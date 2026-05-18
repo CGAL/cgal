@@ -6,8 +6,9 @@ project(Shape_detection_Benchmarks)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
 
-find_package(Eigen3 3.1.0 QUIET) # (3.1.0 or greater)
+find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
+
 if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("benchmark_region_growing_on_point_set_2.cpp")
   target_link_libraries(benchmark_region_growing_on_point_set_2 PRIVATE CGAL::Eigen3_support)

@@ -9,8 +9,8 @@
 //
 // Author(s)     : Jackson Campolattaro
 
-#ifndef ORTHTREE_TESTS_ORTHTREE_TRAITS_POINT_H
-#define ORTHTREE_TESTS_ORTHTREE_TRAITS_POINT_H
+#ifndef CGAL_ORTHTREE_TESTS_ORTHTREE_TRAITS_POINT_H
+#define CGAL_ORTHTREE_TESTS_ORTHTREE_TRAITS_POINT_H
 
 #include <CGAL/license/Orthtree.h>
 
@@ -133,10 +133,11 @@ public:
       }
 
 #if !defined(_MSC_VER) || _MSC_VER > 1920
-      if constexpr (hypercubic_nodes) {
+      if constexpr (hypercubic_nodes)
 #else
-      if (hypercubic_nodes) {
+      if (hypercubic_nodes)
 #endif
+      {
         std::array<typename Self::FT, Self::dimension> center;
         typename Self::FT max_side = 0;
         for (int i = 0; i < Self::dimension; i++) {
@@ -224,4 +225,5 @@ public:
 }
 
 
-#endif //ORTHTREE_TESTS_ORTHTREE_TRAITS_POINT_H
+
+#endif //CGAL_ORTHTREE_TESTS_ORTHTREE_TRAITS_POINT_H

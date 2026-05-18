@@ -52,9 +52,9 @@ int main(int argc, char* argv[])
 
   if (!CGAL::IO::read_PLY_with_properties(input_stream,
                                           std::back_inserter(points),
-                                          CGAL::make_ply_point_reader(Point_map()),
-                                          CGAL::make_ply_normal_reader(Normal_map()),
-                                          std::make_pair(Plane_index_map(), CGAL::PLY_property<int>("segment_index"))))
+                                          CGAL::IO::make_ply_point_reader(Point_map()),
+                                          CGAL::IO::make_ply_normal_reader(Normal_map()),
+                                          std::make_pair(Plane_index_map(), CGAL::IO::PLY_property<int>("segment_index"))))
   {
     std::cerr << "Error: cannot read file " << input_file << std::endl;
     return EXIT_FAILURE;

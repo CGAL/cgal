@@ -59,7 +59,7 @@ Point_3 point(vertex_descriptor vd,  const Surface_mesh& sm)
 int main(int argc, char** argv)
 {
   Surface_mesh surface_mesh;
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cube-meshed.off");
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cube-subdivided.off");
   std::ifstream is(filename);
   if(!is || !(is >> surface_mesh))
   {

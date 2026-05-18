@@ -157,7 +157,7 @@ namespace CGAL {
         return is;
       }
 
-      /** Import the given hds which should be a model of an halfedge graph. */
+      /** Import the given hds which should be a model of a halfedge graph. */
       template<class HEG, class PointConverter>
       void import_from_halfedge_graph(const HEG& heg              ,
                                       const PointConverter& pointconverter,
@@ -198,7 +198,7 @@ namespace CGAL {
         }
       }
 
-      /** Import the given hds which should be a model of an halfedge graph. */
+      /** Import the given hds which should be a model of a halfedge graph. */
       template<class HEG>
       void import_from_halfedge_graph(const HEG& heg,
                                       std::unordered_map

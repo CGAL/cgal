@@ -6,8 +6,9 @@ project(Polygon_Demo)
 
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6 Core)
 
-find_package(Eigen3 3.1.0 QUIET) #(requires 3.1.0 or greater)
+find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
+
 if(NOT TARGET CGAL::Eigen3_support)
   message("NOTICE: This demo requires the Eigen library, and will not be compiled.")
   return()
@@ -20,10 +21,7 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   set(CMAKE_AUTOMOC ON)
   set(CMAKE_AUTOUIC ON)
   set(CMAKE_AUTORCC ON)
-
-  if(CGAL_Core_FOUND)
-    add_compile_definitions(CGAL_USE_CORE)
-  endif()
+  add_compile_definitions(CGAL_USE_CORE)
 
   qt_add_executable(Polygon_2 Polygon_2.cpp
                     Polygon_2.ui Polygon_2.qrc)
@@ -36,5 +34,5 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(Polygon_2)
 else()
-  message("NOTICE: This demo requires CGAL, CGAL_Core, and Qt6, and will not be compiled.")
+  message("NOTICE: This demo requires Qt6, and will not be compiled.")
 endif()

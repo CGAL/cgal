@@ -52,6 +52,8 @@ public:
 
 
   typedef Tree_anchor<Interval, Interval> Tree_anchor_type;
+
+  inline static const Tree_anchor_type the_anchor = Tree_anchor_type();
   Tree_anchor_type *anchor;
 
   typedef Segment_tree_d<Interval, Interval, I1> Segment_tree_1_type;
@@ -59,13 +61,13 @@ public:
 
 
   Segment_tree_1()
-    : anchor(new Tree_anchor_type), segment_tree_1(new Segment_tree_1_type(*anchor))
+    : anchor(&const_cast<Tree_anchor_type&>(the_anchor)), segment_tree_1(new Segment_tree_1_type(*anchor))
   {}
 
   template <class T>
   Segment_tree_1(const T& first,
                  const T& last)
-    : anchor(new Tree_anchor_type), segment_tree_1(new Segment_tree_1_type(*anchor))
+    : anchor(&const_cast<Tree_anchor_type&>(the_anchor)), segment_tree_1(new Segment_tree_1_type(*anchor))
  {
    segment_tree_1->make_tree(first,last);
   }
@@ -75,9 +77,7 @@ public:
                  const T& last)
   {
     delete segment_tree_1;
-    delete anchor;
-    anchor = new Tree_anchor_type;
-    segment_tree_1 = new Segment_tree_1_type(*anchor);
+    segment_tree_1 = new Segment_tree_1_type(&const_cast<Tree_anchor_type&>(the_anchor));
     return segment_tree_1->make_tree(first,last);
   }
 
@@ -95,10 +95,8 @@ public:
 
   ~Segment_tree_1()
   {
-    if (segment_tree_1!=0)
+    if (segment_tree_1 != nullptr)
       delete segment_tree_1;
-    if (anchor!=0)
-      delete anchor;
   }
 };
 
@@ -137,6 +135,8 @@ public:
                                low_2,  high_2, compare_2> I2;
 
   typedef Tree_anchor<Interval, Interval> Tree_anchor_type;
+
+  inline static const Tree_anchor_type the_anchor = Tree_anchor_type();
   Tree_anchor_type *anchor;
 
   typedef Segment_tree_d<Interval, Interval, I2> Segment_tree_1_type;
@@ -146,7 +146,7 @@ public:
   Segment_tree_2_type *segment_tree_2;
 
   Segment_tree_2()
-    : anchor( new Tree_anchor_type),
+    : anchor(&const_cast<Tree_anchor_type&>(the_anchor)),
       segment_tree_1(new Segment_tree_1_type(*anchor)),
       segment_tree_2(new Segment_tree_2_type(*segment_tree_1))
   {}
@@ -154,7 +154,7 @@ public:
   template <class T>
   Segment_tree_2(const T& first,
                  const T& last)
-    : anchor( new Tree_anchor_type),
+    : anchor(&const_cast<Tree_anchor_type&>(the_anchor)),
       segment_tree_1(new Segment_tree_1_type(*anchor)),
       segment_tree_2(new Segment_tree_2_type(*segment_tree_1))
   {
@@ -167,8 +167,6 @@ public:
   {
     delete segment_tree_2;
     delete segment_tree_1;
-    delete anchor;
-    anchor = new Tree_anchor_type;
     segment_tree_1 = new Segment_tree_1_type(*anchor);
     segment_tree_2 = new Segment_tree_2_type(*segment_tree_1);
     return segment_tree_2->make_tree(first,last);
@@ -188,12 +186,10 @@ public:
 
   ~Segment_tree_2()
   {
-    if (segment_tree_2!=0)
+    if (segment_tree_2 != nullptr)
       delete segment_tree_2;
-    if (segment_tree_1!=0)
+    if (segment_tree_1 != nullptr)
       delete segment_tree_1;
-    if (anchor!=0)
-      delete anchor;
   }
 };
 
@@ -239,6 +235,8 @@ public:
 
 
   typedef Tree_anchor<Interval, Interval> Tree_anchor_type;
+
+  inline static const Tree_anchor_type the_anchor = Tree_anchor_type();
   Tree_anchor_type *anchor;
 
   typedef Segment_tree_d<Interval, Interval, I3> Segment_tree_1_type;
@@ -251,7 +249,7 @@ public:
   Segment_tree_3_type *segment_tree_3;
 
   Segment_tree_3()
-    : anchor(new Tree_anchor_type),
+    : anchor(&const_cast<Tree_anchor_type&>(the_anchor)),
       segment_tree_1(new Segment_tree_1_type(*anchor)),
       segment_tree_2(new Segment_tree_2_type(*segment_tree_1)),
       segment_tree_3(new Segment_tree_3_type(*segment_tree_2))
@@ -260,7 +258,7 @@ public:
   template <class T>
   Segment_tree_3(const T& first,
                  const T& last)
-    : anchor(new Tree_anchor_type),
+    : anchor(&const_cast<Tree_anchor_type&>(the_anchor)),
       segment_tree_1(new Segment_tree_1_type(*anchor)),
       segment_tree_2(new Segment_tree_2_type(*segment_tree_1)),
       segment_tree_3(new Segment_tree_3_type(*segment_tree_2))
@@ -275,8 +273,7 @@ public:
     delete segment_tree_3;
     delete segment_tree_2;
     delete segment_tree_1;
-    delete anchor;
-    anchor = new Tree_anchor_type;
+
     segment_tree_1 = new Segment_tree_1_type(*anchor);
     segment_tree_2 = new Segment_tree_2_type(*segment_tree_1);
     segment_tree_3 = new Segment_tree_3_type(*segment_tree_2);
@@ -297,20 +294,18 @@ public:
 
   ~Segment_tree_3()
   {
-    if (segment_tree_3!=0)
+    if (segment_tree_3 != nullptr)
       delete segment_tree_3;
-    if (segment_tree_2!=0)
+    if (segment_tree_2 != nullptr)
       delete segment_tree_2;
-    if (segment_tree_1!=0)
+    if (segment_tree_1 != nullptr)
       delete segment_tree_1;
-    if (anchor!=0)
-      delete anchor;
   }
 };
 
 
 //-------------------------------------------------------------------
-// A three dimensional Segment Tree is defined in this class.
+// A four dimensional Segment Tree is defined in this class.
 // Ti is the type of each dimension of the tree.
 template <class C_Traits_4>
 class Segment_tree_4
@@ -357,6 +352,8 @@ public:
 
 
   typedef Tree_anchor<Interval, Interval> Tree_anchor_type;
+
+  inline static const Tree_anchor_type the_anchor = Tree_anchor_type();
   Tree_anchor_type *anchor;
 
   typedef Segment_tree_d<Interval, Interval, I4> Segment_tree_1_type;
@@ -372,7 +369,7 @@ public:
   Segment_tree_4_type *segment_tree_4;
 
   Segment_tree_4()
-    : anchor(new Tree_anchor_type),
+    : anchor(&const_cast<Tree_anchor_type&>(the_anchor)),
       segment_tree_1(new Segment_tree_1_type(*anchor)),
       segment_tree_2(new Segment_tree_2_type(*segment_tree_1)),
       segment_tree_3(new Segment_tree_3_type(*segment_tree_2)),
@@ -382,7 +379,7 @@ public:
   template <class T>
   Segment_tree_4(const T& first,
                  const T& last)
-    : anchor(new Tree_anchor_type),
+    : anchor(&const_cast<Tree_anchor_type&>(the_anchor)),
       segment_tree_1(new Segment_tree_1_type(*anchor)),
       segment_tree_2(new Segment_tree_2_type(*segment_tree_1)),
       segment_tree_3(new Segment_tree_3_type(*segment_tree_2)),
@@ -399,8 +396,6 @@ public:
     delete segment_tree_3;
     delete segment_tree_2;
     delete segment_tree_1;
-    delete anchor;
-    anchor = new Tree_anchor_type;
     segment_tree_1 = new Segment_tree_1_type(*anchor);
     segment_tree_2 = new Segment_tree_2_type(*segment_tree_1);
     segment_tree_3 = new Segment_tree_3_type(*segment_tree_2);
@@ -422,20 +417,18 @@ public:
 
   ~Segment_tree_4()
   {
-    if (segment_tree_4!=0)
+    if (segment_tree_4 != nullptr)
       delete segment_tree_4;
 
-    if (segment_tree_3!=0)
+    if (segment_tree_3 != nullptr)
       delete segment_tree_3;
 
-    if (segment_tree_2!=0)
+    if (segment_tree_2 != nullptr)
       delete segment_tree_2;
 
-    if (segment_tree_1!=0)
+    if (segment_tree_1 != nullptr)
       delete segment_tree_1;
 
-    if (anchor!=0)
-      delete anchor;
   }
 };
 

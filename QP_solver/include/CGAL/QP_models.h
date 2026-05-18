@@ -42,7 +42,7 @@
 
 // for convenience, every model is actually a model of the
 // concept QuadraticProgramInterface:
-#define QP_MODEL_ITERATOR_TYPES \
+#define CGAL_QP_MODEL_ITERATOR_TYPES \
   typedef typename Base::A_iterator A_iterator;\
   typedef typename Base::B_iterator B_iterator;\
   typedef typename Base::R_iterator R_iterator;\
@@ -197,7 +197,7 @@ private:
    typename QP_model_default_iterators<C_it>::It_2d, C_it> Base;
   typedef typename QP_model_default_iterators<C_it>::It_2d Const_D_iterator;
 public:
-   QP_MODEL_ITERATOR_TYPES;
+   CGAL_QP_MODEL_ITERATOR_TYPES;
    Linear_program_from_iterators (
                      int n, int m, // number of variables / constraints
                      const A_iterator& a,
@@ -272,7 +272,7 @@ private:
   typedef typename QP_model_default_iterators<bool*>::It_1d Const_FLU_iterator;
   typedef typename QP_model_default_iterators<C_it>::It_1d Const_LU_iterator;
 public:
-   QP_MODEL_ITERATOR_TYPES;
+   CGAL_QP_MODEL_ITERATOR_TYPES;
    Nonnegative_quadratic_program_from_iterators (
                      int n, int m, // number of variables / constraints
                      const A_iterator& a,
@@ -342,7 +342,7 @@ private:
   typedef typename QP_model_default_iterators<C_it>::It_1d Const_LU_iterator;
   typedef typename QP_model_default_iterators<C_it>::It_2d Const_D_iterator;
 public:
-   QP_MODEL_ITERATOR_TYPES;
+   CGAL_QP_MODEL_ITERATOR_TYPES;
    Nonnegative_linear_program_from_iterators (
                      int n, int m, // number of variables / constraints
                      const A_iterator& a,
@@ -881,7 +881,7 @@ public:
 private:
   typedef Quadratic_program<NT> Base;
 public:
-  QP_MODEL_ITERATOR_TYPES;
+  CGAL_QP_MODEL_ITERATOR_TYPES;
 private:
   // types
   typedef std::map<std::string,unsigned int> Index_map;

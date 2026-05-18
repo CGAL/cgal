@@ -7,7 +7,7 @@ project(Bounding_volumes_Tests)
 find_package(CGAL REQUIRED COMPONENTS Core)
 
 # Use Eigen
-find_package(Eigen3 3.1.0 QUIET) #(3.1.0 or greater)
+find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
 
 # create a target per cppfile

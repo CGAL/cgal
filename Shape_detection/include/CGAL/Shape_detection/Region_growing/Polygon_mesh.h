@@ -29,5 +29,7 @@
 
 #include <CGAL/Shape_detection/Region_growing/Polygon_mesh/Least_squares_plane_fit_region.h>
 #include <CGAL/Shape_detection/Region_growing/Polygon_mesh/Least_squares_plane_fit_sorting.h>
+#include <CGAL/Shape_detection/Region_growing/Polygon_mesh/Plane_face_region.h>
+#include <CGAL/Shape_detection/Region_growing/Polygon_mesh/Face_area_sorting.h>
 
 #endif // CGAL_SHAPE_DETECTION_REGION_GROWING_POLYGON_MESH_H

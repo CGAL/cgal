@@ -33,8 +33,6 @@ void generate_near_boundary(const PolygonMesh& mesh,
 
   Ppmap ppmap = get(boost::vertex_point, mesh);
   // put vertices
-  vertex_descriptor vd;
-
   for(vertex_descriptor vb : vertices(mesh)) {
     points.push_back(ppmap[vb]);
     on_boundary.push_back(true);

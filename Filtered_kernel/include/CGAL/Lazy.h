@@ -229,14 +229,14 @@ print_dag(const Return_base_tag&, std::ostream& os, int level)
 
 struct Depth_base {
 #ifdef CGAL_PROFILE
-  int depth_;
+  mutable int depth_;
 
   Depth_base()
     : depth_(0)
   {}
 
   int depth() const { return depth_; }
-  void set_depth(int i)
+  void set_depth(int i) const
   {
     depth_ = i;
     CGAL_HISTOGRAM_PROFILER(std::string("[Lazy_kernel DAG depths]"), i);
@@ -244,7 +244,7 @@ struct Depth_base {
   }
 #else
   int depth() const { return 0; }
-  void set_depth(int) {}
+  void set_depth(int) const {}
 #endif
 };
 
@@ -656,6 +656,7 @@ class Lazy_rep_n final :
     auto* p = new typename Base::Indirect(ec()( CGAL::exact( std::get<I>(l) ) ... ) );
     this->set_at(p);
     this->set_ptr(p);
+    this->set_depth(0);
     if(!noprune || is_currently_single_threaded())
       lazy_reset_member(l);
   }
@@ -1081,7 +1082,7 @@ struct Lazy_construction_nt {
   {
     typedef CGAL::cpp20::remove_cvref_t<decltype(ec(CGAL::exact(l)...))> ET;
     typedef CGAL::cpp20::remove_cvref_t<decltype(ac(CGAL::approx(l)...))> AT;
-    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    CGAL_BRANCH_PROFILER(std::string("failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     {
       Protect_FPU_rounding<Protection> P;
       try {
@@ -1249,7 +1250,7 @@ public:
   decltype(auto)
   operator()(const L&... l) const
   {
-    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    CGAL_BRANCH_PROFILER(std::string("failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     {
       Protect_FPU_rounding<Protection> P;
       try {
@@ -1452,7 +1453,7 @@ struct Lazy_construction
 
       typedef Lazy_exact_nt<CGAL::cpp20::remove_cvref_t<decltype(ec(CGAL::exact(l)...))>> result_type;
 
-      CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+      CGAL_BRANCH_PROFILER(std::string("failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
       {
         Protect_FPU_rounding<Protection> P;
         try {
@@ -1468,7 +1469,7 @@ struct Lazy_construction
     else if constexpr (std::disjunction_v<std::is_same<AT, CGAL::Bbox_2>,
                                           std::is_same<AT, CGAL::Bbox_3> >)
     {
-      CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+      CGAL_BRANCH_PROFILER(std::string("failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
       {
         // Protection is outside the try block as VC8 has the CGAL_CFG_FPU_ROUNDING_MODE_UNWINDING_VC_BUG
         Protect_FPU_rounding<Protection> P;
@@ -1486,7 +1487,7 @@ struct Lazy_construction
     {
       typedef Lazy<Object, Object, E2A> Lazy_object;
 
-      CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+      CGAL_BRANCH_PROFILER(std::string("failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
       {
         Protect_FPU_rounding<Protection> P;
         try {
@@ -1543,7 +1544,7 @@ struct Lazy_construction
 
       typedef typename Type_mapper<std::invoke_result_t<AC, typename Type_mapper<L, LK, AK>::type...>, AK, LK>::type result_type;
 
-      CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+      CGAL_BRANCH_PROFILER(std::string("failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
       {
         Protect_FPU_rounding<Protection> P;
 
@@ -1591,7 +1592,7 @@ struct Lazy_construction
 
       static const bool noprune = Disable_lazy_pruning<AK, AC>::value;
 
-      CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+      CGAL_BRANCH_PROFILER(std::string("failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
       {
         Protect_FPU_rounding<Protection> P;
         try {

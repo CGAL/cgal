@@ -18,3 +18,9 @@ endforeach()
 if(cxx_std_20 IN_LIST CMAKE_CXX_COMPILE_FEATURES)
   target_compile_features(test_mesh_terrain PRIVATE cxx_std_20)
 endif()
+
+if(CGAL_ENABLE_TESTING)
+  cgal_add_test(issue_781
+    TEST_NAME "issue_781 very_tiny_edge"
+    ARGUMENTS ${CMAKE_CURRENT_SOURCE_DIR}/issue_781_very_tiny_edge.txt)
+endif()

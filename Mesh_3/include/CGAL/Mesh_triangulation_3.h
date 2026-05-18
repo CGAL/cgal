@@ -152,7 +152,7 @@ and defaults to `Compact_mesh_cell_base_3<GT, MD>`.
          models of `Kernel::ConstructWeightedCircumcenter_3`, `Kernel::ComputeSquaredRadius_3`,
          and `Kernel::ComputeSquaredRadiusSmallestOrthogonalSphere_3` that are
          provided by `GT` to use exact computations when the geometric configuration
-         is close to degenerate (e.g. almost coplanar points). <br><br>
+         is close to degenerate (e.g., almost coplanar points). <br><br>
          Users should therefore be aware that the traits class of the triangulation
          will have type `Robust_weighted_circumcenter_filtered_traits_3<GT>`.
 

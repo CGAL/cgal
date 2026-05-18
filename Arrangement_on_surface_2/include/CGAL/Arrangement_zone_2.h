@@ -415,6 +415,24 @@ private:
                                   Arr_parameter_space& intersection_location,
                                   Arr_boundary_cond_tag) const;
 
+  /*! checks whether an point lies to the left of another point.
+   */
+  bool is_to_left(const Point_2& p1, Arr_parameter_space ps1,
+                  const Point_2& p2, Arr_parameter_space ps2) const
+  { return is_to_left_impl(p1, ps1, p2, ps2, Left_or_right_sides_category()); }
+
+  bool is_to_left_impl(const Point_2& p1, Arr_parameter_space ps1,
+                       const Point_2& p2, Arr_parameter_space ps2,
+                       Arr_all_sides_oblivious_tag) const;
+
+  bool is_to_left_impl(const Point_2& p1, Arr_parameter_space ps1,
+                       const Point_2& p2, Arr_parameter_space ps2,
+                       Arr_has_identified_side_tag) const;
+
+  bool is_to_left_impl(const Point_2& p1, Arr_parameter_space ps1,
+                       const Point_2& p2, Arr_parameter_space ps2,
+                       Arr_boundary_cond_tag) const;
+
   /*! computes the (lexicographically) leftmost intersection of the query
    * curve with a given halfedge on the boundary of a face in the arrangement.
    */

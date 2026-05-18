@@ -1004,7 +1004,7 @@ private:
 *
 * \note This function depends on the \eigen 3.1 (or later) library.
 *
-* @tparam PolygonMesh a model of `FaceListGraph`.
+* @tparam PolygonMesh a model of `VertexListGraph` and `FaceListGraph`.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters".
 *
 * @param pmesh the polygon mesh.

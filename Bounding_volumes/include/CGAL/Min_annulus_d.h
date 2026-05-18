@@ -706,17 +706,15 @@ bool
 Min_annulus_d<Traits_>::
 is_valid( bool verbose, int level) const
 {
-  using namespace std;
-
   CGAL::Verbose_ostream verr( verbose);
-  verr << "CGAL::Min_annulus_d<Traits>::" << endl;
-  verr << "is_valid( true, " << level << "):" << endl;
+  verr << "CGAL::Min_annulus_d<Traits>::" << std::endl;
+  verr << "is_valid( true, " << level << "):" << std::endl;
   verr << "  |P| = " << number_of_points()
-       << ", |S| = " << number_of_support_points() << endl;
+       << ", |S| = " << number_of_support_points() << std::endl;
 
   // containment check (a)
   // ---------------------
-  verr << "  (a) containment check..." << flush;
+  verr << "  (a) containment check..." << std::flush;
 
   Point_iterator  point_it = points_begin();
   for ( ; point_it != points_end(); ++point_it) {
@@ -725,11 +723,11 @@ is_valid( bool verbose, int level) const
                                                 "annulus does not contain all points");
   }
 
-  verr << "passed." << endl;
+  verr << "passed." << std::endl;
 
   // support set check (b)
   // ---------------------
-  verr << "  (b) support set check..." << flush;
+  verr << "  (b) support set check..." << std::flush;
 
   // all inner support points on inner boundary?
   Inner_support_point_iterator  i_pt_it = inner_support_points_begin();
@@ -762,9 +760,9 @@ is_valid( bool verbose, int level) const
   }
   */
 
-  verr << "passed." << endl;
+  verr << "passed." << std::endl;
 
-  verr << "  object is valid!" << endl;
+  verr << "  object is valid!" << std::endl;
   return( true);
 }
 
@@ -774,12 +772,10 @@ std::ostream&
 operator << ( std::ostream& os,
               const Min_annulus_d<Traits_>& min_annulus)
 {
-  using namespace std;
-
   typedef  typename Min_annulus_d<Traits_>::Point  Point;
-  typedef  ostream_iterator<Point>       Os_it;
+  typedef  std::ostream_iterator<Point>       Os_it;
   typedef  typename Traits_::ET          ET;
-  typedef  ostream_iterator<ET>          Et_it;
+  typedef  std::ostream_iterator<ET>          Et_it;
 
   switch ( CGAL::IO::get_mode( os)) {
 
@@ -787,44 +783,44 @@ operator << ( std::ostream& os,
     os << "CGAL::Min_annulus_d( |P| = "
        << min_annulus.number_of_points() << ", |S| = "
        << min_annulus.number_of_inner_support_points() << '+'
-       << min_annulus.number_of_outer_support_points() << endl;
-    os << "  P = {" << endl;
+       << min_annulus.number_of_outer_support_points() << std::endl;
+    os << "  P = {" << std::endl;
     os << "    ";
-    copy( min_annulus.points_begin(), min_annulus.points_end(),
+    std::copy( min_annulus.points_begin(), min_annulus.points_end(),
           Os_it( os, ",\n    "));
-    os << "}" << endl;
-    os << "  S_i = {" << endl;
+    os << "}" << std::endl;
+    os << "  S_i = {" << std::endl;
     os << "    ";
-    copy( min_annulus.inner_support_points_begin(),
+    std::copy( min_annulus.inner_support_points_begin(),
           min_annulus.inner_support_points_end(),
           Os_it( os, ",\n    "));
-    os << "}" << endl;
-    os << "  S_o = {" << endl;
+    os << "}" << std::endl;
+    os << "  S_o = {" << std::endl;
     os << "    ";
-    copy( min_annulus.outer_support_points_begin(),
+    std::copy( min_annulus.outer_support_points_begin(),
           min_annulus.outer_support_points_end(),
           Os_it( os, ",\n    "));
-    os << "}" << endl;
+    os << "}" << std::endl;
     os << "  center = ( ";
-    copy( min_annulus.center_coordinates_begin(),
+    std::copy( min_annulus.center_coordinates_begin(),
           min_annulus.center_coordinates_end(),
           Et_it( os, " "));
-    os << ")" << endl;
+    os << ")" << std::endl;
     os << "  squared inner radius = "
        << min_annulus.squared_inner_radius_numerator() << " / "
-       << min_annulus.squared_radii_denominator() << endl;
+       << min_annulus.squared_radii_denominator() << std::endl;
     os << "  squared outer radius = "
        << min_annulus.squared_outer_radius_numerator() << " / "
-       << min_annulus.squared_radii_denominator() << endl;
+       << min_annulus.squared_radii_denominator() << std::endl;
     break;
 
   case CGAL::IO::ASCII:
-    copy( min_annulus.points_begin(), min_annulus.points_end(),
+    std::copy( min_annulus.points_begin(), min_annulus.points_end(),
           Os_it( os, "\n"));
     break;
 
   case CGAL::IO::BINARY:
-    copy( min_annulus.points_begin(), min_annulus.points_end(),
+    std::copy( min_annulus.points_begin(), min_annulus.points_end(),
           Os_it( os));
     break;
 
@@ -841,19 +837,17 @@ template < class Traits_ >
 std::istream&
 operator >> ( std::istream& is, CGAL::Min_annulus_d<Traits_>& min_annulus)
 {
-  using namespace std;
-
   switch ( CGAL::IO::get_mode( is)) {
 
   case CGAL::IO::PRETTY:
-    cerr << endl;
-    cerr << "Stream must be in ASCII or binary mode" << endl;
+    std::cerr << std::endl;
+    std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
     break;
 
   case CGAL::IO::ASCII:
   case CGAL::IO::BINARY:
     typedef  typename CGAL::Min_annulus_d<Traits_>::Point  Point;
-    typedef  istream_iterator<Point>             Is_it;
+    typedef  std::istream_iterator<Point>             Is_it;
     min_annulus.set( Is_it( is), Is_it());
     break;
 

@@ -80,7 +80,7 @@ namespace CGAL {
  * to have the same direction as a precondition. Moreover, `Arr_conic_traits_2`
  * supports the merging of curves of opposite directions.
  *
- * \cgalModels{AosTraits_2,AosLandmarkTraits_2,AosApproximateTraits_2,AosDirectionalXMonotoneTraits_2}
+ * \cgalModels{AosTraits_2,AosLandmarkTraits_2,AosApproximateTraits_2,AosApproximatePointTraits_2,AosDirectionalXMonotoneTraits_2}
  *
  * \cgalHeading{Types}
  */

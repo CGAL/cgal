@@ -146,7 +146,7 @@ public:
   {
     CGAL_assertion(this->updated);
 
-    // Calculate the index of the nearest grid point point to q.
+    // Calculate the index of the nearest grid point to point q.
     typename Geometry_traits_2::Approximate_2 approximate =
       m_traits->approximate_2_object();
     const ANT qx = approximate(q, 0);

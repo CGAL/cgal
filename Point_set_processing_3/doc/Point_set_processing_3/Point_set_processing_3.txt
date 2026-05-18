@@ -690,7 +690,7 @@ cell so that a point from this cell is kept.
 Point set simplification through grid-based clustering. Removed points are depicted in red. Notice how low-density areas (in green) are not simplified.
 \cgalFigureEnd
 
-\subsection Point_set_processing_3Example_hierarchy_simplication Hierarchy Simplification Example
+\subsection Point_set_processing_3Example_hierarchy_simplification Hierarchy Simplification Example
 The following example reads a point set and produces a set of clusters.
 
 \cgalExample{Point_set_processing_3/hierarchy_simplification_example.cpp}

@@ -28,7 +28,7 @@
 #include <variant>
 
 #include <CGAL/config.h>
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/tags.h>
 #include <CGAL/tss.h>
 #include <CGAL/intersections.h>
@@ -135,7 +135,6 @@ public:
   // Category tags:
   using Has_left_category = Tag_true;
   using Has_merge_category = Tag_true;
-  using Has_do_intersect_category = Tag_false;
 
   using Left_side_category = Arr_identified_side_tag;
   using Bottom_side_category = Arr_contracted_side_tag;
@@ -1497,6 +1496,184 @@ public:
 
   /*! obtains an `Equal_2` function object. */
   Equal_2 equal_2_object() const { return Equal_2(*this); }
+
+  /*! \class Do_intersect
+   * A functor for intersection detection
+   */
+  class Do_intersect_2 {
+  private:
+    /*! determines whether a direction pierces an arc.
+     * \param point the direction.
+     * \param xc the arc.
+     * \return true iff point pierces xc.
+     * \pre point lies in the underlying plane of xc.
+     */
+    bool is_in_between(const Point_2& point,
+                       const X_monotone_curve_2& xc) const {
+      const Kernel& kernel = m_traits;
+      CGAL_precondition(m_traits.has_on(xc.normal(), point));
+
+      const Point_2& left = xc.left();
+      const Point_2& right = xc.right();
+
+      // Handle the poles:
+      if (point.is_max_boundary()) return (right.is_max_boundary());
+      if (point.is_min_boundary()) return (left.is_min_boundary());
+
+      if (xc.is_vertical()) {
+        // Compare the \f$x\f$-coordinates. If they are not equal, return false:
+        Direction_3 normal = xc.normal();
+        bool plane_is_positive, p_is_positive;
+        CGAL::Sign xsign = Traits::x_sign(normal);
+        if (xsign == ZERO) {
+          plane_is_positive = Traits::y_sign(normal) == NEGATIVE;
+          p_is_positive = Traits::x_sign(point) == POSITIVE;
+        } else {
+          plane_is_positive = xsign == POSITIVE;
+          p_is_positive = Traits::y_sign(point) == POSITIVE;
+        }
+
+        bool xc_is_positive = ((plane_is_positive && xc.is_directed_right()) ||
+                               (!plane_is_positive && !xc.is_directed_right()));
+
+        if ((xc_is_positive && !p_is_positive) ||
+            (!xc_is_positive && p_is_positive))
+          return false;
+
+        // Compare the \f$y\f$-coordinates:
+        return (((left.is_min_boundary()) ||
+                 (m_traits.compare_y(point, left) != SMALLER)) &&
+                ((right.is_max_boundary()) ||
+                 (m_traits.compare_y(point, right) != LARGER)));
+      }
+
+      // The arc is not vertical. Compare the projections onto the
+      // \f$xy\f$-plane:
+      typename Kernel::Equal_2 equal_2 = kernel.equal_2_object();
+      Direction_2 p = Traits::project_xy(point);
+      Direction_2 r = Traits::project_xy(right);
+      if (equal_2(p, r)) return true;
+      Direction_2 l = Traits::project_xy(left);
+      if (equal_2(p, l)) return true;
+      return kernel.counterclockwise_in_between_2_object()(p, l, r);
+    }
+
+    /*!
+     */
+    bool do_intersect_ignore_common_endpoints(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2) const {
+      using Intersection_point = std::pair<Point_2, Multiplicity>;
+      using Intersection_result = std::variant<Intersection_point, X_monotone_curve_2>;
+      std::list<Intersection_result> intersections;
+      m_traits.intersect_2_object()(xcv1, xcv2, std::back_inserter(intersections));
+
+      // If the curves do not intersect at all, endpoints do not matter
+      if (intersections.empty()) return false;
+
+      // If there are more than 2 intersections, return true
+      if (intersections.size() > 2) return true;
+
+      // If the intersection is an overlap, return true
+      auto cmp_xy = m_traits.compare_xy_2_object();
+      const Intersection_point* p_first_p = std::get_if<Intersection_point>(&(intersections.front()));
+      if (! p_first_p) return true;
+
+      auto ctr_min_vertex = m_traits.construct_min_vertex_2_object();
+      auto ctr_max_vertex = m_traits.construct_max_vertex_2_object();
+
+      // If the first intersection point of the curves is not an endpoint of the first curve, return true
+      const auto& min_p1 = ctr_min_vertex(xcv1);
+      const auto& max_p1 = ctr_max_vertex(xcv1);
+      if ((cmp_xy(min_p1, p_first_p->first) != EQUAL) && (cmp_xy(max_p1, p_first_p->first) != EQUAL)) return true;
+
+      // If the first intersection point of the curves is not an endpoint of the second curve, return true
+      const auto& min_p2 = ctr_min_vertex(xcv2);
+      const auto& max_p2 = ctr_max_vertex(xcv2);
+      if ((cmp_xy(min_p2, p_first_p->first) != EQUAL) && (cmp_xy(max_p2, p_first_p->first) != EQUAL)) return true;
+
+      // If there is only one intersection, it is an endpoint; return false
+      if (intersections.size() == 1) return false;
+
+      // repeat the above for the last point
+      const Intersection_point* p_last_p = std::get_if<Intersection_point>(&(intersections.back()));
+      if (! p_last_p) return true;
+      if ((cmp_xy(min_p1, p_last_p->first) != EQUAL) && (cmp_xy(max_p1, p_last_p->first) != EQUAL)) return true;
+      if ((cmp_xy(min_p2, p_last_p->first) != EQUAL) && (cmp_xy(max_p2, p_last_p->first) != EQUAL)) return true;
+      return false;
+    }
+
+  protected:
+    using Traits = Arr_geodesic_arc_on_sphere_traits_2<Kernel, atan_x, atan_y>;
+
+    //! The traits (in case it has state)
+    const Traits& m_traits;
+
+    /*! constructs
+     * \param traits the traits (in case it has state)
+     */
+    Do_intersect_2(const Traits& traits) : m_traits(traits) {}
+
+    friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel, atan_x, atan_y>;
+
+  public:
+    /*! determines whether two given \f$x\f$-monotone curves intersect.
+     * \param xcv1 the first curve.
+     * \param xcv2 the second curve.
+     * \param consider_common_endpoints indicates whether common endpoints should be counted as intersections.
+     * \return `true` if `consider_common_endpoints` is true and `xcv1` and `xcv2` intersect or if
+     *  `consider_common_endpoints` is `false and at least one of the interiors of `xcv1` and `xcv2` intersect,
+     *   and `false` otherwise.
+     */
+    bool operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
+                    bool consider_common_endpoints = true) const {
+      CGAL_precondition(! xcv1.is_degenerate());
+      CGAL_precondition(! xcv2.is_degenerate());
+
+      if (! consider_common_endpoints) return do_intersect_ignore_common_endpoints(xcv1, xcv2);
+
+      const Kernel& kernel = m_traits;
+
+      auto equal_3 = kernel.equal_3_object();
+      const Direction_3& normal1 = xcv1.normal();
+      const Direction_3& normal2 = xcv2.normal();
+
+      Direction_3 opposite_normal1 = kernel.construct_opposite_direction_3_object()(normal1);
+
+      if (equal_3(normal1, normal2) || equal_3(opposite_normal1, normal2)) {
+        // The underlying planes are the same
+        if (xcv1.is_vertical()) {
+          // Both arcs are vertical
+          bool res = kernel.equal_3_object()(normal1, normal2);
+          if ((! res && (xcv1.is_directed_right() == xcv2.is_directed_right())) ||
+              (res && (xcv1.is_directed_right() != xcv2.is_directed_right()))) {
+            if (xcv1.left().is_min_boundary() && xcv2.left().is_min_boundary()) return true;
+            if (xcv1.right().is_max_boundary() && xcv2.right().is_max_boundary()) return true;
+            return false;
+          }
+
+          return true;
+        }
+
+        return true;
+      }
+
+      // The following is suspicious; it may introduce instability for inexact kernels
+      auto cross_prod = kernel.construct_cross_product_vector_3_object();
+      Vector_3 v = cross_prod(xcv1.normal().vector(), xcv2.normal().vector());
+
+      // Observe that xc1 and xc2 may share two endpoints.
+      Point_2 ed = m_traits.construct_point_2_object()(v.direction());
+      if (is_in_between(ed, xcv1) && is_in_between(ed, xcv2)) return true;
+
+      Vector_3 vo(kernel.construct_opposite_vector_3_object()(v));
+      Point_2 edo = m_traits.construct_point_2_object()(vo.direction());
+      if (is_in_between(edo, xcv1) && is_in_between(edo, xcv2)) return true;
+
+      return false;
+    }
+  };
+
+  /*! obtains a `Do_intersect_2` function object. */
+  Do_intersect_2 do_intersect_2_object() const { return Do_intersect_2(*this); }
   //@}
 
   /// \name Functor definitions to handle boundaries
@@ -2856,7 +3033,7 @@ public:
   /// \name Functor definitions for the landmarks point-location strategy.
   //@{
   using Approximate_number_type = double;
-  using Approximate_kernel = CGAL::Cartesian<Approximate_number_type>;
+  using Approximate_kernel = CGAL::Simple_cartesian<Approximate_number_type>;
   using Approximate_point_2 = Arr_extended_direction_3<Approximate_kernel>;
   using Approximate_kernel_vector_3 = Approximate_kernel::Vector_3;
   using Approximate_kernel_direction_3 = Approximate_kernel::Direction_3;

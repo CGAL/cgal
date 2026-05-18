@@ -62,9 +62,9 @@ void copy_ch2_to_face_graph(const std::list<P>& CH_2,
 
   for(std::size_t i = 1; i < CH_2.size()-1; ++i){
       CGAL::internal::resize(its.faces[i-1], 3);
-      its.faces[i-1][0] = static_cast<Index>(i);
-      its.faces[i-1][1] = static_cast<Index>(i + 1);
-      its.faces[i-1][2] = static_cast<Index>(i + 2);
+      its.faces[i-1][0] = static_cast<Index>(i - 1);
+      its.faces[i-1][1] = static_cast<Index>(i);
+      its.faces[i-1][2] = static_cast<Index>(i + 1);
   }
 
 }

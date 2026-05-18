@@ -1,0 +1,56 @@
+/*!
+\defgroup PkgBarycentricCoordinates3Ref 3D Generalized Barycentric Coordinates Reference
+
+\defgroup PkgBarycentricCoordinates3RefConcepts Concepts
+\ingroup PkgBarycentricCoordinates3Ref
+
+Generalized barycentric concepts.
+
+\defgroup PkgBarycentricCoordinates3RefAnalytic Analytic Coordinates
+\ingroup PkgBarycentricCoordinates3Ref
+
+Analytic coordinates and related classes.
+
+\defgroup PkgBarycentricCoordinates3RefFunctions Free Functions
+\ingroup PkgBarycentricCoordinates3Ref
+
+Free functions to compute barycentric coordinates.
+
+\addtogroup PkgBarycentricCoordinates3Ref
+
+\cgalPkgDescriptionBegin{3D Generalized Barycentric Coordinates, PkgBarycentricCoordinates3}
+\cgalPkgPicture{barcoord_thumb_3.png}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Antonio Gomes, Dmitry Anisimov}
+\cgalPkgDesc{The package 3D Generalized Barycentric Coordinates offers an efficient and robust
+implementation of three-dimensional closed-form generalized barycentric coordinates
+defined for convex simplicial polytopes.}
+\cgalPkgManuals{Chapter_3D_Generalized_Barycentric_Coordinates, PkgBarycentricCoordinates3Ref}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{6.2}
+\cgalPkgBib{abha-gbc}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+## Concepts ##
+- `BarycentricTraits_3`
+
+## Analytic Coordinates ##
+- `CGAL::Barycentric_coordinates::Wachspress_coordinates_3<TriangleMesh, GeomTraits, VertexPointMap>`
+- `CGAL::Barycentric_coordinates::Mean_value_coordinates_3<TriangleMesh, GeomTraits, VertexPointMap>`
+- `CGAL::Barycentric_coordinates::Discrete_harmonic_coordinates_3<TriangleMesh, GeomTraits, VertexPointMap>`
+
+## Free Functions ##
+- `CGAL::Barycentric_coordinates::apply_barycentric_coordinates()`
+- `CGAL::Barycentric_coordinates::tetrahedron_coordinates()`
+- `CGAL::Barycentric_coordinates::wachspress_coordinates_3()`
+- `CGAL::Barycentric_coordinates::mean_value_coordinates_3()`
+- `CGAL::Barycentric_coordinates::discrete_harmonic_coordinates_3()`
+- `CGAL::Barycentric_coordinates::boundary_coordinates_3()`
+*/

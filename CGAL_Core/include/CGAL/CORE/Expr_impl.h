@@ -361,7 +361,7 @@ void ExprRep::reduceTo(const ExprRep *e) {
   // Currently, ratFlag>0 is an upper bound on the size of the expression,
   // since we recursively compute
   //                 ratFlag(v) = ratFlag(v.lchild)+ratFlag(v.rchild) + 1.
-  // PROPOSAL: if ratFlag() > RAT_REDUCE_THRESHHOLD
+  // PROPOSAL: if ratFlag() > RAT_REDUCE_THRESHOLD
   //         then we automatically do a reduction.  We must determine
   //         an empirical value for RAT_REDUCE_THRESHOLD
 

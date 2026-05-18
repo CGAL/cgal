@@ -288,7 +288,7 @@ public:
     /// and all input primitives. Method
     /// `accelerate_distance_queries()` should be called before the
     /// first distance query, so that an internal secondary search
-    /// structure is build, for improving performance.
+    /// structure is built, for improving performance.
     /// \pre `!empty()`
     FT squared_distance(const Point& query) const;
 
@@ -297,7 +297,7 @@ public:
     /// points, one arbitrarily chosen closest point is
     /// returned. Method `accelerate_distance_queries()` should be
     /// called before the first distance query, so that an internal
-    /// secondary search structure is build, for improving
+    /// secondary search structure is built, for improving
     /// performance.
     /// \pre `!empty()`
     Point closest_point(const Point& query) const;
@@ -307,7 +307,7 @@ public:
     /// smallest distance between the query point and all input
     /// primitives. Method `accelerate_distance_queries()` should be
     /// called before the first distance query, so that an internal
-    /// secondary search structure is build, for improving
+    /// secondary search structure is built, for improving
     /// performance.
     /// \pre `!empty()`
     Point_and_primitive_id closest_point_and_primitive(const Point& query) const;

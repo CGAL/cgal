@@ -199,7 +199,7 @@ lp_intersection(const typename K::Point_3& p, const typename K::Point_3& q,
 
   To_filtering to_filtering;
 
-  CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+  CGAL_BRANCH_PROFILER(std::string("failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
 
   { // First, one computes the intersection using a filtering kernel
     // (intervals as number type).

@@ -578,7 +578,7 @@ developed and implemented by Dmitry Anisimov and Simon Giraudot. Plane regulariz
 was added by Simon Giraudot based on the prototype version developed by Florent Lafarge.
 
 
-\section Shape_Regularization_Acknowledgements Acknowledgments
+\section Shape_Regularization_Acknowledgments Acknowledgments
 
 We wish to thank Andreas Fabri and Marc Pouget for useful discussions and reviews.
 */

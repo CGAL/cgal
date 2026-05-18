@@ -10,8 +10,8 @@
 //
 // Author(s)     : Jane Tournois, Noura Faraj, Jean-Marc Thiery, Tamy Boubekeur
 
-#ifndef TETRAHEDRAL_REMESHING_IMPL_H
-#define TETRAHEDRAL_REMESHING_IMPL_H
+#ifndef CGAL_TETRAHEDRAL_REMESHING_IMPL_H
+#define CGAL_TETRAHEDRAL_REMESHING_IMPL_H
 
 #include <CGAL/license/Tetrahedral_remeshing.h>
 
@@ -718,4 +718,4 @@ struct Adaptive_remesher_type_generator
 }//end namespace Tetrahedral_remeshing
 }//end namespace CGAL
 
-#endif //TETRAHEDRAL_REMESHING_IMPL_H
+#endif //CGAL_TETRAHEDRAL_REMESHING_IMPL_H

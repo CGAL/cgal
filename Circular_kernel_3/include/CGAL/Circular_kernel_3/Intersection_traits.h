@@ -157,11 +157,19 @@ struct SK3_Intersection_traits<SK, typename SK::Sphere_3, typename SK::Sphere_3,
   : SK3_intersect_ternary<SK> {};
 
 template <typename SK>
+struct SK3_Intersection_traits<SK, typename SK::Sphere_3, typename SK::Plane_3, typename SK::Sphere_3>
+  : SK3_intersect_ternary<SK> {};
+
+template <typename SK>
 struct SK3_Intersection_traits<SK, typename SK::Plane_3, typename SK::Sphere_3, typename SK::Sphere_3>
   : SK3_intersect_ternary<SK> {};
 
 template <typename SK>
 struct SK3_Intersection_traits<SK, typename SK::Plane_3, typename SK::Plane_3, typename SK::Sphere_3>
+  : SK3_intersect_ternary<SK> {};
+
+template <typename SK>
+struct SK3_Intersection_traits<SK, typename SK::Plane_3, typename SK::Sphere_3, typename SK::Plane_3>
   : SK3_intersect_ternary<SK> {};
 
 template <typename SK>

@@ -160,7 +160,7 @@ CGAL_DEF_INITIALIZE_ID_MAP_FUNCTION(halfedge)
 CGAL_DEF_INITIALIZE_ID_MAP_FUNCTION(edge)
 CGAL_DEF_INITIALIZE_ID_MAP_FUNCTION(face)
 
-#undef CGAL_DEF_INITIALIZE_ID_FUCNTION
+#undef CGAL_DEF_INITIALIZE_ID_MAP_FUNCTION
 
 // Using the pmap passed in named parameters -------------------------------------------------------
 template <typename IndexMap, typename PropertyTag, typename Tag, typename DynamicTag, typename Graph>

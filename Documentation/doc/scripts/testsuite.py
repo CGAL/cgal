@@ -151,32 +151,53 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
           result = [('./build_logs', './build_logs', (0,1))]
           results_master.extend(result)
     for index in range(0, len(results1)):
-        status='class="package-good"'
+        status='package-good'
+        status_1='package-good'
+        status_2='package-good'
+        status_master='package-good'
         no_errors = True
         no_warn = True
-        for res_list in [results1, results2, results_master]:
-          if res_list[index][2][0] != 0 and res_list[index][2][1] == 0:
-             no_warn = False
-          elif res_list[index][2][1] != 0:
-             no_errors = False
+
+        if results1[index][2][0] != 0 and results1[index][2][1] == 0:
+           no_warn = False
+           status_1='package-warnings'
+        elif results1[index][2][1] != 0:
+           no_errors = False
+           status_1='package-error'
+
+        if results2[index][2][0] != 0 and results2[index][2][1] == 0:
+           no_warn = False
+           status_2='package-warnings'
+        elif results2[index][2][1] != 0:
+           no_errors = False
+           status_2='package-error'
+
+        if results_master[index][2][0] != 0 and results_master[index][2][1] == 0:
+           no_warn = False
+           status_master='package-warnings'
+        elif results_master[index][2][1] != 0:
+           no_errors = False
+           status_master='package-error'
+
         if not no_warn and no_errors :
-            status='class="package-warnings"'
+            status='package-warnings'
         elif not no_errors:
-            status='class="package-error"'
+            status='package-error'
 
 
-        new_row='''<tr {status}>
-<td><a class="name" >{pretty_name}</a></td>
-<td><a class="logs1" href="logs1/{basename1}">Logs</a></td>
-<td class="warn-count1">{warn_count1}
-</td><td class="error-count1">{err_count1}</td>
-<td><a class="logs2" href="logs2/{basename2}">Logs</a></td>
-<td class="warn-count2">{warn_count2}
-</td><td class="error-count2">{err_count2}</td>
-<td><a class="logs_master" href="logs_master/{basename_master}">Logs</a></td>
-<td class="warn-count_master">{warn_count_master}
-</td><td class="error-count_master">{err_count_master}</td></tr>'''.format(
-status=status,
+        new_row='''<tr>
+<td class="{status}"><a class="name" >{pretty_name}</a></td>
+<td class="{status_1}"><a class="logs1" href="logs1/{basename1}">Logs</a></td>
+<td class="warn-count1 {status_1}">{warn_count1}</td>
+<td class="error-count1 {status_1}">{err_count1}</td>
+<td class="{status_2}"><a class="logs2" href="logs2/{basename2}">Logs</a></td>
+<td class="warn-count2 {status_2}">{warn_count2}</td>
+<td class="error-count2 {status_2}">{err_count2}</td>
+<td class="{status_master}"><a class="logs_master" href="logs_master/{basename_master}">Logs</a></td>
+<td class="warn-count_master {status_master}">{warn_count_master}</td>
+<td class="error-count_master {status_master}">{err_count_master}</td>
+</tr>'''.format(
+status=status,status_1=status_1,status_2=status_2,status_master=status_master,
 pretty_name=results1[index][1],
 basename1=results1[index][0],basename2=results2[index][0],basename_master=results_master[index][0],
 warn_count1=str(results1[index][2][0]),warn_count2=str(results2[index][2][0]),warn_count_master=str(results_master[index][2][0]),

@@ -298,7 +298,7 @@ private Q_SLOTS:
       std::size_t max_depth = m_ksr->estimate_max_subdivision_depth();
       dock_widget->partReorientCheck->setChecked(true);
       dock_widget->partSubdivisionCheck->setChecked(true);
-      dock_widget->partMaxDepthBox->setValue(max_depth);
+      dock_widget->partMaxDepthBox->setValue(static_cast<int>(max_depth));
       dock_widget->partPolygonsPerNodeBox->setValue(40);
       dock_widget->partKBox->setValue(2);
     }
@@ -591,7 +591,7 @@ private:
       m_ksr->estimate_detection_parameters(max_distance, max_angle, min_region_size);
       dock_widget->sdMaxDistanceBox->setValue(max_distance);
       dock_widget->sdMaxAngleBox->setValue(max_angle);
-      dock_widget->sdMinRegionSizeBox->setValue(min_region_size);
+      dock_widget->sdMinRegionSizeBox->setValue(static_cast<int>(min_region_size));
       dock_widget->sdkNeighborsBox->setValue(12);
       dock_widget->srCoplanarityCheck->setChecked(true);
       dock_widget->srMaxOffsetBox->setValue(max_distance * 0.5);

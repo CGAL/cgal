@@ -74,52 +74,49 @@ namespace Surface_sweep_2 {
 template <typename Visitor_>
 class Surface_sweep_2 : public No_intersection_surface_sweep_2<Visitor_> {
 public:
-  typedef Visitor_                                      Visitor;
+  using Visitor = Visitor_;
 
 private:
-  typedef No_intersection_surface_sweep_2<Visitor>      Base;
+  using Base = No_intersection_surface_sweep_2<Visitor>;
 
 public:
-  typedef typename Base::Geometry_traits_2              Geometry_traits_2;
-  typedef typename Base::Event                          Event;
-  typedef typename Base::Subcurve                       Subcurve;
-  typedef typename Base::Allocator                      Allocator;
+  using Geometry_traits_2 = typename Base::Geometry_traits_2;
+  using Event = typename Base::Event;
+  using Subcurve = typename Base::Subcurve;
+  using Allocator = typename Base::Allocator;
 
-  typedef typename Base::Traits_adaptor_2               Traits_adaptor_2;
-  typedef typename Traits_adaptor_2::Point_2            Point_2;
-  typedef typename Traits_adaptor_2::X_monotone_curve_2 X_monotone_curve_2;
-  typedef typename Traits_adaptor_2::Multiplicity       Multiplicity;
+  using Traits_adaptor_2 = typename Base::Traits_adaptor_2;
+  using Point_2 = typename Traits_adaptor_2::Point_2;
+  using X_monotone_curve_2 = typename Traits_adaptor_2::X_monotone_curve_2;
+  using Multiplicity = typename Traits_adaptor_2::Multiplicity;
 
-  typedef typename Base::Event_queue_iterator           Event_queue_iterator;
-  typedef typename Event::Subcurve_iterator             Event_subcurve_iterator;
+  using Event_queue_iterator = typename Base::Event_queue_iterator;
+  using Event_subcurve_iterator = typename Event::Subcurve_iterator;
 
-  typedef typename Event::Attribute                     Attribute;
+  using Attribute = typename Event::Attribute;
 
-  typedef std::list<Subcurve*>                          Subcurve_container;
-  typedef typename Subcurve_container::iterator         Subcurve_iterator;
+  using Subcurve_container = std::list<Subcurve*>;
+  using Subcurve_iterator = typename Subcurve_container::iterator;
 
-  typedef typename Base::Status_line_iterator           Status_line_iterator;
+  using Status_line_iterator = typename Base::Status_line_iterator;
 
-  typedef std::pair<Point_2, Multiplicity>              Intersection_point;
-  typedef std::variant<Intersection_point, X_monotone_curve_2>
-                                                        Intersection_result;
-  typedef std::vector<Intersection_result>              Intersection_vector;
-  typedef Random_access_output_iterator<Intersection_vector>
-                                                        vector_inserter;
-  typedef typename Base::Subcurve_alloc                 Subcurve_alloc;
+  using Intersection_point = std::pair<Point_2, Multiplicity>;
+  using Intersection_result = std::variant<Intersection_point, X_monotone_curve_2>;
+  using Intersection_vector = std::vector<Intersection_result>;
+  using vector_inserter = Random_access_output_iterator<Intersection_vector>;
+  using Subcurve_alloc = typename Base::Subcurve_alloc;
+
 protected:
-  typedef typename Base::All_sides_oblivious_category
-    All_sides_oblivious_category;
+  using All_sides_oblivious_category = typename Base::All_sides_oblivious_category;
 
   // Parameter spaces that are either oblivious or open cannot have points
   // on the boundary, and in particular intersection points. In other words,
   // intersection points of an oblivious or open parameter space is interior
   // by definition.
-  typedef typename Base::Sides_category
-    Sides_category;
+  using Sides_category = typename Base::Sides_category;
 
   // Data members:
-  Subcurve_container m_overlap_subCurves;
+  Subcurve_container m_overlap_subcurves;
                                      // Contains all of the new sub-curves
                                      // created by an overlap.
 
@@ -148,10 +145,7 @@ public:
   virtual ~Surface_sweep_2() {}
 
 protected:
-  typedef typename std::vector<Subcurve*>               Subcurve_vector;
-
-  /*! Initialize the data structures for the sweep-line algorithm. */
-  virtual void _init_structures();
+  using Subcurve_vector = typename std::vector<Subcurve*>;
 
   /*! Complete the sweep process (complete the data structures). */
   virtual void _complete_sweep();
@@ -173,11 +167,6 @@ protected:
    * \param curve The subcurve to add.
    */
   virtual bool _add_curve_to_right(Event* event, Subcurve* curve);
-
-  /*! Add a curve as a right curve or left curve when the event is created
-   * or updated.
-   */
-  void _add_curve(Event* e, Subcurve* sc, Attribute type);
 
   /*! create an overlap subcurve from overlap_cv between c1 and c2.
    * \param overlap_cv the overlapping curve.

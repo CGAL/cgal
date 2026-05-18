@@ -11,8 +11,8 @@
 //             Ron Wein <wein@post.tau.ac.il>
 //             Efi Fogel <efifogel@gmail.com>
 
-#ifndef CGAL_BSO_2_INDEXED_VISITOR_H
-#define CGAL_BSO_2_INDEXED_VISITOR_H
+#ifndef CGAL_INDEXED_VISITOR_H
+#define CGAL_INDEXED_VISITOR_H
 
 #include <CGAL/license/Boolean_set_operations_2.h>
 
@@ -32,17 +32,16 @@ class Indexed_event :
                                             Arrangement_,
                                             Allocator_>,
                               Allocator_>,
-    Arrangement_>
-{
+    Arrangement_> {
 private:
-  unsigned int m_index;
+  std::size_t m_index;
 
 public:
   Indexed_event() : m_index (0) {}
 
-  unsigned int index() const { return (m_index); }
+  std::size_t index() const { return (m_index); }
 
-  void set_index(unsigned int index) { m_index = index; }
+  void set_index(std::size_t index) { m_index = index; }
 };
 
 } // namespace CGAL

@@ -1,0 +1,9 @@
+-> The insertion of :  [ 0 -1 -1 0 ]  causes a face to split.
+-> The insertion of :  [ 0 -1 0 1 ]  causes a face to split.
+-> The insertion of :  [ -1 0 0 -0 ]  causes a face to split.
+-> The insertion of :  [ 0 -0 1 0 ]  causes a face to split.
+The arrangement size:
+   |V| = 5,  |E| = 8,  |F| = 5
+-> The removal of :  [ 0 -1 0 -0 ]  causes two faces to merge.
+The arrangement size:
+   |V| = 5,  |E| = 7,  |F| = 4

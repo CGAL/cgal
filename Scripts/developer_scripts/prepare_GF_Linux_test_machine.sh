@@ -230,10 +230,22 @@ done
 if ! getent passwd cgaltest >/dev/null; then
   color_echo "Creating user cgaltest."
   $SUDO_OR_PRINT useradd -m -s /bin/bash -c "CGAL Test User" cgaltest
+else
+  color_echo "User cgaltest already exists."
+  color_echo "Setting up cgaltest user..."
 fi
-
 $SUDO_OR_PRINT chmod g+rx,o+rx "/home/cgaltest"
 $SUDO_OR_PRINT mkdir -p /home/cgaltest/.ssh
+if ! $SUDO_OR_PRINT test -f /home/cgaltest/.ssh/known_hosts; then
+  echo "  Adding known hosts for cgaltest user."
+  $SUDO_OR_PRINT tee /home/cgaltest/.ssh/known_hosts >/dev/null << EOF
+cgaltest.geometryfactory.com ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDawicxHuh18GbTRrcA486rMeXUOcSGDUhwbBJNbppsoUTIbhc16PRTvWibERAlHatGvfbnNWxjMPEmu5vfnSezirV+qgkIv5k8/uF2wYqytiBYLxvGnSd2XxkRhr213tlJQHlf9SO+0pCRZSl9JhvkBdUt33JomrMyrbmpMs9ofSFaHPKGkx0wIiaEJD0yK/kYcPePM0PS1Ogv1/LqTLEgao7A0Ws1n3wpOsObhI1+JJ03vWJx7qriUUq9ByaQmsQfxeNa2kmlIrZsWXiRJ7BEBqqHp3dZY1iSaPegwTeCXurjidKS8SKhkAAncQJieo/gG53NzvSPDaZWJc3u7WM3
+cgaltest.geometryfactory.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJcYFTViwMpkUHPWqM1Cvf6hD3t3kV//QPenMwLzvFMa
+cgaltest.geometryfactory.com ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBIB9g72tYXueXwpzNY8kWd0BUcc2aP2+okFaB2TXNf69ux3R7JsPremJBgBu+g0lXcMvN0a7u7azJUkMS7A7DMc=
+EOF
+  $SUDO_OR_PRINT chown cgaltest:cgaltest /home/cgaltest/.ssh/known_hosts
+  $SUDO_OR_PRINT chmod 644 /home/cgaltest/.ssh/known_hosts
+fi
 $SUDO_OR_PRINT chown cgaltest:cgaltest /home/cgaltest/.ssh
 $SUDO_OR_PRINT chmod 700 /home/cgaltest/.ssh
 $SUDO_OR_PRINT usermod -aG docker cgaltest
@@ -285,9 +297,10 @@ done
 
 # Optionally install bat, strace, and podman-docker if not present
 need_install=()
-for cmd in bat strace python3-docker python3-pyxdg python3-sdnotify; do
+for cmd in bat strace python3-docker python3-pyxdg python3-sdnotify cockpit-podman pcp; do
   command -v "$cmd" &>/dev/null || need_install+=("$cmd")
 done
+command -v dnf5 &>/dev/null && need_install+=("dnf5-plugin-automatic")
 
 # Check if docker is missing or not emulated by podman
 need_podman_docker=false
@@ -304,6 +317,19 @@ if $need_podman_docker; then
 fi
 
 install_packages "${need_install[@]}"
+
+if command -v dnf5 &>/dev/null; then
+  color_echo "Setting up dnf5 automatic updates."
+  $SUDO_OR_PRINT mkdir -p /etc/systemd/system/dnf5-automatic.timer.d
+  $SUDO_OR_PRINT tee /etc/systemd/system/dnf5-automatic.timer.d/time.conf >/dev/null <<EOF
+[Timer]
+OnBootSec=
+OnCalendar= 20:00
+EOF
+  color_echo "Reloading systemd and enabling dnf5-automatic.timer."
+  $SUDO_OR_PRINT systemctl daemon-reload
+  $SUDO_OR_PRINT systemctl enable dnf5-automatic.timer
+fi
 
 color_echo "Update the systemd tmpfiles configuration for podman."
 

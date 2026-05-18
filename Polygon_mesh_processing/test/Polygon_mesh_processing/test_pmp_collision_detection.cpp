@@ -85,7 +85,7 @@ void test_intersections(Index index, const char* type)
   assert(input);
   input >> tm2;
   input.close();
-  input.open("data-coref/large_cube_coplanar.off");
+  input.open("data/large_cube_coplanar.off");
   assert(input);
   input >> tm3;
   input.close();

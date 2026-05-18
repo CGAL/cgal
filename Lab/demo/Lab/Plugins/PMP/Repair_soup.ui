@@ -17,12 +17,35 @@
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QCheckBox" name="eadCheckbox">
-       <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Indicate, when multiple polygons are duplicates, whether all the duplicate polygons should be removed or if one (arbitrarily chosen) face should be kept.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
+      <widget class="QRadioButton" name="keepOneRadio">
        <property name="text">
-        <string>Erase All Duplicates</string>
+        <string>Keep one duplicates</string>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Indicate, when multiple polygons are duplicates, to keep one of the duplicate polygons.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="keepOneIfOddRadio">
+       <property name="text">
+        <string>Keep one duplicates if the number of duplicates is odd</string>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Indicate, when multiple polygons are duplicates, to keep one of the duplicate polygons if their number is odd.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="eraseAllRadio">
+       <property name="text">
+        <string>Erase all duplicates</string>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Indicate, when multiple polygons are duplicates, to remove all the duplicate polygons.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
        </property>
       </widget>
      </item>

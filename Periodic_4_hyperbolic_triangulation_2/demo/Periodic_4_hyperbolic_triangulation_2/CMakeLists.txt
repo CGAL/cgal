@@ -13,9 +13,7 @@ find_package(CGAL REQUIRED COMPONENTS Core Qt6)
 find_package(LEDA QUIET)
 
 find_package(Qt6 QUIET COMPONENTS Widgets)
-if((CGAL_Core_FOUND OR LEDA_FOUND)
-   AND Qt6_FOUND
-   AND CGAL_Qt6_FOUND)
+if(Qt6_FOUND AND CGAL_Qt6_FOUND)
 
   include_directories(BEFORE include)
 

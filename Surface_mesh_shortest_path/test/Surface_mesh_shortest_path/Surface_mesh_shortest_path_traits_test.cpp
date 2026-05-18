@@ -38,7 +38,7 @@ void project_triangle3D_to_triangle2D()
 
 }
 
-void test_simple_2D_barycentric_coordinatess()
+void test_simple_2D_barycentric_coordinates()
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
@@ -300,7 +300,7 @@ void detect_is_saddle_vertex()
 int main()
 {
   project_triangle3D_to_triangle2D();
-  test_simple_2D_barycentric_coordinatess();
+  test_simple_2D_barycentric_coordinates();
   barycentric_coords_3D();
   simple_flattening_triangle_along_edge();
   nonsimple_flattening_triangle_along_edge();

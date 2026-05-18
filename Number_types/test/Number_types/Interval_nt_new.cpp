@@ -1,3 +1,4 @@
+#define CGAL_DISABLE_ROUNDING_MATH_CHECK 1
 #include <iostream>
 #include <CGAL/config.h>
 #include <CGAL/Interval_nt.h>

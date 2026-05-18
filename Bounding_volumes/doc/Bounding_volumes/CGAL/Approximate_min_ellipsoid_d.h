@@ -19,7 +19,7 @@ exists and is unique.
 
 For a given finite and full-dimensional pointset \f$ P\subset \E^d\f$ and a
 real number \f$ \epsilon\ge 0\f$, we say that an ellipsoid \f$ {\cal
-E}\subset\E^d\f$ is an <I>\f$ (1+\epsilon)\f$-appoximation</I> to \f$ (P)\f$ if
+E}\subset\E^d\f$ is an <I>\f$ (1+\epsilon)\f$-approximation</I> to \f$ (P)\f$ if
 \f$ P\subset {\cal E}\f$ and \f$ ({\cal E}) \leq (1+\epsilon)
 ((P))\f$. In other words, an \f$ (1+\epsilon)\f$-approximation to
 \f$ (P)\f$ is an enclosing ellipsoid whose volume is by at most a

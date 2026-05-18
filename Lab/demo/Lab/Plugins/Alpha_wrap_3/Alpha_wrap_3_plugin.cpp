@@ -732,13 +732,13 @@ public Q_SLOTS:
     Oracle oracle(ss_oracle);
 
     if(wrap_triangles)
-      oracle.add_triangle_soup(triangles);
+      oracle.add_triangles(triangles);
     if(wrap_segments)
-      oracle.add_segment_soup(segments);
+      oracle.add_segments(segments);
     if(wrap_points)
-      oracle.add_point_set(points);
+      oracle.add_points(points);
 
-    if(!oracle.do_call())
+    if(oracle.empty())
     {
       print_message("Warning: empty input - nothing to wrap");
       QApplication::restoreOverrideCursor();

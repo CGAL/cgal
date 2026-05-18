@@ -76,6 +76,9 @@ _test_cls_circle_2(const R& )
 
  typename R::Circle_2  ic;
  CGAL::Circle_2<R> c0;
+ typedef CGAL::Point_2<R> P2;
+ typedef CGAL::Circle_2<R> C2;
+ typedef CGAL::Segment_2<R> S2;
 
  const bool nonexact = std::is_floating_point<FT>::value;
 
@@ -165,6 +168,18 @@ _test_cls_circle_2(const R& )
  assert( c8.bounded_side( p3 - vy6 ) == CGAL::ON_BOUNDARY );
  assert( cc.has_on_boundary( p3 + vy6) );
  assert( cc.has_on_boundary( p3 - vx6) );
+ assert(!c1.has_on_unbounded_side(CGAL::Segment_2<R>(p1, p1)));
+ assert( c1.has_on_unbounded_side(CGAL::Segment_2<R>(CGAL::Point_2<R>(4, -2), CGAL::Point_2<R>(5, -2))));
+ assert(!c1.has_on_unbounded_side(CGAL::Segment_2<R>(p0, CGAL::Point_2<R>(5, -2))));
+
+ assert( !C2(P2(RT(0),RT(0),RT(1)), RT(1)).has_on_unbounded_side( S2(P2(RT(0),RT(0), RT(1)), P2(RT(0),RT(0.99),RT(1)))) );
+ assert( !C2(P2(RT(0),RT(0),RT(1)), RT(1)).has_on_unbounded_side( S2(P2(RT(0),RT(0), RT(1)), P2(RT(0),RT(1.99),RT(1)))) );
+ assert( !C2(P2(RT(0),RT(0),RT(1)), RT(1)).has_on_unbounded_side( S2(P2(RT(0),RT(-2),RT(1)), P2(RT(0),RT(1.99),RT(1)))) );
+ assert(!CGAL::Circle_2<R>(CGAL::Point_2<R>(0, 0), 1).has_on_unbounded_side(CGAL::Iso_rectangle_2<R>(CGAL::Point_2<R>(-1, -1), CGAL::Point_2<R>(0, 0))));
+ assert(!CGAL::Circle_2<R>(CGAL::Point_2<R>(0, 0), 1).has_on_unbounded_side(CGAL::Iso_rectangle_2<R>(CGAL::Point_2<R>(-1, -1), CGAL::Point_2<R>(1, 1))));
+ assert(!CGAL::Circle_2<R>(CGAL::Point_2<R>(0, 0), 1).has_on_unbounded_side(CGAL::Iso_rectangle_2<R>(CGAL::Point_2<R>(-1.1, -1.1), CGAL::Point_2<R>(1.1, 1.1))));
+ assert(!CGAL::Circle_2<R>(CGAL::Point_2<R>(0, 0), 1).has_on_unbounded_side(CGAL::Iso_rectangle_2<R>(CGAL::Point_2<R>(-1.1, -2), CGAL::Point_2<R>(1.1, 0))));
+ assert(!CGAL::Circle_2<R>(CGAL::Point_2<R>(0, 0), 1).has_on_unbounded_side(CGAL::Iso_rectangle_2<R>(CGAL::Point_2<R>(-0.1, -0.1), CGAL::Point_2<R>(0.1, 0.1))));
 
  std::cout << '.';
 

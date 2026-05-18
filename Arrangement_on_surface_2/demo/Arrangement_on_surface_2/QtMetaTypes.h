@@ -9,8 +9,8 @@
 //
 // Author(s): Ahmed Essam <theartful.ae@gmail.com>
 
-#ifndef ARRANGEMENET_DEMO_QT_METATYPES_H
-#define ARRANGEMENET_DEMO_QT_METATYPES_H
+#ifndef ARRANGEMENT_DEMO_QT_METATYPES_H
+#define ARRANGEMENT_DEMO_QT_METATYPES_H
 
 #include <QMetaType>
 #include <CGAL/Object.h>

@@ -872,7 +872,7 @@ public:
     Halffacet_handle f;
     CGAL_NEF_TRACEN("get_facet_below");
     if( CGAL::assign(v, o)) {
-      CGAL_NEF_TRACEN("facet below from from vertex...");
+      CGAL_NEF_TRACEN("facet below from vertex...");
       f_below = get_visible_facet(v, ray);
       if( f_below == Halffacet_handle()) {
         CGAL_assertion(v->sfaces_begin() == v->sfaces_last());
@@ -881,7 +881,7 @@ public:
       }
     }
     else if( CGAL::assign(e, o)) {
-      CGAL_NEF_TRACEN("facet below from from edge...");
+      CGAL_NEF_TRACEN("facet below from edge...");
       f_below = get_visible_facet(e, ray);
       if( f_below == Halffacet_handle()) {
         CGAL_assertion(e->source()->sfaces_begin() == e->source()->sfaces_last());
@@ -890,7 +890,7 @@ public:
       }
     }
     else if( CGAL::assign(f, o)) {
-      CGAL_NEF_TRACEN("facet below from from facet...");
+      CGAL_NEF_TRACEN("facet below from facet...");
       f_below = get_visible_facet(f, ray);
       CGAL_assertion( f_below != Halffacet_handle());
     }

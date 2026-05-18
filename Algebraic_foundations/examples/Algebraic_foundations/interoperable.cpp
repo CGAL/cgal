@@ -11,7 +11,7 @@ binary_func(const A& a , const B& b){
     // check for explicit interoperability
     static_assert(CT::Are_explicit_interoperable::value);
 
-    // CT::Cast is used to to convert both types into the coercion type
+    // CT::Cast is used to convert both types into the coercion type
     typename CT::Cast cast;
     // all operations are performed in the coercion type
     return cast(a)*cast(b);

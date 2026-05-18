@@ -370,7 +370,7 @@ The ridge lines are stored in
 `Ridge_line` objects and output through an iterator.
 Each ridge line is represented as a list of halfedges of the mesh it
 crosses with a scalar defining the barycentric coordinate of the
-crossing point with respect to the half-egde endpoints. Each ridge
+crossing point with respect to the halfedge endpoints. Each ridge
 line comes with its type `Ridge_type`, its strength and sharpness.
 
 If one chooses to use only third order quantities, the quantities
@@ -390,7 +390,7 @@ has a parameter to define the size of the neighborhood of the umbilic.
 Umbilics are stored in `Umbilic` objects, they come with their
 type : \ref ELLIPTIC_UMBILIC, \ref HYPERBOLIC_UMBILIC or
 \ref NON_GENERIC_UMBILIC; the vertex of the mesh they are associated
-to and the list of half-edges representing the contour of the
+to and the list of halfedges representing the contour of the
 neighborhood.
 
 

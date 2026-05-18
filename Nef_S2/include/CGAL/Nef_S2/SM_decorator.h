@@ -231,7 +231,7 @@ Size_type number_of_sfaces() const
 
 SFace_cycle_iterator sface_cycles_begin(SFace_handle f) const
 /*{\Mop returns an iterator for all bounding face cycles of |f|.
-The iterator is is convertible to |SVertex_handle|,
+The iterator is convertible to |SVertex_handle|,
 |SHalfloop_handle|, or |SHalfedge_handle|.}*/
 { return f->boundary_entry_objects().begin(); }
 

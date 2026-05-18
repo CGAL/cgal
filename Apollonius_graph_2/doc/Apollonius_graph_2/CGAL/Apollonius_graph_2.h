@@ -112,7 +112,7 @@ typedef Gt::Site_2 Site_2;
 the edge type.
 The `Edge(f,i)` is the edge common to faces `f` and
 `f.neighbor(i)`. It is also the edge joining the vertices
-`vertex(cw(i))` and `vertex(ccw(i))` of `f`.
+`f->vertex(cw(i))` and `f->vertex(ccw(i))` of `f`.
 \pre `i` must be `0`, `1` or `2`.
 */
 typedef Data_structure::Edge Edge;

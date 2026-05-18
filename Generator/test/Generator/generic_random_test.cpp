@@ -20,6 +20,8 @@
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/point_generators_3.h>
 
+#include <CGAL/Polygon_mesh_processing/polygon_mesh_to_polygon_soup.h>
+
 #include <iostream>
 #include <iterator>
 #include <vector>
@@ -88,6 +90,9 @@ int test_triangles_2(const FT eps)
     }
   }
 
+  std::pair<Point_2, const Triangle_2*> ps = g.point_and_support();
+  CGAL_USE(ps);
+
   return 1;
 }
 
@@ -129,6 +134,9 @@ int test_triangles_3(const FT eps)
       return 0;
     }
   }
+
+  std::pair<Point_3, const Triangle_3*> ps = g.point_and_support();
+  CGAL_USE(ps);
 
   return 1;
 }
@@ -176,6 +184,12 @@ int test_T2(const FT eps)
     }
   }
 
+  Point_2 p;
+  CDT::Face_handle f;
+  std::tie(p, f) = g.point_and_support();
+
+  assert(cdt.locate(p,f) == f);
+
   return 1;
 }
 
@@ -189,9 +203,9 @@ bool on_face(int face, double coord[3], const FT eps)
   return false;
 }
 
-int test_volume_mesh(Polyhedron& polyhedron, const FT eps)
+int test_triangle_mesh(Polyhedron& polyhedron, const FT eps)
 {
-  std::cout << "test_volume_mesh (tolerance: " << eps << ")" << std::endl;
+  std::cout << "test_triangle_mesh (tolerance: " << eps << ")" << std::endl;
 
   std::vector<Point_3> points;
   CGAL::Random_points_in_triangle_mesh_3<Polyhedron> g(polyhedron);
@@ -206,6 +220,40 @@ int test_volume_mesh(Polyhedron& polyhedron, const FT eps)
       return 0;
     }
   }
+
+  Point_3 p;
+  boost::graph_traits<Polyhedron>::face_descriptor f;
+
+  std::tie(p, f) = g.point_and_support();
+
+  return 1;
+}
+
+int test_triangle_soup(Polyhedron& polyhedron, const FT eps)
+{
+  std::cout << "test_triangle_mesh (tolerance: " << eps << ")" << std::endl;
+
+  std::vector<Point_3> points;
+  std::vector<std::array<int, 3>> triangles;
+  CGAL::Polygon_mesh_processing::polygon_mesh_to_polygon_soup(polyhedron, points, triangles);
+  CGAL::Random_points_in_triangle_soup_3 g(points, triangles);
+  std::copy_n(g, 300, std::back_inserter(points));
+  for(std::size_t i=0; i<points.size(); ++i)
+  {
+    Point_3 p = points[i];
+    double coords[3] = {p.x(), p.y(), p.z()};
+    if(!(on_face(0, coords, eps) || on_face(1, coords, eps) || on_face(2, coords, eps)))
+    {
+      std::cerr << "ERROR : Generated point (" << p << ") is not on a face." << std::endl;
+      return 0;
+    }
+  }
+
+  Point_3 p;
+  std::size_t fid;
+
+  std::tie(p, fid) = g.point_and_support();
+  assert(fid<triangles.size());
 
   return 1;
 }
@@ -242,6 +290,10 @@ int test_on_c3t3(const Polyhedron& polyhedron, const FT eps)
     }
   }
 
+  Point_3 p;
+  C3t3::Facet f;
+
+  std::tie(p, f) = g.point_and_support();
   return 1;
 }
 
@@ -280,6 +332,12 @@ int test_in_c3t3(const Polyhedron& polyhedron, const FT eps)
     }
   }
 
+  Point_3 p;
+  C3t3::Cell_handle ch;
+
+  std::tie(p, ch) = g.point_and_support();
+  assert(c3t3.triangulation().locate(Weighted_point_3(p,0), ch)==ch);
+
   return 1;
 }
 
@@ -307,7 +365,8 @@ int main()
   int validity =
       test_triangles_2(eps)
       *test_triangles_3(eps)
-      *test_volume_mesh(polyhedron, eps)
+      *test_triangle_mesh(polyhedron, eps)
+      *test_triangle_soup(polyhedron, eps)
       *test_T2(eps)
       *test_on_c3t3(polyhedron, eps)
       *test_in_c3t3(polyhedron, eps)

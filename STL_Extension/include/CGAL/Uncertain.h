@@ -109,8 +109,7 @@ public:
   {
     if (is_certain())
       return _i;
-    CGAL_PROFILER(std::string("Uncertain_conversion_exception thrown for CGAL::Uncertain< ")
-                  + typeid(T).name() + " >");
+    CGAL_PROFILER(std::string("Uncertain_conversion_exception thrown for " + std::string(CGAL_PRETTY_FUNCTION)));
     throw Uncertain_conversion_exception(
                   "Undecidable conversion of CGAL::Uncertain<T>");
   }

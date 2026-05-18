@@ -23,13 +23,6 @@ namespace CGAL {
 class Cartesian_tag;
 class Homogeneous_tag;
 
-// Class declaration
-// =================
-template < class R_ >
-class Access_coordinates_begin_d;
-
-// Class interface
-// ===============
 template < class R_ >
 class Access_coordinates_begin_d {
   public:

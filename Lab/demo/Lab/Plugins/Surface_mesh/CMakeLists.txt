@@ -20,6 +20,11 @@ if(NOT CGAL_DISABLE_GMP)
         PROPERTIES RESOURCE_LOCK Selection_test_resources)
     endif()
 
+    qt6_wrap_ui( mesh_simplificationUI_FILES  Mesh_simplification_dialog.ui)
+    cgal_lab_plugin(mesh_simplification_plugin Mesh_simplification_plugin ${mesh_simplificationUI_FILES})
+    target_link_libraries(
+      mesh_simplification_plugin PRIVATE scene_surface_mesh_item scene_selection_item
+                                         CGAL::Eigen3_support)
   else()
     message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. The Parameterization plugin will not be available.")
   endif()
@@ -34,10 +39,6 @@ if(NOT CGAL_DISABLE_GMP)
       "compilation of  mesh_segmentation_plugin"
       PROPERTIES RESOURCE_LOCK Selection_test_resources)
   endif()
-
-  qt6_wrap_ui( mesh_simplificationUI_FILES  Mesh_simplification_dialog.ui)
-  cgal_lab_plugin(mesh_simplification_plugin Mesh_simplification_plugin ${mesh_simplificationUI_FILES})
-  target_link_libraries(mesh_simplification_plugin PRIVATE scene_surface_mesh_item scene_selection_item)
 
   qt6_wrap_ui(shortestPathUI_FILES Shortest_path_widget.ui)
   cgal_lab_plugin(shortest_path_plugin Shortest_path_plugin

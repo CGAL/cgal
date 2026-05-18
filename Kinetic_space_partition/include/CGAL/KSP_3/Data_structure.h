@@ -363,11 +363,6 @@ public:
     if (m_intersection_graph.iedge_is_on_bbox(edge))
       return 0;
 
-    // Count faces
-    std::size_t numfaces = 0;
-    for (std::size_t i = 0; i < m_support_planes.size(); i++)
-      numfaces += m_support_planes[i].data().mesh.number_of_faces();
-
     Support_plane& sp = m_support_planes[sp_idx];
 
     To_exact to_exact;
@@ -550,11 +545,6 @@ public:
 
   template<typename Queue>
   void fill_event_queue(Queue& queue) {
-    // Count faces
-    std::size_t faces = 0;
-    for (std::size_t i = 0; i < m_support_planes.size(); i++)
-      faces += m_support_planes[i].data().mesh.number_of_faces();
-
     for (std::size_t sp_idx = 6; sp_idx < m_support_planes.size(); sp_idx++) {
       std::vector<IEdge> border;
       m_support_planes[sp_idx].get_border(m_intersection_graph, border);

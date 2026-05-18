@@ -347,30 +347,6 @@ bool read_OFF(const std::string& fname,
 
 } // namespace IO
 
-#ifndef CGAL_NO_DEPRECATED_CODE
-
-/*!
-  \ingroup PkgSurfaceMeshIOFuncDeprecated
-  \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::read_OFF(std::istream&, const Surface_mesh<Point>&)` should be used instead.
-*/
-template <typename Point, typename CGAL_NP_TEMPLATE_PARAMETERS>
-CGAL_DEPRECATED bool read_off(std::istream& is, Surface_mesh<Point>& sm, const CGAL_NP_CLASS& np = parameters::default_values())
-{
-  return IO::read_OFF(is, sm, np);
-}
-
-/*!
-  \ingroup PkgSurfaceMeshIOFuncDeprecated
-  \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::read_OFF(std::istream&, const Surface_mesh<Point>&)` should be used instead.
-*/
-template <typename Point>
-CGAL_DEPRECATED bool read_off(Surface_mesh<Point>& sm, const std::string& filename)
-{
-  return IO::read_OFF(filename, sm, parameters::default_values());
-}
-#endif // CGAL_NO_DEPRECATED_CODE
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Write
 
@@ -548,30 +524,6 @@ bool write_OFF(std::ostream& os,
 }
 
 } // namespace IO
-
-#ifndef CGAL_NO_DEPRECATED_CODE
-
-/*!
-  \ingroup PkgSurfaceMeshIOFuncDeprecated
-  \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::write_OFF(std::ostream&, const Surface_mesh<Point>&)` should be used instead.
-*/
-template <typename Point, typename CGAL_NP_TEMPLATE_PARAMETERS>
-CGAL_DEPRECATED bool write_off(std::ostream& os, const Surface_mesh<Point>& sm, const CGAL_NP_CLASS& np = parameters::default_values())
-{
-  return IO::write_OFF(os, sm, np);
-}
-
-/*!
-  \ingroup PkgSurfaceMeshIOFuncDeprecated
-  \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::write_OFF(std::ostream&, const Surface_mesh<Point>&)` should be used instead.
-*/
-template <typename Point>
-CGAL_DEPRECATED bool write_off(const Surface_mesh<Point>& sm, const std::string& filename)
-{
-  return IO::write_OFF(filename, sm, parameters::default_values());
-}
-
-#endif // CGAL_NO_DEPRECATED_CODE
 
 } // namespace CGAL
 

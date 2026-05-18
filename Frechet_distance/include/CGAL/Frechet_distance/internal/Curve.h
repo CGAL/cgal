@@ -31,7 +31,7 @@ namespace Frechet_distance {
 namespace internal {
 
 //TODO: move that in Kernel_23/Kernel_d?
-double length_of_diagonal(const Bbox_2& bb)
+inline double length_of_diagonal(const Bbox_2& bb)
 {
     using I = Interval_nt<true>;
     I d = square(I(bb.xmax()) - I(bb.xmin()));
@@ -39,7 +39,7 @@ double length_of_diagonal(const Bbox_2& bb)
     return sqrt(d).sup();
 }
 
-double length_of_diagonal(const Bbox_3& bb)
+inline double length_of_diagonal(const Bbox_3& bb)
 {
     using I = Interval_nt<true>;
     I d = square(I(bb.xmax()) - I(bb.xmin()));

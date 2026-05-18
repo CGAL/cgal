@@ -10,7 +10,9 @@ optimization algorithms using the three-dimensional \cgal kernel.
 
 \tparam K must be a model for `Kernel`.
 
-\tparam ET NT must be models for `RingNumberType`. Their default is  `K::RT`.
+\tparam ET must be models for `RingNumberType`. The default is  `K::RT`.
+
+\tparam NT must be models for `RingNumberType`. The default is  `K::RT`.
 
 
 \cgalModels{PolytopeDistanceDTraits}
@@ -29,9 +31,9 @@ public:
 /// @{
 
 /*!
-typedef to `K::Point_3`.
+the point type.
 */
-typedef unspecified_type Point_d;
+typedef K::Point_3 Point_d;
 
 /*!
 typedef to `K::Rep_tag`.
@@ -39,27 +41,27 @@ typedef to `K::Rep_tag`.
 typedef unspecified_type Rep_tag;
 
 /*!
-typedef to `K::RT`.
+the ring number type.
 */
-typedef unspecified_type RT;
+typedef K::RT RT;
 
 /*!
-typedef to `K::FT`.
+the field number type.
 */
-typedef unspecified_type FT;
+typedef K::FT FT;
 
 /*!
-typedef to `K::Access_dimension_3`.
+functor returning `3`.
 */
 typedef unspecified_type Access_dimension_d;
 
 /*!
-typedef to `K::Access_coordinates_begin_3`.
+functor constructing the begin iterator of the homogeneous coordinates of a point.
 */
 typedef unspecified_type Access_coordinates_begin_d;
 
 /*!
-typedef to `K::Construct_point_3`.
+functor constructing a point from a coordinate range.
 */
 typedef unspecified_type Construct_point_d;
 

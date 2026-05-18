@@ -111,7 +111,7 @@ unspecified_type manifold_with_boundary();
  *
  */
 template <class NamedParameters = parameters::Default_named_parameters>
-unspecified_type exude(const Named_function_parameters& np = parameters::default_values());
+unspecified_type exude(const NamedParameters& np = parameters::default_values());
 
 /*!
  * \ingroup PkgMesh3Parameters
@@ -205,7 +205,7 @@ unspecified_type features();
  *
  */
 template <class NamedParameters = parameters::Default_named_parameters>
-unspecified_type lloyd(const Named_function_parameters& np = parameters::default_values());
+unspecified_type lloyd(const NamedParameters& np = parameters::default_values());
 
 /*!
  * \ingroup PkgMesh3Parameters
@@ -406,7 +406,7 @@ unspecified_type no_perturb();
  *
  */
 template <class NamedParameters = parameters::Default_named_parameters>
-unspecified_type odt(const Named_function_parameters& np = parameters::default_values());
+unspecified_type odt(const NamedParameters& np = parameters::default_values());
 
 /*!
  * \ingroup PkgMesh3Parameters
@@ -465,7 +465,7 @@ unspecified_type odt(const Named_function_parameters& np = parameters::default_v
  *
  */
 template <class NamedParameters = parameters::Default_named_parameters>
-unspecified_type perturb(const Named_function_parameters& np = parameters::default_values());
+unspecified_type perturb(const NamedParameters& np = parameters::default_values());
 
 /*!
  * \ingroup PkgMesh3Parameters
@@ -480,7 +480,7 @@ unspecified_type perturb(const Named_function_parameters& np = parameters::defau
  * with at least one facet in the restricted Delaunay triangulation (i.e., its dual intersects the
  * input surface).
  *
- * If one dimensional features are requested, their initialization is performed first.
+ * If 1-dimensional features are requested, their initialization is performed first.
  * If provided, the points of `parameters::initial_points()` are inserted next.
  * Then, `parameters::initial_points_generator()` is used to generate more initial points
  * and complete the initialization.
@@ -508,12 +508,15 @@ unspecified_type initial_points_generator(const InitialPointsGenerator& generato
  *
  * The function `parameters::initial_points()` enables the user to specify a container, model of `Range`, that contains
  * initial points constructed on surfaces,
- * to be used in the `make_mesh_3()` function for mesh generation. Items in the container are
+ * to be used in the `make_mesh_3()` function for mesh generation.
+ * Let `MeshDomain` be a model of `MeshDomain_3`
+ * and `C3t3` be a model of `MeshComplex_3InTriangulation_3` being used by `make_mesh_3()`.
+ * Items in the container are then
  * tuple-like objects containing a `Weighted_point_3`, an `int`, and a `MeshDomain::Index`,
  * where `Weighted_point_3` represents the position and the weight of the point,
  * `int` the dimension of the minimal subcomplex on which the point lies,
  * and `MeshDomain::Index` the corresponding subcomplex index.
- * These initial points are inserted after one dimensional features initialization.
+ * These initial points are inserted after the initialization of 1-dimensional features.
  *
  * Initialization is considered to be complete if the triangulation is a 3D triangulation
  * with at least one facet in the restricted Delaunay triangulation (i.e., its dual intersects the
@@ -526,8 +529,7 @@ unspecified_type initial_points_generator(const InitialPointsGenerator& generato
  * the initialization is not complete,
  * the domain's `construct_initial_points_object()` will be called.
  *
- * \tparam MeshDomain a model of `MeshDomain_3`
- * \tparam C3t3 a model of `MeshComplex_3InTriangulation_3`
+ *
  * \tparam InitialPointsRange a model of `Range` containing tuple-like objects of
  *    `C3t3::Triangulation::Geom_traits::Weighted_point_3, int, MeshDomain::Index`.
  *
@@ -549,7 +551,7 @@ unspecified_type initial_points_generator(const InitialPointsGenerator& generato
  * \sa `MeshDomain_3::Construct_initial_points`
  *
  */
-template <typename MeshDomain, typename C3t3, typename InitialPointsRange>
+template <typename InitialPointsRange>
 unspecified_type initial_points(const InitialPointsRange& initial_points);
 } /* namespace parameters */
 

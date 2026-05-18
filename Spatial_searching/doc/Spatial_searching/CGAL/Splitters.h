@@ -260,7 +260,7 @@ Also, this splitting rule maintains an upper bound on the maximal
 allowed ratio of the longest and shortest side of a rectangle (the
 value of this upper bound is set in the constructor of the fair
 splitting rule). Among the splits that satisfy this bound, it selects
-the one one in which the points have the largest spread. It then
+the one in which the points have the largest spread. It then
 considers the most extreme cuts that would be allowed by the aspect
 ratio bound. This is done by dividing the longest side of the
 rectangle by the aspect ratio bound. If the median cut lies between

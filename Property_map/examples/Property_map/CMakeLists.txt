@@ -6,8 +6,9 @@ find_package(CGAL REQUIRED)
 
 create_single_source_cgal_program("dynamic_properties.cpp")
 
-find_package(Eigen3 3.1.0 QUIET) #(requires 3.1.0 or greater)
+find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
+
 if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("custom_property_map.cpp")
   target_link_libraries(custom_property_map PRIVATE CGAL::Eigen3_support)

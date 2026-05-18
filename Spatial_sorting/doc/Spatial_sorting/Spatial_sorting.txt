@@ -98,9 +98,16 @@ The points to be sorted are supposed to be close to the sphere.
 
 Actually, we approximate a space filling curve on
 the unit sphere by a space filling curve on a cube (with facets at \f$x, y, z = \pm 1/\sqrt{3}\f$).
-Roughly speaking, we split the original set of points in six subsets corresponding to the six facets of the cube. The subset corresponding to a facet \f$f\f$ is the set of points that lie in the half-space defined by the supporting plane of \f$f\f$ that does not contain the origin. And then we basically use the 2D Hilbert sort with its corresponding policy, as explained above for the projection of the points in each subset on its corresponding facet of the cube. The axes orientation on each facet is chosen so that the space filling curve covers the whole cube without any jump; see \cgalFigureRef{Spatial_sorting_fig_Faces_orientations}.
-A point can lie in more than one such half-plane, so, we give a priority for each facet of the cube. The priority order is:
-first, the facet of the cube at \f$x = 1/\sqrt{3}\f$; second, the facet of the cube at \f$y = 1/\sqrt{3}\f$; third, the facet of the cube at \f$ x = -1/\sqrt{3}\f$; fourth, the facet of the cube at \f$ z = 1/\sqrt{3}\f$; fifth, the facet of the cube at \f$ y = -1/\sqrt{3}\f$; and, sixth, the facet of the cube at \f$ z = -1/\sqrt{3}\f$.
+Roughly speaking, we split the original set of points in six subsets corresponding to the six facets of the cube.
+The subset corresponding to a facet \f$f\f$ is the set of points that lie in the halfspace defined by the supporting plane
+of \f$f\f$ that does not contain the origin. And then we basically use the 2D Hilbert sort with its corresponding policy,
+as explained above for the projection of the points in each subset on its corresponding facet of the cube.
+The axes orientation on each facet is chosen so that the space filling curve covers the whole cube without any jump;
+see \cgalFigureRef{Spatial_sorting_fig_Faces_orientations}.
+A point can lie in more than one such halfplane, so, we give a priority for each facet of the cube. The priority order is:
+first, the facet of the cube at \f$x = 1/\sqrt{3}\f$; second, the facet of the cube at \f$y = 1/\sqrt{3}\f$; third,
+the facet of the cube at \f$ x = -1/\sqrt{3}\f$; fourth, the facet of the cube at \f$ z = 1/\sqrt{3}\f$; fifth,
+the facet of the cube at \f$ y = -1/\sqrt{3}\f$; and, sixth, the facet of the cube at \f$ z = -1/\sqrt{3}\f$.
 
 If points are not close to the sphere, they are still sorted the same way, however there is no guarantee that such an order is good anymore.
 

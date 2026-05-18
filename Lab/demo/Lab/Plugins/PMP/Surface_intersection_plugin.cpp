@@ -1,5 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/Polygon_mesh_processing/intersection.h>
+#include <CGAL/Polygon_mesh_processing/intersection_polylines.h>
 
 #include "Kernel_type.h"
 #include "Scene_surface_mesh_item.h"
@@ -76,7 +78,7 @@ public:
   void init(QMainWindow* mw, CGAL::Three::Scene_interface* scene_interface, Messages_interface* mi) {
     this->scene = scene_interface;
     this->mi = mi;
-    actionPolyhedronIntersection_3 = new QAction("Surface Intersection", mw);
+    actionPolyhedronIntersection_3 = new QAction("Intersection Polylines", mw);
     actionPolyhedronIntersection_3->setProperty("subMenuName", "Polygon Mesh Processing");
     connect(actionPolyhedronIntersection_3, SIGNAL(triggered()),
             this, SLOT(intersectionSurfaces()));
@@ -133,11 +135,11 @@ void CGAL_Lab_intersection_plugin::intersectionSurfaces()
       QElapsedTimer time;
       time.start();
 
-      try{
-        PMP::surface_intersection(*itemA->polyhedron(),
-                                  *itemB->polyhedron(),
-                                  std::back_inserter(new_item->polylines),
-                                  CGAL::parameters::throw_on_self_intersection(true));
+      try {
+        PMP::intersection_polylines(*itemA->polyhedron(),
+                                    *itemB->polyhedron(),
+                                    std::back_inserter(new_item->polylines),
+                                    CGAL::parameters::throw_on_self_intersection(true));
       }
       catch(const CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception&)
       {

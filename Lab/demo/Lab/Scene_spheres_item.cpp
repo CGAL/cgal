@@ -2,7 +2,9 @@
 #include<fstream>
 #include <CGAL/Three/Triangle_container.h>
 #include <CGAL/Three/Edge_container.h>
+#include <CGAL/Three/Three.h>
 #include <QApplication>
+#include <QMenu>
 
 using namespace CGAL::Three;
 
@@ -43,9 +45,7 @@ struct Scene_spheres_item_priv
     model_sphere_is_up = false;
   }
 
-  ~Scene_spheres_item_priv()
-  {
-  }
+  ~Scene_spheres_item_priv() {}
 
   void pick(int &id)const;
 
@@ -85,6 +85,15 @@ void Scene_spheres_item_priv::pick(int& id) const
     id = -1;
   }
 
+  if (id != -1 && spheres[id].size() == 1) {
+    const Sphere& sphere = spheres[id][0].first;
+    Three::information(QString("Selected sphere: center (%1, %2, %3) radius %4").
+      arg(sphere.center().x(), 0, 'g', 10).
+      arg(sphere.center().y(), 0, 'g', 10).
+      arg(sphere.center().z(), 0, 'g', 10).
+      arg(CGAL::approximate_sqrt(sphere.squared_radius()), 0, 'g', 10));
+  }
+
   int offset = 0;
   float color[4];
   for(std::size_t i=0; i<spheres.size(); ++i)
@@ -112,8 +121,10 @@ void Scene_spheres_item_priv::pick(int& id) const
   }
 }
 
-Scene_spheres_item::Scene_spheres_item(Scene_group_item* parent, std::size_t max_index, bool planed, bool pickable)
+Scene_spheres_item::Scene_spheres_item(Scene_group_item* parent, std::size_t max_index, bool planed, bool pickable) : Scene_group_item()
 {
+  connected_alpha_slider = false;
+  rendering_mode = Gouraud;
   setParent(parent);
   d = new Scene_spheres_item_priv(planed, max_index, this, pickable);
   if(pickable)
@@ -173,6 +184,9 @@ void Scene_spheres_item_priv::initializeBuffers(CGAL::Three::Viewer_interface *v
 
 void Scene_spheres_item::draw(Viewer_interface *viewer) const
 {
+  if (renderingMode() != Gouraud || !visible())
+    return;
+
   if(!isInit(viewer))
     initGL(viewer);
   if ( getBuffersFilled() &&
@@ -201,6 +215,7 @@ void Scene_spheres_item::draw(Viewer_interface *viewer) const
     }
     else
     {
+      getTriangleContainer(0)->setAlpha(alpha());
       getTriangleContainer(0)->draw(viewer, false);
     }
     if(d->pickable && (d->spheres.size() > 1 && viewer->inDrawWithNames()))
@@ -218,6 +233,9 @@ void Scene_spheres_item::draw(Viewer_interface *viewer) const
 
 void Scene_spheres_item::drawEdges(Viewer_interface *viewer) const
 {
+  if (renderingMode() != Wireframe || !visible())
+    return;
+
   if(!isInit(viewer))
     initGL(viewer);
   if ( getBuffersFilled() &&
@@ -295,6 +313,18 @@ void Scene_spheres_item::invalidateOpenGLBuffers()
     getTriangleContainer(1)->reset_vbos(COLORS);
   }
   getEdgeContainer(0)->reset_vbos(NOT_INSTANCED);
+  compute_bbox();
+}
+
+QMenu* Scene_spheres_item::contextMenu() {
+  QMenu* menu  = Scene_item_rendering_helper::contextMenu();
+
+  if (!connected_alpha_slider && alphaSlider() != nullptr) {
+    connect(alphaSlider(), &QSlider::valueChanged, [this]() {redraw(); });
+    connected_alpha_slider = true;
+  }
+
+  return menu;
 }
 
 QString

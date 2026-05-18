@@ -23,7 +23,7 @@
 #include <iostream>
 int main ()
 {
-//  bool   UNTESTED_TRAITS_AS_CORE_IS_NOT_ISTALLED;
+//  bool   UNTESTED_TRAITS_AS_CORE_IS_NOT_INSTALLED;
   std::cout << std::endl
             << "NOTE: WARNING: Core is not installed, "
             << "skipping the test of the conic traits ..."

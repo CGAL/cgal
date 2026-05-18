@@ -1,0 +1,3 @@
+The package 3D Generalized Barycentric Coordinates offers an efficient and robust
+implementation of three-dimensional closed-form generalized barycentric coordinates
+defined for convex simplicial polytopes.

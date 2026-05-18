@@ -186,7 +186,7 @@ void set_face_patches(const Index2FaceMap& i2f,
    *   at the interface of two subdomains.
    *
    * This function exports the surface as a `TriangleMesh` and appends it to `tmesh`, using
-   *   `orient_polygon_soup()`.
+   *   `CGAL::Polygon_mesh_processing::orient_polygon_soup()`.
    *
    * @tparam C3T3 a model of `MeshComplexWithFeatures_3InTriangulation_3`.
    * @tparam TriangleMesh a model of `MutableFaceGraph` with an internal point property map.

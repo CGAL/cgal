@@ -17,6 +17,7 @@
 
 
 #include <CGAL/Mesher_level.h>
+#include <CGAL/Meshes/Triangulation_mesher_level_traits_2.h>
 
 namespace CGAL {
 namespace Mesh_2 {
@@ -42,6 +43,7 @@ public:
 
   typedef typename Faces_mesher::Previous_level Edges_mesher;
 private:
+  typename Zone::Faces zone_faces;
   Faces_mesher& faces_mesher;
   Edges_mesher& edges_mesher;
   Vertex_handle &va, &vb;
@@ -82,6 +84,11 @@ public:
   void before_insertion(const Edge&, const Point& p, Zone& z)
   {
     faces_mesher.before_insertion_impl(Face_handle(), p, z);
+    if(z.locate_type == Tr::VERTEX) {
+      zone_faces = z.faces;
+    } else {
+      zone_faces.clear();
+    }
   }
 
   /** Restore markers in the star of `v`. */
@@ -113,7 +120,8 @@ public:
     } while ( fc != fcbegin );
 
     // then let's update bad faces
-    faces_mesher.compute_new_bad_faces(v);
+    if(zone_faces.empty()) faces_mesher.compute_new_bad_faces(v);
+    else faces_mesher.compute_new_bad_faces(zone_faces.begin(), zone_faces.end());
 
     CGAL_expensive_assertion(faces_mesher.check_bad_faces());
   }

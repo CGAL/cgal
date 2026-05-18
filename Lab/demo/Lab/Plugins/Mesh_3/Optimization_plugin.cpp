@@ -6,8 +6,6 @@
 #include "config.h"
 #include "config_mesh_3.h"
 
-#ifdef CGAL_LAB_DEMO_USE_SURFACE_MESHER
-
 #include <CGAL/Three/CGAL_Lab_plugin_interface.h>
 #include <CGAL/Three/Three.h>
 
@@ -644,4 +642,3 @@ translate(CGAL::Mesh_optimization_return_code rc)
 
 #include "Optimization_plugin.moc"
 
-#endif // CGAL_LAB_DEMO_USE_SURFACE_MESHER

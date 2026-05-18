@@ -37,7 +37,7 @@ will be `(w,0)`.
 \param number_of_kd_trees The seventh parameter is briefly described later on this page; for a
 detailed description see \cgalCite{cgal:hp-isr-02}.
 
-Snap Rounding (SR, for short) is a well known method for converting
+Snap Rounding (SR, for short) is a well-known method for converting
 arbitrary-precision arrangements of segments into a fixed-precision
 representation \cgalCite{gght-srlse-97}, \cgalCite{gm-rad-98}, \cgalCite{h-psifp-99}. In
 the study of robust geometric computing, it can be classified as a

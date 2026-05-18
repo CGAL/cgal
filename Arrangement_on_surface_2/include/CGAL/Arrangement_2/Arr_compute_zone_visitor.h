@@ -26,7 +26,7 @@ namespace CGAL {
 
 /*! \class
  * A visitor class for Arrangement_zone_2 that outputs the zone of an
- * x-monotone curve. Specifically, it outputs handles to the the arrangement
+ * x-monotone curve. Specifically, it outputs handles to the arrangement
  * cells that the x-monotone curve intersects.
  * The class should be templated by an Arrangement_2 class, and by an
  * output iterator of a variant of types of handles to the arrangement cells

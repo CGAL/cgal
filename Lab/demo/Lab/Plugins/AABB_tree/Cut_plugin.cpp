@@ -22,8 +22,8 @@
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/AABB_halfedge_graph_segment_primitive.h>
 #include <CGAL/AABB_tree/internal/AABB_drawing_traits.h>
-//#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Side_of_triangle_mesh.h>
 
 #include <CGAL/bounding_box.h>
 
@@ -60,7 +60,7 @@ typedef Edge_container Ec;
 typedef Triangle_container Tc;
 typedef Viewer_interface Vi;
 
-typedef CGAL::Simple_cartesian<double> Simple_kernel;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel         Simple_kernel;
 typedef Simple_kernel::FT FT;
 typedef Simple_kernel::Point_3 Point;
 typedef std::pair<Point,FT> Point_distance;
@@ -81,24 +81,25 @@ Simple_kernel::Vector_3 random_vector()
     return Simple_kernel::Vector_3(x,y,z);
 }
 
+template< typename Mesh>
+struct PPMAP;
 
 //functor for tbb parallelization
-template <typename SM_Tree>
+template <typename SM_Tree, bool is_signed>
 class FillGridSize {
   std::size_t grid_size;
   Point_distance (&distance_function)[100][100];
   FT diag;
   FT& max_distance_function;
   std::vector<SM_Tree*>&sm_trees;
-  bool is_signed;
   CGAL::qglviewer::ManipulatedFrame* frame;
 public:
   FillGridSize(std::size_t grid_size, FT diag, Point_distance (&distance_function)[100][100],
   FT& max_distance_function, std::vector<SM_Tree*>& sm_trees,
-  bool is_signed, CGAL::qglviewer::ManipulatedFrame* frame)
+  CGAL::qglviewer::ManipulatedFrame* frame)
   : grid_size(grid_size), distance_function (distance_function), diag(diag),
     max_distance_function(max_distance_function),
-    sm_trees(sm_trees), is_signed(is_signed), frame(frame)
+    sm_trees(sm_trees), frame(frame)
   {
   }
   template<typename Range>
@@ -137,7 +138,7 @@ public:
         max_distance_function = (std::max)(min, max_distance_function);
 
 
-        if(is_signed)
+        if constexpr (is_signed)
         {
           if(!min_sm_tree)
           {
@@ -145,17 +146,12 @@ public:
             max_distance_function = DBL_MAX;//(std::max)(min, max_distance_function);
             continue;
           }
-          typedef typename SM_Tree::size_type size_type;
-          Simple_kernel::Vector_3 random_vec = random_vector();
+          CGAL::Side_of_triangle_mesh<SMesh, Simple_kernel, PPMAP<SMesh>, SM_Tree> side_of(*min_sm_tree);
 
           const Simple_kernel::Point_3& p = distance_function[i][j].first;
           const FT unsigned_distance = distance_function[i][j].second;
 
-          // get sign through ray casting (random vector)
-          Simple_kernel::Ray_3  ray(p, random_vec);
-          size_type nbi =  min_sm_tree->number_of_intersected_primitives(ray);
-
-          FT sign ( (nbi&1) == 0 ? 1 : -1);
+          FT sign ( side_of(p)==CGAL::ON_UNBOUNDED_SIDE ? 1 : -1);
           distance_function[i][j].second = sign * unsigned_distance;
         }
       }
@@ -191,9 +187,7 @@ public:
     GLubyte* getData(){return data; }
 
 };
-typedef CGAL::Simple_cartesian<double> Simple_kernel;
 
-//typedef CGAL::Exact_predicates_inexact_constructions_kernel         Simple_kernel;
 template< typename Mesh>
 struct PPMAP
 {
@@ -390,8 +384,8 @@ private:
   mutable Simple_kernel::FT m_max_distance_function;
   mutable std::vector<float> tex_map;
   mutable Cut_planes_types m_cut_plane;
-  template <typename SM_Tree>
-  void compute_distance_function(QMap<QObject*, SM_Tree*> *sm_trees, bool is_signed = false)const
+  template <bool is_signed = false, typename SM_Tree>
+  void compute_distance_function(QMap<QObject*, SM_Tree*> *sm_trees)const
   {
 
     m_max_distance_function = FT(0);
@@ -402,11 +396,11 @@ private:
       if(!(is_signed && !CGAL::is_closed(*qobject_cast<Scene_surface_mesh_item*>(sm_trees->key(sm_tree))->polyhedron())))
         closed_sm_trees.push_back(sm_tree);
 #ifndef CGAL_LINKED_WITH_TBB
-    FillGridSize<SM_Tree> f(m_grid_size, diag, m_distance_function, m_max_distance_function, closed_sm_trees, is_signed, frame);
+    FillGridSize<SM_Tree, is_signed> f(m_grid_size, diag, m_distance_function, m_max_distance_function, closed_sm_trees, frame);
     HackRange range(0, static_cast<std::size_t>(m_grid_size*m_grid_size));
     f(range);
 #else
-    FillGridSize<SM_Tree> f(m_grid_size, diag, m_distance_function, m_max_distance_function, closed_sm_trees, is_signed, frame);
+    FillGridSize<SM_Tree, is_signed> f(m_grid_size, diag, m_distance_function, m_max_distance_function, closed_sm_trees, frame);
     tbb::parallel_for(tbb::blocked_range<size_t>(0, m_grid_size*m_grid_size), f);
 #endif
   }
@@ -459,7 +453,7 @@ private:
       break;
     case SIGNED_FACETS:
       if (!facet_sm_trees || facet_sm_trees->empty() ) { return; }
-      compute_distance_function( facet_sm_trees, true);
+      compute_distance_function<true>( facet_sm_trees);
 
       break;
     case UNSIGNED_EDGES:

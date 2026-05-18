@@ -1,14 +1,12 @@
 ﻿#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 
-#include <CGAL/Polygon_mesh_processing/intersection.h>
-#include <CGAL/Polygon_mesh_processing/transform.h>
-
-#include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits_3.h>
-#include <CGAL/Rigid_triangle_mesh_collision_detection.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
+#include <CGAL/boost/graph/copy_face_graph.h>
+#include <CGAL/Polygon_mesh_processing/transform.h>
+#include <CGAL/Rigid_triangle_mesh_collision_detection.h>
 #include <CGAL/Side_of_triangle_mesh.h>
 
 #include <fstream>

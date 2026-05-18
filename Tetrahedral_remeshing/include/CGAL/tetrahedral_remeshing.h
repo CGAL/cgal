@@ -10,8 +10,8 @@
 //
 // Author(s)     : Jane Tournois, Noura Faraj, Jean-Marc Thiery, Tamy Boubekeur
 
-#ifndef TETRAHEDRAL_REMESHING_H
-#define TETRAHEDRAL_REMESHING_H
+#ifndef CGAL_TETRAHEDRAL_REMESHING_H
+#define CGAL_TETRAHEDRAL_REMESHING_H
 
 #include <CGAL/license/Tetrahedral_remeshing.h>
 
@@ -29,6 +29,7 @@
 
 #include <CGAL/property_map.h>
 
+#include <cstddef>
 #include <type_traits>
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
@@ -227,7 +228,7 @@ void tetrahedral_isotropic_remeshing(
 
   auto nb_extra_iterations
     = choose_parameter(get_parameter(np, internal_np::nb_flip_smooth_iterations),
-        std::size_t(3));
+        std::size_t{3});
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
   std::cout << "Tetrahedral remeshing ("
@@ -488,7 +489,7 @@ void tetrahedral_isotropic_remeshing(
 
   auto nb_extra_iterations
     = choose_parameter(get_parameter(np, internal_np::nb_flip_smooth_iterations),
-        std::size_t(3));
+        std::size_t{3});
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
   std::cout << "Tetrahedral remeshing ("
@@ -536,4 +537,4 @@ void tetrahedral_isotropic_remeshing(
 
 }//end namespace CGAL
 
-#endif //TETRAHEDRAL_REMESHING_H
+#endif //CGAL_TETRAHEDRAL_REMESHING_H

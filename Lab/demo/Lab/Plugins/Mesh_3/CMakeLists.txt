@@ -39,6 +39,7 @@ if(ITK_FOUND)
   message(STATUS "ITK found")
   include(${ITK_USE_FILE})
   target_link_libraries(mesh_3_plugin PRIVATE CGAL::ITK_support)
+  target_compile_definitions(mesh_3_plugin PRIVATE ITK_LEGACY_FUTURE_REMOVE)
 endif(ITK_FOUND)
 
 find_package(VTK 9.0 QUIET COMPONENTS ImagingGeneral IOImage IOXML NO_MODULE)
@@ -77,8 +78,9 @@ target_link_libraries(
 CGAL_Lab_target_use_c3t3_type(mesh_3_optimization_plugin)
 
 # Use Eigen
-find_package(Eigen3 3.1.0 QUIET) #(3.1.0 or greater)
+find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
+
 if(TARGET CGAL::Eigen3_support)
   target_link_libraries(mesh_3_optimization_plugin PRIVATE CGAL::Eigen3_support)
 else()
