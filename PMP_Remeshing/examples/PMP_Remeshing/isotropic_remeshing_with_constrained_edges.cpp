@@ -25,8 +25,10 @@ struct Border_pmap
   Border_pmap(const Mesh& m)
     : m_mesh(m) {}
 
-  inline friend value_type get(const Border_pmap& bmp, const key_type& e) { return is_border(e, bmp.m_mesh); }
-  void put(Border_pmap&, const key_type&, const value_type&) { CGAL_error_msg("This property map is read-only."); }
+  inline friend value_type get(const Border_pmap& bmp, const key_type& e)
+  {
+    return is_border(e, bmp.m_mesh);
+  }
   const Mesh& m_mesh;
 };
 
@@ -42,13 +44,12 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  using EIFMap = boost::property_map<Mesh, CGAL::edge_is_feature_t>::type;
-  using PIMap = boost::property_map<Mesh, CGAL::face_patch_id_t<int>>::type;
-  using VIMap = boost::property_map<Mesh, CGAL::vertex_incident_patches_t<int>>::type;
+  boost::property_map<Mesh, CGAL::edge_is_feature_t>::type
+    eif = get(CGAL::edge_is_feature, mesh);
+  boost::property_map<Mesh, CGAL::face_patch_id_t<int>>::type
+    pid = get(CGAL::face_patch_id_t<int>(), mesh);
 
-  EIFMap eif = get(CGAL::edge_is_feature, mesh);
-  PIMap pid = get(CGAL::face_patch_id_t<int>(), mesh);
-
+  // Run segmentation to fill the edge_is_feature property map and the face_patch_id property map.
   std::size_t number_of_patches =
       PMP::sharp_edges_segmentation(mesh, 90, eif, pid);
   std::cout << "The input mesh has been segmented into " << number_of_patches << " patches." << std::endl;
@@ -64,7 +65,8 @@ int main(int argc, char* argv[])
                           .number_of_iterations(3));
   std::cout << "Remeshing done." << std::endl;
 
-  CGAL::IO::write_polygon_mesh("out.ply", mesh, CGAL::parameters::stream_precision(17));
+  CGAL::IO::write_polygon_mesh("out.ply", mesh,
+                               CGAL::parameters::stream_precision(17));
 
-  return 0;
+  return EXIT_SUCCESS;
 }
