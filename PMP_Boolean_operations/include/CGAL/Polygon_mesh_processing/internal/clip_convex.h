@@ -307,7 +307,6 @@ remove_bounded_region_and_fill(PolygonMesh& pm,
   using parameters::choose_parameter;
   using parameters::is_default_parameter;
   using parameters::get_parameter;
-  using parameters::get_parameter_reference;
 
   // graph typedefs
   using BGT = boost::graph_traits<PolygonMesh>;
@@ -325,8 +324,11 @@ remove_bounded_region_and_fill(PolygonMesh& pm,
 
   using Point_3 = typename GT::Point_3;
 
-  bool update_bbox = !is_default_parameter<NamedParameters, internal_np::bounding_box_t>::value;
-  std::array<vertex_descriptor, 6>* bbox_pointer = choose_parameter(get_parameter_reference(np, internal_np::bounding_box), nullptr);
+  constexpr bool update_bbox = !is_default_parameter<NamedParameters, internal_np::bounding_box_t>::value;
+  std::array<vertex_descriptor, 6>* bbox_pointer = nullptr;
+
+  if constexpr (update_bbox)
+    bbox_pointer = get_parameter(np, internal_np::bounding_box);
 
   // Default_visitor default_visitor;
   // Visitor_ref visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
@@ -377,7 +379,8 @@ remove_bounded_region_and_fill(PolygonMesh& pm,
     } while (h != h_start);
   }
 
-  if(update_bbox){
+  if constexpr (update_bbox)
+  {
     auto &bbox = *bbox_pointer;
     struct BBox_entry {
       std::size_t index;
