@@ -1,0 +1,33 @@
+/// \defgroup PkgSpherePackingRef Sphere Packing Reference
+
+/// \defgroup PkgSpherePackingAlgorithms Algorithms
+/// \ingroup PkgSpherePackingRef
+/*!
+
+\addtogroup PkgSpherePackingRef
+\cgalPkgDescriptionBegin{SpherePacking, PkgSpherePacking}
+\cgalPkgPicture{sphere_packing_logo_small.png}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Rene Weller, Hermann Meissenhalter, Gabriel Zachmann, Sven Oesau}
+\cgalPkgDesc{
+The SpherePacking provides a method to densely fill a closed triangular mesh with preferably large non-overlapping spheres. The algorithm proceeds by locating potential positions for large spheres based on a grid in parallel on GPU. In each iteration the largest spheres are inserted and the method terminates when a target number or coverage is attained or spheres above a certain radius can no longer be inserted.}
+\cgalPkgManuals{Chapter_SpherePacking,PkgSpherePackingRef}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{6.3}
+\cgalPkgDependsOn{\ref PkgPolygonMeshProcessing}
+\cgalPkgBib{cgal:w-sp}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+
+\cgalPkgShortInfoEnd
+
+\cgalPkgDescriptionEnd
+
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Algorithms}
+- `CGAL::pack_spheres()`
+*/
