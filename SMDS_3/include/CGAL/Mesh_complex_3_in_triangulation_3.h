@@ -22,13 +22,15 @@
 
 #include <CGAL/SMDS_3/Mesh_complex_3_in_triangulation_3_fwd.h>
 #include <CGAL/disable_warnings.h>
-#include <CGAL/iterator.h>
 #include <CGAL/SMDS_3/utilities.h>
 #include <CGAL/SMDS_3/internal/Boundary_of_subdomain_of_complex_3_in_triangulation_3_to_off.h>
-#include <CGAL/Time_stamper.h>
-#include <CGAL/Bbox_3.h>
-#include <CGAL/Union_find.h>
 #include <CGAL/SMDS_3/io_signature.h>
+#include <CGAL/Bbox_3.h>
+#include <CGAL/Has_member.h>
+#include <CGAL/iterator.h>
+#include <CGAL/Time_stamper.h>
+#include <CGAL/Union_find.h>
+#include <CGAL/unordered_flat_map.h>
 
 #include <CGAL/IO/File_medit.h>
 #include <CGAL/IO/File_maya.h>
@@ -45,56 +47,49 @@
 #include <iostream>
 #include <fstream>
 
-
 #ifdef CGAL_LINKED_WITH_TBB
-#include <atomic>
 #include <tbb/concurrent_hash_map.h>
-
-namespace CGAL {
-  template < class DSC, bool Const >
-  std::size_t tbb_hasher(const CGAL::internal::CC_iterator<DSC, Const>& it)
-  {
-    return CGAL::internal::hash_value(it);
-  }
-
-  // As Marc Glisse pointed out the TBB hash of a std::pair is
-  // simplistic and leads to the
-  // TBB Warning: Performance is not optimal because the hash function
-  //              produces bad randomness in lower bits in class
-  //              tbb::interface5::concurrent_hash_map
-  template < class DSC, bool Const >
-  std::size_t tbb_hasher(const std::pair<CGAL::internal::CC_iterator<DSC, Const>,
-                                         CGAL::internal::CC_iterator<DSC, Const> >& p)
-  {
-    return boost::hash<std::pair<CGAL::internal::CC_iterator<DSC, Const>,
-                                 CGAL::internal::CC_iterator<DSC, Const> > >()(p);
-  }
-
-  struct Hash_compare_for_TBB {
-    template < class DSC, bool Const >
-    std::size_t hash(const std::pair<CGAL::internal::CC_iterator<DSC, Const>,
-                                     CGAL::internal::CC_iterator<DSC, Const> >& p) const
-    {
-      return tbb_hasher(p);
-    }
-    template < class DSC, bool Const >
-    std::size_t operator()(const CGAL::internal::CC_iterator<DSC, Const>& it)
-    {
-      return CGAL::internal::hash_value(it);
-    }
-    template <typename T>
-    bool equal(const T& v1, const T& v2) const {
-      return v1 == v2;
-    }
-  };
-}//end namespace CGAL
+#include <atomic>
 #endif
 
 namespace CGAL {
+namespace SMDS_3 {
+namespace details {
 
-  namespace SMDS_3 {
+struct Pair_hash
+{
+  template <typename T1, typename T2>
+  std::size_t operator()(const std::pair<T1, T2>& p) const
+  {
+    return boost::hash<std::pair<T1, T2> >()(p);
+  }
 
-    namespace details {
+  template <typename Pair>
+  std::size_t hash(const Pair& p) const
+  {
+    return this->operator()(p);
+  }
+
+  template <typename T>
+  bool equal(const T& v1, const T& v2) const {
+    return v1 == v2;
+  }
+};
+
+template <typename ConcurrencyTag,
+          typename PairKey, typename Value>
+struct Hash_map_of_pairs_type
+{
+  typedef CGAL::unordered_flat_map<PairKey, Value, SMDS_3::details::Pair_hash> type;
+};
+
+#ifdef CGAL_LINKED_WITH_TBB
+template <typename PairKey, typename Value>
+struct Hash_map_of_pairs_type<CGAL::Parallel_tag, PairKey, Value>
+{
+  typedef tbb::concurrent_hash_map<PairKey, Value, SMDS_3::details::Pair_hash> type;
+};
+#endif
 
       template <typename Tr>
       class C3t3_helper_class
@@ -129,8 +124,8 @@ namespace CGAL {
         }
       }; // end class template C3t3_helper_class
 
-    } // end namespace SMDS_3::details
-  } //end namespace SMDS_3
+} // namespace details
+} // namespace SMDS_3
 
 /*!
   \ingroup PkgSMDS3Classes
@@ -207,7 +202,10 @@ public:
 /// @{
   typedef Tr                                            Triangulation;
   typedef typename Tr::size_type                        size_type;
+
+  typedef typename Tr::Geom_traits::Point_3             Bare_point;
   typedef typename Tr::Point                            Point;
+
   typedef typename Tr::Edge                             Edge;
   typedef typename Tr::Facet                            Facet;
   typedef typename Tr::Vertex_handle                    Vertex_handle;
@@ -234,6 +232,18 @@ public:
   typedef CurveIndex Curve_index;
 /// @}
 
+  struct Facet_prop
+  {
+    Surface_patch_index surface_index_;
+    Index center_index_;
+    Bare_point center_;
+  };
+
+  // in the configuration of a cell base still providing surface pathc info storage
+  // (i.e., index, center, center index), use that instead of the C3T3 hash map
+  CGAL_GENERATE_MEMBER_DETECTOR(set_surface_patch_index);
+  static constexpr bool store_surface_patch_info_in_cell =
+    has_set_surface_patch_index<typename Tr::Cell>::value;
 
 private:
   // Type to store the edges:
@@ -314,6 +324,8 @@ public:
     swapper(rhs.number_of_facets_, number_of_facets_);
     tr_.swap(rhs.tr_);
     swapper(rhs.number_of_cells_, number_of_cells_);
+
+    surface_facet_info_.swap(rhs.surface_facet_info_);
 
     edges_.swap(rhs.edges_);
     corners_.swap(rhs.corners_);
@@ -475,24 +487,159 @@ public:
   {
     vertex->set_index(index);
   }
-  /** sets the surface index of facet \p facet to \p index
+
+  /** sets the surface index of facet \p f to \p index
   */
-  void set_surface_patch_index(const Facet& f, const Surface_patch_index& index)
+  void set_surface_patch_index(const Facet& f,
+                               const Surface_patch_index& index) const
   {
-    set_surface_patch_index(f.first, f.second, index);
+    if constexpr (store_surface_patch_info_in_cell)
+    {
+      f.first->set_surface_patch_index(f.second, index);
+    }
+    else
+    {
+      if (index == Surface_patch_index())
+      {
+        // remove from the map as to avoid wasting memory
+        surface_facet_info_.erase(f);
+      }
+      else
+      {
+#ifdef CGAL_LINKED_WITH_TBB
+        if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
+        {
+          typename Surface_facet_info::accessor accessor;
+          surface_facet_info_.insert(accessor, f);
+          accessor->second.surface_index_ = index;
+        }
+        else
+#endif
+        {
+          surface_facet_info_[f].surface_index_ = index;
+        }
+      }
+    }
   }
+
   /** sets the surface index of facet(\p cell, \p i) to \p index
   */
   void set_surface_patch_index(const Cell_handle& cell,
-    const int i,
-    const Surface_patch_index& index) const
+                               const int i,
+                               const Surface_patch_index& index) const
   {
-    cell->set_surface_patch_index(i, index);
+    return set_surface_patch_index(Facet(cell, i), index);
   }
+
+  void set_surface_center(const Facet& f,
+                          const Bare_point& p) const
+  {
+    if constexpr (store_surface_patch_info_in_cell)
+    {
+      f.first->set_facet_surface_center(f.second, p);
+    }
+    else
+    {
+#ifdef CGAL_LINKED_WITH_TBB
+      if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
+      {
+        typename Surface_facet_info::accessor accessor;
+        surface_facet_info_.insert(accessor, f);
+        accessor->second.center_ = p;
+      }
+      else
+#endif
+      {
+        surface_facet_info_[f].center_ = p;
+      }
+    }
+  }
+
+  /** sets the surface center of facet(\p cell, \p i) to \p p
+  */
+  void set_surface_center(const Cell_handle& cell,
+                          const int i,
+                          const Bare_point& p) const
+  {
+    return set_surface_center(Facet(cell, i), p);
+  }
+
+  void set_surface_center_index(const Facet& f,
+                                const Index& index) const
+  {
+    if constexpr (store_surface_patch_info_in_cell)
+    {
+      f.first->set_facet_surface_center_index(f.second, index);
+    }
+    else
+    {
+#ifdef CGAL_LINKED_WITH_TBB
+      if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
+      {
+        typename Surface_facet_info::accessor accessor;
+        surface_facet_info_.insert(accessor, f);
+        accessor->second.center_index_ = index;
+      }
+      else
+#endif
+      {
+        surface_facet_info_[f].center_index_ = index;
+      }
+    }
+  }
+
+  /** sets the surface center index of facet(\p cell, \p i) to \p index
+  */
+  void set_surface_center_index(const Cell_handle& cell,
+                                const int i,
+                                const Index& index) const
+  {
+    return set_surface_center_index(Facet(cell, i), index);
+  }
+
+  void set_surface_info(const Facet& f,
+                        const Facet_prop& info) const
+  {
+    if constexpr (store_surface_patch_info_in_cell)
+    {
+      f.first->set_surface_patch_index(f.second, info.surface_index_);
+      f.first->set_facet_surface_center(f.second, info.center_);
+      f.first->set_facet_surface_center_index(f.second, info.center_index_);
+    }
+    else
+    {
+      if (info.surface_index_ == Surface_patch_index())
+      {
+        surface_facet_info_.erase(f);
+      }
+      else
+      {
+#ifdef CGAL_LINKED_WITH_TBB
+        if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
+        {
+          typename Surface_facet_info::accessor accessor;
+          surface_facet_info_.insert(accessor, f);
+          accessor->second = info;
+        }
+        else
+#endif
+        {
+          surface_facet_info_[f] = info;
+        }
+      }
+    }
+  }
+
+  void set_surface_info(const Cell_handle& cell, int i,
+                        const Facet_prop& info) const
+  {
+    return set_surface_info(Facet(cell, i), info);
+  }
+
   /** sets the subdomain index of cell \p cell to \p index
   */
   void set_subdomain_index(const Cell_handle& cell,
-    const Subdomain_index& index) const
+                           const Subdomain_index& index) const
   {
     cell->set_subdomain_index(index);
   }
@@ -520,7 +667,29 @@ public:
   */
   Surface_patch_index surface_patch_index(const Facet& f) const
   {
-    return surface_patch_index(f.first, f.second);
+    if constexpr (store_surface_patch_info_in_cell)
+    {
+      return f.first->surface_patch_index(f.second);
+    }
+    else
+    {
+#ifdef CGAL_LINKED_WITH_TBB
+      if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
+      {
+        typename Surface_facet_info::const_accessor accessor;
+        if (surface_facet_info_.find(accessor, f))
+          return accessor->second.surface_index_;
+      }
+      else
+#endif
+      {
+        auto it = surface_facet_info_.find(f);
+        if (it != surface_facet_info_.end())
+          return it->second.surface_index_;
+      }
+    }
+
+    return Surface_patch_index();
   }
 
   /** returns the surface index of facet(\p cell, \p i)
@@ -528,8 +697,112 @@ public:
   Surface_patch_index surface_patch_index(const Cell_handle& cell,
                                           const int i) const
   {
-    return cell->surface_patch_index(i);
+    return surface_patch_index(Facet(cell, i));
   }
+
+  decltype(auto) surface_center(const Facet& f) const
+  {
+    CGAL_precondition(is_in_complex(f));
+
+    if constexpr (store_surface_patch_info_in_cell)
+    {
+      return f.first->get_facet_surface_center(f.second);
+    }
+    else
+    {
+# ifdef CGAL_LINKED_WITH_TBB
+      if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
+      {
+        typename Surface_facet_info::const_accessor accessor;
+        CGAL_assume_code(bool found =)
+        surface_facet_info_.find(accessor, f);
+        CGAL_assume(found);
+        return accessor->second.center_;
+      }
+      else
+#endif
+      {
+        auto it = surface_facet_info_.find(f);
+        CGAL_assume(it != surface_facet_info_.end());
+        return it->second.center_;
+      }
+    }
+  }
+
+  /** returns the surface center of facet(\p cell, \p i)
+  */
+  decltype(auto) surface_center(const Cell_handle& cell,
+                                const int i) const
+  {
+    return surface_center(Facet(cell, i));
+  }
+
+  Index surface_center_index(const Facet& f) const
+  {
+    CGAL_precondition(is_in_complex(f));
+
+    if constexpr (store_surface_patch_info_in_cell)
+    {
+      return f.first->get_facet_surface_center_index(f.second);
+    }
+    else
+    {
+#ifdef CGAL_LINKED_WITH_TBB
+      if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
+      {
+        typename Surface_facet_info::const_accessor accessor;
+        CGAL_assume_code(bool found =)
+        surface_facet_info_.find(accessor, f);
+        CGAL_assume(found);
+        return accessor->second.center_index_;
+      }
+      else
+#endif
+      {
+        auto it = surface_facet_info_.find(f);
+        CGAL_assume(it != surface_facet_info_.end());
+        return it->second.center_index_;
+      }
+    }
+  }
+
+  /** returns the surface center index of facet(\p cell, \p i)
+  */
+  Index surface_center_index(const Cell_handle& cell,
+                             const int i) const
+  {
+    return surface_center_index(Facet(cell, i));
+  }
+
+  decltype(auto) surface_info(const Facet& f) const
+  {
+    if constexpr (store_surface_patch_info_in_cell)
+    {
+      return Facet_prop{ f.first->surface_patch_index(f.second),
+                         f.first->get_facet_surface_center_index(f.second),
+                         f.first->get_facet_surface_center(f.second) };
+    }
+    else
+    {
+#ifdef CGAL_LINKED_WITH_TBB
+      if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
+      {
+        typename Surface_facet_info::const_accessor accessor;
+        CGAL_assume_code(bool found =)
+        surface_facet_info_.find(accessor, f);
+        CGAL_assume(found);
+        return accessor->second;
+      }
+      else
+#endif
+      {
+        auto it = surface_facet_info_.find(f);
+        CGAL_assume(it != surface_facet_info_.end());
+        return it->second;
+      }
+    }
+  }
+
   /** returns the dimension of the lowest dimensional face of the input 3D
   * complex that contains the vertex
   */
@@ -594,10 +867,23 @@ public:
     far_vertices_.push_back(vh);
   }
 
-
   void remove_isolated_vertex(Vertex_handle v)
   {
     Triangulation& tr = triangulation();
+
+    std::vector<Cell_handle> old_cells;
+    old_cells.reserve(32);
+    tr.incident_cells(v, std::back_inserter(old_cells));
+
+    for (const Cell_handle& c : old_cells)
+    {
+      remove_from_complex(c);
+      for (int i = 0; i < 4; ++i) {
+        // Do *not* call the C3T3's remove_from_complex() because the information
+        // on the opposite facet must not be cleared for boundary facets.
+        set_surface_patch_index(c, i, Surface_patch_index());
+      }
+    }
 
     std::vector<Cell_handle> new_cells;
     new_cells.reserve(32);
@@ -613,10 +899,8 @@ public:
         Facet mirror_facet = tr.mirror_facet(std::make_pair(c, i));
         if (is_in_complex(mirror_facet))
         {
-          set_surface_patch_index(c, i,
-            surface_patch_index(mirror_facet));
-          c->set_facet_surface_center(i,
-            mirror_facet.first->get_facet_surface_center(mirror_facet.second));
+          set_surface_patch_index(c, i, surface_patch_index(mirror_facet));
+          set_surface_center(c, i, surface_center(mirror_facet.first, mirror_facet.second));
         }
       }
       /*int i_inf;
@@ -624,10 +908,7 @@ public:
       {
         Facet mirror_facet = tr.mirror_facet(std::make_pair(c, i_inf));
         if (is_in_complex(mirror_facet))
-        {
-          set_surface_patch_index(c, i_inf,
-                                  surface_patch_index(mirror_facet));
-        }
+          set_surface_patch_index(c, i_inf, surface_patch_index(mirror_facet));
       }*/
     }
   }
@@ -679,7 +960,7 @@ public:
 
     for (Facet f :this->facets_in_complex())
     {
-          for (int i = 1; i < 4; ++i)
+      for (int i = 1; i < 4; ++i)
       {
         Vertex_handle vi = f.first->vertex((f.second + i) % 4);
         vi->set_meshing_info(vi->meshing_info() + 1);
@@ -771,19 +1052,20 @@ public:
   {
     return !(subdomain_index(cell) == Subdomain_index());
   }
-  /** returns true if facet \p facet belongs to the 2D complex
+  /** returns true if facet \p f belongs to the 2D complex
   */
-  bool is_in_complex(const Facet& facet) const
+  bool is_in_complex(const Facet& f) const
   {
-    return is_in_complex(facet.first, facet.second);
+    return !(surface_patch_index(f) == Surface_patch_index());
   }
 
   /** returns true if facet (\p cell, \p i) belongs to the 2D complex
   */
   bool is_in_complex(const Cell_handle& cell, const int i) const
   {
-    return (cell->is_facet_on_surface(i));
+    return is_in_complex(Facet(cell, i));
   }
+
   /**
    * returns true if edge \p e belongs to the 1D complex
    */
@@ -1296,7 +1578,7 @@ public:
   Face_status face_status(const Vertex_handle v) const
   {
     if (!manifold_info_initialized_) init_manifold_info();
-    const std::size_t n = v->cached_number_of_incident_facets();
+    const int n = v->cached_number_of_incident_facets();
 
     if (n == 0) return NOT_IN_COMPLEX;
 
@@ -1328,7 +1610,7 @@ public:
     }
 
     // From here all incident edges (in complex) are REGULAR or BOUNDARY.
-    const std::size_t nb_components = union_find_of_incident_facets(v);
+    const int nb_components = union_find_of_incident_facets(v);
     if (nb_components > 1) {
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
       std::cerr << "singular vertex: nb_components=" << nb_components << std::endl;
@@ -1364,19 +1646,29 @@ public:
     if (!manifold_info_initialized_) init_manifold_info();
 
 #ifdef CGAL_LINKED_WITH_TBB
-    typename Edge_facet_counter::const_accessor accessor;
-    if (!edge_facet_counter_.find(accessor,
-      this->make_ordered_pair(edge)))
-      return NOT_IN_COMPLEX;
-    switch (accessor->second)
-#else // not CGAL_LINKED_WITH_TBB
-    switch (edge_facet_counter_[this->make_ordered_pair(edge)])
-#endif // not CGAL_LINKED_WITH_TBB
+    if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
     {
-    case 0: return NOT_IN_COMPLEX;
-    case 1: return BOUNDARY;
-    case 2: return REGULAR;
-    default: return SINGULAR;
+      typename Edge_facet_counter::const_accessor accessor;
+      if (!edge_facet_counter_.find(accessor, this->make_ordered_pair(edge)))
+        return NOT_IN_COMPLEX;
+      switch (accessor->second)
+      {
+        case 0: return NOT_IN_COMPLEX;
+        case 1: return BOUNDARY;
+        case 2: return REGULAR;
+        default: return SINGULAR;
+      }
+    }
+    else
+#endif
+    {
+      switch (edge_facet_counter_[this->make_ordered_pair(edge)])
+      {
+        case 0: return NOT_IN_COMPLEX;
+        case 1: return BOUNDARY;
+        case 2: return REGULAR;
+        default: return SINGULAR;
+      }
     }
   }
 
@@ -1559,7 +1851,7 @@ private:
       end = triangulation().finite_vertices_end();
       vit != end; ++vit)
     {
-      vit->set_c2t3_cache(0, (std::numeric_limits<size_type>::max)());
+      vit->set_c2t3_cache(0, -1);
     }
 
     edge_facet_counter_.clear();
@@ -1578,19 +1870,21 @@ private:
           const int edge_index_vb = tr_.vertex_triple_index(i, (j == 2) ? 0 : (j + 1));
           const Vertex_handle edge_va = cell->vertex(edge_index_va);
           const Vertex_handle edge_vb = cell->vertex(edge_index_vb);
-#ifndef CGAL_LINKED_WITH_TBB
-          ++edge_facet_counter_[this->make_ordered_pair(edge_va, edge_vb)];
-#else // CGAL_LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
+          if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
           {
             typename Edge_facet_counter::accessor accessor;
-            edge_facet_counter_.insert(accessor,
-              this->make_ordered_pair(edge_va, edge_vb));
+            edge_facet_counter_.insert(accessor, this->make_ordered_pair(edge_va, edge_vb));
             ++accessor->second;
           }
-#endif // CGAL_LINKED_WITH_TBB
+          else
+#endif
+          {
+            ++edge_facet_counter_[this->make_ordered_pair(edge_va, edge_vb)];
+          }
 
-          const std::size_t n = edge_va->cached_number_of_incident_facets();
-          edge_va->set_c2t3_cache(n + 1, (std::numeric_limits<size_type>::max)());
+          const int n = edge_va->cached_number_of_incident_facets();
+          edge_va->set_c2t3_cache(n + 1, -1);
         }
       }
     }
@@ -1599,12 +1893,12 @@ private:
 
   /// Extract the subset `F` of facets of the complex incident to `v` and
   /// return the number of connected component of the adjacency graph of `F`.
-  std::size_t union_find_of_incident_facets(const Vertex_handle v) const
+  int union_find_of_incident_facets(const Vertex_handle v) const
   {
     if (v->is_c2t3_cache_valid())
     {
-      const std::size_t n = v->cached_number_of_components();
-      if (n != (std::numeric_limits<size_type>::max)()) return n;
+      const int n = v->cached_number_of_components();
+      if (n != -1) return n;
     }
 
     Union_find<Facet> facets;
@@ -1652,10 +1946,11 @@ private:
         }
       }
     }
-    const std::size_t nb_components = facets.number_of_sets();
 
-    const std::size_t n = v->cached_number_of_incident_facets();
+    const int n = v->cached_number_of_incident_facets();
+    const int nb_components = static_cast<int>(facets.number_of_sets());
     v->set_c2t3_cache(n, nb_components);
+
     return nb_components;
   }
 
@@ -1722,16 +2017,20 @@ private:
   // Private data members
   Triangulation tr_;
 
+private:
   typedef typename Base::Pair_of_vertices Pair_of_vertices;
-#ifdef CGAL_LINKED_WITH_TBB
-  typedef tbb::concurrent_hash_map<Pair_of_vertices, int,
-                                   Hash_compare_for_TBB> Edge_facet_counter;
-#else // not CGAL_LINKED_WITH_TBB
-  typedef std::map<Pair_of_vertices, int> Edge_facet_counter;
-#endif // not CGAL_LINKED_WITH_TBB
-
+  typedef typename SMDS_3::details::Hash_map_of_pairs_type<Concurrency_tag,
+                                                           Pair_of_vertices /*key*/,
+                                                           int /*value*/>::type Edge_facet_counter;
   mutable Edge_facet_counter edge_facet_counter_;
 
+public: // @tmp
+  typedef typename SMDS_3::details::Hash_map_of_pairs_type<Concurrency_tag,
+                                                           Facet /*key*/,
+                                                           Facet_prop /*value*/>::type Surface_facet_info;
+  mutable Surface_facet_info surface_facet_info_;
+
+private:
   typename Number_of_elements<Concurrency_tag>::type number_of_facets_;
   typename Number_of_elements<Concurrency_tag>::type number_of_cells_;
 
@@ -1808,6 +2107,72 @@ Mesh_complex_3_in_triangulation_3(const Self& rhs)
     }
     CGAL_assertion(far_vertices_.size() == rhs.far_vertices_.size());
   }
+
+  for (const auto& e : rhs.surface_facet_info_)
+  {
+    auto get_this_vertex = [&](const Cell_handle& rhs_c, const int rhs_o) -> Vertex_handle {
+      if (rhs.triangulation().is_infinite(rhs_c->vertex(rhs_o))) {
+        return this->triangulation().infinite_vertex();
+      } else {
+        const auto& rhs_p = rhs.triangulation().point(rhs_c, rhs_o);
+        Vertex_handle this_vh;
+        CGAL_assertion_code(bool found =)
+        this->triangulation().is_vertex(rhs_p, this_vh);
+        CGAL_assertion(found);
+        return this_vh;
+      }
+    };
+
+    // Find the corresponding facet in 'this'
+    const Facet& rhs_facet = e.first;
+    const Cell_handle& rhs_c = rhs_facet.first;
+    const int rhs_i = rhs_facet.second;
+
+    Vertex_handle rhs_nv[5];
+    rhs_nv[0] = get_this_vertex(rhs_c, rhs_i);
+    rhs_nv[1] = get_this_vertex(rhs_c, (rhs_i + 1) % 4);
+    rhs_nv[2] = get_this_vertex(rhs_c, (rhs_i + 2) % 4);
+    rhs_nv[3] = get_this_vertex(rhs_c, (rhs_i + 3) % 4);
+
+    Cell_handle rhs_n = rhs_c->neighbor(rhs_i);
+    rhs_nv[4] = get_this_vertex(rhs_n, rhs_n->index(rhs_c));
+
+    Cell_handle this_cell;
+    CGAL_assertion_code(bool found =)
+    this->triangulation().is_cell(rhs_nv[0], rhs_nv[1], rhs_nv[2], rhs_nv[3], this_cell);
+    CGAL_assertion(found);
+
+    Cell_handle this_n;
+    CGAL_assertion_code(found =)
+    this->triangulation().is_cell(rhs_nv[1], rhs_nv[2], rhs_nv[3], rhs_nv[4], this_n);
+    CGAL_assertion(found);
+
+    const int this_opp = this_cell->index(this_n);
+    const Facet this_facet(this_cell, this_opp);
+
+    // std::cout << "from rhs:\n";
+    // std::cout << "  facet: " << rhs.triangulation().point(rhs_c, (rhs_i + 1) % 4) << ", "
+    //                          << rhs.triangulation().point(rhs_c, (rhs_i + 2) % 4) << ", "
+    //                          << rhs.triangulation().point(rhs_c, (rhs_i + 3) % 4) << "\n";
+    // std::cout << "to this:\n";
+    // std::cout << "  facet: " << this->triangulation().point(this_cell, (this_opp + 1) % 4) << ", "
+    //                          << this->triangulation().point(this_cell, (this_opp + 2) % 4) << ", "
+    //                          << this->triangulation().point(this_cell, (this_opp + 3) % 4) << "\n";
+
+#ifdef CGAL_LINKED_WITH_TBB
+    if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
+    {
+      typename Surface_facet_info::accessor accessor;
+      surface_facet_info_.insert(accessor, this_facet);
+      accessor->second = e.second;
+    }
+    else
+#endif
+    {
+      surface_facet_info_[this_facet] = e.second;
+    }
+  }
+  CGAL_postcondition(surface_facet_info_.size() == rhs.surface_facet_info_.size());
 }
 
 template <typename Tr, typename CI_, typename CSI_>
@@ -1816,6 +2181,7 @@ Mesh_complex_3_in_triangulation_3(Self&& rhs)
   : Base()
   , tr_(std::move(rhs.tr_))
   , edge_facet_counter_(std::move(rhs.edge_facet_counter_))
+  , surface_facet_info_(std::move(rhs.surface_facet_info_))
   , manifold_info_initialized_(std::exchange(rhs.manifold_info_initialized_, false))
   , edges_(std::move(rhs.edges_))
   , corners_(std::move(rhs.corners_))
@@ -1946,18 +2312,20 @@ add_to_complex(const Cell_handle& cell,
         Vertex_handle edge_va = cell->vertex(edge_index_va);
         Vertex_handle edge_vb = cell->vertex(edge_index_vb);
 #ifdef CGAL_LINKED_WITH_TBB
+        if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
         {
           typename Edge_facet_counter::accessor accessor;
-          edge_facet_counter_.insert(accessor,
-            this->make_ordered_pair(edge_va, edge_vb));
+          edge_facet_counter_.insert(accessor, this->make_ordered_pair(edge_va, edge_vb));
           ++accessor->second;
         }
-#else // not CGAL_LINKED_WITH_TBB
-        ++edge_facet_counter_[this->make_ordered_pair(edge_va, edge_vb)];
-#endif // not CGAL_LINKED_WITH_TBB
+        else
+#endif
+        {
+          ++edge_facet_counter_[this->make_ordered_pair(edge_va, edge_vb)];
+        }
 
-        const std::size_t n = edge_va->cached_number_of_incident_facets();
-        const std::size_t m = edge_va->cached_number_of_components();
+        const int n = edge_va->cached_number_of_incident_facets();
+        const int m = edge_va->cached_number_of_components();
         edge_va->set_c2t3_cache(n + 1, m);
       }
       const int dimension_plus_1 = tr_.dimension() + 1;
@@ -1996,19 +2364,21 @@ remove_from_complex(const Facet& facet)
         const Vertex_handle edge_va = cell->vertex(edge_index_va);
         const Vertex_handle edge_vb = cell->vertex(edge_index_vb);
 #ifdef CGAL_LINKED_WITH_TBB
+        if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>)
         {
           typename Edge_facet_counter::accessor accessor;
-          edge_facet_counter_.insert(accessor,
-            this->make_ordered_pair(edge_va, edge_vb));
+          edge_facet_counter_.insert(accessor, this->make_ordered_pair(edge_va, edge_vb));
           --accessor->second;
         }
-#else // not CGAL_LINKED_WITH_TBB
-        --edge_facet_counter_[this->make_ordered_pair(edge_va, edge_vb)];
-#endif // not CGAL_LINKED_WITH_TBB
+        else
+#endif
+        {
+          --edge_facet_counter_[this->make_ordered_pair(edge_va, edge_vb)];
+        }
 
-        const std::size_t n = edge_va->cached_number_of_incident_facets();
+        const int n = edge_va->cached_number_of_incident_facets();
         CGAL_assertion(n > 0);
-        const std::size_t m = edge_va->cached_number_of_components();
+        const int m = edge_va->cached_number_of_components();
         edge_va->set_c2t3_cache(n - 1, m);
       }
       const int dimension_plus_1 = tr_.dimension() + 1;

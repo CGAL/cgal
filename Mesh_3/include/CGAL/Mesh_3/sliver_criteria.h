@@ -23,15 +23,34 @@
 
 #include <CGAL/Mesh_3/min_dihedral_angle.h>
 #include <CGAL/Mesh_3/radius_ratio.h>
+#include <CGAL/Mesh_3/Sliver_value_cache.h>
+
 #include <CGAL/FPU.h> // for CGAL::IA_force_to_double
+#include <CGAL/Default.h>
+#include <CGAL/Has_member.h>
+
 #include <vector>
 
 namespace CGAL {
-
 namespace Mesh_3 {
 
-template<typename Tr, //Triangulation
-         bool update_sliver_cache = true,
+namespace internal
+{
+struct Sliver_caching_policy_tag
+{}; // Default tag for the caching policy, used to detect if the user specified a caching policy or not
+struct Sliver_caching_always_tag      : public Sliver_caching_policy_tag{};
+struct Sliver_caching_never_tag       : public Sliver_caching_policy_tag{};
+struct Sliver_caching_below_bound_tag : public Sliver_caching_policy_tag{};// Only cache values below the sliver bound
+
+CGAL_GENERATE_MEMBER_DETECTOR(set_sliver_value);
+} // end namespace internal
+
+template<typename Tr,
+         typename Cache = typename CGAL::Mesh_3::Default_sliver_cache<Tr>::type,
+         typename SliverCachingPolicy =
+              std::conditional_t<internal::has_set_sliver_value<typename Tr::Cell>::value,
+                                 internal::Sliver_caching_always_tag,
+                                 internal::Sliver_caching_below_bound_tag>,
          typename Cell_vector_ = std::vector<typename Tr::Cell_handle> >
 class Sliver_criterion
 {
@@ -44,17 +63,43 @@ public:
 public:
   virtual double get_default_value() const = 0;
   virtual double get_max_value() const = 0;
-  //Sliver_perturber performs perturbation "unit-per-unit"
+  // Sliver_perturber performs perturbation "unit-per-unit"
   // so it needs to know how much is a unit for each criterion
   virtual double get_perturbation_unit() const = 0;
+
+  // Reset the entire cache (if any)
+  void reset_cache() const {
+    cache_.clear();
+  }
+
+  // Reset the cache for a single cell (if any)
+  void reset_cache(const Cell_handle& cell) const {
+    cache_.invalidate(cell);
+  }
+
+  void set_cache(const Cell_handle& cell, const double value) const {
+    cache_.set(cell, value);
+  }
+
+  bool is_sliver(Cell_handle cell) const
+  {
+    if (std::is_same_v<SliverCachingPolicy, internal::Sliver_caching_below_bound_tag>) {
+      return cache_.has_value(cell);
+    } else {
+      // if we cache everything, the operator() will return the cached value
+      return operator()(cell) < this->sliver_bound_;
+    }
+  }
 
   // returns the value of the criterion for t
   virtual double operator()(Cell_handle cell) const
   {
-    if(update_sliver_cache)
-    {
-      if( ! cell->is_cache_valid() )
-      {
+    if (std::is_same_v<SliverCachingPolicy, internal::Sliver_caching_never_tag>) {
+      return operator()(tr_.tetrahedron(cell));
+    } else {
+      if (cache_.has_value(cell)) {
+        return cache_.get(cell);
+      } else {
         // cell->sliver_value() is stored in a plain 64 bits floating point
         // number, and the value computed by operator() might be
         // computed using the 80 bits floating point registers of the x87
@@ -63,13 +108,16 @@ public:
         // inconsistent when comparing caches and registers values
         // (see also the comment below)
         // IA_force_to_double is available in CGAL/FPU.h
-        double value
-          = CGAL::IA_force_to_double(operator()(tr_.tetrahedron(cell)));
-        cell->set_sliver_value(value);
+        const double value = CGAL::IA_force_to_double(operator()(tr_.tetrahedron(cell)));
+        if (std::is_same_v<SliverCachingPolicy, internal::Sliver_caching_below_bound_tag>
+         && value > this->sliver_bound_) {
+          return value;
+        } else {
+          cache_.set(cell, value);
+          return value;
+        }
       }
-      return cell->sliver_value();
     }
-    return operator()(tr_.tetrahedron(cell));
   }
 
   virtual double operator()(const Tetrahedron_3& t) const = 0;
@@ -84,9 +132,11 @@ public:
 
 public:
   Sliver_criterion(const double& bound,
-                   const Tr& tr)
+                   const Tr& tr,
+                   const Cache& cache = Cache())
     : tr_(tr)
     , sliver_bound_(bound)
+    , cache_(cache)
   {}
 
   virtual ~Sliver_criterion(){}
@@ -94,18 +144,20 @@ public:
 protected:
   const Tr& tr_;
   double sliver_bound_;
+  mutable Cache cache_;
 };
 
 template<typename SliverCriterion, typename Cell_vector>
 class Min_value;
 
 template <typename Tr,
-          bool update_sliver_cache = true>
+          typename Cache = typename CGAL::Mesh_3::Default_sliver_cache<Tr>::type,
+          typename SliverCachingPolicy = internal::Sliver_caching_below_bound_tag>
 class Min_dihedral_angle_criterion
-  : public Sliver_criterion<Tr, update_sliver_cache>
+  : public Sliver_criterion<Tr, Cache, SliverCachingPolicy>
 {
 protected:
-  typedef Sliver_criterion<Tr, update_sliver_cache> Base;
+  typedef Sliver_criterion<Tr, Cache, SliverCachingPolicy> Base;
   typedef typename Base::Tetrahedron_3  Tetrahedron_3;
   typedef typename Base::Cell_vector    Cell_vector;
   typedef typename Base::GT             GT;
@@ -147,8 +199,9 @@ public:
 
 public:
   Min_dihedral_angle_criterion(const double& sliver_bound,
-                               const Tr& tr)
-    : Base(sliver_bound, tr), min_value_before_move_(0.)
+                               const Tr& tr,
+                               const Cache& cache = Cache())
+    : Base(sliver_bound, tr, cache), min_value_before_move_(0.)
   {}
 
 private:
@@ -157,16 +210,18 @@ private:
 
 
 template <typename Tr,
-          bool update_sliver_cache = true>
+          typename Cache = typename CGAL::Mesh_3::Default_sliver_cache<Tr>::type,
+          typename SliverCachingPolicy = internal::Sliver_caching_below_bound_tag>
 class Radius_ratio_criterion
-  : public Sliver_criterion<Tr, update_sliver_cache>
+  : public Sliver_criterion<Tr, Cache, SliverCachingPolicy>
 {
+  typedef Radius_ratio_criterion<Tr, Cache, SliverCachingPolicy> Self;
+
 protected:
-  typedef Sliver_criterion<Tr, update_sliver_cache> Base;
+  typedef Sliver_criterion<Tr, Cache, SliverCachingPolicy> Base;
   typedef typename Base::GT             GT;
   typedef typename Base::Tetrahedron_3  Tetrahedron_3;
   typedef typename Base::Cell_vector    Cell_vector;
-  typedef Radius_ratio_criterion<Tr, update_sliver_cache> RR_criterion;
 
 public:
 
@@ -183,13 +238,13 @@ public:
 
   virtual void before_move(const Cell_vector& cells) const
   {
-    Min_value<RR_criterion, Cell_vector> min_value_op(*this);
+    Min_value<Self, Cell_vector> min_value_op(*this);
     min_value_before_move_ = min_value_op(cells);
   }
   virtual bool valid_move(const Cell_vector& cells,
                           const bool soft = false) const
   {
-    Min_value<RR_criterion, Cell_vector> min_value_op(*this);
+    Min_value<Self, Cell_vector> min_value_op(*this);
     double min_val = min_value_op(cells);
     return (min_val > min_value_before_move_)
         || (soft && min_val > this->sliver_bound_);
@@ -197,8 +252,9 @@ public:
 
 public:
   Radius_ratio_criterion(const double& sliver_bound,
-               const Tr& tr)
-    : Base(sliver_bound, tr)
+                         const Tr& tr,
+                         const Cache& cache = Cache())
+    : Base(sliver_bound, tr, cache)
   {}
 
 private:

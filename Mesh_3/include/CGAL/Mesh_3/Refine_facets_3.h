@@ -43,12 +43,12 @@
 #include <CGAL/Object.h>
 
 #include <boost/format.hpp>
-#include <optional>
 #include <boost/optional/optional_io.hpp>
 #include <boost/mpl/has_xxx.hpp>
 
-#include <sstream>
 #include <atomic>
+#include <optional>
+#include <sstream>
 
 namespace CGAL {
 
@@ -169,12 +169,12 @@ public:
 
 #else
 
-  Facet
+  const Facet&
   from_facet_to_refinement_queue_element(const Facet &facet,
                                          const Facet &mirror) const
   {
     // Returns canonical facet
-    return (facet < mirror) ? facet : mirror;
+    return (facet.first < mirror.first) ? facet : mirror;
   }
 
 public:
@@ -300,7 +300,7 @@ public:
   }
 
   /// Gets the point to insert from the element to refine
-  Bare_point refinement_point_impl(const Facet& facet) const
+  decltype(auto) refinement_point_impl(const Facet& facet) const
   {
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
     const Cell_handle c = facet.first;
@@ -312,9 +312,11 @@ public:
               << get_facet_surface_center(facet) << std::endl;
 #endif
 
-    CGAL_assertion (this->is_facet_on_surface(facet));
-    this->set_last_vertex_index(get_facet_surface_center_index(facet));
-    return get_facet_surface_center(facet);
+    CGAL_precondition(this->is_facet_on_surface(facet));
+
+    const auto& [surface_index, center_index, center] = this->r_c3t3_.surface_info(facet);
+    this->set_last_vertex_index(center_index);
+    return center;
   }
 
   Facet get_next_element_impl()
@@ -420,20 +422,14 @@ protected:
   typedef typename MeshDomain::Surface_patch_index Surface_patch_index;
   typedef typename MeshDomain::Index Index;
 
-  struct Facet_prop
-  {
-    Surface_patch_index surface_patch_index;
-    Index index;
-    Bare_point point;
-  };
+  typedef typename Complex3InTriangulation3::Facet_prop Facet_prop;
   typedef typename std::optional<Facet_prop> Facet_properties;
 
-
   /// Returns canonical facet of facet
-  Facet canonical_facet(const Facet& facet) const
+  Facet canonical_facet(const Facet& f) const
   {
-    const Facet mirror = mirror_facet(facet);
-    return ( (facet < mirror)?facet:mirror );
+    Cell_handle n = f.first->neighbor(f.second);
+    return (f.first < n) ? f : Facet(n, n->index(f.first));
   }
 
   /// Returns true if `f` has already been visited.
@@ -448,37 +444,32 @@ protected:
     f.first->set_facet_visited(f.second);
   }
 
-  /// Sets the facet `f` and its mirrored facet's surface centers to `p`.
-  void set_facet_surface_center(const Facet& f,
-                                const Bare_point& p,
-                                const Index& index) const
-  {
-    const Facet mirror = mirror_facet(f);
-
-    f.first->set_facet_surface_center(f.second, p);
-    mirror.first->set_facet_surface_center(mirror.second, p);
-
-    f.first->set_facet_surface_center_index(f.second,index);
-    mirror.first->set_facet_surface_center_index(mirror.second,index);
-  }
-
   /// Returns facet surface center of `f`.
-  Bare_point get_facet_surface_center(const Facet& f) const
+  decltype(auto) get_facet_surface_center(const Facet& f) const
   {
-    return f.first->get_facet_surface_center(f.second);
+    return r_c3t3_.surface_center(f.first, f.second);
   }
 
   /// Returns index of surface center of facet `f`.
   Index get_facet_surface_center_index(const Facet& f) const
   {
-    return f.first->get_facet_surface_center_index(f.second);
+    return r_c3t3_.surface_center_index(f.first, f.second);
   }
 
   /// Sets `f` to surface facets, with index `index`.
   void set_facet_on_surface(const Facet& f,
-                            const Surface_patch_index& index)
+                            const Surface_patch_index& surface_index,
+                            const Index& center_index,
+                            const Bare_point& center)
   {
-    r_c3t3_.add_to_complex(f, index);
+    r_c3t3_.add_to_complex(f, surface_index);
+
+    const Facet mirror = mirror_facet(f);
+
+    // a little awkward: these are performed after add_to_complex() because otherwise
+    // the surface index is set up, and add_to_complex() will do nothing...
+    r_c3t3_.set_surface_info(f, {surface_index, center_index, center});
+    r_c3t3_.set_surface_info(mirror, {surface_index, center_index, center});
   }
 
   /// Returns index of facet `f`.
@@ -622,11 +613,11 @@ protected:
   void treat_new_facet(Facet& facet);
 
   /**
-   * Computes simultaneously `is_facet_on_surface` and `facet_surface_center`.
-   * @param facet The input facet
-   * @return `true` if `facet` is on surface, `false` otherwise
+   * checks whether the facet is on the surface or not, and if it is, computes
+   * the surface patch index, the surface center, and the surface center index.
    */
-  void compute_facet_properties(const Facet& facet, Facet_properties& fp,
+  void compute_facet_properties(const Facet& facet,
+                                Facet_properties& fp,
                                 bool force_exact = false ) const;
 
 protected:
@@ -834,7 +825,7 @@ public:
 
   int number_of_bad_elements_impl();
 
-  Bare_point circumcenter_impl(const Facet& facet) const
+  decltype(auto) circumcenter_impl(const Facet& facet) const
   {
     return get_facet_surface_center(facet);
   }
@@ -1083,7 +1074,7 @@ Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,B_,C_>::
 number_of_bad_elements_impl()
 {
   typedef typename MD::Subdomain_index        Subdomain_index;
-  typedef std::optional<Subdomain_index>    Subdomain;
+  typedef std::optional<Subdomain_index>      Subdomain;
   typedef typename Tr::Finite_facets_iterator Finite_facet_iterator;
 
   int count = 0, count_num_bad_surface_facets = 0;
@@ -1136,7 +1127,7 @@ number_of_bad_elements_impl()
             const Facet f1(c, i);
             if (this->is_facet_on_surface(f1))
             {
-              std::cerr << "*** f1 is " << (this->r_criteria_(this->r_tr_, f1) ? "bad" : "good") << std::endl;
+              std::cerr << "*** f1 is " << (this->r_criteria_(this->r_c3t3_, f1) ? "bad" : "good") << std::endl;
 
 #ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
               c->mark = i;
@@ -1154,7 +1145,7 @@ number_of_bad_elements_impl()
             const Facet f2(c, i);
             if (this->is_facet_on_surface(f2))
             {
-              std::cerr << "*** f2 is " << (this->r_criteria_(this->r_tr_, f2) ? "bad" : "good") << std::endl;
+              std::cerr << "*** f2 is " << (this->r_criteria_(this->r_c3t3_, f2) ? "bad" : "good") << std::endl;
 
 #ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
               mc->mark = i;
@@ -1195,10 +1186,9 @@ number_of_bad_elements_impl()
       //const Bare_point& surface_center = std::get<2>(*properties);
 
       // Facet is on surface: set facet properties
-      //set_facet_surface_center(facet, surface_center, surface_center_index);
-      //set_facet_on_surface(facet, surface_index);
+      // set_facet_on_surface(facet, surface_index, surface_center_index, surface_center);
 
-      const typename Rf_base::Is_facet_bad is_facet_bad = this->r_criteria_(this->r_tr_, facet);
+      const typename Rf_base::Is_facet_bad is_facet_bad = this->r_criteria_(this->r_c3t3_, facet);
       if ( is_facet_bad )
       {
         ++count;
@@ -1375,11 +1365,9 @@ conflicts_zone_impl(const Weighted_point& point
       this->compute_facet_properties(facet, properties, /*force_exact=*/true);
       if ( properties )
       {
-        const auto& [surface_index, surface_center_index, surface_center] = *properties;
-
         // Facet is on surface: set facet properties
-        this->set_facet_surface_center(facet, surface_center, surface_center_index);
-        this->set_facet_on_surface(facet, surface_index);
+        const auto& [surface_index, surface_center_index, surface_center] = *properties;
+        this->set_facet_on_surface(facet, surface_index, surface_center_index, surface_center);
       }
       else
       {
@@ -1435,11 +1423,9 @@ conflicts_zone_impl(const Weighted_point& point
       this->compute_facet_properties(facet, properties, /*force_exact=*/true);
       if ( properties )
       {
-        const auto& [surface_index, surface_center_index, surface_center] = *properties;
-
         // Facet is on surface: set facet properties
-        this->set_facet_surface_center(facet, surface_center, surface_center_index);
-        this->set_facet_on_surface(facet, surface_index);
+        const auto& [surface_index, surface_center_index, surface_center] = *properties;
+        this->set_facet_on_surface(facet, surface_index, surface_center_index, surface_center);
       }
       else
       {
@@ -1601,14 +1587,12 @@ treat_new_facet(Facet& facet)
   compute_facet_properties(facet, properties);
   if ( properties )
   {
-    const auto& [surface_index, surface_center_index, surface_center] = *properties;
-
     // Facet is on surface: set facet properties
-    set_facet_surface_center(facet, surface_center, surface_center_index);
-    set_facet_on_surface(facet, surface_index);
+    const auto& [surface_index, surface_center_index, surface_center] = *properties;
+    set_facet_on_surface(facet, surface_index, surface_center_index, surface_center);
 
     // Insert facet into refinement queue if needed
-    const Is_facet_bad is_facet_bad = r_criteria_(r_tr_, facet);
+    const Is_facet_bad is_facet_bad = r_criteria_(r_c3t3_, facet);
 
     if ( is_facet_bad )
     {
@@ -1886,8 +1870,6 @@ before_insertion_handle_facet_in_conflict_zone(Facet& facet,
   return ( (facet == source_facet) || (other_side == source_facet) );
 }
 
-
-
 template<class Tr, class Cr, class MD, class C3T3_, class Ct, class C_>
 void
 Refine_facets_3_base<Tr,Cr,MD,C3T3_,Ct,C_>::
@@ -1904,11 +1886,8 @@ after_insertion_handle_incident_facet(Facet& facet)
   treat_new_facet(facet);
 }
 
-
-}  // end namespace Mesh_3
-
-
-}  // end namespace CGAL
+} // namespace Mesh_3
+} // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 

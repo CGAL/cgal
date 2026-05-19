@@ -96,14 +96,15 @@ provides bounds for the size and approximation criteria.
 \cgalModels{MeshEdgeCriteria_3}
 
 \sa `MeshCriteriaWithFeatures_3`
-\sa `CGAL::Mesh_criteria_3<Tr>`
+\sa `CGAL::Mesh_criteria_3`
 \sa `MeshDomainField_3`
 */
-template < typename Tr >
+template < typename C3T3 >
 class Mesh_edge_criteria_3
 {
 private:
   typedef Mesh_edge_criteria_3 Self;
+  typedef typename C3T3::Triangulation Tr;
   typedef typename Tr::Geom_traits GT;
 
 public:

@@ -2506,7 +2506,7 @@ void dump_cells_with_small_dihedral_angle(const Tr& tr,
 
   for (Cell_handle c : tr.finite_cell_handles())
   {
-    if (c->subdomain_index() != Subdomain_index() && get(cell_select, c))
+    if (!(c->subdomain_index() == Subdomain_index()) && get(cell_select, c))
     {
       double dh = min_dihedral_angle(tr, c);
       if (dh < angle_bound)

@@ -41,7 +41,7 @@
 #endif
 #include <CGAL/Mesh_3/Protect_edges_sizing_field.h>
 #include <CGAL/SMDS_3/utilities.h>
-#include <CGAL/Mesh_3/Triangulation_helpers.h>
+#include <CGAL/Periodic_3_mesh_3/Triangulation_helpers.h>
 #if CGAL_MESH_3_PROTECTION_DEBUG
 #  include <CGAL/Mesh_3/Dump_c3t3.h>
 #endif
@@ -89,6 +89,8 @@ class Protect_edges_sizing_field
 
 public:
   typedef typename C3T3::Triangulation        Tr;
+  typedef CGAL::Mesh_3::Triangulation_helpers<Tr> Th;
+
   typedef typename Tr::Bare_point             Bare_point;
   typedef typename Tr::Weighted_point         Weighted_point;
   typedef typename Weighted_point::Weight     Weight;
@@ -398,7 +400,7 @@ private:
   /// Computes the Euclidean distance between the bare points `p` and `q`.
   FT compute_distance(const Bare_point& p, const Bare_point& q) const
   {
-    // No need to call min_squared_distance() because 'p' and 'q' have been
+    // No need to call Th::min_squared_distance() because 'p' and 'q' have been
     // built to have proper respective positions in space
     return CGAL::sqrt(geom_traits().
                         compute_squared_distance_3_object()(p,q));
@@ -418,7 +420,7 @@ private:
     const Weighted_point& wpa = point(va);
     const Weighted_point& wpb = point(vb);
 
-    return CGAL::sqrt(tr().min_squared_distance(cp(wpa), cp(wpb)));
+    return CGAL::sqrt(Th().min_squared_distance(tr(), cp(wpa), cp(wpb)));
   }
 
   /// Returns the radius of the ball of vertex `v`.
@@ -583,9 +585,6 @@ Protect_edges_sizing_field(C3T3& c3t3, const MD& domain,
   , nonlinear_growth_of_balls(false)
   , vertex_handle_to_full_space_position()
 {
-#ifndef CGAL_MESH_3_NO_PROTECTION_NON_LINEAR
-  set_nonlinear_growth_of_balls();
-#endif
 }
 
 
@@ -691,7 +690,7 @@ insert_in_correspondence_map(const Vertex_handle v,
                              const Curve_index_container& curve_indices,
                              typename Curve_index_container::const_iterator* /*sfinae*/)
 {
-  CGAL_precondition(cp(point(v)) == tr().canonicalize_point(p));
+  CGAL_precondition(cp(point(v)) == Th().canonicalize_point(tr(), p));
 
   typename Curve_index_container::const_iterator cicit = curve_indices.begin(),
                                                  ciend = curve_indices.end();
@@ -1345,7 +1344,7 @@ try_to_move_close_dummy_vertex(Vertex_handle& protection_vertex,
 
   const Weighted_point& pv_wp = point(protection_vertex);
   const Weighted_point& dv_wp = point(dummy_vertex);
-  const Weighted_point canonical_dv_wp = tr().get_closest_point(pv_wp, dv_wp);
+  const Weighted_point canonical_dv_wp = Th().get_closest_point(tr(), pv_wp, dv_wp);
   CGAL_precondition(pv_wp != canonical_dv_wp);
 
   Vector_3 dir(cp(pv_wp), cp(canonical_dv_wp));
@@ -1412,7 +1411,7 @@ insert_corners()
 
   for ( const auto& [_,p] : corners )
   {
-    Dt_Vertex_handle dtvh = dt.insert(tr().canonicalize_point(p));
+    Dt_Vertex_handle dtvh = dt.insert(Th().canonicalize_point(tr(), p));
     CGAL_assertion(dtvh != Dt_Vertex_handle());
     dt_point_vh_map[p] = dtvh; // note that p is not canonicalized here (there's no point to)
   }
@@ -1685,7 +1684,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
   FT sq_d;
   std::tie(nearest_vh, sq_d) = tr().nearest_power_vertex_with_sq_distance(p, ch);
   CGAL_assertion(nearest_vh != Vertex_handle());
-  CGAL_assertion(tr().point(nearest_vh) != cwp(tr().canonicalize_point(p)));
+  CGAL_assertion(point(nearest_vh) != cwp(Th().canonicalize_point(tr(), p)));
 
 #if CGAL_MESH_3_PROTECTION_DEBUG & 16
   std::cerr << "Nearest power vertex of (" << p << ") is "
@@ -1759,7 +1758,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
       bool is_v_dummy_vertex = is_dummy_vertex(v);
 #endif
 
-      const FT sq_d = tr().min_squared_distance(p, cp(point(v)));
+      const FT sq_d = Th().min_squared_distance(tr(), p, cp(point(v)));
 
       if(minimal_weight_ != Weight() && sq_d < minimal_weight_)
       {
@@ -2433,7 +2432,7 @@ do_balls_intersect(const Vertex_handle& va, const Vertex_handle& vb) const
   const Weighted_point& wpb = point(vb);
   CGAL_precondition(va != vb && wpa != wpb);
 
-  return (tr().min_squared_distance(cp(wpa), cp(wpb)) <=
+  return (Th().min_squared_distance(tr(), cp(wpa), cp(wpb)) <=
             CGAL::square(CGAL::sqrt(cw(wpa)) + CGAL::sqrt(cw(wpa))));
 }
 

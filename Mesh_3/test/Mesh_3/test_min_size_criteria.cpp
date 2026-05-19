@@ -36,12 +36,13 @@ public:
       CGAL::Kernel_traits<Mesh_domain>::Kernel,
       Concurrency_tag>::type;
     using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<Tr>;
+    using Th = CGAL::Mesh_3::Triangulation_helpers<Tr>;
 
     using GT             = typename Tr::Geom_traits;
     using FT             = typename Tr::Geom_traits::FT;
     using Bare_point     = typename Tr::Bare_point;
 
-    using Mesh_criteria  = CGAL::Mesh_criteria_3<Tr>;
+    using Mesh_criteria  = CGAL::Mesh_criteria_3<C3t3>;
     using Facet_criteria = typename Mesh_criteria::Facet_criteria;
     using Cell_criteria  = typename Mesh_criteria::Cell_criteria;
 
@@ -79,6 +80,7 @@ public:
                                         CGAL::parameters::no_perturb());
 
     const Tr& tr = c3t3.triangulation();
+
     typename GT::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
     typename GT::Compute_squared_radius_3 sq_radius = tr.geom_traits().compute_squared_radius_3_object();
 
@@ -88,9 +90,9 @@ public:
     for (auto f : c3t3.facets_in_complex())
     {
       const Bare_point p1 = cp(tr.point(f.first, (f.second + 1) & 3));
-      const Bare_point& ball_center = f.first->get_facet_surface_center(f.second);
+      const Bare_point& ball_center = c3t3.surface_center(f);
 
-      const FT sqr = tr.min_squared_distance(p1, ball_center);
+      const FT sqr = Th().min_squared_distance(tr, p1, ball_center);
       max_sq_facet_radius = (std::max)(max_sq_facet_radius, sqr);
     }
 
@@ -105,7 +107,7 @@ public:
       max_sq_cell_radius = (std::max)(max_sq_cell_radius, sqr);
     }
 
-    const std::size_t nbv = c3t3.triangulation().number_of_vertices();
+    const std::size_t nbv = tr.number_of_vertices();
     std::cout << "C3t3 initial = " << nbv << std::endl;
 
     //new criteria with really small facet_size and cell_size
@@ -123,7 +125,7 @@ public:
                         CGAL::parameters::no_perturb(),
                         CGAL::parameters::no_exude());
 
-    const std::size_t nbv2 = c3t3.triangulation().number_of_vertices();
+    const std::size_t nbv2 = tr.number_of_vertices();
     std::cout << "C3t3 after refinement = " << nbv2 << std::endl;
 
     assert(nbv == nbv2);

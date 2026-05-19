@@ -49,17 +49,18 @@ namespace CGAL {
   \sa `MeshFacetCriteria_3`
   \sa `MeshDomainField_3`
   \sa `CGAL::Mesh_facet_topology`
-  \sa `CGAL::Mesh_criteria_3<Tr>`
+  \sa `CGAL::Mesh_criteria_3`
   \sa `CGAL::make_mesh_3()`
 
 */
-template<typename Tr
+template<typename C3T3
 #ifndef DOXYGEN_RUNNING
-         ,typename Visitor_ = Mesh_3::Facet_criterion_visitor_with_radius_lower_bound<Tr>
+         ,typename Visitor_ = Mesh_3::Facet_criterion_visitor_with_radius_lower_bound<C3T3>
 #endif
          >
 class Mesh_facet_criteria_3
 {
+  typedef typename C3T3::Triangulation Tr;
 public:
 
   /// \name Types
@@ -76,14 +77,14 @@ public:
   typedef typename Visitor::Facet_quality Facet_quality;
   typedef typename Visitor::Is_facet_bad  Is_facet_bad;
 
-  typedef Mesh_3::Abstract_criterion<Tr,Visitor> Abstract_criterion;
+  typedef Mesh_3::Abstract_criterion<C3T3, Visitor> Abstract_criterion;
 private:
-  typedef Mesh_3::Criteria<Tr,Visitor> Criteria;
+  typedef Mesh_3::Criteria<C3T3, Visitor> Criteria;
 
   typedef typename Tr::Facet Facet;
 
 
-  typedef Mesh_facet_criteria_3<Tr> Self;
+  typedef Mesh_facet_criteria_3<C3T3> Self;
 
 public:
   typedef CGAL::Tag_true Has_manifold_criterion;
@@ -162,12 +163,12 @@ public:
    /**
    * @brief returns whether the facet `facet` is bad or not.
    *
-   * @param tr the triangulation within which `facet` lives
+   * @param c3t3 the mesh complex within which `facet` lives
    * @param facet the facet
    */
-  Is_facet_bad operator()(const Tr& tr, const Facet& facet) const
+  Is_facet_bad operator()(const C3T3& c3t3, const Facet& facet) const
   {
-    return criteria_(tr, facet);
+    return criteria_(c3t3, facet);
   }
 
   void add(Abstract_criterion* criterion)
@@ -193,41 +194,41 @@ public:
 private:
   void init_aspect(const FT& angle_bound)
   {
-    typedef Mesh_3::Aspect_ratio_criterion<Tr,Visitor> Aspect_criterion;
+    typedef Mesh_3::Aspect_ratio_criterion<C3T3, Visitor> Aspect_criterion;
     criteria_.add(new Aspect_criterion(angle_bound));
   }
 
   void init_radius(const FT& radius_bound, Tag_false)
   {
     if(FT(0) == radius_bound) return;
-    typedef Mesh_3::Uniform_size_criterion<Tr,Visitor> Uniform_size_criterion;
+    typedef Mesh_3::Uniform_size_criterion<C3T3, Visitor> Uniform_size_criterion;
     criteria_.add(new Uniform_size_criterion(radius_bound));
   }
 
   template <typename Sizing_field>
   void init_radius(const Sizing_field& radius_bound, Tag_true)
   {
-    typedef Mesh_3::Variable_size_criterion<Tr,Visitor,Sizing_field> Variable_size_criterion;
+    typedef Mesh_3::Variable_size_criterion<C3T3, Visitor,Sizing_field> Variable_size_criterion;
     criteria_.add(new Variable_size_criterion(radius_bound));
   }
 
   void init_min_radius(const FT& min_radius_bound)
   {
-    typedef Mesh_3::Uniform_size_criterion<Tr, Visitor> Uniform_size_criterion;
+    typedef Mesh_3::Uniform_size_criterion<C3T3, Visitor> Uniform_size_criterion;
     criteria_.add(new Uniform_size_criterion(min_radius_bound, true/*lower bound*/));
   }
 
   void init_distance(const FT& distance_bound, Tag_false)
   {
     if(FT(0) == distance_bound) return;
-    typedef Mesh_3::Uniform_curvature_size_criterion<Tr,Visitor> Criterion;
+    typedef Mesh_3::Uniform_curvature_size_criterion<C3T3, Visitor> Criterion;
     criteria_.add(new Criterion(distance_bound));
   }
 
   template <typename Sizing_field>
   void init_distance(const Sizing_field& distance_bound, Tag_true)
   {
-    typedef Mesh_3::Variable_curvature_size_criterion<Tr,
+    typedef Mesh_3::Variable_curvature_size_criterion<C3T3,
                                                       Visitor,
                                                       Sizing_field> Criterion;
     criteria_.add(new Criterion(distance_bound));
@@ -240,7 +241,7 @@ private:
     {
       case FACET_VERTICES_ON_SURFACE:
       {
-        typedef Mesh_3::Facet_on_surface_criterion<Tr,Visitor> On_surface_criterion;
+        typedef Mesh_3::Facet_on_surface_criterion<C3T3, Visitor> On_surface_criterion;
         criteria_.add(new On_surface_criterion());
         break;
       }
@@ -249,7 +250,7 @@ private:
       case FACET_VERTICES_ON_SAME_SURFACE_PATCH_WITH_ADJACENCY_CHECK:
         // @TODO: Implement adjacency check !
       {
-        typedef Mesh_3::Facet_on_same_surface_criterion<Tr,Visitor> Same_surface_criterion;
+        typedef Mesh_3::Facet_on_same_surface_criterion<C3T3, Visitor> Same_surface_criterion;
         criteria_.add(new Same_surface_criterion());
         break;
       }

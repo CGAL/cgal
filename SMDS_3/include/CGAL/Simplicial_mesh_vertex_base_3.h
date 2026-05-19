@@ -133,8 +133,6 @@ public:
 public:
   Simplicial_mesh_vertex_base_3()
     : Vb()
-    , number_of_incident_facets_(0)
-    , number_of_components_(0)
     , index_()
     , dimension_(-1)
     , cache_validity(false)
@@ -185,19 +183,19 @@ public:
     cache_validity = false;
   }
 
-  void set_c2t3_cache(const std::size_t i, const std::size_t j)
+  void set_c2t3_cache(const int i, const int j)
   {
     number_of_incident_facets_ = i;
     number_of_components_ = j;
     cache_validity = true;
   }
 
-  std::size_t cached_number_of_incident_facets() const
+  int cached_number_of_incident_facets() const
   {
     return number_of_incident_facets_;
   }
 
-  std::size_t cached_number_of_components() const
+  int cached_number_of_components() const
   {
     return number_of_components_;
   }
@@ -210,10 +208,10 @@ public:
       Get_io_signature<int>()() + "+" +
       Get_io_signature<Index>()();
   }
-private:
 
-  std::size_t number_of_incident_facets_;
-  std::size_t number_of_components_; // number of components in the adjacency
+private:
+  int number_of_incident_facets_ = 0;
+  int number_of_components_ = 0; // number of components in the adjacency
   // graph of incident facets (in complex)
 
 

@@ -152,6 +152,8 @@ class Protect_edges_sizing_field
 
 public:
   typedef typename C3T3::Triangulation        Tr;
+  typedef Mesh_3::Triangulation_helpers<Tr>   Th;
+
   typedef typename Tr::Bare_point             Bare_point;
   typedef typename Tr::Weighted_point         Weighted_point;
   typedef typename Weighted_point::Weight     Weight;
@@ -860,9 +862,6 @@ Protect_edges_sizing_field(C3T3& c3t3, const MD& domain,
   , stop_ptr_(stop_ptr)
 #endif
 {
-#ifndef CGAL_MESH_3_NO_PROTECTION_NON_LINEAR
-  set_nonlinear_growth_of_balls();
-#endif
 }
 
 
@@ -1187,7 +1186,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
         if(!vertices_in_conflict_zone_set.insert(v).second)
           continue;
 
-        const FT sq_d = tr().min_squared_distance(p, cp(point(v)));
+        const FT sq_d = Th().min_squared_distance(tr(), p, cp(point(v)));
 
         if(use_minimal_size() && sq_d < minimal_weight()) {
           insert_a_special_ball = true;
@@ -1242,7 +1241,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
     for (Vertex_handle it : tr().finite_vertex_handles())
     {
       const Weighted_point& it_wp = point(it);
-      FT sq_d = tr().min_squared_distance(p, cp(it_wp));
+      FT sq_d = Th().min_squared_distance(tr(), p, cp(it_wp));
       if ( cwsr(it_wp, - sq_d) == CGAL::SMALLER )
       {
         bool special_ball = false;
@@ -1270,7 +1269,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
     for (Vertex_handle it : tr().finite_vertex_handles())
     {
       const Weighted_point& it_wp = point(it);
-      FT sq_d = tr().min_squared_distance(p, cp(it_wp));
+      FT sq_d = Th().min_squared_distance(tr(), p, cp(it_wp));
       if(sq_d < min_sq_d) {
         min_sq_d = sq_d;
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1

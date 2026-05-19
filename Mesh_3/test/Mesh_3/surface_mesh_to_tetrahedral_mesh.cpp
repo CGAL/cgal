@@ -56,7 +56,7 @@ using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<
 
 // Criteria
 using Features_sizing_field = CGAL::Sizing_field_with_aabb_tree<K, Mesh_domain>;
-using Mesh_criteria = CGAL::Mesh_criteria_3<Tr>;
+using Mesh_criteria = CGAL::Mesh_criteria_3<C3t3>;
 
 std::atomic<bool> stop_meshing{false};
 void signal_handler(int signal)

@@ -54,7 +54,7 @@ struct Polyhedral_complex_tester : public Tester<K>
       Tr,
       typename Mesh_domain::Corner_index,
       typename Mesh_domain::Curve_index> C3t3;
-    typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
+    typedef CGAL::Mesh_criteria_3<C3t3> Mesh_criteria;
 
     //Input
     const std::size_t nb_patches = sizeof(filenames) / sizeof(const char*);

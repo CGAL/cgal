@@ -30,17 +30,16 @@
 #include <cfloat> // for the macro DBL_MAX
 
 namespace CGAL {
-
-
 namespace internal {
 
 // Class Mesh_criteria_3_impl
-template < typename Tr,
+template < typename C3T3,
            typename EdgeCriteria,
            typename FacetCriteria,
            typename CellCriteria >
 class Mesh_criteria_3_impl
 {
+  typedef typename C3T3::Triangulation Tr;
   typedef typename Tr::Geom_traits::FT FT;
 
 public:
@@ -146,17 +145,17 @@ and `C3T3::Triangulation` its nested triangulation type.
 
 \code{.cpp}
 
-// Create a Mesh_criteria_3<Tr> object with all cell and facet parameters set
-Mesh_criteria_3<Tr> criteria (parameters::facet_angle(30).
-                              parameters::facet_size(1).
-                              parameters::facet_distance(0.1).
-                              parameters::cell_radius_edge_ratio(2).
-                              parameters::cell_size(1.5));
+// Create a Mesh_criteria_3 object with all cell and facet parameters set
+Mesh_criteria_3<C3t3> criteria (parameters::facet_angle(30).
+                                parameters::facet_size(1).
+                                parameters::facet_distance(0.1).
+                                parameters::cell_radius_edge_ratio(2).
+                                parameters::cell_size(1.5));
 
-// Create a Mesh_criteria_3<Tr> object with size ignored (note that the order changed)
-Mesh_criteria_3<Tr> criteria (parameters::cell_radius_edge_ratio(2).
-                              parameters::facet_angle(30).
-                              parameters::facet_distance(0.1));
+// Create a Mesh_criteria_3<C3t3> object with size ignored (note that the order changed)
+Mesh_criteria_3<C3t3> criteria (parameters::cell_radius_edge_ratio(2).
+                                parameters::facet_angle(30).
+                                parameters::facet_distance(0.1));
 
 \endcode
 
@@ -172,19 +171,19 @@ Mesh_criteria_3<Tr> criteria (parameters::cell_radius_edge_ratio(2).
 \sa `CGAL::Mesh_facet_topology`
 
 */
-template <typename Tr,
-          typename EdgeCriteria = Mesh_edge_criteria_3<Tr>,
-          typename FacetCriteria = Mesh_facet_criteria_3<Tr>,
-          typename CellCriteria = Mesh_cell_criteria_3<Tr> >
+template <typename C3T3,
+          typename EdgeCriteria = Mesh_edge_criteria_3<C3T3>,
+          typename FacetCriteria = Mesh_facet_criteria_3<C3T3>,
+          typename CellCriteria = Mesh_cell_criteria_3<C3T3> >
 class Mesh_criteria_3
 #ifndef DOXYGEN_RUNNING
-  : public internal::Mesh_criteria_3_impl< Tr,
+  : public internal::Mesh_criteria_3_impl< C3T3,
                                            EdgeCriteria,
                                            FacetCriteria,
                                            CellCriteria >
 #endif
 {
-  typedef internal::Mesh_criteria_3_impl< Tr,
+  typedef internal::Mesh_criteria_3_impl< C3T3,
                                           EdgeCriteria,
                                           FacetCriteria,
                                           CellCriteria>   Base;
@@ -197,18 +196,18 @@ public:
 /*!
 The criteria for edges.
 */
-typedef Mesh_edge_criteria_3<Tr> Edge_criteria;
+typedef Mesh_edge_criteria_3<C3T3> Edge_criteria;
 
 /*!
 The criteria for facets.
 */
-typedef Mesh_facet_criteria_3<Tr> Facet_criteria;
+typedef Mesh_facet_criteria_3<C3T3> Facet_criteria;
 
 /*!
 The
 criteria for cells.
 */
-typedef Mesh_cell_criteria_3<Tr> Cell_criteria;
+typedef Mesh_cell_criteria_3<C3T3> Cell_criteria;
 
 /// @}
 #else

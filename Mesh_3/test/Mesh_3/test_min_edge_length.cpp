@@ -25,7 +25,7 @@ struct Tester
   typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 
   // Criteria
-  typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
+  typedef CGAL::Mesh_criteria_3<C3t3> Mesh_criteria;
 
   void operator()(const std::string fname, const std::string out_fname)
   {
