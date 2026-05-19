@@ -82,7 +82,7 @@ void hilbert_sort_polygon_soup(PointRange& points,
   using Polygon = typename PolygonRange::value_type;
   using Kernel = typename Kernel_traits<Point_3>::type;
   using Point_traits_3 =  Spatial_sort_traits_adapter_3<Kernel,
-                                                        Pointer_property_map<Point_3>::type >;
+                                                        typename Pointer_property_map<Point_3>::type >;
   using Polygon_traits_3 = Spatial_sort_traits_adapter_3<Kernel,
   Point_of_polygon_property_map<Polygon, PointRange>>;
 
