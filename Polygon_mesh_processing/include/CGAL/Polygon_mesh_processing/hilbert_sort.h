@@ -76,7 +76,7 @@ void permute_in_place(RandomAccessContainer& a, Permutation& permutation) {
  */
 template <typename PointRange, typename PolygonRange>
 void hilbert_sort_polygon_soup(PointRange& points,
-		                           PolygonRange& polygons)
+                               PolygonRange& polygons)
 {
   using Point_3 = typename PointRange::value_type;
   using Polygon = typename PolygonRange::value_type;
