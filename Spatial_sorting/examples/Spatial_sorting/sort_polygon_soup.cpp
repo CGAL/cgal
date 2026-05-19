@@ -2,13 +2,13 @@
 #include <CGAL/IO/polygon_soup_io.h>
 #include <CGAL/hilbert_sort.h>
 #include <CGAL/Spatial_sort_traits_adapter_3.h>
-#include <CGAL/boost/iterator/counting_iterator.hpp>
 #include <CGAL/property_map.h>
 #include <vector>
 #include <array>
 #include <utility>
 #include <string>
 #include <filesystem>
+#include <numeric>
 
 using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Point_3 = Kernel::Point_3;
@@ -74,9 +74,7 @@ int main(int argc, char* argv[])
   std::vector<std::size_t> indices;
   indices.reserve(points.size());
 
-  std::copy(boost::counting_iterator<std::size_t>(0),
-            boost::counting_iterator<std::size_t>(points.size()),
-            std::back_inserter(indices));
+  std::iota(indices.begin(), indices.end(), 0);
 
   CGAL::hilbert_sort( indices.begin(),
                       indices.end(),
