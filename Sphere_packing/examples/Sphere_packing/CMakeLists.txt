@@ -10,6 +10,13 @@ if (CUDAToolkit_FOUND)
   enable_language(CUDA)
 endif()
 
+include(CMakePrintHelpers)
+
+cmake_print_properties(
+  TARGETS CUDA::cudart
+  PROPERTIES LOCATION INTERFACE_INCLUDE_DIRECTORIES LINK_LIBRARIES
+)
+
 # Allow the user to specify the path to MyLib's include directory
 set(ProtoSphere_INCLUDE_DIR "" CACHE PATH "Path to ProtoSphere include directory")
 
@@ -17,6 +24,6 @@ set(ProtoSphere_INCLUDE_DIR "" CACHE PATH "Path to ProtoSphere include directory
 set(ProtoSphere_LIBRARY "" CACHE FILEPATH "Path to ProtoSphere library file (e.g. libmylib.a or mylib.lib)")
 
 create_single_source_cgal_program("sphere_packing.cpp")
-target_link_libraries(sphere_packing PRIVATE ${ProtoSphere_LIBRARY})
-target_include_directories(sphere_packing PRIVATE ${ProtoSphere_INCLUDE_DIR})
+target_link_libraries(sphere_packing PRIVATE ${ProtoSphere_LIBRARY} CUDA::cudart)
+target_include_directories(sphere_packing PRIVATE ${ProtoSphere_INCLUDE_DIR} ${CUDAToolkit_INCLUDE_DIRS})
 
