@@ -62,6 +62,16 @@ container_human_readable_status_cmd() {
 }
 declare -xf container_human_readable_status_cmd
 
+dnf_check_updates_cmd() {
+        if command -v dnf >/dev/null; then
+                dnf --disable-plugin='*' check-upgrade --security --quiet
+        else
+                echo "dnf is not available"
+                return 1
+        fi
+}
+declare -xf dnf_check_updates_cmd
+
 simplify_date_cmd() {
         date=$1
         pattern=' \+[0-9]{4} [+]?[A-Z0-9]{3,}$'
@@ -130,6 +140,15 @@ machine_list_cgal_test_container() {
         printf '```\n'
 }
 
+machine_check_updates() {
+        remote_script=$(
+                display_all_exported_cmd_functions
+                printf "export PS4='+ %s >> %s'\n" "$1" "$PS4"
+                echo dnf_check_updates_cmd
+        )
+        ssh "$1" bash -$- -s <<<"$remote_script"
+}
+
 help() {
         cat <<HEREDOC
 Usage: $0 [OPTION]
@@ -149,6 +168,7 @@ Information Options:
   --images      list the images used on each machine
   --containers  list the containers running on each machine
   --info        list the OS and the container implementation on each machine
+  --updates     list the available security updates on each machine
 
 If no information option is given, the script will list all the information.
 HEREDOC
@@ -235,6 +255,7 @@ for arg in "$@"; do
         --plain) set_pretty_csv_to_cat ;;
         --images) add_to_what images ;;
         --containers) add_to_what containers ;;
+        --updates) add_to_what updates ;;
         --info) add_to_what info ;;
         -h | --help)
                 help >&2
@@ -247,7 +268,7 @@ for arg in "$@"; do
 done
 
 if [ ${#WHAT[@]} -eq 0 ]; then
-        add_to_what info images containers
+        add_to_what info images containers updates
 fi
 
 STDOUT_IS_A_TTY=
@@ -316,5 +337,9 @@ for machine in "${TEST_MACHINES[@]}"; do
         if what_contains containers; then
                 printf '\nCGAL test containers:\n'
                 machine_list_cgal_test_container "$HOST" "$USER" | pretty_csv
+        fi
+        if what_contains updates; then
+                printf '\nAvailable security updates:\n'
+                machine_check_updates "$HOST" "$USER"
         fi
 done
