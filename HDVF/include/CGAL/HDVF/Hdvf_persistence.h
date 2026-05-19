@@ -69,14 +69,14 @@ namespace Homological_discrete_vector_field {
 
  \cgalModels{HDVF}
 
- \tparam ChainComplex a model of the `AbstractChainComplex` concept, providing the type of abstract chain complex used (the underlying ring of coefficients must be a model of `Field`).
+ \tparam ChainComplex a model of the `AbstractChainComplex` concept, providing the type of abstract chain complex used (the underlying ring of coefficients must be a model of `Field`). The sparse matrix provided by `ChainComplex` must be an instance of the `Sub_sparse_matrix` template.
  \tparam Degree a scalar data type used for the degrees of the filtration (a model of `RealEmbeddable` concept).
  \tparam Filtration_ a model of the `Filtration` concept, providing the filtration used to compute persistence.
 
  */
 
 template<typename ChainComplex, typename Degree, typename Filtration_ >
-class Hdvf_persistence : public Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sub_sparse_matrix>
+class Hdvf_persistence : public Hdvf_core<ChainComplex>
 {
 public:
     /*! \brief Chain complex type */
@@ -84,6 +84,11 @@ public:
 
     /*! \brief Type of coefficients used to compute homology. */
     typedef typename Chain_complex::Coefficient_ring Coefficient_ring;
+
+    /*! Type of parent HDVF class (`Hdvf_core` with appropriate template parameters)
+     * The `SparseMatrix` model is set to `Sub_sparse_matrix` to activate (co)homology computation over a subcomplex.
+     */
+    typedef Hdvf_core<ChainComplex> Base ;
 
     /*! \brief Structure storing (full) persistent interval data:
      * - `time_birth`, `time_death`: persistent interval filtration indices
@@ -142,27 +147,22 @@ public:
     /*!
      Type of column-major chains
      */
-    typedef CGAL::OSM::Sparse_chain<Coefficient_ring, CGAL::OSM::COLUMN> Column_chain;
+    typedef typename Base::Column_chain Column_chain;
 
     /*!
      Type of row-major chains
      */
-    typedef CGAL::OSM::Sparse_chain<Coefficient_ring, CGAL::OSM::ROW> Row_chain;
+    typedef typename Base::Row_chain Row_chain;
 
     /*!
      Type of column-major sparse matrices
      */
-    typedef CGAL::OSM::Sub_sparse_matrix<Coefficient_ring, CGAL::OSM::COLUMN> Column_matrix;
+    typedef typename Base::Column_matrix Column_matrix;
 
     /*!
      Type of row-major sparse matrices
      */
-    typedef CGAL::OSM::Sub_sparse_matrix<Coefficient_ring, CGAL::OSM::ROW> Row_matrix;
-
-    /*! Type of parent HDVF class (`Hdvf_core` with appropriate template parameters)
-     * The `SparseMatrix` model is set to `Sub_sparse_matrix` to activate (co)homology computation over a subcomplex.
-     */
-    typedef Hdvf_core<ChainComplex, CGAL::OSM::Sparse_chain, CGAL::OSM::Sub_sparse_matrix> Base ;
+    typedef typename Base::Row_matrix Row_matrix;
 
     /*! Type of filtrations used to compute persistence.
      */
@@ -749,7 +749,7 @@ private:
 
 
 template<typename ChainComplex, typename Degree, typename Filtration_>
-Hdvf_persistence<ChainComplex, Degree, Filtration_>::Hdvf_persistence(const ChainComplex& K, const Filtration_& f, int hdvf_opt, bool with_export, int dimension_restriction) : Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sub_sparse_matrix>(K,hdvf_opt,dimension_restriction), _f(f), _with_export(with_export), _t(0) {
+Hdvf_persistence<ChainComplex, Degree, Filtration_>::Hdvf_persistence(const ChainComplex& K, const Filtration_& f, int hdvf_opt, bool with_export, int dimension_restriction) : Hdvf_core<ChainComplex>(K,hdvf_opt,dimension_restriction), _f(f), _with_export(with_export), _t(0) {
     // Check if the complex is non empty
     size_t acc(K.number_of_cells(0));
     for (int q=1; q<K.dimension(); ++q)
@@ -1020,7 +1020,7 @@ std::istream& Hdvf_persistence<ChainComplex, Degree, Filtration_>::read_hdvf_red
     }
 
     // Call parent method
-    Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sub_sparse_matrix>::read_hdvf_reduction_main(in);
+    Hdvf_core<ChainComplex>::read_hdvf_reduction_main(in);
     // Read persistence data
     // ---- with export
     in >> _with_export;

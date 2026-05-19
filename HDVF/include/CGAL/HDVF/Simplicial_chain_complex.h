@@ -39,14 +39,17 @@ template<typename CoefficientRing, typename Traits> class Duality_simplicial_com
  \tparam Traits a geometric traits class model of the `HDVFTraits` concept.
  */
 
-template<typename CoefficientRing, typename Traits>
-class Simplicial_chain_complex : public Abstract_simplicial_chain_complex<CoefficientRing> {
+template<typename CoefficientRing, typename Traits, typename SparseMatrixStruct = OSM::Sparse_matrix<OSM::Sparse_chain> >
+class Simplicial_chain_complex : public Abstract_simplicial_chain_complex<CoefficientRing, SparseMatrixStruct> {
 public:
 
     /** \brief Type of vertex coordinates */
     typedef typename Traits::Point Point ;
     /** \brief Type of vtk export vertex coordinates */
     typedef typename Traits::Point3 Point3 ;
+
+    /** \brief Type of parent `Abstract_simplicial_chain_complex` class. */
+    typedef Abstract_simplicial_chain_complex<CoefficientRing, SparseMatrixStruct> Base;
 
 protected:
     /** \brief Vector of vertex coordinates */
@@ -71,7 +74,7 @@ public:
 
      * \exception Invalid_geometry If the `Mesh_object_io` mesh does not provide the right number of vertices coordinates, throws a `%std::runtime_error` exception.
      */
-    Simplicial_chain_complex(const Mesh_object_io<Traits>& mesh) : Abstract_simplicial_chain_complex<CoefficientRing>(mesh), _coords(mesh.nodes()) {
+    Simplicial_chain_complex(const Mesh_object_io<Traits>& mesh) : Abstract_simplicial_chain_complex<CoefficientRing, SparseMatrixStruct>(mesh), _coords(mesh.nodes()) {
         if (_coords.size() != this->number_of_cells(0))
         {
             std::cerr << "Simplicial_chain_complex. Error, wrong number of points provided.\n";
@@ -84,7 +87,7 @@ public:
      */
     Simplicial_chain_complex& operator= (const Simplicial_chain_complex& complex)
     {
-        this->Abstract_simplicial_chain_complex<CoefficientRing>::operator=(complex) ;
+        this->Abstract_simplicial_chain_complex<CoefficientRing, SparseMatrixStruct>::operator=(complex) ;
         _coords = complex._coords ;
         return *this ;
     }
@@ -127,7 +130,7 @@ public:
     template <typename LabelType = int>
     static void chain_complex_to_vtk(const Simplicial_chain_complex &K, const std::string &filename, const std::vector<std::vector<LabelType> > *labels=NULL, std::string label_type_name = "int")
     {
-        typedef Simplicial_chain_complex<CoefficientRing,Traits> ChainComplex;
+        typedef Simplicial_chain_complex<CoefficientRing,Traits,SparseMatrixStruct> ChainComplex;
         bool with_scalars = (labels != NULL) ;
 
         // Load out file...
@@ -147,7 +150,7 @@ public:
         // Points
         size_t nnodes = K._coords.size() ;
         out << "POINTS " << nnodes << " double" << std::endl ;
-        const std::vector<ChainComplex::Point>& coords(K.points()) ;
+        const std::vector<typename ChainComplex::Point>& coords(K.points()) ;
         for (size_t n = 0; n < nnodes; ++n)
         {
             Point3 p(Traits::to_point3(coords.at(n))) ;
@@ -227,26 +230,26 @@ public:
      * \param q Dimension of the cells of the chain.
      * \param cellId If cellID is not -1 (that is MAX_SIZE_T), labels are exported to distinguish cells of the chain (label 2) from cellId cell (label 0).
      */
-    static void chain_to_vtk(const Simplicial_chain_complex &K, const std::string &filename, const OSM::Sparse_chain<CoefficientRing, OSM::COLUMN>& chain, int q, size_t cellId = -1) ;
+    static void chain_to_vtk(const Simplicial_chain_complex &K, const std::string &filename, const typename Base::template Sparse_chain_type<CoefficientRing, OSM::COLUMN>& chain, int q, size_t cellId = -1) ;
 };
 
 // Initialization of static VTK_simptypes
-template <typename CoefficientRing, typename Traits> const
-std::vector<int> Simplicial_chain_complex<CoefficientRing,Traits>::VTK_simptypes({1, 3, 5, 10});
+template <typename CoefficientRing, typename Traits, typename SparseMatrixStruct> const
+std::vector<int> Simplicial_chain_complex<CoefficientRing,Traits,SparseMatrixStruct>::VTK_simptypes({1, 3, 5, 10});
 
 
 // chain_to_vtk
-template <typename CoefficientRing, typename Traits>
-void Simplicial_chain_complex<CoefficientRing,Traits>::chain_to_vtk(const Simplicial_chain_complex &K, const std::string &filename, const OSM::Sparse_chain<CoefficientRing, OSM::COLUMN>& chain, int q, size_t cellId)
+template <typename CoefficientRing, typename Traits, typename SparseMatrixStruct>
+void Simplicial_chain_complex<CoefficientRing,Traits,SparseMatrixStruct>::chain_to_vtk(const Simplicial_chain_complex &K, const std::string &filename, const typename Simplicial_chain_complex<CoefficientRing,Traits,SparseMatrixStruct>::Base:: template Sparse_chain_type<CoefficientRing, OSM::COLUMN>& chain, int q, size_t cellId)
 {
-    typedef Simplicial_chain_complex<CoefficientRing,Traits> ChainComplex ;
+    typedef Simplicial_chain_complex<CoefficientRing,Traits,SparseMatrixStruct> ChainComplex ;
     if (K._coords.size() != K.number_of_cells(0))
     {
         std::cerr << "SimpComplex_chain_to_vtk. Error, wrong number of points provided.\n";
         throw std::runtime_error("Geometry of points invalid.");
     }
 
-    bool with_scalars = (cellId != -1) ;
+    bool with_scalars = (cellId < K.number_of_cells(q)) ;
 
     // Load out file...
     std::ofstream out ( filename, std::ios::out | std::ios::trunc);
@@ -362,8 +365,8 @@ namespace IO {
  *
  * \exception File_not_found If the file `filename` cannot be created and opened, throw a `%std::runtime_error` exception.
  */
-template <typename CoefficientRing, typename Traits>
-void write_VTK(const CGAL::Homological_discrete_vector_field::Simplicial_chain_complex<CoefficientRing, Traits> &K, const std::string &filename, const OSM::Sparse_chain<CoefficientRing, OSM::COLUMN>& chain, int q, size_t cellId) {
+template <typename CoefficientRing, typename Traits, typename SparseMatrixStruct = OSM::Sparse_matrix<OSM::Sparse_chain>>
+void write_VTK(const CGAL::Homological_discrete_vector_field::Simplicial_chain_complex<CoefficientRing, Traits,SparseMatrixStruct> &K, const std::string &filename, const typename Homological_discrete_vector_field::Simplicial_chain_complex<CoefficientRing,Traits,SparseMatrixStruct>::Base:: template Sparse_chain_type<CoefficientRing, OSM::COLUMN>& chain, int q, size_t cellId) {
     CGAL::Homological_discrete_vector_field::Simplicial_chain_complex<CoefficientRing,Traits>::chain_to_vtk(K, filename, chain, q, cellId);
 }
 
@@ -383,9 +386,9 @@ void write_VTK(const CGAL::Homological_discrete_vector_field::Simplicial_chain_c
  *
  * \exception File_not_found If the file `filename` cannot be created and opened, throw a `%std::runtime_error` exception.
  */
-template <typename CoefficientRing, typename Traits, typename LabelType = int>
-static void write_VTK(const CGAL::Homological_discrete_vector_field::Simplicial_chain_complex<CoefficientRing, Traits> &K, const std::string &filename, const std::vector<std::vector<LabelType> > *labels=NULL, std::string label_type_name = "int") {
-    CGAL::Homological_discrete_vector_field::Simplicial_chain_complex<CoefficientRing, Traits>chain_complex_to_vtk(K, filename, labels, label_type_name);
+template <typename CoefficientRing, typename Traits, typename SparseMatrixStruct = OSM::Sparse_matrix<OSM::Sparse_chain>, typename LabelType = int>
+static void write_VTK(const CGAL::Homological_discrete_vector_field::Simplicial_chain_complex<CoefficientRing, Traits,SparseMatrixStruct> &K, const std::string &filename, const std::vector<std::vector<LabelType> > *labels=NULL, std::string label_type_name = "int") {
+    CGAL::Homological_discrete_vector_field::Simplicial_chain_complex<CoefficientRing, Traits,SparseMatrixStruct>chain_complex_to_vtk(K, filename, labels, label_type_name);
 }
 
 } /* end namespace IO */

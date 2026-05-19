@@ -734,7 +734,8 @@ int main()
         std::cout << lu;
 
         std::cout << "PAQ = LU:" << std::endl;
-        SM_col prod(lu.matrix_P() * A * lu.matrix_Q()), prod2(lu.matrix_L() * lu.matrix_U());
+        SM_col prod(lu.matrix_P() * A * lu.matrix_Q());
+        SM_col prod2(lu.matrix_L() * lu.matrix_U());
         std::cout << prod << "---" << std::endl << prod2 << std::endl;
 
         std::cout << "equal: " << (prod == prod2) << std::endl;

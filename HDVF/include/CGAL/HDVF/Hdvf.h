@@ -82,7 +82,7 @@ namespace Homological_discrete_vector_field {
  */
 
 template<typename ChainComplex>
-class Hdvf : public Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sparse_matrix> {
+class Hdvf : public Hdvf_core<ChainComplex> {
 public:
     /*! \brief Chain complex type */
     typedef ChainComplex Chain_complex;
@@ -93,7 +93,7 @@ public:
     /*!
      Type of parent Hdvf_core class.
      */
-    typedef Hdvf_core<Chain_complex, OSM::Sparse_chain, OSM::Sparse_matrix> Base ;
+    typedef Hdvf_core<Chain_complex> Base ;
 
     // Inherited types
     using Column_chain = typename Base::Column_chain;
@@ -115,7 +115,7 @@ public:
     /*
      * \brief Copy constructor.
      */
-    Hdvf(const Hdvf& hdvf) : Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sparse_matrix>(hdvf) { }
+    Hdvf(const Hdvf& hdvf) : Hdvf_core<ChainComplex>(hdvf) { }
 
     /**
      * \brief Affectation operator.
@@ -139,7 +139,7 @@ public:
      *
      *  \exception If the flags provided are incoherent (or do not define an HDVF), raises a `%std::invalid_argument`.
      */
-    Hdvf(const ChainComplex& K, const std::vector<std::vector<PSC_flag> >& flags, bool with_build_reduction = false, int hdvf_opt = OPT_FULL, int dimension_restriction = -1) : Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sparse_matrix>(K, flags, with_build_reduction, hdvf_opt, dimension_restriction) {}
+    Hdvf(const ChainComplex& K, const std::vector<std::vector<PSC_flag> >& flags, bool with_build_reduction = false, int hdvf_opt = OPT_FULL, int dimension_restriction = -1) : Hdvf_core<ChainComplex>(K, flags, with_build_reduction, hdvf_opt, dimension_restriction) {}
 
     /*
      * \brief Destructor. */
@@ -739,7 +739,7 @@ protected:
 
 // Constructor for the Hdvf class
 template<typename ChainComplex>
-Hdvf<ChainComplex>::Hdvf(const ChainComplex& K, int hdvf_opt, int dimension_restriction) : Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sparse_matrix>(K, hdvf_opt, dimension_restriction) {
+Hdvf<ChainComplex>::Hdvf(const ChainComplex& K, int hdvf_opt, int dimension_restriction) : Hdvf_core<ChainComplex>(K, hdvf_opt, dimension_restriction) {
     // Check if the complex is non empty
     size_t acc(K.number_of_cells(0));
     for (int q=1; q<K.dimension(); ++q)

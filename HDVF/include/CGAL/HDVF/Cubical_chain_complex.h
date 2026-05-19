@@ -79,11 +79,22 @@ namespace Homological_discrete_vector_field {
  */
 
 
-template<typename CoefficientRing, typename Traits>
+template<typename CoefficientRing, typename Traits, typename SparseMatrixStruct = OSM::Sparse_matrix<OSM::Sparse_chain>>
 class Cubical_chain_complex {
 public:
     /*! \brief Type of coefficients used to compute homology. */
     typedef CoefficientRing Coefficient_ring;
+
+    /** \brief Type of sparse matrix structure used to compute homology. */
+    typedef SparseMatrixStruct Sparse_matrix_struct;
+
+    /** \brief Type of sparse chain used to compute homology. */
+    template <typename _CT, int _SF>
+    using Sparse_chain_type = typename SparseMatrixStruct::template Sparse_chain_type<_CT, _SF>;
+
+    /** \brief Type of sparse matrix used to compute homology. */
+    template <typename _CT, int _SF>
+    using Sparse_matrix_type = typename SparseMatrixStruct::template Sparse_matrix_type<_CT, _SF>;
 
     /** \brief Type of vertex coordinates */
     typedef typename Traits::Point Point ;
@@ -122,11 +133,11 @@ public:
     //    friend Duality_cubical_complex_tools<CoefficientRing> ;
 
     /** \brief Type of column-major chains */
-    typedef CGAL::OSM::Sparse_chain<CoefficientRing, CGAL::OSM::COLUMN> Column_chain;
+    typedef Sparse_chain_type<Coefficient_ring, CGAL::OSM::COLUMN> Column_chain;
     /** \brief Type of row-major chains */
-    typedef CGAL::OSM::Sparse_chain<CoefficientRing, CGAL::OSM::ROW> Row_chain ;
+    typedef Sparse_chain_type<CoefficientRing, CGAL::OSM::ROW> Row_chain ;
     /** \brief Type of column-major sparse matrices */
-    typedef CGAL::OSM::Sparse_matrix<CoefficientRing, CGAL::OSM::COLUMN> Column_matrix;
+    typedef Sparse_matrix_type<CoefficientRing, CGAL::OSM::COLUMN> Column_matrix;
 
     /** \brief Checks if `q` belongs to the range of dimensions of cells in the complex. */
     bool is_valid_cell_dimension(int q) const { return ((q>=0) && (q<=_dim)); }
@@ -577,7 +588,7 @@ public:
      * \param q Dimension of the cells of the chain.
      * \param cellId If different from MAX_SIZE_T, labels are exported to distinguish cells of the chain (label 2) from cellId cell (label 0).
      */
-    static void chain_to_vtk(const Cubical_chain_complex<CoefficientRing, Traits> &K, const std::string &filename, const OSM::Sparse_chain<CoefficientRing, OSM::COLUMN>& chain, int q, size_t cellId = -1) ;
+    static void chain_to_vtk(const Cubical_chain_complex<CoefficientRing, Traits, SparseMatrixStruct> &K, const std::string &filename, const typename Cubical_chain_complex<CoefficientRing,Traits,SparseMatrixStruct>::template Sparse_chain_type<CoefficientRing, OSM::COLUMN>& chain, int q, size_t cellId = -1) ;
 
 protected:
     // Methods to access data
@@ -739,16 +750,16 @@ protected:
 };
 
 // Initialization of static VTK_cubtypes
-template <typename CoefficientRing, typename Traits> const
-std::vector<int> Cubical_chain_complex<CoefficientRing, Traits>::VTK_cubtypes({1, 3, 8, 11}) ;
+template <typename CoefficientRing, typename Traits, typename SparseMatrixStruct> const
+std::vector<int> Cubical_chain_complex<CoefficientRing, Traits, SparseMatrixStruct>::VTK_cubtypes({1, 3, 8, 11}) ;
 
 // Initialization of _id_generator
-template <typename CoefficientRing,  typename Traits>
-size_t Cubical_chain_complex<CoefficientRing, Traits>::_id_generator(0) ;
+template <typename CoefficientRing,  typename Traits, typename SparseMatrixStruct>
+size_t Cubical_chain_complex<CoefficientRing, Traits, SparseMatrixStruct>::_id_generator(0) ;
 
 // Constructor implementation
-template<typename CoefficientRing, typename Traits>
-Cubical_chain_complex<CoefficientRing, Traits>::Cubical_chain_complex(const Cub_object_io<Traits>& cub, Cubical_complex_primal_dual type) : _dim(cub.dimension()), _size_bb(_dim+1), _P(_dim+1,1), _base2bool(_dim+1), _bool2base(_dim+1), _complex_id(_id_generator++) {
+template<typename CoefficientRing, typename Traits, typename SparseMatrixStruct>
+Cubical_chain_complex<CoefficientRing, Traits, SparseMatrixStruct>::Cubical_chain_complex(const Cub_object_io<Traits>& cub, Cubical_complex_primal_dual type) : _dim(cub.dimension()), _size_bb(_dim+1), _P(_dim+1,1), _base2bool(_dim+1), _bool2base(_dim+1), _complex_id(_id_generator++) {
     // Initialize _size_bb and _P
     if (type==PRIMAL)
         _size_bb = cub.N();
@@ -780,8 +791,8 @@ Cubical_chain_complex<CoefficientRing, Traits>::Cubical_chain_complex(const Cub_
 }
 
 // initialize_cells implementation
-template<typename CoefficientRing, typename Traits>
-void Cubical_chain_complex<CoefficientRing, Traits>::initialize_cells(const Cub_object_io<Traits>& cub, Cubical_complex_primal_dual type) {
+template<typename CoefficientRing, typename Traits, typename SparseMatrixStruct>
+void Cubical_chain_complex<CoefficientRing, Traits, SparseMatrixStruct>::initialize_cells(const Cub_object_io<Traits>& cub, Cubical_complex_primal_dual type) {
     if (type == PRIMAL) {
         for (size_t i=0; i<cub.number_of_cubs(); ++i) {
             const size_t id(cell_to_bindex(cub.cub(i))) ;
@@ -842,8 +853,8 @@ void Cubical_chain_complex<CoefficientRing, Traits>::initialize_cells(const Cub_
 
 
 // insert_cell implementation
-template<typename CoefficientRing, typename Traits>
-void Cubical_chain_complex<CoefficientRing, Traits>::insert_cell(size_t cell) {
+template<typename CoefficientRing, typename Traits, typename SparseMatrixStruct>
+void Cubical_chain_complex<CoefficientRing, Traits, SparseMatrixStruct>::insert_cell(size_t cell) {
     CGAL_precondition(is_valid_cell(cell));
 
     // verify if the cell has already been visited
@@ -872,8 +883,8 @@ void Cubical_chain_complex<CoefficientRing, Traits>::insert_cell(size_t cell) {
 
 
 // compute_d implementation
-template<typename CoefficientRing, typename Traits>
-void Cubical_chain_complex<CoefficientRing, Traits>::compute_d(int dim)  {
+template<typename CoefficientRing, typename Traits, typename SparseMatrixStruct>
+void Cubical_chain_complex<CoefficientRing, Traits, SparseMatrixStruct>::compute_d(int dim)  {
     size_t nb_lignes = (dim == 0) ? 0 : number_of_cells(dim - 1);
 
     _d[dim] = Column_matrix(nb_lignes, number_of_cells(dim));
@@ -889,8 +900,8 @@ void Cubical_chain_complex<CoefficientRing, Traits>::compute_d(int dim)  {
 }
 
 // dimension implementation
-template<typename CoefficientRing, typename Traits>
-int Cubical_chain_complex<CoefficientRing,Traits>::dimension(const std::vector<size_t>& cell) const {
+template<typename CoefficientRing, typename Traits, typename SparseMatrixStruct>
+int Cubical_chain_complex<CoefficientRing,Traits,SparseMatrixStruct>::dimension(const std::vector<size_t>& cell) const {
     CGAL_precondition(is_valid_cell(cell));
 
     int dimension = 0;
@@ -903,8 +914,8 @@ int Cubical_chain_complex<CoefficientRing,Traits>::dimension(const std::vector<s
 }
 
 // compute_boundaries implementation
-template<typename CoefficientRing, typename Traits>
-std::vector<size_t> Cubical_chain_complex<CoefficientRing, Traits>::compute_boundaries(size_t idcell) const {
+template<typename CoefficientRing, typename Traits, typename SparseMatrixStruct>
+std::vector<size_t> Cubical_chain_complex<CoefficientRing, Traits,SparseMatrixStruct>::compute_boundaries(size_t idcell) const {
     std::vector<size_t> boundaries;
     std::vector<size_t> c = bindex_to_cell(idcell);
 
@@ -928,9 +939,9 @@ std::vector<size_t> Cubical_chain_complex<CoefficientRing, Traits>::compute_boun
  *           -> If a cell Id is provided scalars are exported (0 for the given cellId / 2 for other cells)
  */
 
-template <typename CoefficientRing, typename Traits>
-void Cubical_chain_complex<CoefficientRing,Traits>::chain_to_vtk(const Cubical_chain_complex<CoefficientRing, Traits> &K, const std::string &filename, const OSM::Sparse_chain<CoefficientRing, OSM::COLUMN>& chain, int q, size_t cellId) {
-    bool with_scalars = (cellId != -1) ;
+template <typename CoefficientRing, typename Traits, typename SparseMatrixStruct>
+void Cubical_chain_complex<CoefficientRing,Traits,SparseMatrixStruct>::chain_to_vtk(const Cubical_chain_complex<CoefficientRing, Traits,SparseMatrixStruct> &K, const std::string &filename, const typename Cubical_chain_complex<CoefficientRing,Traits,SparseMatrixStruct>::template Sparse_chain_type<CoefficientRing, OSM::COLUMN>& chain, int q, size_t cellId) {
+    bool with_scalars = (cellId < K.number_of_cells(q)) ;
 
     // Load out file...
     std::ofstream out ( filename, std::ios::out | std::ios::trunc);
@@ -1049,9 +1060,9 @@ namespace IO {
  *
  * \exception File_not_found If the file `filename` cannot be created and opened, throw a `%std::runtime_error` exception.
  */
-template <typename CoefficientRing, typename Traits>
-void write_VTK(const CGAL::Homological_discrete_vector_field::Cubical_chain_complex<CoefficientRing, Traits> &K, const std::string &filename, const OSM::Sparse_chain<CoefficientRing, OSM::COLUMN>& chain, int q, size_t cellId) {
-    CGAL::Homological_discrete_vector_field::Cubical_chain_complex<CoefficientRing,Traits>::chain_to_vtk(K, filename, chain, q, cellId);
+template <typename CoefficientRing, typename Traits, typename SparseMatrixStruct = OSM::Sparse_matrix<OSM::Sparse_chain>>
+void write_VTK(const CGAL::Homological_discrete_vector_field::Cubical_chain_complex<CoefficientRing, Traits, SparseMatrixStruct> &K, const std::string &filename, const typename Homological_discrete_vector_field::Cubical_chain_complex<CoefficientRing,Traits,SparseMatrixStruct>:: template Sparse_chain_type<CoefficientRing, OSM::COLUMN>& chain, int q, size_t cellId) {
+    CGAL::Homological_discrete_vector_field::Cubical_chain_complex<CoefficientRing,Traits,SparseMatrixStruct>::chain_to_vtk(K, filename, chain, q, cellId);
 }
 
 /**
@@ -1070,9 +1081,9 @@ void write_VTK(const CGAL::Homological_discrete_vector_field::Cubical_chain_comp
  *
  * \exception File_not_found If the file `filename` cannot be created and opened, throw a `%std::runtime_error` exception.
  */
-template <typename CoefficientRing, typename Traits, typename LabelType = int>
-static void write_VTK(const CGAL::Homological_discrete_vector_field::Cubical_chain_complex<CoefficientRing, Traits> &K, const std::string &filename, const std::vector<std::vector<LabelType> > *labels=NULL, std::string label_type_name = "int") {
-    CGAL::Homological_discrete_vector_field::Cubical_chain_complex<CoefficientRing, Traits>chain_complex_to_vtk(K, filename, labels, label_type_name);
+template <typename CoefficientRing, typename Traits, typename SparseMatrixStruct = OSM::Sparse_matrix<OSM::Sparse_chain>, typename LabelType = int>
+static void write_VTK(const CGAL::Homological_discrete_vector_field::Cubical_chain_complex<CoefficientRing, Traits, SparseMatrixStruct> &K, const std::string &filename, const std::vector<std::vector<LabelType> > *labels=NULL, std::string label_type_name = "int") {
+    CGAL::Homological_discrete_vector_field::Cubical_chain_complex<CoefficientRing, Traits, SparseMatrixStruct>chain_complex_to_vtk(K, filename, labels, label_type_name);
 }
 
 } /* end namespace IO */

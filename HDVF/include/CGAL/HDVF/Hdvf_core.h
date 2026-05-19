@@ -90,11 +90,10 @@ inline std::ostream& operator<<(std::ostream &out, const std::vector<Cell_pair>&
  \cgalModels{HDVF}
 
  \tparam ChainComplex a model of the `AbstractChainComplex` concept, providing the type of abstract chain complex used.
- \tparam SparseMatrixType a model of the `SparseMatrix` concept (by default, `OSM::Sparse_matrix`), providing the type of sparse matrices used.
  */
 
 
-template<typename ChainComplex, typename SparseMatrixType = OSM::Sparse_matrix<OSM::Sparse_chain>>
+template<typename ChainComplex>
 class Hdvf_core {
 public:
     /*! \brief Type of the underlying chain complex. */
@@ -103,32 +102,35 @@ public:
     /*! \brief Type of coefficients used to compute homology. */
     typedef typename ChainComplex::Coefficient_ring Coefficient_ring;
 
+    /*! \brief Type of sparse matrix structure used to compute homology. */
+    typedef typename ChainComplex::Sparse_matrix_struct Sparse_matrix_struct;
+
 /** \brief Template type of underlying sparse chains. */
     template <typename CR, int SF>
-    using Sparse_chain_base = SparseMatrixType::template Sparse_chain_type<CR, SF>;
+    using Sparse_chain_base = typename Sparse_matrix_struct::template Sparse_chain_type<CR, SF>;
 
     /** \brief Template type of underlying sparse matrices. */
     template <typename CR, int SF>
-    using Sparse_matrix_base = SparseMatrixType::template Sparse_matrix_type<CR, SF>;
+    using Sparse_matrix_base = typename Sparse_matrix_struct::template Sparse_matrix_type<CR, SF>;
     /*!
      Type of column-major chains
      */
-    typedef SparseMatrixType::template Sparse_chain_type<Coefficient_ring, CGAL::OSM::COLUMN>::template Sparse_chain_type<Coefficient_ring, CGAL::OSM::COLUMN> Column_chain;
+    typedef Sparse_chain_base<Coefficient_ring, CGAL::OSM::COLUMN> Column_chain;
 
     /*!
      Type of row-major chains
      */
-    typedef SparseMatrixType::template Sparse_chain_type<Coefficient_ring, CGAL::OSM::ROW>::template Sparse_chain_type<Coefficient_ring, CGAL::OSM::ROW> Row_chain;
+    typedef Sparse_chain_base<Coefficient_ring, CGAL::OSM::ROW> Row_chain;
 
     /*!
      Type of column-major sparse matrices
      */
-    typedef SparseMatrixType::template Sparse_matrix_type<Coefficient_ring, CGAL::OSM::COLUMN> Column_matrix;
+    typedef Sparse_matrix_base<Coefficient_ring, CGAL::OSM::COLUMN> Column_matrix;
 
     /*!
      Type of row-major sparse matrices
      */
-    typedef SparseMatrixType::template Sparse_matrix_type<Coefficient_ring, CGAL::OSM::ROW> Row_matrix;
+    typedef Sparse_matrix_base<Coefficient_ring, CGAL::OSM::ROW> Row_matrix;
 
 protected:
     /* \brief Flags of the cells.
@@ -404,7 +406,7 @@ protected:
 
     // Fill a submatrix of M
     template <typename MatrixType>
-    void fill_sub(MatrixType& M, const Sub_matrix_data<MatrixType>& sub, int q_row, int q_col) {
+    void fill_sub(MatrixType& M, const Sub_matrix_data<MatrixType>& sub) {
         using Matrix_type = MatrixType;
 
         // visit the sub matrix and copy corresponding coefficients (to the right indices)
@@ -458,7 +460,7 @@ protected:
         // Compute H_q
         for (int q=1; q<=_K.dimension(); ++q) {
             Sub_matrix_data<Column_matrix> sub(extract_sub(_K.boundary_matrix(q), q-1, q, PRIMARY, SECONDARY));
-            OSM::Full_lu<Column_matrix> lu(sub.matrix);
+            OSM::Full_lu<Coefficient_ring, OSM::COLUMN, Sparse_matrix_struct> lu(sub.matrix);
             lu.compute();
             Sub_matrix_data<Column_matrix> sub2;
             sub2.matrix = lu.inverse();
@@ -466,7 +468,7 @@ protected:
             sub2.basis_cols = sub.basis_rows;
             sub2.map_rows = sub.map_cols;
             sub2.map_cols = sub.map_rows;
-            fill_sub(_H_col.at(q-1), sub2, q, q-1);
+            fill_sub(_H_col.at(q-1), sub2);
         }
         // Compute F_q
         for (int q=0; q<_K.dimension(); ++q) {
@@ -1039,14 +1041,14 @@ protected:
      * \result Returns a copy of `chain` where only coefficients of cells of PSC_flag `flag` are kept (all other coefficients are cancelled).
      */
     template<int StorageFormat>
-    ChainType<Coefficient_ring, StorageFormat> projection(const ChainType<Coefficient_ring, StorageFormat>& chain, PSC_flag flag, int q) const {
+    Sparse_chain_base<Coefficient_ring, StorageFormat> projection(const Sparse_chain_base<Coefficient_ring, StorageFormat>& chain, PSC_flag flag, int q) const {
         // Create a new chain to store the result
         // Better to initialize 'result' directly with the correct size and iterate over it
-        ChainType<Coefficient_ring, StorageFormat> result(chain);
+        Sparse_chain_base<Coefficient_ring, StorageFormat> result(chain);
 
         // Iterate over each element of the chain
         std::vector<size_t> tmp ;
-        for (typename ChainType<Coefficient_ring, StorageFormat>::const_iterator it = result.cbegin(); it != result.cend(); ++it) {
+        for (typename Sparse_chain_base<Coefficient_ring, StorageFormat>::const_iterator it = result.cbegin(); it != result.cend(); ++it) {
             size_t cell_index = it->first;
             Coefficient_ring value = it->second;
 
@@ -1151,8 +1153,8 @@ private:
 
 
 // Constructor for the Hdvf_core class
-template<typename ChainComplex, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::Hdvf_core(const ChainComplex& K, int hdvf_opt, int dimension_restriction) : _K(K), _hdvf_opt(hdvf_opt), _dimension_restriction(dimension_restriction) {
+template<typename ChainComplex>
+Hdvf_core<ChainComplex>::Hdvf_core(const ChainComplex& K, int hdvf_opt, int dimension_restriction) : _K(K), _hdvf_opt(hdvf_opt), _dimension_restriction(dimension_restriction) {
     // Check if the complex is non empty
     size_t acc(K.number_of_cells(0));
     for (int q=1; q<K.dimension(); ++q)
@@ -1185,8 +1187,8 @@ Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::Hdvf_core(const ChainCompl
 }
 
 // Method to print the matrices
-template<typename ChainComplex, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-std::ostream& Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::write_matrices(std::ostream& out, int dimension_restriction) const {
+template<typename ChainComplex>
+std::ostream& Hdvf_core<ChainComplex>::write_matrices(std::ostream& out, int dimension_restriction) const {
     if (dimension_restriction == -2)
         dimension_restriction = _dimension_restriction;
 
@@ -1224,8 +1226,8 @@ std::ostream& Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::write_matric
 // Second version: returns all the pairs containing sigma
 
 // find a valid Cell_pair for A in dimension q
-template<typename ChainComplex, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-Cell_pair Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::find_pair_A(int q, bool &found) const {
+template<typename ChainComplex>
+Cell_pair Hdvf_core<ChainComplex>::find_pair_A(int q, bool &found) const {
     found = false;
     Cell_pair p;
 
@@ -1253,8 +1255,8 @@ Cell_pair Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::find_pair_A(int 
 }
 
 // find a valid Cell_pair containing tau for A in dimension q
-template<typename ChainComplex, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-Cell_pair Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::find_pair_A(int q, bool &found, size_t gamma) const {
+template<typename ChainComplex>
+Cell_pair Hdvf_core<ChainComplex>::find_pair_A(int q, bool &found, size_t gamma) const {
     found = false;
     Cell_pair p ;
 
@@ -1292,8 +1294,8 @@ Cell_pair Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::find_pair_A(int 
 }
 
 // find all the valid PairCells for A in dimension q
-template<typename ChainComplex, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-std::vector<Cell_pair> Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::find_pairs_A(int q, bool &found) const {
+template<typename ChainComplex>
+std::vector<Cell_pair> Hdvf_core<ChainComplex>::find_pairs_A(int q, bool &found) const {
     std::vector<Cell_pair> pairs;
     found = false ;
 
@@ -1324,8 +1326,8 @@ std::vector<Cell_pair> Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::fin
 }
 
 // find all the valid Cell_pair containing gamma for A in dimension q
-template<typename ChainComplex, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-std::vector<Cell_pair> Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::find_pairs_A(int q, bool &found, size_t gamma) const {
+template<typename ChainComplex>
+std::vector<Cell_pair> Hdvf_core<ChainComplex>::find_pairs_A(int q, bool &found, size_t gamma) const {
     found = false;
     std::vector<Cell_pair> pairs;
 
@@ -1369,8 +1371,8 @@ std::vector<Cell_pair> Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::fin
 
 // Method to perform operation A
 // tau1 is in dimension q, tau2 is in dimension q+1
-template<typename ChainComplex, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-void Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::A(size_t tau1, size_t tau2, int q) {
+template<typename ChainComplex>
+void Hdvf_core<ChainComplex>::A(size_t tau1, size_t tau2, int q) {
     //----------------------------------------------- Submatrices of D ----------------------------------------------------
 
     // Output operation details to the console
@@ -1497,8 +1499,8 @@ void Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::A(size_t tau1, size_t
 
 
 // Method to compute a perfect Hdvf_core
-template<typename ChainComplex, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-std::vector<Cell_pair> Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::compute_perfect_hdvf(bool verbose) {
+template<typename ChainComplex>
+std::vector<Cell_pair> Hdvf_core<ChainComplex>::compute_perfect_hdvf(bool verbose) {
     std::vector<Cell_pair> pair_list; // Vector to store the list of pairs
     bool trouve = false; // Flag to indicate whether a pair was found
     int dim = _K.dimension(); // Get the dimension of the complex K
@@ -1554,8 +1556,8 @@ std::vector<Cell_pair> Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::com
 
 // Method to compute a random perfect Hdvf_core
 // Returns a vector of Cell_pair objects representing the pairs found
-template<typename ChainComplex, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-std::vector<Cell_pair> Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::compute_rand_perfect_hdvf(bool verbose) {
+template<typename ChainComplex>
+std::vector<Cell_pair> Hdvf_core<ChainComplex>::compute_rand_perfect_hdvf(bool verbose) {
     std::vector<Cell_pair> pair_list; // Vector to store the list of pairs
     bool trouve = false; // Flag to indicate whether a pair was found
     int dim = _K.dimension(); // Get the dimension of the complex K
@@ -1597,7 +1599,7 @@ std::vector<Cell_pair> Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::com
             // Add one of the pairs (randomly) to the list
             {
                 // Pickup a random cell sigma
-                std::uniform_int_distribution<std::mt19937::result_type> rand_dist(0,pairs.size()-1);
+                std::uniform_int_distribution<unsigned long long> rand_dist(0,pairs.size()-1);
                 size_t i(rand_dist(rng)) ;
                 pair = pairs.at(i) ;
             }
@@ -1620,8 +1622,8 @@ std::vector<Cell_pair> Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::com
 }
 
 // Method to get cells if with a given psc_flags (P,S,C) for each dimension
-template<typename ChainComplex, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-std::vector<std::vector<size_t> > Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::psc_flags (PSC_flag flag) const {
+template<typename ChainComplex>
+std::vector<std::vector<size_t> > Hdvf_core<ChainComplex>::psc_flags (PSC_flag flag) const {
     std::vector<std::vector<size_t> > res(_K.dimension()+1) ;
     for (int q=0; q<=_K.dimension(); ++q) {
         for (size_t i=0; i<_K.number_of_cells(q); ++i) {
@@ -1633,8 +1635,8 @@ std::vector<std::vector<size_t> > Hdvf_core<ChainComplex, ChainType, SparseMatri
 }
 
 // Method to get cells with a given PSC_flag (P,S,C) for a given dimension
-template<typename ChainComplex, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-std::vector<size_t> Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::psc_flags (PSC_flag flag, int q) const {
+template<typename ChainComplex>
+std::vector<size_t> Hdvf_core<ChainComplex>::psc_flags (PSC_flag flag, int q) const {
     std::vector<size_t> res ;
     if ((q>=0) && (q<=_K.dimension())) {
         for (size_t i=0; i<_K.number_of_cells(q); ++i) {
@@ -1646,8 +1648,8 @@ std::vector<size_t> Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::psc_fl
 }
 
 // Method to print the current state of the reduction
-template<typename ChainComplex, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-std::ostream& Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::write_reduction(std::ostream& out, int dimension_restriction) const {
+template<typename ChainComplex>
+std::ostream& Hdvf_core<ChainComplex>::write_reduction(std::ostream& out, int dimension_restriction) const {
     if (dimension_restriction == -2)
         dimension_restriction = _dimension_restriction;
 
@@ -1704,8 +1706,8 @@ std::ostream& Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::write_reduct
 }
 
 // Save HDVF and reduction: save prefix and run main code
-template<typename ChainComplex, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-std::ostream& Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::write_hdvf_reduction(std::ostream& out) const {
+template<typename ChainComplex>
+std::ostream& Hdvf_core<ChainComplex>::write_hdvf_reduction(std::ostream& out) const {
     // HDVF prefix
     // For Hdvf_core:       #HDVF_core
     // For Hdvf_persistence:       #HDVF_persistence
@@ -1715,8 +1717,8 @@ std::ostream& Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::write_hdvf_r
 }
 
 // Save HDVF and reduction main code
-template<typename ChainComplex, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-std::ostream& Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::write_hdvf_reduction_main(std::ostream& out) const {
+template<typename ChainComplex>
+std::ostream& Hdvf_core<ChainComplex>::write_hdvf_reduction_main(std::ostream& out) const {
     // HDVF save type
     // 0: HDVF and reduction
     // 1: HDVF only
@@ -1764,8 +1766,8 @@ std::ostream& Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::write_hdvf_r
 }
 
 // Read HDVF and reduction: check prefix and call main code
-template<typename ChainComplex, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-std::istream& Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::read_hdvf_reduction(std::istream& in_stream) {
+template<typename ChainComplex>
+std::istream& Hdvf_core<ChainComplex>::read_hdvf_reduction(std::istream& in_stream) {
     // Load and check HDVF prefix
     // For Hdvf_core:       #HDVF_core
     // For Hdvf_persistence:       #HDVF_persistence
@@ -1781,8 +1783,8 @@ std::istream& Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::read_hdvf_re
 }
 
 // Read HDVF and reduction main code
-template<typename ChainComplex, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-std::istream& Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::read_hdvf_reduction_main(std::istream& in_stream) {
+template<typename ChainComplex>
+std::istream& Hdvf_core<ChainComplex>::read_hdvf_reduction_main(std::istream& in_stream) {
     // Load and check HDVF save type
     int type ;
     in_stream >> type ;

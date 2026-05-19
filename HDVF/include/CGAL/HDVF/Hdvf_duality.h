@@ -65,13 +65,13 @@ namespace Homological_discrete_vector_field {
 
  \cgalModels{HDVF}
 
- \tparam ChainComplex a model of the `AbstractChainComplex` concept, providing the type of abstract chain complex used.
+ \tparam ChainComplex a model of the `AbstractChainComplex` concept, providing the type of abstract chain complex used. The sparse matrix provided by `ChainComplex` must be an instance of the `Sub_sparse_matrix` template.
 
  [Gonzalez and al. 2025] Gonzalez-Lorenzo, A., Bac, A. & Gazull, YS. A constructive approach of Alexander duality. J Appl. and Comput. Topology 9, 2 (2025).
  */
 
 template<typename ChainComplex>
-class Hdvf_duality : public Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sub_sparse_matrix> {
+class Hdvf_duality : public Hdvf_core<ChainComplex> {
 public:
     /*! \brief Chain complex type.  */
     typedef ChainComplex Chain_complex;
@@ -82,7 +82,7 @@ public:
     /*!
      Type of parent Hdvf_core class.
      */
-    typedef Hdvf_core<ChainComplex, CGAL::OSM::Sparse_chain, CGAL::OSM::Sub_sparse_matrix> Base ;
+    typedef Hdvf_core<ChainComplex> Base ;
 
     // Inherited types
     using Column_chain = typename Base::Column_chain;
@@ -622,7 +622,7 @@ public:
 // Constructor
 template<typename ChainComplex>
 Hdvf_duality<ChainComplex>::Hdvf_duality(const ChainComplex& L, Sub_chain_complex_mask<ChainComplex>& K, int hdvf_opt) :
-Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sub_sparse_matrix>(L,hdvf_opt), _L(L), _KCC(K), _subCC(K) {
+Hdvf_core<ChainComplex>(L,hdvf_opt), _L(L), _KCC(K), _subCC(K) {
     // Check if the complex is non empty
     size_t acc(L.number_of_cells(0));
     for (int q=1; q<L.dimension(); ++q)
@@ -956,7 +956,7 @@ std::istream& Hdvf_duality<ChainComplex>::read_hdvf_reduction(std::istream& in) 
     }
 
     // Call parent method
-    Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sub_sparse_matrix>::read_hdvf_reduction_main(in);
+    Hdvf_core<ChainComplex>::read_hdvf_reduction_main(in);
     // Read duality data
     // ---- _KCC
     // Init bitboards _KCC

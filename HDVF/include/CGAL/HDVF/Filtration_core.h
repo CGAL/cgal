@@ -81,34 +81,45 @@ public:
     } Filtration_iter_value ;
 
 protected:
-    /** \brief Constant reference to the underlying chain complex. */
+    /* \brief Constant reference to the underlying chain complex. */
     const ChainComplex& _K ;
-    /** \brief Vector of cells of the filtration (full ordering of cells). */
+    /* \brief Vector of cells of the filtration (full ordering of cells). */
     std::vector<Cell> _filtration ;
-    /** \brief Vector of degrees of cells along the filtration. */
+    /* \brief Vector of degrees of cells along the filtration. */
     std::vector<Degree> _deg ;
 
-    /** \brief Map from cells to their index in the filtration. */
+    /* \brief Map from cells to their index in the filtration. */
     std::map<Cell,std::size_t> _cell_to_t ;
 
-    /*!
-     Type of column-major sparse matrices
-     */
-    typedef CGAL::OSM::Sparse_matrix<Coefficient_ring,CGAL::OSM::COLUMN> Column_matrix ;
+    /* \brief Type of sparse matrix structure used to compute homology. */
+    typedef typename ChainComplex::Sparse_matrix_struct Sparse_matrix_struct;
 
-    /*!
-     Type of row-major sparse matrices
-     */
-    typedef CGAL::OSM::Sparse_matrix<Coefficient_ring,CGAL::OSM::ROW> Row_matrix ;
-    /*!
+    /* \brief Template type of underlying sparse chains. */
+    template <typename CR, int SF>
+    using Sparse_chain_base = typename Sparse_matrix_struct::template Sparse_chain_type<CR, SF>;
+
+    /* \brief Template type of underlying sparse matrices. */
+    template <typename CR, int SF>
+    using Sparse_matrix_base = typename Sparse_matrix_struct::template Sparse_matrix_type<CR, SF>;
+    /*
      Type of column-major chains
      */
-    typedef CGAL::OSM::Sparse_chain<Coefficient_ring,CGAL::OSM::COLUMN> Column_chain ;
+    typedef Sparse_chain_base<Coefficient_ring, CGAL::OSM::COLUMN> Column_chain;
 
-    /*!
+    /*
      Type of row-major chains
      */
-    typedef CGAL::OSM::Sparse_chain<Coefficient_ring,CGAL::OSM::ROW> Row_chain ;
+    typedef Sparse_chain_base<Coefficient_ring, CGAL::OSM::ROW> Row_chain;
+
+    /*
+     Type of column-major sparse matrices
+     */
+    typedef Sparse_matrix_base<Coefficient_ring, CGAL::OSM::COLUMN> Column_matrix;
+
+    /*
+     Type of row-major sparse matrices
+     */
+    typedef Sparse_matrix_base<Coefficient_ring, CGAL::OSM::ROW> Row_matrix;
 public:
     /*! \brief Constructor of an empty filtration with an underlying chain complex.
      *

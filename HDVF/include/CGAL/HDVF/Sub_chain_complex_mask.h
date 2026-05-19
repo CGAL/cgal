@@ -289,8 +289,8 @@ public:
      *
      * \param matrices A vector of  `OSM::Sub_sparse_matrix` (in each dimension).
      */
-    template <typename CT, int CTF>
-    void screen_matrices(std::vector<OSM::Sub_sparse_matrix<CT, CTF> >& matrices)
+    template <typename CT, int SF, template <typename, int> typename SCT>
+    void screen_matrices(std::vector<OSM::Sub_sparse_matrix_core<CT, SF, SCT> >& matrices)
     {
         for (int q=0; q<=_K.dimension(); ++q)
         {
@@ -306,11 +306,11 @@ public:
      * \param chain The chain restricted.
      * \param q Dimension of the chain.
      */
-    template <typename CT, int CTF>
-    inline void screen_chain(OSM::Sparse_chain<CT, CTF>& chain, int q)
+    template <typename CT, int CTF, template <typename, int> typename SCT>
+    inline void screen_chain(SCT<CT, CTF>& chain, int q)
     {
         std::vector<size_t> indices;
-        for (typename OSM::Sparse_chain<CT, CTF>::iterator it = chain.begin(); it != chain.end(); ++it)
+        for (typename SCT<CT, CTF>::iterator it = chain.begin(); it != chain.end(); ++it)
         {
             if (!get_bit(q, it->first))
                 indices.push_back(it->first);

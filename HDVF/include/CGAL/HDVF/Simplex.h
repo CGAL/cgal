@@ -36,7 +36,7 @@ namespace Homological_discrete_vector_field {
 
 class Simplex {
     // Friend class: Abstract_simplicial_chain_complex
-    template<typename _CoefficientType>
+    template<typename _CoefficientType, typename _SparseMatrixStruct>
     friend class Abstract_simplicial_chain_complex ;
 
 public:

@@ -47,11 +47,22 @@ namespace Homological_discrete_vector_field {
  */
 
 
-template<typename CoefficientRing>
+template<typename CoefficientRing, typename SparseMatrixStruct = OSM::Sparse_matrix<OSM::Sparse_chain> >
 class Abstract_simplicial_chain_complex {
 public:
     /*! \brief Type of coefficients used to compute homology. */
     typedef CoefficientRing Coefficient_ring;
+
+    /** \brief Type of sparse matrix structure used to compute homology. */
+    typedef SparseMatrixStruct Sparse_matrix_struct;
+
+    /** \brief Type of sparse chain used to compute homology. */
+    template <typename _CT, int _SF>
+    using Sparse_chain_type = typename SparseMatrixStruct::template Sparse_chain_type<_CT, _SF>;
+
+    /** \brief Type of sparse matrix used to compute homology. */
+    template <typename _CT, int _SF>
+    using Sparse_matrix_type = typename SparseMatrixStruct::template Sparse_matrix_type<_CT, _SF>;
 
     /**
      * \brief %Default constructor (empty simplicial complex of dimension `q`).
@@ -71,11 +82,11 @@ public:
     Abstract_simplicial_chain_complex(const Mesh_object_io<Traits>& mesh);
 
     /** \brief Type of column-major chains */
-    typedef CGAL::OSM::Sparse_chain<CoefficientRing, CGAL::OSM::COLUMN> Column_chain;
+    typedef Sparse_chain_type<Coefficient_ring, CGAL::OSM::COLUMN> Column_chain;
     /** \brief Type of row-major chains */
-    typedef CGAL::OSM::Sparse_chain<CoefficientRing, CGAL::OSM::ROW> Row_chain ;
+    typedef Sparse_chain_type<Coefficient_ring, CGAL::OSM::ROW> Row_chain ;
     /** \brief Type of column-major sparse matrices */
-    typedef CGAL::OSM::Sparse_matrix<CoefficientRing, CGAL::OSM::COLUMN> Column_matrix;
+    typedef Sparse_matrix_type<Coefficient_ring, CGAL::OSM::COLUMN> Column_matrix;
 
 
     /** \brief Checks if `q` belongs to the range of dimensions of cells in the complex. */
@@ -319,12 +330,12 @@ private:
 };
 
 // Initialization of _id_generator
-template <typename CoefficientRing>
-size_t Abstract_simplicial_chain_complex<CoefficientRing>::_id_generator(0);
+template <typename CoefficientRing, typename SparseMatrixStruct>
+size_t Abstract_simplicial_chain_complex<CoefficientRing, SparseMatrixStruct>::_id_generator(0);
 
 //constructors
-template<typename CoefficientRing>
-Abstract_simplicial_chain_complex<CoefficientRing>::Abstract_simplicial_chain_complex(int q) : _dim(q), _complex_id(_id_generator++) {
+template<typename CoefficientRing, typename SparseMatrixStruct>
+Abstract_simplicial_chain_complex<CoefficientRing, SparseMatrixStruct>::Abstract_simplicial_chain_complex(int q) : _dim(q), _complex_id(_id_generator++) {
     // Initialize vectors of Simplices and cell counts
     _ind2simp.resize(_dim + 1);
     _simp2ind.resize(_dim + 1);
@@ -333,9 +344,9 @@ Abstract_simplicial_chain_complex<CoefficientRing>::Abstract_simplicial_chain_co
     _d.resize(_dim+1);
 }
 
-template<typename CoefficientRing>
+template<typename CoefficientRing, typename SparseMatrixStruct>
 template <typename Traits>
-Abstract_simplicial_chain_complex<CoefficientRing>::Abstract_simplicial_chain_complex(const Mesh_object_io<Traits>& mesh) : _complex_id(_id_generator++) {
+Abstract_simplicial_chain_complex<CoefficientRing, SparseMatrixStruct>::Abstract_simplicial_chain_complex(const Mesh_object_io<Traits>& mesh) : _complex_id(_id_generator++) {
     // Initialize attributes
 
     _dim = std::abs(mesh.dimension());
@@ -357,8 +368,8 @@ Abstract_simplicial_chain_complex<CoefficientRing>::Abstract_simplicial_chain_co
 }
 
 // Recursive insertion method
-template<typename CoefficientRing>
-void Abstract_simplicial_chain_complex<CoefficientRing>::insert_simplex(const Simplex& tau) {
+template<typename CoefficientRing, typename SparseMatrixStruct>
+void Abstract_simplicial_chain_complex<CoefficientRing, SparseMatrixStruct>::insert_simplex(const Simplex& tau) {
     int q = tau.dimension();
 
     // If the simplex is empty
@@ -380,8 +391,8 @@ void Abstract_simplicial_chain_complex<CoefficientRing>::insert_simplex(const Si
 }
 
 // compute _d boundary matrix
-template<typename CoefficientRing>
-void Abstract_simplicial_chain_complex<CoefficientRing>::compute_d(int dim) const {
+template<typename CoefficientRing, typename SparseMatrixStruct>
+void Abstract_simplicial_chain_complex<CoefficientRing, SparseMatrixStruct>::compute_d(int dim) const {
     size_t nb_lignes = (dim == 0) ? 0 : _nb_cells[dim - 1];
     _d[dim] = Column_matrix(nb_lignes, _nb_cells[dim]);
 
@@ -413,8 +424,8 @@ void Abstract_simplicial_chain_complex<CoefficientRing>::compute_d(int dim) cons
 }
 
 // Method to display the complex's information
-template<typename CoefficientRing>
-std::ostream& Abstract_simplicial_chain_complex<CoefficientRing>::print_complex(std::ostream& out_stream) const {
+template<typename CoefficientRing, typename SparseMatrixStruct>
+std::ostream& Abstract_simplicial_chain_complex<CoefficientRing, SparseMatrixStruct>::print_complex(std::ostream& out_stream) const {
     out_stream << "Complex dimension: " << _dim << std::endl;
 
     // Total number of cells

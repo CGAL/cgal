@@ -25,9 +25,34 @@ namespace OSM {
 /*!
  \ingroup PkgHDVFAlgorithmClasses
 
- The class `Sub_sparse_matrix` is a technical class implementing the concept `SparseMatrix` together with a system of masks to partially screen matrices (and restrict computations to a subset of indices *along their major direction*). This class is used to compute reduced homology (and thus to compute persistent homology and Alexander duality).
+ The structure `Sub_sparse_matrix` provides a more friendly interface for sparse matrices built over a given `SparseChain`model (actually a Curryfication of the `Sparse_matrix_core` template).
 
- `Sub_sparse_matrix` inherits `Sparse_matrix` structure and basically adds two bitboards:
+ Given the template parameter `SparseChainType` (a model of the `SparseChain` concept), corresponding sparse chains and matrices templates are given by:
+ \code
+ Sub_sparse_matrix<SparseChainType>:: template Sparse_chain_type
+ Sub_sparse_matrix<SparseChainType>:: template Sparse_matrix_type
+ \endcode
+
+ \cgalModels{SparseMatrix}
+
+ \tparam SparseChainType a model of `SparseChain` used to store chains of the sparse matrix (default: `OSM::Sparse_chain`).
+ */
+
+template <template <typename, int> typename SparseChainType = OSM::Sparse_chain>
+struct Sub_sparse_matrix {
+    template <typename CT, int SF>
+    using Sparse_chain_type = SparseChainType<CT,SF>;
+
+    template <typename CT, int SF>
+    using Sparse_matrix_type = Sparse_matrix_core<CT,SF, SparseChainType>;
+};
+
+/*!
+ \ingroup PkgHDVFAlgorithmClasses
+
+ The class `Sub_sparse_matrix_core` is a technical class implementing the concept `SparseMatrix` together with a system of masks to partially screen matrices (and restrict computations to a subset of indices *along their major direction*). This class is used to compute reduced homology (and thus to compute persistent homology and Alexander duality).
+
+ `Sub_sparse_matrix_core` inherits `Sparse_matrix_core` structure and basically adds two bitboards:
  - one describing indices of cells belonging to the subset of indices considered (let us denote it by \f$A\f$)
  - the second  providing indices of non-empty chains in \f$A\f$
 
@@ -37,14 +62,20 @@ namespace OSM {
 
  \tparam CoefficientRing a model of the `IntegralDomainWithoutDivision` concept, providing the ring used to compute homology.
  \tparam StorageFormat an integer constant encoding the storage format of matrices (`OSM::COLUMN` or `OSM::ROW`).
+ \tparam SparseChainType a model of `SparseChain` used to store chains of the sparse matrix (default: `OSM::Sparse_chain`).
 */
 
 
-template <typename CoefficientRing, int StorageFormat>
-class Sub_sparse_matrix : public Sparse_matrix<CoefficientRing, StorageFormat> {
+template <typename CoefficientRing, int StorageFormat, template <typename, int> typename SparseChainType = OSM::Sparse_chain>
+class Sub_sparse_matrix_core : public Sparse_matrix_core<CoefficientRing, StorageFormat, SparseChainType> {
 
     /** \brief Type of the chains associated to the matrix. */
     typedef Sparse_chain<CoefficientRing, StorageFormat> Matrix_chain;
+
+    /**
+     Type of the parent class.
+     */
+    typedef Sparse_matrix_core<CoefficientRing, StorageFormat, SparseChainType> Base;
 
 protected:
     /* \brief A bitboard describing subchains restriction. */
@@ -57,12 +88,12 @@ public:
     /**
      * \brief Constructor with given rows/columns sizes and mask set to `full`.
      *
-     * Constructor with sizes, initializes an empty `Sub_sparse_matrix` of type `StorageFormat` with coefficients of type `CoefficientRing`, a given size along rows/columns. The constructor sets the mask to `full`.
+     * Constructor with sizes, initializes an empty `Sub_sparse_matrix_core` of a given size along rows/columns. The constructor sets the mask to `full`.
      *
      * \param rowCount The number of rows to preallocate (default 0).
      * \param columnCount The number of columns to preallocate (default 0).
      */
-    Sub_sparse_matrix(size_t rowCount=0, size_t columnCount=0) : Sparse_matrix<CoefficientRing, StorageFormat>(rowCount, columnCount)
+    Sub_sparse_matrix_core(size_t rowCount=0, size_t columnCount=0) : Sparse_matrix_core<CoefficientRing, StorageFormat, SparseChainType>(rowCount, columnCount)
     {
         if (StorageFormat == OSM::COLUMN)
             _subChains = OSM::Bitboard(columnCount,false) ;
@@ -74,23 +105,23 @@ public:
     /**
      * \brief Constructor with given rows/columns sizes and a mask.
      *
-     * Create a new empty `Sub_sparse_matrix` of type `StorageFormat` with coefficients of type `CoefficientRing`, a given size along rows/columns and a given mask.
+     * Create a new empty `Sub_sparse_matrix_core` of given size along rows/columns and a given mask.
      *
      * \param rowCount The number of rows to preallocate.
      * \param columnCount The number of columns to preallocate.
      * \param subChain Bitboard describing the subset of indices considered as a mask.
      */
-    Sub_sparse_matrix(size_t rowCount, size_t columnCount, const Bitboard& subChain) : Sparse_matrix<CoefficientRing, StorageFormat>(rowCount, columnCount), _subChains(subChain), _subChainsStates(this->_chainsStates & subChain)
+    Sub_sparse_matrix_core(size_t rowCount, size_t columnCount, const Bitboard& subChain) : Sparse_matrix_core<CoefficientRing, StorageFormat, SparseChainType>(rowCount, columnCount), _subChains(subChain), _subChainsStates(this->_chainsStates & subChain)
     {
     }
 
     /** \brief Copy constructor.
      */
-    Sub_sparse_matrix(const Sub_sparse_matrix& otherToCopy) : Sparse_matrix<CoefficientRing, StorageFormat>(otherToCopy), _subChains(otherToCopy._subChains), _subChainsStates(otherToCopy._subChainsStates) {}
+    Sub_sparse_matrix_core(const Sub_sparse_matrix_core& otherToCopy) : Sparse_matrix_core<CoefficientRing, StorageFormat, SparseChainType>(otherToCopy), _subChains(otherToCopy._subChains), _subChainsStates(otherToCopy._subChainsStates) {}
 
     /** \brief Copy constructor.
      */
-    Sub_sparse_matrix(const Sparse_matrix<CoefficientRing,StorageFormat>& otherToCopy) : Sparse_matrix<CoefficientRing, StorageFormat>(otherToCopy)
+    Sub_sparse_matrix_core(const Sparse_matrix_core<CoefficientRing,StorageFormat, SparseChainType>& otherToCopy) : Sparse_matrix_core<CoefficientRing, StorageFormat>(otherToCopy)
     {
         if (StorageFormat == OSM::COLUMN)
             _subChains = OSM::Bitboard(otherToCopy.dimensions().second,false) ;
@@ -153,16 +184,16 @@ public:
     /**
      * \brief Assignment.
      */
-    inline Sub_sparse_matrix& operator=(const Sub_sparse_matrix &otherToCopy)
+    inline Sub_sparse_matrix_core& operator=(const Sub_sparse_matrix_core &otherToCopy)
     {
-        (dynamic_cast<Sparse_matrix<CoefficientRing,StorageFormat>&>(*this)).operator=(otherToCopy) ;
+        (dynamic_cast<Sparse_matrix_core<CoefficientRing,StorageFormat, SparseChainType>&>(*this)).operator=(otherToCopy) ;
         _subChains = otherToCopy._subChains ;
         _subChainsStates = otherToCopy._subChainsStates ;
         return *this ;
     }
 
     /**
-     * \brief Displays a `Sub_sparse_matrix` in the output stream.
+     * \brief Displays a `Sub_sparse_matrix_core` in the output stream.
      *
      * Displays the sparse matrix as well as its mask.
      *
@@ -171,16 +202,16 @@ public:
      *
      * \return A reference to the modified stream.
      */
-    friend std::ostream& operator<<(std::ostream &stream, const Sub_sparse_matrix &matrix) {
-        stream << static_cast<const Sparse_matrix<CoefficientRing, StorageFormat>&>(matrix) ;
+    friend std::ostream& operator<<(std::ostream &stream, const Sub_sparse_matrix_core &matrix) {
+        stream << static_cast<const Sparse_matrix_core<CoefficientRing, StorageFormat, SparseChainType>&>(matrix) ;
         stream << matrix._subChains << std::endl ;
         return stream ;
     }
 
     /**
-     * \brief Tests if a `Sub_sparse_matrix` is null.
+     * \brief Tests if a `Sub_sparse_matrix_core` is null.
      *
-     * The function return `true` is the `Sub_sparse_matrix` is null (that is, all the chains in the mask are empty) and `false` otherwise.
+     * The function return `true` is the `Sub_sparse_matrix_core` is null (that is, all the chains in the mask are empty) and `false` otherwise.
      */
     bool is_null() const
     {
@@ -188,9 +219,9 @@ public:
     }
 
     /**
-     * \brief Tests if a `Sub_sparse_matrix` with chains restricted to a `Bitboard` is null.
+     * \brief Tests if a `Sub_sparse_matrix_core` with chains restricted to a `Bitboard` is null.
      *
-     * The function return `true` is the restricted `Sub_sparse_matrix` is null (that is, all the chains in the mask, restricted to the `Bitboard` `b` are null) and `false` otherwise.
+     * The function return `true` is the restricted `Sub_sparse_matrix_core` is null (that is, all the chains in the mask, restricted to the `Bitboard` `b` are null) and `false` otherwise.
      */
     bool is_null(const Bitboard& b) const
     {

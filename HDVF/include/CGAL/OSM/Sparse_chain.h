@@ -75,10 +75,10 @@ public:
     friend class Sparse_chain;
 
     template <typename _CT, int _CTF, template <typename, int> typename _SCT>
-    friend class Sparse_matrix_template;
+    friend class Sparse_matrix_core;
 
     template <template <typename, int> typename _SCT>
-    friend class Sparse_matrix;
+    friend struct Sparse_matrix;
 
 protected:
     /* \brief Type of data stored in the chain: map between indices and coefficients. */
@@ -838,13 +838,13 @@ bool operator==(const Sparse_chain<_CT, OSM::ROW>& chain, const Sparse_chain<_CT
 }
 
 template <typename _CT>
-bool operator==(const Sparse_chain<_CT, OSM::COLUMN>& chain, const Sparse_chain<_CT, OSM::ROW> &other)
+bool operator==(const Sparse_chain<_CT, OSM::COLUMN>& /* chain */, const Sparse_chain<_CT, OSM::ROW> & /* other */)
 {
     return false;
 }
 
 template <typename _CT>
-bool operator==(const Sparse_chain<_CT, OSM::ROW>& chain, const Sparse_chain<_CT, OSM::COLUMN> &other)
+bool operator==(const Sparse_chain<_CT, OSM::ROW>& /* chain */, const Sparse_chain<_CT, OSM::COLUMN> & /* other */)
 {
     return false;
 }
@@ -895,7 +895,6 @@ std::istream& read_chain (Sparse_chain<_CT, _SF>& chain, std::istream& in) {
     // Read and check type
     int type ;
     in >> type;
-    int storage_format ;
     if (((type == 0) &&(_SF == ROW)) || ((type==1)&&(_SF == COLUMN))) {
         std::cerr << "read_chain with incompatible storage format" << std::endl;
         throw std::runtime_error("read_chain with incompatible storage format");
@@ -910,7 +909,7 @@ std::istream& read_chain (Sparse_chain<_CT, _SF>& chain, std::istream& in) {
     // Read coefs
     size_t index;
     _CT val;
-    for (int i=0; i<ncoefs; ++i) {
+    for (size_t i=0; i<ncoefs; ++i) {
         in >> index >> val;
         chain.set_coefficient(index, val);
     }

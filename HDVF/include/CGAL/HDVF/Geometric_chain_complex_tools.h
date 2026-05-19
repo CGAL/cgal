@@ -74,10 +74,10 @@ namespace IO {
  *<img src="HDVF_dtorus_all.png" align="center" width=30%/>
  */
 
-template <typename ChainComplex, template <typename, int> typename ChainType = OSM::Sparse_chain, template <typename, int> typename SparseMatrixType = OSM::Sparse_matrix, typename VertexIdType = size_t>
-void write_VTK (const Homological_discrete_vector_field::Hdvf_core<ChainComplex, ChainType, SparseMatrixType>& hdvf, const ChainComplex &complex, std::string filename = "test", bool co_faces = false) {
+template <typename ChainComplex, typename VertexIdType = size_t>
+void write_VTK (const Homological_discrete_vector_field::Hdvf_core<ChainComplex>& hdvf, const ChainComplex &complex, std::string filename = "test", bool co_faces = false) {
     typedef typename ChainComplex::Coefficient_ring Coefficient_ring;
-    typedef Homological_discrete_vector_field::Hdvf_core<ChainComplex, ChainType, SparseMatrixType> HDVF_parent;
+    typedef Homological_discrete_vector_field::Hdvf_core<ChainComplex> HDVF_parent;
     // Export PSC labelling in any dimension (whatever the dimension restriction)
     std::string outfile(filename+"_PSC.vtk") ;
     std::vector<std::vector<int> > labels = hdvf.psc_labels(-1) ;
@@ -217,7 +217,7 @@ void write_VTK (const Homological_discrete_vector_field::Hdvf_persistence<ChainC
     }
     info_file.close() ;
     // Export infinite holes by calling Hdvf_core write_VTK
-    (static_cast<void (*) (Homological_discrete_vector_field::Hdvf_core<ChainComplex, CGAL::OSM::Sparse_chain,CGAL::OSM::Sub_sparse_matrix>&, ChainComplex&, std::string, bool)>(CGAL::IO::write_VTK<ChainComplex,CGAL::OSM::Sparse_chain,CGAL::OSM::Sub_sparse_matrix, size_t>))(per_hdvf, complex, filename+"_inf", co_faces);
+    (static_cast<void (*) (Homological_discrete_vector_field::Hdvf_core<ChainComplex>&, ChainComplex&, std::string, bool)>(CGAL::IO::write_VTK<ChainComplex, size_t>))(per_hdvf, complex, filename+"_inf", co_faces);
 }
 
 // Hdvf_duality vtk export

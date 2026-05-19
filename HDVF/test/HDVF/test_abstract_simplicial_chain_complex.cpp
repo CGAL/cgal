@@ -17,10 +17,11 @@ typedef CGAL::Simple_cartesian<double> Kernel;
 typedef HDVF::Hdvf_traits_3<Kernel> Traits;
 
 typedef CGAL::Z2 CoefficientType;
-typedef HDVF::Abstract_simplicial_chain_complex<CoefficientType> ChainComplexType;
-typedef CGAL::OSM::Sparse_matrix<CoefficientType, CGAL::OSM::COLUMN> Column_matrix;
-typedef CGAL::OSM::Sparse_chain<CoefficientType, CGAL::OSM::COLUMN> Column_chain;
-typedef CGAL::OSM::Sparse_chain<CoefficientType, CGAL::OSM::ROW> Row_chain;
+typedef CGAL::OSM::Sparse_matrix<CGAL::OSM::Sparse_chain> Sparse_matrix_struct;
+typedef HDVF::Abstract_simplicial_chain_complex<CoefficientType, Sparse_matrix_struct> ChainComplexType;
+typedef Sparse_matrix_struct:: template Sparse_matrix_type<CoefficientType, CGAL::OSM::COLUMN> Column_matrix;
+typedef Sparse_matrix_struct:: template Sparse_chain_type<CoefficientType, CGAL::OSM::COLUMN> Column_chain;
+typedef Sparse_matrix_struct:: template Sparse_chain_type<CoefficientType, CGAL::OSM::ROW> Row_chain;
 
 int main() {
     // Test constructor (from simple_simplicial_complex.simp)

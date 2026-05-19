@@ -24,7 +24,7 @@ typedef HDVF::Hdvf_traits_3<Kernel> Traits;
 
 int main(int argc, char **argv)
 {
-    using Complex = HDVF::Cubical_chain_complex<Coefficient_ring, Traits> ;
+    using Complex = HDVF::Cubical_chain_complex<Coefficient_ring, Traits, CGAL::OSM::Sparse_matrix<CGAL::OSM::Sparse_chain> > ;
     using HDVF_type = HDVF::Hdvf<Complex> ;
 
     std::string filename ;

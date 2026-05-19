@@ -92,7 +92,8 @@ inline size_t read_nodes(const std::string &filename, std::vector<typename Trait
     }
 
     // First line is the number of nodes
-    size_t nnodes, nnodes_tmp, nodes_dim, padding, d ;
+    size_t nnodes, nnodes_tmp, nodes_dim, padding;
+    int d ;
     bool fill;
     if ( ! in_file.eof())
     {
