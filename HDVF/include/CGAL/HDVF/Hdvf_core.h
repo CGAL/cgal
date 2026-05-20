@@ -21,7 +21,7 @@
 #include <CGAL/OSM/OSM.h>
 #include <CGAL/OSM/Bitboard.h>
 #include <CGAL/OSM/Full_lu.h>
-
+#include <CGAL/number_utils.h>
 //#define DEBUG
 
 namespace CGAL {
@@ -519,7 +519,7 @@ public:
 
     bool is_valid_pair_for_A(size_t gamma, size_t gamma_prime, int q) {
         Coefficient_ring coef(OSM::get_coefficient(_DD_col.at(q+1),gamma, gamma_prime));
-        return coef.is_invertible();
+        return is_invertible(coef);
     }
 
     /**
@@ -1242,7 +1242,7 @@ Cell_pair Hdvf_core<ChainComplex>::find_pair_A(int q, bool &found) const {
 
         // Iterate through the entries of the column
         for (typename Column_chain::const_iterator it = col.begin(); (it != col.end() && !found); ++it) {
-            if ((it->second).is_invertible()) {
+            if (is_invertible(it->second)) {
                 // If an entry with coefficient 1 or -1 is found, set the pair and mark as found
                 p.sigma = it->first;
                 p.tau = *it_col;
@@ -1269,7 +1269,7 @@ Cell_pair Hdvf_core<ChainComplex>::find_pair_A(int q, bool &found, size_t gamma)
         // Search for a q-1 cell tau' such that <_d(tau),tau'> invertible
         const Column_chain& tmp2(OSM::cget_column(_DD_col.at(q), gamma)) ;
         for (typename Column_chain::const_iterator it = tmp2.cbegin(); (it != tmp2.cend() && !found); ++it) {
-            if ((it->second).is_invertible()) {
+            if (is_invertible(it->second)) {
                 found = true ;
                 p.sigma = it->first ;
                 p.tau = gamma ;
@@ -1282,7 +1282,7 @@ Cell_pair Hdvf_core<ChainComplex>::find_pair_A(int q, bool &found, size_t gamma)
         // Search for a q+1 cell tau' such that <_d(tau'),tau> invertible, ie <_cod(tau),tau'> invertible
         Row_chain tmp(OSM::get_row(_DD_col.at(q+1), gamma)) ;
         for (typename Row_chain::const_iterator it = tmp.cbegin(); (it != tmp.cend() && !found); ++it) {
-            if ((it->second).is_invertible()) {
+            if (is_invertible(it->second)) {
                 found = true ;
                 p.sigma = gamma ;
                 p.tau = it->first ;
@@ -1311,7 +1311,7 @@ std::vector<Cell_pair> Hdvf_core<ChainComplex>::find_pairs_A(int q, bool &found)
 
         // Iterate through the entries of the column
         for (typename Column_chain::const_iterator it = col.begin(); it != col.end(); ++it) {
-            if ((it->second).is_invertible()) {
+            if (is_invertible(it->second)) {
                 // If an entry with an invertible coefficient is found, set the pair and mark as found
                 Cell_pair p;
                 p.sigma = it->first;
@@ -1340,7 +1340,7 @@ std::vector<Cell_pair> Hdvf_core<ChainComplex>::find_pairs_A(int q, bool &found,
     if (q < _K.dimension()) {
         Row_chain tmp(OSM::get_row(_DD_col.at(q+1), gamma)) ;
         for (typename Row_chain::const_iterator it = tmp.cbegin(); it != tmp.cend(); ++it) {
-            if ((it->second).is_invertible()) {
+            if (is_invertible(it->second)) {
                 found = true ;
                 Cell_pair p ;
                 p.sigma = gamma ;
@@ -1355,7 +1355,7 @@ std::vector<Cell_pair> Hdvf_core<ChainComplex>::find_pairs_A(int q, bool &found,
         const Column_chain& tmp2(OSM::cget_column(_DD_col.at(q), gamma)) ;
         for (typename Column_chain::const_iterator it = tmp2.cbegin(); it != tmp2.cend(); ++it) {
             //        if (abs(it->second) == 1)
-            if ((it->second).is_invertible()) {
+            if (is_invertible(it->second)) {
                 found = true ;
                 Cell_pair p ;
                 p.sigma = it->first ;
@@ -1386,11 +1386,11 @@ void Hdvf_core<ChainComplex>::A(size_t tau1, size_t tau2, int q) {
     const Coefficient_ring D11 = D12.get_coefficient(tau2); // D11 is the coefficient at the intersection of tau2 in D12
 
     // Assert that D11 is either 1 or -1 (check invertibility)
-    if (! D11.is_invertible())
+    if (! is_invertible(D11))
         throw(std::invalid_argument("Invalid arguments for A - cells do not meet the required condition"));
 
     // Compute the inverse of D11
-    Coefficient_ring D11_inv = D11.inverse();
+    Coefficient_ring D11_inv = inverse(D11);
 
     // Perform operations to remove the row and column contributions
     D12 /= std::vector<size_t>({tau2}); // Remove tau2 column from D12
