@@ -228,6 +228,14 @@ template <int p, typename T> class Algebraic_structure_traits< Zp<p, T, false> >
           return t.is_invertible() ;
         }
     };
+
+    class Invert
+      : public CGAL::cpp98::unary_function< Type, Type > {
+      public:
+        Type operator()( const Type& t) const {
+          return t.inverse() ;
+        }
+    };
   };
 
 
