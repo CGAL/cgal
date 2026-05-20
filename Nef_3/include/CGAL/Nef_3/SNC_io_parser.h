@@ -1191,7 +1191,7 @@ SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W,
               se = sfc;
           }
           this->sncp()->store_boundary_item(se,fc);
-          *fc = make_object(se);
+          *fc = Object_handle(se);
         }
       }
       fi->plane() = normalized(fi->plane());
@@ -1261,7 +1261,7 @@ SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W,
                 se = cb;
           }
           this->sncp()->store_sm_boundary_item(se,fc);
-          *fc = make_object(se);
+          *fc = Object_handle(se);
         }
       }
       sfi->boundary_entry_objects().sort(sort_sface_cycle_entries<Base>(*this));
@@ -1287,7 +1287,7 @@ SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W,
       CGAL_forall_shells_of(it,ci) {
         findMinSF.minimal_sface() = SFace_handle(it);
         visit_shell_objects(SFace_handle(it),findMinSF);
-        *it = make_object(findMinSF.minimal_sface());
+        *it = Object_handle(findMinSF.minimal_sface());
       }
       ci->shell_entry_objects().sort(sort_shell_entries<Base>(*this));
     }
@@ -1787,7 +1787,7 @@ read_facet(Halffacet_handle fh) {
       in.setstate(std::ios_base::badbit);
       return false;
     }
-    fh->boundary_entry_objects().push_back(make_object(SEdge_of[index]));
+    fh->boundary_entry_objects().push_back(Object_handle(SEdge_of[index]));
     in >> cc;
   }
 
@@ -1800,7 +1800,7 @@ read_facet(Halffacet_handle fh) {
       in.setstate(std::ios_base::badbit);
       return false;
     }
-    fh->boundary_entry_objects().push_back(make_object(SLoop_of[index]));
+    fh->boundary_entry_objects().push_back(Object_handle(SLoop_of[index]));
     in >> cc;
   }
 
@@ -1857,7 +1857,7 @@ read_volume(Volume_handle ch) {
       in.setstate(std::ios_base::badbit);
       return false;
     }
-    ch->shell_entry_objects().push_back(make_object(SFace_of[index]));
+    ch->shell_entry_objects().push_back(Object_handle(SFace_of[index]));
     in >> cc;
   }
   in >> ch->mark();
@@ -2117,7 +2117,7 @@ read_sface(SFace_handle sfh) {
       in.setstate(std::ios_base::badbit);
       return false;
     }
-    sfh->boundary_entry_objects().push_back(make_object(Edge_of[index]));
+    sfh->boundary_entry_objects().push_back(Object_handle(Edge_of[index]));
     this->sncp()->store_sm_boundary_item(Edge_of[index], --(sfh->sface_cycles_end()));
     in >> cc;
   }
@@ -2131,7 +2131,7 @@ read_sface(SFace_handle sfh) {
       in.setstate(std::ios_base::badbit);
       return false;
     }
-    sfh->boundary_entry_objects().push_back(make_object(SLoop_of[index]));
+    sfh->boundary_entry_objects().push_back(Object_handle(SLoop_of[index]));
     this->sncp()->store_sm_boundary_item(SLoop_of[index], --(sfh->sface_cycles_end()));
     in >> cc;
   }
@@ -2241,7 +2241,7 @@ void SNC_io_parser<EW>::add_infi_box() {
   for(int i = 0; i < 12; ++i) {
     Halffacet_handle fh = Halffacet_of[fn+i];
     fh->twin() = Halffacet_of[fn+(i/2*2)+((i+1)%2)];
-    fh->boundary_entry_objects().push_back(make_object(SEdge_of[sen+bnd[i]]));
+    fh->boundary_entry_objects().push_back(Object_handle(SEdge_of[sen+bnd[i]]));
     fh->incident_volume() = Volume_of[((i%4) == 1 || (i%4 == 2)) ? 1 : 0];
     if(i<4) {
       hz = i % 2 ? -1 : 1;
@@ -2260,9 +2260,9 @@ void SNC_io_parser<EW>::add_infi_box() {
     fh->mark() = 1;
   }
 
-  Volume_of[0]->shell_entry_objects().push_back(make_object(SFace_of[sfn]));
+  Volume_of[0]->shell_entry_objects().push_back(Object_handle(SFace_of[sfn]));
   Volume_of[0]->mark() = 0;
-  Volume_of[1]->shell_entry_objects().push_front(make_object(SFace_of[sfn+1]));
+  Volume_of[1]->shell_entry_objects().push_front(Object_handle(SFace_of[sfn+1]));
 
   int sprevOff[6] = {4,3,0,5,2,1};
   int snextOff[6] = {2,5,4,1,0,3};
@@ -2327,7 +2327,7 @@ void SNC_io_parser<EW>::add_infi_box() {
   for(int i = 0; i < 16; ++i) {
     SFace_handle sfh = SFace_of[sfn+i];
     sfh->center_vertex() = Vertex_of[vn+(i/2)];
-    sfh->boundary_entry_objects().push_back(make_object(SEdge_of[sen+(i/2*6)+(i%2)]));
+    sfh->boundary_entry_objects().push_back(Object_handle(SEdge_of[sen+(i/2*6)+(i%2)]));
     this->sncp()->store_sm_boundary_item(SEdge_of[sen+(i/2*6)+(i%2)],
                                           --(sfh->sface_cycles_end()));
     int cIdx = i%2 ? 1-volIdx[i/2] : volIdx[i/2];

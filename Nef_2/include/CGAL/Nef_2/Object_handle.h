@@ -20,12 +20,24 @@
 
 #include <CGAL/license/Nef_2.h>
 
-
 #include <CGAL/Object.h>
 
 namespace CGAL {
 
-typedef Object Object_handle;
+template <typename U>
+struct Object_handle : Object
+{
+  using Object::Object;
+
+  template <typename T, typename = std::void_t
+    <typename std::iterator_traits<std::decay_t<T>>::value_type>>
+  Object_handle(T&& t)
+    : Object(std::forward<T>(t), Object::private_tag{})
+  {}
+};
+
+template <typename T, typename U>
+inline bool assign(T& t, const Object_handle<U>& o) { return o.assign(t); }
 
 } //namespace CGAL
 

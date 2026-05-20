@@ -201,11 +201,11 @@ public:
   typedef typename SFace_list::iterator                     SFace_iterator;
   typedef typename SFace_list::const_iterator               SFace_const_iterator;
 
-  typedef CGAL::Object_handle         Object_handle;
-  typedef std::list<Object_handle>    Object_list;
-  typedef Object_list::iterator       Object_iterator;
-  typedef Object_list::const_iterator Object_const_iterator;
-  typedef Object_list::const_iterator Object_const_handle;
+  typedef typename CGAL::Object_handle<SNC_structure>       Object_handle;
+  typedef typename std::list<Object_handle>                 Object_list;
+  typedef typename Object_list::iterator                    Object_iterator;
+  typedef typename Object_list::const_iterator              Object_const_iterator;
+  typedef typename Object_list::const_iterator              Object_const_handle;
 
   typedef typename Sphere_map::SHalfedge_around_svertex_circulator
                                SHalfedge_around_svertex_circulator;
@@ -1117,11 +1117,11 @@ pointer_update(const SNC_structure<Kernel,Items,Mark>& D)
     for(ftc = f->facet_cycles_begin(); ftc !=  f->facet_cycles_end(); ++ftc) {
       if (ftc.is_shalfedge() ) {
         se = SHalfedge_handle(ftc);
-        *ftc = make_object(SEM[se]);
+        *ftc = Object_handle(SEM[se]);
         store_boundary_item(se,ftc);
       } else if (ftc.is_shalfloop() ) {
         sl = SHalfloop_handle(ftc);
-        *ftc = make_object(SLM[sl]);
+        *ftc = Object_handle(SLM[sl]);
         store_boundary_item(sl,ftc);
       } else CGAL_error_msg("damn wrong boundary item in facet.");
     }
@@ -1132,7 +1132,7 @@ pointer_update(const SNC_structure<Kernel,Items,Mark>& D)
     Shell_entry_iterator sei;
     CGAL_forall_shells_of(sei,c) {
       sf = sei; // conversion from generic iterator to sface const handle
-      *sei = make_object(SFM[sf]);
+      *sei = Object_handle(SFM[sf]);
       store_boundary_item(sf,sei);
     }
   }
@@ -1171,17 +1171,17 @@ pointer_update(const SNC_structure<Kernel,Items,Mark>& D)
                   if (sfc.is_svertex()) {
                           SVertex_handle sv(sfc);
                           sv = EM[sv];
-                          *sfc = make_object(sv);
+                          *sfc = Object_handle(sv);
                           store_sm_boundary_item(sv,sfc);
                   } else if (sfc.is_shalfedge()) {
                           se = SHalfedge_handle(sfc);
                           se = SEM[se];
-                          *sfc = make_object(se);
+                          *sfc = Object_handle(se);
                           store_sm_boundary_item(se,sfc);
                   } else if (sfc.is_shalfloop()) {
                           sl = SHalfloop_handle(sfc);
                           sl = SLM[sl];
-                          *sfc = make_object(sl);
+                          *sfc = Object_handle(sl);
                           store_sm_boundary_item(sl,sfc);
                   } else CGAL_error_msg("damn wrong boundary item in sface.");
           }
