@@ -20,9 +20,21 @@
 
 #include <CGAL/license/Nef_2.h>
 
+#ifdef CGAL_NEF_USE_ANY_OBJECT
 #include <CGAL/Object.h>
+#include <type_traits>
+#include <utility>
+#else
+#include <optional>
+#include <variant>
+#endif
 
 namespace CGAL {
+
+template <typename... Args>
+struct Type_pack {};
+
+#ifdef CGAL_NEF_USE_ANY_OBJECT
 
 template <typename U>
 struct Object_handle : Object
@@ -38,6 +50,30 @@ struct Object_handle : Object
 
 template <typename T, typename U>
 inline bool assign(T& t, const Object_handle<U>& o) { return o.assign(t); }
+
+#else
+
+template <typename U>
+struct Object_handle;
+
+template <typename... Args>
+struct Object_handle<Type_pack<Args...>>
+  : std::optional<std::variant<Args...>> {
+  using std::optional<std::variant<Args...>>::optional;
+  // needed for compatabiity with CGAL::Object API
+  bool empty() const { return !this->has_value(); }
+};
+
+template <typename T, typename U>
+inline bool assign(T& t, const Object_handle<U>& oh) {
+  if (oh.empty()) return false;
+  const auto* p = std::get_if<T>(&*oh);
+  if (!p) return false;
+  t = *p;
+  return true;
+}
+
+#endif
 
 } //namespace CGAL
 

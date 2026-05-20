@@ -117,7 +117,13 @@ public:
   typedef SHalfloop*                                    SHalfloop_iterator;
   typedef const SHalfloop*                              SHalfloop_const_iterator;
 
-  typedef typename CGAL::Object_handle<Self>            Object_handle;
+  typedef typename CGAL::Type_pack<SVertex_handle,      SVertex_const_handle,
+                                   SHalfedge_handle,    SHalfedge_const_handle,
+                                   SHalfloop_handle,    SHalfloop_const_handle,
+                                   SFace_handle,        SFace_const_handle>
+                                                        Object;
+
+  typedef typename CGAL::Object_handle<Object>          Object_handle;
   /*{\Mtypemember a generic handle to an object of |\Mvar|.
   The kind of the object can be determined and the object assigned
   by the function:\\

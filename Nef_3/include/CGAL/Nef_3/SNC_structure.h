@@ -201,7 +201,16 @@ public:
   typedef typename SFace_list::iterator                     SFace_iterator;
   typedef typename SFace_list::const_iterator               SFace_const_iterator;
 
-  typedef typename CGAL::Object_handle<SNC_structure>       Object_handle;
+  typedef typename CGAL::Type_pack<Vertex_handle,           Vertex_const_handle,
+                                   SVertex_handle,          SVertex_const_handle,
+                                   Halffacet_handle,        Halffacet_const_handle,
+                                   Volume_handle,           Volume_const_handle,
+                                   SHalfedge_handle,        SHalfedge_const_handle,
+                                   SHalfloop_handle,        SHalfloop_const_handle,
+                                   SFace_handle,            SFace_const_handle>
+                                                            Object;
+
+  typedef typename CGAL::Object_handle<Object>              Object_handle;
   typedef typename std::list<Object_handle>                 Object_list;
   typedef typename Object_list::iterator                    Object_iterator;
   typedef typename Object_list::const_iterator              Object_const_iterator;
