@@ -934,7 +934,7 @@ public:
      *
      * \exception Incompatible_dimension If the dimension of the HDVF stored does not match the dimension of the underlying complex, raises a `%std::runtime_error`.
      *
-     * \exception Incoherent_number_of_cells If the number of cells loaded in a given dimension does not match that of the underlying complex, raises a `std::runtime_error`.
+     * \exception Incoherent_number_of_cells If the number of cells loaded in a given dimension does not match that of the underlying complex, raises a `%std::runtime_error`.
      */
     std::istream& read_hdvf_reduction(std::istream& in_stream) ;
 

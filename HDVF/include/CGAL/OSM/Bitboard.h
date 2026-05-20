@@ -440,7 +440,7 @@ public:
      * \param _bitboard The bitboard where bits are loaded.
      * \return The edited stream.
      *
-     * \exception Invalid_bit If the stream does not provide enough 0/1 characters, raises a `std::runtime_error`.
+     * \exception Invalid_bit If the stream does not provide enough 0/1 characters, raises a `%std::runtime_error`.
      */
     friend std::istream& operator>>(std::istream &_stream, Bitboard &_bitboard) {
         _bitboard = Bitboard(_bitboard.size()); // Erase _bitboard

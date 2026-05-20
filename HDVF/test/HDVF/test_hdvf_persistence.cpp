@@ -26,7 +26,8 @@ typedef Kernel::Point_3 Point_3;
 
 typedef CGAL::Surface_mesh<Kernel::Point_3> Surface_mesh;
 
-typedef HDVF::Simplicial_chain_complex<Coefficient_ring,Traits> Complex;
+typedef CGAL::OSM::Sub_sparse_matrix<CGAL::OSM::Sparse_chain> Sparse_matrix_struct;
+typedef HDVF::Simplicial_chain_complex<Coefficient_ring,Traits, Sparse_matrix_struct> Complex;
 typedef double Degree;
 typedef HDVF::Filtration_lower_star<Complex, Degree> FiltrationType;
 typedef HDVF::Hdvf_persistence<Complex, Degree, FiltrationType> HDVF_type;

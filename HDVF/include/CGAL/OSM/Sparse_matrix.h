@@ -45,8 +45,6 @@ class Sparse_chain;
  Sparse_matrix<SparseChainType>:: template Sparse_matrix_type
  \endcode
 
- \cgalModels{SparseMatrix}
-
  \tparam SparseChainType a model of `SparseChain` used to store chains of the sparse matrix (default: `OSM::Sparse_chain`).
  */
 

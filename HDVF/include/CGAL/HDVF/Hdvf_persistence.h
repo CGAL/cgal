@@ -87,6 +87,9 @@ public:
 
     /*! Type of parent HDVF class (`Hdvf_core` with appropriate template parameters)
      * The `SparseMatrix` model is set to `Sub_sparse_matrix` to activate (co)homology computation over a subcomplex.
+     *
+     * @todo
+     * Check that the SparseMatrix provided by ChainComplex is a Sub_sparse_matrix (and not a standard Sparse_matrix.
      */
     typedef Hdvf_core<ChainComplex> Base ;
 

@@ -55,6 +55,8 @@ public:
      */
     typedef int Storage_format;
 
+
+
     /*!
      * \brief A range of indices of non empty chains.
      */
