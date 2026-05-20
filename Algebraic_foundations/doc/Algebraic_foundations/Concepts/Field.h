@@ -22,7 +22,6 @@ Moreover, `CGAL::Algebraic_structure_traits< Field >` is a model of
 \sa `IntegralDomain`
 \sa `UniqueFactorizationDomain`
 \sa `EuclideanRing`
-\sa `Field`
 \sa `FieldWithSqrt`
 \sa `FieldWithKthRoot`
 \sa `FieldWithRootOf`

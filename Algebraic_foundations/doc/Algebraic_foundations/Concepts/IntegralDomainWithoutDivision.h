@@ -31,7 +31,6 @@ Moreover, `CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >` is
 
 \cgalRefines{Assignable,CopyConstructible,DefaultConstructible,EqualityComparable,FromIntConstructible}
 
-\sa `IntegralDomainWithoutDivision`
 \sa `IntegralDomain`
 \sa `UniqueFactorizationDomain`
 \sa `EuclideanRing`

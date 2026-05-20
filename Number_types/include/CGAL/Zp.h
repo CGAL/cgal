@@ -24,7 +24,7 @@ namespace CGAL {
 /*!
  \ingroup PkgHDVFAlgorithmClasses
 
- The class `Zp` implements the concept `IntegralDomainWithoutDivision` with the ring \f$\mathbb Z/p\mathbb Z\f$ (which is a field when `p`is prime). This is a "lightweight" implementation which aims at providing fast operations and constructors.
+ The class `Zp` implements the concept `IntegralDomainWithoutDivision` with the ring \f$\mathbb Z/p\mathbb Z\f$ (which is a field when `p` is prime). This is a "lightweight" implementation which aims at providing fast operations and constructors.
 
  According to the value of `p`, users can chose the size of the representation used to store values (default size: `int`).
 
