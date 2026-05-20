@@ -64,10 +64,7 @@ template<> class Algebraic_structure_traits< int >
       : public CGAL::cpp98::unary_function< Type, Type > {
       public:
         Type operator()( const Type& t) const {
-          // AF: not sure that this is what you exepect Alexandra
-          typedef Algebraic_structure_traits<Type> AST;
-          typename AST::Is_one is_one;
-          CGAL_precondition( is_one(t) );
+          CGAL_precondition( (t == 1) || (t == -1) );
           return t;
         }
     };
@@ -75,10 +72,7 @@ template<> class Algebraic_structure_traits< int >
     : public CGAL::cpp98::unary_function< Type, bool > {
     public:
       bool operator()( const Type& t) const {
-        // AF: not sure that this is what you exepect Alexandra
-        typedef Algebraic_structure_traits<Type> AST;
-        typename AST::Is_one is_one;
-        return is_one(t);
+        return (t == 1) || (t == -1);
       }
   };
 };
