@@ -63,22 +63,22 @@ public:
   }
   ~FaceGraphWrapper() {}
 
-	virtual float getVolume()	const {
+  virtual float getVolume()  const {
     return static_cast<float>(Polygon_mesh_processing::volume(mesh));
   }
 
-	virtual float3 const getAABBMin() const { return aabb_min; }
-	virtual float3 const getAABBMax() const { return aabb_max; }
+  virtual float3 const getAABBMin() const { return aabb_min; }
+  virtual float3 const getAABBMax() const { return aabb_max; }
 
-	virtual unsigned int getNumVertices() const {
+  virtual unsigned int getNumVertices() const {
     return static_cast<unsigned int>(vertices(mesh).size());
   }
 
-	virtual unsigned int getNumTriangles() const {
+  virtual unsigned int getNumTriangles() const {
     return static_cast<unsigned int>(faces(mesh).size());
   }
 
-	virtual std::vector<uint4> const& getIndices() const {
+  virtual std::vector<uint4> const& getIndices() const {
 #pragma message("ToDo: Does this work with garbage collection?")
     if (indices.empty()) {
       indices.reserve(faces(mesh).size() * 3);
@@ -91,13 +91,13 @@ public:
     return indices;
   }
 
-	virtual std::vector<float4>	const& getVertices() const { return points; }
+  virtual std::vector<float4>  const& getVertices() const { return points; }
 
-	virtual std::vector<uint4>	const& getNormalIndices()	const {
+  virtual std::vector<uint4>  const& getNormalIndices()  const {
     return getIndices();
   }
 
-  virtual std::vector<float4>	const& getNormals()	const {
+  virtual std::vector<float4>  const& getNormals()  const {
     if (normals.empty()) {
       normals.reserve(faces(mesh).size());
       for (const auto& f : faces(mesh)) {

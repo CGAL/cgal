@@ -330,4 +330,12 @@ In order to use \osqp in \cgal programs, the executables should be linked with t
 
 The \osqp web site is <A HREF="https://osqp.org">`https://osqp.org`</A>.
 
+\subsection thirdpartyProtoSphere ProtoSphereExtended
+
+\protosphere is a GPU-based sphere packing library.
+
+In \cgal, this library is used in the \ref PkgSpherePacking package.
+
+It is available at  <A HREF="https://gitlab.informatik.uni-bremen.de/cgvr_public/protosphereextended">https://gitlab.informatik.uni-bremen.de/cgvr_public/protosphereextended</A>.
+
 */
