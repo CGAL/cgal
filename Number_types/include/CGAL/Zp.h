@@ -229,7 +229,7 @@ template <int p, typename T> class Algebraic_structure_traits< Zp<p, T, false> >
         }
     };
 
-    class Invert
+    class Inverse
       : public CGAL::cpp98::unary_function< Type, Type > {
       public:
         Type operator()( const Type& t) const {
