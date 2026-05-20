@@ -266,6 +266,8 @@ public:
 
   void run() override
   {
+    QApplication::setOverrideCursor(Qt::BusyCursor);
+
     QElapsedTimer elapsed_timer;
     elapsed_timer.start();
 
@@ -279,6 +281,8 @@ public:
       Q_EMIT interrupted(this);
 
     std::cout << "Wrapping took " << elapsed_timer.elapsed() / 1000. << "s" << std::endl;
+
+    QApplication::restoreOverrideCursor();
   }
 
 public Q_SLOTS:
@@ -660,8 +664,6 @@ public Q_SLOTS:
     for(const Kernel::Point_3& pt : points)
       m_wrap_bbox += pt.bbox();
 
-    std::cout << "Bbox:\n" << m_wrap_bbox << std::endl;
-
     // The relative value uses the bbox of the full scene and not that of selected items to wrap
     // This is intentional, both because it's tedious to make it otherwise, and because it seems
     // to be simpler to compare between "all wrapped" / "some wrapped"
@@ -738,17 +740,17 @@ public Q_SLOTS:
     if(wrap_points)
       oracle.add_points(points);
 
+    QApplication::restoreOverrideCursor();
+
     if(oracle.empty())
     {
       print_message("Warning: empty input - nothing to wrap");
-      QApplication::restoreOverrideCursor();
       return;
     }
 
     if(alpha <= 0. || offset <= 0.)
     {
       print_message("Warning: alpha/offset must be strictly positive");
-      QApplication::restoreOverrideCursor();
       return;
     }
 
@@ -811,10 +813,6 @@ public Q_SLOTS:
     // Create message box with stop button
     if(use_message_box)
     {
-      // Switch from 'wait' to 'busy'
-      QApplication::restoreOverrideCursor();
-      QApplication::setOverrideCursor(Qt::BusyCursor);
-
       m_message_box = new QMessageBox(QMessageBox::NoIcon,
                                      "Wrapping",
                                      "Wrapping in progress...",
@@ -832,15 +830,11 @@ public Q_SLOTS:
     }
 
     // Actual start
-    QApplication::setOverrideCursor(Qt::WaitCursor);
-
     wrapper_thread->start();
 
     CGAL::Three::Three::getMutex()->lock();
     CGAL::Three::Three::isLocked() = false;
     CGAL::Three::Three::getMutex()->unlock();
-
-    QApplication::restoreOverrideCursor();
   }
 };
 
