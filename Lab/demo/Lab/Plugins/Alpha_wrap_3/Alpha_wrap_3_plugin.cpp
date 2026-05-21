@@ -14,6 +14,7 @@
 #define CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
 
 #include <CGAL/alpha_wrap_3.h>
+#include <CGAL/Polygon_mesh_processing/shape_predicates.h>
 
 #include <QAction>
 #include <QApplication>
@@ -548,6 +549,12 @@ public Q_SLOTS:
             continue;
           }
 
+          if(CGAL::Polygon_mesh_processing::is_degenerate_triangle_face(f, *pMesh))
+          {
+            print_message("Warning: a degenerate face in input has been ignored");
+            continue;
+          }
+
           triangles.emplace_back(get(vpm, target(h, *pMesh)),
                                  get(vpm, target(next(h, *pMesh), *pMesh)),
                                  get(vpm, source(h, *pMesh)));
@@ -570,9 +577,18 @@ public Q_SLOTS:
             continue;
           }
 
-          triangles.emplace_back(soup_item->points()[p[0]],
-                                 soup_item->points()[p[1]],
-                                 soup_item->points()[p[2]]);
+          const Kernel::Point_3& pt0 = soup_item->points()[p[0]];
+          const Kernel::Point_3& pt1 = soup_item->points()[p[1]];
+          const Kernel::Point_3& pt2 = soup_item->points()[p[2]];
+
+          // Check for collinear points (degenerate triangle)
+          if(CGAL::collinear(pt0, pt1, pt2))
+          {
+            print_message("Warning: a degenerate face in input has been ignored");
+            continue;
+          }
+
+          triangles.emplace_back(pt0, pt1, pt2);
         }
 
         continue;
@@ -596,6 +612,12 @@ public Q_SLOTS:
             continue;
           }
 
+          if(CGAL::Polygon_mesh_processing::is_degenerate_triangle_face(f, *pMesh))
+          {
+            print_message("Warning: a degenerate face in input has been ignored");
+            continue;
+          }
+
           triangles.emplace_back(get(vpm, target(h, *pMesh)),
                                  get(vpm, target(next(h, *pMesh), *pMesh)),
                                  get(vpm, source(h, *pMesh)));
@@ -604,6 +626,12 @@ public Q_SLOTS:
         segments.reserve(segments.size() + selection_item->selected_edges.size());
         for(const auto& e : selection_item->selected_edges)
         {
+          if(CGAL::Polygon_mesh_processing::is_degenerate_edge(e, *pMesh))
+          {
+            print_message("Warning: a degenerate edge in input has been ignored");
+            continue;
+          }
+
           segments.emplace_back(get(vpm, target(halfedge(e, *pMesh), *pMesh)),
                                 get(vpm, target(opposite(halfedge(e, *pMesh), *pMesh), *pMesh)));
         }
@@ -627,7 +655,14 @@ public Q_SLOTS:
           {
             auto nit = std::next(it);
             if(nit != end)
+            {
+              if(*it == *nit)
+              {
+                print_message("Warning: a degenerate edge in input has been ignored");
+                continue;
+              }
               segments.emplace_back(*it, *nit);
+            }
           }
         }
 
