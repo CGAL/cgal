@@ -416,7 +416,7 @@ namespace internal {
         long_edges.erase(eit);
 
         //split edge
-        Point refinement_point = this->midpoint(he);
+        Point refinement_point = sizing.split_placement(he, mesh_);
         halfedge_descriptor hnew = CGAL::Euler::split_edge(he, mesh_);
         // propagate the constrained status
         put(ecmap_, edge(hnew, mesh_), get(ecmap_, edge(he, mesh_)));
