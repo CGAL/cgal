@@ -117,9 +117,14 @@ namespace internal {
   \cgalModels{Range}
  */
 
+#ifdef DOXYGEN_RUNNING
+ template <typename Point,
+          typename Vector = typename Kernel_traits<Point>::Kernel::Vector_3>
+#else
 template <typename Point,
           typename Vector>
 class Point_set_3
+#endif
 {
 public:
 
@@ -155,7 +160,7 @@ public:
   \brief This represents a point with associated properties.
   \cgalModels{::Index,LessThanComparable,Hashable}
   */
-  class Index;
+  typedef undefined_type Index;
 #endif
 
   typedef Point Point_3; ///< The point type
@@ -1055,7 +1060,7 @@ public:
 
     \cgalAdvancedBegin
     The following method are specifically designed to make
-    `CGAL::Point_set_3` usable with \cgal input/output functions.
+    `CGAL::Point_set_3` usable with \cgal input/output functions that write into an `OutputIterator` .
     \cgalAdvancedEnd
   */
 
