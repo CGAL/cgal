@@ -1325,14 +1325,14 @@ private:
         return false;//too many cases to be handled
       if (is_on_patch_border(next(hopp, mesh_)) && is_on_patch_border(prev(hopp, mesh_)))
         return false;//too many cases to be handled
-      else if (is_on_patch_border(next(he, mesh_)))
+      if (is_on_patch_border(next(he, mesh_)))
       {
         //avoid generation of degenerate faces, and self-intersections
         if (source(he, mesh_) ==
           target(next(next_on_patch_border(next(he, mesh_)), mesh_), mesh_))
           return false;
       }
-      else if (is_on_patch_border(prev(hopp, mesh_)))
+      if (is_on_patch_border(prev(hopp, mesh_)))
       {
         //avoid generation of degenerate faces, and self-intersections
         if (target(hopp, mesh_) ==
