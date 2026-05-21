@@ -648,7 +648,7 @@ Cell_pair Hdvf_duality<ChainComplex>::find_pair_A(int q, bool &found) const
         // Iterate through the entries of the column
         // Check that the row belongs to the subchaincomplex
         for (typename Base::Column_chain::const_iterator it = col.begin(); (it != col.end() && !found); ++it) {
-            if (_subCC.get_bit(q, it->first) && ((it->second).is_invertible())) {
+            if (_subCC.get_bit(q, it->first) && (is_invertible(it->second))) {
                 // If an entry with coefficient 1 or -1 is found, set the pair and mark as found
                 p.sigma = it->first;
                 p.tau = *it_col;
@@ -675,7 +675,7 @@ Cell_pair Hdvf_duality<ChainComplex>::find_pair_A(int q, bool &found, size_t tau
     const typename Base::Column_chain& tmp2(OSM::cget_column(this->_DD_col.at(q), tau)) ;
     for (typename Base::Column_chain::const_iterator it = tmp2.cbegin(); (it != tmp2.cend() && !found); ++it)
     {
-        if (_subCC.get_bit(q-1, it->first) && (it->second).is_invertible())
+        if (_subCC.get_bit(q-1, it->first) && is_invertible(it->second))
         {
             found = true ;
             p.sigma = it->first ;
@@ -715,7 +715,7 @@ std::vector<Cell_pair> Hdvf_duality<ChainComplex>::find_pairs_A(int q, bool &fou
 
         // Iterate through the entries of the column
         for (typename Base::Column_chain::const_iterator it = col.begin(); it != col.end(); ++it) {
-            if (_subCC.get_bit(q, it->first) && ((it->second).is_invertible())) {
+            if (_subCC.get_bit(q, it->first) && (is_invertible(it->second))) {
                 // If an entry of _subCC with coefficient 1 or -1 is found, set the pair and mark as found
                 Cell_pair p;
                 p.sigma = it->first;
@@ -744,7 +744,7 @@ std::vector<Cell_pair> Hdvf_duality<ChainComplex>::find_pairs_A(int q, bool &fou
     typename Base::Row_chain tmp(OSM::get_row(this->_DD_col.at(q+1), tau)) ;
     for (typename Base::Row_chain::const_iterator it = tmp.cbegin(); it != tmp.cend(); ++it)
     {
-        if (_subCC.get_bit(q+1, it->first) && ((it->second).is_invertible()))
+        if (_subCC.get_bit(q+1, it->first) && (is_invertible(it->second)))
         {
             found = true ;
             Cell_pair p ;

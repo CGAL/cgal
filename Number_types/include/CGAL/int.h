@@ -68,6 +68,7 @@ template<> class Algebraic_structure_traits< int >
           return t;
         }
     };
+    
     class Is_invertible
     : public CGAL::cpp98::unary_function< Type, bool > {
     public:

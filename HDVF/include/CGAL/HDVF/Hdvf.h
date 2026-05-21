@@ -158,7 +158,7 @@ public:
 
     bool is_valid_pair_for_M(size_t pi, size_t gamma, int q) {
         Coefficient_ring coef(OSM::get_coefficient(this->_F_row.at(q),gamma, pi));
-        return coef.is_invertible();
+        return is_invertible(coef);
     }
 
     /**
@@ -218,7 +218,7 @@ public:
 
     bool is_valid_pair_for_W(size_t sigma, size_t gamma, int q) {
         Coefficient_ring coef(OSM::get_coefficient(this->_G_col.at(q),sigma, gamma));
-        return coef.is_invertible();
+        return is_invertible(coef);
     }
 
     /**
@@ -287,14 +287,14 @@ public:
         row_sigma_D = this->projection(row_sigma_D, SECONDARY, q+1);
         const Column_chain& col_pi_H(OSM::cget_column(this->_H_col.at(q), pi));
         coef = row_sigma_D * col_pi_H;
-        res = coef.is_invertible();
+        res = is_invertible(coef);
 
         // Compute <h partial(sigma),pi> (z)
         Column_chain col_sigma_D(this->_K.d(pi,q));
         col_sigma_D = this->projection(col_sigma_D, PRIMARY, q-1);
         Row_chain row_pi_H(OSM::get_row(this->_H_col.at(q-1), sigma));
         coef = row_pi_H * col_sigma_D;
-        res = res && coef.is_invertible();
+        res = res && is_invertible(coef);
         return res;
     }
 
@@ -353,7 +353,7 @@ public:
 
     bool is_valid_pair_for_R(size_t pi, size_t sigma, int q) {
         Coefficient_ring coef(OSM::get_coefficient(this->_H_col.at(q),sigma, pi));
-        return coef.is_invertible();
+        return is_invertible(coef);
     }
 
     // Hdvf methods
@@ -771,7 +771,7 @@ Cell_pair Hdvf<ChainComplex>::find_pair_M(int q, bool &found) const {
 
             // Iterate through the entries of the row
             for (typename Row_chain::const_iterator it = row.begin(); (it != row.end() && !found); ++it) {
-                if ((it->second).is_invertible()) {
+                if (is_invertible(it->second)) {
                     // If an entry with coefficient 1 or -1 is found, set the pair and mark as found
                     p.sigma = it->first; // primary cell
                     p.tau = *it_row; // critical cell
@@ -799,7 +799,7 @@ Cell_pair Hdvf<ChainComplex>::find_pair_M(int q, bool &found, size_t tau) const 
             // Get the column of tau
             const Column_chain& col(OSM::get_column(this->_F_row.at(q), tau)) ;
             for (typename Column_chain::const_iterator it = col.cbegin(); (it != col.cend() && !found); ++it) {
-                if ((it->second).is_invertible()) {
+                if (is_invertible(it->second)) {
                     p.sigma = tau ;
                     p.tau = it->first ;
                     p.dim = q ;
@@ -812,7 +812,7 @@ Cell_pair Hdvf<ChainComplex>::find_pair_M(int q, bool &found, size_t tau) const 
             // Search along the row of tau
             const Row_chain& row(OSM::cget_row(this->_F_row.at(q), tau)) ;
             for (typename Row_chain::const_iterator it = row.cbegin(); (it != row.cend() && !found); ++it) {
-                if ((it->second).is_invertible()) {
+                if (is_invertible(it->second)) {
                     p.sigma = it->first ; // primary cell
                     p.tau = tau ; // critical cell
                     p.dim = q ;
@@ -836,7 +836,7 @@ std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_M(int q, bool &found) cons
 
             // Iterate through the entries of the row
             for (typename Row_chain::const_iterator it = row.begin(); it != row.end(); ++it) {
-                if ((it->second).is_invertible()) {
+                if (is_invertible(it->second)) {
                     // If an entry with coefficient 1 or -1 is found, set the pair and add it
                     Cell_pair p ;
                     p.sigma = it->first; // primary cell
@@ -865,7 +865,7 @@ std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_M(int q, bool &found, size
             // Get the column of tau
             const Column_chain& col(OSM::get_column(this->_F_row.at(q), tau)) ;
             for (typename Column_chain::const_iterator it = col.cbegin(); it != col.cend(); ++it) {
-                if ((it->second).is_invertible()) {
+                if (is_invertible(it->second)) {
                     Cell_pair p ;
                     p.sigma = tau ;
                     p.tau = it->first ;
@@ -879,7 +879,7 @@ std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_M(int q, bool &found, size
         if (this->_flag.at(q).at(tau) == CRITICAL) {
             const Row_chain& row(OSM::get_row(this->_F_row.at(q), tau)) ;
             for (typename Row_chain::const_iterator it = row.cbegin(); it != row.cend(); ++it) {
-                if ((it->second).is_invertible()) {
+                if (is_invertible(it->second)) {
                     Cell_pair p ;
                     p.sigma = it->first ; // primary cell
                     p.tau = tau ; // critical cell
@@ -911,7 +911,7 @@ Cell_pair Hdvf<ChainComplex>::find_pair_W(int q, bool &found) const {
 
             // Iterate through the entries of the col
             for (typename Column_chain::const_iterator it = col.begin(); (it != col.end() && !found); ++it) {
-                if ((it->second).is_invertible()) {
+                if (is_invertible(it->second)) {
                     // If an entry with coefficient 1 or -1 is found, set the pair and mark as found
                     p.sigma = it->first; // secondary cell
                     p.tau = *it_col; // critical cell
@@ -948,7 +948,7 @@ Cell_pair Hdvf<ChainComplex>::find_pair_W(int q, bool &found, size_t tau) const 
         if (this->_flag.at(q).at(tau) == CRITICAL) {
             Column_chain col(OSM::get_column(this->_G_col.at(q), tau)) ;
             for (typename Column_chain::const_iterator it = col.cbegin(); (it != col.cend() && !found); ++it) {
-                if ((it->second).is_invertible()) {
+                if (is_invertible(it->second)) {
                     p.sigma = it->first ; // secondary cell
                     p.tau = tau ; // critical cell
                     p.dim = q ;
@@ -973,7 +973,7 @@ std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_W(int q, bool &found) cons
 
             // Iterate through the entries of the col
             for (typename Column_chain::const_iterator it = col.begin(); it != col.end(); ++it) {
-                if ((it->second).is_invertible()) {
+                if (is_invertible(it->second)) {
                     // If an entry with coefficient 1 or -1 is found, set the pair and mark as found
                     Cell_pair p ;
                     p.sigma = it->first; // secondary cell
@@ -1000,7 +1000,7 @@ std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_W(int q, bool &found, size
         // If tau is primary, search for gamma such that <g(gamma),tau>=+-1
         if (this->_flag.at(q).at(tau) == SECONDARY) {
             for (OSM::Bitboard::iterator it_col = this->_G_col.at(q).begin(); it_col != this->_G_col.at(q).end(); ++it_col) {
-                if ((get_coefficient(this->_G_col.at(q), tau, *it_col)).is_invertible()) {
+                if (is_invertible(get_coefficient(this->_G_col.at(q), tau, *it_col))) {
                     Cell_pair p ;
                     p.sigma = tau ; // secondary cell
                     p.tau = *it_col ; // critical cell
@@ -1013,7 +1013,7 @@ std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_W(int q, bool &found, size
         if (this->_flag.at(q).at(tau) == CRITICAL) {
             Column_chain col(OSM::get_column(this->_G_col.at(q), tau)) ;
             for (typename Column_chain::const_iterator it = col.cbegin(); it != col.cend(); ++it) {
-                if ((it->second).is_invertible()) {
+                if (is_invertible(it->second)) {
                     Cell_pair p ;
                     p.sigma = it->first ; // secondary cell
                     p.tau = tau ; // critical cell
@@ -1056,7 +1056,7 @@ Cell_pair Hdvf<ChainComplex>::find_pair_MW(int q, bool &found) const {
 
                     const Coefficient_ring xi = projS_cod_sigma * H11 ;
                     const Coefficient_ring xip = H11q1 * projP_d_pi ;
-                    found = (xi.is_invertible() && xip.is_invertible()) ;
+                    found = (is_invertible(xi) && is_invertible(xip)) ;
                     if (found) {
                         p.sigma = pi ; // primary cell
                         p.tau = sigma ; // secondary cell
@@ -1101,7 +1101,7 @@ Cell_pair Hdvf<ChainComplex>::find_pair_MW(int q, bool &found, size_t tau) const
                         // test xi and xip
                         const Coefficient_ring xi = projS_cod_sigma * H11 ;
                         const Coefficient_ring xip = H11q1 * projP_d_pi ;
-                        found = (xi.is_invertible() && xip.is_invertible()) ;
+                        found = (is_invertible(xi) && is_invertible(xip)) ;
                         if (found) {
                             p.sigma = pi ; // primary cell
                             p.tau = sigma ; // critical cell
@@ -1133,7 +1133,7 @@ Cell_pair Hdvf<ChainComplex>::find_pair_MW(int q, bool &found, size_t tau) const
                     // test xi and xip
                     const Coefficient_ring xi = projS_cod_sigma * H11 ;
                     const Coefficient_ring xip = H11q1 * projP_d_pi ;
-                    found = (xi.is_invertible() && xip.is_invertible()) ;
+                    found = (is_invertible(xi) && is_invertible(xip)) ;
                     if (found) {
                         p.sigma = pi ; // primary cell
                         p.tau = sigma ; // secondary cell
@@ -1170,7 +1170,7 @@ std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_MW(int q, bool &found) con
 
                     const Coefficient_ring xi = projS_cod_sigma * H11 ;
                     const Coefficient_ring xip = H11q1 * projP_d_pi ;
-                    found = (xi.is_invertible() && xip.is_invertible()) ;
+                    found = (is_invertible(xi) && is_invertible(xip)) ;
                     if (found) {
                         Cell_pair p;
                         p.sigma = pi ; // primary cell
@@ -1217,7 +1217,7 @@ std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_MW(int q, bool &found, siz
                         // test xi and xip
                         const Coefficient_ring xi = projS_cod_sigma * H11 ;
                         const Coefficient_ring xip = H11q1 * projP_d_pi ;
-                        found = (xi.is_invertible() && xip.is_invertible()) ;
+                        found = (is_invertible(xi) && is_invertible(xip)) ;
                         if (found) {
                             Cell_pair p ;
                             p.sigma = pi ; // primary cell
@@ -1251,7 +1251,7 @@ std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_MW(int q, bool &found, siz
                     // test xi and xip
                     const Coefficient_ring xi = projS_cod_sigma * H11 ;
                     const Coefficient_ring xip = H11q1 * projP_d_pi ;
-                    found = (xi.is_invertible() && xip.is_invertible()) ;
+                    found = (is_invertible(xi) && is_invertible(xip)) ;
                     if (found) {
                         Cell_pair p ;
                         p.sigma = pi ; // primary cell
@@ -1287,9 +1287,9 @@ void Hdvf<ChainComplex>::R(size_t pi, size_t sigma, int q) {
         Coefficient_ring H11(H12.get_coefficient(pi)); // H11 is the coefficient at row sigma and column pi
 
         // Assert that H11 is invertible
-        if (!H11.is_invertible())
+        if (! is_invertible(H11))
             throw(std::invalid_argument("Invalid arguments for R - cells do not meet the required condition"));
-        Coefficient_ring H11_inv = H11.inverse(); // Inverse of H11
+        Coefficient_ring H11_inv = inverse(H11); // Inverse of H11
 
         // Remove the contributions of pi from H12 and sigma from H21
         H12 /= std::vector<size_t>({pi}); // Remove column pi from H12
@@ -1412,9 +1412,9 @@ void Hdvf<ChainComplex>::M(size_t pi, size_t gamma, int q) {
         const Coefficient_ring F11(F12.get_coefficient(pi)); // F11 is the coefficient at row gamma and column pi
 
         // Assert that F11 is invertible
-        if (! F11.is_invertible())
+        if (! is_invertible(F11))
             throw(std::invalid_argument("Invalid arguments for M - cells do not meet the required condition"));
-        Coefficient_ring F11_inv = F11.inverse(); // Inverse of F11
+        Coefficient_ring F11_inv = inverse(F11); // Inverse of F11
 
         // Remove the contributions of pi from F12 and gamma from F21
         F12 /= std::vector<size_t>({pi}); // Remove column pi from F12
@@ -1532,9 +1532,9 @@ void Hdvf<ChainComplex>::W(size_t sigma, size_t gamma, int q) {
         Coefficient_ring G11(G12.get_coefficient(gamma)); // G11 is the coefficient at row sigma and column gamma
 
         // Assert that G11 is invertible
-        if (! G11.is_invertible())
+        if (! is_invertible(G11))
             throw(std::invalid_argument("Invalid arguments for W - cells do not meet the required condition"));
-        Coefficient_ring G11_inv = G11.inverse(); // Inverse of G11
+        Coefficient_ring G11_inv = inverse(G11); // Inverse of G11
 
         // Remove the contributions of gamma from G12 and sigma from G21
         G12 /= std::vector<size_t>({gamma}); // Remove column gamma from G12
@@ -1680,12 +1680,12 @@ void Hdvf<ChainComplex>::MW(size_t pi, size_t sigma, int q) {
         Coefficient_ring xi = projS_cod_sigma * H11 ;
         Coefficient_ring xip = H11q1 * projP_d_pi ;
 
-        if (! xi.is_invertible())
+        if (! is_invertible(xi))
             throw "MW impossible, xi non invertible" ;
-        if (! xip.is_invertible())
+        if (! is_invertible(xip))
             throw "MW impossible, xi' non invertible" ;
 
-        Coefficient_ring xi_inv = xi.inverse(), xip_inv = xip.inverse();
+        Coefficient_ring xi_inv = inverse(xi), xip_inv = inverse(xip);
 
         // F_q extraction
 

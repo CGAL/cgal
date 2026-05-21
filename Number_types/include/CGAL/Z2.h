@@ -168,6 +168,23 @@ template <> class Algebraic_structure_traits< Z2 >
           return true;
         }
     };
+
+    class Inverse
+      : public CGAL::cpp98::unary_function< Type, Type > {
+      public:
+        Type operator()( const Type& t) const {
+          return t.inverse();
+        }
+    };
+
+    class Is_invertible
+    : public CGAL::cpp98::unary_function< Type, bool > {
+    public:
+      bool operator()( const Type& t) const {
+        return t.is_invertible();
+      }
+    };
+
   };
 
   template <> class Real_embeddable_traits< Z2 >

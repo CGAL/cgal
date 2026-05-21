@@ -844,7 +844,7 @@ Cell_pair Hdvf_persistence<ChainComplex, Degree, Filtration_>::find_pair_A(bool 
         std::size_t i ;
         for (typename Column_chain::const_iterator it = tmp2.cbegin(); it != tmp2.cend(); ++it)
         {
-            if ((it->first < tmax) && (it->second).is_invertible())
+            if ((it->first < tmax) && is_invertible(it->second))
             {
                 if (!found) // for first cell met
                 {
