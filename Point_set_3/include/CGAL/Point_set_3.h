@@ -123,8 +123,9 @@ namespace internal {
 #else
 template <typename Point,
           typename Vector>
-class Point_set_3
 #endif
+class Point_set_3
+
 {
 public:
 
