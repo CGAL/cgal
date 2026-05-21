@@ -384,14 +384,13 @@ namespace internal {
     void split_long_edges(const EdgeRange& edge_range,
                           SizingFunction& sizing)
     {
-
 #ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << "Split long edges...";
       std::cout.flush();
 #endif
 
       //collect long edges
-      typedef std::pair<halfedge_descriptor, double> H_and_sql;
+      typedef std::pair<halfedge_descriptor, FT> H_and_sql;
       std::multiset< H_and_sql, std::function<bool(H_and_sql,H_and_sql)> >
         long_edges(
           [](const H_and_sql& p1, const H_and_sql& p2)
@@ -400,7 +399,7 @@ namespace internal {
       for(edge_descriptor e : edge_range)
       {
         const halfedge_descriptor he = halfedge(e, mesh_);
-        std::optional<double> sqlen = sizing.is_too_long(source(he, mesh_), target(he, mesh_), mesh_);
+        std::optional<FT> sqlen = sizing.is_too_long(source(he, mesh_), target(he, mesh_), mesh_);
         if(sqlen != std::nullopt)
           long_edges.emplace(he, sqlen.value());
       }
@@ -437,7 +436,7 @@ namespace internal {
 
         //check sub-edges
         //if it was more than twice the "long" threshold, insert them
-        std::optional<double> sqlen_new = sizing.is_too_long(source(hnew, mesh_), target(hnew, mesh_), mesh_);
+        std::optional<FT> sqlen_new = sizing.is_too_long(source(hnew, mesh_), target(hnew, mesh_), mesh_);
         if(sqlen_new != std::nullopt)
           long_edges.emplace(hnew, sqlen_new.value());
 
