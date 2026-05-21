@@ -210,7 +210,7 @@ private:
     return FT(CGAL::squared_distance(get(m_vpmap, va), get(m_vpmap, vb)));
   }
 
-  FT sqlength(const halfedge_descriptor& h, const PolygonMesh& pmesh) const
+  FT sqlength(const halfedge_descriptor h, const PolygonMesh& pmesh) const
   {
     return sqlength(target(h, pmesh), source(h, pmesh));
   }
