@@ -25,7 +25,7 @@ namespace CGAL {
 namespace Homological_discrete_vector_field {
 
 // Forward declaration of SimpComplexTools
-template<typename CoefficientRing, typename Traits> class Duality_simplicial_complex_tools ;
+//template<typename CoefficientRing, typename Traits> class Duality_simplicial_complex_tools ;
 
 /*!
  \ingroup PkgHDVFRef

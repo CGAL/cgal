@@ -25,12 +25,14 @@ typedef CGAL::Surface_mesh<Kernel::Point_3> Surface_mesh;
 int main(int argc, char **argv)
 {
 #if 1
-    using Complex = HDVF::Simplicial_chain_complex<Coefficient_ring,Traits> ;
+    using Sparse_matrix_struct = CGAL::OSM::Sparse_matrix<CGAL::OSM::Sparse_chain>;
+    using Complex = HDVF::Simplicial_chain_complex<Coefficient_ring,Traits,Sparse_matrix_struct> ;
     using HDVF_type = HDVF::Hdvf<Complex> ;
 
     std::string filename ;
     if (argc > 2) std::cerr << "usage: example_hdvf_simplicial off_file" << std::endl;
-    else if (argc == 1) filename  = "data/mesh_data/two_rings.off";
+    else if (argc == 1) filename  = "data/data_simplicial/two_rings.off";
+//    else if (argc == 1) filename  = "data/data_simplicial/three_triangles.off";
     else filename = argv[1];
 
     // Load Surface_mesh object and create Surface_mesh_io
@@ -47,16 +49,18 @@ int main(int argc, char **argv)
 
     //    // Build empty HDVF
     // Without dimension restriction
-    //    HDVF_type hdvf(complex, HDVF::OPT_FULL) ;
+        HDVF_type hdvf(complex, HDVF::OPT_FULL) ;
     // With computation restricted to dimension 1
-    HDVF_type hdvf(complex, HDVF::OPT_FULL, 1) ;
+//    HDVF_type hdvf(complex, HDVF::OPT_FULL, 1) ;
 
     // Compute a perfect HDVF
     hdvf.compute_perfect_hdvf();
 //    hdvf.compute_rand_perfect_hdvf();
 
+    hdvf.write_matrices();
+
     // Output HDVF to console
-    hdvf.write_flags(std::cout, -1);
+//    hdvf.write_flags(std::cout, -1);
     hdvf.write_reduction(std::cout, -1);
 
     // Output HDVF to vtk

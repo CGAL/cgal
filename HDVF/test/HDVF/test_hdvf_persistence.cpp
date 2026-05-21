@@ -17,8 +17,8 @@ namespace HDVF = CGAL::Homological_discrete_vector_field;
 //#define BUILD_TEST_DATA
 
 //typedef int Coefficient_ring;
-//typedef CGAL::Z2 Coefficient_ring;
-typedef CGAL::Zp<5, char, true> Coefficient_ring;
+typedef CGAL::Z2 Coefficient_ring;
+//typedef CGAL::Zp<5, char, true> Coefficient_ring;
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef HDVF::Hdvf_traits_3<Kernel> Traits;
@@ -27,7 +27,7 @@ typedef Kernel::Point_3 Point_3;
 typedef CGAL::Surface_mesh<Kernel::Point_3> Surface_mesh;
 
 typedef CGAL::OSM::Sub_sparse_matrix<CGAL::OSM::Sparse_chain> Sparse_matrix_struct;
-typedef HDVF::Simplicial_chain_complex<Coefficient_ring,Traits, Sparse_matrix_struct> Complex;
+typedef HDVF::Simplicial_chain_complex<Coefficient_ring, Traits, Sparse_matrix_struct> Complex;
 typedef double Degree;
 typedef HDVF::Filtration_lower_star<Complex, Degree> FiltrationType;
 typedef HDVF::Hdvf_persistence<Complex, Degree, FiltrationType> HDVF_type;
@@ -68,9 +68,13 @@ int main(int argc, char **argv) {
 
     // Build empty persistent HDVF (with vtk export activated)
     HDVF_type hdvf(complex, filtration, HDVF::OPT_FULL, true);
+    hdvf.write_matrices();
 
     // Compute a perfect HDVF
-    hdvf.compute_perfect_hdvf();
+    std::cout << "--- computing" << std::endl;
+    hdvf.compute_perfect_hdvf(true);
+    hdvf.write_matrices();
+    CGAL::IO::write_VTK(hdvf, complex, "tmp/res", true) ;
 
 #ifdef BUILD_TEST_DATA
     // Write HDVF_persistence to a .hdvf file

@@ -217,7 +217,8 @@ void write_VTK (const Homological_discrete_vector_field::Hdvf_persistence<ChainC
     }
     info_file.close() ;
     // Export infinite holes by calling Hdvf_core write_VTK
-    (static_cast<void (*) (Homological_discrete_vector_field::Hdvf_core<ChainComplex>&, ChainComplex&, std::string, bool)>(CGAL::IO::write_VTK<ChainComplex, size_t>))(per_hdvf, complex, filename+"_inf", co_faces);
+    const Homological_discrete_vector_field::Hdvf_core<ChainComplex>& tmp(per_hdvf);
+    CGAL::IO::write_VTK(tmp, complex, filename+"_inf", co_faces);
 }
 
 // Hdvf_duality vtk export

@@ -22,6 +22,12 @@
 namespace CGAL {
 namespace OSM {
 
+// Forward declaration of Sub_sparse_matrix_core
+#ifndef DOXYGEN_RUNNING
+template <typename CoefficientRing, int StorageFormat, template <typename, int> typename SparseChainType>
+class Sub_sparse_matrix_core;
+#endif
+
 /*!
  \ingroup PkgHDVFAlgorithmClasses
 
@@ -44,7 +50,7 @@ struct Sub_sparse_matrix {
     using Sparse_chain_type = SparseChainType<CT,SF>;
 
     template <typename CT, int SF>
-    using Sparse_matrix_type = Sparse_matrix_core<CT,SF, SparseChainType>;
+    using Sparse_matrix_type = Sub_sparse_matrix_core<CT,SF, SparseChainType>;
 };
 
 /*!

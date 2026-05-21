@@ -156,16 +156,16 @@ public:
 
 
 template <> class Algebraic_structure_traits< Z2 >
-  : public Algebraic_structure_traits_base< Z2, Integral_domain_without_division_tag >  {
-  public:
+: public Algebraic_structure_traits_base< Z2, Integral_domain_without_division_tag >  {
+public:
     typedef Tag_true            Is_exact;
     typedef Tag_false           Is_numerical_sensitive;
 
     class Is_square
-      : public CGAL::cpp98::unary_function< Type, bool > {
-      public:
+    : public CGAL::cpp98::unary_function< Type, bool > {
+    public:
         bool operator()( const Type& ) const {
-          return true;
+            return true;
         }
     };
 
@@ -187,43 +187,43 @@ template <> class Algebraic_structure_traits< Z2 >
 
   };
 
-  template <> class Real_embeddable_traits< Z2 >
-  : public INTERN_RET::Real_embeddable_traits_base< Z2 , CGAL::Tag_true > {
-  public:
+template <> class Real_embeddable_traits< Z2 >
+: public INTERN_RET::Real_embeddable_traits_base< Z2 , CGAL::Tag_true > {
+public:
 
     class Is_positive
-      : public CGAL::cpp98::unary_function< Type, bool > {
-      public:
+    : public CGAL::cpp98::unary_function< Type, bool > {
+    public:
         bool operator()( const Type& x_) const {
-          return !x_.is_zero() ;
+            return !x_.is_zero() ;
         }
     };
 
     class Is_negative
-      : public CGAL::cpp98::unary_function< Type, bool > {
-      public:
+    : public CGAL::cpp98::unary_function< Type, bool > {
+    public:
         bool operator()( const Type&) const {
-          return false;
+            return false;
         }
     };
 
     class Sgn
-      : public CGAL::cpp98::unary_function< Type, ::CGAL::Sign > {
-      public:
+    : public CGAL::cpp98::unary_function< Type, ::CGAL::Sign > {
+    public:
         ::CGAL::Sign operator()( const Type& x ) const {
-          if(x.is_zero()) return ZERO ;
-          else return POSITIVE ;
+            if(x.is_zero()) return ZERO ;
+            else return POSITIVE ;
         }
     };
 
     class Abs
     : public CGAL::cpp98::unary_function< Type, Type > {
-      public:
+    public:
         Type  operator()( const Type& x ) const {
-          return x ;
+            return x ;
         }
     };
-  };
+};
 
 } /* end namespace CGAL */
 

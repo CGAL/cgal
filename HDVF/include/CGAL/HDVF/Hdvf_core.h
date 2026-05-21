@@ -22,6 +22,7 @@
 #include <CGAL/OSM/Bitboard.h>
 #include <CGAL/OSM/Full_lu.h>
 #include <CGAL/number_utils.h>
+
 //#define DEBUG
 
 namespace CGAL {

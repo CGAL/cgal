@@ -585,14 +585,14 @@ public:
      *
      * \returns The iterator to the beginning of the chain indices.
      */
-    iterator begin(bool discard_small = true) { return iterator(*this, 0, discard_small) ; }
+    iterator begin(bool discard_small = true) const { return iterator(*this, 0, discard_small) ; }
 
     /**
      * \brief Iterator past-the-end of the chain indices.
      *
      * \returns The past-the-end iterator of the chain indices.
      */
-    iterator end() { return iterator(*this, _persist.size()) ; }
+    iterator end() const { return iterator(*this, _persist.size()) ; }
 
     /**
      * \brief Writes a `HDVF_persistence` together with the associated reduction (f, g, h, d matrices)
@@ -789,9 +789,11 @@ Hdvf_persistence<ChainComplex, Degree, Filtration_>::Hdvf_persistence(const Chai
     // Init boundary matrices
     std::vector<Column_matrix> _DD_per(this->_K.dimension()+1) ;
 
-    // Copy _DD_col with filtration order (for dimensions q>0)
+    // Set sub_sparse_matrix mask to full and copy _DD_col with filtration order (for dimensions q>0)
     for (int q = 0 ; q <= this->_K.dimension(); ++q) {
         const std::pair<int, int> s(this->_DD_col.at(q).dimensions()) ;
+        // Set mask to full
+        this->_DD_col.at(q).set_sub(OSM::Bitboard(s.second,false));
         _DD_per.at(q) = Column_matrix(s.first, s.second) ;
     }
     // Set empty mask for _DD_per[0]

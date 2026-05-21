@@ -60,7 +60,7 @@ public:
         return *this;
     }
 
-/** \brief Comparison operator. */
+    /** \brief Comparison operator. */
     bool operator< (const Zp& a) {
         return (_i < a._i);
     }
@@ -215,85 +215,92 @@ public:
 
 // Specialization for p not being a prime number
 template <int p, typename T> class Algebraic_structure_traits< Zp<p, T, false> >
-  : public Algebraic_structure_traits_base< Zp<p, T, false>, Integral_domain_without_division_tag >  {
-  public:
-      typedef Tag_true            Is_exact;
-      typedef Tag_false           Is_numerical_sensitive;
-      typedef Zp<p, T, false> Type;
+: public Algebraic_structure_traits_base< Zp<p, T, false>, Integral_domain_without_division_tag >  {
+public:
+    typedef Tag_true            Is_exact;
+    typedef Tag_false           Is_numerical_sensitive;
+    typedef Zp<p, T, false> Type;
 
     class Is_invertible //   AF: Does not yet exist in Number_types and Algebraic_foundations
-      : public CGAL::cpp98::unary_function< Type, bool > {
-      public:
+    : public CGAL::cpp98::unary_function< Type, bool > {
+    public:
         bool operator()( const Type& t) const {
-          return t.is_invertible() ;
+            return t.is_invertible() ;
         }
     };
 
     class Inverse
-      : public CGAL::cpp98::unary_function< Type, Type > {
-      public:
+    : public CGAL::cpp98::unary_function< Type, Type > {
+    public:
         Type operator()( const Type& t) const {
-          return t.inverse() ;
+            return t.inverse() ;
         }
     };
-  };
+};
 
 
-  // Specialization for p being prime number
-  template <int p, typename T> class Algebraic_structure_traits< Zp<p, T, true> >
-  : public Algebraic_structure_traits_base< Zp<p, T, true>, Field_tag >  {
-  public:
-      typedef Tag_true            Is_exact;
-      typedef Tag_false           Is_numerical_sensitive;
-      typedef Zp<p, T, true> Type;
+// Specialization for p being prime number
+template <int p, typename T> class Algebraic_structure_traits< Zp<p, T, true> >
+: public Algebraic_structure_traits_base< Zp<p, T, true>, Field_tag >  {
+public:
+    typedef Tag_true            Is_exact;
+    typedef Tag_false           Is_numerical_sensitive;
+    typedef Zp<p, T, true> Type;
 
     class Is_invertible
-      : public CGAL::cpp98::unary_function< Type, bool > {
-      public:
+    : public CGAL::cpp98::unary_function< Type, bool > {
+    public:
         bool operator()( const Type& t) const {
-          return ! t.is_zero() ;
+            return ! t.is_zero() ;
         }
     };
-  };
+    class Inverse
+    : public CGAL::cpp98::unary_function< Type, Type > {
+    public:
+        Type operator()( const Type& t) const {
+            return t.inverse() ;
+        }
+    };
+};
 
 template <int p, typename T, bool IsPrime> class Real_embeddable_traits< Zp<p, T, IsPrime> >
-  : public INTERN_RET::Real_embeddable_traits_base< Zp<p, T, IsPrime> , CGAL::Tag_true > {
-      typedef Zp<p, T, IsPrime> Type;
-  public:
+: public INTERN_RET::Real_embeddable_traits_base< Zp<p, T, IsPrime> , CGAL::Tag_true > {
+    typedef Zp<p, T, IsPrime> Type;
+public:
 
     class Is_positive
-      : public CGAL::cpp98::unary_function< Type, bool > {
-      public:
+    : public CGAL::cpp98::unary_function< Type, bool > {
+    public:
         bool operator()( const Type& t) const {
-          return ! t.is_zero() ;
+            return ! t.is_zero() ;
         }
     };
 
     class Is_negative
-      : public CGAL::cpp98::unary_function< Type, bool > {
-      public:
+    : public CGAL::cpp98::unary_function< Type, bool > {
+    public:
         bool operator()( const Type&) const {
-          return false;
+            return false;
         }
     };
 
     class Sgn
-      : public CGAL::cpp98::unary_function< Type, ::CGAL::Sign > {
-      public:
+    : public CGAL::cpp98::unary_function< Type, ::CGAL::Sign > {
+    public:
         ::CGAL::Sign operator()( const Type& t ) const {
-          if(t.is_zero()) return ZERO ;
-          else return POSITIVE ;
+            if(t.is_zero()) return ZERO ;
+            else return POSITIVE ;
         }
     };
 
     class Abs
     : public CGAL::cpp98::unary_function< Type, Type > {
-      public:
+    public:
         Type  operator()( const Type& t ) const {
-          return t ;
+            return t ;
         }
     };
-  };
+};
 
 } /* end namespace CGAL */
 

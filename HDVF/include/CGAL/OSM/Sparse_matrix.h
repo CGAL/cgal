@@ -29,6 +29,7 @@
 namespace CGAL {
 namespace OSM {
 
+// Forward declaration of Sparse_chain
 #ifndef DOXYGEN_RUNNING
 template <typename CoefficientRing, int StorageFormat>
 class Sparse_chain;

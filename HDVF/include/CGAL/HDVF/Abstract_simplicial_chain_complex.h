@@ -277,8 +277,8 @@ public:
      *
      * Displays the number of cells in each dimension and the boundary matrix in each dimension.
      */
-    template <typename _CT>
-    friend std::ostream& operator<< (std::ostream& out, const Abstract_simplicial_chain_complex<_CT>& complex);
+    template <typename _CT, typename _SMS>
+    friend std::ostream& operator<< (std::ostream& out, const Abstract_simplicial_chain_complex<_CT, _SMS>& complex);
 
     /** \brief Get (unique) object Id.
      * For comparison of constant references to the complex.
@@ -452,8 +452,8 @@ std::ostream& Abstract_simplicial_chain_complex<CoefficientRing, SparseMatrixStr
     return out_stream ;
 }
 
-template <typename CoefficientRing>
-std::ostream& operator<< (std::ostream& out, const Abstract_simplicial_chain_complex<CoefficientRing>& complex) {
+template <typename CoefficientRing, typename SparseMatrixStruct>
+std::ostream& operator<< (std::ostream& out, const Abstract_simplicial_chain_complex<CoefficientRing, SparseMatrixStruct>& complex) {
     return complex.print_complex(out);
 }
 

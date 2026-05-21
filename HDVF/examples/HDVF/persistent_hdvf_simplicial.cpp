@@ -23,7 +23,8 @@ typedef HDVF::Hdvf_traits_3<Kernel> Traits;
 typedef Kernel::Compute_z_3 Compute_z;
 typedef Kernel::Point_3 Point_3;
 
-typedef HDVF::Simplicial_chain_complex<Coefficient_ring,Traits> Complex;
+typedef CGAL::OSM::Sub_sparse_matrix<CGAL::OSM::Sparse_chain> Sparse_matrix_struct;
+typedef HDVF::Simplicial_chain_complex<Coefficient_ring,Traits,Sparse_matrix_struct> Complex;
 typedef double Degree;
 typedef HDVF::Filtration_lower_star<Complex, Degree> FiltrationType;
 typedef HDVF::Hdvf_persistence<Complex, Degree, FiltrationType> HDVF_type;
@@ -33,7 +34,7 @@ int main(int argc, char **argv)
 
     std::string filename;
     if (argc > 2) std::cout << "usage: persistent_hdvf_simplicial off_file" << std::endl;
-    else if (argc == 1) filename  = "data/mesh_data/two_rings.off";
+    else if (argc == 1) filename  = "data/data_simplicial/two_rings.off";
     else filename = argv[1];
 
     // Load cub object
