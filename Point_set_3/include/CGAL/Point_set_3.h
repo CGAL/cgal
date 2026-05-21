@@ -128,7 +128,9 @@ public:
   typedef Vector Vector_type;
   typedef Point_set_3<Point, Vector> Point_set;
 
+#ifndef DOXYGEN_RUNNING
   using Index = internal::Point_set_3_index<Point, Vector>;
+#endif
 
   typedef typename Properties::Property_container<Point_set, Index> Base;
 
