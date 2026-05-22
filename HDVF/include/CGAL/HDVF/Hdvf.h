@@ -936,7 +936,7 @@ Cell_pair Hdvf<ChainComplex>::find_pair_W(int q, bool &found, size_t tau) const 
         // If tau is primary, search for gamma such that <g(gamma),tau>=+-1
         if (this->_flag.at(q).at(tau) == SECONDARY) {
             for (OSM::Bitboard::iterator it_col = this->_G_col.at(q).begin(); (it_col != this->_G_col.at(q).end() && !found); ++it_col) {
-                if (OSM::get_coefficient(this->_G_col.at(q), tau, *it_col).is_invertible()) {
+                if (is_invertible(OSM::get_coefficient(this->_G_col.at(q), tau, *it_col))) {
                     p.sigma = tau ; // secondary cell
                     p.tau = *it_col ; // critical cell
                     p.dim = q ;

@@ -114,12 +114,12 @@ protected:
     Sparse_matrix_arg backward_substitution_U(const Row_matrix& U, const Sparse_matrix_arg& B) {
         Row_matrix X(B.dimensions());
         // Init X_n
-        Coefficient_ring un1n1_inv(inverse(get_coefficient(U,_n-1,_n-1)));
+        Coefficient_ring un1n1_inv(CGAL::inverse(get_coefficient(U,_n-1,_n-1)));
         set_row(X, _n-1, get_row(B, _n-1)*un1n1_inv);
         int i_n = static_cast<int>(_n);
         // Backward compute rows of X
         for (int i=i_n-2; i>=0; --i) {
-            Coefficient_ring uii_inv(inverse(get_coefficient(U,i,i)));
+            Coefficient_ring uii_inv(CGAL::inverse(get_coefficient(U,i,i)));
             Row_chain Xi = get_row(B, i)*uii_inv;
             for (int j=i+1; j<i_n; ++j) {
                 Xi -= cget_row(X,j) * get_coefficient(U, i, j) * uii_inv;
@@ -134,11 +134,11 @@ protected:
     Sparse_matrix_arg forward_substitution_L(const Row_matrix& L, const Sparse_matrix_arg& B) {
         Row_matrix X(B.dimensions());
         // Init X_0
-        Coefficient_ring l00_inv(inverse(get_coefficient(L,0,0)));
+        Coefficient_ring l00_inv(CGAL::inverse(get_coefficient(L,0,0)));
         set_row(X, 0, get_row(B, 0)*l00_inv);
         // Forward compute rows of X
         for (std::size_t i=1; i<_n; ++i) {
-            Coefficient_ring lii_inv(inverse(get_coefficient(L,i,i)));
+            Coefficient_ring lii_inv(CGAL::inverse(get_coefficient(L,i,i)));
             Row_chain Xi(get_row(B, i)*lii_inv);
             for (std::size_t j=0; j<i; ++j) {
                 Xi -= cget_row(X,j) * get_coefficient(L, i, j) * lii_inv;
@@ -264,7 +264,7 @@ std::pair<size_t, size_t> Full_lu<CoefficientRing, StorageFormat, SparseMatrix>:
         for (typename Row_chain::const_iterator it = row.cbegin(); (!invert_found) && (it!=row.cend()); ++it) {
             j = it->first;
             Coefficient_ring coef(get_coefficient(U, i, j));
-            invert_found = (is_invertible(coef));
+            invert_found = CGAL::is_invertible(coef);
             if (!invert_found) {
                 if (coef < min_val) {
                     min_val = coef;
@@ -291,7 +291,7 @@ size_t Full_lu<CoefficientRing, StorageFormat, SparseMatrix>::compute() {
         std::pair<size_t, size_t> pivot(choose_pivot(_U,k, invert_found));
         size_t i(pivot.first), j(pivot.second);
 //        std::cout << i << " - " << j << std::endl;
-        if (is_invertible(get_coefficient(_U, i, j))) {
+        if (CGAL::is_invertible(get_coefficient(_U, i, j))) {
             // Update _U accordingly
             swap_rows(_U, i, k);
             swap_columns(_U, j, k);
@@ -302,7 +302,7 @@ size_t Full_lu<CoefficientRing, StorageFormat, SparseMatrix>::compute() {
             swap_rows(_P, i, k);
             // Update _Q accordingly
             swap_columns(_Q, j, k);
-            Coefficient_ring ukk_inv(inverse(get_coefficient(_U, k, k)));
+            Coefficient_ring ukk_inv(CGAL::inverse(get_coefficient(_U, k, k)));
             for (std::size_t j=k+1; j<_n; ++j) {
                 Coefficient_ring ljk(get_coefficient(_U, j, k)*ukk_inv);
                 set_coefficient(_L, j, k, ljk);
