@@ -19,9 +19,9 @@
 
 namespace HDVF = CGAL::Homological_discrete_vector_field;
 
-//typedef int Coefficient_ring;
+typedef int Coefficient_ring;
 //typedef CGAL::Z2 Coefficient_ring;
-typedef CGAL::Zp<5, char, true> Coefficient_ring;
+//typedef CGAL::Zp<5, char, true> Coefficient_ring;
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef HDVF::Hdvf_traits_3<Kernel> Traits;
