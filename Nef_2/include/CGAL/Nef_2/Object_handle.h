@@ -25,7 +25,6 @@
 #include <type_traits>
 #include <utility>
 #else
-#include <optional>
 #include <variant>
 #endif
 
@@ -58,16 +57,16 @@ struct Object_handle;
 
 template <typename... Args>
 struct Object_handle<Type_pack<Args...>>
-  : std::optional<std::variant<Args...>> {
-  using std::optional<std::variant<Args...>>::optional;
+  : std::variant<std::monostate, Args...> {
+  using std::variant<std::monostate, Args...>::variant;
   // needed for compatabiity with CGAL::Object API
-  bool empty() const { return !this->has_value(); }
+  bool empty() const
+  { return std::holds_alternative<std::monostate>(*this); }
 };
 
 template <typename T, typename U>
 inline bool assign(T& t, const Object_handle<U>& oh) {
-  if (oh.empty()) return false;
-  const auto* p = std::get_if<T>(&*oh);
+  const auto* p = std::get_if<T>(&oh);
   if (!p) return false;
   t = *p;
   return true;
