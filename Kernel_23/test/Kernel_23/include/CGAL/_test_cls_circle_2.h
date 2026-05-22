@@ -180,6 +180,7 @@ _test_cls_circle_2(const R& )
  assert(!CGAL::Circle_2<R>(CGAL::Point_2<R>(0, 0), 1).has_on_unbounded_side(CGAL::Iso_rectangle_2<R>(CGAL::Point_2<R>(-1.1, -1.1), CGAL::Point_2<R>(1.1, 1.1))));
  assert(!CGAL::Circle_2<R>(CGAL::Point_2<R>(0, 0), 1).has_on_unbounded_side(CGAL::Iso_rectangle_2<R>(CGAL::Point_2<R>(-1.1, -2), CGAL::Point_2<R>(1.1, 0))));
  assert(!CGAL::Circle_2<R>(CGAL::Point_2<R>(0, 0), 1).has_on_unbounded_side(CGAL::Iso_rectangle_2<R>(CGAL::Point_2<R>(-0.1, -0.1), CGAL::Point_2<R>(0.1, 0.1))));
+ assert(!CGAL::Circle_2<R>(CGAL::Point_2<R>(5, 11), 4).has_on_unbounded_side(CGAL::Iso_rectangle_2<R>(CGAL::Point_2<R>(0, 0), CGAL::Point_2<R>(10, 10))));
 
  std::cout << '.';
 
