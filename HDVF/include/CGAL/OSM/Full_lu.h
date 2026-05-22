@@ -22,6 +22,7 @@
 
 #include <CGAL/OSM/Bitboard.h>
 #include <CGAL/OSM/Sparse_matrix.h>
+#include <CGAL/number_utils.h>
 
 
 namespace CGAL {
