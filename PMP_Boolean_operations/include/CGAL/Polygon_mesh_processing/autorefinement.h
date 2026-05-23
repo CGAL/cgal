@@ -976,6 +976,74 @@ void generate_subtriangles(std::size_t ti,
 #endif
 
 namespace autorefine_impl{
+
+//
+template <typename Kernel, typename Concurrency_tag, typename PointRange, typename PolygonRange, typename Pair_of_triangle_ids>
+void compute_intersecting_pairs(const PointRange& points, const PolygonRange& triangles,
+                                std::size_t split_id, std::vector<Pair_of_triangle_ids>& si_pairs)
+{
+  typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;
+  typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, std::size_t, Box_policy> Box;
+
+  std::vector<Box> boxes_1, boxes_2;
+  std::vector<Box*> boxes_1_ptr, boxes_2_ptr;
+
+  boxes_1.reserve(split_id);
+  boxes_1_ptr.reserve(boxes_1.size());
+  for (std::size_t i=0;i<split_id; ++i)
+  {
+    boxes_1.emplace_back(points[triangles[i][0]].bbox()+points[triangles[i][1]].bbox()+points[triangles[i][2]].bbox(), i);
+    boxes_1_ptr.push_back( &boxes_1.back() );
+  }
+
+  boxes_2.reserve(triangles.size()-split_id);
+  boxes_2_ptr.reserve(boxes_2.size());
+  for (std::size_t i=split_id;i<triangles.size(); ++i)
+  {
+    boxes_2.emplace_back(points[triangles[i][0]].bbox()+points[triangles[i][1]].bbox()+points[triangles[i][2]].bbox(), i);
+    boxes_2_ptr.push_back( &boxes_2.back() );
+  }
+
+  /// \todo experiments different cutoff values
+  std::ptrdiff_t cutoff = 2 * std::ptrdiff_t(
+      std::sqrt(boxes_1.size()+boxes_2.size()) );
+
+#ifdef CGAL_LINKED_WITH_TBB
+  constexpr bool need_copy = std::is_same_v<Concurrency_tag, Parallel_tag>;
+  using TBB_vector = tbb::concurrent_vector<Pair_of_triangle_ids>;
+  std::conditional_t<need_copy, TBB_vector, std::vector<Pair_of_triangle_ids> > collecter;
+#else
+  std::vector<Pair_of_triangle_ids>& collecter=si_pairs;
+#endif
+  auto callback = [&points, &triangles, &collecter]
+  (const Box* b1, const Box* b2)
+  {
+    std::size_t i1=b1->info(), i2=b2->info();
+
+    if (do_intersect(typename Kernel::Triangle_3(points[triangles[i1][0]],points[triangles[i1][1]],points[triangles[i1][2]]),
+                     typename Kernel::Triangle_3(points[triangles[i2][0]],points[triangles[i2][1]],points[triangles[i2][2]])))
+    {
+      collecter.emplace_back(i1,i2);
+    }
+  };
+
+  //using pointers in box_intersection_d is about 10% faster
+  CGAL::box_intersection_d<Concurrency_tag>(boxes_1_ptr.begin(), boxes_1_ptr.end(),
+                                            boxes_2_ptr.begin(), boxes_2_ptr.end(),
+                                            callback, cutoff );
+
+#ifdef CGAL_LINKED_WITH_TBB
+  if constexpr (need_copy)
+  {
+    si_pairs.reserve(collecter.size());
+    std::copy(collecter.begin(), collecter.end(), std::back_inserter(si_pairs));
+  }
+  else
+    si_pairs.swap(collecter);
+#endif
+}
+
+
 // Forward declaration
 struct Wrap_snap_visitor;
 
@@ -991,6 +1059,7 @@ bool autorefine_triangle_soup(PointRange& soup_points,
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
+  using parameters::is_default_parameter;
 
   typedef typename GetPolygonSoupGeomTraits<PointRange, NamedParameters>::type GT;
   typedef typename GetPointMap<PointRange, NamedParameters>::const_type    Point_map;
@@ -1026,7 +1095,24 @@ bool autorefine_triangle_soup(PointRange& soup_points,
 
   // collect intersecting pairs of triangles
   CGAL_PMP_AUTOREFINE_VERBOSE("collect intersecting pairs");
-  triangle_soup_self_intersections<Concurrency_tag>(soup_points, soup_triangles, std::back_inserter(si_pairs), np);
+
+#if defined(CGAL_AUTOREFINE_DEBUG_COUNTERS) || defined(CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS)
+  CGAL::Real_timer timer;
+  timer.start();
+#endif
+
+  if constexpr(!parameters::is_default_parameter<NamedParameters, internal_np::split_triangle_range_at_t>::value)
+  {
+    std::size_t split_id=get_parameter(np, internal_np::split_triangle_range_at);
+    compute_intersecting_pairs<GT, Concurrency_tag>(soup_points, soup_triangles, split_id, si_pairs);
+  }
+  else
+    triangle_soup_self_intersections<Concurrency_tag>(soup_points, soup_triangles, std::back_inserter(si_pairs), np);
+
+#if defined(CGAL_AUTOREFINE_DEBUG_COUNTERS) || defined(CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS)
+  timer.stop();
+  std::cout << "collecting intersecting pairs took " << timer.time() << "\n";
+#endif
 
   if (si_pairs.empty())
   {
