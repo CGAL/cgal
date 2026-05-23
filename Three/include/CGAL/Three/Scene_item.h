@@ -28,14 +28,14 @@
 
 namespace CGAL {
 namespace Three {
-  class Viewer_interface;
+class Viewer_interface;
 }
-}
-namespace CGAL{
+} // namespace CGAL
+namespace CGAL {
 namespace qglviewer {
-  class ManipulatedFrame;
+class ManipulatedFrame;
 }
-}
+} // namespace CGAL
 
 class QMenu;
 class QKeyEvent;
@@ -47,7 +47,8 @@ class Viewer_interface;
 //! This class represents an object in the OpenGL scene.
 //! It contains all the functions called by the Scene. It
 //! acts like a mix between an interface and a helper.
-class SCENE_ITEM_EXPORT Scene_item : public QObject{
+class SCENE_ITEM_EXPORT Scene_item : public QObject
+{
   Q_OBJECT
   Q_PROPERTY(QColor color READ color WRITE setColor)
   Q_PROPERTY(QString name READ name WRITE setName)
@@ -55,34 +56,42 @@ class SCENE_ITEM_EXPORT Scene_item : public QObject{
   Q_ENUMS(RenderingMode)
   Q_PROPERTY(RenderingMode renderingMode READ renderingMode WRITE setRenderingMode)
 public:
- /*!
+  /*!
    * \brief The OpenGL_program_IDs enum
    *
    * This enum holds the OpenGL programs IDs that are given to getShaderProgram() and attribBuffers().
    * @see getShaderProgram
    * @see attribBuffers
    */
-  enum OpenGL_program_IDs
-  {
-    ROGRAM_WITH_LIGHT = 0,       //!< Used to render a surface or an edge affected by the light. It uses a per fragment lighting model, and renders the selected item brighter.
-    PROGRAM_WITHOUT_LIGHT,       //!< Used to render a polyhedron edge or points. It renders in a uniform color and is not affected by light. \attention It renders the selected item in black.
-    PROGRAM_NO_SELECTION,        //!< Used to render a polyline or a surface that is not affected by light, like a cutting plane. It renders in a uniform color that does not change with selection.
-    PROGRAM_WITH_TEXTURE,        //!< Used to render a textured polyhedron. Affected by light.
-    PROGRAM_PLANE_TWO_FACES,     //!< Used to render a two-faced plane. The two faces have a different color. Not affected by light.
+
+  virtual bool hasDependencies() const { return false; }
+  virtual QList<Scene_item*> getDependencies() const { return QList<Scene_item*>(); }
+  enum OpenGL_program_IDs {
+    ROGRAM_WITH_LIGHT = 0,   //!< Used to render a surface or an edge affected by the light. It uses a per fragment
+                             //!< lighting model, and renders the selected item brighter.
+    PROGRAM_WITHOUT_LIGHT,   //!< Used to render a polyhedron edge or points. It renders in a uniform color and is not
+                             //!< affected by light. \attention It renders the selected item in black.
+    PROGRAM_NO_SELECTION,    //!< Used to render a polyline or a surface that is not affected by light, like a cutting
+                             //!< plane. It renders in a uniform color that does not change with selection.
+    PROGRAM_WITH_TEXTURE,    //!< Used to render a textured polyhedron. Affected by light.
+    PROGRAM_PLANE_TWO_FACES, //!< Used to render a two-faced plane. The two faces have a different color. Not affected
+                             //!< by light.
     PROGRAM_WITH_TEXTURED_EDGES, //!< Used to render the edges of a textured polyhedron. Not affected by light.
     PROGRAM_INSTANCED,           //!< Used to display instanced rendered spheres.Affected by light.
     PROGRAM_INSTANCED_WIRE,      //!< Used to display instanced rendered wired spheres. Not affected by light.
-    PROGRAM_C3T3,                //!< Used to render a c3t3_item. It discards any fragment on a side of a plane, meaning that nothing is displayed on this side of the plane. Affected by light.
-    PROGRAM_C3T3_EDGES,          //!< Used to render the edges of a c3t3_item. It discards any fragment on a side of a plane, meaning that nothing is displayed on this side of the plane. Not affected by light.
-    PROGRAM_CUTPLANE_SPHERES,    //!< Used to render the spheres of an item with a cut plane.
-    PROGRAM_SPHERES,             //!< Used to render one or several spheres.
-    PROGRAM_DARK_SPHERES,        //!< Used to render one or several spheres without light (for picking for example).
-    PROGRAM_FLAT,                //!< Used to render flat shading without pre computing normals
-    PROGRAM_OLD_FLAT,            //!< Used to render flat shading without pre computing normals without geometry shader
-    PROGRAM_SOLID_WIREFRAME,     //!< Used to render edges with width superior to 1.
-    PROGRAM_NO_INTERPOLATION,    //!< Used to render faces without interpolating their color.
-    PROGRAM_HEAT_INTENSITY,      //!< Used to render special item in Heat_method_plugin
-    NB_OF_PROGRAMS               //!< Holds the number of different programs in this enum.
+    PROGRAM_C3T3, //!< Used to render a c3t3_item. It discards any fragment on a side of a plane, meaning that nothing
+                  //!< is displayed on this side of the plane. Affected by light.
+    PROGRAM_C3T3_EDGES, //!< Used to render the edges of a c3t3_item. It discards any fragment on a side of a plane,
+                        //!< meaning that nothing is displayed on this side of the plane. Not affected by light.
+    PROGRAM_CUTPLANE_SPHERES, //!< Used to render the spheres of an item with a cut plane.
+    PROGRAM_SPHERES,          //!< Used to render one or several spheres.
+    PROGRAM_DARK_SPHERES,     //!< Used to render one or several spheres without light (for picking for example).
+    PROGRAM_FLAT,             //!< Used to render flat shading without pre computing normals
+    PROGRAM_OLD_FLAT,         //!< Used to render flat shading without pre computing normals without geometry shader
+    PROGRAM_SOLID_WIREFRAME,  //!< Used to render edges with width superior to 1.
+    PROGRAM_NO_INTERPOLATION, //!< Used to render faces without interpolating their color.
+    PROGRAM_HEAT_INTENSITY,   //!< Used to render special item in Heat_method_plugin
+    NB_OF_PROGRAMS            //!< Holds the number of different programs in this enum.
   };
   typedef CGAL::Bbox_3 Bbox;
   typedef CGAL::qglviewer::ManipulatedFrame ManipulatedFrame;
@@ -100,10 +109,10 @@ public:
   //!
   //! This number will be displayed in a warning box at loading.
   //! @see getNbIsolatedvertices
-  void setNbIsolatedvertices(std::size_t nb) { nb_isolated_vertices = nb;}
+  void setNbIsolatedvertices(std::size_t nb) { nb_isolated_vertices = nb; }
   //! Getter for the number of isolated vertices.
   //! @see setNbIsolatedvertices
-  std::size_t getNbIsolatedvertices() const {return nb_isolated_vertices;}
+  std::size_t getNbIsolatedvertices() const { return nb_isolated_vertices; }
   virtual ~Scene_item();
   //! \brief duplicates the item.
   //!
@@ -124,7 +133,7 @@ public:
    * @see computeElements()
    * @see initializeBuffers()
    */
-  virtual void draw(CGAL::Three::Viewer_interface*) const  { draw(); }
+  virtual void draw(CGAL::Three::Viewer_interface*) const { draw(); }
   //! Deprecated. Does nothing.
   virtual void drawEdges() const { draw(); }
   /*! \brief The drawing function for the edges.
@@ -177,10 +186,10 @@ public:
   //! saves the result for further calls.
   //! @returns the item's bounding box.
   virtual Bbox bbox() const {
-      if(!is_bbox_computed)
-          compute_bbox();
-      is_bbox_computed = true;
-      return _bbox;
+    if(!is_bbox_computed)
+      compute_bbox();
+    is_bbox_computed = true;
+    return _bbox;
   }
   //! \brief the item's bounding box's diagonal length.
   //!
@@ -206,22 +215,22 @@ public:
   virtual ManipulatedFrame* manipulatedFrame() { return nullptr; }
 
   // Getters for the four basic properties
-  //!Getter for the item's color.
-  //! @returns the current color of the item.
+  //! Getter for the item's color.
+  //!  @returns the current color of the item.
   virtual QColor color() const { return color_; }
-  //!Getter for the item's name.
-  //! @returns the current name of the item.
+  //! Getter for the item's name.
+  //!  @returns the current name of the item.
   virtual QString name() const { return name_; }
   //! If the item is not visible, it is not drawn and its Bbox
   //! is ignored in the computation of the scene's.
   //! @returns the current visibility of the item.
   virtual bool visible() const { return visible_; }
-  //!Getter for the item's rendering mode.
-  //! @returns the current rendering mode of the item.
+  //! Getter for the item's rendering mode.
+  //!  @returns the current rendering mode of the item.
   //!@see RenderingMode
   virtual RenderingMode renderingMode() const { return rendering_mode; }
-  //!The renderingMode's name.
-  //! @returns the current rendering mode of the item as a human readable string.
+  //! The renderingMode's name.
+  //!  @returns the current rendering mode of the item as a human readable string.
   virtual QString renderingModeName() const;
 
   //! \brief Context menu
@@ -238,20 +247,20 @@ public:
   //!
   //! \brief getId returns the current index of this item in the scene entries.
   //!
-  int getId()const;
+  int getId() const;
 
   //! invalidates the context menu. Call it when supportsRenderingMode() changes,
   //! for example.
   void resetMenu();
-  //!Handles key press events.
-  virtual bool keyPressEvent(QKeyEvent*){return false;}
+  //! Handles key press events.
+  virtual bool keyPressEvent(QKeyEvent*) { return false; }
 
-  //!The group containing the item.
-  //! \returns the parent group if the item is in a group
-  //! \returns 0 if the item is not in a group.
+  //! The group containing the item.
+  //!  \returns the parent group if the item is in a group
+  //!  \returns 0 if the item is not in a group.
   Scene_group_item* parentGroup() const;
 
-  //!Contains the header for the table in the statistics dialog
+  //! Contains the header for the table in the statistics dialog
   /*!
    * A header data is composed of 2 columns : the Categories and the titles.
    * A category is the name given to an association of titles.
@@ -271,17 +280,18 @@ public:
    * titles.append("Name");
    * titles.append("#Edges");\endverbatim
    */
-  struct Header_data{
-   //!Contains the name of the category of statistics and the number of lines it will contain
-   QList<std::pair<QString, int> > categories;
-   //!Contains the name of the lines of each category. Must be sorted from top to bottom.
-   QList<QString> titles;
+  struct Header_data
+  {
+    //! Contains the name of the category of statistics and the number of lines it will contain
+    QList<std::pair<QString, int>> categories;
+    //! Contains the name of the lines of each category. Must be sorted from top to bottom.
+    QList<QString> titles;
   };
-  //!Returns a Header_data struct containing the header information.
-  virtual Header_data header()const;
-  //!Returns true if the item has statistics.
-  virtual bool has_stats()const{return false;}
-  //!Returns a QString containing the requested value for the table in the statistics dialog
+  //! Returns a Header_data struct containing the header information.
+  virtual Header_data header() const;
+  //! Returns true if the item has statistics.
+  virtual bool has_stats() const { return false; }
+  //! Returns a QString containing the requested value for the table in the statistics dialog
   /*! \verbatim
    * Example :
    *  ____________________________
@@ -296,7 +306,7 @@ public:
    */
   virtual QString computeStats(int i);
 
-  //!Contains the number of group and subgroups containing this item.
+  //! Contains the number of group and subgroups containing this item.
   int has_group;
   //!
   //! \brief newViewer adds Vaos for `viewer`.
@@ -318,83 +328,61 @@ public Q_SLOTS:
   //! important to call this function whenever the internal data is changed,
   //! or the displayed item will not be updated.
   virtual void invalidateOpenGLBuffers();
-  //!Setter for the color of the item.
-  virtual void setColor(QColor c) { color_ = c;}
-  //!Setter for the RGB color of the item. Calls setColor(QColor).
+  //! Setter for the color of the item.
+  virtual void setColor(QColor c) { color_ = c; }
+  //! Setter for the RGB color of the item. Calls setColor(QColor).
   //!@see setColor(QColor c)
   void setRgbColor(int r, int g, int b) { setColor(QColor(r, g, b)); }
-  //!Sets the name of the item.
+  //! Sets the name of the item.
   virtual void setName(QString n) { name_ = n; }
-    //!Sets the visibility of the item.
+  //! Sets the visibility of the item.
   virtual void setVisible(bool b);
-  //!Set the parent group. If `group==0`, then the item has no parent.
-  //!This function is called by `Scene::changeGroup` and should not be
-  //!called manually.
+  //! Set the parent group. If `group==0`, then the item has no parent.
+  //! This function is called by `Scene::changeGroup` and should not be
+  //! called manually.
   virtual void moveToGroup(Scene_group_item* group);
-  void setRenderingMode(int m) { setRenderingMode(static_cast<RenderingMode>(m));}
-  //!Sets the rendering mode of the item.
+  void setRenderingMode(int m) { setRenderingMode(static_cast<RenderingMode>(m)); }
+  //! Sets the rendering mode of the item.
   //!@see RenderingMode
   virtual void setRenderingMode(RenderingMode m) {
-    if (supportsRenderingMode(m))
+    if(supportsRenderingMode(m))
       rendering_mode = m;
     Q_EMIT redraw();
   }
-  //!Sets the RenderingMode to Points.
-  void setPointsMode() {
-    setRenderingMode(Points);
-  }
-  //!Sets the RenderingMode to Points.
-  void setShadedPointsMode() {
-    setRenderingMode(ShadedPoints);
-  }
-  //!Sets the RenderingMode to Wireframe.
-  void setWireframeMode() {
-    setRenderingMode(Wireframe);
-  }
+  //! Sets the RenderingMode to Points.
+  void setPointsMode() { setRenderingMode(Points); }
+  //! Sets the RenderingMode to Points.
+  void setShadedPointsMode() { setRenderingMode(ShadedPoints); }
+  //! Sets the RenderingMode to Wireframe.
+  void setWireframeMode() { setRenderingMode(Wireframe); }
 
-  //!Sets the RenderingMode to Flat.
-  void setFlatMode() {
-    setRenderingMode(Flat);
-  }
-  //!Set the RenderingMode to FlatPlusEdges.
-  void setFlatPlusEdgesMode() {
-    setRenderingMode(FlatPlusEdges);
-  }
-  //!Sets the RenderingMode to Gouraud.
-  void setGouraudMode() {
-    setRenderingMode(Gouraud);
-  }
-  //!Sets the RenderingMode to PointsPlusNormals.
-  void setPointsPlusNormalsMode(){
-    setRenderingMode(PointsPlusNormals);
-  }
-  //!Sets the RenderingMode to GouraudPlusEdges.
-  void setGouraudPlusEdgesMode(){
-    setRenderingMode(GouraudPlusEdges);
-  }
+  //! Sets the RenderingMode to Flat.
+  void setFlatMode() { setRenderingMode(Flat); }
+  //! Set the RenderingMode to FlatPlusEdges.
+  void setFlatPlusEdgesMode() { setRenderingMode(FlatPlusEdges); }
+  //! Sets the RenderingMode to Gouraud.
+  void setGouraudMode() { setRenderingMode(Gouraud); }
+  //! Sets the RenderingMode to PointsPlusNormals.
+  void setPointsPlusNormalsMode() { setRenderingMode(PointsPlusNormals); }
+  //! Sets the RenderingMode to GouraudPlusEdges.
+  void setGouraudPlusEdgesMode() { setRenderingMode(GouraudPlusEdges); }
 
-  //!Emits an aboutToBeDestroyed() signal.
-  //!Override this function to delete what needs to be deleted on destruction.
-  //!This might be needed as items are not always deleted right away by Qt and this behavior may cause simply a
-  //!memory leak, for example when multiple items are created at the same time.
+  //! Emits an aboutToBeDestroyed() signal.
+  //! Override this function to delete what needs to be deleted on destruction.
+  //! This might be needed as items are not always deleted right away by Qt and this behavior may cause simply a
+  //! memory leak, for example when multiple items are created at the same time.
   virtual void itemAboutToBeDestroyed(Scene_item*);
-  //!Returns the alpha value for the item.
-    //! Must be called within a valid openGl context.
-    virtual float alpha() const;
+  //! Returns the alpha value for the item.
+  //!  Must be called within a valid openGl context.
+  virtual float alpha() const;
 
-    //! Sets the value of the alpha Slider for this item.
-    //!
-    //! Must be overridden;
-    //! \param alpha must be between 0 and 255
-    virtual void setAlpha(int alpha);
-  //!Selects a point through raycasting.
-  virtual void select(double orig_x,
-                      double orig_y,
-                      double orig_z,
-                      double dir_x,
-                      double dir_y,
-                      double dir_z);
-
+  //! Sets the value of the alpha Slider for this item.
+  //!
+  //! Must be overridden;
+  //! \param alpha must be between 0 and 255
+  virtual void setAlpha(int alpha);
+  //! Selects a point through raycasting.
+  virtual void select(double orig_x, double orig_y, double orig_z, double dir_x, double dir_y, double dir_z);
 
 
 Q_SIGNALS:
@@ -409,23 +397,23 @@ Q_SIGNALS:
   void redraw();
 
 protected:
-  //!Holds the BBox of the item
+  //! Holds the BBox of the item
   mutable Bbox _bbox;
   mutable double _diag_bbox;
   mutable bool is_bbox_computed;
   mutable bool is_bbox_diag_computed;
-  virtual void compute_bbox()const{}
-  virtual void compute_diag_bbox()const;
+  virtual void compute_bbox() const {}
+  virtual void compute_diag_bbox() const;
   // The four basic properties
-  //!The name of the item.
+  //! The name of the item.
   QString name_;
-  //!The color of the item.
+  //! The color of the item.
   QColor color_;
-  //!The visibility of the item.
+  //! The visibility of the item.
   bool visible_;
-  //!The parent group, or 0 if the item is not in a group.
+  //! The parent group, or 0 if the item is not in a group.
   Scene_group_item* parent_group;
-  //!Specifies if the item is currently selected.
+  //! Specifies if the item is currently selected.
   bool is_selected;
   //! Holds the number of vertices that are not linked to the polyhedron from the OFF
   //! file.
@@ -438,12 +426,12 @@ protected:
    * @see invalidateOpenGLBuffers()
    */
   mutable bool are_buffers_filled;
-  //!The rendering mode of the item.
+  //! The rendering mode of the item.
   //!@see RenderingMode
   RenderingMode rendering_mode;
-  //!The default context menu.
+  //! The default context menu.
   QMenu* defaultContextMenu;
-  //!Specifies if the context menu should be rebuild on the next call.
+  //! Specifies if the context menu should be rebuild on the next call.
   bool context_menu_outdated = false;
   /*! Contains the previous RenderingMode.
    * This is used to determine if invalidateOpenGLBuffers should be called or not
@@ -457,26 +445,25 @@ protected:
    * in certain cases.
    * @see invalidateOpenGLBuffers()*/
   RenderingMode cur_shading;
-  //!Contains the size of the vector of VBOs
+  //! Contains the size of the vector of VBOs
   int buffersSize;
-  //!Contains the size of the map of VAOs
+  //! Contains the size of the map of VAOs
   int vaosSize;
-  //!Contains the VBOs
+  //! Contains the VBOs
   mutable std::vector<QOpenGLBuffer> buffers;
   /*! Contains the VAOs.
    */
   std::vector<QOpenGLVertexArrayObject*> vaos;
   int cur_id;
-  //!Adds a VAO to the Map.
-  void addVaos(int i)
-  {
-      QOpenGLVertexArrayObject* n_vao = new QOpenGLVertexArrayObject();
-      vaos[i] = n_vao;
+  //! Adds a VAO to the Map.
+  void addVaos(int i) {
+    QOpenGLVertexArrayObject* n_vao = new QOpenGLVertexArrayObject();
+    vaos[i] = n_vao;
   }
 
   /*! Fills the VBOs with data.
    */
-  void initializeBuffers(){}
+  void initializeBuffers() {}
 
   /*! Passes all the uniform data to the shaders.
    * According to program_name, this data may change.
@@ -484,7 +471,8 @@ protected:
   void attribBuffers(CGAL::Three::Viewer_interface*, int program_name) const;
 
   /*! Compatibility function. Calls `viewer->getShaderProgram()`. */
-  virtual QOpenGLShaderProgram* getShaderProgram(int name , CGAL::Three::Viewer_interface *viewer = nullptr) const;
+  virtual QOpenGLShaderProgram* getShaderProgram(int name, CGAL::Three::Viewer_interface* viewer = nullptr) const;
+
 public:
   //! \brief defaultSaveName returns the name to be used as default
   //! when saving this item.
@@ -493,8 +481,8 @@ public:
   //! \return A new name for the default value in the "save as" dialog.
   virtual QString defaultSaveName() const { return name(); }
 }; // end class Scene_item
-}
-}
+} // namespace Three
+} // namespace CGAL
 
 #include <QMetaType>
 Q_DECLARE_METATYPE(CGAL::Three::Scene_item*)

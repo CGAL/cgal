@@ -48,6 +48,12 @@ public:
   typedef SMesh::Property_map<vertex_descriptor,int> Vertex_selection_map;
   typedef SMesh::Property_map<face_descriptor,int> Face_selection_map;
 
+
+  bool hasDependencies() const override;
+  QList<Scene_item*> getDependencies() const override;
+  void addDependency(Scene_item* item);
+  void removeDependency(Scene_item* item);
+
   void initialize_priv();
   Scene_surface_mesh_item();
   // Takes ownership of the argument.

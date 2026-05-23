@@ -86,6 +86,7 @@ public:
   Datum& datum() { return m_datum; }
   const Datum& datum() const { return m_datum; }
 
+
   /// Returns a point on the primitive
   Point reference_point() const { return m_datum.vertex(0); }
 };
@@ -116,7 +117,7 @@ struct Scene_surface_mesh_item_priv{
   typedef EPICK::Point_3 Point;
   typedef CGAL::Surface_mesh<Point> SMesh;
   typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
-
+  QList<Scene_item*> dependentItems;
   typedef std::vector<QColor> Color_vector;
 
   Scene_surface_mesh_item_priv(const Scene_surface_mesh_item& other, Scene_surface_mesh_item* parent):
@@ -281,6 +282,8 @@ struct Scene_surface_mesh_item_priv{
   mutable SMesh::Property_map<vertex_descriptor,int> v_selection_map;
   mutable SMesh::Property_map<face_descriptor,int> f_selection_map;
   mutable SMesh::Property_map<boost::graph_traits<SMesh>::edge_descriptor, bool> e_is_feature_map;
+  QList<Scene_item*> dependencies;
+
 
   mutable Color_vector colors_;
   double volume, area;
@@ -296,6 +299,32 @@ struct Scene_surface_mesh_item_priv{
 };
 
 const char* aabb_property_name = "Scene_surface_mesh_item aabb tree";
+
+
+bool Scene_surface_mesh_item::hasDependencies() const {
+  return !d->dependencies.isEmpty();
+}
+
+QList<Scene_item*> Scene_surface_mesh_item::getDependencies() const {
+  return d->dependencies;
+}
+
+void Scene_surface_mesh_item::addDependency(Scene_item* item) {
+  if(item && !d->dependencies.contains(item)) {
+    d->dependencies.append(item);
+
+    // SAFETY CRITICAL: If the user deletes the selection item manually from the UI,
+    // we must remove it from this list to prevent a dangling pointer crash.
+    connect(item, &QObject::destroyed, this, [this, item]() { this->removeDependency(item); });
+  }
+}
+
+void Scene_surface_mesh_item::removeDependency(Scene_item* item) {
+  d->dependencies.removeAll(item);
+}
+
+
+
 
 void Scene_surface_mesh_item::initialize_priv()
 {

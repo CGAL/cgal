@@ -26,12 +26,17 @@
 class QEvent;
 class QMouseEvent;
 class QOpenGLFramebufferObject;
-namespace CGAL { namespace Three{ class Viewer_interface;}}
+namespace CGAL {
+namespace Three {
+class Viewer_interface;
+}
+} // namespace CGAL
 
 //! This class is not supposed to be used by Plugins, but sometimes you may need access to
 //! peculiar signals or slots.
-class SCENE_EXPORT Scene  :
-  public QStandardItemModel, public CGAL::Three::Scene_interface, public CGAL::Three::Scene_draw_interface
+class SCENE_EXPORT Scene : public QStandardItemModel,
+                           public CGAL::Three::Scene_interface,
+                           public CGAL::Three::Scene_draw_interface
 
 {
   Q_OBJECT
@@ -42,19 +47,22 @@ class SCENE_EXPORT Scene  :
 public:
   QList<QModelIndex> getModelIndexFromId(int id) const;
   int getIdFromModelIndex(QModelIndex modelId) const;
-  enum Columns { NameColumn = 0,
-                 ColorColumn,
-                 RenderingModeColumn,
-                 VisibleColumn,
-                 ABColumn,
-                 LastColumn = ABColumn,
-                 NumberOfColumns = LastColumn + 1};
-  Scene(QObject*  parent);
+  enum Columns {
+    NameColumn = 0,
+    ColorColumn,
+    RenderingModeColumn,
+    VisibleColumn,
+    ABColumn,
+    LastColumn = ABColumn,
+    NumberOfColumns = LastColumn + 1
+  };
+  Scene(QObject* parent);
   ~Scene();
   int addItem(CGAL::Three::Scene_item* item) override;
   void addChild(Scene_item* item) override;
   Q_INVOKABLE void changeGroup(CGAL::Three::Scene_item* item, CGAL::Three::Scene_group_item* target_group) override;
-  CGAL::Three::Scene_item* replaceItem(int index, CGAL::Three::Scene_item* item, bool emit_item_about_to_be_destroyed = false) override;
+  CGAL::Three::Scene_item*
+  replaceItem(int index, CGAL::Three::Scene_item* item, bool emit_item_about_to_be_destroyed = false) override;
   Q_INVOKABLE int erase(int) override;
 
   int erase(QList<int>) override;
@@ -83,112 +91,99 @@ public:
   int selectionBindex() const override;
   void initializeGL(CGAL::Three::Viewer_interface*) override;
   void initGL(CGAL::Three::Viewer_interface* viewer);
-  void setPickedPixel(const QPoint &p) override {picked_pixel = p;}
+  void setPickedPixel(const QPoint& p) override { picked_pixel = p; }
   void draw(CGAL::Three::Viewer_interface*) override;
   void drawWithNames(CGAL::Three::Viewer_interface*) override;
   bool keyPressEvent(QKeyEvent* e) override;
-  void printPrimitiveId(QPoint point,
-                        CGAL::Three::Viewer_interface*) override;
+  void printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface*) override;
   void printVertexIds() override;
   void printEdgeIds() override;
   void printFaceIds() override;
   void printAllIds() override;
-  //!Re-computes the primitiveIds for `item`
-  void updatePrimitiveIds(Scene_item *item) override;
+  //! Re-computes the primitiveIds for `item`
+  void updatePrimitiveIds(Scene_item* item) override;
   bool testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer) override;
   Bbox bbox() const override;
   void computeBbox();
-  double len_diagonal() const override
-  {
+  double len_diagonal() const override {
     Bbox box = bbox();
     double dx = box.xmax() - box.xmin();
     double dy = box.ymax() - box.ymin();
     double dz = box.zmax() - box.zmin();
-    return std::sqrt(dx*dx + dy*dy + dz*dz);
+    return std::sqrt(dx * dx + dy * dy + dz * dz);
   }
 
-  //Moves a name up in the Geometric Objects view
+  // Moves a name up in the Geometric Objects view
   void moveRowUp();
-  //Moves a name down in the Geometric Objects view
+  // Moves a name down in the Geometric Objects view
   void moveRowDown();
   // QStandardItemModel functions
-  //Defines the behavior when a name is drag-and-dropped in the Geometric Objects view
-  bool dropMimeData(const QMimeData *, Qt::DropAction, int, int,
-                    const QModelIndex &parent) override;
-  //Contains the text and icons of an item in the Geometric Objects view
-  QVariant data ( const QModelIndex & index,
-                  int role = ::Qt::DisplayRole ) const override;
+  // Defines the behavior when a name is drag-and-dropped in the Geometric Objects view
+  bool dropMimeData(const QMimeData*, Qt::DropAction, int, int, const QModelIndex& parent) override;
+  // Contains the text and icons of an item in the Geometric Objects view
+  QVariant data(const QModelIndex& index, int role = ::Qt::DisplayRole) const override;
   //@returns the type of data corresponding to the role.
-  QVariant headerData ( int section, ::Qt::Orientation orientation,
-                        int role = ::Qt::DisplayRole ) const override;
+  QVariant headerData(int section, ::Qt::Orientation orientation, int role = ::Qt::DisplayRole) const override;
   //@returns the flags for the item at the target index.
-  ::Qt::ItemFlags flags ( const QModelIndex & index ) const override;
+  ::Qt::ItemFlags flags(const QModelIndex& index) const override;
   // Sets the column data for the target index. Returns false if index is not valid and
   // if role is not EditRole.
-  bool setData(const QModelIndex &index, const QVariant &value,
-               int role) override;
+  bool setData(const QModelIndex& index, const QVariant& value, int role) override;
 
-  //Returns a list of all the items.
-  QList<CGAL::Three::Scene_item*> item_entries() const ;
+  // Returns a list of all the items.
+  QList<CGAL::Three::Scene_item*> item_entries() const;
   // auxiliary public function for QMainWindow
-  //Selects the row at index i in the sceneView.
+  // Selects the row at index i in the sceneView.
   QItemSelection createSelection(int i);
-  //same for lists
+  // same for lists
   QItemSelection createSelection(QList<int> is);
-  //Selects all the rows in the sceneView.
+  // Selects all the rows in the sceneView.
   QItemSelection createSelectionAll();
-  //Connects specific signals to a group when it is added and
-  // gives a reference to the scene to it.
+  // Connects specific signals to a group when it is added and
+  //  gives a reference to the scene to it.
   void addGroup(Scene_group_item* group);
 
-  void zoomToPosition(QPoint point,
-                        CGAL::Three::Viewer_interface*) override;
-  void setUpdatesEnabled(bool b) override
-  {
+  void zoomToPosition(QPoint point, CGAL::Three::Viewer_interface*) override;
+  void setUpdatesEnabled(bool b) override {
     dont_emit_changes = !b;
     if(!b)
       allItemsChanged();
   }
 
 public Q_SLOTS:
-  //!Specifies a group as Expanded for the Geometric Objects view
+  //! Specifies a group as Expanded for the Geometric Objects view
   void setExpanded(QModelIndex);
-  //!Specifies a group as Collapsed for the Geometric Objects view
+  //! Specifies a group as Collapsed for the Geometric Objects view
   void setCollapsed(QModelIndex);
-  //!Transmits a CGAL::Three::Scene_item::itemChanged() signal to the scene.
+  //! Transmits a CGAL::Three::Scene_item::itemChanged() signal to the scene.
   void itemChanged();
   void itemChanged(int i) override;
   void itemChanged(CGAL::Three::Scene_item*) override;
   void allItemsChanged() override;
-  //!Transmits a CGAL::Three::Scene_item::itemVisibilityChanged() signal to the scene.
+  //! Transmits a CGAL::Three::Scene_item::itemVisibilityChanged() signal to the scene.
   void itemVisibilityChanged();
   void itemVisibilityChanged(CGAL::Three::Scene_item*) override;
-  //!Removes `item` from all the groups of the scene.
+  //! Removes `item` from all the groups of the scene.
   void remove_item_from_groups(CGAL::Three::Scene_item* item);
-  //!Re-organizes the sceneView.
+  //! Re-organizes the sceneView.
   void redraw_model();
   //! Sets the selected item to the target index. Emits a signal to notify
   //! that a new item is now selected, but does not update the Geometric Objects view.
   //! Used in intern and by the mainwindow
-  void setSelectedItemIndex(int i)
-  {
+  void setSelectedItemIndex(int i) {
     selected_item = i;
     Q_EMIT itemIndexSelected(i);
   }
-  void setSelectedItem(int i ) override
-  {
+  void setSelectedItem(int i) override {
     selected_item = i;
     Q_EMIT selectionChanged(i);
   }
 
   //! Does the same as setSelectedItem(int)
-  void setSelectedItem(CGAL::Three::Scene_item* item_to_select)
-  {
-    int i=0;
-    for(CGAL::Three::Scene_item* item : m_entries)
-    {
-      if (item==item_to_select)
-      {
+  void setSelectedItem(CGAL::Three::Scene_item* item_to_select) {
+    int i = 0;
+    for(CGAL::Three::Scene_item* item : m_entries) {
+      if(item == item_to_select) {
         setSelectedItem(i);
         break;
       }
@@ -197,21 +192,15 @@ public Q_SLOTS:
   }
 
   //! Sets the target list of indices as the selected indices.
-  const QList<int>& setSelectedItemIndices(QList<int> l,
-                                           const bool do_emit = true)
-  {
-    for(int i :l)
-    {
-       CGAL::Three::Scene_group_item* group =
-               qobject_cast<CGAL::Three::Scene_group_item*>(item(i));
-       if(group)
-       {
-         QList<int> list;
-         for(Item_id id : group->getChildrenForSelection())
-           list << id;
-         l << setSelectedItemIndices(list, false /*do not emit*/);
-       }
-
+  const QList<int>& setSelectedItemIndices(QList<int> l, const bool do_emit = true) {
+    for(int i : l) {
+      CGAL::Three::Scene_group_item* group = qobject_cast<CGAL::Three::Scene_group_item*>(item(i));
+      if(group) {
+        QList<int> list;
+        for(Item_id id : group->getChildrenForSelection())
+          list << id;
+        l << setSelectedItemIndices(list, false /*do not emit*/);
+      }
     }
     selected_items_list = l;
     if(do_emit)
@@ -219,21 +208,16 @@ public Q_SLOTS:
     return selected_items_list;
   }
 
-    //! Sets the target list of indices as the selected indices.
-  const QList<int>& setSelectedItemList(QList<int> l,
-                                        const bool do_emit = true)
-  {
-    for(int i :l)
-    {
-       CGAL::Three::Scene_group_item* group =
-               qobject_cast<CGAL::Three::Scene_group_item*>(item(i));
-       if(group)
-       {
-         QList<int> list;
-         for(Item_id id : group->getChildrenForSelection())
-           list << id;
-         l << setSelectedItemList(list, false /*do not emit*/);
-       }
+  //! Sets the target list of indices as the selected indices.
+  const QList<int>& setSelectedItemList(QList<int> l, const bool do_emit = true) {
+    for(int i : l) {
+      CGAL::Three::Scene_group_item* group = qobject_cast<CGAL::Three::Scene_group_item*>(item(i));
+      if(group) {
+        QList<int> list;
+        for(Item_id id : group->getChildrenForSelection())
+          list << id;
+        l << setSelectedItemList(list, false /*do not emit*/);
+      }
     }
 
     selected_items_list = l;
@@ -243,19 +227,19 @@ public Q_SLOTS:
   }
 
   // Accessors (setters)
-  //!Sets the item at index i to visible or not visible.
+  //! Sets the item at index i to visible or not visible.
   void setItemVisible(int, bool b);
-  //!Sets the item_A as the item at index i .
+  //! Sets the item_A as the item at index i .
   void setItemA(int i);
-  //!Sets the item_B as the item at index i .
+  //! Sets the item_B as the item at index i .
   void setItemB(int i);
   void newViewer(CGAL::Three::Viewer_interface*);
   void removeViewer(CGAL::Three::Viewer_interface*);
   void enableVisibilityRecentering(bool);
 
 Q_SIGNALS:
-  //generated automatically by moc
-  //!Is emitted when the ids of the items are changed.
+  // generated automatically by moc
+  //! Is emitted when the ids of the items are changed.
   void indexErased(Scene_interface::Item_id id);
   //! Emit this to mark `modelindex` as selected in the Geometric Objects view.
   void itemPicked(const QModelIndex& modelindex);
@@ -287,38 +271,44 @@ private Q_SLOTS:
   void adjustIds(Scene_interface::Item_id removed_id);
   void setSelectionRay(double, double, double, double, double, double);
   void callDraw();
-  void s_itemAboutToBeDestroyed(CGAL::Three::Scene_item *);
+  void s_itemAboutToBeDestroyed(CGAL::Three::Scene_item*);
+
 private:
   /*! Calls the drawing functions of each visible item according
    * to its current renderingMode. If with_names is true, uses
    * the OpenGL mode GL_WITH_NAMES, essentially used for the picking.*/
   void draw_aux(bool with_names, CGAL::Three::Viewer_interface*);
   bool has_alpha();
-  void renderScene(const QList<Scene_interface::Item_id > &items,
-                   CGAL::Three::Viewer_interface* viewer, QMap<float, int> &picked_item_IDs, bool with_names,
-                   int pass, bool writing_depth,
+  void renderScene(const QList<Scene_interface::Item_id>& items,
+                   CGAL::Three::Viewer_interface* viewer,
+                   QMap<float, int>& picked_item_IDs,
+                   bool with_names,
+                   int pass,
+                   bool writing_depth,
                    QOpenGLFramebufferObject* fbo);
-  void renderWireScene(const QList<Scene_interface::Item_id> &items,
-                       Viewer_interface *viewer, QMap<float, int> &picked_item_IDs, bool with_names);
-  void renderPointScene(const QList<Scene_interface::Item_id> &items,
-                        Viewer_interface *viewer,
+  void renderWireScene(const QList<Scene_interface::Item_id>& items,
+                       Viewer_interface* viewer,
+                       QMap<float, int>& picked_item_IDs,
+                       bool with_names);
+  void renderPointScene(const QList<Scene_interface::Item_id>& items,
+                        Viewer_interface* viewer,
                         QMap<float, int>& picked_item_IDs,
                         bool with_names);
   // Re-draw the hierarchy of the view.
-  void organize_items(CGAL::Three::Scene_item* item, QStandardItem *root, int loop);
+  void organize_items(CGAL::Three::Scene_item* item, QStandardItem* root, int loop);
   // List of Scene_items.
   typedef QList<CGAL::Three::Scene_item*> Entries;
-  //List containing all the scene_items.
+  // List containing all the scene_items.
   Entries m_entries;
-  QList<Item_id> m_groups; //used to optimize createSelectionAll()
+  QList<Item_id> m_groups; // used to optimize createSelectionAll()
   QList<Item_id> children;
   // Index of the currently selected item.
   int selected_item;
-  //List of indices of the currently selected items.
+  // List of indices of the currently selected items.
   QList<int> selected_items_list;
-  //Index of the item_A.
+  // Index of the item_A.
   int item_A;
-  //Index of the item_B.
+  // Index of the item_B.
   int item_B;
   bool picked;
   QPoint picked_pixel;
@@ -330,44 +320,36 @@ private:
   QMap<CGAL::Three::Viewer_interface*, QOpenGLVertexArrayObject*> vaos;
   mutable QOpenGLBuffer vbo[2];
   Bbox last_bbox;
-  //the scene will ignore the itemChanged() signals while this is true.
+  // the scene will ignore the itemChanged() signals while this is true.
   bool dont_emit_changes;
   bool visibility_recentering_enabled;
-  bool sort_lists(QVector<QList<int> >&sorted_lists, bool up);
+  bool sort_lists(QVector<QList<int>>& sorted_lists, bool up);
 }; // end class Scene
 
 class QAbstractProxyModel;
 
 //\brief The SceneDelegate class
-//Handles the columns of the sceneView
+// Handles the columns of the sceneView
 class SCENE_EXPORT SceneDelegate : public QItemDelegate
 {
 public:
-  SceneDelegate(QObject * parent = nullptr)
-    : QItemDelegate(parent),
-      checkOnPixmap(":/cgal/icons/check-on.png"),
-      checkOffPixmap(":/cgal/icons/check-off.png")
-  {
-  }
-// Handles the clicks on the sceneView
-  bool editorEvent(QEvent *event, QAbstractItemModel *model,
-                   const QStyleOptionViewItem &option,
-                   const QModelIndex &index);
+  SceneDelegate(QObject* parent = nullptr)
+      : QItemDelegate(parent)
+      , checkOnPixmap(":/cgal/icons/check-on.png")
+      , checkOffPixmap(":/cgal/icons/check-off.png") {}
+  // Handles the clicks on the sceneView
+  bool
+  editorEvent(QEvent* event, QAbstractItemModel* model, const QStyleOptionViewItem& option, const QModelIndex& index);
   // Draws the content of the sceneView
-  void paint(QPainter *painter, const QStyleOptionViewItem &option,
-             const QModelIndex &index) const;
-  void setProxy(QAbstractProxyModel* p_proxy){
-      proxy = p_proxy;
-  }
-  void setScene(Scene* p_scene){
-      scene = p_scene;
-  }
+  void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
+  void setProxy(QAbstractProxyModel* p_proxy) { proxy = p_proxy; }
+  void setScene(Scene* p_scene) { scene = p_scene; }
 
 private:
   QPixmap checkOnPixmap;
   QPixmap checkOffPixmap;
-  QAbstractProxyModel *proxy;
-  Scene *scene;
+  QAbstractProxyModel* proxy;
+  Scene* scene;
   mutable int size;
 
 }; // end class SceneDelegate

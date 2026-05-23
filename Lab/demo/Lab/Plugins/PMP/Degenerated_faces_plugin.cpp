@@ -156,6 +156,7 @@ void Degenerated_faces_plugin::on_actionDegenFaces_triggered()
       selection_item->setName(tr("%1 (selection) (intersecting triangles)").arg(poly_item->name()));
       poly_item->setRenderingMode(Wireframe);
       scene->addItem(selection_item);
+      poly_item->addDependency(selection_item);
       scene->itemChanged(poly_item);
       scene->itemChanged(selection_item);
       found = true;
@@ -204,6 +205,7 @@ void Degenerated_faces_plugin::on_actionDegenEdges_triggered()
       selection_item->setName(tr("%1 (selection) (null length edges)").arg(poly_item->name()));
       poly_item->setRenderingMode(Wireframe);
       scene->addItem(selection_item);
+      poly_item->addDependency(selection_item);
       scene->itemChanged(poly_item);
       scene->itemChanged(selection_item);
       found = true;

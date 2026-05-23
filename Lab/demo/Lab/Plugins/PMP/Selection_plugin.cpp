@@ -99,24 +99,34 @@ public:
     return false;
   }
 
-  QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true) override {
-      if(fileinfo.suffix().toLower() != "txt")
-      {
-        ok = false;
-        return QList<Scene_item*>();
-      }
-      // There will be no actual loading at this step.
-      Scene_polyhedron_selection_item* item = new Scene_polyhedron_selection_item();
-      if(!item->load(fileinfo.filePath().toStdString())) {
-          delete item;
-        ok = false;
-        return QList<Scene_item*>();
-      }
-      item->setName(fileinfo.completeBaseName());
-      ok = true;
-      if(add_to_scene)
-        CGAL::Three::Three::scene()->addItem(item);
-      return QList<Scene_item*>()<<item;
+  QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene = true) override {
+    if(fileinfo.suffix().toLower() != "txt") {
+      ok = false;
+      return QList<Scene_item*>();
+    }
+
+    // 1. Create the item. (CGAL automatically attaches this to whatever is highlighted in the UI!)
+    Scene_polyhedron_selection_item* item = new Scene_polyhedron_selection_item();
+
+    // 2. Load the points. Since we didn't mess with the mesh pointer, it maps perfectly.
+    if(!item->load(fileinfo.filePath().toStdString())) {
+      delete item;
+      ok = false;
+      return QList<Scene_item*>();
+    }
+
+    item->setName(fileinfo.completeBaseName());
+
+    // 3. TAG IT: Just quietly tag it so MainWindow can find it during a reload.
+    Scene_item* target_item = CGAL::Three::Three::scene()->item(CGAL::Three::Three::scene()->mainSelectionIndex());
+    if(target_item) {
+      item->setProperty("parent_mesh_name", target_item->name());
+    }
+
+    ok = true;
+    if(add_to_scene)
+      CGAL::Three::Three::scene()->addItem(item);
+    return QList<Scene_item*>() << item;
   }
 
   bool canSave(const CGAL::Three::Scene_item* scene_item) override {
@@ -1199,6 +1209,10 @@ public Q_SLOTS:
     }
 
     selection_item_map.insert(std::make_pair(poly_item, selection_item));
+
+    poly_item->addDependency(selection_item);
+
+
     connect(this, SIGNAL(save_handleType()),selection_item, SLOT(save_handleType()));
     connect(selection_item, SIGNAL(updateInstructions(QString)), this, SLOT(setInstructions(QString)));
     connect(selection_item, SIGNAL(printMessage(QString)), this, SLOT(printMessage(QString)));

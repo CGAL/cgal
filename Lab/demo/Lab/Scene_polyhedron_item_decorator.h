@@ -14,7 +14,7 @@ class SCENE_POLYHEDRON_ITEM_DECORATOR_EXPORT Scene_polyhedron_item_decorator
   Q_OBJECT
 public:
   /// Create an Scene_polyhedron_item_decorator from a Scene_polyhedron_item.
-
+  void set_polyhedron_item(Scene_face_graph_item* poly_item);
   Scene_polyhedron_item_decorator(Scene_face_graph_item* poly_item, bool delete_item = true);
   ~Scene_polyhedron_item_decorator();
 
@@ -39,7 +39,6 @@ public:
   const Face_graph* polyhedron() const;
 
   Scene_face_graph_item* polyhedron_item() const;
-  void                   set_polyhedron_item(Scene_face_graph_item* poly_item);
 
   // Get dimensions
   bool isFinite() const { return true; }

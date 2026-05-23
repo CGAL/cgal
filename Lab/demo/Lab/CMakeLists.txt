@@ -392,7 +392,10 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   if(TARGET Qt6::WebSockets)
     target_compile_definitions(cgal_lab PRIVATE -DCGAL_USE_WEBSOCKETS)
     target_compile_definitions(demo_framework PRIVATE -DCGAL_USE_WEBSOCKETS)
-    target_link_libraries(cgal_lab PRIVATE Qt6::WebSockets)
+    target_link_libraries(
+    cgal_lab PRIVATE demo_framework point_dialog Qt6::Widgets
+             PUBLIC CGAL::CGAL Qt6::Gui Qt6::OpenGLWidgets Qt6::Qml
+    )
   endif()
   cgal_add_compilation_test(cgal_lab)
 

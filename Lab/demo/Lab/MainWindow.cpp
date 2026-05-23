@@ -65,6 +65,8 @@
 #include "File_loader_dialog.h"
 #include "Viewer.h"
 
+
+
 #include <CGAL/Qt/manipulatedCameraFrame.h>
 #include <CGAL/Qt/manipulatedFrame.h>
 
@@ -957,16 +959,38 @@ void MainWindow::reloadItem() {
 
   Scene_item* item = nullptr;
 
-  for(Scene::Item_id id : scene->selectionIndices())
-  {
+  for(Scene::Item_id id : scene->selectionIndices()) {
     item = scene->item(id);
-    if(!item)//secure items like selection items that get deleted when their "parent" item is reloaded.
+    if(!item)
       continue;
+
     QString filename = item->property("source filename").toString();
     QString loader_name = item->property("loader_name").toString();
+
+    // ---> 1. CACHE DEPENDENCIES BEFORE THEY SELF-DESTRUCT <---
+    typedef QPair<QString, QString> DepInfo;
+    QList<DepInfo> saved_deps;
+
+    for(int i = 0; i < scene->numberOfEntries(); ++i) {
+      Scene_item* potential_dep = scene->item(i);
+      if(!potential_dep)
+        continue;
+
+      QVariant parent_name_var = potential_dep->property("parent_mesh_name");
+      if(parent_name_var.isValid() && parent_name_var.toString() == item->name()) {
+        QString d_file = potential_dep->property("source filename").toString();
+        QString d_loader = potential_dep->property("loader_name").toString();
+
+        if(!d_file.isEmpty() && !d_loader.isEmpty()) {
+          saved_deps.append(qMakePair(d_file, d_loader));
+        }
+      }
+    }
+
     if(filename.isEmpty() || loader_name.isEmpty()) {
       this->warning(QString("Cannot reload item %1: "
-                            "the item has no \"source filename\" or no \"loader_name\" attached\n").arg(item->name()));
+                            "the item has no \"source filename\" or no \"loader_name\" attached\n")
+                        .arg(item->name()));
       continue;
     }
 
@@ -976,40 +1000,65 @@ void MainWindow::reloadItem() {
     QList<Scene_item*> new_items = loadItem(fileinfo, fileloader, ok, false);
     if(!ok)
       return;
+
     QVariant varian = item->property("load_mates");
-    if(!varian.isValid()) //typically when a soup is oriented, the soup_item is deleted and thus the varain points to an unexisting item.
-    {
+    Scene_item* item_to_highlight = nullptr; // Track the new mesh to give it focus
+
+    // BRANCH A: Standard Reload
+    if(!varian.isValid()) {
       Scene_item* new_item = new_items.front();
       new_item->setName(item->name());
       new_item->setColor(item->color());
       new_item->setRenderingMode(item->renderingMode());
       new_item->setVisible(item->visible());
-      Scene_item_with_properties *property_item = dynamic_cast<Scene_item_with_properties*>(new_item);
+      Scene_item_with_properties* property_item = dynamic_cast<Scene_item_with_properties*>(new_item);
       scene->replaceItem(scene->item_id(item), new_item, true);
       if(property_item)
         property_item->copyProperties(item);
       new_item->invalidateOpenGLBuffers();
-      item->deleteLater();
-      return;
-    }
-    QSequentialIterable iterable = varian.value<QSequentialIterable>();
 
-       // Can use foreach:
-    int mate_id = 0;
-    for(const QVariant &v: iterable)
-    {
-      Scene_item* mate = v.value<Scene_item*>();
-      Scene_item* new_item = new_items[mate_id];
-      new_item->setName(mate->name());
-      new_item->setColor(mate->color());
-      new_item->setRenderingMode(mate->renderingMode());
-      new_item->setVisible(mate->visible());
-      Scene_item_with_properties *property_item = dynamic_cast<Scene_item_with_properties*>(new_item);
-      scene->replaceItem(scene->item_id(mate), new_item, true);
-      if(property_item)
-        property_item->copyProperties(mate);
-      new_item->invalidateOpenGLBuffers();
-      mate->deleteLater();
+      item_to_highlight = new_item;
+      item->deleteLater();
+    }
+    // BRANCH B: Load Mates Reload
+    else {
+      QSequentialIterable iterable = varian.value<QSequentialIterable>();
+      int mate_id = 0;
+      for(const QVariant& v : iterable) {
+        Scene_item* mate = v.value<Scene_item*>();
+        Scene_item* new_item = new_items[mate_id];
+        new_item->setName(mate->name());
+        new_item->setColor(mate->color());
+        new_item->setRenderingMode(mate->renderingMode());
+        new_item->setVisible(mate->visible());
+        Scene_item_with_properties* property_item = dynamic_cast<Scene_item_with_properties*>(new_item);
+        scene->replaceItem(scene->item_id(mate), new_item, true);
+        if(property_item)
+          property_item->copyProperties(mate);
+        new_item->invalidateOpenGLBuffers();
+        mate->deleteLater();
+
+        item_to_highlight = new_item;
+      }
+    }
+
+    // ---> 2. RESTORE DEPENDENCIES (Runs unconditionally now!) <---
+    if(item_to_highlight) {
+      // Force the UI to highlight the newly loaded mesh
+      scene->setSelectedItem(scene->item_id(item_to_highlight));
+      QCoreApplication::processEvents();
+
+      // Command the plugin to reload the cached text files
+      for(const DepInfo& info : saved_deps) {
+        CGAL::Three::CGAL_Lab_io_plugin_interface* dep_fileloader = findLoader(info.second);
+        QFileInfo dep_fileinfo(info.first);
+        bool dep_ok;
+        loadItem(dep_fileinfo, dep_fileloader, dep_ok, true);
+      }
+    }
+
+    if(!varian.isValid()) {
+      return;
     }
   }
 }
