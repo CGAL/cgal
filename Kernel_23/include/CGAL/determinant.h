@@ -399,6 +399,40 @@ determinant(
   return m0123456;
 }
 
+inline void subdeterminants(
+ double ax,  double ay,  double az,
+ double bx,  double by,  double bz,
+ double cx,  double cy,  double cz,
+ double dx,  double dy,  double dz,
+ std::array<double,4>& det)
+{
+  double bax = bx-ax;
+  double bay = by-ay;
+  double baz = bz-az;
+  double cax = cx-ax;
+  double cay = cy-ay;
+  double caz = cz-az;
+  double dax = dx-ax;
+  double day = dy-ay;
+  double daz = dz-az;
+
+  double ba2 = bax*bax + bay*bay + baz*baz;
+  double ca2 = cax*cax + cay*cay + caz*caz;
+  double da2 = dax*dax + day*day + daz*daz;
+
+  det[0] = determinant(bay, baz, ba2,
+                       cay, caz, ca2,
+                       day, daz, da2);
+  det[1] = determinant(bax, baz, ba2,
+                       cax, caz, ca2,
+                       dax, daz, da2);
+  det[2] = determinant(bax, bay, ba2,
+                       cax, cay, ca2,
+                       dax, day, da2);
+  det[3] = determinant(bax, bay, baz,
+                       cax, cay, caz,
+                       dax, day, daz);
+}
 
 } //namespace CGAL
 
