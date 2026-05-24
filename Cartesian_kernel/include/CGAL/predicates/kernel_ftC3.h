@@ -21,6 +21,7 @@
 #include <CGAL/predicates/sign_of_determinant.h>
 #include <CGAL/predicates/kernel_ftC2.h>
 #include <CGAL/constructions/kernel_ftC3.h>
+#include <array>
 
 namespace CGAL {
 
@@ -373,7 +374,7 @@ inline
 Oriented_side
 side_of_oriented_sphereC3(double px, double py, double pz,
                           double tx, double ty, double tz,
-                          const array<double,4>& det)
+                          const std::array<double,4>& det)
 {
   double ptx = tx - px;
   double pty = ty - py;
