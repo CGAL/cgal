@@ -1,0 +1,64 @@
+/// \defgroup PkgArrangementOnCurve1Ref Reference Manual
+
+/// \defgroup PkgArrangementOnCurve1Concepts Concepts
+/// \ingroup PkgArrangementOnCurve1Ref
+
+/*!
+ * \addtogroup PkgArrangementOnCurve1Ref
+ * \cgalPkgDescriptionBegin{2D Arrangements,PkgArrangementOnCurve1}
+ * \cgalPkgPicture{Arrangement_2.png}
+ * \cgalPkgSummaryBegin
+ * \cgalPkgAuthors{Efi Fogel}
+ * \cgalPkgDesc{This package can be used to construct, maintain, alter, and display arrangements on a curve. Once an arrangement is constructed, the package can be used to obtain results of various queries on the arrangement, such as point location. The package also supports operations on arrangements, such as computing the overlay of two arrangements.   Arrangements and arrangement components can also be extended to store additional data.}
+ * \cgalPkgManuals{Chapter_2D_Arrangements,PkgArrangementOnCurve1Ref}
+ * \cgalPkgSummaryEnd
+ * \cgalPkgShortInfoBegin
+ * \cgalPkgSince{6.2}
+ * \cgalPkgBib{cgal:f-a1}
+ * \cgalPkgLicense{\ref licensesGPL "GPL"}
+ * \cgalPkgDemo{1D Arrangements,arrangements_1.zip}
+ * \cgalPkgShortInfoEnd
+ * \cgalPkgDescriptionEnd
+ *
+ * Given a set \f$\mathcal{P}\f$ of points on a curve, the <I>arrangement</I>
+ * \f$ {\mathcal A}({\mathcal P})\f$ is the subdivision of the curve induced
+ * by the points in \f$\mathcal{P}\f$ into maximally connected cells. The cells
+ * can be \f$0\f$-dimensional (<I>vertices</I>) or \f$1\f$-dimensional (<I>edges</I>).
+ *
+ * The class `Arrangement_on_curve_1<Traits>` encapsulates a data
+ * structure that maintains arrangements of points. It comes with a
+ * variety of algorithms that operate on 1D arrangements, such as
+ * point-location queries and overlay computations, which are implemented
+ * as peripheral classes or as free (global) functions.
+ *
+ * \cgalClassifedRefPages
+ *
+ * \cgalCRPSection{Enumerations}
+ *
+ * \cgalCRPSection{Tags}
+ *
+ * \cgalCRPSection{Concepts}
+ *
+ * - `AocTraits_1`
+ *
+ * \cgalCRPSection{Geometric Object Concepts}
+ *
+ * \cgalCRPSection{Function Object Concepts}
+ *
+ * - `AosTraits::CompareX_1`
+ *
+ * \cgalCRPSection{Classes}
+ *
+ * - `CGAL::Arrangement_on_curves_1<GeometryTraits_1>`
+ *
+ * \cgalCRPSection{Functions}
+ *
+ * - `CGAL::insert()`
+ * - `CGAL::locate()`
+ * - `CGAL::overlay()`
+ * - `CGAL::IO::read()`
+ * - `CGAL::IO::write()`
+ * - \link PkgArrangementOnCurve1op_left_shift `CGAL::operator<<` \endlink
+ * - \link PkgArrangementOnCurve1op_right_shift `CGAL::operator<<` \endlink
+ *
+ */
