@@ -215,7 +215,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 
   template <typename H>
   void store_boundary_object(H h, Halffacet_handle f) const
-  { f->boundary_entry_objects().push_back(Object_handle(h));
+  { f->boundary_entry_objects().emplace_back(h);
     sncp()->store_boundary_item(h, --(f->facet_cycles_end()));
   }
 
@@ -260,16 +260,10 @@ class SNC_decorator : public SNC_const_decorator<Map> {
   }
 
   template <typename H>
-    void store_boundary_object(H h, Volume_handle c, bool at_front = false) const
+  void store_boundary_object(H h, Volume_handle c) const
   {
-    if(at_front) {
-      c->shell_entry_objects().push_front(Object_handle(h));
-      sncp()->store_boundary_item(h, c->shells_begin());
-    }
-    else {
-      c->shell_entry_objects().push_back(Object_handle(h));
-      sncp()->store_boundary_item(h, --(c->shells_end()));
-    }
+    c->shell_entry_objects().emplace_back(h);
+    sncp()->store_boundary_item(h, --(c->shells_end()));
   }
 
   template<typename SNCD_>
