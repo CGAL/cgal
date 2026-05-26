@@ -2337,7 +2337,7 @@ protected:
                                                             map_from_incident_constraint_face_id_to_new_triangles);
         if(this->debug().move_Steiner_vertices()) {
           std::ostringstream ss;
-          ss << "dump_vertex_" << IO::oformat(v) << "_component_" << component_index << ".off";
+          ss << "dump_vertex_" << IO::oformat(v, with_offset) << "_component_" << component_index << ".off";
           const std::string filename = ss.str();
           std::ofstream out(filename);
           out.precision(17);
@@ -3300,6 +3300,10 @@ public:
   }
 
   auto move_Steiner_vertices_to_the_volume() {
+    if(this->debug().move_Steiner_vertices()) {
+      std::cerr << "move_Steiner_vertices_to_the_volume()\n";
+      dump_constrained_facets_to_off("dump_before_moving_steiner_vertices.off");
+    }
     std::vector<Vertex_handle> steiner_vertices;
     for(auto v : this->finite_vertex_handles()) {
       if(is_Steiner_vertex_on_surface(v)) steiner_vertices.push_back(v);
@@ -5956,6 +5960,12 @@ public:
     dump.precision(17);
     write_facets(dump, *this, this->constrained_facets());
     write_3d_triangulation_to_OFF(dump, *this);
+  }
+
+  void dump_constrained_facets_to_off(std::string filename) const {
+    std::ofstream dump(filename);
+    dump.precision(17);
+    write_facets(dump, *this, this->constrained_facets());
   }
 
   void dump_face_polygons(
