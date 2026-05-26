@@ -4034,6 +4034,17 @@ insert_in_conflict(const Point& p,
       hider.reinsert_vertices(v);
 
 #ifdef CGAL_DELAUNAY_3_USE_SUBDETERMINANTS
+
+      struct Sum {
+        int sum = 0;
+        ~Sum()
+        {
+          std::cout <<  "sum of degrees = "<< sum << std::endl;
+        }
+      };
+      static Sum sum;
+
+      sum.sum += facets_outside.size();
       for(auto f : facets_outside)
       {
         Facet mf = mirror_facet(f);

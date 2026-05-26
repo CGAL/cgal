@@ -156,7 +156,6 @@ public:
              const Point_3 &s, const Point_3 &t, const std::array<double,4>& subdet) const
   {
       CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Side_of_oriented_sphere_3", tmp);
-
       double px, py, pz, qx, qy, qz, rx, ry, rz, sx, sy, sz, tx, ty, tz;
 
       if (fit_in_double(p.x(), px) && fit_in_double(p.y(), py) &&

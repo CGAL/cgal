@@ -1,5 +1,5 @@
-// #define CGAL_DELAUNAY_3_USE_SUBDETERMINANTS 1
-
+#define CGAL_DELAUNAY_3_USE_SUBDETERMINANTS 1
+// #define CGAL_PROFILE
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Delaunay_triangulation_3.h>
@@ -13,8 +13,12 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
 typedef CGAL::Triangulation_vertex_base_3<K>                        Vb;
+#ifdef CGAL_DELAUNAY_3_USE_SUBDETERMINANTS
 typedef CGAL::Triangulation_cell_base_with_info_3<std::array<double,4>, K>    Cbb;
-typedef CGAL::Delaunay_triangulation_cell_base_3<K>            Cb;
+typedef CGAL::Delaunay_triangulation_cell_base_3<K,Cbb>             Cb;
+#else
+typedef CGAL::Delaunay_triangulation_cell_base_3<K>                 Cb;
+#endif
 typedef CGAL::Triangulation_data_structure_3<Vb, Cb>                Tds;
 typedef CGAL::Delaunay_triangulation_3<K, Tds>                      Delaunay;
 typedef Delaunay::Point                                             Point;
@@ -27,7 +31,7 @@ int main(int argc, char* argv[])
   std::vector<Point> points;
   Point p;
 
-  while(in >> p ){
+  while(in >> p){
     points.push_back(p);
   }
 
