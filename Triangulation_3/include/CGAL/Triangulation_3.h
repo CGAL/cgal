@@ -4017,6 +4017,12 @@ insert_in_conflict(const Point& p,
       // as they will be deleted during the insertion.
       hider.process_cells_in_conflict(cells.begin(), cells.end());
 
+#ifdef CGAL_DELAUNAY_3_USE_SUBDETERMINANTS
+      std::vector<Facet> facets_outside(facets.size());
+      for(int i = 0;  i < facets.size(); ++i){
+        facets_outside[i]= mirror_facet(facets[i]);
+      }
+#endif
       Vertex_handle v =
         tds().is_small_hole(facets.size()) ?
         _insert_in_small_hole(p, cells, facets) :
@@ -4026,6 +4032,26 @@ insert_in_conflict(const Point& p,
 
       // Store the hidden points in their new cells.
       hider.reinsert_vertices(v);
+
+#ifdef CGAL_DELAUNAY_3_USE_SUBDETERMINANTS
+      for(auto f : facets_outside)
+      {
+        Facet mf = mirror_facet(f);
+        Cell_handle ch = mf.first;
+        CGAL_assertion(v == ch->vertex(mf.second));
+        if(! is_infinite(ch)){
+           const Point& p0 = ch->vertex(0)->point();
+           const Point& p1 = ch->vertex(1)->point();
+           const Point& p2 = ch->vertex(2)->point();
+           const Point& p3 = ch->vertex(3)->point();
+           subdeterminants(p0.x(), p0.y(), p0.z(),
+                           p1.x(), p1.y(), p1.z(),
+                           p2.x(), p2.y(), p2.z(),
+                           p3.x(), p3.y(), p3.z(), ch->info());
+        }
+      }
+#endif
+
       return v;
     }
     case 2:

@@ -1127,25 +1127,6 @@ insert(const Point& p, Locate_type lt, Cell_handle c, int li, int lj, bool *coul
       Conflict_tester_3 tester(p, this);
       Vertex_handle v = insert_in_conflict(p, lt, c, li, lj,
                                            tester, hidden_point_visitor, could_lock_zone);
-
-#ifdef CGAL_DELAUNAY_3_USE_SUBDETERMINANTS
-     std::vector<Cell_handle> cells;
-     cells.reserve(64);
-     this->incident_cells(v, std::back_inserter(cells));
-      for(Cell_handle ch : cells)
-      {
-        if(! is_infinite(ch)){
-           const Point& p0 = ch->vertex(0)->point();
-           const Point& p1 = ch->vertex(1)->point();
-           const Point& p2 = ch->vertex(2)->point();
-           const Point& p3 = ch->vertex(3)->point();
-           subdeterminants(p0.x(), p0.y(), p0.z(),
-                           p1.x(), p1.y(), p1.z(),
-                           p2.x(), p2.y(), p2.z(),
-                           p3.x(), p3.y(), p3.z(), ch->info());
-        }
-      }
-#endif
       return v;
     }// dim 3
     case 2:
