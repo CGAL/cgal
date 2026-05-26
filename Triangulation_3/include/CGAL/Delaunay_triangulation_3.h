@@ -1130,6 +1130,7 @@ insert(const Point& p, Locate_type lt, Cell_handle c, int li, int lj, bool *coul
 
 #ifdef CGAL_DELAUNAY_3_USE_SUBDETERMINANTS
      std::vector<Cell_handle> cells;
+     cells.reserve(64);
      this->incident_cells(v, std::back_inserter(cells));
       for(Cell_handle ch : cells)
       {
@@ -1155,6 +1156,7 @@ insert(const Point& p, Locate_type lt, Cell_handle c, int li, int lj, bool *coul
 #ifdef CGAL_DELAUNAY_3_USE_SUBDETERMINANTS
      if(dimension() == 3){
      std::vector<Cell_handle> cells;
+     cells.reserve(64);
      this->incident_cells(v, std::back_inserter(cells));
       for(Cell_handle ch : cells)
       {

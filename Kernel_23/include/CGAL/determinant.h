@@ -426,12 +426,12 @@ inline void subdeterminants(
   det[1] = determinant(bax, baz, ba2,
                        cax, caz, ca2,
                        dax, daz, da2);
-  det[2] = determinant(bax, bay, ba2,
-                       cax, cay, ca2,
-                       dax, day, da2);
-  det[3] = determinant(bax, bay, baz,
-                       cax, cay, caz,
-                       dax, day, daz);
+
+  double sd0 = bax*cay - bay*cax;
+  double sd1 = bax*day - bay*dax;
+  double sd2 = cax*day - cay*dax;
+  det[2] = ba2 * sd2 - ca2 * sd1 + da2 * sd0;
+  det[3] = baz * sd2 - caz * sd1 + daz * sd0;
 }
 
 } //namespace CGAL
