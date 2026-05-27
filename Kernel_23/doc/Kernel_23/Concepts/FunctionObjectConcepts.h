@@ -9443,6 +9443,15 @@ public:
                          const Kernel::Point_3&s);
 
   /*!
+    performs the same test as the previous operator simultaneously for `(p,q,r,s)` and `(p,q,r,t)`.
+  */
+  std::pair<Orientation,Orientation> operator()(const Kernel::Point_3&p,
+                                                const Kernel::Point_3&q,
+                                                const Kernel::Point_3&r,
+                                                const Kernel::Point_3&s,
+                                                const Kernel::Point_3&t);
+
+  /*!
     returns \ref CGAL::POSITIVE if `u`, `v` and `w` are positively oriented,
     returns \ref CGAL::NEGATIVE if `u`, `v` and `w` are negatively oriented,
     and returns \ref CGAL::COPLANAR if `u`, `v` and `w` are coplanar.
