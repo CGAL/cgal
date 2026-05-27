@@ -194,7 +194,8 @@ struct Node_id_set {
 
 template< class TriangleMesh,
           class VertexPointMap1, class VertexPointMap2,
-          class Node_visitor=Default_surface_intersection_visitor<TriangleMesh>
+          class Node_visitor=Default_surface_intersection_visitor<TriangleMesh>,
+          class Concurrency_tag=Sequential_tag
          >
 class Intersection_of_triangle_meshes
 {
@@ -335,9 +336,9 @@ class Intersection_of_triangle_meshes
     //using pointers in box_intersection_d is about 10% faster
     if (throw_on_self_intersection){
         Callback_with_self_intersection_report<TriangleMesh, Callback> callback_si(callback, tm_f_faces, tm_e_faces);
-        CGAL::box_intersection_d(face_boxes_ptr.begin(), face_boxes_ptr.end(),
-                                 edge_boxes_ptr.begin(), edge_boxes_ptr.end(),
-                                 callback_si, cutoff);
+        CGAL::box_intersection_d<Concurrency_tag>(face_boxes_ptr.begin(), face_boxes_ptr.end(),
+                                                  edge_boxes_ptr.begin(), edge_boxes_ptr.end(),
+                                                  callback_si, cutoff);
         if (run_check && callback_si.self_intersections_found())
          throw Self_intersection_exception();
     }
@@ -350,9 +351,9 @@ class Intersection_of_triangle_meshes
           if (!callback.is_face_degenerated(fb->info()))
             callback(fb, eb);
         };
-        CGAL::box_intersection_d( face_boxes_ptr.begin(), face_boxes_ptr.end(),
-                                  edge_boxes_ptr.begin(), edge_boxes_ptr.end(),
-                                  filtered_callback, cutoff );
+        CGAL::box_intersection_d<Concurrency_tag>(face_boxes_ptr.begin(), face_boxes_ptr.end(),
+                                                  edge_boxes_ptr.begin(), edge_boxes_ptr.end(),
+                                                  filtered_callback, cutoff);
       }
       else
       {
@@ -388,14 +389,14 @@ class Intersection_of_triangle_meshes
               }
             }
           };
-          CGAL::box_intersection_d( face_boxes_ptr.begin(), face_boxes_ptr.end(),
-                                    edge_boxes_ptr.begin(), edge_boxes_ptr.end(),
-                                    filtered_callback, cutoff );
+          CGAL::box_intersection_d<Concurrency_tag>(face_boxes_ptr.begin(), face_boxes_ptr.end(),
+                                                    edge_boxes_ptr.begin(), edge_boxes_ptr.end(),
+                                                    filtered_callback, cutoff);
         }
         else
-          CGAL::box_intersection_d( face_boxes_ptr.begin(), face_boxes_ptr.end(),
-                                    edge_boxes_ptr.begin(), edge_boxes_ptr.end(),
-                                    callback, cutoff );
+          CGAL::box_intersection_d<Concurrency_tag>(face_boxes_ptr.begin(), face_boxes_ptr.end(),
+                                                    edge_boxes_ptr.begin(), edge_boxes_ptr.end(),
+                                                    callback, cutoff );
       }
     }
   }
@@ -445,9 +446,9 @@ class Intersection_of_triangle_meshes
     Callback  callback(tm, vpm, edge_to_faces, coplanar_faces);
 
     //using pointers in box_intersection_d is about 10% faster
-    CGAL::box_intersection_d( face_boxes_ptr.begin(), face_boxes_ptr.end(),
-                              edge_boxes_ptr.begin(), edge_boxes_ptr.end(),
-                              callback, cutoff );
+    CGAL::box_intersection_d<Concurrency_tag>(face_boxes_ptr.begin(), face_boxes_ptr.end(),
+                                              edge_boxes_ptr.begin(), edge_boxes_ptr.end(),
+                                              callback, cutoff );
   }
 
   template<class Cpl_inter_pt,class Key>

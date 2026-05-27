@@ -29,6 +29,10 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace Corefinement {
 
+#ifdef CGAL_LINKED_WITH_TBB
+CGAL_MUTEX corefinement_intersection_callback_mutex;
+#endif
+
 template<class TriangleMesh, class EdgeToFaces>
 class Collect_face_bbox_per_edge_bbox {
 protected:
@@ -57,7 +61,9 @@ public:
   {
     halfedge_descriptor fh = face_box.info();
     halfedge_descriptor eh = edge_box.info();
-
+#ifdef CGAL_LINKED_WITH_TBB
+    CGAL_SCOPED_LOCK(corefinement_intersection_callback_mutex);
+#endif
     edge_to_faces[edge(eh,tm_edges)].insert(face(fh, tm_faces));
   }
 
@@ -149,6 +155,9 @@ public:
       return;
     }
     // non-coplanar case
+#ifdef CGAL_LINKED_WITH_TBB
+    CGAL_SCOPED_LOCK(corefinement_intersection_callback_mutex);
+#endif
     edge_to_faces[edge(eh,tm_edges)].insert(face(fh, tm_faces));
   }
 
@@ -353,6 +362,9 @@ public:
     }
 
     // non-coplanar case
+#ifdef CGAL_LINKED_WITH_TBB
+    CGAL_SCOPED_LOCK(corefinement_intersection_callback_mutex);
+#endif
     edge_to_faces[edge(eh,tm)].insert(face(fh, tm));
   }
 

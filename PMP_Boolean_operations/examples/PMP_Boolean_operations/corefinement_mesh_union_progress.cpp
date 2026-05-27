@@ -4,6 +4,8 @@
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 
+#include <CGAL/Real_timer.h>
+
 #include <fstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
@@ -97,7 +99,7 @@ struct Visitor_rep{
   std::size_t bound_intersection = 0;
   std::size_t tintersection = 0;
   std::size_t count_intersection = 0;
-  CGAL::Timer t;
+  CGAL::Real_timer t;
 };
 
 
@@ -196,22 +198,31 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  CGAL::Timer t;
+  CGAL::Real_timer t;
   t.start();
   Mesh out;
   Visitor visitor;
 
-  bool valid_union = PMP::corefine_and_compute_union (mesh1,mesh2, out, CGAL::parameters::visitor(visitor));
+  // bool valid_union = PMP::corefine_and_compute_union (mesh1,mesh2, out, CGAL::parameters::visitor(visitor));
+
+  // std::cout << "Global timer = " << t.time() << " sec.\n\n\n" << std::endl;
+
+  // t.stop();
+  // t.reset();
+  // t.start();
+  {
+    bool valid_union = PMP::corefine_and_compute_union (mesh1,mesh2, out, CGAL::parameters::visitor(visitor).concurrency_tag(CGAL::Parallel_tag()));
+  }
 
   std::cout << "Global timer = " << t.time() << " sec." << std::endl;
 
 
-  if(valid_union)
-  {
-    std::cout << "Union was successfully computed\n";
-    CGAL::IO::write_polygon_mesh("union.off", out, CGAL::parameters::stream_precision(17));
-    return 0;
-  }
+  // if(valid_union)
+  // {
+  //   std::cout << "Union was successfully computed\n";
+  //   CGAL::IO::write_polygon_mesh("union.off", out, CGAL::parameters::stream_precision(17));
+  //   return 0;
+  // }
 
   std::cout << "Union could not be computed\n";
 
