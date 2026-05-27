@@ -249,7 +249,7 @@ public:
           else if (maxy < maxx)
               std::swap(maxx, maxy);
 #endif
-          double det =  - ptx * subdet[0] + pty * subdet[1] - ptz * subdet[2] -+ (ptx*ptx + pty*pty + ptz*ptz) * subdet[3];
+          double det =  - ptx * subdet[0] + pty * subdet[1] - ptz * subdet[2] -pt2 * subdet[3];
 
           // Protect against underflow in the computation of eps.
           if (maxx < 1e-58) /* sqrt^5(min_double/eps) */ {
