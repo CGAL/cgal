@@ -82,6 +82,7 @@ struct Orthogonal_cut_plane_traits
   using FT = typename Kernel::FT;
   using Plane_3 = std::pair<int, FT>;
   using Point_3 = typename Kernel::Point_3;
+  using Vector_3 = typename Kernel::Vector_3;
 
   struct Does_not_support_CDT2{};
 
@@ -123,20 +124,46 @@ struct Orthogonal_cut_plane_traits
     }
   };
 
-  Oriented_side_3 oriented_side_3_object() const
+  struct Construct_point_on_3
   {
-    return Oriented_side_3();
-  }
+    Point_3 operator()(const Plane_3 &plane)
+    {
+      switch(plane.first){
+        case 0:
+          return Point_3(plane.second,0,0);
+        case 1:
+          return Point_3(0,plane.second,0);
+        default:
+          return Point_3(0,0,plane.second);
+      }
+    }
+  };
 
-  Construct_plane_line_intersection_point_3 construct_plane_line_intersection_point_3_object() const
+  struct Construct_orthogonal_vector_3
   {
-    return Construct_plane_line_intersection_point_3();
-  }
+    Vector_3 operator()(const Plane_3 &plane)
+    {
+      switch(plane.first){
+        case 0:
+          return Vector_3(1,0,0);
+        case 1:
+          return Vector_3(0,1,0);
+        default:
+          return Vector_3(0,0,1);
+      }
+    }
+  };
 
-  Compute_squared_distance_3 compute_squared_distance_3_object() const
-  {
-    return Compute_squared_distance_3();
-  }
+  using Construct_vector_3 = typename Kernel::Construct_vector_3;
+  using Compute_scalar_product_3 = typename Kernel::Compute_scalar_product_3;
+
+  Oriented_side_3 oriented_side_3_object() const { return Oriented_side_3(); }
+  Construct_plane_line_intersection_point_3 construct_plane_line_intersection_point_3_object() const { return Construct_plane_line_intersection_point_3(); }
+  Compute_squared_distance_3 compute_squared_distance_3_object() const { return Compute_squared_distance_3(); }
+  Construct_orthogonal_vector_3 construct_orthogonal_vector_3_object() const { return Construct_orthogonal_vector_3(); }
+  Construct_point_on_3 construct_point_on_3_object() const { return Construct_point_on_3(); }
+  Construct_vector_3 construct_vector_3_object() const { return Construct_vector_3(); }
+  Compute_scalar_product_3 compute_scalar_product_3_object() const { return Compute_scalar_product_3(); }
 
 #ifndef CGAL_PLANE_CLIP_DO_NOT_USE_BOX_INTERSECTION_D
 // for does self-intersect
