@@ -82,7 +82,9 @@ struct Orthogonal_cut_plane_traits
   using FT = typename Kernel::FT;
   using Plane_3 = std::pair<int, FT>;
   using Point_3 = typename Kernel::Point_3;
-  using Vector_3 = typename Kernel::Vector_3;
+  using Vector_3 = int;
+  using Direction_3 = int;
+  using Comparison_result =typename Kernel::Comparison_result;
 
   struct Does_not_support_CDT2{};
 
@@ -141,29 +143,28 @@ struct Orthogonal_cut_plane_traits
 
   struct Construct_orthogonal_vector_3
   {
-    Vector_3 operator()(const Plane_3 &plane)
-    {
-      switch(plane.first){
-        case 0:
-          return Vector_3(1,0,0);
-        case 1:
-          return Vector_3(0,1,0);
-        default:
-          return Vector_3(0,0,1);
-      }
-    }
+    Vector_3 operator()(const Plane_3 &plane){ return plane.first; }
   };
 
-  using Construct_vector_3 = typename Kernel::Construct_vector_3;
-  using Compute_scalar_product_3 = typename Kernel::Compute_scalar_product_3;
+  struct Construct_direction_3
+  {
+    Direction_3 operator()(const Vector_3 &vec){ return vec; }
+  };
+
+  struct Compare_projection_along_direction_3
+  {
+    Comparison_result operator()(const Point_3 &p, const Point_3 &q, const Direction_3 &dir){
+      return compare(p[dir], q[dir]);
+    }
+  };
 
   Oriented_side_3 oriented_side_3_object() const { return Oriented_side_3(); }
   Construct_plane_line_intersection_point_3 construct_plane_line_intersection_point_3_object() const { return Construct_plane_line_intersection_point_3(); }
   Compute_squared_distance_3 compute_squared_distance_3_object() const { return Compute_squared_distance_3(); }
   Construct_orthogonal_vector_3 construct_orthogonal_vector_3_object() const { return Construct_orthogonal_vector_3(); }
+  Construct_direction_3 construct_direction_3_object() const { return Construct_direction_3(); }
   Construct_point_on_3 construct_point_on_3_object() const { return Construct_point_on_3(); }
-  Construct_vector_3 construct_vector_3_object() const { return Construct_vector_3(); }
-  Compute_scalar_product_3 compute_scalar_product_3_object() const { return Compute_scalar_product_3(); }
+  Compare_projection_along_direction_3 compare_projection_along_direction_3_object() const { return Compare_projection_along_direction_3(); }
 
 #ifndef CGAL_PLANE_CLIP_DO_NOT_USE_BOX_INTERSECTION_D
 // for does self-intersect
