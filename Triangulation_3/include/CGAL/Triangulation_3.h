@@ -4037,9 +4037,7 @@ insert_in_conflict(const Point& p,
       for(auto f : facets_outside)
       {
         CGAL_PROFILER("update of subdeterminants")
-        Facet mf = mirror_facet(f);
-        Cell_handle ch = mf.first;
-        CGAL_assertion(v == ch->vertex(mf.second));
+        Cell_handle ch = f.first->neighbor(f.second);
         if(! is_infinite(ch)){
            const Point& p0 = ch->vertex(0)->point();
            const Point& p1 = ch->vertex(1)->point();

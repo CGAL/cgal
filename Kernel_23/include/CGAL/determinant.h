@@ -420,12 +420,11 @@ inline void subdeterminants(
   double ca2 = cax*cax + cay*cay + caz*caz;
   double da2 = dax*dax + day*day + daz*daz;
 
-  det[0] = determinant(bay, baz, ba2,
-                       cay, caz, ca2,
-                       day, daz, da2);
-  det[1] = determinant(bax, baz, ba2,
-                       cax, caz, ca2,
-                       dax, daz, da2);
+  double bc = baz*ca2 - caz*ba2;
+  double bd = baz*da2 - daz*ba2;
+  double cd = caz*da2 - daz*ca2;
+  det[0] = bay*cd - cay*bd + day*bc;
+  det[1] = bax*cd - cax*bd + dax*bc;
 
   double sd0 = bax*cay - bay*cax;
   double sd1 = bax*day - bay*dax;
