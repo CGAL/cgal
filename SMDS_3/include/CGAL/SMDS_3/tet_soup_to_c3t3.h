@@ -466,6 +466,13 @@ bool build_triangulation_impl(Tr& tr,
       std::cout << "build infinite cells done (" << tr.tds().cells().size() << " cells)" << std::endl;
     }
 
+    // purge vertices which have no incident cell (unused points in the initial range)
+    for (auto vit = tr.finite_vertices_begin(), end = tr.finite_vertices_end(); vit != end; ++vit)
+    {
+      if (vit->cell() == Cell_handle())
+        tr.tds().delete_vertex(vit);
+    }
+
     tr.tds().set_dimension(3);
 
     if (!CGAL::SMDS_3::assign_neighbors<Tr>(tr, incident_cells_map, allow_non_manifold))
