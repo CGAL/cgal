@@ -802,7 +802,7 @@ public:
                         const SplitPrimitives& split_primitives)
   {
     // TODO refined this hardcode value
-    const std::size_t cutoff = 10000; // min size for parallel call
+    const std::size_t cutoff = 30000; // min size for parallel call
     node.set_bbox(compute_bbox(first, beyond));
 
     // sort primitives along longest axis aabb
@@ -824,10 +824,12 @@ public:
       if constexpr(std::is_same_v<Parallel_tag, Concurrency_tag>)
       {
         if(range > cutoff){
-          oneapi::tbb::parallel_invoke(
-            [&]{ expand<Concurrency_tag>(node.left_child(), node_index+1, first, first + new_range, new_range, compute_bbox, split_primitives); },
-            [&]{ expand<Concurrency_tag>(node.right_child(), node_index+new_range, first + new_range, beyond, range - new_range, compute_bbox, split_primitives); }
-            );
+          oneapi::tbb::task_group tg;
+          tg.run([&]{
+                  expand<Concurrency_tag>(node.left_child(), node_index+1, first, first + new_range, new_range, compute_bbox, split_primitives); }
+                );
+          expand<Concurrency_tag>(node.right_child(), node_index+new_range, first + new_range, beyond, range - new_range, compute_bbox, split_primitives);
+          tg.wait();
         } else {
           expand(node.left_child(), node_index+1, first, first + new_range, new_range, compute_bbox, split_primitives);
           expand(node.right_child(), node_index+new_range, first + new_range, beyond, range - new_range, compute_bbox, split_primitives);

@@ -1,4 +1,4 @@
-// Copyright (c) 2008,2011  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2026  GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -8,16 +8,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s) : Camille Wormser, Pierre Alliez, Stephane Tayeb
+// Author(s) : Léo Valque
 
-#ifndef CGAL_AABB_SELF_INTERSECTIONS_H
-#define CGAL_AABB_SELF_INTERSECTIONS_H
+#ifndef CGAL_AABB_MESHES_INTERSECTIONS_H
+#define CGAL_AABB_MESHES_INTERSECTIONS_H
 
 #include <memory>
 
 #include <CGAL/license/AABB_tree.h>
-
-#include <CGAL/disable_warnings.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits_3.h>
@@ -79,26 +77,41 @@ void AABB_self_intersections(const TriangleMesh &tm, OutputIterator out, const N
   tree.insert(faces(tm).first, faces(tm).second, tm);
   tree.template build<Concurrency_tag>();
 
-  CGAL_MUTEX mutex;
-  tbb::concurrent_vector<std::pair<face_descriptor, face_descriptor>> inter;
-  std::vector<face_descriptor> face_vec(faces(tm).begin(), faces(tm).end());
-  oneapi::tbb::parallel_for(
+#ifdef CGAL_LINKED_WITH_TBB
+  if constexpr(std::is_same_v<Concurrency_tag, Parallel_tag>)
+  {
+    CGAL_MUTEX mutex;
+    tbb::concurrent_vector<std::pair<face_descriptor, face_descriptor>> inter;
+    std::vector<face_descriptor> face_vec(faces(tm).begin(), faces(tm).end());
+    oneapi::tbb::parallel_for(
       oneapi::tbb::blocked_range<size_t>(0, face_vec.size()),
       [&](const oneapi::tbb::blocked_range<size_t>& r) {
-          for (size_t i = r.begin(); i != r.end(); ++i) {
-              face_descriptor f_1 = face_vec[i];
-              std::vector<face_descriptor> inter;
-              tree.all_intersected_primitives(get(bb, f_1), std::back_inserter(inter));
-              for(auto f_2: inter)
-                if(f_1 < f_2)
-                  if(Polygon_mesh_processing::internal::do_faces_intersect<GT>(f_1, f_2, tm, tm.points(), gt.construct_segment_3_object(), gt.construct_triangle_3_object(), gt.do_intersect_3_object())){
-                    CGAL_SCOPED_LOCK(mutex);
-                    *out ++ = std::make_pair(f_1, f_2);
-                  }
-          }
+        for (size_t i = r.begin(); i != r.end(); ++i) {
+          face_descriptor f_1 = face_vec[i];
+          std::vector<face_descriptor> inter;
+          tree.all_intersected_primitives(get(bb, f_1), std::back_inserter(inter));
+          for(face_descriptor f_2: inter)
+            if(f_1 < f_2)
+              if(Polygon_mesh_processing::internal::do_faces_intersect<GT>(f_1, f_2, tm, tm.points(), gt.construct_segment_3_object(), gt.construct_triangle_3_object(), gt.do_intersect_3_object())){
+                CGAL_SCOPED_LOCK(mutex);
+                *out ++ = std::make_pair(f_1, f_2);
+              }
+        }
       }
-  );
-
+    );
+  }
+  else
+#endif
+  {
+    for (face_descriptor f_1: faces(tm)){
+      std::vector<face_descriptor> inter;
+      tree.all_intersected_primitives(get(bb, f_1), std::back_inserter(inter));
+      for(face_descriptor f_2: inter)
+        if(f_1 < f_2)
+          if(Polygon_mesh_processing::internal::do_faces_intersect<GT>(f_1, f_2, tm, tm.points(), gt.construct_segment_3_object(), gt.construct_triangle_3_object(), gt.do_intersect_3_object()))
+            *out ++ = std::make_pair(f_1, f_2);
+    }
+  }
 }
 
 }
