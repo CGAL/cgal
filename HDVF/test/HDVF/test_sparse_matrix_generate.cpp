@@ -4,15 +4,20 @@
 #include <set>
 #include <ostream>
 #include <cassert>
+#include <CGAL/Zp.h>
 #include <CGAL/OSM/OSM.h>
 
 // TODO: use also results to check += -= *= .....
 
-typedef int Coefficient_ring;
-typedef CGAL::OSM::Sparse_chain<Coefficient_ring, CGAL::OSM::COLUMN> Column_chain;
-typedef CGAL::OSM::Sparse_chain<Coefficient_ring, CGAL::OSM::ROW> Row_chain ;
-typedef CGAL::OSM::Sparse_matrix<Coefficient_ring, CGAL::OSM::COLUMN> Column_matrix;
-typedef CGAL::OSM::Sparse_matrix<Coefficient_ring, CGAL::OSM::ROW> Row_matrix;
+//typedef int Coefficient_ring;
+typedef CGAL::Zp<5, char, true> Coefficient_ring;
+
+typedef CGAL::OSM::Sparse_matrix<CGAL::OSM::Sparse_chain> Sparse_matrix_base;
+
+typedef Sparse_matrix_base::Sparse_chain_type<Coefficient_ring, CGAL::OSM::COLUMN> Column_chain;
+typedef Sparse_matrix_base::Sparse_chain_type<Coefficient_ring, CGAL::OSM::ROW> Row_chain ;
+typedef Sparse_matrix_base::Sparse_matrix_type<Coefficient_ring, CGAL::OSM::COLUMN> Column_matrix;
+typedef Sparse_matrix_base::Sparse_matrix_type<Coefficient_ring, CGAL::OSM::ROW> Row_matrix;
 
 
 int main(int argc, char **argv)
@@ -93,7 +98,7 @@ int main(int argc, char **argv)
         Column_matrix tmp(columnMajor), res ;
 
         CGAL::OSM::remove_coefficient(tmp, 1, 0);
-        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
+        CGAL::OSM::set_coefficient(tmp, 2, 2, Coefficient_ring(-2)) ;
 
         res = tmp + columnMajor ;
         std::cout << "sum columnMajor + otherColumnMajor: " << res << std::endl ;
@@ -109,7 +114,7 @@ int main(int argc, char **argv)
         Column_matrix tmp(columnMajor), res ;
 
         CGAL::OSM::remove_coefficient(tmp, 1, 0);
-        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
+        CGAL::OSM::set_coefficient(tmp, 2, 2, Coefficient_ring(-2)) ;
 
         res = tmp + rowMajor ;
         std::cout << "sum otherColumnMajor + rowMajor: " << res << std::endl ;
@@ -124,7 +129,7 @@ int main(int argc, char **argv)
         Row_matrix tmp(rowMajor), res ;
 
         CGAL::OSM::remove_coefficient(tmp, 1, 0);
-        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
+        CGAL::OSM::set_coefficient(tmp, 2, 2, Coefficient_ring(-2)) ;
 
         res = tmp + columnMajor ;
         std::cout << "sum otherRowMajor + columnMajor: " << res << std::endl ;
@@ -140,7 +145,7 @@ int main(int argc, char **argv)
         Row_matrix tmp(rowMajor), res ;
 
         CGAL::OSM::remove_coefficient(tmp, 1, 0);
-        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
+        CGAL::OSM::set_coefficient(tmp, 2, 2, Coefficient_ring(-2)) ;
 
         res = tmp + rowMajor ;
         std::cout << "sum otherRowMajor + rowMajor: " << res << std::endl ;
@@ -158,7 +163,7 @@ int main(int argc, char **argv)
         Column_matrix tmp(columnMajor), res ;
 
         CGAL::OSM::remove_coefficient(tmp, 1, 0);
-        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
+        CGAL::OSM::set_coefficient(tmp, 2, 2, Coefficient_ring(-2)) ;
 
         res = tmp - columnMajor ;
         std::cout << "sub columnMajor - otherColumnMajor: " << res << std::endl ;
@@ -174,7 +179,7 @@ int main(int argc, char **argv)
         Column_matrix tmp(columnMajor), res ;
 
         CGAL::OSM::remove_coefficient(tmp, 1, 0);
-        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
+        CGAL::OSM::set_coefficient(tmp, 2, 2, Coefficient_ring(-2)) ;
 
         res = tmp - rowMajor ;
         std::cout << "sub otherColumnMajor - rowMajor: " << res << std::endl ;
@@ -189,7 +194,7 @@ int main(int argc, char **argv)
         Row_matrix tmp(rowMajor), res ;
 
         CGAL::OSM::remove_coefficient(tmp, 1, 0);
-        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
+        CGAL::OSM::set_coefficient(tmp, 2, 2, Coefficient_ring(-2)) ;
 
         res = tmp - columnMajor ;
         std::cout << "sub otherRowMajor - columnMajor: " << res << std::endl ;
@@ -205,7 +210,7 @@ int main(int argc, char **argv)
         Row_matrix tmp(rowMajor), res ;
 
         CGAL::OSM::remove_coefficient(tmp, 1, 0);
-        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
+        CGAL::OSM::set_coefficient(tmp, 2, 2, Coefficient_ring(-2)) ;
 
         res = tmp - rowMajor ;
         std::cout << "sub otherRowMajor - rowMajor: " << res << std::endl ;
@@ -224,7 +229,7 @@ int main(int argc, char **argv)
         Column_matrix tmp(columnMajor) ;
 
         CGAL::OSM::remove_coefficient(tmp, 1, 0);
-        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
+        CGAL::OSM::set_coefficient(tmp, 2, 2, Coefficient_ring(-2)) ;
 
         res = tmp * columnMajor ;
         std::cout << "prod columnMajor * otherColumnMajor: " << res << std::endl ;
@@ -241,7 +246,7 @@ int main(int argc, char **argv)
         Column_matrix tmp(columnMajor) ;
 
         CGAL::OSM::remove_coefficient(tmp, 1, 0);
-        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
+        CGAL::OSM::set_coefficient(tmp, 2, 2, Coefficient_ring(-2)) ;
 
         res = tmp * rowMajor ;
         std::cout << "prod otherColumnMajor * rowMajor: " << res << std::endl ;
@@ -257,7 +262,7 @@ int main(int argc, char **argv)
         Row_matrix tmp(rowMajor) ;
 
         CGAL::OSM::remove_coefficient(tmp, 1, 0);
-        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
+        CGAL::OSM::set_coefficient(tmp, 2, 2, Coefficient_ring(-2)) ;
 
         res = tmp * columnMajor ;
         std::cout << "prod otherRowMajor * columnMajor: " << res << std::endl ;
@@ -274,7 +279,7 @@ int main(int argc, char **argv)
         Row_matrix tmp(rowMajor) ;
 
         CGAL::OSM::remove_coefficient(tmp, 1, 0);
-        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
+        CGAL::OSM::set_coefficient(tmp, 2, 2, Coefficient_ring(-2)) ;
 
         res = tmp * rowMajor ;
         std::cout << "prod otherRowMajor * rowMajor: " << res << std::endl ;
@@ -293,7 +298,7 @@ int main(int argc, char **argv)
         Column_matrix tmp(columnMajor) ;
 
         CGAL::OSM::remove_coefficient(tmp, 1, 0);
-        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
+        CGAL::OSM::set_coefficient(tmp, 2, 2, Coefficient_ring(-2)) ;
 
         res = tmp % columnMajor ;
         std::cout << "prod columnMajor % otherColumnMajor: " << res << std::endl ;
@@ -310,7 +315,7 @@ int main(int argc, char **argv)
         Column_matrix tmp(columnMajor) ;
 
         CGAL::OSM::remove_coefficient(tmp, 1, 0);
-        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
+        CGAL::OSM::set_coefficient(tmp, 2, 2, Coefficient_ring(-2)) ;
 
         res = tmp % rowMajor ;
         std::cout << "prod otherColumnMajor % rowMajor: " << res << std::endl ;
@@ -326,7 +331,7 @@ int main(int argc, char **argv)
         Row_matrix tmp(rowMajor);
 
         CGAL::OSM::remove_coefficient(tmp, 1, 0);
-        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
+        CGAL::OSM::set_coefficient(tmp, 2, 2, Coefficient_ring(-2)) ;
 
         res = tmp % columnMajor ;
         std::cout << "prod otherRowMajor % columnMajor: " << res << std::endl ;
@@ -343,7 +348,7 @@ int main(int argc, char **argv)
         Row_matrix tmp(rowMajor);
 
         CGAL::OSM::remove_coefficient(tmp, 1, 0);
-        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
+        CGAL::OSM::set_coefficient(tmp, 2, 2, Coefficient_ring(-2)) ;
 
         res = tmp % rowMajor ;
         std::cout << "prod otherRowMajor % rowMajor: " << res << std::endl ;

@@ -9,8 +9,9 @@
 typedef int Coefficient_ring;
 typedef CGAL::OSM::Sparse_chain<Coefficient_ring, CGAL::OSM::COLUMN> Column_chain;
 typedef CGAL::OSM::Sparse_chain<Coefficient_ring, CGAL::OSM::ROW> Row_chain ;
-typedef CGAL::OSM::Sparse_matrix<Coefficient_ring, CGAL::OSM::COLUMN> Column_matrix;
-typedef CGAL::OSM::Sparse_matrix<Coefficient_ring, CGAL::OSM::ROW> Row_matrix;
+typedef CGAL::OSM::Sparse_matrix<CGAL::OSM::Sparse_chain> Sparse_matrix_struct;
+typedef Sparse_matrix_struct:: template Sparse_matrix_type<Coefficient_ring, CGAL::OSM::COLUMN> Column_matrix;
+typedef Sparse_matrix_struct:: template Sparse_matrix_type<Coefficient_ring, CGAL::OSM::ROW> Row_matrix;
 
 
 int main(int argc, char **argv)

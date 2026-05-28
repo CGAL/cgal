@@ -38,7 +38,7 @@ class Sparse_chain;
 /*!
  \ingroup PkgHDVFAlgorithmClasses
 
- The structure `Sparse_matrix` provides a more friendly interface for sparse matrices built over a given `SparseChain`model (actually a Curryfication of the `Sparse_matrix_core` template).
+ The structure `Sparse_matrix` provides a user friendly interface for sparse matrices built over a given `SparseChain`model (actually a Curryfication of the `Sparse_matrix_core` template).
 
  Given the template parameter `SparseChainType` (a model of the `SparseChain` concept), corresponding sparse chains and matrices templates are given by:
  \code
@@ -47,6 +47,8 @@ class Sparse_chain;
  \endcode
 
  \tparam SparseChainType a model of `SparseChain` used to store chains of the sparse matrix (default: `OSM::Sparse_chain`).
+
+ \warning Check if the documentation of this structure interfaces properly with the `SparseMatrix` concept.
  */
 
 template <template <typename, int> typename SparseChainType>
@@ -189,7 +191,6 @@ public:
      */
     Sparse_matrix_core(const std::pair<size_t, size_t> dimensions) : Sparse_matrix_core(dimensions.first, dimensions.second) {}
 
-    Sparse_matrix_core(const Sparse_matrix_core &otherToCopy) = default ;
 
     /**
      * \brief Copy constructor.
@@ -199,6 +200,8 @@ public:
      *
      * \param otherToCopy The matrix copied.
      */
+
+    Sparse_matrix_core(const Sparse_matrix_core &otherToCopy) = default ;
 
     template <int CTF>
     Sparse_matrix_core(const Sparse_matrix_core<CoefficientRing,CTF, SparseChainType> &otherToCopy) {

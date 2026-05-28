@@ -32,7 +32,8 @@
  - A row-major representation of \f$A\f$ is: \f$[0\mapsto c_0, 1\mapsto c_1, 2\mapsto c_2]\f$ with the row-chains: \f$c_0 = [0\mapsto 1]\f$ and \f$c_1 = [0\mapsto -1, 2\mapsto 2]\f$ and \f$c_2 = [2\mapsto 1]\f$.
 
  \cgalHasModelsBegin
- \cgalHasModelsBare{`CGAL::OSM::Sparse_matrix<IntegralDomainWithoutDivision, StorageFormat, SparseChain>`}
+ \cgalHasModelsBare{`CGAL::OSM::Sparse_matrix_core<IntegralDomainWithoutDivision, StorageFormat, SparseChain>`}
+ \cgalHasModelsBare{`CGAL::OSM::Sub_sparse_matrix_core<IntegralDomainWithoutDivision, StorageFormat, SparseChain>`}
  \cgalHasModelsEnd
 
  \sa `IntegralDomainWithoutDivision`
@@ -55,7 +56,10 @@ public:
      */
     typedef int Storage_format;
 
-
+    /*!
+     * \brief Type of `SparseChain` used for storage.
+     */
+    typedef Sparse_chain Sparse_chain_type;
 
     /*!
      * \brief A range of indices of non empty chains.

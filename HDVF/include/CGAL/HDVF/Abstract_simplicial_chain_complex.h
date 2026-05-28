@@ -44,6 +44,9 @@ namespace Homological_discrete_vector_field {
  \cgalModels{AbstractChainComplex}
 
  \tparam CoefficientRing a model of the `IntegralDomainWithoutDivision` concept.
+ \tparam SparseMatrixStruct an instantiation of the `Sparse_matrix` structure  providing templates of sparse chains and sparse matrices built over a given model of `SparseChain`.
+
+ \warning Check if the documentation of the `SparseMatrixStruct` added is correct and "understandable".
  */
 
 

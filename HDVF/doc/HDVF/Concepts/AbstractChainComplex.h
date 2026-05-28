@@ -16,7 +16,6 @@ It provides methods to:
 
 \cgalHasModelsBegin
 \cgalHasModelsBare{`CGAL::Homological_discrete_vector_field::Abstract_simplicial_chain_complex<IntegralDomainWithoutDivision>`}
-\cgalHasModelsBare{`CGAL::Homological_discrete_vector_field::Sub_chain_complex_mask<IntegralDomainWithoutDivision, AbstractChainComplex>`}
 \cgalHasModelsEnd
 
 */
@@ -32,20 +31,27 @@ Type of coefficients ring used to compute homology, model of `IntegralDomainWith
  */
 typedef unspecified_type Coefficient_ring;
 
+/**
+ Instantiation of the `Sparse_matrix` structure  providing templates of sparse chains and sparse matrices built over a given model of `SparseChain`.
+
+ \warning Check how to document this as the structure is not a concept...
+ */
+    typedef unspecified_type Sparse_matrix_struct;
+
 /*!
  Type of column-major chains (returned by the boundary operator)
  */
-typedef CGAL::OSM::Sparse_chain<Coefficient_ring, CGAL::OSM::COLUMN> Column_chain;
+typedef Sparse_matrix_struct:: template Sparse_chain_type<Coefficient_ring, CGAL::OSM::COLUMN> Column_chain;
 
 /*!
  Type of row-major chains (returned by the co-boundary operator)
  */
-typedef CGAL::OSM::Sparse_chain<Coefficient_ring, CGAL::OSM::ROW> Row_chain ;
+typedef Sparse_matrix_struct:: template Sparse_chain_type<Coefficient_ring, CGAL::OSM::ROW> Row_chain ;
 
 /*!
  Type of column-major sparse matrices (used to store the boundary operator)
  */
-typedef CGAL::OSM::Sparse_matrix<Coefficient_ring, CGAL::OSM::COLUMN> Column_matrix;
+typedef Sparse_matrix_struct:: template Sparse_matrix_type<Coefficient_ring, CGAL::OSM::COLUMN> Column_matrix;
 
 /// @}
 

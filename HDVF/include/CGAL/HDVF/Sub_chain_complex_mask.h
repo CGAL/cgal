@@ -260,10 +260,13 @@ public:
         return _sub ;
     }
 
-    /** \brief Gets the bitboard of the sub chain complex in dimension q. */
+    /** \brief Gets the bitboard of the sub chain complex in dimension q.
+
+     @todo Correct the reference to local temporary
+     */
     inline const OSM::Bitboard& get_bitboard(int q) const
     {
-        if (q>0)
+        if ((q>=0) && (q<=_dim))
             return _sub.at(q) ;
         else
             return OSM::Bitboard(0);

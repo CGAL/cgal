@@ -77,7 +77,6 @@ namespace IO {
 template <typename ChainComplex, typename VertexIdType = size_t>
 void write_VTK (const Homological_discrete_vector_field::Hdvf_core<ChainComplex>& hdvf, const ChainComplex &complex, std::string filename = "test", bool co_faces = false) {
     typedef typename ChainComplex::Coefficient_ring Coefficient_ring;
-    typedef Homological_discrete_vector_field::Hdvf_core<ChainComplex> HDVF_parent;
     // Export PSC labelling in any dimension (whatever the dimension restriction)
     std::string outfile(filename+"_PSC.vtk") ;
     std::vector<std::vector<int> > labels = hdvf.psc_labels(-1) ;
@@ -360,16 +359,16 @@ public:
  - K (Sub_chain_complex_mask) : Sub_chain_complex_mask identifying K_init inside L
 
  \tparam CoefficientRing a model of the `IntegralDomainWithoutDivision` concept providing the ring used to compute homology.
-
  \tparam Traits a geometric traits class model of the `HDVFTraits` concept.
+ \tparam SparseMatrixStruct a specialization of  `OSM::Sub_sparse_matrix` structure corresponding to that of the dualized complex.
  */
 
-template<typename CoefficientRing, typename Traits>
+template<typename CoefficientRing, typename Traits, typename SparseMatrixStruct = CGAL::OSM::Sub_sparse_matrix<CGAL::OSM::Sparse_chain> >
 class Duality_simplicial_complex_tools {
 public:
     typedef typename Traits::Point Point ;
     /** \brief Type of simplicial chain complex encoding `L`. */
-    typedef Simplicial_chain_complex<CoefficientRing,Traits> Chain_complex ;
+    typedef Simplicial_chain_complex<CoefficientRing,Traits,SparseMatrixStruct> Chain_complex ;
     /** \brief Type of sub chain complex mask encoding the sub complex `K`. */
     typedef Sub_chain_complex_mask<Chain_complex> Sub_chain_complex ;
     /** \brief Type of 3D surface meshes. */

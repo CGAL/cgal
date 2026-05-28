@@ -31,7 +31,7 @@ class Sub_sparse_matrix_core;
 /*!
  \ingroup PkgHDVFAlgorithmClasses
 
- The structure `Sub_sparse_matrix` provides a more friendly interface for sparse matrices built over a given `SparseChain`model (actually a Curryfication of the `Sparse_matrix_core` template).
+ The structure `Sub_sparse_matrix` provides a user friendly interface for sub-sparse matrices built over a given `SparseChain`model (actually a Curryfication of the `Sub_parse_matrix_core` template).
 
  Given the template parameter `SparseChainType` (a model of the `SparseChain` concept), corresponding sparse chains and matrices templates are given by:
  \code
@@ -42,6 +42,8 @@ class Sub_sparse_matrix_core;
  \cgalModels{SparseMatrix}
 
  \tparam SparseChainType a model of `SparseChain` used to store chains of the sparse matrix (default: `OSM::Sparse_chain`).
+
+ \warning Check if the documentation of this structure is correct.
  */
 
 template <template <typename, int> typename SparseChainType = OSM::Sparse_chain>

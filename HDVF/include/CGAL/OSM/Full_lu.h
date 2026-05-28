@@ -166,7 +166,7 @@ public:
 
     /** \brief Tests is the matrix is invertible (ie. full rank and determinant invertible). */
     bool is_invertible() {
-        return is_invertible(determinant());
+        return CGAL::is_invertible(determinant());
     }
 
     /** \brief Computes the inverse of the matrix.

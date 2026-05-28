@@ -19,14 +19,14 @@
 
 namespace HDVF = CGAL::Homological_discrete_vector_field;
 
-typedef int Coefficient_ring;
+//typedef int Coefficient_ring;
 //typedef CGAL::Z2 Coefficient_ring;
-//typedef CGAL::Zp<5, char, true> Coefficient_ring;
+typedef CGAL::Zp<5, char, true> Coefficient_ring;
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef HDVF::Hdvf_traits_3<Kernel> Traits;
 
-using Complex = HDVF::Simplicial_chain_complex<Coefficient_ring,Traits> ;
+using Complex = HDVF::Simplicial_chain_complex<Coefficient_ring,Traits,CGAL::OSM::Sparse_matrix<CGAL::OSM::Sparse_chain> > ;
 using HDVF_type = HDVF::Hdvf<Complex> ;
 
 template<typename ChainComplex>

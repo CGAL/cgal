@@ -38,8 +38,8 @@ int main() {
     // The constructor should raise no exception
     try {
         HDVF::Mesh_object_io<Traits> mio1(2,nodes1,cells1);
-        assert(mio1.nodes.size() == 3);
-        assert(mio1.cells.size() == 3);
+        assert(mio1.nodes().size() == 3);
+        assert(mio1.cells().size() == 3);
     } catch (...) {
         std::cerr << "-- check_dimension() failed" << std::endl;
         assert(false);
@@ -48,8 +48,8 @@ int main() {
     // The constructor *should* raise an exception
     try {
         HDVF::Mesh_object_io<Traits> mio1(2,nodes2,cells2);
-        assert(mio1.nodes.size() == 3);
-        assert(mio1.cells.size() == 3);
+        assert(mio1.nodes().size() == 3);
+        assert(mio1.cells().size() == 3);
     } catch (...) {
         std::cerr << "-- check_dimension() properly detected the dimension changes" << std::endl;
         assert(true);
@@ -59,8 +59,8 @@ int main() {
     // The constructor should not raise an exception
     try {
         HDVF::Mesh_object_io<Traits> mio1(-2,nodes2,cells2);
-        assert(mio1.nodes.size() == 4);
-        assert(mio1.cells.size() == 4);
+        assert(mio1.nodes().size() == 4);
+        assert(mio1.cells().size() == 4);
     } catch (...) {
         std::cerr << "-- check_dimension() failed" << std::endl;
         assert(false);
@@ -71,11 +71,11 @@ int main() {
         std::cerr << "Test read_off with data/three_triangles.off (with ordering of vertices indices)" << std::endl;
         HDVF::Mesh_object_io<Traits> mio2;
         mio2.read_off("data/three_triangles.off") ;
-        assert(mio2.nvertices == 6);
-        assert(mio2.ncells == 3);
-        assert(mio2.cells.at(0) == HDVF::Io_cell_type({0,1,2}));
-        assert(mio2.cells.at(1) == HDVF::Io_cell_type({2,3,4}));
-        assert(mio2.cells.at(2) == HDVF::Io_cell_type({1,3,5}));
+        assert(mio2.number_of_nodes() == 6);
+        assert(mio2.cells().size() == 3);
+        assert(mio2.cells().at(0) == HDVF::Io_cell_type({0,1,2}));
+        assert(mio2.cells().at(1) == HDVF::Io_cell_type({2,3,4}));
+        assert(mio2.cells().at(2) == HDVF::Io_cell_type({1,3,5}));
     }
 
     // Test read_simp()
@@ -83,11 +83,11 @@ int main() {
         std::cerr << "Test read_simp with data/simple_simplicial_complex.simp (with ordering of vertices indices)" << std::endl;
         HDVF::Mesh_object_io<Traits> mio2;
         mio2.read_simp("data/simple_simplicial_complex.simp") ;
-        assert(mio2.nvertices == 0);
-        assert(mio2.ncells == 3);
-        assert(mio2.cells.at(0) == HDVF::Io_cell_type({1,2,3}));
-        assert(mio2.cells.at(1) == HDVF::Io_cell_type({2,4}));
-        assert(mio2.cells.at(2) == HDVF::Io_cell_type({3,4}));
+        assert(mio2.number_of_nodes() == 0);
+        assert(mio2.cells().size() == 3);
+        assert(mio2.cells().at(0) == HDVF::Io_cell_type({1,2,3}));
+        assert(mio2.cells().at(1) == HDVF::Io_cell_type({2,4}));
+        assert(mio2.cells().at(2) == HDVF::Io_cell_type({3,4}));
     }
 
     return 0;

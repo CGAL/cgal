@@ -68,12 +68,12 @@ public:
     Triangulation_3_io(const Triangulation_3& triangulation) : Mesh_object_io<Traits>(3) {
         typedef typename Traits::Point Point;
 
-        this->nvertices = triangulation.number_of_vertices();
-        this->ncells = triangulation.number_of_vertices() + triangulation.number_of_finite_cells();
+        this->_nvertices = triangulation.number_of_vertices();
+        this->_ncells = triangulation.number_of_vertices() + triangulation.number_of_finite_cells();
 
         // Load nodes
         for (Point p : triangulation.points()) {
-            this->nodes.push_back(p);
+            this->_nodes.push_back(p);
         }
         // Load vertices
         size_t tmp_index(0);
@@ -81,7 +81,7 @@ public:
             // Corresponding Io_cell_type
             Io_cell_type tmp_io_cell({tmp_index});
             // Add to cells
-            this->cells.push_back(tmp_io_cell);
+            this->_cells.push_back(tmp_io_cell);
             // Store the permutation
             _io_cell_to_vertex_handle[tmp_index] = v;
             _vertex_handle_to_io_cell[v] = tmp_index;
@@ -99,7 +99,7 @@ public:
             // Sort this vector
             std::sort(tmp_cell.begin(), tmp_cell.end());
             // Add to cells
-            this->cells.push_back(tmp_cell);
+            this->_cells.push_back(tmp_cell);
             // Set the permutation
             _io_cell_to_cell_handle[tmp_cell] = c;
             _cell_handle_to_io_cell[c] = tmp_cell;
