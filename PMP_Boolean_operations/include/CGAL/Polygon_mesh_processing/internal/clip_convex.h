@@ -56,9 +56,6 @@ find_crossing_edge(PolygonMesh& pm,
   using GT = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
   GT traits = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
-  using FT = typename GT::FT;
-  using Plane_3 = typename GT::Plane_3;
-  using Point_3 = typename GT::Point_3;
   using Direction_3 = typename GT::Direction_3;
 
   auto vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
