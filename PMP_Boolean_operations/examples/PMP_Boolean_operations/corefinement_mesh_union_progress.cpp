@@ -19,6 +19,7 @@ struct Visitor_rep{
     : normalize(normalize)
   {
     t.start();
+    rt.start();
   }
 
   void progress_filtering_intersections(double d)
@@ -26,7 +27,7 @@ struct Visitor_rep{
     d /= normalize;
     total += d;
     if(total > bound){
-      std::cout << std::setprecision(3) << total*100 << " %   in " << std::setprecision(5) << t.time() << " sec." << std::endl;
+      std::cout << std::setprecision(3) << total*100 << " %   in " << std::setprecision(5) << rt.time() << " sec (" << t.time() << "s)." << std::endl;
       bound += 0.1;
     }
   }
@@ -47,7 +48,7 @@ struct Visitor_rep{
 
   void start_coplanar_faces(std::size_t tc)
   {
-    std::cout << "Visitor::start_coplanar_faces() at " << t.time() << " sec." << std::endl;
+    std::cout << "Visitor::start_coplanar_faces() at " << rt.time() << " sec (" << t.time() << "s)."  << std::endl;
     tcoplanar= tc;
     count_coplanar = 0;
     bound_coplanar = tcoplanar/10;
@@ -64,7 +65,7 @@ struct Visitor_rep{
 
   void start_intersection_points(std::size_t ti)
   {
-    std::cout << "Visitor::start_intersection_points() at " << t.time() << " sec." << std::endl;
+    std::cout << "Visitor::start_intersection_points() at " << rt.time() << " sec (" << t.time() << "s)."  << std::endl;
     tintersection= ti;
     count_intersection = 0;
     bound_intersection = tintersection/10;
@@ -84,6 +85,11 @@ struct Visitor_rep{
     return t.time();
   }
 
+  double real_time() const
+  {
+    return rt.time();
+  }
+
   double normalize;
   double bound = 0.1;
   double total = 0;
@@ -99,7 +105,8 @@ struct Visitor_rep{
   std::size_t bound_intersection = 0;
   std::size_t tintersection = 0;
   std::size_t count_intersection = 0;
-  CGAL::Real_timer t;
+  CGAL::Timer t;
+  CGAL::Real_timer rt;
 };
 
 
@@ -120,16 +127,16 @@ struct Visitor :
 
   void start_filtering_intersections() const
   {
-    std::cout << "Visitor::start_filtering_intersections() at " << sptr->time() << " sec." << std::endl;
+    std::cout << "Visitor::start_filtering_intersections() at " << sptr->real_time() << " sec (" << sptr->time() << "s)." << std::endl;
   }
   void end_filtering_intersections() const
   {
-    std::cout << "Visitor::end_filtering_intersections() at " << sptr->time() << " sec."  << std::endl;
+    std::cout << "Visitor::end_filtering_intersections() at " << sptr->real_time() << " sec (" << sptr->time() << "s)." << std::endl;
   }
 
   void start_triangulating_faces(std::size_t tf) const
   {
-    std::cout << "Visitor::start_triangulation() with " << tf << " faces at " << sptr->time() << " sec."  << std::endl;
+    std::cout << "Visitor::start_triangulation() with " << tf << " faces at " << sptr->real_time() << " sec (" << sptr->time() << "s)." << std::endl;
     sptr->start_triangulating_faces(tf);
     tf_counter = 0;
   }
@@ -141,7 +148,7 @@ struct Visitor :
 
   void end_triangulating_faces()const
   {
-    std::cout << "Visitor::end_triangulating_faces() at " << sptr->time() << " sec."  << std::endl;
+    std::cout << "Visitor::end_triangulating_faces() at " << sptr->real_time() << " sec (" << sptr->time() << "s)." << std::endl;
   }
 
   void start_handling_intersection_of_coplanar_faces(std::size_t i) const
@@ -156,7 +163,7 @@ struct Visitor :
 
   void end_handling_intersection_of_coplanar_faces() const
   {
-    std::cout << "Visitor::end_coplanar_faces() at " << sptr->time() << " sec." << std::endl;
+    std::cout << "Visitor::end_coplanar_faces() at " << sptr->real_time() << " sec (" << sptr->time() << "s)." << std::endl;
   }
 
   void start_handling_edge_face_intersections(std::size_t i) const
@@ -171,25 +178,27 @@ struct Visitor :
 
   void end_handling_edge_face_intersections() const
   {
-    std::cout << "Visitor::end_intersection_points() at " << sptr->time() << " sec." << std::endl;
+    std::cout << "Visitor::end_intersection_points() at " << sptr->real_time() << " sec (" << sptr->time() << "s)." << std::endl;
   }
 
   void start_building_output() const
   {
-    std::cout << "Visitor::start_building_output() at " << sptr->time()  << " sec."<< std::endl;
+    std::cout << "Visitor::start_building_output() at " << sptr->real_time() << " sec (" << sptr->time() << "s)." << std::endl;
   }
 
   void end_building_output() const
   {
-    std::cout << "Visitor::end_building_output() at " << sptr->time() << " sec." << std::endl;
+    std::cout << "Visitor::end_building_output() at " << sptr->real_time() << " sec (" << sptr->time() << "s)." << std::endl;
   }
 };
 
 
 int main(int argc, char* argv[])
 {
-  const std::string filename1 = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/blobby.off");
-  const std::string filename2 = (argc > 2) ? argv[2] : CGAL::data_file_path("meshes/eight.off");
+  // const std::string filename1 = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/blobby.off");
+  // const std::string filename2 = (argc > 2) ? argv[2] : CGAL::data_file_path("meshes/eight.off");
+  const std::string filename1 = (argc > 1) ? argv[1] : "/home/oem/Data/data/iphigenia.off";
+  const std::string filename2 = (argc > 2) ? argv[2] : "/home/oem/Data/data/iphigenia_transformed.off";
 
   Mesh mesh1, mesh2;
   if(!CGAL::IO::read_polygon_mesh(filename1, mesh1) || !CGAL::IO::read_polygon_mesh(filename2, mesh2))

@@ -54,6 +54,7 @@ if(TARGET CGAL::TBB_support)
   target_link_libraries(corefinement_parallel_union_meshes PRIVATE CGAL::TBB_support)
 
   target_link_libraries(corefinement_mesh_union_progress PRIVATE CGAL::TBB_support)
+  target_link_libraries(corefinement_mesh_union PRIVATE CGAL::TBB_support)
 else()
   message(STATUS "NOTICE: Intel TBB was not found. Sequential code will be used.")
 endif()

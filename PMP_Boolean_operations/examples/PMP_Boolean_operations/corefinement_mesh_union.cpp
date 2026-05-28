@@ -1,6 +1,8 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 
+#include <CGAL/Real_timer.h>
+
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 
@@ -25,7 +27,11 @@ int main(int argc, char* argv[])
   }
 
   Mesh out;
-  bool valid_union = PMP::corefine_and_compute_union(mesh1,mesh2, out);
+  CGAL::Real_timer rt; CGAL::Timer t;
+  rt.start(); t.start();
+  // bool valid_union = PMP::corefine_and_compute_union(mesh1,mesh2, out);
+  bool valid_union = PMP::corefine_and_compute_union(mesh1,mesh2, out, CGAL::parameters::concurrency_tag(CGAL::Parallel_tag()));
+  std::cout << "run in " << rt.time() << " (" << t.time() << "s)" << std::endl;
 
   if(valid_union)
   {
