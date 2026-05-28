@@ -439,7 +439,9 @@ bool build_triangulation_impl(Tr& tr,
     vh->set_dimension(-1);
 
   if(verbose)
+  {
     std::cout << "build vertices done (" << tr.tds().number_of_vertices() << " vertices)" << std::endl;
+  }
 
   if (!finite_cells.empty())
   {
@@ -471,6 +473,11 @@ bool build_triangulation_impl(Tr& tr,
     {
       if (vit->cell() == Cell_handle())
         tr.tds().delete_vertex(vit);
+    }
+
+    if(verbose)
+    {
+      std::cout << "vertices after purge: " << tr.tds().number_of_vertices() << std::endl;
     }
 
     tr.tds().set_dimension(3);
