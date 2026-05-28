@@ -382,7 +382,8 @@ namespace internal {
     // Note: only used to split a range of edges provided as input
     template<typename EdgeRange, typename SizingFunction>
     void split_long_edges(const EdgeRange& edge_range,
-                          SizingFunction& sizing)
+                          SizingFunction& sizing,
+                          const bool do_not_triangulate_faces)
     {
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
@@ -447,26 +448,29 @@ namespace internal {
           long_edges.emplace(hnext, sqlen_new.value());
 
         //insert new edges to keep triangular faces, and update long_edges
-        if (!is_border(hnew, mesh_))
+        if(!do_not_triangulate_faces)
         {
-          Patch_id patch_id = get_patch_id(face(hnew, mesh_));
-          halfedge_descriptor hnew2 =
-            CGAL::Euler::split_face(hnew, next(next(hnew, mesh_), mesh_), mesh_);
-          put(ecmap_, edge(hnew2, mesh_), false);
-          set_patch_id(face(hnew2, mesh_), patch_id);
-          set_patch_id(face(opposite(hnew2, mesh_), mesh_), patch_id);
-        }
+          if (!is_border(hnew, mesh_))
+          {
+            Patch_id patch_id = get_patch_id(face(hnew, mesh_));
+            halfedge_descriptor hnew2 =
+              CGAL::Euler::split_face(hnew, next(next(hnew, mesh_), mesh_), mesh_);
+            put(ecmap_, edge(hnew2, mesh_), false);
+            set_patch_id(face(hnew2, mesh_), patch_id);
+            set_patch_id(face(opposite(hnew2, mesh_), mesh_), patch_id);
+          }
 
-        //do it again on the other side if we're not on boundary
-        halfedge_descriptor hnew_opp = opposite(hnew, mesh_);
-        if (!is_border(hnew_opp, mesh_))
-        {
-          Patch_id patch_id = get_patch_id(face(hnew_opp, mesh_));
-          halfedge_descriptor hnew2 =
-            CGAL::Euler::split_face(prev(hnew_opp, mesh_), next(hnew_opp, mesh_), mesh_);
-          put(ecmap_, edge(hnew2, mesh_), false);
-          set_patch_id(face(hnew2, mesh_), patch_id);
-          set_patch_id(face(opposite(hnew2, mesh_), mesh_), patch_id);
+          //do it again on the other side if we're not on boundary
+          halfedge_descriptor hnew_opp = opposite(hnew, mesh_);
+          if (!is_border(hnew_opp, mesh_))
+          {
+            Patch_id patch_id = get_patch_id(face(hnew_opp, mesh_));
+            halfedge_descriptor hnew2 =
+              CGAL::Euler::split_face(prev(hnew_opp, mesh_), next(hnew_opp, mesh_), mesh_);
+            put(ecmap_, edge(hnew2, mesh_), false);
+            set_patch_id(face(hnew2, mesh_), patch_id);
+            set_patch_id(face(opposite(hnew2, mesh_), mesh_), patch_id);
+          }
         }
       }
 #ifdef CGAL_PMP_REMESHING_VERBOSE

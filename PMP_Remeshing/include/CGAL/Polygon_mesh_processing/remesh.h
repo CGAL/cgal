@@ -441,6 +441,12 @@ void isotropic_remeshing(const FaceRange& faces
 *     \cgalParamDefault{a default property map where no edge is constrained}
 *     \cgalParamExtra{A constrained edge can be split or collapsed, but not flipped, nor its endpoints moved by smoothing.}
 *   \cgalParamNEnd
+*
+*   \cgalParamNBegin{do_not_triangulate_faces}
+*    \cgalParamDescription{If `true`, the faces created by splitting are not triangulated.}
+*    \cgalParamType{`bool`}
+*    \cgalParamDefault{`false`}
+*   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
 * @sa `isotropic_remeshing()`
@@ -492,6 +498,9 @@ void split_long_edges(const EdgeRange& edges
     get_parameter(np, internal_np::face_patch),
     internal::Connected_components_pmap<PM, FIMap>(faces(pmesh), pmesh, ecmap, fimap, false));
 
+  const bool do_not_triangulate
+    = choose_parameter(get_parameter(np, internal_np::do_not_triangulate_faces), false);
+
   typename internal::Incremental_remesher<PM, VPMap, GT, ECMap,
     Static_boolean_property_map<vertex_descriptor, false>, // no constraint pmap
     FPMap,FIMap
@@ -502,7 +511,7 @@ void split_long_edges(const EdgeRange& edges
              fimap,
              false/*need aabb_tree*/);
 
-     remesher.split_long_edges(edges, sizing);
+  remesher.split_long_edges(edges, sizing, do_not_triangulate);
 }
 
 // Convenience overload when using max_length for sizing
