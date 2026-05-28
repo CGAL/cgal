@@ -316,7 +316,7 @@ namespace CGAL {
   *
   * @returns the 3D triangulation built from \p tets
   *
-  * @post the output triangulation must be a triangulation of the convex hull of `tets`
+  * @pre the tetrahedron soup must form a partition of the convex hull of `tets`
   *
   * @sa @ref SMDS_3/tetrahedron_soup_to_c3t3_example.cpp
   *
@@ -431,7 +431,7 @@ namespace CGAL {
   * @returns the 3D triangulation built from parameters
   *
   * @pre `points` contains each point only once
-  * @post the output triangulation must be a triangulation of the convex hull of `points`
+  * @pre the tetrahedron soup must form a partition of the convex hull of `tets`
   * @post `is_valid()` returns `true` for the returned triangulation
   *
   * @sa \link Polygon_mesh_processing::polygon_soup_to_polygon_mesh() `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()` \endlink
