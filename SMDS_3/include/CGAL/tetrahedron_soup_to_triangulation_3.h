@@ -24,6 +24,7 @@
 #include <CGAL/SMDS_3/internal/SMDS_3_helper.h>
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/unordered_flat_map.h>
 
 #include <boost/unordered_map.hpp>
 #include <boost/container/flat_set.hpp>
@@ -68,69 +69,69 @@ namespace CGAL {
 
     const bool verbose = choose_parameter(get_parameter(np, internal_np::verbose), false);
 
-    if(std::begin(tets) == std::end(tets))
+    if (std::begin(tets) == std::end(tets))
       return true;
 
     // check that no tetrahedron has twice the same vertex
     // and build mapping of facets to incident cells
     V_ID max_id = 0;
 
-    typedef std::array<V_ID, 3> Facet_vvv;
+    typedef std::array<V_ID, 3> F_ID;
     typedef std::vector<std::size_t> Incident_tet_indices;
-    typedef boost::unordered_map<Facet_vvv, Incident_tet_indices> Incident_cells_map;
+    typedef boost::unordered_map<F_ID, Incident_tet_indices> Incident_cells_map;
     Incident_cells_map incident_cells_map;
 
-    for(std::size_t tet_idx = 0; tet_idx < tets.size(); ++tet_idx)
+    for (std::size_t tet_idx = 0; tet_idx < tets.size(); ++tet_idx)
     {
       const Tetrahedron& tet = tets[tet_idx];
 
-      if(tet.size() != 4) {
-        if (verbose) {
+      if (tet.size() != 4)
+      {
+        if (verbose)
           std::cerr << "Tetrahedron #" << tet_idx << " has " << tet.size() << " vertices" << std::endl;
-        }
         return false;
       }
 
       boost::container::flat_set<V_ID> tet_vertices;
       std::vector<V_ID> tet_vertices_vec;
 
-      for(V_ID id : tet)
+      for (V_ID id : tet)
       {
-        if(max_id < id)
+        if (max_id < id)
           max_id = id;
 
-        if(!tet_vertices.insert(id).second) {
-          if (verbose) {
+        if (!tet_vertices.insert(id).second)
+        {
+          if (verbose)
             std::cerr << "Tetrahedron #" << tet_idx << " has duplicate vertex " << id << std::endl;
-          }
           return false; // vertex met twice in the same tetrahedron
         }
 
         tet_vertices_vec.push_back(id);
       }
 
-      for(int i=0; i<4; ++i)
+      for (int i=0; i<4; ++i)
       {
-        Facet_vvv facet;
+        F_ID facet;
         int idx = 0;
-        for(int j = 0; j < 4; ++j)
+        for (int j=0; j<4; ++j)
         {
-          if(i != j)
+          if (i != j)
             facet[idx++] = tet_vertices_vec[j];
         }
 
         // Sort the facet vertices to create a canonical ordering
-        if(facet[1] < facet[0]) std::swap(facet[0], facet[1]);
-        if(facet[2] < facet[1]) std::swap(facet[1], facet[2]);
-        if(facet[1] < facet[0]) std::swap(facet[0], facet[1]);
+        if (facet[1] < facet[0]) std::swap(facet[0], facet[1]);
+        if (facet[2] < facet[1]) std::swap(facet[1], facet[2]);
+        if (facet[1] < facet[0]) std::swap(facet[0], facet[1]);
 
         incident_cells_map[facet].push_back(tet_idx);
 
         // check that each facet has at most two incident cells
-        if(incident_cells_map[facet].size() > 2) {
-          if (verbose) {
+        if (incident_cells_map[facet].size() > 2)
+        {
+          if (verbose)
             std::cerr << "Facet with > 2 incident cells" << std::endl;
-          }
           return false;
         }
       }
@@ -140,10 +141,10 @@ namespace CGAL {
     // Build adjacency graph: two tetrahedra are adjacent if they share a facet
     std::vector<std::vector<std::size_t> > tet_adjacency(tets.size());
 
-    for(const auto& facet_and_incident : incident_cells_map)
+    for (const auto& facet_and_incident : incident_cells_map)
     {
       const Incident_tet_indices& incident = facet_and_incident.second;
-      if(incident.size() == 2)
+      if (incident.size() == 2)
       {
         std::size_t tet1 = incident[0];
         std::size_t tet2 = incident[1];
@@ -153,7 +154,7 @@ namespace CGAL {
     }
 
     // Check connectivity via BFS
-    if(tets.size() > 0)
+    if (tets.size() > 0)
     {
       std::vector<bool> visited(tets.size(), false);
       std::queue<std::size_t> q;
@@ -161,27 +162,26 @@ namespace CGAL {
       visited[0] = true;
       std::size_t component_size = 1;
 
-      while(!q.empty())
+      while (!q.empty())
       {
         std::size_t current = q.front();
         q.pop();
 
-        for(std::size_t neighbor : tet_adjacency[current])
+        for (std::size_t neighbor : tet_adjacency[current])
         {
-          if(!visited[neighbor])
+          if (!visited[neighbor])
           {
             visited[neighbor] = true;
             q.push(neighbor);
-            component_size++;
+            ++component_size;
           }
         }
       }
 
-      if(component_size != tets.size())
+      if (component_size != tets.size())
       {
-        if (verbose) {
+        if (verbose)
           std::cerr << component_size << " volume connected components" << std::endl;
-        }
         return false;
       }
     }
@@ -195,21 +195,20 @@ namespace CGAL {
     Vertex_to_tets_map vertex_to_tets;
     Edge_to_tets_map edge_to_tets;
 
-    // Build vertex-to-tetrahedra and edge-to-tetrahedra maps
-    for(std::size_t tet_idx=0; tet_idx<tets.size(); ++tet_idx)
+    for (std::size_t tet_idx = 0; tet_idx < tets.size(); ++tet_idx)
     {
       const Tetrahedron& tet = tets[tet_idx];
 
-      for(V_ID v : tet)
+      for (V_ID v : tet)
         vertex_to_tets[v].push_back(tet_idx);
 
-      for(int i=0; i<4; ++i)
+      for (int i = 0; i < 4; ++i)
       {
-        for(int j=i+1; j<4; ++j)
+        for (int j = i+1; j < 4; ++j)
         {
           V_ID v1 = tet[i];
           V_ID v2 = tet[j];
-          if(v1 > v2)
+          if (v1 > v2)
             std::swap(v1, v2);
           edge_to_tets[std::make_pair(v1, v2)].push_back(tet_idx);
         }
@@ -217,7 +216,7 @@ namespace CGAL {
     }
 
     // Check that around each vertex, tetrahedra form a single connected component
-    for(const auto& v_and_tets : vertex_to_tets)
+    for (const auto& v_and_tets : vertex_to_tets)
     {
       const std::vector<std::size_t>& inc_tets = v_and_tets.second;
       CGAL_assertion(inc_tets.size() != 0);
@@ -229,15 +228,15 @@ namespace CGAL {
       local_q.push(seed);
       remaining.erase(seed);
 
-      while(!local_q.empty())
+      while (!local_q.empty())
       {
         std::size_t current = local_q.front();
         local_q.pop();
 
-        for(std::size_t neighbor : tet_adjacency[current])
+        for (std::size_t neighbor : tet_adjacency[current])
         {
           auto it = remaining.find(neighbor);
-          if(it != remaining.end())
+          if (it != remaining.end())
           {
             local_q.push(neighbor);
             remaining.erase(it);
@@ -245,20 +244,19 @@ namespace CGAL {
         }
       }
 
-      if(!remaining.empty())
+      if (!remaining.empty())
       {
-        if (verbose) {
-          std::cerr << "more than one CC around vertex" << std::endl;
-        }
+        if (verbose)
+          std::cerr << "More than one CC around vertex" << std::endl;
         return false;
       }
     }
 
     // Check that around each edge, tetrahedra form a single connected component
-    for(const auto& e_and_tets : edge_to_tets)
+    for (const auto& e_and_tets : edge_to_tets)
     {
       const std::vector<std::size_t>& inc_tets = e_and_tets.second;
-      if(inc_tets.size() == 0)
+      if (inc_tets.size() == 0)
         continue;
 
       std::set<std::size_t> remaining(inc_tets.begin(), inc_tets.end());
@@ -268,15 +266,15 @@ namespace CGAL {
       local_q.push(seed);
       remaining.erase(seed);
 
-      while(!local_q.empty())
+      while (!local_q.empty())
       {
         std::size_t current = local_q.front();
         local_q.pop();
 
-        for(std::size_t neighbor : tet_adjacency[current])
+        for (std::size_t neighbor : tet_adjacency[current])
         {
           auto it = remaining.find(neighbor);
-          if(it != remaining.end())
+          if (it != remaining.end())
           {
             local_q.push(neighbor);
             remaining.erase(it);
@@ -284,18 +282,16 @@ namespace CGAL {
         }
       }
 
-      if(!remaining.empty())
+      if (!remaining.empty())
       {
-        if (verbose) {
-          std::cerr << "more than one CC around edge" << std::endl;
-        }
+        if (verbose)
+          std::cerr << "More than one CC around edge" << std::endl;
         return false;
       }
     }
 
-    if (verbose) {
+    if (verbose)
       std::cout << "Tetrahedron soup is a valid triangulation" << std::endl;
-    }
 
     return true;
   }
@@ -476,19 +472,24 @@ namespace CGAL {
     Subdomains_ref_type subdomains = choose_parameter(
           get_parameter_reference(np, internal_np::subdomain_indices),
           subdomain_indices);
-    const bool non_manifold = choose_parameter(
+    const bool allow_non_manifold = choose_parameter(
           get_parameter(np, internal_np::allow_non_manifold),
           false);
+    const bool verbose = choose_parameter(get_parameter(np, internal_np::verbose), false);
 
-    CGAL::SMDS_3::build_triangulation_with_subdomains_range(tr, points, tets, subdomains, facets,
-      /*verbose = */false, /*replace_domain_0 = */false, non_manifold);
+    CGAL_precondition_code(if (!allow_non_manifold))
+    CGAL_precondition(is_tetrahedron_soup_a_triangulation(tets, CGAL::parameters::verbose(verbose)));
 
-    CGAL_assertion(CGAL::SMDS_3::internal::is_convex(tr));
+    SMDS_3::build_triangulation_with_subdomains_range(tr, points, tets, subdomains, facets,
+      verbose, /*replace_domain_0 = */false, allow_non_manifold);
+
+    CGAL_postcondition_code(if (!allow_non_manifold))
+    CGAL_postcondition(CGAL::SMDS_3::internal::is_convex(tr));
 
     return tr;
   }
 
-} //namespace CGAL
+} // namespace CGAL
 
 
 #endif // CGAL_SMDS_3_TETRAHEDRON_SOUP_TO_C3T3_H
