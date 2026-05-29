@@ -141,7 +141,7 @@ void CGAL_Lab_intersection_plugin::intersectionSurfaces()
       }
       catch(const CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception&)
       {
-        QMessageBox::warning((QWidget*)nullptr,
+        QMessageBox::warning(CGAL::Three::Three::mainWindow(),
           tr("Self-intersections Found"),
           tr("Some self-intersections were found amongst intersecting facets"));
         delete new_item;
