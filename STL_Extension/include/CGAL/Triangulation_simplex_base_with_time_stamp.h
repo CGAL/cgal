@@ -11,10 +11,12 @@
 #define CGAL_SIMPLEX_BASE_WITH_TIME_STAMP_H
 
 #include <CGAL/tags.h> // for Tag_true
-#include <cstdint>     // for std::size_t
-#include <utility>     // for std::forward
+#include <cstddef>     // for std::size_t
+#include <string>
 
 namespace CGAL {
+
+template <class T> struct Get_io_signature;
 
 /// @brief A base class with a time stamp.
 ///
