@@ -42,6 +42,10 @@ public:
     typedef typename BaseWithTSBase::template Rebind_TDS<TDS>::Other Base2;
     typedef Triangulation_simplex_base_with_time_stamp<Base2> Other;
   };
+
+  static std::string io_signature() {
+    return Get_io_signature<BaseWithTSBase>()();
+  }
 };
 
 } // namespace CGAL
