@@ -22,6 +22,7 @@
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/shape_predicates.h>
 #include <CGAL/Polygon_mesh_processing/tangential_relaxation.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits_3.h>
@@ -253,6 +254,47 @@ namespace internal {
     }
     return true;
   }
+
+  template <typename Mesh>
+  struct Triangulate_face_visitor
+    : public CGAL::Polygon_mesh_processing::Triangulate_faces::Default_visitor<Mesh>
+  {
+    using face_descriptor = typename boost::graph_traits<Mesh>::face_descriptor;
+    using halfedge_descriptor = typename boost::graph_traits<Mesh>::halfedge_descriptor;
+
+    const Mesh& m_mesh;
+    std::unordered_set<halfedge_descriptor>& m_created_halfedges;
+    std::unordered_set<face_descriptor>& m_created_faces;
+
+    std::unordered_set<halfedge_descriptor> m_face_halfedges;
+
+    Triangulate_face_visitor(const Mesh& mesh,
+                             std::unordered_set<face_descriptor>& created_faces,
+                             std::unordered_set<halfedge_descriptor>& created_halfedges)
+      : m_mesh(mesh)
+      , m_created_faces(created_faces)
+      , m_created_halfedges(created_halfedges)
+      {}
+
+    void before_subface_creations(face_descriptor f)
+    {
+      for(halfedge_descriptor h : halfedges_around_face(halfedge(f, m_mesh), m_mesh))
+        m_face_halfedges.insert(h);
+    }
+    void after_subface_creations()
+    {
+      for(face_descriptor f : m_created_faces)
+      {
+        for(halfedge_descriptor h : halfedges_around_face(halfedge(f, m_mesh), m_mesh))
+          if(m_face_halfedges.count(h) == 0)
+            m_created_halfedges.insert(h);
+      }
+    }
+    void after_subface_created(face_descriptor f)
+    {
+      m_created_faces.insert(f);
+    }
+  };
 
   template<typename PolygonMesh
          , typename VertexPointMap
@@ -509,107 +551,107 @@ namespace internal {
           long_edges.emplace(halfedge(e, mesh_), sqlen.value());
       }
 
+      auto emplace_if_too_long = [&](halfedge_descriptor h) {
+        std::optional<FT> sqlen_new = sizing.is_too_long(source(h, mesh_), target(h, mesh_), mesh_);
+        if(sqlen_new != std::nullopt)
+          long_edges.emplace(h, sqlen_new.value());
+      };
+
       //split long edges
 #ifdef CGAL_PMP_REMESHING_VERBOSE
       unsigned int nb_splits = 0;
 #endif
+
       while (!long_edges.empty())
       {
-        //the edge with longest length
-        auto eit = long_edges.begin();
-        halfedge_descriptor he = eit->first;
-        long_edges.erase(eit);
+        // split existing long edges until there is none left,
+        // as splitting an edge can leave remaining "half-length" long edges
+        while(!long_edges.empty())
+        {
+          //the edge with longest length
+          auto eit = long_edges.begin();
+          halfedge_descriptor he = eit->first;
+          long_edges.erase(eit);
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE_PROGRESS
-        std::cout << "\r\t(" << long_edges.size() << " long edges, ";
-        std::cout << nb_splits << " splits)";
-        std::cout.flush();
+          std::cout << "\r\t(" << long_edges.size() << " long edges, ";
+          std::cout << nb_splits << " splits)";
+          std::cout.flush();
 #endif
 
-        if (protect_constraints_ && !is_longest_on_faces(edge(he, mesh_)))
-          continue;
+          if (protect_constraints_ && !is_longest_on_faces(edge(he, mesh_)))
+            continue;
 
-        //collect patch_ids
-        Patch_id patch_id = get_patch_id(face(he, mesh_));
-        Patch_id patch_id_opp = get_patch_id(face(opposite(he, mesh_), mesh_));
-
-        //split edge
-        Point refinement_point = sizing.split_placement(he, mesh_);
-        halfedge_descriptor hnew = CGAL::Euler::split_edge(he, mesh_);
-        CGAL_assertion(he == next(hnew, mesh_));
-        put(ecmap_, edge(hnew, mesh_), get(ecmap_, edge(he, mesh_)) );
+          //split edge
+          Point refinement_point = sizing.split_placement(he, mesh_);
+          halfedge_descriptor hnew = CGAL::Euler::split_edge(he, mesh_);
+          CGAL_assertion(he == next(hnew, mesh_));
+          put(ecmap_, edge(hnew, mesh_), get(ecmap_, edge(he, mesh_)) );
 #ifdef CGAL_PMP_REMESHING_VERBOSE
-        ++nb_splits;
+          ++nb_splits;
 #endif
-        //move refinement point
-        vertex_descriptor vnew = target(hnew, mesh_);
-        put(vpmap_, vnew, refinement_point);
+          //move refinement point
+          vertex_descriptor vnew = target(hnew, mesh_);
+          put(vpmap_, vnew, refinement_point);
 #ifdef CGAL_PMP_REMESHING_VERY_VERBOSE
-        std::cout << "   Refinement point : " << refinement_point << std::endl;
+          std::cout << "   Refinement point : " << refinement_point << std::endl;
 #endif
 
-        //after splitting
-        halfedge_descriptor hnew_opp = opposite(hnew, mesh_);
-        halfedge_added(hnew, status(he));
-        halfedge_added(hnew_opp, status(opposite(he, mesh_)));
+          //after split
+          halfedge_descriptor hnew_opp = opposite(hnew, mesh_);
+          halfedge_added(hnew, status(he));
+          halfedge_added(hnew_opp, status(opposite(he, mesh_)));
 
-        //update sizing field with the new point
-        sizing.register_split_vertex(vnew, mesh_);
+          //update sizing field with the new point
+          sizing.register_split_vertex(vnew, mesh_);
 
-        //check sub-edges
-        //if it was more than twice the "long" threshold, insert them
-        std::optional<FT> sqlen_new = sizing.is_too_long(source(hnew, mesh_), target(hnew, mesh_), mesh_);
-        if(sqlen_new != std::nullopt)
-          long_edges.emplace(hnew, sqlen_new.value());
+          //check sub-edges
+          const halfedge_descriptor hnext = next(hnew, mesh_);
+          emplace_if_too_long(hnew);
+          emplace_if_too_long(hnext);
 
-        const halfedge_descriptor hnext = next(hnew, mesh_);
-        sqlen_new = sizing.is_too_long(source(hnext, mesh_), target(hnext, mesh_), mesh_);
-        if (sqlen_new != std::nullopt)
-          long_edges.emplace(hnext, sqlen_new.value());
+        } // end while long_edges
 
-        //insert new edges to keep triangular faces, and update long_edges
-        if (!is_on_border(hnew))
+        // triangulate faces that have a long edge on their border, and update long_edges
+        std::unordered_set<halfedge_descriptor> to_triangulate;
+        for(halfedge_descriptor he : halfedges(mesh_))
         {
-          halfedge_descriptor hnew2 = CGAL::Euler::split_face(hnew,
-                                                              next(next(hnew, mesh_), mesh_),
-                                                              mesh_);
-          put(ecmap_, edge(hnew2, mesh_), false);
-          Halfedge_status snew = (is_on_patch(hnew) || is_on_patch_border(hnew))
-            ? PATCH
-            : MESH;
-          halfedge_added(hnew2,                  snew);
-          halfedge_added(opposite(hnew2, mesh_), snew);
-          set_patch_id(face(hnew2, mesh_), patch_id);
-          set_patch_id(face(opposite(hnew2, mesh_), mesh_), patch_id);
-
-          if (snew == PATCH)
-          {
-            std::optional<FT> sql = sizing.is_too_long(source(hnew2, mesh_), target(hnew2, mesh_), mesh_);
-            if(sql != std::nullopt)
-              long_edges.emplace(hnew2, sql.value());
-          }
+          if(is_on_border(he) || is_triangle(he, mesh_))
+            continue;
+          if(is_on_patch(he) || is_on_patch_border(he))
+            to_triangulate.insert(he);
         }
 
-        //do it again on the other side if we're not on boundary
-        if (!is_on_border(hnew_opp))
+        while(!to_triangulate.empty())
         {
-          halfedge_descriptor hnew2 = CGAL::Euler::split_face(prev(hnew_opp, mesh_),
-                                                              next(hnew_opp, mesh_),
-                                                              mesh_);
-          put(ecmap_, edge(hnew2, mesh_), false);
-          Halfedge_status snew = (is_on_patch(hnew_opp) || is_on_patch_border(hnew_opp))
-             ? PATCH
-            : MESH;
-          halfedge_added(hnew2,                  snew);
-          halfedge_added(opposite(hnew2, mesh_), snew);
-          set_patch_id(face(hnew2, mesh_), patch_id_opp);
-          set_patch_id(face(opposite(hnew2, mesh_), mesh_), patch_id_opp);
+          halfedge_descriptor he = *to_triangulate.begin();
+          to_triangulate.erase(he);
 
-          if (snew == PATCH)
+          const Patch_id patch_id = get_patch_id(face(he, mesh_));
+
+          std::unordered_set<face_descriptor> created_faces;
+          std::unordered_set<halfedge_descriptor> created_halfedges;
+          Triangulate_face_visitor<PM> visitor(mesh_, created_faces, created_halfedges);
+          CGAL::Polygon_mesh_processing::triangulate_face(face(he, mesh_),
+                                                          mesh_,
+                                                          parameters::visitor(visitor)
+                                                          .geom_traits(gt_)
+                                                          .vertex_point_map(vpmap_));
+
+          for(auto f : created_faces)
+            set_patch_id(f, patch_id);
+
+          for(auto hnew2 : created_halfedges)
           {
-            std::optional<FT> sql = sizing.is_too_long(source(hnew2, mesh_), target(hnew2, mesh_), mesh_);
-            if (sql != std::nullopt)
-              long_edges.emplace(hnew2, sql.value());
+            put(ecmap_, edge(hnew2, mesh_), false);
+
+            // update status : it must be PATCH because we only split faces that have a long edge
+            // on their border, and border edges are PATCH or PATCH_BORDER
+            halfedge_added(hnew2, PATCH);
+            halfedge_added(opposite(hnew2, mesh_), PATCH);
+
+            // put new edges in long_edges if needed
+            emplace_if_too_long(hnew2);
           }
         }
       }
