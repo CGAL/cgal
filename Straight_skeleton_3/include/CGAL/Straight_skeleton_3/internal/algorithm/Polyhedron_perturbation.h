@@ -215,7 +215,7 @@ public:
       double dz = CGAL::to_double(p1.z()) - CGAL::to_double(p2.z());
       double dist2 = dx*dx + dy*dy + dz*dz;
       if (dist2 > epsilon * epsilon) {
-        CGAL_SS3_TRANSF_TRACE_V(2, "Vertex positions too far: " << (*it1)->id() << " d2=" << dist2);
+        CGAL_SS3_TRANSF_TRACE_V(2, "Vertex positions too far: " << (*it1)->id() << " d2=" << dist2 << " epsilon=" << CGAL::square(epsilon));
         return false;
       }
     }
@@ -2222,7 +2222,7 @@ public:
       CGAL_SS3_TRANSF_TRACE_V(16, "Safe mode is enabled, checking validity of the perturbation...");
 
       for (;;) {
-        IO::write_OBJ("results/last_perturbation.obj", polyhedron, parameters::stream_precision(17).do_not_triangulate_faces(true));
+        // IO::write_OBJ("results/last_perturbation.obj", polyhedron, parameters::stream_precision(17).do_not_triangulate_faces(true));
 
         if (check_perturbed_positions_proximity(polyhedron, p_mem) &&
             do_all_plane_pairs_intersect(polyhedron) &&
