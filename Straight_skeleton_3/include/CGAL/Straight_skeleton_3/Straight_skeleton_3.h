@@ -26,6 +26,8 @@
 #include <CGAL/Straight_skeleton_3/internal/weak_find.h>
 #include <CGAL/Straight_skeleton_3/IO/String_factory.h>
 
+#include <CGAL/unordered_flat_map.h>
+
 #include <list>
 #include <memory>
 #include <optional>

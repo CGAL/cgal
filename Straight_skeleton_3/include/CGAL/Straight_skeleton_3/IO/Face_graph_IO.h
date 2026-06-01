@@ -27,6 +27,7 @@
 # include <CGAL/Polygon_mesh_processing/region_growing.h>
 #endif
 #include <CGAL/IO/polygon_mesh_io.h>
+#include <CGAL/unordered_flat_map.h>
 
 #include <algorithm>
 #include <cmath>
@@ -335,7 +336,7 @@ public:
     bool do_triangulate = !choose_parameter(get_parameter(np, CGAL::internal_np::do_not_triangulate_faces), false);
 
     // Vertices
-    std::unordered_map<VertexSPtr, vertex_descriptor> v_map;
+    CGAL::unordered_flat_map<VertexSPtr, vertex_descriptor> v_map;
     for (const VertexSPtr& vertex : polyhedron->vertices()) {
       vertex_descriptor vi = add_vertex(pmesh);
       put(vpm, vi, vertex->point());

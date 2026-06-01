@@ -41,6 +41,7 @@
 #include <CGAL/Polygon_mesh_processing/autorefinement.h> // only for double_ceil
 #include <CGAL/Polygon_mesh_processing/internal/triangle_soup_snap_rounding.h>
 #include <CGAL/IO/polygon_soup_io.h>
+#include <CGAL/unordered_flat_map.h>
 
 #include <algorithm>
 #include <cassert>
@@ -882,8 +883,8 @@ public:
     CGAL_SS3_DEBUG_SPTR(polyhedron);
 
     // Maps to store shifted planes and points
-    std::unordered_map<FacetSPtr, Plane_3> facet_to_shifted_plane;
-    std::unordered_map<VertexSPtr, Point_3> vertex_to_shifted_point;
+    CGAL::unordered_flat_map<FacetSPtr, Plane_3> facet_to_shifted_plane;
+    CGAL::unordered_flat_map<VertexSPtr, Point_3> vertex_to_shifted_point;
 
     for (const FacetSPtr& facet : polyhedron->facets()) {
       facet_to_shifted_plane.emplace(facet, shift_plane(facet, time));
