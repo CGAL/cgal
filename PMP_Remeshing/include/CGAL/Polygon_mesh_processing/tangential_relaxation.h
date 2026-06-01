@@ -184,6 +184,8 @@ void tangential_relaxation(const VertexRange& vertices,
 
   auto check_normals = [&](vertex_descriptor v)
   {
+    auto angle = gt.angle_3_object();
+
     bool first_run = true;
     Vector_3 prev = NULL_VECTOR, first = NULL_VECTOR;
     halfedge_descriptor first_h = boost::graph_traits<TriangleMesh>::null_halfedge();
@@ -204,7 +206,7 @@ void tangential_relaxation(const VertexRange& vertices,
       else
       {
         if (!get(ecm, edge(hd, tm)))
-          if (CGAL::angle(n, prev) != CGAL::ACUTE)
+          if (angle(n, prev) != CGAL::ACUTE)
             return false;
       }
       prev = n;
@@ -214,7 +216,7 @@ void tangential_relaxation(const VertexRange& vertices,
       return true; //vertex incident only to degenerate faces
 
     if (!get(ecm, edge(first_h, tm)))
-      if (CGAL::angle(first, prev) != CGAL::ACUTE)
+      if (angle(first, prev) != CGAL::ACUTE)
         return false;
 
     return true;
