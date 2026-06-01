@@ -3874,14 +3874,14 @@ public:
   void add_event(const Abstract_event_sptr& event)
   {
     typename std::list<Abstract_event_sptr>::iterator it = events_.insert(events_.end(), event);
-    event->setListIt(it);
+    event->set_list_it(it);
   }
 
   bool remove_event(const Abstract_event_sptr& event)
   {
     bool result = false;
-    events_.erase(event->getListIt());
-    event->setListIt(typename std::list<Abstract_event_sptr>::iterator());
+    events_.erase(event->get_list_it());
+    event->set_list_it(typename std::list<Abstract_event_sptr>::iterator());
     return result;
   }
 

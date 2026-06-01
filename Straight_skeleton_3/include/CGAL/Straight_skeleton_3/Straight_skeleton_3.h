@@ -128,15 +128,8 @@ public:
     using Point_3 = typename Geom_traits::Point_3;
 
     using NodeSPtr = std::shared_ptr<Node>;
-    /*!
-    * the weak pointer type to an arc.
-    */
     using ArcWPtr = std::weak_ptr<Arc>;
     using ArcSPtr = std::shared_ptr<Arc>;
-
-    /*!
-    * the weak pointer type to a sheet.
-    */
     using SheetWPtr = std::weak_ptr<Sheet>;
     using SheetSPtr = std::shared_ptr<Sheet>;
 
@@ -186,12 +179,12 @@ public:
       this->skel_ = skel;
     }
 
-    typename std::list<NodeSPtr>::iterator getListIt() const
+    typename std::list<NodeSPtr>::iterator get_list_it() const
     {
       return this->list_it_;
     }
 
-    void setListIt(typename std::list<NodeSPtr>::iterator list_it)
+    void set_list_it(typename std::list<NodeSPtr>::iterator list_it)
     {
       this->list_it_ = list_it;
     }
@@ -306,7 +299,7 @@ public:
     /*!
     * return the list of incident arcs.
     */
-    std::list<ArcWPtr>& arcs()
+    std::list<std::weak_ptr<Arc> >& arcs()
     {
       return this->arcs_;
     }
@@ -314,7 +307,7 @@ public:
     /*!
     * return the list of incident sheets.
     */
-    std::list<SheetWPtr>& sheets()
+    std::list<std::weak_ptr<Sheet> >& sheets()
     {
       return this->sheets_;
     }
@@ -413,23 +406,10 @@ public:
     */
     using Line_3 = typename Geom_traits::Line_3;
 
-    /*!
-    * the shared pointer type to a node.
-    */
     using NodeSPtr = std::shared_ptr<Node>;
     using ArcWPtr = std::weak_ptr<Arc>;
-
-    /*!
-    * the shared pointer type to an arc.
-    */
     using ArcSPtr = std::shared_ptr<Arc>;
-    /*!
-    * the weak pointer type to a sheet.
-    */
     using SheetWPtr = std::weak_ptr<Sheet>;
-    /*!
-    * the shared pointer type to a sheet.
-    */
     using SheetSPtr = std::shared_ptr<Sheet>;
 
   public:
@@ -472,7 +452,7 @@ public:
     /*!
     * returns the source node of the arc.
     */
-    NodeSPtr source() const
+    std::shared_ptr<Node> source() const
     {
       CGAL_SS3_DEBUG_SPTR(node_src_);
       return node_src_;
@@ -505,7 +485,7 @@ public:
     * Note that for unbounded arcs, this function returns a null pointer.
     * \sa `has_target()`
     */
-    NodeSPtr target() const
+    std::shared_ptr<Node> target() const
     {
       CGAL_SS3_DEBUG_SPTR(node_tgt_);
       return node_tgt_;
@@ -563,7 +543,7 @@ public:
     * returns the direction of the arc, i.e., the direction in which the vertex of the polyhedron
     * is moving.
     */
-    const Vector_3& get_direction() const
+    const Vector_3& direction() const
     {
       CGAL_SS3_DEBUG_SPTR(this->direction_->has_value());
       return *(this->direction_);
@@ -584,12 +564,12 @@ public:
       this->skel_ = skel;
     }
 
-    typename std::list<ArcSPtr>::iterator getListIt() const
+    typename std::list<ArcSPtr>::iterator get_list_it() const
     {
       return this->list_it_;
     }
 
-    void setListIt(typename std::list<ArcSPtr>::iterator list_it)
+    void set_list_it(typename std::list<ArcSPtr>::iterator list_it)
     {
       this->list_it_ = list_it;
     }
@@ -641,7 +621,7 @@ public:
     /*!
     * returns the list of incident sheets.
     */
-    std::list<SheetWPtr>& sheets()
+    std::list<std::weak_ptr<Sheet> >& sheets()
     {
       return this->sheets_;
     }
@@ -650,7 +630,7 @@ public:
     * returns the other arc incident to `node` in the given `sheet`.
     * \pre `sheet` contains this arc, and `node` is either the source or target of this arc.
     */
-    ArcSPtr next(const SheetSPtr& sheet, const NodeSPtr& node) const
+    std::shared_ptr<Arc> next(const std::shared_ptr<Sheet>& sheet, const std::shared_ptr<Node>& node) const
     {
       CGAL_precondition(has_incident_sheet(sheet));
       CGAL_precondition(node == node_src_ || node == node_tgt_);
@@ -772,13 +752,7 @@ public:
     */
     using Plane_3 = typename Geom_traits::Plane_3;
 
-    /*!
-    * the shared pointer type to a node.
-    */
     using NodeSPtr = std::shared_ptr<Node>;
-    /*!
-    * the shared pointer type to an arc.
-    */
     using ArcSPtr = std::shared_ptr<Arc>;
     using SheetSPtr = std::shared_ptr<Sheet>;
 
@@ -846,12 +820,12 @@ public:
       this->skel_ = skel;
     }
 
-    typename std::list<SheetSPtr>::iterator getListIt() const
+    typename std::list<SheetSPtr>::iterator get_list_it() const
     {
       return this->list_it_;
     }
 
-    void setListIt(typename std::list<SheetSPtr>::iterator list_it)
+    void set_list_it(typename std::list<SheetSPtr>::iterator list_it)
     {
       this->list_it_ = list_it;
     }
@@ -955,7 +929,7 @@ public:
     /*!
     * returns the list of arcs of the sheet.
     */
-    std::list<ArcSPtr>& arcs()
+    std::list<std::shared_ptr<Arc> >& arcs()
     {
       return this->arcs_;
     }
@@ -964,7 +938,7 @@ public:
     * returns the list of contours of the sheet.
     * Note that this returns a list of arcs, as a sheet might be incident to multiple input edges.
     */
-    std::list<ArcSPtr>& contours()
+    std::list<std::shared_ptr<Arc> >& contours()
     {
       return this->contours_;
     }
@@ -972,7 +946,7 @@ public:
     /*!
     * returns the list of nodes of the sheet.
     */
-    std::list<NodeSPtr>& nodes()
+    std::list<std::shared_ptr<Node> >& nodes()
     {
       return this->nodes_;
     }
@@ -1050,19 +1024,10 @@ public:
 
 public:
   using NodeWPtr = std::weak_ptr<Node>;
-  /*!
-  * the shared pointer type to a node.
-  */
   using NodeSPtr = std::shared_ptr<Node>;
   using ArcWPtr = std::weak_ptr<Arc>;
-  /*!
-  * the shared pointer type to an arc.
-  */
   using ArcSPtr = std::shared_ptr<Arc>;
   using SheetWPtr = std::weak_ptr<Sheet>;
-  /*!
-  * the shared pointer type to a sheet.
-  */
   using SheetSPtr = std::shared_ptr<Sheet>;
 
 public:
@@ -1083,16 +1048,16 @@ public:
   {
     typename std::list<NodeSPtr>::iterator it = nodes_.insert(nodes_.end(), node);
     node->set_skeleton(this->shared_from_this());
-    node->setListIt(it);
+    node->set_list_it(it);
   }
 
   bool remove_node(NodeSPtr node)
   {
     bool result = false;
     if (node->get_skeleton() == this->shared_from_this()) {
-      nodes_.erase(node->getListIt());
+      nodes_.erase(node->get_list_it());
       node->set_skeleton(StraightSkeletonSPtr());
-      node->setListIt(std::list<NodeSPtr>::iterator());
+      node->set_list_it(std::list<NodeSPtr>::iterator());
       result = true;
     }
     return result;
@@ -1102,16 +1067,16 @@ public:
   {
     typename std::list<ArcSPtr>::iterator it = arcs_.insert(arcs_.end(), arc);
     arc->set_skeleton(this->shared_from_this());
-    arc->setListIt(it);
+    arc->set_list_it(it);
   }
 
   bool remove_arc(ArcSPtr arc)
   {
     bool result = false;
     if (arc->get_skeleton() == this->shared_from_this()) {
-      arcs_.erase(arc->getListIt());
+      arcs_.erase(arc->get_list_it());
       arc->set_skeleton(StraightSkeletonSPtr());
-      arc->setListIt(typename std::list<ArcSPtr>::iterator());
+      arc->set_list_it(typename std::list<ArcSPtr>::iterator());
       result = true;
     }
     return result;
@@ -1121,16 +1086,16 @@ public:
   {
     typename std::list<SheetSPtr>::iterator it = sheets_.insert(sheets_.end(), sheet);
     sheet->set_skeleton(this->shared_from_this());
-    sheet->setListIt(it);
+    sheet->set_list_it(it);
   }
 
   bool remove_sheet(SheetSPtr sheet)
   {
     bool result = false;
     if (sheet->get_skeleton() == this->shared_from_this()) {
-      sheets_.erase(sheet->getListIt());
+      sheets_.erase(sheet->get_list_it());
       sheet->set_skeleton(StraightSkeletonSPtr());
-      sheet->setListIt(typename std::list<SheetSPtr>::iterator());
+      sheet->set_list_it(typename std::list<SheetSPtr>::iterator());
       result = true;
     }
     return result;
@@ -1165,7 +1130,7 @@ public:
   /*!
    * returns the sheets of the straight skeleton.
    */
-  std::list<SheetSPtr>& sheets()
+  std::list<std::shared_ptr<Sheet> >& sheets()
   {
     return this->sheets_;
   }
@@ -1173,7 +1138,7 @@ public:
   /*!
    * returns the arcs of the straight skeleton.
    */
-  std::list<ArcSPtr>& arcs()
+  std::list<std::shared_ptr<Arc> >& arcs()
   {
     return this->arcs_;
   }
@@ -1181,7 +1146,7 @@ public:
   /*!
    * returns the nodes of the straight skeleton.
    */
-  std::list<NodeSPtr>& nodes()
+  std::list<std::shared_ptr<Node> >& nodes()
   {
     return this->nodes_;
   }
@@ -1500,7 +1465,7 @@ public:
       }
 
       // check that a node only has two incident arcs at most in the same sheet
-      std::unordered_map<NodeSPtr, int> arc_nodes;
+      CGAL::unordered_flat_map<NodeSPtr, int> arc_nodes;
 
       typename std::list<ArcSPtr>::const_iterator it_a = sheet->arcs().begin();
       while (it_a != sheet->arcs().end()) {

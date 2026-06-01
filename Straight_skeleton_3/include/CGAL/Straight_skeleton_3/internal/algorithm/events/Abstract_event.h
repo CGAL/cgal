@@ -47,12 +47,12 @@ public:
 
   virtual ~Abstract_event() { /*intentionally does nothing*/ }
 
-  typename std::list<Abstract_event_sptr>::iterator getListIt() const
+  typename std::list<Abstract_event_sptr>::iterator get_list_it() const
   {
     return this->list_it_;
   }
 
-  void setListIt(typename std::list<Abstract_event_sptr>::iterator list_it)
+  void set_list_it(typename std::list<Abstract_event_sptr>::iterator list_it)
   {
     this->list_it_ = list_it;
   }
