@@ -46,7 +46,7 @@ int main(int argc, char** argv)
   const FT upper_time_bound = 1;
 
   // every face has weight 2.0, meaning faces move at twice the default speed
-  CGAL::Constant_property_map<face_descriptor, double> face_weight_map(2.);
+  CGAL::Constant_property_map<face_descriptor, FT> face_weight_map(2);
 
   CGAL::Real_timer timer;
   timer.start();

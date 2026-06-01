@@ -46,7 +46,7 @@ int main(int argc, char** argv)
   std::vector<FT> save_times = { 1, 2, 3 };
 
   // every face has weight 3.0, meaning faces move at thrice the default speed
-  CGAL::Constant_property_map<face_descriptor, double> face_weight_map(3.);
+  CGAL::Constant_property_map<face_descriptor, FT> face_weight_map(3);
 
   std::vector<Mesh> results;
   results.reserve(save_times.size());

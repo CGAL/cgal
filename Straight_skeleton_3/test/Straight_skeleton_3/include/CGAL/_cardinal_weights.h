@@ -56,7 +56,7 @@ bool assign_cardinal_weights(const char* weights_filename,
   if (!weights_filename || !weights_in) {
     CGAL_SS3_TRACE_V(1, "Warning: no input weights provided; all weights are set to '1'.");
     for (face_descriptor f : faces(pmesh))
-      put(fwm, f, 1.);
+      put(fwm, f, 1);
 
     return true;
   }
@@ -184,11 +184,7 @@ bool assign_cardinal_weights(const char* weights_filename,
 
     CGAL_SS3_TRACE_V(16, "facet: " << f << " weight: " << weight);
 
-    // @todo currently 'double', but only because the run_and_compare.sh pipeline
-    // with multiple .cpp needs to save to a file and the f:weight pmap will not
-    // be detected if its value type is, e.g., EPECK::FT
-    // Could be FT if there were no intermediary saving
-    put(fwm, f, CGAL::to_double(weight));
+    put(fwm, f, weight);
     CGAL_postcondition(get(fwm, f) >= 0);
   }
 

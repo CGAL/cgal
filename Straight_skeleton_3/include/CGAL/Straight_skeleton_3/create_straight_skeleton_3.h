@@ -177,8 +177,8 @@ construct_skeleton(const TriangleMesh& tmesh,
  *    \cgalParamNBegin{face_weight_map}
  *      \cgalParamDescription{a property map associating to each face the weight (speed) of the face.}
  *      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor`
- *                     as key type and `double` as value type}
- *      \cgalParamDefault{A constant property map with uniform weight 1.0 for all faces.}
+ *                     as key type and `FT` as value type}
+ *      \cgalParamDefault{A constant property map with uniform weight `1` for all faces.}
  *      \cgalParamExtra{Precondition: all face weights must be positive.}
  *    \cgalParamNEnd
  *    \cgalParamNBegin{config_file_path}

@@ -47,7 +47,7 @@ void save_colored_mesh(const PolygonMesh& pmesh,
 
   srand(static_cast<unsigned int>(time(NULL)));
 
-  std::map<std::size_t, CGAL::Color> colors;
+  std::map<value_type, CGAL::Color> colors;
   for (const auto& value : unique_values) {
     colors[value] = Color(static_cast<unsigned char>(rand() % 256),
                           static_cast<unsigned char>(rand() % 256),
@@ -65,6 +65,7 @@ void save_colored_mesh(const PolygonMesh& pmesh,
   }
 
   std::ofstream out(fullpath);
+  out.precision(17);
   CGAL::IO::write_PLY(out, pmesh, CGAL::parameters::face_color_map(face_color));
 }
 

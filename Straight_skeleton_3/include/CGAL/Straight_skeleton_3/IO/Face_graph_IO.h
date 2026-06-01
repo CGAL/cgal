@@ -104,7 +104,7 @@ public:
     std::vector<VertexSPtr> vertices(result->vertices().begin(), result->vertices().end());
 
     auto weight_pmap = choose_parameter(get_parameter(np, CGAL::internal_np::face_weight),
-                                        CGAL::Constant_property_map<std::size_t, double>(1.));
+                                        CGAL::Constant_property_map<std::size_t, FT>(1));
 
     int facet_id_new = -1;
     for (face_descriptor fi : faces(tmesh)) {
@@ -351,7 +351,7 @@ public:
 
     // Write facets
     auto weight_pmap = choose_parameter(get_parameter(np, CGAL::internal_np::face_weight),
-                                        CGAL::Constant_property_map<std::size_t, double>(1.0));
+                                        CGAL::Constant_property_map<std::size_t, FT>(1));
 
     auto f2i = choose_parameter(get_parameter(np, internal_np::face_to_face_map),
                                 boost::make_assoc_property_map(std::map<face_descriptor, std::size_t>()));
@@ -360,7 +360,7 @@ public:
       CGAL_assertion(facet->id() != -1);
       CGAL_assertion(facet->edges().size() >= 3);
 
-      double speed = CGAL::to_double(Hds_utils::get_speed(facet));
+      FT speed = Hds_utils::get_speed(facet);
       std::size_t input_face_id = Hds_utils::get_input_face_id(facet);
       CGAL_SS3_IO_TRACE_V(16, "Saving facet " << facet->id() << " with speed " << speed << " and input face id " << input_face_id);
 

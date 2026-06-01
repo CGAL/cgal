@@ -47,7 +47,7 @@ int main(int argc, char** argv)
   }
 
   // assign weights
-  auto res = sm.add_property_map<face_descriptor, double>("f:weight");
+  auto res = sm.add_property_map<face_descriptor, FT>("f:weight");
   if(!res.second) {
     std::cerr << "Error: failed to add property map?" << std::endl;
     return EXIT_FAILURE;
@@ -71,7 +71,7 @@ int main(int argc, char** argv)
       }
     }
 
-    put (fwm, f, bottom ? 10.0 : 1.0);
+    put (fwm, f, bottom ? 10 : 1);
   }
 #endif
 
