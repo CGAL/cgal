@@ -220,7 +220,7 @@ struct Output_processor
  *      \cgalParamDescription{the path to a configuration file to the algorithm. See the documentation
  *                            of the class `CGAL::Straight_skeletons_3::Configuration` for details.}
  *      \cgalParamType{`std::string`}
- *      \cgalParamDefault{The path to a default configuration file which must be found in the working directory.}
+ *      \cgalParamDefault{A set of default values, see the documentation of the configuration class.}
  *    \cgalParamNEnd
  * \endcond
  *  \cgalNamedParamsEnd

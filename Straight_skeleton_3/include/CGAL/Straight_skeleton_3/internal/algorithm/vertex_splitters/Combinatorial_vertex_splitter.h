@@ -73,11 +73,8 @@ public:
   Combi_vertex_splitter()
   {
     this->type_ = Base::COMBI_VERTEX_SPLITTER;
-    selected_combi_ = 0;
     ConfigurationSPtr config = Configuration::get_instance();
-    if (config->is_loaded()) {
-      selected_combi_ = config->get_int("Algorithm", "selected_combinatorial_split");
-    }
+    selected_combi_ = config->get_int("Algorithm", "selected_combinatorial_split");
   }
 
   virtual ~Combi_vertex_splitter() { /*intentionally does nothing*/ }

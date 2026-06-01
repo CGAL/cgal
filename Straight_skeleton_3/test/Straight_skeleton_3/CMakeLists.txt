@@ -16,6 +16,3 @@ file(
 foreach(cppfile ${cppfiles})
   create_single_source_cgal_program("${cppfile}")
 endforeach()
-
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/StraightSkel.ini
-               ${CMAKE_CURRENT_BINARY_DIR}/StraightSkel.ini COPYONLY)

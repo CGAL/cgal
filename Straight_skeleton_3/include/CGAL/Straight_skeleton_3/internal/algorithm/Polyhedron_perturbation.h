@@ -255,15 +255,8 @@ public:
     // Otherwise, points will no longer be on the supporting planes of their incident facets.
     CGAL_precondition(is_triangle_polyhedron(polyhedron));
 
-    double range = 0.001;
     ConfigurationSPtr config = Configuration::get_instance();
-    if (config->is_loaded()) {
-      double value = config->get_double("Preprocessing", "perturbation_epsilon");
-      if (value != 0.0) {
-        range = value;
-      }
-    }
-
+    double range = config->get_double("Preprocessing", "perturbation_epsilon");
     CGAL_SS3_TRANSF_TRACE("Points will be moved randomly...");
     CGAL_SS3_TRANSF_TRACE("  perturbation_epsilon = " << range);
 
@@ -526,11 +519,8 @@ public:
   {
     CGAL_SS3_DEBUG_SPTR(polyhedron);
 
-    double range = 1e-10;
     ConfigurationSPtr config = Configuration::get_instance();
-    if (config->is_loaded()) {
-      range = config->get_double("Preprocessing", "perturbation_epsilon");
-    }
+    double range = config->get_double("Preprocessing", "perturbation_epsilon");
 
     // If we only nudged planes with fixed point constraints, we might not ensure generic position,
     // for example if two pairs of constraints are along the same line.
@@ -557,12 +547,8 @@ public:
     CGAL_SS3_TRANSF_TRACE_V(4, "Random Plane Tilt (v3)");
     CGAL_SS3_DEBUG_SPTR(polyhedron);
 
-    double range = 1e-10;
     ConfigurationSPtr config = Configuration::get_instance();
-    if (config->is_loaded()) {
-      range = config->get_double("Preprocessing", "perturbation_epsilon");
-    }
-
+    double range = config->get_double("Preprocessing", "perturbation_epsilon");
     CGAL_SS3_TRANSF_TRACE_V(4, "  perturbation_epsilon = " << range);
 
     if (can_trivially_tilt_facets(polyhedron)) {
@@ -1544,16 +1530,8 @@ public:
     // Generic approach
     Transformation::normalize_facet_planes(polyhedron);
 
-    double range = 0.1;
-#if 0 // @tmp
     ConfigurationSPtr config = Configuration::get_instance();
-    if (config->is_loaded()) {
-      double value = config->get_double("Preprocessing", "perturbation_epsilon");
-      if (value != 0.0) {
-        range = value;
-      }
-    }
-#endif
+    double range = config->get_double("Preprocessing", "perturbation_epsilon");
 
     // @todo apply a garanteed small-enough nudge
     for (const FacetSPtr& facet : polyhedron->facets()) {
@@ -2205,14 +2183,8 @@ public:
     // Generic approach
     Transformation::normalize_facet_planes(polyhedron);
 
-    bool safe_mode = true;
     ConfigurationSPtr config = Configuration::get_instance();
-    if (config->is_loaded()) {
-      if ((config->contains("Preprocessing", "check_degenerate_configuration") &&
-          !config->get_Boolean("Preprocessing", "check_degenerate_configuration"))) {
-        safe_mode = false;
-      }
-    }
+    bool safe_mode = config->get_Boolean("Preprocessing", "check_degenerate_configuration");
 
     PolyhedronSPtr p_mem = polyhedron->clone();
 

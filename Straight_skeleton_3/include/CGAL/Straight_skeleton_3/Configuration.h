@@ -22,6 +22,9 @@
 #include <CGAL/Straight_skeleton_3/internal/debug.h>
 #include <CGAL/Straight_skeleton_3/IO/StringFuncs.h>
 
+#include <CGAL/assertions.h>
+#include <CGAL/tss.h>
+
 #include <fstream>
 #include <map>
 #include <memory>
@@ -35,7 +38,7 @@ class Configuration;
 
 using ConfigurationSPtr = std::shared_ptr<Configuration>;
 
-/*
+/*!
  * \ingroup PkgStraightSkeleton3Classes
  *
  * \class CGAL::Straight_skeletons_3::Configuration
@@ -46,11 +49,9 @@ using ConfigurationSPtr = std::shared_ptr<Configuration>;
  *
  * \brief The class allows advanced users to fine tune the 3D straight skeleton construction algorithm.
  *
- * The class `Configuration` reads a series of parameters from an `INI` configuration file.
- * The default provided configuration file is called `StraightSkel.ini` and is located in the
- * `examples` and `test` directories.
- * These configuration files can be directly modified by users, or another file
- * can be loaded explicitly by passing its path using the named parameter `config_file_path`,
+ * The class `Configuration` contains a set of parameters that can be used to tweak the behavior
+ * of the 3D straight skeleton construction algorithm. These parameters are either set to their
+ * default values or can be loaded and overridden at runtime from an `INI` configuration file,
  * provided it follows the format detailed below.
  *
  * \cgalHeading{%Configuration File Entries}
@@ -59,34 +60,47 @@ using ConfigurationSPtr = std::shared_ptr<Configuration>;
  * The following entries are recognized:
  *
  * [Preprocessing]
- * - **`translate_and_scale_polyhedron`:** Boolean (`TRUE`/`FALSE`) to enable translation and scaling
- *                                         of the input polyhedron to fit within a unit cube.
  * - **`truncate_precision`:** Positive floating-point value controlling numerical truncation precision.
  *                             Coordinates of the input polyhedron are rounded to the nearest
- *                             multiple of this value.
+ *                             multiple of this value. %Default is `1e-7`.
+ * - **`translate_and_scale_polyhedron`:** Boolean (`TRUE`/`FALSE`) to enable translation and scaling
+ *                                         of the input polyhedron to fit within a unit cube.
+ *                                         %Default is `FALSE`.
  * - **`merge_coplanar_faces`:** Boolean to enable or disable merging of (almost) coplanar faces.
+ *                               %Default is `TRUE`.
  * - **`coplanarity_epsilon`:** Non-negative floating-point value for coplanarity checks.
  *                              This value controls the threshold for considering two facet normals
  *                              as coplanar: if the squared Euclidean distance between their normalized
  *                              normals is less than `coplanarity_epsilon` squared, the facets are
  *                              considered coplanar and may be merged.
+ *                              %Default is `1e-7`.
  * - **`perturbation_epsilon`:** Positive floating-point value used to create the pertubation to ensure
  *                               general position. The value is used to nudge the coordinates of the planes.
+ *                               %Default is `1e-10`.
  * - **`check_degenerate_configuration`:** Boolean to enable or disable checking if the result of the
  *                                         perturbation mechanism is indeed a valid polyhedron (and try again
  *                                         in the extremely unlikely event that the perturbation
  *                                         created a degenerate configuration).
+ *                                         %Default is `FALSE`.
  *
  * [Algorithm]
  * - **`vertex_splitter`:** String to choose the high-degree vertex splitting strategy. Available options:
  *                          `Combi_vertex_splitter`, `Convex_vertex_splitter`.
+ *                           %Default is `Combi_vertex_splitter`.
  * - **`selected_combinatorial_split`:** Positive index of the valid combinatorial split combination
  *                                       to use, when `Combi_vertex_splitter` is selected.
+ *                                       %Default is `0`.
  * - **`convex_split_optimization`:** String (`min` or `max`) used to specify optimization strategy, when
  *                                    `Convex_vertex_splitter` is selected. The measure being optimized
  *                                    is the number of convex edges in the resulting split configuration.
+ *                                    %Default is `max`.
+ * - **`edge_event`:** String to choose how a degenerate edge event is handled. Available options: `convex`, `reflex`, `split`.
+ *                     %Default is `convex`.
+ * - **`const_offset`** Positive floating-point value used to insert periodic events at fixed time intervals.
+ *                      %Default is `0` (disabled).
  * - **`stop_after_last_save_event`:** Boolean to enable or disable stopping immediately as soon as the
  *                                     last save event has been reached.
+ *                                     %Default is `TRUE`.
  *
  * \sa `CGAL::create_straight_skeleton_3()`
  * \sa `CGAL::create_straight_skeleton_and_offset_polyhedra_3()`
@@ -97,31 +111,11 @@ class Configuration
 public:
   static ConfigurationSPtr get_instance()
   {
-    if (!instance_) {
-      instance_ = ConfigurationSPtr(new Configuration());
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(ConfigurationSPtr, instance);
+    if (!instance) {
+      instance = std::make_shared<Configuration>();
     }
-    return instance_;
-  }
-
-  // Seek a file called 'StraightSkel.ini', either in the working directory
-  std::string find_default_filename()
-  {
-    std::string name("StraightSkel");
-    std::string result = name + ".ini";
-    std::string home(getenv("HOME"));
-    std::string sysconfdir("/etc");
-    std::string filenames[2];
-    filenames[0] = home+"/."+name+"/"+name+".ini";
-    filenames[1] = sysconfdir+"/"+name+"/"+name+".ini";
-    for (unsigned int i = 0; i < 2; ++i) {
-      std::ifstream input(filenames[i].c_str());
-      if (input.is_open()) {
-        input.close();
-        result = filenames[i];
-        break;
-      }
-    }
-    return result;
+    return instance;
   }
 
   void parse(std::istream& input)
@@ -166,9 +160,28 @@ public:
       result = true;
       input.close();
     } else {
-      CGAL_SS3_IO_TRACE("Error: Config file not found.");
+      CGAL_SS3_IO_TRACE("Error: Configuration file not found.");
     }
     return result;
+  }
+
+  void load_default_values()
+  {
+    // Set default values for all parameters
+    properties_.clear();
+    properties_["Preprocessing.truncate_precision"] = "1e-7";
+    properties_["Preprocessing.translate_and_scale_polyhedron"] = "FALSE";
+    properties_["Preprocessing.merge_coplanar_faces"] = "TRUE";
+    properties_["Preprocessing.coplanarity_epsilon"] = "1e-7";
+    properties_["Preprocessing.perturbation_epsilon"] = "1e-10";
+    properties_["Preprocessing.check_degenerate_configuration"] = "FALSE";
+
+    properties_["Algorithm.vertex_splitter"] = "Combi_vertex_splitter";
+    properties_["Algorithm.selected_combinatorial_split"] = "0";
+    properties_["Algorithm.convex_split_optimization"] = "max";
+    properties_["Algorithm.edge_event"] = "convex";
+    properties_["Algorithm.const_offset"] = "0";
+    properties_["Algorithm.stop_after_last_save_event"] = "TRUE";
   }
 
   bool is_loaded() const
@@ -186,11 +199,12 @@ public:
 
   std::string get_string(const std::string& section, const std::string& key)
   {
+    CGAL_precondition(is_loaded());
     std::string result;
     std::string mapkey = section + "." + key;
     if (properties_.find(mapkey) == properties_.end()) {
       // map does not contain this key
-      CGAL_SS3_IO_TRACE("Warning: key=" << mapkey << " not found.");
+      CGAL_SS3_IO_TRACE("Error: key=" << mapkey << " not found.");
     } else {
       result = properties_[mapkey];
     }
@@ -199,6 +213,7 @@ public:
 
   int get_int(const std::string& section, const std::string& key)
   {
+    CGAL_precondition(is_loaded());
     int result = 0;
     std::string value = get_string(section, key);
     if (value.length() != 0) {
@@ -209,6 +224,7 @@ public:
 
   double get_double(const std::string& section, const std::string& key)
   {
+    CGAL_precondition(is_loaded());
     double result = 0.0;
     std::string value = get_string(section, key);
     if (value.length() != 0) {
@@ -220,7 +236,8 @@ public:
   template <typename FT>
   FT get_FT(const std::string& section, const std::string& key)
   {
-    FT result = 0.0;
+    CGAL_precondition(is_loaded());
+    FT result = 0;
     std::string value = get_string(section, key);
     if (value.length() != 0) {
       std::istringstream iss(value.c_str());
@@ -231,6 +248,7 @@ public:
 
   bool get_Boolean(const std::string& section, const std::string& key)
   {
+    CGAL_precondition(is_loaded());
     bool result = false;
     std::string value = get_string(section, key);
     if (value.length() != 0) {
@@ -246,15 +264,11 @@ public:
     return result;
   }
 
-  static ConfigurationSPtr instance_;
-
   std::map<std::string, std::string> properties_;
 #endif /* DOXYGEN_RUNNING */
 };
 
-#ifndef DOXYGEN_RUNNING
-ConfigurationSPtr Configuration::instance_ = ConfigurationSPtr();
-#endif /* DOXYGEN_RUNNING */
+
 
 } // namespace Straight_skeletons_3
 } // namespace CGAL

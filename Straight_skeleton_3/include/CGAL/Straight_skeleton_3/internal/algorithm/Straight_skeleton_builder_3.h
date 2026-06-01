@@ -369,46 +369,33 @@ public:
   void init_vertex_splitter()
   {
     ConfigurationSPtr config = Configuration::get_instance();
-    std::string s_vertex_splitter;
-    if (config->is_loaded()) {
-      s_vertex_splitter = config->get_string("Algorithm", "vertex_splitter");
-      if (s_vertex_splitter.compare("Combi_vertex_splitter") == 0) {
-        vertex_splitter_ = Combi_vertex_splitter::create();
-      } else if (s_vertex_splitter.compare("Convex_vertex_splitter") == 0) {
-        vertex_splitter_ = Convex_vertex_splitter::create();
-      } else if (s_vertex_splitter.compare("Arr_vertex_splitter") == 0) {
-        vertex_splitter_ = Arr_vertex_splitter::create();
-      } else {
-        CGAL_SS3_SPLITTER_TRACE("Warning: option '" << s_vertex_splitter << "' not found.");
-        CGAL_SS3_SPLITTER_TRACE("Using 'Combi_vertex_splitter'.");
-        vertex_splitter_ = Combi_vertex_splitter::create();
-      }
+    std::string s_vertex_splitter = config->get_string("Algorithm", "vertex_splitter");
+    if (s_vertex_splitter.compare("Combi_vertex_splitter") == 0) {
+      vertex_splitter_ = Combi_vertex_splitter::create();
+    } else if (s_vertex_splitter.compare("Convex_vertex_splitter") == 0) {
+      vertex_splitter_ = Convex_vertex_splitter::create();
+    } else if (s_vertex_splitter.compare("Arr_vertex_splitter") == 0) {
+      vertex_splitter_ = Arr_vertex_splitter::create();
     } else {
+      CGAL_SS3_SPLITTER_TRACE("Warning: option '" << s_vertex_splitter << "' not found.");
+      CGAL_SS3_SPLITTER_TRACE("Using 'Combi_vertex_splitter'.");
       vertex_splitter_ = Combi_vertex_splitter::create();
     }
   }
 
   void init_edge_event()
   {
-    ConfigurationSPtr config = Configuration::get_instance();
-    std::string s_edge_event;
-    if (config->is_loaded()) {
-      s_edge_event = Configuration::get_instance()->get_string("Algorithm", "edge_event");
-      if (s_edge_event.compare("convex") == 0) {
-        edge_event_ = 0;
-      } else if (s_edge_event.compare("reflex") == 0) {
-        edge_event_ = 1;
-      } else if (s_edge_event.compare("flip") == 0) {
-        edge_event_ = 2;
-      } else {
-        CGAL_SS3_CORE_TRACE("Warning: option '" << s_edge_event << "' not found.");
-        CGAL_SS3_CORE_TRACE("Using 'convex'.");
-        edge_event_ = 0;
-        s_edge_event = "convex";
-      }
-    } else {
+    std::string s_edge_event = Configuration::get_instance()->get_string("Algorithm", "edge_event");
+    if (s_edge_event.compare("convex") == 0) {
       edge_event_ = 0;
-      s_edge_event = "convex";
+    } else if (s_edge_event.compare("reflex") == 0) {
+      edge_event_ = 1;
+    } else if (s_edge_event.compare("flip") == 0) {
+      edge_event_ = 2;
+    } else {
+      CGAL_SS3_CORE_TRACE("Warning: option '" << s_edge_event << "' not found.");
+      CGAL_SS3_CORE_TRACE("Using option 'convex'.");
+      edge_event_ = 0;
     }
   }
 
@@ -503,14 +490,11 @@ public:
     std::optional<FT> time_future_bound;
     if (!save_times_.empty()) {
       ConfigurationSPtr config = Configuration::get_instance();
-      if (config->is_loaded()) {
-        if ((config->contains("Algorithm", "stop_after_last_save_event") &&
-              config->get_Boolean("Algorithm", "stop_after_last_save_event"))) {
-          time_future_bound = save_times_.back();
+      if (config->get_Boolean("Algorithm", "stop_after_last_save_event")) {
+        time_future_bound = save_times_.back();
 #ifdef CGAL_SS3_HANDLE_NEAR_FUTURE_EVENTS
-          time_future_bound = save_times_.back() - 1; // @fixme workaround to actually detect events after the target
+        time_future_bound = save_times_.back() - 1; // @fixme workaround to actually detect events after the target
 #endif
-        }
       }
     }
 
@@ -636,9 +620,7 @@ public:
       // If we are only interested in specific times, there is no point going further
       if (event->getType() == Abstract_event::SAVE_EVENT && save_times_.empty()) {
         ConfigurationSPtr config = Configuration::get_instance();
-        if (config->is_loaded() &&
-            config->contains("Algorithm", "stop_after_last_save_event") &&
-            config->get_Boolean("Algorithm", "stop_after_last_save_event")) {
+        if (config->get_Boolean("Algorithm", "stop_after_last_save_event")) {
 #ifdef CGAL_SS3_HANDLE_NEAR_FUTURE_EVENTS
           asked_to_stop = true;
 #else
@@ -3862,7 +3844,8 @@ public:
     CGAL_assertion(time != 0);
 
     // Check if the next const event would be (strictly) closer
-    FT pulse = Configuration::get_instance()->get_double("Algorithm", "const_offset");
+    ConfigurationSPtr config = Configuration::get_instance();
+    FT pulse = config->get_double("Algorithm", "const_offset");
     if (pulse != 0) {
       FT next_const_time = floor(CGAL::to_double(current_time / pulse) + 1.0) * pulse;
       if (current_time > next_const_time && next_const_time > time) {

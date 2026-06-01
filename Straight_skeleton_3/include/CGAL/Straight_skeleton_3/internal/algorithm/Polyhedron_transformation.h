@@ -235,11 +235,7 @@ public:
     CGAL_SS3_DEBUG_SPTR(polyhedron);
 
     ConfigurationSPtr config = Configuration::get_instance();
-    double range = 1e-10;
-    if (config->is_loaded()) {
-      range = config->get_double("Preprocessing", "truncate_precision");
-    }
-
+    double range = config->get_double("Preprocessing", "truncate_precision");
     if (range == 0.) {
       return;
     }
@@ -399,16 +395,8 @@ public:
   static int merge_coplanar_facets(const PolyhedronSPtr& polyhedron)
   {
     CGAL_SS3_DEBUG_SPTR(polyhedron);
-    double epsilon = 0.0;
     ConfigurationSPtr config = Configuration::get_instance();
-    if (config->is_loaded()) {
-      std::string section("Preprocessing");
-      std::string key("coplanarity_epsilon");
-      if (config->contains(section, key)) {
-        epsilon = config->get_double(section, key);
-      }
-    }
-
+    const double epsilon = config->get_double("Preprocessing", "coplanarity_epsilon");
     return merge_coplanar_facets(polyhedron, epsilon);
   }
 

@@ -202,15 +202,8 @@ public:
   {
     CGAL_SS3_TRANSF_TRACE("Converting mesh...");
 
-    bool merge_faces = false;
-
     ConfigurationSPtr config = Configuration::get_instance();
-    std::string section("Preprocessing");
-    if (config->is_loaded() &&
-      config->contains(section, "merge_coplanar_faces") &&
-      config->get_Boolean(section, "merge_coplanar_faces")) {
-      merge_faces = true;
-    }
+    bool merge_faces = config->get_Boolean("Preprocessing", "merge_coplanar_faces");
 
     PolyhedronSPtr polyhedron = IO::FaceGraphIO<GeomTraits>::load(tmesh, np);
     if (!merge_faces)

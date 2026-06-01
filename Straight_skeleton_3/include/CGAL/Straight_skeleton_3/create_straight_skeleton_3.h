@@ -42,9 +42,10 @@ construct_skeleton(const TriangleMesh& tmesh,
   namespace SS3io = CGAL::Straight_skeletons_3::IO;
   namespace PMP = CGAL::Polygon_mesh_processing;
 
+  using parameters::choose_parameter;
+  using parameters::is_default_parameter;
   using parameters::get_parameter;
   using parameters::get_parameter_reference;
-  using parameters::choose_parameter;
 
   using Geom_traits = typename GetGeomTraits<TriangleMesh, NamedParameters>::type;
 
@@ -55,15 +56,19 @@ construct_skeleton(const TriangleMesh& tmesh,
   using Straight_skeleton_builder_3 = SS3i::algorithm::Straight_skeleton_builder_3<Geom_traits>;
   using FaceGraphIO = SS3io::FaceGraphIO<Geom_traits>;
 
-  // Get config file path from named parameters if provided, else use default (working directory)
+  // Get config file path from named parameters if provided, else use default
   SS3::ConfigurationSPtr config = SS3::Configuration::get_instance();
-  std::string str_conf_file = parameters::choose_parameter(parameters::get_parameter(np, internal_np::config_file_path),
-                                                           config->find_default_filename());
+  config->load_default_values();
 
-  CGAL_SS3_TRACE_V(4, "Seek config file @ " << str_conf_file);
-  if (!config->load(str_conf_file)) {
-    CGAL_SS3_TRACE_V(1, "Error: Config file '" << str_conf_file << "' not found.");
-    return { };
+  if constexpr (!parameters::is_default_parameter<NamedParameters, internal_np::config_file_path_t>::value) {
+    std::string str_conf_file = parameters::get_parameter(np, internal_np::config_file_path);
+    CGAL_SS3_IO_TRACE("Loading configuration from file: " << str_conf_file);
+    if (!config->load(str_conf_file)) {
+      CGAL_SS3_IO_TRACE("Error: Failed to load configuration file: " << str_conf_file);
+      return { };
+    }
+  } else {
+    CGAL_SS3_IO_TRACE("Using default configuration values (no config file path provided)");
   }
 
   const std::filesystem::path save_path = choose_parameter(get_parameter(np, internal_np::io_path),
@@ -185,7 +190,7 @@ construct_skeleton(const TriangleMesh& tmesh,
  *      \cgalParamDescription{the path to a configuration file to the algorithm. See the documentation
  *                            of the class `CGAL::Straight_skeletons_3::Configuration` for details.}
  *      \cgalParamType{`std::string`}
- *      \cgalParamDefault{The path to a default configuration file which must be found in the working directory.}
+ *      \cgalParamDefault{A set of default values, see the documentation of the configuration class.}
  *    \cgalParamNEnd
  *  \cgalNamedParamsEnd
  *
