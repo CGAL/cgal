@@ -225,8 +225,7 @@ struct Output_processor
  * \endcond
  *  \cgalNamedParamsEnd
  *
- * \param np_out an optional sequence of \ref bgl_namedparameters "Named Parameters"
- *               among the ones listed below
+ * \param nps_out a variadic sequence of optional \ref bgl_namedparameters "Named Parameters" to specify output options for each of the constructed offset polyhedra.
  *  \cgalNamedParamsBegin
  *   \cgalParamNBegin{do_not_triangulate_faces}
  *     \cgalParamDescription{a Boolean used to specify whether the faces of the offset meshes

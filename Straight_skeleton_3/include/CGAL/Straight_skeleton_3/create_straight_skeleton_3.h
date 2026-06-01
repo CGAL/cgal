@@ -167,10 +167,10 @@ construct_skeleton(const TriangleMesh& tmesh,
  *    \cgalParamNBegin{vertex_point_map}
  *      \cgalParamDescription{a property map associating points to the vertices of `tmesh`}
  *      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
- *                     as key type and `GeomTraits::Point_3` as value type, `GeomTraits` being the type of the parameter `geom_traits`}
+ *                     as key type and a model of `Kernel::Point_3` as value type}
  *      \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
- *      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
- *                      must be available in `TriangleMesh`.}
+ *      \cgalParamExtra{The value type of the vertex point property map must be compatible with `GeomTraits::Point_3`,
+                        where `GeomTraits` being the type of the parameter `geom_traits`}
  *    \cgalParamNEnd
  *    \cgalParamNBegin{geom_traits}
  *      \cgalParamDescription{an instance of a geometric traits class}
