@@ -301,7 +301,8 @@ public:
                       const double error_tol,
                       const double min_length,
                       const double max_length,
-                      const double curv_ball_r)
+                      const double curv_ball_r,
+                      const bool do_not_triangulate)
   {
     std::vector<edge_descriptor> p_edges;
     for(edge_descriptor e : edges(pmesh))
@@ -327,7 +328,8 @@ public:
               , target_length
               , *selection_item->polyhedron()
               , CGAL::parameters::geom_traits(EPICK())
-              .edge_is_constrained_map(selection_item->constrained_edges_pmap()));
+              .edge_is_constrained_map(selection_item->constrained_edges_pmap())
+              .do_not_triangulate_faces(do_not_triangulate));
       }
       else if (edge_sizing_type == 1)
       {
@@ -343,7 +345,8 @@ public:
           , adaptive_sizing
           , *selection_item->polyhedron()
           , CGAL::parameters::geom_traits(EPICK())
-            .edge_is_constrained_map(selection_item->constrained_edges_pmap()));
+            .edge_is_constrained_map(selection_item->constrained_edges_pmap())
+            .do_not_triangulate_faces(do_not_triangulate));
       }
     }
     else
@@ -387,6 +390,7 @@ public Q_SLOTS:
 
       int edge_sizing_type = ui.edgeSizing_type_combo_box->currentIndex();
       bool edges_only = ui.splitEdgesOnly_checkbox->isChecked();
+      bool do_not_triangulate = ui.doNotTriangulate_checkbox->isChecked();
       bool preserve_duplicates = ui.preserveDuplicates_checkbox->isChecked();
       double target_length = ui.edgeLength_dspinbox->value();
       double error_tol = ui.errorTol_edit->value();
@@ -429,7 +433,8 @@ public Q_SLOTS:
         if (edges_only)
         {
           do_split_edges(edge_sizing_type, selection_item, pmesh,
-                         target_length, error_tol, min_length, max_length, curv_ball_r);
+                         target_length, error_tol, min_length, max_length, curv_ball_r,
+                         do_not_triangulate);
         }
         else //not edges_only
         {
@@ -465,7 +470,8 @@ public Q_SLOTS:
               else
               {
                 do_split_edges(edge_sizing_type, selection_item, pmesh,
-                               target_length, error_tol, min_length, max_length, curv_ball_r);
+                               target_length, error_tol, min_length, max_length, curv_ball_r,
+                               do_not_triangulate);
               }
             }
 
@@ -675,7 +681,8 @@ public Q_SLOTS:
                 , pmesh
                 , CGAL::parameters::geom_traits(EPICK())
                 . edge_is_constrained_map(eif)
-                . face_patch_map(fpmap));
+                . face_patch_map(fpmap)
+                . do_not_triangulate_faces(do_not_triangulate));
               }
               else if (edge_sizing_type == 1)
               {
@@ -691,6 +698,7 @@ public Q_SLOTS:
                   , pmesh
                   , CGAL::parameters::geom_traits(EPICK())
                   . edge_is_constrained_map(eif)
+                  . do_not_triangulate_faces(do_not_triangulate)
                   . face_patch_map(fpmap));
               }
             }
@@ -703,6 +711,7 @@ public Q_SLOTS:
                 , target_length
                 , pmesh
                 , CGAL::parameters::geom_traits(EPICK())
+                . do_not_triangulate_faces(do_not_triangulate)
                 . edge_is_constrained_map(eif));
               }
               else if (edge_sizing_type == 1)
@@ -862,6 +871,7 @@ public Q_SLOTS:
   {
     // Remeshing parameters
     bool edges_only = false, preserve_duplicates = false;
+    bool do_not_triangulate = false;
     int edge_sizing_type = 0;
     double target_length = 0.;
     double error_tol = 0.;
@@ -901,6 +911,7 @@ public Q_SLOTS:
         }
 
         edges_only = ui.splitEdgesOnly_checkbox->isChecked();
+        do_not_triangulate = ui.doNotTriangulate_checkbox->isChecked();
         preserve_duplicates = ui.preserveDuplicates_checkbox->isChecked();
         edge_sizing_type = ui.edgeSizing_type_combo_box->currentIndex();
         target_length = ui.edgeLength_dspinbox->value();
@@ -963,6 +974,7 @@ public Q_SLOTS:
         tbb::blocked_range<std::size_t>(0, selection.size()),
         Remesh_polyhedron_item_for_parallel_for<Remesh_polyhedron_item>(
                                                                         selection, edges_to_protect, edges_only
+                                                                      , do_not_triangulate
                                                                       , edge_sizing_type, target_length, error_tol
                                                                       , min_length , max_length, nb_iter
                                                                       , protect, smooth_features)
@@ -1012,6 +1024,7 @@ private:
 
     int edge_sizing_type_;
     bool edges_only_;
+    bool do_not_triangulate_;
     double target_length_;
     double error_tol_;
     double min_length_;
@@ -1043,7 +1056,8 @@ private:
         CGAL::Polygon_mesh_processing::split_long_edges(
             border_edges
           , target_length_
-          , *poly_item->polyhedron());
+          , *poly_item->polyhedron()
+          , CGAL::parameters::do_not_triangulate_faces(do_not_triangulate_));
         }
         else if (edge_sizing_type_ == 1)
         {
@@ -1056,7 +1070,8 @@ private:
           CGAL::Polygon_mesh_processing::split_long_edges(
             border_edges
           , target_length_
-          , *poly_item->polyhedron());
+          , *poly_item->polyhedron()
+          , CGAL::parameters::do_not_triangulate_faces(do_not_triangulate_));
         }
       }
       else
@@ -1102,6 +1117,7 @@ private:
   public:
     Remesh_polyhedron_item(
       const bool edges_only,
+      const bool do_not_triangulate,
       const int edge_sizing_type,
       const double target_length,
       const double error_tol,
@@ -1112,6 +1128,7 @@ private:
       const bool smooth_features)
       : edge_sizing_type_(edge_sizing_type)
       , edges_only_(edges_only)
+      , do_not_triangulate_(do_not_triangulate)
       , target_length_(target_length)
       , error_tol_(error_tol)
       , min_length_(min_length)
@@ -1124,6 +1141,7 @@ private:
     Remesh_polyhedron_item(const Remesh_polyhedron_item& remesh)
       : edge_sizing_type_(remesh.edge_sizing_type_)
       , edges_only_(remesh.edges_only_)
+      , do_not_triangulate_(remesh.do_not_triangulate_)
       , target_length_(remesh.target_length_)
       , error_tol_(remesh.error_tol_)
       , min_length_(remesh.min_length_)
@@ -1154,6 +1172,7 @@ private:
       const std::vector<Scene_facegraph_item*>& selection,
       std::map<FaceGraph*,Edge_set >& edges_to_protect,
       const bool edges_only,
+      const bool do_not_triangulate,
       const int edge_sizing_type,
       const double target_length,
       const double error_tol,
@@ -1164,7 +1183,8 @@ private:
       const bool smooth_features)
       : RemeshFunctor(edges_only, edge_sizing_type, target_length
                     , error_tol, min_length, max_length
-                    , nb_iter, protect, smooth_features)
+                    , nb_iter, protect, smooth_features
+                    , do_not_triangulate)
       , selection_(selection), edges_to_protect_(edges_to_protect)
     {}
 
@@ -1205,6 +1225,8 @@ public Q_SLOTS:
   {
     if(ui.splitEdgesOnly_checkbox->isChecked())
     {
+      ui.doNotTriangulate_checkbox->setEnabled(true);
+
       ui.nbIterations_label->setEnabled(false);
       ui.nbIterations_spinbox->setEnabled(false);
       ui.nbSmoothing_label->setEnabled(false);
@@ -1220,6 +1242,8 @@ public Q_SLOTS:
     }
     else
     {
+      ui.doNotTriangulate_checkbox->setEnabled(false);
+
       ui.nbIterations_label->setEnabled(true);
       ui.nbIterations_spinbox->setEnabled(true);
       ui.nbSmoothing_label->setEnabled(true);
