@@ -159,7 +159,7 @@ public:
     const std::vector<std::pair<IkFT, Vertex_descriptor> > &v = m_vertices_on_line[line_idx];
     if (u < v[0].first || v.back().first < u)
       return null_iedge();
-    int low = 0, high = v.size() - 1;
+    int low = 0, high = static_cast<int>(v.size()) - 1;
     while (low < high - 1) {
       int mid = (low + high)>>1;
       // Equality should not happen as it is to be used for moving vertices
