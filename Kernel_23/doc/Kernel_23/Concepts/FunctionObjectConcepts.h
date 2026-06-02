@@ -9077,10 +9077,10 @@ public:
 
   \cgalRefines{AdaptableTernaryFunction}
 
-  \sa `compare_scalar_product_grp`
+  \sa `CGAL::compare_projection_along_direction()`
 
 */
-class CompareScalarProduct_3 {
+class CompareProjectionAlongDirection_3 {
 public:
 
   /// \name Operations
@@ -9088,23 +9088,12 @@ public:
   /// @{
 
   /*!
-  returns `CGAL::LARGER` iff the scalar product of `u` and `v` is larger than the scalar product `sp`,
-  `CGAL::SMALLER`, iff it is smaller,
-  and `CGAL::EQUAL` iff both are equal.
-*/
-  Comparison_result operator()(const Kernel::Vector_3 &u,
-                               const Kernel::Vector_3 &v,
-                               const Kernel::FT &sp);
-
-  /*!
-    returns `CGAL::LARGER` iff the scalar product of `u` and `v` is larger than the scalar product of `w` and `x`,
-    `CGAL::SMALLER`, iff it is smaller,
-    and `CGAL::EQUAL` iff both are equal.
+    returns `CGAL::SMALLER`, `CGAL::EQUAL`, or `CGAL::LARGER` if the projection of `p` onto
+    a line with direction `dir` precedes, coincides, or follows that of `q` in the direction pointed by `dir`.
   */
-  Comparison_result operator()(const Kernel::Vector_3 &u,
-                               const Kernel::Vector_3 &v,
-                               const Kernel::Vector_3 &w,
-                               const Kernel::Vector_3 &x);
+  Comparison_result operator()(const Kernel::Point_3 &p,
+                               const Kernel::Point_3 &q,
+                               const Kernel::Direction_3 &dir);
 
   /// @}
 

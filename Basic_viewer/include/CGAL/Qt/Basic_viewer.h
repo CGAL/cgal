@@ -986,7 +986,7 @@ protected:
       if (!rendering_program_sphere.addShader(geometry_shader_sphere))
       { std::cerr << "Adding geometry shader for sphere FAILED" << std::endl;}
       if (!rendering_program_sphere.addShader(fragment_shader_sphere))
-      { std::cerr << "Adding fragment shader for clipping plane FAILED" << std::endl; }
+      { std::cerr << "Adding fragment shader for sphere FAILED" << std::endl; }
       if (!rendering_program_sphere.link())
       { std::cerr << "Linking Program for sphere FAILED" << std::endl; }
     }
@@ -994,7 +994,6 @@ protected:
     // Cylinder shader
     if (isOpenGL_4_3())
     {
-      // clipping plane shader
       source_ = VERTEX_SOURCE_SHAPE;
 
       QOpenGLShader *vertex_shader_cylinder = new QOpenGLShader(QOpenGLShader::Vertex);
@@ -1019,7 +1018,7 @@ protected:
       if (!rendering_program_cylinder.addShader(geometry_shader_cylinder))
       { std::cerr << "Adding geometry shader for cylinder FAILED" << std::endl;}
       if (!rendering_program_cylinder.addShader(fragment_shader_cylinder))
-      { std::cerr << "Adding fragment shader for clipping plane FAILED" << std::endl; }
+      { std::cerr << "Adding fragment shader for cylinder FAILED" << std::endl; }
       if (!rendering_program_cylinder.link())
       { std::cerr << "Linking Program for cylinder FAILED" << std::endl; }
     }
@@ -1051,12 +1050,12 @@ protected:
       if (!rendering_program_normal.addShader(geometry_shader_normal))
       { std::cerr << "Adding geometry shader for normal FAILED" << std::endl;}
       if (!rendering_program_normal.addShader(fragment_shader_normal))
-      { std::cerr << "Adding fragment shader for clipping plane FAILED" << std::endl; }
+      { std::cerr << "Adding fragment shader for normal FAILED" << std::endl; }
       if (!rendering_program_normal.link())
       { std::cerr << "Linking Program for normal FAILED" << std::endl; }
     }
 
-    // Normal shader
+    // Triangle shader
     if (isOpenGL_4_3())
     {
       source_ = VERTEX_SOURCE_TRIANGLE;
@@ -1083,7 +1082,7 @@ protected:
       if (!rendering_program_triangle.addShader(geometry_shader_triangle))
       { std::cerr << "Adding geometry shader for triangle FAILED" << std::endl;}
       if (!rendering_program_triangle.addShader(fragment_shader_triangle))
-      { std::cerr << "Adding fragment shader for clipping plane FAILED" << std::endl; }
+      { std::cerr << "Adding fragment shader for triangle FAILED" << std::endl; }
       if (!rendering_program_triangle.link())
       { std::cerr << "Linking Program for triangle FAILED" << std::endl; }
     }
@@ -1804,8 +1803,10 @@ protected:
       }
       else if ((e->key()==::Qt::Key_F2))
       {
-        capture_screenshot(QString("./screenshot.png"));
-        displayMessage(QString("Screenshot saved in ./screenshot"));
+        if(capture_screenshot(QString("./screenshot.png")))
+            displayMessage(QString("Screenshot saved in ./screenshot.png"));
+        else
+            displayMessage(QString("Failed to take screenshot"));
       }
       else
       { CGAL::QGLViewer::keyPressEvent(e); } // By default call QGLViewer key press
@@ -1831,8 +1832,8 @@ protected:
       "and restored at next start.<br><br>";
     text += "Press <b>F</b> to display the frame rate, <b>A</b> for the "
       "world axis, ";
-    text += "<b>Alt+Return</b> for full screen mode and <b>Control+S</b> "
-      "to save a snapshot. ";
+    text += "<b>Alt+Return</b> for full screen mode and <b>F2</b> "
+      "to save a screenshot. ";
     text += "See the <b>Keyboard</b> tab in this window for a complete "
       "shortcut list.<br><br>";
     text += "Double clicks automates single click actions: A left button "
@@ -1843,18 +1844,18 @@ protected:
       "defines the camera <i>Revolve Around Point</i>. ";
     text += "See the <b>Mouse</b> tab and the documentation web pages for "
       "details.<br><br>";
-    text += "Press <b>Escape</b> to exit the viewer.";
+    text += "Press <b>Control+Q</b> to exit the viewer.";
     return text;
   }
 
-  void capture_screenshot(const QString& file_path)
+  bool capture_screenshot(const QString& file_path)
   {
     QScreen *screen;
     screen = QApplication::primaryScreen();
 
     // auto geom = screen->geometry();
     auto qpx_pixmap = screen->grabWindow(this->winId());
-    qpx_pixmap.save(file_path);
+    return qpx_pixmap.save(file_path);
   }
 
 public:

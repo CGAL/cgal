@@ -70,7 +70,7 @@ namespace Barycentric_coordinates {
 template<
 typename OutputIterator,
 typename GeomTraits>
-OutputIterator tetrahedron_coordinates(
+OutputIterator tetrahedron_coordinates_3(
   const typename GeomTraits::Point_3& p0,
   const typename GeomTraits::Point_3& p1,
   const typename GeomTraits::Point_3& p2,
@@ -87,7 +87,7 @@ OutputIterator tetrahedron_coordinates(
 template<
 typename Point_3,
 typename OutputIterator>
-OutputIterator tetrahedron_coordinates(
+OutputIterator tetrahedron_coordinates_3(
   const Point_3& p0,
   const Point_3& p1,
   const Point_3& p2,
@@ -97,7 +97,7 @@ OutputIterator tetrahedron_coordinates(
 
   using GeomTraits = typename Kernel_traits<Point_3>::Kernel;
   const GeomTraits traits;
-  return tetrahedron_coordinates(
+  return tetrahedron_coordinates_3(
     p0, p1, p2, p3, query, oi, traits);
 }
 
@@ -142,7 +142,7 @@ OutputIterator tetrahedron_coordinates(
 */
 template<typename GeomTraits>
 std::array<typename GeomTraits::FT, 4>
-tetrahedron_coordinates(
+tetrahedron_coordinates_3(
   const typename GeomTraits::Point_3& p0,
   const typename GeomTraits::Point_3& p1,
   const typename GeomTraits::Point_3& p2,
@@ -162,7 +162,7 @@ tetrahedron_coordinates(
 //return array (infer from point_3)
 template<typename Point_3>
 std::array<typename Kernel_traits<Point_3>::Kernel::FT, 4>
-tetrahedron_coordinates(
+tetrahedron_coordinates_3(
   const Point_3& p0,
   const Point_3& p1,
   const Point_3& p2,
@@ -171,7 +171,7 @@ tetrahedron_coordinates(
 
   using GeomTraits = typename Kernel_traits<Point_3>::Kernel;
   const GeomTraits traits;
-  return tetrahedron_coordinates<GeomTraits>(
+  return tetrahedron_coordinates_3<GeomTraits>(
     p0, p1, p2, p3, query, traits);
 }
 

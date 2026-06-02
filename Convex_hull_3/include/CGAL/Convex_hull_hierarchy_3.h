@@ -189,11 +189,9 @@ struct Convex_hull_hierarchy_3{
     Dir_GT gt;
     GTC converter;
 
-    auto vector_3 = gt.construct_vector_3_object();
-    auto csp = gt.compare_scalar_product_3_object();
+    auto csp = gt.compare_projection_along_direction_3_object();
 
     VPM vpm = get_const_property_map(vertex_point, hierarchy_sm[0]);
-    const typename Dir_GT::Vector_3 &vdir = dir.vector();
 
     size_t level=maxlevel();
 
@@ -202,14 +200,14 @@ struct Convex_hull_hierarchy_3{
       return CGAL::extreme_vertex_3(sm, dir);
 
     vertex_descriptor argmax = *vertices(sm).begin();
-    Vector_3 vec_max = vector_3(ORIGIN, converter(get(vpm, get(to_base_maps[level], argmax))));
+    auto p_max = converter(get(vpm, get(to_base_maps[level], argmax)));
     if(vertices(sm).size() <= MAXSIZE_FOR_NAIVE_SEARCH){
       //If maxlevel is small, we simply go through all its vertices
       for(auto vh=++(vertices(sm).begin()); vh!=vertices(sm).end(); ++vh){
         vertex_descriptor v = *vh;
-        Vector_3 vec = vector_3(ORIGIN, converter(get(vpm, get(to_base_maps[level], v))));
-        if(csp(vec_max, vdir, vec, vdir)==SMALLER){
-          vec_max=vec;
+        const auto& p = converter(get(vpm, get(to_base_maps[level], v)));
+        if(csp(p_max, p, dir)==SMALLER){
+          p_max=p;
           argmax=v;
         }
       }
@@ -233,9 +231,9 @@ struct Convex_hull_hierarchy_3{
       do{
         is_local_max=true;
         for(vertex_descriptor v: vertices_around_target(argmax ,csm)){
-          Vector_3 vec = vector_3(ORIGIN, converter(get(vpm, get(cbase, v))));
-          if(csp(vec_max, vdir, vec, vdir)==SMALLER){
-            vec_max = vec;
+          const auto& p = converter(get(vpm, get(cbase, v)));
+          if(csp(p_max, p, dir)==SMALLER){
+            p_max = p;
             argmax = v;
             is_local_max = false; // repeat with the new vertex
             break;
