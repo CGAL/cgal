@@ -53,61 +53,76 @@ namespace Polygon_2 {
 //
 // \pre The range `(first, beyond)` is composed of at least three points.
 // \pre Not all points in the range `(first, beyond)` are (almost) collinear.
-template<typename K, typename InputBidirectionalIterator, typename OutputForwardIterator>
-OutputForwardIterator filter_collinear_points(InputBidirectionalIterator first,
-                                              InputBidirectionalIterator beyond,
+template<typename K, typename ForwardIterator, typename OutputForwardIterator>
+OutputForwardIterator filter_collinear_points(ForwardIterator first,
+                                              ForwardIterator beyond,
                                               OutputForwardIterator out,
                                               const typename K::FT tolerance =
                                                 std::numeric_limits<typename K::FT>::epsilon())
 {
+  typedef typename K::FT      FT;
+  typedef typename K::Point_2 Point;
+
   CGAL_precondition(std::distance(first, beyond) >= 3);
 
-  typedef typename K::FT                              FT;
-  typedef typename K::Point_2                         Point;
+  // Helper to safely advance and wrap around in a purely forward manner
+  auto wrapped_advance = [&](ForwardIterator it) {
+    ++it;
+    return (it == beyond) ? first : it;
+  };
 
-  InputBidirectionalIterator last = std::prev(beyond);
+  // Helper for collinearity logic
+  auto is_collinear = [&](ForwardIterator i1, ForwardIterator i2, ForwardIterator i3) {
+    const Point& p1 = *i1;
+    const Point& p2 = *i2;
+    const Point& p3 = *i3;
+    const FT det = CGAL::determinant(p1.x() - p3.x(), p1.y() - p3.y(),
+                                     p2.x() - p3.x(), p2.y() - p3.y());
+    return CGAL::abs(det) <= tolerance;
+  };
 
-  InputBidirectionalIterator vit = first, vit_next = vit, vit_next_2 = vit, vend = vit;
-  ++vit_next;
-  ++(++vit_next_2);
+  // find a corner
+  ForwardIterator v0 = first;
+  ForwardIterator v1 = std::next(first);
+  ForwardIterator v2 = std::next(v1);
 
-  bool stop = false;
+  bool all_collinear = false;
 
-  do
-  {
-    CGAL_assertion(vit != vit_next);
-    CGAL_assertion(vit_next != vit_next_2);
-    CGAL_assertion(vit != vit_next_2);
+  while (is_collinear(v0, v1, v2)) {
+    v0 = v1;
+    v1 = v2;
+    v2 = wrapped_advance(v2);
 
-    const Point& o = *vit;
-    const Point& p = *vit_next;
-    const Point& q = *vit_next_2;
-
-    // Stop when 'p' is the starting point. It does not matter whether we are
-    // in a collinear case or not.
-    stop = (vit_next == vend);
-
-    const FT det = CGAL::determinant(o.x() - q.x(), o.y() - q.y(),
-                                     p.x() - q.x(), p.y() - q.y());
-
-    if(CGAL::abs(det) <= tolerance)
-    {
-      // Only move 'p' and 'q' to ignore consecutive collinear points
-      vit_next = (vit_next == last) ? first : ++vit_next;
-      vit_next_2 = (vit_next_2 == last) ? first : ++vit_next_2;
-    }
-    else
-    {
-      // 'vit = vit_next' and not '++vit' because we don't necessarily have *(next(vit) == p)
-      // and collinear points between 'o' and 'p' are ignored
-      vit = vit_next;
-      vit_next = (vit_next == last) ? first : ++vit_next;
-      vit_next_2 = (vit_next_2 == last) ? first : ++vit_next_2;
-
-      *out++ = p;
+    if (v0 == first) {
+      all_collinear = true;
+      break; // We made a full circle and found no corners.
     }
   }
-  while(!stop);
+
+  // If the polygon is entirely degenerate (e.g. all points lie on one line),
+  // there are no 2D corners to output. We safely return empty.
+  if (all_collinear)
+    return out;
+
+  ForwardIterator anchor = v1;
+  ForwardIterator p = v2;
+  ForwardIterator q = wrapped_advance(v2);
+
+  *out++ = *anchor;
+
+  while (p != v1) {
+    if (is_collinear(anchor, p, q)) {
+      // 'p' forms a flat line between 'anchor' and 'q'. Skip 'p'.
+      p = q;
+      q = wrapped_advance(q);
+    } else {
+      // 'p' creates a turn, becomes the next anchor
+      *out++ = *p;
+      anchor = p;
+      p = q;
+      q = wrapped_advance(q);
+    }
+  }
 
   return out;
 }
