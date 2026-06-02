@@ -257,16 +257,16 @@ bool is_simple_2(ForwardIterator first,
 ///   - `compare_x_2_object()`
 ///   - `compare_y_2_object()`
 ///   - `orientation_2_object()`
-/// \tparam BidirectionalIterator must have `PolygonTraits::Point_2` as value type.
+/// \tparam ForwardIterator must have `PolygonTraits::Point_2` as value type.
 ///
 /// \sa `PolygonTraits_2`
 /// \sa `CGAL::bounded_side_2()`
 /// \sa `CGAL::is_simple_2()`
 /// \sa `CGAL::Polygon_2`
 /// \sa `Oriented_side`
-template <class BidirectionalIterator, class Point, class Traits>
-Oriented_side oriented_side_2(BidirectionalIterator first,
-                              BidirectionalIterator last,
+template <class ForwardIterator, class Point, class Traits>
+Oriented_side oriented_side_2(ForwardIterator first,
+                              ForwardIterator last,
                               const Point& point,
                               const Traits& traits);
 
@@ -316,15 +316,15 @@ Bounded_side bounded_side_2(ForwardIterator first,
 ///   - `Less_xy_2`
 ///   - `less_xy_2_object()`
 ///   - `orientation_2_object()`
-/// \tparam BidirectionalIterator must have `Traits::Point_2` as value type.
+/// \tparam ForwardIterator must have `Traits::Point_2` as value type.
 ///
 /// \sa `PolygonTraits_2`
 /// \sa `CGAL::is_simple_2()`
 /// \sa `CGAL::Polygon_2`
 /// \sa `CGAL::Orientation`
-template <class BidirectionalIterator, class Traits>
-Orientation orientation_2(BidirectionalIterator first,
-                          BidirectionalIterator last,
+template <class ForwardIterator, class Traits>
+Orientation orientation_2(ForwardIterator first,
+                          ForwardIterator last,
                           const Traits& traits);
 
 /// @}

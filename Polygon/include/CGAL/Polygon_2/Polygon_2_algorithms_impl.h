@@ -333,9 +333,9 @@ std::cout << "polygon not locally convex!" << std::endl;
 //      Traits::Compare_y_2 compare_y_2_object()
 //      Traits::Orientation_2 and orientation_2_object()
 
-template <class BidirIterator, class Point, class Traits>
-Oriented_side oriented_side_2(BidirIterator first,
-                              BidirIterator last,
+template <class ForwardIterator, class Point, class Traits>
+Oriented_side oriented_side_2(ForwardIterator first,
+                              ForwardIterator last,
                               const Point& point,
                               const Traits& traits)
 {
@@ -523,39 +523,55 @@ namespace internal {
 // This exists because the "is_simple_2" precondition in the orientation_2() function is in fact
 // stronger than necessary: it also works for strictly simple polygons, which matters for
 // SLS2 and AW2, as the polygons might have non-manifoldness.
-template <class BidirIterator, class Traits>
-Orientation orientation_2_no_precondition(BidirIterator first,
-                                          BidirIterator last,
+template <class ForwardIterator, class Traits>
+Orientation orientation_2_no_precondition(ForwardIterator first,
+                                          ForwardIterator beyond,
                                           const Traits& traits)
 {
-  BidirIterator i = left_vertex_2(first, last, traits);
+  typedef typename Traits::Point_2 Point;
 
-  BidirIterator prev = (i == first) ? last : i;
-  --prev;
+  CGAL_precondition(first != beyond); // Ensure range is not empty
 
-  BidirIterator next = i;
-  ++next;
-  if (next == last)
-    next = first;
+  // The code below is a custom left_vertex_2 that keeps track of the predecessor of the leftmost vertex
+  CGAL::internal::Polygon_2::Compare_vertices<Traits> less(traits.less_xy_2_object());
 
-  // if the range [first,last) contains fewer than three points, then some
+  ForwardIterator min_it = first, min_prev = first;
+
+  ForwardIterator prev = first, curr = std::next(first);
+  while (curr != beyond) {
+    if (less(*curr, *min_it)) {
+      min_it = curr;
+      min_prev = prev;
+    }
+    prev = curr;
+    ++curr;
+  }
+
+  // If the left vertex is the first, its predecessor in a polygon is the last element,
+  // and 'prev' points to the last element in the range.
+  if (min_it == first)
+    min_prev = prev;
+
+  ForwardIterator min_next = std::next(min_it);
+  if (min_next == beyond)
+    min_next = first;
+
+  // if the range [first,beyond) contains fewer than three points, then some
   // of the points (prev,i,next) will coincide
 
-  // return the orientation of the triple (prev,i,next)
-  typedef typename Traits::Point_2 Point;
-  return traits.orientation_2_object()(Point(*prev), Point(*i), Point(*next));
+  return traits.orientation_2_object()(Point(*min_prev), Point(*min_it), Point(*min_next));
 }
 
 } // namespace internal
 } // namespace Polygon
 
-template <class BidirIterator, class Traits>
-Orientation orientation_2(BidirIterator first,
-                          BidirIterator last,
+template <class ForwardIterator, class Traits>
+Orientation orientation_2(ForwardIterator first,
+                          ForwardIterator beyond,
                           const Traits& traits)
 {
-  CGAL_precondition(is_simple_2(first, last, traits));
-  return Polygon::internal::orientation_2_no_precondition(first, last, traits);
+  CGAL_precondition(is_simple_2(first, beyond, traits));
+  return Polygon::internal::orientation_2_no_precondition(first, beyond, traits);
 }
 
 } //namespace CGAL
