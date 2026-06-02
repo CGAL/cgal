@@ -16,6 +16,7 @@
 #include <CGAL/license/Vector_graphics_on_surfaces.h>
 
 #include <CGAL/Vector_graphics_on_surfaces/internal/utils.h>
+#include <CGAL/Named_function_parameters.h>
 
 #ifdef CGAL_BSURF_USE_DIJKSTRA_SP
 #include <boost/graph/dijkstra_shortest_paths.hpp>
@@ -654,6 +655,43 @@ struct Geodesic_circle_impl
   };
 #endif
 
+template <class Impl2, class FT, class TriangleMesh, class VPM, class FIM>
+const Dual_geodesic_solver<FT>&
+get_initialized_solver(internal_np::Param_not_found,
+                       const TriangleMesh& tmesh,
+                       VPM vpm,
+                       FIM fim,
+                       Dual_geodesic_solver<FT>& default_solver)
+{
+  default_solver=Impl2::make_dual_geodesic_solver(vpm, fim, tmesh);
+  return default_solver;
+}
+
+template <class Impl2, class FT, class TriangleMesh, class VPM, class FIM>
+const Dual_geodesic_solver<FT>&
+get_initialized_solver(Dual_geodesic_solver<FT>& solver,
+                       const TriangleMesh& tmesh,
+                       VPM vpm,
+                       FIM fim,
+                       Dual_geodesic_solver<FT>&)
+{
+  if (solver.graph.empty())
+    solver=Impl2::make_dual_geodesic_solver(vpm, fim, tmesh);
+  return solver;
+}
+
+template <class Impl2, class FT, class TriangleMesh, class VPM, class FIM>
+const Dual_geodesic_solver<FT>&
+get_initialized_solver(const Dual_geodesic_solver<FT>& solver,
+                       const TriangleMesh&,
+                       VPM,
+                       FIM,
+                       Dual_geodesic_solver<FT>&)
+{
+  CGAL_warning_msg(solver.graph.empty(),"A non-initialized dual geodesic solver is used.");
+  return solver;
+}
+
 } // end of internal namespace
 
 /*!
@@ -680,36 +718,87 @@ struct Dual_geodesic_solver
  * If `solver` was used in a previous call to this function, information will be overwritten.
  * \tparam TriangleMesh a model of `FaceListGraph` and `EdgeListGraph`
  * \tparam FT floating point number type (float or double)
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  * \param solver the container for the precomputed information
  * \param tmesh triangle mesh to be considered for the precomputations
- * \todo add named parameters
- * \todo make sure solver.graph is cleared before filling it
+ * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `tmesh`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMeshIn>::%vertex_descriptor`
+ *                    as key type and `GeomTraits::Point_3` as value type, `GeomTraits` being the type of the parameter `geom_traits`}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     must be available in `TriangleMeshIn`.}
+ *   \cgalParamNEnd
+ *    \cgalParamNBegin{geom_traits}
+ *      \cgalParamDescription{an instance of a geometric traits class}
+ *      \cgalParamType{a class model of `Kernel`, with `Kernel::FT` being `FT`}
+ *      \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *      \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+ *    \cgalParamNEnd
+ * \cgalNamedParamsEnd
  */
-template <class FT, class TriangleMesh>
-void init_geodesic_dual_solver(Dual_geodesic_solver<FT>& solver, const TriangleMesh& tmesh)
+template <class FT, class TriangleMesh, class NamedParameters = parameters::Default_named_parameters>
+void init_geodesic_dual_solver(Dual_geodesic_solver<FT>& solver,
+                               const TriangleMesh& tmesh,
+                               const NamedParameters& np = parameters::default_values())
 {
-  //TODO replace with named parameter
-  using VPM = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type;
-  using K =  typename Kernel_traits<typename boost::property_traits<VPM>::value_type>::type;
-  VPM vpm = get(CGAL::vertex_point, tmesh);
-  typedef typename GetInitializedFaceIndexMap<TriangleMesh, parameters::Default_named_parameters>::const_type FIM;
-  typedef typename GetInitializedVertexIndexMap<TriangleMesh, parameters::Default_named_parameters>::const_type VIM;
-  const FIM fim = get_initialized_face_index_map(tmesh, parameters::default_values());
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
+  using VPM = typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type;
+  using K = typename GetGeomTraits<TriangleMesh, NamedParameters>::type;
+  VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                             get_const_property_map(boost::vertex_point, tmesh));
+
+
+  using FIM = typename GetInitializedFaceIndexMap<TriangleMesh, parameters::Default_named_parameters>::const_type;
+  using VIM = typename GetInitializedVertexIndexMap<TriangleMesh, parameters::Default_named_parameters>::const_type;
+  const FIM fim = get_initialized_face_index_map(tmesh, parameters::default_values());
   using Impl2 = typename internal::Geodesic_circle_impl<K, TriangleMesh, VPM, VIM, FIM>;
+
+  solver.graph.clear();
   solver=Impl2::make_dual_geodesic_solver(vpm, fim, tmesh);
 }
 
 /*!
  * \ingroup VGSMiscellaneous
- *  computes the approximate geodesic distances of `center` to all vertices of the mesh.
- \pre `tmesh` must consist of a single connected component
- * and put the distance in `distance_map`
+ *  computes the approximate geodesic distances of `center` to all vertices of the mesh, and put the distance in `distance_map`.
+ * \pre `tmesh` must consist of a single connected component
+ * \tparam TriangleMesh a model of `FaceListGraph` and `EdgeListGraph`
+ * \tparam FT floating point number type (float or double)
+ * \tparam VertexDistanceMap a model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMeshIn>::%vertex_descriptor`
+ *                           as key type and `FT` as value type.
+ *  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+ * \param center the location from which all the geodesic distance should be computed
+ * \param distance_map property map containing the approximated geodesic distance for each vertex to `center`
+ * \param tmesh input triangle mesh to compute approximated geodesic distances on
+ * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `tmesh`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMeshIn>::%vertex_descriptor`
+ *                    as key type and `GeomTraits::Point_3` as value type, `GeomTraits` being the type of the parameter `geom_traits`}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     must be available in `TriangleMeshIn`.}
+ *   \cgalParamNEnd
+ *    \cgalParamNBegin{geom_traits}
+ *      \cgalParamDescription{an instance of a geometric traits class}
+ *      \cgalParamType{a class model of `Kernel`, with `Kernel::FT` being `FT`}
+ *      \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *      \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+ *    \cgalParamNEnd
+ * \cgalNamedParamsEnd
  */
-template <class FT, class TriangleMesh, class VertexDistanceMap>
+template <class FT, class TriangleMesh, class VertexDistanceMap, class NamedParameters = parameters::Default_named_parameters>
 void approximate_geodesic_distance_field(const CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, FT>& center,
                                          VertexDistanceMap distance_map,
-                                         const TriangleMesh& tmesh)
+                                         const TriangleMesh& tmesh,
+                                         const NamedParameters& np = parameters::default_values())
 {
   // TODO: the solver could be init once and used several times for different centers
   //       in particular, it can be tweaked to compute the Voronoi diagram of the initial centers
@@ -723,14 +812,19 @@ void approximate_geodesic_distance_field(const CGAL::Polygon_mesh_processing::Fa
   //       (shortest path is not a line in that case)
 
   //TODO replace with named parameter
-  using VPM = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type;
-  VPM vpm = get(CGAL::vertex_point, tmesh);
-  using K =  typename Kernel_traits<typename boost::property_traits<VPM>::value_type>::type;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+  using parameters::get_parameter_reference;
 
-  typedef typename GetInitializedVertexIndexMap<TriangleMesh, parameters::Default_named_parameters>::const_type VIM;
+  using VPM = typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type;
+  using K = typename GetGeomTraits<TriangleMesh, NamedParameters>::type;
+  VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                             get_const_property_map(boost::vertex_point, tmesh));
+
+
+  using FIM = typename GetInitializedFaceIndexMap<TriangleMesh, parameters::Default_named_parameters>::const_type;
+  using VIM = typename GetInitializedVertexIndexMap<TriangleMesh, parameters::Default_named_parameters>::const_type;
   const VIM vim = get_initialized_vertex_index_map(tmesh, parameters::default_values());
-  typedef typename GetInitializedFaceIndexMap<TriangleMesh, parameters::Default_named_parameters>::const_type FIM;
-
   using Impl = typename internal::Geodesic_circle_impl<K, TriangleMesh, VPM, VIM, FIM>;
 
   typename Impl::geodesic_solver solver = Impl::make_geodesic_solver(vpm, vim,tmesh);

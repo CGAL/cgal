@@ -26,18 +26,6 @@
 namespace CGAL {
 namespace Vector_graphics_on_surfaces {
 
-#ifndef DOXYGEN_RUNNING
-template <class FT, class TriangleMesh, class EdgeLocationRange>
-void locally_shortest_path(CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, FT> src,
-                           CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, FT> tgt,
-                           const TriangleMesh &tmesh,
-                           EdgeLocationRange &edge_locations
-#ifndef CGAL_BSURF_USE_DIJKSTRA_SP
-                           , const Dual_geodesic_solver<FT>& solver = Dual_geodesic_solver<FT>()
-#endif
-);
-#endif
-
 /*!
  * \ingroup VGSMiscellaneous
  * array containing the locations of the four control points of a Bézier segment on a triangle mesh
@@ -978,6 +966,7 @@ struct Locally_shortest_path_imp
  * \tparam TriangleMesh a model of `FaceListGraph` and `EdgeListGraph`
  * \tparam FT floating point number type (float or double)
  * \tparam EdgeLocationRange a model of `BackInsertionSequence` whose value type `CGAL::Polygon_mesh_processing::Edge_location<FT>`.
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  * \param src source of the path
  * \param tgt target of the path
  * \param tmesh input triangle mesh to compute the path on
@@ -990,21 +979,42 @@ struct Locally_shortest_path_imp
  *                       of `edge_locations` is such that `f == face(opposite(halfedge(e_0, tmesh), tmesh), tmesh))`.
  *                       Similarly, if `tgt` is in the interior of a face `f`, then the last edge location `e_n`
  *                       of `edge_locations` is such that `f == face(halfedge(e_n, tmesh), tmesh)`.
- * \param solver container for the precomputed information. If not initialized, it will be initialized internally.
- * \todo add named parameters
- * \todo should we have halfedge location instead?
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `tmesh`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMeshIn>::%vertex_descriptor`
+ *                    as key type and `GeomTraits::Point_3` as value type, `GeomTraits` being the type of the parameter `geom_traits`}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     must be available in `TriangleMeshIn`.}
+ *   \cgalParamNEnd
+ *    \cgalParamNBegin{geom_traits}
+ *      \cgalParamDescription{an instance of a geometric traits class}
+ *      \cgalParamType{a class model of `Kernel`, with `Kernel::FT` being `FT`}
+ *      \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *      \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+ *    \cgalParamNEnd
+ *    \cgalParamNBegin{dual_geodesic_solver}
+ *      \cgalParamDescription{solver container for the precomputed information.}
+ *      \cgalParamType{must be a `std::reference_wrapper` to an object of type `CGAL::Dual_geodesic_solver<FT>`}
+ *      \cgalParamDefault{if no variable is provided, an internal variable will be used.}
+ *      \cgalParamExtra{If not initialized and the reference is not const, it will be initialized internally and be usuable for a further call.}
+ *    \cgalParamNEnd
+ * \cgalNamedParamsEnd
  */
-template <class FT, class TriangleMesh, class EdgeLocationRange>
+template <class FT, class TriangleMesh, class EdgeLocationRange, class NamedParameters = parameters::Default_named_parameters>
 void locally_shortest_path(CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, FT> src,
                            CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, FT> tgt,
                            const TriangleMesh &tmesh,
-                           EdgeLocationRange &edge_locations
-#ifndef CGAL_BSURF_USE_DIJKSTRA_SP
-                           , const Dual_geodesic_solver<FT>& solver
-#endif
-)
+                           EdgeLocationRange &edge_locations,
+                           const NamedParameters& np = parameters::default_values())
 {
   namespace PMP = CGAL::Polygon_mesh_processing;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+  using parameters::get_parameter_reference;
 
   typedef boost::graph_traits<TriangleMesh> BGT;
   typedef typename BGT::halfedge_descriptor halfedge_descriptor;
@@ -1068,15 +1078,11 @@ void locally_shortest_path(CGAL::Polygon_mesh_processing::Face_location<Triangle
     }
   }
 
-
-
-  //TODO replace with named parameter
-  using VPM = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type;
-  using K =  typename Kernel_traits<typename boost::property_traits<VPM>::value_type>::type;
+  using VPM = typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type;
+  using K = typename GetGeomTraits<TriangleMesh, NamedParameters>::type;
   using Impl = internal::Locally_shortest_path_imp<K, TriangleMesh, VPM>;
-  VPM vpm = get(CGAL::vertex_point, tmesh);
-
-
+  VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                             get_const_property_map(boost::vertex_point, tmesh));
 
 // TODO : if (edge(vsrc, vtgt, mesh) || tgt && src on the same edge ) return;
 
@@ -1174,10 +1180,12 @@ void locally_shortest_path(CGAL::Polygon_mesh_processing::Face_location<Triangle
 
   using Impl2 = typename internal::Geodesic_circle_impl<K, TriangleMesh, VPM, VIM, FIM>;
 
-  std::vector<halfedge_descriptor> initial_path
-    = (solver.graph.empty())
-    ? Impl2::strip_on_dual_graph(Impl2::make_dual_geodesic_solver(vpm, fim, tmesh), tmesh, get(fim, src.first), get(fim,tgt.first))
-    : Impl2::strip_on_dual_graph(solver, tmesh, get(fim, src.first), get(fim,tgt.first));
+  Dual_geodesic_solver<FT> default_solver;
+  const Dual_geodesic_solver<FT>& solver = internal::get_initialized_solver<Impl2>(get_parameter_reference(np, internal_np::dual_geodesic_solver),
+                                                                                   tmesh, vpm, fim, default_solver);
+
+  std::vector<halfedge_descriptor> initial_path =
+    Impl2::strip_on_dual_graph(solver, tmesh, get(fim, src.first), get(fim,tgt.first));
 #endif
 
   CGAL_assertion(face(opposite(initial_path.front(), tmesh), tmesh)==src.first);

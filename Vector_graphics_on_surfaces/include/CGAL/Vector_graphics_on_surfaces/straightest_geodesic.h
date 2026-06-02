@@ -16,6 +16,7 @@
 #include <CGAL/license/Vector_graphics_on_surfaces.h>
 
 #include <CGAL/Vector_graphics_on_surfaces/internal/utils.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 namespace CGAL {
 namespace Vector_graphics_on_surfaces {
@@ -627,27 +628,42 @@ struct Straightest_geodesic_imp
  * is reached before.
  * \tparam TriangleMesh a model of `FaceListGraph` and `EdgeListGraph`
  * \tparam FT floating point number type (float or double)
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  * \param tmesh input triangle mesh to compute the path on
  * \param src the source of the path
  * \param len the distance to walk along the straightest
  * \param dir the initial direction of the walk, given as a 2D vector in the face of src, the halfedge of the face being the y-axis.
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `tmesh`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMeshIn>::%vertex_descriptor`
+ *                    as key type and `GeomTraits::Point_3` as value type, `GeomTraits` being the type of the parameter `geom_traits`}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     must be available in `TriangleMeshIn`.}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
  * \return the straightest path (not containing `src`)
- * \todo add named parameters
  * \todo do we want to also have a way to return Bézier segments? The output is actually Bézier segments subdivided.
  * \todo offer something better than a 2D vector for the direction
  */
-template <class K, class TriangleMesh>
+template <class K, class TriangleMesh, class NamedParameters = parameters::Default_named_parameters>
 std::vector<CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, typename K::FT>>
 straightest_geodesic(const CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, typename K::FT> &src,
                      const typename K::Vector_2& dir,
                      const typename K::FT len,
-                     const TriangleMesh &tmesh)
+                     const TriangleMesh &tmesh,
+                     const NamedParameters& np = parameters::default_values())
 {
-  //TODO replace with named parameter
-  using VPM = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type;
-  using Impl = internal::Straightest_geodesic_imp<K, TriangleMesh, VPM>;
-  VPM vpm = get(CGAL::vertex_point, tmesh);
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
+  using VPM = typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type;
+  using Impl = internal::Straightest_geodesic_imp<K, TriangleMesh, VPM>;
+  VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                             get_const_property_map(boost::vertex_point, tmesh));
 
   return Impl::straightest_geodesic(src, tmesh, vpm, dir, len);
 }

@@ -17,6 +17,7 @@
 
 namespace VGoS = CGAL::Vector_graphics_on_surfaces;
 namespace PMP = CGAL::Polygon_mesh_processing;
+namespace params = CGAL::parameters;
 
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Mesh = CGAL::Surface_mesh<K::Point_3>;
@@ -295,7 +296,7 @@ int main(int argc, char** argv)
 
       // TODO: avoid using the shortest path and directly use the straightest!
       std::vector<Edge_location> shortest_path;
-        VGoS::locally_shortest_path<K::FT>(center, poly_center_loc, mesh, shortest_path, solver);
+        VGoS::locally_shortest_path<K::FT>(center, poly_center_loc, mesh, shortest_path, params::dual_geodesic_solver(std::ref(solver)));
 
       typename K::Vector_2 v = initial_dir;
       // TODO: the code uses the straightest path but since the code expects Edge_location,

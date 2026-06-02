@@ -7,6 +7,7 @@
 
 namespace VGoS = CGAL::Vector_graphics_on_surfaces;
 namespace PMP = CGAL::Polygon_mesh_processing;
+namespace params = CGAL::parameters;
 
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Mesh = CGAL::Surface_mesh<K::Point_3>;
@@ -264,7 +265,7 @@ int main(int argc, char** argv)
   Face_location tgt(f2, CGAL::make_array(0.3,0.3,0.4));
 
   std::vector<Edge_location> edge_locations;
-  VGoS::locally_shortest_path<double>(src, tgt, mesh, edge_locations, solver);
+  VGoS::locally_shortest_path<double>(src, tgt, mesh, edge_locations, params::dual_geodesic_solver(std::ref(solver)));
 
   std::vector<Face_location> supporting_curve;
   supporting_curve.reserve(edge_locations.size()+2);

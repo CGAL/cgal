@@ -191,7 +191,7 @@ struct Bezier_tracing_impl
   )
   {
     std::vector<Edge_location> edge_locations;
-    locally_shortest_path<FT>(src,tgt,mesh, edge_locations, solver);
+    locally_shortest_path<FT>(src,tgt,mesh, edge_locations, parameters::dual_geodesic_solver(std::ref(solver)));
     std::vector<FT> parameters=path_parameters(edge_locations,mesh,src,tgt);
     Face_location point = eval_point_on_geodesic(edge_locations,mesh,src,tgt,parameters,t);
     return point;
@@ -236,39 +236,67 @@ struct Bezier_tracing_impl
  * the de Casteljau algorithm, and geodesic shortest paths are drawn between the control points.
  * \tparam TriangleMesh a model of `FaceListGraph` and `EdgeListGraph`
  * \tparam FT floating point number type (float or double)
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  * \param mesh input triangle mesh to compute the path on
  * \param control_points control points of the Bézier segment
  * \param num_subdiv the number of iterations of the subdivision algorithm
- * \param solver container for the precomputed information. If not initialized, it will be initialized internally.
+ * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `tmesh`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMeshIn>::%vertex_descriptor`
+ *                    as key type and `GeomTraits::Point_3` as value type, `GeomTraits` being the type of the parameter `geom_traits`}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     must be available in `TriangleMeshIn`.}
+ *   \cgalParamNEnd
+ *    \cgalParamNBegin{geom_traits}
+ *      \cgalParamDescription{an instance of a geometric traits class}
+ *      \cgalParamType{a class model of `Kernel`, with `Kernel::FT` being `FT`}
+ *      \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *      \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+ *    \cgalParamNEnd
+ *    \cgalParamNBegin{dual_geodesic_solver}
+ *      \cgalParamDescription{solver container for the precomputed information.}
+ *      \cgalParamType{must be a `std::reference_wrapper` to an object of type `CGAL::Dual_geodesic_solver<FT>`}
+ *      \cgalParamDefault{if no variable is provided, an internal variable will be used.}
+ *      \cgalParamExtra{If not initialized and the reference is not const, it will be initialized internally and be usuable for a further call.}
+ *    \cgalParamNEnd
+ * \cgalNamedParamsEnd
+ *
  * \return discretization of the Bézier segment as face locations
- * \todo add named parameters
  * \todo do we want to also have a way to return Bézier segments? The output is actually Bézier segments subdivided.
  */
-template <class TriangleMesh, class FT>
+template <class TriangleMesh, class FT, class NamedParameters = parameters::Default_named_parameters>
 std::vector<CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, FT>>
-recursive_de_Casteljau(const TriangleMesh& mesh,
+recursive_de_Casteljau(const TriangleMesh& tmesh,
                        const Bezier_segment<TriangleMesh, FT>& control_points,
-                       const int num_subdiv
-#ifndef CGAL_BSURF_USE_DIJKSTRA_SP
-                       , const Dual_geodesic_solver<FT>& solver = Dual_geodesic_solver<FT>()
-#endif
-                       )
+                       const int num_subdiv,
+                       const NamedParameters& np = parameters::default_values())
+
 {
   namespace PMP = CGAL::Polygon_mesh_processing;
+  using parameters::get_parameter_reference;
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
 
   //TODO replace with named parameter
-  using VPM = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type;
-  using K =  typename Kernel_traits<typename boost::property_traits<VPM>::value_type>::type;
+  using VPM = typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type;
+  using K = typename GetGeomTraits<TriangleMesh, NamedParameters>::type;
   using Impl = internal::Bezier_tracing_impl<K, TriangleMesh, VPM>;
 
-  // init solver if empty
-  const Dual_geodesic_solver<FT>* solver_ptr=&solver;
-  Dual_geodesic_solver<FT> local_solver;
-  if (solver.graph.empty())
-  {
-    solver_ptr = &local_solver;
-    init_geodesic_dual_solver(local_solver, mesh);
-  }
+  using VIM = typename GetInitializedVertexIndexMap<TriangleMesh, parameters::Default_named_parameters>::const_type;
+  using FIM = typename GetInitializedFaceIndexMap<TriangleMesh, parameters::Default_named_parameters>::const_type;
+  using Impl2 = typename internal::Geodesic_circle_impl<K, TriangleMesh, VPM, VIM, FIM>;
+  const FIM fim = get_initialized_face_index_map(tmesh, parameters::default_values());
+  VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                             get_const_property_map(boost::vertex_point, tmesh));
+
+  Dual_geodesic_solver<FT> default_solver;
+  const Dual_geodesic_solver<FT>& solver = internal::get_initialized_solver<Impl2>(get_parameter_reference(np, internal_np::dual_geodesic_solver),
+                                                                                   tmesh, vpm, fim, default_solver);
+
 
   std::vector<Bezier_segment<TriangleMesh, FT>> segments(1,control_points);
   std::vector<Bezier_segment<TriangleMesh, FT>> result;
@@ -278,7 +306,7 @@ recursive_de_Casteljau(const TriangleMesh& mesh,
     result.reserve(segments.size() * 2);
     for (std::size_t i = 0; i < segments.size(); ++i)
     {
-      auto [split0, split1] = Impl::subdivide_Bezier_polygon(mesh, segments[i], 0.5, *solver_ptr);
+      auto [split0, split1] = Impl::subdivide_Bezier_polygon(tmesh, segments[i], 0.5, solver);
       result.push_back(split0);
       result.push_back(split1);
     }

@@ -76,7 +76,7 @@ trace_geodesic_polygon(const CGAL::Polygon_mesh_processing::Face_location<Triang
   for(std::size_t i=0;i<n;++i)
   {
     edge_locations.clear();
-    locally_shortest_path<typename K::FT>(vertices[i],vertices[(i+1)%n],tmesh, edge_locations, *solver_ptr);
+    locally_shortest_path<typename K::FT>(vertices[i],vertices[(i+1)%n],tmesh, edge_locations, parameters::dual_geodesic_solver(std::ref(*solver_ptr)));
     result.push_back(vertices[i]);
     for(auto& el : edge_locations)
     {
@@ -146,7 +146,7 @@ struct Default_placement
 
     // TODO: avoid using the shortest path and directly use the straightest!
     std::vector<PMP::Edge_location<TriangleMesh, FT>> shortest_path;
-      locally_shortest_path<FT>(center, polygon_center, tmesh, shortest_path, solver);
+      locally_shortest_path<FT>(center, polygon_center, tmesh, shortest_path, parameters::dual_geodesic_solver(std::ref(solver)));
 
     // update direction
     Vector_2 v = initial_dir;
@@ -386,7 +386,7 @@ struct Placement_along_a_line
       std::tie(polygon_center, theta)=get_polygon_center(tmesh, vpm, m_right_path, scaling * (xc-m_c2.x()));
 
     std::vector<PMP::Edge_location<TriangleMesh, typename K::FT>> shortest_path;
-      locally_shortest_path<typename K::FT>(center, polygon_center, tmesh, shortest_path, solver);
+      locally_shortest_path<typename K::FT>(center, polygon_center, tmesh, shortest_path, parameters::dual_geodesic_solver(std::ref(solver)));
 
 
     std::vector<std::pair<typename K::FT, typename K::FT>> polar_coords =
@@ -752,7 +752,7 @@ trace_Bezier_curves(const CGAL::Polygon_mesh_processing::Face_location<TriangleM
     std::vector<PMP::Face_location<TriangleMesh, FT>> bezier =
       recursive_de_Casteljau(tmesh, control_loc, num_subdiv
 #ifndef CGAL_BSURF_USE_DIJKSTRA_SP
-                            , *solver_ptr
+                            , parameters::dual_geodesic_solver(std::ref(*solver_ptr))
 #endif
                             );
 
@@ -767,7 +767,7 @@ trace_Bezier_curves(const CGAL::Polygon_mesh_processing::Face_location<TriangleM
       if (loc.first!=loc1.first)
       {
         std::vector<PMP::Edge_location<TriangleMesh, FT>> edge_locations;
-        locally_shortest_path<FT>(loc, loc1, tmesh, edge_locations, solver);
+        locally_shortest_path<FT>(loc, loc1, tmesh, edge_locations, parameters::dual_geodesic_solver(std::ref(solver)));
         result[i].reserve(result[i].size()+edge_locations.size());
         for (const PMP::Edge_location<TriangleMesh, FT>& e : edge_locations)
           result[i].push_back(PMP::to_face_location(e, tmesh));
@@ -878,7 +878,7 @@ trace_polyline_of_Bezier_curves(const CGAL::Polygon_mesh_processing::Face_locati
     std::vector<PMP::Face_location<TriangleMesh, FT>> bezier =
       recursive_de_Casteljau(tmesh, control_loc, num_subdiv
 #ifndef CGAL_BSURF_USE_DIJKSTRA_SP
-                            , *solver_ptr
+                            , parameters::dual_geodesic_solver(std::ref(*solver_ptr))
 #endif
                             );
 
@@ -893,7 +893,7 @@ trace_polyline_of_Bezier_curves(const CGAL::Polygon_mesh_processing::Face_locati
       if (loc.first!=loc1.first)
       {
         std::vector<PMP::Edge_location<TriangleMesh, FT>> edge_locations;
-        locally_shortest_path<FT>(loc, loc1, tmesh, edge_locations, solver);
+        locally_shortest_path<FT>(loc, loc1, tmesh, edge_locations, parameters::dual_geodesic_solver(std::ref(solver)));
         for (const PMP::Edge_location<TriangleMesh, FT>& e : edge_locations)
           result.push_back(PMP::to_face_location(e, tmesh));
       }
@@ -975,7 +975,7 @@ trace_agap_polygon(const CGAL::Polygon_mesh_processing::Face_location<TriangleMe
   for(std::size_t i=0;i<n;++i)
   {
     edge_locations.clear();
-    locally_shortest_path<typename K::FT>(vertices[i],vertices[(i+1)%n],tmesh, edge_locations, *solver_ptr);
+    locally_shortest_path<typename K::FT>(vertices[i],vertices[(i+1)%n],tmesh, edge_locations, parameters::dual_geodesic_solver(std::ref(*solver_ptr)));
     result.push_back(PMP::construct_point(vertices[i],tmesh));
     for(auto& el : edge_locations)
     {
