@@ -41,7 +41,7 @@ namespace CGAL {
   * a vertex base model of `SimplicialMeshVertexBase_3`
   * and a cell base model of `SimplicialMeshCellBase_3`
   *
-  * @param tets the set of finite tetrahedra of a valid CGAL triangulation.
+  * @param tets the set of finite tetrahedra of a valid \cgal triangulation.
   * Each element in the range is the geometric description of the
   * corresponding cell in the triangulation.
   *
@@ -117,7 +117,7 @@ namespace CGAL {
   * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param points points of the soup of tetrahedra
-  * @param tets the set of finite tetrahedra of a valid CGAL triangulation.
+  * @param tets the set of finite tetrahedra of a valid \cgal triangulation.
   * Each element in the range describes a tetrahedron using the indices of the points
   * in `points`.
   * It must
@@ -201,10 +201,10 @@ namespace CGAL {
     Default_facet_map empty_map;
     Default_subdomains subdomain_indices(tets.size(), Subdomain_index(1));
 
-    const Facet_map_ref_type& facets = choose_parameter(
+    Facet_map_ref_type facets = choose_parameter(
           get_parameter_reference(np, internal_np::surface_facets),
           empty_map);
-    const Subdomains_ref_type& subdomains = choose_parameter(
+    Subdomains_ref_type subdomains = choose_parameter(
           get_parameter_reference(np, internal_np::subdomain_indices),
           subdomain_indices);
     const bool non_manifold = choose_parameter(

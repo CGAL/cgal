@@ -364,7 +364,7 @@ Tests whether `(u,v)` is an edge of the triangulation data structure.
 bool is_edge(Vertex_handle u, Vertex_handle v) const;
 
 /*!
-Tests whether `(c,i)` is a facet of of the triangulation data structure.
+Tests whether `(c,i)` is a facet of the triangulation data structure.
 Answers `false` when `dimension()` \f$ <2\f$ .
 \pre \f$ i \in\{0,1,2,3\}\f$
 */
@@ -832,6 +832,26 @@ Vertex_iterator vertices_begin() const;
 
 */
 Vertex_iterator vertices_end() const;
+
+/*!
+* returns an array containing the vertices of `e`,
+* in the order of their indices `e.second` and `e.third`
+* in the cell `e.first`.
+*/
+std::array<Vertex_handle, 2> vertices(const Edge& e) const;
+
+/*!
+* returns an array containing the vertices of `f`,
+* in counterclockwise order on the face of `f.first`
+* opposite to vertex `f.first->vertex(f.second)`.
+*/
+std::array<Vertex_handle, 3> vertices(const Facet& f) const;
+
+/*!
+* returns an array containing the vertices of `c`,
+* in the same order as the indices in `c`.
+*/
+std::array<Vertex_handle, 4> vertices(const Cell_handle c) const;
 
 /// @}
 

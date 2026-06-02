@@ -479,6 +479,8 @@ bool is_simple_polygon(Iterator points_begin, Iterator points_end,
     typedef std::set<i_polygon::Vertex_index,
                      i_polygon::Less_segments<Vertex_data> >       Tree;
 
+    typename PolygonTraits::Equal_2 equal_2 = polygon_traits.equal_2_object();
+
     // A temporary fix as the sweep in some cases doesn't discover vertices with degree > 2
     // Todo: fix the sweep code
     std::vector<typename PolygonTraits::Point_2> points(points_begin,points_end);
@@ -487,7 +489,7 @@ bool is_simple_polygon(Iterator points_begin, Iterator points_end,
     typename std::vector<typename PolygonTraits::Point_2>::iterator
                                   succ(points.begin()) , it(succ++);
     for(;succ != points.end(); ++it,++succ){
-      if(*it == *succ){
+      if(equal_2(*it, *succ)){
         return false;
       }
     }

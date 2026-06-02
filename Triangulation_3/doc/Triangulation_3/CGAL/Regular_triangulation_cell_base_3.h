@@ -12,7 +12,7 @@ It is the default cell base class of regular triangulations.
 
 \tparam Cb is a cell base class from which `Regular_triangulation_cell_base_3`
 derives. It must be a model of `TriangulationCellBase_3`.
-By default, this parameter is instantiated by
+By default, this parameter is instantiated with
 `Triangulation_cell_base_3<Traits>`.
 
 \cgalModels{RegularTriangulationCellBase_3}

@@ -10,8 +10,8 @@
 //
 // Author(s)     : Jane Tournois, Noura Faraj, Jean-Marc Thiery, Tamy Boubekeur
 
-#ifndef TETRAHEDRAL_REMESHING_H
-#define TETRAHEDRAL_REMESHING_H
+#ifndef CGAL_TETRAHEDRAL_REMESHING_H
+#define CGAL_TETRAHEDRAL_REMESHING_H
 
 #include <CGAL/license/Tetrahedral_remeshing.h>
 
@@ -29,6 +29,7 @@
 
 #include <CGAL/property_map.h>
 
+#include <cstddef>
 #include <type_traits>
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
@@ -84,7 +85,7 @@ namespace CGAL
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * @param tr the triangulation to be remeshed, of type `Triangulation_3<Traits, TDS, SLDS>`.
-*           `Remeshing_triangulation` is a helper class that satisfies all the requirements
+*           `CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3` is a helper class that satisfies all the requirements
 *           of its template parameters.
 * @param sizing the target edge length. This parameter provides a
 *          mesh density target for the remeshing algorithm.
@@ -227,7 +228,7 @@ void tetrahedral_isotropic_remeshing(
 
   auto nb_extra_iterations
     = choose_parameter(get_parameter(np, internal_np::nb_flip_smooth_iterations),
-        std::size_t(3));
+        std::size_t{3});
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
   std::cout << "Tetrahedral remeshing ("
@@ -488,7 +489,7 @@ void tetrahedral_isotropic_remeshing(
 
   auto nb_extra_iterations
     = choose_parameter(get_parameter(np, internal_np::nb_flip_smooth_iterations),
-        std::size_t(3));
+        std::size_t{3});
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
   std::cout << "Tetrahedral remeshing ("
@@ -536,4 +537,4 @@ void tetrahedral_isotropic_remeshing(
 
 }//end namespace CGAL
 
-#endif //TETRAHEDRAL_REMESHING_H
+#endif //CGAL_TETRAHEDRAL_REMESHING_H

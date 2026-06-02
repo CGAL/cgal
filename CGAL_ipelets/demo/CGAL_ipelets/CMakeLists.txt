@@ -20,8 +20,9 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
 find_package(CGAL REQUIRED COMPONENTS Core)
 
-find_package(Eigen3 3.1.0 QUIET) #(requires 3.1.0 or greater)
+find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
+
 if(NOT TARGET CGAL::Eigen3_support)
   message("NOTICE: This project requires the Eigen library, and will not be compiled.")
   return()
@@ -74,9 +75,7 @@ if(IPE_FOUND AND IPE_VERSION)
   set(CGAL_IPELETS ${CGAL_IPELETS} circle_pencils)
   set(CGAL_IPELETS ${CGAL_IPELETS} hyperbolic)
   set(CGAL_IPELETS ${CGAL_IPELETS} distance)
-  if(CGAL_Core_FOUND)
-    set(CGAL_IPELETS ${CGAL_IPELETS} cone_spanners)
-  endif()
+  set(CGAL_IPELETS ${CGAL_IPELETS} cone_spanners)
 
   if(IPELET_INSTALL_DIR)
     message(STATUS "Set Ipelets install dir: ${IPELET_INSTALL_DIR}")
@@ -97,10 +96,8 @@ if(IPE_FOUND AND IPE_VERSION)
     endif ()
     cgal_add_compilation_test(CGAL_${IPELET})
   endforeach(IPELET)
-  if(CGAL_Core_FOUND)
-    target_link_libraries(CGAL_cone_spanners PRIVATE CGAL::CGAL CGAL::CGAL_Core
-                                                     CGAL::Eigen3_support)
-  endif()
+  target_link_libraries(CGAL_cone_spanners PRIVATE CGAL::CGAL CGAL::CGAL_Core
+                                                   CGAL::Eigen3_support)
   #example in doc not installed
   add_library(simple_triangulation MODULE simple_triangulation.cpp)
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS simple_triangulation)
