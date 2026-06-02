@@ -40,8 +40,8 @@ namespace Polygon_2 {
 // in the range are collinear segments, up to a given tolerance.
 //
 // \tparam K must be a model of `Kernel`
-// \tparam InputForwardIterator must be a model of `ForwardIterator`
-//                              with value type `K::Point_2`
+// \tparam InputBidirectionalIterator must be a model of `BidirectionalIterator`
+//                                    with value type `K::Point_2`
 // \tparam OutputForwardIterator must be a model of `OutputIterator`
 //                               with value type `K::Point_2`
 //
@@ -53,9 +53,9 @@ namespace Polygon_2 {
 //
 // \pre The range `(first, beyond)` is composed of at least three points.
 // \pre Not all points in the range `(first, beyond)` are (almost) collinear.
-template<typename K, typename InputForwardIterator, typename OutputForwardIterator>
-OutputForwardIterator filter_collinear_points(InputForwardIterator first,
-                                              InputForwardIterator beyond,
+template<typename K, typename InputBidirectionalIterator, typename OutputForwardIterator>
+OutputForwardIterator filter_collinear_points(InputBidirectionalIterator first,
+                                              InputBidirectionalIterator beyond,
                                               OutputForwardIterator out,
                                               const typename K::FT tolerance =
                                                 std::numeric_limits<typename K::FT>::epsilon())
@@ -65,9 +65,9 @@ OutputForwardIterator filter_collinear_points(InputForwardIterator first,
   typedef typename K::FT                              FT;
   typedef typename K::Point_2                         Point;
 
-  InputForwardIterator last = std::prev(beyond);
+  InputBidirectionalIterator last = std::prev(beyond);
 
-  InputForwardIterator vit = first, vit_next = vit, vit_next_2 = vit, vend = vit;
+  InputBidirectionalIterator vit = first, vit_next = vit, vit_next_2 = vit, vend = vit;
   ++vit_next;
   ++(++vit_next_2);
 
@@ -318,11 +318,11 @@ std::cout << "polygon not locally convex!" << std::endl;
 //      Traits::Compare_y_2 compare_y_2_object()
 //      Traits::Orientation_2 and orientation_2_object()
 
-template <class ForwardIterator, class Point, class Traits>
-Oriented_side oriented_side_2(ForwardIterator first,
-                                        ForwardIterator last,
-                                        const Point& point,
-                                        const Traits& traits)
+template <class BidirIterator, class Point, class Traits>
+Oriented_side oriented_side_2(BidirIterator first,
+                              BidirIterator last,
+                              const Point& point,
+                              const Traits& traits)
 {
   Orientation o = orientation_2(first, last, traits);
   CGAL_assertion(o != COLLINEAR);
@@ -508,17 +508,17 @@ namespace internal {
 // This exists because the "is_simple_2" precondition in the orientation_2() function is in fact
 // stronger than necessary: it also works for strictly simple polygons, which matters for
 // SLS2 and AW2, as the polygons might have non-manifoldness.
-template <class ForwardIterator, class Traits>
-Orientation orientation_2_no_precondition(ForwardIterator first,
-                                          ForwardIterator last,
+template <class BidirIterator, class Traits>
+Orientation orientation_2_no_precondition(BidirIterator first,
+                                          BidirIterator last,
                                           const Traits& traits)
 {
-  ForwardIterator i = left_vertex_2(first, last, traits);
+  BidirIterator i = left_vertex_2(first, last, traits);
 
-  ForwardIterator prev = (i == first) ? last : i;
+  BidirIterator prev = (i == first) ? last : i;
   --prev;
 
-  ForwardIterator next = i;
+  BidirIterator next = i;
   ++next;
   if (next == last)
     next = first;
@@ -534,9 +534,9 @@ Orientation orientation_2_no_precondition(ForwardIterator first,
 } // namespace internal
 } // namespace Polygon
 
-template <class ForwardIterator, class Traits>
-Orientation orientation_2(ForwardIterator first,
-                          ForwardIterator last,
+template <class BidirIterator, class Traits>
+Orientation orientation_2(BidirIterator first,
+                          BidirIterator last,
                           const Traits& traits)
 {
   CGAL_precondition(is_simple_2(first, last, traits));
