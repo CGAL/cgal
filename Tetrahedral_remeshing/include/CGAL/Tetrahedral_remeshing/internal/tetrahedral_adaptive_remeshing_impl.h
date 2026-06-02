@@ -35,6 +35,8 @@
 #include <optional>
 #include <boost/container/small_vector.hpp>
 
+#include <CGAL/Tetrahedral_remeshing/internal/elementary_remesh_impl.h>
+
 namespace CGAL
 {
 namespace Tetrahedral_remeshing
@@ -88,6 +90,8 @@ class Adaptive_remesher
 
   typedef Tetrahedral_remeshing_smoother<C3t3, SizingFunction, CellSelector> Smoother;
 
+  typedef Elementary_remesher<C3t3, SizingFunction, CellSelector, Visitor> ElementaryRemesher;
+
 private:
   C3t3 m_c3t3;
   const SizingFunction& m_sizing;
@@ -95,9 +99,9 @@ private:
   CellSelector m_cell_selector;
   Visitor& m_visitor;
   Smoother m_vertex_smoother;//initialized with initial surface
+  ElementaryRemesher m_elementary_remesher;
 
   C3t3* m_c3t3_pbackup;
-  std::vector<Vertex_handle> m_far_points;
   Triangulation* m_tr_pbackup; //backup to re-swap triangulations when done
 
 public:
@@ -124,6 +128,7 @@ public:
 
     init_c3t3(vcmap, ecmap, fcmap);
     m_vertex_smoother.init(m_c3t3);
+    m_elementary_remesher.smooth_init(m_c3t3,m_sizing,cell_selector,m_protect_boundaries,smooth_constrained_edges);
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "00-init");
@@ -149,12 +154,14 @@ public:
     , m_visitor(visitor)
     , m_vertex_smoother(sizing, cell_selector, protect_boundaries, smooth_constrained_edges)
     , m_c3t3_pbackup(&c3t3)
-    , m_tr_pbackup(NULL)
+      , m_tr_pbackup(NULL)
   {
     m_c3t3.swap(c3t3);
 
     init_c3t3(vcmap, ecmap, fcmap);
     m_vertex_smoother.init(m_c3t3);
+
+    m_elementary_remesher.smooth_init(m_c3t3,m_sizing,cell_selector,m_protect_boundaries,smooth_constrained_edges);
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "00-init");
@@ -171,8 +178,12 @@ public:
   void split()
   {
     CGAL_assertion(check_vertex_dimensions());
+#ifdef CGAL_TETRAHEDRAL_REMESHING_USE_REFACTORED_SPLIT
+    ElementaryRemesher::split(m_c3t3, m_sizing, m_cell_selector, m_protect_boundaries);
+#else
     split_long_edges(m_c3t3, m_sizing, m_protect_boundaries,
                      m_cell_selector, m_visitor);
+#endif
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     CGAL_assertion(tr().tds().is_valid(true));
@@ -195,8 +206,12 @@ public:
   void collapse()
   {
     CGAL_assertion(check_vertex_dimensions());
-    collapse_short_edges(m_c3t3, m_sizing, m_protect_boundaries,
-                         m_cell_selector, m_visitor);
+#ifdef CGAL_TETRAHEDRAL_REMESHING_USE_REFACTORED_COLLAPSE
+    ElementaryRemesher::collapse(m_c3t3, m_sizing, m_cell_selector,m_visitor,m_protect_boundaries);
+#else
+   collapse_short_edges(m_c3t3, m_sizing, m_protect_boundaries,
+                                           m_cell_selector, m_visitor);
+#endif
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     CGAL_assertion(tr().tds().is_valid(true));
@@ -216,8 +231,12 @@ public:
 
   void flip()
   {
+#ifdef CGAL_TETRAHEDRAL_REMESHING_USE_REFACTORED_FLIP
+    ElementaryRemesher::flip(m_c3t3, m_cell_selector,m_visitor,m_protect_boundaries);
+#else
     flip_edges(m_c3t3, m_protect_boundaries,
                m_cell_selector, m_visitor);
+#endif
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     CGAL_assertion(tr().tds().is_valid(true));
@@ -237,7 +256,11 @@ public:
 
   void smooth()
   {
+#if defined CGAL_TETRAHEDRAL_REMESHING_USE_REFACTORED_SMOOTH
+  m_elementary_remesher.smooth(m_c3t3);
+#else
     m_vertex_smoother.smooth_vertices(m_c3t3);
+#endif
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     CGAL_assertion(tr().tds().is_valid(true));
@@ -304,12 +327,7 @@ public:
   void finalize()
   {
     if (input_is_c3t3())
-    {
-      //reset far points dimension
-      for (Vertex_handle v : m_far_points)
-        v->set_dimension(-1);
       m_c3t3_pbackup->swap(m_c3t3);
-    }
     else
       m_tr_pbackup->swap(m_c3t3.triangulation());
   }
@@ -333,9 +351,6 @@ private:
     CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
       m_c3t3.triangulation(), "00-c3t3_vertices_before_init_");
 #endif
-
-    if (input_is_c3t3())
-      backup_far_points();
 
     const Subdomain_index default_subdomain = default_subdomain_index();
 
@@ -473,22 +488,11 @@ private:
     CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
       m_c3t3.triangulation(), "0-c3t3_vertices_after_init_");
     CGAL::Tetrahedral_remeshing::debug::check_surface_patch_indices(m_c3t3);
-    CGAL::Tetrahedral_remeshing::debug::count_far_points(m_c3t3);
     CGAL::Tetrahedral_remeshing::debug::dump_edges_in_complex(m_c3t3,
       "0-edges_in_complex_after_init.polylines.txt");
 #endif
   }
 
-  void backup_far_points()
-  {
-    for (Vertex_handle v : tr().finite_vertex_handles())
-    {
-      if (v->in_dimension() == -1)
-        m_far_points.push_back(v);
-    }
-  }
-
-private:
   bool dimension_is_modifiable(const Vertex_handle& v, const int new_dim) const
   {
     const int vdim = v->in_dimension();
@@ -608,10 +612,11 @@ public:
 #endif
       if (!resolution_reached())
       {
+
         split();
         collapse();
       }
-      flip();
+        flip();
       smooth();
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
@@ -634,6 +639,8 @@ public:
     }
 
     m_vertex_smoother.start_flip_smooth_steps(m_c3t3);
+    m_elementary_remesher.m_context->start_flip_smooth_steps(m_c3t3);
+
     while (it_nb < max_it + nb_extra_iterations)
     {
       ++it_nb;

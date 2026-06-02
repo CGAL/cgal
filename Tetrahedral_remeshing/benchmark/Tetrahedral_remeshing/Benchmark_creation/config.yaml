@@ -1,0 +1,55 @@
+# Tetrahedral Remeshing Benchmark — example configuration.
+#
+# Copy this file, fill in the absolute paths, then run from this directory:
+#   python run_benchmarks.py --config config.yaml
+#
+# Executable positional args:
+#   <mesh> <num_iterations> <target_edge_factor> <smooth_constrained_edges>
+#   <threads> <output.json>
+
+pipeline:
+  results_dir: /path/to/Benchmark_results
+  run_benchmarks: true
+  num_repeats: 3
+  export_csv: true
+  export_charts: false
+  report: true
+  report_chart_grid_cols: 2
+  resource_monitoring: false
+
+profiling:
+  analysis_types: []
+  profile_runs: none
+
+benchmarks:
+  - name: original_sequential
+    exec: /path/to/build/Release/benchmark_original_tetrahedral_remeshing.exe
+    sweep:
+      input_mesh:
+        - /path/to/Tetrahedral_remeshing/benchmark/Tetrahedral_remeshing/bear.mesh
+        - /path/to/Tetrahedral_remeshing/benchmark/Tetrahedral_remeshing/sphere.mesh
+      num_iterations: [3]
+      target_edge_factor: [0.25]
+      smooth_constrained_edges: [1]
+      threads: [1]
+
+  - name: refactored_sequential
+    exec: /path/to/build/Release/benchmark_refactored_sequential_tetrahedral_remeshing.exe
+    sweep:
+      input_mesh:
+        - /path/to/Tetrahedral_remeshing/benchmark/Tetrahedral_remeshing/bear.mesh
+        - /path/to/Tetrahedral_remeshing/benchmark/Tetrahedral_remeshing/sphere.mesh
+      num_iterations: [3]
+      target_edge_factor: [0.25]
+      smooth_constrained_edges: [1]
+      threads: [1]
+
+  - name: parallel_8threads
+    exec: /path/to/build/Release/benchmark_refactored_parallel_tetrahedral_remeshing.exe
+    sweep:
+      input_mesh:
+        - /path/to/Tetrahedral_remeshing/benchmark/Tetrahedral_remeshing/bear.mesh
+      num_iterations: [3]
+      target_edge_factor: [0.25]
+      smooth_constrained_edges: [1]
+      threads: [8]
