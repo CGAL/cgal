@@ -1201,6 +1201,10 @@ public:
   // IO helpers for debugging
   bool write_missing_segments_file(std::ostream& out) { return cdt_impl.write_missing_segments_file(out); }
   void write_all_segments_file(std::ostream& out)     { cdt_impl.write_all_segments_file(out); }
+  void dump_constrained_facets_to_off(std::string filename) const { cdt_impl.dump_constrained_facets_to_off(filename); }
+  void save_binary_file(std::string filename = "dump.binary.cgal") const {
+    cdt_impl.dump_triangulation(filename);
+  }
 
   // Post-processing helpers
   /// \brief Moves Steiner vertices on the boundary to the volume.
@@ -5950,8 +5954,8 @@ public:
     write_3d_triangulation_to_OFF(dump, tr);
   }
 
-  void dump_triangulation() const {
-    std::ofstream dump("dump.binary.cgal", std::ios::binary);
+  void dump_triangulation(std::string filename = "dump.binary.cgal") const {
+    std::ofstream dump(filename, std::ios::binary);
     CGAL::IO::save_binary_file(dump, *this);
   }
 

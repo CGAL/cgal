@@ -36,6 +36,7 @@
 
 #include <algorithm>
 #include <array>
+#include <boost/iterator/function_output_iterator.hpp>
 #include <cassert>
 #include <chrono>
 #include <cstddef>
@@ -397,8 +398,9 @@ std::function<void()> create_output_finalizer(const CDT& cdt, const CDT_options&
                      "invalid state.\n";
         return;
       }
-      auto dump_tets_to_medit = [](std::string fname,
+      auto dump_to_medit = [](std::string fname,
                               const std::vector<K::Point_3> &points,
+                              const std::vector<std::array<std::size_t, 4>> &indexed_triangles,
                               const std::vector<std::array<std::size_t, 4>> &indexed_tetra,
                               const std::vector<std::size_t> &cell_ids)
       {
@@ -408,19 +410,23 @@ std::function<void()> create_output_finalizer(const CDT& cdt, const CDT_options&
         out << points.size() << "\n";
         for (const K::Point_3& p : points)
           out << p << " 0\n";
-        out << "Triangles\n0\nTetrahedra\n";
+        out << "Triangles\n" << indexed_triangles.size() << "\n";
+        for (const auto& tri : indexed_triangles)
+          out << tri[0]+1 << " " << tri[1]+1 << " " << tri[2]+1 << " " << tri[3] << "\n";
+        out << "Tetrahedra\n";
         out << indexed_tetra.size() << "\n";
         for (std::size_t k=0;k<indexed_tetra.size(); ++k)
           out << indexed_tetra[k][0]+1 << " "
-                    << indexed_tetra[k][1]+1 << " "
-                    << indexed_tetra[k][2]+1 << " "
-                    << indexed_tetra[k][3]+1 << " " << cell_ids[k] << "\n";
+              << indexed_tetra[k][1]+1 << " "
+              << indexed_tetra[k][2]+1 << " "
+              << indexed_tetra[k][3]+1 << " " << cell_ids[k] << "\n";
         out <<"End\n";
       };
 
-      auto& tr = cdt;
+      const auto& tr = cdt.triangulation();
+      using Tr = CDT::Triangulation;
 
-      std::unordered_map<CDT::Triangulation::Cell_handle, int /*Subdomain_index*/> cells_map;
+      std::unordered_map<Tr::Cell_handle, int /*Subdomain_index*/> cells_map;
       for(auto ch : tr.all_cell_handles())
       {
         cells_map[ch] = 1;
@@ -445,12 +451,45 @@ std::function<void()> create_output_finalizer(const CDT& cdt, const CDT_options&
         }
       }
 
+      const bool export_all_the_bbox =
+          std::all_of(cells_map.begin(), cells_map.end(), [](const auto& kv) { return kv.second == 0; });
+      if (export_all_the_bbox) {
+        for(auto ch : tr.finite_cell_handles())
+        {
+          cells_map[ch] = 1;
+        }
+      }
+
       std::vector<K::Point_3> points(cdt.number_of_vertices());
       std::size_t idx = 0;
       for(auto v: cdt.finite_vertex_handles()) {
         // renumber the vertices: there might be holes in the numbering due to removed vertices
         v->set_time_stamp(++idx);
         points.at(idx - 1) = v->point();
+      }
+      std::vector<std::array<std::size_t, 4>> indexed_triangles;
+      std::size_t max_polygon_id = 0;
+      for(auto f : cdt.constrained_facets()) {
+        const auto verts = tr.vertices(f);
+        const auto polygon_id = static_cast<std::size_t>(cdt.face_constraint_index(f));
+        indexed_triangles.push_back({verts[0]->time_stamp() - 1,
+                                     verts[1]->time_stamp() - 1,
+                                     verts[2]->time_stamp() - 1,
+                                     polygon_id});
+        if (polygon_id > max_polygon_id) {
+          max_polygon_id = polygon_id;
+        }
+      }
+      if(export_all_the_bbox) {
+        auto inf_v = tr.infinite_vertex();
+        tr.incident_cells(inf_v, boost::make_function_output_iterator([&](Tr::Cell_handle ch) {
+                            auto facet_index = ch->index(inf_v);
+                            const auto verts = tr.vertices(Tr::Facet{ch, facet_index});
+                            indexed_triangles.push_back({verts[0]->time_stamp() - 1,
+                                                         verts[1]->time_stamp() - 1,
+                                                         verts[2]->time_stamp() - 1,
+                                                         max_polygon_id + 1 /*a new polygon id for the bbox*/});
+                          }));
       }
       std::vector<std::array<std::size_t, 4>> indexed_tetra;
       indexed_tetra.reserve(cdt.number_of_cells());
@@ -463,24 +502,11 @@ std::function<void()> create_output_finalizer(const CDT& cdt, const CDT_options&
         }
       }
       std::vector<std::size_t> cell_ids(indexed_tetra.size(), 1);
-      dump_tets_to_medit(options.output_filename + ".mesh", points, indexed_tetra, cell_ids);
+      dump_to_medit(options.output_filename + ".mesh", points, indexed_triangles, indexed_tetra, cell_ids);
+      cdt.dump_constrained_facets_to_off(options.output_filename);
     }
     {
-      std::ofstream dump(options.output_filename);
-      dump.precision(17);
-#if CGAL_CDT_3_CAN_USE_CXX20_RANGES
-      cdt.write_facets(dump, cdt.triangulation(), std::views::filter(cdt.finite_facets(), [&](auto f) {
-          return cdt.is_facet_constrained(f);
-      }));
-#else // If C++20 ranges are not available, we use boost::make_filter_iterator to filter the facets.
-      auto is_facet_constrained = [&](auto f) { return cdt.is_facet_constrained(f); };
-      const auto& tr = cdt.triangulation();
-      auto it_begin = tr.finite_facets_begin();
-      auto it_end = tr.finite_facets_end();
-      auto filtered_it_begin = boost::make_filter_iterator(is_facet_constrained,it_begin, it_end);
-      auto filtered_it_end = boost::make_filter_iterator(is_facet_constrained,it_end, it_end);
-      cdt.write_facets(dump, tr, CGAL::make_range(filtered_it_begin, filtered_it_end));
-#endif // CGAL_CDT_3_CAN_USE_CXX20_RANGES
+      cdt.save_binary_file(options.output_filename + ".binary.cgal");
     }
   };
 }
