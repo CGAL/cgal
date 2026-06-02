@@ -102,8 +102,8 @@ void test_collinear_point_filtering(const R&, const char* FileName)
   std::size_t final_size;
 
   // check for 3 points
-  CGAL::internal::Polygon_2::filter_collinear_points<R>(make_bidirectional_iterator(&polygon[0]),
-                                                        make_bidirectional_iterator(&polygon[0] + 3),
+  CGAL::internal::Polygon_2::filter_collinear_points<R>(make_forward_iterator(&polygon[0]),
+                                                        make_forward_iterator(&polygon[0] + 3),
                                                         std::back_inserter(simplified_polygon),
                                                         0 /*tolerance*/);
   final_size = simplified_polygon.size();
@@ -112,8 +112,8 @@ void test_collinear_point_filtering(const R&, const char* FileName)
 
   // generic tests
   simplified_polygon.clear();
-  CGAL::internal::Polygon_2::filter_collinear_points<R>(make_bidirectional_iterator(&polygon[0]),
-                                                        make_bidirectional_iterator(&polygon[0] + polygon.size()),
+  CGAL::internal::Polygon_2::filter_collinear_points<R>(make_forward_iterator(&polygon[0]),
+                                                        make_forward_iterator(&polygon[0] + polygon.size()),
                                                         std::back_inserter(simplified_polygon),
                                                         0 /*tolerance*/);
   final_size = simplified_polygon.size();
@@ -122,8 +122,8 @@ void test_collinear_point_filtering(const R&, const char* FileName)
 
     // --
   simplified_polygon.clear();
-  CGAL::internal::Polygon_2::filter_collinear_points<R>(make_bidirectional_iterator(&polygon[0]),
-                                                        make_bidirectional_iterator(&polygon[0] + polygon.size()),
+  CGAL::internal::Polygon_2::filter_collinear_points<R>(make_forward_iterator(&polygon[0]),
+                                                        make_forward_iterator(&polygon[0] + polygon.size()),
                                                         std::back_inserter(simplified_polygon),
                                                         1e-10);
   final_size = simplified_polygon.size();
@@ -185,10 +185,10 @@ void test_polygon(const R&, const Point&, const char* FileName)
                                  make_forward_iterator(&polygon[0]+polygon.size()), R());
     CGAL::Bounded_side bside = CGAL::bounded_side_2(make_forward_iterator(&polygon[0]),
                                                     make_forward_iterator(&polygon[0]+polygon.size()), point);
-    CGAL::Oriented_side oside = CGAL::oriented_side_2(make_bidirectional_iterator(&polygon[0]),
-                                                      make_bidirectional_iterator(&polygon[0]+polygon.size()), point);
-    CGAL::Orientation orientation = CGAL::orientation_2(make_bidirectional_iterator(&polygon[0]),
-                                                        make_bidirectional_iterator(&polygon[0]+polygon.size()));
+    CGAL::Oriented_side oside = CGAL::oriented_side_2(make_forward_iterator(&polygon[0]),
+                                                      make_forward_iterator(&polygon[0]+polygon.size()), point);
+    CGAL::Orientation orientation = CGAL::orientation_2(make_forward_iterator(&polygon[0]),
+                                                        make_forward_iterator(&polygon[0]+polygon.size()));
 
     cout << "left   = " << *left << endl;
     cout << "right  = " << *right << endl;
