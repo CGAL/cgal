@@ -178,8 +178,8 @@ public:
 
 template <class ForwardIterator, class PolygonTraits>
 ForwardIterator left_vertex_2(ForwardIterator first,
-                                   ForwardIterator last,
-                                   const PolygonTraits&traits)
+                              ForwardIterator last,
+                              const PolygonTraits& traits)
 {
     CGAL_precondition(first != last);
     internal::Polygon_2::Compare_vertices<PolygonTraits>
@@ -194,8 +194,8 @@ ForwardIterator left_vertex_2(ForwardIterator first,
 
 template <class ForwardIterator, class PolygonTraits>
 ForwardIterator right_vertex_2(ForwardIterator first,
-                                    ForwardIterator last,
-                                    const PolygonTraits &traits)
+                               ForwardIterator last,
+                               const PolygonTraits &traits)
 {
     CGAL_precondition(first != last);
     internal::Polygon_2::Compare_vertices<PolygonTraits>
@@ -210,8 +210,8 @@ ForwardIterator right_vertex_2(ForwardIterator first,
 
 template <class ForwardIterator, class PolygonTraits>
 ForwardIterator top_vertex_2(ForwardIterator first,
-                                  ForwardIterator last,
-                                  const PolygonTraits&traits)
+                             ForwardIterator last,
+                             const PolygonTraits& traits)
 {
     CGAL_precondition(first != last);
     return std::max_element(first, last, traits.less_yx_2_object());
@@ -224,8 +224,8 @@ ForwardIterator top_vertex_2(ForwardIterator first,
 
 template <class ForwardIterator, class PolygonTraits>
 ForwardIterator bottom_vertex_2(ForwardIterator first,
-                                     ForwardIterator last,
-                                     const PolygonTraits&traits)
+                                ForwardIterator last,
+                                const PolygonTraits& traits)
 {
     CGAL_precondition(first != last);
     return std::min_element(first, last, traits.less_yx_2_object());
@@ -247,8 +247,8 @@ ForwardIterator bottom_vertex_2(ForwardIterator first,
 
 template <class ForwardIterator, class Traits>
 bool is_convex_2(ForwardIterator first,
-                      ForwardIterator last,
-                      const Traits& traits)
+                 ForwardIterator last,
+                 const Traits& traits)
 {
   ForwardIterator previous = first;
   if (previous == last) return true;
@@ -409,9 +409,9 @@ int which_side_in_slab(Point const &point, Point const &low, Point const &high,
 
 template <class ForwardIterator, class Point, class PolygonTraits>
 Bounded_side bounded_side_2(ForwardIterator first,
-                                      ForwardIterator last,
-                                      const Point& point,
-                                      const PolygonTraits& traits)
+                            ForwardIterator last,
+                            const Point& point,
+                            const PolygonTraits& traits)
 {
 
   ForwardIterator current = first;
