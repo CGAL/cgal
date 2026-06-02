@@ -126,21 +126,6 @@ struct Orthogonal_cut_plane_traits
     }
   };
 
-  struct Construct_point_on_3
-  {
-    Point_3 operator()(const Plane_3 &plane)
-    {
-      switch(plane.first){
-        case 0:
-          return Point_3(plane.second,0,0);
-        case 1:
-          return Point_3(0,plane.second,0);
-        default:
-          return Point_3(0,0,plane.second);
-      }
-    }
-  };
-
   struct Construct_orthogonal_vector_3
   {
     Vector_3 operator()(const Plane_3 &plane){ return plane.first; }
@@ -163,7 +148,6 @@ struct Orthogonal_cut_plane_traits
   Compute_squared_distance_3 compute_squared_distance_3_object() const { return Compute_squared_distance_3(); }
   Construct_orthogonal_vector_3 construct_orthogonal_vector_3_object() const { return Construct_orthogonal_vector_3(); }
   Construct_direction_3 construct_direction_3_object() const { return Construct_direction_3(); }
-  Construct_point_on_3 construct_point_on_3_object() const { return Construct_point_on_3(); }
   Compare_projection_along_direction_3 compare_projection_along_direction_3_object() const { return Compare_projection_along_direction_3(); }
 
 #ifndef CGAL_PLANE_CLIP_DO_NOT_USE_BOX_INTERSECTION_D
