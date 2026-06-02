@@ -51,9 +51,19 @@ namespace CGAL {
   * @tparam TetrahedronRange a model of the concept `RandomAccessContainer`
   * whose `value_type` is a model of the concept `RandomAccessContainer`
   * whose `value_type` is `std::size_t`.
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param tets each element in the range describes a tetrahedron
   * using the indices of the vertices.
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+  *
+  * \cgalNamedParamsBegin
+  *   \cgalParamNBegin{verbose}
+  *     \cgalParamDescription{if `true`, the function prints messages about the checks it performs}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`false`}
+  *   \cgalParamNEnd
+  * \cgalNamedParamsEnd
   */
   template <typename TetrahedronRange,
             typename NamedParameters = parameters::Default_named_parameters>
