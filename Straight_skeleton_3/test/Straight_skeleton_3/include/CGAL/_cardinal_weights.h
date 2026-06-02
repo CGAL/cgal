@@ -184,7 +184,10 @@ bool assign_cardinal_weights(const char* weights_filename,
 
     CGAL_SS3_TRACE_V(16, "facet: " << f << " weight: " << weight);
 
-    put(fwm, f, weight);
+    // There is no point using an exact value for the speed: we are going to perturb the face
+    // and introduce inexactness anyway, so we might as well convert to double to avoid
+    // expensive exact arithmetic operations in the skeleton algorithm and further tests.
+    put(fwm, f, CGAL::to_double(weight));
     CGAL_postcondition(get(fwm, f) >= 0);
   }
 
