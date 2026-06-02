@@ -141,6 +141,7 @@ Usage: cdt_3_from_off [options] input.off output.off
 
   --use-finite-edges-map: use a hash map for finite edges (default: false)
   --move-Steiner-vertices-to-the-volume/--no-move-Steiner-vertices-to-the-volume: move Steiner vertices to the volume (default: true)
+  --allow-moving-Steiner-vertices-to-create-negative-tets/--no-allow-moving-Steiner-vertices-to-create-negative-tets: allow moving Steiner vertices to create negative volume tetrahedra (default: false)
   --use-epeck-for-normals/--no-use-epeck-for-normals: use exact kernel for normal computations (default: false)
   --use-epeck-for-Steiner-points/--no-use-epeck-for-Steiner-points: use exact kernel for Steiner point computations (default: false)
 
@@ -168,7 +169,7 @@ struct CDT_options
   bool        read_mesh_with_operator             = false;
   bool        debug_Steiner_points                = false;
   bool        debug_Steiner_points_construction   = false;
-  bool        debug_move_Steiner_vertices         = false;
+  bool        debug_move_Steiner_vertices         = true;
   bool        debug_input_faces                   = false;
   bool        debug_missing_regions               = false;
   bool        debug_regions                       = false;
@@ -185,6 +186,7 @@ struct CDT_options
   bool        debug_restore_faces                 = false;
   bool        use_finite_edges_map                = false;
   bool        move_Steiner_vertices_to_the_volume = true;
+  bool        allow_moving_Steiner_vertices_to_create_negative_tets = false;
   bool        use_epeck_for_normals               = false;
   bool        use_epeck_for_Steiner_points        = false;
   bool        call_is_valid                       = true;
@@ -298,10 +300,10 @@ CDT_options::CDT_options(int argc, char* argv[]) {
         debug_restore_faces                  = enable;
       } else if(arg == "use-finite-edges-map"sv) {
         use_finite_edges_map                = enable;
-      } else if(arg == "no-move-Steiner-vertices-to-the-volume"sv) {
-        move_Steiner_vertices_to_the_volume = false;
       } else if(arg == "move-Steiner-vertices-to-the-volume"sv) {
         move_Steiner_vertices_to_the_volume = enable;
+      } else if(arg == "allow-moving-Steiner-vertices-to-create-negative-tets"sv) {
+        allow_moving_Steiner_vertices_to_create_negative_tets = enable;
       } else if(arg == "no-use-epeck-for-normals"sv) {
         use_epeck_for_normals               = false;
       } else if(arg == "no-use-epeck-for-Steiner-points"sv) {
@@ -352,6 +354,7 @@ CGAL::CDT_3::Debug_options cdt_debug_options(const CDT_options& options) {
   cdt_debug.encroaching_vertices(options.debug_encroaching_vertices);
   cdt_debug.conforming_validation(options.debug_conforming_validation);
   cdt_debug.move_Steiner_vertices(options.debug_move_Steiner_vertices);
+  cdt_debug.move_Steiner_vertices_allow_negative_tets(options.allow_moving_Steiner_vertices_to_create_negative_tets);
   cdt_debug.constraint_hierarchy(options.debug_constraint_hierarchy);
   cdt_debug.geometric_errors(options.debug_geometric_errors);
   cdt_debug.polygon_insertion(options.debug_polygon_insertion);

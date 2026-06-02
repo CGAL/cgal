@@ -98,6 +98,7 @@ struct Debug_options {
     display_statistics,
     use_epeck_for_normals,
     use_epeck_for_Steiner_points,
+    move_Steiner_vertices_allow_negative_tets,
     nb_of_flags
   };
 
@@ -156,6 +157,9 @@ struct Debug_options {
 
   bool move_Steiner_vertices() const { return get(Flag::debug_move_Steiner_vertices); }
   void move_Steiner_vertices(bool b) { get(Flag::debug_move_Steiner_vertices) = b; }
+
+  bool move_Steiner_vertices_allow_negative_tets() const { return get(Flag::move_Steiner_vertices_allow_negative_tets); }
+  void move_Steiner_vertices_allow_negative_tets(bool b) { get(Flag::move_Steiner_vertices_allow_negative_tets) = b; }
 
   bool display_statistics() const { return get(Flag::display_statistics); }
   void display_statistics(bool b) { get(Flag::display_statistics) = b; }
