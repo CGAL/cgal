@@ -461,7 +461,7 @@ public:
 
         rendering_program_cylinder.release();
       }
-      else if (isOpenGL_4_3())
+      else if (isOpenGL_3_2())
       {
         auto renderer = [this, &color, &clipPlane, &plane_point](float rendering_mode) {
 
@@ -703,7 +703,7 @@ public:
       };
 
       auto renderer_clipping_plane = [this](bool clipping_plane_rendering) {
-        if (!isOpenGL_4_3()) return;
+        if (!isOpenGL_3_2()) return;
         if (!clipping_plane_rendering) return;
         // render clipping plane here
         rendering_program_clipping_plane.bind();
@@ -883,9 +883,9 @@ protected:
   void compile_shaders()
   {
     static bool s_compat_warning_shown = false;
-    if (!isOpenGL_4_3() && !s_compat_warning_shown)
+    if (!isOpenGL_3_2() && !s_compat_warning_shown)
     {
-      std::cerr<<"CGAL Basic_viewer: OpenGL < 4.3 detected, using compatibility shaders"<<std::endl;
+      std::cerr<<"CGAL Basic_viewer: OpenGL < 3.2 detected, using compatibility shaders"<<std::endl;
       s_compat_warning_shown = true;
     }
 
@@ -913,11 +913,11 @@ protected:
 
     // Vertices and segments shader
 
-    // const char* source_ = isOpenGL_4_3()
+    // const char* source_ = isOpenGL_3_2()
     //     ? VERTEX_SOURCE_P_L
     //     : VERTEX_SOURCE_P_L_COMP;
 
-    const char* source_ = isOpenGL_4_3()
+    const char* source_ = isOpenGL_3_2()
                           ? VERTEX_SOURCE_P_L
                           : VERTEX_SOURCE_P_L_COMP;
 
@@ -925,7 +925,7 @@ protected:
     if(!vertex_shader_p_l->compileSourceCode(source_))
     { std::cerr<<"Compiling vertex source FAILED"<<std::endl; }
 
-    source_ = isOpenGL_4_3()
+    source_ = isOpenGL_3_2()
         ? FRAGMENT_SOURCE_P_L
         : FRAGMENT_SOURCE_P_L_COMP;
 
@@ -944,7 +944,7 @@ protected:
 
     // Faces shader
 
-    source_ = isOpenGL_4_3()
+    source_ = isOpenGL_3_2()
             ? VERTEX_SOURCE_COLOR
             : VERTEX_SOURCE_COLOR_COMP;
 
@@ -952,7 +952,7 @@ protected:
     if(!vertex_shader_face->compileSourceCode(source_))
     { std::cerr<<"Compiling vertex source FAILED"<<std::endl; }
 
-    source_ = isOpenGL_4_3()
+    source_ = isOpenGL_3_2()
             ? FRAGMENT_SOURCE_COLOR
             : FRAGMENT_SOURCE_COLOR_COMP;
 
@@ -967,7 +967,7 @@ protected:
     if(!rendering_program_face.link())
     { std::cerr<<"linking Program FAILED"<<std::endl; }
 
-    if (isOpenGL_4_3())
+    if (isOpenGL_3_2())
     {
       // clipping plane shader
       source_ = VERTEX_SOURCE_CLIPPING_PLANE;
@@ -991,7 +991,7 @@ protected:
 
     }
 
-    // source_ = isOpenGL_4_3()
+    // source_ = isOpenGL_3_2()
     //         ? VERTEX_SOURCE_CLIPPING_PLANE
     //         : vertex_source_clipping_plane_comp;
 
@@ -999,7 +999,7 @@ protected:
     // if (!vertex_shader_clipping_plane->compileSourceCode(source_))
     // { std::cerr << "Compiling vertex source for clipping plane FAILED" << std::endl; }
 
-    // source_ = isOpenGL_4_3()
+    // source_ = isOpenGL_3_2()
     //         ? FRAGMENT_SOURCE_CLIPPING_PLANE
     //         : fragment_source_clipping_plane_comp;
 
@@ -1015,7 +1015,7 @@ protected:
     // { std::cerr << "Linking Program for clipping plane FAILED" << std::endl; }
 
     // Sphere shader
-    if (isOpenGL_4_3())
+    if (isOpenGL_3_2())
     {
       source_ = VERTEX_SOURCE_SHAPE;
 
@@ -1047,7 +1047,7 @@ protected:
     }
 
     // Cylinder shader
-    if (isOpenGL_4_3())
+    if (isOpenGL_3_2())
     {
       source_ = VERTEX_SOURCE_SHAPE;
 
@@ -1081,7 +1081,7 @@ protected:
     }
 
     // Normal shader
-    if (isOpenGL_4_3())
+    if (isOpenGL_3_2())
     {
       source_ = VERTEX_SOURCE_NORMAL;
 
@@ -1113,7 +1113,7 @@ protected:
     }
 
     // Triangle shader
-    if (isOpenGL_4_3())
+    if (isOpenGL_3_2())
     {
       source_ = VERTEX_SOURCE_TRIANGLE;
 
@@ -1145,7 +1145,7 @@ protected:
     }
 
     // Line shader
-    if (isOpenGL_4_3())
+    if (isOpenGL_3_2())
     {
       source_ = VERTEX_SOURCE_LINE_WIDTH;
 
@@ -1296,7 +1296,7 @@ protected:
     rendering_program_face.setAttributeBuffer("a_Color",GL_FLOAT,0,3);
 
     // 6) clipping plane shader
-    if (isOpenGL_4_3())
+    if (isOpenGL_3_2())
     {
       generate_clipping_plane();
 
@@ -1395,7 +1395,7 @@ protected:
     rendering_program_sphere.setUniformValue(mvpLocation, mvpMatrix);
     rendering_program_sphere.release();
 
-    if (isOpenGL_4_3())
+    if (isOpenGL_3_2())
     {
       QMatrix4x4 clipping_mMatrix;
       clipping_mMatrix.setToIdentity();
@@ -1410,7 +1410,7 @@ protected:
       rendering_program_clipping_plane.release();
     }
 
-    if (isOpenGL_4_3())
+    if (isOpenGL_3_2())
     {
       rendering_program_normal.bind();
 
@@ -1429,7 +1429,7 @@ protected:
       rendering_program_normal.release();
     }
 
-    if (isOpenGL_4_3())
+    if (isOpenGL_3_2())
     {
       rendering_program_triangle.bind();
 
@@ -1438,7 +1438,7 @@ protected:
       rendering_program_triangle.release();
     }
 
-    if (isOpenGL_4_3())
+    if (isOpenGL_3_2())
     {
       rendering_program_line.bind();
 
@@ -1614,7 +1614,7 @@ protected:
       const ::Qt::KeyboardModifiers modifiers = e->modifiers();
       if ((e->key()==::Qt::Key_C) && (modifiers==::Qt::NoButton))
       {
-        if (!isOpenGL_4_3()) return;
+        if (!isOpenGL_3_2()) return;
         if (!is_two_dimensional())
         {
           // toggle clipping plane
@@ -1638,7 +1638,7 @@ protected:
 
       else if ((e->key()==::Qt::Key_C) && (modifiers==::Qt::AltModifier))
       {
-        if (!isOpenGL_4_3()) return;
+        if (!isOpenGL_3_2()) return;
         if (m_use_clipping_plane!=CLIPPING_PLANE_OFF)
         {
           clipping_plane_rendering = !clipping_plane_rendering;
