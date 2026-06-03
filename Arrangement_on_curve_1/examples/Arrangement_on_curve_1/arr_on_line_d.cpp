@@ -6,17 +6,17 @@
 #include <CGAL/Quotient.h>
 #include <CGAL/Arrangement_on_curve_1.h>
 #include <CGAL/Arrangement_on_curve_1_functions.h>
+#include <CGAL/Unbounded_topology_traits.h>
 #include <CGAL/Line_d_traits_1.h>
 
-// Use Quotient<MP_Float> to provide full Field operations (division) for Kernel_d
-using NT          = CGAL::Quotient<CGAL::MP_Float>;
-using Kernel      = CGAL::Cartesian_d<NT>;
-using FT          = typename Kernel::FT;
-using Traits      = CGAL::Arrangement_on_curve_1::Line_d_traits_1<Kernel>;
-using Arrangement = CGAL::Arrangement_on_curve_1::Arrangement_on_curve_1<Traits, int, void>;
+using NT = CGAL::Quotient<CGAL::MP_Float>;
+using Kernel = CGAL::Cartesian_d<NT>;
+using FT = typename Kernel::FT;
+using Traits = CGAL::Arrangement_on_curve_1::Line_d_traits_1<Kernel>;
+using Topo = CGAL::Arrangement_on_curve_1::Unbounded_topology_traits<typename Traits::Point_1, int, void>;
+using Arrangement = CGAL::Arrangement_on_curve_1::Arrangement_on_curve_1<Traits, Topo>;
 
 int main() {
-  // Construct coordinates using the field-capable number type NT
   std::vector<NT> orig_coords = {NT(0), NT(0), NT(0), NT(0)};
   std::vector<NT> dir_coords = {NT(1), NT(2), NT(3), NT(4)};
 
@@ -24,11 +24,10 @@ int main() {
   Kernel::Direction_d direction(Kernel::Vector_d(4, dir_coords.begin(), dir_coords.end()));
   Kernel::Line_d master_line(origin, direction);
 
-  // Initialize traits and arrangement track
   Traits traits(master_line);
-  Arrangement arr(traits);
+  Topo topo;
+  Arrangement arr(traits, topo);
 
-  // Define our d-dimensional points using valid field coordinate sets
   std::vector<NT> c_mid = {NT(3), NT(6), NT(9), NT(12)};
   std::vector<NT> c_far = {NT(5), NT(10), NT(15), NT(20)};
   std::vector<NT> c_near = {NT(1), NT(2), NT(3), NT(4)};
@@ -42,16 +41,23 @@ int main() {
   auto v_far = CGAL::Arrangement_on_curve_1::insert(arr, p_far);
   auto v_near = CGAL::Arrangement_on_curve_1::insert(arr, p_near);
 
-  v_mid->data()  = 2;
-  v_far->data()  = 3;
-  v_near->data() = 1;
+  // Write sorting markers using property maps
+  auto v_data_map = arr.vertex_data_map();
+  put(v_data_map, v_mid, 2);
+  put(v_data_map, v_far, 3);
+  put(v_data_map, v_near, 1);
 
   std::cout << "\nResulting Sorted Sequence along the 4D Line:\n";
-  for (auto vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
+  auto v_range = arr.vertices();
+  auto v_pnt_map = arr.vertex_point_map();
+
+  for (auto vit = v_range.begin(); vit != v_range.end(); ++vit) {
     std::cout << "  Vertex 4D Coordinates: (";
-    for (auto cit = vit->point().cartesian_begin(); cit != vit->point().cartesian_end(); ++cit)
+    auto pnt = get(v_pnt_map, vit);
+    for (auto cit = pnt.cartesian_begin(); cit != pnt.cartesian_end(); ++cit) {
       std::cout << " " << *cit;
-    std::cout << " ) | Sort Priority ID: " << vit->data() << "\n";
+    }
+    std::cout << " ) | Sort Priority ID: " << get(v_data_map, vit) << "\n";
   }
 
   return 0;

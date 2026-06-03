@@ -3,19 +3,17 @@
 //
 // This file is part of CGAL (www.cgal.org).
 //
-// $URL$
-// $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-//
-// Author(s): Efi Fogel         <efif@post.tau.ac.il>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef CGAL_ARRANGEMENT_ON_CURVE_1_FUNCTIONS_H
 #define CGAL_ARRANGEMENT_ON_CURVE_1_FUNCTIONS_H
 
 #include <variant>
-
+#include <iterator>
 #include <CGAL/Arrangement_on_curve_1.h>
+#include <CGAL/property_map.h>
 
 namespace CGAL {
 namespace Arrangement_on_curve_1 {
@@ -23,57 +21,63 @@ namespace Arrangement_on_curve_1 {
 // ==========================================
 // LOCATE (Const)
 // ==========================================
-template <typename Traits, typename VertexData, typename EdgeData>
-typename Arrangement_on_curve_1<Traits, VertexData, EdgeData>::Const_location_result
-locate(const Arrangement_on_curve_1<Traits, VertexData, EdgeData>& arr, const typename Traits::Point_1& p) {
-  auto traits = arr.traits();
-  auto comp = traits.compare_x_1_object();
-
+template <typename GeometryTraits, typename TopologyTraits>
+typename Arrangement_on_curve_1<GeometryTraits, TopologyTraits>::Const_location_result
+locate(const Arrangement_on_curve_1<GeometryTraits, TopologyTraits>& arr,
+       const typename GeometryTraits::Point_1& p) {
   if (arr.is_empty()) return nullptr;
 
-  for (auto vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
-    Comparison_result res = comp(p, vit->point());
+  auto comp = arr.geometry_traits_1().compare_x_1_object();
+  auto pmap = arr.vertex_point_map();
+  auto topo = arr.topology_traits();
+  auto v_range = arr.vertices();
+
+  for (auto vit = v_range.begin(); vit != v_range.end(); ++vit) {
+    Comparison_result res = comp(p, get(pmap, vit));
     if (res == EQUAL) return vit;
-    if (res == SMALLER) return vit->left();
+    if (res == SMALLER) return topo.left_edge(vit);
   }
 
-  auto last_vit = std::prev(arr.vertices_end());
-  return last_vit->right();
+  auto last_vit = std::prev(v_range.end());
+  return topo.right_edge(last_vit);
 }
 
 // ==========================================
 // LOCATE (Mutable)
 // ==========================================
-template <typename Traits, typename VertexData, typename EdgeData>
-typename Arrangement_on_curve_1<Traits, VertexData, EdgeData>::Location_result
-locate(Arrangement_on_curve_1<Traits, VertexData, EdgeData>& arr, const typename Traits::Point_1& p) {
-  auto traits = arr.traits();
-  auto comp = traits.compare_x_1_object();
-
+template <typename GeometryTraits, typename TopologyTraits>
+typename Arrangement_on_curve_1<GeometryTraits, TopologyTraits>::Location_result
+locate(Arrangement_on_curve_1<GeometryTraits, TopologyTraits>& arr,
+       const typename GeometryTraits::Point_1& p) {
   if (arr.is_empty()) return nullptr;
 
-  for (auto vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
-    Comparison_result res = comp(p, vit->point());
+  auto comp = arr.geometry_traits_1().compare_x_1_object();
+  auto pmap = arr.vertex_point_map();
+  auto topo = arr.topology_traits();
+  auto v_range = arr.vertices();
+
+  for (auto vit = v_range.begin(); vit != v_range.end(); ++vit) {
+    Comparison_result res = comp(p, get(pmap, vit));
     if (res == EQUAL) return vit;
-    if (res == SMALLER) return vit->left();
+    if (res == SMALLER) return topo.left_edge(vit);
   }
 
-  auto last_vit = std::prev(arr.vertices_end());
-  return last_vit->right();
+  auto last_vit = std::prev(v_range.end());
+  return topo.right_edge(last_vit);
 }
 
 // ==========================================
 // INSERT
 // ==========================================
-template <typename Traits, typename VertexData, typename EdgeData>
-typename Arrangement_on_curve_1<Traits, VertexData, EdgeData>::Vertex_handle
-insert(Arrangement_on_curve_1<Traits, VertexData, EdgeData>& arr, const typename Traits::Point_1& p) {
-  using Arr = Arrangement_on_curve_1<Traits, VertexData, EdgeData>;
-
+template <typename GeometryTraits, typename TopologyTraits>
+typename Arrangement_on_curve_1<GeometryTraits, TopologyTraits>::Vertex_descriptor
+insert(Arrangement_on_curve_1<GeometryTraits, TopologyTraits>& arr,
+       const typename GeometryTraits::Point_1& p) {
+  using Arr = Arrangement_on_curve_1<GeometryTraits, TopologyTraits>;
   auto location = locate(arr, p);
 
-  if (auto v_ptr = std::get_if<typename Arr::Vertex_handle>(&location)) return *v_ptr;
-  if (auto e_ptr = std::get_if<typename Arr::Edge_handle>(&location)) return arr.split_edge(*e_ptr, p);
+  if (auto v_ptr = std::get_if<typename Arr::Vertex_descriptor>(&location)) return *v_ptr;
+  if (auto e_ptr = std::get_if<typename Arr::Edge_descriptor>(&location)) return arr.split_edge(*e_ptr, p);
 
   return arr.insert_empty(p);
 }
@@ -81,38 +85,44 @@ insert(Arrangement_on_curve_1<Traits, VertexData, EdgeData>& arr, const typename
 // ==========================================
 // OVERLAY
 // ==========================================
-template <typename Traits, typename VertexData, typename EdgeData>
-void overlay(const Arrangement_on_curve_1<Traits, VertexData, EdgeData>& arr1,
-             const Arrangement_on_curve_1<Traits, VertexData, EdgeData>& arr2,
-             Arrangement_on_curve_1<Traits, VertexData, EdgeData>& result) {
-  auto comp = arr1.traits().compare_x_1_object();
-  auto vit1 = arr1.vertices_begin();
-  auto vit2 = arr2.vertices_begin();
+template <typename GeometryTraits, typename TopologyTraits>
+void overlay(const Arrangement_on_curve_1<GeometryTraits, TopologyTraits>& arr1,
+             const Arrangement_on_curve_1<GeometryTraits, TopologyTraits>& arr2,
+             Arrangement_on_curve_1<GeometryTraits, TopologyTraits>& result) {
+  auto comp = arr1.geometry_traits_1().compare_x_1_object();
+  auto pmap1 = arr1.vertex_point_map();
+  auto pmap2 = arr2.vertex_point_map();
 
-  while (vit1 != arr1.vertices_end() && vit2 != arr2.vertices_end()) {
-    Comparison_result res = comp(vit1->point(), vit2->point());
+  auto r1 = arr1.vertices();
+  auto r2 = arr2.vertices();
+
+  auto vit1 = r1.begin();
+  auto vit2 = r2.begin();
+
+  while (vit1 != r1.end() && vit2 != r2.end()) {
+    Comparison_result res = comp(get(pmap1, vit1), get(pmap2, vit2));
     if (res == EQUAL) {
-      insert(result, vit1->point());
+      insert(result, get(pmap1, vit1));
       ++vit1;
       ++vit2;
     }
     else
     if (res == SMALLER) {
-      insert(result, vit1->point());
+      insert(result, get(pmap1, vit1));
       ++vit1;
     }
     else {
-      insert(result, vit2->point());
+      insert(result, get(pmap2, vit2));
       ++vit2;
     }
   }
 
-  while (vit1 != arr1.vertices_end()) {
-    insert(result, vit1->point());
+  while (vit1 != r1.end()) {
+    insert(result, get(pmap1, vit1));
     ++vit1;
   }
-  while (vit2 != arr2.vertices_end()) {
-    insert(result, vit2->point());
+  while (vit2 != r2.end()) {
+    insert(result, get(pmap2, vit2));
     ++vit2;
   }
 }

@@ -3,46 +3,47 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Arrangement_on_curve_1.h>
 #include <CGAL/Arrangement_on_curve_1_functions.h>
-
-// Minimal geometry traits model utilizing direct coordinate FT parameters
-template <typename Kernel>
-class Aoc_ft_traits_1 {
-public:
-  using Point_1 = typename Kernel::FT;
-
-  class Compare_x_1 {
-  public:
-    CGAL::Comparison_result operator()(const Point_1& p1, const Point_1& p2) const {
-      if (p1 < p2) return CGAL::SMALLER;
-      if (p1 > p2) return CGAL::LARGER;
-      return CGAL::EQUAL;
-    }
-  };
-
-  Compare_x_1 compare_x_1_object() const { return Compare_x_1(); }
-};
+#include <CGAL/Unbounded_topology_traits.h>
+#include <CGAL/Line_2_traits_1.h>
 
 using Kernel = CGAL::Exact_predicates_exact_constructions_kernel;
-using Traits = Aoc_ft_traits_1<Kernel>;
-using Arrangement = CGAL::Arrangement_on_curve_1::Arrangement_on_curve_1<Traits, std::string, void>;
+using Traits = CGAL::Arrangement_on_curve_1::Line_2_traits_1<Kernel>;
+using Topo = CGAL::Arrangement_on_curve_1::Unbounded_topology_traits<typename Traits::Point_1, int, void>;
+using Arrangement = CGAL::Arrangement_on_curve_1::Arrangement_on_curve_1<Traits, Topo>;
 
 int main() {
-  Traits traits;
-  Arrangement arr(traits);
+  // Define an infinite 2D line track: y = 0.5x
+  Kernel::Point_2 origin(0, 0);
+  Kernel::Point_2 direction_pt(2, 1);
+  Kernel::Line_2 master_line(origin, direction_pt);
 
-  std::cout << "Inserting raw coordinate fields into 1D track...\n";
-  auto v1 = CGAL::Arrangement_on_curve_1::insert(arr, Kernel::FT(10.5));
-  auto v2 = CGAL::Arrangement_on_curve_1::insert(arr, Kernel::FT(2.0));
-  auto v3 = CGAL::Arrangement_on_curve_1::insert(arr, Kernel::FT(5.25));
+  Traits traits(master_line);
+  Topo topo;
+  Arrangement arr(traits, topo);
 
-  // Modify user-extended data fields on vertices
-  v1->data() = "Right Node";
-  v2->data() = "Left Node";
-  v3->data() = "Center Node";
+  // Collinear points along our line track
+  Kernel::Point_2 p_middle(4, 2);
+  Kernel::Point_2 p_far(8, 4);
+  Kernel::Point_2 p_near(2, 1);
 
-  std::cout << "\nTraversing generated topological components:\n";
-  for (auto vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
-    std::cout << "  Vertex coordinate: " << vit->point() << " | Label: " << vit->data() << "\n";
+  std::cout << "Inserting collinear 2D points into the 1D arrangement...\n";
+  auto v_mid  = CGAL::Arrangement_on_curve_1::insert(arr, p_middle);
+  auto v_far  = CGAL::Arrangement_on_curve_1::insert(arr, p_far);
+  auto v_near = CGAL::Arrangement_on_curve_1::insert(arr, p_near);
+
+  // Fetch the data map and modify user properties via property map interfaces
+  auto v_data_map = arr.vertex_data_map();
+  put(v_data_map, v_mid, 42);
+  put(v_data_map, v_far, 84);
+  put(v_data_map, v_near, 21);
+
+  std::cout << "\nResulting Sorted Sequence along the 2D Line:\n";
+  auto v_range = arr.vertices();
+  auto v_pnt_map = arr.vertex_point_map();
+
+  for (auto vit = v_range.begin(); vit != v_range.end(); ++vit) {
+    std::cout << "  Vertex Point: (" << get(v_pnt_map, vit)
+              << ") | Extension ID: " << get(v_data_map, vit) << "\n";
   }
 
   return 0;

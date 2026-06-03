@@ -8,7 +8,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s): Efi Fogel         <efif@post.tau.ac.il>
+// Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef CGAL_LINE_3_TRAITS_1_H
 #define CGAL_LINE_3_TRAITS_1_H
