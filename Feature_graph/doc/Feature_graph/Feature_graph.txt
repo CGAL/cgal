@@ -1,11 +1,13 @@
 namespace CGAL {
-/* (not ready for doxygen)
+/*!
 
 \mainpage User Manual
 \anchor Chapter_Feature_Graph
 \anchor chaptermine
 \cgalAutoToc
 \author Ange Clément
+
+The manual will be completed later.
 
 This chapter describes the ...
 
@@ -21,7 +23,7 @@ The following example shows ...
 
 \cgalExample{ }
 
-\cgalFigureBegin{figPck,bench.png}
+\cgalFigureBegin{figPck,feature_graph_small.png}
 Left: ...
 \cgalFigureEnd
 
