@@ -176,6 +176,9 @@ public:
 
   void clear_left_vertex(Edge_descriptor e) { e->m_has_left = false; }
   void clear_right_vertex(Edge_descriptor e) { e->m_has_right = false; }
+
+  void erase_vertex(Vertex_descriptor v) { m_vertices.erase(v); }
+  void erase_edge(Edge_descriptor e) { m_edges.erase(e); }
 };
 
 } // namespace Arrangement_on_curve_1

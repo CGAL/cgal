@@ -121,6 +121,65 @@ public:
     m_topology_traits.set_left_edge(v_tgt, e_new);
     return v_new;
   }
+
+  void remove(Vertex_descriptor v) {
+    // Extract the immediate topological neighbors of the vertex
+    Edge_descriptor e_left  = m_topology_traits.left_edge(v);
+    Edge_descriptor e_right = m_topology_traits.right_edge(v);
+
+    bool has_left_neighbor  = m_topology_traits.has_left_vertex(e_left);
+    bool has_right_neighbor = m_topology_traits.has_right_vertex(e_right);
+
+    // Case 1: The arrangement collapses to empty space if this was the final vertex
+    if (! has_left_neighbor && ! has_right_neighbor) {
+      m_topology_traits.erase_vertex(v);
+      m_topology_traits.erase_edge(e_left);
+      m_topology_traits.erase_edge(e_right);
+      return;
+    }
+
+    // Case 2: Removing the leftmost vertex shifts the unbounded track boundary rightward
+    if (! has_left_neighbor) {
+      Vertex_descriptor v_right_neighbor = m_topology_traits.right_vertex(e_right);
+
+      // e_right becomes the new left-unbounded tracking edge
+      m_topology_traits.clear_left_vertex(e_right);
+      m_topology_traits.set_left_edge(v_right_neighbor, e_right);
+
+      m_topology_traits.erase_vertex(v);
+      m_topology_traits.erase_edge(e_left);
+      return;
+    }
+
+    // Case 3: Removing the rightmost vertex shifts the unbounded track boundary leftward
+    if (! has_right_neighbor) {
+      Vertex_descriptor v_left_neighbor = m_topology_traits.left_vertex(e_left);
+
+      // e_left becomes the new right-unbounded tracking edge
+      m_topology_traits.clear_right_vertex(e_left);
+      m_topology_traits.set_right_edge(v_left_neighbor, e_left);
+
+      m_topology_traits.erase_vertex(v);
+      m_topology_traits.erase_edge(e_right);
+      return;
+    }
+
+    // Case 4: Internal Node removal. Stitch the gap by building a unified replacement edge.
+    Vertex_descriptor v_left_neighbor = m_topology_traits.left_vertex(e_left);
+    Vertex_descriptor v_right_neighbor = m_topology_traits.right_vertex(e_right);
+
+    Edge_descriptor e_new = m_topology_traits.create_edge();
+    m_topology_traits.set_left_vertex(e_new, v_left_neighbor);
+    m_topology_traits.set_right_vertex(e_new, v_right_neighbor);
+
+    m_topology_traits.set_right_edge(v_left_neighbor, e_new);
+    m_topology_traits.set_left_edge(v_right_neighbor, e_new);
+
+    // Clean up old topology structures from memory
+    m_topology_traits.erase_vertex(v);
+    m_topology_traits.erase_edge(e_left);
+    m_topology_traits.erase_edge(e_right);
+  }
 };
 
 } // namespace Arrangement_on_curve_1
