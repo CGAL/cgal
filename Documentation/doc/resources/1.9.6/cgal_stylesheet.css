@@ -122,6 +122,11 @@ h2 {
   font-size: 120%;
 }
 
+.image > img {
+    border-radius: 1ex;
+    background-color: white;
+  }
+
 .icon-namespace {
   font-family: Arial, Helvetica;
   font-weight: bold;
