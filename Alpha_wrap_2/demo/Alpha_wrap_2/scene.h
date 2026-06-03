@@ -325,9 +325,9 @@ public:
 
           // look for the opposite vertex to get the direction where the triangulation is finite
           Edge mirror_boundary_edge = tr.mirror_edge(boundary_edge);
-          Vertex_handle oposite_vertex = n->vertex(mirror_boundary_edge.second);
-          Point_2 oposite_vertex_projection = perpendicular.projection(tr.point(oposite_vertex));
-          Vector_2 infinite_cc_unit_vec = (cc1 - oposite_vertex_projection);
+          Vertex_handle opposite_vertex = n->vertex(mirror_boundary_edge.second);
+          Point_2 opposite_vertex_projection = perpendicular.projection(tr.point(opposite_vertex));
+          Vector_2 infinite_cc_unit_vec = (cc1 - opposite_vertex_projection);
           infinite_cc_unit_vec /= CGAL::sqrt(CGAL::to_double(infinite_cc_unit_vec.squared_length()));
           cc1 = (cc1 + (infinite_cc_unit_vec * 1e5));
         }
@@ -343,9 +343,9 @@ public:
 
           // look for the opposite vertex to get the direction where the triangulation is finite
           Edge mirror_boundary_edge = tr.mirror_edge(boundary_edge);
-          Vertex_handle oposite_vertex = f->vertex(mirror_boundary_edge.second);
-          Point_2 oposite_vertex_projection = perpendicular.projection(tr.point(oposite_vertex));
-          Vector_2 infinite_cc_unit_vec = (cc2-oposite_vertex_projection);
+          Vertex_handle opposite_vertex = f->vertex(mirror_boundary_edge.second);
+          Point_2 opposite_vertex_projection = perpendicular.projection(tr.point(opposite_vertex));
+          Vector_2 infinite_cc_unit_vec = (cc2-opposite_vertex_projection);
           infinite_cc_unit_vec /= CGAL::sqrt(CGAL::to_double(infinite_cc_unit_vec.squared_length()));
           cc2 = (cc2 + (infinite_cc_unit_vec * 1e5));
         }

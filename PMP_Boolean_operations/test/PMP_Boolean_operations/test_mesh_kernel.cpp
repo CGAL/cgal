@@ -26,10 +26,33 @@ rotation(double a, double b, double c)
   return aff;
 }
 
+
+std::size_t i=0;
+template<class Mesh, class Plane_3>
+void test_clip_convex_on_mesh(const Mesh &m, const Plane_3 &pl, std::size_t expected_nb_vertices, std::size_t expected_nb_edges, std::size_t expected_nb_faces){
+  using K =typename CGAL::Kernel_traits<typename Plane_3::value_type>::Kernel;
+  using Pl = typename K::Plane_3;
+  using Pl_3P = typename PMP::internal::Three_point_cut_plane_traits<K>::Plane_3;
+
+  auto m_copy = m;
+  PMP::internal::clip_convex(m_copy, Pl_3P(pl[0], pl[1], pl[2]), CGAL::parameters::geom_traits(PMP::internal::Three_point_cut_plane_traits<K>()));
+
+  assert(vertices(m_copy).size() == expected_nb_vertices);
+  assert(edges(m_copy).size()    == expected_nb_edges);
+  assert(faces(m_copy).size()    == expected_nb_faces);
+
+  m_copy = m;
+  PMP::internal::clip_convex(m_copy, Pl(pl[0], pl[1], pl[2]));
+
+  assert(vertices(m_copy).size() == expected_nb_vertices);
+  assert(edges(m_copy).size()    == expected_nb_edges);
+  assert(faces(m_copy).size()    == expected_nb_faces);
+}
+
 template<class Mesh>
 void test_kernel_on_mesh(const Mesh &input, std::size_t expected_nb_vertices, std::size_t expected_nb_edges, std::size_t expected_nb_faces, double expected_volume = 0){
   assert(PMP::has_empty_kernel(input, CGAL::parameters::allow_open_input(true)) == (expected_nb_vertices == 0));
-  assert((PMP::kernel_point(input, CGAL::parameters::allow_open_input(true)) != std::nullopt) == (expected_nb_vertices != 0));
+  assert((PMP::kernel_point(input, CGAL::parameters::allow_open_input(true).strictly_inside(false)) != std::nullopt) == (expected_nb_vertices != 0));
 
   Mesh kernel;
   PMP::kernel(input, kernel, CGAL::parameters::allow_open_input(true));
@@ -79,6 +102,11 @@ void test_kernel_on_mesh(const Mesh &input, std::size_t expected_nb_vertices, st
 template<class Mesh, class K>
 void tests(){
   using P = typename K::Point_3;
+  using Pl = std::array<P, 3>;
+  auto opposite = [](const Pl &a){
+    return Pl({a[0], a[2], a[1]});
+  };
+
   Mesh m;
 
 #ifdef TEST_MESH_KERNEL_VERBOSE
@@ -197,6 +225,55 @@ void tests(){
   make_hexahedron(P(0,0,0).bbox()+P(-2,-2,-2).bbox(), m);
   test_kernel_on_mesh(m, 0, 0, 0, 0);
   clear(m);
+
+  make_hexahedron(P(0,0,0).bbox()+P(1,1,1).bbox(), m);
+  Pl pl;
+#ifdef TEST_MESH_KERNEL_VERBOSE
+  std::cout << "Test clip general" << std::endl;
+#endif
+  pl = {P(1,1,0.5),P(1,0,0.5),P(0,1,0.5)};
+  test_clip_convex_on_mesh(m, pl, 8, 12, 6);
+
+#ifdef TEST_MESH_KERNEL_VERBOSE
+  std::cout << "Test clip one vertex on" << std::endl;
+#endif
+  pl = {P(1,1,1),P(1,0,0.8),P(0,1,0.8)};
+  test_clip_convex_on_mesh(m, pl, 7, 11, 6);
+  test_clip_convex_on_mesh(m, opposite(pl), 8, 12, 6);
+
+#ifdef TEST_MESH_KERNEL_VERBOSE
+  std::cout << "Test clip two vertices on" << std::endl;
+#endif
+  pl = {P(1,1,1),P(0,0,1),P(0,1,0.8)};
+  test_clip_convex_on_mesh(m, pl, 4, 6, 4);
+  test_clip_convex_on_mesh(m, opposite(pl), 8, 13, 7);
+
+#ifdef TEST_MESH_KERNEL_VERBOSE
+  std::cout << "Test clip three vertices on" << std::endl;
+#endif
+  pl = {P(1,1,1),P(0,0,1),P(0,1,0)};
+  test_clip_convex_on_mesh(m, pl, 4, 6, 4);
+  test_clip_convex_on_mesh(m, opposite(pl), 7, 12, 7);
+
+#ifdef TEST_MESH_KERNEL_VERBOSE
+  std::cout << "Test clip full outside except one edge" << std::endl;
+#endif
+  pl = {P(1,1,1),P(1,1,0),P(2,0,0)};
+  test_clip_convex_on_mesh(m, pl, 2, 0, 0);
+#ifdef TEST_MESH_KERNEL_VERBOSE
+  std::cout << "Test clip full inside except one edge" << std::endl;
+#endif
+  test_clip_convex_on_mesh(m, opposite(pl), 8, 12, 6);
+
+#ifdef TEST_MESH_KERNEL_VERBOSE
+  std::cout << "Test clip full outside except one vertex" << std::endl;
+#endif
+  pl = {P(1,1,1),P(0,3,0),P(3,0,0)};
+  test_clip_convex_on_mesh(m, pl, 1, 0, 0);
+#ifdef TEST_MESH_KERNEL_VERBOSE
+  std::cout << "Test clip full inside except one vertex" << std::endl;
+#endif
+  test_clip_convex_on_mesh(m, opposite(pl), 8, 12, 6);
 }
 
 int main(/*int argc, char** argv*/)

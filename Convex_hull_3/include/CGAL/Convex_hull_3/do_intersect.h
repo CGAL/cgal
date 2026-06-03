@@ -65,37 +65,39 @@ struct SphericalPolygonElement {
 };
 
 template <class Vector_3>
-struct SphericalPolygon : public std::vector<SphericalPolygonElement<Vector_3>> {
-
-  typedef std::vector<SphericalPolygonElement<Vector_3>> Base;
-  typedef typename Base::iterator iterator;
-  typedef typename Base::const_iterator const_iterator;
+struct SphericalPolygon
+{
+  using Storage = std::vector<SphericalPolygonElement<Vector_3>>;
+  using iterator = typename Storage::iterator;
+  using const_iterator = typename Storage::const_iterator;
   typedef typename Kernel_traits<Vector_3>::Kernel Kernel;
   typedef typename Kernel::FT NT;
 
+  Storage storage;
+
   SphericalPolygon() {
-    this->reserve(16);
+    storage.reserve(16);
   }
 
   Vector_3 averageDirection() const {
     // PRECONDITION : all vertices (that are unit vectors on the sphere) are normalized.
-    switch( this->size() ) {
+    switch( storage.size() ) {
       case 0 : return Vector_3(1,0,0); break; // An arbitrary one
-      case 1 : return this->begin()->north_; break;
+      case 1 : return storage.begin()->north_; break;
       case 2 :{   // The two vertices are opposite so we do not take their mean
                   // We want a direction with negative dot with bith north_
                   // We take the two perpendicular vector of resp north_0, and north_1 that lies on the same circle on them
                   // And we take a barycenter of them
-                  Vector_3 perp1= LInf_normalize(cross_product((*this)[0].north_, (*this)[0].vertex_));
-                  Vector_3 perp2= LInf_normalize(cross_product((*this)[1].north_, (*this)[1].vertex_));
-                  CGAL_assertion(is_positive((perp1+perp2) * (*this)[0].north_));
-                  CGAL_assertion(is_positive((perp1+perp2) * (*this)[1].north_));
+                  Vector_3 perp1= LInf_normalize(cross_product(storage[0].north_, storage[0].vertex_));
+                  Vector_3 perp2= LInf_normalize(cross_product(storage[1].north_, storage[1].vertex_));
+                  CGAL_assertion(is_positive((perp1+perp2) * storage[0].north_));
+                  CGAL_assertion(is_positive((perp1+perp2) * storage[1].north_));
                   return (perp1 + perp2);
-                  // return (*this)[0].north_ + (*this)[1].north_; //Old, need that both north_ was L2 normalized
+                  // return storage[0].north_ + storage[1].north_; //Old, need that both north_ was L2 normalized
                } break;
       default : {
                   Vector_3 avg(NULL_VECTOR);
-                  for( const SphericalPolygonElement<Vector_3> & v : *this )
+                  for( const SphericalPolygonElement<Vector_3> & v : storage)
                     avg += v.vertex_;
                   return avg;
                 } break;
@@ -103,43 +105,43 @@ struct SphericalPolygon : public std::vector<SphericalPolygonElement<Vector_3>> 
   }
 
   void clip(const Vector_3& clipNorth, SphericalPolygon<Vector_3> &result) const {
-    const int n = this->size();
-    result.clear();
+    const int n = storage.size();
+    result.storage.clear();
     switch( n ) {
       case 0 : {
-                  result.emplace_back(clipNorth);
+                  result.storage.emplace_back(clipNorth);
                   break;
                }
       case 1 : {
-                 result = (*this);
+                 result = *this;
                 //  NT dot = this->begin()->north_ * clipNorth;
-                 Vector_3 v(LInf_normalize(cross_product(clipNorth, this->begin()->north_)));
+                 Vector_3 v(LInf_normalize(cross_product(clipNorth, storage[0].north_)));
                  if(v==NULL_VECTOR /* && is_negative(dot) */){
-                  CGAL_assertion(is_negative(clipNorth * this->begin()->north_)); //Could not be two equal hemispheres
+                  CGAL_assertion(is_negative(clipNorth * storage[0].north_)); //Could not be two equal hemispheres
                    // intersection of two opposite hemispheres ==> empty
-                   result.clear();
+                   result.storage.clear();
                    break;
                  }
 
-                 result.begin()->vertex_ = v;
-                 result.emplace_back(-v, clipNorth);
+                 result.storage.begin()->vertex_ = v;
+                 result.storage.emplace_back(-v, clipNorth);
                  break;
                }
       case 2 : {
-                 result = (*this);
-                 iterator next = result.begin();
+                 result = *this;
+                 iterator next = result.storage.begin();
                  iterator cur = next++;
-                 NT vDot = this->begin()->vertex_ * clipNorth;
+                 NT vDot = storage.begin()->vertex_ * clipNorth;
                  if( is_positive(vDot) ) {
                    // we'll get a triangle
                    next->vertex_ = LInf_normalize(cross_product(clipNorth, next->north_));
                    Vector_3 v( LInf_normalize(cross_product(cur->north_, clipNorth)));
-                   result.emplace(next, v, clipNorth);
+                   result.storage.emplace(next, v, clipNorth);
                  } else if( is_negative(vDot) ) {
                    // we'll get a triangle
                    cur->vertex_ =  LInf_normalize(cross_product(clipNorth, cur->north_));
                    Vector_3 v( LInf_normalize(cross_product(next->north_, clipNorth)));
-                   result.emplace_back(v, clipNorth);
+                   result.storage.emplace_back(v, clipNorth);
                  } else {
                    // we keep a moon crescent
                    NT curTest(clipNorth *  cross_product(cur->north_, cur->vertex_));
@@ -157,7 +159,7 @@ struct SphericalPolygon : public std::vector<SphericalPolygonElement<Vector_3>> 
                        cur->vertex_ = -next->vertex_;
                      } else {
                        //killed the crescent
-                       result.clear();
+                       result.storage.clear();
                      }
                    }
                  }
@@ -165,40 +167,56 @@ struct SphericalPolygon : public std::vector<SphericalPolygonElement<Vector_3>> 
                }
       default : { // n >= 3
                   int nbKept(0);
-                  const_iterator cur = this->begin();
+                  const_iterator cur = storage.begin();
                   NT nextDot, curDot = clipNorth * cur->vertex_;
-                  while( cur != this->end() ) {
-                    if( cur+1 == this->end() )
-                      nextDot = clipNorth * this->begin()->vertex_;
+                  while( cur != storage.end() ) {
+                    if( cur+1 == storage.end() )
+                      nextDot = clipNorth * storage.begin()->vertex_;
                     else
                       nextDot = clipNorth * (cur+1)->vertex_;
                     if( is_positive(curDot) ) { // cur is "IN"
                       ++nbKept;
-                      result.push_back(*cur);
+                      result.storage.push_back(*cur);
                       if( is_negative(nextDot) ) { // next is "OUT"
-                        result.emplace_back( LInf_normalize(cross_product(cur->north_, clipNorth)), clipNorth);
+                        result.storage.emplace_back( LInf_normalize(cross_product(cur->north_, clipNorth)), clipNorth);
                       }
                     } else if( !is_negative(curDot) ) { // cur is "ON" the clipping plane
                       ++nbKept;
                       if ( is_negative(nextDot) ) // next is "OUT"
-                        result.emplace_back(cur->vertex_, clipNorth);
+                        result.storage.emplace_back(cur->vertex_, clipNorth);
                       else
-                        result.push_back(*cur);
+                        result.storage.push_back(*cur);
                     } else { // cur is "OUT"
                       if ( is_positive(nextDot) ) { // next is "IN"
-                        result.emplace_back( LInf_normalize(cross_product(clipNorth, cur->north_)), cur->north_);
+                        result.storage.emplace_back( LInf_normalize(cross_product(clipNorth, cur->north_)), cur->north_);
                       }
                     }
                     curDot = nextDot;
                     ++cur;
                   }
-                  if( (result.size() < 3/*too small*/) || ((nbKept == n)/*no change*/) ) {
-                    result.clear();
+                  if( (result.storage.size() < 3/*too small*/) || ((nbKept == n)/*no change*/) ) {
+                    result.storage.clear();
                   }
                   break;
                 }
     }
   }
+
+  void clear()
+  {
+    storage.clear();
+  }
+
+  bool empty() const
+  {
+    return storage.empty();
+  }
+
+  void swap(SphericalPolygon& other)
+  {
+    storage.swap(other.storage);
+  }
+
 };
 
 template<typename K>

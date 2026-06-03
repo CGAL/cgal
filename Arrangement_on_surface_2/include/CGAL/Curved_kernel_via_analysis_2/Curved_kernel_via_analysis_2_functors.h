@@ -1109,6 +1109,7 @@ public:
    * \return \c true if the two point are the same; \c false otherwise.
    */
   result_type operator()(const Point_2& p1, const Point_2& p2) const {
+    // TODO replace with this->compare_xy_2_object()?
     return (Curved_kernel_via_analysis_2::instance().compare_xy_2_object()(p1, p2) == CGAL::EQUAL);
   }
 
@@ -1268,18 +1269,72 @@ public:
    * \return a boolean flag indicating whether the curves intersect.
    * \todo Reimplement without using Intersect_2 to make robust (and efficient) with inexact constructions.
    */
-  result_type operator()(const Arc_2& cv1, const Arc_2& cv2) const {
-    CERR("\nintersect; cv1: " << cv1 << ";\n cv2:" << cv2 << "");
+  result_type operator()(const Arc_2& xcv1, const Arc_2& xcv2, bool closed = true) const {
+    CERR("\nintersect; cv1: " << xcv1 << ";\n cv2:" << xcv2 << "");
     std::vector<Arc_2> arcs;
-    if (cv1._trim_if_overlapped(cv2, std::back_inserter(arcs))) return true;
-    arcs.clear();
+    if (xcv1._trim_if_overlapped(xcv2, std::back_inserter(arcs))) {
+      arcs.clear();
+      return true;
+    }
 
     // process non-ov erlapping case
-    std::vector<Intersection_point> vec;
-    Arc_2::_intersection_points(cv1, cv2, std::back_inserter(vec));
-    auto empty = vec.empty();
-    vec.clear();
-    return ! empty;
+    std::vector<Intersection_point> intersections;
+    Arc_2::_intersection_points(xcv1, xcv2, std::back_inserter(intersections));
+    auto empty = intersections.empty();
+    if (closed) {
+      intersections.clear();
+      return ! empty;
+    }
+
+    // Check whether the open curves intersect
+
+    // If the closed curves do not intersect, so do the open curves
+    if (empty) return false;
+
+    // If there are more than 2 intersections, return true
+    if (intersections.size() > 2) {
+      intersections.clear();
+      return true;
+    }
+
+    // TODO replace with this->compare_xy_2_object()?
+    auto cmp_xy = Curved_kernel_via_analysis_2::instance().compare_xy_2_object();
+    const Intersection_point& p_first = intersections.front();
+
+    // If the first intersection point of the closed curves is not an endpoint of the first curve, return true
+    const auto& min_p1 = xcv1.curve_end(CGAL::ARR_MIN_END);
+    const auto& max_p1 = xcv1.curve_end(CGAL::ARR_MAX_END);
+    if ((cmp_xy(min_p1, p_first.first) != EQUAL) && (cmp_xy(max_p1, p_first.first) != EQUAL)) {
+      intersections.clear();
+      return true;
+    }
+
+    // If the first intersection point of the closed curves is not an endpoint of the second curve, return true
+    const auto& min_p2 = xcv2.curve_end(CGAL::ARR_MIN_END);
+    const auto& max_p2 = xcv2.curve_end(CGAL::ARR_MAX_END);
+    if ((cmp_xy(min_p2, p_first.first) != EQUAL) && (cmp_xy(max_p2, p_first.first) != EQUAL)) {
+      intersections.clear();
+      return true;
+    }
+
+    // If there is only one intersection, it is an endpoint; return false
+    if (intersections.size() == 1) {
+      intersections.clear();
+      return false;
+    }
+
+    // repeat the above for the last point
+    const Intersection_point& p_last = intersections.back();
+    if ((cmp_xy(min_p1, p_last.first) != EQUAL) && (cmp_xy(max_p1, p_last.first) != EQUAL)) {
+      intersections.clear();
+      return true;
+    }
+    if ((cmp_xy(min_p2, p_last.first) != EQUAL) && (cmp_xy(max_p2, p_last.first) != EQUAL)) {
+      intersections.clear();
+      return true;
+    }
+
+    return false;
   }
 };
 
@@ -1534,9 +1589,7 @@ public:
       for (int k = 0; k < cv_line.number_of_events(); k++) {
         // use a temporary object for comparison predicate
         typename Point_2::Coordinate_2 tmp(common.x(), cv1.curve(), k);
-        if (Curved_kernel_via_analysis_2::instance().
-            kernel().compare_xy_2_object()(common.xy(), tmp) ==
-            CGAL::EQUAL) {
+        if (Curved_kernel_via_analysis_2::instance().kernel().compare_xy_2_object()(common.xy(), tmp) == CGAL::EQUAL) {
           return false;
         }
       }

@@ -14,3 +14,12 @@ file(
 foreach(cppfile ${cppfiles})
   create_single_source_cgal_program("${cppfile}")
 endforeach()
+
+find_package(TBB QUIET)
+include(CGAL_TBB_support)
+
+if(TARGET CGAL::TBB_support)
+  target_link_libraries(approximate_convex_decomposition PRIVATE CGAL::TBB_support)
+else()
+  message(STATUS "NOTICE: Intel TBB was not found. Sequential code will be used.")
+endif()

@@ -18,7 +18,7 @@
 #define CGAL_ALPHA_WRAP_2_INTERNAL_ALPHA_WRAP_2_H
 
 // @todo
-// - Handle degerate inputs?
+// - Handle degenerate inputs?
 // - Add a "full triangle" oracle?
 // - bench sorted/unsorted queues
 
@@ -666,7 +666,7 @@ public:
     std::cout << "> Extract wrap..." << std::endl;
     std::cout << m_tr.number_of_vertices() << " vertices, "
               << m_tr.number_of_faces() << " faces" << std::endl;
-    dump_triangulation("pre_labelling.off");
+    dump_triangulation("pre_labeling.off");
 #endif
 
     using Polygon_with_holes_2 = typename MultipolygonWithHoles::Polygon_with_holes_2;
@@ -718,7 +718,7 @@ public:
       };
 
       // Exterior gets label -1, ccw polygons get positive labels, holes get negative labels
-      std::stack<std::pair<Face_handle, int> > to_check; // 'int' is the label of the neighbhoring cell
+      std::stack<std::pair<Face_handle, int> > to_check; // 'int' is the label of the neighboring cell
       label_region(m_tr.infinite_face(), -1, to_check);
 
       // Label region of front element to_check list
@@ -1114,11 +1114,14 @@ private:
 #endif
 
 #ifdef CGAL_AW2_COMPUTE_AND_STORE_STEINER_INFO_AT_GATE_CREATION
-    Point_2 steiner_point;
-    Steiner_status steiner_status = compute_steiner_point(new_gate, steiner_point);
-    new_gate.m_steiner_status = steiner_status;
-    if (steiner_status == Steiner_status::RULE_1 || steiner_status == Steiner_status::RULE_2)
-      new_gate.m_steiner_point = steiner_point;
+    if(status != Edge_status::HAS_INFINITE_NEIGHBOR)
+    {
+      Point_2 steiner_point;
+      Steiner_status steiner_status = compute_steiner_point(new_gate, steiner_point);
+      new_gate.m_steiner_status = steiner_status;
+      if (steiner_status == Steiner_status::RULE_1 || steiner_status == Steiner_status::RULE_2)
+        new_gate.m_steiner_point = steiner_point;
+    }
 #endif
 
 #ifdef CGAL_AW2_USE_SORTED_PRIORITY_QUEUE
