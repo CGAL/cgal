@@ -20,6 +20,8 @@
 
 #include <CGAL/kernel_config.h>
 
+#include <array>
+
 namespace CGAL {
 
 template <class RT>

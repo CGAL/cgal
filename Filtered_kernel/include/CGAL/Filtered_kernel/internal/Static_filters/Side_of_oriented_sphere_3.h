@@ -131,7 +131,6 @@ public:
                                          qtx,qty,qtz,qt2,
                                          stx,sty,stz,st2);
 
-
           // Protect against underflow in the computation of eps.
           if (maxx < 1e-58) /* sqrt^5(min_double/eps) */ {
             if (maxx == 0)
@@ -179,18 +178,14 @@ public:
           double qtx = qx - tx;
           double qty = qy - ty;
           double qtz = qz - tz;
-          double qt2 = CGAL_NTS square(qtx) + CGAL_NTS square(qty)
-                     + CGAL_NTS square(qtz);
+
           double rtx = rx - tx;
           double rty = ry - ty;
           double rtz = rz - tz;
-         double rt2 = CGAL_NTS square(rtx) + CGAL_NTS square(rty)
-                     + CGAL_NTS square(rtz);
+
           double stx = sx - tx;
           double sty = sy - ty;
           double stz = sz - tz;
-          double st2 = CGAL_NTS square(stx) + CGAL_NTS square(sty)
-                     + CGAL_NTS square(stz);
 
           // Compute the semi-static bound.
           double maxx = CGAL::abs(ptx);
