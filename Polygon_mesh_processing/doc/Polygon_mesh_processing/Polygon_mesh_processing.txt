@@ -93,7 +93,7 @@ The following example demonstrates self-intersection detection in the `pig.off` 
 
 \cgalFigureAnchor{SelfIntersections}
 <center>
-<img src="selfintersections.jpg" style="max-width:70%;"/>
+<img src="selfintersections.jpg" style="max-width:50%;"/>
 </center>
 \cgalFigureCaptionBegin{SelfIntersections}
 Detection of self-intersections in a triangle mesh. Intersecting triangles are displayed
@@ -350,7 +350,7 @@ Curvatures are computed for all vertices using `CGAL::Polygon_mesh_processing::i
 
 \cgalFigureAnchor{icc_measures}
 <center>
-<table border=0>
+<table style="width:50%; border:0;">
 <tr>
 <td><img src="bimba-mean0.040000-0.000000.jpg" style="width:100%;"/></td>
 <td><img src="bimba-gaussian0.040000-0.000000.jpg" style="width:100%;"/></td>
@@ -367,7 +367,7 @@ Mean curvature, Gaussian curvature, minimal principal curvature direction, and m
 
 \cgalFigureAnchor{icc_various_ball_radii}
 <center>
-<table border=0>
+<table style="width:50%; border:0;">
 <tr>
 <td><img src="bimba-mean0.020000-0.000000.jpg" style="width:100%;"/></td>
 <td><img src="bimba-mean0.030000-0.000000.jpg" style="width:100%;"/></td>
