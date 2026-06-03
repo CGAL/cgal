@@ -48,12 +48,12 @@ public:
   struct Edge;
 
   using Vertex_list = std::list<Vertex>;
-  using Edge_list   = std::list<Edge>;
+  using Edge_list = std::list<Edge>;
 
   using Vertex_descriptor = typename Vertex_list::iterator;
-  using Edge_descriptor   = typename Edge_list::iterator;
+  using Edge_descriptor = typename Edge_list::iterator;
   using Vertex_const_descriptor = typename Vertex_list::const_iterator;
-  using Edge_const_descriptor   = typename Edge_list::const_iterator;
+  using Edge_const_descriptor = typename Edge_list::const_iterator;
 
   // Topological entities inherit from data containers to achieve zero-overhead when void
   struct Vertex : public Data_container<VertexData> {
@@ -132,8 +132,8 @@ public:
   size_t number_of_edges() const { return m_edges.size(); }
 
   Vertex_point_map vertex_point_map() const { return Vertex_point_map(); }
-  Vertex_data_map  vertex_data_map() const { return Vertex_data_map(); }
-  Edge_data_map    edge_data_map() const { return Edge_data_map(); }
+  Vertex_data_map vertex_data_map() const { return Vertex_data_map(); }
+  Edge_data_map edge_data_map() const { return Edge_data_map(); }
 
   const Vertex_list& vertices() const { return m_vertices; }
   const Edge_list& edges() const { return m_edges; }

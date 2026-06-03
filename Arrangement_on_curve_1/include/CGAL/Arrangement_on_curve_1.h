@@ -16,11 +16,11 @@
 namespace CGAL {
 namespace Arrangement_on_curve_1 {
 
-template <typename GeometryTraits_, typename TopologyTraits_>
+template <typename GeometryTraits_1, typename TopologyTraits>
 class Arrangement_on_curve_1 {
 public:
-  using Geometry_traits_1 = GeometryTraits_;
-  using Topology_traits = TopologyTraits_;
+  using Geometry_traits_1 = GeometryTraits_1;
+  using Topology_traits = TopologyTraits;
   using Point_1 = typename Geometry_traits_1::Point_1;
 
   using Vertex_descriptor = typename Topology_traits::Vertex_descriptor;
@@ -59,7 +59,7 @@ public:
   bool has_right_vertex(Edge_descriptor e) const { return m_topology_traits.has_right_vertex(e); }
 
   // ============================================================================
-  // HIGH-LEVEL TOPOLOGICAL OPERATIONS (REIMPLEMENTED HERE)
+  // HIGH-LEVEL TOPOLOGICAL OPERATIONS
   // ============================================================================
   Vertex_descriptor insert_empty(const Point_1& p) {
     Vertex_descriptor v = m_topology_traits.create_vertex(p);
