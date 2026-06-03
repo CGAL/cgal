@@ -40,8 +40,8 @@ namespace Polygon_2 {
 // in the range are collinear segments, up to a given tolerance.
 //
 // \tparam K must be a model of `Kernel`
-// \tparam InputBidirectionalIterator must be a model of `BidirectionalIterator`
-//                                    with value type `K::Point_2`
+// \tparam InputForwardIterator must be a model of `BidirectionalIterator`
+//                              with value type `K::Point_2`
 // \tparam OutputForwardIterator must be a model of `OutputIterator`
 //                               with value type `K::Point_2`
 //
@@ -53,9 +53,9 @@ namespace Polygon_2 {
 //
 // \pre The range `(first, beyond)` is composed of at least three points.
 // \pre Not all points in the range `(first, beyond)` are (almost) collinear.
-template<typename K, typename ForwardIterator, typename OutputForwardIterator>
-OutputForwardIterator filter_collinear_points(ForwardIterator first,
-                                              ForwardIterator beyond,
+template<typename K, typename InputForwardIterator, typename OutputForwardIterator>
+OutputForwardIterator filter_collinear_points(InputForwardIterator first,
+                                              InputForwardIterator beyond,
                                               OutputForwardIterator out,
                                               const typename K::FT tolerance =
                                                 std::numeric_limits<typename K::FT>::epsilon())
@@ -66,13 +66,13 @@ OutputForwardIterator filter_collinear_points(ForwardIterator first,
   CGAL_precondition(std::distance(first, beyond) >= 3);
 
   // Helper to safely advance and wrap around in a purely forward manner
-  auto wrapped_advance = [&](ForwardIterator it) {
+  auto wrapped_advance = [&](InputForwardIterator it) {
     ++it;
     return (it == beyond) ? first : it;
   };
 
   // Helper for collinearity logic
-  auto is_collinear = [&](ForwardIterator i1, ForwardIterator i2, ForwardIterator i3) {
+  auto is_collinear = [&](InputForwardIterator i1, InputForwardIterator i2, InputForwardIterator i3) {
     const Point& p1 = *i1;
     const Point& p2 = *i2;
     const Point& p3 = *i3;
@@ -82,9 +82,9 @@ OutputForwardIterator filter_collinear_points(ForwardIterator first,
   };
 
   // find a corner
-  ForwardIterator v0 = first;
-  ForwardIterator v1 = std::next(first);
-  ForwardIterator v2 = std::next(v1);
+  InputForwardIterator v0 = first;
+  InputForwardIterator v1 = std::next(first);
+  InputForwardIterator v2 = std::next(v1);
 
   bool all_collinear = false;
 
@@ -104,9 +104,9 @@ OutputForwardIterator filter_collinear_points(ForwardIterator first,
   if (all_collinear)
     return out;
 
-  ForwardIterator anchor = v1;
-  ForwardIterator p = v2;
-  ForwardIterator q = wrapped_advance(v2);
+  InputForwardIterator anchor = v1;
+  InputForwardIterator p = v2;
+  InputForwardIterator q = wrapped_advance(v2);
 
   *out++ = *anchor;
 
