@@ -1001,15 +1001,14 @@ public:
     const std::size_t cutoff_parallel_call = 30000; // min size for parallel call
     node.set_bbox(compute_bbox(first, beyond));
 
-    // sort primitives along longest axis aabb
-    split_primitives(first, beyond, node.bbox());
-
     if(range < cutoff)
     {
       node.set_children(*first, *beyond);
     }
     else
     {
+      // sort primitives along longest axis aabb
+      split_primitives(first, beyond, node.bbox());
       const std::size_t new_range = range/2;
       node.set_children(m_nodes[node_index+1], m_nodes[node_index+new_range]);
 #ifdef CGAL_LINKED_WITH_TBB
