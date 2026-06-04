@@ -25,6 +25,9 @@
 
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 
+#include <CGAL/box_intersection_d.h>
+#include <CGAL/Box_intersection_d/Box_with_info_d.h>
+
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/tbb.h>
 #include <CGAL/mutex.h>
@@ -35,6 +38,261 @@ namespace CGAL {
 namespace Polygon_mesh_processing{
 
 namespace experimental{
+
+template< typename TriangleMesh1,
+          typename TriangleMesh2,
+          typename OutputIterator,
+          typename NamedParameters1 = parameters::Default_named_parameters,
+          typename NamedParameters2 = parameters::Default_named_parameters>
+void mixed_meshes_intersections(const TriangleMesh1 &tm1,
+                                        const TriangleMesh2 &tm2,
+                                        OutputIterator out,
+                                        const NamedParameters1& np1 = parameters::default_values(),
+                                        const NamedParameters2& np2 = parameters::default_values())
+{
+  using CGAL::parameters::choose_parameter;
+  using CGAL::parameters::get_parameter;
+
+  using face_descriptor_1 = typename boost::graph_traits<TriangleMesh1>::face_descriptor;
+  using halfedge_descriptor_1 = typename boost::graph_traits<TriangleMesh1>::halfedge_descriptor;
+
+  using face_descriptor_2 = typename boost::graph_traits<TriangleMesh2>::face_descriptor;
+  using halfedge_descriptor_2 = typename boost::graph_traits<TriangleMesh2>::halfedge_descriptor;
+
+  using Concurrency_tag = typename internal_np::Lookup_named_param_def <
+                                                internal_np::concurrency_tag_t,
+                                                NamedParameters1,
+                                                Sequential_tag
+                                              > ::type;
+  using GT = typename GetGeomTraits<TriangleMesh1, NamedParameters1>::type;
+  GT gt = choose_parameter<GT>(get_parameter(np1, internal_np::geom_traits));
+
+  using Face_bbox_tag = typename CGAL::dynamic_face_property_t<Bbox_3>;
+  using Primitive_1 = AABB_face_graph_triangle_primitive<TriangleMesh1>;
+  using Bbox_pmap_1 = typename boost::property_map<TriangleMesh1, Face_bbox_tag>::const_type;
+  using Traits_1 = AABB_traits_3<GT, Primitive_1, Bbox_pmap_1>;
+  using Tree_1 = AABB_tree<Traits_1>;
+  using Node_1 = AABB_node<Traits_1>;
+  using ConstPrimitiveIterator_1 = typename std::vector< Primitive_1 >::const_iterator;
+  using Box_1 = Box_intersection_d::Box_with_info_d<double, 3, face_descriptor_1>;
+
+  using Primitive_2 = AABB_face_graph_triangle_primitive<TriangleMesh2>;
+  using Bbox_pmap_2 = typename boost::property_map<TriangleMesh2, Face_bbox_tag>::const_type;
+  using Traits_2 = AABB_traits_3<GT, Primitive_2, Bbox_pmap_2>;
+  using Tree_2 = AABB_tree<Traits_2>;
+  using Node_2 = AABB_node<Traits_2>;
+  using ConstPrimitiveIterator_2 = typename std::vector< Primitive_2 >::const_iterator;
+  using Box_2 = Box_intersection_d::Box_with_info_d<double, 3, face_descriptor_2>;
+
+  using InternOutputIterator= std::back_insert_iterator<std::vector<std::pair<Node_1*, Node_2*>>>;
+
+  const std::size_t cutoff = 200000;
+
+  auto vpm1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),
+                               get_const_property_map(vertex_point, tm1));
+  auto vpm2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
+                               get_const_property_map(vertex_point, tm2));
+
+  auto triangle = [&](auto fd, const auto &vpm, const auto &tm){
+    auto hd = halfedge(fd,tm);
+    auto a = get(vpm, source(hd,tm));
+    auto b = get(vpm, target(hd,tm));
+    auto c = get(vpm, target(next(hd,tm),tm));
+    return typename GT::Triangle_3(a, b, c);
+  };
+
+  auto bbox = [](auto fd, const auto &vpm, const auto &tm){
+    auto hd = halfedge(fd,tm);
+    Bbox_3 res = get(vpm, source(hd,tm)).bbox();
+    res += get(vpm, target(hd,tm)).bbox();
+    res += get(vpm, target(next(hd,tm),tm)).bbox();
+    return res;
+  };
+
+  Bbox_pmap_1 bb1 = get(Face_bbox_tag(), tm1);
+  for(face_descriptor_1 fd : faces(tm1))
+    put(bb1, fd, bbox(fd, vpm1, tm1));
+
+  Traits_1 traits1(bb1);
+  Tree_1 tree1(traits1);
+  tree1.insert(faces(tm1).first, faces(tm1).second, tm1);
+  tree1.template partial_build<Concurrency_tag>(cutoff);
+
+  Bbox_pmap_2 bb2 = get(Face_bbox_tag(), tm2);
+  for(face_descriptor_2 fd : faces(tm2))
+    put(bb2, fd, bbox(fd, vpm2, tm2));
+
+  Traits_2 traits2(bb2);
+  Tree_2 tree2(traits2);
+  tree2.insert(faces(tm2).first, faces(tm2).second, tm2);
+  tree2.template partial_build<Concurrency_tag>(cutoff);
+
+#ifdef CGAL_LINKED_WITH_TBB
+  if constexpr(std::is_same_v<Concurrency_tag, Parallel_tag>)
+  {
+    CGAL_MUTEX m;
+    tbb::concurrent_vector<std::pair<const Node_1*, const Node_2*>> inter;
+    CGAL::internal::AABB_tree::two_tree_listing_intersecting_patches<Concurrency_tag>(tree1, tree2, std::back_inserter(inter), cutoff, bb1, bb2);
+    oneapi::tbb::parallel_for(
+      oneapi::tbb::blocked_range<size_t>(0, inter.size()),
+      [&](const oneapi::tbb::blocked_range<size_t>& r) {
+        for (size_t i = r.begin(); i != r.end(); ++i) {
+          const auto [begin_1, end_1] = tree1.partial_node_to_primitives_iterator(*inter[i].first);
+          const auto [begin_2, end_2] = tree2.partial_node_to_primitives_iterator(*inter[i].second);
+          std::vector< Box_1 > boxes_1;
+          std::vector< Box_2 > boxes_2;
+          std::vector< Box_1* > boxes_ptr_1;
+          std::vector< Box_2* > boxes_ptr_2;
+          boxes_1.reserve(std::distance(begin_1, end_1));
+          boxes_2.reserve(std::distance(begin_2, end_2));
+          boxes_ptr_1.reserve(boxes_1.size());
+          boxes_ptr_2.reserve(boxes_2.size());
+
+          for(auto it=begin_1; it!=end_1; ++it)
+            boxes_1.emplace_back(get(bb1, it->id()), it->id());
+          for(auto it=begin_2; it!=end_2; ++it)
+            boxes_2.emplace_back(get(bb2, it->id()), it->id());
+          for(auto &b: boxes_1)
+            boxes_ptr_1.push_back(std::addressof(b));
+          for(auto &b: boxes_2)
+            boxes_ptr_2.push_back(std::addressof(b));
+
+          std::vector< std::pair<face_descriptor_1, face_descriptor_2>> patch_out;
+          const std::ptrdiff_t cutoff = 2000;
+          box_intersection_d(boxes_ptr_1.begin(), boxes_ptr_1.end(), boxes_ptr_2.begin(), boxes_ptr_2.end(),
+              [&](const Box_1 *b1, const Box_2 *b2)
+              {
+                if(CGAL::do_intersect(triangle(b1->info(), vpm1, tm1), triangle(b2->info(), vpm2, tm2)))
+                  patch_out.emplace_back(b1->info(), b2->info());
+              }, cutoff);
+              CGAL_SCOPED_LOCK(m);
+          for(auto p: patch_out)
+            *out ++ = p;
+        }
+      }
+    );
+  }
+  else
+#endif
+  {
+    std::vector<std::pair<const Node_1*, const Node_2*>> inter;
+    CGAL::internal::AABB_tree::two_tree_listing_intersecting_patches(tree1, tree2, std::back_inserter(inter), cutoff, bb1, bb2);
+    for(const auto& [n_1, n_2]: inter){
+      const auto [begin_1, end_1] = tree1.partial_node_to_primitives_iterator(*n_1);
+      const auto [begin_2, end_2] = tree2.partial_node_to_primitives_iterator(*n_2);
+      std::vector< Box_1 > boxes_1;
+      std::vector< Box_2 > boxes_2;
+      std::vector< Box_1* > boxes_ptr_1;
+      std::vector< Box_2* > boxes_ptr_2;
+      boxes_1.reserve(std::distance(begin_1, end_1));
+      boxes_2.reserve(std::distance(begin_2, end_2));
+      boxes_ptr_1.reserve(boxes_1.size());
+      boxes_ptr_2.reserve(boxes_2.size());
+
+      for(auto it=begin_1; it!=end_1; ++it)
+        boxes_1.emplace_back(get(bb1, it->id()), it->id());
+      for(auto it=begin_2; it!=end_2; ++it)
+        boxes_2.emplace_back(get(bb2, it->id()), it->id());
+      for(auto &b: boxes_1)
+        boxes_ptr_1.push_back(std::addressof(b));
+      for(auto &b: boxes_2)
+        boxes_ptr_2.push_back(std::addressof(b));
+
+      std::vector< std::pair<face_descriptor_1, face_descriptor_2>> patch_out;
+      const std::ptrdiff_t cutoff = 2000;
+      box_intersection_d(boxes_ptr_1.begin(), boxes_ptr_1.end(), boxes_ptr_2.begin(), boxes_ptr_2.end(),
+          [&](const Box_1 *b1, const Box_2 *b2)
+          {
+            if(CGAL::do_intersect(triangle(b1->info(), vpm1, tm1), triangle(b2->info(), vpm2, tm2)))
+              patch_out.emplace_back(b1->info(), b2->info());
+          }, cutoff);
+      for(auto p: patch_out)
+        *out ++ = p;
+    }
+  }
+}
+
+template< typename TriangleMesh1,
+          typename TriangleMesh2,
+          typename OutputIterator,
+          typename NamedParameters1 = parameters::Default_named_parameters,
+          typename NamedParameters2 = parameters::Default_named_parameters>
+void box_meshes_intersections(const TriangleMesh1 &tm1,
+                                        const TriangleMesh2 &tm2,
+                                        OutputIterator out,
+                                        const NamedParameters1& np1 = parameters::default_values(),
+                                        const NamedParameters2& np2 = parameters::default_values())
+{
+  using CGAL::parameters::choose_parameter;
+  using CGAL::parameters::get_parameter;
+
+  using face_descriptor_1 = typename boost::graph_traits<TriangleMesh1>::face_descriptor;
+  using halfedge_descriptor_1 = typename boost::graph_traits<TriangleMesh1>::halfedge_descriptor;
+
+  using face_descriptor_2 = typename boost::graph_traits<TriangleMesh2>::face_descriptor;
+  using halfedge_descriptor_2 = typename boost::graph_traits<TriangleMesh2>::halfedge_descriptor;
+
+  using Concurrency_tag = typename internal_np::Lookup_named_param_def <
+                                                internal_np::concurrency_tag_t,
+                                                NamedParameters1,
+                                                Sequential_tag
+                                              > ::type;
+  using GT = typename GetGeomTraits<TriangleMesh1, NamedParameters1>::type;
+  GT gt = choose_parameter<GT>(get_parameter(np1, internal_np::geom_traits));
+
+  using Box_1 = Box_intersection_d::Box_with_info_d<double, 3, face_descriptor_1>;
+  using Box_2 = Box_intersection_d::Box_with_info_d<double, 3, face_descriptor_2>;
+
+  auto vpm1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),
+                               get_const_property_map(vertex_point, tm1));
+  auto vpm2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
+                               get_const_property_map(vertex_point, tm2));
+
+  auto triangle = [&](auto fd, const auto &vpm, const auto &tm){
+    auto hd = halfedge(fd,tm);
+    auto a = get(vpm, source(hd,tm));
+    auto b = get(vpm, target(hd,tm));
+    auto c = get(vpm, target(next(hd,tm),tm));
+    return typename GT::Triangle_3(a, b, c);
+  };
+
+  auto bbox = [](auto fd, const auto &vpm, const auto &tm){
+    auto hd = halfedge(fd,tm);
+    Bbox_3 res = get(vpm, source(hd,tm)).bbox();
+    res += get(vpm, target(hd,tm)).bbox();
+    res += get(vpm, target(next(hd,tm),tm)).bbox();
+    return res;
+  };
+
+  std::vector< Box_1 > boxes_1;
+  std::vector< Box_2 > boxes_2;
+  boxes_1.reserve(faces(tm1).size());
+  boxes_2.reserve(faces(tm2).size());
+  for(auto fd: faces(tm1))
+    boxes_1.emplace_back(bbox(fd, vpm1, tm1), fd);
+  for(auto fd: faces(tm2))
+    boxes_2.emplace_back(bbox(fd, vpm2, tm2), fd);
+
+  std::vector< Box_1* > boxes_ptr_1;
+  std::vector< Box_2* > boxes_ptr_2;
+  boxes_ptr_1.reserve(faces(tm1).size());
+  boxes_ptr_2.reserve(faces(tm2).size());
+  for(auto &b: boxes_1)
+    boxes_ptr_1.emplace_back(std::addressof(b));
+  for(auto &b: boxes_2)
+    boxes_ptr_2.emplace_back(std::addressof(b));
+
+  CGAL_MUTEX m;
+  auto callback=[&](const Box_1 *b1, const Box_2 *b2){
+    if(CGAL::do_intersect(triangle(b1->info(), vpm1, tm1), triangle(b2->info(), vpm2, tm2))){
+      CGAL_SCOPED_LOCK(m);
+      *out ++ = std::make_pair(b1->info(), b2->info());
+    }
+  };
+
+  const std::ptrdiff_t cutoff = 2000;
+  box_intersection_d<Concurrency_tag>(boxes_ptr_1.begin(), boxes_ptr_1.end(), boxes_ptr_2.begin(), boxes_ptr_2.end(), callback, cutoff);
+}
 
 template< typename TriangleMesh,
           typename OutputIterator,
@@ -86,7 +344,7 @@ void AABB_two_tree_self_intersections(const TriangleMesh &tm, OutputIterator out
 #endif
   using InternOutputIterator= std::back_insert_iterator<std::vector<std::pair<face_descriptor, face_descriptor>>>;
   std::vector<std::pair<face_descriptor, face_descriptor>> inter;
-  CGAL::internal::AABB_tree::two_tree_listing_intersecting_primitives(tree, tree, std::back_inserter(inter), bb, bb);
+  CGAL::internal::AABB_tree::two_tree_listing_intersecting_primitives<Concurrency_tag>(tree, tree, std::back_inserter(inter), bb, bb);
   for(const auto& [f_1, f_2]: inter)
     if(f_1 < f_2)
       if(Polygon_mesh_processing::internal::do_faces_intersect<GT>(f_1, f_2, tm, tm.points(), gt.construct_segment_3_object(), gt.construct_triangle_3_object(), gt.do_intersect_3_object()))
@@ -160,7 +418,6 @@ void AABB_two_tree_meshes_intersections(const TriangleMesh1 &tm1,
   Traits_1 traits1(bb1);
   Tree_1 tree1(traits1);
   tree1.insert(faces(tm1).first, faces(tm1).second, tm1);
-  tree1.template build<Concurrency_tag>();
 
   Bbox_pmap_2 bb2 = get(Face_bbox_tag(), tm2);
   for(face_descriptor_2 fd : faces(tm2))
@@ -169,18 +426,31 @@ void AABB_two_tree_meshes_intersections(const TriangleMesh1 &tm1,
   Traits_2 traits2(bb2);
   Tree_2 tree2(traits2);
   tree2.insert(faces(tm2).first, faces(tm2).second, tm2);
-  tree2.template build<Concurrency_tag>();
 
 #ifdef CGAL_LINKED_WITH_TBB
+  if constexpr(std::is_same_v<Concurrency_tag, Parallel_tag>)
+  {
+    oneapi::tbb::task_group tg;
+    tg.run([&]{ tree1.template build<Concurrency_tag>(); });
+    tree2.template build<Concurrency_tag>();
+    tg.wait();
+    using InternOutputIterator= std::back_insert_iterator<std::vector<std::pair<face_descriptor_1, face_descriptor_2>>>;
 
+    tbb::concurrent_vector<std::pair<face_descriptor_1, face_descriptor_2>> inter;
+    CGAL::internal::AABB_tree::two_tree_listing_intersecting_primitives<Concurrency_tag>(tree1, tree2, std::back_inserter(inter), bb1, bb2);
+    for(const auto& [f_1, f_2]: inter)
+      *out ++ = std::make_pair(f_1, f_2);
+  }
+  else
 #endif
   {
+    tree1.template build();
+    tree2.template build();
     using InternOutputIterator= std::back_insert_iterator<std::vector<std::pair<face_descriptor_1, face_descriptor_2>>>;
     std::vector<std::pair<face_descriptor_1, face_descriptor_2>> inter;
     CGAL::internal::AABB_tree::two_tree_listing_intersecting_primitives(tree1, tree2, std::back_inserter(inter), bb1, bb2);
     for(const auto& [f_1, f_2]: inter)
-      if(CGAL::do_intersect(triangle(f_1, vpm1, tm1), triangle(f_2, vpm2, tm2)))
-        *out ++ = std::make_pair(f_1, f_2);
+      *out ++ = std::make_pair(f_1, f_2);
   }
 }
 
