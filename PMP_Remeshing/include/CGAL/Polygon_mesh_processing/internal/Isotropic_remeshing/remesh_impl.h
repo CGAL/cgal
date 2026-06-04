@@ -345,6 +345,7 @@ namespace internal {
 
       for(face_descriptor f : face_range)
       {
+        CGAL_assertion(is_triangle(halfedge(f, mesh_), mesh_));
         if(is_degenerate_triangle_face(f, mesh_, parameters::vertex_point_map(vpmap_)
                                                             .geom_traits(gt_)))
           continue;
@@ -1816,6 +1817,7 @@ private:
           halfedges_around_target(he, mesh_))
       {
         if(!is_border(h, mesh_) &&
+           is_triangle(h, mesh_) &&
            is_degenerate_triangle_face(face(h, mesh_), mesh_,
                                        parameters::vertex_point_map(vpmap_)
                                                   .geom_traits(gt_)))
