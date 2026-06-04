@@ -439,7 +439,9 @@ bool build_triangulation_impl(Tr& tr,
     vh->set_dimension(-1);
 
   if(verbose)
+  {
     std::cout << "build vertices done (" << tr.tds().number_of_vertices() << " vertices)" << std::endl;
+  }
 
   if (!finite_cells.empty())
   {
@@ -464,6 +466,18 @@ bool build_triangulation_impl(Tr& tr,
     else if(verbose)
     {
       std::cout << "build infinite cells done (" << tr.tds().cells().size() << " cells)" << std::endl;
+    }
+
+    // purge vertices which have no incident cell (unused points in the initial range)
+    for (auto vit = tr.finite_vertices_begin(), end = tr.finite_vertices_end(); vit != end; ++vit)
+    {
+      if (vit->cell() == Cell_handle())
+        tr.tds().delete_vertex(vit);
+    }
+
+    if(verbose)
+    {
+      std::cout << "vertices after purge: " << tr.tds().number_of_vertices() << std::endl;
     }
 
     tr.tds().set_dimension(3);
