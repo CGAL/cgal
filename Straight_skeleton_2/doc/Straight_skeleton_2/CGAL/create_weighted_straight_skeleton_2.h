@@ -197,7 +197,7 @@ is associated to the contour edge between the `i-1`-th and `i`-th vertices.
 */
 template <typename FT,
           typename Polygon,
-          typename Weights,
+          typename InKWeights,
           typename SsK = CGAL::Exact_predicates_inexact_constructions_kernel>
 std::shared_ptr< Straight_skeleton_2<SsK> >
 create_exterior_weighted_straight_skeleton_2(const FT& max_offset,
