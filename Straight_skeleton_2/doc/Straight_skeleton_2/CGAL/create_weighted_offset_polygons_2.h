@@ -43,7 +43,7 @@ and `create_offset_polygons_2()` instead.
 template <typename OfKPolygon, typename FT, typename InKPolygon, typename InKWeights,
           typename HoleIterator, typename OfK, typename SsK>
 std::vector< std::shared_ptr<OfKPolygon> >
-create_interior_weighted_skeleton_and_offset_polygons_2(FT offset,
+create_interior_weighted_skeleton_and_offset_polygons_2(const FT& offset,
                                                         const InKPolygon& outer_boundary,
                                                         HoleIterator holes_begin,
                                                         HoleIterator holes_end,
@@ -85,7 +85,7 @@ and `create_offset_polygons_2()` instead.
 */
 template <typename OfKPolygon, typename FT, typename InKPolygon, typename InKWeights, typename OfK, typename SsK>
 std::vector< std::shared_ptr<OfKPolygon> >
-create_interior_weighted_skeleton_and_offset_polygons_2(FT offset,
+create_interior_weighted_skeleton_and_offset_polygons_2(const FT& offset,
                                                         const InKPolygon& poly,
                                                         const InKWeights& weights,
                                                         OfK ofk = CGAL::Exact_predicates_inexact_constructions_kernel,
@@ -131,7 +131,7 @@ therefore, to construct offsets at more than one single distance, use the separa
 */
 template <typename OfKPolygon, typename FT, typename InKPolygon, typename InKWeights, typename OfK, typename SsK>
 std::vector< std::shared_ptr<OfKPolygon> >
-create_exterior_weighted_skeleton_and_offset_polygons_2(FT offset,
+create_exterior_weighted_skeleton_and_offset_polygons_2(const FT& offset,
                                                         const InKPolygon& poly,
                                                         const InKWeights& weights,
                                                         OfK ofk = Exact_predicates_inexact_constructions_kernel(),

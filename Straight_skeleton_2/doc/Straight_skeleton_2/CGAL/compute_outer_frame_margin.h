@@ -49,7 +49,7 @@ the kernel in which the type `InputIterator::value_type` is defined.
 template <class Traits, class InputIterator>
 std::optional< typename Traits::FT >
 compute_outer_frame_margin( InputIterator first, InputIterator beyond,
-                            typename Traits::FT offset,
+                            const typename Traits::FT& offset,
                             const Traits& traits = Default_traits );
 
 } /* namespace CGAL */

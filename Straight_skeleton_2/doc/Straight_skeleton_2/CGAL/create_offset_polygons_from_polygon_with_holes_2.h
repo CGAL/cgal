@@ -27,7 +27,7 @@ This is equivalent to `arrange_offset_polygons_2(create_interior_skeleton_and_of
 */
 template<class OfKPolygon, class FT, class InKPolygon, class OfK, class SsK>
 std::vector< std::shared_ptr< OfKPolygon > >
-create_interior_skeleton_and_offset_polygons_with_holes_2(FT offset,
+create_interior_skeleton_and_offset_polygons_with_holes_2(const FT& offset,
                                                           const InKPolygon& poly_with_holes,
                                                           OfK ofk = CGAL::Exact_predicates_inexact_constructions_kernel,
                                                           SsK ssk = CGAL::Exact_predicates_inexact_constructions_kernel);
@@ -65,7 +65,7 @@ having reversed the orientation of all other polygons.
 */
 template<class OfKPolygon, class FT, class InKPolygon, class OfK, class SsK>
 std::vector<std::shared_ptr<OfKPolygon> >
-create_exterior_skeleton_and_offset_polygons_with_holes_2(FT offset,
+create_exterior_skeleton_and_offset_polygons_with_holes_2(const FT& offset,
                                                           const InKPolygon& poly_with_holes,
                                                           OfK ofk = Exact_predicates_inexact_constructions_kernel(),
                                                           SsK ssk = Exact_predicates_inexact_constructions_kernel());

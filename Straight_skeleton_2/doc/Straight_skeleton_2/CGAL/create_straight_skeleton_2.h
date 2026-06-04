@@ -111,7 +111,7 @@ from this exterior skeleton, as computed by the function `compute_outer_frame_ma
 */
 template <typename FT, typename PointIterator, typename SsK>
 std::shared_ptr< Straight_skeleton_2<SsK> >
-create_exterior_straight_skeleton_2(FT max_offset,
+create_exterior_straight_skeleton_2(const FT& max_offset,
                                     PointIterator vertices_begin,
                                     PointIterator vertices_end,
                                     SsK k = CGAL::Exact_predicates_inexact_constructions_kernel());
@@ -145,7 +145,7 @@ from this exterior skeleton, as computed by the function `compute_outer_frame_ma
 */
 template <typename FT, typename Polygon, typename SsK>
 std::shared_ptr< Straight_skeleton_2<SsK> >
-create_exterior_straight_skeleton_2(FT max_offset,
+create_exterior_straight_skeleton_2(const FT& max_offset,
                                     const Polygon& P,
                                     SsK k = CGAL::Exact_predicates_inexact_constructions_kernel());
 
