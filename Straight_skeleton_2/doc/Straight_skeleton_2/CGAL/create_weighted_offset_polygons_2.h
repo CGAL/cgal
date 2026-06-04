@@ -10,7 +10,7 @@ namespace CGAL {
 
 The outer boundary is `outer_boundary` and its holes are given by `[holes_begin,holes_end)`.
 Weights of the outer contour are given by `outer_boundary_weights` and weights of the holes
-are given by `[holes_weights_begin, holes_weights_end]`, in the same order as holes appear
+are given by `[holes_weights_begin, holes_weights_end)`, in the same order as holes appear
 in the iterator range. Within each weight range, weights are given in the same order as the vertices
 of the contour: the `i`-th weight in the range is associated to the contour edge between the `i-1`-th
 and `i`-th vertices.

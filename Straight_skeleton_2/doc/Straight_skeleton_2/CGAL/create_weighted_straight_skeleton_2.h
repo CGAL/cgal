@@ -7,10 +7,10 @@ namespace CGAL {
 
 \brief creates a weighted straight skeleton in the interior of a 2D polygon with holes.
 
-The outer contour is given by the point sequence `[outer_contour_vertices_begin, outer_contour_vertices_end]`
-and its holes are given by `[holes_begin,holes_end[`. Weights of the outer contour are given by
-`[outer_contour_weights_begin, outer_contour_weights_end[`, and weights of the holes are given by
-`[holes_weights_begin, holes_weights_end]`, in the same order as holes appear in the iterator range.
+The outer contour is given by the point sequence `[outer_contour_vertices_begin, outer_contour_vertices_end)`
+and its holes are given by `[holes_begin,holes_end)`. Weights of the outer contour are given by
+`[outer_contour_weights_begin, outer_contour_weights_end)`, and weights of the holes are given by
+`[holes_weights_begin, holes_weights_end)`, in the same order as holes appear in the iterator range.
 Within each weight range, weights are given in the same order as the vertices of the contour:
 the `i`-th weight in the range is associated to the contour edge between the `i-1`-th and `i`-th vertices.
 
@@ -25,9 +25,9 @@ the `i`-th weight in the range is associated to the contour edge between the `i-
 \note `Cartesian_converter` and `NT_converter` are used to convert objects from `InK` to `SsK`,
       if they differ.
 
-\pre the range `[outer_contour_vertices_begin, outer_contour_vertices_end[` describes a weakly simple polygon
+\pre the range `[outer_contour_vertices_begin, outer_contour_vertices_end)` describes a weakly simple polygon
      that is oriented counterclockwise.
-\\pre the range `[holes_begin, holes_end[` describes a sequence of weakly simple polygons that are oriented clockwise.
+\\pre the range `[holes_begin, holes_end)` describes a sequence of weakly simple polygons that are oriented clockwise.
 \pre Holes neither intersect each other nor the outer boundary.
 \pre All the weights must be (strictly) positive.
 \pre Collinear consecutive contour edges must have equal weights.
@@ -54,8 +54,8 @@ create_interior_weighted_straight_skeleton_2(PointIterator outer_contour_vertice
 
 \brief creates a weighted straight skeleton in the interior of a 2D polygon *without* holes.
 
-The outer contour is given by the point sequence `[outer_contour_vertices_begin, outer_contour_vertices_end]`.
-Weights of the outer contour are given by `[outer_contour_weights_begin, outer_contour_weights_end]`,
+The outer contour is given by the point sequence `[outer_contour_vertices_begin, outer_contour_vertices_end)`.
+Weights of the outer contour are given by `[outer_contour_weights_begin, outer_contour_weights_end)`,
 appearing in the same order as the vertices of the contour: the `i`-th weight in the range is associated
 to the contour edge between the `i-1`-th and `i`-th vertices.
 
@@ -66,7 +66,7 @@ to the contour edge between the `i-1`-th and `i`-th vertices.
 \note `Cartesian_converter` and `NT_converter` are used to convert objects from `InK` to `SsK`,
       if they differ.
 
-\pre the range `[outer_contour_vertices_begin, outer_contour_vertices_end[` describes a weakly simple polygon
+\pre the range `[outer_contour_vertices_begin, outer_contour_vertices_end)` describes a weakly simple polygon
      that is oriented counterclockwise.
 \pre All the weights must be (strictly) positive.
 \pre Collinear consecutive contour edges must have equal weights.
@@ -122,7 +122,7 @@ create_interior_weighted_straight_skeleton_2(const InKPolygon& polygon,
 \ingroup PkgStraightSkeleton2WeightedSkeletonFunctions
 
 \brief creates a weighted straight skeleton in the <I>limited exterior</I> of the 2D polygon `P`
-given by the point sequence `[vertices_begin,vertices_end[`.
+given by the point sequence `[vertices_begin,vertices_end)`.
 
 The skeleton in the <I>limited exterior</I> of `P` is the skeleton in the interior of a polygon `Q`
 with `P` as its hole and a rectangular frame `F` as outer boundary.
