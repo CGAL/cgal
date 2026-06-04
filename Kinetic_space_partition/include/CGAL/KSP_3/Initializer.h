@@ -498,7 +498,7 @@ private:
         vts.emplace_back(sp_idx, sp.data().exact_vertices[v], sp.data().original_rays[v].to_vector());
 
       if (plot)
-        export_poly(polygons[0], m_data.prefix() + std::to_string(sp_idx) + "_intial_polygon.polylines.txt");
+        export_poly(polygons[0], m_data.prefix() + std::to_string(sp_idx) + "_initial_polygon.polylines.txt");
 
       for (auto [line_idx, line] : sp.data().lines) {
         // Skip lines on the bounding box, they won't split the polygon.
