@@ -6,9 +6,9 @@ namespace CGAL {
 \ingroup PkgStraightSkeleton2WeightedOffsetFunctions
 
 \brief returns a container with all the inner offset polygons <I>with holes</I> at distance `offset`
-of the 2D polygon with holes `poly_with_holes`.
+of the 2D polygon `poly`.
 
-This is equivalent to `arrange_offset_polygons_2(create_interior_weighted_skeleton_and_offset_polygons_2(offset, poly_with_holes, ofk, ssk))`.
+This is equivalent to `arrange_offset_polygons_2(create_interior_weighted_skeleton_and_offset_polygons_2(offset, poly, ofk, ssk))`.
 
 \tparam OfKPolygon is a polygon without holes type determined by `OfK` and `InKPolygon`,
                    see Section \ref SLSOffsetPolygonReturnType.
@@ -35,7 +35,7 @@ template <typename OfKPolygon,
           typename SsK = CGAL::Exact_predicates_inexact_constructions_kernel>
 std::vector< std::shared_ptr< OfKPolygon > >
 create_interior_weighted_skeleton_and_offset_polygons_with_holes_2(const FT& offset,
-                                                                   const InKPolygon& poly_with_holes,
+                                                                   const InKPolygon& poly,
                                                                    const InKWeights& weights,
                                                                    const OfK& ofk = OfK(),
                                                                    const SsK& ssk = SsK());
@@ -47,11 +47,11 @@ create_interior_weighted_skeleton_and_offset_polygons_with_holes_2(const FT& off
 \ingroup PkgStraightSkeleton2WeightedOffsetFunctions
 
 \brief returns a container with all the outer offset polygons <I>with holes</I>
-at distance `offset` of the 2D polygon `poly_with_holes`. Note that the
+at distance `offset` of the 2D polygon `poly`. Note that the
 offset of the outer frame is ignored.
 
 This is equivalent to a call to `CGAL::arrange_offset_polygons_2()` on the
-output of \link CGAL::create_exterior_weighted_skeleton_and_offset_polygons_2() `create_exterior_weighted_skeleton_and_offset_polygons_2(offset, poly_with_holes, ofk, ssk)` \endlink
+output of \link CGAL::create_exterior_weighted_skeleton_and_offset_polygons_2() `create_exterior_weighted_skeleton_and_offset_polygons_2(offset, poly, ofk, ssk)` \endlink
 after having filtered out the polygon corresponding to the offset of the outer frame and
 having reversed the orientation of all other polygons.
 
@@ -80,7 +80,7 @@ template <typename OfKPolygon,
           typename SsK = CGAL::Exact_predicates_inexact_constructions_kernel>
 std::vector<std::shared_ptr<OfKPolygon> >
 create_exterior_weighted_skeleton_and_offset_polygons_with_holes_2(const FT& offset,
-                                                                   const InKPolygon& poly_with_holes,
+                                                                   const InKPolygon& poly,
                                                                    const InKWeights& weights,
                                                                    const OfK& ofk = OfK(),
                                                                    const SsK& ssk = SsK());
