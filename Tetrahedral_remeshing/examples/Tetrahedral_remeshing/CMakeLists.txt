@@ -41,7 +41,7 @@ if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program( "mesh_and_remesh_with_sizing.cpp")
   target_link_libraries(mesh_and_remesh_with_sizing PRIVATE CGAL::Eigen3_support)
 
-    create_single_source_cgal_program( "mesh_and_remesh_one_subdomain.cpp")
+  create_single_source_cgal_program( "mesh_and_remesh_one_subdomain.cpp")
   target_link_libraries(mesh_and_remesh_one_subdomain PRIVATE CGAL::Eigen3_support)
 
   create_single_source_cgal_program("tetrahedral_remeshing_with_features_and_sizing.cpp")
