@@ -8,6 +8,8 @@ find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Core)
 
 create_single_source_cgal_program("test.cpp")
 create_single_source_cgal_program("tree_construction.cpp")
+create_single_source_cgal_program("self_intersections_comparison.cpp")
+create_single_source_cgal_program("meshes_intersections_comparison.cpp")
 
 # google benchmark
 find_package(benchmark QUIET)
@@ -16,4 +18,13 @@ if(benchmark_FOUND)
   target_link_libraries(tree_creation PRIVATE benchmark::benchmark)
 else()
   message(STATUS "NOTICE: The benchmark 'tree_creation.cpp' requires the Google benchmark library, and will not be compiled.")
+endif()
+
+find_package(TBB QUIET)
+include(CGAL_TBB_support)
+if(TARGET CGAL::TBB_support)
+  target_link_libraries(self_intersections_comparison PRIVATE CGAL::TBB_support)
+  target_link_libraries(meshes_intersections_comparison PRIVATE CGAL::TBB_support)
+else()
+  message(STATUS "NOTICE: Intel TBB was not found. Sequential code will be used.")
 endif()
