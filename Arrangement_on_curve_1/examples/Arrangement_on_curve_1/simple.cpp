@@ -27,8 +27,8 @@ int main() {
   Kernel::Point_2 p_near(2, 1);
 
   std::cout << "Inserting collinear 2D points into the 1D arrangement...\n";
-  auto v_mid  = CGAL::Arrangement_on_curve_1::insert(arr, p_middle);
-  auto v_far  = CGAL::Arrangement_on_curve_1::insert(arr, p_far);
+  auto v_mid = CGAL::Arrangement_on_curve_1::insert(arr, p_middle);
+  auto v_far = CGAL::Arrangement_on_curve_1::insert(arr, p_far);
   auto v_near = CGAL::Arrangement_on_curve_1::insert(arr, p_near);
 
   // Fetch the data map and modify user properties via property map interfaces

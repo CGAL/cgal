@@ -12,6 +12,7 @@
 
 #include <variant>
 #include <iterator>
+
 #include <CGAL/Arrangement_on_curve_1.h>
 #include <CGAL/property_map.h>
 
@@ -66,13 +67,12 @@ locate(Arrangement_on_curve_1<GeometryTraits, TopologyTraits>& arr,
   return topo.right_edge(last_vit);
 }
 
-// ==========================================
+  // ==========================================
 // INSERT
 // ==========================================
 template <typename GeometryTraits, typename TopologyTraits>
 typename Arrangement_on_curve_1<GeometryTraits, TopologyTraits>::Vertex_descriptor
-insert(Arrangement_on_curve_1<GeometryTraits, TopologyTraits>& arr,
-       const typename GeometryTraits::Point_1& p) {
+insert(Arrangement_on_curve_1<GeometryTraits, TopologyTraits>& arr, const typename GeometryTraits::Point_1& p) {
   using Arr = Arrangement_on_curve_1<GeometryTraits, TopologyTraits>;
   auto location = locate(arr, p);
 
@@ -80,51 +80,6 @@ insert(Arrangement_on_curve_1<GeometryTraits, TopologyTraits>& arr,
   if (auto e_ptr = std::get_if<typename Arr::Edge_descriptor>(&location)) return arr.split_edge(*e_ptr, p);
 
   return arr.insert_empty(p);
-}
-
-// ==========================================
-// OVERLAY
-// ==========================================
-template <typename GeometryTraits, typename TopologyTraits>
-void overlay(const Arrangement_on_curve_1<GeometryTraits, TopologyTraits>& arr1,
-             const Arrangement_on_curve_1<GeometryTraits, TopologyTraits>& arr2,
-             Arrangement_on_curve_1<GeometryTraits, TopologyTraits>& result) {
-  auto comp = arr1.geometry_traits_1().compare_x_1_object();
-  auto pmap1 = arr1.vertex_point_map();
-  auto pmap2 = arr2.vertex_point_map();
-
-  auto r1 = arr1.vertices();
-  auto r2 = arr2.vertices();
-
-  auto vit1 = r1.begin();
-  auto vit2 = r2.begin();
-
-  while (vit1 != r1.end() && vit2 != r2.end()) {
-    Comparison_result res = comp(get(pmap1, vit1), get(pmap2, vit2));
-    if (res == EQUAL) {
-      insert(result, get(pmap1, vit1));
-      ++vit1;
-      ++vit2;
-    }
-    else
-    if (res == SMALLER) {
-      insert(result, get(pmap1, vit1));
-      ++vit1;
-    }
-    else {
-      insert(result, get(pmap2, vit2));
-      ++vit2;
-    }
-  }
-
-  while (vit1 != r1.end()) {
-    insert(result, get(pmap1, vit1));
-    ++vit1;
-  }
-  while (vit2 != r2.end()) {
-    insert(result, get(pmap2, vit2));
-    ++vit2;
-  }
 }
 
 } // namespace Arrangement_on_curve_1
