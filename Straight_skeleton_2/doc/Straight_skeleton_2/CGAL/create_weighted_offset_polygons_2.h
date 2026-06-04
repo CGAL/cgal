@@ -40,8 +40,13 @@ and `create_offset_polygons_2()` instead.
 \sa `CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2()`
 \sa `Polygon_offset_builder_2`
 */
-template <typename OfKPolygon, typename FT, typename InKPolygon, typename InKWeights,
-          typename HoleIterator, typename OfK, typename SsK>
+template <typename OfKPolygon,
+          typename FT,
+          typename InKPolygon,
+          typename InKWeights,
+          typename HoleIterator,
+          typename OfK = CGAL::Exact_predicates_inexact_constructions_kernel,
+          typename SsK = CGAL::Exact_predicates_inexact_constructions_kernel>
 std::vector< std::shared_ptr<OfKPolygon> >
 create_interior_weighted_skeleton_and_offset_polygons_2(const FT& offset,
                                                         const InKPolygon& outer_boundary,
@@ -50,8 +55,8 @@ create_interior_weighted_skeleton_and_offset_polygons_2(const FT& offset,
                                                         const InKWeights& outer_boundary_weights,
                                                         HoleWeightsIterator holes_weights_begin,
                                                         HoleWeightsIterator holes_weights_end,
-                                                        OfK ofk = CGAL::Exact_predicates_inexact_constructions_kernel,
-                                                        SsK ssk = CGAL::Exact_predicates_inexact_constructions_kernel());
+                                                        const OfK& ofk = OfK(),
+                                                        const SsK& ssk = SsK());
 
 /*!
 \ingroup PkgStraightSkeleton2WeightedOffsetFunctions
@@ -83,13 +88,18 @@ and `create_offset_polygons_2()` instead.
 \sa `CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2()`
 \sa `Polygon_offset_builder_2`
 */
-template <typename OfKPolygon, typename FT, typename InKPolygon, typename InKWeights, typename OfK, typename SsK>
+template <typename OfKPolygon,
+          typename FT,
+          typename InKPolygon,
+          typename InKWeights,
+          typename OfK = CGAL::Exact_predicates_inexact_constructions_kernel,
+          typename SsK = CGAL::Exact_predicates_inexact_constructions_kernel>
 std::vector< std::shared_ptr<OfKPolygon> >
 create_interior_weighted_skeleton_and_offset_polygons_2(const FT& offset,
                                                         const InKPolygon& poly,
                                                         const InKWeights& weights,
-                                                        OfK ofk = CGAL::Exact_predicates_inexact_constructions_kernel,
-                                                        SsK ssk = CGAL::Exact_predicates_inexact_constructions_kernel());
+                                                        const OfK& ofk = OfK(),
+                                                        const SsK& ssk = SsK());
 
 // ---------------------------------------------- EXTERIOR -----------------------------------------
 
@@ -129,12 +139,17 @@ therefore, to construct offsets at more than one single distance, use the separa
 \sa `CGAL::create_exterior_skeleton_and_offset_polygons_with_holes_2()`
 \sa `Polygon_offset_builder_2`
 */
-template <typename OfKPolygon, typename FT, typename InKPolygon, typename InKWeights, typename OfK, typename SsK>
+template <typename OfKPolygon,
+          typename FT,
+          typename InKPolygon,
+          typename InKWeights,
+          typename OfK = CGAL::Exact_predicates_inexact_constructions_kernel,
+          typename SsK = CGAL::Exact_predicates_inexact_constructions_kernel>
 std::vector< std::shared_ptr<OfKPolygon> >
 create_exterior_weighted_skeleton_and_offset_polygons_2(const FT& offset,
                                                         const InKPolygon& poly,
                                                         const InKWeights& weights,
-                                                        OfK ofk = Exact_predicates_inexact_constructions_kernel(),
-                                                        SsK ssk = Exact_predicates_inexact_constructions_kernel());
+                                                        const OfK& ofk = OfK(),
+                                                        const SsK& ssk = SsK());
 
 } /* namespace CGAL */

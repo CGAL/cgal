@@ -37,7 +37,7 @@ the `i`-th weight in the range is associated to the contour edge between the `i-
 */
 template <typename PointIterator, typename HoleIterator,
           typename WeightIterator, typename HoleWeightsIterator,
-          typename SsK>
+          typename SsK = CGAL::Exact_predicates_inexact_constructions_kernel>
 std::shared_ptr< Straight_skeleton_2<SsK> >
 create_interior_weighted_straight_skeleton_2(PointIterator outer_contour_vertices_begin,
                                              PointIterator outer_contour_vertices_end,
@@ -47,7 +47,7 @@ create_interior_weighted_straight_skeleton_2(PointIterator outer_contour_vertice
                                              WeightIterator outer_contour_weights_end,
                                              HoleWeightsIterator holes_weights_begin,
                                              HoleWeightsIterator holes_weights_end,
-                                             SsK k = CGAL::Exact_predicates_inexact_constructions_kernel());
+                                             const SsK& k = SsK());
 
 /*!
 \ingroup PkgStraightSkeleton2WeightedSkeletonFunctions
@@ -74,13 +74,14 @@ to the contour edge between the `i-1`-th and `i`-th vertices.
 \sa `CGAL::create_exterior_straight_skeleton_2()`
 \sa `CGAL::Straight_skeleton_builder_2`
 */
-template <typename PointIterator, typename WeightIterator, typename SsK>
+template <typename PointIterator, typename WeightIterator,
+          typename SsK = CGAL::Exact_predicates_inexact_constructions_kernel>
 std::shared_ptr< Straight_skeleton_2<SsK> >
 create_interior_weighted_straight_skeleton_2(PointIterator outer_contour_vertices_begin,
                                              PointIterator outer_contour_vertices_end,
                                              WeightIterator outer_contour_weights_begin,
                                              WeightIterator outer_contour_weights_end,
-                                             SsK k = CGAL::Exact_predicates_inexact_constructions_kernel());
+                                             const SsK& k = SsK());
 
 /*!
 \ingroup PkgStraightSkeleton2WeightedSkeletonFunctions
@@ -108,11 +109,12 @@ the `i`-th weight in the range is associated to the contour edge between the `i-
 \sa `CGAL::create_exterior_straight_skeleton_2()`
 \sa `CGAL::Straight_skeleton_builder_2`
 */
-template <typename InKPolygon, typename InKWeights, typename SsK>
+template <typename InKPolygon, typename InKWeights,
+          typename SsK = CGAL::Exact_predicates_inexact_constructions_kernel>
 std::shared_ptr< Straight_skeleton_2<SsK> >
 create_interior_weighted_straight_skeleton_2(const InKPolygon& polygon,
                                              const InKWeights& weights,
-                                             SsK k = CGAL::Exact_predicates_inexact_constructions_kernel());
+                                             const SsK& k = SsK());
 
 // ---------------------------------------------- EXTERIOR -----------------------------------------
 
@@ -146,14 +148,16 @@ is associated to the contour edge between the `i-1`-th and `i`-th vertices.
 \sa `CGAL::create_interior_straight_skeleton_2()`
 \sa `CGAL::Straight_skeleton_builder_2`
 */
-template <typename FT, typename PointIterator, typename WeightIterator, typename SsK>
+template <typename FT,
+          typename PointIterator, typename WeightIterator,
+          typename SsK = CGAL::Exact_predicates_inexact_constructions_kernel>
 std::shared_ptr< Straight_skeleton_2<SsK> >
 create_exterior_weighted_straight_skeleton_2(const FT& max_offset,
                                              PointIterator vertices_begin,
                                              PointIterator vertices_end,
                                              WeightIterator weights_begin,
                                              WeightIterator weights_end,
-                                             SsK k = CGAL::Exact_predicates_inexact_constructions_kernel());
+                                             const SsK& k = SsK());
 
 /*!
 \ingroup PkgStraightSkeleton2WeightedSkeletonFunctions
@@ -191,11 +195,14 @@ is associated to the contour edge between the `i-1`-th and `i`-th vertices.
 \sa `CGAL::create_interior_straight_skeleton_2()`
 \sa `CGAL::Straight_skeleton_builder_2`
 */
-template <typename FT, typename Polygon, typename Weights, typename SsK>
+template <typename FT,
+          typename Polygon,
+          typename Weights,
+          typename SsK = CGAL::Exact_predicates_inexact_constructions_kernel>
 std::shared_ptr< Straight_skeleton_2<SsK> >
 create_exterior_weighted_straight_skeleton_2(const FT& max_offset,
                                              const InKPolygon& P,
                                              const InKWeights& weights,
-                                             SsK k = CGAL::Exact_predicates_inexact_constructions_kernel());
+                                             const SsK& k = SsK());
 
 } /* namespace CGAL */

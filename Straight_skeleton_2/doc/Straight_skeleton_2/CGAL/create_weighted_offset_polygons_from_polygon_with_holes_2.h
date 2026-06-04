@@ -25,12 +25,16 @@ This is equivalent to `arrange_offset_polygons_2(create_interior_weighted_skelet
 \sa `CGAL::create_exterior_weighted_skeleton_and_offset_polygons_with_holes_2()`
 \sa `Polygon_offset_builder_2`
 */
-template<class OfKPolygon, class FT, class InKPolygon, class OfK, class SsK>
+template <typename OfKPolygon,
+          typename FT,
+          typename InKPolygon,
+          typename OfK = CGAL::Exact_predicates_inexact_constructions_kernel,
+          typename SsK = CGAL::Exact_predicates_inexact_constructions_kernel>
 std::vector< std::shared_ptr< OfKPolygon > >
 create_interior_weighted_skeleton_and_offset_polygons_with_holes_2(const FT& offset,
                                                                    const InKPolygon& poly_with_holes,
-                                                                   OfK ofk = CGAL::Exact_predicates_inexact_constructions_kernel,
-                                                                   SsK ssk = CGAL::Exact_predicates_inexact_constructions_kernel);
+                                                                   const OfK& ofk = OfK(),
+                                                                   const SsK& ssk = SsK());
 
 
 // ---------------------------------------------- EXTERIOR -----------------------------------------
@@ -64,12 +68,16 @@ having reversed the orientation of all other polygons.
 \sa `CGAL::create_interior_weighted_skeleton_and_offset_polygons_with_holes_2()`
 \sa `Polygon_offset_builder_2`
 */
-template<class OfKPolygon, class FT, class InKPolygon, class OfK, class SsK>
+template <typename OfKPolygon,
+          typename FT,
+          typename InKPolygon,
+          typename OfK = CGAL::Exact_predicates_inexact_constructions_kernel,
+          typename SsK = CGAL::Exact_predicates_inexact_constructions_kernel>
 std::vector<std::shared_ptr<OfKPolygon> >
 create_exterior_weighted_skeleton_and_offset_polygons_with_holes_2(const FT& offset,
                                                                    const InKPolygon& poly_with_holes,
                                                                    const InKWeights& weights,
-                                                                   OfK ofk = Exact_predicates_inexact_constructions_kernel(),
-                                                                   SsK ssk = Exact_predicates_inexact_constructions_kernel());
+                                                                   const OfK& ofk = OfK(),
+                                                                   const SsK& ssk = SsK());
 
 } /* namespace CGAL */

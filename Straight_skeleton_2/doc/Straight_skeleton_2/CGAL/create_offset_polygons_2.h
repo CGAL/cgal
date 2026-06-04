@@ -24,11 +24,14 @@ will be generated in its exterior.
 \sa `CGAL::create_exterior_skeleton_and_offset_polygons_2()`
 \sa `Polygon_offset_builder_2`
 */
-template <typename OfKPolygon, typename FT, typename StraightSkeleton, typename OfK>
+template <typename OfKPolygon,
+          typename FT,
+          typename StraightSkeleton,
+          typename OfK = CGAL::Exact_predicates_inexact_constructions_kernel>
 std::vector< std::shared_ptr<OfKPolygon> >
 create_offset_polygons_2(const FT& offset,
                          const StraightSkeleton& ss,
-                         OfK k = Exact_predicates_inexact_constructions_kernel());
+                         const OfK& k = OfK());
 
 // ---------------------------------------------- INTERIOR -----------------------------------------
 
@@ -65,14 +68,19 @@ the skeleton only once, and then call `create_offset_polygons_2()` for each dist
 \sa `CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2()`
 \sa `Polygon_offset_builder_2`
 */
-template <typename OfKPolygon, typename FT, typename InKPolygon, typename HoleIterator, typename OfK, typename SsK>
+template <typename OfKPolygon,
+          typename FT,
+          typename InKPolygon,
+          typename HoleIterator,
+          typename OfK = CGAL::Exact_predicates_inexact_constructions_kernel,
+          typename SsK = CGAL::Exact_predicates_inexact_constructions_kernel>
 std::vector< std::shared_ptr<OfKPolygon> >
 create_interior_skeleton_and_offset_polygons_2(const FT& offset,
                                                const InKPolygon& outer_boundary,
                                                HoleIterator holes_begin,
                                                HoleIterator holes_end,
-                                               OfK ofk = CGAL::Exact_predicates_inexact_constructions_kernel,
-                                               SsK ssk = CGAL::Exact_predicates_inexact_constructions_kernel());
+                                               const OfK& ofk = OfK(),
+                                               const SsK& ssk = SsK());
 
 /*!
 \ingroup PkgStraightSkeleton2OffsetFunctions
@@ -103,12 +111,16 @@ the skeleton only once, and then call `create_offset_polygons_2()` for each dist
 \sa `CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2()`
 \sa `Polygon_offset_builder_2`
 */
-template <typename OfKPolygon, typename FT, typename InKPolygon, typename OfK, typename SsK>
+template <typename OfKPolygon,
+          typename FT,
+          typename InKPolygon,
+          typename OfK = CGAL::Exact_predicates_inexact_constructions_kernel,
+          typename SsK = CGAL::Exact_predicates_inexact_constructions_kernel>
 std::vector< std::shared_ptr<OfKPolygon> >
 create_interior_skeleton_and_offset_polygons_2(const FT& offset,
                                                const InKPolygon& poly,
-                                               OfK ofk = CGAL::Exact_predicates_inexact_constructions_kernel,
-                                               SsK ssk = CGAL::Exact_predicates_inexact_constructions_kernel());
+                                               const OfK& ofk = OfK(),
+                                               const SsK& ssk = CGAL::SsK());
 
 // ---------------------------------------------- EXTERIOR -----------------------------------------
 
@@ -144,11 +156,15 @@ therefore, to construct offsets at more than one single distance, use the separa
 \sa `CGAL::create_exterior_skeleton_and_offset_polygons_with_holes_2()`
 \sa `Polygon_offset_builder_2`
 */
-template <typename OfKPolygon, typename FT, typename InKPolygon, typename OfK, typename SsK>
+template <typename OfKPolygon,
+          typename FT,
+          typename InKPolygon,
+          typename OfK = CGAL::Exact_predicates_inexact_constructions_kernel,
+          typename SsK = CGAL::Exact_predicates_inexact_constructions_kernel>
 std::vector< std::shared_ptr<OfKPolygon> >
 create_exterior_skeleton_and_offset_polygons_2(const FT& offset,
                                                const InKPolygon& poly,
-                                               OfK ofk = Exact_predicates_inexact_constructions_kernel(),
-                                               SsK ssk = Exact_predicates_inexact_constructions_kernel());
+                                               const OfK& ofk = OfK(),
+                                               const SsK& ssk = SsK());
 
 } /* namespace CGAL */
