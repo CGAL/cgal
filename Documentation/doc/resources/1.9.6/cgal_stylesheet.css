@@ -125,6 +125,7 @@ h2 {
 .image > img {
     border-radius: 1ex;
     background-color: white;
+    padding: 1ex;
   }
 
 .icon-namespace {
