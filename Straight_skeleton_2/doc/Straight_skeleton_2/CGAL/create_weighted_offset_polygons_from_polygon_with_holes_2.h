@@ -1,5 +1,7 @@
 namespace CGAL {
 
+// ############################################## INTERIOR #########################################
+
 /*!
 \ingroup PkgStraightSkeleton2WeightedOffsetFunctions
 
@@ -39,7 +41,7 @@ create_interior_weighted_skeleton_and_offset_polygons_with_holes_2(const FT& off
                                                                    const SsK& ssk = SsK());
 
 
-// ---------------------------------------------- EXTERIOR -----------------------------------------
+// ############################################## EXTERIOR #########################################
 
 /*!
 \ingroup PkgStraightSkeleton2WeightedOffsetFunctions

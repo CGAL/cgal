@@ -33,7 +33,7 @@ create_offset_polygons_2(const FT& offset,
                          const StraightSkeleton& ss,
                          const OfK& k = OfK());
 
-// ---------------------------------------------- INTERIOR -----------------------------------------
+// ############################################## INTERIOR #########################################
 
 /*!
 \ingroup PkgStraightSkeleton2OffsetFunctions
@@ -122,7 +122,7 @@ create_interior_skeleton_and_offset_polygons_2(const FT& offset,
                                                const OfK& ofk = OfK(),
                                                const SsK& ssk = CGAL::SsK());
 
-// ---------------------------------------------- EXTERIOR -----------------------------------------
+// ############################################## EXTERIOR #########################################
 
 /*!
 \ingroup PkgStraightSkeleton2OffsetFunctions

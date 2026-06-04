@@ -1,6 +1,6 @@
 namespace CGAL {
 
-// ---------------------------------------------- INTERIOR -----------------------------------------
+// ############################################## INTERIOR #########################################
 
 /*!
 \ingroup PkgStraightSkeleton2WeightedSkeletonFunctions
@@ -116,7 +116,7 @@ create_interior_weighted_straight_skeleton_2(const InKPolygon& polygon,
                                              const InKWeights& weights,
                                              const SsK& k = SsK());
 
-// ---------------------------------------------- EXTERIOR -----------------------------------------
+// ############################################## EXTERIOR #########################################
 
 /*!
 \ingroup PkgStraightSkeleton2WeightedSkeletonFunctions

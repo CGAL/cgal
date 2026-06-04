@@ -1,6 +1,6 @@
 namespace CGAL {
 
-// ---------------------------------------------- INTERIOR -----------------------------------------
+// ############################################## INTERIOR #########################################
 
 /*!
 \ingroup PkgStraightSkeleton2SkeletonFunctions
@@ -87,7 +87,7 @@ std::shared_ptr< Straight_skeleton_2<SsK> >
 create_interior_straight_skeleton_2(const Polygon& polygon,
                                     const SsK& k = SsK());
 
-// ---------------------------------------------- EXTERIOR -----------------------------------------
+// ############################################## EXTERIOR #########################################
 
 /*!
 \ingroup PkgStraightSkeleton2SkeletonFunctions
