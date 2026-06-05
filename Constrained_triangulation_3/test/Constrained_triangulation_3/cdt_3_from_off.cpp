@@ -36,6 +36,7 @@
 
 #include <algorithm>
 #include <array>
+#include <CLI/CLI.hpp>
 #include <boost/iterator/function_output_iterator.hpp>
 #include <cassert>
 #include <chrono>
@@ -51,7 +52,6 @@
 #include <set>
 #include <sstream>
 #include <stack>
-#include <string_view>
 #include <string>
 #include <type_traits>
 #include <unordered_map>
@@ -97,71 +97,9 @@ auto milliseconds_since(std::chrono::time_point<Clock, Duration> start_time) {
 
 using clock = std::chrono::high_resolution_clock;
 
-void help(std::ostream& out) {
-  out << R"!!!!!(
-Usage: cdt_3_from_off [options] input.off output.off
-
-  input.off: input mesh
-  output.off: output mesh
-
-  --merge-facets/--no-merge-facets: merge facets into patches (set by default)
-  --merge-facets-old: merge facets using the old method
-  --bisect: bisect failures
-  --vertex-vertex-epsilon <double>: epsilon for vertex-vertex min distance (default: 1e-6)
-  --segment-vertex-epsilon <double>: epsilon for segment-vertex min distance (default: 0)
-  --coplanar-polygon-max-angle <double>: max angle for coplanar polygons (default: 1)
-  --coplanar-polygon-max-distance <double>: max distance for coplanar polygons (default: 1e-6)
-
-  --dump-patches-after-merge <filename.ply>: dump patches after merging facets in PLY
-  --dump-surface-mesh-after-merge <filename.off>: dump surface mesh after merging facets in OFF
-  --dump-patches-borders-prefix <filenames_prefix>: dump patches borders
-  --dump-after-conforming <filename.off>: dump mesh after conforming in OFF
-
-  --no-repair: do not repair the mesh
-  --read-mesh-with-operator: read the mesh with operator>>
-  --reject-self-intersections: reject self-intersecting polygon soups
-  --no-is-valid: do not call is_valid checks
-
-  --debug-Steiner-points: debug Steiner point insertion
-  --debug-Steiner-points-construction: debug Steiner point construction
-  --debug-move-Steiner-vertices-to-the-volume: debug moving Steiner vertices to the volume
-  --debug-input-faces: debug input faces
-  --debug-missing-regions: debug missing regions
-  --debug-regions: debug regions
-  --debug_copy_triangulation_into_hole: debug copy_triangulation_into_hole
-  --debug-validity: add is_valid checks after modifications to the TDS
-  --debug-finite-edges-map: debug the use of a hash map for finite edges
-  --debug-subconstraints-to-conform: debug subconstraints to conform
-  --debug-verbose-special-cases: debug verbose output for special cases
-  --debug-encroaching-vertices: debug encroaching vertices computation
-  --debug-conforming-validation: debug edge conforming validation
-  --debug-constraint-hierarchy: debug constraint hierarchy operations
-  --debug-geometric-errors: debug geometric error handling
-  --debug-polygon-insertion: debug polygon insertion process
-  --debug-restore-faces: debug face restoration process
-
-  --use-finite-edges-map: use a hash map for finite edges (default: false)
-  --move-Steiner-vertices-to-the-volume/--no-move-Steiner-vertices-to-the-volume: move Steiner vertices to the volume (default: true)
-  --allow-moving-Steiner-vertices-to-create-negative-tets/--no-allow-moving-Steiner-vertices-to-create-negative-tets: allow moving Steiner vertices to create negative volume tetrahedra (default: false)
-  --use-epeck-for-normals/--no-use-epeck-for-normals: use exact kernel for normal computations (default: false)
-  --use-epeck-for-Steiner-points/--no-use-epeck-for-Steiner-points: use exact kernel for Steiner point computations (default: false)
-
-  --verbose/-V: verbose (can be used several times)
-  --quiet: do not print anything
-  --help/-h: print this help
-)!!!!!";
-}
-
-[[noreturn]] void error(std::string_view message, std::string_view extra = "") {
-  std::cerr << "Error: " << message << extra << '\n';
-  help(std::cerr);
-  std::exit(EXIT_FAILURE);
-}
-
 struct CDT_options
 {
   int         verbose_level                       = 0;
-  bool        need_help                           = false;
   bool        quiet                               = false;
   bool        merge_facets                        = true;
   bool        merge_facets_old_method             = false;
@@ -170,7 +108,7 @@ struct CDT_options
   bool        read_mesh_with_operator             = false;
   bool        debug_Steiner_points                = false;
   bool        debug_Steiner_points_construction   = false;
-  bool        debug_move_Steiner_vertices         = true;
+  unsigned    debug_move_Steiner_vertices         = 0;
   bool        debug_input_faces                   = false;
   bool        debug_missing_regions               = false;
   bool        debug_regions                       = false;
@@ -207,137 +145,118 @@ struct CDT_options
 };
 
 CDT_options::CDT_options(int argc, char* argv[]) {
-  const std::vector<std::string_view> args(argv + 1, argv + argc);
-  int positional = 0;
+  CLI::App app{"Build and process a constrained Delaunay triangulation from an OFF mesh"};
+  app.set_help_flag("-h,--help", "print this help");
+  app.allow_extras(false);
 
-  using namespace std::literals::string_view_literals;
-  for (auto it = args.begin(); it != args.end(); ++it) {
-    auto get_next_arg_or_error_out = [&it, &args]() -> std::string {
-      if(it + 1 == args.end()) {
-        error("extra argument required after "sv, *it);
-      }
-      return std::string(*++it);
-    };
-    std::string_view arg = *it;
-    bool enable = true;
-    bool arg_is_a_long_option = false;
-    if(arg.starts_with("--no-")) {
-      enable = false;
-      arg_is_a_long_option = true;
-      arg.remove_prefix(5);
-    } else if(arg.starts_with("--")) {
-      arg_is_a_long_option = true;
-      arg.remove_prefix(2);
-    }
-    if(arg_is_a_long_option) {
-      if(arg == "merge-facets"sv) {
-        merge_facets                        = enable;
-      } else if(arg == "no-merge-facets"sv) {
-        merge_facets                        = false;
-      } else if(arg == "reject-self-intersections"sv) {
-        reject_self_intersections           = enable;
-      } else if(arg == "no-repair"sv) {
-        repair_mesh                         = false;
-      } else if(arg == "read-mesh-with-operator"sv) {
-        read_mesh_with_operator             = enable;
-      } else if(arg == "merge-facets-old"sv) {
-        merge_facets                        = enable;
-        merge_facets_old_method             = enable;
-      } else if(arg == "bisect"sv) {
-        bisect_failures                     = enable;
-      } else if(arg == "dump-patches-after-merge"sv) {
-        dump_patches_after_merge_filename   = get_next_arg_or_error_out();
-      } else if(arg == "dump-patches-borders-prefix"sv) {
-        dump_patches_borders_prefix         = get_next_arg_or_error_out();
-      } else if(arg == "dump-surface-mesh-after-merge"sv) {
-        dump_surface_mesh_after_merge_filename = get_next_arg_or_error_out();
-      } else if(arg == "dump-after-conforming"sv) {
-        dump_after_conforming_filename      = get_next_arg_or_error_out();
-      } else if(arg == "vertex-vertex-epsilon"sv) {
-        vertex_vertex_epsilon               = std::stod(get_next_arg_or_error_out());
-      } else if(arg == "segment-vertex-epsilon"sv) {
-        segment_vertex_epsilon              = std::stod(get_next_arg_or_error_out());
-      } else if(arg == "coplanar-polygon-max-angle"sv) {
-        coplanar_polygon_max_angle          = std::stod(get_next_arg_or_error_out());
-      } else if(arg == "coplanar-polygon-max-distance"sv) {
-        coplanar_polygon_max_distance       = std::stod(get_next_arg_or_error_out());
-      } else if(arg == "quiet"sv) {
-        quiet                               = enable;
-      } else if(arg == "no-is-valid"sv) {
-        call_is_valid                       = false;
-      } else if(arg == "debug-Steiner-points"sv) {
-        debug_Steiner_points                = enable;
-      } else if(arg == "debug-Steiner-points-construction"sv) {
-        debug_Steiner_points_construction   = enable;
-      } else if(arg == "debug-move-Steiner-vertices-to-the-volume"sv) {
-        debug_move_Steiner_vertices         = enable;
-      } else if(arg == "debug-input-faces"sv) {
-        debug_input_faces                   = enable;
-      } else if(arg == "debug-missing-regions"sv) {
-        debug_missing_regions               = enable;
-      } else if(arg == "debug-regions"sv) {
-        debug_regions                       = enable;
-      } else if(arg == "debug_copy_triangulation_into_hole"sv) {
-        debug_copy_triangulation_into_hole  = enable;
-      } else if(arg == "debug-validity"sv) {
-        debug_validity                      = enable;
-      } else if(arg == "debug-finite-edges-map"sv) {
-        debug_finite_edges_map              = enable;
-      } else if(arg == "debug-subconstraints-to-conform"sv) {
-        debug_subconstraints_to_conform     = enable;
-      } else if(arg == "debug-verbose-special-cases"sv) {
-        debug_verbose_special_cases         = enable;
-      } else if(arg == "debug-encroaching-vertices"sv) {
-        debug_encroaching_vertices          = enable;
-      } else if(arg == "debug-conforming-validation"sv) {
-        debug_conforming_validation         = enable;
-      } else if(arg == "debug-constraint-hierarchy"sv) {
-        debug_constraint_hierarchy          = enable;
-      } else if(arg == "debug-geometric-errors"sv) {
-        debug_geometric_errors              = enable;
-      } else if(arg == "debug-polygon-insertion"sv) {
-        debug_polygon_insertion             = enable;
-      } else if(arg == "debug-restore-faces"sv) {
-        debug_restore_faces                  = enable;
-      } else if(arg == "use-finite-edges-map"sv) {
-        use_finite_edges_map                = enable;
-      } else if(arg == "move-Steiner-vertices-to-the-volume"sv) {
-        move_Steiner_vertices_to_the_volume = enable;
-      } else if(arg == "allow-moving-Steiner-vertices-to-create-negative-tets"sv) {
-        allow_moving_Steiner_vertices_to_create_negative_tets = enable;
-      } else if(arg == "no-use-epeck-for-normals"sv) {
-        use_epeck_for_normals               = false;
-      } else if(arg == "no-use-epeck-for-Steiner-points"sv) {
-        use_epeck_for_Steiner_points        = false;
-      } else if(arg == "use-epeck-for-normals"sv) {
-        use_epeck_for_normals               = enable;
-      } else if(arg == "use-epeck-for-Steiner-points"sv) {
-        use_epeck_for_Steiner_points        = enable;
-      } else if(arg == "verbose"sv || arg == "-V"sv) {
-        ++verbose_level;
-      } else if(arg == "help"sv || arg == "-h"sv) {
-        need_help                           = enable;
-      }
-    } else if(arg == "-V"sv) {
-      ++verbose_level;
-    } else if(arg == "-h"sv) {
-      need_help                             = true;
-    } else if(arg.starts_with('-')) {
-      error("unknown option "sv, arg);
-    } else {
-      switch(positional) {
-        case 0:
-          input_filename = arg;
-          ++positional;
-          break;
-        case 1:
-          output_filename = arg;
-          ++positional;
-          break;
-        default:
-          error("too many arguments"sv);
-      }
-    }
+  app.add_flag("-V,--verbose", verbose_level,
+               "verbose (can be used several times)")
+      ->multi_option_policy(CLI::MultiOptionPolicy::Sum);
+
+  app.add_flag("--quiet", quiet, "do not print anything");
+
+  app.add_flag("--merge-facets,!--no-merge-facets", merge_facets,
+               "merge facets into patches");
+  app.add_flag("--merge-facets-old", merge_facets_old_method,
+               "merge facets using the old method");
+  app.add_flag("--bisect", bisect_failures, "bisect failures");
+  app.add_flag("--reject-self-intersections", reject_self_intersections,
+               "reject self-intersecting polygon soups");
+  app.add_flag("--read-mesh-with-operator", read_mesh_with_operator,
+               "read the mesh with operator>>");
+  app.add_flag("--repair,!--no-repair", repair_mesh,
+               "repair the mesh while reading polygon soup");
+  app.add_flag("--call-is-valid,!--no-is-valid", call_is_valid,
+               "call is_valid checks");
+
+  app.add_option("--vertex-vertex-epsilon", vertex_vertex_epsilon,
+                 "epsilon for vertex-vertex min distance");
+  app.add_option("--segment-vertex-epsilon", segment_vertex_epsilon,
+                 "epsilon for segment-vertex min distance");
+  app.add_option("--coplanar-polygon-max-angle", coplanar_polygon_max_angle,
+                 "max angle for coplanar polygons");
+  app.add_option("--coplanar-polygon-max-distance", coplanar_polygon_max_distance,
+                 "max distance for coplanar polygons");
+
+  app.add_option("--dump-patches-after-merge", dump_patches_after_merge_filename,
+                 "dump patches after merging facets in PLY");
+  app.add_option("--dump-surface-mesh-after-merge", dump_surface_mesh_after_merge_filename,
+                 "dump surface mesh after merging facets in OFF");
+  app.add_option("--dump-patches-borders-prefix", dump_patches_borders_prefix,
+                 "dump patches borders");
+  app.add_option("--dump-after-conforming", dump_after_conforming_filename,
+                 "dump mesh after conforming in OFF");
+
+  app.add_flag("--debug-Steiner-points", debug_Steiner_points,
+               "debug Steiner point insertion");
+  app.add_flag("--debug-Steiner-points-construction", debug_Steiner_points_construction,
+               "debug Steiner point construction");
+  auto debug_move_Steiner_vertices_option =
+      app.add_option("--debug-move-Steiner-vertices-to-the-volume", debug_move_Steiner_vertices,
+                     "debug moving Steiner vertices to the volume (level 0..3)")
+          ->check(CLI::Range(0, 3))
+          ->expected(0, 1);
+  app.add_flag("--debug-input-faces", debug_input_faces, "debug input faces");
+  app.add_flag("--debug-missing-regions", debug_missing_regions, "debug missing regions");
+  app.add_flag("--debug-regions", debug_regions, "debug regions");
+  app.add_flag("--debug_copy_triangulation_into_hole", debug_copy_triangulation_into_hole,
+               "debug copy_triangulation_into_hole");
+  app.add_flag("--debug-validity", debug_validity,
+               "add is_valid checks after modifications to the TDS");
+  app.add_flag("--debug-finite-edges-map", debug_finite_edges_map,
+               "debug the use of a hash map for finite edges");
+  app.add_flag("--debug-subconstraints-to-conform", debug_subconstraints_to_conform,
+               "debug subconstraints to conform");
+  app.add_flag("--debug-verbose-special-cases", debug_verbose_special_cases,
+               "debug verbose output for special cases");
+  app.add_flag("--debug-encroaching-vertices", debug_encroaching_vertices,
+               "debug encroaching vertices computation");
+  app.add_flag("--debug-conforming-validation", debug_conforming_validation,
+               "debug edge conforming validation");
+  app.add_flag("--debug-constraint-hierarchy", debug_constraint_hierarchy,
+               "debug constraint hierarchy operations");
+  app.add_flag("--debug-geometric-errors", debug_geometric_errors,
+               "debug geometric error handling");
+  app.add_flag("--debug-polygon-insertion", debug_polygon_insertion,
+               "debug polygon insertion process");
+  app.add_flag("--debug-restore-faces", debug_restore_faces,
+               "debug face restoration process");
+
+  app.add_flag("--use-finite-edges-map", use_finite_edges_map,
+               "use a hash map for finite edges");
+  app.add_flag("--move-Steiner-vertices-to-the-volume,!--no-move-Steiner-vertices-to-the-volume",
+               move_Steiner_vertices_to_the_volume,
+               "move Steiner vertices to the volume");
+  app.add_flag("--allow-moving-Steiner-vertices-to-create-negative-tets",
+               allow_moving_Steiner_vertices_to_create_negative_tets,
+               "allow moving Steiner vertices to create negative volume tetrahedra");
+  app.add_flag("--use-epeck-for-normals,!--no-use-epeck-for-normals", use_epeck_for_normals,
+               "use exact kernel for normal computations");
+  app.add_flag("--use-epeck-for-Steiner-points,!--no-use-epeck-for-Steiner-points",
+               use_epeck_for_Steiner_points,
+               "use exact kernel for Steiner point computations");
+
+  app.add_option("input.off", input_filename, "input mesh");
+  app.add_option("output.off", output_filename, "output mesh");
+
+  for(auto* option : app.get_options()) {
+    option->always_capture_default(true);
+  }
+
+  app.get_formatter()->enable_default_flag_values(true);
+
+  try {
+    app.parse(argc, argv);
+  } catch(const CLI::ParseError& e) {
+    std::exit(app.exit(e));
+  }
+
+  if(*debug_move_Steiner_vertices_option && debug_move_Steiner_vertices == 0) {
+    debug_move_Steiner_vertices = 1;
+  }
+
+  if(merge_facets_old_method) {
+    merge_facets = true;
   }
 }
 
@@ -874,10 +793,6 @@ int main(int argc, char* argv[]) {
   CGAL::get_default_random() = CGAL::Random(42);
 
   CDT_options options(argc, argv);
-  if(options.need_help) {
-    help(std::cout);
-    return 0;
-  }
 
   CGAL::CDT_3_read_polygon_mesh_output<Mesh> read_mesh_result;
   auto start_time = clock::now();
