@@ -24,7 +24,7 @@ using Timer = CGAL::Timer;
 int main(int argc, char* argv[])
 {
   bool perform_hilbert_sort = argc > 2;
-  const std::string input = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/Nefer.off");
+  const std::string input = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/elephant.off");
   const std::string output = std::filesystem::path(input).stem().string() + "_sorted.off";
   Points points;
   Polygons polygons;
