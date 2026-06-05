@@ -5,18 +5,18 @@
 #include <CGAL/IO/polygon_soup_io.h>
 #include <CGAL/IO/OBJ.h>
 
+#include <array>
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <vector>
-#include <array>
 #include <string>
+#include <vector>
 
 typedef CGAL::Simple_cartesian<double>                Kernel;
 typedef Kernel::Point_3                               Point;
 typedef std::vector<std::size_t>                      Face;
 
-template <typename Point_type, typename Polygon_type>
+template <typename PointType, typename PolygonType>
 void read(const std::string& fname,
           std::size_t v, std::size_t f)
 {
@@ -25,13 +25,13 @@ void read(const std::string& fname,
   assert(input);
 
   std::cout << "Types: " << std::endl;
-  std::cout << typeid(Point_type).name() << std::endl;
-  std::cout << typeid(Polygon_type).name() << std::endl;
+  std::cout << typeid(PointType).name() << std::endl;
+  std::cout << typeid(PolygonType).name() << std::endl;
 
   std::cout << "Expecting " << v << " vertices and " << f << " triangles" << std::endl;
 
-  std::vector<Point_type> points;
-  std::vector<Polygon_type> faces;
+  std::vector<PointType> points;
+  std::vector<PolygonType> faces;
   bool ok = CGAL::IO::read_OBJ(input, points, faces);
 
   std::cout << "Read " << points.size() << " vertices and " << faces.size() << " triangles" << std::endl;
@@ -41,7 +41,7 @@ void read(const std::string& fname,
   assert(faces.size() == f);
 }
 
-void further_tests()
+void test_types()
 {
   // bunch of types to test
   typedef std::array<double, 3>                                       Point_type_1;
@@ -121,7 +121,7 @@ int main(int argc, char** argv)
     assert(CGAL::squared_distance(points[i], pts_backup[i]) < 1e-6);
   assert(polygons == pls_backup);
 
-  further_tests();
+  test_types();
 
   std::cout << "Done!" << std::endl;
   return EXIT_SUCCESS;
