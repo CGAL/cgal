@@ -313,9 +313,10 @@ bool write_STL(std::ostream& os,
 
     for(const Triangle& face : facets)
     {
-      const Point& p = get(point_map, points[face[0]]);
-      const Point& q = get(point_map, points[face[1]]);
-      const Point& r = get(point_map, points[face[2]]);
+      auto it = std::cbegin(face);
+      const Point& p = get(point_map, points[*it++]);
+      const Point& q = get(point_map, points[*it++]);
+      const Point& r = get(point_map, points[*it]);
 
       const Vector_3 n = collinear(p,q,r) ? Vector_3(1,0,0) : unit_normal(p,q,r);
 
@@ -334,9 +335,10 @@ bool write_STL(std::ostream& os,
     os << "solid\n";
     for(const Triangle& face : facets)
     {
-      const Point& p = get(point_map, points[face[0]]);
-      const Point& q = get(point_map, points[face[1]]);
-      const Point& r = get(point_map, points[face[2]]);
+      auto it = std::cbegin(face);
+      const Point& p = get(point_map, points[*it++]);
+      const Point& q = get(point_map, points[*it++]);
+      const Point& r = get(point_map, points[*it]);
 
       const Vector_3 n = internal::construct_normal_of_STL_face(p, q, r, k);
       os << "facet normal " << n << "\nouter loop\n";

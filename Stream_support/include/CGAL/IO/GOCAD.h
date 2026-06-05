@@ -110,7 +110,8 @@ bool read_GOCAD(std::istream& is,
     if((line.find("VRTX") != std::string::npos))
     {
       int i;
-      if(!(iss >> s >> i >> p))
+      double x, y, z;
+      if(!(iss >> s >> i >> IO::iformat(x) >> IO::iformat(y) >> IO::iformat(z)))
       {
         if(verbose)
           std::cerr << "error while reading vertex." << std::endl;
@@ -123,6 +124,7 @@ bool read_GOCAD(std::istream& is,
         offset -= i; // Some files start with index 0 others with 1
       }
 
+      internal::fill_point(x, y, z, 1., p);
       points.push_back(p);
     }
     else if(line[0] == 'T')

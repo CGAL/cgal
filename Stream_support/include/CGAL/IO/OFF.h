@@ -20,6 +20,7 @@
 
 #include <CGAL/array.h>
 #include <CGAL/assertions.h>
+#include <CGAL/Container_helper.h>
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Kernel_traits.h>
@@ -29,8 +30,8 @@
 
 #include <fstream>
 #include <iostream>
-#include <vector>
 #include <type_traits>
+#include <vector>
 
 namespace CGAL {
 
@@ -67,8 +68,7 @@ bool read_OFF(std::istream& is,
   typedef typename Kernel::Point_2                                                    Texture;
   typedef typename Kernel::Vector_3                                                   Normal;
   typedef typename Kernel::FT                                                         FT;
-  typedef CGAL::IO::Color                                                                 Color;
-
+  typedef CGAL::IO::Color                                                             Color;
 
   if(!is.good()){
     if(verbose)
@@ -79,15 +79,19 @@ bool read_OFF(std::istream& is,
   CGAL::File_scanner_OFF scanner(is);
   if(is.fail())
     return false;
-  points.resize(scanner.size_of_vertices());
-  polygons.resize(scanner.size_of_facets());
+
+  CGAL::internal::reserve(points, scanner.size_of_vertices());
+  CGAL::internal::reserve(polygons, scanner.size_of_facets());
 
   for(std::size_t i=0; i<scanner.size_of_vertices(); ++i)
   {
     double x(0), y(0), z(0), w(0);
     scanner.scan_vertex(x, y, z, w);
     CGAL_assertion(w != 0);
-    internal::fill_point(x, y, z, w, points[i]);
+
+    Point p;
+    internal::fill_point(x, y, z, w, p);
+    points.push_back(p);
 
     if(scanner.has_normals())
     {
@@ -122,7 +126,10 @@ bool read_OFF(std::istream& is,
     if((!is.eof() && !is.good()) || no == std::size_t(-1))
       return false;
 
-    CGAL::internal::resize(polygons[i], no);
+    polygons.emplace_back();
+    auto& polygon = polygons.back();
+
+    CGAL::internal::resize(polygon, no);
     for(std::size_t j=0; j<no; ++j)
     {
       std::size_t id = 0;
@@ -132,7 +139,7 @@ bool read_OFF(std::istream& is,
         return false;
       }
       if(id < scanner.size_of_vertices())
-        integer_type_converter(polygons[i][j], id);
+        integer_type_converter(polygon[j], id);
       else
         return false;
     }

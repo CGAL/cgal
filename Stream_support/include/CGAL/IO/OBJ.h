@@ -20,16 +20,16 @@
 #include <CGAL/IO/helpers.h>
 
 #include <CGAL/Container_helper.h>
+#include <CGAL/Named_function_parameters.h>
 
 #include <boost/range/value_type.hpp>
-#include <CGAL/Named_function_parameters.h>
+#include <boost/container/small_vector.hpp>
 
 #include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <vector>
 #include <type_traits>
 
 namespace CGAL {
@@ -95,13 +95,27 @@ bool read_OBJ(std::istream& is,
 
     if(s == "v")
     {
-      if(!(iss >> p))
+      double x, y, z;
+      if(!(iss >> IO::iformat(x) >> IO::iformat(y) >> IO::iformat(z)))
       {
         if(verbose)
           std::cerr << "error while reading OBJ vertex." << std::endl;
         return false;
       }
 
+      // there might be a w coordinate...
+      double w = 1.;
+      if(iss >> IO::iformat(w))
+      {
+        if(w == 0.)
+        {
+          if(verbose)
+            std::cerr << "warning: w coordinate is 0, treating it as 1." << std::endl;
+          w = 1.;
+        }
+      }
+
+      fill_point(x, y, z, w, p);
       points.push_back(p);
     }
     else if(s == "vt")
@@ -114,30 +128,31 @@ bool read_OBJ(std::istream& is,
     }
     else if(s == "f")
     {
+      // Scan all vertex indices of the face into a scratch buffer first
+      boost::container::small_vector<int, 3> face_indices;
+
       int i;
-      polygons.emplace_back();
       while(iss >> i)
       {
         if(i < 1)
         {
-          const std::size_t n = polygons.back().size();
-          ::CGAL::internal::resize(polygons.back(), n + 1);
-          polygons.back()[n] = static_cast<int>(points.size()) + i; // negative indices are relative references
+          // negative indices are relative references
+          face_indices.push_back(static_cast<int>(points.size()) + i);
           if(i < mini)
             mini = i;
         }
         else
         {
-          const std::size_t n = polygons.back().size();
-          ::CGAL::internal::resize(polygons.back(), n + 1);
-          polygons.back()[n] = i - 1;
-          if(i-1 > maxi)
-            maxi = i-1;
+          face_indices.push_back(i - 1);
+          if(i - 1 > maxi)
+            maxi = i - 1;
         }
 
-        // the format can be "f v1/vt1/vn1 v2/vt2/vn2 v3/vt3/vn3 ..." and we only read vertex ids for now,
-        // so skip to the next vertex, but be tolerant about which whitespace is used
-        if (!std::isspace(iss.peek())) {
+        // the format can be "f v1/vt1/vn1 v2/vt2/vn2 v3/vt3/vn3 ..." and we only read
+        // vertex ids for now, so skip to the next vertex, but be tolerant about which
+        // whitespace is used
+        if(!std::isspace(iss.peek()))
+        {
           std::string ignoreme;
           iss >> ignoreme;
         }
@@ -149,6 +164,11 @@ bool read_OBJ(std::istream& is,
           std::cerr << "error while reading OBJ face." << std::endl;
         return false;
       }
+
+      polygons.emplace_back();
+      auto& polygon = polygons.back();
+      ::CGAL::internal::resize(polygon, face_indices.size());
+      std::copy(face_indices.begin(), face_indices.end(), polygon.begin());
     }
     else if(s.front() == '#')
     {
@@ -174,8 +194,7 @@ bool read_OBJ(std::istream& is,
     else
     {
       if(verbose)
-        std::cerr << "Error: unrecognized line: " << s << std::endl;
-      return false;
+        std::cerr << "Warning: unrecognized line: " << s << std::endl;
     }
   }
 
