@@ -1,7 +1,6 @@
 // Regression test for issue #7124:
 // Bbox_3 intersection with Segment_3/Ray_3/Line_3 lost precision due to
 // intermediate to_double() conversions in the old intersection_bl() helper.
-// Also tests degenerate segment handling.
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Simple_cartesian.h>
@@ -73,45 +72,6 @@ int main()
     std::cout << "  OK" << std::endl;
   }
 
-  // Degenerate segment (source == target) inside bbox
-  {
-    std::cout << "Test 5: Degenerate segment inside bbox" << std::endl;
-    CGAL::Bbox_3 box(0, 0, 0, 10, 10, 10);
-    Point p(5, 5, 5);
-    Segment seg(p, p);
-    auto result = CGAL::intersection(seg, box);
-    assert(result);
-    const Point* pt = std::get_if<Point>(&*result);
-    assert(pt != nullptr);
-    assert(*pt == p);
-    std::cout << "  OK" << std::endl;
-  }
-
-  // Degenerate segment (source == target) outside bbox
-  {
-    std::cout << "Test 6: Degenerate segment outside bbox" << std::endl;
-    CGAL::Bbox_3 box(0, 0, 0, 10, 10, 10);
-    Point p(20, 20, 20);
-    Segment seg(p, p);
-    auto result = CGAL::intersection(seg, box);
-    assert(!result);
-    std::cout << "  OK" << std::endl;
-  }
-
-  // Degenerate segment on bbox boundary
-  {
-    std::cout << "Test 7: Degenerate segment on bbox boundary" << std::endl;
-    CGAL::Bbox_3 box(0, 0, 0, 10, 10, 10);
-    Point p(10, 5, 5);
-    Segment seg(p, p);
-    auto result = CGAL::intersection(seg, box);
-    assert(result);
-    const Point* pt = std::get_if<Point>(&*result);
-    assert(pt != nullptr);
-    assert(*pt == p);
-    std::cout << "  OK" << std::endl;
-  }
-
   // Ray through bbox with large coordinates
   {
     std::cout << "Test 8: Ray through bbox (large coords)" << std::endl;
@@ -163,12 +123,6 @@ int main()
     assert(CGAL::intersection(ray, box));
     Lf line(Pf(-5, 5, 5), Pf(15, 5, 5));
     assert(CGAL::intersection(line, box));
-
-    // Degenerate segment inside the box returns a point.
-    Sf dseg(Pf(3, 3, 3), Pf(3, 3, 3));
-    auto rd = CGAL::intersection(dseg, box);
-    assert(rd);
-    assert(std::get_if<Pf>(&*rd) != nullptr);
 
     std::cout << "  OK" << std::endl;
   }

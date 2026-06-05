@@ -63,85 +63,130 @@ intersection_bl(const Bbox_3& box,
 
   CFT seg_min = 0, seg_max = 1;
 
-  // x coordinate
+  // first on x value
   if(cldx == 0) {
-    if(clpx < to_CFT(box.xmin())) return result_type();
-    if(clpx > to_CFT(box.xmax())) return result_type();
+    if(clpx < to_CFT(box.xmin()))
+      return result_type();
+    if(clpx > to_CFT(box.xmax()))
+      return result_type();
   } else {
     CFT newmin, newmax;
     if(cldx > 0) {
-      newmin = (to_CFT(box.xmin()) - clpx) / cldx;
-      newmax = (to_CFT(box.xmax()) - clpx) / cldx;
+      newmin = (to_CFT(box.xmin())-clpx)/cldx;
+      newmax = (to_CFT(box.xmax())-clpx)/cldx;
     } else {
-      newmin = (to_CFT(box.xmax()) - clpx) / cldx;
-      newmax = (to_CFT(box.xmin()) - clpx) / cldx;
+      newmin = (to_CFT(box.xmax())-clpx)/cldx;
+      newmax = (to_CFT(box.xmin())-clpx)/cldx;
     }
-    if(min_infinite) { min_infinite = false; seg_min = newmin; }
-    else if(newmin > seg_min) seg_min = newmin;
-    if(max_infinite) { max_infinite = false; seg_max = newmax; }
-    else if(newmax < seg_max) seg_max = newmax;
-    if(seg_max < seg_min) return result_type();
+
+    if(min_infinite) {
+      min_infinite = false;
+      seg_min = newmin;
+    } else {
+      if(newmin > seg_min)
+        seg_min = newmin;
+    }
+
+    if(max_infinite) {
+      max_infinite = false;
+      seg_max = newmax;
+    } else {
+      if(newmax < seg_max)
+        seg_max = newmax;
+    }
+
+    if(seg_max < seg_min)
+      return result_type();
   }
 
-  // y coordinate
+  // now on y value
   if(cldy == 0) {
-    if(clpy < to_CFT(box.ymin())) return result_type();
-    if(clpy > to_CFT(box.ymax())) return result_type();
+    if(clpy < to_CFT(box.ymin()))
+      return result_type();
+    if(clpy > to_CFT(box.ymax()))
+      return result_type();
   } else {
     CFT newmin, newmax;
     if(cldy > 0) {
-      newmin = (to_CFT(box.ymin()) - clpy) / cldy;
-      newmax = (to_CFT(box.ymax()) - clpy) / cldy;
+      newmin = (to_CFT(box.ymin())-clpy)/cldy;
+      newmax = (to_CFT(box.ymax())-clpy)/cldy;
     } else {
-      newmin = (to_CFT(box.ymax()) - clpy) / cldy;
-      newmax = (to_CFT(box.ymin()) - clpy) / cldy;
+      newmin = (to_CFT(box.ymax())-clpy)/cldy;
+      newmax = (to_CFT(box.ymin())-clpy)/cldy;
     }
-    if(min_infinite) { min_infinite = false; seg_min = newmin; }
-    else if(newmin > seg_min) seg_min = newmin;
-    if(max_infinite) { max_infinite = false; seg_max = newmax; }
-    else if(newmax < seg_max) seg_max = newmax;
-    if(seg_max < seg_min) return result_type();
+
+    if(min_infinite) {
+      min_infinite = false;
+      seg_min = newmin;
+    } else {
+      if(newmin > seg_min)
+        seg_min = newmin;
+    }
+
+    if(max_infinite) {
+      max_infinite = false;
+      seg_max = newmax;
+    } else {
+      if(newmax < seg_max)
+        seg_max = newmax;
+    }
+
+    if(seg_max < seg_min)
+      return result_type();
   }
 
-  // z coordinate
+  // now on z value
   if(cldz == 0) {
-    if(clpz < to_CFT(box.zmin())) return result_type();
-    if(clpz > to_CFT(box.zmax())) return result_type();
+    if(clpz < to_CFT(box.zmin()))
+      return result_type();
+    if(clpz > to_CFT(box.zmax()))
+      return result_type();
   } else {
     CFT newmin, newmax;
     if(cldz > 0) {
-      newmin = (to_CFT(box.zmin()) - clpz) / cldz;
-      newmax = (to_CFT(box.zmax()) - clpz) / cldz;
+      newmin = (to_CFT(box.zmin())-clpz)/cldz;
+      newmax = (to_CFT(box.zmax())-clpz)/cldz;
     } else {
-      newmin = (to_CFT(box.zmax()) - clpz) / cldz;
-      newmax = (to_CFT(box.zmin()) - clpz) / cldz;
+      newmin = (to_CFT(box.zmax())-clpz)/cldz;
+      newmax = (to_CFT(box.zmin())-clpz)/cldz;
     }
-    if(min_infinite) { min_infinite = false; seg_min = newmin; }
-    else if(newmin > seg_min) seg_min = newmin;
-    if(max_infinite) { max_infinite = false; seg_max = newmax; }
-    else if(newmax < seg_max) seg_max = newmax;
-    if(seg_max < seg_min) return result_type();
+
+    if(min_infinite) {
+      min_infinite = false;
+      seg_min = newmin;
+    } else {
+      if(newmin > seg_min)
+        seg_min = newmin;
+    }
+
+    if(max_infinite) {
+      max_infinite = false;
+      seg_max = newmax;
+    } else {
+      if(newmax < seg_max)
+        seg_max = newmax;
+    }
+
+    if(seg_max < seg_min)
+      return result_type();
   }
 
-  if(min_infinite || max_infinite) {
-    // Zero direction vector: the line/ray degenerates to its base point.
+  if(min_infinite || max_infinite)
     seg_max = seg_min;
-  }
 
   NT_converter<CFT, typename K::FT> to_FT;
-  if(seg_max == seg_min) {
-    const CFT t = seg_min;
-    return result_type(Point_3(to_FT(clpx + cldx * t),
-                               to_FT(clpy + cldy * t),
-                               to_FT(clpz + cldz * t)));
-  }
 
-  return result_type(Segment_3(Point_3(to_FT(clpx + cldx * seg_min),
-                                       to_FT(clpy + cldy * seg_min),
-                                       to_FT(clpz + cldz * seg_min)),
-                               Point_3(to_FT(clpx + cldx * seg_max),
-                                       to_FT(clpy + cldy * seg_max),
-                                       to_FT(clpz + cldz * seg_max))));
+  if(seg_max == seg_min)
+    return result_type(Point_3(to_FT(clpx + cldx*seg_min),
+                               to_FT(clpy + cldy*seg_min),
+                               to_FT(clpz + cldz*seg_min)));
+
+  return result_type(Segment_3(Point_3(to_FT(clpx + cldx*seg_min),
+                                       to_FT(clpy + cldy*seg_min),
+                                       to_FT(clpz + cldz*seg_min)),
+                               Point_3(to_FT(clpx + cldx*seg_max),
+                                       to_FT(clpy + cldy*seg_max),
+                                       to_FT(clpz + cldz*seg_max))));
 }
 
 template <class K>
@@ -152,22 +197,6 @@ intersection(const typename K::Segment_3& seg,
 {
   typedef typename K::Point_3 Point_3;
   typedef typename K::Vector_3 Vector_3;
-  typedef typename Intersection_traits<K, typename K::Segment_3, Bbox_3>::result_type result_type;
-  typedef typename Intersection_traits<K, typename K::Segment_3, Bbox_3>::variant_type variant_type;
-
-  // Degenerate segment: the intersection is the source point, if it lies in
-  // the box. (intersection_bl would otherwise report a zero-length segment.)
-  if(seg.is_degenerate()) {
-    const Point_3& p = seg.source();
-    typedef typename Coercion_traits<typename K::FT, double>::Type CFT;
-    typename Coercion_traits<typename K::FT, double>::Cast to_CFT;
-    const CFT px = to_CFT(p.x()), py = to_CFT(p.y()), pz = to_CFT(p.z());
-    if(px >= to_CFT(box.xmin()) && px <= to_CFT(box.xmax()) &&
-       py >= to_CFT(box.ymin()) && py <= to_CFT(box.ymax()) &&
-       pz >= to_CFT(box.zmin()) && pz <= to_CFT(box.zmax()))
-      return result_type(variant_type(p));
-    return result_type();
-  }
 
   const Point_3& linepoint = seg.source();
   const Vector_3 diffvec = seg.target() - linepoint;
