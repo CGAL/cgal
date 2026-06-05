@@ -7,6 +7,7 @@ project(Polygon_mesh_processing_Tests)
 # CGAL and its components
 find_package(CGAL REQUIRED COMPONENTS Core)
 
+create_single_source_cgal_program("relaxation_hilbert_sort_polygon_soup.cpp")
 create_single_source_cgal_program("connected_component_polyhedron.cpp")
 create_single_source_cgal_program("connected_component_surface_mesh.cpp")
 create_single_source_cgal_program("measures_test.cpp")
