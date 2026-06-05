@@ -2,10 +2,14 @@
 
 #include <CGAL/IO/OBJ.h>
 #include <CGAL/IO/polygon_soup_io.h>
+#include <CGAL/IO/OBJ.h>
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <vector>
+#include <array>
+#include <string>
 
 typedef CGAL::Simple_cartesian<double>                Kernel;
 typedef Kernel::Point_3                               Point;
@@ -69,6 +73,13 @@ int main(int argc, char** argv)
     assert(CGAL::squared_distance(points[i], pts_backup[i]) < 1e-6);
   assert(polygons == pls_backup);
 
+  {
+    std::string obj_string("v 0 0 0\nv 1 0 0\nv 1 1 0\nv 0 1 0\nf 1 2 3\nf 1 3 4\n");
+    std::vector<Point> points;
+    std::vector<std::array<std::size_t,3>> polygons;
+    std::istringstream  in(obj_string);
+    CGAL::IO::read_OBJ(in, points, polygons);
+  }
   std::cout << "Done!" << std::endl;
   return EXIT_SUCCESS;
 }
