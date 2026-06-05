@@ -18,44 +18,164 @@
 #define CGAL_INTERNAL_INTERSECTIONS_3_BBOX_3_SEGMENT_3_INTERSECTION_H
 
 #include <CGAL/Intersection_traits_3.h>
-#include <CGAL/Intersections_3/internal/Iso_cuboid_3_Segment_3_intersection.h>
 
 #include <CGAL/Bbox_3.h>
-#include <CGAL/Iso_cuboid_3.h>
+#include <CGAL/Coercion_traits.h>
+#include <CGAL/NT_converter.h>
+#include <CGAL/number_utils.h>
+
+#include <optional>
+#include <variant>
 
 namespace CGAL {
 namespace Intersections {
 namespace internal {
 
+// Intersects a bbox with a segment, ray or line given by a point (lp) and a
+// direction vector (ld). The flags select the kind of object:
+//   segment: min_infinite = max_infinite = false
+//   ray:     min_infinite = false, max_infinite = true
+//   line:    min_infinite = max_infinite = true
+//
+// The bbox coordinates are doubles while the query coordinates are K::FT. To
+// avoid losing precision on either side -- the old version converted the query
+// to double via to_double() (issue #7124), and converting the bbox to K::FT
+// loses information when K::FT is lower precision than double (e.g. float) --
+// the clipping is computed in Coercion_traits<K::FT, double>::Type, the common
+// type of both. This matches what do_intersect(Bbox_3, Segment_3) already does.
+// The resulting point coordinates are converted back to K::FT.
+template <class K>
+typename std::optional< std::variant<typename K::Segment_3, typename K::Point_3 > >
+intersection_bl(const Bbox_3& box,
+                const typename K::FT& lpx, const typename K::FT& lpy, const typename K::FT& lpz,
+                const typename K::FT& ldx, const typename K::FT& ldy, const typename K::FT& ldz,
+                bool min_infinite, bool max_infinite)
+{
+  typedef typename K::Point_3 Point_3;
+  typedef typename K::Segment_3 Segment_3;
+  typedef typename std::optional<std::variant< Segment_3, Point_3 > > result_type;
+
+  typedef typename Coercion_traits<typename K::FT, double>::Type CFT;
+  typename Coercion_traits<typename K::FT, double>::Cast to_CFT;
+
+  const CFT clpx = to_CFT(lpx), clpy = to_CFT(lpy), clpz = to_CFT(lpz);
+  const CFT cldx = to_CFT(ldx), cldy = to_CFT(ldy), cldz = to_CFT(ldz);
+
+  CFT seg_min = 0, seg_max = 1;
+
+  // x coordinate
+  if(cldx == 0) {
+    if(clpx < to_CFT(box.xmin())) return result_type();
+    if(clpx > to_CFT(box.xmax())) return result_type();
+  } else {
+    CFT newmin, newmax;
+    if(cldx > 0) {
+      newmin = (to_CFT(box.xmin()) - clpx) / cldx;
+      newmax = (to_CFT(box.xmax()) - clpx) / cldx;
+    } else {
+      newmin = (to_CFT(box.xmax()) - clpx) / cldx;
+      newmax = (to_CFT(box.xmin()) - clpx) / cldx;
+    }
+    if(min_infinite) { min_infinite = false; seg_min = newmin; }
+    else if(newmin > seg_min) seg_min = newmin;
+    if(max_infinite) { max_infinite = false; seg_max = newmax; }
+    else if(newmax < seg_max) seg_max = newmax;
+    if(seg_max < seg_min) return result_type();
+  }
+
+  // y coordinate
+  if(cldy == 0) {
+    if(clpy < to_CFT(box.ymin())) return result_type();
+    if(clpy > to_CFT(box.ymax())) return result_type();
+  } else {
+    CFT newmin, newmax;
+    if(cldy > 0) {
+      newmin = (to_CFT(box.ymin()) - clpy) / cldy;
+      newmax = (to_CFT(box.ymax()) - clpy) / cldy;
+    } else {
+      newmin = (to_CFT(box.ymax()) - clpy) / cldy;
+      newmax = (to_CFT(box.ymin()) - clpy) / cldy;
+    }
+    if(min_infinite) { min_infinite = false; seg_min = newmin; }
+    else if(newmin > seg_min) seg_min = newmin;
+    if(max_infinite) { max_infinite = false; seg_max = newmax; }
+    else if(newmax < seg_max) seg_max = newmax;
+    if(seg_max < seg_min) return result_type();
+  }
+
+  // z coordinate
+  if(cldz == 0) {
+    if(clpz < to_CFT(box.zmin())) return result_type();
+    if(clpz > to_CFT(box.zmax())) return result_type();
+  } else {
+    CFT newmin, newmax;
+    if(cldz > 0) {
+      newmin = (to_CFT(box.zmin()) - clpz) / cldz;
+      newmax = (to_CFT(box.zmax()) - clpz) / cldz;
+    } else {
+      newmin = (to_CFT(box.zmax()) - clpz) / cldz;
+      newmax = (to_CFT(box.zmin()) - clpz) / cldz;
+    }
+    if(min_infinite) { min_infinite = false; seg_min = newmin; }
+    else if(newmin > seg_min) seg_min = newmin;
+    if(max_infinite) { max_infinite = false; seg_max = newmax; }
+    else if(newmax < seg_max) seg_max = newmax;
+    if(seg_max < seg_min) return result_type();
+  }
+
+  if(min_infinite || max_infinite) {
+    // Zero direction vector: the line/ray degenerates to its base point.
+    seg_max = seg_min;
+  }
+
+  NT_converter<CFT, typename K::FT> to_FT;
+  if(seg_max == seg_min) {
+    const CFT t = seg_min;
+    return result_type(Point_3(to_FT(clpx + cldx * t),
+                               to_FT(clpy + cldy * t),
+                               to_FT(clpz + cldz * t)));
+  }
+
+  return result_type(Segment_3(Point_3(to_FT(clpx + cldx * seg_min),
+                                       to_FT(clpy + cldy * seg_min),
+                                       to_FT(clpz + cldz * seg_min)),
+                               Point_3(to_FT(clpx + cldx * seg_max),
+                                       to_FT(clpy + cldy * seg_max),
+                                       to_FT(clpz + cldz * seg_max))));
+}
+
 template <class K>
 typename Intersection_traits<K, typename K::Segment_3, Bbox_3>::result_type
 intersection(const typename K::Segment_3& seg,
              const Bbox_3& box,
-             const K& k)
+             const K&)
 {
-  // Delegate to the Iso_cuboid_3/Segment_3 intersection which uses exact
-  // kernel arithmetic throughout, avoiding the to_double() precision loss
-  // that the old intersection_bl() helper suffered from (issue #7124).
   typedef typename K::Point_3 Point_3;
-  typedef typename K::Iso_cuboid_3 Iso_cuboid_3;
+  typedef typename K::Vector_3 Vector_3;
   typedef typename Intersection_traits<K, typename K::Segment_3, Bbox_3>::result_type result_type;
   typedef typename Intersection_traits<K, typename K::Segment_3, Bbox_3>::variant_type variant_type;
 
-  // Handle degenerate segments (source == target) to avoid division by zero
-  // in Iso_cuboid_3_Segment_3_intersection which divides by a direction component.
+  // Degenerate segment: the intersection is the source point, if it lies in
+  // the box. (intersection_bl would otherwise report a zero-length segment.)
   if(seg.is_degenerate()) {
     const Point_3& p = seg.source();
-    Iso_cuboid_3 ic(box);
-    if(ic.bounded_side(p) != ON_UNBOUNDED_SIDE)
+    typedef typename Coercion_traits<typename K::FT, double>::Type CFT;
+    typename Coercion_traits<typename K::FT, double>::Cast to_CFT;
+    const CFT px = to_CFT(p.x()), py = to_CFT(p.y()), pz = to_CFT(p.z());
+    if(px >= to_CFT(box.xmin()) && px <= to_CFT(box.xmax()) &&
+       py >= to_CFT(box.ymin()) && py <= to_CFT(box.ymax()) &&
+       pz >= to_CFT(box.zmin()) && pz <= to_CFT(box.zmax()))
       return result_type(variant_type(p));
     return result_type();
   }
 
-  auto res = internal::intersection(seg, Iso_cuboid_3(box), k);
-  if(!res) return result_type();
-  return std::visit([](auto&& v) -> result_type {
-    return result_type(variant_type(std::forward<decltype(v)>(v)));
-  }, *res);
+  const Point_3& linepoint = seg.source();
+  const Vector_3 diffvec = seg.target() - linepoint;
+
+  return intersection_bl<K>(box,
+                            linepoint.x(), linepoint.y(), linepoint.z(),
+                            diffvec.x(), diffvec.y(), diffvec.z(),
+                            false, false);
 }
 
 template <class K>

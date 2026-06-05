@@ -4,6 +4,7 @@
 // Also tests degenerate segment handling.
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Intersections_3/Bbox_3_Segment_3.h>
 #include <CGAL/Intersections_3/Bbox_3_Ray_3.h>
 #include <CGAL/Intersections_3/Bbox_3_Line_3.h>
@@ -132,6 +133,43 @@ int main()
     Line line(p1, p2);
     auto result = CGAL::intersection(line, box);
     assert(result);
+    std::cout << "  OK" << std::endl;
+  }
+
+  // Lower-precision kernel: Simple_cartesian<float>. The bbox coordinates are
+  // double; computing in the coercion type (double here) preserves them,
+  // instead of degrading the bbox to float as an Iso_cuboid<float> would
+  // (the precision-loss case raised in review).
+  {
+    std::cout << "Test 10: Simple_cartesian<float> kernel" << std::endl;
+    typedef CGAL::Simple_cartesian<float> Kf;
+    typedef Kf::Point_3 Pf;
+    typedef Kf::Segment_3 Sf;
+    typedef Kf::Ray_3 Rf;
+    typedef Kf::Line_3 Lf;
+    CGAL::Bbox_3 box(0, 0, 0, 10, 10, 10);
+
+    // Segment crossing the boundary: exact clip in float.
+    Sf seg(Pf(5, 5, 5), Pf(15, 5, 5));
+    auto rseg = CGAL::intersection(seg, box);
+    assert(rseg);
+    const Sf* s = std::get_if<Sf>(&*rseg);
+    assert(s != nullptr);
+    assert(s->source() == Pf(5, 5, 5));
+    assert(s->target() == Pf(10, 5, 5));
+
+    // Ray and line through the box.
+    Rf ray(Pf(5, 5, 5), Pf(15, 5, 5));
+    assert(CGAL::intersection(ray, box));
+    Lf line(Pf(-5, 5, 5), Pf(15, 5, 5));
+    assert(CGAL::intersection(line, box));
+
+    // Degenerate segment inside the box returns a point.
+    Sf dseg(Pf(3, 3, 3), Pf(3, 3, 3));
+    auto rd = CGAL::intersection(dseg, box);
+    assert(rd);
+    assert(std::get_if<Pf>(&*rd) != nullptr);
+
     std::cout << "  OK" << std::endl;
   }
 
