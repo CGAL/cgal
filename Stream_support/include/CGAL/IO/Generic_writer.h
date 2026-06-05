@@ -59,14 +59,13 @@ public:
     }
 
     m_writer.write_facet_header();
-    for(std::size_t i=0, end=polygons.size(); i<end; ++i)
+    for(const Poly& polygon : polygons)
     {
-      const Poly& polygon = polygons[i];
       const std::size_t size = polygon.size();
 
       m_writer.write_facet_begin(size);
-      for(std::size_t j=0; j<size; ++j)
-        m_writer.write_facet_vertex_index(polygon[j]);
+      for(const auto& index : polygon)
+        m_writer.write_facet_vertex_index(index);
       m_writer.write_facet_end();
     }
     m_writer.write_footer();
