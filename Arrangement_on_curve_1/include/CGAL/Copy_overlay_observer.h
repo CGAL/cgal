@@ -23,98 +23,78 @@ public:
   using Vertex_descriptor_b = typename ArrangementB::Vertex_descriptor;
   using Vertex_descriptor_r = typename ArrangementR::Vertex_descriptor;
 
-  using Edge_descriptor_a   = typename ArrangementA::Edge_descriptor;
-  using Edge_descriptor_b   = typename ArrangementB::Edge_descriptor;
-  using Edge_descriptor_r   = typename ArrangementR::Edge_descriptor;
+  using Edge_descriptor_a = typename ArrangementA::Edge_descriptor;
+  using Edge_descriptor_b = typename ArrangementB::Edge_descriptor;
+  using Edge_descriptor_r = typename ArrangementR::Edge_descriptor;
 
   using Vertex_data_map_a = typename ArrangementA::Topology_traits::Vertex_data_map;
   using Vertex_data_map_b = typename ArrangementB::Topology_traits::Vertex_data_map;
   using Vertex_data_map_r = typename ArrangementR::Topology_traits::Vertex_data_map;
 
-  using Edge_data_map_a   = typename ArrangementA::Topology_traits::Edge_data_map;
-  using Edge_data_map_b   = typename ArrangementB::Topology_traits::Edge_data_map;
-  using Edge_data_map_r   = typename ArrangementR::Topology_traits::Edge_data_map;
+  using Edge_data_map_a = typename ArrangementA::Topology_traits::Edge_data_map;
+  using Edge_data_map_b = typename ArrangementB::Topology_traits::Edge_data_map;
+  using Edge_data_map_r = typename ArrangementR::Topology_traits::Edge_data_map;
 
 private:
   Vertex_data_map_r m_v_map_r;
-  Edge_data_map_r   m_e_map_r;
+  Edge_data_map_r m_e_map_r;
 
   Vertex_data_map_a m_v_map_a;
-  Edge_data_map_a   m_e_map_a;
+  Edge_data_map_a m_e_map_a;
 
   Vertex_data_map_b m_v_map_b;
-  Edge_data_map_b   m_e_map_b;
+  Edge_data_map_b m_e_map_b;
 
 public:
-  Copy_overlay_observer(const ArrangementA& arr_a,
-                        const ArrangementB& arr_b,
-                        ArrangementR& arr_r)
-    : m_v_map_r(arr_r.vertex_data_map()), m_e_map_r(arr_r.edge_data_map()),
-      m_v_map_a(arr_a.vertex_data_map()), m_e_map_a(arr_a.edge_data_map()),
-      m_v_map_b(arr_b.vertex_data_map()), m_e_map_b(arr_b.edge_data_map()) {}
+  Copy_overlay_observer(const ArrangementA& arr_a, const ArrangementB& arr_b, ArrangementR& arr_r) :
+    m_v_map_r(arr_r.vertex_data_map()),
+    m_e_map_r(arr_r.edge_data_map()),
+    m_v_map_a(arr_a.vertex_data_map()),
+    m_e_map_a(arr_a.edge_data_map()),
+    m_v_map_b(arr_b.vertex_data_map()),
+    m_e_map_b(arr_b.edge_data_map())
+  {}
 
-  // ============================================================================
-  // VERTEX PROLOGUES
-  // ============================================================================
+  // 1. Two vertices coincide: defaults to copying data from vertex A
   void create_vertex(Vertex_descriptor_a v_a, Vertex_descriptor_b, Vertex_descriptor_r v_res) {
-    using VDataR = typename Vertex_data_map_r::value_type;
-    if constexpr (!std::is_void_v<VDataR>) {
-      using VDataA = typename Vertex_data_map_a::value_type;
-      if constexpr (std::is_convertible_v<VDataA, VDataR>) {
+    using Vertex_data_r = typename Vertex_data_map_r::value_type;
+    if constexpr (! std::is_void_v<Vertex_data_r>) {
+      using Vertex_data_a = typename Vertex_data_map_a::value_type;
+      if constexpr (std::is_convertible_v<Vertex_data_a, Vertex_data_r>) {
         put(m_v_map_r, v_res, get(m_v_map_a, v_a));
       }
     }
   }
 
-  void create_vertex_from_a(Vertex_descriptor_a v_a, Vertex_descriptor_r v_res) {
-    using VDataR = typename Vertex_data_map_r::value_type;
-    if constexpr (!std::is_void_v<VDataR>) {
-      using VDataA = typename Vertex_data_map_a::value_type;
-      if constexpr (std::is_convertible_v<VDataA, VDataR>) {
+  // 2. Vertex A splits Edge B: copies data from vertex A
+  void create_vertex(Vertex_descriptor_a v_a, Edge_descriptor_b, Vertex_descriptor_r v_res) {
+    using Vertex_data_r = typename Vertex_data_map_r::value_type;
+    if constexpr (! std::is_void_v<Vertex_data_r>) {
+      using Vertex_data_a = typename Vertex_data_map_a::value_type;
+      if constexpr (std::is_convertible_v<Vertex_data_a, Vertex_data_r>) {
         put(m_v_map_r, v_res, get(m_v_map_a, v_a));
       }
     }
   }
 
-  void create_vertex_from_b(Vertex_descriptor_b v_b, Vertex_descriptor_r v_res) {
-    using VDataR = typename Vertex_data_map_r::value_type;
-    if constexpr (!std::is_void_v<VDataR>) {
-      using VDataB = typename Vertex_data_map_b::value_type;
-      if constexpr (std::is_convertible_v<VDataB, VDataR>) {
+  // 3. Edge A is split by Vertex B: copies data from vertex B
+  void create_vertex(Edge_descriptor_a, Vertex_descriptor_b v_b, Vertex_descriptor_r v_res) {
+    using Vertex_data_r = typename Vertex_data_map_r::value_type;
+    if constexpr (! std::is_void_v<Vertex_data_r>) {
+      using Vertex_data_b = typename Vertex_data_map_b::value_type;
+      if constexpr (std::is_convertible_v<Vertex_data_b, Vertex_data_r>) {
         put(m_v_map_r, v_res, get(m_v_map_b, v_b));
       }
     }
   }
 
-  // ============================================================================
-  // EDGE PROLOGUES
-  // ============================================================================
+  // 4. Two edges overlap: defaults to copying data from edge A
   void create_edge(Edge_descriptor_a e_a, Edge_descriptor_b, Edge_descriptor_r e_res) {
     using EDataR = typename Edge_data_map_r::value_type;
-    if constexpr (!std::is_void_v<EDataR>) {
+    if constexpr (! std::is_void_v<EDataR>) {
       using EDataA = typename Edge_data_map_a::value_type;
       if constexpr (std::is_convertible_v<EDataA, EDataR>) {
         put(m_e_map_r, e_res, get(m_e_map_a, e_a));
-      }
-    }
-  }
-
-  void create_edge_from_a(Edge_descriptor_a e_a, Edge_descriptor_r e_res) {
-    using EDataR = typename Edge_data_map_r::value_type;
-    if constexpr (!std::is_void_v<EDataR>) {
-      using EDataA = typename Edge_data_map_a::value_type;
-      if constexpr (std::is_convertible_v<EDataA, EDataR>) {
-        put(m_e_map_r, e_res, get(m_e_map_a, e_a));
-      }
-    }
-  }
-
-  void create_edge_from_b(Edge_descriptor_b e_b, Edge_descriptor_r e_res) {
-    using EDataR = typename Edge_data_map_r::value_type;
-    if constexpr (!std::is_void_v<EDataR>) {
-      using EDataB = typename Edge_data_map_b::value_type;
-      if constexpr (std::is_convertible_v<EDataB, EDataR>) {
-        put(m_e_map_r, e_res, get(m_e_map_b, e_b));
       }
     }
   }

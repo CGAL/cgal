@@ -24,25 +24,14 @@ public:
   using Edge_descriptor_b   = typename ArrangementB::Edge_descriptor;
   using Edge_descriptor_r   = typename ArrangementR::Edge_descriptor;
 
-  using Vertex_data_map_a = typename ArrangementA::Topology_traits::Vertex_data_map;
-  using Vertex_data_map_b = typename ArrangementB::Topology_traits::Vertex_data_map;
-  using Vertex_data_map_r = typename ArrangementR::Topology_traits::Vertex_data_map;
-
-  using Edge_data_map_a   = typename ArrangementA::Topology_traits::Edge_data_map;
-  using Edge_data_map_b   = typename ArrangementB::Topology_traits::Edge_data_map;
-  using Edge_data_map_r   = typename ArrangementR::Topology_traits::Edge_data_map;
-
 public:
   Default_overlay_observer(const ArrangementA&, const ArrangementB&, ArrangementR&) {}
 
-  // All notification methods are intentional no-ops
+  // 4 Core Required Intersection Callbacks (Nops)
   void create_vertex(Vertex_descriptor_a, Vertex_descriptor_b, Vertex_descriptor_r) {}
-  void create_vertex_from_a(Vertex_descriptor_a, Vertex_descriptor_r) {}
-  void create_vertex_from_b(Vertex_descriptor_b, Vertex_descriptor_r) {}
-
+  void create_vertex(Vertex_descriptor_a, Edge_descriptor_b, Vertex_descriptor_r) {}
+  void create_vertex(Edge_descriptor_a, Vertex_descriptor_b, Vertex_descriptor_r) {}
   void create_edge(Edge_descriptor_a, Edge_descriptor_b, Edge_descriptor_r) {}
-  void create_edge_from_a(Edge_descriptor_a, Edge_descriptor_r) {}
-  void create_edge_from_b(Edge_descriptor_b, Edge_descriptor_r) {}
 };
 
 } // namespace Arrangement_on_curve_1
