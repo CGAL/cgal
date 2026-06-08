@@ -98,26 +98,27 @@ void overlay(const Arrangement_on_curve_1<GeometryTraitsA, TopologyTraitsA>& arr
 
   using Point_1 = typename GeometryTraitsRes::Point_1;
 
-  using Edge_descriptor_a = typename TopologyTraitsA::Edge_descriptor;
-  using Edge_descriptor_b = typename TopologyTraitsB::Edge_descriptor;
+  using Edge_const_descriptor_a = typename TopologyTraitsA::Edge_const_descriptor;
+  using Edge_const_descriptor_b = typename TopologyTraitsB::Edge_const_descriptor;
   using Vertex_descriptor_r = typename TopologyTraitsRes::Vertex_descriptor;
   using Edge_descriptor_r = typename TopologyTraitsRes::Edge_descriptor;
 
   // Track the current active edge of each arrangement.
   // Initially, before the first vertex, we are in the leftmost unbounded edge.
-  Edge_descriptor_a active_e1 = (vit1 != r1.end()) ? topo1.left_edge(vit1) : Edge_descriptor_a();
-  Edge_descriptor_b active_e2 = (vit2 != r2.end()) ? topo2.left_edge(vit2) : Edge_descriptor_b();
+  auto active_e1 = (vit1 != r1.end()) ? topo1.left_edge(vit1) : Edge_const_descriptor_a();
+  auto active_e2 = (vit2 != r2.end()) ? topo2.left_edge(vit2) : Edge_const_descriptor_b();
 
-  Vertex_descriptor_r last_v_res = Vertex_descriptor_r();
+  auto last_v_res = Vertex_descriptor_r();
   bool first_vertex = true;
 
-  auto trigger_edge_overlay = [&](Edge_descriptor_a e1, Edge_descriptor_b e2, Vertex_descriptor_r curr_v_res) {
-    if (! first_vertex) {
-      auto topo_res = result.topology_traits();
-      Edge_descriptor_r e_res = topo_res.left_edge(curr_v_res);
-      observer.create_edge(e1, e2, e_res);
-    }
-  };
+  auto trigger_edge_overlay =
+    [&](Edge_const_descriptor_a e1, Edge_const_descriptor_b e2, Vertex_descriptor_r curr_v_res) {
+      if (! first_vertex) {
+        auto topo_res = result.topology_traits();
+        auto e_res = topo_res.left_edge(curr_v_res);
+        observer.create_edge(e1, e2, e_res);
+      }
+    };
 
   while (vit1 != r1.end() && vit2 != r2.end()) {
     Point_1 p1 = get(pmap1, vit1);
@@ -161,7 +162,6 @@ void overlay(const Arrangement_on_curve_1<GeometryTraitsA, TopologyTraitsA>& arr
     auto v_res = insert(result, p);
     observer.create_vertex(vit1, active_e2, v_res);
     trigger_edge_overlay(active_e1, active_e2, v_res);
-
     active_e1 = topo1.right_edge(vit1);
     last_v_res = v_res; first_vertex = false;
     ++vit1;
@@ -172,7 +172,6 @@ void overlay(const Arrangement_on_curve_1<GeometryTraitsA, TopologyTraitsA>& arr
     auto v_res = insert(result, p);
     observer.create_vertex(active_e1, vit2, v_res);
     trigger_edge_overlay(active_e1, active_e2, v_res);
-
     active_e2 = topo2.right_edge(vit2);
     last_v_res = v_res; first_vertex = false;
     ++vit2;
@@ -182,7 +181,7 @@ void overlay(const Arrangement_on_curve_1<GeometryTraitsA, TopologyTraitsA>& arr
   if (! result.is_empty()) {
     auto topo_res = result.topology_traits();
     auto last_vit = std::prev(result.vertices().end());
-    Edge_descriptor_r final_e_res = topo_res.right_edge(last_vit);
+    auto final_e_res = topo_res.right_edge(last_vit);
     observer.create_edge(active_e1, active_e2, final_e_res);
   }
 }

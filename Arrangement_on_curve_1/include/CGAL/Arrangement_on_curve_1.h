@@ -26,8 +26,11 @@ public:
   using Vertex_descriptor = typename Topology_traits::Vertex_descriptor;
   using Edge_descriptor = typename Topology_traits::Edge_descriptor;
 
+  using Vertex_const_descriptor = typename Topology_traits::Vertex_const_descriptor;
+  using Edge_const_descriptor = typename Topology_traits::Edge_const_descriptor;
+
   using Location_result = std::variant<Vertex_descriptor, Edge_descriptor, void*>;
-  using Const_location_result = std::variant<Vertex_descriptor, Edge_descriptor, void*>;
+  using Const_location_result = std::variant<Vertex_const_descriptor, Edge_const_descriptor, void*>;
 
 private:
   Geometry_traits_1 m_geometry_traits;
@@ -36,7 +39,8 @@ private:
 public:
   Arrangement_on_curve_1(const Geometry_traits_1& geom_tr = Geometry_traits_1(),
                          const Topology_traits& topo_tr = Topology_traits()) :
-    m_geometry_traits(geom_tr), m_topology_traits(topo_tr) {}
+    m_geometry_traits(geom_tr), m_topology_traits(topo_tr)
+  {}
 
   const Geometry_traits_1& geometry_traits_1() const { return m_geometry_traits; }
   const Topology_traits& topology_traits() const { return m_topology_traits; }
@@ -55,6 +59,10 @@ public:
 
   Vertex_descriptor left_vertex(Edge_descriptor e) const { return m_topology_traits.left_vertex(e); }
   Vertex_descriptor right_vertex(Edge_descriptor e) const { return m_topology_traits.right_vertex(e); }
+
+  Vertex_const_descriptor left_vertex(Edge_const_descriptor e) const { return m_topology_traits.left_vertex(e); }
+  Vertex_const_descriptor right_vertex(Edge_const_descriptor e) const { return m_topology_traits.right_vertex(e); }
+
   bool has_left_vertex(Edge_descriptor e) const { return m_topology_traits.has_left_vertex(e); }
   bool has_right_vertex(Edge_descriptor e) const { return m_topology_traits.has_right_vertex(e); }
 
@@ -62,9 +70,9 @@ public:
   // HIGH-LEVEL TOPOLOGICAL OPERATIONS
   // ============================================================================
   Vertex_descriptor insert_empty(const Point_1& p) {
-    Vertex_descriptor v = m_topology_traits.create_vertex(p);
-    Edge_descriptor e_left = m_topology_traits.create_edge();
-    Edge_descriptor e_right = m_topology_traits.create_edge();
+    auto v = m_topology_traits.create_vertex(p);
+    auto e_left = m_topology_traits.create_edge();
+    auto e_right = m_topology_traits.create_edge();
 
     m_topology_traits.set_right_vertex(e_left, v);
     m_topology_traits.set_left_vertex(e_right, v);
@@ -75,11 +83,11 @@ public:
   }
 
   Vertex_descriptor insert_before(Vertex_descriptor v_first, const Point_1& p) {
-    Vertex_descriptor v_new = m_topology_traits.create_vertex_front(p);
-    Edge_descriptor e_left_unbounded = m_topology_traits.left_edge(v_first);
+    auto v_new = m_topology_traits.create_vertex_front(p);
+    auto e_left_unbounded = m_topology_traits.left_edge(v_first);
     m_topology_traits.set_right_vertex(e_left_unbounded, v_new);
 
-    Edge_descriptor e_new = m_topology_traits.create_edge();
+    auto e_new = m_topology_traits.create_edge();
     m_topology_traits.set_left_vertex(e_new, v_new);
     m_topology_traits.set_right_vertex(e_new, v_first);
 
@@ -90,11 +98,11 @@ public:
   }
 
   Vertex_descriptor insert_after(Vertex_descriptor v_last, const Point_1& p) {
-    Vertex_descriptor v_new = m_topology_traits.create_vertex(p);
-    Edge_descriptor e_right_unbounded = m_topology_traits.right_edge(v_last);
+    auto v_new = m_topology_traits.create_vertex(p);
+    auto e_right_unbounded = m_topology_traits.right_edge(v_last);
     m_topology_traits.set_left_vertex(e_right_unbounded, v_new);
 
-    Edge_descriptor e_new = m_topology_traits.create_edge();
+    auto e_new = m_topology_traits.create_edge();
     m_topology_traits.set_left_vertex(e_new, v_last);
     m_topology_traits.set_right_vertex(e_new, v_new);
 
@@ -108,10 +116,10 @@ public:
     if (! m_topology_traits.has_left_vertex(e)) return insert_before(m_topology_traits.right_vertex(e), p);
     if (! m_topology_traits.has_right_vertex(e)) return insert_after(m_topology_traits.left_vertex(e), p);
 
-    Vertex_descriptor v_tgt = m_topology_traits.right_vertex(e);
-    Vertex_descriptor v_new = m_topology_traits.create_vertex(v_tgt, p);
+    auto v_tgt = m_topology_traits.right_vertex(e);
+    auto v_new = m_topology_traits.create_vertex(v_tgt, p);
 
-    Edge_descriptor e_new = m_topology_traits.create_edge();
+    auto e_new = m_topology_traits.create_edge();
     m_topology_traits.set_left_vertex(e_new, v_new);
     m_topology_traits.set_right_vertex(e_new, v_tgt);
     m_topology_traits.set_right_vertex(e, v_new);
@@ -124,8 +132,8 @@ public:
 
   void remove(Vertex_descriptor v) {
     // Extract the immediate topological neighbors of the vertex
-    Edge_descriptor e_left  = m_topology_traits.left_edge(v);
-    Edge_descriptor e_right = m_topology_traits.right_edge(v);
+    auto e_left  = m_topology_traits.left_edge(v);
+    auto e_right = m_topology_traits.right_edge(v);
 
     bool has_left_neighbor  = m_topology_traits.has_left_vertex(e_left);
     bool has_right_neighbor = m_topology_traits.has_right_vertex(e_right);
@@ -140,7 +148,7 @@ public:
 
     // Case 2: Removing the leftmost vertex shifts the unbounded track boundary rightward
     if (! has_left_neighbor) {
-      Vertex_descriptor v_right_neighbor = m_topology_traits.right_vertex(e_right);
+      auto v_right_neighbor = m_topology_traits.right_vertex(e_right);
 
       // e_right becomes the new left-unbounded tracking edge
       m_topology_traits.clear_left_vertex(e_right);
@@ -153,7 +161,7 @@ public:
 
     // Case 3: Removing the rightmost vertex shifts the unbounded track boundary leftward
     if (! has_right_neighbor) {
-      Vertex_descriptor v_left_neighbor = m_topology_traits.left_vertex(e_left);
+      auto v_left_neighbor = m_topology_traits.left_vertex(e_left);
 
       // e_left becomes the new right-unbounded tracking edge
       m_topology_traits.clear_right_vertex(e_left);
@@ -165,10 +173,10 @@ public:
     }
 
     // Case 4: Internal Node removal. Stitch the gap by building a unified replacement edge.
-    Vertex_descriptor v_left_neighbor = m_topology_traits.left_vertex(e_left);
-    Vertex_descriptor v_right_neighbor = m_topology_traits.right_vertex(e_right);
+    auto v_left_neighbor = m_topology_traits.left_vertex(e_left);
+    auto v_right_neighbor = m_topology_traits.right_vertex(e_right);
 
-    Edge_descriptor e_new = m_topology_traits.create_edge();
+    auto e_new = m_topology_traits.create_edge();
     m_topology_traits.set_left_vertex(e_new, v_left_neighbor);
     m_topology_traits.set_right_vertex(e_new, v_right_neighbor);
 
