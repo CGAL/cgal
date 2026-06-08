@@ -18,7 +18,7 @@
 
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/Uniform_sizing_field.h>
-#include <CGAL/property_map.h>
+#include <CGAL/Dynamic_property_map.h>
 
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
