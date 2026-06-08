@@ -9,7 +9,7 @@ find_package(CGAL REQUIRED)
 
 
   create_single_source_cgal_program("compute_normals_benchmark.cpp")
-  
+
 find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
 
@@ -32,7 +32,7 @@ if (FAST_ENVELOPE_BUILD_DIR)
       set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
   endif()
 
-  
+
   create_single_source_cgal_program("fastE.cpp")
   target_link_libraries( fastE PRIVATE CGAL::Eigen3_support)
   target_link_libraries( fastE PRIVATE FastEnvelope IndirectPredicates geogram)

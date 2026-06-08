@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
   PMP::compute_normals(mesh, vnormals, fnormals);
   timer.stop();
   std::cout << "Time: " << timer.time() << " seconds" << std::endl;
-    
+
 
   return 0;
 }
