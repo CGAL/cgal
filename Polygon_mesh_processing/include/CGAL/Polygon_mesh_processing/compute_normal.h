@@ -274,12 +274,12 @@ bool almost_equal(const typename GT::Vector_3& v1, const typename GT::Vector_3& 
   return traits.compute_scalar_product_3_object()(v1, v2) >= cos_theta;
 }
 
-template <typename PolygonMesh, typename FaceNormalVector, typename K>
+template <typename PolygonMesh, typename Incident_faces, typename FaceNormalVector, typename K>
 bool does_enclose_other_normals(const std::size_t i, const std::size_t j, const std::size_t k,
                                 const typename K::Vector_3& nb,
                                 const typename K::FT sp_bi,
                                 typename boost::graph_traits<PolygonMesh>::face_descriptor &not_enclose_normal,
-                                const std::vector<typename boost::graph_traits<PolygonMesh>::face_descriptor>& incident_faces,
+                                const Incident_faces& incident_faces,
                                 const FaceNormalVector& face_normals,
                                 const K& traits)
 {
@@ -410,8 +410,7 @@ compute_vertex_normal_most_visible_min_circle(typename boost::graph_traits<Polyg
   typename GT::Compute_scalar_product_3 sp_3 = traits.compute_scalar_product_3_object();
   typename GT::Construct_cross_product_vector_3 cp_3 = traits.construct_cross_product_vector_3_object();
 
-  std::vector<face_descriptor> incident_faces;
-  incident_faces.reserve(8);
+  boost::container::small_vector<face_descriptor,8> incident_faces;
   for(face_descriptor f : CGAL::faces_around_target(halfedge(v, pmesh), pmesh))
   {
     // Remove degenerate and redundant faces
