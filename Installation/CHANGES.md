@@ -4,6 +4,9 @@
 
 Release date: December 2026
 
+### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/6.3/Manual/packages.html#PkgKernel23)
+
+- Add operator to functor `Orientation_3` that takes 5 points as argument, with the last two getting tested against the first three points
 
 ## [Release 6.2](https://github.com/CGAL/cgal/releases/tag/v6.2)
 
