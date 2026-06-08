@@ -37,13 +37,6 @@ namespace internal {
 //   ray:     min_infinite = false, max_infinite = true
 //   line:    min_infinite = max_infinite = true
 //
-// The bbox coordinates are doubles while the query coordinates are K::FT. To
-// avoid losing precision on either side -- the old version converted the query
-// to double via to_double() (issue #7124), and converting the bbox to K::FT
-// loses information when K::FT is lower precision than double (e.g. float) --
-// the clipping is computed in Coercion_traits<K::FT, double>::Type, the common
-// type of both. This matches what do_intersect(Bbox_3, Segment_3) already does.
-// The resulting point coordinates are converted back to K::FT.
 template <class K>
 typename std::optional< std::variant<typename K::Segment_3, typename K::Point_3 > >
 intersection_bl(const Bbox_3& box,
