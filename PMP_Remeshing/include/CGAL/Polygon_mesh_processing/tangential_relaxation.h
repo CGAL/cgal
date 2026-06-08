@@ -178,11 +178,14 @@ void tangential_relaxation(const VertexRange& vertices,
   const bool relax_constraints = choose_parameter(get_parameter(np, internal_np::relax_constraints), false);
   const unsigned int nb_iterations = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
 
-  typedef typename GT::Vector_3 Vector_3;
+  typedef typename GT::FT FT;
   typedef typename GT::Point_3 Point_3;
+  typedef typename GT::Vector_3 Vector_3;
 
   auto check_normals = [&](vertex_descriptor v)
   {
+    auto angle = gt.angle_3_object();
+
     bool first_run = true;
     Vector_3 prev = NULL_VECTOR, first = NULL_VECTOR;
     halfedge_descriptor first_h = boost::graph_traits<TriangleMesh>::null_halfedge();
@@ -203,7 +206,7 @@ void tangential_relaxation(const VertexRange& vertices,
       else
       {
         if (!get(ecm, edge(hd, tm)))
-          if (to_double(n * prev) <= 0)
+          if (angle(n, prev) != CGAL::ACUTE)
             return false;
       }
       prev = n;
@@ -213,7 +216,7 @@ void tangential_relaxation(const VertexRange& vertices,
       return true; //vertex incident only to degenerate faces
 
     if (!get(ecm, edge(first_h, tm)))
-      if (to_double(first * prev) <= 0)
+      if (angle(first, prev) != CGAL::ACUTE)
         return false;
 
     return true;
@@ -273,13 +276,13 @@ void tangential_relaxation(const VertexRange& vertices,
             ++star_size;
           }
           CGAL_assertion(star_size > 0); //isolated vertices have already been discarded
-          move = (1. / static_cast<double>(star_size)) * move;
+          move = (FT(1) / FT(star_size)) * move;
         }
         else
         {
           auto gt_centroid = gt.construct_centroid_3_object();
           auto gt_area = gt.compute_area_3_object();
-          double weight = 0;
+          FT weight = 0;
           for(halfedge_descriptor h :interior_hedges)
           {
             // calculate weight
@@ -287,11 +290,10 @@ void tangential_relaxation(const VertexRange& vertices,
             const vertex_descriptor v1 = target(next(h, tm), tm);
             const vertex_descriptor v2 = source(h, tm);
 
-            const double tri_area = gt_area(get(vpm, v), get(vpm, v1), get(vpm, v2));
-            const double face_weight = tri_area
-                                       / (1. / 3. * (sizing.at(v, tm)
-                                                   + sizing.at(v1, tm)
-                                                   + sizing.at(v2, tm)));
+            const FT tri_area = gt_area(get(vpm, v), get(vpm, v1), get(vpm, v2));
+            const FT face_weight = tri_area / (FT(1) / FT(3) * (sizing.at(v, tm)
+                                                              + sizing.at(v1, tm)
+                                                              + sizing.at(v2, tm)));
             weight += face_weight;
 
             const Point_3 centroid = gt_centroid(get(vpm, v), get(vpm, v1), get(vpm, v2));
@@ -310,8 +312,7 @@ void tangential_relaxation(const VertexRange& vertices,
         {
           vertex_descriptor ph0 = source(border_halfedges[0], tm);
           vertex_descriptor ph1 = source(border_halfedges[1], tm);
-          double dot = to_double(Vector_3(get(vpm, v), get(vpm, ph0))
-                                 * Vector_3(get(vpm, v), get(vpm, ph1)));
+          FT dot = Vector_3(get(vpm, v), get(vpm, ph0)) * Vector_3(get(vpm, v), get(vpm, ph1));
           // \todo shouldn't it be an input parameter?
           //check squared cosine is < 0.25 (~120 degrees)
           if (0.25 < dot*dot / ( squared_distance(get(vpm,ph0), get(vpm, v)) *

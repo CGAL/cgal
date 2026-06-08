@@ -210,48 +210,31 @@ const Orientation abcq = orientation(a,b,c,q);
 
   switch ( abcp ) {
   case POSITIVE:
-    switch ( abcq ) {
-    case POSITIVE:
+    if( abcq == POSITIVE ){
       // the segment lies in the positive open halfspaces defined by the
       // triangle's supporting plane
       return false;
-    case NEGATIVE:
-      // p sees the triangle in counterclockwise order
-      return orientation(p,q,a,b) != POSITIVE
-          && orientation(p,q,b,c) != POSITIVE
-          && orientation(p,q,c,a) != POSITIVE;
-    case COPLANAR:
-      // q belongs to the triangle's supporting plane
-      // p sees the triangle in counterclockwise order
-      return orientation(p,q,a,b) != POSITIVE
-          && orientation(p,q,b,c) != POSITIVE
-          && orientation(p,q,c,a) != POSITIVE;
-    default: // should not happen.
-      CGAL_kernel_assertion(false);
-      return false;
     }
+    // NEGATIVE: p sees the triangle in counterclockwise order
+    // COPLANAR: q belongs to the triangle's supporting plane
+    //           and p sees the triangle in counterclockwise order
+    return orientation(p,q,a,b) != POSITIVE
+        && orientation(p,q,b,c) != POSITIVE
+        && orientation(p,q,c,a) != POSITIVE;
+
   case NEGATIVE:
-    switch ( abcq ) {
-    case POSITIVE:
-      // q sees the triangle in counterclockwise order
-      return orientation(q,p,a,b) != POSITIVE
-          && orientation(q,p,b,c) != POSITIVE
-          && orientation(q,p,c,a) != POSITIVE;
-    case NEGATIVE:
+    if( abcq == NEGATIVE ){
       // the segment lies in the negative open halfspaces defined by the
       // triangle's supporting plane
       return false;
-    case COPLANAR:
-      // q belongs to the triangle's supporting plane
-      // p sees the triangle in clockwise order
-      return orientation(q,p,a,b) != POSITIVE
-          && orientation(q,p,b,c) != POSITIVE
-          && orientation(q,p,c,a) != POSITIVE;
-
-    default: // should not happen.
-      CGAL_kernel_assertion(false);
-      return false;
     }
+    // POSITIVE: q sees the triangle in counterclockwise order
+    // COPLANAR: q belongs to the triangle's supporting plane
+    //           and p sees the triangle in clockwise order
+    return orientation(q,p,a,b) != POSITIVE
+        && orientation(q,p,b,c) != POSITIVE
+        && orientation(q,p,c,a) != POSITIVE;
+
   case COPLANAR: // p belongs to the triangle's supporting plane
     switch ( abcq ) {
     case POSITIVE:

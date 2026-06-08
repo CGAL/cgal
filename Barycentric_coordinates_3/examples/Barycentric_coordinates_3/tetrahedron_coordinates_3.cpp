@@ -1,5 +1,5 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Barycentric_coordinates_3/tetrahedron_coordinates.h>
+#include <CGAL/Barycentric_coordinates_3/tetrahedron_coordinates_3.h>
 
 using Kernel = CGAL::Simple_cartesian<double>;
 
@@ -27,7 +27,7 @@ int main() {
   // Get an array of triangle coordinates for all query points
   for(std::size_t i = 0; i < queries.size(); i++) {
     const auto coords_array =
-    CGAL::Barycentric_coordinates::tetrahedron_coordinates(p0, p1, p2, p3, queries[i]);
+    CGAL::Barycentric_coordinates::tetrahedron_coordinates_3(p0, p1, p2, p3, queries[i]);
 
     std::cout << "tetrahedron coordinates (query " << i << "): " <<
       coords_array[0] << " " << coords_array[1] << " " <<
