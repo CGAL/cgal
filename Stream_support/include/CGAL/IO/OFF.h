@@ -192,14 +192,10 @@ bool read_OFF(std::istream& is,
   using parameters::get_parameter;
 
   return internal::read_OFF(is, points, polygons,
-                            choose_parameter(get_parameter(np, internal_np::vertex_normal_output_iterator),
-                                             CGAL::Emptyset_iterator()),
-                            choose_parameter(get_parameter(np, internal_np::vertex_color_output_iterator),
-                                             CGAL::Emptyset_iterator()),
-                            choose_parameter(get_parameter(np, internal_np::vertex_texture_output_iterator),
-                                             CGAL::Emptyset_iterator()),
-                            choose_parameter(get_parameter(np, internal_np::face_color_output_iterator),
-                                             CGAL::Emptyset_iterator()),
+                            choose_parameter<CGAL::Emptyset_iterator>(get_parameter(np, internal_np::vertex_normal_output_iterator)),
+                            choose_parameter<CGAL::Emptyset_iterator>(get_parameter(np, internal_np::vertex_color_output_iterator)),
+                            choose_parameter<CGAL::Emptyset_iterator>(get_parameter(np, internal_np::vertex_texture_output_iterator)),
+                            choose_parameter<CGAL::Emptyset_iterator>(get_parameter(np, internal_np::face_color_output_iterator)),
                             choose_parameter(get_parameter(np, internal_np::verbose), true));
 }
 

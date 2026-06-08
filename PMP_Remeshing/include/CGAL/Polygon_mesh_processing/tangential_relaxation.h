@@ -156,16 +156,14 @@ void tangential_relaxation(const VertexRange& vertices,
       CGAL_NP_CLASS,
       Static_boolean_property_map<edge_descriptor, false> // default (no constraint)
     > ::type ECM;
-  ECM ecm = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
-                             Default_ECM());
+  ECM ecm = choose_parameter<Default_ECM>(get_parameter(np, internal_np::edge_is_constrained));
 
   typedef typename internal_np::Lookup_named_param_def <
       internal_np::vertex_is_constrained_t,
       CGAL_NP_CLASS,
       Static_boolean_property_map<vertex_descriptor, false> // default (no constraint)
     > ::type VCM;
-  VCM vcm = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
-                             Static_boolean_property_map<vertex_descriptor, false>());
+  VCM vcm = choose_parameter<Static_boolean_property_map<vertex_descriptor, false>>(get_parameter(np, internal_np::vertex_is_constrained));
 
   typedef typename internal_np::Lookup_named_param_def <
       internal_np::sizing_function_t,
@@ -227,8 +225,7 @@ void tangential_relaxation(const VertexRange& vertices,
       CGAL_NP_CLASS,
       internal::Allow_all_moves// default
     > ::type Shall_move;
-  Shall_move shall_move = choose_parameter(get_parameter(np, internal_np::allow_move_functor),
-                                           internal::Allow_all_moves());
+  Shall_move shall_move = choose_parameter<internal::Allow_all_moves>(get_parameter(np, internal_np::allow_move_functor));
 
   for (unsigned int nit = 0; nit < nb_iterations; ++nit)
   {

@@ -327,10 +327,8 @@ bool read_PLY(std::istream& is,
   std::vector<std::pair<float, float> > dummy_pf;
 
   return internal::read_PLY(is, points, polygons, comments, std::back_inserter(dummy_pui),
-                            choose_parameter(get_parameter(np, internal_np::face_color_output_iterator),
-                                             CGAL::Emptyset_iterator()),
-                            choose_parameter(get_parameter(np, internal_np::vertex_color_output_iterator),
-                                             CGAL::Emptyset_iterator()),
+                            choose_parameter<CGAL::Emptyset_iterator>(get_parameter(np, internal_np::face_color_output_iterator)),
+                            choose_parameter<CGAL::Emptyset_iterator>(get_parameter(np, internal_np::vertex_color_output_iterator)),
                             std::back_inserter(dummy_pf),
                             choose_parameter(get_parameter(np, internal_np::verbose), true));
 }

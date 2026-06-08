@@ -234,10 +234,8 @@ bool write_OM(const std::string& fname,
 
   using CGAL::parameters::get_parameter;
   using CGAL::parameters::choose_parameter;
-  auto vfpm = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
-                               CGAL::Constant_property_map<vertex_descriptor, bool>(false));
-  auto efpm = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
-                               CGAL::Constant_property_map<edge_descriptor, bool>(false));
+  auto vfpm = choose_parameter<Static_boolean_property_map<vertex_descriptor, false>>(get_parameter(np, internal_np::vertex_is_constrained));
+  auto efpm = choose_parameter<Static_boolean_property_map<edge_descriptor, false>>(get_parameter(np, internal_np::edge_is_constrained));
   auto vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                               get_const_property_map(vertex_point, g));
   std::streamsize precision = choose_parameter(get_parameter(np, internal_np::stream_precision),
