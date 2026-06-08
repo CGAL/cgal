@@ -386,15 +386,14 @@ void AABB_two_tree_self_intersections(const TriangleMesh &tm, OutputIterator out
 
 template< typename TriangleMesh1,
           typename TriangleMesh2,
-          typename OutputIterator,
+          typename Callback,
           typename NamedParameters1 = parameters::Default_named_parameters,
           typename NamedParameters2 = parameters::Default_named_parameters>
-void AABB_two_tree_meshes_intersections(const TriangleMesh1 &tm1,
-                                        const TriangleMesh2 &tm2,
-                                        OutputIterator out,
-                                        const NamedParameters1& np1 = parameters::default_values(),
-                                        const NamedParameters2& np2 = parameters::default_values())
-{
+void meshes_intersections_callback(const TriangleMesh1 &tm1,
+                                   const TriangleMesh2 &tm2,
+                                   Callback callback,
+                                   const NamedParameters1& np1 = parameters::default_values(),
+                                   const NamedParameters2& np2 = parameters::default_values()){
   using CGAL::parameters::choose_parameter;
   using CGAL::parameters::get_parameter;
 
@@ -489,8 +488,8 @@ void AABB_two_tree_meshes_intersections(const TriangleMesh1 &tm1,
     using InternOutputIterator= std::back_insert_iterator<std::vector<std::pair<face_descriptor_1, face_descriptor_2>>>;
     tbb::concurrent_vector<std::pair<face_descriptor_1, face_descriptor_2>> inter;
     CGAL::internal::AABB_tree::two_tree_listing_intersecting_primitives<Concurrency_tag>(tree1, tree2, std::back_inserter(inter));
-    for(const auto& p: inter)
-      *out++ = p;
+    for(const auto& [f_1, f_2]: inter)
+      callback(f_1, f_2);
   }
   else
 #endif
@@ -501,8 +500,22 @@ void AABB_two_tree_meshes_intersections(const TriangleMesh1 &tm1,
     std::vector<std::pair<face_descriptor_1, face_descriptor_2>> inter;
     CGAL::internal::AABB_tree::two_tree_listing_intersecting_primitives(tree1, tree2, std::back_inserter(inter));
     for(const auto& [f_1, f_2]: inter)
-      *out ++ = std::make_pair(f_1, f_2);
+      callback(f_1, f_2);
   }
+}
+
+template< typename TriangleMesh1,
+          typename TriangleMesh2,
+          typename OutputIterator,
+          typename NamedParameters1 = parameters::Default_named_parameters,
+          typename NamedParameters2 = parameters::Default_named_parameters>
+void AABB_two_tree_meshes_intersections(const TriangleMesh1 &tm1,
+                                        const TriangleMesh2 &tm2,
+                                        OutputIterator out,
+                                        const NamedParameters1& np1 = parameters::default_values(),
+                                        const NamedParameters2& np2 = parameters::default_values())
+{
+  meshes_intersections_callback(tm1, tm2, [&](auto f1, auto f2){ *out++ = std::make_pair(f1, f2); }, np1, np2);
 }
 
 } // end of namespace experimental
