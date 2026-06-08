@@ -20,9 +20,9 @@ public:
   using Vertex_descriptor_b = typename ArrangementB::Vertex_descriptor;
   using Vertex_descriptor_r = typename ArrangementR::Vertex_descriptor;
 
-  using Edge_descriptor_a   = typename ArrangementA::Edge_descriptor;
-  using Edge_descriptor_b   = typename ArrangementB::Edge_descriptor;
-  using Edge_descriptor_r   = typename ArrangementR::Edge_descriptor;
+  using Edge_descriptor_a = typename ArrangementA::Edge_descriptor;
+  using Edge_descriptor_b = typename ArrangementB::Edge_descriptor;
+  using Edge_descriptor_r = typename ArrangementR::Edge_descriptor;
 
 public:
   Default_overlay_observer(const ArrangementA&, const ArrangementB&, ArrangementR&) {}

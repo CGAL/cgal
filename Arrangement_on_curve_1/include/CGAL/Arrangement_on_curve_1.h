@@ -29,6 +29,7 @@ public:
   using Vertex_const_descriptor = typename Topology_traits::Vertex_const_descriptor;
   using Edge_const_descriptor = typename Topology_traits::Edge_const_descriptor;
 
+  // Location result: a point is either ON a vertex, INSIDE an edge, or nowhere (void* = nullptr)
   using Location_result = std::variant<Vertex_descriptor, Edge_descriptor, void*>;
   using Const_location_result = std::variant<Vertex_const_descriptor, Edge_const_descriptor, void*>;
 
@@ -37,9 +38,14 @@ private:
   Topology_traits m_topology_traits;
 
 public:
-  Arrangement_on_curve_1(const Geometry_traits_1& geom_tr = Geometry_traits_1(),
-                         const Topology_traits& topo_tr = Topology_traits()) :
-    m_geometry_traits(geom_tr), m_topology_traits(topo_tr)
+  Arrangement_on_curve_1(const Geometry_traits_1& geom_tr) :
+    m_geometry_traits(geom_tr),
+    m_topology_traits()
+  {}
+
+  Arrangement_on_curve_1(const Geometry_traits_1& geom_tr, const Topology_traits& topo_tr) :
+    m_geometry_traits(geom_tr),
+    m_topology_traits(topo_tr)
   {}
 
   const Geometry_traits_1& geometry_traits_1() const { return m_geometry_traits; }
@@ -57,136 +63,163 @@ public:
   auto vertex_data_map() const { return m_topology_traits.vertex_data_map(); }
   auto edge_data_map() const { return m_topology_traits.edge_data_map(); }
 
-  Vertex_descriptor left_vertex(Edge_descriptor e) const { return m_topology_traits.left_vertex(e); }
-  Vertex_descriptor right_vertex(Edge_descriptor e) const { return m_topology_traits.right_vertex(e); }
+  Edge_descriptor unbounded_edge() { return m_topology_traits.unbounded_edge(); }
+  Edge_const_descriptor unbounded_edge() const { return m_topology_traits.unbounded_edge(); }
+
+  Vertex_descriptor left_vertex(Edge_descriptor e) { return m_topology_traits.left_vertex(e); }
+  Vertex_descriptor right_vertex(Edge_descriptor e) { return m_topology_traits.right_vertex(e); }
+  Edge_descriptor left_edge(Vertex_descriptor v) { return m_topology_traits.left_edge(v); }
+  Edge_descriptor right_edge(Vertex_descriptor v) { return m_topology_traits.right_edge(v); }
 
   Vertex_const_descriptor left_vertex(Edge_const_descriptor e) const { return m_topology_traits.left_vertex(e); }
   Vertex_const_descriptor right_vertex(Edge_const_descriptor e) const { return m_topology_traits.right_vertex(e); }
+  Edge_const_descriptor left_edge(Vertex_const_descriptor v) const{ return m_topology_traits.left_edge(v); }
+  Edge_const_descriptor right_edge(Vertex_const_descriptor v) const { return m_topology_traits.right_edge(v); }
 
-  bool has_left_vertex(Edge_descriptor e) const { return m_topology_traits.has_left_vertex(e); }
-  bool has_right_vertex(Edge_descriptor e) const { return m_topology_traits.has_right_vertex(e); }
+  bool has_left_vertex(Edge_const_descriptor e) const { return m_topology_traits.has_left_vertex(e); }
+  bool has_right_vertex(Edge_const_descriptor e) const { return m_topology_traits.has_right_vertex(e); }
 
   // ============================================================================
   // HIGH-LEVEL TOPOLOGICAL OPERATIONS
   // ============================================================================
+
+  // Insert the very first vertex into an empty arrangement.
+  // The single unbounded edge is split into: (-inf, v) and (v, +inf).
   Vertex_descriptor insert_empty(const Point_1& p) {
-    auto v = m_topology_traits.create_vertex(p);
-    auto e_left = m_topology_traits.create_edge();
-    auto e_right = m_topology_traits.create_edge();
+    auto& topo = m_topology_traits;
 
-    m_topology_traits.set_right_vertex(e_left, v);
-    m_topology_traits.set_left_vertex(e_right, v);
+    // The arrangement must be empty: one unbounded edge exists.
+    auto e_unbounded = topo.unbounded_edge();
 
-    m_topology_traits.set_left_edge(v, e_left);
-    m_topology_traits.set_right_edge(v, e_right);
+    // Create the new vertex.
+    Vertex_descriptor v = topo.create_vertex(p);
+
+    // Create the right new edge: (v, +inf)
+    Edge_descriptor e_right = topo.create_edge();
+
+    // Reuse e_unbounded as the left edge: (-inf, v)
+    // It already has no left vertex; set its right vertex to v.
+    topo.set_right_vertex(e_unbounded, v);
+
+    // The right edge has v as its left vertex, and no right vertex.
+    topo.set_left_vertex(e_right, v);
+
+    // Wire the vertex to its two adjacent edges.
+    topo.set_left_edge(v, e_unbounded);
+    topo.set_right_edge(v, e_right);
+
     return v;
   }
 
+  // Insert a new vertex p strictly to the left of an existing first vertex v_first.
+  // Splits the unbounded left edge of v_first.
   Vertex_descriptor insert_before(Vertex_descriptor v_first, const Point_1& p) {
-    auto v_new = m_topology_traits.create_vertex_front(p);
-    auto e_left_unbounded = m_topology_traits.left_edge(v_first);
-    m_topology_traits.set_right_vertex(e_left_unbounded, v_new);
+    auto& topo = m_topology_traits;
 
-    auto e_new = m_topology_traits.create_edge();
-    m_topology_traits.set_left_vertex(e_new, v_new);
-    m_topology_traits.set_right_vertex(e_new, v_first);
+    // e_left is the unbounded edge to the left of v_first: (-inf, v_first)
+    Edge_descriptor e_left = topo.left_edge(v_first);
 
-    m_topology_traits.set_left_edge(v_new, e_left_unbounded);
-    m_topology_traits.set_right_edge(v_new, e_new);
-    m_topology_traits.set_left_edge(v_first, e_new);
+    // Create the new vertex.
+    Vertex_descriptor v_new = topo.create_vertex(p);
+
+    // Create a new edge to sit between v_new and v_first: (v_new, v_first)
+    Edge_descriptor e_between = topo.create_edge();
+    topo.set_left_vertex(e_between, v_new);
+    topo.set_right_vertex(e_between, v_first);
+
+    // The old left unbounded edge now terminates at v_new on its right: (-inf, v_new)
+    topo.set_right_vertex(e_left, v_new);
+
+    // v_new sits between e_left and e_between.
+    topo.set_left_edge(v_new, e_left);
+    topo.set_right_edge(v_new, e_between);
+
+    // v_first's left edge is now e_between.
+    topo.set_left_edge(v_first, e_between);
+
     return v_new;
   }
 
+  // Insert a new vertex p strictly to the right of an existing last vertex v_last.
+  // Splits the unbounded right edge of v_last.
   Vertex_descriptor insert_after(Vertex_descriptor v_last, const Point_1& p) {
-    auto v_new = m_topology_traits.create_vertex(p);
-    auto e_right_unbounded = m_topology_traits.right_edge(v_last);
-    m_topology_traits.set_left_vertex(e_right_unbounded, v_new);
+    auto& topo = m_topology_traits;
 
-    auto e_new = m_topology_traits.create_edge();
-    m_topology_traits.set_left_vertex(e_new, v_last);
-    m_topology_traits.set_right_vertex(e_new, v_new);
+    // e_right is the unbounded edge to the right of v_last: (v_last, +inf)
+    Edge_descriptor e_right = topo.right_edge(v_last);
 
-    m_topology_traits.set_right_edge(v_last, e_new);
-    m_topology_traits.set_left_edge(v_new, e_new);
-    m_topology_traits.set_right_edge(v_new, e_right_unbounded);
+    // Create the new vertex.
+    Vertex_descriptor v_new = topo.create_vertex(p);
+
+    // Create a new edge between v_last and v_new: (v_last, v_new)
+    Edge_descriptor e_between = topo.create_edge();
+    topo.set_left_vertex(e_between, v_last);
+    topo.set_right_vertex(e_between, v_new);
+
+    // The old right unbounded edge now starts from v_new: (v_new, +inf)
+    topo.set_left_vertex(e_right, v_new);
+
+    // v_new is wired between e_between and e_right.
+    topo.set_left_edge(v_new, e_between);
+    topo.set_right_edge(v_new, e_right);
+
+    // v_last's right edge is now e_between.
+    topo.set_right_edge(v_last, e_between);
+
     return v_new;
   }
 
+  // Split the edge e by inserting a new vertex p inside it.
+  // e becomes the left sub-edge; a new edge becomes the right sub-edge.
   Vertex_descriptor split_edge(Edge_descriptor e, const Point_1& p) {
-    if (! m_topology_traits.has_left_vertex(e)) return insert_before(m_topology_traits.right_vertex(e), p);
-    if (! m_topology_traits.has_right_vertex(e)) return insert_after(m_topology_traits.left_vertex(e), p);
+    auto& topo = m_topology_traits;
 
-    auto v_tgt = m_topology_traits.right_vertex(e);
-    auto v_new = m_topology_traits.create_vertex(v_tgt, p);
+    // Create the new vertex.
+    Vertex_descriptor v_new = topo.create_vertex(p);
 
-    auto e_new = m_topology_traits.create_edge();
-    m_topology_traits.set_left_vertex(e_new, v_new);
-    m_topology_traits.set_right_vertex(e_new, v_tgt);
-    m_topology_traits.set_right_vertex(e, v_new);
+    // Create a new right sub-edge.
+    Edge_descriptor e_right = topo.create_edge();
 
-    m_topology_traits.set_left_edge(v_new, e);
-    m_topology_traits.set_right_edge(v_new, e_new);
-    m_topology_traits.set_left_edge(v_tgt, e_new);
+    // If e had a right vertex, transfer it to e_right.
+    if (topo.has_right_vertex(e)) {
+      Vertex_descriptor v_old_right = topo.right_vertex(e);
+      topo.set_right_vertex(e_right, v_old_right);
+      topo.set_left_edge(v_old_right, e_right);
+    }
+    // e_right's left vertex is v_new.
+    topo.set_left_vertex(e_right, v_new);
+
+    // e (the left sub-edge) now ends at v_new.
+    topo.set_right_vertex(e, v_new);
+
+    // Wire v_new between e and e_right.
+    topo.set_left_edge(v_new, e);
+    topo.set_right_edge(v_new, e_right);
+
     return v_new;
   }
 
+  // Remove vertex v from the arrangement.
+  // Merge its two adjacent edges into one, keeping the left edge and removing the right.
   void remove(Vertex_descriptor v) {
-    // Extract the immediate topological neighbors of the vertex
-    auto e_left  = m_topology_traits.left_edge(v);
-    auto e_right = m_topology_traits.right_edge(v);
+    auto& topo = m_topology_traits;
 
-    bool has_left_neighbor  = m_topology_traits.has_left_vertex(e_left);
-    bool has_right_neighbor = m_topology_traits.has_right_vertex(e_right);
+    Edge_descriptor e_left  = topo.left_edge(v);
+    Edge_descriptor e_right = topo.right_edge(v);
 
-    // Case 1: The arrangement collapses to empty space if this was the final vertex
-    if (! has_left_neighbor && ! has_right_neighbor) {
-      m_topology_traits.erase_vertex(v);
-      m_topology_traits.erase_edge(e_left);
-      m_topology_traits.erase_edge(e_right);
-      return;
+    // Extend e_left to cover the span formerly covered by e_right.
+    if (topo.has_right_vertex(e_right)) {
+      Vertex_descriptor v_right = topo.right_vertex(e_right);
+      topo.set_right_vertex(e_left, v_right);
+      topo.set_left_edge(v_right, e_left);
+    }
+    else {
+      topo.clear_right_vertex(e_left);
     }
 
-    // Case 2: Removing the leftmost vertex shifts the unbounded track boundary rightward
-    if (! has_left_neighbor) {
-      auto v_right_neighbor = m_topology_traits.right_vertex(e_right);
-
-      // e_right becomes the new left-unbounded tracking edge
-      m_topology_traits.clear_left_vertex(e_right);
-      m_topology_traits.set_left_edge(v_right_neighbor, e_right);
-
-      m_topology_traits.erase_vertex(v);
-      m_topology_traits.erase_edge(e_left);
-      return;
-    }
-
-    // Case 3: Removing the rightmost vertex shifts the unbounded track boundary leftward
-    if (! has_right_neighbor) {
-      auto v_left_neighbor = m_topology_traits.left_vertex(e_left);
-
-      // e_left becomes the new right-unbounded tracking edge
-      m_topology_traits.clear_right_vertex(e_left);
-      m_topology_traits.set_right_edge(v_left_neighbor, e_left);
-
-      m_topology_traits.erase_vertex(v);
-      m_topology_traits.erase_edge(e_right);
-      return;
-    }
-
-    // Case 4: Internal Node removal. Stitch the gap by building a unified replacement edge.
-    auto v_left_neighbor = m_topology_traits.left_vertex(e_left);
-    auto v_right_neighbor = m_topology_traits.right_vertex(e_right);
-
-    auto e_new = m_topology_traits.create_edge();
-    m_topology_traits.set_left_vertex(e_new, v_left_neighbor);
-    m_topology_traits.set_right_vertex(e_new, v_right_neighbor);
-
-    m_topology_traits.set_right_edge(v_left_neighbor, e_new);
-    m_topology_traits.set_left_edge(v_right_neighbor, e_new);
-
-    // Clean up old topology structures from memory
-    m_topology_traits.erase_vertex(v);
-    m_topology_traits.erase_edge(e_left);
-    m_topology_traits.erase_edge(e_right);
+    // Remove the now-redundant right edge and the vertex.
+    topo.erase_edge(e_right);
+    topo.erase_vertex(v);
   }
 };
 

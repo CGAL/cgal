@@ -39,12 +39,12 @@ int main() {
   put(v_data_map, v_near, std::string("Station A"));
 
   std::cout << "\nResulting Sorted Sequence along the 3D Line:\n";
-  auto v_range = arr.vertices();
   auto v_pnt_map = arr.vertex_point_map();
-
-  for (auto vit = v_range.begin(); vit != v_range.end(); ++vit) {
-    std::cout << "  Vertex 3D Coordinate: (" << get(v_pnt_map, vit)
-              << ") | Descriptor: " << get(v_data_map, vit) << "\n";
+  auto e = arr.unbounded_edge();
+  while (arr.has_right_vertex(e)) {
+    auto v = arr.right_vertex(e);
+    std::cout << "  Vertex Point: (" << get(v_pnt_map, v) << ") | Extension ID: " << get(v_data_map, v) << "\n";
+    e = arr.right_edge(v);
   }
 
   return 0;

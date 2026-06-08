@@ -12,6 +12,7 @@
 
 #include <list>
 #include <type_traits>
+
 #include <boost/property_map/property_map.hpp>
 
 namespace CGAL {
@@ -66,8 +67,8 @@ public:
 
   struct Vertex : public Data_container<VertexData> {
     Point_1 m_point;
-    Edge_descriptor m_left;
-    Edge_descriptor m_right;
+    Edge_descriptor m_left;   // edge immediately to the left of this vertex
+    Edge_descriptor m_right;  // edge immediately to the right of this vertex
     Vertex(const Point_1& p) : m_point(p) {}
   };
 
@@ -115,9 +116,8 @@ public:
       else return k->data();
     }
 
-    friend void put(const Vertex_data_map&, key_type k, typename Map_param_traits<VertexData>::type val) {
-      if constexpr (! std::is_void_v<VertexData>) k->set_data(val);
-    }
+    friend void put(const Vertex_data_map&, key_type k, typename Map_param_traits<VertexData>::type val)
+    { if constexpr (! std::is_void_v<VertexData>) k->set_data(val); }
   };
 
   // 3. Edge User Data Map
@@ -140,17 +140,21 @@ public:
       else return k->data();
     }
 
-    friend void put(const Edge_data_map&, key_type k, typename Map_param_traits<EdgeData>::type val) {
-      if constexpr (! std::is_void_v<EdgeData>) k->set_data(val);
-    }
+    friend void put(const Edge_data_map&, key_type k, typename Map_param_traits<EdgeData>::type val)
+    { if constexpr (! std::is_void_v<EdgeData>) k->set_data(val); }
   };
 
 private:
   Vertex_list m_vertices;
-  Edge_list   m_edges;
+  Edge_list m_edges;
 
 public:
-  Unbounded_topology_traits() = default;
+  // Default constructor
+  Unbounded_topology_traits() { m_edges.emplace_back(); }
+
+  // ============================================================================
+  // QUERIES
+  // ============================================================================
 
   bool is_empty() const { return m_vertices.empty(); }
   size_t number_of_vertices() const { return m_vertices.size(); }
@@ -160,8 +164,17 @@ public:
   Vertex_data_map vertex_data_map() const { return Vertex_data_map(); }
   Edge_data_map edge_data_map() const { return Edge_data_map(); }
 
+  // Return const references to the sorted vertex/edge lists.
   const Vertex_list& vertices() const { return m_vertices; }
   const Edge_list& edges() const { return m_edges; }
+
+  // Mutable iterators over the vertex list (needed for locate and overlay).
+  Vertex_descriptor vertices_begin() { return m_vertices.begin(); }
+  Vertex_descriptor vertices_end() { return m_vertices.end(); }
+
+  // Return the single initial unbounded edge (valid on a fresh/empty arrangement).
+  Edge_descriptor unbounded_edge() { return m_edges.begin(); }
+  Edge_const_descriptor unbounded_edge() const { return m_edges.begin(); }
 
   Edge_descriptor left_edge(Vertex_descriptor v) { return v->m_left; }
   Edge_descriptor right_edge(Vertex_descriptor v) { return v->m_right; }
@@ -179,32 +192,26 @@ public:
   // ============================================================================
   // LOW-LEVEL STORAGE PRIMITIVES
   // ============================================================================
+
+  // Append a new vertex to the back of the list (used for the first/rightmost insert).
   Vertex_descriptor create_vertex(const Point_1& p) {
     m_vertices.emplace_back(p);
     return std::prev(m_vertices.end());
   }
 
-  Vertex_descriptor create_vertex(Vertex_descriptor position, const Point_1& p) {
-    return m_vertices.emplace(position, p);
-  }
-
-  Vertex_descriptor create_vertex_front(const Point_1& p) {
-    m_vertices.emplace_front(p);
-    return m_vertices.begin();
-  }
-
+  // Append a new edge to the back of the list
   Edge_descriptor create_edge() {
     m_edges.emplace_back();
     return std::prev(m_edges.end());
   }
 
-  void set_left_edge(Vertex_descriptor v, Edge_descriptor e) { v->m_left = e; }
+  void set_left_edge(Vertex_descriptor v, Edge_descriptor e) { v->m_left  = e; }
   void set_right_edge(Vertex_descriptor v, Edge_descriptor e) { v->m_right = e; }
 
-  void set_left_vertex(Edge_descriptor e, Vertex_descriptor v) { e->m_left_v = v; e->m_has_left = true; }
+  void set_left_vertex(Edge_descriptor e, Vertex_descriptor v) { e->m_left_v  = v; e->m_has_left  = true; }
   void set_right_vertex(Edge_descriptor e, Vertex_descriptor v) { e->m_right_v = v; e->m_has_right = true; }
 
-  void clear_left_vertex(Edge_descriptor e) { e->m_has_left = false; }
+  void clear_left_vertex(Edge_descriptor e) { e->m_has_left  = false; }
   void clear_right_vertex(Edge_descriptor e) { e->m_has_right = false; }
 
   void erase_vertex(Vertex_descriptor v) { m_vertices.erase(v); }

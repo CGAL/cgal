@@ -48,16 +48,14 @@ int main() {
   put(v_data_map, v_near, 1);
 
   std::cout << "\nResulting Sorted Sequence along the 4D Line:\n";
-  auto v_range = arr.vertices();
   auto v_pnt_map = arr.vertex_point_map();
-
-  for (auto vit = v_range.begin(); vit != v_range.end(); ++vit) {
-    std::cout << "  Vertex 4D Coordinates: (";
-    auto pnt = get(v_pnt_map, vit);
-    for (auto cit = pnt.cartesian_begin(); cit != pnt.cartesian_end(); ++cit) {
-      std::cout << " " << *cit;
-    }
-    std::cout << " ) | Sort Priority ID: " << get(v_data_map, vit) << "\n";
+  auto e = arr.unbounded_edge();
+  while (arr.has_right_vertex(e)) {
+    auto v = arr.right_vertex(e);
+    auto pnt = get(v_pnt_map, v);
+    for (auto cit = pnt.cartesian_begin(); cit != pnt.cartesian_end(); ++cit) std::cout << " " << *cit;
+    std::cout << " ) | Sort Priority ID: " << get(v_data_map, v) << "\n";
+    e = arr.right_edge(v);
   }
 
   return 0;
