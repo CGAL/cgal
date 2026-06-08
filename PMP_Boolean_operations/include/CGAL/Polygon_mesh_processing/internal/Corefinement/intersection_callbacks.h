@@ -115,9 +115,7 @@ public:
   , visitor(visitor)
   {}
 
-  void operator()( const Box& face_box, const Box& edge_box) const {
-    halfedge_descriptor fh = face_box.info();
-    halfedge_descriptor eh = edge_box.info();
+  void operator()( halfedge_descriptor fh, halfedge_descriptor eh ) const {
     if(is_border(eh,tm_edges)) eh = opposite(eh, tm_edges);
 
     //check if the segment intersects the plane of the facet or if it is included in the plane
@@ -191,6 +189,9 @@ public:
     return false;
   }
 
+  void operator()( const Box& face_box, const Box& edge_box) const {
+    operator()(face_box.info(), edge_box.info());
+  }
 
   void operator()(const Box* face_box_ptr, const Box* edge_box_ptr) const
   {
