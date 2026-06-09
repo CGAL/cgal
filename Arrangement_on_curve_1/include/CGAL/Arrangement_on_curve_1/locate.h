@@ -26,27 +26,28 @@ template <typename GeometryTraits, typename TopologyTraits>
 typename Arrangement_on_curve_1<GeometryTraits, TopologyTraits>::Location_result
 locate_impl(Arrangement_on_curve_1<GeometryTraits, TopologyTraits>& arr, const typename GeometryTraits::Point_1& p) {
   using Arr = Arrangement_on_curve_1<GeometryTraits, TopologyTraits>;
-  using Vertex_descriptor = typename Arr::Vertex_descriptor;
-  using Edge_descriptor = typename Arr::Edge_descriptor;
   using Result = typename Arr::Location_result;
 
   auto cmp = arr.geometry_traits_1().compare_x_1_object();
   auto v_pnt_map = arr.vertex_point_map();
-  auto& topo = arr.topology_traits();
 
-  // Walk through the mutable vertex list.
-  for (auto vit = topo.vertices_begin(); vit != topo.vertices_end(); ++vit) {
-    auto res = cmp(p, get(v_pnt_map, vit));
+  // Start with the leftmost unbounded edge (-inf, ...)
+  auto curr_e = arr.unbounded_edge();
 
-    if (res == EQUAL) return Result{Vertex_descriptor{vit}};
-    if (res == SMALLER) return Result{Edge_descriptor{arr.left_edge(vit)}};
-    // LARGER: continue walking right
+  // Proceed to the right by traversing the topological graph
+  while (arr.has_right_vertex(curr_e)) {
+    auto curr_v = arr.right_vertex(curr_e);
+    auto res = cmp(p, get(v_pnt_map, curr_v));
+
+    if (res == EQUAL) return Result{curr_v};   // the point coincides with a vertex
+    if (res == SMALLER) return Result{curr_e}; // the point lies strictly to the left of the current vertex
+
+    // LARGER: the point lies strictly to the right of the current vertex; Move to the right of this vertex
+    curr_e = arr.right_edge(curr_v);
   }
 
-  // p is beyond all vertices → rightmost edge (or the sole unbounded edge).
-  if (topo.is_empty()) return Result{Edge_descriptor{arr.unbounded_edge()}};
-
-  return Result{Edge_descriptor{topo.right_edge(std::prev(topo.vertices_end()))}};
+  // The point is to the right of all existing vertices (or the arrangement is empty)
+  return Result{curr_e};
 }
 
 // ==========================================

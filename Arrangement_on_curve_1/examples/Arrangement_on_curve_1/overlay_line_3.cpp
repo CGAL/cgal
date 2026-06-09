@@ -68,13 +68,12 @@ int main() {
 
   // Traverse and inspect the merged arrangement sequence
   std::cout << "\nResulting Overlay Arrangement Sequence:\n";
-  auto res_range = res_arr.vertices();
   auto res_pnt_map = res_arr.vertex_point_map();
   auto res_data_map = res_arr.vertex_data_map();
 
-  for (auto vit = res_range.begin(); vit != res_range.end(); ++vit) {
-    std::cout << "  Vertex 3D Point: (" << get(res_pnt_map, vit)
-              << ") | Copied Attribute: \"" << get(res_data_map, vit) << "\"\n";
+  for (auto v : res_arr.vertices()) {
+    std::cout << "  Vertex 3D Point: (" << get(res_pnt_map, v)
+              << ") | Copied Attribute: \"" << get(res_data_map, v) << "\"\n";
   }
 
   std::cout << "\nStatistics:\n";

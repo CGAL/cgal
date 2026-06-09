@@ -29,9 +29,9 @@ public:
   using Vertex_const_descriptor = typename Topology_traits::Vertex_const_descriptor;
   using Edge_const_descriptor = typename Topology_traits::Edge_const_descriptor;
 
-  // Location result: a point is either ON a vertex, INSIDE an edge, or nowhere (void* = nullptr)
-  using Location_result = std::variant<Vertex_descriptor, Edge_descriptor, void*>;
-  using Const_location_result = std::variant<Vertex_const_descriptor, Edge_const_descriptor, void*>;
+  // Location result: a point is either ON a vertex or INSIDE an edge
+  using Location_result = std::variant<Vertex_descriptor, Edge_descriptor>;
+  using Const_location_result = std::variant<Vertex_const_descriptor, Edge_const_descriptor>;
 
 private:
   Geometry_traits_1 m_geometry_traits;

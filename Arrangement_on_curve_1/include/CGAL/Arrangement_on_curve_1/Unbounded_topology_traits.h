@@ -14,6 +14,8 @@
 #include <type_traits>
 
 #include <boost/property_map/property_map.hpp>
+#include <boost/iterator/iterator_adaptor.hpp>
+#include <boost/range/iterator_range.hpp>
 
 namespace CGAL {
 namespace Arrangement_on_curve_1 {
@@ -63,6 +65,71 @@ public:
   using Edge_descriptor = typename Edge_list::iterator;
   using Vertex_const_descriptor = typename Vertex_list::const_iterator;
   using Edge_const_descriptor = typename Edge_list::const_iterator;
+
+#if 0
+  // ============================================================================
+  // DESCRIPTOR ITERATOR
+  //
+  // An iterator adaptor whose operator* returns the underlying list
+  // const_iterator (i.e. the descriptor) rather than the list node itself.
+  // This allows vertices() / edges() to yield descriptor values that callers
+  // can pass directly to property maps, left_vertex(), right_edge(), etc.
+  // ============================================================================
+  template <typename ListConstIterator>
+  class Descriptor_iterator {
+  public:
+    using iterator_category = std::bidirectional_iterator_tag;
+    using value_type = ListConstIterator;
+    using difference_type = std::ptrdiff_t;
+    using pointer = const ListConstIterator*;
+    using reference = ListConstIterator; // returns the descriptor by value
+
+    Descriptor_iterator() = default;
+    explicit Descriptor_iterator(ListConstIterator it) : m_it(it) {}
+
+    // Dereferencing yields the const_iterator itself — the descriptor.
+    reference operator*() const { return m_it; }
+    pointer operator->() const { m_tmp = m_it; return &m_tmp; }
+
+    Descriptor_iterator& operator++() { ++m_it; return *this; }
+    Descriptor_iterator operator++(int) { auto tmp = *this; ++m_it; return tmp; }
+    Descriptor_iterator& operator--() { --m_it; return *this; }
+    Descriptor_iterator operator--(int) { auto tmp = *this; --m_it; return tmp; }
+
+    bool operator==(const Descriptor_iterator& o) const { return m_it == o.m_it; }
+    bool operator!=(const Descriptor_iterator& o) const { return m_it != o.m_it; }
+
+  private:
+    ListConstIterator m_it;
+    mutable ListConstIterator m_tmp; // backing store for operator->
+  };
+#else
+  template <typename ListConstIterator>
+  class Descriptor_iterator :
+    public boost::iterator_adaptor<Descriptor_iterator<ListConstIterator>, // Derived class (CRTP)
+                                   ListConstIterator,          // Base iterator to wrap
+                                   ListConstIterator,          // value_type (the descriptor itself)
+                                   boost::use_default,         // iterator_category (deduced as bidirectional)
+                                   ListConstIterator> {        // reference type (forces operator* to return by value)
+    friend class boost::iterator_core_access;
+
+  public:
+    Descriptor_iterator() = default;
+    explicit Descriptor_iterator(ListConstIterator it) : Descriptor_iterator::iterator_adaptor_(it) {}
+
+  private:
+    // Direct core access hook: intercepts dereferencing.
+    // boost::iterator_adaptor automatically implements operator* and operator-> using this.
+    ListConstIterator dereference() const { return this->base(); }
+  };
+#endif
+
+  using Vertex_descriptor_iterator = Descriptor_iterator<Vertex_const_descriptor>;
+  using Edge_descriptor_iterator = Descriptor_iterator<Edge_const_descriptor>;
+
+  // Range types returned by vertices() and edges()
+  using Vertex_descriptor_range = boost::iterator_range<Vertex_descriptor_iterator>;
+  using Edge_descriptor_range = boost::iterator_range<Edge_descriptor_iterator>;
 
   struct Vertex : public Data_container<VertexData> {
     Point_1 m_point;
@@ -163,9 +230,25 @@ public:
   Vertex_data_map vertex_data_map() const { return Vertex_data_map(); }
   Edge_data_map edge_data_map() const { return Edge_data_map(); }
 
-  // Return const references to the sorted vertex/edge lists.
-  const Vertex_list& vertices() const { return m_vertices; }
-  const Edge_list& edges() const { return m_edges; }
+  // Returns const references to the sorted vertex/edge lists.
+  const Vertex_list& raw_vertices() const { return m_vertices; }
+  const Edge_list& raw_edges() const { return m_edges; }
+
+  // Returns a range of vertex descriptors (Vertex_const_descriptor values).
+  // Iterating over this range yields descriptors usable as keys into
+  // vertex_point_map(), vertex_data_map(), left_edge(), right_edge(), etc.
+  Vertex_descriptor_range vertices() const {
+    return boost::make_iterator_range(Vertex_descriptor_iterator(m_vertices.cbegin()),
+                                      Vertex_descriptor_iterator(m_vertices.cend()));
+  }
+
+  // Returns a range of edge descriptors (Edge_const_descriptor values).
+  // Iterating over this range yields descriptors usable as keys into
+  // edge_data_map(), has_left_vertex(), left_vertex(), right_vertex(), etc.
+  Edge_descriptor_range edges() const {
+    return boost::make_iterator_range(Edge_descriptor_iterator(m_edges.cbegin()),
+                                      Edge_descriptor_iterator(m_edges.cend()));
+  }
 
   // Mutable iterators over the vertex list (needed for locate and overlay).
   Vertex_descriptor vertices_begin() { return m_vertices.begin(); }
@@ -207,7 +290,7 @@ public:
   void set_left_edge(Vertex_descriptor v, Edge_descriptor e) { v->m_left  = e; }
   void set_right_edge(Vertex_descriptor v, Edge_descriptor e) { v->m_right = e; }
 
-  void set_left_vertex(Edge_descriptor e, Vertex_descriptor v) { e->m_left_v  = v; e->m_has_left  = true; }
+  void set_left_vertex(Edge_descriptor e, Vertex_descriptor v) { e->m_left_v  = v; e->m_has_left = true; }
   void set_right_vertex(Edge_descriptor e, Vertex_descriptor v) { e->m_right_v = v; e->m_has_right = true; }
 
   void clear_left_vertex(Edge_descriptor e) { e->m_has_left  = false; }
