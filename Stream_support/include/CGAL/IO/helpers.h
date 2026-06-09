@@ -22,27 +22,37 @@
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/range/has_range_iterator.hpp>
 
+#include <algorithm>
+#include <string>
+#include <type_traits>
+
 namespace CGAL {
 namespace IO {
 namespace internal {
 
-// @MaelRL Shall we update that code now?
-// Ideally this should be a std::is_constructible(double, double, double) but boost::is_constructible
-// is not safe to use without CXX11
-template <typename Kernel>
-void fill_point(const double x, const double y, const double z, const double w, CGAL::Point_3<Kernel>& pt)
+template <typename Point,
+          std::enable_if_t<std::is_constructible<Point, double, double>::value, int> = 0>
+void fill_point(const double x, const double y, const double /*z*/, const double w, Point& pt)
 {
-  typedef typename Kernel::FT FT;
-  pt = CGAL::Point_3<Kernel>(FT(x/w), FT(y/w), FT(z/w));
+  pt = Point(x / w, y / w);
 }
 
-template <typename Point_3>
-void fill_point(const double x, const double y, const double z, const double w, Point_3& pt)
+template <typename Point,
+          std::enable_if_t<!std::is_constructible<Point, double, double>::value &&
+                           std::is_constructible<Point, double, double, double>::value, int> = 0>
+void fill_point(const double x, const double y, const double z, const double w, Point& pt)
 {
-  // just in case something weirder than arrays or CGAL points are used as points...
-  CGAL::internal::resize(pt, 3);
+  pt = Point(x / w, y / w, z / w);
+}
 
-  pt[0] = x/w; pt[1] = y/w; pt[2] = z/w;
+// something else (arrays...)
+template <typename Point,
+          std::enable_if_t<!std::is_constructible<Point, double, double>::value &&
+                           !std::is_constructible<Point, double, double, double>::value, int> = 0>
+void fill_point(const double x, const double y, const double z, const double w, Point& pt)
+{
+  CGAL::internal::resize(pt, 3);
+  pt[0] = x / w; pt[1] = y / w; pt[2] = z / w;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
