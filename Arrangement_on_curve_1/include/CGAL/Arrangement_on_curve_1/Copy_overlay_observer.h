@@ -11,6 +11,7 @@
 #define CGAL_ARRANGEMENT_ON_CURVE_1_COPY_OVERLAY_OBSERVER_H
 
 #include <type_traits>
+
 #include <boost/property_map/property_map.hpp>
 
 namespace CGAL {

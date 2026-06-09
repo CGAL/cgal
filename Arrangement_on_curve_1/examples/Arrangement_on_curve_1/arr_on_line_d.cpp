@@ -4,10 +4,10 @@
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
-#include <CGAL/Arrangement_on_curve_1.h>
-#include <CGAL/Arrangement_on_curve_1_functions.h>
-#include <CGAL/Unbounded_topology_traits.h>
-#include <CGAL/Line_d_traits_1.h>
+#include <CGAL/Arrangement_on_curve_1/Arrangement_on_curve_1.h>
+#include <CGAL/Arrangement_on_curve_1/insert.h>
+#include <CGAL/Arrangement_on_curve_1/Unbounded_topology_traits.h>
+#include <CGAL/Arrangement_on_curve_1/Line_d_traits_1.h>
 
 using NT = CGAL::Quotient<CGAL::MP_Float>;
 using Kernel = CGAL::Cartesian_d<NT>;

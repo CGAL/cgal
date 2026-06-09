@@ -11,12 +11,12 @@
 #include <string>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Arrangement_on_curve_1.h>
-#include <CGAL/Arrangement_on_curve_1_functions.h>
-#include <CGAL/overlay.h>
-#include <CGAL/Unbounded_topology_traits.h>
-#include <CGAL/Line_3_traits_1.h>
-#include <CGAL/Copy_overlay_observer.h>
+#include <CGAL/Arrangement_on_curve_1/Arrangement_on_curve_1.h>
+#include <CGAL/Arrangement_on_curve_1/insert.h>
+#include <CGAL/Arrangement_on_curve_1/overlay.h>
+#include <CGAL/Arrangement_on_curve_1/Unbounded_topology_traits.h>
+#include <CGAL/Arrangement_on_curve_1/Line_3_traits_1.h>
+#include <CGAL/Arrangement_on_curve_1/Copy_overlay_observer.h>
 
 using Kernel = CGAL::Exact_predicates_exact_constructions_kernel;
 using Traits = CGAL::Arrangement_on_curve_1::Line_3_traits_1<Kernel>;

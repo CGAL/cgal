@@ -13,9 +13,8 @@
 #include <variant>
 #include <iterator>
 
-#include <CGAL/Arrangement_on_curve_1.h>
-#include <CGAL/Arrangement_on_curve_1_functions.h>
-#include <CGAL/Default_overlay_observer.h>
+#include <CGAL/Arrangement_on_curve_1/Arrangement_on_curve_1.h>
+#include <CGAL/Arrangement_on_curve_1/Default_overlay_observer.h>
 #include <CGAL/property_map.h>
 
 namespace CGAL {

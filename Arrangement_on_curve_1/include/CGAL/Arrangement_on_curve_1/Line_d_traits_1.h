@@ -10,8 +10,8 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef CGAL_LINE_D_TRAITS_1_H
-#define CGAL_LINE_D_TRAITS_1_H
+#ifndef CGAL_ARRANGEMENT_ON_CURVE_1_LINE_D_TRAITS_1_H
+#define CGAL_ARRANGEMENT_ON_CURVE_1_LINE_D_TRAITS_1_H
 
 #include <vector>
 

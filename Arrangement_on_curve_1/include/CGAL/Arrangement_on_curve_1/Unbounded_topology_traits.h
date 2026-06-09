@@ -7,8 +7,8 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef CGAL_UNBOUNDED_TOPOLOGY_TRAITS_H
-#define CGAL_UNBOUNDED_TOPOLOGY_TRAITS_H
+#ifndef CGAL_ARRANGEMENT_ON_CURVE_1_UNBOUNDED_TOPOLOGY_TRAITS_H
+#define CGAL_ARRANGEMENT_ON_CURVE_1_UNBOUNDED_TOPOLOGY_TRAITS_H
 
 #include <list>
 #include <type_traits>
