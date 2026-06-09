@@ -190,9 +190,9 @@ public:
       , surface_center_table_()
       , surface_center_index_table_()
   {
-    for(int i = 0; i < 4; i++) {
+    for(int i=0; i <4; i++){
       surface_index_table_[i] = rhs.surface_index_table_[i];
-      surface_center_table_[i] = rhs.surface_center_table_[i];
+      surface_center_table_[i]= rhs.surface_center_table_[i];
       surface_center_index_table_[i] = rhs.surface_center_index_table_[i];
     }
   }

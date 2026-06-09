@@ -8,3 +8,4 @@ project(Surface_sweep_2_Examples)
 find_package(CGAL REQUIRED)
 
 create_single_source_cgal_program("plane_sweep.cpp")
+create_single_source_cgal_program("plane_sweep_polylines.cpp")

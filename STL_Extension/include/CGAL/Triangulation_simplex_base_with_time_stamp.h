@@ -14,6 +14,7 @@
 #include <cstddef>     // for std::size_t
 #include <string>
 
+
 namespace CGAL {
 
 template <class T> struct Get_io_signature;
@@ -26,7 +27,7 @@ template <typename BaseWithTSBase>
 class Triangulation_simplex_base_with_time_stamp
   : public BaseWithTSBase
  {
-  std::size_t time_stamp_ = std::size_t(-2);
+  std::size_t time_stamp_ = static_cast<std::size_t>(-2);
 
 public:
   using BaseWithTSBase::BaseWithTSBase;

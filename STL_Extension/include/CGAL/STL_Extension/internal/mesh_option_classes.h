@@ -19,8 +19,10 @@
 #include <boost/iterator/function_output_iterator.hpp>
 
 #include <iterator>
-#include <optional>
 #include <type_traits>
+#ifndef CGAL_NO_ATOMIC
+#  include <atomic>
+#endif
 
 namespace CGAL {
 
@@ -271,7 +273,7 @@ struct Initialization_options
     Generator_ref(Generator&& generator)
       : generator_(std::addressof(generator))
       , call_( [](void* g, auto oit, const int n) {
-                 // `oit` is `auto` so that MSVC 2017 sees that the lambda is name-dependant,
+                 // `oit` is `auto` so that MSVC 2017 sees that the lambda is name-dependent,
                  // otherwise it would check both part of the `if constexpr`. With `auto`, the lambda
                  // expression is a class template and MSVC 2017 cannot miscompile it.
                  using Real_generator = CGAL::cpp20::remove_cvref_t<Generator>;

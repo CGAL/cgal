@@ -2,6 +2,8 @@
 #include <fstream>
 #include <algorithm>
 #include <array>
+#include <filesystem>
+#include <string>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Advancing_front_surface_reconstruction.h>
 #include <CGAL/Surface_mesh.h>
@@ -51,7 +53,11 @@ struct Construct{
 
 int main(int argc, char* argv[])
 {
-  std::ifstream in((argc>1)?argv[1]:CGAL::data_file_path("points_3/half.xyz"));
+  const std::string filename = (argc > 1) ?
+    argv[1] :CGAL::data_file_path("points_3/half.xyz");
+  const std::string stem = std::filesystem::path(filename).stem().string();
+
+  std::ifstream in(filename);
   std::vector<Point_3> points;
   Mesh m;
 
@@ -65,7 +71,9 @@ int main(int argc, char* argv[])
                                                points.end(),
                                                construct);
 
-  std::cout << m  << std::endl;
+  std::ofstream out(stem + ".off");
+  out.precision(17);
+  out << m  << std::endl;
 
   return 0;
 }

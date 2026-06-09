@@ -113,7 +113,7 @@ int main(int argc, char** argv)
   // If file(s) are provided, the associated expected result must also be provided.
   // Note that this expected value is a Boolean that is passed in command line
   // with either 'true' or 'false' (and not integers), that is for example:
-  // > self_intersection_surface_mesh_test data/U.off false
+  // > self_intersection_surface_mesh_test data/U_sheet.off false
 
   // First test ----------------------------------------------------------------
   bool expected = false;
@@ -165,7 +165,7 @@ int main(int argc, char** argv)
 
   // Fourth test ----------------------------------------------------------------
   expected = true;
-  filename = (argc > 7) ? argv[7] : "data_degeneracies/degtri_single.off";
+  filename = (argc > 7) ? argv[7] : CGAL::data_file_path("meshes/degeneracies/degtri_single.off");
   if(argc > 7) {
     assert(argc > 8);
     std::stringstream ss(argv[8]);

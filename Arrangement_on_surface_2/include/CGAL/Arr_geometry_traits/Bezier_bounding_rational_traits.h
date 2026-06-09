@@ -21,7 +21,6 @@
  * Definition of the Bezier_bounding_rational_traits<Kernel> class.
  */
 
-#include <CGAL/Cartesian.h>
 #include <CGAL/Polygon_2_algorithms.h>
 #include <CGAL/Arr_geometry_traits/de_Casteljau_2.h>
 

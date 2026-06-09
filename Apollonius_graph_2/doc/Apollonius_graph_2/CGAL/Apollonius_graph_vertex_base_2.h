@@ -22,7 +22,7 @@ discarded. By default `StoreHidden` is set to `true`.
 
 \tparam Vb must be a model of the concept `TriangulationDSVertexBase_2`
 By default this parameter is
-instantiated by `Triangulation_ds_vertex_base_2<>`.
+instantiated with `Triangulation_ds_vertex_base_2<>`.
 
 \cgalModels{ApolloniusGraphVertexBase_2}
 

@@ -151,7 +151,7 @@ private:
  * \tparam MC either a model of the concept `MeshCriteria_3` or a model
  *            of `MeshCriteriaWithFeatures_3` if the domain has exposed features.
  *
- * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param c3t3 the mesh to be refined that is modified by the refinement process.
  *             As the refinement process only adds points to the triangulation, all
@@ -338,7 +338,7 @@ void refine_mesh_3_impl(C3T3& c3t3,
 
   typedef Mesh_3::Mesher_3<C3T3, MeshCriteria, MeshDomain> Mesher;
 
-  // Reset c3t3 (i.e. remove weights) if needed
+  // Reset c3t3 (i.e., remove weights) if needed
   if ( reset_c3t3 )
   {
     C3T3 tmp_c3t3;

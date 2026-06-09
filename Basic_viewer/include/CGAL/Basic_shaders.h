@@ -144,11 +144,14 @@ void main(void)
   float distance = gl_Position.w;
   if (u_IsOrthographic)
   {
-    distance = u_PointSize;
+    // In orthographic projection clip-space w is always 1; using u_PointSize
+    // as the divisor cancelled out the user's setting (pointSize = 1 always).
+    // Use 1.0 so gl_PointSize = u_PointSize, a direct screen-pixel diameter.
+    distance = 1.0;
   }
 
   float effectiveDistance = EqualZero(distance) ? 0.00001 : distance;
-  gl_PointSize = u_PointSize / effectiveDistance * 5.0;
+  gl_PointSize = u_PointSize / effectiveDistance;
 }
 )DELIM";
 
@@ -701,7 +704,11 @@ void main(void)
   float distance = gl_Position.w;
   if (u_IsOrthographic)
   {
-    distance = u_PointSize;
+    // In orthographic projection the clip-space w is always 1, so
+    // perspective-division would make pointSize constant at 1.0.
+    // Use 1.0 as the divisor so the user-supplied u_PointSize passes
+    // through unchanged as a screen-pixel width.
+    distance = 1.0;
   }
 
   float effectiveDistance = EqualZero(distance) ? 0.00001 : distance;
@@ -744,7 +751,11 @@ void main(void)
   vec2 p0 = ToScreenSpace(gl_in[0].gl_Position);
   vec2 p1 = ToScreenSpace(gl_in[1].gl_Position);
   vec2 v0 = normalize(p1 - p0);
-  vec2 n0 = vec2(-v0.y, v0.x) * u_PointSize * 0.5;
+  // Unit perpendicular vector scaled by 0.5; the actual half-width in screen
+  // pixels is supplied by gs_in[i].pointSize (= u_PointSize / effectiveDistance).
+  // Keeping u_PointSize out of n0 avoids the previous quadratic dependence on
+  // u_PointSize that caused edges to appear far wider than intended.
+  vec2 n0 = vec2(-v0.y, v0.x) * 0.5;
 
   // line start
   gl_Position = ToWorldSpace(vec4(p0 - n0 * gs_in[0].pointSize, gl_in[0].gl_Position.zw));

@@ -180,7 +180,7 @@ Provides the operator:
 which takes four points \f$ p, q, r, s\f$ as arguments and returns
 `ON_POSITIVE_SIDE`, `ON_NEGATIVE_SIDE` or,
 `ON_ORIENTED_BOUNDARY` according to the position of points `s`
-with respect to the oriented circle through through \f$ p,q\f$
+with respect to the oriented circle through \f$ p,q\f$
 and \f$ r\f$.
 This type is required only if the function
 `side_of_oriented_circle(Face_handle f, Point p)` is

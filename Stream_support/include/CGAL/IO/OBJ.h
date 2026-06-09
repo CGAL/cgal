@@ -41,10 +41,12 @@ namespace CGAL {
 namespace IO {
 namespace internal {
 
-template <typename PointRange, typename PolygonRange, typename VertexNormalOutputIterator, typename VertexTextureOutputIterator>
+template <typename PointRange, typename PolygonRange, typename PolylineRange,
+          typename VertexNormalOutputIterator, typename VertexTextureOutputIterator>
 bool read_OBJ(std::istream& is,
               PointRange& points,
               PolygonRange& polygons,
+              PolylineRange& polylines,
               VertexNormalOutputIterator,
               VertexTextureOutputIterator,
               const bool verbose = false)
@@ -134,7 +136,13 @@ bool read_OBJ(std::istream& is,
       int i;
       while(iss >> i)
       {
-        if(i < 1)
+        if (i == 0)
+        {
+          if(verbose)
+            std::cerr << "error: vertex index of face cannot be 0" << std::endl;
+          return false;
+        }
+        else if(i < 1)
         {
           // negative indices are relative references
           face_indices.push_back(static_cast<int>(points.size()) + i);
@@ -158,6 +166,13 @@ bool read_OBJ(std::istream& is,
         }
       }
 
+      if(polygons.back().empty())
+      {
+        if(verbose)
+          std::cerr << "error: empty 'f' line." << std::endl;
+        return false;
+      }
+
       if(iss.bad())
       {
         if(verbose)
@@ -169,6 +184,56 @@ bool read_OBJ(std::istream& is,
       auto& polygon = polygons.back();
       ::CGAL::internal::resize(polygon, face_indices.size());
       std::copy(face_indices.begin(), face_indices.end(), polygon.begin());
+    }
+    else if(s == "l")
+    {
+      int i;
+      polylines.emplace_back();
+      while(iss >> i)
+      {
+        if (i == 0)
+        {
+          if(verbose)
+            std::cerr << "error: vertex index of polyline cannot be 0" << std::endl;
+          return false;
+        }
+        else if(i < 1)
+        {
+          const std::size_t n = polylines.back().size();
+          ::CGAL::internal::resize(polylines.back(), n + 1);
+          polylines.back()[n] = static_cast<int>(points.size()) + i; // negative indices are relative references
+          if(i < mini)
+            mini = i;
+        }
+        else
+        {
+          const std::size_t n = polylines.back().size();
+          ::CGAL::internal::resize(polylines.back(), n + 1);
+          polylines.back()[n] = i - 1;
+          if(i-1 > maxi)
+            maxi = i-1;
+        }
+
+        // skip to the next vertex, tolerant about whitespace
+        if (!std::isspace(iss.peek())) {
+          std::string ignoreme;
+          iss >> ignoreme;
+        }
+      }
+
+      if(iss.bad())
+      {
+        if(verbose)
+          std::cerr << "error while reading OBJ polyline." << std::endl;
+        return false;
+      }
+
+      if(polylines.back().empty())
+      {
+        if(verbose)
+          std::cerr << "error: empty 'f' line." << std::endl;
+        return false;
+      }
     }
     else if(s.front() == '#')
     {
@@ -203,7 +268,7 @@ bool read_OBJ(std::istream& is,
   if(tex_found && verbose)
     std::cout << "NOTE: textures were found in this file, but were discarded." << std::endl;
 
-  if(points.empty() || polygons.empty())
+  if(points.empty() || (polygons.empty() && polylines.empty()))
   {
     if(verbose)
       std::cerr << "warning: empty file?" << std::endl;
@@ -218,6 +283,19 @@ bool read_OBJ(std::istream& is,
   }
 
   return !is.bad();
+}
+
+// convenience overload
+template <typename PointRange, typename PolygonRange, typename PolylineRange>
+bool read_OBJ(std::istream& is,
+              PointRange& points,
+              PolygonRange& polygons,
+              PolylineRange& polylines,
+              const bool verbose = false)
+{
+  return read_OBJ(is, points, polygons, polylines,
+                  CGAL::Emptyset_iterator(), CGAL::Emptyset_iterator(),
+                  verbose);
 }
 
 } // namespace internal
@@ -263,9 +341,13 @@ bool read_OBJ(std::istream& is,
 {
   const bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false);
 
-  return internal::read_OBJ(is, points, polygons,
-                            CGAL::Emptyset_iterator(), CGAL::Emptyset_iterator(),
-                            verbose);
+  std::vector<std::vector<std::size_t> > unused_polylines;
+  bool success = internal::read_OBJ(is, points, polygons, unused_polylines,
+                                    CGAL::Emptyset_iterator(), CGAL::Emptyset_iterator(),
+                                    verbose);
+
+  // we want an item with only polylines to return 'false' in this function
+  return (success && !polygons.empty());
 }
 
 /*!
@@ -316,6 +398,25 @@ bool read_OBJ(const std::string& fname,
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Write
 
+namespace internal {
+
+template <typename PointRange,
+          typename PolygonRange,
+          typename PolylineRange,
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool write_OBJ(std::ostream& os,
+               const PointRange& points,
+               const PolygonRange& polygons,
+               const PolylineRange& polylines,
+               const CGAL_NP_CLASS& np = parameters::default_values())
+{
+  set_ascii_mode(os); // obj is ASCII only
+  Generic_writer<std::ostream, File_writer_wavefront> writer(os);
+  return writer(points, polygons, polylines, np);
+}
+
+} // namespace internal
+
 /*!
  * \ingroup PkgStreamSupportIoFuncsOBJ
  *
@@ -334,6 +435,12 @@ bool read_OBJ(const std::string& fname,
  * \param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{point_map}
+ *     \cgalParamDescription{a property map associating points to the elements of the range `points`}
+ *     \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
+ *                    of the iterator of `PointRange` and value type is a model of the concept `Point_3`}
+ *     \cgalParamDefault{`CGAL::Identity_property_map<std::iterator_traits<PointRange::iterator>::value_type>`}
+ *   \cgalParamNEnd
  *   \cgalParamNBegin{stream_precision}
  *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
  *     \cgalParamType{int}
@@ -355,9 +462,8 @@ bool write_OBJ(std::ostream& os,
 #endif
                )
 {
-  set_ascii_mode(os); // obj is ASCII only
-  Generic_writer<std::ostream, File_writer_wavefront> writer(os);
-  return writer(points, polygons, np);
+  std::vector<std::vector<std::size_t> > unused_polylines;
+  return internal::write_OBJ(os, points, polygons, unused_polylines, np);
 }
 
 /*!
@@ -378,6 +484,12 @@ bool write_OBJ(std::ostream& os,
  * \param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{point_map}
+ *     \cgalParamDescription{a property map associating points to the elements of the range `points`}
+ *     \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
+ *                    of the iterator of `PointRange` and value type is a model of the concept `Kernel::Point_3`}
+ *     \cgalParamDefault{`CGAL::Identity_property_map<std::iterator_traits<PointRange::iterator>::value_type>`}
+ *   \cgalParamNEnd
  *   \cgalParamNBegin{stream_precision}
  *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
  *     \cgalParamType{int}

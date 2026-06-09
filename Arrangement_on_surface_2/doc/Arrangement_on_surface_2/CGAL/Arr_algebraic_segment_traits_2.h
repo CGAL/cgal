@@ -209,7 +209,7 @@ public:
     /// @}
   }; /* end Arr_algebraic_segment_traits_2::Construct_x_monotone_segment_2 */
 
-  /*! A model of the the `AosTraits_2::Curve_2` concept.
+  /*! A model of the `AosTraits_2::Curve_2` concept.
    * Represents algebraic curves. Internally, the type stores
    * topological-geometric information about the particular curve.
    * In order to use internal caching, instances should only be created

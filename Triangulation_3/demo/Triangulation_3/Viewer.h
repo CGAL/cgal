@@ -398,7 +398,7 @@ private:
   Coords_ptr incremental_next_point;
   Coords_ptr incremental_facet;
   Coords_ptr incremental_conflict;
-  //pickin
+  //picking
   QMap<float, int> picked_IDs;
   QPoint picking_pos;
 

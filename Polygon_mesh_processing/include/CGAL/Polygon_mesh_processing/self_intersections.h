@@ -533,7 +533,7 @@ self_intersections_impl(const FaceRange& face_range,
  *
  * This function depends on the package \ref PkgBoxIntersectionD.
  *
- * @pre `CGAL::is_triangle_mesh(tmesh)`
+ * @pre \link CGAL::is_triangle_mesh `CGAL::is_triangle_mesh(tmesh)` \endlink
  *
  * @tparam ConcurrencyTag enables sequential versus parallel algorithm.
  *                        Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
@@ -601,7 +601,7 @@ self_intersections(const FaceRange& face_range,
  *
  * This function depends on the package \ref PkgBoxIntersectionD.
  *
- * @pre `CGAL::is_triangle_mesh(tmesh)`
+ * @pre \link CGAL::is_triangle_mesh `CGAL::is_triangle_mesh(tmesh)` \endlink
  *
  * @tparam ConcurrencyTag enables sequential versus parallel algorithm.
  *                         Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
@@ -666,7 +666,7 @@ self_intersections(const TriangleMesh& tmesh,
  *
  * This function depends on the package \ref PkgBoxIntersectionD.
  *
- * @pre `CGAL::is_triangle_mesh(tmesh)`
+ * @pre \link CGAL::is_triangle_mesh `CGAL::is_triangle_mesh(tm)` \endlink
  *
  * @tparam ConcurrencyTag enables sequential versus parallel algorithm.
  *                        Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
@@ -737,7 +737,7 @@ bool does_self_intersect(const FaceRange& face_range,
  *
  * This function depends on the package \ref PkgBoxIntersectionD.
  *
- * @pre `CGAL::is_triangle_mesh(tmesh)`
+ * @pre \link CGAL::is_triangle_mesh `CGAL::is_triangle_mesh(tmesh)` \endlink
  *
  * @tparam ConcurrencyTag enables sequential versus parallel algorithm.
  *                        Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.

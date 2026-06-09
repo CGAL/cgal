@@ -45,5 +45,5 @@ if(TARGET CGAL::Eigen3_support)
   endif()
 
 else()
-  message("NOTICE: These examples require Eigen 3.1.91 (or greater) or later and will not be compiled.")
+  message("NOTICE: These examples require Eigen 3.1.91 (or greater) and will not be compiled.")
 endif()

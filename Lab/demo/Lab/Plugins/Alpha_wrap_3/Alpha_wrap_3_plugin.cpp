@@ -14,6 +14,7 @@
 #define CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
 
 #include <CGAL/alpha_wrap_3.h>
+#include <CGAL/Polygon_mesh_processing/shape_predicates.h>
 
 #include <QAction>
 #include <QApplication>
@@ -266,6 +267,8 @@ public:
 
   void run() override
   {
+    QApplication::setOverrideCursor(Qt::BusyCursor);
+
     QElapsedTimer elapsed_timer;
     elapsed_timer.start();
 
@@ -279,6 +282,8 @@ public:
       Q_EMIT interrupted(this);
 
     std::cout << "Wrapping took " << elapsed_timer.elapsed() / 1000. << "s" << std::endl;
+
+    QApplication::restoreOverrideCursor();
   }
 
 public Q_SLOTS:
@@ -544,6 +549,12 @@ public Q_SLOTS:
             continue;
           }
 
+          if(CGAL::Polygon_mesh_processing::is_degenerate_triangle_face(f, *pMesh))
+          {
+            print_message("Warning: a degenerate face in input has been ignored");
+            continue;
+          }
+
           triangles.emplace_back(get(vpm, target(h, *pMesh)),
                                  get(vpm, target(next(h, *pMesh), *pMesh)),
                                  get(vpm, source(h, *pMesh)));
@@ -566,9 +577,18 @@ public Q_SLOTS:
             continue;
           }
 
-          triangles.emplace_back(soup_item->points()[p[0]],
-                                 soup_item->points()[p[1]],
-                                 soup_item->points()[p[2]]);
+          const Kernel::Point_3& pt0 = soup_item->points()[p[0]];
+          const Kernel::Point_3& pt1 = soup_item->points()[p[1]];
+          const Kernel::Point_3& pt2 = soup_item->points()[p[2]];
+
+          // Check for collinear points (degenerate triangle)
+          if(CGAL::collinear(pt0, pt1, pt2))
+          {
+            print_message("Warning: a degenerate face in input has been ignored");
+            continue;
+          }
+
+          triangles.emplace_back(pt0, pt1, pt2);
         }
 
         continue;
@@ -592,6 +612,12 @@ public Q_SLOTS:
             continue;
           }
 
+          if(CGAL::Polygon_mesh_processing::is_degenerate_triangle_face(f, *pMesh))
+          {
+            print_message("Warning: a degenerate face in input has been ignored");
+            continue;
+          }
+
           triangles.emplace_back(get(vpm, target(h, *pMesh)),
                                  get(vpm, target(next(h, *pMesh), *pMesh)),
                                  get(vpm, source(h, *pMesh)));
@@ -600,6 +626,12 @@ public Q_SLOTS:
         segments.reserve(segments.size() + selection_item->selected_edges.size());
         for(const auto& e : selection_item->selected_edges)
         {
+          if(CGAL::Polygon_mesh_processing::is_degenerate_edge(e, *pMesh))
+          {
+            print_message("Warning: a degenerate edge in input has been ignored");
+            continue;
+          }
+
           segments.emplace_back(get(vpm, target(halfedge(e, *pMesh), *pMesh)),
                                 get(vpm, target(opposite(halfedge(e, *pMesh), *pMesh), *pMesh)));
         }
@@ -623,7 +655,14 @@ public Q_SLOTS:
           {
             auto nit = std::next(it);
             if(nit != end)
+            {
+              if(*it == *nit)
+              {
+                print_message("Warning: a degenerate edge in input has been ignored");
+                continue;
+              }
               segments.emplace_back(*it, *nit);
+            }
           }
         }
 
@@ -659,8 +698,6 @@ public Q_SLOTS:
       m_wrap_bbox += sg.bbox();
     for(const Kernel::Point_3& pt : points)
       m_wrap_bbox += pt.bbox();
-
-    std::cout << "Bbox:\n" << m_wrap_bbox << std::endl;
 
     // The relative value uses the bbox of the full scene and not that of selected items to wrap
     // This is intentional, both because it's tedious to make it otherwise, and because it seems
@@ -732,23 +769,23 @@ public Q_SLOTS:
     Oracle oracle(ss_oracle);
 
     if(wrap_triangles)
-      oracle.add_triangle_soup(triangles);
+      oracle.add_triangles(triangles);
     if(wrap_segments)
-      oracle.add_segment_soup(segments);
+      oracle.add_segments(segments);
     if(wrap_points)
-      oracle.add_point_set(points);
+      oracle.add_points(points);
 
-    if(!oracle.do_call())
+    QApplication::restoreOverrideCursor();
+
+    if(oracle.empty())
     {
       print_message("Warning: empty input - nothing to wrap");
-      QApplication::restoreOverrideCursor();
       return;
     }
 
     if(alpha <= 0. || offset <= 0.)
     {
       print_message("Warning: alpha/offset must be strictly positive");
-      QApplication::restoreOverrideCursor();
       return;
     }
 
@@ -811,10 +848,6 @@ public Q_SLOTS:
     // Create message box with stop button
     if(use_message_box)
     {
-      // Switch from 'wait' to 'busy'
-      QApplication::restoreOverrideCursor();
-      QApplication::setOverrideCursor(Qt::BusyCursor);
-
       m_message_box = new QMessageBox(QMessageBox::NoIcon,
                                      "Wrapping",
                                      "Wrapping in progress...",
@@ -832,15 +865,11 @@ public Q_SLOTS:
     }
 
     // Actual start
-    QApplication::setOverrideCursor(Qt::WaitCursor);
-
     wrapper_thread->start();
 
     CGAL::Three::Three::getMutex()->lock();
     CGAL::Three::Three::isLocked() = false;
     CGAL::Three::Three::getMutex()->unlock();
-
-    QApplication::restoreOverrideCursor();
   }
 };
 

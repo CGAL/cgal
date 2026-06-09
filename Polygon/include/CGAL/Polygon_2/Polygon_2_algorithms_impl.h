@@ -507,7 +507,7 @@ namespace internal {
 
 // This exists because the "is_simple_2" precondition in the orientation_2() function is in fact
 // stronger than necessary: it also works for strictly simple polygons, which matters for
-// Straight line skeletons, as the offset polygons might have non-manifoldness.
+// SLS2 and AW2, as the polygons might have non-manifoldness.
 template <class ForwardIterator, class Traits>
 Orientation orientation_2_no_precondition(ForwardIterator first,
                                           ForwardIterator last,

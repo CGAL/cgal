@@ -787,6 +787,8 @@ public:
                                    ForwardIterator last_cell,
                                    Moving_vertices_set& moving_vertices);
 
+  bool is_restricted_facet(const Facet& f);
+  bool is_restricted_cell(const Cell_handle c);
   void update_restricted_facets();
   void update_restricted_cells();
 
@@ -1751,7 +1753,7 @@ private:
   }
 
   /**
-   * Returns false if there is a vertex belonging to one facet of `facets`
+   * Returns `false` if there is a vertex belonging to one facet of `facets`
    * which has not his dimension < 3
    */
   bool check_no_inside_vertices(const Facet_vector& facets) const;
@@ -1822,7 +1824,7 @@ private:
   }
 
   /**
-   * Returns the facets of `cells` (returns each facet only once i.e. use
+   * Returns the facets of `cells` (returns each facet only once, i.e., use
    * canonical facet)
    */
   Facet_vector get_facets(const Cell_vector& cells) const
@@ -1891,7 +1893,7 @@ private:
   }
 #else
   /**
-   * Returns the facets of `cells` (returns each facet only once i.e. use
+   * Returns the facets of `cells` (returns each facet only once, i.e., use
    * canonical facet)
    */
   template <typename ForwardIterator>
@@ -1982,7 +1984,7 @@ private:
 
 
   /**
-   * Returns the facets of `cells` (returns each facet only once i.e. use
+   * Returns the facets of `cells` (returns each facet only once, i.e., use
    * canonical facet)
    */
   template <typename ForwardIterator>
@@ -2912,6 +2914,24 @@ update_restricted_facets()
     fit = tr_.finite_facets_begin();
     fit != tr_.finite_facets_end(); ++fit)
     updater(*fit);
+}
+
+template <typename C3T3, typename MD>
+bool
+C3T3_helpers<C3T3, MD>::
+is_restricted_facet(const Facet& f)
+{
+  Update_c3t3 updater(domain_, c3t3_);
+  return Surface_patch() != updater(f);
+}
+
+template <typename C3T3, typename MD>
+bool
+C3T3_helpers<C3T3, MD>::
+is_restricted_cell(const Cell_handle cell)
+{
+  Update_c3t3 updater(domain_, c3t3_);
+  return Subdomain() != updater(cell);
 }
 
 template <typename C3T3, typename MD>
