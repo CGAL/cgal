@@ -32,10 +32,9 @@ struct Data_container {
   void set_data(const Data& data) { m_data = data; }
 };
 
+// Empty base class optimization (0 bytes)
 template <>
-struct Data_container<void> {
-  // Empty base class optimization (0 bytes)
-};
+struct Data_container<void> {};
 
 // Helper traits to prevent invalid reference-to-void compilation errors
 template <typename T> struct Map_reference_traits { using type = T&; };
