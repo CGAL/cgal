@@ -322,9 +322,24 @@ public:
   using Line = typename T_3::Geom_traits::Line_3;
   using Locate_type = typename T_3::Locate_type;
 
-  inline static With_offset_tag with_offset{ -1 };
-  inline static With_point_tag with_point{ {-1} };
-  inline static With_point_and_info_tag with_point_and_info{ { {-1} } };
+  inline static With_offset_tag with_offset_tag{ -1 };
+  inline static With_point_tag with_point_tag{ {-1} };
+  inline static With_point_and_info_tag with_point_and_info_tag{ { {-1} } };
+
+  template <typename T>
+  static auto with_offset(T&& arg) {
+    return IO::oformat(std::forward<T>(arg), with_offset_tag);
+  };
+
+  template <typename T>
+  static auto with_point(T&& arg) {
+    return IO::oformat(std::forward<T>(arg), with_point_tag);
+  };
+
+  template <typename T>
+  static auto with_point_and_info(T&& arg) {
+    return IO::oformat(std::forward<T>(arg), with_point_and_info_tag);
+  };
 
   Conforming_Delaunay_triangulation_3(const Geom_traits& gt = Geom_traits())
     : T_3(gt)
@@ -349,15 +364,13 @@ protected:
   using Subconstraint = typename Constraint_hierarchy::Subconstraint;
 
   auto display_vert(Vertex_handle v) const{
-    return IO::oformat([&](std::ostream& os) -> auto& {
-      return os << IO::oformat(v, with_point);
-    }, IO_manip_tag{});
+    return IO::oformat(v, with_point_tag);
   }
 
   auto display_subcstr(Subconstraint subconstraint) const {
     auto [va, vb] = subconstraint;
     std::stringstream os;
-    os << "(" << IO::oformat(va, with_offset) << ", " << IO::oformat(vb, with_offset) << ")"
+    os << "(" << with_offset(va) << ", " << with_offset(vb) << ")"
        << ": [ " << display_vert(va) << " - " << display_vert(vb) << " ]";
     return os.str();
   }
@@ -594,6 +607,8 @@ protected:
 public:
   CDT_3::Debug_options& debug() { return debug_options_; }
   const CDT_3::Debug_options& debug() const { return debug_options_; }
+  CDT_3::Debug_options& options() { return debug_options_; }
+  const CDT_3::Debug_options& options() const { return debug_options_; }
 
   // Backward compatibility wrappers (deprecated, use debug().method() instead)
   bool use_finite_edges_map() const { return update_all_finite_edges_ && debug_options_.use_finite_edges_map_flag(); }
@@ -654,9 +669,9 @@ public:
                          const auto is_edge = this->is_edge(va, vb);
                          if constexpr (cdt_3_can_use_cxx20_format()) if(debug().conforming_validation()) {
                            std::cerr << cdt_3_format("is_conforming>> Edge is 3D: {}  ({} , {})\n",
-                                                    is_edge,
-                                                    CGAL::IO::oformat(va, with_point_and_info),
-                                                    CGAL::IO::oformat(vb, with_point_and_info));
+                                                     is_edge,
+                                                     with_point_and_info(va),
+                                                     with_point_and_info(vb));
                          }
                          return is_edge;
                        });
@@ -840,7 +855,7 @@ protected:
       ss << "insert_Steiner_point_on_subconstraint: Steiner point coincides with an existing vertex\n";
       ss << "  -> Steiner point: " << steiner_pt << '\n';
       ss << "     on constraint: " << display_vert(c_va) << "  -  " << display_vert(c_vb) << '\n';
-      ss << "  -> existing vertex: " << IO::oformat(other_v, with_point_and_info) << '\n';
+      ss << "  -> existing vertex: " << with_point_and_info(other_v) << '\n';
       if(other_v->ccdt_3_data().number_of_incident_constraints() > 0) {
         const auto c_id = other_v->ccdt_3_data().constrained_polyline_id(*this);
         const auto [c_va, c_vb] = constraint_extremities(c_id);
@@ -880,7 +895,7 @@ protected:
           insert_Steiner_point_on_subconstraint(steiner_pt, hint, subconstraint, constraint, visitor);
       if(debug().Steiner_points()) {
         const auto [c_start, c_end] = constraint_extremities(constraint);
-        std::cerr << "(" << IO::oformat(va, with_offset) << ", " << IO::oformat(vb, with_offset) << ")";
+        std::cerr << "(" << with_offset(va) << ", " << with_offset(vb) << ")";
         std::cerr << ": [ " << display_vert(c_start) << " - " << display_vert(c_end) << " ] ";
         std::cerr << "  new vertex " << display_vert(v) << '\n';
       }

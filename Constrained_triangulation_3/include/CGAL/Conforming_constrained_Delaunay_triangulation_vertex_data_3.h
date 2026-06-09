@@ -37,8 +37,7 @@ struct Conforming_constrained_Delaunay_triangulation_vertex_data_3 {};
 
 enum class CDT_3_vertex_type : unsigned char {
   FREE,
-  CORNER,
-  INPUT_VERTEX = CORNER,
+  INPUT_VERTEX,
   STEINER_ON_EDGE,
   STEINER_IN_FACE,
   STEINER_IN_VOLUME,
