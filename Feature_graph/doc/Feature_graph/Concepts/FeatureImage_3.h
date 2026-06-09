@@ -3,7 +3,7 @@
 * \ingroup PkgFeatureGraphConcepts
 * \cgalConcept
 *
-* The concept 'FeatureImage_3' describes a 3D image that contains a label for each voxel.
+* The concept `FeatureImage_3` describes a 3D image that contains a label for each voxel.
 * It also stores the dimension, voxel size as well as the position in 3D space of the voxel at index (0, 0, 0).
 *
 * \cgalHasModelsBegin

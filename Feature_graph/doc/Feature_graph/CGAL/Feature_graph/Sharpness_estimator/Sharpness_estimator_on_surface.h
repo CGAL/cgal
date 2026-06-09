@@ -31,7 +31,7 @@ public:
   /*!
   * Constructor that pre-computes the normals on the surface.
   *
-  * \tparam Surface a model of `FaceListGraph` that represents a surface mesh.
+  * \tparam Surface a model of `FaceListGraph` that represents a `PolygonMesh`.
   * \tparam FT a model of `RealEmbeddable`
   *
   * \param surface the surface where the normals are evaluated.

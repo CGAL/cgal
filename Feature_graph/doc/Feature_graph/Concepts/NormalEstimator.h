@@ -3,7 +3,7 @@
 * \ingroup PkgFeatureGraphConcepts
 * \cgalConcept
 *
-* The concept 'NormalEstimator' describes a functor that
+* The concept `NormalEstimator` describes a functor that
 * extracts the normal for a surface element.
 *
 * \cgalHasModelsBegin

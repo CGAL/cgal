@@ -2,7 +2,7 @@
 * \ingroup PkgFeatureGraphConcepts
 * \cgalConcept
 *
-* The concept 'Sharpness_estimator' describes a functor that
+* The concept `Sharpness_estimator` describes a functor that
 * extracts the sharpness value for a surface element.
 *
 * \cgalHasModelsBegin

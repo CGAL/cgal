@@ -48,7 +48,7 @@ public:
   /*!
   * constructs the parameters used to optimize the feature graph placement on a suface.
   *
-  * \param maximum_iteration the maximum number of iteration of the gradient descent.
+  * \param maximum_iteration the maximum number of iterations of the gradient descent.
   * \param start_step_size the step size at the first iteration of the gradient descent.
   * \param end_step_size the step size at the last iteration of the gradient descent.
   * \param min_energy_delta the minimum energy change to stop the gradient descent iterations.

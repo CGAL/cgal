@@ -37,7 +37,7 @@ public:
   * In the regularization step, if the maximum distance of a line to another line
   * is less than this threshold, then the line is collapsed.
   */
-  template <typename Element_type_tag, typename Point_3, typename Index>
+  template <typename ElementTypeTag, typename Point_3, typename Index>
   FT get_isthmus_line_distance(const Point_3& point_in_space, const Index& element_index) const;
 
   /*!
@@ -46,7 +46,7 @@ public:
   * In the regularization step, if the maximum distance of a line to another line
   * is less than this threshold, then the line is collapsed.
   */
-  template <typename Element_type_tag, typename Point_3, typename Index>
+  template <typename ElementTypeTag, typename Point_3, typename Index>
   FT get_simple_line_distance(const Point_3& point_in_space, const Index& element_index) const;
 
   /*!
@@ -55,7 +55,7 @@ public:
   * In the regularization step, if the maximum distance of a line to another line
   * is less than this threshold, then the line is collapsed.
   */
-  template <typename Element_type_tag, typename Point_3, typename Index>
+  template <typename ElementTypeTag, typename Point_3, typename Index>
   FT get_corner_line_distance(const Point_3& point_in_space, const Index& element_index) const;
 
   /// @}
@@ -112,11 +112,11 @@ public:
   *         It can be a constant or a functor.
   *         If it is a functor, it must implement
   *         <UL>
-  *           <LI> `template <typename Element_type_tag, typename Index>`
+  *           <LI> `template <typename ElementTypeTag, typename Index>`
   *           <BR> `FT operator()(const Point_3& point_in_space, const Index& element_index) const`
   *         </UL>}
   *     \cgalParamDefault{`FT(4.0)`}
-  *     \cgalParamExtra{This paremeter sets a baseline distance and is overriden
+  *     \cgalParamExtra{This parameter sets a baseline distance and is overridden
   *                     by the parameters `parameters::ithmus_line_distance`, `parameters::simple_line_distance` and `parameters::corner_line_distance`
   *                     if they are set.}
   *   \cgalParamSectionEnd
@@ -128,7 +128,7 @@ public:
   *         It can be a constant or a functor.
   *         If it is a functor, it must implement
   *         <UL>
-  *           <LI> `template <typename Element_type_tag, typename Index>`
+  *           <LI> `template <typename ElementTypeTag, typename Index>`
   *           <BR> `FT operator()(const Point_3& point_in_space, const Index& element_index) const`
   *         </UL>}
   *     \cgalParamDefault{`FT(-1.0)`}
@@ -142,7 +142,7 @@ public:
   *         It can be a constant or a functor.
   *         If it is a functor, it must implement
   *         <UL>
-  *           <LI> `template <typename Element_type_tag, typename Index>`
+  *           <LI> `template <typename ElementTypeTag, typename Index>`
   *           <BR> `FT operator()(const Point_3& point_in_space, const Index& element_index) const`
   *         </UL>}
   *     \cgalParamDefault{`FT(-1.0)`}
@@ -156,7 +156,7 @@ public:
   *         It can be a constant or a functor.
   *         If it is a functor, it must implement
   *         <UL>
-  *           <LI> `template <typename Element_type_tag, typename Index>`
+  *           <LI> `template <typename ElementTypeTag, typename Index>`
   *           <BR> `FT operator()(const Point_3& point_in_space, const Index& element_index) const`
   *         </UL>}
   *     \cgalParamDefault{`FT(-1.0)`}
@@ -221,7 +221,7 @@ public:
   *         It can be a constant or a functor.
   *         If it is a functor, it must implement
   *         <UL>
-  *           <LI> `template <typename Element_type_tag, typename Index>`
+  *           <LI> `template <typename ElementTypeTag, typename Index>`
   *           <BR> `FT operator()(const Point_3& point_in_space, const Index& element_index) const`
   *         </UL>}
   *     \cgalParamDefault{`FT(0.0)`}
@@ -237,7 +237,7 @@ public:
   *         It can be a constant or a functor.
   *         If it is a functor, it must implement
   *         <UL>
-  *           <LI> `template <typename Element_type_tag, typename Index>`
+  *           <LI> `template <typename ElementTypeTag, typename Index>`
   *           <BR> `FT operator()(const Point_3& point_in_space, const Index& element_index) const`
   *         </UL>}
   *     \cgalParamDefault{`FT(-1.0)`}
@@ -251,7 +251,7 @@ public:
   *         It can be a constant or a functor.
   *         If it is a functor, it must implement
   *         <UL>
-  *           <LI> `template <typename Element_type_tag, typename Index>`
+  *           <LI> `template <typename ElementTypeTag, typename Index>`
   *           <BR> `FT operator()(const Point_3& point_in_space, const Index& element_index) const`
   *         </UL>}
   *     \cgalParamDefault{`FT(-1.0)`}
@@ -265,7 +265,7 @@ public:
   *         It can be a constant or a functor.
   *         If it is a functor, it must implement
   *         <UL>
-  *           <LI> `template <typename Element_type_tag, typename Index>`
+  *           <LI> `template <typename ElementTypeTag, typename Index>`
   *           <BR> `FT operator()(const Point_3& point_in_space, const Index& element_index) const`
   *         </UL>}
   *     \cgalParamDefault{`FT(-1.0)`}
