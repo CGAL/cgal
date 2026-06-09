@@ -11,7 +11,7 @@
 #define CGAL_ARRANGEMENT_ON_CURVE_1_H
 
 #include <variant>
-#include <CGAL/basic.h>
+#include <memory>
 
 namespace CGAL {
 namespace Arrangement_on_curve_1 {
@@ -21,6 +21,10 @@ class Arrangement_on_curve_1 {
 public:
   using Geometry_traits_1 = GeometryTraits_1;
   using Topology_traits = TopologyTraits;
+
+  // Define a clean type alias for the traits smart pointer
+  using Geometry_traits_ptr = std::shared_ptr<const Geometry_traits_1>;
+
   using Point_1 = typename Geometry_traits_1::Point_1;
 
   using Vertex_descriptor = typename Topology_traits::Vertex_descriptor;
@@ -34,21 +38,32 @@ public:
   using Const_location_result = std::variant<Vertex_const_descriptor, Edge_const_descriptor>;
 
 private:
-  Geometry_traits_1 m_geometry_traits;
+  Geometry_traits_ptr m_geometry_traits;
   Topology_traits m_topology_traits;
 
 public:
-  Arrangement_on_curve_1(const Geometry_traits_1& geom_tr) :
-    m_geometry_traits(geom_tr),
+  // 1. Default constructor: allocates a default-constructed traits instance on the heap
+  Arrangement_on_curve_1() :
+    m_geometry_traits(std::make_shared<const Geometry_traits_1>()),
     m_topology_traits()
   {}
 
-  Arrangement_on_curve_1(const Geometry_traits_1& geom_tr, const Topology_traits& topo_tr) :
-    m_geometry_traits(geom_tr),
-    m_topology_traits(topo_tr)
-  {}
+  // 2. Constructor passing an existing smart pointer
+  Arrangement_on_curve_1(const Geometry_traits_ptr geom_tr_ptr) :
+    m_geometry_traits(geom_tr_ptr),
+    m_topology_traits()
+  { CGAL_assertion(m_geometry_traits != nullptr); }
 
-  const Geometry_traits_1& geometry_traits_1() const { return m_geometry_traits; }
+  // 3. Fully custom constructor with topology traits
+  Arrangement_on_curve_1(const Geometry_traits_ptr& geom_tr_ptr, const Topology_traits& topo_tr) :
+    m_geometry_traits(geom_tr_ptr),
+    m_topology_traits(topo_tr)
+  { CGAL_assertion(m_geometry_traits != nullptr); }
+
+  // ACCESSORS
+  const Geometry_traits_1& geometry_traits_1() const { return *m_geometry_traits; }
+  Geometry_traits_ptr geometry_traits_1_ptr() const { return m_geometry_traits; }
+
   const Topology_traits& topology_traits() const { return m_topology_traits; }
   Topology_traits& topology_traits() { return m_topology_traits; }
 
@@ -78,6 +93,14 @@ public:
 
   bool has_left_vertex(Edge_const_descriptor e) const { return m_topology_traits.has_left_vertex(e); }
   bool has_right_vertex(Edge_const_descriptor e) const { return m_topology_traits.has_right_vertex(e); }
+
+  // Setters
+  void reset_geometry_traits_ptr(Geometry_traits_ptr new_traits_ptr) {
+    // Safety check: changing traits on a populated structure is highly dangerous
+    CGAL_precondition_msg(is_empty(), "Cannot reset the geometry traits pointer of a non-empty arrangement.");
+    CGAL_assertion(new_traits_ptr != nullptr);
+    m_geometry_traits = new_traits_ptr;
+  }
 
   // ============================================================================
   // HIGH-LEVEL TOPOLOGICAL OPERATIONS

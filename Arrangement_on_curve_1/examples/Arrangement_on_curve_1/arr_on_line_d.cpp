@@ -24,9 +24,9 @@ int main() {
   Kernel::Direction_d direction(Kernel::Vector_d(4, dir_coords.begin(), dir_coords.end()));
   Kernel::Line_d master_line(origin, direction);
 
-  Traits traits(master_line);
+  auto traits_ptr = std::make_shared<const Traits>(master_line);
   Topo topo;
-  Arrangement arr(traits, topo);
+  Arrangement arr(traits_ptr, topo);
 
   std::vector<NT> c_mid = {NT(3), NT(6), NT(9), NT(12)};
   std::vector<NT> c_far = {NT(5), NT(10), NT(15), NT(20)};

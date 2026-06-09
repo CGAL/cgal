@@ -132,15 +132,25 @@ public:
   using Edge_descriptor_range = boost::iterator_range<Edge_descriptor_iterator>;
 
   struct Vertex : public Data_container<VertexData> {
+    Vertex(const Point_1& p) : m_point(p) {}
+    const Point_1& point() const { return m_point; }
+
+    Edge_descriptor left() const { return m_left; }
+    Edge_descriptor right() const { return m_right; }
+
     Point_1 m_point;
     Edge_descriptor m_left;   // edge immediately to the left of this vertex
     Edge_descriptor m_right;  // edge immediately to the right of this vertex
-    Vertex(const Point_1& p) : m_point(p) {}
   };
 
   struct Edge : public Data_container<EdgeData> {
-    Vertex_descriptor m_left_v;
-    Vertex_descriptor m_right_v;
+    Vertex_descriptor left() const { return m_left; }
+    Vertex_descriptor right() const { return m_right; }
+    bool has_left() const { return m_has_left; }
+    bool has_right() const { return m_has_right; }
+
+    Vertex_descriptor m_left;
+    Vertex_descriptor m_right;
     bool m_has_left = false;
     bool m_has_right = false;
   };
@@ -260,13 +270,13 @@ public:
 
   Edge_descriptor left_edge(Vertex_descriptor v) { return v->m_left; }
   Edge_descriptor right_edge(Vertex_descriptor v) { return v->m_right; }
-  Vertex_descriptor left_vertex(Edge_descriptor e) { return e->m_left_v; }
-  Vertex_descriptor right_vertex(Edge_descriptor e) { return e->m_right_v; }
+  Vertex_descriptor left_vertex(Edge_descriptor e) { return e->m_left; }
+  Vertex_descriptor right_vertex(Edge_descriptor e) { return e->m_right; }
 
   Edge_const_descriptor left_edge(Vertex_const_descriptor v) const { return v->m_left; }
   Edge_const_descriptor right_edge(Vertex_const_descriptor v) const { return v->m_right; }
-  Vertex_const_descriptor left_vertex(Edge_const_descriptor e) const { return e->m_left_v; }
-  Vertex_const_descriptor right_vertex(Edge_const_descriptor e) const { return e->m_right_v; }
+  Vertex_const_descriptor left_vertex(Edge_const_descriptor e) const { return e->m_left; }
+  Vertex_const_descriptor right_vertex(Edge_const_descriptor e) const { return e->m_right; }
 
   bool has_left_vertex(Edge_const_descriptor e) const { return e->m_has_left; }
   bool has_right_vertex(Edge_const_descriptor e) const { return e->m_has_right; }
@@ -287,11 +297,11 @@ public:
     return std::prev(m_edges.end());
   }
 
-  void set_left_edge(Vertex_descriptor v, Edge_descriptor e) { v->m_left  = e; }
+  void set_left_edge(Vertex_descriptor v, Edge_descriptor e) { v->m_left = e; }
   void set_right_edge(Vertex_descriptor v, Edge_descriptor e) { v->m_right = e; }
 
-  void set_left_vertex(Edge_descriptor e, Vertex_descriptor v) { e->m_left_v  = v; e->m_has_left = true; }
-  void set_right_vertex(Edge_descriptor e, Vertex_descriptor v) { e->m_right_v = v; e->m_has_right = true; }
+  void set_left_vertex(Edge_descriptor e, Vertex_descriptor v) { e->m_left = v; e->m_has_left = true; }
+  void set_right_vertex(Edge_descriptor e, Vertex_descriptor v) { e->m_right = v; e->m_has_right = true; }
 
   void clear_left_vertex(Edge_descriptor e) { e->m_has_left  = false; }
   void clear_right_vertex(Edge_descriptor e) { e->m_has_right = false; }

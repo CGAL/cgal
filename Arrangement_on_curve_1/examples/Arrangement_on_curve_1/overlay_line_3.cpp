@@ -30,12 +30,12 @@ int main() {
   Kernel::Point_3 direction_pt(1, 1, 1);
   Kernel::Line_3 master_line(origin, direction_pt);
 
-  Traits traits(master_line);
+  auto traits_ptr = std::make_shared<const Traits>(master_line);
 
   // Initialize the two source structures and the result container
-  Arrangement arr1(traits);
-  Arrangement arr2(traits);
-  Arrangement res_arr(traits);
+  Arrangement arr1(traits_ptr);
+  Arrangement arr2(traits_ptr);
+  Arrangement res_arr(traits_ptr);
 
   // Define some 3D points resting strictly along the line trajectory
   Kernel::Point_3 pA(1, 1, 1);

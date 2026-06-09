@@ -18,9 +18,9 @@ int main() {
   Kernel::Point_3 direction_pt(1, 1, 1);
   Kernel::Line_3 master_line(origin, direction_pt);
 
-  Traits traits(master_line);
+  auto traits_ptr = std::make_shared<const Traits>(master_line);
   Topo topo;
-  Arrangement arr(traits, topo);
+  Arrangement arr(traits_ptr, topo);
 
   // Define 3D points that rest strictly on our 3D line trajectory
   Kernel::Point_3 p_middle(3, 3, 3);

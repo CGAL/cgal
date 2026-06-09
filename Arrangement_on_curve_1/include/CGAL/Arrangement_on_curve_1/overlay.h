@@ -12,6 +12,7 @@
 
 #include <variant>
 #include <iterator>
+#include <type_traits>
 
 #include <CGAL/Arrangement_on_curve_1/Arrangement_on_curve_1.h>
 #include <CGAL/Arrangement_on_curve_1/Default_overlay_observer.h>
@@ -30,6 +31,19 @@ void overlay(const Arrangement_on_curve_1<GeometryTraitsA, TopologyTraitsA>& arr
              const Arrangement_on_curve_1<GeometryTraitsB, TopologyTraitsB>& arr_b,
              Arrangement_on_curve_1<GeometryTraitsRes, TopologyTraitsRes>& arr_res,
              OverlayObserver& observer) {
+  // If the Result arrangement uses the exact same traits type as Input A,
+  // we can share the pointer instance instead of keeping separate identical copies.
+  if constexpr (std::is_same_v<GeometryTraitsA, GeometryTraitsRes>) {
+    if (arr_res.is_empty() && arr_res.geometry_traits_1_ptr() != arr_a.geometry_traits_1_ptr()) {
+      arr_res.reset_geometry_traits_ptr(arr_a.geometry_traits_1_ptr());
+    }
+  }
+  else if constexpr (std::is_same_v<GeometryTraitsB, GeometryTraitsRes>) {
+    if (arr_res.is_empty() && arr_res.geometry_traits_1_ptr() != arr_b.geometry_traits_1_ptr()) {
+      arr_res.reset_geometry_traits_ptr(arr_b.geometry_traits_1_ptr());
+    }
+  }
+
   auto comp = arr_res.geometry_traits_1().compare_x_1_object();
 
   auto e_a = arr_a.unbounded_edge();

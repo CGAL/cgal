@@ -17,9 +17,9 @@ int main() {
   Kernel::Point_2 direction_pt(2, 1);
   Kernel::Line_2 master_line(origin, direction_pt);
 
-  Traits traits(master_line);
+  auto traits_ptr = std::make_shared<const Traits>(master_line);
   Topo topo;
-  Arrangement arr(traits, topo);
+  Arrangement arr(traits_ptr, topo);
 
   // Collinear points along our line track
   Kernel::Point_2 p_middle(4, 2);
@@ -37,6 +37,7 @@ int main() {
   put(v_data_map, v_far, 84);
   put(v_data_map, v_near, 21);
 
+  // Traverse and inspect the arrangement
   std::cout << "\nResulting Sorted Sequence along the 2D Line:\n";
   auto v_pnt_map = arr.vertex_point_map();
   auto e = arr.unbounded_edge();
