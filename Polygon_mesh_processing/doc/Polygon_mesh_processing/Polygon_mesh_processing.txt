@@ -127,10 +127,15 @@ Given a distance \f$ \delta =  \epsilon / \sqrt(3)\f$, a <em>prism</em> is assoc
 The <em>polyhedral envelope</em> of a set of triangles with a tolerance \f$ \epsilon \f$ then
 is the union of the prisms of all faces with \f$ \delta = \epsilon / \sqrt(3) \f$.
 
-\cgalFigureBegin{envelopeFig, envelope.png}
+\cgalFigureAnchor{envelopeFig}
+<center>
+<img src="envelope.png" style="max-width:75%;"/>
+</center>
+\cgalFigureCaptionBegin{envelopeFig}
 The prism for a single triangle (left), the polyhedral envelope (middle),
 and the Minkowski sum envelope (right) for a triangle mesh.
-\cgalFigureEnd
+\cgalFigureCaptionEnd
+
 
 The polyhedral envelope is guaranteed to be contained within the Minkowski sum envelope. The containment test is exact for the polyhedral envelope and conservative for the Minkowski sum envelope: if a query is inside the polyhedral envelope, it is also inside the Minkowski sum envelope; if outside, its relation to the Minkowski sum envelope is undetermined.
 
