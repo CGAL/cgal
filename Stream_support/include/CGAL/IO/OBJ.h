@@ -422,7 +422,7 @@ bool write_OBJ(std::ostream& os,
  *
  * \brief writes the content of `points` and `polygons` in `os`, using the \ref IOStreamOBJ.
  *
- * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type
+ * \tparam PointRange a model of the concept `Range` whose value type is the point type
  * \tparam PolygonRange a model of the concept `SequenceContainer` whose `value_type` is itself
  *                      a model of the concept `SequenceContainer` whose `value_type` is
  *                      an unsigned integer type convertible to `std::size_t`

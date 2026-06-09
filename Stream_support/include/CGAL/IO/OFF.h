@@ -258,7 +258,7 @@ bool read_OFF(const std::string& fname,
  *
  * \brief writes the content of `points` and `polygons` in `os`, using the \ref IOStreamOFF.
  *
- * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type
+ * \tparam PointRange a model of the concept `Range` whose value type is the point type
  * \tparam PolygonRange a model of the concept `SequenceContainer` whose `value_type` is itself
  *                      a model of the concept `SequenceContainer` whose `value_type` is
  *                      an unsigned integer type convertible to `std::size_t`
@@ -305,7 +305,7 @@ bool write_OFF(std::ostream& os,
  *
  * \brief writes the content of `points` and `polygons` in the file `fname`, using the \ref IOStreamOFF.
  *
- * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type
+ * \tparam PointRange a model of the concept `Range` whose value type is the point type
  * \tparam PolygonRange a model of the concept `SequenceContainer` whose `value_type` is itself
  *                      a model of the concept `SequenceContainer` whose `value_type` is
  *                      an unsigned integer type convertible to `std::size_t`
