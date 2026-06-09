@@ -535,6 +535,115 @@ void tetrahedral_isotropic_remeshing(
 #endif
 }
 
+////////////////////////////////////////////////////////
+/////// CONFORMING_CONSTRAINED_TRIANGULATION_3 /////////
+////////////////////////////////////////////////////////
+
+template <typename CDT_3,
+          typename SizingFunction,
+          typename NamedParameters = parameters::Default_named_parameters
+#ifndef DOXYGEN_RUNNING
+          , typename = std::enable_if_t<
+              std::is_invocable_v<SizingFunction,
+                typename CDT_3::Triangulation::Geom_traits::Point_3, int, int>>
+#endif
+          >
+void tetrahedral_isotropic_remeshing(CDT_3& cdt3,
+                                     const SizingFunction& sizing,
+                                     const NamedParameters& np = parameters::default_values())
+{
+  CGAL_expensive_assertion(cdt3.triangulation().tds().is_valid());
+
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  using Tr = typename CDT_3::Triangulation;
+  using Remesher_types =
+      Tetrahedral_remeshing::internal::Adaptive_remesher_type_generator<Tr, SizingFunction,
+        NamedParameters, int, int, CDT_3>;
+
+  bool remesh_surfaces = choose_parameter(get_parameter(np, internal_np::remesh_boundaries), true);
+  bool protect = !remesh_surfaces;
+  std::size_t max_it = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
+
+  bool smooth_constrained_edges = choose_parameter(get_parameter(np, internal_np::smooth_constrained_edges), false);
+
+  auto cell_select = choose_parameter(get_parameter(np, internal_np::cell_selector),
+                                      typename Remesher_types::Default_Selection_functor());
+
+  auto vcmap = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
+                                typename Remesher_types::Default_VCMap(false));
+
+  auto ecmap = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
+                                typename Remesher_types::Default_ECMap(false));
+
+  auto fcmap = choose_parameter(get_parameter(np, internal_np::facet_is_constrained),
+                                typename Remesher_types::Default_FCMap(false));
+
+  // Advanced and non documented parameters
+  auto visitor = choose_parameter(get_parameter(np, internal_np::visitor), typename Remesher_types::Default_Visitor());
+
+  auto nb_extra_iterations =
+      choose_parameter(get_parameter(np, internal_np::nb_flip_smooth_iterations), std::size_t{3});
+
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+  std::cout << "Tetrahedral remeshing ("
+            << "nb_iter = " << max_it << ", "
+            << "protect = " << std::boolalpha << protect << ")" << std::endl;
+
+  std::cout << "Init tetrahedral remeshing...";
+  std::cout.flush();
+#endif
+
+  using Remesher = typename Remesher_types::type;
+  Remesher remesher(cdt3, sizing, protect, vcmap, ecmap, fcmap, smooth_constrained_edges, cell_select, visitor);
+
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+  std::cout << "done." << std::endl;
+  Tetrahedral_remeshing::internal::compute_statistics(remesher.tr(), cell_select, "statistics_begin.txt");
+#endif
+
+  // perform remeshing
+#ifdef CGAL_TETRAHEDRAL_REMESHING_NO_EXTRA_ITERATIONS
+  nb_extra_iterations = 0;
+#endif
+
+  remesher.remesh(max_it, nb_extra_iterations);
+
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+  const double angle_bound = 5.0;
+  Tetrahedral_remeshing::debug::dump_cells_with_small_dihedral_angle(cdt3.triangulation(), angle_bound, cell_select,
+                                                                     "bad_cells.mesh");
+#endif
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+  Tetrahedral_remeshing::internal::compute_statistics(cdt3.triangulation(), cell_select, "statistics_end.txt");
+#endif
+}
+
+template <typename CDT_3, typename FT,
+          typename NamedParameters = parameters::Default_named_parameters
+#ifndef DOXYGEN_RUNNING
+        , typename = std::enable_if_t<
+            !std::is_invocable_v<FT, typename CDT_3::Triangulation::Geom_traits::Point_3, int, int>>
+#endif
+         >
+void tetrahedral_isotropic_remeshing(CDT_3& cdt3,
+                                     const FT target_edge_length,
+                                     const NamedParameters& np = parameters::default_values())
+{
+  using P = typename CDT_3::Triangulation::Geom_traits::Point_3;
+  using Index = int;//typename CDT_3::Triangulation::Vertex::Index;
+  using Sizing_FT = typename CDT_3::Triangulation::Geom_traits::FT;
+
+  const Sizing_FT target_ft = static_cast<Sizing_FT>(target_edge_length);
+
+  tetrahedral_isotropic_remeshing(cdt3,
+    [target_ft](const P&, const int&, const Index&)
+      { return target_ft; },
+    np);
+}
+
+
 }//end namespace CGAL
 
 #endif //CGAL_TETRAHEDRAL_REMESHING_H
