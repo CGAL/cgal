@@ -320,6 +320,7 @@ bool write_STL(std::ostream& os,
       const Point& p = get(point_map, points[*it++]);
       const Point& q = get(point_map, points[*it++]);
       const Point& r = get(point_map, points[*it]);
+      const Vector n = internal::construct_normal_of_STL_face(p, q, r, k);
 
       decltype(auto) pp = conv(p);
       decltype(auto) qq = conv(q);
@@ -345,6 +346,7 @@ bool write_STL(std::ostream& os,
       const Point& p = get(point_map, points[*it++]);
       const Point& q = get(point_map, points[*it++]);
       const Point& r = get(point_map, points[*it]);
+      const Vector n = internal::construct_normal_of_STL_face(p, q, r, k);
 
       decltype(auto) pp = conv(p);
       decltype(auto) qq = conv(q);
