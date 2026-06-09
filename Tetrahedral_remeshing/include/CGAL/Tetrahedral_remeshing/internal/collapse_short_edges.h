@@ -714,7 +714,7 @@ bool are_edge_lengths_valid(const typename C3t3::Edge& edge,
   }
   else if (collapse_type == TO_MIDPOINT)
   {
-    new_index = max_dimension_index(v0, v1);
+    new_index = max_dimension_index(v0, v1, c3t3);
     new_dim = (std::max)(v0->in_dimension(), v1->in_dimension());
 #ifdef CGAL_AVERAGE_SIZING_AFTER_COLLAPSE
     sizing_at_new_pos = sizing_at_midpoint(edge, new_dim, new_index, sizing, c3t3, cell_selector);
@@ -783,12 +783,12 @@ void merge_surface_patch_indices(const typename C3t3::Facet& f1,
   if (in_cx_f1 && !in_cx_f2)
   {
     typename C3t3::Surface_patch_index patch = c3t3.surface_patch_index(f1);
-    f2.first->set_surface_patch_index(f2.second, patch);
+    c3t3.set_surface_patch_index(f2, patch);
   }
   else if (in_cx_f2 && !in_cx_f1)
   {
     typename C3t3::Surface_patch_index patch = c3t3.surface_patch_index(f2);
-    f1.first->set_surface_patch_index(f1.second, patch);
+    c3t3.set_surface_patch_index(f1, patch);
   }
   else if(in_cx_f1 && in_cx_f2)
   {
@@ -796,7 +796,7 @@ void merge_surface_patch_indices(const typename C3t3::Facet& f1,
 
     typename C3t3::Surface_patch_index patch = c3t3.surface_patch_index(f2);
     c3t3.remove_from_complex(f2);
-    f2.first->set_surface_patch_index(f2.second, patch);
+    c3t3.set_surface_patch_index(f2, patch);
   }
 }
 

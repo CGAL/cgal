@@ -68,17 +68,17 @@ void update_c3t3_facets(C3t3& c3t3,
         //on mirror facet
         const typename C3t3::Surface_patch_index patch = c3t3.surface_patch_index(mf);
         if (c3t3.is_in_complex(mf))
-          f.first->set_surface_patch_index(f.second, patch);
+          c3t3.set_surface_patch_index(f, patch);
         else
-          f.first->set_surface_patch_index(f.second, Surface_patch_index());
+          c3t3.set_surface_patch_index(f, Surface_patch_index());
       }
       else
       {
         //we are inside the modified zone, c3t3 info is not valid anymore
         if (c3t3.is_in_complex(f) || c3t3.is_in_complex(mf))
         {
-          f.first->set_surface_patch_index(f.second, Surface_patch_index());
-          mf.first->set_surface_patch_index(mf.second, Surface_patch_index());
+          c3t3.set_surface_patch_index(f, Surface_patch_index());
+          c3t3.set_surface_patch_index(mf, Surface_patch_index());
         }
       }
     }
@@ -1114,15 +1114,15 @@ Sliver_removal_result find_best_flip(typename C3t3::Edge& edge,
       {
         vertices_around_edge.insert(vi);
 
-        if ( circ->first->subdomain_index()
-             != circ->first->neighbor(circ->second)->subdomain_index())
+        if ( c3t3.subdomain_index(circ->first)
+          != c3t3.subdomain_index(circ->first->neighbor(circ->second)))
         {
           boundary_edge = true;
           boundary_vertices.insert(vi);
         }
 
         if ( tr.is_infinite(circ->first)
-             != tr.is_infinite(circ->first->neighbor(circ->second)))
+          != tr.is_infinite(circ->first->neighbor(circ->second)))
         {
           hull_edge = true;
           //hull_vertices.insert(vi);
@@ -1534,8 +1534,8 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
       ch2->set_vertex(ch2->index(vh2), vh3);
       ch1->set_vertex(ch1->index(vh0), vh1);
 
-      c3t3.add_to_complex(ch0, ch0->index(vh4), patch);
-      c3t3.add_to_complex(ch3, ch3->index(vh4), patch);
+      c3t3.add_to_complex({ch0, ch0->index(vh4)}, patch);
+      c3t3.add_to_complex({ch3, ch3->index(vh4)}, patch);
 
       for (Cell_handle chi : cells_around_edge)
       {
@@ -1578,8 +1578,8 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
         ci->vertex(j)->set_cell(ci);
     }
 
-    c3t3.add_to_complex(ch0, ch0->index(vh4), patch);
-    c3t3.add_to_complex(ch3, ch3->index(vh4), patch);
+    c3t3.add_to_complex({ch0, ch0->index(vh4)}, patch);
+    c3t3.add_to_complex({ch3, ch3->index(vh4)}, patch);
 
     for (Cell_handle chi : cells_around_edge)
     {
@@ -1658,8 +1658,8 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
       ch0->set_vertex(ch0->index(vh5), vh1);
       ch1->set_vertex(ch1->index(vh4), vh3);
 
-      c3t3.add_to_complex(ch0, ch0->index(vh2), patch);
-      c3t3.add_to_complex(ch1, ch1->index(vh2), patch);
+      c3t3.add_to_complex({ch0, ch0->index(vh2)}, patch);
+      c3t3.add_to_complex({ch1, ch1->index(vh2)}, patch);
 
       for (Cell_handle chi : cells_around_edge)
       {
@@ -1708,8 +1708,8 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
         ce->vertex(j)->set_cell(ce);
     }
 
-    c3t3.add_to_complex(ch0, ch0->index(vh2), patch);
-    c3t3.add_to_complex(ch1, ch1->index(vh2), patch);
+    c3t3.add_to_complex({ch0, ch0->index(vh2)}, patch);
+    c3t3.add_to_complex({ch1, ch1->index(vh2)}, patch);
 
     for (Cell_handle chi : cells_around_edge)
     {
@@ -1866,12 +1866,12 @@ std::size_t flipBoundaryEdges(
           CGAL_expensive_assertion_code(bool b =)
           tr.tds().is_facet(vh2, vh3, vh0, c, li, lj, lk);
           CGAL_expensive_assertion(b);
-          c3t3.add_to_complex(c, (6 - li - lj - lk), surfi);
+          c3t3.add_to_complex({c, (6 - li - lj - lk)}, surfi);
 
           CGAL_expensive_assertion_code(b = )
           tr.tds().is_facet(vh2, vh3, vh1, c, li, lj, lk);
           CGAL_expensive_assertion(b);
-          c3t3.add_to_complex(c, (6 - li - lj - lk), surfi);
+          c3t3.add_to_complex({c, (6 - li - lj - lk)}, surfi);
 
           CGAL_expensive_assertion_code(std::size_t nbf_post =
             std::distance(c3t3.facets_in_complex_begin(),
