@@ -166,7 +166,7 @@ bool read_OBJ(std::istream& is,
         }
       }
 
-      if(polygons.back().empty())
+      if(face_indices.empty())
       {
         if(verbose)
           std::cerr << "error: empty 'f' line." << std::endl;
