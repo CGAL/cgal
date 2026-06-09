@@ -42,9 +42,6 @@ public:
                   const PolylineRange& polylines,
                   const NamedParameters& np = parameters::default_values())
   {
-    typedef typename boost::range_value<PolygonRange>::type                   Polygon;
-    typedef typename boost::range_value<PolylineRange>::type                  Polyline;
-
     using parameters::choose_parameter;
     using parameters::get_parameter;
 
@@ -60,14 +57,14 @@ public:
     typedef Simple_cartesian<double> SC;
     Cartesian_converter<K,SC> conv;
     m_writer.write_header(m_os, points.size(), 0, polygons.size());
-    for(std::size_t i=0, end=points.size(); i<end; ++i)
+    for(const auto& p : points)
     {
-      decltype(auto) p = conv(get(point_map, points[i]));
-      m_writer.write_vertex(p.x(), p.y(), p.z());
+      decltype(auto) cp = conv(get(point_map, p));
+      m_writer.write_vertex(cp.x(), cp.y(), cp.z());
     }
 
     m_writer.write_facet_header();
-    for(const Poly& polygon : polygons)
+    for(const auto& polygon : polygons)
     {
       const std::size_t size = polygon.size();
 
@@ -78,9 +75,8 @@ public:
     }
 
     m_writer.write_polyline_header(polylines.size());
-    for (std::size_t i=0, end=polylines.size(); i<end; ++i)
+    for (const auto& polyline : polylines)
     {
-      const Polyline& polyline = polylines[i];
       const std::size_t size = polyline.size();
 
       m_writer.write_polyline_begin(size);
