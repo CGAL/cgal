@@ -3,29 +3,12 @@
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Arrangement_on_curve_1/Arrangement_on_curve_1.h>
-#include <CGAL/Arrangement_on_curve_1/Unbounded_topology_traits.h>
+#include <CGAL/Arrangement_on_curve_1/Ft_traits_1.h>
 #include <CGAL/Arrangement_on_curve_1/insert.h>
-
-// Minimal geometry traits model utilizing direct coordinate FT parameters
-template <typename Kernel>
-class Aoc_ft_traits_1 {
-public:
-  using Point_1 = typename Kernel::FT;
-
-  class Compare_x_1 {
-  public:
-    CGAL::Comparison_result operator()(const Point_1& p1, const Point_1& p2) const {
-      if (p1 < p2) return CGAL::SMALLER;
-      if (p1 > p2) return CGAL::LARGER;
-      return CGAL::EQUAL;
-    }
-  };
-
-  Compare_x_1 compare_x_1_object() const { return Compare_x_1(); }
-};
+#include <CGAL/Arrangement_on_curve_1/Unbounded_topology_traits.h>
 
 using Kernel = CGAL::Exact_predicates_exact_constructions_kernel;
-using Geom_traits = Aoc_ft_traits_1<Kernel>;
+using Geom_traits = CGAL::Arrangement_on_curve_1::Ft_traits_1<Kernel>;
 using Point = Geom_traits::Point_1;
 using Topo_traits = CGAL::Arrangement_on_curve_1::Unbounded_topology_traits<Point, std::string, void>;
 using Arrangement = CGAL::Arrangement_on_curve_1::Arrangement_on_curve_1<Geom_traits, Topo_traits>;
