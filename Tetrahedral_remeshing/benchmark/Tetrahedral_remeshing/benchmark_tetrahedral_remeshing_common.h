@@ -7,16 +7,7 @@
  */
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-//#include <CGAL/Surface_mesh/Surface_mesh.h>
-//#include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/Real_timer.h>
-//#include <CGAL/boost/graph/IO/polygon_mesh_io.h>
-//#include <CGAL/Polygon_mesh_processing/self_intersections.h>
-//#include <CGAL/Mesh_triangulation_3.h>
-//#include <CGAL/Mesh_complex_3_in_triangulation_3.h>
-//#include <CGAL/Mesh_polyhedron_3.h>
-//#include <CGAL/Polyhedral_mesh_domain_3.h>
-//#include <CGAL/SMDS_3/tet_soup_to_c3t3.h>
 #include <CGAL/Memory_sizer.h>
 #include <filesystem>
 #include <fstream>
