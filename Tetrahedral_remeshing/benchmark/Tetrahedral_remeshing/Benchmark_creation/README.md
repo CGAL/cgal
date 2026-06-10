@@ -27,7 +27,7 @@ This repository provides a **generic, schema-driven benchmarking pipeline** for 
    pipeline:
      results_dir: ./Results
      run_benchmarks: true
-     charts: true
+     export_charts: true
      report: true
      report_chart_grid_cols: 2  # Configure chart grid layout
 
@@ -66,7 +66,7 @@ This repository provides a **generic, schema-driven benchmarking pipeline** for 
 
 5. **Compare results across runs**
    ```sh
-   python Benchmark_comparison/compare_benchmark_results.py
+   python Benchmark_comparison/compare_benchmark_results.py --config Benchmark_comparison/config.yaml
    ```
 
 ---
@@ -215,6 +215,3 @@ Parsed macros appear in the results JSON as:
 
 ---
 
-## More Details
-
-See [README_DEEPDIVE.md](README_DEEPDIVE.md) for a detailed explanation of each script, the schema mechanism, and advanced usage. 

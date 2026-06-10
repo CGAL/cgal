@@ -483,7 +483,7 @@ def main():
                 sys.executable,
                 os.path.join(os.path.dirname(__file__), 'generate_charts.py'),
                 args.config,
-                agg_json_path
+                results_dir
             ], check=True)
         except subprocess.CalledProcessError as e:
             logging.error(f"Failed to generate charts: {e}")

@@ -26,8 +26,8 @@ benchmarks:
     exec: /path/to/build/Release/benchmark_original_tetrahedral_remeshing.exe
     sweep:
       input_mesh:
-        - /path/to/Tetrahedral_remeshing/benchmark/Tetrahedral_remeshing/bear.mesh
-        - /path/to/Tetrahedral_remeshing/benchmark/Tetrahedral_remeshing/sphere.mesh
+        - /path/to/bear.mesh
+        - /path/to/sphere.mesh
       num_iterations: [3]
       target_edge_factor: [0.25]
       smooth_constrained_edges: [1]
@@ -37,8 +37,8 @@ benchmarks:
     exec: /path/to/build/Release/benchmark_refactored_sequential_tetrahedral_remeshing.exe
     sweep:
       input_mesh:
-        - /path/to/Tetrahedral_remeshing/benchmark/Tetrahedral_remeshing/bear.mesh
-        - /path/to/Tetrahedral_remeshing/benchmark/Tetrahedral_remeshing/sphere.mesh
+        - /path/to/bear.mesh
+        - /path/to/sphere.mesh
       num_iterations: [3]
       target_edge_factor: [0.25]
       smooth_constrained_edges: [1]
@@ -48,7 +48,7 @@ benchmarks:
     exec: /path/to/build/Release/benchmark_refactored_parallel_tetrahedral_remeshing.exe
     sweep:
       input_mesh:
-        - /path/to/Tetrahedral_remeshing/benchmark/Tetrahedral_remeshing/bear.mesh
+        - /path/to/bear.mesh
       num_iterations: [3]
       target_edge_factor: [0.25]
       smooth_constrained_edges: [1]

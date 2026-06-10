@@ -35,7 +35,6 @@
 #include <cmath>
 #include <list>
 #include <fstream>
-#include <iomanip>
 #include <sstream>
 
 namespace CGAL
@@ -44,21 +43,6 @@ namespace Tetrahedral_remeshing
 {
 namespace internal
 {
-// Helper functions for debug logging (match refactored)
-namespace debug_helpers {
-template <typename Point3> std::string point_to_string(const Point3& p) {
-  std::ostringstream oss;
-  oss << std::setprecision(25);
-  oss << p.x() << " " << p.y() << " " << p.z();
-  return oss.str();
-}
-template <typename Vector3> std::string vector_to_string(const Vector3& v) {
-  std::ostringstream oss;
-  oss << std::setprecision(25);
-  oss << v.x() << " " << v.y() << " " << v.z();
-  return oss.str();
-}
-} // namespace debug_helpers
 
 template <typename C3t3, typename SizingFunction, typename CellSelector> class Tetrahedral_remeshing_smoother
 {
@@ -964,15 +948,6 @@ std::size_t smooth_internal_vertices(C3t3& c3t3,
 #endif
       const Vector_3 move = moves[vid].move / moves[vid].mass;// static_cast<FT>(neighbors[vid]);
       Point_3 new_pos = point(v->point()) + move;
-      // std::ofstream debug_log("debug_internal_vertex_smooth.log", std::ios::app);
-      // debug_log << std::setprecision(25);
-      // debug_log << "=== InternalVertexSmoothOperation ===\n";
-      // debug_log << "Vertex ID: " << vid << "\n";
-      // debug_log << "Current position: " << debug_helpers::point_to_string(point(v->point())) << "\n";
-      // debug_log << "Move vector: " << debug_helpers::vector_to_string(move) << "\n";
-      // debug_log << "Smoothed position: " << debug_helpers::point_to_string(new_pos) << "\n";
-      // debug_log << "Neighbors: " << moves[vid].neighbors << "\n";
-      // debug_log << "Mass: " << moves[vid].mass << "\n";
       if (check_inversion_and_move(v, new_pos, inc_cells[vid], tr, total_move)){
         nb_done_3d++;
       }

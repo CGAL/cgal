@@ -614,11 +614,10 @@ public:
 #endif
       if (!resolution_reached())
       {
-
         split();
         collapse();
       }
-        flip();
+      flip();
       smooth();
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE

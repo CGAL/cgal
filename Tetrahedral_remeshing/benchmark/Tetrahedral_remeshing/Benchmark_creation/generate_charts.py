@@ -65,7 +65,9 @@ def run(config, aggregated_data, csv_path=None):
         elif kind == 'box':
             sns.boxplot(data=df, x=x, y=y, hue=hue)
         elif kind == 'line':
-            sns.lineplot(data=df, x=x, y=y, hue=hue)
+            # marker='o' ensures isolated data points (e.g. a single x value)
+            # remain visible, since a one-point line has no segment to draw.
+            sns.lineplot(data=df, x=x, y=y, hue=hue, marker='o')
         else:
             raise ValueError(f"Unsupported chart kind: {kind}")
 
@@ -78,11 +80,12 @@ def run(config, aggregated_data, csv_path=None):
 
 if __name__ == '__main__':
     if len(sys.argv) != 3:
-        print("Usage: python generate_charts.py <config.yaml> <results.csv>")
+        print("Usage: python generate_charts.py <config.yaml> <results_dir>")
         sys.exit(1)
     config_path = sys.argv[1]
-    csv_path = sys.argv[2]
+    results_dir = sys.argv[2]
     with open(config_path, 'r') as f:
         config = yaml.safe_load(f)
+    csv_path = os.path.join(results_dir, 'pipeline_results.csv')
     df = read_csv_with_auto_delimiter(csv_path)
-    run(config, df, csv_path=csv_path) 
+    run(config, df, csv_path=csv_path)

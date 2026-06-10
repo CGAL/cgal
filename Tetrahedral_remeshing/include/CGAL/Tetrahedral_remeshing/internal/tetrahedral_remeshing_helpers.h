@@ -2051,29 +2051,6 @@ void dump_edges(const std::vector<Edge>& edges, const char* filename)
   ofs.close();
 }
 
-template <typename VertexPair>
-void dump_edge_pairs(const std::vector<VertexPair>& edges, const char* filename)
-{
-  std::ofstream ofs(filename);
-  ofs.precision(17);
-
-  for (const VertexPair& e : edges)
-  {
-    ofs << "2 " << point(e.first->point())
-        << " " << point(e.second->point()) << std::endl;
-  }
-  ofs.close();
-}
-
-template <typename EdgePair> void dump_edge(const EdgePair& vp, const char* filename) {
-  std::ofstream ofs(filename);
-  ofs.precision(17);
-
-  ofs << "2 " << point(vp.first->point()) << " " << point(vp.second->point())
-      << std::endl;
-  ofs.close();
-}
-
 template<typename Facet, typename OutputStream>
 void dump_facet(const Facet& f, OutputStream& os)
 {
@@ -2433,23 +2410,6 @@ void dump_cells(const CellRange& cells, const char* filename)
   dump_cells<Tr>(cells, indices, filename);
 }
 
-template<typename CellRange>
-void dump_cells_timestamps(const CellRange& cells, const char* filename) {
-  std::ofstream ofs(filename);
-  ofs.precision(17);
-
-  // Write header comment
-  ofs << "# Cell timestamps for triangulation" << std::endl;
-  ofs << "# Format: timestamp_value" << std::endl;
-
-  for(typename CellRange::const_iterator cit = cells.begin(); cit != cells.end(); ++cit) {
-      // Output the timestamp of each cell on its own row
-      ofs << (*cit)->time_stamp() << std::endl;
-    }
-
-    ofs.close();
-}
-
 template<typename Tr>
 void dump_cells_in_complex(const Tr& tr, const char* filename)
 {
@@ -2618,26 +2578,6 @@ void dump_vertices_by_dimension(const Tr& tr, const char* prefix)
   std::cout << "Nb far points : " << nb_far_points << std::endl;
 }
 
-template<typename C3t3>
-void dump_far_points(const C3t3& c3t3, const char* filename_no_extension) {
-
-    std::ostringstream oss;
-    oss <<filename_no_extension<< ".off";
-
-    std::ofstream ofs(oss.str());
-    ofs.precision(17);
-    ofs << "OFF" << std::endl;
-    ofs << count_far_points(c3t3)<< " 0 0" << std::endl ;
-    auto& tr=c3t3.triangulation();
-    for(auto vit = tr.finite_vertices_begin(); vit != tr.finite_vertices_end(); ++vit)
-    {
-      if(vit->in_dimension() == -1) {
-        ofs << point(vit->point()) << std::endl;
-      }
-    }
-    ofs.close();
-}
-
 template<typename Tr>
 void dump_triangulation_cells(const Tr& tr, const char* filename)
 {
@@ -2651,26 +2591,6 @@ void dump_triangulation_cells(const Tr& tr, const char* filename)
     indices[i++] = cit->subdomain_index();
   }
   dump_cells<Tr>(cells, indices, filename);
-}
-
-template<typename Tr>
-void dump_triangulation_cells_timestamps(const Tr& tr, const char* filename)
-{
-  std::ofstream ofs(filename);
-  ofs.precision(17);
-
-  // Write header comment
-  ofs << "# Cell timestamps for triangulation" << std::endl;
-  ofs << "# Format: timestamp_value" << std::endl;
-
-  for (typename Tr::Finite_cells_iterator cit = tr.finite_cells_begin();
-       cit != tr.finite_cells_end(); ++cit)
-  {
-    // Output the timestamp of each cell on its own row
-    ofs << cit->time_stamp() << std::endl;
-  }
-
-  ofs.close();
 }
 
 template<typename C3t3>
@@ -2702,49 +2622,6 @@ void dump_c3t3(const C3t3& c3t3, const char* filename_no_extension)
 }
 
 
-template<typename CellRange>
-std::set<std::size_t> get_cells_timestamps(const CellRange& cells) {
-  std::set<std::size_t> timestamps;
-
-  for(typename CellRange::const_iterator cit = cells.begin(); cit != cells.end(); ++cit) {
-    timestamps.insert((*cit)->time_stamp());
-  }
-
-  return timestamps;
-}
-
-#include <mutex>
-#include <sstream>
-#include <iomanip>
-
-class ThreadSafeLogger {
-private:
-    std::ofstream log_file;
-    std::mutex log_mutex;
-
-public:
-    ThreadSafeLogger(const std::string& filename) : log_file(filename) {
-        // Set precision to 17 decimal places
-        log_file << std::fixed << std::setprecision(17);
-    }
-
-    template<typename... Args>
-    void log(Args&&... args) {
-        std::lock_guard<std::mutex> lock(log_mutex);
-        std::ostringstream oss;
-        oss << std::fixed << std::setprecision(17);
-        (oss << ... << args);
-        log_file << oss.str() << std::endl;
-        log_file.flush(); // Ensure immediate write
-    }
-
-    ~ThreadSafeLogger() {
-        std::lock_guard<std::mutex> lock(log_mutex);
-        if (log_file.is_open()) {
-            log_file.close();
-        }
-    }
-};
 } //namespace debug
 
 template<typename C3t3>

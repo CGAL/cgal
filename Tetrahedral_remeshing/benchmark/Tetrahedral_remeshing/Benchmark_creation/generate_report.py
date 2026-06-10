@@ -114,16 +114,14 @@ def run(config, aggregated_data, charts_dir='Charts', report_dir=None):
 
 if __name__ == '__main__':
     if len(sys.argv) != 3:
-        print("Usage: python generate_report.py <config.yaml> <results.csv>")
+        print("Usage: python generate_report.py <config.yaml> <results_dir>")
         sys.exit(1)
     config_path = sys.argv[1]
-    csv_path = sys.argv[2]
+    results_dir = sys.argv[2]
     with open(config_path, 'r') as f:
         config = yaml.safe_load(f)
-    # Auto-detect delimiter
-    def read_csv_with_auto_delimiter(csv_path):
-        return pd.read_csv(csv_path, delimiter=';')
-    df = read_csv_with_auto_delimiter(csv_path)
-    charts_dir = os.path.join(os.path.dirname(os.path.abspath(csv_path)), 'Charts')
-    report_dir = os.path.dirname(os.path.abspath(csv_path))
-    run(config, df, charts_dir=charts_dir, report_dir=report_dir) 
+    csv_path = os.path.join(results_dir, 'pipeline_results.csv')
+    df = pd.read_csv(csv_path, delimiter=';')
+    report_dir = os.path.abspath(results_dir)
+    charts_dir = os.path.join(report_dir, 'Charts')
+    run(config, df, charts_dir=charts_dir, report_dir=report_dir)

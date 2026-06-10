@@ -56,75 +56,44 @@ else()
   endif(LINK_WITH_TBB)
 endif()
 
-# Compilable benchmark
-create_single_source_cgal_program("benchmark_tetrahedral_remeshing.cpp")
-create_single_source_cgal_program("benchmark_adaptive_tetrahedral_remeshing.cpp")
-create_single_source_cgal_program("benchmark_refactored_tetrahedral_remeshing.cpp")
-create_single_source_cgal_program("benchmark_original_tetrahedral_remeshing.cpp")
-create_single_source_cgal_program("benchmark_refactored_sequential_tetrahedral_remeshing.cpp")
+# Three benchmark targets for comparing original vs refactored sequential vs refactored parallel
+set(BENCHMARK_TARGETS
+  benchmark_original_tetrahedral_remeshing
+  benchmark_refactored_sequential_tetrahedral_remeshing
+  benchmark_refactored_parallel_tetrahedral_remeshing
+)
 
-target_include_directories(benchmark_tetrahedral_remeshing PRIVATE ${CMAKE_SOURCE_DIR}/Benchmark_creation/external/)
-target_include_directories(benchmark_adaptive_tetrahedral_remeshing PRIVATE ${CMAKE_SOURCE_DIR}/Benchmark_creation/external)
-target_include_directories(benchmark_refactored_tetrahedral_remeshing PRIVATE ${CMAKE_SOURCE_DIR}/Benchmark_creation/external)
-target_include_directories(benchmark_original_tetrahedral_remeshing PRIVATE ${CMAKE_SOURCE_DIR}/Benchmark_creation/external)
-target_include_directories(benchmark_refactored_sequential_tetrahedral_remeshing PRIVATE ${CMAKE_SOURCE_DIR}/Benchmark_creation/external)
+foreach(target ${BENCHMARK_TARGETS})
+  create_single_source_cgal_program("${target}.cpp")
+  target_include_directories(${target} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Benchmark_creation/external)
+endforeach()
 
 if(TARGET CGAL::TBB_support)
-  target_link_libraries(benchmark_tetrahedral_remeshing PRIVATE CGAL::TBB_support)
-  target_link_libraries(benchmark_adaptive_tetrahedral_remeshing PRIVATE CGAL::TBB_support)
-  target_link_libraries(benchmark_refactored_tetrahedral_remeshing PRIVATE CGAL::TBB_support)
-  target_link_libraries(benchmark_original_tetrahedral_remeshing PRIVATE CGAL::TBB_support)
-  target_link_libraries(benchmark_refactored_sequential_tetrahedral_remeshing PRIVATE CGAL::TBB_support)
+  foreach(target ${BENCHMARK_TARGETS})
+    target_link_libraries(${target} PRIVATE CGAL::TBB_support)
+  endforeach()
 endif()
 
 # Link with Boost.ProgramOptions (optional)
 find_package(Boost QUIET COMPONENTS program_options)
 if(Boost_PROGRAM_OPTIONS_FOUND)
-  target_link_libraries(benchmark_tetrahedral_remeshing PRIVATE Boost::program_options)
-  target_link_libraries(benchmark_adaptive_tetrahedral_remeshing PRIVATE Boost::program_options)
-  target_link_libraries(benchmark_refactored_tetrahedral_remeshing PRIVATE Boost::program_options)
-  target_link_libraries(benchmark_original_tetrahedral_remeshing PRIVATE Boost::program_options)
-  target_link_libraries(benchmark_refactored_sequential_tetrahedral_remeshing PRIVATE Boost::program_options)
+  foreach(target ${BENCHMARK_TARGETS})
+    target_link_libraries(${target} PRIVATE Boost::program_options)
+  endforeach()
 endif()
 
-# Add a post-build step to generate the metadata file
-add_custom_command(TARGET benchmark_tetrahedral_remeshing POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E echo "Generating metadata for $<TARGET_FILE:benchmark_tetrahedral_remeshing>"
-    # Combine environment setting and Python execution into a single command
+# Post-build step: generate per-executable source/exe metadata
+foreach(target ${BENCHMARK_TARGETS})
+  add_custom_command(TARGET ${target} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E echo "Generating metadata for $<TARGET_FILE:${target}>"
     COMMAND ${CMAKE_COMMAND} -E env
             "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}"
             ${METADATA_PYTHON}
             "${METADATA_SCRIPT}"
-            "$<TARGET_FILE:benchmark_tetrahedral_remeshing>"
-            "${CMAKE_CURRENT_SOURCE_DIR}/benchmark_tetrahedral_remeshing.cpp"
+            "$<TARGET_FILE:${target}>"
+            "${CMAKE_CURRENT_SOURCE_DIR}/${target}.cpp"
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-    COMMENT "Generating metadata file for benchmark_tetrahedral_remeshing"
+    COMMENT "Generating metadata file for ${target}"
     VERBATIM
-)
-
-add_custom_command(TARGET benchmark_adaptive_tetrahedral_remeshing POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E echo "Generating metadata for $<TARGET_FILE:benchmark_adaptive_tetrahedral_remeshing>"
-    COMMAND ${CMAKE_COMMAND} -E env
-            "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}"
-            ${METADATA_PYTHON}
-            "${METADATA_SCRIPT}"
-            "$<TARGET_FILE:benchmark_adaptive_tetrahedral_remeshing>"
-            "${CMAKE_CURRENT_SOURCE_DIR}/benchmark_adaptive_tetrahedral_remeshing.cpp"
-    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-    COMMENT "Generating metadata file for benchmark_adaptive_tetrahedral_remeshing"
-    VERBATIM
-)
-
-add_custom_command(TARGET benchmark_refactored_tetrahedral_remeshing POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E echo "Generating metadata for $<TARGET_FILE:benchmark_refactored_tetrahedral_remeshing>"
-    COMMAND ${CMAKE_COMMAND} -E env
-            "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}"
-            ${METADATA_PYTHON}
-            "${METADATA_SCRIPT}"
-            "$<TARGET_FILE:benchmark_refactored_tetrahedral_remeshing>"
-            "${CMAKE_CURRENT_SOURCE_DIR}/benchmark_refactored_tetrahedral_remeshing.cpp"
-    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-    COMMENT "Generating metadata file for benchmark_refactored_tetrahedral_remeshing"
-    VERBATIM
-)
-
+  )
+endforeach()

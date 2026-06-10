@@ -34,6 +34,17 @@ The tool supports two distinct comparison scenarios controlled by the `group_by_
 
 **Example**: Analyze performance consistency of the refactored implementation across multiple runs
 
+#### 3. Ignoring Specific Arguments (`exclude_from_grouping`)
+**Use Case**: Compare runs that differ only in one argument that should not affect grouping — for example, comparing a sequential run (`threads=1`) against a parallel run (`threads=8`) of the same algorithm variant.
+
+By default, two runs are placed in the same comparison row only when **all** input arguments match. Adding argument keys to `exclude_from_grouping` strips those keys before matching, so runs that differ only on those arguments are treated as the same configuration.
+
+```yaml
+analysis:
+  group_by_executable: false
+  exclude_from_grouping: [threads]   # sequential and parallel land in the same row
+```
+
 ### Basic Configuration
 
 ```yaml
@@ -44,6 +55,9 @@ analysis:
   significant_change_threshold: 0.0       # Show metrics with >X% change (0 = all)
   outlier_threshold: 2.0                  # Highlight outliers >X std deviations
   group_by_executable: false              # false = cross-executable, true = same-executable
+  exclude_from_grouping: []               # Input argument keys to ignore when matching runs.
+                                          # e.g. [threads] to compare sequential (threads=1)
+                                          # vs parallel (threads=8) in the same table row.
 
 report:
   chart_grid_cols: 2                      # Chart grid layout columns
@@ -125,7 +139,7 @@ charts:
 ```yaml
 - kind: line
   y: metrics.Performance.Total_Time.Value
-x: run_metadata.input_arguments.threads
+  x: run_metadata.input_arguments.threads
   title: "Performance vs Thread Count"
 ```
 

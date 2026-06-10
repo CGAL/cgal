@@ -44,7 +44,7 @@ def collect_metric_paths(d, prefix=()):
             paths[prefix + (k,)] = v
     return paths
 
-def load_pipeline_results(results_dir, group_by_executable=True):
+def load_pipeline_results(results_dir, group_by_executable=True, exclude_from_grouping=None):
     run_map = {}
     # First check for pipeline_results.json in the top level directory
     pipeline_results_file = os.path.join(results_dir, "pipeline_results.json")
@@ -65,9 +65,12 @@ def load_pipeline_results(results_dir, group_by_executable=True):
                 preprocessor_macros = data.get("run_metadata", {}).get("preprocessor_macros", [])
                 
                 # Create comparable args from all input arguments
+                excluded = set(exclude_from_grouping) if exclude_from_grouping else set()
                 if input_args:
                     processed_items = []
                     for key, value in input_args.items():
+                        if key in excluded:
+                            continue
                         # Process values to extract filename stems for file paths
                         if isinstance(value, str) and ('/' in value or '\\' in value or '.' in value):
                             # Likely a file path - extract stem (filename without extension)
@@ -76,7 +79,7 @@ def load_pipeline_results(results_dir, group_by_executable=True):
                             processed_items.append((key, stem))
                         else:
                             processed_items.append((key, value))
-                    
+
                     comparable_args = dict(processed_items)
                 else:
                     comparable_args = {}
@@ -624,8 +627,14 @@ def calculate_outliers(comparison_data, outlier_threshold):
                                 'max': max(sorted_values)
                             }
                         
-                        # Detect outliers
-                        if row_std > 0:  # Avoid division by zero
+                        # Detect outliers only when there is a meaningful relative
+                        # spread. Runs that are effectively identical still produce a
+                        # std of ~1e-16 from floating-point noise (not exactly 0), and
+                        # for n=2 the z-score is a fixed ratio independent of how tiny
+                        # the actual difference is - so a bare `row_std > 0` guard would
+                        # flag spurious outliers on metrics that don't really differ.
+                        rel_std = (row_std / abs(row_mean)) if row_mean != 0 else row_std
+                        if row_std > 0 and rel_std > 1e-9:
                             for i, value in enumerate(values):
                                 if isinstance(value, (int, float)) and value is not None:
                                     z_score = abs(value - row_mean) / row_std
@@ -688,8 +697,9 @@ def main():
                                                      config.get("significant_change_threshold", 0.0))
     outlier_threshold = analysis_config.get("outlier_threshold", 
                                            config.get("outlier_threshold", 3.0))
-    group_by_executable = analysis_config.get("group_by_executable", 
+    group_by_executable = analysis_config.get("group_by_executable",
                                              config.get("group_by_executable", True))
+    exclude_from_grouping = analysis_config.get("exclude_from_grouping", [])
     
     # Get report configuration (backward compatibility)
     report_config = config.get("report", {})
@@ -727,7 +737,7 @@ def main():
     
     for report_dir in report_dirs:
         print(f"\nProcessing: {os.path.basename(report_dir)}")
-        run_key_to_metrics_map = load_pipeline_results(report_dir, group_by_executable)
+        run_key_to_metrics_map = load_pipeline_results(report_dir, group_by_executable, exclude_from_grouping)
         if run_key_to_metrics_map:
             report_metrics[report_dir] = run_key_to_metrics_map
             metadata = load_metadata(report_dir)

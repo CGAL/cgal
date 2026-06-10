@@ -1,12 +1,15 @@
-results_root: C:/Users/iason.manolas/Documents/learning/gsoc2025-Tetra_remeshing_parallel-imanolas/Tetrahedral_remeshing/build_debug_tetrahedral_remeshing/Benchmark_results  # Folder containing multiple benchmark run folders
+results_root: /path/to/Benchmark_results  # Folder containing multiple benchmark run folders
 include_reports: []                # Optional: list of subfolders to include, or leave empty for all
 
 # Analysis configuration
 analysis:
-  significant_change_threshold: 0.0 # Only show metrics with >1% change (set to 0 to show all)
-  outlier_threshold: 1.0             # Highlight values >1.0 standard deviations from mean as outliers (for testing)
-  group_by_executable: false         # Set to false to compare across different executables (current vs refactored)
-                                     # Set to true to compare only within same executable (for fine-tuning)
+  significant_change_threshold: 0.0 # Only show metrics with >X% change (set to 0 to show all)
+  outlier_threshold: 2.0             # Highlight values >N standard deviations from mean as outliers
+  group_by_executable: false         # false: compare across different executables (e.g. original vs refactored)
+                                     # true: compare only within the same executable (repeatability)
+  exclude_from_grouping: []          # Input argument keys to ignore when matching runs for comparison.
+                                     # Use e.g. [threads] to compare sequential (threads=1) vs parallel (threads=8)
+                                     # in the same table row.
 
 # Report configuration  
 report:
