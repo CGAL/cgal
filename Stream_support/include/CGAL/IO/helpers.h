@@ -15,6 +15,7 @@
 #include <CGAL/assertions.h>
 #include <CGAL/Container_helper.h>
 #include <CGAL/Has_member.h>
+#include <CGAL/Point_2.h>
 #include <CGAL/Point_3.h>
 #include <CGAL/type_traits/is_iterator.h>
 
@@ -24,32 +25,31 @@
 
 #include <algorithm>
 #include <string>
-#include <type_traits>
 
 namespace CGAL {
 namespace IO {
 namespace internal {
 
-template <typename Point,
-          std::enable_if_t<std::is_constructible<Point, double, double>::value, int> = 0>
-void fill_point(const double x, const double y, const double /*z*/, const double w, Point& pt)
+template <typename Kernel>
+void fill_point(const double x, const double y, const double /*z*/, const double w,
+                CGAL::Point_2<Kernel>& pt)
 {
-  pt = Point(x / w, y / w);
+  typedef typename Kernel::FT FT;
+  pt = CGAL::Point_2<Kernel>(FT(x)/FT(w), FT(y)/FT(w));
 }
 
-template <typename Point,
-          std::enable_if_t<!std::is_constructible<Point, double, double>::value &&
-                           std::is_constructible<Point, double, double, double>::value, int> = 0>
-void fill_point(const double x, const double y, const double z, const double w, Point& pt)
+template <typename Kernel>
+void fill_point(const double x, const double y, const double z, const double w,
+                CGAL::Point_3<Kernel>& pt)
 {
-  pt = Point(x / w, y / w, z / w);
+  typedef typename Kernel::FT FT;
+  pt = CGAL::Point_3<Kernel>(FT(x)/FT(w), FT(y)/FT(w), FT(z)/FT(w));
 }
 
 // something else (arrays...)
-template <typename Point,
-          std::enable_if_t<!std::is_constructible<Point, double, double>::value &&
-                           !std::is_constructible<Point, double, double, double>::value, int> = 0>
-void fill_point(const double x, const double y, const double z, const double w, Point& pt)
+template <typename Point>
+void fill_point(const double x, const double y, const double z, const double w,
+                Point& pt)
 {
   CGAL::internal::resize(pt, 3);
   pt[0] = x / w; pt[1] = y / w; pt[2] = z / w;
