@@ -282,8 +282,6 @@ public:
       {
         if (!is_well_oriented(triangulation, cit))
           return ORIENTATION_PROBLEM;
-        if (!triangulation.tds().is_valid(cit, true))
-          return C_PROBLEM;
       }
 
       // check angles
@@ -293,13 +291,6 @@ public:
         if (      curr_max_cos < max_cos_after_collapse  // angles decreased
          && acceptable_max_cos < max_cos_after_collapse) // && angles go below acceptable bound
           return ANGLE_PROBLEM;
-      }
-
-      // check validity of vertices
-      for (Vertex_handle vit : triangulation.finite_vertex_handles())
-      {
-        if (!triangulation.tds().is_valid(vit, true))
-          return V_PROBLEM;
       }
 
       //int si_nb_vh0 = nb_incident_subdomains(vh0, c3t3);
@@ -990,7 +981,7 @@ collapse(const typename C3t3::Cell_handle ch,
 
 
 template<typename C3t3, typename CellSelector, typename ShortEdgesBimap>
-typename C3t3::Vertex_handle collapse(typename C3t3::Edge& edge,
+typename C3t3::Vertex_handle collapse(const typename C3t3::Edge& edge,
                                       const Collapse_type& collapse_type,
                                       CellSelector& cell_selector,
                                       C3t3& c3t3,
@@ -1097,7 +1088,7 @@ template<typename C3t3,
          typename CellSelector,
          typename ShortEdgesBimap,
          typename Visitor>
-typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
+typename C3t3::Vertex_handle collapse_edge(const typename C3t3::Edge& edge,
     C3t3& c3t3,
     const Sizing& sizing,
     const bool /* protect_boundaries */,
@@ -1356,6 +1347,7 @@ void collapse_short_edges(C3T3& c3t3,
             << timer.time() << " seconds)." << std::endl;
 #endif
 }
+
 // #define EDGE_COLLAPSE_DEBUG
 
 template <typename C3t3, typename SizingFunction, typename CellSelector, typename Visitor>
