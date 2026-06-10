@@ -13,7 +13,6 @@
 #ifndef CGAL_ARRANGEMENT_ON_CURVE_1_LINE_2_TRAITS_1_H
 #define CGAL_ARRANGEMENT_ON_CURVE_1_LINE_2_TRAITS_1_H
 
-#include <CGAL/basic.h>
 #include <CGAL/enum.h>
 
 namespace CGAL {

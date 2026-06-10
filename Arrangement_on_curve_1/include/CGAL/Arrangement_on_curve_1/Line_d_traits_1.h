@@ -15,7 +15,6 @@
 
 #include <vector>
 
-#include <CGAL/basic.h>
 #include <CGAL/enum.h>
 
 namespace CGAL {
