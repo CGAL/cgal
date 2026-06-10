@@ -18,10 +18,10 @@
 #include <CGAL/assertions.h>
 
 #include <CGAL/Tetrahedral_remeshing/internal/elementary_operations.h>
-#include <CGAL/Tetrahedral_remeshing/internal/edge_split_operation.h>
-#include <CGAL/Tetrahedral_remeshing/internal/edge_collapse_operation.h>
-#include <CGAL/Tetrahedral_remeshing/internal/edge_flip_operation.h>
-#include <CGAL/Tetrahedral_remeshing/internal/vertex_smooth_operation.h>
+#include <CGAL/Tetrahedral_remeshing/internal/split_long_edges.h>
+#include <CGAL/Tetrahedral_remeshing/internal/collapse_short_edges.h>
+#include <CGAL/Tetrahedral_remeshing/internal/flip_edges.h>
+#include <CGAL/Tetrahedral_remeshing/internal/smooth_vertices.h>
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 
@@ -74,7 +74,7 @@ public:
   std::shared_ptr<VertexSmoothingContext> m_context = nullptr;
 
   Elementary_remesher(C3t3& c3t3)
-    : m_c3t3(c3t3) {}
+      : m_c3t3(c3t3) {}
 
   void split(const SizingFunction& sizing, const CellSelector& cell_selector, const bool protect_boundaries) {
     EdgeSplitOp split_op(sizing, cell_selector, protect_boundaries);
@@ -107,8 +107,8 @@ public:
                    const CellSelector& cell_selector,
                    const bool protect_boundaries,
                    const bool smooth_constrained_edges) {
-    m_context = std::make_shared<VertexSmoothingContext>(m_c3t3, sizing, cell_selector,
-                                                         protect_boundaries, smooth_constrained_edges);
+    m_context = std::make_shared<VertexSmoothingContext>(m_c3t3, sizing, cell_selector, protect_boundaries,
+                                                         smooth_constrained_edges);
     m_edge_smooth_op = std::make_unique<ComplexEdgeSmoothOp>(m_context);
     m_surface_vertices_smooth_op = std::make_unique<SurfaceVertexSmoothOp>(m_context);
     m_internal_vertices_smooth_op = std::make_unique<InternalVertexSmoothOp>(m_context);
@@ -124,7 +124,8 @@ public:
         executor.execute(*m_edge_smooth_op, m_c3t3);
       }
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-      else if(!m_edge_smooth_op) {
+      else if(!m_edge_smooth_op)
+      {
         std::cerr << "Complex edge smoothing operation not initialized." << std::endl;
       }
 #endif
@@ -134,7 +135,8 @@ public:
         executor.execute(*m_surface_vertices_smooth_op, m_c3t3);
       }
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-      else {
+      else
+      {
         std::cerr << "Surface vertex smoothing operation not initialized." << std::endl;
       }
 #endif
