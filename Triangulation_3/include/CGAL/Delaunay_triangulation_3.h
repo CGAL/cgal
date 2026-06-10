@@ -744,7 +744,7 @@ private:
 
 
 template <typename VertexDescriptor,
-          typename = std::enable_if_t<false == std::is_same_v<Vertex_handle, vertex_descriptor> &&
+          typename = std::enable_if_t<true == std::is_same_v<Vertex_handle, vertex_descriptor> ||
                                       std::is_convertible_v<VertexDescriptor, vertex_descriptor>
                                      >
            >
