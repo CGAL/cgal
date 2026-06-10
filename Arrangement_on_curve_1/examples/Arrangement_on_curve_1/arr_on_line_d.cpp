@@ -49,7 +49,7 @@ int main() {
 
   std::cout << "\nResulting Sorted Sequence along the 4D Line:\n";
   auto v_pnt_map = arr.vertex_point_map();
-  auto e = arr.unbounded_edge();
+  auto e = arr.unbounded_left_edge();
   while (arr.has_right_vertex(e)) {
     auto v = arr.right_vertex(e);
     auto pnt = get(v_pnt_map, v);

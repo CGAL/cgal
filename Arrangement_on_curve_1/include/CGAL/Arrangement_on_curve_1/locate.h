@@ -32,7 +32,7 @@ locate_impl(Arrangement_on_curve_1<GeometryTraits, TopologyTraits>& arr, const t
   auto v_pnt_map = arr.vertex_point_map();
 
   // Start with the leftmost unbounded edge (-inf, ...)
-  auto curr_e = arr.unbounded_edge();
+  auto curr_e = arr.unbounded_left_edge();
 
   // Proceed to the right by traversing the topological graph
   while (arr.has_right_vertex(curr_e)) {

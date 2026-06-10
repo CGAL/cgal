@@ -40,7 +40,7 @@ int main() {
   // Traverse and inspect the arrangement
   std::cout << "\nResulting Sorted Sequence along the 2D Line:\n";
   auto v_pnt_map = arr.vertex_point_map();
-  auto e = arr.unbounded_edge();
+  auto e = arr.unbounded_left_edge();
   while (arr.has_right_vertex(e)) {
     auto v = arr.right_vertex(e);
     std::cout << "  Vertex Point: (" << get(v_pnt_map, v) << ") | Extension ID: " << get(v_data_map, v) << "\n";

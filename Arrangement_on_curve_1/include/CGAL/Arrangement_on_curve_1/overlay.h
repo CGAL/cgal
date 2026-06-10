@@ -46,9 +46,9 @@ void overlay(const Arrangement_on_curve_1<GeometryTraitsA, TopologyTraitsA>& arr
 
   auto comp = arr_res.geometry_traits_1().compare_x_1_object();
 
-  auto e_a = arr_a.unbounded_edge();
-  auto e_b = arr_b.unbounded_edge();
-  auto e_res = arr_res.unbounded_edge();
+  auto e_a = arr_a.unbounded_left_edge();
+  auto e_b = arr_b.unbounded_left_edge();
+  auto e_res = arr_res.unbounded_left_edge();
   observer.create_edge(e_a, e_b, e_res);
   while (arr_a.has_right_vertex(e_a) && arr_b.has_right_vertex(e_b)) {
     auto v_a = arr_a.right_vertex(e_a);

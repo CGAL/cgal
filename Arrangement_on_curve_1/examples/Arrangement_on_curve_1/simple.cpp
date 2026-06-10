@@ -28,9 +28,9 @@ int main() {
   v3->data() = "Center Node";
 
   // Traverse and inspect the arrangement
-  std::cout << "\nResulting Sorted Sequence along the 2D Line:\n";
+  std::cout << "\nResulting Sorted Sequence along the 1D Line:\n";
   auto v_pnt_map = arr.vertex_point_map();
-  auto e = arr.unbounded_edge();
+  auto e = arr.unbounded_left_edge();
   while (arr.has_right_vertex(e)) {
     auto v = arr.right_vertex(e);
     std::cout << "  Vertex Point: (" << v->point() << ") | Extension ID: " << v->data() << "\n";

@@ -223,10 +223,15 @@ public:
 private:
   Vertex_list m_vertices;
   Edge_list m_edges;
-
+  Edge_descriptor m_unbounded_left_edge;
+  Edge_descriptor m_unbounded_right_edge;
 public:
   // Default constructor
-  Unbounded_topology_traits() { m_edges.emplace_back(); }
+  Unbounded_topology_traits() {
+    m_edges.emplace_back();
+    m_unbounded_left_edge = m_edges.begin();
+    m_unbounded_right_edge = m_edges.begin();
+  }
 
   // ============================================================================
   // QUERIES
@@ -260,13 +265,15 @@ public:
                                       Edge_descriptor_iterator(m_edges.cend()));
   }
 
-  // Mutable iterators over the vertex list (needed for locate and overlay).
+  // Mutable iterators over the vertex list
   Vertex_descriptor vertices_begin() { return m_vertices.begin(); }
   Vertex_descriptor vertices_end() { return m_vertices.end(); }
 
-  // Return the single initial unbounded edge (valid on a fresh/empty arrangement).
-  Edge_descriptor unbounded_edge() { return m_edges.begin(); }
-  Edge_const_descriptor unbounded_edge() const { return m_edges.begin(); }
+  // UNBOUNDED EDGE ACCESSORS
+  Edge_descriptor unbounded_left_edge() { return m_unbounded_left_edge; }
+  Edge_const_descriptor unbounded_left_edge() const { return m_unbounded_left_edge; }
+  Edge_descriptor unbounded_right_edge() { return m_unbounded_right_edge; }
+  Edge_const_descriptor unbounded_right_edge() const { return m_unbounded_right_edge; }
 
   Edge_descriptor left_edge(Vertex_descriptor v) { return v->m_left; }
   Edge_descriptor right_edge(Vertex_descriptor v) { return v->m_right; }
@@ -302,6 +309,10 @@ public:
 
   void set_left_vertex(Edge_descriptor e, Vertex_descriptor v) { e->m_left = v; e->m_has_left = true; }
   void set_right_vertex(Edge_descriptor e, Vertex_descriptor v) { e->m_right = v; e->m_has_right = true; }
+
+  // Package-level setters for the cached boundaries
+  void set_unbounded_left_edge(Edge_descriptor e)  { m_unbounded_left_edge = e; }
+  void set_unbounded_right_edge(Edge_descriptor e) { m_unbounded_right_edge = e; }
 
   void clear_left_vertex(Edge_descriptor e) { e->m_has_left  = false; }
   void clear_right_vertex(Edge_descriptor e) { e->m_has_right = false; }

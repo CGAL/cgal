@@ -78,8 +78,10 @@ public:
   auto vertex_data_map() const { return m_topology_traits.vertex_data_map(); }
   auto edge_data_map() const { return m_topology_traits.edge_data_map(); }
 
-  Edge_descriptor unbounded_edge() { return m_topology_traits.unbounded_edge(); }
-  Edge_const_descriptor unbounded_edge() const { return m_topology_traits.unbounded_edge(); }
+  Edge_descriptor unbounded_left_edge() { return m_topology_traits.unbounded_left_edge(); }
+  Edge_const_descriptor unbounded_left_edge() const { return m_topology_traits.unbounded_left_edge(); }
+  Edge_descriptor unbounded_right_edge() { return m_topology_traits.unbounded_right_edge(); }
+  Edge_const_descriptor unbounded_right_edge() const { return m_topology_traits.unbounded_right_edge(); }
 
   Vertex_descriptor left_vertex(Edge_descriptor e) { return m_topology_traits.left_vertex(e); }
   Vertex_descriptor right_vertex(Edge_descriptor e) { return m_topology_traits.right_vertex(e); }
@@ -112,9 +114,8 @@ public:
     auto& topo = m_topology_traits;
 
     // The arrangement must be empty: one unbounded edge exists.
-    auto e_unbounded = topo.unbounded_edge();
+    auto e_unbounded = topo.unbounded_left_edge();
 
-    // Create the new vertex.
     Vertex_descriptor v = topo.create_vertex(p);
 
     // Create the right new edge: (v, +inf)
@@ -131,63 +132,58 @@ public:
     topo.set_left_edge(v, e_unbounded);
     topo.set_right_edge(v, e_right);
 
+    // Explicitly update the right boundary tracker.
+    topo.set_unbounded_right_edge(e_right);
+
     return v;
   }
 
   // Insert a new vertex p strictly to the left of an existing first vertex v_first.
-  // Splits the unbounded left edge of v_first.
-  Vertex_descriptor insert_before(Vertex_descriptor v_first, const Point_1& p) {
+  Vertex_descriptor insert_before(Vertex_descriptor v, const Point_1& p) {
     auto& topo = m_topology_traits;
 
-    // e_left is the unbounded edge to the left of v_first: (-inf, v_first)
-    Edge_descriptor e_left = topo.left_edge(v_first);
-
-    // Create the new vertex.
+    Edge_descriptor e_left = topo.left_edge(v);
     Vertex_descriptor v_new = topo.create_vertex(p);
 
-    // Create a new edge to sit between v_new and v_first: (v_new, v_first)
+    // Create a new edge to sit between v_new and v: (v_new, v)
     Edge_descriptor e_between = topo.create_edge();
     topo.set_left_vertex(e_between, v_new);
-    topo.set_right_vertex(e_between, v_first);
+    topo.set_right_vertex(e_between, v);
 
-    // The old left unbounded edge now terminates at v_new on its right: (-inf, v_new)
+    // The old left edge now terminates at v_new on its right
     topo.set_right_vertex(e_left, v_new);
 
     // v_new sits between e_left and e_between.
     topo.set_left_edge(v_new, e_left);
     topo.set_right_edge(v_new, e_between);
 
-    // v_first's left edge is now e_between.
-    topo.set_left_edge(v_first, e_between);
+    // v's left edge is now e_between.
+    topo.set_left_edge(v, e_between);
 
     return v_new;
   }
 
-  // Insert a new vertex p strictly to the right of an existing last vertex v_last.
-  // Splits the unbounded right edge of v_last.
-  Vertex_descriptor insert_after(Vertex_descriptor v_last, const Point_1& p) {
+  // Insert a new vertex p strictly to the right of an existing last vertex v.
+  Vertex_descriptor insert_after(Vertex_descriptor v, const Point_1& p) {
     auto& topo = m_topology_traits;
 
-    // e_right is the unbounded edge to the right of v_last: (v_last, +inf)
-    Edge_descriptor e_right = topo.right_edge(v_last);
-
-    // Create the new vertex.
+    Edge_descriptor e_right = topo.right_edge(v);
     Vertex_descriptor v_new = topo.create_vertex(p);
 
-    // Create a new edge between v_last and v_new: (v_last, v_new)
-    Edge_descriptor e_between = topo.create_edge();
-    topo.set_left_vertex(e_between, v_last);
+    // Create a new edge to sit between v_new and v: (v_new, v)
+     Edge_descriptor e_between = topo.create_edge();
+    topo.set_left_vertex(e_between, v);
     topo.set_right_vertex(e_between, v_new);
 
-    // The old right unbounded edge now starts from v_new: (v_new, +inf)
+    // The old right edge now starts from v_new
     topo.set_left_vertex(e_right, v_new);
 
     // v_new is wired between e_between and e_right.
     topo.set_left_edge(v_new, e_between);
     topo.set_right_edge(v_new, e_right);
 
-    // v_last's right edge is now e_between.
-    topo.set_right_edge(v_last, e_between);
+    // v's right edge is now e_between.
+    topo.set_right_edge(v, e_between);
 
     return v_new;
   }
@@ -195,15 +191,12 @@ public:
   // Split the edge e by inserting a new vertex p inside it.
   // e becomes the left sub-edge; a new edge becomes the right sub-edge.
   Vertex_descriptor split_edge(Edge_descriptor e, const Point_1& p) {
-    auto& topo = m_topology_traits;
+     auto& topo = m_topology_traits;
 
-    // Create the new vertex.
     Vertex_descriptor v_new = topo.create_vertex(p);
-
-    // Create a new right sub-edge.
     Edge_descriptor e_right = topo.create_edge();
 
-    // If e had a right vertex, transfer it to e_right.
+    // If e has a right vertex, transfer it to e_right.
     if (topo.has_right_vertex(e)) {
       Vertex_descriptor v_old_right = topo.right_vertex(e);
       topo.set_right_vertex(e_right, v_old_right);
