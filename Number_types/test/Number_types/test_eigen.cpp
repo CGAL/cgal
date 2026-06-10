@@ -36,7 +36,7 @@ void check_(){
   NT d=(m+m).determinant();
   Eigen::Matrix<NT,s,1> v(3);
   v << 1, 2, 3;
-  
+
   std::cout << "compute dot" << std::endl;
   NT t=v.dot(v);
   v+=d*Eigen::Matrix<NT,s,1>(m*(t*v));
@@ -52,7 +52,7 @@ void check(){
 
 int main(){
   {
-    std::cout << "We use Eigen " 
+    std::cout << "We use Eigen "
               << EIGEN_WORLD_VERSION << "."
               << EIGEN_MAJOR_VERSION << "."
               << EIGEN_MINOR_VERSION << std::endl;
