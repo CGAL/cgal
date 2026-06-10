@@ -1,5 +1,7 @@
 namespace CGAL {
 
+namespace Feature_graph {
+
 /*!
 * \ingroup PkgFeatureGraphDetector
 *
@@ -34,29 +36,29 @@ struct Detect_sharp_features_on_labeled_image
   *   \cgalParamSectionBegin{sharpness_estimator}
   *     \cgalParamDescription{a functor model of `SharpnessEstimator`.
   *       See \ref PkgFeatureGraphSharpnessEstimator for available functors.}
-  *     \cgalParamDefault{`CGAL::Feature_graph::AmbrosioTortorelli_on_image(image).get_sharpness_functor()`}
+  *     \cgalParamDefault{`CGAL::Feature_graph::AmbrosioTortorelli_on_image(image).sharpness_functor()`}
   *   \cgalParamSectionEnd
   *   \cgalParamSectionBegin{regularization_parameters}
-  *     \cgalParamDescription{an instance of `CGAL::Regularization_parameters`.
+  *     \cgalParamDescription{an instance of `CGAL::Feature_graph::Regularization_parameters`.
   *       It describes the parameters for the regularization step.}
-  *     \cgalParamDefault{`CGAL::Regularization_parameters_on_image()`}
+  *     \cgalParamDefault{`CGAL::Feature_graph::Regularization_parameters_on_image()`}
   *   \cgalParamSectionEnd
   *   \cgalParamSectionBegin{do_optimize}
   *     \cgalParamDescription{a boolean indicating if the optimization step is called.}
   *     \cgalParamDefault{`true`}
   *   \cgalParamSectionEnd
   *   \cgalParamSectionBegin{optimization_parameters}
-  *     \cgalParamDescription{an instance of `CGAL::Optimization_parameters`.
+  *     \cgalParamDescription{an instance of `CGAL::Feature_graph::Optimization_parameters`.
   *       It describe the parameters for the optimization step.}
-  *     \cgalParamDefault{`CGAL::Optimization_parameters_on_image<>()`}
+  *     \cgalParamDefault{`CGAL::Feature_graph::Optimization_parameters_on_image<>()`}
   *   \cgalParamSectionEnd
   *   \cgalParamSectionBegin{point_to_element_output_map}
   *     \cgalParamDescription{an output property map that will be filled if supplied.
-    *     It allows to retrieve the surface element where a feature graph point is embedded.
+    *     It allows retrieving of the surface element where a feature graph point is embedded.
     *     It must be a model of `WritablePropertyMap`,
     *     so it must implement `put(output_pmap, point_index, element_index)`
-    *     where the key type is the point index type and the value type the element index type.
-    *     The element index correspond to surface element with the tag `CGAL::DimensionTag<2>`}
+    *     where the key type is the point index type of the feature graph, and the value type the element index type of the surface.
+    *     The element index correspond to a facet element with the tag `CGAL::DimensionTag<2>`}
   *     \cgalParamDefault{`parameters::default()`}
   *   \cgalParamSectionEnd
   * \cgalNamedParamsEnd
@@ -86,9 +88,9 @@ struct Detect_sharp_features_on_surface
   * \tparam Point_3 a model of `Kernel::Point_3`.
   * It defines the feature graph point type.
   *
-  * \tparam Surface a model of `FaceListGraph` that represents a surface mesh.
+  * \tparam PolygonMesh a model of `FaceListGraph` that represents a surface mesh.
   *
-  * \param surface the input surface
+  * \param pmesh a polygon mesh from where the sharp features are extracted.
   *
   * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
   * \cgalNamedParamsBegin
@@ -98,9 +100,9 @@ struct Detect_sharp_features_on_surface
   *     \cgalParamDefault{`CGAL::Feature_graph::Sharpness_estimator::Sharpness_estimator_on_surface(surface)`}
   *   \cgalParamSectionEnd
   *   \cgalParamSectionBegin{regularization_parameters}
-  *     \cgalParamDescription{an instance of `CGAL::Regularization_parameters`.
+  *     \cgalParamDescription{an instance of `CGAL::Feature_graph::Regularization_parameters`.
   *       It describes the parameters for the regularization step.}
-  *     \cgalParamDefault{`CGAL::Regularization_parameters_on_surface()`}
+  *     \cgalParamDefault{`CGAL::Feature_graph::Regularization_parameters_on_surface()`}
   *   \cgalParamSectionEnd
   *   \cgalParamSectionBegin{do_optimize}
   *     \cgalParamDescription{a boolean indicating if the optimization step is called.}
@@ -109,15 +111,15 @@ struct Detect_sharp_features_on_surface
   *   \cgalParamSectionBegin{optimization_parameters}
   *     \cgalParamDescription{an instance of `Optimization_parameters`.
   *     It describe the parameters for the optimization step.}
-  *     \cgalParamDefault{`CGAL::Optimization_parameters_on_surface<>()`}
+  *     \cgalParamDefault{`CGAL::Feature_graph::Optimization_parameters_on_surface<>()`}
   *   \cgalParamSectionEnd
   *   \cgalParamSectionBegin{point_to_element_output_map}
   *     \cgalParamDescription{an output property map that will be filled if supplied.
-  *     It allows to retrieve the surface element where a feature graph point is embedded.
+  *     It allows retrieving of the surface element where a feature graph point is embedded.
   *     It must be a model of `WritablePropertyMap`,
   *     so it must implement `put(output_pmap, point_index, element_index)`
-  *     where the key type is the point index type and the value type the element index type.
-  *     The element index correspond to surface element with the tag `CGAL::DimensionTag<2>`}
+    *     where the key type is the point index type of the feature graph, and the value type the element index type of the surface.
+    *     The element index correspond to a facet element with the tag `CGAL::DimensionTag<2>`}
   *     \cgalParamDefault{`parameters::default()`}
   *   \cgalParamSectionEnd
   * \cgalNamedParamsEnd
@@ -125,8 +127,10 @@ struct Detect_sharp_features_on_surface
   * \returns a graph model of `VertexAndEdgeListGraph`
   * containing the constructed features.
   */
-  template<typename Point_3, typename Surface, typename CGAL_NP_TEMPLATE_PARAMETERS>
-  unspecified_type operator()(const Surface& surface, const CGAL_NP_CLASS& np = parameters::default_values()) const;
+  template<typename Point_3, typename PolygonMesh, typename CGAL_NP_TEMPLATE_PARAMETERS>
+  unspecified_type operator()(const PolygonMesh& pmesh, const CGAL_NP_CLASS& np = parameters::default_values()) const;
 };
+
+} /* namespace Feature_graph */
 
 } /* namespace CGAL */

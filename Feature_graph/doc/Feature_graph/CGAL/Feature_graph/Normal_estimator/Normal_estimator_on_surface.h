@@ -34,12 +34,12 @@ public:
   /*!
   * Constructor that pre-computes the normals on the surface.
   *
-  * \tparam Surface a model of `FaceListGraph` that represents a surface mesh.
+  * \tparam PolygonMesh a model of `FaceListGraph` that represents a surface mesh.
   *
-  * \param surface the surface where the normals are evaluated.
+  * \param pmesh the surface where the normals are evaluated.
   */
-  template <typename Surface>
-  Normal_estimator_on_surface(const Surface& surface);
+  template <typename PolygonMesh>
+  Normal_estimator_on_surface(const PolygonMesh& pmesh);
 
   /// @}
 
@@ -47,11 +47,12 @@ public:
   /// @{
 
   /*!
-  * returns the normal vector of the surface element described by a type and an index.
+  * returns the normal vector of the surface element identified by a dimension and an index.
   *
   * \tparam DimensionTag a tag that represent the element type.
   *         Can be `CGAL::Dimension_tag<0>`, `CGAL::Dimension_tag<1>` or `CGAL::Dimension_tag<2>`
-  * \tparam Index the type of index of the element to evaluate.
+  * \tparam Index the type of index used to identify the element to evaluate,
+  * which can be a vertex, an edge, or a facet according to the DimesionTag.
   *
   * \param element_index the index of the element to evaluate.
   */

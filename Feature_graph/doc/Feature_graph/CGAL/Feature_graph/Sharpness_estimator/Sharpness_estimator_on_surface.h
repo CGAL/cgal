@@ -19,7 +19,7 @@ public:
   /// @{
 
   /*!
-  * The type of of the sharpness value.
+  * The type of the sharpness value.
   */
   typedef double Sharpness_value_type;
 
@@ -31,16 +31,16 @@ public:
   /*!
   * Constructor that pre-computes the normals on the surface.
   *
-  * \tparam Surface a model of `FaceListGraph` that represents a `PolygonMesh`.
+  * \tparam PolygonMesh a model of `FaceListGraph` that represents a surface.
   * \tparam FT a model of `RealEmbeddable`
   *
-  * \param surface the surface where the normals are evaluated.
+  * \param pmesh the surface where the normals are evaluated.
   * \param selection_threshold a threshold on the sharpness value.
   *     Elements with a sharpness value lower than this threshold are considered flat
   *     and will be given a negative value.
   */
-  template <typename Surface, typename FT = Sharpness_value_type>
-  Sharpness_estimator_on_surface(const Surface& surface, const FT& selection_threshold);
+  template <typename PolygonMesh, typename FT = Sharpness_value_type>
+  Sharpness_estimator_on_surface(const PolygonMesh& pmesh, const FT& selection_threshold);
 
   /// @}
 
@@ -52,7 +52,8 @@ public:
   *
   * \tparam DimensionTag a tag that represent the element type.
   *         Can be `CGAL::Dimension_tag<0>`, `CGAL::Dimension_tag<1>` or `CGAL::Dimension_tag<2>`
-  * \tparam Index the type of index of the element to evaluate.
+  * \tparam Index the type of index used to identify the element to evaluate,
+  * which can be a vertex, an edge, or a facet according to the DimesionTag.
   *
   * \param element_index the index of the element to evaluate.
   */

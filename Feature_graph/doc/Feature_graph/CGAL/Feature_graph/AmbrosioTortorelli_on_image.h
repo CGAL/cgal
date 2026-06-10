@@ -62,11 +62,11 @@ public:
   /*!
   * returns the functor that allows to retrieve the sharpness values.
   */
-  Sharpness_functor get_sharpness_functor() const;
+  Sharpness_functor sharpness_functor() const;
   /*!
   * returns the functor that allows to retrieve the normals.
   */
-  Normal_functor get_normal_functor() const;
+  Normal_functor normal_functor() const;
 
   /// @}
 };

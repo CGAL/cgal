@@ -41,7 +41,8 @@ typedef unspecified_type Sharpness_value_type;
 *
 * \tparam DimensionTag a tag that represent the element type.
 *         Can be `CGAL::Dimension_tag<0>`, `CGAL::Dimension_tag<1>` or `CGAL::Dimension_tag<2>`
-* \tparam Index the type of index of the element to evaluate.
+* \tparam Index the type of index used to identify the element to evaluate,
+* which can be a vertex, an edge, or a facet according to the DimesionTag.
 *
 * \param element_index the index of the element to evaluate.
 */

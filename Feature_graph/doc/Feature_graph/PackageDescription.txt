@@ -66,15 +66,15 @@ Secondary concepts:
 
 \cgalCRPSection{Feature graph creation functors}
 
-- `CGAL::Detect_sharp_features_on_labeled_image()`
-- `CGAL::Detect_sharp_features_on_surface()`
+- `CGAL::Feature_graph::Detect_sharp_features_on_labeled_image()`
+- `CGAL::Feature_graph::Detect_sharp_features_on_surface()`
 
 \cgalCRPSection{Parameter classes}
 
-- `CGAL::Regularization_parameters_on_image`
-- `CGAL::Regularization_parameters_on_surface`
-- `CGAL::Optimization_parameters_on_image`
-- `CGAL::Optimization_parameters_on_surface`
+- `CGAL::Feature_graph::Regularization_parameters_on_image`
+- `CGAL::Feature_graph::Regularization_parameters_on_surface`
+- `CGAL::Feature_graph::Optimization_parameters_on_image`
+- `CGAL::Feature_graph::Optimization_parameters_on_surface`
 
 \cgalCRPSection{Sharpness estimators}
 
