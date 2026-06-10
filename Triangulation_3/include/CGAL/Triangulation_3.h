@@ -951,6 +951,16 @@ public:
     }
   }
 
+  template <typename Vertex_descriptor,
+            typename = std::enable_if_t<false == std::is_same_v<Vertex_handle, vertex_descriptor> &&
+                                        std::is_convertible_v<Vertex_descriptor, vertex_descriptor>
+                                       >
+           >
+  const Point& point(Vertex_descriptor v) const
+  {
+    return tds().point(v);
+  }
+
   auto geometry(Cell_handle c) const { return tetrahedron(c); }
   auto geometry(const Facet& f) const { return triangle(f); }
   auto geometry(const Edge& e) const { return segment(e); }
@@ -971,6 +981,18 @@ public:
   {
     return is_infinite(e.first, e.second, e.third);
   }
+
+
+  template <typename VertexDescriptor,
+            typename = std::enable_if_t<false == std::is_same_v<Vertex_handle, vertex_descriptor> &&
+                                        std::is_convertible_v<VertexDescriptor, vertex_descriptor>
+                                       >
+           >
+  bool is_infinite(VertexDescriptor v) const
+  {
+    return v == VertexDescriptor(std::size_t(0)); // AF: shall we have this convention
+  }
+
 
   // QUERIES
   bool is_vertex(const Point& p, Vertex_handle& v) const;

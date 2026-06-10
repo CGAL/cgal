@@ -741,16 +741,69 @@ public:
                                                         OutputItCells fit);
 
 private:
-  Bounded_side
-  side_of_sphere(Vertex_handle v0, Vertex_handle v1,
-                 Vertex_handle v2, Vertex_handle v3,
-                 const Point& p, bool perturb) const;
+
+
+template <typename VertexDescriptor,
+          typename = std::enable_if_t<false == std::is_same_v<Vertex_handle, vertex_descriptor> &&
+                                      std::is_convertible_v<VertexDescriptor, vertex_descriptor>
+                                     >
+           >
+Bounded_side
+side_of_sphere(VertexDescriptor v0, VertexDescriptor v1,
+               VertexDescriptor v2, VertexDescriptor v3,
+               const Point& p, bool perturb) const
+
+{
+  CGAL_precondition(dimension() == 3);
+
+  if(is_infinite(v0))
+  {
+    Orientation o = orientation(point(v2), point(v1), point(v3), p);
+    if(o != COPLANAR)
+      return Bounded_side(o);
+
+    return coplanar_side_of_bounded_circle(point(v2), point(v1), point(v3), p, perturb);
+  }
+
+  if(is_infinite(v1))
+  {
+    Orientation o = orientation(point(v2), point(v3), point(v0), p);
+    if(o != COPLANAR)
+      return Bounded_side(o);
+
+    return coplanar_side_of_bounded_circle(point(v2), point(v3), point(v0), p, perturb);
+  }
+
+  if(is_infinite(v2))
+  {
+    Orientation o = orientation(point(v1), point(v0), point(v3), p);
+    if(o != COPLANAR)
+      return Bounded_side(o);
+
+    return coplanar_side_of_bounded_circle(point(v1), point(v0), point(v3), p, perturb);
+  }
+
+  if(is_infinite(v3))
+  {
+    Orientation o = orientation(point(v0), point(v1), point(v2), p);
+    if(o != COPLANAR)
+      return Bounded_side(o);
+
+    return coplanar_side_of_bounded_circle(point(v0), point(v1), point(v2), p, perturb);
+  }
+
+  return static_cast<Bounded_side>(side_of_oriented_sphere(point(v0), point(v1), point(v2), point(v3), p, perturb));
+}
+
+
+
 public:
   // Queries
   Bounded_side side_of_sphere(Cell_handle c, const Point& p, bool perturb = false) const
   {
-    return side_of_sphere(c->vertex(0), c->vertex(1),
-                          c->vertex(2), c->vertex(3), p, perturb);
+    cell_descriptor cd = tds().to_cell_descriptor(c);
+    return side_of_sphere(tds().vertex(cd,0), tds().vertex(cd,1),
+                          tds().vertex(cd,2), tds().vertex(cd,3), p, perturb);
   }
 
   Bounded_side side_of_circle(const Facet& f, const Point& p, bool perturb = false) const
@@ -1488,6 +1541,7 @@ coplanar_side_of_bounded_circle(const Point& p0, const Point& p1,
   return Bounded_side(-local); //ON_UNBOUNDED_SIDE;
 }
 
+/*
 template < class Gt, class Tds, class Lds >
 Bounded_side
 Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
@@ -1535,6 +1589,8 @@ side_of_sphere(Vertex_handle v0, Vertex_handle v1,
 
   return static_cast<Bounded_side>(side_of_oriented_sphere(point(v0), point(v1), point(v2), point(v3), p, perturb));
 }
+*/
+
 
 template < class Gt, class Tds, class Lds >
 Bounded_side

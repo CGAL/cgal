@@ -161,7 +161,7 @@ namespace internal { namespace TDS_3{
       return -1; // Not found
     }
 
-    int index(Vertex_index vi) const
+    int index(const Vertex_index& vi) const
     {
       for (int i = 0; i < 4; ++i) {
         if (vi == storage().ivertices[i]) {
@@ -332,7 +332,7 @@ namespace internal { namespace TDS_3{
       : tds_(nullptr), index_()
     {}
 
-    Vertex(TDS_3* tds, Vertex_index index)
+    Vertex(TDS_3* tds, const Vertex_index& index)
       : tds_(tds), index_(index)
     {}
 
@@ -1201,12 +1201,12 @@ namespace CGAL {
       return {cell_handle(f.first), f.second};
     }
 
-    Cell_handle cell_handle(cell_descriptor index) const
+    Cell_handle cell_handle(const cell_descriptor& index) const
     {
       return Cell_handle{const_cast<Self*>(this), index};
     }
 
-    Vertex_handle vertex_handle(vertex_descriptor index) const
+    Vertex_handle vertex_handle(const vertex_descriptor& index) const
     {
       return Vertex_handle{const_cast<Self*>(this), index};
     }
@@ -1304,7 +1304,7 @@ namespace CGAL {
       }
     }
 
-    Cell_data& tds_data(Cell_index ci) const
+    Cell_data& tds_data(const Cell_index& ci) const
     {
       return cell_tds_data_pmap()[ci];
     }
@@ -1314,28 +1314,28 @@ namespace CGAL {
       return tds_data(ch.idx());
     }
 
-    Vertex_index vertex(Cell_index ci, int i) const
+    Vertex_index vertex(const Cell_index& ci, int i) const
     {
       return cell_storage()[ci].ivertices[i];
     }
 
-    void set_vertex(Cell_index ci, int i, Vertex_index vi)
+    void set_vertex(const Cell_index& ci, int i, Vertex_index vi)
     {
       cell_storage()[ci].ivertices[i] = vi;
     }
 
-    Cell_index neighbor(Cell_index ci, int i) const
+    Cell_index neighbor(const Cell_index& ci, int i) const
     {
       return cell_storage()[ci].ineighbors[i];
     }
 
-    void set_neighbor(Cell_index ci, int i, Cell_index ni)
+    void set_neighbor(const Cell_index& ci, int i, const Cell_index& ni)
     {
       cell_storage()[ci].ineighbors[i] = ni;
     }
 
     std::pair<Cell_index, int>
-    mirror_facet(Cell_index ci, int i) const
+    mirror_facet(const Cell_index& ci, int i) const
     {
       auto nd = cell_storage()[ci].ineighbors[i];
       int ni = -1;
@@ -1362,7 +1362,7 @@ namespace CGAL {
       return mirror_facet(f.first, f.second);
     }
 
-    Facet facet(Cell_index ci, int i) const
+    Facet facet(const Cell_index& ci, int i) const
     {
       return {cell_handle(ci), i};
     }
@@ -1387,7 +1387,7 @@ namespace CGAL {
       return Cell_handle{this, cell_container().create(this)};
     }
 
-    Cell_index create_cell(Cell_index)
+    Cell_index create_cell(const Cell_index&)
     {
       return cell_container().create(this);
     }
@@ -1414,8 +1414,8 @@ namespace CGAL {
     // AF:  What about the equivalent to
     // https://doc.cgal.org/latest/TDS_3/classTriangulationDataStructure__3.html#a1432860206073c24ca43dbbdfb13b26e
 
-    Cell_index create_cell(Vertex_index vi0, Vertex_index vi1,
-                           Vertex_index vi2, Vertex_index vi3)
+    Cell_index create_cell(const Vertex_index& vi0, const Vertex_index& vi1,
+                           const Vertex_index& vi2, const Vertex_index& vi3)
     {
       Cell_index ci = create_cell_index();
       auto& storage = cell_storage()[ci];
