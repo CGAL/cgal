@@ -57,16 +57,33 @@ void test_types()
   typedef std::vector<int>                                            Polygon_type_2;
   typedef std::basic_string<int>                                      Polygon_type_3;
 
-  read<Point_type_1, Polygon_type_1>("data/cube.stl", 8, 12, true);
-  read<Point_type_1, Polygon_type_2>("data/triangle.stl", 3, 1);
+  auto test_all_combinations = [](const char* fname, std::size_t v, std::size_t f,
+                                  bool is_binary = false, bool should_fail = false)
+  {
+    read<Point_type_1, Polygon_type_1>(fname, v, f, is_binary, should_fail);
+    read<Point_type_1, Polygon_type_2>(fname, v, f, is_binary, should_fail);
+    read<Point_type_1, Polygon_type_3>(fname, v, f, is_binary, should_fail);
 
-  read<Point_type_1, Polygon_type_3>("data/ascii-tetrahedron.stl", 4, 4);
-  read<Point_type_2, Polygon_type_1>("data/binary-tetrahedron-nice-header.stl", 4, 4, true);
-  read<Point_type_2, Polygon_type_2>("data/binary-tetrahedron-non-standard-header-1.stl", 4, 4, true);
-  read<Point_type_2, Polygon_type_3>("data/binary-tetrahedron-non-standard-header-2.stl", 4, 4, true);
-  read<Point_type_3, Polygon_type_1>("data/binary-tetrahedron-non-standard-header-3.stl", 4, 4, true);
-  read<Point_type_3, Polygon_type_2>("data/binary-tetrahedron-non-standard-header-4.stl", 4, 4, true);
-  read<Point_type_3, Polygon_type_3>("data/binary-tetrahedron-non-standard-header-5.stl", 4, 4, true);
+    read<Point_type_2, Polygon_type_1>(fname, v, f, is_binary, should_fail);
+    read<Point_type_2, Polygon_type_2>(fname, v, f, is_binary, should_fail);
+    read<Point_type_2, Polygon_type_3>(fname, v, f, is_binary, should_fail);
+
+    read<Point_type_3, Polygon_type_1>(fname, v, f, is_binary, should_fail);
+    read<Point_type_3, Polygon_type_2>(fname, v, f, is_binary, should_fail);
+    read<Point_type_3, Polygon_type_3>(fname, v, f, is_binary, should_fail);
+  };
+
+  test_all_combinations("data/cube.stl", 8, 12, true);
+  test_all_combinations("data/triangle.stl", 3, 1);
+
+  test_all_combinations("data/ascii-tetrahedron.stl", 4, 4);
+
+  test_all_combinations("data/binary-tetrahedron-nice-header.stl", 4, 4, true);
+  test_all_combinations("data/binary-tetrahedron-non-standard-header-1.stl", 4, 4, true);
+  test_all_combinations("data/binary-tetrahedron-non-standard-header-2.stl", 4, 4, true);
+  test_all_combinations("data/binary-tetrahedron-non-standard-header-3.stl", 4, 4, true);
+  test_all_combinations("data/binary-tetrahedron-non-standard-header-4.stl", 4, 4, true);
+  test_all_combinations("data/binary-tetrahedron-non-standard-header-5.stl", 4, 4, true);
 }
 
 void test_6374()
