@@ -29,15 +29,20 @@
 // Just check that it all compiles.
 template <class NT, int s>
 void check_(){
+  std::cout << "Checking with NT = " << typeid(NT).name() << " and size = " << s << "\n";
   Eigen::Matrix<NT,s,s> m(3,3);
   m << 1, 2, 3, 4, 5, 6, 7, 8, 10;
+  std::cout << "compute determinant" << std::endl;
   NT d=(m+m).determinant();
   Eigen::Matrix<NT,s,1> v(3);
   v << 1, 2, 3;
+  
+  std::cout << "compute dot" << std::endl;
   NT t=v.dot(v);
   v+=d*Eigen::Matrix<NT,s,1>(m*(t*v));
   std::ptrdiff_t si=v.size();
   CGAL_USE(si);
+  std::cout << "done" << std::endl;
 }
 template <class NT>
 void check(){
@@ -47,6 +52,10 @@ void check(){
 
 int main(){
   {
+    std::cout << "We use Eigen " 
+              << EIGEN_WORLD_VERSION << "."
+              << EIGEN_MAJOR_VERSION << "."
+              << EIGEN_MINOR_VERSION << std::endl;
     typedef CGAL::Interval_nt<true> I1;
     I1::Protector p1;
     check<I1>();
