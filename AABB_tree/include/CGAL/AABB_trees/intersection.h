@@ -24,6 +24,8 @@
 
 namespace CGAL::AABB_trees {
 
+  /// \addtogroup PkgAABBTreeRef
+  ///
   /// \brief Tests whether two AABB trees contain intersecting primitives.
   ///
   /// Returns `true` if at least one primitive of `tree1` intersects
@@ -39,6 +41,8 @@ namespace CGAL::AABB_trees {
     return traversal_traits.is_intersection_found();
   }
 
+  /// \addtogroup PkgAABBTreeRef
+  ///
   /// \brief Computes all intersecting primitive pairs between two AABB trees.
   ///
   /// Traverses both trees and outputs all pairs of primitives that intersect.

@@ -168,12 +168,6 @@ handle.
 
 \cgalExample{AABB_tree/AABB_polyhedron_facet_distance_example.cpp}
 
-\subsection aabb_tree_examples_3 Intersections of two trees
-
-In the following example, we compute all the intersections between two tetrahedron.
-
-\cgalExample{AABB_tree/AABB_intersection_example.cpp}
-
 \subsection aabb_tree_examples_4 Tree of Segments for Intersection and Distance Queries
 
 In the following example the segments are stored into a list, and the
@@ -218,6 +212,14 @@ and `AABBPrimitive::reference_point()`) required by the primitive concept. In
 triangle set stored through two arrays: one array of points and one
 array of indices which refer to the point array. Here also the
 primitive internally uses a `boost::iterator_adaptor`.
+
+\subsection aabb_tree_examples_9 Intersections of two trees
+
+In the following example, we compute all the intersections between two tetrahedron. The tetrahedron
+are stored as a vector of `Triangle_3`. We first compute if the tetrahedron do intersect and then we
+draw the indices of the intersecting triangle.
+
+\cgalExample{AABB_tree/AABB_intersection_example.cpp}
 
 \section aabb_tree_perf Performances
 
