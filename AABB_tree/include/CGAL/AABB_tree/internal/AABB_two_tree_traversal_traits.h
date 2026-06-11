@@ -65,10 +65,14 @@ public:
   // If true, the next step of traversal continue on A, if false, the next step of traversal is on B
   template<typename Node_A, typename Node_B>
   bool prefer_A_for_next_step(const Node_A& node_a, const Node_B& node_b, const std::size_t&, const std::size_t&) const {
+  #if 1
     auto sq_diag = [](const Bbox_3 &b){
       return (b.xmax()-b.xmin())*(b.xmax()-b.xmin()) + (b.ymax()-b.ymin())*(b.ymax()-b.ymin()) + (b.zmax()-b.zmin())*(b.zmax()-b.zmin());
     };
     return sq_diag(node_a.bbox()) > sq_diag(node_b.bbox());
+  #else
+    return false;
+  #endif
   }
 
   void intersection(const Primitive1& primitive1, const Node2& node2, std::size_t nb_primitives_2)
@@ -184,7 +188,20 @@ public:
   {}
 
   bool go_further() const {
-    return !m_is_found;;
+    return !m_is_found;
+  }
+
+  // If true, the next step of traversal continue on A, if false, the next step of traversal is on B
+  template<typename Node_A, typename Node_B>
+  bool prefer_A_for_next_step(const Node_A& node_a, const Node_B& node_b, const std::size_t&, const std::size_t&) const {
+  #if 1
+    auto sq_diag = [](const Bbox_3 &b){
+      return (b.xmax()-b.xmin())*(b.xmax()-b.xmin()) + (b.ymax()-b.ymin())*(b.ymax()-b.ymin()) + (b.zmax()-b.zmin())*(b.zmax()-b.zmin());
+    };
+    return sq_diag(node_a.bbox()) > sq_diag(node_b.bbox());
+  #else
+    return false;
+  #endif
   }
 
   void intersection(const Primitive1& primitive1, const Node2& node2, std::size_t nb_primitives_2)
