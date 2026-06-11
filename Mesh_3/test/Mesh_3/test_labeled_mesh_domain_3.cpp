@@ -62,6 +62,10 @@ struct LM3_tester
     test_domain(Sphere_3(CGAL::ORIGIN, 4.));
     test_domain(CGAL::Bbox_3(-2.,-2.,-2., 2.,2.,2.));
     test_domain(Iso_cuboid_3(Point_3(-2.,-2.,-2.), Point_3(2.,2.,2.)));
+
+    // Illinois method tests (via create_implicit_mesh_domain)
+    test_illinois_intersection(Sphere_3(CGAL::ORIGIN, 4.));
+    test_illinois_intersection(CGAL::Bbox_3(-2.,-2.,-2., 2.,2.,2.));
   }
 
 private:
@@ -249,6 +253,103 @@ private:
       Index ii = std::get<1>(i);
       assert(std::get_if<Subdomain_index>(&ii));
       assert(std::get<2>(i) == 0);
+    }
+  }
+
+  // Test the Illinois method path activated via create_implicit_mesh_domain
+  template <class BoundingShape>
+  void test_illinois_intersection(const BoundingShape& bounding_shape) const
+  {
+    typedef typename Mesh_domain::Construct_intersection Construct_intersection;
+    typedef typename Mesh_domain::Intersection Intersection;
+    typedef typename Mesh_domain::Surface_patch_index Surface_patch_index;
+    typedef typename Mesh_domain::Index Index;
+    typedef typename Mesh_domain::Segment_3 Segment_3;
+    typedef typename K::Compute_squared_distance_3 Compute_squared_distance_3;
+
+    Compute_squared_distance_3 squared_distance = K().compute_squared_distance_3_object();
+
+    // create_implicit_mesh_domain stores the continuous function,
+    // activating the Illinois method path
+    namespace p = CGAL::parameters;
+    Mesh_domain domain = Mesh_domain::create_implicit_mesh_domain
+      (p::function = &sphere_function,
+       p::bounding_object = bounding_shape,
+       p::relative_error_bound = FT(1e-3));
+
+    Construct_intersection construct_intersection = domain.construct_intersection_object();
+
+    // Test 1: Axis-aligned segment through sphere surface at (1, 0, 0)
+    {
+      Segment_3 s(Point_3(CGAL::ORIGIN), Point_3(1.5, 0., 0.));
+      Intersection i = construct_intersection(s);
+      Point_3 result = std::get<0>(i);
+      Index ii = std::get<1>(i);
+      assert(std::get_if<Surface_patch_index>(&ii));
+      assert(std::get<2>(i) == 2);
+
+      // Result should be close to the exact intersection (1, 0, 0)
+      FT sd = squared_distance(result, Point_3(1., 0., 0.));
+      assert(sd < FT(1e-4));
+    }
+
+    // Test 2: Diagonal segment through sphere surface at (1,1,1)/sqrt(3)
+    {
+      FT inv_sqrt3 = FT(1.0 / std::sqrt(3.0));
+      Segment_3 s(Point_3(CGAL::ORIGIN), Point_3(2. * inv_sqrt3, 2. * inv_sqrt3, 2. * inv_sqrt3));
+      Intersection i = construct_intersection(s);
+      Point_3 result = std::get<0>(i);
+      Index ii = std::get<1>(i);
+      assert(std::get_if<Surface_patch_index>(&ii));
+      assert(std::get<2>(i) == 2);
+
+      // Result should be close to (inv_sqrt3, inv_sqrt3, inv_sqrt3)
+      Point_3 expected(inv_sqrt3, inv_sqrt3, inv_sqrt3);
+      FT sd = squared_distance(result, expected);
+      assert(sd < FT(1e-4));
+    }
+
+    // Test 3: Segment entirely outside — no intersection
+    {
+      Segment_3 s(Point_3(1.5, 1.5, 0.), Point_3(1.5, 0., 0.));
+      Intersection i = construct_intersection(s);
+      Index ii = std::get<1>(i);
+      assert(std::get_if<typename Mesh_domain::Subdomain_index>(&ii));
+      assert(std::get<2>(i) == 0);
+    }
+
+    // Test 3b: Both endpoints inside sphere — no label change, early return
+    // before Illinois dispatch
+    {
+      Segment_3 s(Point_3(CGAL::ORIGIN), Point_3(0.3, 0., 0.));
+      Intersection i = construct_intersection(s);
+      Index ii = std::get<1>(i);
+      assert(std::get_if<typename Mesh_domain::Subdomain_index>(&ii));
+      assert(std::get<2>(i) == 0);
+    }
+
+    // Test 4: Consistency — Illinois result should have the same surface
+    // patch index as bisection (both bracket the same label change)
+    {
+      // Bisection domain (label-only, no continuous function)
+      Function f_sphere(&sphere_function);
+      Function_wrapper wrapper(f_sphere);
+      Mesh_domain bisection_domain(wrapper, bounding_shape,
+                                   CGAL::parameters::relative_error_bound(FT(1e-3)));
+      Construct_intersection bisect_intersect = bisection_domain.construct_intersection_object();
+
+      Segment_3 s(Point_3(CGAL::ORIGIN), Point_3(1.5, 0., 0.));
+      Intersection i_illinois = construct_intersection(s);
+      Intersection i_bisection = bisect_intersect(s);
+
+      // Both should find a valid intersection with dimension 2
+      assert(std::get<2>(i_illinois) == 2);
+      assert(std::get<2>(i_bisection) == 2);
+
+      // Same surface patch index
+      Surface_patch_index spi_ill = std::get<Surface_patch_index>(std::get<1>(i_illinois));
+      Surface_patch_index spi_bis = std::get<Surface_patch_index>(std::get<1>(i_bisection));
+      assert(spi_ill == spi_bis);
     }
   }
 };
