@@ -630,7 +630,11 @@ public:
 
   };
 
+  #ifndef CGAL_INSERT_IN_SMALL_HOLE_BIS
   static constexpr int maximal_nb_of_facets_of_small_hole = 128;
+  #else
+  static constexpr int maximal_nb_of_facets_of_small_hole = 60;
+  #endif
   typedef Small_unordered_map<Vertex_pair, Local_facet,
                               Small_pair_hash, maximal_nb_of_facets_of_small_hole *8> Vertex_pair_facet_map;
 
@@ -907,6 +911,7 @@ public:
       return insert_in_hole(cell_begin, cell_end, begin, i, create_vertex());
   }
 
+ #ifndef CGAL_INSERT_IN_SMALL_HOLE_BIS
   template <class Cells, class Facets>
   Vertex_handle _insert_in_small_hole(const Cells& cells, const Facets& facets)
   {
@@ -984,6 +989,95 @@ public:
     return vertex_handle(nv);
   }
 
+#else
+template <class Cells, class Facets>
+  Vertex_handle _insert_in_small_hole(const Cells& cells, const Facets& facets)
+  {
+    CGAL_assertion(facets.size() < (std::numeric_limits<unsigned char>::max)());
+    auto nv = this->create_vertex_descriptor();
+
+    typedef std::array<std::pair<cell_descriptor,int>,1024> Vertex_pair_facet_map_bis;
+    typedef std::array<std::pair<vertex_descriptor, vertex_descriptor>,256> Vertex_pairs;
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(Vertex_pair_facet_map_bis, vertex_pair_facet_map_bis);
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(Vertex_pairs, vertex_pairs);
+
+    // We first index the vertices on the boundary
+    for (unsigned char local_facet_index = 0, end = static_cast<unsigned char>(facets.size());
+         local_facet_index < end; ++local_facet_index) {
+      auto [c, i] = facets[local_facet_index];
+      for(int j = 0; j < 3; ++j){
+        auto v = vertex(c, vertex_triple_index(i, j));
+        aux(v)= -1;
+      }
+    }
+    int counter = 0;
+    for (unsigned char local_facet_index = 0, end = static_cast<unsigned char>(facets.size());
+         local_facet_index < end; ++local_facet_index) {
+      auto [c, i] = facets[local_facet_index];
+      for(int j = 0; j < 3; ++j){
+        auto v = vertex(c, vertex_triple_index(i, j));
+        if(aux(v)== -1){
+          aux(v) = counter++;
+          CGAL_assertion(aux(v) > 0);
+        }
+      }
+    }
+    CGAL_assertion(counter <= 32);
+
+    int edge_index = 0;
+    for (unsigned char local_facet_index = 0, end = static_cast<unsigned char>(facets.size());
+         local_facet_index < end; ++local_facet_index) {
+      auto [c, i] = facets[local_facet_index];
+      auto f = mirror_facet(c, i);
+      tds_data(f.first).clear(); // was on boundary
+      const auto u = vertex(f.first, vertex_triple_index(f.second, 0));
+      const auto v = vertex(f.first, vertex_triple_index(f.second, 1));
+      const auto w = vertex(f.first, vertex_triple_index(f.second, 2));
+      set_vertex_cell(u, f.first);
+      set_vertex_cell(v, f.first);
+      set_vertex_cell(w, f.first);
+      const auto nc = create_cell(v, u, w, nv);
+      set_vertex_cell(nv, nc);
+      set_neighbor(nc, 3, f.first);
+      set_neighbor(f.first, f.second, nc);
+
+      if(tds().aux(u) < tds().aux(v)){
+        vertex_pairs[edge_index]= std::make_pair(u,v);
+        ++edge_index;
+      }
+
+      if(tds().aux(v) < tds().aux(w)){
+        vertex_pairs[edge_index]= {v,w};
+        ++edge_index;
+      }
+
+      if(tds().aux(w) < tds().aux(u)){
+        vertex_pairs[edge_index]= {w,u};
+        ++edge_index;
+      }
+
+      vertex_pair_facet_map_bis[tds().aux(u)*32 + tds().aux(v)] = {nc,2};
+      vertex_pair_facet_map_bis[tds().aux(v)*32 + tds().aux(w)] = {nc,1};
+      vertex_pair_facet_map_bis[tds().aux(w)*32 + tds().aux(u)] = {nc,0};
+    }
+
+    for(int i=0; i < edge_index;++i){
+      auto [u, v] = vertex_pairs[i];
+      auto [c, cindex] = vertex_pair_facet_map_bis[tds().aux(u)*32 + tds().aux(v)];
+      auto [n, nindex] = vertex_pair_facet_map_bis[tds().aux(v)*32 + tds().aux(u)];
+
+      set_adjacency(c, cindex, n, nindex);
+    }
+
+  for(auto cd : cells){
+      tds_data(cd).clear(); // was in conflict
+    }
+
+    delete_cells(cells.begin(), cells.end());
+    return vertex_handle(nv);
+  }
+
+#endif
 
   //INSERTION
 

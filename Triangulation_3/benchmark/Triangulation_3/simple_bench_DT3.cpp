@@ -1,3 +1,4 @@
+// #define CGAL_SMALL_UNORDERED_MAP_STATS
 //#define CGAL_PROFILE
 //#define CGAL_USE_SSE2_FABS
 //#define CGAL_USE_SSE2_MAX

@@ -326,6 +326,9 @@ namespace internal { namespace TDS_3{
 
     struct Storage {
       Cell_index icell{};
+#ifdef CGAL_INSERT_IN_SMALL_HOLE_BIS
+      int aux;
+#endif
     };
 
     Vertex()
@@ -363,6 +366,12 @@ namespace internal { namespace TDS_3{
     decltype(auto) storage() const {
       return tds()->vertex_storage()[idx()];
     }
+
+#ifdef CGAL_INSERT_IN_SMALL_HOLE_BIS
+    int& aux() {
+      return storage().aux;
+    }
+#endif
 
     Cell_handle cell() const
     {
@@ -593,14 +602,14 @@ namespace internal { namespace TDS_3{
     }
 
     // Compatibility with OpenMesh handle
-    constexpr size_type idx() const {
+    constexpr const size_type& idx() const {
       return idx_;
     }
     constexpr size_type& idx() {
       return idx_;
     }
     // For convenience
-    constexpr size_type id() const {
+    constexpr const size_type& id() const {
       return idx_;
     }
     constexpr size_type& id() {
@@ -660,7 +669,7 @@ namespace internal { namespace TDS_3{
   }; // end class Index
 
   template <class T>
-  std::size_t hash_value(const Index<T>&  i)
+  constexpr std::size_t hash_value(const Index<T>&  i)
   {
     return i.id();
   }
@@ -1304,6 +1313,11 @@ namespace CGAL {
       }
     }
 
+
+#ifdef CGAL_INSERT_IN_SMALL_HOLE_BIS
+    int& aux(const Vertex_index& vi) { return vertex_storage()[vi].aux; }
+    int aux(const Vertex_index& vi) const { return vertex_storage()[vi].aux; }
+#endif
     Cell_data& tds_data(const Cell_index& ci) const
     {
       return cell_tds_data_pmap()[ci];
