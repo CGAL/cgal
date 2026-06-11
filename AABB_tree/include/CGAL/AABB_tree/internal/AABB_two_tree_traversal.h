@@ -34,6 +34,12 @@ void two_tree_traversal(const ::CGAL::AABB_node<AABBTraits_A>& node_A,
                         TwoTreeTraversalTraits& traversal_traits)
 {
   const std::size_t cutoff_parallel_call = 100000;
+  auto recursive_call = [](const auto &node_A, const auto &node_B, const std::size_t nb_primitives_A, const std::size_t nb_primitives_B, auto &traversal_traits){
+    if(traversal_traits.prefer_A_for_next_step(node_A, node_B, nb_primitives_A, nb_primitives_B))
+      two_tree_traversal< in_order, Concurrency_tag>(node_A, node_B, nb_primitives_A, nb_primitives_B, traversal_traits);
+    else
+      two_tree_traversal<!in_order, Concurrency_tag>(node_B, node_A, nb_primitives_B, nb_primitives_A, traversal_traits);
+  };
   switch(nb_primitives_A)
   {
   case 2:
@@ -60,7 +66,6 @@ void two_tree_traversal(const ::CGAL::AABB_node<AABBTraits_A>& node_A,
   }
   default:
   {
-    // TODO current strategy is we swap at each step. Try largest tree first or largest bbox first
     bool do_intersect_left  = traversal_traits.do_intersect(node_A.left_child(), node_B);
     bool do_intersect_right = traversal_traits.do_intersect(node_A.right_child(), node_B);
 #if CGAL_LINKED_WITH_TBB
@@ -70,26 +75,26 @@ void two_tree_traversal(const ::CGAL::AABB_node<AABBTraits_A>& node_A,
       {
         oneapi::tbb::task_group tg;
         tg.run([&]{
-                two_tree_traversal<!in_order, Concurrency_tag>(node_B, node_A.left_child(), nb_primitives_B, nb_primitives_A/2, traversal_traits);}
+                recursive_call(node_A.left_child(), node_B, nb_primitives_A/2, nb_primitives_B, traversal_traits);}
               );
-        two_tree_traversal<!in_order, Concurrency_tag>(node_B, node_A.right_child(), nb_primitives_B, nb_primitives_A-nb_primitives_A/2, traversal_traits);
+        recursive_call(node_A.right_child(), node_B, nb_primitives_A - nb_primitives_A/2, nb_primitives_B, traversal_traits);
         tg.wait();
       }
       else
       {
         if( do_intersect_left )
-          two_tree_traversal<!in_order>(node_B, node_A.left_child(), nb_primitives_B, nb_primitives_A/2, traversal_traits);
+          recursive_call(node_A.left_child(), node_B, nb_primitives_A/2, nb_primitives_B, traversal_traits);
         if( traversal_traits.go_further() && do_intersect_right )
-          two_tree_traversal<!in_order>(node_B, node_A.right_child(), nb_primitives_B, nb_primitives_A-nb_primitives_A/2, traversal_traits);
+          recursive_call(node_A.right_child(), node_B, nb_primitives_A - nb_primitives_A/2, nb_primitives_B, traversal_traits);
       }
     }
     else
 #endif
     {
       if( do_intersect_left )
-        two_tree_traversal<!in_order>(node_B, node_A.left_child(), nb_primitives_B, nb_primitives_A/2, traversal_traits);
+        recursive_call(node_A.left_child(), node_B, nb_primitives_A/2, nb_primitives_B, traversal_traits);
       if( traversal_traits.go_further() && do_intersect_right )
-        two_tree_traversal<!in_order>(node_B, node_A.right_child(), nb_primitives_B,  nb_primitives_A-nb_primitives_A/2, traversal_traits);
+        recursive_call(node_A.right_child(), node_B, nb_primitives_A - nb_primitives_A/2, nb_primitives_B, traversal_traits);
     }
   }} // switch end
 }

@@ -64,17 +64,20 @@ namespace CGAL::AABB_trees {
     CGAL::internal::AABB_tree::two_tree_traversal<Concurrency_tag>(tree1, tree2, traversal_traits);
   }
 
+  /// \addtogroup PkgAABBTreeRef
+  ///
   /// \brief Computes all self-intersecting primitive pairs in a single AABB tree.
   ///
-  /// \note This function is equivalent to calling:
-  ///       `all_intersected_primitives(tree, tree, out)`.
+  /// Intersections of a primitive with itself are not reported, and each intersecting
+  /// pair of distinct primitives is reported only once.
   template< typename Concurrency_tag = Sequential_tag,
             typename AABBTree,
             typename OutputIterator>
   void all_pairs_of_intersecting_primitives(const AABBTree &tree,
                                             OutputIterator out)
   {
-    all_pairs_of_intersecting_primitives<Concurrency_tag>(tree, tree, out);
+    CGAL::internal::AABB_tree::Listing_self_intersecting_primitives_traits traversal_traits(tree.traits(), out);
+    CGAL::internal::AABB_tree::two_tree_traversal<Concurrency_tag>(tree, tree, traversal_traits);
   }
 
 } // end namespace CGAL::AABB_trees

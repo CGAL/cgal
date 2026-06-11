@@ -62,6 +62,15 @@ public:
     return true;
   }
 
+  // If true, the next step of traversal continue on A, if false, the next step of traversal is on B
+  template<typename Node_A, typename Node_B>
+  bool prefer_A_for_next_step(const Node_A& node_a, const Node_B& node_b, const std::size_t&, const std::size_t&) const {
+    auto sq_diag = [](const Bbox_3 &b){
+      return (b.xmax()-b.xmin())*(b.xmax()-b.xmin()) + (b.ymax()-b.ymin())*(b.ymax()-b.ymin()) + (b.zmax()-b.zmin())*(b.zmax()-b.zmin());
+    };
+    return sq_diag(node_a.bbox()) > sq_diag(node_b.bbox());
+  }
+
   void intersection(const Primitive1& primitive1, const Node2& node2, std::size_t nb_primitives_2)
   {
     using WrapIterator = WrapOutputIterator<true, typename Primitive1::Id>;
@@ -86,6 +95,78 @@ public:
 private:
   const AABBTraits1& m_traits1;
   const AABBTraits2& m_traits2;
+  OutputIterator out;
+};
+
+template<typename AABBTraits, typename OutputIterator>
+class Listing_self_intersecting_primitives_traits
+{
+  typedef typename AABBTraits::Primitive Primitive;
+  typedef ::CGAL::AABB_node<AABBTraits> Node;
+
+  template<bool in_order, typename Value>
+  class WrapOutputIterator
+  {
+    Value first;
+    OutputIterator out;
+  public:
+    WrapOutputIterator(Value first_, OutputIterator out_): first(first_), out(out_){}
+
+    WrapOutputIterator& operator=(Value second){
+      if constexpr(in_order)
+        out = std::make_pair(first, second);
+      else
+        out = std::make_pair(second, first);
+      return *this;
+    }
+    WrapOutputIterator& operator*(){ return *this; }
+    WrapOutputIterator& operator++(){ ++out; return *this; }
+    WrapOutputIterator& operator++(int){ auto tmp = *this; ++out; return *this;  }
+    WrapOutputIterator& operator+(int d){ out += d; return *this; }
+  };
+
+public:
+  Listing_self_intersecting_primitives_traits(const AABBTraits& traits, OutputIterator out_)
+    : m_traits(traits), out(out_)
+  {}
+
+  bool go_further() const {
+    return true;
+  }
+
+  // If true, the next step of traversal continue on A, if false, the next step of traversal is on B
+  template<typename Node_A, typename Node_B>
+  bool prefer_A_for_next_step(const Node_A& node_a, const Node_B& node_b, const std::size_t&, const std::size_t&) const {
+    auto sq_diag = [](const Bbox_3 &b){
+      return (b.xmax()-b.xmin())*(b.xmax()-b.xmin()) + (b.ymax()-b.ymin())*(b.ymax()-b.ymin()) + (b.zmax()-b.zmin())*(b.zmax()-b.zmin());
+    };
+    return sq_diag(node_a.bbox()) > sq_diag(node_b.bbox());
+  }
+
+  void intersection(const Primitive& primitive1, const Node& node2, std::size_t nb_primitives_2)
+  {
+    // TODO Since we are in a symetrical case, maybe we can ignore this call
+    using WrapIterator = WrapOutputIterator<true, typename Primitive::Id>;
+    WrapIterator wrap_out(primitive1.id(), out);
+    Listing_distinct_primitive_traits<AABBTraits, WrapIterator> traits(wrap_out, m_traits);
+    node2.traversal( primitive1, traits, nb_primitives_2);
+  }
+
+  void intersection(const Node& node1, std::size_t nb_primitives_1, const Primitive& primitive2)
+  {
+    using WrapIterator= WrapOutputIterator<false, typename Primitive::Id>;
+    WrapIterator wrap_out(primitive2.id(), out);
+    Listing_distinct_primitive_traits<AABBTraits, WrapIterator> traits(wrap_out, m_traits);
+    node1.traversal( primitive2, traits, nb_primitives_1);
+  }
+
+  bool do_intersect(const Node& node1, const Node& node2) const
+  {
+    return do_overlap(node1.bbox(), node2.bbox());
+  }
+
+private:
+  const AABBTraits& m_traits;
   OutputIterator out;
 };
 
