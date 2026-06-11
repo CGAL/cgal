@@ -23,9 +23,10 @@ int main() {
   auto v3 = CGAL::Arrangement_on_curve_1::insert(arr, Kernel::FT(5.25));
 
   // Modify user-extended data fields on vertices
-  v1->data() = "Right Node";
-  v2->data() = "Left Node";
-  v3->data() = "Center Node";
+  auto v_data_map = arr.vertex_data_map();
+  put(v_data_map, v1, "Right Node");
+  put(v_data_map, v2, "Left Node");
+  put(v_data_map, v3, "Center Node");
 
   // Traverse and inspect the arrangement
   std::cout << "\nResulting Sorted Sequence along the 1D Line:\n";
@@ -33,7 +34,7 @@ int main() {
   auto e = arr.unbounded_left_edge();
   while (arr.has_right_vertex(e)) {
     auto v = arr.right_vertex(e);
-    std::cout << "  Vertex Point: (" << v->point() << ") | Extension ID: " << v->data() << "\n";
+    std::cout << "  Vertex Point: (" << get(v_pnt_map, v) << ") | Extension ID: " << get(v_data_map, v) << "\n";
     e = arr.right_edge(v);
   }
 
