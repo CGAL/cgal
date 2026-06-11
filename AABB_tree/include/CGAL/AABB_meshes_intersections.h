@@ -21,7 +21,7 @@
 #include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 
-#include <CGAL/AABB_intersections.h>
+#include <CGAL/AABB_trees/intersection.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 
 #include <CGAL/box_intersection_d.h>
@@ -378,7 +378,7 @@ void AABB_two_tree_self_intersections(const TriangleMesh &tm, OutputIterator out
 #endif
   using InternOutputIterator= std::back_insert_iterator<std::vector<std::pair<face_descriptor, face_descriptor>>>;
   std::vector<std::pair<face_descriptor, face_descriptor>> inter;
-  CGAL::all_intersected_primitives<Concurrency_tag>(tree, std::back_inserter(inter));
+  CGAL::AABB_trees::all_pairs_of_intersecting_primitives<Concurrency_tag>(tree, std::back_inserter(inter));
   for(const auto& [f_1, f_2]: inter)
     if(f_1 < f_2)
       if(Polygon_mesh_processing::internal::do_faces_intersect<GT>(f_1, f_2, tm, tm.points(), gt.construct_segment_3_object(), gt.construct_triangle_3_object(), gt.do_intersect_3_object()))
@@ -488,7 +488,7 @@ void meshes_intersections_callback(const TriangleMesh1 &tm1,
 
     using InternOutputIterator= std::back_insert_iterator<std::vector<std::pair<face_descriptor_1, face_descriptor_2>>>;
     tbb::concurrent_vector<std::pair<face_descriptor_1, face_descriptor_2>> inter;
-    CGAL::all_intersected_primitives<Concurrency_tag>(tree1, tree2, std::back_inserter(inter));
+    CGAL::AABB_trees::all_pairs_of_intersecting_primitives<Concurrency_tag>(tree1, tree2, std::back_inserter(inter));
     for(const auto& [f_1, f_2]: inter)
       callback(f_1, f_2);
   }
@@ -499,7 +499,7 @@ void meshes_intersections_callback(const TriangleMesh1 &tm1,
     tree2.template build();
     using InternOutputIterator= std::back_insert_iterator<std::vector<std::pair<face_descriptor_1, face_descriptor_2>>>;
     std::vector<std::pair<face_descriptor_1, face_descriptor_2>> inter;
-    CGAL::all_intersected_primitives<Concurrency_tag>(tree1, tree2, std::back_inserter(inter));
+    CGAL::AABB_trees::all_pairs_of_intersecting_primitives<Concurrency_tag>(tree1, tree2, std::back_inserter(inter));
     for(const auto& [f_1, f_2]: inter)
       callback(f_1, f_2);
   }

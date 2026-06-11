@@ -143,9 +143,11 @@ namespace CGAL {
     /// after one or more calls to `insert()`.
     /// This procedure is called implicitly at the first call to a query member function.
     /// An explicit call to `build()` must be made to ensure that the next call to
-    /// a query function will not trigger the construction of the data structure.
+    /// a query function will not trigger the construction of the data structure and/or
+    /// allow the tree to be built in parallel if supported.
+    /// `Concurrency_tag` enables sequential versus parallel algorithm. Possible values are Sequential_tag, Parallel_tag, and Parallel_if_available_tag.
     /// A call to \link AABBTraits::set_shared_data `AABBTraits::set_shared_data(t...)`\endlink
-    // is made using the internally stored traits.
+    /// is made using the internally stored traits.
     /// This procedure has a complexity of \cgalBigO{n log(n)}, where \f$n\f$ is the number of
     /// primitives of the tree.
     template<typename Concurrency_tag=Sequential_tag, typename ... T>

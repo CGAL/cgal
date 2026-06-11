@@ -23,10 +23,10 @@ triangles, or plane objects (planes, triangles) against sets of
 segments. An example of a distance query consists of finding the
 closest point from a point query to a set of triangles.
 
-Note that this component is not suited to the problem of finding all
-intersecting pairs of objects. We refer to the component
+This component solves the problem of finding all
+intersecting pairs of objects and achieves better perfomance than
 \ref chapterBoxIntersection "Intersecting Sequences of dD Iso-oriented Boxes"
-which can find all intersecting pairs of iso-oriented boxes.
+when using parallell execution.
 
 The AABB tree data structure takes as input an iterator range of
 geometric data, which is then converted into primitives. From these
@@ -109,6 +109,13 @@ For example if one is using `CGAL::AABB_traits` with a Kernel from \cgal,
 having degenerate triangles or segments in the AABB-tree will result in an undefined
 behavior or a crash.
 
+\section two_aabb_tree_interface Operation between two trees
+
+Given two AABB trees, the functions `CGAL::AABB_trees::do_intersect()` and
+`CGAL::AABB_trees::all_pairs_of_intersecting_primitives()` can be used to compute,
+respectively, whether the two sets intersect and the list of all
+intersecting object pairs.
+
 \section aabb_tree_examples Examples
 
 \subsection aabb_tree_examples_1 Tree of Triangles, for Intersection and Distance Queries
@@ -160,6 +167,12 @@ primitive id. The latter returns a pair composed of a point and a face
 handle.
 
 \cgalExample{AABB_tree/AABB_polyhedron_facet_distance_example.cpp}
+
+\subsection aabb_tree_examples_3 Intersections of two trees
+
+In the following example, we compute all the intersections between two tetrahedron.
+
+\cgalExample{AABB_tree/AABB_intersection_example.cpp}
 
 \subsection aabb_tree_examples_4 Tree of Segments for Intersection and Distance Queries
 

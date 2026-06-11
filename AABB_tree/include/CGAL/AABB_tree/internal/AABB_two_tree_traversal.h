@@ -15,10 +15,8 @@
 
 #include <CGAL/license/AABB_tree.h>
 
-
 #include <CGAL/AABB_tree/internal/AABB_node.h>
 #include <CGAL/AABB_tree/internal/AABB_traversal_traits.h>
-#include <optional>
 
 namespace CGAL {
 
