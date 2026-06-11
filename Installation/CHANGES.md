@@ -141,9 +141,11 @@ Release date: June 2026
 - Protection of sharp edges (also known as "feature line") is now significantly faster.
 
 ### [dD Triangulations](https://doc.cgal.org/6.2/Manual/packages.html#PkgTriangulations)
+
 - Computation of convex hulls in high dimensions is now significantly faster.
 
 ### [Convex Decomposition of Polyhedra](https://doc.cgal.org/6.2/Manual/packages.html#PkgConvexDecomposition3)
+
 - Added the function [`CGAL::approximate_convex_decomposition()`](https://doc.cgal.org/6.2/Convex_decomposition_3/group__PkgConvexDecomposition3Ref.html#ga98ed6393d56fc2eac2ad82a55af84b2f),
   which computes a set of convex volumes that cover an input mesh.
 
@@ -182,6 +184,7 @@ Release date: June 2026
   User visitors inheriting from the default visitors do not require any update.
 
 ### [Polygon Mesh Processing (Mesh Repair)](https://doc.cgal.org/6.2/Manual/packages.html#PkgPMPMeshRepair)
+
 - Added the named parameter `erase_policy` to [`CGAL::Polygon_mesh_processing::repair_polygon_soup()`](https://doc.cgal.org/6.2/PMP_Mesh_repair/group__PMP__combinatorial__repair__grp.html#ga3b35133783759402828325b91ab559cc) and
   [`CGAL::Polygon_mesh_processing::merge_duplicate_polygons_in_polygon_soup()`](https://doc.cgal.org/6.2/PMP_Mesh_repair/group__PMP__combinatorial__repair__grp.html#ga1f215926ed8794db827e2993d2960870).
   This parameter offers three policies: (i) erase all duplicates polygons,
@@ -2847,7 +2850,7 @@ Release date: May 2017
     sets based on the assumption that they sample a curve in 2D or a
     surface in 3D.
 
-### CGAL and the Boost Graph Library (BGL)
+### More changes to CGAL and the Boost Graph Library (BGL)
 
 - Add function `CGAL::convert_nef_polyhedron_to_polygon_mesh()` to
     convert a `Nef_polyhedron_3` to any model of the `MutableFaceGraph`
