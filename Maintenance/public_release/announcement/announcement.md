@@ -1,6 +1,6 @@
 The CGAL Open Source Project is pleased to announce the release 6.2 of CGAL, the Computational Geometry Algorithms Library.
 
-Besides fixes and general enhancement to existing packages, the following has changed since CGAL 6.1:
+Besides fixes and general enhancement to existing packages, the following has changed since [CGAL 6.1]:
 
 ### General Changes
 
@@ -162,3 +162,5 @@ Besides fixes and general enhancement to existing packages, the following has ch
 - Added new stream formatting capabilities for improved debugging and logging:
   - [`CGAL::IO::Basic_indenting_streambuf`](https://doc.cgal.org/6.2/Stream_support/classCGAL_1_1IO_1_1Basic__indenting__streambuf.html) and [`CGAL::IO::Basic_indenting_stream_guard`](https://doc.cgal.org/6.2/Stream_support/classCGAL_1_1IO_1_1Basic__indenting__stream__guard.html) for automatic indentation of output streams.
   - [`CGAL::IO::Basic_color_streambuf`](https://doc.cgal.org/6.2/Stream_support/classCGAL_1_1IO_1_1Basic__color__streambuf.html) and [`CGAL::IO::Basic_color_stream_guard`](https://doc.cgal.org/6.2/Stream_support/classCGAL_1_1IO_1_1Basic__color__stream__guard.html) for ANSI color support in terminal output.
+
+[CGAL 6.1]: https://github.com/CGAL/cgal/releases/tag/v6.1
