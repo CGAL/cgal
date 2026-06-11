@@ -1,0 +1,128 @@
+\mainpage User Manual
+\anchor Chapter_1D_Arrangements
+\anchor chapterArrangement_on_curve_1
+\cgalAutoToc
+
+\authors Efi Fogel
+
+\section aoc_sec-intro Introduction The package `Arrangement_on_curve_1` is designed for constructing, manipulating,
+and querying one-dimensional arrangements embedded along continuous curves referred to as *master curves*. A 1D
+arrangement offers an efficient mechanism to maintain ordered sequences of points across diverse geometric tracking
+scenarios.
+
+\subsection aoc_ssec-intro-sep Separation of Topology and Geometry Following standard \cgal architectural practices,
+this package strictly isolates the topological framework from the underlying coordinate geometry.
+- **Topology** describes how vertices and edges connect relative to one another (e.g., left/right adjacencies) without
+considering their structural positions.
+- **Geometry** encapsulates coordinate traits, mathematical predicates, and projection logic required to compute
+relative ordering along a trajectory curve.
+
+To optimize lifecycle safety and reference tracking during intensive geometric operations, the core arrangement
+structure handles its geometry traits via a shared smart pointer (`std::shared_ptr<const Geometry_traits_1>`). This
+allows sub-arrangements or output results to safely share identical geometric contexts with zero duplication overhead.
+
+\subsection aoc_ssec-intro-outline Outline
+This manual walks through the structural elements of basic 1D subdivisions, methods for traversing topology pools,
+techniques for point location, the requirements for writing custom geometry traits, and procedures for extending
+elements via property maps or overlay operations.
+
+\section aoc_sec-basic Basic Arrangements
+\subsection aoc_ssec-basic-rep Representation of Arrangements
+A 1D arrangement breaks a continuous track down into two alternating topological records:
+- **Vertices**: Represent 0-dimensional points embedded along the curve trajectory.
+- **Edges**: Represent 1-dimensional open intervals bounded by vertices on their left, right, or extending to infinity.
+
+The topology traits class maintains explicit constant-time $O(1)$ boundaries tracking pointers, `unbounded_left_edge`
+(spanning from $-\infty$) and `unbounded_right_edge` (spanning to $+\infty$), anchoring the outer limits of the
+arrangement track.
+
+\subsection aoc_ssec-basic-arr_class The Arrangement Class Template
+The primary interface is provided by the class template
+`CGAL::Arrangement_on_curve_1::Arrangement_on_curve_1<GeometryTraits_1, TopologyTraits>`.
+It exposes safe APIs for query evaluations while delegating memory container allocations,
+adjacency records updates, and property map indexing to the backend topology traits model.
+
+\subsection aoc_ssec-basic-traverse Traversing the Arrangement
+The arrangement can be traversed sequentially using descriptor iterators.
+Callers can query all vertices or edges globally via ranges:
+\code{.cpp}
+for (auto v_desc : arr.vertices()) {
+  // Access information using property maps...
+}
+\endcode
+
+Alternatively, neighbor-to-neighbor structural traversals can be performed in either direction along the chain using
+adjacent adjacency handle accessors like `left_edge(v)`, `right_edge(v)`, `left_vertex(e)`, and `right_vertex(e)`.
+
+\subsection aoc_ssec-basic-modify Modifying the Arrangement
+Arrangements can be dynamically built or modified up using primitive update methods.
+When an arrangement is entirely empty, it consists of a single unbounded edge representing the whole open line.
+Inserting the very first node point uses `insert_empty(p)`, which splits that single unbounded edge into a
+left-unbounded edge and a right-unbounded edge flanking the new vertex node.
+
+\subsection aoc_ssec-basic-insert Insertion Functions
+The arrangement class provides low-level topological construction modifiers to handle structured manual assembly
+along the frontier:
+- `insert_before(v_first, p)` inserts a new point strictly to the left of the current leftmost boundary node, extending
+the topology further toward $-\infty$.
+- `insert_after(v_last, p)` inserts a new point strictly to the right of the current rightmost boundary node, extending
+the topology further toward $+\infty$.
+- `split_edge(e, p)` subdivides an internal bounded or unbounded edge interval at the designated parameter coordinate
+position, introducing a new interior vertex.
+
+\section aoc_sec-queries Issuing Queries on an Arrangement
+Given a query coordinate point \f$p\f$, point location identifies where the point falls relative to the existing
+arrangement topology. The lookup returns a `Location_result` variant type. The query point evaluates to a
+`Vertex_descriptor` if it coincides exactly with an existing arrangement vertex, or an `Edge_descriptor` if it
+rests inside a bounded intermediate sub-curve or one of the two one-sided unbounded sub-curves.
+
+The package implements this search via a linear topological walk from left to right starting at
+`unbounded_left_edge()`, using the geometry traits functor to locate the precise cell containing the query point
+parameter.
+
+\section aoc_sec-free_funcs Free Functions
+\subsection aoc_ssec-free_insert Insertion Functions
+A high-level free function `insert(arr, p)` is provided to add points into the arrangement. This function first
+calls `locate(arr, p)` internally to find where the point falls. If the point already matches an existing vertex,
+the descriptor of that vertex is returned. Otherwise, the function invokes `insert_empty()`, `insert_before()`,
+`insert_after()`, or `split_edge()` as needed to safely update the topology.
+
+\subsection aoc_ssec-free_remove Removing Vertices and Edges
+A vertex can be removed from the arrangement using the free function `remove(arr, v)`. Removing a vertex removes
+its point node from the track and merges its left and right flanking edge intervals back into a single unified
+edge, preserving the overall topological continuity of the curve.
+
+\section aoc_sec-geom_traits The Geometry Traits
+\subsection aoc_ssec-geom_traits-concepts The Geometry Traits Concept
+A model of the geometry traits must satisfy the requirements of the `AocTraits_1` concept.
+It defines the types for geometric points (`Point_1`) and provides a factory function
+producing a `Compare_x_1` comparison functor. This functor must provide a strict linear
+ordering predicate, returning `SMALLER`, `EQUAL`, or `LARGER` when comparing two points
+along the curve's direction.
+
+\subsection aoc_ssec-geom_traits-models Models of the Geometry Traits Concepts
+The package provides four built-in geometry traits models covering different dimensional spaces:
+- `Ft_traits_1<Kernel>`: A minimal, scalar traits model parameterizing an arrangement directly using a numerical coordinate field type scalar along a flat number line.
+- `Line_2_traits_1<Kernel>`: Supports tracking points along an infinite straight line embedded in 2D space. Points are ordered by projecting them onto the 2D supporting line equation.
+- `Line_3_traits_1<Kernel>`: Supports tracking points along a 3D spatial trajectory line by projecting 3D coordinates onto its directional vector.
+- `Line_d_traits_1<Kernel>`: Scales the 1D arrangement concept across arbitrary $d$-dimensional space by computing inner dot products across coordinate ranges via Cartesian iterators.
+
+\section aoc_sec-extending Extending the Arrangement
+Topological elements can be extended with custom user attributes using template parameters
+for vertex and edge data inside `Unbounded_topology_traits<Point_1, VertexData, EdgeData>`.
+When data types are provided, they are stored directly inside the records using an internal
+container wrapper that leverages the Empty Class Optimization (ECO) to ensure zero memory overhead
+if a field is set to `void`.
+
+These attributes can be read or modified cleanly using standard Boost lvalue property maps
+accessed via `vertex_data_map()` and `edge_data_map()`.
+
+\subsection aoc_ssecoverlay Overlaying Arrangements
+The free function `overlay(arr_a, arr_b, arr_res, observer)` combines two source arrangements
+aligned along the same continuous supporting line into a single unified output arrangement.
+The algorithm performs a synchronized left-to-right sweep across both structures simultaneously.
+
+As intersections, point overlaps, or edge segment splits are discovered, the process notifies a
+user-specified `OverlayObserver`. This observer can then apply custom logic to automatically
+combine, translate, or synchronize extended user attributes from the input arrangements into the
+resulting output cells.
