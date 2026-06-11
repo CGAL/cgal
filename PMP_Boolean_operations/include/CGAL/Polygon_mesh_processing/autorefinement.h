@@ -1026,8 +1026,17 @@ bool autorefine_triangle_soup(PointRange& soup_points,
 
   // collect intersecting pairs of triangles
   CGAL_PMP_AUTOREFINE_VERBOSE("collect intersecting pairs");
+#ifdef CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS
+  Real_timer t;
+  t.start();
+#endif
   triangle_soup_self_intersections<Concurrency_tag>(soup_points, soup_triangles, std::back_inserter(si_pairs), np);
-
+#ifdef CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS
+  std::string mode = parallel_execution ? "parallel" : "sequential";
+  t.stop();
+  std::cout << t.time() << " sec. for #0 (" << mode << ")" << std::endl;
+  t.reset();
+#endif
   if (si_pairs.empty())
   {
     if constexpr (!std::is_same_v<Autorefinement::Default_visitor, Visitor>)
@@ -1093,7 +1102,6 @@ bool autorefine_triangle_soup(PointRange& soup_points,
 
   CGAL_PMP_AUTOREFINE_VERBOSE("compute intersections");
 #ifdef CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS
-  Real_timer t;
   t.start();
 #endif
   std::set<std::pair<std::size_t, std::size_t> > intersecting_triangles;
@@ -1453,9 +1461,6 @@ bool autorefine_triangle_soup(PointRange& soup_points,
 #endif
 
   std::size_t offset = soup_triangles_out.size();
-#ifdef CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS
-  std::string mode = "parallel";
-#endif
 
 // It might be possible to optimize the hardcoded value below
 // but the less triangles the faster will anyway be the operation.

@@ -465,10 +465,14 @@ public:
       {
         auto renderer = [this, &color, &clipPlane, &plane_point](float rendering_mode) {
 
-          QVector2D viewport = {
-            CGAL_BASIC_VIEWER_INIT_SIZE_X,
-            CGAL_BASIC_VIEWER_INIT_SIZE_Y
-          };
+          // Use the actual current viewport dimensions so that the line-width
+          // geometry shader converts between NDC and screen-pixels correctly
+          // even after the window has been resized. Multiply by the device
+          // pixel ratio so HiDPI / Retina displays report the physical pixel
+          // count rather than the logical pixel count.
+          const float pixel_ratio = static_cast<float>(this->devicePixelRatio());
+          QVector2D viewport(static_cast<float>(this->width())  * pixel_ratio,
+                             static_cast<float>(this->height()) * pixel_ratio);
 
           rendering_program_line.bind();
 

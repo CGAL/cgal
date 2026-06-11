@@ -1,5 +1,6 @@
 #include "config.h"
 #include "Scene_points_with_normal_item.h"
+#include <CGAL/Three/Three.h>
 #include <CGAL/Three/CGAL_Lab_plugin_helper.h>
 #include <CGAL/Three/CGAL_Lab_plugin_interface.h>
 
@@ -391,7 +392,7 @@ void CGAL_Lab_point_set_normal_estimation_plugin::on_actionNormalOrientation_tri
       // Warns user
       if (nb_unoriented_normals > 0)
       {
-        QMessageBox::information(nullptr,
+        QMessageBox::information(CGAL::Three::Three::mainWindow(),
                                  tr("Points with an unoriented normal"),
                                  tr("%1 point(s) with an unoriented normal are selected.\nPlease orient them or remove them before running Poisson reconstruction.")
                                  .arg(nb_unoriented_normals));
