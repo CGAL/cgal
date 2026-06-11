@@ -126,3 +126,6 @@ As intersections, point overlaps, or edge segment splits are discovered, the pro
 user-specified `OverlayObserver`. This observer can then apply custom logic to automatically
 combine, translate, or synchronize extended user attributes from the input arrangements into the
 resulting output cells.
+
+*/
+} /* namespace CGAL */
