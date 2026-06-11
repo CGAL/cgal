@@ -10,7 +10,6 @@ namespace Feature_graph {
 *
 * \tparam Vector_3 the type of the normal vector model of `Kernel::Vector_3`.
 *
-* \cgalModels{NormalEstimator}
 */
 template <typename Vector_3>
 struct AmbrosioTortorelli_on_image
