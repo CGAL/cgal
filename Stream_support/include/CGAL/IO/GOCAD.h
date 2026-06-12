@@ -112,7 +112,8 @@ bool read_GOCAD(std::istream& is,
     if((line.find("VRTX") != std::string::npos))
     {
       int i;
-      if(!(iss >> s >> i >> p))
+      double x, y, z;
+      if(!(iss >> s >> i >> IO::iformat(x) >> IO::iformat(y) >> IO::iformat(z)))
       {
         if(verbose)
           std::cerr << "error while reading vertex." << std::endl;
@@ -125,6 +126,7 @@ bool read_GOCAD(std::istream& is,
         offset -= i; // Some files start with index 0 others with 1
       }
 
+      internal::fill_point(x, y, z, 1., p);
       points.push_back(p);
     }
     else if(line[0] == 'T')
@@ -167,12 +169,10 @@ bool read_GOCAD(std::istream& is,
  *
  * \attention The polygon soup is not cleared, and the data from the stream are appended.
  *
- * \tparam PointRange a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
- *                    whose value type is the point type
- * \tparam PolygonRange a model of the concepts `SequenceContainer` and `BackInsertionSequence`
- *                      whose `value_type` is itself a model of the concepts `RandomAccessContainer`
- *                      and `BackInsertionSequence` whose `value_type` is an unsigned integer type
- *                      convertible to `std::size_t`
+ * \tparam PointRange a model of the concept `BackInsertionSequence` whose value type is the point type
+ * \tparam PolygonRange a model of the concept `BackInsertionSequence` whose `value_type` is
+ *                      a model of the concepts `RandomAccessContainer` whose `value_type` is
+ *                      an unsigned integer type convertible to `std::size_t`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param is the input stream
@@ -212,12 +212,10 @@ bool read_GOCAD(std::istream& is,
  *
  * \attention The polygon soup is not cleared, and the data from the file are appended.
  *
- * \tparam PointRange a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
- *                    whose value type is the point type
- * \tparam PolygonRange a model of the concepts `SequenceContainer` and `BackInsertionSequence`
- *                      whose `value_type` is itself a model of the concepts `RandomAccessContainer`
- *                      and `BackInsertionSequence` whose `value_type` is an unsigned integer type
- *                      convertible to `std::size_t`
+ * \tparam PointRange a model of the concept `BackInsertionSequence` whose value type is the point type
+ * \tparam PolygonRange a model of the concept `BackInsertionSequence` whose `value_type` is
+ *                      a model of the concepts `RandomAccessContainer` whose `value_type` is
+ *                      an unsigned integer type convertible to `std::size_t`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param fname the path to the input file
@@ -324,9 +322,9 @@ bool write_GOCAD(std::ostream& os,
  * \brief writes the content of `points` and `polygons` in `os`, using the \ref IOStreamGocad.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type
- * \tparam PolygonRange a model of the concept `SequenceContainer`
- *                      whose `value_type` is itself a model of the concept `SequenceContainer`
- *                      whose `value_type` is an unsigned integer type convertible to `std::size_t`
+ * \tparam PolygonRange a model of the concept `SequenceContainer` whose `value_type` is itself
+ *                      a model of the concept `SequenceContainer` whose `value_type` is
+ *                      an unsigned integer type convertible to `std::size_t`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param os the output stream
@@ -372,9 +370,9 @@ bool write_GOCAD(std::ostream& os,
  * \brief writes the content of `points` and `polygons` in `fname`, using the \ref IOStreamGocad.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type
- * \tparam PolygonRange a model of the concept `SequenceContainer`
- *                      whose `value_type` is itself a model of the concept `SequenceContainer`
- *                      whose `value_type` is an unsigned integer type convertible to `std::size_t`
+ * \tparam PolygonRange a model of the concept `SequenceContainer` whose `value_type` is itself
+ *                      a model of the concept `SequenceContainer` whose `value_type` is
+ *                      an unsigned integer type convertible to `std::size_t`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param fname the path to the output file
