@@ -145,7 +145,7 @@ void main(void)
   if (u_IsOrthographic)
   {
     // In orthographic projection clip-space w is always 1; using u_PointSize
-    // as the divisor cancelled out the user's setting (pointSize = 1 always).
+    // as the divisor canceled out the user's setting (pointSize = 1 always).
     // Use 1.0 so gl_PointSize = u_PointSize, a direct screen-pixel diameter.
     distance = 1.0;
   }

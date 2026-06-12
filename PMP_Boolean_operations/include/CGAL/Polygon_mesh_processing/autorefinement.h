@@ -1792,11 +1792,7 @@ void
 autorefine(      TriangleMesh& tm,
            const NamedParameters& np = parameters::default_values())
 {
-  using parameters::choose_parameter;
-  using parameters::get_parameter;
-
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type GT;
-  // GT traits = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
   std::vector<typename GT::Point_3> soup_points;
   std::vector<std::array<std::size_t, 3> > soup_triangles;
