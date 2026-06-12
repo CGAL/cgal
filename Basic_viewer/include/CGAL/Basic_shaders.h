@@ -721,8 +721,6 @@ const char GEOMETRY_SOURCE_LINE_WIDTH[]=R"DELIM(
 layout (lines) in;
 layout (triangle_strip, max_vertices = 4) out;
 
-in mediump vec4 g_Color[];
-
 in VS_OUT {
   mediump float pointSize;
   mediump vec4 color;
@@ -734,7 +732,6 @@ out highp   vec4 ls_fP;
 
 uniform mediump float u_PointSize;
 uniform mediump vec2  u_Viewport;
-uniform highp   mat4  u_Mvp;
 
 vec2 ToScreenSpace(vec4 vertex)
 {
@@ -753,30 +750,33 @@ void main(void)
   vec2 v0 = normalize(p1 - p0);
   // Unit perpendicular vector scaled by 0.5; the actual half-width in screen
   // pixels is supplied by gs_in[i].pointSize (= u_PointSize / effectiveDistance).
-  // Keeping u_PointSize out of n0 avoids the previous quadratic dependence on
-  // u_PointSize that caused edges to appear far wider than intended.
   vec2 n0 = vec2(-v0.y, v0.x) * 0.5;
+
+  // ls_fP is the local-space position carried from the vertex shader and used by
+  // the fragment shader for the clipping-plane test. It is forwarded directly, so
+  // no per-vertex inverse(u_Mvp) is needed (the edge is thin, so using the
+  // endpoint position rather than the offset corner is exact for that test).
 
   // line start
   gl_Position = ToWorldSpace(vec4(p0 - n0 * gs_in[0].pointSize, gl_in[0].gl_Position.zw));
   fColor = gs_in[0].color;
-  ls_fP = inverse(u_Mvp) * gl_Position;
+  ls_fP = gs_in[0].ls_fP;
   EmitVertex();
 
   gl_Position = ToWorldSpace(vec4(p0 + n0 * gs_in[0].pointSize, gl_in[0].gl_Position.zw));
   fColor = gs_in[0].color;
-  ls_fP = inverse(u_Mvp) * gl_Position;
+  ls_fP = gs_in[0].ls_fP;
   EmitVertex();
 
   // line end
   gl_Position = ToWorldSpace(vec4(p1 - n0 * gs_in[1].pointSize, gl_in[1].gl_Position.zw));
   fColor = gs_in[1].color;
-  ls_fP = inverse(u_Mvp) * gl_Position;
+  ls_fP = gs_in[1].ls_fP;
   EmitVertex();
 
   gl_Position = ToWorldSpace(vec4(p1 + n0 * gs_in[1].pointSize, gl_in[1].gl_Position.zw));
   fColor = gs_in[1].color;
-  ls_fP = inverse(u_Mvp) * gl_Position;
+  ls_fP = gs_in[1].ls_fP;
   EmitVertex();
 }
 )DELIM";
