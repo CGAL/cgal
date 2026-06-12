@@ -214,7 +214,7 @@ void CGAL::QGLViewer::initializeGL() {
     const int gl_minor = format.minorVersion();
 
     // is_ogl_4_3 gates the real OpenGL 4.3 C++ API (QOpenGLFunctions_4_3_Core),
-    // used e.g. by the CGAL Lab demo. Behaviour unchanged.
+    // used e.g. by the CGAL Lab demo. Behavior unchanged.
     is_ogl_4_3 = gl_is_valid && !force_old
                  && !(gl_major < 4 || (gl_major == 4 && gl_minor < 3));
 
