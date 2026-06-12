@@ -319,6 +319,33 @@ const T& choose_parameter(const T& t)
   return t;
 }
 
+// version with a dynamic property tag with initialisation
+template <typename Tag, typename Graph, typename V>
+auto
+choose_parameter(const internal_np::Param_not_found&, Tag tag, Graph& graph, const V& default_value)
+{
+  return get(tag, graph, default_value);
+}
+
+template <typename Tag, typename Graph>
+auto
+choose_parameter(const internal_np::Param_not_found&, Tag tag, Graph& graph)
+{
+  return get(tag, graph);
+}
+
+template <typename T, typename Tag, typename Graph, typename V>
+const T& choose_parameter(const T& t,  Tag, Graph&, const V&)
+{
+  return t;
+}
+
+template <typename T, typename Tag, typename Graph>
+const T& choose_parameter(const T& t, Tag, Graph&)
+{
+  return t;
+}
+
 } // parameters namespace
 
 namespace internal_np {
