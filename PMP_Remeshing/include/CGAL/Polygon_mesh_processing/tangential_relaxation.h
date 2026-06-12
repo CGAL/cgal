@@ -18,14 +18,13 @@
 
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/Uniform_sizing_field.h>
-#include <CGAL/property_map.h>
+#include <CGAL/Dynamic_property_map.h>
 
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <tuple>
 #include <type_traits>
-#include <unordered_map>
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -180,6 +179,8 @@ void tangential_relaxation(const VertexRange& vertices,
   typedef typename GT::Point_3 Point_3;
   typedef typename GT::Vector_3 Vector_3;
 
+  auto face_normals = get(CGAL::dynamic_face_property_t<Vector_3>(), tm);
+
   auto check_normals = [&](vertex_descriptor v)
   {
     auto angle = gt.angle_3_object();
@@ -191,7 +192,7 @@ void tangential_relaxation(const VertexRange& vertices,
     {
       if (is_border(hd, tm)) continue;
 
-      Vector_3 n = compute_face_normal(face(hd, tm), tm, np);
+      Vector_3 n = get(face_normals, face(hd, tm));
       if (n == CGAL::NULL_VECTOR) //for degenerate faces
         continue;
 
@@ -227,6 +228,7 @@ void tangential_relaxation(const VertexRange& vertices,
     > ::type Shall_move;
   Shall_move shall_move = choose_parameter<internal::Allow_all_moves>(get_parameter(np, internal_np::allow_move_functor));
 
+  auto vnormals = get(CGAL::dynamic_vertex_property_t<Vector_3>(), tm);
   for (unsigned int nit = 0; nit < nb_iterations; ++nit)
   {
 #ifdef CGAL_PMP_TANGENTIAL_RELAXATION_VERBOSE
@@ -234,6 +236,7 @@ void tangential_relaxation(const VertexRange& vertices,
     std::cout << nb_iterations << ") ";
     std::cout.flush();
 #endif
+    compute_face_normals(tm, face_normals);
 
     typedef std::tuple<vertex_descriptor, Vector_3, Point_3> VNP;
     std::vector< VNP > barycenters;
@@ -241,8 +244,7 @@ void tangential_relaxation(const VertexRange& vertices,
     auto gt_project = gt.construct_projected_point_3_object();
 
     // at each vertex, compute vertex normal
-    std::unordered_map<vertex_descriptor, Vector_3> vnormals;
-    compute_vertex_normals(tm, boost::make_assoc_property_map(vnormals), np);
+    compute_vertex_normals(tm, vnormals, np.face_normal_map(face_normals));
 
     // at each vertex, compute barycenter of neighbors
     for(vertex_descriptor v : vertices)
@@ -262,7 +264,7 @@ void tangential_relaxation(const VertexRange& vertices,
 
       if (border_halfedges.empty())
       {
-        const Vector_3& vn = vnormals.at(v);
+        const Vector_3& vn = get(vnormals, v);
         Vector_3 move = CGAL::NULL_VECTOR;
         if constexpr (std::is_same_v<SizingFunction, Uniform_sizing_field<TriangleMesh, VPMap>>)
         {
