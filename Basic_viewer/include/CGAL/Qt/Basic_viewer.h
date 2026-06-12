@@ -420,28 +420,53 @@ public:
       if (m_draw_cylinder_edge && m_geometry_feature_enabled)
       {
         auto renderer = [this, &color, &clipPlane, &plane_point](float rendering_mode) {
-          rendering_program_cylinder.bind();
+          // The default edge color. The tubes honour the per-segment colors when
+          // the user supplies them; the join spheres are drawn from the vertex
+          // buffer, so they always use this edge color (otherwise they would pick
+          // up the vertex colors and tint the corners).
+          auto edge_color = m_scene.get_default_color_segment();
+          QVector3D edge_qcolor((double)edge_color.red()/(double)255,
+                                (double)edge_color.green()/(double)255,
+                                (double)edge_color.blue()/(double)255);
+          // Tube radius; the join spheres use the same radius so they meet the
+          // tubes flush.
+          GLfloat radius = static_cast<GLfloat>(sceneRadius()*m_size_edges*0.001);
 
+          // 1. the edges, drawn as cylinders (tubes).
+          rendering_program_cylinder.bind();
           if (m_use_default_color)
           {
-            auto edge_color = m_scene.get_default_color_segment();
-            color = QVector3D((double)edge_color.red()/(double)255,
-                              (double)edge_color.green()/(double)255,
-                              (double)edge_color.blue()/(double)255);
+            color = edge_qcolor;
             rendering_program_cylinder.setUniformValue("u_DefaultColor", color);
             rendering_program_cylinder.setUniformValue("u_UseDefaultColor", static_cast<GLint>(1));
           }
           else
-          {
-            rendering_program_cylinder.setUniformValue("u_UseDefaultColor", static_cast<GLint>(0));
-          }
-          rendering_program_cylinder.setUniformValue("u_Radius", static_cast<GLfloat>(sceneRadius()*m_size_edges*0.001));
+          { rendering_program_cylinder.setUniformValue("u_UseDefaultColor", static_cast<GLint>(0)); }
+          rendering_program_cylinder.setUniformValue("u_Radius", radius);
           rendering_program_cylinder.setUniformValue("u_ClipPlane",  clipPlane);
           rendering_program_cylinder.setUniformValue("u_PointPlane", plane_point);
           rendering_program_cylinder.setUniformValue("u_RenderingMode", rendering_mode);
 
           vao[VAO_SEGMENTS].bind();
           glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(m_scene.number_of_elements(GS::POS_SEGMENTS)));
+          rendering_program_cylinder.release();
+
+          // 2. spheres at the vertices, in the edge color and at the tube radius,
+          //    to fill the joins where the open tubes meet (the analogue of
+          //    ParaView's RenderLinesAsTubes + RenderPointsAsSpheres). This is
+          //    part of the edge rendering, so it does not depend on vertex display,
+          //    and it always uses the edge color, not the vertex color.
+          rendering_program_sphere.bind();
+          rendering_program_sphere.setUniformValue("u_DefaultColor", edge_qcolor);
+          rendering_program_sphere.setUniformValue("u_UseDefaultColor", static_cast<GLint>(1));
+          rendering_program_sphere.setUniformValue("u_Radius", radius);
+          rendering_program_sphere.setUniformValue("u_ClipPlane",  clipPlane);
+          rendering_program_sphere.setUniformValue("u_PointPlane", plane_point);
+          rendering_program_sphere.setUniformValue("u_RenderingMode", rendering_mode);
+
+          vao[VAO_POINTS].bind();
+          glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(m_scene.number_of_elements(GS::POS_POINTS)));
+          rendering_program_sphere.release();
         };
 
         enum {
@@ -497,8 +522,15 @@ public:
           rendering_program_line.setUniformValue("u_PointPlane", plane_point);
           rendering_program_line.setUniformValue("u_RenderingMode", rendering_mode);
 
+          // the capsule fragment shader outputs a coverage alpha at the edge
+          // border; blend it so the anti-aliasing composites over what is drawn
+          glEnable(GL_BLEND);
+          glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
           vao[VAO_SEGMENTS].bind();
           glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(m_scene.number_of_elements(GS::POS_SEGMENTS)));
+
+          glDisable(GL_BLEND);
         };
 
         enum {
@@ -1106,7 +1138,7 @@ protected:
       if (!geometry_shader_line->compileSourceCode(source_))
       { std::cerr << "Compiling geometry source for line FAILED" << std::endl; }
 
-      source_ = FRAGMENT_SOURCE_P_L;
+      source_ = FRAGMENT_SOURCE_LINE_WIDTH;
 
       QOpenGLShader *fragment_shader_line = new QOpenGLShader(QOpenGLShader::Fragment);
       if (!fragment_shader_line->compileSourceCode(source_))

@@ -730,54 +730,127 @@ in VS_OUT {
 out mediump vec4 fColor;
 out highp   vec4 ls_fP;
 
+// Local edge frame, in viewport pixels: v_coord.x runs 0 at p0 to v_segLen at p1
+// (along the edge), v_coord.y is the signed perpendicular distance. noperspective
+// keeps them linear in screen space, so the fragment shader can run a
+// rectangle-distance test for an anti-aliased, square-capped edge.
+noperspective out mediump vec2  v_coord;
+flat          out mediump float v_segLen;
+flat          out mediump float v_halfWidth;
+
 uniform mediump float u_PointSize;
 uniform mediump vec2  u_Viewport;
 
-vec2 ToScreenSpace(vec4 vertex)
+const float AA = 1.0; // anti-aliasing feather in pixels
+
+// clip space -> viewport pixels
+vec2 to_pixel(vec4 clip)
 {
-  return vec2(vertex.xy / vertex.w) * u_Viewport;
+  return ((clip.xy / clip.w) * 0.5 + 0.5) * u_Viewport;
 }
 
-vec4 ToWorldSpace(vec4 vertex)
+// viewport pixels -> clip space, reusing one endpoint's depth (z, w) so the quad
+// keeps perspective-correct depth without any inverse(u_Mvp)
+vec4 to_clip(vec2 px, vec4 endpoint)
 {
-  return vec4((vertex.xy * vertex.w) / u_Viewport, vertex.zw);
+  vec2 ndc = (px / u_Viewport) * 2.0 - 1.0;
+  return vec4(ndc * endpoint.w, endpoint.z, endpoint.w);
+}
+
+void emit(vec2 px, vec2 coord, vec4 endpoint, int i)
+{
+  gl_Position = to_clip(px, endpoint);
+  v_coord = coord;
+  fColor  = gs_in[i].color;
+  ls_fP   = gs_in[i].ls_fP;
+  EmitVertex();
 }
 
 void main(void)
 {
-  vec2 p0 = ToScreenSpace(gl_in[0].gl_Position);
-  vec2 p1 = ToScreenSpace(gl_in[1].gl_Position);
-  vec2 v0 = normalize(p1 - p0);
-  // Unit perpendicular vector scaled by 0.5; the actual half-width in screen
-  // pixels is supplied by gs_in[i].pointSize (= u_PointSize / effectiveDistance).
-  vec2 n0 = vec2(-v0.y, v0.x) * 0.5;
+  vec4 c0 = gl_in[0].gl_Position;
+  vec4 c1 = gl_in[1].gl_Position;
 
-  // ls_fP is the local-space position carried from the vertex shader and used by
-  // the fragment shader for the clipping-plane test. It is forwarded directly, so
-  // no per-vertex inverse(u_Mvp) is needed (the edge is thin, so using the
-  // endpoint position rather than the offset corner is exact for that test).
+  // skip degenerate clip positions to avoid a division by zero
+  if (c0.w == 0.0 || c1.w == 0.0)
+    return;
 
-  // line start
-  gl_Position = ToWorldSpace(vec4(p0 - n0 * gs_in[0].pointSize, gl_in[0].gl_Position.zw));
-  fColor = gs_in[0].color;
-  ls_fP = gs_in[0].ls_fP;
-  EmitVertex();
+  vec2 p0 = to_pixel(c0);
+  vec2 p1 = to_pixel(c1);
 
-  gl_Position = ToWorldSpace(vec4(p0 + n0 * gs_in[0].pointSize, gl_in[0].gl_Position.zw));
-  fColor = gs_in[0].color;
-  ls_fP = gs_in[0].ls_fP;
-  EmitVertex();
+  vec2  edge   = p1 - p0;
+  float segLen = length(edge);
+  vec2  dir    = (segLen > 1e-5) ? edge / segLen : vec2(1.0, 0.0);
+  vec2  perp   = vec2(-dir.y, dir.x);
 
-  // line end
-  gl_Position = ToWorldSpace(vec4(p1 - n0 * gs_in[1].pointSize, gl_in[1].gl_Position.zw));
-  fColor = gs_in[1].color;
-  ls_fP = gs_in[1].ls_fP;
-  EmitVertex();
+  // Half-width in pixels. The previous rectangle used a per-side offset of
+  // 0.25 * pointSize pixels; keep that, averaged over the two endpoints so the
+  // capsule has a single constant width for its round caps.
+  float halfWidth = 0.25 * 0.5 * (gs_in[0].pointSize + gs_in[1].pointSize);
+  float ext = halfWidth + AA; // perpendicular: half thickness plus the AA margin
 
-  gl_Position = ToWorldSpace(vec4(p1 + n0 * gs_in[1].pointSize, gl_in[1].gl_Position.zw));
-  fColor = gs_in[1].color;
-  ls_fP = gs_in[1].ls_fP;
-  EmitVertex();
+  v_segLen    = segLen;
+  v_halfWidth = halfWidth;
+
+  // Square caps: grow the quad by the half width (+AA) perpendicular to the edge,
+  // and by only the AA margin along it, so the square ends are anti-aliased
+  // without being rounded.
+  vec2 dpar  = dir  * AA;
+  vec2 dperp = perp * ext;
+
+  emit(p0 - dpar - dperp, vec2(-AA,         -ext), c0, 0);
+  emit(p0 - dpar + dperp, vec2(-AA,          ext), c0, 0);
+  emit(p1 + dpar - dperp, vec2(segLen + AA, -ext), c1, 1);
+  emit(p1 + dpar + dperp, vec2(segLen + AA,  ext), c1, 1);
+}
+)DELIM";
+
+const char FRAGMENT_SOURCE_LINE_WIDTH[]=R"DELIM(
+#version 150
+in mediump vec4 fColor;
+in highp   vec4 ls_fP;
+
+noperspective in mediump vec2  v_coord;
+flat          in mediump float v_segLen;
+flat          in mediump float v_halfWidth;
+
+out mediump vec4 out_color;
+
+uniform highp   vec4  u_ClipPlane;
+uniform highp   vec4  u_PointPlane;
+uniform mediump float u_RenderingMode;
+
+const float AA = 1.0; // anti-aliasing feather in pixels, matches the geometry shader
+
+void main(void)
+{
+  // onPlane == 1: inside clipping plane, should be solid;
+  // onPlane == -1: outside clipping plane, should be transparent;
+  // onPlane == 0: on clipping plane, whatever;
+  float onPlane = sign(dot((ls_fP.xyz-u_PointPlane.xyz), u_ClipPlane.xyz));
+
+  // rendering_mode == -1: draw both inside and outside;
+  // rendering_mode == 0: draw inside only;
+  // rendering_mode == 1: draw outside only;
+  if (u_RenderingMode == (onPlane+1)/2) {
+    discard;
+  }
+
+  // Signed distance (pixels) to the edge rectangle [0, segLen] x [-hw, hw], with
+  // hw = v_halfWidth. Negative inside, positive outside. Square ends (no rounding),
+  // anti-aliased on all four sides.
+  float dx = max(-v_coord.x, v_coord.x - v_segLen);
+  float dy = abs(v_coord.y) - v_halfWidth;
+  vec2  dd = vec2(dx, dy);
+  float d  = min(max(dx, dy), 0.0) + length(max(dd, 0.0));
+
+  // one-pixel feather centred on the border gives the anti-aliasing
+  float alpha = 1.0 - smoothstep(-0.5, 0.5, d);
+  if (alpha <= 0.0) {
+    discard;
+  }
+
+  out_color = vec4(fColor.rgb, fColor.a * alpha);
 }
 )DELIM";
 
