@@ -152,6 +152,8 @@ void CGAL::QGLViewer::defaultConstructor() {
   is_sharing = false;
   is_linked = false;
   shared_context = nullptr;
+  is_ogl_4_3 = false;
+  is_ogl_3_2 = false;
   _first_tick  = true;
 }
 
@@ -205,17 +207,23 @@ void CGAL::QGLViewer::initializeGL() {
   {
     QSurfaceFormat format = context()->format();
     context()->format().setOption(QSurfaceFormat::DebugContext);
-    if ( !context()->isValid()
-         || format.majorVersion() != 4
-         || QCoreApplication::arguments().contains(QStringLiteral("--old")))
+    const bool gl_is_valid = context()->isValid();
+    const bool force_old =
+        QCoreApplication::arguments().contains(QStringLiteral("--old"));
+    const int gl_major = format.majorVersion();
+    const int gl_minor = format.minorVersion();
 
-    {
-      is_ogl_4_3 = false;
-    }
-    else
-    {
-      is_ogl_4_3 = true;
-    }
+    // is_ogl_4_3 gates the real OpenGL 4.3 C++ API (QOpenGLFunctions_4_3_Core),
+    // used e.g. by the CGAL Lab demo. Behaviour unchanged.
+    is_ogl_4_3 = gl_is_valid && !force_old
+                 && !(gl_major < 4 || (gl_major == 4 && gl_minor < 3));
+
+    // is_ogl_3_2 gates the modern GLSL 1.50 (#version 150) shader path, which
+    // only needs OpenGL 3.2. Basic_viewer uses this to pick modern vs
+    // compatibility shaders, so the modern path also works on contexts such as
+    // macOS 4.1 core profiles.
+    is_ogl_3_2 = gl_is_valid && !force_old
+                 && !(gl_major < 3 || (gl_major == 3 && gl_minor < 2));
 
     QSurfaceFormat cur_f = QOpenGLContext::currentContext()->format();
     const char* rt =(cur_f.renderableType() == QSurfaceFormat::OpenGLES) ? "GLES" : "GL";

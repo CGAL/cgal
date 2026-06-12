@@ -721,8 +721,6 @@ const char GEOMETRY_SOURCE_LINE_WIDTH[]=R"DELIM(
 layout (lines) in;
 layout (triangle_strip, max_vertices = 4) out;
 
-in mediump vec4 g_Color[];
-
 in VS_OUT {
   mediump float pointSize;
   mediump vec4 color;
