@@ -677,7 +677,12 @@ public:
 
   bool is_in_complex(const Cell_handle& c) const
   {
-    return !triangulation().is_infinite(c);
+    for(const auto v : triangulation().vertices(c))
+    {
+      if(impl().vertex_type(v) == CDT_3_vertex_type::BBOX)
+        return false;
+    }
+    return true;
   }
   bool is_in_complex(const Facet& f) const
   {
@@ -685,11 +690,7 @@ public:
   }
   bool is_in_complex(const Cell_handle c, const int i) const
   {
-    Cell_handle c1 = c;
-    Cell_handle c2 = c->neighbor(i);
-    auto index1 = subdomain_index(c1);
-    auto index2 = subdomain_index(c2);
-    return (index1 != index2) || is_facet_constrained({c, i});
+    return is_facet_constrained({c, i});
   }
   const bool is_in_complex(const Vertex_handle u, const Vertex_handle v) const
   {
@@ -706,7 +707,7 @@ public:
   }
   Subdomain_index subdomain_index(const Cell_handle& c) const
   {
-    return triangulation().is_infinite(c) ? Subdomain_index() : Subdomain_index{1};
+    return is_in_complex(c) ? Subdomain_index{1} : Subdomain_index();
   }
   Surface_patch_index surface_patch_index(const Cell_handle c, const int i) const
   {
@@ -714,11 +715,6 @@ public:
   }
   Surface_patch_index surface_patch_index(const Facet& f) const
   {
-    Cell_handle c1 = f.first;
-    Cell_handle c2 = f.first->neighbor(f.second);
-    if(subdomain_index(c1) != subdomain_index(c2) && !is_in_complex(f))
-      return Surface_patch_index(99);// convex hull is a dummy surface
-
     Surface_patch_index index = face_constraint_index(f.first, f.second) + 1;
           // valid face_constraint_index() starts at 0
           // Surface_patch_index 0 is for "not a surface"
@@ -5753,14 +5749,20 @@ public:
 
     using Point = typename T_3::Point_3;
 
-    this->insert(Point(bbox.xmin() - d, bbox.ymin() - d, bbox.zmin() - d));
-    this->insert(Point(bbox.xmin() - d, bbox.ymax() + d, bbox.zmin() - d));
-    this->insert(Point(bbox.xmin() - d, bbox.ymin() - d, bbox.zmax() + d));
-    this->insert(Point(bbox.xmin() - d, bbox.ymax() + d, bbox.zmax() + d));
-    this->insert(Point(bbox.xmax() + d, bbox.ymin() - d, bbox.zmin() - d));
-    this->insert(Point(bbox.xmax() + d, bbox.ymax() + d, bbox.zmin() - d));
-    this->insert(Point(bbox.xmax() + d, bbox.ymin() - d, bbox.zmax() + d));
-    this->insert(Point(bbox.xmax() + d, bbox.ymax() + d, bbox.zmax() + d));
+    std::vector<Point> bbox_points
+     = { Point(bbox.xmin() - d, bbox.ymin() - d, bbox.zmin() - d),
+         Point(bbox.xmin() - d, bbox.ymax() + d, bbox.zmin() - d),
+         Point(bbox.xmin() - d, bbox.ymin() - d, bbox.zmax() + d),
+         Point(bbox.xmin() - d, bbox.ymax() + d, bbox.zmax() + d),
+         Point(bbox.xmax() + d, bbox.ymin() - d, bbox.zmin() - d),
+         Point(bbox.xmax() + d, bbox.ymax() + d, bbox.zmin() - d),
+         Point(bbox.xmax() + d, bbox.ymin() - d, bbox.zmax() + d),
+         Point(bbox.xmax() + d, bbox.ymax() + d, bbox.zmax() + d)};
+    for(const auto& p : bbox_points)
+    {
+      Vertex_handle v = this->insert(p);
+      v->ccdt_3_data().set_vertex_type(CDT_3_vertex_type::BBOX);
+    }
   }
 
   void add_bbox_points_if_not_dimension_3() {

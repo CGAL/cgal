@@ -42,6 +42,7 @@ enum class CDT_3_vertex_type : unsigned char {
   STEINER_ON_EDGE,
   STEINER_IN_FACE,
   STEINER_IN_VOLUME,
+  BBOX,
   nb_of_types
 };
 

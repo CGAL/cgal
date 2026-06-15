@@ -806,8 +806,9 @@ bool is_boundary_vertex(const typename C3t3::Vertex_handle& v,
 }
 
 template<typename C3t3>
-typename C3t3::Surface_patch_index surface_patch_index(const typename C3t3::Vertex_handle v,
-    const C3t3& c3t3)
+std::optional<typename C3t3::Surface_patch_index>
+surface_patch_index(const typename C3t3::Vertex_handle v,
+                    const C3t3& c3t3)
 {
   typedef typename C3t3::Surface_patch_index Surface_patch_index;
   typedef typename C3t3::Facet Facet;
@@ -819,7 +820,7 @@ typename C3t3::Surface_patch_index surface_patch_index(const typename C3t3::Vert
     if (c3t3.is_in_complex(f))
       return c3t3.surface_patch_index(f);
   }
-  return Surface_patch_index();
+  return std::nullopt;
 }
 
 template<typename C3t3>
@@ -831,9 +832,8 @@ void set_index(typename C3t3::Vertex_handle v, const C3t3& c3t3)
     c3t3.set_index(v, c3t3.subdomain_index(v->cell()));
     break;
   case 2:
-    CGAL_expensive_assertion(surface_patch_index(v, c3t3)
-                  != typename C3t3::Surface_patch_index());
-    c3t3.set_index(v, surface_patch_index(v, c3t3));
+    CGAL_expensive_assertion(surface_patch_index(v, c3t3) != std::nullopt);
+    c3t3.set_index(v, surface_patch_index(v, c3t3).value());
     break;
   case 1:
     c3t3.set_index(v, typename C3t3::Curve_index(1));
@@ -1199,11 +1199,14 @@ bool is_internal(const typename C3t3::Edge& edge,
       return false;
     if (!get(cell_selector, circ))
       return false;
-    if (c3t3.is_in_complex(
-          circ,
-          CGAL::Triangulation_utils_3::next_around_edge(circ->index(vs), circ->index(vt))))
+
+    Cell_circulator ch = circ;
+    Cell_circulator next_circ = ++circ;
+    if(c3t3.is_in_complex(ch, ch->index(next_circ)))
       return false;
-  } while (++circ != done);
+    circ = next_circ;
+  }
+  while (circ != done);
 
   return true;
 }
@@ -2104,7 +2107,7 @@ void check_surface_patch_indices(const C3t3& c3t3)
   {
     if (v->in_dimension() != 2)
       continue;
-    CGAL_expensive_assertion(surface_patch_index(v, c3t3) != typename C3t3::Surface_patch_index());
+    CGAL_expensive_assertion(surface_patch_index(v, c3t3) != std::nullopt);
   }
 }
 
