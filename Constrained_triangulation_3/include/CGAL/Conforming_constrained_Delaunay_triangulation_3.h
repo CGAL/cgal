@@ -693,7 +693,7 @@ public:
   {
     return is_facet_constrained({c, i});
   }
-  const bool is_in_complex(const Vertex_handle u, const Vertex_handle v) const
+  bool is_in_complex(const Vertex_handle u, const Vertex_handle v) const
   {
     Constrained_polyline_id c_id = impl().constraint_from_extremities(u, v);
     return (c_id != Constrained_polyline_id{});
@@ -737,7 +737,7 @@ public:
   {
     return curve_index(e.first->vertex(e.second), e.first->vertex(e.third));
   }
-  Index index(const Vertex_handle& v) const
+  Index index(const Vertex_handle&) const
   {
     return 1;//not used in tetrahedral remeshing outside of sizing field
   }
@@ -754,9 +754,10 @@ public:
       return 2;
     case CDT_3_vertex_type::STEINER_IN_VOLUME:
     case CDT_3_vertex_type::FREE:
+    case CDT_3_vertex_type::BBOX:
       return 3;
     }
-    return -1;
+    CGAL_unreachable();
   }
 
   void add_to_complex(const Cell_handle c, const Subdomain_index& index)
@@ -783,7 +784,7 @@ public:
   {
     v->ccdt_3_data().set_vertex_type(CDT_3_vertex_type::INPUT_VERTEX);
   }
-  void add_to_complex(const Vertex_handle v1, const Vertex_handle v2, const Curve_index& index)
+  void add_to_complex(const Vertex_handle, const Vertex_handle, const Curve_index&)
   {
 //    impl().insert_constrained_edge(v1, v2, false/*restore Delaunay*/);
   }
@@ -802,11 +803,11 @@ public:
   {
     remove_from_complex({c, i});
   }
-  void remove_from_complex(const Edge& e)
+  void remove_from_complex(const Edge&)
   {
 //    remove_from_complex(e.first->vertex(e.second), e.first->vertex(e.third));
   }
-  void remove_from_complex(const Vertex_handle u, const Vertex_handle v)
+  void remove_from_complex(const Vertex_handle, const Vertex_handle)
   {
     //should not happen during tetrahedral remeshing since we keep constrained edges
     CGAL_error_msg("removing a constrained edge is not supported");

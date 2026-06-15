@@ -66,7 +66,7 @@ public:
   }
 
   int in_dimension() const { return ccdt_3_data().in_dimension(); }
-  void set_dimension(int dim) {}
+  void set_dimension(int) {}
 };
 
 } // namespace CGAL
