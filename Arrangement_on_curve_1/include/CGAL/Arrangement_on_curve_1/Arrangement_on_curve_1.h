@@ -13,10 +13,13 @@
 #include <variant>
 #include <memory>
 
+#include <CGAL/Arrangement_on_curve_1/Unbounded_topology_traits.h>
+
 namespace CGAL {
 namespace Arrangement_on_curve_1 {
 
-template <typename GeometryTraits_1, typename TopologyTraits>
+template <typename GeometryTraits_1,
+          typename TopologyTraits = Unbounded_topology_traits<typename GeometryTraits_1::Point_1>>
 class Arrangement_on_curve_1 {
 public:
   using Geometry_traits_1 = GeometryTraits_1;
