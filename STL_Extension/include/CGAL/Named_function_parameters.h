@@ -319,7 +319,7 @@ const T& choose_parameter(const T& t)
   return t;
 }
 
-// version with a dynamic property tag with initialisation
+// version with a dynamic property tag with initialization
 template <typename Tag, typename Graph, typename V>
 auto
 choose_parameter(const internal_np::Param_not_found&, Tag tag, Graph& graph, const V& default_value)
