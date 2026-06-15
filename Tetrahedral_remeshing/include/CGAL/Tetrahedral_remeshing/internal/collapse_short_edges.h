@@ -714,7 +714,7 @@ bool are_edge_lengths_valid(const typename C3t3::Edge& edge,
   }
   else if (collapse_type == TO_MIDPOINT)
   {
-    new_index = max_dimension_index(v0, v1);
+    new_index = max_dimension_index(v0, v1, c3t3);
     new_dim = (std::max)(v0->in_dimension(), v1->in_dimension());
 #ifdef CGAL_AVERAGE_SIZING_AFTER_COLLAPSE
     sizing_at_new_pos = sizing_at_midpoint(edge, new_dim, new_index, sizing, c3t3, cell_selector);
@@ -783,12 +783,12 @@ void merge_surface_patch_indices(const typename C3t3::Facet& f1,
   if (in_cx_f1 && !in_cx_f2)
   {
     typename C3t3::Surface_patch_index patch = c3t3.surface_patch_index(f1);
-    f2.first->set_surface_patch_index(f2.second, patch);
+    c3t3.set_surface_patch_index(f2, patch);
   }
   else if (in_cx_f2 && !in_cx_f1)
   {
     typename C3t3::Surface_patch_index patch = c3t3.surface_patch_index(f2);
-    f1.first->set_surface_patch_index(f1.second, patch);
+    c3t3.set_surface_patch_index(f1, patch);
   }
   else if(in_cx_f1 && in_cx_f2)
   {
@@ -796,7 +796,7 @@ void merge_surface_patch_indices(const typename C3t3::Facet& f1,
 
     typename C3t3::Surface_patch_index patch = c3t3.surface_patch_index(f2);
     c3t3.remove_from_complex(f2);
-    f2.first->set_surface_patch_index(f2.second, patch);
+    c3t3.set_surface_patch_index(f2, patch);
   }
 }
 
@@ -1206,21 +1206,28 @@ auto can_be_collapsed(const typename C3T3::Edge& e,
     bool on_boundary;
   };
 
-  const bool boundary = c3t3.is_in_complex(e)
-                     || is_boundary(c3t3, e, cell_selector);
+  const bool in_cx = c3t3.is_in_complex(e);
+  if(in_cx && protect_boundaries)
+    return Collapsible{false, true /*boundary*/};
 
-  if (protect_boundaries)
+  const bool boundary = is_boundary(c3t3, e, cell_selector);
+  if(boundary && protect_boundaries)
+    return Collapsible{false, boundary};
+
+  if(!is_selected(e, c3t3.triangulation(), cell_selector))
+    return Collapsible{false, boundary};
+
+  if(!boundary && !in_cx)
   {
-    if (boundary)
+    auto patch_v0 = surface_patch_index(e.first->vertex(e.second), c3t3);
+    auto patch_v1 = surface_patch_index(e.first->vertex(e.third), c3t3);
+
+    if(patch_v0 != std::nullopt && patch_v1 != std::nullopt && patch_v0 != patch_v1)
       return Collapsible{false, boundary};
+  }
 
-    return Collapsible{ is_internal(e, c3t3, cell_selector), boundary};
-  }
-  else
-  {
-    return Collapsible{ is_selected(e, c3t3.triangulation(), cell_selector),
-                        boundary };
-  }
+//   if(!is_internal(e, c3t3, cell_selector))
+  return Collapsible {true, boundary};
 }
 
 template<typename C3T3,

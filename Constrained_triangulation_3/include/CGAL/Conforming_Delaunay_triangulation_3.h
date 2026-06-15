@@ -908,6 +908,7 @@ protected:
     return false;
   }
 
+public:
   Constrained_polyline_id constraint_from_extremities(Vertex_handle va, Vertex_handle vb) const {
     if(va->ccdt_3_data().number_of_incident_constraints() == 0 || vb->ccdt_3_data().number_of_incident_constraints() == 0)
     {
@@ -927,6 +928,7 @@ protected:
     return c_id;
   }
 
+protected:
   auto constraint_extremities(Constrained_polyline_id c_id) const {
       CGAL_assertion(this->constraint_hierarchy.is_valid_constraint(c_id));
       if(debug().constraint_hierarchy()) {

@@ -657,16 +657,211 @@ private:
 
 public:
   using Vertex_handle = typename Triangulation::Vertex_handle;
-  using Cell_handle = typename Triangulation::Cell_handle;
+  using Edge = typename Triangulation::Edge;
   using Facet = typename Triangulation::Facet;
+  using Cell_handle = typename Triangulation::Cell_handle;
+
+  using Concurrency_tag = Triangulation::Concurrency_tag;
 
 #ifndef DOXYGEN_RUNNING
   using Constrained_polyline_id = typename CDT_3_impl::Constrained_polyline_id;
 #endif // not DOXYGEN_RUNNING
   using size_type = typename Triangulation::size_type;
 
+  using Subdomain_index = int;
+  using Surface_patch_index = CDT_3_signed_index;
+  using Curve_index = std::size_t;//Constrained_polyline_id::size_type;
+  using Corner_index = int;//check that
+  using Index = typename Triangulation::Triangulation_data_structure::Vertex::Index;
+
+  void rescan_after_load_of_triangulation() { /*todo*/ }
+
+  bool is_in_complex(const Cell_handle& c) const
+  {
+    for(const auto v : triangulation().vertices(c))
+    {
+      if(impl().vertex_type(v) == CDT_3_vertex_type::BBOX)
+        return false;
+    }
+    return true;
+  }
+  bool is_in_complex(const Facet& f) const
+  {
+    return is_in_complex(f.first, f.second);
+  }
+  bool is_in_complex(const Cell_handle c, const int i) const
+  {
+    return is_facet_constrained({c, i});
+  }
+  const bool is_in_complex(const Vertex_handle u, const Vertex_handle v) const
+  {
+    Constrained_polyline_id c_id = impl().constraint_from_extremities(u, v);
+    return (c_id != Constrained_polyline_id{});
+  }
+  bool is_in_complex(const Edge& e) const
+  {
+    return is_in_complex(e.first->vertex(e.second), e.first->vertex(e.third));
+  }
+  bool is_in_complex(const Vertex_handle& v) const
+  {
+    return impl().vertex_type(v) == CDT_3_vertex_type::INPUT_VERTEX;
+  }
+  Subdomain_index subdomain_index(const Cell_handle& c) const
+  {
+    return is_in_complex(c) ? Subdomain_index{1} : Subdomain_index();
+  }
+  Surface_patch_index surface_patch_index(const Cell_handle c, const int i) const
+  {
+    return surface_patch_index({c, i});
+  }
+  Surface_patch_index surface_patch_index(const Facet& f) const
+  {
+    Surface_patch_index index = face_constraint_index(f.first, f.second) + 1;
+          // valid face_constraint_index() starts at 0
+          // Surface_patch_index 0 is for "not a surface"
+    return index;
+  }
+  void set_surface_patch_index(const Facet& f, const Surface_patch_index& index)
+  {
+    const Facet& mf = impl().mirror_facet(f);
+
+    // warning : cdt2_index may be outdated
+    f.first->ccdt_3_data().set_face_constraint_index(f.second, index);
+    mf.first->ccdt_3_data().set_face_constraint_index(mf.second, index);
+  }
+  Curve_index curve_index(const Vertex_handle v1, const Vertex_handle v2) const
+  {
+    return impl().constraint_from_extremities(v1, v2).index();
+  }
+  Curve_index curve_index(const Edge& e) const
+  {
+    return curve_index(e.first->vertex(e.second), e.first->vertex(e.third));
+  }
+  Index index(const Vertex_handle& v) const
+  {
+    return 1;//not used in tetrahedral remeshing outside of sizing field
+  }
+  int in_dimension(const Vertex_handle& v) const
+  {
+    auto type = impl().vertex_type(v);
+    switch(type)
+    {
+    case CDT_3_vertex_type::INPUT_VERTEX :
+      return 0;
+    case CDT_3_vertex_type::STEINER_ON_EDGE:
+      return 1;
+    case CDT_3_vertex_type::STEINER_IN_FACE:
+      return 2;
+    case CDT_3_vertex_type::STEINER_IN_VOLUME:
+    case CDT_3_vertex_type::FREE:
+      return 3;
+    }
+    return -1;
+  }
+
+  void add_to_complex(const Cell_handle c, const Subdomain_index& index)
+  {
+    CGAL_precondition(!triangulation().is_infinite(c));
+    CGAL_precondition(index == Subdomain_index{1});
+    CGAL_USE(index);
+  }
+  void set_subdomain_index(const Cell_handle, const Subdomain_index&)
+  {
+  ;
+  }
+  void add_to_complex(const Facet& f, const Surface_patch_index& index)
+  {
+    //todo : use index and cdt2_index too
+    impl().set_facet_constrained(f, index, {});
+    set_surface_patch_index(f, index);
+  }
+  void add_to_complex(const Edge& e, const Curve_index& index)
+  {
+    add_to_complex(e.first->vertex(e.second), e.first->vertex(e.third), index);
+  }
+  void add_to_complex(const Vertex_handle& v, const Corner_index&)
+  {
+    v->ccdt_3_data().set_vertex_type(CDT_3_vertex_type::INPUT_VERTEX);
+  }
+  void add_to_complex(const Vertex_handle v1, const Vertex_handle v2, const Curve_index& index)
+  {
+//    impl().insert_constrained_edge(v1, v2, false/*restore Delaunay*/);
+  }
+  void remove_from_complex(const Cell_handle c)
+  {
+    CGAL_precondition(!triangulation().is_infinite(c));
+  }
+  void remove_from_complex(const Facet& f)
+  {
+    CGAL_precondition(is_in_complex(f.first, f.second));
+    const Facet mf = impl().mirror_facet(f);
+    impl().set_facet_as_not_constrained(f);
+    impl().set_facet_as_not_constrained(mf);
+  }
+  void remove_from_complex(const Cell_handle c, const int i)
+  {
+    remove_from_complex({c, i});
+  }
+  void remove_from_complex(const Edge& e)
+  {
+//    remove_from_complex(e.first->vertex(e.second), e.first->vertex(e.third));
+  }
+  void remove_from_complex(const Vertex_handle u, const Vertex_handle v)
+  {
+    //should not happen during tetrahedral remeshing since we keep constrained edges
+    CGAL_error_msg("removing a constrained edge is not supported");
+  }
+
+  void set_index(Vertex_handle, const Index&) const
+  {
+    // nothing to do since index is not used in tetrahedral remeshing outside of sizing field
+  }
+  void set_dimension(Vertex_handle v, const int dim) const
+  {
+    switch (dim)
+    {
+    case 0:
+      v->ccdt_3_data().set_vertex_type(CDT_3_vertex_type::INPUT_VERTEX);
+      break;
+    case 1:
+      v->ccdt_3_data().set_vertex_type(CDT_3_vertex_type::STEINER_ON_EDGE);
+      break;
+    case 2:
+      v->ccdt_3_data().set_vertex_type(CDT_3_vertex_type::STEINER_IN_FACE);
+      break;
+    case 3:
+      v->ccdt_3_data().set_vertex_type(CDT_3_vertex_type::STEINER_IN_VOLUME);
+      break;
+    };
+  }
+
+  auto edges_in_complex() const
+  {
+    return impl().edges_in_complex();
+  }
+  auto facets_in_complex() const
+  {
+    auto in_complex = [this](const Facet& f) { return is_in_complex(f); };
+    return boost::make_iterator_range(
+            boost::make_filter_iterator(in_complex,
+                                        impl().finite_facets_begin(),
+                                        impl().finite_facets_end()),
+            boost::make_filter_iterator(in_complex,
+                                        impl().finite_facets_end(),
+                                        impl().finite_facets_end()));
+  }
+  auto cells_in_complex() const
+  {
+    return impl().finite_cell_handles();
+  }
+  std::size_t number_of_edges() const
+  {
+    const auto& [ebegin, eend] = edges_in_complex();
+    return std::distance(ebegin, eend);
+  }
+
   /// \cond SKIP_IN_MANUAL
-  CDT_3_impl& impl() { return cdt_impl; }
+  CDT_3_impl& impl()             { return cdt_impl; }
   const CDT_3_impl& impl() const { return cdt_impl; }
   /// \endcond
 public:
@@ -1030,6 +1225,15 @@ public:
 
   /// @} // end constructors section
 
+  /**
+   * swaps `this` and `rhs`
+   */
+  void swap(Conforming_constrained_Delaunay_triangulation_3& rhs)
+  {
+    std::swap(cdt_impl, rhs.cdt_impl);
+  }
+
+
   // -----------------------
   // Accessors
   // -----------------------
@@ -1049,6 +1253,8 @@ public:
   const Triangulation& triangulation() const& {
     return cdt_impl;
   }
+
+  Triangulation& triangulation() & { return cdt_impl; }
 
   /*!
     * \brief moves and returns the underlying triangulation, then clears the object.
@@ -1327,6 +1533,11 @@ public:
     bool operator()(Facet f) const {
       return cdt.is_facet_constrained(f);
     }
+    bool operator()(Edge e) const {
+      return Constrained_polyline_id{}
+              != cdt.constraint_from_extremities(e.first->vertex(e.second),
+                                                 e.first->vertex(e.third));
+    }
   };
 
   using Constrained_facets_iterator = boost::filter_iterator<Is_constrained, typename T_3::All_facets_iterator>;
@@ -1341,6 +1552,21 @@ public:
   Constrained_facets_range constrained_facets() const {
     return {constrained_facets_begin(), constrained_facets_end()};
   }
+
+
+  using Complex_edges_iterator = boost::filter_iterator<Is_constrained, typename T_3::Finite_edges_iterator>;
+  using Complex_edges_range = CGAL::Iterator_range<Complex_edges_iterator>;
+
+  Complex_edges_iterator edges_in_complex_begin() const {
+    return {Is_constrained{*this}, this->finite_edges_begin(), this->finite_edges_end()};
+  }
+  Complex_edges_iterator edges_in_complex_end() const {
+    return {Is_constrained{*this}, this->finite_edges_end(), this->finite_edges_end()};
+  }
+  Complex_edges_range edges_in_complex() const {
+    return { edges_in_complex_begin(), edges_in_complex_end()};
+  }
+
 private:
   struct CDT_2_types
   {
@@ -1472,6 +1698,7 @@ protected:
     return same_triple(f, f2, NEGATIVE);
   }
 
+public:
   void set_facet_constrained(Facet f, CDT_3_signed_index polygon_constraint_id,
                              CDT_2_face_handle fh, [[maybe_unused]] Orientation o = EQUAL)
   {
@@ -1494,6 +1721,7 @@ protected:
     return set_facet_constrained(f, INVALID_FACE_INDEX, CDT_2_face_handle{});
   }
 
+protected:
   void set_adjacency_between_3d_facets(Facet f1, Facet f2) const {
     tr().tds().set_adjacency(f1.first, f1.second, f2.first, f2.second);
     if(dbg().move_Steiner_vertices_level() > 1) {
@@ -5624,14 +5852,20 @@ public:
 
     using Point = typename T_3::Point_3;
 
-    this->insert(Point(bbox.xmin() - d, bbox.ymin() - d, bbox.zmin() - d));
-    this->insert(Point(bbox.xmin() - d, bbox.ymax() + d, bbox.zmin() - d));
-    this->insert(Point(bbox.xmin() - d, bbox.ymin() - d, bbox.zmax() + d));
-    this->insert(Point(bbox.xmin() - d, bbox.ymax() + d, bbox.zmax() + d));
-    this->insert(Point(bbox.xmax() + d, bbox.ymin() - d, bbox.zmin() - d));
-    this->insert(Point(bbox.xmax() + d, bbox.ymax() + d, bbox.zmin() - d));
-    this->insert(Point(bbox.xmax() + d, bbox.ymin() - d, bbox.zmax() + d));
-    this->insert(Point(bbox.xmax() + d, bbox.ymax() + d, bbox.zmax() + d));
+    std::vector<Point> bbox_points
+     = { Point(bbox.xmin() - d, bbox.ymin() - d, bbox.zmin() - d),
+         Point(bbox.xmin() - d, bbox.ymax() + d, bbox.zmin() - d),
+         Point(bbox.xmin() - d, bbox.ymin() - d, bbox.zmax() + d),
+         Point(bbox.xmin() - d, bbox.ymax() + d, bbox.zmax() + d),
+         Point(bbox.xmax() + d, bbox.ymin() - d, bbox.zmin() - d),
+         Point(bbox.xmax() + d, bbox.ymax() + d, bbox.zmin() - d),
+         Point(bbox.xmax() + d, bbox.ymin() - d, bbox.zmax() + d),
+         Point(bbox.xmax() + d, bbox.ymax() + d, bbox.zmax() + d)};
+    for(const auto& p : bbox_points)
+    {
+      Vertex_handle v = this->insert(p);
+      v->ccdt_3_data().set_vertex_type(CDT_3_vertex_type::BBOX);
+    }
   }
 
   void add_bbox_points_if_not_dimension_3() {

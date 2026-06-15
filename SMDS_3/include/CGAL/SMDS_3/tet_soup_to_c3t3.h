@@ -125,7 +125,6 @@ bool build_finite_cells(Tr& tr,
 {
   typedef typename Tr::Vertex_handle                            Vertex_handle;
   typedef typename Tr::Cell_handle                              Cell_handle;
-  typedef typename Tr::Cell::Surface_patch_index                Surface_patch_index;
 
   bool success = true;
 
@@ -159,9 +158,11 @@ bool build_finite_cells(Tr& tr,
       vs[j]->set_dimension(3);
     }
 
+#ifndef CGAL_T3_ALLOW_NEGATIVE_VOLUME
     // this assertion also tests for degeneracy
     CGAL_assertion(orientation(cp(tr.point(vs[0])), cp(tr.point(vs[1])),
                                cp(tr.point(vs[2])), cp(tr.point(vs[3]))) == POSITIVE);
+#endif
 
     Cell_handle c = tr.tds().create_cell(vs[0], vs[1], vs[2], vs[3]);
     c->set_subdomain_index(subdomains[i]); // the cell's info keeps the reference of the tetrahedron
@@ -197,21 +198,21 @@ bool build_finite_cells(Tr& tr,
         }
         while(facet[0] != n0);
 
-        typename FacetPatchMap::const_iterator it = border_facets.find(facet);
-        if(it != border_facets.end())
-        {
-          c->set_surface_patch_index(j, it->second);
-        }
-        else
-        {
-          std::swap(facet[1], facet[2]); // facet[0] is still the smallest, no need to rotate again
-
-          it = border_facets.find(facet);
-          if(it != border_facets.end())
-            c->set_surface_patch_index(j, it->second);
-          else
-            c->set_surface_patch_index(j, Surface_patch_index());
-        }
+//        typename FacetPatchMap::const_iterator it = border_facets.find(facet);
+//        if(it != border_facets.end())
+//        {
+//          c->set_surface_patch_index(j, it->second);
+//        }
+//        else
+//        {
+//          std::swap(facet[1], facet[2]); // facet[0] is still the smallest, no need to rotate again
+//
+//          it = border_facets.find(facet);
+//          if(it != border_facets.end())
+//            c->set_surface_patch_index(j, it->second);
+//          else
+//            c->set_surface_patch_index(j, Surface_patch_index());
+//        }
       }
     }
   }
@@ -291,7 +292,7 @@ bool build_infinite_cells(Tr& tr,
     it->second.emplace_back(opp_c, 0);
     CGAL_assertion(it->second.size() == 2);
 
-    opp_c->set_surface_patch_index(0, c->surface_patch_index(i));
+//    opp_c->set_surface_patch_index(0, c->surface_patch_index(i));
   }
 
 #ifdef CGAL_TET_SOUP_TO_C3T3_DEBUG
