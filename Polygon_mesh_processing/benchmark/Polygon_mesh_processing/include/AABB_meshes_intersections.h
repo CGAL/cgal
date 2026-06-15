@@ -21,8 +21,7 @@
 #include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 
-#include <CGAL/AABB_tree/internal/AABB_two_tree_traversal.h>
-
+#include <CGAL/AABB_trees/intersection.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 
 #include <CGAL/box_intersection_d.h>
@@ -161,7 +160,8 @@ void mixed_meshes_intersections(const TriangleMesh1 &tm1,
     tg.wait();
 
     tbb::concurrent_vector<std::pair<const Node_1*, const Node_2*>> inter;
-    CGAL::internal::AABB_tree::two_tree_listing_intersecting_patches<Concurrency_tag>(tree1, tree2, std::back_inserter(inter), cutoff, bb1, bb2);
+    CGAL::internal::AABB_tree::experimental::Two_tree_intersecting_nodes_traits traversal_traits(tree1.traits(), tree2.traits(), std::back_inserter(inter));
+    CGAL::internal::AABB_tree::experimental::two_tree_partial_traversal<Concurrency_tag>(tree1, tree2, cutoff, traversal_traits);
     oneapi::tbb::parallel_for(
       oneapi::tbb::blocked_range<size_t>(0, inter.size()),
       [&](const oneapi::tbb::blocked_range<size_t>& r) {
@@ -208,7 +208,8 @@ void mixed_meshes_intersections(const TriangleMesh1 &tm1,
     tree2.template partial_build<Concurrency_tag>(cutoff);
 
     std::vector<std::pair<const Node_1*, const Node_2*>> inter;
-    CGAL::internal::AABB_tree::two_tree_listing_intersecting_patches(tree1, tree2, std::back_inserter(inter), cutoff, bb1, bb2);
+    CGAL::internal::AABB_tree::experimental::Two_tree_intersecting_nodes_traits traversal_traits(tree1.traits(), tree2.traits(), std::back_inserter(inter));
+    CGAL::internal::AABB_tree::experimental::two_tree_partial_traversal(tree1, tree2, cutoff, traversal_traits);
 
     for(const auto& [n_1, n_2]: inter){
       const auto [begin_1, end_1] = tree1.partial_node_to_primitives_iterator(*n_1);
@@ -377,7 +378,7 @@ void AABB_two_tree_self_intersections(const TriangleMesh &tm, OutputIterator out
 #endif
   using InternOutputIterator= std::back_insert_iterator<std::vector<std::pair<face_descriptor, face_descriptor>>>;
   std::vector<std::pair<face_descriptor, face_descriptor>> inter;
-  CGAL::internal::AABB_tree::two_tree_listing_intersecting_primitives<Concurrency_tag>(tree, tree, std::back_inserter(inter));
+  CGAL::AABB_trees::all_pairs_of_intersecting_primitives<Concurrency_tag>(tree, std::back_inserter(inter));
   for(const auto& [f_1, f_2]: inter)
     if(f_1 < f_2)
       if(Polygon_mesh_processing::internal::do_faces_intersect<GT>(f_1, f_2, tm, tm.points(), gt.construct_segment_3_object(), gt.construct_triangle_3_object(), gt.do_intersect_3_object()))
@@ -487,7 +488,7 @@ void meshes_intersections_callback(const TriangleMesh1 &tm1,
 
     using InternOutputIterator= std::back_insert_iterator<std::vector<std::pair<face_descriptor_1, face_descriptor_2>>>;
     tbb::concurrent_vector<std::pair<face_descriptor_1, face_descriptor_2>> inter;
-    CGAL::internal::AABB_tree::two_tree_listing_intersecting_primitives<Concurrency_tag>(tree1, tree2, std::back_inserter(inter));
+    CGAL::AABB_trees::all_pairs_of_intersecting_primitives<Concurrency_tag>(tree1, tree2, std::back_inserter(inter));
     for(const auto& [f_1, f_2]: inter)
       callback(f_1, f_2);
   }
@@ -498,7 +499,7 @@ void meshes_intersections_callback(const TriangleMesh1 &tm1,
     tree2.template build();
     using InternOutputIterator= std::back_insert_iterator<std::vector<std::pair<face_descriptor_1, face_descriptor_2>>>;
     std::vector<std::pair<face_descriptor_1, face_descriptor_2>> inter;
-    CGAL::internal::AABB_tree::two_tree_listing_intersecting_primitives(tree1, tree2, std::back_inserter(inter));
+    CGAL::AABB_trees::all_pairs_of_intersecting_primitives<Concurrency_tag>(tree1, tree2, std::back_inserter(inter));
     for(const auto& [f_1, f_2]: inter)
       callback(f_1, f_2);
   }

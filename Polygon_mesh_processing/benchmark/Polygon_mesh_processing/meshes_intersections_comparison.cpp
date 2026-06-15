@@ -27,7 +27,7 @@
 #include <CGAL/Polygon_mesh_processing/transform.h>
 #include <CGAL/Aff_transformation_3.h>
 
-#include <CGAL/AABB_meshes_intersections.h>
+#include "include/AABB_meshes_intersections.h"
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 
 #include <iostream>
