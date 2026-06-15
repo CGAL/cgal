@@ -31,6 +31,7 @@ namespace HDVF = CGAL::Homological_discrete_vector_field;
 
 using Kernel = CGAL::Simple_cartesian<double>;
 using Traits = HDVF::Hdvf_traits_3<Kernel>;
+using Sparse_matrix_struct = CGAL::OSM::Sub_sparse_matrix<CGAL::OSM::Sparse_chain>;
 
 // ------- A ring
 // For Z/nZ other than Z (ie. n=0) and Z/2Z, uncomment and set the following define properly
@@ -97,7 +98,7 @@ void main_code (const Options &options)
     /// SIMP format
     if (options.in_format == InputFormat::SIMP)
     {
-        using Complex = HDVF::Abstract_simplicial_chain_complex<Coefficient_ring>  ;
+        using Complex = HDVF::Abstract_simplicial_chain_complex<Coefficient_ring, Sparse_matrix_struct>  ;
         using HDVF_type = HDVF::Hdvf<Complex> ;
 
         // MeshObject
@@ -118,7 +119,7 @@ void main_code (const Options &options)
     /// OFF format
     else if (options.in_format == InputFormat::OFF)
     {
-        using Complex = HDVF::Simplicial_chain_complex<Coefficient_ring, Traits> ;
+        using Complex = HDVF::Simplicial_chain_complex<Coefficient_ring, Traits, Sparse_matrix_struct> ;
         using HDVF_type = HDVF::Hdvf<Complex> ;
 
         // MeshObject
@@ -153,7 +154,7 @@ void main_code (const Options &options)
     // CubComplex
     else if ((options.in_format == InputFormat::PGM) || (options.in_format == InputFormat::CUB))
     {
-        using Complex = HDVF::Cubical_chain_complex<Coefficient_ring, Traits> ;
+        using Complex = HDVF::Cubical_chain_complex<Coefficient_ring, Traits, Sparse_matrix_struct> ;
         using HDVF_type = HDVF::Hdvf<Complex> ;
 
         HDVF::Cub_object_io<Traits> mesh ;

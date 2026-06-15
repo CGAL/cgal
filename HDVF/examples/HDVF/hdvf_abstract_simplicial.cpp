@@ -23,7 +23,6 @@ typedef HDVF::Hdvf_traits_3<Kernel> Traits;
 int main(int argc, char **argv)
 {
 #if 1
-    //    using Complex = HDVF::Simplicial_chain_complex<Coefficient_ring,Traits> ;
     using Complex = HDVF::Abstract_simplicial_chain_complex<Coefficient_ring> ;
     using HDVF_type = HDVF::Hdvf<Complex> ;
 

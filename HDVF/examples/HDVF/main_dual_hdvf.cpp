@@ -36,6 +36,7 @@ namespace HDVF = CGAL::Homological_discrete_vector_field;
 
 using Kernel = CGAL::Simple_cartesian<double>;
 using Traits = HDVF::Hdvf_traits_3<Kernel>;
+using Sparse_matrix_struct = CGAL::OSM::Sub_sparse_matrix<CGAL::OSM::Sparse_chain>;
 
 template <typename MeshType, typename Complex>
 void mesh_complex_output(const MeshType& mesh, const Complex& L, const HDVF::Sub_chain_complex_mask<Complex>& K, const Options& options)
@@ -165,9 +166,9 @@ void main_code (const Options &options)
     /// OFF format
     else if (options.in_format == InputFormat::OFF)
     {
-        using Complex = HDVF::Simplicial_chain_complex<Coefficient_ring,Traits> ;
+        using Complex = HDVF::Simplicial_chain_complex<Coefficient_ring,Traits,Sparse_matrix_struct> ;
         using HDVF_type = HDVF::Hdvf_duality<Complex> ;
-        using ToolsType = HDVF::Duality_simplicial_complex_tools<Coefficient_ring, Traits> ;
+        using ToolsType = HDVF::Duality_simplicial_complex_tools<Coefficient_ring, Traits, Sparse_matrix_struct> ;
         using SubCCType = HDVF::Sub_chain_complex_mask<Complex> ;
 
         // MeshObject
@@ -209,10 +210,10 @@ void main_code (const Options &options)
     // CubComplex
     else if ((options.in_format == InputFormat::PGM) || (options.in_format == InputFormat::CUB))
     {
-        using Complex = HDVF::Cubical_chain_complex<Coefficient_ring, Traits> ;
+        using Complex = HDVF::Cubical_chain_complex<Coefficient_ring, Traits, Sparse_matrix_struct> ;
         using HDVF_type = HDVF::Hdvf_duality<Complex> ;
         using SubCCType = HDVF::Sub_chain_complex_mask<Complex> ;
-        using ToolsType = HDVF::Duality_cubical_complex_tools<Coefficient_ring, Traits> ;
+        using ToolsType = HDVF::Duality_cubical_complex_tools<Coefficient_ring, Traits, Sparse_matrix_struct> ;
 
         HDVF::Cub_object_io<Traits> mesh ;
         typename Complex::Cubical_complex_primal_dual primal_dual(Complex::PRIMAL) ;

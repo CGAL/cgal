@@ -210,11 +210,8 @@ public:
      *
      * \return A reference to the modified stream.
      */
-    friend std::ostream& operator<<(std::ostream &stream, const Sub_sparse_matrix_core &matrix) {
-        stream << static_cast<const Sparse_matrix_core<CoefficientRing, StorageFormat, SparseChainType>&>(matrix) ;
-        stream << matrix._subChains << std::endl ;
-        return stream ;
-    }
+    template <typename _CR, int _SF, template <typename, int> typename _SCT>
+    friend std::ostream& operator<<(std::ostream &stream, const Sub_sparse_matrix_core<_CR,_SF,_SCT> &matrix);
 
     /**
      * \brief Tests if a `Sub_sparse_matrix_core` is null.
@@ -247,6 +244,13 @@ public:
         return res ;
     }
 };
+
+template <typename _CR, int _SF, template <typename, int> typename _SCT>
+std::ostream& operator<<(std::ostream &stream, const Sub_sparse_matrix_core<_CR,_SF,_SCT> &matrix) {
+    stream << static_cast<const Sparse_matrix_core<_CR,_SF,_SCT>&>(matrix) ;
+    stream << matrix._subChains << std::endl ;
+    return stream ;
+}
 
 } /* end namespace OSM */
 } /* end namespace CGAL */

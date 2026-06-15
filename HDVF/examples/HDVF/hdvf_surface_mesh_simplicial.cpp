@@ -32,7 +32,7 @@ int main(int argc, char **argv)
 
     std::string filename ;
     if (argc > 2) std::cerr << "usage: hdvf_surface_mesh_simplicial off_file" << std::endl;
-    else if (argc == 1) filename  = "data/mesh_data/two_rings.off";
+    else if (argc == 1) filename  = "data/data_simplicial/two_rings.off";
     else filename = argv[1];
 
     // Load simplicial object

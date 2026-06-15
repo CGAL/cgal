@@ -21,7 +21,8 @@ typedef HDVF::Hdvf_traits_3<Kernel> Traits;
 
 //typedef CGAL::Zp<5,int,true> Coefficient_ring;
 typedef CGAL::Z2 Coefficient_ring;
-typedef HDVF::Simplicial_chain_complex<Coefficient_ring, Traits> Complex;
+typedef CGAL::OSM::Sub_sparse_matrix<CGAL::OSM::Sparse_chain> Sparse_matrix_struct;
+typedef HDVF::Simplicial_chain_complex<Coefficient_ring, Traits, Sparse_matrix_struct> Complex;
 typedef HDVF::Hdvf_duality<Complex> HDVF_type;
 typedef HDVF::Duality_simplicial_complex_tools<Coefficient_ring,Traits> Tools_type;
 typedef HDVF::Sub_chain_complex_mask<Complex> Sub_chain_complex;
@@ -48,7 +49,7 @@ int main(int argc, char **argv)
 //    std::cout << sm;
 
     // Build K and L
-    typename Tools_type::Complex_duality_data t(Tools_type::dualize_complex(sm, 1.7, 1));
+    typename Tools_type::Complex_duality_data t(Tools_type::dualize_complex(sm, 1.8, 1));
     std::cout << "--- Triangulation built" << std::endl ;
     std::shared_ptr<Complex> L(t.L_complex);
     std::shared_ptr<Sub_chain_complex> K(t.K_complex);

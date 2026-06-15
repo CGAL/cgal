@@ -58,6 +58,13 @@ public:
     /** \brief Returns the dimension of the complex. */
     int dimension() const { return _dim; }
 
+    /** \brief Resets the `Cub_object_io` and sets the dimension of the cubical complex and its size. */
+    int init(int dim, const std::vector<size_t>& size_bb) {
+        _dim = dim;
+        _N = size_bb;
+        _ncubs.resize(_dim+1);
+    }
+
     /** \brief Returns the number of cubs in each dimension. */
     const std::vector<size_t>& number_of_cubs_by_dimension() const { return _ncubs; }
 
@@ -72,6 +79,16 @@ public:
 
     /** \brief Returns the total number of cubs. */
     size_t number_of_cubs() const { return _cubs.size(); }
+
+    /** \brief Adds a cub (given by its Khalimsky coordinates) to the `Cub_object_io`.
+     *
+     * \param coords boolean index of the cub to add.
+     */
+    void add_cub(const std::vector<size_t>& coords) {
+        _cubs.push_back(coords);
+        const int dtmp(cub_dim(coords)) ;
+        (_ncubs)[dtmp] += 1 ;
+    }
 
     /** \brief %Default constructor.
      *
@@ -96,8 +113,6 @@ public:
     /** \brief Removes all cells of the list. */
     void clear_cubs() { _cubs.clear() ; for (size_t i=0; i<_dim; ++i) _ncubs[i] = 0 ; }
 
-    /** \brief Adds a cell to the list. */
-    void add_cub(const IOCubCellType &c) {_cubs.push_back(c); ++_ncubs[cub_dim(c)] ;}
 
     /** \brief Adds one empty cell of higher dimension all around the complex.
      *

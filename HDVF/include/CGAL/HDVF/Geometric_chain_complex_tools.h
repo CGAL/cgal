@@ -600,11 +600,11 @@ public:
  \tparam Traits a geometric traits class model of the `HDVFTraits` concept.
  */
 
-template<typename CoefficientRing, typename Traits>
+template<typename CoefficientRing, typename Traits, typename SparseMatrixStruct = CGAL::OSM::Sub_sparse_matrix<CGAL::OSM::Sparse_chain>>
 class Duality_cubical_complex_tools {
 public:
     /** \brief Type of cubical complexes used for the initial complex and \f$L\f$. */
-    typedef Cubical_chain_complex<CoefficientRing, Traits> Chain_complex ;
+    typedef Cubical_chain_complex<CoefficientRing, Traits, SparseMatrixStruct> Chain_complex ;
     /** \brief Type of sub chain complex mask used to encode the sub-complex  \f$K\f$. */
     typedef Sub_chain_complex_mask<Chain_complex> Sub_chain_complex ;
     /** \brief Type returned by `dualize_complex()`. */
@@ -626,15 +626,11 @@ public:
      */
     static Complex_duality_data dualize_complex (const Chain_complex& K_init) {
         Cub_object_io<Traits> tmp_L ;
-        tmp_L.dim = K_init.dimension() ;
-        tmp_L.N = K_init.size_bb() ;
-        tmp_L.ncubs.resize(tmp_L.dim+1) ;
+        tmp_L.init(K_init.dimension(), K_init.size_bb()) ;
         // Visit all boolean indices in the BB of _CC and insert corresponding cells in the Cub_object_io of L
         for (size_t i=0; i<K_init.size(); ++i) {
             const std::vector<size_t> tmpkhal(K_init.bindex_to_cell(i)) ;
-            const int dtmp(K_init.dimension(tmpkhal)) ;
-            (tmp_L.ncubs)[dtmp] += 1 ;
-            tmp_L.cubs.push_back(tmpkhal) ;
+            tmp_L.add_cub(tmpkhal);
         }
 
         // Build the output object

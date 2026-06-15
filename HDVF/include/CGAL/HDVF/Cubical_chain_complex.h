@@ -415,8 +415,8 @@ public:
      *
      * Displays the number of cells in each dimension and the boundary matrix in each dimension.
      */
-    template <typename _CT, typename _Traits>
-    friend std::ostream& operator<<(std::ostream& out, const Cubical_chain_complex<_CT,_Traits>& complex) ;
+    template <typename _CT, typename _Traits, typename _SMS>
+    friend std::ostream& operator<<(std::ostream& out, const Cubical_chain_complex<_CT,_Traits,_SMS>& complex) ;
 
     /** \brief Gets (unique) object Id.
      * For comparison of constant references to the complex.
@@ -481,7 +481,7 @@ public:
      * \param label_type_name Typename used in vtk export (e.g. "int" or "unsigned_long", see <a href = "https://docs.vtk.org/en/latest/design_documents/VTKFileFormats.html">VTK manual </a>).
      */
     template <typename LabelType = int>
-    static void chain_complex_to_vtk(const Cubical_chain_complex<CoefficientRing, Traits> &K, const std::string &filename, const std::vector<std::vector<LabelType> > *labels=NULL, std::string label_type_name = "int") {
+    static void chain_complex_to_vtk(const Cubical_chain_complex<CoefficientRing, Traits, SparseMatrixStruct> &K, const std::string &filename, const std::vector<std::vector<LabelType> > *labels=NULL, std::string label_type_name = "int") {
         bool with_scalars = (labels != NULL) ;
 
         // Load out file...
@@ -526,7 +526,7 @@ public:
             // Vertices
             for (size_t i = 0; i<K.number_of_cells(0); ++i) {
                 out << "1 " << i << std::endl ;
-                types.push_back(Cubical_chain_complex<CoefficientRing, Traits>::VTK_cubtypes.at(0)) ;
+                types.push_back(Cubical_chain_complex<CoefficientRing, Traits, SparseMatrixStruct>::VTK_cubtypes.at(0)) ;
                 if (with_scalars)
                 {
                     scalars.push_back((*labels).at(0).at(i)) ;
@@ -543,7 +543,7 @@ public:
                     for (size_t i : verts)
                         out << i << " " ;
                     out << std::endl ;
-                    types.push_back(Cubical_chain_complex<CoefficientRing,Traits>::VTK_cubtypes.at(q)) ;
+                    types.push_back(Cubical_chain_complex<CoefficientRing,Traits, SparseMatrixStruct>::VTK_cubtypes.at(q)) ;
                     if (with_scalars)
                     {
                         scalars.push_back((*labels).at(q).at(id)) ;
@@ -1000,7 +1000,7 @@ void Cubical_chain_complex<CoefficientRing,Traits,SparseMatrixStruct>::chain_to_
                     for (size_t i : verts)
                         out << i << " " ;
                     out << std::endl ;
-                    types.push_back(Cubical_chain_complex<CoefficientRing,Traits>::VTK_cubtypes.at(q)) ;
+                    types.push_back(Cubical_chain_complex<CoefficientRing,Traits,SparseMatrixStruct>::VTK_cubtypes.at(q)) ;
 
                     if (with_scalars) {
                         ids.push_back(id) ;
@@ -1037,8 +1037,8 @@ void Cubical_chain_complex<CoefficientRing,Traits,SparseMatrixStruct>::chain_to_
     out.close() ;
 }
 
-template <typename CoefficientRing, typename Traits>
-std::ostream& operator<<(std::ostream& out, const Cubical_chain_complex<CoefficientRing, Traits>& complex) {
+template <typename CoefficientRing, typename Traits, typename SparseMatrixStruct>
+std::ostream& operator<<(std::ostream& out, const Cubical_chain_complex<CoefficientRing, Traits, SparseMatrixStruct>& complex) {
     return complex.print_complex(out);
 }
 
