@@ -27,20 +27,21 @@ public:
   using Curve_2 = typename Geom_traits_2::Curve_2;
   using X_monotone_curve_2 = typename Geom_traits_2::X_monotone_curve_2;
 
-  using Geom_traits_2_ptr = std::shared_ptr<const Geom_traits_2>;
+  using Shared_geom_traits_2 = std::shared_ptr<const Geom_traits_2>;
 
   // Constructor accepts a shared pointer to the 2D geometry traits
   // and the specific x-monotone curve (or vertical segment) along which
   // all 1D points are assumed to lie.
-  Geom_traits_2_adaptor_1(Geom_traits_2_ptr traits_2_ptr, const X_monotone_curve_2& master_arc)
-    : m_traits_2(traits_2_ptr), m_master_arc(master_arc) {}
+  Geom_traits_2_adaptor_1(Shared_geom_traits_2 shared_traits_2, const X_monotone_curve_2 master_arc) :
+    m_traits_2(std::move(shared_traits_2)),
+    m_master_arc(std::move(master_arc))
+  {}
 
   class Compare_x_1 {
   private:
-    Geom_traits_2_ptr m_traits_2;
-    X_monotone_curve_2 m_arc;
+    Shared_geom_traits_2 m_traits_2;
   public:
-    Compare_x_1(Geom_traits_2_ptr t2, const X_monotone_curve_2& arc) : m_traits_2(t2), m_arc(arc) {}
+    Compare_x_1(Shared_geom_traits_2 t2) : m_traits_2(std::move(t2)) {}
 
     Comparison_result operator()(const Point_1& p1, const Point_1& p2) const {
       // Lexicographic (x, then y) comparison.
@@ -62,10 +63,10 @@ public:
     }
   };
 
-  Compare_x_1 compare_x_1_object() const { return Compare_x_1(m_traits_2, m_master_arc); }
+  Compare_x_1 compare_x_1_object() const { return Compare_x_1(m_traits_2); }
 
 private:
-  Geom_traits_2_ptr m_traits_2;
+  Shared_geom_traits_2 m_traits_2;
   X_monotone_curve_2 m_master_arc;
 };
 

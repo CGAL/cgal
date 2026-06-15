@@ -28,7 +28,7 @@ public:
   /// @{
   typedef GeometryTraits_1 Geometry_traits_1; ///< The geometry traits type.
   typedef TopologyTraits Topology_traits;     ///< The topology traits type.
-  typedef std::shared_ptr<const Geometry_traits_1> Geometry_traits_ptr; ///< A smart pointer to the shared geometry traits context.
+  typedef std::shared_ptr<const Geometry_traits_1> Shared_geometry_traits; ///< A smart pointer to the shared geometry traits context.
   typedef typename Geometry_traits_1::Point_1 Point_1; ///< The 1D arrangement point representation.
 
   typedef typename Topology_traits::Vertex_descriptor Vertex_descriptor; ///< Descriptor handle targeting a mutable vertex element.
@@ -55,22 +55,22 @@ public:
 
   /**
    * \brief Constructor from an existing geometry traits smart pointer.
-   * \param geom_tr_ptr A shared pointer to an existing, valid geometry traits instance.
+   * \param shared_geometry_traits A shared pointer to an existing, valid geometry traits instance.
    */
-  explicit Arrangement_on_curve_1(const Geometry_traits_ptr geom_tr_ptr);
+  explicit Arrangement_on_curve_1(const Shared_geometry_traits shared_geometry_traits);
 
   /**
    * \brief Fully custom constructor passing a traits pointer and an explicit topology configuration block.
    */
-  Arrangement_on_curve_1(const Geometry_traits_ptr& geom_tr_ptr, const Topology_traits& topo_tr);
+  Arrangement_on_curve_1(const Shared_geometry_traits shared_geometry_traits, Topology_traits topo_tr);
   /// @}
 
   /// \name Accessors
   /// @{
-  const Geometry_traits_1& geometry_traits_1() const;     ///< Returns a reference to the active geometry traits instance.
-  Geometry_traits_ptr geometry_traits_1_ptr() const;       ///< Returns the shared smart pointer tracking the geometry traits context.
-  const Topology_traits& topology_traits() const;         ///< Returns an immutable reference to the internal topology store.
-  Topology_traits& topology_traits();                     ///< Returns a mutable reference to the internal topology store.
+  const Geometry_traits_1& geometry_traits_1() const;       ///< Returns a reference to the active geometry traits instance.
+  Shared_geometry_traits shared_geometry_traits_1() const;  ///< Returns the shared smart pointer tracking the geometry traits context.
+  const Topology_traits& topology_traits() const;           ///< Returns an immutable reference to the internal topology store.
+  Topology_traits& topology_traits();                       ///< Returns a mutable reference to the internal topology store.
 
   bool is_empty() const;                   ///< Returns `true` if the arrangement contains no vertices.
   size_t number_of_vertices() const;       ///< Returns the total count of vertices resting along the line track.
@@ -96,7 +96,7 @@ public:
    * \brief Safety reset function allowing empty arrangements to bind to a separate existing traits memory frame.
    * \pre `is_empty() == true`
    */
-  void reset_geometry_traits_ptr(Geometry_traits_ptr new_traits_ptr);
+  void reset_shared_geometry_traits(Shared_geometry_traits new_shared_traits_traits);
 
   /**
    * \brief Inserts the first structural node into an empty subdivision context.
