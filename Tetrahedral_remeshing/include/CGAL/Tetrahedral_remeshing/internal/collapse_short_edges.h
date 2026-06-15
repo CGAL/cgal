@@ -1206,21 +1206,28 @@ auto can_be_collapsed(const typename C3T3::Edge& e,
     bool on_boundary;
   };
 
-  const bool boundary = c3t3.is_in_complex(e)
-                     || is_boundary(c3t3, e, cell_selector);
+  const bool in_cx = c3t3.is_in_complex(e);
+  if(in_cx && protect_boundaries)
+    return Collapsible{false, true /*boundary*/};
 
-  if (protect_boundaries)
+  const bool boundary = is_boundary(c3t3, e, cell_selector);
+  if(boundary && protect_boundaries)
+    return Collapsible{false, boundary};
+
+  if(!is_selected(e, c3t3.triangulation(), cell_selector))
+    return Collapsible{false, boundary};
+
+  if(!boundary && !in_cx)
   {
-    if (boundary)
+    auto patch_v0 = surface_patch_index(e.first->vertex(e.second), c3t3);
+    auto patch_v1 = surface_patch_index(e.first->vertex(e.third), c3t3);
+
+    if(patch_v0 != std::nullopt && patch_v1 != std::nullopt && patch_v0 != patch_v1)
       return Collapsible{false, boundary};
+  }
 
-    return Collapsible{ is_internal(e, c3t3, cell_selector), boundary};
-  }
-  else
-  {
-    return Collapsible{ is_selected(e, c3t3.triangulation(), cell_selector),
-                        boundary };
-  }
+//   if(!is_internal(e, c3t3, cell_selector))
+  return Collapsible {true, boundary};
 }
 
 template<typename C3T3,
