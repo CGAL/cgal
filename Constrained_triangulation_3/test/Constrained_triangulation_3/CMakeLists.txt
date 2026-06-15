@@ -10,6 +10,8 @@ create_single_source_cgal_program(test_ccdt_remeshing.cpp)
 find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
 
+set(CMAKE_CXX_SCAN_FOR_MODULES FALSE)
+
 # CDT_3: C++20 for structured bindings
 add_library(CDT_3_dependencies INTERFACE)
 target_compile_features(CDT_3_dependencies INTERFACE cxx_std_20)
@@ -93,6 +95,9 @@ function(CGAL_add_cdt3_from_local_off_test data_name)
   CGAL_add_cdt3_from_off_test_aux(${data_name} ${CMAKE_CURRENT_SOURCE_DIR}/data ${ARGN})
 endfunction()
 
+CGAL_add_cdt3_from_local_off_test(bug-fixed --move-Steiner-vertices-to-the-volume)
+CGAL_add_cdt3_from_local_off_test(bug3-fixed --move-Steiner-vertices-to-the-volume)
+CGAL_add_cdt3_from_local_off_test(bug4-fixed --move-Steiner-vertices-to-the-volume)
 CGAL_add_cdt3_from_local_off_test(cheese18)
 CGAL_add_cdt3_from_local_off_test(cheese23)
 CGAL_add_cdt3_from_local_off_test(cheese28)

@@ -70,13 +70,13 @@ template<typename Triangulation
          , typename Visitor
          , typename CornerIndex = int
          , typename CurveIndex = int
+         , typename C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<Triangulation, CornerIndex, CurveIndex>
          >
 class Adaptive_remesher
 {
   typedef Triangulation Tr;
+  typedef typename Tr::Geom_traits Gt;
   typedef typename Tr::Geom_traits::FT FT;
-
-  typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex> C3t3;
 
   typedef typename C3t3::Cell_handle         Cell_handle;
   typedef typename C3t3::Vertex_handle       Vertex_handle;
@@ -344,7 +344,7 @@ private:
     {
       if (get(m_cell_selector, cit))
       {
-        const Subdomain_index index = cit->subdomain_index();
+        const Subdomain_index index = m_c3t3.subdomain_index(cit);
         if (m_c3t3.is_in_complex(cit))
           m_c3t3.remove_from_complex(cit);
 
@@ -372,15 +372,15 @@ private:
     for (const Facet& f : tr().finite_facets())
     {
       const Facet mf = tr().mirror_facet(f);
-      const Subdomain_index s1 = f.first->subdomain_index();
-      const Subdomain_index s2 = mf.first->subdomain_index();
+      const Subdomain_index s1 = m_c3t3.subdomain_index(f.first);
+      const Subdomain_index s2 = m_c3t3.subdomain_index(mf.first);
       if (s1 != s2
           || get(fcmap, f)
           || get(fcmap, mf)
           || (input_is_c3t3() && m_c3t3.is_in_complex(f))
-          || (!input_is_c3t3() && f.first->is_facet_on_surface(f.second)))
+          || (!input_is_c3t3() && m_c3t3.is_in_complex(f)))
       {
-        Surface_patch_index patch = f.first->surface_patch_index(f.second);
+        Surface_patch_index patch = m_c3t3.surface_patch_index(f);
         if(patch == Surface_patch_index())
           make_surface_patch_index(s1, s2, patch);
 
@@ -449,7 +449,7 @@ private:
           m_c3t3.add_to_complex(vit, ++corner_id);
 
         set_dimension(vit, 0);
-        vit->set_index(corner_id);
+        //vit->set_index(corner_id);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
         ++nbv;
@@ -554,7 +554,7 @@ private:
       = (std::numeric_limits<Subdomain_index>::min)();
     for (Cell_handle cit : tr().finite_cell_handles())
     {
-      const Subdomain_index cid = cit->subdomain_index();
+      const Subdomain_index cid = m_c3t3.subdomain_index(cit);
       if (cid > max_index && cid != Subdomain_index())
         max_index = cid;
     }
@@ -667,7 +667,9 @@ template<typename Triangulation,
          typename SizingFunction,
          typename NamedParameters,
          typename CornerIndex = int,
-         typename CurveIndex = int>
+         typename CurveIndex = int,
+         typename C3t3_or_CDT_3
+             = CGAL::Mesh_complex_3_in_triangulation_3<Triangulation, CornerIndex, CurveIndex>>
 struct Adaptive_remesher_type_generator
 {
   using Tr = Triangulation;
@@ -711,7 +713,9 @@ struct Adaptive_remesher_type_generator
   >::type;
 
   using type = Adaptive_remesher<
-    Tr, SizingFunction, VCMap, ECMap, FCMap, SelectionFunctor, Visitor>;
+    Tr, SizingFunction, VCMap, ECMap, FCMap, SelectionFunctor, Visitor,
+    CornerIndex, CurveIndex,
+    C3t3_or_CDT_3>;
 };
 
 }//end namespace internal

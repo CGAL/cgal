@@ -578,6 +578,9 @@ public:
 
   // Query
   bool is_subconstraint(T va, T vb) const;
+  bool is_valid_constraint(Constraint_id cid) const {
+    return priv.constraints_set.find(cid) != priv.constraints_set.end();
+  }
 
   Vertex_it vertices_in_constraint_begin(Constraint_id cid) const
   { return cid.begin(); }

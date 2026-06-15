@@ -22,6 +22,9 @@
 #include <CGAL/config.h>
 
 #include <ios>
+#include <iostream>
+#include <locale>
+#include <ostream>
 #include <streambuf>
 #include <string>
 #include <tuple>
@@ -234,6 +237,10 @@ public:
       , original_buf_(stream.rdbuf())
       , indenting_buf_(*original_buf_, indent_string)
   {
+    if(indent_string.empty()) {
+      // No indentation, just use the original buffer
+      return;
+    }
     if(auto old_buf = dynamic_cast<streambuf_type*>(original_buf_)) {
       original_indent_string_ = old_buf->indent_string();
       old_buf->set_indent_string(original_indent_string_ + indent_string);
@@ -300,11 +307,13 @@ using Indenting_wstream_guard = Basic_indenting_stream_guard<std::wostream>;
  * This helper function creates `Basic_indenting_stream_guard` objects for
  * multiple streams at once. All streams will use the same indentation settings,
  * and their original streambufs will be automatically restored when the guards
- * go out of scope. The guards are returned in a tuple.
+ * go out of scope. The guards are returned in a tuple. If no stream is
+ * provided, guards are created for `std::cout`, `std::cerr`, and `std::clog`.
  *
  * \tparam Streams The stream types (deduced from arguments)
  * \param spaces_per_level Number of spaces per indentation level
- * \param streams The streams to apply indentation to
+ * \param streams The streams to apply indentation to. If omitted, the helper
+ * creates guards for `std::cout`, `std::cerr`, and `std::clog`.
  * \return A tuple of Basic_indenting_stream_guard objects
  *
  * \sa Basic_indenting_stream_guard
@@ -318,7 +327,11 @@ using Indenting_wstream_guard = Basic_indenting_stream_guard<std::wostream>;
  */
 template <typename... Streams>
 auto make_indenting_guards(int spaces_per_level, Streams&... streams) {
-  return std::make_tuple(Basic_indenting_stream_guard<Streams>(streams, spaces_per_level)...);
+  if constexpr (sizeof...(Streams) == 0) {
+    return make_indenting_guards(spaces_per_level, std::cout, std::cerr, std::clog);
+  } else {
+    return std::make_tuple(Basic_indenting_stream_guard<Streams>(streams, spaces_per_level)...);
+  }
 }
 
 /**
@@ -327,18 +340,24 @@ auto make_indenting_guards(int spaces_per_level, Streams&... streams) {
  * \brief creates indenting guards for multiple streams with a custom indent string.
  *
  * This overload allows specifying a custom indentation string instead of a number
- * of spaces.
+ * of spaces. If no stream is provided, guards are created for `std::cout`,
+ * `std::cerr`, and `std::clog`.
  *
  * \tparam Streams The stream types (deduced from arguments)
  * \param indent_string The indentation string to use
- * \param streams The streams to apply indentation to
+ * \param streams The streams to apply indentation to. If omitted, the helper
+ * creates guards for `std::cout`, `std::cerr`, and `std::clog`.
  * \return A tuple of Basic_indenting_stream_guard objects
  *
  * \sa Basic_indenting_stream_guard
  */
 template <typename... Streams>
 auto make_indenting_guards(const std::string& indent_string, Streams&... streams) {
-  return std::make_tuple(Basic_indenting_stream_guard<Streams>(streams, indent_string)...);
+  if constexpr (sizeof...(Streams) == 0) {
+    return make_indenting_guards(indent_string, std::cout, std::cerr, std::clog);
+  } else {
+    return std::make_tuple(Basic_indenting_stream_guard<Streams>(streams, indent_string)...);
+  }
 }
 
 } // namespace IO

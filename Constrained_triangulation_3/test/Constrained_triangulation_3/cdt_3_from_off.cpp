@@ -13,6 +13,7 @@
 #include <CGAL/Constrained_triangulation_3/internal/read_polygon_mesh_for_cdt_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/enum.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/IO/File_binary_mesh_3.h>
 #include <CGAL/Named_function_parameters.h>
@@ -39,6 +40,7 @@
 #include <chrono>
 #include <cstddef>
 #include <cstdlib>
+#include <exception>
 #include <fstream>
 #include <functional>
 #include <iostream>
@@ -50,6 +52,7 @@
 #include <stack>
 #include <string_view>
 #include <string>
+#include <type_traits>
 #include <unordered_map>
 #include <utility>
 #include <vector>
@@ -58,20 +61,19 @@
 #endif
 
 #if CGAL_CXX20 && __cpp_lib_concepts >= 201806L && __cpp_lib_ranges >= 201911L
+#  define CGAL_CDT_3_CAN_USE_CXX20_RANGES 1
 #  include <ranges>
 #endif
 
-#if CGAL_CDT_3_USE_EPECK
+#ifndef CGAL_CDT_3_USE_EPECK
+#  define CGAL_CDT_3_USE_EPECK 0
+#endif
 
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+namespace CGAL::CDT_3::test::cdt_3_from_off {
 
-using K = CGAL::Exact_predicates_exact_constructions_kernel;
-
-#else // use Epick
-
-using K = CGAL::Exact_predicates_inexact_constructions_kernel;
-
-#endif // use Epick
+using K = std::conditional_t<CGAL_CDT_3_USE_EPECK == 0,
+                             CGAL::Exact_predicates_inexact_constructions_kernel,
+                             CGAL::Exact_predicates_exact_constructions_kernel>;
 
 using CDT = CGAL::Conforming_constrained_Delaunay_triangulation_3<K>;
 using Point = K::Point_3;
@@ -81,6 +83,18 @@ using Mesh = CGAL::Surface_mesh<Point>;
 using vertex_descriptor = boost::graph_traits<Mesh>::vertex_descriptor;
 using edge_descriptor   = boost::graph_traits<Mesh>::edge_descriptor;
 using face_descriptor   = boost::graph_traits<Mesh>::face_descriptor;
+
+template <typename Rep, typename Period>
+auto milliseconds(std::chrono::duration<Rep, Period> duration) {
+  return std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+};
+
+template <typename Clock, typename Duration>
+auto milliseconds_since(std::chrono::time_point<Clock, Duration> start_time) {
+  return milliseconds(Clock::now() - start_time);
+};
+
+using clock = std::chrono::high_resolution_clock;
 
 void help(std::ostream& out) {
   out << R"!!!!!(
@@ -109,6 +123,7 @@ Usage: cdt_3_from_off [options] input.off output.off
 
   --debug-Steiner-points: debug Steiner point insertion
   --debug-Steiner-points-construction: debug Steiner point construction
+  --debug-move-Steiner-vertices-to-the-volume: debug moving Steiner vertices to the volume
   --debug-input-faces: debug input faces
   --debug-missing-regions: debug missing regions
   --debug-regions: debug regions
@@ -125,6 +140,7 @@ Usage: cdt_3_from_off [options] input.off output.off
   --debug-restore-faces: debug face restoration process
 
   --use-finite-edges-map: use a hash map for finite edges (default: false)
+  --move-Steiner-vertices-to-the-volume/--no-move-Steiner-vertices-to-the-volume: move Steiner vertices to the volume (default: true)
   --use-epeck-for-normals/--no-use-epeck-for-normals: use exact kernel for normal computations (default: false)
   --use-epeck-for-Steiner-points/--no-use-epeck-for-Steiner-points: use exact kernel for Steiner point computations (default: false)
 
@@ -152,6 +168,7 @@ struct CDT_options
   bool        read_mesh_with_operator             = false;
   bool        debug_Steiner_points                = false;
   bool        debug_Steiner_points_construction   = false;
+  bool        debug_move_Steiner_vertices         = false;
   bool        debug_input_faces                   = false;
   bool        debug_missing_regions               = false;
   bool        debug_regions                       = false;
@@ -167,6 +184,7 @@ struct CDT_options
   bool        debug_polygon_insertion             = false;
   bool        debug_restore_faces                 = false;
   bool        use_finite_edges_map                = false;
+  bool        move_Steiner_vertices_to_the_volume = true;
   bool        use_epeck_for_normals               = false;
   bool        use_epeck_for_Steiner_points        = false;
   bool        call_is_valid                       = true;
@@ -198,88 +216,110 @@ CDT_options::CDT_options(int argc, char* argv[]) {
       return std::string(*++it);
     };
     std::string_view arg = *it;
-    if(arg == "--merge-facets"sv) {
-      merge_facets                        = true;
-    } else if(arg == "--no-merge-facets"sv) {
-      merge_facets                        = false;
-    } else if(arg == "--reject-self-intersections"sv) {
-      reject_self_intersections           = true;
-    } else if(arg == "--no-repair"sv) {
-      repair_mesh                         = false;
-    } else if(arg == "--read-mesh-with-operator"sv) {
-      read_mesh_with_operator             = true;
-    } else if(arg == "--merge-facets-old"sv) {
-      merge_facets                        = true;
-      merge_facets_old_method             = true;
-    } else if(arg == "--bisect"sv) {
-      bisect_failures                     = true;
-    } else if(arg == "--dump-patches-after-merge"sv) {
-      dump_patches_after_merge_filename   = get_next_arg_or_error_out();
-    } else if(arg == "--dump-patches-borders-prefix"sv) {
-      dump_patches_borders_prefix         = get_next_arg_or_error_out();
-    } else if(arg == "--dump-surface-mesh-after-merge"sv) {
-      dump_surface_mesh_after_merge_filename = get_next_arg_or_error_out();
-    } else if(arg == "--dump-after-conforming"sv) {
-      dump_after_conforming_filename      = get_next_arg_or_error_out();
-    } else if(arg == "--vertex-vertex-epsilon"sv) {
-      vertex_vertex_epsilon               = std::stod(get_next_arg_or_error_out());
-    } else if(arg == "--segment-vertex-epsilon"sv) {
-      segment_vertex_epsilon              = std::stod(get_next_arg_or_error_out());
-    } else if(arg == "--coplanar-polygon-max-angle"sv) {
-      coplanar_polygon_max_angle          = std::stod(get_next_arg_or_error_out());
-    } else if(arg == "--coplanar-polygon-max-distance"sv) {
-      coplanar_polygon_max_distance       = std::stod(get_next_arg_or_error_out());
-    } else if(arg == "--quiet"sv) {
-      quiet                               = true;
-    } else if(arg == "--no-is-valid"sv) {
-      call_is_valid                       = false;
-    } else if(arg == "--debug-Steiner-points"sv) {
-      debug_Steiner_points                = true;
-    } else if(arg == "--debug-Steiner-points-construction"sv) {
-      debug_Steiner_points_construction   = true;
-    } else if(arg == "--debug-input-faces"sv) {
-      debug_input_faces                   = true;
-    } else if(arg == "--debug-missing-regions"sv) {
-      debug_missing_regions               = true;
-    } else if(arg == "--debug-regions"sv) {
-      debug_regions                       = true;
-    } else if(arg == "--debug_copy_triangulation_into_hole"sv) {
-      debug_copy_triangulation_into_hole  = true;
-    } else if(arg == "--debug-validity"sv) {
-      debug_validity                      = true;
-    } else if(arg == "--debug-finite-edges-map"sv) {
-      debug_finite_edges_map              = true;
-    } else if(arg == "--debug-subconstraints-to-conform"sv) {
-      debug_subconstraints_to_conform     = true;
-    } else if(arg == "--debug-verbose-special-cases"sv) {
-      debug_verbose_special_cases         = true;
-    } else if(arg == "--debug-encroaching-vertices"sv) {
-      debug_encroaching_vertices          = true;
-    } else if(arg == "--debug-conforming-validation"sv) {
-      debug_conforming_validation         = true;
-    } else if(arg == "--debug-constraint-hierarchy"sv) {
-      debug_constraint_hierarchy          = true;
-    } else if(arg == "--debug-geometric-errors"sv) {
-      debug_geometric_errors              = true;
-    } else if(arg == "--debug-polygon-insertion"sv) {
-      debug_polygon_insertion             = true;
-    } else if(arg == "--debug-restore-faces"sv) {
-      debug_restore_faces                  = true;
-    } else if(arg == "--use-finite-edges-map"sv) {
-      use_finite_edges_map                = true;
-    } else if(arg == "--no-use-epeck-for-normals"sv) {
-      use_epeck_for_normals               = false;
-    } else if(arg == "--no-use-epeck-for-Steiner-points"sv) {
-      use_epeck_for_Steiner_points        = false;
-    } else if(arg == "--use-epeck-for-normals"sv) {
-      use_epeck_for_normals               = true;
-    } else if(arg == "--use-epeck-for-Steiner-points"sv) {
-      use_epeck_for_Steiner_points        = true;
-    } else if(arg == "--verbose"sv || arg == "-V"sv) {
+    bool enable = true;
+    bool arg_is_a_long_option = false;
+    if(arg.starts_with("--no-")) {
+      enable = false;
+      arg_is_a_long_option = true;
+      arg.remove_prefix(5);
+    } else if(arg.starts_with("--")) {
+      arg_is_a_long_option = true;
+      arg.remove_prefix(2);
+    }
+    if(arg_is_a_long_option) {
+      if(arg == "merge-facets"sv) {
+        merge_facets                        = enable;
+      } else if(arg == "no-merge-facets"sv) {
+        merge_facets                        = false;
+      } else if(arg == "reject-self-intersections"sv) {
+        reject_self_intersections           = enable;
+      } else if(arg == "no-repair"sv) {
+        repair_mesh                         = false;
+      } else if(arg == "read-mesh-with-operator"sv) {
+        read_mesh_with_operator             = enable;
+      } else if(arg == "merge-facets-old"sv) {
+        merge_facets                        = enable;
+        merge_facets_old_method             = enable;
+      } else if(arg == "bisect"sv) {
+        bisect_failures                     = enable;
+      } else if(arg == "dump-patches-after-merge"sv) {
+        dump_patches_after_merge_filename   = get_next_arg_or_error_out();
+      } else if(arg == "dump-patches-borders-prefix"sv) {
+        dump_patches_borders_prefix         = get_next_arg_or_error_out();
+      } else if(arg == "dump-surface-mesh-after-merge"sv) {
+        dump_surface_mesh_after_merge_filename = get_next_arg_or_error_out();
+      } else if(arg == "dump-after-conforming"sv) {
+        dump_after_conforming_filename      = get_next_arg_or_error_out();
+      } else if(arg == "vertex-vertex-epsilon"sv) {
+        vertex_vertex_epsilon               = std::stod(get_next_arg_or_error_out());
+      } else if(arg == "segment-vertex-epsilon"sv) {
+        segment_vertex_epsilon              = std::stod(get_next_arg_or_error_out());
+      } else if(arg == "coplanar-polygon-max-angle"sv) {
+        coplanar_polygon_max_angle          = std::stod(get_next_arg_or_error_out());
+      } else if(arg == "coplanar-polygon-max-distance"sv) {
+        coplanar_polygon_max_distance       = std::stod(get_next_arg_or_error_out());
+      } else if(arg == "quiet"sv) {
+        quiet                               = enable;
+      } else if(arg == "no-is-valid"sv) {
+        call_is_valid                       = false;
+      } else if(arg == "debug-Steiner-points"sv) {
+        debug_Steiner_points                = enable;
+      } else if(arg == "debug-Steiner-points-construction"sv) {
+        debug_Steiner_points_construction   = enable;
+      } else if(arg == "debug-move-Steiner-vertices-to-the-volume"sv) {
+        debug_move_Steiner_vertices         = enable;
+      } else if(arg == "debug-input-faces"sv) {
+        debug_input_faces                   = enable;
+      } else if(arg == "debug-missing-regions"sv) {
+        debug_missing_regions               = enable;
+      } else if(arg == "debug-regions"sv) {
+        debug_regions                       = enable;
+      } else if(arg == "debug_copy_triangulation_into_hole"sv) {
+        debug_copy_triangulation_into_hole  = enable;
+      } else if(arg == "debug-validity"sv) {
+        debug_validity                      = enable;
+      } else if(arg == "debug-finite-edges-map"sv) {
+        debug_finite_edges_map              = enable;
+      } else if(arg == "debug-subconstraints-to-conform"sv) {
+        debug_subconstraints_to_conform     = enable;
+      } else if(arg == "debug-verbose-special-cases"sv) {
+        debug_verbose_special_cases         = enable;
+      } else if(arg == "debug-encroaching-vertices"sv) {
+        debug_encroaching_vertices          = enable;
+      } else if(arg == "debug-conforming-validation"sv) {
+        debug_conforming_validation         = enable;
+      } else if(arg == "debug-constraint-hierarchy"sv) {
+        debug_constraint_hierarchy          = enable;
+      } else if(arg == "debug-geometric-errors"sv) {
+        debug_geometric_errors              = enable;
+      } else if(arg == "debug-polygon-insertion"sv) {
+        debug_polygon_insertion             = enable;
+      } else if(arg == "debug-restore-faces"sv) {
+        debug_restore_faces                  = enable;
+      } else if(arg == "use-finite-edges-map"sv) {
+        use_finite_edges_map                = enable;
+      } else if(arg == "no-move-Steiner-vertices-to-the-volume"sv) {
+        move_Steiner_vertices_to_the_volume = false;
+      } else if(arg == "move-Steiner-vertices-to-the-volume"sv) {
+        move_Steiner_vertices_to_the_volume = enable;
+      } else if(arg == "no-use-epeck-for-normals"sv) {
+        use_epeck_for_normals               = false;
+      } else if(arg == "no-use-epeck-for-Steiner-points"sv) {
+        use_epeck_for_Steiner_points        = false;
+      } else if(arg == "use-epeck-for-normals"sv) {
+        use_epeck_for_normals               = enable;
+      } else if(arg == "use-epeck-for-Steiner-points"sv) {
+        use_epeck_for_Steiner_points        = enable;
+      } else if(arg == "verbose"sv || arg == "-V"sv) {
+        ++verbose_level;
+      } else if(arg == "help"sv || arg == "-h"sv) {
+        need_help                           = enable;
+      }
+    } else if(arg == "-V"sv) {
       ++verbose_level;
-    } else if(arg == "--help"sv || arg == "-h"sv) {
-      need_help                           = true;
-    } else if(arg[0] == '-') {
+    } else if(arg == "-h"sv) {
+      need_help                             = true;
+    } else if(arg.starts_with('-')) {
       error("unknown option "sv, arg);
     } else {
       switch(positional) {
@@ -311,6 +351,7 @@ CGAL::CDT_3::Debug_options cdt_debug_options(const CDT_options& options) {
   cdt_debug.verbose_special_cases(options.debug_verbose_special_cases);
   cdt_debug.encroaching_vertices(options.debug_encroaching_vertices);
   cdt_debug.conforming_validation(options.debug_conforming_validation);
+  cdt_debug.move_Steiner_vertices(options.debug_move_Steiner_vertices);
   cdt_debug.constraint_hierarchy(options.debug_constraint_hierarchy);
   cdt_debug.geometric_errors(options.debug_geometric_errors);
   cdt_debug.polygon_insertion(options.debug_polygon_insertion);
@@ -348,6 +389,11 @@ std::function<void()> create_output_finalizer(const CDT& cdt, const CDT_options&
   return [&cdt, &options]() {
     auto _ = CGAL::CDT_3_OUTPUT_TASK_guard();
     {
+      if(std::uncaught_exceptions() > 0) {
+        std::cerr << "create_output_finalizer: an exception is being thrown, the triangulation may be left in an "
+                     "invalid state.\n";
+        return;
+      }
       auto dump_tets_to_medit = [](std::string fname,
                               const std::vector<K::Point_3> &points,
                               const std::vector<std::array<std::size_t, 4>> &indexed_tetra,
@@ -397,30 +443,33 @@ std::function<void()> create_output_finalizer(const CDT& cdt, const CDT_options&
       }
 
       std::vector<K::Point_3> points(cdt.number_of_vertices());
+      std::size_t idx = 0;
       for(auto v: cdt.finite_vertex_handles()) {
-        points.at(v->time_stamp() -1) = v->point();
+        // renumber the vertices: there might be holes in the numbering due to removed vertices
+        v->set_time_stamp(++idx);
+        points.at(idx - 1) = v->point();
       }
       std::vector<std::array<std::size_t, 4>> indexed_tetra;
       indexed_tetra.reserve(cdt.number_of_cells());
       for(auto ch: cdt.finite_cell_handles()) {
         if(cells_map[ch] > 0) {
-          indexed_tetra.push_back({ch->vertex(0)->time_stamp() -1,
-                                   ch->vertex(1)->time_stamp() -1,
-                                   ch->vertex(2)->time_stamp() -1,
-                                   ch->vertex(3)->time_stamp() -1});
+          indexed_tetra.push_back({ch->vertex(0)->time_stamp() - 1,
+                                   ch->vertex(1)->time_stamp() - 1,
+                                   ch->vertex(2)->time_stamp() - 1,
+                                   ch->vertex(3)->time_stamp() - 1});
         }
       }
-      std::vector<std::size_t> cell_idsl(indexed_tetra.size(), 1);
-      dump_tets_to_medit(options.output_filename + ".mesh", points, indexed_tetra, cell_idsl);
+      std::vector<std::size_t> cell_ids(indexed_tetra.size(), 1);
+      dump_tets_to_medit(options.output_filename + ".mesh", points, indexed_tetra, cell_ids);
     }
     {
       std::ofstream dump(options.output_filename);
       dump.precision(17);
-#if CGAL_CXX20 && __cpp_lib_concepts >= 201806L && __cpp_lib_ranges >= 201911L
+#if CGAL_CDT_3_CAN_USE_CXX20_RANGES
       cdt.write_facets(dump, cdt.triangulation(), std::views::filter(cdt.finite_facets(), [&](auto f) {
           return cdt.is_facet_constrained(f);
       }));
-#else
+#else // If C++20 ranges are not available, we use boost::make_filter_iterator to filter the facets.
       auto is_facet_constrained = [&](auto f) { return cdt.is_facet_constrained(f); };
       const auto& tr = cdt.triangulation();
       auto it_begin = tr.finite_facets_begin();
@@ -428,7 +477,7 @@ std::function<void()> create_output_finalizer(const CDT& cdt, const CDT_options&
       auto filtered_it_begin = boost::make_filter_iterator(is_facet_constrained,it_begin, it_end);
       auto filtered_it_end = boost::make_filter_iterator(is_facet_constrained,it_end, it_end);
       cdt.write_facets(dump, tr, CGAL::make_range(filtered_it_begin, filtered_it_end));
-#endif
+#endif // CGAL_CDT_3_CAN_USE_CXX20_RANGES
     }
   };
 }
@@ -581,7 +630,7 @@ Borders_of_patches maybe_merge_facets(
 
   {
     auto _ = CGAL::CDT_3_MERGE_FACETS_TASK_guard();
-    auto start_time = std::chrono::high_resolution_clock::now();
+    auto start_time = clock::now();
 
     if(options.merge_facets_old_method) {
       number_of_patches = merge_facets_old_method(mesh, pmaps, number_of_patches);
@@ -592,9 +641,8 @@ Borders_of_patches maybe_merge_facets(
     }
     patch_edges = extract_patch_edges(mesh, pmaps, number_of_patches);
     if (!options.quiet) {
-      auto timing = std::chrono::high_resolution_clock::now() - start_time;
       std::cout << "[timings] found " << number_of_patches << " patches in "
-                << std::chrono::duration_cast<std::chrono::milliseconds>(timing).count() << " ms\n";
+                << milliseconds_since(start_time) << " ms\n";
     }
   }
 
@@ -701,16 +749,15 @@ int go(Mesh mesh, CDT_options options) {
   // Build CDT directly from the polygon mesh using the official API
   CDT cdt;
   auto output_on_exit_scope_guard = CGAL::make_scope_exit(create_output_finalizer(cdt, options));
-  auto build_start = std::chrono::high_resolution_clock::now();
+  auto build_start = clock::now();
   cdt = CDT{std::invoke([&]() {
     auto np = CGAL::parameters::debug(cdt_debug).visitor(std::ref(dump_mesh_with_steiner_points));
     return options.merge_facets ? CDT(mesh, np.plc_face_id(pmaps.patch_id_map)) : CDT(mesh, np);
   })};
   if(!options.quiet) {
-    auto timing = std::chrono::high_resolution_clock::now() - build_start;
     std::cout << "[timings] built CDT from mesh in "
-              << std::chrono::duration_cast<std::chrono::milliseconds>(timing).count() << " ms\n";
-    std::cout << "Number of vertices: " << cdt.number_of_vertices() << "\n\n";
+              << milliseconds_since(build_start) << " ms\n";
+    std::cout << cdt.statistics() << "\n\n";
   }
 
   // Validation: check conforming status and validity
@@ -718,6 +765,17 @@ int go(Mesh mesh, CDT_options options) {
     auto _ = CGAL::CDT_3_VALIDATION_TASK_guard();
     CGAL_assertion(!options.call_is_valid || cdt.is_valid(true));
     CGAL_assertion(!options.call_is_valid || cdt.is_conforming());
+  }
+
+  // Move Steiner vertices to the volume if requested
+  if(options.move_Steiner_vertices_to_the_volume) {
+    auto move_vertices_guard = CGAL::CDT_3_MOVE_STEINER_VERTICES_TASK_guard();
+    cdt.move_Steiner_vertices_to_the_volume();
+    if(!options.quiet) {
+      std::cout << "\n[timings] moved Steiner vertices to the volume in "
+                    << move_vertices_guard.time_ms() << " ms\n";
+      std::cout << cdt.statistics() << "\n";
+    }
   }
 
   return EXIT_SUCCESS;
@@ -778,7 +836,10 @@ int bisect_errors(Mesh mesh, CDT_options options) {
   return CGAL::bisect_failures(mesh, get_size, simplify, run_test, save_mesh);
 }
 
+} // end of namespaces CGAL::CDT_3::test::cdt_3_from_off
+
 int main(int argc, char* argv[]) {
+  using namespace CGAL::CDT_3::test::cdt_3_from_off;
   std::cerr.precision(17);
   std::cout.precision(17);
   CGAL::get_default_random() = CGAL::Random(42);
@@ -790,7 +851,7 @@ int main(int argc, char* argv[]) {
   }
 
   CGAL::CDT_3_read_polygon_mesh_output<Mesh> read_mesh_result;
-  auto start_time = std::chrono::high_resolution_clock::now();
+  auto start_time = clock::now();
   {
     auto _ = CGAL::CDT_3_READ_INPUT_TASK_guard();
 
@@ -817,8 +878,9 @@ int main(int argc, char* argv[]) {
       return EXIT_FAILURE;
     }
     if(!options.quiet) {
-      std::cout << "[timings] read mesh in " << std::chrono::duration_cast<std::chrono::milliseconds>(
-          std::chrono::high_resolution_clock::now() - start_time).count() << " ms\n";
+      std::cout << "[timings] read mesh \"" << options.input_filename << "\" in "
+                << milliseconds_since(start_time)
+                << " ms\n";
       std::cout << "Number of vertices: " << read_mesh_result.polygon_mesh->number_of_vertices() << '\n';
       std::cout << "Number of edges: " << read_mesh_result.polygon_mesh->number_of_edges() << '\n';
       std::cout << "Number of faces: " << read_mesh_result.polygon_mesh->number_of_faces() << "\n\n";
@@ -849,8 +911,7 @@ int main(int argc, char* argv[]) {
 
   auto exit_code = go(std::move(*read_mesh_result.polygon_mesh), options);
   if(!options.quiet) {
-    std::cout << "[timings] total time: " << std::chrono::duration_cast<std::chrono::milliseconds>(
-        std::chrono::high_resolution_clock::now() - start_time).count() << " ms\n";
+    std::cout << "[timings] total time: " << milliseconds_since(start_time) << " ms\n";
     if(exit_code != 0) std::cout << "ERROR with exit code " << exit_code << '\n';
   }
   return exit_code;
