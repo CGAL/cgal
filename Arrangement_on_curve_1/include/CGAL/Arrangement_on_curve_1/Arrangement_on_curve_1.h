@@ -7,8 +7,8 @@
 //
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef CGAL_ARRANGEMENT_ON_CURVE_1_H
-#define CGAL_ARRANGEMENT_ON_CURVE_1_H
+#ifndef CGAL_ARRANGEMENT_ON_CURVE_1_ARRANGEMENT_ON_CURVE_1_H
+#define CGAL_ARRANGEMENT_ON_CURVE_1_ARRANGEMENT_ON_CURVE_1_H
 
 #include <variant>
 #include <memory>
