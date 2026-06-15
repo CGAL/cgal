@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12...3.31)
-project(Arrangement_on_surface_2_Examples)
+project(Arrangement_on_curve_1_Examples)
 find_package(CGAL)
 
 # create a target per cppfile
