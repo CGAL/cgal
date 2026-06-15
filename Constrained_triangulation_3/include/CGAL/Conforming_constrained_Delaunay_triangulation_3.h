@@ -3639,6 +3639,7 @@ public:
       case CDT_3_vertex_type::INPUT_VERTEX:
       case CDT_3_vertex_type::FREE:
       case CDT_3_vertex_type::STEINER_IN_VOLUME:
+      case CDT_3_vertex_type::BBOX:
         return false;
       case CDT_3_vertex_type::STEINER_IN_FACE:
       case CDT_3_vertex_type::STEINER_ON_EDGE:
