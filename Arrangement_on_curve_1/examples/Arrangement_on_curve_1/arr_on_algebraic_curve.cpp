@@ -82,9 +82,7 @@ int main() {
   //    constructed on. Hence any x-monotone arc of the curve is a valid
   //    master arc for the purposes of ordering points along the curve.
   // --------------------------------------------------------------------------
-  const X_monotone_curve_2& master_arc = arcs.front();
-
-  Geom_traits_1 geom_traits_1(traits_2_ptr, master_arc);
+  Geom_traits_1 geom_traits_1(traits_2_ptr);
   Arrangement arr(std::make_shared<const Geom_traits_1>(geom_traits_1));
 
   // --------------------------------------------------------------------------

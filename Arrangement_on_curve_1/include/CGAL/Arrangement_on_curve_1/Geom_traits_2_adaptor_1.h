@@ -32,14 +32,14 @@ public:
   // Constructor accepts a shared pointer to the 2D geometry traits
   // and the specific x-monotone curve (or vertical segment) along which
   // all 1D points are assumed to lie.
-  Geom_traits_2_adaptor_1(Shared_geom_traits_2 shared_traits_2, const X_monotone_curve_2 master_arc) :
-    m_traits_2(std::move(shared_traits_2)),
-    m_master_arc(std::move(master_arc))
+  Geom_traits_2_adaptor_1(Shared_geom_traits_2 shared_traits_2) :
+    m_traits_2(std::move(shared_traits_2))
   {}
 
   class Compare_x_1 {
   private:
     Shared_geom_traits_2 m_traits_2;
+
   public:
     Compare_x_1(Shared_geom_traits_2 t2) : m_traits_2(std::move(t2)) {}
 
@@ -67,7 +67,6 @@ public:
 
 private:
   Shared_geom_traits_2 m_traits_2;
-  X_monotone_curve_2 m_master_arc;
 };
 
 } // namespace Arrangement_on_curve_1
