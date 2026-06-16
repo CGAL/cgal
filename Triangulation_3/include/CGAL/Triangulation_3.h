@@ -1498,7 +1498,7 @@ protected:
       cell_stack.pop();
 
       // For each neighbor cell
-      for(int i=0; i<dimension()+1; ++i)
+      for(int i=0, dim = dimension()+1; i < dim; ++i)
       {
         cell_descriptor test = tds().neighbor(cd, i);
 
