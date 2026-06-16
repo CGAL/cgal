@@ -678,6 +678,7 @@ public:
 
   bool is_in_complex(const Cell_handle& c) const
   {
+    return !triangulation().is_infinite(c);
     for(const auto v : triangulation().vertices(c))
     {
       if(impl().vertex_type(v) == CDT_3_vertex_type::BBOX)
