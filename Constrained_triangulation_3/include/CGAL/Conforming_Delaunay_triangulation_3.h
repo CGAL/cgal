@@ -161,9 +161,9 @@ struct Debug_options {
   }
 
   unsigned int move_Steiner_vertices_level() const {
-    return get(Flag::debug_move_Steiner_vertices_bit1) + 2 * get(Flag::debug_move_Steiner_vertices_bit2); 
+    return get(Flag::debug_move_Steiner_vertices_bit1) + 2 * get(Flag::debug_move_Steiner_vertices_bit2);
   }
-  void move_Steiner_vertices(unsigned int level) { 
+  void move_Steiner_vertices(unsigned int level) {
     CGAL_assertion(level <= 3);
     get(Flag::debug_move_Steiner_vertices_bit1) = level & 1;
     get(Flag::debug_move_Steiner_vertices_bit2) = (level >> 1) & 1;

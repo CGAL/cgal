@@ -758,7 +758,7 @@ public:
     case CDT_3_vertex_type::BBOX:
       return 3;
     case CDT_3_vertex_type::nb_of_types:
-      CGAL_unreachable();    
+      CGAL_unreachable();
     }
     CGAL_unreachable();
   }
@@ -1738,7 +1738,7 @@ protected:
     }
     CGAL_assertion(std::all_of(boost::counting_iterator<int>(1), boost::counting_iterator<int>(4),
       [f1, f2](int i) {
-        return f1.first->neighbor((f1.second + i) % 4) != f2.first && 
+        return f1.first->neighbor((f1.second + i) % 4) != f2.first &&
                f2.first->neighbor((f2.second + i) % 4) != f1.first;
       }
     ));
