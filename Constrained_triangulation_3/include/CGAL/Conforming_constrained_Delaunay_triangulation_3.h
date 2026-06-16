@@ -661,7 +661,7 @@ public:
   using Facet = typename Triangulation::Facet;
   using Cell_handle = typename Triangulation::Cell_handle;
 
-  using Concurrency_tag = Triangulation::Concurrency_tag;
+  using Concurrency_tag = typename Triangulation::Concurrency_tag;
 
 #ifndef DOXYGEN_RUNNING
   using Constrained_polyline_id = typename CDT_3_impl::Constrained_polyline_id;

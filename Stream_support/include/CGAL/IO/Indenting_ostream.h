@@ -325,14 +325,15 @@ using Indenting_wstream_guard = Basic_indenting_stream_guard<std::wostream>;
  * std::cerr << "Indented error\n";
  * \endcode
  */
+ /// @{
 template <typename... Streams>
 auto make_indenting_guards(int spaces_per_level, Streams&... streams) {
-  if constexpr (sizeof...(Streams) == 0) {
-    return make_indenting_guards(spaces_per_level, std::cout, std::cerr, std::clog);
-  } else {
-    return std::make_tuple(Basic_indenting_stream_guard<Streams>(streams, spaces_per_level)...);
-  }
+  return std::make_tuple(Basic_indenting_stream_guard<Streams>(streams, spaces_per_level)...);
 }
+inline auto make_indenting_guards(int spaces_per_level) {
+  return make_indenting_guards(spaces_per_level, std::cout, std::cerr, std::clog);
+}
+/// @}
 
 /**
  * \ingroup PkgStreamSupportRef
@@ -351,14 +352,15 @@ auto make_indenting_guards(int spaces_per_level, Streams&... streams) {
  *
  * \sa Basic_indenting_stream_guard
  */
+ /// @{
 template <typename... Streams>
 auto make_indenting_guards(const std::string& indent_string, Streams&... streams) {
-  if constexpr (sizeof...(Streams) == 0) {
-    return make_indenting_guards(indent_string, std::cout, std::cerr, std::clog);
-  } else {
-    return std::make_tuple(Basic_indenting_stream_guard<Streams>(streams, indent_string)...);
-  }
+  return std::make_tuple(Basic_indenting_stream_guard<Streams>(streams, indent_string)...);
 }
+inline auto make_indenting_guards(const std::string& indent_string) {
+  return make_indenting_guards(indent_string, std::cout, std::cerr, std::clog);
+}
+/// @}
 
 } // namespace IO
 } // namespace CGAL
