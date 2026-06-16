@@ -756,6 +756,8 @@ public:
     case CDT_3_vertex_type::FREE:
     case CDT_3_vertex_type::BBOX:
       return 3;
+    case CDT_3_vertex_type::nb_of_types:
+      CGAL_unreachable();    
     }
     CGAL_unreachable();
   }
