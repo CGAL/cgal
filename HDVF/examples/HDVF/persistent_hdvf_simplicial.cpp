@@ -71,7 +71,7 @@ int main(int argc, char **argv)
     /* ---- Example 3 : build a lower star filtration "slicing" the object according to the index of vertices (we can imagine any other filtration that does not depend on the geometry (e.g. color of vertices...)
      -> AbstractChainComplex in this case
      */
-    std::function<Degree(size_t)> f = [&complex](size_t i) {
+    std::function<Degree(size_t)> f = [](size_t i) {
         return Degree(i) ;
     } ;
 
