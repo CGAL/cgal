@@ -27,7 +27,7 @@ int main()
     std::cout << "Test 1: Original issue #7124 reproducer (Segment_3)" << std::endl;
     CGAL::Bbox_3 box(0, 0, 0, 10, 10, 10);
     Point p1(FT(3) + FT(1)/FT(2475), FT(1)/FT(25), FT(1) + FT(1)/FT(2013));
-    Point p2(FT(3) + FT(1)/FT(2475), FT(-65734357381440816LL), FT(1) + FT(1)/FT(2013));
+    Point p2(FT(3) + FT(1)/FT(2475), FT(double(-65734357381440816LL)), FT(1) + FT(1)/FT(2013));
     Segment seg(p1, p2);
     auto result = CGAL::intersection(seg, box);
     assert(result);
@@ -76,7 +76,7 @@ int main()
   {
     std::cout << "Test 8: Ray through bbox (large coords)" << std::endl;
     CGAL::Bbox_3 box(0, 0, 0, 10, 10, 10);
-    Point origin(FT(3) + FT(1)/FT(2475), FT(-65734357381440816LL), FT(1) + FT(1)/FT(2013));
+    Point origin(FT(3) + FT(1)/FT(2475), FT(double(-65734357381440816LL)), FT(1) + FT(1)/FT(2013));
     Point target(FT(3) + FT(1)/FT(2475), FT(0), FT(1) + FT(1)/FT(2013));
     Ray ray(origin, target);
     auto result = CGAL::intersection(ray, box);
@@ -88,7 +88,7 @@ int main()
   {
     std::cout << "Test 9: Line through bbox (large coords)" << std::endl;
     CGAL::Bbox_3 box(0, 0, 0, 10, 10, 10);
-    Point p1(FT(3) + FT(1)/FT(2475), FT(-65734357381440816LL), FT(1) + FT(1)/FT(2013));
+    Point p1(FT(3) + FT(1)/FT(2475), FT(double(-65734357381440816LL)), FT(1) + FT(1)/FT(2013));
     Point p2(FT(3) + FT(1)/FT(2475), FT(0), FT(1) + FT(1)/FT(2013));
     Line line(p1, p2);
     auto result = CGAL::intersection(line, box);
