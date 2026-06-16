@@ -810,7 +810,6 @@ std::optional<typename C3t3::Surface_patch_index>
 surface_patch_index(const typename C3t3::Vertex_handle v,
                     const C3t3& c3t3)
 {
-  typedef typename C3t3::Surface_patch_index Surface_patch_index;
   typedef typename C3t3::Facet Facet;
   std::vector<Facet> facets;
   c3t3.triangulation().incident_facets(v, std::back_inserter(facets));
