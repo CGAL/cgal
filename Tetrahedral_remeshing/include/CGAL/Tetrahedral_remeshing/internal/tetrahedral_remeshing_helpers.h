@@ -810,7 +810,6 @@ std::optional<typename C3t3::Surface_patch_index>
 surface_patch_index(const typename C3t3::Vertex_handle v,
                     const C3t3& c3t3)
 {
-  typedef typename C3t3::Surface_patch_index Surface_patch_index;
   typedef typename C3t3::Facet Facet;
   std::vector<Facet> facets;
   c3t3.triangulation().incident_facets(v, std::back_inserter(facets));
@@ -1183,9 +1182,6 @@ bool is_internal(const typename C3t3::Edge& edge,
                  const C3t3& c3t3,
                  CellSelector cell_selector)
 {
-  const typename C3t3::Vertex_handle vs = edge.first->vertex(edge.second);
-  const typename C3t3::Vertex_handle vt = edge.first->vertex(edge.third);
-
   typedef typename C3t3::Triangulation::Cell_circulator Cell_circulator;
   Cell_circulator circ = c3t3.triangulation().incident_cells(edge);
   Cell_circulator done = circ;
@@ -2124,7 +2120,7 @@ void count_far_points(const C3t3& c3t3)
 }
 
 template<typename Tr>
-bool are_cell_orientations_valid(const Tr& tr)
+bool are_cell_orientations_valid([[maybe_unused]] const Tr& tr)
 {
 #ifdef CGAL_T3_ALLOW_NEGATIVE_VOLUME
   return true;

@@ -128,10 +128,12 @@ bool build_finite_cells(Tr& tr,
 
   bool success = true;
 
+#ifndef CGAL_T3_ALLOW_NEGATIVE_VOLUME
   CGAL_assertion_code(
     typename Tr::Geom_traits::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
     typename Tr::Geom_traits::Orientation_3 orientation = tr.geom_traits().orientation_3_object();
   )
+#endif
 
   typename SubdomainsRange::value_type max_domain = 0;
   if(replace_domain_0)
