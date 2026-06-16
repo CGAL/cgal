@@ -158,6 +158,7 @@ public:
     switch(m_vertex_type)
     {
     case CDT_3_vertex_type::INPUT_VERTEX:
+    case CDT_3_vertex_type::BBOX:
       return 0;
     case CDT_3_vertex_type::STEINER_ON_EDGE:
       return 1;
@@ -166,10 +167,9 @@ public:
     case CDT_3_vertex_type::STEINER_IN_VOLUME:
     case CDT_3_vertex_type::FREE:
       return 3;
-    default:
-      break;
+    case CDT_3_vertex_type::nb_of_types:
+      CGAL_unreachable();
     }
-    return -1; // should not happen
   }
 
 };
