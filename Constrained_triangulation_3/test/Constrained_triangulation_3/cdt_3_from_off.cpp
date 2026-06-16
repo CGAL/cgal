@@ -1,5 +1,7 @@
 #include <CGAL/config.h>
 
+#define CGAL_T3_ALLOW_NEGATIVE_VOLUME 1
+#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE 1
 // #define CGAL_CDT_2_DEBUG_INTERSECTIONS 1
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
@@ -21,6 +23,7 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Surface_mesh/IO/PLY.h>
 #include <CGAL/Surface_mesh/Surface_mesh.h>
+#include <CGAL/tetrahedral_remeshing.h>
 #include <CGAL/use.h>
 #include <CGAL/utility.h>
 
@@ -705,7 +708,7 @@ int go(Mesh mesh, CDT_options options) {
   if(!options.quiet) {
     std::cout << "[timings] built CDT from mesh in "
               << milliseconds_since(build_start) << " ms\n";
-    std::cout << cdt.statistics() << "\n\n";
+    std::cout << cdt.statistics() << "\n";
   }
 
   // Validation: check conforming status and validity
@@ -720,10 +723,17 @@ int go(Mesh mesh, CDT_options options) {
     auto move_vertices_guard = CGAL::CDT_3_MOVE_STEINER_VERTICES_TASK_guard();
     cdt.move_Steiner_vertices_to_the_volume();
     if(!options.quiet) {
-      std::cout << "\n[timings] moved Steiner vertices to the volume in "
+      std::cout << "[timings] moved Steiner vertices to the volume in "
                     << move_vertices_guard.time_ms() << " ms\n";
       std::cout << cdt.statistics() << "\n";
     }
+    CGAL::tetrahedral_isotropic_remeshing(
+          cdt,
+          bbox_max_span,
+          CGAL::parameters::number_of_iterations(30)
+          .remesh_boundaries(false));
+    // CGAL_assertion(cdt.tr().tds().is_valid(true));
+    std::cout << cdt.statistics() << "\n";
   }
 
   return EXIT_SUCCESS;
