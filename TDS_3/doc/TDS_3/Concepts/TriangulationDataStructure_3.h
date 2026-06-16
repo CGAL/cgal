@@ -1385,7 +1385,7 @@ bool is_valid(bool verbose = false, int level = 0) const;
 \cgalConcept
 
 Various algorithms using a triangulation data structure, such as Delaunay triangulations
-or Alpha Shapes, must be able to associate a state to a cell elemental.
+or Alpha Shapes, must be able to associate a state to a cell.
 For efficiency, this information must be stored directly within the cell.
 
 This class is only meant to store a state (Boolean). Consequently, the state must be the default
