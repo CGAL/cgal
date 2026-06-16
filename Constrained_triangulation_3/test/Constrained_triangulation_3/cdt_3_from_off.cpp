@@ -33,11 +33,10 @@
 #include <CGAL/Polygon_mesh_processing/remesh_planar_patches.h>
 
 #include <boost/graph/graph_traits.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 
 #include <algorithm>
 #include <array>
-#include <CLI/CLI.hpp>
-#include <boost/iterator/function_output_iterator.hpp>
 #include <cassert>
 #include <chrono>
 #include <cstddef>
@@ -61,9 +60,8 @@
 #  include <version>
 #endif
 
-#if CGAL_CXX20 && __cpp_lib_concepts >= 201806L && __cpp_lib_ranges >= 201911L
-#  define CGAL_CDT_3_CAN_USE_CXX20_RANGES 1
-#  include <ranges>
+#if CGAL_USE_CLI11
+#  include <CLI/CLI.hpp>
 #endif
 
 #ifndef CGAL_CDT_3_USE_EPECK
@@ -145,6 +143,7 @@ struct CDT_options
 };
 
 CDT_options::CDT_options(int argc, char* argv[]) {
+#if CGAL_USE_CLI11
   CLI::App app{"Build and process a constrained Delaunay triangulation from an OFF mesh"};
   app.set_help_flag("-h,--help", "print this help");
   app.allow_extras(false);
@@ -258,6 +257,7 @@ CDT_options::CDT_options(int argc, char* argv[]) {
   if(merge_facets_old_method) {
     merge_facets = true;
   }
+#endif // CGAL_USE_CLI11
 }
 
 CGAL::CDT_3::Debug_options cdt_debug_options(const CDT_options& options) {
