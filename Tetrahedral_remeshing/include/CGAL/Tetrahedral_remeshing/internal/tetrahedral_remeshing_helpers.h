@@ -806,10 +806,10 @@ bool is_boundary_vertex(const typename C3t3::Vertex_handle& v,
 }
 
 template<typename C3t3>
-typename C3t3::Surface_patch_index surface_patch_index(const typename C3t3::Vertex_handle v,
-    const C3t3& c3t3)
+std::optional<typename C3t3::Surface_patch_index>
+surface_patch_index(const typename C3t3::Vertex_handle v,
+                    const C3t3& c3t3)
 {
-  typedef typename C3t3::Surface_patch_index Surface_patch_index;
   typedef typename C3t3::Facet Facet;
   std::vector<Facet> facets;
   c3t3.triangulation().incident_facets(v, std::back_inserter(facets));
@@ -819,7 +819,7 @@ typename C3t3::Surface_patch_index surface_patch_index(const typename C3t3::Vert
     if (c3t3.is_in_complex(f))
       return c3t3.surface_patch_index(f);
   }
-  return Surface_patch_index();
+  return std::nullopt;
 }
 
 template<typename C3t3>
@@ -833,7 +833,7 @@ void set_index(typename C3t3::Vertex_handle v, const C3t3& c3t3)
   case 2:
     CGAL_expensive_assertion(surface_patch_index(v, c3t3)
                   != typename C3t3::Surface_patch_index());
-    v->set_index(surface_patch_index(v, c3t3));
+    v->set_index(surface_patch_index(v, c3t3).value());
     break;
   case 1:
     v->set_index(typename C3t3::Curve_index(1));
