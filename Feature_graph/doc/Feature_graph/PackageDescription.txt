@@ -64,26 +64,26 @@ Secondary concepts:
 - `SharpnessEstimator`
 - `NormalEstimator`
 
-\cgalCRPSection{Feature graph creation functors}
+\cgalCRPSection{Feature Graph Creation Functors}
 
 - `CGAL::Feature_graph::Detect_sharp_features_on_labeled_image()`
 - `CGAL::Feature_graph::Detect_sharp_features_on_surface()`
 
-\cgalCRPSection{Parameter classes}
+\cgalCRPSection{Parameter Classes}
 
 - `CGAL::Feature_graph::Regularization_parameters_on_image`
 - `CGAL::Feature_graph::Regularization_parameters_on_surface`
 - `CGAL::Feature_graph::Optimization_parameters_on_image`
 - `CGAL::Feature_graph::Optimization_parameters_on_surface`
 
-\cgalCRPSection{Sharpness estimators}
+\cgalCRPSection{Sharpness Estimators}
 
-- `CGAL::Feature_graph::AmbrosioTortorelli_on_image::Sharpness_functor`
+- `CGAL::Feature_graph::AmbrosioTortorelli_on_image::Sharpness_estimator`
 - `CGAL::Feature_graph::Sharpness_estimator::Sharpness_estimator_on_surface`
 
-\cgalCRPSection{Normal estimators}
+\cgalCRPSection{Normal Estimators}
 
-- `CGAL::Feature_graph::AmbrosioTortorelli_on_image::Normal_functor`
+- `CGAL::Feature_graph::AmbrosioTortorelli_on_image::Normal_estimator`
 - `CGAL::Feature_graph::Normal_estimator::Normal_estimator_on_surface`
 
 */

@@ -27,12 +27,12 @@ public:
   * The type of the functor that allows to retrieve the sharpness values.
   * \cgalModels{SharpnessEstimator}
   */
-  typedef unspecified_type Sharpness_functor;
+  typedef unspecified_type Sharpness_estimator;
   /*!
   * The type of the functor that allows to retrieve the normals.
   * \cgalModels{NormalEstimator}
   */
-  typedef unspecified_type Normal_functor;
+  typedef unspecified_type Normal_estimator;
 
   /// @}
 
@@ -50,7 +50,7 @@ public:
   *     Elements with a sharpness value lower than this threshold are considered flat
   *     and will be given a negative value.
   */
-  template <typename Image, typename FT = Sharpness_functor::Sharpness_value_type>
+  template <typename Image, typename FT = Sharpness_estimator::Sharpness_value_type>
   AmbrosioTortorelli_on_image(const Image& image, const FT& selection_threshold = FT(0.25));
 
   /// @}
@@ -61,11 +61,11 @@ public:
   /*!
   * returns the functor that allows to retrieve the sharpness values.
   */
-  Sharpness_functor sharpness_functor() const;
+  Sharpness_estimator sharpness_estimator() const;
   /*!
   * returns the functor that allows to retrieve the normals.
   */
-  Normal_functor normal_functor() const;
+  Normal_estimator normal_estimator() const;
 
   /// @}
 };

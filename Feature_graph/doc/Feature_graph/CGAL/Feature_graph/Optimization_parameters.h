@@ -43,49 +43,112 @@ public:
 
   /// @}
 
+  /// \name Constructor
+  /// @{
+
+  /*!
+  * constructs the parameters used to optimize the feature graph placement.
+  * As this constructor holds no information abount the surface type, no default value can be inferred.
+  *
+  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+  *
+  * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below.
+  *           The distances are expressed in terms of the longest voxel edge length.
+  *
+  * \cgalNamedParamsBegin
+  *   \cgalParamSectionBegin{maximum_number_of_iterations}
+  *     \cgalParamDescription{the maximum number of iterations of the gradient descent.}
+  *     \cgalParamDefault{`Size(20)`}
+  *   \cgalParamSectionEnd
+  *   \cgalParamSectionBegin{start_step_size}
+  *     \cgalParamDescription{the step size at the first iteration of the gradient descent.}
+  *     \cgalParamDefault{`FT(0.0)`}
+  *   \cgalParamSectionEnd
+  *   \cgalParamSectionBegin{end_step_size}
+  *     \cgalParamDescription{the step size at the last iteration of the gradient descent.}
+  *     \cgalParamDefault{`FT(0.0)`}
+  *   \cgalParamSectionEnd
+  *   \cgalParamSectionBegin{mininmum_energy_delta}
+  *     \cgalParamDescription{the minimum energy change to stop the gradient descent iterations.}
+  *     \cgalParamDefault{`FT(1.e-3)`}
+  *   \cgalParamSectionEnd
+  *   \cgalParamSectionBegin{collapse_distance}
+  *     \cgalParamDescription{the distance to collapse adjacent points in a line during the gradient descent.}
+  *     \cgalParamDefault{`FT(0.0)`}
+  *   \cgalParamSectionEnd
+  *   \cgalParamSectionBegin{smoothing_factor}
+  *     \cgalParamDescription{the smoothing factor of the energy.
+  *                           0 means no smoothing,
+  *                           1 means that the energy will consider smoothing with the same weight
+  *                           as the displacement toward the sharp features of the surface.}
+  *     \cgalParamDefault{`FT(1.0)`}
+  *   \cgalParamSectionEnd
+  *   \cgalParamSectionBegin{normal_refinement_distance}
+  *     \cgalParamDescription{the distance to refine the normals of elements near the sharp features.}
+  *     \cgalParamDefault{`FT(0.0)`}
+  *   \cgalParamSectionEnd
+  *   \cgalParamSectionBegin{plane_detection_distance}
+  *     \cgalParamDescription{the distance to collect elements near the sharp features
+  *                           to determine the adjacent planes.}
+  *     \cgalParamDefault{`FT(0.0)`}
+  *   \cgalParamSectionEnd
+  *   \cgalParamSectionBegin{normal_estimator}
+  *     \cgalParamDescription{a functor to evaluate the normals on elements.}
+  *     \cgalParamDefault{The `CGAL::Feature_graph::Normal_estimator::Normal_estimator_on_surface`
+  *                       that will be initialized with the surface.}
+  *   \cgalParamSectionEnd
+  * \cgalNamedParamsEnd
+  *
+  */
+  template <typename CGAL_NP_TEMPLATE_PARAMETERS>
+  Optimization_parameters(
+    const CGAL_NP_CLASS& np = parameters::default_values());
+
+  /// @}
+
   /// \name Access Functions
   /// @{
 
   /*!
-  * returns the maximum number of iteration of the gradient descent.
+  * returns the maximum number of iterations of the gradient descent.
   */
-  Size maximum_number_of_iteration() const;
+  virtual Size maximum_number_of_iterations() const;
   /*!
   * returns the step size at the first iteration of the gradient descent.
   */
-  FT start_step_size() const;
+  virtual FT start_step_size() const;
   /*!
   * returns the step size at the last iteration of the gradient descent.
   */
-  FT end_step_size() const;
+  virtual FT end_step_size() const;
   /*!
   * returns the minimum energy change to stop the gradient descent iterations.
   */
-  FT mininmum_energy_delta() const;
+  virtual FT mininmum_energy_delta() const;
   /*!
   * returns the distance to collapse adjacent points in a line during the gradient descent.
   */
-  FT collapse_distance() const;
+  virtual FT collapse_distance() const;
   /*!
   * returns the smoothing factor of the energy.
   * 0 means no smoothing,
   * 1 means that the energy will consider smoothing with the same weight
   * as the displacement toward the sharp features of the surface.
   */
-  FT smoothing_factor() const;
+  virtual FT smoothing_factor() const;
   /*!
   * returns the distance to refine the normals of elements near the sharp features.
   */
-  FT refine_normal_distance() const;
+  virtual FT normal_refinement_distance() const;
   /*!
   * returns the distance to collect elements near the sharp features
   * to determine the adjacent planes.
   */
-  FT plane_detection_distance() const;
+  virtual FT plane_detection_distance() const;
   /*!
   * returns a functor that estimates the normal on an element.
   */
-  Normal_estimator normal_estimator() const;
+  virtual Normal_estimator normal_estimator() const;
 
   /// @}
 
@@ -106,7 +169,7 @@ public:
 *
 */
 
-template <typename NormalEstimator = Feature_graph::AmbrosioTortorelli_on_image::Normal_functor>
+template <typename NormalEstimator = Feature_graph::AmbrosioTortorelli_on_image::Normal_estimator>
 class Optimization_parameters_on_image :
 public Optimization_parameters<NormalEstimator>
 {
@@ -142,24 +205,27 @@ public:
   *           The distances are expressed in terms of the longest voxel edge length.
   *
   * \cgalNamedParamsBegin
-  *   \cgalParamSectionBegin{maximum_iteration}
-  *     \cgalParamDescription{the maximum number of iteration of the gradient descent.}
+  *   \cgalParamSectionBegin{maximum_number_of_iterations}
+  *     \cgalParamDescription{the maximum number of iterations of the gradient descent.}
   *     \cgalParamDefault{`Size(20)`}
   *   \cgalParamSectionEnd
   *   \cgalParamSectionBegin{start_step_size}
-  *     \cgalParamDescription{the step size at the first iteration of the gradient descent.}
+  *     \cgalParamDescription{the step size at the first iteration of the gradient descent,
+  *                           expressed as the size of the maximum voxel edge size.}
   *     \cgalParamDefault{`FT(1.0)`}
   *   \cgalParamSectionEnd
   *   \cgalParamSectionBegin{end_step_size}
-  *     \cgalParamDescription{the step size at the last iteration of the gradient descent.}
+  *     \cgalParamDescription{the step size at the last iteration of the gradient descent,
+  *                           expressed as the size of the maximum voxel edge size.}
   *     \cgalParamDefault{`FT(0.125)`}
   *   \cgalParamSectionEnd
-  *   \cgalParamSectionBegin{min_energy_delta}
+  *   \cgalParamSectionBegin{mininmum_energy_delta}
   *     \cgalParamDescription{the minimum energy change to stop the gradient descent iterations.}
   *     \cgalParamDefault{`FT(1.e-3)`}
   *   \cgalParamSectionEnd
   *   \cgalParamSectionBegin{collapse_distance}
-  *     \cgalParamDescription{the distance to collapse adjacent points in a line during the gradient descent.}
+  *     \cgalParamDescription{the distance to collapse adjacent points in a line during the gradient descent,
+  *                           expressed as the size of the maximum voxel edge size.}
   *     \cgalParamDefault{`FT(0.5)`}
   *   \cgalParamSectionEnd
   *   \cgalParamSectionBegin{smoothing_factor}
@@ -169,18 +235,20 @@ public:
   *                           as the displacement toward the sharp features of the surface.}
   *     \cgalParamDefault{`FT(1.0)`}
   *   \cgalParamSectionEnd
-  *   \cgalParamSectionBegin{refine_normal_distance}
-  *     \cgalParamDescription{the distance to refine the normals of elements near the sharp features.}
+  *   \cgalParamSectionBegin{normal_refinement_distance}
+  *     \cgalParamDescription{the distance to refine the normals of elements near the sharp features,
+  *                           expressed as the size of the maximum voxel edge size.}
   *     \cgalParamDefault{`FT(4.0)`}
   *   \cgalParamSectionEnd
   *   \cgalParamSectionBegin{plane_detection_distance}
   *     \cgalParamDescription{the distance to collect elements near the sharp features
-  *                           to determine the adjacent planes.}
+  *                           to determine the adjacent planes,
+  *                           expressed as the size of the maximum voxel edge size.}
   *     \cgalParamDefault{`FT(4.0)`}
   *   \cgalParamSectionEnd
   *   \cgalParamSectionBegin{normal_estimator}
-  *     \cgalParamDescription{a functor to evaluate the normals on elements.}
-  *     \cgalParamDefault{The `normal_functor` of the `CGAL::Feature_graph::AmbrosioTortorelli_on_image`
+  *     \cgalParamDescription{an estimator to evaluate the normals on elements.}
+  *     \cgalParamDefault{The `normal_estimator` of the `CGAL::Feature_graph::AmbrosioTortorelli_on_image`
   *                       that will be initialized with the image}
   *   \cgalParamSectionEnd
   * \cgalNamedParamsEnd
@@ -243,8 +311,8 @@ public:
   * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below.
   *
   * \cgalNamedParamsBegin
-  *   \cgalParamSectionBegin{maximum_iteration}
-  *     \cgalParamDescription{the maximum number of iteration of the gradient descent.}
+  *   \cgalParamSectionBegin{maximum_number_of_iterations}
+  *     \cgalParamDescription{the maximum number of iterations of the gradient descent.}
   *     \cgalParamDefault{`Size(20)`}
   *   \cgalParamSectionEnd
   *   \cgalParamSectionBegin{start_step_size}
@@ -255,7 +323,7 @@ public:
   *     \cgalParamDescription{the step size at the last iteration of the gradient descent.}
   *     \cgalParamDefault{`FT(0.0)`}
   *   \cgalParamSectionEnd
-  *   \cgalParamSectionBegin{min_energy_delta}
+  *   \cgalParamSectionBegin{mininmum_energy_delta}
   *     \cgalParamDescription{the minimum energy change to stop the gradient descent iterations.}
   *     \cgalParamDefault{`FT(1.e-3)`}
   *   \cgalParamSectionEnd
@@ -270,7 +338,7 @@ public:
   *                           as the displacement toward the sharp features of the surface.}
   *     \cgalParamDefault{`FT(1.0)`}
   *   \cgalParamSectionEnd
-  *   \cgalParamSectionBegin{refine_normal_distance}
+  *   \cgalParamSectionBegin{normal_refinement_distance}
   *     \cgalParamDescription{the distance to refine the normals of elements near the sharp features.}
   *     \cgalParamDefault{`FT(0.0)`}
   *   \cgalParamSectionEnd

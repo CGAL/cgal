@@ -33,10 +33,15 @@ struct Detect_sharp_features_on_labeled_image
   *
   * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
   * \cgalNamedParamsBegin
+  *   \cgalParamSectionBegin{value_outside}
+  *      \cgalParamDescription{the value attached to voxels
+  *                            outside of the domain where feature are extracted.}
+  *      \cgalParamDefault{0}
+  *   \cgalParamSectionEnd
   *   \cgalParamSectionBegin{sharpness_estimator}
-  *     \cgalParamDescription{a functor model of `SharpnessEstimator`.
-  *       See \ref PkgFeatureGraphSharpnessEstimator for available functors.}
-  *     \cgalParamDefault{`CGAL::Feature_graph::AmbrosioTortorelli_on_image(image).sharpness_functor()`}
+  *     \cgalParamDescription{an estimator model of `SharpnessEstimator`.
+  *       See \ref PkgFeatureGraphSharpnessEstimator for available estimators.}
+  *     \cgalParamDefault{`CGAL::Feature_graph::AmbrosioTortorelli_on_image(image).sharpness_estimator()`}
   *   \cgalParamSectionEnd
   *   \cgalParamSectionBegin{regularization_parameters}
   *     \cgalParamDescription{an instance of `CGAL::Feature_graph::Regularization_parameters`.
@@ -54,11 +59,12 @@ struct Detect_sharp_features_on_labeled_image
   *   \cgalParamSectionEnd
   *   \cgalParamSectionBegin{point_to_element_output_map}
   *     \cgalParamDescription{an output property map that will be filled if supplied.
-    *     It allows retrieving of the surface element where a feature graph point is embedded.
-    *     It must be a model of `WritablePropertyMap`,
-    *     so it must implement `put(output_pmap, point_index, element_index)`
-    *     where the key type is the point index type of the feature graph, and the value type the element index type of the surface.
-    *     The element index correspond to a facet element with the tag `CGAL::DimensionTag<2>`}
+  *     It allows retrieving of the surface element where a feature graph point is embedded.
+  *     It must be a model of `WritablePropertyMap`,
+  *     and must implement `put(output_pmap, feature_vertex_descriptor, facet_descriptor)`
+  *     where the key type is the `vertex_descriptor` of the feature graph, and the value type is
+  *     a descriptor of an element of the surface, with type `std::size_t`.
+  *     The facet descriptor correspond to a facet element with the tag `CGAL::DimensionTag<2>`}
   *     \cgalParamDefault{`parameters::default()`}
   *   \cgalParamSectionEnd
   * \cgalNamedParamsEnd
@@ -95,8 +101,8 @@ struct Detect_sharp_features_on_surface
   * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
   * \cgalNamedParamsBegin
   *   \cgalParamSectionBegin{sharpness_estimator}
-  *     \cgalParamDescription{a functor model of `SharpnessEstimator`.
-  *       See \ref PkgFeatureGraphSharpnessEstimator for available functors.}
+  *     \cgalParamDescription{an estimator model of `SharpnessEstimator`.
+  *       See \ref PkgFeatureGraphSharpnessEstimator for available estimators.}
   *     \cgalParamDefault{`CGAL::Feature_graph::Sharpness_estimator::Sharpness_estimator_on_surface(surface)`}
   *   \cgalParamSectionEnd
   *   \cgalParamSectionBegin{regularization_parameters}
@@ -117,9 +123,9 @@ struct Detect_sharp_features_on_surface
   *     \cgalParamDescription{an output property map that will be filled if supplied.
   *     It allows retrieving of the surface element where a feature graph point is embedded.
   *     It must be a model of `WritablePropertyMap`,
-  *     so it must implement `put(output_pmap, point_index, element_index)`
-    *     where the key type is the point index type of the feature graph, and the value type the element index type of the surface.
-    *     The element index correspond to a facet element with the tag `CGAL::DimensionTag<2>`}
+  *     and must implement `put(output_pmap, feature_vertex_descriptor, facet_descriptor)`
+  *     where the key type is the `vertex_descriptor` of the feature graph, and the value type is
+  *     the `facet_descriptor` of the polygon mesh.}
   *     \cgalParamDefault{`parameters::default()`}
   *   \cgalParamSectionEnd
   * \cgalNamedParamsEnd

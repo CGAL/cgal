@@ -41,14 +41,21 @@ public:
   * \tparam DimensionTag a tag that represent the element type.
   *         Can be `CGAL::Dimension_tag<0>`, `CGAL::Dimension_tag<1>` or `CGAL::Dimension_tag<2>`
   * \tparam Point_3 class model of `Kernel::Point_3`.
-  * \tparam Index the type of index used to identify the element to evaluate,
-  * which can be a vertex, an edge, or a facet according to the DimesionTag.
+  * \tparam Descriptor the type of descriptor used to identify the element to evaluate,
+  * which can be a vertex, an edge, or a facet according to the DimensionTag.
+  * If the domain is a model of `FeatureImage_3`, it is a `std::size_t` for element with
+  * dimension 0, 1 and 2. If the domain is a model of `FaceListGraph`, it is a
+  * `vertex_descriptor` (resp. `halfedge_descriptor`; `face_descriptor `) for element with
+  * dimension 0 (resp. 1 ; 2).
+  * \tparam Domain the type of the surface where the element is embedded.
+  * Can be an Image class model of `FeatureImage_3`, or a model of `FaceListGraph` that represents a surface mesh.
   *
   * \param point_in_space the position to evaluate from in 3D space.
-  * \param element_index the index of the element on the surface.
+  * \param element_descriptor the descriptor of the element on the surface.
+  * \param domain the domain that contains the elements.
   */
-  template <typename DimensionTag, typename Point_3, typename Index>
-  FT isthmus_line_distance_threshold(const Point_3& point_in_space, const Index& element_index) const;
+  template <typename DimensionTag, typename Point_3, typename Descriptor, typename Domain>
+  FT isthmus_line_distance_threshold(const Point_3& point_in_space, const Descriptor& element_descriptor, const Domain& domain) const;
 
   /*!
   * returns the threshold on the distance between a simple line and any line
@@ -59,14 +66,21 @@ public:
   * \tparam DimensionTag a tag that represent the element type.
   *         Can be `CGAL::Dimension_tag<0>`, `CGAL::Dimension_tag<1>` or `CGAL::Dimension_tag<2>`
   * \tparam Point_3 class model of `Kernel::Point_3`.
-  * \tparam Index the type of index used to identify the element to evaluate,
-  * which can be a vertex, an edge, or a facet according to the DimesionTag.
+  * \tparam Descriptor the type of descriptor used to identify the element to evaluate,
+  * which can be a vertex, an edge, or a facet according to the DimensionTag.
+  * If the domain is a model of `FeatureImage_3`, it is a `std::size_t` for element with
+  * dimension 0, 1 and 2. If the domain is a model of `FaceListGraph`, it is a
+  * `vertex_descriptor` (resp. `halfedge_descriptor`; `face_descriptor `) for element with
+  * dimension 0 (resp. 1 ; 2).
+  * \tparam Domain the type of the surface where the element is embedded.
+  * Can be an Image class model of `FeatureImage_3`, or a model of `FaceListGraph` that represents a surface mesh.
   *
   * \param point_in_space the position to evaluate from in 3D space.
-  * \param element_index the index of the element on the surface.
+  * \param element_descriptor the descriptor of the element on the surface.
+  * \param domain the domain that contains the elements.
   */
-  template <typename DimensionTag, typename Point_3, typename Index>
-  FT simple_line_distance_threshold(const Point_3& point_in_space, const Index& element_index) const;
+  template <typename DimensionTag, typename Point_3, typename Descriptor, typename Domain>
+  FT simple_line_distance_threshold(const Point_3& point_in_space, const Descriptor& element_descriptor, const Domain& domain) const;
 
   /*!
   * returns the threshold on the distance between a corner line and any line
@@ -77,14 +91,21 @@ public:
   * \tparam DimensionTag a tag that represent the element type.
   *         Can be `CGAL::Dimension_tag<0>`, `CGAL::Dimension_tag<1>` or `CGAL::Dimension_tag<2>`
   * \tparam Point_3 class model of `Kernel::Point_3`.
-  * \tparam Index the type of index used to identify the element to evaluate,
-  * which can be a vertex, an edge, or a facet according to the DimesionTag.
+  * \tparam Descriptor the type of descriptor used to identify the element to evaluate,
+  * which can be a vertex, an edge, or a facet according to the DimensionTag.
+  * If the domain is a model of `FeatureImage_3`, it is a `std::size_t` for element with
+  * dimension 0, 1 and 2. If the domain is a model of `FaceListGraph`, it is a
+  * `vertex_descriptor` (resp. `halfedge_descriptor`; `face_descriptor `) for element with
+  * dimension 0 (resp. 1 ; 2).
+  * \tparam Domain the type of the surface where the element is embedded.
+  * Can be an Image class model of `FeatureImage_3`, or a model of `FaceListGraph` that represents a surface mesh.
   *
   * \param point_in_space the position to evaluate from in 3D space.
-  * \param element_index the index of the element on the surface.
+  * \param element_descriptor the descriptor of the element on the surface.
+  * \param domain the domain that contains the elements.
   */
-  template <typename DimensionTag, typename Point_3, typename Index>
-  FT corner_line_distance_threshold(const Point_3& point_in_space, const Index& element_index) const;
+  template <typename DimensionTag, typename Point_3, typename Descriptor, typename Domain>
+  FT corner_line_distance_threshold(const Point_3& point_in_space, const Descriptor& element_descriptor, const Domain& domain) const;
 
   /// @}
 
@@ -140,8 +161,8 @@ public:
   *         It can be a constant or a functor that return the threshold at a point on the surface.
   *         If it is a functor, it must implement
   *         <UL>
-  *           <LI> `template <typename DimensionTag, typename Point_3, typename Index>`
-  *           <BR> `FT operator()(const Point_3& point_in_space, const Index& element_index) const`
+  *           <LI> `template <typename DimensionTag, typename Point_3, typename Descriptor, typename Domain>`
+  *           <BR> `FT operator()(const Point_3& point_in_space, const Descriptor& element_descriptor, const Domain& domain) const`
   *         </UL>}
   *     \cgalParamDefault{`FT(4.0)`}
   *     \cgalParamExtra{This parameter sets a baseline distance and is overridden
@@ -156,8 +177,8 @@ public:
   *         It can be a constant or a functor that return the threshold at a point on the surface.
   *         If it is a functor, it must implement
   *         <UL>
-  *           <LI> `template <typename DimensionTag, typename Point_3, typename Index>`
-  *           <BR> `FT operator()(const Point_3& point_in_space, const Index& element_index) const`
+  *           <LI> `template <typename DimensionTag, typename Point_3, typename Descriptor, typename Domain>`
+  *           <BR> `FT operator()(const Point_3& point_in_space, const Descriptor& element_descriptor, const Domain& domain) const`
   *         </UL>}
   *     \cgalParamDefault{`FT(-1.0)`}
   *     \cgalParamExtra{Negative values implies the use of the parameter `parameters::line_distance_threshold`.}
@@ -170,8 +191,8 @@ public:
   *         It can be a constant or a functor that return the threshold at a point on the surface.
   *         If it is a functor, it must implement
   *         <UL>
-  *           <LI> `template <typename DimensionTag, typename Point_3, typename Index>`
-  *           <BR> `FT operator()(const Point_3& point_in_space, const Index& element_index) const`
+  *           <LI> `template <typename DimensionTag, typename Point_3, typename Descriptor, typename Domain>`
+  *           <BR> `FT operator()(const Point_3& point_in_space, const Descriptor& element_descriptor, const Domain& domain) const`
   *         </UL>}
   *     \cgalParamDefault{`FT(-1.0)`}
   *     \cgalParamExtra{Negative values implies the use of the parameter `parameters::line_distance_threshold`.}
@@ -184,8 +205,8 @@ public:
   *         It can be a constant or a functor that return the threshold at a point on the surface.
   *         If it is a functor, it must implement
   *         <UL>
-  *           <LI> `template <typename DimensionTag, typename Point_3, typename Index>`
-  *           <BR> `FT operator()(const Point_3& point_in_space, const Index& element_index) const`
+  *           <LI> `template <typename DimensionTag, typename Point_3, typename Descriptor, typename Domain>`
+  *           <BR> `FT operator()(const Point_3& point_in_space, const Descriptor& element_descriptor, const Domain& domain) const`
   *         </UL>}
   *     \cgalParamDefault{`FT(-1.0)`}
   *     \cgalParamExtra{Negative values implies the use of the parameter `parameters::line_distance_threshold`.}
@@ -249,8 +270,8 @@ public:
   *         It can be a constant or a functor that return the threshold at a point on the surface.
   *         If it is a functor, it must implement
   *         <UL>
-  *           <LI> `template <typename DimensionTag, typename Point_3, typename Index>`
-  *           <BR> `FT operator()(const Point_3& point_in_space, const Index& element_index) const`
+  *           <LI> `template <typename DimensionTag, typename Point_3, typename Descriptor, typename Domain>`
+  *           <BR> `FT operator()(const Point_3& point_in_space, const Descriptor& element_descriptor, const Domain& domain) const`
   *         </UL>}
   *     \cgalParamDefault{`FT(0.0)`}
   *     \cgalParamExtra{This paremeter sets a baseline distance and is overriden
@@ -265,8 +286,8 @@ public:
   *         It can be a constant or a functor that return the threshold at a point on the surface.
   *         If it is a functor, it must implement
   *         <UL>
-  *           <LI> `template <typename DimensionTag, typename Point_3, typename Index>`
-  *           <BR> `FT operator()(const Point_3& point_in_space, const Index& element_index) const`
+  *           <LI> `template <typename DimensionTag, typename Point_3, typename Descriptor, typename Domain>`
+  *           <BR> `FT operator()(const Point_3& point_in_space, const Descriptor& element_descriptor, const Domain& domain) const`
   *         </UL>}
   *     \cgalParamDefault{`FT(-1.0)`}
   *     \cgalParamExtra{Negative values implies the use of the parameter `parameters::line_distance_threshold`.}
@@ -279,8 +300,8 @@ public:
   *         It can be a constant or a functor that return the threshold at a point on the surface.
   *         If it is a functor, it must implement
   *         <UL>
-  *           <LI> `template <typename DimensionTag, typename Point_3, typename Index>`
-  *           <BR> `FT operator()(const Point_3& point_in_space, const Index& element_index) const`
+  *           <LI> `template <typename DimensionTag, typename Point_3, typename Descriptor, typename Domain>`
+  *           <BR> `FT operator()(const Point_3& point_in_space, const Descriptor& element_descriptor, const Domain& domain) const`
   *         </UL>}
   *     \cgalParamDefault{`FT(-1.0)`}
   *     \cgalParamExtra{Negative values implies the use of the parameter `parameters::line_distance_threshold`.}
@@ -293,8 +314,8 @@ public:
   *         It can be a constant or a functor that return the threshold at a point on the surface.
   *         If it is a functor, it must implement
   *         <UL>
-  *           <LI> `template <typename DimensionTag, typename Point_3, typename Index>`
-  *           <BR> `FT operator()(const Point_3& point_in_space, const Index& element_index) const`
+  *           <LI> `template <typename DimensionTag, typename Point_3, typename Descriptor, typename Domain>`
+  *           <BR> `FT operator()(const Point_3& point_in_space, const Descriptor& element_descriptor, const Domain& domain) const`
   *         </UL>}
   *     \cgalParamDefault{`FT(-1.0)`}
   *     \cgalParamExtra{Negative values implies the use of the parameter `parameters::line_distance_threshold`.}
