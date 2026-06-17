@@ -106,6 +106,9 @@ _test_cls_triangulation_3(const Triangulation &)
   typedef typename Cls::size_type            size_type;
   typedef typename Cls::difference_type      difference_type;
 
+  typedef typename Cls::vertex_descriptor    vertex_descriptor;
+  typedef typename Cls::cell_descriptor      cell_descriptor;
+
   typedef typename Cls::Vertex_handle        Vertex_handle;
   typedef typename Cls::Cell_handle          Cell_handle;
   typedef typename Cls::Vertex_iterator      Vertex_iterator;
