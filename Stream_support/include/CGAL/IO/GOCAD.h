@@ -53,6 +53,8 @@ bool read_GOCAD(std::istream& is,
   typedef typename boost::range_value<PolygonRange>::type   Poly;
 
   const bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false);
+  const bool read_only_one_object = parameters::choose_parameter(parameters::get_parameter(np, internal_np::read_only_one_object), false);
+
 
   if(!is)
   {
@@ -63,15 +65,17 @@ bool read_GOCAD(std::istream& is,
 
   set_ascii_mode(is); // GOCAD is ASCII only
 
-  int offset = 0;
   std::string s;
   Point p;
-  bool vertices_read = false,
-      end_read = false;
+
+  bool vertices_read = false;
+  std::size_t offset=0;
+  int l_offset=0;
+  int nb_gocad=0;
+  int nb_end=0;
+  bool end_read=true;
 
   std::string line;
-  std::size_t nb_gocad=1, //don't read the first one, it is optional anyway.
-      nb_end=0;
   while(std::getline(is, line))
   {
     if(line.empty())
@@ -81,39 +85,18 @@ bool read_GOCAD(std::istream& is,
     if(!(iss >> s))
       continue; // can't read anything on the line, whitespace only?
 
-    if(s == "TFACE")
+    if(s == "GOCAD")
     {
-      break;
+      ++nb_gocad;
+      offset=points.size();
+      vertices_read = false;
+      end_read = false;
     }
-
-    std::string::size_type idx;
-    if((idx = s.find("name")) != std::string::npos)
-    {
-      std::size_t pos = s.find(":")+1;
-      name_and_color.first = s.substr(pos, s.length());
-    }
-
-    if((idx = s.find("color")) != std::string::npos)
-    {
-      std::size_t pos = s.find(":")+1;
-      name_and_color.second = s.substr(pos, s.length());
-    }
-  }
-
-  while(std::getline(is, line))
-  {
-    if(line.empty())
-      continue;
-
-    std::istringstream iss(line);
-    if(line.find("GOCAD ") != std::string::npos) //the whitespace matters, it is used to define a gocad type, but not in the coord system keyword, for example.
-      nb_gocad++;
-
-    if((line.find("VRTX") != std::string::npos))
+    else if(s=="VRTX")
     {
       int i;
       double x, y, z;
-      if(!(iss >> s >> i >> IO::iformat(x) >> IO::iformat(y) >> IO::iformat(z)))
+      if(!(iss >> i >> IO::iformat(x) >> IO::iformat(y) >> IO::iformat(z)))
       {
         if(verbose)
           std::cerr << "error while reading vertex." << std::endl;
@@ -123,18 +106,14 @@ bool read_GOCAD(std::istream& is,
       if(!vertices_read)
       {
         vertices_read = true;
-        offset -= i; // Some files start with index 0 others with 1
+        l_offset = -i;
       }
 
       internal::fill_point(x, y, z, 1., p);
       points.push_back(p);
     }
-    else if(line[0] == 'T')
+    else if(s == "TRGL")
     {
-      iss >> s;
-      if(s != "TRGL")
-        continue;
-
       int i,j,k;
       if(!(iss >> i >> j >> k))
       {
@@ -145,20 +124,40 @@ bool read_GOCAD(std::istream& is,
 
       Poly new_face;
       ::CGAL::internal::resize(new_face, 3);
-      new_face[0] = offset + i;
-      new_face[1] = offset + j;
-      new_face[2] = offset + k;
+      new_face[0] =  offset + (l_offset + i);
+      new_face[1] =  offset + (l_offset + j);
+      new_face[2] =  offset + (l_offset + k);
       polygons.push_back(new_face);
     }
-    else if(line == "END")
+    else if (s=="END")
     {
+      ++nb_end;
       end_read=true;
-      nb_end++;
+      if (read_only_one_object)
+        break;
+    }
+    else if (s=="HEADER")
+    {
+      while(std::getline(is, line))
+      {
+        std::string::size_type idx;
+        if((idx = line.find("name")) != std::string::npos)
+        {
+          std::size_t pos = line.find(":")+1;
+          name_and_color.first = line.substr(pos, line.length());
+        }
+        else if((idx = line.find("color")) != std::string::npos)
+        {
+          std::size_t pos = line.find(":")+1;
+          name_and_color.second = line.substr(pos, line.length());
+        }
+        else if((idx = line.find("}")) != std::string::npos)
+          break;
+      }
     }
   }
-  if(is.eof())
-    is.clear(std::ios::goodbit);
-  return end_read && nb_gocad == nb_end && !is.bad();
+
+  return nb_gocad!=0 && end_read && nb_gocad == nb_end && !is.bad();
 }
 /// \endcond
 
@@ -184,6 +183,11 @@ bool read_GOCAD(std::istream& is,
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{verbose}
  *     \cgalParamDescription{indicates whether output warnings and error messages should be printed or not.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`false`}
+ *   \cgalParamNEnd
+ *   \cgalParamNBegin{read_only_one_object}
+ *     \cgalParamDescription{if `true` only one GOCAD object will be read in the stream,  and the stream will be left ready for the reading of the next GOCAD object.}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`false`}
  *   \cgalParamNEnd
@@ -227,6 +231,11 @@ bool read_GOCAD(std::istream& is,
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{verbose}
  *     \cgalParamDescription{indicates whether output warnings and error messages should be printed or not.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`false`}
+ *   \cgalParamNEnd
+ *   \cgalParamNBegin{read_only_one_object}
+ *     \cgalParamDescription{if `true` only one GOCAD object will be read in the stream,  and the stream will be left ready for the reading of the next GOCAD object.}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`false`}
  *   \cgalParamNEnd
