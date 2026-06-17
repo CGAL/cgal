@@ -225,6 +225,11 @@ CGAL_add_named_parameter(used_to_find_a_point_t, used_to_find_a_point, used_to_f
 // List of named parameters used in the Point Set Processing package
 CGAL_add_named_parameter(query_point_t, query_point_map, query_point_map)
 CGAL_add_named_parameter(normal_t, normal_map, normal_map)
+CGAL_add_named_parameter(color_map_t, color_map, color_map)
+CGAL_add_named_parameter(colors_t, colors, colors)
+CGAL_add_named_parameter(labels_t, labels, labels)
+CGAL_add_named_parameter(constructor_t, constructor, constructor)
+CGAL_add_named_parameter(serializer_t, serializer, serializer)
 CGAL_add_named_parameter(diagonalize_traits_t, diagonalize_traits, diagonalize_traits)
 CGAL_add_named_parameter(svd_traits_t, svd_traits, svd_traits)
 CGAL_add_named_parameter(callback_t, callback, callback)
