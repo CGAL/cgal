@@ -122,11 +122,6 @@ uniform         bool  u_IsOrthographic;
 uniform mediump vec3  u_DefaultColor;
 uniform         bool  u_UseDefaultColor;
 
-bool EqualZero(float value)
-{
-  return abs(value) < 0.00001;
-}
-
 void main(void)
 {
   fColor = vec4(a_Color, 1.0);
@@ -141,17 +136,11 @@ void main(void)
 
   gl_Position  = u_Mvp * pos;
 
-  float distance = gl_Position.w;
-  if (u_IsOrthographic)
-  {
-    // In orthographic projection clip-space w is always 1; using u_PointSize
-    // as the divisor canceled out the user's setting (pointSize = 1 always).
-    // Use 1.0 so gl_PointSize = u_PointSize, a direct screen-pixel diameter.
-    distance = 1.0;
-  }
-
-  float effectiveDistance = EqualZero(distance) ? 0.00001 : distance;
-  gl_PointSize = u_PointSize / effectiveDistance;
+  // u_PointSize is a constant screen-pixel diameter, the same in 2D and 3D and
+  // independent of the scene scale (the legacy glPointSize() semantics). We do
+  // not divide by the clip-space w: that foreshortened points with depth, so on
+  // a large scene the points shrank below one pixel and disappeared.
+  gl_PointSize = u_PointSize;
 }
 )DELIM";
 
@@ -683,11 +672,6 @@ uniform         bool  u_IsOrthographic;
 uniform mediump vec3  u_DefaultColor;
 uniform         bool  u_UseDefaultColor;
 
-bool EqualZero(float value)
-{
-  return abs(value) < 0.00001;
-}
-
 void main(void)
 {
   vec4 pos = vec4(a_Pos, 1.0);
@@ -701,18 +685,12 @@ void main(void)
 
   gl_Position  = u_Mvp * pos;
 
-  float distance = gl_Position.w;
-  if (u_IsOrthographic)
-  {
-    // In orthographic projection the clip-space w is always 1, so
-    // perspective-division would make pointSize constant at 1.0.
-    // Use 1.0 as the divisor so the user-supplied u_PointSize passes
-    // through unchanged as a screen-pixel width.
-    distance = 1.0;
-  }
-
-  float effectiveDistance = EqualZero(distance) ? 0.00001 : distance;
-  vs_out.pointSize = u_PointSize / effectiveDistance;
+  // u_PointSize is a constant screen-pixel width, the same in 2D and 3D and
+  // independent of the scene scale (the legacy glLineWidth() semantics). We do
+  // not divide by the clip-space w here: doing so foreshortened the width with
+  // depth, which made far edges collapse below one pixel and made the +/- step
+  // depend on the scene scale.
+  vs_out.pointSize = u_PointSize;
 }
 )DELIM";
 
@@ -783,10 +761,10 @@ void main(void)
   vec2  dir    = (segLen > 1e-5) ? edge / segLen : vec2(1.0, 0.0);
   vec2  perp   = vec2(-dir.y, dir.x);
 
-  // Half-width in pixels. The previous rectangle used a per-side offset of
-  // 0.25 * pointSize pixels; keep that, averaged over the two endpoints so the
-  // capsule has a single constant width for its round caps.
-  float halfWidth = 0.25 * 0.5 * (gs_in[0].pointSize + gs_in[1].pointSize);
+  // Half-width in pixels. u_PointSize (carried in pointSize) is the full edge
+  // width in screen pixels, so the per-side offset is half of it, averaged over
+  // the two endpoints so the edge has a single constant width.
+  float halfWidth = 0.5 * 0.5 * (gs_in[0].pointSize + gs_in[1].pointSize);
   float ext = halfWidth + AA; // perpendicular: half thickness plus the AA margin
 
   v_segLen    = segLen;

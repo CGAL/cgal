@@ -428,9 +428,16 @@ public:
           QVector3D edge_qcolor((double)edge_color.red()/(double)255,
                                 (double)edge_color.green()/(double)255,
                                 (double)edge_color.blue()/(double)255);
-          // Tube radius; the join spheres use the same radius so they meet the
-          // tubes flush.
-          GLfloat radius = static_cast<GLfloat>(sceneRadius()*m_size_edges*0.001);
+          // Tube radius, in world units, proportional to the scene radius so the
+          // tube keeps the same on-screen thickness at any scene scale. The
+          // constant is tuned so the default (m_size_edges) gives a tube a few
+          // pixels across at the default framing.
+          GLfloat radius = static_cast<GLfloat>(sceneRadius()*m_size_edges*0.005);
+          // The join spheres are drawn a little larger than the tube radius: the
+          // sphere is a coarse (low-resolution) mesh, so at exactly the tube
+          // radius its faceted surface sits just inside the tube and a sliver of
+          // the corner shows through. The 1.2 margin makes it cover the joint.
+          GLfloat join_radius = radius*1.2f;
 
           // 1. the edges, drawn as cylinders (tubes).
           rendering_program_cylinder.bind();
@@ -459,7 +466,7 @@ public:
           rendering_program_sphere.bind();
           rendering_program_sphere.setUniformValue("u_DefaultColor", edge_qcolor);
           rendering_program_sphere.setUniformValue("u_UseDefaultColor", static_cast<GLint>(1));
-          rendering_program_sphere.setUniformValue("u_Radius", radius);
+          rendering_program_sphere.setUniformValue("u_Radius", join_radius);
           rendering_program_sphere.setUniformValue("u_ClipPlane",  clipPlane);
           rendering_program_sphere.setUniformValue("u_PointPlane", plane_point);
           rendering_program_sphere.setUniformValue("u_RenderingMode", rendering_mode);
@@ -1583,11 +1590,16 @@ protected:
       // std::cout<<"width: "<< this->width() <<std::endl;
       // std::cout<<"height: "<< this->height() <<std::endl;
 
-      m_size_vertices=1.5*d;
-      m_size_edges=d;
+      // Edge width and vertex size are constant screen-pixel sizes, independent
+      // of the scene scale, so they stay correct for a mesh at any scale and in
+      // both 2D and 3D. (Previously these were the bounding-box diagonal d, a
+      // world-space length, which made flat edges sub-pixel and tube edges and
+      // vertex spheres grow quadratically with the scene size.)
+      m_size_vertices=6.;      // pixels (point diameter)
+      m_size_edges=2.;         // pixels (line width)
       m_size_rays=m_size_edges;
       m_size_lines=m_size_edges;
-      m_size_normals=d/3;
+      m_size_normals=d/3;      // world-space length: normals are drawn in 3D
       m_height_factor_normals=0.02;
     }
   }
