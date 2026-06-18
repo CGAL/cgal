@@ -558,14 +558,14 @@ public:
     auto cells_out = boost::make_function_output_iterator(
         [&](Cell_handle c) mutable {
           // transform on the fly, then insert
-          *cell_back = tds().to_cell_descriptor(c);
+          *cell_back = tds().descriptor(c);
         }
       );
     auto facets_back = std::back_inserter(facets);
     auto facets_out = boost::make_function_output_iterator(
         [&](const Facet& f) mutable {
           // transform on the fly, then insert
-          *facets_back = std::make_pair(tds().to_cell_descriptor(f.first), f.second);
+          *facets_back = std::make_pair(tds().descriptor(f.first), f.second);
         }
       );
     if(dimension() == 2)
@@ -801,7 +801,7 @@ public:
   // Queries
   Bounded_side side_of_sphere(Cell_handle c, const Point& p, bool perturb = false) const
   {
-    cell_descriptor cd = tds().to_cell_descriptor(c);
+    cell_descriptor cd = tds().descriptor(c);
     return side_of_sphere(tds().vertex(cd,0), tds().vertex(cd,1),
                           tds().vertex(cd,2), tds().vertex(cd,3), p, perturb);
   }

@@ -131,9 +131,9 @@ void test_conflicts(T& T3_13, const P *q)
       std::vector<Cell_handle>   C;
       std::vector<Facet>         F;
       auto cell_inserter = boost::make_function_output_iterator(
-        [&](auto cd) { C.push_back(T3_13.tds().cell_handle(cd)); });
+        [&](auto cd) { C.push_back(T3_13.tds().handle(cd)); });
       auto facet_inserter = boost::make_function_output_iterator(
-        [&](auto pair) { F.emplace_back(T3_13.tds().cell_handle(pair.first), pair.second); });
+        [&](auto pair) { F.emplace_back(T3_13.tds().handle(pair.first), pair.second); });
 
       T3_13.find_conflicts(q[i], c, facet_inserter, cell_inserter);
 

@@ -1210,23 +1210,23 @@ namespace CGAL {
       return {cell_handle(f.first), f.second};
     }
 
-    Cell_handle cell_handle(const cell_descriptor& index) const
+    Cell_handle handle(const cell_descriptor& index) const
     {
       return Cell_handle{const_cast<Self*>(this), index};
     }
 
-    Vertex_handle vertex_handle(const vertex_descriptor& index) const
+    Vertex_handle handle(const vertex_descriptor& index) const
     {
       return Vertex_handle{const_cast<Self*>(this), index};
     }
 
-    cell_descriptor to_cell_descriptor(Cell_handle ch) const
+    cell_descriptor descriptor(Cell_handle ch) const
     {
       CGAL_assertion(ch.container() == this);
       return ch.idx();
     }
 
-    vertex_descriptor to_vertex_descriptor(Vertex_handle vh) const
+    vertex_descriptor descriptor(Vertex_handle vh) const
     {
       CGAL_assertion(vh.container() == this);
       return vh.idx();
@@ -1332,6 +1332,12 @@ namespace CGAL {
     {
       return cell_storage()[ci].ivertices[i];
     }
+
+    Vertex_handle vertex(const Cell_handle& ch, int i) const
+    {
+      return handle(vertex(descriptor(ch),i));
+    }
+
 
     void set_vertex(const Cell_index& ci, int i, Vertex_index vi)
     {

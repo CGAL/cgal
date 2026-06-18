@@ -11,6 +11,7 @@ find_package(CGAL REQUIRED)
 # Creating entries for all C++ files with "main" routine
 # ##########################################################
 
+create_single_source_cgal_program("align.cpp")
 create_single_source_cgal_program("ocean.cpp")
 create_single_source_cgal_program("incident_edges.cpp")
 create_single_source_cgal_program("simple_2.cpp")

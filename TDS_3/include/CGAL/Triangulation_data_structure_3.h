@@ -303,22 +303,22 @@ public:
     return f;
   }
 
-  Cell_handle cell_handle(cell_descriptor cd) const
+  Cell_handle handle(cell_descriptor cd) const
   {
     return cd;
   }
 
-  Vertex_handle vertex_handle(vertex_descriptor vd) const
+  Vertex_handle handle(vertex_descriptor vd) const
   {
     return vd;
   }
 
-  cell_descriptor to_cell_descriptor(Cell_handle ch) const
+  cell_descriptor descriptor(Cell_handle ch) const
   {
     return ch;
   }
 
-  vertex_descriptor to_vertex_descriptor(Vertex_handle vh) const
+  vertex_descriptor descriptor(Vertex_handle vh) const
   {
     return vh;
   }
@@ -684,7 +684,6 @@ public:
 
   Tds& operator=(Tds&& tds) = default; // move assignment
 
-  using Tds_storage::cell_handle;
   using Tds_storage::cells;
   using Tds_storage::clear;
   using Tds_storage::clear_without_removing_property_maps;
@@ -693,7 +692,9 @@ public:
   using Tds_storage::create_vertex;
   using Tds_storage::delete_cell;
   using Tds_storage::delete_vertex;
+  using Tds_storage::descriptor;
   using Tds_storage::dimension;
+  using Tds_storage::handle;
   using Tds_storage::is_cell;
   using Tds_storage::is_vertex;
   using Tds_storage::mirror_facet;
@@ -707,9 +708,6 @@ public:
   using Tds_storage::set_vertex_cell;
   using Tds_storage::set_vertex;
   using Tds_storage::tds_data;
-  using Tds_storage::to_cell_descriptor;
-  using Tds_storage::to_vertex_descriptor;
-  using Tds_storage::vertex_handle;
   using Tds_storage::vertex;
   using Tds_storage::vertices;
 
@@ -986,7 +984,7 @@ public:
 #endif
     delete_cells(cells.begin(), cells.end());
     vertex_pair_facet_map.clear();
-    return vertex_handle(nv);
+    return handle(nv);
   }
 
 #else
@@ -1074,7 +1072,7 @@ template <class Cells, class Facets>
     }
 
     delete_cells(cells.begin(), cells.end());
-    return vertex_handle(nv);
+    return handle(nv);
   }
 
 #endif

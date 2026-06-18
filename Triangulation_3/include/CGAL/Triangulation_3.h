@@ -1452,21 +1452,21 @@ protected:
     SV sv;
     std::stack<cell_descriptor, SV > cell_stack(sv);
 
-    cell_stack.push(tds().to_cell_descriptor(d));
+    cell_stack.push(tds().descriptor(d));
     d->tds_data().mark_in_conflict();
 
-    *it.second++ = d; // = tds().to_cell_descriptor(d);
+    *it.second++ = d; // = tds().descriptor(d);
 
     auto check_this_facet_must_be_in_the_cz = [&](cell_descriptor cd, int i, bool on_boundary = false) {
       if(!this_facet_must_be_in_the_cz || !the_facet_is_in_its_cz) return;
-      if((cd == tds().to_cell_descriptor(this_facet_must_be_in_the_cz->first)) &&
+      if((cd == tds().descriptor(this_facet_must_be_in_the_cz->first)) &&
          (i == this_facet_must_be_in_the_cz->second))
       {
         *the_facet_is_in_its_cz = true;
       }
       if(on_boundary) {
         auto [nd, ni] = tds().mirror_facet(cd, i);
-        if((nd == tds().to_cell_descriptor(this_facet_must_be_in_the_cz->first)) &&
+        if((nd == tds().descriptor(this_facet_must_be_in_the_cz->first)) &&
            (ni == this_facet_must_be_in_the_cz->second))
         {
           *the_facet_is_in_its_cz = true;
@@ -1512,7 +1512,7 @@ protected:
 
           if(cd < test)
           {
-            *it.third++ = std::make_pair(tds().cell_handle(cd), i);
+            *it.third++ = std::make_pair(tds().handle(cd), i);
           }
           continue; // test was already in conflict.
         }
@@ -1529,7 +1529,7 @@ protected:
             std::cerr << ss.str();
           }
 #endif
-          if(tester(tds().cell_handle(test)))
+          if(tester(tds().handle(test)))
           {
             // "test" is in the conflict zone
             if(could_lock_zone)
@@ -1547,12 +1547,12 @@ protected:
 
             if(cd < test)
             {
-              *it.third++ = std::make_pair(tds().cell_handle(cd), i);
+              *it.third++ = std::make_pair(tds().handle(cd), i);
             }
 
             cell_stack.push(test);
             tds().tds_data(test).mark_in_conflict();
-            *it.second++ = tds().cell_handle(test);
+            *it.second++ = tds().handle(test);
             continue;
           }
 
@@ -1562,7 +1562,7 @@ protected:
         // Is it the facet where're looking for?
         check_this_boundary_facet_must_be_in_the_cz(cd, i);
 
-        *it.first++ = std::make_pair(tds().cell_handle(cd), i);
+        *it.first++ = std::make_pair(tds().handle(cd), i);
       }
     }
     while(!cell_stack.empty());
@@ -1585,7 +1585,7 @@ protected:
     auto cells_out = boost::make_function_output_iterator(
         [&](Cell_handle c) mutable {
           // transform on the fly, then insert
-          *cell_back = tds().to_cell_descriptor(c);
+          *cell_back = tds().descriptor(c);
         }
       );
     Facet facet;
@@ -4112,7 +4112,7 @@ insert_in_conflict(const Point& p,
 
   auto cell_handle_iterator = [&](auto it) {
     return boost::make_transform_iterator(it,
-      [this](const cell_descriptor& cd) { return tds().cell_handle(cd); });
+      [this](const cell_descriptor& cd) { return tds().handle(cd); });
   };
 
   switch(dimension())
@@ -4139,14 +4139,14 @@ insert_in_conflict(const Point& p,
       auto cells_out = boost::make_function_output_iterator(
         [&](Cell_handle c) mutable {
           // transform on the fly, then insert
-          *cell_back = tds().to_cell_descriptor(c);
+          *cell_back = tds().descriptor(c);
         }
       );
       auto facets_back = std::back_inserter(facets);
       auto facets_out = boost::make_function_output_iterator(
         [&](const Facet& f) mutable {
           // transform on the fly, then insert
-          *facets_back = std::make_pair(tds().to_cell_descriptor(f.first), f.second);
+          *facets_back = std::make_pair(tds().descriptor(f.first), f.second);
         }
       );
       // Parallel
@@ -4194,7 +4194,7 @@ insert_in_conflict(const Point& p,
         _insert_in_small_hole(p, cells, facets) :
         _insert_in_hole(p,
                         cells.begin(), cells.end(),
-                        tds().cell_handle(facet.first), facet.second);
+                        tds().handle(facet.first), facet.second);
 
       // Store the hidden points in their new cells.
       hider.reinsert_vertices(v);
@@ -4226,7 +4226,7 @@ insert_in_conflict(const Point& p,
       auto cells_out = boost::make_function_output_iterator(
         [&](Cell_handle c) mutable {
           // transform on the fly, then insert
-          *cell_back = tds().to_cell_descriptor(c);
+          *cell_back = tds().descriptor(c);
         });
 
       find_conflicts(c, tester, make_triple(Oneset_iterator<Facet>(facet),
