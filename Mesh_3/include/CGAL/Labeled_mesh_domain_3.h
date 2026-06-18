@@ -631,8 +631,7 @@ public:
    *   \cgalParamNEnd
    *   \cgalParamNBegin{value_outside}
    *     \cgalParamDescription{the value attached to voxels
-   *                           outside of the domain to be meshed. It should be lower than
-   *                           `iso_value`.}
+   *                           outside of the domain to be meshed.}
    *     \cgalParamDefault{0}
    *   \cgalParamNEnd
    *
