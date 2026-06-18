@@ -92,7 +92,7 @@ struct S2S2_inter_info
 };
 
 template <class K>
-inline S2S2_inter_info
+inline typename K::Boolean
 do_intersect(const typename K::Segment_2 &seg1, const typename K::Segment_2 &seg2);
 
 
@@ -108,7 +108,7 @@ seg_seg_do_intersect_crossing(
     switch (make_certain(k.orientation_2_object()(p1,p2,p3))) {
     case LEFT_TURN:
     {
-      switch (k.orientation_2_object()(p3,p4,p2))
+      switch (make_certain(k.orientation_2_object()(p3,p4,p2)))
       {
         case COLLINEAR:
           return S2S2_inter_info(i2);
@@ -122,7 +122,7 @@ seg_seg_do_intersect_crossing(
     }
     case RIGHT_TURN:
     {
-      switch (k.orientation_2_object()(p3,p4,p2))
+      switch (make_certain(k.orientation_2_object()(p3,p4,p2)))
       {
         case COLLINEAR:
           return S2S2_inter_info(i2);
@@ -145,16 +145,28 @@ seg_seg_do_intersect_crossing(
     return S2S2_inter_info(false);
 }
 
-// used internally by Arr_segment_traits_2template <class K>
 template <class K>
-bool
+typename K::Boolean
 seg_seg_do_intersect_crossing(
         const typename K::Point_2& p1, const typename K::Point_2& p2,
         const typename K::Point_2& p3, const typename K::Point_2& p4,
         const K& k)
 {
-  return seg_seg_do_intersect_crossing(p1,p2,p3,p4,0,0,0,0,k,false,-1).inter;
+    switch (make_certain(k.orientation_2_object()(p1,p2,p3))) {
+    case LEFT_TURN:
+      return ! (k.orientation_2_object()(p3,p4,p2) == RIGHT_TURN); //   right_turn(p3,p4,p2);
+    case RIGHT_TURN:
+      return ! (k.orientation_2_object()(p3,p4,p2) == LEFT_TURN); //left_turn(p3,p4,p2);
+    case COLLINEAR:
+      return true;
+    default:
+      CGAL_unreachable();
+    }
+    CGAL_kernel_assertion(false);
+    return false;
 }
+
+
 
 
 // lexicographic order of points p1 < p3 < p4 < p2, with segments (p1,p2) and (p3,p4)
@@ -169,7 +181,7 @@ seg_seg_do_intersect_contained(
     switch (make_certain(k.orientation_2_object()(p1,p2,p3))) {
     case LEFT_TURN:
     {
-      switch (k.orientation_2_object()(p1,p2,p4))
+      switch (make_certain(k.orientation_2_object()(p1,p2,p4)))
       {
         case COLLINEAR:
           return S2S2_inter_info(i4);
@@ -183,7 +195,7 @@ seg_seg_do_intersect_contained(
     }
     case RIGHT_TURN:
     {
-      switch (k.orientation_2_object()(p1,p2,p4))
+      switch (make_certain(k.orientation_2_object()(p1,p2,p4)))
       {
         case COLLINEAR:
           return S2S2_inter_info(i4);
@@ -206,16 +218,31 @@ seg_seg_do_intersect_contained(
     return S2S2_inter_info(false);
 }
 
-// used internally by Arr_segment_traits_2
+
+// lexicographic order of points p1 < p3 < p4 < p2, with segments (p1,p2) and (p3,p4)
 template <class K>
-bool
+typename K::Boolean
 seg_seg_do_intersect_contained(
         const typename K::Point_2& p1, const typename K::Point_2& p2,
         const typename K::Point_2& p3, const typename K::Point_2& p4,
         const K& k)
 {
-  return seg_seg_do_intersect_contained(p1,p2,p3,p4,0,0,0,0,k,false,-1).inter;
+    switch (make_certain(k.orientation_2_object()(p1,p2,p3))) {
+    case LEFT_TURN:
+      return ! (k.orientation_2_object()(p1,p2,p4) == LEFT_TURN); // left_turn(p1,p2,p4);
+    case RIGHT_TURN:
+      return ! (k.orientation_2_object()(p1,p2,p4) == RIGHT_TURN); // right_turn(p1,p2,p4);
+    case COLLINEAR:
+        return true;
+    default:
+      CGAL_unreachable();
+    }
+    CGAL_kernel_assertion(false);
+    return false;
 }
+
+
+
 
 template <class K>
 S2S2_inter_info
@@ -324,13 +351,99 @@ do_intersect_with_info(const typename K::Segment_2 &seg1,
 }
 
 
+
+template <class K>
+typename K::Boolean
+do_intersect_without_info(const typename K::Segment_2 &seg1,
+                       const typename K::Segment_2 &seg2,
+                       const K& k)
+{
+    typename K::Less_xy_2 less_xy;
+
+    bool seg1_is_left_to_right = less_xy(seg1.source(),seg1.target());
+    bool seg2_is_left_to_right = less_xy(seg2.source(),seg2.target());
+
+    int A1_id = seg1_is_left_to_right ? 0 : 1;
+    int A2_id = seg1_is_left_to_right ? 1 : 0;
+    int B1_id = seg2_is_left_to_right ? 0 : 1;
+    int B2_id = seg2_is_left_to_right ? 1 : 0;
+
+    typename K::Point_2 const & A1 = seg1.point(A1_id);
+    typename K::Point_2 const & A2 = seg1.point(A2_id);
+    typename K::Point_2 const & B1 = seg2.point(B1_id);
+    typename K::Point_2 const & B2 = seg2.point(B2_id);
+
+    typename K::Compare_xy_2 compare_xy;
+
+  // first try to filter using the bbox of the segments
+    if (less_xy(A2,B1)
+     || less_xy(B2,A1))
+        return false;
+
+    switch(make_certain(compare_xy(A1,B1))) {
+    case SMALLER:
+        switch(make_certain(compare_xy(A2,B1))) {
+        case SMALLER:
+            return false;
+        case EQUAL:
+            return true; // DI_MORE_INFO_TAG: A2==B1 but only A2 is reported
+        case LARGER:
+            switch(make_certain(compare_xy(A2,B2))) {
+            case SMALLER:
+                return seg_seg_do_intersect_crossing(A1,A2,B1,B2,  k);
+            case EQUAL:
+                // A1 < B1 < B2 = A1
+                return true; // DI_MORE_INFO_TAG: A2==B2 but only A2 is reported
+            case LARGER:
+                return seg_seg_do_intersect_contained(A1,A2,B1,B2, k);
+            default:
+              CGAL_unreachable();
+            }
+        default:
+          CGAL_unreachable();
+
+        }
+    case EQUAL:
+        return true; // DI_MORE_INFO_TAG: A1==B1 but only A1 is reported
+    case LARGER:
+        switch(make_certain(compare_xy(B2,A1))) {
+        case SMALLER:
+            return false;
+        case EQUAL:
+            return true; // DI_MORE_INFO_TAG: A1==B2 but only A1 is reported
+        case LARGER:
+            switch(make_certain(compare_xy(B2,A2))) {
+            case SMALLER:
+                return seg_seg_do_intersect_crossing(B1,B2,A1,A2,  k);
+            case EQUAL:
+                // B1 < A1 < A2 = B2
+                // DI_MORE_INFO_TAG: A2==B2 but only A2 is reported
+                return true; // DI_MORE_INFO_TAG: A2==B2 but only A2 is reported
+            case LARGER:
+                return seg_seg_do_intersect_contained(B1,B2,A1,A2, k);
+            default:
+              CGAL_unreachable();
+            }
+        default:
+          CGAL_unreachable();
+        }
+    default:
+      CGAL_unreachable();
+    }
+
+    CGAL_kernel_assertion(false);
+    return false;
+}
+
+
+
 template <class K>
 typename K::Boolean
 do_intersect(const typename K::Segment_2 &seg1,
              const typename K::Segment_2 &seg2,
              const K& k)
 {
-  return do_intersect_with_info(seg1, seg2, k, false).inter;
+  return do_intersect_without_info(seg1, seg2, k);
 }
 
 template <class K>
