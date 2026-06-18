@@ -179,17 +179,6 @@ optional: it is used by some models of the
 
 \mpfi can be downloaded from <A HREF="https://gitlab.inria.fr/mpfi/mpfi">`https://gitlab.inria.fr/mpfi/mpfi`</A>.
 
-
-\subsection thirdpartyNTL NTL
-<b>Version 5.1 or later</b>
-
-\ntl provides data structures and algorithms for signed, arbitrary
-length integers, and for vectors, matrices, and polynomials over the
-integers and over finite fields. The optional library \ntl is used by \cgal
-to speed up operations of the Polynomial package, such as GCDs. It is recommended to install \ntl with support from \gmp.
-
-\ntl can be downloaded from <A HREF="https://libntl.org">`https://libntl.org`</A>.
-
 \subsection thirdpartyESBTL ESBTL
 
 The \esbtl (Easy Structural Biology Template Library) is a library that allows

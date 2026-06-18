@@ -1145,17 +1145,13 @@ bool is_outside(const typename C3t3::Edge & edge,
   Cell_circulator done = circ;
   do
   {
-    // is cell in complex?
-    if (c3t3.is_in_complex(circ))
-      return false;
     // does circ belong to the selection?
     if (get(cell_selector, circ))
       return false;
+  }
+  while (++circ != done);
 
-    ++circ;
-  } while (circ != done);
-
-  return true; //all incident cells are outside or infinite
+  return true; //all incident cells are outside selection
 }
 
 // is `v` part of the selection of cells that should be remeshed?
