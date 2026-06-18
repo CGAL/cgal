@@ -115,7 +115,7 @@ public:
   }
 
   void smooth() {
-    CGAL_assertion(m_context);
+    CGAL_assertion(m_context != nullptr);
     m_context->refresh(m_c3t3);
 
     if(!m_context->m_protect_boundaries) {
