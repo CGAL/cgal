@@ -757,8 +757,6 @@ public:
     case CDT_3_vertex_type::FREE:
     case CDT_3_vertex_type::BBOX:
       return 3;
-    case CDT_3_vertex_type::nb_of_types:
-      CGAL_unreachable();
     }
     CGAL_unreachable();
   }
@@ -1447,7 +1445,7 @@ public:
   }
 
   auto statistics(std::string prefix = "") const {
-    using Stats_array = std::array<std::size_t, static_cast<std::size_t>(CDT_3_vertex_type::nb_of_types)>;
+    using Stats_array = std::array<std::size_t, static_cast<std::size_t>(CDT_3_vertex_type::last) + 1>;
     return IO::oformat([this, prefix=std::move(prefix)](std::ostream& out) -> auto& {
       out << prefix << "Number of vertices: " << triangulation().number_of_vertices() << "\n";
       out << prefix << "Number of cells: " << triangulation().number_of_cells() << "\n";
@@ -3646,9 +3644,8 @@ public:
       case CDT_3_vertex_type::STEINER_IN_FACE:
       case CDT_3_vertex_type::STEINER_ON_EDGE:
         return true;
-      default:
-        CGAL_unreachable();
     }
+    CGAL_unreachable();
   }
 
   auto move_Steiner_vertices_to_the_volume() {
@@ -3678,7 +3675,6 @@ private:
         case Vertex_marker::CAVITY: std::cerr << "CAVITY"; break;
         case Vertex_marker::CAVITY_ABOVE: std::cerr << "CAVITY_ABOVE"; break;
         case Vertex_marker::CAVITY_BELOW: std::cerr << "CAVITY_BELOW"; break;
-        case Vertex_marker::nb_of_markers: CGAL_unreachable(); break;
       }
       std::cerr << ")\n";
     }
@@ -6653,11 +6649,10 @@ auto get_remeshing_triangulation(Conforming_constrained_Delaunay_triangulation_3
       v->set_index(v->ccdt_3_data().face_index());
       break;
     case CDT_3_vertex_type::FREE:
+    case CDT_3_vertex_type::BBOX:
+    case CDT_3_vertex_type::STEINER_IN_VOLUME:
       v->set_dimension(3);
       v->set_index(1);
-      break;
-    default:
-      CGAL_error();
       break;
     }
   }

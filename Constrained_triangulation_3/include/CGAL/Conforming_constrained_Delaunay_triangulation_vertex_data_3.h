@@ -42,7 +42,7 @@ enum class CDT_3_vertex_type : unsigned char {
   STEINER_IN_FACE,
   STEINER_IN_VOLUME,
   BBOX,
-  nb_of_types
+  last = BBOX,
 };
 
 enum class CDT_3_vertex_marker {
@@ -52,14 +52,14 @@ enum class CDT_3_vertex_marker {
   CAVITY,
   CAVITY_ABOVE,
   CAVITY_BELOW,
-  nb_of_markers
+  last = CAVITY_BELOW
 };
 
 class Conforming_constrained_Delaunay_triangulation_vertex_data_3 {
 protected:
   // TODO: check and improve the compactness of this class
   CDT_3_vertex_type m_vertex_type = CDT_3_vertex_type::FREE;
-  std::bitset<static_cast<int>(CDT_3_vertex_marker::nb_of_markers)> mark{};
+  std::bitset<static_cast<int>(CDT_3_vertex_marker::last) + 1> mark{};
   struct C_id {
     void* ptr = nullptr;
     std::size_t id = 0;
@@ -167,9 +167,8 @@ public:
     case CDT_3_vertex_type::STEINER_IN_VOLUME:
     case CDT_3_vertex_type::FREE:
       return 3;
-    case CDT_3_vertex_type::nb_of_types:
-      CGAL_unreachable();
     }
+    CGAL_unreachable();
   }
 
 };
