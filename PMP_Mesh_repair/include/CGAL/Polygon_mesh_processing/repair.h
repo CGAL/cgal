@@ -9,7 +9,8 @@
 //
 //
 // Author(s)     : Sebastien Loriot,
-//                 Mael Rouxel-Labbé
+//                 Mael Rouxel-Labbé,
+//                 Utkarsh Khajuria <utkarshkhajuria55@gmail.com>
 
 #ifndef CGAL_POLYGON_MESH_PROCESSING_REPAIR_H
 #define CGAL_POLYGON_MESH_PROCESSING_REPAIR_H
@@ -163,7 +164,7 @@ std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
 
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type              GT;
   typedef typename GT::FT                                                          FT;
-  const GT traits = choose_parameter<GT>(get_parameter(np, internal_np::vertex_point));
+  const GT traits = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type    VPM;
   typedef typename boost::property_traits<VPM>::value_type                         Point_3;

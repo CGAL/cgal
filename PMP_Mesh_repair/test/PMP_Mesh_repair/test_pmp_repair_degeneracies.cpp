@@ -262,6 +262,17 @@ void remove_negligible_connected_components(const std::string filename)
   PMP::remove_connected_components_of_negligible_size(mesh, CP::area_threshold(1e15));
   assert(is_empty(mesh));
 
+  // Explicit vertex point map and geom traits
+  std::cout << "---------\nexplicit vertex point map and geom traits..." << std::endl;
+  Mesh mesh_with_explicit_np = mesh_cpy;
+  auto vpm = get(CGAL::vertex_point, mesh_with_explicit_np);
+  const std::size_t nb_explicit_np = PMP::remove_connected_components_of_negligible_size(
+                                      mesh_with_explicit_np,
+                                      CP::vertex_point_map(vpm)
+                                         .geom_traits(K()));
+  assert(nb_explicit_np == 3);
+  assert(PMP::internal::number_of_connected_components(mesh_with_explicit_np) == 1);
+
   // Could also have used default parameters, which does the job by itself
   std::cout << "---------\ndefault values..." << std::endl;
 
