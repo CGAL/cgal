@@ -831,7 +831,8 @@ void set_index(typename C3t3::Vertex_handle v, const C3t3& c3t3)
     c3t3.set_index(v, c3t3.subdomain_index(v->cell()));
     break;
   case 2:
-    CGAL_expensive_assertion(surface_patch_index(v, c3t3) != std::nullopt);
+    CGAL_expensive_assertion(surface_patch_index(v, c3t3)
+                  != typename C3t3::Surface_patch_index());
     c3t3.set_index(v, surface_patch_index(v, c3t3).value());
     break;
   case 1:

@@ -153,7 +153,7 @@ jobs:
           sudo apt-get update && sudo apt-get install -y gh cmake graphviz ssh bibtex2html
           sudo pip install lxml
           sudo pip install pyquery
-          wget --no-verbose -O doxygen_exe https://cgal.geometryfactory.com/~cgaltest/doxygen_1_9_6_patched/doxygen
+          wget --no-verbose -O doxygen_exe https://cgal.geometryfactory.com/~cgaltest/doxygen_1_17_0_patched/doxygen
           sudo mv doxygen_exe /usr/bin/doxygen
           sudo chmod +x /usr/bin/doxygen
           git config --global user.email "cgal@geometryfactory.com"
