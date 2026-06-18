@@ -837,21 +837,20 @@ public:
     };
   }
 
+  using Edges_in_complex_iterator = typename CDT_3_impl::Complex_edges_iterator;
   auto edges_in_complex() const
   {
     return impl().edges_in_complex();
   }
+  auto edges_in_complex_begin() const { using std::begin; return begin(impl().edges_in_complex()); }
+  auto edges_in_complex_end() const { using std::end; return end(impl().edges_in_complex()); }
+  using Facets_in_complex_iterator = typename CDT_3_impl::Constrained_facets_iterator;
   auto facets_in_complex() const
   {
-    auto in_complex = [this](const Facet& f) { return is_in_complex(f); };
-    return boost::make_iterator_range(
-            boost::make_filter_iterator(in_complex,
-                                        impl().finite_facets_begin(),
-                                        impl().finite_facets_end()),
-            boost::make_filter_iterator(in_complex,
-                                        impl().finite_facets_end(),
-                                        impl().finite_facets_end()));
+    return impl().constrained_facets();
   }
+  auto facets_in_complex_begin() const { using std::begin; return begin(impl().constrained_facets()); }
+  auto facets_in_complex_end() const { using std::end; return end(impl().constrained_facets()); }
   auto cells_in_complex() const
   {
     return impl().finite_cell_handles();

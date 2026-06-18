@@ -234,7 +234,7 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
   // insert midpoint
   Vertex_handle new_v = tr.tds().insert_in_edge(e);
   new_v->set_point(typename Tr::Point(m));
-  new_v->set_dimension(dimension);
+  c3t3.set_dimension(new_v, dimension);
 
   // update c3t3 with subdomain and surface patch indices
   std::vector<Cell_handle> new_cells;

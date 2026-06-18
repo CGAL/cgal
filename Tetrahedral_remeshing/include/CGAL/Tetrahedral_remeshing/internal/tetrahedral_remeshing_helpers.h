@@ -644,10 +644,10 @@ Facet canonical_facet(const Facet& f)
   return (c2 < c) ? std::make_pair(c2, c2->index(c)) : std::make_pair(c, i);
 }
 
-template<typename VertexHandle>
-bool is_on_feature(const VertexHandle v)
+template<typename C3T3, typename VertexHandle>
+bool is_on_feature(const C3T3& c3t3, const VertexHandle v)
 {
-  return (v->in_dimension() == 1 || v->in_dimension() == 0);
+  return (c3t3.in_dimension(v) == 1 || c3t3.in_dimension(v) == 0);
 }
 
 template<typename Tr>
@@ -825,7 +825,7 @@ surface_patch_index(const typename C3t3::Vertex_handle v,
 template<typename C3t3>
 void set_index(typename C3t3::Vertex_handle v, const C3t3& c3t3)
 {
-  switch (v->in_dimension())
+  switch (c3t3.in_dimension(v))
   {
   case 3:
     c3t3.set_index(v, c3t3.subdomain_index(v->cell()));
@@ -1419,7 +1419,7 @@ auto sizing_at_vertex(const Vertex_handle v,
 {
   auto size = sizing(point(v->point()), c3t3.in_dimension(v), c3t3.index(v));
 
-  if(v->in_dimension() < 3 && size == 0)
+  if(c3t3.in_dimension(v) < 3 && size == 0)
   {
     std::vector<typename C3t3::Cell_handle> cells;
     c3t3.triangulation().incident_cells(v, std::back_inserter(cells));
@@ -1451,8 +1451,8 @@ auto sizing_at_midpoint(const typename C3t3::Edge& e,
   {
     const auto [u, v] = make_vertex_pair(e);
 
-    const FT size_at_u = sizing(cp(u->point()), u->in_dimension(), c3t3.index(u));
-    const FT size_at_v = sizing(cp(v->point()), v->in_dimension(), c3t3.index(v));
+    const FT size_at_u = sizing(cp(u->point()), c3t3.in_dimension(u), c3t3.index(u));
+    const FT size_at_v = sizing(cp(v->point()), c3t3.in_dimension(v), c3t3.index(v));
 
     if (size_at_u == 0. || size_at_v == 0.)
       return average_sizing_in_incident_cells(e, sizing, c3t3, cell_selector);
@@ -1587,7 +1587,7 @@ auto midpoint_with_info(const typename C3t3::Edge& e,
 
   const Point_3 midpoint_pt = midpt(cp(u->point()), cp(v->point()));
   const int midpoint_dim = boundary_edge
-    ? (std::max)(u->in_dimension(), v->in_dimension())
+    ? (std::max)(c3t3.in_dimension(u), c3t3.in_dimension(v))
     : 3;
   const Index midpoint_index = boundary_edge
     ? max_dimension_index(c3t3.triangulation().vertices(e), c3t3)
@@ -1616,8 +1616,8 @@ squared_upper_size_bound(const typename C3t3::Edge& e,
     const Vertex_handle u = e.first->vertex(e.second);
     const Vertex_handle v = e.first->vertex(e.third);
 
-    const FT size_at_u = sizing(cp(u->point()), u->in_dimension(), c3t3.index(u));
-    const FT size_at_v = sizing(cp(v->point()), v->in_dimension(), c3t3.index(v));
+    const FT size_at_u = sizing(cp(u->point()), c3t3.in_dimension(u), c3t3.index(u));
+    const FT size_at_v = sizing(cp(v->point()), c3t3.in_dimension(v), c3t3.index(v));
 
     // if e is on the boundary AND sizing at the boundary is set to 0,
     // we take the maximum size of the incident cells
@@ -1873,8 +1873,8 @@ void get_edge_info(const typename C3t3::Edge& edge,
         }
         else
         {
-          const bool v0_on_feature = is_on_feature(v0);
-          const bool v1_on_feature = is_on_feature(v1);
+          const bool v0_on_feature = is_on_feature(c3t3, v0);
+          const bool v1_on_feature = is_on_feature(c3t3, v1);
 
           if (v0_on_feature && v1_on_feature) {
             if (c3t3.is_in_complex(edge)) {
@@ -2098,7 +2098,7 @@ void check_surface_patch_indices(const C3t3& c3t3)
   typedef typename C3t3::Vertex_handle Vertex_handle;
   for (Vertex_handle v : c3t3.triangulation().finite_vertex_handles())
   {
-    if (v->in_dimension() != 2)
+    if (c3t3.in_dimension(v) != 2)
       continue;
     CGAL_expensive_assertion(surface_patch_index(v, c3t3) != std::nullopt);
   }
@@ -2524,10 +2524,12 @@ void dump_cells_with_small_dihedral_angle(const Tr& tr,
   dump_cells_off(cells, tr, "bad_cells.off");
 }
 
-template<typename Tr>
-void dump_vertices_by_dimension(const Tr& tr, const char* prefix)
+template<typename C3t3>
+void dump_vertices_by_dimension(const C3t3& c3t3, const char* prefix)
 {
-  typedef typename Tr::Vertex_handle Vertex_handle;
+  using Tr = typename C3t3::Triangulation;
+  const Tr& tr = c3t3.triangulation();
+  using Vertex_handle = typename Tr::Vertex_handle;
   std::vector< std::vector<Vertex_handle> > vertices_per_dimension(4);
 
   std::size_t nb_far_points = 0;
@@ -2536,14 +2538,14 @@ void dump_vertices_by_dimension(const Tr& tr, const char* prefix)
        vit != tr.finite_vertices_end();
        ++vit)
   {
-    if (vit->in_dimension() == -1)
+    if (c3t3.in_dimension(vit) == -1)
     {
       ++nb_far_points;
       continue;//far point
     }
-    CGAL_assertion(vit->in_dimension() >= 0 && vit->in_dimension() < 4);
+    CGAL_assertion(c3t3.in_dimension(vit) >= 0 && c3t3.in_dimension(vit) < 4);
 
-    vertices_per_dimension[vit->in_dimension()].push_back(vit);
+    vertices_per_dimension[c3t3.in_dimension(vit)].push_back(vit);
   }
 
   for (int i = 0; i < 4; ++i)

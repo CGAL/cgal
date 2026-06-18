@@ -1225,7 +1225,7 @@ void collect_subdomains_on_boundary(const C3t3& c3t3,
   {
     for (auto v : c3t3.triangulation().vertices(c))
     {
-      const int dim = v->in_dimension();
+      const int dim = c3t3.in_dimension(v);
       if(dim >= 0 && dim < 3)
         vertices_subdomain_indices[v].insert(c->subdomain_index());
     }

@@ -137,7 +137,7 @@ public:
   {
     CGAL_assertion(!m_flip_smooth_steps);
     reset_vertex_id_map(c3t3.triangulation());
-    reset_free_vertices(c3t3.triangulation());
+    reset_free_vertices(c3t3);
 
     // once this variable is set to true,
     // m_vertex_id becomes constant and
@@ -169,8 +169,9 @@ private:
 
   // this function can be used iff m_vertex_id
   // has already been initialized
-  void reset_free_vertices(const Tr& tr)
+  void reset_free_vertices(const C3t3& c3t3)
   {
+    const auto& tr = c3t3.triangulation();
     // when flip-smooth steps start,
     // m_free_vertices should already be initialized
     // by the last smoothing step.
@@ -192,7 +193,7 @@ private:
       for (auto vi : tr.vertices(c))
       {
         const std::size_t idi = vertex_id(vi);
-        const int dim = vi->in_dimension();
+        const int dim = c3t3.in_dimension(vi);
 
         switch (dim)
         {
@@ -671,8 +672,8 @@ private:
       const Vertex_handle vh0 = e.first->vertex(e.second);
       const Vertex_handle vh1 = e.first->vertex(e.third);
 
-      CGAL_expensive_assertion(is_on_feature(vh0));
-      CGAL_expensive_assertion(is_on_feature(vh1));
+      CGAL_expensive_assertion(is_on_feature(c3t3, vh0));
+      CGAL_expensive_assertion(is_on_feature(c3t3, vh1));
 
       const std::size_t& i0 = vertex_id(vh0);
       const std::size_t& i1 = vertex_id(vh1);
@@ -706,7 +707,7 @@ private:
     {
       const std::size_t vid = vertex_id(v);
 
-      if (!is_free(vid) || !is_on_feature(v))
+      if (!is_free(vid) || !is_on_feature(c3t3, v))
         continue;
 
       const Point_3 current_pos = point(v->point());
@@ -792,8 +793,8 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
       const std::size_t& i0 = vertex_id(vh0);
       const std::size_t& i1 = vertex_id(vh1);
 
-      const bool vh0_moving = !is_on_feature(vh0) && is_free(i0);
-      const bool vh1_moving = !is_on_feature(vh1) && is_free(i1);
+      const bool vh0_moving = !is_on_feature(c3t3, vh0) && is_free(i0);
+      const bool vh1_moving = !is_on_feature(c3t3, vh1) && is_free(i1);
 
       if (!vh0_moving && !vh1_moving)
         continue;
@@ -822,7 +823,7 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
   {
     const std::size_t vid = vertex_id(v);
 
-    if (!is_free(vid) || v->in_dimension() != 2)
+    if (!is_free(vid) || c3t3.in_dimension(v) != 2)
       continue;
 
     const std::size_t nb_neighbors = moves[vid].neighbors;
@@ -1085,7 +1086,7 @@ public:
     reset_vertex_id_map(tr);
 
     //are vertices free to move? indices are in `vertex_id`
-    reset_free_vertices(tr);
+    reset_free_vertices(c3t3);
 
     //collect incident cells
     using Incident_cells_vector = boost::container::small_vector<Cell_handle, 40>;
@@ -1146,7 +1147,7 @@ public:
 #endif
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
-      c3t3.triangulation(), "c3t3_vertices_after_smoothing");
+      c3t3, "c3t3_vertices_after_smoothing");
     os_surf.close();
     os_vol.close();
 #endif

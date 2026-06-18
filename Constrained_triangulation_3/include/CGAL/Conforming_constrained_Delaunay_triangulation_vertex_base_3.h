@@ -55,7 +55,10 @@ public:
   using Base = Triangulation_simplex_base_with_time_stamp<VertexBase>;
   using Base::Base;
 
+  ///////// for C3T3 : dummy implementation for compilation purposes
   using Index = int;
+  void set_dimension(int) {}
+  ///////// end of for C3T3
 
   // model of ConformingConstrainedDelaunayTriangulationVertexBase_3
   Conforming_constrained_Delaunay_triangulation_vertex_data_3& ccdt_3_data() { return ccdt_3_data_; }
@@ -64,9 +67,6 @@ public:
   static std::string io_signature() {
     return Get_io_signature<VertexBase>()();
   }
-
-  int in_dimension() const { return ccdt_3_data().in_dimension(); }
-  void set_dimension(int) {}
 };
 
 } // namespace CGAL
