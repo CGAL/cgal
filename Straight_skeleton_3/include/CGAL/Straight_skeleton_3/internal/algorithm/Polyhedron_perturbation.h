@@ -25,6 +25,7 @@
 #include <CGAL/Straight_skeleton_3/internal/algorithm/Polyhedron_transformation.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/Polyhedron_self_intersection.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/vertex_splitters.h>
+#include <CGAL/Straight_skeleton_3/internal/algorithm/vertex_splitters/Combinatorial_vertex_splitter.h>
 
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
@@ -34,6 +35,9 @@
 
 #include <CGAL/enum.h>
 #include <CGAL/Random.h>
+
+#include "ortools/sat/cp_model.h"
+#include "ortools/sat/sat_parameters.pb.h"
 
 #include <limits>
 #include <list>
@@ -1443,12 +1447,13 @@ public:
     CGAL_SS3_TRANSF_TRACE_V(32, "F" << f->id() << " has length " << Size_shenanigans::length(f->get_plane()));
   }
 
+#if 1
   // duplicated because all faces have their source here
   static void get_clipped_plane_faces(const VertexSPtr vertex,
                                       const Iso_cuboid_3& bbox,
                                       std::vector<Point_3>& points,
                                       std::vector<std::vector<std::size_t> >& triangles,
-                                      std::vector<FacetSPtr>& triangle_2_sptr)
+                                      std::vector<FacetSPtr>& triangle_to_facet)
   {
     using Vector_3 = typename GeomTraits::Vector_3;
 
@@ -1461,8 +1466,8 @@ public:
         std::vector<Point_3> local_range;
         auto res = CGAL::intersection(bbox, plane);
         if (!res) {
-          // Should not happen, as bbox is constructed to contain all intersections
-          std::cerr << "no intersection between plane and bbox" << std::endl;
+          // Should not happen
+          std::cerr << "no intersection between plane and bbox??!" << std::endl;
           CGAL_assertion(false);
           std::exit(1);
         } else if (const Triangle_3* itr = std::get_if<Triangle_3>(&*res)) {
@@ -1505,12 +1510,167 @@ public:
           for(const auto& tri : polygons) {
             CGAL_assertion(tri.size() == 3);
             triangles.push_back(tri);
-            triangle_2_sptr.push_back(facet);
+            triangle_to_facet.push_back(facet);
           }
         }
       }
     }
   }
+#else
+  static void get_clipped_plane_faces(const VertexSPtr vertex,
+                                      const Iso_cuboid_3& bbox,
+                                      std::vector<Point_3>& points,
+                                      std::vector<std::vector<std::size_t> >& triangles,
+                                      std::vector<FacetSPtr>& triangle_2_sptr)
+  {
+    using Vector_3 = typename GeomTraits::Vector_3;
+    const Point_3& center = vertex->point();
+
+    for(const auto& facet_wptr : vertex->facets())
+    {
+      if(FacetSPtr facet = facet_wptr.lock())
+      {
+        const Plane_3& plane = facet->get_plane();
+
+        std::vector<Point_3> local_range;
+        auto res = CGAL::intersection(bbox, plane);
+        if (!res) {
+          // Should not happen, as bbox is constructed to contain all intersections
+          std::cerr << "no intersection between plane and bbox" << std::endl;
+          CGAL_assertion(false);
+          std::exit(1);
+        } else if (const Triangle_3* itr = std::get_if<Triangle_3>(&*res)) {
+          for (int i=0; i<3; ++i) {
+            local_range.push_back((*itr)[i]);
+          }
+        } else if (const std::vector<Point_3>* ir = std::get_if<std::vector<Point_3> >(&*res)) {
+          for (const Point_3& p : *ir) {
+            local_range.push_back(p);
+          }
+        } else {
+          std::cerr << "plane/bbox intersection is not a polygon" << std::endl;
+          CGAL_assertion(false);
+          std::exit(1);
+        }
+
+        // Ensure orientation: normal of local_range must match plane's orientation
+        if(local_range.size() >= 3) {
+          Vector_3 plane_normal = plane.orthogonal_vector();
+          Vector_3 tri_normal = CGAL::cross_product(local_range[1] - local_range[0], local_range[2] - local_range[1]);
+          if(tri_normal * plane_normal < 0) {
+            std::reverse(local_range.begin(), local_range.end());
+          }
+        }
+
+        // Insert extremities (projections) into local_range at the correct place
+        const Point_3& prev_pt = vertex->prev(facet)->point();
+        const Point_3& v_pt = vertex->point();
+        const Point_3& next_pt = vertex->next(facet)->point();
+
+        Vector_3 prev_dir = prev_pt - v_pt;
+        Vector_3 next_dir = next_pt - v_pt;
+        auto res_prev = CGAL::intersection(Ray_3{v_pt, prev_dir}, bbox);
+        auto res_next = CGAL::intersection(Ray_3{v_pt, next_dir}, bbox);
+        CGAL_assertion(res_prev && res_next);
+
+        auto get_ray_bbox_extremity = [&](const auto& res, const Point_3& src) -> std::optional<Point_3> {
+          if(const Segment_3* seg = std::get_if<Segment_3>(&*res)) {
+            if(seg->source() == src)
+              return seg->target();
+            else if(seg->target() == src)
+              return seg->source();
+            else
+              return std::nullopt;
+          }
+          return std::nullopt;
+        };
+
+        std::optional<Point_3> opt_prev = get_ray_bbox_extremity(res_prev, v_pt);
+        std::optional<Point_3> opt_next = get_ray_bbox_extremity(res_next, v_pt);
+        CGAL_assertion(opt_prev && opt_next);
+
+        // check linearly to find in which segment the point belongs
+        // (it belongs by construction)
+        auto insert_in_order = [&local_range](const Point_3& new_p)
+        {
+          for(auto it = local_range.begin(); it != local_range.end(); ++it) {
+            auto it_next = std::next(it);
+            if(it_next == local_range.end()) {
+              it_next = local_range.begin();
+            }
+            if(new_p != *it && new_p != *it_next &&
+               CGAL::collinear(*it, new_p, *it_next) &&
+               CGAL::collinear_are_strictly_ordered_along_line(*it, new_p, *it_next))
+            {
+              // std::cout << "insert " << new_p << " between " << *it << " and " << *it_next << std::endl;
+              local_range.insert(it_next, new_p);
+              break;
+            }
+          }
+        };
+
+        insert_in_order(*opt_prev);
+        insert_in_order(*opt_next);
+
+        // Triangulate by fanning from the center vertex (vertex->point())
+        std::size_t center_idx = points.size();
+        points.push_back(center);
+
+        std::size_t base_idx = points.size();
+        for(const Point_3& p : local_range) {
+          points.push_back(p);
+        }
+
+        // --- Sector logic ---
+        // Get prev/next points for this facet at the center vertex
+        Vector_3 n = plane.orthogonal_vector();
+
+        // Orientation planes: through center, normal is n x (prev-center) and n x (next-center)
+        Vector_3 v_prev = prev_pt - center;
+        Vector_3 v_next = next_pt - center;
+        Vector_3 n_prev = CGAL::cross_product(n, v_prev);
+        Vector_3 n_next = CGAL::cross_product(n, v_next);
+        Plane_3 plane_prev(center, n_prev);
+        Plane_3 plane_next(center, n_next);
+
+        // Determine if angle at center is > 180°
+        // If next is to the left of prev (in the facet's orientation), angle < 180°
+        // If next is to the right of prev, angle > 180°
+        // Use orientation of (center, prev, next) with normal n
+        bool angle_gt_180 = (CGAL::orientation(center, next_pt, prev_pt, center + n) == CGAL::NEGATIVE);
+        std::cout << "center = " << center << std::endl;
+        std::cout << "prev_pt = " << prev_pt << std::endl;
+        std::cout << "next_pt = " << next_pt << std::endl;
+        std::cout << "center + n = " << center + n << std::endl;
+        std::cout << "angle_gt_180 = " << angle_gt_180 << std::endl;
+
+        for(std::size_t i=0; i<local_range.size(); ++i) {
+          std::size_t i1 = base_idx + i;
+          std::size_t i2 = base_idx + ((i+1)%local_range.size());
+
+          // Compute midpoint of the two extremities
+          const Point_3& p1 = points[i1];
+          const Point_3& p2 = points[i2];
+          Point_3 mid = CGAL::midpoint(p1, p2);
+          std::cout << "test: " << mid << std::endl;
+
+          // Test if mid is between the two orientation planes
+          bool on_pos_side_prev = (plane_prev.oriented_side(mid) == CGAL::ON_NEGATIVE_SIDE);
+          bool on_pos_side_next = (plane_next.oriented_side(mid) == CGAL::ON_POSITIVE_SIDE);
+          std::cout << "on_pos_side_prev = " << on_pos_side_prev << std::endl;
+          std::cout << "on_pos_side_next = " << on_pos_side_next << std::endl;
+
+          bool in_sector = (on_pos_side_prev && on_pos_side_next);
+          // If angle > 180°, invert logic: triangles inside are NOT part of the facet
+          bool is_facet_triangle = angle_gt_180 ? !in_sector : in_sector;
+
+          triangles.push_back({center_idx, i1, i2});
+          triangle_2_sptr.push_back(is_facet_triangle ? facet : nullptr);
+        }
+      }
+    }
+  }
+#endif
 
   static void apply_rand_plane_tilts_V4(const PolyhedronSPtr& polyhedron)
   {
@@ -1546,38 +1706,40 @@ public:
       }
     }
 
+    CGAL_SS3_CORE_TRACE_V(4, vertices_tosplit.size() << " vertices to split");
+
     using Arr_vertex_splitter = algorithm::Arr_vertex_splitter<GeomTraits>;
     using Arr_vertex_splitter_sptr = std::shared_ptr<Arr_vertex_splitter>;
     Arr_vertex_splitter_sptr vertex_splitter = Arr_vertex_splitter::create();
 
     for (const VertexSPtr& vertex : vertices_tosplit) {
-      CGAL_SS3_CORE_TRACE_V(1, "Splitting vertex at " << vertex->point());
+      CGAL_SS3_CORE_TRACE_V(8, "Splitting vertex at " << vertex->point());
 
       vertex->sort();
 
       // soup to be used in the arrangement
       std::vector<Point_3> points;
       std::vector<std::vector<std::size_t> > triangles;
-      std::vector<FacetSPtr> triangle_2_sptr;
+      std::vector<FacetSPtr> triangle_to_facet;
 
       // Compute bounding box of intersections
       Iso_cuboid_3 bbox = Arr_vertex_splitter::compute_intersection_bbox(vertex);
 
       // Get the triangles from the base planes, with tagged faces
-      get_clipped_plane_faces(vertex, bbox, points, triangles, triangle_2_sptr);
+      get_clipped_plane_faces(vertex, bbox, points, triangles, triangle_to_facet);
       std::cout << points.size() << " points, " << triangles.size() << " triangles [base]" << std::endl;
 
       // Dump a polygon soup for each set of triangle faces associated to a specific fsptr value
       {
-        std::map<FacetSPtr, std::vector<std::vector<std::size_t> > > fsptr_to_faces;
+        std::map<FacetSPtr, std::vector<std::vector<std::size_t> > > facet_to_triangles;
         for (std::size_t i=0; i<triangles.size(); ++i) {
-          FacetSPtr fsptr = triangle_2_sptr[i];
+          FacetSPtr fsptr = triangle_to_facet[i];
           if (fsptr) {
-            fsptr_to_faces[fsptr].push_back(triangles[i]);
+            facet_to_triangles[fsptr].push_back(triangles[i]);
           }
         }
         std::size_t idx = 0;
-        for (const auto& kv : fsptr_to_faces) {
+        for (const auto& kv : facet_to_triangles) {
           std::ostringstream oss;
           oss << "results/arr_base_" << idx << ".off";
           CGAL::IO::write_OFF(oss.str(), points, kv.second, CGAL::parameters::stream_precision(17));
@@ -1585,7 +1747,7 @@ public:
         }
       }
 
-      // Add the bounding box faces (@todo probably not necessary)
+      // Add the bounding box faces
 #if 1
       std::size_t base_idx = points.size();
       points.push_back(Point_3(bbox.xmin(), bbox.ymin(), bbox.zmin())); // v0
@@ -1616,45 +1778,45 @@ public:
       triangles.push_back({base_idx+1, base_idx+2, base_idx+6});
       triangles.push_back({base_idx+1, base_idx+6, base_idx+5});
 
-      triangle_2_sptr.resize(triangles.size(), nullptr);
+      triangle_to_facet.resize(triangles.size(), nullptr);
 
       std::cout << points.size() << " points, " << triangles.size() << " triangles [+bbox]" << std::endl;
 #endif
 
-      for (std::size_t i=0; i<triangle_2_sptr.size(); ++i) {
-        std::cout << "triangle " << i << " ==> ptr: " << triangle_2_sptr[i] << std::endl;
+      for (std::size_t i=0; i<triangle_to_facet.size(); ++i) {
+        std::cout << "triangle " << i << " ==> ptr: " << triangle_to_facet[i] << std::endl;
       }
 
       PMP::merge_duplicate_points_in_polygon_soup(points, triangles);
       CGAL::IO::write_OFF("results/arr_soup.off", points, triangles, CGAL::parameters::stream_precision(17));
 
-      CGAL_assertion(triangles.size() == triangle_2_sptr.size());
+      CGAL_assertion(triangles.size() == triangle_to_facet.size());
 
       std::cout << "autorefining..." << std::endl;
-      std::vector<FacetSPtr> updated_triangle_2_sptr;
-      Range_updating_autoref_visitor<FacetSPtr> autoref_visitor(triangle_2_sptr, updated_triangle_2_sptr);
+      std::vector<FacetSPtr> updated_triangle_to_facet;
+      Range_updating_autoref_visitor<FacetSPtr> autoref_visitor(triangle_to_facet, updated_triangle_to_facet);
 
       PMP::autorefine_triangle_soup(points, triangles, CGAL::parameters::visitor(autoref_visitor));
-      triangle_2_sptr = std::move(updated_triangle_2_sptr);
-      CGAL_assertion(triangles.size() == triangle_2_sptr.size());
+      triangle_to_facet = std::move(updated_triangle_to_facet);
+      CGAL_assertion(triangles.size() == triangle_to_facet.size());
 
       CGAL::IO::write_OFF("results/arr_autorefined.off", points, triangles, CGAL::parameters::stream_precision(17));
 
       for (std::size_t i=0; i<triangles.size(); ++i) {
-        std::cout << "[4] triangle " << i << " ptr: " << triangle_2_sptr[i] << std::endl;
+        std::cout << "[4] triangle " << i << " ptr: " << triangle_to_facet[i] << std::endl;
       }
 
       // Dump a polygon soup for each set of triangle faces associated to a specific fsptr value
       {
-        std::map<FacetSPtr, std::vector<std::vector<std::size_t> > > fsptr_to_faces;
+        std::map<FacetSPtr, std::vector<std::vector<std::size_t> > > facet_to_triangles;
         for (std::size_t i=0; i<triangles.size(); ++i) {
-          FacetSPtr fsptr = triangle_2_sptr[i];
+          FacetSPtr fsptr = triangle_to_facet[i];
           if (fsptr) {
-            fsptr_to_faces[fsptr].push_back(triangles[i]);
+            facet_to_triangles[fsptr].push_back(triangles[i]);
           }
         }
         std::size_t idx = 0;
-        for (const auto& kv : fsptr_to_faces) {
+        for (const auto& kv : facet_to_triangles) {
           std::ostringstream oss;
           oss << "results/arr_autorefined_" << idx << ".off";
           CGAL::IO::write_OFF(oss.str(), points, kv.second, CGAL::parameters::stream_precision(17));
@@ -1663,7 +1825,7 @@ public:
       }
 
       std::cout << "repairing..." << std::endl;
-      Range_updating_repair_PS_visitor<FacetSPtr> repair_ps_visitor(triangle_2_sptr);
+      Range_updating_repair_PS_visitor<FacetSPtr> repair_ps_visitor(triangle_to_facet);
       PMP::merge_duplicate_polygons_in_polygon_soup(points, triangles,
                                                     CGAL::parameters::visitor(repair_ps_visitor)
                                                                     .erase_all_duplicates(false) /*keep one*/
@@ -1673,15 +1835,15 @@ public:
 
       // Dump a polygon soup for each set of triangle faces associated to a specific fsptr value
       {
-        std::map<FacetSPtr, std::vector<std::vector<std::size_t> > > fsptr_to_faces;
+        std::map<FacetSPtr, std::vector<std::vector<std::size_t> > > facet_to_triangles;
         for (std::size_t i=0; i<triangles.size(); ++i) {
-          FacetSPtr fsptr = triangle_2_sptr[i];
+          FacetSPtr fsptr = triangle_to_facet[i];
           if (fsptr) {
-            fsptr_to_faces[fsptr].push_back(triangles[i]);
+            facet_to_triangles[fsptr].push_back(triangles[i]);
           }
         }
         std::size_t idx = 0;
-        for (const auto& kv : fsptr_to_faces) {
+        for (const auto& kv : facet_to_triangles) {
           std::ostringstream oss;
           oss << "results/arr_repaired_" << idx << ".off";
           CGAL::IO::write_OFF(oss.str(), points, kv.second, CGAL::parameters::stream_precision(17));
@@ -1689,13 +1851,13 @@ public:
         }
       }
 
-      CGAL_assertion(triangles.size() == triangle_2_sptr.size());
+      CGAL_assertion(triangles.size() == triangle_to_facet.size());
 
       // dump only the triangles with a non nullptr
       {
         std::vector<std::vector<std::size_t> > input_triangles;
         for (std::size_t i=0; i<triangles.size(); ++i) {
-          if (triangle_2_sptr[i]) {
+          if (triangle_to_facet[i]) {
             input_triangles.push_back(triangles[i]);
           }
         }
@@ -1803,8 +1965,8 @@ public:
           to_visit.pop();
 
           std::cout << "At face " << current_tid << " [" << triangles[current_tid][0]
-                                                  << ", " << triangles[current_tid][1]
-                                                  << ", " << triangles[current_tid][2] << "], ";
+                                                 << ", " << triangles[current_tid][1]
+                                                 << ", " << triangles[current_tid][2] << "], ";
           std::cout << "invert: " << invert_face << ", ";
           std::cout << "VIDS: " << face_volume_IDs[current_tid][0] << " " << face_volume_IDs[current_tid][1] << std::endl;
 
@@ -1902,7 +2064,7 @@ public:
         }
       }; // lambda 'build_volume_CC'
 
-      // identify volumes in the shifting faces soup, and tag faces of the volumes
+      // identify volumes in the arrangement, and tag faces of the volumes
       // that are incident to the base face(s)
       std::vector<std::vector<TID> > volume_CCs; // range of ranges (volumes) of triangle IDs
       std::vector<std::array<VID, 2> > face_volume_IDs(triangles.size(),
@@ -1911,8 +2073,8 @@ public:
 
       VID vid = 0;
       for(std::size_t i=0; i<triangles.size(); ++i) {
-        // do not start from bbox faces: we will visit them anyway / we don't want the outer wrap
-        if (!triangle_2_sptr[i])
+        // do not start from bbox faces: we will visit them anyway
+        if (!triangle_to_facet[i])
           continue;
         if (face_volume_IDs[i][0] == VID(-1))
           build_volume_CC(i, vid++, true, points, triangles, edge_map, volume_CCs, face_volume_IDs);
@@ -1922,44 +2084,7 @@ public:
 
       std::cout << volume_CCs.size() << " volume CCs" << std::endl;
 
-      Mesh input;
-      bool success = CGAL::IO::read_polygon_mesh("input.obj", input);
-      CGAL_assertion(success);
-
-      Mesh bb_sm;
-      make_hexahedron(Point_3(bbox.xmin(), bbox.ymin(), bbox.zmin()),
-                      Point_3(bbox.xmax(), bbox.ymin(), bbox.zmin()),
-                      Point_3(bbox.xmax(), bbox.ymax(), bbox.zmin()),
-                      Point_3(bbox.xmin(), bbox.ymax(), bbox.zmin()),
-                      Point_3(bbox.xmin(), bbox.ymax(), bbox.zmax()),
-                      Point_3(bbox.xmin(), bbox.ymin(), bbox.zmax()),
-                      Point_3(bbox.xmax(), bbox.ymin(), bbox.zmax()),
-                      Point_3(bbox.xmax(), bbox.ymax(), bbox.zmax()),
-                      bb_sm, CGAL::parameters::do_not_triangulate_faces(false));
-
-      Mesh input_bb_inter;
-      PMP::corefine_and_compute_intersection(input, bb_sm, input_bb_inter,
-                                             CGAL::parameters::do_not_modify(true));
-
-      FT vol_input = PMP::volume(input_bb_inter);
-      std::cout << "input volume: " << vol_input << std::endl;
-
-      enum class CC_in_out_flag
-      {
-        UNKNOWN = 0,
-        INSIDE,
-        OUTSIDE
-      };
-
-      std::vector<CC_in_out_flag> in_out_flags(volume_CCs.size());
-      std::size_t classified_CCs = 0;
-
-      std::vector<std::vector<PID> > in_triangles, out_triangles;
-
       for (std::size_t i=0; i<volume_CCs.size(); ++i) {
-        std::cout << "== checking CC " << i << std::endl;
-        in_out_flags[i] = CC_in_out_flag::UNKNOWN;
-
         // build a mesh from the soup
         std::vector<Point_3> cc_points = points;
         std::vector<std::vector<PID> > cc_triangles;
@@ -1971,65 +2096,539 @@ public:
         oss << "results/volume_cc_" << i << ".off";
         CGAL::IO::write_OFF(oss.str(), cc_points, cc_triangles, CGAL::parameters::stream_precision(17));
         std::cout << "Wrote volume CC " << i << " with " << cc_triangles.size() << " triangles." << std::endl;
-
-        Mesh cc_sm;
-        PMP::orient_polygon_soup(points, cc_triangles);
-        CGAL_assertion(PMP::is_polygon_soup_a_polygon_mesh(cc_triangles));
-        PMP::polygon_soup_to_polygon_mesh(points, cc_triangles, cc_sm);
-        CGAL_assertion(is_triangle_mesh(cc_sm) && is_closed(cc_sm) && !PMP::does_self_intersect(cc_sm));
-
-        // @tmp workaround because is_outward_oriented seems broken
-        const FT vol_full_cc = PMP::volume(cc_sm);
-        if (vol_full_cc < 0)
-          PMP::reverse_face_orientations(cc_sm);
-
-        CGAL::IO::write_polygon_mesh("results/A_" + std::to_string(i) + ".off", input, CGAL::parameters::stream_precision(17));
-        CGAL::IO::write_polygon_mesh("results/B_" + std::to_string(i) + ".off", cc_sm, CGAL::parameters::stream_precision(17));
-
-        // compute the intersection with the input mesh
-        Mesh inter;
-        PMP::corefine_and_compute_intersection(input, cc_sm, inter,
-                                               CGAL::parameters::do_not_modify(true));
-
-        CGAL::IO::write_polygon_mesh("results/inter_" + std::to_string(i) + ".off", inter, CGAL::parameters::stream_precision(17));
-
-        FT vol_cc = PMP::volume(inter);
-        std::cout << "volume of CC: " << vol_cc << std::endl;
-
-        // if the volume of the intersection is almost the same as the volume of the CC, then it's an inside component
-        if (CGAL::abs(vol_cc - vol_input) < 0.25 * vol_input) {
-          in_out_flags[i] = CC_in_out_flag::INSIDE;
-          ++classified_CCs;
-          for (TID tid : volume_CCs[i]) {
-            in_triangles.push_back(triangles[tid]);
-          }
-        } else if (vol_cc < 0.1 * vol_input) {
-          in_out_flags[i] = CC_in_out_flag::OUTSIDE;
-          ++classified_CCs;
-          for (TID tid : volume_CCs[i]) {
-            out_triangles.push_back(triangles[tid]);
-          }
-        }
-        std::cout << "CC classification: " << int(in_out_flags[i]) << std::endl;
       }
 
-      std::cout << classified_CCs << " known CCs" << std::endl;
+      enum class CC_in_out_flag
+      {
+        UNINITIALIZED = 0,
+        TBD,
+        INSIDE,
+        OUTSIDE
+      };
 
-      CGAL::IO::write_OFF("results/inside_ccs.off", points, in_triangles, CGAL::parameters::stream_precision(17));
-      CGAL::IO::write_OFF("results/outside_ccs.off", points, out_triangles, CGAL::parameters::stream_precision(17));
+      std::vector<CC_in_out_flag> in_out_flags(volume_CCs.size(), CC_in_out_flag::UNINITIALIZED);
+      std::size_t classified_CCs = 0;
+
+      // Classify some trivial CCs:
+      // - if every non-bbox face points outwards, the CC is necessarily in
+      // - if every non-bbox face points inwards, the CC is necessarily out
+      for(std::size_t i=0; i<triangles.size(); ++i) {
+        if (!triangle_to_facet[i])
+          continue;
+
+        // bottom
+        VID bot_vid = face_volume_IDs[i][0];
+        CGAL_assertion(bot_vid != VID(-1));
+        if (in_out_flags[bot_vid] == CC_in_out_flag::UNINITIALIZED)
+          in_out_flags[bot_vid] = CC_in_out_flag::INSIDE; // [0], bottom, face points outwards
+        else if (in_out_flags[bot_vid] == CC_in_out_flag::OUTSIDE)
+          in_out_flags[bot_vid] = CC_in_out_flag::TBD;
+
+        // top
+        VID top_vid = face_volume_IDs[i][1];
+        CGAL_assertion(top_vid != VID(-1));
+        if (in_out_flags[top_vid] == CC_in_out_flag::UNINITIALIZED)
+          in_out_flags[top_vid] = CC_in_out_flag::OUTSIDE; // [1], top, face points inwards
+        else if (in_out_flags[top_vid] == CC_in_out_flag::INSIDE)
+          in_out_flags[top_vid] = CC_in_out_flag::TBD;
+      }
+
+      {
+        unsigned int undetermined_n = 0;
+        for (std::size_t i=0; i<volume_CCs.size(); ++i) {
+          CGAL_assertion(in_out_flags[i] != CC_in_out_flag::UNINITIALIZED);
+          if (in_out_flags[i] == CC_in_out_flag::INSIDE)
+            std::cout << "volume " << i << " is known inside (base)" << std::endl;
+          else if (in_out_flags[i] == CC_in_out_flag::OUTSIDE)
+            std::cout << "volume " << i << " is known outside (base)" << std::endl;
+          else
+            ++undetermined_n;
+        }
+        std::cout << undetermined_n << " undetermined cells" << std::endl;
+
+        std::vector<std::pair<CC_in_out_flag, std::string> > dumps =
+          {{CC_in_out_flag::INSIDE, "INSIDE"}, {CC_in_out_flag::OUTSIDE, "OUTSIDE"}};
+        for (auto e : dumps)
+        {
+          std::vector<Point_3> cc_points = points;
+          std::vector<std::vector<PID> > cc_triangles;
+
+          for (std::size_t i=0; i<volume_CCs.size(); ++i) {
+            CGAL_assertion(e.first != CC_in_out_flag::TBD);
+            CGAL_assertion(e.first != CC_in_out_flag::UNINITIALIZED);
+
+            if (in_out_flags[i] != e.first)
+              continue;
+
+            for (TID tid : volume_CCs[i])
+              cc_triangles.push_back(triangles[tid]);
+
+            std::ostringstream oss;
+            oss << "results/volumes_" << e.second << "_base.off";
+            CGAL::IO::write_OFF(oss.str(), cc_points, cc_triangles, CGAL::parameters::stream_precision(17));
+          }
+        }
+      }
+
+      // Set up the non obvious known volumes
+
+      boost::dynamic_bitset<> is_boundary_point(points.size(), 0);
+      for (std::size_t pid=0; pid<points.size(); ++pid)
+      {
+        const Point_3& p = points[pid];
+        if (p.x() == bbox.xmin() || p.x() == bbox.xmax() ||
+            p.y() == bbox.ymin() || p.y() == bbox.ymax() ||
+            p.z() == bbox.zmin() || p.z() == bbox.zmax())
+          is_boundary_point.set(pid);
+      }
+
+#if 0
+      // For each edge of the mesh, we have 2 pairs of 4 volume cells incident to the bounding box
+      // We keep the four volume cells that are on the same side as the edge's endpoint opposite
+      // of the vertex.
+      // In these four volume cells, assign inside/outside: if the edge is convex, then it's 3
+      // volumes outside and 1 volume inside. If the edge is concave, then it's 1 volume inside
+      // outside and 3 volumes inside.
+
+      for(PID pid0 = 0; pid0 < points.size(); ++pid0) {
+        for(const auto& [pid1, tids] : edge_map[pid0]) {
+          CGAL_assertion(tids.size() <= 4);
+          if (tids.size() != 4)
+            continue;
+          if (is_boundary_point[pid0] == is_boundary_point[pid1])  // internal or on border edge
+            continue;
+
+          // now, all incident volumes will be on the boundary since the edge is on the boundary
+          std::set<FacetSPtr> orig_facets;
+          for(TID tid : tids) {
+            CGAL_assertion(face_volume_IDs[tid][0] != VID(-1) && face_volume_IDs[tid][1] != VID(-1));
+            orig_facets.insert(triangle_to_facet[tid]);
+          }
+          CGAL_assertion(orig_facets.size() == 2);
+
+          FacetSPtr f0 = *(orig_facets.begin());
+          FacetSPtr f1 = *(std::next(orig_facets.begin(), 1));
+          EdgeSPtr common_e = f0->find_edge(f1);
+          if (common_e == EdgeSPtr()) // these faces are not adjacent in the input
+            continue;
+
+          // get the point that is *not* the center of the star
+          VertexSPtr other_v = common_e->other(vertex);
+
+          Vector_3 orig_v { vertex->point(), other_v->point() };
+
+          // sort by distance to the center vertex to get the oriented edge
+          // @fixme sounds like an inconsistency because we are going to check scalar products
+          // between vectors that do NOT correspond to post-perturbation state
+          bool flip = (CGAL::compare_distance(vertex->point(), points[pid1], points[pid0]) == CGAL::SMALLER);
+          PID spid0 = flip ? pid1 : pid0;
+          PID spid1 = flip ? pid0 : pid1;
+
+          Vector_3 new_v { points[spid0], points[spid1] };
+
+          std::cout << "--" << std::endl;
+          std::cout << points[pid0] << " " << points[pid1] << " is a tentative edge" << std::endl;
+          std::cout << points[spid0] << " " << points[spid1] << " (oriented)" << std::endl;
+          std::cout << "vertex = " << vertex->point() << std::endl;
+          std::cout << "other = " << other_v->point() << std::endl;
+          std::cout << CGAL::scalar_product(orig_v, new_v) << std::endl;
+
+          if (CGAL::scalar_product(orig_v, new_v) < 0)
+            continue;
+
+          std::cout << points[pid0] << " " << points[pid1] << " is a good edge" << std::endl;
+
+          // Now, we have an edge touching the bbox (but not on the bbox), equivalent to (part of)
+          // the edge in the initial star
+          // -> mark the volumes as inside and outside depending on convexity
+
+          // @fixme same inconsistency here: planes have been tilted and so we use the new plane
+          // but third_v->point() is an OLD position...
+          VertexSPtr third_v = *(f1->vertices().begin());
+          const Plane_3& pl0 = f0->get_plane();
+          for (VertexSPtr v1 : f1->vertices()) {
+            if (CGAL::compare_distance(pl0, v1->point(), third_v->point()) == CGAL::LARGER)
+              third_v = v1;
+          }
+
+          std::map<VID, unsigned int> positive_hits;
+          for(TID tid : tids)
+            ++(positive_hits[face_volume_IDs[tid][1]]);
+
+          bool is_convex = (f0->get_plane().oriented_side(third_v->point()) == CGAL::NEGATIVE);
+          std::cout << "it is a " << (is_convex ? "convex" : "concave") << " edge" << std::endl;
+          std::cout << "f0f1: " << f0->id() << " " << f1->id() << std::endl;
+          Vector_3 n = f0->get_plane().orthogonal_vector();
+          n = n/CGAL::approximate_sqrt(n.squared_length());
+          std::cout << "normal " << vertex->point() << " " << vertex->point() + n << std::endl;
+          std::cout << "third point was " << third_v->point() << std::endl;
+
+          for (const auto& e : positive_hits) {
+            if (e.second == 0)
+              in_out_flags[e.first] = CC_in_out_flag::INSIDE;
+            else if (e.second == 2)
+              in_out_flags[e.first] = CC_in_out_flag::OUTSIDE;
+            else
+              in_out_flags[e.first] = (is_convex ? CC_in_out_flag::OUTSIDE : CC_in_out_flag::INSIDE);
+          }
+        }
+      }
+#else
+      // Generalization of above: for the complete trace of the star on the bounding box,
+      // we know the cell above is OUTSIDE and the cell beneath is INSIDE
+
+      // We need to have the border incident edges for any type of boundary point
+      std::unordered_map<PID, std::unordered_map<PID, std::vector<TID> > > symmetrical_border_edge_map;
+      for (TID ti=0; ti<triangles.size(); ++ti) {
+        for (std::size_t j=0; j<3; ++j) {
+          PID pid0 = triangles[ti][j];
+          PID pid1 = triangles[ti][(j+1)%3];
+          if (!is_boundary_point[pid0] || !is_boundary_point[pid1])
+            continue;
+          // avoid edges across the box
+          const Point_3 m = CGAL::midpoint(points[pid0], points[pid1]);
+          if (m.x() == bbox.xmin() || m.x() == bbox.xmax() ||
+              m.y() == bbox.ymin() || m.y() == bbox.ymax() ||
+              m.z() == bbox.zmin() || m.z() == bbox.zmax()) {
+            symmetrical_border_edge_map[pid0][pid1].push_back(ti);
+            symmetrical_border_edge_map[pid1][pid0].push_back(ti);
+          }
+        }
+      }
+
+      // Helper to mark cell directly above and below a facet incident to an edge
+      auto mark_cells = [&](PID ipid0, PID ipid1, FacetSPtr current_facet)
+      {
+        auto [pid0, pid1] = CGAL::make_sorted_pair(ipid0, ipid1);
+        auto edge_it = symmetrical_border_edge_map.find(pid0);
+        CGAL_assertion(edge_it != symmetrical_border_edge_map.end());
+        auto pid1_it = edge_it->second.find(pid1);
+        CGAL_assertion(pid1_it != edge_it->second.end());
+
+        const auto& tids = pid1_it->second;
+        for (TID tid : tids) {
+          if (triangle_to_facet[tid] != current_facet)
+            continue;
+
+          in_out_flags[face_volume_IDs[tid][1]] = CC_in_out_flag::OUTSIDE;
+          in_out_flags[face_volume_IDs[tid][0]] = CC_in_out_flag::INSIDE;
+
+          return;
+        }
+      };
+
+      // Helper to find next boundary point on current_facet in the direction of next_facet
+      auto find_next_boundary_point = [&](PID prev_pid,
+                                          PID current_pid,
+                                          FacetSPtr prev_facet,
+                                          FacetSPtr current_facet,
+                                          FacetSPtr next_facet) -> std::pair<PID, bool>
+      {
+        std::set<PID> incident_boundary_points;
+
+        // @fixme bad, because in the edge we seek, p0 might be the greater one
+        auto edge_it = symmetrical_border_edge_map.find(current_pid);
+        CGAL_assertion(edge_it != symmetrical_border_edge_map.end());
+
+        for (const auto& [other_pid, tids] : edge_it->second) {
+          CGAL_assertion(is_boundary_point[current_pid] && is_boundary_point[other_pid]);
+
+          bool on_current_facet = false;
+          for (TID tid : tids) {
+            if (triangle_to_facet[tid] == current_facet) {
+              on_current_facet = true;
+              break;
+            }
+          }
+
+          if (on_current_facet)
+            incident_boundary_points.insert(other_pid);
+        }
+
+        std::cout << incident_boundary_points.size() << " incident boundary points" << std::endl;
+        CGAL_assertion(incident_boundary_points.size() == 2);
+
+        PID first_pid = *(incident_boundary_points.begin());
+        PID second_pid = *(std::next(incident_boundary_points.begin()));
+
+        if (prev_pid != PID(-1))
+          return {(prev_pid == first_pid ? second_pid : first_pid), true};
+
+        // If we are here, candidate_pid is the point that is at the intersection
+        // of prev_facet and facet and we need to know in which direction to walk
+        // along facet. This is deduced from the convexity of the edge in the input polyhedron.
+        //
+        // @fixme this assumes that perturbation does not modify the convexity of edges...
+
+        const Plane_3& pl = current_facet->get_plane();
+
+        // determine convexity of prev/current
+        VertexSPtr third_v = *(current_facet->vertices().begin());
+        const Plane_3& prev_pl = prev_facet->get_plane();
+        for (VertexSPtr v : current_facet->vertices()) {
+          if (CGAL::compare_distance(prev_pl, v->point(), third_v->point()) == CGAL::LARGER)
+            third_v = v;
+        }
+
+        bool is_convex = (prev_facet->get_plane().oriented_side(third_v->point()) == CGAL::NEGATIVE);
+
+        // now, if the edge is convex in the input polyhedron, we must turn "right", meaning,
+        // the next point is on the negative side of the plane too
+        if (prev_facet->get_plane().oriented_side(points[first_pid]) == CGAL::NEGATIVE)
+          return {(is_convex ? first_pid : second_pid), true};
+        else
+          return {(is_convex ? second_pid : first_pid), true};
+
+        return {PID(-1), false};
+      };
+
+      // Walk the trace of the star on the bbox ("box link")
+      FacetSPtr start_facet = vertex->first_facet();
+      FacetSPtr facet = start_facet;
+
+      std::ofstream link_out("results/link.txt");
+      link_out.precision(17);
+
+      do
+      {
+        FacetSPtr prev_facet = facet->prev(vertex);
+        std::cout << "walking on " << facet->id() << " (prev: " << prev_facet->id() << ")" << std::endl;
+
+        PID current_pid = PID(-1);
+
+      // Find an arrangement edge that:
+      // 1. Has prev_facet and facet as the two incident input faces
+      // 2. Has one endpoint on the boundary, one not
+      // 3. Satisfies the orientation check
+
+        bool found_start_point = false;
+
+        for (PID pid0 = 0; pid0 < points.size(); ++pid0) {
+          // (non-border) edge map here because we seek a non-border edge
+          for (const auto& [pid1, tids] : edge_map[pid0]) {
+            if (tids.size() != 4)
+              continue;
+
+            if (is_boundary_point[pid0] == is_boundary_point[pid1]) // internal or on border edge
+              continue;
+
+            std::set<FacetSPtr> incident_faces;
+            for (TID tid : tids)
+              incident_faces.insert(triangle_to_facet[tid]);
+            CGAL_assertion(incident_faces.size() == 2);
+
+            if (!incident_faces.count(prev_facet) || !incident_faces.count(facet))
+              continue;
+
+            std::cout << points[pid0] << " " << points[pid1] << " is a tentative edge" << std::endl;
+
+            // Found a matching edge, now check orientation
+            EdgeSPtr common_e = prev_facet->find_edge(facet);
+            CGAL_assertion(common_e != EdgeSPtr());
+
+            VertexSPtr other_v = common_e->other(vertex);
+            Vector_3 orig_v{vertex->point(), other_v->point()};
+
+            bool flip = (CGAL::compare_distance(vertex->point(), points[pid1], points[pid0]) == CGAL::SMALLER);
+            PID test_spid0 = flip ? pid1 : pid0;
+            PID test_spid1 = flip ? pid0 : pid1;
+
+            Vector_3 new_v { points[test_spid0], points[test_spid1] };
+
+            if (CGAL::scalar_product(orig_v, new_v) >= 0) {
+              found_start_point = true;
+              current_pid = test_spid1;
+              break;
+            }
+          }
+
+          if (found_start_point)
+            break;
+        }
+
+        CGAL_assertion(found_start_point);
+        std::cout << "Start at " << current_pid << " pos: " << points[current_pid] << std::endl;
+
+        // Now walk the star link on arrangement edges
+
+        FacetSPtr next_facet = facet->next(vertex);
+        const Plane_3& next_pl = next_facet->get_plane();
+
+        PID prev_pid (-1);
+        for(;;) {
+          CGAL_assertion(!next_pl.has_on(points[current_pid]));
+
+          // find the next point on 'facet' in the direction of 'next_facet'
+          auto [next_pid, valid] = find_next_boundary_point(prev_pid, current_pid, prev_facet, facet, next_facet);
+          CGAL_assertion(valid);
+          CGAL_assertion(is_boundary_point[current_pid] && is_boundary_point[next_pid]);
+
+          link_out << "2 " << points[current_pid] << " " << points[next_pid] << std::endl;
+
+          mark_cells(current_pid, next_pid, facet);
+
+          prev_pid = current_pid;
+          current_pid = next_pid;
+
+          // Check if we've reached the boundary between current_facet and next_facet
+          if (next_pl.has_on(points[current_pid]))
+            break;
+        }
+
+        facet = next_facet;
+      }
+      while (facet != start_facet);
+
+      std::cout << "Known cells marked from star link walk" << std::endl;
+#endif
+
+      // Intermediate dump
+      {
+        unsigned int undetermined_n = 0;
+        for (std::size_t i=0; i<volume_CCs.size(); ++i) {
+          CGAL_assertion(in_out_flags[i] != CC_in_out_flag::UNINITIALIZED);
+          if (in_out_flags[i] == CC_in_out_flag::INSIDE)
+            std::cout << "volume " << i << " is known inside (boundary edges)" << std::endl;
+          else if (in_out_flags[i] == CC_in_out_flag::OUTSIDE)
+            std::cout << "volume " << i << " is known outside (boundary edges)" << std::endl;
+          else
+            ++undetermined_n;
+        }
+        std::cout << undetermined_n << " undetermined cells" << std::endl;
+
+        std::vector<std::pair<CC_in_out_flag, std::string> > dumps =
+          {{CC_in_out_flag::INSIDE, "INSIDE"}, {CC_in_out_flag::OUTSIDE, "OUTSIDE"}};
+        for (auto e : dumps)
+        {
+          std::vector<Point_3> cc_points = points;
+          std::vector<std::vector<PID> > cc_triangles;
+
+          for (std::size_t i=0; i<volume_CCs.size(); ++i) {
+            if (in_out_flags[i] != e.first)
+              continue;
+
+            for (TID tid : volume_CCs[i])
+              cc_triangles.push_back(triangles[tid]);
+
+            std::ostringstream oss;
+            oss << "results/volumes_" << e.second << "_intermediate.off";
+            CGAL::IO::write_OFF(oss.str(), cc_points, cc_triangles, CGAL::parameters::stream_precision(17));
+          }
+        }
+      }
 
       // Now, we want to deal with the tentative cells
 
-      // Brute force: check all possibilities and keep the one that volume closest to the target.
+      using operations_research::Domain;
+      using operations_research::sat::BoolVar;
+      using operations_research::sat::CpModelBuilder;
+      using operations_research::sat::CpSolverResponse;
+      using operations_research::sat::CpSolverStatus;
+      using operations_research::sat::SatParameters;
+      using operations_research::sat::SolutionBooleanValue;
+      using operations_research::sat::SolveWithParameters;
 
-      // Compute target volume: compute the intersection of the mesh with the bbox
+      CpModelBuilder model;
 
-      // Now, try all combinations of INSIDE/OUTSIDE for UNKNOWN cells
+      const std::size_t C = volume_CCs.size();
+
+      std::vector<BoolVar> x;
+      x.reserve(C);
+      for (int c = 0; c < C; ++c)
+        x.push_back(model.NewBoolVar());
+
+      // cells that are known, are known
+      for (int c = 0; c < C; ++c) {
+        if (in_out_flags[c] == CC_in_out_flag::OUTSIDE)
+          model.AddEquality(x[c], false);
+        else if (in_out_flags[c] == CC_in_out_flag::INSIDE)
+          model.AddEquality(x[c], true);
+      }
+
+      // The boundary must be well oriented, so the boundary can only have an INSIDE volume
+      // on its negative side, and an OUTSIDE volume on its positive side.
+      // In model terms, this is:
+      //   x[pos] => x[neg]. (if above is true, below is true)
+      for(std::size_t i=0; i<triangles.size(); ++i) {
+        if (!triangle_to_facet[i])
+          continue;
+
+        CGAL_assertion(face_volume_IDs[i][0] != VID(-1));
+        CGAL_assertion(face_volume_IDs[i][1] != VID(-1));
+        model.AddImplication(x[face_volume_IDs[i][1]], x[face_volume_IDs[i][0]]);
+      }
+
+      // missing constraints:
+      // @todo manifoldness
+      // @todo boundary is a single, simply connected component
+      // @todo for each face, there is one and only one **simply** connected component
+      // @todo could use hints using intersection of volumes?
+
+      // Solve
+      const auto& proto = model.Build();
+      LOG(INFO) << "Variables: " << proto.variables_size();
+      LOG(INFO) << "Constraints: " << proto.constraints_size();
+
+      SatParameters params;
+      params.set_stop_after_first_solution(true);
+      params.set_enumerate_all_solutions(false);
+
+      bool ok = false;
+      const CpSolverResponse response = SolveWithParameters(proto, params);
+      if (response.status() == CpSolverStatus::OPTIMAL ||
+          response.status() == CpSolverStatus::FEASIBLE) {
+        ok = true;
+
+        for (int c = 0; c < C; ++c)
+          in_out_flags[c] = SolutionBooleanValue(response, x[c]) ? CC_in_out_flag::INSIDE
+                                                                 : CC_in_out_flag::OUTSIDE;
+      }
+
+      std::cout << "OK is " << ok << std::endl;
+
+      // Final dump
+      {
+        unsigned int undetermined_n = 0;
+        for (std::size_t i=0; i<volume_CCs.size(); ++i) {
+          CGAL_assertion(in_out_flags[i] != CC_in_out_flag::UNINITIALIZED);
+          if (in_out_flags[i] == CC_in_out_flag::INSIDE)
+            std::cout << "volume " << i << " is known inside (final)" << std::endl;
+          else if (in_out_flags[i] == CC_in_out_flag::OUTSIDE)
+            std::cout << "volume " << i << " is known outside (final)" << std::endl;
+          else
+            ++undetermined_n;
+        }
+        std::cout << undetermined_n << " undetermined cells" << std::endl;
+
+        std::vector<std::pair<CC_in_out_flag, std::string> > dumps =
+          {{CC_in_out_flag::INSIDE, "INSIDE"}, {CC_in_out_flag::OUTSIDE, "OUTSIDE"}};
+        for (auto e : dumps)
+        {
+          std::vector<Point_3> cc_points = points;
+          std::vector<std::vector<PID> > cc_triangles;
+
+          for (std::size_t i=0; i<volume_CCs.size(); ++i) {
+            CGAL_assertion(e.first != CC_in_out_flag::TBD);
+            CGAL_assertion(e.first != CC_in_out_flag::UNINITIALIZED);
+
+            if (in_out_flags[i] != e.first)
+              continue;
+
+            for (TID tid : volume_CCs[i])
+              cc_triangles.push_back(triangles[tid]);
+
+            std::ostringstream oss;
+            oss << "results/volumes_" << e.second << "_final.off";
+            CGAL::IO::write_OFF(oss.str(), cc_points, cc_triangles, CGAL::parameters::stream_precision(17));
+          }
+        }
+      }
 
       // a valid partition has:
-      // - all cells are either inside or outside
-      // - only 1 "inside" face-connected component & 1 "outside" face-CC
-      // - no non-manifold occurences
+      // - C1) all cells are either inside or outside
+      // - C2) boundary is manifold
+      // - C3) only 1 "inside" face-connected component & 1 "outside" face-CC
+      // - C4) only 1 simply connected component per input face
       auto is_valid_partition = [&](const std::vector<std::vector<TID>>& volume_CCs,
                                    const std::vector<std::array<VID, 2>>& face_volume_IDs,
                                    const std::vector<CC_in_out_flag>& in_out_flags,
@@ -2037,137 +2636,225 @@ public:
                                    const std::vector<Point_3>& points,
                                    const std::vector<std::unordered_map<PID, std::vector<TID>>>& edge_map) -> bool
       {
-        // 1. All cells are classified
-        for(const auto& flag : in_out_flags)
-          if(flag == CC_in_out_flag::UNKNOWN)
-            return false;
+        namespace PMP = CGAL::Polygon_mesh_processing;
 
-        // 2. Only one face-connected component for INSIDE and one for OUTSIDE
-        std::vector<TID> inside_faces, outside_faces;
-        for(std::size_t ccid = 0; ccid < volume_CCs.size(); ++ccid) {
-          if(in_out_flags[ccid] == CC_in_out_flag::INSIDE)
-            inside_faces.insert(inside_faces.end(), volume_CCs[ccid].begin(), volume_CCs[ccid].end());
-          else if(in_out_flags[ccid] == CC_in_out_flag::OUTSIDE)
-            outside_faces.insert(outside_faces.end(), volume_CCs[ccid].begin(), volume_CCs[ccid].end());
+        // C1
+        for(const auto& flag : in_out_flags) {
+          if(flag == CC_in_out_flag::UNINITIALIZED || flag == CC_in_out_flag::TBD) {
+            std::cerr << "Error: failed C1" << std::endl;
+            return false;
+          }
         }
 
-        auto count_face_ccs = [&](const std::vector<TID>& faces) -> int {
-          std::unordered_set<TID> visited;
-          int ccs = 0;
-          std::unordered_set<TID> face_set(faces.begin(), faces.end());
-          for(TID tid : faces) {
-            if(visited.count(tid)) continue;
-            ++ccs;
-            std::stack<TID> stack;
-            stack.push(tid);
-            visited.insert(tid);
-            while(!stack.empty()) {
-              TID curr = stack.top(); stack.pop();
-              // For each edge of curr, find adjacent faces in the same set
-              for(int j=0; j<3; ++j) {
-                PID a = triangles[curr][j], b = triangles[curr][(j+1)%3];
-                auto it = edge_map[a].find(b);
-                if(it == edge_map[a].end()) continue;
-                for(TID nbr : it->second) {
-                  if(face_set.count(nbr) && !visited.count(nbr)) {
-                    visited.insert(nbr);
-                    stack.push(nbr);
-                  }
-                }
-              }
-            }
+        // C2+C3+C4
+        auto check_CC = [&](std::optional<FacetSPtr> of = std::nullopt) -> bool {
+          std::vector<std::vector<PID> > local_triangles;
+          for (std::size_t i=0; i<triangles.size(); ++i) {
+            if (!triangle_to_facet[i])
+              continue;
+
+            if (in_out_flags[face_volume_IDs[i][0]] == in_out_flags[face_volume_IDs[i][1]])
+              continue;
+
+            if (of.has_value() && triangle_to_facet[i] != of.value())
+              continue;
+
+            local_triangles.push_back(triangles[i]);
           }
-          return ccs;
+
+          CGAL_assertion(!local_triangles.empty());
+
+          if (!PMP::is_polygon_soup_a_polygon_mesh(local_triangles)) {
+            std::cerr << "Error: failed C34-PS_PM" << std::endl;
+            return false;
+          }
+
+          // @todo avoid using a Surface_mesh
+          CGAL::Surface_mesh<Point_3> sm;
+          PMP::polygon_soup_to_polygon_mesh(points, local_triangles, sm);
+          CGAL_assertion(faces(sm).size() == local_triangles.size());
+
+          const unsigned int nb = number_of_borders(sm);
+          if (nb != 1) {
+            std::cerr << "Error: failed C34-borders (" << nb << ")" << std::endl;
+            return false;
+          }
+
+          if (PMP::does_self_intersect(sm)) {
+            std::cerr << "Error: CC self intersects" << std::endl;
+            return false;
+          }
+
+          return true;
         };
 
-        if(count_face_ccs(inside_faces) != 1 || count_face_ccs(outside_faces) != 1)
+        if (!check_CC()) {
+          std::cerr << "Error: issue with global boundary" << std::endl;
           return false;
+        }
 
-        // 3. No non-manifold edges or vertices
-        // For each edge, all incident faces must have the same label or form a single contiguous block per label
-        for(PID pid0 = 0; pid0 < points.size(); ++pid0) {
-          for(const auto& [pid1, tids] : edge_map[pid0]) {
-            // For each label, check that all faces with that label are consecutive in the sorted list
-            std::vector<CC_in_out_flag> labels;
-            for(TID tid : tids) {
-              // Find which side of the face this edge is on
-              int pos = -1;
-              for(int j=0; j<3; ++j) {
-                if((triangles[tid][j] == pid0 && triangles[tid][(j+1)%3] == pid1) ||
-                   (triangles[tid][j] == pid1 && triangles[tid][(j+1)%3] == pid0)) {
-                  pos = j;
-                  break;
-                }
-              }
-              if(pos == -1) continue; // Should not happen
-              // Use the face_volume_IDs to get the CC id, then the label
-              VID ccid0 = face_volume_IDs[tid][0], ccid1 = face_volume_IDs[tid][1];
-              CC_in_out_flag flag0 = (ccid0 < in_out_flags.size()) ? in_out_flags[ccid0] : CC_in_out_flag::UNKNOWN;
-              CC_in_out_flag flag1 = (ccid1 < in_out_flags.size()) ? in_out_flags[ccid1] : CC_in_out_flag::UNKNOWN;
-              // Both sides should be classified
-              if(flag0 == CC_in_out_flag::UNKNOWN || flag1 == CC_in_out_flag::UNKNOWN)
-                return false;
-              labels.push_back(flag0);
-              labels.push_back(flag1);
-            }
-            // Check that for each label, all appearances are consecutive (no interleaving)
-            for(CC_in_out_flag label : {CC_in_out_flag::INSIDE, CC_in_out_flag::OUTSIDE}) {
-              int first = -1, last = -1, count = 0;
-              for(std::size_t i=0; i<labels.size(); ++i) {
-                if(labels[i] == label) {
-                  if(first == -1) first = i;
-                  last = i;
-                  ++count;
-                }
-              }
-              if(count > 0) {
-                for(int i=first; i<=last; ++i)
-                  if(labels[i] != label)
-                    return false; // non-manifold edge
-              }
+        for (FacetWPtr wf : vertex->facets()) {
+          if (FacetSPtr f = wf.lock()) {
+            if (!check_CC(f)) {
+              std::cerr << "Error: issue with CC of f" << f->id() << std::endl;
+              return false;
             }
           }
         }
-        // For each vertex, collect incident faces and check same as above
-        for(PID pid = 0; pid < points.size(); ++pid) {
-          std::vector<CC_in_out_flag> labels;
-          for(std::size_t tid = 0; tid < triangles.size(); ++tid) {
-            for(int j=0; j<3; ++j) {
-              if(triangles[tid][j] == pid) {
-                VID ccid0 = face_volume_IDs[tid][0], ccid1 = face_volume_IDs[tid][1];
-                CC_in_out_flag flag0 = (ccid0 < in_out_flags.size()) ? in_out_flags[ccid0] : CC_in_out_flag::UNKNOWN;
-                CC_in_out_flag flag1 = (ccid1 < in_out_flags.size()) ? in_out_flags[ccid1] : CC_in_out_flag::UNKNOWN;
-                if(flag0 == CC_in_out_flag::UNKNOWN || flag1 == CC_in_out_flag::UNKNOWN)
-                  return false;
-                labels.push_back(flag0);
-                labels.push_back(flag1);
-                break;
-              }
-            }
-          }
-          for(CC_in_out_flag label : {CC_in_out_flag::INSIDE, CC_in_out_flag::OUTSIDE}) {
-            int first = -1, last = -1, count = 0;
-            for(std::size_t i=0; i<labels.size(); ++i) {
-              if(labels[i] == label) {
-                if(first == -1) first = i;
-                last = i;
-                ++count;
-              }
-            }
-            if(count > 0) {
-              for(int i=first; i<=last; ++i)
-                if(labels[i] != label)
-                  return false; // non-manifold vertex
-            }
-          }
-        }
+
         return true;
       };
 
+      bool is_valid = is_valid_partition(volume_CCs, face_volume_IDs, in_out_flags, triangles, points, edge_map);
+      std::cout << "valid partition? " << is_valid << std::endl;
+      if (!is_valid)
+        std::exit(1);
 
+      // Now, extract the connectivity from the arrangement and plug it back into the polyhedron itself
+      std::vector<std::vector<PID> > boundary_triangles;
+      std::vector<FacetSPtr> boundary_triangle_to_facet;
+      for (std::size_t i=0; i<triangles.size(); ++i) {
+        if (!triangle_to_facet[i])
+          continue;
 
-      std::exit(1);
+        if (in_out_flags[face_volume_IDs[i][0]] == in_out_flags[face_volume_IDs[i][1]])
+          continue;
+
+        boundary_triangles.push_back(triangles[i]);
+        boundary_triangle_to_facet.push_back(triangle_to_facet[i]);
+      }
+
+      CGAL::IO::write_polygon_soup("results/boundary.off", points, boundary_triangles);
+
+      CGAL_assertion(!boundary_triangles.empty());
+      CGAL_assertion(PMP::is_polygon_soup_a_polygon_mesh(boundary_triangles));
+
+      // @todo avoid using a CGAL::Surface_mesh
+      using Mesh = CGAL::Surface_mesh<Point_3>;
+      using edge_descriptor = typename boost::graph_traits<Mesh>::edge_descriptor;
+      using halfedge_descriptor = typename boost::graph_traits<Mesh>::halfedge_descriptor;
+      using face_descriptor = typename boost::graph_traits<Mesh>::face_descriptor;
+
+      Mesh bsm;
+      auto ifpm = get(CGAL::dynamic_face_property_t<FacetSPtr>{}, bsm);
+
+      auto out = boost::make_function_output_iterator(
+        [ifpm, &boundary_triangle_to_facet](const std::pair<std::size_t, face_descriptor>& pid_f) {
+          // we shouldn't have triangles that are not from a face here
+          CGAL_assertion(boundary_triangle_to_facet[pid_f.first] != FacetSPtr());
+          put(ifpm, pid_f.second, boundary_triangle_to_facet[pid_f.first]);
+        });
+
+      PMP::polygon_soup_to_polygon_mesh(points, boundary_triangles, bsm,
+                                        CGAL::parameters::polygon_to_face_output_iterator(out));
+      CGAL_assertion(faces(bsm).size() == boundary_triangles.size());
+
+      // ordered facets in the polyhedron
+      CGAL::unordered_flat_map<FacetSPtr, int> local_facet_indices;
+      EdgeSPtr edge = vertex->find_edge(start_facet);
+      EdgeSPtr edge_first = edge;
+      FacetSPtr current_facet = start_facet;
+
+      int curr_index = 0;
+      do {
+        local_facet_indices[current_facet] = curr_index++;
+        edge = edge->next(vertex);
+        current_facet = edge->other(current_facet);
+      } while (edge != edge_first);
+
+      using vec2i = boost::shared_array<int>;
+      using combi = std::vector<vec2i>;
+
+      auto reconstruct_combi = [&]() -> combi {
+        auto create_split = [](int begin, int end) -> vec2i {
+          vec2i result(new int[2]);
+          result[0] = begin;
+          result[1] = end;
+          return result;
+        };
+
+        std::set<std::pair<int, int> > unique_splits;
+        for (edge_descriptor e : edges(bsm))
+        {
+          if (is_border(e, bsm))
+            continue;
+
+          halfedge_descriptor h = halfedge(e, bsm);
+          face_descriptor f1 = face(h, bsm);
+          face_descriptor f2 = face(opposite(h, bsm), bsm);
+
+          // map mesh faces -> original input facets
+          // (use the type produced by ifpm; here assumed comparable + indexable)
+          FacetSPtr input_facet_1 = get(ifpm, f1);
+          FacetSPtr input_facet_2 = get(ifpm, f2);
+          CGAL_assertion(input_facet_1 != FacetSPtr() && input_facet_2 != FacetSPtr());
+
+          if (input_facet_1 == input_facet_2)
+            continue;
+
+          // if the facets are neighbors, it's not a split edge
+          EdgeSPtr common_e = input_facet_1->find_edge(input_facet_2);
+          if (common_e != EdgeSPtr())
+            continue;
+
+          // map original facets -> fan positions
+          int a = local_facet_indices.at(input_facet_1);
+          int b = local_facet_indices.at(input_facet_2);
+
+          // canonicalize so begin < end (matches create_single_split_combinations)
+          int begin = (std::min)(a, b);
+          int end = (std::max)(a, b);
+
+          std::cout << "create split between F" << input_facet_1->id() << " and F" << input_facet_2->id() << std::endl;
+          unique_splits.emplace(begin, end);
+        }
+
+        combi result;
+        result.reserve(unique_splits.size());
+        for (const std::pair<int, int>& s : unique_splits)
+          result.push_back(create_split(s.first, s.second));
+
+        // sort into the canonical order used by the generator
+        // compare_splits returns +1 when split1 < split2 lexicographically.
+        auto sorter = [](const vec2i& s1, const vec2i& s2)
+        {
+          auto compare_splits = [](const vec2i& split1, const vec2i& split2) -> int {
+            int result = 0;
+            if (split1[0] < split2[0] || (split1[0] == split2[0] && split1[1] < split2[1]))
+            result = 1;
+            else if (split1[0] > split2[0] || (split1[0] == split2[0] && split1[1] > split2[1]))
+            result = -1;
+            return result;
+          };
+
+          return (compare_splits(s1, s2) > 0);
+        };
+
+        std::sort(result.begin(), result.end(), sorter);
+
+        // a fully-split deg N vertex requires N-3 splits
+        std::cout << "result size: " << result.size() << std::endl;
+        std::cout << "degree: " << vertex->degree() << std::endl;
+        CGAL_postcondition(result.size() == vertex->degree() - 3);
+
+        return result;
+      };
+
+      // @todo just split_vertex(vertex, split_combi)...?
+      using Combi_vertex_splitter = algorithm::Combi_vertex_splitter<GeomTraits>;
+
+      combi split_combi = reconstruct_combi();
+      PolyhedronSPtr poly_c = Combi_vertex_splitter::copy_vertex(vertex);
+      VertexSPtr vertex_c = poly_c->vertices().front();
+      Combi_vertex_splitter::split_vertex(vertex_c, split_combi);
+      Combi_vertex_splitter::apply(poly_c, vertex);
+      CGAL_postcondition(polyhedron->is_consistent());
     }
+
+    CGAL_assertion_code(bool success =)
+      Transformation::reset_points(polyhedron);
+    CGAL_assertion(success);
+    CGAL_postcondition(polyhedron && polyhedron->is_consistent());
   }
 
   // Perturbation to ensure generic configuration.
