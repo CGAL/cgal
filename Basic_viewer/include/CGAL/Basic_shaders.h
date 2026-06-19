@@ -118,7 +118,6 @@ out highp   vec4 ls_fP; // local space
 
 uniform highp   mat4  u_Mvp;
 uniform mediump float u_PointSize;
-uniform         bool  u_IsOrthographic;
 uniform mediump vec3  u_DefaultColor;
 uniform         bool  u_UseDefaultColor;
 
@@ -668,7 +667,6 @@ out VS_OUT {
 
 uniform highp   mat4  u_Mvp;
 uniform mediump float u_PointSize;
-uniform         bool  u_IsOrthographic;
 uniform mediump vec3  u_DefaultColor;
 uniform         bool  u_UseDefaultColor;
 

@@ -388,7 +388,6 @@ public:
           // Scale by the device pixel ratio so points keep a consistent on-screen
           // size on HiDPI displays (gl_PointSize is in physical pixels).
           rendering_program_p_l.setUniformValue("u_PointSize",  GLfloat(m_size_vertices*this->devicePixelRatio()));
-          rendering_program_p_l.setUniformValue("u_IsOrthographic", GLint(is_two_dimensional()));
 
           rendering_program_p_l.setUniformValue("u_ClipPlane", clipPlane);
           rendering_program_p_l.setUniformValue("u_PointPlane", plane_point);
@@ -527,7 +526,6 @@ public:
           // physical-pixel units as u_Viewport; without this the edge is
           // rendered too thin on HiDPI displays and fades out to near-white.
           rendering_program_line.setUniformValue("u_PointSize", static_cast<GLfloat>(m_size_edges*pixel_ratio));
-          rendering_program_line.setUniformValue("u_IsOrthographic", static_cast<GLint>(is_two_dimensional()));
 
           rendering_program_line.setUniformValue("u_Viewport", viewport);
           rendering_program_line.setUniformValue("u_ClipPlane", clipPlane);
@@ -581,7 +579,6 @@ public:
             rendering_program_p_l.setUniformValue("u_UseDefaultColor", static_cast<GLint>(0));
           }
           rendering_program_p_l.setUniformValue("u_PointSize", GLfloat(m_size_edges));
-          rendering_program_p_l.setUniformValue("u_IsOrthographic", GLint(is_two_dimensional()));
 
           rendering_program_p_l.setUniformValue("u_ClipPlane", clipPlane);
           rendering_program_p_l.setUniformValue("u_PointPlane", plane_point);
@@ -629,7 +626,6 @@ public:
           rendering_program_p_l.setUniformValue("u_UseDefaultColor", static_cast<GLint>(0));
         }
         rendering_program_p_l.setUniformValue("u_PointSize",  GLfloat(m_size_rays));
-        rendering_program_p_l.setUniformValue("u_IsOrthographic", GLint(is_two_dimensional()));
 
         rendering_program_p_l.setUniformValue("u_ClipPlane", clipPlane);
         rendering_program_p_l.setUniformValue("u_PointPlane", plane_point);
@@ -676,7 +672,6 @@ public:
           rendering_program_p_l.setUniformValue("u_UseDefaultColor", static_cast<GLint>(0));
         }
         rendering_program_p_l.setUniformValue("u_PointSize",  GLfloat(m_size_lines));
-        rendering_program_p_l.setUniformValue("u_IsOrthographic", GLint(is_two_dimensional()));
 
         rendering_program_p_l.setUniformValue("u_ClipPlane", clipPlane);
         rendering_program_p_l.setUniformValue("u_PointPlane", plane_point);
