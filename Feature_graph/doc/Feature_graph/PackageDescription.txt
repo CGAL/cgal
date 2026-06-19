@@ -54,9 +54,8 @@ to ensure the correct placement of lines and corners along estimated normals.
 
 \cgalCRPSection{Concepts}
 
-Concepts representing the input surfaces:
+Concept representing the input surface:
 
-- `FeatureImage_3`
 - `FaceListGraph`
 
 Secondary concepts:

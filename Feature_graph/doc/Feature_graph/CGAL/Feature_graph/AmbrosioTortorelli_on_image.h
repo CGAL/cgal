@@ -3,7 +3,7 @@ namespace CGAL {
 namespace Feature_graph {
 
 /*!
-* \ingroup PkgFeatureGraphRef
+* \ingroup PkgFeatureGraphNormalEstimator, PkgFeatureGraphSharpnessEstimator
 *
 * \brief Class that evaluates the Ambriosio-Tortorelli normals and sharpness measure from an image.
 * Two estimators can then be retrieved to access the normal and sharpness estimations.
@@ -42,16 +42,12 @@ public:
   /*!
   * evaluates the normal and sharpness values using the Ambrosio-Tortorelli energy optimization.
   *
-  * \tparam Image the image type model of `FeatureImage_3`
-  * \tparam FT a model of `RealEmbeddable`
-  *
-  * \param image the image.
+  * \param image the image domain.
   * \param selection_threshold a threshold on the sharpness value.
   *     Elements with a sharpness value lower than this threshold are considered flat
   *     and will be given a negative value.
   */
-  template <typename Image, typename FT = Sharpness_value_type>
-  AmbrosioTortorelli_on_image(const Image& image, const FT& selection_threshold = FT(0.25));
+  AmbrosioTortorelli_on_image(const CGAL::Image_3& image, const Sharpness_estimator::Sharpness_value_type& selection_threshold = Sharpness_estimator::Sharpness_value_type(0.25));
 
   /// @}
 

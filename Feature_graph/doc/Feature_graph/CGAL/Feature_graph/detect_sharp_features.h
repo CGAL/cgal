@@ -49,12 +49,9 @@ struct Detect_sharp_features_on_labeled_image
   * of the image is considered as a subdomain with voxel value
   * specified by `parameters::value_outside`.
   *
-  * \tparam Image class model of `FeatureImage_3`.
-  * It represent a labeled image.
-  *
   * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
-  * \param image the input image
+  * \param image the input image domain that represent a labeled image.
   *
   * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
   * \cgalNamedParamsBegin
@@ -77,7 +74,7 @@ struct Detect_sharp_features_on_labeled_image
   *         If it is a scalar field, it must implement
   *         <UL>
   *           <LI> `template <typename DimensionTag>`
-  *           <BR> `FT operator()(const Point_3& point_in_space, const std::size_t& element_descriptor, const Image& image) const`
+  *           <BR> `FT operator()(const Point_3& point_in_space, const std::size_t& element_descriptor, const CGAL::Image_3& image) const`
   *         </UL>
   *         <LI> The type `DimensionTag` represents the element type, it can either be `CGAL::Dimension_tag<0>`, `CGAL::Dimension_tag<1>` or `CGAL::Dimension_tag<2>`,
   *         which represent either a vertex element, an edge element, or a facet element respectively.
@@ -99,7 +96,7 @@ struct Detect_sharp_features_on_labeled_image
   *         If it is a scalar field, it must implement
   *         <UL>
   *           <LI> `template <typename DimensionTag>`
-  *           <BR> `FT operator()(const Point_3& point_in_space, const std::size_t& element_descriptor, const Image& image) const`
+  *           <BR> `FT operator()(const Point_3& point_in_space, const std::size_t& element_descriptor, const CGAL::Image_3& image) const`
   *         </UL>
   *         See the description of `parameters::line_distance_threshold` for more details on this scalar field.}
   *     \cgalParamDefault{`FT(-1.0)`}
@@ -114,7 +111,7 @@ struct Detect_sharp_features_on_labeled_image
   *         If it is a scalar field, it must implement
   *         <UL>
   *           <LI> `template <typename DimensionTag>`
-  *           <BR> `FT operator()(const Point_3& point_in_space, const std::size_t& element_descriptor, const Image& image) const`
+  *           <BR> `FT operator()(const Point_3& point_in_space, const std::size_t& element_descriptor, const CGAL::Image_3& image) const`
   *         </UL>
   *         See the description of `parameters::line_distance_threshold` for more details on this scalar field.}
   *     \cgalParamDefault{`FT(-1.0)`}
@@ -129,7 +126,7 @@ struct Detect_sharp_features_on_labeled_image
   *         If it is a scalar field, it must implement
   *         <UL>
   *           <LI> `template <typename DimensionTag, typename Descriptor>`
-  *           <BR> `FT operator()(const Point_3& point_in_space, const Descriptor& element_descriptor, const Image& image) const`
+  *           <BR> `FT operator()(const Point_3& point_in_space, const Descriptor& element_descriptor, const CGAL::Image_3& image) const`
   *         </UL>
   *         See the description of `parameters::line_distance_threshold` for more details on this scalar field.}
   *     \cgalParamDefault{`FT(-1.0)`}
@@ -202,8 +199,8 @@ struct Detect_sharp_features_on_labeled_image
   * \returns a graph model of `VertexAndEdgeListGraph`
   * containing the constructed features.
   */
-  template <typename Image, typename CGAL_NP_TEMPLATE_PARAMETERS>
-  unspecified_type operator()(const Image& image, const CGAL_NP_CLASS& np = parameters::default_values()) const;
+  template <typename CGAL_NP_TEMPLATE_PARAMETERS>
+  unspecified_type operator()(const CGAL::Image_3& image, const CGAL_NP_CLASS& np = parameters::default_values()) const;
 
   /// @}
 };
