@@ -76,8 +76,9 @@ construct_skeleton(const TriangleMesh& tmesh,
 
   CGAL_precondition(!CGAL::is_empty(tmesh));
   CGAL_precondition(CGAL::is_closed(tmesh));
-  CGAL_precondition(!PMP::does_self_intersect(tmesh));
-  CGAL_precondition(PMP::is_outward_oriented(tmesh));
+  CGAL_warning(CGAL::is_triangle_mesh(tmesh));
+  CGAL_precondition(!CGAL::is_triangle_mesh(tmesh) || !PMP::does_self_intersect(tmesh));
+  CGAL_precondition(!CGAL::is_triangle_mesh(tmesh) || PMP::is_outward_oriented(tmesh));
 
   const bool outwards = (!save_times.empty() && CGAL::is_positive(save_times.front()));
 
