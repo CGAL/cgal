@@ -22,7 +22,7 @@ using face_descriptor = boost::graph_traits<Mesh>::face_descriptor;
 int main(int argc, char** argv)
 {
   if (argc == 1) {
-    std::cout << "Usage: " << argv[0] << " <input filename>" << std::endl;
+    std::cout << "Usage: " << argv[0] << " <input filename> [time bound]" << std::endl;
     std::cout << "  <input filename>: Path to input mesh file (required)" << std::endl;
     return EXIT_FAILURE;
   }
@@ -43,7 +43,7 @@ int main(int argc, char** argv)
 
   std::cout << "Input mesh: " << vertices(sm).size() << " NV " << faces(sm).size() << " NF" << std::endl;
 
-  const FT upper_time_bound = 1;
+  const FT time_bound = (argc > 2) ? std::stod(argv[2]) : 1;
 
   // every face has weight 2.0, meaning faces move at twice the default speed
   CGAL::Constant_property_map<face_descriptor, FT> face_weight_map(2);
@@ -52,7 +52,8 @@ int main(int argc, char** argv)
   timer.start();
 
   // Main call
-  auto straight_skeleton = CGAL::create_straight_skeleton_3(sm, upper_time_bound, CGAL::parameters::face_weight_map(face_weight_map));
+  auto straight_skeleton = CGAL::create_straight_skeleton_3(sm, time_bound,
+                                                            CGAL::parameters::face_weight_map(face_weight_map));
 
   timer.stop();
   std::cout << "Elapsed: " << timer.time() << std::endl;
