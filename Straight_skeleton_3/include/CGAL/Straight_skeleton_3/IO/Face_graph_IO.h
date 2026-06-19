@@ -26,6 +26,7 @@
 #if 0
 # include <CGAL/Polygon_mesh_processing/region_growing.h>
 #endif
+# include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/IO/polygon_mesh_io.h>
 #include <CGAL/unordered_flat_map.h>
 
@@ -134,9 +135,9 @@ public:
         }
       }
 
-      if (outward_offsetting) {
+      if (outward_offsetting)
         std::reverse(poly_vertices.begin(), poly_vertices.end());
-      }
+
 
       FacetSPtr facet = Facet::create(poly_vertices);
       facet->set_id(facet_id_new);
@@ -151,16 +152,12 @@ public:
         h = next(h, tmesh);
       }
 
-      if (num_vertices == 3) {
-        Plane_3 plane { poly_vertices[0]->point(),
-                        poly_vertices[1]->point(),
-                        poly_vertices[2]->point() };
-        facet->set_plane(plane);
-      } else {
-        // @todo is there a point handling non triangulated inputs here and everywhere...?
-        CGAL_assertion(false);
-        return { };
-      }
+      Vector_3 n = Polygon_mesh_processing::compute_face_normal(fi, tmesh);
+      if (outward_offsetting)
+        n = -n;
+
+      Plane_3 pl (poly_vertices[0]->point(), n);
+      facet->set_plane(pl);
       result->add_facet(facet);
 
       const FT weight = get(weight_pmap, fi);
