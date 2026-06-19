@@ -763,8 +763,10 @@ void main(void)
 
   // Half-width in pixels. u_PointSize (carried in pointSize) is the full edge
   // width in screen pixels, so the per-side offset is half of it, averaged over
-  // the two endpoints so the edge has a single constant width.
-  float halfWidth = 0.5 * 0.5 * (gs_in[0].pointSize + gs_in[1].pointSize);
+  // the two endpoints. Clamp to a minimum so a very thin edge still keeps a
+  // solid, anti-aliased core of about one pixel, instead of fading into the
+  // background (which made thin edges look white).
+  float halfWidth = max(0.5 * 0.5 * (gs_in[0].pointSize + gs_in[1].pointSize), 1.0);
   float ext = halfWidth + AA; // perpendicular: half thickness plus the AA margin
 
   v_segLen    = segLen;
