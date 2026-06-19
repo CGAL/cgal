@@ -306,6 +306,7 @@ public:
                    const NamedParameters& np = CGAL::parameters::default_values())
   {
     using CGAL::parameters::choose_parameter;
+    using CGAL::parameters::is_default_parameter;
     using CGAL::parameters::get_parameter;
 
     using vertex_descriptor = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
@@ -344,8 +345,9 @@ public:
     auto weight_pmap = choose_parameter(get_parameter(np, CGAL::internal_np::face_weight),
                                         CGAL::Constant_property_map<std::size_t, FT>(1));
 
+    std::map<face_descriptor, std::size_t> default_f2i;
     auto f2i = choose_parameter(get_parameter(np, internal_np::face_to_face_map),
-                                boost::make_assoc_property_map(std::map<face_descriptor, std::size_t>()));
+                                boost::make_assoc_property_map(default_f2i));
 
     for (const FacetSPtr& facet : polyhedron->facets()) {
       CGAL_assertion(facet->id() != -1);
@@ -435,7 +437,8 @@ public:
         }
 
         put(weight_pmap, sm_f, speed);
-        put(f2i, sm_f, input_face_id);
+        if constexpr (!is_default_parameter<NamedParameters, internal_np::face_to_face_map_t>::value)
+          put(f2i, sm_f, input_face_id);
       }
     }
 
