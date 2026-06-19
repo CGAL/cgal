@@ -3,12 +3,12 @@
 * \ingroup PkgFeatureGraphConcepts
 * \cgalConcept
 *
-* The concept `NormalEstimator` describes a functor that
+* The concept `NormalEstimator` describes an estimator that
 * extracts the normal for a surface element.
 *
 * \cgalHasModelsBegin
 * \cgalHasModels{CGAL::Feature_graph::AmbrosioTortorelli_on_image::Normal_estimator}
-* \cgalHasModels{CGAL::Feature_graph::Normal_estimator::Normal_estimator_on_surface}
+* \cgalHasModels{CGAL::Feature_graph::Normal_estimator_on_surface}
 * \cgalHasModelsEnd
 *
 */
@@ -26,7 +26,7 @@ typedef unspecified_type Normal_type;
 
 /// @}
 
-/// \name Functor
+/// \name Estimator
 /// @{
 
 /*!

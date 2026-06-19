@@ -7,15 +7,15 @@
 
 /// \defgroup PkgFeatureGraphDetector Feature Graph Detector
 /// \ingroup PkgFeatureGraphRef
-/// The functors in this group allows to extract the feature graph from different types of surfaces.
+/// The detectors in this group allows to extract the feature graph from different types of surfaces.
 
 /// \defgroup PkgFeatureGraphSharpnessEstimator Sharpness Estimator
 /// \ingroup PkgFeatureGraphRef
-/// The functors in this group allows to estimate the sharpness on surfaces.
+/// The detectors in this group allows to estimate the sharpness on surfaces.
 
 /// \defgroup PkgFeatureGraphNormalEstimator Normal Estimator
 /// \ingroup PkgFeatureGraphRef
-/// The functors in this group allows to estimate the normal on surfaces.
+/// The detectors in this group allows to estimate the normal on surfaces.
 
 /// \defgroup PkgFeatureGraphParameter Parameter Class
 /// \ingroup PkgFeatureGraphRef
@@ -64,26 +64,19 @@ Secondary concepts:
 - `SharpnessEstimator`
 - `NormalEstimator`
 
-\cgalCRPSection{Feature Graph Creation Functors}
+\cgalCRPSection{Feature Graph Detectors}
 
 - `CGAL::Feature_graph::Detect_sharp_features_on_labeled_image()`
 - `CGAL::Feature_graph::Detect_sharp_features_on_surface()`
 
-\cgalCRPSection{Parameter Classes}
-
-- `CGAL::Feature_graph::Regularization_parameters_on_image`
-- `CGAL::Feature_graph::Regularization_parameters_on_surface`
-- `CGAL::Feature_graph::Optimization_parameters_on_image`
-- `CGAL::Feature_graph::Optimization_parameters_on_surface`
-
 \cgalCRPSection{Sharpness Estimators}
 
 - `CGAL::Feature_graph::AmbrosioTortorelli_on_image::Sharpness_estimator`
-- `CGAL::Feature_graph::Sharpness_estimator::Sharpness_estimator_on_surface`
+- `CGAL::Feature_graph::Sharpness_estimator_on_surface`
 
 \cgalCRPSection{Normal Estimators}
 
 - `CGAL::Feature_graph::AmbrosioTortorelli_on_image::Normal_estimator`
-- `CGAL::Feature_graph::Normal_estimator::Normal_estimator_on_surface`
+- `CGAL::Feature_graph::Normal_estimator_on_surface`
 
 */

@@ -2,13 +2,10 @@ namespace CGAL {
 
 namespace Feature_graph {
 
-namespace Normal_estimator
-{
-
 /*!
 * \ingroup PkgFeatureGraphNormalEstimator
 *
-* \brief Functor that assign a normal on elements of a surface.
+* \brief Estimator that assign a normal on elements of a surface.
 *
 * \tparam Vector_3 the type of the normal vector model of `Kernel::Vector_3`.
 *
@@ -43,7 +40,7 @@ public:
 
   /// @}
 
-  /// \name Functor
+  /// \name Estimator
   /// @{
 
   /*!
@@ -68,8 +65,6 @@ public:
 
   /// @}
 };
-
-} /* namespace Normal_estimator */
 
 } /* namespace Feature_graph */
 

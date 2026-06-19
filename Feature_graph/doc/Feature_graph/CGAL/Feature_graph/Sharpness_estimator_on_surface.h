@@ -2,13 +2,10 @@ namespace CGAL {
 
 namespace Feature_graph {
 
-namespace Sharpness_estimator
-{
-
 /*!
 * \ingroup PkgFeatureGraphSharpnessEstimator
 *
-* \brief Functor that assign a sharpness value on elements of a surface.
+* \brief Estimator that assign a sharpness value on elements of a surface.
 *
 * \cgalModels{SharpnessEstimator}
 */
@@ -44,7 +41,7 @@ public:
 
   /// @}
 
-  /// \name Functor
+  /// \name Estimator
   /// @{
 
   /*!
@@ -69,8 +66,6 @@ public:
 
   /// @}
 };
-
-} /* namespace Sharpness_estimator */
 
 } /* namespace Feature_graph */
 

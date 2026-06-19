@@ -2,12 +2,12 @@
 * \ingroup PkgFeatureGraphConcepts
 * \cgalConcept
 *
-* The concept `Sharpness_estimator` describes a functor that
+* The concept `Sharpness_estimator` describes an estimator that
 * extracts the sharpness value for a surface element.
 *
 * \cgalHasModelsBegin
 * \cgalHasModels{CGAL::Feature_graph::AmbrosioTortorelli_on_image::Sharpness_estimator}
-* \cgalHasModels{CGAL::Feature_graph::Sharpness_estimator::Sharpness_estimator_on_surface}
+* \cgalHasModels{CGAL::Feature_graph::Sharpness_estimator_on_surface}
 * \cgalHasModelsEnd
 *
 */
@@ -27,7 +27,7 @@ typedef unspecified_type Sharpness_value_type;
 
 /// @}
 
-/// \name Functor
+/// \name Estimator
 /// @{
 
 /*!
@@ -35,7 +35,7 @@ typedef unspecified_type Sharpness_value_type;
 * A low sharpness value should represent a flat area,
 * while a high value implies a sharp feature.
 * For two sharpness values `A` and `B`,
-* the value `A` is has a higher sharpness value iff `B < A`.
+* the value `A` is told to have a higher sharpness value iff `B < A`.
 * Negative values represent smooth areas that should be erased in the
 * selection step of the feature graph extraction method.
 *
