@@ -565,7 +565,7 @@ public:
     }
 
 #ifdef CGAL_SS3_DUMP_FILES
-    IO::write_OBJ("results/tilt-v3_input.obj", polyhedron, parameters::do_not_triangulate_faces(true));
+    IO::write_OBJ("results/tilt-v3_input.obj", polyhedron, parameters::do_not_triangulate_faces(true).stream_precision(17));
 #endif
 
     CGAL_SS3_TRANSF_TRACE_CODE(unsigned int had_to_triangulate_n = 0;)

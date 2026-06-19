@@ -207,6 +207,8 @@ public:
     if (!merge_faces)
       return polyhedron;
 
+    IO::write_OBJ("results/loaded.obj", polyhedron, parameters::do_not_triangulate_faces(false));
+
 #if 1
 
 #if 0
@@ -294,6 +296,7 @@ public:
 #endif
 
     CGAL_SS3_TRANSF_TRACE("Converted, " << polyhedron->facets().size() << " facets");
+    IO::write_OBJ("results/converted.obj", polyhedron, parameters::do_not_triangulate_faces(false));
 
     return polyhedron;
   }

@@ -348,8 +348,10 @@ public:
     int result = 0;
     std::list<EdgeWPtr> edges_toremove;
     for (const EdgeSPtr& edge : polyhedron->edges()) {
-      // the issue with below is that the weights also might be almost exactly the same...
-      // @todo add another epsilon...?
+      // the issue with below is that in some pipelines, we compute
+      // weights based e.g. on the normal so we shouldn't do an exact
+      // equality check
+      // @todo add another epsilon...
 #if 0
       // always reject merges if weights are different
       if (Hds_utils::get_speed(edge->get_facet_L()) != Hds_utils::get_speed(edge->get_facet_R())) {
@@ -363,7 +365,7 @@ public:
       }
     }
 
-    CGAL_SS3_TRANSF_TRACE(edges_toremove.size() << " edges to merge");
+    CGAL_SS3_TRANSF_TRACE(edges_toremove.size() << " edges to remove");
     CGAL_SS3_TRANSF_TRACE_CODE(if (edges_toremove.size() > 0))
     CGAL_SS3_TRANSF_TRACE("Adjacent facets of the following edges are detected to be coplanar and will be merged.");
 
@@ -687,6 +689,8 @@ public:
   {
     CGAL_SS3_TRANSF_TRACE_V(16, "reset_point() of " << vertex->to_string());
     CGAL_SS3_DEBUG_SPTR(vertex);
+
+    CGAL_warning(vertex->degree() == 3);
 
     std::array<const Plane_3*, 3> planes;
     unsigned int i = 0;

@@ -267,9 +267,7 @@ public:
     for (const EdgeSPtr& edge : facet->edges()) {
       const Point_3& p_src = edge->source()->point();
       const Point_3& p_tgt = edge->target()->point();
-
-      CGAL_SS3_ALGO_TRACE_V(64, " p_src = " << p_src);
-      CGAL_SS3_ALGO_TRACE_V(64, " p_tgt = " << p_tgt);
+      CGAL_SS3_ALGO_TRACE_V(64, "candidate edge = " << edge->to_string());
       CGAL_assertion(p_src != p_tgt);
 
       // this only stands for EPECK and flat faces
@@ -301,21 +299,21 @@ public:
         } else {
           Segment_3 s { p_src, p_tgt };
           if (s.has_on(point)) {
-            // intersection if it's on the ray except if its the source or target
+            // intersection if it's on the segment except if its the source or target
             return (point != p_src && point != p_tgt);
           }
         }
       } else {
         Segment_3 s { p_src, p_tgt };
         if (s.has_on(point)) {
-          // intersection if it's on the ray except if its the source or target
+          // intersection if it's on the segment except if its the source or target
           return (point != p_src && point != p_tgt);
         }
       }
 
       candidate_ray_targets.push_back(CGAL::midpoint(p_src, p_tgt));
 
-      CGAL_SS3_ALGO_TRACE_V(64, "new potential ray target: " << candidate_ray_targets.back() << " for " << edge->to_string());
+      CGAL_SS3_ALGO_TRACE_V(64, "  new potential ray target: " << candidate_ray_targets.back());
     }
 
     for (;;) {
@@ -324,6 +322,7 @@ public:
         shooting_ray = Ray_3(point, candidate_ray_targets.back());
         candidate_ray_targets.pop_back();
       } else {
+        // normally we shouldn't need any of the random targets
         Point_3 rnd_p = *random_point_on_sphere++;
         Point_3 target_p = point + Vector_3(CGAL::ORIGIN, rnd_p);
         Point_3 proj_p = pl.projection(target_p);
@@ -339,10 +338,8 @@ public:
       CGAL_assertion(pl.has_on(shooting_ray.point(0)));
       CGAL_assertion(pl.has_on(shooting_ray.point(1)));
 
-      // normally we shouldn't need any of the random targets
-      if (shooting_ray.is_degenerate()) {
+      if (shooting_ray.is_degenerate())
         continue;
-      }
 
       FT sq_dist_to_closest = (std::numeric_limits<double>::max)();
       EdgeSPtr closest_edge;
@@ -353,12 +350,13 @@ public:
 
         CGAL_SS3_ALGO_TRACE_V(64, "Treat " << target_edge->to_string());
 
-        CGAL::Object obj = CGAL::intersection(shooting_ray, edge_geometry);
-        CGAL_assertion_code(using EG = CGAL::cpp20::remove_cvref_t<decltype(edge_geometry)>);
-        CGAL_assertion_code(const EG* eg = CGAL::object_cast<EG>(&obj);)
-        CGAL_assertion(!bool(eg));
+        auto res = CGAL::intersection(shooting_ray, edge_geometry);
+        if (!res) {
+          CGAL_SS3_ALGO_TRACE_V(64, "  no intersection between ray and facet edge");
+          return;
+        }
 
-        if (const Point_3 *ipoint = CGAL::object_cast<Point_3>(&obj)) {
+        if (const Point_3* ipoint = std::get_if<Point_3>(&*res)) {
           FT sqd = CGAL::squared_distance(point, *ipoint);
           CGAL_SS3_ALGO_TRACE_V(64, "  intersects @ SQ_tgt: " << sqd);
           CGAL::Comparison_result res = CGAL::compare(sqd, sq_dist_to_closest);
@@ -367,6 +365,11 @@ public:
             closest_edge = target_edge;
             CGAL_SS3_ALGO_TRACE_V(64, "  new closest");
           }
+        } else {
+          // CGAL_assertion_code(using EG = CGAL::cpp20::remove_cvref_t<decltype(edge_geometry)>);
+          // CGAL_assertion_code(const EG* eg = std::get_if<EG>(&*res);)
+          // CGAL_assertion(!bool(eg));
+          CGAL_assertion(false);
         }
       };
 
@@ -374,15 +377,17 @@ public:
       // self-intersection detection while splitting or handling edge events,
       // where facets have few edges
       for (const EdgeSPtr& edge : facet->edges()) {
-        CGAL_SS3_ALGO_TRACE_V(64, "consider edge: " << edge->to_string());
+        CGAL_SS3_ALGO_TRACE_V(64, "Consider " << edge->to_string());
         VertexSPtr v_src = edge->src(facet);
         VertexSPtr v_tgt = edge->tgt(facet);
         const Point_3& p_src = v_src->point();
         const Point_3& p_tgt = v_tgt->point();
+        CGAL_assertion(pl.has_on(p_src));
+        CGAL_assertion(pl.has_on(p_tgt));
 
         if (CGAL::collinear(p_src, p_tgt, point)) {
-          // we have already checked that the point is not on an edge
-          // while collecting ray targets
+          // we have already checked that the point is not on an edge while collecting ray targets
+          CGAL_SS3_ALGO_TRACE_V(64, "ignore collinear");
           continue;
         }
 
@@ -606,6 +611,8 @@ public:
     // @speed use the projection traits here too
     bool coplanarity = (facet->contains_vertex(e_src) || facet_pl.has_on(e_src->point())) &&
                        (facet->contains_vertex(e_tgt) || facet_pl.has_on(e_tgt->point()));
+    CGAL_SS3_ALGO_TRACE_V(64, "coplanarity: " << coplanarity);
+
     if (coplanarity) {
       auto test_fo_o_coplanarity = [&](const EdgeSPtr& /*fe*/, const auto& fo,
                                        const EdgeSPtr& /*e*/, const auto& o) -> bool
@@ -741,12 +748,14 @@ public:
         return false; // no intersection
       } else if (const Point_3 *ipoint = CGAL::object_cast<Point_3>(&obj)) {
         CGAL_SS3_ALGO_TRACE_V(64, "intersection point at " << *ipoint);
+        CGAL_assertion(facet_pl.has_on(*ipoint));
+        CGAL_assertion(o.has_on(*ipoint));
 
         // intersection is a point, so there is an intersection if the point is not an extremity
         // of the edge, and if it is inside the facet
         if constexpr (std::is_same_v<O, Segment_3>) {
-          if (facet->contains_vertex(e->source()) ||
-              facet->contains_vertex(e->target())) {
+          if (facet->contains_vertex(e->source()) || facet->contains_vertex(e->target())) {
+            // no coplanarity here
             return false;
           } else {
               // @speed adapt v2 to work with rays?
@@ -790,7 +799,8 @@ public:
     return test_o_facet(edge, s);
   }
 
-  static bool has_self_intersecting_surface(const PolyhedronSPtr& polyhedron)
+  static bool has_self_intersecting_surface(const PolyhedronSPtr& polyhedron,
+                                            bool handle_degree_1_as_ray = true)
   {
     CGAL_SS3_DEBUG_SPTR(polyhedron);
 
@@ -804,7 +814,7 @@ public:
     // @speed O(nf*nfe*ne) algorithm
     for (const FacetSPtr& facet : polyhedron->facets()) {
       for (const EdgeSPtr& edge : polyhedron->edges()) {
-        if (is_edge_inside_facet(facet, edge, true /*handle_degree_1_as_ray*/)) {
+        if (is_edge_inside_facet(facet, edge, handle_degree_1_as_ray)) {
           CGAL_SS3_ALGO_TRACE_V(16, "\nPolyhedron has no self-intersecting facets, but the surface is self-intersecting!");
           CGAL_SS3_ALGO_TRACE_V(16, facet->to_string());
           CGAL_SS3_ALGO_TRACE_V(16, edge->to_string());

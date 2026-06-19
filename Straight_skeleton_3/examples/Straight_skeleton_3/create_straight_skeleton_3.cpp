@@ -21,6 +21,9 @@ using face_descriptor = boost::graph_traits<Mesh>::face_descriptor;
 
 int main(int argc, char** argv)
 {
+  std::cout.precision(17);
+  std::cerr.precision(17);
+
   if (argc == 1) {
     std::cout << "Usage: " << argv[0] << " <input filename> [time bound]" << std::endl;
     std::cout << "  <input filename>: Path to input mesh file (required)" << std::endl;
