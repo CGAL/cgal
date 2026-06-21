@@ -82,6 +82,11 @@ Release date: June 2026
 - Added the box type [`CGAL::Box_with_info_d<FT, dim, Info>`](https://doc.cgal.org/6.2/Box_intersection_d/classCGAL_1_1Box__intersection__d_1_1Box__with__info__d.html),
   which stores a variable of type `Info` accessible via the class member function [`info()`](https://doc.cgal.org/6.2/Box_intersection_d/classCGAL_1_1Box__intersection__d_1_1Box__with__info__d.html#a5858777d3531cfc13bdc0fea067a7532).
 
+### [Ball merge surface reconstruction](https://doc.cgal.org/6.2/Manual/packages.html#PkgBallMerge) (new package)
+
+-   This package implements a surface reconstuction algorithm from a point set without normals sampled on a manifold surface.
+    The algorithm is lightweight and based on flooding in the 3D Delaunay triangulation of the input point set. The output
+    uses only input points.
 ### [2D Arrangements](https://doc.cgal.org/6.2/Manual/packages.html#PkgArrangementOnSurface2)
 
 - Introduced a Geometry Traits concept for arrangement on surfaces that enables the provision

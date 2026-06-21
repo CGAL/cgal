@@ -1,0 +1,35 @@
+/// \defgroup PkgBallMergeRef Ball Merge Surface Reconstruction Reference
+
+/*!
+\addtogroup PkgBallMergeRef
+
+\cgalPkgDescriptionBegin{Ball Merge Surface Reconstruction,PkgBallMerge}
+\cgalPkgPicture{pkgBMR-small.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Amal Dev Parakkat, Stefan Ohrhallinger, Elmar Eisemann, Pooran Memari}
+\cgalPkgDesc{This package offers a surface reconstruction algorithm based on Delaunay triangulation, designed to work
+with unstructured point clouds. It builds a watertight surface by merging balls centered at Voronoi vertices, which
+approximate the medial axisof the shape. The algorithm uses a global variant of the ball merge strategy, making it robust
+to typical issues in scanned data—such as noise, outliers, and small gaps. It’s especially suited for reconstructing clean,
+closed surfaces from real-world 3D scans.}
+\cgalPkgManuals{Chapter_Ball_merge_surface_reconstruction,PkgBallMergeRef}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{6.2}
+\cgalPkgDependsOn{\ref PkgTriangulation3}
+\cgalPkgBib{cgal:poem-bmsr}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Concepts}
+
+\cgalCRPSection{Functions}
+- `CGAL::ball_merge_surface_reconstruction()`
+
+\cgalCRPSection{Class}
+- `CGAL::Ball_merge_surface_reconstruction`
+
+*/
