@@ -112,6 +112,13 @@ template <> class Real_embeddable_traits< long double >
   : public INTERN_RET::Real_embeddable_traits_base< long double , CGAL::Tag_true > {
   public:
 
+    struct Ceil
+    : public CGAL::cpp98::unary_function< Type, double > {
+     public:
+       double operator()( int x ) const
+       { return std::ceil(x); }
+    };
+
     class To_interval
       : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
       public:

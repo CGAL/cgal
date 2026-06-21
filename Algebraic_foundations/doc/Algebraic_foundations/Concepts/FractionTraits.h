@@ -52,23 +52,23 @@ typedef unspecified_type Denominator_type;
 /// @}
 
 /// \name Functors
-/// In case `Type` is not a `Fraction` all functors are `Null_functor`.
+/// In case `Type` is not a `Fraction` all functors are `CGAL::Null_functor`.
 /// @{
 
   /*!
-    A model of FractionTraits_::Compose.
+    A model of `FractionTraits_::Compose`.
    */
 typedef unspecified_type Compose;
 
 
   /*!
-    A model of FractionTraits_::Decompose.
+    A model of `FractionTraits_::Decompose`.
    */
 typedef unspecified_type Decompose;
 
 
   /*!
-    A model of FractionTraits_::CommonFactor.
+    A model of `FractionTraits_::CommonFactor`.
    */
 typedef unspecified_type Common_factor;
 
