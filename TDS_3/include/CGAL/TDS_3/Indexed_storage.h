@@ -1207,7 +1207,7 @@ namespace CGAL {
 
     std::pair<Cell_handle,int> facet_with_handle(std::pair<cell_descriptor, int> f) const
     {
-      return {cell_handle(f.first), f.second};
+      return {handle(f.first), f.second};
     }
 
     Cell_handle handle(const cell_descriptor& index) const
@@ -1373,7 +1373,7 @@ namespace CGAL {
     mirror_facet(Cell_handle ch, int i) const
     {
       std::pair<Cell_index, int> f = mirror_facet(ch.idx(), i);
-      return {cell_handle(f.first), f.second};
+      return {handle(f.first), f.second};
     }
 
     std::pair<Cell_index, int>
@@ -1384,7 +1384,7 @@ namespace CGAL {
 
     Facet facet(const Cell_index& ci, int i) const
     {
-      return {cell_handle(ci), i};
+      return {handle(ci), i};
     }
 
     Vertex_handle create_vertex()
