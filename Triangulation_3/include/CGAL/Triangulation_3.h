@@ -1570,6 +1570,141 @@ protected:
     return it;
   }
 
+
+  template <class CellDescriptor,
+            class Conflict_test,
+            class OutputIteratorBoundaryFacets,
+            class OutputIteratorCells,
+            class OutputIteratorInternalFacets,
+            std::enable_if_t<false == std::is_same_v<Cell_handle, CellDescriptor>, bool> = true>
+  Triple<OutputIteratorBoundaryFacets,
+         OutputIteratorCells,
+         OutputIteratorInternalFacets>
+  find_conflicts(CellDescriptor d,
+                 const Conflict_test& tester,
+                 Triple<OutputIteratorBoundaryFacets,
+                        OutputIteratorCells,
+                        OutputIteratorInternalFacets> it,
+                 bool *could_lock_zone = nullptr,
+                 const Facet *this_facet_must_be_in_the_cz = nullptr,
+                 bool *the_facet_is_in_its_cz = nullptr) const
+  {
+    CGAL_precondition(dimension()>=2);
+
+    if(the_facet_is_in_its_cz)
+      *the_facet_is_in_its_cz = false;
+
+    if(could_lock_zone)
+    {
+      *could_lock_zone = true;
+      if(!this->try_lock_cell(d))
+      {
+        *could_lock_zone = false;
+        return it;
+      }
+    }
+
+    CGAL_precondition(tester(tds().handle(d)));
+
+    // To store the boundary cells, in case we need to rollback
+    typedef boost::container::small_vector<cell_descriptor,64> SV;
+    SV sv;
+    std::stack<cell_descriptor, SV > cell_stack(sv);
+
+    cell_stack.push(d);
+    tds().tds_data(d).mark_in_conflict();
+
+    *it.second++ = d;
+
+    auto check_this_facet_must_be_in_the_cz = [&](cell_descriptor cd, int i, bool on_boundary = false) {
+      if(!this_facet_must_be_in_the_cz || !the_facet_is_in_its_cz) return;
+      if((cd == tds().descriptor(this_facet_must_be_in_the_cz->first)) &&
+         (i == this_facet_must_be_in_the_cz->second))
+      {
+        *the_facet_is_in_its_cz = true;
+      }
+      if(on_boundary) {
+        auto [nd, ni] = tds().mirror_facet(cd, i);
+        if((nd == tds().descriptor(this_facet_must_be_in_the_cz->first)) &&
+           (ni == this_facet_must_be_in_the_cz->second))
+        {
+          *the_facet_is_in_its_cz = true;
+        }
+      }
+    };
+
+    auto check_this_boundary_facet_must_be_in_the_cz = [&](cell_descriptor cd, int i) {
+      check_this_facet_must_be_in_the_cz(cd, i, true);
+    };
+
+    do
+    {
+      cell_descriptor cd = cell_stack.top();
+      cell_stack.pop();
+
+      // For each neighbor cell
+      for(int i=0, dim = dimension()+1; i < dim; ++i)
+      {
+        cell_descriptor test = tds().neighbor(cd, i);
+
+        // "test" is either in the conflict zone,
+        // either facet-adjacent to the CZ
+
+        if(tds().tds_data(test).is_in_conflict())
+        {
+          // Is it the facet where're looking for?
+          check_this_facet_must_be_in_the_cz(cd, i);
+
+          if(cd < test)
+          {
+            *it.third++ = std::make_pair(cd, i);
+          }
+          continue; // test was already in conflict.
+        }
+        if(tds().tds_data(test).is_clear())
+        {
+          if(tester(tds().handle(test)))
+          {
+            // "test" is in the conflict zone
+            if(could_lock_zone)
+            {
+              if(!this->try_lock_cell(test))
+              {
+                *could_lock_zone = false;
+                // Unlock
+                return it;
+              }
+            }
+
+            // Is it the facet where're looking for?
+            check_this_boundary_facet_must_be_in_the_cz(cd, i);
+
+            if(cd < test)
+            {
+              *it.third++ = std::make_pair(cd, i);
+            }
+
+            cell_stack.push(test);
+            tds().tds_data(test).mark_in_conflict();
+            *it.second++ = test;
+            continue;
+          }
+
+          tds().tds_data(test).mark_on_boundary();
+        }
+
+        // Is it the facet where're looking for?
+        check_this_boundary_facet_must_be_in_the_cz(cd, i);
+
+        *it.first++ = std::make_pair(cd, i);
+      }
+    }
+    while(!cell_stack.empty());
+
+    return it;
+  }
+
+
   // This one takes a function object to recursively determine the cells in
   // conflict, then calls tds()._insert_in_hole().
   template < class Conflict_test >
@@ -4115,6 +4250,7 @@ insert_in_conflict(const Point& p,
       [this](const cell_descriptor& cd) { return tds().handle(cd); });
   };
 
+  cell_descriptor cd = tds().descriptor(c);
   switch(dimension())
   {
     case 3:
@@ -4136,26 +4272,15 @@ insert_in_conflict(const Point& p,
       boost::container::small_vector<cell_descriptor,32> cells;
       boost::container::small_vector<std::pair<cell_descriptor, int>,32> facets;
       auto cells_back = std::back_inserter(cells);
-      auto cells_out = boost::make_function_output_iterator(
-        [&](Cell_handle c) mutable {
-          // transform on the fly, then insert
-          *cells_back = tds().descriptor(c);
-        }
-      );
       auto facets_back = std::back_inserter(facets);
-      auto facets_out = boost::make_function_output_iterator(
-        [&](const Facet& f) mutable {
-          // transform on the fly, then insert
-          *facets_back = std::make_pair(tds().descriptor(f.first), f.second);
-        }
-      );
+
       // Parallel
       if(could_lock_zone)
       {
-        find_conflicts(c,
+        find_conflicts(cd,
                        tester,
-                       make_triple(facets_out,
-                                   cells_out,
+                       make_triple(facets_back,
+                                   cells_back,
                                    Emptyset_iterator()),
                        could_lock_zone);
 
@@ -4166,9 +4291,9 @@ insert_in_conflict(const Point& p,
             tds().tds_data(ch).clear();
           }
 
-          for(auto& [cd, i] : facets)
+          for(auto& [fcd, fi] : facets)
           {
-            tds().tds_data(tds().neighbor(cd, i)).clear();
+            tds().tds_data(tds().neighbor(fcd, fi)).clear();
           }
           return Vertex_handle();
         }
@@ -4176,10 +4301,10 @@ insert_in_conflict(const Point& p,
       // Sequential
       else
       {
-        find_conflicts(c,
+        find_conflicts(cd,
                        tester,
-                        make_triple(facets_out,
-                                    cells_out,
+                        make_triple(facets_back,
+                                    cells_back,
                                     Emptyset_iterator()));
       }
 
