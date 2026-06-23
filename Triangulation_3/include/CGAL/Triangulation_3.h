@@ -1529,7 +1529,7 @@ protected:
             std::cerr << ss.str();
           }
 #endif
-          if(tester(tds().handle(test)))
+          if(tester(test))
           {
             // "test" is in the conflict zone
             if(could_lock_zone)
@@ -1604,7 +1604,7 @@ protected:
       }
     }
 
-    CGAL_precondition(tester(tds().handle(d)));
+    CGAL_precondition(tester(d));
 
     // To store the boundary cells, in case we need to rollback
     typedef boost::container::small_vector<cell_descriptor,64> SV;
@@ -1663,7 +1663,7 @@ protected:
         }
         if(tds().tds_data(test).is_clear())
         {
-          if(tester(tds().handle(test)))
+          if(tester(test))
           {
             // "test" is in the conflict zone
             if(could_lock_zone)
@@ -1756,11 +1756,11 @@ private:
       : p(pt), t(tr)
     {}
 
-    bool operator()(const Cell_handle c) const
+    bool operator()(const cell_descriptor& c) const
     {
       Locate_type loc;
       int i, j;
-      return t->side_of_cell(p, c, loc, i, j) == ON_BOUNDED_SIDE;
+      return t->side_of_cell(p, t->tds().handle(c), loc, i, j) == ON_BOUNDED_SIDE;
     }
   };
 
@@ -1774,11 +1774,11 @@ private:
       : p(pt), t(tr)
     {}
 
-    bool operator()(const Cell_handle c) const
+    bool operator()(const cell_descriptor& c) const
     {
       Locate_type loc;
       int i, j;
-      return t->side_of_facet(p, c, loc, i, j) == ON_BOUNDED_SIDE;
+      return t->side_of_facet(p, t->tds().handle(c), loc, i, j) == ON_BOUNDED_SIDE;
     }
   };
 

@@ -806,12 +806,27 @@ public:
                           tds().vertex(cd,2), tds().vertex(cd,3), p, perturb);
   }
 
+  template <typename CellDescriptor,
+           std::enable_if_t<false == std::is_same_v<Cell_handle, CellDescriptor>, bool> = true>
+  Bounded_side side_of_sphere(const CellDescriptor& cd, const Point& p, bool perturb = false) const
+  {
+    return side_of_sphere(tds().vertex(cd,0), tds().vertex(cd,1),
+                          tds().vertex(cd,2), tds().vertex(cd,3), p, perturb);
+  }
+
   Bounded_side side_of_circle(const Facet& f, const Point& p, bool perturb = false) const
   {
     return side_of_circle(f.first, f.second, p, perturb);
   }
 
   Bounded_side side_of_circle(Cell_handle c, int i, const Point& p, bool perturb = false) const;
+
+  template <typename CellDescriptor,
+            std::enable_if_t<false == std::is_same_v<Cell_handle, CellDescriptor>, bool> = true>
+  Bounded_side side_of_circle(const CellDescriptor& c, int i, const Point& p, bool perturb = false) const
+  {
+    return side_of_circle(tds().handle(c),i,p,perturb);
+  }
 
   Vertex_handle nearest_vertex_in_cell(const Point& p, Cell_handle c) const;
   Vertex_handle nearest_vertex(const Point& p, Cell_handle c = Cell_handle()) const;
@@ -879,6 +894,13 @@ protected:
       return t->side_of_sphere(c, p, true) == ON_BOUNDED_SIDE;
     }
 
+    template <typename CellDescriptor,
+              std::enable_if_t<false == std::is_same_v<Cell_handle, CellDescriptor>, bool> = true>
+    bool operator()(const CellDescriptor& c) const
+    {
+      return t->side_of_sphere(c, p, true) == ON_BOUNDED_SIDE;
+    }
+
     Oriented_side compare_weight(const Point& , const Point& ) const
     {
       return ZERO;
@@ -900,6 +922,14 @@ protected:
       : p(pt), t(tr) {}
 
     bool operator()(const Cell_handle c) const
+    {
+      return t->side_of_circle(c, 3, p, true) == ON_BOUNDED_SIDE;
+    }
+
+
+    template <typename CellDescriptor,
+              std::enable_if_t<false == std::is_same_v<Cell_handle, CellDescriptor>, bool> = true>
+    bool operator()(const CellDescriptor& c) const
     {
       return t->side_of_circle(c, 3, p, true) == ON_BOUNDED_SIDE;
     }
