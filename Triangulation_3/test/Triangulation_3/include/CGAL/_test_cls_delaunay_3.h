@@ -118,24 +118,20 @@ void test_conflicts(T& T3_13, const P *q)
         continue;
       }
       // Get the stuff in conflicts.
-      std::vector<typename Cls::vertex_descriptor> V;
+      std::vector<Cell_handle>   C;
+      std::vector<Facet>         F;
+      std::vector<Vertex_handle> V;
 
       T3_13.vertices_on_conflict_zone_boundary(q[i], c, std::back_inserter(V));
 #ifndef CGAL_NO_DEPRECATED_CODE
       // test deprecated vertices_in_conflict
-      std::vector<typename Cls::vertex_descriptor> V2;
+      std::vector<Vertex_handle> V2;
       T3_13.vertices_in_conflict(q[i], c, std::back_inserter(V2));
       assert(V2.size() == V.size());
 #endif
 
-      std::vector<Cell_handle>   C;
-      std::vector<Facet>         F;
-      auto cell_inserter = boost::make_function_output_iterator(
-        [&](auto cd) { C.push_back(T3_13.tds().handle(cd)); });
-      auto facet_inserter = boost::make_function_output_iterator(
-        [&](auto pair) { F.emplace_back(T3_13.tds().handle(pair.first), pair.second); });
-
-      T3_13.find_conflicts(q[i], c, facet_inserter, cell_inserter);
+      T3_13.find_conflicts(q[i], c, std::back_inserter(F),
+                           std::back_inserter(C));
 
       if (T3_13.dimension() == 3)
           assert(F.size() == 2*V.size() - 4); // Euler relation.
