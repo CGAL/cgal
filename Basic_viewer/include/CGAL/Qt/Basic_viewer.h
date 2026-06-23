@@ -341,7 +341,10 @@ public:
           {
             rendering_program_sphere.setUniformValue("u_UseDefaultColor", static_cast<GLint>(0));
           }
-          rendering_program_sphere.setUniformValue("u_Radius", static_cast<GLfloat>(sceneRadius()*m_size_vertices*0.002));
+          // Sphere radius from the same pixel size as the point vertices, so the
+          // sphere diameter is about m_size_vertices pixels, matching gl_PointSize.
+          rendering_program_sphere.setUniformValue("u_Radius", static_cast<GLfloat>(0.5*m_size_vertices*
+                                                   camera()->pixelGLRatio(sceneCenter())));
           rendering_program_sphere.setUniformValue("u_ClipPlane",  clipPlane);
           rendering_program_sphere.setUniformValue("u_PointPlane", plane_point);
           rendering_program_sphere.setUniformValue("u_RenderingMode", rendering_mode);
@@ -429,11 +432,13 @@ public:
           QVector3D edge_qcolor((double)edge_color.red()/(double)255,
                                 (double)edge_color.green()/(double)255,
                                 (double)edge_color.blue()/(double)255);
-          // Tube radius, in world units, proportional to the scene radius so the
-          // tube keeps the same on-screen thickness at any scene scale. The
-          // constant is tuned so the default (m_size_edges) gives a tube a few
-          // pixels across at the default framing.
-          GLfloat radius = static_cast<GLfloat>(sceneRadius()*m_size_edges*0.005);
+          // Tube radius in world units, derived from the same pixel size as the
+          // flat edges so the two modes match. pixelGLRatio(p) is the world length
+          // of one screen pixel at p, so 0.5 * m_size_edges * pixelGLRatio gives a
+          // tube whose on-screen diameter is about m_size_edges pixels, the same as
+          // the flat edge width. Evaluated per frame, so it stays consistent on zoom.
+          GLfloat radius = static_cast<GLfloat>(0.5*m_size_edges*
+                                                camera()->pixelGLRatio(sceneCenter()));
           // The join spheres are drawn a little larger than the tube radius: the
           // sphere is a coarse (low-resolution) mesh, so at exactly the tube
           // radius its faceted surface sits just inside the tube and a sliver of
