@@ -1581,11 +1581,11 @@ protected:
 
     std::vector<cell_descriptor> cells;
     cells.reserve(32);
-    auto cell_back = std::back_inserter(cells);
+    auto cells_back = std::back_inserter(cells);
     auto cells_out = boost::make_function_output_iterator(
         [&](Cell_handle c) mutable {
           // transform on the fly, then insert
-          *cell_back = tds().descriptor(c);
+          *cells_back = tds().descriptor(c);
         }
       );
     Facet facet;
@@ -4135,11 +4135,11 @@ insert_in_conflict(const Point& p,
       // First, find the conflict region.
       boost::container::small_vector<cell_descriptor,32> cells;
       boost::container::small_vector<std::pair<cell_descriptor, int>,32> facets;
-      auto cell_back = std::back_inserter(cells);
+      auto cells_back = std::back_inserter(cells);
       auto cells_out = boost::make_function_output_iterator(
         [&](Cell_handle c) mutable {
           // transform on the fly, then insert
-          *cell_back = tds().descriptor(c);
+          *cells_back = tds().descriptor(c);
         }
       );
       auto facets_back = std::back_inserter(facets);
@@ -4222,11 +4222,11 @@ insert_in_conflict(const Point& p,
       std::vector<cell_descriptor> cells;
       cells.reserve(32);
       Facet facet;
-      auto cell_back = std::back_inserter(cells);
+      auto cells_back = std::back_inserter(cells);
       auto cells_out = boost::make_function_output_iterator(
         [&](Cell_handle c) mutable {
           // transform on the fly, then insert
-          *cell_back = tds().descriptor(c);
+          *cells_back = tds().descriptor(c);
         });
 
       find_conflicts(c, tester, make_triple(Oneset_iterator<Facet>(facet),

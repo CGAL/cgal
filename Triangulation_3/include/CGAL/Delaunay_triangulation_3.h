@@ -554,11 +554,11 @@ public:
     cells.reserve(32);
     std::vector<std::pair<cell_descriptor, int>> facets;
     facets.reserve(64);
-    auto cell_back = std::back_inserter(cells);
+    auto cells_back = std::back_inserter(cells);
     auto cells_out = boost::make_function_output_iterator(
         [&](Cell_handle c) mutable {
           // transform on the fly, then insert
-          *cell_back = tds().descriptor(c);
+          *cells_back = tds().descriptor(c);
         }
       );
     auto facets_back = std::back_inserter(facets);
@@ -589,14 +589,14 @@ public:
     for(const auto& f: facets)
     {
       tds().tds_data(tds().neighbor(f.first, f.second)).clear();
-      *bfit++ = f;
+      *bfit++ = std::make_pair(tds().handle(f.first), f.second);
     }
 
     // Reset the conflict flag in the conflict cells.
     for(auto cd : cells)
     {
       tds().tds_data(cd).clear();
-      *cit++ = cd;
+      *cit++ = tds().handle(cd);
     }
     return make_triple(bfit, cit, ifit);
   }
@@ -635,12 +635,12 @@ public:
     CGAL_precondition(dimension() >= 2);
 
     // Get the facets on the boundary of the hole.
-    std::vector<std::pair<cell_descriptor, int>> facets;
+    std::vector<Facet> facets;
     find_conflicts(p, c, std::back_inserter(facets),
                    Emptyset_iterator(), Emptyset_iterator());
 
     // Then extract uniquely the vertices.
-    std::set<vertex_descriptor> vertices;
+    std::set<Vertex_handle> vertices;
     if(dimension() == 3)
     {
       for(auto f: facets)
