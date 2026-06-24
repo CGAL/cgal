@@ -1220,6 +1220,16 @@ namespace CGAL {
       return Vertex_handle{const_cast<Self*>(this), index};
     }
 
+    cell_descriptor descriptor(const cell_descriptor& c) const
+    {
+      return c;
+    }
+
+    vertex_descriptor descriptor(const vertex_descriptor& v) const
+    {
+      return v;
+    }
+
     cell_descriptor descriptor(Cell_handle ch) const
     {
       CGAL_assertion(ch.container() == this);

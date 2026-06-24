@@ -799,13 +799,14 @@ side_of_sphere(VertexDescriptor v0, VertexDescriptor v1,
 
 public:
   // Queries
-  Bounded_side side_of_sphere(Cell_handle c, const Point& p, bool perturb = false) const
+  template <typename CellDescriptor>
+  Bounded_side side_of_sphere(CellDescriptor c, const Point& p, bool perturb = false) const
   {
     cell_descriptor cd = tds().descriptor(c);
     return side_of_sphere(tds().vertex(cd,0), tds().vertex(cd,1),
                           tds().vertex(cd,2), tds().vertex(cd,3), p, perturb);
   }
-
+/*
   template <typename CellDescriptor,
            std::enable_if_t<false == std::is_same_v<Cell_handle, CellDescriptor>, bool> = true>
   Bounded_side side_of_sphere(const CellDescriptor& cd, const Point& p, bool perturb = false) const
@@ -813,7 +814,7 @@ public:
     return side_of_sphere(tds().vertex(cd,0), tds().vertex(cd,1),
                           tds().vertex(cd,2), tds().vertex(cd,3), p, perturb);
   }
-
+*/
   Bounded_side side_of_circle(const Facet& f, const Point& p, bool perturb = false) const
   {
     return side_of_circle(f.first, f.second, p, perturb);
