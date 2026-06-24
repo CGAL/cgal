@@ -123,6 +123,8 @@ jobs:
           sudo chmod +x /usr/bin/doxygen
 
       - name: Configure git
+        env:
+          PUSH_TOKEN: ${{ secrets.PUSH_TO_CGAL_GITHUB_IO_TOKEN }}
         run: |
           git config --global user.email "cgal@geometryfactory.com"
           git config --global user.name "cgaltest"
