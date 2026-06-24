@@ -92,7 +92,7 @@ protected:
   typedef typename Graph_traits::face_descriptor face_descriptor;
   typedef typename Graph_traits::halfedge_descriptor halfedge_descriptor;
 
-  typedef typename boost::property_traits<VertexPointMapF>::reference Point;
+  typedef typename boost::property_traits<VertexPointMapF>::value_type Point;
 
   typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;
   typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, halfedge_descriptor, Box_policy> Box;
@@ -119,13 +119,14 @@ public:
     if(is_border(eh,tm_edges)) eh = opposite(eh, tm_edges);
 
     //check if the segment intersects the plane of the facet or if it is included in the plane
-    Point a = get(vpmap_tmf, source(fh, tm_faces));
-    Point b = get(vpmap_tmf, target(fh, tm_faces));
-    Point c = get(vpmap_tmf, target(next(fh, tm_faces), tm_faces));
+    Point& a = get(vpmap_tmf, source(fh, tm_faces));
+    Point& b = get(vpmap_tmf, target(fh, tm_faces));
+    Point& c = get(vpmap_tmf, target(next(fh, tm_faces), tm_faces));
 
     /// SHOULD_USE_TRAITS_TAG
-    const Orientation abcp = orientation(a,b,c, get(vpmap_tme, target(eh, tm_edges)));
-    const Orientation abcq = orientation(a,b,c, get(vpmap_tme, source(eh, tm_edges)));
+    using K = typename Kernel_traits<Point>::Kernel;
+    auto orientation = K().orientation_3_object();
+    const auto [abcp,abcq] = orientation(a,b,c, get(vpmap_tme, target(eh, tm_edges)), get(vpmap_tme, source(eh, tm_edges)));
     if (abcp==abcq){
       if (abcp!=COPLANAR){
         return; //no intersection
@@ -161,28 +162,28 @@ public:
 
   bool is_face_degenerated(halfedge_descriptor fh) const
   {
-    Point a = get(vpmap_tmf, source(fh, tm_faces));
-    Point b = get(vpmap_tmf, target(fh, tm_faces));
-    Point c = get(vpmap_tmf, target(next(fh, tm_faces), tm_faces));
+    Point& a = get(vpmap_tmf, source(fh, tm_faces));
+    Point& b = get(vpmap_tmf, target(fh, tm_faces));
+    Point& c = get(vpmap_tmf, target(next(fh, tm_faces), tm_faces));
 
     return collinear(a, b, c);
   }
 
   bool are_edge_faces_degenerated(halfedge_descriptor eh) const
   {
-    Point a = get(vpmap_tme, source(eh, tm_edges));
-    Point b = get(vpmap_tme, target(eh, tm_edges));
+    Point& a = get(vpmap_tme, source(eh, tm_edges));
+    Point& b = get(vpmap_tme, target(eh, tm_edges));
 
     if(!is_border(eh,tm_edges))
     {
-      Point c = get(vpmap_tme, target(next(eh, tm_edges), tm_edges));
+      Point& c = get(vpmap_tme, target(next(eh, tm_edges), tm_edges));
       if (collinear(a, b, c)) return true;
     }
 
     eh = opposite(eh, tm_edges);
     if(!is_border(eh,tm_edges))
     {
-      Point c = get(vpmap_tme, target(next(eh, tm_edges), tm_edges));
+      Point& c = get(vpmap_tme, target(next(eh, tm_edges), tm_edges));
       if (collinear(a, b, c)) return true;
     }
 
