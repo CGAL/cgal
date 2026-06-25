@@ -151,7 +151,7 @@ private:
  * \tparam MC either a model of the concept `MeshCriteria_3` or a model
  *            of `MeshCriteriaWithFeatures_3` if the domain has exposed features.
  *
- * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param c3t3 the mesh to be refined that is modified by the refinement process.
  *             As the refinement process only adds points to the triangulation, all
