@@ -3,7 +3,7 @@
 
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_count_ratio_stop_predicate.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Bounded_normal_change_placement.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Bounded_normal_change_filter.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/GarlandHeckbert_policies.h>
 
 #include <CGAL/Polygon_mesh_processing/measure.h>
@@ -96,18 +96,18 @@ Surface_mesh edge_collapse(Surface_mesh& mesh,
 {
   typedef typename Policy::Get_cost Cost;
   typedef typename Policy::Get_placement Placement;
-  typedef SMS::Bounded_normal_change_placement<Placement> Bounded_placement;
 
   std::cout << "Edge collapse mesh of " << num_edges(mesh) << " edges. Policy: " << typeid(Policy).name() << std::endl;
 
   const Cost& cost = p.get_cost();
   const Placement& unbounded_placement = p.get_placement();
-  Bounded_placement bounded_placement(unbounded_placement);
   SMS::Edge_count_ratio_stop_predicate<Surface_mesh> stop(ratio);
+  SMS::Bounded_normal_change_filter<> filter;
 
   std::chrono::time_point<std::chrono::steady_clock> start_time = std::chrono::steady_clock::now();
 
   SMS::edge_collapse(mesh, stop, CGAL::parameters::get_cost(cost)
+                                                  .filter(filter)
                                                   .get_placement(unbounded_placement));
 
   std::chrono::time_point<std::chrono::steady_clock> end_time = std::chrono::steady_clock::now();

@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
 
   for (std::size_t i = 0;i<convex_volumes.size();i++) {
     const Convex_hull& ch = convex_volumes[i];
-    CGAL::IO::write_polygon_soup(std::to_string(i) + ".off", ch.first, ch.second);
+    CGAL::IO::write_polygon_soup(std::to_string(i) + ".off", ch.first, ch.second, CGAL::parameters::stream_precision(17));
   }
 
   return 0;
