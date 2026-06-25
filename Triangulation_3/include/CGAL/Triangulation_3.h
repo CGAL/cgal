@@ -1458,7 +1458,6 @@ protected:
     *it.second++ = d; // = tds().descriptor(d);
 
     auto check_this_facet_must_be_in_the_cz = [&](cell_descriptor cd, int i, bool on_boundary = false) {
-      if(!this_facet_must_be_in_the_cz || !the_facet_is_in_its_cz) return;
       if((cd == tds().descriptor(this_facet_must_be_in_the_cz->first)) &&
          (i == this_facet_must_be_in_the_cz->second))
       {
@@ -1508,8 +1507,9 @@ protected:
         if(tds().tds_data(test).is_in_conflict())
         {
           // Is it the facet where're looking for?
-          check_this_facet_must_be_in_the_cz(cd, i);
-
+          if(this_facet_must_be_in_the_cz && the_facet_is_in_its_cz){
+            check_this_facet_must_be_in_the_cz(cd, i);
+          }
           if(cd < test)
           {
             *it.third++ = std::make_pair(tds().handle(cd), i);
@@ -1543,8 +1543,9 @@ protected:
             }
 
             // Is it the facet where're looking for?
-            check_this_boundary_facet_must_be_in_the_cz(cd, i);
-
+            if(this_facet_must_be_in_the_cz && the_facet_is_in_its_cz){
+              check_this_boundary_facet_must_be_in_the_cz(cd, i);
+            }
             if(cd < test)
             {
               *it.third++ = std::make_pair(tds().handle(cd), i);
@@ -1560,7 +1561,10 @@ protected:
         }
 
         // Is it the facet where're looking for?
-        check_this_boundary_facet_must_be_in_the_cz(cd, i);
+
+        if(this_facet_must_be_in_the_cz && the_facet_is_in_its_cz){
+          check_this_boundary_facet_must_be_in_the_cz(cd, i);
+        }
 
         *it.first++ = std::make_pair(tds().handle(cd), i);
       }
@@ -1617,7 +1621,6 @@ protected:
     *it.second++ = d;
 
     auto check_this_facet_must_be_in_the_cz = [&](cell_descriptor cd, int i, bool on_boundary = false) {
-      if(!this_facet_must_be_in_the_cz || !the_facet_is_in_its_cz) return;
       if((cd == tds().descriptor(this_facet_must_be_in_the_cz->first)) &&
          (i == this_facet_must_be_in_the_cz->second))
       {
@@ -1653,8 +1656,9 @@ protected:
         if(tds().tds_data(test).is_in_conflict())
         {
           // Is it the facet where're looking for?
-          check_this_facet_must_be_in_the_cz(cd, i);
-
+          if(this_facet_must_be_in_the_cz && the_facet_is_in_its_cz){
+            check_this_facet_must_be_in_the_cz(cd, i);
+          }
           if(cd < test)
           {
             *it.third++ = std::make_pair(cd, i);
@@ -1677,8 +1681,10 @@ protected:
             }
 
             // Is it the facet where're looking for?
-            check_this_boundary_facet_must_be_in_the_cz(cd, i);
 
+            if(this_facet_must_be_in_the_cz && the_facet_is_in_its_cz){
+              check_this_boundary_facet_must_be_in_the_cz(cd, i);
+            }
             if(cd < test)
             {
               *it.third++ = std::make_pair(cd, i);
@@ -1694,7 +1700,10 @@ protected:
         }
 
         // Is it the facet where're looking for?
-        check_this_boundary_facet_must_be_in_the_cz(cd, i);
+
+        if(this_facet_must_be_in_the_cz && the_facet_is_in_its_cz){
+          check_this_boundary_facet_must_be_in_the_cz(cd, i);
+        }
 
         *it.first++ = std::make_pair(cd, i);
       }
