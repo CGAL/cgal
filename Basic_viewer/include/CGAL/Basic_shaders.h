@@ -706,18 +706,8 @@ in VS_OUT {
 out mediump vec4 fColor;
 out highp   vec4 ls_fP;
 
-// Local edge frame, in viewport pixels: v_coord.x runs 0 at p0 to v_segLen at p1
-// (along the edge), v_coord.y is the signed perpendicular distance. noperspective
-// keeps them linear in screen space, so the fragment shader can run a
-// rectangle-distance test for an anti-aliased, square-capped edge.
-noperspective out mediump vec2  v_coord;
-flat          out mediump float v_segLen;
-flat          out mediump float v_halfWidth;
-
 uniform mediump float u_PointSize;
 uniform mediump vec2  u_Viewport;
-
-const float AA = 1.0; // anti-aliasing feather in pixels
 
 // clip space -> viewport pixels
 vec2 to_pixel(vec4 clip)
@@ -733,10 +723,9 @@ vec4 to_clip(vec2 px, vec4 endpoint)
   return vec4(ndc * endpoint.w, endpoint.z, endpoint.w);
 }
 
-void emit(vec2 px, vec2 coord, vec4 endpoint, int i)
+void emit(vec2 px, vec4 endpoint, int i)
 {
   gl_Position = to_clip(px, endpoint);
-  v_coord = coord;
   fColor  = gs_in[i].color;
   ls_fP   = gs_in[i].ls_fP;
   EmitVertex();
@@ -761,25 +750,20 @@ void main(void)
 
   // Half-width in pixels. u_PointSize (carried in pointSize) is the full edge
   // width in screen pixels, so the per-side offset is half of it, averaged over
-  // the two endpoints. Clamp to a minimum so a very thin edge still keeps a
-  // solid, anti-aliased core of about one pixel, instead of fading into the
-  // background (which made thin edges look white).
+  // the two endpoints. Clamp to a minimum so a very thin edge still keeps a solid
+  // one-pixel core instead of disappearing.
   float halfWidth = max(0.5 * 0.5 * (gs_in[0].pointSize + gs_in[1].pointSize), 1.0);
-  float ext = halfWidth + AA; // perpendicular: half thickness plus the AA margin
 
-  v_segLen    = segLen;
-  v_halfWidth = halfWidth;
+  // Opaque square-capped edge: emit the exact rectangle from p0 to p1, half the
+  // width on each side. The edge is drawn solid and the framebuffer multisampling
+  // smooths the silhouette, so it stays fully opaque at any width: there is no
+  // per-pixel blending, so a thin edge cannot fade into the background.
+  vec2 dperp = perp * halfWidth;
 
-  // Square caps: grow the quad by the half width (+AA) perpendicular to the edge,
-  // and by only the AA margin along it, so the square ends are anti-aliased
-  // without being rounded.
-  vec2 dpar  = dir  * AA;
-  vec2 dperp = perp * ext;
-
-  emit(p0 - dpar - dperp, vec2(-AA,         -ext), c0, 0);
-  emit(p0 - dpar + dperp, vec2(-AA,          ext), c0, 0);
-  emit(p1 + dpar - dperp, vec2(segLen + AA, -ext), c1, 1);
-  emit(p1 + dpar + dperp, vec2(segLen + AA,  ext), c1, 1);
+  emit(p0 - dperp, c0, 0);
+  emit(p0 + dperp, c0, 0);
+  emit(p1 - dperp, c1, 1);
+  emit(p1 + dperp, c1, 1);
 }
 )DELIM";
 
@@ -788,17 +772,11 @@ const char FRAGMENT_SOURCE_LINE_WIDTH[]=R"DELIM(
 in mediump vec4 fColor;
 in highp   vec4 ls_fP;
 
-noperspective in mediump vec2  v_coord;
-flat          in mediump float v_segLen;
-flat          in mediump float v_halfWidth;
-
 out mediump vec4 out_color;
 
 uniform highp   vec4  u_ClipPlane;
 uniform highp   vec4  u_PointPlane;
 uniform mediump float u_RenderingMode;
-
-const float AA = 1.0; // anti-aliasing feather in pixels, matches the geometry shader
 
 void main(void)
 {
@@ -814,21 +792,10 @@ void main(void)
     discard;
   }
 
-  // Signed distance (pixels) to the edge rectangle [0, segLen] x [-hw, hw], with
-  // hw = v_halfWidth. Negative inside, positive outside. Square ends (no rounding),
-  // anti-aliased on all four sides.
-  float dx = max(-v_coord.x, v_coord.x - v_segLen);
-  float dy = abs(v_coord.y) - v_halfWidth;
-  vec2  dd = vec2(dx, dy);
-  float d  = min(max(dx, dy), 0.0) + length(max(dd, 0.0));
-
-  // one-pixel feather centred on the border gives the anti-aliasing
-  float alpha = 1.0 - smoothstep(-0.5, 0.5, d);
-  if (alpha <= 0.0) {
-    discard;
-  }
-
-  out_color = vec4(fColor.rgb, fColor.a * alpha);
+  // Opaque edge: output the solid edge colour. The framebuffer multisampling
+  // smooths the silhouette, so the edge stays fully solid at any width without
+  // any per-pixel blending.
+  out_color = fColor;
 }
 )DELIM";
 
