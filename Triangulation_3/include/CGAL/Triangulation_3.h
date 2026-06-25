@@ -990,7 +990,7 @@ public:
            >
   bool is_infinite(VertexDescriptor v) const
   {
-    return v == VertexDescriptor(std::size_t(0)); // AF: shall we have this convention
+    return v.idx() == 0; // AF: shall we have this convention
   }
 
 
