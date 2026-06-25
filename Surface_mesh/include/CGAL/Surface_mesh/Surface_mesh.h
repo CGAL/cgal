@@ -1361,18 +1361,33 @@ public:
     #endif
 
     // Fill Vertex to vertex map and vpm for interior vertices
-    for(std::size_t i=0; i<patch.interior_vertices.size(); ++i){
+    auto fill_vertex = [&](std::size_t i){
       vertex_descriptor v = patch.interior_vertices[i];
       vertex_descriptor new_v(vertices_idx_begin + i);
-      put(tm_to_output_vertices, v,  new_v);
-      put(vpm_out, new_v, get(vpm_tm, v) );
+
+      put(tm_to_output_vertices, v, new_v);
+      put(vpm_out, new_v, get(vpm_tm, v));
       output.set_halfedge(new_v, null_halfedge());
+    };
+#ifdef CGAL_LINKED_WITH_TBB
+    if constexpr(true){
+      if(patch.interior_vertices.size() > 10000){
+        tbb::parallel_for(std::size_t(0), patch.interior_vertices.size(), fill_vertex);
+      } else {
+        for(std::size_t i=0; i<patch.interior_vertices.size(); ++i)
+          fill_vertex(i);
+      }
+    }
+    else
+#endif
+    {
+      for(std::size_t i=0; i<patch.interior_vertices.size(); ++i)
+        fill_vertex(i);
     }
 
     // Fill Edge to edge map for interior edges
     // Also fill target of halfedges and halfedge of vertices
-    for(std::size_t i=0; i<patch.interior_edges.size(); ++i)
-    {
+    auto fill_edge = [&](std::size_t i){
       halfedge_descriptor h = patch.interior_edges[i];
       edge_descriptor new_edge(i+edges_idx_begin);
       halfedge_descriptor new_h = output.halfedge(new_edge);
@@ -1410,11 +1425,25 @@ public:
         output.set_halfedge(output.source(new_h), new_h);
         user_visitor.after_vertex_copy(tm.source(h), tm, output.target(new_h), output);
       }
+    };
+#ifdef CGAL_LINKED_WITH_TBB
+    if constexpr(true){
+      if(patch.interior_edges.size() > 10000){
+        tbb::parallel_for(std::size_t(0), patch.interior_edges.size(), fill_edge);
+      } else {
+        for(std::size_t i=0; i<patch.interior_edges.size(); ++i)
+          fill_edge(i);
+      }
+    }
+    else
+#endif
+    {
+      for(std::size_t i=0; i<patch.interior_edges.size(); ++i)
+        fill_edge(i);
     }
 
     //create faces and connect halfedges
-    for(std::size_t i=0; i<patch.faces.size(); ++i)
-    {
+    auto fill_face = [&](std::size_t i){
       face_descriptor f = patch.faces[i];
       halfedge_descriptor h_in_1 = tm.halfedge(f);
       halfedge_descriptor h_in_2 = tm.next(h_in_1);
@@ -1437,6 +1466,21 @@ public:
           output.set_next(hedges[i], hedges[(i+1)%3]);
         output.set_face(hedges[i], new_f);
       }
+    };
+#ifdef CGAL_LINKED_WITH_TBB
+    if constexpr(true){
+      if(patch.faces.size() > 10000){
+        tbb::parallel_for(std::size_t(0), patch.faces.size(), fill_face);
+      } else {
+        for(std::size_t i=0; i<patch.faces.size(); ++i)
+          fill_face(i);
+      }
+    }
+    else
+#endif
+    {
+      for(std::size_t i=0; i<patch.faces.size(); ++i)
+        fill_face(i);
     }
   }
 
