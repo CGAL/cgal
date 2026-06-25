@@ -1765,7 +1765,8 @@ private:
       : p(pt), t(tr)
     {}
 
-    bool operator()(const cell_descriptor& c) const
+    template <typename CellDescriptor>
+    bool operator()(const CellDescriptor& c) const
     {
       Locate_type loc;
       int i, j;
@@ -1783,7 +1784,8 @@ private:
       : p(pt), t(tr)
     {}
 
-    bool operator()(const cell_descriptor& c) const
+    template <typename CellDescriptor>
+    bool operator()(const CellDescriptor& c) const
     {
       Locate_type loc;
       int i, j;

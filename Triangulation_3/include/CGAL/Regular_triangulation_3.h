@@ -1167,9 +1167,10 @@ protected:
     {
     }
 
-    bool operator()(const Cell_handle c) const
+    template <typename CellDescriptor>
+    bool operator()(const CellDescriptor& c) const
     {
-      return t->in_conflict_3(p, c);
+      return t->in_conflict_3(p, t->tds().handle(c));
     }
 
     bool test_initial_cell(const Cell_handle c) const
@@ -1194,9 +1195,10 @@ protected:
     {
     }
 
-    bool operator()(const Cell_handle c) const
+    template <typename CellDescriptor>
+    bool operator()(const CellDescriptor& c) const
     {
-      return t->in_conflict_2(p, c, 3);
+      return t->in_conflict_2(p, t->tds().handle(c), 3);
     }
 
     bool test_initial_cell(const Cell_handle c) const
@@ -1222,9 +1224,10 @@ protected:
     {
     }
 
-    bool operator()(const Cell_handle c) const
+    template <typename CellDescriptor>
+    bool operator()(const CellDescriptor& c) const
     {
-      return t->in_conflict_1(p, c);
+      return t->in_conflict_1(p, t->tds().handle(c));
     }
 
     bool test_initial_cell(const Cell_handle c) const
@@ -1250,9 +1253,10 @@ protected:
     {
     }
 
-    bool operator()(const Cell_handle c) const
+    template <typename CellDescriptor>
+    bool operator()(const CellDescriptor& c) const
     {
-      return t->in_conflict_0(p, c);
+      return t->in_conflict_0(p, t->tds().handle(c));
     }
 
     bool test_initial_cell(const Cell_handle c) const
