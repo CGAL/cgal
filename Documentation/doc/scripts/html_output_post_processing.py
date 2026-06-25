@@ -316,10 +316,13 @@ removes some unneeded files, and performs minor repair on some glitches.''')
             write_out_html(d, fn)
 
     #Rewrite the code for index trees images
-
     filesjs_files=package_glob('./*/files.js')
     for fn in filesjs_files:
       re_replace_in_file(r'^.*\[ "Concepts",.*$', '', fn)
+
+    #make sure dynsections.js is present in Manual (behavior changed when updating to doxygen 1.17.0
+    if not path.exists(os.path.join('Manual','dynsections.js')):
+      os.rename(os.path.join('Triangulation_2','dynsections.js'), os.path.join('Manual','dynsections.js'))
 
     #Rewrite the path of some images
     re_replace_in_file("'src','ftv2",
