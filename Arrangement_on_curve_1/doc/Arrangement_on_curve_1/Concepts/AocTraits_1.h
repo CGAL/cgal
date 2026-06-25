@@ -6,7 +6,7 @@
 namespace CGAL {
 
 /// \ingroup PkgArrangementOnCurve1Concepts
-/// \bgconcept
+/// \cgalConcept
 class AocTraits_1 {
 public:
   /// A point guaranteed to lie on the master curve

@@ -10,6 +10,8 @@
 #ifndef CGAL_ARRANGEMENT_ON_CURVE_1_ARRANGEMENT_ON_CURVE_1_H
 #define CGAL_ARRANGEMENT_ON_CURVE_1_ARRANGEMENT_ON_CURVE_1_H
 
+#include <CGAL/license/Arrangement_on_curve_1.h>
+
 #include <variant>
 #include <memory>
 

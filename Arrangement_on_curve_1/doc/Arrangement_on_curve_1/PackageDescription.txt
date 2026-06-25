@@ -3,10 +3,23 @@
 /// \defgroup PkgArrangementOnCurve1Concepts Concepts
 /// \ingroup PkgArrangementOnCurve1Ref
 
+/// \cgalConceptNamespace
+/// The namespace containing concepts specific to 1D Arrangements.
+namespace AocTraits {}
+
+/// \defgroup PkgArrangementOnCurve1IO I/O
+/// \ingroup PkgArrangementOnCurve1Ref
+
+/// \defgroup PkgArrangementOnCurve1op_left_shift operator<<
+/// \ingroup PkgArrangementOnCurve1IO
+
+/// \defgroup PkgArrangementOnCurve1op_right_shift operator>>
+/// \ingroup PkgArrangementOnCurve1IO
+
 /*!
 \addtogroup PkgArrangementOnCurve1Ref
 \cgalPkgDescriptionBegin{1D Arrangements,PkgArrangementOnCurve1}
-\cgalPkgPicture{Arrangement_1.png}
+\cgalPkgPicture{semicircle.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Efi Fogel}
 \cgalPkgDesc{This package can be used to construct, maintain, alter, and display arrangements on a curve. Once an arrangement is constructed, the package can be used to obtain results of various queries on the arrangement, such as point location. The package also supports operations on arrangements, such as computing the overlay of two arrangements.   Arrangements and arrangement components can also be extended to store additional data.}

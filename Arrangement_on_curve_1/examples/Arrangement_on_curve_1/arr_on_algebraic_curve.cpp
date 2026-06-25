@@ -129,38 +129,28 @@ int main() {
   std::cout << "  Number of edges:    " << arr.number_of_edges()    << "\n\n";
 
   std::cout << "Sorted vertex sequence (left to right by x-coordinate):\n";
-  {
-    auto e = arr.unbounded_left_edge();
-    while (arr.has_right_vertex(e)) {
-      auto v = arr.right_vertex(e);
-      std::cout << "  " << get(v_data_map, v) << "\n";
-      e = arr.right_edge(v);
-    }
+  auto e = arr.unbounded_left_edge();
+  while (arr.has_right_vertex(e)) {
+    auto v = arr.right_vertex(e);
+    std::cout << "  " << get(v_data_map, v) << "\n";
+    e = arr.right_edge(v);
   }
 
   std::cout << "\nEdge structure (left to right):\n";
-  {
-    size_t idx = 0;
-    auto e = arr.unbounded_left_edge();
-    while (true) {
-      std::cout << "  Edge " << idx++ << ": ";
-      if (arr.has_left_vertex(e))
-        std::cout << "[" << get(v_data_map, arr.left_vertex(e)) << "]";
-      else
-        std::cout << "(curve start)";
+  size_t idx = 0;
+  e = arr.unbounded_left_edge();
+  while (true) {
+    std::cout << "  Edge " << idx++ << ": ";
+    if (arr.has_left_vertex(e)) std::cout << "[" << get(v_data_map, arr.left_vertex(e)) << "]";
+    else std::cout << "(curve start)";
+    std::cout << " -- ";
 
-      std::cout << " -- ";
+    if (arr.has_right_vertex(e)) std::cout << "[" << get(v_data_map, arr.right_vertex(e)) << "]";
+    else std::cout << "(curve end)";
+    std::cout << "\n";
 
-      if (arr.has_right_vertex(e))
-        std::cout << "[" << get(v_data_map, arr.right_vertex(e)) << "]";
-      else
-        std::cout << "(curve end)";
-
-      std::cout << "\n";
-
-      if (! arr.has_right_vertex(e)) break;
-      e = arr.right_edge(arr.right_vertex(e));
-    }
+    if (! arr.has_right_vertex(e)) break;
+    e = arr.right_edge(arr.right_vertex(e));
   }
 
   // --------------------------------------------------------------------------
