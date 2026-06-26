@@ -111,7 +111,9 @@ static double get_relative_precision_of_to_double();
 }; /* end Lazy_exact_nt */
 
 /*!
-writes `m` to ostream `out` in an interval format.
+writes the exact value `m.exact()` to ostream `out`.
+This enables round-trip save/load of `Lazy_exact_nt` values without
+loss of precision: `operator>>` reconstructs the same exact number.
 \relates Lazy_exact_nt
 */
 std::ostream& operator<<(std::ostream& out, const Lazy_exact_nt<NT>& m);
