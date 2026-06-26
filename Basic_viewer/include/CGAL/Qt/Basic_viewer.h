@@ -537,15 +537,10 @@ public:
           rendering_program_line.setUniformValue("u_PointPlane", plane_point);
           rendering_program_line.setUniformValue("u_RenderingMode", rendering_mode);
 
-          // the capsule fragment shader outputs a coverage alpha at the edge
-          // border; blend it so the anti-aliasing composites over what is drawn
-          glEnable(GL_BLEND);
-          glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
+          // The opaque edges are drawn solid; the framebuffer multisampling does
+          // the anti-aliasing, so no blending is needed here.
           vao[VAO_SEGMENTS].bind();
           glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(m_scene.number_of_elements(GS::POS_SEGMENTS)));
-
-          glDisable(GL_BLEND);
         };
 
         enum {
