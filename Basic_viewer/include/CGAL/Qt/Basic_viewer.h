@@ -464,22 +464,33 @@ public:
           glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(m_scene.number_of_elements(GS::POS_SEGMENTS)));
           rendering_program_cylinder.release();
 
-          // 2. spheres at the vertices, in the edge color and at the tube radius,
-          //    to fill the joins where the open tubes meet (the analogue of
-          //    ParaView's RenderLinesAsTubes + RenderPointsAsSpheres). This is
-          //    part of the edge rendering, so it does not depend on vertex display,
-          //    and it always uses the edge color, not the vertex color.
-          rendering_program_sphere.bind();
-          rendering_program_sphere.setUniformValue("u_DefaultColor", edge_qcolor);
-          rendering_program_sphere.setUniformValue("u_UseDefaultColor", static_cast<GLint>(1));
-          rendering_program_sphere.setUniformValue("u_Radius", join_radius);
-          rendering_program_sphere.setUniformValue("u_ClipPlane",  clipPlane);
-          rendering_program_sphere.setUniformValue("u_PointPlane", plane_point);
-          rendering_program_sphere.setUniformValue("u_RenderingMode", rendering_mode);
+          // 2. A sphere at each edge endpoint, in the edge color and at the tube
+          //    radius, to fill the joins where the open tubes meet (the analogue of
+          //    ParaView's RenderLinesAsTubes + RenderPointsAsSpheres). These are
+          //    drawn from the edges, not the scene's point set, so a sphere lands
+          //    exactly at each tube endpoint; degenerate edges are skipped and
+          //    non-edge points (such as a triangulation's infinite vertex) are
+          //    never touched, so no sphere floats where there is no tube. It is part
+          //    of the edge rendering, so it does not depend on the vertex display,
+          //    and it takes the same color as the cylinders, so the joints blend in
+          //    even when the edges are colored individually.
+          rendering_program_join_sphere.bind();
+          if (m_use_default_color)
+          {
+            color = edge_qcolor;
+            rendering_program_join_sphere.setUniformValue("u_DefaultColor", color);
+            rendering_program_join_sphere.setUniformValue("u_UseDefaultColor", static_cast<GLint>(1));
+          }
+          else
+          { rendering_program_join_sphere.setUniformValue("u_UseDefaultColor", static_cast<GLint>(0)); }
+          rendering_program_join_sphere.setUniformValue("u_Radius", join_radius);
+          rendering_program_join_sphere.setUniformValue("u_ClipPlane",  clipPlane);
+          rendering_program_join_sphere.setUniformValue("u_PointPlane", plane_point);
+          rendering_program_join_sphere.setUniformValue("u_RenderingMode", rendering_mode);
 
-          vao[VAO_POINTS].bind();
-          glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(m_scene.number_of_elements(GS::POS_POINTS)));
-          rendering_program_sphere.release();
+          vao[VAO_SEGMENTS].bind();
+          glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(m_scene.number_of_elements(GS::POS_SEGMENTS)));
+          rendering_program_join_sphere.release();
         };
 
         enum {
@@ -937,6 +948,7 @@ protected:
     rendering_program_line.removeAllShaders();
     rendering_program_clipping_plane.removeAllShaders();
     rendering_program_sphere.removeAllShaders();
+    rendering_program_join_sphere.removeAllShaders();
     rendering_program_cylinder.removeAllShaders();
     rendering_program_normal.removeAllShaders();
     rendering_program_triangle.removeAllShaders();
@@ -1087,6 +1099,36 @@ protected:
       { std::cerr << "Adding fragment shader for sphere FAILED" << std::endl; }
       if (!rendering_program_sphere.link())
       { std::cerr << "Linking Program for sphere FAILED" << std::endl; }
+    }
+
+    // Join-sphere shader: a sphere at each endpoint of every edge, used to fill
+    // the tube-edge joints. Same vertex/fragment as the sphere program, but a
+    // geometry shader that takes the edge (a line) and skips degenerate ones.
+    if (isOpenGL_3_2())
+    {
+      source_ = VERTEX_SOURCE_SHAPE;
+      QOpenGLShader *vertex_shader_join_sphere = new QOpenGLShader(QOpenGLShader::Vertex);
+      if (!vertex_shader_join_sphere->compileSourceCode(source_))
+      { std::cerr << "Compiling vertex source for join sphere FAILED" << std::endl; }
+
+      source_ = GEOMETRY_SOURCE_SPHERE_JOIN;
+      QOpenGLShader *geometry_shader_join_sphere = new QOpenGLShader(QOpenGLShader::Geometry);
+      if (!geometry_shader_join_sphere->compileSourceCode(source_))
+      { std::cerr << "Compiling geometry source for join sphere FAILED" << std::endl; }
+
+      source_ = FRAGMENT_SOURCE_P_L;
+      QOpenGLShader *fragment_shader_join_sphere = new QOpenGLShader(QOpenGLShader::Fragment);
+      if (!fragment_shader_join_sphere->compileSourceCode(source_))
+      { std::cerr << "Compiling fragment source for join sphere FAILED" << std::endl; }
+
+      if (!rendering_program_join_sphere.addShader(vertex_shader_join_sphere))
+      { std::cerr << "Adding vertex shader for join sphere FAILED" << std::endl;}
+      if (!rendering_program_join_sphere.addShader(geometry_shader_join_sphere))
+      { std::cerr << "Adding geometry shader for join sphere FAILED" << std::endl;}
+      if (!rendering_program_join_sphere.addShader(fragment_shader_join_sphere))
+      { std::cerr << "Adding fragment shader for join sphere FAILED" << std::endl; }
+      if (!rendering_program_join_sphere.link())
+      { std::cerr << "Linking Program for join sphere FAILED" << std::endl; }
     }
 
     // Cylinder shader
@@ -1437,6 +1479,12 @@ protected:
     mvpLocation = rendering_program_sphere.uniformLocation("u_Mvp");
     rendering_program_sphere.setUniformValue(mvpLocation, mvpMatrix);
     rendering_program_sphere.release();
+
+    // join spheres for the tube-edge joints
+    rendering_program_join_sphere.bind();
+    mvpLocation = rendering_program_join_sphere.uniformLocation("u_Mvp");
+    rendering_program_join_sphere.setUniformValue(mvpLocation, mvpMatrix);
+    rendering_program_join_sphere.release();
 
     if (isOpenGL_3_2())
     {
@@ -2043,6 +2091,7 @@ protected:
   QOpenGLShaderProgram rendering_program_line;
   QOpenGLShaderProgram rendering_program_clipping_plane;
   QOpenGLShaderProgram rendering_program_sphere;
+  QOpenGLShaderProgram rendering_program_join_sphere;
   QOpenGLShaderProgram rendering_program_cylinder;
   QOpenGLShaderProgram rendering_program_normal;
   QOpenGLShaderProgram rendering_program_triangle;

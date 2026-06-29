@@ -223,6 +223,75 @@ void main(void)
 }
 )DELIM";
 
+// Join spheres for the tube-edge mode. Takes each edge (a line) and emits a
+// sphere at both endpoints, so the spheres land exactly where the open cylinders
+// meet. Drawing from the edges (not the scene's point set) means a point that is
+// not a tube endpoint (e.g. a triangulation's infinite vertex) never gets a
+// sphere, and a zero-length (degenerate) edge, whose cylinder is not drawn, is
+// skipped so no sphere floats where there is no tube.
+const char GEOMETRY_SOURCE_SPHERE_JOIN[]=R"DELIM(
+#version 150
+layout(lines) in;
+layout(triangle_strip, max_vertices = 84) out; // 2 spheres * (resolution+1)*2*(resolution/2), resolution = 6
+
+#define PI 3.14159265358979323846
+
+in mediump vec4 gColor[];
+
+out mediump vec4 fColor;
+out highp   vec4 ls_fP;
+
+uniform highp   mat4 u_Mvp;
+uniform mediump float u_Radius;
+
+void drawSphere(in vec4 center, in float radius, in float resolution)
+{
+  float latResolution = resolution*0.5;
+  float stepTheta = PI/latResolution;
+  float stepPhi = 2*PI/resolution;
+  for(int i=0; i<latResolution; ++i)
+  {
+    float theta1 = stepTheta*i;
+    float theta2 = stepTheta*(i+1);
+    for(int j=0; j<=resolution; ++j)
+    {
+      float phi = stepPhi*j;
+      float x1 = center.x + radius * sin(theta1) * cos(phi);
+      float y1 = center.y + radius * sin(theta1) * sin(phi);
+      float z1 = center.z + radius * cos(theta1);
+      ls_fP = vec4(x1, y1, z1, 1.0);
+      gl_Position = u_Mvp * ls_fP;
+      EmitVertex();
+
+      float x2 = center.x + radius * sin(theta2) * cos(phi);
+      float y2 = center.y + radius * sin(theta2) * sin(phi);
+      float z2 = center.z + radius * cos(theta2);
+      ls_fP = vec4(x2, y2, z2, 1.0);
+      gl_Position = u_Mvp * ls_fP;
+      EmitVertex();
+    }
+    EndPrimitive();
+  }
+}
+
+void main(void)
+{
+  vec4 a = gl_in[0].gl_Position;
+  vec4 b = gl_in[1].gl_Position;
+
+  // Skip degenerate (zero-length) edges: there is no cylinder there, so a join
+  // sphere would float where no tube is.
+  if (length(b.xyz - a.xyz) < 1e-7)
+    return;
+
+  // Each endpoint sphere takes that endpoint's color, so it matches the cylinder.
+  fColor = gColor[0];
+  drawSphere(a, u_Radius, 6.0);
+  fColor = gColor[1];
+  drawSphere(b, u_Radius, 6.0);
+}
+)DELIM";
+
 const char GEOMETRY_SOURCE_CYLINDER[]=R"DELIM(
 #version 150
 layout(lines) in;
