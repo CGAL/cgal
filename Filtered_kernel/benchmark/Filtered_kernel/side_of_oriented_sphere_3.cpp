@@ -62,14 +62,16 @@ int main(int argc, char* argv[])
   std::cout << "We run " << M << " times: All four consecutive points combined with the next " << Q << " points as query" << std::endl;
   Timer timer;
   timer.start();
-  std::size_t inside = 0;
-  std::size_t bound = (std::min)(points.size(), std::size_t(Q));
+  std::size_t count = 0, inside = 0;
+  std::size_t bound = (std::min)(points.size()/2, std::size_t(Q));
   for(int k = 0; k < M; k++)
-    for(int i = 0; i < points.size()-6; ++i)
-      for(int j = i; j < bound ; ++j )
+    for(int i = 0; i < points.size()/2; ++i)
+      for(int j = i+4; j < i+4+bound ; ++j ){
+        ++count;
         if(side_of_oriented_sphere(points[i],points[i+1], points[i+2], points[i+3], points[j]) == CGAL::ON_NEGATIVE_SIDE) ++inside;
+      }
 
-  std ::cout << inside << std::endl;
+  std ::cout << inside << " inside of " << count << " calls" << std::endl;
 
   timer.stop();
   std::cout << "Time elapsed: " << timer.time() << " sec" << std::endl;

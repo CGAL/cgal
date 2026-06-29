@@ -108,6 +108,12 @@ public:
 double maxx = (std::max)({CGAL::abs(ptx), CGAL::abs(qtx), CGAL::abs(rtx), CGAL::abs(stx)});
 double maxy = (std::max)({CGAL::abs(pty), CGAL::abs(qty), CGAL::abs(rty), CGAL::abs(sty)});
 double maxz = (std::max)({CGAL::abs(ptz), CGAL::abs(qtz), CGAL::abs(rtz), CGAL::abs(stz)});
+
+/*
+double maxx = (std::max)({std::abs(ptx), std::abs(qtx), std::abs(rtx), std::abs(stx)});
+double maxy = (std::max)({std::abs(pty), std::abs(qty), std::abs(rty), std::abs(sty)});
+double maxz = (std::max)({std::abs(ptz), std::abs(qtz), std::abs(rtz), std::abs(stz)});
+*/
 #endif
           double eps = 1.2466136531027298e-13 * maxx * maxy * maxz;
 
