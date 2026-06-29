@@ -9,3 +9,4 @@ project(Filtered_kernel_3_Benchmarks)
 find_package(CGAL REQUIRED)
 
 create_single_source_cgal_program("side_of_oriented_sphere_3.cpp")
+target_compile_options(side_of_oriented_sphere_3 PRIVATE /arch:AVX2)

@@ -15,8 +15,28 @@
 
 #include <CGAL/Profile_counter.h>
 #include <CGAL/Filtered_kernel/internal/Static_filters/Static_filter_error.h>
+#include <immintrin.h>
 
 namespace CGAL { namespace internal { namespace Static_filters_predicates {
+
+
+  inline double hmax4(__m256d v)
+{
+    __m128d hi = _mm256_extractf128_pd(v, 1);
+    __m128d lo = _mm256_castpd256_pd128(v);
+    __m128d m  = _mm_max_pd(lo, hi);
+    __m128d s  = _mm_shuffle_pd(m, m, 1);
+    m = _mm_max_sd(m, s);
+    return _mm_cvtsd_f64(m);
+}
+
+inline __m256d abs4(__m256d v)
+{
+    const __m256d mask =
+        _mm256_castsi256_pd(_mm256_set1_epi64x(0x7fffffffffffffffLL));
+    return _mm256_and_pd(v, mask);
+}
+
 
 template < typename K_base >
 class Side_of_oriented_sphere_3
@@ -48,28 +68,68 @@ public:
       {
           CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
 
+#ifdef CGAL_VECTORIZE
+          double X[4] = {px-tx, qx - tx, rx - tx, sx - tx};
+          double Y[4] = {py-ty, qy - ty, ry - ty, sy - ty};
+          double Z[4] = {pz-tz, qz - tz, rz - tz, sz - tz};
+
+          double pt2 = CGAL_NTS square(X[0]) + CGAL_NTS square(Y[0])
+                     + CGAL_NTS square(Z[0]);
+          double qt2 = CGAL_NTS square(X[1]) + CGAL_NTS square(Y[1])
+                     + CGAL_NTS square(Z[1]);
+          double rt2 = CGAL_NTS square(X[2]) + CGAL_NTS square(Y[2])
+                     + CGAL_NTS square(Z[2]);
+          double st2 = CGAL_NTS square(X[3]) + CGAL_NTS square(Y[3])
+                     + CGAL_NTS square(Z[3]);
+
+#else
           double ptx = px - tx;
           double pty = py - ty;
           double ptz = pz - tz;
-          double pt2 = CGAL_NTS square(ptx) + CGAL_NTS square(pty)
-                     + CGAL_NTS square(ptz);
+
           double qtx = qx - tx;
           double qty = qy - ty;
           double qtz = qz - tz;
-          double qt2 = CGAL_NTS square(qtx) + CGAL_NTS square(qty)
-                     + CGAL_NTS square(qtz);
+
           double rtx = rx - tx;
           double rty = ry - ty;
           double rtz = rz - tz;
-         double rt2 = CGAL_NTS square(rtx) + CGAL_NTS square(rty)
-                     + CGAL_NTS square(rtz);
+
           double stx = sx - tx;
           double sty = sy - ty;
           double stz = sz - tz;
+
+
+          double pt2 = CGAL_NTS square(ptx) + CGAL_NTS square(pty)
+                     + CGAL_NTS square(ptz);
+
+          double qt2 = CGAL_NTS square(qtx) + CGAL_NTS square(qty)
+                     + CGAL_NTS square(qtz);
+          double rt2 = CGAL_NTS square(rtx) + CGAL_NTS square(rty)
+                     + CGAL_NTS square(rtz);
           double st2 = CGAL_NTS square(stx) + CGAL_NTS square(sty)
                      + CGAL_NTS square(stz);
-#if 1
+#endif
           // Compute the semi-static bound.
+
+#if CGAL_STD_ABS
+double maxx = (std::max)({std::abs(ptx), std::abs(qtx), std::abs(rtx), std::abs(stx)});
+double maxy = (std::max)({std::abs(pty), std::abs(qty), std::abs(rty), std::abs(sty)});
+double maxz = (std::max)({std::abs(ptz), std::abs(qtz), std::abs(rtz), std::abs(stz)});
+#elif CGAL_STD_FABS
+double maxx = (std::max)({std::fabs(ptx), std::fabs(qtx), std::fabs(rtx), std::fabs(stx)});
+double maxy = (std::max)({std::fabs(pty), std::fabs(qty), std::fabs(rty), std::fabs(sty)});
+double maxz = (std::max)({std::fabs(ptz), std::fabs(qtz), std::fabs(rtz), std::fabs(stz)});
+
+#elif CGAL_VECTORIZE
+double maxx = hmax4(abs4(_mm256_loadu_pd(X)));
+double maxy = hmax4(abs4(_mm256_loadu_pd(Y)));
+double maxz = hmax4(abs4(_mm256_loadu_pd(Z)));
+#elif CGAL_CGAL_ABS
+double maxx = (std::max)({CGAL::abs(ptx), CGAL::abs(qtx), CGAL::abs(rtx), CGAL::abs(stx)});
+double maxy = (std::max)({CGAL::abs(pty), CGAL::abs(qty), CGAL::abs(rty), CGAL::abs(sty)});
+double maxz = (std::max)({CGAL::abs(ptz), CGAL::abs(qtz), CGAL::abs(rtz), CGAL::abs(stz)});
+#else
           double maxx = CGAL::abs(ptx);
           double maxy = CGAL::abs(pty);
           double maxz = CGAL::abs(ptz);
@@ -86,12 +146,7 @@ public:
           double artz = CGAL::abs(rtz);
           double astz = CGAL::abs(stz);
 
-#ifdef CGAL_USE_SSE2_MAX
-          CGAL::Max<double> mmax;
-          maxx = mmax(maxx, aqtx, artx, astx);
-          maxy = mmax(maxy, aqty, arty, asty);
-          maxz = mmax(maxz, aqtz, artz, astz);
-#else
+
           if (maxx < aqtx) maxx = aqtx;
           if (maxx < artx) maxx = artx;
           if (maxx < astx) maxx = astx;
@@ -103,17 +158,6 @@ public:
           if (maxz < aqtz) maxz = aqtz;
           if (maxz < artz) maxz = artz;
           if (maxz < astz) maxz = astz;
-#endif
-#else
-double maxx = (std::max)({CGAL::abs(ptx), CGAL::abs(qtx), CGAL::abs(rtx), CGAL::abs(stx)});
-double maxy = (std::max)({CGAL::abs(pty), CGAL::abs(qty), CGAL::abs(rty), CGAL::abs(sty)});
-double maxz = (std::max)({CGAL::abs(ptz), CGAL::abs(qtz), CGAL::abs(rtz), CGAL::abs(stz)});
-
-/*
-double maxx = (std::max)({std::abs(ptx), std::abs(qtx), std::abs(rtx), std::abs(stx)});
-double maxy = (std::max)({std::abs(pty), std::abs(qty), std::abs(rty), std::abs(sty)});
-double maxz = (std::max)({std::abs(ptz), std::abs(qtz), std::abs(rtz), std::abs(stz)});
-*/
 #endif
           double eps = 1.2466136531027298e-13 * maxx * maxy * maxz;
 
@@ -136,11 +180,17 @@ double maxz = (std::max)({std::abs(ptz), std::abs(qtz), std::abs(rtz), std::abs(
           else if (maxy < maxx)
               std::swap(maxx, maxy);
 #endif
+#ifdef CGAL_VECTORIZE
+          double det = CGAL::determinant(X[0],Y[0],Z[0],pt2,
+                                         X[2],Y[2],Z[2],rt2,
+                                         X[1],Y[1],Z[1],qt2,
+                                         X[3],Y[3],Z[3],st2);
+#else
           double det = CGAL::determinant(ptx,pty,ptz,pt2,
                                          rtx,rty,rtz,rt2,
                                          qtx,qty,qtz,qt2,
                                          stx,sty,stz,st2);
-
+#endif
           // Protect against underflow in the computation of eps.
           if (maxx < 1e-58) /* sqrt^5(min_double/eps) */ {
             if (maxx == 0)

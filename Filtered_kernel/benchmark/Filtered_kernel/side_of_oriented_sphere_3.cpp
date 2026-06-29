@@ -1,8 +1,12 @@
-// #define CGAL_SMALL_UNORDERED_MAP_STATS
 // #define CGAL_PROFILE
-//#define CGAL_USE_SSE2_FABS
-//#define CGAL_USE_SSE2_MAX
-//#define CGAL_MSVC_USE_STD_FABS  // use this one with precise
+
+// Nothing defined corresponds to main
+// The next two for the three-liner with max(abs*)
+// #define CGAL_STD_FABS  1
+// #define CGAL_STD_ABS  1
+// The max(abs*) using AVX
+// #define CGAL_VECTORIZE 1
+
 #define CGAL_NDEBUG 1
 #define NDEBUG 1
 
