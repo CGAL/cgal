@@ -68,7 +68,7 @@ public:
           double stz = sz - tz;
           double st2 = CGAL_NTS square(stx) + CGAL_NTS square(sty)
                      + CGAL_NTS square(stz);
-
+#if 1
           // Compute the semi-static bound.
           double maxx = CGAL::abs(ptx);
           double maxy = CGAL::abs(pty);
@@ -104,7 +104,11 @@ public:
           if (maxz < artz) maxz = artz;
           if (maxz < astz) maxz = astz;
 #endif
-
+#else
+double maxx = (std::max)({CGAL::abs(ptx), CGAL::abs(qtx), CGAL::abs(rtx), CGAL::abs(stx)});
+double maxy = (std::max)({CGAL::abs(pty), CGAL::abs(qty), CGAL::abs(rty), CGAL::abs(sty)});
+double maxz = (std::max)({CGAL::abs(ptz), CGAL::abs(qtz), CGAL::abs(rtz), CGAL::abs(stz)});
+#endif
           double eps = 1.2466136531027298e-13 * maxx * maxy * maxz;
 
 #ifdef CGAL_USE_SSE2_MAX
