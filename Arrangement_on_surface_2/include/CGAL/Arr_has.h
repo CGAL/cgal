@@ -204,7 +204,7 @@ struct has_construct_x_monotone_curve_2 : std::false_type {};
 
 // Partial specialization selected if `T::Construct_x_monotone_curve_2` is defined.
 template <typename T>
-struct has_construct_x_monotone_curve_2<T, std::void_t<typename T::Construct_x_monotone_2>> : std::true_type {};
+struct has_construct_x_monotone_curve_2<T, std::void_t<typename T::Construct_x_monotone_curve_2>> : std::true_type {};
 
 // `Construct_curve_2`
 // Fallback selected if `Construct_curve_2` is not defined in the traits `T` below.
