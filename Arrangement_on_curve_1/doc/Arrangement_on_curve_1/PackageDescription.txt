@@ -29,7 +29,6 @@ namespace AocTraits {}
 \cgalPkgSince{6.2}
 \cgalPkgBib{cgal:f-a1}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{1D Arrangements,arrangements_1.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
