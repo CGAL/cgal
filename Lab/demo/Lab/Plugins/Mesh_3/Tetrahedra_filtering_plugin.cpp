@@ -162,7 +162,7 @@ public Q_SLOTS:
       QString message = tr("The filtering is only available for items with less than %1 subdomains, and this one has %2")
                             .arg(max_number_of_item)
                             .arg(c3t3_item->subdomain_indices().size());
-      QMessageBox::warning(nullptr, "Warning", message);
+      QMessageBox::warning(CGAL::Three::Three::mainWindow(), "Warning", message);
       return;
     }
     int counter = 0;

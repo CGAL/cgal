@@ -19,66 +19,45 @@ on:
 
   issue_comment:
     types: [created]
-  # push:
-  #   branches:
-  #     - main
+  push:
+    branches:
+      - main
 
 env:
   author_association: ${{ github.event.comment.author_association }}
   comment_body: ${{ github.event.comment.body }}
+  is_a_push: ${{ github.event_name == 'push' }}
+  is_a_pr: ${{ github.event_name != 'push' }}
+  branch_name: ${{ github.event_name == 'push' && github.ref_name || format('refs/pull/{0}/head', inputs.pr_number || github.event.issue.number) }}
+  pr_number: ${{ inputs.pr_number || github.event.issue.number || github.ref_name }}
+  trigger_build: ${{ inputs && inputs.pr_number || startsWith(github.event.comment.body, '/build:') || startsWith(github.event.comment.body, '/force-build:')  || github.event_name == 'push' }}
+  force_build: ${{ inputs && inputs.force_build || startsWith(github.event.comment.body, '/force-build:') || github.event_name == 'push' }}
+  permission: ${{ inputs.pr_number || github.event.comment.author_association == 'OWNER' || github.event.comment.author_association == 'MEMBER' || github.event_name == 'push' }}
 
 permissions:
   contents: read # to fetch code (actions/checkout)
 
 jobs:
   pre_build_checks:
-    if: ${{ inputs.pr_number || startsWith(github.event.comment.body, '/build:') || startsWith(github.event.comment.body, '/force-build:') || github.event_name == 'push' }}
     runs-on: ubuntu-latest
+    if: ${{ inputs.pr_number || startsWith(github.event.comment.body, '/build:') || startsWith(github.event.comment.body, '/force-build:') || github.event_name == 'push' }}
     name: Trigger the build?
     outputs:
       trigger_build: ${{ steps.get_doc_version.outputs.result && steps.get_doc_version.outputs.result != '' }}
-      force_build: ${{ steps.check_comment_body.outputs.force_build }}
-      pr_number: ${{ steps.get_pr_number.outputs.pr_number }}
       doc_version: ${{ steps.get_doc_version.outputs.result }}
     steps:
-      - name: Display inputs
-        run: |
-          echo "pr_number=${{ inputs.pr_number || github.event.issue.number }}"
-          echo "doc_version=${{ inputs.doc_version }}"
-          echo "force_build=${{ inputs.force_build || startsWith(env.comment_body, '/force-build:') }}"
-      - name: Check comment body
-        id: check_comment_body
-        env:
-          trigger_build: ${{ inputs && inputs.pr_number || startsWith(env.comment_body, '/build:') || startsWith(env.comment_body, '/force-build:')  || github.event_name == 'push'}}
-          force_build: ${{ inputs && inputs.force_build || startsWith(env.comment_body, '/force-build:') || github.event_name == 'push' }}
-        if: inputs.pr_number || startsWith(env.comment_body, '/build:') || startsWith(env.comment_body, '/force-build:') || github.event_name == 'push'
-        run: |
-          if [ "${trigger_build}" = "false" ]; then
-            echo "No build requested"
-            exit 1
-          fi
-          echo "force_build=${force_build}" >> $GITHUB_OUTPUT
-          echo "trigger_build=${trigger_build}" >> $GITHUB_OUTPUT
-
       - name: Check permissions
-        if: ( steps.check_comment_body.outputs.trigger_build || false ) && (inputs.pr_number || github.event_name == 'push' || env.author_association == 'OWNER' || env.author_association == 'MEMBER')
+        if: fromJSON(env.permission || false)
         run: echo "Authorized"
 
       - name: No permissions
-        if: ( steps.check_comment_body.outputs.trigger_build || false ) && (! inputs.pr_number && github.event_name != 'push' && env.author_association != 'OWNER' && env.author_association != 'MEMBER' )
+        if: ${{ ! fromJSON(env.permission || false) }}
         run: |
           echo 'ERROR: User ${{ github.actor }} is not allowed to trigger the build of the documentation with /build:* or /force-build:*'
           exit 1
 
-      - name: Get PR number
-        if: ( steps.check_comment_body.outputs.trigger_build || false )
-        id: get_pr_number
-        env:
-          pr_number: ${{ inputs.pr_number || github.event.issue.number || github.ref_name }}
-        run: echo "pr_number=$pr_number" >> $GITHUB_OUTPUT
-
       - name: Get doc version
-        if: ( steps.check_comment_body.outputs.trigger_build || false )
+        if: fromJSON(env.trigger_build || false)
         uses: actions/github-script@v7
         id: get_doc_version
         with:
@@ -99,25 +78,16 @@ jobs:
             throw new Error('No version found')
 
   build_doc:
-    name: |
-      ${{ format('{0}: Build Documentation version "{1}"', github.actor, needs.pre_build_checks.outputs.doc_version) }}
+    name: Build Documentation
     needs: pre_build_checks
     permissions:
       contents: read # to fetch code (actions/checkout)
       pull-requests: write # to create comment
     runs-on: ubuntu-latest
     env:
-      force_build: ${{ needs.pre_build_checks.outputs.force_build }}
-      pr_number: ${{ needs.pre_build_checks.outputs.pr_number }}
       doc_version: ${{ needs.pre_build_checks.outputs.doc_version }}
     if: ${{ fromJSON(needs.pre_build_checks.outputs.trigger_build || false) }}
     steps:
-
-      - name: Display environment variables
-        run: |
-          echo "pr_number=${{ env.pr_number }}"
-          echo "doc_version=${{ env.doc_version }}"
-          echo "force_build=${{ env.force_build }}"
 
       - name: Emoji-comment
         if: github.event_name == 'issue_comment'
@@ -136,88 +106,121 @@ jobs:
         name: "checkout branch"
         with:
           repository: ${{ github.repository }}
-          ref: refs/pull/${{ env.pr_number }}/head
+          ref: ${{ env.branch_name }}
           fetch-depth: 0
 
       - name: Install dependencies
         run: |
           set -x
+          export DEBIAN_FRONTEND=noninteractive
+          sudo apt-get update && sudo apt-get install -y cmake graphviz ssh bibtex2html python3-pyquery python3-lxml gh
 
-          # Install Github CLI `gh`
-          (type -p wget >/dev/null || (sudo apt update && sudo apt-get install wget -y))
-          sudo mkdir -p -m 755 /etc/apt/keyrings
-          wget -qO- https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null
-          sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg
-          echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
-
-          sudo apt-get update && sudo apt-get install -y gh cmake graphviz ssh bibtex2html
-          sudo pip install lxml
-          sudo pip install pyquery
-          wget --no-verbose -O doxygen_exe https://cgal.geometryfactory.com/~cgaltest/doxygen_1_9_6_patched/doxygen
+      - name: Install Doxygen
+        run: |
+          set -ex
+          wget --no-verbose -O doxygen_exe https://cgal.geometryfactory.com/~cgaltest/doxygen_1_17_0_patched/doxygen
           sudo mv doxygen_exe /usr/bin/doxygen
           sudo chmod +x /usr/bin/doxygen
+
+      - name: Configure git
+        env:
+          PUSH_TOKEN: ${{ secrets.PUSH_TO_CGAL_GITHUB_IO_TOKEN }}
+        run: |
           git config --global user.email "cgal@geometryfactory.com"
           git config --global user.name "cgaltest"
+          # Setup git credentials securely using .netrc (prevents token in command line)
+          mkdir -p "${HOME}"
+          cat > "${HOME}/.netrc" <<EOF
+          machine github.com
+          login x-access-token
+          password ${PUSH_TOKEN}
+          EOF
+          chmod 600 "${HOME}/.netrc"
 
       - name: CMake configuration of Documentation/doc
         run: |
           set -ex
-          mkdir -p build_doc && cd build_doc && cmake ../Documentation/doc
+          cmake -B build_doc -S Documentation/doc --log-level=VERBOSE
 
       - name: Build and upload Doc
         id: build_and_run
         env:
           GH_TOKEN: ${{ github.token }}
+          PUSH_TOKEN: ${{ secrets.PUSH_TO_CGAL_GITHUB_IO_TOKEN }}
+          PR_NUMBER: ${{ env.pr_number }}
+          ROUND: ${{ env.doc_version }}
+          FORCE_BUILD: ${{ env.force_build }}
+          BRANCH_NAME: ${{ env.branch_name }}
+          IS_PUSH: ${{ env.is_a_push }}
         run: |
-          set -ex
-          PR_NUMBER=$pr_number
-          ROUND=$doc_version
-          force=$force_build
-          wget --no-verbose cgal.github.io -O index.html
-          if ! egrep -qF "/$PR_NUMBER/$ROUND" index.html || [ "$force" = "yes" ]; then
-            #list impacted packages
-            LIST_OF_PKGS=$(git diff --name-only origin/main...HEAD |cut -s -d/ -f1 |sort -u | xargs -I {} echo {} && ls -d {}/package_info 2>/dev/null  |cut -d/ -f1 |egrep -v Installation||true)
-            if [ "$LIST_OF_PKGS" = "" ]; then
-              echo "DoxygenError=No package affected." >> $GITHUB_OUTPUT
-              exit 1
-            fi
-            for p in $LIST_OF_PKGS; do
-              if [ -f $p/doc/$p/dependencies ]; then
-                LIST_OF_PKGS="$LIST_OF_PKGS $(cat $p/doc/$p/dependencies)"
-              fi
-            done
-            LIST_OF_PKGS=$(echo $LIST_OF_PKGS | tr ' ' '\n' | sort -u)
-            cd build_doc && make -j$(nproc) doc
-            make -j$(nproc) doc_with_postprocessing 2>build.log
-            if [ -s build.log ]; then
-              delimiter="$(openssl rand -hex 8)"
-              echo "DoxygenError<<${delimiter}" >> "${GITHUB_OUTPUT}"
-              cat build.log >> "${GITHUB_OUTPUT}"
-              echo "${delimiter}" >> "${GITHUB_OUTPUT}"
-              exit 1
-            fi
-            cd ..
-            git clone https://CGAL:${{ secrets.PUSH_TO_CGAL_GITHUB_IO_TOKEN }}@github.com/CGAL/cgal.github.io.git
-            mkdir -p cgal.github.io/${PR_NUMBER}/$ROUND
-            rm cgal.github.io/${PR_NUMBER}/$ROUND/* -rf
-            for f in $LIST_OF_PKGS Manual
-            do
-              if [ -d ./build_doc/doc_output/$f ]; then
-                cp -r ./build_doc/doc_output/$f ./cgal.github.io/${PR_NUMBER}/$ROUND
-              fi
-            done
-            cd ./cgal.github.io
-            echo "<li><a href=https://cgal.github.io/${PR_NUMBER}/$ROUND/Manual/index.html>Manual for PR ${PR_NUMBER} ($ROUND).</a></li>" >> ./index.html
-            ./cleanup.bash
-            git add ${PR_NUMBER}/$ROUND index.html && git commit -q --amend -m "sole commit" && git push -q -f -u origin master
-          else
-            echo "DoxygenError=This round already exists. Overwrite it with /force-build." >> $GITHUB_OUTPUT
+          set -euxo pipefail
+
+          wget --no-verbose https://cgal.github.io -O index.html
+          if grep -qF "/${PR_NUMBER}/${ROUND}" index.html && [ "${FORCE_BUILD}" != "true" ]; then
+            echo "DoxygenError=This round already exists. Overwrite it with /force-build." >> "${GITHUB_OUTPUT}"
+            exit 1
+          fi
+          # List impacted packages
+          LIST_OF_PKGS=$(git diff --name-only origin/main...HEAD | cut -s -d/ -f1 | sort -u | while read pkg; do echo "${pkg}"; done && ls -d */package_info 2>/dev/null | cut -d/ -f1 | grep -v Installation || true)
+
+          if [ "${IS_PUSH}" != "true" ] && [ -z "${LIST_OF_PKGS}" ]; then
+            echo "DoxygenError=No package affected." >> "${GITHUB_OUTPUT}"
             exit 1
           fi
 
+          # Collect dependencies
+          for p in ${LIST_OF_PKGS}; do
+            if [ -f "${p}/doc/${p}/dependencies" ]; then
+              LIST_OF_PKGS="${LIST_OF_PKGS} $(cat "${p}/doc/${p}/dependencies")"
+            fi
+          done
+          LIST_OF_PKGS=$(echo "${LIST_OF_PKGS}" | tr ' ' '\n' | sort -u)
+
+          # Build documentation
+          cd build_doc
+          make -j"$(nproc)" doc
+          make -j"$(nproc)" doc_with_postprocessing 2>build.log || true
+          cat build.log
+
+          if [ -s build.log ]; then
+            delimiter="$(openssl rand -hex 8)"
+            echo "DoxygenError<<${delimiter}" >> "${GITHUB_OUTPUT}"
+            cat build.log >> "${GITHUB_OUTPUT}"
+            echo "${delimiter}" >> "${GITHUB_OUTPUT}"
+            exit 1
+          fi
+
+          # Upload documentation
+          cd ..
+          git clone https://github.com/CGAL/cgal.github.io.git
+          mkdir -p "cgal.github.io/${PR_NUMBER}/${ROUND}"
+          rm -rf "cgal.github.io/${PR_NUMBER}/${ROUND}"/*
+
+          if [ "${IS_PUSH}" = "true" ]; then
+            cp -r ./build_doc/doc_output/* "./cgal.github.io/${PR_NUMBER}/${ROUND}"
+          else
+            for f in ${LIST_OF_PKGS} Manual; do
+              if [ -d "./build_doc/doc_output/${f}" ]; then
+                cp -r "./build_doc/doc_output/${f}" "./cgal.github.io/${PR_NUMBER}/${ROUND}"
+              fi
+            done
+            echo "<li><a href=https://cgal.github.io/${PR_NUMBER}/${ROUND}/Manual/index.html>Manual for PR ${PR_NUMBER} (${ROUND}).</a></li>" >> ./cgal.github.io/index.html
+          fi
+
+          cd ./cgal.github.io
+          ./cleanup.bash
+          if [ -n "${PUSH_TOKEN}" ]; then
+            git add "${PR_NUMBER}/${ROUND}" index.html
+            git commit -q --reset-author --amend -m "sole commit"
+            git push -q -f -u origin master
+          fi
+
+          # Clean up credentials
+          rm -f "${HOME}/.netrc"
+
       - name: Post address
         uses: actions/github-script@v7
-        if: ${{ success() }}
+        if: ${{ success() && github.event_name != 'push' }}
         with:
           script: |
             const round = "${{ env.doc_version }}"
@@ -233,7 +236,7 @@ jobs:
         env:
           ERRORMSG: ${{steps.build_and_run.outputs.DoxygenError}}
         uses: actions/github-script@v7
-        if: ${{ failure() }}
+        if: ${{ failure() && github.event_name != 'push' }}
         with:
           script: |
             const error = process.env.ERRORMSG

@@ -1,6 +1,3 @@
-namespace CGAL {
-namespace Barycentric_coordinates {
-
 /*!
 \ingroup PkgBarycentricCoordinates3RefConcepts
 \cgalConcept
@@ -438,6 +435,3 @@ Orientation_2 orientation_2_object();
 /// @}
 
 };
-
-} // namespace Barycentric_coordinates
-} // namespace CGAL

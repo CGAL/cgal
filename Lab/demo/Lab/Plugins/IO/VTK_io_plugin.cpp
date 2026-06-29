@@ -225,7 +225,7 @@ public:
       {
         if(!CGAL::is_triangle_mesh(*poly_item->polyhedron()))
         {
-          QMessageBox::warning(0, "Error",
+          QMessageBox::warning(CGAL::Three::Three::mainWindow(), "Error",
                                "Cannot save a mesh in vtu format if "
                                "it is not pure triangle.");
           return false;
