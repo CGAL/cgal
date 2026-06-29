@@ -1817,7 +1817,10 @@ protected:
         displayMessage(QString("Size of edges=%1.").arg(m_size_edges));
         update();
       }
-      else if ((e->key()==::Qt::Key_Minus) && (!modifiers.testFlag(::Qt::ControlModifier))) // No ctrl
+      // Key_Underscore so Shift and '-' also decreases (Shift and '-' is '_' on
+      // most layouts), symmetric with Shift and '+' increasing.
+      else if (((e->key()==::Qt::Key_Minus) || (e->key()==::Qt::Key_Underscore)) &&
+               (!modifiers.testFlag(::Qt::ControlModifier))) // No ctrl
       {
         if (m_size_edges>.5) m_size_edges-=.5;
         displayMessage(QString("Size of edges=%1.").arg(m_size_edges));
@@ -1829,7 +1832,8 @@ protected:
         displayMessage(QString("Size of points=%1.").arg(m_size_vertices));
         update();
       }
-      else if ((e->key()==::Qt::Key_Minus) && (modifiers.testFlag(::Qt::ControlModifier)))
+      else if (((e->key()==::Qt::Key_Minus) || (e->key()==::Qt::Key_Underscore)) &&
+               (modifiers.testFlag(::Qt::ControlModifier)))
       {
         if (m_size_vertices>.5) m_size_vertices-=.5;
         displayMessage(QString("Size of points=%1.").arg(m_size_vertices));
