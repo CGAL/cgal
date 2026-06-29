@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
     for(int i = 0; i < points.size()/2; ++i)
       for(int j = i+4; j < i+4+bound ; ++j ){
         ++count;
-        if(side_of_oriented_sphere(points[i],points[i+1], points[i+2], points[i+3], points[j]) == CGAL::ON_NEGATIVE_SIDE) ++inside;
+        if(side_of_oriented_sphere(points[i+(j%4)],points[i+(1+j%4)], points[i+(2+j%4)], points[i+(3+j%4)], points[j]) == CGAL::ON_NEGATIVE_SIDE) ++inside;
       }
 
   std ::cout << inside << " inside of " << count << " calls" << std::endl;
