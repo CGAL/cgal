@@ -461,14 +461,18 @@ public:
 
         rendering_program_cylinder.release();
       }
-      else
+      else if (isOpenGL_3_2())
       {
         auto renderer = [this, &color, &clipPlane, &plane_point](float rendering_mode) {
 
-          QVector2D viewport = {
-            CGAL_BASIC_VIEWER_INIT_SIZE_X,
-            CGAL_BASIC_VIEWER_INIT_SIZE_Y
-          };
+          // Use the actual current viewport dimensions so that the line-width
+          // geometry shader converts between NDC and screen-pixels correctly
+          // even after the window has been resized. Multiply by the device
+          // pixel ratio so HiDPI / Retina displays report the physical pixel
+          // count rather than the logical pixel count.
+          const float pixel_ratio = static_cast<float>(this->devicePixelRatio());
+          QVector2D viewport(static_cast<float>(this->width())  * pixel_ratio,
+                             static_cast<float>(this->height()) * pixel_ratio);
 
           rendering_program_line.bind();
 
@@ -513,6 +517,52 @@ public:
         }
 
         rendering_program_line.release();
+      }
+      else
+      {
+        auto renderer = [this, &color, &clipPlane, &plane_point](float rendering_mode) {
+          rendering_program_p_l.bind();
+
+          if (m_use_default_color)
+          {
+            auto edge_color = m_scene.get_default_color_segment();
+            color = QVector3D((double)edge_color.red()/(double)255,
+                              (double)edge_color.green()/(double)255,
+                              (double)edge_color.blue()/(double)255);
+            rendering_program_p_l.setUniformValue("u_DefaultColor", color);
+            rendering_program_p_l.setUniformValue("u_UseDefaultColor", static_cast<GLint>(1));
+          }
+          else
+          {
+            rendering_program_p_l.setUniformValue("u_UseDefaultColor", static_cast<GLint>(0));
+          }
+          rendering_program_p_l.setUniformValue("u_PointSize", GLfloat(m_size_edges));
+          rendering_program_p_l.setUniformValue("u_IsOrthographic", GLint(is_two_dimensional()));
+
+          rendering_program_p_l.setUniformValue("u_ClipPlane", clipPlane);
+          rendering_program_p_l.setUniformValue("u_PointPlane", plane_point);
+          rendering_program_p_l.setUniformValue("u_RenderingMode", rendering_mode);
+
+          vao[VAO_SEGMENTS].bind();
+          glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(m_scene.number_of_elements(GS::POS_SEGMENTS)));
+        };
+
+        enum {
+          DRAW_ALL = -1,
+          DRAW_INSIDE_ONLY,
+          DRAW_OUTSIDE_ONLY
+        };
+
+        if (m_use_clipping_plane == CLIPPING_PLANE_SOLID_HALF_ONLY)
+        {
+          renderer(DRAW_INSIDE_ONLY);
+        }
+        else
+        {
+          renderer(DRAW_ALL);
+        }
+
+        rendering_program_p_l.release();
       }
     }
 
@@ -657,7 +707,7 @@ public:
       };
 
       auto renderer_clipping_plane = [this](bool clipping_plane_rendering) {
-        if (!isOpenGL_4_3()) return;
+        if (!isOpenGL_3_2()) return;
         if (!clipping_plane_rendering) return;
         // render clipping plane here
         rendering_program_clipping_plane.bind();
@@ -836,6 +886,13 @@ public:
 protected:
   void compile_shaders()
   {
+    static bool s_compat_warning_shown = false;
+    if (!isOpenGL_3_2() && !s_compat_warning_shown)
+    {
+      std::cerr<<"CGAL Basic_viewer: OpenGL < 3.2 detected, using compatibility shaders"<<std::endl;
+      s_compat_warning_shown = true;
+    }
+
     rendering_program_face.removeAllShaders();
     rendering_program_p_l.removeAllShaders();
     rendering_program_line.removeAllShaders();
@@ -860,11 +917,11 @@ protected:
 
     // Vertices and segments shader
 
-    // const char* source_ = isOpenGL_4_3()
+    // const char* source_ = isOpenGL_3_2()
     //     ? VERTEX_SOURCE_P_L
     //     : VERTEX_SOURCE_P_L_COMP;
 
-    const char* source_ = isOpenGL_4_3()
+    const char* source_ = isOpenGL_3_2()
                           ? VERTEX_SOURCE_P_L
                           : VERTEX_SOURCE_P_L_COMP;
 
@@ -872,7 +929,7 @@ protected:
     if(!vertex_shader_p_l->compileSourceCode(source_))
     { std::cerr<<"Compiling vertex source FAILED"<<std::endl; }
 
-    source_ = isOpenGL_4_3()
+    source_ = isOpenGL_3_2()
         ? FRAGMENT_SOURCE_P_L
         : FRAGMENT_SOURCE_P_L_COMP;
 
@@ -884,12 +941,14 @@ protected:
     { std::cerr<<"adding vertex shader FAILED"<<std::endl; }
     if(!rendering_program_p_l.addShader(fragment_shader_p_l))
     { std::cerr<<"adding fragment shader FAILED"<<std::endl; }
+    rendering_program_p_l.bindAttributeLocation("a_Pos", 0);
+    rendering_program_p_l.bindAttributeLocation("a_Color", 1);
     if(!rendering_program_p_l.link())
     { std::cerr<<"linking Program FAILED"<<std::endl; }
 
     // Faces shader
 
-    source_ = isOpenGL_4_3()
+    source_ = isOpenGL_3_2()
             ? VERTEX_SOURCE_COLOR
             : VERTEX_SOURCE_COLOR_COMP;
 
@@ -897,7 +956,7 @@ protected:
     if(!vertex_shader_face->compileSourceCode(source_))
     { std::cerr<<"Compiling vertex source FAILED"<<std::endl; }
 
-    source_ = isOpenGL_4_3()
+    source_ = isOpenGL_3_2()
             ? FRAGMENT_SOURCE_COLOR
             : FRAGMENT_SOURCE_COLOR_COMP;
 
@@ -912,7 +971,7 @@ protected:
     if(!rendering_program_face.link())
     { std::cerr<<"linking Program FAILED"<<std::endl; }
 
-    if (isOpenGL_4_3())
+    if (isOpenGL_3_2())
     {
       // clipping plane shader
       source_ = VERTEX_SOURCE_CLIPPING_PLANE;
@@ -936,7 +995,7 @@ protected:
 
     }
 
-    // source_ = isOpenGL_4_3()
+    // source_ = isOpenGL_3_2()
     //         ? VERTEX_SOURCE_CLIPPING_PLANE
     //         : vertex_source_clipping_plane_comp;
 
@@ -944,7 +1003,7 @@ protected:
     // if (!vertex_shader_clipping_plane->compileSourceCode(source_))
     // { std::cerr << "Compiling vertex source for clipping plane FAILED" << std::endl; }
 
-    // source_ = isOpenGL_4_3()
+    // source_ = isOpenGL_3_2()
     //         ? FRAGMENT_SOURCE_CLIPPING_PLANE
     //         : fragment_source_clipping_plane_comp;
 
@@ -960,7 +1019,7 @@ protected:
     // { std::cerr << "Linking Program for clipping plane FAILED" << std::endl; }
 
     // Sphere shader
-    if (isOpenGL_4_3())
+    if (isOpenGL_3_2())
     {
       source_ = VERTEX_SOURCE_SHAPE;
 
@@ -992,7 +1051,7 @@ protected:
     }
 
     // Cylinder shader
-    if (isOpenGL_4_3())
+    if (isOpenGL_3_2())
     {
       source_ = VERTEX_SOURCE_SHAPE;
 
@@ -1019,12 +1078,14 @@ protected:
       { std::cerr << "Adding geometry shader for cylinder FAILED" << std::endl;}
       if (!rendering_program_cylinder.addShader(fragment_shader_cylinder))
       { std::cerr << "Adding fragment shader for cylinder FAILED" << std::endl; }
+      rendering_program_cylinder.bindAttributeLocation("a_Pos", 0);
+      rendering_program_cylinder.bindAttributeLocation("a_Color", 1);
       if (!rendering_program_cylinder.link())
       { std::cerr << "Linking Program for cylinder FAILED" << std::endl; }
     }
 
     // Normal shader
-    if (isOpenGL_4_3())
+    if (isOpenGL_3_2())
     {
       source_ = VERTEX_SOURCE_NORMAL;
 
@@ -1056,7 +1117,7 @@ protected:
     }
 
     // Triangle shader
-    if (isOpenGL_4_3())
+    if (isOpenGL_3_2())
     {
       source_ = VERTEX_SOURCE_TRIANGLE;
 
@@ -1088,7 +1149,7 @@ protected:
     }
 
     // Line shader
-    if (isOpenGL_4_3())
+    if (isOpenGL_3_2())
     {
       source_ = VERTEX_SOURCE_LINE_WIDTH;
 
@@ -1115,6 +1176,8 @@ protected:
       { std::cerr << "Adding geometry shader for line FAILED" << std::endl;}
       if (!rendering_program_line.addShader(fragment_shader_line))
       { std::cerr << "Adding fragment shader for line FAILED" << std::endl; }
+      rendering_program_line.bindAttributeLocation("a_Pos", 0);
+      rendering_program_line.bindAttributeLocation("a_Color", 1);
       if (!rendering_program_line.link())
       { std::cerr << "Linking Program for line FAILED" << std::endl; }
     }
@@ -1237,7 +1300,7 @@ protected:
     rendering_program_face.setAttributeBuffer("a_Color",GL_FLOAT,0,3);
 
     // 6) clipping plane shader
-    if (isOpenGL_4_3())
+    if (isOpenGL_3_2())
     {
       generate_clipping_plane();
 
@@ -1336,7 +1399,7 @@ protected:
     rendering_program_sphere.setUniformValue(mvpLocation, mvpMatrix);
     rendering_program_sphere.release();
 
-    if (isOpenGL_4_3())
+    if (isOpenGL_3_2())
     {
       QMatrix4x4 clipping_mMatrix;
       clipping_mMatrix.setToIdentity();
@@ -1351,7 +1414,7 @@ protected:
       rendering_program_clipping_plane.release();
     }
 
-    if (isOpenGL_4_3())
+    if (isOpenGL_3_2())
     {
       rendering_program_normal.bind();
 
@@ -1370,7 +1433,7 @@ protected:
       rendering_program_normal.release();
     }
 
-    if (isOpenGL_4_3())
+    if (isOpenGL_3_2())
     {
       rendering_program_triangle.bind();
 
@@ -1379,7 +1442,7 @@ protected:
       rendering_program_triangle.release();
     }
 
-    if (isOpenGL_4_3())
+    if (isOpenGL_3_2())
     {
       rendering_program_line.bind();
 
@@ -1555,7 +1618,7 @@ protected:
       const ::Qt::KeyboardModifiers modifiers = e->modifiers();
       if ((e->key()==::Qt::Key_C) && (modifiers==::Qt::NoButton))
       {
-        if (!isOpenGL_4_3()) return;
+        if (!isOpenGL_3_2()) return;
         if (!is_two_dimensional())
         {
           // toggle clipping plane
@@ -1579,7 +1642,7 @@ protected:
 
       else if ((e->key()==::Qt::Key_C) && (modifiers==::Qt::AltModifier))
       {
-        if (!isOpenGL_4_3()) return;
+        if (!isOpenGL_3_2()) return;
         if (m_use_clipping_plane!=CLIPPING_PLANE_OFF)
         {
           clipping_plane_rendering = !clipping_plane_rendering;

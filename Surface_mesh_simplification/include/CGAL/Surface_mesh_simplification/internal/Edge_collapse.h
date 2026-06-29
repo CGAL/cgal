@@ -1133,6 +1133,8 @@ is_collapse_geometrically_valid(const Profile& profile, Placement_type k0)
     }
   }
 
+  CGAL_SMS_TRACE(3,"collapse validity: " << res);
+
   return res;
 }
 

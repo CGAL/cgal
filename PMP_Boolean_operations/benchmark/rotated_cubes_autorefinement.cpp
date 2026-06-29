@@ -101,7 +101,8 @@ int main(int argc, char** argv)
     PMP::polygon_mesh_to_polygon_soup(inter, points, faces);
 
     std::cout << "Snapped the points on double" << std::endl;
-    bool success=PMP::autorefine_triangle_soup(points, faces, CGAL::parameters::apply_iterative_snap_rounding(true).erase_all_duplicates(true).concurrency_tag(CGAL::Parallel_if_available_tag()));
+    using Erase_policy = PMP::Duplicate_polygon_erase_policy;
+    bool success=PMP::autorefine_triangle_soup(points, faces, CGAL::parameters::apply_iterative_snap_rounding(true).erase_policy(Erase_policy::ERASE_ALL).concurrency_tag(CGAL::Parallel_if_available_tag()));
     t.stop();
     if(!success){
       std::cout << "Rounding failed" << std::endl;

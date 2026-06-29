@@ -1318,7 +1318,13 @@ bool selfIntersect(Mesh* mesh, std::vector<std::pair<typename boost::graph_trait
     (*mesh, std::back_inserter(faces),
     CGAL::parameters::vertex_point_map(get(CGAL::vertex_point, *mesh)));
 
-  std::cout << "ok (" << faces.size() << " triangle pair(s))" << std::endl;
+  std::cout << "self-intersections test: ";
+  if(faces.empty())
+    std::cout << "no self-intersection" << std::endl;
+  else {
+    std::cout << "intersection(s) found, ";
+    std::cout << faces.size() << " triangle pair(s)" << std::endl;
+  }
   return !faces.empty();
 }
 
