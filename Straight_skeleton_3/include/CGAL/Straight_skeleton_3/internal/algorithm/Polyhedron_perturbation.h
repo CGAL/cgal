@@ -36,8 +36,10 @@
 #include <CGAL/enum.h>
 #include <CGAL/Random.h>
 
-#include "ortools/sat/cp_model.h"
-#include "ortools/sat/sat_parameters.pb.h"
+#ifdef CGAL_SPS3_USE_V4_PERTURBATION
+# include "ortools/sat/cp_model.h"
+# include "ortools/sat/sat_parameters.pb.h"
+#endif
 
 #include <limits>
 #include <list>
@@ -68,6 +70,7 @@ private:
 
   using Vertex = typename Polyhedron::Vertex;
   using VertexSPtr = typename Polyhedron::VertexSPtr;
+  using EdgeWPtr = typename Polyhedron::EdgeWPtr;
   using EdgeSPtr = typename Polyhedron::EdgeSPtr;
   using Facet = typename Polyhedron::Facet;
   using FacetWPtr = typename Polyhedron::FacetWPtr;
@@ -250,6 +253,8 @@ public:
     return true;
   }
 
+  // @fixme this whole approach does not yield a solid perturbed state as the planes
+  // go through the points, but the **normalized** planes do not...
   static void rand_move_points(const PolyhedronSPtr& polyhedron)
   {
     CGAL_SS3_TRANSF_TRACE_V(4, "Moving points randomly...");
@@ -341,6 +346,193 @@ public:
                                                       << facet->get_plane().c() << " " << facet->get_plane().d() << "]");
 
     CGAL_postcondition(Transformation::has_normalized_plane(facet));
+  }
+
+  // Note that this is meant to be used as V4 perturbation and thus we do NOT reset points
+  static void perturbPlanesCoefficientsControlled(const PolyhedronSPtr& polyhedron,
+                                                  const double initial_range,
+                                                  const double max_displacement,
+                                                  const int max_iterations = 50,
+                                                  const double reduction_factor = 0.5)
+  {
+    CGAL::unordered_flat_map<FacetSPtr, Plane_3> original_planes;
+    // 'amplitudes' stores the current scale of perturbation for each facet.
+    // It starts at 1.0 and shrinks on failure.
+    CGAL::unordered_flat_map<FacetSPtr, FT> amplitudes;
+
+    for (const FacetSPtr& f : polyhedron->facets()) {
+      original_planes[f] = f->get_plane();
+      amplitudes[f] = FT(1);
+    }
+
+    CGAL::unordered_flat_map<VertexSPtr, Point_3> original_points;
+    CGAL::unordered_flat_map<VertexSPtr, FT> sq_max_displacements;
+
+    // Precompute max displacement per vertex
+    const FT global_sq_max = CGAL::square(FT(max_displacement));
+    for (const VertexSPtr& v : polyhedron->vertices()) {
+      original_points[v] = v->point();
+
+      // Initialize with global max
+      FT local_sq_max = global_sq_max;
+
+      // Check neighbors: min of (10% dist) and current max
+      for (const EdgeWPtr& we : v->edges()) {
+        if (const EdgeSPtr e = we.lock()) {
+          VertexSPtr ov = e->other(v);
+          const FT sq_dist = CGAL::squared_distance(v->point(), ov->point());
+          const FT limit_sq = 0.01 * sq_dist;
+          if (limit_sq < local_sq_max)
+            local_sq_max = limit_sq;
+        }
+      }
+      sq_max_displacements[v] = local_sq_max;
+    }
+
+    // Random number generation
+    static std::random_device rd;
+    unsigned int s = 0; // rd();
+    std::mt19937 gen(s);
+    std::uniform_real_distribution<double> rdist(-1.0, 1.0);
+
+    // Set of facets that need perturbation in the current iteration.
+    // Initially, all facets need perturbation.
+    std::unordered_set<FacetSPtr> active_facets;
+    for (const FacetSPtr& f : polyhedron->facets())
+      active_facets.insert(f);
+
+    for (int iter = 0; iter < max_iterations; ++iter)
+    {
+      CGAL_SS3_TRANSF_TRACE_V(16, "controlled perturbation - iteration #" << iter);
+
+      if (active_facets.empty()) {
+         CGAL_SS3_TRANSF_TRACE_V(8, "perturbControlled: converged (no active facets) at iteration #" << iter);
+         return;
+      }
+
+      // Apply perturbations
+      // We only perturb facets that are in the 'active_facets' set.
+      // We generate a NEW random nudge every iteration, scaled by the current amplitude.
+
+      for (const FacetSPtr& f : active_facets)
+      {
+        const Plane_3& orig_pl = original_planes[f];
+        const FT amplitude = amplitudes[f];
+        const FT scale = FT(initial_range) * amplitude;
+        std::cout << "perturb F" << f->id() << " with scale " << scale << std::endl;
+
+        // Generate random nudge in arbitrary precision (FT)
+        // We generate in double and convert, which is standard for randoms.
+        FT nudge_a = FT(rdist(gen)) * scale;
+        FT nudge_b = FT(rdist(gen)) * scale;
+        FT nudge_c = FT(rdist(gen)) * scale;
+        FT nudge_d = FT(rdist(gen)) * scale;
+
+        FT na = orig_pl.a() + nudge_a;
+        FT nb = orig_pl.b() + nudge_b;
+        FT nc = orig_pl.c() + nudge_c;
+        FT nd = orig_pl.d() + nudge_d;
+
+        FT sqlen = CGAL::square(na) + CGAL::square(nb) + CGAL::square(nc);
+        FT len = CGAL::approximate_sqrt(sqlen);
+        CGAL_assertion(!is_zero(len));
+
+        CGAL_SS3_TRANSF_TRACE_V(32, "Nudging F" << f->id());
+        CGAL_SS3_TRANSF_TRACE_V(32, "  From coefficients [" << orig_pl.a() << " " << orig_pl.b() << " "
+                                                            << orig_pl.c() << " " << orig_pl.d() << "]");
+
+        f->set_plane(Plane_3(na / len, nb / len, nc / len, nd / len));
+
+        CGAL_SS3_TRANSF_TRACE_V(16, "  To coefficients [" << f->get_plane().a() << " " << f->get_plane().b() << " "
+                                                          << f->get_plane().c() << " " << f->get_plane().d() << "]");
+      }
+
+      // Check displacement of every vertex ----
+      // We check ALL vertices, because a vertex can be affected by a neighbor's perturbation
+      // even if its own incident facets were 'inactive'.
+
+      std::unordered_set<FacetSPtr> next_active_facets;
+
+      // Check displacement of a single vertex
+      auto is_too_large_displacement = [&](const VertexSPtr& v) {
+        const Point_3& p_old = original_points.at(v);
+
+        for (auto it_wf1 = v->facets().begin() ; it_wf1 != v->facets().end(); ++it_wf1) {
+          if (FacetSPtr f1 = it_wf1->lock()) {
+            for (auto it_wf2 = std::next(it_wf1); it_wf2 != v->facets().end(); ++it_wf2) {
+              if (FacetSPtr f2 = it_wf2->lock()) {
+                for (auto it_wf3 = std::next(it_wf2); it_wf3 != v->facets().end(); ++it_wf3) {
+                  if (FacetSPtr f3 = it_wf3->lock()) {
+                    std::optional<Point_3> p_new = Kernel_wrapper::intersection(f1->get_plane(), f2->get_plane(), f3->get_plane());
+                    if (!p_new.has_value()) {
+                      CGAL_SS3_TRANSF_TRACE_V(1, "Error: triplet of planes does not define a point!");
+                      CGAL_SS3_TRANSF_TRACE_V(1, "  faces: " << f1->id() << " " << f2->id() << " " << f3->id());
+                      std::abort();
+                      return true;
+                    }
+
+                    if (CGAL::squared_distance(p_old, p_new.value()) > sq_max_displacements[v]) {
+                      CGAL_SS3_TRANSF_TRACE_V(16, "  Vertex " << v->id() << " moved too far");
+                      CGAL_SS3_TRANSF_TRACE_V(16, "  from " << v->point() << " to " << p_new.value());
+                      CGAL_SS3_TRANSF_TRACE_V(16, "  F1 [" << f1->id() << "] " << f1->get_plane().a() << " " << f1->get_plane().b() << " "
+                                                                               << f1->get_plane().c() << " " << f1->get_plane().d());
+                      CGAL_SS3_TRANSF_TRACE_V(16, "  F2 [" << f2->id() << "] " << f2->get_plane().a() << " " << f2->get_plane().b() << " "
+                                                                               << f2->get_plane().c() << " " << f2->get_plane().d());
+                      CGAL_SS3_TRANSF_TRACE_V(16, "  F3 [" << f3->id() << "] " << f3->get_plane().a() << " " << f3->get_plane().b() << " "
+                                                                               << f3->get_plane().c() << " " << f3->get_plane().d());
+
+                      std::optional<Point_3> p_beg = Kernel_wrapper::intersection(original_planes[f1], original_planes[f2], original_planes[f3]);
+                      if (!p_beg.has_value()) {
+                        CGAL_SS3_TRANSF_TRACE_V(1, "triplet of ORIGINAL planes does not define a point!");
+                      } else {
+                        CGAL_SS3_TRANSF_TRACE_V(1, "original intersection is: " << p_beg.value());
+                      }
+
+                      next_active_facets.insert(f1);
+                      next_active_facets.insert(f2);
+                      next_active_facets.insert(f3);
+                      return true;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        return false;
+      };
+
+      bool all_ok = true;
+
+      std::unordered_set<FacetSPtr> overly_perturbed_facets;
+
+      for (const VertexSPtr& v : polyhedron->vertices())
+      {
+        if (is_too_large_displacement(v)) {
+          all_ok = false;
+          for (const FacetWPtr& wf : v->facets()) {
+            if (FacetSPtr f = wf.lock()) {
+              overly_perturbed_facets.insert(f);
+            }
+          }
+        }
+      }
+
+      if (all_ok)
+      {
+        CGAL_SS3_TRANSF_TRACE_V(8, "perturbControlled: converged at iteration #" << iter);
+        return;
+      }
+
+      // Prepare for next iteration: only perturb the facets that caused issues.
+      active_facets = std::move(next_active_facets);
+
+      for (FacetSPtr f : active_facets)
+        amplitudes[f] *= reduction_factor;
+    }
+
+    CGAL_SS3_TRANSF_TRACE_V(1, "Warning: perturbControlled did not converge in " << max_iterations << " iterations");
   }
 
   /**
@@ -1467,7 +1659,7 @@ public:
         auto res = CGAL::intersection(bbox, plane);
         if (!res) {
           // Should not happen
-          std::cerr << "no intersection between plane and bbox??!" << std::endl;
+          std::cerr << "no intersection between plane and bbox?!" << std::endl;
           CGAL_assertion(false);
           std::exit(1);
         } else if (const Triangle_3* itr = std::get_if<Triangle_3>(&*res)) {
@@ -1672,6 +1864,7 @@ public:
   }
 #endif
 
+#ifdef CGAL_SPS3_USE_V4_PERTURBATION
   static void apply_rand_plane_tilts_V4(const PolyhedronSPtr& polyhedron)
   {
     namespace PMP = CGAL::Polygon_mesh_processing;
@@ -1693,11 +1886,15 @@ public:
     ConfigurationSPtr config = Configuration::get_instance();
     double range = config->get_double("Preprocessing", "perturbation_epsilon");
 
+#ifdef CGAL_SPS3_USE_V4_PERTURBATION
+    perturbPlanesCoefficientsControlled(polyhedron, range, 1. /*max displacement*/);
+#else
     // @todo apply a garanteed small-enough nudge
     for (const FacetSPtr& facet : polyhedron->facets()) {
       CGAL_SS3_TRANSF_TRACE_V(32, "Nudge F" << facet->id());
       perturbPlaneCoefficientsNudge(facet, range);
     }
+#endif
 
     std::list<VertexSPtr> vertices_tosplit;
     for (const VertexSPtr& vertex : polyhedron->vertices()) {
@@ -1780,7 +1977,7 @@ public:
 
       triangle_to_facet.resize(triangles.size(), nullptr);
 
-      std::cout << points.size() << " points, " << triangles.size() << " triangles [+bbox]" << std::endl;
+      std::cout << points.size() << " points, " << triangles.size() << " triangles [w/ bbox]" << std::endl;
 #endif
 
       for (std::size_t i=0; i<triangle_to_facet.size(); ++i) {
@@ -2326,7 +2523,6 @@ public:
       {
         std::set<PID> incident_boundary_points;
 
-        // @fixme bad, because in the edge we seek, p0 might be the greater one
         auto edge_it = symmetrical_border_edge_map.find(current_pid);
         CGAL_assertion(edge_it != symmetrical_border_edge_map.end());
 
@@ -2521,9 +2717,11 @@ public:
 
       using operations_research::Domain;
       using operations_research::sat::BoolVar;
+      using operations_research::sat::IntVar;
       using operations_research::sat::CpModelBuilder;
       using operations_research::sat::CpSolverResponse;
       using operations_research::sat::CpSolverStatus;
+      using operations_research::sat::LinearExpr;
       using operations_research::sat::SatParameters;
       using operations_research::sat::SolutionBooleanValue;
       using operations_research::sat::SolveWithParameters;
@@ -2540,9 +2738,9 @@ public:
       // cells that are known, are known
       for (int c = 0; c < C; ++c) {
         if (in_out_flags[c] == CC_in_out_flag::OUTSIDE)
-          model.AddEquality(x[c], false);
+          model.FixVariable(x[c], false);
         else if (in_out_flags[c] == CC_in_out_flag::INSIDE)
-          model.AddEquality(x[c], true);
+          model.FixVariable(x[c], true);
       }
 
       // The boundary must be well oriented, so the boundary can only have an INSIDE volume
@@ -2560,9 +2758,186 @@ public:
 
       // missing constraints:
       // @todo manifoldness
-      // @todo boundary is a single, simply connected component
-      // @todo for each face, there is one and only one **simply** connected component
-      // @todo could use hints using intersection of volumes?
+
+      // @speed could use hints using intersection of volumes?
+
+      // Variables for the facets
+      std::vector<BoolVar> b(triangles.size());
+      for (std::size_t tid=0; tid<triangles.size(); ++tid) {
+        b[tid] = model.NewBoolVar();
+        const VID bot_vid = face_volume_IDs[tid][0];
+        const VID top_vid = face_volume_IDs[tid][1];
+
+        if (bot_vid == VID(-1) || top_vid == VID(-1)) {
+          model.FixVariable(b[tid], false);
+        } else {
+          model.AddNotEqual(x[bot_vid], x[top_vid]).OnlyEnforceIf(b[tid]);
+          model.AddEquality(x[bot_vid], x[top_vid]).OnlyEnforceIf(b[tid].Not());
+        }
+      }
+
+      // =====================================================================
+      //  CONSTRAINT — Global Euler characteristic (V_b − E_b + F_b = 1)
+      // =====================================================================
+
+      std::unordered_map<PID, std::unordered_set<TID> > vertex_incident_facets;
+      for (TID ti=0; ti<triangles.size(); ++ti) {
+        for (int j=0; j<3; ++j)
+          vertex_incident_facets[triangles[ti][j]].insert(ti);
+      }
+
+      // F_b
+      LinearExpr F_b = LinearExpr::Sum(b);
+
+      // E_b : edge on surface iff >= 1 incident boundary facet
+      std::vector<BoolVar> e_b;
+      e_b.reserve(std::pow(vertex->degree(), 3));
+
+      for (std::size_t pid0=0; pid0<points.size(); ++pid0) {
+        for (auto& pid1_and_edges : edge_map[pid0]) {
+          e_b.push_back(model.NewBoolVar());
+          std::vector<TID>& inc_triangles = pid1_and_edges.second;
+          CGAL_assertion(!inc_triangles.empty());
+          std::vector<IntVar> inc;
+          inc.reserve(inc_triangles.size());
+          for (TID tid : inc_triangles)
+            inc.emplace_back(b[tid]);
+          model.AddMaxEquality(e_b.back(), inc);
+        }
+      }
+      LinearExpr E_b = LinearExpr::Sum(e_b);
+
+      // V_b : vertex on surface iff >= 1 incident boundary facet
+      std::vector<BoolVar> v_b(points.size());
+      for (int v=0; v<points.size(); ++v) {
+        v_b[v] = model.NewBoolVar();
+        std::unordered_set<TID>& inc_triangles = vertex_incident_facets[v];
+        CGAL_assertion(!inc_triangles.empty());
+        std::vector<IntVar> inc;
+        inc.reserve(inc_triangles.size());
+        for (TID tid : vertex_incident_facets[v])
+          inc.emplace_back(b[tid]);
+        model.AddMaxEquality(v_b[v], inc);
+      }
+      LinearExpr V_b = LinearExpr::Sum(v_b);
+
+      model.AddEquality(V_b - E_b + F_b, 1);
+
+      // =====================================================================
+      //  CONSTRAINT — Per-facet Euler characteristic (V_c − E_c + F_c = 1)
+      // =====================================================================
+
+      for (FacetWPtr wf : vertex->facets()) {
+        if (FacetSPtr f = wf.lock()) {
+          std::vector<BoolVar> b_c;
+          for (TID tid=0; tid<triangles.size(); ++tid) {
+            if (triangle_to_facet[tid] == f)
+              b_c.push_back(b[tid]);
+          }
+          CGAL_assertion(!b_c.empty());
+
+          LinearExpr F_c = LinearExpr::Sum(b_c);
+
+          // E_c
+          std::vector<BoolVar> e_c;
+          e_c.reserve(std::pow(vertex->degree(), 2));
+
+          int e = 0;
+          for (std::size_t pid0=0; pid0<points.size(); ++pid0) {
+            for (auto& pid1_and_edges : edge_map[pid0]) {
+              std::vector<TID>& inc_triangles = pid1_and_edges.second;
+              std::vector<IntVar> inc;
+              for (TID tid : inc_triangles) {
+                if (triangle_to_facet[tid] == f)
+                  inc.emplace_back(b[tid]);
+              }
+              if (inc.empty())
+                continue;
+              e_c.push_back(model.NewBoolVar());
+              model.AddMaxEquality(e_c.back(), inc);
+            }
+          }
+
+          CGAL_assertion(!e_c.empty());
+          LinearExpr E_c = LinearExpr::Sum(e_c);
+
+          // V_c
+          std::vector<BoolVar> v_c;
+          v_c.reserve(std::pow(vertex->degree(), 2));
+
+          for (int v=0; v<points.size(); ++v) {
+            std::vector<IntVar> inc;
+            std::unordered_set<TID>& inc_triangles = vertex_incident_facets[v];
+            for (TID tid : inc_triangles) {
+              if (triangle_to_facet[tid] == f)
+                inc.emplace_back(b[tid]);
+            }
+            if (inc.empty())
+              continue;
+            v_c.push_back(model.NewBoolVar());
+            model.AddMaxEquality(v_c.back(), inc);
+          }
+          CGAL_assertion(!v_c.empty());
+          LinearExpr V_c = LinearExpr::Sum(v_c);
+
+          // Only enforce if color is active on the boundary
+          model.AddEquality(V_c - E_c + F_c, 1);
+        }
+      }
+
+      // =====================================================================
+      //  CONSTRAINT — Global edge manifoldness
+      // =====================================================================
+
+      // @todo we can ignore entirely-boundary edges (pid0/pid1 on boundary **AND** midpoint not on bbox)
+
+      for (std::size_t pid0=0; pid0<points.size(); ++pid0) {
+        for (auto& pid1_and_edges : edge_map[pid0]) {
+          LinearExpr inc_n = 0;
+          std::vector<TID>& inc_triangles = pid1_and_edges.second;
+          for (TID tid : inc_triangles)
+            inc_n += b[tid];
+          model.AddLessOrEqual(inc_n, 2);
+        }
+      }
+
+      // =====================================================================
+      //  CONSTRAINT — Local edge manifoldness
+      // =====================================================================
+
+      for (FacetWPtr wf : vertex->facets()) {
+        if (FacetSPtr f = wf.lock()) {
+          for (std::size_t pid0=0; pid0<points.size(); ++pid0) {
+            for (auto& pid1_and_edges : edge_map[pid0]) {
+              LinearExpr inc_n = 0;
+              std::vector<TID>& inc_triangles = pid1_and_edges.second;
+              for (TID tid : inc_triangles) {
+                if (triangle_to_facet[tid] == f)
+                  inc_n += b[tid];
+              }
+              model.AddLessOrEqual(inc_n, 2);
+            }
+          }
+        }
+      }
+
+      // =====================================================================
+      //  CONSTRAINT — Global vertex manifoldness
+      // =====================================================================
+
+      // check manifoldness on the border: only 2 boundary edges
+
+      // @todo
+
+      // =====================================================================
+      //  CONSTRAINT — Local vertex manifoldness
+      // =====================================================================
+
+
+      // @todo
+
+
+
 
       // Solve
       const auto& proto = model.Build();
@@ -2666,6 +3041,7 @@ public:
 
           if (!PMP::is_polygon_soup_a_polygon_mesh(local_triangles)) {
             std::cerr << "Error: failed C34-PS_PM" << std::endl;
+            CGAL::IO::write_polygon_soup("results/bad_CC.off", points, local_triangles, CGAL::parameters::stream_precision(17));
             return false;
           }
 
@@ -2696,7 +3072,7 @@ public:
         for (FacetWPtr wf : vertex->facets()) {
           if (FacetSPtr f = wf.lock()) {
             if (!check_CC(f)) {
-              std::cerr << "Error: issue with CC of f" << f->id() << std::endl;
+              std::cerr << "Error: issue with CC of F" << f->id() << std::endl;
               return false;
             }
           }
@@ -2855,7 +3231,12 @@ public:
       Transformation::reset_points(polyhedron);
     CGAL_assertion(success);
     CGAL_postcondition(polyhedron && polyhedron->is_consistent());
+
+#ifdef CGAL_SS3_DUMP_FILES
+    IO::write_OBJ("results/perturbed_V4.obj", polyhedron, parameters::do_not_triangulate_faces(true));
+#endif
   }
+#endif // CGAL_SPS3_USE_V4_PERTURBATION
 
   // Perturbation to ensure generic configuration.
   // We always need to ensure that points are exactly on the planes of their incident facets.
@@ -2864,8 +3245,11 @@ public:
     CGAL_SS3_TRANSF_TRACE_V(4, "Applying random perturbation to the polyhedron...");
 
     // if the input is all triangles, simply perturb points directly
+#ifndef CGAL_SPS3_USE_V4_PERTURBATION
+    // don't do this because we don't split vertices with V4
     if (is_triangle_polyhedron(polyhedron))
       return rand_move_points(polyhedron);
+#endif
 
     // Generic approach
     Transformation::normalize_facet_planes(polyhedron);
@@ -2875,7 +3259,11 @@ public:
 
     PolyhedronSPtr p_mem = polyhedron->clone();
 
+#ifdef CGAL_SPS3_USE_V4_PERTURBATION
+    apply_rand_plane_tilts_V4(polyhedron);
+#else
     apply_rand_plane_tilts_V3(polyhedron);
+#endif
 
     if (safe_mode) {
       CGAL_SS3_TRANSF_TRACE_V(16, "Safe mode is enabled, checking validity of the perturbation...");
@@ -2892,10 +3280,6 @@ public:
         }
 
         CGAL_SS3_TRANSF_TRACE_V(4, "Perturbation failed, retrying...");
-        CGAL_SS3_TRANSF_TRACE_V(4, "  - Proximity check: " << check_perturbed_positions_proximity(polyhedron, p_mem));
-        CGAL_SS3_TRANSF_TRACE_V(4, "  - Plane pairs intersection check: " << do_all_plane_pairs_intersect(polyhedron));
-        CGAL_SS3_TRANSF_TRACE_V(4, "  - Self-intersection check: " << !Self_intersection::has_self_intersecting_surface(polyhedron));
-        CGAL_SS3_TRANSF_TRACE_V(4, "  - Plane triplets intersection check: " << do_all_plane_triplets_intersect(polyhedron));
 
         polyhedron = p_mem->clone();
         if (!is_triangle_polyhedron(polyhedron)) {

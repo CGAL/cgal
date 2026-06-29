@@ -296,6 +296,7 @@ private:
   using Transformation = algorithm::Polyhedron_transformation<GeomTraits>;
   using Perturbation = algorithm::Polyhedron_perturbation<GeomTraits>;
   using Self_intersection = algorithm::Self_intersection<GeomTraits>;
+  using FaceGraphIO = IO::FaceGraphIO<GeomTraits>;
 
 private:
   using PQ = std::priority_queue<Abstract_event_sptr,

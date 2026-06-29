@@ -686,7 +686,7 @@ public:
 
     triangle_2_sptr.resize(triangles.size(), nullptr);
 
-    std::cout << points.size() << " points, " << triangles.size() << " triangles [+bbox]" << std::endl;
+    std::cout << points.size() << " points, " << triangles.size() << " triangles [w/ bbox]" << std::endl;
 
     for (std::size_t i=0; i<triangle_2_sptr.size(); ++i) {
       std::cout << "triangle " << i << " ==> ptr: " << triangle_2_sptr[i] << std::endl;
