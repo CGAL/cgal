@@ -120,6 +120,10 @@ Concurrency tag (from the TDS).
 */
 typedef Triangulation_data_structure::Concurrency_tag Concurrency_tag;
 
+/*!
+Storage tag (from the TDS).
+*/
+typedef Triangulation_data_structure::Storage_tag Storage_tag;
 /// @}
 
 /*! \name
@@ -233,6 +237,23 @@ iterator over simplices intersected by a line segment.
 Its value type is `Triangulation_simplex_3 `.
 */
 typedef unspecified_type Segment_simplex_iterator;
+
+/// @}
+
+/*! \name
+
+When the storage tag is `Handle_tag` the descriptors are a model of `Handle`,
+and otherwise model of `Descriptor`.
+/// @{
+/*!
+descriptor for a vertex
+*/
+typedef Triangulation_data_structure::vertex_descriptor vertex_descriptor;
+
+/*!
+descriptor for a cell
+*/
+typedef Triangulation_data_structure::cell_descriptor cell_descriptor;
 
 /// @}
 

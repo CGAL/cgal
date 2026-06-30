@@ -27,6 +27,8 @@ container to store vertices and cells. It can be `Sequential_tag` (use of a
 `create_vertex()`, `create_cell()`, `delete_vertex()`, and `delete_cell()`.
 `Sequential_tag` is the default value.
 
+\tparam StorageTag enables to choose between storage of handles and indices. It can be `Index_tag` or `Handle_tag`.
+
 \cgalModels{TriangulationDataStructure_3}
 
 The base class `Triangulation_utils_3` defines basic computations on
@@ -37,7 +39,8 @@ indices of vertices and neighbors of cells.
 */
 template< typename VertexBase,
           typename CellBase,
-          typename ConcurrencyTag >
+          typename ConcurrencyTag,
+          typename StorageTag >
 class Triangulation_data_structure_3
   : public CGAL::Triangulation_utils_3
 {

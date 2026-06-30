@@ -58,7 +58,7 @@ class must provide the following types and operations.
 
 \cgalHeading{I/O}
 
-The information stored in the `iostream` is:
+The information stored in the `std::iostream` is:
 the dimension, the number of vertices, the number of cells,
 the indices of the vertices of each cell, then the indices of the
 neighbors of each cell, where the index corresponds to the preceding
@@ -106,14 +106,24 @@ Difference type (signed integral type)
 typedef unspecified_type difference_type;
 
 /*!
-
+A `Handle` type.
 */
 typedef unspecified_type Vertex_handle;
 
 /*!
-
+A `Handle` type.
 */
 typedef unspecified_type Cell_handle;
+
+/*!
+A `Descriptor` type.
+*/
+typedef unspecified_type vertex_descriptor;
+
+/*!
+A `Descriptor` type.
+*/
+typedef unspecified_type cell_descriptor;
 
 /*!
 Can be `CGAL::Sequential_tag`, `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`. If it is
@@ -121,6 +131,12 @@ Can be `CGAL::Sequential_tag`, `CGAL::Parallel_tag`, or `CGAL::Parallel_if_avail
 `create_vertex()`, `create_cell()`, `delete_vertex()`, `delete_cell()`.
 */
 typedef unspecified_type Concurrency_tag;
+
+/*!
+Can be `CGAL::Handle_tag`, or `CGAL::Index_tag`.
+If it is `CGAL::Handle_tag` a descriptor is a handle, otherwise an index.
+*/
+typedef unspecified_type Storage_tag;
 
 /*!
 \cgalAdvancedType
@@ -395,7 +411,7 @@ bool is_cell(Vertex_handle u, Vertex_handle v, Vertex_handle w, Vertex_handle t,
 Cell_handle & c, int & i, int & j, int & k, int & l) const;
 /// @}
 /// \name has_vertex
-/// There is a method `has_vertex` in the cell class. The analogous methods for facets are defined here.
+/// There is a method `has_vertex()` in the cell class. The analogous methods for facets are defined here.
 /// @{
 
 /*!
@@ -1014,6 +1030,29 @@ Facet mirror_facet(Facet f) const;
 
 /// @}
 
+
+/// \name Vertex API
+/// @{
+
+/*!
+Returns a cell incident to vertex `v`.
+*/
+cell_descriptor cell(vertex_descriptor v) const;
+
+/// @}
+
+
+/// \name Cell API
+/// @{
+
+/*!
+Returns the i'th vertex of cell `c`.
+*/
+vertex_descriptor vertex(cell_descriptor c, int i) const;
+
+/// @}
+
+
 /// \name Checking
 /// @{
 
@@ -1385,7 +1424,7 @@ bool is_valid(bool verbose = false, int level = 0) const;
 \cgalConcept
 
 Various algorithms using a triangulation data structure, such as Delaunay triangulations
-or Alpha Shapes, must be able to associate a state to a cell elemental.
+or Alpha Shapes, must be able to associate a state to a cell.
 For efficiency, this information must be stored directly within the cell.
 
 This class is only meant to store a state (Boolean). Consequently, the state must be the default

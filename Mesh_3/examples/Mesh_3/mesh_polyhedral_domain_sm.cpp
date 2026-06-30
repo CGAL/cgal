@@ -1,3 +1,5 @@
+#define INDEX_STORAGE  1
+//#define CGAL_MESH_3_VERBOSE
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Mesh_triangulation_3.h>
@@ -8,6 +10,7 @@
 #include <CGAL/Polyhedral_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/refine_mesh_3.h>
+#include <CGAL/Memory_sizer.h>
 
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -27,6 +30,8 @@ typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 
 // Criteria
 typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
+
+typedef CGAL::Memory_sizer Memory_sizer;
 
 namespace params = CGAL::parameters;
 
@@ -55,8 +60,22 @@ int main(int argc, char*argv[])
   Mesh_criteria criteria(params::facet_angle(25).facet_size(0.15).facet_distance(0.008).
                                  cell_radius_edge_ratio(3));
 
+  Memory_sizer memory_sizer;
+  auto res_mem_at_start = memory_sizer.resident_size();
+  std::cout << "Memory usage before CGAL::make_mesh_3:\n" << memory_sizer.virtual_size() << " bytes (virtual), "
+            << res_mem_at_start << " bytes (resident)" << std::endl;
+
   // Mesh generation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, params::no_perturb().no_exude());
+
+  auto res_mem = memory_sizer.resident_size();
+  std::cout << "Memory usage after construction of the triangulation:\n" << memory_sizer.virtual_size() << " bytes (virtual), "
+            << res_mem << " bytes (resident)" << std::endl;
+  std::cout << "Diff in resident memory: "
+            << res_mem - res_mem_at_start << " bytes" << std::endl;
+
+  std::cout << "cell size  : " << c3t3.triangulation().infinite_vertex()->cell()->size() << std::endl;
+  std::cout << "vertex size: " << c3t3.triangulation().infinite_vertex()->size() << std::endl;
 
   // Output
   std::ofstream medit_file("out_1.mesh");

@@ -14,9 +14,9 @@
 
 #include <CGAL/assertions.h>
 
-#include <map>
 #include <optional>
 #include <iterator>
+#include <vector>
 
 #include <boost/property_map/property_map.hpp>
 
@@ -135,7 +135,8 @@ public:
   virtual void swap(Index a, Index b) override {
     // todo: maybe cast to index, instead of casting index to size?
     CGAL_precondition(std::size_t(a) < m_data.size() && std::size_t(b) < m_data.size());
-    std::iter_swap(m_data.begin() + a, m_data.begin() + b);
+    std::iter_swap(m_data.begin() + static_cast<std::size_t>(a),
+                   m_data.begin() + static_cast<std::size_t>(b));
   };
 
   virtual void reset(Index i) override {
@@ -151,7 +152,7 @@ public:
     CGAL_precondition(other_base.type() == type());
     auto& other = dynamic_cast<const Property_array<Index, T>&>(other_base);
     CGAL_precondition(std::size_t(other_index) < other.capacity() && std::size_t(this_index) < capacity());
-    m_data[this_index] = other.m_data[other_index];
+    m_data[static_cast<std::size_t>(this_index)] = other.m_data[static_cast<std::size_t>(other_index)];
   }
 
 public:
@@ -219,20 +220,20 @@ public:
   Property_array<Index, T>& array() const { return m_array.get(); }
 
   // todo: This might not be needed, if the other operator[] is made const
-  const_reference operator[](Index i) const { return m_array.get()[i]; }
+  const_reference operator[](Index i) const { return array()[i]; }
 
-  reference operator[](Index i) { return m_array.get()[i]; }
+  reference operator[](Index i) { return array()[i]; }
 
   // todo: maybe these can be const, in an lvalue property map?
-  iterator begin() { return m_array.get().begin(); }
+  iterator begin() { return array().begin(); }
 
-  iterator end() { return m_array.get().end(); }
+  iterator end() { return array().end(); }
 
-  const_iterator begin() const { return m_array.get().begin(); }
+  const_iterator begin() const { return array().begin(); }
 
-  const_iterator end() const { return m_array.get().end(); }
+  const_iterator end() const { return array().end(); }
 
-  bool operator==(const Property_array_handle<Index, T>& other) const { return other.m_array.get() == m_array.get(); }
+  bool operator==(const Property_array_handle<Index, T>& other) const { return other.array() == array(); }
 
   bool operator!=(const Property_array_handle<Index, T>& other) const { return !operator==(other); }
 
@@ -478,10 +479,10 @@ public:
       return emplace_back();
 
     // If there are empty slots, return the index of one of them and mark it as full
-    auto first_unused = std::find_if(m_active_indices.begin(), m_active_indices.end(), [](bool used) { return !used; });
+    auto first_unused = std::find(m_active_indices.begin(), m_active_indices.end(), false);
     if (first_unused != m_active_indices.end()) {
       *first_unused = true;
-      auto index = Index(std::distance(m_active_indices.begin(), first_unused));
+      auto index = Index(static_cast<std::size_t>(std::distance(m_active_indices.begin(), first_unused)));
       reset(index);
       return index;
     }

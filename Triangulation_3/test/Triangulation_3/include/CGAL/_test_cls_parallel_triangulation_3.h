@@ -11,6 +11,7 @@
 // Author(s)     : Clement Jamin
 
 #include <CGAL/point_generators_3.h>
+#include <CGAL/Bbox_3.h>
 
 #include <cassert>
 #include <iostream>

@@ -229,16 +229,6 @@ public:
 
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 private:
-  //top stands for tuple-or-pair
-  template <class Info>
-  const Point& top_get_first(const std::pair<Point,Info>& pair) const { return pair.first; }
-  template <class Info>
-  const Info& top_get_second(const std::pair<Point,Info>& pair) const { return pair.second; }
-  template <class Info>
-  const Point& top_get_first(const boost::tuple<Point,Info>& tuple) const { return boost::get<0>(tuple); }
-  template <class Info>
-  const Info& top_get_second(const boost::tuple<Point,Info>& tuple) const { return boost::get<1>(tuple); }
-
   template<class Construct_bare_point, class Container>
   struct Index_to_Bare_point
   {
@@ -263,9 +253,9 @@ private:
     std::vector<typename Vertex::Info> infos;
     std::size_t index=0;
     for (InputIterator it=first;it!=last;++it){
-      Tuple_or_pair value=*it;
-      points.push_back( top_get_first(value)  );
-      infos.push_back ( top_get_second(value) );
+      auto [p, info] =*it;
+      points.push_back( p );
+      infos.push_back ( info );
       indices.push_back(index++);
     }
 
@@ -829,7 +819,7 @@ locate(const Point& p, Locate_type& lt, int& li, int& lj,
   int level = maxlevel;
 
   // find the highest level with enough vertices
-  while (hierarchy[--level]->number_of_vertices() < (size_type) minsize) {
+  while (hierarchy[--level]->number_of_vertices() < minsize) {
     if ( ! level)
         break;  // do not go below 0
   }
@@ -877,10 +867,10 @@ int
 Triangulation_hierarchy_3<Tr>::
 random_level()
 {
-  boost::geometric_distribution<> proba(1.0/double(ratio));
+  boost::geometric_distribution<> proba(1.0/ratio);
   boost::variate_generator<boost::rand48&, boost::geometric_distribution<> > die(random, proba);
 
-  return (std::min)(die(), (int)maxlevel)-1;
+  return (std::min)(die(), int(maxlevel))-1;
 }
 
 } //namespace CGAL

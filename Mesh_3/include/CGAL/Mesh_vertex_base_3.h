@@ -145,6 +145,11 @@ public:
 
   // Default copy constructor and assignment operator are ok
 
+  std::size_t size() const
+  {
+    return sizeof(*this);
+  }
+
   // Returns the dimension of the lowest dimensional face of the input 3D
   // complex that contains the vertex
   int in_dimension() const {
@@ -347,10 +352,221 @@ struct Mesh_vertex_base_3 {
   };
 };
 
+
+
+template <class GT,
+          class Indices_tuple,
+          class Index_,
+          class Vb = VertexWithWeightedPoint<GT>>
+struct MeshVertex_3
+  : public Vb
+{
+  using Vb::Vb;
+  typedef typename Vb::Vertex_handle  Vertex_handle;
+
+  // Types
+  typedef Index_                      Index;
+  typedef typename GT::FT             FT;
+  typedef typename Vb::Point          Point;
+  typedef unsigned int                Erase_counter_type;
+
+  struct Storage : public Vb::Storage {
+#if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
+ || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
+    Erase_counter_type                m_erase_counter;
+#endif
+    std::size_t number_of_incident_facets_ = 0;
+    std::size_t number_of_components_ = 0; // number of components in the adjacency
+                                         // graph of incident facets (in complex)
+
+
+    // Index of the lowest dimensional face of the input 3D complex
+    // that contains me
+    Index index_;
+    // Stores info needed by optimizers
+    FT meshing_info_ = 0;
+
+    // Dimension of the lowest dimensional face of the input 3D complex
+    // that contains me. Negative values are a marker for special vertices.
+    short dimension_ = -1;
+    bool cache_validity = false;
+#ifdef CGAL_INTRUSIVE_LIST
+    Vertex_index next_intrusive_;
+    Vertex_index previous_intrusive_;
+#endif
+    // std::size_t time_stamp_ = std::size_t(-2);
+  };
+
+  auto&& storage()
+  {
+    return this->tds()->vertex_storage()[this->idx()];
+  }
+
+  auto&& storage() const
+  { return this->tds()->vertex_storage()[this->Vb::idx()]; }
+
+  template < typename TDS2 >
+  struct Rebind_TDS {
+    using Vb2 = typename Vb::template Rebind_TDS<TDS2>::Other;
+    using Other = MeshVertex_3<GT,
+                               Indices_tuple,
+                               Index_,
+                               Vb2>;
+  };
+
+
+#if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
+ || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
+
+public:
+  // Erase counter (cf. Compact_container)
+  unsigned int erase_counter() const
+  {
+    return storage().m_erase_counter;
+  }
+  void set_erase_counter(unsigned int c)
+  {
+    storage().m_erase_counter = c;
+  }
+  void increment_erase_counter()
+  {
+    ++storage().m_erase_counter;
+  }
+#endif
+
+
+  // Returns the dimension of the lowest dimensional face of the input 3D
+  // complex that contains the vertex
+  int in_dimension() const {
+    if(storage().dimension_ < -1) return -2-storage().dimension_;
+    else return storage().dimension_;
+  }
+
+  // Sets the dimension of the lowest dimensional face of the input 3D complex
+  // that contains the vertex
+  void set_dimension(const int dimension) {
+    CGAL_assertion(dimension < 4);
+    storage().dimension_ = short(dimension);
+  }
+
+  // Tells if the vertex is marked as a special protecting ball
+  bool is_special() const { return storage().dimension_ < -1; }
+
+  // Marks or unmarks the vertex as a special protecting ball
+  void set_special(bool special = true) {
+    if(special != (storage().dimension_ < -1) )
+      storage().dimension_ = short(-2-storage().dimension_);
+  }
+
+  // Returns the index of the lowest dimensional face of the input 3D complex
+  // that contains the vertex
+  Index index() const { return storage().index_; }
+
+  // Sets the index of the lowest dimensional face of the input 3D complex
+  // that contains the vertex
+  void set_index(const Index& index) { storage().index_ = index; }
+
+// Accessors to meshing_info private data
+  const FT& meshing_info() const { return storage().meshing_info_; }
+  void set_meshing_info(const FT& value) { storage().meshing_info_ = value; }
+
+#ifdef CGAL_INTRUSIVE_LIST
+  Vertex_handle next_intrusive() const
+  {
+    return Vertex_handle(this->tds(), storage().next_intrusive_);
+  }
+
+  void set_next_intrusive(Vertex_handle v)
+  {
+    storage().next_intrusive_ = v.idx();
+  }
+
+  Vertex_handle previous_intrusive() const
+  {
+    return Vertex_handle(this->tds(), storage().previous_intrusive_);
+  }
+
+  void set_previous_intrusive(Vertex_handle v)
+  {
+    storage().previous_intrusive_ = v.idx();
+  }
+#endif
+
+  /// For the determinism of Compact_container iterators
+  ///@{
+  typedef Tag_true Has_timestamp;
+
+  std::size_t time_stamp() const {
+    return this->idx().idx(); // storage().time_stamp_;
+  }
+  void set_time_stamp(const std::size_t& ) {
+    //storage().time_stamp_ = ts;
+  }
+  ///@}
+
+  bool is_c2t3_cache_valid() const {
+    return storage().cache_validity;
+  }
+
+  void invalidate_c2t3_cache()
+  {
+    storage().cache_validity = false;
+  }
+
+  void set_c2t3_cache(const std::size_t i, const std::size_t j)
+  {
+    storage().number_of_incident_facets_ = i;
+    storage().number_of_components_ = j;
+    storage().cache_validity = true;
+  }
+
+  std::size_t cached_number_of_incident_facets() const
+  {
+    return storage().number_of_incident_facets_;
+  }
+
+  std::size_t cached_number_of_components() const
+  {
+    return storage().number_of_components_;
+  }
+
+  static
+  std::string io_signature()
+  {
+    assert(false); // not implemented
+    return "tbd";
+  }
+
+
+  std::size_t size() const
+  {
+    return sizeof(Storage);
+  }
+
+friend std::istream& operator>>(std::istream &is, MeshVertex_3& v)
+  {
+    assert(false); // not implemented
+    return is;
+  }
+
+  friend std::ostream& operator<<(std::ostream &os, const MeshVertex_3& v)
+  {
+    assert(false); // not implemented
+    return os;
+  }
+};
+
+
+
+
 template<class GT,
          class Indices_tuple,
          class Index,
+#ifdef INDEX_STORAGE
+         class Vb = VertexWithWeightedPoint<GT> >
+#else
          class Vb = Regular_triangulation_vertex_base_3<GT> >
+#endif
 struct Mesh_vertex_generator_3 {
 #ifdef DOXYGEN_RUNNING
   using Triangulation_data_structure = unspecified_type;
@@ -363,7 +579,11 @@ struct Mesh_vertex_generator_3 {
   template < class TDS3 >
   struct Rebind_TDS {
     typedef typename Vb::template Rebind_TDS<TDS3>::Other Vb3;
+#if INDEX_STORAGE
+    typedef MeshVertex_3 <GT, Indices_tuple, Index, Vb3> Other;
+#else
     typedef Mesh_vertex_3 <GT, Indices_tuple, Index, Vb3> Other;
+#endif
   };
 };
 

@@ -123,12 +123,19 @@ class Alpha_wrapper_3
   // Triangulation
   using Base_GT = typename Oracle::Geom_traits;
   using Default_Gt = CGAL::Robust_circumcenter_filtered_traits_3<Base_GT>;
-
+#if INDEX_STORAGE
+  using  Default_Vbb = Vertex4Alpha_wrap_3<Default_Gt>;
+  using  Default_Vb = Vertex4Hierarchy<Default_Vbb>;
+  using  Default_Cbt = Cell4Alpha_wrap_3<Default_Gt>;
+  using Tds_type_tag = CGAL::Index_tag;
+#else
   using Default_Vb = Alpha_wrap_triangulation_vertex_base_3<Default_Gt>;
   using Default_Cb = Alpha_wrap_triangulation_cell_base_3<Default_Gt>;
   using Default_Cbt = Cell_base_with_timestamp<Default_Cb>; // for determinism
-  using Default_Tds = CGAL::Triangulation_data_structure_3<Default_Vb, Default_Cbt>;
-  using Default_Triangulation = CGAL::Delaunay_triangulation_3<Default_Gt, Default_Tds, Fast_location>;
+  using Tds_type_tag =CGAL::Handle_tag;
+#endif
+  using Default_Tds = CGAL::Triangulation_data_structure_3<Default_Vb, Default_Cbt, Sequential_tag, Tds_type_tag>;
+  using Default_Triangulation = CGAL::Delaunay_triangulation_3<Default_Gt, Default_Tds  , Fast_location>;
 
 public:
   using Triangulation = typename Default::Get<Triangulation_, Default_Triangulation>::type;

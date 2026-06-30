@@ -13,6 +13,8 @@
 #ifndef CGAL_TEST_CLS_ITERATOR_C
 #define CGAL_TEST_CLS_ITERATOR_C
 
+#include <iterator>
+
 template < class Triangulation >
 typename Triangulation::size_type
 _test_vertex_iterator( const Triangulation &T )
@@ -26,52 +28,64 @@ _test_vertex_iterator( const Triangulation &T )
                                                     Finite_vertices_iterator;
     size_type n = 0;
 
-    for (Vertex_iterator vit = T.vertices_begin(); vit != T.vertices_end(); ++vit)
-        {
-          Vertex_handle vh = vit; // Test the conversion.
-          n++;
-          const Vertex & v = *vit; // Test operator*;
-          Cell_handle c = vit->cell(); // Test operator->;
-          (void) vh;
-          (void) v;
-          (void) c;
-        }
+    for(Vertex_iterator vit = T.vertices_begin(); vit != T.vertices_end(); ++vit)
+    {
+      Vertex_handle vh = vit; // Test the conversion.
+      n++;
+      const Vertex& v = *vit;      // Test operator*;
+      Cell_handle c = vit->cell(); // Test operator->;
+      (void)vh;
+      (void)v;
+      (void)c;
+    }
     assert( n-1 == T.number_of_vertices() );
     n=0;
     for (Finite_vertices_iterator fvit = T.finite_vertices_begin();
-                    fvit != T.finite_vertices_end(); ++fvit)
+         fvit != T.finite_vertices_end(); ++fvit)
     {
-          Vertex_handle vh = fvit; // Test the conversion.
-          const Vertex & v = *fvit; // Test operator*;
-          Cell_handle c = fvit->cell(); // Test operator->;
-          n++;
-          (void) vh;
-          (void) v;
-          (void) c;
+      Vertex_handle vh = fvit; // Test the conversion.
+      const Vertex & v = *fvit; // Test operator*;
+      Cell_handle c = fvit->cell(); // Test operator->;
+      n++;
+      (void) vh;
+      (void) v;
+      (void) c;
     }
     assert( n == T.number_of_vertices() );
 
     // Test Backward-ness of the iterators.
     n=0;
     for (Vertex_iterator vit = T.vertices_end(); vit != T.vertices_begin(); --vit)
-        {
-          Vertex_handle vh = vit; // Test the conversion.
-          (void) vh;
-          n++;
-        }
+    {
+      if(vit != T.vertices_end()) {
+        Vertex_handle vh = vit; // Test the conversion.
+        (void) vh;
+      }
+      n++;
+    }
     assert( n-1 == T.number_of_vertices() );
     n=0;
     for (Finite_vertices_iterator fvit = T.finite_vertices_end();
-                    fvit != T.finite_vertices_begin(); --fvit)
+         fvit != T.finite_vertices_begin(); --fvit)
     {
-          Vertex_handle vh = fvit; // Test the conversion.
-          (void) vh;
-          n++;
+      if(fvit != T.finite_vertices_end()) {
+        Vertex_handle vh = fvit; // Test the conversion.
+        (void) vh;
+      }
+      n++;
     }
     assert( n == T.number_of_vertices() );
 
     return n;
 }
+
+template <typename Iterator, typename Category_tag>
+constexpr bool category_of_iterator_is_at_least = std::is_convertible_v<
+    typename std::iterator_traits<Iterator>::iterator_category, Category_tag>;
+
+template <typename Range, typename Category_tag>
+constexpr bool category_of_range_is_at_least = std::is_convertible_v<
+    typename std::iterator_traits<typename Range::iterator>::iterator_category, Category_tag>;
 
 template < class Triangulation >
 int
@@ -105,6 +119,21 @@ _test_triangulation_iterator( const Triangulation &T )
   typedef typename Triangulation::Vertex          Vertex;
   typedef typename Triangulation::Cell_handle     Cell_handle;
 
+  static_assert(category_of_iterator_is_at_least<Cell_iterator, std::bidirectional_iterator_tag>);
+  static_assert(category_of_iterator_is_at_least<Facet_iterator, std::bidirectional_iterator_tag>);
+  static_assert(category_of_iterator_is_at_least<Edge_iterator, std::bidirectional_iterator_tag>);
+  static_assert(category_of_iterator_is_at_least<Vertex_iterator, std::bidirectional_iterator_tag>);
+
+  static_assert(category_of_iterator_is_at_least<Finite_cells_iterator, std::bidirectional_iterator_tag>);
+  static_assert(category_of_iterator_is_at_least<Finite_facets_iterator, std::bidirectional_iterator_tag>);
+  static_assert(category_of_iterator_is_at_least<Finite_edges_iterator, std::bidirectional_iterator_tag>);
+  static_assert(category_of_iterator_is_at_least<Finite_vertices_iterator, std::bidirectional_iterator_tag>);
+
+  static_assert(category_of_range_is_at_least<All_cell_handles, std::bidirectional_iterator_tag>);
+  static_assert(category_of_range_is_at_least<All_facets, std::bidirectional_iterator_tag>);
+  static_assert(category_of_range_is_at_least<All_edges, std::bidirectional_iterator_tag>);
+  static_assert(category_of_range_is_at_least<All_vertex_handles, std::bidirectional_iterator_tag>);
+
   int n=0 , m=0 , f=0 , t=0;
   Cell_iterator Cit;
   Facet_iterator Fit;
@@ -123,15 +152,13 @@ _test_triangulation_iterator( const Triangulation &T )
       All_vertex_handles range = T.all_vertex_handles();
       Vertex_handle vh = *(range.first);
       assert(vh == T.all_vertices_begin());
-      vh = *(range.second);
-      assert(vh == T.all_vertices_end());
+      assert(*(range.second) == T.all_vertices_end());
     }
     {
       All_cell_handles range = T.all_cell_handles();
       Cell_handle vh = *(range.first);
       assert(vh == T.all_cells_begin());
-      vh = *(range.second);
-      assert(vh == T.all_cells_end());
+      assert(*(range.second) == T.all_cells_end());
     }
     {
       All_edges range = T.all_edges();
@@ -147,16 +174,13 @@ _test_triangulation_iterator( const Triangulation &T )
       Finite_vertex_handles range = T.finite_vertex_handles();
       Vertex_handle vh = *(range.first);
       assert(vh == Vertex_handle(T.finite_vertices_begin()));
-      vh = *(range.second);
-
-      assert(vh == Vertex_handle(T.finite_vertices_end()));
+      assert(Vertex_handle{*(std::prev(range.second))} == Vertex_handle(std::prev(T.finite_vertices_end())));
     }
     {
       Finite_cell_handles range = T.finite_cell_handles();
       Cell_handle ch = *(range.first);
       assert(ch == Cell_handle(T.finite_cells_begin()));
-      ch = *(range.second);
-      assert(ch == Cell_handle(T.finite_cells_end()));
+      assert(Cell_handle{*(std::prev(range.second))} == Cell_handle(std::prev(T.finite_cells_end())));
     }
     {
       Finite_edges range = T.finite_edges();
