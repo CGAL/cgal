@@ -1,24 +1,12 @@
-# Created by the script cgal_create_cmake_script
-# This is the CMake script for compiling a CGAL application.
+# Created by the script cgal_create_CMakeLists
+# This is the CMake script for compiling a set of CGAL applications.
 
 cmake_minimum_required(VERSION 3.12...3.31)
-project(Filtered_kernel_test)
 
-add_executable(bench_simple_comparisons bench_simple_comparisons.cpp)
+project(Filtered_kernel_3_Benchmarks)
 
-find_package(CGAL REQUIRED COMPONENTS Core)
+# CGAL and its components
+find_package(CGAL REQUIRED)
 
-add_executable(bench_orientation_3 "orientation_3.cpp")
-target_link_libraries(bench_orientation_3 CGAL::CGAL_Core)
-
-add_executable(bench_comparisons "orientation_3.cpp")
-target_link_libraries(bench_comparisons CGAL::CGAL_Core)
-set_property(
-  TARGET bench_comparisons
-  APPEND
-  PROPERTY COMPILE_DEFINITIONS ONLY_TEST_COMPARISONS)
-
-get_property(
-  DEF
-  TARGET bench_comparisons
-  PROPERTY COMPILE_DEFINITIONS)
+create_single_source_cgal_program("side_of_oriented_sphere_3.cpp")
+target_compile_options(side_of_oriented_sphere_3 PRIVATE /arch:AVX2)
