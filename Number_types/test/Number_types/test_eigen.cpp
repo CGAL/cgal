@@ -24,8 +24,6 @@
 #ifdef CGAL_EIGEN3_ENABLED
 #include <Eigen/Dense>
 
-
-
 // Just check that it all compiles.
 template <class NT, int s>
 void check_(){
