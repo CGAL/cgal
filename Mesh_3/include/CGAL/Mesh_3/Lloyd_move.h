@@ -231,17 +231,12 @@ private:
       }
       case 2: // segment centroid
       {
-        const Bare_point& a = points.front();
-        const Bare_point& b = points.back();
-        return centroid_segment_move(v, a, b, c3t3, sizing_field);
+        return centroid_of_segment_move(v, points, c3t3, sizing_field);
         break;
       }
       case 3: // triangle centroid
       {
-        const Bare_point& a = points.at(0);
-        const Bare_point& b = points.at(1);
-        const Bare_point& c = points.at(2);
-        return centroid_triangle_move(v, a, b, c, c3t3, sizing_field);
+        return centroid_of_triangle_move(v, points, c3t3, sizing_field);
         break;
       }
       default: // >= 4 points, centroid + projection
@@ -250,6 +245,29 @@ private:
     }
 
     return CGAL::NULL_VECTOR;
+  }
+
+  Vector_3 centroid_of_segment_move(const Vertex_handle& v,
+                                          const std::vector<Bare_point>& points,
+                                          const C3T3& c3t3,
+                                          const Sizing_field& sizing_field) const
+  {
+    CGAL_precondition(points.size() == 2);
+    const Bare_point& a = points.front();
+    const Bare_point& b = points.back();
+    return centroid_segment_move(v, a, b, c3t3, sizing_field);
+  }
+
+  Vector_3 centroid_of_triangle_move(const Vertex_handle& v,
+                                           const std::vector<Bare_point>& points,
+                                           const C3T3& c3t3,
+                                           const Sizing_field& sizing_field) const
+  {
+    CGAL_precondition(points.size() == 3);
+    const Bare_point& a = points.at(0);
+    const Bare_point& b = points.at(1);
+    const Bare_point& c = points.at(2);
+    return centroid_triangle_move(v, a, b, c, c3t3, sizing_field);
   }
 
   /**
@@ -391,9 +409,27 @@ private:
     std::transform(ch_2d.begin(), ch_2d.end(),
                    std::back_inserter(polygon_3d), To_3d(to_3d));
 
-    // Compute centroid using quadrature sizing
-    return centroid_3d_polygon_move(v, polygon_3d.begin(), polygon_3d.end(),
-                                    c3t3, sizing_field);
+    switch(polygon_3d.size())
+    {
+    case 1:
+      return CGAL::NULL_VECTOR;
+    case 2: // segment centroid
+    {
+      return centroid_of_segment_move(v, polygon_3d, c3t3, sizing_field);
+      break;
+    }
+    case 3: // triangle centroid
+    {
+      return centroid_of_triangle_move(v, polygon_3d, c3t3, sizing_field);
+      break;
+    }
+    default: // >= 4 points, centroid + projection
+      // Compute centroid using quadrature sizing
+      return centroid_3d_polygon_move(v, polygon_3d.begin(), polygon_3d.end(), c3t3, sizing_field);
+    }
+
+    CGAL_unreachable();
+    return CGAL::NULL_VECTOR;
   }
 
   /**
