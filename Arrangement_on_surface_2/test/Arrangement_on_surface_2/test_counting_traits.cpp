@@ -110,14 +110,16 @@ void test_counting_traits(const Decorating_traits_test_objects<Ct>& objs) {
       t.test_counting(Ct::APPROXIMATE_2_POINT_OP, [&]() { ct.approximate_2_object()(pt); });
     if constexpr (has_approximate_2_xcv<Ct>::value) {
       t.test_counting(Ct::APPROXIMATE_2_CURVE_OP, [&]() {
-        using Approximate_point_2 = typename Ct::Approximate_point_2;
+        using Ct_approximate_2 = typename Ct::Approximate_2;
+        using Approximate_point_2 = typename Ct_approximate_2::Approximate_point_2;
         std::vector<Approximate_point_2> approx_points;
         ct.approximate_2_object()(xcv_seg, 0.5, std::back_inserter(approx_points));
       });
     }
     if constexpr (has_approximate_2_xcv_bounds<Ct>::value) {
       t.test_counting(Ct::APPROXIMATE_2_BOUNDED_CURVE_OP, [&]() {
-        using Approximate_point_2 = typename Ct::Approximate_point_2;
+        using Ct_approximate_2 = typename Ct::Approximate_2;
+        using Approximate_point_2 = typename Ct_approximate_2::Approximate_point_2;
         std::vector<Approximate_point_2> approx_points;
         ct.approximate_2_object()(xcv_seg, 0.5, std::back_inserter(approx_points), Bbox_2(0, 0, 1, 1));
       });

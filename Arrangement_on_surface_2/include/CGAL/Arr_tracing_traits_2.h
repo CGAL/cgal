@@ -889,19 +889,19 @@ template <typename BaseTraits, typename Derived>
 class Tracing_approximate_2_point<BaseTraits, Derived, std::enable_if_t<has_approximate_2_point<BaseTraits>::value>> {
   using Base = BaseTraits;
 
-public:
-  using Approximate_point_2 = typename Base::Approximate_point_2;
-
 protected:
   //! A functor that approximates coordinates, points, and \f$x\f$-monotone curves.
   template <typename T>
   class Approximate_2 {
     using Point_2 = typename Base::Point_2;
+    using Base_approximate_2 = typename Base::Approximate_2;
 
   public:
+    using Approximate_point_2 = typename Base_approximate_2::Approximate_point_2;
+
     /*! obtains an approximation of a point.
      */
-    typename Base::Approximate_point_2 operator()(const Point_2& p) {
+    Approximate_point_2 operator()(const Point_2& p) {
       const T* derived = static_cast<const T*>(this);
       if (! derived->m_enabled) return derived->m_object(p);
       std::cout << "approximate" << std::endl
@@ -947,12 +947,15 @@ protected:
     /*! obtains an approximation of an \f$x\f$-monotone curve. */
     template <typename OutputIterator>
     OutputIterator operator()(const X_monotone_curve_2& xcv, double error, OutputIterator oi, bool l2r = true) {
+      using Base_approximate_2 = typename Base::Approximate_2;
+      using Ap = typename Base_approximate_2::Approximate_point_2;
+
       const T* derived = static_cast<const T*>(this);
       if (! derived->m_enabled) return derived->m_object(xcv, error, oi, l2r);
       std::cout << "approximate" << std::endl
                 << "  xcv: " << xcv << ", error: " << error
                 << ", l2r: " << l2r << std::endl;
-      std::list<typename Base::Approximate_point_2> container;
+      std::list<Ap> container;
       derived->m_object(xcv, error, std::back_inserter(container), l2r);
       if (container.empty()) return oi;
 
@@ -1001,12 +1004,15 @@ protected:
     template <typename OutputIterator>
     OutputIterator operator()(const X_monotone_curve_2& xcv, double error, OutputIterator oi, const Bbox_2& bbox,
                               bool l2r = true) const {
+      using Base_approximate_2 = typename Base::Approximate_2;
+      using Ap = typename Base_approximate_2::Approximate_point_2;
+
       const T* derived = static_cast<const T*>(this);
       if (! derived->m_enabled) return derived->m_object(xcv, error, oi, l2r);
       std::cout << "approximate" << std::endl
                 << "  xcv: " << xcv << ", error: " << error
                 << ", bbox: " << bbox << ", l2r: " << l2r << std::endl;
-      std::list<typename Base::Approximate_point_2> container;
+      std::list<Ap> container;
       derived->m_object(xcv, error, std::back_inserter(container), bbox, l2r);
       if (container.empty()) return oi;
 
@@ -1043,13 +1049,12 @@ private:
     typename Tracing_approximate_2_xcv_within_bounds<Base, Derived>::template Approximate_2<Approximate_2>;
 
 public:
-  using Approximate_number_type = typename Base::Approximate_number_type;
-
   //! A functor that approximates a coordinates, a point, or an \f$x\f$-monotone curve.
   class Approximate_2 : public Tracing_approx_point,
                         public Tracing_approx_xcv,
                         public Tracing_approx_xcv_within_bounds {
     using Point_2 = typename Base::Point_2;
+    using Base_approximate_2 = typename Base::Approximate_2;
 
   public:
     friend Tracing_approx_point;
@@ -1059,6 +1064,8 @@ public:
     using Tracing_approx_point::operator();
     using Tracing_approx_xcv::operator();
     using Tracing_approx_xcv_within_bounds::operator();
+
+    using Approximate_number_type = typename Base_approximate_2::Approximate_number_type;
 
     /*! constructs
      */
@@ -1082,7 +1089,7 @@ public:
 
   private:
     bool m_enabled;
-    typename Base::Approximate_2 m_object;
+    Base_approximate_2 m_object;
   };
 
   /*! obtains an `Approximate_2` function object.

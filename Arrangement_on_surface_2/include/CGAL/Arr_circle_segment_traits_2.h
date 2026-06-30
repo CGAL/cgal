@@ -136,8 +136,7 @@ public:
      * \param cv The curve.
      * \return The left endpoint.
      */
-    const Point_2& operator()(const X_monotone_curve_2 & cv) const
-    { return (cv.left()); }
+    const Point_2& operator()(const X_monotone_curve_2 & cv) const { return (cv.left()); }
   };
 
   /*! obtains a `Construct_min_vertex_2` functor object. */
@@ -149,8 +148,7 @@ public:
      * \param cv The curve.
      * \return The right endpoint.
      */
-    const Point_2& operator() (const X_monotone_curve_2 & cv) const
-    { return (cv.right()); }
+    const Point_2& operator() (const X_monotone_curve_2 & cv) const { return (cv.right()); }
   };
 
   /*! obtains a Construct_max_vertex_2 functor object. */
@@ -178,8 +176,7 @@ public:
      *         LARGER if y(p) > cv(x(p)), i.e. the point is above the curve;
      *         EQUAL if p lies on the curve.
      */
-    Comparison_result operator()(const Point_2& p,
-                                 const X_monotone_curve_2& cv) const {
+    Comparison_result operator()(const Point_2& p, const X_monotone_curve_2& cv) const {
       CGAL_precondition (cv.is_in_x_range(p));
 
       return (cv.point_position(p));
@@ -201,13 +198,10 @@ public:
      * \return The relative position of cv1 with respect to cv2 immdiately to
      *         the right of p: SMALLER, LARGER or EQUAL.
      */
-    Comparison_result operator()(const X_monotone_curve_2& cv1,
-                                 const X_monotone_curve_2& cv2,
-                                 const Point_2& p) const {
+    Comparison_result operator()(const X_monotone_curve_2& cv1, const X_monotone_curve_2& cv2, const Point_2& p) const {
       // Make sure that p lies on both curves, and that both are defined to its
       // right (so their right endpoint is lexicographically larger than p).
-      CGAL_precondition(cv1.point_position(p) == EQUAL &&
-                        cv2.point_position(p) == EQUAL);
+      CGAL_precondition(cv1.point_position(p) == EQUAL && cv2.point_position(p) == EQUAL);
 
       if ((CGAL::compare(cv1.left().x(),cv1.right().x()) == EQUAL) &&
           (CGAL::compare(cv2.left().x(),cv2.right().x()) == EQUAL)) {
@@ -249,14 +243,12 @@ public:
      * \return The relative position of `cv1` with respect to `cv2` immdiately
      *         to the left of `p`: `SMALLER`, `LARGER`, or `EQUAL`.
      */
-    Comparison_result operator()(const X_monotone_curve_2& cv1,
-                                 const X_monotone_curve_2& cv2,
+    Comparison_result operator()(const X_monotone_curve_2& cv1, const X_monotone_curve_2& cv2,
                                  const Point_2& p) const {
       // Make sure that p lies on both curves, and that both are defined to its
       // left (so their left endpoint is lexicographically smaller than p).
 
-      CGAL_precondition(cv1.point_position (p) == EQUAL &&
-                        cv2.point_position (p) == EQUAL);
+      CGAL_precondition(cv1.point_position (p) == EQUAL && cv2.point_position (p) == EQUAL);
 
       if ((CGAL::compare(cv1.left().x(),cv1.right().x()) == EQUAL) &&
           (CGAL::compare(cv2.left().x(),cv2.right().x()) == EQUAL)) {
@@ -294,8 +286,7 @@ public:
      * \param cv2 The second curve.
      * \return (true) if the two curves are the same; (false) otherwise.
      */
-    bool operator()(const X_monotone_curve_2& cv1,
-                    const X_monotone_curve_2& cv2) const {
+    bool operator()(const X_monotone_curve_2& cv1, const X_monotone_curve_2& cv2) const {
       if (&cv1 == &cv2) return (true);
 
       return (cv1.equals (cv2));
@@ -392,10 +383,6 @@ public:
   /// \name Functor definitions for approximations. Used by the landmarks
   // point-location strategy and the drawing procedure.
   //@{
-  using Approximate_number_type = double;
-  using Approximate_kernel = CGAL::Simple_cartesian<Approximate_number_type>;
-  using Approximate_point_2 = Approximate_kernel::Point_2;
-
   class Approximate_2 {
   protected:
     using Traits = Arr_circle_segment_traits_2<Kernel, Filter>;
@@ -411,6 +398,10 @@ public:
     friend class Arr_circle_segment_traits_2<Kernel, Filter>;
 
   public:
+    using Approximate_number_type = double;
+    using Approximate_kernel = CGAL::Simple_cartesian<Approximate_number_type>;
+    using Approximate_point_2 = Approximate_kernel::Point_2;
+
     /*! obtains an approximation of a point coordinate.
      * \param p the exact point.
      * \param i the coordinate index (either 0 or 1).
@@ -431,8 +422,7 @@ public:
     /*! obtains an approximation of an \f$x\f$-monotone curve.
      */
     template <typename OutputIterator>
-    OutputIterator operator()(const X_monotone_curve_2& xcv, double error,
-                              OutputIterator oi, bool l2r = true) const {
+    OutputIterator operator()(const X_monotone_curve_2& xcv, double error, OutputIterator oi, bool l2r = true) const {
       if (xcv.is_linear()) return approximate_segment(xcv, oi, l2r);
       return approximate_arc(xcv, error, oi, l2r);;
     }
@@ -441,9 +431,7 @@ public:
     /*! handles segments.
      */
     template <typename OutputIterator>
-    OutputIterator approximate_segment(const X_monotone_curve_2& xcv,
-                                       OutputIterator oi,
-                                       bool l2r = true) const {
+    OutputIterator approximate_segment(const X_monotone_curve_2& xcv, OutputIterator oi, bool l2r = true) const {
       // std::cout << "SEGMENT\n";
       auto min_vertex = m_traits.construct_min_vertex_2_object();
       auto max_vertex = m_traits.construct_max_vertex_2_object();
@@ -500,8 +488,7 @@ public:
      * (`xc`,`yc`) by an angle, the sine and cosine of which are `sint` and
      * `cost`, respectively, and translate by (`cx`,`cy`).
      */
-    void transform_point(double xc, double yc, double cx, double cy,
-                         double& x, double& y) const {
+    void transform_point(double xc, double yc, double cx, double cy, double& x, double& y) const {
       x = xc + cx;
       y = yc + cy;
     }
@@ -554,12 +541,8 @@ public:
 
       *oi++ = Approximate_point_2(xs, ys);
       add_points(xs_t, ys_t, ts, xt_t, yt_t, tt, error, oi,
-                 [&](double tm, double& xm, double& ym) {
-                   circular_point(r, tm, xm, ym);
-                 },
-                 [&](double xc, double& yc, double& x, double& y) {
-                   transform_point(xc, yc, cx, cy, x, y);
-                 });
+                 [&](double tm, double& xm, double& ym) { circular_point(r, tm, xm, ym); },
+                 [&](double xc, double& yc, double& x, double& y) { transform_point(xc, yc, cx, cy, x, y); });
       *oi++ = Approximate_point_2(xt, yt);
       return oi;
     }
@@ -669,7 +652,7 @@ public:
      */
     void operator()(const X_monotone_curve_2& cv, const Point_2& p,
                     X_monotone_curve_2& c1, X_monotone_curve_2& c2) const {
-      CGAL_precondition(cv.point_position(p)==EQUAL &&
+      CGAL_precondition(cv.point_position(p) == EQUAL &&
                         ! p.equals (cv.source()) &&
                         ! p.equals (cv.target()));
 
@@ -698,9 +681,7 @@ public:
      * \return The past-the-end iterator.
      */
     template <typename OutputIterator>
-    OutputIterator operator()(const X_monotone_curve_2& cv1,
-                              const X_monotone_curve_2& cv2,
-                              OutputIterator oi) const
+    OutputIterator operator()(const X_monotone_curve_2& cv1, const X_monotone_curve_2& cv2, OutputIterator oi) const
     { return (cv1.intersect(cv2, oi, &_inter_map)); }
   };
 
@@ -748,9 +729,7 @@ public:
      * \param c Output: The merged curve.
      * \pre The two curves are mergeable.
      */
-    void operator()(const X_monotone_curve_2& cv1,
-                    const X_monotone_curve_2& cv2,
-                    X_monotone_curve_2& c) const {
+    void operator()(const X_monotone_curve_2& cv1, const X_monotone_curve_2& cv2, X_monotone_curve_2& c) const {
       CGAL_precondition(m_traits->are_mergeable_2_object()(cv2, cv1));
 
       c = cv1;
@@ -782,8 +761,7 @@ public:
      * \param cv the curve
      * \return an opposite \f$x\f$-monotone curve.
      */
-    X_monotone_curve_2 operator()(const X_monotone_curve_2& cv) const
-    { return cv.construct_opposite(); }
+    X_monotone_curve_2 operator()(const X_monotone_curve_2& cv) const { return cv.construct_opposite(); }
   };
 
   /*! obtains a `Construct_opposite_2` functor object. */
@@ -812,9 +790,7 @@ public:
      * \pre src != tgt
      * \pre both points must be interior and must lie on \c cv
      */
-    X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv,
-                                  const Point_2& src,
-                                  const Point_2& tgt)const {
+    X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv, const Point_2& src, const Point_2& tgt)const {
       // make functor objects
       CGAL_precondition_code(Compare_y_at_x_2 compare_y_at_x_2 = m_traits.compare_y_at_x_2_object());
       CGAL_precondition_code(Equal_2 equal_2 = m_traits.equal_2_object());

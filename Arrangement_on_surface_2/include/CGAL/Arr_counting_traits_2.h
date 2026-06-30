@@ -761,19 +761,19 @@ template <typename BaseTraits, typename Derived>
 class Counting_approximate_2_point<BaseTraits, Derived, std::enable_if_t<has_approximate_2_point<BaseTraits>::value>> {
   using Base = BaseTraits;
 
-public:
-  using Approximate_point_2 = typename Base::Approximate_point_2;
-
 protected:
   //! A functor that approximates coordinates, points, and \f$x\f$-monotone curves.
   template <typename T>
   class Approximate_2 {
     using Point_2 = typename Base::Point_2;
+    using Base_approximate_2 = typename Base::Approximate_2;
 
   public:
+    using Approximate_point_2 = typename Base_approximate_2::Approximate_point_2;
+
     /*! obtains an approximation of a point.
      */
-    typename Base::Approximate_point_2 operator()(const Point_2& p) const {
+    Approximate_point_2 operator()(const Point_2& p) const {
       const T* derived = static_cast<const T*>(this);
       ++derived->m_counter2;
       return derived->m_object(p);
@@ -889,13 +889,12 @@ private:
     typename Counting_approximate_2_xcv_within_bounds<Base, Derived>::template Approximate_2<Approximate_2>;
 
 public:
-  using Approximate_number_type = typename Base::Approximate_number_type;
-
   //! A functor that approximates a coordinates, a point, or an \f$x\f$-monotone curve.
   class Approximate_2 : public Counting_approx_point,
                         public Counting_approx_xcv,
                         public Counting_approx_xcv_within_bounds {
     using Point_2 = typename Base::Point_2;
+    using Base_approximate_2 = typename Base::Approximate_2;
 
   public:
     friend Counting_approx_point;
@@ -905,6 +904,8 @@ public:
     using Counting_approx_point::operator();
     using Counting_approx_xcv::operator();
     using Counting_approx_xcv_within_bounds::operator();
+
+    using Approximate_number_type = typename Base_approximate_2::Approximate_number_type;
 
     /*! constructs
      */
@@ -930,7 +931,7 @@ public:
     }
 
   private:
-    typename Base::Approximate_2 m_object;
+    Base_approximate_2 m_object;
     std::size_t& m_counter1;
     std::size_t& m_counter2;
     std::size_t& m_counter3;

@@ -25,11 +25,9 @@ private:
 public:
   using Operation_id = typename Tt::Operation_id;
 
-  Tracing_traits_test(Tt& ct) : m_tt(ct)
-  { m_old_buf = redirect_cout(m_rd_stream); }
+  Tracing_traits_test(Tt& ct) : m_tt(ct) { m_old_buf = redirect_cout(m_rd_stream); }
 
-  ~Tracing_traits_test()
-  { restore_cout(m_old_buf); }
+  ~Tracing_traits_test() { restore_cout(m_old_buf); }
 
   template <typename Lambda>
   void test_tracing(Operation_id op_id, Lambda fn) {
@@ -138,14 +136,16 @@ void test_tracing_traits(Decorating_traits_test_objects<Tt>& objs) {
       t.test_tracing(Tt::APPROXIMATE_2_OP, [&]() { tt.approximate_2_object()(pt); });
     if constexpr (has_approximate_2_xcv<Tt>::value) {
       t.test_tracing(Tt::APPROXIMATE_2_OP, [&]() {
-        using Approximate_point_2 = typename Tt::Approximate_point_2;
+        using Tt_approximate_2 = typename Tt::Approximate_2;
+        using Approximate_point_2 = typename Tt_approximate_2::Approximate_point_2;
         std::vector<Approximate_point_2> approx_points;
         tt.approximate_2_object()(xcv_seg, 0.5, std::back_inserter(approx_points));
       });
     }
     if constexpr (has_approximate_2_xcv_bounds<Tt>::value) {
       t.test_tracing(Tt::APPROXIMATE_2_OP, [&]() {
-        using Approximate_point_2 = typename Tt::Approximate_point_2;
+        using Tt_approximate_2 = typename Tt::Approximate_2;
+        using Approximate_point_2 = typename Tt_approximate_2::Approximate_point_2;
         std::vector<Approximate_point_2> approx_points;
         tt.approximate_2_object()(xcv_seg, 0.5, std::back_inserter(approx_points), Bbox_2(0, 0, 1, 1));
       });
