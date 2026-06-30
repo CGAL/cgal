@@ -72,7 +72,10 @@ namespace CGAL {
 namespace CDT_3 {
 
 struct Debug_options {
-  enum class Flags {
+  enum class Flag;
+  bool get(Flag f) const { return flags[static_cast<int>(f)]; }
+  auto get(Flag f)  { return flags[static_cast<int>(f)]; }
+  enum class Flag {
     Steiner_points = 0,
     Steiner_points_construction,
     conforming,
@@ -91,71 +94,92 @@ struct Debug_options {
     debug_geometric_errors,
     debug_polygon_insertion,
     debug_restore_faces,
+    debug_move_Steiner_vertices_bit1,
+    debug_move_Steiner_vertices_bit2,
     display_statistics,
     use_epeck_for_normals,
     use_epeck_for_Steiner_points,
+    move_Steiner_vertices_allow_negative_tets,
     nb_of_flags
   };
-  bool Steiner_points_construction() const { return flags[static_cast<int>(Flags::Steiner_points_construction)]; }
-  void Steiner_points_construction(bool b) { flags.set(static_cast<int>(Flags::Steiner_points_construction), b); }
 
-  bool Steiner_points() const { return flags[static_cast<int>(Flags::Steiner_points)]; }
-  void Steiner_points(bool b) { flags.set(static_cast<int>(Flags::Steiner_points), b); }
+  using Flags = std::bitset<static_cast<int>(Flag::nb_of_flags)>;
 
-  bool input_faces() const { return flags[static_cast<int>(Flags::input_faces)]; }
-  void input_faces(bool b) { flags.set(static_cast<int>(Flags::input_faces), b); }
+  bool Steiner_points_construction() const { return get(Flag::Steiner_points_construction); }
+  void Steiner_points_construction(bool b) { get(Flag::Steiner_points_construction) = b; }
 
-  bool missing_region() const { return flags[static_cast<int>(Flags::missing_region)]; }
-  void missing_region(bool b) { flags.set(static_cast<int>(Flags::missing_region), b); }
+  bool Steiner_points() const { return get(Flag::Steiner_points); }
+  void Steiner_points(bool b) { get(Flag::Steiner_points) = b; }
 
-  bool regions() const { return flags[static_cast<int>(Flags::regions)]; }
-  void regions(bool b) { flags.set(static_cast<int>(Flags::regions), b); }
+  bool input_faces() const { return get(Flag::input_faces); }
+  void input_faces(bool b) { get(Flag::input_faces) = b; }
 
-  bool copy_triangulation_into_hole() const { return flags[static_cast<int>(Flags::copy_triangulation_into_hole)]; }
-  void copy_triangulation_into_hole(bool b) { flags.set(static_cast<int>(Flags::copy_triangulation_into_hole), b); }
+  bool missing_region() const { return get(Flag::missing_region); }
+  void missing_region(bool b) { get(Flag::missing_region) = b; }
 
-  bool validity() const { return flags[static_cast<int>(Flags::validity)]; }
-  void validity(bool b) { flags.set(static_cast<int>(Flags::validity), b); }
+  bool regions() const { return get(Flag::regions); }
+  void regions(bool b) { get(Flag::regions) = b; }
 
+  bool copy_triangulation_into_hole() const { return get(Flag::copy_triangulation_into_hole); }
+  void copy_triangulation_into_hole(bool b) { get(Flag::copy_triangulation_into_hole) = b; }
 
-  bool finite_edges_map() const { return flags[static_cast<int>(Flags::debug_finite_edges_map)]; }
-  void finite_edges_map(bool b) { flags.set(static_cast<int>(Flags::debug_finite_edges_map), b); }
+  bool validity() const { return get(Flag::validity); }
+  void validity(bool b) { get(Flag::validity) = b; }
 
-  bool subconstraints_to_conform() const { return flags[static_cast<int>(Flags::debug_subconstraints_to_conform)]; }
-  void subconstraints_to_conform(bool b) { flags.set(static_cast<int>(Flags::debug_subconstraints_to_conform), b); }
+  bool finite_edges_map() const { return get(Flag::debug_finite_edges_map); }
+  void finite_edges_map(bool b) { get(Flag::debug_finite_edges_map) = b; }
 
-  bool use_finite_edges_map_flag() const { return flags[static_cast<int>(Flags::use_finite_edges_map)]; }
-  void use_finite_edges_map(bool b) { flags.set(static_cast<int>(Flags::use_finite_edges_map), b); }
+  bool subconstraints_to_conform() const { return get(Flag::debug_subconstraints_to_conform); }
+  void subconstraints_to_conform(bool b) { get(Flag::debug_subconstraints_to_conform) = b; }
 
-  bool verbose_special_cases() const { return flags[static_cast<int>(Flags::verbose_special_cases)]; }
-  void verbose_special_cases(bool b) { flags.set(static_cast<int>(Flags::verbose_special_cases), b); }
+  bool use_finite_edges_map_flag() const { return get(Flag::use_finite_edges_map); }
+  void use_finite_edges_map(bool b) { get(Flag::use_finite_edges_map) = b; }
 
-  bool encroaching_vertices() const { return flags[static_cast<int>(Flags::debug_encroaching_vertices)]; }
-  void encroaching_vertices(bool b) { flags.set(static_cast<int>(Flags::debug_encroaching_vertices), b); }
+  bool verbose_special_cases() const { return get(Flag::verbose_special_cases); }
+  void verbose_special_cases(bool b) { get(Flag::verbose_special_cases) = b; }
 
-  bool conforming_validation() const { return flags[static_cast<int>(Flags::debug_conforming_validation)]; }
-  void conforming_validation(bool b) { flags.set(static_cast<int>(Flags::debug_conforming_validation), b); }
+  bool encroaching_vertices() const { return get(Flag::debug_encroaching_vertices); }
+  void encroaching_vertices(bool b) { get(Flag::debug_encroaching_vertices) = b; }
 
-  bool constraint_hierarchy() const { return flags[static_cast<int>(Flags::debug_constraint_hierarchy)]; }
-  void constraint_hierarchy(bool b) { flags.set(static_cast<int>(Flags::debug_constraint_hierarchy), b); }
+  bool conforming_validation() const { return get(Flag::debug_conforming_validation); }
+  void conforming_validation(bool b) { get(Flag::debug_conforming_validation) = b; }
 
-  bool geometric_errors() const { return flags[static_cast<int>(Flags::debug_geometric_errors)]; }
-  void geometric_errors(bool b) { flags.set(static_cast<int>(Flags::debug_geometric_errors), b); }
+  bool constraint_hierarchy() const { return get(Flag::debug_constraint_hierarchy); }
+  void constraint_hierarchy(bool b) { get(Flag::debug_constraint_hierarchy) = b; }
 
-  bool polygon_insertion() const { return flags[static_cast<int>(Flags::debug_polygon_insertion)]; }
-  void polygon_insertion(bool b) { flags.set(static_cast<int>(Flags::debug_polygon_insertion), b); }
+  bool geometric_errors() const { return get(Flag::debug_geometric_errors); }
+  void geometric_errors(bool b) { get(Flag::debug_geometric_errors) = b; }
 
-  bool restore_faces() const { return flags[static_cast<int>(Flags::debug_restore_faces)]; }
-  void restore_faces(bool b) { flags.set(static_cast<int>(Flags::debug_restore_faces), b); }
+  bool polygon_insertion() const { return get(Flag::debug_polygon_insertion); }
+  void polygon_insertion(bool b) { get(Flag::debug_polygon_insertion) = b; }
 
-  bool display_statistics() const { return flags[static_cast<int>(Flags::display_statistics)]; }
-  void display_statistics(bool b) { flags.set(static_cast<int>(Flags::display_statistics), b); }
+  bool restore_faces() const { return get(Flag::debug_restore_faces); }
+  void restore_faces(bool b) { get(Flag::debug_restore_faces) = b; }
 
-  bool use_epeck_for_normals() const { return flags[static_cast<int>(Flags::use_epeck_for_normals)]; }
-  void use_epeck_for_normals(bool b) { flags.set(static_cast<int>(Flags::use_epeck_for_normals), b); }
+  bool move_Steiner_vertices() const {
+    return get(Flag::debug_move_Steiner_vertices_bit1) || get(Flag::debug_move_Steiner_vertices_bit2);
+  }
 
-  bool use_epeck_for_Steiner_points() const { return flags[static_cast<int>(Flags::use_epeck_for_Steiner_points)]; }
-  void use_epeck_for_Steiner_points(bool b) { flags.set(static_cast<int>(Flags::use_epeck_for_Steiner_points), b); }
+  unsigned int move_Steiner_vertices_level() const {
+    return get(Flag::debug_move_Steiner_vertices_bit1) + 2 * get(Flag::debug_move_Steiner_vertices_bit2);
+  }
+  void move_Steiner_vertices(unsigned int level) {
+    CGAL_assertion(level <= 3);
+    get(Flag::debug_move_Steiner_vertices_bit1) = level & 1;
+    get(Flag::debug_move_Steiner_vertices_bit2) = (level >> 1) & 1;
+  }
+
+  bool move_Steiner_vertices_allow_negative_tets() const { return get(Flag::move_Steiner_vertices_allow_negative_tets); }
+  void move_Steiner_vertices_allow_negative_tets(bool b) { get(Flag::move_Steiner_vertices_allow_negative_tets) = b; }
+
+  bool display_statistics() const { return get(Flag::display_statistics); }
+  void display_statistics(bool b) { get(Flag::display_statistics) = b; }
+
+  bool use_epeck_for_normals() const { return get(Flag::use_epeck_for_normals); }
+  void use_epeck_for_normals(bool b) { get(Flag::use_epeck_for_normals) = b; }
+
+  bool use_epeck_for_Steiner_points() const { return get(Flag::use_epeck_for_Steiner_points); }
+  void use_epeck_for_Steiner_points(bool b) { get(Flag::use_epeck_for_Steiner_points) = b; }
 
   double segment_vertex_epsilon() const { return segment_vertex_epsilon_; }
   void set_segment_vertex_epsilon(double eps) { segment_vertex_epsilon_ = eps; }
@@ -164,7 +188,7 @@ struct Debug_options {
   void set_vertex_vertex_epsilon(double eps) { vertex_vertex_epsilon_ = eps; }
 
 private:
-  std::bitset<static_cast<int>(Flags::nb_of_flags)> flags{};
+  Flags flags{};
   double segment_vertex_epsilon_ = 0.0;
   double vertex_vertex_epsilon_  = 0.0;
 }; // end struct Debug_options
@@ -173,13 +197,14 @@ namespace internal {
 
 inline auto& tasks_manager() {
   struct Tasks_manager {
-    enum {
+    enum class Tm {
       READ_INPUT = 0,
       MERGE_FACETS,
       INSERT_VERTICES,
       COMPUTE_DISTANCES,
       CONFORMING,
       CDT,
+      MOVE_STEINER_VERTICES,
       OUTPUT,
       VALIDATION,
       NB_TASKS
@@ -187,18 +212,19 @@ inline auto& tasks_manager() {
 
   #if CGAL_USE_ITT
     __itt_domain* cdt_3_domain = __itt_domain_create("org.cgal.CDT_3");
-    const std::array<__itt_string_handle*, NB_TASKS> task_handles = {
+    const std::array<__itt_string_handle*, static_cast<std::size_t>(Tm::NB_TASKS)> task_handles = {
       __itt_string_handle_create("CDT_3: read input file"),
       __itt_string_handle_create("CDT_3: merge facets"),
       __itt_string_handle_create("CDT_3: insert vertices"),
       __itt_string_handle_create("CDT_3: compute distances"),
       __itt_string_handle_create("CDT_3: conforming"),
       __itt_string_handle_create("CDT_3: cdt"),
+      __itt_string_handle_create("CDT_3: move Steiner vertices"),
       __itt_string_handle_create("CDT_3: outputs"),
       __itt_string_handle_create("CDT_3: validation")
     };
   #endif
-    std::array<CGAL::Real_timer, NB_TASKS> timers{};
+    std::array<CGAL::Real_timer, static_cast<std::size_t>(Tm::NB_TASKS)> timers{};
     struct Scope_guard {
       Tasks_manager *instance = nullptr;
       int task_id;
@@ -222,18 +248,19 @@ inline auto& tasks_manager() {
       }
     };
 
-    Scope_guard make_task_scope_guard(int task_id) {
-      return Scope_guard(this, task_id);
+    Scope_guard make_task_scope_guard(Tm task_id) {
+      return Scope_guard(this, static_cast<int>(task_id));
     }
 
-    Scope_guard READ_INPUT_TASK_guard() { return make_task_scope_guard(READ_INPUT); }
-    Scope_guard MERGE_FACETS_TASK_guard() { return make_task_scope_guard(MERGE_FACETS); }
-    Scope_guard INSERT_VERTICES_TASK_guard() { return make_task_scope_guard(INSERT_VERTICES); }
-    Scope_guard COMPUTE_DISTANCES_TASK_guard() { return make_task_scope_guard(COMPUTE_DISTANCES); }
-    Scope_guard CONFORMING_TASK_guard() { return make_task_scope_guard(CONFORMING); }
-    Scope_guard CDT_TASK_guard() { return make_task_scope_guard(CDT); }
-    Scope_guard OUTPUT_TASK_guard() { return make_task_scope_guard(OUTPUT); }
-    Scope_guard VALIDATION_TASK_guard() { return make_task_scope_guard(VALIDATION); }
+    Scope_guard READ_INPUT_TASK_guard() { return make_task_scope_guard(Tm::READ_INPUT); }
+    Scope_guard MERGE_FACETS_TASK_guard() { return make_task_scope_guard(Tm::MERGE_FACETS); }
+    Scope_guard INSERT_VERTICES_TASK_guard() { return make_task_scope_guard(Tm::INSERT_VERTICES); }
+    Scope_guard COMPUTE_DISTANCES_TASK_guard() { return make_task_scope_guard(Tm::COMPUTE_DISTANCES); }
+    Scope_guard CONFORMING_TASK_guard() { return make_task_scope_guard(Tm::CONFORMING); }
+    Scope_guard CDT_TASK_guard() { return make_task_scope_guard(Tm::CDT); }
+    Scope_guard MOVE_STEINER_VERTICES_TASK_guard() { return make_task_scope_guard(Tm::MOVE_STEINER_VERTICES); }
+    Scope_guard OUTPUT_TASK_guard() { return make_task_scope_guard(Tm::OUTPUT); }
+    Scope_guard VALIDATION_TASK_guard() { return make_task_scope_guard(Tm::VALIDATION); }
 
   }; // end struct Intel_OneAPI_ITT_API
 
@@ -273,6 +300,10 @@ inline auto CDT_3_OUTPUT_TASK_guard() {
   return CDT_3::internal::tasks_manager().OUTPUT_TASK_guard();
 }
 
+inline auto CDT_3_MOVE_STEINER_VERTICES_TASK_guard() {
+  return CDT_3::internal::tasks_manager().MOVE_STEINER_VERTICES_TASK_guard();
+}
+
 inline auto CDT_3_VALIDATION_TASK_guard() {
   return CDT_3::internal::tasks_manager().VALIDATION_TASK_guard();
 }
@@ -291,9 +322,24 @@ public:
   using Line = typename T_3::Geom_traits::Line_3;
   using Locate_type = typename T_3::Locate_type;
 
-  inline static With_offset_tag with_offset{ -1 };
-  inline static With_point_tag with_point{ {-1} };
-  inline static With_point_and_info_tag with_point_and_info{ { {-1} } };
+  inline static With_offset_tag with_offset_tag{ -1 };
+  inline static With_point_tag with_point_tag{ {-1} };
+  inline static With_point_and_info_tag with_point_and_info_tag{ { {-1} } };
+
+  template <typename T>
+  static auto with_offset(T&& arg) {
+    return IO::oformat(std::forward<T>(arg), with_offset_tag);
+  };
+
+  template <typename T>
+  static auto with_point(T&& arg) {
+    return IO::oformat(std::forward<T>(arg), with_point_tag);
+  };
+
+  template <typename T>
+  static auto with_point_and_info(T&& arg) {
+    return IO::oformat(std::forward<T>(arg), with_point_and_info_tag);
+  };
 
   Conforming_Delaunay_triangulation_3(const Geom_traits& gt = Geom_traits())
     : T_3(gt)
@@ -318,16 +364,13 @@ protected:
   using Subconstraint = typename Constraint_hierarchy::Subconstraint;
 
   auto display_vert(Vertex_handle v) const{
-    std::stringstream os;
-    os.precision(17);
-    os << IO::oformat(v, with_point);
-    return os.str();
+    return IO::oformat(v, with_point_tag);
   }
 
   auto display_subcstr(Subconstraint subconstraint) const {
     auto [va, vb] = subconstraint;
     std::stringstream os;
-    os << "(" << IO::oformat(va, with_offset) << ", " << IO::oformat(vb, with_offset) << ")"
+    os << "(" << with_offset(va) << ", " << with_offset(vb) << ")"
        << ": [ " << display_vert(va) << " - " << display_vert(vb) << " ]";
     return os.str();
   }
@@ -564,6 +607,8 @@ protected:
 public:
   CDT_3::Debug_options& debug() { return debug_options_; }
   const CDT_3::Debug_options& debug() const { return debug_options_; }
+  CDT_3::Debug_options& options() { return debug_options_; }
+  const CDT_3::Debug_options& options() const { return debug_options_; }
 
   // Backward compatibility wrappers (deprecated, use debug().method() instead)
   bool use_finite_edges_map() const { return update_all_finite_edges_ && debug_options_.use_finite_edges_map_flag(); }
@@ -624,9 +669,9 @@ public:
                          const auto is_edge = this->is_edge(va, vb);
                          if constexpr (cdt_3_can_use_cxx20_format()) if(debug().conforming_validation()) {
                            std::cerr << cdt_3_format("is_conforming>> Edge is 3D: {}  ({} , {})\n",
-                                                    is_edge,
-                                                    CGAL::IO::oformat(va, with_point_and_info),
-                                                    CGAL::IO::oformat(vb, with_point_and_info));
+                                                     is_edge,
+                                                     with_point_and_info(va),
+                                                     with_point_and_info(vb));
                          }
                          return is_edge;
                        });
@@ -810,7 +855,7 @@ protected:
       ss << "insert_Steiner_point_on_subconstraint: Steiner point coincides with an existing vertex\n";
       ss << "  -> Steiner point: " << steiner_pt << '\n';
       ss << "     on constraint: " << display_vert(c_va) << "  -  " << display_vert(c_vb) << '\n';
-      ss << "  -> existing vertex: " << IO::oformat(other_v, with_point_and_info) << '\n';
+      ss << "  -> existing vertex: " << with_point_and_info(other_v) << '\n';
       if(other_v->ccdt_3_data().number_of_incident_constraints() > 0) {
         const auto c_id = other_v->ccdt_3_data().constrained_polyline_id(*this);
         const auto [c_va, c_vb] = constraint_extremities(c_id);
@@ -850,7 +895,7 @@ protected:
           insert_Steiner_point_on_subconstraint(steiner_pt, hint, subconstraint, constraint, visitor);
       if(debug().Steiner_points()) {
         const auto [c_start, c_end] = constraint_extremities(constraint);
-        std::cerr << "(" << IO::oformat(va, with_offset) << ", " << IO::oformat(vb, with_offset) << ")";
+        std::cerr << "(" << with_offset(va) << ", " << with_offset(vb) << ")";
         std::cerr << ": [ " << display_vert(c_start) << " - " << display_vert(c_end) << " ] ";
         std::cerr << "  new vertex " << display_vert(v) << '\n';
       }
@@ -863,6 +908,7 @@ protected:
     return false;
   }
 
+public:
   Constrained_polyline_id constraint_from_extremities(Vertex_handle va, Vertex_handle vb) const {
     if(va->ccdt_3_data().number_of_incident_constraints() == 0 || vb->ccdt_3_data().number_of_incident_constraints() == 0)
     {
@@ -882,15 +928,16 @@ protected:
     return c_id;
   }
 
+protected:
   auto constraint_extremities(Constrained_polyline_id c_id) const {
-      CGAL_assertion(this->constraint_hierarchy.vertices_in_constraint_begin(c_id) !=
-                     this->constraint_hierarchy.vertices_in_constraint_end(c_id));
+      CGAL_assertion(this->constraint_hierarchy.is_valid_constraint(c_id));
       if(debug().constraint_hierarchy()) {
         std::cerr << "constraint " << static_cast<void*>(c_id.vl_ptr()) << " has "
                   << c_id.vl_ptr()->skip_size() << " vertices\n";
       }
       const auto begin = this->constraint_hierarchy.vertices_in_constraint_begin(c_id);
       const auto end = this->constraint_hierarchy.vertices_in_constraint_end(c_id);
+      CGAL_assertion(begin != end);
       const auto c_va = *begin;
       const auto c_vb = *std::prev(end);
     return std::make_pair(c_va, c_vb);

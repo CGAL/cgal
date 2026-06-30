@@ -1220,17 +1220,18 @@ namespace handle {
 
 } // namespace internal
 
-template <class DSC, bool Const >
-class Output_rep<CGAL::internal::CC_iterator<DSC, Const> > {
+template <class DSC, bool Const, class Format_tag>
+class Output_rep<CGAL::internal::CC_iterator<DSC, Const>, Format_tag> {
 protected:
   using CC_iterator = CGAL::internal::CC_iterator<DSC, Const>;
   using Compact_container = typename CC_iterator::CC;
   using Time_stamper = typename Compact_container::Time_stamper;
   CC_iterator it;
+  CGAL_NO_UNIQUE_ADDRESS Format_tag format;
 public:
-  Output_rep( const CC_iterator it) : it(it) {}
+  Output_rep(const CC_iterator& it, Format_tag format = {}) : it(it), format(std::move(format)) {}
   std::ostream& operator()( std::ostream& out) const {
-    return (out << Time_stamper::display_id(it.operator->()));
+    return (out << IO::oformat(Time_stamper::display_id(it.operator->()), format));
   }
 };
 
@@ -1257,7 +1258,7 @@ struct Output_rep<CGAL::internal::CC_iterator<DSC, Const>, With_offset_tag>
   using Base = Output_rep<CC_iterator>;
   using Base::Base;
 
-  Output_rep(const CC_iterator it, With_offset_tag tag = {})
+  Output_rep(const CC_iterator& it, With_offset_tag tag = {})
     : Base(it), offset(tag.offset) {}
 
   std::ostream& operator()(std::ostream& out) const {
@@ -1276,7 +1277,7 @@ struct Output_rep<CGAL::internal::CC_iterator<DSC, Const>, With_point_tag>
 
   using Base::Base;
 
-  Output_rep(const CC_iterator it, With_point_tag tag = {})
+  Output_rep(const CC_iterator& it, With_point_tag tag = {})
     : Base(it, tag) {}
 
   std::ostream& operator()(std::ostream& out) const {

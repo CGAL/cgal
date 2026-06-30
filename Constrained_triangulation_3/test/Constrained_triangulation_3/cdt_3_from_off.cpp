@@ -1,5 +1,7 @@
 #include <CGAL/config.h>
 
+#define CGAL_T3_ALLOW_NEGATIVE_VOLUME 1
+#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE 1
 // #define CGAL_CDT_2_DEBUG_INTERSECTIONS 1
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
@@ -13,6 +15,7 @@
 #include <CGAL/Constrained_triangulation_3/internal/read_polygon_mesh_for_cdt_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/enum.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/IO/File_binary_mesh_3.h>
 #include <CGAL/Named_function_parameters.h>
@@ -20,6 +23,7 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Surface_mesh/IO/PLY.h>
 #include <CGAL/Surface_mesh/Surface_mesh.h>
+#include <CGAL/tetrahedral_remeshing.h>
 #include <CGAL/use.h>
 #include <CGAL/utility.h>
 
@@ -32,6 +36,7 @@
 #include <CGAL/Polygon_mesh_processing/remesh_planar_patches.h>
 
 #include <boost/graph/graph_traits.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 
 #include <algorithm>
 #include <array>
@@ -39,6 +44,7 @@
 #include <chrono>
 #include <cstddef>
 #include <cstdlib>
+#include <exception>
 #include <fstream>
 #include <functional>
 #include <iostream>
@@ -48,8 +54,8 @@
 #include <set>
 #include <sstream>
 #include <stack>
-#include <string_view>
 #include <string>
+#include <type_traits>
 #include <unordered_map>
 #include <utility>
 #include <vector>
@@ -57,21 +63,19 @@
 #  include <version>
 #endif
 
-#if CGAL_CXX20 && __cpp_lib_concepts >= 201806L && __cpp_lib_ranges >= 201911L
-#  include <ranges>
+#if CGAL_USE_CLI11
+#  include <CLI/CLI.hpp>
 #endif
 
-#if CGAL_CDT_3_USE_EPECK
+#ifndef CGAL_CDT_3_USE_EPECK
+#  define CGAL_CDT_3_USE_EPECK 0
+#endif
 
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+namespace CGAL::CDT_3::test::cdt_3_from_off {
 
-using K = CGAL::Exact_predicates_exact_constructions_kernel;
-
-#else // use Epick
-
-using K = CGAL::Exact_predicates_inexact_constructions_kernel;
-
-#endif // use Epick
+using K = std::conditional_t<CGAL_CDT_3_USE_EPECK == 0,
+                             CGAL::Exact_predicates_inexact_constructions_kernel,
+                             CGAL::Exact_predicates_exact_constructions_kernel>;
 
 using CDT = CGAL::Conforming_constrained_Delaunay_triangulation_3<K>;
 using Point = K::Point_3;
@@ -82,68 +86,21 @@ using vertex_descriptor = boost::graph_traits<Mesh>::vertex_descriptor;
 using edge_descriptor   = boost::graph_traits<Mesh>::edge_descriptor;
 using face_descriptor   = boost::graph_traits<Mesh>::face_descriptor;
 
-void help(std::ostream& out) {
-  out << R"!!!!!(
-Usage: cdt_3_from_off [options] input.off output.off
+template <typename Rep, typename Period>
+auto milliseconds(std::chrono::duration<Rep, Period> duration) {
+  return std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+};
 
-  input.off: input mesh
-  output.off: output mesh
+template <typename Clock, typename Duration>
+auto milliseconds_since(std::chrono::time_point<Clock, Duration> start_time) {
+  return milliseconds(Clock::now() - start_time);
+};
 
-  --merge-facets/--no-merge-facets: merge facets into patches (set by default)
-  --merge-facets-old: merge facets using the old method
-  --bisect: bisect failures
-  --vertex-vertex-epsilon <double>: epsilon for vertex-vertex min distance (default: 1e-6)
-  --segment-vertex-epsilon <double>: epsilon for segment-vertex min distance (default: 0)
-  --coplanar-polygon-max-angle <double>: max angle for coplanar polygons (default: 1)
-  --coplanar-polygon-max-distance <double>: max distance for coplanar polygons (default: 1e-6)
-
-  --dump-patches-after-merge <filename.ply>: dump patches after merging facets in PLY
-  --dump-surface-mesh-after-merge <filename.off>: dump surface mesh after merging facets in OFF
-  --dump-patches-borders-prefix <filenames_prefix>: dump patches borders
-  --dump-after-conforming <filename.off>: dump mesh after conforming in OFF
-
-  --no-repair: do not repair the mesh
-  --read-mesh-with-operator: read the mesh with operator>>
-  --reject-self-intersections: reject self-intersecting polygon soups
-  --no-is-valid: do not call is_valid checks
-
-  --debug-Steiner-points: debug Steiner point insertion
-  --debug-Steiner-points-construction: debug Steiner point construction
-  --debug-input-faces: debug input faces
-  --debug-missing-regions: debug missing regions
-  --debug-regions: debug regions
-  --debug_copy_triangulation_into_hole: debug copy_triangulation_into_hole
-  --debug-validity: add is_valid checks after modifications to the TDS
-  --debug-finite-edges-map: debug the use of a hash map for finite edges
-  --debug-subconstraints-to-conform: debug subconstraints to conform
-  --debug-verbose-special-cases: debug verbose output for special cases
-  --debug-encroaching-vertices: debug encroaching vertices computation
-  --debug-conforming-validation: debug edge conforming validation
-  --debug-constraint-hierarchy: debug constraint hierarchy operations
-  --debug-geometric-errors: debug geometric error handling
-  --debug-polygon-insertion: debug polygon insertion process
-  --debug-restore-faces: debug face restoration process
-
-  --use-finite-edges-map: use a hash map for finite edges (default: false)
-  --use-epeck-for-normals/--no-use-epeck-for-normals: use exact kernel for normal computations (default: false)
-  --use-epeck-for-Steiner-points/--no-use-epeck-for-Steiner-points: use exact kernel for Steiner point computations (default: false)
-
-  --verbose/-V: verbose (can be used several times)
-  --quiet: do not print anything
-  --help/-h: print this help
-)!!!!!";
-}
-
-[[noreturn]] void error(std::string_view message, std::string_view extra = "") {
-  std::cerr << "Error: " << message << extra << '\n';
-  help(std::cerr);
-  std::exit(EXIT_FAILURE);
-}
+using clock = std::chrono::high_resolution_clock;
 
 struct CDT_options
 {
   int         verbose_level                       = 0;
-  bool        need_help                           = false;
   bool        quiet                               = false;
   bool        merge_facets                        = true;
   bool        merge_facets_old_method             = false;
@@ -152,6 +109,7 @@ struct CDT_options
   bool        read_mesh_with_operator             = false;
   bool        debug_Steiner_points                = false;
   bool        debug_Steiner_points_construction   = false;
+  unsigned    debug_move_Steiner_vertices         = 0;
   bool        debug_input_faces                   = false;
   bool        debug_missing_regions               = false;
   bool        debug_regions                       = false;
@@ -167,6 +125,8 @@ struct CDT_options
   bool        debug_polygon_insertion             = false;
   bool        debug_restore_faces                 = false;
   bool        use_finite_edges_map                = false;
+  bool        move_Steiner_vertices_to_the_volume = true;
+  bool        allow_moving_Steiner_vertices_to_create_negative_tets = false;
   bool        use_epeck_for_normals               = false;
   bool        use_epeck_for_Steiner_points        = false;
   bool        call_is_valid                       = true;
@@ -186,116 +146,121 @@ struct CDT_options
 };
 
 CDT_options::CDT_options(int argc, char* argv[]) {
-  const std::vector<std::string_view> args(argv + 1, argv + argc);
-  int positional = 0;
+#if CGAL_USE_CLI11
+  CLI::App app{"Build and process a constrained Delaunay triangulation from an OFF mesh"};
+  app.set_help_flag("-h,--help", "print this help");
+  app.allow_extras(false);
 
-  using namespace std::literals::string_view_literals;
-  for (auto it = args.begin(); it != args.end(); ++it) {
-    auto get_next_arg_or_error_out = [&it, &args]() -> std::string {
-      if(it + 1 == args.end()) {
-        error("extra argument required after "sv, *it);
-      }
-      return std::string(*++it);
-    };
-    std::string_view arg = *it;
-    if(arg == "--merge-facets"sv) {
-      merge_facets                        = true;
-    } else if(arg == "--no-merge-facets"sv) {
-      merge_facets                        = false;
-    } else if(arg == "--reject-self-intersections"sv) {
-      reject_self_intersections           = true;
-    } else if(arg == "--no-repair"sv) {
-      repair_mesh                         = false;
-    } else if(arg == "--read-mesh-with-operator"sv) {
-      read_mesh_with_operator             = true;
-    } else if(arg == "--merge-facets-old"sv) {
-      merge_facets                        = true;
-      merge_facets_old_method             = true;
-    } else if(arg == "--bisect"sv) {
-      bisect_failures                     = true;
-    } else if(arg == "--dump-patches-after-merge"sv) {
-      dump_patches_after_merge_filename   = get_next_arg_or_error_out();
-    } else if(arg == "--dump-patches-borders-prefix"sv) {
-      dump_patches_borders_prefix         = get_next_arg_or_error_out();
-    } else if(arg == "--dump-surface-mesh-after-merge"sv) {
-      dump_surface_mesh_after_merge_filename = get_next_arg_or_error_out();
-    } else if(arg == "--dump-after-conforming"sv) {
-      dump_after_conforming_filename      = get_next_arg_or_error_out();
-    } else if(arg == "--vertex-vertex-epsilon"sv) {
-      vertex_vertex_epsilon               = std::stod(get_next_arg_or_error_out());
-    } else if(arg == "--segment-vertex-epsilon"sv) {
-      segment_vertex_epsilon              = std::stod(get_next_arg_or_error_out());
-    } else if(arg == "--coplanar-polygon-max-angle"sv) {
-      coplanar_polygon_max_angle          = std::stod(get_next_arg_or_error_out());
-    } else if(arg == "--coplanar-polygon-max-distance"sv) {
-      coplanar_polygon_max_distance       = std::stod(get_next_arg_or_error_out());
-    } else if(arg == "--quiet"sv) {
-      quiet                               = true;
-    } else if(arg == "--no-is-valid"sv) {
-      call_is_valid                       = false;
-    } else if(arg == "--debug-Steiner-points"sv) {
-      debug_Steiner_points                = true;
-    } else if(arg == "--debug-Steiner-points-construction"sv) {
-      debug_Steiner_points_construction   = true;
-    } else if(arg == "--debug-input-faces"sv) {
-      debug_input_faces                   = true;
-    } else if(arg == "--debug-missing-regions"sv) {
-      debug_missing_regions               = true;
-    } else if(arg == "--debug-regions"sv) {
-      debug_regions                       = true;
-    } else if(arg == "--debug_copy_triangulation_into_hole"sv) {
-      debug_copy_triangulation_into_hole  = true;
-    } else if(arg == "--debug-validity"sv) {
-      debug_validity                      = true;
-    } else if(arg == "--debug-finite-edges-map"sv) {
-      debug_finite_edges_map              = true;
-    } else if(arg == "--debug-subconstraints-to-conform"sv) {
-      debug_subconstraints_to_conform     = true;
-    } else if(arg == "--debug-verbose-special-cases"sv) {
-      debug_verbose_special_cases         = true;
-    } else if(arg == "--debug-encroaching-vertices"sv) {
-      debug_encroaching_vertices          = true;
-    } else if(arg == "--debug-conforming-validation"sv) {
-      debug_conforming_validation         = true;
-    } else if(arg == "--debug-constraint-hierarchy"sv) {
-      debug_constraint_hierarchy          = true;
-    } else if(arg == "--debug-geometric-errors"sv) {
-      debug_geometric_errors              = true;
-    } else if(arg == "--debug-polygon-insertion"sv) {
-      debug_polygon_insertion             = true;
-    } else if(arg == "--debug-restore-faces"sv) {
-      debug_restore_faces                  = true;
-    } else if(arg == "--use-finite-edges-map"sv) {
-      use_finite_edges_map                = true;
-    } else if(arg == "--no-use-epeck-for-normals"sv) {
-      use_epeck_for_normals               = false;
-    } else if(arg == "--no-use-epeck-for-Steiner-points"sv) {
-      use_epeck_for_Steiner_points        = false;
-    } else if(arg == "--use-epeck-for-normals"sv) {
-      use_epeck_for_normals               = true;
-    } else if(arg == "--use-epeck-for-Steiner-points"sv) {
-      use_epeck_for_Steiner_points        = true;
-    } else if(arg == "--verbose"sv || arg == "-V"sv) {
-      ++verbose_level;
-    } else if(arg == "--help"sv || arg == "-h"sv) {
-      need_help                           = true;
-    } else if(arg[0] == '-') {
-      error("unknown option "sv, arg);
-    } else {
-      switch(positional) {
-        case 0:
-          input_filename = arg;
-          ++positional;
-          break;
-        case 1:
-          output_filename = arg;
-          ++positional;
-          break;
-        default:
-          error("too many arguments"sv);
-      }
-    }
+  app.add_flag("-V,--verbose", verbose_level,
+               "verbose (can be used several times)")
+      ->multi_option_policy(CLI::MultiOptionPolicy::Sum);
+
+  app.add_flag("--quiet", quiet, "do not print anything");
+
+  app.add_flag("--merge-facets,!--no-merge-facets", merge_facets,
+               "merge facets into patches");
+  app.add_flag("--merge-facets-old", merge_facets_old_method,
+               "merge facets using the old method");
+  app.add_flag("--bisect", bisect_failures, "bisect failures");
+  app.add_flag("--reject-self-intersections", reject_self_intersections,
+               "reject self-intersecting polygon soups");
+  app.add_flag("--read-mesh-with-operator", read_mesh_with_operator,
+               "read the mesh with operator>>");
+  app.add_flag("--repair,!--no-repair", repair_mesh,
+               "repair the mesh while reading polygon soup");
+  app.add_flag("--call-is-valid,!--no-is-valid", call_is_valid,
+               "call is_valid checks");
+
+  app.add_option("--vertex-vertex-epsilon", vertex_vertex_epsilon,
+                 "epsilon for vertex-vertex min distance");
+  app.add_option("--segment-vertex-epsilon", segment_vertex_epsilon,
+                 "epsilon for segment-vertex min distance");
+  app.add_option("--coplanar-polygon-max-angle", coplanar_polygon_max_angle,
+                 "max angle for coplanar polygons");
+  app.add_option("--coplanar-polygon-max-distance", coplanar_polygon_max_distance,
+                 "max distance for coplanar polygons");
+
+  app.add_option("--dump-patches-after-merge", dump_patches_after_merge_filename,
+                 "dump patches after merging facets in PLY");
+  app.add_option("--dump-surface-mesh-after-merge", dump_surface_mesh_after_merge_filename,
+                 "dump surface mesh after merging facets in OFF");
+  app.add_option("--dump-patches-borders-prefix", dump_patches_borders_prefix,
+                 "dump patches borders");
+  app.add_option("--dump-after-conforming", dump_after_conforming_filename,
+                 "dump mesh after conforming in OFF");
+
+  app.add_flag("--debug-Steiner-points", debug_Steiner_points,
+               "debug Steiner point insertion");
+  app.add_flag("--debug-Steiner-points-construction", debug_Steiner_points_construction,
+               "debug Steiner point construction");
+  auto debug_move_Steiner_vertices_option =
+      app.add_option("--debug-move-Steiner-vertices-to-the-volume", debug_move_Steiner_vertices,
+                     "debug moving Steiner vertices to the volume (level 0..3)")
+          ->check(CLI::Range(0, 3))
+          ->expected(0, 1);
+  app.add_flag("--debug-input-faces", debug_input_faces, "debug input faces");
+  app.add_flag("--debug-missing-regions", debug_missing_regions, "debug missing regions");
+  app.add_flag("--debug-regions", debug_regions, "debug regions");
+  app.add_flag("--debug_copy_triangulation_into_hole", debug_copy_triangulation_into_hole,
+               "debug copy_triangulation_into_hole");
+  app.add_flag("--debug-validity", debug_validity,
+               "add is_valid checks after modifications to the TDS");
+  app.add_flag("--debug-finite-edges-map", debug_finite_edges_map,
+               "debug the use of a hash map for finite edges");
+  app.add_flag("--debug-subconstraints-to-conform", debug_subconstraints_to_conform,
+               "debug subconstraints to conform");
+  app.add_flag("--debug-verbose-special-cases", debug_verbose_special_cases,
+               "debug verbose output for special cases");
+  app.add_flag("--debug-encroaching-vertices", debug_encroaching_vertices,
+               "debug encroaching vertices computation");
+  app.add_flag("--debug-conforming-validation", debug_conforming_validation,
+               "debug edge conforming validation");
+  app.add_flag("--debug-constraint-hierarchy", debug_constraint_hierarchy,
+               "debug constraint hierarchy operations");
+  app.add_flag("--debug-geometric-errors", debug_geometric_errors,
+               "debug geometric error handling");
+  app.add_flag("--debug-polygon-insertion", debug_polygon_insertion,
+               "debug polygon insertion process");
+  app.add_flag("--debug-restore-faces", debug_restore_faces,
+               "debug face restoration process");
+
+  app.add_flag("--use-finite-edges-map", use_finite_edges_map,
+               "use a hash map for finite edges");
+  app.add_flag("--move-Steiner-vertices-to-the-volume,!--no-move-Steiner-vertices-to-the-volume",
+               move_Steiner_vertices_to_the_volume,
+               "move Steiner vertices to the volume");
+  app.add_flag("--allow-moving-Steiner-vertices-to-create-negative-tets",
+               allow_moving_Steiner_vertices_to_create_negative_tets,
+               "allow moving Steiner vertices to create negative volume tetrahedra");
+  app.add_flag("--use-epeck-for-normals,!--no-use-epeck-for-normals", use_epeck_for_normals,
+               "use exact kernel for normal computations");
+  app.add_flag("--use-epeck-for-Steiner-points,!--no-use-epeck-for-Steiner-points",
+               use_epeck_for_Steiner_points,
+               "use exact kernel for Steiner point computations");
+
+  app.add_option("input.off", input_filename, "input mesh");
+  app.add_option("output.off", output_filename, "output mesh");
+
+  for(auto* option : app.get_options()) {
+    option->always_capture_default(true);
   }
+
+  app.get_formatter()->enable_default_flag_values(true);
+
+  try {
+    app.parse(argc, argv);
+  } catch(const CLI::ParseError& e) {
+    std::exit(app.exit(e));
+  }
+
+  if(*debug_move_Steiner_vertices_option && debug_move_Steiner_vertices == 0) {
+    debug_move_Steiner_vertices = 1;
+  }
+
+  if(merge_facets_old_method) {
+    merge_facets = true;
+  }
+#endif // CGAL_USE_CLI11
 }
 
 CGAL::CDT_3::Debug_options cdt_debug_options(const CDT_options& options) {
@@ -311,6 +276,8 @@ CGAL::CDT_3::Debug_options cdt_debug_options(const CDT_options& options) {
   cdt_debug.verbose_special_cases(options.debug_verbose_special_cases);
   cdt_debug.encroaching_vertices(options.debug_encroaching_vertices);
   cdt_debug.conforming_validation(options.debug_conforming_validation);
+  cdt_debug.move_Steiner_vertices(options.debug_move_Steiner_vertices);
+  cdt_debug.move_Steiner_vertices_allow_negative_tets(options.allow_moving_Steiner_vertices_to_create_negative_tets);
   cdt_debug.constraint_hierarchy(options.debug_constraint_hierarchy);
   cdt_debug.geometric_errors(options.debug_geometric_errors);
   cdt_debug.polygon_insertion(options.debug_polygon_insertion);
@@ -348,8 +315,14 @@ std::function<void()> create_output_finalizer(const CDT& cdt, const CDT_options&
   return [&cdt, &options]() {
     auto _ = CGAL::CDT_3_OUTPUT_TASK_guard();
     {
-      auto dump_tets_to_medit = [](std::string fname,
+      if(std::uncaught_exceptions() > 0) {
+        std::cerr << "create_output_finalizer: an exception is being thrown, the triangulation may be left in an "
+                     "invalid state.\n";
+        return;
+      }
+      auto dump_to_medit = [](std::string fname,
                               const std::vector<K::Point_3> &points,
+                              const std::vector<std::array<std::size_t, 4>> &indexed_triangles,
                               const std::vector<std::array<std::size_t, 4>> &indexed_tetra,
                               const std::vector<std::size_t> &cell_ids)
       {
@@ -359,19 +332,23 @@ std::function<void()> create_output_finalizer(const CDT& cdt, const CDT_options&
         out << points.size() << "\n";
         for (const K::Point_3& p : points)
           out << p << " 0\n";
-        out << "Triangles\n0\nTetrahedra\n";
+        out << "Triangles\n" << indexed_triangles.size() << "\n";
+        for (const auto& tri : indexed_triangles)
+          out << tri[0]+1 << " " << tri[1]+1 << " " << tri[2]+1 << " " << tri[3] << "\n";
+        out << "Tetrahedra\n";
         out << indexed_tetra.size() << "\n";
         for (std::size_t k=0;k<indexed_tetra.size(); ++k)
           out << indexed_tetra[k][0]+1 << " "
-                    << indexed_tetra[k][1]+1 << " "
-                    << indexed_tetra[k][2]+1 << " "
-                    << indexed_tetra[k][3]+1 << " " << cell_ids[k] << "\n";
+              << indexed_tetra[k][1]+1 << " "
+              << indexed_tetra[k][2]+1 << " "
+              << indexed_tetra[k][3]+1 << " " << cell_ids[k] << "\n";
         out <<"End\n";
       };
 
-      auto& tr = cdt;
+      const auto& tr = cdt.triangulation();
+      using Tr = CDT::Triangulation;
 
-      std::unordered_map<CDT::Triangulation::Cell_handle, int /*Subdomain_index*/> cells_map;
+      std::unordered_map<Tr::Cell_handle, int /*Subdomain_index*/> cells_map;
       for(auto ch : tr.all_cell_handles())
       {
         cells_map[ch] = 1;
@@ -396,39 +373,62 @@ std::function<void()> create_output_finalizer(const CDT& cdt, const CDT_options&
         }
       }
 
+      const bool export_all_the_bbox =
+          std::all_of(cells_map.begin(), cells_map.end(), [](const auto& kv) { return kv.second == 0; });
+      if (export_all_the_bbox) {
+        for(auto ch : tr.finite_cell_handles())
+        {
+          cells_map[ch] = 1;
+        }
+      }
+
       std::vector<K::Point_3> points(cdt.number_of_vertices());
+      std::size_t idx = 0;
       for(auto v: cdt.finite_vertex_handles()) {
-        points.at(v->time_stamp() -1) = v->point();
+        // renumber the vertices: there might be holes in the numbering due to removed vertices
+        v->set_time_stamp(++idx);
+        points.at(idx - 1) = v->point();
+      }
+      std::vector<std::array<std::size_t, 4>> indexed_triangles;
+      std::size_t max_polygon_id = 0;
+      for(auto f : cdt.constrained_facets()) {
+        const auto verts = tr.vertices(f);
+        const auto polygon_id = static_cast<std::size_t>(cdt.face_constraint_index(f));
+        indexed_triangles.push_back({verts[0]->time_stamp() - 1,
+                                     verts[1]->time_stamp() - 1,
+                                     verts[2]->time_stamp() - 1,
+                                     polygon_id});
+        if (polygon_id > max_polygon_id) {
+          max_polygon_id = polygon_id;
+        }
+      }
+      if(export_all_the_bbox) {
+        auto inf_v = tr.infinite_vertex();
+        tr.incident_cells(inf_v, boost::make_function_output_iterator([&](Tr::Cell_handle ch) {
+                            auto facet_index = ch->index(inf_v);
+                            const auto verts = tr.vertices(Tr::Facet{ch, facet_index});
+                            indexed_triangles.push_back({verts[0]->time_stamp() - 1,
+                                                         verts[1]->time_stamp() - 1,
+                                                         verts[2]->time_stamp() - 1,
+                                                         max_polygon_id + 1 /*a new polygon id for the bbox*/});
+                          }));
       }
       std::vector<std::array<std::size_t, 4>> indexed_tetra;
       indexed_tetra.reserve(cdt.number_of_cells());
       for(auto ch: cdt.finite_cell_handles()) {
         if(cells_map[ch] > 0) {
-          indexed_tetra.push_back({ch->vertex(0)->time_stamp() -1,
-                                   ch->vertex(1)->time_stamp() -1,
-                                   ch->vertex(2)->time_stamp() -1,
-                                   ch->vertex(3)->time_stamp() -1});
+          indexed_tetra.push_back({ch->vertex(0)->time_stamp() - 1,
+                                   ch->vertex(1)->time_stamp() - 1,
+                                   ch->vertex(2)->time_stamp() - 1,
+                                   ch->vertex(3)->time_stamp() - 1});
         }
       }
-      std::vector<std::size_t> cell_idsl(indexed_tetra.size(), 1);
-      dump_tets_to_medit(options.output_filename + ".mesh", points, indexed_tetra, cell_idsl);
+      std::vector<std::size_t> cell_ids(indexed_tetra.size(), 1);
+      dump_to_medit(options.output_filename + ".mesh", points, indexed_triangles, indexed_tetra, cell_ids);
+      cdt.dump_constrained_facets_to_off(options.output_filename);
     }
     {
-      std::ofstream dump(options.output_filename);
-      dump.precision(17);
-#if CGAL_CXX20 && __cpp_lib_concepts >= 201806L && __cpp_lib_ranges >= 201911L
-      cdt.write_facets(dump, cdt.triangulation(), std::views::filter(cdt.finite_facets(), [&](auto f) {
-          return cdt.is_facet_constrained(f);
-      }));
-#else
-      auto is_facet_constrained = [&](auto f) { return cdt.is_facet_constrained(f); };
-      const auto& tr = cdt.triangulation();
-      auto it_begin = tr.finite_facets_begin();
-      auto it_end = tr.finite_facets_end();
-      auto filtered_it_begin = boost::make_filter_iterator(is_facet_constrained,it_begin, it_end);
-      auto filtered_it_end = boost::make_filter_iterator(is_facet_constrained,it_end, it_end);
-      cdt.write_facets(dump, tr, CGAL::make_range(filtered_it_begin, filtered_it_end));
-#endif
+      cdt.save_binary_file(options.output_filename + ".binary.cgal");
     }
   };
 }
@@ -581,7 +581,7 @@ Borders_of_patches maybe_merge_facets(
 
   {
     auto _ = CGAL::CDT_3_MERGE_FACETS_TASK_guard();
-    auto start_time = std::chrono::high_resolution_clock::now();
+    auto start_time = clock::now();
 
     if(options.merge_facets_old_method) {
       number_of_patches = merge_facets_old_method(mesh, pmaps, number_of_patches);
@@ -592,9 +592,8 @@ Borders_of_patches maybe_merge_facets(
     }
     patch_edges = extract_patch_edges(mesh, pmaps, number_of_patches);
     if (!options.quiet) {
-      auto timing = std::chrono::high_resolution_clock::now() - start_time;
       std::cout << "[timings] found " << number_of_patches << " patches in "
-                << std::chrono::duration_cast<std::chrono::milliseconds>(timing).count() << " ms\n";
+                << milliseconds_since(start_time) << " ms\n";
     }
   }
 
@@ -701,16 +700,15 @@ int go(Mesh mesh, CDT_options options) {
   // Build CDT directly from the polygon mesh using the official API
   CDT cdt;
   auto output_on_exit_scope_guard = CGAL::make_scope_exit(create_output_finalizer(cdt, options));
-  auto build_start = std::chrono::high_resolution_clock::now();
+  auto build_start = clock::now();
   cdt = CDT{std::invoke([&]() {
     auto np = CGAL::parameters::debug(cdt_debug).visitor(std::ref(dump_mesh_with_steiner_points));
     return options.merge_facets ? CDT(mesh, np.plc_face_id(pmaps.patch_id_map)) : CDT(mesh, np);
   })};
   if(!options.quiet) {
-    auto timing = std::chrono::high_resolution_clock::now() - build_start;
     std::cout << "[timings] built CDT from mesh in "
-              << std::chrono::duration_cast<std::chrono::milliseconds>(timing).count() << " ms\n";
-    std::cout << "Number of vertices: " << cdt.number_of_vertices() << "\n\n";
+              << milliseconds_since(build_start) << " ms\n";
+    std::cout << cdt.statistics() << "\n";
   }
 
   // Validation: check conforming status and validity
@@ -718,6 +716,24 @@ int go(Mesh mesh, CDT_options options) {
     auto _ = CGAL::CDT_3_VALIDATION_TASK_guard();
     CGAL_assertion(!options.call_is_valid || cdt.is_valid(true));
     CGAL_assertion(!options.call_is_valid || cdt.is_conforming());
+  }
+
+  // Move Steiner vertices to the volume if requested
+  if(options.move_Steiner_vertices_to_the_volume) {
+    auto move_vertices_guard = CGAL::CDT_3_MOVE_STEINER_VERTICES_TASK_guard();
+    cdt.move_Steiner_vertices_to_the_volume();
+    if(!options.quiet) {
+      std::cout << "[timings] moved Steiner vertices to the volume in "
+                    << move_vertices_guard.time_ms() << " ms\n";
+      std::cout << cdt.statistics() << "\n";
+    }
+    CGAL::tetrahedral_isotropic_remeshing(
+          cdt,
+          bbox_max_span,
+          CGAL::parameters::number_of_iterations(30)
+          .remesh_boundaries(false));
+    // CGAL_assertion(cdt.tr().tds().is_valid(true));
+    std::cout << cdt.statistics() << "\n";
   }
 
   return EXIT_SUCCESS;
@@ -778,19 +794,18 @@ int bisect_errors(Mesh mesh, CDT_options options) {
   return CGAL::bisect_failures(mesh, get_size, simplify, run_test, save_mesh);
 }
 
+} // end of namespaces CGAL::CDT_3::test::cdt_3_from_off
+
 int main(int argc, char* argv[]) {
+  using namespace CGAL::CDT_3::test::cdt_3_from_off;
   std::cerr.precision(17);
   std::cout.precision(17);
   CGAL::get_default_random() = CGAL::Random(42);
 
   CDT_options options(argc, argv);
-  if(options.need_help) {
-    help(std::cout);
-    return 0;
-  }
 
   CGAL::CDT_3_read_polygon_mesh_output<Mesh> read_mesh_result;
-  auto start_time = std::chrono::high_resolution_clock::now();
+  auto start_time = clock::now();
   {
     auto _ = CGAL::CDT_3_READ_INPUT_TASK_guard();
 
@@ -817,8 +832,9 @@ int main(int argc, char* argv[]) {
       return EXIT_FAILURE;
     }
     if(!options.quiet) {
-      std::cout << "[timings] read mesh in " << std::chrono::duration_cast<std::chrono::milliseconds>(
-          std::chrono::high_resolution_clock::now() - start_time).count() << " ms\n";
+      std::cout << "[timings] read mesh \"" << options.input_filename << "\" in "
+                << milliseconds_since(start_time)
+                << " ms\n";
       std::cout << "Number of vertices: " << read_mesh_result.polygon_mesh->number_of_vertices() << '\n';
       std::cout << "Number of edges: " << read_mesh_result.polygon_mesh->number_of_edges() << '\n';
       std::cout << "Number of faces: " << read_mesh_result.polygon_mesh->number_of_faces() << "\n\n";
@@ -849,8 +865,7 @@ int main(int argc, char* argv[]) {
 
   auto exit_code = go(std::move(*read_mesh_result.polygon_mesh), options);
   if(!options.quiet) {
-    std::cout << "[timings] total time: " << std::chrono::duration_cast<std::chrono::milliseconds>(
-        std::chrono::high_resolution_clock::now() - start_time).count() << " ms\n";
+    std::cout << "[timings] total time: " << milliseconds_since(start_time) << " ms\n";
     if(exit_code != 0) std::cout << "ERROR with exit code " << exit_code << '\n';
   }
   return exit_code;
