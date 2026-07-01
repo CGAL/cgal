@@ -70,7 +70,7 @@ jobs:
               return '.'
             }
             const body = context.payload.comment.body
-            const re = /\/(force-)?build:(\w+)\s*/;
+            const re = /\/(force-)?build:([A-Za-z0-9_-]+)\s*/;
             if(re.test(body)) {
               const res = re.exec(body)
               return res[2]
