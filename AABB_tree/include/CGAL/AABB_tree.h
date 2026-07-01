@@ -244,8 +244,9 @@ namespace CGAL {
       set_primitive_data_impl(CGAL::Boolean_tag<internal::Has_nested_type_Shared_data<Primitive>::value>(),std::forward<T>(t)...);
     }
 
+    template<typename ConcurrencyTag=Sequential_tag>
     bool build_kd_tree();
-    template<typename ConstPointIterator>
+    template<typename ConcurrencyTag=Sequential_tag, typename ConstPointIterator>
     bool build_kd_tree(ConstPointIterator first, ConstPointIterator beyond);
 public:
 
@@ -455,6 +456,7 @@ public:
     /// constructs the internal search tree from
     /// a point set taken on the internal primitives
     /// returns `true` iff successful memory allocation
+    template<typename ConcurrencyTag=Sequential_tag>
     bool accelerate_distance_queries();
     /// turns off the usage of the internal search tree and clears it if it was already constructed.
     void do_not_accelerate_distance_queries();
@@ -467,11 +469,11 @@ public:
     /// is needed to update the search tree.
     /// \tparam ConstPointIterator is an iterator with
     /// value type `Point_and_primitive_id`.
-    template<typename ConstPointIterator>
+    template<typename ConcurrencyTag=Sequential_tag, typename ConstPointIterator>
     bool accelerate_distance_queries(ConstPointIterator first, ConstPointIterator beyond)
     {
       m_use_default_search_tree = false;
-      return build_kd_tree(first,beyond);
+      return build_kd_tree<ConcurrencyTag>(first,beyond);
     }
 
     /// returns the minimum squared distance between the query point
@@ -822,6 +824,7 @@ public:
 #endif
   }
 
+
   template<typename Tr>
   template<typename Concurrency_tag, typename ConstPrimitiveIterator, typename ComputeBbox, typename SplitPrimitives>
   void
@@ -918,6 +921,7 @@ public:
   // constructs the search KD tree from given points
   // to accelerate the distance queries
   template<typename Tr>
+  template<typename ConcurrencyTag>
   bool AABB_tree<Tr>::build_kd_tree()
   {
     // iterate over primitives to get reference points on them
@@ -927,18 +931,20 @@ public:
       points.push_back( Point_and_primitive_id( Helper::get_reference_point(p, m_traits), p.id() ) );
 
     // clears current KD tree
-    return build_kd_tree(points.begin(), points.end());
+    return build_kd_tree<ConcurrencyTag>(points.begin(), points.end());
   }
 
   // constructs the search KD tree from given points
   // to accelerate the distance queries
   template<typename Tr>
-  template<typename ConstPointIterator>
+  template<typename ConcurrencyTag, typename ConstPointIterator>
   bool AABB_tree<Tr>::build_kd_tree(ConstPointIterator first,
                                     ConstPointIterator beyond)
   {
     clear_search_tree();
-    m_p_search_tree = std::make_unique<const Search_tree>(first, beyond);
+    std::unique_ptr<Search_tree> p_search_tree = std::make_unique<Search_tree>(first, beyond);
+    p_search_tree->template build<ConcurrencyTag>();
+    m_p_search_tree = std::move(p_search_tree);
 #ifdef CGAL_HAS_THREADS
       m_atomic_search_tree_constructed.store(true, std::memory_order_release); // in case build_kd_tree() is triggered by a call to best_hint()
 #else
@@ -1046,11 +1052,12 @@ public:
 
   // constructs the search KD tree from internal primitives
   template<typename Tr>
+  template<typename ConcurrencyTag>
   bool AABB_tree<Tr>::accelerate_distance_queries()
   {
     m_use_default_search_tree = true;
     if(m_primitives.empty()) return true;
-    return build_kd_tree();
+    return build_kd_tree<ConcurrencyTag>();
   }
 
   template<typename Tr>

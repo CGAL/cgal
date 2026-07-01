@@ -58,7 +58,12 @@ public:
       ++begin;
     }
     m_tree.insert(points.begin(), points.end());
-    m_tree.build();
+  }
+
+  template <class ConcurrencyTag=Sequential_tag>
+  void build()
+  {
+    m_tree.template build<ConcurrencyTag>();
   }
 
   template <typename Point>
