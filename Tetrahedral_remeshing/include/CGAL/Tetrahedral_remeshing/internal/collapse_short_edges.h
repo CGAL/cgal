@@ -31,6 +31,11 @@
 #include <CGAL/SMDS_3/tet_soup_to_c3t3.h>
 #include <CGAL/utility.h>
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
+#include <CGAL/Tetrahedral_remeshing/internal/elementary_operations.h>
+
+#ifdef CGAL_LINKED_WITH_TBB
+#include <tbb/concurrent_unordered_map.h>
+#endif
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
 #include <CGAL/Real_timer.h>
@@ -976,7 +981,7 @@ collapse(const typename C3t3::Cell_handle ch,
 
 
 template<typename C3t3, typename CellSelector, typename ShortEdgesBimap>
-typename C3t3::Vertex_handle collapse(typename C3t3::Edge& edge,
+typename C3t3::Vertex_handle collapse(const typename C3t3::Edge& edge,
                                       const Collapse_type& collapse_type,
                                       CellSelector& cell_selector,
                                       C3t3& c3t3,
@@ -1083,7 +1088,7 @@ template<typename C3t3,
          typename CellSelector,
          typename ShortEdgesBimap,
          typename Visitor>
-typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
+typename C3t3::Vertex_handle collapse_edge(const typename C3t3::Edge& edge,
     C3t3& c3t3,
     const Sizing& sizing,
     const bool /* protect_boundaries */,
@@ -1349,6 +1354,127 @@ void collapse_short_edges(C3T3& c3t3,
             << timer.time() << " seconds)." << std::endl;
 #endif
 }
+
+// #define EDGE_COLLAPSE_DEBUG
+
+template <typename C3t3, typename SizingFunction, typename CellSelector, typename Visitor>
+class EdgeCollapseOperation : public ElementaryOperation<C3t3,
+                                                         typename C3t3::Triangulation::Edge,
+                                                         std::vector<typename C3t3::Triangulation::Edge>,
+                                                         typename C3t3::Triangulation::Cell_handle>
+{
+public:
+  using Triangulation = typename C3t3::Triangulation;
+  using Vertex_handle = typename Triangulation::Vertex_handle;
+  using Edge = typename Triangulation::Edge;
+  using Short_edges = std::vector<Edge>;
+  using Cell_handle = typename Triangulation::Cell_handle;
+
+  using Base = ElementaryOperation<C3t3, Edge, Short_edges, Cell_handle>;
+
+  using ElementType = typename Base::ElementType;
+  using ElementSource = typename Base::ElementSource;
+  using Lock_zone = typename Base::Lock_zone;
+  using Point = typename Triangulation::Point;
+  using FT = typename Triangulation::Geom_traits::FT;
+
+private:
+  const SizingFunction& m_sizing;
+  const CellSelector& m_cell_selector;
+  bool m_protect_boundaries;
+  const Visitor& m_visitor;
+
+#if defined CGAL_CONCURRENT_TETRAHEDRAL_REMESHING && defined CGAL_LINKED_WITH_TBB
+  tbb::concurrent_unordered_map<Edge, bool> should_skip_edge;
+#else
+  boost::unordered_map<Edge, bool> should_skip_edge;
+#endif
+
+  boost::container::small_vector<Cell_handle, 64> get_incident_cells(Vertex_handle vh, const C3t3& c3t3) const
+  {
+    boost::container::small_vector<Cell_handle, 64> inc_cells;
+#ifdef USE_THREADSAFE_INCIDENT_CELLS
+    c3t3.triangulation().incident_cells_threadsafe(vh, std::back_inserter(inc_cells));
+#else
+    c3t3.triangulation().incident_cells(vh, std::back_inserter(inc_cells));
+#endif
+    return inc_cells;
+  }
+
+public:
+  EdgeCollapseOperation(const SizingFunction& sizing,
+                        const CellSelector& cell_selector,
+                        const bool protect_boundaries,
+                        const Visitor& visitor)
+      : m_sizing(sizing)
+      , m_cell_selector(cell_selector)
+      , m_protect_boundaries(protect_boundaries)
+      , m_visitor(visitor) {}
+
+  std::vector<ElementType> get_short_edges(const C3t3& c3t3) const
+  {
+    std::vector<std::pair<Edge, FT>> short_edges_with_length;
+    const auto& tr = c3t3.triangulation();
+
+    for(const Edge& e : tr.finite_edges())
+    {
+      auto [collapsible, boundary] = can_be_collapsed(e, c3t3, m_protect_boundaries, m_cell_selector);
+      if(!collapsible)
+        continue;
+
+      const auto sqlen = is_too_short(e, boundary, m_sizing, c3t3, m_cell_selector);
+      if(sqlen != std::nullopt)
+        short_edges_with_length.push_back(std::make_pair(e, sqlen.value()));
+    }
+
+    // Stable ascending sort: shortest first.
+    std::stable_sort(short_edges_with_length.begin(), short_edges_with_length.end(),
+                     [](const std::pair<Edge, FT>& a, const std::pair<Edge, FT>& b) {
+                       return a.second < b.second;
+                     });
+
+    std::vector<ElementType> short_edges;
+    short_edges.reserve(short_edges_with_length.size());
+    for(const auto& ef : short_edges_with_length)
+      short_edges.push_back(ef.first);
+    return short_edges;
+  }
+
+  ElementSource get_element_source(const C3t3& c3t3) const override
+  {
+    return get_short_edges(c3t3);
+  }
+
+  bool lock_zone(const ElementType& edge, const C3t3& c3t3) const override
+  {
+    auto& tr = c3t3.triangulation();
+    if(should_skip_edge.contains(edge))
+      return true;
+    const Vertex_handle v0 = edge.first->vertex(edge.second);
+    const Vertex_handle v1 = edge.first->vertex(edge.third);
+    if(!(tr.try_lock_vertex(v0) && tr.try_lock_vertex(v1)))
+      return false;
+    if(!tr.is_vertex(v0) || !tr.is_vertex(v1))
+      return false;
+    std::vector<Cell_handle> inc_cells_0, inc_cells_1;
+    return tr.try_lock_and_get_incident_cells(v0, inc_cells_0) &&
+           tr.try_lock_and_get_incident_cells(v1, inc_cells_1);
+  }
+
+  bool execute_operation(const ElementType& edge, C3t3& c3t3) override
+  {
+    if(should_skip_edge.contains(edge))
+      return true;
+
+    Vertex_handle result =
+        collapse_edge(edge, c3t3, m_sizing, m_protect_boundaries, m_cell_selector, should_skip_edge, m_visitor);
+    return (result != Vertex_handle());
+  }
+
+  std::string operation_name() const override { return "Edge Collapse"; }
+  bool requires_ordered_processing() const override { return true; }
+};
+
 }
 }
 }

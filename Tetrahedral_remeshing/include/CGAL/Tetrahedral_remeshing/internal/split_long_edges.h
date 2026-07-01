@@ -28,6 +28,8 @@
 #include <utility>
 #include <optional>
 
+#include <CGAL/Tetrahedral_remeshing/internal/elementary_operations.h>
+
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
 #include <CGAL/Real_timer.h>
 #endif
@@ -461,6 +463,121 @@ void split_long_edges(C3T3& c3t3,
             << timer.time() << " sec)." << std::endl;
 #endif
 }
+
+// #define CGAL_TETRAHEDRAL_REMESHING_EDGE_SPLIT_DEBUG
+
+template <typename C3t3, typename SizingFunction, typename CellSelector>
+class EdgeSplitOperation
+    : public ElementaryOperation<C3t3,
+                                 std::pair<typename C3t3::Triangulation::Geom_traits::FT,
+                                           std::pair<typename C3t3::Triangulation::Vertex_handle,
+                                                     typename C3t3::Triangulation::Vertex_handle>>,
+                                 std::vector<std::pair<typename C3t3::Triangulation::Geom_traits::FT,
+                                                       std::pair<typename C3t3::Triangulation::Vertex_handle,
+                                                                 typename C3t3::Triangulation::Vertex_handle>>>,
+                                 typename C3t3::Triangulation::Cell_handle>
+{
+public:
+  using Tr = typename C3t3::Triangulation;
+  using Vertex_handle = typename Tr::Vertex_handle;
+  using Cell_handle = typename Tr::Cell_handle;
+  using Edge_vv = std::pair<Vertex_handle, Vertex_handle>;
+  using FT = typename Tr::Geom_traits::FT;
+
+  using Long_edges_with_lengths = std::vector<std::pair<FT, Edge_vv>>;
+  using Base = ElementaryOperation<C3t3, std::pair<FT, Edge_vv>, Long_edges_with_lengths, Cell_handle>;
+  using Edge = typename Tr::Edge;
+  using ElementType = typename Base::ElementType;
+  using ElementSource = typename Base::ElementSource;
+  using VertexPair = std::pair<Vertex_handle, Vertex_handle>;
+  using Point = typename Tr::Point;
+  using Lock_zone = typename Base::Lock_zone;
+  using Facet = typename Tr::Facet;
+
+  using Subdomain_index = typename C3t3::Subdomain_index;
+  using Surface_patch_index = typename C3t3::Surface_patch_index;
+  using Curve_index = typename C3t3::Curve_index;
+
+private:
+  const SizingFunction& m_sizing;
+  const CellSelector& m_cell_selector;
+  bool m_protect_boundaries;
+
+public:
+  EdgeSplitOperation(const SizingFunction& sizing, const CellSelector& cell_selector, const bool protect_boundaries)
+      : m_sizing(sizing)
+      , m_cell_selector(cell_selector)
+      , m_protect_boundaries(protect_boundaries) {}
+
+  Long_edges_with_lengths get_long_edges(const C3t3& c3t3) const
+  {
+    Long_edges_with_lengths long_edges_with_lengths;
+    const Tr& tr = c3t3.triangulation();
+
+    for(Edge e : tr.finite_edges())
+    {
+      auto [splittable, boundary] = can_be_split(e, c3t3, m_protect_boundaries, m_cell_selector);
+      if(!splittable)
+        continue;
+
+      const std::optional<FT> sqlen = is_too_long(e, boundary, m_sizing, c3t3, m_cell_selector);
+      if(sqlen != std::nullopt)
+      {
+        auto edge_pair = make_vertex_pair(e);
+        long_edges_with_lengths.push_back(make_pair(*sqlen, edge_pair));
+      }
+    }
+
+    // Stable descending sort by length, matching the original bimap ordering.
+    std::stable_sort(long_edges_with_lengths.begin(), long_edges_with_lengths.end(),
+                     [](const std::pair<FT, Edge_vv>& a, const std::pair<FT, Edge_vv>& b) {
+                       return a.first > b.first;
+                     });
+    return long_edges_with_lengths;
+  }
+
+  ElementSource get_element_source(const C3t3& c3t3) const override
+  {
+    return get_long_edges(c3t3);
+  }
+
+  bool lock_zone(const ElementType& el, const C3t3& c3t3) const override
+  {
+    auto& tr = c3t3.triangulation();
+    const auto& vertex_pair = el.second;
+
+    std::vector<Cell_handle> inc_cells_first, inc_cells_second;
+    return tr.try_lock_and_get_incident_cells(vertex_pair.first, inc_cells_first) &&
+           tr.try_lock_and_get_incident_cells(vertex_pair.second, inc_cells_second);
+  }
+
+  bool execute_operation(const ElementType& vp, C3t3& c3t3) override
+  {
+    auto& tr = c3t3.triangulation();
+
+    Edge_vv e = vp.second;
+
+    Cell_handle cell;
+    int i1, i2;
+    if(tr.tds().is_edge(e.first, e.second, cell, i1, i2))
+    {
+      Edge edge(cell, i1, i2);
+
+      auto [splittable, boundary] = can_be_split(edge, c3t3, m_protect_boundaries, m_cell_selector);
+      if(!splittable)
+        return false;
+
+      Vertex_handle vh = split_edge(edge, m_cell_selector, c3t3);
+      return (vh != Vertex_handle());
+    }
+
+    return false;
+  }
+
+  bool requires_ordered_processing() const override { return true; }
+
+  std::string operation_name() const override { return "Edge Split"; }
+};
 
 } // internal
 } // Tetrahedral_remeshing
