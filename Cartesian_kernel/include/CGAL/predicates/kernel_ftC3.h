@@ -21,6 +21,7 @@
 #include <CGAL/predicates/sign_of_determinant.h>
 #include <CGAL/predicates/kernel_ftC2.h>
 #include <CGAL/constructions/kernel_ftC3.h>
+#include <array>
 
 namespace CGAL {
 
@@ -368,6 +369,19 @@ side_of_oriented_sphereC3(const FT &px, const FT &py, const FT &pz,
                                 stx,sty,stz,st2);
   // Note that the determinant above is det(P,R,Q,S) (Q and R are swapped)!
 }
+
+inline
+Oriented_side
+side_of_oriented_sphereC3(double px, double py, double pz,
+                          double tx, double ty, double tz,
+                          const std::array<double,4>& det)
+{
+  double ptx = tx - px;
+  double pty = ty - py;
+  double ptz = tz - pz;
+  return sign(ptx * det[0] - pty * det[1] + ptz * det[2] - (ptx*ptx + pty*pty + ptz*ptz) * det[3]);
+}
+
 
 template <class FT >
 CGAL_KERNEL_MEDIUM_INLINE

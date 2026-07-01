@@ -20,6 +20,8 @@
 
 #include <CGAL/kernel_config.h>
 
+#include <array>
+
 namespace CGAL {
 
 template <class RT>
@@ -399,6 +401,39 @@ determinant(
   return m0123456;
 }
 
+inline void subdeterminants(
+ double ax,  double ay,  double az,
+ double bx,  double by,  double bz,
+ double cx,  double cy,  double cz,
+ double dx,  double dy,  double dz,
+ std::array<double,4>& det)
+{
+  double bax = bx-ax;
+  double bay = by-ay;
+  double baz = bz-az;
+  double cax = cx-ax;
+  double cay = cy-ay;
+  double caz = cz-az;
+  double dax = dx-ax;
+  double day = dy-ay;
+  double daz = dz-az;
+
+  double ba2 = bax*bax + bay*bay + baz*baz;
+  double ca2 = cax*cax + cay*cay + caz*caz;
+  double da2 = dax*dax + day*day + daz*daz;
+
+  double bc = baz*ca2 - caz*ba2;
+  double bd = baz*da2 - daz*ba2;
+  double cd = caz*da2 - daz*ca2;
+  det[0] = bay*cd - cay*bd + day*bc;
+  det[1] = bax*cd - cax*bd + dax*bc;
+
+  double sd0 = bax*cay - bay*cax;
+  double sd1 = bax*day - bay*dax;
+  double sd2 = cax*day - cay*dax;
+  det[2] = ba2 * sd2 - ca2 * sd1 + da2 * sd0;
+  det[3] = baz * sd2 - caz * sd1 + daz * sd0;
+}
 
 } //namespace CGAL
 

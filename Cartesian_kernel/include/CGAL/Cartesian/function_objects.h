@@ -27,6 +27,8 @@
 #include <CGAL/Distance_3/Point_3_Point_3.h>
 #include <CGAL/Distance_3/internal/squared_distance_utils_3.h>
 
+#include <array>
+
 namespace CGAL {
 
 namespace CartesianKernelFunctors {
@@ -4379,6 +4381,18 @@ namespace CartesianKernelFunctors {
                                        r.x(), r.y(), r.z(),
                                        s.x(), s.y(), s.z(),
                                        test.x(), test.y(), test.z());
+    }
+  Oriented_side
+    operator()( const Point_3& p, const Point_3& q, const Point_3& r,
+                const Point_3& s, const Point_3& test,
+                const std::array<double,4>& det) const
+    {
+      return side_of_oriented_sphereC3(p.x(), p.y(), p.z(),
+                                       q.x(), q.y(), q.z(),
+                                       r.x(), r.y(), r.z(),
+                                       s.x(), s.y(), s.z(),
+                                       test.x(), test.y(), test.z(),
+                                       det);
     }
   };
 
