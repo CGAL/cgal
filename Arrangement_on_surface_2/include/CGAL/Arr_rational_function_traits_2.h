@@ -1001,7 +1001,7 @@ public:
      * of xcv that is defined by ce at its limit.
      * Returns SMALLER, EQUAL, or LARGER accordingly.
      */
-    Comparison_result operator()(const Point_2& p, const X_monotone_curve_2&  xcv, Arr_curve_end ce) {
+    Comparison_result operator()(const Point_2& p, const X_monotone_curve_2&  xcv, Arr_curve_end ce) const {
       CGAL_precondition(Parameter_space_in_x_2()(xcv,ce) == ARR_INTERIOR);
       CGAL_precondition(Parameter_space_in_y_2()(xcv,ce) != ARR_INTERIOR);
       return CGAL::compare(p.x(), (ce == ARR_MIN_END) ? xcv.left_x() : xcv.right_x());
@@ -1013,7 +1013,7 @@ public:
      * Returns SMALLER, EQUAL, or LARGER accordingly.
      */
     Comparison_result operator()(const X_monotone_curve_2&  xcv1, Arr_curve_end ce1,
-                                 const X_monotone_curve_2&  xcv2, Arr_curve_end ce2) {
+                                 const X_monotone_curve_2&  xcv2, Arr_curve_end ce2) const {
       CGAL_precondition(Parameter_space_in_x_2()(xcv1,ce1) == ARR_INTERIOR);
       CGAL_precondition(Parameter_space_in_y_2()(xcv1,ce1) != ARR_INTERIOR);
       CGAL_precondition(Parameter_space_in_x_2()(xcv2,ce2) == ARR_INTERIOR);
@@ -1060,7 +1060,7 @@ public:
      * \return SMALLER if the curve is directed right;
      *         LARGER if the curve is directed left.
      */
-    Comparison_result operator()(const X_monotone_curve_2& cv) {
+    Comparison_result operator()(const X_monotone_curve_2& cv) const {
       if (cv.is_directed_right()) return (SMALLER);
       else return (LARGER);
     }
@@ -1075,7 +1075,7 @@ public:
      * \param cv The curve.
      * \return The opposite curve.
      */
-    X_monotone_curve_2 operator()(const X_monotone_curve_2& cv) { return (cv.flip()); }
+    X_monotone_curve_2 operator()(const X_monotone_curve_2& cv) const { return (cv.flip()); }
   };
 
   /*! obtains a Construct_opposite_2 functor object. */
@@ -1088,9 +1088,9 @@ public:
     using Approximate_number_type = Bound;
 
   private:
-    Approximate_number_type approx_x(const Point_2& p) { return Approximate_number_type(p.x().lower()); }
+    Approximate_number_type approx_x(const Point_2& p) const { return Approximate_number_type(p.x().lower()); }
 
-    Approximate_number_type approx_y(const Point_2& p) {
+    Approximate_number_type approx_y(const Point_2& p) const {
       using Polynomial_1 = typename Algebraic_kernel_d_1::Polynomial_1;
 
       typename CGAL::Coercion_traits<Polynomial_1,Bound>::Cast cast;
@@ -1101,7 +1101,7 @@ public:
   public:
     /*!
      */
-    Approximate_number_type operator()(const Point_2& p, int i){
+    Approximate_number_type operator()(const Point_2& p, int i) const {
       if (i == 0) return approx_x(p);
       if (i == 1) return approx_y(p);
       CGAL_assertion(false);

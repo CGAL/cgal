@@ -2652,8 +2652,7 @@ public:
       const Direction_3& normal1 = xc1.normal();
       const Direction_3& normal2 = xc2.normal();
 
-      Direction_3 opposite_normal1 =
-        kernel.construct_opposite_direction_3_object()(normal1);
+      Direction_3 opposite_normal1 = kernel.construct_opposite_direction_3_object()(normal1);
 
       if (equal_3(normal1, normal2) || equal_3(opposite_normal1, normal2)) {
         // The underlying planes are the same
@@ -3046,7 +3045,8 @@ public:
      * \return SMALLER if the curve is directed right;
      *         LARGER if the curve is directed left.
      */
-    Comparison_result operator()(const X_monotone_curve_2& xc) { return (xc.is_directed_right()) ? SMALLER : LARGER; }
+    Comparison_result operator()(const X_monotone_curve_2& xc) const
+    { return (xc.is_directed_right()) ? SMALLER : LARGER; }
   };
 
   /*! obtains a `Compare_endpoints_xy_2` function object. */
@@ -3058,7 +3058,7 @@ public:
      * \param xc the curve.
      * \return the opposite curve.
      */
-    X_monotone_curve_2 operator()(const X_monotone_curve_2& xc) { return xc.opposite(); }
+    X_monotone_curve_2 operator()(const X_monotone_curve_2& xc) const { return xc.opposite(); }
   };
 
   /*! obtains a `Construct_opposite_2` function object. */
@@ -3078,8 +3078,7 @@ public:
 
   /*! inserters a spherical_arc used by the traits-class */
   template <typename OutputStream>
-  friend OutputStream& operator<<(OutputStream& os,
-                                  const X_monotone_curve_2& xc) {
+  friend OutputStream& operator<<(OutputStream& os, const X_monotone_curve_2& xc) {
     os << "(" << xc.left() << "), (" << xc.right() << ")";
     return os;
   }

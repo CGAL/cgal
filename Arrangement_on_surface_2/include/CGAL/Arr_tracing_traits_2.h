@@ -580,7 +580,7 @@ public:
      * \param xcv the curve.
      * \return the opposite curve.
      */
-    X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv) {
+    X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv) const {
       if (! m_enabled) return m_object(xcv);
       std::cout << "construct_opposite" << std::endl
                 << "  xcv: " << xcv << std::endl;
@@ -610,7 +610,7 @@ protected:
   template <typename T>
   class Construct_point_2 {
   public:
-    void operator()() {}; // avoids compilation errors
+    void operator()() const {}; // avoids compilation errors
   };
 };
 
@@ -632,7 +632,7 @@ protected:
     /*! constructs a point given two coordinates.
      */
     template <typename Coord1, typename Coord2>
-    Point_2 operator()(const Coord1& x, const Coord2& y) {
+    Point_2 operator()(const Coord1& x, const Coord2& y) const {
       const T* derived = static_cast<const T*>(this);
       if (! derived->m_enabled) return derived->m_object(x, y);
       std::cout << "construct_point_2" << std::endl
@@ -846,7 +846,7 @@ public:
      * \param xcv the curve.
      * \return the comparison result.
      */
-    Comparison_result operator()(const X_monotone_curve_2& xcv) {
+    Comparison_result operator()(const X_monotone_curve_2& xcv) const {
       if (! m_enabled) return m_object(xcv);
       std::cout << "compare_endpoints_xy" << std::endl
                 << "  xcv: " << xcv << std::endl;
@@ -897,11 +897,12 @@ protected:
     using Base_approximate_2 = typename Base::Approximate_2;
 
   public:
+    using Approximate_kernel = typename Base_approximate_2::Approximate_kernel;
     using Approximate_point_2 = typename Base_approximate_2::Approximate_point_2;
 
     /*! obtains an approximation of a point.
      */
-    Approximate_point_2 operator()(const Point_2& p) {
+    Approximate_point_2 operator()(const Point_2& p) const {
       const T* derived = static_cast<const T*>(this);
       if (! derived->m_enabled) return derived->m_object(p);
       std::cout << "approximate" << std::endl
@@ -946,7 +947,7 @@ protected:
   public:
     /*! obtains an approximation of an \f$x\f$-monotone curve. */
     template <typename OutputIterator>
-    OutputIterator operator()(const X_monotone_curve_2& xcv, double error, OutputIterator oi, bool l2r = true) {
+    OutputIterator operator()(const X_monotone_curve_2& xcv, double error, OutputIterator oi, bool l2r = true) const {
       using Base_approximate_2 = typename Base::Approximate_2;
       using Ap = typename Base_approximate_2::Approximate_point_2;
 
@@ -1078,7 +1079,7 @@ public:
      * \return An approximation of `p`'s \f$x\f$-coordinate (if `i` == 0), or an
      *         approximation of `p`'s \f$y\f$-coordinate (if `i` == 1).
      */
-    Approximate_number_type operator()(const Point_2& p, int i) {
+    Approximate_number_type operator()(const Point_2& p, int i) const {
       if (! m_enabled) return m_object(p, i);
       std::cout << "approximate" << std::endl
                 << "  p: " << p << ", i: " << i << std::endl;
@@ -1277,7 +1278,7 @@ public:
      * \param xcv the curve.
      * \param ce the curve-end.
      */
-    Comparison_result operator()(const Point_2& pt, const X_monotone_curve_2& xcv, Arr_curve_end ce) {
+    Comparison_result operator()(const Point_2& pt, const X_monotone_curve_2& xcv, Arr_curve_end ce) const {
       if (! m_enabled) return m_object(pt, xcv, ce);
       std::cout << "compare_x_on_boundary" << std::endl
                 << "  pt: " << pt << std::endl
@@ -1295,7 +1296,7 @@ public:
      * \param ce2 the second curve-end.
      */
     Comparison_result operator()(const X_monotone_curve_2& xcv1, Arr_curve_end ce1,
-                                 const X_monotone_curve_2& xcv2, Arr_curve_end ce2) {
+                                 const X_monotone_curve_2& xcv2, Arr_curve_end ce2) const {
       if (! m_enabled) return m_object(xcv2, ce1, xcv2, ce2);
       std::cout << "compare_x_on_boundary" << std::endl
                 << "xcv1: " << xcv1 << std::endl
@@ -1856,8 +1857,7 @@ public:
      * \param xcv the curve.
      * \return the comparison result.
      */
-    Comparison_result operator()(const Point_2& p,
-                                 const X_monotone_curve_2& xcv) const {
+    Comparison_result operator()(const Point_2& p, const X_monotone_curve_2& xcv) const {
       if (! m_enabled) return m_object(p, xcv);
       std::cout << "compare_y_at_x" << std::endl
                 << "  p: " << p << std::endl

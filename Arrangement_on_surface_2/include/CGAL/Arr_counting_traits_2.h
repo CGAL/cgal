@@ -471,7 +471,7 @@ public:
      * \param xcv the curve.
      * \return the opposite curve.
      */
-    X_monotone_curve_2 operator()(const X_monotone_curve_2& xc) {
+    X_monotone_curve_2 operator()(const X_monotone_curve_2& xc) const {
       ++m_counter;
       return m_object(xc);
     }
@@ -521,7 +521,7 @@ protected:
     /*! constructs a point given two coordinates.
      */
     template <typename Coord1, typename Coord2>
-    Point_2 operator()(const Coord1& x, const Coord2& y) {
+    Point_2 operator()(const Coord1& x, const Coord2& y) const {
       const T* derived = static_cast<const T*>(this);
       ++derived->m_counter2;
       return derived->m_object(x, y);
@@ -722,7 +722,7 @@ public:
      * \param xcv the curve.
      * \return the comparison result.
      */
-    Comparison_result operator()(const X_monotone_curve_2& xc) {
+    Comparison_result operator()(const X_monotone_curve_2& xc) const {
       ++m_counter;
       return m_object(xc);
     }
@@ -769,6 +769,7 @@ protected:
     using Base_approximate_2 = typename Base::Approximate_2;
 
   public:
+    using Approximate_kernel = typename Base_approximate_2::Approximate_kernel;
     using Approximate_point_2 = typename Base_approximate_2::Approximate_point_2;
 
     /*! obtains an approximation of a point.
@@ -814,7 +815,7 @@ protected:
   public:
     /*! obtains an approximation of an \f$x\f$-monotone curve. */
     template <typename OutputIterator>
-    OutputIterator operator()(const X_monotone_curve_2& xcv, double error, OutputIterator oi, bool l2r = true) {
+    OutputIterator operator()(const X_monotone_curve_2& xcv, double error, OutputIterator oi, bool l2r = true) const {
       const T* derived = static_cast<const T*>(this);
       ++derived->m_counter3;
       return derived->m_object(xcv, error, oi, l2r);
@@ -858,7 +859,7 @@ protected:
      */
     template <typename OutputIterator>
     OutputIterator operator()(const X_monotone_curve_2& xcv, double error, OutputIterator oi, const Bbox_2& bbox,
-                              bool l2r = true) {
+                              bool l2r = true) const {
       const T* derived = static_cast<const T*>(this);
       ++derived->m_counter4;
       return derived->m_object(xcv, error, oi, bbox, l2r);
@@ -925,7 +926,7 @@ public:
      * \return An approximation of `p`'s \f$x\f$-coordinate (if `i` == 0), or an
      *         approximation of `p`'s \f$y\f$-coordinate (if `i` == 1).
      */
-    Approximate_number_type operator()(const Point_2& p, int i) {
+    Approximate_number_type operator()(const Point_2& p, int i) const {
       ++m_counter1;
       return m_object(p, i);
     }
@@ -1107,7 +1108,7 @@ public:
      * \param p1 the first point.
      * \param p2 the second point.
      */
-    Comparison_result operator()(const Point_2& p1, const Point_2& p2) {
+    Comparison_result operator()(const Point_2& p1, const Point_2& p2) const {
       ++m_counter1;
       return m_object(p1, p2);
     }
@@ -1117,7 +1118,7 @@ public:
      * \param xcv the curve.
      * \param ce the curve-end.
      */
-    Comparison_result operator()(const Point_2& pt, const X_monotone_curve_2& xcv, Arr_curve_end ce) {
+    Comparison_result operator()(const Point_2& pt, const X_monotone_curve_2& xcv, Arr_curve_end ce) const {
       ++m_counter2;
       return m_object(pt, xcv, ce);
     }
@@ -1129,7 +1130,7 @@ public:
      * \param ce2 the second curve-end.
      */
     Comparison_result operator()(const X_monotone_curve_2& xcv1, Arr_curve_end ce1,
-                                 const X_monotone_curve_2& xcv2, Arr_curve_end ce2) {
+                                 const X_monotone_curve_2& xcv2, Arr_curve_end ce2) const {
       ++m_counter3;
       return m_object(xcv1, ce1, xcv2, ce2);
     }
