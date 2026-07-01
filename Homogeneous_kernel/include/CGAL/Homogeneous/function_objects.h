@@ -23,6 +23,7 @@
 #include <CGAL/predicates/sign_of_determinant.h>
 #include <CGAL/Homogeneous/predicates_on_pointsH2.h>
 #include <CGAL/Homogeneous/predicates_on_pointsH3.h>
+#include <CGAL/Fraction_traits.h>
 
 namespace CGAL {
 
@@ -2599,8 +2600,9 @@ namespace HomogeneousKernelFunctors {
     Vector_2
     operator()(const Vector_2& v, const FT& f ) const
     {
-      return Vector_2( v.hx()*f.denominator(), v.hy()*f.denominator(),
-                       v.hw()*f.numerator() );
+      RT num, den;
+      typename Fraction_traits<FT>::Decompose()(f, num, den);
+      return Vector_2( v.hx()*den, v.hy()*den, v.hw()*num );
     }
 
     Vector_2
@@ -2621,8 +2623,9 @@ namespace HomogeneousKernelFunctors {
     Vector_3
     operator()(const Vector_3& v, const FT& f ) const
     {
-      return Vector_3( v.hx()*f.denominator(), v.hy()*f.denominator(),
-                       v.hz()*f.denominator(), v.hw()*f.numerator() );
+      RT num, den;
+      typename Fraction_traits<FT>::Decompose()(f, num, den);
+      return Vector_3( v.hx()*den, v.hy()*den, v.hz()*den, v.hw()*num );
     }
 
     Vector_3
@@ -3330,9 +3333,14 @@ namespace HomogeneousKernelFunctors {
                    CGAL::square(c2.center().x()) -
                    CGAL::square(c2.center().y()) + c2.squared_radius();
 
-      const RT aa = a.numerator() * b.denominator() * c.denominator();
-      const RT bb = a.denominator() * b.numerator() * c.denominator();
-      const RT cc = a.denominator() * b.denominator() * c.numerator();
+      RT num_a, den_a, num_b, den_b, num_c, den_c;
+      typename Fraction_traits<FT>::Decompose decomp;
+      decomp(a, num_a, den_a);
+      decomp(b, num_b, den_b);
+      decomp(c, num_c, den_c);
+      const RT aa = num_a * den_b * den_c;
+      const RT bb = den_a * num_b * den_c;
+      const RT cc = den_a * den_b * num_c;
 
       return Line_2(aa, bb, cc);
     }
@@ -3362,10 +3370,16 @@ namespace HomogeneousKernelFunctors {
                    CGAL::square(s2.center().y()) -
                    CGAL::square(s2.center().z()) + s2.squared_radius();
 
-      const RT aa = a.numerator() * b.denominator() * c.denominator() * d.denominator();
-      const RT bb = a.denominator() * b.numerator() * c.denominator() * d.denominator();
-      const RT cc = a.denominator() * b.denominator() * c.numerator() * d.denominator();
-      const RT dd = a.denominator() * b.denominator() * c.denominator() * d.numerator();
+      RT num_a, den_a, num_b, den_b, num_c, den_c, num_d, den_d;
+      typename Fraction_traits<FT>::Decompose decomp;
+      decomp(a, num_a, den_a);
+      decomp(b, num_b, den_b);
+      decomp(c, num_c, den_c);
+      decomp(d, num_d, den_d);
+      const RT aa = num_a * den_b * den_c * den_d;
+      const RT bb = den_a * num_b * den_c * den_d;
+      const RT cc = den_a * den_b * num_c * den_d;
+      const RT dd = den_a * den_b * den_c * num_d;
 
       return Plane_3(aa, bb, cc, dd);
     }
@@ -3388,8 +3402,9 @@ namespace HomogeneousKernelFunctors {
     Vector_2
     operator()( const Vector_2& v, const FT& c) const
     {
-      return Vector_2( v.hx()*c.numerator(), v.hy()*c.numerator(),
-                       v.hw()*c.denominator() ); }
+      RT num, den;
+      typename Fraction_traits<FT>::Decompose()(c, num, den);
+      return Vector_2( v.hx()*num, v.hy()*num, v.hw()*den ); }
   };
 
   template <typename K>
@@ -3409,8 +3424,9 @@ namespace HomogeneousKernelFunctors {
     Vector_3
     operator()( const Vector_3& v, const FT& c) const
     {
-      return Vector_3( v.hx()*c.numerator(), v.hy()*c.numerator(),
-                       v.hz()*c.numerator(), v.hw()*c.denominator() ); }
+      RT num, den;
+      typename Fraction_traits<FT>::Decompose()(c, num, den);
+      return Vector_3( v.hx()*num, v.hy()*num, v.hz()*num, v.hw()*den ); }
   };
 
   template <typename K>
