@@ -7,3 +7,4 @@ project(Spatial_sorting_)
 find_package(CGAL REQUIRED COMPONENTS Core)
 
 create_single_source_cgal_program("simple.cpp")
+create_single_source_cgal_program("spatial_sort_polygon_mesh_benchmark.cpp")
