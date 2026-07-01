@@ -1467,7 +1467,7 @@ public:
   Straight_skeleton_builder_2& enter_contour_weights(WeightIterator aWeightsBegin,
                                                      WeightIterator aWeightsEnd)
   {
-    return enter_contour_weightsg(aWeightsBegin, aWeightsEnd, NT_converter<FT,FT>());
+    return enter_contour_weights(aWeightsBegin, aWeightsEnd, NT_converter<FT,FT>());
   }
 } ;
 
