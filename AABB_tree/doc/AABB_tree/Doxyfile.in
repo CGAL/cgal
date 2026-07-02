@@ -5,3 +5,5 @@ PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Fast Intersection and Distance Comput
 EXTRACT_ALL                =  false
 HIDE_UNDOC_MEMBERS         =  true
 HIDE_UNDOC_CLASSES         =  true
+
+INPUT += ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/AABB_trees/intersection.h
