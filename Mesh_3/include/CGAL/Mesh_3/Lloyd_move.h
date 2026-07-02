@@ -86,10 +86,8 @@ public:
     {
       case 3:
         return lloyd_move_inside_domain(v,incident_cells,c3t3,sizing_field);
-        break;
       case 2:
         return lloyd_move_on_boundary(v,c3t3,sizing_field);
-        break;
       case 1:
       case 0:
       case -1:
@@ -97,12 +95,10 @@ public:
         // N.B.: dimension = -1 is possible if we added points on a far sphere
         //       during initialization
         return CGAL::NULL_VECTOR;
-        break;
       default:
         // Should not happen
         CGAL_assertion(false);
         return CGAL::NULL_VECTOR;
-        break;
     }
 
     return CGAL::NULL_VECTOR;
@@ -225,23 +221,13 @@ private:
     {
       case 0: // could happen if there is an isolated surface point into mesh
       case 1: // don't do anything, as the point is already on the surface
-      {
         return CGAL::NULL_VECTOR;
-        break;
-      }
       case 2: // segment centroid
-      {
         return centroid_of_segment_move(v, points, c3t3, sizing_field);
-        break;
-      }
       case 3: // triangle centroid
-      {
         return centroid_of_triangle_move(v, points, c3t3, sizing_field);
-        break;
-      }
       default: // >= 4 points, centroid + projection
         return centroid_general_move(v, points.begin(), points.end(), c3t3, sizing_field);
-        break;
     }
 
     return CGAL::NULL_VECTOR;
@@ -414,15 +400,9 @@ private:
     case 1:
       return CGAL::NULL_VECTOR;
     case 2: // segment centroid
-    {
       return centroid_of_segment_move(v, polygon_3d, c3t3, sizing_field);
-      break;
-    }
     case 3: // triangle centroid
-    {
       return centroid_of_triangle_move(v, polygon_3d, c3t3, sizing_field);
-      break;
-    }
     default: // >= 4 points, centroid + projection
       // Compute centroid using quadrature sizing
       return centroid_3d_polygon_move(v, polygon_3d.begin(), polygon_3d.end(), c3t3, sizing_field);
