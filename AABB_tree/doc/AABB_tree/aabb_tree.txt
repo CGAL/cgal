@@ -350,6 +350,9 @@ inside the bounding box.
 
 \subsection aabb_two_trees_perf Intersection of two AABB trees
 
+The surface triangle mesh chosen for benchmarking distances is the knot model (again),
+the iphigenia model and the Nefertiti model. We test their intersections between them with
+translation and scaling so that they do intersect. When testing with itself, we translate them slightly.
 
 |  Nb triangles | Traversal | Total | box_intersection_d
 | ----:    | ----:     | ----: | ----: | -: |

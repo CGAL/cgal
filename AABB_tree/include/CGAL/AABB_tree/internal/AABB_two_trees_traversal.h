@@ -33,7 +33,9 @@ void two_trees_traversal(const ::CGAL::AABB_node<AABBTraits_A>& node_A,
                         const std::size_t nb_primitives_B,
                         TwoTreeTraversalTraits& traversal_traits)
 {
+#if CGAL_LINKED_WITH_TBB
   const std::size_t cutoff_parallel_call = 100000;
+#endif
   auto recursive_call = [](const auto &node_A, const auto &node_B, const std::size_t nb_primitives_A, const std::size_t nb_primitives_B, auto &traversal_traits){
     if(traversal_traits.prefer_A_for_next_step(node_A, node_B, nb_primitives_A, nb_primitives_B))
       two_trees_traversal< in_order, ConcurrencyTag>(node_A, node_B, nb_primitives_A, nb_primitives_B, traversal_traits);
