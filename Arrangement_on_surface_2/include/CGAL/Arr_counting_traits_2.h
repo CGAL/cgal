@@ -30,6 +30,7 @@
 #include <CGAL/Arr_enums.h>
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_has.h>
+#include <CGAL/Bbox_2.h>
 
 namespace CGAL {
 namespace aos2 {
