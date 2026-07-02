@@ -89,13 +89,13 @@ public:
   template <typename P3>
   bool is_locked(const P3 &point)
   {
-    return is_cell_locked(get_grid_index(point));
+    return is_cell_locked(grid_index(point));
   }
 
   template <typename P3>
   bool is_locked_by_this_thread(const P3 &point)
   {
-    return get_thread_local_grid()[get_grid_index(point)];
+    return get_thread_local_grid()[grid_index(point)];
   }
 
   template <bool no_spin = false>
@@ -110,7 +110,7 @@ public:
   {
     if (lock_radius == 0)
     {
-      int index_to_lock = get_grid_index(index_x, index_y, index_z);
+      int index_to_lock = grid_index(index_x, index_y, index_z);
       return try_lock<no_spin>(index_to_lock);
     }
     else
@@ -131,7 +131,7 @@ public:
                k <= (std::min)(m_num_grid_cells_per_axis - 1, index_z+lock_radius) ;
                ++k)
           {
-            int index_to_lock = get_grid_index(i, j, k);
+            int index_to_lock = grid_index(i, j, k);
             // Try to lock it
             if (try_lock<no_spin>(index_to_lock))
             {
@@ -182,7 +182,7 @@ public:
 
     if (lock_radius == 0)
     {
-      return try_lock<no_spin>(get_grid_index(index_x, index_y, index_z));
+      return try_lock<no_spin>(grid_index(index_x, index_y, index_z));
     }
     else
     {
@@ -232,7 +232,7 @@ public:
   template <typename P3>
   void unlock_all_tls_locked_locations_but_one_point(const P3 &point)
   {
-    unlock_all_tls_locked_cells_but_one(get_grid_index(point));
+    unlock_all_tls_locked_cells_but_one(grid_index(point));
   }
 
   bool check_if_all_cells_are_unlocked()
@@ -288,7 +288,7 @@ protected:
     return {index_x, index_y, index_z};
   }
 
-  int get_grid_index(int index_x, int index_y, int index_z) const
+  int grid_index(int index_x, int index_y, int index_z) const
   {
     return
       index_z*m_num_grid_cells_per_axis*m_num_grid_cells_per_axis
@@ -297,11 +297,11 @@ protected:
   }
 
   template <typename P3>
-  int get_grid_index(const P3& point) const
+  int grid_index(const P3& point) const
   {
     auto [index_x, index_y, index_z] = get_grid_indices(point);
 
-    return get_grid_index(index_x, index_y, index_z);
+    return grid_index(index_x, index_y, index_z);
   }
 
   auto* derived() { return static_cast<Derived*>(this); }
