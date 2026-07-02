@@ -552,6 +552,33 @@ public:
           // the anti-aliasing, so no blending is needed here.
           vao[VAO_SEGMENTS].bind();
           glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(m_scene.number_of_elements(GS::POS_SEGMENTS)));
+
+          // Fill the square-cap corners where flat edges meet with a disk at each
+          // edge endpoint, in the edge color and at the edge width. Drawn from the
+          // segments, so it lands only at real edge endpoints and skips degenerate
+          // edges. The 2D analogue of the tube-mode join spheres.
+          rendering_program_edge_disk.bind();
+          if (m_use_default_color)
+          {
+            auto edge_color = m_scene.get_default_color_segment();
+            color = QVector3D((double)edge_color.red()/(double)255,
+                              (double)edge_color.green()/(double)255,
+                              (double)edge_color.blue()/(double)255);
+            rendering_program_edge_disk.setUniformValue("u_DefaultColor", color);
+            rendering_program_edge_disk.setUniformValue("u_UseDefaultColor", static_cast<GLint>(1));
+          }
+          else
+          {
+            rendering_program_edge_disk.setUniformValue("u_UseDefaultColor", static_cast<GLint>(0));
+          }
+          rendering_program_edge_disk.setUniformValue("u_PointSize", static_cast<GLfloat>(m_size_edges*pixel_ratio));
+          rendering_program_edge_disk.setUniformValue("u_Viewport", viewport);
+          rendering_program_edge_disk.setUniformValue("u_ClipPlane", clipPlane);
+          rendering_program_edge_disk.setUniformValue("u_PointPlane", plane_point);
+          rendering_program_edge_disk.setUniformValue("u_RenderingMode", rendering_mode);
+          vao[VAO_SEGMENTS].bind();
+          glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(m_scene.number_of_elements(GS::POS_SEGMENTS)));
+          rendering_program_edge_disk.release();
         };
 
         enum {
@@ -946,6 +973,7 @@ protected:
     rendering_program_face.removeAllShaders();
     rendering_program_p_l.removeAllShaders();
     rendering_program_line.removeAllShaders();
+    rendering_program_edge_disk.removeAllShaders();
     rendering_program_clipping_plane.removeAllShaders();
     rendering_program_sphere.removeAllShaders();
     rendering_program_join_sphere.removeAllShaders();
@@ -1262,6 +1290,39 @@ protected:
       if (!rendering_program_line.link())
       { std::cerr << "Linking Program for line FAILED" << std::endl; }
     }
+
+    // Edge-disk shader: fills the flat-edge corners with a small screen-space disk
+    // at each edge endpoint. Same vertex shader as the shapes (raw position), a
+    // geometry shader that emits a rounded quad at the edge width, and a fragment
+    // that rounds it into a disk.
+    if (isOpenGL_3_2())
+    {
+      source_ = VERTEX_SOURCE_SHAPE;
+      QOpenGLShader *vertex_shader_edge_disk = new QOpenGLShader(QOpenGLShader::Vertex);
+      if (!vertex_shader_edge_disk->compileSourceCode(source_))
+      { std::cerr << "Compiling vertex source for edge disk FAILED" << std::endl; }
+
+      source_ = GEOMETRY_SOURCE_EDGE_DISK;
+      QOpenGLShader *geometry_shader_edge_disk = new QOpenGLShader(QOpenGLShader::Geometry);
+      if (!geometry_shader_edge_disk->compileSourceCode(source_))
+      { std::cerr << "Compiling geometry source for edge disk FAILED" << std::endl; }
+
+      source_ = FRAGMENT_SOURCE_EDGE_DISK;
+      QOpenGLShader *fragment_shader_edge_disk = new QOpenGLShader(QOpenGLShader::Fragment);
+      if (!fragment_shader_edge_disk->compileSourceCode(source_))
+      { std::cerr << "Compiling fragment source for edge disk FAILED" << std::endl; }
+
+      if (!rendering_program_edge_disk.addShader(vertex_shader_edge_disk))
+      { std::cerr << "Adding vertex shader for edge disk FAILED" << std::endl;}
+      if (!rendering_program_edge_disk.addShader(geometry_shader_edge_disk))
+      { std::cerr << "Adding geometry shader for edge disk FAILED" << std::endl;}
+      if (!rendering_program_edge_disk.addShader(fragment_shader_edge_disk))
+      { std::cerr << "Adding fragment shader for edge disk FAILED" << std::endl; }
+      rendering_program_edge_disk.bindAttributeLocation("a_Pos", 0);
+      rendering_program_edge_disk.bindAttributeLocation("a_Color", 1);
+      if (!rendering_program_edge_disk.link())
+      { std::cerr << "Linking Program for edge disk FAILED" << std::endl; }
+    }
   }
 
   void initialize_buffers()
@@ -1536,6 +1597,11 @@ protected:
       int mvpLocation = rendering_program_line.uniformLocation("u_Mvp");
       rendering_program_line.setUniformValue(mvpLocation, mvpMatrix);
       rendering_program_line.release();
+
+      rendering_program_edge_disk.bind();
+      mvpLocation = rendering_program_edge_disk.uniformLocation("u_Mvp");
+      rendering_program_edge_disk.setUniformValue(mvpLocation, mvpMatrix);
+      rendering_program_edge_disk.release();
     }
   }
 
@@ -2093,6 +2159,7 @@ protected:
   QOpenGLShaderProgram rendering_program_face;
   QOpenGLShaderProgram rendering_program_p_l;
   QOpenGLShaderProgram rendering_program_line;
+  QOpenGLShaderProgram rendering_program_edge_disk;
   QOpenGLShaderProgram rendering_program_clipping_plane;
   QOpenGLShaderProgram rendering_program_sphere;
   QOpenGLShaderProgram rendering_program_join_sphere;

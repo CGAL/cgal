@@ -868,6 +868,104 @@ void main(void)
 }
 )DELIM";
 
+// Vertex-disk join for the flat edges. Takes each edge (a line) and emits a small
+// screen-space disk at both endpoints, in the edge colour and at the edge width,
+// so the square-cap corners where flat edges meet are filled. It reuses the same
+// pixel-to-clip conversion as the wide-edge shader, so the disk radius matches the
+// edge half-width. Drawing from the edges (not the point set) skips degenerate
+// edges and never touches a non-edge point, so no disk floats where there is no
+// edge. The disk is screen-facing (a rounded quad), not a sphere, so it stays flat
+// in 3D and scales at any width with no point-size limit.
+const char GEOMETRY_SOURCE_EDGE_DISK[]=R"DELIM(
+#version 150
+layout(lines) in;
+layout(triangle_strip, max_vertices = 8) out; // 2 endpoints * 4 corners
+
+in mediump vec4 gColor[];
+
+out mediump vec4 fColor;
+out highp   vec4 ls_fP;
+out mediump vec2 v_coord;
+
+uniform highp   mat4  u_Mvp;
+uniform mediump float u_PointSize;
+uniform mediump vec2  u_Viewport;
+
+// clip space -> viewport pixels
+vec2 to_pixel(vec4 clip)
+{
+  return ((clip.xy / clip.w) * 0.5 + 0.5) * u_Viewport;
+}
+
+// viewport pixels -> clip space, reusing the endpoint depth (z, w)
+vec4 to_clip(vec2 px, vec4 endpoint)
+{
+  vec2 ndc = (px / u_Viewport) * 2.0 - 1.0;
+  return vec4(ndc * endpoint.w, endpoint.z, endpoint.w);
+}
+
+void emitDisk(vec4 clip, vec4 modelPos, vec4 color, float radius)
+{
+  vec2 c = to_pixel(clip);
+  fColor = color;
+  ls_fP  = modelPos;
+
+  v_coord = vec2(-1.0, -1.0); gl_Position = to_clip(c + vec2(-radius, -radius), clip); EmitVertex();
+  v_coord = vec2(-1.0,  1.0); gl_Position = to_clip(c + vec2(-radius,  radius), clip); EmitVertex();
+  v_coord = vec2( 1.0, -1.0); gl_Position = to_clip(c + vec2( radius, -radius), clip); EmitVertex();
+  v_coord = vec2( 1.0,  1.0); gl_Position = to_clip(c + vec2( radius,  radius), clip); EmitVertex();
+  EndPrimitive();
+}
+
+void main(void)
+{
+  vec4 m0 = gl_in[0].gl_Position; // model-space position (a_Pos), from VERTEX_SOURCE_SHAPE
+  vec4 m1 = gl_in[1].gl_Position;
+
+  // Skip degenerate (zero-length) edges: no flat edge there, so no corner to fill.
+  if (length(m1.xyz - m0.xyz) < 1e-7)
+    return;
+
+  vec4 clip0 = u_Mvp * m0;
+  vec4 clip1 = u_Mvp * m1;
+  if (clip0.w == 0.0 || clip1.w == 0.0)
+    return;
+
+  // Same half-width as the wide edge: half the edge width in pixels, min one pixel.
+  float radius = max(0.5 * u_PointSize, 1.0);
+
+  emitDisk(clip0, m0, gColor[0], radius);
+  emitDisk(clip1, m1, gColor[1], radius);
+}
+)DELIM";
+
+const char FRAGMENT_SOURCE_EDGE_DISK[]=R"DELIM(
+#version 150
+in mediump vec4 fColor;
+in highp   vec4 ls_fP;
+in mediump vec2 v_coord;
+
+out mediump vec4 out_color;
+
+uniform highp   vec4  u_ClipPlane;
+uniform highp   vec4  u_PointPlane;
+uniform mediump float u_RenderingMode;
+
+void main(void)
+{
+  // Round the quad into a disk.
+  if (dot(v_coord, v_coord) > 1.0)
+    discard;
+
+  float onPlane = sign(dot((ls_fP.xyz-u_PointPlane.xyz), u_ClipPlane.xyz));
+  if (u_RenderingMode == (onPlane+1)/2) {
+    discard;
+  }
+
+  out_color = fColor;
+}
+)DELIM";
+
 //------------------------------------------------------------------------------
 //  compatibility shaders
 
