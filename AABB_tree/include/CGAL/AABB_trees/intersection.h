@@ -15,8 +15,8 @@
 
 #include <CGAL/license/AABB_tree.h>
 
-#include <CGAL/AABB_tree/internal/AABB_two_tree_traversal.h>
-#include <CGAL/AABB_tree/internal/AABB_two_tree_traversal_traits.h>
+#include <CGAL/AABB_tree/internal/AABB_two_trees_traversal.h>
+#include <CGAL/AABB_tree/internal/AABB_two_trees_traversal_traits.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/tbb.h>
@@ -36,8 +36,8 @@ namespace CGAL::AABB_trees {
   bool do_intersect(const AABBTree1 &tree1,
                     const AABBTree2 &tree2)
   {
-    CGAL::internal::AABB_tree::Two_tree_do_intersect_traits traversal_traits(tree1.traits(), tree2.traits());
-    CGAL::internal::AABB_tree::two_tree_traversal<Concurrency_tag>(tree1, tree2, traversal_traits);
+    CGAL::internal::AABB_tree::Two_trees_do_intersect_traits traversal_traits(tree1.traits(), tree2.traits());
+    CGAL::internal::AABB_tree::two_trees_traversal<Concurrency_tag>(tree1, tree2, traversal_traits);
     return traversal_traits.is_intersection_found();
   }
 
@@ -64,8 +64,8 @@ namespace CGAL::AABB_trees {
                                             const AABBTree2 &tree2,
                                             OutputIterator out)
   {
-    CGAL::internal::AABB_tree::Two_tree_listing_intersecting_primitives_traits traversal_traits(tree1.traits(), tree2.traits(), out);
-    CGAL::internal::AABB_tree::two_tree_traversal<Concurrency_tag>(tree1, tree2, traversal_traits);
+    CGAL::internal::AABB_tree::Two_trees_listing_intersecting_primitives_traits traversal_traits(tree1.traits(), tree2.traits(), out);
+    CGAL::internal::AABB_tree::two_trees_traversal<Concurrency_tag>(tree1, tree2, traversal_traits);
   }
 
   /// \addtogroup PkgAABBTreeRef
@@ -81,7 +81,7 @@ namespace CGAL::AABB_trees {
                                             OutputIterator out)
   {
     CGAL::internal::AABB_tree::Listing_self_intersecting_primitives_traits traversal_traits(tree.traits(), out);
-    CGAL::internal::AABB_tree::two_tree_traversal<Concurrency_tag>(tree, tree, traversal_traits);
+    CGAL::internal::AABB_tree::two_trees_traversal<Concurrency_tag>(tree, tree, traversal_traits);
   }
 
 } // end namespace CGAL::AABB_trees

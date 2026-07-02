@@ -10,8 +10,8 @@
 //
 // Author(s) : Léo Valque
 
-#ifndef CGAL_AABB_TWO_TREE_TRAVERSAL_TRAITS_H
-#define CGAL_AABB_TWO_TREE_TRAVERSAL_TRAITS_H
+#ifndef CGAL_AABB_TWO_TREES_TRAVERSAL_TRAITS_H
+#define CGAL_AABB_TWO_TREES_TRAVERSAL_TRAITS_H
 
 #include <CGAL/license/AABB_tree.h>
 
@@ -25,7 +25,7 @@ namespace CGAL {
 namespace internal { namespace AABB_tree {
 
 template<typename AABBTraits1, typename AABBTraits2, typename OutputIterator>
-class Two_tree_listing_intersecting_primitives_traits
+class Two_trees_listing_intersecting_primitives_traits
 {
   typedef typename AABBTraits1::Primitive Primitive1;
   typedef typename AABBTraits2::Primitive Primitive2;
@@ -49,12 +49,12 @@ class Two_tree_listing_intersecting_primitives_traits
     }
     WrapOutputIterator& operator*(){ return *this; }
     WrapOutputIterator& operator++(){ ++out; return *this; }
-    WrapOutputIterator& operator++(int){ auto tmp = *this; ++out; return *this;  }
+    WrapOutputIterator& operator++(int){ auto tmp = *this; ++out; return tmp;  }
     WrapOutputIterator& operator+(int d){ out += d; return *this; }
   };
 
 public:
-  Two_tree_listing_intersecting_primitives_traits(const AABBTraits1& traits1, const AABBTraits2& traits2, OutputIterator out_)
+  Two_trees_listing_intersecting_primitives_traits(const AABBTraits1& traits1, const AABBTraits2& traits2, OutputIterator out_)
     : m_traits1(traits1), m_traits2(traits2), out(out_)
   {}
 
@@ -175,7 +175,7 @@ private:
 };
 
 template<typename AABBTraits1, typename AABBTraits2>
-class Two_tree_do_intersect_traits
+class Two_trees_do_intersect_traits
 {
   typedef typename AABBTraits1::Primitive Primitive1;
   typedef typename AABBTraits2::Primitive Primitive2;
@@ -183,7 +183,7 @@ class Two_tree_do_intersect_traits
   typedef ::CGAL::AABB_node<AABBTraits2> Node2;
 
 public:
-  Two_tree_do_intersect_traits(const AABBTraits1& traits1, const AABBTraits2& traits2)
+  Two_trees_do_intersect_traits(const AABBTraits1& traits1, const AABBTraits2& traits2)
     : m_traits1(traits1), m_traits2(traits2), m_is_found(false)
   {}
 
@@ -236,7 +236,7 @@ private:
 namespace experimental{
 
 template<typename AABBTraits1, typename AABBTraits2, typename OutputIterator>
-class Two_tree_intersecting_nodes_traits
+class Two_trees_intersecting_nodes_traits
 {
   typedef typename AABBTraits1::Primitive Primitive1;
   typedef typename AABBTraits2::Primitive Primitive2;
@@ -244,7 +244,7 @@ class Two_tree_intersecting_nodes_traits
   typedef ::CGAL::AABB_node<AABBTraits2> Node2;
 
 public:
-  Two_tree_intersecting_nodes_traits(const AABBTraits1& traits1, const AABBTraits2& traits2, OutputIterator out_)
+  Two_trees_intersecting_nodes_traits(const AABBTraits1& traits1, const AABBTraits2& traits2, OutputIterator out_)
     : m_traits1(traits1), m_traits2(traits2), out(out_)
   {}
 
