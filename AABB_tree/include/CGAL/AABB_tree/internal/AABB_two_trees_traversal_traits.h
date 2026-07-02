@@ -49,7 +49,7 @@ class Two_trees_listing_intersecting_primitives_traits
     }
     WrapOutputIterator& operator*(){ return *this; }
     WrapOutputIterator& operator++(){ ++out; return *this; }
-    WrapOutputIterator& operator++(int){ auto tmp = *this; ++out; return tmp;  }
+    WrapOutputIterator& operator++(int){ /*auto tmp = *this;*/ ++out; return *this; }
     WrapOutputIterator& operator+(int d){ out += d; return *this; }
   };
 
@@ -66,10 +66,7 @@ public:
   template<typename Node_A, typename Node_B>
   bool prefer_A_for_next_step(const Node_A& node_a, const Node_B& node_b, const std::size_t&, const std::size_t&) const {
   #if 1
-    auto sq_diag = [](const Bbox_3 &b){
-      return (b.xmax()-b.xmin())*(b.xmax()-b.xmin()) + (b.ymax()-b.ymin())*(b.ymax()-b.ymin()) + (b.zmax()-b.zmin())*(b.zmax()-b.zmin());
-    };
-    return sq_diag(node_a.bbox()) > sq_diag(node_b.bbox());
+    return node_a.bbox().squared_diagonal_length() > node_b.bbox().squared_diagonal_length();
   #else
     return false;
   #endif
@@ -141,15 +138,12 @@ public:
   // If true, the next step of traversal continue on A, if false, the next step of traversal is on B
   template<typename Node_A, typename Node_B>
   bool prefer_A_for_next_step(const Node_A& node_a, const Node_B& node_b, const std::size_t&, const std::size_t&) const {
-    auto sq_diag = [](const Bbox_3 &b){
-      return (b.xmax()-b.xmin())*(b.xmax()-b.xmin()) + (b.ymax()-b.ymin())*(b.ymax()-b.ymin()) + (b.zmax()-b.zmin())*(b.zmax()-b.zmin());
-    };
-    return sq_diag(node_a.bbox()) > sq_diag(node_b.bbox());
+    return node_a.bbox().squared_diagonal_length() > node_b.bbox().squared_diagonal_length();
   }
 
   void intersection(const Primitive& primitive1, const Node& node2, std::size_t nb_primitives_2)
   {
-    // TODO Since we are in a symetrical case, maybe we can ignore this call
+    // TODO Since we are in a symmetric case, maybe we can ignore this call
     using WrapIterator = WrapOutputIterator<true, typename Primitive::Id>;
     WrapIterator wrap_out(primitive1.id(), out);
     Listing_distinct_primitive_traits<AABBTraits, WrapIterator> traits(wrap_out, m_traits);
@@ -191,14 +185,11 @@ public:
     return !m_is_found;
   }
 
-  // If true, the next step of traversal continue on A, if false, the next step of traversal is on B
+  // If true, the next step of traversal continues on A, if false, the next step of traversal is on B
   template<typename Node_A, typename Node_B>
   bool prefer_A_for_next_step(const Node_A& node_a, const Node_B& node_b, const std::size_t&, const std::size_t&) const {
   #if 1
-    auto sq_diag = [](const Bbox_3 &b){
-      return (b.xmax()-b.xmin())*(b.xmax()-b.xmin()) + (b.ymax()-b.ymin())*(b.ymax()-b.ymin()) + (b.zmax()-b.zmin())*(b.zmax()-b.zmin());
-    };
-    return sq_diag(node_a.bbox()) > sq_diag(node_b.bbox());
+    return node_a.bbox().squared_diagonal_length() > node_b.bbox().squared_diagonal_length();
   #else
     return false;
   #endif

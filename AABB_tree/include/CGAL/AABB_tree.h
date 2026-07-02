@@ -691,12 +691,15 @@ public:
       return std::addressof(m_nodes[0]);
     }
 
-    // Still documented but now unused by build() function
-    Node& new_node()
+#ifndef CGAL_NO_DEPRECATED_CODE
+    //  Now unused by build() function
+    /// @private
+    CGAL_DEPRECATED Node& new_node()
     {
       m_nodes.emplace_back();
       return m_nodes.back();
     }
+#endif // CGAL_NO_DEPRECATED_CODE
   private:
     const Primitive& singleton_data() const {
       CGAL_assertion(size() == 1);

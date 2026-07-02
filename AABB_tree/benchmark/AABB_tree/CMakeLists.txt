@@ -6,8 +6,10 @@ project(AABB_traits_benchmark)
 
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Core)
 
-create_single_source_cgal_program("test.cpp")
+create_single_source_cgal_program("test_AABB_tree.cpp")
 create_single_source_cgal_program("tree_construction.cpp")
+create_single_source_cgal_program("knot_generation.cpp")
+create_single_source_cgal_program("tree_queries.cpp")
 
 # google benchmark
 find_package(benchmark QUIET)
