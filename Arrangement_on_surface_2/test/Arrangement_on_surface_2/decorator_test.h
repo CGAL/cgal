@@ -244,7 +244,7 @@ struct Consolidated_curve_data_traits_decorating_test_objects : public Decoratin
     auto ctr_cv = base.construct_curve_2_object();
     auto ctr_pt = base.construct_point_2_object();
     auto ctr_xcv = base.construct_x_monotone_curve_2_object();
-    this->xcv_seg = ctr_xcv(ctr_pt(0, 0), ctr_pt(1, 1));
+    this->xcv_seg = ctr_xcv(ctr_pt(0, 0), ctr_pt(1, 1), 0);
     this->xcv_seg_pt = ctr_pt(0.5, 0.5);
     this->cv = ctr_cv(ctr_pt(0, 0), ctr_pt(1, 1));
   }
