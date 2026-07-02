@@ -269,7 +269,10 @@ private:
 
     Facet_vector incident_facets;
     incident_facets.reserve(64);
-    tr.finite_incident_facets(v, std::back_inserter(incident_facets));
+    if constexpr (Tr::Concurrency_tag::is_parallel)
+      tr.incident_facets_threadsafe(v, std::back_inserter(incident_facets));
+    else
+      tr.incident_facets(v, std::back_inserter(incident_facets));
 
     std::vector<Bare_point> points;
     points.reserve(64);
