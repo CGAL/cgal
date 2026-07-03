@@ -21,7 +21,7 @@ struct Detect_sharp_features_on_labeled_image
   /*!
   * Output feature graph point type
   */
-  typedef K::Point_3 Point_3;
+  typedef typename K::Point_3 Point_3;
 
   /*!
   * Natural number type.
@@ -31,7 +31,7 @@ struct Detect_sharp_features_on_labeled_image
   /*!
   * Numerical type.
   */
-  typedef K::FT FT;
+  typedef typename K::FT FT;
 
   /// @}
 
@@ -224,7 +224,7 @@ struct Detect_sharp_features_on_surface
   /*!
   * Output feature graph point type
   */
-  typedef K::Point_3 Point_3;
+  typedef typename K::Point_3 Point_3;
 
   /*!
   * Natural number type.
@@ -234,7 +234,7 @@ struct Detect_sharp_features_on_surface
   /*!
   * Numerical type.
   */
-  typedef K::FT FT;
+  typedef typename K::FT FT;
 
   /// @}
 
