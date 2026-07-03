@@ -13,9 +13,11 @@
 #ifndef CGAL_FEATURE_GRAPH_DETECT_SHARP_FEATURES_H
 #define CGAL_FEATURE_GRAPH_DETECT_SHARP_FEATURES_H
 
+#include <CGAL/license/Feature_graph.h>
+
 #include <boost/graph/adjacency_list.hpp>
 
-#include <CGAL/license/Feature_graph.h>
+#include <CGAL/Named_function_parameters.h>
 
 namespace CGAL
 {
