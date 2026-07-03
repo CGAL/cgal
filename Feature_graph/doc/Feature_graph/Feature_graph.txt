@@ -15,11 +15,13 @@ This chapter describes the ...
 
 Section on definitions here ...
 
-\section secmyexamples Examples
+\section secExamples Examples
 
-\subsection myFirstExample First Example
+\subsection exFromSegmentedImage Feature Graph Extraction from a Segmented Image
 
-The following example shows ...
+The following example shows the extraction of the feature graph from a segmented image.
+
+\cgalExample{Feature_graph/feature_graph_from_segmented_image.cpp}
 
 \cgalFigureBegin{figPck,feature_graph_small.png}
 Left: ...

@@ -12,7 +12,7 @@ namespace Feature_graph {
 *
 */
 template <typename Vector_3>
-struct AmbrosioTortorelli_on_image
+struct Image_AmbrosioTortorelli
 {
 public:
   /// \name Types
@@ -24,12 +24,12 @@ public:
   typedef Vector_3 Normal_type;
 
   /*!
-  * The type of the estimator that allows to retrieve the sharpness values.
+  * The type of the estimator that allow the user to retrieve the sharpness values.
   * \cgalModels{SharpnessEstimator}
   */
   typedef unspecified_type Sharpness_estimator;
   /*!
-  * The type of the estimator that allows to retrieve the normals.
+  * The type of the estimator that allow the user to retrieve the normals.
   * \cgalModels{NormalEstimator}
   */
   typedef unspecified_type Normal_estimator;
@@ -47,7 +47,7 @@ public:
   *     Elements with a sharpness value lower than this threshold are considered flat
   *     and will be given a negative value.
   */
-  AmbrosioTortorelli_on_image(const CGAL::Image_3& image, const Sharpness_estimator::Sharpness_value_type& selection_threshold = Sharpness_estimator::Sharpness_value_type(0.25));
+  Image_AmbrosioTortorelli(const CGAL::Image_3& image, const Sharpness_estimator::Sharpness_number_type& selection_threshold = Sharpness_estimator::Sharpness_number_type(0.25));
 
   /// @}
 
@@ -55,11 +55,11 @@ public:
   /// @{
 
   /*!
-  * returns the estimator that allows to retrieve the sharpness values.
+  * returns the estimator that allow the user to retrieve the sharpness values.
   */
   Sharpness_estimator sharpness_estimator() const;
   /*!
-  * returns the estimator that allows to retrieve the normals.
+  * returns the estimator that allow the user to retrieve the normals.
   */
   Normal_estimator normal_estimator() const;
 

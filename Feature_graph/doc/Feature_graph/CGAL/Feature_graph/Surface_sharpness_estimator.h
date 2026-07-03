@@ -9,7 +9,7 @@ namespace Feature_graph {
 *
 * \cgalModels{SharpnessEstimator}
 */
-struct Sharpness_estimator_on_surface
+struct Surface_sharpness_estimator
 {
 public:
   /// \name Types
@@ -18,7 +18,7 @@ public:
   /*!
   * The type of the sharpness value.
   */
-  typedef double Sharpness_value_type;
+  typedef double Sharpness_number_type;
 
   /// @}
 
@@ -37,7 +37,7 @@ public:
   *     and will be given a negative value.
   */
   template <typename PolygonMesh>
-  Sharpness_estimator_on_surface(const PolygonMesh& pmesh, const Sharpness_value_type& selection_threshold);
+  Surface_sharpness_estimator(const PolygonMesh& pmesh, const Sharpness_number_type& selection_threshold);
 
   /// @}
 
@@ -62,7 +62,7 @@ public:
   * \param domain the domain that contains the elements.
   */
   template <typename DimensionTag, typename Descriptor, typename Domain>
-  Sharpness_value_type operator()(const Descriptor& element_descriptor, const Domain& domain) const;
+  Sharpness_number_type operator()(const Descriptor& element_descriptor, const Domain& domain) const;
 
   /// @}
 };

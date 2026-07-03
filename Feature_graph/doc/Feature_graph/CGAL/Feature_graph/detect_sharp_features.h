@@ -63,7 +63,7 @@ struct Detect_sharp_features_on_labeled_image
   *   \cgalParamSectionBegin{sharpness_estimator}
   *     \cgalParamDescription{an estimator model of `SharpnessEstimator`.
   *       See \ref PkgFeatureGraphSharpnessEstimator for available estimators.}
-  *     \cgalParamDefault{`CGAL::Feature_graph::AmbrosioTortorelli_on_image(image).sharpness_estimator()`}
+  *     \cgalParamDefault{`CGAL::Feature_graph::Image_AmbrosioTortorelli(image).sharpness_estimator()`}
   *   \cgalParamSectionEnd
   *
   *   \cgalParamSectionBegin{line_distance_threshold}
@@ -181,12 +181,12 @@ struct Detect_sharp_features_on_labeled_image
   *   \cgalParamSectionEnd
   *   \cgalParamSectionBegin{normal_estimator}
   *     \cgalParamDescription{an estimator to evaluate the normals on elements.}
-  *     \cgalParamDefault{`CGAL::Feature_graph::AmbrosioTortorelli_on_image(image).normal_estimator()`}
+  *     \cgalParamDefault{`CGAL::Feature_graph::Image_AmbrosioTortorelli(image).normal_estimator()`}
   *   \cgalParamSectionEnd
   *
   *   \cgalParamSectionBegin{point_to_element_output_map}
   *     \cgalParamDescription{an output property map that will be filled if supplied.
-  *     It allows retrieving of the surface element where a feature graph point is embedded.
+  *     It allow retrieving of the surface element where a feature graph point is embedded.
   *     It must be a model of `WritablePropertyMap`,
   *     and must implement `put(output_pmap, feature_vertex_descriptor, facet_descriptor)`
   *     where the key type is the `vertex_descriptor` of the feature graph, and the value type is
@@ -256,7 +256,7 @@ struct Detect_sharp_features_on_surface
   *   \cgalParamSectionBegin{sharpness_estimator}
   *     \cgalParamDescription{an estimator model of `SharpnessEstimator`.
   *       See \ref PkgFeatureGraphSharpnessEstimator for available estimators.}
-  *     \cgalParamDefault{`CGAL::Feature_graph::Sharpness_estimator_on_surface(pmesh)`}
+  *     \cgalParamDefault{`CGAL::Feature_graph::Surface_sharpness_estimator(pmesh)`}
   *   \cgalParamSectionEnd
   *
   *   \cgalParamSectionBegin{line_distance_threshold}
@@ -367,12 +367,12 @@ struct Detect_sharp_features_on_surface
   *   \cgalParamSectionEnd
   *   \cgalParamSectionBegin{normal_estimator}
   *     \cgalParamDescription{an estimator to evaluate the normals on elements.}
-  *     \cgalParamDefault{`CGAL::Feature_graph::Normal_estimator_on_surface(pmesh)`}
+  *     \cgalParamDefault{`CGAL::Feature_graph::Surface_normal_estimator(pmesh)`}
   *   \cgalParamSectionEnd
   *
   *   \cgalParamSectionBegin{point_to_element_output_map}
   *     \cgalParamDescription{an output property map that will be filled if supplied.
-  *     It allows retrieving of the surface element where a feature graph point is embedded.
+  *     It allow retrieving of the surface element where a feature graph point is embedded.
   *     It must be a model of `WritablePropertyMap`,
   *     and must implement `put(output_pmap, feature_vertex_descriptor, facet_descriptor)`
   *     where the key type is the `vertex_descriptor` of the feature graph, and the value type is

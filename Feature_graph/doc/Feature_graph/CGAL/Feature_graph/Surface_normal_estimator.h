@@ -12,7 +12,7 @@ namespace Feature_graph {
 * \cgalModels{NormalEstimator}
 */
 template <typename Vector_3>
-struct Normal_estimator_on_surface
+struct Surface_normal_estimator
 {
 public:
   /// \name Types
@@ -36,7 +36,7 @@ public:
   * \param pmesh the surface where the normals are evaluated.
   */
   template <typename PolygonMesh>
-  Normal_estimator_on_surface(const PolygonMesh& pmesh);
+  Surface_normal_estimator(const PolygonMesh& pmesh);
 
   /// @}
 
