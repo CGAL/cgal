@@ -22,9 +22,12 @@
 #include <tbb/tbb.h>
 #endif
 
-namespace CGAL::AABB_trees {
+/// \file AABB_trees/intersection.h
 
-  /// \addtogroup PkgAABBTreeRef
+namespace CGAL{
+namespace AABB_trees {
+
+  /// \ingroup PkgAABBTreeRef
   ///
   /// \brief Tests whether two AABB trees contain intersecting primitives.
   ///
@@ -41,7 +44,7 @@ namespace CGAL::AABB_trees {
     return traversal_traits.is_intersection_found();
   }
 
-  /// \addtogroup PkgAABBTreeRef
+  /// \ingroup PkgAABBTreeRef
   ///
   /// \brief Computes all intersecting primitive pairs between two AABB trees.
   ///
@@ -68,7 +71,7 @@ namespace CGAL::AABB_trees {
     CGAL::internal::AABB_tree::two_trees_traversal<Concurrency_tag>(tree1, tree2, traversal_traits);
   }
 
-  /// \addtogroup PkgAABBTreeRef
+  /// \ingroup PkgAABBTreeRef
   ///
   /// \brief Computes all self-intersecting primitive pairs in a single AABB tree.
   ///
@@ -84,6 +87,6 @@ namespace CGAL::AABB_trees {
     CGAL::internal::AABB_tree::two_trees_traversal<Concurrency_tag>(tree, tree, traversal_traits);
   }
 
-} // end namespace CGAL::AABB_trees
+}} // end namespace CGAL::AABB_trees
 
 #endif

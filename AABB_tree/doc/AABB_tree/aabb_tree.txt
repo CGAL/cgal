@@ -109,17 +109,17 @@ For example if one is using `CGAL::AABB_traits` with a Kernel from \cgal,
 having degenerate triangles or segments in the AABB-tree will result in an undefined
 behavior or a crash.
 
-\section two_aabb_tree_interface Operation between two trees
+\section two_aabb_tree_interface Operations between two AABB trees
 
-Given two AABB trees, the function `CGAL::AABB_trees::do_intersect()` can be used
-to determine whether at least one primitive of the first tree intersects a primitive
-of the second tree. To list all such intersecting pairs, use
-`CGAL::AABB_trees::all_pairs_of_intersecting_primitives()`.
+Given two AABB trees, the function `CGAL::AABB_trees::do_intersect()` determines whether any
+primitive of the first tree intersects a primitive of the second tree.
+To enumerate all intersecting pairs of primitives, use `CGAL::AABB_trees::all_pairs_of_intersecting_primitives()`.
 
-These functions provide an alternative to `CGAL::box_intersection_d()`. While
-`CGAL::box_intersection_d()` generally performs better in sequential computations,
-`CGAL::AABB_trees::all_pairs_of_intersecting_primitives()` typically offers much better
-performance when executed in parallel (see \ref aabb_tree_perf).
+These functions provide an alternative to `CGAL::box_intersection_d()`. In practice, `CGAL::AABB_trees::all_pairs_of_intersecting_primitives()` generally provides better performance,
+particularly when using a parallel execution tag (see \ref aabb_tree_perf).
+
+Moreover, if several calls to `CGAL::AABB_trees::all_pairs_of_intersecting_primitives()` are performed using the same trees, the trees need to be constructed only once.
+Consequently, the performance advantage over `CGAL::box_intersection_d()` becomes even greater.
 
 \section aabb_tree_examples Examples
 
@@ -212,7 +212,7 @@ to custom points. In \ref AABB_tree/AABB_custom_triangle_soup_example.cpp "AABB_
 triangles are stored into a single array as to form a triangle
 soup. The primitive internally uses a `boost::iterator_adaptor`
 as to provide the three functions `AABBPrimitive::id()`, `AABBPrimitive::datum()`,
-and `AABBPrimitive::reference_point()`) required by the primitive concept. In
+and `AABBPrimitive::reference_point()` required by the primitive concept. In
 \ref AABB_tree/AABB_custom_indexed_triangle_set_example.cpp "AABB_custom_indexed_triangle_set_example.cpp" the input is an indexed
 triangle set stored through two arrays: one array of points and one
 array of indices which refer to the point array. Here also the
@@ -350,16 +350,25 @@ inside the bounding box.
 
 \subsection aabb_two_trees_perf Intersection of two AABB trees
 
-The surface triangle mesh chosen for benchmarking distances is the knot model (again),
-the iphigenia model and the Nefertiti model. We test their intersections between them with
-translation and scaling so that they do intersect. When testing with itself, we translate them slightly.
+We test the intersection of two AABB trees using 3 models: iphigenia and the Nefertiti that are two common models of mesh processing and twisted knot to maximize the number of intersection. For each model,
+we test their intersection with a translated version of themselves (Note: We do not exploit the fact that it is the same model, the tree is built two times).
+We compare here `CGAL::AABB_trees::all_pairs_of_intersecting_primitives()` and `CGAL::box_intersection_d()`.
 
-|  Nb triangles | Traversal | Total | box_intersection_d
-| ----:    | ----:     | ----: | ----: | -: |
-|   14,400 | 45,132 | 45,626 | 45,770 |
-|   57,600 | 21,589 | 21,312 | 21,137 |
-|  230,400 | 11,063 | 10,962 | 11,086 |
-|  921,600 |  5,636 |  5,722 |  5,703 |
+We exhibit the performance of the intersection of two AABB trees using three models: Iphigenia and Nefertiti \cgalFigureRef{figAABB-tree-bench}, which are widely used benchmark meshes in geometry processing, and a twisted knot \cgalFigureRef{figAABB-tree-bench}, chosen to maximize the number of intersections.
+
+For each model, we compute the intersections between the model and a translated copy of itself. Although both trees are built from the same mesh, we intentionally construct the AABB tree twice and do not exploit this fact.
+We compare the performance of `CGAL::AABB_trees::all_pairs_of_intersecting_primitives()` with that of `CGAL::box_intersection_d()`.
+
+\cgalFigureBegin{figAABB-tree-model,iphigenia.png, nefertiti.png, twisted_knot.png}
+The three input models used to illustrate AABB trees intersection performance. Iphigenia (left), Nefertiti (center), Twisted knot (right).
+\cgalFigureEnd
+
+| Models | Nb Triangles | Nb Intersections | **AABB** | Tree (ms) | | | **Box** d || **AABB** | Tree Seq. | (ms) | | **Box** d Seq. |
+| ----: | ----: | ----: | ----: | ----: | ----: | ----: | ----: || ----: | ----: | ----: | ----: | ----: |
+|  |  |  | Build |  Do intersect | All pairs | All pairs + Build |  || Build | Do intersect | All pairs | All pairs + Build |  |
+| Iphigenia × Iphigenia Tr. | 703,512 × 703,512 | 47,677 | 91 | <0.1 | 37 | 128 | 424 || 318 | <0.1 | 169 | 488 | 868 |
+| Nefertiti × Nefertiti Tr. | 2,018,232 × 2,018,232 | 14,246 | 261 | <0.1 | 10 | 271 | 1,006 ||1,087 | <0.1 | 46 | 1,134 | 2,348 |
+| Twisted knot × Twisted knot Rot. | 600,000 × 600,000 | 240,144 | 154 | <0.1 | 57 | 211 | 850 || 541 | <0.1 | 440 | 981 | 2,993 |
 
 \subsection aabb_tree_perf_summary Summary
 

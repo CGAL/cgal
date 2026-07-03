@@ -26,6 +26,8 @@ int main(int argc, char* argv[])
   const int tubular_segments = argc > 7 ? std::atoi(argv[7]) : 120;
   const int radial_segments  = argc > 8 ? std::atoi(argv[8]) : 60;
 
+  const double exc = argc > 9 ? std::atof(argv[9]) : 1; // excentricity
+
   std::vector<Point> vertices;
   std::vector<Triangle> faces;
 
@@ -72,7 +74,7 @@ int main(int argc, char* argv[])
 
     for(int j=0; j<radial_segments; ++j){
       double phi = j * dr;
-      vertices.push_back(C + tube_radius*(std::cos(phi)*N + std::sin(phi)*B));
+      vertices.push_back(C + tube_radius*(exc*std::cos(phi)*N + 1/exc*std::sin(phi)*B));
     }
   }
 
