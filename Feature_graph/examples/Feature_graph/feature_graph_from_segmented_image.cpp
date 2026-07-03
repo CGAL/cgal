@@ -1,4 +1,4 @@
-// WARNING : non-functioning example. This exmaple is to understand how to create and use the feature graph for tetrahedral mesh creation. 
+// WARNING : non-functioning example. This exmaple is to understand how to create and use the feature graph for tetrahedral mesh creation.
 
 #include <CGAL/Image_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
