@@ -85,7 +85,7 @@ public:
 
           double aprz = CGAL::abs(prz);
           double apsz = CGAL::abs(psz);
-#ifdef CGAL_USE_SSE2_MAX
+#if defined CGAL_USE_SSE2_MAX || defined CGAL_USE_NEON_MAX
           CGAL::Max<double> mmax;
 
           maxx = mmax(maxx, aprx, apsx);
@@ -105,14 +105,14 @@ public:
 
           double eps = 5.1107127829973299e-15 * maxx * maxy * maxz;
 
-#ifdef CGAL_USE_SSE2_MAX
+#if defined CGAL_USE_SSE2_MAX || defined CGAL_USE_NEON_MAX
 #if 0
           CGAL::Min<double> mmin;
           double tmp = mmin(maxx, maxy, maxz);
           maxz = mmax(maxx, maxy, maxz);
           maxx = tmp;
 #else
-          sse2minmax(maxx,maxy,maxz);
+          simd_minmax(maxx,maxy,maxz);
           // maxy can contain ANY element
 #endif
 #else

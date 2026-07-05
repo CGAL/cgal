@@ -113,7 +113,7 @@ public:
           double asty = CGAL::abs(sty);
           double astz = CGAL::abs(stz);
 
-#ifdef CGAL_USE_SSE2_MAX
+#if defined CGAL_USE_SSE2_MAX || defined CGAL_USE_NEON_MAX
           CGAL::Max<double> mmax;
           maxx = mmax(maxx, aqtx, artx, astx);
           maxy = mmax(maxy, aqty, arty, asty);
@@ -134,14 +134,14 @@ public:
 
           double eps = 1.2466136531027298e-13 * maxx * maxy * maxz;
 
-#ifdef CGAL_USE_SSE2_MAX
+#if defined CGAL_USE_SSE2_MAX || defined CGAL_USE_NEON_MAX
           /*
           CGAL::Min<double> mmin;
           double tmp = mmin(maxx, maxy, maxz);
           maxz = mmax(maxx, maxy, maxz);
           maxx = tmp;
           */
-          sse2minmax(maxx,maxy,maxz);
+          simd_minmax(maxx,maxy,maxz);
           // maxy can contain ANY element
 
 #else
@@ -255,7 +255,7 @@ public:
       double asty = CGAL::abs(sty);
       double astz = CGAL::abs(stz);
 
-#ifdef CGAL_USE_SSE2_MAX
+#if defined CGAL_USE_SSE2_MAX || defined CGAL_USE_NEON_MAX
           CGAL::Max<double> mmax;
           maxx = mmax(maxx, aqtx, artx, astx);
           maxy = mmax(maxy, aqty, arty, asty);
@@ -276,14 +276,14 @@ public:
 
       double eps = 1.0466759304746772485e-13 * maxx * maxy * maxz;
 
-#ifdef CGAL_USE_SSE2_MAX
+#if defined CGAL_USE_SSE2_MAX || defined CGAL_USE_NEON_MAX
       /*
       CGAL::Min<double> mmin;
       double tmp = mmin(maxx, maxy, maxz);
       maxz = mmax(maxx, maxy, maxz);
       maxx = tmp;
       */
-      sse2minmax(maxx,maxy,maxz);
+      simd_minmax(maxx,maxy,maxz);
       // maxy can contain ANY element
 #else
       // Sort maxx < maxy < maxz.

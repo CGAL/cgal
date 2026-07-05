@@ -30,6 +30,11 @@
 #include <CGAL/sse2.h>
 #endif
 
+// NEON fabs: enabled when CGAL_USE_NEON_FABS is defined.
+#ifdef CGAL_USE_NEON_FABS
+#  include <arm_neon.h>
+#endif
+
 #ifdef _MSC_VER
 #include <cfloat>
 #endif
@@ -132,7 +137,20 @@ inline double sse2fabs(double a)
   temp = _mm_and_pd(temp, absMask.m);
   return _mm_cvtsd_f64 (temp);
 }
+#endif
 
+// NEON absolute value for double.
+#ifdef CGAL_USE_NEON_FABS
+inline double neon_fabs(double a)
+{
+#if defined(_MSC_VER) && defined(_M_ARM64)
+  // MSVC ARM64 does not provide vabsd_f64().
+  return vget_lane_f64(vabs_f64(vdup_n_f64(a)), 0);
+#else
+  // GCC and Clang map this to a single FABS instruction.
+  return vabsd_f64(a);
+#endif
+}
 #endif
 
 template <> class Real_embeddable_traits< double >
@@ -141,13 +159,15 @@ template <> class Real_embeddable_traits< double >
 
 
 // GCC is faster with std::fabs().
-#if defined(__GNUG__) || defined(CGAL_MSVC_USE_STD_FABS) || defined(CGAL_USE_SSE2_FABS)
+#if defined(__GNUG__) || defined(CGAL_MSVC_USE_STD_FABS) || defined(CGAL_USE_SSE2_FABS) || defined(CGAL_USE_NEON_FABS)
     class Abs
       : public CGAL::cpp98::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
 #ifdef CGAL_USE_SSE2_FABS
           return sse2fabs(x);
+#elif defined CGAL_USE_NEON_FABS
+          return neon_fabs(x);
 #else
           return std::fabs( x );
 #endif

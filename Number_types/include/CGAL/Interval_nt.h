@@ -74,6 +74,8 @@ public:
 #ifndef CGAL_NO_ASSERTIONS
 # ifdef CGAL_USE_SSE2
       : val(_mm_setr_pd(-1, 0))
+# elif defined CGAL_USE_NEON
+      : val(vcombine_f64(vdup_n_f64(-1.0), vdup_n_f64(0.0)))
 # else
       : _inf(-1), _sup(0)
 # endif
@@ -146,6 +148,9 @@ public:
   // This constructor should really be private, like the simd() function, but
   // that would mean a lot of new friends, so they are only undocumented.
   explicit Interval_nt(__m128d v) : val(v) {}
+#elif defined CGAL_USE_NEON
+  // NEON: float64x2_t holds {-inf, sup} just like __m128d.
+  explicit Interval_nt(float64x2_t v) : val(v) {}
 #endif
 
   // Unchecked version for Lazy_rep in Lazy.h.
@@ -153,6 +158,9 @@ public:
   Interval_nt(double i, double s, no_check_t)
 #ifdef CGAL_USE_SSE2
     : val(_mm_setr_pd(-i, s))
+#elif defined CGAL_USE_NEON
+    // vsetq_lane_f64 builds {-i, s} in a float64x2_t register.
+    : val(vsetq_lane_f64(s, vdupq_n_f64(-i), 1))
 #else
     : _inf(-i), _sup(s)
 #endif
@@ -179,6 +187,9 @@ public:
   {
 #ifdef CGAL_USE_SSE2
     return IA (swap_m128d(val));
+#elif defined CGAL_USE_NEON
+    // Swapping {-inf, sup} gives {sup, -inf} = {-(-inf), -(sup)} = negated interval.
+    return IA (swap_f64x2(val));
 #else
     return IA (-sup(), -inf());
 #endif
@@ -199,6 +210,11 @@ public:
 #ifdef CGAL_USE_SSE2
     // Faster to answer yes, but slower to answer no.
     return _mm_movemask_pd (_mm_cmpneq_pd (val, d.val)) == 0;
+#elif defined CGAL_USE_NEON
+    // vceqq_f64 returns a uint64x2_t with all-ones lanes where equal.
+    // vandq_u64 combines both lanes; vgetq_lane_u64 checks the result.
+    uint64x2_t eq = vceqq_f64(val, d.val);
+    return (vgetq_lane_u64(eq, 0) & vgetq_lane_u64(eq, 1)) != 0;
 #else
     return inf() == d.inf() && sup() == d.sup();
 #endif
@@ -211,6 +227,17 @@ public:
     __m128d y = _mm_xor_pd ((-d).val, m); // {-ds,di}
     __m128d c = _mm_cmplt_pd (val, y); // {i>ds,s<di}
     return _mm_movemask_pd (c) == 0;
+#elif defined CGAL_USE_NEON
+    // (-d).val = swap_f64x2(d.val) = {ds, -di}
+    // XOR with {-0,-0} flips sign bits -> {-ds, di}
+    // vcltq_f64(val, y) checks {-inf < -ds, sup < di} i.e. {inf>ds, sup<di}
+    // If either lane is true the intervals do NOT overlap.
+    float64x2_t neg_zero = vdupq_n_f64(-0.0);
+    float64x2_t y = vreinterpretq_f64_u64(
+        veorq_u64(vreinterpretq_u64_f64(swap_f64x2(d.val)),
+                  vreinterpretq_u64_f64(neg_zero)));
+    uint64x2_t c = vcltq_f64(val, y);
+    return (vgetq_lane_u64(c, 0) | vgetq_lane_u64(c, 1)) == 0;
 #else
     return !(d.inf() > sup() || d.sup() < inf());
 #endif
@@ -220,6 +247,9 @@ public:
   {
 #ifdef CGAL_USE_SSE2
     return -_mm_cvtsd_f64(val);
+#elif defined CGAL_USE_NEON
+    // Lane 0 holds -inf; negate to get inf.
+    return -vgetq_lane_f64(val, 0);
 #else
     return -_inf;
 #endif
@@ -232,12 +262,17 @@ public:
     // - it is too opaque
     // - it is a less likely CSE candidate
     // return _mm_cvtsd_f64(_mm_unpackhi_pd(val, val));
+#elif defined CGAL_USE_NEON
+    // Lane 1 holds sup directly.
+    return vgetq_lane_f64(val, 1);
 #else
     return _sup;
 #endif
   }
 #ifdef CGAL_USE_SSE2
   __m128d simd() const { return val; }
+#elif defined CGAL_USE_NEON
+  float64x2_t simd() const { return val; }
 #endif
 
   std::pair<double, double> pair() const
@@ -272,6 +307,9 @@ private:
   // is free to access.
 #ifdef CGAL_USE_SSE2
   __m128d val;
+#elif defined CGAL_USE_NEON
+  // float64x2_t stores {-inf, sup} in lanes {0, 1}, mirroring the SSE2 layout.
+  float64x2_t val;
 #else
   double _inf, _sup;
 #endif
@@ -470,6 +508,12 @@ private:
       __m128d bb = IA_opacify128_weak(b.simd());
       __m128d r = _mm_add_pd(aa, bb);
       return Interval_nt(IA_opacify128(r));
+#elif defined CGAL_USE_NEON
+      // vaddq_f64 adds both lanes simultaneously: {-ai+-bi, as+bs}.
+      float64x2_t aa = IA_opacify_neon(a.simd());
+      float64x2_t bb = IA_opacify_neon_weak(b.simd());
+      float64x2_t r  = vaddq_f64(aa, bb);
+      return Interval_nt(IA_opacify_neon(r));
 #else
       return Interval_nt (-CGAL_IA_ADD(-a.inf(), -b.inf()),
           CGAL_IA_ADD(a.sup(), b.sup()));
@@ -507,7 +551,7 @@ private:
     Interval_nt
     operator- (const Interval_nt &a, const Interval_nt & b)
     {
-#ifdef CGAL_USE_SSE2
+#if defined CGAL_USE_SSE2 || defined CGAL_USE_NEON
       return a+-b;
 #else
       Internal_protector P;
@@ -516,7 +560,7 @@ private:
 #endif
     }
 
-#ifdef CGAL_USE_SSE2
+#if defined CGAL_USE_SSE2 || defined CGAL_USE_NEON
   friend
     Interval_nt
     operator- (double a, const Interval_nt & b)
@@ -536,8 +580,38 @@ private:
       else if(CGAL_CST_TRUE(b.is_point()))
         return a * b.inf();
 #endif
-      Internal_protector P;
-#ifdef CGAL_USE_SSE2
+            Internal_protector P;
+#ifdef CGAL_USE_NEON
+      // NEON multiply for interval arithmetic.
+      // compute all four cross-products and take the component-wise max.
+      // Layout: val = {-i, s}  so lane0=-inf, lane1=sup.
+      float64x2_t aa = IA_opacify_neon_weak(a.simd());   // {-ai, as}
+      float64x2_t bb = b.simd();                          // {-bi, bs}
+      float64x2_t neg_zero  = vdupq_n_f64(-0.0);
+      float64x2_t neg_zero1 = vdupq_n_f64(-0.0);         // same mask
+      float64x2_t ax = swap_f64x2(aa);                   // {as, -ai}
+      float64x2_t ap = vreinterpretq_f64_u64(
+          veorq_u64(vreinterpretq_u64_f64(ax),
+                    vreinterpretq_u64_f64(neg_zero1)));   // {-as, ai}
+      // bz = {bi, bs}: flip sign of lane0 of bb
+      float64x2_t bz_mask = vcombine_f64(vdup_n_f64(-0.0), vdup_n_f64(0.0));
+      float64x2_t bz = vreinterpretq_f64_u64(
+          veorq_u64(vreinterpretq_u64_f64(bb),
+                    vreinterpretq_u64_f64(bz_mask)));     // {bi, bs}
+      bz = IA_opacify_neon(bz);
+      float64x2_t c  = swap_f64x2(bz);                   // {bs, bi}
+      float64x2_t big = IA::largest().simd();
+      float64x2_t x1 = vmulq_f64(aa, bz);                // {-ai*bi, as*bs}
+      float64x2_t x2 = vmulq_f64(aa, c);                 // {-ai*bs, as*bi}
+      x2 = vminq_f64(x2, big);
+      float64x2_t x3 = vmulq_f64(ap, bz);                // {-as*bi, ai*bs}
+      float64x2_t x4 = vmulq_f64(ap, c);                 // {-as*bs, ai*bi}
+      x4 = vminq_f64(x4, big);
+      float64x2_t y1 = vmaxq_f64(x1, x2);
+      float64x2_t y2 = vmaxq_f64(x3, x4);
+      float64x2_t r  = vmaxq_f64(y1, y2);
+      return IA(IA_opacify_neon(r));
+#elif defined CGAL_USE_SSE2
 # if !defined __SSE4_1__ && !defined __AVX__
       // Brutal, compute all products in all directions.
       // The actual winner (by a hair) on recent hardware before removing NaNs.
@@ -713,6 +787,13 @@ private:
       // larger than necessary, but is likely faster to produce.
       r = _mm_min_pd(r,largest().simd());
       return IA(IA_opacify128(r));
+#elif defined CGAL_USE_NEON
+      // Broadcast scalar a into both lanes, multiply, clamp infinities.
+      float64x2_t bb = IA_opacify_neon_weak(b.simd());
+      float64x2_t aa = vdupq_n_f64(IA_opacify(a));
+      float64x2_t r  = vmulq_f64(aa, bb);
+      r = vminq_f64(r, largest().simd());
+      return IA(IA_opacify_neon(r));
 #else
       else if (!(a > 0)) return 0.; // We could test this before the SSE block and remove the minpd line.
       return IA(-CGAL_IA_MUL(a, -b.inf()), CGAL_IA_MUL(a, b.sup()));
@@ -737,8 +818,36 @@ private:
       else if(CGAL_CST_TRUE(b.is_point()))
         return a / b.inf();
 #endif
-      Internal_protector P;
-#if defined CGAL_USE_SSE2 && (defined __SSE4_1__ || defined __AVX__)
+            Internal_protector P;
+#if defined CGAL_USE_NEON
+      // Division for interval arithmetic on NEON.
+      // Check whether 0 is in b: if both -bi<=0 and bs>=0 then bi<=0 && bs>=0.
+      // val layout {-bi, bs}: lane0=-bi, lane1=bs.
+      // 0 in b  <=>  -bi <= 0  AND  bs >= 0  <=>  lane0 <= 0 AND lane1 >= 0.
+      float64x2_t zero = vdupq_n_f64(0.0);
+      uint64x2_t ge0 = vcgeq_f64(b.simd(), zero); // {-bi>=0, bs>=0}
+      if (vgetq_lane_u64(ge0, 0) && vgetq_lane_u64(ge0, 1))
+        return largest(); // 0 in b
+      // b is strictly positive or strictly negative; use multiply-by-reciprocal
+      // approach: compute {1/-bi, 1/bs} then multiply.
+      // For b>0: {-bi,bs} both positive -> reciprocal is safe.
+      // For b<0: negate b first (swap lanes), divide, negate result.
+      float64x2_t bb = b.simd();
+      float64x2_t aa = a.simd();
+      // Determine sign of b from lane1 (bs): if bs < 0 then b < 0.
+      if (vgetq_lane_f64(bb, 1) < 0.0) {
+        // b < 0: negate both a and b, then divide as if b > 0.
+        aa = swap_f64x2(aa); // negate a
+        bb = swap_f64x2(bb); // negate b
+      }
+      // Now b > 0: {-bi, bs} with bi < 0 < bs.
+      // Compute reciprocal of b lanes and multiply.
+      float64x2_t ones = vdupq_n_f64(1.0);
+      float64x2_t inv_b = vdivq_f64(ones, IA_opacify_neon(bb));
+      float64x2_t r = vdivq_f64(IA_opacify_neon_weak(aa),
+                                 IA_opacify_neon(bb));
+      return IA(IA_opacify_neon(r));
+#elif defined CGAL_USE_SSE2 && (defined __SSE4_1__ || defined __AVX__)
       //// not a tight bound, but easy:
       // return CGAL::inverse(b)*a;
 # if 1
@@ -859,6 +968,43 @@ private:
       __m128d r = _mm_div_pd(aa, bb);
       return Interval_nt(IA_opacify128(r));
     }
+#elif defined CGAL_USE_NEON
+  friend
+    Interval_nt
+    operator/ (double a, const Interval_nt & b)
+    {
+      // Check 0 in b: lane0=-bi>=0 AND lane1=bs>=0.
+      float64x2_t zero = vdupq_n_f64(0.0);
+      uint64x2_t ge0 = vcgeq_f64(b.simd(), zero);
+      if (vgetq_lane_u64(ge0, 0) && vgetq_lane_u64(ge0, 1))
+        return largest();
+      float64x2_t aa, xx;
+      if (a > 0) {
+        aa = vdupq_n_f64(-a);
+        xx = (-b).simd();
+      } else if (a < 0) {
+        aa = vdupq_n_f64(a);
+        xx = b.simd();
+      } else return 0.;
+      Internal_protector P;
+      float64x2_t r = vdivq_f64(IA_opacify_neon_weak(aa), IA_opacify_neon(xx));
+      return Interval_nt(IA_opacify_neon(r));
+    }
+
+  friend
+    Interval_nt
+    operator/ (Interval_nt a, double b)
+    {
+      if (b < 0) { a = -a; b = -b; }
+      else if (b == 0) return largest();
+      // Now b > 0
+      Internal_protector P;
+      b = IA_opacify(b);
+      float64x2_t bb = vdupq_n_f64(b);
+      float64x2_t aa = IA_opacify_neon(a.simd());
+      float64x2_t r  = vdivq_f64(aa, bb);
+      return Interval_nt(IA_opacify_neon(r));
+    }
 #endif
 };
 
@@ -903,6 +1049,15 @@ magnitude (const Interval_nt<Protected> & d)
   __m128d x = _mm_and_pd (d.simd(), m); // { abs(inf), abs(sup) }
   __m128d y = _mm_unpackhi_pd (x, x);
   return _mm_cvtsd_f64 (_mm_max_sd (x, y));
+#elif defined CGAL_USE_NEON
+  // Mask off sign bits to get absolute values of both lanes.
+  // val = {-inf, sup}; abs gives {|inf|, |sup|}; return the max.
+  const uint64x2_t abs_mask = vdupq_n_u64(0x7fffffffffffffffULL);
+  float64x2_t x = vreinterpretq_f64_u64(
+      vandq_u64(vreinterpretq_u64_f64(d.simd()), abs_mask));
+  float64_t lo = vgetq_lane_f64(x, 0);
+  float64_t hi = vgetq_lane_f64(x, 1);
+  return lo > hi ? lo : hi;
 #else
   return (std::max)(CGAL::abs(d.inf()), CGAL::abs(d.sup()));
 #endif
@@ -978,6 +1133,17 @@ struct Min <Interval_nt<Protected> >
         // Use _mm_max_sd instead?
         __m128d y = _mm_max_pd (d.simd(), e.simd());
         return Interval_nt<Protected> (_mm_move_sd (x, y));
+#elif defined CGAL_USE_NEON
+        // min({-di,ds},{-ei,es}) = {-max(di,ei), min(ds,es)}
+        // lane0: min(-di,-ei) = -max(di,ei)  -> vminq_f64 on lane0
+        // lane1: min(ds,es)                  -> vminq_f64 on lane1
+        // But we want lane0 from vmax (most-negative = largest -inf)
+        // and lane1 from vmin (smallest sup).
+        float64x2_t x = vminq_f64(d.simd(), e.simd()); // {min(-di,-ei), min(ds,es)}
+        float64x2_t y = vmaxq_f64(d.simd(), e.simd()); // {max(-di,-ei), max(ds,es)}
+        // Result: lane0 from y (largest -inf = most negative lower bound),
+        //         lane1 from x (smallest sup).
+        return Interval_nt<Protected>(vcombine_f64(vget_low_f64(y), vget_high_f64(x)));
 #else
         return Interval_nt<Protected>(
                 -(std::max)(-d.inf(), -e.inf()),
@@ -1000,6 +1166,15 @@ struct Max <Interval_nt<Protected> >
         __m128d x = _mm_min_pd (d.simd(), e.simd());
         __m128d y = _mm_max_pd (d.simd(), e.simd());
         return Interval_nt<Protected> (_mm_move_sd (y, x));
+#elif defined CGAL_USE_NEON
+        // max({-di,ds},{-ei,es}) = {-min(di,ei), max(ds,es)}
+        // lane0: min(-di,-ei) = -max(di,ei) -> vminq_f64 gives smallest -inf
+        // lane1: max(ds,es)                 -> vmaxq_f64
+        float64x2_t x = vminq_f64(d.simd(), e.simd()); // {min(-di,-ei), min(ds,es)}
+        float64x2_t y = vmaxq_f64(d.simd(), e.simd()); // {max(-di,-ei), max(ds,es)}
+        // Result: lane0 from x (smallest -inf = least negative lower bound),
+        //         lane1 from y (largest sup).
+        return Interval_nt<Protected>(vcombine_f64(vget_low_f64(x), vget_high_f64(y)));
 #else
         return Interval_nt<Protected>(
                 -(std::min)(-d.inf(), -e.inf()),
@@ -1132,7 +1307,16 @@ namespace INTERN_INTERVAL_NT {
     // sqrt([+a,+b]) => [sqrt(+a);sqrt(+b)]
     // sqrt([-a,+b]) => [0;sqrt(+b)] => assumes roundoff error.
     // sqrt([-a,-b]) => [0;sqrt(-b)] => assumes user bug (unspecified result).
-#ifdef __AVX512F__
+#ifdef CGAL_USE_NEON
+    // AArch64 vsqrtq_f64 computes sqrt in round-to-nearest mode.
+    // We need the lower bound rounded DOWN and the upper bound rounded UP.
+    // Since we cannot change rounding mode per-lane, we use the same
+    // nextafter-based approach as CGAL_ALWAYS_ROUND_TO_NEAREST.
+    double i = 0.0;
+    if (d.inf() > 0.0)
+      i = nextafter(std::sqrt(d.inf()), 0.0);
+    return Interval_nt<Protected>(i, IA_sqrt_up(d.sup()));
+#elif defined __AVX512F__
     double i = 0;
     if(d.inf() > 0){
       __m128d x = d.simd();
@@ -1171,6 +1355,16 @@ namespace INTERN_INTERVAL_NT {
     __m128d b = _mm_xor_pd(a, _mm_setr_pd(-0., 0.));  // {i,s}
     __m128d r = _mm_mul_pd(a, b);                     // {-i*i,s*s}
     return Interval_nt<Protected>(IA_opacify128(r));
+#elif defined CGAL_USE_NEON
+    // abs(d).simd() = {-i, s} with 0 <= i <= s.
+    // Flip sign of lane0 to get {i, s}, then multiply: {-i*i, s*s}.
+    float64x2_t a = IA_opacify_neon(CGAL::abs(d).simd()); // {-i, s}
+    float64x2_t sign_flip = vcombine_f64(vdup_n_f64(-0.0), vdup_n_f64(0.0));
+    float64x2_t b = vreinterpretq_f64_u64(
+        veorq_u64(vreinterpretq_u64_f64(a),
+                  vreinterpretq_u64_f64(sign_flip)));       // {i, s}
+    float64x2_t r = vmulq_f64(a, b);                       // {-i*i, s*s}
+    return Interval_nt<Protected>(IA_opacify_neon(r));
 #else
     if (d.inf()>=0.0)
         return Interval_nt<Protected>(-CGAL_IA_MUL(-d.inf(), d.inf()),
@@ -1197,6 +1391,21 @@ namespace INTERN_INTERVAL_NT {
     __m128d z = _mm_set1_pd(-0.); // +0. would be valid, but I'd rather end up with interval [+0, sup]
     __m128d r = _mm_min_sd(t, z);
     return Interval_nt<Protected> (r);
+#elif defined CGAL_USE_NEON
+    // a = {-inf, sup},  -a = swap = {sup, -inf} = {-(-inf), -(sup)}
+    // min lane-wise gives the more-negative lower bound (larger -inf).
+    // max lane-wise gives the larger upper bound.
+    // Then combine: lane0 from min (clamped to <=0), lane1 from max.
+    float64x2_t a = d.simd();
+    float64x2_t b = (-d).simd();
+    float64x2_t x = vminq_f64(a, b);
+    float64x2_t y = vmaxq_f64(a, b);
+    // Combine: take lane0 from x (lower bound side), lane1 from y (upper bound).
+    float64x2_t t = vcombine_f64(vget_low_f64(x), vget_high_f64(y));
+    // Clamp lane0 to <= 0 (same as _mm_min_sd with -0.).
+    float64x2_t neg_zero_lo = vcombine_f64(vdup_n_f64(-0.0), vdup_n_f64(0.0));
+    float64x2_t r = vminq_f64(t, neg_zero_lo);
+    return Interval_nt<Protected>(r);
 #else
     if (d.inf() >= 0.0) return d;
     if (d.sup() <= 0.0) return -d;
@@ -1548,6 +1757,10 @@ public:
     Interval operator()( const Interval& a, const Interval& b ) const {
 #ifdef CGAL_USE_SSE2
       return Interval(_mm_max_pd(a.simd(), b.simd()));
+#elif defined CGAL_USE_NEON
+      // vmaxq_f64 on {-ai,as} and {-bi,bs} gives {max(-ai,-bi), max(as,bs)}
+      // = {-min(ai,bi), max(as,bs)} which is exactly the hull.
+      return Interval(vmaxq_f64(a.simd(), b.simd()));
 #else
       BOOST_USING_STD_MAX();
       BOOST_USING_STD_MIN();

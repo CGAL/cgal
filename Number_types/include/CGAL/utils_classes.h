@@ -21,6 +21,12 @@
 #include <CGAL/sse2.h>
 #endif
 
+// NEON min/max for double: enabled by CGAL_USE_NEON_MAX.
+// vmaxq_f64 / vminq_f64 operate on two doubles in a single 128-bit register.
+#ifdef CGAL_USE_NEON_MAX
+#  include <arm_neon.h>
+#endif
+
 namespace CGAL {
 
 template < class A, class B = A >
@@ -194,14 +200,95 @@ inline void sse2minmax(double& a, double b, double& c)
 
 #endif // CGAL_USE_SSE2_MAX
 
+#ifdef CGAL_USE_NEON_MAX
+
+inline double neon_max(double a, double b)
+{
+  float64x2_t A = vdupq_n_f64(a);
+  float64x2_t B = vdupq_n_f64(b);
+  return vgetq_lane_f64(vmaxq_f64(A, B), 0);
+}
+
+inline double neon_max(double a, double b, double c)
+{
+  float64x2_t AB = vmaxq_f64(vdupq_n_f64(a), vdupq_n_f64(b));
+  float64x2_t C  = vdupq_n_f64(c);
+  return vgetq_lane_f64(vmaxq_f64(AB, C), 0);
+}
+
+inline double neon_max(double a, double b, double c, double d)
+{
+  float64x2_t AB = vmaxq_f64(vdupq_n_f64(a), vdupq_n_f64(b));
+  float64x2_t CD = vmaxq_f64(vdupq_n_f64(c), vdupq_n_f64(d));
+  return vgetq_lane_f64(vmaxq_f64(AB, CD), 0);
+}
+
+inline double neon_min(double a, double b)
+{
+  float64x2_t A = vdupq_n_f64(a);
+  float64x2_t B = vdupq_n_f64(b);
+  return vgetq_lane_f64(vminq_f64(A, B), 0);
+}
+
+inline double neon_min(double a, double b, double c)
+{
+  float64x2_t AB = vminq_f64(vdupq_n_f64(a), vdupq_n_f64(b));
+  float64x2_t C  = vdupq_n_f64(c);
+  return vgetq_lane_f64(vminq_f64(AB, C), 0);
+}
+
+inline double neon_min(double a, double b, double c, double d)
+{
+  float64x2_t AB = vminq_f64(vdupq_n_f64(a), vdupq_n_f64(b));
+  float64x2_t CD = vminq_f64(vdupq_n_f64(c), vdupq_n_f64(d));
+  return vgetq_lane_f64(vminq_f64(AB, CD), 0);
+}
+
+// sets a = min(a,b,c), c = max(a,b,c).
+// b may hold any value on exit (same contract as sse2minmax).
+inline void neon_minmax(double& a, double b, double& c)
+{
+  float64x2_t A = vdupq_n_f64(a);
+  float64x2_t B = vdupq_n_f64(b);
+  float64x2_t C = vdupq_n_f64(c);
+
+  float64x2_t AB_min = vminq_f64(A, B);
+  float64x2_t AB_max = vmaxq_f64(A, B);
+
+  // min(a,b,c)
+  float64x2_t min_abc = vminq_f64(AB_min, C);
+  // max(a,b,c)
+  float64x2_t max_abc = vmaxq_f64(AB_max, C);
+
+  a = vgetq_lane_f64(min_abc, 0);
+  c = vgetq_lane_f64(max_abc, 0);
+}
+
+#endif // CGAL_USE_NEON_MAX
+
+// simd_minmax: unified name for call sites that work on both SSE2 and NEON.
+// Defined only when one of the two SIMD back-ends is active.
+#if defined CGAL_USE_SSE2_MAX || defined CGAL_USE_NEON_MAX
+inline void simd_minmax(double& a, double b, double& c)
+{
+#ifdef CGAL_USE_SSE2_MAX
+  sse2minmax(a, b, c);
+#else
+  neon_minmax(a, b, c);
+#endif
+}
+#endif // CGAL_USE_SSE2_MAX || CGAL_USE_NEON_MAX
+
 template <>
 struct Max<double> :public CGAL::cpp98::binary_function< double, double, double > {
- Max() {}
+Max() {}
 
- double operator()( const double& x, const double& y) const
+double operator()( const double& x, const double& y) const
     {
 #ifdef CGAL_USE_SSE2_MAX
       return sse2max(x,y);
+#elif defined CGAL_USE_NEON_MAX
+      return neon_max(x,y);
 #else
       return (std::max)( x, y);
 #endif
@@ -211,6 +298,8 @@ struct Max<double> :public CGAL::cpp98::binary_function< double, double, double 
   {
 #ifdef CGAL_USE_SSE2_MAX
     return sse2max(x,y,z);
+#elif defined CGAL_USE_NEON_MAX
+    return neon_max(x,y,z);
 #else
     return (std::max)((std::max)( x, y), z);
 #endif
@@ -220,6 +309,8 @@ struct Max<double> :public CGAL::cpp98::binary_function< double, double, double 
   {
 #ifdef CGAL_USE_SSE2_MAX
     return sse2max(w,x,y,z);
+#elif defined CGAL_USE_NEON_MAX
+    return neon_max(w,x,y,z);
 #else
     return (std::max)((std::max)( x, y), (std::max)(w,z));
 #endif
@@ -234,6 +325,8 @@ struct Min<double> :public CGAL::cpp98::binary_function< double, double, double 
     {
 #ifdef CGAL_USE_SSE2_MAX
       return sse2min(x,y);
+#elif defined CGAL_USE_NEON_MAX
+      return neon_min(x,y);
 #else
       return (std::min)( x, y);
 #endif
@@ -243,6 +336,8 @@ struct Min<double> :public CGAL::cpp98::binary_function< double, double, double 
   {
 #ifdef CGAL_USE_SSE2_MAX
     return sse2min(x,y,z);
+#elif defined CGAL_USE_NEON_MAX
+    return neon_min(x,y,z);
 #else
     return (std::min)((std::min)( x, y), z);
 #endif
@@ -252,6 +347,8 @@ struct Min<double> :public CGAL::cpp98::binary_function< double, double, double 
   {
 #ifdef CGAL_USE_SSE2_MAX
     return sse2min(w,x,y,z);
+#elif defined CGAL_USE_NEON_MAX
+    return neon_min(w,x,y,z);
 #else
     return (std::min)((std::min)( x, y), (std::min)(w,z));
 #endif

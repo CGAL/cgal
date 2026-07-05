@@ -44,6 +44,9 @@ extern "C" {
 #  else
 #    include <cfloat>
 #  endif
+#elif defined _MSC_VER && defined _M_ARM64
+   // MSVC on ARM64: _controlfp_s is x86-only; fenv.h is the correct interface.
+#  include <fenv.h>
 #elif defined _MSC_VER || defined __sparc__ || \
      (defined __i386__ && !defined __PGI && !defined __SUNPRO_CC \
       && !defined __SSE2__)
@@ -118,6 +121,15 @@ extern "C" {
   (defined __x86_64__ || defined _M_X64) && \
   !defined CGAL_ALWAYS_ROUND_TO_NEAREST
 #  define CGAL_USE_SSE2 1
+#endif
+
+#if defined(__aarch64__) || defined(_M_ARM64)
+#  include <arm_neon.h>
+#  define CGAL_HAS_NEON 1
+#endif
+
+#if defined(CGAL_HAS_NEON) && !defined(CGAL_ALWAYS_ROUND_TO_NEAREST)
+#  define CGAL_USE_NEON 1
 #endif
 #ifdef CGAL_CFG_DENORMALS_COMPILE_BUG
 double& get_static_minimin(); // Defined in Interval_arithmetic_impl.h
@@ -283,7 +295,49 @@ inline __m128d swap_m128d(__m128d x){
   return _mm_shuffle_pd(x, x, 1);
 # endif
 }
+#endif // CGAL_USE_SSE2
+
+// NEON opacify & swap helpers
+#ifdef CGAL_USE_NEON
+
+// Prevent the compiler from reordering or constant-folding across a
+// fesetround() boundary, same role as IA_opacify128 on SSE2.
+inline float64x2_t IA_opacify_neon(float64x2_t x)
+{
+#if defined __GNUG__ || defined __clang__
+  // "+w"  pins the value in a NEON/FP register.
+  asm volatile ("" : "+w"(x));
+  return x;
+#else
+  // MSVC on ARM64: no inline asm available.
+  // We use the same volatile+memcpy.
+  volatile float64x2_t e = x;
+  std::memcpy(&x, (void*)&e, 16);
+  return x;
 #endif
+}
+
+// Weaker barrier: blocks algebraic reassociation but not fesetround migration.
+inline float64x2_t IA_opacify_neon_weak(float64x2_t x)
+{
+#if defined __GNUG__ || defined __clang__
+  asm ("" : "+mw"(x));
+  return x;
+#else
+  // MSVC: fall back to the strong barrier; no weaker option without asm.
+  return IA_opacify_neon(x);
+#endif
+}
+
+// Swap the two double lanes: {a, b} -> {b, a}
+// Counterpart of swap_m128d().  vextq_f64 with offset 1 rotates the two
+// 64-bit elements, which on a 2-element vector is equivalent to a swap.
+inline float64x2_t swap_f64x2(float64x2_t x)
+{
+  return vextq_f64(x, x, 1);
+}
+
+#endif // CGAL_USE_NEON
 
 // Interval arithmetic needs to protect against double-rounding effects
 // caused by excess FPU precision, even if it forces the 53bit mantissa
@@ -365,7 +419,20 @@ inline double CGAL_IA_SQUARE(double a){
   double b = CGAL_IA_STOP_CPROP(a); // only once
   return IA_up(b*b);
 }
-#if defined CGAL_SAFE_SSE2
+
+// Handle MSVC ARM64 first because SSE2 intrinsics and _controlfp_s are x86-only.
+// This prevents ARM64 from incorrectly selecting unsupported x86 code paths.
+#if defined ( _MSC_VER ) && defined ( _M_ARM64 )
+// MSVC on ARM64: <fenv.h> is already included at the top of this file.
+#define CGAL_IA_SETFPCW(CW)  fesetround(CW)
+#define CGAL_IA_GETFPCW(CW)  CW = fegetround()
+typedef int FPU_CW_t;
+#define CGAL_FE_TONEAREST    FE_TONEAREST
+#define CGAL_FE_TOWARDZERO   FE_TOWARDZERO
+#define CGAL_FE_UPWARD       FE_UPWARD
+#define CGAL_FE_DOWNWARD     FE_DOWNWARD
+
+#elif defined CGAL_SAFE_SSE2
 
 #define CGAL_IA_SETFPCW(CW) _MM_SET_ROUNDING_MODE(CW)
 #define CGAL_IA_GETFPCW(CW) CW = _MM_GET_ROUNDING_MODE()
@@ -430,7 +497,8 @@ typedef unsigned int FPU_CW_t;
 #define CGAL_FE_UPWARD       FP_RND_RP
 #define CGAL_FE_DOWNWARD     FP_RND_RM
 
-#elif defined ( _MSC_VER )
+#elif defined ( _MSC_VER ) && !defined ( _M_ARM64 )
+// x86/x64 MSVC only: _controlfp_s is not available on ARM64.
 #if ( _MSC_VER < 1400)
 #define CGAL_IA_SETFPCW(CW) _controlfp (CW, _MCW_RC )
 #define CGAL_IA_GETFPCW(CW) CW = _controlfp (0, 0 ) &  _MCW_RC
