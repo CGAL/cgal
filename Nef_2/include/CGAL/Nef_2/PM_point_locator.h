@@ -104,7 +104,7 @@ public:
   |Halfedge_const_handle|, |Halfedge_const_iterator|, |Face_const_handle|,
   |Face_const_iterator|.}*/
 
-  typedef CGAL::Object_handle Object_handle;
+  typedef typename PM_decorator_::Object_handle Object_handle;
   /*{\Mtypemember a generic handle to an object of the underlying plane
   map. The kind of the object |(vertex, halfedge,face)| can be determined and
   the object assigned by the three functions:\\
