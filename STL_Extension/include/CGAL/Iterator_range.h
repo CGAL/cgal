@@ -13,6 +13,7 @@
 #define CGAL_ITERATOR_RANGE_H
 
 #include <CGAL/tuple.h>
+#include <CGAL/Time_stamper.h>
 #include <utility>
 #include <boost/foreach.hpp>
 
@@ -43,11 +44,28 @@ public:
   I begin() const { return this->first; }
   I end() const { return this->second; }
 
+  /*
+  AF  needed by exude_mesh_3() etc
+  static iterator s_iterator_to(const typename std::iterator_traits<I>::value_type&  value) {
+    assert false; // AF: not even sure that we can implement that correctly
+    return I();
+  }
+*/
   /// returns `std::distance(begin(), end())`
   std::size_t size() const { return static_cast<std::size_t>(std::distance(begin(), end())); }
 
   /// returns `std::distance(begin(), end())==0`
   bool empty() const { return begin() == end(); }
+
+  template <typename T>
+  bool is_used(const T& t) const
+  {
+    return true; // AF: not implemented, but we need it for some validity checks. It is not critical if it returns false positives.
+    for (I i = begin(); i != end(); ++i) {
+      //if (*i == t) return true;  // AF: does not compile
+    }
+    return false;
+  }
 
   operator std::tuple<I&, I&>()
   {

@@ -15,6 +15,7 @@
 #include <CGAL/license/Alpha_wrap_3.h>
 
 #include <CGAL/Triangulation_vertex_base_3.h>
+#include <CGAL/TDS_3/Indexed_storage.h>
 
 namespace CGAL {
 namespace Alpha_wraps_3 {
@@ -63,6 +64,39 @@ public:
   const Vertex_type& type() const { return vertex_type; }
   Vertex_type& type() { return vertex_type; }
 };
+
+template <typename GT,
+            typename Vb = VertexWithPoint<GT>>
+class Vertex4Alpha_wrap_3
+  : public Vb
+  {
+    public:
+    using Vb::Vb; // inherit constructors
+    using Point = typename GT::Point_3;
+    using TDS = typename Vb::Triangulation_data_structure;
+    using Vertex_handle = typename TDS::Vertex_handle;
+    using Cell_handle = typename TDS::Cell_handle;
+
+    struct Storage : public Vb::Storage {
+      Vertex_type vertex_type = Vertex_type::DEFAULT;
+    };
+
+    template < typename TDS2 >
+    struct Rebind_TDS {
+      using Vb2 = typename Vb::template Rebind_TDS<TDS2>::Other;
+      using Other = Vertex4Alpha_wrap_3<GT,Vb2>;
+    };
+    auto&& storage() {
+      return this->tds()->vertex_storage()[this->idx()];
+    }
+
+    auto&& storage() const { return this->tds()->vertex_storage()[this->idx()]; }
+
+  public:
+
+  const Vertex_type& type() const { return storage().vertex_type; }
+  Vertex_type& type() { return storage().vertex_type; }
+  };
 
 } // namespace internal
 } // namespace Alpha_wraps_3

@@ -620,7 +620,7 @@ make_property_map(const std::vector<T>& v)
 template<class KeyType, class ValueType>
 struct Constant_property_map
 {
-  ValueType default_value;
+  ValueType default_value{};
 
   typedef KeyType                                       key_type;
   typedef ValueType                                     value_type;

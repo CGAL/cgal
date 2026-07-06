@@ -141,7 +141,7 @@ bool do_overlap(const Bbox_3 &bb1, const Bbox_3 &bb2);
 
 /*!
 returns the bounding box of the objects in the range `[first,past_end[`.
-Each object in the range must have a member function `BBox_3 bbox()`
+Each object in the range must have a member function `Bbox_3 bbox()`
 returning its bounding box.
 
 \relates Bbox_3

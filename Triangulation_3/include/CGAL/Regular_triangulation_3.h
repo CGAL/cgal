@@ -25,7 +25,6 @@
 #ifdef CGAL_LINKED_WITH_TBB
 # include <CGAL/point_generators_3.h>
 # include <tbb/parallel_for.h>
-# include <thread>
 # include <tbb/enumerable_thread_specific.h>
 # include <tbb/concurrent_vector.h>
 #endif
@@ -51,7 +50,8 @@
 #endif
 
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
-#include <CGAL/point_generators_3.h>
+# include <CGAL/point_generators_3.h>
+# include <thread>
 #endif
 
 #include <boost/mpl/identity.hpp>
@@ -62,7 +62,6 @@
 #include <iostream>
 #include <iterator>
 #include <set>
-#include <thread>
 #include <utility>
 #include <vector>
 
@@ -74,20 +73,25 @@ namespace CGAL {
    *
    ************************************************/
 
+template <typename Gt, typename Tds_>
+using Regular_triangulation_3_tds =
+    typename Default::Get<Tds_,
+                          Triangulation_data_structure_3<Regular_triangulation_vertex_base_3<Gt>,
+                                                         Regular_triangulation_cell_base_3<Gt>>>::type;
+
 template < class Gt, class Tds_ = Default, class Lock_data_structure_ = Default >
 class Regular_triangulation_3
   : public Triangulation_3<
              Gt,
-             typename Default::Get<Tds_, Triangulation_data_structure_3 <
-                                           Regular_triangulation_vertex_base_3<Gt>,
-                                           Regular_triangulation_cell_base_3<Gt> > >::type,
+             Regular_triangulation_3_tds<Gt, Tds_>,
              Lock_data_structure_>
+  , public Cache_cell_circumcenter_with_property_maps<
+             Regular_triangulation_3<Gt, Tds_, Lock_data_structure_>,
+             Gt,
+             Regular_triangulation_3_tds<Gt, Tds_>>
 {
 private:
-  typedef typename Default::Get<Tds_, Triangulation_data_structure_3 <
-                                        Regular_triangulation_vertex_base_3<Gt>,
-                                        Regular_triangulation_cell_base_3<Gt> >
-                               >::type                            Tds;
+  typedef Regular_triangulation_3_tds<Gt, Tds_>                   Tds;
 
   typedef Regular_triangulation_3<Gt, Tds_, Lock_data_structure_> Self;
 
@@ -404,7 +408,7 @@ public:
       size_t i = 0;
       // Insert "num_points_seq" points sequentially
       // (or more if dim < 3 after that)
-      size_t num_points_seq = (std::min)(num_points, (size_t)100);
+      size_t num_points_seq = (std::min<size_t>)(num_points, 100);
       while (i < num_points_seq || (dimension() < 3 && i < num_points))
       {
         Locate_type lt;
@@ -530,7 +534,7 @@ private:
       size_t i = 0;
       // Insert "num_points_seq" points sequentially
       // (or more if dim < 3 after that)
-      size_t num_points_seq = (std::min)(num_points, (size_t)100);
+      size_t num_points_seq = (std::min<size_t>)(num_points, 100);
       while (i < num_points_seq || (dimension() < 3 && i < num_points))
       {
         Locate_type lt;
@@ -681,11 +685,12 @@ public:
 
       ifit = Tr_Base::find_conflicts(c, tester,
                                      make_triple(std::back_inserter(facets),
-                                                 std::back_inserter(cells),
-                                                 ifit),
+                                                std::back_inserter(cells),
+                                                 ifit ),
                                      could_lock_zone,
                                      this_facet_must_be_in_the_cz,
                                      the_facet_is_in_its_cz).third;
+
     }
     else
     {
@@ -700,6 +705,7 @@ public:
                                      could_lock_zone,
                                      this_facet_must_be_in_the_cz,
                                      the_facet_is_in_its_cz).third;
+
     }
 
     // Reset the conflict flag on the boundary.
@@ -1161,9 +1167,10 @@ protected:
     {
     }
 
-    bool operator()(const Cell_handle c) const
+    template <typename CellDescriptor>
+    bool operator()(const CellDescriptor& c) const
     {
-      return t->in_conflict_3(p, c);
+      return t->in_conflict_3(p, t->tds().handle(c));
     }
 
     bool test_initial_cell(const Cell_handle c) const
@@ -1188,9 +1195,10 @@ protected:
     {
     }
 
-    bool operator()(const Cell_handle c) const
+    template <typename CellDescriptor>
+    bool operator()(const CellDescriptor& c) const
     {
-      return t->in_conflict_2(p, c, 3);
+      return t->in_conflict_2(p, t->tds().handle(c), 3);
     }
 
     bool test_initial_cell(const Cell_handle c) const
@@ -1216,9 +1224,10 @@ protected:
     {
     }
 
-    bool operator()(const Cell_handle c) const
+    template <typename CellDescriptor>
+    bool operator()(const CellDescriptor& c) const
     {
-      return t->in_conflict_1(p, c);
+      return t->in_conflict_1(p, t->tds().handle(c));
     }
 
     bool test_initial_cell(const Cell_handle c) const
@@ -1244,9 +1253,10 @@ protected:
     {
     }
 
-    bool operator()(const Cell_handle c) const
+    template <typename CellDescriptor>
+    bool operator()(const CellDescriptor& c) const
     {
-      return t->in_conflict_0(p, c);
+      return t->in_conflict_0(p, t->tds().handle(c));
     }
 
     bool test_initial_cell(const Cell_handle c) const

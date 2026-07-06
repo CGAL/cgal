@@ -34,10 +34,14 @@ typename Default::Get<Tds_, Triangulation_data_structure_3 <\
 template < class Gt, class Tds_ >
 class Delaunay_triangulation_3<Gt, Tds_, Fast_location>
   : public Triangulation_hierarchy_3<Delaunay_triangulation_3<Gt,
-      CGAL_TDS_3::template Rebind_vertex<Triangulation_hierarchy_vertex_base_3<CGAL_TDS_3::Vertex> >::Other> >
+      CGAL_TDS_3::template Rebind_vertex<std::conditional_t<std::is_same_v<CGAL_TDS_3::Storage_tag, Handle_tag>,
+                                                            Triangulation_hierarchy_vertex_base_3<CGAL_TDS_3::Vertex>,
+                                                            Vertex4Hierarchy<typename Tds_::Vertex>>>::Other>>
 {
     typedef Triangulation_hierarchy_3<Delaunay_triangulation_3<Gt,
-      CGAL_TDS_3::template Rebind_vertex<Triangulation_hierarchy_vertex_base_3<CGAL_TDS_3::Vertex> >::Other> >  Base;
+      CGAL_TDS_3::template Rebind_vertex<std::conditional_t<std::is_same_v<CGAL_TDS_3::Storage_tag, Handle_tag>,
+                                                            Triangulation_hierarchy_vertex_base_3<CGAL_TDS_3::Vertex>,
+                                                            Vertex4Hierarchy<typename Tds_::Vertex>>>::Other>>    Base;
 
 public:
 

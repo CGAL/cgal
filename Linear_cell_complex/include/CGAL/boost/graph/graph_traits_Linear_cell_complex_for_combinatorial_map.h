@@ -96,24 +96,12 @@ struct EdgeHandle : Dart_descriptor
   std::size_t id() const
   { return first_halfedge()->id()/2; }
 
-  friend std::size_t hash_value(const EdgeHandle& i)
-  {
-    if (i.first_halfedge()==nullptr) return 0;
-    return hash_value(i.first_halfedge()<i.second_halfedge()?
-                      i.first_halfedge():i.second_halfedge());
+  friend std::size_t hash_value(const EdgeHandle& i) {
+    if(i.first_halfedge() == nullptr)
+      return 0;
+    return hash_value((std::min)(i.first_halfedge(), i.second_halfedge()));
   }
 };
-
-// make edge_descriptor hashable by default in Unique_hash_map
-namespace handle{
-  template<typename Dart_descriptor>
-  struct Hash_functor< EdgeHandle<Dart_descriptor> >
-  {
-    std::size_t
-    operator()(const EdgeHandle<Dart_descriptor>& edge)
-    { return hash_value(edge); }
-  };
-} //end of namespace handle
 
 template <class CMap, typename Dart_Iterator>
 class CMap_dart_descriptor_edge_iterator

@@ -15,6 +15,7 @@
 #ifdef CGAL_LINKED_WITH_TBB
 
 #include <CGAL/Bbox_3.h>
+#include <CGAL/number_utils.h>
 
 #include <atomic>
 #include <thread>
@@ -215,10 +216,9 @@ public:
 
     if (lock_radius == 0)
     {
-      int index =
-        index_z*m_num_grid_cells_per_axis*m_num_grid_cells_per_axis
-        + index_y*m_num_grid_cells_per_axis
-        + index_x;
+      int index = (((index_z*m_num_grid_cells_per_axis)
+                    + index_y)*m_num_grid_cells_per_axis)
+                    + index_x;
       return try_lock<no_spin>(index);
     }
     else
@@ -332,14 +332,14 @@ protected:
     index_z = std::clamp(index_z, 0, m_num_grid_cells_per_axis - 1);
 
     return
-      index_z*m_num_grid_cells_per_axis*m_num_grid_cells_per_axis
-      + index_y*m_num_grid_cells_per_axis
-      + index_x;
+      (((index_z*m_num_grid_cells_per_axis)
+        + index_y)*m_num_grid_cells_per_axis)
+        + index_x;
   }
 
   bool is_cell_locked(int cell_index)
   {
-    return static_cast<Derived*>(this)->is_cell_locked_impl(cell_index);
+    return derived()->is_cell_locked_impl(cell_index);
   }
 
   bool try_lock_cell(int cell_index)
@@ -350,12 +350,16 @@ protected:
   template <bool no_spin>
   bool try_lock_cell(int cell_index)
   {
-    return static_cast<Derived*>(this)
-      ->template try_lock_cell_impl<no_spin>(cell_index);
+    return derived()->template try_lock_cell_impl<no_spin>(cell_index);
   }
   void unlock_cell(int cell_index)
   {
-    static_cast<Derived*>(this)->unlock_cell_impl(cell_index);
+    derived()->unlock_cell_impl(cell_index);
+  }
+
+  auto derived()
+  {
+    return static_cast<Derived*>(this);
   }
 
   int                                             m_num_grid_cells_per_axis;
@@ -524,6 +528,11 @@ public:
   void unlock_cell_impl(int cell_index)
   {
     m_grid[cell_index] = 0;
+  }
+
+  auto this_thread_priority()
+  {
+    return m_tls_thread_priorities.local();
   }
 
 private:

@@ -32,24 +32,23 @@ struct Vertex_converter
 
   template <typename Src> auto operator()(const Src& src) const
   {
-    using namespace CGAL;
 
     Vertex v;
     v.set_point(Wp{src.point()});
       switch(src.ccdt_3_data().vertex_type()) {
-      case CDT_3_vertex_type::CORNER:
+      case CGAL::CDT_3_vertex_type::CORNER:
         v.set_dimension(0);
         v.set_index(0);
         break;
-      case CDT_3_vertex_type::STEINER_ON_EDGE:
+      case CGAL::CDT_3_vertex_type::STEINER_ON_EDGE:
         v.set_dimension(1);
         v.set_index(static_cast<int>(src.ccdt_3_data().constrained_polyline_id(*tr).index()));
         break;
-      case CDT_3_vertex_type::STEINER_IN_FACE:
+      case CGAL::CDT_3_vertex_type::STEINER_IN_FACE:
         v.set_dimension(2);
         v.set_index(src.ccdt_3_data().face_index());
         break;
-      case CDT_3_vertex_type::FREE:
+      case CGAL::CDT_3_vertex_type::FREE:
         v.set_dimension(3);
         v.set_index(1);
         break;

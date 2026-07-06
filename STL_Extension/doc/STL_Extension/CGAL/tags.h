@@ -100,6 +100,18 @@ struct Parallel_if_available_tag {};
 
 /*!
 \ingroup PkgSTLExtensionUtilities
+Tag used to enable storage of indices, for example in the 3D triangulation data structure.
+*/
+struct Index_tag {};
+
+/*!
+\ingroup PkgSTLExtensionUtilities
+Tag used to enable storage of indices, for example in the 3D triangulation data structure.
+*/
+struct Handle_tag {};
+
+/*!
+\ingroup PkgSTLExtensionUtilities
 
 General tag indicating that non of any other possible tags is valid.
 

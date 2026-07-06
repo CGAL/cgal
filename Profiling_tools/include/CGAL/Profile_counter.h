@@ -47,9 +47,6 @@
 #include <sstream>
 #include <iomanip>
 #include <string>
-#include <map>
-#include <atomic>
-
 #include <CGAL/disable_warnings.h>
 
 // Automatically define CGAL_CONCURRENT_PROFILE if we're linked with TBB
@@ -65,7 +62,10 @@
 #endif
 
 #ifdef CGAL_CONCURRENT_PROFILE
-# include "tbb/concurrent_hash_map.h"
+#  include <atomic>
+#  include "tbb/concurrent_hash_map.h"
+#else
+#  include <map>
 #endif
 
 namespace CGAL {
@@ -184,7 +184,8 @@ struct Profile_branch_counter
 
 private:
 #ifdef CGAL_CONCURRENT_PROFILE
-    std::atomic<unsigned int> i, j;
+    alignas(128) std::atomic<unsigned int> i;
+    alignas(128) std::atomic<unsigned int> j;
 #else
     unsigned int i, j;
 #endif
@@ -215,7 +216,9 @@ struct Profile_branch_counter_3
 
 private:
 #ifdef CGAL_CONCURRENT_PROFILE
-    std::atomic<unsigned int> i, j, k;
+    alignas(128) std::atomic<unsigned int> i;
+    alignas(128) std::atomic<unsigned int> j;
+    alignas(128) std::atomic<unsigned int> k;
 #else
     unsigned int i, j, k;
 #endif

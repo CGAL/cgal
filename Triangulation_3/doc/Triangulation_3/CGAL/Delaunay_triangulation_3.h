@@ -243,7 +243,7 @@ Vertex_handle move_if_no_collision(Vertex_handle v, const Point & p);
 
 /*!
 If there is no collision during the move, this function is the same as
-`move_if_no_collision` . Otherwise, `v` is removed and the vertex at point `p`
+`move_if_no_collision()` . Otherwise, `v` is removed and the vertex at point `p`
 is returned.
 \pre Vertex `v` must be finite.
 */

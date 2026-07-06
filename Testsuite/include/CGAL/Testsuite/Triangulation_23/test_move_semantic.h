@@ -15,29 +15,37 @@
 #define CGAL_TEST_T23_MOVE_SEMANTIC_C
 
 #include <cassert>
+#include <utility>
 
 namespace CGAL {
   namespace Testsuite {
     namespace Triangulation_23 {
       template <typename Tr>
       void test_move_semantic(Tr source_tr) {
+        constexpr bool is_indexed_based =
+            Tr::Triangulation_data_structure::Is_CGAL_TDS_3::value == false;
         const auto dimension = source_tr.dimension();
         const auto nb_of_vertices = source_tr.number_of_vertices();
         auto check_triangulation_validity = [&](const Tr& tr) {
+          CGAL_USE(tr);
           assert(tr.is_valid());
           assert(tr.number_of_vertices() == nb_of_vertices);
           assert(tr.dimension() == dimension);
         };
-        auto check_moved_from_triangulation = [](const Tr& tr_copy) {
-          assert(tr_copy.dimension() == -2);
-          assert(tr_copy.number_of_vertices() + 1 == 0);
+        auto check_moved_from_triangulation = [&](const Tr& tr_copy) {
+          CGAL_USE(tr_copy);
+          CGAL_USE(is_indexed_based);
+          assert(is_indexed_based || tr_copy.dimension() == -2);
+          assert(is_indexed_based || tr_copy.number_of_vertices() + 1 == 0);
         };
         auto check_empty_triangulation = [](const Tr& tr_copy2) {
+          CGAL_USE(tr_copy2);
           assert(tr_copy2.dimension() == -1);
           assert(tr_copy2.number_of_vertices() == 0);
         };
         // move constructor
         {
+          check_triangulation_validity(source_tr);
           Tr tr_copy(source_tr);
           check_triangulation_validity(tr_copy);
 
