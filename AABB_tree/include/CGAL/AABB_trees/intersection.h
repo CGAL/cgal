@@ -31,17 +31,47 @@ namespace AABB_trees {
   ///
   /// \brief Tests whether two AABB trees contain intersecting primitives.
   ///
+  /// \cgalNamedParamsBegin
+  ///   \cgalParamNBegin{transformation}
+  ///     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `tm1` (`tm2`)}
+  ///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
+  ///                    as key type and `bool` as value type}
+  ///     \cgalParamDefault{a constant property map returning `false` for any edge}
+  ///   \cgalParamNEnd
+  /// \cgalNamedParamsEnd
+  ///
   /// Returns `true` if at least one primitive of `tree1` intersects
   /// a primitive of `tree2`, and `false` otherwise.
   template< typename Concurrency_tag = Sequential_tag,
             typename AABBTree1,
-            typename AABBTree2 >
+            typename AABBTree2,
+            typename NamedParameters1 = parameters::Default_named_parameters,
+            typename NamedParameters2 = parameters::Default_named_parameters>
   bool do_intersect(const AABBTree1 &tree1,
-                    const AABBTree2 &tree2)
+                    const AABBTree2 &tree2,
+                    const NamedParameters1& np1 = parameters::default_values(),
+                    const NamedParameters2& np2 = parameters::default_values())
   {
-    CGAL::internal::AABB_tree::Two_trees_do_intersect_traits traversal_traits(tree1.traits(), tree2.traits());
-    CGAL::internal::AABB_tree::two_trees_traversal<Concurrency_tag>(tree1, tree2, traversal_traits);
-    return traversal_traits.is_intersection_found();
+    using parameters::get_parameter;
+    using parameters::choose_parameter;
+    using parameters::is_default_parameter;
+    if constexpr(is_default_parameter<NamedParameters1, internal_np::transformation_t>::value &&
+                 is_default_parameter<NamedParameters2, internal_np::transformation_t>::value)
+    {
+      CGAL::internal::AABB_tree::Two_trees_do_intersect_traits traversal_traits(tree1.traits(), tree2.traits());
+      CGAL::internal::AABB_tree::two_trees_traversal<Concurrency_tag>(tree1, tree2, traversal_traits);
+      return traversal_traits.is_intersection_found();
+    }
+    else
+    {
+      using Kernel = typename Kernel_traits<typename AABBTree1::AABBTraits::Point>::Kernel::type;
+      using Aff_tr = Aff_transformation_3<Kernel>;
+      const Aff_tr& tr1 = choose_parameter(get_parameter(np1, internal_np::transformation), Aff_tr(Identity_transformation()));
+      const Aff_tr& tr2 = choose_parameter(get_parameter(np2, internal_np::transformation), Aff_tr(Identity_transformation()));
+      CGAL::internal::AABB_tree::Two_trees_do_intersect_traits_with_transformation traversal_traits(tree1.traits(), tree2.traits(), tr1, tr2);
+      CGAL::internal::AABB_tree::two_trees_traversal<Concurrency_tag>(tree1, tree2, traversal_traits);
+      return traversal_traits.is_intersection_found();
+    }
   }
 
   /// \ingroup PkgAABBTreeRef
@@ -62,13 +92,33 @@ namespace AABB_trees {
   template< typename Concurrency_tag = Sequential_tag,
             typename AABBTree1,
             typename AABBTree2,
-            typename OutputIterator >
+            typename OutputIterator,
+            typename NamedParameters1 = parameters::Default_named_parameters,
+            typename NamedParameters2 = parameters::Default_named_parameters>
   void all_pairs_of_intersecting_primitives(const AABBTree1 &tree1,
                                             const AABBTree2 &tree2,
-                                            OutputIterator out)
+                                            OutputIterator out,
+                                            const NamedParameters1& np1 = parameters::default_values(),
+                                            const NamedParameters2& np2 = parameters::default_values())
   {
-    CGAL::internal::AABB_tree::Two_trees_listing_intersecting_primitives_traits traversal_traits(tree1.traits(), tree2.traits(), out);
-    CGAL::internal::AABB_tree::two_trees_traversal<Concurrency_tag>(tree1, tree2, traversal_traits);
+    using parameters::get_parameter;
+    using parameters::choose_parameter;
+    using parameters::is_default_parameter;
+    if constexpr(is_default_parameter<NamedParameters1, internal_np::transformation_t>::value &&
+                 is_default_parameter<NamedParameters2, internal_np::transformation_t>::value)
+    {
+      CGAL::internal::AABB_tree::Two_trees_listing_intersecting_primitives_traits traversal_traits(tree1.traits(), tree2.traits(), out);
+      CGAL::internal::AABB_tree::two_trees_traversal<Concurrency_tag>(tree1, tree2, traversal_traits);
+    }
+    else
+    {
+      using Kernel = typename Kernel_traits<typename AABBTree1::AABB_traits::Point>::Kernel;
+      using Aff_tr = Aff_transformation_3<Kernel>;
+      Aff_tr tr1 = choose_parameter(get_parameter(np1, internal_np::transformation), Aff_tr(Identity_transformation()));
+      Aff_tr tr2 = choose_parameter(get_parameter(np2, internal_np::transformation), Aff_tr(Identity_transformation()));
+      CGAL::internal::AABB_tree::Two_trees_listing_intersecting_primitives_traits_with_transformation traversal_traits(tree1.traits(), tree2.traits(), out, tr1, tr2);
+      CGAL::internal::AABB_tree::two_trees_traversal<Concurrency_tag>(tree1, tree2, traversal_traits);
+    }
   }
 
   /// \ingroup PkgAABBTreeRef

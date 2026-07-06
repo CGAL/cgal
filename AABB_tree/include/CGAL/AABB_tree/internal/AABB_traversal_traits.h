@@ -184,6 +184,56 @@ private:
 };
 
 /**
+ * @class Listing_primitive_traits_with_transformation
+ */
+template<typename AABBTraits, typename Kernel, typename Query, typename Output_iterator>
+class Listing_primitive_traits_with_transformation
+{
+  typedef typename AABBTraits::FT FT;
+  typedef typename AABBTraits::Point Point;
+  typedef typename AABBTraits::Primitive Primitive;
+  typedef typename AABBTraits::Bounding_box Bounding_box;
+  typedef typename AABBTraits::Primitive::Id Primitive_id;
+  typedef typename AABBTraits::Point_and_primitive_id Point_and_primitive_id;
+  typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;
+  typedef ::CGAL::AABB_node<AABBTraits> Node;
+
+  Bbox_3 compute_transformed_bbox(const Bbox_3& bbox) const
+  {
+    return internal::compute_transformed_bbox(m_transfo, bbox, m_has_rotation);
+  }
+
+public:
+  Listing_primitive_traits_with_transformation(Output_iterator out_it,const AABBTraits& traits, const Aff_transformation_3<Kernel> &transfo)
+    : m_out_it(out_it), m_traits(traits), m_transfo(transfo), m_has_rotation(has_rotation(transfo))
+  {}
+
+  bool go_further() const { return true; }
+
+  void intersection(const Query& query, const Primitive& primitive)
+  {
+    auto datum = internal::Primitive_helper<AABBTraits>::get_datum(primitive, m_traits);
+    if( CGAL::do_intersect(query, datum.transform(m_transfo)) )
+      *m_out_it++ = primitive.id();
+  }
+
+  bool do_intersect(const Query& query, const Node& node) const
+  {
+#if 1
+    return m_traits.do_intersect_object()(query, compute_transformed_bbox(node.bbox()));
+#else
+    return Convex_hull_3::do_intersect(query, node.bbox(), parameters::transformation(m_transfo))
+#endif
+  }
+
+private:
+  Output_iterator m_out_it;
+  const AABBTraits m_traits;
+  Aff_transformation_3<Kernel> m_transfo;
+  bool m_has_rotation;
+};
+
+/**
  * @class Listing_distinct_primitive_traits
  * used by `all_pairs_of_intersecting_primitives()` to avoid report `(i, i)` and twice `(i, j)`.
  */
@@ -308,6 +358,57 @@ public:
 private:
   bool m_is_found;
   const AABBTraits& m_traits;
+};
+
+/**
+ * @class Do_intersect_traits_with_transformation
+ */
+template<typename AABBTraits, typename Kernel, typename Query>
+class Do_intersect_traits_with_transformation
+{
+  typedef typename AABBTraits::FT FT;
+  typedef typename AABBTraits::Point Point;
+  typedef typename AABBTraits::Primitive Primitive;
+  typedef typename AABBTraits::Bounding_box Bounding_box;
+  typedef typename AABBTraits::Primitive::Id Primitive_id;
+  typedef typename AABBTraits::Point_and_primitive_id Point_and_primitive_id;
+  typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;
+  typedef ::CGAL::AABB_node<AABBTraits> Node;
+
+  Bbox_3 compute_transformed_bbox(const Bbox_3& bbox) const
+  {
+    return compute_transformed_bbox(m_transfo, bbox, m_has_rotation);
+  }
+
+public:
+  Do_intersect_traits_with_transformation(const AABBTraits& traits, const Aff_transformation_3<Kernel> &transfo)
+    : m_is_found(false), m_traits(traits), m_transfo(transfo), m_has_rotation(has_rotation(transfo))
+  {}
+
+  bool go_further() const { return !m_is_found; }
+
+  void intersection(const Query& query, const Primitive& primitive)
+  {
+    if( m_traits.do_intersect_object()(query, internal::Primitive_helper<AABBTraits>::get_datum(primitive, m_traits).transform(m_transfo)) )
+      m_is_found = true;
+  }
+
+  bool do_intersect(const Query& query, const Node& node) const
+  {
+#if 1
+    return m_traits.do_intersect_object()(query, compute_transformed_bbox(node.bbox()));
+#else
+    return Convex_hull_3::do_intersect(query, node.bbox(), parameters::transformation(m_transfo))
+#endif
+  }
+
+  bool is_intersection_found() const { return m_is_found; }
+
+private:
+  bool m_is_found;
+  const AABBTraits m_traits;
+  Aff_transformation_3<Kernel> m_transfo;
+  bool m_has_rotation;
 };
 
 

@@ -61,6 +61,51 @@ struct Primitive_helper<AABBTraits,false>{
   static Reference_point_type get_reference_point(const typename AABBTraits::Primitive& p,const AABBTraits&) {return p.reference_point();}
 };
 
+
+template<class Kernel>
+Bbox_3 compute_transformed_bbox(const CGAL::Aff_transformation_3<Kernel>& at, const Bbox_3& bbox, bool has_rotation)
+{
+  typedef Simple_cartesian<Interval_nt_advanced> AK;
+  typedef Cartesian_converter<Kernel, AK>    C2F;
+  C2F c2f;
+
+  // CGAL::Aff_transformation_3<Kernel> cp(at);
+  // AK::Aff_transformation_3 a_at = c2f(cp);
+  // std::cout << "Test " << at.m(0, 0) << std::endl;
+  AK::Aff_transformation_3 a_at = c2f(at);
+  AK::FT xtrm[6] = { c2f((bbox.min)(0)), c2f((bbox.max)(0)),
+                     c2f((bbox.min)(1)), c2f((bbox.max)(1)),
+                     c2f((bbox.min)(2)), c2f((bbox.max)(2)) };
+
+  if(!has_rotation){
+    AK::Point_3 ps[2];
+    ps[0] = a_at( AK::Point_3(xtrm[0], xtrm[2], xtrm[4]) );
+    ps[1] = a_at( AK::Point_3(xtrm[1], xtrm[3], xtrm[5]) );
+
+    return bbox_3(ps, ps+2);
+  }
+
+  AK::Point_3 ps[8];
+  ps[0] = a_at( AK::Point_3(xtrm[0], xtrm[2], xtrm[4]) );
+  ps[1] = a_at( AK::Point_3(xtrm[0], xtrm[2], xtrm[5]) );
+  ps[2] = a_at( AK::Point_3(xtrm[0], xtrm[3], xtrm[4]) );
+  ps[3] = a_at( AK::Point_3(xtrm[0], xtrm[3], xtrm[5]) );
+
+  ps[4] = a_at( AK::Point_3(xtrm[1], xtrm[2], xtrm[4]) );
+  ps[5] = a_at( AK::Point_3(xtrm[1], xtrm[2], xtrm[5]) );
+  ps[6] = a_at( AK::Point_3(xtrm[1], xtrm[3], xtrm[4]) );
+  ps[7] = a_at( AK::Point_3(xtrm[1], xtrm[3], xtrm[5]) );
+
+  return bbox_3(ps, ps+8);
+}
+
+template<class Kernel>
+bool has_rotation(const CGAL::Aff_transformation_3<Kernel>& at){
+  // return true;
+  return  (   at.m(0,1) != 0 || at.m(0,2) != 0 || at.m(1,0) != 0
+           || at.m(1,2) != 0 || at.m(2,0) != 0 || at.m(2,1) != 0);
+}
+
 } } //namespace CGAL::internal
 
 #endif //CGAL_INTERNAL_AABB_TREE_PRIMITIVE_HELPER
