@@ -154,7 +154,6 @@ typename boost::range_value<PointRange>::type apply_barycentric_coordinates_3(co
     ++cci;
     p[2] += *cci * (*it);
     ++it;
-    ++cci;
   }
 
   Construct_point_3 construct_point_3 = geom_traits.construct_point_3_object();
