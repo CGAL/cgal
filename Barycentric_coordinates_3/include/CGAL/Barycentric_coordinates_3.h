@@ -145,13 +145,15 @@ typename boost::range_value<PointRange>::type apply_barycentric_coordinates_3(co
   Construct_cartesian_const_iterator construct_cci = geom_traits.construct_cartesian_const_iterator_3_object();
 
   std::array<FT, 3> p = { FT(0), FT(0), FT(0) };
+  auto it = coordinates.begin();
   for (const Point& pv : points) {
     Cartesian_const_iterator cci = construct_cci(pv);
-    p[0] += *cci * (*(std::begin(coordinates)));
+    p[0] += *cci * (*it);
     ++cci;
-    p[1] += *cci * (*(std::begin(coordinates) + 1));
+    p[1] += *cci * (*it);
     ++cci;
-    p[2] += *cci * (*(std::begin(coordinates) + 2));
+    p[2] += *cci * (*it);
+    ++it;
     ++cci;
   }
 
