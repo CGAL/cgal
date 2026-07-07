@@ -18,6 +18,7 @@
 #include <string>
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+#include <CGAL/Real_timer.h>
 #include <cstddef>
 #include <iostream>
 #endif
@@ -58,6 +59,11 @@ public:
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
     std::size_t nb_done = 0;
+    CGAL::Real_timer timer;
+    timer.start();
+#endif
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE_PROGRESS
+    std::size_t nb_processed = 0;
 #endif
     for (const auto& element : candidates)
     {
@@ -67,11 +73,17 @@ public:
         ++nb_done;
 #endif
       }
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE_PROGRESS
+      std::cout << "\r" << op.operation_name() << "... ("
+                << ++nb_processed << "/" << candidates.size() << ")";
+      std::cout.flush();
+#endif
     }
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+    timer.stop();
     std::cout << op.operation_name() << ": " << nb_done << "/"
-              << candidates.size() << " done." << std::endl;
+              << candidates.size() << " done (" << timer.time() << " sec)." << std::endl;
 #endif
     return true;
   }

@@ -22,6 +22,7 @@
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Triangulation_utils_3.h>
 
+#include <CGAL/Tetrahedral_remeshing/internal/elementary_operations.h>
 #include <CGAL/Tetrahedral_remeshing/internal/split_long_edges.h>
 #include <CGAL/Tetrahedral_remeshing/internal/collapse_short_edges.h>
 #include <CGAL/Tetrahedral_remeshing/internal/flip_edges.h>
@@ -171,8 +172,10 @@ public:
   void split()
   {
     CGAL_assertion(check_vertex_dimensions());
-    split_long_edges(m_c3t3, m_sizing, m_protect_boundaries,
-                     m_cell_selector, m_visitor);
+    typedef EdgeSplitOperation<C3t3, SizingFunction, CellSelector, Visitor> EdgeSplitOp;
+    EdgeSplitOp split_op(m_sizing, m_cell_selector, m_protect_boundaries, m_visitor);
+    ElementaryOperationExecutionSequential<EdgeSplitOp> executor;
+    executor.execute(split_op, m_c3t3);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     CGAL_assertion(tr().tds().is_valid(true));
