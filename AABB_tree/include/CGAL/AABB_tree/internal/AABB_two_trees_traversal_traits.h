@@ -152,8 +152,8 @@ public:
 
   bool do_intersect(const Node1& node1, const Node2& node2) const
   {
+  // TODO Both option are slow
   #if 1
-    // return do_overlap(node1.bbox(), node2.bbox());
     return do_overlap(compute_transformed_bbox(m_tr1, node1.bbox(), m_tr1_has_rotation), compute_transformed_bbox(m_tr2, node2.bbox(), m_tr2_has_rotation));
   #else
     return Convex_hull_3::do_intersect(node1.bbox(), node2.bbox(), parameters::transformation(m_tr1), parameters::transformation(m_tr2));

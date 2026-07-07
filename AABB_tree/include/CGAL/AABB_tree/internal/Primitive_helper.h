@@ -14,7 +14,7 @@
 
 #include <CGAL/license/AABB_tree.h>
 
-
+#include <CGAL/Aff_transformation_3.h>
 #include <CGAL/AABB_tree/internal/Has_nested_type_Shared_data.h>
 #include <boost/mpl/has_xxx.hpp>
 
@@ -69,9 +69,6 @@ Bbox_3 compute_transformed_bbox(const CGAL::Aff_transformation_3<Kernel>& at, co
   typedef Cartesian_converter<Kernel, AK>    C2F;
   C2F c2f;
 
-  // CGAL::Aff_transformation_3<Kernel> cp(at);
-  // AK::Aff_transformation_3 a_at = c2f(cp);
-  // std::cout << "Test " << at.m(0, 0) << std::endl;
   AK::Aff_transformation_3 a_at = c2f(at);
   AK::FT xtrm[6] = { c2f((bbox.min)(0)), c2f((bbox.max)(0)),
                      c2f((bbox.min)(1)), c2f((bbox.max)(1)),
@@ -101,7 +98,6 @@ Bbox_3 compute_transformed_bbox(const CGAL::Aff_transformation_3<Kernel>& at, co
 
 template<class Kernel>
 bool has_rotation(const CGAL::Aff_transformation_3<Kernel>& at){
-  // return true;
   return  (   at.m(0,1) != 0 || at.m(0,2) != 0 || at.m(1,0) != 0
            || at.m(1,2) != 0 || at.m(2,0) != 0 || at.m(2,1) != 0);
 }
