@@ -219,8 +219,22 @@ public:
 
   void flip()
   {
-    flip_edges(m_c3t3, m_protect_boundaries,
-               m_cell_selector, m_visitor);
+    typedef InternalEdgeFlipOperation<C3t3, CellSelector, Visitor> InternalFlipOp;
+    typedef BoundaryEdgeFlipOperation<C3t3, CellSelector, Visitor> BoundaryFlipOp;
+
+    // one incident-cells cache shared by both passes, as in the former flip_edges()
+    typename InternalFlipOp::Incident_cells_map inc_cells;
+
+    InternalFlipOp internal_flip_op(m_cell_selector, m_visitor, inc_cells);
+    ElementaryOperationExecutionSequential<InternalFlipOp> internal_executor;
+    internal_executor.execute(internal_flip_op, m_c3t3);
+
+    if (!m_protect_boundaries)
+    {
+      BoundaryFlipOp boundary_flip_op(m_cell_selector, m_visitor, inc_cells);
+      ElementaryOperationExecutionSequential<BoundaryFlipOp> boundary_executor;
+      boundary_executor.execute(boundary_flip_op, m_c3t3);
+    }
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     CGAL_assertion(tr().tds().is_valid(true));
