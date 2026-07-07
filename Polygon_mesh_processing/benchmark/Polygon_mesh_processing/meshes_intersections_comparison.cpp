@@ -13,7 +13,7 @@
 #include <CGAL/Polygon_mesh_processing/autorefinement.h>
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
 
-#include <CGAL/AABB_tree/internal/AABB_two_tree_traversal.h>
+#include <CGAL/AABB_tree/internal/AABB_two_trees_traversal.h>
 
 #include <tbb/tbb.h>
 
@@ -56,10 +56,14 @@ void two_meshes_intersection(std::string fname1, std::string fname2){
   t.start();
   rt.start();
 
+#if CGAL_LINKED_WITH_TBB
+  tbb::concurrent_vector<std::pair<face_descriptor, face_descriptor>> out;
+#else
   std::vector<std::pair<face_descriptor, face_descriptor>> out;
+#endif
 
   out.clear();
-  PMP::experimental::AABB_two_tree_meshes_intersections(tm1, tm2, std::back_inserter(out), CGAL::parameters::concurrency_tag(CGAL::Parallel_tag()));
+  PMP::experimental::AABB_two_trees_meshes_intersections(tm1, tm2, std::back_inserter(out), CGAL::parameters::concurrency_tag(CGAL::Parallel_tag()));
   std::cout << "number intersections: " << out.size() << std::endl;
   std::cout << "Two tree AABB intersecton time: " << rt.time() << "sec (" << t.time() << "s all cpu)." << std::endl;
 
@@ -68,7 +72,7 @@ void two_meshes_intersection(std::string fname1, std::string fname2){
   t.start(); rt.start();
 
   out.clear();
-  PMP::experimental::AABB_two_tree_meshes_intersections(tm1, tm2, std::back_inserter(out));
+  PMP::experimental::AABB_two_trees_meshes_intersections(tm1, tm2, std::back_inserter(out));
   std::cout << "number intersections: " << out.size() << std::endl;
   std::cout << "Two tree AABB intersecton time (Sequential): " << rt.time() << "sec (" << t.time() << "s all cpu)." << std::endl;
 

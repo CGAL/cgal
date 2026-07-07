@@ -26,24 +26,27 @@
 
 namespace CGAL{
 namespace AABB_trees {
-
   /// \ingroup PkgAABBTreeRef
   ///
   /// \brief Tests whether two AABB trees contain intersecting primitives.
   ///
   /// \cgalNamedParamsBegin
+  ///   \cgalParamNBegin{concurrency_tag}
+  ///     \cgalParamDescription{a tag indicating if the task should be done using one or several threads.}
+  ///     \cgalParamType{Either `CGAL::Sequential_tag`, or `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`}
+  ///     \cgalParamDefault{`CGAL::Sequential_tag`}
+  ///     \cgalParamExtra{`np1` only}
+  ///   \cgalParamNEnd
   ///   \cgalParamNBegin{transformation}
-  ///     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `tm1` (`tm2`)}
-  ///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
-  ///                    as key type and `bool` as value type}
-  ///     \cgalParamDefault{a constant property map returning `false` for any edge}
+  ///     \cgalParamDescription{An affine transformation apply to `tree1` (`tree2`)}
+  ///     \cgalParamType{`CGAL::Aff_transformation_3<Kernel>` where `Kernel` is the kernel associated with `AABBTree1::AABB_traits::Point` (`AABBTree2::AABB_traits::Point`)}
+  ///     \cgalParamDefault{An identity transformation}
   ///   \cgalParamNEnd
   /// \cgalNamedParamsEnd
   ///
-  /// Returns `true` if at least one primitive of `tree1` intersects
+  /// \return `true` if at least one primitive of `tree1` intersects
   /// a primitive of `tree2`, and `false` otherwise.
-  template< typename Concurrency_tag = Sequential_tag,
-            typename AABBTree1,
+  template< typename AABBTree1,
             typename AABBTree2,
             typename NamedParameters1 = parameters::Default_named_parameters,
             typename NamedParameters2 = parameters::Default_named_parameters>
@@ -55,6 +58,12 @@ namespace AABB_trees {
     using parameters::get_parameter;
     using parameters::choose_parameter;
     using parameters::is_default_parameter;
+    using Concurrency_tag = typename internal_np::Lookup_named_param_def <
+                                          internal_np::concurrency_tag_t,
+                                          NamedParameters1,
+                                          Sequential_tag
+                                        > ::type;
+
     if constexpr(is_default_parameter<NamedParameters1, internal_np::transformation_t>::value &&
                  is_default_parameter<NamedParameters2, internal_np::transformation_t>::value)
     {
@@ -69,7 +78,8 @@ namespace AABB_trees {
       const Aff_tr& tr1 = choose_parameter(get_parameter(np1, internal_np::transformation), Aff_tr(Identity_transformation()));
       const Aff_tr& tr2 = choose_parameter(get_parameter(np2, internal_np::transformation), Aff_tr(Identity_transformation()));
       CGAL::internal::AABB_tree::Two_trees_do_intersect_traits_with_transformation traversal_traits(tree1.traits(), tree2.traits(), tr1, tr2);
-      CGAL::internal::AABB_tree::two_trees_traversal<Concurrency_tag>(tree1, tree2, traversal_traits);
+      // TODO Aff_transformation is not thread safe, no concurrency_tag available
+      CGAL::internal::AABB_tree::two_trees_traversal(tree1, tree2, traversal_traits);
       return traversal_traits.is_intersection_found();
     }
   }
@@ -83,14 +93,28 @@ namespace AABB_trees {
   ///       - `id1` is the ID of a primitive from `tree1`
   ///       - `id2` is the ID of a primitive from `tree2`
   ///
-  /// \tparam Concurrency_tag  enables sequential versus parallel algorithm. Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
   /// \tparam AABBTree1        Type of the first AABB tree.
   /// \tparam AABBTree2        Type of the second AABB tree.
   /// \tparam OutputIterator   Output iterator storing pairs of primitive IDs.
+  /// \tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters"
+  /// \tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters"
+  ///
+  /// \cgalNamedParamsBegin
+  ///   \cgalParamNBegin{concurrency_tag}
+  ///     \cgalParamDescription{a tag indicating if the task should be done using one or several threads.}
+  ///     \cgalParamType{Either `CGAL::Sequential_tag`, or `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`}
+  ///     \cgalParamDefault{`CGAL::Sequential_tag`}
+  ///     \cgalParamExtra{`np1` only}
+  ///   \cgalParamNEnd
+  ///   \cgalParamNBegin{transformation}
+  ///     \cgalParamDescription{An affine transformation apply to `tree1` (`tree2`)}
+  ///     \cgalParamType{`CGAL::Aff_transformation_3<Kernel>` where `Kernel` is the kernel associated with `AABBTree1::AABB_traits::Point` (`AABBTree2::AABB_traits::Point`)}
+  ///     \cgalParamDefault{An identity transformation}
+  ///   \cgalParamNEnd
+  /// \cgalNamedParamsEnd
   ///
   /// \see do_intersect()
-  template< typename Concurrency_tag = Sequential_tag,
-            typename AABBTree1,
+  template< typename AABBTree1,
             typename AABBTree2,
             typename OutputIterator,
             typename NamedParameters1 = parameters::Default_named_parameters,
@@ -104,6 +128,12 @@ namespace AABB_trees {
     using parameters::get_parameter;
     using parameters::choose_parameter;
     using parameters::is_default_parameter;
+    using Concurrency_tag = typename internal_np::Lookup_named_param_def <
+                                          internal_np::concurrency_tag_t,
+                                          NamedParameters1,
+                                          Sequential_tag
+                                        > ::type;
+
     if constexpr(is_default_parameter<NamedParameters1, internal_np::transformation_t>::value &&
                  is_default_parameter<NamedParameters2, internal_np::transformation_t>::value)
     {
@@ -117,7 +147,8 @@ namespace AABB_trees {
       Aff_tr tr1 = choose_parameter(get_parameter(np1, internal_np::transformation), Aff_tr(Identity_transformation()));
       Aff_tr tr2 = choose_parameter(get_parameter(np2, internal_np::transformation), Aff_tr(Identity_transformation()));
       CGAL::internal::AABB_tree::Two_trees_listing_intersecting_primitives_traits_with_transformation traversal_traits(tree1.traits(), tree2.traits(), out, tr1, tr2);
-      CGAL::internal::AABB_tree::two_trees_traversal<Concurrency_tag>(tree1, tree2, traversal_traits);
+      // TODO Aff_transformation is not thread safe, no concurrency_tag available
+      CGAL::internal::AABB_tree::two_trees_traversal(tree1, tree2, traversal_traits);
     }
   }
 
