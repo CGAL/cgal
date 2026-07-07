@@ -14,6 +14,7 @@
 
 #include <CGAL/license/AABB_tree.h>
 
+#include <CGAL/Bbox_3.h>
 #include <CGAL/Aff_transformation_3.h>
 #include <CGAL/AABB_tree/internal/Has_nested_type_Shared_data.h>
 #include <boost/mpl/has_xxx.hpp>
