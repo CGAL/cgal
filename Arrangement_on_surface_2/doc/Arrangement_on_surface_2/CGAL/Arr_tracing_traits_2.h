@@ -15,8 +15,8 @@ namespace CGAL {
  *
  * A metadata traits-class decorator for the arrangement package. It traces the
  * invocations of traits-class functors. It is parameterized with another traits
- * class and inherits from it. For each traits method it prints out its input
- * parameters and its output result
+ * class. For each traits method it prints out its input parameters and its
+ * output result
  *
  * It models all the concepts that the original traits models.
  */
@@ -108,7 +108,7 @@ public:
    */
   std::shared_ptr<BaseTraits> shared_traits() const { return m_base_traits; }
 
-  /// \name Types inherited from `BaseTraits`
+  /// \name Types coming from BaseTraits
   /// @{
 
   using Has_left_category = typename Base::Has_left_category;

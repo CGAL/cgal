@@ -16,8 +16,8 @@ namespace CGAL {
  *
  * A metadata traits-class decorator for the arrangement package. It counts the
  * number of invocations of traits-class functors. It is parameterized with
- * another traits class and inherits from it. For each traits method it
- * maintains a counter that counts the number of invocations into the method.
+ * another traits class. For each traits method it maintains a counter that
+ * counts the number of invocations into the method.
  *
  * It models all the concepts that the original traits models.
  */
@@ -97,7 +97,7 @@ public:
   template <typename OutStream>
   OutStream& print(OutStream& os, Operation_id id) const;
 
-  /// \name Types and functors inherited from `BaseTraits`
+  /// \name Types and functors coming from BaseTraits
   /// @{
 
   using Has_left_category = typename Base::Has_left_category;
