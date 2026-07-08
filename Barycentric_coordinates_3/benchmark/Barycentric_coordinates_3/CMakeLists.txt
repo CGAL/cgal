@@ -5,7 +5,7 @@ set(CMAKE_CXX_FLAGS "${CMAXE_CXX_FLAGS} -Wall -Wextra -Werror")
 
 set(CMAKE_CXX_STANDARD 14)
 
-find_package(CGAL QUIET COMPONENTS Core)
+find_package(CGAL)
 if(CGAL_FOUND)
 
   include(${CGAL_USE_FILE})

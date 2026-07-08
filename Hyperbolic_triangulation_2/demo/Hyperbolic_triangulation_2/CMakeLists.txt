@@ -4,7 +4,7 @@ project(Hyperbolic_triangulation_2_Demo)
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Core Qt6)
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 find_package(LEDA QUIET)
 
 # Find Qt6 itself

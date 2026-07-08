@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.12...3.31)
 project(Surface_mesh_shortest_path_Tests)
 
-find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Core)
+find_package(CGAL)
 
 include_directories(BEFORE "include")
 

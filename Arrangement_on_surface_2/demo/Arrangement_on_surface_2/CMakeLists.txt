@@ -12,7 +12,7 @@ if(POLICY CMP0071)
   cmake_policy(SET CMP0071 NEW)
 endif()
 
-find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Core Qt6)
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS  Qt6)
 find_package(Qt6 QUIET COMPONENTS Widgets)
 
 if (CGAL_Qt6_FOUND AND Qt6_FOUND)
