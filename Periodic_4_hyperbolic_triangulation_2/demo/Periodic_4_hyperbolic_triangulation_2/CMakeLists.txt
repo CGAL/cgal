@@ -24,9 +24,7 @@ if(Qt6_FOUND AND CGAL_Qt6_FOUND)
   qt_add_executable(P4HDT2 P4HDT2.cpp P4HDT2.ui Main_resources.qrc)
 
   target_link_libraries(P4HDT2 PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 Qt6::Widgets)
-  if(TARGET CGAL::CGAL_Core)
-    target_link_libraries(P4HDT2 PRIVATE CGAL::CGAL_Core)
-  endif()
+
   if(LEDA_FOUND)
     target_link_libraries(P4HDT2 PRIVATE ${LEDA_LIBRARIES})
   endif()
