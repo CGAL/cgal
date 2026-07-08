@@ -64,13 +64,13 @@ template<typename K>
 void test_parallel()
 {
   using P = typename K::Point_3;
-  // using V = typename K::Vector_3;
+  using V = typename K::Vector_3;
   using M =  CGAL::Surface_mesh<P>;
   using fd = typename boost::graph_traits<M>::face_descriptor;
   using Primitive = CGAL::AABB_face_graph_triangle_primitive<M>;
   using Traits = CGAL::AABB_traits_3<K, Primitive>;
   using Tree = CGAL::AABB_tree<Traits>;
-  // using Aff_tr = CGAL::Aff_transformation_3<K>;
+  using Aff_tr = CGAL::Aff_transformation_3<K>;
 
   M m1, m2;
   if(!CGAL::IO::read_polygon_mesh(CGAL::data_file_path("meshes/knot1.off"), m1)){
