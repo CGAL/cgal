@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.12...3.31)
 
 project(Shape_regularization_Tests)
 
-find_package(CGAL REQUIRED COMPONENTS Core)
+find_package(CGAL)
 
 # Find OSQP library and headers.
 find_package(OSQP QUIET)

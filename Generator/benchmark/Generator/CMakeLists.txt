@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.12...3.31)
 project(Generator_example)
 
-find_package(CGAL REQUIRED COMPONENTS Core)
+find_package(CGAL)
 
 find_package(Boost COMPONENTS program_options)
 if(Boost_PROGRAM_OPTIONS_FOUND)

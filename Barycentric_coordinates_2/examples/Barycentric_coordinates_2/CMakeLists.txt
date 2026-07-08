@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.12...3.31)
 
 project(Barycentric_coordinates_2_Examples)
 
-find_package(CGAL REQUIRED COMPONENTS Core)
+find_package(CGAL)
 
 create_single_source_cgal_program("segment_coordinates.cpp")
 create_single_source_cgal_program("triangle_coordinates.cpp")

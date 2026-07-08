@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.12...3.31)
 project(Arrangement_on_surface_2_Examples)
 
-find_package(CGAL REQUIRED COMPONENTS Core OPTIONAL_COMPONENTS Qt6)
+find_package(CGAL OPTIONAL_COMPONENTS Qt6)
 
 # create a target per cppfile
 file(

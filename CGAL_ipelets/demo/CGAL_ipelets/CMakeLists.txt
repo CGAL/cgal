@@ -18,7 +18,7 @@ endmacro()
 #path where to build libraries
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
-find_package(CGAL REQUIRED COMPONENTS Core)
+find_package(CGAL)
 
 find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)

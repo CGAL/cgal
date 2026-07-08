@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.12...3.31)
 
 project(Weights_Examples)
 
-find_package(CGAL REQUIRED COMPONENTS Core)
+find_package(CGAL)
 
 create_single_source_cgal_program("weights.cpp")
 create_single_source_cgal_program("coordinates_one_query.cpp")

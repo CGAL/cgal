@@ -5,7 +5,7 @@ if(POLICY CMP0074)
 endif()
 if(NOT CGAL_DISABLE_GMP)
   if(TARGET CGAL::Eigen3_support)
-    find_package(CGAL REQUIRED COMPONENTS Core)
+    find_package(CGAL)
 
     qt6_wrap_ui(parameterizationUI_FILES Parameterization_widget.ui OTE_dialog.ui)
     cgal_lab_plugin(parameterization_plugin Parameterization_plugin

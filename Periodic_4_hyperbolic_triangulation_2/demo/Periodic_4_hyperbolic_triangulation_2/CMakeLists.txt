@@ -8,7 +8,7 @@ include_directories(${CMAKE_BINARY_DIR})
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
 
-find_package(CGAL REQUIRED COMPONENTS Core Qt6)
+find_package(CGAL REQUIRED COMPONENTS Qt6)
 
 find_package(LEDA QUIET)
 

@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.12...3.31)
 project(Periodic_4_hyperbolic_triangulation_2_Benchmarks)
 
-find_package(CGAL REQUIRED COMPONENTS Core)
+find_package(CGAL)
 
 create_single_source_cgal_program("bench_p4ht2_hyperbolic_vs_euclidean.cpp")
 create_single_source_cgal_program("bench_p4ht2_insertion.cpp")

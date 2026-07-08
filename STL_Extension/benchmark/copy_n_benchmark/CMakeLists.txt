@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.12...3.31)
 project(copy_n_benchmark_example)
 
-find_package(CGAL REQUIRED COMPONENTS Core)
+find_package(CGAL)
 
 create_single_source_cgal_program("copy_n_benchmark.cpp")
 create_single_source_cgal_program("copy_n_use_case_benchmark.cpp")

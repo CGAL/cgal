@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.12...3.31)
 project(Surface_sweep_2_Tests)
 
-find_package(CGAL REQUIRED COMPONENTS Core)
+find_package(CGAL)
 
 set(CGAL_SEGMENT_TRAITS 1)
 set(CGAL_POLYLINE_TRAITS 11)
