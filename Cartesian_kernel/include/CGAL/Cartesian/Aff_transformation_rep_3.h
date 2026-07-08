@@ -135,7 +135,7 @@ public:
 
   virtual Plane_3 transform(const Plane_3& p) const
   {
-      if (is_even())
+    if (is_even())
       return Plane_3(transform(p.point()),
                  transpose().inverse().transform(p.orthogonal_direction()));
     else
@@ -157,8 +157,8 @@ public:
   virtual bool is_even() const
   {
     return sign_of_determinant(t11, t12, t13,
-                                  t21, t22, t23,
-                                  t31, t32, t33) == POSITIVE;
+                               t21, t22, t23,
+                               t31, t32, t33) == POSITIVE;
   }
 
 

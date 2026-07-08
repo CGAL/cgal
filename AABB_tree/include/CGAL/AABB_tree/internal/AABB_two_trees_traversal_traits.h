@@ -110,7 +110,7 @@ class Two_trees_listing_intersecting_primitives_traits_with_transformation
 public:
   Two_trees_listing_intersecting_primitives_traits_with_transformation(const AABBTraits1& traits1, const AABBTraits2& traits2,
                                                                        OutputIterator out_,
-                                                                       const Aff_transformation_3<Kernel> &tr1, const Aff_transformation_3<Kernel> &tr2)
+                                                                       const Aff_transformation_repC3<Kernel> &tr1, const Aff_transformation_repC3<Kernel> &tr2)
     : m_traits1(traits1), m_traits2(traits2), out(out_), m_tr1(tr1), m_tr2(tr2), m_tr1_has_rotation(has_rotation(tr1)), m_tr2_has_rotation(has_rotation(tr2))
   {}
 
@@ -133,9 +133,7 @@ public:
     using Wrap_iterator = Wrap_output_iterator<true, typename Primitive1::Id, OutputIterator>;
     Wrap_iterator wrap_out(primitive1.id(), out);
     Listing_primitive_traits_with_transformation<AABBTraits2, Kernel, typename AABBTraits1::Primitive::Datum, Wrap_iterator> traits(wrap_out, m_traits2, m_tr2);
-    // Listing_primitive_traits<AABBTraits2, typename AABBTraits1::Primitive::Datum, Wrap_iterator> traits(wrap_out, m_traits2);
-    auto datum = internal::Primitive_helper<AABBTraits1>::get_datum(primitive1, m_traits1).transform(m_tr1);
-    // auto datum = internal::Primitive_helper<AABBTraits1>::get_datum(primitive1, m_traits1);
+    auto datum = internal::Primitive_helper<AABBTraits1>::get_datum(primitive1, m_traits1).transform(Aff_transformation_3<Kernel>(m_tr1));
     node2.traversal(datum, traits, nb_primitives_2);
   }
 
@@ -144,9 +142,7 @@ public:
     using Wrap_iterator= Wrap_output_iterator<false, typename Primitive2::Id, OutputIterator>;
     Wrap_iterator wrap_out(primitive2.id(), out);
     Listing_primitive_traits_with_transformation<AABBTraits1, Kernel, typename AABBTraits2::Primitive::Datum, Wrap_iterator> traits(wrap_out, m_traits1, m_tr1);
-    // Listing_primitive_traits<AABBTraits1, typename AABBTraits2::Primitive::Datum, Wrap_iterator> traits(wrap_out, m_traits1);
-    auto datum = internal::Primitive_helper<AABBTraits1>::get_datum(primitive2, m_traits2).transform(m_tr2);
-    // auto datum = internal::Primitive_helper<AABBTraits1>::get_datum(primitive2, m_traits2).transform(m_tr2);
+    auto datum = internal::Primitive_helper<AABBTraits1>::get_datum(primitive2, m_traits2).transform(Aff_transformation_3<Kernel>(m_tr2));
     node1.traversal(datum, traits, nb_primitives_1);
   }
 
@@ -164,8 +160,8 @@ private:
   const AABBTraits1& m_traits1;
   const AABBTraits2& m_traits2;
   OutputIterator out;
-  const Aff_transformation_3<Kernel>& m_tr1;
-  const Aff_transformation_3<Kernel>& m_tr2;
+  const Aff_transformation_repC3<Kernel>& m_tr1;
+  const Aff_transformation_repC3<Kernel>& m_tr2;
   bool m_tr1_has_rotation, m_tr2_has_rotation;
 };
 
@@ -282,7 +278,7 @@ class Two_trees_do_intersect_traits_with_transformation
   typedef ::CGAL::AABB_node<AABBTraits2> Node2;
 
 public:
-  Two_trees_do_intersect_traits_with_transformation(const AABBTraits1& traits1, const AABBTraits2& traits2, const Aff_transformation_3<Kernel> &tr1, const Aff_transformation_3<Kernel> &tr2)
+  Two_trees_do_intersect_traits_with_transformation(const AABBTraits1& traits1, const AABBTraits2& traits2, const Aff_transformation_repC3<Kernel> &tr1, const Aff_transformation_repC3<Kernel> &tr2)
     : m_traits1(traits1), m_traits2(traits2), m_tr1(tr1), m_tr2(tr2), m_is_found(false)
   {}
 
@@ -332,8 +328,8 @@ public:
 private:
   const AABBTraits1& m_traits1;
   const AABBTraits2& m_traits2;
-  Aff_transformation_3<Kernel> m_tr1;
-  Aff_transformation_3<Kernel> m_tr2;
+  const Aff_transformation_repC3<Kernel>& m_tr1;
+  const Aff_transformation_repC3<Kernel>& m_tr2;
   bool m_is_found;
 };
 

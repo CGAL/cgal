@@ -144,11 +144,18 @@ namespace AABB_trees {
     {
       using Kernel = typename Kernel_traits<typename AABBTree1::AABB_traits::Point>::Kernel;
       using Aff_tr = Aff_transformation_3<Kernel>;
-      Aff_tr tr1 = choose_parameter(get_parameter(np1, internal_np::transformation), Aff_tr(Identity_transformation()));
-      Aff_tr tr2 = choose_parameter(get_parameter(np2, internal_np::transformation), Aff_tr(Identity_transformation()));
+      using Aff_tr_rep = Aff_transformation_repC3<Kernel>;
+      Aff_tr tr1_ref = choose_parameter(get_parameter(np1, internal_np::transformation), Aff_tr(Identity_transformation()));
+      Aff_tr tr2_ref = choose_parameter(get_parameter(np2, internal_np::transformation), Aff_tr(Identity_transformation()));
+      Aff_tr_rep tr1(tr1_ref.m(0,0), tr1_ref.m(0,1), tr1_ref.m(0,2), tr1_ref.m(0,3),
+                     tr1_ref.m(1,0), tr1_ref.m(1,1), tr1_ref.m(1,2), tr1_ref.m(1,3),
+                     tr1_ref.m(2,0), tr1_ref.m(2,1), tr1_ref.m(2,2), tr1_ref.m(2,3));
+      Aff_tr_rep tr2(tr2_ref.m(0,0), tr2_ref.m(0,1), tr2_ref.m(0,2), tr2_ref.m(0,3),
+                     tr2_ref.m(1,0), tr2_ref.m(1,1), tr2_ref.m(1,2), tr2_ref.m(1,3),
+                     tr2_ref.m(2,0), tr2_ref.m(2,1), tr2_ref.m(2,2), tr2_ref.m(2,3));
       CGAL::internal::AABB_tree::Two_trees_listing_intersecting_primitives_traits_with_transformation traversal_traits(tree1.traits(), tree2.traits(), out, tr1, tr2);
       // TODO Aff_transformation is not thread safe, no concurrency_tag available
-      CGAL::internal::AABB_tree::two_trees_traversal(tree1, tree2, traversal_traits);
+      CGAL::internal::AABB_tree::two_trees_traversal<Concurrency_tag>(tree1, tree2, traversal_traits);
     }
   }
 

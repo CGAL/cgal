@@ -204,7 +204,7 @@ class Listing_primitive_traits_with_transformation
   }
 
 public:
-  Listing_primitive_traits_with_transformation(Output_iterator out_it,const AABBTraits& traits, const Aff_transformation_3<Kernel> &transfo)
+  Listing_primitive_traits_with_transformation(Output_iterator out_it,const AABBTraits& traits, const Aff_transformation_repC3<Kernel> &transfo)
     : m_out_it(out_it), m_traits(traits), m_transfo(transfo), m_has_rotation(has_rotation(transfo))
   {}
 
@@ -213,7 +213,7 @@ public:
   void intersection(const Query& query, const Primitive& primitive)
   {
     auto datum = internal::Primitive_helper<AABBTraits>::get_datum(primitive, m_traits);
-    if( CGAL::do_intersect(query, datum.transform(m_transfo)) )
+    if( CGAL::do_intersect(query, datum.transform(Aff_transformation_3<Kernel>(m_transfo))) )
       *m_out_it++ = primitive.id();
   }
 
@@ -222,14 +222,14 @@ public:
 #if 1
     return m_traits.do_intersect_object()(query, compute_transformed_bbox(node.bbox()));
 #else
-    return Convex_hull_3::do_intersect(query, node.bbox(), parameters::transformation(m_transfo))
+    return Convex_hull_3::do_intersect(query, node.bbox(), parameters::transformation(Aff_transformation_3<Kernel>(m_transfo)))
 #endif
   }
 
 private:
   Output_iterator m_out_it;
   const AABBTraits m_traits;
-  Aff_transformation_3<Kernel> m_transfo;
+  const Aff_transformation_repC3<Kernel>& m_transfo;
   bool m_has_rotation;
 };
 
@@ -389,7 +389,7 @@ public:
 
   void intersection(const Query& query, const Primitive& primitive)
   {
-    if( m_traits.do_intersect_object()(query, internal::Primitive_helper<AABBTraits>::get_datum(primitive, m_traits).transform(m_transfo)) )
+    if( m_traits.do_intersect_object()(query, internal::Primitive_helper<AABBTraits>::get_datum(primitive, m_traits).transform(Aff_transformation_3<Kernel>(m_transfo))) )
       m_is_found = true;
   }
 

@@ -95,15 +95,14 @@ void test_parallel()
   assert(inter.size() == 1191);
   inter.clear();
 
-  // TODO Aff_transformation currently not thread safe
-  // CGAL::AABB_trees::all_pairs_of_intersecting_primitives(tree1, tree2, std::back_inserter(inter), CGAL::parameters::concurrency_tag(CGAL::Parallel_tag()).transformation(Aff_tr(CGAL::Translation(), V(0.5,0,0))));
-  // std::cout << inter.size() << std::endl;
-  // assert(inter.size() == 0);
-  // inter.clear();
+  CGAL::AABB_trees::all_pairs_of_intersecting_primitives(tree1, tree2, std::back_inserter(inter), CGAL::parameters::concurrency_tag(CGAL::Parallel_tag()).transformation(Aff_tr(CGAL::Translation(), V(0.5,0,0))));
+  std::cout << inter.size() << std::endl;
+  assert(inter.size() == 0);
+  inter.clear();
 
-  // CGAL::AABB_trees::all_pairs_of_intersecting_primitives(tree1, tree2, std::back_inserter(inter), CGAL::parameters::concurrency_tag(CGAL::Parallel_tag()).transformation(Aff_tr(0, 1, 0, 1, 0, 0, 0, 0, 1, 1)));
-  // std::cout << inter.size() << std::endl;
-  // assert(inter.size() == 1289);
+  CGAL::AABB_trees::all_pairs_of_intersecting_primitives(tree1, tree2, std::back_inserter(inter), CGAL::parameters::concurrency_tag(CGAL::Parallel_tag()).transformation(Aff_tr(0, 1, 0, 1, 0, 0, 0, 0, 1, 1)));
+  std::cout << inter.size() << std::endl;
+  assert(inter.size() == 1289);
 }
 #endif
 

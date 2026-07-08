@@ -40,7 +40,7 @@ template < class R_ >
 class Aff_transformationC3
   : public Handle_for_virtual<Aff_transformation_rep_baseC3<R_> >
 {
-  friend class PlaneC3<R_>; // FIXME: why ?
+  // friend class PlaneC3<R_>; // FIXME: why ?
 
   typedef typename R_::FT                   FT;
   typedef Aff_transformation_rep_baseC3<R_> Aff_t_base;
@@ -115,6 +115,12 @@ public:
       initialize_with(Aff_transformation_repC3<R>(m11, m12, m13, m14,
                                             m21, m22, m23, m24,
                                             m31, m32, m33, m34));
+  }
+
+  // General form: with translation
+  Aff_transformationC3(const Aff_transformation_repC3<R> &b)
+  {
+    initialize_with(b);
   }
 
   Point_3
