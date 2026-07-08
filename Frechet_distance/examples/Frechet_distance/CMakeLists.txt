@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.12...3.31)
 project( Frechet_distance_Examples )
 
-find_package(CGAL REQUIRED QUIET OPTIONAL_COMPONENTS Core )
+find_package(CGAL)
 
 
 find_package(Eigen3 QUIET)
