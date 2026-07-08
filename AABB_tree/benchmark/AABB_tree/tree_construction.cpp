@@ -63,7 +63,7 @@ struct Compute_bbox {
   BBM bbm;
 };
 
-template <typename Concurrency_tag, class K>
+template <typename ConcurrencyTag, class K>
 void run(std::string input)
 {
   typedef typename K::Point_3 Point_3;
@@ -79,9 +79,9 @@ void run(std::string input)
   Tree tree(faces(tm).begin(), faces(tm).end(), tm);
   CGAL::Real_timer time;
   time.start();
-  tree.template build<Concurrency_tag>();
+  tree.template build<ConcurrencyTag>();
   std::cout << "  build() time: " << time.time() << "\n";
-  tree.template accelerate_distance_queries<Concurrency_tag>();
+  tree.template accelerate_distance_queries<ConcurrencyTag>();
   std::cout << "  build() + build kd-tree time: " << time.time() << "\n";
   }
 
@@ -98,12 +98,11 @@ void run(std::string input)
   BTraits traits(bb);
   BTree tree(traits);
   tree.insert(faces(tm).begin(), faces(tm).end(), tm);
-  // BTree tree(faces(tm).begin(), faces(tm).end(), tm);
   CGAL::Real_timer time;
   time.start();
-  tree.template build<Concurrency_tag>();
+  tree.template build<ConcurrencyTag>();
   std::cout << "  build() with reference bbox time: " << time.time() << "\n";
-  tree.template accelerate_distance_queries<Concurrency_tag>();
+  tree.template accelerate_distance_queries<ConcurrencyTag>();
   std::cout << "  build() with reference bbox + build kd-tree time: " << time.time() << "\n";
   }
 
@@ -133,9 +132,9 @@ void run(std::string input)
 
   Compute_bbox<BBM> compute_bbox(bbm);
   Split_primitives<RPM> split_primitives(rpm);
-  tree.template custom_build<Concurrency_tag>(compute_bbox, split_primitives);
+  tree.template custom_build<ConcurrencyTag>(compute_bbox, split_primitives);
   std::cout << "  custom_build() time: " << time.time() << "\n";
-  tree.template accelerate_distance_queries<Concurrency_tag>();
+  tree.template accelerate_distance_queries<ConcurrencyTag>();
   std::cout << "  custom_build() + build kd-tree time: " << time.time() << "\n";
   }
 }

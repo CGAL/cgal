@@ -47,7 +47,7 @@ int main()
     Tree tree2(tetra2.begin(),tetra2.end());
 
     // do intersect
-    std::cout << "Tetrahedrons do intersect: " << CGAL::AABB_trees::do_intersect(tree1, tree2) << std::endl;
+    std::cout << "Tetrahedra do intersect: " << CGAL::AABB_trees::do_intersect(tree1, tree2) << std::endl;
 
     std::vector< std::pair<Iterator, Iterator> > intersections;
     CGAL::AABB_trees::all_pairs_of_intersecting_primitives(tree1, tree2, std::back_inserter(intersections));

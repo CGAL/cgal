@@ -10,8 +10,8 @@
 //
 // Author(s) : Léo Valque
 
-#ifndef CGAL_AABB_TREE_INTERSECTIONS_H
-#define CGAL_AABB_TREE_INTERSECTIONS_H
+#ifndef CGAL_AABB_TREES_INTERSECTIONS_H
+#define CGAL_AABB_TREES_INTERSECTIONS_H
 
 #include <CGAL/license/AABB_tree.h>
 

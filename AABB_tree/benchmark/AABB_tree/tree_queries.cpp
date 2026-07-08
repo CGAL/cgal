@@ -138,7 +138,7 @@ void benchmark_queries(const Mesh& mesh)
 }
 
 template<class Kernel>
-void benchmark_kernel(const std::string &filename, const std::string &Kernel_name)
+void benchmark_kernel(const std::string &filename, const std::string &kernel_name)
 {
   using Segment = typename Kernel::Segment_3;
 
@@ -165,7 +165,7 @@ void benchmark_kernel(const std::string &filename, const std::string &Kernel_nam
   t.stop();
 
   std::cout << std::setw(40)
-            << Kernel_name
+            << kernel_name
             << N/t.time()
             << '\n';
 }

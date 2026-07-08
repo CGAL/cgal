@@ -109,7 +109,7 @@ For example if one is using `CGAL::AABB_traits` with a Kernel from \cgal,
 having degenerate triangles or segments in the AABB-tree will result in an undefined
 behavior or a crash.
 
-\section two_aabb_tree_interface Operations between two AABB trees
+\section two_aabb_tree_interface Operations between Two AABB Trees
 
 Given two AABB trees, the function `CGAL::AABB_trees::do_intersect()` determines whether any
 primitive of the first tree intersects a primitive of the second tree.
@@ -218,7 +218,7 @@ triangle set stored through two arrays: one array of points and one
 array of indices which refer to the point array. Here also the
 primitive internally uses a `boost::iterator_adaptor`.
 
-\subsection aabb_tree_examples_9 Intersections of two trees
+\subsection aabb_tree_examples_9 Intersection of Two Trees
 
 In the following example, we compute all the intersections between two tetrahedra. The tetrahedra
 are stored as a vector of `Triangle_3`. We first compute if the tetrahedra do intersect and then we
@@ -255,7 +255,7 @@ AABB tree alone and AABB tree with internal KD-tree) for four denser versions if
 \subsection aabb_tree_perf_mem Memory
 
 When using the polyhedron triangle facet primitive (defined in
-`AABB_face_graph_triangle_primitive.h`) the AABB tree occupies
+`CGAL/AABB_face_graph_triangle_primitive.h`) the AABB tree occupies
 approximately 61 bytes per primitive (without constructing the
 internal KD-tree). It increases to approximately 150 bytes per
 primitive when constructing the internal KD-tree with one reference
@@ -348,7 +348,7 @@ inside the bounding box.
 |  3,686,400 | 13,696 | 13,389 | 13,440 |
 |  14,745,600 | 7,158 | 6,913| 7,010 |
 
-\subsection aabb_two_trees_perf Intersection of two AABB trees
+\subsection aabb_two_trees_perf Intersection of Two AABB Trees
 
 We test the intersection of two AABB trees using 3 models: iphigenia and the Nefertiti that are two common models of mesh processing and twisted knot to maximize the number of intersection. For each model,
 we test their intersection with a translated version of themselves (Note: We do not exploit the fact that it is the same model, the tree is built two times).
