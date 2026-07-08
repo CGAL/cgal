@@ -20,6 +20,7 @@
 #include <boost/bimap/multiset_of.hpp>
 #include <boost/container/small_vector.hpp>
 #include <boost/functional/hash.hpp>
+#include <boost/unordered_map.hpp>
 
 #include <vector>
 #include <algorithm>
@@ -30,6 +31,7 @@
 
 #include <CGAL/SMDS_3/tet_soup_to_c3t3.h>
 #include <CGAL/utility.h>
+#include <CGAL/Tetrahedral_remeshing/internal/elementary_operations.h>
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
@@ -976,7 +978,7 @@ collapse(const typename C3t3::Cell_handle ch,
 
 
 template<typename C3t3, typename CellSelector, typename ShortEdgesBimap>
-typename C3t3::Vertex_handle collapse(typename C3t3::Edge& edge,
+typename C3t3::Vertex_handle collapse(const typename C3t3::Edge& edge,
                                       const Collapse_type& collapse_type,
                                       CellSelector& cell_selector,
                                       C3t3& c3t3,
@@ -1083,7 +1085,7 @@ template<typename C3t3,
          typename CellSelector,
          typename ShortEdgesBimap,
          typename Visitor>
-typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
+typename C3t3::Vertex_handle collapse_edge(const typename C3t3::Edge& edge,
     C3t3& c3t3,
     const Sizing& sizing,
     const bool /* protect_boundaries */,
@@ -1230,125 +1232,89 @@ auto can_be_collapsed(const typename C3T3::Edge& e,
   return Collapsible {true, boundary};
 }
 
-template<typename C3T3,
-         typename Sizing,
-         typename CellSelector,
-         typename Visitor>
-void collapse_short_edges(C3T3& c3t3,
-                          const Sizing& sizing,
-                          const bool protect_boundaries,
-                          CellSelector cell_selector,
-                          Visitor& visitor)
+template <typename C3t3, typename SizingFunction, typename CellSelector, typename Visitor>
+class EdgeCollapseOperation
+    : public ElementaryOperation<C3t3,
+                                 typename C3t3::Triangulation::Edge,
+                                 std::vector<typename C3t3::Triangulation::Edge>>
 {
-  typedef typename C3T3::Triangulation       T3;
-  typedef typename T3::Edge                  Edge;
-  typedef typename T3::Vertex_handle         Vertex_handle;
+public:
+  using Tr = typename C3t3::Triangulation;
+  using Vertex_handle = typename Tr::Vertex_handle;
+  using Edge = typename Tr::Edge;
+  using FT = typename Tr::Geom_traits::FT;
 
-  typedef typename T3::Geom_traits::FT FT;
-  typedef boost::bimap<
-        boost::bimaps::set_of<Edge, Compare_edges<Edge> >,
-        boost::bimaps::multiset_of<FT, std::less<FT> > >  Boost_bimap;
-  typedef typename Boost_bimap::value_type            short_edge;
+  using Short_edges = std::vector<Edge>;
+  using Base = ElementaryOperation<C3t3, Edge, Short_edges>;
+  using ElementType = typename Base::ElementType;
+  using ElementSource = typename Base::ElementSource;
 
-  T3& tr = c3t3.triangulation();
+private:
+  const SizingFunction& m_sizing;
+  const CellSelector& m_cell_selector;
+  bool m_protect_boundaries;
+  Visitor& m_visitor;
 
-#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-  std::cout << "Collapse short edges...";
-  std::cout.flush();
-  std::size_t nb_collapses = 0;
-  CGAL::Real_timer timer;
-  timer.start();
-#endif
+  // Edges invalidated by an earlier collapse in this pass. The candidate list
+  // is collected once, so an edge whose cells were destroyed by a preceding
+  // collapse is marked here (by collapse_edge, through remove_from_bimap) and
+  // skipped when the pass reaches it -- this replaces the former dynamic bimap
+  // worklist. Edges that only *become* short during the pass are not
+  // re-collapsed here; they are handled in the next remeshing iteration.
+  boost::unordered_map<Edge, bool> m_should_skip;
 
-  //collect long edges
-  Boost_bimap short_edges;
-  for (const Edge& e : tr.finite_edges())
+public:
+  EdgeCollapseOperation(const SizingFunction& sizing,
+                        const CellSelector& cell_selector,
+                        const bool protect_boundaries,
+                        Visitor& visitor)
+      : m_sizing(sizing)
+      , m_cell_selector(cell_selector)
+      , m_protect_boundaries(protect_boundaries)
+      , m_visitor(visitor) {}
+
+  ElementSource get_element_source(const C3t3& c3t3) const override
   {
-    auto [collapsible, boundary] = can_be_collapsed(e, c3t3, protect_boundaries, cell_selector);
-    if (!collapsible)
-      continue;
+    std::vector<std::pair<Edge, FT>> short_edges_with_length;
+    const Tr& tr = c3t3.triangulation();
 
-    const auto sqlen = is_too_short(e, boundary, sizing, c3t3, cell_selector);
-    if(sqlen != std::nullopt)
-      short_edges.insert(short_edge(e, sqlen.value()));
+    for (const Edge& e : tr.finite_edges())
+    {
+      auto [collapsible, boundary] = can_be_collapsed(e, c3t3, m_protect_boundaries, m_cell_selector);
+      if (!collapsible)
+        continue;
+
+      const auto sqlen = is_too_short(e, boundary, m_sizing, c3t3, m_cell_selector);
+      if (sqlen != std::nullopt)
+        short_edges_with_length.push_back(std::make_pair(e, sqlen.value()));
+    }
+
+    // shortest first; stable to match the original bimap's ordering
+    std::stable_sort(short_edges_with_length.begin(), short_edges_with_length.end(),
+                     [](const std::pair<Edge, FT>& a, const std::pair<Edge, FT>& b) {
+                       return a.second < b.second;
+                     });
+
+    Short_edges short_edges;
+    short_edges.reserve(short_edges_with_length.size());
+    for (const auto& ef : short_edges_with_length)
+      short_edges.push_back(ef.first);
+    return short_edges;
   }
 
-#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-  debug::dump_edges(short_edges, "short_edges.polylines.txt");
-
-  std::ofstream short_success("short_collapse_success.polylines.txt");
-  std::ofstream short_fail("short_collapse_fail.polylines.txt");
-  std::ofstream short_cancel("short_collapse_canceled.polylines.txt");
-#endif
-
-  while(!short_edges.empty())
+  bool execute_operation(const ElementType& edge, C3t3& c3t3) override
   {
-    //the edge with shortest length
-    typename Boost_bimap::right_map::iterator eit = short_edges.right.begin();
-    Edge e = eit->second;
+    if (m_should_skip.find(edge) != m_should_skip.end())
+      return false;
 
-#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE_PROGRESS
-    FT sqlen = eit->first;
-    std::cout << "\rCollapse... (" << short_edges.left.size() << " short edges, ";
-    std::cout << std::sqrt(sqlen) << ", ";
-    std::cout << nb_collapses << " collapses)";
-    std::cout.flush();
-#endif
+    const Vertex_handle vh = collapse_edge(edge, c3t3, m_sizing, m_protect_boundaries,
+                                           m_cell_selector, m_should_skip, m_visitor);
+    return (vh != Vertex_handle());
+  }
 
-    short_edges.right.erase(eit);
+  std::string operation_name() const override { return "Collapse short edges"; }
+};
 
-    CGAL_expensive_assertion_code(const bool bd = is_boundary_edge(e));
-    CGAL_expensive_assertion(!!is_too_short(e, bd, sizing, c3t3, cell_selector));
-    CGAL_expensive_assertion(can_be_collapsed(e, c3t3, protect_boundaries, cell_selector));
-
-#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-    const auto p1 = e.first->vertex(e.second)->point();
-    const auto p2 = e.first->vertex(e.third)->point();
-#endif
-
-    Vertex_handle vh = collapse_edge(e, c3t3, sizing,
-                                     protect_boundaries, cell_selector,
-                                     short_edges,
-                                     visitor);
-    if (vh != Vertex_handle())
-    {
-      std::vector<Edge> incident_short;
-      c3t3.triangulation().finite_incident_edges(vh,
-          std::back_inserter(incident_short));
-      for (const Edge& eshort : incident_short)
-      {
-        const auto [collapsible, boundary]
-          = can_be_collapsed(eshort, c3t3, protect_boundaries, cell_selector);
-        if (!collapsible)
-          continue;
-
-        const auto sqlen = is_too_short(eshort, boundary, sizing, c3t3, cell_selector);
-        update_bimap(eshort, short_edges, sqlen);
-      }
-
-#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-      ++nb_collapses;
-#endif
-
-#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-      if (vh != Vertex_handle())
-        short_success << "2 " << point(p1) << " " << point(p2) << std::endl;
-      else
-        short_fail << "2 " << point(p1) << " " << point(p2) << std::endl;
-#endif
-    }
-  }//end loop on short_edges
-#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-  short_success.close();
-  short_fail.close();
-#endif
-
-#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-  timer.stop();
-  std::cout << " done (" << nb_collapses << " collapses, in "
-            << timer.time() << " seconds)." << std::endl;
-#endif
-}
 }
 }
 }

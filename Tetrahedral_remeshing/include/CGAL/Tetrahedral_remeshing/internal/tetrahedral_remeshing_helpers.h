@@ -1896,32 +1896,13 @@ void get_edge_info(const typename C3t3::Edge& edge,
 }
 
 
-template<typename EdgesBimap>
-void remove_from_bimap(const typename EdgesBimap::left_map::key_type& e,
-                       EdgesBimap& edges)
+// Mark an edge invalidated by a collapse so the collapse operation skips it
+// when the (statically collected) candidate list reaches it.
+template<typename EdgeType, typename ShouldSkipContainer>
+void remove_from_bimap(const EdgeType& e,
+                       ShouldSkipContainer& should_skip)
 {
-  typename EdgesBimap::left_map::iterator eit = edges.left.find(e);
-  if (eit != edges.left.end())
-    edges.left.erase(eit);
-}
-
-// if e is in 'edges'
-template<typename EdgesBimap, typename FT>
-void
-update_bimap(typename EdgesBimap::left_map::key_type& e, //Edge
-             EdgesBimap& edges,
-             const std::optional<FT> sqlen)
-{
-  if(sqlen == std::nullopt)
-    remove_from_bimap(e, edges);
-  else
-  {
-    typename EdgesBimap::left_map::iterator eit = edges.left.find(e);
-    if(eit != edges.left.end())
-      edges.left.replace_data(eit, sqlen.value());
-    else
-      edges.left.insert(typename EdgesBimap::left_map::value_type(e, sqlen.value()));
-  }
+  should_skip[e] = true;
 }
 
 template<typename Tr>

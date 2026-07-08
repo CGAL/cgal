@@ -198,8 +198,10 @@ public:
   void collapse()
   {
     CGAL_assertion(check_vertex_dimensions());
-    collapse_short_edges(m_c3t3, m_sizing, m_protect_boundaries,
-                         m_cell_selector, m_visitor);
+    typedef EdgeCollapseOperation<C3t3, SizingFunction, CellSelector, Visitor> EdgeCollapseOp;
+    EdgeCollapseOp collapse_op(m_sizing, m_cell_selector, m_protect_boundaries, m_visitor);
+    ElementaryOperationExecutionSequential<EdgeCollapseOp> executor;
+    executor.execute(collapse_op, m_c3t3);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     CGAL_assertion(tr().tds().is_valid(true));
