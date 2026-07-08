@@ -184,8 +184,7 @@ void random_perturbation(VertexRange vertices
       NamedParameters,
       Static_boolean_property_map<vertex_descriptor, false> // default
     > ::type VCMap;
-  VCMap vcmap = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
-                                 Static_boolean_property_map<vertex_descriptor, false>());
+  VCMap vcmap = choose_parameter<Static_boolean_property_map<vertex_descriptor, false>>(get_parameter(np, internal_np::vertex_is_constrained));
 
   unsigned int seed = choose_parameter(get_parameter(np, internal_np::random_seed), -1);
   bool do_project = choose_parameter(get_parameter(np, internal_np::do_project), true);

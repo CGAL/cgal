@@ -345,6 +345,7 @@ namespace internal {
 
       for(face_descriptor f : face_range)
       {
+        CGAL_assertion(is_triangle(halfedge(f, mesh_), mesh_));
         if(is_degenerate_triangle_face(f, mesh_, parameters::vertex_point_map(vpmap_)
                                                             .geom_traits(gt_)))
           continue;
@@ -384,14 +385,13 @@ namespace internal {
     void split_long_edges(const EdgeRange& edge_range,
                           SizingFunction& sizing)
     {
-
 #ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << "Split long edges...";
       std::cout.flush();
 #endif
 
       //collect long edges
-      typedef std::pair<halfedge_descriptor, double> H_and_sql;
+      typedef std::pair<halfedge_descriptor, FT> H_and_sql;
       std::multiset< H_and_sql, std::function<bool(H_and_sql,H_and_sql)> >
         long_edges(
           [](const H_and_sql& p1, const H_and_sql& p2)
@@ -400,7 +400,7 @@ namespace internal {
       for(edge_descriptor e : edge_range)
       {
         const halfedge_descriptor he = halfedge(e, mesh_);
-        std::optional<double> sqlen = sizing.is_too_long(source(he, mesh_), target(he, mesh_), mesh_);
+        std::optional<FT> sqlen = sizing.is_too_long(source(he, mesh_), target(he, mesh_), mesh_);
         if(sqlen != std::nullopt)
           long_edges.emplace(he, sqlen.value());
       }
@@ -417,7 +417,7 @@ namespace internal {
         long_edges.erase(eit);
 
         //split edge
-        Point refinement_point = this->midpoint(he);
+        Point refinement_point = sizing.split_placement(he, mesh_);
         halfedge_descriptor hnew = CGAL::Euler::split_edge(he, mesh_);
         // propagate the constrained status
         put(ecmap_, edge(hnew, mesh_), get(ecmap_, edge(he, mesh_)));
@@ -437,7 +437,7 @@ namespace internal {
 
         //check sub-edges
         //if it was more than twice the "long" threshold, insert them
-        std::optional<double> sqlen_new = sizing.is_too_long(source(hnew, mesh_), target(hnew, mesh_), mesh_);
+        std::optional<FT> sqlen_new = sizing.is_too_long(source(hnew, mesh_), target(hnew, mesh_), mesh_);
         if(sqlen_new != std::nullopt)
           long_edges.emplace(hnew, sqlen_new.value());
 
@@ -1325,14 +1325,14 @@ private:
         return false;//too many cases to be handled
       if (is_on_patch_border(next(hopp, mesh_)) && is_on_patch_border(prev(hopp, mesh_)))
         return false;//too many cases to be handled
-      else if (is_on_patch_border(next(he, mesh_)))
+      if (is_on_patch_border(next(he, mesh_)))
       {
         //avoid generation of degenerate faces, and self-intersections
         if (source(he, mesh_) ==
           target(next(next_on_patch_border(next(he, mesh_)), mesh_), mesh_))
           return false;
       }
-      else if (is_on_patch_border(prev(hopp, mesh_)))
+      if (is_on_patch_border(prev(hopp, mesh_)))
       {
         //avoid generation of degenerate faces, and self-intersections
         if (target(hopp, mesh_) ==
@@ -1817,6 +1817,7 @@ private:
           halfedges_around_target(he, mesh_))
       {
         if(!is_border(h, mesh_) &&
+           is_triangle(h, mesh_) &&
            is_degenerate_triangle_face(face(h, mesh_), mesh_,
                                        parameters::vertex_point_map(vpmap_)
                                                   .geom_traits(gt_)))

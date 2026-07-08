@@ -180,23 +180,6 @@ OutputIterator compute_subcurves(CurveInputIterator begin, CurveInputIterator en
   return compute_subcurves(begin, end, subcurves, mult_overlaps, traits);
 }
 
-/*! Determine whether any curves in a given range intersect pairwise.
- * \param begin An input iterator of the the range.
- * \param end A input past-the-end iterator of the range.
- * \return (true) if any pair of curves intersect; (false) otherwise.
- */
-template <typename CurveInputIterator, typename Traits>
-CGAL_DEPRECATED
-bool do_curves_intersect(CurveInputIterator begin, CurveInputIterator end, Traits& traits)
-{ return Ss2::do_intersect(begin, end, false, traits); }
-
-/*!
- */
-template <typename CurveInputIterator>
-CGAL_DEPRECATED
-bool do_curves_intersect(CurveInputIterator begin, CurveInputIterator end)
-{ return Ss2::do_intersect(begin, end, false); }
-
 /*! Subdivide a range of input curves according to their pairwise intersections.
  * Each curve is subdivided into sub-curves, referred to as polylines.
  *
@@ -268,6 +251,28 @@ void compute_intersection_polylines(CurveInputIterator begin,
   typename Ss2::Default_arr_traits<Curve>::Traits m_traits;
   compute_intersection_polylines(begin, end, output_points, output_polylines, m_traits);
 }
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+
+/*! Determine whether any curves in a given range intersect pairwise.
+ * \deprecated This function is deprecated since the version 6.2 of \cgal. Use the function `CGAL::Surface_sweep_2::do_intersect()` instead.
+ * \param begin An input iterator of the the range.
+ * \param end A input past-the-end iterator of the range.
+ * \return (true) if any pair of curves intersect; (false) otherwise.
+ */
+template <typename CurveInputIterator, typename Traits>
+CGAL_DEPRECATED
+bool do_curves_intersect(CurveInputIterator begin, CurveInputIterator end, Traits& traits)
+{ return Ss2::do_intersect(begin, end, false, traits); }
+
+/*!
+ * \deprecated This function is deprecated since the version 6.2 of \cgal. Use the function `CGAL::Surface_sweep_2::do_intersect()` instead.
+ */
+template <typename CurveInputIterator>
+CGAL_DEPRECATED
+bool do_curves_intersect(CurveInputIterator begin, CurveInputIterator end)
+{ return Ss2::do_intersect(begin, end, false); }
+#endif
 
 } // namespace CGAL
 
