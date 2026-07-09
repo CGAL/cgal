@@ -2111,9 +2111,9 @@ private:
     FacePatchMap patch_ids_map_;
     EdgeIsConstrainedMap ecmap_;
     EdgeIsProtectedMap epmap_;
-    CGAL::OR_property_map<EdgeIsConstrainedMap, EdgeIsProtectedMap> feature_edges_pmap_;
     VertexIsConstrainedMap vcmap_;
     FaceIndexMap fimap_;
+    CGAL::OR_property_map<EdgeIsConstrainedMap, EdgeIsProtectedMap> feature_edges_pmap_;
     CGAL_assertion_code(bool input_mesh_is_valid_;)
 
   };//end class Incremental_remesher
