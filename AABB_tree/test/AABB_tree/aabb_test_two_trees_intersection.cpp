@@ -11,8 +11,6 @@
 #include <CGAL/AABB_trees/intersection.h>
 #include <CGAL/IO/polygon_mesh_io.h>
 
-namespace PMP = CGAL::Polygon_mesh_processing;
-
 using Epick = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Epeck = CGAL::Exact_predicates_exact_constructions_kernel;
 using Cartesian = CGAL::Simple_cartesian<double>;

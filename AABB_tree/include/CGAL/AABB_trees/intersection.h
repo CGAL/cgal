@@ -15,6 +15,8 @@
 
 #include <CGAL/license/AABB_tree.h>
 
+#include <CGAL/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/AABB_tree/internal/AABB_two_trees_traversal.h>
 #include <CGAL/AABB_tree/internal/AABB_two_trees_traversal_traits.h>
 

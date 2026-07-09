@@ -1010,8 +1010,9 @@ public:
                                 const ComputeBbox& compute_bbox,
                                 const SplitPrimitives& split_primitives)
   {
-    // TODO refined this hardcode value
+#ifdef CGAL_LINKED_WITH_TBB
     const std::size_t cutoff_parallel_call = 30000; // min size for parallel call
+#endif
     node.set_bbox(compute_bbox(first, beyond));
 
     if(range < cutoff)
