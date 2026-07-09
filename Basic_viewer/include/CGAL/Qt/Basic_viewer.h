@@ -424,7 +424,7 @@ public:
       if (m_draw_cylinder_edge && m_geometry_feature_enabled)
       {
         auto renderer = [this, &color, &clipPlane, &plane_point](float rendering_mode) {
-          // The default edge color. The tubes honour the per-segment colors when
+          // The default edge color. The tubes honor the per-segment colors when
           // the user supplies them; the join spheres are drawn from the vertex
           // buffer, so they always use this edge color (otherwise they would pick
           // up the vertex colors and tint the corners).
@@ -465,7 +465,7 @@ public:
           rendering_program_cylinder.release();
 
           // 2. A sphere at each edge endpoint, in the edge color and at the tube
-          //    radius, to fill the joins where the open tubes meet (the analogue of
+          //    radius, to fill the joins where the open tubes meet (the analog of
           //    ParaView's RenderLinesAsTubes + RenderPointsAsSpheres). These are
           //    drawn from the edges, not the scene's point set, so a sphere lands
           //    exactly at each tube endpoint; degenerate edges are skipped and
@@ -556,7 +556,7 @@ public:
           // Fill the square-cap corners where flat edges meet with a disk at each
           // edge endpoint, in the edge color and at the edge width. Drawn from the
           // segments, so it lands only at real edge endpoints and skips degenerate
-          // edges. The 2D analogue of the tube-mode join spheres.
+          // edges. The 2D analog of the tube-mode join spheres.
           rendering_program_edge_disk.bind();
           if (m_use_default_color)
           {
