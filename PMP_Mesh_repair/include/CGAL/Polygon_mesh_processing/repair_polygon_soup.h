@@ -881,6 +881,13 @@ DuplicateOutputIterator collect_duplicate_polygons(const PointRange& points,
   return out;
 }
 
+struct Default_repair_PS_visitor
+{
+  void swap(std::size_t /*pos_1*/, std::size_t /*pos_2*/) const { };
+  void duplicated_polygons(const std::vector<std::size_t>& /*duplicated_polygons*/) const { };
+  void resize(std::size_t /*new_size*/) const { };
+};
+
 } // end namespace internal
 
 /// \ingroup PMP_combinatorial_repair_grp
@@ -967,8 +974,20 @@ std::size_t merge_duplicate_polygons_in_polygon_soup(const PointRange& points,
   typedef typename GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type Traits;
   Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
 
+  auto polygons_mem = polygons;
+
+  // visitor
+  typedef typename internal_np::Lookup_named_param_def <
+    internal_np::visitor_t,
+    NamedParameters,
+    internal::Default_repair_PS_visitor // default
+  > ::type Visitor;
+  Visitor visitor(choose_parameter<Visitor>(get_parameter(np, internal_np::visitor)));
+
   std::deque<std::vector<P_ID> > all_duplicate_polygons;
   internal::collect_duplicate_polygons(points, polygons, std::back_inserter(all_duplicate_polygons), traits, same_orientation);
+
+  CGAL_assertion(polygons == polygons_mem);
 
   if(all_duplicate_polygons.empty())
     return 0;
@@ -998,6 +1017,12 @@ std::size_t merge_duplicate_polygons_in_polygon_soup(const PointRange& points,
     const std::vector<P_ID>& duplicate_polygons = all_duplicate_polygons.back();
     CGAL_assertion(duplicate_polygons.size() >= 2);
 
+    std::vector<P_ID> mapped_duplicate_polygons(duplicate_polygons.size());
+    for (std::size_t i=0; i<duplicate_polygons.size(); ++i) {
+      mapped_duplicate_polygons[i] = PID_to_pos[duplicate_polygons[i]];
+    }
+    visitor.duplicated_polygons(mapped_duplicate_polygons);
+
     std::size_t i = (erase_policy == Policy::ERASE_ALL) ? 0 :
                     (erase_policy == Policy::KEEP_ONE) ? 1 :
                  /* (erase_policy == Policy::KEEP_ONE_IF_ODD) ?*/ duplicate_polygons.size() % 2;
@@ -1024,6 +1049,7 @@ std::size_t merge_duplicate_polygons_in_polygon_soup(const PointRange& points,
 
       CGAL_assertion(polygon_to_remove_pos <= swap_position);
       std::swap(polygons[swap_position], polygons[polygon_to_remove_pos]);
+      visitor.swap(swap_position, polygon_to_remove_pos);
       --swap_position;
 
       treated[polygon_to_remove_id] = true;
@@ -1038,6 +1064,7 @@ std::size_t merge_duplicate_polygons_in_polygon_soup(const PointRange& points,
   typename PolygonRange::iterator first = polygons.begin();
   std::advance(first, swap_position);
   polygons.erase(first, polygons.end());
+  visitor.resize(polygons.size());
 
 #ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE
   std::cout << "Removed " << removed_polygons_n << " duplicate polygon(s)" << std::endl;
