@@ -4,6 +4,16 @@
 
 Release date: December 2026
 
+### [The Heat Method](https://doc.cgal.org/6.3/Manual/packages.html#PkgHeatMethod)
+
+- Fixed the geodesic distances estimated from **multi-vertex source sets**: the recovered
+  potential was normalized per vertex against the *set* of source values
+  (`min_s |phi(v) - phi(s)|`), which collapses distances near the source set when the
+  potential varies across the sources (e.g. seeding all boundary vertices of an open mesh
+  read about half the true distance near the boundary, with most near-boundary vertices
+  below the euclidean lower bound). The potential is now anchored with a single constant,
+  the mean of the potential over the source set. Single-source results are unchanged.
+
 
 ## [Release 6.2](https://github.com/CGAL/cgal/releases/tag/v6.2)
 
