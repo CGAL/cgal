@@ -15,7 +15,6 @@
 
 #include <CGAL/license/Polygon_mesh_processing/corefinement.h>
 
-
 #include <boost/graph/graph_traits.hpp>
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/intersection_callbacks.h>
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/Intersection_type.h>
@@ -204,9 +203,6 @@ class Intersection_of_triangle_meshes
   typedef typename graph_traits::halfedge_descriptor halfedge_descriptor;
   typedef typename graph_traits::vertex_descriptor vertex_descriptor;
 
-  typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;
-  typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, halfedge_descriptor, Box_policy> Box;
-
   typedef std::unordered_set<face_descriptor> Face_set;
   typedef std::unordered_map<edge_descriptor, Face_set> Edge_to_faces;
 
@@ -257,69 +253,19 @@ class Intersection_of_triangle_meshes
                             Bbox_3 tm_1_bb,
                             Bbox_3 tm_2_bb)
   {
+
+    CGAL::Real_timer t;
+    t.start();
+
     using GT = typename GetGeomTraits<TriangleMesh, parameters::Default_named_parameters>::type;
-    using Face_bbox_tag = typename CGAL::dynamic_face_property_t<Bbox_3>;
-    using Primitive = AABB_face_graph_triangle_primitive<TriangleMesh>;
-    using Bbox_pmap = typename boost::property_map<TriangleMesh, Face_bbox_tag>::const_type;
-    using Traits = AABB_traits_3<GT, Primitive, Bbox_pmap>;
-    using Tree = AABB_tree<Traits>;
+    using AABB_tree_helper = AABB_tree_build_helper<TriangleMesh, GT>;
+    using Tree = typename AABB_tree_helper::Tree;
+    AABB_tree_helper helper;
 
-    auto bbox = [](auto fd, const auto &vpm, const auto &tm){
-      auto hd = halfedge(fd,tm);
-      Bbox_3 res = get(vpm, source(hd,tm)).bbox();
-      res += get(vpm, target(hd,tm)).bbox();
-      res += get(vpm, target(next(hd,tm),tm)).bbox();
-      return res;
-    };
+    Tree tree1(faces(tm1).begin(), faces(tm1).end(), tm1);
+    Tree tree2(faces(tm2).begin(), faces(tm2).end(), tm2);
 
-    Bbox_pmap bbmap1 = get(Face_bbox_tag(), tm1);
-    Bbox_pmap bbmap2 = get(Face_bbox_tag(), tm2);
-  #ifdef CGAL_LINKED_WITH_TBB
-    if constexpr(std::is_same_v<Concurrency_tag, Parallel_tag>)
-    {
-      oneapi::tbb::parallel_for(
-        oneapi::tbb::blocked_range<size_t>(0, faces(tm1).size()),
-          [&](const oneapi::tbb::blocked_range<size_t>& r) {
-            for (size_t i = r.begin(); i < r.end(); ++i) {
-              face_descriptor fd = *(faces(tm1).begin() + i);
-              put(bbmap1, fd, bbox(fd, vpm1, tm1));
-            }
-          }
-      );
-
-      oneapi::tbb::parallel_for(
-        oneapi::tbb::blocked_range<size_t>(0, faces(tm2).size()),
-          [&](const oneapi::tbb::blocked_range<size_t>& r) {
-            for (size_t i = r.begin(); i < r.end(); ++i) {
-              face_descriptor fd = *(faces(tm2).begin() + i);
-              put(bbmap2, fd, bbox(fd, vpm2, tm2));
-            }
-          }
-      );
-    }
-    else
-  #endif
-    {
-      for(face_descriptor fd : faces(tm1))
-        put(bbmap1, fd, bbox(fd, vpm1, tm1));
-      for(face_descriptor fd : faces(tm2))
-        put(bbmap2, fd, bbox(fd, vpm2, tm2));
-    }
-
-
-    // TODO insert only faces overlapping the bb of the other mesh
-    // TODO be careful degenerate features
-    Traits traits1(bbmap1);
-    Tree tree1(traits1);
-    tree1.insert(faces(tm1).first, faces(tm1).second, tm1);
-
-    Traits traits2(bbmap2);
-    Tree tree2(traits2);
-    tree2.insert(faces(tm2).first, faces(tm2).second, tm2);
-
-    // Edge_to_faces& edge_to_faces = &tm2 < &tm1
-    //                              ? stm_edge_to_ltm_faces
-    //                              : ltm_edge_to_stm_faces;
+    std::cout << "Computing Bbox and reference point " << t.time() << std::endl;
     #ifdef DO_NOT_HANDLE_COPLANAR_FACES
     typedef Collect_face_bbox_per_edge_bbox<TriangleMesh, Edge_to_faces>
       Callback;
@@ -337,51 +283,51 @@ class Intersection_of_triangle_meshes
     if constexpr(std::is_same_v<Concurrency_tag, Parallel_tag>)
     {
       oneapi::tbb::task_group tg;
-      tg.run([&]{ tree1.template build<Concurrency_tag>(); });
-      tree2.template build<Concurrency_tag>();
+      tg.run([&]{ helper.template build<Concurrency_tag>(tree1, tm1, vpm1); });
+      helper.template build<Concurrency_tag>(tree2, tm2, vpm2);
       tg.wait();
 
-      // using InternOutputIterator= std::back_insert_iterator<std::vector<std::pair<face_descriptor, face_descriptor>>>;
+      std::cout << "Building AABB tree " << t.time() << std::endl;
+
       tbb::concurrent_vector<std::pair<face_descriptor, face_descriptor>> inter;
       CGAL::AABB_trees::all_pairs_of_intersecting_primitives<Concurrency_tag>(tree1, tree2, std::back_inserter(inter));
 
-      tbb::parallel_for(
-      tbb::blocked_range<std::size_t>(0, inter.size()),
-      [&](const tbb::blocked_range<std::size_t>& r)
-      {
-        for (std::size_t i = r.begin(); i != r.end(); ++i)
-        {
-          const auto& [f_1, f_2] = inter[i];
+      std::cout << "Compute " << inter.size() << " candidates " << t.time() << std::endl;
+      // for(const auto& [f_1, f_2]: inter){
+      tbb::parallel_for(std::size_t(0), inter.size(), [&](std::size_t i){
+        const auto& [f_1, f_2] = inter[i];
 
-          halfedge_descriptor hf1_0 = halfedge(f_1, tm1);
-          halfedge_descriptor hf1_1 = next(hf1_0, tm1);
-          halfedge_descriptor hf1_2 = next(hf1_1, tm1);
+        halfedge_descriptor hf1_0 = halfedge(f_1, tm1);
+        halfedge_descriptor hf1_1 = next(hf1_0, tm1);
+        halfedge_descriptor hf1_2 = next(hf1_1, tm1);
 
-          halfedge_descriptor hf2_0 = halfedge(f_2, tm2);
-          halfedge_descriptor hf2_1 = next(hf2_0, tm2);
-          halfedge_descriptor hf2_2 = next(hf2_1, tm2);
+        halfedge_descriptor hf2_0 = halfedge(f_2, tm2);
+        halfedge_descriptor hf2_1 = next(hf2_0, tm2);
+        halfedge_descriptor hf2_2 = next(hf2_1, tm2);
 
-          if (is_border(hf2_0, tm2) || hf2_0 < opposite(hf2_0, tm2))
-            callback12(hf1_0, hf2_0);
-          if (is_border(hf2_1, tm2) || hf2_1 < opposite(hf2_1, tm2))
-            callback12(hf1_0, hf2_1);
-          if (is_border(hf2_2, tm2) || hf2_2 < opposite(hf2_2, tm2))
-            callback12(hf1_0, hf2_2);
+        if (is_border(hf2_0, tm2) || hf2_0 < opposite(hf2_0, tm2))
+          callback12(hf1_0, hf2_0);
+        if (is_border(hf2_1, tm2) || hf2_1 < opposite(hf2_1, tm2))
+          callback12(hf1_0, hf2_1);
+        if (is_border(hf2_2, tm2) || hf2_2 < opposite(hf2_2, tm2))
+          callback12(hf1_0, hf2_2);
 
-          if (is_border(hf1_0, tm1) || hf1_0 < opposite(hf1_0, tm1))
-            callback21(hf2_0, hf1_0);
-          if (is_border(hf1_1, tm1) || hf1_1 < opposite(hf1_1, tm1))
-            callback21(hf2_0, hf1_1);
-          if (is_border(hf1_2, tm1) || hf1_2 < opposite(hf1_2, tm1))
-            callback21(hf2_0, hf1_2);
-        }
+        if (is_border(hf1_0, tm1) || hf1_0 < opposite(hf1_0, tm1))
+          callback21(hf2_0, hf1_0);
+        if (is_border(hf1_1, tm1) || hf1_1 < opposite(hf1_1, tm1))
+          callback21(hf2_0, hf1_1);
+        if (is_border(hf1_2, tm1) || hf1_2 < opposite(hf1_2, tm1))
+          callback21(hf2_0, hf1_2);
       });
+      // }
+
+      std::cout << "process candidates " << t.time() << std::endl;
     }
     else
   #endif
     {
-      tree1.template build();
-      tree2.template build();
+      helper.template build<Concurrency_tag>(tree1, tm1, vpm1);
+      helper.template build<Concurrency_tag>(tree2, tm2, vpm2);
       // using InternOutputIterator= std::back_insert_iterator<std::vector<std::pair<face_descriptor, face_descriptor>>>;
       std::vector<std::pair<face_descriptor, face_descriptor>> inter;
       CGAL::AABB_trees::all_pairs_of_intersecting_primitives(tree1, tree2, std::back_inserter(inter));
