@@ -127,7 +127,9 @@ void two_trees_partial_traversal(const ::CGAL::AABB_node<AABBTraits_A>& node_A,
                                 const std::size_t cutoff,
                                 TwoTreeTraversalTraits& traversal_traits)
 {
+#if CGAL_LINKED_WITH_TBB
   const std::size_t cutoff_parallel_call = 100000;
+#endif
   if(nb_primitives_A < cutoff && nb_primitives_B < cutoff)
   {
     if constexpr(in_order)
