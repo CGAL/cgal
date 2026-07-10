@@ -1609,8 +1609,9 @@ public:
     }
   }
 
+  // Version of filll_new_triangle_mesh of face_graph_utils spefically written for Surface_mesh
   template < bool reverse_orientation_of_patches_from_tm1,
-            bool reverse_orientation_of_patches_from_tm2,
+             bool reverse_orientation_of_patches_from_tm2,
             class IntersectionEdgeMap,
             class VertexPointMap1,
             class VertexPointMap2,
@@ -1665,6 +1666,7 @@ public:
   #endif
 
     // Import polylines
+    // TODO Fully sequential, a parallelization is possible but for most example not worth it
     output_shared_edges.reserve( std::accumulate(polylines.lengths.begin(), polylines.lengths.end(), std::size_t(0)) );
     size_type nb_polylines = polylines.lengths.size();
     for (size_type i=0; i < nb_polylines; ++i)

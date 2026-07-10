@@ -216,34 +216,46 @@ connected_components(const PolygonMesh& pmesh,
   EdgeConstraintMap ecmap
     = choose_parameter<EdgeConstraintMap>(get_parameter(np, internal_np::edge_is_constrained));
 
-  typedef typename GetInitializedFaceIndexMap<PolygonMesh, NamedParameters>::const_type FaceIndexMap;
-  FaceIndexMap fimap = get_initialized_face_index_map(pmesh, np);
+  // typedef typename GetInitializedFaceIndexMap<PolygonMesh, NamedParameters>::const_type FaceIndexMap;
+  // FaceIndexMap fimap = get_initialized_face_index_map(pmesh, np);
 
+  // std::vector<bool> handled(num_faces(pmesh), false);
+  // auto is_handled = [&](face_descriptor f){
+  //   return handled[get(fimap,f)];
+  // };
+  // auto set_handled = [&](face_descriptor f){
+  //   handled[get(fimap,f)] = true;
+  // };
+
+  using F2B_tag = typename CGAL::dynamic_face_property_t<bool>;
+  using Face_to_bool_map = typename boost::property_map<PolygonMesh, F2B_tag>::const_type;
+  Face_to_bool_map handled = get(F2B_tag(), pmesh, false);
+  auto is_handled = [&](face_descriptor f){
+    return get(handled, f);
+  };
+  auto set_handled = [&](face_descriptor f){
+    put(handled, f, true);
+  };
   typename boost::property_traits<FaceComponentMap>::value_type i=0;
-  std::vector<bool> handled(num_faces(pmesh), false);
   for (face_descriptor f : faces(pmesh))
   {
-    if (handled[get(fimap,f)]) continue;
+    if (is_handled(f)) continue;
     std::vector<face_descriptor> queue;
     queue.push_back(f);
     while(!queue.empty())
     {
       face_descriptor fq = queue.back();
       queue.pop_back();
-      typename boost::property_traits<FaceIndexMap>::value_type  fq_id = get(fimap,fq);
-      if ( handled[fq_id]) continue;
-      handled[fq_id]=true;
+      if (is_handled(fq)) continue;
+      set_handled(fq);
       put(fcm, fq, i);
       for (halfedge_descriptor h : halfedges_around_face(halfedge(fq, pmesh), pmesh))
       {
         if ( get(ecmap, edge(h, pmesh)) ) continue;
         halfedge_descriptor opp = opposite(h, pmesh);
         face_descriptor fqo = face(opp, pmesh);
-        if ( fqo != GT::null_face() )
-        {
-          if ( !handled[get(fimap,fqo)] )
+        if ( fqo != GT::null_face() && !is_handled(fqo))
             queue.push_back(fqo);
-        }
       }
     }
     ++i;

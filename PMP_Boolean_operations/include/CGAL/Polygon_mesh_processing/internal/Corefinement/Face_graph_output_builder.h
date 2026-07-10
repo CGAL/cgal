@@ -1061,32 +1061,41 @@ public:
 
     // (1) Assign a patch id to each facet indicating in which connected
     // component limited by intersection edges of the surface they are.
-    // ... for tm1
+    std::vector <std::size_t> tm1_patch_sizes;
+    std::vector <std::size_t> tm2_patch_sizes;
+    std::size_t nb_patches_tm1, nb_patches_tm2;
     std::vector<std::size_t> tm1_patch_ids( num_faces(tm1),NID );
     Border_edge_map<TriangleMesh> is_marked_1(intersection_edges1, tm1);
-    std::size_t nb_patches_tm1 =
+    auto connected_components_1=[&]()
+    {
+    // ... for tm1
+    nb_patches_tm1 =
       connected_components(tm1,
                            make_compose_property_map(fids1,make_property_map(&tm1_patch_ids[0])),
                            parameters::edge_is_constrained_map(is_marked_1)
                                       .face_index_map(fids1));
-
-    std::vector <std::size_t> tm1_patch_sizes(nb_patches_tm1, 0);
+    tm1_patch_sizes.resize(nb_patches_tm1, 0);
     for(std::size_t i : tm1_patch_ids)
       if(i!=NID)
         ++tm1_patch_sizes[i];
-    // ... for tm2
+    };
+
     std::vector<std::size_t> tm2_patch_ids( num_faces(tm2),NID );
     Border_edge_map<TriangleMesh> is_marked_2(intersection_edges2, tm2);
-    std::size_t nb_patches_tm2 =
+    auto connected_components_2=[&]()
+    {
+    // ... for tm2
+    nb_patches_tm2 =
       connected_components(tm2,
                            make_compose_property_map(fids2,make_property_map(&tm2_patch_ids[0])),
                            parameters::edge_is_constrained_map(is_marked_2)
                                       .face_index_map(fids2));
-
-    std::vector <std::size_t> tm2_patch_sizes(nb_patches_tm2, 0);
+    tm2_patch_sizes.resize(nb_patches_tm2, 0);
     for(Node_id i : tm2_patch_ids)
       if(i!=NID)
         ++tm2_patch_sizes[i];
+    };
+    tbb::parallel_invoke(connected_components_1, connected_components_2);
 
 
     user_visitor.classify_patches();
