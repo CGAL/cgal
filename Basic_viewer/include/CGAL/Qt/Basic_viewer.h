@@ -788,9 +788,10 @@ public:
         if (!clipping_plane_rendering) return;
         // render clipping plane here
         rendering_program_clipping_plane.bind();
+        rendering_program_clipping_plane.setUniformValue("u_Color", QVector4D(0.0f, 0.0f, 0.0f, 1.0f));
         vao[VAO_CLIPPING_PLANE].bind();
         glLineWidth(0.1f);
-        glDrawArrays(GL_LINES, 0, static_cast<GLsizei>((m_array_for_clipping_plane.size()/3)));
+        glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(m_clip_grid_vertex_count));
         glLineWidth(1.0f);
         vao[VAO_CLIPPING_PLANE].release();
         rendering_program_clipping_plane.release();
@@ -833,6 +834,89 @@ public:
       {
         // 1. draw solid HALF
         renderer(DRAW_SOLID_HALF);
+
+        // Clip-plane cap: fill each clipped volume's cross-section in its color.
+        // Draw the volume's cap faces into the stencil (even-odd), then a quad
+        // on the plane where the stencil is odd.
+        if (m_proto_cap)
+        {
+          const std::vector<std::pair<unsigned int, CGAL::IO::Color>> &groups =
+            m_scene.get_face_groups();
+          const std::size_t ng = groups.size();
+          // No groups (e.g. a surface mesh): cap the whole display buffer as one
+          // grey group. Otherwise cap each per-volume group from the cap buffer.
+          const int cap_vao = (ng == 0) ? VAO_FACES : VAO_CAP_FACES;
+          const GLsizei total = static_cast<GLsizei>(m_scene.number_of_elements(
+            (ng == 0) ? GS::POS_FACES : GS::POS_CAP_FACES));
+
+          glEnable(GL_STENCIL_TEST);
+          glDisable(GL_CULL_FACE);
+
+          for (std::size_t g = 0, ncap = (ng == 0 ? 1 : ng); g < ncap; ++g)
+          {
+            GLint start;
+            GLsizei count;
+            QVector4D capcol;
+            if (ng == 0)
+            {
+              start = 0;
+              count = total;
+              capcol = QVector4D(0.6f, 0.6f, 0.6f, 1.0f);
+            }
+            else
+            {
+              start = static_cast<GLint>(groups[g].first);
+              const unsigned int end = (g + 1 < ng)
+                ? groups[g + 1].first : static_cast<unsigned int>(total);
+              count = static_cast<GLsizei>(end - groups[g].first);
+              const CGAL::IO::Color &c = groups[g].second;
+              capcol = QVector4D(c.red() / 255.0f, c.green() / 255.0f,
+                                 c.blue() / 255.0f, 1.0f);
+            }
+            if (count <= 0) { continue; }
+
+            // 1. stencil fill (even-odd) from this volume's faces
+            glClear(GL_STENCIL_BUFFER_BIT);
+            glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+            glDepthMask(GL_FALSE);
+            glDisable(GL_DEPTH_TEST);
+            glStencilFunc(GL_ALWAYS, 0, 0xFF);
+            glStencilOp(GL_KEEP, GL_KEEP, GL_INVERT);
+
+            rendering_program_face.bind();
+            rendering_program_face.setUniformValue("u_UseDefaultColor",
+                                                   static_cast<GLint>(1));
+            rendering_program_face.setUniformValue("u_DefaultColor",
+                                                   QVector3D(0.0, 0.0, 0.0));
+            rendering_program_face.setUniformValue("u_RenderingMode",
+              static_cast<float>(DRAW_SOLID_HALF));
+            rendering_program_face.setUniformValue("u_RenderingTransparency",
+              clipping_plane_rendering_transparency);
+            rendering_program_face.setUniformValue("u_ClipPlane", clipPlane);
+            rendering_program_face.setUniformValue("u_PointPlane", plane_point);
+            vao[cap_vao].bind();
+            glDrawArrays(GL_TRIANGLES, start, count);
+            vao[cap_vao].release();
+            rendering_program_face.release();
+
+            // 2. cap quad where the stencil is odd, in the volume color
+            glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+            glDepthMask(GL_TRUE);
+            glEnable(GL_DEPTH_TEST);
+            glStencilFunc(GL_NOTEQUAL, 0, 0xFF);
+            glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+
+            rendering_program_clipping_plane.bind();
+            rendering_program_clipping_plane.setUniformValue("u_Color", capcol);
+            vao[VAO_CLIPPING_PLANE].bind();
+            glDrawArrays(GL_TRIANGLES,
+                         static_cast<GLint>(m_clip_grid_vertex_count), 6);
+            vao[VAO_CLIPPING_PLANE].release();
+            rendering_program_clipping_plane.release();
+          }
+
+          glDisable(GL_STENCIL_TEST);
+        }
 
         // 2. render clipping plane here
         renderer_clipping_plane(clipping_plane_rendering);
@@ -1441,6 +1525,20 @@ protected:
     rendering_program_face.enableAttributeArray("a_Color");
     rendering_program_face.setAttributeBuffer("a_Color",GL_FLOAT,0,3);
 
+    // 5b) cap faces: positions only, reused by the face program for the stencil
+    // pass (a_Normal/a_Color are unused there).
+    vao[VAO_CAP_FACES].bind();
+    positions = m_scene.get_array_of_index(GS::POS_CAP_FACES);
+
+    ++bufn;
+    CGAL_assertion(bufn<NB_GL_BUFFERS);
+    buffers[bufn].bind();
+    buffers[bufn].allocate(positions.data(), static_cast<int>(positions.size()*sizeof(float)));
+    rendering_program_face.enableAttributeArray("a_Pos");
+    rendering_program_face.setAttributeBuffer("a_Pos",GL_FLOAT,0,3);
+    buffers[bufn].release();
+    vao[VAO_CAP_FACES].release();
+
     // 6) clipping plane shader
     if (isOpenGL_3_2())
     {
@@ -1754,6 +1852,14 @@ protected:
     array.push_back(0.f);
     array.push_back(0.f);
     array.push_back(1.f);
+
+    // Clip-plane cap: a filled quad on the plane, same extent as the grid (the
+    // grid line draw uses only the vertices before it).
+    m_clip_grid_vertex_count = array.size()/3;
+    const float s = float(size);
+    const float quad[18] = { -s,-s,0.f,  s,-s,0.f,  s,s,0.f,
+                             -s,-s,0.f,  s,s,0.f,  -s,s,0.f };
+    for (float f : quad) array.push_back(f);
   }
 
   virtual void mouseDoubleClickEvent(QMouseEvent *e)
@@ -1869,6 +1975,12 @@ protected:
       {
         m_draw_vertices=!m_draw_vertices;
         displayMessage(QString("Draw vertices=%1.").arg(m_draw_vertices?"true":"false"));
+        update();
+      }
+      else if ((e->key()==::Qt::Key_K) && (modifiers==::Qt::NoButton)) // PROTOTYPE
+      {
+        m_proto_cap=!m_proto_cap;
+        displayMessage(QString("Clip-plane cap=%1.").arg(m_proto_cap?"true":"false"));
         update();
       }
       else if ((e->key()==::Qt::Key_W) && (modifiers==::Qt::NoButton))
@@ -2151,6 +2263,7 @@ protected:
     VAO_RAYS,
     VAO_LINES,
     VAO_FACES,
+    VAO_CAP_FACES,
     VAO_CLIPPING_PLANE,
     NB_VAO_BUFFERS
   };
@@ -2170,6 +2283,8 @@ protected:
   // variables for clipping plane
   bool clipping_plane_rendering = true; // will be toggled when alt+c is pressed, which is used for indicating whether or not to render the clipping plane ;
   float clipping_plane_rendering_transparency = 0.5f; // to what extent the transparent part should be rendered;
+  std::size_t m_clip_grid_vertex_count = 0; // PROTOTYPE: grid vertices before the cap quad in m_array_for_clipping_plane
+  bool m_proto_cap = true; // PROTOTYPE: toggle the clip-plane cap (K)
 
 };
 

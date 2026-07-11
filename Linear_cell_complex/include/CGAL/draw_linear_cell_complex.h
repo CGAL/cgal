@@ -238,6 +238,56 @@ void compute_elements(const LCC& lcc,
   lcc.free_mark(oriented_mark);
 }
 
+// Fill one closed face (the side of dh) into the cap buffer (cf. compute_face).
+template <class LCC>
+void compute_cap_face(const LCC& lcc,
+                      typename LCC::Dart_const_handle dh,
+                      CGAL::Graphics_scene& graphics_scene)
+{
+  typename LCC::Dart_const_handle cur=dh;
+  do
+  {
+    if (!lcc.is_next_exist(cur)) { return; } // open face => not filled
+    cur=lcc.next(cur);
+  }
+  while (cur!=dh);
+
+  graphics_scene.cap_face_begin();
+  cur=dh;
+  do
+  {
+    graphics_scene.add_point_in_cap_face(lcc.point(cur));
+    cur=lcc.next(cur);
+  }
+  while (cur!=dh);
+  graphics_scene.cap_face_end();
+}
+
+// Cap geometry: one closed boundary per volume, grouped and colored by volume.
+// One dart per face of the volume keeps shared walls (not de-duplicated as in
+// the display), so each volume stays closed for the parity fill.
+template <class LCC, class GSOptions>
+void compute_cap_elements(const LCC& lcc,
+                          CGAL::Graphics_scene& graphics_scene,
+                          const GSOptions& gso)
+{
+  for (auto vit=lcc.template one_dart_per_cell<3>().begin(),
+            vend=lcc.template one_dart_per_cell<3>().end(); vit!=vend; ++vit)
+  {
+    if (!gso.draw_volume(lcc, vit)) { continue; }
+
+    if (gso.colored_volume(lcc, vit))
+    { graphics_scene.start_face_group(gso.volume_color(lcc, vit)); }
+    else
+    { graphics_scene.start_face_group(graphics_scene.get_default_color_face()); }
+
+    for (auto fit=lcc.template one_dart_per_incident_cell<2,3>(vit).begin(),
+              fend=lcc.template one_dart_per_incident_cell<2,3>(vit).end();
+         fit!=fend; ++fit)
+    { compute_cap_face(lcc, fit, graphics_scene); }
+  }
+}
+
 } // namespace draw_function_for_lcc
 
 #define CGAL_LCC_TYPE                                                          \
@@ -257,6 +307,8 @@ void add_to_graphics_scene(const CGAL_LCC_TYPE& alcc,
 {
   draw_function_for_lcc::compute_elements(static_cast<const Refs&>(alcc),
                                           graphics_scene, gso);
+  draw_function_for_lcc::compute_cap_elements(static_cast<const Refs&>(alcc),
+                                              graphics_scene, gso);
 }
 
 // add_to_graphics_scene: to add a LCC in the given graphic buffer, without a

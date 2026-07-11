@@ -396,9 +396,11 @@ const char FRAGMENT_SOURCE_CLIPPING_PLANE[]=R"DELIM(
 
 out mediump vec4 out_color;
 
+uniform mediump vec4 u_Color;
+
 void main(void)
 {
-  out_color = vec4(0.0, 0.0, 0.0, 1.0);
+  out_color = u_Color;
 }
 )DELIM";
 

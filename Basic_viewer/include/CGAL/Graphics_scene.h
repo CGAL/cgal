@@ -74,6 +74,8 @@ public:
                            &m_bounding_box, &arrays[COLOR_LINES]),
         m_buffer_for_faces(&arrays[POS_FACES], nullptr, &m_bounding_box, &arrays[COLOR_FACES],
                            &arrays[FLAT_NORMAL_FACES], &arrays[SMOOTH_NORMAL_FACES]),
+        // Clip-plane cap buffer: positions only, no bbox (shares the faces).
+        m_buffer_for_cap_faces(&arrays[POS_CAP_FACES]),
         m_default_color_face(60, 60, 200),
         m_default_color_point(200, 60, 60),
         m_default_color_segment(0, 0, 0),
@@ -278,6 +280,25 @@ public:
     { m_buffer_for_faces.face_end(); }
   }
 
+  // Clip-plane cap: its own face buffer, one closed boundary per volume.
+  void cap_face_begin()
+  { m_buffer_for_cap_faces.face_begin(); }
+
+  template <typename KPoint>
+  bool add_point_in_cap_face(const KPoint &kp)
+  { return m_buffer_for_cap_faces.add_point_in_face(kp); }
+
+  void cap_face_end()
+  { m_buffer_for_cap_faces.face_end(); }
+
+  // Start a new per-volume cap group (its first vertex index and color).
+  void start_face_group(const CGAL::IO::Color &acolor)
+  { m_face_groups.emplace_back(number_of_elements(POS_CAP_FACES), acolor); }
+
+  const std::vector<std::pair<unsigned int, CGAL::IO::Color>> &
+  get_face_groups() const
+  { return m_face_groups; }
+
   template <typename KPoint>
   void add_text(const KPoint &kp, const std::string &txt)
   {
@@ -338,7 +359,9 @@ public:
     m_buffer_for_rays.clear();
     m_buffer_for_lines.clear();
     m_buffer_for_faces.clear();
+    m_buffer_for_cap_faces.clear();
     m_texts.clear();
+    m_face_groups.clear();
     m_bounding_box=CGAL::Bbox_3();
   }
 
@@ -375,6 +398,7 @@ public:
     POS_RAYS,
     POS_LINES,
     POS_FACES,
+    POS_CAP_FACES, // clip-plane capping: per-volume closed boundary (positions only)
     END_POS,
     BEGIN_COLOR = END_POS,
     COLOR_POINTS = BEGIN_COLOR,
@@ -396,6 +420,7 @@ protected:
   Buffer_for_vao m_buffer_for_rays;
   Buffer_for_vao m_buffer_for_lines;
   Buffer_for_vao m_buffer_for_faces;
+  Buffer_for_vao m_buffer_for_cap_faces; // clip-plane capping (positions only)
 
   CGAL::IO::Color m_default_color_face;
   CGAL::IO::Color m_default_color_point;
@@ -404,6 +429,9 @@ protected:
   CGAL::IO::Color m_default_color_line;
 
   std::vector<std::tuple<Local_point, std::string>> m_texts;
+
+  // Per-volume cap groups: first POS_CAP_FACES vertex and color of each volume.
+  std::vector<std::pair<unsigned int, CGAL::IO::Color>> m_face_groups;
 
   std::vector<BufferType> arrays[LAST_INDEX];
 
