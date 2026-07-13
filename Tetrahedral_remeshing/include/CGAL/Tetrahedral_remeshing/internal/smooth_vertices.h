@@ -116,13 +116,18 @@ public:
                            const CellSelector& cell_selector,
                            const bool protect_boundaries,
                            const bool smooth_constrained_edges)
-      : m_sizing(sizing)
-      , m_cell_selector(cell_selector)
+      : m_cell_selector(cell_selector)
+      , m_sizing(sizing)
       , m_protect_boundaries(protect_boundaries)
       , m_smooth_constrained_edges(smooth_constrained_edges)
   {
     refresh(c3t3);
 #ifdef CGAL_TET_REMESHING_SMOOTHING_WITH_MLS
+    if (m_protect_boundaries)
+    {
+      collect_vertices_surface_indices(c3t3);
+      compute_vertices_normals(c3t3);
+    }
     createMLSSurfaces(subdomain_FMLS, subdomain_FMLS_indices, m_vertices_normals, m_vertices_surface_indices, c3t3);
 #else
     build_aabb_trees(c3t3);
