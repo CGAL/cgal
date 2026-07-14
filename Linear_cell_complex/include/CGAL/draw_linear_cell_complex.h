@@ -20,6 +20,8 @@
 #include <CGAL/Linear_cell_complex_operations.h>
 #include <CGAL/Random.h>
 
+#include <unordered_map>
+
 namespace CGAL {
 
 namespace draw_function_for_lcc
@@ -171,12 +173,22 @@ void compute_elements(const LCC& lcc,
 
   lcc.orient(oriented_mark);
 
+  // Clip-plane cap: dart -> its face index (both sides of a shared wall map to
+  // the same index, so it is referenced once per volume).
+  std::unordered_map<std::size_t, unsigned int> dart_face;
+
   for(typename LCC::Dart_range::const_iterator it=lcc.darts().begin(),
         itend=lcc.darts().end(); it!=itend; ++it)
   {
     if (!lcc.is_marked(it, markvolumes) &&
         gso.draw_volume(lcc, it))
     {
+      // Clip-plane cap: open a volume group in its color.
+      if (gso.colored_volume(lcc, it))
+      { graphics_scene.volume_begin(gso.volume_color(lcc, it)); }
+      else
+      { graphics_scene.volume_begin(graphics_scene.get_default_color_face()); }
+
       for(typename LCC::template Dart_of_cell_basic_range<3>::const_iterator
             itv=lcc.template darts_of_cell_basic<3>(it, markvolumes).begin(),
             itvend=lcc.template darts_of_cell_basic<3>(it, markvolumes).end();
@@ -187,16 +199,21 @@ void compute_elements(const LCC& lcc,
             lcc.is_marked(itv, oriented_mark) &&
             gso.draw_face(lcc, itv))
         {
-          if ((!gso.volume_wireframe(lcc, itv) ||
-               Test_opposite_draw_lcc<LCC>::run(lcc, gso, itv)) &&
-              !gso.face_wireframe(lcc, itv))
+          const bool face_drawn=(!gso.volume_wireframe(lcc, itv) ||
+                                 Test_opposite_draw_lcc<LCC>::run(lcc, gso, itv)) &&
+                                !gso.face_wireframe(lcc, itv);
+          const unsigned int fidx=graphics_scene.number_of_faces();
+          if (face_drawn)
           { compute_face(lcc, itv, it, graphics_scene, gso); }
+          const bool face_added=(graphics_scene.number_of_faces()>fidx);
           for(typename LCC::template Dart_of_cell_basic_range<2>::const_iterator
                 itf=lcc.template darts_of_cell_basic<2>(itv, markfaces).begin(),
                 itfend=lcc.template darts_of_cell_basic<2>(itv, markfaces).end();
               itf!=itfend; ++itf)
           {
             lcc.mark(itf, markfaces);
+            if (face_added)
+            { dart_face[lcc.darts().index(itf)]=fidx; }
             if (!lcc.is_marked(itf, markedges) &&
                 gso.draw_edge(lcc, itf))
             {
@@ -218,6 +235,17 @@ void compute_elements(const LCC& lcc,
           }
         }
       }
+
+      // Clip-plane cap: reference this volume's faces (own and shared) by index.
+      for(auto fit=lcc.template one_dart_per_incident_cell<2,3>(it).begin(),
+               fitend=lcc.template one_dart_per_incident_cell<2,3>(it).end();
+          fit!=fitend; ++fit)
+      {
+        auto found=dart_face.find(lcc.darts().index(fit));
+        if (found!=dart_face.end())
+        { graphics_scene.add_face_to_current_volume(found->second); }
+      }
+      graphics_scene.volume_end();
     }
   }
 
@@ -236,56 +264,6 @@ void compute_elements(const LCC& lcc,
   lcc.free_mark(markedges);
   lcc.free_mark(markvertices);
   lcc.free_mark(oriented_mark);
-}
-
-// Fill one closed face (the side of dh) into the cap buffer (cf. compute_face).
-template <class LCC>
-void compute_cap_face(const LCC& lcc,
-                      typename LCC::Dart_const_handle dh,
-                      CGAL::Graphics_scene& graphics_scene)
-{
-  typename LCC::Dart_const_handle cur=dh;
-  do
-  {
-    if (!lcc.is_next_exist(cur)) { return; } // open face => not filled
-    cur=lcc.next(cur);
-  }
-  while (cur!=dh);
-
-  graphics_scene.cap_face_begin();
-  cur=dh;
-  do
-  {
-    graphics_scene.add_point_in_cap_face(lcc.point(cur));
-    cur=lcc.next(cur);
-  }
-  while (cur!=dh);
-  graphics_scene.cap_face_end();
-}
-
-// Cap geometry: one closed boundary per volume, grouped and colored by volume.
-// One dart per face of the volume keeps shared walls (not de-duplicated as in
-// the display), so each volume stays closed for the parity fill.
-template <class LCC, class GSOptions>
-void compute_cap_elements(const LCC& lcc,
-                          CGAL::Graphics_scene& graphics_scene,
-                          const GSOptions& gso)
-{
-  for (auto vit=lcc.template one_dart_per_cell<3>().begin(),
-            vend=lcc.template one_dart_per_cell<3>().end(); vit!=vend; ++vit)
-  {
-    if (!gso.draw_volume(lcc, vit)) { continue; }
-
-    if (gso.colored_volume(lcc, vit))
-    { graphics_scene.start_face_group(gso.volume_color(lcc, vit)); }
-    else
-    { graphics_scene.start_face_group(graphics_scene.get_default_color_face()); }
-
-    for (auto fit=lcc.template one_dart_per_incident_cell<2,3>(vit).begin(),
-              fend=lcc.template one_dart_per_incident_cell<2,3>(vit).end();
-         fit!=fend; ++fit)
-    { compute_cap_face(lcc, fit, graphics_scene); }
-  }
 }
 
 } // namespace draw_function_for_lcc
@@ -307,8 +285,6 @@ void add_to_graphics_scene(const CGAL_LCC_TYPE& alcc,
 {
   draw_function_for_lcc::compute_elements(static_cast<const Refs&>(alcc),
                                           graphics_scene, gso);
-  draw_function_for_lcc::compute_cap_elements(static_cast<const Refs&>(alcc),
-                                              graphics_scene, gso);
 }
 
 // add_to_graphics_scene: to add a LCC in the given graphic buffer, without a

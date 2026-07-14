@@ -835,47 +835,39 @@ public:
         // 1. draw solid HALF
         renderer(DRAW_SOLID_HALF);
 
-        // Clip-plane cap: fill each clipped volume's cross-section in its color.
-        // Draw the volume's cap faces into the stencil (even-odd), then a quad
-        // on the plane where the stencil is odd.
-        if (m_proto_cap)
+        // Clip-plane cap: for each closed volume, fill its faces into the stencil
+        // (even-odd), then a quad where the stencil is odd, in the volume color.
+        // Faces are referenced in the single buffer, so a shared wall serves both
+        // volumes with no duplicated geometry. No volumes: one grey group.
         {
-          const std::vector<std::pair<unsigned int, CGAL::IO::Color>> &groups =
-            m_scene.get_face_groups();
-          const std::size_t ng = groups.size();
-          // No groups (e.g. a surface mesh): cap the whole display buffer as one
-          // grey group. Otherwise cap each per-volume group from the cap buffer.
-          const int cap_vao = (ng == 0) ? VAO_FACES : VAO_CAP_FACES;
-          const GLsizei total = static_cast<GLsizei>(m_scene.number_of_elements(
-            (ng == 0) ? GS::POS_FACES : GS::POS_CAP_FACES));
+          const std::vector<std::vector<unsigned int>> &volumes =
+            m_scene.get_volume_faces();
+          const std::vector<CGAL::IO::Color> &vcolors =
+            m_scene.get_volume_colors();
+          const std::size_t nvol = volumes.size();
+
+          // Compute which volumes/surfaces are closed once, on the first clip.
+          if (!m_cap_closed_valid)
+          { compute_cap_closed(); m_cap_closed_valid = true; }
 
           glEnable(GL_STENCIL_TEST);
           glDisable(GL_CULL_FACE);
 
-          for (std::size_t g = 0, ncap = (ng == 0 ? 1 : ng); g < ncap; ++g)
+          for (std::size_t v = 0, nfill = (nvol == 0 ? 1 : nvol); v < nfill; ++v)
           {
-            GLint start;
-            GLsizei count;
+            // Boundary guard: an open volume/surface has no meaningful cap.
+            if (v < m_cap_closed.size() && m_cap_closed[v] == 0) { continue; }
             QVector4D capcol;
-            if (ng == 0)
-            {
-              start = 0;
-              count = total;
-              capcol = QVector4D(0.6f, 0.6f, 0.6f, 1.0f);
-            }
+            if (nvol == 0)
+            { capcol = QVector4D(0.6f, 0.6f, 0.6f, 1.0f); }
             else
             {
-              start = static_cast<GLint>(groups[g].first);
-              const unsigned int end = (g + 1 < ng)
-                ? groups[g + 1].first : static_cast<unsigned int>(total);
-              count = static_cast<GLsizei>(end - groups[g].first);
-              const CGAL::IO::Color &c = groups[g].second;
+              const CGAL::IO::Color &c = vcolors[v];
               capcol = QVector4D(c.red() / 255.0f, c.green() / 255.0f,
                                  c.blue() / 255.0f, 1.0f);
             }
-            if (count <= 0) { continue; }
 
-            // 1. stencil fill (even-odd) from this volume's faces
+            // 1. even-odd stencil fill from this volume's faces
             glClear(GL_STENCIL_BUFFER_BIT);
             glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
             glDepthMask(GL_FALSE);
@@ -894,9 +886,23 @@ public:
               clipping_plane_rendering_transparency);
             rendering_program_face.setUniformValue("u_ClipPlane", clipPlane);
             rendering_program_face.setUniformValue("u_PointPlane", plane_point);
-            vao[cap_vao].bind();
-            glDrawArrays(GL_TRIANGLES, start, count);
-            vao[cap_vao].release();
+            vao[VAO_FACES].bind();
+            if (nvol == 0)
+            {
+              glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(
+                m_scene.number_of_elements(GS::POS_FACES)));
+            }
+            else
+            {
+              for (unsigned int fi : volumes[v])
+              {
+                const std::pair<unsigned int, unsigned int> &r =
+                  m_scene.face_range(fi);
+                glDrawArrays(GL_TRIANGLES, static_cast<GLint>(r.first),
+                             static_cast<GLsizei>(r.second));
+              }
+            }
+            vao[VAO_FACES].release();
             rendering_program_face.release();
 
             // 2. cap quad where the stencil is odd, in the volume color
@@ -1409,6 +1415,63 @@ protected:
     }
   }
 
+  // Clip-plane cap: a group is cappable only if it is closed (every edge used by
+  // two triangles); an open surface is skipped. Vertices matched by position.
+  void compute_cap_closed()
+  {
+    m_cap_closed.clear();
+    const std::vector<BufferType> &pos=m_scene.get_array_of_index(GS::POS_FACES);
+    const std::vector<std::vector<unsigned int>> &volumes=
+      m_scene.get_volume_faces();
+    const std::size_t nvol=volumes.size();
+    const std::size_t ngroup=(nvol==0 ? 1 : nvol);
+    m_cap_closed.assign(ngroup, 1);
+
+    for (std::size_t g=0; g<ngroup; ++g)
+    {
+      std::map<std::tuple<float, float, float>, unsigned int> vid;
+      std::map<std::pair<unsigned int, unsigned int>, int> ecount;
+
+      auto id_of=[&](unsigned int vtx) -> unsigned int {
+        std::tuple<float, float, float> key(pos[3*vtx], pos[3*vtx+1],
+                                            pos[3*vtx+2]);
+        auto it=vid.find(key);
+        if (it!=vid.end()) { return it->second; }
+        unsigned int id=static_cast<unsigned int>(vid.size());
+        vid.emplace(key, id);
+        return id;
+      };
+      auto add_triangle=[&](unsigned int v0) {
+        const unsigned int i0=id_of(v0), i1=id_of(v0+1), i2=id_of(v0+2);
+        unsigned int e[3][2]={{i0, i1}, {i1, i2}, {i2, i0}};
+        for (int k=0; k<3; ++k)
+        {
+          unsigned int a=e[k][0], b=e[k][1];
+          if (a>b) { std::swap(a, b); }
+          ++ecount[std::make_pair(a, b)];
+        }
+      };
+
+      if (nvol==0)
+      {
+        const unsigned int nv=m_scene.number_of_elements(GS::POS_FACES);
+        for (unsigned int v=0; v+2<nv; v+=3) { add_triangle(v); }
+      }
+      else
+      {
+        for (unsigned int fi : volumes[g])
+        {
+          const std::pair<unsigned int, unsigned int> &r=m_scene.face_range(fi);
+          for (unsigned int v=r.first; v+2<r.first+r.second; v+=3)
+          { add_triangle(v); }
+        }
+      }
+
+      for (const auto &e : ecount)
+      { if (e.second!=2) { m_cap_closed[g]=0; break; } }
+    }
+  }
+
   void initialize_buffers()
   {
     set_camera_mode();
@@ -1525,20 +1588,6 @@ protected:
     rendering_program_face.enableAttributeArray("a_Color");
     rendering_program_face.setAttributeBuffer("a_Color",GL_FLOAT,0,3);
 
-    // 5b) cap faces: positions only, reused by the face program for the stencil
-    // pass (a_Normal/a_Color are unused there).
-    vao[VAO_CAP_FACES].bind();
-    positions = m_scene.get_array_of_index(GS::POS_CAP_FACES);
-
-    ++bufn;
-    CGAL_assertion(bufn<NB_GL_BUFFERS);
-    buffers[bufn].bind();
-    buffers[bufn].allocate(positions.data(), static_cast<int>(positions.size()*sizeof(float)));
-    rendering_program_face.enableAttributeArray("a_Pos");
-    rendering_program_face.setAttributeBuffer("a_Pos",GL_FLOAT,0,3);
-    buffers[bufn].release();
-    vao[VAO_CAP_FACES].release();
-
     // 6) clipping plane shader
     if (isOpenGL_3_2())
     {
@@ -1560,6 +1609,7 @@ protected:
       rendering_program_clipping_plane.release();
     }
 
+    m_cap_closed_valid = false; // clip-plane cap: recompute closedness lazily
     m_are_buffers_initialized = true;
   }
 
@@ -1977,12 +2027,6 @@ protected:
         displayMessage(QString("Draw vertices=%1.").arg(m_draw_vertices?"true":"false"));
         update();
       }
-      else if ((e->key()==::Qt::Key_K) && (modifiers==::Qt::NoButton)) // PROTOTYPE
-      {
-        m_proto_cap=!m_proto_cap;
-        displayMessage(QString("Clip-plane cap=%1.").arg(m_proto_cap?"true":"false"));
-        update();
-      }
       else if ((e->key()==::Qt::Key_W) && (modifiers==::Qt::NoButton))
       {
         m_draw_faces=!m_draw_faces;
@@ -2263,7 +2307,6 @@ protected:
     VAO_RAYS,
     VAO_LINES,
     VAO_FACES,
-    VAO_CAP_FACES,
     VAO_CLIPPING_PLANE,
     NB_VAO_BUFFERS
   };
@@ -2283,8 +2326,9 @@ protected:
   // variables for clipping plane
   bool clipping_plane_rendering = true; // will be toggled when alt+c is pressed, which is used for indicating whether or not to render the clipping plane ;
   float clipping_plane_rendering_transparency = 0.5f; // to what extent the transparent part should be rendered;
-  std::size_t m_clip_grid_vertex_count = 0; // PROTOTYPE: grid vertices before the cap quad in m_array_for_clipping_plane
-  bool m_proto_cap = true; // PROTOTYPE: toggle the clip-plane cap (K)
+  std::size_t m_clip_grid_vertex_count = 0; // clip-plane cap: grid vertices before the cap quad in m_array_for_clipping_plane
+  std::vector<char> m_cap_closed; // clip-plane cap: per group, 1 if closed (cappable)
+  bool m_cap_closed_valid = false; // clip-plane cap: is m_cap_closed up to date
 
 };
 
