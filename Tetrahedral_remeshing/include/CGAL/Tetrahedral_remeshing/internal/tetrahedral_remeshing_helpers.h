@@ -811,7 +811,7 @@ surface_patch_index(const typename C3t3::Vertex_handle v,
                     const C3t3& c3t3)
 {
   typedef typename C3t3::Facet Facet;
-  std::vector<Facet> facets;
+  boost::container::small_vector<Facet, 64> facets;
   c3t3.triangulation().incident_facets(v, std::back_inserter(facets));
 
   for(const Facet& f : facets)
