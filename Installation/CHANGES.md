@@ -4,6 +4,13 @@
 
 Release date: December 2026
 
+### [2D Snap Rounding](https://doc.cgal.org/6.2/Manual/packages.html#PkgSnapRounding2) (major changes)
+- Added the function `vertical_slab_snap_rounding_2()`, a new snap rounding algorithm that offers better performance and supports a wider range of rounding schemes, including floating-point coordinate representations.
+- Added the traits classes `Double_grid_snap_rounding_traits_2`, `Float_grid_snap_rounding_traits_2`, and `Integer_grid_snap_rounding_traits_2`, enabling `vertical_slab_snap_rounding_2()`
+  to operate on double-precision floating-point, single-precision floating-point, and integer coordinates, respectively.
+- Added the function `hot_pixel_snap_rounding_2()`, a new API exposing the original hot-pixel snap rounding algorithm.
+- Deprecated the existing overload of `snap_rounding_2()`.
+- Added a new overload of `snap_rounding_2()` that automatically dispatch to either `vertical_slab_snap_rounding_2()` or `hot_pixel_snap_rounding_2()`, depending on the provided traits class.
 
 ## [Release 6.2](https://github.com/CGAL/cgal/releases/tag/v6.2)
 
