@@ -130,7 +130,7 @@ void DemoWindowItem::draw_triangles(std::vector < Anchor > anchors)
 
 void DemoWindowItem::draw_Dirichlet(Domain & domain)
 {
-  std::vector < Voronoi_point > vertices = CGAL::Dirichlet_vertices<Traits>(domain);
+  std::vector < Voronoi_point > vertices = CGAL::Dirichlet_vertices<Del_Traits>(domain);
   int n = vertices.size();
   for (int i = 0; i < n; ++i) {
     Point v0 = Point(CGAL::to_double(vertices[i].x()), CGAL::to_double(vertices[i].y()));

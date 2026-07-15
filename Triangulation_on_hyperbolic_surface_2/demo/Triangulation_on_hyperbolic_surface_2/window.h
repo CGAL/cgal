@@ -23,7 +23,7 @@
 // UI generated header
 #include "ui_drawing_window_description.h"
 
-#include <CGAL/Exact_rational.h>
+#include <CGAL/Gmpq.h>
 #include <CGAL/Simple_cartesian.h>
 
 #include <CGAL/Hyperbolic_Delaunay_triangulation_CK_traits_2.h>
@@ -36,11 +36,12 @@ typedef CGAL::Gmpq                                                              
 typedef CGAL::Circular_kernel_2<CGAL::Simple_cartesian<NumberType>,CGAL::Algebraic_kernel_for_circles_2_2<NumberType>> Kernel;
 typedef CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2<Kernel>               ParentTraits;
 typedef CGAL::Hyperbolic_surface_traits_2<ParentTraits>                           Traits;
-typedef Traits::Hyperbolic_point_2                                                Point;
-typedef typename Traits::Hyperbolic_Voronoi_point_2                               Voronoi_point;
-typedef CGAL::Hyperbolic_fundamental_domain_2<Traits>                             Domain;
-typedef CGAL::Triangulation_on_hyperbolic_surface_2<Traits>                       Triangulation;
-typedef CGAL::Delaunay_triangulation_on_hyperbolic_surface_2<Traits>              Delaunay_triangulation;
+using Del_Traits = CGAL::Hyperbolic_surface_Delaunay_traits_2<Traits>;
+typedef Del_Traits::Hyperbolic_point_2                                                Point;
+typedef typename Del_Traits::Hyperbolic_Voronoi_point_2                               Voronoi_point;
+typedef CGAL::Hyperbolic_fundamental_domain_2<Del_Traits>                             Domain;
+typedef CGAL::Triangulation_on_hyperbolic_surface_2<Del_Traits>                       Triangulation;
+typedef CGAL::Delaunay_triangulation_on_hyperbolic_surface_2<Del_Traits>              Delaunay_triangulation;
 typedef typename Delaunay_triangulation::Anchor                                   Anchor;
 
 class DemoWindowItem

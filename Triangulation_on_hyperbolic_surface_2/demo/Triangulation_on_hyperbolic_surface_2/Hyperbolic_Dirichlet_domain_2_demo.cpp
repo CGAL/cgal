@@ -13,9 +13,10 @@ typedef CGAL::Gmpq                                                              
 typedef CGAL::Circular_kernel_2<CGAL::Simple_cartesian<NumberType>,CGAL::Algebraic_kernel_for_circles_2_2<NumberType>> Kernel;
 typedef CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2<Kernel>                                             ParentTraits;
 typedef CGAL::Hyperbolic_surface_traits_2<ParentTraits>                                                         Traits;
+using Del_Traits = CGAL::Hyperbolic_surface_Delaunay_traits_2<Traits>;
 
-typedef CGAL::Hyperbolic_fundamental_domain_2<Traits>                                                           Domain;
-typedef CGAL::Hyperbolic_fundamental_domain_factory_2<Traits>                                                   Factory;
+typedef CGAL::Hyperbolic_fundamental_domain_2<Del_Traits>                                                           Domain;
+typedef CGAL::Hyperbolic_fundamental_domain_factory_2<Del_Traits>                                                   Factory;
 
 int main(int argc, char **argv)
 {

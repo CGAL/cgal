@@ -18,9 +18,10 @@ typedef Hyperbolic_Delaunay_triangulation_CK_traits_2<Kernel>     ParentTraits;
 // typedef Simple_cartesian<NumberType>                                Kernel;
 // typedef Hyperbolic_Delaunay_triangulation_traits_2<Kernel>              ParentTraits;
 typedef Hyperbolic_surface_traits_2<ParentTraits>                       Traits;
-typedef Hyperbolic_fundamental_domain_2<Traits>                         Domain;
-typedef Hyperbolic_fundamental_domain_factory_2<Traits>                 Factory;
-typedef Triangulation_on_hyperbolic_surface_2<Traits>                   Triangulation;
+using Del_Traits = CGAL::Hyperbolic_surface_Delaunay_traits_2<Traits>;
+typedef Hyperbolic_fundamental_domain_2<Del_Traits>                         Domain;
+typedef Hyperbolic_fundamental_domain_factory_2<Del_Traits>                 Factory;
+typedef Triangulation_on_hyperbolic_surface_2<Del_Traits>                   Triangulation;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

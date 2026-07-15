@@ -16,11 +16,13 @@ typedef Gmpq                                                      NumberType;
 typedef Circular_kernel_2<Simple_cartesian<NumberType>,Algebraic_kernel_for_circles_2_2<NumberType>> Kernel;
 typedef Hyperbolic_Delaunay_triangulation_CK_traits_2<Kernel>     ParentTraits;
 typedef Hyperbolic_surface_traits_2<ParentTraits>                 Traits;
+typedef Hyperbolic_surface_Delaunay_traits_2<Traits> Del_Traits;
 
-typedef Hyperbolic_fundamental_domain_2<Traits>                   Domain;
-typedef Hyperbolic_isometry_2<Traits>                             Isometry;
-typedef Hyperbolic_fundamental_domain_factory_2<Traits>           Factory;
-typedef Delaunay_triangulation_on_hyperbolic_surface_2<Traits>    Delaunay_triangulation;
+typedef Hyperbolic_isometry_2<Del_Traits>                             Isometry;
+
+typedef Hyperbolic_fundamental_domain_2<Del_Traits>                   Domain;
+typedef Hyperbolic_fundamental_domain_factory_2<Del_Traits>           Factory;
+typedef Delaunay_triangulation_on_hyperbolic_surface_2<Del_Traits>    Delaunay_triangulation;
 
 /*
   HOW TO USE THIS DEMO
@@ -57,11 +59,13 @@ int main(int argc, char *argv[])
   Factory factory;
   std::cout << "Generating surface with seed " << seed << "..." << std::endl;
   domain = factory.make_hyperbolic_fundamental_domain_g2(seed);
-  Delaunay_triangulation dt = Delaunay_triangulation(domain);
+  Del_Traits gt = Del_Traits();
+  Delaunay_triangulation dt = Delaunay_triangulation(gt,domain);
 
   if (argc > 3) {
     p = atoi(argv[3]);
   }
+  dt.set_circumcenter_approximation_precision(p);
 
   // 2. Get a vertex
   // So that if you run the demo on a same surface but with different values of epsilon,
@@ -75,7 +79,7 @@ int main(int argc, char *argv[])
   std::cout << "Computing a " << epsilon << "-net with floating-point precision " << p*53 << "..." << std::endl;
   Timer timer;
   timer.start();
-  std::cout << "Is epsilon-net? " << dt.epsilon_net(epsilon, p) << std::endl;
+  std::cout << "Is epsilon-net? " << dt.construct_epsilon_net(epsilon) << std::endl;
   timer.stop();
   std::cout << "Done in " << timer.time() << " seconds." << std::endl;
   dt.combinatorial_map().display_characteristics(std::cout) << std::endl;
