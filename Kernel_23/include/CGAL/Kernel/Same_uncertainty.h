@@ -42,6 +42,13 @@ struct Same_uncertainty < std::pair<T1,T1>, Uncertain<T2> >
   typedef std::pair<Uncertain<T1>,Uncertain<T1> > type;
 };
 
+template < typename T1, typename T2 , int N>
+struct Same_uncertainty < std::array<T1,N>, Uncertain<T2> >
+{
+  typedef std::array<Uncertain<T1>,N> type;
+};
+
+
 // Short cut to extract uncertainty from a number type directly.
 template < typename T1, typename NT >
 struct Same_uncertainty_nt

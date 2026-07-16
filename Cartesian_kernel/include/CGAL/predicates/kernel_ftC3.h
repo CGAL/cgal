@@ -18,6 +18,7 @@
 #ifndef CGAL_PREDICATES_KERNEL_FTC3_H
 #define CGAL_PREDICATES_KERNEL_FTC3_H
 
+#include <array>
 #include <CGAL/predicates/sign_of_determinant.h>
 #include <CGAL/predicates/kernel_ftC2.h>
 #include <CGAL/constructions/kernel_ftC3.h>
@@ -115,7 +116,7 @@ collinearC3(const FT &px, const FT &py, const FT &pz,
 
 template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
-typename Same_uncertainty_nt<std::pair<Orientation,Orientation>, FT>::type
+typename Same_uncertainty_nt<std::array<Orientation,2>, FT>::type
 orientationsC3(const FT &px, const FT &py, const FT &pz,
                const FT &qx, const FT &qy, const FT &qz,
                const FT &rx, const FT &ry, const FT &rz,

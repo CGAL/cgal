@@ -15,6 +15,7 @@
 
 #include <CGAL/enum.h>
 #include <CGAL/kernel_assertions.h>
+#include <array>
 
 namespace CGAL {
 namespace Intersections {
@@ -195,10 +196,10 @@ do_intersect(const typename K::Triangle_3& t,
   const Point_3& q = point_on(s,1);
 
 #if 1
-  std::pair<Orientation,Orientation> abcp_abcq = orientation(a,b,c,p,q);
+  std::array<Orientation,2> abcp_abcq = orientation(a,b,c,p,q);
 
-  const Orientation abcp = abcp_abcq.first;
-  const Orientation abcq = abcp_abcq.second;
+  const Orientation& abcp = abcp_abcq[0];
+  const Orientation& abcq = abcp_abcq[1];
   CGAL_assertion_code(const Orientation abcpbis = orientation(a,b,c,p);)
   CGAL_assertion_code(const Orientation abcqbis = orientation(a,b,c,q);)
   CGAL_assertion(abcpbis == abcp);

@@ -18,7 +18,7 @@
 #include <CGAL/Filtered_kernel/internal/Static_filters/Static_filter_error.h>
 #include <CGAL/Profile_counter.h>
 #include <cmath>
-#include <utility>
+#include <array>
 
 namespace CGAL { namespace internal { namespace Static_filters_predicates {
 
@@ -41,7 +41,7 @@ class Orientation_3
 public:
   using Base::operator();
 
-  std::pair<Orientation,Orientation>
+  std::array<Orientation,2>
   operator()(const Point_3 &p, const Point_3 &q,
              const Point_3 &r, const Point_3 &s, const Point_3 &t) const
   {
@@ -115,9 +115,9 @@ public:
           if (maxz < apsz) maxz = apsz;
           if (maxzt < aptz) maxzt = aptz;
 #endif
-          std::pair<double,double> det = CGAL::determinants(pqx, prx, psx, ptx,
-                                                            pqy, pry, psy, pty,
-                                                            pqz, prz, psz, ptz);
+          std::array<double,2> det = CGAL::determinants(pqx, prx, psx, ptx,
+                                                        pqy, pry, psy, pty,
+                                                        pqz, prz, psz, ptz);
 
           double epss = 5.1107127829973299e-15 * maxx * maxy * maxz;
           double epst = 5.1107127829973299e-15 * maxxt * maxyt * maxzt;
@@ -141,7 +141,7 @@ public:
           else if (maxy < maxx)
               std::swap(maxx, maxy);
 #endif
-          std::pair<Orientation,Orientation> res = std::make_pair(ZERO,ZERO);
+          std::array<Orientation,2> res = {ZERO,ZERO};
           bool first = false;
           bool second = false;
           // Protect against underflow in the computation of eps.
@@ -155,13 +155,13 @@ public:
           }
           // Protect against overflow in the computation of det.
           if ((!first) && (maxz < 1e102)) /* cbrt(max_double [hadamard]/4) */ {
-             if (det.first > epss)  { res.first = POSITIVE; first = true;}
-             else if (det.first < -epss) { res.first = NEGATIVE; first = true;}
+             if (det[0] > epss)  { res[0] = POSITIVE; first = true;}
+             else if (det[0] < -epss) { res[0] = NEGATIVE; first = true;}
           }
 
           if((! second) && (maxzt < 1e102)){
-            if (det.second > epst) { res.second = POSITIVE; second = true;}
-               else if (det.second < -epst) { res.second = NEGATIVE; second = true;}
+            if (det[1] > epst) { res[1] = POSITIVE; second = true;}
+               else if (det[1] < -epst) { res[1] = NEGATIVE; second = true;}
           }
           if(first && second){
             return res;
