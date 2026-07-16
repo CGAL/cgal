@@ -71,7 +71,7 @@ void two_trees_traversal(const ::CGAL::AABB_node<AABBTraits_A>& node_A,
     bool do_intersect_left  = traversal_traits.do_intersect(node_A.left_child(), node_B);
     bool do_intersect_right = traversal_traits.do_intersect(node_A.right_child(), node_B);
 #if CGAL_LINKED_WITH_TBB
-    if constexpr(std::is_same_v<ConcurrencyTag, Parallel_tag>)
+    if constexpr(ConcurrencyTag::is_parallel)
     {
       if(do_intersect_left && do_intersect_right && nb_primitives_A > cutoff_parallel_call && nb_primitives_B > cutoff_parallel_call)
       {
@@ -147,7 +147,7 @@ void two_trees_partial_traversal(const ::CGAL::AABB_node<AABBTraits_A>& node_A,
     bool do_intersect_left  = traversal_traits.do_intersect(node_A.left_child(), node_B);
     bool do_intersect_right = traversal_traits.do_intersect(node_A.right_child(), node_B);
 #if CGAL_LINKED_WITH_TBB
-    if constexpr(std::is_same_v<ConcurrencyTag, Parallel_tag>)
+    if constexpr(ConcurrencyTag::is_parallel)
     {
       if(do_intersect_left && do_intersect_right && nb_primitives_A > cutoff_parallel_call && nb_primitives_B > cutoff_parallel_call)
       {

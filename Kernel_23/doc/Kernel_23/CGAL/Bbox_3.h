@@ -88,26 +88,6 @@ double ymax() const;
 double zmax() const;
 
 /*!
-
-*/
-double x_span() const;
-
-/*!
-
-*/
-double y_span() const;
-
-/*!
-
-*/
-double z_span() const;
-
-/*!
-
-*/
-double squared_diagonal_length() const;
-
-/*!
 Returns `xmin()` if `i==0` or `ymin()` if `i==1`
 or `zmin()` if `i==2`.
 \pre `i>=0` and `i<=2`

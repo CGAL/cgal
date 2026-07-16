@@ -13,7 +13,7 @@
 
 using Epick = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Epeck = CGAL::Exact_predicates_exact_constructions_kernel;
-using Cartesian = CGAL::Simple_cartesian<double>;
+using SCD = CGAL::Simple_cartesian<double>;
 
 template<typename K>
 void test()
@@ -107,7 +107,7 @@ void test_parallel()
 int main(){
   test<Epick>();
   test<Epeck>();
-  test<Cartesian>();
+  test<SCD>();
 
   return 0;
 }

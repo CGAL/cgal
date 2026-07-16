@@ -41,7 +41,7 @@ public:
   }
   Wrap_output_iterator& operator*(){ return *this; }
   Wrap_output_iterator& operator++(){ ++out; return *this; }
-  Wrap_output_iterator& operator++(int){ /*auto tmp = *this;*/ ++out; return *this; }
+  Wrap_output_iterator  operator++(int){ auto tmp = *this; ++out; return tmp; }
   Wrap_output_iterator& operator+(int d){ out += d; return *this; }
 };
 

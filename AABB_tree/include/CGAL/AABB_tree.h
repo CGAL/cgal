@@ -165,7 +165,7 @@ namespace CGAL {
 #endif
     /// @private
     template<typename ConcurrencyTag=Sequential_tag>
-    void partial_build(const size_t cutoff = 200000);
+    void partial_build(const size_t cutoff);
 
     /// @private
     template <class ConcurrencyTag=Sequential_tag, class ComputeBbox, class SplitPrimitives>
@@ -691,15 +691,6 @@ public:
       return std::addressof(m_nodes[0]);
     }
 
-#ifndef CGAL_NO_DEPRECATED_CODE
-    //  Now unused by build() function
-    /// @private
-    CGAL_DEPRECATED Node& new_node()
-    {
-      m_nodes.emplace_back();
-      return m_nodes.back();
-    }
-#endif // CGAL_NO_DEPRECATED_CODE
   private:
     const Primitive& singleton_data() const {
       CGAL_assertion(size() == 1);
@@ -861,7 +852,7 @@ public:
       const std::size_t new_range = range/2;
       node.set_children(m_nodes[node_index+1], m_nodes[node_index+new_range]);
 #ifdef CGAL_LINKED_WITH_TBB
-      if constexpr(std::is_same_v<Parallel_tag, ConcurrencyTag>)
+      if constexpr(ConcurrencyTag::is_parallel)
       {
         if(range > cutoff_parallel_call){
           oneapi::tbb::task_group tg;
@@ -949,7 +940,7 @@ public:
     clear_search_tree();
     std::unique_ptr<Search_tree> p_search_tree = std::make_unique<Search_tree>(first, beyond);
     p_search_tree->template build<ConcurrencyTag>();
-    m_p_search_tree = std::move(p_search_tree);
+    m_p_search_tree = std::move(p_search_tree); // Move a Search_tree* to a const Search_tree*
 #ifdef CGAL_HAS_THREADS
       m_atomic_search_tree_constructed.store(true, std::memory_order_release); // in case build_kd_tree() is triggered by a call to best_hint()
 #else
@@ -1026,7 +1017,7 @@ public:
       const std::size_t new_range = range/2;
       node.set_children(m_nodes[node_index+1], m_nodes[node_index+new_range]);
 #ifdef CGAL_LINKED_WITH_TBB
-      if constexpr(std::is_same_v<Parallel_tag, ConcurrencyTag>)
+      if constexpr(ConcurrencyTag::is_parallel)
       {
         if(range > cutoff_parallel_call){
           oneapi::tbb::task_group tg;

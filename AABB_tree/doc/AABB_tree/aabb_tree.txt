@@ -23,10 +23,9 @@ triangles, or plane objects (planes, triangles) against sets of
 segments. An example of a distance query consists of finding the
 closest point from a point query to a set of triangles.
 
-This component solves the problem of finding all
-intersecting pairs of objects and achieves better perfomance than
-\ref chapterBoxIntersection "Intersecting Sequences of dD Iso-oriented Boxes"
-when using parallel execution.
+Similarly to the package \ref chapterBoxIntersection "Intersecting Sequences of dD Iso-oriented Boxes",
+this component might also be used for finding all intersecting pairs of objects,
+and can even achieves better performances when running on several threads.
 
 The AABB tree data structure takes as input an iterator range of
 geometric data, which is then converted into primitives. From these
@@ -118,8 +117,8 @@ To enumerate all intersecting pairs of primitives, use `CGAL::AABB_trees::all_pa
 These functions provide an alternative to `CGAL::box_intersection_d()`. In practice, `CGAL::AABB_trees::all_pairs_of_intersecting_primitives()` generally provides better performance,
 particularly when using a parallel execution tag (see \ref aabb_tree_perf).
 
-Moreover, if several calls to `CGAL::AABB_trees::all_pairs_of_intersecting_primitives()` are performed using the same trees, the trees need to be constructed only once.
-Consequently, the performance advantage over `CGAL::box_intersection_d()` becomes even greater.
+Note that compared to `CGAL::box_intersection_d()`, the tree of primitives is actually constructed. It becomes even more interesting in term of runtime
+if several calls to the aforementioned intersection functions are called with the same tree.
 
 \section aabb_tree_examples Examples
 
@@ -351,7 +350,7 @@ inside the bounding box.
 \subsection aabb_two_trees_perf Intersection of Two AABB Trees
 
 We test the intersection of two AABB trees using 3 models: iphigenia and the Nefertiti that are two common models of mesh processing and twisted knot to maximize the number of intersection. For each model,
-we test their intersection with a translated version of themselves (Note: We do not exploit the fact that it is the same model, the tree is built two times).
+we test their intersection with a translated version of themselves (Note: We do not exploit the fact that it is the same model, the tree is built twice).
 We compare here `CGAL::AABB_trees::all_pairs_of_intersecting_primitives()` and `CGAL::box_intersection_d()`.
 
 We exhibit the performance of the intersection of two AABB trees using three models: Iphigenia and Nefertiti \cgalFigureRef{figAABB-tree-bench}, which are widely used benchmark meshes in geometry processing, and a twisted knot \cgalFigureRef{figAABB-tree-bench}, chosen to maximize the number of intersections.

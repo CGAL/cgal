@@ -30,7 +30,7 @@ namespace CGAL{
 namespace AABB_trees {
   /// \ingroup PkgAABBTreeRef
   ///
-  /// \brief Tests whether two AABB trees contain intersecting primitives.
+  /// \brief tests if at least two primitives each from an AABB tree intersect.
   ///
   /// \cgalNamedParamsBegin
   ///   \cgalParamNBegin{concurrency_tag}
@@ -88,7 +88,7 @@ namespace AABB_trees {
 
   /// \ingroup PkgAABBTreeRef
   ///
-  /// \brief Computes all intersecting primitive pairs between two AABB trees.
+  /// \brief Computes all pairs of intersecting primitive from two AABB trees.
   ///
   /// Traverses both trees and outputs all pairs of primitives that intersect.
   /// Each output element is a pair `(id1, id2)` where:
@@ -97,7 +97,7 @@ namespace AABB_trees {
   ///
   /// \tparam AABBTree1        Type of the first AABB tree.
   /// \tparam AABBTree2        Type of the second AABB tree.
-  /// \tparam OutputIterator   Output iterator storing pairs of primitive IDs.
+  /// \tparam OutputIterator   Output iterator storing std::pair<AABBTree1::Primitive::Id, AABBTree2::Primitive::Id>.
   /// \tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters"
   /// \tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters"
   ///
@@ -163,7 +163,9 @@ namespace AABB_trees {
 
   /// \ingroup PkgAABBTreeRef
   ///
-  /// \brief Computes all self-intersecting primitive pairs in a single AABB tree.
+  /// \brief Computes all pairs of primitives from a single AABB tree that are intersecting.
+  ///
+  /// \note Whether two objects that share a common subfeature (e.g., two triangles sharing an edge) are considered to intersect depends on the primitive type used.
   ///
   /// Intersections of a primitive with itself are not reported, and each intersecting
   /// pair of distinct primitives is reported only once.
