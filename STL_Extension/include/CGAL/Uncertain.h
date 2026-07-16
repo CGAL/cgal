@@ -197,6 +197,15 @@ T get_certain(Uncertain<T> a)
 
 template < typename T >
 inline
+std::array<T,2>
+get_certain(std::array<Uncertain<T>, 2> a)
+{
+  CGAL_assertion(is_certain(a[0]) && is_certain(a[1]));
+  return make_array(a[0].inf(), a[1].inf());
+}
+
+template < typename T >
+inline
 Uncertain<T>
 Uncertain<T>::indeterminate()
 {
