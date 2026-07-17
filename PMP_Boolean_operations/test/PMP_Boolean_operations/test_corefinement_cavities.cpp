@@ -37,7 +37,6 @@ using Mesh = CGAL::Surface_mesh<Point_3>;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
-
 void test_operations(Mesh A, Mesh B,
                      bool reverse_A, bool reverse_B,
                      std::string round,
@@ -126,4 +125,18 @@ int main()
   test_operations(B, B, false, true,  "b01", 0, 0, 16, 16);
   test_operations(B, B, true,  false, "b10", 0, 0, 16, 16);
   test_operations(B, B, true,  true,  "b11", 16, 16, 0, 0);
+
+  // testing shared faces
+  {
+  Mesh A,B;
+  std::ifstream(CGAL::data_file_path("meshes/cube.off")) >> A;
+  std::ifstream("data-coref/house.off") >> B;
+  test_operations(A, B, false, false, "CH1", 9, 8, 0, 5);
+  }
+  {
+  Mesh A,B;
+  std::ifstream(CGAL::data_file_path("meshes/cube.off")) >> A;
+  std::ifstream("data-coref/hole_cube.off") >> B;
+  test_operations(A, B, false, false, "CH2", 14, 18, 8, 0);
+  }
 }
