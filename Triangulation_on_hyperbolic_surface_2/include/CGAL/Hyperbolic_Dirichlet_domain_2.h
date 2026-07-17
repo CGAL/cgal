@@ -129,7 +129,7 @@ std::ostream&
     for (std::size_t k = 0; k < n; ++k)
     {
         if (k > 0) s << "," << std::endl;
-        s << "[" << to_double(vertices[k].x()) << ", " << to_double(vertices[k].y()) << "]" ;
+        s << "[\"" << to_double(vertices[k].x()) << "\", \"" << to_double(vertices[k].y()) << "\"]" ;
     }
     s << "]\n";
 

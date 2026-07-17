@@ -1219,9 +1219,9 @@ to_json(std::ostream& s) const
             if (i > 0) s << ",\n";
 
             s << "        { "
-              << "\"x\": " << anch.vertices[i].x()
-              << ", \"y\": " << anch.vertices[i].y()
-              << " }";
+              << "\"x\": \"" << anch.vertices[i].x()
+              << "\", \"y\": \"" << anch.vertices[i].y()
+              << "\" }";
         }
 
         s << "\n      ]\n";

@@ -863,9 +863,9 @@ Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::
       auto t = lift[k];
       if (k > 0) s << "," << std::endl;
       s << "[";
-      s << "[" << std::get<1>(t).x() << ", " << std::get<1>(t).y() << "],\n";
-      s << "[" << std::get<2>(t).x() << ", " << std::get<2>(t).y() << "],\n";
-      s << "[" << std::get<3>(t).x() << ", " << std::get<3>(t).y() << "]\n";
+      s << "[\"" << std::get<1>(t).x() << "\", \"" << std::get<1>(t).y() << "\"],\n";
+      s << "[\"" << std::get<2>(t).x() << "\", \"" << std::get<2>(t).y() << "\"],\n";
+      s << "[\"" << std::get<3>(t).x() << "\", \"" << std::get<3>(t).y() << "\"]\n";
       s << "]" ;
     }
   s << "]\n";

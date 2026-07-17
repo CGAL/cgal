@@ -277,7 +277,7 @@ to_json(std::ostream& s) const
     for (std::size_t k = 0; k < n; ++k)
     {
         if (k > 0) s << "," << std::endl;
-        s << "[" << vertex(k).x() << ", " << vertex(k).y() << "]" ;
+        s << "[\"" << vertex(k).x() << "\", \"" << vertex(k).y() << "\"]" ;
     }
     s << "]\n";
 
