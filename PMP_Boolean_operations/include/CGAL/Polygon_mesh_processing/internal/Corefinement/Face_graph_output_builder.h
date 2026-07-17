@@ -859,7 +859,8 @@ public:
     const Nodes_vector& nodes,
     bool input_have_coplanar_faces,
     const boost::dynamic_bitset<>& is_node_of_degree_one,
-    const Mesh_to_map_node&)
+    const Mesh_to_map_node&,
+    const std::vector<std::pair<face_descriptor, face_descriptor>>& identical_patches)
   {
     const bool used_to_classify_patches =  requested_output[UNION]==std::nullopt &&
                                            requested_output[TM1_MINUS_TM2]==std::nullopt &&
@@ -1803,6 +1804,38 @@ public:
           if (inconsistent_classification()) return;
           debug_check_consistency();
         }
+    }
+
+    for (auto [f1, f2] : identical_patches)
+    {
+      std::size_t pid1 = tm1_patch_ids[ get(fids1, f1) ];
+      std::size_t pid2 = tm2_patch_ids[ get(fids2, f2) ];
+
+      CGAL_assertion(patch_status_not_set_tm1[pid1]==patch_status_not_set_tm2[pid2]);
+
+      if (patch_status_not_set_tm1[pid1])
+      {
+        // check if the faces have the same orientation
+        halfedge_descriptor h1=halfedge(f1, tm1), h2=halfedge(f2, tm2);
+        for (int i=0; i<3; ++i)
+        {
+          if (get(vpm1, target(h1, tm1)) == get(vpm2, target(h2, tm2)))
+            break;
+          h2=next(h2, tm2);
+        }
+        CGAL_assertion(get(vpm1, target(h1, tm1)) == get(vpm2, target(h2, tm2)));
+        if (get(vpm1, source(h1, tm1)) == get(vpm2, source(h2, tm2)))
+        {
+          // same orientation
+          CGAL_assertion(get(vpm1, target(next(h1, tm1), tm1)) == get(vpm2, target(next(h2, tm2), tm2)));
+          coplanar_patches_of_tm1_for_union_and_intersection.set(pid1);
+          coplanar_patches_of_tm2_for_union_and_intersection.set(pid2);
+        }
+        coplanar_patches_of_tm1.set(pid1);
+        coplanar_patches_of_tm2.set(pid2);
+        patch_status_not_set_tm1.reset(pid1);
+        patch_status_not_set_tm2.reset(pid2);
+      }
     }
 
     if (used_to_classify_patches)

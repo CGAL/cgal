@@ -99,7 +99,8 @@ struct Default_surface_intersection_visitor{
   template<class T,class VPM1,class VPM2>
   void finalize(T&,
                 const TriangleMesh&, const TriangleMesh&,
-                const VPM1, const VPM2)
+                const VPM1, const VPM2,
+                const std::vector<std::pair<face_descriptor, face_descriptor>>&)
   {}
   void new_node_added_triple_face(std::size_t /* node_id */,
                                   face_descriptor /* f1 */,
@@ -1744,7 +1745,7 @@ public:
 
     if (!do_overlap(tm1_bb, tm2_bb))
     {
-      visitor.finalize(nodes,tm1,tm2,vpm1,vpm2);
+      visitor.finalize(nodes,tm1,tm2,vpm1,vpm2,{});
       return output;
     }
 
@@ -1759,6 +1760,8 @@ public:
     // preprocessing to detect identical faces/edges and
     // ignore them in the intersection tests
     std::vector<vertex_descriptor> tm1_verts, tm2_verts;
+    tm1_verts.reserve(num_vertices(tm1));
+    tm2_verts.reserve(num_vertices(tm2));
     for (vertex_descriptor v : vertices(tm1))
     {
       const auto& p = get(vpm1, v);
@@ -1787,7 +1790,6 @@ public:
               [&vpm2](vertex_descriptor v1, vertex_descriptor v2)
               { return get(vpm2, v1) < get(vpm2, v2);});
 
-    // TODO: can we get rid of is_vshared_map1 and is_vshared_map2 when done?
     static constexpr std::size_t NOT_SHARED = std::size_t(-1);
     auto is_vshared_map1 = get(CGAL::dynamic_vertex_property_t<std::size_t>(), tm1, NOT_SHARED);
     auto is_vshared_map2 = get(CGAL::dynamic_vertex_property_t<std::size_t>(), tm2, NOT_SHARED);
@@ -1812,87 +1814,119 @@ public:
       }
     }
 
+    std::vector<std::pair<face_descriptor, face_descriptor>> identical_patches;
     if (common_vertices.size()>=4) // one triangle is useless
     {
       auto is_fshared_map1 = get(CGAL::dynamic_face_property_t<bool>(), tm1, false);
       auto is_fshared_map2 = get(CGAL::dynamic_face_property_t<bool>(), tm2, false);
       auto is_eshared_map1 = get(CGAL::dynamic_edge_property_t<bool>(), tm1, false);
       auto is_eshared_map2 = get(CGAL::dynamic_edge_property_t<bool>(), tm2, false);
+      bool identical_meshes = tm1_bb==tm2_bb && tm1_verts.size()==tm2_verts.size() && tm1_verts.size()==common_vertices.size();
 
-      auto array_less = [](const std::array<std::size_t,3>& a1,
-                           const std::array<std::size_t,3>& a2)
-      {
-        if (a1[0]!=a2[0]) return a1[0] < a2[0];
-        return a1[1] < a2[1];
-      };
-
-
+      // detect and make identical faces in tm1 and tm2
+      std::size_t k0=0;
       for (const std::pair<vertex_descriptor, vertex_descriptor>& vp : common_vertices)
       {
-        std::vector<face_descriptor> tm1_faces;
-        std::vector<std::array<std::size_t,3>> face_set; // [2] = id of face in tm1_faces
-
-        for (halfedge_descriptor h : halfedges_around_target(vp.first, tm1))
+        for (halfedge_descriptor h1 : halfedges_around_target(vp.first, tm1))
         {
-          face_descriptor f1 = face(h, tm1);
+          face_descriptor f1 = face(h1, tm1);
           if (f1 == graph_traits::null_face()) continue;
-          std::size_t k1 = get(is_vshared_map1, source(h,tm1));
-          h = next(h, tm1);
-          std::size_t k2 = get(is_vshared_map1, target(h,tm1));
-          if (k1!=NOT_SHARED && k2!=NOT_SHARED)
-          {
-            if (k2<k1) std::swap(k1,k2);
-            face_set.push_back(CGAL::make_array(k1,k2,tm1_faces.size()));
-            tm1_faces.push_back(f1);
-          }
-        }
-        if (face_set.empty()) continue;
-        std::sort(face_set.begin(), face_set.end(), array_less);
+          std::size_t k1 = get(is_vshared_map1, source(h1,tm1));
+          if (k1 == NOT_SHARED) continue;
+          h1 = next(h1, tm1);
+          std::size_t k2 = get(is_vshared_map1, target(h1,tm1));
+          if (k2 == NOT_SHARED) continue;
+          if (k0>k1 || k0>k2) continue; // report faces only once
 
-        for (halfedge_descriptor h : halfedges_around_target(vp.second, tm2))
-        {
-          face_descriptor f2 = face(h, tm2);
-          if (f2 == graph_traits::null_face()) continue;
-          std::size_t k1 = get(is_vshared_map2, source(h,tm2));
-          h = next(h, tm2);
-          std::size_t k2 = get(is_vshared_map2, target(h,tm2));
-          if (k1!=NOT_SHARED && k2!=NOT_SHARED)
+          //looking for (k0,k1,k2) in tm2
+          vertex_descriptor v0=common_vertices[k0].second,
+                            v1=common_vertices[k1].second,
+                            v2=common_vertices[k2].second;
+          auto [h2, found] = halfedge(v0,v1,tm2);
+          if (found)
           {
-            if (k2<k1) std::swap(k1,k2);
-
-            auto it = std::lower_bound(face_set.begin(), face_set.end(), CGAL::make_array(k1,k2,NOT_SHARED), array_less);
-            if ( (it != face_set.end()) && (*it)[0]==k1 && (*it)[1]==k2 )
+            if (target(next(h2, tm2), tm2)!=v2)
             {
-              visitor.input_have_coplanar_faces();
-              put(is_fshared_map1, tm1_faces[(*it)[2]], true);
-              put(is_fshared_map2, f2, true);
+              h2=opposite(h2,tm2);
+              if (target(next(h2, tm2), tm2)!=v2)
+              {
+                identical_meshes=false;
+                continue;
+              }
+            }
+            face_descriptor f2 = face(h2,tm2);
+            if (f2 == graph_traits::null_face())
+            {
+              identical_meshes=false;
+              continue;
+            }
 
-              halfedge_descriptor h=halfedge(tm1_faces[(*it)[2]], tm1);
-              for (int i=0;i<3;++i)
-              {
-                put(is_eshared_map1, edge(h, tm1), true);
-                h=next(h,tm1);
-              }
-              h=halfedge(f2, tm2);
-              for (int i=0;i<3;++i)
-              {
-                put(is_eshared_map2, edge(h, tm2), true);
-                h=next(h,tm2);
-              }
+            identical_patches.emplace_back(f1,f2);
+            visitor.input_have_coplanar_faces();
+            put(is_fshared_map1, f1, true);
+            put(is_fshared_map2, f2, true);
+
+            for (int i=0;i<3;++i)
+            {
+              put(is_eshared_map1, edge(h1, tm1), true);
+              h1=next(h1,tm1);
+            }
+            for (int i=0;i<3;++i)
+            {
+              put(is_eshared_map2, edge(h2, tm2), true);
+              h2=next(h2,tm2);
+            }
+          }
+          else
+            identical_meshes=false;
+        }
+        ++k0;
+      }
+
+      // TODO: we should also be able to fill coplanar_patches_of_tm[1/2] as we might exclude entirely some components
+      if (!identical_meshes)
+      {
+        visitor.start_filtering_intersections();
+        filter_intersections(tm1, tm2, vpm1, vpm2, non_manifold_feature_map_2, throw_on_self_intersection, tm1_faces, tm2_faces, bb12,
+                             is_fshared_map1, is_eshared_map2, false);
+        filter_intersections(tm2, tm1, vpm2, vpm1, non_manifold_feature_map_1, throw_on_self_intersection, tm2_faces, tm1_faces, bb12,
+                             is_fshared_map2, is_eshared_map1, true);
+        visitor.end_filtering_intersections();
+
+        // dumping shared edges in output
+        if constexpr (!std::is_same_v<OutputIterator, Emptyset_iterator>)
+        {
+          typedef typename boost::property_traits<VertexPointMap1>::value_type Point_3;
+          for (edge_descriptor e : edges(tm1))
+          {
+            if (get(is_eshared_map1, e))
+            {
+              std::vector<Point_3> polyline;
+              polyline.push_back(get(vpm1, source(e,tm1)));
+              polyline.push_back(get(vpm1, target(e,tm1)));
+              *output++=polyline;
             }
           }
         }
       }
+      else
+      {
+        if constexpr (!std::is_same_v<OutputIterator, Emptyset_iterator>)
+        {
+          typedef typename boost::property_traits<VertexPointMap1>::value_type Point_3;
+          for (edge_descriptor e : edges(tm1))
+          {
 
-      // TODO: we should also be able to fill coplanar_patches_of_tm[1/2] as we might exclude entirely some components
-      // TODO: is_eshared_map1 and is_eshared_map2 should be also put in ecm
+            std::vector<Point_3> polyline;
+            polyline.push_back(get(vpm1, source(e,tm1)));
+            polyline.push_back(get(vpm1, target(e,tm1)));
+            *output++=polyline;
+          }
+        }
+        visitor.finalize(nodes,tm1,tm2,vpm1,vpm2, identical_patches);
 
-      visitor.start_filtering_intersections();
-      filter_intersections(tm1, tm2, vpm1, vpm2, non_manifold_feature_map_2, throw_on_self_intersection, tm1_faces, tm2_faces, bb12,
-                           is_fshared_map1, is_eshared_map2, false);
-      filter_intersections(tm2, tm1, vpm2, vpm1, non_manifold_feature_map_1, throw_on_self_intersection, tm2_faces, tm1_faces, bb12,
-                           is_fshared_map2, is_eshared_map1, true);
-      visitor.end_filtering_intersections();
+        return output;
+      }
     }
     else
     {
@@ -1936,7 +1970,7 @@ public:
     visitor.check_no_duplicates(nodes);
 
     if (!build_polylines){
-      visitor.finalize(nodes,tm1,tm2,vpm1,vpm2);
+      visitor.finalize(nodes,tm1,tm2,vpm1,vpm2, identical_patches);
       return output;
     }
     //remove duplicated intersecting edges:
@@ -1959,7 +1993,7 @@ public:
       construct_polylines_with_info(nodes,out); //direct construction by propagation
 #endif
 
-    visitor.finalize(nodes,tm1,tm2,vpm1,vpm2);
+    visitor.finalize(nodes,tm1,tm2,vpm1,vpm2, identical_patches);
 
     return output;
   }
@@ -1991,7 +2025,7 @@ public:
     compute_intersection_points(stm_edge_to_ltm_faces, tm, tm, vpm, vpm, non_manifold_feature_map_1, non_manifold_feature_map_1, current_node);
 
     if (!build_polylines){
-      visitor.finalize(nodes,tm,tm,vpm,vpm);
+      visitor.finalize(nodes,tm,tm,vpm,vpm,{});
       return output;
     }
     //remove duplicated intersecting edges:
@@ -2021,7 +2055,7 @@ public:
       construct_polylines_with_info(nodes,out); //direct construction by propagation
 #endif
 
-    visitor.finalize(nodes,tm,tm,vpm,vpm);
+    visitor.finalize(nodes,tm,tm,vpm,vpm,{});
 
     return output;
   }
