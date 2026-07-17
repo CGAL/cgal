@@ -1228,8 +1228,9 @@ to_json(std::ostream& s) const
         s << "    }";
     }
 
-    s << "\n  ],\n";
+    s << "\n  ]\n";
 
+    /*
     // Edges
     s << "  \"edges\": [\n";
 
@@ -1253,7 +1254,9 @@ to_json(std::ostream& s) const
     }
 
     s << "\n  ]\n";
+    */
     s << "}";
+
 
     return s;
 }
