@@ -64,7 +64,7 @@ public:
     Point_2 src;
     Point_2 trg;
     mutable boost::container::small_vector< std::size_t, 1> polyline_indices; // Indices of all overlapping polylines on the segment
-                                                                              // Made mutable to be fullfill by a set
+                                                                              // Made mutable to be fulfilled by a set
   };
   using X_monotone_curve_2 = Segment_2;
   using Curve_2 = X_monotone_curve_2;
