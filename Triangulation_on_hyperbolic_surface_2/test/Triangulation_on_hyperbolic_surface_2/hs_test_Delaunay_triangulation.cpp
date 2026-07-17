@@ -13,12 +13,14 @@
 using namespace CGAL;
 
 
-typedef Simple_cartesian<CGAL::Exact_rational>                      Kernel;
+//typedef Simple_cartesian<Exact_rational>                      Kernel;
+typedef Simple_cartesian<Gmpq>                      Kernel;
 typedef Hyperbolic_Delaunay_triangulation_traits_2<Kernel>          ParentTraits;
 
 typedef Hyperbolic_surface_traits_2<ParentTraits>                   Traits;
-typedef Hyperbolic_fundamental_domain_2<Traits>                     Domain;
-typedef Delaunay_triangulation_on_hyperbolic_surface_2<Traits>      Delaunay_triangulation;
+using Del_Traits = CGAL::Hyperbolic_surface_Delaunay_traits_2<Traits>;
+typedef Hyperbolic_fundamental_domain_2<Del_Traits>                     Domain;
+typedef Delaunay_triangulation_on_hyperbolic_surface_2<Del_Traits>      Delaunay_triangulation;
 typedef typename Delaunay_triangulation::Anchor                     Anchor;
 typedef typename Delaunay_triangulation::CMap                       CMap;
 
@@ -55,7 +57,8 @@ Domain build_domain()
 int main()
 {
     Domain domain = build_domain();
-    Delaunay_triangulation dt = Delaunay_triangulation(domain);
+    Del_Traits gt = Del_Traits();
+    Delaunay_triangulation dt = Delaunay_triangulation(gt,domain);
 
     assert(dt.is_valid());
 
@@ -78,9 +81,6 @@ int main()
     }
 
     assert(same_vertices);
-
-    assert(dt.shortest_loop_edge() != 0);
-    assert(dt.shortest_non_loop_edge() == 0);
 
     return 0;
 }

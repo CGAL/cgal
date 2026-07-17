@@ -46,11 +46,11 @@
 
 \cgalCRPSection{Classes}
 
-- `CGAL::Triangulation_on_hyperbolic_surface_2` represents a triangulation of a closed orientable hyperbolic surface. It offers functions for the generation of the triangulation from a convex fundamental domain, the Delaunay flip algorithm and the construction of a portion of the lift of the triangulation in the Poincaré disk.
+- `CGAL::Triangulation_on_hyperbolic_surface_2` represents a triangulation of a hyperbolic surface. It offers functions for the generation of the triangulation from a convex fundamental domain, the Delaunay flip algorithm and the construction of a portion of the lift of the triangulation in the Poincaré disk.
 
-- `CGAL::Delaunay_triangulation_on_hyperbolic_surface_2` represents a Delaunay triangulation of a closed orientable hyperbolic surface. It offers functions for the generation of the Delaunay triangulation from a convex fundamental domain, the insertion of a point in the Delaunay triangulation, two point location algorithms and the \f$ \varepsilon \f$-net algorithm.
+- `CGAL::Delaunay_triangulation_on_hyperbolic_surface_2` represents a Delaunay triangulation of a hyperbolic surface. It offers functions for the generation of the Delaunay triangulation from a convex fundamental domain, the insertion of a point in the Delaunay triangulation, two point location algorithms and the \f$ \varepsilon \f$-net algorithm.
 
-- `CGAL::Hyperbolic_fundamental_domain_2` represents a fundamental domain of a closed orientable hyperbolic surface.
+- `CGAL::Hyperbolic_fundamental_domain_2` represents a fundamental domain of a hyperbolic surface.
 
 - `CGAL::Hyperbolic_fundamental_domain_factory_2` is a factory class, whose purpose is to generate some convex domains of surfaces of genus two.
 
@@ -64,6 +64,6 @@ Models for `HyperbolicSurfaceTraits_2` and `ComplexNumber` are provided: `CGAL::
 
 \cgalCRPSection{Dirichlet Domain Function}
 
-- `CGAL::Dirichlet_vertices` computes the vertices of a Dirichlet domain from a fundamental domain whose vertices represent a same point on the corresponding hyperbolic surface.
+- `CGAL::Dirichlet_vertices` computes the vertices of a Dirichlet domain from a fundamental domain whose vertices represent a single point on the corresponding hyperbolic surface.
 
 */

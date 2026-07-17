@@ -200,12 +200,25 @@ public:
 
     Tries to compute an `epsilon`-net of the surface.
 
-    When `Number` is `CGAL::Gmpq`, the algorithm rounds the coordinates of circumcenters to `CGAL::Gmpfr` with precision `p*53`.
-    When `Number` is <em>not</em> `CGAL::Gmpq`, `p` is ignored.
+    When `Number` is `CGAL::Gmpq` and Kernel is `CGAL::Simple_cartesian<Number>` or `CGAL::Cartesian<Number>`,
+    the traits class
+    CGAL::Hyperbolic_surface_Delaunay_traits_2<
+    CGAL::Hyperbolic_surface_traits_2<
+    CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2<
+    CGAL::Circular_kernel_2<Kernel,CGAL::Algebraic_kernel_for_circles_2_2<Number>>
+    >>>
+    enables to choose the approximation precision via the
+    function `set_precision()`.
+
+    If another number type is used, the approximation uses the function
+    CGAL::to_double() and there are no general guarantees whatsoever.
+
+    Note that a Delaunay triangulation with a single vertex is always an
+    espsilon-packing for any non-negative epsilon.
 
     \pre <code>is_epsilon_packing(epsilon)</code> and <code>p > 0</code>
   */
-  bool epsilon_net(double const epsilon, unsigned const p = 1);
+  bool construct_epsilon_net(double const epsilon);
   /*!
     \return a Boolean that indicates whether the vertices of the Delaunay triangulation form a certified `epsilon`-covering of the surface.
   */
@@ -218,6 +231,18 @@ public:
     \return a Boolean that indicates whether the vertices of the Delaunay triangulation form a certified `epsilon`-net of the surface.
   */
   bool is_epsilon_net(const double epsilon) const;
+  /*!  Sets `p` such that the precision of the `CGAL::Gmpfr` numbers
+    involved in the computations of the function
+    `HyperbolicSurfaceDelaunayTraitsClass::Construct_approximate_hyperbolic_circumcenter_2`
+    is `p`x 53, where 53 is the precision of a double.
+  */
+  void approximation_precision(unsigned p) {approx_precision = p;}
+  /*!  \return `p` such that the precision of the `CGAL::Gmpfr` numbers
+    involved in the computations of the function
+    `HyperbolicSurfaceDelaunayTraitsClass::Construct_approximate_hyperbolic_circumcenter_2`
+    is `p`x 53, where 53 is the precision of a double.
+  */
+  unsigned approximation_precision() {return approx_precision;}
   /// @}
 
   /// \name Other functions
@@ -226,10 +251,10 @@ public:
     \return a `double` approximation of the length of the shortest geodesic loop edge in the Delaunay triangulation. Returns 0 (NULL) if there is no loop edge.
   */
   double shortest_loop_edge() const;
-  /*!
-    \return a `double` approximation of the length of the shortest non-loop edge in the Delaunay triangulation. Returns 0 (NULL) if all edges are loops.
+  /*!  \return returns the optimal packing value up to double precision. Returns
+    0 (NULL) if all edges are loops.
   */
-  double shortest_non_loop_edge() const;
+  double packing_value() const;
   /// @}
 }
 

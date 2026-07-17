@@ -4,6 +4,7 @@
 #include <CGAL/Hyperbolic_Delaunay_triangulation_CK_traits_2.h>
 #include <CGAL/Hyperbolic_surface_traits_2.h>
 
+#include <CGAL/Hyperbolic_surface_Delaunay_traits_2.h>
 #include <CGAL/Delaunay_triangulation_on_hyperbolic_surface_2.h>
 
 using namespace CGAL;
@@ -12,8 +13,9 @@ typedef Gmpq                                                        NumberType;
 typedef Circular_kernel_2<Simple_cartesian<NumberType>, Algebraic_kernel_for_circles_2_2<NumberType>> Kernel;
 typedef Hyperbolic_Delaunay_triangulation_CK_traits_2<Kernel>       ParentTraits;
 typedef Hyperbolic_surface_traits_2<ParentTraits>                   Traits;
-typedef Hyperbolic_fundamental_domain_2<Traits>                     Domain;
-typedef Delaunay_triangulation_on_hyperbolic_surface_2<Traits>      Delaunay_triangulation;
+using Del_Traits = Hyperbolic_surface_Delaunay_traits_2<Traits>;
+typedef Hyperbolic_fundamental_domain_2<Del_Traits>                     Domain;
+typedef Delaunay_triangulation_on_hyperbolic_surface_2<Del_Traits>      Delaunay_triangulation;
 
 typedef typename Traits::FT                                         FT;
 typedef typename Traits::Hyperbolic_point_2                         Point;
@@ -52,15 +54,15 @@ Domain build_domain()
 int main(int argc, char *argv[])
 {
     Domain domain = build_domain();
-    Delaunay_triangulation dt = Delaunay_triangulation(domain);
+    Del_Traits gt = Del_Traits();
+    Delaunay_triangulation dt = Delaunay_triangulation(gt,domain);
 
     assert(dt.is_valid());
 
-    bool is_eps_net = dt.epsilon_net(epsilon, p);
+    bool is_eps_net = dt.construct_epsilon_net(epsilon);
 
     assert(is_eps_net);
     assert(dt.is_valid());
-    assert(dt.shortest_non_loop_edge() != 0);
 
     return 0;
 }

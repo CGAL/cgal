@@ -44,7 +44,7 @@ namespace internal {
     typedef typename Traits::Circular_arc_point_2           Circular_arc_point_2;
 
   public:
-    Construct_hyperbolic_circumcenter_CK_2(const Traits gt = Traits()): _gt(gt) {}
+  Construct_hyperbolic_circumcenter_CK_2(const Traits gt = Traits()): _gt(gt) {}
 
     Hyperbolic_Voronoi_point_2 operator()(const Hyperbolic_point_2& p,
                                           const Hyperbolic_point_2& q,
@@ -126,7 +126,7 @@ namespace internal {
     }
 
   private:
-    const Traits& _gt;
+    Traits _gt;
   }; // end Construct_hyperbolic_circumcenter_2
 
 
@@ -300,7 +300,7 @@ namespace internal {
     }
 
   private:
-    const Traits& _gt;
+    Traits _gt;
   }; // end Construct_hyperbolic_bisector_2
 
 

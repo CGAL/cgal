@@ -95,7 +95,7 @@ public:
 
   Triangulation_on_hyperbolic_surface_2() {};
   Triangulation_on_hyperbolic_surface_2(const Hyperbolic_fundamental_domain_2<Traits>& domain);
-// Triangulation_on_hyperbolic_surface_2(Combinatorial_map_with_cross_ratios& cmap);
+  // Triangulation_on_hyperbolic_surface_2(Combinatorial_map_with_cross_ratios& cmap);
   Triangulation_on_hyperbolic_surface_2(Combinatorial_map_with_cross_ratios& cmap, Anchor& anchor);
 
   Combinatorial_map_with_cross_ratios& combinatorial_map();
@@ -112,7 +112,7 @@ public:
   int make_Delaunay();
   std::vector<std::tuple<Dart_const_descriptor, Point, Point, Point> > lift(Anchor const & anchor, bool center=true) const;
   std::vector<std::tuple<Dart_const_descriptor, Point, Point, Point> > lift(bool center=true) const;
-
+  std::ostream& lift_to_json(std::ostream& s, std::vector< std::tuple< Dart_const_descriptor, Point, Point, Point > >lift) const;
   bool is_valid() const;
 
   // The following methods are not documented but they are non private for internal future use.
@@ -124,7 +124,6 @@ public:
   Dart_const_descriptor const_opposite(Dart_const_descriptor dart) const;
 
   Complex_number get_cross_ratio(Dart_const_descriptor dart) const;
-
   // returns the cross ratio of the points a,b,c,d
   Complex_number cross_ratio(const Point& a, const Point& b, const Point& c, const Point& d) const;
   // returns the point d such that the cross ratio of a,b,c,d is cratio
@@ -161,9 +160,6 @@ protected:
   void copy_from(Combinatorial_map_with_cross_ratios& cmap);
   void copy_from(Combinatorial_map_with_cross_ratios& cmap, const Anchor& anchor);
 };
-
-// template<class Traits, class Attributes> std::ostream& operator<<(std::ostream& s, const Triangulation_on_hyperbolic_surface_2<Traits, Attributes>& triangulation);
-// template<class Traits, class Attributes> void operator>>(std::istream& s, Triangulation_on_hyperbolic_surface_2<Traits, Attributes>& triangulation);
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -845,6 +841,37 @@ fourth_point_from_cross_ratio(const Point& a, const Point& b, const Point& c,
   Complex_number zc (c.x(), c.y());
   Complex_number result = ( cratio*za*(zc-zb) + zb*(za-zc) ) / ( cratio*(zc-zb) + (za-zc));
   return Point(result.real(), result.imag());
+}
+
+//////////////////////////////////////////////////////
+//       TO JSON OUTPUT
+//////////////////////////////////////////////////////
+template<class Traits, class Attributes>
+std::ostream&
+Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::
+  lift_to_json(std::ostream& s, std::vector< std::tuple< Dart_const_descriptor, Point, Point, Point > >lift) const
+{
+  const std::size_t n = lift.size();
+
+  s << "{\n";
+  s << "  \"type\": " << "lifted_triangulation" << ",\n";
+  s << "  \"size\": " << n << ",\n";
+
+  s << "  \"triangles\": [";
+  for (std::size_t k = 0; k < n; ++k)
+    {
+      auto t = lift[k];
+      if (k > 0) s << "," << std::endl;
+      s << "[";
+      s << "[" << std::get<1>(t).x() << ", " << std::get<1>(t).y() << "],\n";
+      s << "[" << std::get<2>(t).x() << ", " << std::get<2>(t).y() << "],\n";
+      s << "[" << std::get<3>(t).x() << ", " << std::get<3>(t).y() << "]\n";
+      s << "]" ;
+    }
+  s << "]\n";
+
+  s << "}";
+  return s;
 }
 
 } // namespace CGAL

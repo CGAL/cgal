@@ -20,7 +20,7 @@
 namespace CGAL {
 
 // Input: triangulation with a single vertex v
-// Output: lift of this triangulation with one lift of v mapped to the origin of the Poincaré disk and all its incident triangles arout it.
+// Output: lift of this triangulation with one lift of v mapped to the origin of the Poincaré disk and all its incident triangles around it.
 template<class Traits>
 std::vector<std::tuple<typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Dart_const_descriptor, typename Traits::Point_2, typename Traits::Point_2, typename Traits::Point_2>>
 unfold(Delaunay_triangulation_on_hyperbolic_surface_2<Traits> & triangulation)
@@ -93,18 +93,49 @@ std::vector<typename Traits::Hyperbolic_Voronoi_point_2> Dirichlet_vertices(Hype
     typedef Delaunay_triangulation_on_hyperbolic_surface_2<Traits>      Delaunay_Triangulation;
     typedef typename Delaunay_Triangulation::Dart_const_descriptor      Dart_const_descriptor;
 
-    Delaunay_Triangulation triangulation = Delaunay_Triangulation(domain);
+    Traits gt;
+    Delaunay_Triangulation triangulation = Delaunay_Triangulation(gt,domain);
 
     std::vector<std::tuple<Dart_const_descriptor,Point,Point,Point>> realized_triangles = unfold<Traits>(triangulation);
     std::vector<Voronoi_point> dirichlet_vertices;
     dirichlet_vertices.reserve(realized_triangles.size());
-    Traits gt;
     typename Traits::Construct_hyperbolic_circumcenter_2 chc = gt.construct_hyperbolic_circumcenter_2_object();
     for (std::tuple<Dart_const_descriptor, Point, Point, Point>& triangle : realized_triangles){
         Voronoi_point circumcenter = chc(std::get<1>(triangle), std::get<2>(triangle), std::get<3>(triangle));
         dirichlet_vertices.push_back(circumcenter);
     }
     return dirichlet_vertices;
+}
+
+//////////////////////////////////////////////////////
+//       TO JSON OUTPUT
+//////////////////////////////////////////////////////
+template<class Traits>
+std::ostream&
+  Dirichlet_to_json(Hyperbolic_fundamental_domain_2<Traits> & domain, std::ostream& s)
+{
+    typedef typename Traits::Point_2                                    Point;
+    typedef typename Traits::Hyperbolic_Voronoi_point_2                 Voronoi_point;
+
+    std::vector<Voronoi_point> vertices = Dirichlet_vertices(domain);
+
+    const std::size_t n = vertices.size();
+
+    s << "{\n";
+    s << "  \"type\": " << "Dirichlet" << ",\n";
+    s << "  \"size\": " << n << ",\n";
+
+    s << "  \"vertices\": [";
+    for (std::size_t k = 0; k < n; ++k)
+    {
+        if (k > 0) s << "," << std::endl;
+        s << "[" << to_double(vertices[k].x()) << ", " << to_double(vertices[k].y()) << "]" ;
+    }
+    s << "]\n";
+
+    s << "}";
+
+    return s;
 }
 
 } // namespace CGAL

@@ -4,7 +4,7 @@ namespace CGAL {
 
   \return a vector with the vertices of a Dirichlet domain whose base point is translated to the origin of the Poincaré disk.
 
-  @param domain must be a fundamental domain whose vertices represent a same
+  @param domain must be a fundamental domain whose vertices represent a single
   point on the corresponding hyperbolic surface.
 
   \tparam Traits must be a model of `HyperbolicSurfaceTraits_2`.
