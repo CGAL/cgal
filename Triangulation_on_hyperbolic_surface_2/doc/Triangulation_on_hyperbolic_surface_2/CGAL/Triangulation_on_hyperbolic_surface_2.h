@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
   \ingroup PkgHyperbolicSurfaceTriangulation2MainClasses
 
-  This item defines attributes of edges that are of type `Complex_number` reprensenting cross-ratios.
+  This item defines attributes of edges that are of type `Complex_number` representing cross-ratios.
 
   \tparam Traits must be a model of `HyperbolicSurfaceTraits_2`.
 
@@ -208,7 +208,7 @@ Vertex_range vertices_range();
   bool is_Delaunay() const;
 
   /*!
-    applies the Delaunay flip algorithm: flips Delaunay-flippable edges until there is no such edge anymore.
+    applies the Delaunay flip algorithm: flips Delaunay-flippable edges until there is no such edge anymore. Returns the number of flips performed by the algorithm.
     \pre <code> is_valid() </code>
   */
   int make_Delaunay();

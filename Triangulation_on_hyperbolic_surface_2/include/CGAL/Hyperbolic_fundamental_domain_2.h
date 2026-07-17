@@ -262,7 +262,7 @@ to_json(std::ostream& s) const
     const std::size_t n = size();
 
     s << "{\n";
-    s << "  \"type\": " << "domain" << ",\n";
+    s << "  \"type\": " << "\"domain\"" << ",\n";
     s << "  \"size\": " << n << ",\n";
 
     s << "  \"paired_side\": [";

@@ -854,7 +854,7 @@ Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::
   const std::size_t n = lift.size();
 
   s << "{\n";
-  s << "  \"type\": " << "lifted_triangulation" << ",\n";
+  s << "  \"type\": " << "\"lifted_triangulation\"" << ",\n";
   s << "  \"size\": " << n << ",\n";
 
   s << "  \"triangles\": [";

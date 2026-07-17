@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
   \ingroup PkgHyperbolicSurfaceTriangulation2InputOutput
 
-  inserts the triangulation in a stream.
+  inserts the triangulation s.
 
   The format of the output is the following.
   Each dart of the triangulation is given an index between \f$ 0 \f$ and \f$ n-1 \f$, where \f$ n \f$
@@ -32,7 +32,7 @@ std::istream& operator>>(std::istream& s, Triangulation_on_hyperbolic_surface_2<
 /*!
   \ingroup PkgHyperbolicSurfaceTriangulation2InputOutput
 
-  inserts the domain in a stream.
+  inserts the domain s.
 
   The format of the output is the following.
   The first line prints the number \f$n\f$ of vertices of the domain.
@@ -56,14 +56,14 @@ std::istream& operator>>(std::istream& s, Hyperbolic_fundamental_domain_2<Traits
 /*!
   \ingroup PkgHyperbolicSurfaceTriangulation2InputOutput
 
-  inserts the isometry in a stream.
+  inserts the isometry s.
 */
 std::ostream& operator<<(std::ostream& s, const Hyperbolic_isometry_2<Traits>& isometry);
 
 /*!
   \ingroup PkgHyperbolicSurfaceTriangulation2InputOutput
 
-  inserts the Delaunay triangulation in a stream.
+  inserts the Delaunay triangulation s.
 
   The format of the output is the following.
   Each dart of the triangulation is given an index between \f$ 0 \f$ and \f$ n-1 \f$, where \f$ n \f$

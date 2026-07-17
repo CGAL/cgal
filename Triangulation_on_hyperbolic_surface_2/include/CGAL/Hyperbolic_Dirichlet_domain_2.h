@@ -122,7 +122,7 @@ std::ostream&
     const std::size_t n = vertices.size();
 
     s << "{\n";
-    s << "  \"type\": " << "Dirichlet" << ",\n";
+    s << "  \"type\": " << "\"Dirichlet\"" << ",\n";
     s << "  \"size\": " << n << ",\n";
 
     s << "  \"vertices\": [";

@@ -1188,7 +1188,7 @@ to_json(std::ostream& s) const
     }
 
     s << "{\n";
-    s << "  \"type\": " << "Delaunay_triangulation" << ",\n";
+    s << "  \"type\": " << "\"Delaunay_triangulation\"" << ",\n";
     s << "  \"num_darts\": " << current_dart_id << ",\n";
 
     // Faces
