@@ -1247,8 +1247,8 @@ to_json(std::ostream& s) const
         s << "      \"dart\": " << darts_ids[it] << ",\n";
         s << "      \"opposite\": "
           << darts_ids[Base::const_opposite(it)] << ",\n";
-        s << "      \"cross_ratio\": "
-          << Base::get_cross_ratio(it) << "\n";
+        s << "      \"cross_ratio\": \""
+          << Base::get_cross_ratio(it) << "\"\n";
         s << "    }";
     }
 

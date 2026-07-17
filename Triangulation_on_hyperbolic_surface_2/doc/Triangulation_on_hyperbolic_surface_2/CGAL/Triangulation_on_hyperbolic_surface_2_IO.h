@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
   \ingroup PkgHyperbolicSurfaceTriangulation2InputOutput
 
-  inserts the triangulation s.
+  inserts the triangulation into s.
 
   The format of the output is the following.
   Each dart of the triangulation is given an index between \f$ 0 \f$ and \f$ n-1 \f$, where \f$ n \f$
@@ -22,7 +22,7 @@ std::ostream& operator<<(std::ostream& s, const Triangulation_on_hyperbolic_surf
 /*!
   \ingroup PkgHyperbolicSurfaceTriangulation2InputOutput
 
-  extracts the triangulation from a stream.
+  extracts the triangulation from s.
 
   The format of the input is the same as the format of the output of
   the '<<' operator for Triangulation_on_hyperbolic_surface_2.
@@ -32,7 +32,7 @@ std::istream& operator>>(std::istream& s, Triangulation_on_hyperbolic_surface_2<
 /*!
   \ingroup PkgHyperbolicSurfaceTriangulation2InputOutput
 
-  inserts the domain s.
+  inserts the domain into s.
 
   The format of the output is the following.
   The first line prints the number \f$n\f$ of vertices of the domain.
@@ -46,7 +46,7 @@ std::ostream& operator<<(std::ostream& s, const Hyperbolic_fundamental_domain_2<
 /*!
   \ingroup PkgHyperbolicSurfaceTriangulation2InputOutput
 
-  extracts the domain from a stream.
+  extracts the domain from s.
 
   The format of the input is the same as the format of the output of
   the '<<' operator for Hyperbolic_fundamental_domain_2.
@@ -56,14 +56,14 @@ std::istream& operator>>(std::istream& s, Hyperbolic_fundamental_domain_2<Traits
 /*!
   \ingroup PkgHyperbolicSurfaceTriangulation2InputOutput
 
-  inserts the isometry s.
+  inserts the isometry into s.
 */
 std::ostream& operator<<(std::ostream& s, const Hyperbolic_isometry_2<Traits>& isometry);
 
 /*!
   \ingroup PkgHyperbolicSurfaceTriangulation2InputOutput
 
-  inserts the Delaunay triangulation s.
+  inserts the Delaunay triangulation into s.
 
   The format of the output is the following.
   Each dart of the triangulation is given an index between \f$ 0 \f$ and \f$ n-1 \f$, where \f$ n \f$
@@ -80,7 +80,7 @@ std::istream& operator>>(std::istream& s, Delaunay_triangulation_on_hyperbolic_s
 /*!
   \ingroup PkgHyperbolicSurfaceTriangulation2InputOutput
 
-  extracts the Delaunay triangulation from a stream.
+  extracts the Delaunay triangulation from s.
 
   The format of the input is the same as the format of the output of
   the '<<' operator for `Delaunay_triangulation_on_hyperbolic_surface_2`.
