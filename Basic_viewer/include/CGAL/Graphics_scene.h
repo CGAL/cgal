@@ -16,6 +16,8 @@
 // TODO #include <CGAL/license/GraphicsView.h>
 
 #include <iostream>
+#include <algorithm>
+#include <array>
 #include <map>
 #include <queue>
 #include <string>
@@ -259,7 +261,10 @@ public:
     else
     {
       m_current_face_start = number_of_elements(POS_FACES);
-      m_buffer_for_faces.face_begin(m_default_color_face);
+      // A face with no color inherits the color of its volume, if it has one.
+      m_buffer_for_faces.face_begin(
+        (m_building_volume && m_current_volume_has_color)
+        ? m_current_volume_color : m_default_color_face);
     }
   }
 
@@ -280,30 +285,63 @@ public:
 
   void face_end()
   {
-    if (m_buffer_for_faces.is_a_face_started())
+    if (!m_buffer_for_faces.is_a_face_started())
+    { return; }
+
+    // Inside a volume, de-duplicate faces by geometry: a shared wall added by the
+    // second volume is dropped and the stored one referenced (one copy in the
+    // display, both volumes referencing it for the cap).
+    if (m_building_volume)
     {
-      m_buffer_for_faces.face_end();
-      // Record this face's vertex range in POS_FACES, for the clip-plane cap.
-      m_faces.emplace_back(m_current_face_start,
-                           number_of_elements(POS_FACES) - m_current_face_start);
+      const std::vector<Local_point> &pts=
+        m_buffer_for_faces.get_points_of_current_face();
+      if (pts.size()>=3)
+      {
+        Face_key key=canonical_face_key(pts);
+        auto found=m_face_dedup.find(key);
+        if (found!=m_face_dedup.end())
+        { // Shared wall already stored: drop this copy, reference the existing.
+          m_buffer_for_faces.cancel_face();
+          m_volume_faces.back().push_back(found->second);
+          return;
+        }
+        m_buffer_for_faces.face_end();
+        const unsigned int idx=static_cast<unsigned int>(m_faces.size());
+        m_faces.emplace_back(m_current_face_start,
+                             number_of_elements(POS_FACES)-m_current_face_start);
+        m_face_dedup.emplace(std::move(key), idx);
+        m_volume_faces.back().push_back(idx);
+        return;
+      }
     }
+
+    m_buffer_for_faces.face_end();
+    // Record this face's vertex range in POS_FACES, for the clip-plane cap.
+    m_faces.emplace_back(m_current_face_start,
+                         number_of_elements(POS_FACES) - m_current_face_start);
   }
 
-  // Clip-plane cap: per-volume face grouping over the single face buffer. A
-  // shared wall is referenced by both volumes, so no geometry is duplicated.
+  // Clip-plane cap: a volume groups the faces added until volume_end, de-duplicated
+  // by geometry (see face_end). Its color is inherited by its uncolored faces.
   void volume_begin(const CGAL::IO::Color &acolor)
   {
     m_volume_faces.emplace_back();
     m_volume_colors.push_back(acolor);
+    m_current_volume_color=acolor;
+    m_current_volume_has_color=true;
+    m_building_volume=true;
   }
 
-  void volume_end() {}
-
-  void add_face_to_current_volume(unsigned int face_index)
+  void volume_begin()
   {
-    if (!m_volume_faces.empty())
-    { m_volume_faces.back().push_back(face_index); }
+    m_volume_faces.emplace_back();
+    m_volume_colors.push_back(m_default_color_face);
+    m_current_volume_has_color=false;
+    m_building_volume=true;
   }
+
+  void volume_end()
+  { m_building_volume=false; }
 
   unsigned int number_of_faces() const
   { return static_cast<unsigned int>(m_faces.size()); }
@@ -383,6 +421,9 @@ public:
     m_volume_faces.clear();
     m_volume_colors.clear();
     m_current_face_start=0;
+    m_face_dedup.clear();
+    m_building_volume=false;
+    m_current_volume_has_color=false;
     m_bounding_box=CGAL::Bbox_3();
   }
 
@@ -455,6 +496,29 @@ protected:
   std::vector<std::vector<unsigned int>> m_volume_faces;
   std::vector<CGAL::IO::Color> m_volume_colors;
   unsigned int m_current_face_start = 0;
+
+  // Clip-plane cap: geometric face de-duplication during volume building. The key
+  // is the sorted face vertex positions, so both sides of a shared wall match.
+  using Face_key = std::vector<std::array<double, 3>>;
+  std::map<Face_key, unsigned int> m_face_dedup;
+  bool m_building_volume = false;
+
+  // Color of the volume currently being built, inherited by its uncolored faces.
+  CGAL::IO::Color m_current_volume_color;
+  bool m_current_volume_has_color = false;
+
+  static Face_key canonical_face_key(const std::vector<Local_point> &pts)
+  {
+    Face_key key;
+    key.reserve(pts.size());
+    for (const Local_point &p : pts)
+    {
+      key.push_back({{CGAL::to_double(p.x()), CGAL::to_double(p.y()),
+                      CGAL::to_double(p.z())}});
+    }
+    std::sort(key.begin(), key.end());
+    return key;
+  }
 
   std::vector<BufferType> arrays[LAST_INDEX];
 
