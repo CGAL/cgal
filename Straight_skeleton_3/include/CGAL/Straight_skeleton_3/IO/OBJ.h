@@ -214,6 +214,7 @@ bool write_OBJ(const std::string& filename,
       std::set<EdgeSPtr> visited_edges;
 
       for (EdgeSPtr edge : facet->edges()) {
+        CGAL_SS3_DEBUG_SPTR(edge);
         if (visited_edges.find(edge) != visited_edges.end()) {
           continue; // already visited
         }
@@ -224,6 +225,7 @@ bool write_OBJ(const std::string& filename,
 
         // Walk forward to collect boundary vertices
         do {
+          CGAL_SS3_DEBUG_SPTR(edge);
           visited_edges.insert(edge);
           boundary_vertices.push_back(edge->src(facet));
           if (edge->tgt(facet)->degree() == 1) {

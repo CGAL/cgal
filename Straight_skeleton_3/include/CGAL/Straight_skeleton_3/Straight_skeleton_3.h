@@ -852,7 +852,6 @@ public:
 
     void set_plane(const Plane_3& plane)
     {
-      CGAL_SS3_DEBUG_SPTR(plane);
       this->plane_ = plane;
     }
 

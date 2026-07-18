@@ -38,7 +38,7 @@ int main(int argc, char** argv)
     return EXIT_FAILURE;
   }
 
-  // let's tolerate untriangulated inputs
+  // start by triangulating the input as to avoid fake coplanar faces
   if (!CGAL::is_triangle_mesh(sm)) {
     std::cout << "Triangulating input mesh..." << std::endl;
     PMP::triangulate_faces(sm);

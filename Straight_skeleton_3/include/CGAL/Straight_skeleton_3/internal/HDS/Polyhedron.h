@@ -205,7 +205,6 @@ public:
 
     static VertexSPtr create(const Point_3& point)
     {
-      CGAL_SS3_DEBUG_SPTR(point);
       return std::make_shared<Vertex>(point);
     }
 
@@ -303,6 +302,7 @@ public:
 
     void add_edge(const EdgeSPtr& edge)
     {
+      CGAL_SS3_DEBUG_SPTR(edge);
       EdgeWPtr edge_wptr(edge);
       typename std::list<EdgeWPtr>::iterator it = edges_.insert(edges_.end(), edge_wptr);
       VertexSPtr vertex_src = edge->source();
@@ -324,6 +324,7 @@ public:
 
     bool remove_edge(const EdgeSPtr& edge)
     {
+      CGAL_SS3_DEBUG_SPTR(edge);
       bool result = false;
       if (edge->source() == this->shared_from_this()) {
         edges_.erase(edge->getVertexSrcListIt());
@@ -365,6 +366,7 @@ public:
       */
     EdgeSPtr find_edge(const VertexSPtr& tgt) const
     {
+      CGAL_SS3_DEBUG_SPTR(tgt);
       EdgeSPtr result = EdgeSPtr();
       for (EdgeWPtr edge_wptr : edges_) {
         if (EdgeSPtr edge = edge_wptr.lock()) {
@@ -387,6 +389,7 @@ public:
     */
     EdgeSPtr find_edge(const FacetSPtr& facet) const
     {
+      CGAL_SS3_DEBUG_SPTR(facet);
       EdgeSPtr result = EdgeSPtr();
       for (EdgeWPtr edge_wptr : edges_) {
         if (EdgeSPtr edge = edge_wptr.lock()) {
@@ -406,6 +409,7 @@ public:
 
     bool remove_facet(const FacetSPtr& facet)
     {
+      CGAL_SS3_DEBUG_SPTR(facet);
       bool result = false;
       typename std::list<FacetWPtr>::iterator it = facets_.begin();
       while (it != facets_.end()) {
@@ -444,6 +448,7 @@ public:
 
     bool has_incident_edge(const EdgeSPtr& edge) const
     {
+      CGAL_SS3_DEBUG_SPTR(edge);
       EdgeWPtr edge_wptr = EdgeWPtr(edge);
       bool result = (edges_.end() !=
           STL_Extension::internal::weak_find(edges_.begin(), edges_.end(), edge_wptr));
@@ -452,6 +457,7 @@ public:
 
     bool has_incident_facet(const FacetSPtr& facet) const
     {
+      CGAL_SS3_DEBUG_SPTR(facet);
       FacetWPtr facet_wptr = FacetWPtr(facet);
       bool result = (facets_.end() !=
           STL_Extension::internal::weak_find(facets_.begin(), facets_.end(), facet_wptr));
@@ -613,6 +619,7 @@ public:
 
     VertexSPtr prev(const FacetSPtr& facet) const
     {
+      CGAL_SS3_DEBUG_SPTR(facet);
       VertexSPtr result = VertexSPtr();
       CGAL_assertion(facet->vertices().size() > 1);
 
@@ -636,6 +643,7 @@ public:
     VertexSPtr split(const FacetSPtr& facet_left,
                      FacetSPtr facet_right)
     {
+      CGAL_SS3_DEBUG_SPTR(facet_left);
       VertexSPtr result = VertexSPtr();
       if (!has_incident_facet(facet_left) || !has_incident_facet(facet_right)) {
         return result;
@@ -1047,7 +1055,7 @@ public:
 
     VertexSPtr other(const VertexSPtr& vertex) const
     {
-      CGAL_precondition(has_vertex(vertex));
+      CGAL_SS3_DEBUG_SPTR(vertex);
       VertexSPtr result = VertexSPtr();
       if (vertex == vertex_src_) {
         result = vertex_tgt_;
@@ -1059,6 +1067,7 @@ public:
 
     FacetSPtr other(const FacetSPtr& facet) const
     {
+      CGAL_SS3_DEBUG_SPTR(facet);
       FacetSPtr result = FacetSPtr();
       if (facet == facet_l_.lock()) {
         result = facet_r_.lock();
@@ -1070,6 +1079,7 @@ public:
 
     VertexSPtr src(const FacetSPtr& facet_l) const
     {
+      CGAL_SS3_DEBUG_SPTR(facet);
       VertexSPtr result = VertexSPtr();
       if (facet_l == facet_l_.lock()) {
         result = vertex_src_;
@@ -1081,6 +1091,7 @@ public:
 
     VertexSPtr tgt(const FacetSPtr& facet_l) const
     {
+      CGAL_SS3_DEBUG_SPTR(facet);
       VertexSPtr result = VertexSPtr();
       if (facet_l == facet_l_.lock()) {
         result = vertex_tgt_;
@@ -1092,6 +1103,7 @@ public:
 
     FacetSPtr left(const VertexSPtr& vertex_src) const
     {
+      CGAL_SS3_DEBUG_SPTR(vertex);
       FacetSPtr result = FacetSPtr();
       if (vertex_src == vertex_src_) {
         result = facet_l_.lock();
@@ -1103,6 +1115,7 @@ public:
 
     FacetSPtr right(const VertexSPtr& vertex_src) const
     {
+      CGAL_SS3_DEBUG_SPTR(vertex);
       FacetSPtr result = FacetSPtr();
       if (vertex_src == vertex_src_) {
         result = facet_r_.lock();
@@ -1114,6 +1127,7 @@ public:
 
     EdgeSPtr next(const FacetSPtr& facet) const
     {
+      CGAL_SS3_DEBUG_SPTR(facet);
       EdgeSPtr result = EdgeSPtr();
       VertexSPtr vertex_tgt = tgt(facet);
       for (EdgeWPtr edge_wptr : vertex_tgt->edges()) {
@@ -1130,6 +1144,7 @@ public:
 
     EdgeSPtr prev(const FacetSPtr& facet) const
     {
+      CGAL_SS3_DEBUG_SPTR(facet);
       EdgeSPtr result = EdgeSPtr();
       VertexSPtr vertex_src = src(facet);
       for (EdgeWPtr edge_wptr : vertex_src->edges()) {
@@ -1149,6 +1164,7 @@ public:
       */
     EdgeSPtr next(const VertexSPtr& vertex) const
     {
+      CGAL_SS3_DEBUG_SPTR(vertex);
       EdgeSPtr result = EdgeSPtr();
       FacetSPtr facet;
       if (vertex == vertex_src_) {
@@ -1177,6 +1193,7 @@ public:
 
     EdgeSPtr prev(const VertexSPtr& vertex) const
     {
+      CGAL_SS3_DEBUG_SPTR(vertex);
       EdgeSPtr result = EdgeSPtr();
       FacetSPtr facet;
       if (vertex == vertex_src_) {
@@ -1229,6 +1246,7 @@ public:
       */
     EdgeSPtr split(const VertexSPtr& middle)
     {
+      CGAL_SS3_DEBUG_SPTR(middle);
       EdgeSPtr result = Edge::create(middle, vertex_tgt_);
       if (FacetSPtr facet_l = facet_l_.lock()) {
         result->set_facet_L(facet_l);
@@ -1643,6 +1661,7 @@ private:
 
     void add_edge(const EdgeSPtr& edge)
     {
+      CGAL_SS3_DEBUG_SPTR(edge);
       typename std::list<EdgeSPtr>::iterator it = edges_.insert(edges_.end(), edge);
       FacetSPtr facet_l = edge->get_facet_L();
       FacetSPtr facet_r = edge->get_facet_R();
@@ -1680,6 +1699,7 @@ private:
 
     bool remove_edge(const EdgeSPtr& edge)
     {
+      CGAL_SS3_DEBUG_SPTR(edge);
       bool result = false;
       if (edge->get_facet_L() == this->shared_from_this()) {
         edges_.erase(edge->getFacetLListIt());
@@ -1702,6 +1722,7 @@ private:
     */
     EdgeSPtr find_edge(const FacetSPtr& facet) const
     {
+      CGAL_SS3_DEBUG_SPTR(facet);
       EdgeSPtr result = EdgeSPtr();
       typename std::list<EdgeSPtr>::const_iterator it_e = edges_.begin();
       while (it_e != edges_.end()) {
@@ -1716,6 +1737,7 @@ private:
 
     std::list<EdgeSPtr> find_edges(const FacetSPtr& facet) const
     {
+      CGAL_SS3_DEBUG_SPTR(facet);
       std::list<EdgeSPtr> result;
       typename std::list<EdgeSPtr>::const_iterator it_e = edges_.begin();
       while (it_e != edges_.end()) {
@@ -1729,12 +1751,14 @@ private:
 
     bool contains_vertex(const VertexSPtr& vertex) const
     {
+      CGAL_SS3_DEBUG_SPTR(vertex);
       bool result = (vertices_.end() != std::find(vertices_.begin(), vertices_.end(), vertex));
       return result;
     }
 
     bool has_incident_edge(const EdgeSPtr& edge) const
     {
+      CGAL_SS3_DEBUG_SPTR(edge);
       bool result = (edges_.end() != std::find(edges_.begin(), edges_.end(), edge));
       return result;
     }
@@ -1864,6 +1888,7 @@ private:
 
     FacetSPtr next(const VertexSPtr& vertex) const
     {
+      CGAL_SS3_DEBUG_SPTR(vertex);
       FacetSPtr result = FacetSPtr();
       typename std::list<FacetWPtr>::const_iterator it_f = vertex->facets().begin();
       while (it_f != vertex->facets().end()) {
@@ -1915,6 +1940,7 @@ private:
 
     FacetSPtr prev(const VertexSPtr& vertex) const
     {
+      CGAL_SS3_DEBUG_SPTR(vertex);
       FacetSPtr result = FacetSPtr();
       typename std::list<FacetWPtr>::const_reverse_iterator it_f = vertex->facets().rbegin();
       while (it_f != vertex->facets().rend()) {
@@ -1969,6 +1995,7 @@ private:
     */
     void merge(const FacetSPtr& facet)
     {
+      CGAL_SS3_DEBUG_SPTR(facet);
       typename std::list<VertexSPtr>::iterator it_v = facet->vertices().begin();
       while (it_v != facet->vertices().end()) {
         VertexSPtr vertex = *it_v++;
@@ -2400,6 +2427,7 @@ public:
 
   void add_vertex(const VertexSPtr& vertex)
   {
+    CGAL_SS3_DEBUG_SPTR(vertex);
     vertex->set_id(next_vertex_id_++);
     typename std::list<VertexSPtr>::iterator it = vertices_.insert(vertices_.end(), vertex);
     vertex->set_polyhedron(this->shared_from_this());
@@ -2408,6 +2436,7 @@ public:
 
   bool remove_vertex(const VertexSPtr& vertex)
   {
+    CGAL_SS3_DEBUG_SPTR(vertex);
     bool result = false;
     if (vertex->get_polyhedron() == this->shared_from_this()) {
       vertices_.erase(vertex->getPolyhedronListIt());
@@ -2437,6 +2466,7 @@ public:
    */
   VertexSPtr find_vertex(const VertexSPtr& needle)
   {
+    CGAL_SS3_DEBUG_SPTR(needle);
     VertexSPtr result = VertexSPtr();
     typename std::list<VertexSPtr>::iterator it_v = vertices_.begin();
     while (it_v != vertices_.end()) {
@@ -2451,6 +2481,7 @@ public:
 
   void add_edge(const EdgeSPtr& edge)
   {
+    CGAL_SS3_DEBUG_SPTR(edge);
     edge->set_id(next_edge_id_++);
     typename std::list<EdgeSPtr>::iterator it = edges_.insert(edges_.end(), edge);
     edge->set_polyhedron(this->shared_from_this());
@@ -2467,6 +2498,7 @@ public:
 
   bool remove_edge(const EdgeSPtr& edge)
   {
+    CGAL_SS3_DEBUG_SPTR(edge);
     bool result = false;
     if (edge->get_polyhedron() == this->shared_from_this()) {
       edges_.erase(edge->getPolyhedronListIt());
@@ -2493,6 +2525,7 @@ public:
    */
   EdgeSPtr find_edge(const EdgeSPtr& needle)
   {
+    CGAL_SS3_DEBUG_SPTR(needle);
     EdgeSPtr result = EdgeSPtr();
     typename std::list<EdgeSPtr>::iterator it_e = edges_.begin();
     while (it_e != edges_.end()) {
@@ -2513,6 +2546,7 @@ public:
 
   void add_facet(const FacetSPtr& facet)
   {
+    CGAL_SS3_DEBUG_SPTR(facet);
     facet->set_id(next_facet_id_++);
     typename std::list<FacetSPtr>::iterator it_f = facets_.insert(facets_.end(), facet);
     facet->setPolyhedronListIt(it_f);
@@ -2536,6 +2570,7 @@ public:
 
   bool remove_facet(const FacetSPtr& facet)
   {
+    CGAL_SS3_DEBUG_SPTR(facet);
     bool result = false;
     if (facet->get_polyhedron() == this->shared_from_this()) {
       facets_.erase(facet->getPolyhedronListIt());

@@ -840,7 +840,6 @@ public:
     CGAL_SS3_DEBUG_SPTR(polyhedron);
     for (const FacetSPtr& facet : polyhedron->facets()) {
       const Plane_3& plane = facet->get_plane();
-      CGAL_SS3_DEBUG_SPTR(plane);
       CGAL_assertion(Kernel_wrapper::has_normalized_plane(plane));
       Hds_utils::set_base_plane(facet, plane);
     }
@@ -1544,7 +1543,6 @@ public:
                                                      edge_1->get_facet_R(),
                                                      edge_2->get_facet_L(),
                                                      edge_2->get_facet_R());
-    CGAL_SS3_DEBUG_SPTR(point);
 
     if (!check_bisectors_V2(edge_1, point, event_time) ||
         !check_bisectors_V2(edge_2, point, event_time)) {

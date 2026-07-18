@@ -143,8 +143,6 @@ public:
                              const Point_3& p_box_min, const Point_3& p_box_max)
   {
     CGAL_SS3_DEBUG_SPTR(polyhedron);
-    CGAL_SS3_DEBUG_SPTR(p_box_min);
-    CGAL_SS3_DEBUG_SPTR(p_box_max);
     bool result = true;
     for (const VertexSPtr& vertex : polyhedron->vertices()) {
       const Point_3& p = vertex->point();

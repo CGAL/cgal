@@ -118,8 +118,6 @@ public:
 
   static bool has_normalized_plane(const Plane_3& plane)
   {
-    CGAL_SS3_DEBUG_SPTR(plane);
-
     const FT& a = plane.a();
     const FT& b = plane.b();
     const FT& c = plane.c();

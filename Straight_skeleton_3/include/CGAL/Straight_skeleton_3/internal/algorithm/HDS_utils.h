@@ -359,12 +359,10 @@ public:
   static void set_base_plane(const FacetSPtr& facet, const Plane_3& plane)
   {
     CGAL_SS3_DEBUG_SPTR(facet);
-    CGAL_SS3_DEBUG_SPTR(plane);
     CGAL_precondition(facet->has_data());
     SkelFacetDataSPtr data = std::dynamic_pointer_cast<Skeleton_facet_data>(facet->get_data());
     CGAL_SS3_DEBUG_SPTR(data);
     data->set_base_plane(plane);
-    CGAL_SS3_DEBUG_SPTR(get_base_plane(facet));
   }
 
   static bool has_final_plane(const FacetSPtr& facet)
@@ -388,7 +386,6 @@ public:
   static void set_final_plane(const FacetSPtr& facet, const Plane_3& plane)
   {
     CGAL_SS3_DEBUG_SPTR(facet);
-    CGAL_SS3_DEBUG_SPTR(plane);
     CGAL_precondition(facet->has_data());
     SkelFacetDataSPtr data = std::dynamic_pointer_cast<Skeleton_facet_data>(facet->get_data());
     CGAL_SS3_DEBUG_SPTR(data);

@@ -138,13 +138,12 @@ public:
       if (outward_offsetting)
         std::reverse(poly_vertices.begin(), poly_vertices.end());
 
-
       FacetSPtr facet = Facet::create(poly_vertices);
       facet->set_id(facet_id_new);
 
       // Correspondence between the edges of the input mesh and the new edges
       // in the polyhedron
-      // poly_vertices is filled starting at source() of the first edge
+      // poly_vertices is filled, starting at source() of the first edge
       // Facet::create() creates the i-th edge between vertices[i] and vertices[i+1]
       halfedge_descriptor h = halfedge(fi, tmesh);
       for (EdgeSPtr e : facet->edges()) {
@@ -207,7 +206,9 @@ public:
     if (!merge_faces)
       return polyhedron;
 
+#ifdef CGAL_SS3_DUMP_FILES
     IO::write_OBJ("results/loaded.obj", polyhedron, parameters::do_not_triangulate_faces(false));
+#endif
 
 #if 1
 
@@ -296,7 +297,10 @@ public:
 #endif
 
     CGAL_SS3_TRANSF_TRACE("Converted, " << polyhedron->facets().size() << " facets");
+
+#ifdef CGAL_SS3_DUMP_FILES
     IO::write_OBJ("results/converted.obj", polyhedron, parameters::do_not_triangulate_faces(false));
+#endif
 
     return polyhedron;
   }
