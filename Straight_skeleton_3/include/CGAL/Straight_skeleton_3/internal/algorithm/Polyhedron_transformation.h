@@ -1037,21 +1037,18 @@ public:
   triangulate_facet(const FacetSPtr& facet,
                     const PolyhedronSPtr& polyhedron)
   {
-    CGAL_SS3_TRANSF_TRACE_V(16, "Triangulate facet " << facet->id() << " of polyhedron "
-                                << polyhedron->id() << " with " << facet->vertices().size()
-                                << " vertices");
     CGAL_SS3_DEBUG_SPTR(facet);
     CGAL_SS3_DEBUG_SPTR(polyhedron);
 
-    std::list<VertexSPtr> facet_vertices = facet->vertices();
+    facet->sort_vertices();
+    CGAL_SS3_TRANSF_TRACE_V(16, "Triangulate " << facet->to_string());
 
-    CGAL_precondition(facet && polyhedron && facet->vertices().size() >= 3);
+    const std::list<VertexSPtr>& facet_vertices = facet->vertices();
+    CGAL_precondition(facet_vertices.size() >= 3);
 
     if (facet_vertices.size() == 3) {
       return { facet_vertices, { facet } };
     }
-
-    facet->sort_vertices();
 
     using CDT2_Tag = CGAL::No_constraint_intersection_tag;
     auto pcdt = construct_facet_triangulation<CDT2_Tag>(facet);
@@ -1060,7 +1057,7 @@ public:
     using PCDT_FH = typename PCDT::Face_handle;
 
     std::unordered_map<PCDT_FH, bool> in_domain_map;
-    boost::associative_property_map<std::unordered_map<PCDT_FH, bool>> in_domain(in_domain_map);
+    boost::associative_property_map<std::unordered_map<PCDT_FH, bool> > in_domain(in_domain_map);
     CGAL::mark_domain_in_triangulation(pcdt, in_domain);
 
     // Speed of the subdivided facet is applied to all the subfacets
