@@ -1077,49 +1077,49 @@ public:
       return result;
     }
 
-    VertexSPtr src(const FacetSPtr& facet_l) const
+    VertexSPtr src(const FacetSPtr& facet) const
     {
       CGAL_SS3_DEBUG_SPTR(facet);
       VertexSPtr result = VertexSPtr();
-      if (facet_l == facet_l_.lock()) {
+      if (facet == facet_l_.lock()) {
         result = vertex_src_;
-      } else if (facet_l == facet_r_.lock()) {
+      } else if (facet == facet_r_.lock()) {
         result = vertex_tgt_;
       }
       return result;
     }
 
-    VertexSPtr tgt(const FacetSPtr& facet_l) const
+    VertexSPtr tgt(const FacetSPtr& facet) const
     {
       CGAL_SS3_DEBUG_SPTR(facet);
       VertexSPtr result = VertexSPtr();
-      if (facet_l == facet_l_.lock()) {
+      if (facet == facet_l_.lock()) {
         result = vertex_tgt_;
-      } else if (facet_l == facet_r_.lock()) {
+      } else if (facet == facet_r_.lock()) {
         result = vertex_src_;
       }
       return result;
     }
 
-    FacetSPtr left(const VertexSPtr& vertex_src) const
+    FacetSPtr left(const VertexSPtr& vertex) const
     {
       CGAL_SS3_DEBUG_SPTR(vertex);
       FacetSPtr result = FacetSPtr();
-      if (vertex_src == vertex_src_) {
+      if (vertex == vertex_src_) {
         result = facet_l_.lock();
-      } else if (vertex_src == vertex_tgt_) {
+      } else if (vertex == vertex_tgt_) {
         result = facet_r_.lock();
       }
       return result;
     }
 
-    FacetSPtr right(const VertexSPtr& vertex_src) const
+    FacetSPtr right(const VertexSPtr& vertex) const
     {
       CGAL_SS3_DEBUG_SPTR(vertex);
       FacetSPtr result = FacetSPtr();
-      if (vertex_src == vertex_src_) {
+      if (vertex == vertex_src_) {
         result = facet_r_.lock();
-      } else if (vertex_src == vertex_tgt_) {
+      } else if (vertex == vertex_tgt_) {
         result = facet_l_.lock();
       }
       return result;
@@ -1168,9 +1168,9 @@ public:
       EdgeSPtr result = EdgeSPtr();
       FacetSPtr facet;
       if (vertex == vertex_src_) {
-        facet = FacetSPtr(facet_l_);
+        facet = facet_l_.lock();
       } else if (vertex == vertex_tgt_) {
-        facet = FacetSPtr(facet_r_);
+        facet = facet_r_.lock();
       }
 
       CGAL_SS3_DEBUG_SPTR(facet);
@@ -1197,9 +1197,9 @@ public:
       EdgeSPtr result = EdgeSPtr();
       FacetSPtr facet;
       if (vertex == vertex_src_) {
-        facet = FacetSPtr(facet_r_);
+        facet = facet_r_.lock();
       } else if (vertex == vertex_tgt_) {
-        facet = FacetSPtr(facet_l_);
+        facet = facet_l_.lock();
       }
 
       CGAL_SS3_DEBUG_SPTR(facet);
@@ -2391,24 +2391,24 @@ public:
     return this->facets_;
   }
 
-  bool has_vertex(const VertexSPtr& vertex)
+  bool has_vertex(const VertexSPtr& vertex) const
   {
-    typename std::list<VertexSPtr>::iterator it_v =
-      std::find(vertices_.begin(), vertices_.end(), vertex);
+    CGAL_SS3_DEBUG_SPTR(vertex);
+    auto it_v = std::find(vertices_.begin(), vertices_.end(), vertex);
     return (it_v != vertices_.end());
   }
 
-  bool has_edge(const EdgeSPtr& edge)
+  bool has_edge(const EdgeSPtr& edge) const
   {
-    typename std::list<EdgeSPtr>::iterator it_e =
-      std::find(edges_.begin(), edges_.end(), edge);
+    CGAL_SS3_DEBUG_SPTR(edge);
+    auto it_e = std::find(edges_.begin(), edges_.end(), edge);
     return (it_e != edges_.end());
   }
 
-  bool has_facet(const FacetSPtr& facet)
+  bool has_facet(const FacetSPtr& facet) const
   {
-    typename std::list<FacetSPtr>::iterator it_f =
-      std::find(facets_.begin(), facets_.end(), facet);
+    CGAL_SS3_DEBUG_SPTR(facet);
+    auto it_f = std::find(facets_.begin(), facets_.end(), facet);
     return (it_f != facets_.end());
   }
 
