@@ -40,7 +40,6 @@ public:
 
   Hyperbolic_fundamental_domain_2() {};
 
-  //TODO DOC added precondition
   template<class PointRange, class PairingRange>
   Hyperbolic_fundamental_domain_2(PointRange & vertices, PairingRange & pairings)
   {
@@ -224,11 +223,10 @@ is_valid()const
   return true;
 }
 
-//TODO DOC
 template<class Traits>
 bool
 Hyperbolic_fundamental_domain_2<Traits>::
-is_valid_length_pairing()const
+is_valid_length_pairing() const
 {
   // Get the number of vertices (= nb of sides)
   std::size_t n = vertices_.size();

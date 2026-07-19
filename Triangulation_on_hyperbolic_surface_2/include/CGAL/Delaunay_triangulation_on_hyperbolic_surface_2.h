@@ -101,7 +101,6 @@ public:
     bool is_epsilon_packing(const double epsilon) const;
     bool is_epsilon_net(const double epsilon) const;
     double packing_value() const;
-    //double covering_value();
     double covering_value() const;
     void set_circumcenter_approximation_precision(unsigned p) {gt_.approximation_precision(p);}
     unsigned get_circumcenter_approximation_precision() {return gt_.approximation_precision();}

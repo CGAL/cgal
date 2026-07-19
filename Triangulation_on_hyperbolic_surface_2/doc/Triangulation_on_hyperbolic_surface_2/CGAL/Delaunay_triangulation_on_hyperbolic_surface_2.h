@@ -4,7 +4,7 @@ namespace CGAL {
   \ingroup PkgHyperbolicSurfaceTriangulation2MainClasses
 
   This item defines attributes for edges and faces.
-  Edge attributes are of type `Complex_number` representing cross-ratios.
+  Edge attributes are of type `Complex_number` representing cross-ratios encoding the metric of the surface.
   Face attributes are of type `Anchor`, representing a lift of a triangle.
 
   \tparam Traits must be a model of `HyperbolicSurfaceTraits_2` and the same as
@@ -30,7 +30,7 @@ struct Delaunay_triangulation_attributes {
   The class provides functions such as the generation of the Delaunay triangulation from a convex fundamental domain,
   the location of a point in the lifted triangulation, the insertion of a point in the Delaunay triangulation, and the \f$ \varepsilon \f$-net algorithm.
 
-  \tparam Traits must be a model of `HyperbolicSurfaceTraits_2`.
+  \tparam Traits must be a model of `HyperbolicSurfaceDelaunayTraits_2`.
 
   \sa `Triangulation_on_hyperbolic_surface_2<Traits, Attributes>`
 */
@@ -48,7 +48,7 @@ public:
   typedef typename Triangulation_on_hyperbolic_surface_2<Traits,Delaunay_triangulation_attributes<Traits>>::Anchor    Anchor;
 
   /*!
-    must be compatible with the method  `CGAL::to_double()`.
+    must be compatible with the method  `CGAL::to_double()` and must support a cosh function to compute the hyperbolic cosine.
    */
   typedef typename Traits::FT                                         Number;
   typedef typename Traits::Complex                                    Complex_number;
@@ -101,13 +101,12 @@ public:
   /// @}
 
   /// \name Creation
-  /// Calls the corresponding constructor from #Base, constructs the Delaunay
+  /// The main Delaunay class can be constructed from a general triangulation or a hyperbolic fundamental domain. It constructs the Delaunay
   /// triangulation and sets an #Anchor for each face.
   /// @{
-  Delaunay_triangulation_on_hyperbolic_surface_2() {};
-  Delaunay_triangulation_on_hyperbolic_surface_2(CMap & cmap, Anchor & anch);
-  Delaunay_triangulation_on_hyperbolic_surface_2(Hyperbolic_fundamental_domain_2<Traits> const & domain);
-  Delaunay_triangulation_on_hyperbolic_surface_2(Base & triangulation);
+  Delaunay_triangulation_on_hyperbolic_surface_2(Traits & gt) {};
+  Delaunay_triangulation_on_hyperbolic_surface_2(Traits & gt, Hyperbolic_fundamental_domain_2<Traits> const & domain);
+  Delaunay_triangulation_on_hyperbolic_surface_2(Traits & gt, Base & triangulation);
   /// @}
 
   /// \name Access Functions
@@ -231,30 +230,41 @@ public:
     \return a Boolean that indicates whether the vertices of the Delaunay triangulation form a certified `epsilon`-net of the surface.
   */
   bool is_epsilon_net(const double epsilon) const;
-  /*!  Sets `p` such that the precision of the `CGAL::Gmpfr` numbers
-    involved in the computations of the function
+
+  /*!  \return the optimal packing value up to double precision. Returns
+    inf (+infinity) if all edges are loops.
+  */
+  double packing_value() const;
+
+  /*! \return the optimal covering value up to double precision.   */
+  double covering_value() const;
+
+  /*! \return a shortest loop edge of the triangulation if any, otherwise
+      returns a null pointer.
+   */
+  Dart_const_descriptor shortest_loop_edge() const;
+
+  /*!  Sets `p` such that when FT is Gmpq, the precision for the function
     `HyperbolicSurfaceDelaunayTraitsClass::Construct_approximate_hyperbolic_circumcenter_2`
     is `p`x 53, where 53 is the precision of a double.
   */
-  void approximation_precision(unsigned p) {approx_precision = p;}
-  /*!  \return `p` such that the precision of the `CGAL::Gmpfr` numbers
-    involved in the computations of the function
+  void set_circumcenter_approximation_precision(unsigned p);
+
+  /*!  \return `p` such that when FT is Gmpq, the precision for the function
     `HyperbolicSurfaceDelaunayTraitsClass::Construct_approximate_hyperbolic_circumcenter_2`
     is `p`x 53, where 53 is the precision of a double.
   */
-  unsigned approximation_precision() {return approx_precision;}
-  /// @}
+  unsigned get_circumcenter_approximation_precision();
+
+    /// @}
 
   /// \name Other functions
   /// @{
   /*!
-    \return a `double` approximation of the length of the shortest geodesic loop edge in the Delaunay triangulation. Returns 0 (NULL) if there is no loop edge.
-  */
-  double shortest_loop_edge() const;
-  /*!  \return returns the optimal packing value up to double precision. Returns
-    0 (NULL) if all edges are loops.
-  */
-  double packing_value() const;
+    \return the hyperbolic cosine of the length of the edge associated to a dart.
+   */
+  Number dart_cosh_length(Dart_const_descriptor dart) const;
+
   /// @}
 }
 

@@ -42,6 +42,7 @@
 \cgalCRPSection{Concepts}
 
 - `HyperbolicSurfaceTraits_2` is the concept for the template parameter of most classes of the package.
+- `HyperbolicSurfaceDelaunayTraits_2` is the concept for the template parameter of the class `CGAL::Delaunay_triangulation_on_hyperbolic_surface_2`.
 - `ComplexNumber` describes a complex number type.
 
 \cgalCRPSection{Classes}
@@ -56,7 +57,7 @@
 
 - `CGAL::Hyperbolic_isometry_2` represents an isometry in the Poincaré disk model. Facilities are offered to compose isometries, and apply an isometry to a point.
 
-Models for `HyperbolicSurfaceTraits_2` and `ComplexNumber` are provided: `CGAL::Hyperbolic_surface_traits_2` and `CGAL::Complex_number`.
+Models for `HyperbolicSurfaceTraits_2`, `HyperbolicSurfaceDelaunayTraits_2` and `ComplexNumber` are provided: `CGAL::Hyperbolic_surface_traits_2`, `CGAL::Hyperbolic_Surface_Delaunay_Traits_2` and `CGAL::Complex_number`.
 
 \cgalCRPSection{Input/Output Functions}
 
