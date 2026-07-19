@@ -1,4 +1,4 @@
-// Copyright (c) 2005,2006,2007,2009,2010,2011 Tel-Aviv University (Israel).
+// Copyright (c) 2005,2006,2007,2009,2010,2011,2026 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -28,7 +28,11 @@
 #include <CGAL/Surface_sweep_2/Intersection_points_visitor.h>
 #include <CGAL/Surface_sweep_2/Subcurves_visitor.h>
 #include <CGAL/Surface_sweep_2/Do_intersect_visitor.h>
+#include <CGAL/Surface_sweep_2/Do_interior_intersect_visitor.h>
+#include <CGAL/Surface_sweep_2/Intersection_polylines_visitor.h>
 #include <CGAL/Surface_sweep_2/Surface_sweep_2_utils.h>
+
+#include <CGAL/Arr_curve_data_traits_2.h>
 
 namespace CGAL {
 namespace Surface_sweep_2 {
@@ -132,11 +136,11 @@ OutputIterator compute_intersection_points(CurveInputIterator begin, CurveInputI
  * The subcurves are calculated using the surface-sweep algorithm.
  * \param begin An input iterator for the first curve in the range.
  * \param end A input past-the-end iterator for the range.
- * \param points Output: An output iterator for the subcurve.
+ * \param subcurves Output: An output iterator for the subcurve.
  * \param mult_overlaps If (true), the overlapping subcurve will be reported
  *                      multiple times.
- * \pre The value-type of CurveInputIterator is Traits::Curve_2, and the
- *      value-type of OutputIterator is Traits::X_monotone_curve_2.
+ * \pre The value-type of `CurveInputIterator` is `Traits::Curve_2`, and the
+ *      value-type of `OutputIterator` is `Traits::X_monotone_curve_2`.
  */
 template <typename CurveInputIterator, typename OutputIterator, typename Traits>
 OutputIterator compute_subcurves(CurveInputIterator begin, CurveInputIterator end,
@@ -176,7 +180,82 @@ OutputIterator compute_subcurves(CurveInputIterator begin, CurveInputIterator en
   return compute_subcurves(begin, end, subcurves, mult_overlaps, traits);
 }
 
+/*! Subdivide a range of input curves according to their pairwise intersections.
+ * Each curve is subdivided into sub-curves, referred to as polylines.
+ *
+ * \tparam CurveInputIterator model of `ForwardIterator` whose `value_type` is `Traits::Curve_2`
+ * \tparam PointRange model of `RandomAccessContainer` and `BackInsertionSequence` whose value type is `Traits::Point_2`
+ * \tparam PolylineRange model of `RandomAccessContainer` and `BackInsertionSequence` whose `value_type` is itself a model of `RandomAccessConatiner` and `BackInsertionSequence`
+ *                       whose `value_type` is an unsigned integer type convertible to `std::size_t`.
+ *
+ * \param begin An input iterator for the first curve in the range.
+ * \param end A input past-the-end iterator for the range.
+ * \param output_points A range that will be populated with all vertices induced by the input curves (their endpoints and intersection points).
+ * \param output_polylines A range that will be populated with index sequence referring to
+ *   `output_points`. Each sequence corresponds to one input curve and
+ *   describes the polyline obtained after subdividing the curve at
+ *   intersection points.
+ * \pre The value-type of `CurveInputIterator` is `Traits::Curve_2`, and the
+ *      value-type of `OutputIterator` is `Traits::X_monotone_curve_2`.
+ */
+template <typename CurveInputIterator, typename PointRange, typename PolylineRange, typename Traits>
+void compute_intersection_polylines(CurveInputIterator begin,
+                                    CurveInputIterator end,
+                                    PointRange& output_points,
+                                    PolylineRange& output_polylines,
+                                    Traits& traits)
+{
+  using Internal_traits = Arr_curve_data_traits_2<Traits, std::size_t>;
+  using Visitor = Ss2::Intersection_polylines_visitor<Internal_traits, PointRange, PolylineRange>;
+  using Surface_sweep = Ss2::Surface_sweep_2<Visitor>;
+
+  using Internal_curve_2 = typename Internal_traits::Curve_2;
+
+  using X_monotone_curve_2 = typename Traits::X_monotone_curve_2;
+  using value_type = typename std::iterator_traits<CurveInputIterator>::value_type;
+
+  std::vector<Internal_curve_2> curves;
+  curves.reserve(std::distance(begin, end));
+  std::size_t i=0;
+  for(auto it=begin; it!=end; ++it)
+    curves.emplace_back(*it, i++);
+
+  Internal_traits internal_traits(traits);
+  output_points.reserve(2 * std::distance(begin, end));
+  output_polylines.resize(std::distance(begin, end));
+  Visitor visitor(output_points, output_polylines);
+  Surface_sweep surface_sweep(&internal_traits, &visitor);
+
+  if constexpr (std::is_same_v<value_type, X_monotone_curve_2>) {
+    surface_sweep.sweep(curves.begin(), curves.end());
+  } else {
+    using Internal_X_curve_2 = typename Internal_traits::X_monotone_curve_2;
+    using Point_2 = typename Internal_traits::Point_2;
+
+    std::vector<Internal_X_curve_2> xcurves;
+    std::vector<Point_2> points;
+    xcurves.reserve(std::distance(begin, end));
+    Ss2::make_x_monotone(curves.begin(), curves.end(), std::back_inserter(xcurves), std::back_inserter(points), internal_traits);
+    surface_sweep.sweep(xcurves.begin(), xcurves.end(), points.begin(), points.end());
+  }
+}
+
+template <typename CurveInputIterator, typename PointRange, typename PolylineRange>
+void compute_intersection_polylines(CurveInputIterator begin,
+                                    CurveInputIterator end,
+                                    PointRange& output_points,
+                                    PolylineRange& output_polylines)
+{
+  typedef typename std::iterator_traits<CurveInputIterator>::value_type  Curve;
+
+  typename Ss2::Default_arr_traits<Curve>::Traits m_traits;
+  compute_intersection_polylines(begin, end, output_points, output_polylines, m_traits);
+}
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+
 /*! Determine whether any curves in a given range intersect pairwise.
+ * \deprecated This function is deprecated since the version 6.2 of \cgal. Use the function `CGAL::Surface_sweep_2::do_intersect()` instead.
  * \param begin An input iterator of the the range.
  * \param end A input past-the-end iterator of the range.
  * \return (true) if any pair of curves intersect; (false) otherwise.
@@ -187,11 +266,13 @@ bool do_curves_intersect(CurveInputIterator begin, CurveInputIterator end, Trait
 { return Ss2::do_intersect(begin, end, false, traits); }
 
 /*!
+ * \deprecated This function is deprecated since the version 6.2 of \cgal. Use the function `CGAL::Surface_sweep_2::do_intersect()` instead.
  */
 template <typename CurveInputIterator>
 CGAL_DEPRECATED
 bool do_curves_intersect(CurveInputIterator begin, CurveInputIterator end)
 { return Ss2::do_intersect(begin, end, false); }
+#endif
 
 } // namespace CGAL
 
