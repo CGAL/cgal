@@ -269,7 +269,11 @@ class Two_trees_do_intersect_traits_with_transformation
 
 public:
   Two_trees_do_intersect_traits_with_transformation(const AABBTraits1& traits1, const AABBTraits2& traits2, const AffTransformation &tr1, const AffTransformation &tr2)
-    : m_traits1(traits1), m_traits2(traits2), m_tr1(tr1), m_tr2(tr2), m_is_found(false)
+    : m_traits1(traits1), m_traits2(traits2),
+      m_tr1(tr1), m_tr2(tr2),
+      m_tr1_inverse(tr1.inverse()), m_tr2_inverse(tr2.inverse()),
+      m_tr1_has_rotation(tr1.has_rotation()), m_tr2_has_rotation(tr2.has_rotation()),
+      m_is_found(false)
   {}
 
   bool go_further() const {
@@ -302,7 +306,7 @@ public:
 
   bool do_intersect(const Node1& node1, const Node2& node2) const
   {
-    return do_overlap(compute_transformed_bbox(node1.bbox(), m_tr1), compute_transformed_bbox(node2.bbox(), m_tr2));
+    return do_overlap(compute_transformed_bbox(m_tr1, node1.bbox(), m_tr1_has_rotation), compute_transformed_bbox(m_tr2, node2.bbox(), m_tr2_has_rotation));
   }
 
   bool is_intersection_found() const { return m_is_found; }
@@ -314,6 +318,7 @@ private:
   const AffTransformation& m_tr2;
   AffTransformation m_tr1_inverse;
   AffTransformation m_tr2_inverse;
+  bool m_tr1_has_rotation, m_tr2_has_rotation;
   bool m_is_found;
 };
 

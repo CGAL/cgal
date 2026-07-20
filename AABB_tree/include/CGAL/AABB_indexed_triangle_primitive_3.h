@@ -24,49 +24,57 @@ namespace CGAL {
 
 namespace internal {
 
-template <class GeomTraits, class Iterator, class PointIterator, class PointMap>
-struct Triangle_3_from_index_range_iterator_property_map {
-  //classical typedefs
-  typedef Iterator key_type;
-  typedef typename GeomTraits::Triangle_3 value_type;
-  typedef typename GeomTraits::Triangle_3 reference;
+template <class GeomTraits, class PointRange, class FaceRange, class PointMap>
+struct Triangle_3_from_triangle_soup_property_map
+{
+  using key_type = std::size_t;
+  using value_type = typename GeomTraits::Triangle_3;
+  using reference = value_type;
 
-  typedef boost::readable_property_map_tag category;
-  typedef Triangle_3_from_index_range_iterator_property_map<GeomTraits, Iterator, PointIterator, PointMap> Self;
+  using category = boost::readable_property_map_tag;
+  using Self = Triangle_3_from_triangle_soup_property_map<GeomTraits, PointRange, FaceRange, PointMap>;
 
-  Triangle_3_from_index_range_iterator_property_map() {}
-  Triangle_3_from_index_range_iterator_property_map(PointIterator b, PointMap& pmap) : begin(b), pmap(pmap) {}
+  Triangle_3_from_triangle_soup_property_map(){}
+  template <typename std::enable_if<std::is_default_constructible<PointMap>::value, int>::type = 0>
+  Triangle_3_from_triangle_soup_property_map(const PointRange &pts_, const FaceRange &triangles_) : pts(&pts_), triangles(&triangles_){}
+  Triangle_3_from_triangle_soup_property_map(const PointRange &pts_, const FaceRange &triangles_, PointMap pmap) : pts(&pts_), triangles(&triangles_), pmap(pmap) {}
 
   inline friend value_type
-  get(Self s, key_type it)
+  get(const Self &s, const key_type &i)
   {
-    return typename GeomTraits::Construct_triangle_3()(get(s.pmap, s.begin[(*it)[0]]), get(s.pmap, s.begin[(*it)[1]]), get(s.pmap, s.begin[(*it)[2]]));
+    return GeomTraits().construct_triangle_3_object()(get(s.pmap, (*s.pts)[(*s.triangles)[i][0]]),
+                                                      get(s.pmap, (*s.pts)[(*s.triangles)[i][1]]),
+                                                      get(s.pmap, (*s.pts)[(*s.triangles)[i][2]]));
   }
 
-  PointIterator begin;
+  const PointRange *pts;
+  const FaceRange *triangles;
   PointMap pmap;
 };
 
-template <class GeomTraits, class Iterator, class PointIterator, class PointMap>
-struct Point_from_indexed_triangle_3_iterator_property_map {
-  //classical typedefs
-  typedef Iterator key_type;
-  typedef typename PointMap::value_type value_type;
-  typedef const value_type reference;
+template <class GeomTraits, class PointRange, class FaceRange, class PointMap>
+struct Reference_point_from_triangle_soup_property_map
+{
+  using key_type = std::size_t;
+  using value_type = typename GeomTraits::Point_3;
+  using reference = value_type;
 
-  typedef boost::readable_property_map_tag category;
-  typedef Point_from_indexed_triangle_3_iterator_property_map<GeomTraits, Iterator, PointIterator, PointMap> Self;
+  using category = boost::readable_property_map_tag;
+  using Self = Reference_point_from_triangle_soup_property_map<GeomTraits, PointRange, FaceRange, PointMap>;
 
-  Point_from_indexed_triangle_3_iterator_property_map() {}
-  Point_from_indexed_triangle_3_iterator_property_map(PointIterator b, PointMap &pmap) : begin(b), pmap(pmap) {}
+  Reference_point_from_triangle_soup_property_map(){}
+  template <typename std::enable_if<std::is_default_constructible<PointMap>::value, int>::type = 0>
+  Reference_point_from_triangle_soup_property_map(const PointRange &pts_, const FaceRange &triangles_) : pts(&pts_), triangles(&triangles_){}
+  Reference_point_from_triangle_soup_property_map(const PointRange &pts_, const FaceRange &triangles_, PointMap pmap) : pts(&pts_), triangles(&triangles_), pmap(pmap) {}
 
-  inline friend reference
-  get(Self s, key_type it)
+  inline friend value_type
+  get(const Self &s, const key_type &i)
   {
-    return get(s.pmap, s.begin[((*it)[0])]);
+    return get(s.pmap, (*s.pts)[(*s.triangles)[i][0]]);
   }
 
-  PointIterator begin;
+  const PointRange *pts;
+  const FaceRange *triangles;
   PointMap pmap;
 };
 }//namespace internal
@@ -83,8 +91,8 @@ struct Point_from_indexed_triangle_3_iterator_property_map {
  * \tparam GeomTraits is a traits class providing the nested type `Point_3` and `Triangle_3`.
  *         It also provides the functor `Construct_triangle_3` that has an operator taking three `Point_3` as
  *         parameters and returns a `Triangle_3`
- * \tparam IndexIterator is a model of `ForwardIterator` with its value type being a `RandomAccessRange` of size 3 with an index type as `value_type`, e.g., `uint8_t`, `uint16_t` or int.
  * \tparam PointRange is a model of `RandomAccessRange`. Its value type needs to be compatible to `PointMap` or `Point_3` in the default case.
+ * \tparam FaceRange  is a model of `RandomAccessRange`. Its value type needs to a `RandomAccessRange` of size 3 with value_type begin `std::size_t`.
  * \tparam CacheDatum is either `CGAL::Tag_true` or `CGAL::Tag_false`. In the former case,
  *         the datum is stored in the primitive, while in the latter it is
  *         constructed on the fly to reduce the memory footprint.
@@ -99,33 +107,56 @@ struct Point_from_indexed_triangle_3_iterator_property_map {
  * \sa `AABB_triangle_primitive_3<GeomTraits,Iterator,CacheDatum>`
  */
 template < class GeomTraits,
-           class IndexIterator,
            class PointRange,
+           class FaceRange,
            class CacheDatum = Tag_false,
-           class PointMap = Identity_property_map<typename PointRange::value_type>>
+           class PointMap = Identity_property_map<typename PointRange::value_type> >
 class AABB_indexed_triangle_primitive_3
 #ifndef DOXYGEN_RUNNING
-  : public AABB_primitive<  IndexIterator,
-                            internal::Triangle_3_from_index_range_iterator_property_map<GeomTraits, IndexIterator, typename PointRange::iterator, PointMap>,
-                            internal::Point_from_indexed_triangle_3_iterator_property_map<GeomTraits, IndexIterator, typename PointRange::iterator, PointMap>,
+  : public AABB_primitive<  std::size_t,
+                            internal::Triangle_3_from_triangle_soup_property_map<GeomTraits, PointRange, FaceRange, PointMap>,
+                            internal::Reference_point_from_triangle_soup_property_map<GeomTraits, PointRange, FaceRange, PointMap>,
                             Tag_true,
                             CacheDatum >
 #endif
 {
-  typedef AABB_primitive< IndexIterator,
-                          internal::Triangle_3_from_index_range_iterator_property_map<GeomTraits, IndexIterator, typename PointRange::iterator, PointMap>,
-                          internal::Point_from_indexed_triangle_3_iterator_property_map<GeomTraits, IndexIterator, typename PointRange::iterator, PointMap>,
-                          Tag_true,
-                          CacheDatum > Base;
+  using Base = AABB_primitive<  std::size_t,
+                                internal::Triangle_3_from_triangle_soup_property_map<GeomTraits, PointRange, FaceRange, PointMap>,
+                                internal::Reference_point_from_triangle_soup_property_map<GeomTraits, PointRange, FaceRange, PointMap>,
+                                Tag_true,
+                                CacheDatum >;
+  using Triangle_property_map = internal::Triangle_3_from_triangle_soup_property_map<GeomTraits, PointRange, FaceRange, PointMap>;
+  using Point_property_map = internal::Reference_point_from_triangle_soup_property_map<GeomTraits, PointRange, FaceRange, PointMap>;
+  using Face_iterator = typename FaceRange::iterator;
+  using Face_const_iterator = typename FaceRange::const_iterator;
 public:
   ///constructor from an iterator
-  AABB_indexed_triangle_primitive_3(IndexIterator it, PointRange&) : Base(it) {}
+  template<typename std::enable_if<std::is_default_constructible<PointMap>::value, int>::type = 0>
+  AABB_indexed_triangle_primitive_3(Face_const_iterator it, const PointRange&, const FaceRange& triangles) : Base(std::distance(triangles.begin(), it)){}
+  template<typename std::enable_if<std::is_default_constructible<PointMap>::value, int>::type = 0>
+  AABB_indexed_triangle_primitive_3(Face_iterator it, const PointRange&, const FaceRange& triangles) : Base(std::size_t(std::distance(triangles.begin(), Face_const_iterator(it)))){}
+  template<class IndexIterator, typename std::enable_if<std::is_default_constructible<PointMap>::value, int>::type = 0>
+  AABB_indexed_triangle_primitive_3(IndexIterator it, const PointRange&, const FaceRange&) : Base(it){}
+  template <typename std::enable_if<std::is_default_constructible<PointMap>::value, int>::type = 0>
+  AABB_indexed_triangle_primitive_3(std::size_t i, const PointRange&, const FaceRange&) : Base(i){}
+
+  AABB_indexed_triangle_primitive_3(Face_const_iterator it, const PointRange&, const FaceRange& triangles, PointMap) : Base(std::distance(triangles.begin(), it)){}
+  AABB_indexed_triangle_primitive_3(Face_iterator it, const PointRange&, const FaceRange& triangles, PointMap) : Base(std::size_t(std::distance(triangles.begin(), Face_const_iterator(it)))){}
+  template<class IndexIterator>
+  AABB_indexed_triangle_primitive_3(IndexIterator it, const PointRange&, const FaceRange&, PointMap) : Base(it){}
+  AABB_indexed_triangle_primitive_3(std::size_t i, const PointRange&, const FaceRange&, PointMap) : Base(i){}
 
   /// \internal
-  static typename Base::Shared_data construct_shared_data(PointRange &range, PointMap pmap = PointMap()) {
+  static typename Base::Shared_data construct_shared_data(const PointRange &pts, const FaceRange &triangles, PointMap pmap) {
     return std::make_pair(
-      internal::Triangle_3_from_index_range_iterator_property_map<GeomTraits, IndexIterator, typename PointRange::iterator, PointMap>(range.begin(), pmap),
-      internal::Point_from_indexed_triangle_3_iterator_property_map<GeomTraits, IndexIterator, typename PointRange::iterator, PointMap>(range.begin(), pmap));
+      Triangle_property_map(pts, triangles, pmap),
+      Point_property_map(pts, triangles, pmap));
+  }
+  template <typename std::enable_if<std::is_default_constructible<PointMap>::value, int>::type = 0>
+  static typename Base::Shared_data construct_shared_data(const PointRange &pts, const FaceRange &triangles) {
+    return std::make_pair(
+      Triangle_property_map(pts, triangles),
+      Point_property_map(pts, triangles));
   }
 };
 

@@ -86,7 +86,6 @@ namespace AABB_trees {
       const Aff_tr& tr1 = choose_parameter(get_parameter(np1, internal_np::transformation), Aff_tr(Identity_transformation()));
       const Aff_tr& tr2 = choose_parameter(get_parameter(np2, internal_np::transformation), Aff_tr(Identity_transformation()));
       CGAL::internal::AABB_tree::Two_trees_do_intersect_traits_with_transformation traversal_traits(tree1.traits(), tree2.traits(), tr1, tr2);
-      // TODO Aff_transformation is not thread safe, no concurrency_tag available
       CGAL::internal::AABB_tree::two_trees_traversal(tree1, tree2, traversal_traits);
       return traversal_traits.is_intersection_found();
     }
