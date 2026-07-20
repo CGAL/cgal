@@ -32,6 +32,16 @@ struct Border_pmap
   const Mesh& m_mesh;
 };
 
+template<typename EdgesMap>
+std::size_t count_edges(const Mesh& mesh, const EdgesMap& edges_map)
+{
+  std::size_t count = 0;
+  for(const auto e : edges(mesh))
+    if(get(edges_map, e))
+      ++count;
+  return count;
+}
+
 int main(int argc, char* argv[])
 {
   const std::string filename = (argc > 1)
@@ -53,6 +63,8 @@ int main(int argc, char* argv[])
   std::size_t number_of_patches =
       PMP::sharp_edges_segmentation(mesh, 90, eif, pid);
   std::cout << "The input mesh has been segmented into " << number_of_patches << " patches." << std::endl;
+  std::cout << "Number of constained edges : " << count_edges(mesh, eif) << std::endl;
+  std::cout << "Number of protected edges : " << count_edges(mesh, Border_pmap(mesh)) << std::endl;
 
   // Border edges are protected (i.e. kept identical),
   // Feature edges are constrained (i.e. can only be collapsed or split).
@@ -63,7 +75,10 @@ int main(int argc, char* argv[])
                           .face_patch_map(pid)
                           .edge_is_constrained_map(eif)
                           .number_of_iterations(3));
+  std::cout << std::endl;
   std::cout << "Remeshing done." << std::endl;
+  std::cout << "Number of constained edges : " << count_edges(mesh, eif) << std::endl;
+  std::cout << "Number of protected edges : " << count_edges(mesh, Border_pmap(mesh)) << std::endl;
 
   CGAL::IO::write_polygon_mesh("out.ply", mesh,
                                CGAL::parameters::stream_precision(17));
