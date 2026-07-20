@@ -38,6 +38,7 @@ typedef CGAL::Index_tag Tds_type_tag;
 #else
 typedef CGAL::Triangulation_vertex_base_3<K> Vb;
 typedef CGAL::Delaunay_triangulation_cell_base_3<K> Cb;
+typedef CGAL::Handle_tag Tds_type_tag;
 #endif
 typedef CGAL::Triangulation_data_structure_3<Vb, Cb, Concurrent_tag, Tds_type_tag> Tds;
 typedef CGAL::Delaunay_triangulation_3<K,Tds>                DT;
