@@ -1219,11 +1219,17 @@ auto can_be_collapsed(const typename C3T3::Edge& e,
 
   if(!boundary && !in_cx)
   {
-    auto patch_v0 = surface_patch_index(e.first->vertex(e.second), c3t3);
-    auto patch_v1 = surface_patch_index(e.first->vertex(e.third), c3t3);
+    const auto v0 = e.first->vertex(e.second);
+    const auto v1 = e.first->vertex(e.third);
 
-    if(patch_v0 != std::nullopt && patch_v1 != std::nullopt && patch_v0 != patch_v1)
-      return Collapsible{false, boundary};
+    if(v0->in_dimension() != 3 && v1->in_dimension() != 3)
+    {
+      const auto patch_v0 = surface_patch_index(v0, c3t3);
+      const auto patch_v1 = surface_patch_index(v1, c3t3);
+
+      if(patch_v0 != std::nullopt && patch_v1 != std::nullopt && patch_v0 != patch_v1)
+        return Collapsible{false, boundary};
+    }
   }
 
 //   if(!is_internal(e, c3t3, cell_selector))
