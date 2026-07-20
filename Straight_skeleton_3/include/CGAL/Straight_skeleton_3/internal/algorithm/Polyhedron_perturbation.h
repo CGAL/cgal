@@ -280,12 +280,11 @@ public:
                 }
 
                 const FT sqd = CGAL::squared_distance(vertex->point(), p_new.value());
-                std::cout << f1->id() << " " << f2->id() << " " << f3->id() << " -> " << p_new.value() << " (sqd=" << sqd << ")" << std::endl;
                 max_sq_displacement = (std::max)(max_sq_displacement, sqd);
                 if (sqd > sq_tolerance) {
-                  CGAL_SS3_TRANSF_TRACE_V(16, "  vertex is unstable and would move to " << p_new.value());
-                  CGAL_SS3_TRANSF_TRACE_V(16, "    (" << CGAL::approximate_sqrt(CGAL::squared_distance(vertex->point(), p_new.value())) << " away)");
-                  CGAL_SS3_TRANSF_TRACE_V(16, "    when recomputed with faces: " << f1->id() << " " << f2->id() << " " << f3->id());
+                  CGAL_SS3_TRANSF_TRACE_V(1, "  vertex is unstable and would move to " << p_new.value());
+                  CGAL_SS3_TRANSF_TRACE_V(1, "    (" << CGAL::approximate_sqrt(CGAL::squared_distance(vertex->point(), p_new.value())) << " away)");
+                  CGAL_SS3_TRANSF_TRACE_V(1, "    when recomputed with faces: " << f1->id() << " " << f2->id() << " " << f3->id());
                   return false;
                 }
               }
@@ -465,7 +464,6 @@ public:
         const Plane_3& orig_pl = original_planes[f];
         const FT amplitude = amplitudes[f];
         const FT scale = FT(initial_range) * amplitude;
-        std::cout << "perturb F" << f->id() << " with scale " << scale << std::endl;
 
         // Generate random nudge in arbitrary precision (FT)
         // We generate in double and convert, which is standard for randoms.
@@ -1704,7 +1702,7 @@ public:
         auto res = CGAL::intersection(bbox, plane);
         if (!res) {
           // Should not happen
-          std::cerr << "no intersection between plane and bbox?!" << std::endl;
+          CGAL_SS3_TRANSF_TRACE_V(1, "no intersection between plane and bbox?!");
           CGAL_assertion(false);
           std::exit(1);
         } else if (const Triangle_3* itr = std::get_if<Triangle_3>(&*res)) {
@@ -1716,7 +1714,7 @@ public:
             local_range.push_back(p);
           }
         } else {
-          std::cerr << "plane/bbox intersection is not a polygon" << std::endl;
+          CGAL_SS3_TRANSF_TRACE_V(1, "plane/bbox intersection is not a polygon");
           CGAL_assertion(false);
           std::exit(1);
         }
@@ -1773,7 +1771,7 @@ public:
         auto res = CGAL::intersection(bbox, plane);
         if (!res) {
           // Should not happen, as bbox is constructed to contain all intersections
-          std::cerr << "no intersection between plane and bbox" << std::endl;
+          CGAL_SS3_TRANSF_TRACE_V(1, "no intersection between plane and bbox");
           CGAL_assertion(false);
           std::exit(1);
         } else if (const Triangle_3* itr = std::get_if<Triangle_3>(&*res)) {
@@ -1785,7 +1783,7 @@ public:
             local_range.push_back(p);
           }
         } else {
-          std::cerr << "plane/bbox intersection is not a polygon" << std::endl;
+          CGAL_SS3_TRANSF_TRACE_V(1, "plane/bbox intersection is not a polygon");
           CGAL_assertion(false);
           std::exit(1);
         }
@@ -1875,11 +1873,11 @@ public:
         // If next is to the right of prev, angle > 180°
         // Use orientation of (center, prev, next) with normal n
         bool angle_gt_180 = (CGAL::orientation(center, next_pt, prev_pt, center + n) == CGAL::NEGATIVE);
-        std::cout << "center = " << center << std::endl;
-        std::cout << "prev_pt = " << prev_pt << std::endl;
-        std::cout << "next_pt = " << next_pt << std::endl;
-        std::cout << "center + n = " << center + n << std::endl;
-        std::cout << "angle_gt_180 = " << angle_gt_180 << std::endl;
+        // std::cout << "center = " << center << std::endl;
+        // std::cout << "prev_pt = " << prev_pt << std::endl;
+        // std::cout << "next_pt = " << next_pt << std::endl;
+        // std::cout << "center + n = " << center + n << std::endl;
+        // std::cout << "angle_gt_180 = " << angle_gt_180 << std::endl;
 
         for(std::size_t i=0; i<local_range.size(); ++i) {
           std::size_t i1 = base_idx + i;
@@ -1889,13 +1887,13 @@ public:
           const Point_3& p1 = points[i1];
           const Point_3& p2 = points[i2];
           Point_3 mid = CGAL::midpoint(p1, p2);
-          std::cout << "test: " << mid << std::endl;
+          // std::cout << "test: " << mid << std::endl;
 
           // Test if mid is between the two orientation planes
           bool on_pos_side_prev = (plane_prev.oriented_side(mid) == CGAL::ON_NEGATIVE_SIDE);
           bool on_pos_side_next = (plane_next.oriented_side(mid) == CGAL::ON_POSITIVE_SIDE);
-          std::cout << "on_pos_side_prev = " << on_pos_side_prev << std::endl;
-          std::cout << "on_pos_side_next = " << on_pos_side_next << std::endl;
+          // std::cout << "on_pos_side_prev = " << on_pos_side_prev << std::endl;
+          // std::cout << "on_pos_side_next = " << on_pos_side_next << std::endl;
 
           bool in_sector = (on_pos_side_prev && on_pos_side_next);
           // If angle > 180°, invert logic: triangles inside are NOT part of the facet
@@ -1932,7 +1930,6 @@ public:
 
     ConfigurationSPtr config = Configuration::get_instance();
     double nudge_range = config->get_double("Preprocessing", "perturbation_epsilon");
-    nudge_range = 1e-1;
 
     // -- PART 1 --
     // Compute *perturbed* planes such that at a given vertex, any 3-intersection of incident
@@ -2002,7 +1999,9 @@ public:
           CGAL_precondition(Transformation::has_normalized_plane(f));
           nudge_ranges[f] = nudge_range;
 
-          CGAL_SS3_TRANSF_TRACE_V(16, "Anchor F" << f->id());
+          // @fixme? do we need some kind of "link stability" to ensure the link does not tangle?...
+          // --> maybe we don't because we have stability of all points, hence the edges are stable too
+          CGAL_SS3_TRANSF_TRACE_V(16, "Recompute F" << f->id());
           CGAL_SS3_TRANSF_TRACE_V(16, "  From coefficients [" << f->get_plane().a() << " " << f->get_plane().b() << " "
                                                               << f->get_plane().c() << " " << f->get_plane().d() << "]");
 
@@ -2095,26 +2094,23 @@ public:
         }
 
         for (;;) {
-          std::cout << "Try again to get stable anchors" << std::endl;
-
           // @todo don't recompute if the nudge range hasn't changed
           for (const FacetSPtr& f : facets) {
             // Now, we compute a nudge, using the fixed nudge direction
             const Plane_3& base_plane = pre_nudge_planes[f];
             const FT& nudge_coeff = nudge_ranges[f];
-            std::cout << "nudge F" << f->id() << " with nudge coeff " << nudge_coeff << std::endl;
             Plane_3 nudged_plane { base_plane.a(), base_plane.b(), base_plane.c(), base_plane.d() + nudge_coeff };
             f->set_plane(nudged_plane);
             CGAL_SS3_TRANSF_TRACE_V(16, "  To coefficients [" << f->get_plane().a() << " " << f->get_plane().b() << " "
                                                               << f->get_plane().c() << " " << f->get_plane().d() << "]");
 
-            std::cout << "distance to anchors:" << std::endl;
-            for (const VertexSPtr& v : f->vertices()) {
-              if (anchors.count(v)) {
-                FT dist = CGAL::approximate_sqrt(CGAL::squared_distance(v->point(), f->get_plane()));
-                std::cout << "  V" << v->id() << " dist: " << dist << std::endl;
-              }
-            }
+            // std::cout << "distance to anchors:" << std::endl;
+            // for (const VertexSPtr& v : f->vertices()) {
+            //   if (anchors.count(v)) {
+            //     FT dist = CGAL::approximate_sqrt(CGAL::squared_distance(v->point(), f->get_plane()));
+            //     std::cout << "  V" << v->id() << " dist: " << dist << std::endl;
+            //   }
+            // }
           }
 
           // Now, all facets have updated (nudged) planes, so check the stability of the anchors
@@ -2125,7 +2121,7 @@ public:
               continue;
             }
             if (!is_stable_vertex(anchor, polyhedron, sq_max_displacements[anchor])) {
-              std::cout << "Anchor V" << anchor->id() << " is not stable, reducing incident plane nudges" << std::endl;
+              CGAL_SS3_TRANSF_TRACE_V(16, "Anchor V" << anchor->id() << " is not stable, reducing incident plane nudges");
               stable_anchors = false;
               for (const FacetWPtr& wf : anchor->facets()) {
                 if (FacetSPtr f = wf.lock()) {
@@ -2179,12 +2175,8 @@ public:
         return false;
       };
 
-      int iter = -1;
       for (;;) {
         // Apply perturbation with given anchors, and note faces which have unstable vertices
-
-        std::cout << "Iter " << ++iter << std::endl;
-        std::cout << facets_to_recompute.size() << " facets to recompute" << std::endl;
 
 #if 1
         // The smart algorithm does not yet work, but this complete range is a massive amount of useless work, recomputing facet planes over and over.
@@ -2194,7 +2186,6 @@ public:
         recompute_facet_planes(facets_to_recompute);
         facets_to_recompute.clear();
 #endif
-        std::cout << "all facets recomputed" << std::endl;
 
         // facet perturbations have been recomputed with their temporary anchors
         // check stability of other vertices
@@ -2252,7 +2243,6 @@ public:
             CGAL_SS3_TRANSF_TRACE_V(8, "  Must triangulate F" << f->id());
             Plane_3 original_plane = original_planes.at(f);
             auto [local_vertices, new_facets] = Transformation::triangulate_facet(f, polyhedron);
-            std::cout << polyhedron->to_string() << std::endl;
             CGAL_postcondition(polyhedron->is_consistent());
 
             original_planes.erase(f);
@@ -2274,20 +2264,12 @@ public:
       IO::write_OBJ("results/V4_preprocessed.obj", polyhedron, parameters::do_not_triangulate_faces(true));
 #endif
 
-      // @tmp +++
-      for (const VertexSPtr v : polyhedron->vertices()) {
-        if (!is_stable_vertex(v, polyhedron, sq_max_displacements[v])) {
-          std::cerr << "Error: vertex " << v->to_string() << " is not stable" << std::endl;
-          std::abort();
-        }
-      }
-      CGAL_SS3_TRANSF_TRACE_V(8, "All vertices are stable.");
-      // @tmp ---
+      CGAL_postcondition_code(for (const VertexSPtr v : polyhedron->vertices()))
+      CGAL_postcondition(is_stable_vertex(v, polyhedron, sq_max_displacements[v]));
     }
 
-    std::cout << "genericity:" << std::endl;
-    std::cout << do_all_plane_pairs_intersect(polyhedron) << std::endl;
-    std::cout << do_all_plane_triplets_intersect(polyhedron) << std::endl;
+    CGAL_postcondition(do_all_plane_pairs_intersect(polyhedron));
+    CGAL_postcondition(do_all_plane_triplets_intersect(polyhedron));
 
     // -- PART 2 --
     // The perturbation planes are set up, recompute all vertex positions, and split high-degree
@@ -2334,8 +2316,6 @@ public:
                     FT sqd = CGAL::squared_distance(vertex->point(), *p_new);
                     max_sq_displacement = std::max(max_sq_displacement, sqd);
 
-                    std::cout << f1->id() << " " << f2->id() << " " << f3->id() << " -> " << p_new.value() << " (sqd=" << sqd << ")" << std::endl;
-
                     bb += p_new->bbox();
                     inter_out << *(p_new) << "\n";
                   }
@@ -2346,18 +2326,18 @@ public:
         }
       }
 
-      std::cout << "max_sq_displacement = " << max_sq_displacement << std::endl;
+      CGAL_SS3_TRANSF_TRACE_V(64, "max_sq_displacement = " << max_sq_displacement);
 
       bb.scale(1.5);
 
       Iso_cuboid_3 bbox { bb };
 
-      std::cout << "splitting bounding box: " << bbox << std::endl;
-      std::cout << "x span " << bb.x_span() << ", y span " << bb.y_span() << ", z span " << bb.z_span() << std::endl;
+      CGAL_SS3_TRANSF_TRACE_V(64, "splitting bounding box: " << bbox);
+      CGAL_SS3_TRANSF_TRACE_V(64, "x span " << bb.x_span() << ", y span " << bb.y_span() << ", z span " << bb.z_span());
 
       // Get the triangles from the base planes, with tagged faces
       get_clipped_plane_faces(vertex, bbox, points, triangles, triangle_to_facet);
-      std::cout << points.size() << " points, " << triangles.size() << " triangles [base]" << std::endl;
+      CGAL_SS3_TRANSF_TRACE_V(64, points.size() << " points, " << triangles.size() << " triangles [base]");
 
       // Dump a polygon soup for each set of triangle faces associated to a specific fsptr value
       {
@@ -2379,7 +2359,6 @@ public:
       }
 
       // Add the bounding box faces
-#if 1
       std::size_t base_idx = points.size();
       points.push_back(Point_3(bbox.xmin(), bbox.ymin(), bbox.zmin())); // v0
       points.push_back(Point_3(bbox.xmax(), bbox.ymin(), bbox.zmin())); // v1
@@ -2411,20 +2390,22 @@ public:
 
       triangle_to_facet.resize(triangles.size(), nullptr);
 
-      std::cout << points.size() << " points, " << triangles.size() << " triangles [w/ bbox]" << std::endl;
-#endif
+      CGAL_SS3_TRANSF_TRACE_V(64, points.size() << " points, " << triangles.size() << " triangles [w/ bbox]");
 
       for (std::size_t i=0; i<triangle_to_facet.size(); ++i) {
-        std::cout << "triangle " << i << " ptr: "
-                  << (triangle_to_facet[i] ? triangle_to_facet[i]->id() : -1) << std::endl;
+        CGAL_SS3_TRANSF_TRACE_V(64, "triangle " << i << " ptr: "
+                                << (triangle_to_facet[i] ? triangle_to_facet[i]->id() : -1));
       }
 
       PMP::merge_duplicate_points_in_polygon_soup(points, triangles);
+
+#ifdef CGAL_SS3_DUMP_FILES
       CGAL::IO::write_OFF("results/arr_soup.off", points, triangles, CGAL::parameters::stream_precision(17));
+#endif
 
       CGAL_assertion(triangles.size() == triangle_to_facet.size());
 
-      std::cout << "autorefining..." << std::endl;
+      CGAL_SS3_TRANSF_TRACE_V(64, "autorefining...");
       std::vector<FacetSPtr> updated_triangle_to_facet;
       Range_updating_autoref_visitor<FacetSPtr> autoref_visitor(triangle_to_facet, updated_triangle_to_facet);
 
@@ -2432,7 +2413,9 @@ public:
       triangle_to_facet = std::move(updated_triangle_to_facet);
       CGAL_assertion(triangles.size() == triangle_to_facet.size());
 
+#ifdef CGAL_SS3_DUMP_FILES
       CGAL::IO::write_OFF("results/arr_autorefined.off", points, triangles, CGAL::parameters::stream_precision(17));
+#endif
 
       // dump the arrangement, with normalized points fitting in a unit cube, for easier visualization
       std::vector<Point_3> normalized_points;
@@ -2441,13 +2424,16 @@ public:
                                             (p.y() - bbox.ymin()) / bb.y_span(),
                                             (p.z() - bbox.zmin()) / bb.z_span()));
       }
+
+#ifdef CGAL_SS3_DUMP_FILES
       CGAL::IO::write_OFF("results/arr_autorefined_normalized.off", normalized_points, triangles, CGAL::parameters::stream_precision(17));
+#endif
 
       for (std::size_t i=0; i<triangles.size(); ++i) {
-        std::cout << "[4] triangle " << i << " ptr: "
-                  << (triangle_to_facet[i] ? triangle_to_facet[i]->id() : -1) << std::endl;
+        CGAL_SS3_TRANSF_TRACE_V(64, "[4] triangle " << i << " ptr: " << (triangle_to_facet[i] ? triangle_to_facet[i]->id() : -1));
       }
 
+#ifdef CGAL_SS3_DUMP_FILES
       // Dump a polygon soup for each set of triangle faces associated to a specific fsptr value
       {
         CGAL::unordered_flat_map<std::size_t, std::vector<std::vector<std::size_t> > > id_to_triangles;
@@ -2469,16 +2455,21 @@ public:
 
         CGAL_assertion(id_to_triangles.size() == vertex->degree());
       }
+#endif
 
-      std::cout << "repairing..." << std::endl;
+      CGAL_SS3_TRANSF_TRACE_V(64, "repairing...");
       Range_updating_repair_PS_visitor<FacetSPtr> repair_ps_visitor(triangle_to_facet);
       PMP::merge_duplicate_polygons_in_polygon_soup(points, triangles,
                                                     CGAL::parameters::visitor(repair_ps_visitor)
                                                                     .erase_all_duplicates(false) /*keep one*/
                                                                     .require_same_orientation(false)
                                                                     .verbose(true));
-      CGAL::IO::write_OFF("results/arr_repaired.off", points, triangles, CGAL::parameters::stream_precision(17));
 
+#ifdef CGAL_SS3_DUMP_FILES
+      CGAL::IO::write_OFF("results/arr_repaired.off", points, triangles, CGAL::parameters::stream_precision(17));
+#endif
+
+#ifdef CGAL_SS3_DUMP_FILES
       // Dump a polygon soup for each set of triangle faces associated to a specific fsptr value
       {
         CGAL::unordered_flat_map<std::size_t, std::vector<std::vector<std::size_t> > > id_to_triangles;
@@ -2495,9 +2486,11 @@ public:
           CGAL::IO::write_OFF(oss.str(), points, kv.second, CGAL::parameters::stream_precision(17));
         }
       }
+#endif
 
       CGAL_assertion(triangles.size() == triangle_to_facet.size());
 
+#ifdef CGAL_SS3_DUMP_FILES
       // dump only the triangles with a non nullptr
       {
         std::vector<std::vector<std::size_t> > input_triangles;
@@ -2507,9 +2500,9 @@ public:
           }
         }
 
-        std::cout << input_triangles.size() << " input triangles" << std::endl;
         CGAL::IO::write_OFF("results/arr_recovered_input.off", points, input_triangles, CGAL::parameters::stream_precision(17));
       }
+#endif
 
       using PID = std::size_t;
       using TID = std::size_t;
@@ -2543,7 +2536,7 @@ public:
             const PID pid1 = pid1_and_edges.first;
             CGAL_assertion(pid0 != pid1);
 
-            std::cout << "processing a non-manifold edge: " << points[pid0] << " -- " << points[pid1] << std::endl;
+            CGAL_SS3_TRANSF_TRACE_V(64, "processing NM edge: " << points[pid0] << " -- " << points[pid1]);
 
             auto get_third_point_id = [&triangles, pid0, pid1](TID tid) -> PID
             {
@@ -2595,7 +2588,7 @@ public:
                                 auto& volume_CCs,
                                 auto& face_volume_IDs)
       {
-        std::cout << "Building volume #" << CC_ID << " from seed face " << seed_tid << std::endl;
+        CGAL_SS3_TRANSF_TRACE_V(64, "Building volume #" << CC_ID << " from seed face " << seed_tid);
 
         volume_CCs.emplace_back();
 
@@ -2609,11 +2602,12 @@ public:
           std::tie(current_tid, invert_face) = to_visit.top();
           to_visit.pop();
 
-          std::cout << "At face " << current_tid << " [" << triangles[current_tid][0]
-                                                 << ", " << triangles[current_tid][1]
-                                                 << ", " << triangles[current_tid][2] << "], ";
-          std::cout << "invert: " << invert_face << ", ";
-          std::cout << "VIDS: " << face_volume_IDs[current_tid][0] << " " << face_volume_IDs[current_tid][1] << std::endl;
+          CGAL_SS3_TRANSF_TRACE_V(64,
+            "At face " << current_tid << " [" << triangles[current_tid][0]
+                                      << ", " << triangles[current_tid][1]
+                                      << ", " << triangles[current_tid][2] << "]");
+          CGAL_SS3_TRANSF_TRACE_V(64, "  invert: " << invert_face);
+          CGAL_SS3_TRANSF_TRACE_V(64, "  VIDS: " << face_volume_IDs[current_tid][0] << " " << face_volume_IDs[current_tid][1]);
 
           std::size_t pos = invert_face ? 0 : 1;
           if (face_volume_IDs[current_tid][pos] == CC_ID) {
@@ -2636,23 +2630,23 @@ public:
             const std::vector<TID>& inc_triangles = edge_map.at(e_pids.first).at(e_pids.second);
             CGAL_assertion(!inc_triangles.empty());
 
-            std::cout << "  ~~ Crossing edge [" << e_pids.first << ", " << e_pids.second << "]" << std::endl;
-            std::cout << "    pos: " << points[e_pids.first] << " " << points[e_pids.second] << std::endl;
+            CGAL_SS3_TRANSF_TRACE_V(64, "  ~~ Crossing edge [" << e_pids.first << ", " << e_pids.second << "]");
+            CGAL_SS3_TRANSF_TRACE_V(64, "    pos: " << points[e_pids.first] << " " << points[e_pids.second]);
 
             // The faces are ordered CCW while looking from pid0.
             // So the walking while looking from [j] depends on whether [j] is pid0 or not
             int iter_direction = (e_pids.first == triangles[current_tid][j]) ? 1 : -1;
-            std::cout << "    iter_direction = " << iter_direction << std::endl;
+            CGAL_SS3_TRANSF_TRACE_V(64, "    iter_direction = " << iter_direction);
 
             // and it also depends on whether we are walking above or below the face
             iter_direction *= invert_face ? 1 : -1;
-            std::cout << "    invert_face = " << invert_face << std::endl;
+            CGAL_SS3_TRANSF_TRACE_V(64, "    invert_face = " << invert_face);
 
             TID next_tid = current_tid;
             for (;;) {
               if (inc_triangles.size() == 1) {
-                std::cerr << "Warning: dangling triangle..." << std::endl;
-                std::cout << "    over the edge, the triangle is ITSELF " << current_tid << " [" << triangles[next_tid][0] << ", " << triangles[next_tid][1] << ", " << triangles[next_tid][2] << "], ";
+                CGAL_SS3_TRANSF_TRACE_V(1, "Warning: dangling triangle...");
+                CGAL_SS3_TRANSF_TRACE_V(1, "    over the edge, the triangle is ITSELF " << current_tid << " [" << triangles[next_tid][0] << ", " << triangles[next_tid][1] << ", " << triangles[next_tid][2] << "]");
                 to_visit.emplace(current_tid, !invert_face);
                 break;
               } else if (inc_triangles.size() == 2) {
@@ -2661,8 +2655,8 @@ public:
                 CGAL_assertion(next_tid == current_tid);
 
                 next_tid = (inc_triangles[0] == current_tid) ? inc_triangles[1] : inc_triangles[0];
-                std::cout << "    over the edge, the triangle is TRIVIALLY " << next_tid << " [" << triangles[next_tid][0] << ", " << triangles[next_tid][1] << ", " << triangles[next_tid][2] << "], ";
-                std::cout << "VIDS " << face_volume_IDs[next_tid][0] << " " << face_volume_IDs[next_tid][1] << std::endl;
+                CGAL_SS3_TRANSF_TRACE_V(64, "    over the edge, the triangle is TRIVIALLY " << next_tid << " [" << triangles[next_tid][0] << ", " << triangles[next_tid][1] << ", " << triangles[next_tid][2] << "]");
+                CGAL_SS3_TRANSF_TRACE_V(64, "  VIDS " << face_volume_IDs[next_tid][0] << " " << face_volume_IDs[next_tid][1]);
                 CGAL_assertion(next_tid != current_tid);
               } else {
                 // tricky part, now
@@ -2670,16 +2664,16 @@ public:
                 CGAL_assertion(tid_it != inc_triangles.end());
 
                 if (iter_direction == 1) { // CCW
-                  std::cout << "    CCW walk" << std::endl;
+                  CGAL_SS3_TRANSF_TRACE_V(64, "    CCW walk");
                   auto next_it = std::next(tid_it);
                   next_tid = (next_it == inc_triangles.end()) ? inc_triangles[0] : *next_it;
                 } else { // CW
-                  std::cout << "    CW walk" << std::endl;
+                  CGAL_SS3_TRANSF_TRACE_V(64, "    CW walk");
                   next_tid = (tid_it == inc_triangles.begin()) ? inc_triangles.back() : *(std::prev(tid_it));
                 }
 
-                std::cout << "    over the edge, the triangle is " << next_tid << " [" << triangles[next_tid][0] << ", " << triangles[next_tid][1] << ", " << triangles[next_tid][2] << "], ";
-                std::cout << "VIDS " << face_volume_IDs[next_tid][0] << " " << face_volume_IDs[next_tid][1] << std::endl;
+                CGAL_SS3_TRANSF_TRACE_V(64, "    over the edge, the triangle is " << next_tid << " [" << triangles[next_tid][0] << ", " << triangles[next_tid][1] << ", " << triangles[next_tid][2] << "]");
+                CGAL_SS3_TRANSF_TRACE_V(64, "  VIDS " << face_volume_IDs[next_tid][0] << " " << face_volume_IDs[next_tid][1]);
                 CGAL_assertion(next_tid != current_tid);
               }
 
@@ -2693,10 +2687,9 @@ public:
               CGAL_assertion(triangles[next_tid][pos] == triangles[current_tid][j]);
 
               const bool flip_side = (triangles[next_tid][(pos+1)%3] == triangles[current_tid][(j+1)%3]);
-              std::cout << "    flipping? " << flip_side
-                        << " (N: " << triangles[next_tid][(pos+1)%3] << " C: " << triangles[current_tid][(j+1)%3] << ")" << std::endl;
+              CGAL_SS3_TRANSF_TRACE_V(64, "    flipping? " << flip_side << " (N: " << triangles[next_tid][(pos+1)%3] << " C: " << triangles[current_tid][(j+1)%3] << ")");
 
-              std::cout << "Final TID = " << next_tid << std::endl;
+              CGAL_SS3_TRANSF_TRACE_V(64, "Final TID = " << next_tid);
               if (flip_side) {
                 to_visit.emplace(next_tid, !invert_face);
               } else {
@@ -2713,8 +2706,8 @@ public:
       // that are incident to the base face(s)
       std::vector<std::vector<TID> > volume_CCs; // range of ranges (volumes) of triangle IDs
       std::vector<std::array<VID, 2> > face_volume_IDs(triangles.size(),
-                                                        // [0] is down, [1] is up
-                                                        std::array<VID, 2>{VID(-1), VID(-1)});
+                                                       // [0] is down, [1] is up
+                                                       std::array<VID, 2>{VID(-1), VID(-1)});
 
       VID vid = 0;
       for(std::size_t i=0; i<triangles.size(); ++i) {
@@ -2727,7 +2720,7 @@ public:
           build_volume_CC(i, vid++, false, points, triangles, edge_map, volume_CCs, face_volume_IDs);
       }
 
-      std::cout << volume_CCs.size() << " volume CCs" << std::endl;
+      CGAL_SS3_TRANSF_TRACE_V(64, volume_CCs.size() << " volume CCs");
 
       for (std::size_t i=0; i<volume_CCs.size(); ++i) {
         // build a mesh from the soup
@@ -2737,10 +2730,11 @@ public:
           cc_triangles.push_back(triangles[tid]);
         }
 
+#ifdef CGAL_SS3_DUMP_FILES
         std::ostringstream oss;
         oss << "results/volume_cc_" << i << ".off";
         CGAL::IO::write_OFF(oss.str(), cc_points, cc_triangles, CGAL::parameters::stream_precision(17));
-        std::cout << "Wrote volume CC " << i << " with " << cc_triangles.size() << " triangles." << std::endl;
+#endif
       }
 
       enum class CC_in_out_flag
@@ -2778,19 +2772,21 @@ public:
           in_out_flags[top_vid] = CC_in_out_flag::TBD;
       }
 
+#ifdef CGAL_SS3_DUMP_FILES
       // base info dump
       {
         unsigned int undetermined_n = 0;
         for (std::size_t i=0; i<volume_CCs.size(); ++i) {
           CGAL_assertion(in_out_flags[i] != CC_in_out_flag::UNINITIALIZED);
-          if (in_out_flags[i] == CC_in_out_flag::INSIDE)
-            std::cout << "volume " << i << " is known inside (base)" << std::endl;
-          else if (in_out_flags[i] == CC_in_out_flag::OUTSIDE)
-            std::cout << "volume " << i << " is known outside (base)" << std::endl;
-          else
+          if (in_out_flags[i] == CC_in_out_flag::INSIDE) {
+            CGAL_SS3_TRANSF_TRACE_V(64, "volume " << i << " is known inside (base)");
+          } else if (in_out_flags[i] == CC_in_out_flag::OUTSIDE) {
+            CGAL_SS3_TRANSF_TRACE_V(64, "volume " << i << " is known outside (base)");
+          } else {
             ++undetermined_n;
+          }
         }
-        std::cout << undetermined_n << " undetermined cells" << std::endl;
+        CGAL_SS3_TRANSF_TRACE_V(64, undetermined_n << " undetermined cells");
 
         std::vector<std::pair<CC_in_out_flag, std::string> > dumps =
           {{CC_in_out_flag::INSIDE, "INSIDE"}, {CC_in_out_flag::OUTSIDE, "OUTSIDE"}};
@@ -2818,6 +2814,7 @@ public:
           }
         }
       }
+#endif
 
       // Set up the non obvious known volumes
 
@@ -2831,98 +2828,6 @@ public:
           is_boundary_point.set(pid);
       }
 
-#if 0 // old stuff, outdated
-      // For each edge of the mesh, we have 2 pairs of 4 volume cells incident to the bounding box
-      // We keep the four volume cells that are on the same side as the edge's endpoint opposite
-      // of the vertex.
-      // In these four volume cells, assign inside/outside: if the edge is convex, then it's 3
-      // volumes outside and 1 volume inside. If the edge is concave, then it's 1 volume inside
-      // outside and 3 volumes inside.
-
-      for(PID pid0 = 0; pid0 < points.size(); ++pid0) {
-        for(const auto& [pid1, tids] : edge_map[pid0]) {
-          CGAL_assertion(tids.size() <= 4);
-          if (tids.size() != 4)
-            continue;
-          if (is_boundary_point[pid0] == is_boundary_point[pid1])  // internal or on border edge
-            continue;
-
-          // now, all incident volumes will be on the boundary since the edge is on the boundary
-          std::set<FacetSPtr> orig_facets;
-          for(TID tid : tids) {
-            CGAL_assertion(face_volume_IDs[tid][0] != VID(-1) && face_volume_IDs[tid][1] != VID(-1));
-            orig_facets.insert(triangle_to_facet[tid]);
-          }
-          CGAL_assertion(orig_facets.size() == 2);
-
-          FacetSPtr f0 = *(orig_facets.begin());
-          FacetSPtr f1 = *(std::next(orig_facets.begin(), 1));
-          EdgeSPtr common_e = f0->find_edge(f1);
-          if (common_e == EdgeSPtr()) // these faces are not adjacent in the input
-            continue;
-
-          // get the point that is *not* the center of the star
-          VertexSPtr other_v = common_e->other(vertex);
-
-          Vector_3 orig_v { vertex->point(), other_v->point() };
-
-          // sort by distance to the center vertex to get the oriented edge
-          // @fixme sounds like an inconsistency because we are going to check scalar products
-          // between vectors that do NOT correspond to post-perturbation state
-          bool flip = (CGAL::compare_distance(vertex->point(), points[pid1], points[pid0]) == CGAL::SMALLER);
-          PID spid0 = flip ? pid1 : pid0;
-          PID spid1 = flip ? pid0 : pid1;
-
-          Vector_3 new_v { points[spid0], points[spid1] };
-
-          std::cout << "--" << std::endl;
-          std::cout << points[pid0] << " " << points[pid1] << " is a tentative edge" << std::endl;
-          std::cout << points[spid0] << " " << points[spid1] << " (oriented)" << std::endl;
-          std::cout << "vertex = " << vertex->point() << std::endl;
-          std::cout << "other = " << other_v->point() << std::endl;
-          std::cout << CGAL::scalar_product(orig_v, new_v) << std::endl;
-
-          if (CGAL::scalar_product(orig_v, new_v) < 0)
-            continue;
-
-          std::cout << points[pid0] << " " << points[pid1] << " is a good edge" << std::endl;
-
-          // Now, we have an edge touching the bbox (but not on the bbox), equivalent to (part of)
-          // the edge in the initial star
-          // -> mark the volumes as inside and outside depending on convexity
-
-          // @fixme same inconsistency here: planes have been tilted and so we use the new plane
-          // but third_v->point() is an OLD position...
-          VertexSPtr third_v = *(f1->vertices().begin());
-          const Plane_3& pl0 = f0->get_plane();
-          for (VertexSPtr v1 : f1->vertices()) {
-            if (CGAL::compare_distance(pl0, v1->point(), third_v->point()) == CGAL::LARGER)
-              third_v = v1;
-          }
-
-          std::map<VID, unsigned int> positive_hits;
-          for(TID tid : tids)
-            ++(positive_hits[face_volume_IDs[tid][1]]);
-
-          bool is_convex = (f0->get_plane().oriented_side(third_v->point()) == CGAL::NEGATIVE);
-          std::cout << "it is a " << (is_convex ? "convex" : "concave") << " edge" << std::endl;
-          std::cout << "f0f1: " << f0->id() << " " << f1->id() << std::endl;
-          Vector_3 n = f0->get_plane().orthogonal_vector();
-          n = n/CGAL::approximate_sqrt(n.squared_length());
-          std::cout << "normal " << vertex->point() << " " << vertex->point() + n << std::endl;
-          std::cout << "third point was " << third_v->point() << std::endl;
-
-          for (const auto& e : positive_hits) {
-            if (e.second == 0)
-              in_out_flags[e.first] = CC_in_out_flag::INSIDE;
-            else if (e.second == 2)
-              in_out_flags[e.first] = CC_in_out_flag::OUTSIDE;
-            else
-              in_out_flags[e.first] = (is_convex ? CC_in_out_flag::OUTSIDE : CC_in_out_flag::INSIDE);
-          }
-        }
-      }
-#else
       // Generalization of above: for the complete trace of the star on the bounding box,
       // we know the cell above is OUTSIDE and the cell beneath is INSIDE
 
@@ -2993,7 +2898,7 @@ public:
             incident_boundary_points.insert(other_pid);
         }
 
-        std::cout << incident_boundary_points.size() << " incident boundary points" << std::endl;
+        CGAL_SS3_TRANSF_TRACE_V(64, incident_boundary_points.size() << " incident boundary points");
         CGAL_assertion(incident_boundary_points.size() == 2);
 
         PID first_pid = *(incident_boundary_points.begin());
@@ -3017,7 +2922,7 @@ public:
         std::cout << "is_convex = " << is_convex << std::endl;
 
         // now, if the edge is convex in the input polyhedron, we must turn "right", meaning,
-        // the next point is on the negative side of the plane too
+        // the next point is on the negative side of the plane
         if (prev_facet->get_plane().oriented_side(points[first_pid]) == CGAL::NEGATIVE)
           return {(is_convex ? first_pid : second_pid), true};
         else
@@ -3040,7 +2945,7 @@ public:
         Vector_3 orig_v { vertex->point(), other_v->point() };
         CGAL_assertion(orig_v != CGAL::NULL_VECTOR);
 
-        std::cout << "compute start of " << prev_facet->id() << " " << facet->id() << std::endl;
+        CGAL_SS3_TRANSF_TRACE_V(64, "compute start of " << prev_facet->id() << " " << facet->id());
 
         for (PID pid0 = 0; pid0 < points.size(); ++pid0) {
           for (const auto& [pid1, tids] : edge_map[pid0]) {
@@ -3066,15 +2971,15 @@ public:
             PID test_spid1 = flip ? pid0 : pid1;
             CGAL_assertion(is_boundary_point[test_spid1]);
 
-            std::cout << "flip? " << flip << std::endl;
-            std::cout << "candidate 0 " << normalized_points[test_spid0] << std::endl;
-            std::cout << "candidate 1 " << normalized_points[test_spid1] << std::endl;
+            CGAL_SS3_TRANSF_TRACE_V(64, "flip? " << flip);
+            CGAL_SS3_TRANSF_TRACE_V(64, "candidate 0 " << normalized_points[test_spid0]);
+            CGAL_SS3_TRANSF_TRACE_V(64, "candidate 1 " << normalized_points[test_spid1]);
 
             Vector_3 new_v { points[test_spid0], points[test_spid1] };
-            std::cout << "sp = " << CGAL::scalar_product(orig_v, new_v) << std::endl;
+            CGAL_SS3_TRANSF_TRACE_V(64, "sp = " << CGAL::scalar_product(orig_v, new_v));
 
             if (CGAL::scalar_product(orig_v, new_v) >= 0) {
-              std::cout << "start is " << normalized_points[test_spid1] << std::endl;
+              CGAL_SS3_TRANSF_TRACE_V(64, "start is " << normalized_points[test_spid1]);
               return test_spid1;
             }
           }
@@ -3089,8 +2994,10 @@ public:
         edge = edge->next(vertex);
       } while(edge != start_edge);
 
+#ifdef CGAL_SS3_DUMP_FILES
       std::ofstream link_out("results/link.txt");
       link_out.precision(17);
+#endif
 
       edge = start_edge;
       do
@@ -3100,11 +3007,11 @@ public:
         EdgeSPtr next_edge = edge->next(vertex);
         FacetSPtr next_facet = next_edge->left(vertex);
 
-        std::cout << "walking on " << facet->id() << " (prev: " << prev_facet->id() << ")" << std::endl;
+        CGAL_SS3_TRANSF_TRACE_V(64, "walking on " << facet->id() << " (prev: " << prev_facet->id() << ")");
 
         PID current_pid = edge_start_pid[edge];
         CGAL_assertion(current_pid != PID(-1));
-        std::cout << "Start at " << current_pid << " pos: " << normalized_points[current_pid] << std::endl;
+        CGAL_SS3_TRANSF_TRACE_V(64, "Start at " << current_pid << " pos: " << normalized_points[current_pid]);
 
         // Now walk the star link on arrangement edges
 
@@ -3117,8 +3024,10 @@ public:
           CGAL_assertion(valid);
           CGAL_assertion(is_boundary_point[current_pid] && is_boundary_point[next_pid]);
 
-          link_out << "2 " << normalized_points[current_pid] << " " << normalized_points[next_pid] << std::endl;
-          std::cout << "now at " << next_pid << " pos: " << normalized_points[next_pid] << std::endl;
+#ifdef CGAL_SS3_DUMP_FILES
+          link_out << "2 " << normalized_points[current_pid] << " " << normalized_points[next_pid] << "\n";
+#endif
+          CGAL_SS3_TRANSF_TRACE_V(64, "now at " << next_pid << " pos: " << normalized_points[next_pid]);
 
           mark_cells(current_pid, next_pid, facet);
 
@@ -3133,22 +3042,27 @@ public:
       }
       while (edge != start_edge);
 
-      std::cout << "Known cells marked from star link walk" << std::endl;
+#ifdef CGAL_SS3_DUMP_FILES
+      link_out.close();
 #endif
 
+      CGAL_SS3_TRANSF_TRACE_V(64, "Known cells marked from star link walk");
+
+#ifdef CGAL_SS3_DUMP_FILES
       // intermediate info dump
       {
         unsigned int undetermined_n = 0;
         for (std::size_t i=0; i<volume_CCs.size(); ++i) {
           CGAL_assertion(in_out_flags[i] != CC_in_out_flag::UNINITIALIZED);
-          if (in_out_flags[i] == CC_in_out_flag::INSIDE)
-            std::cout << "volume " << i << " is known inside (boundary edges)" << std::endl;
-          else if (in_out_flags[i] == CC_in_out_flag::OUTSIDE)
-            std::cout << "volume " << i << " is known outside (boundary edges)" << std::endl;
-          else
+          if (in_out_flags[i] == CC_in_out_flag::INSIDE) {
+             CGAL_SS3_TRANSF_TRACE_V(64, "volume " << i << " is known inside (boundary edges)");
+          } else if (in_out_flags[i] == CC_in_out_flag::OUTSIDE) {
+            CGAL_SS3_TRANSF_TRACE_V(64, "volume " << i << " is known outside (boundary edges)");
+          } else {
             ++undetermined_n;
+          }
         }
-        std::cout << undetermined_n << " undetermined cells" << std::endl;
+        CGAL_SS3_TRANSF_TRACE_V(64, undetermined_n << " undetermined cells");
 
         std::vector<std::pair<CC_in_out_flag, std::string> > dumps =
           {{CC_in_out_flag::INSIDE, "INSIDE"}, {CC_in_out_flag::OUTSIDE, "OUTSIDE"}};
@@ -3188,7 +3102,7 @@ public:
             CGAL_assertion(bot_vid != VID(-1) && top_vid != VID(-1));
 
             if (in_out_flags[top_vid] == CC_in_out_flag::OUTSIDE && in_out_flags[bot_vid] == CC_in_out_flag::INSIDE) {
-              std::cout << "Boundary facet " << i << " with top/bottom volumes " << top_vid << "/" << bot_vid << std::endl;
+              CGAL_SS3_TRANSF_TRACE_V(64, "Boundary facet " << i << " with top/bottom volumes " << top_vid << "/" << bot_vid);
               id_to_triangles[fsptr->id()].push_back(triangles[i]);
             }
           }
@@ -3205,6 +3119,7 @@ public:
           CGAL_assertion(id_to_triangles.size() == vertex->degree());
         }
       }
+#endif
 
       // Sanity checks:
       // - a boundary facet cannot have an OUTSIDE volume on its bottom and an INSIDE volume on its top
@@ -3246,19 +3161,25 @@ public:
       // =====================================================================
 
       // cells that are known, are known
+      unsigned int unknowns = 0;
       for (int c = 0; c < C; ++c) {
-        if (in_out_flags[c] == CC_in_out_flag::OUTSIDE)
+        if (in_out_flags[c] == CC_in_out_flag::OUTSIDE) {
           model.FixVariable(x[c], false);
-        else if (in_out_flags[c] == CC_in_out_flag::INSIDE)
+        } else if (in_out_flags[c] == CC_in_out_flag::INSIDE) {
           model.FixVariable(x[c], true);
+        } else {
+          ++unknowns;
+        }
       }
+
+      CGAL_SS3_TRANSF_TRACE_V(32, "Fixed/Variables: " << C-unknowns << " / " << C);
 
       // =====================================================================
       //  CONSTRAINT — Boundary facets point outside
       // =====================================================================
 
-      // The boundary must be well oriented, so the boundary can only have an INSIDE volume
-      // on its negative side, and an OUTSIDE volume on its positive side.
+      // The boundary must be well oriented, hence a boundary facet must have the 'INSIDE' marker
+      // on its negative side, and the 'OUTSIDE' marker on its positive side.
       // In model terms, this is:
       //   x[pos] => x[neg]. (if above is true, below is true)
       for(std::size_t i=0; i<triangles.size(); ++i) {
@@ -3446,8 +3367,8 @@ public:
 
       // Solve
       const auto& proto = model.Build();
-      LOG(INFO) << "Variables: " << proto.variables_size();
-      LOG(INFO) << "Constraints: " << proto.constraints_size();
+      CGAL_SS3_TRANSF_TRACE_V(8, "Variables: " << proto.variables_size());
+      CGAL_SS3_TRANSF_TRACE_V(8, "Constraints: " << proto.constraints_size());
 
       SatParameters params;
       params.set_stop_after_first_solution(true);
@@ -3464,25 +3385,27 @@ public:
                                                                  : CC_in_out_flag::OUTSIDE;
       }
 
-      std::cout << "OK is " << ok << std::endl;
+      CGAL_SS3_TRANSF_TRACE_V(32, "OK is " << ok);
       if (!ok) {
-        std::cerr << "ERROR: failed to find a valid partition: " << response.status() << std::endl;
+        CGAL_SS3_TRANSF_TRACE_V(1, "ERROR: failed to find a solution [" << response.status() << "]");
         std::abort();
       }
 
+#ifdef CGAL_SS3_DUMP_FILES
       // Final dump
       {
         unsigned int undetermined_n = 0;
         for (std::size_t i=0; i<volume_CCs.size(); ++i) {
           CGAL_assertion(in_out_flags[i] != CC_in_out_flag::UNINITIALIZED);
-          if (in_out_flags[i] == CC_in_out_flag::INSIDE)
-            std::cout << "volume " << i << " is known inside (final)" << std::endl;
-          else if (in_out_flags[i] == CC_in_out_flag::OUTSIDE)
-            std::cout << "volume " << i << " is known outside (final)" << std::endl;
-          else
+          if (in_out_flags[i] == CC_in_out_flag::INSIDE) {
+            CGAL_SS3_TRANSF_TRACE_V(64, "volume " << i << " is known inside (final)");
+          } else if (in_out_flags[i] == CC_in_out_flag::OUTSIDE) {
+            CGAL_SS3_TRANSF_TRACE_V(64, "volume " << i << " is known outside (final)");
+          } else {
             ++undetermined_n;
+          }
         }
-        std::cout << undetermined_n << " undetermined cells" << std::endl;
+        CGAL_SS3_TRANSF_TRACE_V(64, undetermined_n << " undetermined cells");
 
         std::vector<std::pair<CC_in_out_flag, std::string> > dumps =
           {{CC_in_out_flag::INSIDE, "INSIDE"}, {CC_in_out_flag::OUTSIDE, "OUTSIDE"}};
@@ -3510,6 +3433,7 @@ public:
           }
         }
       }
+#endif
 
       // a valid partition has:
       // - C1) all cells are either inside or outside
@@ -3528,7 +3452,7 @@ public:
         // C1
         for(const auto& flag : in_out_flags) {
           if(flag == CC_in_out_flag::UNINITIALIZED || flag == CC_in_out_flag::TBD) {
-            std::cerr << "Error: failed C1" << std::endl;
+            CGAL_SS3_TRANSF_TRACE_V(1, "Error: failed C1");
             return false;
           }
         }
@@ -3552,8 +3476,10 @@ public:
           CGAL_assertion(!local_triangles.empty());
 
           if (!PMP::is_polygon_soup_a_polygon_mesh(local_triangles)) {
-            std::cerr << "Error: failed C34-PS_PM" << std::endl;
+            CGAL_SS3_TRANSF_TRACE_V(1, "Error: failed C34-PS_PM");
+#ifdef CGAL_SS3_DUMP_FILES
             CGAL::IO::write_polygon_soup("results/bad_CC.off", points, local_triangles, CGAL::parameters::stream_precision(17));
+#endif
             return false;
           }
 
@@ -3564,12 +3490,12 @@ public:
 
           const unsigned int nb = number_of_borders(sm);
           if (nb != 1) {
-            std::cerr << "Error: failed C34-borders (" << nb << ")" << std::endl;
+            CGAL_SS3_TRANSF_TRACE_V(1, "Error: failed C34-borders (" << nb << ")");
             return false;
           }
 
           if (PMP::does_self_intersect(sm)) {
-            std::cerr << "Error: CC self intersects" << std::endl;
+            CGAL_SS3_TRANSF_TRACE_V(1, "Error: CC self intersects");
             return false;
           }
 
@@ -3577,14 +3503,14 @@ public:
         };
 
         if (!check_CC()) {
-          std::cerr << "Error: issue with global boundary" << std::endl;
+          CGAL_SS3_TRANSF_TRACE_V(1, "Error: issue with global boundary");
           return false;
         }
 
         for (FacetWPtr wf : vertex->facets()) {
           if (FacetSPtr f = wf.lock()) {
             if (!check_CC(f)) {
-              std::cerr << "Error: issue with CC of F" << f->id() << std::endl;
+              CGAL_SS3_TRANSF_TRACE_V(1, "Error: issue with CC of F" << f->id());
               return false;
             }
           }
@@ -3594,9 +3520,9 @@ public:
       };
 
       bool is_valid = is_valid_partition(volume_CCs, face_volume_IDs, in_out_flags, triangles, points, edge_map);
-      std::cout << "valid partition? " << is_valid << std::endl;
+      CGAL_SS3_TRANSF_TRACE_V(32, "valid partition? " << is_valid);
       if (!is_valid)
-        std::exit(1);
+        std::abort();
 
       // Now, extract the connectivity from the arrangement and plug it back into the polyhedron itself
       std::vector<std::vector<PID> > boundary_triangles;
@@ -3612,7 +3538,9 @@ public:
         boundary_triangle_to_facet.push_back(triangle_to_facet[i]);
       }
 
+#ifdef CGAL_SS3_DUMP_FILES
       CGAL::IO::write_polygon_soup("results/boundary.off", points, boundary_triangles);
+#endif
 
       CGAL_assertion(!boundary_triangles.empty());
       CGAL_assertion(PMP::is_polygon_soup_a_polygon_mesh(boundary_triangles));
@@ -3692,7 +3620,7 @@ public:
           int begin = (std::min)(a, b);
           int end = (std::max)(a, b);
 
-          std::cout << "create split between F" << input_facet_1->id() << " and F" << input_facet_2->id() << std::endl;
+          CGAL_SS3_TRANSF_TRACE_V(64, "create split between F" << input_facet_1->id() << " and F" << input_facet_2->id());
           unique_splits.emplace(begin, end);
         }
 
@@ -3720,8 +3648,8 @@ public:
         std::sort(result.begin(), result.end(), sorter);
 
         // a fully-split deg N vertex requires N-3 splits
-        std::cout << "result size: " << result.size() << std::endl;
-        std::cout << "degree: " << vertex->degree() << std::endl;
+        CGAL_SS3_TRANSF_TRACE_V(64, "result size: " << result.size());
+        CGAL_SS3_TRANSF_TRACE_V(64, "degree: " << vertex->degree());
         CGAL_postcondition(result.size() == vertex->degree() - 3);
 
         return result;

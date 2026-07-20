@@ -87,11 +87,8 @@ struct Output_processor
     auto def_f2f_pm = boost::make_assoc_property_map(def_f2f);
     auto f2f = choose_parameter(get_parameter(np_out, internal_np::face_to_face_map), def_f2f_pm);
 
-    std::cout << "f2f is provided? " << !(is_default_parameter<NamedParameters, internal_np::face_to_face_map_t>::value) << std::endl;
-
     for (face_descriptor_out fo : faces(result_t)) {
       std::size_t index = get(of2fi_pm, fo);
-      std::cout << "index of output face " << fo << " is " << index << std::endl;
       CGAL_assertion(index < num_faces(tmesh));
       face_descriptor_in fi = *(std::next(faces(tmesh).begin(), index));
       put(f2f, fo, fi);
@@ -125,8 +122,6 @@ struct Output_processor
                       std::vector<PolygonMeshOut>& results,
                       bool outwards)
   {
-    std::cout << "process(" << result_index << ", default NP)" << std::endl;
-
     if (result_index >= results_p.size())
       return true;
 
@@ -148,9 +143,6 @@ struct Output_processor
                       const FirstNP& first_np,
                       const RestNPs&... rest_nps)
   {
-    std::cout << "process(" << result_index << ")" << std::endl;
-    std::cout << "f2f is provided? " << !(parameters::is_default_parameter<FirstNP, internal_np::face_to_face_map_t>::value) << std::endl;
-
     if (result_index >= results_p.size())
       return true;  // All results processed successfully
 
