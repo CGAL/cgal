@@ -880,7 +880,7 @@ public:
       return this->vertex_src_;
     }
 
-    void set_vertex_src(const VertexSPtr& src)
+    void set_source(const VertexSPtr& src)
     {
       this->vertex_src_ = src;
     }
@@ -901,7 +901,7 @@ public:
       return this->vertex_tgt_;
     }
 
-    void set_vertex_tgt(const VertexSPtr& tgt)
+    void set_target(const VertexSPtr& tgt)
     {
       this->vertex_tgt_ = tgt;
     }
