@@ -12,6 +12,12 @@ Release date: December 2026
 - Deprecated the existing overload of `snap_rounding_2()`.
 - Added a new overload of `snap_rounding_2()` that automatically dispatch to either `vertical_slab_snap_rounding_2()` or `hot_pixel_snap_rounding_2()`, depending on the provided traits class.
 
+### [Tetrahedral Remeshing](https://doc.cgal.org/6.3/Manual/packages.html#PkgTetrahedralRemeshing)
+
+- Added a new parameter `edge_is_protected_map` to [`CGAL::tetrahedral_isotropic_remeshing()`](https://doc.cgal.org/6.3/Tetrahedral_remeshing/group__PkgTetrahedralRemeshingRef.html),
+ to distinguish betweeen "constrained" edges that can be resampled while the constrained edges polyline graph remains topologically unchanged,
+ and "protected" edges that may not be modified at all by remeshing.
+
 ## [Release 6.2](https://github.com/CGAL/cgal/releases/tag/v6.2)
 
 Release date: June 2026
