@@ -68,13 +68,14 @@ struct Primitive_helper<AABBTraits,false>{
 
 
 template<class Kernel>
-Bbox_3 compute_transformed_bbox(const CGAL::Aff_transformation_repC3<Kernel>& at, const Bbox_3& bbox, bool has_rotation)
+Bbox_3 compute_transformed_bbox(const CGAL::Aff_transformation_3<Kernel>& at, const Bbox_3& bbox, bool has_rotation)
 {
   typedef Simple_cartesian<Interval_nt<false>> AK;
   typedef Cartesian_converter<Kernel, AK>    C2F;
   C2F c2f;
 
-  AK::Aff_transformation_3 a_at = c2f(CGAL::Aff_transformation_3<Kernel>(at));
+
+  AK::Aff_transformation_3 a_at = c2f(at);
   AK::FT xtrm[6] = { c2f((bbox.min)(0)), c2f((bbox.max)(0)),
                      c2f((bbox.min)(1)), c2f((bbox.max)(1)),
                      c2f((bbox.min)(2)), c2f((bbox.max)(2)) };
@@ -102,15 +103,32 @@ Bbox_3 compute_transformed_bbox(const CGAL::Aff_transformation_repC3<Kernel>& at
 }
 
 template<class Kernel>
-bool has_rotation(const CGAL::Aff_transformation_3<Kernel>& at){
-  return  (   at.m(0,1) != 0 || at.m(0,2) != 0 || at.m(1,0) != 0
-           || at.m(1,2) != 0 || at.m(2,0) != 0 || at.m(2,1) != 0);
-}
+Bbox_2 compute_transformed_bbox(const CGAL::Aff_transformation_2<Kernel>& at, const Bbox_2& bbox, bool has_rotation)
+{
+  typedef Simple_cartesian<Interval_nt<false>> AK;
+  typedef Cartesian_converter<Kernel, AK>    C2F;
+  C2F c2f;
 
-template<class Kernel>
-bool has_rotation(const CGAL::Aff_transformation_repC3<Kernel>& at){
-  return  (   !is_zero(at.cartesian(0,1)) || !is_zero(at.cartesian(0,2)) || !is_zero(at.cartesian(1,0))
-           || !is_zero(at.cartesian(1,2)) || !is_zero(at.cartesian(2,0)) || !is_zero(at.cartesian(2,1)));
+
+  AK::Aff_transformation_2 a_at = c2f(at);
+  AK::FT xtrm[4] = { c2f((bbox.min)(0)), c2f((bbox.max)(0)),
+                     c2f((bbox.min)(1)), c2f((bbox.max)(1)) };
+
+  if(!has_rotation){
+    AK::Point_2 ps[2];
+    ps[0] = a_at( AK::Point_2(xtrm[0], xtrm[2]) );
+    ps[1] = a_at( AK::Point_2(xtrm[1], xtrm[3]) );
+
+    return bbox_2(ps, ps+2);
+  }
+
+  AK::Point_3 ps[4];
+  ps[0] = a_at( AK::Point_2(xtrm[0], xtrm[2]) );
+  ps[1] = a_at( AK::Point_2(xtrm[0], xtrm[3]) );
+  ps[2] = a_at( AK::Point_2(xtrm[1], xtrm[2]) );
+  ps[3] = a_at( AK::Point_2(xtrm[1], xtrm[3]) );
+
+  return bbox_2(ps, ps+4);
 }
 
 } } //namespace CGAL::internal

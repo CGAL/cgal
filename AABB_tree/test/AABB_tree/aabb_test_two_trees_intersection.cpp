@@ -87,19 +87,13 @@ void test_parallel()
 
   tbb::concurrent_vector< std::pair<fd, fd> > inter;
   assert(CGAL::AABB_trees::do_intersect(tree1, tree2, CGAL::parameters::concurrency_tag(CGAL::Parallel_tag())));
-
   CGAL::AABB_trees::all_pairs_of_intersecting_primitives(tree1, tree2, std::back_inserter(inter), CGAL::parameters::concurrency_tag(CGAL::Parallel_tag()));
-  std::cout << inter.size() << std::endl;
   assert(inter.size() == 1191);
   inter.clear();
-
   CGAL::AABB_trees::all_pairs_of_intersecting_primitives(tree1, tree2, std::back_inserter(inter), CGAL::parameters::concurrency_tag(CGAL::Parallel_tag()).transformation(Aff_tr(CGAL::Translation(), V(0.5,0,0))));
-  std::cout << inter.size() << std::endl;
   assert(inter.size() == 0);
   inter.clear();
-
   CGAL::AABB_trees::all_pairs_of_intersecting_primitives(tree1, tree2, std::back_inserter(inter), CGAL::parameters::concurrency_tag(CGAL::Parallel_tag()).transformation(Aff_tr(0, 1, 0, 1, 0, 0, 0, 0, 1, 1)));
-  std::cout << inter.size() << std::endl;
   assert(inter.size() == 1289);
 }
 #endif
@@ -108,6 +102,10 @@ int main(){
   test<Epick>();
   test<Epeck>();
   test<SCD>();
-
+#ifdef CGAL_LINKED_WITH_TBB
+  test_parallel<Epick>();
+  test_parallel<Epeck>();
+  test_parallel<SCD>();
+#endif
   return 0;
 }

@@ -20,6 +20,9 @@
 #include <CGAL/AABB_tree/internal/AABB_two_trees_traversal.h>
 #include <CGAL/AABB_tree/internal/AABB_two_trees_traversal_traits.h>
 
+#include <CGAL/Aff_transformation_2.h>
+#include <CGAL/Aff_transformation_3.h>
+
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/tbb.h>
 #endif
@@ -75,8 +78,11 @@ namespace AABB_trees {
     }
     else
     {
-      using Kernel = typename Kernel_traits<typename AABBTree1::AABBTraits::Point>::Kernel::type;
-      using Aff_tr = Aff_transformation_3<Kernel>;
+      using Kernel = typename Kernel_traits<typename AABBTree1::AABB_traits::Point>::Kernel;
+      // Get the dimension of the AABBTraits through the bbox and get the appropriate Aff_transformation
+      using Aff_tr = std::conditional_t< std::is_same_v<typename AABBTree1::Bounding_box, Bbox_2>,
+                                         Aff_transformation_2<Kernel>,
+                                         Aff_transformation_3<Kernel>>;
       const Aff_tr& tr1 = choose_parameter(get_parameter(np1, internal_np::transformation), Aff_tr(Identity_transformation()));
       const Aff_tr& tr2 = choose_parameter(get_parameter(np2, internal_np::transformation), Aff_tr(Identity_transformation()));
       CGAL::internal::AABB_tree::Two_trees_do_intersect_traits_with_transformation traversal_traits(tree1.traits(), tree2.traits(), tr1, tr2);
@@ -145,18 +151,13 @@ namespace AABB_trees {
     else
     {
       using Kernel = typename Kernel_traits<typename AABBTree1::AABB_traits::Point>::Kernel;
-      using Aff_tr = Aff_transformation_3<Kernel>;
-      using Aff_tr_rep = Aff_transformation_repC3<Kernel>;
-      Aff_tr tr1_ref = choose_parameter(get_parameter(np1, internal_np::transformation), Aff_tr(Identity_transformation()));
-      Aff_tr tr2_ref = choose_parameter(get_parameter(np2, internal_np::transformation), Aff_tr(Identity_transformation()));
-      Aff_tr_rep tr1(tr1_ref.m(0,0), tr1_ref.m(0,1), tr1_ref.m(0,2), tr1_ref.m(0,3),
-                     tr1_ref.m(1,0), tr1_ref.m(1,1), tr1_ref.m(1,2), tr1_ref.m(1,3),
-                     tr1_ref.m(2,0), tr1_ref.m(2,1), tr1_ref.m(2,2), tr1_ref.m(2,3));
-      Aff_tr_rep tr2(tr2_ref.m(0,0), tr2_ref.m(0,1), tr2_ref.m(0,2), tr2_ref.m(0,3),
-                     tr2_ref.m(1,0), tr2_ref.m(1,1), tr2_ref.m(1,2), tr2_ref.m(1,3),
-                     tr2_ref.m(2,0), tr2_ref.m(2,1), tr2_ref.m(2,2), tr2_ref.m(2,3));
+      // Get the dimension of the AABBTraits through the bbox and get the appropriate Aff_transformation
+      using Aff_tr = std::conditional_t< std::is_same_v<typename AABBTree1::Bounding_box, Bbox_2>,
+                                         Aff_transformation_2<Kernel>,
+                                         Aff_transformation_3<Kernel>>;
+      Aff_tr tr1 = choose_parameter(get_parameter(np1, internal_np::transformation), Aff_tr(Identity_transformation()));
+      Aff_tr tr2 = choose_parameter(get_parameter(np2, internal_np::transformation), Aff_tr(Identity_transformation()));
       CGAL::internal::AABB_tree::Two_trees_listing_intersecting_primitives_traits_with_transformation traversal_traits(tree1.traits(), tree2.traits(), out, tr1, tr2);
-      // TODO Aff_transformation is not thread safe, no concurrency_tag available
       CGAL::internal::AABB_tree::two_trees_traversal<Concurrency_tag>(tree1, tree2, traversal_traits);
     }
   }
