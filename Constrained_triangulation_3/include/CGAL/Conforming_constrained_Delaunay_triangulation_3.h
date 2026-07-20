@@ -713,7 +713,7 @@ public:
     */
   template <typename PolygonMesh, typename CGAL_NP_TEMPLATE_PARAMETERS>
   Conforming_constrained_Delaunay_triangulation_3(const PolygonMesh& mesh, const CGAL_NP_CLASS& np = parameters::default_values())
-      : cdt_impl(parameters::choose_parameter(parameters::get_parameter(np, internal_np::geom_traits), Traits{}))
+      : cdt_impl(parameters::choose_parameter<Traits>(parameters::get_parameter(np, internal_np::geom_traits)))
   {
     // ----------------------------------
     // cstr... (polygon mesh)
@@ -724,7 +724,7 @@ public:
 
     auto mesh_vp_map = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                         get_const_property_map(vertex_point, mesh));
-    this->debug() = choose_parameter(get_parameter(np, internal_np::debug), CDT_3::Debug_options{});
+    this->debug() = choose_parameter<CDT_3::Debug_options>(get_parameter(np, internal_np::debug));
 
     using graph_traits = boost::graph_traits<PolygonMesh>;
     using vertex_descriptor = typename graph_traits::vertex_descriptor;
@@ -927,7 +927,7 @@ public:
   Conforming_constrained_Delaunay_triangulation_3(const PointRange& points,
                                                   const PolygonRange& polygons,
                                                   const NamedParams& np = parameters::default_values())
-      : cdt_impl(parameters::choose_parameter(parameters::get_parameter(np, internal_np::geom_traits), Traits{}))
+      : cdt_impl(parameters::choose_parameter<Traits>(parameters::get_parameter(np, internal_np::geom_traits)))
   {
     // ----------------------------------
     // cstr... (polygon soup)
@@ -938,8 +938,7 @@ public:
     using PointRange_const_iterator = typename PointRange::const_iterator;
     using PointRange_value_type = typename std::iterator_traits<PointRange_const_iterator>::value_type;
 
-    auto point_map = choose_parameter(get_parameter(np, internal_np::point_map),
-                                                    CGAL::Identity_property_map<PointRange_value_type>{});
+    auto point_map = choose_parameter<CGAL::Identity_property_map<PointRange_value_type>>(get_parameter(np, internal_np::point_map));
 
     constexpr bool has_plc_face_id = !parameters::is_default_parameter<NamedParams, internal_np::plc_face_id_t>::value;
 

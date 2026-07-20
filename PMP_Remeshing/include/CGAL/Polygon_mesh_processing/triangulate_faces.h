@@ -216,8 +216,7 @@ public:
     Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
     VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                get_property_map(vertex_point, pmesh));
-    Visitor visitor = choose_parameter<Visitor>(get_parameter(np, internal_np::visitor),
-                                                Triangulate_faces::Default_visitor<PolygonMesh>());
+    Visitor visitor = choose_parameter<Visitor>(get_parameter(np, internal_np::visitor));
 
     typename Traits::Construct_cross_product_vector_3 cross_product =
       traits.construct_cross_product_vector_3_object();

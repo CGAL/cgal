@@ -1079,8 +1079,7 @@ std::size_t stitch_boundary_cycle(const typename boost::graph_traits<PolygonMesh
   typedef typename internal_np::Lookup_named_param_def<internal_np::halfedges_keeper_t,
                                                        CGAL_NP_CLASS,
                                                        Default_halfedges_keeper<PolygonMesh> >::type  Halfedge_keeper;
-  const Halfedge_keeper hd_kpr = choose_parameter(get_parameter(np, internal_np::halfedges_keeper),
-                                                  Default_halfedges_keeper<PolygonMesh>());
+  const Halfedge_keeper hd_kpr = choose_parameter<Default_halfedges_keeper<PolygonMesh>>(get_parameter(np, internal_np::halfedges_keeper));
 
   halfedge_descriptor bh = h, bh_mem = bh;
 
@@ -1346,8 +1345,7 @@ std::size_t stitch_borders(const BorderHalfedgeRange& boundary_cycle_representat
   typedef typename internal_np::Lookup_named_param_def<internal_np::halfedges_keeper_t,
                                                        CGAL_NP_CLASS,
                                                        Default_halfedges_keeper<PolygonMesh> >::type  Halfedge_keeper;
-  const Halfedge_keeper hd_kpr = choose_parameter(get_parameter(np, internal_np::halfedges_keeper),
-                                                  Default_halfedges_keeper<PolygonMesh>());
+  const Halfedge_keeper hd_kpr = choose_parameter<Default_halfedges_keeper<PolygonMesh>>(get_parameter(np, internal_np::halfedges_keeper));
 
   bool per_cc = choose_parameter(get_parameter(np, internal_np::apply_per_connected_component), false);
 

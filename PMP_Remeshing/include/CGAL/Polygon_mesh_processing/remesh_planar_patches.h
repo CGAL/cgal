@@ -1446,7 +1446,6 @@ void remesh_planar_patches(const TriangleMeshIn& tm_in,
   using parameters::is_default_parameter;
 
   typedef typename boost::graph_traits<TriangleMeshIn> graph_traits;
-  typedef typename graph_traits::edge_descriptor edge_descriptor;
   typedef typename graph_traits::vertex_descriptor vertex_descriptor;
   typedef typename graph_traits::face_descriptor face_descriptor;
 
@@ -1464,23 +1463,21 @@ void remesh_planar_patches(const TriangleMeshIn& tm_in,
   typename internal_np::Lookup_named_param_def< internal_np::edge_is_constrained_t,
                                                 NamedParametersIn,
                                                 Default_ECM>::type
-    edge_is_constrained = choose_parameter<Default_ECM>(get_parameter(np_in, internal_np::edge_is_constrained),
-                                                        dynamic_edge_property_t<bool>(), tm_in);
+    edge_is_constrained = choose_parameter(get_parameter(np_in, internal_np::edge_is_constrained),
+                                           dynamic_edge_property_t<bool>(), tm_in, false);
 
   typename internal_np::Lookup_named_param_def< internal_np::vertex_corner_map_t,
                                                 NamedParametersIn,
                                                 Default_VCM>::type
-    vertex_corner_id = choose_parameter<Default_VCM>(get_parameter(np_in, internal_np::vertex_corner_map),
-                                                     dynamic_vertex_property_t<std::size_t>(), tm_in);
+    vertex_corner_id = choose_parameter(get_parameter(np_in, internal_np::vertex_corner_map),
+                                        dynamic_vertex_property_t<std::size_t>(), tm_in);
 
   typename internal_np::Lookup_named_param_def< internal_np::face_patch_t,
                                                 NamedParametersIn,
                                                 Default_FCM>::type
-    face_cc_ids = choose_parameter<Default_FCM>(get_parameter(np_in, internal_np::face_patch),
-                                                dynamic_face_property_t<std::size_t>(), tm_in);
+    face_cc_ids = choose_parameter(get_parameter(np_in, internal_np::face_patch),
+                                   dynamic_face_property_t<std::size_t>(), tm_in);
 
-  if (is_default_parameter<NamedParametersIn, internal_np::edge_is_constrained_t>::value)
-    for(edge_descriptor e : edges(tm_in)) put(edge_is_constrained, e, false);
   for(vertex_descriptor v : vertices(tm_in)) put(vertex_corner_id, v, Planar_segmentation::default_id());
   for(face_descriptor f : faces(tm_in)) put(face_cc_ids, f, -1);
 

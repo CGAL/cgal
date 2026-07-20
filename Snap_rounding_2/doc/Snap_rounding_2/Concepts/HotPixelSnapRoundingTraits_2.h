@@ -3,20 +3,20 @@
 \ingroup PkgSnapRounding2Concepts
 \cgalConcept
 
-The concept `SnapRoundingTraits_2` lists the set of requirements that must be fulfilled by
-an instance of the `Traits` template-parameter of
-the free function \ref CGAL::snap_rounding_2() `CGAL::snap_rounding_2<Traits,InputIterator,OutputContainer>()`.
+The concept `HotPixelSnapRoundingTraits_2` lists the set of requirements that must be fulfilled by
+an instance of the `geom_traits` parameter of
+the free function `CGAL::hot_pixel_snap_rounding_2()`.
 The list includes the nested types of the geometric primitives used in this class and
 some function object types for the required predicates on those primitives.
 
 \cgalRefines{AosTraits_2}
 
 \cgalHasModelsBegin
-\cgalHasModels{CGAL::Snap_rounding_traits_2<Kernel>}
+\cgalHasModels{CGAL::Hot_pixel_snap_rounding_traits_2<Kernel>}
 \cgalHasModelsEnd
 */
 
-class SnapRoundingTraits_2 {
+class HotPixelSnapRoundingTraits_2 {
 public:
 
 /// \name Types
@@ -29,22 +29,22 @@ The number type. This type must fulfill the requirements on
 typedef unspecified_type FT;
 
 /*!
-Models the concept `ArrTraits::Point_2`.
+Models the concept `AosTraits_2::Point_2`.
 */
 typedef unspecified_type Point_2;
 
 /*!
-Models the concept `ArrTraits::XMonotoneCurve_2`.
+Models the concept `AosTraits_2::XMonotoneCurve_2`.
 */
 typedef unspecified_type Segment_2;
 
 /*!
-Models the concept `SRTraits_2::IsoRectangle_2`
+Models the concept `HPSRTraits_2::IsoRectangle_2`
 */
 typedef unspecified_type Iso_rectangle_2;
 
 /*!
-Models the concept `SearchTraits::Cartesian_const_iterator_2`
+Models the concept `SearchTraits::Cartesian_const_iterator_d`
 */
 typedef unspecified_type Cartesian_const_iterator_2;
 
@@ -54,59 +54,59 @@ typedef unspecified_type Cartesian_const_iterator_2;
 /// @{
 
 /*!
-Models the concept `SRTraits_2::ConstructVertex_2`.
+Models the concept `HPSRTraits_2::ConstructVertex_2`.
 */
 typedef unspecified_type Construct_vertex_2;
 
 /*!
-Models the concept `SRTraits_2::ConstructSegment_2`.
+Models the concept `HPSRTraits_2::ConstructSegment_2`.
 */
 typedef unspecified_type Construct_segment_2;
 
 /*!
-Models the concept `SRTraits_2::ConstructIsoRectangle_2`.
+Models the concept `HPSRTraits_2::ConstructIsoRectangle_2`.
 */
 typedef unspecified_type Construct_iso_rectangle_2;
 
 /*!
-Models the concept `RealEmbeddableTraits::ToDouble`. The precision of this operation is
+Models the concept `RealEmbeddableTraits_::ToDouble`. The precision of this operation is
 of not high significance, as it is only used in the implementation of the
 heuristic technique to exploit a cluster of kd-trees rather than just one.
 */
 typedef unspecified_type To_double;
 
 /*!
-Models the concept `SRTraits_2::CompareX_2`.
+Models the concept `HPSRTraits_2::CompareX_2`.
 */
 typedef unspecified_type Compare_x_2;
 
 /*!
-Models the concept `SRTraits_2::CompareY_2`.
+Models the concept `HPSRTraits_2::CompareY_2`.
 */
 typedef unspecified_type Compare_y_2;
 
 /*!
-Models the concept `SRTraits_2::Snap_2`.
+Models the concept `HPSRTraits_2::Snap_2`.
 */
 typedef unspecified_type Snap_2;
 
 /*!
-Models the concept `SRTraits_2::IntegerGridPoint_2`.
+Models the concept `HPSRTraits_2::IntegerGridPoint_2`.
 */
 typedef unspecified_type Integer_grid_point_2;
 
 /*!
-Models the concept `SRTraits_2::MinkowskiSumWithPixel_2`.
+Models the concept `HPSRTraits_2::MinkowskiSumWithPixel_2`.
 */
 typedef unspecified_type Minkowski_sum_with_pixel_2;
 
 /*!
-Models the concept `ArrTraits::ConstructMinVertex_2`.
+Models the concept `AosTraits_2::ConstructMinVertex_2`.
 */
 typedef unspecified_type Construct_min_vertex_2;
 
 /*!
-Models the concept `ArrTraits::ConstructMaxVertex_2`.
+Models the concept `AosTraits_2::ConstructMaxVertex_2`.
 */
 typedef unspecified_type Construct_max_vertex_2;
 
@@ -163,10 +163,10 @@ Minkowski_sum_with_pixel_2 minkowski_sum_with_pixel_2_object();
 
 /// @}
 
-}; /* end SnapRoundingTraits_2 */
+}; /* end HotPixelSnapRoundingTraits_2 */
 
 
-namespace SRTraits_2{
+namespace HPSRTraits_2{
 
 /*!
   \ingroup PkgSnapRounding2Concepts
@@ -174,7 +174,7 @@ namespace SRTraits_2{
   Represents an iso rectangle
   \cgalRefines{DefaultConstructible,CopyConstructible,Assignable}
   \cgalHasModelsBegin
-  \cgalHasModelsBare{\link SnapRoundingTraits_2::Iso_rectangle_2 `Snap_rounding_traits_2::Iso_rectangle_2` \endlink}
+  \cgalHasModelsBare{\link HotPixelSnapRoundingTraits_2::Iso_rectangle_2 `Snap_rounding_traits_2::Iso_rectangle_2` \endlink}
   \cgalHasModelsEnd
 */
 class IsoRectangle_2
@@ -185,7 +185,7 @@ class IsoRectangle_2
   \cgalConcept
   \cgalRefines{AdaptableBinaryFunction}
   \cgalHasModelsBegin
-  \cgalHasModelsBare{\link SnapRoundingTraits_2::Construct_vertex_2 `Snap_rounding_traits_2::Construct_vertex_2` \endlink}
+  \cgalHasModelsBare{\link HotPixelSnapRoundingTraits_2::Construct_vertex_2 `Snap_rounding_traits_2::Construct_vertex_2` \endlink}
   \cgalHasModelsEnd
 */
 class ConstructVertex_2
@@ -204,7 +204,7 @@ class ConstructVertex_2
   \cgalConcept
   \cgalRefines{AdaptableBinaryFunction}
   \cgalHasModelsBegin
-  \cgalHasModelsBare{\link SnapRoundingTraits_2::Construct_segment_2 `Snap_rounding_traits_2::Construct_segment_2`  \endlink}
+  \cgalHasModelsBare{\link HotPixelSnapRoundingTraits_2::Construct_segment_2 `Snap_rounding_traits_2::Construct_segment_2`  \endlink}
   \cgalHasModelsEnd
 */
 class ConstructSegment_2
@@ -223,7 +223,7 @@ class ConstructSegment_2
   \cgalConcept
   \cgalRefines{AdaptableQuaternaryFunction}
   \cgalHasModelsBegin
-  \cgalHasModelsBare{\link SnapRoundingTraits_2::Construct_iso_rectangle_2 `Snap_rounding_traits_2::Construct_iso_rectangle_2` \endlink}
+  \cgalHasModelsBare{\link HotPixelSnapRoundingTraits_2::Construct_iso_rectangle_2 `Snap_rounding_traits_2::Construct_iso_rectangle_2` \endlink}
   \cgalHasModelsEnd
 */
 class ConstructIsoRectangle_2
@@ -246,7 +246,7 @@ class ConstructIsoRectangle_2
   \cgalConcept
   \cgalRefines{AdaptableBinaryFunction}
   \cgalHasModelsBegin
-  \cgalHasModelsBare{\link SnapRoundingTraits_2::Compare_x_2 `Snap_rounding_traits_2::Compare_x_2` \endlink}
+  \cgalHasModelsBare{\link HotPixelSnapRoundingTraits_2::Compare_x_2 `Snap_rounding_traits_2::Compare_x_2` \endlink}
   \cgalHasModelsEnd
 */
 class CompareX_2
@@ -264,7 +264,7 @@ class CompareX_2
   \cgalConcept
   \cgalRefines{AdaptableBinaryFunction}
   \cgalHasModelsBegin
-  \cgalHasModelsBare{\link SnapRoundingTraits_2::Compare_y_2 `Snap_rounding_traits_2::Compare_y_2` \endlink}
+  \cgalHasModelsBare{\link HotPixelSnapRoundingTraits_2::Compare_y_2 `Snap_rounding_traits_2::Compare_y_2` \endlink}
   \cgalHasModelsEnd
 */
 class CompareY_2
@@ -283,7 +283,7 @@ class CompareY_2
   \cgalConcept
   \cgalRefines{AdaptableQuaternaryFunction}
   \cgalHasModelsBegin
-  \cgalHasModelsBare{\link SnapRoundingTraits_2::Snap_2 `Snap_rounding_traits_2::Snap_2` \endlink}
+  \cgalHasModelsBare{\link HotPixelSnapRoundingTraits_2::Snap_2 `Snap_rounding_traits_2::Snap_2` \endlink}
   \cgalHasModelsEnd
 */
 class Snap_2
@@ -304,7 +304,7 @@ class Snap_2
   \cgalConcept
   \cgalRefines{AdaptableBinaryFunction}
   \cgalHasModelsBegin
-  \cgalHasModelsBare{\link SnapRoundingTraits_2::Integer_grid_point_2 `Snap_rounding_traits_2::Integer_grid_point_2` \endlink}
+  \cgalHasModelsBare{\link HotPixelSnapRoundingTraits_2::Integer_grid_point_2 `Snap_rounding_traits_2::Integer_grid_point_2` \endlink}
   \cgalHasModelsEnd
 
 */
@@ -327,7 +327,7 @@ class IntegerGridPoint_2
   \cgalConcept
   \cgalRefines{AdaptableTernaryFunction}
   \cgalHasModelsBegin
-  \cgalHasModelsBare{\link SnapRoundingTraits_2::Minkowski_sum_with_pixel_2 `Snap_rounding_traits_2::Minkowski_sum_with_pixel_2` \endlink}
+  \cgalHasModelsBare{\link HotPixelSnapRoundingTraits_2::Minkowski_sum_with_pixel_2 `Snap_rounding_traits_2::Minkowski_sum_with_pixel_2` \endlink}
   \cgalHasModelsEnd
 */
 class MinkowskiSumWithPixel_2
@@ -343,4 +343,4 @@ class MinkowskiSumWithPixel_2
   void operator()(std::list<Point_2>& vertices_list, Segment_2 s, NT unit_square);
 };
 
-} /* end of namespace SRTraits_2 */
+} /* end of namespace HPSRTraits_2 */

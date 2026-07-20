@@ -563,10 +563,23 @@ bool operator<(const Gmpzf &a, int b)
 }
 
 inline
+bool operator<(const Gmpzf &a, double d)
+{
+  return operator<(a, Gmpzf(d));
+}
+
+inline
 bool operator==(const Gmpzf &a, int b)
 {
   return operator==(a, Gmpzf(b));
 }
+
+inline
+bool operator==(const Gmpzf &a, double d)
+{
+  return operator==(a, Gmpzf(d));
+}
+
 
 inline
 bool operator>(const Gmpzf &a, int b)
