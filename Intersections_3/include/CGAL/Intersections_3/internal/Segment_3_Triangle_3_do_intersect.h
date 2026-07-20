@@ -196,10 +196,10 @@ do_intersect(const typename K::Triangle_3& t,
   const Point_3& q = point_on(s,1);
 
 #if 1
-  std::array<Orientation,2> abcp_abcq = orientation(a,b,c,p,q);
+  std::array<typename K::Orientation,2> abcp_abcq = orientation(a,b,c,p,q);
 
-  const Orientation& abcp = abcp_abcq[0];
-  const Orientation& abcq = abcp_abcq[1];
+  const Orientation abcp = make_certain(abcp_abcq[0]);
+  const Orientation abcq = make_certain(abcp_abcq[1]);
   CGAL_assertion_code(const Orientation abcpbis = orientation(a,b,c,p);)
   CGAL_assertion_code(const Orientation abcqbis = orientation(a,b,c,q);)
   CGAL_assertion(abcpbis == abcp);
