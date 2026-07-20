@@ -264,8 +264,7 @@ void isotropic_remeshing(const FaceRange& faces
       NamedParameters,
       Static_boolean_property_map<edge_descriptor, false> // default (no constraint pmap)
     > ::type ECMap;
-  ECMap ecmap = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
-                                 Static_boolean_property_map<edge_descriptor, false>());
+  ECMap ecmap = choose_parameter<Static_boolean_property_map<edge_descriptor, false>>(get_parameter(np, internal_np::edge_is_constrained));
 
   typedef typename
     internal_np::Lookup_named_param_def <
@@ -281,8 +280,7 @@ void isotropic_remeshing(const FaceRange& faces
       NamedParameters,
       Static_boolean_property_map<vertex_descriptor, false> // default (no constraint pmap)
     > ::type VCMap;
-  VCMap vcmap = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
-                                 Static_boolean_property_map<vertex_descriptor, false>());
+  VCMap vcmap = choose_parameter<Static_boolean_property_map<vertex_descriptor, false>>(get_parameter(np, internal_np::vertex_is_constrained));
 
   bool protect = choose_parameter(get_parameter(np, internal_np::protect_constraints), false);
   typedef typename internal_np::Lookup_named_param_def <
@@ -299,8 +297,7 @@ void isotropic_remeshing(const FaceRange& faces
 #endif
     ) ) );
 
-  auto shall_move = choose_parameter(get_parameter(np, internal_np::allow_move_functor),
-                                     internal::Allow_all_moves());
+  auto shall_move = choose_parameter<internal::Allow_all_moves>(get_parameter(np, internal_np::allow_move_functor));
 
 #if !defined(CGAL_NO_PRECONDITIONS)
   if(protect)
@@ -509,8 +506,7 @@ void split_long_edges(const EdgeRange& edges
         NamedParameters,
         Static_boolean_property_map<edge_descriptor, false> // default (no constraint pmap)
       > ::type ECMap;
-  ECMap ecmap = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
-                                 Static_boolean_property_map<edge_descriptor, false>());
+  ECMap ecmap = choose_parameter<Static_boolean_property_map<edge_descriptor, false>>(get_parameter(np, internal_np::edge_is_constrained));
 
   typedef typename internal_np::Lookup_named_param_def<
       internal_np::edge_is_protected_t,

@@ -2,8 +2,7 @@
 #include <CGAL/Point_set_3.h>
 #include <CGAL/Random.h>
 
-#include <fstream>
-#include <limits>
+#include <iostream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
