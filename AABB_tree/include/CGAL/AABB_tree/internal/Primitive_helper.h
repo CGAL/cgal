@@ -122,7 +122,7 @@ Bbox_2 compute_transformed_bbox(const CGAL::Aff_transformation_2<Kernel>& at, co
     return bbox_2(ps, ps+2);
   }
 
-  AK::Point_3 ps[4];
+  AK::Point_2 ps[4];
   ps[0] = a_at( AK::Point_2(xtrm[0], xtrm[2]) );
   ps[1] = a_at( AK::Point_2(xtrm[0], xtrm[3]) );
   ps[2] = a_at( AK::Point_2(xtrm[1], xtrm[2]) );
