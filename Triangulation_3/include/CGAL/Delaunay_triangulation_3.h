@@ -153,6 +153,7 @@ public:
   typedef Tag_false                                  Periodic_tag;
 
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
+  using Tr_Base::is_index_based;
   using Tr_Base::cw;
   using Tr_Base::ccw;
   using Tr_Base::geom_traits;
