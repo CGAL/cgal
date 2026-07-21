@@ -264,6 +264,7 @@ two, triangulates the domain using the class
 `CGAL::Triangulation_on_hyperbolic_surface_2`, applies the Delaunay flip
 algorithm to the resulting triangulation, saves and prints the Delaunay
 triangulation.
+
 \cgalExample{Triangulation_on_hyperbolic_surface_2/Triangulation_on_hyperbolic_surface_2.cpp}
 
 This example generates a convex fundamental domain of a surface of genus two,
