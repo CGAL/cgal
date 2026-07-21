@@ -340,12 +340,8 @@ template<typename C3t3,
          typename Visitor>
 class EdgeSplitOperation
     : public ElementaryOperation<C3t3,
-                                 std::pair<typename C3t3::Triangulation::Geom_traits::FT,
-                                           std::pair<typename C3t3::Triangulation::Vertex_handle,
-                                                     typename C3t3::Triangulation::Vertex_handle>>,
-                                 std::vector<std::pair<typename C3t3::Triangulation::Geom_traits::FT,
-                                                       std::pair<typename C3t3::Triangulation::Vertex_handle,
-                                                                 typename C3t3::Triangulation::Vertex_handle>>>>
+                                 typename C3t3::Triangulation::Edge,
+                                 std::vector<typename C3t3::Triangulation::Edge>>
 {
 public:
   using Tr = typename C3t3::Triangulation;
@@ -355,11 +351,10 @@ public:
   using Edge_vv = std::pair<Vertex_handle, Vertex_handle>;
   using FT = typename Tr::Geom_traits::FT;
 
-  using Long_edge = std::pair<FT, Edge_vv>;
-  using Long_edges_with_lengths = std::vector<Long_edge>;
-  using BaseOperation = ElementaryOperation<C3t3, Long_edge, Long_edges_with_lengths>;
+  using Long_edges = std::vector<Edge>;
+  using BaseOperation = ElementaryOperation<C3t3, Edge, Long_edges>;
   using ElementType = typename BaseOperation::ElementType;
-  static_assert(std::is_same_v<ElementType, Long_edge>, "ElementType must be Long_edge");
+  static_assert(std::is_same_v<ElementType, Edge>, "ElementType must be Edge");
   using ElementSource = typename BaseOperation::ElementSource;
 
 private:
@@ -386,7 +381,12 @@ public:
 
   ElementSource get_element_source(const C3t3& c3t3) const override
   {
-    Long_edges_with_lengths long_edges;
+    struct Long_edge_with_length
+    {
+      Edge edge;
+      FT sqlength;
+    };
+    std::vector<Long_edge_with_length> long_edges_with_lengths;
     const Tr& tr = c3t3.triangulation();
 
     for (Edge e : tr.finite_edges())
@@ -397,35 +397,40 @@ public:
 
       const std::optional<FT> sqlen = is_too_long(e, boundary, m_sizing, c3t3, m_cell_selector);
       if (sqlen != std::nullopt)
-        long_edges.push_back(std::make_pair(*sqlen, make_vertex_pair(e)));
+        long_edges_with_lengths.push_back(Long_edge_with_length{e, sqlen.value()});
     }
 
     // longest first; stable to match the original bimap's ordering
-    std::stable_sort(long_edges.begin(), long_edges.end(),
-                     [](const std::pair<FT, Edge_vv>& a, const std::pair<FT, Edge_vv>& b) {
-                       return a.first > b.first;
+    std::stable_sort(long_edges_with_lengths.begin(), long_edges_with_lengths.end(),
+                     [](const Long_edge_with_length& a, const Long_edge_with_length& b) {
+                       return a.sqlength > b.sqlength;
                      });
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     {
       std::ofstream ofs("long_edges.polylines.txt");
-      for (const auto& le : long_edges)
-        ofs << "2 " << point(le.second.first->point())
-            << " " << point(le.second.second->point()) << std::endl;
+      for (const auto& le : long_edges_with_lengths)
+        ofs << "2 " << point(le.edge.first->point())
+            << " " << point(le.edge.second->point()) << std::endl;
     }
     m_can_be_split_ofs.open("can_be_split_edges.polylines.txt");
     m_split_failed_ofs.open("split_failed.polylines.txt");
     m_midpoints_ofs.open("midpoints.off");
     m_midpoints_ofs << "OFF" << std::endl;
-    m_midpoints_ofs << long_edges.size() << " 0 0" << std::endl;
+    m_midpoints_ofs << long_edges_with_lengths.size() << " 0 0" << std::endl;
 #endif
+
+    Long_edges long_edges;
+    long_edges.reserve(long_edges_with_lengths.size());
+    for(const auto& ef : long_edges_with_lengths)
+      long_edges.push_back(ef.edge);
     return long_edges;
   }
 
   bool execute_operation(const ElementType& element, C3t3& c3t3) override
   {
     Tr& tr = c3t3.triangulation();
-    const Edge_vv& e = element.second;
+    const Edge_vv& e = make_vertex_pair(element);
 
     Cell_handle cell;
     int i1, i2;

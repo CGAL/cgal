@@ -1281,7 +1281,7 @@ public:
     struct Short_edge_with_length
     {
       Edge edge;
-      FT length;
+      FT sqlength;
     };
     std::vector<Short_edge_with_length> short_edges_with_length;
     const Tr& tr = c3t3.triangulation();
@@ -1300,7 +1300,7 @@ public:
     // shortest first; stable to match the original bimap's ordering
     std::stable_sort(short_edges_with_length.begin(), short_edges_with_length.end(),
                      [](const Short_edge_with_length& a, const Short_edge_with_length& b) {
-                       return a.length < b.length;
+                       return a.sqlength < b.sqlength;
                      });
 
     Short_edges short_edges;
