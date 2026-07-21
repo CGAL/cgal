@@ -124,8 +124,8 @@ public:
                            const CellSelector& cell_selector,
                            const bool protect_boundaries,
                            const bool smooth_constrained_edges)
-      : m_cell_selector(cell_selector)
-      , m_sizing(sizing)
+      : m_sizing(sizing)
+      , m_cell_selector(cell_selector)
       , m_protect_boundaries(protect_boundaries)
       , m_smooth_constrained_edges(smooth_constrained_edges)
   {

@@ -1746,7 +1746,6 @@ std::size_t flipBoundaryEdges(C3T3& c3t3,
   typedef typename C3T3::Cell_handle Cell_handle;
   typedef typename C3T3::Facet Facet;
   typedef typename C3T3::Edge Edge;
-  typedef typename C3T3::Surface_patch_index Surface_patch_index;
   typedef typename C3T3::Triangulation Tr;
   typedef std::pair<Vertex_handle, Vertex_handle> Edge_vv;
 
@@ -1822,7 +1821,7 @@ bool flip_boundary_edge(C3t3& c3t3,
                         BV_valences& boundary_vertices_valences,
                         IncidentCellsVectorMap& inc_cells,
                         const Flip_criterion& flip_criterion,
-                        typename Visitor& visitor)
+                        Visitor& visitor)
 {
   using Vertex_handle       = typename C3t3::Vertex_handle;
   using Facet               = typename C3t3::Facet;
@@ -1853,7 +1852,7 @@ bool flip_boundary_edge(C3t3& c3t3,
       int v3 = boundary_vertices_valences.at(vh3)[surfi];
 
       if(v0 < 2 || v1 < 2 || v2 < 2 || v3 < 2)
-        continue;
+        return false;
 
       int m0 = (boundary_vertices_valences.at(vh0).size() > 1 ? 4 : 6);
       int m1 = (boundary_vertices_valences.at(vh1).size() > 1 ? 4 : 6);
