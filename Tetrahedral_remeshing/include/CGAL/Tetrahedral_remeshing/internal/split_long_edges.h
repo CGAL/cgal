@@ -334,7 +334,10 @@ auto can_be_split(const typename C3T3::Edge& e,
 
 
 
-template <typename C3t3, typename SizingFunction, typename CellSelector, typename Visitor>
+template<typename C3t3,
+         typename SizingFunction,
+         typename CellSelector,
+         typename Visitor>
 class EdgeSplitOperation
     : public ElementaryOperation<C3t3,
                                  std::pair<typename C3t3::Triangulation::Geom_traits::FT,
@@ -352,16 +355,19 @@ public:
   using Edge_vv = std::pair<Vertex_handle, Vertex_handle>;
   using FT = typename Tr::Geom_traits::FT;
 
-  using Long_edges_with_lengths = std::vector<std::pair<FT, Edge_vv>>;
-  using Base = ElementaryOperation<C3t3, std::pair<FT, Edge_vv>, Long_edges_with_lengths>;
-  using ElementType = typename Base::ElementType;
-  using ElementSource = typename Base::ElementSource;
+  using Long_edge = std::pair<FT, Edge_vv>;
+  using Long_edges_with_lengths = std::vector<Long_edge>;
+  using BaseOperation = ElementaryOperation<C3t3, Long_edge, Long_edges_with_lengths>;
+  using ElementType = typename BaseOperation::ElementType;
+  static_assert(std::is_same_v<ElementType, Long_edge>, "ElementType must be Long_edge");
+  using ElementSource = typename BaseOperation::ElementSource;
 
 private:
   const SizingFunction& m_sizing;
   const CellSelector& m_cell_selector;
   bool m_protect_boundaries;
   Visitor& m_visitor;
+
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
   mutable std::ofstream m_can_be_split_ofs;
   mutable std::ofstream m_split_failed_ofs;

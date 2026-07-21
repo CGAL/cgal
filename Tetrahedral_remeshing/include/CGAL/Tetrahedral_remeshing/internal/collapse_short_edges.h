@@ -1232,7 +1232,10 @@ auto can_be_collapsed(const typename C3T3::Edge& e,
   return Collapsible {true, boundary};
 }
 
-template <typename C3t3, typename SizingFunction, typename CellSelector, typename Visitor>
+template<typename C3t3,
+         typename SizingFunction,
+         typename CellSelector,
+         typename Visitor>
 class EdgeCollapseOperation
     : public ElementaryOperation<C3t3,
                                  typename C3t3::Triangulation::Edge,
@@ -1275,7 +1278,12 @@ public:
 
   ElementSource get_element_source(const C3t3& c3t3) const override
   {
-    std::vector<std::pair<Edge, FT>> short_edges_with_length;
+    struct Short_edge_with_length
+    {
+      Edge edge;
+      FT length;
+    };
+    std::vector<Short_edge_with_length> short_edges_with_length;
     const Tr& tr = c3t3.triangulation();
 
     for (const Edge& e : tr.finite_edges())
@@ -1286,19 +1294,19 @@ public:
 
       const auto sqlen = is_too_short(e, boundary, m_sizing, c3t3, m_cell_selector);
       if (sqlen != std::nullopt)
-        short_edges_with_length.push_back(std::make_pair(e, sqlen.value()));
+        short_edges_with_length.push_back(Short_edge_with_length{e, sqlen.value()});
     }
 
     // shortest first; stable to match the original bimap's ordering
     std::stable_sort(short_edges_with_length.begin(), short_edges_with_length.end(),
-                     [](const std::pair<Edge, FT>& a, const std::pair<Edge, FT>& b) {
-                       return a.second < b.second;
+                     [](const Short_edge_with_length& a, const Short_edge_with_length& b) {
+                       return a.length < b.length;
                      });
 
     Short_edges short_edges;
     short_edges.reserve(short_edges_with_length.size());
     for (const auto& ef : short_edges_with_length)
-      short_edges.push_back(ef.first);
+      short_edges.push_back(ef.edge);
     return short_edges;
   }
 
