@@ -4,6 +4,10 @@
 
 Release date: December 2026
 
+### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/6.3/Manual/packages.html#PkgKernel23)
+
+- Add operator to functor `Orientation_3` that takes 5 points as argument, with the last two getting tested against the first three points
+
 ### [2D Snap Rounding](https://doc.cgal.org/6.2/Manual/packages.html#PkgSnapRounding2) (major changes)
 - Added the function `vertical_slab_snap_rounding_2()`, a new snap rounding algorithm that offers better performance and supports a wider range of rounding schemes, including floating-point coordinate representations.
 - Added the traits classes `Double_grid_snap_rounding_traits_2`, `Float_grid_snap_rounding_traits_2`, and `Integer_grid_snap_rounding_traits_2`, enabling `vertical_slab_snap_rounding_2()`
