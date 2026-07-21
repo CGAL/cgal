@@ -671,7 +671,7 @@ public:
                                    Vertex_handle,
                                    typename C3t3::Triangulation::Finite_vertex_handles>;
   using ElementType = typename BaseOperation::ElementType;
-  static_assert(std::is_same_v<ElementType, Vertex_handle>, "ElementType should be Vertex_handle"); 
+  static_assert(std::is_same_v<ElementType, Vertex_handle>, "ElementType should be Vertex_handle");
   using ElementSource = typename BaseOperation::ElementSource;
 
   using BaseClass::m_context;
