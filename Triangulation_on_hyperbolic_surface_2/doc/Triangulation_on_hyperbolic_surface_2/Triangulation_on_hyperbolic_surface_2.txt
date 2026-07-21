@@ -72,7 +72,7 @@ Computations in a hyperbolic setting involve hyperbolic trigonometry and thus in
 domains, general triangulations and Delaunay triangulations. A
 triangulation is represented by an enriched `CGAL::Combinatorial_map` with
 complex number attributes on edges that encode the metric of the surface.  Additionally, a Delaunay triangulation has
-an anchor attributes on each face representing a lift of triangles.</span>
+an anchor attribute on each face representing a lift of triangles.</span>
 
 \subsection Subsection_Hyperbolic_Surface_Triangulations_DS_Domains Data Structure for Domains
 
