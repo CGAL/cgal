@@ -4,6 +4,7 @@
 #include <CGAL/Hyperbolic_fundamental_domain_factory_2.h>
 #include <CGAL/Triangulation_on_hyperbolic_surface_2.h>
 #include <CGAL/Triangulation_on_hyperbolic_surface_2_IO.h>
+#include <fstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel          Kernel;
 typedef CGAL::Hyperbolic_Delaunay_triangulation_traits_2<Kernel>     ParentTraits;

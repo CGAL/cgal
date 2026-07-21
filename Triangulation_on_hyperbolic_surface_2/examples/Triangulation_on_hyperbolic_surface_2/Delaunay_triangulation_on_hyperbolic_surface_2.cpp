@@ -1,4 +1,3 @@
-//#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Circular_kernel_2.h>
 #include <CGAL/Algebraic_kernel_for_circles_2_2.h>
@@ -8,9 +7,9 @@
 #include <CGAL/Hyperbolic_fundamental_domain_factory_2.h>
 #include <CGAL/Hyperbolic_Dirichlet_domain_2.h>
 #include <CGAL/Triangulation_on_hyperbolic_surface_2_IO.h>
+#include <fstream>
 
 using Rational = CGAL::Gmpq;
-//using Kernel = CGAL::Circular_kernel_2<CGAL::Simple_cartesian<Rational>,CGAL::Algebraic_kernel_for_circles_2_2<Rational>>;
 using Kernel = CGAL::Circular_kernel_2<CGAL::Cartesian<Rational>,CGAL::Algebraic_kernel_for_circles_2_2<Rational>>;
 using ParentTraits = CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2<Kernel>;
 using HSTraits = CGAL::Hyperbolic_surface_traits_2<ParentTraits>;

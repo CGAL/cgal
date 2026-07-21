@@ -89,7 +89,7 @@ public:
     bool is_valid() const;
 
     //---------- location and insertion
-    Locate_type relative_position(Point const & query, unsigned & li, Anchor const & anch) const;
+    void relative_locate(Point const & query, Locate_type& lt, unsigned & li, Anchor const & anch) const;
     Anchor locate(Point const & query, Locate_walk walk = STRAIGHT); // const ?
     Anchor locate(Point const & query, Locate_type & lt, unsigned & li, unsigned & ld, Anchor const & hint, Locate_walk walk = STRAIGHT); // const ?
     void insert(Point const & query, Anchor & hint);
@@ -375,17 +375,17 @@ is_valid() const
 
 //---------- location and insertion
 
-// Output: The locate type lt of query relative to the anchor, and an index corresponding to:
+//TODO DOC
+// Computes the locate type lt of query relative to the anchor, and an index corresponding to:
 // - if lt == FACE: NULL_INDEX,
 // - if lt == EDGE: index of the edge on which query lies,
 // - if lt == VERTEX: index of the vertex on which query lies,
 // - if lt == OUTSIDE: index of the first edge such that query and the third point of the triangle lies on different sides.
 template<class Traits>
-typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Locate_type
+void
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-relative_position(Point const & query, unsigned & li, Anchor const & anch) const
-{
-    Locate_type lt = FACE;
+  relative_locate(Point const & query, Locate_type& lt, unsigned & li, Anchor const & anch) const {
+    lt = FACE;
     li = NULL_INDEX;
     //Traits gt;//MARC?? TO BE REMOVED
     typename Traits::Hyperbolic_orientation_2 ho2 = gt_.hyperbolic_orientation_2();
@@ -406,7 +406,6 @@ relative_position(Point const & query, unsigned & li, Anchor const & anch) const
             }
         }
     }
-    return lt;
 }
 
 // Output: an anchor of the triangle in which query lies,
@@ -421,7 +420,7 @@ locate_visibility_walk(Point const & query, Locate_type & lt, unsigned & li, uns
 
     // initialisation
     ld = 0;
-    lt = relative_position(query, li, hint);
+    relative_locate(query, lt, li, hint);
     if (lt != OUTSIDE){
         return hint;
     }
@@ -454,7 +453,7 @@ locate_visibility_walk(Point const & query, Locate_type & lt, unsigned & li, uns
         ++ld;
     }
     Anchor res = Anchor(dart, a, c, d);
-    lt = relative_position(query, li, res);
+    relative_locate(query, lt, li, res);
     CGAL_assertion(lt != OUTSIDE);
     return res;
 }
@@ -511,7 +510,7 @@ locate_straight_walk(Point const & query, Locate_type & lt, unsigned & li, unsig
         ++ld;
     }
     Anchor res = Anchor(dart, r, l, p);
-    lt = relative_position(query, li, res);
+    relative_locate(query, lt, li, res);
     CGAL_assertion(lt != OUTSIDE);
     return res;
 }

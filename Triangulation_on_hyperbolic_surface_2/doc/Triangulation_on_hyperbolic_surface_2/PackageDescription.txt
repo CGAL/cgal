@@ -39,6 +39,8 @@
 
 \cgalClassifedRefPages
 
+Note that the data structure for triangulations in this package is a `CGAL::Combinatorial_map` instead of the usual `CGAL::Triangulation_data_structure_2` used for instance in the package \ref Chapter_2D_Periodic_Hyperbolic_Triangulations "2D Periodic Hyperbolic Triangulations". In particular, this implies that vertices, edges and faces are encoded by darts of the combinatorial map so that most of the functions of the package are working with darts.
+
 \cgalCRPSection{Concepts}
 
 - `HyperbolicSurfaceTraits_2` is the concept for the template parameter of most classes of the package.

@@ -246,13 +246,13 @@ public:
 
   /*!  Sets `p` such that when FT is Gmpq, the precision for the function
     `HyperbolicSurfaceDelaunayTraitsClass::Construct_approximate_hyperbolic_circumcenter_2`
-    is `p`x 53, where 53 is the precision of a double.
+    is `p` x 53 bits, where 53 is the precision of a double.
   */
   void set_circumcenter_approximation_precision(unsigned p);
 
   /*!  \return `p` such that when FT is Gmpq, the precision for the function
     `HyperbolicSurfaceDelaunayTraitsClass::Construct_approximate_hyperbolic_circumcenter_2`
-    is `p`x 53, where 53 is the precision of a double.
+    is `p` x 53 bits, where 53 is the precision of a double.
   */
   unsigned get_circumcenter_approximation_precision();
 

@@ -207,8 +207,7 @@ The method `CGAL::Delaunay_triangulation_on_hyperbolic_surface_2::covering_value
 \section Section_Hyperbolic_Surface_Triangulations_Software_Design Software Design
 
 The concept `ComplexNumber` describes a complex number type modeled by `CGAL::Complex_number`. Complex numbers are used to encode the cross ratios, for the coefficients of isometries and implicitly to work with points in the Poincaré disk.
-Most classes of the package are templated by the concept `HyperbolicSurfaceTraits_2` TODO : OR THE Delaunay new traits??. It is a refinement of `HyperbolicDelaunayTriangulationTraits_2` and is modeled by `CGAL::Hyperbolic_surface_traits_2`. It defines the geometric objects (points, segments...) forming the lifted triangulation in the Poincaré disk.
-
+<span style="color:red">Most classes of the package are templated by the concepts `HyperbolicSurfaceTraits_2` or `HyperbolicSurfaceDelaunayTraits_2`. The concept `HyperbolicSurfaceTraits_2` is a refinement of `HyperbolicDelaunayTriangulationTraits_2` and is modeled by `CGAL::Hyperbolic_surface_traits_2`. It defines the geometric objects (points, segments...) forming the lifted triangulation in the Poincaré disk and adds the computation of the cosine of the hyperbolic distance between two points. The concept `HyperbolicSurfaceDelaunayTraits_2` is a refinement of `HyperbolicSurfaceTraits_2` and adds the tools to handle approximate computations, in particular it adds the computation of an approximate circumcenter that is a critical tool in the epsilon net algorithm.</span>
 
 The package offers <span style="color:red">four</span> main classes:
 - `CGAL::Triangulation_on_hyperbolic_surface_2` represents a triangulation of a hyperbolic surface. It offers functions for the  generation of the triangulation from a convex fundamental domain, the Delaunay flip algorithm and the construction of a portion of the lift of the triangulation in the Poincaré disk.
@@ -224,7 +223,7 @@ The secondary class `CGAL::Hyperbolic_isometry_2` defines isometries in the Poin
 
 \section Visualization Visualization
 
-<div style="color:red">This package contains several demos (found in the folder Triangulation_on_hyperbolic_surface_2/demo), which display triangulations.</div>
+<div style="color:red">This package contains several demos (found in the folder Triangulation_on_hyperbolic_surface_2/demo), which display lifts of triangulations and Dirichlet domains.</div>
 
 The function `CGAL::Triangulation_on_hyperbolic_surface_2::lift()` computes a lift of each triangle in the hyperbolic plane, enabling its visualization (see \cgalFigureRef{THS2-demo-output}).
 
@@ -246,7 +245,7 @@ Lift, in the Poincaré disk, of the Delaunay triangulation of a 0.1-net of a gen
 \cgalFigureCaptionEnd
 </div>
 
-<div style="color:red">Additionally, the function `CGAL::Dirichlet_vertices()` can be used to display a Dirichlet domain.</div>
+<div style="color:red">Additionally, the function `CGAL::Dirichlet_vertices()`  displays a Dirichlet domain.</div>
 
 <div style="color:red">
 \cgalFigureAnchor{HDD2-demo-output}
@@ -267,20 +266,11 @@ algorithm to the resulting triangulation, saves and prints the Delaunay
 triangulation.
 \cgalExample{Triangulation_on_hyperbolic_surface_2/Triangulation_on_hyperbolic_surface_2.cpp}
 
-
 This example generates a convex fundamental domain of a surface of genus two,
 construct its Delaunay triangulation using the class
 `CGAL::Delaunay_triangulation_on_hyperbolic_surface_2`, computes an \f$
-\varepsilon \f$-net, locates a query point in the triangulation and saves the
-Delaunay triangulation of this \f$ \varepsilon \f$-net.
-
-TODO: use both MP_Float and gmpq
-mettre un example qui fail avec precision 1, output the current covering and
-packing values, then works with higher precision.
-
+\varepsilon \f$-net, locates a query point in the triangulation. <span style="color:red">Then a surface of genus 5 is generated showing that a higher approximation precision for the circumcenters is mandatory for the epsilon net algorithm to output correct results.</span>
 \cgalExample{Triangulation_on_hyperbolic_surface_2/Delaunay_triangulation_on_hyperbolic_surface_2.cpp}
-
-
 
 
 \section Section_Hyperbolic_Surface_Implementation_History Design and Implementation History
