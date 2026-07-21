@@ -1734,19 +1734,18 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
 template<typename C3T3, typename SurfaceIndexMapMap,
          typename IncidentCellsVectorMap, typename Flip_Criterion,
          typename CellSelector, typename Visitor>
-std::size_t flipBoundaryEdges(
-  C3T3& c3t3,
-  const std::vector<typename C3T3::Edge>& boundary_edges,
-  SurfaceIndexMapMap& boundary_vertices_valences,
-  IncidentCellsVectorMap& inc_cells,
-  const Flip_Criterion& flip_criterion,
-  CellSelector& cell_selector,
-  Visitor& visitor)
+std::size_t flipBoundaryEdges(C3T3& c3t3,
+                              const std::vector<typename C3T3::Edge>& boundary_edges,
+                              SurfaceIndexMapMap& boundary_vertices_valences,
+                              IncidentCellsVectorMap& inc_cells,
+                              const Flip_Criterion& flip_criterion,
+                              CellSelector& cell_selector,
+                              Visitor& visitor)
 {
   typedef typename C3T3::Vertex_handle Vertex_handle;
-  typedef typename C3T3::Cell_handle   Cell_handle;
-  typedef typename C3T3::Facet         Facet;
-  typedef typename C3T3::Edge          Edge;
+  typedef typename C3T3::Cell_handle Cell_handle;
+  typedef typename C3T3::Facet Facet;
+  typedef typename C3T3::Edge Edge;
   typedef typename C3T3::Surface_patch_index Surface_patch_index;
   typedef typename C3T3::Triangulation Tr;
   typedef std::pair<Vertex_handle, Vertex_handle> Edge_vv;
@@ -1756,55 +1755,87 @@ std::size_t flipBoundaryEdges(
   Tr& tr = c3t3.triangulation();
 
   std::vector<Edge_vv> candidate_edges_for_flip;
-  for (const Edge& e : boundary_edges)
-  {
-    if (!c3t3.is_in_complex(e))
+  for(const Edge& e : boundary_edges) {
+    if(!c3t3.is_in_complex(e))
       candidate_edges_for_flip.push_back(make_vertex_pair(e));
   }
 
-  for (const auto& [vh0, vh1] : candidate_edges_for_flip)
-  {
+  for(const auto& [vh0, vh1] : candidate_edges_for_flip) {
     boost::container::small_vector<Cell_handle, 64>& inc_vh0 = inc_cells[vh0];
-    if (inc_vh0.empty())
+    if(inc_vh0.empty())
       tr.incident_cells(vh0, std::back_inserter(inc_vh0));
 
     Cell_handle c;
     int i, j;
-    if (!is_edge_uv(vh0, vh1, inc_vh0, c, i, j))
+    if(!is_edge_uv(vh0, vh1, inc_vh0, c, i, j))
       continue;
 
     Edge edge(c, i, j);
     std::vector<Facet> boundary_facets;
     const bool on_boundary = is_boundary_edge(edge, c3t3, cell_selector, boundary_facets);
 
-//    if (on_boundary && boundary_facets.empty())
-//    {
-//      std::cerr << vh0->point().point() << "\t " << vh1->point().point() << std::endl;
-//      bool b = is_boundary_edge(vh0, vh1, c3t3, cell_selector);
-//      CGAL::Tetrahedral_remeshing::debug::dump_c3t3(c3t3, "dump_c3t3_about_boundary_");
-//      CGAL::Tetrahedral_remeshing::debug::dump_facets_in_complex(c3t3, "dump_facets_about_boundary_.off");
-//      CGAL::Tetrahedral_remeshing::debug::dump_facets_from_selection(
-//        c3t3, cell_selector, "dump_facets_from_selection_.off");
-//      std::cerr << "valid = " << tr.tds().is_valid(true) << std::endl;
-//      std::cerr << "boundary = " << b << std::endl;
-//      CGAL_assertion(on_boundary);
-//    }
-//    else if (on_boundary && boundary_facets.size() != 2)
-//    {
-//      std::cerr << vh0->point().point() << "\t " << vh1->point().point() << std::endl;
-//      CGAL::Tetrahedral_remeshing::debug::dump_c3t3(c3t3, "dump_c3t3_about_boundary_");
-//      CGAL::Tetrahedral_remeshing::debug::dump_facets(boundary_facets, "dump_boundary_facets.polylines.txt");
-//      std::vector<Facet> dummy_facets;
-//      bool b = is_boundary_edge(edge, c3t3, cell_selector, dummy_facets, true/**/);
-//      std::cerr << "boundary = " << b << std::endl;
-//    }
+    //    if (on_boundary && boundary_facets.empty())
+    //    {
+    //      std::cerr << vh0->point().point() << "\t " << vh1->point().point() << std::endl;
+    //      bool b = is_boundary_edge(vh0, vh1, c3t3, cell_selector);
+    //      CGAL::Tetrahedral_remeshing::debug::dump_c3t3(c3t3, "dump_c3t3_about_boundary_");
+    //      CGAL::Tetrahedral_remeshing::debug::dump_facets_in_complex(c3t3, "dump_facets_about_boundary_.off");
+    //      CGAL::Tetrahedral_remeshing::debug::dump_facets_from_selection(
+    //        c3t3, cell_selector, "dump_facets_from_selection_.off");
+    //      std::cerr << "valid = " << tr.tds().is_valid(true) << std::endl;
+    //      std::cerr << "boundary = " << b << std::endl;
+    //      CGAL_assertion(on_boundary);
+    //    }
+    //    else if (on_boundary && boundary_facets.size() != 2)
+    //    {
+    //      std::cerr << vh0->point().point() << "\t " << vh1->point().point() << std::endl;
+    //      CGAL::Tetrahedral_remeshing::debug::dump_c3t3(c3t3, "dump_c3t3_about_boundary_");
+    //      CGAL::Tetrahedral_remeshing::debug::dump_facets(boundary_facets, "dump_boundary_facets.polylines.txt");
+    //      std::vector<Facet> dummy_facets;
+    //      bool b = is_boundary_edge(edge, c3t3, cell_selector, dummy_facets, true/**/);
+    //      std::cerr << "boundary = " << b << std::endl;
+    //    }
 
-    if (!on_boundary || boundary_facets.size() != 2)
+    if(!on_boundary || boundary_facets.size() != 2)
       continue;
     CGAL_assertion(boundary_facets.size() == 2);
 
+    if(flip_boundary_edge(c3t3, edge, boundary_facets, boundary_vertices_valences,
+                          inc_cells, flip_criterion, visitor))
+    {
+      ++nb_success;
+      CGAL_expensive_assertion(tr.tds().is_valid());
+    }
+  }
+  return nb_success;
+}
+
+//todo : write this function
+template <typename C3t3,
+          typename BV_valences,
+          typename IncidentCellsVectorMap,
+          typename Flip_criterion,
+          typename Visitor>
+bool flip_boundary_edge(C3t3& c3t3,
+                        const typename C3t3::Edge& edge,
+                        const std::vector<typename C3t3::Facet>& boundary_facets,
+                        BV_valences& boundary_vertices_valences,
+                        IncidentCellsVectorMap& inc_cells,
+                        const Flip_criterion& flip_criterion,
+                        typename Visitor& visitor)
+{
+  using Vertex_handle       = typename C3t3::Vertex_handle;
+  using Facet               = typename C3t3::Facet;
+  using Cell_handle         = typename C3t3::Cell_handle;
+  using Surface_patch_index = typename C3t3::Surface_patch_index;
+
+  auto& tr = c3t3.triangulation();
+
     const Facet& f0 = boundary_facets[0];
     const Facet& f1 = boundary_facets[1];
+
+    const Vertex_handle vh0 = f0.first->vertex(f0.second);
+    const Vertex_handle vh1 = f0.first->vertex(f0.third);
 
     // find 3rd and 4th vertices to flip on surface
     const Vertex_handle vh2 = third_vertex(f0, vh0, vh1, tr);
@@ -1884,16 +1915,11 @@ std::size_t flipBoundaryEdges(
           boundary_vertices_valences[vh2][surfi]++;
           boundary_vertices_valences[vh3][surfi]++;
 
-          nb_success++;
+          return true;
         }
-        else
-          continue;
       }
     }
-  }
-  CGAL_expensive_assertion(tr.tds().is_valid());
-
-  return nb_success;
+  return false;
 }
 
 // Shared state for the internal and boundary edge-flip operations: the cell
