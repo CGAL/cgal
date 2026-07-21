@@ -749,8 +749,8 @@ template <typename VertexDescriptor,
                                      >
            >
 Bounded_side
-side_of_sphere(VertexDescriptor v0, VertexDescriptor v1,
-               VertexDescriptor v2, VertexDescriptor v3,
+side_of_sphere(const VertexDescriptor& v0, const VertexDescriptor& v1,
+               const VertexDescriptor& v2, const VertexDescriptor& v3,
                const Point& p, bool perturb) const
 
 {
@@ -800,11 +800,16 @@ side_of_sphere(VertexDescriptor v0, VertexDescriptor v1,
 public:
   // Queries
   template <typename CellDescriptor>
-  Bounded_side side_of_sphere(CellDescriptor c, const Point& p, bool perturb = false) const
+  Bounded_side side_of_sphere(const CellDescriptor& c, const Point& p, bool perturb = false) const
   {
     cell_descriptor cd = tds().descriptor(c);
+    if constexpr (is_index_based) {
+      const std::array<Vertex_index,4>&  ivertices = tds().vertices(cd);
+      return side_of_sphere(ivertices[0], ivertices[1], ivertices[2], ivertices[3], p, perturb);
+    }else{
     return side_of_sphere(tds().vertex(cd,0), tds().vertex(cd,1),
                           tds().vertex(cd,2), tds().vertex(cd,3), p, perturb);
+    }
   }
 /*
   template <typename CellDescriptor,
@@ -890,7 +895,7 @@ protected:
     Conflict_tester_3(const Point& pt, const Self *tr)
       : p(pt), t(tr) {}
 
-    bool operator()(const Cell_handle c) const
+    bool operator()(const Cell_handle& c) const
     {
       return t->side_of_sphere(c, p, true) == ON_BOUNDED_SIDE;
     }
@@ -907,7 +912,7 @@ protected:
       return ZERO;
     }
 
-    bool test_initial_cell(Cell_handle) const
+    bool test_initial_cell(const Cell_handle&) const
     {
       return true;
     }
@@ -922,7 +927,7 @@ protected:
     Conflict_tester_2(const Point& pt, const Self *tr)
       : p(pt), t(tr) {}
 
-    bool operator()(const Cell_handle c) const
+    bool operator()(const Cell_handle& c) const
     {
       return t->side_of_circle(c, 3, p, true) == ON_BOUNDED_SIDE;
     }

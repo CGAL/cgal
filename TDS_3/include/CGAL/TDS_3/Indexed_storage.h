@@ -100,7 +100,7 @@ namespace internal { namespace TDS_3{
       : tds_(nullptr), index_(Cell_handle().idx())
     {}
 
-    Cell(TDS_3* tds_, Cell_index index)
+    Cell(TDS_3* tds_, const Cell_index& index)
       : tds_(tds_), index_(index)
     {}
 
@@ -151,7 +151,7 @@ namespace internal { namespace TDS_3{
       return Vertex_handle(tds(), idx);
     }
 
-    int index(Vertex_handle v) const
+    int index(const Vertex_handle& v) const
     {
       for (int i = 0; i < 4; ++i) {
         if (v.idx() == storage().ivertices[i]) {
@@ -171,7 +171,7 @@ namespace internal { namespace TDS_3{
       return -1; // Not found
     }
 
-    bool has_vertex(Vertex_handle v) const
+    bool has_vertex(const Vertex_handle& v) const
     {
       for (int i = 0; i < 4; ++i) {
         if (v.idx() == storage().ivertices[i]) {
@@ -181,7 +181,7 @@ namespace internal { namespace TDS_3{
       return false;
     }
 
-    bool has_vertex(Vertex_handle v, int & i) const
+    bool has_vertex(const Vertex_handle& v, int & i) const
     {
       for (i = 0; i < 4; ++i) {
         if (v.idx() == storage().ivertices[i]) {
@@ -197,7 +197,7 @@ namespace internal { namespace TDS_3{
       return Cell_handle(tds(), idx);
     }
 
-    int index(Cell_handle n) const
+    int index(const Cell_handle& n) const
     {
       for (int i = 0; i < 4; ++i) {
         if (n.idx() == storage().ineighbors[i]) {
@@ -207,7 +207,7 @@ namespace internal { namespace TDS_3{
       return -1; // Not found
     }
 
-    bool has_neighbor(Cell_handle n) const
+    bool has_neighbor(const Cell_handle& n) const
     {
       for (int i = 0; i < 4; ++i) {
         if (n.idx() == storage().ineighbors[i]) {
@@ -217,7 +217,7 @@ namespace internal { namespace TDS_3{
       return false;
     }
 
-    bool has_neighbor(Cell_handle n, int & i) const
+    bool has_neighbor(const Cell_handle& n, int & i) const
     {
       for (i = 0; i < 4; ++i) {
         if (n.idx() == storage().ineighbors[i]) {
@@ -227,17 +227,17 @@ namespace internal { namespace TDS_3{
       return false;
     }
 
-    void set_vertex(int i, Vertex_handle v)
+    void set_vertex(int i, const Vertex_handle& v)
     {
       storage().ivertices[i] = v.idx();
     }
 
-    void set_neighbor(int i, Cell_handle n)
+    void set_neighbor(int i, const Cell_handle& n)
     {
       storage().ineighbors[i] = n.idx();
     }
 
-    void set_vertices(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2, Vertex_handle v3)
+    void set_vertices(const Vertex_handle& v0, const Vertex_handle& v1, const Vertex_handle& v2, const Vertex_handle& v3)
     {
       CGAL_assertion(tds()->dimension() < 3 || v0.idx() != Vertex_index(Vertex_index::invalid_index));
       CGAL_assertion(tds()->dimension() < 3 || v1.idx() != Vertex_index(Vertex_index::invalid_index));
@@ -249,7 +249,7 @@ namespace internal { namespace TDS_3{
       storage().ivertices[3] = v3.idx();
     }
 
-    void set_neighbors(Cell_handle n0, Cell_handle n1, Cell_handle n2, Cell_handle n3)
+    void set_neighbors(const Cell_handle& n0, const Cell_handle& n1, const Cell_handle& n2, const Cell_handle& n3)
     {
       storage().ineighbors[0] = n0.idx();
       storage().ineighbors[1] = n1.idx();
@@ -378,7 +378,7 @@ namespace internal { namespace TDS_3{
       return Cell_handle(tds(), storage().icell);
     }
 
-    void set_cell(Cell_handle c)
+    void set_cell(const Cell_handle& c)
     {
       storage().icell = c.idx();
     }
@@ -1338,6 +1338,11 @@ namespace CGAL {
       return tds_data(ch.idx());
     }
 
+    const std::array<Vertex_index,4>& vertices(const Cell_index& ci) const
+    {
+      return cell_storage()[ci].ivertices;
+    }
+
     Vertex_index vertex(const Cell_index& ci, int i) const
     {
       return cell_storage()[ci].ivertices[i];
@@ -1368,15 +1373,13 @@ namespace CGAL {
     mirror_facet(const Cell_index& ci, int i) const
     {
       auto nd = cell_storage()[ci].ineighbors[i];
-      int ni = -1;
       auto& storage = cell_storage()[nd];
       for (int j = 0; j < 4; ++j) {
         if (storage.ineighbors[j] == ci) {
-          ni = j;
-          break;
+          return {nd, j};
         }
       }
-      return {nd, ni};
+      return {nd, -1};
     }
 
     std::pair<Cell_handle, int>
@@ -1702,8 +1705,8 @@ namespace CGAL {
       cell_container().storage_[c1.idx()].ineighbors[i1] = c0.idx();
     }
 
-    void set_adjacency(Cell_index ci0, int i0,
-                       Cell_index ci1, int i1)
+    void set_adjacency(const Cell_index& ci0, int i0,
+                       const Cell_index& ci1, int i1)
     {
       CGAL_assertion(i0 >= 0 && i0 <= dimension());
       CGAL_assertion(i1 >= 0 && i1 <= dimension());
@@ -1712,12 +1715,12 @@ namespace CGAL {
       cell_container().storage_[ci1].ineighbors[i1] = ci0;
     }
 
-    void set_vertex_cell(Vertex_index vi, Cell_index ci)
+    void set_vertex_cell(const Vertex_index& vi, const Cell_index& ci)
     {
       vertex_storage()[vi].icell = ci;
     }
 
-    void set_vertex_cell(Vertex_handle v, Cell_handle c)
+    void set_vertex_cell(const Vertex_handle& v, const Cell_handle& c)
     {
       vertex_storage()[v.idx()].icell = c.idx();
     }
@@ -1725,24 +1728,24 @@ namespace CGAL {
     bool has_garbage() const { return vertex_container().has_garbage() || cell_container().has_garbage(); }
 
     /// returns whether the index of vertex `v` is valid, that is within the current array bounds.
-    bool has_valid_index(Vertex_index v) const
+    bool has_valid_index(const Vertex_index& v) const
     {
       return (v.id() < num_vertices());
     }
 
-    bool has_valid_index(Cell_index c) const
+    bool has_valid_index(const Cell_index& c) const
     {
       return (c.id() < num_cells());
     }
 
     /// returns whether vertex `v` is marked removed.
     /// \sa `collect_garbage()`
-    bool is_removed(Vertex_index v) const
+    bool is_removed(const Vertex_index& v) const
     {
       return vertex_container().removed_[v];
     }
 
-    bool is_removed(Cell_index c) const
+    bool is_removed(const Cell_index& c) const
     {
       return cell_container().removed_[c];
     }
@@ -1889,22 +1892,22 @@ namespace CGAL {
 
 
   public:
-    const Point& point(Vertex_handle vh) const
+    const Point& point(const Vertex_handle& vh) const
     {
       return vertex_point_pmap_[vh.idx()];
     }
 
-    const Point& point(Vertex_index vi) const
+    const Point& point(const Vertex_index& vi) const
     {
       return vertex_point_pmap_[vi];
     }
 
-    Point& point(Vertex_handle vh)
+    Point& point(const Vertex_handle& vh)
     {
       return vertex_point_pmap_[vh.idx()];
     }
 
-    Point& point(Vertex_index vi)
+    Point& point(const Vertex_index& vi)
     {
       return vertex_point_pmap_[vi];
     }
@@ -2043,7 +2046,7 @@ namespace CGAL {
       }
     }
 
-  void set_vertex(int i, Vertex_handle v)
+  void set_vertex(int i, const Vertex_handle& v)
   {
       invalidate_circumcenter();
       Cb::set_vertex(i, v);
@@ -2055,8 +2058,8 @@ namespace CGAL {
       Cb::set_vertices();
   }
 
-  void set_vertices(Vertex_handle v0, Vertex_handle v1,
-                    Vertex_handle v2, Vertex_handle v3)
+  void set_vertices(const Vertex_handle& v0, const Vertex_handle& v1,
+                    const Vertex_handle& v2, const Vertex_handle& v3)
   {
       invalidate_circumcenter();
       Cb::set_vertices(v0, v1, v2, v3);

@@ -1045,7 +1045,7 @@ protected:
   Cell_handle generic_locate(const Point& p,
                              Locate_type& lt,
                              int& li, int& lj,
-                             Cell_handle start,
+                             const Cell_handle& start,
                              internal::Structural_filtering_3_tag,
                              bool *could_lock_zone = nullptr) const
   {
@@ -1060,7 +1060,7 @@ protected:
   Cell_handle generic_locate(const Point& p,
                              Locate_type& lt,
                              int& li, int& lj,
-                             Cell_handle start,
+                             const Cell_handle& start,
                              internal::No_structural_filtering_3_tag,
                              bool *could_lock_zone = nullptr) const
   {
@@ -1421,7 +1421,7 @@ protected:
   Triple<OutputIteratorBoundaryFacets,
          OutputIteratorCells,
          OutputIteratorInternalFacets>
-  find_conflicts(Cell_handle d,
+  find_conflicts(const Cell_handle& d,
                  const Conflict_test& tester,
                  Triple<OutputIteratorBoundaryFacets,
                         OutputIteratorCells,
@@ -1453,11 +1453,11 @@ protected:
     std::stack<cell_descriptor, SV > cell_stack(sv);
 
     cell_stack.push(tds().descriptor(d));
-    d->tds_data().mark_in_conflict();
+    tds().tds_data(d).mark_in_conflict();
 
     *it.second++ = d; // = tds().descriptor(d);
 
-    auto check_this_facet_must_be_in_the_cz = [&](cell_descriptor cd, int i, bool on_boundary = false) {
+    auto check_this_facet_must_be_in_the_cz = [&](const cell_descriptor& cd, int i, bool on_boundary = false) {
       if((cd == tds().descriptor(this_facet_must_be_in_the_cz->first)) &&
          (i == this_facet_must_be_in_the_cz->second))
       {
@@ -1473,7 +1473,7 @@ protected:
       }
     };
 
-    auto check_this_boundary_facet_must_be_in_the_cz = [&](cell_descriptor cd, int i) {
+    auto check_this_boundary_facet_must_be_in_the_cz = [&](const cell_descriptor& cd, int i) {
       check_this_facet_must_be_in_the_cz(cd, i, true);
     };
 
@@ -1503,8 +1503,8 @@ protected:
 
         // "test" is either in the conflict zone,
         // either facet-adjacent to the CZ
-
-        if(tds().tds_data(test).is_in_conflict())
+        auto& test_tds_data =  tds().tds_data(test);
+        if(test_tds_data.is_in_conflict())
         {
           // Is it the facet where're looking for?
           if(this_facet_must_be_in_the_cz && the_facet_is_in_its_cz){
@@ -1516,7 +1516,7 @@ protected:
           }
           continue; // test was already in conflict.
         }
-        if(tds().tds_data(test).is_clear())
+        if(test_tds_data.is_clear())
         {
 #if CGAL_DEBUG_INDEXED_CONTAINER
           if(this->is_parallel()) {
@@ -1552,12 +1552,12 @@ protected:
             }
 
             cell_stack.push(test);
-            tds().tds_data(test).mark_in_conflict();
+            test_tds_data.mark_in_conflict();
             *it.second++ = tds().handle(test);
             continue;
           }
 
-          tds().tds_data(test).mark_on_boundary();
+          test_tds_data.mark_on_boundary();
         }
 
         // Is it the facet where're looking for?
@@ -1584,7 +1584,7 @@ protected:
   Triple<OutputIteratorBoundaryFacets,
          OutputIteratorCells,
          OutputIteratorInternalFacets>
-  find_conflicts(CellDescriptor d,
+  find_conflicts(const CellDescriptor& d,
                  const Conflict_test& tester,
                  Triple<OutputIteratorBoundaryFacets,
                         OutputIteratorCells,
@@ -1620,7 +1620,7 @@ protected:
 
     *it.second++ = d;
 
-    auto check_this_facet_must_be_in_the_cz = [&](cell_descriptor cd, int i, bool on_boundary = false) {
+    auto check_this_facet_must_be_in_the_cz = [&](const cell_descriptor& cd, int i, bool on_boundary = false) {
       if((cd == tds().descriptor(this_facet_must_be_in_the_cz->first)) &&
          (i == this_facet_must_be_in_the_cz->second))
       {
@@ -1636,7 +1636,7 @@ protected:
       }
     };
 
-    auto check_this_boundary_facet_must_be_in_the_cz = [&](cell_descriptor cd, int i) {
+    auto check_this_boundary_facet_must_be_in_the_cz = [&](const cell_descriptor& cd, int i) {
       check_this_facet_must_be_in_the_cz(cd, i, true);
     };
 
@@ -1652,8 +1652,8 @@ protected:
 
         // "test" is either in the conflict zone,
         // either facet-adjacent to the CZ
-
-        if(tds().tds_data(test).is_in_conflict())
+        auto& test_tds_data = tds().tds_data(test);
+        if(test_tds_data.is_in_conflict())
         {
           // Is it the facet where're looking for?
           if(this_facet_must_be_in_the_cz && the_facet_is_in_its_cz){
@@ -1665,7 +1665,7 @@ protected:
           }
           continue; // test was already in conflict.
         }
-        if(tds().tds_data(test).is_clear())
+        if(test_tds_data.is_clear())
         {
           if(tester(test))
           {
@@ -1691,12 +1691,12 @@ protected:
             }
 
             cell_stack.push(test);
-            tds().tds_data(test).mark_in_conflict();
+            test_tds_data.mark_in_conflict();
             *it.second++ = test;
             continue;
           }
 
-          tds().tds_data(test).mark_on_boundary();
+          test_tds_data.mark_on_boundary();
         }
 
         // Is it the facet where're looking for?
