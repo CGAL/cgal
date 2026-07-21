@@ -1,0 +1,1 @@
+The 3D Mesh Smoothing package provides tools for improving 3D meshes by iteratively relocating vertices.  
