@@ -1,0 +1,16 @@
+add_subdirectory(Cinolib)
+add_subdirectory(libigl)
+add_subdirectory(geogram)
+
+option(BUILD_CGAL "Make example with CGAL" ON)
+if (BUILD_CGAL)
+    # Try to find CGAL but do not fail the configure if it's missing; skip examples when absent.
+    find_package(CGAL QUIET)
+    if (TARGET CGAL::CGAL OR CGAL_FOUND)
+        add_subdirectory(CGAL)
+    else()
+        message(WARNING "CGAL requested but not found; skipping CGAL examples.")
+    endif()
+else()
+    message(WARNING "CGAL is disabled, cgal_offset_computation will not be available.")
+endif()
