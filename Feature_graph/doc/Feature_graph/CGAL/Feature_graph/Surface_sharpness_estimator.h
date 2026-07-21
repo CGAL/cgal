@@ -50,7 +50,7 @@ public:
   * \tparam DimensionTag a tag that represent the element type.
   *         Can be `CGAL::Dimension_tag<0>`, `CGAL::Dimension_tag<1>` or `CGAL::Dimension_tag<2>`
   * \tparam Descriptor the type of descriptor used to identify the element to evaluate,
-  * which can be a vertex, an edge, or a facet according to the DimensionTag.
+  * which can be a vertex, an edge, or a face according to the DimensionTag.
   * If the domain is of type `CGAL::Image_3`, it is a `std::size_t` for element with
   * dimension 0, 1 and 2. If the domain is a model of `FaceListGraph`, it is a
   * `vertex_descriptor` (resp. `halfedge_descriptor`; `face_descriptor `) for element with

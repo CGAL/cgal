@@ -7,15 +7,15 @@
 
 /// \defgroup PkgFeatureGraphDetector Feature Graph Detector
 /// \ingroup PkgFeatureGraphRef
-/// The detectors in this group allow the user to extract the feature graph from different types of surfaces.
+/// The detectors in this group enable the user to extract the feature graph from different types of surfaces.
 
 /// \defgroup PkgFeatureGraphSharpnessEstimator Sharpness Estimator
 /// \ingroup PkgFeatureGraphRef
-/// The detectors in this group allow the user to estimate the sharpness on surfaces.
+/// The detectors in this group enable the user to estimate the sharpness on surfaces.
 
 /// \defgroup PkgFeatureGraphNormalEstimator Normal Estimator
 /// \ingroup PkgFeatureGraphRef
-/// The detectors in this group allow the user to estimate the normal on surfaces.
+/// The detectors in this group enable the user to estimate the normal on surfaces.
 
 /*!
 \addtogroup PkgFeatureGraphRef

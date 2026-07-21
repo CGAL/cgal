@@ -24,12 +24,12 @@ public:
   typedef Vector_3 Normal_type;
 
   /*!
-  * The type of the estimator that allow the user to retrieve the sharpness values.
+  * The type of the estimator that enables the user to retrieve the sharpness values.
   * \cgalModels{SharpnessEstimator}
   */
   typedef unspecified_type Sharpness_estimator;
   /*!
-  * The type of the estimator that allow the user to retrieve the normals.
+  * The type of the estimator that enables the user to retrieve the normals.
   * \cgalModels{NormalEstimator}
   */
   typedef unspecified_type Normal_estimator;
@@ -55,11 +55,11 @@ public:
   /// @{
 
   /*!
-  * returns the estimator that allow the user to retrieve the sharpness values.
+  * returns the estimator that enables the user to retrieve the sharpness values.
   */
   Sharpness_estimator sharpness_estimator() const;
   /*!
-  * returns the estimator that allow the user to retrieve the normals.
+  * returns the estimator that enables the user to retrieve the normals.
   */
   Normal_estimator normal_estimator() const;
 

@@ -1,4 +1,5 @@
-// WARNING : non-functioning example. This exmaple is to understand how to create and use the feature graph for tetrahedral mesh creation.
+// TEMPORARY WARNING : non-functioning example, as the API is not yet implemented, this example compiles but the sharp features are not computed yet.
+// This example is to understand how to create and use the feature graph for tetrahedral mesh creation.
 
 #include <CGAL/Image_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>

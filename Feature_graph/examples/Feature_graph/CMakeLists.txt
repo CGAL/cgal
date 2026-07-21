@@ -27,13 +27,6 @@ if(NOT TARGET CGAL::Eigen3_support)
   return()
 endif()
 
-# bigobj
-if (MSVC)
-  add_compile_options(/bigobj)
-else ()
-  add_compile_options(-Wa,-mbig-obj)
-endif ()
-
 if(TARGET CGAL::CGAL_ImageIO)
 
   if(CGAL_ImageIO_USE_ZLIB)

@@ -77,7 +77,7 @@ struct Detect_sharp_features_on_labeled_image
   *           <BR> `FT operator()(const Point_3& point_in_space, const std::size_t& element_descriptor, const CGAL::Image_3& image) const`
   *         </UL>
   *         <LI> The type `DimensionTag` represents the element type, it can either be `CGAL::Dimension_tag<0>`, `CGAL::Dimension_tag<1>` or `CGAL::Dimension_tag<2>`,
-  *         which represent either a vertex element, an edge element, or a facet element respectively.
+  *         which represent either a vertex element, an edge element, or a face element respectively.
   *         <LI> The parameter `element_descriptor` indicates the element of the image :
   *         from the centroid `(x,y,z)` of the point, line or surface element in the image space,
   *         and given the dimension of the image `(xdim, ydim, zdim)`, the descriptor is
@@ -186,12 +186,12 @@ struct Detect_sharp_features_on_labeled_image
   *
   *   \cgalParamSectionBegin{point_to_element_output_map}
   *     \cgalParamDescription{an output property map that will be filled if supplied.
-  *     It allow retrieving of the surface element where a feature graph point is embedded.
+  *     It enables the user to retrieve the surface element where a feature graph point is embedded.
   *     It must be a model of `WritablePropertyMap`,
-  *     and must implement `put(output_pmap, feature_vertex_descriptor, facet_descriptor)`
+  *     and must implement `put(output_pmap, feature_vertex_descriptor, face_descriptor)`
   *     where the key type is the `vertex_descriptor` of the feature graph, and the value type is
   *     a descriptor of an element of the surface, with type `std::size_t`.
-  *     The facet descriptor correspond to a facet element with the tag `CGAL::DimensionTag<2>`}
+  *     The face descriptor correspond to a face element with the tag `CGAL::DimensionTag<2>`}
   *     \cgalParamDefault{`parameters::default()`}
   *   \cgalParamSectionEnd
   * \cgalNamedParamsEnd
@@ -270,7 +270,7 @@ struct Detect_sharp_features_on_surface
   *           <BR> `FT operator()(const Point_3& point_in_space, const Descriptor& element_descriptor, const PolygonMesh& pmesh) const`
   *         </UL>
   *         <LI> The type `DimensionTag` represents the element type, it can either be `CGAL::Dimension_tag<0>`, `CGAL::Dimension_tag<1>` or `CGAL::Dimension_tag<2>`,
-  *         which represent either a vertex element, an edge element, or a facet element respectively.
+  *         which represent either a vertex element, an edge element, or a face element respectively.
   *         <LI> The type `Descriptor` is either a `vertex_descriptor`, `halfedge_descriptor` or `face_descriptor` and
   *         is set respectivelly to the DimensionTag.}
   *     \cgalParamDefault{`FT(0.0)`}
@@ -372,9 +372,9 @@ struct Detect_sharp_features_on_surface
   *
   *   \cgalParamSectionBegin{point_to_element_output_map}
   *     \cgalParamDescription{an output property map that will be filled if supplied.
-  *     It allow retrieving of the surface element where a feature graph point is embedded.
+  *     It enables the user to retrieve the surface element where a feature graph point is embedded.
   *     It must be a model of `WritablePropertyMap`,
-  *     and must implement `put(output_pmap, feature_vertex_descriptor, facet_descriptor)`
+  *     and must implement `put(output_pmap, feature_vertex_descriptor, face_descriptor)`
   *     where the key type is the `vertex_descriptor` of the feature graph, and the value type is
   *     the `facet_descriptor` of the polygon mesh.}
   *     \cgalParamDefault{`parameters::default()`}
