@@ -844,7 +844,9 @@ public:
             m_scene.get_volume_faces();
           const std::vector<CGAL::IO::Color> &vcolors =
             m_scene.get_volume_colors();
-          const std::size_t nvol = volumes.size();
+          const std::vector<CGAL::Bbox_3> &vbboxes =
+            m_scene.get_volume_bboxes();
+          const std::size_t num_volumes = volumes.size();
 
           // Compute which volumes/surfaces are closed once, on the first clip.
           if (!m_cap_closed_valid)
@@ -853,12 +855,33 @@ public:
           glEnable(GL_STENCIL_TEST);
           glDisable(GL_CULL_FACE);
 
-          for (std::size_t v = 0, nfill = (nvol == 0 ? 1 : nvol); v < nfill; ++v)
+          // Bound each volume's stencil clear to its screen rectangle.
+          QMatrix4x4 capMvp;
+          { double m[16]; camera()->getModelViewProjectionMatrix(m);
+            for (int i=0; i<16; ++i) { capMvp.data()[i]=float(m[i]); } }
+          GLint capVp[4]; glGetIntegerv(GL_VIEWPORT, capVp);
+          if (num_volumes != 0) { glEnable(GL_SCISSOR_TEST); }
+
+          for (std::size_t v = 0, nfill = (num_volumes == 0 ? 1 : num_volumes); v < nfill; ++v)
           {
             // Boundary guard: an open volume/surface has no meaningful cap.
             if (v < m_cap_closed.size() && m_cap_closed[v] == 0) { continue; }
+            // Skip a volume the plane does not cross (nothing to cap).
+            if (num_volumes != 0 && v < vbboxes.size() &&
+                !plane_crosses_bbox(vbboxes[v], clipPlane, plane_point))
+            { continue; }
+            if (num_volumes != 0 && v < vbboxes.size())
+            {
+              GLint sx, sy; GLsizei sw, sh;
+              if (bbox_scissor(vbboxes[v], capMvp, capVp, sx, sy, sw, sh))
+              {
+                if (sw==0 || sh==0) { continue; } // off-screen
+                glScissor(sx, sy, sw, sh);
+              }
+              else { glScissor(capVp[0], capVp[1], capVp[2], capVp[3]); }
+            }
             QVector4D capcol;
-            if (nvol == 0)
+            if (num_volumes == 0)
             { capcol = QVector4D(0.6f, 0.6f, 0.6f, 1.0f); }
             else
             {
@@ -887,7 +910,7 @@ public:
             rendering_program_face.setUniformValue("u_ClipPlane", clipPlane);
             rendering_program_face.setUniformValue("u_PointPlane", plane_point);
             vao[VAO_FACES].bind();
-            if (nvol == 0)
+            if (num_volumes == 0)
             {
               glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(
                 m_scene.number_of_elements(GS::POS_FACES)));
@@ -921,6 +944,7 @@ public:
             rendering_program_clipping_plane.release();
           }
 
+          if (num_volumes != 0) { glDisable(GL_SCISSOR_TEST); }
           glDisable(GL_STENCIL_TEST);
         }
 
@@ -1415,6 +1439,53 @@ protected:
     }
   }
 
+  // Clip-plane cap: true if the plane (normal, point) crosses the box.
+  static bool plane_crosses_bbox(const CGAL::Bbox_3 &b,
+                                 const QVector4D &normal, const QVector4D &point)
+  {
+    const double nx=normal.x(), ny=normal.y(), nz=normal.z();
+    const double d=nx*point.x()+ny*point.y()+nz*point.z();
+    double lo=0.0, hi=0.0;
+    if (nx>=0){ lo+=nx*b.xmin(); hi+=nx*b.xmax(); } else { lo+=nx*b.xmax(); hi+=nx*b.xmin(); }
+    if (ny>=0){ lo+=ny*b.ymin(); hi+=ny*b.ymax(); } else { lo+=ny*b.ymax(); hi+=ny*b.ymin(); }
+    if (nz>=0){ lo+=nz*b.zmin(); hi+=nz*b.zmax(); } else { lo+=nz*b.zmax(); hi+=nz*b.zmin(); }
+    return (lo-d)<=0.0 && (hi-d)>=0.0;
+  }
+
+  // Clip-plane cap: framebuffer-pixel rectangle of a world box under mvp/viewport.
+  // Returns false if a corner is behind the camera (caller clears the full screen).
+  static bool bbox_scissor(const CGAL::Bbox_3 &b, const QMatrix4x4 &mvp,
+                           const GLint vp[4],
+                           GLint &sx, GLint &sy, GLsizei &sw, GLsizei &sh)
+  {
+    const double xs[2]={b.xmin(), b.xmax()};
+    const double ys[2]={b.ymin(), b.ymax()};
+    const double zs[2]={b.zmin(), b.zmax()};
+    float minx=1e30f, miny=1e30f, maxx=-1e30f, maxy=-1e30f;
+    for (int c=0; c<8; ++c)
+    {
+      QVector4D p=mvp*QVector4D(float(xs[c&1]), float(ys[(c>>1)&1]),
+                                float(zs[(c>>2)&1]), 1.0f);
+      if (p.w()<=0.0f) { return false; }
+      const float px=((p.x()/p.w())*0.5f+0.5f)*vp[2]+vp[0];
+      const float py=((p.y()/p.w())*0.5f+0.5f)*vp[3]+vp[1];
+      if (px<minx) minx=px;  if (px>maxx) maxx=px;
+      if (py<miny) miny=py;  if (py>maxy) maxy=py;
+    }
+    int x0=int(minx); if (float(x0)>minx) --x0;   // floor
+    int y0=int(miny); if (float(y0)>miny) --y0;
+    int x1=int(maxx); if (float(x1)<maxx) ++x1;   // ceil
+    int y1=int(maxy); if (float(y1)<maxy) ++y1;
+    if (x0<vp[0])       { x0=vp[0]; }
+    if (y0<vp[1])       { y0=vp[1]; }
+    if (x1>vp[0]+vp[2]) { x1=vp[0]+vp[2]; }
+    if (y1>vp[1]+vp[3]) { y1=vp[1]+vp[3]; }
+    sx=x0; sy=y0;
+    sw=(x1>x0)?GLsizei(x1-x0):0;
+    sh=(y1>y0)?GLsizei(y1-y0):0;
+    return true;
+  }
+
   // Clip-plane cap: a group is cappable only if it is closed (every edge used by
   // two triangles); an open surface is skipped. Vertices matched by position.
   void compute_cap_closed()
@@ -1423,22 +1494,22 @@ protected:
     const std::vector<BufferType> &pos=m_scene.get_array_of_index(GS::POS_FACES);
     const std::vector<std::vector<unsigned int>> &volumes=
       m_scene.get_volume_faces();
-    const std::size_t nvol=volumes.size();
-    const std::size_t ngroup=(nvol==0 ? 1 : nvol);
-    m_cap_closed.assign(ngroup, 1);
+    const std::size_t num_volumes=volumes.size();
+    const std::size_t num_groups=(num_volumes==0 ? 1 : num_volumes);
+    m_cap_closed.assign(num_groups, 1);
 
-    for (std::size_t g=0; g<ngroup; ++g)
+    for (std::size_t g=0; g<num_groups; ++g)
     {
-      std::map<std::tuple<float, float, float>, unsigned int> vid;
-      std::map<std::pair<unsigned int, unsigned int>, int> ecount;
+      std::map<std::tuple<float, float, float>, unsigned int> vertex_id_map;
+      std::map<std::pair<unsigned int, unsigned int>, int> edge_count_map;
 
       auto id_of=[&](unsigned int vtx) -> unsigned int {
         std::tuple<float, float, float> key(pos[3*vtx], pos[3*vtx+1],
                                             pos[3*vtx+2]);
-        auto it=vid.find(key);
-        if (it!=vid.end()) { return it->second; }
-        unsigned int id=static_cast<unsigned int>(vid.size());
-        vid.emplace(key, id);
+        auto it=vertex_id_map.find(key);
+        if (it!=vertex_id_map.end()) { return it->second; }
+        unsigned int id=static_cast<unsigned int>(vertex_id_map.size());
+        vertex_id_map.emplace(key, id);
         return id;
       };
       auto add_triangle=[&](unsigned int v0) {
@@ -1448,11 +1519,11 @@ protected:
         {
           unsigned int a=e[k][0], b=e[k][1];
           if (a>b) { std::swap(a, b); }
-          ++ecount[std::make_pair(a, b)];
+          ++edge_count_map[std::make_pair(a, b)];
         }
       };
 
-      if (nvol==0)
+      if (num_volumes==0)
       {
         const unsigned int nv=m_scene.number_of_elements(GS::POS_FACES);
         for (unsigned int v=0; v+2<nv; v+=3) { add_triangle(v); }
@@ -1467,7 +1538,7 @@ protected:
         }
       }
 
-      for (const auto &e : ecount)
+      for (const auto &e : edge_count_map)
       { if (e.second!=2) { m_cap_closed[g]=0; break; } }
     }
   }

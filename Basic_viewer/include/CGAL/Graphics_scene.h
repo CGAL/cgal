@@ -297,6 +297,9 @@ public:
         m_buffer_for_faces.get_points_of_current_face();
       if (pts.size()>=3)
       {
+        // Volume bounding box (shared walls included), for the cap plane test.
+        for (const Local_point &p : pts) { m_volume_bboxes.back()+=p.bbox(); }
+
         Face_key key=canonical_face_key(pts);
         auto found=m_face_dedup.find(key);
         if (found!=m_face_dedup.end())
@@ -327,6 +330,7 @@ public:
   {
     m_volume_faces.emplace_back();
     m_volume_colors.push_back(acolor);
+    m_volume_bboxes.emplace_back();
     m_current_volume_color=acolor;
     m_current_volume_has_color=true;
     m_building_volume=true;
@@ -336,6 +340,7 @@ public:
   {
     m_volume_faces.emplace_back();
     m_volume_colors.push_back(m_default_color_face);
+    m_volume_bboxes.emplace_back();
     m_current_volume_has_color=false;
     m_building_volume=true;
   }
@@ -355,6 +360,9 @@ public:
 
   const std::vector<CGAL::IO::Color> &get_volume_colors() const
   { return m_volume_colors; }
+
+  const std::vector<CGAL::Bbox_3> &get_volume_bboxes() const
+  { return m_volume_bboxes; }
 
   template <typename KPoint>
   void add_text(const KPoint &kp, const std::string &txt)
@@ -420,6 +428,7 @@ public:
     m_faces.clear();
     m_volume_faces.clear();
     m_volume_colors.clear();
+    m_volume_bboxes.clear();
     m_current_face_start=0;
     m_face_dedup.clear();
     m_building_volume=false;
@@ -495,6 +504,7 @@ protected:
   std::vector<std::pair<unsigned int, unsigned int>> m_faces;
   std::vector<std::vector<unsigned int>> m_volume_faces;
   std::vector<CGAL::IO::Color> m_volume_colors;
+  std::vector<CGAL::Bbox_3> m_volume_bboxes;
   unsigned int m_current_face_start = 0;
 
   // Clip-plane cap: geometric face de-duplication during volume building. The key
