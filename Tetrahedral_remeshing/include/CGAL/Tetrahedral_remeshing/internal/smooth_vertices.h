@@ -71,12 +71,13 @@ public:
   using AABB_segment_tree = CGAL::AABB_tree<AABB_segment_traits>;
 
 private:
+  Triangle_vec m_aabb_triangles;
+  Segment_vec m_aabb_segments;
+
+public:
   using FMLS = CGAL::Tetrahedral_remeshing::internal::FMLS<Gt>;
   std::vector<FMLS> subdomain_FMLS;
   std::unordered_map<Surface_patch_index, std::size_t, boost::hash<Surface_patch_index>> subdomain_FMLS_indices;
-
-  Triangle_vec m_aabb_triangles;
-  Segment_vec m_aabb_segments;
 
 public:
   AABB_triangle_tree m_triangles_aabb_tree;
@@ -1019,7 +1020,7 @@ public:
 #ifdef CGAL_TET_REMESHING_SMOOTHING_WITH_MLS
       std::optional<Point_3> mls_proj = project(si, current_pos);
       if(mls_proj == std::nullopt)
-        continue;
+        return false;
 
       new_pos = *mls_proj;
 #else // AABB_tree projection
