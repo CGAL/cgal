@@ -195,6 +195,13 @@ T get_certain(Uncertain<T> a)
   return a.inf();
 }
 
+template < typename T>
+inline
+bool is_certain(std::array<Uncertain<T>, 2> a)
+{
+  return is_certain(a[0]) && is_certain(a[1]);
+}
+
 template < typename T >
 inline
 std::array<T,2>
