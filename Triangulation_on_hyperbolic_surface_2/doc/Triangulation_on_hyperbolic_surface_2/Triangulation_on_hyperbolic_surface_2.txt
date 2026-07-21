@@ -126,7 +126,7 @@ See \cgalCite{despre2022experimental} for details.
 \subsection Subsection_Hyperbolic_Surface_Triangulations_DS_Delaunay_Triangulations Data Structure for Delaunay Triangulations
 
 <div style="color:red">
-Some algorithms, for instance, the \f$ \varepsilon \f$-net computation frequently access lifts of
+Some algorithms, for instance, the \f$ \varepsilon \f$-net computation, frequently access lifts of
 triangles in \f$ \mathbb{D} \f$. Therefore, for more convenience and time efficiency the data
 structure for Delaunay triangulations is enriched with additional information.
 Recall that our basic triangulation
