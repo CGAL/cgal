@@ -269,7 +269,7 @@ void test_tracing_non_caching_segment_traits() {
 //   test_tracing_traits(objs);
 // }
 
-void test_tracing_rational_funcion_traits() {
+void test_tracing_rational_function_traits() {
   using Base_traits = Rational_function_traits_decorating_test_types::Base_traits;
   using Tracing_traits = Arr_tracing_traits_2<Base_traits>;
   test_type_consistency<Base_traits, Tracing_traits>();
@@ -298,7 +298,7 @@ int main() {
   test_tracing_linear_traits();
   test_tracing_non_caching_segment_traits();
   // test_tracing_polyline_traits();
-  test_tracing_rational_funcion_traits();
+  test_tracing_rational_function_traits();
   test_tracing_segment_traits();
   return 0;
 }
