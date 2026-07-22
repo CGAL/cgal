@@ -279,7 +279,7 @@ construct its Delaunay triangulation using the class
 This package implements the Delaunay flip algorithm described in the hyperbolic setting by Vincent Despré, Jean-Marc Schlenker and Monique Teillaud in \cgalCite{despre2020flipping}, using the data structure for representing triangulations presented in \cgalCite{despre2022experimental}.
 The generation of domains is implemented as described in Vincent Despré, Loïc Dubois, Benedikt Kolbe and Monique Teillaud in \cgalCite{despre2022experimental}, based on results of Aline Aigon-Dupuy, Peter Buser, Michel Cibils, Alfred F Künzle and Frank Steiner \cgalCite{aigon2005hyperbolic}.
 <span style="color:red">The \f$ \varepsilon \f$-net algorithm
-is implementated as described in Vincent Despré, Camille Lanuel, Marc Pouget and Monique Teillaud in
+is implemented as described in Vincent Despré, Camille Lanuel, Marc Pouget and Monique Teillaud in
 \cgalCite{cgal:dlpt-naihs-25} and detailed in Camille Lanuel PhD thesis \cgalCite{cgal:l-cenhs-25} </span>
 The code and the documentation of the package were written by Loïc Dubois <span style="color:red">and Camille Lanuel</span>, under regular discussions with Vincent Despré, Marc Pouget and Monique Teillaud.
 The authors acknowledge support from the grants <a href="https://sos.loria.fr/">SoS</a>, <a href="https://perso.math.u-pem.fr/sabourau.stephane/min-max/min-max.html">MIN-MAX</a> <span style="color:red">and <a href="https://homepages.loria.fr/VDespre/Abysm/">Abysm</a></span> of the French National Research Agency ANR.
