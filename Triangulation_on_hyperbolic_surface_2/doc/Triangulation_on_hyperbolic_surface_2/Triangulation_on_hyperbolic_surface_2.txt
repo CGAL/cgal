@@ -130,7 +130,7 @@ Some algorithms, for instance, the \f$ \varepsilon \f$-net computation, frequent
 triangles in \f$ \mathbb{D} \f$. Therefore, for more convenience and time efficiency the data
 structure for Delaunay triangulations is enriched with additional information.
 Recall that our basic triangulation
-(i.e. non-Delaunay) only has one anchor in its data structure. This implies that
+(i.e., non-Delaunay) only has one anchor in its data structure. This implies that
 computing a lift of a given triangle requires lifting a sequence of adjacent
 triangles from the anchor to this very triangle, an operation which is not
 constant time.
