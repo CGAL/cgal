@@ -5,7 +5,6 @@
 
 #ifdef CGAL_USE_CORE
 
-#include <CGAL/basic.h>
 #include <CGAL/draw_arrangement_2.h>
 
 #include "arr_conics.h"
@@ -21,8 +20,8 @@ int main() {
   Point p2(0, -1);
   Point p3(0, 1);
   Point p4(1, 0);
-  Point p5(Rational(1,2),Rational(1,2));
-  Point p6(Rational(-1,2),Rational(1,2));
+  Point p5(Rational(1, 2), Rational(1, 2));
+  Point p6(Rational(-1, 2), Rational(1, 2));
   Rat_point rp0(0, 0);
   Rat_point rp1(1, 0);
   Rat_point rp2(0, 1);
@@ -57,7 +56,7 @@ int main() {
 
   print_arrangement_size(arr);
 
-  CGAL::draw(arr);
+  CGAL::draw(arr, "linear_conics");
 
   return 0;
 }

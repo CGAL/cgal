@@ -34,6 +34,7 @@ class Generic_random_point_generator : public Random_generator_base<P>
   std::vector<double> weights;
   ObjectFromIdMap object_from_id_map;
   Random& random;
+  std::size_t last_picked_id = std::size_t(-1);
 
 protected:
   void generate_point();
@@ -89,13 +90,19 @@ public:
       return 0;
     return weights.back();
   }
+
+  std::pair<P,Id> point_and_support() const
+  {
+    CGAL_assertion(last_picked_id != std::size_t(-1));
+    return std::pair(this->operator*(),ids[last_picked_id]);
+  }
 };
 
 template < typename Id, class ObjectFromIdMap, class GeneratorOnObject, class P >
 void Generic_random_point_generator<Id, ObjectFromIdMap,  GeneratorOnObject, P>::generate_point()
 {
   //shoot a random value in weights
-  std::size_t target = std::distance(
+  last_picked_id = std::distance(
     weights.begin(),
     std::upper_bound(
       weights.begin(),
@@ -105,7 +112,7 @@ void Generic_random_point_generator<Id, ObjectFromIdMap,  GeneratorOnObject, P>:
   );
 
   // generate the points
-  GeneratorOnObject pointCreator(object_from_id_map(ids[target]));
+  GeneratorOnObject pointCreator(object_from_id_map(ids[last_picked_id]), random);
   this->d_item = *pointCreator;
 }
 
@@ -125,8 +132,8 @@ struct Apply_approx_sqrt
     return approximate_sqrt( static_cast<const Functor&>(*this)(t) );
   }
 };
-} //namespace internal
 
-}//namesape CGAL
+} // namespace internal
+} // namespace CGAL
 
 #endif // CGAL_INTERNAL_GENERIC_RANDOM_POINT_GENERATOR_H

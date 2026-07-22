@@ -69,7 +69,7 @@ int main()
   output.close();
 
   // Output skeleton points and the corresponding surface points
-  output.open("correspondance-lcc.polylines.txt");
+  output.open("correspondence-lcc.polylines.txt");
   for(Skeleton_vertex v : CGAL::make_range(vertices(skeleton)))
     for(vertex_descriptor vd : skeleton[v].vertices)
       output << "2 " << skeleton[v].point << " "

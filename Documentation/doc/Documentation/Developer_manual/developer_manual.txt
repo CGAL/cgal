@@ -23,4 +23,5 @@ The developer manual is primarily aimed at \cgal developers, but may also be int
 - \subpage devman_info
 - \subpage devman_create_cgal_CMakeLists
 - \subpage deprecated
+- \subpage Doxygen_for_CGAL
 */

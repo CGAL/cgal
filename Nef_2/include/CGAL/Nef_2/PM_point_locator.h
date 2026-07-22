@@ -362,16 +362,16 @@ public:
 
 
   // C++ is really friendly:
-  #define USECMARK(t) const Mark& mark(t h) const { return Base::mark(h); }
-  #define USEMARK(t)  Mark& mark(t h) const { return Base::mark(h); }
-  USEMARK(Vertex_handle)
-  USEMARK(Halfedge_handle)
-  USEMARK(Face_handle)
-  USECMARK(Vertex_const_handle)
-  USECMARK(Halfedge_const_handle)
-  USECMARK(Face_const_handle)
-  #undef USEMARK
-  #undef USECMARK
+  #define CGAL_USECMARK(t) const Mark& mark(t h) const { return Base::mark(h); }
+  #define CGAL_USEMARK(t)  Mark& mark(t h) const { return Base::mark(h); }
+  CGAL_USEMARK(Vertex_handle)
+  CGAL_USEMARK(Halfedge_handle)
+  CGAL_USEMARK(Face_handle)
+  CGAL_USECMARK(Vertex_const_handle)
+  CGAL_USECMARK(Halfedge_const_handle)
+  CGAL_USECMARK(Face_const_handle)
+  #undef CGAL_USEMARK
+  #undef CGAL_USECMARK
   /*{\Mimplementation Naive query operations are realized by checking
   the intersection points of the $1$-skeleton of the plane map |P| with
   the query segments $s$. This method takes time linear in the size $n$
@@ -407,9 +407,9 @@ protected:
   typedef PM_persistent_PL_traits<Base>  PMPPLT;
   typedef PointLocator<PMPPLT>           PMPP_locator;
   PMPP_locator* pPPL;
-  #define LOCATE_IN_TRIANGULATION pPPL->locate_down
+  #define CGAL_LOCATE_IN_TRIANGULATION pPPL->locate_down
   #else
-  #define LOCATE_IN_TRIANGULATION walk_in_triangulation
+  #define CGAL_LOCATE_IN_TRIANGULATION walk_in_triangulation
   #endif
 
 public:
@@ -536,7 +536,7 @@ protected:
   The efficiency of this point location module is mostly based on
   heuristics. Therefore worst case bounds are not very expressive. The
   query operations take up to linear time for subsequent query
-  operations though they are better in practise. They trigger a one-time
+  operations though they are better in practice. They trigger a one-time
   initialization which needs worst case $O(n^2)$ time though runtime
   tests often show subquadratic results. The necessary space for the
   query structure is subsumed in the storage space $O(n)$ of the input
@@ -698,7 +698,7 @@ public:
   face) of |P| which contains the point |p| in its relative
   interior.}*/
   {
-    Object_handle h = LOCATE_IN_TRIANGULATION(p);
+    Object_handle h = CGAL_LOCATE_IN_TRIANGULATION(p);
     Vertex_const_handle v_triang;
     if ( assign(v_triang,h) ) {
       return input_object(v_triang);
@@ -786,7 +786,7 @@ public:
     Vertex_const_handle v;
     Halfedge_const_handle e;
     object_kind current;
-    Object_handle h = LOCATE_IN_TRIANGULATION(p);
+    Object_handle h = CGAL_LOCATE_IN_TRIANGULATION(p);
     if ( assign(v,h) ) {
       CGAL_NEF_TRACEN("located vertex "<<PV(v));
       current = VERTEX;

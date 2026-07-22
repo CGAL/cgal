@@ -13,7 +13,7 @@
 //
 // file          : test/Min_circle_2/test_Min_circle_2.C
 // package       : $CGAL_Package: Min_circle_2 $
-// chapter       : Geometric Optimisation
+// chapter       : Geometric Optimization
 //
 // source        : web/Min_circle_2.aw
 // revision      : $Id$

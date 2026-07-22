@@ -13,7 +13,7 @@ of the concept `Periodic_2TriangulationVertexBase_2` to be used by
 periodic triangulation.
 
 The first one `Traits` is the geometric traits, it is to be
-instantiated by a model of the concept
+instantiated with a model of the concept
 `Periodic_2TriangulationTraits_2`. The second argument is the base
 class to which the additional information for the periodic vertex is
 added and should be a model of `TriangulationDSVertexBase_2`

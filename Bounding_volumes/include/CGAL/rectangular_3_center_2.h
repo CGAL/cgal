@@ -135,7 +135,7 @@ rectangular_3_center_2_type1(
   rad = sdist(v(r, 2), v(r, 0));
   // init to prevent default constructor requirement
   Point bestpoint = *f;
-  // (initialisation avoids warning)
+  // (initialization avoids warning)
   unsigned int bestrun = 0;
 
   // two cases: top-left & bottom-right or top-right & bottom-left

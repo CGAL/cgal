@@ -382,7 +382,7 @@ namespace CGAL {
     int _facet_number;
 
     //---------------------------------------------------------------------
-    // For post-processing
+    // For postprocessing
     mutable int _postprocessing_counter;
     int _size_before_postprocessing;
 
@@ -2105,11 +2105,11 @@ namespace CGAL {
         }
       while((!_ordered_border.empty())&&(K <= K)&&(min_K != infinity())&&(K!=K_prev));
 
-#ifdef VERBOSE
+#ifdef CGAL_AFSR_VERBOSE
       if ((min_K < infinity())&&(!_ordered_border.empty())) {
         std::cout << "   [ next K required = " << min_K << " ]" << std::endl;
       }
-#endif // VERBOSE
+#endif
     }
 
 
@@ -2432,7 +2432,7 @@ namespace CGAL {
 
       std::size_t itmp, L_v_size_mem;
       L_v_size_mem = L_v.size();
-      if ((vh_on_border_inserted != 0)&& // to post-process only the borders
+      if ((vh_on_border_inserted != 0)&& // to postprocess only the borders
           (L_v.size() < .1 * _size_before_postprocessing))
         {
           {
@@ -2445,7 +2445,7 @@ namespace CGAL {
               }
             while (!L_v.empty() && (L_v.size() < itmp));
           }
-#ifdef VERBOSE
+#ifdef CGAL_AFSR_VERBOSE
           if(L_v.size() > 0){
             std::cout << "   " << L_v.size() << " non-regular points." << std::endl;
           }
@@ -2604,6 +2604,7 @@ namespace CGAL {
     typedef Kernel::Point_3 Point_3;
 
     CC cc=CC();
+
     Triangulation_3 dt( boost::make_transform_iterator(b, AFSR::Auto_count_cc<Point_3,CC>(cc)),
                         boost::make_transform_iterator(e, AFSR::Auto_count_cc<Point_3,CC>(cc) )  );
 
@@ -2667,7 +2668,6 @@ namespace CGAL {
     CC cc=CC();
     Triangulation_3 dt( boost::make_transform_iterator(b, AFSR::Auto_count_cc<Point_3,CC>(cc)),
                         boost::make_transform_iterator(e, AFSR::Auto_count_cc<Point_3,CC>(cc) )  );
-
     Reconstruction R(dt);
     R.run(radius_ratio_bound, beta);
     AFSR::construct_polyhedron(polyhedron, R);

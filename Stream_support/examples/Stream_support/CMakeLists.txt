@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.31)
 project(Stream_support_Examples)
 
 find_package(CGAL REQUIRED)
@@ -18,3 +18,8 @@ create_single_source_cgal_program( "off2wav.cpp" )
 create_single_source_cgal_program( "off_bbox.cpp" )
 create_single_source_cgal_program( "off_glue.cpp" )
 create_single_source_cgal_program( "off_transform.cpp" )
+
+create_single_source_cgal_program( "indenting_ostream.cpp" )
+create_single_source_cgal_program( "color_ostream.cpp" )
+create_single_source_cgal_program( "polygon_mesh_io.cpp" )
+

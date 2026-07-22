@@ -36,7 +36,7 @@ public :
   /// Initializes it with the given threshold value.
   Stop_above_cost_threshold( double threshold ) : mThres(threshold) {}
 
-  /// Returns `true` when `cost` is smaller or equal than the threshold.
+  /// Returns `true` when `cost` is  greater or equal than the threshold.
   /// \tparam CDT  must be `CGAL::Constrained_Delaunay_triangulation_2` with a vertex type that
   /// is model of  `PolylineSimplificationVertexBase_2`.
 
@@ -61,4 +61,3 @@ private:
 } //namespace CGAL
 
 #endif // CGAL_POLYLINE_SIMPLIFICATION_2_STOP_ABOVE_COST_THRESHOLD_H
-

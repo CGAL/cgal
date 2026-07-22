@@ -152,6 +152,8 @@ void CGAL::QGLViewer::defaultConstructor() {
   is_sharing = false;
   is_linked = false;
   shared_context = nullptr;
+  is_ogl_4_3 = false;
+  is_ogl_3_2 = false;
   _first_tick  = true;
 }
 
@@ -205,17 +207,23 @@ void CGAL::QGLViewer::initializeGL() {
   {
     QSurfaceFormat format = context()->format();
     context()->format().setOption(QSurfaceFormat::DebugContext);
-    if ( !context()->isValid()
-         || format.majorVersion() != 4
-         || QCoreApplication::arguments().contains(QStringLiteral("--old")))
+    const bool gl_is_valid = context()->isValid();
+    const bool force_old =
+        QCoreApplication::arguments().contains(QStringLiteral("--old"));
+    const int gl_major = format.majorVersion();
+    const int gl_minor = format.minorVersion();
 
-    {
-      is_ogl_4_3 = false;
-    }
-    else
-    {
-      is_ogl_4_3 = true;
-    }
+    // is_ogl_4_3 gates the real OpenGL 4.3 C++ API (QOpenGLFunctions_4_3_Core),
+    // used e.g. by the CGAL Lab demo. Behavior unchanged.
+    is_ogl_4_3 = gl_is_valid && !force_old
+                 && !(gl_major < 4 || (gl_major == 4 && gl_minor < 3));
+
+    // is_ogl_3_2 gates the modern GLSL 1.50 (#version 150) shader path, which
+    // only needs OpenGL 3.2. Basic_viewer uses this to pick modern vs
+    // compatibility shaders, so the modern path also works on contexts such as
+    // macOS 4.1 core profiles.
+    is_ogl_3_2 = gl_is_valid && !force_old
+                 && !(gl_major < 3 || (gl_major == 3 && gl_minor < 2));
 
     QSurfaceFormat cur_f = QOpenGLContext::currentContext()->format();
     const char* rt =(cur_f.renderableType() == QSurfaceFormat::OpenGLES) ? "GLES" : "GL";
@@ -354,7 +362,6 @@ camera is manipulated) : main drawing method. Should be overloaded. \arg
 postDraw() : display of visual hints (world axis, FPS...) */
 CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::paintGL() {
-  makeCurrent();
   // Clears screen, set model view matrix...
   preDraw();
   // Used defined method. Default calls draw()
@@ -364,7 +371,6 @@ void CGAL::QGLViewer::paintGL() {
     draw();
   // Add visual hints: axis, camera, grid...
   postDraw();
-  doneCurrent();
   Q_EMIT drawFinished(true);
 }
 
@@ -720,7 +726,6 @@ CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::drawLight(GLenum, qreal ) const {
 }
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
 CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::renderText(int x, int y, const QString &str,
                            const QFont &font) {
@@ -742,7 +747,6 @@ void CGAL::QGLViewer::renderText(double x, double y, double z, const QString &st
   const Vec proj = camera_->projectedCoordinatesOf(Vec(x, y, z));
   renderText(int(proj.x), int(proj.y), str, font);
 }
-#endif
 
 /*! Draws \p text at position \p x, \p y (expressed in screen coordinates
 pixels, origin in the upper left corner of the widget).
@@ -2080,6 +2084,9 @@ void CGAL::QGLViewer::keyPressEvent(QKeyEvent *e) {
     static QElapsedTimer doublePress;
 
     if (modifiers == playPathKeyboardModifiers()) {
+      if(camera()->frame()->isSpinning()){
+        camera()->frame()->stopSpinning();
+      }
       qint64 elapsed = doublePress.restart();
       if ((elapsed < 250) && (index == previousPathId_))
         camera()->resetPath(index);
@@ -2739,7 +2746,7 @@ CGAL::QGLViewer::wheelAction(::Qt::Key key, ::Qt::KeyboardModifiers modifiers) c
 /*! Returns the MouseHandler (if any) that receives wheel events when the \p
   modifiers and \p key keyboard keys are pressed.
 
-  Returns -1 if no no such binding has been defined using setWheelBinding(). See
+  Returns -1 if no such binding has been defined using setWheelBinding(). See
   also wheelAction().
 */
 CGAL_INLINE_FUNCTION

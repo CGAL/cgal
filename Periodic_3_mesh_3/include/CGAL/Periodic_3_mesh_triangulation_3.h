@@ -193,14 +193,14 @@ public:
 
   Bare_point canonicalize_point(const Bare_point& p) const
   {
-    return P3T3::internal::robust_canonicalize_point(p, geom_traits());
+    return P3T3::internal::construct_canonical_point(p, geom_traits());
   }
 
   // @fixme it might be dangerous to call robust_canonicalize() without also changing
   // <p, offset> = construct_periodic_point(p) (lack of consistency in the result)
   Weighted_point canonicalize_point(const Weighted_point& p) const
   {
-    return P3T3::internal::robust_canonicalize_point(p, geom_traits());
+    return P3T3::internal::construct_canonical_point(p, geom_traits());
   }
 
   // 1-cover, so we can take a const&
@@ -430,9 +430,8 @@ public:
     typename Geom_traits::Compute_squared_distance_3 compute_sd =
       geom_traits().compute_squared_distance_3_object();
 
-    bool used_exact = false;
-    std::pair<Bare_point, Offset> pp_p = P3T3::internal::construct_periodic_point(p, used_exact, geom_traits());
-    std::pair<Bare_point, Offset> pp_q = P3T3::internal::construct_periodic_point(q, used_exact, geom_traits());
+    std::pair<Bare_point, Offset> pp_p = P3T3::internal::construct_periodic_point(p, geom_traits());
+    std::pair<Bare_point, Offset> pp_q = P3T3::internal::construct_periodic_point(q, geom_traits());
 
     Offset min_off;
 
@@ -474,8 +473,7 @@ public:
     typename Geom_traits::Construct_point_3 cp =
       geom_traits().construct_point_3_object();
 
-    bool used_exact = false;
-    std::pair<Bare_point, Offset> pp_q = P3T3::internal::construct_periodic_point(q, used_exact, geom_traits());
+    std::pair<Bare_point, Offset> pp_q = P3T3::internal::construct_periodic_point(q, geom_traits());
 
     Offset min_off;
     Offset null_offset(0,0,0);
@@ -550,10 +548,9 @@ public:
       geom_traits().compare_power_distance_3_object();
 
     // Compute the offsets that would bring p, q, and r into the canonical domain
-    bool used_exact = false;
-    std::pair<Bare_point, Offset> pp_p = P3T3::internal::construct_periodic_point(p, used_exact, geom_traits());
-    std::pair<Bare_point, Offset> pp_q = P3T3::internal::construct_periodic_point(cp(q), used_exact, geom_traits());
-    std::pair<Bare_point, Offset> pp_r = P3T3::internal::construct_periodic_point(cp(r), used_exact, geom_traits());
+    std::pair<Bare_point, Offset> pp_p = P3T3::internal::construct_periodic_point(p, geom_traits());
+    std::pair<Bare_point, Offset> pp_q = P3T3::internal::construct_periodic_point(cp(q), geom_traits());
+    std::pair<Bare_point, Offset> pp_r = P3T3::internal::construct_periodic_point(cp(r), geom_traits());
 
     // To compare pp(p, q) to pp(p, r), we first need to know the best offsets that minimize these distances
     auto get_offset_minimizing_power_product = [&](const Weighted_point& wp,
@@ -916,76 +913,6 @@ public:
     return make_object(s);
   }
 
-  void dual_exact(const Facet& f, const Weighted_point& ws,
-                  Bare_point& cc) const
-  {
-    // first find the offset minimizing the distance between the facet and the fourth point
-    typename Geom_traits::Construct_point_3 construct_point =
-      geom_traits().construct_point_3_object();
-
-    // @fixme need to introduce Compare_power_distances_to_power_sphere_3(3 points, query)
-    typename Geom_traits::Construct_weighted_circumcenter_3 wcc =
-      geom_traits().construct_weighted_circumcenter_3_object();
-    typename Geom_traits::Compare_squared_distance_3 compare_sd =
-      geom_traits().compare_squared_distance_3_object();
-
-    const Cell_handle c = f.first;
-    const int i = f.second;
-
-    const Bare_point fcc = wcc(point(c, (i+1)%4), point(c, (i+2)%4), point(c, (i+3)%4));
-    const Bare_point& s = construct_point(ws);
-
-    bool used_exact = false;
-    std::pair<Bare_point, Offset> pp_fcc = P3T3::internal::construct_periodic_point(fcc, used_exact, geom_traits());
-    std::pair<Bare_point, Offset> pp_s = P3T3::internal::construct_periodic_point(s, used_exact, geom_traits());
-
-    Offset min_off;
-
-    for(int i = 0; i < 3; ++i) {
-      for(int j = 0; j < 3; ++j) {
-        for(int k = 0; k < 3; ++k)
-        {
-          const Offset o(i-1, j-1, k-1);
-
-          if((i == 0 && j == 0 && k == 0) ||
-             compare_sd(fcc, s, fcc, s,
-                        pp_fcc.second, pp_s.second + o,
-                        pp_fcc.second, pp_s.second + min_off) == SMALLER)
-          {
-            min_off = o;
-          }
-        }
-      }
-    }
-
-    typedef typename Kernel_traits<Bare_point>::Kernel                Kernel;
-    typedef Exact_predicates_exact_constructions_kernel               EKernel;
-
-    typedef Cartesian_converter<Kernel, EKernel>                      To_exact;
-    typedef Cartesian_converter<EKernel, Kernel>                      Back_from_exact;
-
-    typedef CGAL::Periodic_3_regular_triangulation_traits_3<EKernel>  Exact_Rt;
-    typedef typename Exact_Rt::Weighted_point_3                       EWeighted_point_3;
-
-    To_exact to_exact;
-    Back_from_exact back_from_exact;
-
-    Exact_Rt etraits(to_exact(domain()));
-    Exact_Rt::Construct_weighted_circumcenter_3 exact_weighted_circumcenter =
-      etraits.construct_weighted_circumcenter_3_object();
-
-    const EWeighted_point_3& cp = to_exact(c->vertex((i+1)%4)->point());
-    const EWeighted_point_3& cq = to_exact(c->vertex((i+2)%4)->point());
-    const EWeighted_point_3& cr = to_exact(c->vertex((i+3)%4)->point());
-    const EWeighted_point_3& cs = to_exact(ws);
-
-    cc = back_from_exact(exact_weighted_circumcenter(cp, cq, cr, cs,
-                                                     pp_fcc.second + get_offset(c, (i+1)%4),
-                                                     pp_fcc.second + get_offset(c, (i+2)%4),
-                                                     pp_fcc.second + get_offset(c, (i+3)%4),
-                                                     pp_s.second + min_off));
-  }
-
   void dual_segment(const Facet& facet, Bare_point& p, Bare_point& q) const
   {
     typename Base::Periodic_segment_3 ps = Base::dual(facet);
@@ -1031,6 +958,9 @@ public:
                            get_offset(n, 2), get_offset(n, 3));
 
     typename EKernel::Point_3 dp;
+    typename EKernel::Compute_x_3 compute_x = etraits.compute_x_3_object();
+    typename EKernel::Compute_y_3 compute_y = etraits.compute_y_3_object();
+    typename EKernel::Compute_z_3 compute_z = etraits.compute_z_3_object();
 
     // get the offset of the first weighted circumcenter
     Offset transl_wc1;
@@ -1039,17 +969,17 @@ public:
       // can safely perform a construction here because the kernel has exact constructions
       dp = etraits.construct_point_3_object()(exact_wc1, transl_wc1);
 
-      if(dp.x() < dom.xmin())
+      if(compute_x(dp) < dom.xmin())
         transl_wc1.x() += 1;
-      else if(dp.y() < dom.ymin())
+      else if(compute_y(dp) < dom.ymin())
         transl_wc1.y() += 1;
-      else if(dp.z() < dom.zmin())
+      else if(compute_z(dp) < dom.zmin())
         transl_wc1.z() += 1;
-      else if(!(dp.x() < dom.xmax()))
+      else if(!(compute_x(dp) < dom.xmax()))
         transl_wc1.x() -= 1;
-      else if(!(dp.y() < dom.ymax()))
+      else if(!(compute_y(dp) < dom.ymax()))
         transl_wc1.y() -= 1;
-      else if(!(dp.z() < dom.zmax()))
+      else if(!(compute_z(dp) < dom.zmax()))
         transl_wc1.z() -= 1;
       else
         break;
@@ -1061,17 +991,17 @@ public:
     {
       dp = etraits.construct_point_3_object()(exact_wc2, transl_wc2);
 
-      if(dp.x() < dom.xmin())
+      if(compute_x(dp) < dom.xmin())
         transl_wc2.x() += 1;
-      else if(dp.y() < dom.ymin())
+      else if(compute_y(dp) < dom.ymin())
         transl_wc2.y() += 1;
-      else if(dp.z() < dom.zmin())
+      else if(compute_z(dp) < dom.zmin())
         transl_wc2.z() += 1;
-      else if(!(dp.x() < dom.xmax()))
+      else if(!(compute_x(dp) < dom.xmax()))
         transl_wc2.x() -= 1;
-      else if(!(dp.y() < dom.ymax()))
+      else if(!(compute_y(dp) < dom.ymax()))
         transl_wc2.y() -= 1;
-      else if(!(dp.z() < dom.zmax()))
+      else if(!(compute_z(dp) < dom.zmax()))
         transl_wc2.z() -= 1;
       else
         break;

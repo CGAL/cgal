@@ -21,6 +21,7 @@
 #include <CGAL/Algebraic_structure_traits.h>
 #include <CGAL/Real_embeddable_traits.h>
 #include <CGAL/Kernel/Same_uncertainty.h>
+#include <boost/mpl/if.hpp>
 
 namespace CGAL {
 CGAL_NTS_BEGIN_NAMESPACE

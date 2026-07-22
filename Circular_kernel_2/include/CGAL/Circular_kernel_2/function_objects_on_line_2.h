@@ -30,26 +30,32 @@ namespace CGAL {
 namespace LinearFunctors {
 
   template < class CK >
-  class Construct_line_2 : public  CK::Linear_kernel::Construct_line_2
+  class Construct_line_2
+    // : public CK::Linear_kernel::Construct_line_2
   {
-          typedef typename CK::Line_arc_2            Line_arc_2;
+    typedef typename CK::Line_arc_2            Line_arc_2;
     typedef typename CK::Line_2                Line_2;
-    public:
 
-    typedef typename CK::Linear_kernel::Construct_line_2::result_type
-      result_type;
-    using CK::Linear_kernel::Construct_line_2::operator();
+    typedef typename CK::Linear_kernel::Construct_line_2 Linear_Construct_circle_2;
 
-    result_type operator() (const Line_arc_2 & a) const
+  public:
+    // using CK::Linear_kernel::Construct_line_2::operator();
+
+    template <class... Args>
+    decltype(auto)
+    operator()(const Args&... args) const
+    { return Linear_Construct_circle_2()(args...); }
+
+    decltype(auto) operator() (const Line_arc_2 & a) const
     {
       return (a.rep().supporting_line());
     }
 
-    result_type
+    Line_2
     operator() ( const typename CK::Polynomial_1_2 &eq )
-      {
-              return construct_line_2<CK>(eq);
-      }
+    {
+      return construct_line_2<CK>(eq);
+    }
   };
 
 } // namespace LinearFunctors

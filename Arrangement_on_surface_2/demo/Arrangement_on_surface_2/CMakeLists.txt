@@ -1,6 +1,6 @@
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.31)
 project(Arrangement_on_surface_2_Demo)
 
 if(NOT POLICY CMP0070 AND POLICY CMP0053)
@@ -20,7 +20,7 @@ if (CGAL_Qt6_FOUND AND Qt6_FOUND)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
   # Arrangement package includes
-  add_definitions(-DQT_NO_KEYWORDS)
+  add_compile_definitions(QT_NO_KEYWORDS)
   option(COMPILE_UTILS_INCREMENTALLY
     "Compile files in Utils directory incrementally, or compile them all as a unit. \
     Incremental compilation will be better for development and consume less \
@@ -110,11 +110,7 @@ if (CGAL_Qt6_FOUND AND Qt6_FOUND)
                  ${CGAL_Qt6_MOC_FILES})
 
   target_link_libraries(arrangement_2 PRIVATE Qt6::Widgets)
-  target_link_libraries(arrangement_2 PRIVATE CGAL::CGAL CGAL::CGAL_Qt6)
-  if(CGAL_Core_FOUND)
-    target_link_libraries(arrangement_2 PRIVATE CGAL::CGAL_Core)
-  endif()
-
+  target_link_libraries(arrangement_2 PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 CGAL::CGAL_Core)
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS arrangement_2)
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)

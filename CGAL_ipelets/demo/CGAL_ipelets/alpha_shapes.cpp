@@ -85,7 +85,7 @@ void ASphapeIpelet::protected_run(int fn)
   Alpha_shape_2 A(LWP.begin(),LWP.end());
   int alpha=-1;
   int nb_ret;
-  boost::tie(nb_ret,alpha)=request_value_from_user<int>((boost::format("# Spectral critical value (0-%d)") % A.number_of_alphas()).str() );
+  std::tie(nb_ret,alpha)=request_value_from_user<int>((boost::format("# Spectral critical value (0-%d)") % A.number_of_alphas()).str() );
   if (nb_ret == -1) return;
 
   if(alpha<0 || (std::size_t) alpha>A.number_of_alphas()){

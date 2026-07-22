@@ -539,9 +539,9 @@ namespace CGAL {
                         // Properties of the bbox_mesh
 
                         typename Polygon_mesh::template Property_map<Edge_descriptor, std::set<const Plane*> > bbox_edge_supporting_planes
-                                = bbox_mesh.template property_map<Edge_descriptor, std::set<const Plane*> >("e:supp_plane").first;
+                                = bbox_mesh.template property_map<Edge_descriptor, std::set<const Plane*> >("e:supp_plane").value();
                         typename Polygon_mesh::template Property_map<Vertex_descriptor, std::set<const Plane*> > bbox_vertex_supporting_planes
-                                = bbox_mesh.template property_map<Vertex_descriptor, std::set<const Plane*> >("v:supp_plane").first;
+                                = bbox_mesh.template property_map<Vertex_descriptor, std::set<const Plane*> >("v:supp_plane").value();
 
                         // The properties of the proxy mesh
                         candidate_faces.clear();
@@ -729,11 +729,11 @@ namespace CGAL {
                         Hypothesis<Kernel>::split_edge(Polygon_mesh& mesh, const EdgePos& ep, const Plane* cutting_plane) {
                         // The supporting planes of each edge
                         typename Polygon_mesh::template Property_map<Edge_descriptor, std::set<const Plane*> > edge_supporting_planes =
-                                mesh.template property_map<Edge_descriptor, std::set<const Plane*> >("e:supp_plane").first;
+                                mesh.template property_map<Edge_descriptor, std::set<const Plane*> >("e:supp_plane").value();
 
                         // The supporting planes of each vertex
                         typename Polygon_mesh::template Property_map<Vertex_descriptor, std::set<const Plane*> > vertex_supporting_planes
-                                = mesh.template property_map<Vertex_descriptor, std::set<const Plane*> >("v:supp_plane").first;
+                                = mesh.template property_map<Vertex_descriptor, std::set<const Plane*> >("v:supp_plane").value();
 
                         // We cannot use const reference, because it will become invalid after splitting
                         std::set<const Plane*> sfs = edge_supporting_planes[ep.edge];
@@ -771,7 +771,7 @@ namespace CGAL {
 
                         // The supporting plane of each face
                         typename Polygon_mesh::template Property_map<Face_descriptor, const Plane*> face_supporting_planes =
-                                mesh.template property_map<Face_descriptor, const Plane*>("f:supp_plane").first;
+                                mesh.template property_map<Face_descriptor, const Plane*>("f:supp_plane").value();
                         const Plane* supporting_plane = face_supporting_planes[face];
 
                         if (supporting_plane == cutting_plane)
@@ -779,11 +779,11 @@ namespace CGAL {
 
                         // The supporting planar segment of each face
                         typename Polygon_mesh::template Property_map<Face_descriptor, Planar_segment*> face_supporting_segments =
-                                mesh.template property_map<Face_descriptor, Planar_segment*>("f:supp_segment").first;
+                                mesh.template property_map<Face_descriptor, Planar_segment*>("f:supp_segment").value();
 
                         // The supporting planes of each edge
                         typename Polygon_mesh::template Property_map<Edge_descriptor, std::set<const Plane*> > edge_supporting_planes =
-                                mesh.template property_map<Edge_descriptor, std::set<const Plane*> >("e:supp_plane").first;
+                                mesh.template property_map<Edge_descriptor, std::set<const Plane*> >("e:supp_plane").value();
 
                         Planar_segment* supporting_segment = face_supporting_segments[face];
 
@@ -882,13 +882,13 @@ namespace CGAL {
 
                         // The supporting plane of each face
                         typename Polygon_mesh::template Property_map<Face_descriptor, const Plane*> face_supporting_planes =
-                                mesh.template property_map<Face_descriptor, const Plane*>("f:supp_plane").first;
+                                mesh.template property_map<Face_descriptor, const Plane*>("f:supp_plane").value();
                         const Plane* supporting_plane = face_supporting_planes[face];
                         if (supporting_plane == cutting_plane)
                                 return;
 
                         typename Polygon_mesh::template Property_map<Edge_descriptor, std::set<const Plane*> > edge_supporting_planes
-                                = mesh.template property_map<Edge_descriptor, std::set<const Plane*> >("e:supp_plane").first;
+                                = mesh.template property_map<Edge_descriptor, std::set<const Plane*> >("e:supp_plane").value();
 
                         const typename Polygon_mesh::template Property_map<Vertex_descriptor, Point>& coords = mesh.points();
 
@@ -997,11 +997,11 @@ namespace CGAL {
                 {
                         // The supporting plane of each face
                         typename Polygon_mesh::template Property_map<Face_descriptor, const Plane*> face_supporting_planes =
-                                mesh.template property_map<Face_descriptor, const Plane*>("f:supp_plane").first;
+                                mesh.template property_map<Face_descriptor, const Plane*>("f:supp_plane").value();
 
                         // The supporting planar segment of each face
                         typename Polygon_mesh::template Property_map<Face_descriptor, Planar_segment*> face_supporting_segments =
-                                mesh.template property_map<Face_descriptor, Planar_segment*>("f:supp_segment").first;
+                                mesh.template property_map<Face_descriptor, Planar_segment*>("f:supp_segment").value();
 
                         std::set<Face_descriptor> intersecting_faces;
                         for(auto f : mesh.faces()) {
@@ -1034,7 +1034,7 @@ namespace CGAL {
 
                         // The supporting plane of each face
                         typename Polygon_mesh::template Property_map<Face_descriptor, const Plane*> face_supporting_planes
-                                = candidate_faces.template property_map<Face_descriptor, const Plane*>("f:supp_plane").first;
+                                = candidate_faces.template property_map<Face_descriptor, const Plane*>("f:supp_plane").value();
 
                         for (std::size_t i = 0; i < all_faces.size(); ++i) {
                                 Face_descriptor face = all_faces[i];
@@ -1090,7 +1090,7 @@ namespace CGAL {
                 typename Hypothesis<Kernel>::Adjacency Hypothesis<Kernel>::extract_adjacency(const Polygon_mesh& candidate_faces)
                 {
                         typename Polygon_mesh::template Property_map<Vertex_descriptor, std::set<const Plane*> > vertex_supporting_planes
-                                = candidate_faces.template property_map<Vertex_descriptor, std::set<const Plane*> >("v:supp_plane").first;
+                                = candidate_faces.template property_map<Vertex_descriptor, std::set<const Plane*> >("v:supp_plane").value();
 
                         // An edge is denoted by its two end points
                         typedef typename std::unordered_map<const Point*, std::set<Halfedge_descriptor> >        Edge_map;

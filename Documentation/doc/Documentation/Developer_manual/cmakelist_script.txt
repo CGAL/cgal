@@ -17,7 +17,7 @@ configuration.
 create <B>a single executable</B> for 'source' linked with
 compilations of all other source files
 (`*.cc`, `*.cp`, `*.cxx`, `*.cpp`, `*.CPP`, `*.c++`, or `*.C`).
-This behaviour is usually needed for (graphical) demos.
+This behavior is usually needed for (graphical) demos.
 
 If the parameter is not given, the script creates <B>one executable for each given
 source file</B>.
@@ -35,6 +35,6 @@ These options should suffice to create a `CMakeLists.txt` script
 for most directories containing programs. However, in some special
 cases, it might still be required to create the script manually, for
 instance, if some source files/executables need a different linking than
-other source files. The Section \subpage devman_create_and_use_a_cmakelist provides more details.
+other source files. The Section \ref devman_create_and_use_a_cmakelist provides more details.
 
 */

@@ -22,10 +22,11 @@
 #include <CGAL/assertions.h>
 #include <CGAL/use.h>
 #include <CGAL/tags.h>
+#include <CGAL/type_traits.h>
 
 #include <cstddef>
-#include <functional>
 #include <iterator>
+#include <utility>
 
 // These are name redefinitions for backwards compatibility
 // with the pre iterator-traits style adaptors.
@@ -640,6 +641,34 @@ operator+( Dist n, const Iterator_from_circulator<C,Ref,Ptr>& circ) {
     return tmp += n;
 }
 
+template <class Circ>
+class Range_from_circulator {
+private:
+  Circ anchor;
+public:
+  using pointer = CGAL::cpp20::remove_cvref_t<decltype(anchor.operator->())>;
+  using const_pointer = CGAL::cpp20::remove_cvref_t<decltype(std::as_const(anchor).operator->())>;
+  using reference = decltype(*anchor);
+  using const_reference = decltype(*std::as_const(anchor));
+  using iterator = Iterator_from_circulator<Circ, reference, pointer>;
+  using const_iterator = Iterator_from_circulator<Circ, const_reference, const_pointer>;
+
+  iterator begin() {
+    return iterator(&anchor, 0);
+  }
+  const_iterator begin() const {
+    return const_iterator(&anchor, 0);
+  }
+  iterator end() {
+    return anchor == nullptr ? iterator(&anchor, 0) : iterator(&anchor, 1);
+  }
+  const_iterator end() const {
+    return anchor == nullptr ? const_iterator(&anchor, 0) : const_iterator(&anchor, 1);
+  }
+  Range_from_circulator() = default;
+  Range_from_circulator(const Circ& c) : anchor(get_min_circulator(c)) {}
+};
+
 template < class  C >
 class Container_from_circulator {
 private:
@@ -698,14 +727,18 @@ typedef Iterator_from_circulator< C, const_reference, const_pointer>
 };
 template <class Container>
 class Circulator_from_container {
+    static auto begin(Container* c) {
+        using std::begin;
+        return begin(*c);
+    }
+
+    static auto end(Container* c) {
+        using std::end;
+        return end(*c);
+    }
+
     typedef Circulator_from_container<Container>      Self;
-    typedef typename Container::iterator              container_iterator;
-    typedef typename Container::const_iterator        container_const_iterator;
-    typedef std::conditional_t<
-        std::is_const<Container>::value,
-        container_const_iterator,
-        container_iterator
-        >                                             iterator;
+    using iterator = decltype(begin(std::declval<Container*>()));
     typedef std::iterator_traits<iterator>            iterator_traits;
 public:
     typedef typename iterator_traits::value_type      value_type;
@@ -717,7 +750,7 @@ public:
         typename iterator_traits::iterator_category
         >::iterator_category                          iterator_category;
 
-    typedef typename Container::size_type size_type;
+    using size_type = decltype(std::size(std::declval<Container&>()));
 private:
     Container*     ctnr;
     iterator  i;
@@ -734,27 +767,27 @@ public:
     bool operator==( std::nullptr_t p) const {
         CGAL_USE(p);
         CGAL_assertion( p == nullptr);
-        return (ctnr == nullptr) || (ctnr->begin() == ctnr->end());
+        return (ctnr == nullptr) || (begin(ctnr) == end(ctnr));
     }
     bool operator!=( std::nullptr_t p) const { return !(*this == p); }
     bool operator==( const Self& c) const { return i == c.i; }
     bool operator!=( const Self& c) const { return !(*this == c); }
     reference  operator*() const {
         CGAL_assertion( ctnr != nullptr);
-        CGAL_assertion( i != ctnr->end());
+        CGAL_assertion( i != end(ctnr));
         return *i;
     }
     pointer  operator->() const {
         CGAL_assertion( ctnr != nullptr);
-        CGAL_assertion( i != ctnr->end());
+        CGAL_assertion( i != end(ctnr));
         return i.operator->();
     }
     Self& operator++() {
         CGAL_assertion( ctnr != nullptr);
-        CGAL_assertion( i != ctnr->end());
+        CGAL_assertion( i != end(ctnr));
         ++i;
-        if ( i == ctnr->end())
-            i = ctnr->begin();
+        if ( i == end(ctnr))
+            i = begin(ctnr);
         return *this;
     }
     Self operator++(int) {
@@ -764,9 +797,9 @@ public:
     }
     Self& operator--() {
         CGAL_assertion( ctnr != nullptr);
-        CGAL_assertion( i != ctnr->end());
-        if ( i == ctnr->begin())
-            i = ctnr->end();
+        CGAL_assertion( i != end(ctnr));
+        if ( i == begin(ctnr))
+            i = end(ctnr);
         --i;
         return *this;
     }
@@ -777,15 +810,15 @@ public:
     }
     Self& operator+=( difference_type n) {
         CGAL_assertion( ctnr != nullptr);
-        CGAL_assertion( i != ctnr->end());
-        typename Container::difference_type j    = i - ctnr->begin();
+        CGAL_assertion( i != end(ctnr));
+        typename Container::difference_type j    = i - begin(ctnr);
         typename Container::difference_type size = ctnr->size();
         CGAL_assertion( j    >= 0);
         CGAL_assertion( size >= 0);
         j = non_negative_mod( j + n, size);
         CGAL_assertion( j >= 0);
         CGAL_assertion( j < size);
-        i = ctnr->begin() + j;
+        i = begin(ctnr) + j;
         return *this;
     }
     Self operator+( difference_type n) const {

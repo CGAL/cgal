@@ -177,7 +177,7 @@ public:
 
         bool exist;
         edge_desc edge;
-        boost::tie(edge, exist) = boost::edge(p1_vd, p2_vd, curve);
+        std::tie(edge, exist) = boost::edge(p1_vd, p2_vd, curve);
         if (!exist)
         {
           boost::add_edge(p1_vd, p2_vd, curve);
@@ -353,7 +353,7 @@ private:
             // look for ei from p2's incident edges
             bool found;
             int ind;
-            boost::tie(found, ind) = find_edge(vertex_to_edge[p2], ei);
+            std::tie(found, ind) = find_edge(vertex_to_edge[p2], ei);
             if (!found)
             {
               continue;

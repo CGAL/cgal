@@ -74,7 +74,10 @@ int main(int argc, char** argv)
            <<" simple."<<std::endl;
 
   if (draw)
-  { CGAL::draw(lcc, {p}); }
+  {
+    auto cycles={p};
+    CGAL::draw(lcc, cycles);
+  }
 
   return EXIT_SUCCESS;
 }

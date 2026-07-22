@@ -195,7 +195,7 @@ namespace CGAL {
     //      where alpha = (1+a_eps)(d+1) with a_eps the return value
     //      of achieved_epsilon().
     //
-    // The ellipsoid E* we actuallly want is the intersection of E' with
+    // The ellipsoid E* we actually want is the intersection of E' with
     // the hyperplane { (y,z) in R^{d+1} | y = 1}.  Writing
     //
     //       [ M'  m  ]                 [ y ]

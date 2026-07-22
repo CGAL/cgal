@@ -24,7 +24,7 @@ namespace CGAL {
    * - GMap_cell_iterator<Map,i,dim>: one dart per each i-cell
    * - GMap_one_dart_per_incident_cell_iterator<Map,Ite,i,dim>
    * - GMap_one_dart_per_cell_iterator<Map,Ite,i,dim>
-   * - one specialisation of the CMap_cell_iterator for the
+   * - one specialization of the CMap_cell_iterator for the
    *    GMap_dart_iterator_basic_of_all iterator
    */
 
@@ -73,7 +73,8 @@ namespace CGAL {
       static_assert(std::is_same<typename Base::Basic_iterator,
                               Tag_true>::value);
       CGAL_assertion(amap.is_whole_map_unmarked(mmark_number));
-      mark_cell<Map,i,dim>(amap, (*this), mmark_number);
+      if(this->cont())
+      { mark_cell<Map,i,dim>(amap, (*this), mmark_number); }
     }
 
    /// Constructor with a dart in parameter (for end iterator).
@@ -81,8 +82,8 @@ namespace CGAL {
       Base(amap, adart),
       mmark_number(amap.get_new_mark())
     {
-      if (adart!=this->mmap->null_descriptor)
-        mark_cell<Map,i,dim>(amap, (*this), mmark_number);
+      if (this->cont())
+      { mark_cell<Map,i,dim>(amap, (*this), mmark_number); }
     }
 
     /// Destructor.
@@ -136,7 +137,7 @@ namespace CGAL {
              this->mmap->is_marked((*this), mmark_number));
 
       if (this->cont())
-        mark_cell<Map,i,dim>(*this->mmap, (*this), mmark_number);
+      { mark_cell<Map,i,dim>(*this->mmap, (*this), mmark_number); }
       return *this;
     }
 
@@ -249,7 +250,7 @@ namespace CGAL {
              this->mmap->is_marked((*this), mmark_number));
 
       if (this->cont())
-        mark_cell<Map,i,dim>(*this->mmap, (*this), mmark_number);
+      { mark_cell<Map,i,dim>(*this->mmap, (*this), mmark_number); }
       return *this;
     }
 

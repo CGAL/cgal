@@ -50,7 +50,7 @@ void shortest_path_regular_tetrahedron()
   face_iterator startFace;
   face_iterator endFace;
 
-  boost::tie(startFace,endFace) = CGAL::faces(P);
+  std::tie(startFace,endFace) = CGAL::faces(P);
 
   face_descriptor firstFace = *startFace;
 
@@ -66,7 +66,7 @@ void shortest_path_regular_tetrahedron()
   Kernel::FT halfSideLength = sideLength / Kernel::FT(2.0);
   Kernel::FT triangleHeight = CGAL::sqrt((sideLength*sideLength) - (halfSideLength*halfSideLength));
 
-  for (boost::tie(currentVertex, endVertex) = CGAL::vertices(P); currentVertex != endVertex; ++currentVertex)
+  for (std::tie(currentVertex, endVertex) = CGAL::vertices(P); currentVertex != endVertex; ++currentVertex)
   {
     if ((*currentVertex)->point().y()==-1)
     {
@@ -118,7 +118,7 @@ void test_simple_saddle_vertex_mesh()
 
   vertex_iterator startVertex;
   vertex_iterator endVertex;
-  boost::tie(startVertex, endVertex) = CGAL::vertices(P);
+  std::tie(startVertex, endVertex) = CGAL::vertices(P);
 
   vertex_iterator currentVertex = startVertex;
 
@@ -368,7 +368,7 @@ void test_boundary_mesh()
   face_iterator startFace;
   face_iterator endFace;
 
-  boost::tie(startFace, endFace) = CGAL::faces(P);
+  std::tie(startFace, endFace) = CGAL::faces(P);
 
   vertex_iterator currentVertex;
   vertex_iterator endVertex;
@@ -380,7 +380,7 @@ void test_boundary_mesh()
   Point_3 vertexLocations[10];
   size_t currentVertexIndex = 0;
 
-  for (boost::tie(currentVertex, endVertex) = CGAL::vertices(P); currentVertex != endVertex; ++currentVertex)
+  for (std::tie(currentVertex, endVertex) = CGAL::vertices(P); currentVertex != endVertex; ++currentVertex)
   {
     vertexHandles[currentVertexIndex] = *currentVertex;
     vertexLocations[currentVertexIndex] = vpm[*currentVertex];

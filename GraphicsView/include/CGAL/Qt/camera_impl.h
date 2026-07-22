@@ -155,7 +155,7 @@ since the latter automatically updates these values when it is resized (hence
 overwriting your values).
 
 Non-positive dimension are silently replaced by a 1 pixel value to ensure
-frustrum coherence.
+frustum coherence.
 
 If your Camera is used without a CGAL::QGLViewer (offscreen rendering, shadow maps),
 use setAspectRatio() instead to define the projection matrix. */
@@ -1225,7 +1225,7 @@ Vec Camera::pivotPoint() const { return frame()->pivotPoint(); }
 /*! Sets the Camera's position() and orientation() from an OpenGL ModelView
 matrix.
 
-This enables a Camera initialisation from an other OpenGL application. \p
+This enables a Camera initialization from an other OpenGL application. \p
 modelView is a 16 GLdouble vector representing a valid OpenGL ModelView matrix,
 such as one can get using: \code GLdouble mvm[16];
 glGetDoublev(GL_MODELVIEW_MATRIX, mvm);
@@ -1909,6 +1909,14 @@ KeyFrameInterpolator *Camera::keyFrameInterpolator(unsigned int i) const {
     return kfi_[i];
   else
     return nullptr;
+}
+CGAL_INLINE_FUNCTION
+void Camera::stopAllPaths(){
+    for(auto [key,value]: kfi_.asKeyValueRange()){
+          if(value->interpolationIsStarted()){
+              value->stopInterpolation();
+          }
+      }
 }
 
 /*! Sets the KeyFrameInterpolator that defines the Camera path of index \p i.

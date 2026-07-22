@@ -69,6 +69,19 @@ public:
     return graph.maxflow();
   }
 
+  template <typename VertexLabelMap, typename VertexIndexMap, typename InputVertexDescriptorRange>
+  void get_labels(VertexLabelMap vertex_label_map, VertexIndexMap vertex_index_map,
+    const std::vector<Vertex_descriptor>& inserted_vertices,
+    InputVertexDescriptorRange& input_range) {
+    CGAL_assertion(inserted_vertices.size() == input_range.size());
+
+    for (auto vd : input_range) {
+      std::size_t index = get(vertex_index_map, vd);
+      int label = graph.what_segment(inserted_vertices[index]); // Source = 0, Sink = 1
+      put(vertex_label_map, vd, label);
+    }
+  }
+
   template <typename VertexLabelMap, typename InputVertexDescriptor>
   void update(VertexLabelMap vertex_label_map,
               const std::vector<Vertex_descriptor>& inserted_vertices,

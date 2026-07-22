@@ -124,7 +124,7 @@ void SkeletonIpelet::protected_run(int fn)
   if (fn==0 || fn==1)
     draw_straight_skeleton(*ss,max_edge);
   else{
-    boost::tie(ret_val,dist)=
+    std::tie(ret_val,dist)=
       request_value_from_user<double>(
         (boost::format("Offset value (BBox %1%x%2%)") % (bbox.xmax()-bbox.xmin()) % (bbox.ymax()-bbox.ymin())).str()
       );

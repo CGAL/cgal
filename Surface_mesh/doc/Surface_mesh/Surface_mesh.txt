@@ -333,8 +333,7 @@ this boils down to an identity function as vertices \em are indices.
 
 As a model of `FaceGraph` (see Section \ref sectionSurfaceMesh_BGL), `CGAL::Surface_mesh`
 can be read from and written using a number of different file formats. Refer to
-the \ref PkgBGLIOFct of the \ref PkgBGL package, and the \ref PMP_IO_grp of the \ref PkgPolygonMeshProcessing
-package for more information.
+the \ref PkgBGLIOFct of the \ref PkgBGL package, and the \ref PMP_IO_grp of the \ref PkgPMPMeshRepair package for more information.
 
 In addition, this package provides `Surface_mesh`-specific overloads of the I/O functions
 from the \ref PkgBGL package. This enables reading/writing directly from/to internal property maps,
@@ -408,7 +407,7 @@ of points to OpenGL.
 
 We use a \em freelist for removed elements. This mean when a vertex gets removed
 and later `add_vertex` is called, the memory of the removed element is reused.
-This especially means that the n'th inserted element has not necessarily the index `n-1`,
+This especially means that the n-th inserted element has not necessarily the index `n-1`,
 and when iterating over elements they will not be enumerated in the insertion order.
 
 

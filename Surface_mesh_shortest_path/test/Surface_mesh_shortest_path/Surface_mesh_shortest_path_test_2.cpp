@@ -73,7 +73,7 @@ int main(int argc, char* argv[])
 
   std::vector<vertex_descriptor> vertices;
 
-  boost::tie(verticesStart, verticesEnd) = CGAL::vertices(polyhedron);
+  std::tie(verticesStart, verticesEnd) = CGAL::vertices(polyhedron);
 
   for (vertex_iterator it = verticesStart; it != verticesEnd; ++it)
   {
@@ -85,7 +85,7 @@ int main(int argc, char* argv[])
 
   std::vector<face_descriptor> faces;
 
-  boost::tie(facesStart, facesEnd) = CGAL::faces(polyhedron);
+  std::tie(facesStart, facesEnd) = CGAL::faces(polyhedron);
 
   for (face_iterator it = facesStart; it != facesEnd; ++it)
   {

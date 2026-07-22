@@ -5,6 +5,7 @@ Algebraic_foundations
 Circulator
 Stream_support
 Poisson_surface_reconstruction_3
+Polygon_mesh_processing
 Property_map
 Bounding_volumes
 Principal_component_analysis

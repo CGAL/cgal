@@ -24,7 +24,7 @@ namespace CGAL {
  * two triangles, onto the \f$ xy\f$-plane, we obtain line segments. Indeed,
  * `Env_triangle_traits_3` inherits from the traits class that substitutes
  * `ArrSegmentTraits`, and extends it by adding operations on 3D objects, namely
- * spacial triangles. Note that the traits class does <I>not</I> define
+ * spatial triangles. Note that the traits class does <I>not</I> define
  * `Kernel::Triangle_3` as its surface (and \f$ xy\f$-monotone surface) type, as
  * one may expect. This is because the traits class needs to store extra data
  * with the triangles in order to efficiently operate on them.  Nevertheless,

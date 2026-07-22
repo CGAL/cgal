@@ -48,7 +48,7 @@ The lower envelope is represented using the output minimization diagram `diag`.
 
 \tparam InputIterator must be an input iterator with value type `EnvelopeDiagram::X_monotone_curve_2`.
 \tparam EnvelopeDiagram must be a model of the concept `EnvelopeDiagram_1`.
-\tparam Traits must be a model of the concept `ArrangementXMonotoneTraits_2`.
+\tparam Traits must be a model of the concept `AosXMonotoneTraits_2`.
 */
 template<class InputIterator, class EnvelopeDiagram, class Traits>
 void lower_envelope_x_monotone_2
@@ -107,7 +107,7 @@ The upper envelope is represented using the output maximization diagram `diag`.
 
 \tparam InputIterator must be an input iterator with value type `EnvelopeDiagram::X_monotone_curve_2`.
 \tparam EnvelopeDiagram must be a model of the concept `EnvelopeDiagram_1`.
-\tparam Traits must be a model of the concept `ArrangementXMonotoneTraits_2`.
+\tparam Traits must be a model of the concept `AosXMonotoneTraits_2`.
 */
 template<class InputIterator, class EnvelopeDiagram, class Traits>
 void upper_envelope_x_monotone_2

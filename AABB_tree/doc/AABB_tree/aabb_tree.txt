@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 
 \mainpage User Manual
-\anchor Chapter_3D_Fast_Intersection_and_Distance_Computation
+\anchor Chapter_Fast_Intersection_and_Distance_Computation
 \cgalAutoToc
 
 \authors Pierre Alliez, Stephane Tayeb, and Camille Wormser
@@ -12,7 +12,7 @@ namespace CGAL {
 
 The AABB tree component offers a static data structure and algorithms
 to perform efficient intersection and distance queries against sets of
-finite 3D geometric objects. The set of geometric objects stored in
+finite 2D or 3D geometric objects. The set of geometric objects stored in
 the data structure can be queried for intersection detection,
 intersection computation and distance. The intersection queries can be
 of any type, provided that the corresponding intersection predicates
@@ -106,7 +106,7 @@ it is used only for distance computations.
 \warning Having degenerate primitives in the AABB-tree is not recommended as the underlying
 predicates and constructions of the traits class might not be able to handle them.
 For example if one is using `CGAL::AABB_traits` with a Kernel from \cgal,
-having degenerate triangles or segments in the AABB-tree will results in an undefined
+having degenerate triangles or segments in the AABB-tree will result in an undefined
 behavior or a crash.
 
 \section aabb_tree_examples Examples
@@ -123,7 +123,7 @@ the squared distance from a point query.
 
 \subsection aabb_tree_examples_2 Tree of Polyhedron Triangle Facets for Intersection Queries
 
- In the following example the AABB primitive wraps a facet handle of a
+In the following example the AABB primitive wraps a facet handle of a
 triangle polyhedral surface as `id` and the corresponding 3D
 triangle as geometric object. From a segment query we test the
 intersections, then compute the number of intersections, compute the
@@ -163,11 +163,16 @@ handle.
 
 \subsection aabb_tree_examples_4 Tree of Segments for Intersection and Distance Queries
 
- In the following example the segments are stored into a list, and the
+In the following example the segments are stored into a list, and the
 AABB primitive wraps a segment as `datum` and an iterator in the
 list as `id`. We compute the number of intersections with plane
 and triangles queries, and the closest point from a point query.
 \cgalExample{AABB_tree/AABB_segment_3_example.cpp}
+
+\subsection aabb_tree_examples_8 Tree of Polyline and Polygon Segments for Intersection and Distance Queries
+
+The following example uses segments given by a polyline and a polygon. The difference is that the polygon is closed. The `id` in this case is the iterator pointing to a `Point_2` in the polyline or the polygon. The datum, a `Segment_2`, is created on the fly from the points using the `id` as the source and the following `Point_2` as the target. We count the intersections with a `Segment_2` and the closest point and id from a point query.
+\cgalExample{AABB_tree/AABB_polyline_segment_2_example.cpp}
 
 \subsection aabb_tree_examples_5 Tree of Polyhedron Edge Segments for Intersection and Distance Queries
 
@@ -192,9 +197,9 @@ The AABB tree example folder contains three examples of trees
 constructed with custom primitives. In \ref AABB_tree/AABB_custom_example.cpp "AABB_custom_example.cpp"
 the primitive contains triangles which are defined by three pointers
 to custom points. In \ref AABB_tree/AABB_custom_triangle_soup_example.cpp "AABB_custom_triangle_soup_example.cpp" all input
-triangles are stored into a single array so as to form a triangle
-soup. The primitive internally uses a `boost::iterator_adaptor` so as
-to provide the three functions `AABBPrimitive::id()`, `AABBPrimitive::datum()`,
+triangles are stored into a single array as to form a triangle
+soup. The primitive internally uses a `boost::iterator_adaptor`
+as to provide the three functions `AABBPrimitive::id()`, `AABBPrimitive::datum()`,
 and `AABBPrimitive::reference_point()`) required by the primitive concept. In
 \ref AABB_tree/AABB_custom_indexed_triangle_set_example.cpp "AABB_custom_indexed_triangle_set_example.cpp" the input is an indexed
 triangle set stored through two arrays: one array of points and one
@@ -208,7 +213,7 @@ contains a set of polyhedron triangle facets. We measure the tree
 construction time, the memory occupancy and the number of queries per
 second for a variety of intersection and distance queries. The machine
 used is a PC running Windows XP64 with an Intel CPU Core2 Extreme
-clocked at 3.06 GHz with 4GB of RAM. By default the kernel used is
+clocked at 3.06 GHz with 4GB of RAM. By default, the kernel used is
 `Simple_cartesian<double>` (the fastest in our experiments). The
 program has been compiled with Visual C++ 2005 compiler with the O2
 option which maximizes speed.
@@ -233,13 +238,13 @@ subdivision scheme which multiplies the number of triangles by four.
 \subsection aabb_tree_perf_mem Memory
 
 When using the polyhedron triangle facet primitive (defined in
-`AABB_polyhedron_triangle_primitive.h`) the AABB tree occupies
+`AABB_face_graph_triangle_primitive.h`) the AABB tree occupies
 approximately 61 bytes per primitive (without constructing the
 internal KD-tree). It increases to approximately 150 bytes per
 primitive when constructing the internal KD-tree with one reference
 point per primitive (the default mode when calling the function
 `AABB_tree::accelerate_distance_queries()`). Note that the polyhedron
-facet primitive primitive stores only one facet handle as primitive id
+facet primitive stores only one facet handle as primitive id
 and computes on the fly a 3D triangle from the facet handle stored
 internally. When explicitly storing a 3D triangle in the primitive the
 tree occupies approximately 140 bytes per primitive instead of 60
@@ -335,7 +340,7 @@ inside the bounding box.
 
 The experiments described above are neither exhaustive nor conclusive
 as we have chosen one specific case where the input primitives are the
-facets of a triangle surface polyhedron. Nevertheless we now provide
+facets of a triangle surface polyhedron. Nevertheless, we now provide
 some general observations and advises about how to put the AABB tree
 to use with satisfactory performances. While the tree construction
 times and memory occupancy do not fluctuate much in our experiments
@@ -426,7 +431,7 @@ initial ball radius to a small value still guaranteed to intersect the
 input primitives. This is achieved by constructing an internal secondary data
 structure which provides a good hint to the algorithm at the beginning
 of the traversal (done by default).
-Calling `do_not_accelerate_distance_queries()` will disable
+Calling `AABB_tree::do_not_accelerate_distance_queries()` will disable
 the construction and the usage of this internal secondary data structure.
 
 \section aabb_tree_history Design and Implementation History
@@ -437,9 +442,14 @@ implementing both intersection and distance queries, and for generic
 queries and primitives was developed by Camille Wormser. In 2009,
 Pierre Alliez, Stéphane Tayeb and Camille Wormser made the
 implementation CGAL-compliant, with the help of Laurent Rineau for
-optimizing the tree construction. The authors wish to thank Andreas
-Fabri, Jane Tournois, Mariette Yvinec and Sylvain Lefèbvre for
-helpful comments and discussions.
+optimizing the tree construction. Additionally, Andreas
+Fabri, Jane Tournois, Mariette Yvinec and Sylvain Lefèbvre are
+given thanks for helpful comments and discussions during that period.
+Later, Sébastien Loriot contributed several improvements:
+thread-safe queries, introduction of shared data stored in the traits
+for lighter primitive types, ...
+In 2024, the package was made compatible with 2D and 3D primitives by
+Andreas Fabri, Sébastien Loriot, and Sven Oesau.
 
 */
 

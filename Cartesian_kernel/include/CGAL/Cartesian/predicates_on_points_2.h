@@ -24,7 +24,7 @@ namespace CGAL {
 
 template < class K >
 inline
-bool
+typename K::Boolean
 equal_xy(const PointC2<K> &p, const PointC2<K> &q)
 {
   return CGAL_AND( p.x() == q.x() , p.y() == q.y() );
@@ -34,7 +34,7 @@ equal_xy(const PointC2<K> &p, const PointC2<K> &q)
 // Unused, undocumented, un-functorized.
 template < class K >
 inline
-Comparison_result
+typename K::Comparison_result
 compare_deltax_deltay(const PointC2<K>& p,
                       const PointC2<K>& q,
                       const PointC2<K>& r,
@@ -46,7 +46,7 @@ compare_deltax_deltay(const PointC2<K>& p,
 
 template < class K >
 inline
-Comparison_result
+typename K::Comparison_result
 compare_lexicographically_yx(const PointC2<K> &p,
                              const PointC2<K> &q)
 {

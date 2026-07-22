@@ -30,15 +30,15 @@ namespace CGAL {
  * The type substituting the template parameter `SegmentTraits_2` when
  * the template Arr_polyline_traits_2 is instantiated must be a model
  * of the concepts
- *   - `ArrangementTraits_2`,
- *   - `ArrangementDirectionalXMonotoneTraits_2`,
- *   - `ArrangementConstructXMonotoneCurveTraits_2`,
- *   - `ArrangementConstructCurveTraits_2`.
+ *   - `AosTraits_2`,
+ *   - `AosDirectionalXMonotoneTraits_2`,
+ *   - `AosConstructXMonotoneCurveTraits_2`,
+ *   - `AosConstructCurveTraits_2`.
  *
  * If, in addition, the GeometryTraits_2 models the concept
- * `ArrangementApproximateTraits_2` then `Arr_polycurve_traits_2` models
- * this concept as well. The same holds for the concept
- * `ArrangementOpenBoundaryTraits_2`. If no type is provided, then
+ * `AosApproximateTraits_2` (or `AosApproximatePointTraits_2`) then
+ * `Arr_polycurve_traits_2` models this concept as well. The same holds for the
+ * concept `AosOpenBoundaryTraits_2`. If no type is provided, then
  * `Arr_segment_traits_2` (instantiated with
  * `Exact_predicates_exact_constructions_kernel` as the kernel) is used.
  * Otherwise,
@@ -52,17 +52,17 @@ namespace CGAL {
  *
  * The number type used by the injected segment traits should support exact
  * rational arithmetic (that is, the number type should support the arithmetic
- * operations \f$ +\f$, \f$ -\f$, \f$ \times\f$ and \f$ \div\f$ carried out
+ * operations \f$+\f$, \f$-\f$, \f$\times\f$ and \f$\div\f$ carried out
  * without loss of precision), in order to avoid robustness problems, although
  * other inexact number types could be used at the user's own risk.
  *
- * A polyline that comprises \f$n > 0\f$ segments has \f$ n+1 \f$ points, and
- * they are represented as objects of type `SegmentTraits_2::Point_2`. Since the
- * notion of a \a vertex is reserved to 0-dimensional elements of an
+ * A polyline that comprises \f$n > 0\f$ segments has \f$n+1\f$ points, and
+ * they are represented as objects of type `SegmentTraits_2::Point_2`. Since
+ * the notion of a \a vertex is reserved to 0-dimensional elements of an
  * arrangement, we use, in this context, the notion of \a points in order to
- * refer to the vertices of a polyline. For example, an arrangement induced by a
- * single non-self intersecting polyline has exactly two vertices regardless of
- * the number of points. Finally, the types `Segment_2` and
+ * refer to the vertices of a polyline. For example, an arrangement induced by
+ * a single non-self intersecting polyline has exactly two vertices regardless
+ * of the number of points. Finally, the types `Segment_2` and
  * `X_monotone_segment_2` nested in `Arr_polyline_traits_2` are nothing but
  * `SegmentTraits_2::Curve_2` and `SegmentTraits_2::X_monotone_curve_2`,
  * respectively.
@@ -77,9 +77,9 @@ namespace CGAL {
  * the macro `CGAL_ALWAYS_LEFT_TO_RIGHT` to 1 before any \cgal header is
  * included.
  *
- * \cgalModels{ArrangementTraits_2,ArrangementDirectionalXMonotoneTraits_2,`ArrangementConstructXMonotoneCurveTraits_2`
- *             ArrangementConstructCurveTraits_2,ArrangementApproximateTraits_2 (if the type that substitutes
- *   the template parameter `SegmentTraits_2` models the concept as well)}
+ * \cgalModels{AosTraits_2,AosDirectionalXMonotoneTraits_2,AosConstructXMonotoneCurveTraits_2,AosConstructCurveTraits_2,AosApproximateTraits_2
+ * (if the type that substitutes the template parameter `SegmentTraits_2`
+ * models the concept as well)}
  *
  * \sa `Arr_polycurve_traits_2<SubcurveTraits_2>`
  * \sa `Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>`
@@ -91,22 +91,23 @@ namespace CGAL {
  * \sa `CGAL_ALWAYS_LEFT_TO_RIGHT`
  */
 template <typename SegmentTraits_2>
-class Arr_polyline_traits_2 : public Arr_polycurve_traits_2<SegmentTraits_2>{
+class Arr_polyline_traits_2 : public Arr_polycurve_traits_2<SegmentTraits_2> {
 public:
-
   /// \name Types
   /// @{
-  /*!
-   */
+
+  ///
   typedef SegmentTraits_2                             Segment_traits_2;
-  // TODO: Have to turn these into links, so whenever I mention Point_2 it
-  //       will point here and *not* to Kernel::Point_2 for instance.
+
+  ///
   typedef SegmentTraits_2::Point_2                    Point_2;
 
-  /*!
-   */
+  ///
   typedef SegmentTraits_2::Curve_2                    Segment_2;
+
+  ///
   typedef SegmentTraits_2::X_monotone_curve_2         X_monotone_segment_2;
+
   /// @}
 
   /*! The `Curve_2` type nested within the traits class respresnts
@@ -114,18 +115,18 @@ public:
    */
   class Curve_2 {
   public:
-    //! Const iterator of subcurves.
+    /// Const iterator of subcurves.
     typedef std::vector<X_monotone_segment_2>::const_iterator
       Segment_const_iterator;
 
-    //! Reverse const iterator of subcurves.
+    /// Reverse const iterator of subcurves.
     typedef std::reverse_iterator<Segment_const_iterator>
       Segment_const_reverse_iterator;
 
-    //! constructs default.
+    /// constructs default.
     Curve_2();
 
-    //! constructs from a subcurve.
+    /// constructs from a subcurve.
     Curve_2(const Segment_2& seg);
 
     /*! constructs a polyline from a range of subcurves.
@@ -137,19 +138,19 @@ public:
     template <typename InputIterator>
     void Curve_2(InputIterator begin, InputIterator end);
 
-    //! obtains an iterator for the polycurve subcurves.
+    /// obtains an iterator for the polycurve subcurves.
     Segment_const_iterator begin_segments() const;
 
-    //! obtains a past-the-end iterator for the polycurve subcurves.
+    /// obtains a past-the-end iterator for the polycurve subcurves.
     Segment_const_iterator end_segments() const;
 
-    //! obtains the first reverse iterator of the polyline subcurves.
+    /// obtains the first reverse iterator of the polyline subcurves.
     Segment_const_reverse_iterator rbegin_segments() const;
 
-    //! obtains the past-the-end reverse iterator for the polyline points.
+    /// obtains the past-the-end reverse iterator for the polyline points.
     Segment_const_reverse_iterator rend_segments() const;
 
-    /*! Obtain the number of subcurves that comprise the poyline.
+    /*! obtains the number of subcurves that comprise the poyline.
      * \return The number of subcurves.
      */
     Segments_size_type number_of_segments() const;
@@ -161,45 +162,45 @@ public:
   class X_monotone_curve_2 {
   public:
 
-    //! Const iterator of subcurves.
+    /// Const iterator of subcurves.
     typedef std::vector<X_monotone_segment_2>::const_iterator
       Segment_const_iterator;
 
-    //! Reverse const iterator of subcurves.
+    /// Reverse const iterator of subcurves.
     typedef std::reverse_iterator<Segment_const_iterator>
       Segment_const_reverse_iterator;
 
-    /*! Construct default. */
+    /*! constructs default. */
     X_monotone_curve_2();
 
-    /*! Construct from a subcurve. */
+    /*! constructs from a subcurve. */
     X_monotone_curve_2(X_monotone_segment_2 seg);
 
-    /*! Construct from a range.  Similar to the constructor of a general
+    /*! constructs from a range.  Similar to the constructor of a general
      * polycurve.  Like in the case of general polycurve, for the sake of
-     * backwards compatibility we have to keep an implementation of construction
-     * from a range of points. DO NOT USE THIS CONSTRUCTION.
+     * backwards compatibility we have to keep an implementation of
+     * construction from a range of points. DO NOT USE THIS CONSTRUCTION.
      */
     template <typename InputIterator>
     X_monotone_curve_2(InputIterator begin, InputIterator end);
 
-    /*! Obtain the first iterator of the polyline subcurves.
+    /*! obtains the first iterator of the polyline subcurves.
      */
     Segment_const_iterator begin_segments() const;
 
-    /*! Obtain the past-the-end iterator of the polyline subcurves.
+    /*! obtains the past-the-end iterator of the polyline subcurves.
      */
     Segment_const_iterator end_segments() const;
 
-    /*! Obtain the first reverse iterator of the polyline subcurves.
+    /*! obtains the first reverse iterator of the polyline subcurves.
      */
     Segment_const_reverse_iterator rbegin_segments() const;
 
-    /*! Obtain the past-the-end reverse iterator for the polyline points.
+    /*! obtains the past-the-end reverse iterator for the polyline points.
      */
     Segment_const_reverse_iterator rend_segments() const;
 
-    /*! Obtain the number of subcurves that comprise the poyline.
+    /*! obtains the number of subcurves that comprise the poyline.
      * \return The number of subcurves.
      */
     Segments_size_type number_of_segments() const;
@@ -209,7 +210,7 @@ public:
    * polyline.
    *
    * This functor constructs general polylines. Its `operator()` is
-   * oveloaded to support various input types.
+   * overloaded to support various input types.
    *
    * Note that the composing segments, depending on the `SegmentTraits_2`,
    * might not be \f$x\f$-monotone.
@@ -219,30 +220,30 @@ public:
     /// \name Operations
     /// @{
 
-    /*! Obtain a polyline connecting the two given endpoints.
+    /*! obtains a polyline connecting the two given endpoints.
      * \param p The first point.
      * \param q The second point.
-     * \pre `p` and `q` are distinct.
      * \return A segment connecting `p` and `q`.
+     * \pre `p` and `q` are distinct.
      */
     Curve_2 operator()(const Point_2& p, const Point_2& q) const;
 
-    /*! Obtain a polyline that comprises of one given segment.
+    /*! obtains a polyline that comprises of one given segment.
      * \param seg input segment
-     * \pre `seg` is not degenerated (not tested)
      * \return A polyline with one segment, namely `seg`.
+     * \pre `seg` is not degenerated (not tested)
      */
     Curve_2 operator()(const Segment_2& seg) const;
 
-    /*! Construct a well-oriented polyline from a range of either
+    /*! constructs a well-oriented polyline from a range of either
      * `SegmentTraits_2::Point_2` or `SegmentTraits_2::Segment_2`.
      *
      * \param begin iterator pointing to the first element in the range.
      * \param end iterator pointing to the past-the-end element in the range.
+     * \return A polyline using the corresponding construction implementation.
      * \pre The given range form a continuous and well-oriented polyline
      *      (not tested).
      * \pre Contains no degenerated segments (not tested)
-     * \return A polyline using the corresponding construction implementation.
      */
     template <typename ForwardIterator>
     Curve_2 operator()(ForwardIterator begin, ForwardIterator end) const;
@@ -270,15 +271,15 @@ public:
     /// \name Operations
     /// @{
 
-    /*! Append a point `p` to an existing polyline `cv` at the back.
+    /*! appends a point `p` to an existing polyline `cv` at the back.
      * \param cv a polyline. Note, `cv` is not (necessarily)
-     *        \f$ x\f$-monotone.
+     *        \f$x\f$-monotone.
      * \param p a point to be appended to `cv` at the back.
      * \pre `cv` contains at least one segment.
      */
     void operator()(Curve_2& cv, const Point_2& p) const;
 
-    /*! Append a segment `seg` to an existing polyline `cv` at the back.
+    /*! appends a segment `seg` to an existing polyline `cv` at the back.
      * If `cv` is empty, `seg` will be its first segment.
      * \param cv a polyline. Note, `cv` is (not necessarily) \f$x\f$-monotone.
      * \param seg a segment (not necessarily \f$x\f$-monotone) to be appended
@@ -286,7 +287,7 @@ public:
      */
     void operator()(Curve_2& cv, const Segment_2& seg) const;
 
-    /*! Append a point `p` to an existing \f$x\f$-monotone polyline `xcv` at
+    /*! appends a point `p` to an existing \f$x\f$-monotone polyline `xcv` at
      * the back.
      * \param xcv the existing \f$x\f$-monotone polyline
      * \param p the point to be pushed back.
@@ -297,7 +298,7 @@ public:
      */
     void operator()(const X_monotone_curve_2& xcv, Point_2& p) const;
 
-    /*! Append a segment `seg` to an existing \f$x\f$-monotone polyline `xcv`
+    /*! appends a segment `seg` to an existing \f$x\f$-monotone polyline `xcv`
      * at the back. If `xcv` is empty, `seg` will be its first segment.
      * \param xcv existing \f$x\f$-monotone polyline
      * \param seg the segment to be added
@@ -320,15 +321,15 @@ public:
     /// \name Operations
     /// @{
 
-    /*! Append a point `p` to an existing polyline `cv` at the front.
+    /*! appends a point `p` to an existing polyline `cv` at the front.
      * \param cv a polyline. Note, `cv` is not (necessarily)
-     *        \f$ x\f$-monotone.
+     *        \f$x\f$-monotone.
      * \param p a point to be appended to `cv` at the back.
      * \pre `cv` contains at least one segment.
      */
     void operator()(Curve_2& cv, const Point_2& p) const;
 
-    /*! Append a segment `seg` to an existing polyline `cv` at the front.
+    /*! appends a segment `seg` to an existing polyline `cv` at the front.
      * If `cv` is empty, `seg` will be its first segment.
      * \param cv a polyline. Note, `cv` is (not necessarily) \f$x\f$-monotone.
      * \param seg a segment (not necessarily \f$x\f$-monotone) to be appended
@@ -336,7 +337,7 @@ public:
      */
     void operator()(Curve_2& cv, const Segment_2& seg) const;
 
-    /*! Append a point `p` to an existing \f$x\f$-monotone polyline `xcv` at
+    /*! appends a point `p` to an existing \f$x\f$-monotone polyline `xcv` at
      * the front.
      * \param xcv the existing \f$x\f$-monotone polyline
      * \param p the point to be pushed back.
@@ -347,7 +348,7 @@ public:
      */
     void operator()(const X_monotone_curve_2& xcv, Point_2& p) const;
 
-    /*! Append a segment `seg` to an existing \f$x\f$-monotone polyline `xcv`
+    /*! appends a segment `seg` to an existing \f$x\f$-monotone polyline `xcv`
      * at the front. If `xcv` is empty, `seg` will be its first segment.
      * \param xcv existing \f$x\f$-monotone polyline
      * \param seg the segment to be added
@@ -382,7 +383,6 @@ public:
   Push_front_2 push_front_2_object() const;
 
   /// @} /* End Accessing Functor Objects */
-
 }; /* end Arr_polyline_traits_2 */
 
 } /* end namespace CGAL */

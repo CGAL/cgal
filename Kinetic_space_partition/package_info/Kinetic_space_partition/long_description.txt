@@ -1,0 +1,6 @@
+Kinetic Shape Partition
+
+This CGAL package provides a way to partition 2D or 3D space by propagating
+2D segments or 3D polygons until they intersect the predefined number of times.
+Once the partition is found, a 3D shape can be reconstructed by utilizing a graph cut approach.
+The final result is a piece-wise linear approximation of the given smooth shape.

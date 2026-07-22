@@ -320,7 +320,7 @@ class PointLocator {
    If the ray does not intersect any node or edge of |G|, then |nil| is
    returned.\\
    The class |\Mtype| is generic, it is parameterized with a traits class
-   |PLocTraits| which widely controls its behaviour.
+   |PLocTraits| which widely controls its behavior.
    The traits may even change the return type of a query and its semantics.
    There are predined traits classes for the LEDA graph types, which are
    described below in a separate section.

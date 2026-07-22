@@ -160,7 +160,6 @@ private:
     assert(are_equal(res_o2o1, expected_result));
 
     do_intersect_check(o1, o2);
-    do_intersect_check(o1, o2);
   }
 
   template <typename O1, typename O2>
@@ -169,7 +168,6 @@ private:
     const FT res_o1o2 = CGAL::squared_distance(o1, o2);
     const FT res_o2o1 = CGAL::squared_distance(o2, o1);
 
-    do_intersect_check(o1, o2);
     do_intersect_check(o1, o2);
 
     assert(res_o1o2 <= ubound);
@@ -243,10 +241,36 @@ private:
   void P_Tet()
   {
     std::cout << "Point - Tetrahedron\n";
+    //Degenerate Tetrahedron
+    check_squared_distance (p(2, 2, 2), Tet(p(0, 0, 0), p( 6, 0, 0), p( 0, 6, 0), p( 6, 6, 0)), 4);
+    check_squared_distance (p(3, 3, 0), Tet(p(0, 0, 0), p( 6, 0, 0), p( 0, 6, 0), p( 6, 6, 0)), 0);
+    check_squared_distance (p(8, 8, 0), Tet(p(0, 0, 0), p( 6, 0, 0), p( 0, 6, 0), p( 6, 6, 0)), 8);
+
+    //Inside Tetrahedron
+    check_squared_distance (p(1, 1, 1), Tet(p(0, 0, 0), p( 3, 0, 0), p( 0, 3, 0), p( 0, 0, 3)), 0);
+    check_squared_distance (p(1, 1, 1), Tet(p(0, 0, 0), p( 3, 0, 0), p( 0, 0, 3), p( 0, 3, 0)), 0);
     check_squared_distance (p(0, 0, 0), Tet(p(0, 0, 0), p( 1, 0, 0), p( 0, 1, 0), p( 0, 0, 1)), 0);
+
+    //General
     check_squared_distance (p(0, 0, 2), Tet(p(0, 0, 0), p( 1, 0, 0), p( 0, 1, 0), p( 0, 0, 1)), 1);
     check_squared_distance (p(0, 0, -1), Tet(p(0, 0, 0), p( 1, 0, 0), p( 0, 1, 0), p( 0, 0, 1)), 1);
     check_squared_distance (p(5, 0, 0), Tet(p(0, 0, 0), p( 1, 0, 0), p( 0, 1, 0), p( 4, 0, 1)), 2);
+    check_squared_distance (p(1, 1, -1), Tet(p(0, 0, 1), p( 0, 0, 0), p( 4, 0, 0), p( 0, 4, 0)), 1);
+    check_squared_distance (p(1, 1, -1), Tet(p(0, 0, 1), p( 0, 0, 0), p( 0, 4, 0), p( 4, 0, 0)), 1);
+
+    for(int i=0; i<N; ++i)
+    {
+      P p0 = random_point();
+      P p1 = random_point();
+      P p2 = random_point();
+      P p3 = random_point();
+      P q = random_point();
+
+      check_squared_distance_with_bound(q, Tet(p0, p1, p2, p3), squared_distance(q, T(p0, p1, p2))*(1 + 1e-10));
+      check_squared_distance_with_bound(q, Tet(p0, p1, p2, p3), squared_distance(q, T(p1, p3, p2))*(1 + 1e-10));
+      check_squared_distance_with_bound(q, Tet(p0, p1, p2, p3), squared_distance(q, T(p0, p3, p2))*(1 + 1e-10));
+      check_squared_distance_with_bound(q, Tet(p0, p1, p2, p3), squared_distance(q, T(p0, p3, p1))*(1 + 1e-10));
+    }
   }
 
   void S_S()
@@ -324,7 +348,7 @@ private:
       check_squared_distance(S{p2, p3}, S{p4, p5}, 0);
       check_squared_distance(S{p2, p3}, S{p5, p4}, 0);
       check_squared_distance(S{p3, p2}, S{p4, p5}, 0);
-      check_squared_distance(S{p3, p2}, S{p4, p5}, 0);
+      check_squared_distance(S{p3, p2}, S{p5, p4}, 0);
 
       const double lambda_6 = r.get_double(0, 1);
       const P p6 = p3 + FT(lambda_6) * V{p3 - p2};
@@ -332,7 +356,7 @@ private:
       check_squared_distance(S{p2, p3}, S{p6, p5}, 0);
       check_squared_distance(S{p2, p3}, S{p5, p6}, 0);
       check_squared_distance(S{p3, p2}, S{p6, p5}, 0);
-      check_squared_distance(S{p3, p2}, S{p6, p5}, 0);
+      check_squared_distance(S{p3, p2}, S{p5, p6}, 0);
 
       const double lambda_7 = r.get_double(1, 2);
       const P p7 = p3 + FT(lambda_7) * V{p3 - p2};

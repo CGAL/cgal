@@ -26,15 +26,15 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
   class Power_side_of_oriented_power_circle_2:
     public K_base::Power_side_of_oriented_power_circle_2
   {
+    typedef typename K_base::Oriented_side Oriented_side;
     typedef typename K_base::Weighted_point_2 Weighted_point_2;
     typedef typename K_base::FT FT;
     typedef typename K_base::Power_side_of_oriented_power_circle_2 Base;
-  public:
-    typedef typename Base::result_type result_type;
 
+  public:
     using Base::operator();
 
-    result_type operator() ( const Weighted_point_2 & p,
+    Oriented_side operator()(const Weighted_point_2 & p,
                              const Weighted_point_2 & q,
                              const Weighted_point_2 & r,
                              const Weighted_point_2 & t) const
@@ -64,7 +64,7 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
           double drx = (rx - tx);
           double dry = (ry - ty);
           double drz = (((square( drx ) + square( dry )) - rwt) + twt);
-          result_type int_tmp_result;
+          Oriented_side int_tmp_result;
           double RT_tmp_result;
           double eps;
           RT_tmp_result = CGAL::determinant( dpx, dpy, dpz, dqx, dqy, dqz, drx, dry, drz );
@@ -162,7 +162,7 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
     }
 
 
-    result_type operator() ( const Weighted_point_2 & p,
+    Oriented_side operator()(const Weighted_point_2 & p,
                              const Weighted_point_2 & q,
                              const Weighted_point_2 & t) const
     {
@@ -219,7 +219,7 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
           double upper_bound_1;
           if( (cmpx != 0) )
             {
-              result_type int_tmp_result;
+              Oriented_side int_tmp_result;
               double RT_tmp_result;
               RT_tmp_result = CGAL::determinant( dpx, dpz, dqx, dqz );
               lower_bound_1 = max2;
@@ -265,11 +265,11 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
                         }
                     }
                 }
-              return static_cast<result_type>(cmpx * int_tmp_result);
+              return static_cast<Oriented_side>(cmpx * int_tmp_result);
             }
           int cmpy;
           cmpy = ((py > qy) ? 1 : ((py < qy) ? -1 : 0));
-          result_type int_tmp_result_FFWKCAA;
+          Oriented_side int_tmp_result_FFWKCAA;
           double RT_tmp_result_k60Ocge = CGAL::determinant( dpy, dpz, dqy, dqz );
           lower_bound_1 = max4;
           upper_bound_1 = max4;
@@ -314,7 +314,7 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
                     }
                 }
             }
-          return static_cast<result_type>(cmpy * int_tmp_result_FFWKCAA);
+          return static_cast<Oriented_side>(cmpy * int_tmp_result_FFWKCAA);
 
         }
       else

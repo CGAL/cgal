@@ -32,6 +32,9 @@ namespace CGAL {
     template <class, class>
     friend class Concurrent_compact_container;
 
+    template <class, class, class, class>
+    friend class Compact_container_with_index;
+
   public:
     typedef typename Base::Point Point;
 
@@ -63,6 +66,9 @@ namespace CGAL {
 
     template <class, class>
     friend class Concurrent_compact_container;
+
+    template <class, class, class, class>
+    friend class Compact_container_with_index;
 
   public:
     typedef typename Base::Point Point;

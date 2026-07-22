@@ -112,7 +112,7 @@ public:
 /*{\Mdefinition
 An instance of data type |\Mname| is a subset of the plane that is
 the result of forming complements and intersections starting from a
-finite set |H| of half-spaces. |\Mtype| is closed under all binary set
+finite set |H| of halfspaces. |\Mtype| is closed under all binary set
 operations |intersection|, |union|, |difference|, |complement| and
 under the topological operations |boundary|, |closure|, and
 |interior|.
@@ -139,7 +139,7 @@ static  T EK; // static extended kernel
   typedef typename T::Segment_2 Extended_segment;
 
   typedef typename T::Standard_line_2 Line;
-  /*{\Mtypemember the oriented lines modeling half-planes}*/
+  /*{\Mtypemember the oriented lines modeling halfplanes}*/
   typedef typename T::Standard_point_2 Point;
   /*{\Mtypemember the affine points of the plane.}*/
   typedef typename T::Standard_direction_2 Direction;
@@ -351,7 +351,7 @@ public:
 
 
   Nef_polyhedron_2(const Line& l, Boundary line = INCLUDED) : Base(Nef_rep())
-  /*{\Mcreate creates a Nef polyhedron |\Mvar| containing the half-plane
+  /*{\Mcreate creates a Nef polyhedron |\Mvar| containing the halfplane
   left of |l| including |l| if |line==INCLUDED|, excluding |l| if
   |line==EXCLUDED|.}*/
   {   CGAL_NEF_TRACEN("Nconstruction from line "<<l);
@@ -773,7 +773,7 @@ public:
 
   Nef_polyhedron_2<T,Items,Mark> symmetric_difference(
     const Nef_polyhedron_2<T,Items,Mark>& N1) const
-  /*{\Mop returns the symmectric difference |\Mvar - T| $\cup$
+  /*{\Mop returns the symmetric difference |\Mvar - T| $\cup$
           |T - \Mvar|. }*/
   { Nef_polyhedron_2<T,Items,Mark> res(pm(),false); // empty, no frame
     Overlayer D(res.pm());
@@ -853,7 +853,7 @@ public:
 
   /*{\Mtext \headerline{Exploration - Point location - Ray shooting}
   As Nef polyhedra are the result of forming complements
-  and intersections starting from a set |H| of half-spaces that are
+  and intersections starting from a set |H| of halfspaces that are
   defined by oriented lines in the plane, they can be represented by
   an attributed plane map $M = (V,E,F)$. For topological queries
   within |M| the following types and operations allow exploration

@@ -1,4 +1,4 @@
-/// \defgroup PkgGeneralizedMapsRef Generalized Maps Reference
+/// \defgroup PkgGeneralizedMapsRef Reference Manual
 
 /// \defgroup PkgGeneralizedMapsConcepts Concepts
 /// \ingroup PkgGeneralizedMapsRef

@@ -15,6 +15,10 @@
 
 #include <CGAL/license/Surface_mesher.h>
 
+#define CGAL_DEPRECATED_HEADER "<CGAL/Surface_mesher_generator.h>"
+#define CGAL_DEPRECATED_MESSAGE_DETAILS \
+  "The 3D Mesh Generation package (see https://doc.cgal.org/latest/Mesh_3/) should be used instead."
+#include <CGAL/Installation/internal/deprecation_warning.h>
 
 #include <CGAL/Surface_mesher/Surface_mesher.h>
 #include <CGAL/Surface_mesher/Surface_mesher_manifold.h>
@@ -30,10 +34,6 @@
 #include <CGAL/Surface_mesher/Types_generators.h>
 
 namespace CGAL {
-
-  struct Non_manifold_tag {};
-  struct Manifold_tag {};
-  struct Manifold_with_boundary_tag {};
 
 //   struct Dynamic_manifold_tag {
 //     enum Tag { Manifold = 0, Non_manifold = 1, Manifold_with_boundary = 2 };

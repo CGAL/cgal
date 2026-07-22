@@ -10,6 +10,8 @@
 
 #include <CGAL/tetrahedral_remeshing.h>
 
+#include <string>
+
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 

@@ -69,7 +69,14 @@ namespace Custom {
     using Item = std::vector<Object>::const_iterator;
     using Region = std::vector<Item>;
 
-    using Region_unordered_map = std::unordered_map<Item, std::size_t, CGAL::Shape_detection::internal::hash_item<Item> >;
+    struct hash_item {
+      std::size_t operator()(Item i) const {
+        using boost::hash_value;
+        return boost::hash_value(i.operator->());
+      }
+    };
+
+    using Region_unordered_map = std::unordered_map<Item, std::size_t, hash_item >;
     using Region_index_map = boost::associative_property_map<Region_unordered_map>;
 
     Region_index_map region_index_map() {

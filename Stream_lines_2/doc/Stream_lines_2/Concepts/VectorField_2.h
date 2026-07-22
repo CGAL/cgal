@@ -64,7 +64,7 @@ Geom_traits::Iso_rectangle_2 bbox();
 
 /*!
 returns the vector field value and the local density.
-\pre `is_in_domain(p)` must be `true`.
+\pre \link is_in_domain `is_in_domain(p)`\endlink must be `true`.
 */
 std::pair<Vector_2,FT> get_field(Point_2 p);
 
@@ -76,7 +76,7 @@ bool is_in_domain(Point_2 p);
 
 /*!
 returns the integration step at the point `p`, i.e., the distance between `p` and the next point in the polyline.
-\pre `is_in_domain(p)` must be `true`.
+\pre \link is_in_domain `is_in_domain(p)`\endlink must be `true`.
 */
 FT get_integration_step(Point_2 p);
 

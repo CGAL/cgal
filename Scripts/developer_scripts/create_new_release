@@ -4,14 +4,6 @@
 #
 # Radu Ursu, Sylvain Pion, 2004-2006.
 
-# TODO :
-# - Cleanup the public/internal separation:
-#   - have CGAL_VERSION_NR be not affected by the internal version
-#   - have CGAL_REVISION be the revision (replacing the internal number)
-# - The public release case should pass the info to create_internal_release.
-#   [new] : create_internal_release should not know about internal/public mode.
-# - Merge [some parts] into ./create_internal_release ?
-
 DO_PUBLIC=""             # Also build the public versions
 DO_IT=""                 # Real mode (copy to HTTP server), versus local testing
 DO_NOT_TAG=""            # If set, do not call tag
@@ -36,7 +28,7 @@ usage() {
     printerr '  --help           : prints this usage help'
     printerr '  --public         : also build the corresponding public versions'
     printerr '  --do-it          : the real thing (NOT for local tests!  Only for the release'
-    printerr '                     master! Does write operations (updating the version_number,'
+    printerr '                     main! Does write operations (updating the version_number,'
     printerr '                     tag, copying on the web server...)'
     printerr '  --do-not-tag     : when used with --do-it, the tag is not created.'
     printerr '  --tag            : when used without --do-it, the tag is created, but files'
@@ -136,7 +128,7 @@ HTML_DIR="/u/agrion/geometrica/CGAL/Members/Releases"
 URL="http://cgal.inria.fr/CGAL/Members/Releases"
 
 
-PATH=$PATH:/usr/local/bin:/usr/bin/gnu
+PATH=$PATH:/usr/local/bin:/usr/sbin
 
 # Working dir
 TMPDIR="`pwd`"
@@ -301,10 +293,10 @@ if [ -n "$DO_PUBLIC" ]; then
         public_release_version="${public_release_version}-beta${BETA}"
     fi
     if [ -r "${NUMBERS_DIR}/public_release_name" ]; then
-	public_release_name=`cat "${NUMBERS_DIR}/public_release_name"`
+        public_release_name=`cat "${NUMBERS_DIR}/public_release_name"`
         public_release_version=${public_release_name#CGAL-}
     else
-	public_release_name="CGAL-${public_release_version}"
+        public_release_name="CGAL-${public_release_version}"
     fi
     if ! [ -f ${NUMBERS_DIR}/MAJOR_NUMBER ]; then
         eval $(cmake -DCGALCONFIGVERSIONFILE=${SOURCES_DIR}/CGALConfigVersion.cmake -P ${SOURCES_DIR}/Scripts/developer_scripts/create_new_release_evaluate_versions.cmake 2>&1)
@@ -323,6 +315,9 @@ if [ -n "$DO_PUBLIC" ]; then
     zip -q -r ${public_release_name}-library.zip ${public_release_name}
     mv ${public_release_name}*.tar.xz "${HTML_DIR}/${release_name}-public/"
     mv ${public_release_name}*.zip "${HTML_DIR}/${release_name}-public/"
+    if command -v sestatus >/dev/null 2>&1; then
+        sestatus && restorecon -R "${HTML_DIR}/${release_name}-public"
+    fi
     rm -f "$HTML_DIR/CGAL-last-public"
     ln -s "${release_name}-public" "$HTML_DIR/CGAL-last-public"
 fi

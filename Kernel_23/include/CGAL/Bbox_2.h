@@ -71,6 +71,7 @@ public:
   inline Bbox_2&     operator+=(const Bbox_2 &b);
 
   inline void dilate(int dist);
+  inline void scale(double factor);
 };
 
 inline
@@ -168,6 +169,25 @@ Bbox_2::dilate(int dist)
   rep[1] = float_advance(rep[1],-dist);
   rep[2] = float_advance(rep[2],dist);
   rep[3] = float_advance(rep[3],dist);
+}
+
+inline
+void
+Bbox_2::scale(double factor)
+{
+  CGAL_precondition(factor > 0);
+
+  if(factor == 1.)
+    return;
+
+  std::array<double, 2> half_width = { (xmax() - xmin()) * 0.5,
+                                       (ymax() - ymin()) * 0.5 };
+  std::array<double, 2> center = { xmin() + half_width[0],
+                                   ymin() + half_width[1] };
+  rep[0] = center[0] - factor * half_width[0];
+  rep[1] = center[1] - factor * half_width[1];
+  rep[2] = center[0] + factor * half_width[0];
+  rep[3] = center[1] + factor * half_width[1];
 }
 
 inline

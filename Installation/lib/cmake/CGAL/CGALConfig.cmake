@@ -2,12 +2,18 @@
 # This file is the CGALConfig.cmake for a header-only CGAL installation
 #
 
+cmake_minimum_required(VERSION 3.22...3.31)
+
 # For CGAL_CreateSingleSourceCGALProgram.cmake
 set( CGAL_REQUESTED_COMPONENTS ${CGAL_FIND_COMPONENTS} )
 
 set(CGAL_LIBRARIES CGAL)
 
-get_filename_component(CGAL_CONFIG_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+# Resolve symlinks before extracting the directory so that the subsequent
+# DIRECTORY walk produces a correct CGAL_ROOT (e.g. /lib -> /usr/lib on
+# Arch Linux).  See https://github.com/CGAL/cgal/issues/8521
+file(REAL_PATH "${CMAKE_CURRENT_LIST_FILE}" _cgal_config_realpath)
+get_filename_component(CGAL_CONFIG_DIR "${_cgal_config_realpath}" DIRECTORY)
 
 function(cgal_detect_branch_build VAR_NAME)
   if(IS_DIRECTORY ${CGAL_CONFIG_DIR}/../../../../Installation/package_info/Installation/)
@@ -30,6 +36,7 @@ if(BRANCH_BUILD)
   set(CGAL_MODULES_DIR ${CGAL_ROOT}/Installation/cmake/modules)
   file(GLOB packages_dirs ${CGAL_ROOT}/*)
 #  message("packages_dirs: ${packages_dirs}")
+  set(CGAL_INCLUDE_DIRS)
   foreach(package_dir ${packages_dirs})
     set(inc_dir ${package_dir}/include)
     if(IS_DIRECTORY ${inc_dir}
@@ -196,11 +203,12 @@ endforeach()
 #
 # Define a specific target for basic viewer
 #
-if (NOT TARGET CGAL::CGAL_Basic_viewer)
-  add_library(CGAL::CGAL_Basic_viewer INTERFACE IMPORTED GLOBAL)
-    set_target_properties(CGAL::CGAL_Basic_viewer PROPERTIES
-      INTERFACE_COMPILE_DEFINITIONS "CGAL_USE_BASIC_VIEWER;QT_NO_KEYWORDS"
+if (NOT TARGET CGAL::CGAL_Basic_viewer_Qt)
+  add_library(CGAL::CGAL_Basic_viewer_Qt INTERFACE IMPORTED GLOBAL)
+    set_target_properties(CGAL::CGAL_Basic_viewer_Qt PROPERTIES
+      INTERFACE_COMPILE_DEFINITIONS "CGAL_USE_BASIC_VIEWER"
       INTERFACE_LINK_LIBRARIES CGAL::CGAL_Qt6)
+  add_library(CGAL::CGAL_Basic_viewer ALIAS CGAL::CGAL_Basic_viewer_Qt)
 endif()
 
 #warning: the order in this list has to match the enum in Exact_type_selector
@@ -214,6 +222,6 @@ if ( NOT "${CGAL_CMAKE_EXACT_NT_BACKEND}" STREQUAL "Default" )
       TARGET CGAL
       APPEND PROPERTY
           INTERFACE_COMPILE_DEFINITIONS "CMAKE_OVERRIDDEN_DEFAULT_ENT_BACKEND=${DEB_VAL}"
-  ) # do not use set_target_properties to avoid overwritting
+  ) # do not use set_target_properties to avoid overwriting
 endif()
 

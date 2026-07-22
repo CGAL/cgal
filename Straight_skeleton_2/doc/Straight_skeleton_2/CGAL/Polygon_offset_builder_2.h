@@ -70,7 +70,7 @@ For any given input polygon, its offset polygons at a certain distance are compo
 This method returns all such contours in an unspecified order and with no parental relationship
 between them (that is why it is called `construct_offset_contours()` and not `construct_offset_polygons()`).
 
-Those offset contours in the resulting sequence which are oriented counter-clockwise are outer contours
+Those offset contours in the resulting sequence which are oriented counterclockwise are outer contours
 and those oriented clockwise are holes. It is up to the user to match each hole to its parent in order
 to reconstruct the parent-hole relationship of the conceptual output. It is sufficient to test each hole
 against each parent as there won't be a hole inside a hole, a parent inside any other contour,

@@ -764,6 +764,46 @@ public:
                                const K::Point_3& b,
                                const K::Point_3& c,
                                const K::FT& cosine);
+
+  /*!
+  compares the angles \f$ \theta_1\f$ and \f$ \theta_2\f$, where
+  \f$ \theta_1\f$ is the angle in \f$ [0, \pi]\f$ of the triangle
+  \f$ (a1, b1, c1)\f$ at the vertex `b1`, and \f$ \theta_2\f$
+  is the angle in \f$ [0, \pi]\f$ of the triangle \f$ (a2, b2, c2)\f$ at the vertex `b2`.
+  \pre `a1!=b1 && c1!=b1 && a2!=b2 && c2!=b2`.
+  */
+  Comparison_result operator()(const K::Point_3& a1,
+                               const K::Point_3& b1,
+                               const K::Point_3& c1,
+                               const K::Point_3& a2,
+                               const K::Point_3& b2,
+                               const K::Point_3& c2);
+  /*!
+  compares the angles \f$ \theta_1\f$ and \f$ \theta_2\f$, where
+  \f$ \theta_1\f$ is the angle in \f$ [0, \pi]\f$ between the normals
+  of the triangles \f$ (a1, b1, c1)\f$ and \f$ (a2, b2, c2)\f$, and \f$ \theta_2\f$ is
+  the angle in \f$ [0, \pi]\f$ such that \f$ cos(\theta_2) = cosine\f$.
+  \pre `a1!=b1 && c1!=b1` && `a2!=b2 && c2!=b2`.
+  */
+  Comparison_result operator()(const K::Point_3& a1,
+                               const K::Point_3& b1,
+                               const K::Point_3& c1,
+                               const K::Point_3& a2,
+                               const K::Point_3& b2,
+                               const K::Point_3& c2,
+                               const K::FT& cosine);
+
+  /*!
+  compares the angles \f$ \theta_1\f$ and \f$ \theta_2\f$, where
+  \f$ \theta_1\f$ is the angle in \f$ [0, \pi]\f$ between the vectors
+  \f$ u1\f$ and \f$ v1\f$, and \f$ \theta_2\f$ is the angle in \f$ [0, \pi]\f$
+  between the vectors \f$ u2\f$ and \f$ v2\f$.
+  \pre none of the vectors have zero length.
+  */
+  Comparison_result operator()(const K::Vector_3& u1,
+                               const K::Vector_3& v1,
+                               const K::Vector_3& u2,
+                               const K::Vector_3& v2);
 };
 
 /*!
@@ -1181,6 +1221,15 @@ public:
   Comparison_result operator()(const Type1& obj1,
                                const Type2& obj2,
                                const Kernel::FT&d2);
+  /*!
+    compares the squared distance between the plane constructed from points `p`, `q`, and `r`
+    and `query` to the value `sqd`.
+  */
+  Comparison_result operator()(const Kernel::Point_3& p,
+                               const Kernel::Point_3& q,
+                               const Kernel::Point_3& r,
+                               const Kernel::Point_3& query,
+                               const Kernel::FT& sqd);
 
   /// @}
 
@@ -1190,10 +1239,47 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines{AdaptableTernaryFunction}
+  \sa `compare_squared_radius_grp`
+*/
+class CompareSquaredRadius_2 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    compares the squared radius of the circle of radius `0` centered at `p` to `sr`.
+    This returns \ref CGAL::EQUAL if `sr` is zero, \ref CGAL::SMALLER if `sr` is positive,
+    and \ref CGAL::LARGER if `sr` is negative.
+  */
+  Comparison_result operator()(const Kernel::Point_2& p,
+                               const Kernel::FT& sr);
+
+  /*!
+    compares the squared radius of the smallest circle passing through the points `p` and `q` to `sr`.
+  */
+  Comparison_result operator()(const Kernel::Point_2& p,
+                               const Kernel::Point_2& q,
+                               const Kernel::FT& sr);
+
+  /*!
+    compares the squared radius of the circle defined by the points `p`, `q`, and `r` to `sr`.
+  */
+  Comparison_result operator()(const Kernel::Point_2& p,
+                               const Kernel::Point_2& q,
+                               const Kernel::Point_2& r,
+                               const Kernel::FT& sr);
+
+  /// @}
+
+}; /* end Kernel::CompareSquaredRadius_2 */
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
 
   \sa `compare_squared_radius_grp`
-
 */
 class CompareSquaredRadius_3 {
 public:
@@ -1203,24 +1289,22 @@ public:
   /// @{
 
   /*!
-    compares the squared radius of the sphere of radius 0 centered
-    at `p` to `sr`.
-    This returns the opposite sign of `sr`.
+    compares the squared radius of the sphere of radius `0` centered at `p` to `sr`.
+    This returns \ref CGAL::EQUAL if `sr` is zero, \ref CGAL::SMALLER if `sr` is positive,
+    and \ref CGAL::LARGER if `sr` is negative.
   */
   Comparison_result operator()(const Kernel::Point_3& p,
                                const Kernel::FT& sr);
 
   /*!
-    compares the squared radius of the sphere defined by the
-    points `p` and `q` to `sr`.
+    compares the squared radius of the smallest sphere passing through the points `p` and `q` to `sr`.
   */
   Comparison_result operator()(const Kernel::Point_3&p,
                                const Kernel::Point_3&q,
                                const Kernel::FT& sr);
 
   /*!
-    compares the squared radius of the sphere defined by the
-    points `p`, `q`, and `r` to `sr`.
+    compares the squared radius of the smallest sphere defined by the points `p`, `q`, and `r` to `sr`.
   */
   Comparison_result operator()(const Kernel::Point_3&p,
                                const Kernel::Point_3&q,
@@ -1228,8 +1312,7 @@ public:
                                const Kernel::FT& sr);
 
   /*!
-    compares the squared radius of the sphere defined by the
-    points `p`, `q`, `r`, and `s` to `sr`.
+    compares the squared radius of the sphere defined by the points `p`, `q`, `r`, and `s` to `sr`.
   */
   Comparison_result operator()(const Kernel::Point_3&p,
                                const Kernel::Point_3&q,
@@ -1248,7 +1331,7 @@ public:
 
 \cgalRefines{AdaptableFunctor}
 
-\sa `ComputePowerProduct_3` for the definition of of orthogonality for power distances.
+\sa `ComputePowerProduct_3` for the definition of orthogonality for power distances.
 
 */
 class CompareWeightedSquaredRadius_3
@@ -1826,7 +1909,7 @@ public:
   /// @{
 
   /*!
-    returns an approximation of the area of `c`.
+    returns an approximation of the area bounded by `c`.
   */
   double operator()(const Kernel::Circle_3& c);
 
@@ -1943,7 +2026,7 @@ public:
   /// @{
 
   /*!
-    returns the area of `c`, divided by \f$ \pi\f$.
+    returns the area bounded by `c`, divided by \f$ \pi\f$.
   */
   Kernel::FT operator()(const Kernel::Circle_3& c);
 
@@ -3053,7 +3136,7 @@ public:
 
   /*!
   returns the squared radius of the
-  smallest sphere circle to the argument(s).
+  smallest circle to the argument(s).
   */
   Kernel::FT operator() (const Kernel::Weighted_point_2& pw,
                          const Kernel::Weighted_point_2& qw,
@@ -3072,7 +3155,7 @@ public:
 \cgalConcept
 
 \sa `CGAL::Weighted_point_3<Kernel>`
-\sa `ComputePowerProduct_3` for the definition of of orthogonality for power distances.
+\sa `ComputePowerProduct_3` for the definition of orthogonality for power distances.
 
 \cgalRefines{AdaptableFunctor}
 
@@ -3870,7 +3953,7 @@ public:
   /*!
     returns a bounding box of `i`.
   */
-  CGAL::Bbox_3 operator()(const Kernel::Iso_Cuboid_3
+  CGAL::Bbox_3 operator()(const Kernel::Iso_cuboid_3
                           &i);
 
   /*!
@@ -3983,7 +4066,7 @@ public:
 
 
   /*!
-    returns an iterator on the 0'th %Cartesian coordinate of `p`.
+    returns an iterator on the zeroth %Cartesian coordinate of `p`.
   */
   Kernel::Cartesian_const_iterator_2 operator()(const Kernel::Point_2
                                                 &p);
@@ -3995,7 +4078,7 @@ public:
                                                 &p, int);
 
   /*!
-    returns an iterator on the 0'th %Cartesian coordinate of `v`.
+    returns an iterator on the zeroth %Cartesian coordinate of `v`.
   */
   Kernel::Cartesian_const_iterator_2 operator()(const Kernel::Vector_2
                                                 &v);
@@ -4028,7 +4111,7 @@ public:
   /// @{
 
   /*!
-    returns an iterator on the 0'th %Cartesian coordinate of `p`.
+    returns an iterator on the zeroth %Cartesian coordinate of `p`.
   */
   Kernel::Cartesian_const_iterator_3 operator()(const Kernel::Point_3
                                                 &p);
@@ -4040,7 +4123,7 @@ public:
                                                 &p, int);
 
   /*!
-    returns an iterator on the 0'th %Cartesian coordinate of `v`.
+    returns an iterator on the zeroth %Cartesian coordinate of `v`.
   */
   Kernel::Cartesian_const_iterator_3 operator()(const Kernel::Vector_3
                                                 &v);
@@ -4312,7 +4395,7 @@ public:
     Kernel::Vector_3 const& n);
 
   /*!
-    introduces a variable of type `Kernel::Point_3`.
+    introduces a variable of type `Kernel::Circle_3`.
     It is initialized to the circle passing through the three points.
     \pre The three points are not collinear.
   */
@@ -6078,6 +6161,24 @@ public:
   Kernel::Point_2 operator()(const Kernel::Line_2& l,
                              const Kernel::Point_2& p);
 
+  /*!
+    returns the point of `s` that is the closest to `p`.
+  */
+  Kernel::Point_2 operator()(const Kernel::Segment_2& s,
+                             const Kernel::Point_2& p);
+
+  /*!
+    returns the point of `t` that is the closest to `p`.
+  */
+  Kernel::Point_2 operator()(const Kernel::Triangle_2& t,
+                             const Kernel::Point_2& p);
+
+  /*!
+    returns `t`.
+  */
+  Kernel::Point_2 operator()(const Kernel::Point_2& t,
+                             const Kernel::Point_2&);
+
   /// @}
 
 }; /* end Kernel::ConstructProjectedPoint_2 */
@@ -6654,8 +6755,7 @@ public:
                                const Orientation & orientation = COUNTERCLOCKWISE);
 
   /*!
-    introduces a sphere initialized to the diametral sphere of
-    the circle.
+    introduces a sphere initialized to the diametral sphere of the circle.
   */
   Kernel::Sphere_3 operator()( const Kernel::Circle_3 &c);
 
@@ -7036,7 +7136,7 @@ public:
   /*!
     introduces a null vector.
   */
-  Kernel::Vector_2 operator()(const Null_vector &NULL_VECTOR);
+  Kernel::Vector_2 operator()(const CGAL::Null_vector &v);
 
   /// @}
 
@@ -7095,7 +7195,7 @@ public:
   /*!
     introduces a null vector.
   */
-  Kernel::Vector_3 operator()(const Null_vector &NULL_VECTOR);
+  Kernel::Vector_3 operator()(const CGAL::Null_vector &v);
 
 
   /// @}
@@ -7130,7 +7230,7 @@ public:
                              &s, int i);
 
   /*!
-    returns the i'th vertex of
+    returns the i-th vertex of
     `r` in counterclockwise order, starting with the lower left
     vertex. The parameter `i` is taken modulo 4.
   */
@@ -7138,7 +7238,7 @@ public:
                              Kernel::Iso_rectangle_2 &r, int i);
 
   /*!
-    returns the i'th vertex of `t`. The parameter
+    returns the i-th vertex of `t`. The parameter
     `i` is taken modulo 3.
   */
   Kernel::Point_2 operator()(const Kernel::Triangle_2
@@ -7151,9 +7251,6 @@ public:
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalConcept
-
-\image html IsoCuboid.png
-\image latex IsoCuboid.png
 
 \cgalRefines{AdaptableBinaryFunction}
 
@@ -7179,23 +7276,25 @@ public:
                              &s, int i);
 
   /*!
-    returns the i'th vertex of
+    returns the i-th vertex of
     `c`, as indicated in the figure below. The parameter `i` is
     taken modulo 8.
 
+    \image html IsoCuboid.png
+    \image latex IsoCuboid.png
   */
   Kernel::Point_3 operator()(const
                              Kernel::Iso_cuboid_3 &c, int i);
 
   /*!
-    returns the i'th vertex of `t`. The parameter
+    returns the i-th vertex of `t`. The parameter
     `i` is taken modulo 3.
   */
   Kernel::Point_3 operator()(const Kernel::Triangle_3
                              &t, int i);
 
   /*!
-    returns the i'th vertex of
+    returns the i-th vertex of
     `t`. The parameter `i` is taken modulo 4.
   */
   Kernel::Point_3 operator()(const
@@ -7562,7 +7661,7 @@ public:
     and also for `Type1` and `Type2` of respective types
 
     - `Kernel::Triangle_3` and `Kernel::Tetrahedron_3`
-    - `Kernel::Plane_3` and `Kernel::Sphere_3` (or the contrary)
+    - `Kernel::Plane_3` and `Kernel::Sphere_3`
     - `Kernel::Sphere_3` and `Kernel::Sphere_3`.
 
   */
@@ -8013,6 +8112,7 @@ public:
   \sa `CGAL::Circle_2<Kernel>`
   \sa `CGAL::Iso_rectangle_2<Kernel>`
   \sa `CGAL::Triangle_2<Kernel>`
+  \sa `CGAL::Segment_2<Kernel>`
   \sa `::Kernel::HasOnUnboundedSide_2`
   \sa `::Kernel::HasOnBoundary_2`
   \sa `::Kernel::BoundedSide_2`
@@ -8087,6 +8187,12 @@ public:
                   const Kernel::Point_3&p);
 
   /*!
+    returns true iff `p` lies on the bounded side of `c`.
+  */
+  bool operator()(const Kernel::Circle_3& c,
+                  const Kernel::Point_3& p);
+
+  /*!
     returns true iff the line segment `ab` is inside the union of the
     bounded sides of `s1` and `s2`.
   */
@@ -8126,7 +8232,7 @@ public:
 
   /*!
     returns true iff `p` lies on the negative side of `l`
-    (`l` is considered a half-space).
+    (`l` is considered a halfspace).
   */
   bool operator()(const Kernel::Line_2&l,
                   const Kernel::Point_2&p);
@@ -8161,7 +8267,7 @@ public:
 
   /*!
     returns true iff `p` lies on the negative side of `h`
-    (`h` is considered a half-space).
+    (`h` is considered a halfspace).
   */
   bool operator()(const Kernel::Plane_3&h,
                   const Kernel::Point_3&p);
@@ -8208,7 +8314,7 @@ public:
 
   /*!
     returns true iff `p` lies on the positive side of `l`
-    (`l` is considered a half-space).
+    (`l` is considered a halfspace).
   */
   bool operator()(const Kernel::Line_2&l,
                   const Kernel::Point_2&p);
@@ -8243,7 +8349,7 @@ public:
 
   /*!
     returns true iff `p` lies on the positive side of `h`
-    (`h` is considered a half-space).
+    (`h` is considered a halfspace).
   */
   bool operator()(const Kernel::Plane_3&h,
                   const Kernel::Point_3&p);
@@ -8292,6 +8398,20 @@ public:
   bool operator()(const Kernel::Circle_2&c,
                   const Kernel::Point_2&p);
 
+
+  /*!
+    returns true iff `i` lies on the unbounded side of `c`.
+  */
+  bool operator()(const Kernel::Circle_2& c,
+                  const Kernel::Iso_rectangle_2& i);
+
+
+  /*!
+    returns true iff `s` lies on the unbounded side of `c`.
+  */
+  bool operator()(const Kernel::Circle_2& c,
+                  const Kernel::Segment_2& s);
+
   /*!
     returns true iff `p` lies on the unbounded side of `i`.
   */
@@ -8337,6 +8457,12 @@ public:
                   const Kernel::Point_3&p);
 
   /*!
+    returns true iff `c` lies on the unbounded side of `s`.
+  */
+  bool operator()(const Kernel::Sphere_3& s,
+                  const Kernel::Iso_cuboid_3& c);
+
+  /*!
     returns true iff `p` lies on the unbounded side of `t`.
   */
   bool operator()(const Kernel::Tetrahedron_3&t,
@@ -8348,6 +8474,11 @@ public:
   bool operator()(const Kernel::Iso_cuboid_3&c,
                   const Kernel::Point_3&p);
 
+  /*!
+    returns true iff `p` lies on the unbounded side of `c`.
+  */
+  bool operator()(const Kernel::Circle_3&c,
+                  const Kernel::Point_3&p);
 
   /// @}
 
@@ -8939,6 +9070,34 @@ public:
   /// @}
 
 }; /* end Kernel::LessSignedDistanceToPlane_3 */
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
+  \cgalRefines{AdaptableTernaryFunction}
+
+  \sa `CGAL::compare_projection_along_direction()`
+
+*/
+class CompareProjectionAlongDirection_3 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    returns `CGAL::SMALLER`, `CGAL::EQUAL`, or `CGAL::LARGER` if the projection of `p` onto
+    a line with direction `dir` precedes, coincides, or follows that of `q` in the direction pointed by `dir`.
+  */
+  Comparison_result operator()(const Kernel::Point_3 &p,
+                               const Kernel::Point_3 &q,
+                               const Kernel::Direction_3 &dir);
+
+  /// @}
+
+}; /* end Kernel::CompareScalarProduct_3 */
 
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects

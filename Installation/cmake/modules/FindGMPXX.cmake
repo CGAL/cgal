@@ -4,8 +4,6 @@
 #   GMPXX_INCLUDE_DIR  - the GMPXX include directory
 #   GMPXX_LIBRARIES    - Libraries needed to use GMPXX
 
-# TODO: support Windows and MacOSX
-
 # GMPXX needs GMP
 
 find_package( GMP QUIET )

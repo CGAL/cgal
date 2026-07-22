@@ -1,0 +1,5 @@
+do_intersect 7 18 1
+do_intersect 7 29 1
+do_intersect 18 29 1
+do_intersect 26 28 1
+do_intersect 1 34 0

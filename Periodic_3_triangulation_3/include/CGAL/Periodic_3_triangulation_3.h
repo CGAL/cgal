@@ -38,7 +38,15 @@
 #include <CGAL/Number_types/internal/Exact_type_selector.h>
 #include <CGAL/NT_converter.h>
 #include <CGAL/Unique_hash_map.h>
+#include <CGAL/tags.h>
 #include <CGAL/use.h>
+#include <CGAL/utility.h>
+#include <boost/unordered/unordered_map_fwd.hpp>
+#include <CGAL/IO/io.h>
+#include <CGAL/Iterator_range.h>
+#include <CGAL/Triangulation_utils_3.h>
+#include <CGAL/enum.h>
+#include <CGAL/iterator.h>
 
 #ifndef CGAL_NO_STRUCTURAL_FILTERING
 #include <CGAL/Filtered_kernel/internal/Static_filters/tools.h>
@@ -50,14 +58,18 @@
 #include <boost/random/uniform_smallint.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <boost/tuple/tuple.hpp>
-#include <boost/unordered_map.hpp>
+#include <boost/unordered/unordered_map.hpp>
 
-#include <iostream>
 #include <algorithm>
-#include <cmath>
-#include <functional>
+#include <array>
+#include <cstddef>
+#include <iostream>
 #include <list>
+#include <map>
+#include <set>
+#include <stack>
 #include <utility>
+#include <vector>
 
 namespace CGAL {
 
@@ -182,11 +194,11 @@ public:
 private:
   typedef typename GT::FT                      FT;
   typedef std::pair< Vertex_handle, Offset >   Virtual_vertex;
-  typedef boost::unordered_map<Vertex_handle, Virtual_vertex>
+  typedef boost::unordered::unordered_map<Vertex_handle, Virtual_vertex>
                                                Virtual_vertex_map;
   typedef typename Virtual_vertex_map::const_iterator
                                                Virtual_vertex_map_it;
-  typedef boost::unordered_map<Vertex_handle, std::vector<Vertex_handle > >
+  typedef boost::unordered::unordered_map<Vertex_handle, std::vector<Vertex_handle > >
                                                Virtual_vertex_reverse_map;
   typedef typename Virtual_vertex_reverse_map::const_iterator
                                                Virtual_vertex_reverse_map_it;
@@ -235,6 +247,13 @@ public:
   typedef Facet_iterator                       Finite_facets_iterator;
   typedef Edge_iterator                        Finite_edges_iterator;
   typedef Vertex_iterator                      Finite_vertices_iterator;
+
+  typedef Iterator_range<Prevent_deref<Finite_cells_iterator,
+                                       const Cell_handle&> >         Finite_cell_handles;
+  typedef Iterator_range<Finite_facets_iterator> Finite_facets;
+  typedef Iterator_range<Finite_edges_iterator> Finite_edges;
+  typedef Iterator_range<Prevent_deref<Finite_vertices_iterator,
+                                       const Vertex_handle&> >       Finite_vertex_handles;
 
   int dimension() const { return (number_of_vertices() == 0) ? -2 : 3; }
 
@@ -870,18 +889,11 @@ public:
     return construct_point(pp.first, pp.second);
   }
 
-  Periodic_point_3 construct_periodic_point(const Point_3& p,
-                                            bool& had_to_use_exact) const
+  Periodic_point_3 construct_periodic_point(const Point_3& p) const
   {
     // The function is a different file to be able to be used where there is
     // no triangulation (namely, the domains of Periodic_3_mesh_3).
-    return ::CGAL::P3T3::internal::construct_periodic_point(p, had_to_use_exact, geom_traits());
-  }
-
-  Periodic_point_3 construct_periodic_point(const Point_3& p) const
-  {
-    bool useless = false;
-    return construct_periodic_point(p, useless);
+    return ::CGAL::P3T3::internal::construct_periodic_point(p, geom_traits());
   }
 
   // ---------------------------------------------------------------------------
@@ -1712,11 +1724,21 @@ public:
     return _tds.cells_end();
   }
 
+  auto finite_cell_handles() const
+  {
+    return _tds.cell_handles();
+  }
+
   Vertex_iterator finite_vertices_begin() const {
     return _tds.vertices_begin();
   }
   Vertex_iterator finite_vertices_end() const {
     return _tds.vertices_end();
+  }
+
+  auto finite_vertex_handles() const
+  {
+    return _tds.vertex_handles();
   }
 
   Edge_iterator finite_edges_begin() const {
@@ -1726,11 +1748,21 @@ public:
     return _tds.edges_end();
   }
 
+  Finite_edges finite_edges() const
+  {
+    return Finite_edges(finite_edges_begin(), finite_edges_end());
+  }
+
   Facet_iterator finite_facets_begin() const {
     return _tds.facets_begin();
   }
   Facet_iterator finite_facets_end() const {
     return _tds.facets_end();
+  }
+
+  Finite_facets finite_facets() const
+  {
+    return Finite_facets(finite_facets_begin(), finite_facets_end());
   }
 
   // All iterators (= finite, for periodic triangulations)
@@ -1742,11 +1774,21 @@ public:
     return _tds.cells_end();
   }
 
+  auto all_cell_handles() const
+  {
+    return _tds.cell_handles();
+  }
+
   All_vertices_iterator all_vertices_begin() const {
     return _tds.vertices_begin();
   }
   All_vertices_iterator all_vertices_end() const {
     return _tds.vertices_end();
+  }
+
+  auto all_vertex_handles() const
+  {
+    return _tds.vertex_handles();
   }
 
   All_edges_iterator all_edges_begin() const {
@@ -1914,6 +1956,20 @@ public:
 
   Facet mirror_facet(Facet f) const {
     return _tds.mirror_facet(f);
+  }
+
+  /// Vertex ranges defining a simplex
+  static std::array<Vertex_handle, 2> vertices(const Edge& e)
+  {
+    return Triangulation_data_structure::vertices(e);
+  }
+  static std::array<Vertex_handle, 3> vertices(const Facet& f)
+  {
+    return Triangulation_data_structure::vertices(f);
+  }
+  static std::array<Vertex_handle, 4> vertices(const Cell_handle c)
+  {
+    return Triangulation_data_structure::vertices(c);
   }
 
 private:
@@ -2237,7 +2293,7 @@ make_canonical(Vertex_triple& t) const
   *
   * returns the cell p lies in
   * starts at cell "start"
-  * returns a cell Cell_handel if lt == CELL
+  * returns a cell Cell_handle if lt == CELL
   * returns a facet (Cell_handle,li) if lt == FACET
   * returns an edge (Cell_handle,li,lj) if lt == EDGE
   * returns a vertex (Cell_handle,li) if lt == VERTEX
@@ -2784,7 +2840,7 @@ Periodic_3_triangulation_3<GT,TDS>::create_initial_triangulation(const Point& p)
   /// Virtual cells, 6 per periodic instance
   Cell_handle cells[3][3][3][6];
 
-  // Initialise vertices:
+  // initialize vertices:
   vir_vertices[0][0][0] = _tds.create_vertex();
   vir_vertices[0][0][0]->set_point(p);
   virtual_vertices_reverse[vir_vertices[0][0][0]] = std::vector<Vertex_handle>();
@@ -2792,7 +2848,7 @@ Periodic_3_triangulation_3<GT,TDS>::create_initial_triangulation(const Point& p)
     for(int j=0; j<_cover[1]; j++) {
       for(int k=0; k<_cover[2]; k++) {
         if((i!=0)||(j!=0)||(k!=0)) {
-          // Initialise virtual vertices out of the domain for debugging
+          // initialize virtual vertices out of the domain for debugging
           vir_vertices[i][j][k] =
             _tds.create_vertex();
           vir_vertices[i][j][k]->set_point(p); //+Offset(i,j,k));
@@ -4414,7 +4470,7 @@ test_next(const Periodic_3_triangulation_3<GT, TDS1>& t1,
   queue.push_back(std::make_pair(c1,c2));
 
   while(! queue.empty()) {
-    boost::tie(c1,c2) = queue.back();
+    std::tie(c1,c2) = queue.back();
     queue.pop_back();
 
     // Precondition: c1, c2 have been registered as well as their 4 vertices.

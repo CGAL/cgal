@@ -44,18 +44,42 @@ namespace internal {
 template <typename K>
 void pop_back_if_equal_to_front(CGAL::Polygon_2<K>& poly)
 {
-  typename CGAL::Polygon_2<K>::iterator it = poly.end();
-  --it;
-  if((*poly.begin()) == *it)
-    poly.erase(it);
+  auto last_it = std::prev(poly.end());
+  if((*poly.begin()) == *last_it)
+    poly.erase(last_it);
 }
 
 template <typename K>
 void pop_back_if_equal_to_front(CGAL::Polygon_with_holes_2<K>& pwh)
 {
   pop_back_if_equal_to_front(pwh.outer_boundary());
-  for(auto i = pwh.holes_begin(); i!= pwh.holes_end(); ++i)
-    pop_back_if_equal_to_front(*i);
+  for(auto& hole : pwh.holes())
+    pop_back_if_equal_to_front(hole);
+}
+
+template <typename Geometry>
+bool read_wkt_or_fail_stream(std::istream& in,
+                             const std::string& line,
+                             Geometry& geometry)
+{
+  try {
+    boost::geometry::read_wkt(line, geometry);
+  } catch(std::exception& e) {
+    std::cerr << "error: " << e.what() << std::endl;
+    in.clear(in.rdstate() | std::ios::failbit);
+    return false;
+  }
+  return true;
+}
+
+inline bool get_a_new_line(std::istream& in, std::string& line)
+{
+  in >> std::ws; // skip whitespaces
+  if(in.good()) {
+    return !std::getline(in, line).fail();
+  } else {
+    return false;
+  }
 }
 
 } // namespace internal
@@ -68,7 +92,7 @@ void pop_back_if_equal_to_front(CGAL::Polygon_with_holes_2<K>& pwh)
 //!
 //! \tparam Point can be a `CGAL::Point_2` or `CGAL::Point_3`.
 //!
-//! \attention Only %Cartesian Kernels with double or float as `FT` are supported.
+//! \attention Only %Cartesian Kernels with `double`or `float` as `FT` are supported.
 //!
 //! \see `CGAL::Point_2`
 //! \see `CGAL::Point_3`
@@ -76,28 +100,12 @@ template<typename Point>
 bool read_point_WKT(std::istream& in,
                     Point& point)
 {
-  if(!in.good())
-    return false;
-
   std::string line;
-  while(std::getline(in, line))
+  while(internal::get_a_new_line(in, line))
   {
-    std::istringstream iss(line);
-    std::string type;
-    iss >> type;
-
-    if(type.substr(0, 5).compare("POINT") == 0)
+    if(line.substr(0, 5).compare("POINT") == 0)
     {
-      try
-      {
-        boost::geometry::read_wkt(line, point);
-      }
-      catch(...)
-      {
-        std::cerr << "error." << std::endl;
-        return false;
-      }
-
+      internal::read_wkt_or_fail_stream(in, line, point);
       break;
     }
   }
@@ -116,7 +124,7 @@ bool read_point_WKT(std::istream& in,
 //! - a function `resize()` that takes a `size_type`
 //! - an `operator[]()` that takes a `size_type`.
 //!
-//! \attention Only %Cartesian Kernels with double or float  as `FT` are supported.
+//! \attention Only %Cartesian Kernels with `double`or `float`  as `FT` are supported.
 //!
 //! \see `CGAL::Point_2`
 //! \see `CGAL::Point_3`
@@ -124,29 +132,20 @@ template<typename MultiPoint>
 bool read_multi_point_WKT(std::istream& in,
                           MultiPoint& mp)
 {
-  if(!in.good())
-    return false;
-
-  CGAL::internal::Geometry_container<MultiPoint, boost::geometry::multi_point_tag> gc(mp);
   std::string line;
-  while(std::getline(in, line))
+  bool found = false;
+  while(internal::get_a_new_line(in, line))
   {
-    std::istringstream iss(line);
-    std::string type;
-    iss >> type;
-
-    if(type.substr(0, 10).compare("MULTIPOINT") == 0)
+    if(line.substr(0, 10).compare("MULTIPOINT") == 0)
     {
-      try{
-        boost::geometry::read_wkt(line, gc);
-      } catch(...){
-        std::cerr << "error." << std::endl;
-        return false;
-      }
+      CGAL::internal::Geometry_container<MultiPoint, boost::geometry::multi_point_tag> gc(mp);
+      found = internal::read_wkt_or_fail_stream(in, line, gc);
       break;
     }
   }
-
+  if(! found){
+    return false;
+  }
   return !in.fail();
 }
 
@@ -156,43 +155,36 @@ bool read_multi_point_WKT(std::istream& in,
 //!
 //! The first line starting with LINESTRING in the stream will be used.
 //!
-//! \tparam Linestring must be a model of `RandomAccessRange` of `CGAL::Point_2`,
+//! \tparam Linestring must be a model of `RandomAccessRange` of `CGAL::Point_2` or `CGAL::Point_3`,
 //! and have:
-//! - a function `push_back()` that takes a `CGAL::Point_2`.
+//! - a function `push_back()` that takes a point.
 //! - a function `clear()`,
 //! - a function `resize()` that takes a `size_type`
 //! - an `operator[]()` that takes a `size_type`.
 //!
-//! \attention Only %Cartesian Kernels with double or float  as `FT` are supported.
+//! \attention Only %Cartesian Kernels with `double`or `float`  as `FT` are supported.
 //!
 //! \see `CGAL::Point_2`
+//! \see `CGAL::Point_3`
 template<typename LineString>
 bool read_linestring_WKT(std::istream& in,
                          LineString& polyline)
 {
-  if(!in.good())
-    return false;
-
-  CGAL::internal::Geometry_container<LineString, boost::geometry::linestring_tag> gc(polyline);
   std::string line;
-  while(std::getline(in, line))
+  bool found = false;
+  while(internal::get_a_new_line(in, line))
   {
-    std::istringstream iss(line);
-    std::string type;
-    iss >> type;
-
-    if(type.substr(0, 10).compare("LINESTRING") == 0)
+    if(line.substr(0, 10).compare("LINESTRING") == 0)
     {
-      try{
-        boost::geometry::read_wkt(line, gc);
-      } catch(...){
-        std::cerr << "error." << std::endl;
-        return false;
-      }
+      CGAL::internal::Geometry_container<LineString, boost::geometry::linestring_tag> gc(polyline);
+      found = internal::read_wkt_or_fail_stream(in, line, gc);
       break;
     }
   }
 
+  if(! found){
+    return false;
+  }
   return !in.fail();
 }
 
@@ -207,47 +199,35 @@ bool read_linestring_WKT(std::istream& in,
 //! - a function `resize()` that takes a `size_type`
 //! - an `operator[]()` that takes a `size_type`.
 //!
-//! \attention Only %Cartesian Kernels with double or float  as `FT` are supported.
+//! \attention Only %Cartesian Kernels with `double`or `float`  as `FT` are supported.
 //!
-//! \see `CGAL::Point_2`
 template<typename MultiLineString>
 bool read_multi_linestring_WKT(std::istream& in,
                                MultiLineString& mls)
 {
-  if(!in.good())
-    return false;
-
-  typedef typename MultiLineString::value_type                                      PointRange;
-  typedef CGAL::internal::Geometry_container<PointRange, boost::geometry::linestring_tag> LineString;
-
-  std::vector<LineString> pr_range;
-  CGAL::internal::Geometry_container<std::vector<LineString>, boost::geometry::multi_linestring_tag> gc(pr_range);
   std::string line;
-  while(std::getline(in, line))
+  bool found = false;
+  while(internal::get_a_new_line(in, line))
   {
-    std::istringstream iss(line);
-    std::string type;
-    iss >> type;
-
-    if(type.substr(0, 15).compare("MULTILINESTRING") == 0)
+    if(line.substr(0, 15).compare("MULTILINESTRING") == 0)
     {
-      try
-      {
-        boost::geometry::read_wkt(line, gc);
-      }
-      catch(...)
-      {
-        std::cerr << "error." << std::endl;
-        return false;
+      using PointRange = typename MultiLineString::value_type;
+      using LineString = CGAL::internal::Geometry_container<PointRange, boost::geometry::linestring_tag>;
+
+      std::vector<LineString> pr_range;
+      CGAL::internal::Geometry_container<std::vector<LineString>, boost::geometry::multi_linestring_tag> gc(pr_range);
+
+      found = internal::read_wkt_or_fail_stream(in, line, gc);
+      for(LineString& ls : gc) {
+        mls.push_back(*ls.range);
       }
 
       break;
     }
   }
-
-  for(LineString& ls : gc)
-    mls.push_back(*ls.range);
-
+  if(! found){
+    return false;
+  }
   return !in.fail();
 }
 
@@ -259,38 +239,26 @@ bool read_multi_linestring_WKT(std::istream& in,
 //!
 //! \tparam Polygon is a `CGAL::General_polygon_with_holes_2`.
 //!
-//! \attention Only %Cartesian Kernels with double or float  as `FT` are supported.
+//! \attention Only %Cartesian Kernels with `double`or `float`  as `FT` are supported.
 //!
 //! \see `CGAL::General_polygon_with_holes_2`
 template<typename Polygon>
 bool read_polygon_WKT(std::istream& in,
                       Polygon& polygon)
 {
-  if(!in.good())
-    return false;
-
   std::string line;
-  while(std::getline(in, line))
+  bool found = false;
+  while(internal::get_a_new_line(in, line))
   {
-    std::istringstream iss(line);
-    std::string type;
-    iss >> type;
-
-    if(type.substr(0, 7).compare("POLYGON") == 0)
+    if(line.substr(0, 7).compare("POLYGON") == 0)
     {
-      try
-      {
-        boost::geometry::read_wkt(line, polygon);
-      }
-      catch( ...)
-      {
-        in.setstate(std::ios::failbit);
-        return false;
-      };
-
+      found = internal::read_wkt_or_fail_stream(in, line, polygon);
       internal::pop_back_if_equal_to_front(polygon);
       break;
     }
+  }
+  if(! found){
+    return false;
   }
   return !in.fail();
 }
@@ -306,43 +274,31 @@ bool read_polygon_WKT(std::istream& in,
 //! - a function `resize()` that takes a `size_type`
 //! - an `operator[]()` that takes a `size_type`.
 //!
-//! \attention Only %Cartesian Kernels with double or float  as `FT` are supported.
+//! \attention Only %Cartesian Kernels with `double`or `float`  as `FT` are supported.
 //!
 //! \see `CGAL::General_polygon_with_holes_2`
 template<typename MultiPolygon>
 bool read_multi_polygon_WKT(std::istream& in,
                             MultiPolygon& polygons)
 {
-  if(!in.good())
-    return false;
-
-  CGAL::internal::Geometry_container<MultiPolygon, boost::geometry::multi_polygon_tag> gc(polygons);
   std::string line;
-  while(std::getline(in, line))
+  bool found = false;
+  while(internal::get_a_new_line(in, line))
   {
-    std::istringstream iss(line);
-    std::string type;
-    iss >> type;
-
-    if(type.substr(0, 12).compare("MULTIPOLYGON") == 0)
+    if(line.substr(0, 12).compare("MULTIPOLYGON") == 0)
     {
-      try
-      {
-        boost::geometry::read_wkt(line, gc);
-      }
-      catch( ...)
-      {
-        in.setstate(std::ios::failbit);
-        return false;
-      };
+      CGAL::internal::Geometry_container<MultiPolygon, boost::geometry::multi_polygon_tag> gc(polygons);
+      found = internal::read_wkt_or_fail_stream(in, line, gc);
 
-      for(typename CGAL::internal::Geometry_container<MultiPolygon, boost::geometry::multi_polygon_tag>::iterator it = gc.begin(); it != gc.end(); ++it)
-        internal::pop_back_if_equal_to_front(*it);
+      for(auto& p : gc)
+        internal::pop_back_if_equal_to_front(p);
 
       break;
     }
   }
-
+  if(! found){
+    return false;
+  }
   return !in.fail();
 }
 
@@ -359,11 +315,12 @@ bool read_multi_polygon_WKT(std::istream& in,
 //!
 //! \brief writes `point` into a WKT stream.
 //!
-//! \tparam Point is a `CGAL::Point_2`
+//! \tparam Point is a `CGAL::Point_2` or `CGAL::Point_3`
 //!
-//! \attention Only %Cartesian Kernels with double or float  as `FT` are supported.
+//! \attention Only %Cartesian Kernels with `double`or `float`  as `FT` are supported.
 //!
 //! \see `CGAL::Point_2`
+//! \see `CGAL::Point_3`
 template<typename Point>
 std::ostream& write_point_WKT(std::ostream& out,
                               const Point& point)
@@ -381,7 +338,7 @@ std::ostream& write_point_WKT(std::ostream& out,
 //!
 //! \tparam Polygon must be a `CGAL::General_polygon_with_holes_2`
 //!
-//! \attention Only %Cartesian Kernels with double or float  as `FT` are supported.
+//! \attention Only %Cartesian Kernels with `double`or `float`  as `FT` are supported.
 //!
 //! \see `CGAL::General_polygon_with_holes_2`
 template<typename Polygon>
@@ -399,19 +356,20 @@ std::ostream& write_polygon_WKT(std::ostream& out,
 //!
 //! \brief writes the content of `ls` into a WKT stream.
 //!
-//! \tparam LineString must be a `RandomAccessRange` of `CGAL::Point_2`.
+//! \tparam LineString must be a `RandomAccessRange` of `CGAL::Point_2` or `CGAL::Point_3`.
 //!
-//! \attention Only %Cartesian Kernels with double or float  as `FT` are supported.
+//! \attention Only %Cartesian Kernels with `double`or `float`  as `FT` are supported.
 //!
 //!\see `CGAL::Point_2`
+//!\see `CGAL::Point_3`
 template<typename LineString>
 std::ostream& write_linestring_WKT(std::ostream& out,
-                                   LineString ls)
+                                   const LineString& ls)
 {
   if(!out.good())
     return out;
 
-  CGAL::internal::Geometry_container<LineString, boost::geometry::linestring_tag> gc(ls);
+  CGAL::internal::Geometry_container<LineString, boost::geometry::linestring_tag> gc(const_cast<LineString&>(ls));
   out << boost::geometry::wkt(gc) << std::endl;
   return out;
 }
@@ -420,19 +378,20 @@ std::ostream& write_linestring_WKT(std::ostream& out,
 //!
 //! \brief writes the content of `mp` into a WKT stream.
 //!
-//! \tparam MultiPoint must be a `RandomAccessRange` of `CGAL::Point_2`.
+//! \tparam MultiPoint must be a `RandomAccessRange` of `CGAL::Point_2` or `CGAL::Point_3`.
 //!
-//! \attention Only %Cartesian Kernels with double or float  as `FT` are supported.
+//! \attention Only %Cartesian Kernels with `double`or `float`  as `FT` are supported.
 //!
+//!\see `CGAL::Point_2`
 //!\see `CGAL::Point_2`
 template<typename MultiPoint>
 std::ostream& write_multi_point_WKT(std::ostream& out,
-                                    MultiPoint& mp)
+                                    const MultiPoint& mp)
 {
   if(!out.good())
     return out;
 
-  CGAL::internal::Geometry_container<MultiPoint, boost::geometry::multi_point_tag> gc(mp);
+  CGAL::internal::Geometry_container<MultiPoint, boost::geometry::multi_point_tag> gc(const_cast<MultiPoint&>(mp));
   out << boost::geometry::wkt(gc) << std::endl;
   return out;
 }
@@ -443,24 +402,24 @@ std::ostream& write_multi_point_WKT(std::ostream& out,
 //!
 //! \tparam MultiPolygon must be a `RandomAccessRange` of `CGAL::General_polygon_with_holes_2`.
 //!
-//! \attention Only %Cartesian Kernels with double or float  as `FT` are supported.
+//! \attention Only %Cartesian Kernels with `double`or `float`  as `FT` are supported.
 //!
 //!\see `CGAL::General_polygon_with_holes_2`
 template<typename MultiPolygon>
 std::ostream& write_multi_polygon_WKT(std::ostream& out,
-                                      MultiPolygon& polygons)
+                                      const MultiPolygon& polygons)
 {
   if(!out.good())
     return out;
 
-  CGAL::internal::Geometry_container<MultiPolygon, boost::geometry::multi_polygon_tag> gc(polygons);
+  CGAL::internal::Geometry_container<MultiPolygon, boost::geometry::multi_polygon_tag> gc(const_cast<MultiPolygon&>(polygons));
   out << boost::geometry::wkt(gc) << std::endl;
   return out;
 }
 
 template<typename Kernel, typename Container>
 std::ostream& write_multi_polygon_WKT(std::ostream& out,
-                                      Multipolygon_with_holes_2<Kernel,Container>& mp)
+                                      const Multipolygon_with_holes_2<Kernel,Container>& mp)
 {
   return write_multi_polygon_WKT(out, mp.polygons_with_holes());
 }
@@ -471,12 +430,12 @@ std::ostream& write_multi_polygon_WKT(std::ostream& out,
 //!
 //! \tparam MultiLineString must be a `RandomAccessRange` of `LineString`.
 //!
-//! \attention Only %Cartesian Kernels with double or float  as `FT` are supported.
+//! \attention Only %Cartesian Kernels with `double`or `float`  as `FT` are supported.
 //!
 //! \see `CGAL::IO::write_linestring_WKT()`
 template<typename MultiLineString>
 std::ostream& write_multi_linestring_WKT(std::ostream& out,
-                                         MultiLineString& mls)
+                                         const MultiLineString& mls)
 {
   if(!out.good())
     return out;
@@ -485,9 +444,9 @@ std::ostream& write_multi_linestring_WKT(std::ostream& out,
   typedef CGAL::internal::Geometry_container<PointRange, boost::geometry::linestring_tag> LineString;
 
   std::vector<LineString> pr_range;
-  for(PointRange& pr : mls)
+  for(const PointRange& pr : mls)
   {
-    LineString ls(pr);
+    LineString ls(const_cast<PointRange&>(pr));
     pr_range.push_back(ls);
   }
 
@@ -506,7 +465,7 @@ std::ostream& write_multi_linestring_WKT(std::ostream& out,
 //! \tparam MultiLineString must be a `RandomAccessRange` of `Linestring`.
 //! \tparam MultiPolygon must be a model of `RandomAccessRange` of `CGAL::General_polygon_with_holes_2`.
 //!
-//! \attention Only %Cartesian Kernels with double or float  as `FT` are supported.
+//! \attention Only %Cartesian Kernels with `double`or `float`  as `FT` are supported.
 //!
 //! \see `CGAL::IO::read_linestring_WKT()`
 template<typename MultiPoint,
@@ -517,17 +476,16 @@ bool read_WKT(std::istream& is,
               MultiLineString& polylines,
               MultiPolygon& polygons)
 {
-  if(!is.good())
-    return false;
+  auto fail = [&is]() { is.clear(is.rdstate() | std::ios::failbit); return false; };
 
-  while(is.good() && !is.eof())
+  bool found = false;
+  std::string line;
+  while(is >> std::ws && is.good() && std::getline(is, line))
   {
     typedef typename MultiPoint::value_type Point;
     typedef typename MultiLineString::value_type LineString;
     typedef typename MultiPolygon::value_type Polygon;
 
-    std::string line;
-    std::getline(is, line);
     std::string::size_type header_end = line.find("("); // }
     if(header_end == std::string::npos){
       continue;
@@ -549,45 +507,58 @@ bool read_WKT(std::istream& is,
     if(type == "POINT")
     {
       Point p;
-      CGAL::IO::read_point_WKT(iss, p);
+      if(!IO::read_point_WKT(iss, p) ) return fail();
+      found = true;
       points.push_back(p);
     }
     else if(type == "LINESTRING")
     {
       LineString l;
-      CGAL::IO::read_linestring_WKT(iss, l);
-      polylines.push_back(l);
+      if(!IO::read_linestring_WKT(iss, l)) return fail();
+      found = true;
+      polylines.push_back(std::move(l));
     }
     else if(type == "POLYGON")
     {
       Polygon p;
-      CGAL::IO::read_polygon_WKT(iss, p);
-      if(!p.outer_boundary().is_empty())
-        polygons.push_back(p);
+      if(!IO::read_polygon_WKT(iss, p)) return fail();
+      if(!p.outer_boundary().is_empty()){
+        found = true;
+        polygons.push_back(std::move(p));
+      }
     }
     else if(type == "MULTIPOINT")
     {
       MultiPoint mp;
-      CGAL::IO::read_multi_point_WKT(iss, mp);
-      for(const Point& point : mp)
+      if(!IO::read_multi_point_WKT(iss, mp)) return fail();
+      for(const Point& point : mp){
         points.push_back(point);
+        found = true;
+      }
     }
     else if(type == "MULTILINESTRING")
     {
       MultiLineString mls;
-      CGAL::IO::read_multi_linestring_WKT(iss, mls);
-      for(const LineString& ls : mls)
-        polylines.push_back(ls);
+      if(!IO::read_multi_linestring_WKT(iss, mls)) return fail();
+      for(LineString& ls : mls){
+        polylines.push_back(std::move(ls));
+        found = true;
+      }
     }
     else if(type == "MULTIPOLYGON")
     {
       MultiPolygon mp;
-      CGAL::IO::read_multi_polygon_WKT(iss, mp);
-      for(const Polygon& poly : mp)
-        polygons.push_back(poly);
+      if(!IO::read_multi_polygon_WKT(iss, mp)) return fail();
+      for(Polygon& poly : mp){
+        polygons.push_back(std::move(poly));
+        found = true;
+      }
     }
   }
 
+  if(!found){
+    return false;
+  }
 
   return !is.fail();
 }

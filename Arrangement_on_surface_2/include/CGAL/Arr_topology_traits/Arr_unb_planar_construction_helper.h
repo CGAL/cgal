@@ -103,7 +103,7 @@ protected:
                                         // (stored in the visitor class).
 
 public:
-  /*! Constructor. */
+  /*! constructs. */
   Arr_unb_planar_construction_helper(Arrangement_2* arr) :
     m_top_traits(arr->topology_traits()),
     m_arr_access(*arr),
@@ -112,7 +112,7 @@ public:
     m_he_ind_map_p(nullptr)
   {}
 
-  /*! Destructor. */
+  /*! destructs. */
   virtual ~Arr_unb_planar_construction_helper(){}
 
   /// \name Notification functions.
@@ -121,8 +121,7 @@ public:
   /* A notification issued before the sweep process starts. */
   virtual void before_sweep();
 
-  /*!
-   * A notification invoked before the sweep-line starts handling the given
+  /*! A notification invoked before the sweep-line starts handling the given
    * event.
    */
   virtual void before_handle_event(Event* event);
@@ -132,11 +131,11 @@ public:
                             Subcurve* /* sc */)
   {}
 
-  /*! Collect a subcurve index that does not see any status-line from below. */
+  /*! collects a subcurve index that does not see any status-line from below. */
   void add_subcurve_in_top_face(unsigned int index)
   { m_subcurves_at_ubf.push_back(index); }
 
-  /*! Get the indices of the halfedges below the subcurve. */
+  /*! obtains the indices of the halfedges below the subcurve. */
   Indices_list& halfedge_indices_list() { return (m_subcurves_at_ubf); }
 
 
@@ -150,15 +149,13 @@ public:
   }
   //@}
 
-  /*!
-   * Set the map that maps each halfedge to the list of subcurve indices
+  /*! sets the map that maps each halfedge to the list of subcurve indices
    * that "see" the halfedge from below.
    */
   void set_halfedge_indices_map(Halfedge_indices_map& table)
   { m_he_ind_map_p = &table; }
 
-  /*!
-   * Determine if we should swap the order of predecessor halfedges when
+  /*! determines if we should swap the order of predecessor halfedges when
    * calling insert_at_vertices_ex() .
    */
   bool swap_predecessors(Event* event) const
@@ -170,7 +167,7 @@ public:
             (event->parameter_space_in_y() == ARR_TOP_BOUNDARY));
   }
 
-  /*! Get the current top face. */
+  /*! obtains the current top face. */
   Face_handle top_face() const
   { return (m_th->face()); }
 };

@@ -20,6 +20,7 @@
 #include <CGAL/property_map.h>
 
 #include <algorithm>
+#include <optional>
 #include <string>
 #include <typeinfo>
 #include <vector>
@@ -109,27 +110,27 @@ public:
 
 public: // virtual interface of Base_property_array
 
-    virtual void reserve(size_t n)
+    void reserve(size_t n) override
     {
         data_.reserve(n);
     }
 
-    virtual void resize(size_t n)
+    void resize(size_t n) override
     {
         data_.resize(n, value_);
     }
 
-    virtual void push_back()
+    void push_back() override
     {
         data_.push_back(value_);
     }
 
-    virtual void reset(size_t idx)
+    void reset(size_t idx) override
     {
         data_[idx] = value_;
     }
 
-    bool transfer(const Base_property_array& other)
+    bool transfer(const Base_property_array& other) override
     {
       const Property_array<T>* pa = dynamic_cast<const Property_array*>(&other);
       if(pa != nullptr){
@@ -139,7 +140,7 @@ public: // virtual interface of Base_property_array
       return false;
     }
 
-    bool transfer(const Base_property_array& other, std::size_t from, std::size_t to)
+    bool transfer(const Base_property_array& other, std::size_t from, std::size_t to) override
     {
       const Property_array<T>* pa = dynamic_cast<const Property_array*>(&other);
       if (pa != nullptr)
@@ -151,32 +152,32 @@ public: // virtual interface of Base_property_array
       return false;
     }
 
-    virtual void shrink_to_fit()
+    void shrink_to_fit() override
     {
         vector_type(data_).swap(data_);
     }
 
-    virtual void swap(size_t i0, size_t i1)
+    void swap(size_t i0, size_t i1) override
     {
         T d(data_[i0]);
         data_[i0]=data_[i1];
         data_[i1]=d;
     }
 
-    virtual Base_property_array* clone() const
+    Base_property_array* clone() const override
     {
         Property_array<T>* p = new Property_array<T>(this->name_, this->value_);
         p->data_ = data_;
         return p;
     }
 
-    virtual Base_property_array* empty_clone() const
+    Base_property_array* empty_clone() const override
     {
         Property_array<T>* p = new Property_array<T>(this->name_, this->value_);
         return p;
     }
 
-    virtual const std::type_info& type() const { return typeid(T); }
+    const std::type_info& type() const override { return typeid(T); }
 
 
 public:
@@ -187,14 +188,14 @@ public:
         return &data_[0];
     }
 
-    /// Access the i'th element. No range check is performed!
+    /// Access the i-th element. No range check is performed!
     reference operator[](std::size_t _idx)
     {
         CGAL_assertion( _idx < data_.size() );
         return data_[_idx];
     }
 
-    /// Const access to the i'th element. No range check is performed!
+    /// Const access to the i-th element. No range check is performed!
     const_reference operator[](std::size_t _idx) const
     {
         CGAL_assertion( _idx < data_.size());
@@ -339,16 +340,16 @@ public:
     };
 
     template <class T>
-    std::pair<typename Get_pmap_type<T>::type, bool>
+    std::optional<typename Get_pmap_type<T>::type>
     get(const std::string& name, std::size_t i) const
     {
       typedef typename Ref_class::template Get_property_map<Key, T>::type Pmap;
       if (parrays_[i]->name() == name)
         {
           if (Property_array<T>* array = dynamic_cast<Property_array<T>*>(parrays_[i]))
-            return std::make_pair (Pmap(array), true);
+            return std::optional(Pmap(array));
         }
-      return std::make_pair(Pmap(), false);
+      return std::nullopt;
     }
 
     // add a property with name \c name and default value \c t
@@ -359,12 +360,9 @@ public:
         typedef typename Ref_class::template Get_property_map<Key, T>::type Pmap;
         for (std::size_t i=0; i<parrays_.size(); ++i)
         {
-            std::pair<Pmap, bool> out = get<T>(name, i);
-            if (out.second)
-              {
-                out.second = false;
-                return out;
-              }
+            std::optional<Pmap> out = get<T>(name, i);
+            if (out.has_value())
+              return std::make_pair(*out, false);
         }
 
         // otherwise add the property
@@ -376,19 +374,19 @@ public:
     }
 
 
-    // get a property by its name. returns invalid property if it does not exist.
+    // get a property by its name. Returns std::nullopt when it doesn't exist
     template <class T>
-    std::pair<typename Get_pmap_type<T>::type, bool>
+    std::optional<typename Get_pmap_type<T>::type>
     get(const std::string& name) const
     {
         typedef typename Ref_class::template Get_property_map<Key, T>::type Pmap;
         for (std::size_t i=0; i<parrays_.size(); ++i)
           {
-            std::pair<Pmap, bool> out = get<T>(name, i);
-            if (out.second)
+            std::optional<Pmap> out = get<T>(name, i);
+            if (out.has_value())
               return out;
           }
-        return std::make_pair(Pmap(), false);
+        return std::nullopt;
     }
 
 
@@ -397,11 +395,11 @@ public:
     typename Get_pmap_type<T>::type
     get_or_add(const std::string& name, const T t=T())
     {
-      typename Ref_class::template Get_property_map<Key, T>::type p;
-      bool b;
-      boost::tie(p,b)= get<T>(name);
-        if (!b) p = add<T>(name, t).first;
-        return p;
+      std::optional<typename Get_pmap_type<T>::type> out = get<T>(name);
+      if (out.has_value())
+        return out.value();
+      else
+        return add<T>(name, t).first;
     }
 
 

@@ -317,6 +317,25 @@ template < typename ET >
 struct Exact_type_selector : Exact_field_selector< ET > {};
 #endif
 
+constexpr const char* exact_nt_backend_string()
+{
+  switch(Default_exact_nt_backend)
+  {
+    case GMP_BACKEND:
+      return "GMP_BACKEND";
+    case GMPXX_BACKEND:
+      return "GMPXX_BACKEND";
+    case BOOST_GMP_BACKEND:
+      return "BOOST_GMP_BACKEND";
+    case BOOST_BACKEND:
+      return "BOOST_BACKEND";
+    case LEDA_BACKEND:
+      return "LEDA_BACKEND";
+    default:
+      return "MP_FLOAT_BACKEND";
+  }
+}
+
 } } // namespace CGAL::internal
 
 #undef CGAL_EXACT_SELECTORS_SPECS

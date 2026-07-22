@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>KineticSurfaceReconstructionWidget</class>
+ <widget class="QDockWidget" name="KineticSurfaceReconstructionWidget">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>372</width>
+    <height>590</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>372</width>
+    <height>590</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Kinetic Surface Reconstruction</string>
+  </property>
+  <widget class="QWidget" name="dockWidgetContents">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="12" column="0">
+     <widget class="QPushButton" name="partRunButton">
+      <property name="text">
+       <string>partition</string>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="0">
+     <widget class="QGroupBox" name="shapeDetectionGroup">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="title">
+       <string>Shape Detection</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_sd">
+       <item row="2" column="0">
+        <widget class="QLabel" name="sdMaxAngleLabel">
+         <property name="text">
+          <string>Maximum angle</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="sdMaxDistanceLabel">
+         <property name="text">
+          <string>Maximum distance</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QSpinBox" name="sdMinRegionSizeBox">
+         <property name="toolTip">
+          <string>Smallest allowed size for a primitive</string>
+         </property>
+         <property name="minimum">
+          <number>5</number>
+         </property>
+         <property name="maximum">
+          <number>10000</number>
+         </property>
+         <property name="singleStep">
+          <number>50</number>
+         </property>
+         <property name="value">
+          <number>500</number>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="sdMinRegionSizeLabel">
+         <property name="text">
+          <string>Minimum region size</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="DoubleEdit" name="sdMaxDistanceBox">
+         <property name="toolTip">
+          <string>Maximum distance from a point to a plane.</string>
+         </property>
+         <property name="text">
+          <string>1.0</string>
+         </property>
+         <property name="readOnly">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="DoubleEdit" name="sdMaxAngleBox">
+         <property name="toolTip">
+          <string>Maximum angle in degrees between the normal of a point and the normal of a plane.</string>
+         </property>
+         <property name="text">
+          <string>25</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="sdkNeighborsLabel">
+         <property name="text">
+          <string>k neighbors</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QSpinBox" name="sdkNeighborsBox">
+         <property name="toolTip">
+          <string>K neighborhood of a point considered for region growing</string>
+         </property>
+         <property name="maximum">
+          <number>100</number>
+         </property>
+         <property name="singleStep">
+          <number>5</number>
+         </property>
+         <property name="value">
+          <number>12</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="9" column="0">
+     <widget class="QGroupBox" name="shapeRegularizationGroup">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="title">
+       <string>Shape Regularization</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_sr">
+       <item row="2" column="1">
+        <widget class="DoubleEdit" name="srMaxOffsetBox">
+         <property name="toolTip">
+          <string>Maximum allowed orthogonal distance between two parallel planes such that they are considered to be coplanar.</string>
+         </property>
+         <property name="text">
+          <string>25</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="srAngleToleranceLabel">
+         <property name="text">
+          <string>Angle tolerance</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="DoubleEdit" name="srAngleToleranceBox">
+         <property name="toolTip">
+          <string>Maximum allowed angle in degrees between plane normals used for parallelism and orthogonality.</string>
+         </property>
+         <property name="text">
+          <string>1.0</string>
+         </property>
+         <property name="readOnly">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="srMaxOffsetLabel">
+         <property name="text">
+          <string>Maximum offset</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0" colspan="2">
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QCheckBox" name="srParallelismCheck">
+           <property name="toolTip">
+            <string>Planes, which are detected as near parallel, are made exactly parallel.</string>
+           </property>
+           <property name="text">
+            <string>Parallelism</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="srCoplanarityCheck">
+           <property name="toolTip">
+            <string>Parallel planes, which are detected as near coplanar, are made exactly coplanar.</string>
+           </property>
+           <property name="text">
+            <string>Coplanarity</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="srOrthogonalityCheck">
+           <property name="toolTip">
+            <string>Planes, which are detected as near orthogonal, are made exactly orthogonal.</string>
+           </property>
+           <property name="text">
+            <string>Orthogonality</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="13" column="0">
+     <widget class="QGroupBox" name="kineticReconstructionGroup">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="title">
+       <string>Kinetic Surface Reconstruction</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_rec">
+       <item row="2" column="0" colspan="2">
+        <widget class="QCheckBox" name="recGroundCheck">
+         <property name="toolTip">
+          <string>Estimates a ground level from the detected shapes. Sets the outside label of all faces on the bounding box below the ground level to inside.</string>
+         </property>
+         <property name="text">
+          <string>Estimate ground</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="recLambdaLabel">
+         <property name="toolTip">
+          <string/>
+         </property>
+         <property name="text">
+          <string>Lambda</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0" colspan="2">
+        <layout class="QHBoxLayout" name="horizontalLayout_rec"/>
+       </item>
+       <item row="1" column="1">
+        <widget class="DoubleEdit" name="recLambdaBox">
+         <property name="toolTip">
+          <string>Lambda trades data faithfulness for low complexity in the energy minimization.</string>
+         </property>
+         <property name="text">
+          <string>0.7</string>
+         </property>
+         <property name="readOnly">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="11" column="0">
+     <widget class="QGroupBox" name="kineticPartitionGroup">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="title">
+       <string>Kinetic Space Partition</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_part">
+       <item row="1" column="0">
+        <widget class="QLabel" name="partKLabel">
+         <property name="text">
+          <string>K</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="partMaxDepthLabel">
+         <property name="text">
+          <string>Maximum depth</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QSpinBox" name="partKBox">
+         <property name="toolTip">
+          <string>Maximum number of intersections that can occur for a polygon before its expansion stops</string>
+         </property>
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <number>100</number>
+         </property>
+         <property name="singleStep">
+          <number>1</number>
+         </property>
+         <property name="value">
+          <number>2</number>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0" colspan="2">
+        <layout class="QHBoxLayout" name="horizontalLayout_part">
+         <item>
+          <widget class="QCheckBox" name="partReorientCheck">
+           <property name="toolTip">
+            <string>Aligns the x-axis of the bounding box with the direction of the largest variation in horizontal direction of the input data while maintaining the z-axis.</string>
+           </property>
+           <property name="text">
+            <string>Bounding box reorientation</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="partSubdivisionCheck">
+           <property name="toolTip">
+            <string>The kinetic partition is split into subpartitions using an octree if the number of intersecting polygons per node is larger than specified.</string>
+           </property>
+           <property name="text">
+            <string>Subdivision</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="2" column="1">
+        <widget class="QSpinBox" name="partMaxDepthBox">
+         <property name="toolTip">
+          <string>Maximum octree depth for subdivision</string>
+         </property>
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <number>100</number>
+         </property>
+         <property name="singleStep">
+          <number>1</number>
+         </property>
+         <property name="value">
+          <number>3</number>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="partPolygonsPerNodeLabel">
+         <property name="text">
+          <string>Polygons per Node</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QSpinBox" name="partPolygonsPerNodeBox">
+         <property name="toolTip">
+          <string>Maximum number of intersecting polygons for an octree node before it is split</string>
+         </property>
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <number>100</number>
+         </property>
+         <property name="singleStep">
+          <number>1</number>
+         </property>
+         <property name="value">
+          <number>40</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="15" column="0">
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>40</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="10" column="0">
+     <widget class="QPushButton" name="sdRunButton">
+      <property name="text">
+       <string>detect and regularize</string>
+      </property>
+     </widget>
+    </item>
+    <item row="14" column="0">
+     <widget class="QPushButton" name="recRunButton">
+      <property name="text">
+       <string>reconstruct</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DoubleEdit</class>
+   <extends>QLineEdit</extends>
+   <header>CGAL_double_edit.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

@@ -36,7 +36,7 @@ output_to_tetgen(std::string filename,
   std::cerr << "Output to tetgen:\n";
 #endif
 
-  typedef Medit_pmap_generator<C3T3,rebind,no_patch> Generator;
+  typedef Medit_pmap_generator<C3T3,Renumber_subdomain_indices(rebind),Facet_indices(no_patch)> Generator;
   typedef typename Generator::Cell_pmap Cell_pmap;
   typedef typename Generator::Facet_pmap Facet_pmap;
   typedef typename Generator::Facet_pmap_twice Facet_pmap_twice;
@@ -195,9 +195,9 @@ namespace IO {
  * @brief exports a mesh complex to tetgen format
  * @param filename the path to the output files, without the extension.
  * @param c3t3 the mesh complex
- * @param rebind if true, labels of cells are rebinded into [1..nb_of_labels]
- * @param show_patches if true, patches are labeled with different labels than
- * cells. If false, each surface facet is written twice, using the label of
+ * @param rebind if `true`, labels of cells are rebound into [1..nb_of_labels]
+ * @param show_patches if `true`, patches are labeled with different labels than
+ * cells. If `false`, each surface facet is written twice, using the label of
  * each adjacent cell.
  * \see \ref IOStreamTetgen
  */

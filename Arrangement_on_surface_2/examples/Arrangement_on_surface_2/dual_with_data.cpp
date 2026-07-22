@@ -4,7 +4,6 @@
 
 #include <algorithm>
 
-#include <CGAL/basic.h>
 #include <CGAL/Arr_curve_data_traits_2.h>
 
 #include "arr_linear.h"

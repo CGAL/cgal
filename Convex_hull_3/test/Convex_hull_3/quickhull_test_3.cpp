@@ -20,7 +20,7 @@ typedef K::Segment_3                                      Segment_3;
 typedef CGAL::Creator_uniform_3<NT,Point_3>               Creator;
 typedef CGAL::Random_points_in_sphere_3<Point_3,Creator>  Generator;
 
-const unsigned int num = 40;
+const unsigned int num = 400000;
 
 template <class Facet_handle>
 void compute_plane_equation(Facet_handle f)
@@ -135,9 +135,9 @@ int main()
   std::cerr << "Testing coplanar hull" << std::endl;
   test_coplanar_hull();
 
-  std::cerr << "Testing 500 random points" << std::endl;
+  std::cerr << "Testing " << num << " random points" << std::endl;
   std::vector<Point_3> points;
-  Generator g(500);
+  Generator g(1);
   std::copy_n( g, num, std::back_inserter(points));
 
   assert(points.size() == num);

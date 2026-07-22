@@ -26,92 +26,19 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
   class Power_side_of_oriented_power_sphere_3:
     public K_base::Power_side_of_oriented_power_sphere_3
   {
+    typedef typename K_base::Oriented_side    Oriented_side;
     typedef typename K_base::Weighted_point_3 Weighted_point_3;
     typedef typename K_base::FT FT;
     typedef typename K_base::Power_side_of_oriented_power_sphere_3 Base;
-  public:
-    typedef typename Base::result_type result_type;
 
+  public:
     using Base::operator();
 
-    void
-    msvc_workaround(double& max1, double& max2, double& max3, double& max4, double& max5, double&  RT_tmp_result,
-                    double px, double  py, double  pz, double  pwt,
-                    double qx, double  qy, double  qz, double  qwt,
-                    double  rx, double  ry, double  rz, double  rwt,
-                    double  sx, double  sy, double  sz, double  swt,
-                    double  tx, double  ty, double  tz, double  twt) const
-    {
-      double dpx = (px - tx);
-      double dpy = (py - ty);
-      double dpz = (pz - tz);
-      double twt_pwt = (twt - pwt);
-      double dpt = (((square( dpx ) + square( dpy )) + square( dpz )) + twt_pwt);
-      double dqx = (qx - tx);
-      double dqy = (qy - ty);
-      double dqz = (qz - tz);
-      double twt_qwt = (twt - qwt);
-      double dqt = (((square( dqx ) + square( dqy )) + square( dqz )) + twt_qwt);
-      double drx = (rx - tx);
-      double dry = (ry - ty);
-      double drz = (rz - tz);
-      double twt_rwt = (twt - rwt);
-      double drt = (((square( drx ) + square( dry )) + square( drz )) + twt_rwt);
-      double dsx = (sx - tx);
-      double dsy = (sy - ty);
-      double dsz = (sz - tz);
-      double twt_swt = (twt - swt);
-      double dst = (((square( dsx ) + square( dsy )) + square( dsz )) + twt_swt);
-
-      //        double
-      RT_tmp_result = CGAL::determinant( dpx, dpy, dpz, dpt, dqx, dqy, dqz, dqt, drx, dry, drz, drt, dsx, dsy, dsz, dst );
-
-      //        double
-      max2 = CGAL::abs(dpx);
-
-
-      double adqx = CGAL::abs(dqx);
-      double adqy = CGAL::abs(dqy);
-      double adqz = CGAL::abs(dqz);
-
-      double adrx = CGAL::abs(drx);
-      double adry = CGAL::abs(dry);
-      double adrz = CGAL::abs(drz);
-
-      double adsx = CGAL::abs(dsx);
-      double adsy = CGAL::abs(dsy);
-      double adsz = CGAL::abs(dsz);
-
-      double atwt_qwt = CGAL::abs(twt_qwt);
-      double atwt_rwt = CGAL::abs(twt_rwt);
-      double atwt_swt = CGAL::abs(twt_swt);
-
-      if( (max2 < adqx) ) max2 = adqx;
-      if( (max2 < adrx) ) max2 = adrx;
-      if( (max2 < adsx) ) max2 = adsx;
-      max1 = max2;
-      max3 = CGAL::abs(dpy);
-      if( (max3 < adqy) ) max3 = adqy;
-      if( (max3 < adry) ) max3 = adry;
-      if( (max3 < adsy) ) max3 = adsy;
-      if( (max1 < max3) )      max1 = max3;
-      max4 = CGAL::abs(dpz);
-      if( (max4 < adqz) ) max4 = adqz;
-      if( (max4 < adrz) ) max4 = adrz;
-      if( (max4 < adsz) ) max4 = adsz;
-      if( (max1 < max4) )      max1 = max4;
-      max5 = CGAL::abs(twt_pwt);
-      if( (max5 < atwt_qwt) ) max5 = atwt_qwt;
-      if( (max5 < atwt_rwt) ) max5 = atwt_rwt;
-      if( (max5 < atwt_swt) ) max5 = atwt_swt;
-    }
-
-
-    result_type operator() ( const Weighted_point_3 & p,
-                             const Weighted_point_3 & q,
-                             const Weighted_point_3 & r,
-                             const Weighted_point_3 & s,
-                             const Weighted_point_3 & t) const
+    Oriented_side operator() (const Weighted_point_3& p,
+                              const Weighted_point_3& q,
+                              const Weighted_point_3& r,
+                              const Weighted_point_3& s,
+                              const Weighted_point_3& t) const
     {
       CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Power_side_of_power_sphere_3 with 4+1 wpoints", tmp);
 
@@ -132,19 +59,6 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
       {
         CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
 
-        // We split the operator as we get an ICE with VC9 and VC10
-        // when we compile 64 bit code
-#if defined (BOOST_MSVC) && defined ( _WIN64)
-        double max1,max2,max3,max4,max5;
-        double RT_tmp_result;
-        msvc_workaround(max1,max2,max3,max4,max5, RT_tmp_result,
-                        px, py, pz, pwt,
-                        qx, qy, qz, qwt,
-                        rx, ry, rz, rwt,
-                        sx, sy, sz, swt,
-                        tx, ty, tz, twt);
-
-#else
         double dpx = (px - tx);
         double dpy = (py - ty);
         double dpz = (pz - tz);
@@ -204,7 +118,7 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
         if( (max5 < atwt_qwt) ) max5 = atwt_qwt;
         if( (max5 < atwt_rwt) ) max5 = atwt_rwt;
         if( (max5 < atwt_swt) ) max5 = atwt_swt;
-#endif
+
         double lower_bound_1 = max1;
         double upper_bound_1 = max1;
         if( (max2 < lower_bound_1) ) lower_bound_1 = max2;
@@ -225,7 +139,7 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
               return Base::operator()(p,q,r,s,t);
             }
 
-            result_type int_tmp_result;
+            Oriented_side int_tmp_result;
 
             double eps = (1.67106803095990471147e-13 * (((max2 * max3) * max4) * (CGAL::max) ( max5, (max1 * max1) )));
 
@@ -253,10 +167,10 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
         return Base::operator()(p,q,r,s,t);
     }
 
-    result_type operator() ( const Weighted_point_3 & p,
-                             const Weighted_point_3 & q,
-                             const Weighted_point_3 & r,
-                             const Weighted_point_3 & t) const
+    Oriented_side operator() (const Weighted_point_3& p,
+                              const Weighted_point_3& q,
+                              const Weighted_point_3& r,
+                              const Weighted_point_3& t) const
     {
 
       CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Power_side_of_oriented_power_sphere_3 with 3+1 wpoints", tmp);
@@ -408,15 +322,15 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
                   }
               }
           }
-        return static_cast<result_type>(cmp * int_tmp_result_FFWKCAA);
+        return static_cast<Oriented_side>(cmp * int_tmp_result_FFWKCAA);
       }
       else
         return Base::operator()(p,q,r,t);
     }
 
-    result_type operator() ( const Weighted_point_3 & p,
-                             const Weighted_point_3 & q,
-                             const Weighted_point_3 & t) const
+    Oriented_side operator() (const Weighted_point_3& p,
+                              const Weighted_point_3& q,
+                              const Weighted_point_3& t) const
     {
 
       CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Power_side_of_oriented_power_sphere_3 with 2+1 wpoints", tmp);
@@ -506,7 +420,7 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
                     }
                 }
             }
-            return static_cast<result_type>(cmp * int_tmp_result);
+            return static_cast<Oriented_side>(cmp * int_tmp_result);
         }
         cmp = ((py > qy) ? 1 : ((py < qy) ? -1 : 0));
         if( (cmp != 0) )
@@ -549,7 +463,7 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
                   }
               }
           }
-          return static_cast<result_type>(cmp * int_tmp_result_FFWKCAA);
+          return static_cast<Oriented_side>(cmp * int_tmp_result_FFWKCAA);
         }
         cmp = ((pz > qz) ? 1 : ((pz < qz) ? -1 : 0));
         int int_tmp_result_3SPBwDj;
@@ -592,7 +506,7 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
                 }
             }
         }
-        return static_cast<result_type>(cmp * int_tmp_result_3SPBwDj);
+        return static_cast<Oriented_side>(cmp * int_tmp_result_3SPBwDj);
       }
       else
         return Base::operator()(p,q,t);

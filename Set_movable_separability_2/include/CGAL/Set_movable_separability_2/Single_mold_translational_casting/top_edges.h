@@ -75,7 +75,7 @@ OutputIterator top_edges(const CGAL::Polygon_2<CastingTraits_2>& polygon,
   typedef CastingTraits_2                               Traits;
 
   CGAL_precondition(polygon.is_simple());
-  CGAL_precondition(!internal::is_any_edge_colinear(polygon, traits));
+  CGAL_precondition(!internal::is_any_edge_collinear(polygon, traits));
 
   auto e_it = polygon.edges_begin();
   auto segment_outer_circle =
@@ -100,7 +100,7 @@ OutputIterator top_edges(const CGAL::Polygon_2<CastingTraits_2>& polygon,
  * \param oi the output iterator to put the top edges in
  * \param traits the traits to use.
  * \return all the possible top edges of the polygon and there pullout direction
- *  a pair of Directions is build this way [firstClockwise,secondClockwise]
+ *  a pair of Directions is built this way [firstClockwise,secondClockwise]
  *   (with no rotation)
  */
 template <typename CastingTraits_2, typename OutputIterator>
@@ -117,7 +117,7 @@ OutputIterator top_edges(const CGAL::Polygon_2<CastingTraits_2>& polygon,
  * \param oi the output iterator to put the top edges in
  * \param orientation the orientation of `polygon`.
  * \return all the possible top edges of the polygon and there pullout direction
- *  a pair of Directions is build this way [firstClockwise,secondClockwise]
+ *  a pair of Directions is built this way [firstClockwise,secondClockwise]
  *   (with no rotation)
  */
 template <typename CastingTraits_2, typename OutputIterator>
@@ -133,7 +133,7 @@ OutputIterator top_edges(const CGAL::Polygon_2<CastingTraits_2>& polygon,
  * \param polygon the input polygon that we want to check if is castable or not.
  * \param oi the output iterator to put the top edges in
  * \return all the possible top edges of the polygon and there pullout direction
- *  a pair of Directions is build this way [firstClockwise,secondClockwise]
+ *  a pair of Directions is built this way [firstClockwise,secondClockwise]
  *   (with no rotation)
  */
 template <typename CastingTraits_2, typename OutputIterator>

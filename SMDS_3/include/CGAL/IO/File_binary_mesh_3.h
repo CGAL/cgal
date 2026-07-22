@@ -27,7 +27,7 @@ namespace IO {
 
   /**
    * @ingroup PkgSMDS3IOFunctions
-   * @brief outputs a mesh complex to the CGAL binary file format (`.binary.cgal`).
+   * @brief outputs a mesh complex to the \cgal binary file format (`.binary.cgal`).
    *
    * @tparam C3T3 Type of mesh complex, model of `MeshComplex_3InTriangulation_3`
    *
@@ -46,14 +46,13 @@ save_binary_file(std::ostream& os,
                , bool binary = true)
 #endif
 {
-  typedef typename C3T3::Triangulation::Geom_traits::FT FT;
   if(binary) os << "binary ";
   os << "CGAL c3t3 " << CGAL::Get_io_signature<C3T3>()() << "\n";
   if(binary) {
     CGAL::IO::set_binary_mode(os);
   } else {
     CGAL::IO::set_ascii_mode(os);
-    os.precision(std::numeric_limits<FT>::digits10+2);
+    os.precision(std::numeric_limits<double>::max_digits10);
   }
   return !!(os << c3t3);
   // call operator!() twice, because operator bool() is C++11
@@ -61,7 +60,7 @@ save_binary_file(std::ostream& os,
 
 /**
  * @ingroup PkgSMDS3IOFunctions
- * @brief loads a mesh complex from a file written in CGAL binary file format (`.binary.cgal`).
+ * @brief loads a mesh complex from a file written in \cgal binary file format (`.binary.cgal`).
  *
  * @tparam C3T3 Type of mesh complex, model of `MeshComplex_3InTriangulation_3`
  *

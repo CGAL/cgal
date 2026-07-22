@@ -202,7 +202,7 @@ OutputIterator range_search(Dt& delau,
 // Note that the function only works correctly with exact constructions
 // because it computes the circumcenter of the points a, b, and c
 // and then performs a range query with this circle.
-// When vertices of the trinagulation are on the circle the outcome
+// When vertices of the triangulation are on the circle the outcome
 // is not deterministic.
 // A solution would be to not construct a circle, but to use the
 // function CGAL::side_of_bounded_circle

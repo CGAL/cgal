@@ -59,7 +59,7 @@ struct Slivers_ex_att_t_aux<Cell, true>
   {
     return c->slivers_exuder_restore_attributes(attr);
   }
-}; // end partial specialisation Slivers_ex_att_t_aux<Cell, true>
+}; // end partial specialization Slivers_ex_att_t_aux<Cell, true>
 
 template <class Cell>
 struct Slivers_exuder_cell_attributes_traits

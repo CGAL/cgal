@@ -1,4 +1,4 @@
-/// \defgroup PkgPeriodic2Triangulation2Ref 2D Periodic Triangulations Reference
+/// \defgroup PkgPeriodic2Triangulation2Ref Reference Manual
 
 /// \defgroup PkgPeriodic2Triangulation2Concepts Concepts
 /// \ingroup PkgPeriodic2Triangulation2Ref
@@ -110,7 +110,9 @@ of the concept `Periodic_2Offset_2`.
 - `CGAL::Periodic_2_triangulation_2::Locate_type`
 
 \cgalCRPSection{Draw 2D Periodic Triangulation}
- - \link PkgDrawPeriodic2Triangulation2 CGAL::draw<P2T2>() \endlink
+- \link PkgDrawPeriodic2Triangulation2 CGAL::draw<P2T2>() \endlink
+- `GraphicsSceneOptionsPeriodic2Triangulation2`
+- `CGAL::Graphics_scene_options_periodic_2_triangulation_2`
 
 */
 

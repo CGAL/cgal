@@ -11,7 +11,6 @@ configuration of \cgal that allow you to answer such questions as:
 <UL>
 <LI>Is \em LEDA / \gmp there? (Section  \ref secleda_gmp_support)
 <LI>Which compiler is this? (Section  \ref secwhich_compiler )
-<LI>Does the compiler support feature X? (Section  \ref secworkaround_flags )
 </UL>
 
 Also addressed here are issues related to writing code for
@@ -24,10 +23,6 @@ assume. Especially you may assume that the compiler
 <LI>supports member templates
 <LI>support for <TT>std::iterator_traits</TT>.
 </UL>
-Still, there are many bugs (sometimes known as "features") left in the
-compilers.  Have a look at the list of (non-obsolete) workarounds in
-Section  \ref secworkaround_flags  to get an idea of which "features" are
-still present.
 
 \section secleda_gmp_support Checking for LEDA or GMP support
 
@@ -65,7 +60,7 @@ probably must be deprecated and phased out), trying not to break backward
 compatibility too much.
 
 A list of reasonable Boost libraries to use in the \cgal API is
-Graph, Optional, Parameter (for packages already using it),
+Graph, Parameter (for packages already using it),
 Property Map, Smart Pointers (for packages already using it),
 Variant.
 
@@ -194,116 +189,9 @@ Linux
 
 \section secproblems_and_workarounds Known problems and workarounds
 
-For (good) reasons that will not be discussed here, it was decided to
-use \cpp for the development of \cgal. An international standard for
-\cpp has been sanctioned in 1998 \cgalCite{cgal:ansi-is14882-98} and the
-level of compliance varies widely between different
-compilers, let alone bugs.
-
-\subsection secworkaround_flags Workaround flags
-
-In order to provide a uniform development environment for \cgal that
-looks more standard compliant than what the compilers provide, a number
-of workaround flags and macros have been created.  Some of the
-workaround macros are set in `<CGAL/config.h>`.
-
-using the macros
-listed in Section  \ref secwhich_compiler  to identify the compiler.
-But most of them are set in the platform-specific configuration files
-
-<CENTER>
-<TT><CGAL/config/</TT><I>os-compiler</I><TT>/CGAL/compiler_config.h></TT>
-
-</CENTER>
-where <I>os-compiler</I> refers to a string describing your
-operating system and compiler that is defined as follows.
-
-<CENTER>
-  <I>`<arch>_<os>-<os-version>_<comp>-<comp-version>`</I>
-
-</CENTER>
-
-<DL>
-<DT><B>`<arch>`</B><DD> is the system architecture as defined by <TT>uname -p</TT> or <TT>uname -m</TT>,
-<DT><B>`<os>`</B><DD> is the operating system as defined by <TT>uname
-    -s</TT>,
-<DT><B>`<os-version>`</B><DD> is the operating system version as defined by
-  <TT>uname -r</TT>,
-<DT><B>`<comp>`</B><DD> is the basename of the compiler executable (if it
-  contains spaces, these are replaced by "-"), and
-<DT><B>`<comp-version>`</B><DD> is the compiler's version number (which
-  unfortunately can not be derived in a uniform manner, since it is
-  quite compiler specific).
-</DL>
-
-Examples are <TT>mips_IRIX64-6.5_CC-n32-7.30</TT> or <TT>sparc_SunOS-5.6_g++-2.95</TT>.
-For more information, see the \cgal \link usage usage guide \endlink.
-
-This platform-specific configuration file is created during
-
-installation by the script <TT>install_cgal</TT>. The flags listed below
-are set according to the results of test programs that are compiled and run.
-These test programs reside in the directory
-<CENTER>
-<TT>$(CGAL_ROOT)/config/testfiles</TT>
-
-</CENTER>
-where <TT>$(CGAL_ROOT)</TT> represents the installation directory for the library.
-The names of all testfiles, which correspond to the names of the flags,
-
-start with <TT>CGAL_CFG_</TT> followed by
-<UL>
-<LI><I>either</I> a description of a bug ending with
-  <TT>_BUG</TT>
-<LI><I>or</I> a description of a feature starting with
-  <TT>NO_</TT>.
-</UL>
-For any of these files a corresponding flag is set in the
-platform-specific configuration file, iff either compilation or execution
-fails. The reasoning behind this sort of negative scheme is that on
-standard-compliant platforms there should be no flags at all.
-
-Currently (CGAL-3.4-I-181), we have the following configuration
-test files (and flags). The short descriptions that are given in the files are
-included here. In some cases, it is probably necessary to have a look at the
-actual files to understand what the flag is for. This list is just to
-give an overview.
-Be sure to have a look at <TT>Installation/config/testfiles/</TT> to have an
-up-to-date version of this list.
-
-<DL>
-<DT><B><TT>CGAL_CFG_LONGNAME_BUG</TT></B><DD>
-
-   This flag is set if a compiler (or assembler or linker) has problems
- with long symbol names.
-
-<DT><B><TT>CGAL_CFG_NET2003_MATCHING_BUG</TT></B><DD>
-
-   This flag is set, if the compiler does not match a member definition
- to an existing declaration. This bug shows up on VC 7.1 Beta
- (`cl1310`).
-
-<DT><B><TT>CGAL_CFG_NO_LIMITS</TT></B><DD>
-
-   This flag is set if a compiler does not know the limits.
-
-<DT><B><TT>CGAL_CFG_NO_LONG_LONG</TT></B><DD>
-
-   The `long long` built-in integral type is not part of the
-  \iso C++ standard, but many compilers support it
-  nevertheless, since it is part of the \iso C standard. This
-  flag is set if it is supported.
-
-<DT><B><TT>CGAL_CFG_NO_TMPL_IN_TMPL_PARAM</TT></B><DD>
-
-  Nested templates in template parameter, such as `template <
-  template <class T> class A>` are not supported by any compiler.
-  This flag is set if they are not supported.
-</DL>
-
 \subsection secworkaround_macros Macros connected to workarounds/compilers
 
-Some macros are defined according to certain workaround flags. This is
+Some macros are defined according to the detected compiler. This is
 done to avoid some `ifdef`s in our actual code.
 
 <DL>
@@ -380,15 +268,5 @@ enclosed by
 \endcode
 This may not be true anymore for recent VC++ versions.
 </DL>
-
-\section secportability_req_and_rec Requirements and recommendations
-
-Recommendations:
-<UL>
-<LI>Workarounds for a compiler bug or a missing feature should not
-      be treated on a per-compiler basis. When you detect a deficiency,
-      you should rather write a short test program that triggers the setting
-      of a flag for this deficiency during configuration.
-</UL>
 
 */

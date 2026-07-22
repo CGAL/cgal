@@ -373,10 +373,10 @@ void orient_scanline (Iterator begin, Iterator end,
    iterating on `points`:
 
    - if the named parameter `scanline_id_map` is provided, the range
-     is cut everytime the id changes.
+     is cut every time the id changes.
 
    - if no scanline ID map is provided, a fallback method simply cuts
-     the range everytime 3 consecutive points form an acute angle on
+     the range every time 3 consecutive points form an acute angle on
      the projected XY-plane. This fallback method gives suboptimal
      results.
 

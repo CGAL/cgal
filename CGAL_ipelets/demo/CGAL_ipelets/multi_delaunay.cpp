@@ -172,7 +172,7 @@ void MdelaunayIpelet::protected_run(int fn)
         if(fn==4 ||fn==9){
           int order;
           int ret_val;
-          boost::tie(ret_val,order)=request_value_from_user<int>("Enter order");
+          std::tie(ret_val,order)=request_value_from_user<int>("Enter order");
           if (ret_val < 0){
             print_error_message("Incorrect value");
             return;

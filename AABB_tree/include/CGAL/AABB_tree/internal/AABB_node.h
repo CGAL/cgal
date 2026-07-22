@@ -56,7 +56,7 @@ public:
   /**
    * @brief General traversal query
    * @param query the query
-   * @param traits the traversal traits that define the traversal behaviour
+   * @param traits the traversal traits that define the traversal behavior
    * @param nb_primitives the number of primitive
    *
    * General traversal query. The traits class allows using it for the various

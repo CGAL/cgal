@@ -218,6 +218,18 @@ struct Tester
            || ( v == vp4 && tr.point(vit) == p4 ) );
 
     assert ( tv1.in_dimension() == tv2.in_dimension() );
+
+
+    // Test iterator range
+    {
+      Vertex_handle vh =  *c3t3.vertices_in_complex().begin();
+      for (auto v : c3t3.vertices_in_complex()) {
+        assert(v == vh);
+        break;
+      }
+    }
+
+
     //-------------------------------------------------------
     // Check adjacencies
     //-------------------------------------------------------
@@ -334,9 +346,13 @@ struct Tester
     // Test vertex iterators
     //-------------------------------------------------------
     std::cout << "Test vertex iterators\n";
-    const Vertex_handle& vertex_to_modify = c3t3.vertices_in_complex_begin();
+    Vertex_handle vertex_to_modify = c3t3.vertices_in_complex_begin();
+    Vertex_handle vertex_to_modify_copy = vertex_to_modify;
+
     c3t3.remove_from_complex(vertex_to_modify);
-    c3t3.add_to_complex(vertex_to_modify,corner_index_bis);
+
+    // use a copy of it: `vertex_to_modify_copy`
+    c3t3.add_to_complex(vertex_to_modify_copy,corner_index_bis);
 
     typename C3t3::Vertices_in_complex_iterator corner_vit =
       c3t3.vertices_in_complex_begin(corner_index);

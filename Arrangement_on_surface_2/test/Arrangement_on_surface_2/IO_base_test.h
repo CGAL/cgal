@@ -563,7 +563,7 @@ template <typename InputStream_>
 bool IO_base_test<Base_geom_traits>::read_segment(InputStream_& is,
                                                   Subcurve_2& seg)
 {
-  //we dont need to check this type as it has already been checked in the
+  //we don't need to check this type as it has already been checked in the
   //IO_test.h
   char type;
   is >> type;
@@ -600,7 +600,7 @@ template <typename InputStream_>
 bool IO_base_test<Base_geom_traits>::read_xsegment(InputStream_& is,
                                                    X_monotone_subcurve_2& xseg)
 {
-  //we dont need to check this type as it has already been checked in the
+  //we don't need to check this type as it has already been checked in the
   //IO_test.h
   char type;
   is >> type;

@@ -1,4 +1,4 @@
-/// \defgroup PkgTSMARef Triangulated Surface Mesh Approximation Reference
+/// \defgroup PkgTSMARef Reference Manual
 
 /// \defgroup PkgTSMAConcepts Concepts
 /// \ingroup PkgTSMARef
@@ -20,7 +20,7 @@ The API is flexible and can be extended to user-defined proxies and error metric
 \cgalPkgBib{cgal:az-tsma}
 \cgalPkgDependsOn{\ref thirdpartyEigen}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
+\cgalPkgDemo{CGAL Lab,CGALlab.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 

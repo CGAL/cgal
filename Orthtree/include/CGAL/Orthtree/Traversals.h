@@ -144,7 +144,6 @@ public:
   \tparam Tree an instance of `Orthtree`
 
   All tree nodes at another depth are ignored. If the selected depth is
-  All tree nodes at another depth are ignored. If the selected depth is
   higher than the maximum depth of the orthtree, no node will be traversed.
 
   \cgalModels{OrthtreeTraversal}

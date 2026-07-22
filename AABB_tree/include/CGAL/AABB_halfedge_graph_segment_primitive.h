@@ -60,7 +60,8 @@ namespace CGAL {
  *
  * \sa `AABBPrimitive`
  * \sa `AABB_primitive<Id,ObjectPropertyMap,PointPropertyMapPolyhedron,ExternalPropertyMaps,CacheDatum>`
- * \sa `AABB_face_graph_triangle_primitive<FaceGraph,OneFaceGraphPerTree,CacheDatum>`
+ * \sa `AABB_face_graph_triangle_primitive<FaceGraph,VertexPointPMap,OneFaceGraphPerTree,CacheDatum>`
+ * \sa `AABB_segment_primitive_3<Iterator,CacheDatum>`
  * \sa \link BGLPolyGT `boost::graph_traits<Polyhedron>` \endlink
  */
 template < class HalfedgeGraph,

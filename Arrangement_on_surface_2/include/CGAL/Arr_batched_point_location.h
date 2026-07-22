@@ -39,7 +39,7 @@ namespace Ss2 = Surface_sweep_2;
  * \param points_end A past-the-end iterator for the range of query points.
  * \param oi Output: An output iterator for the query results.
  * \pre The value-type of PointsIterator is Arrangement::Point_2,
- *      and the value-type of OutputIterator is is pair<Point_2, Result>,
+ *      and the value-type of OutputIterator is pair<Point_2, Result>,
  *      where Result is std::optional<std::variant<Vertex_const_handle,
  *                                      Halfedge_const_handle,
  *                                      Face_const_handle> >.
@@ -113,7 +113,7 @@ locate(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
    *
    * If the type Bgt2 is the same as the type Gt2, use a reference to Gt2
    * to avoid constructing a new one.  Otherwise, instantiate a local variable
-   * of the former and provide the later as a single parameter to the
+   * of the former and provide the latter as a single parameter to the
    * constructor.
    *
    * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has

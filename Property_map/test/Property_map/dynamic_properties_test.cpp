@@ -2,6 +2,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/boost/graph/generators.h>
 
 #if defined(CGAL_USE_OPENMESH)
 #include <OpenMesh/Core/IO/MeshIO.hh>

@@ -51,6 +51,7 @@ namespace Orthtree_impl {
 
 BOOST_MPL_HAS_XXX_TRAIT_DEF(Node_data)
 BOOST_MPL_HAS_XXX_TRAIT_DEF(Squared_distance_of_element)
+BOOST_MPL_HAS_XXX_TRAIT_DEF(Has_on_unbounded_side)
 
 template <class GT, bool has_data>
 struct Node_data_wrapper;
@@ -125,13 +126,16 @@ public:
   /// @{
 #ifndef DOXYGEN_RUNNING
   static inline constexpr bool has_data = Orthtree_impl::has_Node_data<GeomTraits>::value;
-  static inline constexpr bool supports_neighbor_search = true;// Orthtree_impl::has_Squared_distance_of_element<GeomTraits>::value;
+  static inline constexpr bool supports_neighbor_search = Orthtree_impl::has_Squared_distance_of_element<GeomTraits>::value;
+  static inline constexpr bool supports_ball_search = Orthtree_impl::has_Has_on_unbounded_side<GeomTraits>::value;
 #else
   static inline constexpr bool has_data = bool_value; ///< `true` if `GeomTraits` is a model of `OrthtreeTraitsWithData` and `false` otherwise.
   static inline constexpr bool supports_neighbor_search = bool_value; ///< `true` if `GeomTraits` is a model of `CollectionPartitioningOrthtreeTraits` and `false` otherwise.
+  static inline constexpr bool supports_ball_search = bool_value; ///< `true` if `GeomTraits` provides a `Has_on_bounded_side` functor and `false` otherwise.
 #endif
   static constexpr int dimension = Traits::dimension; ///< Dimension of the tree
   using Kernel = typename Traits::Kernel; ///< Kernel type.
+  using Geom_traits = Kernel;
   using FT = typename Traits::FT; ///< Number type.
   using Point = typename Traits::Point_d; ///< Point type.
   using Bbox = typename Traits::Bbox_d; ///< Bounding box type.
@@ -215,6 +219,7 @@ private: // data members :
   using Property_array = typename Properties::Experimental::Property_container<Node_index>::template Array<T>;
 
   Traits m_traits; /* the tree traits */
+  Kernel m_kernel;
 
   Node_property_container m_node_properties;
   Orthtree_impl::Node_data_wrapper<Traits, has_data> m_node_contents;
@@ -385,7 +390,8 @@ public:
     \param max_depth deepest a tree is allowed to be (nodes at this depth will not be split).
     \param bucket_size maximum number of items a node is allowed to contain.
    */
-  void refine(size_t max_depth = 10, size_t bucket_size = 20) {
+  template<typename Orthtree = Self>
+  auto refine(size_t max_depth = 10, size_t bucket_size = 20) -> std::enable_if_t<Orthtree::has_data, void> {
     refine(Orthtrees::Maximum_depth_and_maximum_contained_elements(max_depth, bucket_size));
   }
 
@@ -459,6 +465,11 @@ public:
    */
   const Traits& traits() const { return m_traits; }
 
+  const Kernel& geom_traits() const
+  {
+    return m_kernel;
+  }
+
   /*!
     \brief provides access to the root node, and by
     extension the rest of the tree.
@@ -501,7 +512,7 @@ public:
 
     \tparam Traversal a model of `OrthtreeTraversal`
 
-    \param args Arguments to to pass to the traversal's constructor, excluding the first (always an orthtree reference)
+    \param args Arguments to pass to the traversal's constructor, excluding the first (always an orthtree reference)
 
     \return a `ForwardRange` over the node indices of the tree
    */
@@ -515,11 +526,11 @@ public:
   compute_cartesian_coordinate(std::uint32_t gc, std::size_t depth, int ci) const
   {
     CGAL_assertion(depth <= m_side_per_depth.size());
-    // an odd coordinate will be first compute at the current depth,
+    // an odd coordinate will be first computed at the current depth,
     // while an even coordinate has already been computed at a previous depth.
     // So while the coordinate is even, we decrease the depth to end up of the first
     // non-even coordinate to compute it (with particular case for bbox limits).
-    // Note that is depth becomes too large, we might end up with incorrect coordinates
+    // Note that if the depth becomes too large, we might end up with incorrect coordinates
     // due to rounding errors.
     if (gc == (1u << depth)) return (m_bbox.max)()[ci]; // gc == 2^node_depth
     if (gc == 0) return (m_bbox.min)()[ci];
@@ -594,7 +605,7 @@ public:
     \return an optional containing the property map if it exists
    */
   template <typename T>
-  std::optional<Property_map<T>> property(const std::string& name) {
+  std::optional<Property_map<T>> property(const std::string& name) const {
     auto p = m_node_properties.template get_property_if_exists<T>(name);
     if (p)
       return std::optional<Property_map<T> >(Property_map<T>(*p));
@@ -681,10 +692,10 @@ public:
 
   \warning Nearest neighbor searches requires `GeomTraits` to be a model of `CollectionPartitioningOrthtreeTraits`.
  */
-  template<typename OutputIterator>
+  template<typename OutputIterator, typename Orthtree = Self>
   auto nearest_k_neighbors(const Point& query,
     std::size_t k,
-    OutputIterator output) const -> std::enable_if_t<supports_neighbor_search, OutputIterator> {
+    OutputIterator output) const -> std::enable_if_t<Orthtree::supports_neighbor_search, OutputIterator> {
     Sphere query_sphere(query, (std::numeric_limits<FT>::max)());
     CGAL_precondition(k > 0);
 
@@ -704,8 +715,8 @@ public:
 
   \warning Nearest neighbor searches requires `GeomTraits` to be a model of `CollectionPartitioningOrthtreeTraits`.
  */
-  template<typename OutputIterator>
-  auto neighbors_within_radius(const Sphere& query, OutputIterator output) const -> std::enable_if_t<supports_neighbor_search, OutputIterator> {
+  template<typename OutputIterator, typename Orthtree = Self>
+  auto neighbors_within_radius(const Sphere& query, OutputIterator output) const -> std::enable_if_t<Orthtree::supports_neighbor_search, OutputIterator> {
     return nearest_k_neighbors_within_radius(query, (std::numeric_limits<std::size_t>::max)(), output);
   }
 
@@ -726,12 +737,12 @@ public:
 
   \warning Nearest neighbor searches requires `GeomTraits` to be a model of `CollectionPartitioningOrthtreeTraits`.
  */
-  template <typename OutputIterator>
+  template <typename OutputIterator, typename Orthtree = Self>
   auto nearest_k_neighbors_within_radius(
     const Sphere& query,
     std::size_t k,
     OutputIterator output
-  ) const -> std::enable_if_t<supports_neighbor_search, OutputIterator> {
+  ) const -> std::enable_if_t<Orthtree::supports_neighbor_search, OutputIterator> {
     CGAL_precondition(k > 0);
     Sphere query_sphere = query;
 
@@ -764,7 +775,7 @@ public:
 
     This function finds all the intersecting leaf nodes and writes their indices to the output iterator.
 
-    \tparam Query the primitive class (e.g., sphere, ray)
+    \tparam Query the primitive class (e.g., plane, ray)
     \tparam OutputIterator a model of `OutputIterator` that accepts `Node_index` types
 
     \param query the intersecting primitive.
@@ -774,7 +785,52 @@ public:
    */
   template <typename Query, typename OutputIterator>
   OutputIterator intersected_nodes(const Query& query, OutputIterator output) const {
-    return intersected_nodes_recursive(query, root(), output);
+    return intersected_nodes_recursive(query, root(), output, [](const Query& query, const typename Traits::Bbox_d &box) -> bool {return CGAL::do_intersect(query, box);});
+  }
+
+  /*!
+    \brief finds the leaf nodes that intersect with a ball.
+
+    This function finds all the intersecting leaf nodes and writes their indices to the output iterator.
+    Requires the Traits class to provide the functor via `has_on_bounded_side_object()` with an operator:
+
+    `bool operator()(Traits::Sphere_d, Traits::Bbox_d)`
+
+    `Kernel::HasOnUnboundedSide_2` and `Kernel::HasOnUnboundedSide_3` are compatible concepts for dimensions 2 and 3.
+
+    \tparam OutputIterator a model of `OutputIterator` that accepts `Node_index` types
+
+    \param center the center of the ball
+    \param squared_radius the squared radius of the ball
+    \param output output iterator.
+
+    \return the output iterator after writing
+   */
+  template <typename OutputIterator>
+  auto intersected_nodes(const Point& center, const FT squared_radius, OutputIterator output) const -> std::enable_if_t<Orthtree::supports_ball_search, OutputIterator> {
+    return intersected_nodes_recursive(Sphere(center, squared_radius), root(), output, [&](const Sphere& query, const typename Traits::Bbox_d& box) -> bool
+      {return !m_traits.has_on_unbounded_side_object()(query, box); });
+  }
+
+  /*!
+    \brief finds the leaf nodes that intersect with any primitive.
+
+    This function finds all the intersecting leaf nodes and writes their indices to the output iterator.
+
+    \tparam Query the primitive class (e.g., sphere, ray)
+    \tparam OutputIterator a model of `OutputIterator` that accepts `Node_index` types
+    \tparam IntersectionFunctor a functor that is invoked on each node while traversing the tree to determine
+            intersection must be of type `bool(const Query&, const Traits::Bbox_d&)`
+
+    \param query the intersecting primitive.
+    \param output output iterator.
+    \param func the intersection functor.
+
+    \return the output iterator after writing
+   */
+  template <typename Query, typename OutputIterator, typename IntersectionFunctor>
+  OutputIterator intersected_nodes(const Query& query, OutputIterator output, IntersectionFunctor &func) const {
+    return intersected_nodes_recursive(query, root(), output, func);
   }
 
   /// @}
@@ -926,7 +982,7 @@ public:
     \return the index of the specified descendant node
    */
   template <typename... Indices>
-  Node_index descendant(Node_index node, Indices... indices) {
+  Node_index descendant(Node_index node, Indices... indices) const {
     return recursive_descendant(node, indices...);
   }
 
@@ -940,7 +996,7 @@ public:
     \return the index of the specified node
    */
   template <typename... Indices>
-  Node_index node(Indices... indices) {
+  Node_index node(Indices... indices) const {
     return descendant(root(), indices...);
   }
 
@@ -1261,28 +1317,19 @@ public:
 
 private: // functions :
 
-  Node_index recursive_descendant(Node_index node, std::size_t i) { return child(node, i); }
+  Node_index recursive_descendant(Node_index node, std::size_t i) const { return child(node, i); }
 
   template <typename... Indices>
-  Node_index recursive_descendant(Node_index node, std::size_t i, Indices... remaining_indices) {
+  Node_index recursive_descendant(Node_index node, std::size_t i, Indices... remaining_indices) const {
     return recursive_descendant(child(node, i), remaining_indices...);
   }
 
-  bool do_intersect(Node_index n, const Sphere& sphere) const {
-
-    // Create a bounding box from the node
-    Bbox node_box = bbox(n);
-
-    // Check for intersection between the node and the sphere
-    return CGAL::do_intersect(node_box, sphere);
-  }
-
-  template <typename Query, typename Node_output_iterator>
+  template <typename Query, typename Node_output_iterator, typename IntersectionFunctor>
   Node_output_iterator intersected_nodes_recursive(const Query& query, Node_index node,
-                                                   Node_output_iterator output) const {
+                                                   Node_output_iterator output, IntersectionFunctor func) const {
 
     // Check if the current node intersects with the query
-    if (CGAL::do_intersect(query, bbox(node))) {
+    if (func(query, bbox(node))) {
 
       // if this node is a leaf, then it's considered an intersecting node
       if (is_leaf(node)) {
@@ -1292,19 +1339,19 @@ private: // functions :
 
       // Otherwise, each of the children need to be checked
       for (int i = 0; i < degree; ++i) {
-        intersected_nodes_recursive(query, child(node, i), output);
+        intersected_nodes_recursive(query, child(node, i), output, func);
       }
     }
     return output;
   }
 
-  template <typename Result>
+  template <typename Result, typename Orthtree = Self>
   auto nearest_k_neighbors_recursive(
     Sphere& search_bounds,
     Node_index node,
     std::vector<Result>& results,
     std::size_t k,
-    FT epsilon = 0) const -> std::enable_if_t<supports_neighbor_search> {
+    FT epsilon = 0) const -> std::enable_if_t<Orthtree::supports_neighbor_search> {
 
     // Check whether the node has children
     if (is_leaf(node)) {
@@ -1349,10 +1396,11 @@ private: // functions :
 
       struct Node_index_with_distance {
         Node_index index;
-        FT distance;
+        FT distance_center;
+        FT distance_box;
 
-        Node_index_with_distance(const Node_index& index, FT distance) :
-          index(index), distance(distance) {}
+        Node_index_with_distance(const Node_index& index, FT distance_center, FT distance_box) :
+          index(index), distance_center(distance_center), distance_box(distance_box) {}
       };
 
       // Recursive case: the node has children
@@ -1361,36 +1409,46 @@ private: // functions :
       std::vector<Node_index_with_distance> children_with_distances;
       children_with_distances.reserve(Self::degree);
 
+      Bbox_dimensions node_size = m_side_per_depth[depth(node) + 1];
+
+      for (FT &d : node_size)
+        d /= 2.0;
+
       // Fill the list with child nodes
       for (int i = 0; i < Self::degree; ++i) {
         auto child_node = child(node, i);
 
-        FT squared_distance = 0;
+        FT squared_distance_to_center = 0;
+        FT squared_distance_to_box = 0;
         Point c = m_traits.construct_center_d_object()(search_bounds);
         Point b = barycenter(child_node);
+        std::size_t idx = 0;
         for (const auto r : cartesian_range(c, b)) {
           FT d = (get<0>(r) - get<1>(r));
-          squared_distance += d * d;
+          squared_distance_to_center += d * d;
+          if (CGAL::abs(d) > node_size[idx])
+            squared_distance_to_box += CGAL::square(CGAL::abs(d) - node_size[idx]);
+          idx++;
         }
 
         // Add a child to the list, with its distance
         children_with_distances.emplace_back(
           child_node,
-          squared_distance
+          squared_distance_to_center,
+          squared_distance_to_box
         );
       }
 
       // Sort the children by their distance from the search point
       std::sort(children_with_distances.begin(), children_with_distances.end(), [=](auto& left, auto& right) {
-        return left.distance < right.distance;
+        return left.distance_center < right.distance_center;
         });
 
       // Loop over the children
       for (auto child_with_distance : children_with_distances) {
 
         // Check whether the bounding box of the child intersects with the search bounds
-        if (CGAL::do_intersect(bbox(child_with_distance.index), search_bounds)) {
-
+        if (child_with_distance.distance_box < m_traits.compute_squared_radius_d_object()(search_bounds)) {
           // Recursively invoke this function
           nearest_k_neighbors_recursive(search_bounds, child_with_distance.index, results, k);
         }
@@ -1401,16 +1459,9 @@ private: // functions :
 public:
 
   /// \cond SKIP_IN_MANUAL
-  void dump_to_polylines(std::ostream& os) const {
-    for (const auto n: traverse<Orthtrees::Preorder_traversal>())
-      if (is_leaf(n)) {
-        Bbox box = bbox(n);
-        dump_box_to_polylines(box, os);
-      }
-  }
-
-  void dump_box_to_polylines(const Bbox_2& box, std::ostream& os) const {
-    // dump in 3D for visualisation
+  template <class K>
+  void dump_box_to_polylines(const Iso_rectangle_2<K>& box, std::ostream& os) const {
+    // dump in 3D for visualization
     os << "5 "
        << box.xmin() << " " << box.ymin() << " 0 "
        << box.xmin() << " " << box.ymax() << " 0 "
@@ -1419,7 +1470,8 @@ public:
        << box.xmin() << " " << box.ymin() << " 0" << std::endl;
   }
 
-  void dump_box_to_polylines(const Bbox_3& box, std::ostream& os) const {
+  template <class K>
+  void dump_box_to_polylines(const Iso_cuboid_3<K>& box, std::ostream& os) const {
     // Back face
     os << "5 "
        << box.xmin() << " " << box.ymin() << " " << box.zmin() << " "
@@ -1449,6 +1501,14 @@ public:
     os << "2 "
        << box.xmax() << " " << box.ymax() << " " << box.zmin() << " "
        << box.xmax() << " " << box.ymax() << " " << box.zmax() << std::endl;
+  }
+
+  void dump_to_polylines(std::ostream& os) const {
+    for (Node_index n: traverse(Orthtrees::Preorder_traversal<Self>(*this)))
+      if (is_leaf(n)) {
+        Bbox box = bbox(n);
+        dump_box_to_polylines(box, os);
+      }
   }
 
   std::string to_string(Node_index node) {

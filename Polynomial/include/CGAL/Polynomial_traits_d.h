@@ -931,13 +931,13 @@ public:
     operator()(const Polynomial_d& p, const Coefficient_type& x) const {
       return p.evaluate(x);
     }
-#define ICOEFF typename First_if_different<Innermost_coefficient_type, Coefficient_type>::Type
+#define CGAL_ICOEFF typename First_if_different<Innermost_coefficient_type, Coefficient_type>::Type
     Coefficient_type operator()
-      ( const Polynomial_d& p, const ICOEFF& x) const
+      ( const Polynomial_d& p, const CGAL_ICOEFF& x) const
     {
       return p.evaluate(x);
     }
-#undef ICOEFF
+#undef CGAL_ICOEFF
   };
 
   // Evaluate_homogeneous;
@@ -952,13 +952,13 @@ public:
     {
       return p.evaluate_homogeneous(a,b);
     }
-#define ICOEFF typename First_if_different<Innermost_coefficient_type, Coefficient_type>::Type
+#define CGAL_ICOEFF typename First_if_different<Innermost_coefficient_type, Coefficient_type>::Type
     Coefficient_type operator()
-      ( const Polynomial_d& p, const ICOEFF& a, const ICOEFF& b) const
+      ( const Polynomial_d& p, const CGAL_ICOEFF& a, const CGAL_ICOEFF& b) const
     {
       return p.evaluate_homogeneous(a,b);
     }
-#undef ICOEFF
+#undef CGAL_ICOEFF
 
   };
 
@@ -999,7 +999,7 @@ public:
 
   // Sign_at, Sign_at_homogeneous, Compare
   // define XXX_ even though ICoeff may not be Real_embeddable
-  // select propoer XXX among XXX_ or Null_functor using ::std::conditional_t
+  // select proper XXX among XXX_ or Null_functor using ::std::conditional_t
 private:
   struct Sign_at_ {
   private:

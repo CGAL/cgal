@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.31)
 project(Convex_decomposition_3_Examples)
 
 find_package(CGAL REQUIRED)
@@ -14,3 +14,12 @@ file(
 foreach(cppfile ${cppfiles})
   create_single_source_cgal_program("${cppfile}")
 endforeach()
+
+find_package(TBB QUIET)
+include(CGAL_TBB_support)
+
+if(TARGET CGAL::TBB_support)
+  target_link_libraries(approximate_convex_decomposition PRIVATE CGAL::TBB_support)
+else()
+  message(STATUS "NOTICE: Intel TBB was not found. Sequential code will be used.")
+endif()

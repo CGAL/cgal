@@ -17,36 +17,84 @@
 #ifndef CGAL_DRAW_ARRANGEMENT_2_H
 #define CGAL_DRAW_ARRANGEMENT_2_H
 
-#include <CGAL/Qt/Basic_viewer_qt.h>
+#include <CGAL/Qt/Basic_viewer.h>
+
+#include "CGAL/Bbox_2.h"
 
 #ifdef DOXYGEN_RUNNING
 
 namespace CGAL {
 
 /*! \ingroup PkgArrangementOnSurface2Draw
+
+ * The function opens a new window and draws `arr`, an instance of the
+ * `CGAL::Arrangement_on_surface_2` class template. Parameters of the drawing
+ * are taken from the optional graphics scene options parameter.
  *
- * opens a new window and draws `arr`, an instance of the `CGAL::Arrangement_2`
- * class template. A call to this function is blocking; that is, the program
- * continues only after the user closes the window. This function requires
- * `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is
- * defined.  Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link
- * with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER`.
+ * A call to this function blocks the execution of the program until the drawing
+ * window is closed. This function requires `CGAL_Qt6`, and is only available if
+ * the macro `CGAL_USE_BASIC_VIEWER` is defined. Linking with the cmake target
+ * `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the definition
+ * `CGAL_USE_BASIC_VIEWER`.
  *
- * \tparam GeometryTraits_2 a geometry traits type, a model of a 2D arrangement
- * traits concept. At this point it must be an instance of either
- * `CGAL::Arr_segment_traits_2` or `CGAL::Arr_conic_traits_2`.
+ * \tparam GeometryTraits a geometry traits type, a model of a 2D arrangement
+ * geometry traits concept. Observe that not all geometery-traits models are
+ * supported.
  *
- * \tparam Dcel the \dcel type, a model of the `ArrangementDcel` concept.
+ * \tparam TopologyTraits a topology traits type, a model of the
+ * `AosTopologyTraits` concept.
+ *
+ * \tparam GSOptions a model of `GraphicsSceneOptions` concept.
  *
  * \param arr the 2D arrangement to draw.
- * \param title the window title.
+ * \param bbox a bounding box in parameter space.
+ * \param gso the graphics scene options.
+ * \param title the optional title of the window.
  *
- * \sa `ArrangementDcel`
- * \sa `ArrangementTraits_2`
+ * \sa `AosTraits_2`
+ * \sa `AosTopologyTraits`
+ * \sa `GraphicsSceneOptions`
  */
-template <typename GeometryTraits_2, typename Dcel>
-void draw(const Arrangement_2<GeometryTraits_2, Dcel>& arr,
-          const char* title = "2D Arrangement Basic Viewer");
+
+template <typename GeometryTraits, typename TopologyTraits>
+void draw(const Arrangement_on_surface_2<GeometryTraits, TopologyTraits>& arr,
+          const Bbox_2& bbox, const GSOptions& gso,
+          const char* title = "2D Arrangement on Surface");
+
+/*! \ingroup PkgArrangementOnSurface2Draw
+ *
+ * A shortcut to `CGAL::draw(arr, bbox, Graphics_scene_options<Aos,
+ * Aos::Vertex_const_handle, Aos::Halfedge_const_handle,
+ * Aos::Face_const_handle>{})`, where `Aos` is
+ * `Arrangement_on_surface_2<GeometryTraits, TopologyTraits>`.
+ */
+
+template <typename GeometryTraits, typename TopologyTraits>
+void draw(const Arrangement_on_surface_2<GeometryTraits, TopologyTraits>& arr,
+          const Bbox_2& bbox, const char* title = "2D Arrangement on Surface");
+
+/*! \ingroup PkgArrangementOnSurface2Draw
+ *
+ * Similar to `CGAL::draw(arr, bbox, gso)`, where the bounding box `bbox` is
+ * computed to bound all points and curves of the arrangement in parameter
+ * space.
+ */
+
+template <typename GeometryTraits, typename TopologyTraits>
+void draw(const Arrangement_on_surface_2<GeometryTraits, TopologyTraits>& arr,
+          const GSOptions& gso, const char* title = "2D Arrangement on Surface");
+
+/*! \ingroup PkgArrangementOnSurface2Draw
+ *
+ * A shortcut to `CGAL::draw(arr, Graphics_scene_options<Aos,
+ * Aos::Vertex_const_handle, Aos::Halfedge_const_handle,
+ * Aos::Face_const_handle>{})`, where `Aos` is
+ * `Arrangement_on_surface_2<GeometryTraits, TopologyTraits>`.
+ */
+
+template <typename GeometryTraits, typename TopologyTraits>
+void draw(const Arrangement_on_surface_2<GeometryTraits, TopologyTraits>& arr,
+          const char* title = "2D Arrangement on Surface");
 
 } /* namespace CGAL */
 

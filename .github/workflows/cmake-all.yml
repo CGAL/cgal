@@ -7,13 +7,12 @@ permissions:
 
 jobs:
   cmake-testsuite:
-
+    if: github.repository == 'CGAL/cgal' || github.event_name != 'push'
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v4
     - name: install dependencies
-      run: sudo apt-get install -y libboost-dev libboost-program-options-dev libmpfr-dev libeigen3-dev
+      run: sudo apt-get update && sudo apt-get install -y libboost-dev libboost-program-options-dev libmpfr-dev libeigen3-dev
     - name: configure all
       run: |
         set -e
@@ -21,9 +20,8 @@ jobs:
         ctest -L Installation -j $(getconf _NPROCESSORS_ONLN)
 
   cmake-testsuite-with-qt:
-
+    if: github.repository == 'CGAL/cgal' || github.event_name != 'push'
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v4
     - name: install dependencies

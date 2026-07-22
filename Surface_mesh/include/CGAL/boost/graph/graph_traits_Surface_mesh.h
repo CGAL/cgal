@@ -472,7 +472,6 @@ remove_vertex(typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_descr
   sm.remove_vertex(v);
 }
 
-
 template <typename P>
 void
 remove_edge(typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_descriptor u,
@@ -491,7 +490,6 @@ remove_edge(typename boost::graph_traits<CGAL::Surface_mesh<P> >::edge_descripto
   sm.remove_edge(e);
 }
 
-
 template <typename P>
 void
 remove_edge(typename boost::graph_traits<CGAL::Surface_mesh<P> >::edge_iterator eiter,
@@ -506,6 +504,13 @@ remove_face(typename boost::graph_traits<CGAL::Surface_mesh<P> >::face_descripto
             CGAL::Surface_mesh<P>& sm)
 {
   sm.remove_face(f);
+}
+
+template<typename P>
+void
+remove_all_elements(CGAL::Surface_mesh<P>& sm)
+{
+  sm.clear_without_removing_property_maps();
 }
 
 template<typename P>

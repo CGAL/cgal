@@ -85,7 +85,7 @@ public:
   \ingroup PkgOrthtreeSplitPredicates
   \brief A class used to choose when a node should be split depending on the depth and the number of contained elements.
 
-  This predicate makes a note split if it contains more than a
+  This predicate makes a node split if it contains more than a
   certain number of items and if its depth is lower than a certain
   limit.
 

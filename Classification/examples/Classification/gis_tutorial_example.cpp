@@ -6,6 +6,7 @@
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 
 #include <CGAL/boost/graph/graph_traits_Delaunay_triangulation_2.h>
+#include <CGAL/boost/graph/border.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
 
 #include <CGAL/Point_set_3.h>
@@ -16,7 +17,6 @@
 #include <CGAL/Polygon_mesh_processing/locate.h>
 
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
-#include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/remesh.h>
 
 #include <boost/graph/adjacency_list.hpp>
@@ -446,7 +446,7 @@ int main (int argc, char** argv)
 
   // Get all holes
   std::vector<Mesh::Halfedge_index> holes;
-  CGAL::Polygon_mesh_processing::extract_boundary_cycles (dtm_mesh, std::back_inserter (holes));
+  CGAL::extract_boundary_cycles (dtm_mesh, std::back_inserter (holes));
 
   std::cerr << holes.size() << " hole(s) identified" << std::endl;
 
@@ -470,7 +470,7 @@ int main (int argc, char** argv)
     }
   }
 
-  // Fill all holes except the bigest (which is the outer hull of the mesh)
+  // Fill all holes except the biggest (which is the outer hull of the mesh)
   for (Mesh::Halfedge_index hi : holes)
     if (hi != outer_hull)
       CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole
@@ -691,11 +691,9 @@ int main (int argc, char** argv)
   //! [Classification]
 
   // Get training from input
-  Point_set::Property_map<int> training_map;
-  bool training_found;
-  std::tie (training_map, training_found) = points.property_map<int>("training");
+  std::optional<Point_set::Property_map<int>> training_map = points.property_map<int>("training");
 
-  if (training_found)
+  if (training_map.has_value())
   {
     std::cerr << "Classifying ground/vegetation/building" << std::endl;
 
@@ -718,7 +716,7 @@ int main (int argc, char** argv)
 
     // Train a random forest classifier
     Classification::ETHZ::Random_forest_classifier classifier (labels, features);
-    classifier.train (points.range(training_map));
+    classifier.train (points.range(training_map.value()));
 
     // Classify with graphcut regularization
     Point_set::Property_map<int> label_map = points.add_property_map<int>("labels").first;
@@ -732,7 +730,7 @@ int main (int argc, char** argv)
     // Evaluate
     std::cerr << "Mean IoU on training data = "
               << Classification::Evaluation(labels,
-                                            points.range(training_map),
+                                            points.range(training_map.value()),
                                             points.range(label_map)).mean_intersection_over_union() << std::endl;
 
     // Save the classified point set

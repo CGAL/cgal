@@ -14,8 +14,8 @@ were extracted from the other streams. At each time, an instance has
 a <I>state</I> that uniquely determines the subsequent numbers being
 produced.
 
-It can be very useful, e.g. for debugging, to reproduce a sequence of
-random numbers. This can be done by either initialising with a fixed
+It can be very useful, e.g., for debugging, to reproduce a sequence of
+random numbers. This can be done by either initializing with a fixed
 seed, or by using the state functions as described below.
 
 \note A `Random` object is not deterministic when used by several threads at

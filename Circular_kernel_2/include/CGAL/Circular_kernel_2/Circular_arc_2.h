@@ -656,7 +656,7 @@ public:
       return CGAL::CircularFunctors::circular_arc_bbox<CK>(*this);
     }
 
-    // Dont use this function, it is only for internal use
+    // Don't use this function, it is only for internal use
     void _setx_info(unsigned short int v_is_x_monotone,
                   unsigned short int v_two_end_points_on_upper_part,
                   unsigned short int v_is_complementary_x_monotone) const {

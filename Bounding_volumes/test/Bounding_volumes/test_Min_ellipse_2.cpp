@@ -13,7 +13,7 @@
 //
 // file          : test/Min_ellipse_2/test_Min_ellipse_2.C
 // package       : $CGAL_Package: Min_ellipse_2 $
-// chapter       : Geometric Optimisation
+// chapter       : Geometric Optimization
 //
 // source        : web/Min_ellipse_2.aw
 // revision      : $Id$

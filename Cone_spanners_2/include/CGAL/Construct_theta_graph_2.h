@@ -169,7 +169,7 @@ protected:
     /* Construct edges in one cone bounded by two directions.
 
      \param cwBound      The direction of the clockwise boundary of the cone.
-     \param ccwBound     The direction of the counter-clockwise boundary.
+     \param ccwBound     The direction of the counterclockwise boundary.
      \param g            The Theta graph to be built.
     */
     void add_edges_in_cone(const Direction_2& cwBound, const Direction_2& ccwBound, Graph_& g) {
@@ -193,13 +193,13 @@ protected:
         const Less_by_direction  orderMid(g, cw90(bisector_direction));
 
         typename Graph_::vertex_iterator vit, ve;
-        boost::tie(vit, ve) = boost::vertices(g);
+        std::tie(vit, ve) = boost::vertices(g);
 
         // Step 1: Sort S according to order induced by D1
         std::vector<typename Graph_::vertex_descriptor> S(vit, ve);
         std::sort(S.begin (), S.end (), orderD1);
 
-        // Step 2: Initialise an empty set to store vertices sorted by orderD2
+        // Step 2: initialize an empty set to store vertices sorted by orderD2
         typedef CGAL::ThetaDetail::Plane_scan_tree<typename Graph_::vertex_descriptor,
                 typename Graph_::vertex_descriptor,
                 Less_by_direction,
@@ -218,7 +218,7 @@ protected:
                 typename Graph_::edge_descriptor existing_e;
                 bool                    existing;
                 // check whether the edge already exists
-                boost::tie(existing_e, existing)=boost::edge(*it, *ri, g);
+                std::tie(existing_e, existing)=boost::edge(*it, *ri, g);
                 if (!existing)
                     boost::add_edge(*it, *ri, g);
             }

@@ -9,14 +9,12 @@
 //
 // Author(s)     : Sven Oesau
 
-#ifndef ORTHTREE_TESTS_ORTHTREE_TRAITS_H
-#define ORTHTREE_TESTS_ORTHTREE_TRAITS_H
+#ifndef CGAL_ORTHTREE_TESTS_ORTHTREE_TRAITS_H
+#define CGAL_ORTHTREE_TESTS_ORTHTREE_TRAITS_H
 
 #include <CGAL/license/Orthtree.h>
 
 #include <CGAL/Dimension.h>
-#include <CGAL/Bbox_2.h>
-#include <CGAL/Point_set_2.h>
 #include <CGAL/Orthtree/Cartesian_ranges.h>
 
 #include <CGAL/Orthtree_traits_base.h>
@@ -58,4 +56,4 @@ public:
 }
 
 
-#endif //ORTHTREE_TESTS_ORTHTREE_TRAITS_H
+#endif //CGAL_ORTHTREE_TESTS_ORTHTREE_TRAITS_H

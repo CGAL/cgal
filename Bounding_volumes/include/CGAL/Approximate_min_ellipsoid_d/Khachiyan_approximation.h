@@ -71,7 +71,7 @@ namespace CGAL {
     std::vector<const Point *> P;   // input points
     int n;                          // number of input points, i.e., P.size()
 
-    // This class comes in two flavours:
+    // This class comes in two flavors:
     //
     //  (i) When Embed is false, the input points are taken to be
     //    ordinary points in R^{d_P}, where d_P is the dimension of the
@@ -392,7 +392,7 @@ namespace CGAL {
   private:
     void run(const double desired_eps)
       // Runs Khachiyans algorithm, provided the points added so far
-      // are non-degnerate.  On return, the variable x will be a
+      // are non-degenerate.  On return, the variable x will be a
       // solution to program (D) for the points P such that the
       // relaxed optimality conditions (*) hold.
       //

@@ -336,6 +336,32 @@ compare_angle(const typename K::Point_3& a,
 template < class K >
 inline
 typename K::Comparison_result
+compare_angle(const typename K::Point_3& a1,
+              const typename K::Point_3& b1,
+              const typename K::Point_3& c1,
+              const typename K::Point_3& a2,
+              const typename K::Point_3& b2,
+              const typename K::Point_3& c2,
+              const K& k)
+{
+  return k.compare_angle_3_object()(a1, b1, c1, a2, b2, c2);
+}
+
+template < class K >
+inline
+typename K::Comparison_result
+compare_angle(const typename K::Vector_3& u1,
+              const typename K::Vector_3& v1,
+              const typename K::Vector_3& u2,
+              const typename K::Vector_3& v2,
+              const K& k)
+{
+  return k.compare_angle_3_object()(u1, v1, u2, v2);
+}
+
+template < class K >
+inline
+typename K::Comparison_result
 compare_dihedral_angle(const typename K::Point_3& a1,
                        const typename K::Point_3& b1,
                        const typename K::Point_3& c1,
@@ -523,6 +549,18 @@ compare_lexicographically_xyz(const typename K::Point_3 &p,
 {
   return k.compare_xyz_3_object()(p, q);
 }
+
+template < class K >
+inline
+typename K::Comparison_result
+compare_projection_along_direction(const typename K::Point_3 &p,
+                                   const typename K::Point_3 &q,
+                                   const typename K::Direction_3 &dir,
+                                   const K &k)
+{
+  return k.compare_projection_along_direction_3_object()(p, q, dir);
+}
+
 
 template < class K >
 inline

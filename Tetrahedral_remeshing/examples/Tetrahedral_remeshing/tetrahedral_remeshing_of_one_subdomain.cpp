@@ -3,6 +3,8 @@
 #include <CGAL/Tetrahedral_remeshing/Remeshing_triangulation_3.h>
 #include <CGAL/tetrahedral_remeshing.h>
 
+#include <CGAL/property_map.h>
+
 #include "tetrahedral_remeshing_generate_input.h"
 
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;

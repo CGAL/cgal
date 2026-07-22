@@ -14,7 +14,6 @@
 #define CGAL_QT_TRIANGULATION_GRAPHICS_ITEM_H
 
 #include <CGAL/Bbox_2.h>
-#include <CGAL/apply_to_range.h>
 #include <CGAL/Qt/PainterOstream.h>
 
 #include <CGAL/Qt/GraphicsItem.h>

@@ -16,6 +16,7 @@
 #include <CGAL/license/Straight_skeleton_extrusion_2.h>
 
 #ifdef CGAL_SLS_DEBUG_DRAW
+  #include <CGAL/Straight_skeleton_2/IO/print.h>
   #include <CGAL/draw_straight_skeleton_2.h>
   #include <CGAL/draw_polygon_2.h>
   #include <CGAL/draw_polygon_with_holes_2.h>
@@ -30,7 +31,6 @@
 
 #include <CGAL/General_polygon_with_holes_2.h>
 
-#include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/stitch_borders.h>
@@ -44,6 +44,7 @@
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/mark_domain_in_triangulation.h>
 
+#include <CGAL/boost/graph/border.h>
 #include <CGAL/Cartesian/function_objects.h>
 #include <CGAL/enum.h>
 #include <CGAL/IO/helpers.h>
@@ -86,12 +87,12 @@ inline constexpr FT default_extrusion_height()
 }
 
 // @todo Maybe this postprocessing is not really necessary? Do users really care if the point
-// is not perfectly above the input contour edge (it generally cannot be anyway if the kernel is not exact except for some
-// specific cases)?
+// is not perfectly above the input contour edge (it generally cannot be anyway if the kernel
+// is not exact except for some specific cases)?
 #define CGAL_SLS_SNAP_TO_VERTICAL_SLABS
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
 
-// The purpose of this visitor is to snap back almost-vertical (see preprocessing_weights()) edges
+// The purpose of this visitor is to snap back almost-vertical (see preprocess_weights()) edges
 // to actual vertical slabs.
 template <typename HDS, typename GeomTraits>
 typename GeomTraits::Point_2
@@ -205,17 +206,19 @@ public:
   }
 
   // can't modify the position yet because we need arrange_polygons() to still work properly
+  //
+  // @fixme on paper one could create a polygon thin-enough w.r.t. the max weight value
+  // such that there is a skeleton vertex that wants to be snapped to two different sides...
   void on_offset_point(const Point_2& op,
                        SS_Halfedge_const_handle hook) const
   {
-    CGAL_assertion(hook->is_bisector());
-
-#ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
-    // @fixme on paper one could create a polygon thin-enough w.r.t. the max weight value such that
-    // there is a skeleton vertex that wants to be snapped to two different sides...
-    CGAL_assertion(m_snapped_positions.count(op) == 0);
+    CGAL_precondition(hook->is_bisector());
 
     HDS_Halfedge_const_handle canonical_hook = (hook < hook->opposite()) ? hook : hook->opposite();
+    m_offset_points[canonical_hook] = op;
+
+#ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
+    CGAL_precondition(m_snapped_positions.count(op) == 0);
 
     SS_Halfedge_const_handle contour_h1 = hook->defining_contour_edge();
     CGAL_assertion(contour_h1->opposite()->is_border());
@@ -224,9 +227,6 @@ public:
 
     const bool is_h1_vertical = (contour_h1->weight() == m_vertical_weight);
     const bool is_h2_vertical = (contour_h2->weight() == m_vertical_weight);
-
-    // this can happen when the offset is passing through vertices
-    m_offset_points[canonical_hook] = op;
 
     // if both are vertical, it's the common vertex (which has to exist)
     if(is_h1_vertical && is_h2_vertical)
@@ -321,9 +321,10 @@ class Extrusion_builder
 
 private:
   Geom_traits m_gt;
+  bool m_verbose;
 
 public:
-  Extrusion_builder(const Geom_traits& gt) : m_gt(gt) { }
+  Extrusion_builder(const Geom_traits& gt, bool verbose = false) : m_gt(gt), m_verbose(verbose) { }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -337,10 +338,6 @@ public:
                                   FaceRange& faces,
                                   const bool invert_faces = false)
   {
-#ifdef CGAL_SLS_DEBUG_DRAW
-    CGAL::draw(p);
-#endif
-
     CDT cdt;
 
     try
@@ -351,7 +348,8 @@ public:
     }
     catch(const typename CDT::Intersection_of_constraints_exception&)
     {
-      std::cerr << "Warning: Failed to triangulate horizontal face" << std::endl;
+      if(m_verbose)
+        std::cerr << "Warning: Failed to triangulate horizontal face" << std::endl;
       return;
     }
 
@@ -416,7 +414,8 @@ public:
     }
     catch(const typename PCDT::Intersection_of_constraints_exception&)
     {
-      std::cerr << "Warning: Failed to triangulate skeleton face" << std::endl;
+      if(m_verbose)
+        std::cerr << "Warning: Failed to triangulate skeleton face" << std::endl;
       return;
     }
 
@@ -426,10 +425,6 @@ public:
       points.push_back(pcdt.point(vh));
       vh->info() = id++;
     }
-
-#ifdef CGAL_SLS_DEBUG_DRAW
-    // CGAL::draw(pcdt);
-#endif
 
     std::unordered_map<PCDT_Face_handle, bool> in_domain_map;
     boost::associative_property_map< std::unordered_map<PCDT_Face_handle, bool> > in_domain(in_domain_map);
@@ -498,7 +493,8 @@ public:
 
       if(face_points.size() < 3)
       {
-        std::cerr << "Warning: sm_vs has size 1 or 2: offset crossing face at a single point?" << std::endl;
+        if(m_verbose)
+          std::cerr << "Warning: sm_vs has size 1 or 2: offset crossing face at a single point?" << std::endl;
         continue;
       }
 
@@ -601,7 +597,8 @@ public:
 
       if(face_points.size() < 3)
       {
-        std::cerr << "Warning: sm_vs has size 1 or 2: offset crossing face at a single point?" << std::endl;
+        if(m_verbose)
+          std::cerr << "Warning: sm_vs has size 1 or 2: offset crossing face at a single point?" << std::endl;
         continue;
       }
 
@@ -669,12 +666,13 @@ public:
 
     if(!ss_ptr)
     {
-      std::cerr << "Error: encountered an error during skeleton construction" << std::endl;
+      if(m_verbose)
+        std::cerr << "Error: encountered an error during skeleton construction" << std::endl;
       return false;
     }
 
 #ifdef CGAL_SLS_DEBUG_DRAW
-    // print_straight_skeleton(*ss_ptr);
+    Straight_skeletons_2::IO::print_straight_skeleton(*ss_ptr);
     CGAL::draw(*ss_ptr);
 #endif
 
@@ -691,7 +689,7 @@ public:
 #ifdef CGAL_SLS_SNAP_TO_VERTICAL_SLABS
       Visitor visitor(*ss_ptr, offset_points, vertical_weight, snapped_positions);
 #else
-      Visitor visitor(*ss_ptr, vertical_weight, offset_points);
+      Visitor visitor(*ss_ptr, offset_points);
 #endif
       Offset_builder ob(*ss_ptr, Offset_builder_traits(), visitor);
       Offset_polygons raw_output;
@@ -764,12 +762,13 @@ public:
 
       if(!ss_ptr)
       {
-        std::cerr << "Error: encountered an error during outer skeleton construction" << std::endl;
+        if(m_verbose)
+          std::cerr << "Error: encountered an error during outer skeleton construction" << std::endl;
         return false;
       }
 
 #ifdef CGAL_SLS_DEBUG_DRAW
-      // print_straight_skeleton(*ss_ptr);
+      Straight_skeletons_2::IO::print_straight_skeleton(*ss_ptr);
       CGAL::draw(*ss_ptr);
 #endif
 
@@ -813,18 +812,19 @@ public:
                                           CGAL_SS_i::vertices_begin(hole),
                                           CGAL_SS_i::vertices_end(hole),
                                           std::begin(no_holes), std::end(no_holes),
-                                          std::begin(speeds[hole_id]), std::end(speeds[hole_id]),
+                                          std::begin(speeds[1 + hole_id]), std::end(speeds[1 + hole_id]),
                                           std::begin(no_speeds), std::end(no_speeds),
                                           m_gt);
 
       if(!ss_ptr)
       {
-        std::cerr << "Error: encountered an error during skeleton construction" << std::endl;
+        if(m_verbose)
+          std::cerr << "Error: encountered an error during skeleton construction" << std::endl;
         return EXIT_FAILURE;
       }
 
 #ifdef CGAL_SLS_DEBUG_DRAW
-      // print_straight_skeleton(*ss_ptr);
+      Straight_skeletons_2::IO::print_straight_skeleton(*ss_ptr);
       CGAL::draw(*ss_ptr);
 #endif
 
@@ -886,7 +886,7 @@ void convert_angles(AngleRange& angles)
     CGAL_precondition(0 < angle && angle < 180);
 
     // @todo should this be an epsilon around 90°? As theta goes to 90°, tan(theta) goes to infinity
-    // and thus we could get numerical issues (overlfows) if the kernel is not exact
+    // and thus we could get numerical issues (overflows) if the kernel is not exact
     if(angle == 90)
       return 0;
     else
@@ -905,7 +905,7 @@ void convert_angles(AngleRange& angles)
 // - the weight of vertical slabs
 template <typename FT, typename WeightRange>
 std::tuple<Slope, bool, FT>
-preprocess_weights(WeightRange& weights)
+preprocess_weights(WeightRange& weights, bool verbose = false)
 {
   CGAL_precondition(!weights.empty());
 
@@ -928,12 +928,14 @@ preprocess_weights(WeightRange& weights)
       }
       else if(slope == Slope::INWARD && w < 0)
       {
-        std::cerr << "Error: mixing positive and negative weights is not yet supported" << std::endl;
+        if(verbose)
+          std::cerr << "Error: mixing positive and negative weights is not yet supported" << std::endl;
         return {Slope::UNKNOWN, false, FT(-1)};
       }
       else if(slope == Slope::OUTWARD && w > 0)
       {
-        std::cerr << "Error: mixing positive and negative weights is not yet supported" << std::endl;
+        if(verbose)
+          std::cerr << "Error: mixing positive and negative weights is not yet supported" << std::endl;
         return {Slope::UNKNOWN, false, FT(-1)};
       }
 
@@ -946,7 +948,8 @@ preprocess_weights(WeightRange& weights)
 
   if(slope == Slope::UNKNOWN)
   {
-    std::cerr << "Warning: all edges vertical?" << std::endl;
+    if(verbose)
+      std::cerr << "Warning: all edges vertical?" << std::endl;
     slope = Slope::VERTICAL;
   }
 
@@ -1002,7 +1005,7 @@ bool extrude_skeleton(const PolygonWithHoles& pwh,
   Slope slope;
   bool valid_input;
   FT vertical_weight;
-  std::tie(slope, valid_input, vertical_weight) = preprocess_weights<FT>(weights);
+  std::tie(slope, valid_input, vertical_weight) = preprocess_weights<FT>(weights, verbose);
 
   if(!valid_input)
   {
@@ -1034,10 +1037,10 @@ bool extrude_skeleton(const PolygonWithHoles& pwh,
   // build a soup, to be converted to a mesh afterwards
   std::vector<Point_3> points;
   std::vector<std::vector<std::size_t> > faces;
-  points.reserve(2 * pwh.outer_boundary().size()); // just a reasonnable guess
+  points.reserve(2 * pwh.outer_boundary().size()); // just a reasonable guess
   faces.reserve(2 * pwh.outer_boundary().size() + 2*pwh.number_of_holes());
 
-  Extrusion_builder<Geom_traits> builder(gt);
+  Extrusion_builder<Geom_traits> builder(gt, verbose);
   bool res;
   if(slope != Slope::OUTWARD) // INWARD or VERTICAL
     res = builder.inward_construction(pwh, weights, vertical_weight, height, points, faces);

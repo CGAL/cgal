@@ -3,7 +3,7 @@
 \cgalConcept
 
 The Delaunay refinement process involved in the
-template functions `make_mesh_3()` and `refine_mesh_3()`
+template functions `CGAL::make_mesh_3()` and `CGAL::refine_mesh_3()`
 is guided by a set of elementary refinement criteria
 that concern either mesh tetrahedra or surface facets.
 The concept `MeshCellCriteria_3` describes the types that

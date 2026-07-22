@@ -1,4 +1,4 @@
-/// \defgroup PkgVisibility2Ref Visibility_2 Reference
+/// \defgroup PkgVisibility2Ref Reference Manual
 
 /// \defgroup PkgVisibility2Concepts Concepts
 /// \ingroup PkgVisibility2Ref

@@ -18,7 +18,7 @@
 #include <CGAL/Alpha_wrap_3/internal/Oracle_base.h>
 
 #include <CGAL/AABB_primitive.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Named_function_parameters.h>
@@ -51,7 +51,7 @@ struct PS_oracle_traits
                                    CGAL::Tag_false, // not external
                                    CGAL::Tag_false>; // no caching
 
-  using AABB_traits = CGAL::AABB_traits<Geom_traits, Primitive>;
+  using AABB_traits = CGAL::AABB_traits_3<Geom_traits, Primitive>;
   using AABB_tree = CGAL::AABB_tree<AABB_traits>;
 };
 
@@ -97,12 +97,22 @@ public:
   { }
 
 public:
+  void clear()
+  {
+    m_points_ptr->clear();
+    Oracle_base::clear();
+  }
+
   // adds a range of points to the oracle
   template <typename PointRange,
             typename CGAL_NP_TEMPLATE_PARAMETERS>
-  void add_point_set(const PointRange& points,
-                     const CGAL_NP_CLASS& /*np*/ = CGAL::parameters::default_values())
+  void add_points(const PointRange& points,
+                  const CGAL_NP_CLASS& /*np*/ = CGAL::parameters::default_values())
   {
+#ifdef CGAL_AW3_DEBUG
+    std::cout << "Insert into AABB tree (points)..." << std::endl;
+#endif
+
     if(points.empty())
     {
 #ifdef CGAL_AW3_DEBUG
@@ -111,14 +121,9 @@ public:
       return;
     }
 
-    const std::size_t old_size = m_points_ptr->size();
     m_points_ptr->insert(std::cend(*m_points_ptr), std::cbegin(points), std::cend(points));
 
-#ifdef CGAL_AW3_DEBUG
-    std::cout << "Insert into AABB tree (points)..." << std::endl;
-#endif
-
-    this->tree().insert(std::next(std::cbegin(*m_points_ptr), old_size), std::cend(*m_points_ptr));
+    this->tree().rebuild(std::cbegin(*m_points_ptr), std::cend(*m_points_ptr));
 
     // Manually constructing it here purely for profiling reasons: if we keep the lazy approach,
     // it will be done at the first treatment of a facet that needs a Steiner point.
@@ -126,7 +131,9 @@ public:
     // to accelerate the tree.
     this->tree().accelerate_distance_queries();
 
-    CGAL_postcondition(this->tree().size() == m_points_ptr->size());
+#ifdef CGAL_AW3_DEBUG
+    std::cout << "PS Tree: " << this->tree().size() << " primitives" << std::endl;
+#endif
   }
 };
 

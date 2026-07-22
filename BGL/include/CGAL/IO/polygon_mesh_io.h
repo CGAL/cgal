@@ -17,6 +17,7 @@
 #include <CGAL/boost/graph/IO/INP.h>
 #include <CGAL/boost/graph/IO/OBJ.h>
 #include <CGAL/boost/graph/IO/OFF.h>
+#include <CGAL/boost/graph/IO/OM.h>
 #include <CGAL/boost/graph/IO/PLY.h>
 #include <CGAL/boost/graph/IO/STL.h>
 #include <CGAL/boost/graph/IO/VTK.h>
@@ -45,25 +46,25 @@ bool read_polygon_mesh(std::istream& is,
   ok = read_OFF(is, g, np, false);
   if(ok)
     return true;
-  g.clear();
+  clear(g);
   is.clear();//reset the error state
   is.seekg (0, is.beg);
   ok = read_OBJ(is, g, np, false);
   if(ok)
     return true;
-  g.clear();
+  clear(g);
   is.clear();
   is.seekg (0, is.beg);
   ok = read_PLY(is, g, np, false);
   if(ok)
     return true;
-  g.clear();
+  clear(g);
   is.clear();
   is.seekg (0, is.beg);
   ok = read_STL(is, g, np, false);
   if(ok)
     return true;
-  g.clear();
+  clear(g);
   is.clear();
   is.seekg (0, is.beg);
   ok = read_GOCAD(is, g, np, false);
@@ -80,6 +81,7 @@ bool read_polygon_mesh(std::istream& is,
  * Supported file formats are the following:
  * - \ref IOStreamOFF (`.off`)
  * - \ref IOStreamOBJ (`.obj`)
+ * - \ref IOStreamOM (`.om`)
  * - \ref IOStreamSTL (`.stl`)
  * - \ref IOStreamPLY (`.ply`)
  * - \ref IOStreamGocad (`.ts`)
@@ -138,6 +140,10 @@ bool read_polygon_mesh(const std::string& fname,
     return read_OBJ(fname, g, np);
   else if(ext == "off")
     return read_OFF(fname, g, np);
+#ifdef CGAL_USE_OPENMESH
+  else if(ext == "om")
+    return read_OM(fname, g, np);
+#endif
   else if(ext == "ply")
     return read_PLY(fname, g, np);
   else if(ext == "stl")

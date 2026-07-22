@@ -1,10 +1,7 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - 3D Fast Intersection and Distance Computation (AABB Tree)"
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Fast Intersection and Distance Computation (AABB Tree)"
 
 EXTRACT_ALL                =  false
 HIDE_UNDOC_MEMBERS         =  true
 HIDE_UNDOC_CLASSES         =  true
-
-
-

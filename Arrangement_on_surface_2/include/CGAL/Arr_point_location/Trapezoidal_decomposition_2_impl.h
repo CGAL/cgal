@@ -1668,7 +1668,7 @@ void Trapezoidal_decomposition_2<Td_traits>::remove(Halfedge_const_handle he)
   In_face_iterator mid_it(follow_curve(p1_node,he,EQUAL));
   In_face_iterator top_it(follow_curve(p1_node,he,LARGER));
 
-  bool inc_btm = true; //true if btm_it should be be incremented (not top_it)
+  bool inc_btm = true; //true if btm_it should be incremented (not top_it)
   bool prev_inc_btm = false; //holds the inc_btm from previous iteration
   bool end_reached = false; //true if this is the last iteration
 
@@ -2636,7 +2636,7 @@ merge_edge(Halfedge_const_handle he1,
   Td_map_item rightp_item = locate(rightmost, lt2);
   Td_map_item mrgp_item = locate(ce, lt);
 
-  //varifying that all trapezoids are not nullptr and are of type POINT
+  //verifying that all trapezoids are not nullptr and are of type POINT
   CGAL_warning(std::visit(dag_node_visitor(), leftp_item) != nullptr);
   CGAL_warning(std::visit(dag_node_visitor(), rightp_item)!= nullptr);
   CGAL_warning(std::visit(dag_node_visitor(), mrgp_item)  != nullptr);

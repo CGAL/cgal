@@ -1,16 +1,16 @@
 namespace CGAL {
 
-// ---------------------------------------------- INTERIOR -----------------------------------------
+// ############################################## INTERIOR #########################################
 
 /*!
 \ingroup PkgStraightSkeleton2WeightedSkeletonFunctions
 
 \brief creates a weighted straight skeleton in the interior of a 2D polygon with holes.
 
-The outer contour is given by the point sequence `[outer_contour_vertices_begin, outer_contour_vertices_end]`
-and its holes are given by `[holes_begin,holes_end[`. Weights of the outer contour are given by
-`[outer_contour_weights_begin, outer_contour_weights_end[`, and weights of the holes are given by
-`[holes_weights_begin, holes_weights_end]`, in the same order as holes appear in the iterator range.
+The outer contour is given by the point sequence `[outer_contour_vertices_begin, outer_contour_vertices_end)`
+and its holes are given by `[holes_begin,holes_end)`. Weights of the outer contour are given by
+`[outer_contour_weights_begin, outer_contour_weights_end)`, and weights of the holes are given by
+`[holes_weights_begin, holes_weights_end)`, in the same order as holes appear in the iterator range.
 Within each weight range, weights are given in the same order as the vertices of the contour:
 the `i`-th weight in the range is associated to the contour edge between the `i-1`-th and `i`-th vertices.
 
@@ -25,9 +25,9 @@ the `i`-th weight in the range is associated to the contour edge between the `i-
 \note `Cartesian_converter` and `NT_converter` are used to convert objects from `InK` to `SsK`,
       if they differ.
 
-\pre the range `[outer_contour_vertices_begin, outer_contour_vertices_end[` describes a weakly simple polygon
+\pre the range `[outer_contour_vertices_begin, outer_contour_vertices_end)` describes a weakly simple polygon
      that is oriented counterclockwise.
-\\pre the range `[holes_begin, holes_end[` describes a sequence of weakly simple polygons that are oriented clockwise.
+\\pre the range `[holes_begin, holes_end)` describes a sequence of weakly simple polygons that are oriented clockwise.
 \pre Holes neither intersect each other nor the outer boundary.
 \pre All the weights must be (strictly) positive.
 \pre Collinear consecutive contour edges must have equal weights.
@@ -37,7 +37,7 @@ the `i`-th weight in the range is associated to the contour edge between the `i-
 */
 template <typename PointIterator, typename HoleIterator,
           typename WeightIterator, typename HoleWeightsIterator,
-          typename SsK>
+          typename SsK = CGAL::Exact_predicates_inexact_constructions_kernel>
 std::shared_ptr< Straight_skeleton_2<SsK> >
 create_interior_weighted_straight_skeleton_2(PointIterator outer_contour_vertices_begin,
                                              PointIterator outer_contour_vertices_end,
@@ -47,15 +47,15 @@ create_interior_weighted_straight_skeleton_2(PointIterator outer_contour_vertice
                                              WeightIterator outer_contour_weights_end,
                                              HoleWeightsIterator holes_weights_begin,
                                              HoleWeightsIterator holes_weights_end,
-                                             SsK k = CGAL::Exact_predicates_inexact_constructions_kernel());
+                                             const SsK& k = SsK());
 
 /*!
 \ingroup PkgStraightSkeleton2WeightedSkeletonFunctions
 
 \brief creates a weighted straight skeleton in the interior of a 2D polygon *without* holes.
 
-The outer contour is given by the point sequence `[outer_contour_vertices_begin, outer_contour_vertices_end]`.
-Weights of the outer contour are given by `[outer_contour_weights_begin, outer_contour_weights_end]`,
+The outer contour is given by the point sequence `[outer_contour_vertices_begin, outer_contour_vertices_end)`.
+Weights of the outer contour are given by `[outer_contour_weights_begin, outer_contour_weights_end)`,
 appearing in the same order as the vertices of the contour: the `i`-th weight in the range is associated
 to the contour edge between the `i-1`-th and `i`-th vertices.
 
@@ -66,7 +66,7 @@ to the contour edge between the `i-1`-th and `i`-th vertices.
 \note `Cartesian_converter` and `NT_converter` are used to convert objects from `InK` to `SsK`,
       if they differ.
 
-\pre the range `[outer_contour_vertices_begin, outer_contour_vertices_end[` describes a weakly simple polygon
+\pre the range `[outer_contour_vertices_begin, outer_contour_vertices_end)` describes a weakly simple polygon
      that is oriented counterclockwise.
 \pre All the weights must be (strictly) positive.
 \pre Collinear consecutive contour edges must have equal weights.
@@ -74,27 +74,28 @@ to the contour edge between the `i-1`-th and `i`-th vertices.
 \sa `CGAL::create_exterior_straight_skeleton_2()`
 \sa `CGAL::Straight_skeleton_builder_2`
 */
-template <typename PointIterator, typename WeightIterator, typename SsK>
+template <typename PointIterator, typename WeightIterator,
+          typename SsK = CGAL::Exact_predicates_inexact_constructions_kernel>
 std::shared_ptr< Straight_skeleton_2<SsK> >
 create_interior_weighted_straight_skeleton_2(PointIterator outer_contour_vertices_begin,
                                              PointIterator outer_contour_vertices_end,
                                              WeightIterator outer_contour_weights_begin,
                                              WeightIterator outer_contour_weights_end,
-                                             SsK k = CGAL::Exact_predicates_inexact_constructions_kernel());
+                                             const SsK& k = SsK());
 
 /*!
 \ingroup PkgStraightSkeleton2WeightedSkeletonFunctions
 
 \brief creates a weighted straight skeleton in the interior of a 2D polygon, possibly with holes.
 
-Range of weights `weights` must be provided in the same order as the contours (i.e., first
+Weights must be provided in the same order as the contours (i.e., first
 the weights of the outer boundary, and then the weights of the holes, if there are any).
 Within each range of weights, the weights must be given in the same order as the vertices of the contour:
 the `i`-th weight in the range is associated to the contour edge between the `i-1`-th and `i`-th vertices.
 
 \tparam InKPolygon must be a model of `SequenceContainer` with value type `InK::Point_2` (e.g. `Polygon_2<InK>`),
                    or a model of `GeneralPolygonWithHoles_2` (e.g. `Polygon_with_holes_2<InK>`).
-\tparam InKWeights must be a model of `Range` whose value type is itself a model of `Range` with value type `InK::FT`.
+\tparam InKWeights must be a model of `SequenceContainer` whose value type is itself a model of `SequenceContainer` with value type `InK::FT`.
 \tparam SsK must be a model of `Kernel`.
 
 \note `Cartesian_converter` and `NT_converter` are used to convert objects from `InK` to `SsK`,
@@ -108,19 +109,20 @@ the `i`-th weight in the range is associated to the contour edge between the `i-
 \sa `CGAL::create_exterior_straight_skeleton_2()`
 \sa `CGAL::Straight_skeleton_builder_2`
 */
-template <typename InKPolygon, typename InKWeights, typename SsK>
+template <typename InKPolygon, typename InKWeights,
+          typename SsK = CGAL::Exact_predicates_inexact_constructions_kernel>
 std::shared_ptr< Straight_skeleton_2<SsK> >
 create_interior_weighted_straight_skeleton_2(const InKPolygon& polygon,
                                              const InKWeights& weights,
-                                             SsK k = CGAL::Exact_predicates_inexact_constructions_kernel());
+                                             const SsK& k = SsK());
 
-// ---------------------------------------------- EXTERIOR -----------------------------------------
+// ############################################## EXTERIOR #########################################
 
 /*!
 \ingroup PkgStraightSkeleton2WeightedSkeletonFunctions
 
 \brief creates a weighted straight skeleton in the <I>limited exterior</I> of the 2D polygon `P`
-given by the point sequence `[vertices_begin,vertices_end[`.
+given by the point sequence `[vertices_begin,vertices_end)`.
 
 The skeleton in the <I>limited exterior</I> of `P` is the skeleton in the interior of a polygon `Q`
 with `P` as its hole and a rectangular frame `F` as outer boundary.
@@ -146,14 +148,16 @@ is associated to the contour edge between the `i-1`-th and `i`-th vertices.
 \sa `CGAL::create_interior_straight_skeleton_2()`
 \sa `CGAL::Straight_skeleton_builder_2`
 */
-template <typename FT, typename PointIterator, typename WeightIterator, typename SsK>
+template <typename FT,
+          typename PointIterator, typename WeightIterator,
+          typename SsK = CGAL::Exact_predicates_inexact_constructions_kernel>
 std::shared_ptr< Straight_skeleton_2<SsK> >
-create_exterior_weighted_straight_skeleton_2(FT max_offset,
+create_exterior_weighted_straight_skeleton_2(const FT& max_offset,
                                              PointIterator vertices_begin,
                                              PointIterator vertices_end,
                                              WeightIterator weights_begin,
                                              WeightIterator weights_end,
-                                             SsK k = CGAL::Exact_predicates_inexact_constructions_kernel());
+                                             const SsK& k = SsK());
 
 /*!
 \ingroup PkgStraightSkeleton2WeightedSkeletonFunctions
@@ -177,7 +181,7 @@ is associated to the contour edge between the `i-1`-th and `i`-th vertices.
 \tparam FT must be a model of `FieldNumberType` convertible to `SsK::FT`.
 \tparam InKPolygon must be a model of `SequenceContainer` with value type `InK::Point_2` (e.g. `Polygon_2<InK>`)
                    or a model of `GeneralPolygonWithHoles_2` (e.g. `Polygon_with_holes_2<InK>`).
-\tparam InKWeights must be a model of `Range` whose value type is itself a model of `Range` with value type `InK::FT`.
+\tparam InKWeights must be a model of `SequenceContainer` whose value type is itself a model of `SequenceContainer` with value type `InK::FT`.
 
 \note `Cartesian_converter` and `NT_converter` are used to convert objects from `InK` to `SsK`,
       if they differ.
@@ -191,11 +195,14 @@ is associated to the contour edge between the `i-1`-th and `i`-th vertices.
 \sa `CGAL::create_interior_straight_skeleton_2()`
 \sa `CGAL::Straight_skeleton_builder_2`
 */
-template <typename FT, typename Polygon, typename Weights, typename SsK>
+template <typename FT,
+          typename Polygon,
+          typename InKWeights,
+          typename SsK = CGAL::Exact_predicates_inexact_constructions_kernel>
 std::shared_ptr< Straight_skeleton_2<SsK> >
-create_exterior_weighted_straight_skeleton_2(FT max_offset,
+create_exterior_weighted_straight_skeleton_2(const FT& max_offset,
                                              const InKPolygon& P,
                                              const InKWeights& weights,
-                                             SsK k = CGAL::Exact_predicates_inexact_constructions_kernel());
+                                             const SsK& k = SsK());
 
 } /* namespace CGAL */

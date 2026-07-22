@@ -426,7 +426,7 @@ void test_algebraic_structure_intern(
     //commutative
     assert(a+b+c==c+b+a);
     assert(a*b*c==c*b*a);
-    //distributiv
+    //distributive
     assert((a-b)*c==a*c-b*c);
     assert((a+b)*c==a*c+b*c);
     //binom

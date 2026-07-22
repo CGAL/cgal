@@ -25,9 +25,10 @@ width-planes.
 \f$ \mathcal{W(S)}=\mathcal{W}_{d_{opt}}\mathcal{(S)}\f$
 </OL>
 
-<I>Note:</I> There might be several optimal build directions. Hence
+\note There might be several optimal build directions. Hence
 neither the width-planes nor the direction \f$ \mathbf{d}_{opt}\f$ are
-unique - only the width is.
+unique - only the width is.   There may also be duplicates reported,
+different vectors having the same or the opposite directions.
 
 \tparam Traits must be a model for `WidthTraits_3`.
 
@@ -54,7 +55,7 @@ Because there is no need for dividing values during the algorithm, the
 numbers can get really huge (all the computations are made using a lot
 of multiplications). Therefore it is strongly recommended to use a
 number type that can handle numbers of arbitrary length (e.g.,
-`leda_integer` in combination with the homogeneous representation
+`Exact_integer` in combination with the homogeneous representation
 of the points). But these large numbers have a disadvantage:
 Operations on them are slower as greater the number gets. Therefore it
 is possible to shorten the numbers by using the compiler flag

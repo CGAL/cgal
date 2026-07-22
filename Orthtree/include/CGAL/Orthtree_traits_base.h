@@ -9,13 +9,11 @@
 //
 // Author(s)     : Jackson Campolattaro
 
-#ifndef ORTHTREE_ORTHTREE_TRAITS_BASE_H
-#define ORTHTREE_ORTHTREE_TRAITS_BASE_H
+#ifndef CGAL_ORTHTREE_ORTHTREE_TRAITS_BASE_H
+#define CGAL_ORTHTREE_ORTHTREE_TRAITS_BASE_H
 
 #include <CGAL/license/Orthtree.h>
 
-#include <CGAL/Bbox_2.h>
-#include <CGAL/Point_set_2.h>
 #include <CGAL/Orthtree/Cartesian_ranges.h>
 #include <CGAL/Orthtree.h>
 
@@ -91,11 +89,16 @@ struct Orthtree_traits_base {
   using Adjacency = int;
   /// @}
 
-  auto construct_point_d_object() const {
-    return [](auto... Args) -> Point_d {
-      std::initializer_list<FT> args_list{Args...};
-      return Point_d{static_cast<int>(args_list.size()), args_list.begin(), args_list.end()};
-    };
+  struct Construct_point_d {
+    template <typename ...Args, typename T = std::common_type_t<Args...>>
+    Point_d operator()(Args ...args) {
+      std::initializer_list<T> args_list{ args... };
+      return Point_d{ static_cast<int>(args_list.size()), args_list.begin(), args_list.end() };
+    }
+  };
+
+  Construct_point_d construct_point_d_object() const {
+    return Construct_point_d();
   }
 };
 
@@ -109,6 +112,7 @@ struct Orthtree_traits_base<GeomTraits, 2> {
   using Bbox_d = typename GeomTraits::Iso_rectangle_2;
   using Sphere_d = typename GeomTraits::Circle_2;
   using Cartesian_const_iterator_d = typename GeomTraits::Cartesian_const_iterator_2;
+  using Has_on_unbounded_side = typename GeomTraits::Has_on_unbounded_side_2;
 
   enum Adjacency {
     LEFT,
@@ -117,10 +121,16 @@ struct Orthtree_traits_base<GeomTraits, 2> {
     UP
   };
 
-  auto construct_point_d_object() const {
+  using Construct_point_d = Point_d(*)(const FT&, const FT&);
+
+  Construct_point_d construct_point_d_object() const {
     return [](const FT& x, const FT& y) -> Point_d {
       return {x, y};
     };
+  }
+
+  Has_on_unbounded_side has_on_unbounded_side_object() const {
+    return GeomTraits().has_on_unbounded_side_3_object();
   }
 };
 
@@ -134,6 +144,7 @@ struct Orthtree_traits_base<GeomTraits, 3> {
   using Bbox_d = typename GeomTraits::Iso_cuboid_3;
   using Sphere_d = typename GeomTraits::Sphere_3;
   using Cartesian_const_iterator_d = typename GeomTraits::Cartesian_const_iterator_3;
+  using Has_on_unbounded_side = typename GeomTraits::Has_on_unbounded_side_3;
 
   enum Adjacency {
     LEFT,
@@ -155,13 +166,19 @@ struct Orthtree_traits_base<GeomTraits, 3> {
     RIGHT_TOP_FRONT
   };
 
-  auto construct_point_d_object() const {
+  using Construct_point_d = Point_d(*)(const FT&, const FT&, const FT&);
+
+  Construct_point_d construct_point_d_object() const {
     return [](const FT& x, const FT& y, const FT& z) -> Point_d {
       return {x, y, z};
     };
+  }
+
+  Has_on_unbounded_side has_on_unbounded_side_object() const {
+    return GeomTraits().has_on_unbounded_side_3_object();
   }
 };
 
 }
 
-#endif //ORTHTREE_ORTHTREE_TRAITS_BASE_H
+#endif //CGAL_ORTHTREE_ORTHTREE_TRAITS_BASE_H

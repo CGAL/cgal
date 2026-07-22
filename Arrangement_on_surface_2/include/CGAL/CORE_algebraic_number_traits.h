@@ -421,10 +421,10 @@ public:
     // Construct two polynomials with integer coefficients.
     Integer        p_scale, q_scale;
 
-    construct_polynomial (*(P.getCoeffs()), p_deg,
+    construct_polynomial (P.getCoeffs(), p_deg,
                           p_poly, q_scale);
 
-    construct_polynomial (*(Q.getCoeffs()), q_deg,
+    construct_polynomial (Q.getCoeffs(), q_deg,
                           q_poly, p_scale);
 
     // Scale the result polynomials.
@@ -541,7 +541,7 @@ public:
 
     for (i = 1; i <= n_roots; i++)
     {
-      // Get the i'th real-valued root.
+      // Get the i-th real-valued root.
       *oi = rootOf(poly, i);
       ++oi;
     }
@@ -603,7 +603,7 @@ public:
 
     for (i = 0; i < root_intervals.size(); i++)
     {
-      // Get the i'th real-valued root.
+      // Get the i-th real-valued root.
       *oi = rootOf(poly, root_intervals[i]);
       ++oi;
     }

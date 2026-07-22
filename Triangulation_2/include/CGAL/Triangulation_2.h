@@ -172,7 +172,7 @@ public:
     Self & operator--() { Base::operator--(); return *this; }
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
-    operator Vertex_handle() const { return Base::base(); }
+    operator const Vertex_handle&() const { return Base::base(); }
   };
 
   class Finite_faces_iterator
@@ -187,7 +187,7 @@ public:
     Self & operator--() { Base::operator--(); return *this; }
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
-    operator Face_handle() const { return Base::base(); }
+    operator const Face_handle&() const { return Base::base(); }
   };
 
   typedef Filter_iterator<All_edges_iterator,
@@ -214,8 +214,10 @@ public:
   typedef typename Tds::Vertex_handles         All_vertex_handles;
   typedef typename Tds::Edges                  All_edges;
 
-  typedef Iterator_range<Prevent_deref<Finite_faces_iterator> >    Finite_face_handles;
-  typedef Iterator_range<Prevent_deref<Finite_vertices_iterator> > Finite_vertex_handles;
+  typedef Iterator_range<Prevent_deref<Finite_faces_iterator,
+                                       const Face_handle&>>   Finite_face_handles;
+  typedef Iterator_range<Prevent_deref<Finite_vertices_iterator,
+                                       const Vertex_handle&>> Finite_vertex_handles;
   typedef Iterator_range<Finite_edges_iterator>                    Finite_edges;
   typedef Iterator_range<Point_iterator>                           Points;
 
@@ -292,6 +294,7 @@ public:
   bool is_infinite(const Edge& e) const;
   bool is_infinite(const Edge_circulator& ec) const;
   bool is_infinite(const All_edges_iterator& ei) const;
+  bool is_vertex(Vertex_handle va) const;
   bool is_edge(Vertex_handle va, Vertex_handle vb) const;
   bool is_edge(Vertex_handle va, Vertex_handle vb, Face_handle& fr,
                int & i) const;
@@ -320,6 +323,10 @@ public:
   Point_2 circumcenter(const Point& p0,
                        const Point& p1,
                        const Point& p2) const;
+
+  const Point& geometry(Vertex_handle v) const { return point(v); }
+  Segment geometry(const Edge& e) const { return segment(e); }
+  Triangle geometry(Face_handle f) const { return triangle(f); }
 
 
   //MOVE - INSERTION - DELETION - Flip
@@ -1097,6 +1104,14 @@ is_infinite(const All_edges_iterator& ei) const
 template <class Gt, class Tds >
 inline bool
 Triangulation_2<Gt, Tds>::
+is_vertex(Vertex_handle va) const
+{
+  return _tds.is_vertex(va);
+}
+
+template <class Gt, class Tds >
+inline bool
+Triangulation_2<Gt, Tds>::
 is_edge(Vertex_handle va, Vertex_handle vb) const
 {
   return _tds.is_edge( va, vb);
@@ -1463,7 +1478,7 @@ template <class Gt, class Tds >
 typename Triangulation_2<Gt,Tds>::Vertex_handle
 Triangulation_2<Gt,Tds>::
 insert(const Point& p, Locate_type lt, Face_handle loc, int li)
-  // insert a point p, whose localisation is known (lt, f, i)
+  // insert a point p, whose localization is known (lt, f, i)
 {
   if(number_of_vertices() == 0) {
     return(insert_first(p));
@@ -3267,7 +3282,7 @@ typename Triangulation_2<Gt, Tds>::Finite_face_handles
 Triangulation_2<Gt, Tds>::
 finite_face_handles() const
 {
-  return make_prevent_deref_range(finite_faces_begin(),finite_faces_end());
+  return { finite_faces_begin(), finite_faces_end() };
 }
 
 template <class Gt, class Tds >
@@ -3296,7 +3311,7 @@ typename Triangulation_2<Gt, Tds>::Finite_vertex_handles
 Triangulation_2<Gt, Tds>::
 finite_vertex_handles() const
 {
-  return make_prevent_deref_range(finite_vertices_begin(),finite_vertices_end());
+  return { finite_vertices_begin(), finite_vertices_end() };
 }
 
 template <class Gt, class Tds >
@@ -3671,13 +3686,8 @@ Comparison_result
 Triangulation_2<Gt, Tds>::
 compare_xy(const Point& p, const Point& q) const
 {
-  Comparison_result res = geom_traits().compare_x_2_object()(construct_point(p),
-                                                             construct_point(q));
-  if(res == EQUAL){
-    return geom_traits().compare_y_2_object()(construct_point(p),
-                                              construct_point(q));
-  }
-  return res;
+  return geom_traits().compare_xy_2_object()(construct_point(p),
+                                             construct_point(q));
 }
 
 template <class Gt, class Tds >

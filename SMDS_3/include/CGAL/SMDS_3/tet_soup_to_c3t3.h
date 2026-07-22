@@ -439,7 +439,9 @@ bool build_triangulation_impl(Tr& tr,
     vh->set_dimension(-1);
 
   if(verbose)
+  {
     std::cout << "build vertices done (" << tr.tds().number_of_vertices() << " vertices)" << std::endl;
+  }
 
   if (!finite_cells.empty())
   {
@@ -464,6 +466,18 @@ bool build_triangulation_impl(Tr& tr,
     else if(verbose)
     {
       std::cout << "build infinite cells done (" << tr.tds().cells().size() << " cells)" << std::endl;
+    }
+
+    // purge vertices which have no incident cell (unused points in the initial range)
+    for (auto vit = tr.finite_vertices_begin(), end = tr.finite_vertices_end(); vit != end; ++vit)
+    {
+      if (vit->cell() == Cell_handle())
+        tr.tds().delete_vertex(vit);
+    }
+
+    if(verbose)
+    {
+      std::cout << "vertices after purge: " << tr.tds().number_of_vertices() << std::endl;
     }
 
     tr.tds().set_dimension(3);
@@ -566,6 +580,7 @@ bool build_triangulation_from_file(std::istream& is,
 {
   using Point_3 = typename Tr::Point;
   using Subdomain_index = typename Tr::Cell::Subdomain_index;
+  using Surface_patch_index = typename Tr::Cell::Surface_patch_index;
 
   using Facet        = std::array<int, 3>; // 3 = id
   using Tet_with_ref = std::array<int, 4>; // 4 = id
@@ -576,7 +591,7 @@ bool build_triangulation_from_file(std::istream& is,
   std::vector<Tet_with_ref> finite_cells;
   std::vector<Subdomain_index> subdomains;
   std::vector<Point_3> points;
-  boost::unordered_map<Facet, typename Tr::Cell::Surface_patch_index> border_facets;
+  boost::unordered_map<Facet, Surface_patch_index> border_facets;
 
   int dim;
   int nv, nf, ntet, ref;
@@ -601,19 +616,38 @@ bool build_triangulation_from_file(std::istream& is,
   {
     // remove trailing whitespace, in particular a possible '\r' from Windows
     // end-of-line encoding
-    if(!line.empty() && std::isspace(line.back())) {
+    while(!line.empty() && std::isspace(line.back())) {
       line.pop_back();
     }
-    if (line.size() > 0 && line.at(0) == '#' &&
+    if(line.empty())
+      continue;
+
+    // remove whitespaces at the beginning of the line
+    for (std::size_t i=0; i<line.size(); ++i)
+    {
+      if (!std::isspace(line[i]))
+      {
+        if (i!=0)
+          line = line.substr(i);
+        break;
+      }
+    }
+
+    if (line.at(0) == '#' &&
         line.find("CGAL::Mesh_complex_3_in_triangulation_3") != std::string::npos)
     {
       is_CGAL_mesh = true; // with CGAL meshes, domain 0 should be kept
       continue;
     }
 
-    if(line == "Vertices")
+    // skip non-CGAL comments
+    if (line.at(0)=='#') continue;
+
+    if(line.find("Vertices") != std::string::npos)
     {
       is >> nv;
+      if(verbose)
+        std::cerr << "Reading "<< nv << " vertices" << std::endl;
       for(int i=0; i<nv; ++i)
       {
         typename Tr::Geom_traits::FT x,y,z;
@@ -627,15 +661,19 @@ bool build_triangulation_from_file(std::istream& is,
       }
     }
 
-    if(line == "Triangles")
+    if(line.find("Triangles") != std::string::npos)
     {
       bool has_negative_surface_patch_ids = false;
-      typename Tr::Cell::Surface_patch_index max_surface_patch_id = 0;
+      Surface_patch_index max_surface_patch_id{0};
       is >> nf;
+
+      if(verbose)
+        std::cerr << "Reading "<< nf << " triangles" << std::endl;
+
       for(int i=0; i<nf; ++i)
       {
         int n[3];
-        typename Tr::Cell::Surface_patch_index surface_patch_id;
+        Surface_patch_index surface_patch_id;
         if(!(is >> n[0] >> n[1] >> n[2] >> surface_patch_id))
         {
           if(verbose)
@@ -680,9 +718,13 @@ bool build_triangulation_from_file(std::istream& is,
       }
     }
 
-    if(line == "Tetrahedra")
+    if(line.find("Tetrahedra") != std::string::npos)
     {
       is >> ntet;
+
+      if(verbose)
+        std::cerr << "Reading "<< ntet << " tetrahedra" << std::endl;
+
       for(int i=0; i<ntet; ++i)
       {
         int n[4];

@@ -1,7 +1,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
 
-#include <CGAL/boost/graph/helpers.h>
+#include <CGAL/boost/graph/generators.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/property_map.h>
 

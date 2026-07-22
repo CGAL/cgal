@@ -128,14 +128,14 @@ public:
         return &data_[0];
     }
 
-    /// Access the i'th element. No range check is performed!
+    /// Access the i-th element. No range check is performed!
     reference operator[](int _idx)
     {
         assert( size_t(_idx) < data_.size() );
         return data_[_idx];
     }
 
-    /// Const access to the i'th element. No range check is performed!
+    /// Const access to the i-th element. No range check is performed!
     const_reference operator[](int _idx) const
     {
         assert( size_t(_idx) < data_.size());

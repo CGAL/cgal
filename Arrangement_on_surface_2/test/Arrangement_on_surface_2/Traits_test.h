@@ -20,17 +20,17 @@
 #include "Traits_base_test.h"
 
 /*! Traits test */
-template <typename Geom_traits_T>
-class Traits_test : public Traits_base_test<Geom_traits_T> {
+template <typename GeomTraits>
+class Traits_test : public Traits_base_test<GeomTraits> {
 private:
-  Traits_test<Geom_traits_T>&  operator=(const Traits_test<Geom_traits_T>&);
-  typedef Geom_traits_T                                 Traits;
-  typedef Traits_base_test<Traits>                      Base;
-  typedef typename Base::Enum_type                      Enum_type;
+  Traits_test<GeomTraits>& operator=(const Traits_test<GeomTraits>&);
+  using Traits = GeomTraits;
+  using Base = Traits_base_test<Traits>;
+  using Enum_type = typename Base::Enum_type;
 
-  typedef typename Traits::Point_2                      Point_2;
-  typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
-  typedef typename Traits::Curve_2                      Curve_2;
+  using Point_2 = typename Traits::Point_2;
+  using X_monotone_curve_2 = typename Traits::X_monotone_curve_2;
+  using Curve_2 = typename Traits::Curve_2;
 
   // some polycurve functors needs Segment and x-monotone segment to be defined
   // which are normally not found in other geom_traits.
@@ -38,21 +38,21 @@ private:
   TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS ||     \
   TEST_GEOM_TRAITS == POLYCURVE_BEZIER_GEOM_TRAITS
 
-  typedef typename Traits::Subcurve_2                   Subcurve_2;
-  typedef typename Traits::X_monotone_subcurve_2        X_monotone_subcurve_2;
+  using Subcurve_2 = typename Traits::Subcurve_2;
+  using X_monotone_subcurve_2 = typename Traits::X_monotone_subcurve_2;
 
 #endif
 
   /*! A map between (strings) commands and (member functions) operations */
-  typedef bool(Traits_test::* Wrapper)(std::istringstream&);
-  typedef std::map<std::string, Wrapper>                Wrapper_map;
-  typedef typename Wrapper_map::iterator                Wrapper_iter;
+  using Wrapper = bool (Traits_test::*)(std::istringstream&);
+  using Wrapper_map = std::map<std::string, Wrapper>;
+  using Wrapper_iter = typename Wrapper_map::iterator;
+
   Wrapper_map m_wrappers;
 
   virtual bool exec(std::istringstream& str_stream,
                     const std::string& str_command,
-                    bool& result)
-  {
+                    bool& result) {
     // str_stream is the input file object.
     // Get the appropriate functor. "str_command" consist of the appropriate
     // functor string.
@@ -145,6 +145,7 @@ private:
    * other coincide.
    */
   bool intersect_wrapper(std::istringstream& line);
+  bool do_intersect_wrapper(std::istringstream& line);
 
   /*! Tests Split_2.
    * Split a given x-monotone curve at a given point into two sub-curves.
@@ -169,6 +170,47 @@ private:
 
   /*! Tests Approximate_2.
    * Return an approximation of a point coordinate.
+   */
+
+  /*! Fall threw implementation to handle the case where the
+   * Approximate_2::operator()(const X_monotone_curve_2& xcv,
+   *                           Approximate_number_type error,
+   *                           OutputIterator oi,
+   *                           bool l2r)
+   * is not supported.
+   */
+  template <typename GT>
+  bool approximate_wrapper_impl2(std::istringstream& is, long);
+
+  /*! Specialized instance to handle the case where the
+   * Approximate_2::operator()(const X_monotone_curve_2& xcv,
+   *                           Approximate_number_type error,
+   *                           OutputIterator oi,
+   *                           bool l2r)
+   * is supported.
+   */
+  template <typename GT,
+            typename T =
+            decltype(std::declval<GT>().approximate_2_object().operator()
+                     (std::declval<typename GT::X_monotone_curve_2>(),
+                      0,
+                      (std::declval<int*>())))>
+  bool approximate_wrapper_impl2(std::istringstream& is, int);
+
+  /*! Fall threw implementation to handle the case where the type
+   * Traits::Approximate_2 does not exist.
+   */
+  template <typename GT>
+  bool approximate_wrapper_impl1(std::istringstream& is, long);
+
+  /*! Specialized instance to handle the case where the type
+   * Traits::Approximate_2 exists.
+   */
+  template <typename GT,
+            typename T = decltype(std::declval<GT>().approximate_2_object())>
+  bool approximate_wrapper_impl1(std::istringstream& is, int);
+
+  /*!
    */
   bool approximate_wrapper(std::istringstream& line);
 
@@ -260,65 +302,42 @@ public:
 /*! Constructor.
  * Accepts test data file name.
  */
-template <typename Geom_traits_T>
-Traits_test<Geom_traits_T>::Traits_test(const Geom_traits_T& traits) :
-Base(traits)
-{
-  typedef Geom_traits_T Traits;
+template <typename GeomTraits>
+Traits_test<GeomTraits>::Traits_test(const GeomTraits& traits) : Base(traits) {
+  using Traits = GeomTraits;
 
-  m_wrappers[std::string("compare_x")] =
-    &Traits_test<Traits>::compare_x_wrapper;
-  m_wrappers[std::string("compare_xy")] =
-    &Traits_test<Traits>::compare_xy_wrapper;
-  m_wrappers[std::string("min_vertex")] =
-    &Traits_test<Traits>::min_vertex_wrapper;
-  m_wrappers[std::string("max_vertex")] =
-    &Traits_test<Traits>::max_vertex_wrapper;
-  m_wrappers[std::string("is_vertical")] =
-    &Traits_test<Traits>::is_vertical_wrapper;
-  m_wrappers[std::string("compare_y_at_x")] =
-    &Traits_test<Traits>::compare_y_at_x_wrapper;
-  m_wrappers[std::string("compare_y_at_x_left")] =
-    &Traits_test<Traits>::compare_y_at_x_left_wrapper;
-  m_wrappers[std::string("compare_y_at_x_right")] =
-    &Traits_test<Traits>::compare_y_at_x_right_wrapper;
-  m_wrappers[std::string("equal_points")] =
-    &Traits_test<Traits>::equal_points_wrapper;
-  m_wrappers[std::string("equal_curves")] =
-    &Traits_test<Traits>::equal_curves_wrapper;
-  m_wrappers[std::string("make_x_monotone")] =
-    &Traits_test<Traits>::make_x_monotone_wrapper;
-  m_wrappers[std::string("intersect")] =
-    &Traits_test<Traits>::intersect_wrapper;
-  m_wrappers[std::string("split")] =
-    &Traits_test<Traits>::split_wrapper;
-  m_wrappers[std::string("are_mergeable")] =
-    &Traits_test<Traits>::are_mergeable_wrapper;
-  m_wrappers[std::string("merge")] =
-    &Traits_test<Traits>::merge_wrapper;
-  m_wrappers[std::string("approximate")] =
-    &Traits_test<Traits>::approximate_wrapper;
-  m_wrappers[std::string("construct_x_monotone_curve")] =
-    &Traits_test<Traits>::construct_x_monotone_curve_wrapper;
+  m_wrappers[std::string("compare_x")] = &Traits_test<Traits>::compare_x_wrapper;
+  m_wrappers[std::string("compare_xy")] = &Traits_test<Traits>::compare_xy_wrapper;
+  m_wrappers[std::string("min_vertex")] = &Traits_test<Traits>::min_vertex_wrapper;
+  m_wrappers[std::string("max_vertex")] = &Traits_test<Traits>::max_vertex_wrapper;
+  m_wrappers[std::string("is_vertical")] = &Traits_test<Traits>::is_vertical_wrapper;
+  m_wrappers[std::string("compare_y_at_x")] = &Traits_test<Traits>::compare_y_at_x_wrapper;
+  m_wrappers[std::string("compare_y_at_x_left")] = &Traits_test<Traits>::compare_y_at_x_left_wrapper;
+  m_wrappers[std::string("compare_y_at_x_right")] = &Traits_test<Traits>::compare_y_at_x_right_wrapper;
+  m_wrappers[std::string("equal_points")] = &Traits_test<Traits>::equal_points_wrapper;
+  m_wrappers[std::string("equal_curves")] = &Traits_test<Traits>::equal_curves_wrapper;
+  m_wrappers[std::string("make_x_monotone")] = &Traits_test<Traits>::make_x_monotone_wrapper;
+  m_wrappers[std::string("intersect")] = &Traits_test<Traits>::intersect_wrapper;
+  m_wrappers[std::string("do_intersect")] = &Traits_test<Traits>::do_intersect_wrapper;
+  m_wrappers[std::string("split")] = &Traits_test<Traits>::split_wrapper;
+  m_wrappers[std::string("are_mergeable")] = &Traits_test<Traits>::are_mergeable_wrapper;
+  m_wrappers[std::string("merge")] = &Traits_test<Traits>::merge_wrapper;
+  m_wrappers[std::string("approximate")] = &Traits_test<Traits>::approximate_wrapper;
+  m_wrappers[std::string("construct_x_monotone_curve")] = &Traits_test<Traits>::construct_x_monotone_curve_wrapper;
 
   // left-right
 
-  m_wrappers[std::string("parameter_space_x")] =
-    &Traits_test<Traits>::parameter_space_in_x_wrapper;
-  m_wrappers[std::string("compare_y_near_boundary")] =
-    &Traits_test<Traits>::compare_y_near_boundary_wrapper;
+  m_wrappers[std::string("parameter_space_x")] = &Traits_test<Traits>::parameter_space_in_x_wrapper;
+  m_wrappers[std::string("compare_y_near_boundary")] = &Traits_test<Traits>::compare_y_near_boundary_wrapper;
 
   // TODO Is_on_y_identification_2
 
   // bottom-top
 
-  m_wrappers[std::string("parameter_space_y")] =
-    &Traits_test<Traits>::parameter_space_in_y_wrapper;
+  m_wrappers[std::string("parameter_space_y")] = &Traits_test<Traits>::parameter_space_in_y_wrapper;
 
-  m_wrappers[std::string("compare_x_near_boundary")] =
-    &Traits_test<Traits>::compare_x_near_boundary_wrapper;
-  m_wrappers[std::string("compare_x_on_boundary")] =
-    &Traits_test<Traits>::compare_x_on_boundary_wrapper;
+  m_wrappers[std::string("compare_x_near_boundary")] = &Traits_test<Traits>::compare_x_near_boundary_wrapper;
+  m_wrappers[std::string("compare_x_on_boundary")] = &Traits_test<Traits>::compare_x_on_boundary_wrapper;
 
   // some polycurve functors needs Segment and x-monotone segment to be defined
   // which are normally not found in other geom_traits.
@@ -326,26 +345,20 @@ Base(traits)
       TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS || \
       TEST_GEOM_TRAITS == POLYCURVE_BEZIER_GEOM_TRAITS || \
       TEST_GEOM_TRAITS == POLYLINE_GEOM_TRAITS
-  m_wrappers[std::string("push_back")] =
-    &Traits_test<Traits>::push_back_wrapper;
-  m_wrappers[std::string("push_front")] =
-    &Traits_test<Traits>::push_front_wrapper;
-  m_wrappers[std::string("number_of_points")] =
-    &Traits_test<Traits>::number_of_points_wrapper;
-  m_wrappers[std::string("compare_endpoints_xy")] =
-    &Traits_test<Traits>::compare_endpoints_xy_wrapper;
-  m_wrappers[std::string("construct_opposite")] =
-    &Traits_test<Traits>::construct_opposite_wrapper;
-  m_wrappers[std::string("trim")] =
-    &Traits_test<Traits>::trim_wrapper;
+  m_wrappers[std::string("push_back")] = &Traits_test<Traits>::push_back_wrapper;
+  m_wrappers[std::string("push_front")] = &Traits_test<Traits>::push_front_wrapper;
+  m_wrappers[std::string("number_of_points")] = &Traits_test<Traits>::number_of_points_wrapper;
+  m_wrappers[std::string("compare_endpoints_xy")] = &Traits_test<Traits>::compare_endpoints_xy_wrapper;
+  m_wrappers[std::string("construct_opposite")] = &Traits_test<Traits>::construct_opposite_wrapper;
+  m_wrappers[std::string("trim")] = &Traits_test<Traits>::trim_wrapper;
 #endif
   // TODO Is_on_x_identification_2
 }
 
 /*! Destructor.
  */
-template <typename Geom_traits_T>
-Traits_test<Geom_traits_T>::~Traits_test() {}
+template <typename GeomTraits>
+Traits_test<GeomTraits>::~Traits_test() {}
 
 // some polycurve functors needs Segment and x-monotone segment to be defined
 // which are normally not found in other geom_traits.
@@ -354,9 +367,8 @@ Traits_test<Geom_traits_T>::~Traits_test() {}
     TEST_GEOM_TRAITS == POLYCURVE_BEZIER_GEOM_TRAITS || \
     TEST_GEOM_TRAITS == POLYLINE_GEOM_TRAITS
 
-template <typename Geom_traits_T>
-bool Traits_test<Geom_traits_T>::trim_wrapper(std::istringstream& str_stream)
-{
+template <typename GeomTraits>
+bool Traits_test<GeomTraits>::trim_wrapper(std::istringstream& str_stream) {
   unsigned int x_curve_id, xcv_trimmed, src_id, tgt_id;
 
   // Read the ID's of the x-curve, source and target points
@@ -386,10 +398,8 @@ bool Traits_test<Geom_traits_T>::trim_wrapper(std::istringstream& str_stream)
 
 /* Test Push_back
  */
-template <typename Geom_traits_T>
-bool Traits_test<Geom_traits_T>::
-push_back_wrapper(std::istringstream& str_stream)
-{
+template <typename GeomTraits>
+bool Traits_test<GeomTraits>::push_back_wrapper(std::istringstream& str_stream) {
   //type: 0 for pushing a segment into curve.
   //      1 for pushing x-monotone segment into x-monotone curve.
   unsigned int type;
@@ -459,10 +469,8 @@ push_back_wrapper(std::istringstream& str_stream)
 /*
  * Test Push_front
  */
-template <typename Geom_traits_T>
-bool Traits_test<Geom_traits_T>::
-push_front_wrapper(std::istringstream& str_stream)
-{
+template <typename GeomTraits>
+bool Traits_test<GeomTraits>::push_front_wrapper(std::istringstream& str_stream) {
   //type: 0 for pushing a segment into curve.
   //      1 for pushing x-monotone segment into x-monotone curve.
   unsigned int type;
@@ -535,10 +543,8 @@ push_front_wrapper(std::istringstream& str_stream)
  * This wrapper will only test for the x-monotone segments. For testing the
  * points, compare_x_wrapper can be used.
  */
-template <typename Geom_traits_T>
-bool Traits_test<Geom_traits_T>::
-compare_x_wrapper(std::istringstream& str_stream)
-{
+template <typename GeomTraits>
+bool Traits_test<GeomTraits>::compare_x_wrapper(std::istringstream& str_stream) {
   unsigned int id1, id2;
   unsigned int expected_answer;
   unsigned int real_answer;
@@ -581,10 +587,8 @@ compare_x_wrapper(std::istringstream& str_stream)
   return this->compare(expected_answer, real_answer);
 }
 
-template <typename Geom_traits_T>
-bool Traits_test<Geom_traits_T>::
-compare_xy_wrapper(std::istringstream& str_stream)
-{
+template <typename GeomTraits>
+bool Traits_test<GeomTraits>::compare_xy_wrapper(std::istringstream& str_stream) {
   unsigned int id1, id2;
   unsigned int expected_answer;
   unsigned int real_answer;
@@ -629,12 +633,10 @@ compare_xy_wrapper(std::istringstream& str_stream)
   return this->compare(expected_answer, real_answer);
 }
 
-template <typename Geom_traits_T>
-bool Traits_test<Geom_traits_T>::
-number_of_points_wrapper(std::istringstream& str_stream)
-{
-  typedef Geom_traits_T                         Geom_traits;
-  typedef typename Geom_traits::size_type       size_type;
+template <typename GeomTraits>
+bool Traits_test<GeomTraits>::number_of_points_wrapper(std::istringstream& str_stream) {
+  using Geom_traits = GeomTraits;
+  using size_type = typename Geom_traits::size_type;
 
   unsigned int id;
   size_type expected_result;
@@ -645,10 +647,8 @@ number_of_points_wrapper(std::istringstream& str_stream)
   return this->compare(expected_result, real_answer);
 }
 
-template <typename Geom_traits_T>
-bool Traits_test<Geom_traits_T>::
-compare_endpoints_xy_wrapper(std::istringstream& str_stream)
-{
+template <typename GeomTraits>
+bool Traits_test<GeomTraits>::compare_endpoints_xy_wrapper(std::istringstream& str_stream) {
   unsigned int id;
   str_stream >> id;
 
@@ -662,10 +662,8 @@ compare_endpoints_xy_wrapper(std::istringstream& str_stream)
   return this->compare(expected_answer, real_answer);
 }
 
-template <typename Geom_traits_T>
-bool Traits_test<Geom_traits_T>::
-construct_opposite_wrapper(std::istringstream& str_stream)
-{
+template <typename GeomTraits>
+bool Traits_test<GeomTraits>::construct_opposite_wrapper(std::istringstream& str_stream) {
   unsigned int id1, id2;
   str_stream >> id1 >> id2;
 
@@ -687,10 +685,8 @@ construct_opposite_wrapper(std::istringstream& str_stream)
     TEST_GEOM_TRAITS != POLYLINE_GEOM_TRAITS
 /*! Test Compare_x_2
  */
-template <typename Geom_traits_T>
-bool Traits_test<Geom_traits_T>::
-compare_x_wrapper(std::istringstream& str_stream)
-{
+template <typename GeomTraits>
+bool Traits_test<GeomTraits>::compare_x_wrapper(std::istringstream& str_stream) {
   unsigned int id1, id2;
   str_stream >> id1 >> id2;
   unsigned int exp_answer = this->get_expected_enum(str_stream);
@@ -705,10 +701,8 @@ compare_x_wrapper(std::istringstream& str_stream)
 
 /*! Test Compare_xy_2
  */
-template <typename Geom_traits_T>
-bool Traits_test<Geom_traits_T>::
-compare_xy_wrapper(std::istringstream& str_stream)
-{
+template <typename GeomTraits>
+bool Traits_test<GeomTraits>::compare_xy_wrapper(std::istringstream& str_stream) {
   unsigned int id1, id2;
   str_stream >> id1 >> id2;
   unsigned int exp_answer = this->get_expected_enum(str_stream);
@@ -726,10 +720,8 @@ compare_xy_wrapper(std::istringstream& str_stream)
 /*! Tests Construct_min_vertex_2.
  * Degenerate case: vertical curve.
  */
-template <typename Geom_traits_T>
-bool Traits_test<Geom_traits_T>::
-min_vertex_wrapper(std::istringstream& str_stream)
-{
+template <typename GeomTraits>
+bool Traits_test<GeomTraits>::min_vertex_wrapper(std::istringstream& str_stream) {
   unsigned int id1, id2;
   str_stream >> id1 >> id2;
   Point_2& exp_answer = this->m_points[id2];
@@ -744,10 +736,8 @@ min_vertex_wrapper(std::istringstream& str_stream)
 /*! Tests Construct_max_vertex_2.
  * Degenerate case: vertical curve.
  */
-template <typename Geom_traits_T>
-bool Traits_test<Geom_traits_T>::
-max_vertex_wrapper(std::istringstream& str_stream)
-{
+template <typename GeomTraits>
+bool Traits_test<GeomTraits>::max_vertex_wrapper(std::istringstream& str_stream) {
   unsigned int id1, id2;
   str_stream >> id1 >> id2;
   Point_2& exp_answer = this->m_points[id2];
@@ -759,11 +749,9 @@ max_vertex_wrapper(std::istringstream& str_stream)
   return this->compare_points(exp_answer, real_answer);
 }
 
-template <typename Geom_traits_T>
+template <typename GeomTraits>
 bool
-Traits_test<Geom_traits_T>::
-is_vertical_wrapper(std::istringstream& str_stream)
-{
+Traits_test<GeomTraits>::is_vertical_wrapper(std::istringstream& str_stream) {
   unsigned int id;
   str_stream >> id;
   bool exp_answer = this->get_expected_boolean(str_stream);
@@ -780,11 +768,9 @@ is_vertical_wrapper(std::istringstream& str_stream)
  * Degenerate cases: The point is an endpoint of the curve.
  *                   The curve is vertical.
  */
-template <typename Geom_traits_T>
+template <typename GeomTraits>
 bool
-Traits_test<Geom_traits_T>::
-compare_y_at_x_wrapper(std::istringstream& str_stream)
-{
+Traits_test<GeomTraits>::compare_y_at_x_wrapper(std::istringstream& str_stream) {
   unsigned int id1, id2;
   str_stream >> id1 >> id2;
   unsigned int exp_answer = this->get_expected_enum(str_stream);
@@ -804,29 +790,23 @@ compare_y_at_x_wrapper(std::istringstream& str_stream)
  *                   The curves coincide and vertical.
  *                   One of the curves is vertical.
  */
-template <typename Geom_traits_T>
+template <typename GeomTraits>
 bool
-Traits_test<Geom_traits_T>::
-compare_y_at_x_left_wrapper(std::istringstream& str_stream)
-{
-  typedef typename Geom_traits_T::Has_left_category          Has_left_category;
+Traits_test<GeomTraits>::compare_y_at_x_left_wrapper(std::istringstream& str_stream) {
+  using Has_left_category = typename GeomTraits::Has_left_category;
   return compare_y_at_x_left_wrapper_imp(str_stream, Has_left_category());
 }
 
-template <typename Geom_traits_T>
+template <typename GeomTraits>
 bool
-Traits_test<Geom_traits_T>::
-compare_y_at_x_left_wrapper_imp(std::istringstream&, CGAL::Tag_false)
-{
+Traits_test<GeomTraits>::compare_y_at_x_left_wrapper_imp(std::istringstream&, CGAL::Tag_false) {
   CGAL_error();
   return false;
 }
 
-template <typename Geom_traits_T>
+template <typename GeomTraits>
 bool
-Traits_test<Geom_traits_T>::
-compare_y_at_x_left_wrapper_imp(std::istringstream& str_stream, CGAL::Tag_true)
-{
+Traits_test<GeomTraits>::compare_y_at_x_left_wrapper_imp(std::istringstream& str_stream, CGAL::Tag_true) {
   unsigned int id1, id2, id3;
   str_stream >> id1 >> id2 >> id3;
   unsigned int exp_answer = this->get_expected_enum(str_stream);
@@ -846,10 +826,8 @@ compare_y_at_x_left_wrapper_imp(std::istringstream& str_stream, CGAL::Tag_true)
  *                   The curves coincide and vertical.
  *                   One of the curves is vertical.
  */
-template <typename Geom_traits_T>
-bool Traits_test<Geom_traits_T>::
-compare_y_at_x_right_wrapper(std::istringstream& str_stream)
-{
+template <typename GeomTraits>
+bool Traits_test<GeomTraits>::compare_y_at_x_right_wrapper(std::istringstream& str_stream) {
   unsigned int id1, id2, id3;
   str_stream >> id1 >> id2 >> id3;
   unsigned int exp_answer = this->get_expected_enum(str_stream);
@@ -866,10 +844,8 @@ compare_y_at_x_right_wrapper(std::istringstream& str_stream)
 /*! Tests Equal_2::operator()(Point_2, Point_2).
  * Check whether two points are the same.
  */
-template <typename Geom_traits_T>
-bool Traits_test<Geom_traits_T>::
-equal_points_wrapper(std::istringstream& str_stream)
-{
+template <typename GeomTraits>
+bool Traits_test<GeomTraits>::equal_points_wrapper(std::istringstream& str_stream) {
   unsigned int id1, id2;
   str_stream >> id1 >> id2;
   bool exp_answer = this->get_expected_boolean(str_stream);
@@ -884,10 +860,8 @@ equal_points_wrapper(std::istringstream& str_stream)
 /*! Tests Equal_2::operator()(X_monotone_curve_2, X_monotone_curve_2).
  * Check whether two x-monotone curves are the same.
  */
-template <typename Geom_traits_T>
-bool Traits_test<Geom_traits_T>::
-equal_curves_wrapper(std::istringstream& str_stream)
-{
+template <typename GeomTraits>
+bool Traits_test<GeomTraits>::equal_curves_wrapper(std::istringstream& str_stream) {
   unsigned int id1, id2;
   str_stream >> id1 >> id2;
   bool exp_answer = this->get_expected_boolean(str_stream);
@@ -906,14 +880,13 @@ equal_curves_wrapper(std::istringstream& str_stream)
  * segment is vertical. Both first and last are vertical. An internal segment
  * is vertical.
  */
-template <typename Geom_traits_T>
-bool Traits_test<Geom_traits_T>::
-make_x_monotone_wrapper(std::istringstream& str_stream)
-{
-  typedef Geom_traits_T                                 Traits;
-  typedef typename Traits::Point_2                      Point_2;
-  typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
-  typedef std::variant<Point_2, X_monotone_curve_2>   Make_x_monotone_result;
+template <typename GeomTraits>
+bool Traits_test<GeomTraits>::make_x_monotone_wrapper(std::istringstream& str_stream) {
+  using Traits = GeomTraits;
+  using Point_2 = typename Traits::Point_2;
+  using X_monotone_curve_2 = typename Traits::X_monotone_curve_2;
+  using Make_x_monotone_result = std::variant<Point_2, X_monotone_curve_2>;
+
   CGAL_USE_TYPE(typename Traits::Curve_2);
 
   unsigned int id;
@@ -958,19 +931,15 @@ make_x_monotone_wrapper(std::istringstream& str_stream)
  * left) endpoint of one curve and the first (resp. last) segment of the
  * other coincide.
  */
-template <typename Geom_traits_T>
-bool Traits_test<Geom_traits_T>::
-intersect_wrapper(std::istringstream& str_stream)
-{
+template <typename GeomTraits>
+bool Traits_test<GeomTraits>::intersect_wrapper(std::istringstream& str_stream) {
+  using Traits = GeomTraits;
+  using Point_2 = typename Traits::Point_2;
+  using X_monotone_curve_2 = typename Traits::X_monotone_curve_2;
+  using Multiplicity = typename Traits::Multiplicity;
 
-  typedef Geom_traits_T                         Traits;
-  typedef typename Traits::Point_2              Point_2;
-  typedef typename Traits::X_monotone_curve_2   X_monotone_curve_2;
-  typedef typename Traits::Multiplicity         Multiplicity;
-
-  typedef std::pair<Point_2, Multiplicity>      Intersection_point;
-  typedef std::variant<Intersection_point, X_monotone_curve_2>
-                                                Intersection_result;
+  using Intersection_point = std::pair<Point_2, Multiplicity>;
+  using Intersection_result = std::variant<Intersection_point, X_monotone_curve_2>;
 
   unsigned int id1, id2;
   str_stream >> id1 >> id2;
@@ -1017,16 +986,29 @@ intersect_wrapper(std::istringstream& str_stream)
   return true;
 }
 
+template <typename GeomTraits>
+bool Traits_test<GeomTraits>::
+do_intersect_wrapper(std::istringstream& str_stream) {
+  std::size_t id1, id2;
+  str_stream >> id1 >> id2;
+  bool res = this->m_geom_traits.do_intersect_2_object()(this->m_xcurves[id1], this->m_xcurves[id2]);
+
+  std::cout << "Test: do_intersect( " << CGAL::IO::oformat(this->m_xcurves[id1]) << ","
+            << CGAL::IO::oformat(this->m_xcurves[id2]) << " ) ? ";
+  bool exp_res;
+  str_stream >> exp_res;
+  return (exp_res == res);
+}
+
 /*! Tests Split_2.
  * Split a given x-monotone curve at a given point into two sub-curves.
  * Degenerate cases for polylines: the point and a polyline internal point
  * coincides.
  */
-template <typename Geom_traits_T>
-bool Traits_test<Geom_traits_T>::split_wrapper(std::istringstream& str_stream)
-{
-  typedef Geom_traits_T                                 Traits;
-  typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
+template <typename GeomTraits>
+bool Traits_test<GeomTraits>::split_wrapper(std::istringstream& str_stream) {
+  using Traits = GeomTraits;
+  using X_monotone_curve_2 = typename Traits::X_monotone_curve_2;
 
   unsigned int id1, id2, id3, id4;
   str_stream >> id1 >> id2 >> id3 >> id4;
@@ -1043,29 +1025,25 @@ bool Traits_test<Geom_traits_T>::split_wrapper(std::istringstream& str_stream)
 /*! Tests Are_mergeable_2.
  * Check whether it is possible to merge two given x-monotone curves.
  */
-template <typename Geom_traits_T>
-bool Traits_test<Geom_traits_T>::
-are_mergeable_wrapper(std::istringstream& str_stream)
-{
-  typedef typename Geom_traits_T::Has_merge_category       Has_merge_category;
+template <typename GeomTraits>
+bool Traits_test<GeomTraits>::
+are_mergeable_wrapper(std::istringstream& str_stream) {
+  using Has_merge_category = typename GeomTraits::Has_merge_category;
   return are_mergeable_wrapper_imp(str_stream, Has_merge_category());
 }
 
-template <typename Geom_traits_T>
+template <typename GeomTraits>
 bool
-Traits_test<Geom_traits_T>::
-are_mergeable_wrapper_imp(std::istringstream&, CGAL::Tag_false)
-{
-  //waqar
+Traits_test<GeomTraits>::
+are_mergeable_wrapper_imp(std::istringstream&, CGAL::Tag_false) {
   std::cout << "I am at the wrong place" << std::endl;
   CGAL_error();
   return false;
 }
 
-template <typename Geom_traits_T>
-bool Traits_test<Geom_traits_T>::
-are_mergeable_wrapper_imp(std::istringstream& str_stream, CGAL::Tag_true)
-{
+template <typename GeomTraits>
+bool Traits_test<GeomTraits>::
+are_mergeable_wrapper_imp(std::istringstream& str_stream, CGAL::Tag_true) {
   unsigned int id1, id2;
   str_stream >> id1 >> id2;
   bool exp_answer = this->get_expected_boolean(str_stream);
@@ -1073,36 +1051,29 @@ are_mergeable_wrapper_imp(std::istringstream& str_stream, CGAL::Tag_true)
             << CGAL::IO::oformat(this->m_xcurves[id2]) << " ) ? " << exp_answer << " ";
 
   bool real_answer =
-    this->m_geom_traits.are_mergeable_2_object()(this->m_xcurves[id1],
-                                                 this->m_xcurves[id2]);
+    this->m_geom_traits.are_mergeable_2_object()(this->m_xcurves[id1], this->m_xcurves[id2]);
   return this->compare(exp_answer, real_answer);
 }
 
 /*! Tests Merge_2.
  * Merge two given x-monotone curves into a single curve.
  */
-template <typename Geom_traits_T>
-bool Traits_test<Geom_traits_T>::merge_wrapper(std::istringstream& str_stream)
-{
-  typedef typename Geom_traits_T::Has_merge_category         Has_merge_category;
+template <typename GeomTraits>
+bool Traits_test<GeomTraits>::merge_wrapper(std::istringstream& str_stream) {
+  using Has_merge_category = typename GeomTraits::Has_merge_category;
   return merge_wrapper_imp(str_stream, Has_merge_category());
 }
 
-template <typename Geom_traits_T>
-bool Traits_test<Geom_traits_T>::merge_wrapper_imp(std::istringstream&,
-                                              CGAL::Tag_false)
-{
+template <typename GeomTraits>
+bool Traits_test<GeomTraits>::merge_wrapper_imp(std::istringstream&, CGAL::Tag_false) {
   CGAL_error();
   return false;
 }
 
-template <typename Geom_traits_T>
-bool
-Traits_test<Geom_traits_T>::merge_wrapper_imp(std::istringstream& str_stream,
-                                              CGAL::Tag_true)
-{
-  typedef Geom_traits_T                         Traits;
-  typedef typename Traits::X_monotone_curve_2   X_monotone_curve_2;
+template <typename GeomTraits>
+bool Traits_test<GeomTraits>::merge_wrapper_imp(std::istringstream& str_stream, CGAL::Tag_true) {
+  using Traits = GeomTraits                         ;
+  using X_monotone_curve_2 = typename Traits::X_monotone_curve_2;
 
   unsigned int id1, id2, id;
   str_stream >> id1 >> id2 >> id;
@@ -1115,25 +1086,69 @@ Traits_test<Geom_traits_T>::merge_wrapper_imp(std::istringstream& str_stream,
   return this->compare_curves(this->m_xcurves[id], cv);
 }
 
+//! Fall threw instance
+template <typename GeomTraits>
+template <typename GT>
+bool Traits_test<GeomTraits>::
+approximate_wrapper_impl2(std::istringstream&, long) { return false; }
+
+//! Specialized instance
+template <typename GeomTraits>
+template <typename GT, typename T>
+bool Traits_test<GeomTraits>::
+approximate_wrapper_impl2(std::istringstream& is, int) {
+  std::size_t id;
+  typename GeomTraits::Approximate_number_type error;
+  bool l2r;
+  is >> id >> error >> l2r;
+  const auto& xcv = this->m_xcurves[id];
+  using Ap2 = typename GeomTraits::Approximate_point_2;
+  std::vector<Ap2> apoints;
+
+  auto approx = this->m_geom_traits.approximate_2_object();
+  approx(xcv, error, std::back_inserter(apoints), l2r);
+
+  std::size_t exp_num_apoints;
+  is >> exp_num_apoints;
+  if (apoints.size() != exp_num_apoints) {
+    std::cout << "xcv: " << xcv << std::endl;
+    std::cout << "error: " << error << std::endl;
+    for (const auto& pt : apoints) {
+      std::cout << pt << std::endl;
+    }
+    std::cerr << "Error: no. of inexact points does not match ("
+              << apoints.size() << ", " << exp_num_apoints
+              << ")!\n";
+    return false;
+  }
+  return true;
+}
+
+//! Fall threw instance
+template <typename GeomTraits>
+template <typename GT>
+bool Traits_test<GeomTraits>::approximate_wrapper_impl1(std::istringstream&, long) { return false; }
+
+//! Specialized instance
+template <typename GeomTraits>
+template <typename GT, typename T>
+bool Traits_test<GeomTraits>::
+approximate_wrapper_impl1(std::istringstream& is, int)
+{ return approximate_wrapper_impl2<GeomTraits>(is, 0); }
+
 /*! Tests Approximate_2.
  * Return an approximation of a point coordinate.
  */
-template <typename Geom_traits_T>
-bool
-Traits_test<Geom_traits_T>::approximate_wrapper(std::istringstream& )
-{
-  return false;
-}
+template <typename GeomTraits>
+bool Traits_test<GeomTraits>::approximate_wrapper(std::istringstream& is)
+{ return approximate_wrapper_impl1<GeomTraits>(is, 0); }
 
 /*! tests Construct_x_monotone_curve_2.
  * Return an x-monotone curve connecting the two given endpoints.
  */
-template <typename Geom_traits_T>
-bool Traits_test<Geom_traits_T>::
-construct_x_monotone_curve_wrapper(std::istringstream& )
-{
-  return false;
-}
+template <typename GeomTraits>
+bool Traits_test<GeomTraits>::
+construct_x_monotone_curve_wrapper(std::istringstream&) { return false; }
 
 // ///////////////////////////////////////////////////////////////////////////
 // boundary-specific functors
@@ -1143,35 +1158,28 @@ construct_x_monotone_curve_wrapper(std::istringstream& )
 
 /*! Test Parameter_space_in_x_2
 */
-template <typename Geom_traits_T>
-bool Traits_test<Geom_traits_T>::
-parameter_space_in_x_wrapper(std::istringstream& str_stream)
-{
-  typedef typename
-    CGAL::internal::Arr_complete_left_side_category< Geom_traits_T >::Category
-    Left_side_category;
-  typedef typename
-    CGAL::internal::Arr_complete_right_side_category< Geom_traits_T >::Category
-    Right_side_category;
-  typedef CGAL::internal::Arr_left_right_implementation_dispatch
-    <Left_side_category, Right_side_category>           LR;
-  typedef typename LR::Parameter_space_in_x_2_curve_end_tag     Psx_tag;
+template <typename GeomTraits>
+bool Traits_test<GeomTraits>::parameter_space_in_x_wrapper(std::istringstream& str_stream) {
+  using Left_side_category = typename
+    CGAL::internal::Arr_complete_left_side_category<GeomTraits>::Category;
+  using Right_side_category = typename
+    CGAL::internal::Arr_complete_right_side_category<GeomTraits>::Category;
+  using LR = CGAL::internal::Arr_left_right_implementation_dispatch
+    <Left_side_category, Right_side_category>;
+  using Psx_tag = typename LR::Parameter_space_in_x_2_curve_end_tag;
   return parameter_space_in_x_wrapper_imp(str_stream, Psx_tag());
 }
 
-template <typename Geom_traits_T>
-bool Traits_test<Geom_traits_T>::
-parameter_space_in_x_wrapper_imp(std::istringstream&, CGAL::Arr_use_dummy_tag)
-{
+template <typename GeomTraits>
+bool Traits_test<GeomTraits>::
+parameter_space_in_x_wrapper_imp(std::istringstream&, CGAL::Arr_use_dummy_tag) {
   CGAL_error();
   return false;
 }
 
-template <typename Geom_traits_T>
-bool Traits_test<Geom_traits_T>::
-parameter_space_in_x_wrapper_imp(std::istringstream& str_stream,
-                                 CGAL::Arr_use_traits_tag)
-{
+template <typename GeomTraits>
+bool Traits_test<GeomTraits>::parameter_space_in_x_wrapper_imp(std::istringstream& str_stream,
+                                                               CGAL::Arr_use_traits_tag) {
   CGAL::Arr_parameter_space exp_answer, real_answer;
   unsigned int id;
   str_stream >> id;
@@ -1211,36 +1219,28 @@ parameter_space_in_x_wrapper_imp(std::istringstream& str_stream,
 
 /*! Test Compare_y_near_boundary_2
  */
-template <typename Geom_traits_T>
-bool Traits_test<Geom_traits_T>::
-compare_y_near_boundary_wrapper(std::istringstream& str_stream)
-{
-  typedef typename
-    CGAL::internal::Arr_complete_left_side_category<Geom_traits_T >::Category
-    Left_side_category;
-  typedef typename
-    CGAL::internal::Arr_complete_right_side_category<Geom_traits_T >::Category
-    Right_side_category;
-  typedef CGAL::internal::Arr_left_right_implementation_dispatch
-    <Left_side_category, Right_side_category>           LR;
-  typedef typename LR::Compare_y_near_boundary_2_curve_ends_tag Cmp_tag;
+template <typename GeomTraits>
+bool Traits_test<GeomTraits>::compare_y_near_boundary_wrapper(std::istringstream& str_stream) {
+  using Left_side_category = typename
+    CGAL::internal::Arr_complete_left_side_category<GeomTraits >::Category;
+  using Right_side_category = typename
+    CGAL::internal::Arr_complete_right_side_category<GeomTraits >::Category;
+  using LR = CGAL::internal::Arr_left_right_implementation_dispatch
+    <Left_side_category, Right_side_category>;
+  using Cmp_tag = typename LR::Compare_y_near_boundary_2_curve_ends_tag;
   return compare_y_near_boundary_wrapper_imp(str_stream, Cmp_tag());
 }
 
-template <typename Geom_traits_T>
-bool Traits_test<Geom_traits_T>::
-compare_y_near_boundary_wrapper_imp(std::istringstream&,
-                                    CGAL::Arr_use_dummy_tag)
-{
+template <typename GeomTraits>
+bool Traits_test<GeomTraits>::
+compare_y_near_boundary_wrapper_imp(std::istringstream&, CGAL::Arr_use_dummy_tag) {
   CGAL_error();
   return false;
 }
 
-template <typename Geom_traits_T>
-bool Traits_test<Geom_traits_T>::
-compare_y_near_boundary_wrapper_imp(std::istringstream& str_stream,
-                                    CGAL::Arr_use_traits_tag)
-{
+template <typename GeomTraits>
+bool Traits_test<GeomTraits>::
+compare_y_near_boundary_wrapper_imp(std::istringstream& str_stream, CGAL::Arr_use_traits_tag) {
   unsigned int id1, id2;
   str_stream >> id1 >> id2;
   std::pair<Enum_type, unsigned int> next_input =
@@ -1272,35 +1272,27 @@ compare_y_near_boundary_wrapper_imp(std::istringstream& str_stream,
 
 /*! Test Parameter_space_in_y_2
  */
-template <typename Geom_traits_T>
-bool Traits_test<Geom_traits_T>::
-parameter_space_in_y_wrapper(std::istringstream& str_stream)
-{
-  typedef typename
-    CGAL::internal::Arr_complete_bottom_side_category<Geom_traits_T>::Category
-    Bottom_side_category;
-  typedef typename
-    CGAL::internal::Arr_complete_top_side_category<Geom_traits_T>::Category
-    Top_side_category;
-  typedef CGAL::internal::Arr_bottom_top_implementation_dispatch
-    <Bottom_side_category, Top_side_category>           BT;
-  typedef typename BT::Parameter_space_in_y_2_curve_end_tag     Psy_tag;
+template <typename GeomTraits>
+bool Traits_test<GeomTraits>::parameter_space_in_y_wrapper(std::istringstream& str_stream) {
+  using Bottom_side_category = typename
+    CGAL::internal::Arr_complete_bottom_side_category<GeomTraits>::Category;
+  using Top_side_category = typename
+    CGAL::internal::Arr_complete_top_side_category<GeomTraits>::Category;
+  using BT = CGAL::internal::Arr_bottom_top_implementation_dispatch
+    <Bottom_side_category, Top_side_category>;
+  using Psy_tag = typename BT::Parameter_space_in_y_2_curve_end_tag;
   return parameter_space_in_y_wrapper_imp(str_stream, Psy_tag());
 }
 
-template <typename Geom_traits_T>
-bool Traits_test<Geom_traits_T>::
-parameter_space_in_y_wrapper_imp(std::istringstream&, CGAL::Arr_use_dummy_tag)
-{
+template <typename GeomTraits>
+bool Traits_test<GeomTraits>::parameter_space_in_y_wrapper_imp(std::istringstream&, CGAL::Arr_use_dummy_tag) {
   CGAL_error();
   return false;
 }
 
-template <typename Geom_traits_T>
-bool Traits_test<Geom_traits_T>::
-parameter_space_in_y_wrapper_imp(std::istringstream& str_stream,
-                                 CGAL::Arr_use_traits_tag)
-{
+template <typename GeomTraits>
+bool Traits_test<GeomTraits>::parameter_space_in_y_wrapper_imp(std::istringstream& str_stream,
+                                                               CGAL::Arr_use_traits_tag) {
   unsigned int id;
   str_stream >> id;
   std::pair<Enum_type, unsigned int> next_input =
@@ -1340,36 +1332,29 @@ parameter_space_in_y_wrapper_imp(std::istringstream& str_stream,
 
 /* Compare_x_near_boundary_2
  */
-template <typename Geom_traits_T>
-bool Traits_test<Geom_traits_T>::
-compare_x_near_boundary_wrapper(std::istringstream& str_stream)
-{
-  typedef typename
-    CGAL::internal::Arr_complete_bottom_side_category<Geom_traits_T>::Category
-    Bottom_side_category;
-  typedef typename
-    CGAL::internal::Arr_complete_top_side_category<Geom_traits_T>::Category
-    Top_side_category;
-  typedef CGAL::internal::Arr_bottom_top_implementation_dispatch
-    <Bottom_side_category, Top_side_category>           BT;
-  typedef typename BT::Compare_x_near_boundary_2_curve_ends_tag Cmp_tag;
+template <typename GeomTraits>
+bool Traits_test<GeomTraits>::compare_x_near_boundary_wrapper(std::istringstream& str_stream) {
+  using Bottom_side_category = typename
+    CGAL::internal::Arr_complete_bottom_side_category<GeomTraits>::Category;
+  using Top_side_category = typename
+    CGAL::internal::Arr_complete_top_side_category<GeomTraits>::Category;
+  using BT = CGAL::internal::Arr_bottom_top_implementation_dispatch
+    <Bottom_side_category, Top_side_category>;
+  using Cmp_tag = typename BT::Compare_x_near_boundary_2_curve_ends_tag;
   return compare_x_near_boundary_wrapper_imp(str_stream, Cmp_tag());
 }
 
-template <typename Geom_traits_T>
-bool Traits_test<Geom_traits_T>::
-compare_x_near_boundary_wrapper_imp(std::istringstream&,
-                                    CGAL::Arr_use_dummy_tag)
-{
+template <typename GeomTraits>
+bool Traits_test<GeomTraits>::compare_x_near_boundary_wrapper_imp(std::istringstream&,
+                                                                  CGAL::Arr_use_dummy_tag) {
   CGAL_error();
   return false;
 }
 
-template <typename Geom_traits_T>
-bool Traits_test<Geom_traits_T>::
+template <typename GeomTraits>
+bool Traits_test<GeomTraits>::
 compare_x_near_boundary_wrapper_imp(std::istringstream& str_stream,
-                                    CGAL::Arr_use_traits_tag)
-{
+                                    CGAL::Arr_use_traits_tag) {
   std::cout << "Test: compare_x_near_boundary( ";
 
   unsigned int id1, id2;
@@ -1400,42 +1385,32 @@ compare_x_near_boundary_wrapper_imp(std::istringstream& str_stream,
 
 /* Compare_x_on_boundary
  */
-template <typename Geom_traits_T>
-bool Traits_test<Geom_traits_T>::
-compare_x_on_boundary_wrapper(std::istringstream& str_stream)
-{
-  typedef typename
-    CGAL::internal::Arr_complete_bottom_side_category<Geom_traits_T>::Category
-    Bottom_side_category;
-  typedef typename
-    CGAL::internal::Arr_complete_top_side_category<Geom_traits_T>::Category
-    Top_side_category;
-  typedef CGAL::internal::Arr_bottom_top_implementation_dispatch
-    <Bottom_side_category, Top_side_category> BT;
-  typedef typename BT::Compare_x_on_boundary_2_points_tag              Cmp_tag1;
-  typedef typename BT::Compare_x_on_boundary_2_point_curve_end_tag     Cmp_tag2;
-  typedef typename BT::Compare_x_on_boundary_2_curve_ends_tag          Cmp_tag3;
-  typedef typename CGAL::internal::Or_traits<Cmp_tag1, Cmp_tag2>::type
-    Cmp_tag12;
-  typedef typename CGAL::internal::Or_traits<Cmp_tag12, Cmp_tag3>::type
-    Cmp_tag;
+template <typename GeomTraits>
+bool Traits_test<GeomTraits>::compare_x_on_boundary_wrapper(std::istringstream& str_stream) {
+  using Bottom_side_category = typename
+    CGAL::internal::Arr_complete_bottom_side_category<GeomTraits>::Category;
+  using Top_side_category = typename
+    CGAL::internal::Arr_complete_top_side_category<GeomTraits>::Category;
+  using BT = CGAL::internal::Arr_bottom_top_implementation_dispatch
+    <Bottom_side_category, Top_side_category>;
+  using Cmp_tag1 = typename BT::Compare_x_on_boundary_2_points_tag;
+  using Cmp_tag2 = typename BT::Compare_x_on_boundary_2_point_curve_end_tag;
+  using Cmp_tag3 = typename BT::Compare_x_on_boundary_2_curve_ends_tag;
+  using Cmp_tag12 = typename CGAL::internal::Or_traits<Cmp_tag1, Cmp_tag2>::type;
+  using Cmp_tag = typename CGAL::internal::Or_traits<Cmp_tag12, Cmp_tag3>::type;
   return compare_x_on_boundary_wrapper_imp(str_stream, Cmp_tag());
 }
 
-template <typename Geom_traits_T>
-bool Traits_test<Geom_traits_T>::
-compare_x_on_boundary_wrapper_imp(std::istringstream&,
-                                  CGAL::Arr_use_dummy_tag)
-{
+template <typename GeomTraits>
+bool Traits_test<GeomTraits>::
+compare_x_on_boundary_wrapper_imp(std::istringstream&, CGAL::Arr_use_dummy_tag) {
   CGAL_error();
   return false;
 }
 
-template <typename Geom_traits_T>
-bool Traits_test<Geom_traits_T>::
-compare_x_on_boundary_wrapper_imp(std::istringstream& str_stream,
-                                  CGAL::Arr_use_traits_tag)
-{
+template <typename GeomTraits>
+bool Traits_test<GeomTraits>::compare_x_on_boundary_wrapper_imp(std::istringstream& str_stream,
+                                  CGAL::Arr_use_traits_tag) {
   // TBD: points
   std::cout << "Test: compare_x_on_boundary( ";
 

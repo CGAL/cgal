@@ -210,7 +210,7 @@ class Bench
   Pmwx _pm;
   Point_location _pl(_pm);
 
-  std::cout << "Construction complited"<<std::endl;
+  std::cout << "Construction completed"<<std::endl;
   try{
     this->start();
 

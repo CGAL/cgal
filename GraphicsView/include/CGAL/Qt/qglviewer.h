@@ -34,6 +34,13 @@
 #include <QMouseEvent>
 #include <QKeyCombination>
 
+#ifndef APIENTRY
+#define APIENTRY QT_APIENTRY
+#endif
+#ifndef APIENTRYP
+#define APIENTRYP APIENTRY *
+#endif
+
 class QTabWidget;
 class QImage;
 class QOpenGLFramebufferObject;
@@ -478,7 +485,6 @@ public:
   qreal bufferTextureMaxU() const { return bufferTextureMaxU_; }
   /*! Same as bufferTextureMaxU(), but for the v texture coordinate. */
   qreal bufferTextureMaxV() const { return bufferTextureMaxV_; }
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
   // These methods are part of the QGLWidget public API.
   // As of version 2.7.0, the use of QOpenGLWidget instead means that they have
   // to be provided for backward compatibility.
@@ -486,7 +492,6 @@ public:
                   const QFont &font = QFont());
   void renderText(double x, double y, double z, const QString &str,
                   const QFont &font = QFont());
-#endif
 
 public Q_SLOTS:
   void copyBufferToTexture(GLint, GLenum = GL_NONE);
@@ -1206,6 +1211,7 @@ protected:
   qglviewer::Vec _offset;
   //C o n t e x t
   bool is_ogl_4_3;
+  bool is_ogl_3_2;
   bool is_sharing;
   bool is_linked;
   QOpenGLContext* shared_context;
@@ -1217,6 +1223,13 @@ public:
   //! @returns `true` if the context is 4.3.
   //! @returns `false` if the context is ES 2.0.
   bool isOpenGL_4_3()const {return is_ogl_4_3; }
+
+  //! Is used to know if the openGL context supports GLSL 1.50 (OpenGL 3.2).
+  //! This is the requirement for the modern (`#version 150`) shaders, which is
+  //! weaker than isOpenGL_4_3(). Use this to select modern vs compatibility
+  //! shaders, and isOpenGL_4_3() for the OpenGL 4.3 C++ API.
+  //! @returns `true` if the context is at least OpenGL 3.2.
+  bool isOpenGL_3_2()const {return is_ogl_3_2; }
 
 };
 

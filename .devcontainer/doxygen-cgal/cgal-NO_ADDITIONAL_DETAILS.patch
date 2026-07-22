@@ -1,0 +1,44 @@
+diff --git a/src/config.xml b/src/config.xml
+index 7ce082fa76..c7863aa66e 100644
+--- a/src/config.xml
++++ b/src/config.xml
+@@ -924,6 +924,18 @@ Go to the <a href="commands.html">next</a> section or return to the
+  \note This will also disable the warnings about undocumented members
+  that are normally produced when \ref cfg_warnings "WARNINGS" is
+  set to \c YES.
++]]>
++      </docs>
++    </option>
++  </group>
++  <group name='Build' docs='Build related configuration options'>
++    <option type='bool' id='NO_ADDITIONAL_DETAILS' defval='0'>
++      <docs>
++<![CDATA[
++ When the \c EXTRACT_ALL tag is set to \c YES and a member or class
++ as no documentation, no detailed section will be produced if
++ the \c NO_ADDITIONAL_DETAILS tag is set to \c YES.
++ This tag has no effect if the \c EXTRACT_ALL tag is set to \c NO.
+ ]]>
+       </docs>
+     </option>
+diff --git a/src/memberdef.cpp b/src/memberdef.cpp
+index 32fc2f5433..8f8791b2d7 100644
+--- a/src/memberdef.cpp
++++ b/src/memberdef.cpp
+@@ -2667,6 +2667,7 @@ bool MemberDefImpl::hasDetailedDescription() const
+   if (!m_hasDetailedDescriptionCached)
+   {
+     bool extractAll            = Config_getBool(EXTRACT_ALL);
++    bool xAllNoDetailedSec     = Config_getBool(NO_ADDITIONAL_DETAILS);
+     bool alwaysDetailedSec     = Config_getBool(ALWAYS_DETAILED_SEC);
+     bool repeatBrief           = Config_getBool(REPEAT_BRIEF);
+     bool briefMemberDesc       = Config_getBool(BRIEF_MEMBER_DESC);
+@@ -2678,7 +2679,7 @@ bool MemberDefImpl::hasDetailedDescription() const
+     // the member has detailed documentation because the user added some comments
+     bool docFilter =
+            // extract all is enabled
+-           extractAll ||
++           (extractAll && !xAllNoDetailedSec)||
+            // has detailed docs
+            !documentation().isEmpty() ||
+            // has inbody docs

@@ -47,13 +47,13 @@ int main()
 
   // make sure all is OK when clearing the mesh
 
-  auto vconn = m.property_map<Vertex_index, Vertex_connectivity>("v:connectivity").first;
-  auto hconn = m.property_map<Halfedge_index, Halfedge_connectivity>("h:connectivity").first;
-  auto fconn = m.property_map<Face_index, Face_connectivity>("f:connectivity").first;
-  auto vpoint = m.property_map<Vertex_index, Point_3>("v:point").first;
-  auto vremoved = m.property_map<Vertex_index, bool>("v:removed").first;
-  auto eremoved = m.property_map<Edge_index, bool>("e:removed").first;
-  auto fremoved = m.property_map<Face_index, bool>("f:removed").first;
+  auto vconn = m.property_map<Vertex_index, Vertex_connectivity>("v:connectivity").value();
+  auto hconn = m.property_map<Halfedge_index, Halfedge_connectivity>("h:connectivity").value();
+  auto fconn = m.property_map<Face_index, Face_connectivity>("f:connectivity").value();
+  auto vpoint = m.property_map<Vertex_index, Point_3>("v:point").value();
+  auto vremoved = m.property_map<Vertex_index, bool>("v:removed").value();
+  auto eremoved = m.property_map<Edge_index, bool>("e:removed").value();
+  auto fremoved = m.property_map<Face_index, bool>("f:removed").value();
 
   // first call to squat the first available position
   m.add_property_map<Vertex_index, int>("vprop_dummy");
@@ -74,13 +74,13 @@ int main()
     auto l_fprop = m.add_property_map<Face_index, int>("fprop").first;
     auto l_eprop = m.add_property_map<Edge_index, int>("eprop").first;
 
-    auto l_vconn = m.property_map<Vertex_index, Vertex_connectivity>("v:connectivity").first;
-    auto l_hconn = m.property_map<Halfedge_index, Halfedge_connectivity>("h:connectivity").first;
-    auto l_fconn = m.property_map<Face_index, Face_connectivity>("f:connectivity").first;
-    auto l_vpoint = m.property_map<Vertex_index, Point_3>("v:point").first;
-    auto l_vremoved = m.property_map<Vertex_index, bool>("v:removed").first;
-    auto l_eremoved = m.property_map<Edge_index, bool>("e:removed").first;
-    auto l_fremoved = m.property_map<Face_index, bool>("f:removed").first;
+    auto l_vconn = m.property_map<Vertex_index, Vertex_connectivity>("v:connectivity").value();
+    auto l_hconn = m.property_map<Halfedge_index, Halfedge_connectivity>("h:connectivity").value();
+    auto l_fconn = m.property_map<Face_index, Face_connectivity>("f:connectivity").value();
+    auto l_vpoint = m.property_map<Vertex_index, Point_3>("v:point").value();
+    auto l_vremoved = m.property_map<Vertex_index, bool>("v:removed").value();
+    auto l_eremoved = m.property_map<Edge_index, bool>("e:removed").value();
+    auto l_fremoved = m.property_map<Face_index, bool>("f:removed").value();
 
     assert( &vconn.array() == &l_vconn.array() );
     assert( &hconn.array() == &l_hconn.array() );
@@ -98,13 +98,13 @@ int main()
   {
     m.clear();
 
-    auto l_vconn = m.property_map<Vertex_index, Vertex_connectivity>("v:connectivity").first;
-    auto l_hconn = m.property_map<Halfedge_index, Halfedge_connectivity>("h:connectivity").first;
-    auto l_fconn = m.property_map<Face_index, Face_connectivity>("f:connectivity").first;
-    auto l_vpoint = m.property_map<Vertex_index, Point_3>("v:point").first;
-    auto l_vremoved = m.property_map<Vertex_index, bool>("v:removed").first;
-    auto l_eremoved = m.property_map<Edge_index, bool>("e:removed").first;
-    auto l_fremoved = m.property_map<Face_index, bool>("f:removed").first;
+    auto l_vconn = m.property_map<Vertex_index, Vertex_connectivity>("v:connectivity").value();
+    auto l_hconn = m.property_map<Halfedge_index, Halfedge_connectivity>("h:connectivity").value();
+    auto l_fconn = m.property_map<Face_index, Face_connectivity>("f:connectivity").value();
+    auto l_vpoint = m.property_map<Vertex_index, Point_3>("v:point").value();
+    auto l_vremoved = m.property_map<Vertex_index, bool>("v:removed").value();
+    auto l_eremoved = m.property_map<Edge_index, bool>("e:removed").value();
+    auto l_fremoved = m.property_map<Face_index, bool>("f:removed").value();
 
     assert( &vconn.array() == &l_vconn.array() );
     assert( &hconn.array() == &l_hconn.array() );

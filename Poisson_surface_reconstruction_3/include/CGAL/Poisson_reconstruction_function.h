@@ -22,20 +22,14 @@
 #  endif
 #endif
 
-#include <vector>
-#include <deque>
-#include <algorithm>
-#include <cmath>
-#include <iterator>
-#include <type_traits>
-
 #include <CGAL/IO/trace.h>
 #include <CGAL/Reconstruction_triangulation_3.h>
 #include <CGAL/spatial_sort.h>
+
 #ifdef CGAL_EIGEN3_ENABLED
-#include <CGAL/Eigen_solver_traits.h>
-#else
+ #include <CGAL/Eigen_solver_traits.h>
 #endif
+
 #include <CGAL/centroid.h>
 #include <CGAL/property_map.h>
 #include <CGAL/assertions.h>
@@ -44,8 +38,19 @@
 #include <CGAL/compute_average_spacing.h>
 #include <CGAL/Timer.h>
 
-#include <memory>
+#ifdef CGAL_LINKED_WITH_TBB
+ #include <tbb/enumerable_thread_specific.h>
+#endif
+
 #include <boost/iterator/indirect_iterator.hpp>
+
+#include <algorithm>
+#include <cmath>
+#include <deque>
+#include <iterator>
+#include <memory>
+#include <type_traits>
+#include <vector>
 
 /*!
   \file Poisson_reconstruction_function.h
@@ -260,7 +265,10 @@ private:
 
     Cell_handle get() const
     {
-      return Triangulation_data_structure::Cell_range::s_iterator_to(*m_cell);
+      if(m_cell == nullptr)
+        return {};
+      else
+        return Triangulation_data_structure::Cell_range::s_iterator_to(*m_cell);
     }
     void set (Cell_handle ch) { m_cell = ch.operator->(); }
   };
@@ -279,10 +287,16 @@ private:
 
   // contouring and meshing
   Point m_sink; // Point with the minimum value of operator()
-  mutable Cell_hint m_hint; // last cell found = hint for next search
+
+#ifdef CGAL_LINKED_WITH_TBB
+  mutable tbb::enumerable_thread_specific<Cell_handle> m_hint;
+  Cell_handle& get_hint() const { return m_hint.local(); }
+#else
+  mutable Cell_handle m_hint;
+  Cell_handle& get_hint() const { return m_hint; }
+#endif
 
   FT average_spacing;
-
 
   /// function to be used for the different constructors available that are
   /// doing the same thing but with default template parameters
@@ -446,7 +460,7 @@ public:
       // Add a pass of Delaunay refinement.
       //
       // In that pass, the sizing field, of the refinement process of the
-      // triangulation, is based on the result of a poisson function with a
+      // triangulation, is based on the result of a Poisson function with a
       // sample of the input points. The ratio is 'approximation_ratio'.
       //
       // For optimization reasons, the cell criteria of the refinement
@@ -584,25 +598,24 @@ public:
   }
 #endif
 
-  boost::tuple<FT, Cell_handle, bool> special_func(const Point& p) const
+  std::tuple<FT, Cell_handle, bool> special_func(const Point& p) const
   {
-    Cell_handle hint = m_hint.get();
-    hint = m_tr->locate(p, hint); // no hint when we use hierarchy
-    m_hint.set(hint);
+    Cell_handle& hint = get_hint();
+    hint = m_tr->locate(p, hint);
 
     if(m_tr->is_infinite(hint)) {
       int i = hint->index(m_tr->infinite_vertex());
-      return boost::make_tuple(hint->vertex((i+1)&3)->f(),
-                               hint, true);
+      return std::make_tuple(hint->vertex((i+1)&3)->f(),
+                             hint, true);
     }
 
     FT a,b,c,d;
     barycentric_coordinates(p,hint,a,b,c,d);
-    return boost::make_tuple(a * hint->vertex(0)->f() +
-                             b * hint->vertex(1)->f() +
-                             c * hint->vertex(2)->f() +
-                             d * hint->vertex(3)->f(),
-                             hint, false);
+    return std::make_tuple(a * hint->vertex(0)->f() +
+                           b * hint->vertex(1)->f() +
+                           c * hint->vertex(2)->f() +
+                           d * hint->vertex(3)->f(),
+                           hint, false);
   }
   /// \endcond
 
@@ -613,9 +626,8 @@ public:
   */
   FT operator()(const Point& p) const
   {
-    Cell_handle hint = m_hint.get();
+    Cell_handle& hint = get_hint();
     hint = m_tr->locate(p, hint);
-    m_hint.set(hint);
 
     if(m_tr->is_infinite(hint)) {
       int i = hint->index(m_tr->infinite_vertex());

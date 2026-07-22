@@ -12,8 +12,8 @@
 //
 // Author(s)     : Maxime Gimeno
 
-#ifndef GEOMETRY_CONTAINER_H
-#define GEOMETRY_CONTAINER_H
+#ifndef CGAL_STREAM_SUPPORT_INTERNAL_GEOMETRY_CONTAINER_H
+#define CGAL_STREAM_SUPPORT_INTERNAL_GEOMETRY_CONTAINER_H
 #include <boost/geometry/io/wkt/write.hpp>
 #include <boost/geometry/io/wkt/read.hpp>
 #include <memory>
@@ -46,20 +46,16 @@ struct Geometry_container{
   typedef typename Range::size_type size_type;
   typedef typename Range::value_type value_type;
   std::shared_ptr<Range>  range;
-  bool must_delete;
   //
   // Default constructor.
   // Creates a new internal Range.
   // De-allocate memory after usage.
-  Geometry_container():range(new Range()), must_delete(true)
-  {
-  }
+  Geometry_container() : range(std::make_shared<Range>()) {}
   /*
-   Copy constructor.
+   Store a pointer to the given range.
    Memory NOT de-allocated after usage.
   */
-  Geometry_container(Range& range)
-    :range(&range, Dummy_deleter()), must_delete(false){}
+  Geometry_container(Range& range) : range(&range, Dummy_deleter()) {}
 
   iterator begin()
   { return range->begin(); }
@@ -116,4 +112,4 @@ struct range_mutable_iterator<CGAL::internal::Geometry_container<T, TAG> >
 { typedef typename range_mutable_iterator<T>::type type; };
 
 }//end boost
-#endif // GEOMETRY_CONTAINER_H
+#endif // CGAL_STREAM_SUPPORT_INTERNAL_GEOMETRY_CONTAINER_H

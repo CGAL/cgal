@@ -24,9 +24,9 @@ int main(int argc, char** argv) {
   vertex_iterator vb, ve;
   int index = 0;
 
-  // boost::tie assigns the first and second element of the std::pair
+  // std::tie assigns the first and second element of the std::pair
   // returned by boost::vertices to the variables vit and ve
-  for(boost::tie(vb,ve)=vertices(P); vb!=ve; ++vb ){
+  for(std::tie(vb,ve)=vertices(P); vb!=ve; ++vb ){
     vertex_descriptor  vd = *vb;
     vd->id() = index++;
   }
@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
 
   // Here we start at an arbitrary vertex
   // Any other vertex could be the starting point
-  boost::tie(vb,ve)=vertices(P);
+  std::tie(vb,ve)=vertices(P);
   vertex_descriptor  vd = *vb;
 
   std::cout << "We compute distances to " << vd->point() << std::endl;
@@ -54,7 +54,7 @@ int main(int argc, char** argv) {
 
 
   // Traverse all vertices and show at what distance they are
-  for(boost::tie(vb,ve)=vertices(P); vb!=ve; ++vb ){
+  for(std::tie(vb,ve)=vertices(P); vb!=ve; ++vb ){
     vd = *vb;
     std::cout <<  vd->point() << "  is " << distance[vd->id()] << " hops away" << std::endl;
   }

@@ -14,6 +14,10 @@
 
 #include <CGAL/license/Surface_mesher.h>
 
+#define CGAL_DEPRECATED_HEADER "<CGAL/Gray_level_image_3.h>"
+#define CGAL_DEPRECATED_MESSAGE_DETAILS \
+  "The 3D Mesh Generation package (see https://doc.cgal.org/latest/Mesh_3/) should be used instead."
+#include <CGAL/Installation/internal/deprecation_warning.h>
 
 #include <CGAL/basic.h>
 
@@ -73,7 +77,7 @@ public:
 
   static void print_supported_file_format()
   {
-    ::printSupportedFileFormat();
+    CGAL::printSupportedFileFormat();
   }
 
   FT operator()(Point p) const
@@ -82,7 +86,7 @@ public:
     const float Y=static_cast<float>(to_double(p.y()));
     const float Z=static_cast<float>(to_double(p.z()));
 
-    float value = ::triLinInterp(this->image_ptr.get(), X, Y, Z, value_outside);
+    float value = CGAL::triLinInterp(this->image_ptr.get(), X, Y, Z, value_outside);
     if (positive_inside)
     {
       if (value > isovalue) // inside

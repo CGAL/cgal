@@ -87,7 +87,7 @@ insert_generic_dummy_points()
   const FT minor_step = spans[min_pos] / FT(8); // a ratio of 6:8 makes for nicely shaped tetrahedra
 #endif
   nums_steps[max_pos] = int(to_interval(spans[max_pos] / minor_step).first); // flooring
-  CGAL_assertion(nums_steps[max_pos] >= steps[min_pos]);
+  CGAL_assertion(nums_steps[max_pos] >= nums_steps[min_pos]);
 
   // Important! Consecutive levels in the max length have a shift (that's the `k % 2 != 0` part).
   // Hence, to get proper periodicity, the number of steps needs to be even, otherwise the level
@@ -131,7 +131,7 @@ insert_generic_dummy_points()
     return goff;
   };
 
-  // This should be prefered from building points from the lattice offset
+  // This should be preferred from building points from the lattice offset
   // because the grid offset (by construction) aligns with the canonical domain,
   // and there is thus fewer numerical errors.
   auto construct_point_from_grid_offset = [&](const Offset& goff) -> Point_3

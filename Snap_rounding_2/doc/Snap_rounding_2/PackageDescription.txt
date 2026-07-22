@@ -1,14 +1,26 @@
-/// \defgroup PkgSnapRounding2Ref 2D Snap Rounding Reference
+/// \defgroup PkgSnapRounding2Ref Reference Manual
 /// \defgroup PkgSnapRounding2Concepts Concepts
 /// \ingroup PkgSnapRounding2Ref
+
+/// \defgroup Snap_rounding_common Snap Rounding Common
+/// Functions to round segments or polygons safely
+/// \ingroup PkgSnapRounding2Ref
+
+/// \defgroup Snap_rounding_hot_pixel_grp Hot Pixel Snap Rounding
+/// Classes and functions to round segments or polygons using Hot Pixel SR method.
+/// \ingroup PkgSnapRounding2Ref
+
+/// \defgroup Snap_rounding_vertical_slab_grp Vertical Slab Snap Rounding
+/// Classes and functions to round segments or polygons using Vertical Slab SR method.
+/// \ingroup PkgSnapRounding2Ref
+
 /*!
 \addtogroup PkgSnapRounding2Ref
-\todo check generated documentation
 \cgalPkgDescriptionBegin{2D Snap Rounding,PkgSnapRounding2}
 \cgalPkgPicture{snap-detail.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthor{Eli Packer}
-\cgalPkgDesc{Snap Rounding is a well known method for converting arbitrary-precision arrangements of segments into a fixed-precision representation. In the study of robust geometric computing, it can be classified as a finite precision approximation technique. Iterated Snap Rounding is a modification of Snap Rounding in which each vertex is at least half-the-width-of-a-pixel away from any non-incident edge. This package supports both methods.}
+\cgalPkgAuthors{Eli Packer, Leo Valque}
+\cgalPkgDesc{Snap Rounding is a well known method for converting arbitrary-precision arrangements of segments into a smaller precision representation. This package supports methods to converting into various including fixed-precision or floating-point representation.}
 \cgalPkgManuals{Chapter_2D_Snap_Rounding,PkgSnapRounding2Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
@@ -19,6 +31,30 @@
 \cgalPkgDemo{2D Snap Rounding,snap_rounding_2.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Parameters}
+
+Optional parameters of the functions of this package are implemented as \ref BGLNamedParameters.
+The page \ref bgl_namedparameters "Named Parameters" describes their usage.
+
+\cgalCRPSection{Snap Rounding Common}
+- \ref snap_rounding_2_fct "CGAL::snap_rounding_2()"
+
+\cgalCRPSection{Vertical Slab Snap Rounding}
+- `CGAL::vertical_slab_snap_rounding_2()`
+- `CGAL::Double_grid_snap_rounding_traits_2`
+- `CGAL::Float_grid_snap_rounding_traits_2`
+- `CGAL::Integer_grid_snap_rounding_traits_2`
+
+\cgalCRPSection{Hot Pixel Snap Rounding}
+- `CGAL::hot_pixel_snap_rounding_2()`
+- `CGAL::Hot_pixel_snap_rounding_traits_2`
+
+\cgalCRPSection{Snap Rounding Concepts}
+- `HotPixelSnapRoundingTraits_2`
+- `VerticalSlabSnapRoundingTraits_2`
 
 */
 

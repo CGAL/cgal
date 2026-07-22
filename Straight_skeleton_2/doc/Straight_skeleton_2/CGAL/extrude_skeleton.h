@@ -5,18 +5,21 @@ namespace CGAL {
 *
 * \brief constructs the straight skeleton-based extrusion of a polygon with holes.
 *
-* Given a polygon with holes and a set of weights, the skeleton extrusion is a volume constructed
-* from the weighted straight skeleton by associating a height to the vertices of the skeleton,
-* which corresponds to the time at the vertex. The input polygon is placed at `z = 0`.
-*
-* This function allows cropping the extruded skeleton at a maximum height, using the optional
-* `maximum_height()` named parameter.
+* Given a polygon with holes and a set of weights (or angles) associated to its edges,
+* the skeleton extrusion is a volume constructed from the weighted straight skeleton
+* by associating a height to the vertices of the skeleton, which corresponds to the time
+* at the vertex. The input polygon is placed at `z = 0`.
 *
 * The result is a closed, 2-manifold surface triangle mesh. Note that this mesh can have non-local
-* self-intersections if a maximal height is provided due to possible (geometric) non-manifold occurences.
+* self-intersections if a maximal height is provided due to possible (geometric) non-manifold occurrences.
 *
-* @tparam PolygonWithHoles must be a model of `SequenceContainer` with value type `InK::Point_2` (e.g. `Polygon_2<InK>`)
-                           or a model of `GeneralPolygonWithHoles_2` (e.g. `Polygon_with_holes_2<InK>`).
+* It is possible to crop the extruded skeleton at a maximum height using the optional
+* `maximum_height()` named parameter. A maximum height must be specified if the weights (or angles)
+* associated to the edges of the input polygon correspond an outward extrusion, i.e. if no weight
+* is greater than zero (or no angle is smaller than `90` degrees).
+*
+* @tparam Polygon must be a model of `SequenceContainer` with value type `InK::Point_2` (e.g. `Polygon_2<InK>`)
+                  or a model of `GeneralPolygonWithHoles_2` (e.g. `Polygon_with_holes_2<InK>`).
 * @tparam PolygonMesh a model of `MutableFaceGraph`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
@@ -42,7 +45,7 @@ namespace CGAL {
 *     \cgalParamType{a model of `Range` whose value type is a model of `Range` whose value type is `FT`}
 *     \cgalParamDefault{an empty range (uniform weights are used)}
 *     \cgalParamExtra{Angles are measured in degrees and should be strictly within `0` and `180` degrees
-*                     and should be eitger all acute (inward extrusion) or all obtuse (outward extrusion).}
+*                     and should be either all acute (inward extrusion) or all obtuse (outward extrusion).}
 *     \cgalParamExtra{This parameter is ignored if the `weights` parameter is provided.}
 *     \cgalParamExtra{The conversion to weights involves trigonometry and will be inexact,
 *                     even when using a number type with exact square roots.}

@@ -87,7 +87,7 @@ public:
    * @returns -1 if the list is empty.*/
   virtual Item_id erase(Item_id) = 0;
   /*! Deletes the items with the target indices.
-   * @returns the index of the polyhedron just before the
+   * @returns the index of the item just before the
    * one that is erased, or just after. Returns -1 if
    * the list is empty.
    */
@@ -102,7 +102,7 @@ public:
   //! \brief The number of items
   //!@returns the number of items in the scene.
   virtual int numberOfEntries() const = 0;
-  //!\brief The `id`th item.
+  //!\brief The `id`-th item.
   //! @returns the item with the specified index.
   virtual CGAL::Three::Scene_item* item(Item_id id) const = 0;
   //!\brief The id of `item`
@@ -131,7 +131,7 @@ public:
   virtual double len_diagonal() const = 0;
 
 public:
-  //! Updates the information about the `i`th item in the
+  //! Updates the information about the `i`-th item in the
   //! Geometric Objects list and redraws the scene.
   virtual void itemChanged(Item_id i) = 0;
   //! Updates the information about `item` in the

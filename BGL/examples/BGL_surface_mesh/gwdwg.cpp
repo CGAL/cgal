@@ -4,6 +4,7 @@
 #include <CGAL/boost/graph/Graph_with_descriptor_with_graph.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/Euler_operations.h>
+#include <CGAL/boost/graph/generators.h>
 
 #include <fstream>
 

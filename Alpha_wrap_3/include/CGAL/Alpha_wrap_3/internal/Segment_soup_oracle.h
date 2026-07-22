@@ -17,9 +17,9 @@
 #include <CGAL/Alpha_wrap_3/internal/Alpha_wrap_AABB_geom_traits.h>
 #include <CGAL/Alpha_wrap_3/internal/Oracle_base.h>
 
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_segment_primitive.h>
+#include <CGAL/AABB_segment_primitive_3.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/property_map.h>
@@ -52,7 +52,7 @@ struct SS_oracle_traits
                                    CGAL::Tag_false, // not external
                                    CGAL::Tag_false>; // no caching
 
-  using AABB_traits = CGAL::AABB_traits<Geom_traits, Primitive>;
+  using AABB_traits = CGAL::AABB_traits_3<Geom_traits, Primitive>;
   using AABB_tree = CGAL::AABB_tree<AABB_traits>;
 };
 
@@ -99,11 +99,21 @@ public:
   { }
 
 public:
+  void clear()
+  {
+    m_segments_ptr->clear();
+    Oracle_base::clear();
+  }
+
   template <typename SegmentRange,
             typename CGAL_NP_TEMPLATE_PARAMETERS>
-  void add_segment_soup(const SegmentRange& segments,
-                        const CGAL_NP_CLASS& /*np*/ = CGAL::parameters::default_values())
+  void add_segments(const SegmentRange& segments,
+                    const CGAL_NP_CLASS& /*np*/ = CGAL::parameters::default_values())
   {
+#ifdef CGAL_AW3_DEBUG
+    std::cout << "Insert into AABB Tree (" << segments.size() << " segments)..." << std::endl;
+#endif
+
     if(segments.empty())
     {
 #ifdef CGAL_AW3_DEBUG
@@ -114,7 +124,7 @@ public:
 
     typename Geom_traits::Is_degenerate_3 is_degenerate = this->geom_traits().is_degenerate_3_object();
 
-    const std::size_t old_size = m_segments_ptr->size();
+    m_segments_ptr->reserve(m_segments_ptr->size() + segments.size());
 
     for(const Segment& s : segments)
     {
@@ -129,10 +139,7 @@ public:
       m_segments_ptr->push_back(s);
     }
 
-#ifdef CGAL_AW3_DEBUG
-    std::cout << "Insert into AABB tree (segments)..." << std::endl;
-#endif
-    this->tree().insert(std::next(std::cbegin(*m_segments_ptr), old_size), std::cend(*m_segments_ptr));
+    this->tree().rebuild(std::cbegin(*m_segments_ptr), std::cend(*m_segments_ptr));
 
     // Manually constructing it here purely for profiling reasons: if we keep the lazy approach,
     // it will be done at the first treatment of a facet that needs a Steiner point.
@@ -140,7 +147,9 @@ public:
     // to accelerate the tree.
     this->tree().accelerate_distance_queries();
 
-    CGAL_postcondition(this->tree().size() == m_segments_ptr->size());
+#ifdef CGAL_AW3_DEBUG
+    std::cout << "SS Tree: " << this->tree().size() << " primitives" << std::endl;
+#endif
   }
 };
 

@@ -63,8 +63,8 @@ public:
     PointH2(const RT& hx, const RT& hy, const RT& hw)
       : base(hx, hy, hw) {}
 
-    bool    operator==( const PointH2<R>& p) const;
-    bool    operator!=( const PointH2<R>& p) const;
+    typename R::Boolean operator==( const PointH2<R>& p) const;
+    typename R::Boolean operator!=( const PointH2<R>& p) const;
 
     const RT & hx() const { return base.hx(); }
     const RT & hy() const { return base.hy(); }
@@ -94,7 +94,7 @@ public:
 
 template < class R >
 inline
-bool
+typename R::Boolean
 PointH2<R>::operator==( const PointH2<R>& p) const
 {
   return base == p.base;
@@ -102,7 +102,7 @@ PointH2<R>::operator==( const PointH2<R>& p) const
 
 template < class R >
 inline
-bool
+typename R::Boolean
 PointH2<R>::operator!=( const PointH2<R>& p) const
 { return !(*this == p); }
 

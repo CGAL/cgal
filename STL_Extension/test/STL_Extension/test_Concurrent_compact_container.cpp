@@ -16,11 +16,11 @@ int main()
 
 #include <cassert>
 #include <cstddef>
-#include <list>
 #include <vector>
 #include <CGAL/Compact_container.h>
 #include <CGAL/Concurrent_compact_container.h>
 #include <CGAL/Random.h>
+#include <CGAL/Time_stamper.h>
 #include <CGAL/use.h>
 #define TBB_PREVIEW_GLOBAL_CONTROL 1
 # include <tbb/global_control.h>
@@ -32,7 +32,6 @@ int main()
 struct Node_1
 : public CGAL::Compact_container_base
 {
-  Node_1() {}
   bool operator==(const Node_1 &) const { return true; }
   bool operator!=(const Node_1 &) const { return false; }
   bool operator< (const Node_1 &) const { return false; }
@@ -45,7 +44,7 @@ struct Node_1
   void set_time_stamp(const std::size_t& ts) {
     time_stamp_ = ts;
   }
-  std::size_t time_stamp_;
+  std::size_t time_stamp_ = CGAL::Time_stamper<void>::invalid_time_stamp;
 };
 
 class Node_2

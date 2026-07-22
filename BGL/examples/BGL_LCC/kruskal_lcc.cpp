@@ -41,7 +41,7 @@ void kruskal(const LCC& lcc)
     "point [ \n";
 
   vertex_iterator vb, ve;
-  for(boost::tie(vb,ve) = vertices(lcc); vb!=ve; ++vb){
+  for(std::tie(vb,ve) = vertices(lcc); vb!=ve; ++vb){
     std::cout << (*vb)->point() << "\n";
   }
 

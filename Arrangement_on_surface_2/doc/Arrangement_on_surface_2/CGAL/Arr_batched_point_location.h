@@ -8,7 +8,7 @@ namespace CGAL {
  * through an output iterator. Each query result is given as a pair of the query
  * point and an object representing the arrangement feature that contains it,
  * namely a discriminated union container of the types `Face_const_handle`,
- * `Halfedge_const_handle`, and `Vertex_const_hanlde`. The resulting pairs in
+ * `Halfedge_const_handle`, and `Vertex_const_handle`. The resulting pairs in
  * the output container are sorted in increasing \f$xy\f$-lexicographical order
  * of the query points.
  *
@@ -30,9 +30,8 @@ namespace CGAL {
  */
 template <typename Traits, typename Dcel,
 typename InputIterator, typename OutputIterator>
-OutputIterator locate (const Arrangement_2<Traits, Dcel>& arr,
-                       InputIterator begin,
-                       InputIterator end,
-                       OutputIterator oi);
+OutputIterator locate(const Arrangement_2<Traits, Dcel>& arr,
+                      InputIterator begin, InputIterator end,
+                      OutputIterator oi);
 
 } /* namespace CGAL */

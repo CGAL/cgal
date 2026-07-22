@@ -64,7 +64,7 @@ typedef unspecified_type Construct_cartesian_const_iterator_d;
 /*!
 Function used to construct an object of type `Construct_cartesian_const_iterator_d`.
 */
-Construct_cartesian_const_iterator_d construct_construct_cartesian_const_iterator_d_object(const Point_d& p) const;
+Construct_cartesian_const_iterator_d construct_cartesian_const_iterator_d_object() const;
 
 /// @}
 

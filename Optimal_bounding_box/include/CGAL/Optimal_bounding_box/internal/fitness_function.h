@@ -39,7 +39,7 @@ compute_fitness(const typename Traits::Matrix& R, // rotation matrix
   CGAL_assertion(points.size() >= 3);
 
   FT xmin, ymin, zmin, xmax, ymax, zmax;
-  //cast from double to float looses data, so cast with {} is not allowed
+  //cast from double to float loses data, so cast with {} is not allowed
   //cast from double to exact types also works
   xmin = ymin = zmin = FT((std::numeric_limits<double>::max)());
   xmax = ymax = zmax = FT(std::numeric_limits<double>::lowest());
@@ -83,7 +83,7 @@ compute_fitness_if_smaller(const typename Traits::Matrix& R, // rotation matrix
   CGAL_assertion(points.size() >= 3);
 
   FT xmin, ymin, zmin, xmax, ymax, zmax;
-  //cast from double to float looses data, so cast with {} is not allowed
+  //cast from double to float loses data, so cast with {} is not allowed
   //cast from double to exact types also works
   xmin = ymin = zmin = FT((std::numeric_limits<double>::max)());
   xmax = ymax = zmax = FT(std::numeric_limits<double>::lowest());

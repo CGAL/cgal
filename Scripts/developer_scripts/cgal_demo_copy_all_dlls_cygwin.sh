@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#use this script from inside the build directory of the Polyhedron demo
+#use this script from inside the build directory of CGAL Lab
 #Needs the Qt6_DIR env variable set to <Qt6_ROOT>/lib/cmake/Qt6
 
 #No config : in autotest_cgal we use NMake as generator

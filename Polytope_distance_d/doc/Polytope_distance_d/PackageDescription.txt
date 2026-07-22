@@ -1,10 +1,9 @@
-/// \defgroup PkgPolytopeDistanceDRef Optimal Distances Reference
+/// \defgroup PkgPolytopeDistanceDRef Reference Manual
 /// \defgroup PkgPolytopeDistanceDConcepts Concepts
 /// \ingroup PkgPolytopeDistanceDRef
 
 /*!
 \addtogroup PkgPolytopeDistanceDRef
-\todo check generated documentation
 \cgalPkgDescriptionBegin{Optimal Distances,PkgPolytopeDistanceD}
 \cgalPkgPicture{dist.png}
 \cgalPkgSummaryBegin

@@ -1,11 +1,10 @@
-/// \defgroup PkgMatrixSearchRef Monotone and Sorted Matrix Search Reference
+/// \defgroup PkgMatrixSearchRef Reference Manual
 
 /// \defgroup PkgMatrixSearchConcepts Concepts
 /// \ingroup PkgMatrixSearchRef
 
 /*!
 \addtogroup PkgMatrixSearchRef
-\todo check generated documentation
 \cgalPkgDescriptionBegin{Monotone and Sorted Matrix Search,PkgMatrixSearch}
 \cgalPkgPicture{matrix.png}
 \cgalPkgSummaryBegin

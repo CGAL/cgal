@@ -170,34 +170,43 @@ public:
   // of p and store the resulting position in q and normal in n.
   void fastProjectionCPU(const Vector_3& p, Vector_3& q, Vector_3& n) const
   {
+    using Point_3 = typename Gt::Point_3;
+    using FT = typename Gt::FT;
+
     double sigma_s = PNScale * MLSRadius;
     double sigma_r = bilateralRange;
 
-    const Vector_3 g = (p - Vector_3(grid.getMinMax()[0], grid.getMinMax()[1], grid.getMinMax()[2])) / sigma_s;
+    const Point_3 gMinMax(grid.getMinMax()[0], grid.getMinMax()[1], grid.getMinMax()[2]);
+    const Point_3 pp(p[0], p[1], p[2]);
+    Vector_3 gv(gMinMax, pp);
+    gv = gv / sigma_s;
 
-    std::array<std::size_t, 3> gxyz;
-    for (int j = 0; j < 3; ++j)
-    {
-      if (g[j] < 0.)
-        gxyz[j] = 0;
-      if (g[j] >= grid.getRes()[j])
-        gxyz[j] = grid.getRes()[j] - 1;
-      else
-        gxyz[j] = static_cast<std::size_t>(std::floor(g[j]));
-    }
+    auto snap_to_interval = [this](const FT& x, const int j)->std::size_t
+      {
+        if (x < 0)
+          return 0;
+        else if(x >= grid.getRes()[j])
+          return grid.getRes()[j] - 1;
+        else
+          return static_cast<std::size_t>(std::floor(x));
+      };
+
+    std::array<std::size_t, 3> g{snap_to_interval(gv.x(), 0),
+                                 snap_to_interval(gv.y(), 1),
+                                 snap_to_interval(gv.z(), 2)};
 
     std::array<std::size_t, 3> minIt;
     std::array<std::size_t, 3> maxIt;
     for (std::size_t j = 0; j < 3; ++j)
     {
-      if (gxyz[j] == 0)
+      if (g[j] == 0)
         minIt[j] = 0;
       else
-        minIt[j] = gxyz[j] - 1;
-      if (gxyz[j] == grid.getRes()[j] - 1)
+        minIt[j] = g[j] - 1;
+      if (g[j] == grid.getRes()[j] - 1)
         maxIt[j] = (grid.getRes()[j] - 1);
       else
-        maxIt[j] = gxyz[j] + 1;
+        maxIt[j] = g[j] + 1;
     }
     Vector_3 c = CGAL::NULL_VECTOR;
     double sumW = 0.f;
@@ -489,6 +498,9 @@ private:
     inline std::size_t getCellIndicesSize(std::size_t i,
                                            std::size_t j,
                                            std::size_t k) const {
+      CGAL_assertion_code(auto gle = getLUTElement(i, j, k));
+      CGAL_assertion(gle >= 0);
+      CGAL_assertion(gle < indices.size());
       return indices[getLUTElement(i, j, k)];
     }
     inline std::size_t getIndicesElement(std::size_t i,

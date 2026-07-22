@@ -25,16 +25,14 @@ template < typename K_base >
 class Orientation_2
   : public K_base::Orientation_2
 {
+  typedef typename K_base::Orientation      Orientation;
   typedef typename K_base::Point_2          Point_2;
   typedef typename K_base::Vector_2         Vector_2;
-  typedef typename K_base::Circle_2          Circle_2;
+  typedef typename K_base::Circle_2         Circle_2;
 
   typedef typename K_base::Orientation_2    Base;
 
 public:
-
-  typedef typename Base::result_type  result_type;
-
   using Base::operator();
 
   Orientation

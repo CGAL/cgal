@@ -12,8 +12,20 @@
 #ifndef CGAL_CLASSIFICATION_POINT_SET_NEIGHBORHOOD_H
 #define CGAL_CLASSIFICATION_POINT_SET_NEIGHBORHOOD_H
 
+#include <CGAL/Euclidean_distance.h>
+#include <CGAL/Kd_tree.h>
+#include <CGAL/Search_traits_adapter.h>
+#include <CGAL/Splitters.h>
 #include <CGAL/license/Classification.h>
 
+#include <CGAL/tags.h>
+#include <boost/iterator/counting_iterator.hpp>
+#include <boost/property_map/property_map.hpp>
+#include <cstddef>
+#include <cstdint>
+#include <limits>
+#include <map>
+#include <memory>
 #include <vector>
 
 #include <CGAL/boost/iterator/counting_iterator.hpp>
@@ -60,7 +72,7 @@ class Point_set_neighborhood
   using Point = typename GeomTraits::Point_3;
 
   class My_point_property_map{
-    const PointRange* input;
+    const PointRange* input = nullptr;
     PointMap point_map;
 
   public:
@@ -76,7 +88,7 @@ class Point_set_neighborhood
     // we did not put `reference` here on purpose as the recommended default
     // is `Identity_property_map<Point_3>` and not `Identity_property_map<const Point_3>`
     friend decltype(auto) get (const My_point_property_map& ppmap, key_type i)
-    { return get(ppmap.point_map, *(ppmap.input->begin()+std::size_t(i))); }
+    { return get(ppmap.point_map, *(ppmap.input->begin()+static_cast<std::size_t>(i))); }
   };
 
   using Search_traits_base = Search_traits_3<GeomTraits>;
@@ -317,9 +329,8 @@ private:
       Point ref (std::floor(p.x() / voxel_size),
                  std::floor(p.y() / voxel_size),
                  std::floor(p.z() / voxel_size));
-      typename std::map<Point, std::vector<std::uint32_t> >::iterator it;
-      boost::tie (it, boost::tuples::ignore)
-        = grid.insert (std::make_pair (ref, std::vector<std::uint32_t>()));
+      typename std::map<Point, std::vector<std::uint32_t> >::iterator it
+        = grid.insert (std::make_pair (ref, std::vector<std::uint32_t>())).first;
       it->second.push_back (i);
     }
 

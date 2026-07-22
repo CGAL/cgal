@@ -172,7 +172,7 @@ bool read_STL(const std::string& fname,
     {
       return true;
     }
-    g.clear();
+    clear(g);
   }
   std::ifstream is(fname);
   CGAL::IO::set_mode(is, CGAL::IO::ASCII);

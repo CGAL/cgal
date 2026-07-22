@@ -31,6 +31,8 @@ class Circle_2 : public R_::Kernel_base::Circle_2
 {
   typedef typename R_::FT                    FT;
   typedef typename R_::Point_2               Point_2;
+  typedef typename R_::Segment_2             Segment_2;
+  typedef typename R_::Iso_rectangle_2       Iso_rectangle_2;
   typedef typename R_::Kernel_base::Circle_2 RCircle_2;
   typedef typename R_::Aff_transformation_2  Aff_transformation_2;
 
@@ -102,7 +104,8 @@ public:
     return R().compute_squared_radius_2_object()(*this);
   }
 
-  Orientation orientation() const
+  typename R::Orientation
+  orientation() const
   {
     // This make_certain(), the uncertain orientation of circles, the orientation
     // of circles, are all yucky.
@@ -129,7 +132,7 @@ public:
   }
 
   typename R::Boolean
-  has_on_bounded_side(const Point_2 &p) const
+  has_on_bounded_side(const Point_2& p) const
   {
     return bounded_side(p) == ON_BOUNDED_SIDE;
   }
@@ -138,6 +141,18 @@ public:
   has_on_unbounded_side(const Point_2 &p) const
   {
     return bounded_side(p) == ON_UNBOUNDED_SIDE;
+  }
+
+  typename R::Boolean
+  has_on_unbounded_side(const Iso_rectangle_2& r) const
+  {
+    return R().has_on_unbounded_side_2_object()(*this, r);
+  }
+
+  typename R::Boolean
+  has_on_unbounded_side(const Segment_2& s) const
+  {
+    return R().has_on_unbounded_side_2_object()(*this, s);
   }
 
   typename R::Boolean
@@ -175,18 +190,6 @@ public:
   bbox() const
   {
     return R().construct_bbox_2_object()(*this);
-  }
-
-  typename R::Boolean
-  operator==(const Circle_2 &c) const
-  {
-    return R().equal_2_object()(*this, c);
-  }
-
-  typename R::Boolean
-  operator!=(const Circle_2 &c) const
-  {
-    return !(*this == c);
   }
 
   Circle_2 transform(const Aff_transformation_2 &t) const

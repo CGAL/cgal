@@ -44,7 +44,7 @@ private:
 public:
   FT operator()(const FT value) const
   {
-    return static_cast<FT>(CGAL::sqrt(CGAL::to_double(CGAL::abs(value))));
+    return CGAL::approximate_sqrt(CGAL::abs(value));
   }
 };
 

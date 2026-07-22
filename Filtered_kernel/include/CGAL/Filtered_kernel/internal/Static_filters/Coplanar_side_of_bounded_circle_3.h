@@ -44,8 +44,6 @@ class Side_of_bounded_circle_3
   }
 
 public:
-  typedef Bounded_side result_type;
-
   Bounded_side operator()(const Point &p, const Point &q,
                           const Point &r, const Point &t) const
   {

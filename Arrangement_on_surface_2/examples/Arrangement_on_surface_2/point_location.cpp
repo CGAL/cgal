@@ -1,7 +1,6 @@
 //! \file examples/Arrangement_on_surface_2/point_location.cpp
 // Answering point-location queries.
 
-#include <CGAL/basic.h>
 #include <CGAL/Arr_naive_point_location.h>
 #include <CGAL/Arr_landmarks_point_location.h>
 

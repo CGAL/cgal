@@ -26,6 +26,7 @@
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/boost/graph/internal/helpers.h>
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Handle_hash_function.h>
@@ -64,7 +65,10 @@ namespace CGAL {
         /// We write -1, which is <a href="https://en.cppreference.com/w/cpp/types/numeric_limits">
         /// <tt>(std::numeric_limits<size_type>::max)()</tt></a>
         /// as `size_type` is an unsigned type.
-        explicit SM_Index(size_type _idx=(std::numeric_limits<size_type>::max)()) : idx_(_idx) {}
+        constexpr
+        SM_Index() : idx_((std::numeric_limits<size_type>::max)()) {}
+
+        explicit SM_Index(size_type _idx) : idx_(_idx) {}
 
         /// Get the underlying index of this index
         operator size_type() const { return idx_; }
@@ -125,7 +129,7 @@ namespace CGAL {
     {
     public:
 
-        SM_Vertex_index() : SM_Index<SM_Vertex_index>((std::numeric_limits<size_type>::max)()) {}
+        SM_Vertex_index() = default;
 
         explicit SM_Vertex_index(size_type _idx) : SM_Index<SM_Vertex_index>(_idx) {}
 
@@ -161,16 +165,7 @@ namespace CGAL {
     {
     public:
 
-        // Workaround for a bug in g++4.4 in ADL for function next:
-        // we provide the types needed for std::iterator_traits<Surface_mesh::halfedge_index>,
-        // although this descriptor is not an iterator.
-        typedef void iterator_category;
-        typedef void value_type;
-        typedef void difference_type;
-        typedef void pointer;
-        typedef void reference;
-
-        SM_Halfedge_index() : SM_Index<SM_Halfedge_index>((std::numeric_limits<size_type>::max)()) {}
+        SM_Halfedge_index() = default;
 
         explicit SM_Halfedge_index(size_type _idx) : SM_Index<SM_Halfedge_index>(_idx) {}
 
@@ -205,7 +200,7 @@ namespace CGAL {
     {
     public:
 
-        SM_Face_index() : SM_Index<SM_Face_index>((std::numeric_limits<size_type>::max)()) {}
+        SM_Face_index() = default;
 
         explicit SM_Face_index(size_type _idx) : SM_Index<SM_Face_index>(_idx) {}
 
@@ -240,7 +235,7 @@ namespace CGAL {
     public:
         typedef std::uint32_t size_type;
 
-        SM_Edge_index() : halfedge_((std::numeric_limits<size_type>::max)()) { }
+        SM_Edge_index() = default;
 
         explicit SM_Edge_index(size_type idx) : halfedge_(idx * 2) { }
 
@@ -597,7 +592,7 @@ public:
     /// \name Range Types
     ///
     /// Each range `R` in this section has a nested type `R::iterator`,
-    /// is convertible to `std::pair<R::iterator,R::iterator>`, so that one can use `boost::tie()`,
+    /// is convertible to `std::pair<R::iterator,R::iterator>`, so that one can use `std::tie()`,
     /// and can be used with `BOOST_FOREACH()`, as well as with the C++11 range based for-loop.
 
     ///@{
@@ -869,7 +864,7 @@ public:
 #endif
 
   /// @cond CGAL_DOCUMENT_INTERNALS
-  // typedefs which make it easier to write the partial specialisation of boost::graph_traits
+  // typedefs which make it easier to write the partial specialization of boost::graph_traits
 
   typedef Vertex_index   vertex_index;
   typedef P                   vertex_property_type;
@@ -1008,7 +1003,6 @@ public:
     /// adds a new edge, and resizes edge and halfedge properties if necessary.
     Halfedge_index add_edge()
     {
-      Halfedge_index h0, h1;
       size_type inf = (std::numeric_limits<size_type>::max)();
       if(recycle_ && (edges_freelist_ != inf)){
         size_type idx = edges_freelist_;
@@ -1695,13 +1689,13 @@ public:
     /// \name Low-Level Connectivity
     ///@{
 
-    /// returns the vertex the halfedge `h` points to.
+    /// returns the vertex where the halfedge `h` points to.
     Vertex_index target(Halfedge_index h) const
     {
         return hconn_[h].vertex_;
     }
 
-    /// sets the vertex the halfedge `h` points to to `v`.
+    /// sets the vertex where the halfedge `h` points to `v`.
     void set_target(Halfedge_index h, Vertex_index v)
     {
         hconn_[h].vertex_ = v;
@@ -1827,7 +1821,7 @@ public:
         return opposite(prev(h));
     }
 
-    /// returns the i'th vertex of edge `e`, for `i=0` or `1`.
+    /// returns the i-th vertex of edge `e`, for `i=0` or `1`.
     Vertex_index vertex(Edge_index e, unsigned int i) const
     {
         CGAL_assertion(i<=1);
@@ -1856,7 +1850,7 @@ public:
         return Halfedge_index(e.halfedge());
     }
 
-    /// returns the i'th halfedge of edge `e`, for `i=0` or `1`.
+    /// returns the i-th halfedge of edge `e`, for `i=0` or `1`.
     Halfedge_index halfedge(Edge_index e, unsigned int i) const
     {
         CGAL_assertion(i<=1);
@@ -2073,12 +2067,9 @@ private: //--------------------------------------------------- property handling
       return Property_selector<I>(this)().template add<T>(name, t);
     }
 
-    /// returns a property map named `name` with key type `I` and value type `T`,
-    /// and a Boolean that is `true` if the property exists.
-    /// In case it does not exist the Boolean is `false` and the behavior of
-    /// the property map is undefined.
+    /// returns an optional property map named `name` with key type `I` and value type `T`.
     template <class I, class T>
-    std::pair<Property_map<I, T>,bool> property_map(const std::string& name) const
+    std::optional<Property_map<I, T>> property_map(const std::string& name) const
     {
       return Property_selector<I>(const_cast<Surface_mesh*>(this))().template get<T>(name);
     }
@@ -2258,7 +2249,7 @@ private: //------------------------------------------------------- private data
 
   /// \relates Surface_mesh
   ///
-  /// This operator calls `write_OFF(std::ostream& os, const CGAL::Surface_mesh& sm)`.
+  /// This operator calls `CGAL::IO::write_OFF(std::ostream& os, const CGAL::Surface_mesh& sm)`.
    template <typename P>
   std::ostream& operator<<(std::ostream& os, const Surface_mesh<P>& sm)
   {
@@ -2270,7 +2261,7 @@ private: //------------------------------------------------------- private data
   /// Extracts the surface mesh from an input stream in OFF
   /// and appends it to the surface mesh `sm`.
   ///
-  /// This operator calls `read_OFF(std::istream& is, CGAL::Surface_mesh& sm)`.
+  /// This operator calls `CGAL::IO::read_OFF(std::istream& is, CGAL::Surface_mesh& sm)`.
   template <typename P>
   std::istream& operator>>(std::istream& is, Surface_mesh<P>& sm)
   {
@@ -2317,13 +2308,13 @@ operator=(const Surface_mesh<P>& rhs)
         fprops_ = rhs.fprops_;
 
         // property handles contain pointers, have to be reassigned
-        vconn_    = property_map<Vertex_index, Vertex_connectivity>("v:connectivity").first;
-        hconn_    = property_map<Halfedge_index, Halfedge_connectivity>("h:connectivity").first;
-        fconn_    = property_map<Face_index, Face_connectivity>("f:connectivity").first;
-        vremoved_ = property_map<Vertex_index, bool>("v:removed").first;
-        eremoved_ = property_map<Edge_index, bool>("e:removed").first;
-        fremoved_ = property_map<Face_index, bool>("f:removed").first;
-        vpoint_   = property_map<Vertex_index, P>("v:point").first;
+        vconn_    = property_map<Vertex_index, Vertex_connectivity>("v:connectivity").value();
+        hconn_    = property_map<Halfedge_index, Halfedge_connectivity>("h:connectivity").value();
+        fconn_    = property_map<Face_index, Face_connectivity>("f:connectivity").value();
+        vremoved_ = property_map<Vertex_index, bool>("v:removed").value();
+        eremoved_ = property_map<Edge_index, bool>("e:removed").value();
+        fremoved_ = property_map<Face_index, bool>("f:removed").value();
+        vpoint_   = property_map<Vertex_index, P>("v:point").value();
 
         // how many elements are removed?
         removed_vertices_  = rhs.removed_vertices_;
@@ -2682,8 +2673,12 @@ collect_garbage(Visitor &visitor)
     for (i=0; i<nH; ++i)
     {
         h = Halfedge_index(i);
-        set_target(h, vmap[target(h)]);
-        set_next(h, hmap[next(h)]);
+        if(target(h) != null_vertex()){
+          set_target(h, vmap[target(h)]);
+        }
+        if(next(h) != null_halfedge()){
+          set_next(h, hmap[next(h)]);
+        }
         if (!is_border(h))
             set_face(h, fmap[face(h)]);
     }
@@ -2693,7 +2688,8 @@ collect_garbage(Visitor &visitor)
     for (i=0; i<nF; ++i)
     {
         f = Face_index(i);
-        set_halfedge(f, hmap[halfedge(f)]);
+        if( halfedge(f) != null_halfedge())
+          set_halfedge(f, hmap[halfedge(f)]);
     }
 
     //apply visitor before invalidating the maps
@@ -2793,6 +2789,37 @@ namespace internal{
   }
 }
 
+namespace internal {
+
+template <typename P>
+std::size_t
+exact_num_faces(const CGAL::Surface_mesh<P>& sm)
+{
+ return sm.number_of_faces();
+}
+
+template <typename P>
+std::size_t
+exact_num_edges(const CGAL::Surface_mesh<P>& sm)
+{
+ return sm.number_of_edges();
+}
+
+template <typename P>
+std::size_t
+exact_num_halfedges(const CGAL::Surface_mesh<P>& sm)
+{
+ return sm.number_of_halfedges();
+}
+
+template <typename P>
+std::size_t
+exact_num_vertices(const CGAL::Surface_mesh<P>& sm)
+{
+ return sm.number_of_vertices();
+}
+
+} // namespace internal
 } // namespace CGAL
 
 #ifndef DOXYGEN_RUNNING

@@ -1,4 +1,4 @@
-/// \defgroup PkgPeriodic3Mesh3Ref 3D Periodic Mesh Generation Reference
+/// \defgroup PkgPeriodic3Mesh3Ref Reference Manual
 
 /// \defgroup PkgPeriodic3Mesh3Concepts Concepts
 /// \ingroup PkgPeriodic3Mesh3Ref

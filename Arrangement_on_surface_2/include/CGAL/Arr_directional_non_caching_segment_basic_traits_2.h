@@ -22,10 +22,10 @@ namespace CGAL {
 
 /*! \class
  * A model of the following concepts:
- * 1. ArrangementBasicTraits_2,
- * 2. ArrangementDirectionalXMonotoneTraits_2,
- * 4. ArrangementConstructXMonotoneCurveTraits_2, and
- * 3. ArrangementOpenBoundaryTraits_2
+ * 1. AosBasicTraits_2,
+ * 2. AosDirectionalXMonotoneTraits_2,
+ * 4. AosConstructXMonotoneCurveTraits_2, and
+ * 3. AosOpenBoundaryTraits_2
  * It handles linear curves.
  */
 template <class Kernel_T>
@@ -39,16 +39,15 @@ public:
   typedef typename Base::Segment_assertions                Segment_assertions;
   typedef typename Base::Has_exact_division                Has_exact_division;
 
-  /*! Default constructor. */
+  /*! constructs default. */
   Arr_directional_non_caching_segment_basic_traits_2() : Base() {}
 
   /// \name Types and functors inherited from the base, required by the
-  // ArrangementBasicTraits_2 concept.
+  // AosBasicTraits_2 concept.
   //@{
 
   // Traits types:
   typedef typename Base::Has_left_category         Has_left_category;
-  typedef typename Base::Has_do_intersect_category Has_do_intersect_category;
 
   typedef typename Base::Left_side_category        Left_side_category;
   typedef typename Base::Bottom_side_category      Bottom_side_category;
@@ -103,7 +102,7 @@ public:
   //@{
   typedef typename Kernel::Construct_opposite_segment_2  Construct_opposite_2;
 
-  /*! Obtain a Construct_opposite_2 functor object. */
+  /*! obtains a Construct_opposite_2 functor object. */
   Construct_opposite_2 construct_opposite_2_object() const
   { return Construct_opposite_2(); }
 
@@ -114,7 +113,7 @@ public:
     /*! The traits (in case it has state). */
     const Traits& m_traits;
 
-    /*! Constructor
+    /*! Constructs
      * \param traits the traits (in case it has state).
      */
     Compare_endpoints_xy_2(const Traits& traits) : m_traits(traits) {}
@@ -122,7 +121,7 @@ public:
     friend class Arr_directional_non_caching_segment_basic_traits_2<Kernel>;
 
   public:
-    /*! Compare the two endpoints of a given curve lexigoraphically.
+    /*! compares the two endpoints of a given curve lexigoraphically.
      * \param cv The curve.
      * \return SMALLER if cv is directed from left to right and LARGER
      * otherwise.
@@ -138,7 +137,7 @@ public:
     }
   };
 
-  /*! Obtain a Compare_endpoints_xy_2 functor object. */
+  /*! obtains a Compare_endpoints_xy_2 functor object. */
   Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const
   { return Compare_endpoints_xy_2(*this); }
   //@}

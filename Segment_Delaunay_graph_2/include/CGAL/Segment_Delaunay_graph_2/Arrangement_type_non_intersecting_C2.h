@@ -65,13 +65,13 @@ private:
   Are_same_points_2     same_points;
 
 public:
-  typedef typename Enum::Arrangement_type    result_type;
+  typedef typename Enum::Arrangement_type    Arrangement_type;
 
 private:
 
   //--------------------------------------------------------------------
 
-  result_type
+  Arrangement_type
   arrangement_type_ss(const Site_2& p, const Site_2& q) const
   {
     bool same_p1q1 = same_points(p.source_site(), q.source_site());
@@ -98,7 +98,7 @@ private:
 
   //--------------------------------------------------------------------
 
-  result_type
+  Arrangement_type
   arrangement_type_ps(const Site_2& p, const Site_2& q) const
   {
     if ( same_points(p, q.source_site()) ) {
@@ -112,7 +112,7 @@ private:
 
   //--------------------------------------------------------------------
 
-  result_type
+  Arrangement_type
   arrangement_type_pp(const Site_2& p, const Site_2& q) const
   {
     if ( same_points(p, q) ) {
@@ -128,7 +128,7 @@ public:
   typedef Site_2                   argument_type;
 
 
-  result_type
+  Arrangement_type
   operator()(const Site_2& p, const Site_2& q) const
   {
     CGAL_precondition( p.is_defined() && q.is_defined() );

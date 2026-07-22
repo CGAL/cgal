@@ -100,7 +100,7 @@ struct Graph_manipulations
       edge_descriptor edge;
       bool b;
       // test if the edge is already here, using add_edge
-      boost::tie(edge, b) = add_edge(va, vb, g);
+      std::tie(edge, b) = add_edge(va, vb, g);
       remove_edge(edge, g);
       if(!b) {
         // The edge was already here.
@@ -129,7 +129,7 @@ struct Graph_manipulations
     if(v1 != v2) {
       edge_descriptor edge;
       bool b;
-      boost::tie(edge, b) = add_edge(v1, v2, g);
+      std::tie(edge, b) = add_edge(v1, v2, g);
       return b;
     } else
       return false;

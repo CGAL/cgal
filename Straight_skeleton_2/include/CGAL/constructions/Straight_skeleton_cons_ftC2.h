@@ -567,7 +567,7 @@ compute_artifical_isec_timeC2 ( Trisegment_2_ptr< Trisegment_2<K, Segment_2_with
   if (!inter_exist) // no intersection
     return cgal_make_optional(Rational<FT>(FT(0),FT(0))) ; // does not exist
 
-  // Compute the intersection point and evalute the time from the line equation of the contour edge
+  // Compute the intersection point and evaluate the time from the line equation of the contour edge
   auto inter_res = K().intersect_2_object()(ray, opp_seg);
 
   FT t;

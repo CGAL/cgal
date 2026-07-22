@@ -53,7 +53,7 @@ protected:
   Face_const_handle m_unb_face;         // The unbounded arrangement face.
 
 public:
-  /*! Constructor.
+  /*! constructs.
    * \param arr The arrangement.
    */
   Arr_bounded_planar_batched_pl_helper(const Arrangement_2* arr) :
@@ -76,7 +76,7 @@ public:
   void after_handle_event(Event* /* event */) { return; }
   //@}
 
-  /*! Get the current top face. */
+  /*! obtains the current top face. */
   Face_const_handle top_face() const { return (m_unb_face); }
 };
 

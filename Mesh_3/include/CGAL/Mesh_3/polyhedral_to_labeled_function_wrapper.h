@@ -23,7 +23,7 @@
 
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_polyhedron_triangle_primitive.h>
 #include <CGAL/AABB_polyhedron_segment_primitive.h>
 
@@ -68,7 +68,7 @@ public:
   // AABB_tree Types
   typedef class AABB_const_polyhedron_triangle_primitive<BGT, Polyhedron_>
                                                     AABB_primitive;
-  typedef class AABB_traits<BGT,AABB_primitive>     AABB_traits;
+  typedef class AABB_traits_3<BGT,AABB_primitive>   AABB_traits;
   typedef class AABB_tree<AABB_traits>              AABB_tree;
   typedef typename AABB_traits::Bounding_box        Bounding_box;
 
@@ -189,7 +189,7 @@ public:
   // AABB_tree Types
   typedef class AABB_const_polyhedron_triangle_primitive<BGT, Polyhedron_>
                                                     AABB_primitive;
-  typedef class AABB_traits<BGT,AABB_primitive>     AABB_traits;
+  typedef class AABB_traits_3<BGT,AABB_primitive>   AABB_traits;
   typedef class AABB_tree<AABB_traits>              AABB_tree;
   typedef typename AABB_traits::Bounding_box        Bounding_box;
 
@@ -264,7 +264,7 @@ public:
   // AABB_tree Types
   typedef class AABB_const_polyhedron_edge_primitive<BGT, Polyhedron_>
                                                     AABB_primitive;
-  typedef class AABB_traits<BGT,AABB_primitive>     AABB_traits;
+  typedef class AABB_traits_3<BGT,AABB_primitive>   AABB_traits;
   typedef class AABB_tree<AABB_traits>              AABB_tree;
   typedef typename AABB_traits::Bounding_box        Bounding_box;
 

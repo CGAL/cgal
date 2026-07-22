@@ -22,7 +22,7 @@ as a gradient red/green corresponding to close/far from the source vertices.
 The heat method is highly efficient, since the algorithm
 boils down to two standard sparse linear algebra problems.  It is especially
 useful in situations where one wishes to perform repeated distance queries
-on a fixed domain, since precomputation done for the first query can be re-used.
+on a fixed domain, since precomputation done for the first query can be reused.
 
 As a rule of thumb, the method works well on triangle meshes, which are
 Delaunay, though in practice may also work fine for meshes that are far from
@@ -149,7 +149,7 @@ Next, the gradient in a given triangle can be expressed as
 
 \f$\nabla u = \frac{1}{2 A_f} \sum_i u_i ( N \times e_i ) \f$
 
-where \f$A_f\f$ is the area of the triangle, \f$N\f$ is its outward unit normal, \f$e_i\f$ is the \f$i\f$th edge vector (oriented counter-clockwise), and \f$u_i\f$ is the value of \f$u\f$ at the opposing vertex. The integrated divergence associated with vertex \f$i\f$ can be written as
+where \f$A_f\f$ is the area of the triangle, \f$N\f$ is its outward unit normal, \f$e_i\f$ is the \f$i\f$th edge vector (oriented counterclockwise), and \f$u_i\f$ is the value of \f$u\f$ at the opposing vertex. The integrated divergence associated with vertex \f$i\f$ can be written as
 
 \f$\nabla \cdot X = \frac{1}{2} \sum_j cot\theta_1 (e_1 \cdot X_j) + cot \theta_2 (e_2 \cdot X_j)\f$
 

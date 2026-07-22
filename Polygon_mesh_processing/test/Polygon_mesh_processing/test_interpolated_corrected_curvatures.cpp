@@ -1,5 +1,4 @@
 #include <CGAL/Polygon_mesh_processing/interpolated_corrected_curvatures.h>
-#include <CGAL/Polygon_mesh_processing/random_perturbation.h>
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
@@ -9,8 +8,9 @@
 
 #include <boost/graph/graph_traits.hpp>
 
+#include <functional>
 #include <iostream>
-#include <unordered_map>
+#include <string>
 
 #define ABS_ERROR 1e-6
 
@@ -181,7 +181,7 @@ void test_average_curvatures(std::string mesh_path,
 int main()
 {
   // testing on a simple sphere(r = 0.5), on both Polyhedron & SurfaceMesh:
-  // For this mesh, ina addition to the whole mesh functions, we also compare against the single vertex
+  // For this mesh, in addition to the whole mesh functions, we also compare against the single vertex
   // curvature functions to make sure the produce the same results
   // Expected: Mean Curvature = 2, Gaussian Curvature = 4, Principal Curvatures = 2 & 2 so 2 on avg.
   test_average_curvatures<Polyhedron>("meshes/sphere.off", Average_test_info(2, 4, 2), true);

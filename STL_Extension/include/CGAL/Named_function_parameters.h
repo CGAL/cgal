@@ -319,6 +319,33 @@ const T& choose_parameter(const T& t)
   return t;
 }
 
+// version with a dynamic property tag with initialization
+template <typename Tag, typename Graph, typename V>
+auto
+choose_parameter(const internal_np::Param_not_found&, Tag tag, Graph& graph, const V& default_value)
+{
+  return get(tag, graph, default_value);
+}
+
+template <typename Tag, typename Graph>
+auto
+choose_parameter(const internal_np::Param_not_found&, Tag tag, Graph& graph)
+{
+  return get(tag, graph);
+}
+
+template <typename T, typename Tag, typename Graph, typename V>
+const T& choose_parameter(const T& t,  Tag, Graph&, const V&)
+{
+  return t;
+}
+
+template <typename T, typename Tag, typename Graph>
+const T& choose_parameter(const T& t, Tag, Graph&)
+{
+  return t;
+}
+
 } // parameters namespace
 
 namespace internal_np {
@@ -510,13 +537,13 @@ struct Boost_parameter_compatibility_wrapper<Tag, true, false>
   }
 
 #define CGAL_add_named_parameter_with_compatibility(X, Y, Z)        \
-  const Boost_parameter_compatibility_wrapper<internal_np::X> Z;
+  inline const Boost_parameter_compatibility_wrapper<internal_np::X> Z;
 #define CGAL_add_named_parameter_with_compatibility_cref_only(X, Y, Z)        \
-  const Boost_parameter_compatibility_wrapper<internal_np::X, true, true> Z;
+  inline const Boost_parameter_compatibility_wrapper<internal_np::X, true, true> Z;
 #define CGAL_add_named_parameter_with_compatibility_ref_only(X, Y, Z)        \
-  const Boost_parameter_compatibility_wrapper<internal_np::X, true, false> Z;
+  inline const Boost_parameter_compatibility_wrapper<internal_np::X, true, false> Z;
 #define CGAL_add_extra_named_parameter_with_compatibility(X, Y, Z)        \
-  const Boost_parameter_compatibility_wrapper<internal_np::X> Z;
+  inline const Boost_parameter_compatibility_wrapper<internal_np::X> Z;
 #include <CGAL/STL_Extension/internal/parameters_interface.h>
 #undef CGAL_add_named_parameter
 #undef CGAL_add_extra_named_parameter_with_compatibility
@@ -559,6 +586,11 @@ namespace parameters = CGAL::parameters;
 }
 #endif
 
+// For disambiguation using SFINAE
+BOOST_MPL_HAS_XXX_TRAIT_DEF(CGAL_Named_function_parameters_class)
+template<class T>
+inline constexpr bool is_named_function_parameter = has_CGAL_Named_function_parameters_class<T>::value;
+
 } //namespace CGAL
 
 #ifndef CGAL_NO_STATIC_ASSERTION_TESTS
@@ -572,10 +604,5 @@ namespace boost
   }
 }
 #endif
-
-// For disambiguation using SFINAE
-BOOST_MPL_HAS_XXX_TRAIT_DEF(CGAL_Named_function_parameters_class)
-template<class T>
-inline constexpr bool is_named_function_parameter = has_CGAL_Named_function_parameters_class<T>::value;
 
 #endif // CGAL_BOOST_FUNCTION_PARAMS_HPP

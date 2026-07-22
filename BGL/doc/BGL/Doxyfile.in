@@ -5,6 +5,7 @@ INPUT += ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/IO/polygon_mesh_io.h \
          ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/Euler_operations.h \
          ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/iterator.h \
          ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/helpers.h \
+         ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/border.h \
          ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/generators.h \
          ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/selection.h \
          ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/split_graph_into_polylines.h \
@@ -19,7 +20,8 @@ INPUT += ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/IO/polygon_mesh_io.h \
          ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/METIS/partition_graph.h \
          ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/METIS/partition_dual_graph.h \
          ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/alpha_expansion_graphcut.h \
-         ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/graph_traits_inheritance_macros.h
+         ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/graph_traits_inheritance_macros.h \
+         ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/dijkstra_shortest_path.h
 
 
 EXAMPLE_PATH               +=  ${CGAL_Surface_mesh_skeletonization_EXAMPLE_DIR} \
@@ -34,6 +36,7 @@ ALIASES +=  "bgllink{1}=<a href=\"http://www.boost.org/libs/graph/doc/\1.html\">
 EXTRACT_ALL=NO
 HIDE_UNDOC_MEMBERS         =  YES
 HIDE_UNDOC_CLASSES         =  YES
+WARN_IF_INCOMPLETE_DOC     =  NO
 
 # macros to be used inside the code
 ALIASES += "cgalAssociatedTypesBegin=<dl class=\"params\"><dt>Associated Types</dt><dd> <table class=\"params\">"

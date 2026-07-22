@@ -1,0 +1,5 @@
+/*!
+\example Kinetic_surface_reconstruction/ksr_basic.cpp
+\example Kinetic_surface_reconstruction/ksr_building.cpp
+\example Kinetic_surface_reconstruction/ksr_parameters.cpp
+*/

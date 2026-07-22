@@ -1,4 +1,4 @@
-/// \defgroup PkgPoissonSurfaceReconstruction3Ref Poisson Surface Reconstruction Reference
+/// \defgroup PkgPoissonSurfaceReconstruction3Ref Reference Manual
 /*!
 \addtogroup PkgPoissonSurfaceReconstruction3Ref
 \cgalPkgDescriptionBegin{Poisson Surface Reconstruction,PkgPoissonSurfaceReconstruction3}
@@ -13,7 +13,7 @@
 \cgalPkgDependsOn{\ref PkgSolverInterface}
 \cgalPkgBib{cgal:asg-srps}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
+\cgalPkgDemo{CGAL Lab,CGALlab.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 

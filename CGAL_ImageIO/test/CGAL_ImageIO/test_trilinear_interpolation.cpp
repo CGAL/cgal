@@ -20,11 +20,11 @@ int main() {
 
   CGAL::Image_3 image(_createImage(2, 2, 2, 1,
                                    1., 1., 1.,
-                                   1, WK_FIXED, SGN_UNSIGNED));
+                                   1, CGAL::WK_FIXED, CGAL::SGN_UNSIGNED));
 
   Word data[8] = { 0, 0, 0, 0, 0, 0, 0, 0};
 
-  ImageIO_free(image.data());
+  CGAL::ImageIO_free(image.data());
   image.set_data(&data[0]);
 
   std::cerr << std::setprecision(2) << std::fixed;
@@ -215,7 +215,7 @@ int main() {
       {
         ++counter;
         const float value1 =
-          ::triLinInterp(image2.image(),
+          CGAL::triLinInterp(image2.image(),
                          d_x,
                          d_y,
                          d_z,

@@ -12,7 +12,7 @@ namespace CGAL {
 
 \section Property_mapA A Short Introduction to the Boost Property Maps Library
 
-The Boost Property Map Library consists mainly of interface specifications in the form of concepts. These interface specifications are intended for use by implementors of generic libraries in communicating requirements on template parameters to their users. In particular, the Boost Property Map concepts define a general purpose interface for mapping key objects to corresponding value objects, thereby hiding the details of how the mapping is implemented from algorithms. The implementation of types fulfilling the property map interface is up to the client of the algorithm to provide.
+The Boost Property Map Library consists mainly of interface specifications in the form of concepts. These interface specifications are intended for use by implementers of generic libraries in communicating requirements on template parameters to their users. In particular, the Boost Property Map concepts define a general purpose interface for mapping key objects to corresponding value objects, thereby hiding the details of how the mapping is implemented from algorithms. The implementation of types fulfilling the property map interface is up to the client of the algorithm to provide.
 
 The Boost Property Map Library also contains a few adaptors that convert commonly used data-structures that implement a mapping operation, such as builtin arrays (pointers), iterators, and std::map, to have the property map interface.
 

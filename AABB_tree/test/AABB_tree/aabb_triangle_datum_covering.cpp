@@ -5,7 +5,7 @@
 #include <CGAL/AABB_tree/internal/triangle_datum_covering.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Polygon_mesh_processing/bbox.h>
@@ -29,7 +29,7 @@ void test_no_cover(const Mesh& mesh)
   using Line_3 = typename GT::Line_3;
 
   using Primitive = CGAL::AABB_face_graph_triangle_primitive<Mesh, CGAL::Default, CGAL::Tag_true, CGAL::Tag_true>;
-  using Traits = CGAL::AABB_traits<GT, Primitive>;
+  using Traits = CGAL::AABB_traits_3<GT, Primitive>;
   using Tree = CGAL::AABB_tree<Traits>;
 
   // Build
@@ -99,7 +99,7 @@ void test_cover(const Mesh& mesh,
   using AABB_tree = CGAL::AABB_trees::internal::AABB_covered_triangle_tree<GT, Point>;
 
   using FG_Primitive = CGAL::AABB_face_graph_triangle_primitive<Mesh, CGAL::Default, CGAL::Tag_true, CGAL::Tag_true>;
-  using FG_Traits = CGAL::AABB_traits<GT, FG_Primitive>;
+  using FG_Traits = CGAL::AABB_traits_3<GT, FG_Primitive>;
   using FG_Tree = CGAL::AABB_tree<FG_Traits>;
 
   CGAL::Bbox_3 bbox = CGAL::Polygon_mesh_processing::bbox(mesh);

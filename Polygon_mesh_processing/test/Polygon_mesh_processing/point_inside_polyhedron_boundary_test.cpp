@@ -32,7 +32,7 @@ int main(int argc, char** argv)
 
   //test compilation of constructor from AABB_tree
   typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> FGTP;
-  typedef CGAL::AABB_traits<K, FGTP>    AABB_traits;
+  typedef CGAL::AABB_traits_3<K, FGTP>  AABB_traits;
   typedef CGAL::AABB_tree<AABB_traits>  AABB_tree;
 
   AABB_tree tree(faces(poly).first, faces(poly).second, poly);

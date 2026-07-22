@@ -58,7 +58,7 @@ public:
     const double& size() const { return second; }
     const double& sine() const { return first; }
 
-    // q1<q2 means q1 is prioritised over q2
+    // q1<q2 means q1 is prioritized over q2
     // ( q1 == *this, q2 == q )
     bool operator<(const Quality& q) const
     {
@@ -73,10 +73,10 @@ public:
       return( sine() < q.sine() );
     }
 
-    std::ostream& operator<<(std::ostream& out) const
+    friend std::ostream& operator<<(std::ostream& out, const Quality& q)
     {
-      return out << "(size=" << size()
-                 << ", sine=" << sine() << ")";
+      return out << "(size=" << q.size()
+                 << ", sine=" << q.sine() << ")";
     }
   };
 

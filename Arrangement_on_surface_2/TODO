@@ -4,7 +4,7 @@
     another chapter on "2D Arrangements on General Surfaces".
     This chapter can be much shorter, as all you can do with arrangements was
     explained and demonstrated in the "2D Arrangements" chapter. We should
-    however intorduce the concept of TopologyTraits, and re-interpret the
+    however introduce the concept of TopologyTraits, and re-interpret the
     functionality of the GeometryTraits.
 
   - Incoorporate:
@@ -98,7 +98,7 @@
   - The "planar" zone visitor is also used here. I believe this should work,
     as it is generic enough (I hope).
     Can you test it by trying to incrementally insert curves to an
-    arrrangement on a sphere.
+    arrangement on a sphere.
 
   - We can think of adding a test for the spherical topology, similar to the
     construction test developed by Baruch: Namely read n curves from a file,
@@ -164,7 +164,7 @@
   or at least issues warnings about returning a reference to temporary
   variable. Can you prompt the INRIA people to fix this?
   (I personally think that we should remove this example from our test-suite,
-   but if the INRIA people believe that it's place is there, they should at
+   but if the INRIA people believe that its place is there, they should at
    least properly maintain it ...)
 - There is a problem with the examples that use CORE on Darwin (platform #10).
   Other Darwin platforms seem fine. Do we want to investigate? (perhaps it's

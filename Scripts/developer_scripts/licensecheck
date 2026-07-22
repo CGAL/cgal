@@ -89,7 +89,7 @@ The two configuration files F</etc/devscripts.conf> and
 F<~/.devscripts> are sourced by a shell in that order to set
 configuration variables.  Command line options can be used to override
 configuration file settings.  Environment variable settings are
-ignored for this purpose.  The currently recognised variables are:
+ignored for this purpose.  The currently recognized variables are:
 
 =over 4
 
@@ -602,6 +602,10 @@ sub parselicense {
 
       if ($licensetext =~ /SPDX-License-Identifier BSL-1.0/i) {
         $license = "BSL 1.0";
+      }
+
+      if ($licensetext =~ /SPDX-License-Identifier CC0-1.0/i) {
+        $license = "CC0 1.0";
       }
 
       if ($licensetext =~ /SPDX-License-Identifier LicenseRef-RFL/i) {
