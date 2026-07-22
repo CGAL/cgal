@@ -78,7 +78,7 @@ int main(int argc, char* argv[])
 #endif
         std::cout << "Smoothing shape... (" << nb_iterations << " iterations)" << std::endl;
         PMP::smooth_shape(faces_to_smooth, mesh, time, CGAL::parameters::number_of_iterations(nb_iterations)
-                                                                                                   .vertex_is_constrained_map(vcmap));
+                                                                                                   );
         CGAL::IO::write_polygon_mesh("./issue7990_smoothed.off", mesh, CGAL::parameters::stream_precision(17));
         std::cout << "Done!" << std::endl;
         //draw(mesh);
