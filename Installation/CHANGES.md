@@ -4,7 +4,12 @@
 
 Release date: December 2026
 
+### [2D Arrangements](https://doc.cgal.org/6.3/Manual/packages.html#PkgArrangementOnSurface2)
+
+- **Breaking change**: Enhanced the metadata traits-class decorators `Arr_counting_traits_2` and `Arr_tracing_traits_2`. Each is (still) parameterized with another traits class being decorated, but it does not inherit from it. In addition one can get and set a smart pointer to the class being decorated.
+
 ### [2D Snap Rounding](https://doc.cgal.org/6.2/Manual/packages.html#PkgSnapRounding2) (major changes)
+
 - Added the function `vertical_slab_snap_rounding_2()`, a new snap rounding algorithm that offers better performance and supports a wider range of rounding schemes, including floating-point coordinate representations.
 - Added the traits classes `Double_grid_snap_rounding_traits_2`, `Float_grid_snap_rounding_traits_2`, and `Integer_grid_snap_rounding_traits_2`, enabling `vertical_slab_snap_rounding_2()`
   to operate on double-precision floating-point, single-precision floating-point, and integer coordinates, respectively.
