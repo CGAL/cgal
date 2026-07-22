@@ -272,7 +272,7 @@ struct Dihedral_angle_cosine
   }
 };
 
-Dihedral_angle_cosine cosine_of_90_degrees()
+inline Dihedral_angle_cosine cosine_of_90_degrees()
 {
   return Dihedral_angle_cosine(CGAL::ZERO, 0., 1.);
 }
@@ -806,10 +806,10 @@ bool is_boundary_vertex(const typename C3t3::Vertex_handle& v,
 }
 
 template<typename C3t3>
-typename C3t3::Surface_patch_index surface_patch_index(const typename C3t3::Vertex_handle v,
-    const C3t3& c3t3)
+std::optional<typename C3t3::Surface_patch_index>
+surface_patch_index(const typename C3t3::Vertex_handle v,
+                    const C3t3& c3t3)
 {
-  typedef typename C3t3::Surface_patch_index Surface_patch_index;
   typedef typename C3t3::Facet Facet;
   std::vector<Facet> facets;
   c3t3.triangulation().incident_facets(v, std::back_inserter(facets));
@@ -819,7 +819,7 @@ typename C3t3::Surface_patch_index surface_patch_index(const typename C3t3::Vert
     if (c3t3.is_in_complex(f))
       return c3t3.surface_patch_index(f);
   }
-  return Surface_patch_index();
+  return std::nullopt;
 }
 
 template<typename C3t3>
@@ -833,7 +833,7 @@ void set_index(typename C3t3::Vertex_handle v, const C3t3& c3t3)
   case 2:
     CGAL_expensive_assertion(surface_patch_index(v, c3t3)
                   != typename C3t3::Surface_patch_index());
-    v->set_index(surface_patch_index(v, c3t3));
+    v->set_index(surface_patch_index(v, c3t3).value());
     break;
   case 1:
     v->set_index(typename C3t3::Curve_index(1));
@@ -1146,17 +1146,13 @@ bool is_outside(const typename C3t3::Edge & edge,
   Cell_circulator done = circ;
   do
   {
-    // is cell in complex?
-    if (c3t3.is_in_complex(circ))
-      return false;
     // does circ belong to the selection?
     if (get(cell_selector, circ))
       return false;
+  }
+  while (++circ != done);
 
-    ++circ;
-  } while (circ != done);
-
-  return true; //all incident cells are outside or infinite
+  return true; //all incident cells are outside selection
 }
 
 // is `v` part of the selection of cells that should be remeshed?
@@ -1439,6 +1435,7 @@ auto sizing_at_vertex(const Vertex_handle v,
 
 template<typename Sizing, typename C3t3, typename Cell_selector>
 auto sizing_at_midpoint(const typename C3t3::Edge& e,
+                        const typename C3t3::Triangulation::Geom_traits::Point_3& m, // edge midpoint
                         const int dim,
                         const typename C3t3::Index& index,
                         const Sizing& sizing,
@@ -1446,17 +1443,13 @@ auto sizing_at_midpoint(const typename C3t3::Edge& e,
                         const Cell_selector& cell_selector)
 {
   using FT = typename C3t3::Triangulation::Geom_traits::FT;
-  using Point_3 = typename C3t3::Triangulation::Geom_traits::Point_3;
-
   auto cp = c3t3.triangulation().geom_traits().construct_point_3_object();
-  const Point_3 m = CGAL::midpoint(cp(e.first->vertex(e.second)->point()),
-                                   cp(e.first->vertex(e.third)->point()));
+
   const FT size = sizing(m, dim, index);
 
   if (dim < 3 && size == 0)
   {
-    const auto u = e.first->vertex(e.second);
-    const auto v = e.first->vertex(e.third);
+    const auto [u, v] = make_vertex_pair(e);
 
     const FT size_at_u = sizing(cp(u->point()), u->in_dimension(), u->index());
     const FT size_at_v = sizing(cp(v->point()), v->in_dimension(), v->index());
@@ -1572,7 +1565,6 @@ auto midpoint_with_info(const typename C3t3::Edge& e,
                         const C3t3& c3t3)
 {
   using Tr = typename C3t3::Triangulation;
-  using Vertex_handle = typename Tr::Vertex_handle;
   using Gt = typename Tr::Geom_traits;
   using Point_3 = typename Gt::Point_3;
   using Index = typename C3t3::Index;
@@ -1584,9 +1576,7 @@ auto midpoint_with_info(const typename C3t3::Edge& e,
     Index index;
   };
 
-  const auto vs = c3t3.triangulation().vertices(e);
-  const Vertex_handle u = vs[0];
-  const Vertex_handle v = vs[1];
+  const auto [u, v] = make_vertex_pair(e);
 
   const auto& gt = c3t3.triangulation().geom_traits();
   auto cp = gt.construct_point_3_object();

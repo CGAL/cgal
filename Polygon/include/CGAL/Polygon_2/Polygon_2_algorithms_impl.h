@@ -40,7 +40,7 @@ namespace Polygon_2 {
 // in the range are collinear segments, up to a given tolerance.
 //
 // \tparam K must be a model of `Kernel`
-// \tparam InputForwardIterator must be a model of `ForwardIterator`
+// \tparam InputForwardIterator must be a model of `BidirectionalIterator`
 //                              with value type `K::Point_2`
 // \tparam OutputForwardIterator must be a model of `OutputIterator`
 //                               with value type `K::Point_2`
@@ -60,54 +60,69 @@ OutputForwardIterator filter_collinear_points(InputForwardIterator first,
                                               const typename K::FT tolerance =
                                                 std::numeric_limits<typename K::FT>::epsilon())
 {
+  typedef typename K::FT      FT;
+  typedef typename K::Point_2 Point;
+
   CGAL_precondition(std::distance(first, beyond) >= 3);
 
-  typedef typename K::FT                              FT;
-  typedef typename K::Point_2                         Point;
+  // Helper to safely advance and wrap around in a purely forward manner
+  auto wrapped_advance = [&](InputForwardIterator it) {
+    ++it;
+    return (it == beyond) ? first : it;
+  };
 
-  InputForwardIterator last = std::prev(beyond);
+  // Helper for collinearity logic
+  auto is_collinear = [&](InputForwardIterator i1, InputForwardIterator i2, InputForwardIterator i3) {
+    const Point& p1 = *i1;
+    const Point& p2 = *i2;
+    const Point& p3 = *i3;
+    const FT det = CGAL::determinant(p1.x() - p3.x(), p1.y() - p3.y(),
+                                     p2.x() - p3.x(), p2.y() - p3.y());
+    return CGAL::abs(det) <= tolerance;
+  };
 
-  InputForwardIterator vit = first, vit_next = vit, vit_next_2 = vit, vend = vit;
-  ++vit_next;
-  ++(++vit_next_2);
+  // find a corner
+  InputForwardIterator v0 = first;
+  InputForwardIterator v1 = std::next(first);
+  InputForwardIterator v2 = std::next(v1);
 
-  bool stop = false;
+  bool all_collinear = false;
 
-  do
-  {
-    CGAL_assertion(vit != vit_next);
-    CGAL_assertion(vit_next != vit_next_2);
-    CGAL_assertion(vit != vit_next_2);
+  while (is_collinear(v0, v1, v2)) {
+    v0 = v1;
+    v1 = v2;
+    v2 = wrapped_advance(v2);
 
-    const Point& o = *vit;
-    const Point& p = *vit_next;
-    const Point& q = *vit_next_2;
-
-    // Stop when 'p' is the starting point. It does not matter whether we are
-    // in a collinear case or not.
-    stop = (vit_next == vend);
-
-    const FT det = CGAL::determinant(o.x() - q.x(), o.y() - q.y(),
-                                     p.x() - q.x(), p.y() - q.y());
-
-    if(CGAL::abs(det) <= tolerance)
-    {
-      // Only move 'p' and 'q' to ignore consecutive collinear points
-      vit_next = (vit_next == last) ? first : ++vit_next;
-      vit_next_2 = (vit_next_2 == last) ? first : ++vit_next_2;
-    }
-    else
-    {
-      // 'vit = vit_next' and not '++vit' because we don't necessarily have *(next(vit) == p)
-      // and collinear points between 'o' and 'p' are ignored
-      vit = vit_next;
-      vit_next = (vit_next == last) ? first : ++vit_next;
-      vit_next_2 = (vit_next_2 == last) ? first : ++vit_next_2;
-
-      *out++ = p;
+    if (v0 == first) {
+      all_collinear = true;
+      break; // We made a full circle and found no corners.
     }
   }
-  while(!stop);
+
+  // If the polygon is entirely degenerate (e.g. all points lie on one line),
+  // there are no 2D corners to output. We safely return empty.
+  if (all_collinear)
+    return out;
+
+  InputForwardIterator anchor = v1;
+  InputForwardIterator p = v2;
+  InputForwardIterator q = wrapped_advance(v2);
+
+  *out++ = *anchor;
+
+  while (p != v1) {
+    if (is_collinear(anchor, p, q)) {
+      // 'p' forms a flat line between 'anchor' and 'q'. Skip 'p'.
+      p = q;
+      q = wrapped_advance(q);
+    } else {
+      // 'p' creates a turn, becomes the next anchor
+      *out++ = *p;
+      anchor = p;
+      p = q;
+      q = wrapped_advance(q);
+    }
+  }
 
   return out;
 }
@@ -163,8 +178,8 @@ public:
 
 template <class ForwardIterator, class PolygonTraits>
 ForwardIterator left_vertex_2(ForwardIterator first,
-                                   ForwardIterator last,
-                                   const PolygonTraits&traits)
+                              ForwardIterator last,
+                              const PolygonTraits& traits)
 {
     CGAL_precondition(first != last);
     internal::Polygon_2::Compare_vertices<PolygonTraits>
@@ -179,8 +194,8 @@ ForwardIterator left_vertex_2(ForwardIterator first,
 
 template <class ForwardIterator, class PolygonTraits>
 ForwardIterator right_vertex_2(ForwardIterator first,
-                                    ForwardIterator last,
-                                    const PolygonTraits &traits)
+                               ForwardIterator last,
+                               const PolygonTraits &traits)
 {
     CGAL_precondition(first != last);
     internal::Polygon_2::Compare_vertices<PolygonTraits>
@@ -195,8 +210,8 @@ ForwardIterator right_vertex_2(ForwardIterator first,
 
 template <class ForwardIterator, class PolygonTraits>
 ForwardIterator top_vertex_2(ForwardIterator first,
-                                  ForwardIterator last,
-                                  const PolygonTraits&traits)
+                             ForwardIterator last,
+                             const PolygonTraits& traits)
 {
     CGAL_precondition(first != last);
     return std::max_element(first, last, traits.less_yx_2_object());
@@ -209,8 +224,8 @@ ForwardIterator top_vertex_2(ForwardIterator first,
 
 template <class ForwardIterator, class PolygonTraits>
 ForwardIterator bottom_vertex_2(ForwardIterator first,
-                                     ForwardIterator last,
-                                     const PolygonTraits&traits)
+                                ForwardIterator last,
+                                const PolygonTraits& traits)
 {
     CGAL_precondition(first != last);
     return std::min_element(first, last, traits.less_yx_2_object());
@@ -232,8 +247,8 @@ ForwardIterator bottom_vertex_2(ForwardIterator first,
 
 template <class ForwardIterator, class Traits>
 bool is_convex_2(ForwardIterator first,
-                      ForwardIterator last,
-                      const Traits& traits)
+                 ForwardIterator last,
+                 const Traits& traits)
 {
   ForwardIterator previous = first;
   if (previous == last) return true;
@@ -320,9 +335,9 @@ std::cout << "polygon not locally convex!" << std::endl;
 
 template <class ForwardIterator, class Point, class Traits>
 Oriented_side oriented_side_2(ForwardIterator first,
-                                        ForwardIterator last,
-                                        const Point& point,
-                                        const Traits& traits)
+                              ForwardIterator last,
+                              const Point& point,
+                              const Traits& traits)
 {
   Orientation o = orientation_2(first, last, traits);
   CGAL_assertion(o != COLLINEAR);
@@ -394,9 +409,9 @@ int which_side_in_slab(Point const &point, Point const &low, Point const &high,
 
 template <class ForwardIterator, class Point, class PolygonTraits>
 Bounded_side bounded_side_2(ForwardIterator first,
-                                      ForwardIterator last,
-                                      const Point& point,
-                                      const PolygonTraits& traits)
+                            ForwardIterator last,
+                            const Point& point,
+                            const PolygonTraits& traits)
 {
 
   ForwardIterator current = first;
@@ -507,28 +522,44 @@ namespace internal {
 
 // This exists because the "is_simple_2" precondition in the orientation_2() function is in fact
 // stronger than necessary: it also works for strictly simple polygons, which matters for
-// Straight line skeletons, as the offset polygons might have non-manifoldness.
+// SLS2 and AW2, as the polygons might have non-manifoldness.
 template <class ForwardIterator, class Traits>
 Orientation orientation_2_no_precondition(ForwardIterator first,
-                                          ForwardIterator last,
+                                          ForwardIterator beyond,
                                           const Traits& traits)
 {
-  ForwardIterator i = left_vertex_2(first, last, traits);
+  typedef typename Traits::Point_2 Point;
 
-  ForwardIterator prev = (i == first) ? last : i;
-  --prev;
+  CGAL_precondition(first != beyond); // Ensure range is not empty
 
-  ForwardIterator next = i;
-  ++next;
-  if (next == last)
-    next = first;
+  // The code below is a custom left_vertex_2 that keeps track of the predecessor of the leftmost vertex
+  CGAL::internal::Polygon_2::Compare_vertices<Traits> less(traits.less_xy_2_object());
 
-  // if the range [first,last) contains fewer than three points, then some
+  ForwardIterator min_it = first, min_prev = first;
+
+  ForwardIterator prev = first, curr = std::next(first);
+  while (curr != beyond) {
+    if (less(*curr, *min_it)) {
+      min_it = curr;
+      min_prev = prev;
+    }
+    prev = curr;
+    ++curr;
+  }
+
+  // If the left vertex is the first, its predecessor in a polygon is the last element,
+  // and 'prev' points to the last element in the range.
+  if (min_it == first)
+    min_prev = prev;
+
+  ForwardIterator min_next = std::next(min_it);
+  if (min_next == beyond)
+    min_next = first;
+
+  // if the range [first,beyond) contains fewer than three points, then some
   // of the points (prev,i,next) will coincide
 
-  // return the orientation of the triple (prev,i,next)
-  typedef typename Traits::Point_2 Point;
-  return traits.orientation_2_object()(Point(*prev), Point(*i), Point(*next));
+  return traits.orientation_2_object()(Point(*min_prev), Point(*min_it), Point(*min_next));
 }
 
 } // namespace internal
@@ -536,11 +567,11 @@ Orientation orientation_2_no_precondition(ForwardIterator first,
 
 template <class ForwardIterator, class Traits>
 Orientation orientation_2(ForwardIterator first,
-                          ForwardIterator last,
+                          ForwardIterator beyond,
                           const Traits& traits)
 {
-  CGAL_precondition(is_simple_2(first, last, traits));
-  return Polygon::internal::orientation_2_no_precondition(first, last, traits);
+  CGAL_precondition(is_simple_2(first, beyond, traits));
+  return Polygon::internal::orientation_2_no_precondition(first, beyond, traits);
 }
 
 } //namespace CGAL

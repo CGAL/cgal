@@ -1,4 +1,4 @@
-Snap Rounding (SR, for short) is a well known method for converting
+Snap Rounding (SR, for short) is a well-known method for converting
 arbitrary-precision arrangements of segments into a fixed-precision
 representation [Good,Guib,Hobb]. In the study of robust geometric
 computing, it can be classified as a finite precision approximation

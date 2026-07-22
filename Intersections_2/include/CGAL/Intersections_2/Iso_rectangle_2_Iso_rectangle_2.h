@@ -20,6 +20,7 @@
 
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/Intersection_traits_2.h>
+#include <CGAL/Rational_traits.h>
 
 namespace CGAL {
 

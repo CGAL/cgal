@@ -28,6 +28,7 @@
 #include <CGAL/Mesh_3/Triangulation_helpers.h>
 #include <CGAL/Time_stamper.h>
 #include <CGAL/tuple.h>
+#include <CGAL/unordered_flat_map.h>
 #include <CGAL/iterator.h>
 #include <CGAL/array.h>
 #include <CGAL/Handle_hash_function.h>
@@ -787,6 +788,8 @@ public:
                                    ForwardIterator last_cell,
                                    Moving_vertices_set& moving_vertices);
 
+  bool is_restricted_facet(const Facet& f);
+  bool is_restricted_cell(const Cell_handle c);
   void update_restricted_facets();
   void update_restricted_cells();
 
@@ -1751,7 +1754,7 @@ private:
   }
 
   /**
-   * Returns false if there is a vertex belonging to one facet of `facets`
+   * Returns `false` if there is a vertex belonging to one facet of `facets`
    * which has not his dimension < 3
    */
   bool check_no_inside_vertices(const Facet_vector& facets) const;
@@ -1822,7 +1825,7 @@ private:
   }
 
   /**
-   * Returns the facets of `cells` (returns each facet only once i.e. use
+   * Returns the facets of `cells` (returns each facet only once, i.e., use
    * canonical facet)
    */
   Facet_vector get_facets(const Cell_vector& cells) const
@@ -1891,7 +1894,7 @@ private:
   }
 #else
   /**
-   * Returns the facets of `cells` (returns each facet only once i.e. use
+   * Returns the facets of `cells` (returns each facet only once, i.e., use
    * canonical facet)
    */
   template <typename ForwardIterator>
@@ -1982,7 +1985,7 @@ private:
 
 
   /**
-   * Returns the facets of `cells` (returns each facet only once i.e. use
+   * Returns the facets of `cells` (returns each facet only once, i.e., use
    * canonical facet)
    */
   template <typename ForwardIterator>
@@ -2915,6 +2918,24 @@ update_restricted_facets()
 }
 
 template <typename C3T3, typename MD>
+bool
+C3T3_helpers<C3T3, MD>::
+is_restricted_facet(const Facet& f)
+{
+  Update_c3t3 updater(domain_, c3t3_);
+  return Surface_patch() != updater(f);
+}
+
+template <typename C3T3, typename MD>
+bool
+C3T3_helpers<C3T3, MD>::
+is_restricted_cell(const Cell_handle cell)
+{
+  Update_c3t3 updater(domain_, c3t3_);
+  return Subdomain() != updater(cell);
+}
+
+template <typename C3T3, typename MD>
 void
 C3T3_helpers<C3T3, MD>::
 update_restricted_cells()
@@ -3018,7 +3039,9 @@ move_point(const Vertex_handle& old_vertex,
 
     Vertex_handle new_vertex = move_point_topo_change(old_vertex, new_position, outdated_cells_set);
 
-    moving_vertices.insert(new_vertex);
+    if(new_vertex != Vertex_handle{}) {
+      moving_vertices.insert(new_vertex);
+    }
     return new_vertex;
   }
 }
@@ -3104,7 +3127,9 @@ move_point(const Vertex_handle& old_vertex,
 
     lock_moving_vertices();
     moving_vertices.erase(old_vertex);
-    moving_vertices.insert(new_vertex);
+    if(new_vertex != Vertex_handle{}) {
+      moving_vertices.insert(new_vertex);
+    }
     unlock_moving_vertices();
 
     // Don't "unlock_all_elements" here, the caller may need it to do it himself
@@ -3148,6 +3173,23 @@ move_point_topo_change(const Vertex_handle& old_vertex,
 
   if (could_lock_zone && *could_lock_zone == false)
     return Vertex_handle();
+
+  CGAL::unordered_flat_set<Vertex_handle> insertion_conflict_vertices;
+  std::for_each(insertion_conflict_cells.begin(), insertion_conflict_cells.end(),
+                [&](const Cell_handle& c) {
+                  for(auto v: tr_.vertices(c)) {
+                    insertion_conflict_vertices.insert(v);
+                  }
+                });
+  std::for_each(insertion_conflict_boundary.begin(), insertion_conflict_boundary.end(),
+                [&](const Facet& f) {
+                  for(auto v: tr_.vertices(f)) {
+                    insertion_conflict_vertices.erase(v);
+                  }
+                });
+  if(!insertion_conflict_vertices.empty()) {
+    return Vertex_handle{};
+  }
 
   lock_outdated_cells();
   for(typename Cell_set::iterator it = insertion_conflict_cells.begin();
@@ -3207,6 +3249,9 @@ move_point_topo_change(const Vertex_handle& old_vertex,
   reset_sliver_cache(removal_conflict_cells);
   reset_circumcenter_cache(insertion_conflict_cells);
   reset_sliver_cache(insertion_conflict_cells);
+
+  if(insertion_conflict_boundary.empty())
+    return old_vertex; // new_location is a vertex already
 
   Vertex_handle nv = move_point_topo_change_conflict_zone_known(old_vertex, new_position,
                                 insertion_conflict_boundary[0],

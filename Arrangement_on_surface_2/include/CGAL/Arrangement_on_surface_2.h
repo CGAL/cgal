@@ -1736,8 +1736,8 @@ protected:
                    Arr_not_all_sides_oblivious_tag) const;
 
   /*! Given two x-monotone curves that share their minimal end point.
-   * returns true if the y-coordinate of the first curve curve near its minimal
-   * end smaller than the y-coordinate of the second curve (near its minimal
+   * returns true if the y-coordinate of the first curve near its minimal
+   * end is smaller than the y-coordinate of the second curve (near its minimal
    * end). This function is used, for example, when a new curve is to be
    * inserted into the arrangement. In this case the search is conducted over
    * the curves that will comprise a new CCB.

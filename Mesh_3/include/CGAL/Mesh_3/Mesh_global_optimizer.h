@@ -304,7 +304,7 @@ public:
   /**
    * Launch optimization process
    *
-   * @param nb_interations maximum number of iterations
+   * @param nb_iterations maximum number of iterations
    */
   Mesh_optimization_return_code operator()(int nb_iterations,
                                            Visitor v = Visitor());
@@ -547,7 +547,9 @@ private:
           }
 
           // Restore size in meshing_info data
-          new_v->set_meshing_info(size);
+          if(new_v != Vertex_handle{}) {
+            new_v->set_meshing_info(size);
+          }
         }
         else // Move point
         {
@@ -993,7 +995,9 @@ update_mesh(const Moves_vector& moves,
         Vertex_handle new_v = helper_.move_point(v, move, outdated_cells, moving_vertices);
 
         // Restore size in meshing_info data
-        new_v->set_meshing_info(size);
+        if(new_v != Vertex_handle{}) {
+          new_v->set_meshing_info(size);
+        }
       }
       else // Move point
       {

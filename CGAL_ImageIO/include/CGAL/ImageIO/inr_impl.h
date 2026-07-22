@@ -1,7 +1,7 @@
 // Copyright (c) 2005-2008 ASCLEPIOS Project, INRIA Sophia-Antipolis (France)
 // All rights reserved.
 //
-// This file is part of the ImageIO Library, and as been adapted for CGAL (www.cgal.org).
+// This file is part of the ImageIO Library, and has been adapted for CGAL (www.cgal.org).
 //
 // $URL$
 // $Id$
@@ -21,13 +21,15 @@
 #include <string>
 #include <sstream>
 #include <string.h>
+#include <clocale>
 
+namespace CGAL {
 /* Magic header for inrimages v4 */
-#define INR4_MAGIC "#INRIMAGE-4#{"
+#define CGAL_INR4_MAGIC "#INRIMAGE-4#{"
 
 
 /** Magic header for inrimages */
-#define INR_MAGIC "#INR"
+#define CGAL_INR_MAGIC "#INR"
 
 typedef struct stringListElementStruct {
   char *string;
@@ -40,7 +42,6 @@ typedef struct {
 } stringListHead;
 /* string list descriptor */
 
-#include <clocale>
 class Set_numeric_locale {
   const char * old_locale;
 public:
@@ -116,7 +117,7 @@ int _writeInrimageHeader(const _image *im, ENDIANNESS end) {
     }
 
     /* write header information */
-    oss << INR4_MAGIC << "\n";
+    oss << CGAL_INR4_MAGIC << "\n";
     oss << "XDIM=" << im->xdim << "\n";
     oss << "YDIM=" << im->ydim << "\n";
     oss << "ZDIM=" << im->zdim << "\n";
@@ -234,7 +235,7 @@ int readInrimageHeader(const char *,_image *im) {
   if(im->openMode != OM_CLOSE) {
     /* read image magic number */
     if(!fgetns(str, 257, im )) return -1;
-    if(strcmp(str, INR4_MAGIC)) return -1;
+    if(strcmp(str, CGAL_INR4_MAGIC)) return -1;
 
 
     /* while read line does not begin with '#' or '\n', read line
@@ -450,7 +451,7 @@ static void concatStringElement(const stringListHead *strhead,
 
 CGAL_INLINE_FUNCTION
 int testInrimageHeader(char *magic,const char *) {
-  if (!strcmp(magic, INR_MAGIC))
+  if (!strcmp(magic, CGAL_INR_MAGIC))
     return 0;
   else
     return -1;
@@ -503,3 +504,5 @@ PTRIMAGE_FORMAT createInrimageFormat() {
   strcpy(f->realName,"Inrimage");
   return f;
 }
+
+} // namespace CGAL

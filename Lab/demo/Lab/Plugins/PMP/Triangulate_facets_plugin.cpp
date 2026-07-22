@@ -24,7 +24,7 @@ class CGAL_Lab_triangulate_facets_plugin :
   typedef boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
 
   struct Selection_updater_visitor
-    : public CGAL::Polygon_mesh_processing::Hole_filling::Default_visitor
+    : public CGAL::Polygon_mesh_processing::Triangulate_faces::Default_visitor<SMesh>
   {
     typedef typename Scene_polyhedron_selection_item::Selection_set_facet Container;
     Container& faces;
