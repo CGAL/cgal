@@ -1,9 +1,8 @@
 # Created by the script cgal_create_CMakeLists.
 # This is the CMake script for compiling a set of CGAL applications.
 
-project(Shape_regularization_Benchmarks)
-
 cmake_minimum_required(VERSION 3.12...3.31)
+project(Shape_regularization_Benchmarks)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
 
