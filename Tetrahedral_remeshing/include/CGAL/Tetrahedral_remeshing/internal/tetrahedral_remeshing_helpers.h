@@ -1895,6 +1895,14 @@ void get_edge_info(const typename C3t3::Edge& edge,
   }
 }
 
+#ifdef CGAL_TETRAHEDRAL_REMESHING_USE_REFACTORED_COLLAPSE
+template<typename EdgeType, typename ShouldSkipContainer>
+void remove_from_bimap(const EdgeType& e,
+                      ShouldSkipContainer& should_skip)
+{
+  should_skip[e] = true;
+}
+#else
 
 template<typename EdgesBimap>
 void remove_from_bimap(const typename EdgesBimap::left_map::key_type& e,
@@ -1904,6 +1912,7 @@ void remove_from_bimap(const typename EdgesBimap::left_map::key_type& e,
   if (eit != edges.left.end())
     edges.left.erase(eit);
 }
+#endif // CGAL_TETRAHEDRAL_REMESHING_USE_REFACTORED_COLLAPSE
 
 // if e is in 'edges'
 template<typename EdgesBimap, typename FT>
@@ -2102,7 +2111,7 @@ void check_surface_patch_indices(const C3t3& c3t3)
 }
 
 template<typename C3t3>
-void count_far_points(const C3t3& c3t3)
+size_t count_far_points(const C3t3& c3t3)
 {
   std::size_t count = 0;
   for (auto v : c3t3.triangulation().finite_vertex_handles())
@@ -2111,6 +2120,7 @@ void count_far_points(const C3t3& c3t3)
       ++count;
   }
   std::cout << "Nb far points : " << count << std::endl;
+  return count;
 }
 
 template<typename Tr>
@@ -2609,6 +2619,19 @@ void dump_c3t3(const C3t3& c3t3, const char* filename_no_extension)
 
 
 } //namespace debug
+
+template<typename C3t3>
+inline boost::container::small_vector<typename C3t3::Cell_handle, 64>
+get_incident_cells(typename C3t3::Vertex_handle vh, const C3t3& c3t3)
+{
+  boost::container::small_vector<typename C3t3::Cell_handle, 64> inc_cells;
+#ifdef USE_THREADSAFE_INCIDENT_CELLS
+  c3t3.triangulation().incident_cells_threadsafe(vh, std::back_inserter(inc_cells));
+#else
+  c3t3.triangulation().incident_cells(vh, std::back_inserter(inc_cells));
+#endif
+  return inc_cells;
+}
 } //namespace Tetrahedral_remeshing
 } //namespace CGAL
 
