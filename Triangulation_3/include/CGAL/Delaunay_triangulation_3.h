@@ -184,6 +184,10 @@ protected:
                                         const Point& p2, const Point& p3,
                                         const Point& t, bool perturb = false) const;
 
+  Oriented_side side_of_oriented_sphere(const Point& p0, const Point& p1,
+                                        const Point& p2, const Point& p3,
+                                        const Point& t, const std::array<double,4>& det, bool perturb = false) const;
+
   Bounded_side coplanar_side_of_bounded_circle(const Point& p, const Point& q,
                                                const Point& r, const Point& s, bool perturb = false) const;
 
@@ -734,10 +738,28 @@ private:
   side_of_sphere(Vertex_handle v0, Vertex_handle v1,
                  Vertex_handle v2, Vertex_handle v3,
                  const Point& p, bool perturb) const;
+
+  Bounded_side
+  side_of_sphere(Vertex_handle v0, Vertex_handle v1,
+                 Vertex_handle v2, Vertex_handle v3,
+                 const Point& p, const std::array<double,4>& det, bool perturb) const;
+
 public:
   // Queries
   Bounded_side side_of_sphere(Cell_handle c, const Point& p, bool perturb = false) const
   {
+#ifdef CGAL_DELAUNAY_3_USE_SUBDETERMINANTS
+    if(! is_infinite(c)){
+
+    Bounded_side bs = side_of_sphere(c->vertex(0), c->vertex(1),
+                                     c->vertex(2), c->vertex(3), p, c->info(), perturb);
+
+    CGAL_assertion_code(Bounded_side check = side_of_sphere(c->vertex(0), c->vertex(1),
+                                                            c->vertex(2), c->vertex(3), p, perturb));
+    CGAL_assertion(bs == check);
+    return bs;
+    }
+#endif
     return side_of_sphere(c->vertex(0), c->vertex(1),
                           c->vertex(2), c->vertex(3), p, perturb);
   }
@@ -1110,8 +1132,29 @@ insert(const Point& p, Locate_type lt, Cell_handle c, int li, int lj, bool *coul
     case 2:
     {
       Conflict_tester_2 tester(p, this);
-      return insert_in_conflict(p, lt, c, li, lj,
-                                tester, hidden_point_visitor, could_lock_zone);
+       Vertex_handle v = insert_in_conflict(p, lt, c, li, lj,
+                                            tester, hidden_point_visitor, could_lock_zone);
+#ifdef CGAL_DELAUNAY_3_USE_SUBDETERMINANTS
+     if(dimension() == 3){
+     std::vector<Cell_handle> cells;
+     cells.reserve(64);
+     this->incident_cells(v, std::back_inserter(cells));
+      for(Cell_handle ch : cells)
+      {
+        if(! is_infinite(ch)){
+           const Point& p0 = ch->vertex(0)->point();
+           const Point& p1 = ch->vertex(1)->point();
+           const Point& p2 = ch->vertex(2)->point();
+           const Point& p3 = ch->vertex(3)->point();
+           subdeterminants(p0.x(), p0.y(), p0.z(),
+                           p1.x(), p1.y(), p1.z(),
+                           p2.x(), p2.y(), p2.z(),
+                           p3.x(), p3.y(), p3.z(), ch->info());
+        }
+      }
+     }
+#endif
+      return v;
     }//dim 2
     default :
       // dimension <= 1
@@ -1419,6 +1462,49 @@ side_of_oriented_sphere(const Point& p0, const Point& p1, const Point& p2,
 }
 
 template < class Gt, class Tds, class Lds >
+Oriented_side
+Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
+side_of_oriented_sphere(const Point& p0, const Point& p1, const Point& p2,
+                        const Point& p3, const Point& p, const std::array<double,4>& det, bool perturb) const
+{
+  CGAL_precondition(orientation(p0, p1, p2, p3) == POSITIVE);
+
+  Oriented_side os =
+      geom_traits().side_of_oriented_sphere_3_object()(p0, p1, p2, p3, p, det);
+
+  if(os != ON_ORIENTED_BOUNDARY || !perturb)
+    return os;
+
+  // We are now in a degenerate case => we do a symbolic perturbation.
+
+  // We sort the points lexicographically.
+  const Point * points[5] = {&p0, &p1, &p2, &p3, &p};
+  std::sort(points, points + 5, typename Tr_Base::Perturbation_order(this));
+
+  // We successively look whether the leading monomial, then 2nd monomial
+  // of the determinant has non null coefficient.
+  // 2 iterations are enough (cf paper)
+  for(int i=4; i>2; --i)
+  {
+    if(points[i] == &p)
+      return ON_NEGATIVE_SIDE; // since p0 p1 p2 p3 are non coplanar
+    // and positively oriented
+    Orientation o;
+    if(points[i] == &p3 && (o = orientation(p0,p1,p2,p)) != COPLANAR)
+      return o;
+    if(points[i] == &p2 && (o = orientation(p0,p1,p,p3)) != COPLANAR)
+      return o;
+    if(points[i] == &p1 && (o = orientation(p0,p,p2,p3)) != COPLANAR)
+      return o;
+    if(points[i] == &p0 && (o = orientation(p,p1,p2,p3)) != COPLANAR)
+      return o;
+  }
+
+  CGAL_assertion(false);
+  return ON_NEGATIVE_SIDE;
+}
+
+template < class Gt, class Tds, class Lds >
 Bounded_side
 Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
 coplanar_side_of_bounded_circle(const Point& p0, const Point& p1,
@@ -1516,6 +1602,58 @@ side_of_sphere(Vertex_handle v0, Vertex_handle v1,
 
   return (Bounded_side) side_of_oriented_sphere(v0->point(), v1->point(), v2->point(), v3->point(), p, perturb);
 }
+
+template < class Gt, class Tds, class Lds >
+Bounded_side
+Delaunay_triangulation_3<Gt,Tds,Default,Lds>::
+side_of_sphere(Vertex_handle v0, Vertex_handle v1,
+               Vertex_handle v2, Vertex_handle v3,
+               const Point& p,
+               const std::array<double, 4>& det,
+               bool perturb) const
+{
+  CGAL_precondition(dimension() == 3);
+
+  if(is_infinite(v0))
+  {
+    Orientation o = orientation(v2->point(), v1->point(), v3->point(), p);
+    if(o != COPLANAR)
+      return Bounded_side(o);
+
+    return coplanar_side_of_bounded_circle(v2->point(), v1->point(), v3->point(), p, perturb);
+  }
+
+  if(is_infinite(v1))
+  {
+    Orientation o = orientation(v2->point(), v3->point(), v0->point(), p);
+    if(o != COPLANAR)
+      return Bounded_side(o);
+
+    return coplanar_side_of_bounded_circle(v2->point(), v3->point(), v0->point(), p, perturb);
+  }
+
+  if(is_infinite(v2))
+  {
+    Orientation o = orientation(v1->point(), v0->point(), v3->point(), p);
+    if(o != COPLANAR)
+      return Bounded_side(o);
+
+    return coplanar_side_of_bounded_circle(v1->point(), v0->point(), v3->point(), p, perturb);
+  }
+
+  if(is_infinite(v3))
+  {
+    Orientation o = orientation(v0->point(), v1->point(), v2->point(), p);
+    if(o != COPLANAR)
+      return Bounded_side(o);
+
+    return coplanar_side_of_bounded_circle(v0->point(), v1->point(), v2->point(), p, perturb);
+  }
+
+  return (Bounded_side) side_of_oriented_sphere(v0->point(), v1->point(), v2->point(), v3->point(), p, det, perturb);
+}
+
+
 
 template < class Gt, class Tds, class Lds >
 Bounded_side
