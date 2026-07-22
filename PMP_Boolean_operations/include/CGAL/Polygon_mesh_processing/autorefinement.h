@@ -54,7 +54,7 @@
 #endif
 #endif
 
-// Thingi10K/raw_meshes/101633.stl is getting a huge speed up with switched on
+// Thingi10K/raw_meshes/101633.stl is getting a huge speed up when switched on
 #ifdef CGAL_AUTOREF_USE_FIXED_PROJECTION_TRAITS
 #include <CGAL/Kernel_23/internal/Projection_traits_3.h>
 #endif
