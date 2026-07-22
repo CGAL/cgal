@@ -54,6 +54,7 @@
 #endif
 #endif
 
+// Thingi10K/raw_meshes/101633.stl is getting a huge speed up with switched on
 #ifdef CGAL_AUTOREF_USE_FIXED_PROJECTION_TRAITS
 #include <CGAL/Kernel_23/internal/Projection_traits_3.h>
 #endif
@@ -1100,15 +1101,21 @@ bool autorefine_triangle_soup(PointRange& soup_points,
     all_triangle_data[tid].point_locations[2]=-3;
   }
 
-  CGAL_PMP_AUTOREFINE_VERBOSE("compute intersections");
+  CGAL_PMP_AUTOREFINE_VERBOSE("compute intersections ("+std::to_string(si_pairs.size())+")");
 #ifdef CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS
   t.start();
 #endif
   std::set<std::pair<std::size_t, std::size_t> > intersecting_triangles;
   std::set<std::pair<std::size_t, std::size_t> > coplanar_triangles;
   //TODO: PARALLEL_FOR #2
+#ifdef CGAL_AUTOREF_USE_PROGRESS_DISPLAY
+  boost::timer::progress_display pd_ci(si_pairs.size());
+#endif
   for (const Pair_of_triangle_ids& p : si_pairs)
   {
+#ifdef CGAL_AUTOREF_USE_PROGRESS_DISPLAY
+    ++pd_ci;
+#endif
     int i1 = tri_inter_ids[p.first],
         i2 = tri_inter_ids[p.second];
 
@@ -1302,7 +1309,7 @@ bool autorefine_triangle_soup(PointRange& soup_points,
   t.reset();
 #endif
 
-  CGAL_PMP_AUTOREFINE_VERBOSE("triangulate faces");
+  CGAL_PMP_AUTOREFINE_VERBOSE("triangulate faces ("+std::to_string(triangles.size())+")");
   // now refine triangles
 #ifdef CGAL_LINKED_WITH_TBB
   std::conditional_t<parallel_execution,
