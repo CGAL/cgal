@@ -65,6 +65,10 @@ void box_intersection_segment_tree_d(
   static_assert (!std::is_convertible<ConcurrencyTag, Parallel_tag>::value,
                  "Parallel_tag is enabled but TBB is unavailable.");
 #else // CGAL_LINKED_WITH_TBB
+  // if(std::is_convertible<ConcurrencyTag, Parallel_tag>::value)
+  // {
+  //   std::nth_element()
+  // }
   if(std::is_convertible<ConcurrencyTag, Parallel_tag>::value)
   {
     // Here is an illustration for n=2.

@@ -284,6 +284,12 @@ corefine_and_compute_boolean_operations(
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
+  using Concurrency_tag = typename internal_np::Lookup_named_param_def <
+                                          internal_np::concurrency_tag_t,
+                                          NPIn1,
+                                          Sequential_tag
+                                        > ::type;
+
   const bool throw_on_self_intersection =
     choose_parameter(get_parameter(np1, internal_np::throw_on_self_intersection), false);
 
@@ -489,7 +495,7 @@ corefine_and_compute_boolean_operations(
     ob.setup_for_clipping_a_surface(use_compact_clipper);
   }
 
-  Corefinement::Intersection_of_triangle_meshes<TriangleMesh, VPM1, VPM2, Algo_visitor >
+  Corefinement::Intersection_of_triangle_meshes<TriangleMesh, VPM1, VPM2, Algo_visitor, Concurrency_tag >
     functor(tm1, tm2, vpm1, vpm2, Algo_visitor(uv,ob,ecm_in));
   functor(CGAL::Emptyset_iterator(), throw_on_self_intersection, true);
 
@@ -762,6 +768,12 @@ corefine(      TriangleMesh& tm1,
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
+  using Concurrency_tag = typename internal_np::Lookup_named_param_def <
+                                          internal_np::concurrency_tag_t,
+                                          NamedParameters1,
+                                          Sequential_tag
+                                        > ::type;
+
   TriangleMesh* const_mesh_ptr=nullptr;
   if (choose_parameter(get_parameter(np1, internal_np::do_not_modify), false))
   {
@@ -835,7 +847,7 @@ corefine(      TriangleMesh& tm1,
 
   Ob ob;
   Ecm ecm(tm1,tm2,ecm1,ecm2);
-  Corefinement::Intersection_of_triangle_meshes<TriangleMesh, VPM1, VPM2, Algo_visitor>
+  Corefinement::Intersection_of_triangle_meshes<Concurrency_tag, TriangleMesh, VPM1, VPM2, Algo_visitor>
     functor(tm1, tm2, vpm1, vpm2, Algo_visitor(uv,ob,ecm,const_mesh_ptr), const_mesh_ptr);
 
   // Fill non-manifold feature maps if provided

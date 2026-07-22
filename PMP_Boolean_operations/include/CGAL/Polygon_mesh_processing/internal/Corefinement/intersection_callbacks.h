@@ -29,6 +29,10 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace Corefinement {
 
+#ifdef CGAL_LINKED_WITH_TBB
+CGAL_MUTEX corefinement_intersection_callback_mutex;
+#endif
+
 template<class TriangleMesh, class EdgeToFaces>
 class Collect_face_bbox_per_edge_bbox {
 protected:
@@ -57,7 +61,9 @@ public:
   {
     halfedge_descriptor fh = face_box.info();
     halfedge_descriptor eh = edge_box.info();
-
+#ifdef CGAL_LINKED_WITH_TBB
+    CGAL_SCOPED_LOCK(corefinement_intersection_callback_mutex);
+#endif
     edge_to_faces[edge(eh,tm_edges)].insert(face(fh, tm_faces));
   }
 
@@ -86,7 +92,7 @@ protected:
   typedef typename Graph_traits::face_descriptor face_descriptor;
   typedef typename Graph_traits::halfedge_descriptor halfedge_descriptor;
 
-  typedef typename boost::property_traits<VertexPointMapF>::reference Point;
+  typedef typename boost::property_traits<VertexPointMapF>::value_type Point;
 
   typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;
   typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, halfedge_descriptor, Box_policy> Box;
@@ -109,19 +115,18 @@ public:
   , visitor(visitor)
   {}
 
-  void operator()( const Box& face_box, const Box& edge_box) const {
-    halfedge_descriptor fh = face_box.info();
-    halfedge_descriptor eh = edge_box.info();
+  void operator()( halfedge_descriptor fh, halfedge_descriptor eh ) const {
     if(is_border(eh,tm_edges)) eh = opposite(eh, tm_edges);
 
     //check if the segment intersects the plane of the facet or if it is included in the plane
-    Point a = get(vpmap_tmf, source(fh, tm_faces));
-    Point b = get(vpmap_tmf, target(fh, tm_faces));
-    Point c = get(vpmap_tmf, target(next(fh, tm_faces), tm_faces));
+    Point& a = get(vpmap_tmf, source(fh, tm_faces));
+    Point& b = get(vpmap_tmf, target(fh, tm_faces));
+    Point& c = get(vpmap_tmf, target(next(fh, tm_faces), tm_faces));
 
     /// SHOULD_USE_TRAITS_TAG
-    const Orientation abcp = orientation(a,b,c, get(vpmap_tme, target(eh, tm_edges)));
-    const Orientation abcq = orientation(a,b,c, get(vpmap_tme, source(eh, tm_edges)));
+    using K = typename Kernel_traits<Point>::Kernel;
+    auto orientation = K().orientation_3_object();
+    const auto [abcp,abcq] = orientation(a,b,c, get(vpmap_tme, target(eh, tm_edges)), get(vpmap_tme, source(eh, tm_edges)));
     if (abcp==abcq){
       if (abcp!=COPLANAR){
         return; //no intersection
@@ -149,39 +154,45 @@ public:
       return;
     }
     // non-coplanar case
+#ifdef CGAL_LINKED_WITH_TBB
+    CGAL_SCOPED_LOCK(corefinement_intersection_callback_mutex);
+#endif
     edge_to_faces[edge(eh,tm_edges)].insert(face(fh, tm_faces));
   }
 
   bool is_face_degenerated(halfedge_descriptor fh) const
   {
-    Point a = get(vpmap_tmf, source(fh, tm_faces));
-    Point b = get(vpmap_tmf, target(fh, tm_faces));
-    Point c = get(vpmap_tmf, target(next(fh, tm_faces), tm_faces));
+    Point& a = get(vpmap_tmf, source(fh, tm_faces));
+    Point& b = get(vpmap_tmf, target(fh, tm_faces));
+    Point& c = get(vpmap_tmf, target(next(fh, tm_faces), tm_faces));
 
     return collinear(a, b, c);
   }
 
   bool are_edge_faces_degenerated(halfedge_descriptor eh) const
   {
-    Point a = get(vpmap_tme, source(eh, tm_edges));
-    Point b = get(vpmap_tme, target(eh, tm_edges));
+    Point& a = get(vpmap_tme, source(eh, tm_edges));
+    Point& b = get(vpmap_tme, target(eh, tm_edges));
 
     if(!is_border(eh,tm_edges))
     {
-      Point c = get(vpmap_tme, target(next(eh, tm_edges), tm_edges));
+      Point& c = get(vpmap_tme, target(next(eh, tm_edges), tm_edges));
       if (collinear(a, b, c)) return true;
     }
 
     eh = opposite(eh, tm_edges);
     if(!is_border(eh,tm_edges))
     {
-      Point c = get(vpmap_tme, target(next(eh, tm_edges), tm_edges));
+      Point& c = get(vpmap_tme, target(next(eh, tm_edges), tm_edges));
       if (collinear(a, b, c)) return true;
     }
 
     return false;
   }
 
+  void operator()( const Box& face_box, const Box& edge_box) const {
+    operator()(face_box.info(), edge_box.info());
+  }
 
   void operator()(const Box* face_box_ptr, const Box* edge_box_ptr) const
   {
@@ -353,6 +364,9 @@ public:
     }
 
     // non-coplanar case
+#ifdef CGAL_LINKED_WITH_TBB
+    CGAL_SCOPED_LOCK(corefinement_intersection_callback_mutex);
+#endif
     edge_to_faces[edge(eh,tm)].insert(face(fh, tm));
   }
 
