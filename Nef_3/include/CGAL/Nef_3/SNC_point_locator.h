@@ -343,9 +343,9 @@ public:
 
     CGAL_NEF_TIMER(rs_t.stop());
     switch (solution) {
-      case is_vertex_: return make_object(v_res);
-      case is_edge_: return make_object(e_res);
-      case is_facet_: return make_object(f_res);
+      case is_vertex_: return Object_handle(v_res);
+      case is_edge_: return Object_handle(e_res);
+      case is_facet_: return Object_handle(f_res);
       case is_none_ : break;
     }
     return Object_handle();
@@ -362,28 +362,28 @@ public:
         Vertex_handle v(*vi);
         if ( p == v->point()) {
           _CGAL_NEF_TRACEN("found on vertex "<<v->point());
-          return make_object(v);
+          return Object_handle(v);
         }
       }
       for(typename Halfedge_list::const_iterator ei=n->edges_begin(); ei!=n->edges_end(); ++ei) {
         Halfedge_handle e(*ei);
         if (SNC_intersection::does_contain_internally(e->source()->point(),e->twin()->source()->point(), p) ) {
           _CGAL_NEF_TRACEN("found on edge "<<Segment_3(e->source()->point(),e->twin()->source()->point()));
-          return make_object(e);
+          return Object_handle(e);
         }
       }
       for(typename Halffacet_list::const_iterator fi=n->facets_begin(); fi!=n->facets_end(); ++fi) {
         Halffacet_handle f(*fi);
         if (SNC_intersection::does_contain_internally( f, p) ) {
           _CGAL_NEF_TRACEN("found on facet...");
-          return make_object(f);
+          return Object_handle(f);
         }
       }
 
       _CGAL_NEF_TRACEN("point not found in 2-skeleton");
       _CGAL_NEF_TRACEN("shooting ray to determine the volume");
       Ray_3 r( p, Vector_3( -1, 0, 0));
-      return make_object(determine_volume(r));
+      return Object_handle(determine_volume(r));
 
     } else {   // standard kernel
 
@@ -396,11 +396,11 @@ public:
       typename Vertex_list::const_iterator vi = n->vertices_begin();
 
       if(n->empty())
-        return make_object(Base(*this).volumes_begin());
+        return Object_handle(Base(*this).volumes_begin());
 
       Vertex_handle v(*vi),closest;
       if(p==v->point())
-        return make_object(v);
+        return Object_handle(v);
 
       closest = v;
       ++vi;
@@ -408,7 +408,7 @@ public:
         v = *vi;
         if ( p == v->point()) {
           _CGAL_NEF_TRACEN("found on vertex "<<v->point());
-          return make_object(v);
+          return Object_handle(v);
         }
 
         if(CGAL::has_smaller_distance_to_point(p, v->point(), closest->point())){
@@ -433,7 +433,7 @@ public:
         CGAL_NEF_TRACEN("test edge " << e->source()->point() << "->" << e->twin()->source()->point());
         if (SNC_intersection::does_contain_internally(e->source()->point(), e->twin()->source()->point(), p)) {
 //          _CGAL_NEF_TRACEN("found on edge "<< ss);
-          return make_object(e);
+          return Object_handle(e);
         }
         if((e->source() != v)  && (e->twin()->source() != v) &&
            SNC_intersection::does_intersect_internally(s, Segment_3(e->source()->point(),e->twin()->source()->point()), ip)) {
@@ -449,7 +449,7 @@ public:
         CGAL_NEF_TRACEN("test facet " << f->plane());
         if (SNC_intersection::does_contain_internally(f,p) ) {
           _CGAL_NEF_TRACEN("found on facet...");
-          return make_object(f);
+          return Object_handle(f);
         }
 
         if( !v_vertex_of_f(v,f) && SNC_intersection::does_intersect_internally(s,f,ip) ) {
@@ -467,7 +467,7 @@ public:
         Object_handle so = L.locate(s.source()-s.target(), true);
         SFace_handle sf;
         if(CGAL::assign(sf,so))
-          return make_object(sf->volume());
+          return Object_handle(sf->volume());
         CGAL_error_msg( "wrong handle type");
         return Object_handle();
 
@@ -475,12 +475,12 @@ public:
         _CGAL_NEF_TRACEN("facet hit, obtaining volume...");
         if(f_res->plane().oriented_side(p) == ON_NEGATIVE_SIDE)
           f_res = f_res->twin();
-        return make_object(f_res->incident_volume());
+        return Object_handle(f_res->incident_volume());
       } else if( solution == is_edge_) {
         SM_decorator SD(&*e_res->source());
         if( SD.is_isolated(e_res))
-          return make_object(e_res->incident_sface()->volume());
-        return make_object(get_visible_facet(e_res,Ray_3(s.source(),s.to_vector()))->incident_volume());
+          return Object_handle(e_res->incident_sface()->volume());
+        return Object_handle(get_visible_facet(e_res,Ray_3(s.source(),s.to_vector()))->incident_volume());
       }
       CGAL_error_msg( "wrong handle type");
       return Object_handle();
