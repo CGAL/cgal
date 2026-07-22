@@ -17,6 +17,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <stdexcept>
 
 namespace CGAL {
 
@@ -58,6 +59,17 @@ public:
     inherited classes.
   */
   virtual float value (std::size_t index) = 0;
+
+  /*!
+    \brief returns the value taken by the multi-dimensional feature
+    for at the item for the item at position `index` and in dimension
+    `dim`. This method must be implemented by inherited classes for
+    multi-dimensional features.
+
+    \note The function `value(std::size_t index)` must still be implemented,
+    but is not used. Simply defining it to return zero is sufficient.
+  */
+  virtual float value (std::size_t index, std::size_t dim) { return 0; }
 
 };
 
@@ -109,6 +121,59 @@ public:
 };
 
 #endif
+
+// Use a throw to prevent the user from accidentally calling an irrelevant member function
+class Missing_argument_exception : public std::exception { };
+
+/*!
+  \ingroup PkgClassificationFeature
+
+  \brief %An extension of a `Feature_base` to support multi-dimensional features.
+
+  \cgalModels{Feature_base}
+*/
+
+class Feature_base_multi_dim : public Feature_base
+{
+public:
+
+  /// \cond SKIP_IN_MANUAL
+  virtual float value(std::size_t index) final {
+    throw Missing_argument_exception();
+    return 0;
+  }
+  /// \endcond
+
+  /*!
+  \brief returns the value taken by the multi-dimensional feature
+  for at the item for the item at position `index` and in dimension
+  `dim`. This method must be implemented by inherited classes for
+  multi-dimensional features.
+
+  \note The function `value(std::size_t index)` from the base class
+  `Feature_base` is not used for multi-dimensional features.
+  */
+  virtual float value(std::size_t index, std::size_t dim) = 0;
+};
+
+namespace Internal {
+  class Feature_base_dim : public Feature_base
+  {
+    std::size_t m_dim;
+    Feature_handle m_feature_handle;
+
+  public:
+    Feature_base_dim(std::size_t dim, std::string name, Feature_handle feature_handle) : m_dim(dim), m_feature_handle(feature_handle)
+    {
+      this->set_name(name + '[' + std::to_string(dim) + ']');
+    }
+
+    float value(std::size_t pt_index)
+    {
+      return m_feature_handle->value(pt_index, m_dim);
+    }
+  };
+} // namespace Internal
 
 /*!
   \ingroup PkgClassificationFeature
