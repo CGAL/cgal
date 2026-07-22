@@ -63,6 +63,15 @@ std::ostream& operator<<(std::ostream& s, const Hyperbolic_isometry_2<Traits>& i
 /*!
   \ingroup PkgHyperbolicSurfaceTriangulation2InputOutput
 
+  extracts the isometry from s.
+
+  The format is a coefficient per line, the matrix is cij and the order is c11, c12, c21, c22.
+*/
+std::istream& operator>>(std::istream& s, Hyperbolic_isometry_2<Traits>& isometry);
+
+/*!
+  \ingroup PkgHyperbolicSurfaceTriangulation2InputOutput
+
   inserts the Delaunay triangulation into s.
 
   The format of the output is the following.

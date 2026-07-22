@@ -48,6 +48,17 @@ std::ostream& operator<<(std::ostream& s, const Hyperbolic_isometry_2<Traits>& i
   return s;
 }
 
+template<class Traits>
+std::istream& operator>>(std::istream& s, Hyperbolic_isometry_2<Traits>& isometry)
+{
+  for (int k=0; k<4; ++k) {
+    typename Traits::Complex c;
+    s >> c;
+    isometry.set_coefficient(k, c);
+    //    void set_coefficient(int index, const Complex_number& coefficient);
+  }
+  return s;
+}
 ////////////////////////////////////////////////////////////////////////////////
 template<class Traits, class Attributes>
 std::ostream& operator<<(std::ostream& s, const Triangulation_on_hyperbolic_surface_2<Traits, Attributes>& triangulation)

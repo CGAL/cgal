@@ -59,13 +59,16 @@ public:
   */
   typedef typename Traits::Hyperbolic_point_2                         Point;
 
+   /*!
+    Types borrowed from the combinatorial map.
+  */
   typedef typename CMap::Dart_descriptor                              Dart_descriptor;
-  typedef typename CMap::Dart_range                                   Dart_range;
+  typedef typename CMap::Dart_const_descriptor                        Dart_const_descriptor;
+  // typedef typename CMap::Dart_range                                   Dart_range;
   typedef typename CMap::template One_dart_per_cell_range<0>          Vertex_range;
   typedef typename CMap::template One_dart_per_cell_range<1>          Edge_range;
   typedef typename CMap::template One_dart_per_cell_range<2>          Face_range;
-  typedef typename CMap::Dart_const_descriptor                        Dart_const_descriptor;
-  typedef typename CMap::Dart_const_range                             Dart_const_range;
+  //typedef typename CMap::Dart_const_range                             Dart_const_range;
   typedef typename CMap::template One_dart_per_cell_const_range<1>    Edge_const_range;
   typedef typename CMap::template One_dart_per_cell_const_range<2>    Face_const_range;
   /// @}
@@ -146,7 +149,7 @@ public:
   /// \name Point location and insertion
   /// @{
   /*!
-    \return a `Locate_type` that indicates whether `query` lies on a vertex, an edge, inside or outside the lifted triangle described by the given anchor.
+    Computes the locate type `lt` of `query` relative to the anchor that indicates whether `query` lies on a vertex, an edge, inside or outside the lifted triangle described by the given anchor.
 
     If `query` lies on a vertex or an edge, the index `li` is set to the index of the vertex or edge on which `query` lies.
 
@@ -154,7 +157,7 @@ public:
 
     If `query` lies outside the triangle, `li` is set to the index of the first edge such that `query` and the third point of the triangle lie on different sides.
   */
-  Locate_type relative_position(Point const & query, unsigned & li, Anchor const & anch) const;
+  void relative_locate(Point const & query, Locate_type& lt, unsigned & li, Anchor const & anch) const;
 
   /*!
     \return the anchor representing the lift of the triangle in which `query` lies.
@@ -164,9 +167,9 @@ public:
     The point location algorithm starts from `hint` and `ld` is set to the number of triangles traversed by the walk used for the point location algorithm.
     The variable `lt` indicates the location of `query` with respect to  the
     lifted triangle described by the returned anchor,  `li` is an index
-    precising its location as described in the method `relative_position`.
+    precising its location as described in the method `relative_locate`.
 
-    \sa relative_position
+    \sa relative_locate
   */
   Anchor locate(Point const & query, Locate_type & lt, unsigned & li, unsigned & ld, Anchor const & hint, Locate_walk walk = STRAIGHT); // const ?
 
@@ -199,23 +202,15 @@ public:
 
     Tries to compute an `epsilon`-net of the surface.
 
-    When `Number` is `CGAL::Gmpq` and Kernel is `CGAL::Simple_cartesian<Number>` or `CGAL::Cartesian<Number>`,
-    the traits class
-    CGAL::Hyperbolic_surface_Delaunay_traits_2<
-    CGAL::Hyperbolic_surface_traits_2<
-    CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2<
-    CGAL::Circular_kernel_2<Kernel,CGAL::Algebraic_kernel_for_circles_2_2<Number>>
-    >>>
-    enables to choose the approximation precision via the
-    function `set_precision()`.
-
+    When `Number` is `CGAL::Gmpq`, the function `set_circumcenter_approximation_precision`
+    enables to choose the approximation precision for the insertion of circumcenters.
     If another number type is used, the approximation uses the function
     CGAL::to_double() and there are no general guarantees whatsoever.
 
     Note that a Delaunay triangulation with a single vertex is always an
     espsilon-packing for any non-negative epsilon.
 
-    \pre <code>is_epsilon_packing(epsilon)</code> and <code>p > 0</code>
+    \pre <code>is_epsilon_packing(epsilon)</code>
   */
   bool construct_epsilon_net(double const epsilon);
   /*!
