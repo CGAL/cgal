@@ -513,7 +513,7 @@ private:
 
 
 template <typename C3t3, typename SizingFunction, typename CellSelector>
-class VertexSmoothOperationBase
+class Vertex_smooth_operation_base
 {
 protected:
   typedef typename C3t3::Triangulation Tr;
@@ -539,7 +539,7 @@ protected:
 public:
   std::shared_ptr<Context> m_context{nullptr};
 
-  VertexSmoothOperationBase(std::shared_ptr<Context> context)
+  Vertex_smooth_operation_base(std::shared_ptr<Context> context)
       : m_context(context) {}
 
   void set_context(std::shared_ptr<Context> p_context) { m_context = p_context; }
@@ -657,23 +657,23 @@ protected:
 };
 
 template <typename C3t3, typename SizingFunction, typename CellSelector>
-class ComplexEdgeVertexSmoothOperation
-    : public VertexSmoothOperationBase<C3t3, SizingFunction, CellSelector>,
+class Complex_edge_vertex_smooth_operation
+    : public Vertex_smooth_operation_base<C3t3, SizingFunction, CellSelector>,
       public Elementary_operation<C3t3,
                                  typename C3t3::Triangulation::Vertex_handle,
                                  typename C3t3::Triangulation::Finite_vertex_handles>
 {
 public:
-  using BaseClass = VertexSmoothOperationBase<C3t3, SizingFunction, CellSelector>;
+  using BaseClass = Vertex_smooth_operation_base<C3t3, SizingFunction, CellSelector>;
   using Vertex_handle = typename C3t3::Triangulation::Vertex_handle;
   using Surface_patch_index = typename C3t3::Surface_patch_index;
 
   using Base_operation = Elementary_operation<C3t3,
                                    Vertex_handle,
                                    typename C3t3::Triangulation::Finite_vertex_handles>;
-  using ElementType = typename Base_operation::ElementType;
-  static_assert(std::is_same_v<ElementType, Vertex_handle>, "ElementType should be Vertex_handle");
-  using ElementSource = typename Base_operation::ElementSource;
+  using Element_type = typename Base_operation::Element_type;
+  static_assert(std::is_same_v<Element_type, Vertex_handle>, "Element_type should be Vertex_handle");
+  using Element_range = typename Base_operation::Element_range;
 
   using BaseClass::m_context;
 
@@ -685,16 +685,16 @@ public:
   using typename BaseClass::Vector_3;
 
 public:
-  ComplexEdgeVertexSmoothOperation(std::shared_ptr<typename BaseClass::Context> context)
+  Complex_edge_vertex_smooth_operation(std::shared_ptr<typename BaseClass::Context> context)
       : BaseClass(context) {}
 
-  ElementSource get_element_source(const C3t3& c3t3) const override
+  Element_range get_elements(const C3t3& c3t3) const override
   {
     perform_global_preprocessing(c3t3);
     return c3t3.triangulation().finite_vertex_handles();
   }
 
-  bool execute_operation(const ElementType& v, C3t3& c3t3) override
+  bool execute_operation(const Element_type& v, C3t3& c3t3) override
   {
     auto& tr = c3t3.triangulation();
     const std::size_t vid = m_context->vertex_id(v);
@@ -789,21 +789,21 @@ public:
 };
 
 template <typename C3t3, typename SizingFunction, typename CellSelector>
-class SurfaceVertexSmoothOperation
-    : public VertexSmoothOperationBase<C3t3, SizingFunction, CellSelector>,
+class Surface_vertex_smooth_operation
+    : public Vertex_smooth_operation_base<C3t3, SizingFunction, CellSelector>,
       public Elementary_operation<C3t3,
                                  typename C3t3::Triangulation::Vertex_handle,
                                  typename C3t3::Triangulation::Finite_vertex_handles>
 {
 public:
-  using BaseClass = VertexSmoothOperationBase<C3t3, SizingFunction, CellSelector>;
+  using BaseClass = Vertex_smooth_operation_base<C3t3, SizingFunction, CellSelector>;
   using Base_operation = Elementary_operation<C3t3,
                                    typename C3t3::Triangulation::Vertex_handle,
                                    typename C3t3::Triangulation::Finite_vertex_handles>;
-  using ElementType = typename Base_operation::ElementType;
-  static_assert(std::is_same_v<ElementType, typename C3t3::Triangulation::Vertex_handle>,
-                               "ElementType should be Vertex_handle");
-  using ElementSource = typename Base_operation::ElementSource;
+  using Element_type = typename Base_operation::Element_type;
+  static_assert(std::is_same_v<Element_type, typename C3t3::Triangulation::Vertex_handle>,
+                               "Element_type should be Vertex_handle");
+  using Element_range = typename Base_operation::Element_range;
 
   using BaseClass::m_context;
 
@@ -899,16 +899,16 @@ private:
   }
 
 public:
-  SurfaceVertexSmoothOperation(std::shared_ptr<typename BaseClass::Context> context)
+  Surface_vertex_smooth_operation(std::shared_ptr<typename BaseClass::Context> context)
       : BaseClass(context) {}
 
-  ElementSource get_element_source(const C3t3& c3t3) const override
+  Element_range get_elements(const C3t3& c3t3) const override
   {
     perform_global_preprocessing(c3t3);
     return c3t3.triangulation().finite_vertex_handles();
   }
 
-  bool execute_operation(const ElementType& v, C3t3& c3t3) override
+  bool execute_operation(const Element_type& v, C3t3& c3t3) override
   {
     auto& tr = c3t3.triangulation();
     auto& moves = m_context->m_moves;
@@ -1038,21 +1038,21 @@ public:
 };
 
 template <typename C3t3, typename SizingFunction, typename CellSelector>
-class InternalVertexSmoothOperation
-    : public VertexSmoothOperationBase<C3t3, SizingFunction, CellSelector>,
+class Internal_vertex_smooth_operation
+    : public Vertex_smooth_operation_base<C3t3, SizingFunction, CellSelector>,
       public Elementary_operation<C3t3,
                                  typename C3t3::Triangulation::Vertex_handle,
                                  typename C3t3::Triangulation::Finite_vertex_handles>
 {
 public:
-  using BaseClass = VertexSmoothOperationBase<C3t3, SizingFunction, CellSelector>;
+  using BaseClass = Vertex_smooth_operation_base<C3t3, SizingFunction, CellSelector>;
   using Base_operation = Elementary_operation<C3t3,
                                    typename C3t3::Triangulation::Vertex_handle,
                                    typename C3t3::Triangulation::Finite_vertex_handles>;
-  using ElementType = typename Base_operation::ElementType;
-  static_assert(std::is_same_v<ElementType, typename C3t3::Triangulation::Vertex_handle>,
-                               "ElementType should be Vertex_handle");
-  using ElementSource = typename Base_operation::ElementSource;
+  using Element_type = typename Base_operation::Element_type;
+  static_assert(std::is_same_v<Element_type, typename C3t3::Triangulation::Vertex_handle>,
+                               "Element_type should be Vertex_handle");
+  using Element_range = typename Base_operation::Element_range;
 
   using BaseClass::m_context;
 
@@ -1065,7 +1065,7 @@ public:
   using typename BaseClass::Vertex_handle;
 
 public:
-  InternalVertexSmoothOperation(std::shared_ptr<typename BaseClass::Context> context)
+  Internal_vertex_smooth_operation(std::shared_ptr<typename BaseClass::Context> context)
       : BaseClass(context) {}
 
   void perform_global_preprocessing(const C3t3& c3t3) const
@@ -1116,13 +1116,13 @@ public:
     }
   }
 
-  ElementSource get_element_source(const C3t3& c3t3) const override
+  Element_range get_elements(const C3t3& c3t3) const override
   {
     perform_global_preprocessing(c3t3);
     return c3t3.triangulation().finite_vertex_handles();
   }
 
-  bool execute_operation(const ElementType& v, C3t3& c3t3) override
+  bool execute_operation(const Element_type& v, C3t3& c3t3) override
   {
     auto& tr = c3t3.triangulation();
     auto& moves = m_context->m_moves;

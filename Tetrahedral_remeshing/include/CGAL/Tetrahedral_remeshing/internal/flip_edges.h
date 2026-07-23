@@ -1927,7 +1927,7 @@ bool flip_surface_edge(C3t3& c3t3,
 template <typename C3t3,
           typename CellSelector,
           typename Visitor>
-class EdgeFlipOperationBase
+class Edge_flip_operation_base
 {
 protected:
   using Tr            = typename C3t3::Triangulation;
@@ -1945,7 +1945,7 @@ protected:
   // flipBoundaryEdges().
   Incident_cells_map& inc_cells;
 
-  EdgeFlipOperationBase(CellSelector& cell_selector,
+  Edge_flip_operation_base(CellSelector& cell_selector,
                         Visitor& visitor,
                         Incident_cells_map& incident_cells)
       : m_cell_selector(cell_selector)
@@ -1957,13 +1957,13 @@ protected:
 // reset the cell caches, collect the internal edges, then run find_best_flip
 // on each in turn, sharing the incident-cells cache.
 template <typename C3t3, typename CellSelector, typename Visitor>
-class InternalEdgeFlipOperation
-    : public EdgeFlipOperationBase<C3t3, CellSelector, Visitor>,
+class Internal_edge_flip_operation
+    : public Edge_flip_operation_base<C3t3, CellSelector, Visitor>,
       public Elementary_operation<C3t3,
                                  std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>,
                                  std::vector<std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>>>
 {
-  using BaseClass = EdgeFlipOperationBase<C3t3, CellSelector, Visitor>;
+  using BaseClass = Edge_flip_operation_base<C3t3, CellSelector, Visitor>;
   using typename BaseClass::Cell_handle;
   using typename BaseClass::Vertex_handle;
   using typename BaseClass::Edge;
@@ -1976,16 +1976,16 @@ public:
   using Incident_cells_map = typename BaseClass::Incident_cells_map;
   using Edge_vv = std::pair<Vertex_handle, Vertex_handle>;
   using Base_operation = Elementary_operation<C3t3, Edge_vv, std::vector<Edge_vv>>;
-  using ElementType = typename Base_operation::ElementType;
-  static_assert(std::is_same_v<ElementType, Edge_vv>, "ElementType must be Edge_vv");
-  using ElementSource = typename Base_operation::ElementSource;
+  using Element_type = typename Base_operation::Element_type;
+  static_assert(std::is_same_v<Element_type, Edge_vv>, "Element_type must be Edge_vv");
+  using Element_range = typename Base_operation::Element_range;
 
-  InternalEdgeFlipOperation(CellSelector& cell_selector,
+  Internal_edge_flip_operation(CellSelector& cell_selector,
                             Visitor& visitor,
                             Incident_cells_map& incident_cells)
       : BaseClass(cell_selector, visitor, incident_cells) {}
 
-  ElementSource get_element_source(const C3t3& c3t3) const override
+  Element_range get_elements(const C3t3& c3t3) const override
   {
     for (auto c : c3t3.cells_in_complex())
       c->reset_cache_validity();//we will use sliver_value
@@ -1996,7 +1996,7 @@ public:
     return inside_edges;
   }
 
-  bool execute_operation(const ElementType& vp, C3t3& c3t3) override
+  bool execute_operation(const Element_type& vp, C3t3& c3t3) override
   {
     Cells_vector& o_inc_vh = inc_cells[vp.first];
     if (o_inc_vh.empty())
@@ -2020,13 +2020,13 @@ public:
 // per-vertex boundary valences once, then, for each boundary edge, flip on the
 // surface when it lowers the valence cost, updating the valences accordingly.
 template <typename C3t3, typename CellSelector, typename Visitor>
-class BoundaryEdgeFlipOperation
-    : public EdgeFlipOperationBase<C3t3, CellSelector, Visitor>,
+class Boundary_edge_flip_operation
+    : public Edge_flip_operation_base<C3t3, CellSelector, Visitor>,
       public Elementary_operation<C3t3,
                                  std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>,
                                  std::vector<std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>>>
 {
-  using BaseClass = EdgeFlipOperationBase<C3t3, CellSelector, Visitor>;
+  using BaseClass = Edge_flip_operation_base<C3t3, CellSelector, Visitor>;
   using typename BaseClass::Cell_handle;
   using typename BaseClass::Vertex_handle;
   using typename BaseClass::Edge;
@@ -2046,14 +2046,14 @@ public:
   using Incident_cells_map = typename BaseClass::Incident_cells_map;
   using Edge_vv = std::pair<Vertex_handle, Vertex_handle>;
   using Base_operation = Elementary_operation<C3t3, Edge_vv, std::vector<Edge_vv>>;
-  using ElementType = typename Base_operation::ElementType;
-  static_assert(std::is_same_v<ElementType, Edge_vv>, "ElementType must be Edge_vv");
-  using ElementSource = typename Base_operation::ElementSource;
+  using Element_type = typename Base_operation::Element_type;
+  static_assert(std::is_same_v<Element_type, Edge_vv>, "Element_type must be Edge_vv");
+  using Element_range = typename Base_operation::Element_range;
 
-  BoundaryEdgeFlipOperation(CellSelector& cell_selector, Visitor& visitor, Incident_cells_map& incident_cells)
+  Boundary_edge_flip_operation(CellSelector& cell_selector, Visitor& visitor, Incident_cells_map& incident_cells)
       : BaseClass(cell_selector, visitor, incident_cells) {}
 
-  ElementSource get_element_source(const C3t3& c3t3) const override
+  Element_range get_elements(const C3t3& c3t3) const override
   {
     std::vector<Edge> boundary_edges;
     boost::unordered_map<Vertex_handle, std::unordered_set<Subdomain_index>> vertices_subdomain_indices;
@@ -2078,7 +2078,7 @@ public:
     return candidate_edges_for_flip;
   }
 
-  bool execute_operation(const ElementType& vp, C3t3& c3t3) override
+  bool execute_operation(const Element_type& vp, C3t3& c3t3) override
   {
     const Vertex_handle vh0 = vp.first;
     const Vertex_handle vh1 = vp.second;

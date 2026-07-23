@@ -172,7 +172,7 @@ public:
   void split()
   {
     CGAL_assertion(check_vertex_dimensions());
-    typedef EdgeSplitOperation<C3t3, SizingFunction, CellSelector, Visitor> EdgeSplitOp;
+    typedef Edge_split_operation<C3t3, SizingFunction, CellSelector, Visitor> EdgeSplitOp;
     EdgeSplitOp split_op(m_sizing, m_cell_selector, m_protect_boundaries, m_visitor);
     Elementary_operation_execution_sequential<EdgeSplitOp> executor;
     executor.execute(split_op, m_c3t3);
@@ -198,7 +198,7 @@ public:
   void collapse()
   {
     CGAL_assertion(check_vertex_dimensions());
-    typedef EdgeCollapseOperation<C3t3, SizingFunction, CellSelector, Visitor> EdgeCollapseOp;
+    typedef Edge_collapse_operation<C3t3, SizingFunction, CellSelector, Visitor> EdgeCollapseOp;
     EdgeCollapseOp collapse_op(m_sizing, m_cell_selector, m_protect_boundaries, m_visitor);
     Elementary_operation_execution_sequential<EdgeCollapseOp> executor;
     executor.execute(collapse_op, m_c3t3);
@@ -221,8 +221,8 @@ public:
 
   void flip()
   {
-    typedef InternalEdgeFlipOperation<C3t3, CellSelector, Visitor> InternalFlipOp;
-    typedef BoundaryEdgeFlipOperation<C3t3, CellSelector, Visitor> BoundaryFlipOp;
+    typedef Internal_edge_flip_operation<C3t3, CellSelector, Visitor> InternalFlipOp;
+    typedef Boundary_edge_flip_operation<C3t3, CellSelector, Visitor> BoundaryFlipOp;
 
     // one incident-cells cache shared by both passes, as in the former flip_edges()
     typename InternalFlipOp::Incident_cells_map inc_cells;
@@ -264,18 +264,18 @@ public:
     {
       if (m_smoothing_context->m_smooth_constrained_edges)
       {
-        ComplexEdgeVertexSmoothOperation<C3t3, SizingFunction, CellSelector> op(m_smoothing_context);
+        Complex_edge_vertex_smooth_operation<C3t3, SizingFunction, CellSelector> op(m_smoothing_context);
         Elementary_operation_execution_sequential<decltype(op)> executor;
         executor.execute(op, m_c3t3);
       }
       {
-        SurfaceVertexSmoothOperation<C3t3, SizingFunction, CellSelector> op(m_smoothing_context);
+        Surface_vertex_smooth_operation<C3t3, SizingFunction, CellSelector> op(m_smoothing_context);
         Elementary_operation_execution_sequential<decltype(op)> executor;
         executor.execute(op, m_c3t3);
       }
     }
     {
-      InternalVertexSmoothOperation<C3t3, SizingFunction, CellSelector> op(m_smoothing_context);
+      Internal_vertex_smooth_operation<C3t3, SizingFunction, CellSelector> op(m_smoothing_context);
       Elementary_operation_execution_sequential<decltype(op)> executor;
       executor.execute(op, m_c3t3);
     }

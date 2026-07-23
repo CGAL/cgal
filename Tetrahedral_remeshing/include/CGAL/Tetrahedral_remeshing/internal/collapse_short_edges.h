@@ -1236,7 +1236,7 @@ template<typename C3t3,
          typename SizingFunction,
          typename CellSelector,
          typename Visitor>
-class EdgeCollapseOperation
+class Edge_collapse_operation
     : public Elementary_operation<C3t3,
                                  typename C3t3::Triangulation::Edge,
                                  std::vector<typename C3t3::Triangulation::Edge>>
@@ -1249,8 +1249,8 @@ public:
 
   using Short_edges = std::vector<Edge>;
   using Base_operation = Elementary_operation<C3t3, Edge, Short_edges>;
-  using ElementType = typename Base_operation::ElementType;
-  using ElementSource = typename Base_operation::ElementSource;
+  using Element_type = typename Base_operation::Element_type;
+  using Element_range = typename Base_operation::Element_range;
 
 private:
   const SizingFunction& m_sizing;
@@ -1267,7 +1267,7 @@ private:
   boost::unordered_map<Edge, bool> m_should_skip;
 
 public:
-  EdgeCollapseOperation(const SizingFunction& sizing,
+  Edge_collapse_operation(const SizingFunction& sizing,
                         const CellSelector& cell_selector,
                         const bool protect_boundaries,
                         Visitor& visitor)
@@ -1276,7 +1276,7 @@ public:
       , m_protect_boundaries(protect_boundaries)
       , m_visitor(visitor) {}
 
-  ElementSource get_element_source(const C3t3& c3t3) const override
+  Element_range get_elements(const C3t3& c3t3) const override
   {
     struct Short_edge_with_length
     {
@@ -1310,7 +1310,7 @@ public:
     return short_edges;
   }
 
-  bool execute_operation(const ElementType& edge, C3t3& c3t3) override
+  bool execute_operation(const Element_type& edge, C3t3& c3t3) override
   {
     if (m_should_skip.find(edge) != m_should_skip.end())
       return false;

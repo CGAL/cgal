@@ -27,20 +27,20 @@ namespace CGAL {
 namespace Tetrahedral_remeshing {
 namespace internal {
 
-template <typename C3t3_, typename ElementType_, typename ElementSource_>
+template <typename C3t3_, typename ElementType, typename ElementRange>
 class Elementary_operation
 {
 public:
   using C3t3 = C3t3_;
   using Triangulation = typename C3t3::Triangulation;
-  using ElementType = ElementType_;
-  using ElementSource = ElementSource_;
+  using Element_type = ElementType;
+  using Element_range = ElementRange;
 
   Elementary_operation() = default;
   virtual ~Elementary_operation() = default;
 
-  virtual ElementSource get_element_source(const C3t3& c3t3) const = 0;
-  virtual bool execute_operation(const ElementType& e, C3t3& c3t3) = 0;
+  virtual Element_range get_elements(const C3t3& c3t3) const = 0;
+  virtual bool execute_operation(const Element_type& e, C3t3& c3t3) = 0;
   virtual std::string operation_name() const = 0;
 };
 
@@ -49,11 +49,11 @@ class Elementary_operation_execution_sequential
 {
 public:
   using C3t3 = typename Operation::C3t3;
-  using ElementSource = typename Operation::ElementSource;
+  using Element_range = typename Operation::Element_range;
 
   bool execute(Operation& op, C3t3& c3t3) const
   {
-    ElementSource candidates = op.get_element_source(c3t3);
+    Element_range candidates = op.get_elements(c3t3);
     if (candidates.empty())
       return false;
 

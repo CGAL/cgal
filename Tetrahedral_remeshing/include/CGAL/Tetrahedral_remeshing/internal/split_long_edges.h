@@ -338,7 +338,7 @@ template<typename C3t3,
          typename SizingFunction,
          typename CellSelector,
          typename Visitor>
-class EdgeSplitOperation
+class Edge_split_operation
     : public Elementary_operation<C3t3,
                                  typename C3t3::Triangulation::Edge,
                                  std::vector<typename C3t3::Triangulation::Edge>>
@@ -353,9 +353,9 @@ public:
 
   using Long_edges = std::vector<Edge>;
   using Base_operation = Elementary_operation<C3t3, Edge, Long_edges>;
-  using ElementType = typename Base_operation::ElementType;
-  static_assert(std::is_same_v<ElementType, Edge>, "ElementType must be Edge");
-  using ElementSource = typename Base_operation::ElementSource;
+  using Element_type = typename Base_operation::Element_type;
+  static_assert(std::is_same_v<Element_type, Edge>, "Element_type must be Edge");
+  using ElementSource = typename Base_operation::Element_range;
 
 private:
   const SizingFunction& m_sizing;
@@ -370,7 +370,7 @@ private:
 #endif
 
 public:
-  EdgeSplitOperation(const SizingFunction& sizing,
+  Edge_split_operation(const SizingFunction& sizing,
                      const CellSelector& cell_selector,
                      const bool protect_boundaries,
                      Visitor& visitor)
@@ -379,7 +379,7 @@ public:
       , m_protect_boundaries(protect_boundaries)
       , m_visitor(visitor) {}
 
-  ElementSource get_element_source(const C3t3& c3t3) const override
+  ElementSource get_elements(const C3t3& c3t3) const override
   {
     struct Long_edge_with_length
     {
@@ -427,7 +427,7 @@ public:
     return long_edges;
   }
 
-  bool execute_operation(const ElementType& element, C3t3& c3t3) override
+  bool execute_operation(const Element_type& element, C3t3& c3t3) override
   {
     Tr& tr = c3t3.triangulation();
     const Edge_vv& e = make_vertex_pair(element);
