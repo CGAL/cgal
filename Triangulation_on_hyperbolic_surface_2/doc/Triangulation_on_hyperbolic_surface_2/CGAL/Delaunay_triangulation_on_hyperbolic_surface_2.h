@@ -167,9 +167,9 @@ public:
     The point location algorithm starts from `hint` and `ld` is set to the number of triangles traversed by the walk used for the point location algorithm.
     The variable `lt` indicates the location of `query` with respect to  the
     lifted triangle described by the returned anchor,  `li` is an index
-    precising its location as described in the method `relative_locate`.
+    precising its location as described in the method `relative_locate()`.
 
-    \sa relative_locate
+    \sa relative_locate()
   */
   Anchor locate(Point const & query, Locate_type & lt, unsigned & li, unsigned & ld, Anchor const & hint, Locate_walk walk = STRAIGHT); // const ?
 
