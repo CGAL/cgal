@@ -1975,10 +1975,10 @@ class InternalEdgeFlipOperation
 public:
   using Incident_cells_map = typename BaseClass::Incident_cells_map;
   using Edge_vv = std::pair<Vertex_handle, Vertex_handle>;
-  using Base = ElementaryOperation<C3t3, Edge_vv, std::vector<Edge_vv>>;
-  using ElementType = typename Base::ElementType;
+  using BaseOperation = ElementaryOperation<C3t3, Edge_vv, std::vector<Edge_vv>>;
+  using ElementType = typename BaseOperation::ElementType;
   static_assert(std::is_same_v<ElementType, Edge_vv>, "ElementType must be Edge_vv");
-  using ElementSource = typename Base::ElementSource;
+  using ElementSource = typename BaseOperation::ElementSource;
 
   InternalEdgeFlipOperation(CellSelector& cell_selector,
                             Visitor& visitor,
@@ -2045,10 +2045,10 @@ class BoundaryEdgeFlipOperation
 public:
   using Incident_cells_map = typename BaseClass::Incident_cells_map;
   using Edge_vv = std::pair<Vertex_handle, Vertex_handle>;
-  using Base = ElementaryOperation<C3t3, Edge_vv, std::vector<Edge_vv>>;
-  using ElementType = typename Base::ElementType;
+  using BaseOperation = ElementaryOperation<C3t3, Edge_vv, std::vector<Edge_vv>>;
+  using ElementType = typename BaseOperation::ElementType;
   static_assert(std::is_same_v<ElementType, Edge_vv>, "ElementType must be Edge_vv");
-  using ElementSource = typename Base::ElementSource;
+  using ElementSource = typename BaseOperation::ElementSource;
 
   BoundaryEdgeFlipOperation(CellSelector& cell_selector, Visitor& visitor, Incident_cells_map& incident_cells)
       : BaseClass(cell_selector, visitor, incident_cells) {}

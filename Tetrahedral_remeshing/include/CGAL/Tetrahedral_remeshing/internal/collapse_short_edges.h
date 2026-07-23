@@ -1248,9 +1248,9 @@ public:
   using FT = typename Tr::Geom_traits::FT;
 
   using Short_edges = std::vector<Edge>;
-  using Base = ElementaryOperation<C3t3, Edge, Short_edges>;
-  using ElementType = typename Base::ElementType;
-  using ElementSource = typename Base::ElementSource;
+  using BaseOperation = ElementaryOperation<C3t3, Edge, Short_edges>;
+  using ElementType = typename BaseOperation::ElementType;
+  using ElementSource = typename BaseOperation::ElementSource;
 
 private:
   const SizingFunction& m_sizing;
