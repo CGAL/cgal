@@ -1,0 +1,77 @@
+// PRETTY PACKAGE NAME should equal the project title in Doxyfile.in
+
+/// \defgroup PkgFeatureGraphRef Reference Manual
+
+/// \defgroup PkgFeatureGraphConcepts Concepts
+/// \ingroup PkgFeatureGraphRef
+
+/// \defgroup PkgFeatureGraphDetector Feature Graph Detector
+/// \ingroup PkgFeatureGraphRef
+/// The detectors in this group enable the user to extract the feature graph from different types of surfaces.
+
+/// \defgroup PkgFeatureGraphSharpnessEstimator Sharpness Estimator
+/// \ingroup PkgFeatureGraphRef
+/// The detectors in this group enable the user to estimate the sharpness on surfaces.
+
+/// \defgroup PkgFeatureGraphNormalEstimator Normal Estimator
+/// \ingroup PkgFeatureGraphRef
+/// The detectors in this group enable the user to estimate the normal on surfaces.
+
+/*!
+\addtogroup PkgFeatureGraphRef
+\cgalPkgDescriptionBegin{Feature graph,PkgFeatureGraph}
+\cgalPkgPicture{feature_graph_small.png}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Ange Clément}
+\cgalPkgDesc{
+This package provides methods to extract a feature graph from three-dimensional surface data.
+A feature graph is a data structure that represent the sharp lines on the surface.
+The goal of the feature detection methods is to construct lines that can be used for future mesh generation.}
+\cgalPkgManuals{Chapter_Feature_Graph,PkgFeatureGraphRef}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{6.2}
+\cgalPkgBib{cgal:c-fg}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+The feature graph is extracted in multiple steps.
+First, a sharpness evaluation is conducted on the surface elements.
+Then, from this measure, smooth elements are discarded,
+and a graph thinning process generates lines that
+are guaranteed to be positioned along the highest values of the measure.
+Finally, the result is refined with a correction step and an optimization phase
+to ensure the correct placement of lines and corners along estimated normals.
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Concepts}
+
+Concept representing the input surface:
+
+- `FaceListGraph`
+
+Secondary concepts:
+
+- `SharpnessEstimator`
+- `NormalEstimator`
+
+\cgalCRPSection{Feature Graph Detectors}
+
+- `CGAL::Feature_graph::Detect_sharp_features_on_labeled_image()`
+- `CGAL::Feature_graph::Detect_sharp_features_on_surface()`
+
+\cgalCRPSection{Sharpness Estimators}
+
+- `CGAL::Feature_graph::Image_AmbrosioTortorelli::Sharpness_estimator`
+- `CGAL::Feature_graph::Surface_sharpness_estimator`
+
+\cgalCRPSection{Normal Estimators}
+
+- `CGAL::Feature_graph::Image_AmbrosioTortorelli::Normal_estimator`
+- `CGAL::Feature_graph::Surface_normal_estimator`
+
+*/
