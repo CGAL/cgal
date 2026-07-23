@@ -277,19 +277,19 @@ get_parameter_reference(const Named_function_parameters<T, Tag, Base>& np, Query
 
 // Two parameters, non-trivial default value
 template <typename D>
-D& choose_parameter(const internal_np::Param_not_found&, D& d)
+D& choose_parameter(internal_np::Param_not_found, D& d)
 {
   return d;
 }
 
 template <typename D>
-const D& choose_parameter(const internal_np::Param_not_found&, const D& d)
+const D& choose_parameter(internal_np::Param_not_found, const D& d)
 {
   return d;
 }
 
 template <typename D>
-D choose_parameter(const internal_np::Param_not_found&, D&& d)
+D choose_parameter(internal_np::Param_not_found, D&& d)
 {
   return std::forward<D>(d);
 }
@@ -306,9 +306,15 @@ const T& choose_parameter(const T& t, const D&)
   return t;
 }
 
+template <typename T, typename D>
+T choose_parameter(T&& t, const D&)
+{
+  return t;
+}
+
 // single parameter so that we can avoid a default construction
 template <typename D>
-D choose_parameter(const internal_np::Param_not_found&)
+D choose_parameter(internal_np::Param_not_found)
 {
   return D();
 }
@@ -553,7 +559,7 @@ struct Boost_parameter_compatibility_wrapper<Tag, true, false>
 
 // Version with three parameters for dynamic property maps
 template <typename D, typename Dynamic_tag, typename PolygonMesh>
-D choose_parameter(const internal_np::Param_not_found&, Dynamic_tag tag, PolygonMesh& pm)
+D choose_parameter(internal_np::Param_not_found, Dynamic_tag tag, PolygonMesh& pm)
 {
   return get(tag, pm);
 }
