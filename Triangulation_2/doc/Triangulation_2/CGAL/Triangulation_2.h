@@ -1283,7 +1283,7 @@ The class `Triangulation_cw_ccw_2` offers two functions `int cw(int i)` and `int
 which, given the index of a vertex in a face,
 compute the index of the next vertex of the same face in clockwise
 or counterclockwise order.
-This works also for neighbor indexes.
+This works also for neighbor indices.
 Thus, for example the neighbor `neighbor(cw(i))` of a face `f` is the
 neighbor which is next to `neighbor(i)` turning clockwise
 around `f`. The face `neighbor(cw(i))`
