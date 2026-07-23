@@ -38,7 +38,7 @@
 \cgalClassifedRefPages
 
 \cgalCRPSection{Classes}
-- \link pkgMeshSmoothing3Classes `CGAL::Mesh_smoother` \endlink
-- \link pkgMeshSmoothing3Classes `CGAL::C3t3_smoother` \endlink
+- `CGAL::Mesh_smoothing_3::Mesh_smoother`
+- `CGAL::Mesh_smoothing_3::C3t3_smoother`
 
 */
