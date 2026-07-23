@@ -169,7 +169,7 @@ public:
     lifted triangle described by the returned anchor,  `li` is an index
     precising its location as described in the method `relative_locate()`.
 
-    \sa relative_locate
+    \sa relative_locate()
   */
   Anchor locate(Point const & query, Locate_type & lt, unsigned & li, unsigned & ld, Anchor const & hint, Locate_walk walk = STRAIGHT); // const ?
 
