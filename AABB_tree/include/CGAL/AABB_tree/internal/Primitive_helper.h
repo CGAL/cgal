@@ -73,7 +73,7 @@ Bbox_3 compute_transformed_bbox(const CGAL::Aff_transformation_3<Kernel>& at, co
   typedef Simple_cartesian<Interval_nt<false>> AK;
   typedef Cartesian_converter<Kernel, AK>    C2F;
   C2F c2f;
-
+  CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_UPWARD);
 
   AK::Aff_transformation_3 a_at = c2f(at);
   AK::FT xtrm[6] = { c2f((bbox.min)(0)), c2f((bbox.max)(0)),

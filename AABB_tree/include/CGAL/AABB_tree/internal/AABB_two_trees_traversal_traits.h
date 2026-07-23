@@ -95,7 +95,7 @@ private:
   OutputIterator out;
 };
 
-template<typename AABBTraits1, typename AABBTraits2, typename OutputIterator, typename AffTransformation>
+template<typename AABBTraits1, typename AABBTraits2, typename OutputIterator, typename AffTransformation, bool Protected=true >
 class Two_trees_listing_intersecting_primitives_traits_with_transformation
 {
   typedef typename AABBTraits1::Primitive Primitive1;
@@ -145,6 +145,7 @@ public:
   bool do_intersect(const Node1& node1, const Node2& node2) const
   {
     // TODO write a specific do_intersect function between two OBBs
+    Protect_FPU_rounding<Protected>(CGAL_FE_UPWARD);
     return do_overlap(compute_transformed_bbox(m_tr1, node1.bbox(), m_tr1_has_rotation), compute_transformed_bbox(m_tr2, node2.bbox(), m_tr2_has_rotation));
   }
 
@@ -259,7 +260,7 @@ private:
   bool m_is_found;
 };
 
-template<typename AABBTraits1, typename AABBTraits2, typename AffTransformation>
+template<typename AABBTraits1, typename AABBTraits2, typename AffTransformation, bool Protected=true>
 class Two_trees_do_intersect_traits_with_transformation
 {
   typedef typename AABBTraits1::Primitive Primitive1;
@@ -306,6 +307,7 @@ public:
 
   bool do_intersect(const Node1& node1, const Node2& node2) const
   {
+    Protect_FPU_rounding<Protected>(CGAL_FE_UPWARD);
     return do_overlap(compute_transformed_bbox(m_tr1, node1.bbox(), m_tr1_has_rotation), compute_transformed_bbox(m_tr2, node2.bbox(), m_tr2_has_rotation));
   }
 
