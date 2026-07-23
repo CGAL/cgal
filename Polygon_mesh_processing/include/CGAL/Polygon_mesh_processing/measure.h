@@ -437,8 +437,8 @@ face_area(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
 
   CGAL_precondition(is_valid_face_descriptor(f, tmesh));
 
-  typename GetVertexPointMap<TriangleMesh, CGAL_NP_CLASS>::const_type
-      vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+  typedef typename GetVertexPointMap<TriangleMesh, CGAL_NP_CLASS>::const_type VPM;
+  VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(CGAL::vertex_point, tmesh));
 
   halfedge_descriptor hd = halfedge(f, tmesh);
