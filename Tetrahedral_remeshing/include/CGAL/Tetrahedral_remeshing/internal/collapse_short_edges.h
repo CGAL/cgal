@@ -808,7 +808,7 @@ collapse(const typename C3t3::Cell_handle ch,
          const int to, const int from,
          CellSelector& cell_selector,
          C3t3& c3t3,
-         ShortEdgesBimap& short_edges)
+         ShortEdgesBimap& deleted_short_edges)
 {
   typedef typename C3t3::Triangulation Tr;
   typedef typename C3t3::Vertex_handle Vertex_handle;
@@ -916,7 +916,7 @@ collapse(const typename C3t3::Cell_handle ch,
   {
     for (const auto& ei : cell_edges(c, tr))
     {
-      remove_from_bimap(ei, short_edges);
+      deleted_short_edges[ei] = true;
 
       const Vertex_handle eiv0 = c->vertex(ei.second);
       const Vertex_handle eiv1 = c->vertex(ei.third);
@@ -982,7 +982,7 @@ typename C3t3::Vertex_handle collapse(const typename C3t3::Edge& edge,
                                       const Collapse_type& collapse_type,
                                       CellSelector& cell_selector,
                                       C3t3& c3t3,
-                                      ShortEdgesBimap& short_edges)
+                                      ShortEdgesBimap& deleted_short_edges)
 {
   typedef typename C3t3::Vertex_handle Vertex_handle;
   typedef typename C3t3::Triangulation::Point Point_3;
@@ -1005,7 +1005,7 @@ typename C3t3::Vertex_handle collapse(const typename C3t3::Edge& edge,
     vh0->set_point(new_position);
     vh1->set_point(new_position);
 
-    vh = collapse(edge.first, edge.second, edge.third, cell_selector, c3t3, short_edges);
+    vh = collapse(edge.first, edge.second, edge.third, cell_selector, c3t3, deleted_short_edges);
     c3t3.set_dimension(vh, (std::min)(dim_vh0, dim_vh1));
   }
   else //Collapse at vertex
@@ -1013,7 +1013,7 @@ typename C3t3::Vertex_handle collapse(const typename C3t3::Edge& edge,
     if (collapse_type == TO_V1)
     {
       vh0->set_point(p1);
-      vh = collapse(edge.first, edge.third, edge.second, cell_selector, c3t3, short_edges);
+      vh = collapse(edge.first, edge.third, edge.second, cell_selector, c3t3, deleted_short_edges);
       c3t3.set_dimension(vh, (std::min)(dim_vh0, dim_vh1));
     }
     else //Collapse at v0
@@ -1021,7 +1021,7 @@ typename C3t3::Vertex_handle collapse(const typename C3t3::Edge& edge,
       if (collapse_type == TO_V0)
       {
         vh1->set_point(p0);
-        vh = collapse(edge.first, edge.second, edge.third, cell_selector, c3t3, short_edges);
+        vh = collapse(edge.first, edge.second, edge.third, cell_selector, c3t3, deleted_short_edges);
         c3t3.set_dimension(vh, (std::min)(dim_vh0, dim_vh1));
       }
       else
@@ -1090,7 +1090,7 @@ typename C3t3::Vertex_handle collapse_edge(const typename C3t3::Edge& edge,
     const Sizing& sizing,
     const bool /* protect_boundaries */,
     CellSelector cell_selector,
-    ShortEdgesBimap& short_edges,
+    ShortEdgesBimap& deleted_short_edges,//should_skip
     Visitor& )
 {
   typedef typename C3t3::Triangulation   Tr;
@@ -1186,7 +1186,7 @@ typename C3t3::Vertex_handle collapse_edge(const typename C3t3::Edge& edge,
       if (in_cx)
         nb_valid_collapse++;
 #endif
-      return collapse(edge, collapse_type, cell_selector, c3t3, short_edges);
+      return collapse(edge, collapse_type, cell_selector, c3t3, deleted_short_edges);
     }
   }
 #ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
@@ -1260,11 +1260,11 @@ private:
 
   // Edges invalidated by an earlier collapse in this pass. The candidate list
   // is collected once, so an edge whose cells were destroyed by a preceding
-  // collapse is marked here (by collapse_edge, through remove_from_bimap) and
+  // collapse is marked here (by collapse_edge) and
   // skipped when the pass reaches it -- this replaces the former dynamic bimap
   // worklist. Edges that only *become* short during the pass are not
   // re-collapsed here; they are handled in the next remeshing iteration.
-  boost::unordered_map<Edge, bool> m_should_skip;
+  boost::unordered_map<Edge, bool> m_deleted_short_edges;
 
 public:
   Edge_collapse_operation(const SizingFunction& sizing,
@@ -1312,11 +1312,11 @@ public:
 
   bool execute_operation(const Element_type& edge, C3t3& c3t3) override
   {
-    if (m_should_skip.find(edge) != m_should_skip.end())
+    if (m_deleted_short_edges.find(edge) != m_deleted_short_edges.end())
       return false;
 
     const Vertex_handle vh = collapse_edge(edge, c3t3, m_sizing, m_protect_boundaries,
-                                           m_cell_selector, m_should_skip, m_visitor);
+                                           m_cell_selector, m_deleted_short_edges, m_visitor);
     return (vh != Vertex_handle());
   }
 

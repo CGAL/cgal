@@ -1895,16 +1895,6 @@ void get_edge_info(const typename C3t3::Edge& edge,
   }
 }
 
-
-// Mark an edge invalidated by a collapse so the collapse operation skips it
-// when the (statically collected) candidate list reaches it.
-template<typename EdgeType, typename ShouldSkipContainer>
-void remove_from_bimap(const EdgeType& e,
-                       ShouldSkipContainer& should_skip)
-{
-  should_skip[e] = true;
-}
-
 template<typename Tr>
 std::array<typename Tr::Edge, 6>
 cell_edges(const typename Tr::Cell_handle c, const Tr&)
