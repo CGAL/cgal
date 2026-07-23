@@ -449,3 +449,6 @@ CGAL_add_named_parameter(with_plc_face_id_t, with_plc_face_id, with_plc_face_id)
 
 // List of named parameters used in the package 'Barycentric_coordinates_3'
 CGAL_add_named_parameter(computation_policy_t, computation_policy, computation_policy)
+
+// List of named parameters used in the package 'Vector_graphics_on_surfaces`
+CGAL_add_named_parameter(dual_geodesic_solver_t, dual_geodesic_solver, dual_geodesic_solver)
