@@ -18,7 +18,7 @@
 #include <CGAL/Triangulation_utils_3.h>
 #include <CGAL/utility.h>
 
-#include <CGAL/Tetrahedral_remeshing/internal/elementary_operations.h>
+#include <CGAL/Tetrahedral_remeshing/internal/Elementary_operation.h>
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 
 #include <boost/container/small_vector.hpp>
@@ -1959,7 +1959,7 @@ protected:
 template <typename C3t3, typename CellSelector, typename Visitor>
 class InternalEdgeFlipOperation
     : public EdgeFlipOperationBase<C3t3, CellSelector, Visitor>,
-      public ElementaryOperation<C3t3,
+      public Elementary_operation<C3t3,
                                  std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>,
                                  std::vector<std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>>>
 {
@@ -1975,10 +1975,10 @@ class InternalEdgeFlipOperation
 public:
   using Incident_cells_map = typename BaseClass::Incident_cells_map;
   using Edge_vv = std::pair<Vertex_handle, Vertex_handle>;
-  using BaseOperation = ElementaryOperation<C3t3, Edge_vv, std::vector<Edge_vv>>;
-  using ElementType = typename BaseOperation::ElementType;
+  using Base_operation = Elementary_operation<C3t3, Edge_vv, std::vector<Edge_vv>>;
+  using ElementType = typename Base_operation::ElementType;
   static_assert(std::is_same_v<ElementType, Edge_vv>, "ElementType must be Edge_vv");
-  using ElementSource = typename BaseOperation::ElementSource;
+  using ElementSource = typename Base_operation::ElementSource;
 
   InternalEdgeFlipOperation(CellSelector& cell_selector,
                             Visitor& visitor,
@@ -2022,7 +2022,7 @@ public:
 template <typename C3t3, typename CellSelector, typename Visitor>
 class BoundaryEdgeFlipOperation
     : public EdgeFlipOperationBase<C3t3, CellSelector, Visitor>,
-      public ElementaryOperation<C3t3,
+      public Elementary_operation<C3t3,
                                  std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>,
                                  std::vector<std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>>>
 {
@@ -2045,10 +2045,10 @@ class BoundaryEdgeFlipOperation
 public:
   using Incident_cells_map = typename BaseClass::Incident_cells_map;
   using Edge_vv = std::pair<Vertex_handle, Vertex_handle>;
-  using BaseOperation = ElementaryOperation<C3t3, Edge_vv, std::vector<Edge_vv>>;
-  using ElementType = typename BaseOperation::ElementType;
+  using Base_operation = Elementary_operation<C3t3, Edge_vv, std::vector<Edge_vv>>;
+  using ElementType = typename Base_operation::ElementType;
   static_assert(std::is_same_v<ElementType, Edge_vv>, "ElementType must be Edge_vv");
-  using ElementSource = typename BaseOperation::ElementSource;
+  using ElementSource = typename Base_operation::ElementSource;
 
   BoundaryEdgeFlipOperation(CellSelector& cell_selector, Visitor& visitor, Incident_cells_map& incident_cells)
       : BaseClass(cell_selector, visitor, incident_cells) {}

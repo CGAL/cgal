@@ -28,7 +28,7 @@ namespace Tetrahedral_remeshing {
 namespace internal {
 
 template <typename C3t3_, typename ElementType_, typename ElementSource_>
-class ElementaryOperation
+class Elementary_operation
 {
 public:
   using C3t3 = C3t3_;
@@ -36,8 +36,8 @@ public:
   using ElementType = ElementType_;
   using ElementSource = ElementSource_;
 
-  ElementaryOperation() = default;
-  virtual ~ElementaryOperation() = default;
+  Elementary_operation() = default;
+  virtual ~Elementary_operation() = default;
 
   virtual ElementSource get_element_source(const C3t3& c3t3) const = 0;
   virtual bool execute_operation(const ElementType& e, C3t3& c3t3) = 0;
@@ -45,7 +45,7 @@ public:
 };
 
 template <typename Operation>
-class ElementaryOperationExecutionSequential
+class Elementary_operation_execution_sequential
 {
 public:
   using C3t3 = typename Operation::C3t3;

@@ -19,7 +19,7 @@
 
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 #include <CGAL/Tetrahedral_remeshing/internal/FMLS.h>
-#include <CGAL/Tetrahedral_remeshing/internal/elementary_operations.h>
+#include <CGAL/Tetrahedral_remeshing/internal/Elementary_operation.h>
 
 #include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_tree.h>
@@ -659,7 +659,7 @@ protected:
 template <typename C3t3, typename SizingFunction, typename CellSelector>
 class ComplexEdgeVertexSmoothOperation
     : public VertexSmoothOperationBase<C3t3, SizingFunction, CellSelector>,
-      public ElementaryOperation<C3t3,
+      public Elementary_operation<C3t3,
                                  typename C3t3::Triangulation::Vertex_handle,
                                  typename C3t3::Triangulation::Finite_vertex_handles>
 {
@@ -668,12 +668,12 @@ public:
   using Vertex_handle = typename C3t3::Triangulation::Vertex_handle;
   using Surface_patch_index = typename C3t3::Surface_patch_index;
 
-  using BaseOperation = ElementaryOperation<C3t3,
+  using Base_operation = Elementary_operation<C3t3,
                                    Vertex_handle,
                                    typename C3t3::Triangulation::Finite_vertex_handles>;
-  using ElementType = typename BaseOperation::ElementType;
+  using ElementType = typename Base_operation::ElementType;
   static_assert(std::is_same_v<ElementType, Vertex_handle>, "ElementType should be Vertex_handle");
-  using ElementSource = typename BaseOperation::ElementSource;
+  using ElementSource = typename Base_operation::ElementSource;
 
   using BaseClass::m_context;
 
@@ -791,19 +791,19 @@ public:
 template <typename C3t3, typename SizingFunction, typename CellSelector>
 class SurfaceVertexSmoothOperation
     : public VertexSmoothOperationBase<C3t3, SizingFunction, CellSelector>,
-      public ElementaryOperation<C3t3,
+      public Elementary_operation<C3t3,
                                  typename C3t3::Triangulation::Vertex_handle,
                                  typename C3t3::Triangulation::Finite_vertex_handles>
 {
 public:
   using BaseClass = VertexSmoothOperationBase<C3t3, SizingFunction, CellSelector>;
-  using BaseOperation = ElementaryOperation<C3t3,
+  using Base_operation = Elementary_operation<C3t3,
                                    typename C3t3::Triangulation::Vertex_handle,
                                    typename C3t3::Triangulation::Finite_vertex_handles>;
-  using ElementType = typename BaseOperation::ElementType;
+  using ElementType = typename Base_operation::ElementType;
   static_assert(std::is_same_v<ElementType, typename C3t3::Triangulation::Vertex_handle>,
                                "ElementType should be Vertex_handle");
-  using ElementSource = typename BaseOperation::ElementSource;
+  using ElementSource = typename Base_operation::ElementSource;
 
   using BaseClass::m_context;
 
@@ -1040,19 +1040,19 @@ public:
 template <typename C3t3, typename SizingFunction, typename CellSelector>
 class InternalVertexSmoothOperation
     : public VertexSmoothOperationBase<C3t3, SizingFunction, CellSelector>,
-      public ElementaryOperation<C3t3,
+      public Elementary_operation<C3t3,
                                  typename C3t3::Triangulation::Vertex_handle,
                                  typename C3t3::Triangulation::Finite_vertex_handles>
 {
 public:
   using BaseClass = VertexSmoothOperationBase<C3t3, SizingFunction, CellSelector>;
-  using BaseOperation = ElementaryOperation<C3t3,
+  using Base_operation = Elementary_operation<C3t3,
                                    typename C3t3::Triangulation::Vertex_handle,
                                    typename C3t3::Triangulation::Finite_vertex_handles>;
-  using ElementType = typename BaseOperation::ElementType;
+  using ElementType = typename Base_operation::ElementType;
   static_assert(std::is_same_v<ElementType, typename C3t3::Triangulation::Vertex_handle>,
                                "ElementType should be Vertex_handle");
-  using ElementSource = typename BaseOperation::ElementSource;
+  using ElementSource = typename Base_operation::ElementSource;
 
   using BaseClass::m_context;
 

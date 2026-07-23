@@ -22,7 +22,7 @@
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Triangulation_utils_3.h>
 
-#include <CGAL/Tetrahedral_remeshing/internal/elementary_operations.h>
+#include <CGAL/Tetrahedral_remeshing/internal/Elementary_operation.h>
 #include <CGAL/Tetrahedral_remeshing/internal/split_long_edges.h>
 #include <CGAL/Tetrahedral_remeshing/internal/collapse_short_edges.h>
 #include <CGAL/Tetrahedral_remeshing/internal/flip_edges.h>
@@ -174,7 +174,7 @@ public:
     CGAL_assertion(check_vertex_dimensions());
     typedef EdgeSplitOperation<C3t3, SizingFunction, CellSelector, Visitor> EdgeSplitOp;
     EdgeSplitOp split_op(m_sizing, m_cell_selector, m_protect_boundaries, m_visitor);
-    ElementaryOperationExecutionSequential<EdgeSplitOp> executor;
+    Elementary_operation_execution_sequential<EdgeSplitOp> executor;
     executor.execute(split_op, m_c3t3);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
@@ -200,7 +200,7 @@ public:
     CGAL_assertion(check_vertex_dimensions());
     typedef EdgeCollapseOperation<C3t3, SizingFunction, CellSelector, Visitor> EdgeCollapseOp;
     EdgeCollapseOp collapse_op(m_sizing, m_cell_selector, m_protect_boundaries, m_visitor);
-    ElementaryOperationExecutionSequential<EdgeCollapseOp> executor;
+    Elementary_operation_execution_sequential<EdgeCollapseOp> executor;
     executor.execute(collapse_op, m_c3t3);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
@@ -228,13 +228,13 @@ public:
     typename InternalFlipOp::Incident_cells_map inc_cells;
 
     InternalFlipOp internal_flip_op(m_cell_selector, m_visitor, inc_cells);
-    ElementaryOperationExecutionSequential<InternalFlipOp> internal_executor;
+    Elementary_operation_execution_sequential<InternalFlipOp> internal_executor;
     internal_executor.execute(internal_flip_op, m_c3t3);
 
     if (!m_protect_boundaries)
     {
       BoundaryFlipOp boundary_flip_op(m_cell_selector, m_visitor, inc_cells);
-      ElementaryOperationExecutionSequential<BoundaryFlipOp> boundary_executor;
+      Elementary_operation_execution_sequential<BoundaryFlipOp> boundary_executor;
       boundary_executor.execute(boundary_flip_op, m_c3t3);
     }
 
@@ -265,18 +265,18 @@ public:
       if (m_smoothing_context->m_smooth_constrained_edges)
       {
         ComplexEdgeVertexSmoothOperation<C3t3, SizingFunction, CellSelector> op(m_smoothing_context);
-        ElementaryOperationExecutionSequential<decltype(op)> executor;
+        Elementary_operation_execution_sequential<decltype(op)> executor;
         executor.execute(op, m_c3t3);
       }
       {
         SurfaceVertexSmoothOperation<C3t3, SizingFunction, CellSelector> op(m_smoothing_context);
-        ElementaryOperationExecutionSequential<decltype(op)> executor;
+        Elementary_operation_execution_sequential<decltype(op)> executor;
         executor.execute(op, m_c3t3);
       }
     }
     {
       InternalVertexSmoothOperation<C3t3, SizingFunction, CellSelector> op(m_smoothing_context);
-      ElementaryOperationExecutionSequential<decltype(op)> executor;
+      Elementary_operation_execution_sequential<decltype(op)> executor;
       executor.execute(op, m_c3t3);
     }
 

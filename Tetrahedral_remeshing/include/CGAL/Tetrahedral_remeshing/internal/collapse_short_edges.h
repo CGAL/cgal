@@ -31,7 +31,7 @@
 
 #include <CGAL/SMDS_3/tet_soup_to_c3t3.h>
 #include <CGAL/utility.h>
-#include <CGAL/Tetrahedral_remeshing/internal/elementary_operations.h>
+#include <CGAL/Tetrahedral_remeshing/internal/Elementary_operation.h>
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
@@ -1237,7 +1237,7 @@ template<typename C3t3,
          typename CellSelector,
          typename Visitor>
 class EdgeCollapseOperation
-    : public ElementaryOperation<C3t3,
+    : public Elementary_operation<C3t3,
                                  typename C3t3::Triangulation::Edge,
                                  std::vector<typename C3t3::Triangulation::Edge>>
 {
@@ -1248,9 +1248,9 @@ public:
   using FT = typename Tr::Geom_traits::FT;
 
   using Short_edges = std::vector<Edge>;
-  using BaseOperation = ElementaryOperation<C3t3, Edge, Short_edges>;
-  using ElementType = typename BaseOperation::ElementType;
-  using ElementSource = typename BaseOperation::ElementSource;
+  using Base_operation = Elementary_operation<C3t3, Edge, Short_edges>;
+  using ElementType = typename Base_operation::ElementType;
+  using ElementSource = typename Base_operation::ElementSource;
 
 private:
   const SizingFunction& m_sizing;
