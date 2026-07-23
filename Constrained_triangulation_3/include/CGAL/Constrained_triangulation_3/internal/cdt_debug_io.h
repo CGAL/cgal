@@ -35,9 +35,7 @@ namespace CGAL {
 
     std::size_t i = 0;
     for(const auto& [cell, facet_index] : facets_range) {
-      const auto v0 = cell->vertex(Tr::vertex_triple_index(facet_index, 0));
-      const auto v1 = cell->vertex(Tr::vertex_triple_index(facet_index, 1));
-      const auto v2 = cell->vertex(Tr::vertex_triple_index(facet_index, 2));
+      const auto [v0, v1, v2] = tr.vertices({cell, facet_index});
       points.push_back(tr.point(v0));
       points.push_back(tr.point(v1));
       points.push_back(tr.point(v2));

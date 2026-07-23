@@ -1077,6 +1077,12 @@ Makefile
 *.sln
 *.depends
 
+# Output files of tetgen
+*.edge
+*.cell
+*.node
+*.smesh
+
 # The rest: "various" things that I do not know how to classify
 # -- Laurent Rineau, 2013/01/11
 *.ncb
@@ -1163,10 +1169,11 @@ Data/data/meshes/*.*.vtk
 Data/data/meshes/*.log
 Data/data/meshes/*.off-cdt-output.off
 dump_*.off
+dump_*.ply
 dump_*.txt
-dump-*.binary.cgal
-dump-*.polylines.txt
-dump-*.xyz
+dump*.binary.cgal
+dump*.polylines.txt
+dump*.xyz
 dump.off.mesh
 log.txt
 patches_after_merge.ply

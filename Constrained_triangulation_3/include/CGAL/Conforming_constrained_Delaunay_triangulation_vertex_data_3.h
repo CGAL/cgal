@@ -35,7 +35,15 @@ namespace CGAL {
 struct Conforming_constrained_Delaunay_triangulation_vertex_data_3 {};
 #else // DOXYGEN_RUNNING
 
-enum class CDT_3_vertex_type { FREE, CORNER, INPUT_VERTEX = CORNER, STEINER_ON_EDGE, STEINER_IN_FACE };
+enum class CDT_3_vertex_type : unsigned char {
+  FREE,
+  INPUT_VERTEX,
+  STEINER_ON_EDGE,
+  STEINER_IN_FACE,
+  STEINER_IN_VOLUME,
+  BBOX,
+  last = BBOX,
+};
 
 enum class CDT_3_vertex_marker {
   CLEAR = 0,
@@ -44,14 +52,14 @@ enum class CDT_3_vertex_marker {
   CAVITY,
   CAVITY_ABOVE,
   CAVITY_BELOW,
-  nb_of_markers
+  last = CAVITY_BELOW
 };
 
 class Conforming_constrained_Delaunay_triangulation_vertex_data_3 {
 protected:
   // TODO: check and improve the compactness of this class
   CDT_3_vertex_type m_vertex_type = CDT_3_vertex_type::FREE;
-  std::bitset<static_cast<int>(CDT_3_vertex_marker::nb_of_markers)> mark{};
+  std::bitset<static_cast<int>(CDT_3_vertex_marker::last) + 1> mark{};
   struct C_id {
     void* ptr = nullptr;
     std::size_t id = 0;
@@ -143,6 +151,7 @@ public:
   void set_vertex_type(CDT_3_vertex_type type) { m_vertex_type = type; }
   bool is_Steiner_vertex_on_edge() const { return m_vertex_type == CDT_3_vertex_type::STEINER_ON_EDGE; }
   bool is_Steiner_vertex_in_face() const { return m_vertex_type == CDT_3_vertex_type::STEINER_IN_FACE; }
+  bool is_Steiner_vertex_in_volume() const { return m_vertex_type == CDT_3_vertex_type::STEINER_IN_VOLUME; }
 };
 
 #endif // DOXYGEN_RUNNING

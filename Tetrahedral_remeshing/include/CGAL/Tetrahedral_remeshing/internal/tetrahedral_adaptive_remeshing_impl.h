@@ -16,7 +16,9 @@
 #include <CGAL/license/Tetrahedral_remeshing.h>
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE_PROGRESS
-#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+#  ifndef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+#    define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+#  endif
 #endif
 
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
@@ -70,13 +72,13 @@ template<typename Triangulation
          , typename Visitor
          , typename CornerIndex = int
          , typename CurveIndex = int
+         , typename C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<Triangulation, CornerIndex, CurveIndex>
          >
 class Adaptive_remesher
 {
   typedef Triangulation Tr;
+  typedef typename Tr::Geom_traits Gt;
   typedef typename Tr::Geom_traits::FT FT;
-
-  typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex> C3t3;
 
   typedef typename C3t3::Cell_handle         Cell_handle;
   typedef typename C3t3::Vertex_handle       Vertex_handle;
@@ -180,7 +182,7 @@ public:
     CGAL::Tetrahedral_remeshing::debug::dump_facets_in_complex(m_c3t3,
       "1-facets_in_complex_after_split.off");
     CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
-      m_c3t3.triangulation(), "1-c3t3_vertices_after_split");
+      m_c3t3, "1-c3t3_vertices_after_split");
     CGAL::Tetrahedral_remeshing::debug::check_surface_patch_indices(m_c3t3);
     CGAL::Tetrahedral_remeshing::debug::dump_edges_in_complex(m_c3t3,
       "1-edges_in_complex_after_split.polylines.txt");
@@ -202,7 +204,7 @@ public:
     CGAL_assertion(tr().tds().is_valid(true));
     CGAL_assertion(debug::are_cell_orientations_valid(tr()));
     CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
-      m_c3t3.triangulation(), "2-c3t3_vertices_after_collapse");
+      m_c3t3, "2-c3t3_vertices_after_collapse");
     CGAL::Tetrahedral_remeshing::debug::check_surface_patch_indices(m_c3t3);
     CGAL::Tetrahedral_remeshing::debug::dump_edges_in_complex(m_c3t3,
       "2-edges_in_complex_after_collapse.polylines.txt");
@@ -223,7 +225,7 @@ public:
     CGAL_assertion(tr().tds().is_valid(true));
     CGAL_assertion(debug::are_cell_orientations_valid(tr()));
     CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
-      m_c3t3.triangulation(), "3-c3t3_vertices_after_flip");
+      m_c3t3, "3-c3t3_vertices_after_flip");
     CGAL::Tetrahedral_remeshing::debug::check_surface_patch_indices(m_c3t3);
     CGAL::Tetrahedral_remeshing::debug::dump_edges_in_complex(m_c3t3,
       "3-edges_in_complex_after_flip.polylines.txt");
@@ -243,7 +245,7 @@ public:
     CGAL_assertion(tr().tds().is_valid(true));
     CGAL_assertion(debug::are_cell_orientations_valid(tr()));
     CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
-      m_c3t3.triangulation(), "4-c3t3_vertices_after_smooth");
+      m_c3t3, "4-c3t3_vertices_after_smooth");
     CGAL::Tetrahedral_remeshing::debug::check_surface_patch_indices(m_c3t3);
     CGAL::Tetrahedral_remeshing::debug::dump_edges_in_complex(m_c3t3,
       "4-edges_in_complex_after_smoothing.polylines.txt");
@@ -307,7 +309,7 @@ public:
     {
       //reset far points dimension
       for (Vertex_handle v : m_far_points)
-        v->set_dimension(-1);
+        m_c3t3.set_dimension(v, -1);
       m_c3t3_pbackup->swap(m_c3t3);
     }
     else
@@ -331,7 +333,7 @@ private:
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
-      m_c3t3.triangulation(), "00-c3t3_vertices_before_init_");
+      m_c3t3, "00-c3t3_vertices_before_init_");
 #endif
 
     if (input_is_c3t3())
@@ -344,7 +346,7 @@ private:
     {
       if (get(m_cell_selector, cit))
       {
-        const Subdomain_index index = cit->subdomain_index();
+        const Subdomain_index index = m_c3t3.subdomain_index(cit);
         if (m_c3t3.is_in_complex(cit))
           m_c3t3.remove_from_complex(cit);
 
@@ -372,15 +374,15 @@ private:
     for (const Facet& f : tr().finite_facets())
     {
       const Facet mf = tr().mirror_facet(f);
-      const Subdomain_index s1 = f.first->subdomain_index();
-      const Subdomain_index s2 = mf.first->subdomain_index();
+      const Subdomain_index s1 = m_c3t3.subdomain_index(f.first);
+      const Subdomain_index s2 = m_c3t3.subdomain_index(mf.first);
       if (s1 != s2
           || get(fcmap, f)
           || get(fcmap, mf)
           || (input_is_c3t3() && m_c3t3.is_in_complex(f))
-          || (!input_is_c3t3() && f.first->is_facet_on_surface(f.second)))
+          || (!input_is_c3t3() && m_c3t3.is_in_complex(f)))
       {
-        Surface_patch_index patch = f.first->surface_patch_index(f.second);
+        Surface_patch_index patch = m_c3t3.surface_patch_index(f);
         if(patch == Surface_patch_index())
           make_surface_patch_index(s1, s2, patch);
 
@@ -449,7 +451,7 @@ private:
           m_c3t3.add_to_complex(vit, ++corner_id);
 
         set_dimension(vit, 0);
-        vit->set_index(corner_id);
+        //vit->set_index(corner_id);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
         ++nbv;
@@ -471,7 +473,7 @@ private:
     std::cout << "\t Min dihedral angle = " << mdh << std::endl;
 
     CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
-      m_c3t3.triangulation(), "0-c3t3_vertices_after_init_");
+      m_c3t3, "0-c3t3_vertices_after_init_");
     CGAL::Tetrahedral_remeshing::debug::check_surface_patch_indices(m_c3t3);
     CGAL::Tetrahedral_remeshing::debug::count_far_points(m_c3t3);
     CGAL::Tetrahedral_remeshing::debug::dump_edges_in_complex(m_c3t3,
@@ -483,7 +485,7 @@ private:
   {
     for (Vertex_handle v : tr().finite_vertex_handles())
     {
-      if (v->in_dimension() == -1)
+      if (m_c3t3.in_dimension(v) == -1)
         m_far_points.push_back(v);
     }
   }
@@ -491,7 +493,7 @@ private:
 private:
   bool dimension_is_modifiable(const Vertex_handle& v, const int new_dim) const
   {
-    const int vdim = v->in_dimension();
+    const int vdim = m_c3t3.in_dimension(v);
     // feature edges and tip/endpoints vertices are kept
     switch (vdim)
     {
@@ -510,7 +512,7 @@ private:
   void set_dimension(Vertex_handle v, const int new_dim)
   {
     if (dimension_is_modifiable(v, new_dim))
-      v->set_dimension(new_dim);
+      m_c3t3.set_dimension(v, new_dim);
   }
 
   bool check_vertex_dimensions()
@@ -519,7 +521,7 @@ private:
     {
       // dimension is -1 for Mesh_3 "far points"
       // for other vertices, it is in [0; 3]
-      if (vit->in_dimension() < -1 || vit->in_dimension() > 3)
+      if (m_c3t3.in_dimension(vit) < -1 || m_c3t3.in_dimension(vit) > 3)
         return false;
     }
     return true;
@@ -554,7 +556,7 @@ private:
       = (std::numeric_limits<Subdomain_index>::min)();
     for (Cell_handle cit : tr().finite_cell_handles())
     {
-      const Subdomain_index cid = cit->subdomain_index();
+      const Subdomain_index cid = m_c3t3.subdomain_index(cit);
       if (cid > max_index && cid != Subdomain_index())
         max_index = cid;
     }
@@ -667,7 +669,9 @@ template<typename Triangulation,
          typename SizingFunction,
          typename NamedParameters,
          typename CornerIndex = int,
-         typename CurveIndex = int>
+         typename CurveIndex = int,
+         typename C3t3_or_CDT_3
+             = CGAL::Mesh_complex_3_in_triangulation_3<Triangulation, CornerIndex, CurveIndex>>
 struct Adaptive_remesher_type_generator
 {
   using Tr = Triangulation;
@@ -711,7 +715,9 @@ struct Adaptive_remesher_type_generator
   >::type;
 
   using type = Adaptive_remesher<
-    Tr, SizingFunction, VCMap, ECMap, FCMap, SelectionFunctor, Visitor>;
+    Tr, SizingFunction, VCMap, ECMap, FCMap, SelectionFunctor, Visitor,
+    CornerIndex, CurveIndex,
+    C3t3_or_CDT_3>;
 };
 
 }//end namespace internal
