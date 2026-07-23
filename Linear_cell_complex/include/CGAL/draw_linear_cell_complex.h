@@ -60,7 +60,6 @@ struct LCC_geom_utils<LCC, Local_kernel, 2>
 template <class LCC, class GSOptionsLCC>
 void compute_face(const LCC& lcc,
                   typename LCC::Dart_const_handle dh,
-                  typename LCC::Dart_const_handle voldh,
                   CGAL::Graphics_scene& graphics_scene,
                   const GSOptionsLCC& gso)
 {
@@ -77,9 +76,8 @@ void compute_face(const LCC& lcc,
   }
   while (cur!=dh);
 
-  if (gso.colored_volume(lcc, voldh))
-  { graphics_scene.face_begin(gso.volume_color(lcc, voldh)); }
-  else if (gso.colored_face(lcc, dh))
+  // An explicit face color wins; otherwise the face inherits its volume color.
+  if (gso.colored_face(lcc, dh))
   { graphics_scene.face_begin(gso.face_color(lcc, dh)); }
   else
   { graphics_scene.face_begin(); }
@@ -177,6 +175,27 @@ void compute_elements(const LCC& lcc,
     if (!lcc.is_marked(it, markvolumes) &&
         gso.draw_volume(lcc, it))
     {
+      // Clip-plane cap: open a volume group; its incident faces are added below
+      // and de-duplicated by the scene, so a shared wall is stored once (no map).
+      if (gso.colored_volume(lcc, it))
+      { graphics_scene.volume_begin(gso.volume_color(lcc, it)); }
+      else
+      { graphics_scene.volume_begin(); }
+
+      // Faces of this volume (one dart per incident face, on the volume's side).
+      for(auto fit=lcc.template one_dart_per_incident_cell<2,3>(it).begin(),
+               fitend=lcc.template one_dart_per_incident_cell<2,3>(it).end();
+          fit!=fitend; ++fit)
+      {
+        if ((!gso.volume_wireframe(lcc, fit) ||
+             Test_opposite_draw_lcc<LCC>::run(lcc, gso, fit)) &&
+            !gso.face_wireframe(lcc, fit))
+        { compute_face(lcc, fit, graphics_scene, gso); }
+      }
+
+      graphics_scene.volume_end();
+
+      // Edges and vertices of this volume (each drawn once).
       for(typename LCC::template Dart_of_cell_basic_range<3>::const_iterator
             itv=lcc.template darts_of_cell_basic<3>(it, markvolumes).begin(),
             itvend=lcc.template darts_of_cell_basic<3>(it, markvolumes).end();
@@ -187,10 +206,6 @@ void compute_elements(const LCC& lcc,
             lcc.is_marked(itv, oriented_mark) &&
             gso.draw_face(lcc, itv))
         {
-          if ((!gso.volume_wireframe(lcc, itv) ||
-               Test_opposite_draw_lcc<LCC>::run(lcc, gso, itv)) &&
-              !gso.face_wireframe(lcc, itv))
-          { compute_face(lcc, itv, it, graphics_scene, gso); }
           for(typename LCC::template Dart_of_cell_basic_range<2>::const_iterator
                 itf=lcc.template darts_of_cell_basic<2>(itv, markfaces).begin(),
                 itfend=lcc.template darts_of_cell_basic<2>(itv, markfaces).end();
