@@ -316,12 +316,10 @@ a Boolean indicating whether the kernel exists or not, respectively.
 
 Corefinement was introduced in \cgal 4.10 by Sébastien Loriot.
 
-The `apply_iterative_snap_rounding` option for autorefinement was developed by Sylvain Lazard
-and Léo Vaque \cgalCite{valquelazard2025}, and implemented by Léo Valque in 2025.
+The `apply_iterative_snap_rounding` option for autorefinement was developed by \cgalCite{valquelazard2025}, and implemented by Léo Valque in 2025.
 
 The kernel functions and the specialization of clipping and plane refinement to convex
-inputs were implemented in 2025 by Léo Valque, inspired by the work of Sorgente et al.
-\cgalCite{sorgente2022polyhedron}.
+inputs were implemented in 2025 by Léo Valque, inspired by the work of \cgalCite{sorgente2022polyhedron}.
 
 */
 } /* namespace CGAL */

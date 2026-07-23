@@ -36,7 +36,7 @@ neighbor coordinates, which we describe in this section.
 
 \subsection InterpolationIntroduction Introduction
 
-Natural neighbor interpolation was introduced by Sibson
+Natural neighbor interpolation was introduced by
 \cgalCite{s-bdnni-81} to interpolate multivariate scattered data. Given
 a set of data points \f$ \mathcal{P}\f$, the natural neighbor coordinates
 associated to \f$ \mathcal{P}\f$ are defined from the Voronoi diagram of
@@ -83,7 +83,7 @@ and \f$ \mathbf{q}\f$ will be:
 - \f$ \lambda_p(\mathbf{x}) = \frac{\|\mathbf{x} - \mathbf{q}\| }{ \|\mathbf{q} - \mathbf{p}\|} \f$
 - \f$ \lambda_q(\mathbf{x}) = \frac{\|\mathbf{x} - \mathbf{p}\| }{ \|\mathbf{q} - \mathbf{p}\|} \f$
 
-Furthermore, Piper \cgalCite{cgal:p-plcbd-93} shows that the coordinate
+Furthermore, \cgalCite{cgal:p-plcbd-93} shows that the coordinate
 functions are continuous in the convex hull of \f$ \mathcal{P}\f$ and
 continuously differentiable except on the data points \f$ \mathcal{P}\f$.<BR>
 
@@ -192,8 +192,8 @@ issued from a surface \f$ \mathcal{S}\f$ and given a query point
 \f$ \mathbf{x}\f$ on \f$ \mathcal{S}\f$. We assume that \f$ \mathcal{S}\f$ is a
 closed and compact surface of \f$ \mathbb{R}^3\f$, and let \f$ \mathcal{P}=
 \{\mathbf{p_1}, \ldots,\mathbf{p_n}\}\f$ be an \f$ \epsilon\f$-sample of
-\f$ \mathcal{S}\f$ (refer to Amenta and Bern \cgalCite{ab-srvf-99}). The
-concepts are based on the definition of Boissonnat and Fl&ouml;totto
+\f$ \mathcal{S}\f$ (refer to \cgalCite{ab-srvf-99}). The
+concepts are based on the definition of
 \cgalCite{bf-lcss-02}, \cgalCite{cgal:f-csapc-03}. Both references
 contain a thorough description of the requirements and the
 mathematical properties.
@@ -300,7 +300,7 @@ The interpolation functions presented below are used to interpolate function val
 
 \subsubsection InterpolationLinearPrecisionInterpolation Linear Precision Interpolation
 
-Sibson \cgalCite{s-bdnni-81} defines a very simple interpolant that
+\cgalCite{s-bdnni-81} defines a very simple interpolant that
 re-produces linear functions exactly. The interpolation of
 \f$ \Phi(\mathbf{x})\f$ is given as the linear combination of the neighbors' function
 values weighted by the coordinates:
@@ -362,7 +362,7 @@ around \f$ f(0)\f$, the faster the interpolant approaches \f$ \xi_i\f$ as
 
 \subsubsection InterpolationFarin Farin's C^1 Continuous Interpolant
 
-Farin \cgalCite{f-sodt-90} extended Sibson's work and realizes a \f$ C^1\f$
+\cgalCite{f-sodt-90} extended Sibson's work and realizes a \f$ C^1\f$
 continuous interpolant by embedding natural neighbor coordinates in
 the Bernstein-B&eacute;zier representation of a cubic simplex. If the
 gradient of \f$ \Phi\f$ at the data points is known, this interpolant

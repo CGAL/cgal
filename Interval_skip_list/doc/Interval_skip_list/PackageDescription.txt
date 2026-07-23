@@ -18,7 +18,7 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-This chapter presents the interval skip list introduced by Hanson \cgalCite{h-islds-91},
+This chapter presents the interval skip list introduced by \cgalCite{h-islds-91},
 and derived from the skip list data structure \cgalCite{p-slpab-90}.
 
 The data structure stores intervals and allows to perform stabbing queries,

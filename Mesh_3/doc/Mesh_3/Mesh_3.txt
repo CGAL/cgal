@@ -724,7 +724,7 @@ Cut view of a 3D mesh produced from a segmented liver image. Code from subsectio
 
 When a segmented image is given as input, the generated mesh surface sometimes sticks too closely
 to the voxels surface, causing an aliasing effect.
-A solution to generate a smooth and accurate output surface was described by Stalling et al in
+A solution to generate a smooth and accurate output surface was described by
 \cgalCite{stalling1998weighted}. It consists in generating a second input image, made
 of integer coefficients called *weights*, and use those weights to define smoother domain boundaries.
 The 3D image of weights can be generated using `CGAL::Mesh_3::generate_label_weights()` as shown in
@@ -1375,27 +1375,27 @@ Lloyd optimization speed-up, compared to the sequential version of the algorithm
 \subsection Mesh_3TheoreticalFoundations Theoretical Foundations
 
 The \cgal mesh generation package implements a meshing engine based
-on the method of Delaunay refinement introduced by Chew \cgalCite{c-gqmgc-93} and Ruppert \cgalCite{r-draq2d-95}
-and pioneered in 3D by Shewchuk \cgalCite{s-tmgdr-98}.
+on the method of Delaunay refinement introduced by \cgalCite{c-gqmgc-93} and \cgalCite{r-draq2d-95}
+and pioneered in 3D by \cgalCite{s-tmgdr-98}.
 It uses the notion of restricted Delaunay triangulation
 to approximate 1-dimensional curved features and curved surface patches
-and rely on the work of Boissonnat and Oudot \cgalCite{cgal:bo-pgsms-05}
-and Oudot et al. \cgalCite{cgal:ory-mvbss-05}
+and rely on the work of \cgalCite{cgal:bo-pgsms-05}
+and \cgalCite{cgal:ory-mvbss-05}
 to achieve accurate representation of boundary and subdividing surfaces in the mesh.
 The mechanism of protecting balls, used to ensure a fair representation
 of 1-dimensional features, if any, and the termination of the refinement process
 whatever may be the input geometry, in particular whatever small dihedral angles may form
 the boundary and subdivision surface patches,
-was pioneered by Cheng et al. \cgalCite{cgal:cdr-drpsc-07} and further experimented by Dey, Levine et al.
+was pioneered by \cgalCite{cgal:cdr-drpsc-07} and further experimented by
 \cgalCite{cgal:cdl-pdma-07}.
 The optimization phase involves global optimization processes, a perturbation process
 and a sliver exudation process. The global optimizers are based on Lloyd smoothing \cgalCite{cgal:dfg-cvtaa-99t}, \cgalCite{cgal:dw-tmgob-02}
 and odt smoothing \cgalCite{cgal::c-mssbo-04}, \cgalCite{cgal:acyd-vtm-05}, where odt means
 <I>optimal Delaunay triangulation</I>. The perturbation process
-is mainly based on the work of Tournois \cgalCite{cgal:t-om-09}
-and Tournois et al. \cgalCite{cgal:twad-iropitmg-09},
+is mainly based on the work of \cgalCite{cgal:t-om-09}
+and \cgalCite{cgal:twad-iropitmg-09},
 while the exudation process is, the now famous, optimization by weighting described
-in Edelsbrunner et al. \cgalCite{cgal:cdeft-slive-00}.
+in \cgalCite{cgal:cdeft-slive-00}.
 
 \subsection Mesh_3ImplementationHistory Implementation History
 
@@ -1417,7 +1417,7 @@ and appeared first in release 3.6 of \cgal.
 
 In collaboration with Laurent Rineau, Stéphane also added demos and examples.
 After some experiments on medical imaging data performed by
-Dobrina Boltcheva et al. \cgalCite{cgal:byb-mgmmi-09}, \cgalCite{cgal:-byb-fpdmgmmi-09}, the handling
+\cgalCite{cgal:byb-mgmmi-09}, \cgalCite{cgal:-byb-fpdmgmmi-09}, the handling
 of 1-dimensional features was worked out by Laurent Rineau, Stéphane Tayeb
 and Mariette Yvinec. It appeared first in the release 3.8 of \cgal.
 
