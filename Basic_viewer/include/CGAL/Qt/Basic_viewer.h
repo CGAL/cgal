@@ -1478,18 +1478,18 @@ protected:
     }
     const auto xr=std::minmax_element(px, px+8);
     const auto yr=std::minmax_element(py, py+8);
-    int x0=int(std::floor(*xr.first));
-    int y0=int(std::floor(*yr.first));
-    int x1=int(std::ceil(*xr.second));
-    int y1=int(std::ceil(*yr.second));
-    x0=(std::max)(x0, vp[0]);
-    y0=(std::max)(y0, vp[1]);
-    x1=(std::min)(x1, vp[0]+vp[2]);
-    y1=(std::min)(y1, vp[1]+vp[3]);
+    // Clamp to the viewport in float space so the int cast stays in range (a
+    // corner near the camera can project to a coordinate larger than int).
+    const float lox=float(vp[0]), hix=float(vp[0]+vp[2]);
+    const float loy=float(vp[1]), hiy=float(vp[1]+vp[3]);
+    const int x0=int(std::clamp(std::floor(*xr.first),  lox, hix));
+    const int y0=int(std::clamp(std::floor(*yr.first),  loy, hiy));
+    const int x1=int(std::clamp(std::ceil (*xr.second), lox, hix));
+    const int y1=int(std::clamp(std::ceil (*yr.second), loy, hiy));
     sx=x0;
     sy=y0;
-    sw=(x1>x0)?GLsizei(x1-x0):0;
-    sh=(y1>y0)?GLsizei(y1-y0):0;
+    sw=GLsizei(x1-x0);
+    sh=GLsizei(y1-y0);
     return true;
   }
 
