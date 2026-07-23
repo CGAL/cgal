@@ -105,10 +105,10 @@ public:
       t31(m31), t32(m32), t33(m33), t34(m34)
   {}
 
-  virtual ~Aff_transformation_repC3()
+  ~Aff_transformation_repC3() override
   {}
 
-  virtual Point_3 transform(const Point_3& p) const // FIXME : construction
+  Point_3 transform(const Point_3& p) const override // FIXME : construction
   {
     typename R::Construct_point_3 construct_point_3;
     return construct_point_3(t11 * p.x() + t12 * p.y() + t13 * p.z() + t14,
@@ -117,7 +117,7 @@ public:
   }
 
   // note that a vector is not translated
-  virtual Vector_3 transform(const Vector_3& v) const // FIXME : construction
+  Vector_3 transform(const Vector_3& v) const override // FIXME : construction
   {
     return Vector_3(t11 * v.x() + t12 * v.y() + t13 * v.z(),
                     t21 * v.x() + t22 * v.y() + t23 * v.z(),
@@ -125,7 +125,7 @@ public:
   }
 
   // note that a direction is not translated
-  virtual Direction_3 transform(const Direction_3& dir) const
+  Direction_3 transform(const Direction_3& dir) const override
   { // FIXME : construction
     Vector_3 v = dir.to_vector();
     return Direction_3(t11 * v.x() + t12 * v.y() + t13 * v.z(),
@@ -133,7 +133,7 @@ public:
                        t31 * v.x() + t32 * v.y() + t33 * v.z());
   }
 
-  virtual Plane_3 transform(const Plane_3& p) const
+  Plane_3 transform(const Plane_3& p) const override
   {
       if (is_even())
       return Plane_3(transform(p.point()),
@@ -147,14 +147,14 @@ public:
   // Note that Aff_transformation is not defined yet,
   // so the following 6 functions have to be implemented
   // outside class body
-  virtual Aff_transformation_3 inverse() const;
-  virtual Aff_transformation_3 transpose() const;
-  virtual Aff_transformation_3 operator*(const Transformation_base_3 &t) const;
-  virtual Aff_transformation_3 compose(const Transformation_3 &t) const;
-  virtual Aff_transformation_3 compose(const Translation_3 &t) const;
-  virtual Aff_transformation_3 compose(const Scaling_3 &t) const;
+  Aff_transformation_3 inverse() const override;
+  Aff_transformation_3 transpose() const override;
+  Aff_transformation_3 operator*(const Transformation_base_3 &t) const override;
+  Aff_transformation_3 compose(const Transformation_3 &t) const override;
+  Aff_transformation_3 compose(const Translation_3 &t) const override;
+  Aff_transformation_3 compose(const Scaling_3 &t) const override;
 
-  virtual bool is_even() const
+  bool is_even() const override
   {
     return sign_of_determinant(t11, t12, t13,
                                   t21, t22, t23,
@@ -162,7 +162,7 @@ public:
   }
 
 
-  virtual FT cartesian(int i, int j) const
+  FT cartesian(int i, int j) const override
   {
     switch (i)
     {
@@ -198,7 +198,7 @@ public:
   return FT(0);
   }
 
-  virtual std::ostream &print(std::ostream &os) const
+  std::ostream &print(std::ostream &os) const override
   {
     os <<"Aff_transformationC3("<<t11<<' '<<t12<<' '<<t13<<' '<<t14<<std::endl;
     os <<"                     "<<t21<<' '<<t22<<' '<<t23<<' '<<t24<<std::endl;

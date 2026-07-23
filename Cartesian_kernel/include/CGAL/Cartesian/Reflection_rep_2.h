@@ -56,41 +56,41 @@ typedef typename CGAL::Line_2<R>                 Line_2;
     cosinus_ = 2*sq_cos-1;
   }
 
-  ~Reflection_repC2()
+  ~Reflection_repC2() override
   {}
 
-  Point_2      transform(const Point_2 &p) const
+  Point_2      transform(const Point_2 &p) const override
   {
     return Point_2(
           cosinus_*p.x()+sinus_*p.y()-cosinus_*t.x()-sinus_*t.y()+t.x(),
           sinus_*p.x()-cosinus_*p.y()-sinus_*t.x()+cosinus_*t.y()+t.y());
   }
 
-  Vector_2      transform(const Vector_2 &p) const
+  Vector_2      transform(const Vector_2 &p) const override
   {
     return Vector_2(
           cosinus_*p.x()+sinus_*p.y()-cosinus_*t.x()-sinus_*t.y()+t.x(),
           sinus_*p.x()-cosinus_*p.y()-sinus_*t.x()+cosinus_*t.y()+t.y());
   }
 
-  Direction_2  transform(const Direction_2 &d) const
+  Direction_2  transform(const Direction_2 &d) const override
   {
 
     return transform(d.vector()).direction();
   }
 
-  Aff_transformation_2 operator*(const Aff_t_base &t) const
+  Aff_transformation_2 operator*(const Aff_t_base &t) const override
   {
     return t.compose(*this);
   }
 
-  Aff_transformation_2 compose(const Translation &tr) const
+  Aff_transformation_2 compose(const Translation &tr) const override
   {
     return Aff_transformation_2(cosinus_, sinus_, t13()+tr.translationvector_.x(),
                                 sinus_, -cosinus_, t23()+tr.translationvector_.y());
   }
 
-  Aff_transformation_2 compose(const Scaling &s) const
+  Aff_transformation_2 compose(const Scaling &s) const override
   {
     return Aff_transformation_2(s.scalefactor_ * cosinus_,
                                 s.scalefactor_ * sinus_,
@@ -100,7 +100,7 @@ typedef typename CGAL::Line_2<R>                 Line_2;
                                 s.scalefactor_ * t23());
   }
 
-  Aff_transformation_2 compose(const Transformation &tr) const
+  Aff_transformation_2 compose(const Transformation &tr) const override
   {
     return Aff_transformation_2(
           tr.t11*cosinus_+tr.t12*sinus_,
@@ -111,7 +111,7 @@ typedef typename CGAL::Line_2<R>                 Line_2;
           tr.t21*t13()+tr.t22*t23()+tr.t23);
   }
 
-  Aff_transformation_2 compose(const Rotation &r) const
+  Aff_transformation_2 compose(const Rotation &r) const override
   {
     return Aff_transformation_2(
           r.cosinus_*cosinus_-r.sinus_*sinus_,
@@ -124,7 +124,7 @@ typedef typename CGAL::Line_2<R>                 Line_2;
           +r.cosinus_*t23());
   }
 
-  Aff_transformation_2 compose(const Reflection &r) const
+  Aff_transformation_2 compose(const Reflection &r) const override
   {
     return Aff_transformation_2(
           cosinus_*r.cosinus_+sinus_*r.sinus_,
@@ -136,23 +136,23 @@ typedef typename CGAL::Line_2<R>                 Line_2;
           r.sinus_*(t13()-r.t.x()) -r.cosinus_*(t23()-r.t.y())+r.t.y());
   }
 
-  Aff_transformation_2  inverse() const
+  Aff_transformation_2  inverse() const override
   {
     return Aff_transformation_2(cartesian(0,0), cartesian(0,1), cartesian(0,2),
                                 cartesian(1,0), cartesian(1,1), cartesian(1,2));
   }
 
-  bool is_even() const
+  bool is_even() const override
   {
     return true;
   }
 
- virtual bool is_reflection() const
+ bool is_reflection() const override
   {
     return true;
   }
 
-  FT cartesian(int i, int j) const
+  FT cartesian(int i, int j) const override
   {
     switch (i)
     {
@@ -178,7 +178,7 @@ typedef typename CGAL::Line_2<R>                 Line_2;
     return FT(0);
   }
 
-  std::ostream &print(std::ostream &os) const
+  std::ostream &print(std::ostream &os) const override
   {
     os << "Aff_transformationC2(" << sinus_ << ", " << cosinus_ <<  "; "<< t <<")";
     return os;
