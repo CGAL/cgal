@@ -387,6 +387,6 @@ namespace CGAL {
 
     /// \endcond
   };
-}
-}
+} // namespace Shape_detection
+} // namespace CGAL
 #endif

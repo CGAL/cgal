@@ -40,6 +40,10 @@
 /// I/O Functions for the \ref IOStreamLAS
 /// \ingroup IOstreamFunctions
 
+/// \defgroup PkgStreamSupportIoFuncsVG VG I/O Functions
+/// I/O Functions for the \ref IOStreamVG
+/// \ingroup IOstreamFunctions
+
 /// \defgroup PkgStreamSupportIoFuncsXYZ XYZ I/O Functions
 /// I/O Functions for the \ref IOStreamXYZ
 /// \ingroup IOstreamFunctions
@@ -124,6 +128,7 @@ the printing mode.
 - \link PkgStreamSupportIoFuncs3MF I/O for 3MF files \endlink
 - \link PkgStreamSupportIoFuncsWKT I/O for WKT files \endlink
 - \link PkgStreamSupportIoFuncsLAS I/O for LAS files \endlink
+- \link PkgStreamSupportIoFuncsVG I/O for VG files \endlink
 - \link PkgStreamSupportIoFuncsXYZ I/O for XYZ files \endlink
 
 */
