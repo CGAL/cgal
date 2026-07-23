@@ -513,7 +513,6 @@ private:
 using cgal_types::C3t3_wrapper; 
 
 
-
 /*!
 * \ingroup pkgMeshSmoothing3Classes
 * 
