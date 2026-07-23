@@ -40,7 +40,7 @@ template < class R_ >
 class Aff_transformationC3
   : public Handle_for_virtual<Aff_transformation_rep_baseC3<R_> >
 {
-  friend class PlaneC3<R_>; // FIXME: why ?
+  // friend class PlaneC3<R_>; // FIXME: why ?
 
   typedef typename R_::FT                   FT;
   typedef Aff_transformation_rep_baseC3<R_> Aff_t_base;
@@ -117,6 +117,12 @@ public:
                                             m31, m32, m33, m34));
   }
 
+  // General form: with translation
+  Aff_transformationC3(const Aff_transformation_repC3<R> &b)
+  {
+    initialize_with(b);
+  }
+
   Point_3
   transform(const Point_3 &p) const
   { return this->Ptr()->transform(p); }
@@ -156,6 +162,7 @@ public:
 
   bool is_translation() const { return this->Ptr()->is_translation(); }
   bool is_scaling() const { return this->Ptr()->is_scaling(); }
+  bool has_rotation() const { return this->Ptr()->has_rotation(); }
 
 
   FT cartesian(int i, int j) const { return this->Ptr()->cartesian(i,j); }

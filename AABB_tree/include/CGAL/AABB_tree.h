@@ -145,30 +145,30 @@ namespace CGAL {
     /// An explicit call to `build()` must be made to ensure that the next call to
     /// a query function will not trigger the construction of the data structure and/or
     /// allow the tree to be built in parallel if supported.
-    /// `Concurrency_tag` enables sequential versus parallel algorithm. Possible values are Sequential_tag, Parallel_tag, and Parallel_if_available_tag.
+    /// `ConcurrencyTag` enables sequential versus parallel algorithm. Possible values are Sequential_tag, Parallel_tag, and Parallel_if_available_tag.
     /// A call to \link AABBTraits::set_shared_data `AABBTraits::set_shared_data(t...)`\endlink
     /// is made using the internally stored traits.
     /// This procedure has a complexity of \cgalBigO{n log(n)}, where \f$n\f$ is the number of
     /// primitives of the tree.
-    template<typename Concurrency_tag=Sequential_tag, typename ... T>
+    template<typename ConcurrencyTag=Sequential_tag, typename ... T>
     void build(T&& ...);
 #ifndef DOXYGEN_RUNNING
-    template<typename Concurrency_tag=Sequential_tag>
+    template<typename ConcurrencyTag=Sequential_tag>
     void build();
 
     /// triggers the (re)construction of the tree similarly to a call to `build()`
     /// but the traits functors `Compute_bbox` and `Split_primitives` are ignored
     /// and `compute_bbox` and `split_primitives` are used instead.
-    template <class Concurrency_tag=Sequential_tag, class ComputeBbox, class SplitPrimitives>
+    template <class ConcurrencyTag=Sequential_tag, class ComputeBbox, class SplitPrimitives>
     void custom_build(const ComputeBbox& compute_bbox,
                       const SplitPrimitives& split_primitives);
 #endif
     /// @private
-    template<typename Concurrency_tag=Sequential_tag>
-    void partial_build(const size_t cutoff = 200000);
+    template<typename ConcurrencyTag=Sequential_tag>
+    void partial_build(const size_t cutoff);
 
     /// @private
-    template <class Concurrency_tag=Sequential_tag, class ComputeBbox, class SplitPrimitives>
+    template <class ConcurrencyTag=Sequential_tag, class ComputeBbox, class SplitPrimitives>
     void custom_partial_build(const size_t cutoff,
                               const ComputeBbox& compute_bbox,
                               const SplitPrimitives& split_primitives);
@@ -179,7 +179,7 @@ namespace CGAL {
 
     /// is equivalent to calling `clear()`, \link insert(InputIterator, InputIterator, T&&...) `insert(first,last,t...)`\endlink,
     // and `build()`
-    template<typename Concurrency_tag=Sequential_tag, typename ConstPrimitiveIterator,typename ... T>
+    template<typename ConcurrencyTag=Sequential_tag, typename ConstPrimitiveIterator,typename ... T>
     void rebuild(ConstPrimitiveIterator first, ConstPrimitiveIterator beyond,T&& ...);
 
     /// adds a sequence of primitives to the set of primitives of the AABB tree.
@@ -244,8 +244,9 @@ namespace CGAL {
       set_primitive_data_impl(CGAL::Boolean_tag<internal::Has_nested_type_Shared_data<Primitive>::value>(),std::forward<T>(t)...);
     }
 
+    template<typename ConcurrencyTag=Sequential_tag>
     bool build_kd_tree();
-    template<typename ConstPointIterator>
+    template<typename ConcurrencyTag=Sequential_tag, typename ConstPointIterator>
     bool build_kd_tree(ConstPointIterator first, ConstPointIterator beyond);
 public:
 
@@ -455,6 +456,7 @@ public:
     /// constructs the internal search tree from
     /// a point set taken on the internal primitives
     /// returns `true` iff successful memory allocation
+    template<typename ConcurrencyTag=Sequential_tag>
     bool accelerate_distance_queries();
     /// turns off the usage of the internal search tree and clears it if it was already constructed.
     void do_not_accelerate_distance_queries();
@@ -467,11 +469,11 @@ public:
     /// is needed to update the search tree.
     /// \tparam ConstPointIterator is an iterator with
     /// value type `Point_and_primitive_id`.
-    template<typename ConstPointIterator>
+    template<typename ConcurrencyTag=Sequential_tag, typename ConstPointIterator>
     bool accelerate_distance_queries(ConstPointIterator first, ConstPointIterator beyond)
     {
       m_use_default_search_tree = false;
-      return build_kd_tree(first,beyond);
+      return build_kd_tree<ConcurrencyTag>(first,beyond);
     }
 
     /// returns the minimum squared distance between the query point
@@ -585,7 +587,7 @@ public:
      *
      * [first,beyond[ is the range of primitives to be added to the tree.
      */
-    template<typename Concurrency_tag=Sequential_tag, typename ConstPrimitiveIterator, typename ComputeBbox, typename SplitPrimitives>
+    template<typename ConcurrencyTag=Sequential_tag, typename ConstPrimitiveIterator, typename ComputeBbox, typename SplitPrimitives>
     void expand(Node& node,
                 std::size_t node_index,
                 ConstPrimitiveIterator first,
@@ -595,7 +597,7 @@ public:
                 const SplitPrimitives& split_primitives);
 
     /// @private
-    template<typename Concurrency_tag=Sequential_tag, typename ConstPrimitiveIterator, typename ComputeBbox, typename SplitPrimitives>
+    template<typename ConcurrencyTag=Sequential_tag, typename ConstPrimitiveIterator, typename ComputeBbox, typename SplitPrimitives>
     void partial_expand(Node& node,
                         std::size_t node_index,
                         ConstPrimitiveIterator first,
@@ -689,12 +691,6 @@ public:
       return std::addressof(m_nodes[0]);
     }
 
-    // Still documented but now unused by build() function
-    Node& new_node()
-    {
-      m_nodes.emplace_back();
-      return m_nodes.back();
-    }
   private:
     const Primitive& singleton_data() const {
       CGAL_assertion(size() == 1);
@@ -787,7 +783,7 @@ public:
 
   // Clears tree and insert a set of primitives
   template<typename Tr>
-  template<typename Concurrency_tag, typename ConstPrimitiveIterator, typename ... T>
+  template<typename ConcurrencyTag, typename ConstPrimitiveIterator, typename ... T>
   void AABB_tree<Tr>::rebuild(ConstPrimitiveIterator first,
                               ConstPrimitiveIterator beyond,
                               T&& ... t)
@@ -798,11 +794,11 @@ public:
     // inserts primitives
     insert(first, beyond,std::forward<T>(t)...);
 
-    build<Concurrency_tag>();
+    build<ConcurrencyTag>();
   }
 
   template<typename Tr>
-  template<typename Concurrency_tag, typename ... T>
+  template<typename ConcurrencyTag, typename ... T>
   void AABB_tree<Tr>::build(T&& ... t)
   {
     set_shared_data(std::forward<T>(t)...);
@@ -822,8 +818,9 @@ public:
 #endif
   }
 
+
   template<typename Tr>
-  template<typename Concurrency_tag, typename ConstPrimitiveIterator, typename ComputeBbox, typename SplitPrimitives>
+  template<typename ConcurrencyTag, typename ConstPrimitiveIterator, typename ComputeBbox, typename SplitPrimitives>
   void
   AABB_tree<Tr>::expand(Node& node,
                         std::size_t node_index,
@@ -834,7 +831,9 @@ public:
                         const SplitPrimitives& split_primitives)
   {
     // TODO refined this hardcode value
+#ifdef CGAL_LINKED_WITH_TBB
     const std::size_t cutoff_parallel_call = 30000; // min size for parallel call
+#endif
     node.set_bbox(compute_bbox(first, beyond));
 
     // sort primitives along longest axis aabb
@@ -853,14 +852,14 @@ public:
       const std::size_t new_range = range/2;
       node.set_children(m_nodes[node_index+1], m_nodes[node_index+new_range]);
 #ifdef CGAL_LINKED_WITH_TBB
-      if constexpr(std::is_same_v<Parallel_tag, Concurrency_tag>)
+      if constexpr(ConcurrencyTag::is_parallel)
       {
         if(range > cutoff_parallel_call){
           oneapi::tbb::task_group tg;
           tg.run([&]{
-                  expand<Concurrency_tag>(node.left_child(), node_index+1, first, first + new_range, new_range, compute_bbox, split_primitives); }
+                  expand<ConcurrencyTag>(node.left_child(), node_index+1, first, first + new_range, new_range, compute_bbox, split_primitives); }
                 );
-          expand<Concurrency_tag>(node.right_child(), node_index+new_range, first + new_range, beyond, range - new_range, compute_bbox, split_primitives);
+          expand<ConcurrencyTag>(node.right_child(), node_index+new_range, first + new_range, beyond, range - new_range, compute_bbox, split_primitives);
           tg.wait();
         } else {
           expand(node.left_child(), node_index+1, first, first + new_range, new_range, compute_bbox, split_primitives);
@@ -879,16 +878,16 @@ public:
 
   // Build the data structure, after calls to insert(..)
   template<typename Tr>
-  template <class Concurrency_tag>
+  template <class ConcurrencyTag>
   void AABB_tree<Tr>::build()
   {
-    custom_build<Concurrency_tag>(m_traits.compute_bbox_object(),
+    custom_build<ConcurrencyTag>(m_traits.compute_bbox_object(),
                                   m_traits.split_primitives_object());
   }
 #ifndef DOXYGEN_RUNNING
   // Build the data structure, after calls to insert(..)
   template<typename Tr>
-  template <class Concurrency_tag, class ComputeBbox, class SplitPrimitives>
+  template <class ConcurrencyTag, class ComputeBbox, class SplitPrimitives>
   void AABB_tree<Tr>::custom_build(
     const ComputeBbox& compute_bbox,
     const SplitPrimitives& split_primitives)
@@ -901,7 +900,7 @@ public:
       m_nodes.resize(m_primitives.size()-1);
 
       // constructs the tree
-      expand<Concurrency_tag>(m_nodes[0],
+      expand<ConcurrencyTag>(m_nodes[0],
                               0,
                               m_primitives.begin(), m_primitives.end(),
                               m_primitives.size(),
@@ -918,6 +917,7 @@ public:
   // constructs the search KD tree from given points
   // to accelerate the distance queries
   template<typename Tr>
+  template<typename ConcurrencyTag>
   bool AABB_tree<Tr>::build_kd_tree()
   {
     // iterate over primitives to get reference points on them
@@ -927,18 +927,20 @@ public:
       points.push_back( Point_and_primitive_id( Helper::get_reference_point(p, m_traits), p.id() ) );
 
     // clears current KD tree
-    return build_kd_tree(points.begin(), points.end());
+    return build_kd_tree<ConcurrencyTag>(points.begin(), points.end());
   }
 
   // constructs the search KD tree from given points
   // to accelerate the distance queries
   template<typename Tr>
-  template<typename ConstPointIterator>
+  template<typename ConcurrencyTag, typename ConstPointIterator>
   bool AABB_tree<Tr>::build_kd_tree(ConstPointIterator first,
                                     ConstPointIterator beyond)
   {
     clear_search_tree();
-    m_p_search_tree = std::make_unique<const Search_tree>(first, beyond);
+    std::unique_ptr<Search_tree> p_search_tree = std::make_unique<Search_tree>(first, beyond);
+    p_search_tree->template build<ConcurrencyTag>();
+    m_p_search_tree = std::move(p_search_tree); // Move a Search_tree* to a const Search_tree*
 #ifdef CGAL_HAS_THREADS
       m_atomic_search_tree_constructed.store(true, std::memory_order_release); // in case build_kd_tree() is triggered by a call to best_hint()
 #else
@@ -948,17 +950,17 @@ public:
   }
 
   template<typename Tr>
-  template <class Concurrency_tag>
+  template <class ConcurrencyTag>
   void AABB_tree<Tr>::partial_build(const std::size_t cutoff)
   {
-    custom_partial_build<Concurrency_tag>(cutoff,
+    custom_partial_build<ConcurrencyTag>(cutoff,
                                         m_traits.compute_bbox_object(),
                                         m_traits.split_primitives_object());
   }
 
   // Build the data structure, after calls to insert(..)
   template<typename Tr>
-  template <class Concurrency_tag, class ComputeBbox, class SplitPrimitives>
+  template <class ConcurrencyTag, class ComputeBbox, class SplitPrimitives>
   void AABB_tree<Tr>::custom_partial_build(
     const std::size_t cutoff,
     const ComputeBbox& compute_bbox,
@@ -972,7 +974,7 @@ public:
       m_nodes.resize(m_primitives.size()-1);
 
       // constructs the tree
-      partial_expand<Concurrency_tag>(m_nodes[0],
+      partial_expand<ConcurrencyTag>(m_nodes[0],
                                       0,
                                       m_primitives.begin(), m_primitives.end(),
                                       m_primitives.size(),
@@ -988,7 +990,7 @@ public:
   }
 
   template<typename Tr>
-  template<typename Concurrency_tag, typename ConstPrimitiveIterator, typename ComputeBbox, typename SplitPrimitives>
+  template<typename ConcurrencyTag, typename ConstPrimitiveIterator, typename ComputeBbox, typename SplitPrimitives>
   void
   AABB_tree<Tr>::partial_expand(Node& node,
                                 std::size_t node_index,
@@ -999,8 +1001,9 @@ public:
                                 const ComputeBbox& compute_bbox,
                                 const SplitPrimitives& split_primitives)
   {
-    // TODO refined this hardcode value
+#ifdef CGAL_LINKED_WITH_TBB
     const std::size_t cutoff_parallel_call = 30000; // min size for parallel call
+#endif
     node.set_bbox(compute_bbox(first, beyond));
 
     if(range < cutoff)
@@ -1014,14 +1017,14 @@ public:
       const std::size_t new_range = range/2;
       node.set_children(m_nodes[node_index+1], m_nodes[node_index+new_range]);
 #ifdef CGAL_LINKED_WITH_TBB
-      if constexpr(std::is_same_v<Parallel_tag, Concurrency_tag>)
+      if constexpr(ConcurrencyTag::is_parallel)
       {
         if(range > cutoff_parallel_call){
           oneapi::tbb::task_group tg;
           tg.run([&]{
-                  partial_expand<Concurrency_tag>(node.left_child(), node_index+1, first, first + new_range, new_range, cutoff, compute_bbox, split_primitives); }
+                  partial_expand<ConcurrencyTag>(node.left_child(), node_index+1, first, first + new_range, new_range, cutoff, compute_bbox, split_primitives); }
                 );
-          partial_expand<Concurrency_tag>(node.right_child(), node_index+new_range, first + new_range, beyond, range - new_range, cutoff, compute_bbox, split_primitives);
+          partial_expand<ConcurrencyTag>(node.right_child(), node_index+new_range, first + new_range, beyond, range - new_range, cutoff, compute_bbox, split_primitives);
           tg.wait();
         } else {
           partial_expand(node.left_child(), node_index+1, first, first + new_range, new_range, cutoff, compute_bbox, split_primitives);
@@ -1046,11 +1049,12 @@ public:
 
   // constructs the search KD tree from internal primitives
   template<typename Tr>
+  template<typename ConcurrencyTag>
   bool AABB_tree<Tr>::accelerate_distance_queries()
   {
     m_use_default_search_tree = true;
     if(m_primitives.empty()) return true;
-    return build_kd_tree();
+    return build_kd_tree<ConcurrencyTag>();
   }
 
   template<typename Tr>

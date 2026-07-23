@@ -39,6 +39,10 @@ inline void init_ogl_context(int major, int minor) {
   fmt.setRenderableType(QSurfaceFormat::OpenGL);
   fmt.setProfile(QSurfaceFormat::CoreProfile);
   fmt.setOption(QSurfaceFormat::DebugContext);
+  // 4x multisampling, so the opaque flat edges (and the rest of the scene) are
+  // anti-aliased by the framebuffer instead of by per-pixel blending in the
+  // shader. This keeps thin edges fully solid instead of fading to the background.
+  fmt.setSamples(4);
   QSurfaceFormat::setDefaultFormat(fmt);
 
   //for windows

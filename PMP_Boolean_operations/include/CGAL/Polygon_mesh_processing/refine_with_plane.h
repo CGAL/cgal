@@ -82,6 +82,9 @@ struct Orthogonal_cut_plane_traits
   using FT = typename Kernel::FT;
   using Plane_3 = std::pair<int, FT>;
   using Point_3 = typename Kernel::Point_3;
+  using Vector_3 = int;
+  using Direction_3 = int;
+  using Comparison_result =typename Kernel::Comparison_result;
 
   struct Does_not_support_CDT2{};
 
@@ -123,20 +126,29 @@ struct Orthogonal_cut_plane_traits
     }
   };
 
-  Oriented_side_3 oriented_side_3_object() const
+  struct Construct_orthogonal_vector_3
   {
-    return Oriented_side_3();
-  }
+    Vector_3 operator()(const Plane_3 &plane){ return plane.first; }
+  };
 
-  Construct_plane_line_intersection_point_3 construct_plane_line_intersection_point_3_object() const
+  struct Construct_direction_3
   {
-    return Construct_plane_line_intersection_point_3();
-  }
+    Direction_3 operator()(const Vector_3 &vec){ return vec; }
+  };
 
-  Compute_squared_distance_3 compute_squared_distance_3_object() const
+  struct Compare_projection_along_direction_3
   {
-    return Compute_squared_distance_3();
-  }
+    Comparison_result operator()(const Point_3 &p, const Point_3 &q, const Direction_3 &dir){
+      return compare(p[dir], q[dir]);
+    }
+  };
+
+  Oriented_side_3 oriented_side_3_object() const { return Oriented_side_3(); }
+  Construct_plane_line_intersection_point_3 construct_plane_line_intersection_point_3_object() const { return Construct_plane_line_intersection_point_3(); }
+  Compute_squared_distance_3 compute_squared_distance_3_object() const { return Compute_squared_distance_3(); }
+  Construct_orthogonal_vector_3 construct_orthogonal_vector_3_object() const { return Construct_orthogonal_vector_3(); }
+  Construct_direction_3 construct_direction_3_object() const { return Construct_direction_3(); }
+  Compare_projection_along_direction_3 compare_projection_along_direction_3_object() const { return Compare_projection_along_direction_3(); }
 
 #ifndef CGAL_PLANE_CLIP_DO_NOT_USE_BOX_INTERSECTION_D
 // for does self-intersect

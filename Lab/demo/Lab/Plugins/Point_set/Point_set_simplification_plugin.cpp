@@ -2,6 +2,7 @@
 #include "Scene_points_with_normal_item.h"
 #include <CGAL/Three/CGAL_Lab_plugin_helper.h>
 #include <CGAL/Three/CGAL_Lab_plugin_interface.h>
+#include <CGAL/Three/Three.h>
 
 #include <CGAL/grid_simplify_point_set.h>
 #include <CGAL/random_simplify_point_set.h>
@@ -267,7 +268,7 @@ void CGAL_Lab_point_set_simplification_plugin::on_actionSimplify_triggered()
     // Warns user
     if (nb_points_to_remove > 0)
     {
-      QMessageBox::information(nullptr,
+      QMessageBox::information(CGAL::Three::Three::mainWindow(),
                                tr("Points selected for removal"),
                                tr("%1 point(s) are selected for removal.\nYou may delete or reset the selection using the item context menu.")
                                .arg(nb_points_to_remove));

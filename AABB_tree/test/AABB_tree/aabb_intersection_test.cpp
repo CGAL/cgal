@@ -11,8 +11,6 @@
 #include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_tree.h>
 
-#include <CGAL/Polyhedron_3.h>
-
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 
 void test(const std::string fname1, const std::string fname2, std::size_t nb_inter)

@@ -185,7 +185,7 @@ private:
 
 /**
  * @class Listing_distinct_primitive_traits
- * used by all_pairs_of_intersecting_primitives to avoid report (i, i) and two (i, j)
+ * used by `all_pairs_of_intersecting_primitives()` to avoid report `(i, i)` and twice `(i, j)`.
  */
 template<typename AABBTraits, typename Output_iterator>
 class Listing_distinct_primitive_traits
@@ -309,7 +309,6 @@ private:
   bool m_is_found;
   const AABBTraits& m_traits;
 };
-
 
 /**
  * @class Projection_traits
