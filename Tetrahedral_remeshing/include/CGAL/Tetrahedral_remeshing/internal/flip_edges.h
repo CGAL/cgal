@@ -1375,8 +1375,8 @@ template<typename C3T3, typename IncCellsVectorMap,
          typename Visitor>
 Sliver_removal_result flip_on_surface(C3T3& c3t3,
     typename C3T3::Edge& edge,
-    typename C3T3::Vertex_handle v0i,//v0 of new edge that will replace edge
-    typename C3T3::Vertex_handle v1i,//v1 of new edge that will replace edge
+    const typename C3T3::Vertex_handle v0i,//v0 of new edge that will replace edge
+    const typename C3T3::Vertex_handle v1i,//v1 of new edge that will replace edge
     IncCellsVectorMap& inc_cells,
     Flip_Criterion flip_criterion,
     Visitor& visitor)
@@ -1799,7 +1799,7 @@ std::size_t flipBoundaryEdges(C3T3& c3t3,
       continue;
     CGAL_assertion(boundary_facets.size() == 2);
 
-    if(flip_boundary_edge(c3t3, edge, boundary_facets, boundary_vertices_valences,
+    if(flip_surface_edge(c3t3, edge, boundary_facets, boundary_vertices_valences,
                           inc_cells, flip_criterion, visitor))
     {
       ++nb_success;
@@ -1815,8 +1815,8 @@ template <typename C3t3,
           typename IncidentCellsVectorMap,
           typename Flip_criterion,
           typename Visitor>
-bool flip_boundary_edge(C3t3& c3t3,
-                        const typename C3t3::Edge& edge,
+bool flip_surface_edge(C3t3& c3t3,
+                        typename C3t3::Edge& edge,
                         const std::vector<typename C3t3::Facet>& boundary_facets,
                         BV_valences& boundary_vertices_valences,
                         IncidentCellsVectorMap& inc_cells,
@@ -1833,8 +1833,8 @@ bool flip_boundary_edge(C3t3& c3t3,
     const Facet& f0 = boundary_facets[0];
     const Facet& f1 = boundary_facets[1];
 
-    const Vertex_handle vh0 = f0.first->vertex(f0.second);
-    const Vertex_handle vh1 = f0.first->vertex(f0.third);
+    const Vertex_handle vh0 = edge.first->vertex(edge.second);
+    const Vertex_handle vh1 = edge.first->vertex(edge.third);
 
     // find 3rd and 4th vertices to flip on surface
     const Vertex_handle vh2 = third_vertex(f0, vh0, vh1, tr);
@@ -2100,70 +2100,12 @@ public:
     if (!on_boundary || boundary_facets.size() != 2)
       return false;
 
-    const Facet& f0 = boundary_facets[0];
-    const Facet& f1 = boundary_facets[1];
-
-    // find 3rd and 4th vertices to flip on surface
-    const Vertex_handle vh2 = third_vertex(f0, vh0, vh1, tr);
-    const Vertex_handle vh3 = third_vertex(f1, vh0, vh1, tr);
-
-    if (!tr.tds().is_edge(vh2, vh3)) // most-likely to happen early exit
-    {
-      const Surface_patch_index surfi = c3t3.surface_patch_index(boundary_facets[0]);
-
-      int v0 = m_boundary_vertices_valences.at(vh0)[surfi];
-      int v1 = m_boundary_vertices_valences.at(vh1)[surfi];
-      int v2 = m_boundary_vertices_valences.at(vh2)[surfi];
-      int v3 = m_boundary_vertices_valences.at(vh3)[surfi];
-
-      if (v0 < 2 || v1 < 2 || v2 < 2 || v3 < 2)
-        return false;
-
-      int m0 = (m_boundary_vertices_valences.at(vh0).size() > 1 ? 4 : 6);
-      int m1 = (m_boundary_vertices_valences.at(vh1).size() > 1 ? 4 : 6);
-      int m2 = (m_boundary_vertices_valences.at(vh2).size() > 1 ? 4 : 6);
-      int m3 = (m_boundary_vertices_valences.at(vh3).size() > 1 ? 4 : 6);
-
-      int initial_cost = (v0 - m0)*(v0 - m0)
-                       + (v1 - m1)*(v1 - m1)
-                       + (v2 - m2)*(v2 - m2)
-                       + (v3 - m3)*(v3 - m3);
-      v0--;
-      v1--;
-      v2++;
-      v3++;
-
-      int final_cost = (v0 - m0)*(v0 - m0)
-                     + (v1 - m1)*(v1 - m1)
-                     + (v2 - m2)*(v2 - m2)
-                     + (v3 - m3)*(v3 - m3);
-      if (initial_cost > final_cost)
-      {
-        const Sliver_removal_result db = flip_on_surface(c3t3, edge, vh2, vh3,
-                                                         inc_cells,
-                                                         MIN_ANGLE_BASED,
-                                                         m_visitor);
-        if (db == VALID_FLIP)
-        {
-          Cell_handle c_new;
-          int li, lj, lk;
-          tr.tds().is_facet(vh2, vh3, vh0, c_new, li, lj, lk);
-          c3t3.add_to_complex(c_new, (6 - li - lj - lk), surfi);
-
-          tr.tds().is_facet(vh2, vh3, vh1, c_new, li, lj, lk);
-          c3t3.add_to_complex(c_new, (6 - li - lj - lk), surfi);
-
-          m_boundary_vertices_valences[vh0][surfi]--;
-          m_boundary_vertices_valences[vh1][surfi]--;
-          m_boundary_vertices_valences[vh2][surfi]++;
-          m_boundary_vertices_valences[vh3][surfi]++;
-
-          return true;
-        }
-      }
-    }
-
-    return false;
+    return flip_surface_edge(c3t3, edge,
+                              boundary_facets,
+                              m_boundary_vertices_valences,
+                              inc_cells,
+                              MIN_ANGLE_BASED,
+                              m_visitor);
   }
 
   std::string operation_name() const override { return "Flip edges (boundary)"; }
