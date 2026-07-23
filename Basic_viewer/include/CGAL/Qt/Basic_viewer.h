@@ -21,6 +21,8 @@
 #include <iostream>
 #include <tuple>
 #include <string>
+#include <algorithm>
+#include <cmath>
 #include <CGAL/Graphics_scene.h>
 
 #ifdef __GNUC__
@@ -857,9 +859,13 @@ public:
 
           // Bound each volume's stencil clear to its screen rectangle.
           QMatrix4x4 capMvp;
-          { double m[16]; camera()->getModelViewProjectionMatrix(m);
-            for (int i=0; i<16; ++i) { capMvp.data()[i]=float(m[i]); } }
-          GLint capVp[4]; glGetIntegerv(GL_VIEWPORT, capVp);
+          {
+            double m[16];
+            camera()->getModelViewProjectionMatrix(m);
+            for (int i=0; i<16; ++i) { capMvp.data()[i]=float(m[i]); }
+          }
+          GLint capVp[4];
+          glGetIntegerv(GL_VIEWPORT, capVp);
           if (num_volumes != 0) { glEnable(GL_SCISSOR_TEST); }
 
           for (std::size_t v = 0, nfill = (num_volumes == 0 ? 1 : num_volumes); v < nfill; ++v)
@@ -1461,26 +1467,27 @@ protected:
     const double xs[2]={b.xmin(), b.xmax()};
     const double ys[2]={b.ymin(), b.ymax()};
     const double zs[2]={b.zmin(), b.zmax()};
-    float minx=1e30f, miny=1e30f, maxx=-1e30f, maxy=-1e30f;
+    float px[8], py[8];
     for (int c=0; c<8; ++c)
     {
-      QVector4D p=mvp*QVector4D(float(xs[c&1]), float(ys[(c>>1)&1]),
-                                float(zs[(c>>2)&1]), 1.0f);
+      const QVector4D p=mvp*QVector4D(float(xs[c&1]), float(ys[(c>>1)&1]),
+                                      float(zs[(c>>2)&1]), 1.0f);
       if (p.w()<=0.0f) { return false; }
-      const float px=((p.x()/p.w())*0.5f+0.5f)*vp[2]+vp[0];
-      const float py=((p.y()/p.w())*0.5f+0.5f)*vp[3]+vp[1];
-      if (px<minx) minx=px;  if (px>maxx) maxx=px;
-      if (py<miny) miny=py;  if (py>maxy) maxy=py;
+      px[c]=((p.x()/p.w())*0.5f+0.5f)*vp[2]+vp[0];
+      py[c]=((p.y()/p.w())*0.5f+0.5f)*vp[3]+vp[1];
     }
-    int x0=int(minx); if (float(x0)>minx) --x0;   // floor
-    int y0=int(miny); if (float(y0)>miny) --y0;
-    int x1=int(maxx); if (float(x1)<maxx) ++x1;   // ceil
-    int y1=int(maxy); if (float(y1)<maxy) ++y1;
-    if (x0<vp[0])       { x0=vp[0]; }
-    if (y0<vp[1])       { y0=vp[1]; }
-    if (x1>vp[0]+vp[2]) { x1=vp[0]+vp[2]; }
-    if (y1>vp[1]+vp[3]) { y1=vp[1]+vp[3]; }
-    sx=x0; sy=y0;
+    const auto xr=std::minmax_element(px, px+8);
+    const auto yr=std::minmax_element(py, py+8);
+    int x0=int(std::floor(*xr.first));
+    int y0=int(std::floor(*yr.first));
+    int x1=int(std::ceil(*xr.second));
+    int y1=int(std::ceil(*yr.second));
+    x0=(std::max)(x0, vp[0]);
+    y0=(std::max)(y0, vp[1]);
+    x1=(std::min)(x1, vp[0]+vp[2]);
+    y1=(std::min)(y1, vp[1]+vp[3]);
+    sx=x0;
+    sy=y0;
     sw=(x1>x0)?GLsizei(x1-x0):0;
     sh=(y1>y0)?GLsizei(y1-y0):0;
     return true;
