@@ -15,6 +15,7 @@
 
 #include <CGAL/license/AABB_tree.h>
 
+#include <CGAL/FPU.h>
 #include <CGAL/AABB_tree/internal/Primitive_helper.h>
 #include <CGAL/AABB_tree/internal/AABB_node.h>
 #include <CGAL/AABB_tree/internal/AABB_traversal_traits.h>

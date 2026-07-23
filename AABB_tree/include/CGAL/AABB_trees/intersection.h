@@ -23,6 +23,8 @@
 #include <CGAL/Aff_transformation_2.h>
 #include <CGAL/Aff_transformation_3.h>
 
+#include <CGAL/FPU.h>
+
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/tbb.h>
 #endif
@@ -164,7 +166,7 @@ namespace AABB_trees {
                                                                                                       typename AABBTree2::AABB_traits,
                                                                                                       OutputIterator, Aff_tr, false>
                                                         traversal_traits(tree1.traits(), tree2.traits(), out, tr1, tr2);
-      Protect_FPU_rounding(CGAL_FE_UPWARD);
+      Protect_FPU_rounding();
       CGAL::internal::AABB_tree::two_trees_traversal<Concurrency_tag>(tree1, tree2, traversal_traits);
     }
   }
