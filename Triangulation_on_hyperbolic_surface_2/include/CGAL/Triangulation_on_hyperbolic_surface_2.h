@@ -46,8 +46,8 @@ struct Combinatorial_map_with_cross_ratios_item
   template <class CMap>
   struct Dart_wrapper
   {
-    typedef Cell_attribute<CMap, Complex_number<typename Traits::FT> >    Edge_attrib;
-    typedef std::tuple<void, Edge_attrib, void>                           Attributes;
+    typedef Cell_attribute<CMap, Complex_number<typename Traits::FT> >    Edge_attribute;
+    typedef std::tuple<void, Edge_attribute, void>                           Attributes;
   };
 };
 

@@ -30,9 +30,9 @@ template<class Traits>
 struct Delaunay_triangulation_attributes {
     template<class CMap>
     struct Dart_wrapper{
-        typedef Cell_attribute<CMap, Complex_number<typename Traits::FT>> Edge_attrib;
-        typedef Cell_attribute<CMap, typename Triangulation_on_hyperbolic_surface_2<Traits, Delaunay_triangulation_attributes<Traits>>::Anchor> Face_attrib;
-        typedef std::tuple<void,Edge_attrib,Face_attrib> Attributes;
+        typedef Cell_attribute<CMap, Complex_number<typename Traits::FT>> Edge_attribute;
+        typedef Cell_attribute<CMap, typename Triangulation_on_hyperbolic_surface_2<Traits, Delaunay_triangulation_attributes<Traits>>::Anchor> Face_attribute;
+        typedef std::tuple<void,Edge_attribute,Face_attribute> Attributes;
     };
 };
 
