@@ -17,6 +17,7 @@
 
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/manifoldness.h>
 
 #include <CGAL/boost/graph/border.h>
@@ -106,6 +107,20 @@ struct Face_index_tracker_base
     return m_v2v2_map;
   }
 
+  template <class I2I>
+  void update_ids_of_duplicated_corners(PolygonMeshOut& pm_out, const I2I& i2i, std::size_t nb_unique_corners)
+  {
+    for (auto v : vertices(pm_out))
+    {
+      std::size_t vid = get(m_v2v2_map.pm, v);
+      if (vid>=nb_unique_corners)
+      {
+        vid = i2i.at(vid);
+        put(m_v2v2_map.pm, v, vid);
+      }
+    }
+  }
+
   Vertex_map<VertexCornerMapOut> m_v2v2_map;
 };
 
@@ -118,6 +133,8 @@ struct Face_index_tracker_base<PolygonMeshOut, internal_np::Param_not_found>
 
   Face_index_tracker_base(internal_np::Param_not_found) {}
   Vmap v2v_map() { return Vmap(); }
+  template <class I2I>
+  void update_ids_of_duplicated_corners(PolygonMeshOut&, const I2I&,std::size_t){}
 };
 
 template <class PolygonMeshOut, class VertexCornerMapOut, class FacePatchMapOut>
@@ -849,13 +866,27 @@ bool decimate_impl(const TriangleMeshIn& tm_in,
                                                 f_id_tracker,
                                                 face_normals);
 
+  std::map<std::size_t, std::size_t> duplicated_corners;
+  std::size_t nb_unique_corners=corners.size();
   if (!is_polygon_soup_a_polygon_mesh(faces))
   {
 #ifdef CGAL_DEBUG_DECIMATION
     CGAL::IO::write_polygon_soup("soup.off", corners, faces);
     std::cout << "the output is not a valid polygon mesh!" << std::endl;
 #endif
-    return false;
+    struct Orient_visitor :
+      public Default_orientation_visitor
+    {
+      std::map<std::size_t, std::size_t>* duplicated_corners_ptr;
+      void duplicated_vertex (std::size_t input_id, std::size_t new_id)
+      {
+        duplicated_corners_ptr->emplace(new_id, input_id);
+      }
+    };
+    Orient_visitor ov;
+    ov.duplicated_corners_ptr=&duplicated_corners;
+    decimate_success=false;
+    orient_polygon_soup(corners, faces, parameters::visitor(ov));
   }
 
   visitor(pm_out);
@@ -863,6 +894,8 @@ bool decimate_impl(const TriangleMeshIn& tm_in,
                                parameters::point_to_vertex_map(f_id_tracker.v2v_map()).
                                            polygon_to_face_map(f_id_tracker.f2f_map()),
                                parameters::vertex_point_map(vpm_out));
+  if (!duplicated_corners.empty())
+    f_id_tracker.update_ids_of_duplicated_corners(pm_out, duplicated_corners, nb_unique_corners);
   return decimate_success;
 }
 
