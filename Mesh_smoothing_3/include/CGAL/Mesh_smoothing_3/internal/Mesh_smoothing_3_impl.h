@@ -1,6 +1,24 @@
+// Copyright (c) 2026  INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+//
+// Author(s)     : François Protais
 
-#include "math_functions.h"
-#include "utils/colorized_text.h"
+#ifndef CGAL_MESH_SMOOTHING_3_INTERNAL_MESH_SMOOTHING_3_IMPL_H
+#define CGAL_MESH_SMOOTHING_3_INTERNAL_MESH_SMOOTHING_3_IMPL_H
+
+#include <CGAL/license/Mesh_smoothing_3.h>
+
+#include <CGAL/Mesh_smoothing_3/internal/math_functions.h>
+#include <CGAL/Mesh_smoothing_3/internal/utils/colorized_text.h>
+
+namespace CGAL {
 
 namespace Mesh_smoothing_3 {
 
@@ -51,13 +69,13 @@ void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::set_boundary_wei
 template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
 void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::set_boundary_weight(Parameters::BOUNDARY_WEIGHTING_MODE mode) {
     switch (mode) {
-        case Parameters::DEFAULT: 
+        case Parameters::DEFAULT:
             _boundary_weight = 1;
             break;
-        case Parameters::STRONG: 
+        case Parameters::STRONG:
             _boundary_weight = 10;
             break;
-        case Parameters::SOFT: 
+        case Parameters::SOFT:
             _boundary_weight = 1e-3;
             break;
     }
@@ -748,7 +766,7 @@ std::pair<unsigned, unsigned> Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeN
         if (determinants[i] <= 0) ++nb_det_inverted;
         if (!exact_checks[i]) ++nb_exactly_inverted;
     }
-    
+
     if (cell_determinants != nullptr) {
         for (auto [cell_descriptor, compressed_id] : _cell_original_to_compressed) {
             (*cell_determinants)[cell_descriptor] = {determinants[compressed_id], exact_checks[compressed_id]};
@@ -794,6 +812,6 @@ bool Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::run() {
     return result;
 }
 
+} } // end of CGAL::Mesh_smoothing_3 namespace
 
-}
-
+#endif //CGAL_MESH_SMOOTHING_3_INTERNAL_MESH_SMOOTHING_3_IMPL_H

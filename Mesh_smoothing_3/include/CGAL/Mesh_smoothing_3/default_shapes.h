@@ -1,14 +1,33 @@
-#pragma once
+// Copyright (c) 2026  INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+//
+// Author(s)     : François Protais
+
+#ifndef CGAL_MESH_SMOOTHING_3_DEFAULT_SHAPES_H
+#define CGAL_MESH_SMOOTHING_3_DEFAULT_SHAPES_H
+
+#include <CGAL/license/Mesh_smoothing_3.h>
+
+#include <Eigen/Eigen>
 
 #include <vector>
 #include <array>
-#include <Eigen/Eigen>
+
+
+namespace CGAL {
 
 namespace Mesh_smoothing_3 {
 
 namespace Shapes {
-    
-    template < 
+
+    template <
         typename Point3  = Eigen::Vector3d
     >
     class Base_element_shape_reference {
@@ -33,7 +52,7 @@ namespace Shapes {
         bool inverse = false;
     };
 
-    // This heavy class set-up is to obtain something generic that does not store data while still working with Eigen that does not allow constexpr allocations 
+    // This heavy class set-up is to obtain something generic that does not store data while still working with Eigen that does not allow constexpr allocations
     template <
         typename Point3  = Eigen::Vector3d,
         unsigned NbVertices = 0,
@@ -69,7 +88,7 @@ namespace Shapes {
         }
         operator std::array<Point3, 4> () const { return this->inner_tetrahedra_reference_shape(0);  }
     };
-    
+
     template <typename Point3> const std::array<Point3, 4> VTK_TETRAHEDRON<Point3>::reference_points = {{
         Point3{std::sqrt(8./9),0,-1./3},
         Point3{-std::sqrt(2./9),std::sqrt(2./3),-1./3},
@@ -208,9 +227,7 @@ namespace Shapes {
         // {0,3,6,5},
         // {1,2,4,7},
     }};
-}
 
+} } } // end of CGAL::Mesh_smoothing_3::Shapes namespace
 
-
-}
-
+#endif // CGAL_MESH_SMOOTHING_3_DEFAULT_SHAPES_H

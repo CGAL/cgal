@@ -1,11 +1,29 @@
-#pragma once
+// Copyright (c) 2026  INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+//
+// Author(s)     : François Protais
+
+#ifndef CGAL_MESH_SMOOTHING_3_MESH_REPRESENTATIONS_H
+#define CGAL_MESH_SMOOTHING_3_MESH_REPRESENTATIONS_H
+
+#include <CGAL/license/Mesh_smoothing_3.h>
+
+#include <CGAL/Mesh_smoothing_3/default_shapes.h>
+
+#include <Eigen/Eigen>
 
 #include <vector>
 #include <array>
-#include <Eigen/Eigen>
-#include "default_shapes.h"
-
 #include <iostream>
+
+namespace CGAL {
 
 namespace Mesh_smoothing_3 {
 
@@ -329,7 +347,7 @@ public:
     }
 
     auto edge_range() const { return c3t3.edges_in_complex(); }
-    Curve_index curve_id(Edge_descriptor edge) const { return c3t3.curve_index(edge); } 
+    Curve_index curve_id(Edge_descriptor edge) const { return c3t3.curve_index(edge); }
     Vertex_descriptor edge_vertex(Edge_descriptor edge, unsigned i) const {
         assert(i < 2);
         return edge.first->vertex(i == 0 ? edge.second : edge.third);
@@ -338,7 +356,6 @@ public:
     C3t3 &c3t3;
 };
 
-}
+} } } // end of CGAL::Mesh_smoothing_3::default_structures namespace
 
-}
-
+#endif // CGAL_MESH_SMOOTHING_3_MESH_REPRESENTATIONS_H

@@ -1,3 +1,30 @@
+// The MIT License
+//
+// Copyright (c) 1990 Jorge Nocedal
+// Copyright (c) 2007-2010 Naoaki Okazaki
+// Copyright (c) 2020-2022 Zhepei Wang
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the "Software"),
+// to deal in the Software without restriction, including without limitation
+// the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the
+// Software is furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+//
+// Taken from https://github.com/ZJU-FAST-Lab/LBFGS-Lite
+//
+
 #ifndef LBFGS_HPP
 #define LBFGS_HPP
 
@@ -25,14 +52,14 @@ namespace lbfgs
         int mem_size = 8;
 
         /**
-         * Epsilon for grad convergence test. DO NOT USE IT in nonsmooth cases! 
+         * Epsilon for grad convergence test. DO NOT USE IT in nonsmooth cases!
          *  Set it to 0.0 and use past-delta-based test for nonsmooth functions.
          *  This parameter determines the accuracy with which the solution is to
          *  be found. A minimization terminates when
          *      ||g(x)||_inf / max(1, ||x||_inf) < g_epsilon,
-         *  where ||.||_inf is the infinity norm. The default value is 1.0e-5. 
-         *  This should be greater than 1.0e-6 in practice because L-BFGS does 
-         *  not directly reduce first-order residual. It still needs the function 
+         *  where ||.||_inf is the infinity norm. The default value is 1.0e-5.
+         *  This should be greater than 1.0e-6 in practice because L-BFGS does
+         *  not directly reduce first-order residual. It still needs the function
          *  value which can be corrupted by machine_prec when ||g|| is small.
          */
         double g_epsilon = 1.0e-5;
@@ -49,7 +76,7 @@ namespace lbfgs
         /**
          * Delta for convergence test.
          *  This parameter determines the minimum rate of decrease of the
-         *  cost function. The library stops iterations when the following 
+         *  cost function. The library stops iterations when the following
          *  condition is met:
          *      |f' - f| / max(1, |f|) < delta,
          *  where f' is the cost value of past iterations ago, and f is
@@ -113,15 +140,15 @@ namespace lbfgs
 
         /**
          * A parameter to ensure the global convergence for nonconvex functions.
-         *  The default value is 1.0e-6. The parameter performs the so called 
-         *  cautious update for L-BFGS, especially when the convergence is 
-         *  not sufficient. The parameter must be positive but might as well 
+         *  The default value is 1.0e-6. The parameter performs the so called
+         *  cautious update for L-BFGS, especially when the convergence is
+         *  not sufficient. The parameter must be positive but might as well
          *  be less than 1.0e-3 in practice.
          */
         double cautious_factor = 1.0e-6;
 
         /**
-         * The machine precision for floating-point values. The default is 1.0e-16. 
+         * The machine precision for floating-point values. The default is 1.0e-16.
          *  This parameter must be a positive value set by a client program to
          *  estimate the machine precision.
          */
@@ -192,7 +219,7 @@ namespace lbfgs
      *  function and its gradients when needed. A client program must implement
      *  this function to evaluate the values of the cost function and its
      *  gradients, given current values of variables.
-     *  
+     *
      *  @param  instance    The user data sent for lbfgs_optimize() function by the client.
      *  @param  x           The current values of variables.
      *  @param  g           The gradient vector. The callback function must compute
@@ -208,12 +235,12 @@ namespace lbfgs
      *
      *  The lbfgs_optimize() function call this function to obtain the values of the
      *  upperbound of the stepsize to search in, provided with the beginning values of
-     *  variables before the line search, and the current step vector (can be descent direction). 
-     *  A client program can implement this function for more efficient linesearch. Any step 
-     *  larger than this bound should not be considered. For example, it has a very large or even 
+     *  variables before the line search, and the current step vector (can be descent direction).
+     *  A client program can implement this function for more efficient linesearch. Any step
+     *  larger than this bound should not be considered. For example, it has a very large or even
      *  inf function value. Note that the function value at the provided bound should be FINITE!
      *  If it is not used, just set it nullptr.
-     *  
+     *
      *  @param  instance    The user data sent for lbfgs_optimize() function by the client.
      *  @param  xp          The values of variables before current line search.
      *  @param  d           The step vector. It can be the descent direction.
@@ -268,15 +295,15 @@ namespace lbfgs
 
     /**
      * Line search method for smooth or nonsmooth functions.
-     *  This function performs line search to find a point that satisfy 
-     *  both the Armijo condition and the weak Wolfe condition. It is 
-     *  as robust as the backtracking line search but further applies 
-     *  to continuous and piecewise smooth functions where the strong 
+     *  This function performs line search to find a point that satisfy
+     *  both the Armijo condition and the weak Wolfe condition. It is
+     *  as robust as the backtracking line search but further applies
+     *  to continuous and piecewise smooth functions where the strong
      *  Wolfe condition usually does not hold.
      *
      *  @see
-     *      Adrian S. Lewis and Michael L. Overton. Nonsmooth optimization 
-     *      via quasi-Newton methods. Mathematical Programming, Vol 141, 
+     *      Adrian S. Lewis and Michael L. Overton. Nonsmooth optimization
+     *      via quasi-Newton methods. Mathematical Programming, Vol 141,
      *      No 1, pp. 135-163, 2013.
      */
     inline int line_search_lewisoverton(Eigen::VectorXd &x,
@@ -397,31 +424,31 @@ namespace lbfgs
      *              4. g(x) is either the gradient or subgradient;
      *              5. The gradient exists at the initial guess x0.
      * A user must implement a function compatible with ::lbfgs_evaluate_t (evaluation
-     * callback) and pass the pointer to the callback function to lbfgs_optimize() 
-     * arguments. Similarly, a user can implement a function compatible with 
-     * ::lbfgs_stepbound_t to provide an external upper bound for stepsize, and 
-     * ::lbfgs_progress_t (progress callback) to obtain the current progress 
-     * (e.g., variables, function, and gradient, etc) and to cancel the iteration 
-     * process if necessary. Implementation of the stepbound and the progress callback 
+     * callback) and pass the pointer to the callback function to lbfgs_optimize()
+     * arguments. Similarly, a user can implement a function compatible with
+     * ::lbfgs_stepbound_t to provide an external upper bound for stepsize, and
+     * ::lbfgs_progress_t (progress callback) to obtain the current progress
+     * (e.g., variables, function, and gradient, etc) and to cancel the iteration
+     * process if necessary. Implementation of the stepbound and the progress callback
      * is optional: a user can pass nullptr if progress notification is not necessary.
-     * 
+     *
      *
      *  @param  x               The vector of decision variables.
      *                          THE INITIAL GUESS x0 SHOULD BE SET BEFORE THE CALL!
-     *                          A client program can receive decision variables 
-     *                          through this vector, at which the cost and its 
+     *                          A client program can receive decision variables
+     *                          through this vector, at which the cost and its
      *                          gradient are queried during minimization.
      *  @param  f               The ref to the variable that receives the final
      *                          value of the cost function for the variables.
      *  @param  proc_evaluate   The callback function to provide function f(x) and
      *                          gradient g(x) evaluations given a current values of
      *                          variables x. A client program must implement a
-     *                          callback function compatible with lbfgs_evaluate_t 
+     *                          callback function compatible with lbfgs_evaluate_t
      *                          and pass the pointer to the callback function.
      *  @param  proc_stepbound  The callback function to provide values of the
      *                          upperbound of the stepsize to search in, provided
-     *                          with the beginning values of variables before the 
-     *                          line search, and the current step vector (can be 
+     *                          with the beginning values of variables before the
+     *                          line search, and the current step vector (can be
      *                          negative gradient). A client program can implement
      *                          this function for more efficient linesearch. If it is
      *                          not used, just set it nullptr.
@@ -433,8 +460,8 @@ namespace lbfgs
      *  @param  instance        A user data pointer for client programs. The callback
      *                          functions will receive the value of this argument.
      *  @param  param           The parameters for L-BFGS optimization.
-     *  @retval int             The status code. This function returns a nonnegative 
-     *                          integer if the minimization process terminates without 
+     *  @retval int             The status code. This function returns a nonnegative
+     *                          integer if the minimization process terminates without
      *                          an error. A negative integer indicates an error.
      */
     inline int lbfgs_optimize(Eigen::VectorXd &x,
@@ -552,7 +579,7 @@ namespace lbfgs
         }
         else
         {
-            /* 
+            /*
             Compute the initial step:
             */
             step = param.init_step > 0 ? param.init_step : 1.0 / d.norm();
@@ -668,16 +695,16 @@ namespace lbfgs
                 /* Compute the negative of gradients. */
                 d = -g;
 
-                /* 
-                Only cautious update is performed here as long as 
+                /*
+                Only cautious update is performed here as long as
                 (y^t \cdot s) / ||s_{k+1}||^2 > \epsilon * ||g_{k}||^\alpha,
-                where \epsilon is the cautious factor and a proposed value 
+                where \epsilon is the cautious factor and a proposed value
                 for \alpha is 1.
-                This is not for enforcing the PD of the approxomated Hessian 
-                since ys > 0 is already ensured by the weak Wolfe condition. 
+                This is not for enforcing the PD of the approxomated Hessian
+                since ys > 0 is already ensured by the weak Wolfe condition.
                 This is to ensure the global convergence as described in:
-                Dong-Hui Li and Masao Fukushima. On the global convergence of 
-                the BFGS method for nonconvex unconstrained optimization problems. 
+                Dong-Hui Li and Masao Fukushima. On the global convergence of
+                the BFGS method for nonconvex unconstrained optimization problems.
                 SIAM Journal on Optimization, Vol 11, No 4, pp. 1054-1064, 2011.
                 */
                 cau = lm_s.col(end).squaredNorm() * gp.norm() * param.cautious_factor;

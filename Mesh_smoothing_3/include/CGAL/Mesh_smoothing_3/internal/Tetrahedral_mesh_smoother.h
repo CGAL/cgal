@@ -1,12 +1,35 @@
-#pragma once
+// Copyright (c) 2026  INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+//
+// Author(s)     : François Protais
+
+#ifndef CGAL_MESH_SMOOTHING_3_INTERNAL_TETRAHEDRAL_MESH_SMOOTHER_H
+#define CGAL_MESH_SMOOTHING_3_INTERNAL_TETRAHEDRAL_MESH_SMOOTHER_H
+
+#include <CGAL/license/Mesh_smoothing_3.h>
+
+#include <CGAL/Mesh_smoothing_3/internal/predicates/predicates.h>
+#include <CGAL/Mesh_smoothing_3/internal/math_functions.h>
+#include <CGAL/Mesh_smoothing_3/internal/Function_minimizer.h>
+#include <CGAL/Mesh_smoothing_3/internal/utils/log_time.h>
+
+#include <Eigen/Eigen>
+
 #include <vector>
 #include <array>
 #include <set>
 #include <functional>
-#include <Eigen/Eigen>
 #include <random>
+#include <fstream>
 
-#include "predicates/predicates.h"
+namespace CGAL {
 
 namespace Mesh_smoothing_3_internal {
 
@@ -29,7 +52,7 @@ public:
     void set_boundary_without_query(
         std::vector<std::vector<unsigned>> const &bnd_faces,
         std::vector<std::pair<unsigned, std::vector<std::array<unsigned, 2>>>> const *vert_and_face_corners, // pointer to highlight that the code keeps but not copy
-        std::vector<Surface_patch_index> const &face_ids 
+        std::vector<Surface_patch_index> const &face_ids
     );
 
 
@@ -70,13 +93,13 @@ public:
     using Size_query = std::function<double (unsigned vertex_id, Eigen::Vector3d coord)>;
     using Size_batch_query = std::function<void (std::vector<unsigned> const &vertices, std::vector<Eigen::Vector3d> coords, std::vector<double> &sizes)>;
 
-    void set_target_sizing(Size_query query); // todo: implement and use. 
+    void set_target_sizing(Size_query query); // todo: implement and use.
     void set_target_sizing(Size_batch_query query);
 
     using Validation_query = std::function<double (Eigen::VectorXd const &coords)>;
 
     void set_validation_query(Validation_query query);
-    
+
 
     unsigned max_lbfgs_iter = 500;
 
@@ -110,14 +133,14 @@ public:
     unsigned number_of_lbfgs_iter = 0;
 
 public:
-    bool exact_predicate_status = false; 
-    bool exact_predicate_optimization_check = false; 
-    bool exact_predicate_linesearch_enforcement = false; 
+    bool exact_predicate_status = false;
+    bool exact_predicate_optimization_check = false;
+    bool exact_predicate_linesearch_enforcement = false;
 
     std::vector<bool> const &get_predicate_is_positive() {
-        evaluate_exact_predicates(); 
-        return _predicate_is_positive; 
-    }    
+        evaluate_exact_predicates();
+        return _predicate_is_positive;
+    }
 
     unsigned get_number_of_invalid_steps_with_predicates() const { return _predicates_nb_invalid_steps; }
 
@@ -337,17 +360,10 @@ private:
     double curves_and_points_energies(Eigen::VectorXd const &x, Eigen::VectorXd *g = nullptr);
 
 };
-}
 
 // ==============================================================================================//
 //                                           Implementation                                      //
 // ==============================================================================================//
-#include "math_functions.h"
-#include "Function_minimizer.h"
-#include "utils/log_time.h"
-#include <fstream>
-
-namespace Mesh_smoothing_3_internal {
 
 template<typename Surface_patch_index, typename Curve_index>
 inline Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::Tetrahedral_mesh_smoother(
@@ -643,7 +659,7 @@ unsigned Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::evaluate_e
             Math_functions::sub_line_vector(coords,tet.verts[2]),
             Math_functions::sub_line_vector(coords,tet.verts[3])
         });
-        
+
         invalid_tet += !exact_check;
         if (x == nullptr) _predicate_is_positive[t] = exact_check;
     }
@@ -814,7 +830,7 @@ inline double Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::power
         unsigned t = static_cast<unsigned>(iter_t);
         Tet_storage &tet = _tet_storage[t];
         if (tet.skip) continue;
-        double scaled_epsilon = tet.det_estimation*_untangling_eps;  
+        double scaled_epsilon = tet.det_estimation*_untangling_eps;
         double weight = tet.local_edge_size;
 
         Eigen::Matrix3d J = tet.compute_jacobian(x);
@@ -1324,7 +1340,7 @@ inline bool Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::run_unt
         }
         _predicates_nb_invalid_steps = 0;
     }
-    
+
     if (run_callback(UNTANGLING, 0)) {
         if (verbose) std::cout << "Early callback stop. Returning false." << std::endl;
         return false;
@@ -1578,5 +1594,7 @@ inline bool Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::run_qua
     if (verbose) logging.log_total_time();
     return res;
 }
-}
 
+} } // end of CGAL::Mesh_smoothing_3_internal namespace
+
+#endif // CGAL_MESH_SMOOTHING_3_INTERNAL_TETRAHEDRAL_MESH_SMOOTHER_H

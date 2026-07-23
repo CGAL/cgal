@@ -1,10 +1,29 @@
-#pragma once
+// Copyright (c) 2026  INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+//
+// Author(s)     : François Protais
+
+#ifndef CGAL_MESH_SMOOTHING_3_INTERNAL_FUNCTION_MINIMIZER_H
+#define CGAL_MESH_SMOOTHING_3_INTERNAL_FUNCTION_MINIMIZER_H
+
+#include <CGAL/license/Mesh_smoothing_3.h>
+
+#include <CGAL/Mesh_smoothing_3/internal/auxiliary/lbfgs.hpp>
 
 #include <functional>
 
+namespace CGAL {
+
 namespace Mesh_smoothing_3_internal {
 
-#include "LBFGS-Lite/include/lbfgs.hpp" // todo: probably not good inside namespace. modify the code itself? Without namespace?
+
 
 
 class Function_minimizer {
@@ -110,5 +129,6 @@ private:
     }
 };
 
-}
+} } // end of CGAL::Mesh_smoothing_3_internal
 
+#endif // CGAL_MESH_SMOOTHING_3_INTERNAL_FUNCTION_MINIMIZER_H

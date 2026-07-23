@@ -1,4 +1,19 @@
-#pragma once
+// Copyright (c) 2026  INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+//
+// Author(s)     : François Protais
+
+#ifndef CGAL_MESH_SMOOTHING_3_INTERNAL_UTILS_COLORIZED_TEXT_H
+#define CGAL_MESH_SMOOTHING_3_INTERNAL_UTILS_COLORIZED_TEXT_H
+
+#include <CGAL/license/Mesh_smoothing_3.h>
 
 // taken from https://stackoverflow.com/a/78739378
 
@@ -7,6 +22,8 @@
 #if defined WIN32 || defined _WIN64
 #include <Windows.h>
 #endif
+
+namespace CGAL {
 
 namespace Mesh_smoothing_3_internal {
 
@@ -79,4 +96,6 @@ inline void Colorized_print(const std::string &text, const ConsoleTextColor& col
 
 }
 
-}
+} } // end of CGAL::Mesh_smoothing_3_internal
+
+#endif // CGAL_MESH_SMOOTHING_3_INTERNAL_UTILS_COLORIZED_TEXT_H

@@ -1,5 +1,23 @@
-#pragma once
+// Copyright (c) 2026  INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+//
+// Author(s)     : François Protais
+
+#ifndef CGAL_MESH_SMOOTHING_3_INTERNAL_MATH_FUNCTIONS_H
+#define CGAL_MESH_SMOOTHING_3_INTERNAL_MATH_FUNCTIONS_H
+
+#include <CGAL/license/Mesh_smoothing_3.h>
+
 #include <Eigen/Eigen>
+
+namespace CGAL {
 
 namespace Mesh_smoothing_3_internal {
 
@@ -45,7 +63,6 @@ namespace Math_functions {
         return K;
     }
 
-}
+} } } // end of CGAL::Mesh_smoothing_3_internal::Math_functions namespace
 
-}
-
+#endif // CGAL_MESH_SMOOTHING_3_INTERNAL_MATH_FUNCTIONS_H
