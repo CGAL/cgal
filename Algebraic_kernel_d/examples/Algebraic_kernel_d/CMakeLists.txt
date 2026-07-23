@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.12...3.31)
 project(Algebraic_kernel_d_Examples)
 
-find_package(CGAL REQUIRED COMPONENTS Core)
+find_package(CGAL)
 
 find_package(MPFI QUIET)
 if(MPFI_FOUND AND NOT CGAL_DISABLE_GMP)

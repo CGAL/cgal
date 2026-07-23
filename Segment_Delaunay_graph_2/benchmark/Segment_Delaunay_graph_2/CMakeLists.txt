@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.12...3.31)
 project(Segment_Delaunay_graph_2_example)
 
-find_package(CGAL REQUIRED COMPONENTS Core)
+find_package(CGAL)
 
 create_single_source_cgal_program("benchmark.cpp")
 create_single_source_cgal_program("benchmark_nox.cpp")

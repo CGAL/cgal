@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.12...3.31)
 project(Envelope_3_Tests)
 
-find_package(CGAL REQUIRED COMPONENTS Core)
+find_package(CGAL)
 
 create_single_source_cgal_program("triangles_test.cpp")
 create_single_source_cgal_program("spheres_test.cpp")

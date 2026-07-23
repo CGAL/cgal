@@ -18,7 +18,7 @@ endmacro()
 #path where to build libraries
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
-find_package(CGAL REQUIRED COMPONENTS Core)
+find_package(CGAL)
 
 find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
@@ -96,7 +96,7 @@ if(IPE_FOUND AND IPE_VERSION)
     endif ()
     cgal_add_compilation_test(CGAL_${IPELET})
   endforeach(IPELET)
-  target_link_libraries(CGAL_cone_spanners PRIVATE CGAL::CGAL CGAL::CGAL_Core
+  target_link_libraries(CGAL_cone_spanners PRIVATE CGAL::CGAL
                                                    CGAL::Eigen3_support)
 
   #example in doc not installed

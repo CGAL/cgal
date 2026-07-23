@@ -6,13 +6,11 @@ project(Filtered_kernel_test)
 
 add_executable(bench_simple_comparisons bench_simple_comparisons.cpp)
 
-find_package(CGAL REQUIRED COMPONENTS Core)
+find_package(CGAL)
 
 add_executable(bench_orientation_3 "orientation_3.cpp")
-target_link_libraries(bench_orientation_3 CGAL::CGAL_Core)
 
 add_executable(bench_comparisons "orientation_3.cpp")
-target_link_libraries(bench_comparisons CGAL::CGAL_Core)
 set_property(
   TARGET bench_comparisons
   APPEND

@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.12...3.31)
 project(Orthtree_Examples)
 
-find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Core)
+find_package(CGAL)
 
 create_single_source_cgal_program("octree_build_from_point_set.cpp")
 create_single_source_cgal_program("octree_build_from_point_vector.cpp")

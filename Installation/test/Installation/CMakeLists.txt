@@ -13,7 +13,7 @@ macro(create_link_to_program COMPONENT)
   CGAL_add_test(link_to_${COMPONENT})
 endmacro()
 
-find_package(CGAL REQUIRED COMPONENTS Core)
+find_package(CGAL)
 
 include(CGAL_CreateSingleSourceCGALProgram)
 include(CGAL_SetupGMP)

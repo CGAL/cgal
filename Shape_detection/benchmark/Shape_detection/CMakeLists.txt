@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.12...3.31)
 project(Shape_detection_Benchmarks)
 
-find_package(CGAL REQUIRED COMPONENTS Core)
+find_package(CGAL)
 
 find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)

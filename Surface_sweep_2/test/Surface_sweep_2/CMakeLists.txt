@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.12...3.31)
 project(Surface_sweep_2_Tests)
 
-find_package(CGAL REQUIRED COMPONENTS Core)
+find_package(CGAL)
 
 set(CGAL_SEGMENT_TRAITS 1)
 set(CGAL_POLYLINE_TRAITS 11)
@@ -19,12 +19,10 @@ function(compile name source_file point_location traits)
   #    message(compile ${source_file})
   add_executable(${name} ${source_file})
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS ${name})
-  if(TARGET CGAL::CGAL_Core)
-    target_link_libraries(${name} PRIVATE CGAL::CGAL CGAL::CGAL_Core)
-  else()
+
     target_link_libraries(${name} PRIVATE CGAL::CGAL)
-  endif()
-  target_compile_definitions(
+
+    target_compile_definitions(
     ${name} PRIVATE -DCGAL_ARR_TEST_POINT_LOCATION=${point_location}
                     -DCGAL_ARR_TEST_TRAITS=${traits})
 endfunction()

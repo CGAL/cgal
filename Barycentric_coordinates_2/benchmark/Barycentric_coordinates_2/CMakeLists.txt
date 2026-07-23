@@ -3,7 +3,7 @@
 cmake_minimum_required(VERSION 3.12...3.31)
 project(Barycentric_coordinates_2_Benchmarks)
 
-find_package(CGAL REQUIRED COMPONENTS Core)
+find_package(CGAL)
 
 create_single_source_cgal_program("benchmark_segment_coordinates.cpp")
 create_single_source_cgal_program("benchmark_triangle_coordinates.cpp")

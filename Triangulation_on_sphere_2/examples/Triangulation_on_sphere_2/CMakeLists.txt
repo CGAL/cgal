@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.12...3.31)
 
 project( Triangulation_on_sphere_2_Examples )
 
-find_package(CGAL REQUIRED COMPONENTS Core)
+find_package(CGAL)
 find_package(LEDA QUIET)
 
 create_single_source_cgal_program( "triang_on_sphere.cpp" )

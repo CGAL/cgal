@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.12...3.31)
 project(Mesh_2_Tests)
 
-find_package(CGAL REQUIRED COMPONENTS Core)
+find_package(CGAL)
 
 # create a target per cppfile
 file(

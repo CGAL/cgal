@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.12...3.31)
 project(Segment_Delaunay_graph_2_Examples)
 
-find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Core)
+find_package(CGAL)
 
 create_single_source_cgal_program("sdg-count-sites.cpp")
 create_single_source_cgal_program("sdg-fast-sp.cpp")
