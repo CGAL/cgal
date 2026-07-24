@@ -20,7 +20,7 @@
 #include <boost/bimap/multiset_of.hpp>
 #include <boost/container/small_vector.hpp>
 #include <boost/functional/hash.hpp>
-#include <boost/unordered_map.hpp>
+#include <boost/unordered_set.hpp>
 
 #include <vector>
 #include <algorithm>
@@ -802,13 +802,13 @@ void merge_surface_patch_indices(const typename C3t3::Facet& f1,
   }
 }
 
-template<typename C3t3, typename CellSelector, typename ShortEdgesBimap>
+template<typename C3t3, typename CellSelector, typename ShortEdgesSet>
 typename C3t3::Vertex_handle
 collapse(const typename C3t3::Cell_handle ch,
          const int to, const int from,
          CellSelector& cell_selector,
          C3t3& c3t3,
-         ShortEdgesBimap& deleted_short_edges)
+         ShortEdgesSet& deleted_short_edges)
 {
   typedef typename C3t3::Triangulation Tr;
   typedef typename C3t3::Vertex_handle Vertex_handle;
@@ -916,7 +916,7 @@ collapse(const typename C3t3::Cell_handle ch,
   {
     for (const auto& ei : cell_edges(c, tr))
     {
-      deleted_short_edges[ei] = true;
+      deleted_short_edges.insert(ei);
 
       const Vertex_handle eiv0 = c->vertex(ei.second);
       const Vertex_handle eiv1 = c->vertex(ei.third);
@@ -977,12 +977,12 @@ collapse(const typename C3t3::Cell_handle ch,
 }
 
 
-template<typename C3t3, typename CellSelector, typename ShortEdgesBimap>
+template<typename C3t3, typename CellSelector, typename ShortEdgesSet>
 typename C3t3::Vertex_handle collapse(const typename C3t3::Edge& edge,
                                       const Collapse_type& collapse_type,
                                       CellSelector& cell_selector,
                                       C3t3& c3t3,
-                                      ShortEdgesBimap& deleted_short_edges)
+                                      ShortEdgesSet& deleted_short_edges)
 {
   typedef typename C3t3::Vertex_handle Vertex_handle;
   typedef typename C3t3::Triangulation::Point Point_3;
@@ -1083,14 +1083,14 @@ bool is_cells_set_manifold(const C3t3&,
 template<typename C3t3,
          typename Sizing,
          typename CellSelector,
-         typename ShortEdgesBimap,
+         typename ShortEdgesSet,
          typename Visitor>
 typename C3t3::Vertex_handle collapse_edge(const typename C3t3::Edge& edge,
     C3t3& c3t3,
     const Sizing& sizing,
     const bool /* protect_boundaries */,
     CellSelector cell_selector,
-    ShortEdgesBimap& deleted_short_edges,//should_skip
+    ShortEdgesSet& deleted_short_edges,//should_skip
     Visitor& )
 {
   typedef typename C3t3::Triangulation   Tr;
@@ -1264,7 +1264,7 @@ private:
   // skipped when the pass reaches it -- this replaces the former dynamic bimap
   // worklist. Edges that only *become* short during the pass are not
   // re-collapsed here; they are handled in the next remeshing iteration.
-  boost::unordered_map<Edge, bool> m_deleted_short_edges;
+  mutable boost::unordered_set<Edge> m_deleted_short_edges;
 
 public:
   Edge_collapse_operation(const SizingFunction& sizing,
@@ -1278,6 +1278,8 @@ public:
 
   Element_range get_elements(const C3t3& c3t3) const override
   {
+    m_deleted_short_edges.clear();
+
     struct Short_edge_with_length
     {
       Edge edge;
