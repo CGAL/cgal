@@ -444,6 +444,10 @@ Release date: Sept 2025
 
 - **Breaking change**: Classes based on the RS Library are no longer provided.
 
+### [Polygon Mesh Processing](https://doc.cgal.org/6.1/Manual/packages.html#PkgPolygonMeshProcessing)
+
+-   Added the function `minmax_dihedral_angle()` to identify the sharpest edges of a triangle mesh
+
 ## [Release 6.0.1](https://github.com/CGAL/cgal/releases/tag/v6.0.1)
 
 Release date: October 2024
