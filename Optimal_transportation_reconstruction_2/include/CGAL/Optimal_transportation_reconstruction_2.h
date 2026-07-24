@@ -234,7 +234,7 @@ public:
   /*!
           If `sample_size == 0`, the simplification is performed using an exhaustive priority queue.
           If `sample_size` is strictly positive the simplification is performed using a
-          multiple choice approach, ie, a best-choice selection in a random sample of
+          multiple choice approach, i.e., a best-choice selection in a random sample of
           edge collapse operators, of size `sample_size`. A typical value for the sample
           size is 15, but this value must be enlarged when targeting a very coarse simplification.
           \param sample_size If `sample_size != 0`, the size of the random sample replaces the priority queue.
@@ -258,8 +258,8 @@ public:
 
 
   /*!
-        The use_flip parameter determines whether the edge flipping procedure
-        is used for the half-edge collapse.
+        The `use_flip` parameter determines whether the edge flipping procedure
+        is used for the halfedge collapse.
    */
   void set_use_flip(const bool use_flip) {
     m_use_flip = use_flip;
@@ -340,7 +340,7 @@ public:
     m_ignore = 0;
   }
 
-  //Function if one wants to create a Optimal_transportation_reconstruction_2
+  //Function if one wants to create an Optimal_transportation_reconstruction_2
   //without yet specifying the input in the constructor.
   template <class InputIterator>
   void initialize(
@@ -1598,7 +1598,9 @@ public:
 
 
   /*!
-    Since noise and missing data may prevent the reconstructed shape to have sharp corners well located, the algorithm offers the possibility to automatically relocate points after each edge collapse. The new location of the points is chosen such that the fitting of the output segments to the input points is improved.
+    Since noise and missing data may prevent the reconstructed shape to have sharp corners well located,
+    the algorithm offers the possibility to automatically relocate points after each edge collapse.
+    The new location of the points is chosen such that the fitting of the output segments to the input points is improved.
    */
   void relocate_all_points() {
     CGAL::Real_timer timer;

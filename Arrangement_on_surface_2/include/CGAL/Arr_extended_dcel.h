@@ -61,8 +61,10 @@ public:
 
   template <typename Point_>
   struct rebind {
-    using Point_2 = Point_;
-    using other = typename Vertex_base::template rebind<Point_2>;
+    using Pnt = Point_;
+    using Rebind_vertex_base = typename Vertex_base::template rebind<Pnt>;
+    using Other_vertex_base = typename Rebind_vertex_base::other;
+    using other = Arr_extended_vertex<Other_vertex_base, Vertex_data>;
   };
 };
 
@@ -101,8 +103,10 @@ public:
 
   template <typename XMonotoneCurve>
   struct rebind {
-    using X_monotonote_curve_2 = XMonotoneCurve;
-    using other = typename Halfedge_base::template rebind<X_monotonote_curve_2>;
+    using Xcv = XMonotoneCurve;
+    using Rebind_halfedge_base = typename Halfedge_base::template rebind<Xcv>;
+    using Other_halfedge_base = typename Rebind_halfedge_base::other;
+    using other = Arr_extended_halfedge<Other_halfedge_base, Halfedge_data>;
   };
 };
 

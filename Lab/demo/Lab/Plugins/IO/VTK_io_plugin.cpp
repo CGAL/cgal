@@ -31,7 +31,6 @@
 #include <fstream>
 
 #include <boost/graph/graph_traits.hpp>
-#include <unordered_map>
 
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/boost/graph/Euler_operations.h>
@@ -63,6 +62,7 @@
 #include <vtkVersion.h>
 #include <vtkPoints.h>
 #include <vtkCellArray.h>
+#include <vtkCellType.h>
 #include <vtkType.h>
 #include <vtkCommand.h>
 
@@ -225,7 +225,7 @@ public:
       {
         if(!CGAL::is_triangle_mesh(*poly_item->polyhedron()))
         {
-          QMessageBox::warning(0, "Error",
+          QMessageBox::warning(CGAL::Three::Three::mainWindow(), "Error",
                                "Cannot save a mesh in vtu format if "
                                "it is not pure triangle.");
           return false;
@@ -250,7 +250,7 @@ public:
       if(!c3t3_item || extension != "vtu")
         return false;
 
-      std::ofstream os(output_filename.data());
+      std::ofstream os(output_filename.data(), std::ios::binary);
       os << std::setprecision(16);
       const C3t3& c3t3 = c3t3_item->c3t3();
 
@@ -336,12 +336,20 @@ public:
     for(int i = 0; i< data->GetNumberOfCells(); ++i)
     {
       int t = data->GetCellType(i);
-      if( t == 5 || t == 7 || t == 9) //tri, quad or polygon
-        is_polygon_mesh = true;
-      else if(t == 10) //tetrahedron
-        is_c3t3 = true;
-      else if( t == 3 || t == 4) //line or polyline
-        is_polyline = true;
+      switch(t) {
+        case VTK_TRIANGLE:
+        case VTK_POLYGON:
+        case VTK_QUAD:
+          is_polygon_mesh = true;
+          break;
+        case VTK_TETRA:
+          is_c3t3 = true;
+          break;
+        case VTK_LINE:
+        case VTK_POLY_LINE:
+          is_polyline = true;
+          break;
+      }
     }
     Scene_group_item* group = nullptr;
     if((is_polygon_mesh && is_c3t3)
@@ -447,8 +455,8 @@ public:
            cit != c3t3_item->c3t3().triangulation().finite_cells_end();
            ++cit)
       {
-        CGAL_assertion(cit->info() >= 0);
-        c3t3_item->c3t3().add_to_complex(cit, cit->info());
+        if(cit->info() != 0)
+          c3t3_item->c3t3().add_to_complex(cit, cit->info());
         for(int i=0; i < 4; ++i)
         {
           if(cit->surface_patch_index(i)>0)

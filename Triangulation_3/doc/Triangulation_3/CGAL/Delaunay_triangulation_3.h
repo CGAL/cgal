@@ -39,7 +39,7 @@ manual \ref Triangulation3exfastlocation.
 
 \tparam SLDS is an optional parameter to specify the type of the spatial lock data structure.
         It must be a model of the `SurjectiveLockDataStructure` concept,
-        with `Object` being a `Point` (as defined below).
+        with `object` being a `Point` (as defined below).
         It is only used if the triangulation data structure used is concurrency-safe (i.e.\ when
         `TDS::Concurrency_tag` is `CGAL::Parallel_tag`).
         The default value is `Spatial_lock_grid_3<Tag_priority_blocking>` if
@@ -290,8 +290,8 @@ This function will try to remove `v` only if the removal does not
 decrease the dimension.
 
 The return value is only meaningful if `*could_lock_zone` is `true`:
-  - returns true if the vertex was removed
-  - returns false if the vertex wasn't removed since it would decrease
+  - returns `true` if the vertex was removed
+  - returns `false` if the vertex wasn't removed since it would decrease
     the dimension.
 
 \pre `v` is a finite vertex of the triangulation.

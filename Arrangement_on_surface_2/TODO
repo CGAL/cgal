@@ -164,7 +164,7 @@
   or at least issues warnings about returning a reference to temporary
   variable. Can you prompt the INRIA people to fix this?
   (I personally think that we should remove this example from our test-suite,
-   but if the INRIA people believe that it's place is there, they should at
+   but if the INRIA people believe that its place is there, they should at
    least properly maintain it ...)
 - There is a problem with the examples that use CORE on Darwin (platform #10).
   Other Darwin platforms seem fine. Do we want to investigate? (perhaps it's

@@ -791,8 +791,7 @@ public:
     // since the selected vertices are a set, we lost order in the process,
     // so find back the correct orientation
     std::array<fg_vertex_descriptor, 3> vs;
-    for(std::size_t i=0; i<3; ++i)
-      vs[i] = *(std::next(selected_vertices.begin(), i));
+    std::copy_n(selected_vertices.begin(), 3, vs.begin());
 
     int pos_counter = 0, neg_counter = 0;
     for(std::size_t i=0; i<3; ++i)
@@ -917,6 +916,7 @@ public Q_SLOTS:
 
   void updateTick();
   void moveVertex();
+  void moveVertex(const Point_3&);
 protected:
   bool eventFilter(QObject* /*target*/, QEvent * gen_event)
   {

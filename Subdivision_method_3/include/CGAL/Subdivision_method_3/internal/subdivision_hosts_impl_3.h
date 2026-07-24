@@ -74,8 +74,8 @@ void PQQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
 
   typedef typename boost::property_traits<VertexPointMap>::value_type Point;
 
-  Point* vertex_point_buffer = new Point[num_v + num_e + num_f];
-  Point* edge_point_buffer = vertex_point_buffer + num_v;
+  std::vector<Point> vertex_point_buffer(num_v + num_e + num_f);
+  Point* edge_point_buffer = vertex_point_buffer.data() + num_v;
   Point* face_point_buffer = edge_point_buffer + num_e;
 
   int i=0;
@@ -161,7 +161,6 @@ void PQQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
     put(vpm, *vitr, vertex_point_buffer[i]);
 
   CGAL_postcondition(CGAL::is_valid_polygon_mesh(p));
-  delete []vertex_point_buffer;
 }
 
 // ======================================================================
@@ -196,8 +195,8 @@ void PTQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
   // We need to reserve the memory to prevent reallocation.
   call_reserve(p,num_v + num_e, 2*2*num_e, 4*num_e/2);
 
-  Point* vertex_point_buffer = new Point[num_v + num_e];
-  Point* edge_point_buffer = vertex_point_buffer + num_v;
+  std::vector<Point> vertex_point_buffer(num_v + num_e);
+  Point* edge_point_buffer = vertex_point_buffer.data() + num_v;
 
   int i=0;
   std::unordered_map<vertex_descriptor,int> v_index;
@@ -265,7 +264,6 @@ void PTQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
     put(vpm, *vitr, vertex_point_buffer[i]);
 
   CGAL_postcondition(CGAL::is_valid_polygon_mesh(p));
-  delete []vertex_point_buffer;
 }
 
 
@@ -295,7 +293,7 @@ void DQQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
       border_halfedges.push_back(halfedge(ed,p));
     }
   }
-  Point* point_buffer = new Point[num_e*2];
+  std::vector<Point> point_buffer(num_e * 2);
 
   // Build the point_buffer
   int pi = 0;
@@ -391,14 +389,13 @@ void DQQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
       Euler::remove_center_vertex(halfedge(vh,p),p);
   }
 
-  delete []point_buffer;
 }
 
 // ======================================================================
 template <class Poly, class VertexPointMap, class Mask>
 void Sqrt3_1step(Poly& p, VertexPointMap vpm, Mask mask,
                  const bool refine_border = false) {
-  // `refine_border` is a boolean that is meant to be true only every SECOND step
+  // `refine_border` is a Boolean that is meant to be true only every SECOND step
   // of the subdivision. In particular, this function makes uses of the fact
   // that there is at most a single border edge in a face, which is true if
   // the mesh is obtained from a sqrt3 subdivision before, but might otherwise
@@ -428,7 +425,7 @@ void Sqrt3_1step(Poly& p, VertexPointMap vpm, Mask mask,
         ++new_pts_size;
     }
   }
-  Point* cpt = new Point[new_pts_size];
+  std::vector<Point> cpt(new_pts_size);
 
   // size of the subdivided mesh
   call_reserve(p,num_v + new_pts_size, (num_e + 2*num_f + new_pts_size)*2, 3*num_f);
@@ -515,7 +512,6 @@ void Sqrt3_1step(Poly& p, VertexPointMap vpm, Mask mask,
   }
 
   CGAL_postcondition(CGAL::is_valid_polygon_mesh(p));
-  delete []cpt;
 }
 
 } // namespace internal

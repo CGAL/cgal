@@ -42,7 +42,9 @@ foreach(
   edge_aware_upsample_point_set_example
   structuring_example
   read_ply_points_with_colors_example
-  write_ply_points_example)
+  write_ply_points_example
+  poisson_eliminate_example
+  poisson_eliminate_from_mesh_example)
   create_single_source_cgal_program("${target}.cpp")
   target_link_libraries(${target} PRIVATE CGAL::CGAL)
 endforeach()
@@ -68,8 +70,9 @@ else()
 endif()
 
 # Use Eigen
-find_package(Eigen3 3.1.0 QUIET) #(requires 3.1.0 or greater)
+find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
+
 if(TARGET CGAL::Eigen3_support)
 
   # Executables that require Eigen

@@ -8,8 +8,6 @@ typedef K::Line_2 Line_2;
 typedef K::Intersect_2 Intersect_2;
 
 struct Intersection_visitor {
-  typedef void result_type;
-
   void operator()(const Point_2& p) const
   {
     std::cout << p << std::endl;

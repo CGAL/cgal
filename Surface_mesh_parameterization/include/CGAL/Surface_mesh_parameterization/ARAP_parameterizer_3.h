@@ -128,7 +128,7 @@ namespace Surface_mesh_parameterization {
 /// When \f$\lambda\f$ is non-null, the border does not need to be parameterized and
 /// a random vertex is pinned.
 ///
-/// If flips are present in the initial parameterization, a post-processing step
+/// If flips are present in the initial parameterization, a postprocessing step
 /// is applied using `CGAL::Surface_mesh_parameterization::MVC_post_processor_3<TriangleMesh_, SolverTraits_>`
 /// to attempt to obtain a valid final embedding.
 ///
@@ -370,8 +370,7 @@ private:
   {
     Error_code status;
 
-    unsigned int number_of_borders =
-                         CGAL::Polygon_mesh_processing::number_of_borders(mesh);
+    unsigned int number_of_borders = CGAL::number_of_borders(mesh);
     if(number_of_borders == 0) {
       status = ERROR_BORDER_TOO_SHORT;
       return status;

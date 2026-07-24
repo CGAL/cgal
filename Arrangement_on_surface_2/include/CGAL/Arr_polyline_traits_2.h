@@ -67,8 +67,6 @@ public:
   // Tag definitions:
   typedef typename Base::Has_left_category            Has_left_category;
   typedef typename Base::Has_merge_category           Has_merge_category;
-  typedef typename Base::Has_do_intersect_category
-    Has_do_intersect_category;
 
   typedef typename Base::Left_side_category           Left_side_category;
   typedef typename Base::Bottom_side_category         Bottom_side_category;
@@ -595,9 +593,6 @@ public:
   { return Construct_x_monotone_curve_2(*this); }
 
   //
-  using Approximate_number_type = typename Base::Approximate_number_type;
-  using Approximate_point_2 = typename Base::Approximate_point_2;
-
   class Approximate_2 : public Base::Approximate_2 {
   protected:
     using Traits = Arr_polyline_traits_2<Segment_traits_2>;
@@ -616,11 +611,20 @@ public:
     friend class Arr_polyline_traits_2<Segment_traits_2>;
 
   public:
-    Approximate_number_type operator()(const Point_2& p, int i) const
-    { return Base::Approximate_2::operator()(p, i); }
+    using Approximate_number_type = typename Base::Approximate_number_type;
+    using Approximate_point_2 = typename Base::Approximate_point_2;
+    using Approximate_kernel = typename Base::Approximate_kernel;
 
-    Approximate_point_2 operator()(const Point_2& p) const
-    { return Base::Approximate_2::operator()(p); }
+    /*! obtains an approximation of a point coordinate.
+     * \param p the exact point.
+     * \param i the coordinate index (either 0 or 1).
+     * \pre `i` is either 0 or 1.
+     * \return An approximation of `p`'s \f$x\f$-coordinate (if `i` == 0), or an
+     *         approximation of `p`'s \f$y\f$-coordinate (if `i` == 1).
+     */
+    Approximate_number_type operator()(const Point_2& p, int i) const { return Base::Approximate_2::operator()(p, i); }
+
+    Approximate_point_2 operator()(const Point_2& p) const { return Base::Approximate_2::operator()(p); }
 
     /*! obtains an approximation of an \f$x\f$-monotone curve. */
     template <typename OutputIterator>
@@ -652,8 +656,7 @@ public:
   /*! obtains the segment traits.
    * \return the segment traits.
    */
-  CGAL_DEPRECATED const Segment_traits_2* segment_traits_2() const
-  { return this->subcurve_traits_2(); }
+  CGAL_DEPRECATED const Segment_traits_2* segment_traits_2() const { return this->subcurve_traits_2(); }
 };
 
 } // namespace CGAL

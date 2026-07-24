@@ -16,14 +16,14 @@ namespace CGAL {
  *
  * A metadata traits-class decorator for the arrangement package. It counts the
  * number of invocations of traits-class functors. It is parameterized with
- * another traits class and inherits from it. For each traits method it
- * maintains a counter that counts the number of invocations into the method.
+ * another traits class. For each traits method it maintains a counter that
+ * counts the number of invocations into the method.
  *
  * It models all the concepts that the original traits models.
  */
 
 template <typename BaseTraits>
-class Arr_counting_traits_2 : public BaseTraits {
+class Arr_counting_traits_2 {
 public:
   enum Operation_id {
     COMPARE_X_2_OP = 0,
@@ -38,18 +38,24 @@ public:
     COMPARE_Y_AT_X_RIGHT_2_OP,
     MAKE_X_MONOTONE_2_OP,
     SPLIT_2_OP,
+    DO_INTERSECT_2_OP,
     INTERSECT_2_OP,
     ARE_MERGEABLE_2_OP,
     MERGE_2_OP,
     CONSTRUCT_2_OPPOSITE_2_OP,
+    CONSTRUCT_POINT_2_OP,
+    CONSTRUCT_POINT_2_XY_OP,
+    CONSTRUCT_X_MONOTONE_CURVE_2_OP,
+    CONSTRUCT_CURVE_2_OP,
     COMPARE_ENDPOINTS_XY_2_OP,
     APPROXIMATE_2_COORD_OP,
     APPROXIMATE_2_POINT_OP,
     APPROXIMATE_2_CURVE_OP,
+    APPROXIMATE_2_BOUNDED_CURVE_OP,
     PARAMETER_SPACE_IN_X_2_CURVE_END_OP,
     PARAMETER_SPACE_IN_X_2_POINT_OP,
-    IS_ON_X_IDENTIFICATION_POINT_2_OP,
-    IS_ON_X_IDENTIFICATION_CURVE_2_OP,
+    IS_ON_X_IDENTIFICATION_2_POINT_OP,
+    IS_ON_X_IDENTIFICATION_2_CURVE_OP,
     COMPARE_Y_ON_BOUNDARY_2_OP,
     COMPARE_Y_NEAR_BOUNDARY_2_OP,
     PARAMETER_SPACE_IN_Y_2_CURVE_END_OP,
@@ -60,48 +66,56 @@ public:
     COMPARE_X_ON_BOUNDARY_2_POINT_CURVE_END_OP,
     COMPARE_X_ON_BOUNDARY_2_CURVE_ENDS_OP,
     COMPARE_X_NEAR_BOUNDARY_2_OP,
-    NUMBER_OF_OPERATIONS
+    NUMBER_OF_OPERATIONS,
   };
 
   /// \name Creation
   /// @{
 
-  /*! constructs default */
-  template <typename ... Args>
-  Arr_counting_traits_2(Args ... args) : Base(std::forward<Args>(args)...) {}
+  /*! constructs default.
+   */
+  template<typename ... Args>
+  Arr_counting_traits_2(Args ... args);
 
-  /*! disables copy constructor. */
+  /*! constructs from a shared pointer.
+   * \param[in] traits the taits being counted.
+   */
+  Arr_counting_traits_2(std::shared_ptr<BaseTraits> traits);
+
+  /*! disables copy constructor.
+   */
   Arr_counting_traits_2(const Arr_counting_traits_2&) = delete;
 
   /// @}
 
-  /*! obtains the counter of the given operation */
+  /*! obtains the counter of the given operation.
+   */
   std::size_t count(Operation_id id) const;
 
-  /*! prints the counter associated with an operation. */
+  /*! prints the counter associated with an operation.
+   */
   template <typename OutStream>
   OutStream& print(OutStream& os, Operation_id id) const;
 
-  /// \name Types and functors inherited from `BaseTraits`
+  /// \name Types and functors coming from BaseTraits
   /// @{
 
   using Has_left_category = typename Base::Has_left_category;
   using Has_merge_category = typename Base::Has_merge_category;
-  using Has_do_intersect_category = typename Base::Has_do_intersect_category;
 
-  using Left_side_category =
-    typename internal::Arr_complete_left_side_category<Base>::Category;
-  using Bottom_side_category =
-    typename internal::Arr_complete_bottom_side_category<Base>::Category;
-  using Top_side_category =
-    typename internal::Arr_complete_top_side_category<Base>::Category;
-  using Right_side_category =
-    typename internal::Arr_complete_right_side_category<Base>::Category;
+  using Left_side_category = typename internal::Arr_complete_left_side_category<Base>::Category;
+  using Bottom_side_category = typename internal::Arr_complete_bottom_side_category<Base>::Category;
+  using Top_side_category = typename internal::Arr_complete_top_side_category<Base>::Category;
+  using Right_side_category = typename internal::Arr_complete_right_side_category<Base>::Category;
 
   using Point_2 = typename Base::Point_2;
   using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
+
+  //! Defined only if the traits being counted models the concept `AosTraits_2`.
   using Curve_2 = typename Base::Curve_2;
 
+  //! Defined only if the traits being counted models the concept `AosXMonotoneTraits_2`.
+  using Multiplicity = typename Base::Multiplicity;
   /// @}
 
   /// \name Obtain the appropriate functor
@@ -116,14 +130,36 @@ public:
   Equal_2 equal_2_object() const;
   Compare_y_at_x_left_2 compare_y_at_x_left_2_object() const;
   Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const;
-  Make_x_monotone_2 make_x_monotone_2_object() const;
+  Do_intersect_2 do_intersect_2_object() const;
+
+  //! Supported only if the traits being counted models the concept `AosXMonotoneTraits_2`.
   Split_2 split_2_object() const;
   Intersect_2 intersect_2_object() const;
   Are_mergeable_2 are_mergeable_2_object() const;
   Merge_2 merge_2_object() const;
+
+  //! Supported only if the traits being counted models the concept `AosTraits_2`.
+  Make_x_monotone_2 make_x_monotone_2_object() const;
+
+  //! Supported only if the traits being counted models the concept `AosDirectionalXMonotoneTraits_2`.
   Construct_opposite_2 construct_opposite_2_object() const;
   Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const;
+
+  //! Supported only if the traits being counted models the concept `AosApproximateTraits_2`.
   Approximate_2 approximate_2_object() const;
+
+  //! Supported only if the traits being counted models the concept `AosConstructPointTraits_2`
+  Construct_point_2 construct_point_2_object() const;
+
+  //! Supported only if the traits being counted models the concept `AosConstructXMonotoneCurveTraits_2`
+  Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object() const;
+
+  //! Supported only if the traits being counted models the concept `AosConstructCurveTraits_2`
+  Construct_curve_2 construct_curve_2_object() const;
+
+  /*! Supported only if the traits being counted models the concepts
+   * `AosOpenBoundaryTraits_2` or `AosSphericalBoundaryTraits_2`.
+   */
   Parameter_space_in_x_2 parameter_space_in_x_2_object() const;
   Is_on_x_identification_2 is_on_x_identification_2_object() const;
   Compare_y_on_boundary_2 compare_y_on_boundary_2_object() const;
@@ -135,11 +171,24 @@ public:
 
   /// @}
 
-  /*! cleans all operation counters */
+  /*! cleans all operation counters.
+   */
   void clear_counters();
+
+  /*! obtains a const reference to the traits being counted.
+   */
+  const Base& traits() const { return *m_base_traits; }
+
+  /*! obtains a reference to the traits being counted.
+   */
+  Base& traits() { return *m_base_traits; }
+
+  /*! obtains the smart pointer to the traits being counted.
+   */
+  Shared_base shared_traits() const { return m_base_traits; }
 };
 
-template <typename OutStream, class BaseTraits>
-inline OutStream& operator<<(OutStream& os,
-                             const Arr_counting_traits_2<BaseTraits>& traits);
+template <typename OutStream, typename BaseTraits>
+inline OutStream& operator<<(OutStream& os, const Arr_counting_traits_2<BaseTraits>& traits);
+
 } // namespace CGAL

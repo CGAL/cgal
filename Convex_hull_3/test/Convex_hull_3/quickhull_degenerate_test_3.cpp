@@ -186,6 +186,13 @@ int main()
   Triangle_3 ch_triangle;
   assert(CGAL::assign(ch_triangle, ch_object));
 
+  std::vector<Point_3> pts;
+  std::vector<std::array<int, 3> > faces;
+  CGAL::convex_hull_3(points.begin(), points.end(), pts, faces);
+  assert(faces.size() == 1);
+  for (int i : faces[0])
+    assert(0 <= i && i <= 2);
+
   std::cout << "Testing hull of four points " << std::endl;
   Point_3 p4(1, 1, 1);
   points.push_back(p4);

@@ -25,8 +25,9 @@ else()
 endif()
 
 # Use Eigen for Mesh_3
-find_package(Eigen3 3.1.0 QUIET) #(3.1.0 or greater)
+find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
+
 if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program( "mesh_and_remesh_polyhedral_domain_with_features.cpp" )
   target_link_libraries(mesh_and_remesh_polyhedral_domain_with_features PRIVATE CGAL::Eigen3_support)
@@ -40,6 +41,9 @@ if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program( "mesh_and_remesh_with_sizing.cpp")
   target_link_libraries(mesh_and_remesh_with_sizing PRIVATE CGAL::Eigen3_support)
 
+  create_single_source_cgal_program( "mesh_and_remesh_one_subdomain.cpp")
+  target_link_libraries(mesh_and_remesh_one_subdomain PRIVATE CGAL::Eigen3_support)
+
   create_single_source_cgal_program("tetrahedral_remeshing_with_features_and_sizing.cpp")
   target_link_libraries(tetrahedral_remeshing_with_features_and_sizing PRIVATE CGAL::Eigen3_support)
 
@@ -47,6 +51,7 @@ if(TARGET CGAL::Eigen3_support)
     message(STATUS "Found TBB")
     target_link_libraries(mesh_and_remesh_polyhedral_domain_with_features PRIVATE CGAL::TBB_support)
     target_link_libraries(mesh_and_remesh_c3t3 PRIVATE CGAL::TBB_support)
+    target_link_libraries(mesh_and_remesh_one_subdomain PRIVATE CGAL::TBB_support)
     target_link_libraries(mesh_and_remesh_with_sizing PRIVATE CGAL::TBB_support)
     target_link_libraries(tetrahedral_remeshing_with_features_and_sizing PRIVATE CGAL::TBB_support)
   endif()

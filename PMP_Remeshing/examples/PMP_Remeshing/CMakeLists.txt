@@ -1,0 +1,68 @@
+# Created by the script cgal_create_CMakeLists
+# This is the CMake script for compiling a set of CGAL applications.
+
+cmake_minimum_required(VERSION 3.12...3.31)
+project(PMP_Remeshing_Examples)
+
+# CGAL and its components
+find_package(CGAL REQUIRED)
+
+create_single_source_cgal_program("extrude.cpp" )
+create_single_source_cgal_program("hausdorff_distance_remeshing_example.cpp")
+create_single_source_cgal_program("isotropic_remeshing_example.cpp")
+create_single_source_cgal_program("isotropic_remeshing_of_patch_example.cpp")
+create_single_source_cgal_program("isotropic_remeshing_with_custom_sizing_example.cpp")
+create_single_source_cgal_program("isotropic_remeshing_with_allow_move.cpp")
+create_single_source_cgal_program("random_perturbation_SM_example.cpp")
+create_single_source_cgal_program("remesh_planar_patches.cpp")
+create_single_source_cgal_program("tangential_relaxation_example.cpp")
+create_single_source_cgal_program("triangulate_faces_example.cpp")
+create_single_source_cgal_program("triangulate_faces_split_visitor_example.cpp")
+
+find_package(Eigen3 QUIET)
+include(CGAL_Eigen3_support)
+
+if(TARGET CGAL::Eigen3_support)
+  create_single_source_cgal_program("acvd_remeshing_example.cpp")
+  target_link_libraries(acvd_remeshing_example PUBLIC CGAL::Eigen3_support)
+  create_single_source_cgal_program("delaunay_remeshing_example.cpp")
+  target_link_libraries(delaunay_remeshing_example PRIVATE CGAL::Eigen3_support)
+  create_single_source_cgal_program("isotropic_remeshing_with_sizing_example.cpp")
+  target_link_libraries(isotropic_remeshing_with_sizing_example PRIVATE CGAL::Eigen3_support)
+  create_single_source_cgal_program("mesh_smoothing_example.cpp")
+  target_link_libraries(mesh_smoothing_example PRIVATE CGAL::Eigen3_support)
+  create_single_source_cgal_program("refine_fair_example.cpp")
+  target_link_libraries(refine_fair_example PRIVATE CGAL::Eigen3_support)
+  create_single_source_cgal_program("remesh_almost_planar_patches.cpp")
+  target_link_libraries(remesh_almost_planar_patches PRIVATE CGAL::Eigen3_support)
+  create_single_source_cgal_program("shape_smoothing_example.cpp")
+  target_link_libraries(shape_smoothing_example PRIVATE CGAL::Eigen3_support)
+else()
+  message(STATUS "NOTICE: Examples that use Eigen will not be compiled.")
+endif()
+
+find_package(OpenMesh QUIET)
+if(OpenMesh_FOUND)
+  include(CGAL_OpenMesh_support)
+
+  create_single_source_cgal_program("triangulate_faces_example_OM.cpp")
+  target_link_libraries(triangulate_faces_example_OM PRIVATE CGAL::OpenMesh_support)
+else()
+  message(STATUS "NOTICE: Examples that use OpenMesh will not be compiled.")
+endif()
+
+find_package(TBB QUIET)
+include(CGAL_TBB_support)
+if(TARGET CGAL::TBB_support)
+  target_link_libraries(hausdorff_distance_remeshing_example PRIVATE CGAL::TBB_support)
+else()
+  message(STATUS "NOTICE: Intel TBB was not found. Sequential code will be used.")
+endif()
+
+find_package(Ceres QUIET)
+include(CGAL_Ceres_support)
+if(TARGET CGAL::Eigen3_support AND TARGET CGAL::Ceres_support)
+  target_link_libraries(mesh_smoothing_example PRIVATE CGAL::Ceres_support)
+else()
+  message(STATUS "NOTICE: The example 'mesh_smoothing_example' uses the Ceres library, and will not be compiled.")
+endif()

@@ -52,7 +52,7 @@ struct Tester {
 
     std::cout << "Reading fish.edg...\n";
 
-    std::ifstream edg_file("fish.edg");
+    std::ifstream edg_file(CGAL::data_file_path("2d_segments/fish.edg"));
 
     cdt.clear();
 
@@ -105,7 +105,7 @@ struct Tester {
     std::cout << "Number of vertices after make_conforming_Gabriel_2: "
               << cdt2.number_of_vertices() << "\n";
     assert(cdt2.is_valid());
-    assert( cdt2.number_of_vertices() == 45 );
+    assert( cdt2.number_of_vertices() == 29 );
 
     // check that numbers of vertices are the same in cdt and cdt2
     assert( cdt2.number_of_vertices() ==

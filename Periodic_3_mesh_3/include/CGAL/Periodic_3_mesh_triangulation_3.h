@@ -193,14 +193,14 @@ public:
 
   Bare_point canonicalize_point(const Bare_point& p) const
   {
-    return P3T3::internal::robust_canonicalize_point(p, geom_traits());
+    return P3T3::internal::construct_canonical_point(p, geom_traits());
   }
 
   // @fixme it might be dangerous to call robust_canonicalize() without also changing
   // <p, offset> = construct_periodic_point(p) (lack of consistency in the result)
   Weighted_point canonicalize_point(const Weighted_point& p) const
   {
-    return P3T3::internal::robust_canonicalize_point(p, geom_traits());
+    return P3T3::internal::construct_canonical_point(p, geom_traits());
   }
 
   // 1-cover, so we can take a const&
@@ -430,9 +430,8 @@ public:
     typename Geom_traits::Compute_squared_distance_3 compute_sd =
       geom_traits().compute_squared_distance_3_object();
 
-    bool used_exact = false;
-    std::pair<Bare_point, Offset> pp_p = P3T3::internal::construct_periodic_point(p, used_exact, geom_traits());
-    std::pair<Bare_point, Offset> pp_q = P3T3::internal::construct_periodic_point(q, used_exact, geom_traits());
+    std::pair<Bare_point, Offset> pp_p = P3T3::internal::construct_periodic_point(p, geom_traits());
+    std::pair<Bare_point, Offset> pp_q = P3T3::internal::construct_periodic_point(q, geom_traits());
 
     Offset min_off;
 
@@ -474,8 +473,7 @@ public:
     typename Geom_traits::Construct_point_3 cp =
       geom_traits().construct_point_3_object();
 
-    bool used_exact = false;
-    std::pair<Bare_point, Offset> pp_q = P3T3::internal::construct_periodic_point(q, used_exact, geom_traits());
+    std::pair<Bare_point, Offset> pp_q = P3T3::internal::construct_periodic_point(q, geom_traits());
 
     Offset min_off;
     Offset null_offset(0,0,0);
@@ -550,10 +548,9 @@ public:
       geom_traits().compare_power_distance_3_object();
 
     // Compute the offsets that would bring p, q, and r into the canonical domain
-    bool used_exact = false;
-    std::pair<Bare_point, Offset> pp_p = P3T3::internal::construct_periodic_point(p, used_exact, geom_traits());
-    std::pair<Bare_point, Offset> pp_q = P3T3::internal::construct_periodic_point(cp(q), used_exact, geom_traits());
-    std::pair<Bare_point, Offset> pp_r = P3T3::internal::construct_periodic_point(cp(r), used_exact, geom_traits());
+    std::pair<Bare_point, Offset> pp_p = P3T3::internal::construct_periodic_point(p, geom_traits());
+    std::pair<Bare_point, Offset> pp_q = P3T3::internal::construct_periodic_point(cp(q), geom_traits());
+    std::pair<Bare_point, Offset> pp_r = P3T3::internal::construct_periodic_point(cp(r), geom_traits());
 
     // To compare pp(p, q) to pp(p, r), we first need to know the best offsets that minimize these distances
     auto get_offset_minimizing_power_product = [&](const Weighted_point& wp,
@@ -961,6 +958,9 @@ public:
                            get_offset(n, 2), get_offset(n, 3));
 
     typename EKernel::Point_3 dp;
+    typename EKernel::Compute_x_3 compute_x = etraits.compute_x_3_object();
+    typename EKernel::Compute_y_3 compute_y = etraits.compute_y_3_object();
+    typename EKernel::Compute_z_3 compute_z = etraits.compute_z_3_object();
 
     // get the offset of the first weighted circumcenter
     Offset transl_wc1;
@@ -969,17 +969,17 @@ public:
       // can safely perform a construction here because the kernel has exact constructions
       dp = etraits.construct_point_3_object()(exact_wc1, transl_wc1);
 
-      if(dp.x() < dom.xmin())
+      if(compute_x(dp) < dom.xmin())
         transl_wc1.x() += 1;
-      else if(dp.y() < dom.ymin())
+      else if(compute_y(dp) < dom.ymin())
         transl_wc1.y() += 1;
-      else if(dp.z() < dom.zmin())
+      else if(compute_z(dp) < dom.zmin())
         transl_wc1.z() += 1;
-      else if(!(dp.x() < dom.xmax()))
+      else if(!(compute_x(dp) < dom.xmax()))
         transl_wc1.x() -= 1;
-      else if(!(dp.y() < dom.ymax()))
+      else if(!(compute_y(dp) < dom.ymax()))
         transl_wc1.y() -= 1;
-      else if(!(dp.z() < dom.zmax()))
+      else if(!(compute_z(dp) < dom.zmax()))
         transl_wc1.z() -= 1;
       else
         break;
@@ -991,17 +991,17 @@ public:
     {
       dp = etraits.construct_point_3_object()(exact_wc2, transl_wc2);
 
-      if(dp.x() < dom.xmin())
+      if(compute_x(dp) < dom.xmin())
         transl_wc2.x() += 1;
-      else if(dp.y() < dom.ymin())
+      else if(compute_y(dp) < dom.ymin())
         transl_wc2.y() += 1;
-      else if(dp.z() < dom.zmin())
+      else if(compute_z(dp) < dom.zmin())
         transl_wc2.z() += 1;
-      else if(!(dp.x() < dom.xmax()))
+      else if(!(compute_x(dp) < dom.xmax()))
         transl_wc2.x() -= 1;
-      else if(!(dp.y() < dom.ymax()))
+      else if(!(compute_y(dp) < dom.ymax()))
         transl_wc2.y() -= 1;
-      else if(!(dp.z() < dom.zmax()))
+      else if(!(compute_z(dp) < dom.zmax()))
         transl_wc2.z() -= 1;
       else
         break;

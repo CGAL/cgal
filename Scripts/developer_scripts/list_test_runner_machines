@@ -4,10 +4,10 @@
 declare -A MACHINE_CONTAINER_IMAGES
 
 TEST_MACHINES=(
-        "lrineau@bonnard"
+        "cgaltest@bonnard"
         "lrineau@cgal"
         "cgaltest@friedrich"
-        "lrineau@rubens"
+        "cgaltest@rubens"
 )
 
 machine_title() {
@@ -18,8 +18,9 @@ machine_info() {
         HOST=$1
         remote_script=$(printf "export PS4='+ %s >> %s'\n" "$HOST" "$PS4")$'\n'$(
                 cat <<'EOF'
-source /etc/os-release
-printf '\n- OS: `%s`\n- container implementation: `%s`\n' "$PRETTY_NAME" "$(docker --version)"
+source /usr/lib/os-release
+printf '\n- OS: `%s`\n- kernel: `%s`\n- container implementation: `%s`\n' "$PRETTY_NAME" "$(uname -r)" "$(docker --version)"
+
 EOF
         )
         ssh "$HOST" bash -$- -s <<<"$remote_script"
@@ -61,6 +62,16 @@ container_human_readable_status_cmd() {
         docker_cmd ps --all --filter name="$1" --format '{{.Status}}'
 }
 declare -xf container_human_readable_status_cmd
+
+dnf_check_updates_cmd() {
+        if command -v dnf >/dev/null; then
+                dnf --disable-plugin='*' check-upgrade --security --quiet
+        else
+                echo "dnf is not available"
+                return 1
+        fi
+}
+declare -xf dnf_check_updates_cmd
 
 simplify_date_cmd() {
         date=$1
@@ -130,6 +141,19 @@ machine_list_cgal_test_container() {
         printf '```\n'
 }
 
+machine_check_updates() {
+        remote_script=$(
+                display_all_exported_cmd_functions
+                printf "export PS4='+ %s >> %s'\n" "$1" "$PS4"
+                echo dnf_check_updates_cmd
+        )
+        ssh "$1" bash -$- -s <<<"$remote_script"
+}
+
+machine_run_command() {
+        ssh "$1" bash -$- -s <<<"$2"
+}
+
 help() {
         cat <<HEREDOC
 Usage: $0 [OPTION]
@@ -149,6 +173,8 @@ Information Options:
   --images      list the images used on each machine
   --containers  list the containers running on each machine
   --info        list the OS and the container implementation on each machine
+  --updates     list the available security updates on each machine
+  --run CMD     run CMD on each machine using ssh
 
 If no information option is given, the script will list all the information.
 HEREDOC
@@ -165,16 +191,6 @@ error_out() {
 command -v sed >/dev/null || {
         error_out 'sed is required'
 }
-
-if [[ $1 == --table ]] && ! command -v pandoc >/dev/null; then
-        error_out 'pandoc is required for the option --table'
-fi
-if [[ $1 == --column ]] && ! command -v column >/dev/null; then
-        error_out 'column is required for the option --column'
-fi
-if [[ $1 == --bat ]] && ! command -v bat >/dev/null; then
-        error_out 'bat is required for the option --bat'
-fi
 
 set_pretty_csv_to_md_table() {
         pretty_csv() (
@@ -210,6 +226,7 @@ set_pretty_csv_to_cat() {
 }
 
 WHAT=()
+RUN_COMMAND=
 
 add_to_what() {
         for i in "$@"; do
@@ -227,27 +244,68 @@ what_contains() {
         return 1
 }
 
-for arg in "$@"; do
-        case "$arg" in
-        --table) set_pretty_csv_to_md_table ;;
-        --column) set_pretty_csv_to_column ;;
-        --bat) set_pretty_csv_to_bat ;;
-        --plain) set_pretty_csv_to_cat ;;
-        --images) add_to_what images ;;
-        --containers) add_to_what containers ;;
-        --info) add_to_what info ;;
+while [[ $# -gt 0 ]]; do
+        case "$1" in
+        --table)
+                command -v pandoc >/dev/null || error_out 'pandoc is required for the option --table'
+                set_pretty_csv_to_md_table
+                shift
+                ;;
+        --column)
+                command -v column >/dev/null || error_out 'column is required for the option --column'
+                set_pretty_csv_to_column
+                shift
+                ;;
+        --bat)
+                command -v bat >/dev/null || error_out 'bat is required for the option --bat'
+                set_pretty_csv_to_bat
+                shift
+                ;;
+        --plain)
+                set_pretty_csv_to_cat
+                shift
+                ;;
+        --images)
+                add_to_what images
+                shift
+                ;;
+        --containers)
+                add_to_what containers
+                shift
+                ;;
+        --updates)
+                add_to_what updates
+                shift
+                ;;
+        --info)
+                add_to_what info
+                shift
+                ;;
+        --run)
+                shift
+                [ $# -gt 0 ] || error_out 'missing argument for option --run'
+                RUN_COMMAND=$1
+                add_to_what run
+                shift
+                ;;
+        --run=*)
+                RUN_COMMAND=${1#--run=}
+                [ -n "$RUN_COMMAND" ] || error_out 'missing argument for option --run'
+                add_to_what run
+                shift
+                ;;
         -h | --help)
                 help >&2
                 exit 0
                 ;;
         *)
-                error_out "Unknown option $arg"
+                error_out "Unknown option $1"
                 ;;
         esac
 done
 
 if [ ${#WHAT[@]} -eq 0 ]; then
-        add_to_what info images containers
+        add_to_what info images containers updates
 fi
 
 STDOUT_IS_A_TTY=
@@ -277,24 +335,26 @@ if ! declare -f pretty_csv >/dev/null; then
         fi
 fi
 
-ERROR_MACHINES=""
-for machine in "${TEST_MACHINES[@]}"; do
-        USER=${machine%@*}
-        HOST=${machine#*@}
-        # shellcheck disable=SC2029
-        MACHINE_CONTAINER_IMAGES[$machine]=$(ssh "$HOST" cat "/home/$USER/.config/CGAL/test_cgal_docker_images") || {
-                ERROR_MACHINES="$ERROR_MACHINES $machine"
-        }
-done
-if [ -n "$ERROR_MACHINES" ]; then
-        printf '\n> %s\n> %s\n' '[!CAUTION]' 'ERROR:'
-        for machine in $ERROR_MACHINES; do
+if what_contains images; then
+        ERROR_MACHINES=""
+        for machine in "${TEST_MACHINES[@]}"; do
                 USER=${machine%@*}
                 HOST=${machine#*@}
-                # shellcheck disable=SC2016
-                printf '> - ERROR: cannot read file `/home/%s/.config/CGAL/test_cgal_docker_images` on ssh host `%s`\n' "$USER" "$HOST"
+                # shellcheck disable=SC2029
+                MACHINE_CONTAINER_IMAGES[$machine]=$(ssh "$HOST" cat "/home/$USER/.config/CGAL/test_cgal_docker_images") || {
+                        ERROR_MACHINES="$ERROR_MACHINES $machine"
+                }
         done
-        exit 1
+        if [ -n "$ERROR_MACHINES" ]; then
+                printf '\n> %s\n> %s\n' '[!CAUTION]' 'ERROR:'
+                for machine in $ERROR_MACHINES; do
+                        USER=${machine%@*}
+                        HOST=${machine#*@}
+                        # shellcheck disable=SC2016
+                        printf '> - ERROR: cannot read file `/home/%s/.config/CGAL/test_cgal_docker_images` on ssh host `%s`\n' "$USER" "$HOST"
+                done
+                exit 1
+        fi
 fi
 cat <<HEREDOC
 # Test runner machines #
@@ -316,5 +376,15 @@ for machine in "${TEST_MACHINES[@]}"; do
         if what_contains containers; then
                 printf '\nCGAL test containers:\n'
                 machine_list_cgal_test_container "$HOST" "$USER" | pretty_csv
+        fi
+        if what_contains updates; then
+                printf '\nAvailable security updates:\n'
+                machine_check_updates "$HOST" "$USER"
+        fi
+        if what_contains run; then
+                printf '\nOutput of command `%s`:\n' "$RUN_COMMAND"
+                printf '\n```plain\n'
+                machine_run_command "$HOST" "$RUN_COMMAND"
+                printf '```\n'
         fi
 done

@@ -1,4 +1,4 @@
-/// \defgroup PkgPartition2Ref 2D Polygon Partitioning Reference
+/// \defgroup PkgPartition2Ref Reference Manual
 /// \defgroup PkgPartition2Concepts Concepts
 /// \ingroup PkgPartition2Ref
 /// \defgroup PkgPartition2FunctionObjectConcepts Function Object Concepts
@@ -77,7 +77,7 @@ original polygon).
 
 \cgalCRPSection{Classes}
 - `CGAL::Partition_is_valid_traits_2<Traits, PolygonIsValid>`
-- `CGAL::Partition_traits_2<R,P>`
+- `CGAL::Partition_traits_2<R,P,Container>`
 
 
 \cgalCRPSection{Function Object Classes}

@@ -96,7 +96,7 @@ class Approximator {
 
     /* we construct the rotation matrix that transfers the x-axis
        into |ps_|, the z-axis into h_.orthogonal_vector() and the
-       y-axix into the corresponding crossproduct of the two.*/
+       y-axis into the corresponding crossproduct of the two.*/
     if ( s.is_degenerate() ) {
       VSegment S(1);
       S[0] = approximate(s.source());
@@ -153,7 +153,7 @@ class Approximator {
 
     /* we construct the rotation matrix that transfers the x-axis
        into |ps_|, the z-axis into h_.orthogonal_vector() and the
-       y-axix into the corresponding crossproduct of the two.*/
+       y-axis into the corresponding crossproduct of the two.*/
 
     VVector v0 = convert(s.base1());
     VVector v1 = convert(s.base2());

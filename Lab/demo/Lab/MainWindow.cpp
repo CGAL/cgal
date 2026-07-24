@@ -14,6 +14,7 @@
 #include <CGAL/Qt/debug.h>
 #include <CGAL/double.h>
 
+#include <QtGlobal>
 #include <QJsonArray>
 #include <QtDebug>
 #include <QFileDialog>
@@ -46,10 +47,14 @@
 #include <fstream>
 #include <QElapsedTimer>
 #include <QWidgetAction>
+#if QT_VERSION < QT_VERSION_CHECK(6, 11, 0)
 #include <QSequentialIterable>
+#else
+#include <QMetaSequence>
+#endif
 #include <QDir>
 #include <QJSValue>
-
+#include <QLoggingCategory>
 
 #include <CGAL/Three/Three.h>
 #include <CGAL/Three/CGAL_Lab_plugin_interface.h>
@@ -111,7 +116,7 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
   ui = new Ui::MainWindow;
   ui->setupUi(this);
   menuBar()->setNativeMenuBar(false);
-  searchAction = new QWidgetAction(nullptr);
+  searchAction = new QWidgetAction(this);
   CGAL::Three::Three::s_mainwindow = this;
   menu_map[ui->menuOperations->title()] = ui->menuOperations;
   this->verbose = verbose;
@@ -543,6 +548,8 @@ void MainWindow::setMenus(QString name, QString parentName, QAction* a )
   }
 }
 
+QLoggingCategory qlog_cgallab_plugins("cgal.lab.plugins");
+
 bool MainWindow::load_plugin(QString fileName, bool blacklisted)
 {
   if(fileName.contains("plugin") && QLibrary::isLibrary(fileName)) {
@@ -563,9 +570,8 @@ bool MainWindow::load_plugin(QString fileName, bool blacklisted)
         return true;
       }
     }
-    QDebug qdebug = qDebug();
     if(verbose)
-      qdebug << "### Loading \"" << fileName.toUtf8().data() << "\"... ";
+      qCDebug(qlog_cgallab_plugins) << "### Loading" << fileName << "... ";
     QPluginLoader loader;
     loader.setFileName(fileinfo.absoluteFilePath());
     QJsonArray keywords = loader.metaData().value("MetaData").toObject().value("Keywords").toArray();
@@ -595,7 +601,7 @@ bool MainWindow::load_plugin(QString fileName, bool blacklisted)
       bool init2 = initIOPlugin(obj);
       if (!init1 && !init2)
       {
-        pluginsStatus_map[name] = QString("Not for this program.");
+        pluginsStatus_map[name] = QString("ERROR: Not for this program.");
       }
       else{
         QJSValue objectValue =
@@ -607,12 +613,16 @@ bool MainWindow::load_plugin(QString fileName, bool blacklisted)
     }
     else if(!do_load)
     {
-      pluginsStatus_map[name]="Wrong Keywords.";
+      pluginsStatus_map[name]="ERROR: Wrong Keywords.";
       ignored_map[name] = true;
     }
     else{
-      pluginsStatus_map[name] = loader.errorString();
-
+      pluginsStatus_map[name] = "ERROR: " + loader.errorString();
+    }
+    if(verbose && pluginsStatus_map[name].startsWith("ERROR")) {
+      qCDebug(qlog_cgallab_plugins) << "  plugin " << name << ": " << pluginsStatus_map[name]
+          << "\n  plugin keywords: " << s_keywords
+          << "\n     app keywords: " << accepted_keywords;
     }
     PathNames_map[name].push_back(fileinfo.absoluteDir().absolutePath());
     return true;
@@ -987,7 +997,13 @@ void MainWindow::reloadItem() {
       item->deleteLater();
       return;
     }
-    QSequentialIterable iterable = varian.value<QSequentialIterable>();
+#if QT_VERSION < QT_VERSION_CHECK(6, 11, 0)
+    using Iterable = QSequentialIterable;
+#else
+     using Iterable = QMetaSequence::Iterable;
+#endif
+
+    Iterable iterable = varian.value<Iterable>();
 
        // Can use foreach:
     int mate_id = 0;
@@ -1124,10 +1140,10 @@ void MainWindow::open(QString filename)
     ok=true;
     break;
   case 0:
-    load_pair = File_loader_dialog::getItem(fileinfo.fileName(), all_items, &ok);
+    load_pair = File_loader_dialog::getItem(this, fileinfo.fileName(), all_items, &ok);
     break;
   default:
-    load_pair = File_loader_dialog::getItem(fileinfo.fileName(), selected_items, &ok);
+    load_pair = File_loader_dialog::getItem(this, fileinfo.fileName(), selected_items, &ok);
   }
   //viewer->makeCurrent();
   if(!ok || load_pair.first.isEmpty()) { return; }
@@ -1790,8 +1806,8 @@ bool MainWindow::loadScript(QFileInfo info)
   QString program;
   QString filename = info.absoluteFilePath();
   QFile script_file(filename);
-  script_file.open(QIODevice::ReadOnly);
-  if(!script_file.isReadable()) {
+  bool success = script_file.open(QIODevice::ReadOnly);
+  if((! success) || (!script_file.isReadable())) {
     throw std::ios_base::failure(script_file.errorString().toStdString());
   }
   program = script_file.readAll();
@@ -2742,9 +2758,9 @@ void MainWindow::exportStatistics()
   if(filename.isEmpty())
     return;
   QFile output(filename);
-  output.open(QIODevice::WriteOnly | QIODevice::Text);
+  bool success = output.open(QIODevice::WriteOnly | QIODevice::Text);
 
-  if(!output.isOpen()){
+  if((! success) || (!output.isOpen())){
     qDebug() << "- Error, unable to open" << "outputFilename" << "for output";
   }
   QTextStream outStream(&output);

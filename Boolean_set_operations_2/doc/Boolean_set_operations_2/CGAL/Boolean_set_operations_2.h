@@ -19,6 +19,10 @@ namespace CGAL {
  * <tr><td align="right"><b>2.</b></td><td>`void complement(const Type1& pgn, Type2& res, const GpsTraits& traits);`</td></tr>
  * </table>
  *
+ * \tparam Kernel    a model of the concept `PolygonTraits_2`.
+ * \tparam Container a model of the concept `Container`; defaults to `std::vector<Kernel::Point_2`>.
+ * \tparam ArrTraits a model of the concept `AosDirectionalXMonotoneTraits_2`.
+ * \tparam GpsTraits a model of the concept `GeneralPolygonSetTraits_2`, which must be convertible to `ArrTraits`.
  * \tparam UsePolylines determines whether the boundary of the input polygon is
  * treated as a cyclic sequence of single (\f$x\f$-monotone) segments or as a
  * cyclic sequence of (\f$x\f$-monotone) polylines. If substituted with
@@ -28,7 +32,7 @@ namespace CGAL {
  * to a standard polygon. If substituted with `CGAL::Tag_false`, the input
  * polygon is used as is. Refer to \ref bso_ssectraits_sel for more information.
  *
- *   - The types `Type` and `Type2` of the parameters must be convertible to the
+ *   - The types `Type1` and `Type2` of the parameters must be convertible to the
  * types specified in a row in the table below, respectively.
  *   - The types that apply to signature (<b>1.1.</b>) above are restricted to those
  * listed in rows <b>1</b> and <b>2</b> in the table below.
@@ -54,6 +58,8 @@ namespace CGAL {
  * \sa \link boolean_join `CGAL::join()` \endlink
  * \sa \link boolean_difference `CGAL::difference()` \endlink
  * \sa \link boolean_symmetric_difference `CGAL::symmetric_difference()` \endlink
+ * \sa Polygon_2<Kernel, Container>
+ * \sa Polygon_with_holes_2<Kernel, Container>
  */
 
 /// @{
@@ -90,7 +96,7 @@ void complement(const Polygon_2<Kernel, Container>& pgn,
  * \param pgn the input polygon.
  * \param res the complement of \p pgn.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits>
 void
@@ -136,7 +142,7 @@ OutputIterator complement(const Polygon_with_holes_2<Kernel, Container>& pgn,
  *             `General_polygon_with_holes_2<<General_polygon_2<ArrTraits>>`.
  * \return the past-the-end iterator of the output container.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator>
 OutputIterator
@@ -161,7 +167,7 @@ void complement(const Polygon_2<Kernel, Container>& pgn,
  * \param res the resulting complement of \p pgn
  * \param traits a traits object.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
  */
 template <typename ArrTraits, typename GpsTraits>
@@ -193,7 +199,7 @@ OutputIterator complement(const Polygon_with_holes_2<Kernel, Container>& pgn,
  * \param traits a traits object.
  * \return the past-the-end iterator of the output container.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
  */
 template <typename Polygon, typename OutputIterato, typename GpsTraitsr>
@@ -224,6 +230,10 @@ namespace CGAL {
  * <tr><td align="right"><b>2.</b></td><td>`OutputIterator difference(const Type1& pgn1, const Type2& pgn2, OutputIterator oi, const GpsTraits& traits);`</td></tr>
  * </table>
  *
+ * \tparam Kernel    a model of the concept `PolygonTraits_2`
+ * \tparam Container a model of the concept `Container`; defaults to `std::vector<Kernel::Point_2`>.
+ * \tparam ArrTraits a model of the concept `AosDirectionalXMonotoneTraits_2`
+ * \tparam GpsTraits a model of the concept `GeneralPolygonSetTraits_2`, which must be convertible to `ArrTraits`.
  * \tparam UsePolylines determines whether the boundaries of the input polygons
  * are treated as cyclic sequences of single (\f$x\f$-monotone) segments or as
  * cyclic sequences of (\f$x\f$-monotone) polylines. If substituted with
@@ -264,6 +274,8 @@ namespace CGAL {
  * \sa \link boolean_intersection `CGAL::intersection()` \endlink
  * \sa \link boolean_join `CGAL::join()` \endlink
  * \sa \link boolean_symmetric_difference `CGAL::symmetric_difference()` \endlink
+ * \sa Polygon_2<Kernel, Container>
+ * \sa Polygon_with_holes_2<Kernel, Container>
  */
 
 /// @{
@@ -438,7 +450,7 @@ OutputIterator difference(const Polygon_with_holes_2<Kernel, Container>& pgn1,
  *           Its dereference type must be convertibe to
  *             `General_polygon_with_holes_2<General_polygon_2<ArrTraits>>`.
  * \return the past-the-end iterator of the output container.
- * \pre `%ArrTraits` must be a model of the concept `ArrangementDirectionalXMonotoneTraits_2`.
+ * \pre `%ArrTraits` must be a model of the concept `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator>
 OutputIterator difference(const General_polygon_2<ArrTraits>& pgn1,
@@ -454,7 +466,7 @@ OutputIterator difference(const General_polygon_2<ArrTraits>& pgn1,
  *             `General_polygon_with_holes_2<General_polygon_2<ArrTraits>>`.
  * \return the past-the-end iterator of the output container.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator>
 OutputIterator
@@ -471,7 +483,7 @@ difference(const General_polygon_with_holes_2<General_polygon_2<ArrTraits>>& pgn
  *             `General_polygon_with_holes_2<General_polygon_2<ArrTraits>>`.
  * \return the past-the-end iterator of the output container.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator>
 OutputIterator
@@ -578,7 +590,7 @@ OutputIterator difference(const Polygon_with_holes_2<Kernel, Container>& pgn1,
  * \param traits a traits object.
  * \return the past-the-end iterator of the output container.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  * \pre GpsTraits must be a model of `GeneralPolygonSetTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator, typename GpsTraits>
@@ -597,7 +609,7 @@ OutputIterator difference(const General_polygon_2<ArrTraits>& pgn1,
  * \param traits a traits object.
  * \return the past-the-end iterator of the output container.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  * \pre GpsTraits must be a model of `GeneralPolygonSetTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator, typename GpsTraits>
@@ -617,7 +629,7 @@ difference(const General_polygon_with_holes_2<General_polygon_2<ArrTraits>>& pgn
  * \param traits a traits object.
  * \return the past-the-end iterator of the output container.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  * \pre GpsTraits must be a model of `GeneralPolygonSetTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator, typename GpsTraits>
@@ -660,48 +672,22 @@ namespace CGAL {
  * A function template in this group that accepts two input polygons has one of
  * the following signatures:
  * <table cellpadding=3 border="0">
- * <tr><td align="right"><b>1.1.</b></td><td>`bool do_intersect(const Type1& pgn1, const Type2& pgn2, UsePolylines = Tag_true());`</td></tr>
- * <tr><td align="right"><b>1.2.</b></td><td>`bool do_intersect(const Type1& pgn1, const Type2& pgn2);`</td></tr>
- * <tr><td align="right"><b>  2.</b></td><td>`bool do_intersect(const Type1& pgn1, const Type2& pgn2, const GpsTraits& traits);`</td></tr>
+ * <tr><td align="right"><b>1.</b></td><td>`bool do_intersect(const Type1& pgn1, const Type2& pgn2);`</td></tr>
+ * <tr><td align="right"><b>2.</b></td><td>`bool do_intersect(const Type1& pgn1, const Type2& pgn2, const GpsTraits& traits);`</td></tr>
  * </table>
  *
  * There are also function templates that accept one or two ranges of input polygons:
  * <table cellpadding=3 border="0">
- * <tr><td align="right"><b>3.1.</b></td><td>`bool do_intersect(InputIterator begin, InputIterator end, UsePolylines = Tag_true());`</td></tr>
- * <tr><td align="right"><b>3.2.</b></td><td>`bool do_intersect(InputIterator begin, InputIterator end);`</td></tr>
- * <tr><td align="right"><b>  4.</b></td><td>`bool do_intersect(InputIterator begin, InputIterator end, const GpsTraits& traits);`</td></tr>
- * <tr><td align="right"><b>5.1.</b></td><td>`bool do_intersect(InputIterator1 begin1, InputIterator1 end1, InputIterator2 begin2, InputIterator2 end2, UsePolylines = Tag_true());`</td></tr>
- * <tr><td align="right"><b>5.2.</b></td><td>`bool do_intersect(InputIterator1 begin1, InputIterator1 end1, InputIterator2 begin2, InputIterator2 end2);`</td></tr>
- * <tr><td align="right"><b>  6.</b></td><td>`bool do_intersect(InputIterator1 begin1, InputIterator1 end1, InputIterator2 begin2, InputIterator2 end2, const GpsTraits& traits);`</td></tr>
+ * <tr><td align="right"><b>3.</b></td><td>`bool do_intersect(InputIterator begin, InputIterator end);`</td></tr>
+ * <tr><td align="right"><b>4.</b></td><td>`bool do_intersect(InputIterator begin, InputIterator end, const GpsTraits& traits);`</td></tr>
+ * <tr><td align="right"><b>5.</b></td><td>`bool do_intersect(InputIterator1 begin1, InputIterator1 end1, InputIterator2 begin2, InputIterator2 end2);`</td></tr>
+ * <tr><td align="right"><b>6.</b></td><td>`bool do_intersect(InputIterator1 begin1, InputIterator1 end1, InputIterator2 begin2, InputIterator2 end2, const GpsTraits& traits);`</td></tr>
  * </table>
  *
- * \tparam UsePolylines determines whether the boundary of the input polygons
- * are treated as a cyclic sequence of single (\f$x\f$-monotone) segments or as
- * a cyclic sequence of (\f$x\f$-monotone) polylines. If substituted with
- * `CGAL::Tag_true`, which is the default, the input polygons are converted to
- * general polygons bounded by polylines before the operation is actually
- * performed. If substituted with `CGAL::Tag_false`, the input polygons are used
- * as is. Refer to \ref bso_ssectraits_sel for more information.
- *
- *   - The types `Type1` and `Type2` of the parameters of
- *     `InputIterator1::value_type` and `InputIterator2::value_type` must be
- *     convertible to the types specified in a row in the table below,
- *     respectively.
- *
- *   - The types that apply to signatures (<b>1.1.</b>) and (<b>5.1.</b>) above
- *     are restricted to those listed in rows <b>1&ndash;4</b> in the table
- *     below.
- *
- *   - The types that apply to signatures (<b>1.2.</b>) and (<b>5.2.</b>) above
- *     are restricted to those listed in rows <b>5&ndash;8</b> in the table
- *     below.
- *
- *   - The type of `InputIterator::value_type` in (<b>3.1.</b>) above
- *     must be convertible to either `Polygon_2` or `Polygon_with_holes_2`.
- *
- *   - The type of `InputIterator::value_type` in (<b>3.2.</b>) above must be
- *     convertible to either `General_polygon_2` or
- *     `General_polygon_with_holes_2`.
+ * \tparam Kernel    a model of the concept `PolygonTraits_2`.
+ * \tparam Container a model of the concept `Container`; defaults to `std::vector<Kernel::Point_2`>.
+ * \tparam ArrTraits a model of the concept `AosDirectionalXMonotoneTraits_2`.
+ * \tparam GpsTraits a model of the concept `GeneralPolygonSetTraits_2`, which must be convertible to `ArrTraits`.
  *
  * <div align="left">
  * <table cellpadding=3 border="1">
@@ -728,6 +714,8 @@ namespace CGAL {
  * \sa \link boolean_join `CGAL::join()` \endlink
  * \sa \link boolean_difference `CGAL::difference()` \endlink
  * \sa \link boolean_symmetric_difference `CGAL::symmetric_difference()` \endlink
+ * \sa Polygon_2<Kernel, Container>
+ * \sa Polygon_with_holes_2<Kernel, Container>
  */
 
 /// @{
@@ -735,6 +723,11 @@ namespace CGAL {
 //////// Traits-less
 
 /*! determines whether two polygons intersect in their interior.
+ *
+ * The kernel used to instantiate the type of the input polygons must support
+ * exact predicates to guarantee correct results; however, inexact constructions
+ * are tolerated.
+ *
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \return `true` if `pgn1` and `pgn2` intersect in their interior and `false`
@@ -745,25 +738,11 @@ bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
                   const Polygon_2<Kernel, Container>& pgn2);
 
 /*! determines whether two polygons intersect in their interior.
- * \tparam UsePolylines determines whether the boundaries of `pgn1` and `pgn2`
- *         are treated as cyclic sequences of single (\f$x\f$-monotone) segments
- *         or as a cyclic sequences of (\f$x\f$-monotone) polylines. If
- *         substituted with `CGAL::Tag_true`, which is the default, `pgn1` and
- *         `pgn2` are converted to general polygons, bounded by polylines
- *         before the operation is actually performed. If substituted with
- *         `CGAL::Tag_false`, `pgn1` and `pgn2` are used as is. Refer to \ref
- *         bso_ssectraits_sel for more information.
- * \param pgn1 the 1st input polygon.
- * \param pgn2 the 2nd input polygon.
- * \return `true` if `pgn1` and `pgn2` intersect in their interior and `false`
- *         otherwise.
- */
-template <typename Kernel, typename Container, typename UsePolylines>
-bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
-                  const Polygon_2<Kernel, Container>& pgn2,
-                  UsePolylines = Tag_true());
-
-/*! determines whether two polygons intersect in their interior.
+ *
+ * The kernel used to instantiate the type of the input polygons must support
+ * exact predicates to guarantee correct results; however, inexact constructions
+ * are tolerated.
+ *
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \return `true` if `pgn1` and `pgn2` intersect in their interior and `false`
@@ -774,26 +753,11 @@ bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
                   const Polygon_with_holes_2<Kernel, Container>& pgn2);
 
 /*! determines whether two polygons intersect in their interior.
- * \tparam UsePolylines determines whether the boundaries of `pgn1` and `pgn2`
- *         are treated as cyclic sequences of single (\f$x\f$-monotone) segments
- *         or as a cyclic sequences of (\f$x\f$-monotone) polylines. If
- *         substituted with `CGAL::Tag_true`, which is the default, `pgn1` and
- *         `pgn2` are converted to a general polygon and a general polygon
- *         with holes, respectively, bounded by polylines before the operation
- *         is actually performed. If substituted with `CGAL::Tag_false`, `pgn1`
- *         and `pgn2` are used as is. Refer to \ref bso_ssectraits_sel for more
- *         information.
- * \param pgn1 the 1st input polygon.
- * \param pgn2 the 2nd input polygon.
- * \return `true` if `pgn1` and `pgn2` intersect in their interior and `false`
- *         otherwise.
- */
-template <typename Kernel, typename Container, typename UsePolylines>
-bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
-                  const Polygon_with_holes_2<Kernel, Container>& pgn2,
-                  UsePolylines = Tag_true());
-
-/*! determines whether two polygons intersect in their interior.
+ *
+ * The kernel used to instantiate the type of the input polygons must support
+ * exact predicates to guarantee correct results; however, inexact constructions
+ * are tolerated.
+ *
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \return `true` if `pgn1` and `pgn2` intersect in their interior and `false`
@@ -803,27 +767,12 @@ template <typename Kernel, typename Container>
 bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& pgn1,
                   const Polygon_2<Kernel, Container>& pgn2);
 
-/*! determines whether two polygons intersect in their interior.
- * \tparam UsePolylines determines whether the boundaries of `pgn1` and `pgn2`
- *         are treated as cyclic sequences of single (\f$x\f$-monotone) segments
- *         or as a cyclic sequences of (\f$x\f$-monotone) polylines. If
- *         substituted with `CGAL::Tag_true`, which is the default, `pgn1` and
- *         `pgn2` are converted to a general polygon with holes and a general
- *         polygon, respectively, bounded by polylines before the operation
- *         is actually performed. If substituted with `CGAL::Tag_false`, `pgn1`
- *         and `pgn2` are used as is. Refer to \ref bso_ssectraits_sel for more
- *         information.
- * \param pgn1 the 1st input polygon.
- * \param pgn2 the 2nd input polygon.
- * \return `true` if `pgn1` and `pgn2` intersect in their interior and `false`
- *         otherwise.
- */
-template <typename Kernel, typename Container, typename UsePolylines>
-bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& pgn1,
-                  const Polygon_2<Kernel, Container>& pgn2,
-                  UsePolylines = Tag_true());
-
 /*! determines whether two polygons with holes intersect in their interior.
+ *
+ * The kernel used to instantiate the type of the input polygons must support
+ * exact predicates to guarantee correct results; however, inexact constructions
+ * are tolerated.
+ *
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \return `true` if `pgn1` and `pgn2` intersect in their interior and `false`
@@ -832,25 +781,6 @@ bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& pgn1,
 template <typename Kernel, typename Container>
 bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& pgn1,
                   const Polygon_with_holes_2<Kernel, Container>& pgn2);
-
-/*! determines whether two polygons with holes intersect in their interior.
- * \tparam UsePolylines determines whether the boundaries of `pgn1` and `pgn2`
- *         are treated as cyclic sequences of single (\f$x\f$-monotone) segments
- *         or as a cyclic sequences of (\f$x\f$-monotone) polylines. If
- *         substituted with `CGAL::Tag_true`, which is the default, `pgn1` and
- *         `pgn2` are converted to general polygon with holes , bounded by
- *         polylines before the operation is actually performed. If substituted
- *         with `CGAL::Tag_false`, `pgn1` and `pgn2` are used as is. Refer to
- *         \ref bso_ssectraits_sel for more information.
- * \param pgn1 the 1st input polygon.
- * \param pgn2 the 2nd input polygon.
- * \return `true` if `pgn1` and `pgn2` intersect in their interior and `false`
- *         otherwise.
- */
-template <typename Kernel, typename Container, typename UsePolylines>
-bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& pgn1,
-                  const Polygon_with_holes_2<Kernel, Container>& pgn2,
-                  UsePolylines = Tag_true());
 
 /*! determines whether two general polygons intersect in their interior.
  * \param pgn1 the 1st input polygon.
@@ -858,7 +788,7 @@ bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& pgn1,
  * \return `true` if `pgn1` and `pgn2` intersect in their interior and `false`
  *         otherwise.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits>
 bool do_intersect(const General_polygon_2<ArrTraits>& pgn1,
@@ -870,7 +800,7 @@ bool do_intersect(const General_polygon_2<ArrTraits>& pgn1,
  * \return `true` if `pgn1` and `pgn2` intersect in their interior and `false`
  *         otherwise.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits>
 bool
@@ -883,7 +813,7 @@ do_intersect(const General_polygon_2<ArrTraits>& pgn1,
  * \return `true` if `pgn1` and `pgn2` intersect in their interior and `false`
  *         otherwise.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits>
 bool do_intersect(const General_polygon_with_holes_2<General_polygon_2<ArrTraits>>& pgn1,
@@ -904,6 +834,13 @@ bool do_intersect(const General_polygon_with_holes_2<Polygon>& pgn1,
  * of general polygons or a range of general polygons with holes) determines
  * whether the open polygons (respectively general polygons) in the range have a common
  * point.
+ *
+ * When the operation is applied to linear polygons (that is, the value type of
+ * the input iterator is either `Polygon_2` or `Polygon_with_holes_2`), the
+ * kernel used to instantiate the type of the input polygons must support exact
+ * predicates to guarantee correct results; however, inexact constructions are
+ * tolerated.
+ *
  * \param begin the first iterator of the input range. Its value type is
  *        either `Polygon_2` (respectively `General_polygon_2`) or
  *        `Polygon_with_holes_2` (respectively `General_polygon_with_holes_2`).
@@ -917,36 +854,16 @@ bool do_intersect(const General_polygon_with_holes_2<Polygon>& pgn1,
 template <typename InputIterator>
 bool do_intersect(InputIterator begin, InputIterator end);
 
-/*! Given a range of polygons or a range of polygons with holes (respectively a range
- * of general polygons or a range of general polygons with holes) determines
- * whether the open polygons (respectively general polygons) in the range have a common
- * point.
- * \tparam UsePolylines determines whether the boundaries of the polygons in the
- *         input range are treated as cyclic sequences of single
- *         (\f$x\f$-monotone) segments or as a cyclic sequences of
- *         (\f$x\f$-monotone) polylines. If substituted with `CGAL::Tag_true`,
- *         which is the default, the input polygons are converted to general
- *         polygon with holes , bounded by polylines before the operation is
- *         actually performed. If substituted with `CGAL::Tag_false`, `pgn1` and
- *         `pgn2` are used as is. Refer to \ref bso_ssectraits_sel for more
- *         information.
- * \param begin the first iterator of the input range. Its value type is
- *        either `Polygon_2` (respectively `General_polygon_2`) or
- *        `Polygon_with_holes_2` (respectively `General_polygon_with_holes_2`).
- * \param end the past-the-end iterator of the input range. Its value type is
- *        either `Polygon_2` (respectively `General_polygon_2`) or
- *        `Polygon_with_holes_2` (respectively `General_polygon_with_holes_2`).
- * \return `true` if the pairwise intersections of all open polygons or polygons
- *         with holes (respectively general polygons or general polygons with holes) in
- *         the range [*begin,*end) overlap, and `false` otherwise.
- */
-template <typename InputIterator, typename UsePolylines>
-bool do_intersect(InputIterator begin, InputIterator end,
-                  UsePolylines = Tag_true());
-
 /*! Given a range of polygons (respectively general polygons) and a range of polygons
  * with holes (respectively general polygons with holes) determines whether the open
  * polygons (respectively general polygons) in the two ranges have a common point.
+ *
+ * When the operation is applied to linear polygons (that is, the value type of
+ * any input iterator is either `Polygon_2` or `Polygon_with_holes_2`), the
+ * kernel used to instantiate the type of the input polygons must support exact
+ * predicates to guarantee correct results; however, inexact constructions are
+ * tolerated.
+ *
  * \param begin1 the first iterator of the 1st input range. Its value type is
  *        `Polygon_2` (respectively `General_polygon_2`).
  * \param end1 the past-the-end iterator of the 1st input range. Its value
@@ -964,40 +881,14 @@ template <typename InputIterator1, typename InputIterator2>
 bool do_intersect(InputIterator1 begin1, InputIterator1 end1,
                   InputIterator2 begin2, InputIterator2 end2);
 
-/*! Given a range of polygons (respectively general polygons) and a range of polygons
- * with holes (respectively general polygons with holes) determines whether the open
- * polygons (respectively general polygons) in the two ranges have a common point.
- * \tparam UsePolylines determines whether the boundaries of the polygons in the
- *         input ranges are treated as cyclic sequences of single
- *         (\f$x\f$-monotone) segments or as a cyclic sequences of
- *         (\f$x\f$-monotone) polylines. If substituted with `CGAL::Tag_true`,
- *         which is the default, the input polygons are converted to general
- *         polygon with holes , bounded by polylines before the operation is
- *         actually performed. If substituted with `CGAL::Tag_false`, `pgn1` and
- *         `pgn2` are used as is. Refer to \ref bso_ssectraits_sel for more
- *         information.
- * \param begin1 the first iterator of the 1st input range. Its value type is
- *        `Polygon_2` (respectively `General_polygon_2`).
- * \param end1 the past-the-end iterator of the 1st input range. Its value
- *        type is `Polygon_2` (respectively `General_polygon_2`).
- * \param begin2 the first iterator of the 2nd input range. Its value type
- *        is `Polygon_with_holes_2` (respectively `General_polygon_with_holes_2`).
- * \param end2 the past-the-end iterator of the 2nd input range. Its value
- *        type is `Polygon_with_holes_2` (respectively `General_polygon_with_holes_2`).
- * \return `true` if the pairwise intersections of all open polygons (respectively
- *        general polygons) and polygons with holes (respectively general polygons with
- *        holes) in the ranges [*begin1,*end1) and [*begin2,*end2),
- *        respectively, overlap, and `false` otherwise.
- */
-template <typename InputIterator1, typename InputIterator2,
-          typename UsePolylines>
-bool do_intersect(InputIterator1 begin1, InputIterator1 end1,
-                  InputIterator2 begin2, InputIterator2 end2,
-                  UsePolylines = Tag_true());
-
 //////// With Traits
 
 /*! determines whether two polygons intersect in their interior.
+ *
+ * The kernel used to instantiate the type of the input polygons must support
+ * exact predicates to guarantee correct results; however, inexact constructions
+ * are tolerated.
+ *
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \param traits a traits object.
@@ -1011,6 +902,11 @@ bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
                   const GpsTraits& traits);
 
 /*! determines whether two polygons intersect in their interior.
+ *
+ * The kernel used to instantiate the type of the input polygons must support
+ * exact predicates to guarantee correct results; however, inexact constructions
+ * are tolerated.
+ *
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \param traits a traits object.
@@ -1021,10 +917,14 @@ bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
 template <typename Kernel, typename Container, typename GpsTraits>
 bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
                   const Polygon_with_holes_2<Kernel, Container>& pgn2,
-                  const GpsTraits& traits,
                   const GpsTraits& traits);
 
 /*! determines whether two polygons intersect in their interior.
+ *
+ * The kernel used to instantiate the type of the input polygons must support
+ * exact predicates to guarantee correct results; however, inexact constructions
+ * are tolerated.
+ *
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \param traits a traits object.
@@ -1038,6 +938,11 @@ bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& pgn1,
                   const GpsTraits& traits);
 
 /*! determines whether two polygons with holes intersect in their interior.
+ *
+ * The kernel used to instantiate the type of the input polygons must support
+ * exact predicates to guarantee correct results; however, inexact constructions
+ * are tolerated.
+ *
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \param traits a traits object.
@@ -1058,7 +963,7 @@ bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& pgn1,
  *         otherwise.
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits, typename GpsTraits>
 bool do_intersect(const General_polygon_2<ArrTraits>& pgn1,
@@ -1073,7 +978,7 @@ bool do_intersect(const General_polygon_2<ArrTraits>& pgn1,
  *         otherwise.
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits, typename GpsTraits>
 bool
@@ -1089,7 +994,7 @@ do_intersect(const General_polygon_2<ArrTraits>& pgn1,
  *         otherwise.
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits, typename GpsTraits>
 bool
@@ -1116,6 +1021,12 @@ bool do_intersect(const General_polygon_with_holes_2<Polygon>& pgn1,
  * of general polygons or a range of general polygons with holes) determines
  * whether the open polygons (respectively general polygons) in the range have a common
  * point.
+ *
+ * When the operation is applied to linear polygons (that is, the value type of
+ * the input iterator is either `Polygon_2` or `Polygon_with_holes_2`), the
+ * traits parameter `GpsTraits` must support exact predicates to guarantee
+ * correct results; however, inexact constructions are tolerated.
+ *
  * \param begin the first iterator of the input range. Its value type is
  *        either `Polygon_2` (respectively `General_polygon_2`) or
  *        `Polygon_with_holes_2` (respectively `General_polygon_with_holes_2`).
@@ -1135,6 +1046,12 @@ bool do_intersect(InputIterator begin, InputIterator end,
 /*! Given a range of polygons (respectively general polygons) and a range of polygons
  * with holes (respectively general polygons with holes) determines whether the open
  * polygons (respectively general polygons) in the two ranges have a common point.
+ *
+ * When the operation is applied to linear polygons (that is, the value type of
+ * any input iterator is either `Polygon_2` or `Polygon_with_holes_2`), the
+ * traits parameter `GpsTraits` must support exact predicates to guarantee
+ * correct results; however, inexact constructions are tolerated.
+ *
  * \param begin1 the first iterator of the 1st input range. Its value type is
  *        `Polygon_2` (respectively `General_polygon_2`).
  * \param end1 the past-the-end iterator of the 1st input range. Its value
@@ -1186,6 +1103,10 @@ namespace CGAL {
  * <tr><td align="right"><b>6.</b></td><td>`OutputIterator intersection(InputIterator1 begin1, InputIterator1 end1, InputIterator2 begin2, InputIterator2 end2, OutputIterator oi, const GpsTraits& traits);`</td></tr>
  * </table>
  *
+ * \tparam Kernel    a model of the concept `PolygonTraits_2`.
+ * \tparam Container a model of the concept `Container`; defaults to `std::vector<Kernel::Point_2`>.
+ * \tparam ArrTraits a model of the concept `AosDirectionalXMonotoneTraits_2`.
+ * \tparam GpsTraits a model of the concept `GeneralPolygonSetTraits_2`, which must be convertible to `ArrTraits`.
  * \tparam UsePolylines determines whether the boundaries of the input polygons
  * are treated as cyclic sequences of single (\f$x\f$-monotone) segments or as
  * cyclic sequences of (\f$x\f$-monotone) polylines. If substituted with
@@ -1244,6 +1165,8 @@ namespace CGAL {
  * \sa \link boolean_join `CGAL::join()` \endlink
  * \sa \link boolean_difference `CGAL::difference()` \endlink
  * \sa \link boolean_symmetric_difference `CGAL::symmetric_difference()` \endlink
+ * \sa Polygon_2<Kernel, Container>
+ * \sa Polygon_with_holes_2<Kernel, Container>
  */
 
 /// @{
@@ -1415,7 +1338,7 @@ OutputIterator intersection(const Polygon_with_holes_2<Kernel, Container>& pgn1,
  *             `General_polygon_with_holes_2<General_polygon_2<ArrTraits>>`.
  * \return the past-the-end iterator of the output container.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator>
 OutputIterator intersection(const General_polygon_2<ArrTraits>& pgn1,
@@ -1431,7 +1354,7 @@ OutputIterator intersection(const General_polygon_2<ArrTraits>& pgn1,
  *             `General_polygon_with_holes_2<General_polygon_2<ArrTraits>>`.
  * \return the past-the-end iterator of the output container.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator>
 OutputIterator
@@ -1448,7 +1371,7 @@ intersection(const General_polygon_with_holes_2<General_polygon_2<ArrTraits>>& p
  *             `General_polygon_with_holes_2<General_polygon_2<ArrTraits>>`.
  * \return the past-the-end iterator of the output container.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator>
 OutputIterator
@@ -1672,7 +1595,7 @@ intersection(const Polygon_with_holes_2<Kernel, Container>& pgn1,
  * \param traits a traits object.
  * \return the past-the-end iterator of the output container.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  * \pre GpsTraits must be a model of `GeneralPolygonSetTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator, typename GpsTraits>
@@ -1693,7 +1616,7 @@ OutputIterator intersection(const General_polygon_2<ArrTraits>& pgn1,
  * \param traits a traits object.
  * \return the past-the-end iterator of the output container.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  * \pre GpsTraits must be a model of `GeneralPolygonSetTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator, typename GpsTraits>
@@ -1715,7 +1638,7 @@ intersection(const General_polygon_with_holes_2<General_polygon_2<ArrTraits>>& p
  * \param traits a traits object.
  * \return the past-the-end iterator of the output container.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  * \pre GpsTraits must be a model of `GeneralPolygonSetTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator, typename GpsTraits>
@@ -1825,6 +1748,10 @@ namespace CGAL {
  * <tr><td align="right"><b>6.</b></td><td>`OutputIterator join(InputIterator1 begin1, InputIterator1 end1, InputIterator2 begin2, InputIterator2 end2, OutputIterator oi, const GpsTraits& traits);`</td></tr>
  * </table>
  *
+ * \tparam Kernel    a model of the concept `PolygonTraits_2`.
+ * \tparam Container a model of the concept `Container`; defaults to `std::vector<Kernel::Point_2`>.
+ * \tparam ArrTraits a model of the concept `AosDirectionalXMonotoneTraits_2`.
+ * \tparam GpsTraits a model of the concept `GeneralPolygonSetTraits_2`, which must be convertible to `ArrTraits`.
  * \tparam UsePolylines determines whether the boundaries of the input polygons
  * are treated as cyclic sequences of single (\f$x\f$-monotone) segments or as
  * cyclic sequences of (\f$x\f$-monotone) polylines. If substituted with
@@ -1882,6 +1809,8 @@ namespace CGAL {
  * \sa \link boolean_intersection `CGAL::intersection()` \endlink
  * \sa \link boolean_difference `CGAL::difference()` \endlink
  * \sa \link boolean_symmetric_difference `CGAL::symmetric_difference()` \endlink
+ * \sa Polygon_2<Kernel, Container>
+ * \sa Polygon_with_holes_2<Kernel, Container>
  */
 
 /// @{
@@ -2026,7 +1955,7 @@ bool join(const Polygon_with_holes_2<Kernel, Container>& pgn1,
  * \param res the resulting union of \p pgn1 and \p pgn2.
  * \return `true` if the two input polygons overlap.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits>
 bool join(const General_polygon_2<ArrTraits>& pgn1,
@@ -2039,7 +1968,7 @@ bool join(const General_polygon_2<ArrTraits>& pgn1,
  * \param res the resulting union of \p pgn1 and \p pgn2.
  * \return `true` if the two input polygons overlap.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits>
 bool
@@ -2053,7 +1982,7 @@ join(const General_polygon_2<ArrTraits>& pgn1,
  * \param res the resulting union of \p pgn1 and \p pgn2.
  * \return `true` if the two input polygons overlap.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits>
 bool
@@ -2217,7 +2146,7 @@ bool join(const Polygon_with_holes_2<Kernel, Container>& pgn2,
  * \param traits a traits object.
  * \return `true` if the two input polygons overlap.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
  */
 template <typename ArrTraits, typename GpsTraits>
@@ -2234,7 +2163,7 @@ bool join(const General_polygon_2<ArrTraits>& pgn1,
  * \param traits a traits object.
  * \return `true` if the two input polygons overlap.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
  */
 template <typename ArrTraits, typename GpsTraits>
@@ -2252,7 +2181,7 @@ join(const General_polygon_2<ArrTraits>& pgn1,
  * \param traits a traits object.
  * \return `true` if the two input polygons overlap.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
  */
 template <typename ArrTraits, typename GpsTraits>
@@ -2407,6 +2336,10 @@ namespace CGAL {
  * <tr><td align="right"><b>  4.</b></td><td>`Oriented_side oriented_side(const Point_2& p, const Type& pgn, const GpsTraits& traits);`</td></tr>
  * </table>
  *
+ * \tparam Kernel    a model of the concept `PolygonTraits_2`.
+ * \tparam Container a model of the concept `Container`; defaults to `std::vector<Kernel::Point_2`>.
+ * \tparam ArrTraits a model of the concept `AosDirectionalXMonotoneTraits_2`.
+ * \tparam GpsTraits a model of the concept `GeneralPolygonSetTraits_2`, which must be convertible to `ArrTraits`.
  * \tparam UsePolylines determines whether the boundaries of the input polygons
  * are treated as cyclic sequences of single (\f$x\f$-monotone) segments or as
  * cyclic sequences of (\f$x\f$-monotone) polylines. If substituted with
@@ -2446,6 +2379,8 @@ namespace CGAL {
  * \param traits an optional traits object.
  *
  * \sa \link boolean_do_intersect `CGAL::do_intersect()` \endlink
+ * \sa Polygon_2<Kernel, Container>
+ * \sa Polygon_with_holes_2<Kernel, Container>
  */
 
 /// @{
@@ -2568,7 +2503,7 @@ oriented_side(const Polygon_with_holes_2<Kernel, Container>& pgn1,
  * \param pgn1 1st the input polygon.
  * \param pgn2 the 2nd input polygon.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits>
 Oriented_side oriented_side(const General_polygon_2<ArrTraits>& pgn1,
@@ -2578,7 +2513,7 @@ Oriented_side oriented_side(const General_polygon_2<ArrTraits>& pgn1,
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits>
 Oriented_side
@@ -2589,7 +2524,7 @@ oriented_side(const General_polygon_2<ArrTraits>& pgn1,
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits>
 Oriented_side
@@ -2655,7 +2590,7 @@ Oriented_side oriented_side(const Polygon_with_holes_2<Kernel, Container>& pgn1,
  * \param pgn2 the 2nd input polygon.
  * \param traits a traits object.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
  *
  */
@@ -2669,7 +2604,7 @@ Oriented_side oriented_side(const General_polygon_2<ArrTraits>& pgn1,
  * \param pgn2 the 2nd input polygon.
  * \param traits a traits object.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
  *
  */
@@ -2684,7 +2619,7 @@ oriented_side(const General_polygon_2<ArrTraits>& pgn1,
  * \param pgn2 the 2nd input polygon.
  * \param traits a traits object.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
  *
  */
@@ -2727,7 +2662,7 @@ Oriented_side oriented_side(const Point_2& p,
  * \param p the input point.
  * \param pgn the input polygon.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits>
 Oriented_side oriented_side(const Point_2& p,
@@ -2770,7 +2705,7 @@ Oriented_side oriented_side(const Point_2& p,
  * \param pgn the input polygon.
  * \param traits a traits object.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
  */
 template <typename ArrTraits, typename GpsTraits>
@@ -2823,6 +2758,10 @@ namespace CGAL {
  * <tr><td align="right"><b>6.</b></td><td>`OutputIterator symmetric_difference(InputIterator1 begin1, InputIterator1 end1, InputIterator2 begin2, InputIterator2 end2, OutputIterator oi, const GpsTraits& traits);`</td></tr>
  * </table>
  *
+ * \tparam Kernel    a model of the concept `PolygonTraits_2`.
+ * \tparam Container a model of the concept `Container`; defaults to `std::vector<Kernel::Point_2`>.
+ * \tparam ArrTraits a model of the concept `AosDirectionalXMonotoneTraits_2`.
+ * \tparam GpsTraits a model of the concept `GeneralPolygonSetTraits_2`, which must be convertible to `ArrTraits`.
  * \tparam UsePolylines determines whether the boundaries of the input polygons
  * are treated as cyclic sequences of single (\f$x\f$-monotone) segments or as
  * cyclic sequences of (\f$x\f$-monotone) polylines. If substituted with
@@ -2879,6 +2818,8 @@ namespace CGAL {
  * \sa \link boolean_intersection `CGAL::intersection()` \endlink
  * \sa \link boolean_join `CGAL::join()` \endlink
  * \sa \link boolean_difference `CGAL::difference()` \endlink
+ * \sa Polygon_2<Kernel, Container>
+ * \sa Polygon_with_holes_2<Kernel, Container>
  */
 
 /// @{
@@ -3063,7 +3004,7 @@ symmetric_difference(const Polygon_with_holes_2<Kernel, Container>& pgn1,
  *             `General_polygon_with_holes_2<General_polygon_2<ArrTraits>>`.
  * \return the past-the-end iterator of the output container.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator>
 OutputIterator symmetric_difference(const General_polygon_2<ArrTraits>& pgn1,
@@ -3081,7 +3022,7 @@ OutputIterator symmetric_difference(const General_polygon_2<ArrTraits>& pgn1,
  *             `General_polygon_with_holes_2<General_polygon_2<ArrTraits>>`.
  * \return the past-the-end iterator of the output container.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator>
 OutputIterator
@@ -3100,7 +3041,7 @@ symmetric_difference(const General_polygon_with_holes_2<General_polygon_2<ArrTra
  *             `General_polygon_with_holes_2<General_polygon_2<ArrTraits>>`.
  * \return the past-the-end iterator of the output container.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator>
 OutputIterator
@@ -3332,7 +3273,7 @@ symmetric_difference(const Polygon_with_holes_2<Kernel, Container>& pgn1,
  * \param traits a traits object.
  * \return the past-the-end iterator of the output container.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  * \pre GpsTraits must be a model of `GeneralPolygonSetTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator, typename GpsTraits>
@@ -3353,7 +3294,7 @@ OutputIterator symmetric_difference(const General_polygon_2<ArrTraits>& pgn1,
  * \param traits a traits object.
  * \return the past-the-end iterator of the output container.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  * \pre GpsTraits must be a model of `GeneralPolygonSetTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator, typename GpsTraits>
@@ -3375,7 +3316,7 @@ symmetric_difference(const General_polygon_with_holes_2<General_polygon_2<ArrTra
  * \param traits a traits object.
  * \return the past-the-end iterator of the output container.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  * \pre GpsTraits must be a model of `GeneralPolygonSetTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator, typename GpsTraits>

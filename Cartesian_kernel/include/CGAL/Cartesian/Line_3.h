@@ -24,6 +24,7 @@ namespace CGAL {
 template < class R_ >
 class LineC3
 {
+  typedef typename R_::Boolean              Boolean;
   typedef typename R_::FT                   FT;
   typedef typename R_::Point_3              Point_3;
   typedef typename R_::Vector_3             Vector_3;
@@ -65,8 +66,8 @@ public:
   LineC3(const Point_3 &p, const Direction_3 &d)
   { *this = R().construct_line_3_object()(p, d); }
 
-  bool        operator==(const LineC3 &l) const;
-  bool        operator!=(const LineC3 &l) const;
+  typename R::Boolean operator==(const LineC3 &l) const;
+  typename R::Boolean operator!=(const LineC3 &l) const;
 
   Plane_3     perpendicular_plane(const Point_3 &p) const;
   Line_3      opposite() const;
@@ -88,13 +89,13 @@ public:
 
   Point_3     point(const FT i) const;
 
-  bool        has_on(const Point_3 &p) const;
-  bool        is_degenerate() const;
+  Boolean has_on(const Point_3 &p) const;
+  Boolean is_degenerate() const;
 };
 
 template < class R >
 inline
-bool
+typename R::Boolean
 LineC3<R>::operator==(const LineC3<R> &l) const
 {
   if (CGAL::identical(base, l.base))
@@ -104,7 +105,7 @@ LineC3<R>::operator==(const LineC3<R> &l) const
 
 template < class R >
 inline
-bool
+typename R::Boolean
 LineC3<R>::operator!=(const LineC3<R> &l) const
 {
   return !(*this == l);
@@ -135,7 +136,7 @@ LineC3<R>::opposite() const
 
 template < class R >
 inline
-bool
+typename R::Boolean
 LineC3<R>::
 has_on(const typename LineC3<R>::Point_3 &p) const
 {
@@ -144,7 +145,7 @@ has_on(const typename LineC3<R>::Point_3 &p) const
 
 template < class R >
 inline
-bool
+typename R::Boolean
 LineC3<R>::is_degenerate() const
 {
   return to_vector() == NULL_VECTOR;

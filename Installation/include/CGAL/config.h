@@ -135,6 +135,10 @@
 #  include <CGAL/Testsuite/vc_debug_hook.h>
 #endif
 
+#ifndef CGAL_NO_GDB_AUTOLOAD
+#  include <CGAL/gdb_autoload.h>
+#endif
+
 //----------------------------------------------------------------------//
 //  Support for DLL on Windows (CGAL_EXPORT macro)
 //----------------------------------------------------------------------//
@@ -311,9 +315,6 @@ using std::max;
 #ifndef __has_cpp_attribute
   #define __has_cpp_attribute(x) 0  // Compatibility with non-supporting compilers.
 #endif
-#ifndef __has_warning
-  #define __has_warning(x) 0  // Compatibility with non-clang compilers.
-#endif
 
 #if __has_include(<version>)
 #  include <version>
@@ -462,10 +463,6 @@ namespace CGAL {
 } // end of the temporary compatibility with CGAL-4.14
 #endif // CGAL_NO_DEPRECATED_CODE
 
-#if __has_include(<version>)
-#  include <version>
-#endif
-
 namespace CGAL {
 
 // Typedef for the type of nullptr.
@@ -481,7 +478,7 @@ namespace cpp11{
 }//namespace cpp11
 } //namespace CGAL
 
-#if __cpp_lib_concepts >= 201806L
+#if __cpp_lib_concepts >= 201806L && __cpp_lib_ranges >= 201911L
 #  define CGAL_CPP20_REQUIRE_CLAUSE(x) requires x
 #  define CGAL_TYPE_CONSTRAINT(x) x
 #else
@@ -506,7 +503,7 @@ namespace cpp11{
 #  define CGAL_FALLTHROUGH while(false){}
 #endif
 
-#if __cpp_lib_format >= 201907L
+#if CGAL_CXX20 && __cpp_lib_format >= 201907L
 #  define CGAL_CAN_USE_CXX20_FORMAT 1
 #endif
 
@@ -553,6 +550,11 @@ namespace cpp11{
 #endif // not BOOST_MSVC
 /// @}
 #include <CGAL/license/lgpl.h>
+
+#ifdef __STDC_LIB_EXT1__
+#  define __STDC_WANT_LIB_EXT1__ 1
+#  include <stdlib.h> // for getenv_s
+#endif
 
 //----------------------------------------------------------------------//
 //  Function to define data directory

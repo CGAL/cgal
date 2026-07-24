@@ -98,11 +98,11 @@ Input (left), non-zero (middle) even-odd (right).
 
 \section SectionPolygonRepair_UnionIntersection Union and Intersection Rule
 
-Given several valid polygons these rules apply a %Boolean operation:
+Given several valid polygons these rules apply a Boolean operation:
 In the arrangement of two valid multipolygons with holes, the faces that are in any and both multipolygons
 with holes are in the resulting multipolygon with holes for a union and intersection, respectively.
 
-While this %Boolean operation works for any two valid multipolygons, in the scope of repairing
+While this Boolean operation works for any two valid multipolygons, in the scope of repairing
 it serves to obtain an approximation from outside and inside when applying union and intersection, respectively,
 when the input is similar.
 
@@ -123,7 +123,7 @@ strict criteria:
 - Adjacent collinear edges touching at vertices of degree two are merged
 - The sequence of vertices representing a boundary starts from its
 lexicographically smallest vertex
-- Outer boundaries are oriented counter-clockwise and inner boundaries are
+- Outer boundaries are oriented counterclockwise and inner boundaries are
 oriented clockwise
 - The inner boundaries of a polygon with holes are stored in lexicographic
 order

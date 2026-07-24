@@ -8,10 +8,11 @@ project(Kinetic_surface_reconstruction_Examples)
 find_package(CGAL REQUIRED)
 include(CGAL_CreateSingleSourceCGALProgram)
 
-find_package(Eigen3 3.1.0 REQUIRED)
-if(Eigen3_FOUND)
+find_package(Eigen3 QUIET)
+include(CGAL_Eigen3_support)
+
+if(TARGET CGAL::Eigen3_support)
   message(STATUS "Found Eigen")
-  include(CGAL_Eigen3_support)
 
   set(targets ksr_basic ksr_building ksr_parameters)
 

@@ -59,9 +59,9 @@ public:
     actionAutorefine = new QAction(tr("Autorefine Mesh (Deprecated)"), mw);
     actionNewAutorefine = new QAction(tr("Autorefine"), mw);
     actionAutorefineAndRMSelfIntersections = new QAction(tr("Autorefine and Remove Self-Intersections (Deprecated)"), mw);
-    actionRemoveNeedlesAndCaps = new QAction(tr("Remove Needles And Caps"));
-    actionSnapBorders = new QAction(tr("Snap Boundaries"));
-    actionAddBbox = new QAction(tr("Add Bounding Box"));
+    actionRemoveNeedlesAndCaps = new QAction(tr("Remove Needles And Caps"), mw);
+    actionSnapBorders = new QAction(tr("Snap Boundaries"), mw);
+    actionAddBbox = new QAction(tr("Add Bounding Box"), mw);
 
     actionRemoveIsolatedVertices->setObjectName("actionRemoveIsolatedVertices");
     actionRemoveDegenerateFaces->setObjectName("actionRemoveDegenerateFaces");
@@ -329,7 +329,7 @@ void CGAL_Lab_repair_cgal_lab_plugin::on_actionSnapBorders_triggered()
 
       // post processing
       std::vector<halfedge_descriptor> remaining_cycles;
-      CGAL::Polygon_mesh_processing::extract_boundary_cycles(tm, std::back_inserter(remaining_cycles));
+      CGAL::extract_boundary_cycles(tm, std::back_inserter(remaining_cycles));
 
       for (halfedge_descriptor hc : remaining_cycles)
       {

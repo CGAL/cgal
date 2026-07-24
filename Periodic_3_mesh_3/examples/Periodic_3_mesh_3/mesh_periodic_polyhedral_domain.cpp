@@ -55,7 +55,7 @@ public:
 
   return_type operator()(const Point_3& p) const
   {
-    const Point_3 cp = P3T3::internal::robust_canonicalize_point(p, m_gt);
+    const Point_3 cp = P3T3::internal::construct_canonical_point(p, m_gt);
     CGAL::Bounded_side res = m_sotm(cp);
     return ((res == ON_BOUNDED_SIDE) ? 1 : 2); // set a region to '0' if it is not to be meshed
   }

@@ -19,13 +19,15 @@ if(CGAL_ACTIVATE_CONCURRENT_MESH_3 OR "$ENV{CGAL_ACTIVATE_CONCURRENT_MESH_3}")
 endif()
 
 # Use Eigen
-find_package(Eigen3 3.1.0 QUIET) #(3.1.0 or greater)
+find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
+
 if(NOT TARGET CGAL::Eigen3_support)
   message("NOTICE: All examples require the Eigen3 library, and will not be compiled.")
   return()
 endif()
 
+set(CMAKE_POLICY_DEFAULT_CMP0167 NEW)
 find_package(VTK 9.0
              COMPONENTS ImagingGeneral IOImage
              QUIET)
@@ -70,7 +72,7 @@ if(TARGET ITT::ITT)
   target_compile_definitions(mesh_implicit_domains PRIVATE CGAL_MESH_3_USE_INTEL_ITT)
 endif()
 
-create_single_source_cgal_program( "mesh_polyhedral_domain.cpp" )
+create_single_source_cgal_program("mesh_polyhedral_domain.cpp")
 target_link_libraries(mesh_polyhedral_domain PRIVATE CGAL::Eigen3_support)
 
 create_single_source_cgal_program("mesh_polyhedral_domain_sm.cpp")
@@ -95,7 +97,7 @@ create_single_source_cgal_program("mesh_polyhedral_domain_with_features_sizing.c
 target_link_libraries(mesh_polyhedral_domain_with_features_sizing
                       PRIVATE CGAL::Eigen3_support)
 
-                    create_single_source_cgal_program("mesh_polyhedral_domain_with_edge_distance.cpp")
+create_single_source_cgal_program("mesh_polyhedral_domain_with_edge_distance.cpp")
 target_link_libraries(mesh_polyhedral_domain_with_edge_distance
                       PRIVATE CGAL::Eigen3_support)
 
@@ -103,8 +105,7 @@ create_single_source_cgal_program("mesh_polyhedral_domain_with_features_sm.cpp")
 target_link_libraries(mesh_polyhedral_domain_with_features_sm
                       PRIVATE CGAL::Eigen3_support)
 
-create_single_source_cgal_program(
-  "mesh_polyhedral_domain_with_lipschitz_sizing.cpp")
+create_single_source_cgal_program("mesh_polyhedral_domain_with_lipschitz_sizing.cpp")
 target_link_libraries(mesh_polyhedral_domain_with_lipschitz_sizing
                       PRIVATE CGAL::Eigen3_support)
 
@@ -170,6 +171,7 @@ if(TARGET CGAL::CGAL_ImageIO)
     target_link_libraries(mesh_3D_image_variable_size
                           PRIVATE CGAL::Eigen3_support)
 
+    set(CMAKE_POLICY_DEFAULT_CMP0167 NEW)
     find_package(ITK NAMES ITK InsightToolkit
                      QUIET COMPONENTS ITKCommon ITKThresholding ITKSmoothing ITKImageIntensity)
     if(ITK_FOUND)
@@ -223,7 +225,8 @@ if(CGAL_ACTIVATE_CONCURRENT_MESH_3 AND TARGET CGAL::TBB_support)
     mesh_polyhedral_domain_with_edge_distance
     mesh_polyhedral_domain_with_features_sm
     mesh_polyhedral_domain_with_lipschitz_sizing
-    mesh_two_implicit_spheres_with_balls)
+    mesh_two_implicit_spheres_with_balls
+    surface_mesh_to_tetrahedral_mesh)
     if(TARGET ${target})
       target_link_libraries(${target} PRIVATE CGAL::TBB_support)
     endif()

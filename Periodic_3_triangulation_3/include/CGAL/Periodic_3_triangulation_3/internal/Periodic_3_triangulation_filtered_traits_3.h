@@ -52,7 +52,7 @@ struct Offset_converter_3
 
   using Base::operator();
 
-  Target_off
+  const Target_off&
   operator()(const Source_off &off) const
   {
     return off;
@@ -107,6 +107,24 @@ public:
   }
 
   typedef Filtered_predicate<
+            typename Exact_traits::Compare_x_3,
+            typename Filtering_traits::Compare_x_3,
+            Offset_converter_3<C2E>,
+            Offset_converter_3<C2F> >  Compare_x_3;
+
+  typedef Filtered_predicate<
+            typename Exact_traits::Compare_y_3,
+            typename Filtering_traits::Compare_y_3,
+            Offset_converter_3<C2E>,
+            Offset_converter_3<C2F> >  Compare_y_3;
+
+  typedef Filtered_predicate<
+            typename Exact_traits::Compare_z_3,
+            typename Filtering_traits::Compare_z_3,
+            Offset_converter_3<C2E>,
+            Offset_converter_3<C2F> >  Compare_z_3;
+
+  typedef Filtered_predicate<
             typename Exact_traits::Compare_xyz_3,
             typename Filtering_traits::Compare_xyz_3,
             Offset_converter_3<C2E>,
@@ -117,6 +135,30 @@ public:
             typename Filtering_traits::Orientation_3,
             Offset_converter_3<C2E>,
             Offset_converter_3<C2F> >  Orientation_3;
+
+  Compare_x_3 compare_x_3_object() const
+  {
+    typename Exact_traits::Compare_x_3 pe = traits_e.compare_x_3_object();
+    typename Filtering_traits::Compare_x_3 pf = traits_f.compare_x_3_object();
+
+    return Compare_x_3(pe, pf);
+  }
+
+  Compare_y_3 compare_y_3_object() const
+  {
+    typename Exact_traits::Compare_y_3 pe = traits_e.compare_y_3_object();
+    typename Filtering_traits::Compare_y_3 pf = traits_f.compare_y_3_object();
+
+    return Compare_y_3(pe, pf);
+  }
+
+  Compare_z_3 compare_z_3_object() const
+  {
+    typename Exact_traits::Compare_z_3 pe = traits_e.compare_z_3_object();
+    typename Filtering_traits::Compare_z_3 pf = traits_f.compare_z_3_object();
+
+    return Compare_z_3(pe, pf);
+  }
 
   Compare_xyz_3 compare_xyz_3_object() const
   {

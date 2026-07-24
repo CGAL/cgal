@@ -197,11 +197,11 @@ public:
   void init_subcurve_in_arrangement_flags(size_t n)
   { m_isCurveInArr.resize(n, false); }
 
-  /*! checks if the i'th subcurve is in the arrangement. */
+  /*! checks if the i-th subcurve is in the arrangement. */
   bool is_subcurve_in_arrangement(unsigned int i) const
   { return (m_isCurveInArr[i]); }
 
-  /*! sets the flag indicating whether the i'th subcurve is in the arrangement.
+  /*! sets the flag indicating whether the i-th subcurve is in the arrangement.
    */
   void set_subcurve_in_arrangement(unsigned int i, bool flag)
   { m_isCurveInArr[i] = flag; }

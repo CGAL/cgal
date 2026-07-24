@@ -39,6 +39,7 @@
 \package_listing{Straight_skeleton_2}
 \package_listing{Minkowski_sum_2}
 \package_listing{Polyline_simplification_2}
+\package_listing{Frechet_distance}
 \package_listing{Visibility_2}
 \package_listing{Set_movable_separability_2}
 
@@ -71,9 +72,11 @@
 \package_listing{Triangulation_on_sphere_2}
 \package_listing{Periodic_2_triangulation_2}
 \package_listing{Hyperbolic_triangulation_2}
+\package_listing{Triangulation_on_hyperbolic_surface_2}
 \package_listing{Periodic_4_hyperbolic_triangulation_2}
 \package_listing{Triangulation_3}
 \package_listing{TDS_3}
+\package_listing{Constrained_triangulation_3}
 \package_listing{Periodic_3_triangulation_3}
 \package_listing{Triangulation}
 \package_listing{Alpha_shapes_2}
@@ -89,10 +92,12 @@
 \cgalPackageSection{PartMeshing,Mesh Generation}
 
 \package_listing{Mesh_2}
+\package_listing{Alpha_wrap_2}
 \package_listing{Surface_mesher}
 \package_listing{Skin_surface_3}
 \package_listing{SMDS_3}
 \package_listing{Mesh_3}
+\package_listing{Isosurfacing_3}
 \package_listing{Tetrahedral_remeshing}
 \package_listing{Periodic_3_mesh_3}
 \package_listing{Alpha_wrap_3}
@@ -107,9 +112,12 @@
 \package_listing{Kinetic_surface_reconstruction}
 \package_listing{Optimal_transportation_reconstruction_2}
 
-\cgalPackageSection{PartGeometryProcessing,Geometry Processing}
+\cgalPackageSection{PartPolygonMeshProcessing,Polygon Mesh Processing}
 
 \package_listing{Polygon_mesh_processing}
+\package_listing{PMP_Boolean_operations}
+\package_listing{PMP_Remeshing}
+\package_listing{PMP_Mesh_repair}
 \package_listing{Subdivision_method_3}
 \package_listing{Surface_mesh_segmentation}
 \package_listing{Surface_mesh_simplification}
@@ -118,6 +126,11 @@
 \package_listing{Surface_mesh_shortest_path}
 \package_listing{Surface_mesh_skeletonization}
 \package_listing{Surface_mesh_approximation}
+\package_listing{Heat_method_3}
+\package_listing{Surface_mesh_topology}
+
+\cgalPackageSection{PartPointSetProcessing,Point Set Processing}
+
 \package_listing{Ridges_3}
 \package_listing{Jet_fitting_3}
 \package_listing{Point_set_3}
@@ -126,8 +139,6 @@
 \package_listing{Shape_regularization}
 \package_listing{Stream_lines_2}
 \package_listing{Classification}
-\package_listing{Heat_method_3}
-\package_listing{Surface_mesh_topology}
 
 \cgalPackageSection{PartSearchStructures,Spatial Searching and Sorting}
 
@@ -152,6 +163,7 @@
 
 \package_listing{Interpolation}
 \package_listing{Barycentric_coordinates_2}
+\package_listing{Barycentric_coordinates_3}
 
 \cgalPackageSection{PartSupportLibrary,Support Library}
 

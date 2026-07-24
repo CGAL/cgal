@@ -30,7 +30,10 @@
 #include <algorithm>
 #include <vector>
 #include <queue>
+#include <stack>
 #include <set>
+
+#include <boost/iterator/counting_iterator.hpp>
 
 namespace CGAL {
 
@@ -138,7 +141,7 @@ protected: // DATA MEMBERS
     int dmax_, dcur_; // dimension of the current triangulation
     Vertex_container  vertices_;  // list of all vertices
     Full_cell_container full_cells_; // list of all full cells
-
+    mutable std::vector<Full_cell_handle> visited;
 private:
 
     void clean_dynamic_memory()
@@ -306,10 +309,10 @@ public:
         return s->mirror_index(i);
     }
 
-    int mirror_vertex(Full_cell_handle s, int i) const /* Concept */
+    Vertex_handle mirror_vertex(Full_cell_handle s, int i) const /* Concept */
     {
         CGAL_precondition(Full_cell_handle() != s && check_range(i));
-        return s->mirror_vertex(i);
+        return s->mirror_vertex(i, current_dimension());
     }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - FACETS OPERATIONS
@@ -365,7 +368,7 @@ protected:
 public:
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - REMOVALS
 
-    Vertex_handle collapse_face(const Face &); /* Concept */
+    Vertex_handle contract_face(const Face &); /* Concept */
     void remove_decrease_dimension(Vertex_handle, Vertex_handle); /* Concept */
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - INSERTIONS
@@ -374,12 +377,12 @@ public:
     Vertex_handle insert_in_face(const Face &); /* Concept */
     Vertex_handle insert_in_facet(const Facet &); /* Concept */
     template< typename Forward_iterator >
-    Vertex_handle insert_in_hole(Forward_iterator, Forward_iterator, Facet); /* Concept */
+    Vertex_handle insert_in_hole(Forward_iterator, Forward_iterator, const Facet&); /* Concept */
     template< typename Forward_iterator, typename OutputIterator >
-    Vertex_handle insert_in_hole(Forward_iterator, Forward_iterator, Facet, OutputIterator); /* Concept */
+    Vertex_handle insert_in_hole(Forward_iterator, Forward_iterator, const Facet&, OutputIterator); /* Concept */
 
     template< typename OutputIterator >
-    Full_cell_handle insert_in_tagged_hole(Vertex_handle, Facet, OutputIterator);
+    Full_cell_handle insert_in_tagged_hole(Vertex_handle, const Facet&, OutputIterator);
 
     Vertex_handle insert_increase_dimension(Vertex_handle=Vertex_handle()); /* Concept */
 
@@ -667,8 +670,10 @@ Triangulation_data_structure<Dim, Vb, Fcb>
                     TraversalPredicate & tp,
                     OutputIterator & out) const /* Concept */
 {
+    CGAL_precondition(visited.empty());
     std::queue<Full_cell_handle> queue;
     set_visited(start, true);
+    visited.push_back(start);
     queue.push(start);
     const int cur_dim = current_dimension();
     Facet ft;
@@ -684,6 +689,7 @@ Triangulation_data_structure<Dim, Vb, Fcb>
             if( ! get_visited(n) )
             {
                 set_visited(n, true);
+                visited.push_back(n);
                 if( tp(Facet(s, i)) )
                     queue.push(n);
                 else
@@ -691,7 +697,9 @@ Triangulation_data_structure<Dim, Vb, Fcb>
             }
         }
     }
-    clear_visited_marks(start);
+    for(auto fch : visited)
+        set_visited(fch, false);
+    visited.clear();
     return ft;
 }
 
@@ -776,13 +784,13 @@ Triangulation_data_structure<Dim, Vb, Fcb>
 template <class Dim, class Vb, class Fcb>
 typename Triangulation_data_structure<Dim, Vb, Fcb>::Vertex_handle
 Triangulation_data_structure<Dim, Vb, Fcb>
-::collapse_face(const Face & f) /* Concept */
+::contract_face(const Face & f) /* Concept */
 {
     const int fd = f.face_dimension();
     CGAL_precondition( (1 <= fd ) && (fd < current_dimension()));
     std::vector<Full_cell_handle> simps;
     // save the Face's vertices:
-    Full_cell s;
+    Full_cell s(current_dimension());
     for( int i = 0; i <= fd; ++i )
         s.set_vertex(i, f.vertex(i));
     // compute the star of f
@@ -926,7 +934,7 @@ template <class Dim, class Vb, class Fcb >
 template < typename OutputIterator >
 typename Triangulation_data_structure<Dim, Vb, Fcb>::Full_cell_handle
 Triangulation_data_structure<Dim, Vb, Fcb>
-::insert_in_tagged_hole(Vertex_handle v, Facet f,
+::insert_in_tagged_hole(Vertex_handle v, const Facet& f,
                         OutputIterator new_full_cells)
 {
     CGAL_assertion_msg(is_boundary_facet(f), "starting facet should be on the hole boundary");
@@ -934,13 +942,13 @@ Triangulation_data_structure<Dim, Vb, Fcb>
     const int cur_dim = current_dimension();
     Full_cell_handle new_s;
 
-    std::queue<IITH_task> task_queue;
+    std::stack<IITH_task, std::vector<IITH_task>> task_queue;
     task_queue.push(
     IITH_task(f, mirror_index(full_cell(f), index_of_covertex(f))) );
 
   while (!task_queue.empty())
   {
-    IITH_task task = task_queue.front();
+    IITH_task task = task_queue.top();
     task_queue.pop();
 
     Full_cell_handle old_s = full_cell(task.boundary_facet);
@@ -1028,7 +1036,7 @@ template< class Dim, class Vb, class Fcb >
 template< typename Forward_iterator, typename OutputIterator >
 typename Triangulation_data_structure<Dim, Vb, Fcb>::Vertex_handle
 Triangulation_data_structure<Dim, Vb, Fcb>
-::insert_in_hole(Forward_iterator start, Forward_iterator end, Facet f,
+::insert_in_hole(Forward_iterator start, Forward_iterator end, const Facet& f,
                  OutputIterator out) /* Concept */
 {
     CGAL_expensive_precondition(
@@ -1047,7 +1055,7 @@ template< class Dim, class Vb, class Fcb >
 template< typename Forward_iterator >
 typename Triangulation_data_structure<Dim, Vb, Fcb>::Vertex_handle
 Triangulation_data_structure<Dim, Vb, Fcb>
-::insert_in_hole(Forward_iterator start, Forward_iterator end, Facet f) /* Concept */
+::insert_in_hole(Forward_iterator start, Forward_iterator end, const Facet& f) /* Concept */
 {
     Emptyset_iterator out;
     return insert_in_hole(start, end, f, out);

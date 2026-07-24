@@ -1,4 +1,4 @@
-/// \defgroup PkgConeSpanners2Ref Cone-Based Spanners Reference
+/// \defgroup PkgConeSpanners2Ref Reference Manual
 
 /*!
 \addtogroup PkgConeSpanners2Ref

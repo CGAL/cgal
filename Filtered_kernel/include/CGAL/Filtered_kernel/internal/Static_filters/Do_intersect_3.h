@@ -39,18 +39,17 @@ template < typename K_base, typename SFK >
 class Do_intersect_3
   : public K_base::Do_intersect_3
 {
+  typedef typename K_base::Boolean   Boolean;
   typedef typename K_base::Point_3   Point_3;
   typedef typename K_base::Ray_3     Ray_3;
   typedef typename K_base::Segment_3 Segment_3;
   typedef typename K_base::Triangle_3 Triangle_3;
   typedef typename K_base::Tetrahedron_3 Tetrahedron_3;
   typedef typename K_base::Sphere_3 Sphere_3;
+
   typedef typename K_base::Do_intersect_3 Base;
 
 public:
-
-  typedef typename Base::result_type  result_type;
-
   using Base::operator();
 
   Sign sign_with_error(const double x, const double error) const {
@@ -67,32 +66,31 @@ public:
   // the  statically filtered kernel we avoid
   // that doubles are put into Interval_nt
   // to get taken out again with fit_in_double
-  result_type
+  Boolean
   operator()(const Segment_3 &s, const Triangle_3& t) const
   {
     return Intersections::internal::do_intersect(t,s, SFK());
   }
 
-  result_type
+  Boolean
   operator()(const Triangle_3& t, const Segment_3 &s) const
   {
     return Intersections::internal::do_intersect(t,s, SFK());
   }
 
-  result_type
+  Boolean
   operator()(const Triangle_3 &t0, const Triangle_3& t1) const
   {
     return Intersections::internal::do_intersect(t0,t1, SFK());
   }
 
-
-  result_type
+  Boolean
   operator()(const Bbox_3& b, const Segment_3 &s) const
   {
     return this->operator()(s, b);
   }
 
-  result_type
+  Boolean
   operator()(const Segment_3 &s, const Bbox_3& b) const
   {
     CGAL_BRANCH_PROFILER_3(std::string("semi-static failures/attempts/calls to   : ") +
@@ -111,7 +109,7 @@ public:
     {
       CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
 
-      const Uncertain<result_type> ub =
+      const Uncertain<Boolean> ub =
         Intersections::internal::do_intersect_bbox_segment_aux
         <double,
          true, // bounded at t=0
@@ -127,13 +125,13 @@ public:
     return Base::operator()(s,b);
   }
 
-  result_type
+  Boolean
   operator()(const Bbox_3& b, const Tetrahedron_3 &t) const
   {
     return this->operator()(t, b);
   }
 
-  result_type
+  Boolean
   operator()(const Tetrahedron_3 &t, const Bbox_3& b) const
   {
     CGAL_BRANCH_PROFILER_3(std::string("semi-static failures/attempts/calls to   : ") +
@@ -168,13 +166,13 @@ public:
     return Base::operator()(t,b);
   }
 
-  result_type
+  Boolean
   operator()(const Bbox_3& b, const Ray_3 &r) const
   {
     return this->operator()(r, b);
   }
 
-  result_type
+  Boolean
   operator()(const Ray_3 &r, const Bbox_3& b) const
   {
     CGAL_BRANCH_PROFILER_3(std::string("semi-static failures/attempts/calls to   : ") +
@@ -193,7 +191,7 @@ public:
     {
       CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
 
-      const Uncertain<result_type> ub =
+      const Uncertain<Boolean> ub =
         Intersections::internal::do_intersect_bbox_segment_aux
         <double,
          true, // bounded at t=0
@@ -209,8 +207,7 @@ public:
     return Base::operator()(r,b);
   }
 
-
-  result_type
+  Boolean
   operator()(const Bbox_3& b, const Triangle_3 &t) const
   {
     return this->operator()(t, b);
@@ -487,7 +484,7 @@ public:
     return false;
   };
 
-  result_type
+  Boolean
   operator()(const Triangle_3 &t, const Bbox_3& b) const
   {
     CGAL_BRANCH_PROFILER_3(std::string("semi-static failures/attempts/calls to   : ") +
@@ -616,42 +613,41 @@ public:
     return Base::operator()(t,b);
   }
 
-  result_type
+  Boolean
   operator()(const Bbox_3& b, const Sphere_3 &s) const
   {
     return this->operator()(s, b);
   }
 
-  // The parameter overestimate is used to avoid a filter failure in AABB_tree::closest_point()
-  result_type
-  operator()(const Sphere_3 &s, const Bbox_3& b, bool overestimate = false) const
+  Boolean
+  operator()(const Sphere_3 &s, const Bbox_3& b) const
   {
     CGAL_BRANCH_PROFILER_3(std::string("semi-static failures/attempts/calls to   : ") +
-                           std::string(CGAL_PRETTY_FUNCTION), tmp);
+      std::string(CGAL_PRETTY_FUNCTION), tmp);
 
     Get_approx<Point_3> get_approx; // Identity functor for all points
     const Point_3& c = s.center();
 
     double scx, scy, scz, ssr;
-    double bxmin = b.xmin() , bymin = b.ymin() , bzmin = b.zmin() ,
-           bxmax = b.xmax() , bymax = b.ymax() , bzmax = b.zmax() ;
+    double bxmin = b.xmin(), bymin = b.ymin(), bzmin = b.zmin(),
+      bxmax = b.xmax(), bymax = b.ymax(), bzmax = b.zmax();
 
     if (fit_in_double(get_approx(c).x(), scx) &&
-        fit_in_double(get_approx(c).y(), scy) &&
-        fit_in_double(get_approx(c).z(), scz) &&
-        fit_in_double(s.squared_radius(), ssr))
+      fit_in_double(get_approx(c).y(), scy) &&
+      fit_in_double(get_approx(c).z(), scz) &&
+      fit_in_double(s.squared_radius(), ssr))
     {
       CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
 
-      if ((ssr < 1.11261183279326254436e-293) || (ssr > 2.80889552322236673473e+306)){
+      if ((ssr < 1.11261183279326254436e-293) || (ssr > 2.80889552322236673473e+306)) {
         CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
-        return Base::operator()(s,b);
+        return Base::operator()(s, b);
       }
       double distance = 0;
       double max1 = 0;
       double double_tmp_result = 0;
       double eps = 0;
-      if(scx < bxmin)
+      if (scx < bxmin)
       {
         double bxmin_scx = bxmin - scx;
         max1 = bxmin_scx;
@@ -659,22 +655,18 @@ public:
         distance = square(bxmin_scx);
         double_tmp_result = (distance - ssr);
 
-        if( (max1 < 3.33558365626356687717e-147) || (max1 > 1.67597599124282407923e+153) ){
-          if(overestimate){
-            return true;
-          }else{
-            CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
-            return Base::operator()(s,b);
-          }
+        if ((max1 < 3.33558365626356687717e-147) || (max1 > 1.67597599124282407923e+153)) {
+          CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+          return Base::operator()(s, b);
         }
 
-        eps = 1.99986535548615598560e-15 * (std::max) (ssr, square(max1));
+        eps = 1.99986535548615598560e-15 * (std::max)(ssr, square(max1));
 
-        if (double_tmp_result > eps){
+        if (double_tmp_result > eps) {
           return false;
         }
       }
-      else if(scx > bxmax)
+      else if (scx > bxmax)
       {
         double scx_bxmax = scx - bxmax;
         max1 = scx_bxmax;
@@ -682,139 +674,140 @@ public:
         distance = square(scx_bxmax);
         double_tmp_result = (distance - ssr);
 
-        if( (max1 < 3.33558365626356687717e-147) || (max1 > 1.67597599124282407923e+153)){
-          if(overestimate){
-            return true;
-          }else{
-            CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
-            return Base::operator()(s,b);
-          }
+        if ((max1 < 3.33558365626356687717e-147) || (max1 > 1.67597599124282407923e+153)) {
+          CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+          return Base::operator()(s, b);
         }
 
-        eps = 1.99986535548615598560e-15 * (std::max) (ssr, square(max1));
+        eps = 1.99986535548615598560e-15 * (std::max)(ssr, square(max1));
 
-        if (double_tmp_result > eps){
+        if (double_tmp_result > eps) {
           return false;
         }
       }
 
 
-      if(scy < bymin)
+      if (scy < bymin)
       {
         double bymin_scy = bymin - scy;
-        if(max1 < bymin_scy){
+        if (max1 < bymin_scy) {
           max1 = bymin_scy;
         }
 
         distance += square(bymin_scy);
         double_tmp_result = (distance - ssr);
 
-        if( (max1 < 3.33558365626356687717e-147) || ((max1 > 1.67597599124282407923e+153)) ){
-          if(overestimate){
-            return true;
-          }else{
-            CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
-            return Base::operator()(s,b);
-          }
+        if ((max1 < 3.33558365626356687717e-147) || ((max1 > 1.67597599124282407923e+153))) {
+          CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+          return Base::operator()(s, b);
         }
 
-        eps = 1.99986535548615598560e-15 * (std::max) (ssr, square(max1));
+        eps = 1.99986535548615598560e-15 * (std::max)(ssr, square(max1));
 
-        if (double_tmp_result > eps){
+        if (double_tmp_result > eps) {
           return false;
         }
       }
-      else if(scy > bymax)
+      else if (scy > bymax)
       {
         double scy_bymax = scy - bymax;
-        if(max1 < scy_bymax){
+        if (max1 < scy_bymax) {
           max1 = scy_bymax;
         }
         distance += square(scy_bymax);
         double_tmp_result = (distance - ssr);
 
-        if( ((max1 < 3.33558365626356687717e-147)) || ((max1 > 1.67597599124282407923e+153)) ){
-          if(overestimate){
-            return true;
-          }else{
-            CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
-            return Base::operator()(s,b);
-          }
+        if (((max1 < 3.33558365626356687717e-147)) || ((max1 > 1.67597599124282407923e+153))) {
+          CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+          return Base::operator()(s, b);
         }
 
-        eps = 1.99986535548615598560e-15 * (std::max) (ssr, square(max1));
+        eps = 1.99986535548615598560e-15 * (std::max)(ssr, square(max1));
 
-        if (double_tmp_result > eps){
+        if (double_tmp_result > eps) {
           return false;
         }
       }
 
 
-      if(scz < bzmin)
+      if (scz < bzmin)
       {
         double bzmin_scz = bzmin - scz;
-        if(max1 < bzmin_scz){
+        if (max1 < bzmin_scz) {
           max1 = bzmin_scz;
         }
         distance += square(bzmin_scz);
         double_tmp_result = (distance - ssr);
 
-        if( ((max1 < 3.33558365626356687717e-147)) || ((max1 > 1.67597599124282407923e+153))){
-          if(overestimate){
-            return true;
-          }else{
-            CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
-            return Base::operator()(s,b);
-          }
+        if (((max1 < 3.33558365626356687717e-147)) || ((max1 > 1.67597599124282407923e+153))) {
+          CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+          return Base::operator()(s, b);
         }
 
-        eps = 1.99986535548615598560e-15 * (std::max) (ssr, square(max1));
+        eps = 1.99986535548615598560e-15 * (std::max)(ssr, square(max1));
 
-        if (double_tmp_result > eps){
+        if (double_tmp_result > eps) {
           return false;
         }
       }
-      else if(scz > bzmax)
+      else if (scz > bzmax)
       {
         double scz_bzmax = scz - bzmax;
-        if(max1 < scz_bzmax){
+        if (max1 < scz_bzmax) {
           max1 = scz_bzmax;
         }
 
         distance += square(scz_bzmax);
         double_tmp_result = (distance - ssr);
 
-        if( ((max1 < 3.33558365626356687717e-147)) || ((max1 > 1.67597599124282407923e+153)) ){
-          if(overestimate){
-            return true;
-          }else{
-            CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
-            return Base::operator()(s,b);
-          }
+        if (((max1 < 3.33558365626356687717e-147)) || ((max1 > 1.67597599124282407923e+153))) {
+          CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+          return Base::operator()(s, b);
         }
 
-        eps = 1.99986535548615598560e-15 * (std::max) (ssr, square(max1));
+        eps = 1.99986535548615598560e-15 * (std::max)(ssr, square(max1));
 
-        if (double_tmp_result > eps){
+        if (double_tmp_result > eps) {
           return false;
         }
       }
 
-      // double_tmp_result and eps were growing all the time
-      // no need to test for > eps as done earlier in at least one case
-      if (double_tmp_result < -eps){
-        return true;
-      } else {
-        if(overestimate){
-          return true;
+      // If the center is inside the box, check the distance to the closest box face and the furthest corner.
+      if (distance == 0) {
+        double dx = (std::max)(bxmax - scx, scx - bxmin);
+        double dy = (std::max)(bymax - scy, scy - bymin);
+        double dz = (std::max)(bzmax - scz, scz - bzmin);
+
+        max1 = (std::max)(dx, (std::max)(dy, dz));
+        double min1 = (std::min)(dx, (std::min)(dy, dz));
+
+        dx = square(dx);
+        dy = square(dy);
+        dz = square(dz);
+
+        if ((min1 < 3.33558365626356743286e-147) || (max1 > 1.67597599124282389316e+153) ||
+            (ssr < 1.11261183279326296156e-293) || (ssr > 2.80889552322236642288e+306))
+        {
+          CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+          return Base::operator()(s, b);
         }
-        CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
-        return Base::operator()(s,b);
+
+        eps = 1.99986535548615559117e-15 * (std::max)((std::max)(ssr, dx), (std::max)(dy, dz));
+
+        distance = ssr - dx - dy - dz;
+
+        // Is the box fully contained in the sphere?
+        if (distance > eps)
+          return false;
+
+        // Does the box intersect the sphere or is the sphere fully contained in the box?
+        if (distance < -eps)
+          return true;
       }
 
       CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
     }
-    return Base::operator()(s,b);
+    return Base::operator()(s, b);
   }
 
 

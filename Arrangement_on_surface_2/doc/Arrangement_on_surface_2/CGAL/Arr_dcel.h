@@ -7,8 +7,8 @@ namespace CGAL {
  * class templates and other templates.  It is parameterized by a geometry
  * traits type and optionally by a vertex, halfedge, or face types. By default,
  * the `Arr_dcel` class template uses the \link
- * ArrangementBasicTraits_2::Point_2 `Point_2`\endlink and \link
- * ArrangementBasicTraits_2::X_monotone_curve_2 `X_monotone_curve_2`\endlink
+ * AosBasicTraits_2::Point_2 `Point_2`\endlink and \link
+ * AosBasicTraits_2::X_monotone_curve_2 `X_monotone_curve_2`\endlink
  * types nested in the traits type to instantiate the vertex and base halfedge
  * types, respectively. Thus, by default the \dcel only stores the topological
  * incidence relations and the geometric data attached to vertices and
@@ -16,15 +16,15 @@ namespace CGAL {
  * overridden. Notice that if the vertex and halfedge types are overridden, the
  * traits type is ignored.
  *
- * \cgalModels{ArrangementDcelWithRebind}
+ * \cgalModels{AosDcelWithRebind}
  *
  * \tparam Traits a geometry traits type, which is a model of the
- *                `ArrangementBasicTraits_2` concept.
- * \tparam V the vertex type, which is a model of the `ArrangementDcelVertex`
+ *                `AosBasicTraits_2` concept.
+ * \tparam V the vertex type, which is a model of the `AosDcelVertex`
  *           concept.
  * \tparam H the halfedge type, which is a model of the
- *            `ArrangementDcelHalfedge` concept.
- * \tparam F the face type, which is a model of the `ArrangementDcelFace`
+ *            `AosDcelHalfedge` concept.
+ * \tparam F the face type, which is a model of the `AosDcelFace`
  *           concept.
  *
  * \sa `Arr_dcel_base<V, H, F>`
@@ -33,7 +33,6 @@ template <typename Traits,
           typename V = Arr_vertex_base<typename Traits::Point_2>,
           typename H = Arr_halfedge_base<typename Traits::X_monotone_curve_2>,
           typename F = Arr_face_base>
-class Arr_dcel : public Arr_dcel_base<V, H, F> {
-};
+class Arr_dcel : public Arr_dcel_base<V, H, F> {};
 
 } /* end namespace CGAL */

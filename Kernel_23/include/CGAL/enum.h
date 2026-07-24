@@ -21,8 +21,6 @@
 #include <CGAL/Kernel/Same_uncertainty.h>
 #include <CGAL/Origin.h>
 
-// If you add/change one type here, please update Is_a_predicate.h as well.
-
 namespace CGAL {
 
 enum  Sign
@@ -98,6 +96,12 @@ enum Box_parameter_space_2
         INTERIOR,
         EXTERIOR
      };
+
+enum class API_version {
+  any = 0,
+  v1 = 1,
+  v2 = 2,
+};
 
 template < typename T, typename U >
 inline

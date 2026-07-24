@@ -572,7 +572,7 @@ public:
     int k;
 
     for (k = 1; k <= 2; ++k) {
-      // Get the integer coefficients of the k'th auxiliary conic curve.
+      // Get the integer coefficients of the k-th auxiliary conic curve.
       aux_rat_coeffs[0] = (k == 1) ? r_1 : r_2;
       aux_rat_coeffs[1] = (k == 1) ? s_1 : s_2;
       aux_rat_coeffs[2] = (k == 1) ? t_1 : t_2;
@@ -593,7 +593,7 @@ public:
       }
 
       // Compute the x- and y-coordinates of intersection points of the base
-      // conic and the k'th auxiliary conic.
+      // conic and the k-th auxiliary conic.
       n_xs = compute_resultant_roots(nt_traits,
                                      base_coeffs[0], base_coeffs[1],
                                      base_coeffs[2],
@@ -1173,7 +1173,7 @@ protected:
     //  cos(phi)*x + sin(phi)*y - (cos(phi)*x0 + sin(phi)*y0) = 0
     //
     // We store the equation of this line in the extra data structure and also
-    // the sign (side of half-plane) our arc occupies with respect to the line.
+    // the sign (side of halfplane) our arc occupies with respect to the line.
     m_extra_data = new Extra_data;
 
     m_extra_data->a = cos_phi;

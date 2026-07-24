@@ -162,7 +162,7 @@ public:
 public:
 // The face_iterator_base_begin  gives the possibility to iterate over all
 // faces in the container  independently of the dimension.
-  // public for the need of file_ouput() of Constrained triangulation
+  // public for the need of file_output() of Constrained triangulation
   // should be made private later
 
   Face_iterator face_iterator_base_begin() const    {
@@ -2302,7 +2302,7 @@ set_adjacency(Face_handle fh,
               int ih,
               std::map< Vh_pair, Edge>& edge_map)
 {
-  // set adjacency to (fh,ih) using the the map edge_map
+  // set adjacency to (fh,ih) using the map edge_map
   // or insert (fh,ih) in edge map
   Vertex_handle vhcw  =  fh->vertex(cw(ih));
   Vertex_handle vhccw =  fh->vertex(ccw(ih));

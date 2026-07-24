@@ -51,6 +51,12 @@ public:
   using Line_3 = typename Kernel::Line_3;
   using Plane_3 = typename Kernel::Plane_3;
   using Triangle_2 = typename Kernel::Triangle_2;
+  using IkFT = typename Intersection_kernel::FT;
+  using IkVector_2 = typename Intersection_kernel::Vector_2;
+  using IkLine_2 = typename Intersection_kernel::Line_2;
+  using IkPoint_2 = typename Intersection_kernel::Point_2;
+  using IkSegment_2 = typename Intersection_kernel::Segment_2;
+  using IkTriangle_2 = typename Intersection_kernel::Triangle_2;
 
   using Mesh = CGAL::Surface_mesh<Point_2>;
   using Intersection_graph = CGAL::KSP_3::internal::Intersection_graph<Kernel, Intersection_kernel>;
@@ -78,27 +84,75 @@ public:
   using V_original_map = typename Mesh::template Property_map<Vertex_index, bool>;
   using V_time_map = typename Mesh::template Property_map<Vertex_index, std::vector<FT> >;
 
-  struct Face_event {
-    Face_event() {}
-    Face_event(std::size_t sp_idx, FT time, IEdge edge, IFace face) : support_plane(sp_idx), time(time), crossed_edge(edge), face(face) {}
-    std::size_t support_plane;
-    typename Intersection_kernel::FT time;
-    typename Intersection_kernel::FT intersection_bary;
+  struct Cached_event {
+    IkFT t;
+    IkFT u;
+    IkPoint_2 p;
+    IEdge e = Intersection_graph::null_iedge();// for unconstrained vertices
+    IVertex d  = Intersection_graph::null_ivertex();// for constrained vertices
+  };
+
+  struct Vertex_event {
+    Vertex_event() : vertex(-1), other(-1), time(-1), crossed_edge(Intersection_graph::null_iedge()), destination(Intersection_graph::null_ivertex()) {}
+    Vertex_event(Cached_event& ce, std::size_t v) : vertex(v), other(-1), time(ce.t), u(ce.u), p(ce.p), crossed_edge(ce.e), destination(ce.d) {}
+    std::size_t vertex, other;
+    IkFT time;
+    IkFT u;
+    IkPoint_2 p;
     IEdge crossed_edge;
-    IFace face; // The face that does not yet belong to the region.
+    IVertex destination; // Target ivertex for constrained vertices.
+  };
+
+  struct Vertex {
+    Vertex() : sp_idx(std::size_t(-1)), queued_events(0) {}
+    Vertex(std::size_t sp_idx, const IkPoint_2& p0, const IkVector_2& v, IkFT t_init = 0)
+      : sp_idx(sp_idx), p0(p0), v(v), t_init(t_init), ivertex(-1), itarget(-1), moving(true), k(0), face(std::size_t(-1)), other(-1), constraints(),
+      constraint_edge(IVertex(-1), IVertex(-1), nullptr), other_constraint_edge(IVertex(-1), IVertex(-1), nullptr), queued_events(0) {
+    }
+
+    void stop(const Vertex_event &event) {
+      moving = false;
+      t_init = event.time;
+      v = IkVector_2(0, 0);
+      p0 = event.p;
+      ivertex = itarget;
+
+      known_intersections.clear();
+      cached_events.clear();
+      queued_events = 0;
+    }
+
+    std::size_t sp_idx;
+    IkPoint_2 p0;
+    IkVector_2 v;
+    IkFT t_init;
+    IVertex ivertex, itarget;
+    bool moving;
+    int k;
+    std::size_t face;
+    std::size_t other; // If the vertex is constrained, it may have a mirrored vertex in the neighbor face.
+    std::set<std::size_t> constraints; // line indices
+    IEdge constraint_edge, other_constraint_edge;
+    // Reference from edge back to moving vertices is required.
+    std::unordered_map<std::size_t, Cached_event> known_intersections; // Cache to avoid recalculating intersections.
+    std::list<Cached_event> cached_events;
+    int queued_events;
   };
 
   struct Data {
-    Data() : mesh(),
+    Data(std::vector<Vertex> &vertices)
+      : mesh(),
       v_ivertex_map(mesh.template add_property_map<Vertex_index, IVertex>("v:ivertex", Intersection_graph::null_ivertex()).first),
       v_iedge_map(mesh.template add_property_map<Vertex_index, IEdge>("v:iedge", Intersection_graph::null_iedge()).first),
       e_iedge_map(mesh.template add_property_map<Edge_index, IEdge>("e:iedge", Intersection_graph::null_iedge()).first),
       input_map(mesh.template add_property_map<Face_index, std::vector<std::size_t> >("f:input", std::vector<std::size_t>()).first),
       f_initial_map(mesh.template add_property_map<Face_index, bool >("f:initial", false).first),
-      v_original_map(mesh.template add_property_map<Vertex_index, bool>("v:original", false).first) {}
+      v_original_map(mesh.template add_property_map<Vertex_index, bool>("v:original", false).first),
+      vertices(vertices) {}
 
     bool is_bbox;
     Point_2 centroid;
+    IkPoint_2 ikcentroid;
     Plane_3 plane;
     typename Intersection_kernel::Plane_3 exact_plane;
     Mesh mesh;
@@ -110,20 +164,24 @@ public:
     F_bool_map f_initial_map;
     V_original_map v_original_map;
     std::map<IEdge, std::pair<IFace, IFace> > iedge2ifaces;
+    std::unordered_map<std::size_t, typename Intersection_kernel::Line_2> lines, bbox_lines;
     std::set<IFace> ifaces; // All ifaces in the support plane
     std::vector<IFace> initial_ifaces; // IFaces which intersect with the input polygon and are thus part of the mesh before the propagation starts.
     std::vector<Face_index> initial_pfaces;
     std::map<IVertex, Vertex_index> ivertex2pvertex;
-    IEdge_set unique_iedges;
+    IEdge_set iedges;
     std::set<std::size_t> crossed_lines;
 
-    std::vector<IEdge> iedges;
     std::vector<Point_2> original_vertices;
     std::vector<typename Intersection_kernel::Point_2> exact_vertices;
     std::vector<Vector_2> original_vectors;
     std::vector<Direction_2> original_directions;
     std::vector<typename Intersection_kernel::Direction_2> exact_directions;
     std::vector<typename Intersection_kernel::Ray_2> original_rays;
+    std::unordered_map<IFace, std::list<std::size_t> > polygons;
+    std::unordered_map<IFace, Face_index> iface2pface;
+    std::unordered_map<IFace, std::list<IEdge>> borders;
+    std::vector<Vertex> &vertices;
 
     FT distance_tolerance;
     FT angle_tolerance;
@@ -132,6 +190,9 @@ public:
 
     int k;
   };
+public:
+  int active_polygons = 0;
+  int ea = 0, eb = 0, ec1 = 0, ec2 = 0, ed1 = 0, ed2 = 0;
 
 private:
   static constexpr bool identical_kernel = !std::is_same_v<Kernel, Intersection_kernel>;
@@ -139,21 +200,11 @@ private:
   std::shared_ptr<Data> m_data;
 
 public:
-  Support_plane() : m_data(std::make_shared<Data>()) {}
+  //Support_plane() : m_data(std::make_shared<Data>()) {}
 
   template<typename PointRange>
-  Support_plane(const PointRange& polygon, const bool is_bbox, typename Intersection_kernel::Plane_3 plane) :
-    m_data(std::make_shared<Data>()) {
-
-    std::vector<Point_3> points;
-    points.reserve(polygon.size());
-    for (const auto& point : polygon) {
-      points.push_back(Point_3(
-        static_cast<FT>(point.x()),
-        static_cast<FT>(point.y()),
-        static_cast<FT>(point.z())));
-    }
-    CGAL_assertion(points.size() == polygon.size());
+  Support_plane(const PointRange& polygon, const bool is_bbox, typename Intersection_kernel::Plane_3 plane, std::vector<Vertex> &vertices)
+    : m_data(std::make_shared<Data>(vertices)) {
 
     From_exact from_exact;
 
@@ -165,32 +216,23 @@ public:
     m_data->angle_tolerance = 0;
     m_data->actual_input_polygon = static_cast<std::size_t>(- 1);
 
-    std::vector<Triangle_2> tris(points.size() - 2);
-    for (std::size_t i = 2; i < points.size(); i++) {
-      tris[i - 2] = Triangle_2(to_2d(points[0]), to_2d(points[i - 1]), to_2d(points[i]));
+    std::vector<IkPoint_2> points;
+    points.reserve(polygon.size());
+    for (const auto& point : polygon) {
+      points.push_back(to_2d(point));
     }
+    CGAL_assertion(points.size() == polygon.size());
 
-    m_data->centroid = CGAL::centroid(tris.begin(), tris.end(), CGAL::Dimension_tag<2>());
+    m_data->ikcentroid = CGAL::centroid(points.begin(), points.end(), CGAL::Dimension_tag<0>());
+    m_data->centroid = from_exact(m_data->ikcentroid);
 
     add_property_maps();
   }
 
-  Support_plane(const std::vector<typename Intersection_kernel::Point_3>& polygon, const bool is_bbox) :
-    m_data(std::make_shared<Data>()) {
+  Support_plane(const std::vector<typename Intersection_kernel::Point_3>& polygon, const bool is_bbox, std::vector<Vertex>& vertices)
+    : m_data(std::make_shared<Data>(vertices)) {
 
     From_exact from_exact;
-
-    std::vector<Point_3> points;
-    points.reserve(polygon.size());
-    for (const auto& point : polygon) {
-      points.push_back(Point_3(
-        from_exact(point.x()),
-        from_exact(point.y()),
-        from_exact(point.z())));
-    }
-    CGAL_assertion_code(const std::size_t n = points.size();)
-    CGAL_assertion(n == polygon.size());
-    CGAL_assertion(n != 0);
 
     m_data->k = 0;
     m_data->exact_plane = typename Intersection_kernel::Plane_3(polygon[0], polygon[1], polygon[2]);
@@ -200,18 +242,22 @@ public:
     m_data->angle_tolerance = 0;
     m_data->actual_input_polygon = static_cast<std::size_t>(- 1);
 
-    std::vector<Triangle_2> tris(points.size() - 2);
-    for (std::size_t i = 2; i < points.size(); i++) {
-      tris[i - 2] = Triangle_2(to_2d(points[0]), to_2d(points[i - 1]), to_2d(points[i]));
+    std::vector<IkPoint_2> points;
+    points.reserve(polygon.size());
+    for (const auto& point : polygon) {
+      points.push_back(to_2d(point));
     }
+    CGAL_assertion_code(const std::size_t n = points.size();)
+    CGAL_assertion(n == polygon.size());
+    CGAL_assertion(n != 0);
 
-    m_data->centroid = CGAL::centroid(tris.begin(), tris.end(), CGAL::Dimension_tag<2>());
+    m_data->ikcentroid = CGAL::centroid(points.begin(), points.end(), CGAL::Dimension_tag<0>());
+    m_data->centroid = from_exact(m_data->ikcentroid);
 
     add_property_maps();
   }
 
   void add_property_maps() {
-
     m_data->v_ivertex_map = m_data->mesh.template add_property_map<Vertex_index, IVertex>("v:ivertex", Intersection_graph::null_ivertex()).first;
     m_data->v_iedge_map = m_data->mesh.template add_property_map<Vertex_index, IEdge>("v:iedge", Intersection_graph::null_iedge()).first;
     m_data->e_iedge_map = m_data->mesh.template add_property_map<Edge_index, IEdge>("e:iedge", Intersection_graph::null_iedge()).first;
@@ -275,7 +321,6 @@ public:
     if (n == Mesh::null_halfedge()) {
       std::cout << " NULL_HALFEDGE!";
     }
-    //std::cout << "edges: " << border.size() << std::endl;
   }
 
   void get_border(Intersection_graph& igraph, const Face_index& fi, std::vector<IEdge>& border) {
@@ -296,7 +341,6 @@ public:
     if (h == Mesh::null_halfedge()) {
       std::cout << " NULL_HALFEDGE!";
     }
-    //std::cout << "edges: " << border.size() << std::endl;
   }
 
   Data& data() { return *m_data; }
@@ -312,6 +356,77 @@ public:
   void clear_pfaces() {
     m_data->mesh.clear();
     add_property_maps();
+  }
+
+  static void check_edge_is_turning(const Vertex& v1, const Vertex& v2) {
+    IkFT t_min = ((v1.t_init < v2.t_init) ? v2.t_init : v1.t_init) + 1;
+    IkPoint_2 v1p = v1.p0 + (t_min - v1.t_init) * v1.v;
+    IkPoint_2 v2p = v2.p0 + (t_min - v2.t_init) * v2.v;
+    IkPoint_2 v1_t = v1p + v1.v;
+    IkPoint_2 v2_t = v2p + v2.v;
+    IkVector_2 e1 = v2p - v1p;
+    IkVector_2 e2 = v2_t - v1_t;
+    CGAL_assertion((e1.x() * e2.y() - e1.y() * e2.x()) == 0); // Collinear
+  }
+
+  static void check_edge_is_turning(const Vertex& v1, const Vertex& v2, IkVector_2& v) {
+    IkFT t_min = ((v1.t_init < v2.t_init) ? v2.t_init : v1.t_init) + 1;
+    IkPoint_2 v1p = v1.p0 + (t_min - v1.t_init) * v1.v;
+    IkPoint_2 v2p = v2.p0 + (t_min - v2.t_init) * v2.v;
+    IkPoint_2 v1_t = v1p + v1.v;
+    IkPoint_2 v2_t = v2p + v2.v;
+    IkPoint_2 v1_2t = v1p + v1.v + v1.v;
+    IkPoint_2 v2_2t = v2p + v2.v + v2.v;
+    IkVector_2 e1 = v2p - v1p;
+    IkVector_2 e2 = v2_t - v1_t;
+    IkVector_2 e3 = v2_2t - v1_2t;
+    CGAL_assertion((e1.x() * e2.y() - e1.y() * e2.x()) == 0); // Collinear
+    CGAL_assertion((e3.x() * e2.y() - e3.y() * e2.x()) == 0); // Collinear
+    v = e1;
+  }
+
+  static IkVector_2 calculate_edge_speed(const Vertex& a, const Vertex& b, const IkPoint_2& intersection, const IkLine_2& line) {
+    CGAL_assertion_code(check_edge_is_turning(a, b));
+    IkPoint_2 a_t = a.p0 + a.v;
+    IkPoint_2 b_t = b.p0 + b.v;
+
+    bool half = (a_t == b_t);
+    if (half) {
+      a_t = a.p0 + a.v / FT(2);
+      b_t = b.p0 + b.v / FT(2);
+    }
+
+    IkPoint_2 i_t;
+    auto res = CGAL::intersection(line, IkLine_2(a_t, b_t));
+    CGAL::assign(i_t, res);
+
+    IkVector_2 edge_vec = i_t - intersection;
+    if (half)
+      edge_vec = edge_vec * FT(2);
+
+    return edge_vec;
+  }
+
+  static IkVector_2 calculate_edge_speed(const Vertex& a, const Vertex& b, const IkPoint_2& intersection, const IkLine_2& line, const IkFT &t) {
+    CGAL_assertion_code(check_edge_is_turning(a, b));
+    IkPoint_2 a_t = a.p0 + (1 + t - a.t_init) * a.v;
+    IkPoint_2 b_t = b.p0 + (1 + t - b.t_init) * b.v;
+
+    bool half = (a_t == b_t);
+    if (half) {
+      a_t = a.p0 + (0.5 + t - a.t_init) * a.v;
+      b_t = b.p0 + (0.5 + t - b.t_init) * b.v;
+    }
+
+    IkPoint_2 i_t;
+    auto res = CGAL::intersection(line, IkLine_2(a_t, b_t));
+    CGAL::assign(i_t, res);
+
+    IkVector_2 edge_vec = i_t - intersection;
+    if (half)
+      edge_vec = edge_vec * FT(2);
+
+    return edge_vec;
   }
 
   const std::array<Vertex_index, 4>
@@ -338,23 +453,16 @@ public:
   }
 
   template<typename Pair>
-  std::size_t add_input_polygon(
-    const std::vector<Pair>& points,
-    const std::vector<std::size_t>& input_indices) {
+  void add_input_polygon(
+    const std::vector<Pair>& points) {
 
     CGAL_assertion(is_simple_polygon(points));
-    CGAL_assertion(is_convex_polygon(points));
+    //CGAL_assertion(is_convex_polygon(points));
     CGAL_assertion(is_valid_polygon(points));
 
-    To_exact to_exact;
     From_exact from_exact;
 
     CGAL_assertion(points.size() >= 3);
-    std::vector<Triangle_2> tris(points.size() - 2);
-    for (std::size_t i = 2; i < points.size(); i++)
-      tris[i - 2] = Triangle_2(from_exact(points[0].first), from_exact(points[i - 1].first), from_exact(points[i].first));
-
-    m_data->centroid = CGAL::centroid(tris.begin(), tris.end(), CGAL::Dimension_tag<2>());
 
     std::vector<Vertex_index> vertices;
     const std::size_t n = points.size();
@@ -367,22 +475,23 @@ public:
     m_data->exact_directions.resize(n);
     m_data->original_rays.resize(n);
 
-    FT sum_length = FT(0);
+    for (std::size_t i = 0; i < n; ++i) {
+      m_data->exact_vertices[i] = points[i].first;
+    }
+
+    m_data->ikcentroid = CGAL::centroid(m_data->exact_vertices.begin(), m_data->exact_vertices.end(), CGAL::Dimension_tag<0>());
+    m_data->centroid = from_exact(m_data->ikcentroid);
+
     std::vector<typename Intersection_kernel::Vector_2> directions;
     directions.reserve(n);
 
     std::vector<std::pair<std::size_t, typename Intersection_kernel::Direction_2> > dir_vec;
 
-    FT num = 0;
     for (const auto& pair : points) {
       const auto& point = pair.first;
-      directions.push_back(typename Intersection_kernel::Vector_2(to_exact(m_data->centroid), point));
-      const FT length = CGAL::sqrt(CGAL::abs(from_exact(directions.back() * directions.back())));
-      sum_length += length;
-      num += 1;
+      directions.push_back(typename Intersection_kernel::Vector_2(m_data->ikcentroid, point));
     }
     CGAL_assertion(directions.size() == n);
-    sum_length /= num;
 
     dir_vec.reserve(n);
     for (std::size_t i = 0; i < n; i++)
@@ -396,17 +505,15 @@ public:
 
     for (std::size_t i = 0; i < n; ++i) {
       const auto& point = points[dir_vec[i].first].first;
-      const auto vi = m_data->mesh.add_vertex(from_exact(point));
       m_data->original_vertices[i] = from_exact(point);
       m_data->exact_vertices[i] = point;
-      m_data->original_vectors[i] = from_exact(directions[dir_vec[i].first]) / sum_length;
+      m_data->original_vectors[i] = from_exact(directions[dir_vec[i].first]);
       m_data->original_directions[i] = Direction_2(from_exact(directions[dir_vec[i].first]));
       m_data->exact_directions[i] = dir_vec[i].second;
-      m_data->original_rays[i] = typename Intersection_kernel::Ray_2(point, directions[dir_vec[i].first] / sum_length);
-      m_data->v_original_map[vi] = true;
-      vertices.push_back(vi);
+      m_data->original_rays[i] = typename Intersection_kernel::Ray_2(point, directions[dir_vec[i].first]);
     }
 
+    CGAL_assertion_code(
     for (std::size_t i = 0; i < m_data->original_directions.size(); i++) {
       for (std::size_t j = 0; j < m_data->original_directions.size(); j++) {
         if (j < i)
@@ -414,16 +521,7 @@ public:
         if (j > i)
           CGAL_assertion(m_data->original_directions[i] < m_data->original_directions[j]);
       }
-    }
-
-    const auto fi = m_data->mesh.add_face(vertices);
-    CGAL_assertion(fi != Mesh::null_face());
-    auto& input_vec = m_data->input_map[fi];
-    CGAL_assertion(input_vec.empty());
-    for (const std::size_t input_index : input_indices) {
-      input_vec.push_back(input_index);
-    }
-    return static_cast<std::size_t>(fi);
+    });
   }
 
   bool has_crossed_line(std::size_t line) const {
@@ -546,6 +644,18 @@ public:
     return out;
   }
 
+  void add_face(IFace &face, Face_index fi) {
+    m_data->iface2pface[face] = fi;
+  }
+
+  const Face_index face(IFace &face) {
+    auto it = m_data->iface2pface.find(face);
+    if (it == m_data->iface2pface.end())
+      return Face_index();
+    else
+      return it->second;
+  }
+
   const std::pair<Face_index, Face_index> faces(const Vertex_index& vi) const {
 
     for (const auto& he : halfedges_around_target(halfedge(vi, m_data->mesh), m_data->mesh)) {
@@ -660,11 +770,8 @@ public:
 
   const std::set<IFace>& ifaces() const { return m_data->ifaces; }
 
-  const IEdge_set& unique_iedges() const { return m_data->unique_iedges; }
-  IEdge_set& unique_iedges() { return m_data->unique_iedges; }
-
-  const std::vector<IEdge>& iedges() const { return m_data->iedges; }
-  std::vector<IEdge>& iedges() { return m_data->iedges; }
+  const IEdge_set& iedges() const { return m_data->iedges; }
+  IEdge_set& iedges() { return m_data->iedges; }
 
   const Point_2 to_2d(const Point_3& point) const {
     return m_data->plane.to_2d(point);
@@ -676,8 +783,9 @@ public:
       m_data->plane.to_2d(Point_3(0, 0, 0) + vec));
   }
 
-  template<typename = typename std::enable_if<identical_kernel>::type >
-  const typename Intersection_kernel::Point_2 to_2d(const typename Intersection_kernel::Point_3& point) const {
+  template<class IK = Intersection_kernel>
+  auto to_2d(const typename Intersection_kernel::Point_3& point) const
+    -> std::enable_if_t<!std::is_same_v<Kernel, IK>, const typename Intersection_kernel::Point_2> {
     return m_data->exact_plane.to_2d(point);
   }
 
@@ -687,8 +795,9 @@ public:
       m_data->plane.to_2d(line.point() + line.to_vector()));
   }
 
-  template<typename = typename std::enable_if<identical_kernel>::type >
-  const typename Intersection_kernel::Line_2 to_2d(const typename Intersection_kernel::Line_3& line) const {
+  template <typename IK = Intersection_kernel>
+  auto to_2d(const typename Intersection_kernel::Line_3& line) const
+      -> std::enable_if_t<!std::is_same_v<Kernel, IK>, const typename Intersection_kernel::Line_2> {
     return typename Intersection_kernel::Line_2(
       m_data->exact_plane.to_2d(line.point()),
       m_data->exact_plane.to_2d(line.point() + line.to_vector()));
@@ -700,25 +809,21 @@ public:
       m_data->plane.to_2d(segment.target()));
   }
 
-  template<typename = typename std::enable_if<identical_kernel>::type >
-  const typename Intersection_kernel::Segment_2 to_2d(const typename Intersection_kernel::Segment_3& segment) const {
+  template <typename IK = Intersection_kernel>
+  auto to_2d(const typename Intersection_kernel::Segment_3& segment) const
+      -> std::enable_if_t<!std::is_same_v<Kernel, IK>, const typename Intersection_kernel::Segment_2> {
     return typename Intersection_kernel::Segment_2(
       m_data->exact_plane.to_2d(segment.source()),
       m_data->exact_plane.to_2d(segment.target()));
-  }
-
-  const Vector_3 to_3d(const Vector_2& vec) const {
-    return Vector_3(
-      m_data->plane.to_3d(Point_2(FT(0), FT(0))),
-      m_data->plane.to_3d(Point_2(FT(0), FT(0)) + vec));
   }
 
   const Point_3 to_3d(const Point_2& point) const {
     return m_data->plane.to_3d(point);
   }
 
-  template<typename = typename std::enable_if<identical_kernel>::type >
-  const typename Intersection_kernel::Point_3 to_3d(const typename Intersection_kernel::Point_2& point) const {
+  template <typename IK = Intersection_kernel>
+  auto to_3d(const typename Intersection_kernel::Point_2& point) const
+    -> std::enable_if_t<!std::is_same_v<Kernel, IK>, const typename Intersection_kernel::Point_3> {
     return m_data->exact_plane.to_3d(point);
   }
 

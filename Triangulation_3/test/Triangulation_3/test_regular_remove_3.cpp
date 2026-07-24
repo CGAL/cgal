@@ -32,8 +32,11 @@ int degeneracy_counter = 0;
 // This gives a rough idea of how degenerate a data set is.
 struct traits : public K
 {
-    struct Power_side_of_oriented_power_sphere_3 : public K::Power_side_of_oriented_power_sphere_3
+    struct Power_side_of_oriented_power_sphere_3
+      : public K::Power_side_of_oriented_power_sphere_3
     {
+      using Oriented_side = K::Oriented_side;
+
       typedef K::Weighted_point_3 Weighted_point;
         typedef K::Power_side_of_oriented_power_sphere_3 P3;
         Oriented_side operator() (const Weighted_point &p0,
@@ -222,7 +225,7 @@ public:
 // Inserts number points in the triangulation and the multiset, using PI as the
 // point generator.
 template < class PI >
-void insert (Cls &T, point_set &points, int number)
+void insert_points (Cls &T, point_set &points, int number)
 {
     int i = 1;
     for (PI pi (number), pend; pi != pend; ++pi, ++i) {
@@ -345,28 +348,28 @@ int main(int argc, char **argv)
     std::cout << " test dimension 0" << std::endl;
     randgen.seed(seed0);
 
-    insert<point_iterator_0> (T, points, 10);
+    insert_points<point_iterator_0> (T, points, 10);
     dim_jump (T, Point (0, 0, 1), 0);
     remove (T, points, 10);
 
     std::cout << " test dimension 1" << std::endl;
     randgen.seed(seed1);
 
-    insert<point_iterator_1> (T, points, 20);
+    insert_points<point_iterator_1> (T, points, 20);
     dim_jump (T, Point (0, 0, 1), 1);
     remove (T, points, 20);
 
     std::cout << " test dimension 2" << std::endl;
     randgen.seed(seed2);
 
-    insert<point_iterator_2> (T, points, 100);
+    insert_points<point_iterator_2> (T, points, 100);
     dim_jump (T, Point (0, 0, 1), 2);
     remove (T, points, 100);
 
     std::cout << " test dimension 3" << std::endl;
     randgen.seed(seed3);
 
-    insert<point_iterator_3> (T, points, 500);
+    insert_points<point_iterator_3> (T, points, 500);
     assert(T.dimension() == 3);
     remove (T, points, 500);
 

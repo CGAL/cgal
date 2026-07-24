@@ -1533,7 +1533,7 @@ side_of_circle(Cell_handle c, int i, const Point& p, bool perturb) const
   // in dimension 2, for an infinite facet
   // in this case, returns ON_BOUNDARY if the point lies on the
   // finite edge (endpoints included)
-  // ON_BOUNDED_SIDE for a point in the open half-plane
+  // ON_BOUNDED_SIDE for a point in the open halfplane
   // ON_UNBOUNDED_SIDE elsewhere
 
   CGAL_precondition(dimension() >= 2);
@@ -1542,7 +1542,7 @@ side_of_circle(Cell_handle c, int i, const Point& p, bool perturb) const
   if(dimension() == 2)
   {
     CGAL_precondition(i == 3);
-    // the triangulation is supposed to be valid, ie the facet
+    // the triangulation is supposed to be valid, i.e. the facet
     // with vertices 0 1 2 in this order is positively oriented
     if(! c->has_vertex(infinite_vertex(), i3))
       return coplanar_side_of_bounded_circle(c->vertex(0)->point(),

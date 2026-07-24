@@ -166,8 +166,7 @@ compute_average_spacing(
   typedef typename NP_helper::Geom_traits Kernel;
 
   PointMap point_map = NP_helper::get_const_point_map(points, np);
-  const std::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
-                                                                 std::function<bool(double)>());
+  const std::function<bool(double)>& callback = choose_parameter<std::function<bool(double)>>(get_parameter(np, internal_np::callback));
 
   // types for K nearest neighbors search structure
   typedef typename Kernel::FT FT;

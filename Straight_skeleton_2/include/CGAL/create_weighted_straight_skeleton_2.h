@@ -147,7 +147,7 @@ create_exterior_weighted_straight_skeleton_2(const FT& max_offset,
   using IK = typename Kernel_traits<Point_2>::Kernel;
   using IFT = typename IK::FT;
 
-  static_assert((std::is_same<typename std::iterator_traits<WeightIterator>::value_type, IFT>::value));
+  static_assert((std::is_same<typename std::iterator_traits<WeightIterator>::value_type, IFT>::value), "Vertices and weights should have the same FT");
 
   std::shared_ptr<Straight_skeleton_2<K> > skeleton;
 
@@ -220,7 +220,7 @@ std::shared_ptr<Straight_skeleton_2<K> >
 inline
 create_exterior_weighted_straight_skeleton_2(const FT& max_offset,
                                              const Polygon& aPoly,
-                                             Weights& weights,
+                                             const Weights& weights,
                                              const K& k = K())
 {
   return create_exterior_weighted_straight_skeleton_2(max_offset,

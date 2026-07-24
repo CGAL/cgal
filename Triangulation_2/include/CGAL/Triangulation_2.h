@@ -294,6 +294,7 @@ public:
   bool is_infinite(const Edge& e) const;
   bool is_infinite(const Edge_circulator& ec) const;
   bool is_infinite(const All_edges_iterator& ei) const;
+  bool is_vertex(Vertex_handle va) const;
   bool is_edge(Vertex_handle va, Vertex_handle vb) const;
   bool is_edge(Vertex_handle va, Vertex_handle vb, Face_handle& fr,
                int & i) const;
@@ -322,6 +323,10 @@ public:
   Point_2 circumcenter(const Point& p0,
                        const Point& p1,
                        const Point& p2) const;
+
+  const Point& geometry(Vertex_handle v) const { return point(v); }
+  Segment geometry(const Edge& e) const { return segment(e); }
+  Triangle geometry(Face_handle f) const { return triangle(f); }
 
 
   //MOVE - INSERTION - DELETION - Flip
@@ -1094,6 +1099,14 @@ Triangulation_2<Gt, Tds>::
 is_infinite(const All_edges_iterator& ei) const
 {
   return is_infinite(*ei);
+}
+
+template <class Gt, class Tds >
+inline bool
+Triangulation_2<Gt, Tds>::
+is_vertex(Vertex_handle va) const
+{
+  return _tds.is_vertex(va);
 }
 
 template <class Gt, class Tds >

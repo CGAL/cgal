@@ -9,7 +9,7 @@ function(process_CGAL_subdirectory entry subdir type_name)
     make_directory("${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}")
   endif()
 
-  message("\n-- Configuring ${subdir} in ${subdir}/${ENTRY_DIR_NAME}")
+  message("-- Configuring ${subdir} in ${subdir}/${ENTRY_DIR_NAME}")
 
   set(source_dir "")
   if(EXISTS ${entry}/CMakeLists.txt)
@@ -28,7 +28,14 @@ function(process_CGAL_subdirectory entry subdir type_name)
     endif()
   endif()
   if(source_dir)
+    set(CGAL_CMAKE_FOLDER_PREFIX)
+    if(CMAKE_FOLDER)
+      set(CGAL_CMAKE_FOLDER_PREFIX "${CMAKE_FOLDER}/")
+    endif()
+    set(CMAKE_FOLDER "${CGAL_CMAKE_FOLDER_PREFIX}${subdir}/${ENTRY_DIR_NAME}")
+    list(APPEND CMAKE_MESSAGE_INDENT "  ")
     add_subdirectory( "${source_dir}" "${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}" EXCLUDE_FROM_ALL)
+    list(POP_BACK CMAKE_MESSAGE_INDENT)
   endif()
 endfunction()
 
@@ -73,7 +80,7 @@ function(CGAL_handle_subdirectories subdir_name plural_name)
 
       # If there is no .cpp files, ignore the sub-directory
       if(files)
-        process_cgal_subdirectory("${entry}" ${subdir_name} ${singular_name})
+        process_CGAL_subdirectory("${entry}" ${subdir_name} ${singular_name})
       endif()
 
     endif()

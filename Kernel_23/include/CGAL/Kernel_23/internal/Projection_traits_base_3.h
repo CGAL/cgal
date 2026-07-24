@@ -34,7 +34,6 @@ class Projected_orientation_with_normal_3
   typedef typename Traits::Vector_3 Vector_3;
 public:
   typedef typename K::Orientation Orientation;
-  typedef Orientation result_type;
 
   Projected_orientation_with_normal_3(const Vector_3& normal_)
     : normal(normal_)
@@ -69,7 +68,6 @@ class Projected_side_of_oriented_circle_with_normal_3
 
 public:
   typedef typename K::Oriented_side Oriented_side;
-  typedef Oriented_side result_type;
 
   Projected_side_of_oriented_circle_with_normal_3(const Vector_3& normal_)
     : normal(normal_)
@@ -307,6 +305,7 @@ template <class Traits>
 class Less_along_axis
 {
   // private members
+  typedef typename Traits::Boolean Boolean;
   typedef typename Traits::Vector_3 Vector_3;
   typedef typename Traits::Point_2 Point;
   Vector_3 base;
@@ -317,9 +316,7 @@ public:
     CGAL_TIME_PROFILER("Construct Less_along_axis")
   }
 
-  typedef bool result_type;
-
-  bool operator() (const Point &p, const Point &q) const {
+  Boolean operator() (const Point &p, const Point &q) const {
     return base * (p - q) < 0;
   }
 }; // end class Less_along_axis
@@ -328,6 +325,7 @@ template <class Traits>
 class Compare_along_axis
 {
   // private members
+  typedef typename Traits::Comparison_result Comparison_result;
   typedef typename Traits::Vector_3 Vector_3;
   typedef typename Traits::Point_2 Point;
   Vector_3 base;
@@ -338,8 +336,6 @@ public:
     CGAL_TIME_PROFILER("Construct Compare_along_axis")
   }
 
-  typedef Comparison_result result_type;
-
   Comparison_result operator() (const Point &p, const Point &q) const {
     return compare(base * (p - q), 0);
   }
@@ -349,9 +345,13 @@ template <class Traits>
 class Less_xy_along_axis
 {
   // private members
+  typedef typename Traits::Comparison_result Comparison_result;
+  typedef typename Traits::Boolean Boolean;
   typedef typename Traits::Vector_3 Vector_3;
   typedef typename Traits::Point_2 Point;
+
   Vector_3 base1, base2;
+
 public:
   Less_xy_along_axis(const Vector_3& base1, const Vector_3& base2) : base1(base1), base2(base2)
   {
@@ -359,9 +359,7 @@ public:
     CGAL_TIME_PROFILER("Construct Less_xy_along_axis")
   }
 
-  typedef bool result_type;
-
-  bool operator() (const Point &p, const Point &q) const {
+  Boolean operator() (const Point &p, const Point &q) const {
 
     Compare_along_axis<Traits> cx(base1);
     Comparison_result crx = cx(p, q);
@@ -371,6 +369,63 @@ public:
     return ly(p, q);
   }
 }; // end class Less_xy_along_axis
+
+template <class Traits>
+class Compare_xy_along_axis
+{
+  // private members
+  typedef typename Traits::Comparison_result Comparison_result;
+  typedef typename Traits::Vector_3 Vector_3;
+  typedef typename Traits::Point_2 Point;
+  Vector_3 base1, base2;
+
+public:
+  Compare_xy_along_axis(const Vector_3& base1, const Vector_3& base2) : base1(base1), base2(base2)
+  {
+    CGAL_PROFILER("Construct Compare_xy_along_axis")
+      CGAL_TIME_PROFILER("Construct Compare_xy_along_axis")
+  }
+
+  Comparison_result operator()(const Point& p, const Point& q) const
+  {
+    Compare_along_axis<Traits> cx(base1);
+    Comparison_result crx = cx(p, q);
+    if (crx != EQUAL) {
+      return crx;
+    }
+    Compare_along_axis<Traits> cy(base2);
+    return cy(p, q);
+  }
+}; // end class Compare_xy_along_axis
+
+template <class Traits>
+class Equal_along_axes
+{
+  // private members
+  typedef typename Traits::Comparison_result Comparison_result;
+  typedef typename Traits::Boolean Boolean;
+  typedef typename Traits::Vector_3 Vector_3;
+  typedef typename Traits::Point_2 Point;
+  Vector_3 base1, base2;
+
+public:
+  Equal_along_axes(const Vector_3& base1, const Vector_3& base2) : base1(base1), base2(base2)
+  {
+    CGAL_PROFILER("Construct Compare_xy_along_axis")
+      CGAL_TIME_PROFILER("Construct Compare_xy_along_axis")
+  }
+
+  Boolean operator()(const Point& p, const Point& q) const
+  {
+    Compare_along_axis<Traits> cx(base1);
+    Comparison_result crx = cx(p, q);
+    if (crx != EQUAL) {
+      return false;
+    }
+    Compare_along_axis<Traits> cy(base2);
+    return cy(p, q) == EQUAL;
+  }
+}; // end class Compare_xy_along_axis
 
 } // end namespace TriangulationProjectionTraitsCartesianFunctors
 
@@ -418,6 +473,15 @@ public:
   }
 
   typedef Kernel K;
+
+  typedef typename K::Boolean                                Boolean;
+  typedef typename K::Sign                                   Sign;
+  typedef typename K::Comparison_result                      Comparison_result;
+  typedef typename K::Orientation                            Orientation;
+  typedef typename K::Oriented_side                          Oriented_side;
+  typedef typename K::Bounded_side                           Bounded_side;
+  typedef typename K::Angle                                  Angle;
+
   typedef typename K::FT          FT;
   typedef typename K::Point_3     Point_2;
   typedef typename K::Segment_3   Segment_2;
@@ -426,12 +490,16 @@ public:
   typedef typename K::Line_3      Line_2;
 
   typedef typename K::Angle_3                                Angle_2;
-  typedef typename K::Compare_xyz_3                          Compare_xy_2;
 
   typedef TriangulationProjectionTraitsCartesianFunctors::
     Compare_along_axis<Self>                                 Compare_x_2;
   typedef TriangulationProjectionTraitsCartesianFunctors::
     Compare_along_axis<Self>                                 Compare_y_2;
+  typedef TriangulationProjectionTraitsCartesianFunctors::
+    Compare_xy_along_axis<Self>                              Compare_xy_2;
+
+  typedef TriangulationProjectionTraitsCartesianFunctors::
+    Equal_along_axes<Self>                                   Equal_2;
 
   typedef TriangulationProjectionTraitsCartesianFunctors::
     Less_along_axis<Self>                                    Less_x_2;
@@ -467,6 +535,7 @@ public:
 
   typedef typename K::Compute_area_3                Compute_area_2;
   typedef typename K::Construct_bbox_3              Construct_bbox_2;
+  typedef typename K::Do_intersect_3                Do_intersect_2; // for do_intersect(bbox_2, segment_2)
 
   Less_x_2
   less_x_2_object() const
@@ -498,6 +567,18 @@ public:
     return Compare_y_2(this->base2());
   }
 
+  Compare_xy_2
+  compare_xy_2_object() const
+  {
+    return Compare_xy_2(this->base1(), this->base2());
+  }
+
+  Equal_2
+    equal_2_object() const
+  {
+      return Equal_2(this->base1(), this->base2());
+  }
+
   Orientation_2
   orientation_2_object() const
   {
@@ -524,9 +605,6 @@ public:
 
   Angle_2  angle_2_object() const
     {return Angle_2();}
-
-  Compare_xy_2  compare_xy_2_object() const
-    {return Compare_xy_2();}
 
   Construct_point_2  construct_point_2_object() const
     {return Construct_point_2();}
@@ -567,6 +645,9 @@ public:
 
   Construct_bbox_2  construct_bbox_2_object() const
     {return Construct_bbox_2();}
+
+  Do_intersect_2 do_intersect_2_object() const
+    {return Do_intersect_2();}
 
 
   // Special functor, not in the Kernel concept

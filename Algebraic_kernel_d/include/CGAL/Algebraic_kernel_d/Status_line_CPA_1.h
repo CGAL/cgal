@@ -223,7 +223,7 @@ public:
      * returns the x-coordinate of the vertical line (always a finite value).
      */
     Algebraic_real_1 x() const {
-        // unless x-coordiate was explicitly set with _set_x: compute its value
+        // unless x-coordinate was explicitly set with _set_x: compute its value
         if(!this->ptr()->_m_x) {
             this->ptr()->_m_x = (is_event() ?
 #if CGAL_ACK_USE_EXACUS

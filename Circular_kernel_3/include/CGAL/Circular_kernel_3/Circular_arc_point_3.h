@@ -211,7 +211,7 @@ public:
 
   const Root_for_spheres_2_3 & coordinates() const { return get_pointee_or_identity(base); }
 
-  const CGAL::Bbox_3 bbox() const {
+  CGAL::Bbox_3 bbox() const {
     return get_pointee_or_identity(base).bbox();
   }
 

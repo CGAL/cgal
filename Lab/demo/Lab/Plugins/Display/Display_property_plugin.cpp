@@ -383,7 +383,7 @@ private:
                        color);
 
       QRect text_rect(left_margin + cell_width + 10, drawing_height - top_margin - j, 100, text_height);
-      painter.drawText(text_rect, Qt::AlignCenter, QObject::tr("%1").arg(values[i], 0, 'f', 6, QLatin1Char(' ')));
+      painter.drawText(text_rect, Qt::AlignCenter, QObject::tr("%1").arg(static_cast<double>(values[i]), 0, 'f', 6, QLatin1Char(' ')));
     }
 
     if(color_map.size() > size)
@@ -1115,9 +1115,9 @@ private:
 
     QString sid;
     if(std::is_same<Simplex, vertex_descriptor>::value)
-      sid = QString("v%1").arg(extremum_s);
+      sid = QString("v%1").arg(static_cast<int>(extremum_s));
     else
-      sid = QString("f%1").arg(extremum_s);
+      sid = QString("f%1").arg(static_cast<int>(extremum_s));
 
     face_descriptor unused_fd;
     Point_3 unused_p;

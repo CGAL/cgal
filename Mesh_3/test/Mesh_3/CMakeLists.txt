@@ -7,8 +7,9 @@ project( Mesh_3_Tests )
 find_package(CGAL REQUIRED COMPONENTS ImageIO)
 
 # Use Eigen
-find_package(Eigen3 3.1.0 QUIET) #(3.1.0 or greater)
+find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
+
 if (NOT TARGET CGAL::Eigen3_support)
   message("NOTICE: This project requires the Eigen library, and will not be compiled.")
   return()
@@ -19,6 +20,7 @@ include(CGAL_TBB_support)
 
 find_package(ITT QUIET)
 
+create_single_source_cgal_program("surface_mesh_to_tetrahedral_mesh.cpp")
 create_single_source_cgal_program( "test_boost_has_xxx.cpp" )
 create_single_source_cgal_program( "test_mesh_capsule_var_distance_bound.cpp" )
 create_single_source_cgal_program( "test_implicit_multi_domain_to_labeling_function_wrapper.cpp" )
@@ -49,14 +51,16 @@ create_single_source_cgal_program( "test_meshing_with_default_edge_size.cpp" )
 create_single_source_cgal_program( "test_meshing_determinism.cpp" )
 create_single_source_cgal_program( "test_meshing_without_features_determinism.cpp" )
 create_single_source_cgal_program( "test_mesh_3_issue_1554.cpp" )
-create_single_source_cgal_program( "test_mesh_polyhedral_domain_with_features_deprecated.cpp" )
+create_single_source_cgal_program( "test_mesh_3_issue_8773.cpp" )
 create_single_source_cgal_program( "test_meshing_with_one_step.cpp" )
 create_single_source_cgal_program( "test_meshing_with_one_step_with_features.cpp" )
 create_single_source_cgal_program( "test_mesh_cell_base_3.cpp")
 create_single_source_cgal_program( "test_min_edge_length.cpp")
 create_single_source_cgal_program( "test_max_edge_distance.cpp")
+create_single_source_cgal_program( "test_remeshing_polyhedron.cpp" )
 
 foreach(target
+    surface_mesh_to_tetrahedral_mesh
     test_boost_has_xxx
     test_mesh_capsule_var_distance_bound
     test_implicit_multi_domain_to_labeling_function_wrapper
@@ -79,7 +83,7 @@ foreach(target
     test_meshing_determinism
     test_meshing_without_features_determinism
     test_mesh_3_issue_1554
-    test_mesh_polyhedral_domain_with_features_deprecated
+    test_mesh_3_issue_8773
     test_mesh_cell_base_3
     test_meshing_with_one_step
     test_meshing_with_one_step_with_features
@@ -87,6 +91,7 @@ foreach(target
     test_max_edge_distance
     test_min_size_criteria
     test_meshing_polyhedral_complex_with_manifold_and_min_size
+    test_remeshing_polyhedron
     )
   if(TARGET ${target})
     target_link_libraries(${target} PRIVATE CGAL::Eigen3_support)
@@ -95,6 +100,7 @@ endforeach()
 
 if(TARGET CGAL::TBB_support)
   foreach(target
+      surface_mesh_to_tetrahedral_mesh
       test_meshing_verbose
       test_meshing_polyhedron_with_features
       test_meshing_utilities.h
@@ -108,7 +114,7 @@ if(TARGET CGAL::TBB_support)
       test_meshing_determinism
       test_meshing_without_features_determinism
       test_mesh_3_issue_1554
-      test_mesh_polyhedral_domain_with_features_deprecated
+      test_mesh_3_issue_8773
       test_mesh_cell_base_3
       test_min_edge_length
       test_max_edge_distance
@@ -121,6 +127,7 @@ if(TARGET CGAL::TBB_support)
 
   if(CGAL_ENABLE_TESTING)
     set_property(TEST
+      "execution   of  surface_mesh_to_tetrahedral_mesh"
       "execution   of  test_meshing_verbose"
       "execution   of  test_meshing_polyhedron_with_features"
       "execution   of  test_meshing_implicit_function"
@@ -129,7 +136,9 @@ if(TARGET CGAL::TBB_support)
       "execution   of  test_meshing_polyhedral_complex"
       "execution   of  test_mesh_capsule_var_distance_bound"
       "execution   of  test_mesh_3_issue_1554"
-      "execution   of  test_mesh_polyhedral_domain_with_features_deprecated"
+      "execution   of  test_mesh_3_issue_8773"
+      "execution   of  test_mesh_cell_base_3"
+      "execution   of  test_remeshing_polyhedron"
       "execution   of  test_mesh_cell_base_3"
       PROPERTY RUN_SERIAL 1)
     if(TARGET test_meshing_3D_image)

@@ -13,9 +13,12 @@
 #ifndef CGAL_INTERNAL_STATIC_FILTERS_ORIENTATION_3_H
 #define CGAL_INTERNAL_STATIC_FILTERS_ORIENTATION_3_H
 
-#include <CGAL/Profile_counter.h>
+#include <CGAL/determinant.h>
+#include <CGAL/enum.h>
 #include <CGAL/Filtered_kernel/internal/Static_filters/Static_filter_error.h>
+#include <CGAL/Profile_counter.h>
 #include <cmath>
+#include <utility>
 
 namespace CGAL { namespace internal { namespace Static_filters_predicates {
 
@@ -27,18 +30,18 @@ template < typename K_base >
 class Orientation_3
   : public K_base::Orientation_3
 {
+  typedef typename K_base::Orientation      Orientation;
   typedef typename K_base::Point_3          Point_3;
   typedef typename K_base::Vector_3         Vector_3;
   typedef typename K_base::Sphere_3         Sphere_3;
   typedef typename K_base::Tetrahedron_3    Tetrahedron_3;
+
   typedef typename K_base::Orientation_3    Base;
 
 public:
- typedef typename Base::result_type  result_type;
-
   using Base::operator();
 
-  result_type
+  Orientation
   operator()(const Point_3 &p, const Point_3 &q,
              const Point_3 &r, const Point_3 &s) const
   {

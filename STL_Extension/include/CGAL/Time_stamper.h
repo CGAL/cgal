@@ -13,6 +13,9 @@
 #define CGAL_TIME_STAMPER_H
 
 #include <CGAL/Has_timestamp.h>
+#include <CGAL/assertions.h>
+#include <cstddef>
+#include <iterator>
 #include <string>
 
 namespace CGAL {
@@ -29,19 +32,21 @@ template <typename T>
 struct Time_stamper
 {
   static constexpr bool has_timestamp = true;
+  static constexpr std::size_t invalid_time_stamp = static_cast<std::size_t>(-2);
+  static constexpr std::size_t not_yet_used_time_stamp = static_cast<std::size_t>(-1);
 
   static bool is_valid(const T* pt) {
-    return pt != nullptr && pt->time_stamp() != std::size_t(-2);
+    return pt != nullptr && pt->time_stamp() != invalid_time_stamp;
   }
 
   static void initialize_time_stamp(T* pt) {
-    pt->set_time_stamp(std::size_t(-1));
+    pt->set_time_stamp(not_yet_used_time_stamp);
   }
 
   template <typename time_stamp_t>
   static void set_time_stamp(T* pt, time_stamp_t& time_stamp_) {
     CGAL_assertion(is_valid(pt));
-    if(pt->time_stamp() == std::size_t(-1)) {
+    if(pt->time_stamp() == not_yet_used_time_stamp) {
       const std::size_t new_ts = time_stamp_++;
       pt->set_time_stamp(new_ts);
     }
@@ -70,7 +75,7 @@ struct Time_stamper
   {
     CGAL_assertion(is_valid(pt));
     if(pt == nullptr){
-      return std::size_t(-1);
+      return not_yet_used_time_stamp;
     }
     return pt->time_stamp();
   }
@@ -91,7 +96,7 @@ struct Time_stamper
   static std::size_t hash_value(const T* p) {
     CGAL_assertion(nullptr== p || is_valid(p));
     if(nullptr == p)
-      return std::size_t(-1);
+      return not_yet_used_time_stamp;
     else
       return p->time_stamp();
   }
@@ -129,7 +134,7 @@ public:
   {
   }
 
-  static auto display_id(const T* pt, int)
+  static auto display_id(const T* pt, int = 0)
   {
     return static_cast<const void*>(pt);
   }
