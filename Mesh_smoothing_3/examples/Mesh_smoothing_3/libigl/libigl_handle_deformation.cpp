@@ -1,13 +1,13 @@
 #include <cstdlib>
 #include <random>
 
-#include <Mesh_smoothing_3/Mesh_smoothing_3.h>
+#include <CGAL/Mesh_smoothing_3/Mesh_smoothing_3.h>
 
 #include <igl/readMESH.h>
 #include <igl/writeMESH.h>
 #include <iostream>
 
-using Mesh_smoothing_3::utils::Contiguous_unsigned_range;
+using CGAL::Mesh_smoothing_3::utils::Contiguous_unsigned_range;
 
 class Tetrahedral_mesh_wrapper {
 public:
@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
 
     Tetrahedral_mesh_wrapper mesh_wrapper {V, ref_V, T};
 
-    Mesh_smoothing_3::Mesh_smoother smoother(mesh_wrapper);
+    CGAL::Mesh_smoothing_3::Mesh_smoother smoother(mesh_wrapper);
     smoother.set_verbose();
     smoother.set_locked_boundary(false);
 

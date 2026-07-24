@@ -20,7 +20,7 @@
 #include <CGAL/IO/File_medit.h>
 
 
-#include <Mesh_smoothing_3/Mesh_smoothing_3.h>
+#include <CGAL/Mesh_smoothing_3/Mesh_smoothing_3.h>
 
 #include <iostream>
 #include <string>
@@ -93,7 +93,7 @@ public:
         }
         return vertices;
     }
-    std::array<Point_3, 4> cell_reference_shape(Cell_descriptor) const { return Mesh_smoothing_3::Shapes::VTK_TETRAHEDRON<Point_3>(); }
+    std::array<Point_3, 4> cell_reference_shape(Cell_descriptor) const { return CGAL::Mesh_smoothing_3::Shapes::VTK_TETRAHEDRON<Point_3>(); }
 public:
     Tetrahedral_mesh_wrapper(Triangulation &tetmesh_, std::set<int> regions)
     : tetmesh(tetmesh_)
@@ -118,7 +118,7 @@ public:
     using Surface_patch_index = unsigned;
     std::size_t nb_faces() const { return faces.size(); }
     auto face_range() const {
-        return Mesh_smoothing_3::utils::Contiguous_unsigned_range{0, faces.size()};
+        return CGAL::Mesh_smoothing_3::utils::Contiguous_unsigned_range{0, faces.size()};
     }
     unsigned patch_id(Face_descriptor) const { return 0; }
     std::size_t nb_face_vertices(Face_descriptor) const { return 3; }
@@ -264,7 +264,7 @@ int main(int argc, char** argv)
     Tetrahedral_mesh_wrapper mesh_wrapper(tr, {1,2});
     Triangle_boundary_wrapper boundary_wrapper {boundary_faces};
 
-    Mesh_smoothing_3::Mesh_smoother smoother(mesh_wrapper, boundary_wrapper);
+    CGAL::Mesh_smoothing_3::Mesh_smoother smoother(mesh_wrapper, boundary_wrapper);
     smoother.set_verbose();
 
     smoother.set_locked_vertices(boundary_vertices);

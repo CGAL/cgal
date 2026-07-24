@@ -1,13 +1,14 @@
 
-#include <Mesh_smoothing_3/Mesh_smoothing_3.h>
 #include <geogram/mesh/mesh.h>
 #include <geogram/mesh/mesh_io.h>
 #include <geogram/mesh/mesh_AABB.h>
 #include <geogram/mesh/mesh_geometry.h>
 
+#include <CGAL/Mesh_smoothing_3/Mesh_smoothing_3.h>
+
 #include <memory>
 
-class Mesh_wrapper : public Mesh_smoothing_3::helper_structures::Mixed_element_mesh<GEO::index_t, GEO::index_t, GEO::vec3, GEO::index_range> {
+class Mesh_wrapper : public CGAL::Mesh_smoothing_3::helper_structures::Mixed_element_mesh<GEO::index_t, GEO::index_t, GEO::vec3, GEO::index_range> {
 public:
     std::size_t nb_vertices() const override { return mesh.vertices.nb(); }
 
@@ -67,10 +68,10 @@ public:
     GEO::Mesh &mesh;
     GEO::Mesh const * ref_mesh;
 
-    Mesh_smoothing_3::Shapes::VTK_TETRAHEDRON<GEO::vec3> tet_ref;
-    Mesh_smoothing_3::Shapes::GEOGRAM_HEXAHEDRON<GEO::vec3> hex_ref;
-    Mesh_smoothing_3::Shapes::VTK_PYRAMID<GEO::vec3> py_ref;
-    Mesh_smoothing_3::Shapes::VTK_WEDGE<GEO::vec3> we_ref;
+    CGAL::Mesh_smoothing_3::Shapes::VTK_TETRAHEDRON<GEO::vec3> tet_ref;
+    CGAL::Mesh_smoothing_3::Shapes::GEOGRAM_HEXAHEDRON<GEO::vec3> hex_ref;
+    CGAL::Mesh_smoothing_3::Shapes::VTK_PYRAMID<GEO::vec3> py_ref;
+    CGAL::Mesh_smoothing_3::Shapes::VTK_WEDGE<GEO::vec3> we_ref;
 };
 
 class Boundary_wrapper {
@@ -211,13 +212,13 @@ int main(int argc, char** argv) {
     Boundary_wrapper surface_wrapper{mesh};
     PolyLine_wrapper curve_wrapper{mesh};
 
-    Mesh_smoothing_3::Mesh_smoother smoother(mesh_wrapper, surface_wrapper, curve_wrapper);
+    CGAL::Mesh_smoothing_3::Mesh_smoother smoother(mesh_wrapper, surface_wrapper, curve_wrapper);
 
     smoother.set_boundary_query(query);
     smoother.set_curves_query(curve_query);
     smoother.set_vertex_target_positions(point_targets);
 
-    smoother.set_boundary_weight(Mesh_smoothing_3::Parameters::STRONG);
+    smoother.set_boundary_weight(CGAL::Mesh_smoothing_3::Parameters::STRONG);
     smoother.set_verbose();
     smoother.set_max_number_of_iteration(100);
     smoother.run();

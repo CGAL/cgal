@@ -10,7 +10,10 @@ FetchContent_MakeAvailable(geogram)
 
 add_executable(geogram_smooth geogram_smooth.cpp)
 add_executable(geogram_smooth_custom geogram_smooth_custom.cpp)
-target_link_libraries(geogram_smooth PRIVATE Mesh_smoothing_3 geogram)
-target_link_libraries(geogram_smooth_custom PRIVATE Mesh_smoothing_3 geogram)
+target_link_libraries(geogram_smooth PRIVATE CGAL geogram Eigen3::Eigen)
+target_link_libraries(geogram_smooth_custom PRIVATE CGAL geogram Eigen3::Eigen)
 
-
+if(OpenMP_CXX_FOUND)
+    target_link_libraries(geogram_smooth PRIVATE OpenMP::OpenMP_CXX)
+    target_link_libraries(geogram_smooth_custom PRIVATE OpenMP::OpenMP_CXX)
+endif()

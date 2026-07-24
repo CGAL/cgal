@@ -25,7 +25,7 @@
 #include <map>
 #include <set>
 
-#include <Mesh_smoothing_3/Mesh_smoothing_3.h>
+#include <CGAL/Mesh_smoothing_3/Mesh_smoothing_3.h>
 
 // Parallel tag
 #ifdef CGAL_CONCURRENT_MESH_3
@@ -53,7 +53,7 @@ typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 
 
-#if CGAL_VERSION_NR >= CGAL_VERSION_NUMBER(6, 2, 0)
+#if CGAL_VERSION_NR >= CGAL_VERSION_NUMBER(6, 2, 0) // todo remove after inclusion into cgal proper
     using Image_internal = CGAL::_image;
     auto image_WK_FIXED = CGAL::WK_FIXED;
     auto image_SGN_UNSIGNED = CGAL::SGN_UNSIGNED;
@@ -300,8 +300,8 @@ int main(int argc, char* argv[])
 
     // Smoothing
 
-    Mesh_smoothing_3::C3t3_smoother smoother(c3t3_deformed);
-    for (auto c : c3t3.vertices_in_complex())
+    CGAL::Mesh_smoothing_3::C3t3_smoother smoother(c3t3_deformed);
+    for (auto c : c3t3_deformed.vertices_in_complex())
     {
         smoother.set_vertex_lock(c, true);
     }
