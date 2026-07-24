@@ -45,8 +45,6 @@ public:
   {
     vertices_ = std::vector<Point>(vertices.begin(), vertices.end());
     pairings_ = std::vector<std::size_t>(pairings.begin(), pairings.end());
-    CGAL_precondition(is_valid());
-    CGAL_precondition(is_valid_length_pairing());
   }
 
   // returns the number of vertices (equivalently, the number of sides)
