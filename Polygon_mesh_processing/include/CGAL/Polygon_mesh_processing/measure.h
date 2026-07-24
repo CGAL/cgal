@@ -14,8 +14,6 @@
 #define CGAL_POLYGON_MESH_PROCESSING_MEASURE_H
 
 #include <CGAL/license/Polygon_mesh_processing/measure.h>
-
-#include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/shape_predicates.h>
 
 #include <CGAL/assertions.h>

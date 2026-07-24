@@ -133,6 +133,8 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - `CGAL::Polygon_mesh_processing::face_bbox()`
 - `CGAL::Polygon_mesh_processing::triangle()`
 - `CGAL::Polygon_mesh_processing::transform()`
+- `CGAL::Polygon_mesh_processing::minmax_edge_length()`
+- `CGAL::Polygon_mesh_processing::minmax_dihedral_angle()`
 
 \cgalCRPSection{Normal Computation Functions}
 - `CGAL::Polygon_mesh_processing::compute_face_normal()`
@@ -166,24 +168,6 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - `CGAL::Polygon_mesh_processing::max_distance_to_triangle_mesh()`
 - `CGAL::Polygon_mesh_processing::sample_triangle_soup()`
 - `CGAL::Polygon_mesh_processing::sample_triangle_mesh()`
-
-\cgalCRPSection{Geometric Measure Functions}
-- \link PMP_measure_grp `CGAL::Polygon_mesh_processing::angle_sum()` \endlink
-- \link PMP_measure_grp `CGAL::Polygon_mesh_processing::discrete_Gaussian_curvatures()` \endlink
-- \link PMP_measure_grp `CGAL::Polygon_mesh_processing::discrete_Gaussian_curvature()` \endlink
-- \link PMP_measure_grp `CGAL::Polygon_mesh_processing::discrete_mean_curvature()` \endlink
-- \link PMP_measure_grp `CGAL::Polygon_mesh_processing::discrete_mean_curvatures()` \endlink
-- \link PMP_measure_grp `CGAL::Polygon_mesh_processing::edge_length()` \endlink
-- \link PMP_measure_grp `CGAL::Polygon_mesh_processing::squared_edge_length()` \endlink
-- \link PMP_measure_grp `CGAL::Polygon_mesh_processing::minmax_edge_length()` \endlink
-- \link PMP_measure_grp `CGAL::Polygon_mesh_processing::face_area()` \endlink
-- \link PMP_measure_grp `CGAL::Polygon_mesh_processing::squared_face_area()` \endlink
-- \link PMP_measure_grp `CGAL::Polygon_mesh_processing::area()` \endlink
-- \link PMP_measure_grp `CGAL::Polygon_mesh_processing::volume()` \endlink
-- \link PMP_measure_grp `CGAL::Polygon_mesh_processing::face_border_length()` \endlink
-- \link PMP_measure_grp `CGAL::Polygon_mesh_processing::longest_border()` \endlink
-- \link PMP_measure_grp `CGAL::Polygon_mesh_processing::centroid()` \endlink
-- \link PMP_measure_grp `CGAL::Polygon_mesh_processing::minmax_dihedral_angle()` \endlink
 
 \cgalCRPSection{Feature Detection Functions}
 - `CGAL::Polygon_mesh_processing::sharp_edges_segmentation()`
