@@ -52,19 +52,6 @@ typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 // C3t3
 typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 
-
-#if CGAL_VERSION_NR >= CGAL_VERSION_NUMBER(6, 2, 0) // todo remove after inclusion into cgal proper
-    using Image_internal = CGAL::_image;
-    auto image_WK_FIXED = CGAL::WK_FIXED;
-    auto image_SGN_UNSIGNED = CGAL::SGN_UNSIGNED;
-// Code for CGAL 6.0 or newer
-#else
-    using Image_internal = _image;
-    auto image_WK_FIXED = WK_FIXED;
-    auto image_SGN_UNSIGNED = SGN_UNSIGNED;
-#endif
-
-
 // AABB traits for C3t3 facets and edges
 struct Facet_to_triangle_property_map
 {
@@ -155,9 +142,9 @@ namespace params = CGAL::parameters;
 CGAL::Image_3 create_cgal_image(const std::size_t& xdim, const std::size_t& ydim, const std::size_t& zdim,
                                 double vx = 1.0, double vy = 1.0, double vz = 1.0)
 {
-    Image_internal* im = _createImage(xdim, ydim, zdim, 1,
+    CGAL::_image* im = _createImage(xdim, ydim, zdim, 1,
                                     vx, vy, vz, 1,
-                                    image_WK_FIXED, image_SGN_UNSIGNED);
+                                    CGAL::WK_FIXED, CGAL::SGN_UNSIGNED);
     std::fill_n(static_cast<unsigned char*>(im->data), xdim*ydim*zdim, 0);
     return CGAL::Image_3(im);
 }
@@ -168,7 +155,7 @@ void add_rectangle_in_image(const K::Point_3& rectangle_min, // [0..1]^3
                             CGAL::Image_3 &image)
 {
     using CGAL::IMAGEIO::static_evaluate;
-    Image_internal* im = image.image();
+    CGAL::_image* im = image.image();
     const std::size_t min_x = rectangle_min.x() * im->xdim;
     const std::size_t min_y = rectangle_min.y() * im->ydim;
     const std::size_t min_z = rectangle_min.z() * im->zdim;
