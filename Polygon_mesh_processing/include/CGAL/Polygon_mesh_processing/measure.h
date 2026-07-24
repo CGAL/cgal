@@ -383,8 +383,8 @@ template<typename ConcurrencyTag = CGAL::Sequential_tag,
          typename PolygonMesh,
          typename CGAL_NP_TEMPLATE_PARAMETERS>
 #ifdef DOXYGEN_RUNNING
-std::pair<std::pair<boost::graph_traits<PolygonMesh>::edge_descriptor`, FT>,
-          std::pair<boost::graph_traits<PolygonMesh>::edge_descriptor`, FT> >
+std::pair<std::pair<boost::graph_traits<PolygonMesh>::edge_descriptor, FT>,
+          std::pair<boost::graph_traits<PolygonMesh>::edge_descriptor, FT> >
 #else
 auto
 #endif
@@ -1471,7 +1471,7 @@ public:
  * \tparam ConcurrencyTag enables sequential versus parallel algorithm. Possible values are
  *                        `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
  * \tparam EdgeRange a model of `Range` whhose iterator type is `InputIterator` with value type
- *                   `boost::graph_traits<PolygonMesh>::%edge_descriptor`.
+ *                   `boost::graph_traits<TriangleMesh>::%edge_descriptor`.
  * \tparam TriangleMesh a model of `HalfedgeListGraph`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
