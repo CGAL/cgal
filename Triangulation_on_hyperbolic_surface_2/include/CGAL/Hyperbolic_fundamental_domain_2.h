@@ -237,9 +237,9 @@ is_valid_length_pairing() const
     v1p = Point(vertices_[kp%n].x(), vertices_[kp%n].y());
     v2p = Point(vertices_[(kp+1)%n].x(), vertices_[(kp+1)%n].y());
 
-    //Try object design? typename Traits::cosh_hd chd = gt.cosh_hd_object();
+    //Try object design? typename Traits::cosh_of_hyperbolic_distance chd = gt.cosh_of_hyperbolic_distance_object();
     //if (!(chd(v1,v2) == chd(v1p,v2p))) {
-    if (!(Traits::cosh_hd(v1,v2) == Traits::cosh_hd(v1p,v2p))) {
+    if (!(Traits::cosh_of_hyperbolic_distance(v1,v2) == Traits::cosh_of_hyperbolic_distance(v1p,v2p))) {
       return false;
     }
   }

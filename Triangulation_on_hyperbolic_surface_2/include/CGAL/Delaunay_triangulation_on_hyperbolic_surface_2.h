@@ -852,7 +852,7 @@ construct_epsilon_net(double const epsilon)
         if(this->combinatorial_map_.is_marked(current_dart, triangles_list_mark)){
 	  this->combinatorial_map_.unmark(current_dart, triangles_list_mark);
 	  Voronoi_point c = circumcenter(current_anchor);
-	  if (gt_.template cosh_hd<Algebraic_number,Voronoi_point>(c, current_anchor.vertices[0]) > BOUND) {
+	  if (gt_.template cosh_of_hyperbolic_distance<Algebraic_number,Voronoi_point>(c, current_anchor.vertices[0]) > BOUND) {
 	    // Point approx_c = approx_circumcenter_from_c(c); TO BE REMOVED
 	    Point approx_c = approx_circumcenter_from_anchor(current_anchor);
 	    if(norm(Complex_number(approx_c.x(), approx_c.y())) >= Number(1)) {
@@ -966,7 +966,7 @@ covering_value() const
     Dart_const_descriptor current_dart = it;
     const Anchor & current_anchor = anchor(current_dart);
     Voronoi_point c = circumcenter(current_anchor);
-    radius = gt_.template cosh_hd<Algebraic_number,Voronoi_point>(c, current_anchor.vertices[0]);
+    radius = gt_.template cosh_of_hyperbolic_distance<Algebraic_number,Voronoi_point>(c, current_anchor.vertices[0]);
     if (radius > max_radius) {
       max_radius = radius;
     }
@@ -1063,7 +1063,7 @@ dart_cosh_length(Dart_const_descriptor dart) const
   unsigned index = index_in_anchor(dart);
   Point const & a = current_anchor.vertices[index];
   Point const & b = current_anchor.vertices[ccw(index)];
-  return gt_.cosh_hd(a, b);
+  return gt_.cosh_of_hyperbolic_distance(a, b);
 }
 
 //////////////////////////////////////////////////////

@@ -35,7 +35,7 @@ public:
     \return the hyperbolic cosine of the hyperbolic distance between u and v in the Poincaré disk.
    */
    template <typename Number = FT, typename Point = Hyperbolic_point_2>
-     static Number cosh_hd(Point const& u, Hyperbolic_point_2 const& v);
+     static Number cosh_of_hyperbolic_distance(Point const& u, Hyperbolic_point_2 const& v);
 
 
   /// @}

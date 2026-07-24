@@ -21,7 +21,7 @@
 namespace CGAL {
 
   /*
-  Marc: Convert cosh_hd to an object fct?
+  Marc: Convert cosh_of_hyperbolic_distance to an object fct?
   remove "static" and construct the traits each time it is used?
   (may follow the kernel cgal style CGAL_DISTANCE_2_POINT_2_POINT_2_H that uses inline?? it may not be an object function but a global kernel function seems ok since there are no construction)
  it is used in CGAL_HYPERBOLIC_FUNDAMENTAL_DOMAIN_2_H
@@ -44,7 +44,7 @@ public:
     orientation tests are used.
   */
 template <typename Number = FT, typename Point = Hyperbolic_point_2>
-static Number cosh_hd(Point const& u, Hyperbolic_point_2 const& v)
+static Number cosh_of_hyperbolic_distance(Point const& u, Hyperbolic_point_2 const& v)
 {
       Number num = (u.x() - v.x()) * (u.x() - v.x()) + (u.y() - v.y()) * (u.y() - v.y());
       Number den = (1 - (u.x() * u.x() + u.y() * u.y())) * (1 - (v.x() * v.x() + v.y() * v.y()));
