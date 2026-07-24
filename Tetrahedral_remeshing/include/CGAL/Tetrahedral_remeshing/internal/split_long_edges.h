@@ -15,22 +15,16 @@
 
 #include <CGAL/license/Tetrahedral_remeshing.h>
 
-#include <boost/bimap.hpp>
-#include <boost/bimap/set_of.hpp>
-#include <boost/bimap/multiset_of.hpp>
 #include <boost/container/small_vector.hpp>
 #include <boost/functional/hash.hpp>
 
+#include <CGAL/Tetrahedral_remeshing/internal/Elementary_operation.h>
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 
 #include <unordered_map>
 #include <functional>
 #include <utility>
 #include <optional>
-
-#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-#include <CGAL/Real_timer.h>
-#endif
 
 namespace CGAL
 {
@@ -340,127 +334,140 @@ auto can_be_split(const typename C3T3::Edge& e,
 
 
 
-template<typename C3T3,
-         typename Sizing,
+template<typename C3t3,
+         typename SizingFunction,
          typename CellSelector,
          typename Visitor>
-void split_long_edges(C3T3& c3t3,
-                      const Sizing& sizing,
-                      const bool protect_boundaries,
-                      CellSelector cell_selector,
-                      Visitor& visitor)
+class Edge_split_operation
+    : public Elementary_operation<C3t3,
+                                 typename C3t3::Triangulation::Edge,
+                                 std::vector<typename C3t3::Triangulation::Edge>>
 {
-  typedef typename C3T3::Triangulation       T3;
-  typedef typename T3::Cell_handle           Cell_handle;
-  typedef typename T3::Edge                  Edge;
-  typedef typename T3::Vertex_handle         Vertex_handle;
-  typedef typename std::pair<Vertex_handle, Vertex_handle> Edge_vv;
+public:
+  using Tr = typename C3t3::Triangulation;
+  using Vertex_handle = typename Tr::Vertex_handle;
+  using Cell_handle = typename Tr::Cell_handle;
+  using Edge = typename Tr::Edge;
+  using Edge_vv = std::pair<Vertex_handle, Vertex_handle>;
+  using FT = typename Tr::Geom_traits::FT;
 
-  typedef typename T3::Geom_traits::FT FT;
-  typedef boost::bimap<
-        boost::bimaps::set_of<Edge_vv>,
-        boost::bimaps::multiset_of<FT, std::greater<FT> > >  Boost_bimap;
-  typedef typename Boost_bimap::value_type               long_edge;
+  using Long_edges = std::vector<Edge>;
+  using Base_operation = Elementary_operation<C3t3, Edge, Long_edges>;
+  using Element_type = typename Base_operation::Element_type;
+  static_assert(std::is_same_v<Element_type, Edge>, "Element_type must be Edge");
+  using ElementSource = typename Base_operation::Element_range;
 
-#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-  std::cout << "Split long edges...";
-  std::cout.flush();
-  std::size_t nb_splits = 0;
-  CGAL::Real_timer timer;
-  timer.start();
-#endif
-
-  //collect long edges
-  T3& tr = c3t3.triangulation();
-  Boost_bimap long_edges;
-  for (Edge e : tr.finite_edges())
-  {
-    auto [splittable, boundary] = can_be_split(e, c3t3, protect_boundaries, cell_selector);
-    if (!splittable)
-      continue;
-
-    const std::optional<FT> sqlen = is_too_long(e, boundary, sizing, c3t3, cell_selector);
-    if(sqlen != std::nullopt)
-      long_edges.insert(long_edge(make_vertex_pair(e), sqlen.value()));
-  }
+private:
+  const SizingFunction& m_sizing;
+  const CellSelector& m_cell_selector;
+  bool m_protect_boundaries;
+  Visitor& m_visitor;
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-  debug::dump_edges(long_edges, "long_edges.polylines.txt");
-
-  std::ofstream can_be_split_ofs("can_be_split_edges.polylines.txt");
-  std::ofstream split_failed_ofs("split_failed.polylines.txt");
-
-  std::ofstream ofs("midpoints.off");
-  ofs << "OFF" << std::endl;
-  ofs << long_edges.size() << " 0 0" << std::endl;
+  mutable std::ofstream m_can_be_split_ofs;
+  mutable std::ofstream m_split_failed_ofs;
+  mutable std::ofstream m_midpoints_ofs;
 #endif
-  while(!long_edges.empty())
+
+public:
+  Edge_split_operation(const SizingFunction& sizing,
+                     const CellSelector& cell_selector,
+                     const bool protect_boundaries,
+                     Visitor& visitor)
+      : m_sizing(sizing)
+      , m_cell_selector(cell_selector)
+      , m_protect_boundaries(protect_boundaries)
+      , m_visitor(visitor) {}
+
+  ElementSource get_elements(const C3t3& c3t3) const override
   {
-    //the edge with longest length
-    typename Boost_bimap::right_map::iterator eit = long_edges.right.begin();
-    Edge_vv e = eit->second;
-#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE_PROGRESS
-    const double sqlen = eit->first;
+    struct Long_edge_with_length
+    {
+      Edge edge;
+      FT sqlength;
+    };
+    std::vector<Long_edge_with_length> long_edges_with_lengths;
+    const Tr& tr = c3t3.triangulation();
+
+    for (Edge e : tr.finite_edges())
+    {
+      auto [splittable, boundary] = can_be_split(e, c3t3, m_protect_boundaries, m_cell_selector);
+      if (!splittable)
+        continue;
+
+      const std::optional<FT> sqlen = is_too_long(e, boundary, m_sizing, c3t3, m_cell_selector);
+      if (sqlen != std::nullopt)
+        long_edges_with_lengths.push_back(Long_edge_with_length{e, sqlen.value()});
+    }
+
+    // longest first; stable to match the original bimap's ordering
+    std::stable_sort(long_edges_with_lengths.begin(), long_edges_with_lengths.end(),
+                     [](const Long_edge_with_length& a, const Long_edge_with_length& b) {
+                       return a.sqlength > b.sqlength;
+                     });
+
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+    {
+      std::ofstream ofs("long_edges.polylines.txt");
+      for (const auto& le : long_edges_with_lengths)
+        ofs << "2 " << point(le.edge.first->point())
+            << " " << point(le.edge.second->point()) << std::endl;
+    }
+    m_can_be_split_ofs.open("can_be_split_edges.polylines.txt");
+    m_split_failed_ofs.open("split_failed.polylines.txt");
+    m_midpoints_ofs.open("midpoints.off");
+    m_midpoints_ofs << "OFF" << std::endl;
+    m_midpoints_ofs << long_edges_with_lengths.size() << " 0 0" << std::endl;
 #endif
-    long_edges.right.erase(eit);
+
+    Long_edges long_edges;
+    long_edges.reserve(long_edges_with_lengths.size());
+    for(const auto& ef : long_edges_with_lengths)
+      long_edges.push_back(ef.edge);
+    return long_edges;
+  }
+
+  bool execute_operation(const Element_type& element, C3t3& c3t3) override
+  {
+    Tr& tr = c3t3.triangulation();
+    const Edge_vv& e = make_vertex_pair(element);
 
     Cell_handle cell;
     int i1, i2;
-    if ( tr.tds().is_edge(e.first, e.second, cell, i1, i2))
+    if (!tr.tds().is_edge(e.first, e.second, cell, i1, i2))
+      return false;
+
+    Edge edge(cell, i1, i2);
+
+    // check that splittability has not changed
+    if (!can_be_split(edge, c3t3, m_protect_boundaries, m_cell_selector).can_be_split)
+      return false;
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+    m_can_be_split_ofs << "2 " << edge.first->vertex(edge.second)->point()
+                        << " " << edge.first->vertex(edge.third)->point() << std::endl;
+#endif
+
+    m_visitor.before_split(tr, edge);
+    Vertex_handle vh = split_edge(edge, m_cell_selector, c3t3);
+
+    if (vh == Vertex_handle())
     {
-      Edge edge(cell, i1, i2);
-
-      //check that splittability has not changed
-      auto [splittable, _] = can_be_split(edge, c3t3, protect_boundaries, cell_selector);
-      if (!splittable)
-        continue;
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-      else
-        can_be_split_ofs << "2 " << edge.first->vertex(edge.second)->point()
-                          << " " << edge.first->vertex(edge.third)->point() << std::endl;
-#endif
-      visitor.before_split(tr, edge);
-      Vertex_handle vh = split_edge(edge, cell_selector, c3t3);
-
-      if(vh != Vertex_handle())
-        visitor.after_split(tr, vh);
-
-#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-      else
-        split_failed_ofs << "2 " << edge.first->vertex(edge.second)->point() << " "
+      m_split_failed_ofs << "2 " << edge.first->vertex(edge.second)->point() << " "
                          << edge.first->vertex(edge.third)->point() << std::endl;
-      if (vh != Vertex_handle())
-        ofs << vh->point() << std::endl;
 #endif
-
-#if  defined(CGAL_TETRAHEDRAL_REMESHING_VERBOSE_PROGRESS) \
-|| defined(CGAL_TETRAHEDRAL_REMESHING_VERBOSE)
-      if (vh != Vertex_handle())
-        ++nb_splits;
-#endif
-
-#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE_PROGRESS
-      std::cout << "\rSplit... ("
-                << long_edges.left.size() << " long edges, "
-                << "length  = " << std::sqrt(sqlen) << ", "
-                << nb_splits << " splits)";
-      std::cout.flush();
-#endif
+      return false;
     }
-  }//end loop on long_edges
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-  if(can_be_split_ofs.is_open()) can_be_split_ofs.close();
-  if(split_failed_ofs.is_open()) split_failed_ofs.close();
-  if(ofs.is_open())              ofs.close();
+    m_midpoints_ofs << vh->point() << std::endl;
 #endif
+    m_visitor.after_split(tr, vh);
+    return true;
+  }
 
-#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-  timer.stop();
-  std::cout << " done (" << nb_splits << " splits, in "
-            << timer.time() << " sec)." << std::endl;
-#endif
-}
+  std::string operation_name() const override { return "Split long edges"; }
+};
 
 } // internal
 } // Tetrahedral_remeshing

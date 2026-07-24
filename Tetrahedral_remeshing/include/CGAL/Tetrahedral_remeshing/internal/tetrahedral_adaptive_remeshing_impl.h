@@ -22,6 +22,7 @@
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Triangulation_utils_3.h>
 
+#include <CGAL/Tetrahedral_remeshing/internal/Elementary_operation.h>
 #include <CGAL/Tetrahedral_remeshing/internal/split_long_edges.h>
 #include <CGAL/Tetrahedral_remeshing/internal/collapse_short_edges.h>
 #include <CGAL/Tetrahedral_remeshing/internal/flip_edges.h>
@@ -86,7 +87,7 @@ class Adaptive_remesher
   typedef typename C3t3::Curve_index         Curve_index;
   typedef typename C3t3::Corner_index        Corner_index;
 
-  typedef Tetrahedral_remeshing_smoother<C3t3, SizingFunction, CellSelector> Smoother;
+  typedef Vertex_smoothing_context<C3t3, SizingFunction, CellSelector> SmoothingContext;
 
 private:
   C3t3 m_c3t3;
@@ -94,7 +95,7 @@ private:
   const bool m_protect_boundaries;
   CellSelector m_cell_selector;
   Visitor& m_visitor;
-  Smoother m_vertex_smoother;//initialized with initial surface
+  std::shared_ptr<SmoothingContext> m_smoothing_context;//built from the initial surface
 
   C3t3* m_c3t3_pbackup;
   std::vector<Vertex_handle> m_far_points;
@@ -116,14 +117,14 @@ public:
     , m_protect_boundaries(protect_boundaries)
     , m_cell_selector(cell_selector)
     , m_visitor(visitor)
-    , m_vertex_smoother(sizing, cell_selector, protect_boundaries, smooth_constrained_edges)
     , m_c3t3_pbackup(NULL)
     , m_tr_pbackup(&tr)
   {
     m_c3t3.triangulation().swap(tr);
 
     init_c3t3(vcmap, ecmap, fcmap);
-    m_vertex_smoother.init(m_c3t3);
+    m_smoothing_context = std::make_shared<SmoothingContext>(
+      m_c3t3, m_sizing, m_cell_selector, m_protect_boundaries, smooth_constrained_edges);
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "00-init");
@@ -147,14 +148,14 @@ public:
     , m_protect_boundaries(protect_boundaries)
     , m_cell_selector(cell_selector)
     , m_visitor(visitor)
-    , m_vertex_smoother(sizing, cell_selector, protect_boundaries, smooth_constrained_edges)
     , m_c3t3_pbackup(&c3t3)
     , m_tr_pbackup(NULL)
   {
     m_c3t3.swap(c3t3);
 
     init_c3t3(vcmap, ecmap, fcmap);
-    m_vertex_smoother.init(m_c3t3);
+    m_smoothing_context = std::make_shared<SmoothingContext>(
+      m_c3t3, m_sizing, m_cell_selector, m_protect_boundaries, smooth_constrained_edges);
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "00-init");
@@ -171,8 +172,10 @@ public:
   void split()
   {
     CGAL_assertion(check_vertex_dimensions());
-    split_long_edges(m_c3t3, m_sizing, m_protect_boundaries,
-                     m_cell_selector, m_visitor);
+    typedef Edge_split_operation<C3t3, SizingFunction, CellSelector, Visitor> EdgeSplitOp;
+    EdgeSplitOp split_op(m_sizing, m_cell_selector, m_protect_boundaries, m_visitor);
+    Elementary_operation_execution_sequential<EdgeSplitOp> executor;
+    executor.execute(split_op, m_c3t3);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     CGAL_assertion(tr().tds().is_valid(true));
@@ -195,8 +198,10 @@ public:
   void collapse()
   {
     CGAL_assertion(check_vertex_dimensions());
-    collapse_short_edges(m_c3t3, m_sizing, m_protect_boundaries,
-                         m_cell_selector, m_visitor);
+    typedef Edge_collapse_operation<C3t3, SizingFunction, CellSelector, Visitor> EdgeCollapseOp;
+    EdgeCollapseOp collapse_op(m_sizing, m_cell_selector, m_protect_boundaries, m_visitor);
+    Elementary_operation_execution_sequential<EdgeCollapseOp> executor;
+    executor.execute(collapse_op, m_c3t3);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     CGAL_assertion(tr().tds().is_valid(true));
@@ -216,8 +221,22 @@ public:
 
   void flip()
   {
-    flip_edges(m_c3t3, m_protect_boundaries,
-               m_cell_selector, m_visitor);
+    typedef Internal_edge_flip_operation<C3t3, CellSelector, Visitor> InternalFlipOp;
+    typedef Boundary_edge_flip_operation<C3t3, CellSelector, Visitor> BoundaryFlipOp;
+
+    // one incident-cells cache shared by both passes, as in the former flip_edges()
+    typename InternalFlipOp::Incident_cells_map inc_cells;
+
+    InternalFlipOp internal_flip_op(m_cell_selector, m_visitor, inc_cells);
+    Elementary_operation_execution_sequential<InternalFlipOp> internal_executor;
+    internal_executor.execute(internal_flip_op, m_c3t3);
+
+    if (!m_protect_boundaries)
+    {
+      BoundaryFlipOp boundary_flip_op(m_cell_selector, m_visitor, inc_cells);
+      Elementary_operation_execution_sequential<BoundaryFlipOp> boundary_executor;
+      boundary_executor.execute(boundary_flip_op, m_c3t3);
+    }
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     CGAL_assertion(tr().tds().is_valid(true));
@@ -237,7 +256,29 @@ public:
 
   void smooth()
   {
-    m_vertex_smoother.smooth_vertices(m_c3t3);
+    m_smoothing_context->refresh(m_c3t3);
+
+    // Order matches the former Tetrahedral_remeshing_smoother::smooth_vertices():
+    // complex (1D) edges, then surface (2D) vertices, then internal (3D) vertices.
+    if (!m_protect_boundaries)
+    {
+      if (m_smoothing_context->m_smooth_constrained_edges)
+      {
+        Complex_edge_vertex_smooth_operation<C3t3, SizingFunction, CellSelector> op(m_smoothing_context);
+        Elementary_operation_execution_sequential<decltype(op)> executor;
+        executor.execute(op, m_c3t3);
+      }
+      {
+        Surface_vertex_smooth_operation<C3t3, SizingFunction, CellSelector> op(m_smoothing_context);
+        Elementary_operation_execution_sequential<decltype(op)> executor;
+        executor.execute(op, m_c3t3);
+      }
+    }
+    {
+      Internal_vertex_smooth_operation<C3t3, SizingFunction, CellSelector> op(m_smoothing_context);
+      Elementary_operation_execution_sequential<decltype(op)> executor;
+      executor.execute(op, m_c3t3);
+    }
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     CGAL_assertion(tr().tds().is_valid(true));
@@ -633,7 +674,7 @@ public:
 #endif
     }
 
-    m_vertex_smoother.start_flip_smooth_steps(m_c3t3);
+    m_smoothing_context->start_flip_smooth_steps(m_c3t3);
     while (it_nb < max_it + nb_extra_iterations)
     {
       ++it_nb;

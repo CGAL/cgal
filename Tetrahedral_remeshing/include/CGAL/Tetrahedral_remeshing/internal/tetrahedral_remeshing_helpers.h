@@ -1895,35 +1895,6 @@ void get_edge_info(const typename C3t3::Edge& edge,
   }
 }
 
-
-template<typename EdgesBimap>
-void remove_from_bimap(const typename EdgesBimap::left_map::key_type& e,
-                       EdgesBimap& edges)
-{
-  typename EdgesBimap::left_map::iterator eit = edges.left.find(e);
-  if (eit != edges.left.end())
-    edges.left.erase(eit);
-}
-
-// if e is in 'edges'
-template<typename EdgesBimap, typename FT>
-void
-update_bimap(typename EdgesBimap::left_map::key_type& e, //Edge
-             EdgesBimap& edges,
-             const std::optional<FT> sqlen)
-{
-  if(sqlen == std::nullopt)
-    remove_from_bimap(e, edges);
-  else
-  {
-    typename EdgesBimap::left_map::iterator eit = edges.left.find(e);
-    if(eit != edges.left.end())
-      edges.left.replace_data(eit, sqlen.value());
-    else
-      edges.left.insert(typename EdgesBimap::left_map::value_type(e, sqlen.value()));
-  }
-}
-
 template<typename Tr>
 std::array<typename Tr::Edge, 6>
 cell_edges(const typename Tr::Cell_handle c, const Tr&)
