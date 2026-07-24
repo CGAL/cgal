@@ -1,11 +1,10 @@
 #include <CGAL/Polygon_mesh_processing/measure.h>
-#include <CGAL/Polygon_mesh_processing/bbox.h>
+#include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Real_timer.h>
@@ -13,13 +12,12 @@
 #include <iostream>
 #include <fstream>
 #include <iterator>
-#include <list>
+#include <string>
 
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic;
-typedef CGAL::Exact_predicates_exact_constructions_kernel Epec;
 
 template <typename Mesh>
 void
@@ -27,8 +25,12 @@ test(std::string fname)
 {
   std::cout << typeid(Mesh).name() << std::endl;
   Mesh pmesh;
-  std::ifstream in(fname);
-  in >> pmesh;
+  if(!PMP::IO::read_polygon_mesh(fname, pmesh))
+  {
+    std::cerr << "Invalid input." << std::endl;
+    return;
+  }
+
 
   CGAL::Real_timer timer;
   timer.start();
