@@ -335,6 +335,11 @@ inline auto make_indenting_guards(int spaces_per_level) {
 }
 /// @}
 
+template <typename Stream>
+auto make_indenting_guard(Stream& stream, const std::string& indent_string) {
+  return Basic_indenting_stream_guard<Stream>(stream, indent_string);
+}
+
 /**
  * \ingroup PkgStreamSupportRef
  *
@@ -355,7 +360,11 @@ inline auto make_indenting_guards(int spaces_per_level) {
  /// @{
 template <typename... Streams>
 auto make_indenting_guards(const std::string& indent_string, Streams&... streams) {
-  return std::make_tuple(Basic_indenting_stream_guard<Streams>(streams, indent_string)...);
+  if constexpr(sizeof...(Streams) == 0) {
+    return make_indenting_guards(indent_string, std::cout, std::cerr, std::clog);
+  } else {
+    return std::make_tuple(make_indenting_guard(streams, indent_string)...);
+  }
 }
 inline auto make_indenting_guards(const std::string& indent_string) {
   return make_indenting_guards(indent_string, std::cout, std::cerr, std::clog);
