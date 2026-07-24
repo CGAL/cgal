@@ -254,6 +254,8 @@ void tangential_relaxation(const VertexRange& vertices,
 
       // collect hedges to detect if we have to handle boundary cases
       std::vector<halfedge_descriptor> interior_hedges, border_halfedges;
+      interior_hedges.reserve(8);
+      border_halfedges.reserve(8);
       for(halfedge_descriptor h : halfedges_around_target(v, tm))
       {
         if (is_border_edge(h, tm) || get(ecm, edge(h, tm)))
