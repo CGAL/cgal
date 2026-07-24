@@ -91,7 +91,6 @@ namespace AABB_trees {
                                                                                    typename AABBTree2::AABB_traits,
                                                                                    Aff_tr, false>
                                                         traversal_traits(tree1.traits(), tree2.traits(), tr1, tr2);
-      Protect_FPU_rounding(CGAL_FE_UPWARD);
       CGAL::internal::AABB_tree::two_trees_traversal(tree1, tree2, traversal_traits);
       return traversal_traits.is_intersection_found();
     }
@@ -166,7 +165,6 @@ namespace AABB_trees {
                                                                                                       typename AABBTree2::AABB_traits,
                                                                                                       OutputIterator, Aff_tr, false>
                                                         traversal_traits(tree1.traits(), tree2.traits(), out, tr1, tr2);
-      Protect_FPU_rounding();
       CGAL::internal::AABB_tree::two_trees_traversal<Concurrency_tag>(tree1, tree2, traversal_traits);
     }
   }
