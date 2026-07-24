@@ -86,6 +86,9 @@ public:
   */
   bool is_valid() const;
 
+  /*!  checks that the lengths of the sides of each side pairing are the same.   */
+  bool is_valid_length_pairing() const;
+
   /// @}
 };
 
@@ -103,6 +106,7 @@ public:
   For \f$ i=0 \f$ to \f$ n-1 \f$ the i-th vertex is printed on a separate line.
 
   \pre <code> is_valid() </code>
+  \pre <code> is_valid_length_pairing() </code>
 */
 std::ostream& operator<<(std::ostream& s, const Hyperbolic_fundamental_domain_2<Traits>& domain);
 

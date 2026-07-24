@@ -15,10 +15,9 @@
 
 #include <CGAL/license/Triangulation_on_hyperbolic_surface_2.h>
 
+#include <CGAL/Hyperbolic_surface_traits_2.h>
 #include <CGAL/Hyperbolic_isometry_2.h>
-
 #include <CGAL/assertions.h>
-
 #include <iostream>
 #include <vector>
 
@@ -36,6 +35,8 @@ class Hyperbolic_fundamental_domain_2
 {
 public:
   typedef typename Traits::Hyperbolic_point_2                    Point;
+  typedef typename Traits::FT                          FT;
+  typedef Complex_number<FT>                                          Complex_number;
 
   Hyperbolic_fundamental_domain_2() {};
 
@@ -61,15 +62,15 @@ public:
   std::istream& from_stream(std::istream& s);
   std::ostream& to_stream(std::ostream& s) const;
 
+  std::ostream& to_json(std::ostream& s) const;
+
   bool is_valid() const;
+  bool is_valid_length_pairing() const;
 
 private:
   std::vector<Point> vertices_;
   std::vector<std::size_t> pairings_;
 };
-
-//template<class Traits> std::ostream& operator<<(std::ostream& s, const Hyperbolic_fundamental_domain_2<Traits>& domain);
-//template<class Traits> std::istream& operator>>(std::istream& s, Hyperbolic_fundamental_domain_2<Traits>& domain);
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -167,6 +168,10 @@ from_stream(std::istream& s)
     s >> p;
     vertices_.push_back(p);
   }
+
+  CGAL_precondition(is_valid());
+  CGAL_precondition(is_valid_length_pairing());
+
   return s;
 }
 
@@ -214,6 +219,67 @@ is_valid()const
   }
 
   return true;
+}
+
+template<class Traits>
+bool
+Hyperbolic_fundamental_domain_2<Traits>::
+is_valid_length_pairing() const
+{
+  // Get the number of vertices (= nb of sides)
+  std::size_t n = vertices_.size();
+  Point v1,v2,v1p,v2p;
+
+  for (std::size_t k=0; k<n; ++k) {
+    v1 = Point(vertices_[k%n].x(), vertices_[k%n].y());
+    v2 = Point(vertices_[(k+1)%n].x(), vertices_[(k+1)%n].y());
+    std::size_t kp = pairings_[k];
+    v1p = Point(vertices_[kp%n].x(), vertices_[kp%n].y());
+    v2p = Point(vertices_[(kp+1)%n].x(), vertices_[(kp+1)%n].y());
+
+    //Try object design? typename Traits::cosh_of_hyperbolic_distance chd = gt.cosh_of_hyperbolic_distance_object();
+    //if (!(chd(v1,v2) == chd(v1p,v2p))) {
+    if (!(Traits::cosh_of_hyperbolic_distance(v1,v2) == Traits::cosh_of_hyperbolic_distance(v1p,v2p))) {
+      return false;
+    }
+  }
+
+ return true;
+}
+
+//////////////////////////////////////////////////////
+//       TO JSON OUTPUT
+//////////////////////////////////////////////////////
+template<class Traits>
+std::ostream&
+Hyperbolic_fundamental_domain_2<Traits>::
+to_json(std::ostream& s) const
+{
+    const std::size_t n = size();
+
+    s << "{\n";
+    s << "  \"type\": " << "\"domain\"" << ",\n";
+    s << "  \"size\": " << n << ",\n";
+
+    s << "  \"paired_side\": [";
+    for (std::size_t k = 0; k < n; ++k)
+    {
+        if (k > 0) s << ", ";
+        s << paired_side(k);
+    }
+    s << "],\n";
+
+    s << "  \"vertices\": [";
+    for (std::size_t k = 0; k < n; ++k)
+    {
+        if (k > 0) s << "," << std::endl;
+        s << "[\"" << vertex(k).x() << "\", \"" << vertex(k).y() << "\"]" ;
+    }
+    s << "]\n";
+
+    s << "}";
+
+    return s;
 }
 
 } // namespace CGAL

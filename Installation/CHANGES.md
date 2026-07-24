@@ -32,6 +32,15 @@ Release date: June 2026
 
 ### [2D Alpha Wrapping](https://doc.cgal.org/6.2/Manual/packages.html#PkgAlphaWrap2) (new package)
 
+### [2D Triangulations on Hyperbolic Surfaces](https://doc.cgal.org/6.2/Manual/packages.html#PkgHyperbolicSurfaceTriangulation2)
+
+- Added
+  [CGAL::Delaunay_triangulation_on_hyperbolic_surface_2](https://doc.cgal.org/6.2/Triangulation_on_hyperbolic_surface_2/classCGAL_1_1Delaunay__triangulation__on__hyperbolic__surface__2.html).
+  Functionalities include point location, point insertion, and the
+  computation of an epsilon-net of the hyperbolic surface, which is a set of
+  well-distributed points on the surface controlled by the parameter epsilon.
+  
+### [2D Alpha Wrapping (new package)](https://doc.cgal.org/6.2/Manual/packages.html#PkgAlphaWrap2)
 - This component takes a polygon soup, a 2D segment soup, and/or a 2D point set as input,
   and generates a valid (watertight, intersection-free and 1-manifold) multi-polygon that
   strictly encloses the input. The algorithm proceeds by shrink-wrapping
