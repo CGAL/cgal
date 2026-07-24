@@ -14,7 +14,12 @@
 
 #include <CGAL/license/AABB_tree.h>
 
-
+#include <CGAL/Bbox_3.h>
+#include <CGAL/Aff_transformation_3.h>
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Cartesian/Aff_transformation_3.h>
+#include <CGAL/Cartesian_converter.h>
+#include <CGAL/Interval_nt.h>
 #include <CGAL/AABB_tree/internal/Has_nested_type_Shared_data.h>
 #include <boost/mpl/has_xxx.hpp>
 
@@ -60,6 +65,71 @@ struct Primitive_helper<AABBTraits,false>{
   typedef typename Point_result_type<typename AABBTraits::Primitive>::type Reference_point_type;
   static Reference_point_type get_reference_point(const typename AABBTraits::Primitive& p,const AABBTraits&) {return p.reference_point();}
 };
+
+
+template<class Kernel>
+Bbox_3 compute_transformed_bbox(const CGAL::Aff_transformation_3<Kernel>& at, const Bbox_3& bbox, bool has_rotation)
+{
+  // We protect here for simplicity but may potentially decreased performance
+  typedef Simple_cartesian<Interval_nt<true>> AK;
+  typedef Cartesian_converter<Kernel, AK>    C2F;
+  C2F c2f;
+
+  AK::Aff_transformation_3 a_at = c2f(at);
+  AK::FT xtrm[6] = { c2f((bbox.min)(0)), c2f((bbox.max)(0)),
+                     c2f((bbox.min)(1)), c2f((bbox.max)(1)),
+                     c2f((bbox.min)(2)), c2f((bbox.max)(2)) };
+
+  if(!has_rotation){
+    AK::Point_3 ps[2];
+    ps[0] = a_at( AK::Point_3(xtrm[0], xtrm[2], xtrm[4]) );
+    ps[1] = a_at( AK::Point_3(xtrm[1], xtrm[3], xtrm[5]) );
+
+    return bbox_3(ps, ps+2);
+  }
+
+  AK::Point_3 ps[8];
+  ps[0] = a_at( AK::Point_3(xtrm[0], xtrm[2], xtrm[4]) );
+  ps[1] = a_at( AK::Point_3(xtrm[0], xtrm[2], xtrm[5]) );
+  ps[2] = a_at( AK::Point_3(xtrm[0], xtrm[3], xtrm[4]) );
+  ps[3] = a_at( AK::Point_3(xtrm[0], xtrm[3], xtrm[5]) );
+
+  ps[4] = a_at( AK::Point_3(xtrm[1], xtrm[2], xtrm[4]) );
+  ps[5] = a_at( AK::Point_3(xtrm[1], xtrm[2], xtrm[5]) );
+  ps[6] = a_at( AK::Point_3(xtrm[1], xtrm[3], xtrm[4]) );
+  ps[7] = a_at( AK::Point_3(xtrm[1], xtrm[3], xtrm[5]) );
+
+  return bbox_3(ps, ps+8);
+}
+
+template<class Kernel>
+Bbox_2 compute_transformed_bbox(const CGAL::Aff_transformation_2<Kernel>& at, const Bbox_2& bbox, bool has_rotation)
+{
+  typedef Simple_cartesian<Interval_nt<false>> AK;
+  typedef Cartesian_converter<Kernel, AK>    C2F;
+  C2F c2f;
+
+
+  AK::Aff_transformation_2 a_at = c2f(at);
+  AK::FT xtrm[4] = { c2f((bbox.min)(0)), c2f((bbox.max)(0)),
+                     c2f((bbox.min)(1)), c2f((bbox.max)(1)) };
+
+  if(!has_rotation){
+    AK::Point_2 ps[2];
+    ps[0] = a_at( AK::Point_2(xtrm[0], xtrm[2]) );
+    ps[1] = a_at( AK::Point_2(xtrm[1], xtrm[3]) );
+
+    return bbox_2(ps, ps+2);
+  }
+
+  AK::Point_2 ps[4];
+  ps[0] = a_at( AK::Point_2(xtrm[0], xtrm[2]) );
+  ps[1] = a_at( AK::Point_2(xtrm[0], xtrm[3]) );
+  ps[2] = a_at( AK::Point_2(xtrm[1], xtrm[2]) );
+  ps[3] = a_at( AK::Point_2(xtrm[1], xtrm[3]) );
+
+  return bbox_2(ps, ps+4);
+}
 
 } } //namespace CGAL::internal
 

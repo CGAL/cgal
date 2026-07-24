@@ -15,7 +15,7 @@
 
 #include <CGAL/license/AABB_tree.h>
 
-
+#include <CGAL/AABB_tree/internal/Primitive_helper.h>
 #include <CGAL/AABB_tree/internal/AABB_node.h>
 #include <optional>
 
@@ -183,6 +183,46 @@ private:
   const AABBTraits& m_traits;
 };
 
+/**
+ * @class Listing_distinct_primitive_traits
+ * used by `all_pairs_of_intersecting_primitives()` to avoid report `(i, i)` and twice `(i, j)`.
+ */
+template<typename AABBTraits, typename Output_iterator>
+class Listing_distinct_primitive_traits
+{
+  typedef typename AABBTraits::FT FT;
+  typedef typename AABBTraits::Point Point;
+  typedef typename AABBTraits::Primitive Primitive;
+  typedef typename AABBTraits::Bounding_box Bounding_box;
+  typedef typename AABBTraits::Primitive::Id Primitive_id;
+  typedef typename AABBTraits::Point_and_primitive_id Point_and_primitive_id;
+  typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;
+  typedef ::CGAL::AABB_node<AABBTraits> Node;
+
+public:
+  Listing_distinct_primitive_traits(Output_iterator out_it, const AABBTraits& traits)
+    : m_out_it(out_it), m_traits(traits) {}
+
+  constexpr bool go_further() const { return true; }
+
+  void intersection(const Primitive& query, const Primitive& primitive)
+  {
+    if( query.id()<primitive.id() && m_traits.do_intersect_object()(internal::Primitive_helper<AABBTraits>::get_datum(query, m_traits), primitive) )
+    {
+      *m_out_it++ = primitive.id();
+    }
+  }
+
+  bool do_intersect(const Primitive& query, const Node& node) const
+  {
+    return m_traits.do_intersect_object()(query, node.bbox());
+  }
+
+private:
+  Output_iterator m_out_it;
+  const AABBTraits& m_traits;
+};
+
 
 /**
  * @class First_primitive_traits
@@ -269,7 +309,6 @@ private:
   bool m_is_found;
   const AABBTraits& m_traits;
 };
-
 
 /**
  * @class Projection_traits

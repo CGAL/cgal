@@ -66,6 +66,7 @@ public:
   double x_span() const;
   double y_span() const;
   double z_span() const;
+  double squared_diagonal_length() const;
 
   inline double min BOOST_PREVENT_MACRO_SUBSTITUTION (int i) const;
   inline double max BOOST_PREVENT_MACRO_SUBSTITUTION (int i) const;
@@ -120,6 +121,10 @@ inline double Bbox_3::y_span() const {
 
 inline double Bbox_3::z_span() const {
   return zmax() - zmin();
+}
+
+inline double Bbox_3::squared_diagonal_length() const {
+  return x_span()*x_span() + y_span()*y_span() + z_span()*z_span();
 }
 
 inline
