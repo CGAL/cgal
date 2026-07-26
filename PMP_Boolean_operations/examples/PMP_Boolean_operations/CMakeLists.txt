@@ -23,6 +23,7 @@ create_single_source_cgal_program("triangle_mesh_autorefinement.cpp")
 create_single_source_cgal_program("snap_polygon_soup.cpp")
 create_single_source_cgal_program("mesh_slicer_example.cpp")
 create_single_source_cgal_program("mesh_kernel_example.cpp")
+create_single_source_cgal_program("mesh_orthogonal_clip_example.cpp")
 
 find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)

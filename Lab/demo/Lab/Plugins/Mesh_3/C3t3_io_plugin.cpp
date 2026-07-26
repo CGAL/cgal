@@ -150,7 +150,7 @@ CGAL_Lab_c3t3_binary_io_plugin::load(
       }
       else if(item->c3t3().triangulation().number_of_finite_cells() == 0)
       {
-        QMessageBox::warning((QWidget*)NULL, tr("C3t3_io_plugin"),
+        QMessageBox::warning(CGAL::Three::Three::mainWindow(), tr("C3t3_io_plugin"),
                                        tr("No finite cell provided.\n"
                                           "Nothing to display."),
                                         QMessageBox::Ok);

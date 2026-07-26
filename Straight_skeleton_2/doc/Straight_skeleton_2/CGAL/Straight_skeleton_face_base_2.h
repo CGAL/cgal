@@ -22,7 +22,8 @@ for the `CGAL::Straight_skeleton_2` concept.
 \sa `CGAL::Straight_skeleton_halfedge_base_2`
 */
 template< typename Refs >
-class Straight_skeleton_face_base_2 {
+class Straight_skeleton_face_base_2
+{
 public:
 
 }; /* end Straight_skeleton_face_base_2 */

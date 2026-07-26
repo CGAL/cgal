@@ -14,7 +14,8 @@ required by the `Straight_skeleton_builder_2` algorithm class.
 \sa `CGAL::Straight_skeleton_builder_2`
 */
 template< typename Kernel >
-class Straight_skeleton_builder_traits_2 {
+class Straight_skeleton_builder_traits_2
+{
 public:
 
 }; /* end Straight_skeleton_builder_traits_2 */

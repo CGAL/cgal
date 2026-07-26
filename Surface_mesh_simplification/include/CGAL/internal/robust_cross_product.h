@@ -76,7 +76,7 @@ typename GeomTraits::Vector_3 similar_coordinates_cross_product(const typename G
   const FT& vy = v.y();
   const FT& vz = v.z();
 
-  auto minor = [](const FT& ui, const FT& vi, const FT& uj, const FT& vj)
+  auto compute_minor = [](const FT& ui, const FT& vi, const FT& uj, const FT& vj)
   {
     // The main idea is that we expect ai and bi (and aj and bj) to have roughly the same magnitude
     // since this function is used to compute the cross product of two vectors that are defined
@@ -87,9 +87,9 @@ typename GeomTraits::Vector_3 similar_coordinates_cross_product(const typename G
   };
 
   // ay*
-  FT x = minor(uy, vy, uz, vz);
-  FT y = minor(uz, vz, ux, vx);
-  FT z = minor(ux, vx, uy, vy);
+  FT x = compute_minor(uy, vy, uz, vz);
+  FT y = compute_minor(uz, vz, ux, vx);
+  FT z = compute_minor(ux, vx, uy, vy);
 
   return Vector(x, y, z);
 }
