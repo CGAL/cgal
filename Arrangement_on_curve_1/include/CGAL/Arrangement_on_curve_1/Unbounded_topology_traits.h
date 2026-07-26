@@ -8,6 +8,7 @@
 #define CGAL_ARRANGEMENT_ON_CURVE_1_UNBOUNDED_TOPOLOGY_TRAITS_H
 
 #include <list>
+#include <memory>
 #include <type_traits>
 #include <unordered_map>
 
@@ -50,14 +51,23 @@ template <> struct Map_param_traits<void> { using type = int; }; // Safe dummy f
 // UNBOUNDED TOPOLOGY TRAITS
 // ============================================================================
 
-template <typename Point_1, typename VertexData = void, typename EdgeData = void>
+template <typename Point_1, typename VertexData = void, typename EdgeData = void,
+          typename Allocator = std::allocator<char>>
 class Unbounded_topology_traits {
 public:
   struct Vertex;
   struct Edge;
 
-  using Vertex_list = std::list<Vertex>;
-  using Edge_list = std::list<Edge>;
+  // Allocator type aliases.
+  // The single Allocator parameter is rebound to the concrete element types of
+  // each container via std::allocator_traits::rebind_alloc, following the same
+  // convention used by std::list itself.
+  using Allocator_type = Allocator;
+  using Vertex_allocator = typename std::allocator_traits<Allocator>::template rebind_alloc<Vertex>;
+  using Edge_allocator = typename std::allocator_traits<Allocator>::template rebind_alloc<Edge>;
+
+  using Vertex_list = std::list<Vertex, Vertex_allocator>;
+  using Edge_list = std::list<Edge,   Edge_allocator>;
 
   using Vertex_descriptor = typename Vertex_list::iterator;
   using Edge_descriptor = typename Edge_list::iterator;
@@ -218,16 +228,37 @@ public:
     { if constexpr (! std::is_void_v<EdgeData>) k->set_data(val); }
   };
 
+  // Expose the allocator so callers (e.g. copy/move of Arrangement_on_curve_1)
+  // can retrieve it via the standard get_allocator() idiom.
+  // m_vertices.get_allocator() returns Vertex_allocator (= rebind_alloc<Vertex>),
+  // not the original Allocator_type. We convert back via std::allocator_traits
+  // rebind, which is always possible because all allocators rebound from the
+  // same source type are mutually convertible by the Allocator concept.
+  Allocator_type get_allocator() const noexcept { return Allocator_type(m_vertices.get_allocator()); }
+
 private:
   Vertex_list m_vertices;
   Edge_list m_edges;
   Edge_descriptor m_unbounded_left_edge;
   Edge_descriptor m_unbounded_right_edge;
+
 public:
-  // Default constructor
-  Unbounded_topology_traits() {
+  // Default constructor: uses a default-constructed Allocator.
+  Unbounded_topology_traits() :
+    m_vertices(),
+    m_edges() {
     m_edges.emplace_back();
-    m_unbounded_left_edge = m_edges.begin();
+    m_unbounded_left_edge  = m_edges.begin();
+    m_unbounded_right_edge = m_edges.begin();
+  }
+
+  // Constructor accepting an explicit allocator instance.
+  // Both internal lists are constructed with allocators rebound from `alloc`.
+  explicit Unbounded_topology_traits(const Allocator_type& alloc) :
+    m_vertices(Vertex_allocator(alloc)),
+    m_edges(Edge_allocator(alloc)) {
+    m_edges.emplace_back();
+    m_unbounded_left_edge  = m_edges.begin();
     m_unbounded_right_edge = m_edges.begin();
   }
 
@@ -286,11 +317,10 @@ public:
   // Swap two topology-traits objects. Used internally by copy assignment and
   // may also be useful to callers.
   void swap(Unbounded_topology_traits& other) noexcept {
-    using std::swap;
-    swap(m_vertices, other.m_vertices);
-    swap(m_edges, other.m_edges);
-    swap(m_unbounded_left_edge, other.m_unbounded_left_edge);
-    swap(m_unbounded_right_edge, other.m_unbounded_right_edge);
+    std::swap(m_vertices, other.m_vertices);
+    std::swap(m_edges, other.m_edges);
+    std::swap(m_unbounded_left_edge, other.m_unbounded_left_edge);
+    std::swap(m_unbounded_right_edge, other.m_unbounded_right_edge);
   }
 
   // ============================================================================
@@ -409,10 +439,21 @@ private:
   // --------------------------------------------------------------------------
   void patch_cross_references(const Unbounded_topology_traits& other) {
     // -- Step 1: build the translation maps -----------------------------------
+    //
+    // The temporary maps use the same allocator as the lists (rebound to the
+    // map's value_type) so that in contexts where a scoped/pool allocator is
+    // in use, all allocations stay within the same arena.
+
+    using Edge_map_value = std::pair<const Edge_const_descriptor,   Edge_descriptor>;
+    using Vertex_map_value = std::pair<const Vertex_const_descriptor, Vertex_descriptor>;
+    using Edge_map_alloc = typename std::allocator_traits<Allocator>::template rebind_alloc<Edge_map_value>;
+    using Vertex_map_alloc = typename std::allocator_traits<Allocator>::template rebind_alloc<Vertex_map_value>;
 
     // edge_map[src_edge_it] = dst_edge_it
-    std::unordered_map<Edge_const_descriptor,   Edge_descriptor,
-                       Iterator_hash> edge_map;
+    std::unordered_map<Edge_const_descriptor, Edge_descriptor,
+                       Iterator_hash, std::equal_to<Edge_const_descriptor>,
+                       Edge_map_alloc> edge_map(0, Iterator_hash{}, std::equal_to<Edge_const_descriptor>{},
+                                                Edge_map_alloc(get_allocator()));
     edge_map.reserve(m_edges.size());
     {
       auto src_it = other.m_edges.cbegin();
@@ -423,7 +464,9 @@ private:
 
     // vertex_map[src_vertex_it] = dst_vertex_it
     std::unordered_map<Vertex_const_descriptor, Vertex_descriptor,
-                       Iterator_hash> vertex_map;
+                       Iterator_hash, std::equal_to<Vertex_const_descriptor>,
+                       Vertex_map_alloc> vertex_map(0, Iterator_hash{}, std::equal_to<Vertex_const_descriptor>{},
+                                                    Vertex_map_alloc(get_allocator()));
     vertex_map.reserve(m_vertices.size());
     {
       auto src_it = other.m_vertices.cbegin();

@@ -27,6 +27,10 @@ public:
   // Define a clean type alias for the traits smart pointer
   using Shared_geometry_traits = std::shared_ptr<const Geometry_traits_1>;
 
+  // Expose the allocator type from the topology traits so that callers can
+  // query it via get_allocator() and use it with compatible containers.
+  using Allocator_type = typename Topology_traits::Allocator_type;
+
   using Point_1 = typename Geometry_traits_1::Point_1;
 
   using Vertex_descriptor = typename Topology_traits::Vertex_descriptor;
@@ -83,6 +87,15 @@ public:
     m_topology_traits(std::move(topo_tr))
   { CGAL_assertion(m_geometry_traits != nullptr); }
 
+  // 4. Allocator-aware constructor.
+  //    Constructs an empty arrangement whose internal topology traits (and
+  //    therefore its vertex/edge lists) use the supplied allocator.
+  //    Requires that TopologyTraits is constructible from an Allocator_type.
+  Arrangement_on_curve_1(Shared_geometry_traits shared_geom_tr, const Allocator_type& alloc) :
+    m_geometry_traits(std::move(shared_geom_tr)),
+    m_topology_traits(alloc)
+  { CGAL_assertion(m_geometry_traits != nullptr); }
+
   // ACCESSORS
   const Geometry_traits_1& geometry_traits_1() const { return *m_geometry_traits; }
   Shared_geometry_traits shared_geometry_traits_1() const { return m_geometry_traits; }
@@ -120,6 +133,9 @@ public:
   bool has_right_vertex(Edge_const_descriptor e) const { return m_topology_traits.has_right_vertex(e); }
 
   // Setters
+  // Returns the allocator used by the internal topology traits.
+  Allocator_type get_allocator() const noexcept { return m_topology_traits.get_allocator(); }
+
   void reset_shared_geometry_traits(Shared_geometry_traits new_shared_geom_tr) {
     // Safety check: changing traits on a populated structure is highly dangerous
     CGAL_precondition_msg(is_empty(), "Cannot reset the geometry traits pointer of a non-empty arrangement.");
