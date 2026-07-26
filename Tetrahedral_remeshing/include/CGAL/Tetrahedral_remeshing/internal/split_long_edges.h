@@ -340,8 +340,10 @@ template<typename C3t3,
          typename Visitor>
 class Edge_split_operation
     : public Elementary_operation<C3t3,
-                                 typename C3t3::Triangulation::Edge,
-                                 std::vector<typename C3t3::Triangulation::Edge>>
+                                 std::pair<typename C3t3::Triangulation::Vertex_handle,
+                                           typename C3t3::Triangulation::Vertex_handle>,
+                                 std::vector<std::pair<typename C3t3::Triangulation::Vertex_handle,
+                                                       typename C3t3::Triangulation::Vertex_handle>>>
 {
 public:
   using Tr = typename C3t3::Triangulation;
@@ -351,10 +353,15 @@ public:
   using Edge_vv = std::pair<Vertex_handle, Vertex_handle>;
   using FT = typename Tr::Geom_traits::FT;
 
-  using Long_edges = std::vector<Edge>;
-  using Base_operation = Elementary_operation<C3t3, Edge, Long_edges>;
+  // Candidates are stored as vertex pairs, captured at collection time. A raw
+  // Edge (Cell_handle, i, j) would go stale: each split destroys and recycles
+  // cells, so by the time the executor reaches a later candidate its Cell_handle
+  // may point at a different cell. Vertices are never removed by a split, so the
+  // vertex pair stays valid and is re-resolved to the current edge via is_edge().
+  using Long_edges = std::vector<Edge_vv>;
+  using Base_operation = Elementary_operation<C3t3, Edge_vv, Long_edges>;
   using Element_type = typename Base_operation::Element_type;
-  static_assert(std::is_same_v<Element_type, Edge>, "Element_type must be Edge");
+  static_assert(std::is_same_v<Element_type, Edge_vv>, "Element_type must be Edge_vv");
   using ElementSource = typename Base_operation::Element_range;
 
 private:
@@ -423,14 +430,14 @@ public:
     Long_edges long_edges;
     long_edges.reserve(long_edges_with_lengths.size());
     for(const auto& ef : long_edges_with_lengths)
-      long_edges.push_back(ef.edge);
+      long_edges.push_back(make_vertex_pair(ef.edge));
     return long_edges;
   }
 
   bool execute_operation(const Element_type& element, C3t3& c3t3) override
   {
     Tr& tr = c3t3.triangulation();
-    const Edge_vv& e = make_vertex_pair(element);
+    const Edge_vv& e = element;
 
     Cell_handle cell;
     int i1, i2;
