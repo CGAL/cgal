@@ -16,6 +16,9 @@ namespace AocTraits {}
 /// \defgroup PkgArrangementOnCurve1op_right_shift operator>>
 /// \ingroup PkgArrangementOnCurve1IO
 
+/// \defgroup PkgArrangementOnCurve1Funcs Free Functions
+/// \ingroup PkgArrangementOnCurve1Ref
+
 /*!
 \addtogroup PkgArrangementOnCurve1Ref
 \cgalPkgDescriptionBegin{1D Arrangements,PkgArrangementOnCurve1}

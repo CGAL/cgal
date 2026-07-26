@@ -1,10 +1,7 @@
 // Copyright (c) 2026 Tel-Aviv University (Israel).
 // All rights reserved.
-//
 // This file is part of CGAL (www.cgal.org).
-//
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-//
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef CGAL_ARRANGEMENT_ON_CURVE_1_INSERT_H
@@ -19,9 +16,8 @@
 namespace CGAL {
 namespace Arrangement_on_curve_1 {
 
-// ==========================================
-// INSERT
-// ==========================================
+/*! inserts a point into an arrangement on a curve.
+ */
 template <typename GeometryTraits, typename TopologyTraits>
 typename Arrangement_on_curve_1<GeometryTraits, TopologyTraits>::Vertex_descriptor
 insert(Arrangement_on_curve_1<GeometryTraits, TopologyTraits>& arr, const typename GeometryTraits::Point_1& p) {

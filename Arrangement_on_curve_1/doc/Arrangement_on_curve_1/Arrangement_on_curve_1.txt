@@ -17,6 +17,12 @@ manipulating, and querying one-dimensional arrangements embedded along
 continuous curves referred to as *master curves*. A 1D arrangement
 offers an efficient mechanism to maintain ordered sequences of points
 across diverse geometric tracking scenarios.
+\cgalFigureRef{aoc_fig-semicircle} shows a 1D arrangement embedded on
+the closed upper semicircle.  It has seven vertices
+\f$v_0,v_1,...,v_6\f$ and six edges \f$e_0, e_1, ..., e_5\f$.
+
+\cgalFigureBegin{aoc_fig-semicircle,semicircle.png}
+\cgalFigureEnd
 
 <!-- ----------------------------------------------------------------------- -->
 \subsection aoc_ssec-intro-sep Separation of Topology and Geometry
@@ -93,48 +99,88 @@ Inserting the very first node point uses `insert_empty(p)`, which splits that si
 left-unbounded edge and a right-unbounded edge flanking the new vertex node.
 
 <!-- ----------------------------------------------------------------------- -->
-\subsection aoc_ssec-basic-insert Insertion Functions
+\subsection aoc_ssec-basic-insert Inserting Points
 <!-- ----------------------------------------------------------------------- -->
 
-The arrangement class provides low-level topological construction modifiers to handle structured manual assembly
-along the frontier:
-- `insert_before(v_first, p)` inserts a new point strictly to the left of the current leftmost boundary node, extending
-the topology further toward \f$-\infty\f$.
-- `insert_after(v_last, p)` inserts a new point strictly to the right of the current rightmost boundary node, extending
-the topology further toward \f$+\infty\f$.
-- `split_edge(e, p)` subdivides an internal bounded or unbounded edge interval at the designated parameter coordinate
-position, introducing a new interior vertex.
+The arrangement class provides low-level topological construction
+modifiers to handle structured manual assembly along the frontier:
 
-\section aoc_sec-queries Issuing Queries on an Arrangement
-Given a query coordinate point \f$p\f$, point location identifies where the point falls relative to the existing
-arrangement topology. The lookup returns a `Location_result` variant type. The query point evaluates to a
-`Vertex_descriptor` if it coincides exactly with an existing arrangement vertex, or an `Edge_descriptor` if it
-rests inside a bounded intermediate sub-curve or one of the two one-sided unbounded sub-curves.
+- `insert_before(v_first, p)` inserts a new point strictly to the left
+of the current leftmost boundary node, extending the topology further
+toward \f$-\infty\f$.
 
-The package implements this search via a linear topological walk from left to right starting at
-`unbounded_left_edge()`, using the geometry traits functor to locate the precise cell containing the query point
-parameter.
+- `insert_after(v_last, p)` inserts a new point strictly to the right
+of the current rightmost boundary node, extending the topology further
+toward \f$+\infty\f$.
+
+- `split_edge(e, p)` subdivides an internal bounded or unbounded edge
+interval at the designated parameter coordinate position, introducing
+a new interior vertex.
 
 <!-- ======================================================================= -->
 \section aoc_sec-free_funcs Free Functions
 <!-- ======================================================================= -->
 
 <!-- ----------------------------------------------------------------------- -->
-\subsection aoc_ssec-free_insert Insertion Functions
-A high-level free function `insert(arr, p)` is provided to add points into the arrangement. This function first
+\subsection aoc_ssec-free_locate Issuing Queries
 <!-- ----------------------------------------------------------------------- -->
 
-calls `locate(arr, p)` internally to find where the point falls. If the point already matches an existing vertex,
-the descriptor of that vertex is returned. Otherwise, the function invokes `insert_empty()`, `insert_before()`,
-`insert_after()`, or `split_edge()` as needed to safely update the topology.
+Given a query point \f$p\f$, the call `locate(arr, q)` locates the
+query point in the given arrangement. The function returns a
+discriminated union container of type `Const_location_result` (an
+instance of `std::variant` template) that identifies a cell (i.e., a
+vertex or an edge). In particular, the result is a
+`Const_vertex_descriptor` if the geometric embedding of the identified
+vertex coincides exactly with the query point \f$q\f$, or otherwise an
+`Const_Edge_desriptor`, such that the geometric embedding of the
+identified edge contains \f$q\f$ in its interior. The search is
+implemented via a linear topological walk from left to right starting
+at `unbounded_left_edge()`, using the geometry traits functor to
+locate the precise cell containing the query point parameter.
+
+A similar function that return an object of type `Location_result`
+that stores a not-const descriptor is also supported.
+
+<!-- ----------------------------------------------------------------------- -->
+\subsection aoc_ssec-free_insert Inserting Points
+<!-- ----------------------------------------------------------------------- -->
+
+A high-level free function `insert(arr, p)` is provided to insert
+points into the arrangement. This function first calls `locate(arr,
+p)` internally to find where the point is located. If the point
+already matches an existing vertex, the descriptor of that vertex is
+returned. Otherwise, the function invokes `insert_empty()`,
+`insert_before()`, `insert_after()`, or `split_edge()` as needed to
+safely update the topology.
 
 <!-- ----------------------------------------------------------------------- -->
 \subsection aoc_ssec-free_remove Removing Vertices and Edges
 <!-- ----------------------------------------------------------------------- -->
 
-A vertex can be removed from the arrangement using the free function `remove(arr, v)`. Removing a vertex removes
-its point node from the track and merges its left and right flanking edge intervals back into a single unified
-edge, preserving the overall topological continuity of the curve.
+A vertex can be removed from the arrangement using the free function
+`remove(arr, v)`. Removing a vertex removes its point node from the
+track and merges its left and right flanking edge intervals back into
+a single unified edge, preserving the overall topological continuity
+of the curve.
+
+<!-- ----------------------------------------------------------------------- -->
+\subsection aoc_ssec-free_overlay Overlaying Two Arrangements
+<!-- ----------------------------------------------------------------------- -->
+
+The call `overlay(arr_a, arr_b, arr_r)` combines two input arrangements
+`arr_a` and `arr_b` aligned along the same continuous supporting curve
+into a single unified output arrangement `arr_r` (embedded the same
+underlying curve).  The algorithm performs a synchronized
+left-to-right sweep across both structures simultaneously.
+
+An overloaded version accepts a forth argument, referred to as the
+observer, is also supported. As intersections, point overlaps, or edge
+segment splits are discovered, the process notifies user-specified
+callback functions defined in the observer object, which must be a
+model of the `OverlayObserver` concept. These functions can then apply
+custom logic to automatically combine, translate, or synchronize
+extended user cells (i.e., vertices and edges) from the input
+arrangements into the resulting output cells.
 
 <!-- ======================================================================= -->
 \section aoc_sec-geom_traits The Geometry Traits
@@ -172,19 +218,6 @@ if a field is set to `void`.
 
 These attributes can be read or modified cleanly using standard Boost lvalue property maps
 accessed via `vertex_data_map()` and `edge_data_map()`.
-
-<!-- ----------------------------------------------------------------------- -->
-\subsection aoc_ssecoverlay Overlaying Arrangements
-<!-- ----------------------------------------------------------------------- -->
-
-The free function `overlay(arr_a, arr_b, arr_res, observer)` combines two source arrangements
-aligned along the same continuous supporting line into a single unified output arrangement.
-The algorithm performs a synchronized left-to-right sweep across both structures simultaneously.
-
-As intersections, point overlaps, or edge segment splits are discovered, the process notifies a
-user-specified `OverlayObserver`. This observer can then apply custom logic to automatically
-combine, translate, or synchronize extended user attributes from the input arrangements into the
-resulting output cells.
 
 */
 } /* namespace CGAL */

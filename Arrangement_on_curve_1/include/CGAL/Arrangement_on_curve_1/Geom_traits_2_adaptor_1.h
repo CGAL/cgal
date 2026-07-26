@@ -1,10 +1,7 @@
 // Copyright (c) 2026 Tel-Aviv University (Israel).
 // All rights reserved.
-//
 // This file is part of CGAL (www.cgal.org)
-//
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-//
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
 #ifndef CGAL_ARRANGEMENT_ON_CURVE_1_GEOM_TRAITS_2_ADAPTOR_1_H

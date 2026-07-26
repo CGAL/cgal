@@ -1,12 +1,13 @@
-// Copyright (c) 2026 Tel-Aviv University (Israel). All rights reserved.
+// Copyright (c) 2026 Tel-Aviv University (Israel).
+// All rights reserved.
+// This file is part of CGAL (www.cgal.org).
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
 namespace CGAL {
 namespace Arrangement_on_curve_1 {
 
-/**
- * \ingroup PkgArrangementOnCurve1Ref
+/*! \ingroup PkgArrangementOnCurve1Ref
  *
  * \brief `Line_2_traits_1` is a geometric traits model of `AocTraits_1` designed for
  * subdivisions along an infinite supporting line embedded in 2D Euclidean space.
@@ -31,8 +32,7 @@ public:
   /// \name Creation
   /// @{
 
-  /**
-   * \brief Constructor from an embedding 2D line.
+  /*! constructs from an embedding 2D line.
    * \param line The supporting geometric master line trajectory.
    */
   Line_2_traits_1(const Line_2& line);
