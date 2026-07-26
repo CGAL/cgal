@@ -9,6 +9,7 @@
 
 #include <list>
 #include <type_traits>
+#include <unordered_map>
 
 #include <boost/property_map/property_map.hpp>
 #include <boost/iterator/iterator_adaptor.hpp>
@@ -230,6 +231,68 @@ public:
     m_unbounded_right_edge = m_edges.begin();
   }
 
+  // --------------------------------------------------------------------------
+  // The compiler-generated move constructor and move assignment are correct:
+  // std::list move transfers nodes without reallocation, so all stored
+  // iterators (m_unbounded_left_edge, m_unbounded_right_edge, and the
+  // m_left/m_right fields inside every Vertex and Edge node) remain valid
+  // and point into the same nodes, which now belong to the moved-to object.
+  // --------------------------------------------------------------------------
+  Unbounded_topology_traits(Unbounded_topology_traits&&) noexcept = default;
+  Unbounded_topology_traits& operator=(Unbounded_topology_traits&&) noexcept = default;
+
+  // --------------------------------------------------------------------------
+  // Destructor: all members clean up after themselves; nothing to do manually.
+  // --------------------------------------------------------------------------
+  ~Unbounded_topology_traits() = default;
+
+  // --------------------------------------------------------------------------
+  // Copy constructor.
+  //
+  // A naïve (compiler-generated) copy would be silently incorrect: copying
+  // std::list gives a new list with new nodes, but every stored iterator
+  // (m_unbounded_left_edge, m_unbounded_right_edge, and the m_left/m_right
+  // cross-reference fields inside every Vertex and Edge node) would still
+  // point into the *source* object's lists -- immediately becoming dangling.
+  //
+  // The correct approach is to:
+  //   1. Copy both lists (giving new, independent nodes in the same order).
+  //   2. Build translation tables mapping each source Edge_descriptor to the
+  //      corresponding destination Edge_descriptor, and likewise for vertices.
+  //      Since std::list copies nodes in order, the i-th node of the copy
+  //      corresponds to the i-th node of the source; we build the maps by
+  //      walking both lists in lockstep.
+  //   3. Patch every stored cross-reference in the destination using the maps.
+  // --------------------------------------------------------------------------
+  Unbounded_topology_traits(const Unbounded_topology_traits& other) :
+    m_vertices(other.m_vertices),   // deep copy: new nodes, same Point_1 values
+    m_edges(other.m_edges)          // deep copy: new nodes, same has_left/has_right flags
+  { patch_cross_references(other); }
+
+  // --------------------------------------------------------------------------
+  // Copy assignment.
+  //
+  // Same reasoning as the copy constructor. We use the copy-and-swap idiom
+  // to provide the strong exception guarantee.
+  // --------------------------------------------------------------------------
+  Unbounded_topology_traits& operator=(const Unbounded_topology_traits& other) {
+    if (this != &other) {
+      Unbounded_topology_traits tmp(other); // copy-construct into a temporary
+      swap(tmp);                            // swap members (noexcept)
+    }
+    return *this;
+  }
+
+  // Swap two topology-traits objects. Used internally by copy assignment and
+  // may also be useful to callers.
+  void swap(Unbounded_topology_traits& other) noexcept {
+    using std::swap;
+    swap(m_vertices, other.m_vertices);
+    swap(m_edges, other.m_edges);
+    swap(m_unbounded_left_edge, other.m_unbounded_left_edge);
+    swap(m_unbounded_right_edge, other.m_unbounded_right_edge);
+  }
+
   // ============================================================================
   // QUERIES
   // ============================================================================
@@ -316,6 +379,92 @@ public:
 
   void erase_vertex(Vertex_descriptor v) { m_vertices.erase(v); }
   void erase_edge(Edge_descriptor e) { m_edges.erase(e); }
+
+private:
+  // --------------------------------------------------------------------------
+  // patch_cross_references()
+  //
+  // Called after a copy of m_vertices and m_edges from `other` has been made
+  // (so this object already has independent but structurally identical lists).
+  // Every iterator stored inside the copied nodes still points into `other`'s
+  // lists. This function rebuilds all cross-references to point into *this*
+  // object's lists instead.
+  //
+  // Step 1 -- build translation maps (O(V + E)):
+  //   Walk the source and destination edge lists in lockstep; the i-th edge
+  //   of `other` corresponds to the i-th edge of `this`. Record the mapping
+  //   src_edge_it -> dst_edge_it in edge_map, and likewise for vertices.
+  //
+  // Step 2 -- patch vertex nodes (O(V)):
+  //   Each Vertex stores m_left and m_right (Edge_descriptors pointing into
+  //   the edge list). Translate them via edge_map.
+  //
+  // Step 3 -- patch edge nodes (O(E)):
+  //   Each Edge stores m_left and m_right (Vertex_descriptors pointing into
+  //   the vertex list). Translate them via vertex_map.
+  //
+  // Step 4 -- patch the cached boundary edge descriptors (O(1)):
+  //   m_unbounded_left_edge and m_unbounded_right_edge must also be
+  //   translated from `other`'s edge list into this object's edge list.
+  // --------------------------------------------------------------------------
+  void patch_cross_references(const Unbounded_topology_traits& other) {
+    // -- Step 1: build the translation maps -----------------------------------
+
+    // edge_map[src_edge_it] = dst_edge_it
+    std::unordered_map<Edge_const_descriptor,   Edge_descriptor,
+                       Iterator_hash> edge_map;
+    edge_map.reserve(m_edges.size());
+    {
+      auto src_it = other.m_edges.cbegin();
+      auto dst_it = m_edges.begin();
+      for (; src_it != other.m_edges.cend(); ++src_it, ++dst_it)
+        edge_map.emplace(src_it, dst_it);
+    }
+
+    // vertex_map[src_vertex_it] = dst_vertex_it
+    std::unordered_map<Vertex_const_descriptor, Vertex_descriptor,
+                       Iterator_hash> vertex_map;
+    vertex_map.reserve(m_vertices.size());
+    {
+      auto src_it = other.m_vertices.cbegin();
+      auto dst_it = m_vertices.begin();
+      for (; src_it != other.m_vertices.cend(); ++src_it, ++dst_it)
+        vertex_map.emplace(src_it, dst_it);
+    }
+
+    // -- Step 2: patch the m_left / m_right edge references inside vertices --
+    {
+      auto src_vit = other.m_vertices.cbegin();
+      auto dst_vit = m_vertices.begin();
+      for (; src_vit != other.m_vertices.cend(); ++src_vit, ++dst_vit) {
+        dst_vit->m_left  = edge_map.at(src_vit->m_left);
+        dst_vit->m_right = edge_map.at(src_vit->m_right);
+      }
+    }
+
+    // -- Step 3: patch the m_left / m_right vertex references inside edges ---
+    {
+      auto src_eit = other.m_edges.cbegin();
+      auto dst_eit = m_edges.begin();
+      for (; src_eit != other.m_edges.cend(); ++src_eit, ++dst_eit) {
+        if (src_eit->m_has_left)
+          dst_eit->m_left  = vertex_map.at(src_eit->m_left);
+        if (src_eit->m_has_right)
+          dst_eit->m_right = vertex_map.at(src_eit->m_right);
+        // m_has_left and m_has_right were already copied by the list copy
+      }
+    }
+
+    // -- Step 4: patch the cached unbounded-edge descriptors -----------------
+    m_unbounded_left_edge  = edge_map.at(other.m_unbounded_left_edge);
+    m_unbounded_right_edge = edge_map.at(other.m_unbounded_right_edge);
+  }
+
+  // Minimal hash for list iterators: use the address of the node they point to.
+  struct Iterator_hash {
+    template <typename It>
+    std::size_t operator()(It it) const noexcept { return std::hash<const void*>{}(static_cast<const void*>(&*it)); }
+  };
 };
 
 } // namespace Arrangement_on_curve_1
