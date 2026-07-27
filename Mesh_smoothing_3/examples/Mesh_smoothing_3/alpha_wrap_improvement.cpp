@@ -135,7 +135,7 @@ public:
 int main(int argc, char** argv)
 {
     // Read the input
-    const std::string filename = (argc > 1) ? argv[1] : "../../data/joint.off";
+    const std::string filename = (argc > 1) ? argv[1] : "../data/stairs.off";
     std::cout << "Reading " << filename << "..." << std::endl;
 
     Points points;

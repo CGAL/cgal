@@ -1,23 +1,147 @@
 namespace CGAL {
+
 /*!
 
 \mainpage User Manual
-\anchor Chapter_3D_Mesh_smoothing
+
+\anchor Chapter_Mesh_Smoothing_3
+\anchor userchaptermeshsmoothing3
+
 \cgalAutoToc
 
-\author François Protais
+\image html constraints.jpg
+\image latex constraints.jpg
+<BR>
 
-This chapter describes the ...
+\authors François Protais
 
-\section secmydefinitions Definitions
+todo: 
+* pass on the text, 
+* modify example to actually smooth a c3t3 that we read
 
-Section on definitions here ...
 
-\section secmyexamples Examples
+\section secMeshSmoothing3 Volume Mesh Smoothing and Geometric Fitting
 
-\subsection myFirstExample First Example
+This package implements an optimization algorithm for improving the quality of
+volumetric meshes and fitting them to geometric targets. The method supports
+tetrahedral meshes as well as mixed meshes containing tetrahedra, pyramids,
+wedges, and hexahedra. It can be used to smooth an already valid mesh, untangle
+an invalid mesh, or deform a mesh so that its boundary follows a prescribed
+geometry.
 
-The following example shows ...
+The algorithm only modifies vertex coordinates. It does not insert or remove
+vertices, change cell connectivity, or alter the combinatorial structure of the
+input mesh. Consequently, cell indices, material labels, adjacency relations,
+and other data attached to the mesh can be preserved throughout the
+optimization.
+
+\subsection ssecMeshSmoothingAlgorithm Smoothing and Fitting Algorithm
+
+The algorithm optimizes vertex positions according to an element-quality
+energy. The default objective improves the conformal quality of the cells,
+while alternative modes can include sizing information or focus the
+optimization on the worst local element quality. Interior vertices are moved
+to improve the volume mesh, while boundary vertices can additionally be
+attracted towards a target geometry.
+
+For an initially valid mesh, exact geometric predicates can be enabled to
+reject coordinate updates that would invert an element. In this mode, all
+accepted optimization steps preserve element orientation, providing a
+validity guarantee while the element quality is improved. Predicate checking
+can also be used during untangling to monitor the transition from an invalid
+input mesh to a valid output mesh.
+
+Geometric targets can be specified at several dimensions:
+
+- surface targets constrain boundary polygons to locally estimated tangent
+  planes;
+- curve targets constrain selected mesh edges to target tangent directions;
+- point targets attract individual vertices to prescribed positions.
+
+Surface patches and curves may be assigned different identifiers, allowing
+different parts of the mesh to use different target geometries. Constraints
+are soft and weighted by default, so geometric fidelity can be balanced
+against element quality. Vertices, or individual coordinate dimensions, can
+also be locked when hard constraints are required. Combining surface, curve,
+and point targets allows smooth regions, sharp curves, corners, and user
+handles to be treated within the same optimization.
+
+\section secMeshSmoothing3API API
+
+The main API is provided by the templated class
+`Mesh_smoothing_3::Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>`.
+The three template parameters provide lightweight views of the volume cells,
+the selected boundary polygons, and the selected curve edges. These views
+supply descriptors and ranges for traversing the input data structure, access
+to vertex coordinates, and the reference shape associated with each cell.
+The optimizer updates the original mesh in place through its coordinate setter;
+no conversion to an internal mesh representation is required.
+
+After construction, the smoother can be configured through member functions.
+Surface, curve, and point targets are respectively defined with
+`set_boundary_query()`, `set_curves_query()`, and
+`set_vertex_target_position()`. Additional functions control vertex locks,
+constraint weights, predicate enforcement, optimization modes, and the maximum
+number of iterations. The optimization is started with `run()`.
+
+For a `CGAL::Mesh_complex_3_in_triangulation_3`, the convenience class
+`Mesh_smoothing_3::C3t3_smoother<C3T3>` directly adapts the volume cells,
+surface patches, and feature curves stored in the complex.
+
+\section secMeshSmoothing3Examples Examples
+
+\subsection ssecMeshSmoothingC3t3 Direct Smoothing of a C3t3
+
+The following example demonstrates the direct use of the smoother on a
+`CGAL::Mesh_complex_3_in_triangulation_3`. A multi-domain `C3t3` is generated
+from a labeled image and deformed to create a low-quality input. The
+`C3t3_smoother` is then constructed directly from the complex.
+
+The volume cells, boundary facets, surface-patch indices, feature edges, and
+curve indices are read from the same `C3t3`; they do not need to be copied into
+separate arrays or converted to a standalone surface representation. Target
+queries are built from AABB trees associated with each surface patch and each
+feature curve. The smoother consequently improves the tetrahedra while keeping
+the boundary facets and feature edges aligned with their corresponding
+geometric targets.
+
+\cgalFigureBegin{Mesh_smoothing_c3t3, c3t3_image.jpg}
+Smoothing of a deformed multi-domain `C3t3`.
+The volume mesh, surface patches, and feature curves are handled directly
+through the `C3t3` data structure.
+\cgalFigureEnd
+
+\cgalExample{Mesh_smoothing_3/c3t3_smooth.cpp}
+
+\subsection ssecMeshWrapImprovement Feature-Preserving Improvement of an Alpha Wrap Offset
+
+The following example combines the \ref PkgAlphaWrap3 package with volume mesh
+improvement. Alpha Wrap first generates a watertight offset surface and its
+underlying Delaunay triangulation. The cells inside the wrap are identified,
+and tetrahedral remeshing is applied to improve the sampling of the volume
+while leaving the boundary connectivity unchanged.
+
+A first smoothing pass improves the tetrahedral elements with the boundary
+vertices fixed. The boundary is then released and a geometric query defines
+the target offset: each query point is projected onto the input triangle soup
+and displaced by the requested offset distance along the outward direction.
+The optimizer jointly moves the boundary and interior vertices to recover the
+offset geometry without sacrificing the quality of the volume cells.
+
+Unlike point redistribution performed directly on the wrapped surface, the
+fitting energy allows neighboring boundary facets to align with different
+local target planes. Sharp edges and corners that were rounded by Alpha Wrap
+can therefore be recovered automatically, without explicitly extracting or
+tagging a feature graph.
+
+\cgalFigureBegin{Mesh_wrap_improvement, stairs.jpg}
+Feature-preserving offsets for several Alpha Wrap gate sizes.
+The upper row shows the Alpha Wrap results, in which the stair edges remain
+rounded. The lower row shows the meshes after volume fitting, which recovers
+the sharp features while improving the underlying tetrahedral mesh.
+\cgalFigureEnd
+
+\cgalExample{Mesh_smoothing_3/alpha_wrap_improvement.cpp}
 
 */
 } /* namespace CGAL */
