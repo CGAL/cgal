@@ -6,7 +6,7 @@ project(Filtered_kernel_test)
 
 add_executable(bench_simple_comparisons bench_simple_comparisons.cpp)
 
-find_package(CGAL)
+find_package(CGAL REQUIRED)
 
 add_executable(bench_orientation_3 "orientation_3.cpp")
 
