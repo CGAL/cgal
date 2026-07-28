@@ -28,6 +28,7 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/boost/graph/internal/helpers.h>
 #include <CGAL/Named_function_parameters.h>
+#include <boost/dynamic_bitset/dynamic_bitset.hpp>
 #include <CGAL/circulator.h>
 #include <CGAL/Handle_hash_function.h>
 #include <CGAL/IO/Verbose_ostream.h>
@@ -47,6 +48,10 @@
 #include <typeinfo>
 #include <utility>
 #include <vector>
+
+#ifdef CGAL_OUTPUT_BUILDER_RUNNING_TIME
+#include <CGAL/Real_timer.h>
+#endif
 
 namespace CGAL {
 
@@ -1298,6 +1303,451 @@ public:
     removed_edges_ += other.removed_edges_;
     removed_faces_ += other.removed_faces_;
     return true;
+  }
+
+  template < bool reverse_patch_orientation,
+            class PatchDescription,
+            class VertexPointMap,
+            class VertexPointMapOut,
+            //  class EdgeMarkMapOut,
+            //  class EdgeMarkMapIn ,
+            class VertexToVertexMap,
+            class EdgeToEdgeMap ,
+            class UserVisitor>
+  void append_patch(
+    PatchDescription& patch,
+    const Surface_mesh &tm,
+    const VertexPointMapOut& vpm_out,
+    const VertexPointMap& vpm_tm,
+    // EdgeMarkMapOut& edge_mark_map_out,
+    // const EdgeMarkMapIn& edge_mark_map_in,
+    VertexToVertexMap& tm_to_output_vertices,
+    EdgeToEdgeMap& tm_to_output_edges,
+    UserVisitor& user_visitor,
+    std::size_t vertices_idx_begin,
+    std::size_t edges_idx_begin,
+    std::size_t face_idx_begin)
+  {
+    Self &output = *this;
+
+    using vertex_descriptor = SM_Vertex_index;
+    using edge_descriptor = SM_Edge_index;
+    using halfedge_descriptor = SM_Halfedge_index;
+    using face_descriptor = SM_Face_index;
+
+    auto get_halfedge = [&](halfedge_descriptor h){
+      edge_descriptor e = get(tm_to_output_edges, tm.edge(h));
+      halfedge_descriptor h_out = output.halfedge(e);
+      if( output.target(h_out) == get(tm_to_output_vertices, tm.target(h))){
+        CGAL_assertion( source(h_out, output) == get(tm_to_output_vertices, source(h, tm)) );
+        if constexpr(reverse_patch_orientation)
+          return output.opposite(h_out);
+        else
+          return h_out;
+      }
+      CGAL_assertion( target(h_out, output) == get(tm_to_output_vertices, source(h, tm)) );
+      CGAL_assertion( source(h_out, output) == get(tm_to_output_vertices, target(h, tm)) );
+      if constexpr(reverse_patch_orientation)
+        return h_out;
+      else
+        return output.opposite(h_out);
+    };
+
+    #ifdef CGAL_COREFINEMENT_POLYHEDRA_DEBUG
+    #warning the size of tm_to_output_edges will increase at each step \
+              when adding new patches  by the size of internal edges. \
+              Maybe the use of a copy would be better since we do not need \
+              the internal edges added?
+    #endif
+
+    // Fill Vertex to vertex map and vpm for interior vertices
+    auto fill_vertex = [&](std::size_t i){
+      vertex_descriptor v = patch.interior_vertices[i];
+      vertex_descriptor new_v(vertices_idx_begin + i);
+
+      put(tm_to_output_vertices, v, new_v);
+      put(vpm_out, new_v, get(vpm_tm, v));
+      output.set_halfedge(new_v, null_halfedge());
+    };
+#ifdef CGAL_LINKED_WITH_TBB
+    if constexpr(true){
+      if(patch.interior_vertices.size() > 10000){
+        tbb::parallel_for(std::size_t(0), patch.interior_vertices.size(), fill_vertex);
+      } else {
+        for(std::size_t i=0; i<patch.interior_vertices.size(); ++i)
+          fill_vertex(i);
+      }
+    }
+    else
+#endif
+    {
+      for(std::size_t i=0; i<patch.interior_vertices.size(); ++i)
+        fill_vertex(i);
+    }
+
+    // Fill Edge to edge map for interior edges
+    // Also fill target of halfedges and halfedge of vertices
+    auto fill_edge = [&](std::size_t i){
+      halfedge_descriptor h = patch.interior_edges[i];
+      edge_descriptor new_edge(i+edges_idx_begin);
+      halfedge_descriptor new_h = output.halfedge(new_edge);
+      vertex_descriptor src = get(tm_to_output_vertices, tm.source(h));
+      vertex_descriptor tgt = get(tm_to_output_vertices, tm.target(h));
+      user_visitor.before_edge_copy(h, tm, output);
+      put(tm_to_output_edges, tm.edge(h), new_edge);
+      if constexpr(reverse_patch_orientation){
+        output.set_target(new_h, src);
+        output.set_target(output.opposite(new_h), tgt);
+      } else {
+        output.set_target(new_h, tgt);
+        output.set_target(output.opposite(new_h), src);
+      }
+      user_visitor.after_edge_copy(h, tm, new_h, output);
+
+      // copy the mark on input edge to the output edge
+      // copy_edge_mark<TriangleMesh>(ed, new_edge,
+      //                              edge_mark_map_in, edge_mark_map_out);
+
+      CGAL_assertion(is_border(new_h, output));
+      CGAL_assertion(is_border(opposite(new_h, output), output));
+
+      // Fill the halfedge if interior vertices
+      if (tm.halfedge(tm.target(h)) == h &&
+          output.halfedge(output.target(new_h)) == null_halfedge()){
+        user_visitor.before_vertex_copy(tm.target(h), tm, output); // Call visitor when the vertex would be complete
+        output.set_halfedge(output.target(new_h), new_h);
+        user_visitor.after_vertex_copy(tm.target(h), tm, output.target(new_h), output);
+      }
+
+      if (tm.halfedge(tm.source(h)) == tm.opposite(h) &&
+          output.halfedge(output.source(new_h)) == null_halfedge()){
+        user_visitor.before_vertex_copy(tm.source(h), tm, output); // Call visitor when the vertex would be complete
+        output.set_halfedge(output.source(new_h), new_h);
+        user_visitor.after_vertex_copy(tm.source(h), tm, output.target(new_h), output);
+      }
+    };
+#ifdef CGAL_LINKED_WITH_TBB
+    if constexpr(true){
+      if(patch.interior_edges.size() > 10000){
+        tbb::parallel_for(std::size_t(0), patch.interior_edges.size(), fill_edge);
+      } else {
+        for(std::size_t i=0; i<patch.interior_edges.size(); ++i)
+          fill_edge(i);
+      }
+    }
+    else
+#endif
+    {
+      for(std::size_t i=0; i<patch.interior_edges.size(); ++i)
+        fill_edge(i);
+    }
+
+    //create faces and connect halfedges
+    auto fill_face = [&](std::size_t i){
+      face_descriptor f = patch.faces[i];
+      halfedge_descriptor h_in_1 = tm.halfedge(f);
+      halfedge_descriptor h_in_2 = tm.next(h_in_1);
+      halfedge_descriptor h_in_3 = tm.next(h_in_2);
+      CGAL_assertion(tm.next(h_in_3) == h_in_1);
+
+      std::array<halfedge_descriptor, 3> hedges = { get_halfedge(h_in_1), get_halfedge(h_in_2), get_halfedge(h_in_3) };
+
+      user_visitor.before_face_copy(f, tm, output);
+      SM_Face_index new_f(face_idx_begin + i);
+      user_visitor.after_face_copy(f, tm, new_f, output);
+      output.set_halfedge(new_f, hedges[0]);
+
+      for (int i=0;i<3;++i)
+      {
+        CGAL_assertion(hedges[i] != null_halfedge());
+        if(reverse_patch_orientation)
+          output.set_next(hedges[i], hedges[(i+2)%3]);
+        else
+          output.set_next(hedges[i], hedges[(i+1)%3]);
+        output.set_face(hedges[i], new_f);
+      }
+    };
+#ifdef CGAL_LINKED_WITH_TBB
+    if constexpr(true){
+      if(patch.faces.size() > 10000){
+        tbb::parallel_for(std::size_t(0), patch.faces.size(), fill_face);
+      } else {
+        for(std::size_t i=0; i<patch.faces.size(); ++i)
+          fill_face(i);
+      }
+    }
+    else
+#endif
+    {
+      for(std::size_t i=0; i<patch.faces.size(); ++i)
+        fill_face(i);
+    }
+  }
+
+  // Duplicated from face_graph_utils, TODO remove duplication
+  template <class PolygonMesh,
+            class MarkedEdgeSet>
+  typename boost::graph_traits<PolygonMesh>::halfedge_descriptor
+  next_marked_halfedge_around_target_vertex(
+    typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
+    const PolygonMesh& pm,
+    const MarkedEdgeSet& marked_edges)
+  {
+    CGAL_assertion( marked_edges.count(pm.edge(h))!= 0 );
+    typename boost::graph_traits<PolygonMesh>::halfedge_descriptor nxt =
+      pm.next(h);
+    while( !marked_edges.count(pm.edge(nxt)) )
+    {
+      nxt=pm.next(pm.opposite(nxt));
+    }
+    CGAL_assertion(nxt!=h);
+    return nxt;
+  }
+
+
+  template <class EdgeToEdgeMap,
+            class VertexToVertexMap,
+            class VertexPointMap1,
+            class VertexPointMap2,
+            class VertexPointMapOut,
+            class IntersectionEdgeMap,
+            class UserVisitor>
+  void import_polyline(
+    SM_Halfedge_index h1,
+    SM_Halfedge_index h2,
+    const Self& tm1,
+    const Self& tm2,
+    std::size_t nb_segments,
+    VertexToVertexMap& pm1_to_output_vertices,
+    VertexToVertexMap& pm2_to_output_vertices,
+    EdgeToEdgeMap& pm1_to_output_edges,
+    EdgeToEdgeMap& pm2_to_output_edges,
+    const IntersectionEdgeMap& intersection_edges1,
+    const IntersectionEdgeMap& intersection_edges2,
+    const VertexPointMap1& vpm1,
+    const VertexPointMap2& vpm2,
+    const VertexPointMapOut& vpm_out,
+    std::vector<SM_Edge_index>& output_shared_edges,
+    UserVisitor& user_visitor)
+  {
+    using TriangleMesh = Self;
+    using vertex_descriptor = SM_Vertex_index;
+    using halfedge_descriptor = SM_Halfedge_index;
+    using face_descriptor = SM_Face_index;
+
+    auto set_output_vertex = [&](vertex_descriptor v1, vertex_descriptor v2, halfedge_descriptor h_out){
+      user_visitor.before_vertex_copy(v1, tm1, *this);
+      vertex_descriptor new_v = this->add_vertex();
+      this->set_halfedge(new_v, this->opposite(h_out));
+      put(vpm_out, new_v, get(vpm1, v1));
+      user_visitor.after_vertex_copy(v1, tm1, new_v, *this);
+      put(pm1_to_output_vertices, v1, new_v);
+      put(pm2_to_output_vertices, v2, new_v);
+      return new_v;
+    };
+
+    output_shared_edges.push_back(this->edge(this->add_edge()));
+    halfedge_descriptor h_out = this->halfedge(output_shared_edges.back());
+
+    // make sure the first vertex does not already exist
+    vertex_descriptor src;
+    if( get(pm1_to_output_vertices, tm1.source(h1)) == null_vertex())
+      src = set_output_vertex(tm1.source(h1), tm2.source(h2), h_out);
+    else
+      src = get(pm1_to_output_vertices, tm1.source(h1));
+
+    //make sure the target vertex does not already exist if it is a polyline endpoint
+    vertex_descriptor tgt;
+    if ( nb_segments==1 ){
+      if( get(pm1_to_output_vertices, tm1.target(h1)) == null_vertex())
+        tgt = set_output_vertex(tm1.target(h1), tm2.target(h2), h_out);
+      else
+        tgt = get(pm1_to_output_vertices, tm1.target(h1));
+    } else {
+      tgt = set_output_vertex(tm1.target(h1), tm2.target(h2), h_out);
+    }
+
+    // update source and target vertex of the edge created
+    this->set_target(h_out, tgt);
+    this->set_target(this->opposite(h_out), src);
+
+    //set the correspondence
+    put(pm1_to_output_edges, tm1.edge(h1), this->edge(h_out));
+    put(pm2_to_output_edges, tm2.edge(h2), this->edge(h_out));
+
+    user_visitor.intersection_edge_copy(h1, tm1, h2, tm2, h_out, *this);
+
+    src=tgt;
+    for (std::size_t i=1; i<nb_segments; ++i)
+    {
+      //create new edge
+      output_shared_edges.push_back(this->edge(this->add_edge()));
+      h_out = this->halfedge(output_shared_edges.back());
+      //get the new edge
+      h1 = next_marked_halfedge_around_target_vertex(h1, tm1, intersection_edges1);
+      h2 = next_marked_halfedge_around_target_vertex(h2, tm2, intersection_edges2);
+
+      user_visitor.intersection_edge_copy(h1, tm1, h2, tm2, h_out, *this);
+
+      //if this is the final segment, only create a target vertex if it does not exist
+      if ( i+1 == nb_segments ){
+        if( get(pm1_to_output_vertices, tm1.target(h1)) == null_vertex())
+          tgt = set_output_vertex(tm1.target(h1), tm2.target(h2), h_out);
+        else
+          tgt = get(pm1_to_output_vertices, tm1.target(h1));
+      } else {
+        tgt = set_output_vertex(tm1.target(h1), tm2.target(h2), h_out);
+      }
+
+      this->set_target(h_out, tgt);
+      this->set_target(this->opposite(h_out), src);
+
+      src = tgt;
+
+      put(pm1_to_output_edges, tm1.edge(h1), this->edge(h_out));
+      put(pm2_to_output_edges, tm2.edge(h2), this->edge(h_out));
+    }
+  }
+
+  template < bool reverse_orientation_of_patches_from_tm1,
+            bool reverse_orientation_of_patches_from_tm2,
+            class IntersectionEdgeMap,
+            class VertexPointMap1,
+            class VertexPointMap2,
+            class VertexPointMapOut,
+            class EdgeMarkMap1,
+            class EdgeMarkMap2,
+            class EdgeMarkMapOut,
+            class IntersectionPolylines,
+            class PatchContainer1,
+            class PatchContainer2,
+            class UserVisitor>
+  void fill_new_triangle_mesh(
+    const boost::dynamic_bitset<>& patches_of_tm1_to_import,
+    const boost::dynamic_bitset<>& patches_of_tm2_to_import,
+    PatchContainer1& patches_of_tm1,
+    PatchContainer2& patches_of_tm2,
+    const IntersectionPolylines& polylines,
+    const IntersectionEdgeMap& intersection_edges1,
+    const IntersectionEdgeMap& intersection_edges2,
+    const VertexPointMap1& vpm1,
+    const VertexPointMap2& vpm2,
+    const VertexPointMapOut& vpm_out,
+    const EdgeMarkMap1& edge_mark_map1,
+    const EdgeMarkMap2& edge_mark_map2,
+          EdgeMarkMapOut& edge_mark_map_out,
+    std::vector< SM_Edge_index >& output_shared_edges,
+    UserVisitor& user_visitor)
+  {
+    using TriangleMesh = Self;
+    using Point = typename VertexPointMap1::value_type;
+    using vertex_descriptor = SM_Vertex_index;
+    using edge_descriptor = SM_Edge_index;
+    using face_descriptor = SM_Face_index;
+
+    using V2V_tag = typename CGAL::dynamic_vertex_property_t<vertex_descriptor>;
+    using Vertex_to_vertex_map = typename boost::property_map<TriangleMesh, V2V_tag>::const_type;
+
+    using E2E_tag = typename CGAL::dynamic_edge_property_t<SM_Edge_index>;
+    using Edge_to_edge_map = typename boost::property_map<TriangleMesh, E2E_tag>::const_type;
+
+    const TriangleMesh &tm1 = patches_of_tm1.pm;
+    const TriangleMesh &tm2 = patches_of_tm2.pm;
+
+    Vertex_to_vertex_map tm1_to_output_vertices = get(V2V_tag(), tm1, null_vertex());
+    Vertex_to_vertex_map tm2_to_output_vertices = get(V2V_tag(), tm2, null_vertex());
+    Edge_to_edge_map tm1_to_output_edges = get(E2E_tag(), tm1, null_edge());
+    Edge_to_edge_map tm2_to_output_edges = get(E2E_tag(), tm2, null_edge());
+
+  #ifdef CGAL_OUTPUT_BUILDER_RUNNING_TIME
+    Real_timer t;
+    t.start();
+  #endif
+
+    // Import polylines
+    output_shared_edges.reserve( std::accumulate(polylines.lengths.begin(), polylines.lengths.end(), std::size_t(0)) );
+    size_type nb_polylines = polylines.lengths.size();
+    for (size_type i=0; i < nb_polylines; ++i)
+      if (!polylines.to_skip.test(i))
+        import_polyline(polylines.tm1[i], polylines.tm2[i],
+                        tm1, tm2,
+                        polylines.lengths[i],
+                        tm1_to_output_vertices, tm2_to_output_vertices,
+                        tm1_to_output_edges, tm2_to_output_edges,
+                        intersection_edges1, intersection_edges2,
+                        vpm1, vpm2, vpm_out,
+                        output_shared_edges,
+                        user_visitor);
+
+  #ifdef CGAL_OUTPUT_BUILDER_RUNNING_TIME
+    std::cout << "Import polyline " << t.time() << std::endl;
+  #endif
+
+    // Get ids of patch to append
+    std::vector<std::size_t> ids_of_patches_to_append_from_tm1;
+    std::vector<std::size_t> ids_of_patches_to_append_from_tm2;
+    ids_of_patches_to_append_from_tm1.reserve(patches_of_tm1_to_import.count());
+    for (std::size_t i= patches_of_tm1_to_import.find_first();
+                    i < patches_of_tm1_to_import.npos;
+                    i = patches_of_tm1_to_import.find_next(i)){
+      ids_of_patches_to_append_from_tm1.push_back(i);
+    }
+    ids_of_patches_to_append_from_tm2.reserve(patches_of_tm2_to_import.count());
+    for (std::size_t i= patches_of_tm2_to_import.find_first();
+                    i < patches_of_tm2_to_import.npos;
+                    i = patches_of_tm2_to_import.find_next(i)){
+      ids_of_patches_to_append_from_tm2.push_back(i);
+    }
+
+    // Compute final sizes
+    size_type nv = num_vertices(), ne = num_edges(), nf = num_faces();
+    size_type tnv = num_vertices(), tne = num_edges(), tnf = num_faces();
+    for (std::size_t i : ids_of_patches_to_append_from_tm1){
+      tnv += patches_of_tm1[i].interior_vertices.size();
+      tne += patches_of_tm1[i].interior_edges.size();
+      tnf += patches_of_tm1[i].faces.size();
+    }
+    for (std::size_t i : ids_of_patches_to_append_from_tm2){
+      tnv += patches_of_tm2[i].interior_vertices.size();
+      tne += patches_of_tm2[i].interior_edges.size();
+      tnf += patches_of_tm2[i].faces.size();
+    }
+    resize(tnv, tne, tnf);
+
+    // Append patches
+    for (std::size_t i : ids_of_patches_to_append_from_tm1){
+      append_patch<reverse_orientation_of_patches_from_tm1>(
+        patches_of_tm1[i],
+        tm1,
+        vpm_out,
+        vpm1,
+        tm1_to_output_vertices,
+        tm1_to_output_edges,
+        user_visitor,
+        nv, ne, nf);
+      nv += patches_of_tm1[i].interior_vertices.size();
+      ne += patches_of_tm1[i].interior_edges.size();
+      nf += patches_of_tm1[i].faces.size();
+    }
+
+    for (std::size_t i : ids_of_patches_to_append_from_tm2){
+      append_patch<reverse_orientation_of_patches_from_tm2>(
+        patches_of_tm2[i],
+        tm2,
+        vpm_out,
+        vpm2,
+        tm2_to_output_vertices,
+        tm2_to_output_edges,
+        user_visitor,
+        nv, ne, nf);
+      nv += patches_of_tm2[i].interior_vertices.size();
+      ne += patches_of_tm2[i].interior_edges.size();
+      nf += patches_of_tm2[i].faces.size();
+    }
+
+  #ifdef CGAL_OUTPUT_BUILDER_RUNNING_TIME
+    std::cout << "Import patch: " << t.time() << std::endl;
+  #endif
   }
 
     ///@}
