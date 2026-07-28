@@ -93,14 +93,6 @@ public:
           double aprz = CGAL::abs(prz);
           double apsz = CGAL::abs(psz);
           double aptz = CGAL::abs(ptz);
-#ifdef CGAL_USE_SSE2_MAX
-          CGAL::Max<double> mmax;
-
-          maxx = mmax(maxx, aprx, apsx); // todo add aptx etc
-          maxy = mmax(maxy, apry, apsy);
-          maxz = mmax(maxz, aprz, apsz);
-#else
-
 
           if (maxx < aprx) maxx = aprx;
           double maxxt = maxx;
@@ -114,7 +106,7 @@ public:
           double maxzt = maxz;
           if (maxz < apsz) maxz = apsz;
           if (maxzt < aptz) maxzt = aptz;
-#endif
+
           std::array<double,2> det = CGAL::determinants(pqx, prx, psx, ptx,
                                                         pqy, pry, psy, pty,
                                                         pqz, prz, psz, ptz);
@@ -122,17 +114,6 @@ public:
           double epss = 5.1107127829973299e-15 * maxx * maxy * maxz;
           double epst = 5.1107127829973299e-15 * maxxt * maxyt * maxzt;
 
-#ifdef CGAL_USE_SSE2_MAX
-#if 0
-          CGAL::Min<double> mmin;
-          double tmp = mmin(maxx, maxy, maxz);
-          maxz = mmax(maxx, maxy, maxz);
-          maxx = tmp;
-#else
-          sse2minmax(maxx,maxy,maxz);
-          // maxy can contain ANY element
-#endif
-#else
           // Sort maxx < maxy < maxz.
           if (maxx > maxz)
               std::swap(maxx, maxz);
@@ -140,7 +121,7 @@ public:
               std::swap(maxy, maxz);
           else if (maxy < maxx)
               std::swap(maxx, maxy);
-#endif
+
           std::array<Orientation,2> res = {ZERO,ZERO};
           bool first = false;
           bool second = false;
