@@ -25,7 +25,6 @@ insert(Arrangement_on_curve_1<GeometryTraits, TopologyTraits>& arr, const typena
   using Vertex_descriptor = typename Arr::Vertex_descriptor;
   using Edge_descriptor = typename Arr::Edge_descriptor;
 
-  std::cout << "inserting " << p << std::endl;
   auto loc = locate(arr, p);
 
   // Point already exists → return existing vertex.
