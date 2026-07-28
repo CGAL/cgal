@@ -103,6 +103,11 @@ public:
 ///     \cgalParamType{Boolean}
 ///     \cgalParamDefault{`false`}
 ///   \cgalParamNEnd
+///   \cgalParamNBegin{read_only_one_object}
+///     \cgalParamDescription{if `true` only one GOCAD object will be read in the stream,  and the stream will be left ready for the reading of the next GOCAD object.}
+///     \cgalParamType{Boolean}
+///     \cgalParamDefault{`false`}
+///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
 /// \returns `true` if reading was successful and the resulting mesh is valid, `false` otherwise.
@@ -172,6 +177,11 @@ bool read_GOCAD(std::istream& is, Graph& g, const CGAL_NP_CLASS& np = parameters
 ///
 ///   \cgalParamNBegin{verbose}
 ///     \cgalParamDescription{whether extra information is printed when an incident occurs during reading}
+///     \cgalParamType{Boolean}
+///     \cgalParamDefault{`false`}
+///   \cgalParamNEnd
+///   \cgalParamNBegin{read_only_one_object}
+///     \cgalParamDescription{if `true` only one GOCAD object will be read in the stream,  and the stream will be left ready for the reading of the next GOCAD object.}
 ///     \cgalParamType{Boolean}
 ///     \cgalParamDefault{`false`}
 ///   \cgalParamNEnd

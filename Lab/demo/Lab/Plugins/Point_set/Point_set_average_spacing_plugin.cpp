@@ -4,6 +4,7 @@
 #include "Scene_points_with_normal_item.h"
 #include <CGAL/Three/CGAL_Lab_plugin_helper.h>
 #include <CGAL/Three/CGAL_Lab_plugin_interface.h>
+#include <CGAL/Three/Three.h>
 
 #include <CGAL/compute_average_spacing.h>
 #include <CGAL/Real_timer.h>
@@ -129,7 +130,7 @@ void CGAL_Lab_point_set_average_spacing_plugin::on_actionAverageSpacing_triggere
               << std::endl;
     QApplication::restoreOverrideCursor();
 
-    QMessageBox::information(nullptr,
+    QMessageBox::information(CGAL::Three::Three::mainWindow(),
                              tr("Average Spacing"),
                              tr("Average Spacing = %1 = %2 * point set radius")
                              .arg(average_spacing)

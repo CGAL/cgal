@@ -109,7 +109,7 @@ static int run_mesh(const Obj_data& data)
     }
   }
 
-  auto [file_stream, points_ids_offsets] = save_obj(data, "initial_cdt.obj");
+  auto [file_stream, points_ids_offsets] = save_obj(data, CGAL::data_file_path("2d_segments/initial_cdt.obj"));
 
   if(cdt.dimension() == 2) {
     CDT::Face_circulator fc = cdt.incident_faces(cdt.infinite_vertex()), done = fc;
@@ -167,7 +167,7 @@ int main(int argc, char*argv[] )
   std::cerr.precision(17);
   std::cout.precision(17);
   std::clog.precision(17);
-  std::ifstream in(argc > 1 ? argv[1] : "mini.obj");
+  std::ifstream in(argc > 1 ? argv[1] : CGAL::data_file_path("2d_segments/mini.obj"));
   if(!in)
     return EXIT_FAILURE;
 
@@ -196,7 +196,7 @@ int main(int argc, char*argv[] )
   std::string output_dir = "./";
 
   auto save_fn = [&](const Obj_data& d, const std::string& prefix) {
-    const std::string filename = join_path(output_dir, "bisect_" + prefix + ".obj");
+    const std::string filename = join_path(output_dir, CGAL::data_file_path("2d_segments/bisect_" + prefix + ".obj"));
     save_obj(d, filename);
   };
 

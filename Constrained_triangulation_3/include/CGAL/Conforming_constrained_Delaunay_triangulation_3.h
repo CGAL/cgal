@@ -1,4 +1,4 @@
-// Copyright (c) 2019-2024  GeometryFactory Sarl (France).
+// Copyright (c) 2019-2026  GeometryFactory Sarl (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -713,7 +713,7 @@ public:
     */
   template <typename PolygonMesh, typename CGAL_NP_TEMPLATE_PARAMETERS>
   Conforming_constrained_Delaunay_triangulation_3(const PolygonMesh& mesh, const CGAL_NP_CLASS& np = parameters::default_values())
-      : cdt_impl(parameters::choose_parameter(parameters::get_parameter(np, internal_np::geom_traits), Traits{}))
+      : cdt_impl(parameters::choose_parameter<Traits>(parameters::get_parameter(np, internal_np::geom_traits)))
   {
     // ----------------------------------
     // cstr... (polygon mesh)
@@ -724,7 +724,7 @@ public:
 
     auto mesh_vp_map = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                         get_const_property_map(vertex_point, mesh));
-    this->debug() = choose_parameter(get_parameter(np, internal_np::debug), CDT_3::Debug_options{});
+    this->debug() = choose_parameter<CDT_3::Debug_options>(get_parameter(np, internal_np::debug));
 
     using graph_traits = boost::graph_traits<PolygonMesh>;
     using vertex_descriptor = typename graph_traits::vertex_descriptor;
@@ -927,7 +927,7 @@ public:
   Conforming_constrained_Delaunay_triangulation_3(const PointRange& points,
                                                   const PolygonRange& polygons,
                                                   const NamedParams& np = parameters::default_values())
-      : cdt_impl(parameters::choose_parameter(parameters::get_parameter(np, internal_np::geom_traits), Traits{}))
+      : cdt_impl(parameters::choose_parameter<Traits>(parameters::get_parameter(np, internal_np::geom_traits)))
   {
     // ----------------------------------
     // cstr... (polygon soup)
@@ -938,8 +938,7 @@ public:
     using PointRange_const_iterator = typename PointRange::const_iterator;
     using PointRange_value_type = typename std::iterator_traits<PointRange_const_iterator>::value_type;
 
-    auto point_map = choose_parameter(get_parameter(np, internal_np::point_map),
-                                                    CGAL::Identity_property_map<PointRange_value_type>{});
+    auto point_map = choose_parameter<CGAL::Identity_property_map<PointRange_value_type>>(get_parameter(np, internal_np::point_map));
 
     constexpr bool has_plc_face_id = !parameters::is_default_parameter<NamedParams, internal_np::plc_face_id_t>::value;
 
@@ -1362,11 +1361,13 @@ protected:
           auto c = *cell_it;
           for(int li = first_li; li < 4; ++li) {
             if(c->ccdt_3_data().is_facet_constrained(li)) {
-              self->register_facet_to_be_constrained(c, li);
   #if CGAL_CDT_3_DEBUG_MISSING_TRIANGLES
+              auto face_id = static_cast<std::size_t>(c->ccdt_3_data().face_constraint_index(li));
+              auto fh_2 = c->ccdt_3_data().face_2(self->face_cdt_2(face_id), li);
               std::cerr << "Add missing triangle (from visitor), face F#" << face_id << ": \n";
               self->write_2d_triangle(std::cerr, fh_2);
   #endif // CGAL_CDT_3_DEBUG_MISSING_TRIANGLES
+              self->register_facet_to_be_constrained(c, li);
             }
           }
         }
@@ -1789,6 +1790,7 @@ public:
 
     if(fh != CDT_2_face_handle{}) {
       fh->info().facet_3d = f;
+      fh->info().missing_subface = false;
     }
   }
 
@@ -2354,8 +2356,16 @@ private:
     }
   }
 
-  void search_for_missing_subfaces(CDT_3_signed_index polygon_constraint_id)
-  {
+  enum class Search_for_missing_subfaces_option {
+    DEFAULT = 0,
+    SEARCH_FOR_UNCONSTRAINED_FACETS = 1
+
+  };
+
+  bool
+  search_for_missing_subfaces(CDT_3_signed_index polygon_constraint_id,
+                              Search_for_missing_subfaces_option option = Search_for_missing_subfaces_option::DEFAULT) {
+    bool something_has_changed = false;
     const CDT_2& cdt_2 = face_cdt_2(polygon_constraint_id);
 
     face_constraint_misses_subfaces_reset(static_cast<std::size_t>(polygon_constraint_id));
@@ -2370,6 +2380,7 @@ private:
       if(!tr().is_facet(v0, v1, v2, c, i, j, k)) {
         fh->info().missing_subface = true;
         face_constraint_misses_subfaces_set(static_cast<std::size_t>(polygon_constraint_id));
+        something_has_changed = true;
 #if CGAL_CDT_3_DEBUG_MISSING_TRIANGLES
         std::cerr << cdt_3_format("Missing triangle in polygon #{}:\n", polygon_constraint_id);
         write_triangle(std::cerr, v0, v1, v2);
@@ -2377,9 +2388,35 @@ private:
       } else {
         fh->info().missing_subface = false;
         const int facet_index = 6 - i - j - k;
+        if(option == Search_for_missing_subfaces_option::SEARCH_FOR_UNCONSTRAINED_FACETS &&
+          !is_facet_constrained({c, facet_index}))
+        {
+          something_has_changed = true;
+          if(this->debug().restore_faces()) {
+            std::cerr << "Unconstrained facet in polygon #" << polygon_constraint_id
+                      << " with vertices: " << this->display_vert(v0) << ", " << this->display_vert(v1) << ", "
+                      << this->display_vert(v2) << '\n';
+          }
+        }
         set_facet_constrained({c, facet_index}, polygon_constraint_id, fh);
       }
     }
+    if(option == Search_for_missing_subfaces_option::SEARCH_FOR_UNCONSTRAINED_FACETS && something_has_changed) {
+      std::cerr << "ERROR: Some unconstrained facets were found in polygon #" << polygon_constraint_id << '\n';
+    }
+    if(this->debug().restore_faces() && something_has_changed) {
+      std::cerr << "Some missing subfaces were found in polygon #" << polygon_constraint_id << ".\n";
+      for(const auto fh: cdt_2.all_face_handles())
+      {
+        if(fh->info().is_outside_the_face || !fh->info().missing_subface) continue;
+        const auto v0 = fh->vertex(0)->info().vertex_handle_3d;
+        const auto v1 = fh->vertex(1)->info().vertex_handle_3d;
+        const auto v2 = fh->vertex(2)->info().vertex_handle_3d;
+        std::cerr << "  - missing triangle with vertices " << this->display_vert(v0) << ", " << this->display_vert(v1)
+                  << ", " << this->display_vert(v2) << '\n';
+      }
+    }
+    return something_has_changed;
   }
 
   static auto region(const CDT_2& cdt_2, CDT_2_face_handle fh)
@@ -4167,12 +4204,16 @@ public:
     return result;
   }
 
-  void recheck_for_missing_subfaces() {
+  bool recheck_for_missing_subfaces() {
+    bool nothing_has_changed = true;
     for(CDT_3_signed_index i = 0, end = static_cast<CDT_3_signed_index>(face_constraint_misses_subfaces.size()); i < end; ++i) {
       if(this->face_data[i].skip_face == false) {
-        search_for_missing_subfaces(i);
+        nothing_has_changed =
+            nothing_has_changed &&
+            !search_for_missing_subfaces(i, Search_for_missing_subfaces_option::SEARCH_FOR_UNCONSTRAINED_FACETS);
       }
     }
+    return nothing_has_changed;
   }
 
   template <typename ...Args>
@@ -4208,8 +4249,21 @@ public:
         /* i is modified inside the loop */)
     {
       if(restore_face(static_cast <CDT_3_signed_index>(i))) {
-        face_constraint_misses_subfaces_reset(i);
+        // then check for missing subfaces, because restoring a region can perturb subfaces of the
+        // same face
+        const CDT_2& cdt_2 = face_cdt_2(i);
+        if(std::any_of(begin(cdt_2.finite_face_handles()), end(cdt_2.finite_face_handles()),
+                       [](const auto& fh) { return !fh->info().is_outside_the_face && fh->info().missing_subface; }))
+        {
+          face_constraint_misses_subfaces_set(i);
+        } else {
+          face_constraint_misses_subfaces_reset(i);
+        }
         i = face_constraint_misses_subfaces_find_next(i);
+        if(i == face_constraint_misses_subfaces_npos) {
+          // check again from the start, because restoring a face can alter constrained facets in other faces
+          i = face_constraint_misses_subfaces_find_first();
+        }
       } else {
         if(this->debug().missing_region() || this->debug().Steiner_points()) {
           std::cerr << "restore_face(" << i << ") incomplete, back to conforming...\n";
@@ -4244,9 +4298,10 @@ public:
       // else:
       throw Constrained_triangulation_insertion_exception(failed_faces);
     }
-    CGAL_assertion_code(recheck_for_missing_subfaces());
-    CGAL_assertion_msg(face_constraint_misses_subfaces_find_first() == face_constraint_misses_subfaces_npos,
-                       "All faces have been restored, but the triangulation is a CDT. This should not happen.");
+    CGAL_assertion_msg(
+        recheck_for_missing_subfaces() &&
+            face_constraint_misses_subfaces_find_first() == face_constraint_misses_subfaces_npos,
+        "All faces have been restored, but the triangulation is still not a CDT. This should not happen.");
   }
 
   void add_bbox_points_if_not_dimension_3() {

@@ -126,10 +126,10 @@ namespace Contours {
     using Point_2 = typename PointMap::value_type;
     using GeomTraits = typename CGAL::Kernel_traits<Point_2>::Kernel;
 
-    const PointMap point_map = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::point_map), PointMap());
-    const GeomTraits traits = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::geom_traits), GeomTraits());
+    const PointMap point_map = parameters::choose_parameter<PointMap>(
+      parameters::get_parameter(np, internal_np::point_map));
+    const GeomTraits traits = parameters::choose_parameter<GeomTraits>(
+      parameters::get_parameter(np, internal_np::geom_traits));
 
     CGAL_precondition(input_range.size() >= 3);
     using Contour_regularizer =
@@ -249,10 +249,10 @@ namespace Contours {
     using Point_2 = typename PointMap::value_type;
     using GeomTraits = typename CGAL::Kernel_traits<Point_2>::Kernel;
 
-    const PointMap point_map = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::point_map), PointMap());
-    const GeomTraits traits = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::geom_traits), GeomTraits());
+    const PointMap point_map = parameters::choose_parameter<PointMap>(
+      parameters::get_parameter(np, internal_np::point_map));
+    const GeomTraits traits = parameters::choose_parameter<GeomTraits>(
+      parameters::get_parameter(np, internal_np::geom_traits));
 
     CGAL_precondition(input_range.size() >= 2);
     using Contour_regularizer =

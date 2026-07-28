@@ -27,7 +27,7 @@ int main(int , char* [])
 {
   std::cout << "Random seed " << CGAL::get_default_random().get_seed() << std::endl;
 
-  const int nbv = 100;
+  const int nbv = 10000;
 
   //a triangulation
   DT3 delaunay;
@@ -47,6 +47,10 @@ int main(int , char* [])
     Vertex_handle v = delaunay.insert(points[i]);
     v2i[v] = i++;
   }
+
+  // add some useless points
+  points.push_back(Point_3(10, 10, 10));
+  points.push_back(Point_3(20, 20, 20));
 
   tetrahedra.reserve(delaunay.number_of_finite_cells());
   tets_by_indices.reserve(delaunay.number_of_finite_cells());
@@ -91,7 +95,7 @@ int main(int , char* [])
   //build triangulation from indices and subdomains
   Remeshing_triangulation tr3
     = CGAL::tetrahedron_soup_to_triangulation_3<Remeshing_triangulation>(
-        points, tets_by_indices, CGAL::parameters::subdomain_indices(std::cref(subdomains)));
+        points, tets_by_indices, CGAL::parameters::subdomain_indices(std::cref(subdomains)).verbose(true));
   assert(tr3.is_valid());
 
   //build triangulation from indices, subdomains and surface facets
@@ -99,7 +103,8 @@ int main(int , char* [])
     = CGAL::tetrahedron_soup_to_triangulation_3<Remeshing_triangulation>(
         points, tets_by_indices,
         CGAL::parameters::subdomain_indices(std::cref(subdomains))
-                         .surface_facets(std::cref(border_facets)));
+                         .surface_facets(std::cref(border_facets))
+                         .verbose(true));
   assert(tr4.is_valid());
 
   return EXIT_SUCCESS;

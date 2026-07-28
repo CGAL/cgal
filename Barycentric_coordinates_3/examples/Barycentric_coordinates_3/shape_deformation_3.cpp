@@ -48,7 +48,7 @@ int main(int argc, char** argv) {
     coords.clear();
     mv(vertex_val, std::back_inserter(coords));
 
-    Point_3 p = CGAL::Barycentric_coordinates::apply_barycentric_coordinates(target_cube, coords);
+    Point_3 p = CGAL::Barycentric_coordinates::apply_barycentric_coordinates_3(target_cube, coords);
 
     put(vertex_point_map, v, p);
   }

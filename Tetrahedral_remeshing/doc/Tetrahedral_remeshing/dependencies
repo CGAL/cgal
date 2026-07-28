@@ -9,3 +9,5 @@ BGL
 Mesh_3
 TDS_3
 SMDS_3
+Surface_mesh
+Polyhedron

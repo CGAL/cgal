@@ -265,9 +265,6 @@ compute_vcm (const PointRange& points,
              double convolution_radius,
              const NamedParameters& np = parameters::default_values())
 {
-    using parameters::choose_parameter;
-    using parameters::get_parameter;
-
     // basic geometric types
     typedef Point_set_processing_3_np_helper<PointRange, NamedParameters> NP_helper;
     typedef typename NP_helper::Const_point_map PointMap;
@@ -311,9 +308,6 @@ vcm_estimate_normals_internal (PointRange& points,
                                int nb_neighbors_convolve = -1 ///< number of neighbors used during the convolution.
 )
 {
-    using parameters::choose_parameter;
-    using parameters::get_parameter;
-
     // basic geometric types
     typedef Point_set_processing_3_np_helper<PointRange, NamedParameters> NP_helper;
     typedef typename NP_helper::Point_map PointMap;

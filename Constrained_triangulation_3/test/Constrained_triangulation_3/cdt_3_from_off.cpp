@@ -1,7 +1,3 @@
-#ifdef _MSC_VER
-#  pragma warning(disable: 4455)
-#endif
-
 #include <CGAL/config.h>
 
 // #define CGAL_CDT_2_DEBUG_INTERSECTIONS 1
@@ -193,7 +189,7 @@ CDT_options::CDT_options(int argc, char* argv[]) {
   const std::vector<std::string_view> args(argv + 1, argv + argc);
   int positional = 0;
 
-  using std::literals::string_view_literals::operator""sv;
+  using namespace std::literals::string_view_literals;
   for (auto it = args.begin(); it != args.end(); ++it) {
     auto get_next_arg_or_error_out = [&it, &args]() -> std::string {
       if(it + 1 == args.end()) {

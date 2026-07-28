@@ -102,8 +102,8 @@ of `p` and `q` on the curve.
 FT curve_segment_length(const Point_3& p, const Point_3& q,
                         const Curve_index& curve_index,
                         CGAL::Orientation orientation) const;
-/*!
 
+/*!
 Returns `CGAL::POSITIVE` if the signed geodesic distance from
 `p` to `q` on the way through `r` along loop with index `ci`
 is positive, `CGAL::NEGATIVE` if the distance is negative.
@@ -122,10 +122,17 @@ CGAL::Sign distance_sign(const Point_3& p, const Point_3& q,
                          const Curve_index& ci) const;
 
 /*!
-Returns the length of curve with index
+Returns the length of the input curve with index
 `curve_index`
 */
 FT curve_length(const Curve_index& curve_index) const;
+
+/**
+ * Returns the signed geodesic distance between points `pa` and `pb` on the curve
+ * with index `curve_index`.
+ */
+FT signed_geodesic_distance(const Point_3& pa, const Point_3& pb, const Curve_index& curve_index) const;
+
 /*!
 Returns `true` if the portion of the curve of index `index`,
 between the points `c1` and `c2`, is covered by the spheres of

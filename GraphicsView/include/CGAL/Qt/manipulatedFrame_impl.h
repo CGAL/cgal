@@ -264,6 +264,8 @@ void ManipulatedFrame::mousePressEvent(QMouseEvent *const event,
   // not inserted in mouseBinding_
   // if (action_ == NO_MOUSE_ACTION)
   // event->ignore();
+  camera->stopAllPaths();
+
 
   prevPos_ = pressPos_ = event->pos();
 }
