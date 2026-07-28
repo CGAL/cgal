@@ -16,11 +16,10 @@
 #include <CGAL/license/Envelope_2.h>
 
 /*! \file
- * Global functions for computing lower and upper envelopes of curves in the
- * plane.
+ * Global functions for computing lower and upper envelopes of curves in the plane.
  */
 
-#include <CGAL/Envelope_2/Env_divide_and_conquer_2.h>
+#include <CGAL/Envelope_2/Envelope_divide_and_conquer_2.h>
 
 namespace CGAL {
 
