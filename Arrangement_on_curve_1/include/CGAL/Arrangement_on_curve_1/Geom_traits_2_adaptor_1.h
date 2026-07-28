@@ -31,11 +31,15 @@ public:
 
   using Shared_geom_traits_2 = std::shared_ptr<const Geom_traits_2>;
 
-  // Constructor accepts a shared pointer to the 2D geometry traits
-  // and the specific x-monotone curve (or vertical segment) along which
-  // all 1D points are assumed to lie.
-  Geom_traits_2_adaptor_1(Shared_geom_traits_2 shared_traits_2) :
-    m_traits_2(std::move(shared_traits_2))
+  // 1. Default constructor: allocates a default-constructed 2D traits instance on the heap
+  Geom_traits_2_adaptor_1() : m_traits_2(std::make_shared<const Geom_traits_2>()) {}
+
+  // 2. Constructor accepts a shared pointer to the 2D geometry traits
+  Geom_traits_2_adaptor_1(Shared_geom_traits_2 shared_traits_2) : m_traits_2(std::move(shared_traits_2)) {}
+
+  // 3. Constructor taking a raw reference to a 2D traits object
+  explicit Geom_traits_2_adaptor_1(const Geom_traits_2& traits_2) :
+    m_traits_2(std::make_shared<const Geom_traits_2>(traits_2))
   {}
 
   class Compare_x_1 {
