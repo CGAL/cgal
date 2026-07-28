@@ -265,11 +265,6 @@ bool create_straight_skeleton_and_offset_polyhedra_3(const TriangleMeshIn& tmesh
   using Polyhedron = SS3i::HDS::Polyhedron<Geom_traits>;
   using PolyhedronSPtr = typename Polyhedron::PolyhedronSPtr;
 
-  using FaceGraphIO = SS3io::FaceGraphIO<Geom_traits>;
-
-  using face_descriptor_in = typename boost::graph_traits<TriangleMeshIn>::face_descriptor;
-  using face_descriptor_out = typename boost::graph_traits<PolygonMeshOut>::face_descriptor;
-
   const bool outwards = (!save_times.empty() && CGAL::is_positive(save_times.front()));
 
   // visitor to collect the results at save times

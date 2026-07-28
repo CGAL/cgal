@@ -59,8 +59,7 @@ void save_colored_mesh(const PolygonMesh& pmesh,
   auto face_color = nc_pmesh.template add_property_map<face_descriptor, Color>("f:color").first;
 
   for (auto f : faces(pmesh)) {
-    std::cout << "facet " << f << " with value " << values[f]
-              << " gets color " << colors[values[f]] << std::endl;
+    // std::cout << "facet " << f << " with value " << values[f] << " gets color " << colors[values[f]] << std::endl;
     put(face_color, f, colors[values[f]]);
   }
 

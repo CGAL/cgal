@@ -319,8 +319,6 @@ public:
 
     facet_into->merge(facet_from);
     polyhedron->remove_facet(facet_from);
-
-    CGAL_postcondition(polyhedron->is_consistent());
   }
 
   static void merge_facets(const EdgeSPtr& edge,
@@ -364,8 +362,9 @@ public:
     }
 
     CGAL_SS3_TRANSF_TRACE(edges_toremove.size() << " edges to remove");
+
     CGAL_SS3_TRANSF_TRACE_CODE(if (edges_toremove.size() > 0))
-    CGAL_SS3_TRANSF_TRACE("Adjacent facets of the following edges are detected to be coplanar and will be merged.");
+    CGAL_SS3_TRANSF_TRACE_V(16, "Adjacent facets of the following edges are detected to be coplanar and will be merged.");
 
     for (EdgeWPtr edge_w : edges_toremove) {
       if (EdgeSPtr edge = edge_w.lock()) {
@@ -586,7 +585,7 @@ public:
 
   static int sanitize(const PolyhedronSPtr& polyhedron)
   {
-    CGAL_SS3_TRANSF_TRACE("Sanitizing polyhedron...");
+    CGAL_SS3_TRANSF_TRACE_V(4, "Sanitizing polyhedron...");
 
     CGAL_SS3_DEBUG_SPTR(polyhedron);
 
@@ -666,7 +665,8 @@ public:
 
     std::optional<Point_3> point = Kernel_wrapper::intersection(*(planes[0]), *(planes[1]), *(planes[2]));
     if (!point) {
-      CGAL_SS3_TRANSF_TRACE_V(1, "Warning: triplet of planes does not define a point!");
+      CGAL_SS3_TRANSF_TRACE_V(1, "Error: triplet of planes does not define a point!");
+      std::abort();
       return false;
     }
 

@@ -76,7 +76,7 @@ function process_file_single_function {
   echo "WEIGHT_FILE: ${WEIGHT_FILE}"
 
   LOG_FILE=${OUTPUT_DIRECTORY}/${FULL_ID}/log_offset.txt
-  CMD="./offset_with_cardinal_weights ${FILE} --weight-path ${WEIGHT_FILE} --save-path ${OUTPUT_DIRECTORY}/${FULL_ID} --save-times 1"
+  CMD="./offset_with_cardinal_weights ${FILE} --weight-path ${WEIGHT_FILE} --save-times 1 --save-path ${OUTPUT_DIRECTORY}/${FULL_ID}"
 
   if [ ! -f $WEIGHT_FILE ]; then
     echo "====== [ERROR]: missing offset file?! ======"

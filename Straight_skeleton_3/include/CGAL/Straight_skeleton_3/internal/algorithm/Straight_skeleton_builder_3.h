@@ -4042,7 +4042,7 @@ public:
         FacetSPtr facet_2_src = edge_2->get_facet_src();
         FacetSPtr facet_2_tgt = edge_2->get_facet_tgt();
 
-        const Plane_3& plane_l2 = facet_l2->get_plane();
+        CGAL_assertion_code(const Plane_3& plane_l2 = facet_l2->get_plane();)
         CGAL_assertion_code(const FT& l2a = plane_l2.a();)
         CGAL_assertion_code(const FT& l2b = plane_l2.b();)
         CGAL_assertion_code(const FT& l2c = plane_l2.c();)
@@ -4408,7 +4408,7 @@ public:
     Hds_utils::clear_sheet(edge);
 #endif
 
-    // grab vertices and facets counter clockwise around node
+    // grab vertices and facets counterclockwise around node
     std::array<VertexSPtr, 4> vertices;
     vertices[0] = vertex_src->prev(edge->get_facet_L());
     vertices[1] = vertex_src->next(edge->get_facet_R());

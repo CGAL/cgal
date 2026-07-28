@@ -2592,6 +2592,7 @@ public:
       Range_updating_autoref_visitor<FacetSPtr> autoref_visitor(triangle_to_facet, updated_triangle_to_facet);
 
       PMP::autorefine_triangle_soup(points, triangles, CGAL::parameters::visitor(autoref_visitor));
+
       triangle_to_facet = std::move(updated_triangle_to_facet);
       CGAL_assertion(triangles.size() == triangle_to_facet.size());
 
@@ -2930,7 +2931,6 @@ public:
       };
 
       std::vector<CC_in_out_flag> in_out_flags(volume_CCs.size(), CC_in_out_flag::UNINITIALIZED);
-      std::size_t classified_CCs = 0;
 
       // Classify some trivial CCs:
       // - if every non-bbox face points outwards, the CC is necessarily in
@@ -3097,8 +3097,6 @@ public:
         // If we are here, candidate_pid is the point that is at the intersection
         // of prev_facet and facet and we need to know in which direction to walk
         // along facet.
-
-        const Plane_3& pl = current_facet->get_plane();
 
         // determine convexity of prev/current
         std::list<EdgeSPtr> common_edges = prev_facet->find_edges(current_facet);
@@ -3497,7 +3495,6 @@ public:
           std::vector<BoolVar> e_c;
           e_c.reserve(std::pow(vertex->degree(), 2));
 
-          int e = 0;
           for (std::size_t pid0=0; pid0<points.size(); ++pid0) {
             for (auto& pid1_and_edges : edge_map[pid0]) {
               std::vector<TID>& inc_triangles = pid1_and_edges.second;
@@ -3790,7 +3787,6 @@ public:
 #else
       // Since vertex manifoldness is difficult to express with constraints, try and try
       // till we succeed
-      bool valid_solution_found = false;
       int iteration = -1;
       const int max_iterations = 1000;
 
@@ -3968,12 +3964,11 @@ public:
           }
         } else {
           CGAL_SS3_TRANSF_TRACE_V(1, "Valid solution found");
-          valid_solution_found = true;
           break;
         }
       }
 
-      CGAL_assertion(valid_solution_found);
+      CGAL_assertion(iteration < max_iterations);
 #endif // CGAL_SLS3_USE_LAZY_NON_MANIFOLD_VERTEX_CONSTRAINTS
 
 
@@ -4018,8 +4013,6 @@ public:
           }
         }
       }
-#else // CGAL_SLS3_USE_LAZY_NON_MANIFOLD_VERTEX_CONSTRAINTS
-
 #endif // CGAL_SLS3_USE_LAZY_NON_MANIFOLD_VERTEX_CONSTRAINTS
 
       // a valid partition has:
@@ -4106,10 +4099,7 @@ public:
         return true;
       };
 
-      bool is_valid = is_valid_partition(volume_CCs, face_volume_IDs, solution, triangles, points, edge_map);
-      CGAL_SS3_TRANSF_TRACE_V(32, "valid partition? " << is_valid);
-      if (!is_valid)
-        std::abort();
+      CGAL_postcondition(is_valid_partition(volume_CCs, face_volume_IDs, solution, triangles, points, edge_map));
 
       // Now, extract the connectivity from the arrangement and plug it back into the polyhedron itself
       std::vector<std::vector<PID> > boundary_triangles;
@@ -4272,23 +4262,15 @@ public:
   {
     CGAL_SS3_TRANSF_TRACE_V(4, "Applying random perturbation to the polyhedron...");
 
-    const FT sq_tolerance = 0;
-    for (const VertexSPtr vertex : polyhedron->vertices()) {
-      is_stable_vertex(vertex, polyhedron, sq_tolerance);
-    }
-
     // if the input is all triangles, simply perturb points directly
 #ifndef CGAL_SPS3_USE_V4_PERTURBATION
-    // don't do this because we don't split vertices with V4
+    // don't do this with V4 because we perturb and split at once
     if (is_triangle_polyhedron(polyhedron))
       return rand_move_points(polyhedron);
 #endif
 
     // Generic approach
-    Transformation::normalize_facet_planes(polyhedron);
-
-    ConfigurationSPtr config = Configuration::get_instance();
-    bool safe_mode = config->get_Boolean("Preprocessing", "check_degenerate_configuration");
+    Transformation::normalize_facet_planes(polyhedron); // @todo is this needed?
 
     PolyhedronSPtr p_mem = polyhedron->clone();
 
@@ -4298,11 +4280,17 @@ public:
     apply_rand_plane_tilts_V3(polyhedron);
 #endif
 
+    ConfigurationSPtr config = Configuration::get_instance();
+    const bool safe_mode = config->get_Boolean("Preprocessing", "check_degenerate_configuration");
+
     if (safe_mode) {
       CGAL_SS3_TRANSF_TRACE_V(16, "Safe mode is enabled, checking validity of the perturbation...");
 
       for (;;) {
-        // IO::write_OBJ("results/last_perturbation.obj", polyhedron, parameters::stream_precision(17).do_not_triangulate_faces(true));
+#ifdef CGAL_SS3_DUMP_FILES
+        IO::write_OBJ("results/last_perturbation.obj", polyhedron,
+                      parameters::stream_precision(17).do_not_triangulate_faces(true));
+#endif
 
         if (check_perturbed_positions_proximity(polyhedron, p_mem) &&
             do_all_plane_pairs_intersect(polyhedron) &&

@@ -1160,7 +1160,7 @@ public:
     }
 
     /**
-      * counter clockwise from outside
+      * counterclockwise from outside
       */
     EdgeSPtr next(const VertexSPtr& vertex) const
     {
@@ -1323,7 +1323,7 @@ public:
       const Plane_3& plane_l = facet_l->get_plane();
       const Vector_3 normal_l = plane_l.orthogonal_vector();
       CGAL_assertion(normal_l != CGAL::NULL_VECTOR);
-      const Vector_3 dir = line().to_vector();
+      const Vector_3 dir { vertex_src_->point(), vertex_tgt_->point() };
       CGAL_assertion(dir != CGAL::NULL_VECTOR);
       const Point_3& p_src = vertex_src_->point();
       Point_3 p = p_src + CGAL::cross_product(normal_l, dir);
@@ -2027,8 +2027,6 @@ private:
           }
         }
       }
-
-      CGAL_assertion(get_polyhedron()->is_consistent());
     }
 
     int id() const
