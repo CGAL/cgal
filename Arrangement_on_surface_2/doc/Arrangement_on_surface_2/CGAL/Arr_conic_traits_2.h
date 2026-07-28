@@ -438,15 +438,6 @@ public:
     Bbox_2 operator()(const X_monotone_curve_2& xcv) const { return bbox(xcv); }
   };
 
-  /*! \name Auxiliary Functor definitions, used for, e.g., the landmarks \
-   * point-location strategy and the drawing function.
-   */
-  /// @{
-  typedef double                                        Approximate_number_type;
-  typedef CGAL::Cartesian<Approximate_number_type>      Approximate_kernel;
-  typedef Approximate_kernel::Point_2                   Approximate_point_2;
-  /// @}
-
   /*! \class Trim_2
    * A functor that trims a conic arc.
    */

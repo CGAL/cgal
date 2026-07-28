@@ -63,6 +63,7 @@
 \cgalCRPSection{Function Templates}
 
 - `CGAL::facets_in_complex_3_to_triangle_mesh()`
+- `CGAL::is_tetrahedron_soup_a_triangulation()`
 - `CGAL::tetrahedron_soup_to_triangulation_3()`
 
 \cgalCRPSection{Input/Output Functions}

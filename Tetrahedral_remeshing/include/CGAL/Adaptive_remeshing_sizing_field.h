@@ -353,12 +353,9 @@ create_adaptive_remeshing_sizing_field(const Tr& tr,
   using Edge_vv = std::pair<V, V>;
   using Facet = typename Tr::Facet;
 
-  auto ecmap = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
-    CGAL::Constant_property_map<Edge_vv, bool>(false));
-  auto fcmap = choose_parameter(get_parameter(np, internal_np::facet_is_constrained),
-    CGAL::Constant_property_map<Facet, bool>(false));
-  auto cell_selector = choose_parameter(get_parameter(np, internal_np::cell_selector),
-    CGAL::Tetrahedral_remeshing::internal::All_cells_selected<Tr>());
+  auto ecmap = choose_parameter<Static_boolean_property_map<Edge_vv, false>>(get_parameter(np, internal_np::edge_is_constrained));
+  auto fcmap = choose_parameter<Static_boolean_property_map<Facet, false>>(get_parameter(np, internal_np::facet_is_constrained));
+  auto cell_selector = choose_parameter<CGAL::Tetrahedral_remeshing::internal::All_cells_selected<Tr>>(get_parameter(np, internal_np::cell_selector));
 
   return Adaptive_remeshing_sizing_field<Tr>(tr, ecmap, fcmap, cell_selector);
 }

@@ -366,8 +366,8 @@ bool write_PLY(std::ostream& os,
   using parameters::is_default_parameter;
   using parameters::get_parameter;
 
-  VCM vcm = choose_parameter(get_parameter(np, internal_np::vertex_color_map), VCM());
-  FCM fcm = choose_parameter(get_parameter(np, internal_np::face_color_map), FCM());
+  VCM vcm = choose_parameter<VCM>(get_parameter(np, internal_np::vertex_color_map));
+  FCM fcm = choose_parameter<FCM>(get_parameter(np, internal_np::face_color_map));
 
   bool has_vcolor = !is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_color_map_t>::value;
   bool has_fcolor = !is_default_parameter<CGAL_NP_CLASS, internal_np::face_color_map_t>::value;
@@ -470,8 +470,6 @@ bool write_PLY(std::ostream& os,
       decltype(auto) fp = get(fvpm, vd);
       internal::output_properties(os, &fp, make_ply_point_writer (CGAL::Identity_property_map<Target_point>()));
     }
-
-    std::cout << "using generic writer" << std::endl;
 
     if constexpr (!parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_normal_map_t>::value)
     {

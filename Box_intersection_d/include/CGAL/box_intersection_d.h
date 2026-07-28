@@ -43,7 +43,7 @@ namespace CGAL {
 namespace internal {
 
 // Generic call with custom predicate traits parameter.
-template< class ConcurrencyTag,
+template< bool in_order, class ConcurrencyTag,
           class RandomAccessIter1, class RandomAccessIter2,
           class Callback, class Traits >
 void box_intersection_segment_tree_d(
@@ -51,8 +51,7 @@ void box_intersection_segment_tree_d(
     RandomAccessIter2 begin2, RandomAccessIter2 end2,
     Callback callback,
     const Traits& traits,
-    const std::ptrdiff_t cutoff,
-    const bool in_order)
+    const std::ptrdiff_t cutoff)
 {
   typedef typename Traits::NT NT;
 
@@ -195,8 +194,8 @@ void box_intersection_segment_tree_d(
 
         // Specify "copy by value" otherwise the values of iterators for next (i,j) iterations
         // become shared with different lambdas being run in parallel, and things go wrong
-        g.run([=]{ Box_intersection_d::segment_tree( r1_start, r1_end, r2_start, r2_end,
-                                                     inf, sup, callback, traits, cutoff, dim, in_order); });
+        g.run([=]{ Box_intersection_d::segment_tree<in_order>(r1_start, r1_end, r2_start, r2_end,
+                                                              inf, sup, callback, traits, cutoff, dim); });
       }
     }
 
@@ -205,7 +204,7 @@ void box_intersection_segment_tree_d(
   else
 #endif // CGAL_LINKED_WITH_TBB
   {
-    Box_intersection_d::segment_tree(begin1, end1, begin2, end2, inf, sup, callback, traits, cutoff, dim, in_order);
+    Box_intersection_d::segment_tree<in_order>(begin1, end1, begin2, end2, inf, sup, callback, traits, cutoff, dim);
   }
 }
 
@@ -223,10 +222,9 @@ void box_intersection_custom_predicates_d(
     std::ptrdiff_t cutoff = 10,
     Box_intersection_d::Setting setting = Box_intersection_d::BIPARTITE)
 {
-  internal::box_intersection_segment_tree_d<ConcurrencyTag>(begin1, end1, begin2, end2, callback, traits, cutoff, true);
-  if constexpr(BoxPredicateTraits::has_unique_box_traits)
-    if(setting == Box_intersection_d::BIPARTITE)
-      internal::box_intersection_segment_tree_d<ConcurrencyTag>(begin2, end2, begin1, end1, callback, traits, cutoff, false);
+  internal::box_intersection_segment_tree_d<true, ConcurrencyTag>(begin1, end1, begin2, end2, callback, traits, cutoff);
+  if(setting == Box_intersection_d::BIPARTITE)
+    internal::box_intersection_segment_tree_d<false, ConcurrencyTag>(begin2, end2, begin1, end1, callback, traits, cutoff);
 }
 
 // Generic call with box traits parameter.
@@ -464,6 +462,29 @@ void box_self_intersection_d(
                                             Box_traits(), cutoff, topology );
 }
 
+namespace internal{
+  template< class ForwardIter1, class ForwardIter2,
+            class Callback, class BoxTraits1, class BoxTraits2 >
+  void box_intersection_all_pairs_d(
+      ForwardIter1 begin1, ForwardIter1 end1,
+      ForwardIter2 begin2, ForwardIter2 end2,
+      Callback callback, BoxTraits1, BoxTraits2,
+      Box_intersection_d::Topology topology,
+      Box_intersection_d::Setting setting)
+  {
+      bool complete_case = (setting != Box_intersection_d::BIPARTITE);
+      if (topology == Box_intersection_d::CLOSED) {
+          typedef Box_intersection_d::internal::Predicate_traits_d<BoxTraits1, BoxTraits2, true> Traits;
+          Box_intersection_d::all_pairs( begin1, end1, begin2, end2,
+                                        callback, Traits(), complete_case);
+      } else {
+          typedef Box_intersection_d::internal::Predicate_traits_d<BoxTraits1, BoxTraits2, false> Traits;
+          Box_intersection_d::all_pairs( begin1, end1, begin2, end2,
+                                        callback, Traits(), complete_case);
+      }
+  }
+}
+
 // Generic call for trivial all-pairs algorithm with box traits parameter.
 // - make all default parameters explicit overloads (workaround)
 template< class ForwardIter1, class ForwardIter2,
@@ -483,20 +504,12 @@ template< class ForwardIter1, class ForwardIter2,
 void box_intersection_all_pairs_d(
     ForwardIter1 begin1, ForwardIter1 end1,
     ForwardIter2 begin2, ForwardIter2 end2,
-    Callback callback, BoxTraits,
+    Callback callback, BoxTraits traits,
     Box_intersection_d::Topology topology,
     Box_intersection_d::Setting setting)
 {
-    bool complete_case = (setting != Box_intersection_d::BIPARTITE);
-    if (topology == Box_intersection_d::CLOSED) {
-        typedef Box_intersection_d::Predicate_traits_d<BoxTraits,true> Traits;
-        Box_intersection_d::all_pairs( begin1, end1, begin2, end2,
-                                       callback, Traits(), complete_case);
-    } else {
-        typedef Box_intersection_d::Predicate_traits_d<BoxTraits,false> Traits;
-        Box_intersection_d::all_pairs( begin1, end1, begin2, end2,
-                                       callback, Traits(), complete_case);
-    }
+    box_intersection_all_pairs_d( begin1, end1, begin2, end2, callback, traits, traits,
+                                  topology, setting);
 }
 
 template< class ForwardIter1, class ForwardIter2,
@@ -519,11 +532,12 @@ void box_intersection_all_pairs_d(
     ForwardIter2 begin2, ForwardIter2 end2,
     Callback callback)
 {
-    typedef typename std::iterator_traits<ForwardIter1>::value_type val_t;
-    typedef Box_intersection_d::Box_traits_d< val_t>  Box_traits;
-    box_intersection_all_pairs_d( begin1, end1, begin2, end2,
-                                  callback, Box_traits(),
-                                  Box_intersection_d::CLOSED );
+    typedef typename std::iterator_traits<ForwardIter1>::value_type val_t_1;
+    typedef typename std::iterator_traits<ForwardIter2>::value_type val_t_2;
+    typedef Box_intersection_d::Box_traits_d<val_t_1>  Box_traits_1;
+    typedef Box_intersection_d::Box_traits_d<val_t_2>  Box_traits_2;
+    internal::box_intersection_all_pairs_d( begin1, end1, begin2, end2,
+                                           callback, Box_traits_1(), Box_traits_2(), Box_intersection_d::CLOSED, Box_intersection_d::BIPARTITE);
 }
 
 template< class ForwardIter1, class ForwardIter2, class Callback >
@@ -533,10 +547,12 @@ void box_intersection_all_pairs_d(
     Callback callback,
     Box_intersection_d::Topology topology)
 {
-    typedef typename std::iterator_traits<ForwardIter1>::value_type val_t;
-    typedef Box_intersection_d::Box_traits_d< val_t>  Box_traits;
-    box_intersection_all_pairs_d( begin1, end1, begin2, end2,
-                                  callback, Box_traits(), topology);
+    typedef typename std::iterator_traits<ForwardIter1>::value_type val_t_1;
+    typedef typename std::iterator_traits<ForwardIter2>::value_type val_t_2;
+    typedef Box_intersection_d::Box_traits_d<val_t_1>  Box_traits_1;
+    typedef Box_intersection_d::Box_traits_d<val_t_2>  Box_traits_2;
+    internal::box_intersection_all_pairs_d( begin1, end1, begin2, end2,
+                                           callback, Box_traits_1(), Box_traits_2(), topology, Box_intersection_d::BIPARTITE);
 }
 
 template< class ForwardIter1, class ForwardIter2, class Callback >
@@ -547,10 +563,12 @@ void box_intersection_all_pairs_d(
     Box_intersection_d::Topology topology,
     Box_intersection_d::Setting  setting)
 {
-    typedef typename std::iterator_traits<ForwardIter1>::value_type val_t;
-    typedef Box_intersection_d::Box_traits_d< val_t>  Box_traits;
-    box_intersection_all_pairs_d( begin1, end1, begin2, end2,
-                                  callback, Box_traits(), topology, setting);
+    typedef typename std::iterator_traits<ForwardIter1>::value_type val_t_1;
+    typedef typename std::iterator_traits<ForwardIter2>::value_type val_t_2;
+    typedef Box_intersection_d::Box_traits_d<val_t_1>  Box_traits_1;
+    typedef Box_intersection_d::Box_traits_d<val_t_2>  Box_traits_2;
+    internal::box_intersection_all_pairs_d( begin1, end1, begin2, end2,
+                                            callback, Box_traits_1(), Box_traits_2(), topology, setting);
 }
 
 // Generic call for trivial all-pairs algorithm with box traits parameter

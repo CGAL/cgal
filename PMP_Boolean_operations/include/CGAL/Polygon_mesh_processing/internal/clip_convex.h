@@ -56,47 +56,37 @@ find_crossing_edge(PolygonMesh& pm,
   using GT = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
   GT traits = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
-  using FT = typename GT::FT;
-  using Plane_3 = typename GT::Plane_3;
-  using Point_3 = typename GT::Point_3;
+  using Direction_3 = typename GT::Direction_3;
 
   auto vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                               get_property_map(vertex_point, pm));
 
   auto oriented_side = traits.oriented_side_3_object();
   auto normal = traits.construct_orthogonal_vector_3_object();
-  auto vector = traits.construct_vector_3_object();
-  auto point_on = traits.construct_point_on_3_object();
-  auto dot = traits.compute_scalar_product_3_object();
-  auto sq = [&](const Plane_3& pl, const Point_3& p){
-    return dot(vector(point_on(pl), p), normal(pl));
-  };
+  auto direction = traits.construct_direction_3_object();
+  auto cpad = traits.compare_projection_along_direction_3_object();
+  Direction_3 dir = direction(normal(plane));
 
   // ____________________ Find a crossing edge _____________________
 
   vertex_descriptor start = choose_parameter(get_parameter(np, internal_np::starting_vertex_descriptor), *vertices(pm).begin());
   vertex_descriptor src = start;
-  FT sp_src = sq(plane, get(vpm, src));
-  Sign direction_to_zero = sign(sp_src);
-
   vertex_descriptor trg;
-  FT sp_trg;
+  Orientation direction_to_zero = oriented_side(plane, get(vpm, src));
 
   bool is_crossing_edge=false;
   if(direction_to_zero!=EQUAL){
     do{
       bool is_local_max=true;
       for(auto v: vertices_around_target(src ,pm)){
-        sp_trg = sq(plane, get(vpm, v));
         // Check if v in the direction to the plane
-        if(compare(sp_src, sp_trg)==direction_to_zero){
-          if(sign(sp_trg)!=direction_to_zero){
+        if(cpad(get(vpm, src), get(vpm, v), dir) == direction_to_zero){
+          if(oriented_side(plane, get(vpm, v))!= direction_to_zero){
             // Fund a crossing edge
             trg = v;
             is_crossing_edge=true;
           } else {
             // Continue from v
-            sp_src = sp_trg;
             src = v;
           }
           is_local_max=false; // repeat with the new vertex
@@ -113,17 +103,15 @@ find_crossing_edge(PolygonMesh& pm,
   } else {
     // src on the plane
     trg=src;
-    sp_trg = sp_src;
   }
 
-  if(sign(sp_trg)==EQUAL && direction_to_zero!=POSITIVE){
+  if(oriented_side(plane, get(vpm, trg))==EQUAL && direction_to_zero!=POSITIVE){
     // Search a vertex around trg coming from positive side
     bool no_positive_side = true;
     for(auto v: vertices_around_target(trg ,pm)){
       Oriented_side side_v = oriented_side(plane, get(vpm, v));
       if(side_v==ON_POSITIVE_SIDE){
         src = v;
-        sp_src = sq(plane, get(vpm, src));
         no_positive_side = false;
         break;
       }
@@ -307,7 +295,6 @@ remove_bounded_region_and_fill(PolygonMesh& pm,
   using parameters::choose_parameter;
   using parameters::is_default_parameter;
   using parameters::get_parameter;
-  using parameters::get_parameter_reference;
 
   // graph typedefs
   using BGT = boost::graph_traits<PolygonMesh>;
@@ -325,8 +312,11 @@ remove_bounded_region_and_fill(PolygonMesh& pm,
 
   using Point_3 = typename GT::Point_3;
 
-  bool update_bbox = !is_default_parameter<NamedParameters, internal_np::bounding_box_t>::value;
-  std::array<vertex_descriptor, 6>* bbox_pointer = choose_parameter(get_parameter_reference(np, internal_np::bounding_box), nullptr);
+  constexpr bool update_bbox = !is_default_parameter<NamedParameters, internal_np::bounding_box_t>::value;
+  std::array<vertex_descriptor, 6>* bbox_pointer = nullptr;
+
+  if constexpr (update_bbox)
+    bbox_pointer = get_parameter(np, internal_np::bounding_box);
 
   // Default_visitor default_visitor;
   // Visitor_ref visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
@@ -377,7 +367,8 @@ remove_bounded_region_and_fill(PolygonMesh& pm,
     } while (h != h_start);
   }
 
-  if(update_bbox){
+  if constexpr (update_bbox)
+  {
     auto &bbox = *bbox_pointer;
     struct BBox_entry {
       std::size_t index;

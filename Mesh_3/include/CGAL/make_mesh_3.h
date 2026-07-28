@@ -619,7 +619,7 @@ C3T3 make_mesh_3(const MeshDomain& domain, const MeshCriteria& criteria, const C
                                                                               std::vector<Initial_point>>::reference;
     using Initial_points_range = std::remove_cv_t<std::remove_reference_t<Initial_points_range_ref>>;
     std::vector<Initial_point> empty_vec;
-    Initial_points_range initial_points = choose_parameter(get_parameter_reference(np, internal_np::initial_points_param), empty_vec);
+    Initial_points_range_ref initial_points = choose_parameter(get_parameter_reference(np, internal_np::initial_points_param), empty_vec);
 
     // initial points generator
     using Initial_points_generator = typename internal_np::Lookup_named_param_def<internal_np::initial_points_generator_param_t,

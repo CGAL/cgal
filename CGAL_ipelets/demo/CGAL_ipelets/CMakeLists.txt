@@ -92,23 +92,20 @@ if(IPE_FOUND AND IPE_VERSION)
                                                  ${IPE_LIBRARIES})
     if(IPELET_INSTALL_DIR)
       install(TARGETS CGAL_${IPELET} DESTINATION ${IPELET_INSTALL_DIR})
-      install(FILES ./lua/libCGAL_${IPELET}.lua DESTINATION ${IPELET_INSTALL_DIR}) #only for ipe 7
+      install(FILES ./lua/libCGAL_${IPELET}.lua DESTINATION ${IPELET_INSTALL_DIR})
     endif ()
     cgal_add_compilation_test(CGAL_${IPELET})
   endforeach(IPELET)
   target_link_libraries(CGAL_cone_spanners PRIVATE CGAL::CGAL CGAL::CGAL_Core
                                                    CGAL::Eigen3_support)
+
   #example in doc not installed
   add_library(simple_triangulation MODULE simple_triangulation.cpp)
+  target_include_directories(simple_triangulation BEFORE PRIVATE ${IPE_INCLUDE_DIR})
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS simple_triangulation)
   target_link_libraries(simple_triangulation CGAL::CGAL CGAL::Eigen3_support
                         ${IPE_LIBRARIES})
-  target_include_directories(simple_triangulation BEFORE PRIVATE ${IPE_INCLUDE_DIR})
-  if (WITH_IPE_7)
-      target_compile_definitions(simple_triangulation PRIVATE CGAL_USE_IPE_7)
-    endif()
   cgal_add_compilation_test(simple_triangulation)
-
 else()
   message("NOTICE: This project requires the Ipe include files and library, and will not be compiled.")
 endif()

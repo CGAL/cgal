@@ -302,11 +302,7 @@ Patch IDs have been assigned to both input and output meshes, enabling an identi
 
 \cgalFigureAnchor{decimate_rg_sphere}
 <center>
-<table border=0>
-<tr>
-<td><img src="decimate_rg_joint.png" style="width:100%;"/></td>
-</tr>
-</table>
+<img src="decimate_rg_joint.png" style="width:70%;"/>
 </center>
 \cgalFigureCaptionBegin{decimate_rg_sphere}
 Remeshing of planar patches using region growing for planar patch detection.

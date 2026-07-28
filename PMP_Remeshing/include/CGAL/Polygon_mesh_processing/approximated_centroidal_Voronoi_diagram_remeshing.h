@@ -337,7 +337,7 @@ void upsample_subdivision_property(TriangleMesh& tmesh,
 
   using VPM = typename CGAL::GetVertexPointMap<TriangleMesh, NamedParameters>::type;
   VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                         get_property_map(CGAL::vertex_point, tmesh));
+                             get_property_map(CGAL::vertex_point, tmesh));
 
   // unordered_set of old vertices
   std::unordered_set<vertex_descriptor> old_vertices;
@@ -1405,9 +1405,8 @@ bool approximated_centroidal_Voronoi_diagram_remeshing(TriangleMesh& tmesh,
   auto ps = internal::acvd_impl(tmesh, static_cast<int>(nb_vertices), np);
   CGAL_assertion(is_polygon_soup_a_polygon_mesh(ps.second));
 
-  auto vpm = parameters::choose_parameter(
-                parameters::get_parameter(np, CGAL::vertex_point),
-                get_property_map(CGAL::vertex_point, tmesh));
+  auto vpm = parameters::choose_parameter(parameters::get_parameter(np, CGAL::vertex_point),
+                                          get_property_map(CGAL::vertex_point, tmesh));
 
   remove_all_elements(tmesh);
   polygon_soup_to_polygon_mesh(ps.first, ps.second, tmesh, parameters::vertex_point_map(vpm));

@@ -439,7 +439,9 @@ bool build_triangulation_impl(Tr& tr,
     vh->set_dimension(-1);
 
   if(verbose)
+  {
     std::cout << "build vertices done (" << tr.tds().number_of_vertices() << " vertices)" << std::endl;
+  }
 
   if (!finite_cells.empty())
   {
@@ -464,6 +466,18 @@ bool build_triangulation_impl(Tr& tr,
     else if(verbose)
     {
       std::cout << "build infinite cells done (" << tr.tds().cells().size() << " cells)" << std::endl;
+    }
+
+    // purge vertices which have no incident cell (unused points in the initial range)
+    for (auto vit = tr.finite_vertices_begin(), end = tr.finite_vertices_end(); vit != end; ++vit)
+    {
+      if (vit->cell() == Cell_handle())
+        tr.tds().delete_vertex(vit);
+    }
+
+    if(verbose)
+    {
+      std::cout << "vertices after purge: " << tr.tds().number_of_vertices() << std::endl;
     }
 
     tr.tds().set_dimension(3);
@@ -602,15 +616,32 @@ bool build_triangulation_from_file(std::istream& is,
   {
     // remove trailing whitespace, in particular a possible '\r' from Windows
     // end-of-line encoding
-    if(!line.empty() && std::isspace(line.back())) {
+    while(!line.empty() && std::isspace(line.back())) {
       line.pop_back();
     }
-    if (line.size() > 0 && line.at(0) == '#' &&
+    if(line.empty())
+      continue;
+
+    // remove whitespaces at the beginning of the line
+    for (std::size_t i=0; i<line.size(); ++i)
+    {
+      if (!std::isspace(line[i]))
+      {
+        if (i!=0)
+          line = line.substr(i);
+        break;
+      }
+    }
+
+    if (line.at(0) == '#' &&
         line.find("CGAL::Mesh_complex_3_in_triangulation_3") != std::string::npos)
     {
       is_CGAL_mesh = true; // with CGAL meshes, domain 0 should be kept
       continue;
     }
+
+    // skip non-CGAL comments
+    if (line.at(0)=='#') continue;
 
     if(line.find("Vertices") != std::string::npos)
     {

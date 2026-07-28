@@ -287,7 +287,7 @@ public:
                 bounding_object,
                 parameters::choose_parameter(parameters::get_parameter(np, internal_np::error_bound), FT(1e-3)),
                 parameters::choose_parameter(parameters::get_parameter(np, internal_np::surface_patch_index), construct_pair_functor()),
-                parameters::choose_parameter(parameters::get_parameter(np, internal_np::null_subdomain_index_param), Null_subdomain_index()),
+                parameters::choose_parameter<Null_subdomain_index>(parameters::get_parameter(np, internal_np::null_subdomain_index_param)),
                 parameters::choose_parameter(parameters::get_parameter(np, internal_np::rng), nullptr))
   {}
 ///@}
@@ -298,7 +298,7 @@ public:
                 parameters::get_parameter(np, internal_np::bounding_object_param),
                 parameters::choose_parameter(parameters::get_parameter(np, internal_np::error_bound), FT(1e-3)),
                 parameters::choose_parameter(parameters::get_parameter(np, internal_np::surface_patch_index), construct_pair_functor()),
-                parameters::choose_parameter(parameters::get_parameter(np, internal_np::null_subdomain_index_param), Null_subdomain_index()),
+                parameters::choose_parameter<Null_subdomain_index>(parameters::get_parameter(np, internal_np::null_subdomain_index_param)),
                 parameters::choose_parameter(parameters::get_parameter(np, internal_np::rng), nullptr))
   {}
 
@@ -385,8 +385,8 @@ public:
     using parameters::choose_parameter;
     FT relative_error_bound_ = choose_parameter(get_parameter(np, internal_np::error_bound), FT(1e-3));
     CGAL::Random* p_rng_ = choose_parameter(get_parameter(np, internal_np::rng), nullptr);
-    auto null_subdomain_index_ = choose_parameter(get_parameter(np, internal_np::null_subdomain_index_param), Null_functor());
-    auto construct_surface_patch_index_ = choose_parameter(get_parameter(np, internal_np::surface_patch_index), Null_functor());
+    auto null_subdomain_index_ = choose_parameter<Null_functor>(get_parameter(np, internal_np::null_subdomain_index_param));
+    auto construct_surface_patch_index_ = choose_parameter<Null_functor>(get_parameter(np, internal_np::surface_patch_index));
     namespace p = CGAL::parameters;
     return Labeled_mesh_domain_3
             (p::function = make_implicit_to_labeling_function_wrapper<BGT>(function),

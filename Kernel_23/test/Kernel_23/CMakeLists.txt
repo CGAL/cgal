@@ -46,7 +46,7 @@ if(CGAL_ENABLE_TESTING)
   else()
     message(VERBOSE "GDB executable found: ${GDB_EXECUTABLE}")
     file(GENERATE
-           OUTPUT "$<CONFIG>/test_gdb_pretty_printers.gdb"
+           OUTPUT "$<TARGET_FILE_DIR:test_gdb_pretty_printers>/test_gdb_pretty_printers.gdb"
            CONTENT "
              set auto-load safe-path /
              set debuginfod enabled off
@@ -61,7 +61,7 @@ if(CGAL_ENABLE_TESTING)
           TARGET "test_gdb_pretty_printers")
     add_test(NAME "execution   of  test_gdb_pretty_printers"
       COMMAND "${GDB_EXECUTABLE}" --batch --quiet --nx
-        -x "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/test_gdb_pretty_printers.gdb"
+        -x "$<TARGET_FILE_DIR:test_gdb_pretty_printers>/test_gdb_pretty_printers.gdb"
         )
 
     set_tests_properties("execution   of  test_gdb_pretty_printers"

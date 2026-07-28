@@ -736,8 +736,7 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
                                                         CGAL_NP_CLASS,
                                                         Static_boolean_property_map<vertex_descriptor, false> // default (not used)
                                                          >::type Vertex_map;
-    Vertex_map is_cst = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
-                                         Static_boolean_property_map<vertex_descriptor, false>());
+    Vertex_map is_cst = choose_parameter<Static_boolean_property_map<vertex_descriptor, false>>(get_parameter(np, internal_np::vertex_is_constrained));
     for (vertex_descriptor v : vertices_to_remove)
       if (!get(is_cst, v))
         remove_vertex(v, pmesh);
@@ -1007,7 +1006,7 @@ void split_connected_components_impl(FIMap fim,
   using parameters::is_default_parameter;
 
   Fpm pidmap = choose_parameter(get_parameter(np, internal_np::face_patch),
-                                get(CGAL::dynamic_face_property_t<faces_size_type>(), tm));
+                                CGAL::dynamic_face_property_t<faces_size_type>(), tm);
 
   faces_size_type nb_patches = 0;
   if(is_default_parameter<NamedParameters, internal_np::face_patch_t>::value)
@@ -1114,8 +1113,7 @@ void split_connected_components(const PolygonMesh& pmesh,
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  Ecm ecm = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
-                             Default_ecm());
+  Ecm ecm = choose_parameter<Default_ecm>(get_parameter(np, internal_np::edge_is_constrained));
 
   internal::split_connected_components_impl(CGAL::get_initialized_face_index_map(pmesh, np),
                                             CGAL::get_initialized_halfedge_index_map(pmesh, np),
