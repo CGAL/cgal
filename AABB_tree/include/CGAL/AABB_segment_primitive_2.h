@@ -35,7 +35,7 @@ namespace internal {
     //     std::declval<typename GeomTraits::Segment_2>())) reference;
     typedef decltype(
       typename GeomTraits::Construct_source_2()(
-        *std::declval<key_type&>())) reference;
+        *std::declval<key_type>())) reference;
     typedef boost::readable_property_map_tag category;
     typedef Source_of_segment_2_iterator_property_map<GeomTraits, Iterator> Self;
 

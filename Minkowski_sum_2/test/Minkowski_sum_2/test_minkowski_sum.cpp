@@ -93,8 +93,45 @@ Polygon_with_holes_2 compute_minkowski_sum_2(Polygon_2& p, Polygon_2& q,
   }
 }
 
-int main(int argc, char* argv[])
+int main(/*int argc, char* argv[]*/)
 {
+  int argc = 36;
+  std::vector<const char*> argv = {"test_minkowski_sum",
+          "rfsohgtv",
+          "/home/oem/CGAL/git/master/Minkowski_sum_2/test/Minkowski_sum_2/data/rooms_part1.dat",
+          "/home/oem/CGAL/git/master/Minkowski_sum_2/test/Minkowski_sum_2/data/rooms_part2.dat",
+          "/home/oem/CGAL/git/master/Minkowski_sum_2/test/Minkowski_sum_2/data/comb_part1.dat",
+          "/home/oem/CGAL/git/master/Minkowski_sum_2/test/Minkowski_sum_2/data/comb_part2.dat",
+          "/home/oem/CGAL/git/master/Minkowski_sum_2/test/Minkowski_sum_2/data/knife_part1.dat",
+          "/home/oem/CGAL/git/master/Minkowski_sum_2/test/Minkowski_sum_2/data/knife_part2.dat",
+          "/home/oem/CGAL/git/master/Minkowski_sum_2/test/Minkowski_sum_2/data/mchain_part1.dat",
+          "/home/oem/CGAL/git/master/Minkowski_sum_2/test/Minkowski_sum_2/data/mchain_part2.dat",
+          "/home/oem/CGAL/git/master/Minkowski_sum_2/test/Minkowski_sum_2/data/random_part1.dat",
+          "/home/oem/CGAL/git/master/Minkowski_sum_2/test/Minkowski_sum_2/data/random_part2.dat",
+          "/home/oem/CGAL/git/master/Minkowski_sum_2/test/Minkowski_sum_2/data/wheels_part1.dat",
+          "/home/oem/CGAL/git/master/Minkowski_sum_2/test/Minkowski_sum_2/data/wheels_part2.dat",
+          "/home/oem/CGAL/git/master/Minkowski_sum_2/test/Minkowski_sum_2/data/r35975_part1.dat",
+          "/home/oem/CGAL/git/master/Minkowski_sum_2/test/Minkowski_sum_2/data/r35975_part2.dat",
+          "/home/oem/CGAL/git/master/Minkowski_sum_2/test/Minkowski_sum_2/data/r38305_part1.dat",
+          "/home/oem/CGAL/git/master/Minkowski_sum_2/test/Minkowski_sum_2/data/r38305_part2.dat",
+          "/home/oem/CGAL/git/master/Minkowski_sum_2/test/Minkowski_sum_2/data/D.dat",
+          "/home/oem/CGAL/git/master/Minkowski_sum_2/test/Minkowski_sum_2/data/E.dat",
+          "/home/oem/CGAL/git/master/Minkowski_sum_2/test/Minkowski_sum_2/data/F.dat",
+          "/home/oem/CGAL/git/master/Minkowski_sum_2/test/Minkowski_sum_2/data/G.dat",
+          "/home/oem/CGAL/git/master/Minkowski_sum_2/test/Minkowski_sum_2/data/F.dat",
+          "/home/oem/CGAL/git/master/Minkowski_sum_2/test/Minkowski_sum_2/data/E.dat",
+          "/home/oem/CGAL/git/master/Minkowski_sum_2/test/Minkowski_sum_2/data/F.dat",
+          "/home/oem/CGAL/git/master/Minkowski_sum_2/test/Minkowski_sum_2/data/D.dat",
+          "/home/oem/CGAL/git/master/Minkowski_sum_2/test/Minkowski_sum_2/data/F.dat",
+          "/home/oem/CGAL/git/master/Minkowski_sum_2/test/Minkowski_sum_2/data/A.dat",
+          "/home/oem/CGAL/git/master/Minkowski_sum_2/test/Minkowski_sum_2/data/A.dat",
+          "/home/oem/CGAL/git/master/Minkowski_sum_2/test/Minkowski_sum_2/data/G.dat",
+          "/home/oem/CGAL/git/master/Minkowski_sum_2/test/Minkowski_sum_2/data/B.dat",
+          "/home/oem/CGAL/git/master/Minkowski_sum_2/test/Minkowski_sum_2/data/G.dat",
+          "/home/oem/CGAL/git/master/Minkowski_sum_2/test/Minkowski_sum_2/data/dangling_edge_part1.dat",
+          "/home/oem/CGAL/git/master/Minkowski_sum_2/test/Minkowski_sum_2/data/dangling_edge_part2.dat",
+          "/home/oem/CGAL/git/master/Minkowski_sum_2/test/Minkowski_sum_2/data/isolated_vertex_part1.dat",
+          "/home/oem/CGAL/git/master/Minkowski_sum_2/test/Minkowski_sum_2/data/isolated_vertex_part2.dat"};
   if (argc < 2) {
     std::cerr << "Usage: " << argv[0] << " [method flag] [polygon files]..."
               << std::endl;
