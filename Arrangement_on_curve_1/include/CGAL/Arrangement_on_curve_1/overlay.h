@@ -60,6 +60,7 @@ void overlay(const Arrangement_on_curve_1<GeometryTraitsA, TopologyTraitsA>& arr
       e_a = arr_a.right_edge(v_a);
       e_b = arr_b.right_edge(v_b);
       e_res = arr_res.right_edge(v_res);
+      observer.create_edge(e_a, e_b, e_res);
       continue;
     }
     else if (cmp == SMALLER) {
