@@ -15,293 +15,128 @@
 
 #include <CGAL/license/Envelope_2.h>
 
-
 #include <list>
-
+#include <memory>
 #include <CGAL/basic.h>
 #include <CGAL/memory.h>
 
+#include <CGAL/Arrangement_on_curve_1/Arrangement_on_curve_1.h>
+#include <CGAL/Arrangement_on_curve_1/Geom_traits_2_adaptor_1.h>
+#include <CGAL/Arrangement_on_curve_1/Unbounded_topology_traits.h>
+
 namespace CGAL {
 
-/*! \class
- * A minimization (or a maximization) diagram that represents the lower (or the
- * upper) envelope of a set of curves in the plane.
+/*! \class Envelope_diagram_1
+ * A minimization (or maximization) diagram representing the lower (or upper)
+ * envelope of a set of curves in the plane, inheriting directly from Arrangement_on_curve_1.
  */
-template <typename Traits_, typename Allocator = CGAL_ALLOCATOR(int) >
-class Envelope_diagram_1 {
+template <typename Traits_, typename Allocator = CGAL_ALLOCATOR(int)>
+class Envelope_diagram_1 :
+  public Arrangement_on_curve_1::Arrangement_on_curve_1<
+    Arrangement_on_curve_1::Geom_traits_2_adaptor_1<Traits_>,
+    Arrangement_on_curve_1::Unbounded_topology_traits<
+      typename Traits_::Point_2,
+      std::list<typename Traits_::X_monotone_curve_2>,
+      std::list<typename Traits_::X_monotone_curve_2>,
+      Allocator>> {
 public:
-  typedef Traits_                                   Traits_2;
-  typedef typename Traits_2::Point_2                Point_2;
-  typedef typename Traits_2::X_monotone_curve_2     X_monotone_curve_2;
-  typedef std::list<X_monotone_curve_2>             Curve_container;
-  typedef typename Curve_container::iterator        Curve_iterator;
-  typedef typename Curve_container::const_iterator  Curve_const_iterator;
-  typedef std::size_t                               Size;
+  using Traits_2 = Traits_;
+  using Point_2 = typename Traits_2::Point_2;
+  using X_monotone_curve_2 = typename Traits_2::X_monotone_curve_2;
+  using Curve_container = std::list<X_monotone_curve_2>;
+  using Curve_iterator = typename Curve_container::iterator;
+  using Curve_const_iterator = typename Curve_container::const_iterator;
+  using Size = std::size_t;
 
-  /*! Representation of a diagram vertex, which stores the point it represents
-   * and a list of all curves that pass at that point.
-   */
-  class Edge;
+  using Geom_traits_1 = Arrangement_on_curve_1::Geom_traits_2_adaptor_1<Traits_2>;
+  using Topol_traits  = Arrangement_on_curve_1::Unbounded_topology_traits<
+    Point_2, Curve_container, Curve_container, Allocator>;
 
-  class Vertex {
-  private:
-    Point_2 _p;
-    Curve_container _cvs;
-    Edge* _leftP;
-    Edge* _rightP;
+  using Base = Arrangement_on_curve_1::Arrangement_on_curve_1<Geom_traits_1, Topol_traits>;
 
-  public:
-    /*! Constructor. */
-    Vertex() :
-      _leftP(nullptr),
-      _rightP(nullptr)
-    {}
-
-    /*! Constructor with a point. */
-    Vertex(const Point_2& p) :
-      _p(p),
-      _leftP(nullptr),
-      _rightP(nullptr)
-    {}
-
-    /*! Get the point. */
-    const Point_2& point() const { return _p; }
-
-    /*! Get the number of curves associated with the vertex. */
-    Size number_of_curves() const { return _cvs.size(); }
-
-    /*! Get the range of curves associated with the vertex. */
-    Curve_const_iterator curves_begin() const { return _cvs.begin(); }
-
-    Curve_const_iterator curves_end() const { return _cvs.end(); }
-
-    /*! Get the left edge (const version). */
-    const Edge* left() const { return _leftP; }
-
-    /*! Get the left edge (non-const version). */
-    Edge* left() { return _leftP; }
-
-    /*! Get the right edge (const version). */
-    const Edge* right() const { return _rightP; }
-
-    /*! Get the right edge (non-const version). */
-    Edge* right() { return _rightP; }
-
-    /*! Set the point. */
-    void set_point (const Point_2& p) { _p = p; }
-
-    /*! Clear the list of curves. */
-    void clear_curves() { _cvs.clear(); }
-
-    /*! Associate a new curve with the vertex. */
-    void add_curve(const X_monotone_curve_2& cv) { _cvs.push_back(cv); }
-
-    /*! Associate a range of new curves with the vertex. */
-    void add_curves(Curve_const_iterator begin, Curve_const_iterator end)
-    { for (auto iter = begin; iter != end; ++iter) _cvs.push_back(*iter); }
-
-    /*! Set the left edge. */
-    void set_left(Edge* e) { _leftP = e; }
-
-    /*! Get the right edge. */
-    void set_right(Edge* e) { _rightP = e; }
-  };
-
-  /*! Representation of a diagram edge, which represents an interval and
-   * stores all curves that form the envelope on it (usually there's just one
-   * curve or zero curves, unless the input contains overlapping curves).
-   */
-  class Edge {
-  private:
-    Curve_container _cvs;
-    Vertex* _leftP;
-    Vertex* _rightP;
-
-  public:
-    /*! Constructor. */
-    Edge() :
-      _leftP(nullptr),
-      _rightP(nullptr)
-    {}
-
-    /*! Check if the edge represents an empty interval. */
-    bool is_empty() const { return _cvs.empty(); }
-
-    /*! Get the number of curves associated with the edge. */
-    Size number_of_curves() const { return _cvs.size(); }
-
-    /*! Get a representative x-monotone curve.
-     * \pre The edge does not represent an empty interval.
-     */
-    const X_monotone_curve_2& curve() const {
-      CGAL_precondition(! _cvs.empty());
-      return (*(_cvs.begin()));
-    }
-
-    /*! Get the range of curves associated with the edge. */
-    Curve_const_iterator curves_begin() const { return _cvs.begin(); }
-
-    Curve_const_iterator curves_end() const { return _cvs.end(); }
-
-    /*! Get the left vertex (const version). */
-    const Vertex* left() const { return _leftP; }
-
-    /*! Get the left vertex (const version). */
-    Vertex* left() { return _leftP; }
-
-    /*! Get the right vertex (const version). */
-    const Vertex* right() const { return _rightP; }
-
-    /*! Get the right vertex (non-const version). */
-    Vertex* right() { return _rightP; }
-
-    /*! Clear the list of curves. */
-    void clear_curves() { _cvs.clear(); }
-
-    /*! Associate a new curve with the edge. */
-    void add_curve(const X_monotone_curve_2& cv) { _cvs.push_back (cv); }
-
-    /*! Associate a range of new curves with the edge. */
-    void add_curves(Curve_const_iterator begin, Curve_const_iterator end)
-    { for (auto iter = begin; iter != end; ++iter) _cvs.push_back (*iter); }
-
-    /*! Set the left vertex. */
-    void set_left(Vertex* v) { _leftP = v; }
-
-    /*! Get the right vertex. */
-    void set_right(Vertex* v) { _rightP = v; }
-  };
-
-  typedef Vertex*                        Vertex_handle;
-  typedef const Vertex*                  Vertex_const_handle;
-  typedef Edge*                          Edge_handle;
-  typedef const Edge*                    Edge_const_handle;
-
-private:
-  // Vertex allocator.
-  typedef std::allocator_traits<Allocator> Allocator_traits;
-  typedef typename Allocator_traits::template rebind_alloc<Vertex> Vertex_allocator;
-
-  // Halfedge allocator.
-  typedef typename Allocator_traits::template rebind_alloc<Edge> Edge_allocator;
-
-  Edge* _leftmostP;                   // The leftmost edge of the diagram
-                                      // (representing the range from -oo).
-  Edge* _rightmostP;                  // The rightmost edge of the diagram
-                                      // (representing the range to +oo).
-
-  Vertex_allocator vertex_alloc;      // An allocator for vertices.
-  Edge_allocator edge_alloc;          // An allocator for edges.
+  // Descriptors are the native handles used everywhere
+  using Vertex_handle = typename Base::Vertex_descriptor;
+  using Vertex_const_handle = typename Base::Vertex_const_descriptor;
+  using Edge_handle = typename Base::Edge_descriptor;
+  using Edge_const_handle = typename Base::Edge_const_descriptor;
 
 public:
-  /*! Constructor.
-   * An empty diagram contains one (empty) edge, representing (-oo, +oo):
-   */
-  Envelope_diagram_1() { _leftmostP = _rightmostP = new_edge(); }
+  /*! Default constructor. */
+  Envelope_diagram_1() : Base() {}
 
-  /*! Move constructor.
-   */
-  Envelope_diagram_1(Envelope_diagram_1&& other) {
-    _leftmostP = other._leftmostP;
-    _rightmostP = other._rightmostP;
-    other._leftmostP = other._rightmostP = new_edge();
+  /*! Constructor passing a 2D geometry traits shared pointer. */
+  Envelope_diagram_1(std::shared_ptr<const Traits_2> traits_2_ptr) :
+    Base(std::make_shared<const Geom_traits_1>(traits_2_ptr))
+  {}
+
+  Envelope_diagram_1(const Envelope_diagram_1&) = default;
+  Envelope_diagram_1& operator=(const Envelope_diagram_1&) = default;
+
+  Envelope_diagram_1(Envelope_diagram_1&&) noexcept = default;
+  Envelope_diagram_1& operator=(Envelope_diagram_1&&) noexcept = default;
+
+  ~Envelope_diagram_1() = default;
+
+  // --------------------------------------------------------------------------
+  // DIAGRAM BOUNDARY ACCESSORS
+  // --------------------------------------------------------------------------
+  Edge_const_handle leftmost() const { return this->unbounded_left_edge(); }
+  Edge_handle leftmost() { return this->unbounded_left_edge(); }
+
+  Edge_const_handle rightmost() const { return this->unbounded_right_edge(); }
+  Edge_handle rightmost() { return this->unbounded_right_edge(); }
+
+  void set_leftmost(Edge_handle e) { this->topology_traits().set_unbounded_left_edge(e); }
+  void set_rightmost(Edge_handle e) { this->topology_traits().set_unbounded_right_edge(e); }
+
+  void clear() { Base::operator=(Base(this->shared_geometry_traits_1())); }
+
+  // --------------------------------------------------------------------------
+  // CURVE DATA ACCESSORS & MUTATORS
+  // --------------------------------------------------------------------------
+  const Point_2& point(Vertex_const_handle v) const { return get(this->vertex_point_map(), v); }
+
+  void set_point(Vertex_handle v, const Point_2& p) { put(this->vertex_point_map(), v, p); }
+
+  Curve_container& curves(Vertex_handle v) { return get(this->vertex_data_map(), v); }
+
+  const Curve_container& curves(Vertex_const_handle v) const { return get(this->vertex_data_map(), v); }
+
+  Curve_container& curves(Edge_handle e) { return get(this->edge_data_map(), e); }
+
+  const Curve_container& curves(Edge_const_handle e) const { return get(this->edge_data_map(), e); }
+
+  bool is_empty_edge(Edge_const_handle e) const { return curves(e).empty(); }
+
+  void add_curve(Edge_handle e, const X_monotone_curve_2& cv) { curves(e).push_back(cv); }
+
+  void add_curve(Vertex_handle v, const X_monotone_curve_2& cv) { curves(v).push_back(cv); }
+
+  void add_curves(Edge_handle e, Curve_const_iterator begin, Curve_const_iterator end) {
+    auto& c = curves(e);
+    for (auto it = begin; it != end; ++it) c.push_back(*it);
   }
 
-  /*! Move assignment operator.
-   */
-  Envelope_diagram_1& operator=(Envelope_diagram_1&& other) {
-    _leftmostP = other._leftmostP;
-    _rightmostP = other._rightmostP;
-    other._leftmostP = other._rightmostP = new_edge();
-    return *this;
+  void add_curves(Vertex_handle v, Curve_const_iterator begin, Curve_const_iterator end) {
+    auto& c = curves(v);
+    for (auto it = begin; it != end; ++it) c.push_back(*it);
   }
 
-  /*! Destructor.
-   */
-  ~Envelope_diagram_1() { _free(); }
+  void clear_curves(Vertex_handle v) { curves(v).clear(); }
+  void clear_curves(Edge_handle e)   { curves(e).clear(); }
 
-  /*! Get the leftmost edge of the diagram (const version).
-   */
-  Edge_const_handle leftmost() const { return _leftmostP; }
+  // --------------------------------------------------------------------------
+  // TOPOLOGY MUTATION HELPER DELEGATES
+  // --------------------------------------------------------------------------
+  Vertex_handle new_vertex(const Point_2& p) { return this->topology_traits().create_vertex(p); }
 
-  /*! Get the leftmost edge of the diagram (non-const version).
-   */
-  Edge_handle leftmost() { return _leftmostP; }
+  Edge_handle new_edge() { return this->topology_traits().create_edge(); }
 
-  /*! Get the rightmost edge of the diagram (const version).
-   */
-  Edge_const_handle rightmost() const { return _rightmostP; }
+  void delete_vertex(Vertex_handle v) { this->topology_traits().erase_vertex(v); }
 
-  /*! Get the rightmost edge of the diagram (non-const version).
-   */
-  Edge_handle rightmost() { return _rightmostP; }
-
-  /*! Clear the diagram.
-   */
-  void clear() {
-    _free();
-
-    // An empty diagram contains one (empty) edge, representing (-oo, +oo):
-    _leftmostP = _rightmostP = new_edge();
-  }
-
-  /*! Set the leftmost edge.
-   */
-  void set_leftmost(Edge_handle e) { _leftmostP = e; }
-
-  /*! Set the rightmost edge.
-   */
-  void set_rightmost(Edge_handle e) { _rightmostP = e; }
-
-  /*! Create a new vertex.
-   */
-  Vertex_handle new_vertex(const Point_2& p) {
-    Vertex* v = vertex_alloc.allocate (1);
-    std::allocator_traits<Vertex_allocator>::construct(vertex_alloc, v, p);
-    return (v);
-  }
-
-  /*! Create a new edge.
-   */
-  Edge_handle new_edge() {
-    Edge* e = edge_alloc.allocate (1);
-    std::allocator_traits<Edge_allocator>::construct(edge_alloc, e);
-    return (e);
-  }
-
-  /*! Delete an existing vertex.
-   */
-  void delete_vertex(Vertex_handle v) {
-    std::allocator_traits<Vertex_allocator>::destroy(vertex_alloc, v);
-    vertex_alloc.deallocate (v, 1);
-  }
-
-  /*! Delete an existing edge.
-   */
-  void delete_edge(Edge_handle e) {
-    std::allocator_traits<Edge_allocator>::destroy(edge_alloc, e);
-    edge_alloc.deallocate (e, 1);
-  }
-
-private:
-  /*! Free all diagram elements.
-   */
-  void _free() {
-    Edge* e = _leftmostP;
-    while (e != nullptr) {
-      Vertex* v = e->right();
-      delete_edge(e);
-      if (v == nullptr) break;
-
-      e = v->right();
-      delete_vertex(v);
-    }
-
-    _leftmostP = nullptr;
-    _rightmostP = nullptr;
-  }
+  void delete_edge(Edge_handle e) { this->topology_traits().erase_edge(e); }
 };
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif
