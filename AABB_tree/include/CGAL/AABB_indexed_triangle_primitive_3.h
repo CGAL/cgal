@@ -35,7 +35,7 @@ struct Triangle_3_from_triangle_soup_property_map
   using Self = Triangle_3_from_triangle_soup_property_map<GeomTraits, PointRange, FaceRange, PointMap>;
 
   Triangle_3_from_triangle_soup_property_map(){}
-  template <typename std::enable_if<std::is_default_constructible<PointMap>::value, int>::type = 0>
+  template <class PM=PointMap, std::enable_if_t<std::is_default_constructible_v<PM>, int> = 0>
   Triangle_3_from_triangle_soup_property_map(const PointRange &pts_, const FaceRange &triangles_) : pts(&pts_), triangles(&triangles_){}
   Triangle_3_from_triangle_soup_property_map(const PointRange &pts_, const FaceRange &triangles_, PointMap pmap) : pts(&pts_), triangles(&triangles_), pmap(pmap) {}
 
@@ -63,7 +63,7 @@ struct Reference_point_from_triangle_soup_property_map
   using Self = Reference_point_from_triangle_soup_property_map<GeomTraits, PointRange, FaceRange, PointMap>;
 
   Reference_point_from_triangle_soup_property_map(){}
-  template <typename std::enable_if<std::is_default_constructible<PointMap>::value, int>::type = 0>
+  template <class PM=PointMap, std::enable_if_t<std::is_default_constructible_v<PM>, int> = 0>
   Reference_point_from_triangle_soup_property_map(const PointRange &pts_, const FaceRange &triangles_) : pts(&pts_), triangles(&triangles_){}
   Reference_point_from_triangle_soup_property_map(const PointRange &pts_, const FaceRange &triangles_, PointMap pmap) : pts(&pts_), triangles(&triangles_), pmap(pmap) {}
 
@@ -131,13 +131,13 @@ class AABB_indexed_triangle_primitive_3
   using Face_const_iterator = typename FaceRange::const_iterator;
 public:
   ///constructor from an iterator
-  template<typename std::enable_if<std::is_default_constructible<PointMap>::value, int>::type = 0>
+  template <class PM=PointMap, std::enable_if_t<std::is_default_constructible_v<PM>, int> = 0>
   AABB_indexed_triangle_primitive_3(Face_const_iterator it, const PointRange&, const FaceRange& triangles) : Base(std::distance(triangles.begin(), it)){}
-  template<typename std::enable_if<std::is_default_constructible<PointMap>::value, int>::type = 0>
+  template<class PM=PointMap, std::enable_if_t<std::is_default_constructible_v<PM>, int> = 0>
   AABB_indexed_triangle_primitive_3(Face_iterator it, const PointRange&, const FaceRange& triangles) : Base(std::size_t(std::distance(triangles.begin(), Face_const_iterator(it)))){}
-  template<class IndexIterator, typename std::enable_if<std::is_default_constructible<PointMap>::value, int>::type = 0>
+  template<class IndexIterator, class PM=PointMap, std::enable_if_t<std::is_default_constructible_v<PM>, int> = 0>
   AABB_indexed_triangle_primitive_3(IndexIterator it, const PointRange&, const FaceRange&) : Base(it){}
-  template <typename std::enable_if<std::is_default_constructible<PointMap>::value, int>::type = 0>
+  template <class PM=PointMap, std::enable_if_t<std::is_default_constructible_v<PM>, int> = 0>
   AABB_indexed_triangle_primitive_3(std::size_t i, const PointRange&, const FaceRange&) : Base(i){}
 
   AABB_indexed_triangle_primitive_3(Face_const_iterator it, const PointRange&, const FaceRange& triangles, PointMap) : Base(std::distance(triangles.begin(), it)){}
@@ -152,7 +152,7 @@ public:
       Triangle_property_map(pts, triangles, pmap),
       Point_property_map(pts, triangles, pmap));
   }
-  template <typename std::enable_if<std::is_default_constructible<PointMap>::value, int>::type = 0>
+  template <class PM=PointMap, std::enable_if_t<std::is_default_constructible_v<PM>, int> = 0>
   static typename Base::Shared_data construct_shared_data(const PointRange &pts, const FaceRange &triangles) {
     return std::make_pair(
       Triangle_property_map(pts, triangles),
