@@ -15,9 +15,10 @@
 #include <CGAL/license/Minkowski_sum_2.h>
 
 
-#include <CGAL/Minkowski_sum_2/AABB_tree_with_join.h>
-#include <CGAL/Minkowski_sum_2/AABB_traits_2.h>
-#include <CGAL/Minkowski_sum_2/AABB_segment_2_primitive.h>
+#include <CGAL/AABB_tree.h>
+#include <CGAL/AABB_traits_2.h>
+#include <CGAL/AABB_segment_primitive_2.h>
+#include <CGAL/AABB_trees/intersection.h>
 
 namespace CGAL {
 
@@ -35,10 +36,12 @@ public:
   typedef typename CGAL::Polygon_with_holes_2<Kernel, Container>
                                                         Polygon_with_holes_2;
   typedef typename Polygon_2::Edge_const_iterator       Edge_iterator;
-  typedef AABB_segment_2_primitive<Kernel, Edge_iterator, Polygon_with_holes_2>
+  typedef AABB_segment_primitive_2<Kernel, Edge_iterator>
                                                         Tree_segment_2;
-  typedef Minkowski_sum::AABB_traits_2<Kernel, Tree_segment_2>         Tree_traits;
-  typedef AABB_tree_with_join<Tree_traits>              Tree_2;
+  // typedef AABB_segment_2_primitive<Kernel, Edge_iterator, Polygon_with_holes_2>
+                                                        // Tree_segment_2;
+  typedef AABB_traits_2<Kernel, Tree_segment_2>         Tree_traits;
+  typedef AABB_tree<Tree_traits>              Tree_2;
 
 public:
   AABB_collision_detector_2(const Polygon_with_holes_2& p,
@@ -70,7 +73,8 @@ public:
   // completely inside of the other one. Q is translated by t.
   bool check_collision(const Point_2 &t)
   {
-    if (m_stationary_tree.do_intersect(m_translating_tree, t)) return true;
+    if(AABB_trees::do_intersect(m_translating_tree, m_stationary_tree, parameters::transformation(Aff_transformation_2<Kernel>(Translation(), t-ORIGIN))))
+      return true;
 
     // If t_q is inside of P, or t_p is inside of Q, one polygon is completely
     // inside of the other.

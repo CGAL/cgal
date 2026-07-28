@@ -42,26 +42,27 @@ int main()
 
   // constructs AABB tree
   std::vector<std::size_t> indices(triangles.size(), 0);
+  std::iota(indices.begin(), indices.end(), 0);
   Tree tree(indices.begin(), indices.end(), points, triangles);
 
   // point sampling
   Point_and_primitive_id id;
   id = tree.closest_point_and_primitive(P(0.5, 0.4, 0));
-  assert(std::distance(triangles.cbegin(), id.second) == 0);
+  assert(id.second == 0);
   id = tree.closest_point_and_primitive(P(0.5, 0.6, 0));
-  assert(std::distance(triangles.cbegin(), id.second) == 1);
+  assert(id.second == 1);
   id = tree.closest_point_and_primitive(P(1.5, 0.4, 0));
-  assert(std::distance(triangles.cbegin(), id.second) == 2);
+  assert(id.second == 2);
   id = tree.closest_point_and_primitive(P(1.5, 0.6, 0));
-  assert(std::distance(triangles.cbegin(), id.second) == 3);
+  assert(id.second == 3);
   id = tree.closest_point_and_primitive(P(3.0, 0.5, 0));
-  assert(std::distance(triangles.cbegin(), id.second) == 3);
+  assert(id.second == 3);
 
   R ray(P(5.5, 0.5, 0), P(1.5, 0.4, 0));
   auto intersection = tree.first_intersection(ray);
 
   assert(intersection.has_value());
-  assert(std::distance(triangles.cbegin(), intersection->second) == 3);
+  assert(intersection->second == 3);
 
   std::vector<P> pts1, pts2;
   std::vector<std::array<std::size_t, 3> > trs1, trs2;

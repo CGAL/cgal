@@ -23,6 +23,8 @@
 #include <CGAL/Aff_transformation_2.h>
 #include <CGAL/Aff_transformation_3.h>
 
+#include <CGAL/FPU.h>
+
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/tbb.h>
 #endif
@@ -83,13 +85,12 @@ namespace AABB_trees {
       using Aff_tr = std::conditional_t< std::is_same_v<typename AABBTree1::Bounding_box, Bbox_2>,
                                          Aff_transformation_2<Kernel>,
                                          Aff_transformation_3<Kernel>>;
-      const Aff_tr& tr1 = choose_parameter(get_parameter(np1, internal_np::transformation), Aff_tr(Identity_transformation()));
-      const Aff_tr& tr2 = choose_parameter(get_parameter(np2, internal_np::transformation), Aff_tr(Identity_transformation()));
+      Aff_tr tr1 = choose_parameter(get_parameter(np1, internal_np::transformation), Aff_tr(Identity_transformation()));
+      Aff_tr tr2 = choose_parameter(get_parameter(np2, internal_np::transformation), Aff_tr(Identity_transformation()));
       CGAL::internal::AABB_tree::Two_trees_do_intersect_traits_with_transformation<typename AABBTree1::AABB_traits,
                                                                                    typename AABBTree2::AABB_traits,
                                                                                    Aff_tr, false>
                                                         traversal_traits(tree1.traits(), tree2.traits(), tr1, tr2);
-      Protect_FPU_rounding(CGAL_FE_UPWARD);
       CGAL::internal::AABB_tree::two_trees_traversal(tree1, tree2, traversal_traits);
       return traversal_traits.is_intersection_found();
     }
@@ -164,7 +165,6 @@ namespace AABB_trees {
                                                                                                       typename AABBTree2::AABB_traits,
                                                                                                       OutputIterator, Aff_tr, false>
                                                         traversal_traits(tree1.traits(), tree2.traits(), out, tr1, tr2);
-      Protect_FPU_rounding(CGAL_FE_UPWARD);
       CGAL::internal::AABB_tree::two_trees_traversal<Concurrency_tag>(tree1, tree2, traversal_traits);
     }
   }
