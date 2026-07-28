@@ -173,7 +173,7 @@ public:
     properties_["Preprocessing.translate_and_scale_polyhedron"] = "FALSE";
     properties_["Preprocessing.merge_coplanar_faces"] = "TRUE";
     properties_["Preprocessing.coplanarity_epsilon"] = "1e-7";
-    properties_["Preprocessing.perturbation_epsilon"] = "1e-10";
+    properties_["Preprocessing.perturbation_epsilon"] = "1e-12";
     properties_["Preprocessing.check_degenerate_configuration"] = "FALSE";
 
     properties_["Algorithm.vertex_splitter"] = "Combi_vertex_splitter";
