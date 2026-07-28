@@ -802,13 +802,13 @@ void merge_surface_patch_indices(const typename C3t3::Facet& f1,
   }
 }
 
-template<typename C3t3, typename CellSelector, typename ShortEdgesSet>
+template<typename C3t3, typename CellSelector, typename ShortEdgesBimap>
 typename C3t3::Vertex_handle
 collapse(const typename C3t3::Cell_handle ch,
          const int to, const int from,
          CellSelector& cell_selector,
          C3t3& c3t3,
-         ShortEdgesSet& deleted_short_edges)
+         ShortEdgesBimap& short_edges)
 {
   typedef typename C3t3::Triangulation Tr;
   typedef typename C3t3::Vertex_handle Vertex_handle;
@@ -916,7 +916,7 @@ collapse(const typename C3t3::Cell_handle ch,
   {
     for (const auto& ei : cell_edges(c, tr))
     {
-      deleted_short_edges.insert(ei);
+      remove_from_bimap(ei, short_edges);
 
       const Vertex_handle eiv0 = c->vertex(ei.second);
       const Vertex_handle eiv1 = c->vertex(ei.third);
@@ -977,12 +977,12 @@ collapse(const typename C3t3::Cell_handle ch,
 }
 
 
-template<typename C3t3, typename CellSelector, typename ShortEdgesSet>
+template<typename C3t3, typename CellSelector, typename ShortEdgesBimap>
 typename C3t3::Vertex_handle collapse(const typename C3t3::Edge& edge,
                                       const Collapse_type& collapse_type,
                                       CellSelector& cell_selector,
                                       C3t3& c3t3,
-                                      ShortEdgesSet& deleted_short_edges)
+                                      ShortEdgesBimap& short_edges)
 {
   typedef typename C3t3::Vertex_handle Vertex_handle;
   typedef typename C3t3::Triangulation::Point Point_3;
@@ -1005,7 +1005,7 @@ typename C3t3::Vertex_handle collapse(const typename C3t3::Edge& edge,
     vh0->set_point(new_position);
     vh1->set_point(new_position);
 
-    vh = collapse(edge.first, edge.second, edge.third, cell_selector, c3t3, deleted_short_edges);
+    vh = collapse(edge.first, edge.second, edge.third, cell_selector, c3t3, short_edges);
     c3t3.set_dimension(vh, (std::min)(dim_vh0, dim_vh1));
   }
   else //Collapse at vertex
@@ -1013,7 +1013,7 @@ typename C3t3::Vertex_handle collapse(const typename C3t3::Edge& edge,
     if (collapse_type == TO_V1)
     {
       vh0->set_point(p1);
-      vh = collapse(edge.first, edge.third, edge.second, cell_selector, c3t3, deleted_short_edges);
+      vh = collapse(edge.first, edge.third, edge.second, cell_selector, c3t3, short_edges);
       c3t3.set_dimension(vh, (std::min)(dim_vh0, dim_vh1));
     }
     else //Collapse at v0
@@ -1021,7 +1021,7 @@ typename C3t3::Vertex_handle collapse(const typename C3t3::Edge& edge,
       if (collapse_type == TO_V0)
       {
         vh1->set_point(p0);
-        vh = collapse(edge.first, edge.second, edge.third, cell_selector, c3t3, deleted_short_edges);
+        vh = collapse(edge.first, edge.second, edge.third, cell_selector, c3t3, short_edges);
         c3t3.set_dimension(vh, (std::min)(dim_vh0, dim_vh1));
       }
       else
@@ -1083,14 +1083,14 @@ bool is_cells_set_manifold(const C3t3&,
 template<typename C3t3,
          typename Sizing,
          typename CellSelector,
-         typename ShortEdgesSet,
+         typename ShortEdgesBimap,
          typename Visitor>
 typename C3t3::Vertex_handle collapse_edge(const typename C3t3::Edge& edge,
     C3t3& c3t3,
     const Sizing& sizing,
     const bool /* protect_boundaries */,
     CellSelector cell_selector,
-    ShortEdgesSet& deleted_short_edges,//should_skip
+    ShortEdgesBimap& short_edges,
     Visitor& )
 {
   typedef typename C3t3::Triangulation   Tr;
@@ -1186,7 +1186,7 @@ typename C3t3::Vertex_handle collapse_edge(const typename C3t3::Edge& edge,
       if (in_cx)
         nb_valid_collapse++;
 #endif
-      return collapse(edge, collapse_type, cell_selector, c3t3, deleted_short_edges);
+      return collapse(edge, collapse_type, cell_selector, c3t3, short_edges);
     }
   }
 #ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
@@ -1232,6 +1232,17 @@ auto can_be_collapsed(const typename C3T3::Edge& e,
   return Collapsible {true, boundary};
 }
 
+// The short edges left to collapse, shortest first. Edges are compared by
+// their vertex pair, but stored with their orientation : `collapse_edge()`
+// reads it to decide which extremity survives, so an edge already in the map
+// keeps the orientation it entered with, and only its length is updated.
+template<typename C3t3>
+using Short_edges_bimap = boost::bimap<
+    boost::bimaps::set_of<typename C3t3::Triangulation::Edge,
+                          Compare_edges<typename C3t3::Triangulation::Edge> >,
+    boost::bimaps::multiset_of<typename C3t3::Triangulation::Geom_traits::FT,
+                               std::less<typename C3t3::Triangulation::Geom_traits::FT> > >;
+
 template<typename C3t3,
          typename SizingFunction,
          typename CellSelector,
@@ -1239,7 +1250,7 @@ template<typename C3t3,
 class Edge_collapse_operation
     : public Elementary_operation<C3t3,
                                  typename C3t3::Triangulation::Edge,
-                                 std::vector<typename C3t3::Triangulation::Edge>>
+                                 Short_edges_bimap<C3t3> >
 {
 public:
   using Tr = typename C3t3::Triangulation;
@@ -1247,7 +1258,7 @@ public:
   using Edge = typename Tr::Edge;
   using FT = typename Tr::Geom_traits::FT;
 
-  using Short_edges = std::vector<Edge>;
+  using Short_edges = Short_edges_bimap<C3t3>;
   using Base_operation = Elementary_operation<C3t3, Edge, Short_edges>;
   using Element_type = typename Base_operation::Element_type;
   using Element_range = typename Base_operation::Element_range;
@@ -1257,14 +1268,6 @@ private:
   const CellSelector& m_cell_selector;
   bool m_protect_boundaries;
   Visitor& m_visitor;
-
-  // Edges invalidated by an earlier collapse in this pass. The candidate list
-  // is collected once, so an edge whose cells were destroyed by a preceding
-  // collapse is marked here (by collapse_edge) and
-  // skipped when the pass reaches it -- this replaces the former dynamic bimap
-  // worklist. Edges that only *become* short during the pass are not
-  // re-collapsed here; they are handled in the next remeshing iteration.
-  mutable boost::unordered_set<Edge> m_deleted_short_edges;
 
 public:
   Edge_collapse_operation(const SizingFunction& sizing,
@@ -1278,51 +1281,112 @@ public:
 
   Element_range get_elements(const C3t3& c3t3) const override
   {
-    m_deleted_short_edges.clear();
-
-    struct Short_edge_with_length
+    Short_edges short_edges;
+    for (const Edge& e : c3t3.triangulation().finite_edges())
     {
-      Edge edge;
-      FT sqlength;
-    };
-    std::vector<Short_edge_with_length> short_edges_with_length;
-    const Tr& tr = c3t3.triangulation();
-
-    for (const Edge& e : tr.finite_edges())
-    {
-      auto [collapsible, boundary] = can_be_collapsed(e, c3t3, m_protect_boundaries, m_cell_selector);
+      auto [collapsible, boundary]
+        = can_be_collapsed(e, c3t3, m_protect_boundaries, m_cell_selector);
       if (!collapsible)
         continue;
 
       const auto sqlen = is_too_short(e, boundary, m_sizing, c3t3, m_cell_selector);
       if (sqlen != std::nullopt)
-        short_edges_with_length.push_back(Short_edge_with_length{e, sqlen.value()});
+        short_edges.insert(typename Short_edges::value_type(e, sqlen.value()));
     }
-
-    // shortest first; stable to match the original bimap's ordering
-    std::stable_sort(short_edges_with_length.begin(), short_edges_with_length.end(),
-                     [](const Short_edge_with_length& a, const Short_edge_with_length& b) {
-                       return a.sqlength < b.sqlength;
-                     });
-
-    Short_edges short_edges;
-    short_edges.reserve(short_edges_with_length.size());
-    for (const auto& ef : short_edges_with_length)
-      short_edges.push_back(ef.edge);
     return short_edges;
   }
 
   bool execute_operation(const Element_type& edge, C3t3& c3t3) override
   {
-    if (m_deleted_short_edges.find(edge) != m_deleted_short_edges.end())
+    Short_edges no_short_edges; // no work list to keep up to date
+    return execute_operation(edge, c3t3, no_short_edges);
+  }
+
+  /**
+  * Collapses `edge`, and keeps `short_edges` up to date : `collapse_edge()`
+  * removes from it the edges it destroys, and the edges incident to the
+  * vertex it keeps are re-evaluated here, since their length has changed.
+  */
+  bool execute_operation(const Element_type& edge, C3t3& c3t3,
+                         Short_edges& short_edges)
+  {
+    const Vertex_handle vh = collapse_edge(edge, c3t3, m_sizing, m_protect_boundaries,
+                                           m_cell_selector, short_edges, m_visitor);
+    if (vh == Vertex_handle())
       return false;
 
-    const Vertex_handle vh = collapse_edge(edge, c3t3, m_sizing, m_protect_boundaries,
-                                           m_cell_selector, m_deleted_short_edges, m_visitor);
-    return (vh != Vertex_handle());
+    std::vector<Edge> incident_short;
+    c3t3.triangulation().finite_incident_edges(vh, std::back_inserter(incident_short));
+    for (const Edge& eshort : incident_short)
+    {
+      const auto [collapsible, boundary]
+        = can_be_collapsed(eshort, c3t3, m_protect_boundaries, m_cell_selector);
+
+      // an edge that can no longer be collapsed leaves the work list, rather
+      // than being taken out of it later and refused by collapse_edge()
+      std::optional<FT> sqlen;
+      if (collapsible)
+        sqlen = is_too_short(eshort, boundary, m_sizing, c3t3, m_cell_selector);
+
+      update_bimap(eshort, short_edges, sqlen);
+    }
+    return true;
   }
 
   std::string operation_name() const override { return "Collapse short edges"; }
+};
+
+/**
+* Collapse is the only operation whose elements change as it runs : collapsing
+* an edge shortens the ones around the vertex it keeps, and destroys others.
+* Its elements are therefore taken from a work list that `execute_operation()`
+* keeps up to date, shortest first, rather than from a list collected once.
+*/
+template<typename C3t3,
+         typename SizingFunction,
+         typename CellSelector,
+         typename Visitor>
+class Elementary_operation_execution_sequential<
+        Edge_collapse_operation<C3t3, SizingFunction, CellSelector, Visitor> >
+{
+  using Operation = Edge_collapse_operation<C3t3, SizingFunction, CellSelector, Visitor>;
+  using Short_edges = typename Operation::Short_edges;
+  using Edge = typename Operation::Edge;
+
+public:
+  bool execute(Operation& op, C3t3& c3t3) const
+  {
+    Short_edges short_edges = op.get_elements(c3t3);
+    if (short_edges.empty())
+      return false;
+
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+    std::size_t nb_done = 0;
+    CGAL::Real_timer timer;
+    timer.start();
+#endif
+    while (!short_edges.empty())
+    {
+      // the edge with shortest length
+      typename Short_edges::right_map::iterator eit = short_edges.right.begin();
+      const Edge e = eit->second;
+      short_edges.right.erase(eit);
+
+      if (op.execute_operation(e, c3t3, short_edges))
+      {
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+        ++nb_done;
+#endif
+      }
+    }
+
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+    timer.stop();
+    std::cout << op.operation_name() << ": " << nb_done << " done ("
+              << timer.time() << " sec)." << std::endl;
+#endif
+    return true;
+  }
 };
 
 }
