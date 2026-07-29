@@ -957,6 +957,60 @@ public:
         // 2. render clipping plane here
         renderer_clipping_plane(clipping_plane_rendering);
       }
+      else if (m_use_clipping_plane == CLIPPING_PLANE_VOLUMES)
+      {
+        // Whole-volume clipping: draw each volume that is not entirely clipped
+        // away as a whole (no cut, no cap). Straddling volumes are kept.
+        const std::vector<std::vector<unsigned int>> &volumes =
+          m_scene.get_volume_faces();
+        const std::size_t num_volumes = volumes.size();
+
+        glEnable(GL_POLYGON_OFFSET_FILL);
+        glPolygonOffset(2.0, 2.0);
+        glDepthFunc(GL_LESS);
+
+        rendering_program_face.bind();
+        if (m_use_default_color)
+        {
+          auto fc = m_scene.get_default_color_face();
+          rendering_program_face.setUniformValue("u_DefaultColor",
+            QVector3D((double)fc.red()/255.0, (double)fc.green()/255.0,
+                      (double)fc.blue()/255.0));
+          rendering_program_face.setUniformValue("u_UseDefaultColor", static_cast<GLint>(1));
+        }
+        else
+        { rendering_program_face.setUniformValue("u_UseDefaultColor", static_cast<GLint>(0)); }
+        rendering_program_face.setUniformValue("u_RenderingMode",
+          static_cast<float>(DRAW_SOLID_ALL));
+        rendering_program_face.setUniformValue("u_RenderingTransparency",
+          clipping_plane_rendering_transparency);
+        rendering_program_face.setUniformValue("u_ClipPlane", clipPlane);
+        rendering_program_face.setUniformValue("u_PointPlane", plane_point);
+
+        vao[VAO_FACES].bind();
+        if (num_volumes == 0)
+        {
+          glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(
+            m_scene.number_of_elements(GS::POS_FACES)));
+        }
+        else
+        {
+          for (std::size_t v = 0; v < num_volumes; ++v)
+          {
+            if (!volume_kept(v, clipPlane, plane_point)) { continue; }
+            for (unsigned int fi : volumes[v])
+            {
+              const std::pair<unsigned int, unsigned int> &r = m_scene.face_range(fi);
+              glDrawArrays(GL_TRIANGLES, static_cast<GLint>(r.first),
+                           static_cast<GLsizei>(r.second));
+            }
+          }
+        }
+        vao[VAO_FACES].release();
+        glDisable(GL_POLYGON_OFFSET_FILL);
+
+        renderer_clipping_plane(clipping_plane_rendering);
+      }
       else
       {
         // 1. draw solid FOR ALL
@@ -1456,6 +1510,35 @@ protected:
     if (ny>=0){ lo+=ny*b.ymin(); hi+=ny*b.ymax(); } else { lo+=ny*b.ymax(); hi+=ny*b.ymin(); }
     if (nz>=0){ lo+=nz*b.zmin(); hi+=nz*b.zmax(); } else { lo+=nz*b.zmax(); hi+=nz*b.zmin(); }
     return (lo-d)<=0.0 && (hi-d)>=0.0;
+  }
+
+  // Whole-volume clipping: true if volume v has a vertex on the kept side of the
+  // plane (dot(p-point, normal)>=0). A straddling volume is kept, so it is hidden
+  // only when every vertex is clipped away. Bbox fast-path first, then an exact
+  // vertex scan when the box straddles (its corners are not real vertices).
+  bool volume_kept(std::size_t v,
+                   const QVector4D &normal, const QVector4D &point) const
+  {
+    const CGAL::Bbox_3 &b=m_scene.get_volume_bboxes()[v];
+    const double nx=normal.x(), ny=normal.y(), nz=normal.z();
+    const double d=nx*point.x()+ny*point.y()+nz*point.z();
+    double lo=0.0, hi=0.0;
+    if (nx>=0){ lo+=nx*b.xmin(); hi+=nx*b.xmax(); } else { lo+=nx*b.xmax(); hi+=nx*b.xmin(); }
+    if (ny>=0){ lo+=ny*b.ymin(); hi+=ny*b.ymax(); } else { lo+=ny*b.ymax(); hi+=ny*b.ymin(); }
+    if (nz>=0){ lo+=nz*b.zmin(); hi+=nz*b.zmax(); } else { lo+=nz*b.zmax(); hi+=nz*b.zmin(); }
+    if (hi-d<0.0) { return false; } // whole box clipped away
+    if (lo-d>=0.0) { return true; } // whole box on the kept side
+    const std::vector<BufferType> &pos=m_scene.get_array_of_index(GS::POS_FACES);
+    for (unsigned int fi : m_scene.get_volume_faces()[v])
+    {
+      const std::pair<unsigned int, unsigned int> &r=m_scene.face_range(fi);
+      for (unsigned int k=0; k<r.second; ++k)
+      {
+        const std::size_t i=3*(std::size_t(r.first)+k);
+        if (nx*pos[i]+ny*pos[i+1]+nz*pos[i+2]-d>=0.0) { return true; }
+      }
+    }
+    return false;
   }
 
   // Clip-plane cap: framebuffer-pixel rectangle of a world box under mvp/viewport.
@@ -2026,6 +2109,7 @@ protected:
           case CLIPPING_PLANE_SOLID_HALF_TRANSPARENT_HALF: clipping_plane_rendering=true; displayMessage(QString("Draw clipping = solid half & transparent half")); break;
           case CLIPPING_PLANE_SOLID_HALF_WIRE_HALF: displayMessage(QString("Draw clipping = solid half & wireframe half")); break;
           case CLIPPING_PLANE_SOLID_HALF_ONLY: displayMessage(QString("Draw clipping = solid half only")); break;
+          case CLIPPING_PLANE_VOLUMES: displayMessage(QString("Draw clipping = whole volumes")); break;
           default: break;
           }
           update();
@@ -2347,6 +2431,7 @@ protected:
     CLIPPING_PLANE_SOLID_HALF_TRANSPARENT_HALF,
     CLIPPING_PLANE_SOLID_HALF_WIRE_HALF,
     CLIPPING_PLANE_SOLID_HALF_ONLY,
+    CLIPPING_PLANE_VOLUMES, // draw whole volumes on the kept side, no cut
     CLIPPING_PLANE_END_INDEX
   };
 
