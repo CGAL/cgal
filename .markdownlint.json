@@ -1,7 +1,12 @@
 {
-        "default": true,
-        "line-length": false,
-        "no-duplicate-heading": {
-                "siblings_only": true
-        }
+  "default": true,
+  "line-length": false,
+  "no-duplicate-heading": {
+    "siblings_only": true
+  },
+  "no-inline-html": {
+    "allowed_elements": [
+      "sup"
+    ]
+  }
 }

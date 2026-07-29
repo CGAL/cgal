@@ -67,6 +67,7 @@ CGAL_add_named_parameter(face_color_map_t, face_color_map, face_color_map)
 CGAL_add_named_parameter(repair_polygon_soup_t, repair_polygon_soup, repair_polygon_soup)
 CGAL_add_named_parameter(output_color_t, output_color, output_color)
 CGAL_add_named_parameter(stream_precision_t, stream_precision, stream_precision)
+CGAL_add_named_parameter(read_only_one_object_t, read_only_one_object, read_only_one_object)
 
 // List of named parameters that we use in the package 'Mesh_3'
 CGAL_add_named_parameter(vertex_feature_degree_t, vertex_feature_degree, vertex_feature_degree_map)
@@ -441,6 +442,12 @@ CGAL_add_named_parameter(maximum_height_t, maximum_height, maximum_height)
 // List of named parameters used in Straight_skeleton_3
 CGAL_add_named_parameter(face_weight_t, face_weight, face_weight_map)
 CGAL_add_named_parameter(outward_offsetting_t, outward_offsetting, outward_offsetting)
+
+//List of named parameters used in Snap_rounding_2
+CGAL_add_named_parameter(pixel_size_t, pixel_size, pixel_size)
+CGAL_add_named_parameter(do_iterative_snap_rounding_t, do_iterative_snap_rounding, do_iterative_snap_rounding)
+CGAL_add_named_parameter(use_grid_coordinates_t, use_grid_coordinates, use_grid_coordinates)
+CGAL_add_named_parameter(output_unique_segments_t, output_unique_segments, output_unique_segments)
 
 // List of named parameters used in the package 'Constrained_triangulation_3'
 CGAL_add_named_parameter(plc_face_id_t, plc_face_id, plc_face_id)

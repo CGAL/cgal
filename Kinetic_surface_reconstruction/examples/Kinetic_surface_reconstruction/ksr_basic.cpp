@@ -32,7 +32,7 @@ int main() {
 
   ksr.detection_and_partition(1, param);
 
-  std::cout << ksr.detected_planar_shapes().size() << " planar shapes detected" << std::endl;
+  std::cout << ksr.planar_shapes().size() << " planar shapes detected" << std::endl;
 
   std::vector<Point_3> vtx;
   std::vector<std::vector<std::size_t> > polylist;
