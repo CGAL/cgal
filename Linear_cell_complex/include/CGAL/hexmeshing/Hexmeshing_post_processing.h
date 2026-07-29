@@ -19,7 +19,8 @@
 #include <CGAL/hexmeshing/Hexmeshing_laplacian_smoothing.h>
 #include <CGAL/hexmeshing/Hexmeshing_two_refinement_utils.h>
 
-namespace CGAL::internal::Hexmeshing {
+namespace CGAL::internal::Hexmeshing
+{
   inline
   void post_processing(LCC& lcc, double length_of_4_template, bool trim, MarkingFunction cellIdentifier, DecideInsideFunction decideFunc)
   {
