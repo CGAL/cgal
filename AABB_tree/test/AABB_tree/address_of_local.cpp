@@ -18,7 +18,7 @@ int main()
   poly.push_back(Point_2(1,0));
   poly.push_back(Point_2(1,1));
 
-  Edge_const_iterator it =	poly.edges_begin();
+  Edge_const_iterator it =      poly.edges_begin();
 
   Sosi_pmap sosi_pmap;
 
