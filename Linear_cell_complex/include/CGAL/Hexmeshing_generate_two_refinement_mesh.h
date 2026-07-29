@@ -17,6 +17,7 @@
 
 namespace CGAL
 {
+  inline
   internal::Hexmeshing::LCC generate_two_refinement_mesh_from_file
       (const std::string& file, int cube_cells_per_dim, int nb_levels, bool trim=false)
   {
