@@ -251,11 +251,13 @@ refine_convex_with_plane(PolygonMesh& pm,
 
     // Split the face
     visitor.before_subface_created(pm);
+    visitor.before_subface_creations(face(h, pm), pm);
     halfedge_descriptor sh = CGAL::Euler::split_face(h_previous, h, pm);
     if constexpr(is_f2f_map)
       put(f2f, face(opposite(sh, pm), pm), get(f2f, face(sh, pm)));
 
     visitor.after_subface_created(face(h, pm), pm);
+    visitor.after_subface_creations(pm);
     boundaries.emplace_back(sh);
     set_halfedge(target(sh, pm), sh, pm);
     visitor.add_retriangulation_edge(sh, pm);
