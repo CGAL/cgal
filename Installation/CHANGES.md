@@ -8,6 +8,10 @@ Release date: December 2026
 
 - **Breaking change**: Enhanced the metadata traits-class decorators `Arr_counting_traits_2` and `Arr_tracing_traits_2`. Each is (still) parameterized with another traits class being decorated, but it does not inherit from it. In addition one can get and set a smart pointer to the class being decorated.
 
+### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/6.3/Manual/packages.html#PkgKernel23)
+
+- Add operator to functor `Orientation_3` that takes 5 points as argument, with the last two getting tested against the first three points
+
 ### [2D Snap Rounding](https://doc.cgal.org/6.2/Manual/packages.html#PkgSnapRounding2) (major changes)
 
 - Added the function `vertical_slab_snap_rounding_2()`, a new snap rounding algorithm that offers better performance and supports a wider range of rounding schemes, including floating-point coordinate representations.
