@@ -34,5 +34,7 @@ int main()
 
   const Point_2& p = get(sosi_polygon_map, it);
   const Point_2& q = get(sosi_segment_map, segs.begin());
+  assert(p == poly[0]);
+  assert(q == segs[0].source());
   return 0;
 }
