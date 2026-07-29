@@ -6,7 +6,7 @@ int main(int argc, char** argv)
 {
   std::string filename=(argc<2?CGAL::data_file_path("meshes/cube.off"):argv[1]);
 
-  auto lcc=CGAL::generate_two_refinement_mesh(filename, 20, 2, true);
+  auto lcc=CGAL::generate_two_refinement_mesh_from_file(filename, 20, 2, true);
   CGAL::draw(lcc);
 
   return EXIT_SUCCESS;
