@@ -32,7 +32,7 @@ namespace internal {
     typedef typename GeomTraits::Point_2 value_type;
     using reference = std::conditional_t<
       std::is_reference_v<decltype(*std::declval<key_type&>())>,
-      typename GeomTraits::Point_2&,
+      const typename GeomTraits::Point_2&,
       typename GeomTraits::Point_2
     >;
     typedef boost::readable_property_map_tag category;
