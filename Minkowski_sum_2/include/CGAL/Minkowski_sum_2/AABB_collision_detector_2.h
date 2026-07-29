@@ -38,8 +38,6 @@ public:
   typedef typename Polygon_2::Edge_const_iterator       Edge_iterator;
   typedef AABB_segment_primitive_2<Kernel, Edge_iterator>
                                                         Tree_segment_2;
-  // typedef AABB_segment_2_primitive<Kernel, Edge_iterator, Polygon_with_holes_2>
-                                                        // Tree_segment_2;
   typedef AABB_traits_2<Kernel, Tree_segment_2>         Tree_traits;
   typedef AABB_tree<Tree_traits>              Tree_2;
 
