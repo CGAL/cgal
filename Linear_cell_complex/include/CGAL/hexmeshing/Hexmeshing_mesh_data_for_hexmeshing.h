@@ -22,20 +22,27 @@
 #include <filesystem>
 #include <string>
 
-namespace CGAL::internal {
+namespace CGAL::internal
+{
   template<typename TriangleMesh=Hexmeshing::Polyhedron>
-  class Mesh_data_for_hexmeshing {
+  class Mesh_data_for_hexmeshing
+  {
   public:
-    Mesh_data_for_hexmeshing(const std::string& file, int cube_cells_per_dim) {
+    Mesh_data_for_hexmeshing(const std::string& file, int cube_cells_per_dim)
+    {
       load_surface(file);
       construct_tree_from_poly();
       cubic_grid_from_aabb(cube_cells_per_dim);
     }
-    Mesh_data_for_hexmeshing(TriangleMesh& poly_out, int cube_cells_per_dim) : poly(poly_out) {
+    Mesh_data_for_hexmeshing(TriangleMesh& poly_out, int cube_cells_per_dim) :
+        poly(poly_out)
+    {
       construct_tree_from_poly();
       cubic_grid_from_aabb(cube_cells_per_dim);
     }
-    Mesh_data_for_hexmeshing(TriangleMesh poly_out, Hexmeshing::Grid grid_out) : poly(poly_out), grid(grid_out) {
+    Mesh_data_for_hexmeshing(TriangleMesh poly_out, Hexmeshing::Grid grid_out) :
+        poly(poly_out), grid(grid_out)
+    {
       construct_tree_from_poly();
     }
 
@@ -48,14 +55,16 @@ namespace CGAL::internal {
     }
 
   private:
-    void construct_tree_from_poly() {
+    void construct_tree_from_poly()
+    {
       // Compute AABB tree
       tree.insert(faces(poly).first, faces(poly).second, poly);
       tree.accelerate_distance_queries();
       tree.bbox();
     }
 
-    void cubic_grid_from_aabb(int cube_cells_per_dim){
+    void cubic_grid_from_aabb(int cube_cells_per_dim)
+    {
       assert(cube_cells_per_dim > 2);
       auto bbox = tree.bbox();
 
@@ -63,16 +72,18 @@ namespace CGAL::internal {
                       bbox.ymin() + (bbox.y_span()/2),
                       bbox.zmin() + (bbox.z_span()/2)};
 
-      double max_size = std::max(std::max(bbox.x_span(), bbox.y_span()), bbox.z_span());
-      grid = Hexmeshing::Grid::make_centered_cube(center, max_size / (cube_cells_per_dim-2), cube_cells_per_dim);
+      double max_size=std::max(std::max(bbox.x_span(), bbox.y_span()), bbox.z_span());
+      grid = Hexmeshing::Grid::make_centered_cube
+          (center, max_size / (cube_cells_per_dim-2), cube_cells_per_dim);
     }
 
-    void load_surface(const std::string& file) {
+    void load_surface(const std::string& file)
+    {
       std::ifstream off_file(file);
-      CGAL_precondition_msg(off_file.good(), ("Input .off couldn't be read : " + file).c_str());
+      CGAL_precondition_msg(off_file.good(),
+                            ("Input .off couldn't be read : " + file).c_str());
 
       off_file>>poly;
-
       CGAL::Polygon_mesh_processing::triangulate_faces(poly);
     }
 
@@ -81,6 +92,5 @@ namespace CGAL::internal {
     Hexmeshing::Grid grid;
   };
 }
-
 
 #endif

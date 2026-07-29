@@ -15,8 +15,8 @@
 
 #include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
 #include <CGAL/hexmeshing/Hexmeshing_two_refinement_mark_utils.h>
-#include <CGAL/query_replace/cmap_signature.h>
-#include <CGAL/query_replace/cmap_query_replace.h>
+#include <CGAL/Linear_cell_complex/query_replace/cmap_signature.h>
+#include <CGAL/Linear_cell_complex/query_replace/cmap_query_replace.h>
 #include <iostream>
 #include <boost/range/join.hpp>
 

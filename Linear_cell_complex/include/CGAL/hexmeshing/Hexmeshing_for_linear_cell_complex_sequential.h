@@ -23,7 +23,7 @@
 #include <CGAL/hexmeshing/Hexmeshing_post_processing.h>
 #include <CGAL/hexmeshing/Hexmeshing_outer_alias.h>
 #include <CGAL/hexmeshing/Hexmeshing_mesh_data_for_hexmeshing.h>
-#include <CGAL/query_replace/cmap_query_replace.h>
+#include <CGAL/Linear_cell_complex/query_replace/cmap_query_replace.h>
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Linear_cell_complex_traits.h>
 #include <CGAL/Combinatorial_map_save_load.h>
