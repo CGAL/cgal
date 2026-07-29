@@ -28,7 +28,8 @@
 #include <CGAL/Cell_attribute_with_point.h>
 
 
-namespace CGAL::internal::Hexmeshing {
+namespace CGAL::internal::Hexmeshing
+{
 using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
 using FT = Kernel::FT;
 using Point = Kernel::Point_3;
@@ -46,7 +47,5 @@ using Side_of_mesh = CGAL::Side_of_triangle_mesh<Polyhedron, Kernel>;
 
 using LCCTraits = CGAL::Linear_cell_complex_traits<3,Kernel>;
 }
-
-
 
 #endif

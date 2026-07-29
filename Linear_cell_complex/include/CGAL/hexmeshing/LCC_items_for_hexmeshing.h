@@ -18,14 +18,16 @@
 #include <CGAL/hexmeshing/Hexmeshing_generic_point.h>
 #include <CGAL/hexmeshing/Hexmeshing_outer_alias.h>
 
-namespace CGAL::internal::Hexmeshing {
+namespace CGAL::internal::Hexmeshing
+{
 /**
  * @brief Enumeration representing the type of volume in the hexahedral mesh
  *
  * This enum class defines the different states a volume can be in during
  * the hexahedral mesh generation and refinement process.
  */
-enum class VolumeType {
+enum class VolumeType
+{
   NONE,         // Newly created vol_attribute
   REFINEMENT,   // Previously NONE volumes that was selected for refinement
   ID_EXPANSION, // Expansion of the Identified layer of volumes
@@ -52,7 +54,8 @@ public:
      * Each vertex can be identified by a unique ID, which can be a simple number
      * or a composite of up to three numbers.
      */
-    struct VertexAttr : public Cell_attribute_with_point<Storage> {
+    struct VertexAttr : public Cell_attribute_with_point<Storage>
+    {
       using Base = Cell_attribute_with_point<Storage>;
       VertexAttr():
         Base(),
@@ -78,7 +81,8 @@ public:
      * Stores information about the state and properties of a volume cell,
      * including its iteration state, type, area ID, ownership, and connected component ID.
      */
-    struct VolumeAttrValue {
+    struct VolumeAttrValue
+    {
       static constexpr uint max_cc_id = std::numeric_limits<uint>::max();
 
       char iteration = -1;
@@ -99,7 +103,8 @@ public:
      * Stores information about face properties including template ID,
      * plane orientation, plane ID, and connected component ID.
      */
-    struct FaceAttrValue {
+    struct FaceAttrValue
+    {
       static constexpr uint max_plane_id = std::numeric_limits<uint>::max();
       static constexpr uint max_cc_id = std::numeric_limits<uint>::max();
 
@@ -119,26 +124,24 @@ public:
   };
 };
 
-using LCC = CGAL::Linear_cell_complex_for_combinatorial_map<3,3, LCCTraits, LCCItemsForHexmeshing>;
-using Dart_handle = typename LCC::Dart_handle;
-using Vertex_handle = typename LCC::Vertex_attribute_handle;
+using LCC=CGAL::Linear_cell_complex_for_combinatorial_map
+    <3,3, LCCTraits, LCCItemsForHexmeshing>;
+using Dart_handle = typename LCC::Dart_descriptor;
+using Vertex_handle = typename LCC::Vertex_attribute_descriptor;
 using size_type = typename LCC::size_type;
 
 using DartInfo = LCCItemsForHexmeshing::Dart_wrapper<LCC::Storage>;
 
 // Do not use this, only to satisfy lcc.is_isomorphic_to
-bool operator==(const DartInfo::VolumeAttrValue& first, const DartInfo::VolumeAttrValue& second){
-  return true;
-}
+bool operator==(const DartInfo::VolumeAttrValue& /*first*/,
+                const DartInfo::VolumeAttrValue& /*second*/)
+{ return true; }
 
 // Do no use this, only to statisfy lcc.is_isomorphic_to
-bool operator==(const DartInfo::FaceAttrValue& first, const DartInfo::FaceAttrValue& second){
-  return true;
-}
+bool operator==(const DartInfo::FaceAttrValue& /*first*/,
+                const DartInfo::FaceAttrValue& /*second*/)
+{ return true; }
 
 }
-
-
-
 
 #endif
