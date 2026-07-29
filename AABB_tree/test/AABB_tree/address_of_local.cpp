@@ -22,7 +22,9 @@ int main()
 
   Sosi_pmap sosi_pmap;
 
-  Point_2 p = get(sosi_pmap, it);
+  const Point_2&  p = get(sosi_pmap, it);
+
+  std::cout << p << std::endl;
 
   return 0;
 }
