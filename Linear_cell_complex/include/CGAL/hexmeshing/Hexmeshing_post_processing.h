@@ -44,7 +44,4 @@ namespace CGAL::internal::Hexmeshing
   }
 }
 
-
-
-
 #endif

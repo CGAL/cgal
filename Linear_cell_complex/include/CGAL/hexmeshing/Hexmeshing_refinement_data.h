@@ -17,7 +17,8 @@
 #include <CGAL/hexmeshing/Hexmeshing_plane_normal.h>
 #include <vector>
 
-namespace CGAL::internal::Hexmeshing {
+namespace CGAL::internal::Hexmeshing
+{
   /**
    * @brief Data structure for managing mesh refinement operations
    *
@@ -37,7 +38,5 @@ namespace CGAL::internal::Hexmeshing {
     std::vector<Dart_handle> partial_templates_to_refine;  ///< Collection of partial templates that need refinement
   };
 }
-
-
 
 #endif

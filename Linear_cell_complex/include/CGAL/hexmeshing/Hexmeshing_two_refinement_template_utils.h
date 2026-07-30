@@ -21,7 +21,8 @@
 #include <boost/range/join.hpp>
 
 
-namespace CGAL::internal::Hexmeshing {
+namespace CGAL::internal::Hexmeshing
+{
   const size_t CONST_SIZE_T_MAX = std::numeric_limits<size_t>::max();
 
   /**
@@ -204,8 +205,5 @@ namespace CGAL::internal::Hexmeshing {
     return nbsub;
   }
 }
-
-
-
 
 #endif

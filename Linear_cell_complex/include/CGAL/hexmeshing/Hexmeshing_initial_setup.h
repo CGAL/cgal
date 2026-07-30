@@ -15,7 +15,8 @@
 
 #include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
 
-namespace CGAL::internal::Hexmeshing {
+namespace CGAL::internal::Hexmeshing
+{
   /**
    * @brief Sets up the initial plane structure for the hexahedral mesh refinement algorithm
    *
@@ -48,7 +49,8 @@ namespace CGAL::internal::Hexmeshing {
    * @param hdata Hexahedral meshing data containing the Linear Cell Complex and grid information
    */
   template <typename HexData>
-  void setup_initial_planes(HexData& hdata){
+  void setup_initial_planes(HexData& hdata)
+  {
     LCC& lcc = hdata.lcc;
 
     auto __first_plane = [](LCC& lcc, PlaneNormal plane){
@@ -150,7 +152,8 @@ namespace CGAL::internal::Hexmeshing {
    *                       for refinement based on its position and properties
    */
   template <typename HexData>
-  void initial_setup(HexData& hdata, MarkingFunction& cellIdentifier){
+  void initial_setup(HexData& hdata, MarkingFunction& cellIdentifier)
+  {
     LCC& lcc = hdata.lcc;
     setup_initial_planes(hdata);
 
@@ -166,8 +169,5 @@ namespace CGAL::internal::Hexmeshing {
     }
   }
 }
-
-
-
 
 #endif

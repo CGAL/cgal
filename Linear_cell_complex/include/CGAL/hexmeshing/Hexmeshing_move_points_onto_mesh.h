@@ -22,7 +22,9 @@
 namespace CGAL::internal::Hexmeshing {
   // func sets intersection and normal for dual edge
   // normal should be normalized
-  void move_points_onto_mesh(LCC& lcc, size_type move_mark, DetectingFunction func) {
+  inline
+  void move_points_onto_mesh(LCC& lcc, size_type move_mark, DetectingFunction func)
+  {
     set_dual_edges(lcc);
 
     int count_vertices = set_vertex_ids(lcc);
@@ -68,7 +70,9 @@ namespace CGAL::internal::Hexmeshing {
 
   // void move_points_onto_mesh_with_volume_fraction(LCC& lcc, size_type move_mark, size_type inner_mark, double length_of_4_template, MarkingFunction cellIdentifier, DecideInsideFunction decideFunc) {
   //   set_fraction(lcc, length_of_4_template, cellIdentifier, decideFunc);
-  void move_points_onto_mesh_with_volume_fraction(LCC& lcc, size_type move_mark, size_type inner_mark) {
+  inline
+  void move_points_onto_mesh_with_volume_fraction(LCC& lcc, size_type move_mark, size_type inner_mark)
+  {
     const double s = 0.5;
 
     auto volumes = lcc.one_dart_per_cell<3>();
@@ -89,7 +93,5 @@ namespace CGAL::internal::Hexmeshing {
     lcc.free_mark(set_gradient_mark);
   }
 }
-
-
 
 #endif

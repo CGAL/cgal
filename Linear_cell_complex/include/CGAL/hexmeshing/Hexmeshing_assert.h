@@ -15,7 +15,8 @@
 
 #include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
 
-namespace CGAL::internal::Hexmeshing {
+namespace CGAL::internal::Hexmeshing
+{
   /**
    * @brief Asserts that all dart attributes in the given arrays are unique
    *
@@ -30,7 +31,8 @@ namespace CGAL::internal::Hexmeshing {
    * @param array Variadic parameter containing arrays of dart handles to check
    */
   template <uint i, typename... DartArray>
-  void assert_dart_attr_are_unique(LCC& lcc, DartArray... array){
+  void assert_dart_attr_are_unique(LCC& lcc, DartArray... array)
+  {
     auto assertion = [&](){
       std::unordered_map<void*, int> attributes;
       ([&]{
@@ -62,7 +64,8 @@ namespace CGAL::internal::Hexmeshing {
    * @param rdata Refinement data containing the faces of the current plane
    */
   template <typename HexData>
-  void assert_faces_of_plane_valid(HexData& hdata, RefinementData& rdata){
+  void assert_faces_of_plane_valid(HexData& hdata, RefinementData& rdata)
+  {
     LCC& lcc = hdata.lcc;
     assert_dart_attr_are_unique<2>(hdata.lcc, rdata.faces_of_plane);
 
@@ -81,7 +84,6 @@ namespace CGAL::internal::Hexmeshing {
     CGAL_assertion_code(assertion());
   }
 
-  // hdata は未使用
   /**
    * @brief Asserts that all faces in the Linear Cell Complex are quadrilateral
    *
@@ -93,7 +95,9 @@ namespace CGAL::internal::Hexmeshing {
    *
    * @param lcc The Linear Cell Complex to validate
    */
-  void assert_all_faces_are_quadrilateral(LCC &lcc){
+  inline
+  void assert_all_faces_are_quadrilateral(LCC &lcc)
+  {
     auto assertion = [&](){
       auto iterator = lcc.one_dart_per_cell<2>();
       for (auto it = iterator.begin(); it != iterator.end(); it++){
@@ -116,7 +120,9 @@ namespace CGAL::internal::Hexmeshing {
    *
    * @param lcc The Linear Cell Complex to validate
    */
-  void assert_all_volumes_are_hexes(LCC &lcc){
+  inline
+  void assert_all_volumes_are_hexes(LCC &lcc)
+  {
     auto assertion = [&](){
       auto iterator = lcc.one_dart_per_cell<3>();
       for (auto it = iterator.begin(); it != iterator.end(); it++){
@@ -127,11 +133,6 @@ namespace CGAL::internal::Hexmeshing {
 
     CGAL_assertion_code(assertion());
   }
-
-
-
-
 }
-
 
 #endif

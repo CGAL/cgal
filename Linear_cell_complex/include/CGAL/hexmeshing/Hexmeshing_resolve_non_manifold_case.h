@@ -22,9 +22,12 @@
 #include <cassert>
 
 
-namespace CGAL::internal::Hexmeshing {
+namespace CGAL::internal::Hexmeshing
+{
   // all volume cells need to have attribute
-  int __get_signal(LCC& lcc, Dart_handle vertex, size_type inner_mark) {
+  inline
+  int __get_signal(LCC& lcc, Dart_handle vertex, size_type inner_mark)
+  {
     std::array<Dart_handle, 8> volumes = volumes_around_node(lcc, vertex);
     int inner_signal = 0;
     for(int i = 0; i < 8; i++) {
@@ -38,6 +41,7 @@ namespace CGAL::internal::Hexmeshing {
     return inner_signal;
   }
 
+  inline
   std::array<std::vector<int>, 7> __get_seven_non_manifold_templates() {
     return {{{0b10000010, 0b01000001, 0b00101000, 0b00010100, 0b01111101, 0b11101011, 0b11010111, 0b10111110},
             {0b10000100, 0b01000010, 0b00100001, 0b00011000, 0b10000001, 0b01001000, 0b00100100, 0b00010010, 0b10100000, 0b01010000, 0b00001010, 0b00000101, 0b01111011, 0b01111110, 0b01011111, 0b11100111, 0b10101111, 0b10110111, 0b11011110, 0b11011011, 0b11111010, 0b10111101, 0b11110101, 0b11101101},
@@ -48,6 +52,7 @@ namespace CGAL::internal::Hexmeshing {
             {0b01011010, 0b10100101}}};
   }
 
+  inline
   std::array<int, 256> __get_non_manifold_template_list() {
     return {{0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,
             0,0,1,0,1,1,1,0,1,0,1,0,1,0,1,0,
@@ -67,7 +72,9 @@ namespace CGAL::internal::Hexmeshing {
             0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0}};
   }
 
-  std::array<std::vector<int>, 256> __get_solution_to_non_manifold_templates_list() {
+  inline
+  std::array<std::vector<int>, 256> __get_solution_to_non_manifold_templates_list()
+  {
     std::array<std::vector<int>, 7> seven_templates = __get_seven_non_manifold_templates();
     std::array<int, 256> is_in_templates = __get_non_manifold_template_list();
 
@@ -94,7 +101,9 @@ namespace CGAL::internal::Hexmeshing {
 
   // Algorithm 1 in Owen et al. (2014)
   // prerequisite: If the vertex is non-manifold, the manifold condition must be satisfiable through a modification of the fraction within 0.37.
-  void resolve_non_manifold_case(LCC& lcc, double s, size_type inner_mark) {
+  inline
+  void resolve_non_manifold_case(LCC& lcc, double s, size_type inner_mark)
+  {
     std::array<int, 256> is_in_templates = __get_non_manifold_template_list();
 
     std::array<std::vector<int>, 256> resolve_templates = __get_solution_to_non_manifold_templates_list();
@@ -165,8 +174,5 @@ namespace CGAL::internal::Hexmeshing {
     }
   }
 }
-
-
-
 
 #endif

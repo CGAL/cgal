@@ -21,17 +21,19 @@
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <functional>
 
-
-namespace CGAL::internal::Hexmeshing {
-
-  auto is_volume_intersecting_poly(Tree& tree) {
-    return [&](LCC& lcc, Dart_handle dart){
-      return is_intersect(lcc, dart, tree);
-    };
+namespace CGAL::internal::Hexmeshing
+{
+  inline
+  auto is_volume_intersecting_poly(Tree& tree)
+  {
+    return [&](LCC& lcc, Dart_handle dart)
+    { return is_intersect(lcc, dart, tree); };
   }
 
   // function to be used in move_points_onto_mesh
-  auto detect_intersection_with_volume_fraction(double s, size_type inner_mark, size_type set_gradient_mark) {
+  inline
+  auto detect_intersection_with_volume_fraction(double s, size_type inner_mark, size_type set_gradient_mark)
+  {
     return [s, inner_mark, set_gradient_mark](LCC& lcc, Dart_handle dart) -> bool {
       auto dart3 = lcc.beta<3>(dart);
       if(lcc.is_free<3>(dart)) {
@@ -83,13 +85,16 @@ namespace CGAL::internal::Hexmeshing {
     };
   }
 
-  auto is_marked_volume(size_type mark) {
-    return [mark](LCC& lcc, Dart_handle dart) -> bool {
-      return lcc.is_marked(dart, mark);
-    };
+  inline
+  auto is_marked_volume(size_type mark)
+  {
+    return [mark](LCC& lcc, Dart_handle dart) -> bool
+    { return lcc.is_marked(dart, mark); };
   }
 
-  auto detect_intersection(Tree& tree, Polyhedron& poly) {
+  inline
+  auto detect_intersection(Tree& tree, Polyhedron& poly)
+  {
     return [&](LCC& lcc, Dart_handle dart) -> bool {
       auto &face_attr = lcc.attribute<2>(dart)->info();
       if(!tree.do_intersect(face_attr.dual_edge)) return false;
@@ -104,7 +109,9 @@ namespace CGAL::internal::Hexmeshing {
     };
   }
 
-  auto is_inner_centroid(Tree& tree) {
+  inline
+  auto is_inner_centroid(Tree& tree)
+  {
     return [&](LCC& lcc, Dart_handle dart) -> bool {
       // if(is_intersect(lcc, dart, tree)) return false;
       // return !is_outside_knowing_no_intersect(lcc.point(dart), tree);
@@ -113,14 +120,13 @@ namespace CGAL::internal::Hexmeshing {
     };
   }
 
-  auto is_inner_point(Tree& tree) {
+  inline
+  auto is_inner_point(Tree& tree)
+  {
     return [&](Point p) -> bool {
       return !is_outside_knowing_no_intersect(p, tree);
     };
   }
 }
-
-
-
 
 #endif

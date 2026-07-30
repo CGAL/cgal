@@ -18,12 +18,14 @@
 
 
 
-namespace CGAL::internal::Hexmeshing {
+namespace CGAL::internal::Hexmeshing
+{
+  inline
   bool is_intersect(double x1, double y1, double z1,
-                  double x2, double y2, double z2,
-                  double x3, double y3, double z3,
-                  double x4, double y4, double z4,
-                  const Tree& t)
+                    double x2, double y2, double z2,
+                    double x3, double y3, double z3,
+                    double x4, double y4, double z4,
+                    const Tree& t)
   {
     Kernel::Point_3 p1(x1,y1,z1);
     Kernel::Point_3 p2(x2,y2,z2);
@@ -42,9 +44,10 @@ namespace CGAL::internal::Hexmeshing {
     return false;
   }
 
+  inline
   bool is_intersect(double x1, double y1, double z1,
-                  double x2, double y2, double z2,
-                  const Tree& t)
+                    double x2, double y2, double z2,
+                    const Tree& t)
   {
     return
         is_intersect(x1,y1,z1, x2,y1,z1, x2,y1,z2, x1,y1,z2, t) || // f1 y1
@@ -55,6 +58,7 @@ namespace CGAL::internal::Hexmeshing {
         is_intersect(x1,y1,z2, x2,y1,z2, x2,y2,z2, x1,y2,z2, t);   // f6 z2
   }
 
+  inline
   bool is_intersect(const LCC& lcc, LCC::Dart_const_handle dh, const Tree& t)
   {
     CGAL::Bbox_3 bbox=lcc.point(dh).bbox();
@@ -71,16 +75,12 @@ namespace CGAL::internal::Hexmeshing {
   /// Test if a particular point is outside of the object (Tree), knowing there is
   /// no intersection between its voxel and the tree.
   inline
-  bool is_outside_knowing_no_intersect(const Point& p,
-                                      const Tree& t)
+  bool is_outside_knowing_no_intersect(const Point& p, const Tree& t)
   {
     Side_of_mesh s(t);
     CGAL::Bounded_side res=s(p);
     return res!=CGAL::ON_BOUNDED_SIDE; // && !=CGAL::ON_BOUNDARY ?
   }
 }
-
-
-
 
 #endif

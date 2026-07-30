@@ -27,7 +27,6 @@
 #include <CGAL/Cell_attribute.h>
 #include <CGAL/Cell_attribute_with_point.h>
 
-
 namespace CGAL::internal::Hexmeshing
 {
 using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;

@@ -15,7 +15,8 @@
 
 #include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
 
-namespace CGAL::internal::Hexmeshing {
+namespace CGAL::internal::Hexmeshing
+{
   /**
    * @brief Expands the set of identified cells by propagating identification to neighboring cells
    *
@@ -45,7 +46,8 @@ namespace CGAL::internal::Hexmeshing {
    * @param nb_levels The total number of refinement levels to be performed
    */
   template <typename HexData>
-  void expand_identified_cells(HexData& hdata, int current_lvl, int nb_levels){
+  void expand_identified_cells(HexData& hdata, int current_lvl, int nb_levels)
+  {
     LCC& lcc = hdata.lcc;
 
     assert(nb_levels >= 1 && current_lvl >= 0);
@@ -81,7 +83,6 @@ namespace CGAL::internal::Hexmeshing {
         }
       }
     }
-
   }
 }
 

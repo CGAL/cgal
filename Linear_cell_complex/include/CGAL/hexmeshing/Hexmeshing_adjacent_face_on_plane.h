@@ -17,7 +17,8 @@
 #include <CGAL/hexmeshing/Hexmeshing_grid.h>
 #include <boost/container/static_vector.hpp>
 
-namespace CGAL::internal::Hexmeshing {
+namespace CGAL::internal::Hexmeshing
+{
   /**
    * @brief Internal function to find the adjacent face on a given plane
    *
@@ -32,7 +33,9 @@ namespace CGAL::internal::Hexmeshing {
    * @param edge A dart handle representing the edge to find adjacent faces for
    * @return A dart handle to the adjacent face on the plane, or null if not found
    */
-  Dart_handle __adjacent_face_on_plane(LCC& lcc, PlaneNormal plane, Dart_handle edge){
+  inline
+  Dart_handle __adjacent_face_on_plane(LCC& lcc, PlaneNormal plane, Dart_handle edge)
+  {
     Dart_handle other_face = lcc.beta(edge, 2);
     auto this_face_handle = lcc.attribute<2>(edge);
     auto other_face_handle = lcc.attribute<2>(other_face);
@@ -81,7 +84,9 @@ namespace CGAL::internal::Hexmeshing {
    * @param additional_volumes Vector to store volumes encountered during the search
    * @return A dart handle to the adjacent face on the plane, or null if not found
    */
-  Dart_handle __adjacent_face_on_plane(LCC& lcc, PlaneNormal plane, Dart_handle edge, std::vector<Dart_handle>& additional_volumes){
+  inline
+  Dart_handle __adjacent_face_on_plane(LCC& lcc, PlaneNormal plane, Dart_handle edge, std::vector<Dart_handle>& additional_volumes)
+  {
     Dart_handle other_face = lcc.beta(edge, 2);
     auto this_face_handle = lcc.attribute<2>(edge);
     auto other_face_handle = lcc.attribute<2>(other_face);
@@ -134,7 +139,9 @@ namespace CGAL::internal::Hexmeshing {
    * @param edge A dart handle representing the edge to find adjacent faces for
    * @return A dart handle to the adjacent face on the plane, or null if not found
    */
-  Dart_handle adjacent_face_on_plane(LCC& lcc, PlaneNormal plane, Dart_handle edge){
+  inline
+  Dart_handle adjacent_face_on_plane(LCC& lcc, PlaneNormal plane, Dart_handle edge)
+  {
     Dart_handle other_face = __adjacent_face_on_plane(lcc, plane, edge);
 
     // This is needed to iterate on 3 templates that are on a grid border, missing a connected volume
@@ -159,7 +166,9 @@ namespace CGAL::internal::Hexmeshing {
    * @param additionnal_volumes Pointer to vector to store volumes encountered during the search
    * @return A dart handle to the adjacent face on the plane, or null if not found
    */
-  Dart_handle adjacent_face_on_plane(LCC& lcc, PlaneNormal plane, Dart_handle edge, std::vector<Dart_handle>* additionnal_volumes){
+  inline
+  Dart_handle adjacent_face_on_plane(LCC& lcc, PlaneNormal plane, Dart_handle edge, std::vector<Dart_handle>* additionnal_volumes)
+  {
     Dart_handle other_face = __adjacent_face_on_plane(lcc, plane, edge, *additionnal_volumes);
 
     if (other_face == lcc.null_dart_descriptor && !lcc.is_free<3>(edge))

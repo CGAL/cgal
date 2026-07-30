@@ -15,7 +15,8 @@
 
 #include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
 
-namespace CGAL::internal::Hexmeshing {
+namespace CGAL::internal::Hexmeshing
+{
   /**
    * @brief Creates new vertices for template refinement by subdividing edges
    *
@@ -97,7 +98,5 @@ namespace CGAL::internal::Hexmeshing {
     lcc.free_mark(arrete_done);
   }
 }
-
-
 
 #endif

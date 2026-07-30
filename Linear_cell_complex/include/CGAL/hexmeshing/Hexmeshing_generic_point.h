@@ -15,8 +15,8 @@
 
 #include <array>
 
-
-namespace CGAL::internal::Hexmeshing {
+namespace CGAL::internal::Hexmeshing
+{
   /**
    * @brief A generic 3D point class with basic arithmetic operations
    * @tparam T The numeric type used for coordinates (e.g., int, char)
@@ -65,6 +65,5 @@ namespace CGAL::internal::Hexmeshing {
   using PointChar = GenericPointForHexmeshing<char>;
   using AreaId = PointChar;
 }
-
 
 #endif

@@ -17,7 +17,8 @@
 #include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
 #include <iostream>
 
-namespace CGAL::internal::Hexmeshing {
+namespace CGAL::internal::Hexmeshing
+{
   /**
    * @brief Explores a face in a plane to identify marked nodes and gather adjacent faces
    *
@@ -47,7 +48,8 @@ namespace CGAL::internal::Hexmeshing {
    */
   template <typename HexData>
   void explore_face_of_plane(HexData& hdata, RefinementData& rdata, std::queue<Dart_handle>& queue,
-        Dart_handle face, size_type explored_edge, size_type explored_face) {
+                             Dart_handle face, size_type explored_edge, size_type explored_face)
+  {
     LCC& lcc = hdata.lcc;
 
     auto& face_attr = lcc.attribute<2>(face)->info();
@@ -101,10 +103,8 @@ namespace CGAL::internal::Hexmeshing {
       }
     }
 
-
-    if (face_attr.template_id > 0) {
-      rdata.faces_of_plane.push_back(face);
-    }
+    if (face_attr.template_id > 0)
+    { rdata.faces_of_plane.push_back(face); }
   }
 
   /**
@@ -197,7 +197,6 @@ namespace CGAL::internal::Hexmeshing {
   void propagate_face(HexData &hdata, RefinementData &rdata, const Dart_handle &face, size_type explored_face_mark)
   {
     LCC& lcc = hdata.lcc;
-
 
     assert(lcc.attribute<3>(face) != nullptr);
     auto &vol_attr = get_or_create_refinement_volume(lcc, face)->info();
@@ -556,12 +555,7 @@ namespace CGAL::internal::Hexmeshing {
 
     lcc.free_mark(explored_edge);
     lcc.free_mark(explored_face);
-
   }
 }
-
-
-
-
 
 #endif

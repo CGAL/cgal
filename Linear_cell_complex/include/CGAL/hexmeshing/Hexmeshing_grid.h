@@ -22,8 +22,8 @@
 #include <array>
 #include <cassert>
 
-
-namespace CGAL::internal::Hexmeshing {
+namespace CGAL::internal::Hexmeshing
+{
   /**
    * @brief A structure representing a 3D grid for hexahedral mesh generation
    *
@@ -31,7 +31,8 @@ namespace CGAL::internal::Hexmeshing {
    * cell size, and dimensions. It provides methods for creating both centered and
    * non-centered grids, as well as specialized cube grid creation.
    */
-  struct Grid {
+  struct Grid
+  {
     using Kernel = Exact_predicates_inexact_constructions_kernel;
     using Point = Kernel::Point_3;
     using PointInt = GenericPointForHexmeshing<int>;
@@ -171,9 +172,6 @@ namespace CGAL::internal::Hexmeshing {
       lcc.sew3_same_facets();
     }
   };
-
-
 }
-
 
 #endif

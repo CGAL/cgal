@@ -18,7 +18,8 @@
 #include <CGAL/hexmeshing/Hexmeshing_threads_utils.h>
 #include <cassert>
 
-namespace CGAL::internal::Hexmeshing {
+namespace CGAL::internal::Hexmeshing
+{
   /**
    * @brief Finds the origin dart of a 3-template pattern
    *
@@ -30,6 +31,7 @@ namespace CGAL::internal::Hexmeshing {
    * @param template_mark The mark used to identify template faces
    * @return A dart handle pointing to the origin of the 3-template pattern, or null if not found
    */
+  inline
   Dart_handle find_3_template_origin(LCC& lcc, Dart_handle marked_face, size_type template_mark) {
 
     auto _edges_count = lcc.darts_of_cell<2,1>(marked_face).size();
@@ -80,7 +82,9 @@ namespace CGAL::internal::Hexmeshing {
    * @param face A dart handle representing the face to check for adjacent 3-template conflicts
    * @return true if a fix was applied (node was marked), false otherwise
    */
-  bool fix_adjacent_3_templates(LCC &lcc, RefinementData &rdata, size_type template_mark, std::queue<Dart_handle>& faces_to_check, Dart_handle &face)
+  inline
+  bool fix_adjacent_3_templates(LCC &lcc, RefinementData &rdata, size_type template_mark,
+                                std::queue<Dart_handle>& faces_to_check, Dart_handle &face)
   {
     // Transform nearby 3 templates into two 4 templates
     // if they both share the unmarked node
@@ -119,7 +123,6 @@ namespace CGAL::internal::Hexmeshing {
         is_impossible = true;
         break;
       }
-
     }
 
     if (is_impossible) {
@@ -158,7 +161,8 @@ namespace CGAL::internal::Hexmeshing {
    * @param face2 Reference to the second neighboring face (may be modified)
    */
   template <typename HexData>
-  void clean_up_3_template(HexData &hdata, const Dart_handle &origin_dart, const Dart_handle &upper_edge, const Dart_handle lower_edge, Dart_handle &face1, Dart_handle &face2)
+  void clean_up_3_template(HexData &hdata, const Dart_handle &origin_dart, const Dart_handle &upper_edge,
+                           const Dart_handle lower_edge, Dart_handle &face1, Dart_handle &face2)
   {
     LCC& lcc = hdata.lcc;
 
@@ -316,8 +320,6 @@ namespace CGAL::internal::Hexmeshing {
       assert(p == 0);
     }
   }
-
 }
-
 
 #endif // CGAL_HEXMESHING_TWO_REFINEMENT_3_TEMPLATE_UTILS_H

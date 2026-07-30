@@ -19,8 +19,11 @@
 #include <CGAL/Eigen_matrix.h>
 #include <CGAL/Eigen_vector.h>
 
-namespace CGAL::internal::Hexmeshing {
-  void __set_centroid(LCC& lcc, Dart_handle dart) {
+namespace CGAL::internal::Hexmeshing
+{
+  inline
+  void __set_centroid(LCC& lcc, Dart_handle dart)
+  {
     auto attr = get_or_create_attr<3>(lcc, dart);
     auto &vol_attr = attr->info();
 
@@ -39,14 +42,18 @@ namespace CGAL::internal::Hexmeshing {
     vol_attr.centroid = CGAL::ORIGIN + centroid / vertex_count;
   }
 
-  void set_centroids(LCC& lcc) {
+  inline
+  void set_centroids(LCC& lcc)
+  {
     auto volumes = lcc.one_dart_per_cell<3>();
     for(auto it = volumes.begin(); it != volumes.end(); it++) {
       __set_centroid(lcc, it);
     }
   }
 
-  void __set_dual_edge(LCC& lcc, Dart_handle dart) {
+  inline
+  void __set_dual_edge(LCC& lcc, Dart_handle dart)
+  {
     auto attr = get_or_create_attr<2>(lcc, dart);
     auto &face_attr = attr->info();
 
@@ -71,7 +78,9 @@ namespace CGAL::internal::Hexmeshing {
     face_attr.dual_edge = {p1, p2};
   }
 
-  void set_dual_edges(LCC& lcc) {
+  inline
+  void set_dual_edges(LCC& lcc)
+  {
     set_centroids(lcc);
     auto faces = lcc.one_dart_per_cell<2>();
     for(auto it = faces.begin(); it != faces.end(); it++) {
@@ -79,7 +88,9 @@ namespace CGAL::internal::Hexmeshing {
     }
   }
 
-  int set_vertex_ids(LCC& lcc) {
+  inline
+  int set_vertex_ids(LCC& lcc)
+  {
     auto vertices = lcc.one_dart_per_cell<0>();
     int count_vertices = 0;
     for(auto it = vertices.begin(); it != vertices.end(); it++) {
@@ -88,7 +99,9 @@ namespace CGAL::internal::Hexmeshing {
     return count_vertices;
   }
 
-  void __set_fraction(LCC& lcc, Dart_handle dart, int number_of_random_points, RandomPointGenerator& gen, MarkingFunction cellIdentifier, DecideInsideFunction decideFunc) {
+  inline
+  void __set_fraction(LCC& lcc, Dart_handle dart, int number_of_random_points, RandomPointGenerator& gen, MarkingFunction cellIdentifier, DecideInsideFunction decideFunc)
+  {
     auto attr = get_or_create_attr<3>(lcc, dart);
     auto &vol_attr = attr->info();
     __set_centroid(lcc, dart);
@@ -108,7 +121,8 @@ namespace CGAL::internal::Hexmeshing {
   }
 
   template<int numberOfRandomPoints=101>
-  void set_fraction(LCC& lcc, double length_of_4_template, MarkingFunction cellIdentifier, DecideInsideFunction decideFunc) {
+  void set_fraction(LCC& lcc, double length_of_4_template, MarkingFunction cellIdentifier, DecideInsideFunction decideFunc)
+  {
     auto volumes = lcc.one_dart_per_cell<3>();
     RandomPointGenerator gen(length_of_4_template * 0.5);
     for(auto it = volumes.begin(); it != volumes.end(); it++) {
@@ -116,9 +130,11 @@ namespace CGAL::internal::Hexmeshing {
     }
   }
 
-  // 2.2 Estimate gradients at cell centers 参照で作成
+  // 2.2 Estimate gradients at cell centers
   // centroid is assumed to be set
-  void __set_gradient_at_dual_node(LCC& lcc, Dart_handle dart) {
+  inline
+  void __set_gradient_at_dual_node(LCC& lcc, Dart_handle dart)
+  {
     auto neighbors = cells_26_connectivity(lcc, dart);
     CGAL::Eigen_matrix<double, 3, 3> mat;
     CGAL::Eigen_vector<double, 3> vec;
@@ -144,10 +160,5 @@ namespace CGAL::internal::Hexmeshing {
     lcc.attribute<3>(dart)->info().gradient = Vector(grad_frac[0], grad_frac[1], grad_frac[2]);
   }
 }
-
-
-
-
-
 
 #endif
