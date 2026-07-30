@@ -17,11 +17,9 @@
 #include <utility>
 #include <vector>
 
-// #include "cmap_copy.h" // FOR DEBUGGING
-// #include <CGAL/draw_linear_cell_complex.h> // FOR DEBUGGING
-#include <CGAL/Linear_cell_complex/cmap_3close_cc.h>
+#include <CGAL/Combinatorial_map/internal/cmap_3close_cc.h>
+#include <CGAL/Combinatorial_map/internal/cmap_isomorphisms.h>
 #include <CGAL/Linear_cell_complex/query_replace/cmap_query_replace_geometry.h>
-#include <CGAL/Linear_cell_complex/cmap_isomorphisms.h>
 
 namespace CGAL::internal
 {

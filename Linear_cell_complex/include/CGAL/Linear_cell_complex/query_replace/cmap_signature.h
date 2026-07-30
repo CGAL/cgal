@@ -25,7 +25,7 @@
 #include <CGAL/draw_linear_cell_complex.h>
 #include <CGAL/IO/Color.h>
 #include <CGAL/Random.h>
-#include <CGAL/Linear_cell_complex/cmap_copy.h>
+#include <CGAL/Combinatorial_map/internal/cmap_copy.h>
 
 // We have 3 type of words:
 //      fword for faces; sword for surfaces; vword for volumes
