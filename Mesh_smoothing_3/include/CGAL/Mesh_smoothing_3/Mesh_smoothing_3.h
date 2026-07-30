@@ -53,7 +53,7 @@ namespace Parameters {
 * The class `Mesh_smoother` provides an interface to optimize a tetrahedral mesh with an energy,
 * while allowing the user to specify soft-constraints on the boundary and along a curve network.
 * This class is designed for linking with various mesh representations.
-* For usage with CGAL common mesh representations, refer to `C3t3_smoother`.
+* For usage with %CGAL common mesh representations, refer to `C3t3_smoother`.
 *
 * \tparam TetrahedralMesh encodes the volumetric mesh and must be a model of `MeshDataStructure`.
 *
