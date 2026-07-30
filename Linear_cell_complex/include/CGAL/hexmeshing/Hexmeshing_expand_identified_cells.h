@@ -66,7 +66,7 @@ namespace CGAL::internal::Hexmeshing
 
     // Expand the set of identified cells n times
     for (int i = 0 ; i < height_of_refinement_level(current_lvl, nb_levels); i++){
-      std::vector<Dart_handle> to_propagate;
+      std::vector<Dart_descriptor> to_propagate;
       auto& vol_attributes = lcc.attributes<3>();
 
       for(auto it = vol_attributes.begin(), end = vol_attributes.end(); it != end; it++){

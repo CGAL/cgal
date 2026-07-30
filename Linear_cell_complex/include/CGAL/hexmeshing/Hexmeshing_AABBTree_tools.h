@@ -59,7 +59,7 @@ namespace CGAL::internal::Hexmeshing
   }
 
   inline
-  bool is_intersect(const LCC& lcc, LCC::Dart_const_handle dh, const Tree& t)
+  bool is_intersect(const LCC& lcc, LCC::Dart_const_descriptor dh, const Tree& t)
   {
     CGAL::Bbox_3 bbox=lcc.point(dh).bbox();
     // For each vertex of the volume

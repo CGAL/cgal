@@ -47,7 +47,7 @@ namespace CGAL::internal::Hexmeshing
     int fix_c_count = 0, fix_3_count = 0;
 
     // Condition for checking faces : 2 or 3 templates.
-    std::queue<Dart_handle> faces_to_check;
+    std::queue<Dart_descriptor> faces_to_check;
 
     // First iteration
 
@@ -55,7 +55,7 @@ namespace CGAL::internal::Hexmeshing
     int faces_end = rdata.faces_of_plane.size();
 
     for (int i = 0; i < faces_end; i++){
-      Dart_handle face = rdata.faces_of_plane[i];
+      Dart_descriptor face = rdata.faces_of_plane[i];
       auto& face_attr = hdata.lcc.template attribute<2>(face)->info();
 
       if (face_attr.template_id == 2 && fix_mark_connectivity(hdata.lcc, rdata, hdata.template_mark, faces_to_check, face))
@@ -67,7 +67,7 @@ namespace CGAL::internal::Hexmeshing
 
     // Repeat until there are no more faces to check
     while (!faces_to_check.empty()){
-      Dart_handle front_face = faces_to_check.front();
+      Dart_descriptor front_face = faces_to_check.front();
       faces_to_check.pop();
 
       auto& face_attr = hdata.lcc.template attribute<2>(front_face)->info();
@@ -108,14 +108,14 @@ namespace CGAL::internal::Hexmeshing
   void refine_marked_faces(HexData& hdata, RefinementData& rdata){
     LCC& lcc = hdata.lcc;
     int nbsub = 0;
-    for (Dart_handle& dart : boost::join(rdata.faces_of_plane, rdata.faces_to_refine))
+    for (Dart_descriptor& dart : boost::join(rdata.faces_of_plane, rdata.faces_to_refine))
     {
       //Utile uniquement si les faces marqués ne sont pas 100% templatés
       auto edges_range = lcc.darts_of_cell<2, 1>(dart);
       int propagation = 0, beta3_propagation = 0;
       bool has_beta3 = !lcc.is_free<3>(dart);
 
-      std::vector<Dart_handle> edges_vec;
+      std::vector<Dart_descriptor> edges_vec;
       for (auto it = edges_range.begin(), end = edges_range.end(); it != end; it++){
         edges_vec.push_back(it);
         if (lcc.is_marked(it, hdata.propagation_face_mark)) propagation++;
@@ -124,7 +124,7 @@ namespace CGAL::internal::Hexmeshing
 
       auto& substituer = hdata.ext->regular_templates;
       Signature signature;
-      Dart_handle f_signature_start = fsignature_of_face(lcc, dart, hdata.template_mark, signature);
+      Dart_descriptor f_signature_start = fsignature_of_face(lcc, dart, hdata.template_mark, signature);
 
       size_t temp_id = hdata.ext->regular_templates.replace_one_face_from_signature
         (lcc, dart, signature, f_signature_start);
@@ -186,7 +186,7 @@ namespace CGAL::internal::Hexmeshing
     {
       Pattern_substituer<LCC>& substituer = hdata.ext->regular_templates;
       Signature signature;
-      Dart_handle v_signature_start = vsignature_of_volume(lcc, dart, hdata.template_mark, signature);
+      Dart_descriptor v_signature_start = vsignature_of_volume(lcc, dart, hdata.template_mark, signature);
       size_type temp_id = substituer.replace_one_volume_from_signature(lcc, dart, signature, v_signature_start);
       if (temp_id < CONST_SIZE_T_MAX)
         nbsub++;

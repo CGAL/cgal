@@ -26,7 +26,7 @@ namespace CGAL::internal::Hexmeshing
   inline
   auto is_volume_intersecting_poly(Tree& tree)
   {
-    return [&](LCC& lcc, Dart_handle dart)
+    return [&](LCC& lcc, Dart_descriptor dart)
     { return is_intersect(lcc, dart, tree); };
   }
 
@@ -34,7 +34,7 @@ namespace CGAL::internal::Hexmeshing
   inline
   auto detect_intersection_with_volume_fraction(double s, size_type inner_mark, size_type set_gradient_mark)
   {
-    return [s, inner_mark, set_gradient_mark](LCC& lcc, Dart_handle dart) -> bool {
+    return [s, inner_mark, set_gradient_mark](LCC& lcc, Dart_descriptor dart) -> bool {
       auto dart3 = lcc.beta<3>(dart);
       if(lcc.is_free<3>(dart)) {
         return false;
@@ -88,14 +88,14 @@ namespace CGAL::internal::Hexmeshing
   inline
   auto is_marked_volume(size_type mark)
   {
-    return [mark](LCC& lcc, Dart_handle dart) -> bool
+    return [mark](LCC& lcc, Dart_descriptor dart) -> bool
     { return lcc.is_marked(dart, mark); };
   }
 
   inline
   auto detect_intersection(Tree& tree, Polyhedron& poly)
   {
-    return [&](LCC& lcc, Dart_handle dart) -> bool {
+    return [&](LCC& lcc, Dart_descriptor dart) -> bool {
       auto &face_attr = lcc.attribute<2>(dart)->info();
       if(!tree.do_intersect(face_attr.dual_edge)) return false;
       auto intersection = tree.any_intersection(face_attr.dual_edge);
@@ -112,7 +112,7 @@ namespace CGAL::internal::Hexmeshing
   inline
   auto is_inner_centroid(Tree& tree)
   {
-    return [&](LCC& lcc, Dart_handle dart) -> bool {
+    return [&](LCC& lcc, Dart_descriptor dart) -> bool {
       // if(is_intersect(lcc, dart, tree)) return false;
       // return !is_outside_knowing_no_intersect(lcc.point(dart), tree);
       __set_centroid(lcc, dart);

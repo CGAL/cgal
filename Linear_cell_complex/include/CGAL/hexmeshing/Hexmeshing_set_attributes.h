@@ -22,7 +22,7 @@
 namespace CGAL::internal::Hexmeshing
 {
   inline
-  void __set_centroid(LCC& lcc, Dart_handle dart)
+  void __set_centroid(LCC& lcc, Dart_descriptor dart)
   {
     auto attr = get_or_create_attr<3>(lcc, dart);
     auto &vol_attr = attr->info();
@@ -52,7 +52,7 @@ namespace CGAL::internal::Hexmeshing
   }
 
   inline
-  void __set_dual_edge(LCC& lcc, Dart_handle dart)
+  void __set_dual_edge(LCC& lcc, Dart_descriptor dart)
   {
     auto attr = get_or_create_attr<2>(lcc, dart);
     auto &face_attr = attr->info();
@@ -100,7 +100,7 @@ namespace CGAL::internal::Hexmeshing
   }
 
   inline
-  void __set_fraction(LCC& lcc, Dart_handle dart, int number_of_random_points, RandomPointGenerator& gen, MarkingFunction cellIdentifier, DecideInsideFunction decideFunc)
+  void __set_fraction(LCC& lcc, Dart_descriptor dart, int number_of_random_points, RandomPointGenerator& gen, MarkingFunction cellIdentifier, DecideInsideFunction decideFunc)
   {
     auto attr = get_or_create_attr<3>(lcc, dart);
     auto &vol_attr = attr->info();
@@ -133,7 +133,7 @@ namespace CGAL::internal::Hexmeshing
   // 2.2 Estimate gradients at cell centers
   // centroid is assumed to be set
   inline
-  void __set_gradient_at_dual_node(LCC& lcc, Dart_handle dart)
+  void __set_gradient_at_dual_node(LCC& lcc, Dart_descriptor dart)
   {
     auto neighbors = cells_26_connectivity(lcc, dart);
     CGAL::Eigen_matrix<double, 3, 3> mat;

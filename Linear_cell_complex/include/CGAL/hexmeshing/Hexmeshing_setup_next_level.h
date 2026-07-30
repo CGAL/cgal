@@ -158,12 +158,12 @@ namespace CGAL::internal::Hexmeshing
    */
   template <typename HexData>
   void setup_next_level_face(HexData& hdata,
-                            std::unordered_map<LCC::Attribute_handle<2>::type, Union_find<Dart_handle>::handle>& odd_face_to_handle,
-                            std::unordered_map<LCC::Attribute_handle<2>::type, Union_find<Dart_handle>::handle>& even_face_to_handle,
-                            std::queue<Dart_handle>& to_explore,
-                            Union_find<Dart_handle>& odd_union_find,
-                            Union_find<Dart_handle>& even_union_find,
-                            Dart_handle face,
+                            std::unordered_map<LCC::Attribute_descriptor<2>::type, Union_find<Dart_descriptor>::handle>& odd_face_to_handle,
+                            std::unordered_map<LCC::Attribute_descriptor<2>::type, Union_find<Dart_descriptor>::handle>& even_face_to_handle,
+                            std::queue<Dart_descriptor>& to_explore,
+                            Union_find<Dart_descriptor>& odd_union_find,
+                            Union_find<Dart_descriptor>& even_union_find,
+                            Dart_descriptor face,
                             PlaneNormal planeIteration,
                             size_t plane_id,
                             int edge_mark, int face_mark){
@@ -178,9 +178,9 @@ namespace CGAL::internal::Hexmeshing
     lcc.mark_cell<2>(face, face_mark);
 
     auto edges = lcc.darts_of_cell<2, 1>(face);
-    Union_find<Dart_handle>::handle odd_cc_id, even_cc_id;
+    Union_find<Dart_descriptor>::handle odd_cc_id, even_cc_id;
 
-    Dart_handle back_face = lcc.beta(face, 2, 1, 1, 2);
+    Dart_descriptor back_face = lcc.beta(face, 2, 1, 1, 2);
 
     for (auto it = edges.begin(), end = edges.end(); it != end; it++){
       // Iterate
@@ -190,7 +190,7 @@ namespace CGAL::internal::Hexmeshing
       // We don't care if we miss a grid-border 3-template, because if we didn't found it using this function,
       // it has a missing volume (in the same beta3 orientation of our iteration).
       // This means that we can discard this face because there is nothing left to check.
-      Dart_handle adjacent_face = __adjacent_face_on_plane(lcc, planeIteration, it);
+      Dart_descriptor adjacent_face = __adjacent_face_on_plane(lcc, planeIteration, it);
 
       if (adjacent_face == lcc.null_dart_descriptor) continue;
 
@@ -301,10 +301,10 @@ namespace CGAL::internal::Hexmeshing
    */
   template <typename HexData>
   void setup_next_level_plane(HexData& hdata){
-    using FaceToHandle = std::unordered_map<LCC::Attribute_handle<2>::type, Union_find<Dart_handle>::handle>;
-    using Union_find = Union_find<Dart_handle>;
+    using FaceToHandle = std::unordered_map<LCC::Attribute_descriptor<2>::type, Union_find<Dart_descriptor>::handle>;
+    using Union_find = Union_find<Dart_descriptor>;
     using UF_Partition = std::vector<Union_find::handle>;
-    using PlaneCC = std::vector<Dart_handle>;
+    using PlaneCC = std::vector<Dart_descriptor>;
     using PlaneSet = std::vector<PlaneCC>;
 
     LCC& lcc = hdata.lcc;
@@ -313,7 +313,7 @@ namespace CGAL::internal::Hexmeshing
     size_type edge_mark = lcc.get_new_mark();
     size_type face_mark = lcc.get_new_mark();
 
-    const auto find_next_plane_id = [&](Dart_handle face, char axis) -> std::optional<size_t>{
+    const auto find_next_plane_id = [&](Dart_descriptor face, char axis) -> std::optional<size_t>{
       if (face == lcc.null_dart_descriptor) return {};
       face = lcc.beta(face, 2, 1, 1, 2);
       auto attr = lcc.attribute<2>(face);
@@ -329,7 +329,7 @@ namespace CGAL::internal::Hexmeshing
       // Checks the second volume, if we are on a 1/2 template, we might have to check
       // all faces of the hex to find the next plane of 'axis'
 
-      for (Dart_handle f : faces_of_hex(lcc, face)){
+      for (Dart_descriptor f : faces_of_hex(lcc, face)){
         attr = lcc.attribute<2>(f);
         if (attr != nullptr && attr->info().plane[axis]){
           return attr->info().plane_id;
@@ -340,9 +340,9 @@ namespace CGAL::internal::Hexmeshing
     };
 
     const auto create_plane = [&](char plane_normal, size_t plane_id, const UF_Partition& partition,
-        const Union_find& uf, const FaceToHandle& face_to_handle) -> std::vector<Dart_handle>
+        const Union_find& uf, const FaceToHandle& face_to_handle) -> std::vector<Dart_descriptor>
     {
-      std::vector<Dart_handle> plane_cc;
+      std::vector<Dart_descriptor> plane_cc;
       std::unordered_map<Union_find::pointer, size_t> ptr_to_id;
 
       for (int i = 0; i < partition.size(); i++){
@@ -350,7 +350,7 @@ namespace CGAL::internal::Hexmeshing
       }
 
       for (auto uf_handle : partition){
-        Dart_handle face_cc = *uf_handle;
+        Dart_descriptor face_cc = *uf_handle;
         plane_cc.push_back(face_cc);
       }
 
@@ -372,7 +372,7 @@ namespace CGAL::internal::Hexmeshing
       PlaneSet new_plane_set;
 
       for (int pid = 0; pid < old_plane_set.size(); pid++){
-        std::queue<Dart_handle> to_explore;
+        std::queue<Dart_descriptor> to_explore;
         Union_find odd_union_find, even_union_find;
         FaceToHandle odd_face_to_handle, even_face_to_handle;
 
@@ -399,7 +399,7 @@ namespace CGAL::internal::Hexmeshing
         }
 
         while (!to_explore.empty()){
-          Dart_handle face = to_explore.front();
+          Dart_descriptor face = to_explore.front();
           to_explore.pop();
 
           // TODO write this in a better way, there is so much args / lines

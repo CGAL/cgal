@@ -26,9 +26,9 @@ namespace CGAL::internal::Hexmeshing
    * This function is typically used for debugging to ensure data integrity during mesh operations.
    *
    * @tparam i The dimension of the cell attributes to check (0 for vertex, 1 for edge, 2 for face, 3 for volume)
-   * @tparam DartArray Variadic template parameter for the dart handle arrays
+   * @tparam DartArray Variadic template parameter for the dart descriptor arrays
    * @param lcc The Linear Cell Complex
-   * @param array Variadic parameter containing arrays of dart handles to check
+   * @param array Variadic parameter containing arrays of dart descriptors to check
    */
   template <uint i, typename... DartArray>
   void assert_dart_attr_are_unique(LCC& lcc, DartArray... array)
@@ -70,7 +70,7 @@ namespace CGAL::internal::Hexmeshing
     assert_dart_attr_are_unique<2>(hdata.lcc, rdata.faces_of_plane);
 
     auto assertion = [&](){
-      for (Dart_handle face : rdata.faces_of_plane){
+      for (Dart_descriptor face : rdata.faces_of_plane){
         auto& attr = lcc.attribute<2>(face)->info();
         auto nodes = lcc.darts_of_cell<2, 0>(face);
         int marked = 0;

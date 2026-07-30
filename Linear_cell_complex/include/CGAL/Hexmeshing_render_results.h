@@ -24,10 +24,10 @@
 namespace CGAL {
   template <typename LCC>
   using LCCSceneOptions = CGAL::Graphics_scene_options<LCC,
-                          typename LCC::Dart_const_handle,
-                          typename LCC::Dart_const_handle,
-                          typename LCC::Dart_const_handle,
-                          typename LCC::Dart_const_handle>;
+                          typename LCC::Dart_const_descriptor,
+                          typename LCC::Dart_const_descriptor,
+                          typename LCC::Dart_const_descriptor,
+                          typename LCC::Dart_const_descriptor>;
 
   inline IO::Color viridis255(double t) {
     t = std::clamp(t, 0.0, 1.0);
@@ -71,12 +71,12 @@ namespace CGAL {
 
     LCCSceneOptions<internal::Hexmeshing::LCC> gso;
 
-    gso.colored_volume = [&](const internal::Hexmeshing::LCC& lcc, internal::Hexmeshing::LCC::Dart_const_handle dart){ return true; };
-    gso.volume_color = [&](const internal::Hexmeshing::LCC& lcc, internal::Hexmeshing::LCC::Dart_const_handle dart){
+    gso.colored_volume = [&](const internal::Hexmeshing::LCC& lcc, internal::Hexmeshing::LCC::Dart_const_descriptor dart){ return true; };
+    gso.volume_color = [&](const internal::Hexmeshing::LCC& lcc, internal::Hexmeshing::LCC::Dart_const_descriptor dart){
       double f = lcc.attribute<3>(dart)->info().fraction;
       return viridis255(f);
     };
-    gso.draw_volume = [&](const internal::Hexmeshing::LCC& lcc, internal::Hexmeshing::LCC::Dart_const_handle dart){
+    gso.draw_volume = [&](const internal::Hexmeshing::LCC& lcc, internal::Hexmeshing::LCC::Dart_const_descriptor dart){
       return true;
     };
 
@@ -90,11 +90,11 @@ namespace CGAL {
 
     LCCSceneOptions<internal::Hexmeshing::LCC> gso;
 
-    gso.colored_volume = [&](const internal::Hexmeshing::LCC& lcc, internal::Hexmeshing::LCC::Dart_const_handle dart){ return true; };
-    gso.volume_color = [&](const internal::Hexmeshing::LCC& lcc, internal::Hexmeshing::LCC::Dart_const_handle dart){
+    gso.colored_volume = [&](const internal::Hexmeshing::LCC& lcc, internal::Hexmeshing::LCC::Dart_const_descriptor dart){ return true; };
+    gso.volume_color = [&](const internal::Hexmeshing::LCC& lcc, internal::Hexmeshing::LCC::Dart_const_descriptor dart){
       return viridis255(lcc.attribute<3>(dart)->info().fraction);
     };
-    gso.draw_volume = [&](const internal::Hexmeshing::LCC& lcc, internal::Hexmeshing::LCC::Dart_const_handle dart){
+    gso.draw_volume = [&](const internal::Hexmeshing::LCC& lcc, internal::Hexmeshing::LCC::Dart_const_descriptor dart){
       return lcc.is_marked(dart, mark);
     };
 

@@ -68,16 +68,16 @@ namespace CGAL::internal::Hexmeshing
   }
 
   inline
-  std::vector<std::vector<Dart_handle>> get_neighbors_list_for_smoothing(LCC& lcc, size_type surface_mark, size_type inner_mark)
+  std::vector<std::vector<Dart_descriptor>> get_neighbors_list_for_smoothing(LCC& lcc, size_type surface_mark, size_type inner_mark)
   {
     int count_vertices = set_vertex_ids(lcc);
-    std::vector<std::vector<Dart_handle>> neighbors_list(count_vertices);
+    std::vector<std::vector<Dart_descriptor>> neighbors_list(count_vertices);
 
     auto edges = lcc.one_dart_per_cell<1>();
     for(auto edge = edges.begin(); edge != edges.end(); edge++) {
       bool inside = lcc.is_marked(edge, inner_mark);
       bool outside = !inside;
-      Dart_handle e = lcc.beta(edge, 3, 2);
+      Dart_descriptor e = lcc.beta(edge, 3, 2);
 
       while(e != nullptr and e != edge and lcc.attribute<3>(e) != nullptr) {
         if(lcc.is_marked(e, inner_mark)) {
@@ -115,9 +115,9 @@ namespace CGAL::internal::Hexmeshing
   {
     auto vertices = lcc.one_dart_per_cell<0>();
 
-    std::vector<std::vector<Dart_handle>> neighbors_list = get_neighbors_list_for_smoothing(lcc, surface_mark, inner_mark);
+    std::vector<std::vector<Dart_descriptor>> neighbors_list = get_neighbors_list_for_smoothing(lcc, surface_mark, inner_mark);
 
-    std::vector<std::pair<Dart_handle, Point>> new_points;
+    std::vector<std::pair<Dart_descriptor, Point>> new_points;
 
     for(auto vertex = vertices.begin(); vertex != vertices.end(); vertex++) {
       auto attr = lcc.attribute<0>(vertex);

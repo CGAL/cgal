@@ -47,8 +47,8 @@ namespace CGAL::internal::Hexmeshing
    * @param explored_face Mark to track explored faces
    */
   template <typename HexData>
-  void explore_face_of_plane(HexData& hdata, RefinementData& rdata, std::queue<Dart_handle>& queue,
-                             Dart_handle face, size_type explored_edge, size_type explored_face)
+  void explore_face_of_plane(HexData& hdata, RefinementData& rdata, std::queue<Dart_descriptor>& queue,
+                             Dart_descriptor face, size_type explored_edge, size_type explored_face)
   {
     LCC& lcc = hdata.lcc;
 
@@ -91,10 +91,10 @@ namespace CGAL::internal::Hexmeshing
         lcc.mark_cell<1>(dit, explored_edge);
 
         // Also add incident volumes while iterating
-        Dart_handle other_face = __adjacent_face_on_plane(lcc, rdata.iteration, dit, rdata.additionnal_volumes_found);
+        Dart_descriptor other_face = __adjacent_face_on_plane(lcc, rdata.iteration, dit, rdata.additionnal_volumes_found);
         // Also do the other way around to catch volumes in the opposite dir
         if (!lcc.is_free<3>(dit)){
-          Dart_handle other_face2 = __adjacent_face_on_plane(lcc, rdata.iteration, lcc.beta(dit, 3), rdata.additionnal_volumes_found);
+          Dart_descriptor other_face2 = __adjacent_face_on_plane(lcc, rdata.iteration, lcc.beta(dit, 3), rdata.additionnal_volumes_found);
           if (other_face == lcc.null_dart_descriptor) other_face  = other_face2;
         }
 
@@ -121,14 +121,14 @@ namespace CGAL::internal::Hexmeshing
    *
    * @tparam HexData Type of the hexahedral meshing data structure
    * @param hdata Hexahedral meshing data containing the Linear Cell Complex and marks
-   * @param face A dart handle representing the face to analyze for propagation marking
+   * @param face A dart descriptor representing the face to analyze for propagation marking
    * @param face_attr The face attribute containing the template_id information
    */
   template <typename HexData>
-  void mark_template_for_propagation(HexData &hdata, Dart_handle face, DartInfo::FaceAttrValue &face_attr)
+  void mark_template_for_propagation(HexData &hdata, Dart_descriptor face, DartInfo::FaceAttrValue &face_attr)
   {
     LCC& lcc = hdata.lcc;
-    Dart_handle marked_edge;
+    Dart_descriptor marked_edge;
     auto nodes = lcc.darts_of_cell<2, 0>(face);
 
     bool found = false;
@@ -159,9 +159,9 @@ namespace CGAL::internal::Hexmeshing
 
     assert(found);
 
-    Dart_handle face1 = lcc.beta(marked_edge, 2, 1, 1, 2);
-    Dart_handle face2 = lcc.beta(face1, 0, 2);
-    Dart_handle face3 = lcc.beta(face1, 0, 0, 2);
+    Dart_descriptor face1 = lcc.beta(marked_edge, 2, 1, 1, 2);
+    Dart_descriptor face2 = lcc.beta(face1, 0, 2);
+    Dart_descriptor face3 = lcc.beta(face1, 0, 0, 2);
 
     mark_half_face_unchecked(lcc, face1, hdata.propagation_face_mark);
     mark_half_face_unchecked(lcc, face3, hdata.propagation_face_mark);
@@ -190,11 +190,11 @@ namespace CGAL::internal::Hexmeshing
    * @tparam HexData Type of the hexahedral meshing data structure
    * @param hdata Hexahedral meshing data containing the Linear Cell Complex and marks
    * @param rdata Refinement data containing the current iteration and collections
-   * @param face A dart handle representing the face to propagate from
+   * @param face A dart descriptor representing the face to propagate from
    * @param explored_face_mark Mark used to track already explored faces
    */
   template <typename HexData>
-  void propagate_face(HexData &hdata, RefinementData &rdata, const Dart_handle &face, size_type explored_face_mark)
+  void propagate_face(HexData &hdata, RefinementData &rdata, const Dart_descriptor &face, size_type explored_face_mark)
   {
     LCC& lcc = hdata.lcc;
 
@@ -206,8 +206,8 @@ namespace CGAL::internal::Hexmeshing
     // It is garanted that faces and volumes added will be unique in our array
     // Because that back_hex is only accessible within the template itself, and not
     // accessible from the plane.
-    Dart_handle back_face = lcc.beta(face, 2, 1, 1, 2);
-    Dart_handle back_volume_face = lcc.beta(back_face, 3);
+    Dart_descriptor back_face = lcc.beta(face, 2, 1, 1, 2);
+    Dart_descriptor back_volume_face = lcc.beta(back_face, 3);
     assert(back_volume_face != nullptr);
     auto &back_vol_attr = get_or_create_refinement_volume(lcc, back_volume_face)->info();
 
@@ -274,7 +274,7 @@ namespace CGAL::internal::Hexmeshing
     int propagated_count = 0;
     int marked_for_prop_count = 0;
 
-    if (!skip_propagation) for (Dart_handle face : rdata.faces_of_plane){
+    if (!skip_propagation) for (Dart_descriptor face : rdata.faces_of_plane){
       auto& face_attr = lcc.attribute<2>(face)->info();
 
       if (face_attr.template_id == 4){
@@ -283,7 +283,7 @@ namespace CGAL::internal::Hexmeshing
           propagated_count++;
         }
 
-        Dart_handle other_face = lcc.beta(face, 3);
+        Dart_descriptor other_face = lcc.beta(face, 3);
         if (!lcc.is_free<3>(face) && is_half_face_marked(lcc, other_face, hdata.propagation_face_mark)) {
           propagate_face(hdata, rdata, other_face, explored_face_mark);
           propagated_count++;
@@ -293,7 +293,7 @@ namespace CGAL::internal::Hexmeshing
 
     if (rdata.iteration >= 2) return;
 
-    for (Dart_handle face : rdata.faces_of_plane){
+    for (Dart_descriptor face : rdata.faces_of_plane){
       auto& face_attr = lcc.attribute<2>(face)->info();
       if (face_attr.template_id < 1 or face_attr.template_id > 2) continue;
 
@@ -338,7 +338,7 @@ namespace CGAL::internal::Hexmeshing
     LCC& lcc = hdata.lcc;
 
     // Iterate over all faces of even planes
-    for (Dart_handle face : rdata.faces_of_plane)
+    for (Dart_descriptor face : rdata.faces_of_plane)
     {
       auto edges = lcc.darts_of_cell<2, 0>(face);
 
@@ -393,7 +393,7 @@ namespace CGAL::internal::Hexmeshing
       // Create second volume attr and push the face from the other volume
       if (!lcc.is_free<3>(face))
       {
-        Dart_handle other_face = lcc.beta(face, 3);
+        Dart_descriptor other_face = lcc.beta(face, 3);
         auto &other_vol_attr = get_or_create_refinement_volume(lcc, other_face)->info();
         bool other_vol_processed = other_vol_attr.iteration == rdata.iteration;
 
@@ -441,14 +441,14 @@ namespace CGAL::internal::Hexmeshing
     // No additionnal volumes should be found on the first iteration
     assert(rdata.iteration != 0 || rdata.iteration == 0 && rdata.additionnal_volumes_found.size() == 0);
 
-    for (Dart_handle initial_edge : rdata.additionnal_volumes_found)
+    for (Dart_descriptor initial_edge : rdata.additionnal_volumes_found)
     {
       auto &vol_attr = lcc.attribute<3>(initial_edge)->info();
 
       bool node_1_marked = lcc.is_marked(initial_edge, hdata.template_mark);
       bool node_2_marked = lcc.is_marked(lcc.other_extremity(initial_edge), hdata.template_mark);
 
-      Dart_handle adjacent_faces[] = {
+      Dart_descriptor adjacent_faces[] = {
         initial_edge,
         lcc.beta(initial_edge, 2),
 
@@ -514,7 +514,7 @@ namespace CGAL::internal::Hexmeshing
   template <typename HexData>
   void get_cells_to_refine(HexData &hdata, RefinementData &rdata, PlaneNormal iterationPlane)
   {
-    using PlaneCC = std::vector<Dart_handle>;
+    using PlaneCC = std::vector<Dart_descriptor>;
     using PlaneSet = std::vector<PlaneCC>;
 
     LCC& lcc = hdata.lcc;
@@ -527,13 +527,13 @@ namespace CGAL::internal::Hexmeshing
 
     // Explore all even planes
     for (int i = 1; i < plane_set.size(); i += 2) {
-      std::queue<Dart_handle> to_explore;
+      std::queue<Dart_descriptor> to_explore;
 
       for (auto start : plane_set[i])
         to_explore.push(start);
 
       while (!to_explore.empty()) {
-        Dart_handle front = to_explore.front();
+        Dart_descriptor front = to_explore.front();
         to_explore.pop();
         explore_face_of_plane(hdata, rdata, to_explore, front, explored_edge, explored_face);
       }

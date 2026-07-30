@@ -26,9 +26,9 @@ namespace CGAL::internal::Hexmeshing
 {
   // all volume cells need to have attribute
   inline
-  int __get_signal(LCC& lcc, Dart_handle vertex, size_type inner_mark)
+  int __get_signal(LCC& lcc, Dart_descriptor vertex, size_type inner_mark)
   {
-    std::array<Dart_handle, 8> volumes = volumes_around_node(lcc, vertex);
+    std::array<Dart_descriptor, 8> volumes = volumes_around_node(lcc, vertex);
     int inner_signal = 0;
     for(int i = 0; i < 8; i++) {
       auto it = volumes[i];
@@ -109,7 +109,7 @@ namespace CGAL::internal::Hexmeshing
     std::array<std::vector<int>, 256> resolve_templates = __get_solution_to_non_manifold_templates_list();
 
     auto vertices = lcc.one_dart_per_cell<0>();
-    std::queue<std::pair<Dart_handle, int>> que;
+    std::queue<std::pair<Dart_descriptor, int>> que;
     for(auto vertex = vertices.begin(); vertex != vertices.end(); vertex++) {
       int inner_signal = __get_signal(lcc, vertex, inner_mark);
       if(inner_signal == -1) continue;
@@ -128,7 +128,7 @@ namespace CGAL::internal::Hexmeshing
       int id = lcc.attribute<0>(vertex)->id;
       assert(counter[id] < NUMBER_OF_EPSILONS);
       double eps = epsilons[counter[id]++];
-      std::array<Dart_handle, 8> volumes = volumes_around_node(lcc, vertex);
+      std::array<Dart_descriptor, 8> volumes = volumes_around_node(lcc, vertex);
 
       int able_to_change = 0;
       for(auto volume: volumes) {

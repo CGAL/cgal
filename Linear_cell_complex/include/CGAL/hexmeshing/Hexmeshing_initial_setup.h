@@ -65,7 +65,7 @@ namespace CGAL::internal::Hexmeshing
       return lcc.null_dart_descriptor;
     };
 
-    auto __next_plane = [](LCC& lcc, Dart_handle start_plane, PlaneNormal plane){
+    auto __next_plane = [](LCC& lcc, Dart_descriptor start_plane, PlaneNormal plane){
       return lcc.beta(start_plane, 1, 2, 3, 2, 1);
     };
 
@@ -76,10 +76,10 @@ namespace CGAL::internal::Hexmeshing
 
       auto& plane_set = hdata.first_face_of_planes[p];
 
-      Dart_handle start_plane = __first_plane(hdata.lcc, plane);
+      Dart_descriptor start_plane = __first_plane(hdata.lcc, plane);
 
       for (int z = 0; z < hdata.grid.dims[p]; z++){
-        std::vector<Dart_handle> starts;
+        std::vector<Dart_descriptor> starts;
         starts.push_back(lcc.beta(start_plane, 0, 2));
 
         start_plane = __next_plane(lcc, start_plane, plane);
@@ -94,29 +94,29 @@ namespace CGAL::internal::Hexmeshing
       auto& plane_set = hdata.first_face_of_planes[p];
       for (int i = 0; i < plane_set.size(); i++) {
         plane_for_each_face(lcc, plane_set[i],
-          [&](Dart_handle face, auto& edges){
+          [&](Dart_descriptor face, auto& edges){
             auto& face_attr = get_or_create_attr<2>(lcc, face)->info();
             face_attr.plane[p] = true;
             face_attr.plane_id = i;
             face_attr.cc_id = 0;
           },
-          [&](Dart_handle edge){
+          [&](Dart_descriptor edge){
             return lcc.beta(edge, 2, 3, 2);
           });
       }
 
        // Last odd plane
        // int size = hdata.first_face_of_planes[p].size();
-       // Dart_handle start = hdata.first_face_of_planes[p][size-1][0];
+       // Dart_descriptor start = hdata.first_face_of_planes[p][size-1][0];
        // start = lcc.beta(start, 2, 1, 1, 2);
 
        // plane_for_each_face(lcc, start,
-       //  [&](Dart_handle face){
+       //  [&](Dart_descriptor face){
        //    auto& face_attr = get_or_create_attr<2>(lcc, face)->info();
        //    face_attr.plane[p] = true;
        //    face_attr.cc_id = 0;
        //  },
-       //  [&](Dart_handle edge){
+       //  [&](Dart_descriptor edge){
        //    return lcc.beta(edge, 2, 3, 2);
        //  });
     }

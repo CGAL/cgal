@@ -126,8 +126,8 @@ public:
 
 using LCC=CGAL::Linear_cell_complex_for_combinatorial_map
     <3,3, LCCTraits, LCCItemsForHexmeshing>;
-using Dart_handle = typename LCC::Dart_descriptor;
-using Vertex_handle = typename LCC::Vertex_attribute_descriptor;
+using Dart_descriptor = typename LCC::Dart_descriptor;
+using Vertex_descriptor = typename LCC::Vertex_attribute_descriptor;
 using size_type = typename LCC::size_type;
 
 using DartInfo = LCCItemsForHexmeshing::Dart_wrapper<LCC::Storage>;

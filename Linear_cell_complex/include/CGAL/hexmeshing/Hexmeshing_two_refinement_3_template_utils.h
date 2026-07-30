@@ -27,17 +27,17 @@ namespace CGAL::internal::Hexmeshing
    * through the marked faces.
    *
    * @param lcc The Linear Cell Complex
-   * @param marked_face A dart handle representing the marked face to start the search from
+   * @param marked_face A dart descriptor representing the marked face to start the search from
    * @param template_mark The mark used to identify template faces
-   * @return A dart handle pointing to the origin of the 3-template pattern, or null if not found
+   * @return A dart descriptor pointing to the origin of the 3-template pattern, or null if not found
    */
   inline
-  Dart_handle find_3_template_origin(LCC& lcc, Dart_handle marked_face, size_type template_mark) {
+  Dart_descriptor find_3_template_origin(LCC& lcc, Dart_descriptor marked_face, size_type template_mark) {
 
     auto _edges_count = lcc.darts_of_cell<2,1>(marked_face).size();
     assert(_edges_count == 6);
 
-    Dart_handle dart = marked_face;
+    Dart_descriptor dart = marked_face;
 
     // Get the origin dart : Find the two unmarked node on the face
     // since the 3 template is created by adjacent two 2-templates
@@ -79,12 +79,12 @@ namespace CGAL::internal::Hexmeshing
    * @param rdata Refinement data containing the current iteration direction
    * @param template_mark HexMeshingData template_mark
    * @param faces_to_check Queue of faces that need to be checked for template conflicts
-   * @param face A dart handle representing the face to check for adjacent 3-template conflicts
+   * @param face A dart descriptor representing the face to check for adjacent 3-template conflicts
    * @return true if a fix was applied (node was marked), false otherwise
    */
   inline
   bool fix_adjacent_3_templates(LCC &lcc, RefinementData &rdata, size_type template_mark,
-                                std::queue<Dart_handle>& faces_to_check, Dart_handle &face)
+                                std::queue<Dart_descriptor>& faces_to_check, Dart_descriptor &face)
   {
     // Transform nearby 3 templates into two 4 templates
     // if they both share the unmarked node
@@ -95,7 +95,7 @@ namespace CGAL::internal::Hexmeshing
 
     // find the unmarked edge;
     bool found = false;
-    Dart_handle edges_unmarked[2];
+    Dart_descriptor edges_unmarked[2];
 
     for (auto it = edges.begin(); it != edges.end() && !found; it++)
     {
@@ -110,8 +110,8 @@ namespace CGAL::internal::Hexmeshing
 
     bool is_impossible = false;
     for (int i = 0; i < 2; i++){
-      Dart_handle edge = edges_unmarked[i];
-      Dart_handle other_face = adjacent_face_on_plane(lcc, rdata.iteration, edge);
+      Dart_descriptor edge = edges_unmarked[i];
+      Dart_descriptor other_face = adjacent_face_on_plane(lcc, rdata.iteration, edge);
 
       if (other_face == lcc.null_dart_descriptor) continue;
 
@@ -161,8 +161,8 @@ namespace CGAL::internal::Hexmeshing
    * @param face2 Reference to the second neighboring face (may be modified)
    */
   template <typename HexData>
-  void clean_up_3_template(HexData &hdata, const Dart_handle &origin_dart, const Dart_handle &upper_edge,
-                           const Dart_handle lower_edge, Dart_handle &face1, Dart_handle &face2)
+  void clean_up_3_template(HexData &hdata, const Dart_descriptor &origin_dart, const Dart_descriptor &upper_edge,
+                           const Dart_descriptor lower_edge, Dart_descriptor &face1, Dart_descriptor &face2)
   {
     LCC& lcc = hdata.lcc;
 
@@ -171,8 +171,8 @@ namespace CGAL::internal::Hexmeshing
     if (lcc.attribute<2>(face1) != nullptr) face1_attr = lcc.attribute<2>(face1)->info();
     if (lcc.attribute<2>(face2) != nullptr) face2_attr = lcc.attribute<2>(face2)->info();
 
-    Dart_handle lower_mid_1 = lcc.insert_barycenter_in_cell<1>(lower_edge);
-    Dart_handle lower_mid_2 = lcc.beta(lower_mid_1, 2, 1);
+    Dart_descriptor lower_mid_1 = lcc.insert_barycenter_in_cell<1>(lower_edge);
+    Dart_descriptor lower_mid_2 = lcc.beta(lower_mid_1, 2, 1);
 
     thread_join_3_template_vertex__pairpair(hdata, lower_edge);
 
@@ -180,8 +180,8 @@ namespace CGAL::internal::Hexmeshing
     lcc.contract_cell<1>(lower_mid_2);
 
     // Contract the two remaining 2-darts faces
-    Dart_handle face_to_remove_1 = lcc.beta(upper_edge, 2, 1);
-    Dart_handle face_to_remove_2 = lcc.beta(upper_edge, 2, 1, 1, 2, 1, 2);
+    Dart_descriptor face_to_remove_1 = lcc.beta(upper_edge, 2, 1);
+    Dart_descriptor face_to_remove_2 = lcc.beta(upper_edge, 2, 1, 1, 2, 1, 2);
 
     assert(lcc.darts_of_orbit<1>(face_to_remove_1).size() == 2);
     assert(lcc.darts_of_orbit<1>(face_to_remove_2).size() == 2);
@@ -238,28 +238,28 @@ namespace CGAL::internal::Hexmeshing
       int nb_edges = lcc.darts_of_cell<2,1>(origin_dart).size();
       assert(nb_edges == 3);
 
-      Dart_handle vol2_origin_dart = lcc.beta(origin_dart, 3);
+      Dart_descriptor vol2_origin_dart = lcc.beta(origin_dart, 3);
 
-      Dart_handle upper_edge = lcc.beta(origin_dart, 0); //?
-      Dart_handle vol2_upper_edge = lcc.beta(upper_edge, 3);
+      Dart_descriptor upper_edge = lcc.beta(origin_dart, 0); //?
+      Dart_descriptor vol2_upper_edge = lcc.beta(upper_edge, 3);
 
       // Assert the origin dart have different directions on the adjacent volume
       // So assert that their opposite are equal
       assert(lcc.beta(origin_dart, 1) == lcc.beta(vol2_origin_dart, 0, 3));
 
       // Face of the two neighboring volumes to the created volume
-      Dart_handle face1 = lcc.beta(origin_dart, 2, 3);
-      Dart_handle face2 = lcc.beta(origin_dart, 1, 2, 3);
-      Dart_handle lower_edge = lcc.beta(upper_edge, 2, 1, 1);
+      Dart_descriptor face1 = lcc.beta(origin_dart, 2, 3);
+      Dart_descriptor face2 = lcc.beta(origin_dart, 1, 2, 3);
+      Dart_descriptor lower_edge = lcc.beta(upper_edge, 2, 1, 1);
 
-      Dart_handle vol2_face1 = lcc.beta(vol2_origin_dart, 2, 3);
-      Dart_handle vol2_face2 = lcc.beta(vol2_origin_dart, 0, 2, 3); // 0 because opposite directions
-      Dart_handle vol2_lower_edge = lcc.beta(vol2_upper_edge, 2, 1, 1);
+      Dart_descriptor vol2_face1 = lcc.beta(vol2_origin_dart, 2, 3);
+      Dart_descriptor vol2_face2 = lcc.beta(vol2_origin_dart, 0, 2, 3); // 0 because opposite directions
+      Dart_descriptor vol2_lower_edge = lcc.beta(vol2_upper_edge, 2, 1, 1);
 
       // Contract upper and lower edge into its barycenter
 
-      Dart_handle upper_mid_1 = lcc.insert_barycenter_in_cell<1>(upper_edge);
-      Dart_handle upper_mid_2 = lcc.beta(upper_mid_1, 2, 1);
+      Dart_descriptor upper_mid_1 = lcc.insert_barycenter_in_cell<1>(upper_edge);
+      Dart_descriptor upper_mid_2 = lcc.beta(upper_mid_1, 2, 1);
 
       thread_join_3_template_vertex__pair(hdata, upper_edge);
 
@@ -303,14 +303,14 @@ namespace CGAL::internal::Hexmeshing
       assert(lcc.attribute<2>(marked_face)->info().template_id == 3);
 
       // Query replace with the partial 3-template, making it into two volumes
-      Dart_handle origin_dart = find_3_template_origin(lcc, marked_face, hdata.template_mark);
+      Dart_descriptor origin_dart = find_3_template_origin(lcc, marked_face, hdata.template_mark);
       marked_face = origin_dart;
 
-      Dart_handle upper_d1 = origin_dart;
-      Dart_handle upper_d2 = lcc.beta(origin_dart, 1, 1);
+      Dart_descriptor upper_d1 = origin_dart;
+      Dart_descriptor upper_d2 = lcc.beta(origin_dart, 1, 1);
 
       // Create the missing edge to perform the query_replace
-      Dart_handle upper_edge = lcc.insert_cell_1_in_cell_2(upper_d1, upper_d2);
+      Dart_descriptor upper_edge = lcc.insert_cell_1_in_cell_2(upper_d1, upper_d2);
 
       size_type p = hdata.ext->partial_templates.query_replace_one_volume(lcc, marked_face, hdata.template_mark);
       assert(p == 0);
