@@ -3,15 +3,14 @@ namespace CGAL {
 /*!
 \ingroup PkgLinearCellComplexConstructions
 
-Two refinement algorithm described by \cgalCite{cgal:owen2017template-based} on a 3-dimensional linear cell complex.
-It performs grid-based hexahedral meshing for a given surface mesh with multiple refinement levels.
+generates a pure hexahedral mesh from a triangle mesh using the two refinement algorithm described in \cgalCite{cgal:owen2017template-based}.
 
-\tparam TriangleMesh a model of FaceListGraph
+\tparam TriangleMesh a model of `FaceListGraph`
 \param tmesh a triangle mesh 
 \param cube_cells_per_dim Grid cells per dimension
 \param nb_levels How many times to perform refinement
 \param trim Whether to apply trimming to remove excess volumes after refinement. A volume cell is considered to be excess if the full volume of it is outside of the surface mesh.
-              (default: false)
+              (default: `false`)
 
 \sa `CGAL::Linear_cell_complex_for_combinatorial_map`
 
