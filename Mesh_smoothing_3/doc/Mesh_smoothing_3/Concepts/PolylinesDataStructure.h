@@ -25,6 +25,12 @@ Index associated with an edge to identify the curve it belongs to. This is used 
 */
 using Curve_index = unspecified_type;
 
+/*!
+Descriptor used to access a vertex information. Should be compatible with the one used in MeshDataStructure.
+*/
+using Vertex_descriptor = unspecified_type;
+
+
 /// @}
 
 /// \name Operations
@@ -32,7 +38,7 @@ using Curve_index = unspecified_type;
 /// @{
 
 /*!
-Used only to reserve memory. std::size_t is optional but will avoid warnings.
+std::size_t is optional but will avoid warnings.
 */
 std::size_t nb_edges() const;
 
@@ -42,12 +48,12 @@ Provides an iterable range over the Edge_descriptor of the mesh
 unspecified_type edge_range() const;
 
 /*!
-Returns an identifier (curve id, segment id, ...) related to the given edge.
+Returns an identifier (curve id, segment id, ...) related to an edge.
 */
 Curve_index curve_id(Edge_descriptor edge) const;
 
 /*!
-Return the ith vertex of the edge (max 2). Vertex_descriptor as given in `MeshDataStructure`. 
+Return the ith vertex of an edge (max 2).
 */
 Vertex_descriptor edge_vertex(Edge_descriptor edge, unsigned i) const;
 

@@ -40,7 +40,7 @@ namespace default_structures {
         std::size_t nb_vertices() const { return 0; }
 
         Point_3 vertex_coordinates(Vertex_descriptor vertex) const { return {0.,0.,0.}; }
-        void set_new_vertex_coordinates(Vertex_descriptor vertex, Point_3 coord) {}   // only non const
+        void  set_vertex_coordinates(Vertex_descriptor vertex, Point_3 coord) {}   // only non const
 
         std::vector<Cell_descriptor> cell_range() const { return {}; } // should return a range of Cell_descriptor
         std::array<Vertex_descriptor, 4> cell_vertices(Cell_descriptor cell) const { return {0,0,0,0}; } // can return anything of size 4 with [int] operator
@@ -103,7 +103,7 @@ namespace basic_structures {
         std::size_t nb_vertices() const { return _points.size(); }
 
         Point_3 vertex_coordinates(Vertex_descriptor vertex) const { return _points[vertex]; }
-        void set_new_vertex_coordinates(Vertex_descriptor vertex, Point_3 coord) { _points[vertex] = coord; }   // only non const
+        void  set_vertex_coordinates(Vertex_descriptor vertex, Point_3 coord) { _points[vertex] = coord; }   // only non const
 
         utils::Contiguous_unsigned_range cell_range() const { return utils::Contiguous_unsigned_range{0, nb_cells()}; }
         std::array<Vertex_descriptor, 4> cell_vertices(Cell_descriptor cell) const { return _tetrahedra[cell]; }
@@ -166,7 +166,7 @@ namespace helper_structures {
         virtual std::size_t nb_vertices() const = 0;
 
         virtual Point3 vertex_coordinates(VertexDescriptor vertex) const = 0;
-        virtual void set_new_vertex_coordinates(VertexDescriptor vertex, Point3 coord) = 0;
+        virtual void  set_vertex_coordinates(VertexDescriptor vertex, Point3 coord) = 0;
 
         virtual InputCellRangeType input_cell_range() const = 0;
         virtual Shape const * get_element_shape(InputCellDescriptor cell) const = 0; // you can return nullptr if you want to ignore the cell
@@ -281,7 +281,7 @@ class Triangulation_3_wrapper {
     std::size_t nb_vertices() const { return tr.number_of_vertices(); }
 
     decltype(auto) vertex_coordinates(Vertex_descriptor vertex) const { return tr.point(vertex); }
-    void set_new_vertex_coordinates(Vertex_descriptor vertex, const Point_3& coord) {
+    void  set_vertex_coordinates(Vertex_descriptor vertex, const Point_3& coord) {
         vertex->set_point(coord);
     }
 
@@ -315,14 +315,14 @@ public:
     using Curve_index = C3t3::Curve_index;
 
     std::size_t nb_cells() const { return c3t3.number_of_cells(); }
-    std::size_t nb_faces() const { return c3t3.number_of_edges(); }
-    std::size_t nb_edges() const { return c3t3.number_of_facets(); }
+    std::size_t nb_faces() const { return c3t3.number_of_facets(); }
+    std::size_t nb_edges() const { return c3t3.number_of_edges(); }
     std::size_t nb_vertices() const { return c3t3.triangulation().number_of_vertices(); }
 
     decltype(auto) vertex_coordinates(Vertex_descriptor vertex) const {
         return c3t3.triangulation().point(vertex).point(); // c3t3 holds weighted points
     }
-    void set_new_vertex_coordinates(Vertex_descriptor vertex, const Point_3& coord) { vertex->set_point(Weighted_point_3{coord}); }
+    void  set_vertex_coordinates(Vertex_descriptor vertex, const Point_3& coord) { vertex->set_point(Weighted_point_3{coord}); }
     auto cell_range() const { return c3t3.cells_in_complex(); }
     std::array<Vertex_descriptor, 4> cell_vertices(Cell_descriptor cell) const {
         std::array<Vertex_descriptor, 4> vertices;

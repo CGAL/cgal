@@ -15,7 +15,7 @@ public:
 /// @{
 
 /*!
-Descriptor used to access a face information
+Descriptor used to access face information
 */
 using Face_descriptor = unspecified_type;
 
@@ -37,7 +37,7 @@ using Surface_patch_index = unspecified_type;
 /// @{
 
 /*!
-Used only to reserve memory. std::size_t is optional but will avoid warnings.
+std::size_t is optional but will avoid warnings.
 */
 std::size_t nb_faces() const;
 
@@ -47,12 +47,12 @@ Provides an iterable range over the Face_descriptor of the mesh
 unspecified_type face_range() const;
 
 /*!
-Returns the number of vertices of given face. std::size_t is optional but will avoid warnings.
+Returns the number of vertices of a face. std::size_t is optional but will avoid warnings.
 */
 std::size_t nb_face_vertices(Face_descriptor face) const;
 
 /*!
-Returns an identifier (patch id, face id, ...) related to the given face.
+Returns an identifier (patch id, face id, ...) related to a face.
 */
 Surface_patch_index patch_id(Face_descriptor face) const;
 

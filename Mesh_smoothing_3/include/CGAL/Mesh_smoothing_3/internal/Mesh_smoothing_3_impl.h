@@ -424,7 +424,7 @@ template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
 void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::update_mesh_coordinates() {
     for (auto [vertex_descriptor, compressed_id] : _vertex_original_to_compressed) {
         Eigen::Vector3d pt = Mesh_smoothing_3_internal::Math_functions::sub_col_vector(_compressed_coords, compressed_id);
-        _mesh.set_new_vertex_coordinates(vertex_descriptor, convert_to_user(pt));
+        _mesh. set_vertex_coordinates(vertex_descriptor, convert_to_user(pt));
     }
 }
 
