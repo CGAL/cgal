@@ -36,6 +36,7 @@ if(BRANCH_BUILD)
   set(CGAL_MODULES_DIR ${CGAL_ROOT}/Installation/cmake/modules)
   file(GLOB packages_dirs ${CGAL_ROOT}/*)
 #  message("packages_dirs: ${packages_dirs}")
+  set(CGAL_INCLUDE_DIRS)
   foreach(package_dir ${packages_dirs})
     set(inc_dir ${package_dir}/include)
     if(IS_DIRECTORY ${inc_dir}

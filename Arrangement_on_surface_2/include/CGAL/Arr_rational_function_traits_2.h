@@ -7,8 +7,8 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Oren Salzman <orenzalz@post.tau.ac.il >
-//                 Michael Hemmer <Michael.Hemmer@sophia.inria.fr>
+// Author(s) : Oren Salzman <orenzalz@post.tau.ac.il >
+//             Michael Hemmer <Michael.Hemmer@sophia.inria.fr>
 
 #ifndef CGAL_ARR_RATIONAL_ARC_TRAITS_D_1_H
 #define CGAL_ARR_RATIONAL_ARC_TRAITS_D_1_H
@@ -67,7 +67,6 @@ public:
   using Polynomial_traits_1 = typename Base_rational_arc_ds_1::Polynomial_traits_1;
 
   using Bound = typename Algebraic_kernel_d_1::Bound;
-  using Approximate_number_type = Bound;
 
   using Rational_function = CGAL::Arr_rational_arc::Rational_function<Algebraic_kernel_d_1>;
   using Cache = CGAL::Arr_rational_arc::Cache<Algebraic_kernel_d_1>;
@@ -116,10 +115,8 @@ public:
   Arr_rational_function_traits_2(const Self& other) :
     delete_ak(other.delete_ak_internal_flag()) {
     //copy kernel
-    if (delete_ak)
-      _ak_ptr = new Algebraic_kernel_d_1(*other.algebraic_kernel_d_1());
-    else
-      _ak_ptr = other.algebraic_kernel_d_1();
+    if (delete_ak) _ak_ptr = new Algebraic_kernel_d_1(*other.algebraic_kernel_d_1());
+    else _ak_ptr = other.algebraic_kernel_d_1();
 
     //copy cache
     _cache.initialize(other.cache(), _ak_ptr);
@@ -152,8 +149,7 @@ public:
     using second_argument_type = Polynomial_1;
     using result_type = X_monotone_curve_2;
 
-    X_monotone_curve_2 operator()( const Polynomial_1& P) const
-    { return X_monotone_curve_2(P, _traits->cache()); }
+    X_monotone_curve_2 operator()( const Polynomial_1& P) const { return X_monotone_curve_2(P, _traits->cache()); }
 
     template <typename InputIterator>
     X_monotone_curve_2 operator()( InputIterator begin, InputIterator end) const {
@@ -161,28 +157,22 @@ public:
       return X_monotone_curve_2(rat_vec, _traits->cache());
     }
 
-    X_monotone_curve_2 operator()(const Polynomial_1& P,
-                                  const Algebraic_real_1& x_s,
-                                  bool dir_right) const
+    X_monotone_curve_2 operator()(const Polynomial_1& P, const Algebraic_real_1& x_s, bool dir_right) const
     { return X_monotone_curve_2(P, x_s, dir_right, _traits->cache()); }
 
     template <typename InputIterator>
-    X_monotone_curve_2 operator()(InputIterator begin, InputIterator end,
-                                  const Algebraic_real_1& x_s,
+    X_monotone_curve_2 operator()(InputIterator begin, InputIterator end, const Algebraic_real_1& x_s,
                                   bool dir_right) const {
       Rat_vector rat_vec(begin,end);
       return X_monotone_curve_2(rat_vec, x_s, dir_right, _traits->cache());
     }
 
-    X_monotone_curve_2 operator()(const Polynomial_1& P,
-                                  const Algebraic_real_1& x_s,
-                                  const Algebraic_real_1& x_t) const
+    X_monotone_curve_2 operator()(const Polynomial_1& P, const Algebraic_real_1& x_s, const Algebraic_real_1& x_t) const
     { return X_monotone_curve_2(P, x_s, x_t, _traits->cache()); }
 
     template <typename InputIterator>
     X_monotone_curve_2 operator()(InputIterator begin, InputIterator end,
-                                  const Algebraic_real_1& x_s,
-                                  const Algebraic_real_1& x_t) const {
+                                  const Algebraic_real_1& x_s, const Algebraic_real_1& x_t) const {
       Rat_vector rat_vec(begin,end);
       return X_monotone_curve_2(rat_vec, x_s, x_t, _traits->cache());
     }
@@ -192,50 +182,37 @@ public:
     { return X_monotone_curve_2(P, Q, _traits->cache()); }
 
     template <typename InputIterator>
-    X_monotone_curve_2 operator()(InputIterator begin_numer,
-                                  InputIterator end_numer,
-                                  InputIterator begin_denom,
-                                  InputIterator end_denom) const {
+    X_monotone_curve_2 operator()(InputIterator begin_numer, InputIterator end_numer,
+                                  InputIterator begin_denom, InputIterator end_denom) const {
       Rat_vector rat_vec_numer(begin_numer,end_numer);
       Rat_vector rat_vec_denom(begin_denom,end_denom);
       return X_monotone_curve_2(rat_vec_numer, rat_vec_denom, _traits->cache());
     }
 
-    X_monotone_curve_2 operator()(const Polynomial_1& P, const Polynomial_1& Q,
-                                  const Algebraic_real_1& x_s,
+    X_monotone_curve_2 operator()(const Polynomial_1& P, const Polynomial_1& Q, const Algebraic_real_1& x_s,
                                   bool dir_right) const
     { return X_monotone_curve_2(P, Q, x_s, dir_right, _traits->cache()); }
 
     template <typename InputIterator>
-    X_monotone_curve_2 operator()(InputIterator begin_numer,
-                                  InputIterator end_numer,
-                                  InputIterator begin_denom,
-                                  InputIterator end_denom,
-                                  const Algebraic_real_1& x_s,
-                                  bool dir_right) const {
+    X_monotone_curve_2 operator()(InputIterator begin_numer, InputIterator end_numer,
+                                  InputIterator begin_denom, InputIterator end_denom,
+                                  const Algebraic_real_1& x_s, bool dir_right) const {
       Rat_vector rat_vec_numer(begin_numer,end_numer);
       Rat_vector rat_vec_denom(begin_denom,end_denom);
-      return X_monotone_curve_2(rat_vec_numer, rat_vec_denom, x_s,dir_right,
-                                _traits->cache());
+      return X_monotone_curve_2(rat_vec_numer, rat_vec_denom, x_s,dir_right, _traits->cache());
     }
 
-    X_monotone_curve_2 operator()(const Polynomial_1& P,
-                                  const Polynomial_1& Q,
-                                  const Algebraic_real_1& x_s,
-                                  const Algebraic_real_1& x_t) const
+    X_monotone_curve_2 operator()(const Polynomial_1& P, const Polynomial_1& Q,
+                                  const Algebraic_real_1& x_s, const Algebraic_real_1& x_t) const
     { return X_monotone_curve_2(P, Q, x_s, x_t, _traits->cache()); }
 
     template <typename InputIterator>
-    X_monotone_curve_2 operator()(InputIterator begin_numer,
-                                  InputIterator end_numer,
-                                  InputIterator begin_denom,
-                                  InputIterator end_denom,
-                                  const Algebraic_real_1& x_s,
-                                  const Algebraic_real_1& x_t) const {
+    X_monotone_curve_2 operator()(InputIterator begin_numer, InputIterator end_numer,
+                                  InputIterator begin_denom, InputIterator end_denom,
+                                  const Algebraic_real_1& x_s, const Algebraic_real_1& x_t) const {
       Rat_vector rat_vec_numer(begin_numer, end_numer);
       Rat_vector rat_vec_denom(begin_denom, end_denom);
-      return X_monotone_curve_2(rat_vec_numer, rat_vec_denom, x_s, x_t,
-                                _traits->cache());
+      return X_monotone_curve_2(rat_vec_numer, rat_vec_denom, x_s, x_t, _traits->cache());
     }
   };
 
@@ -279,28 +256,23 @@ public:
     { return Curve_2(P, x_s, dir_right, _traits->cache()); }
 
     template <typename InputIterator>
-    Curve_2 operator()(InputIterator begin, InputIterator end,
-                       const Algebraic_real_1& x_s, bool dir_right) const {
+    Curve_2 operator()(InputIterator begin, InputIterator end, const Algebraic_real_1& x_s, bool dir_right) const {
       Rat_vector rat_vec(begin, end);
       return Curve_2(rat_vec, x_s, dir_right, _traits->cache());
     }
 
-    Curve_2 operator()(const Polynomial_1& P,
-                       const Algebraic_real_1& x_s,
-                       const Algebraic_real_1& x_t) const {
+    Curve_2 operator()(const Polynomial_1& P, const Algebraic_real_1& x_s, const Algebraic_real_1& x_t) const {
       return Curve_2(P, x_s, x_t, _traits->cache());
     }
 
     template <typename InputIterator>
     Curve_2 operator()(InputIterator begin, InputIterator end,
-                       const Algebraic_real_1& x_s,
-                       const Algebraic_real_1& x_t) const {
+                       const Algebraic_real_1& x_s, const Algebraic_real_1& x_t) const {
       Rat_vector rat_vec(begin,end);
       return Curve_2(rat_vec, x_s, x_t, _traits->cache());
     }
 
-    Curve_2 operator()(const Polynomial_1& P, const Polynomial_1& Q) const
-    { return Curve_2(P, Q, _traits->cache()); }
+    Curve_2 operator()(const Polynomial_1& P, const Polynomial_1& Q) const { return Curve_2(P, Q, _traits->cache()); }
 
     template <typename InputIterator>
     Curve_2 operator()(InputIterator begin_numer, InputIterator end_numer,
@@ -310,8 +282,7 @@ public:
       return Curve_2(rat_vec_numer, rat_vec_denom, _traits->cache());
     }
 
-    Curve_2 operator()(const Polynomial_1& P, const Polynomial_1& Q,
-                       const Algebraic_real_1& x_s, bool dir_right) const
+    Curve_2 operator()(const Polynomial_1& P, const Polynomial_1& Q, const Algebraic_real_1& x_s, bool dir_right) const
     { return Curve_2(P, Q, x_s, dir_right, _traits->cache()); }
 
     template <typename InputIterator>
@@ -325,15 +296,13 @@ public:
     }
 
     Curve_2 operator()(const Polynomial_1& P, const Polynomial_1& Q,
-                       const Algebraic_real_1& x_s,
-                       const Algebraic_real_1& x_t) const
+                       const Algebraic_real_1& x_s, const Algebraic_real_1& x_t) const
     { return Curve_2(P, Q, x_s, x_t, _traits->cache()); }
 
     template <typename InputIterator>
     Curve_2 operator()(InputIterator begin_numer, InputIterator end_numer,
                        InputIterator begin_denom, InputIterator end_denom,
-                       const Algebraic_real_1& x_s,
-                       const Algebraic_real_1& x_t) const {
+                       const Algebraic_real_1& x_s, const Algebraic_real_1& x_t) const {
       Rat_vector rat_vec_numer(begin_numer,end_numer);
       Rat_vector rat_vec_denom(begin_denom,end_denom);
       return Curve_2(rat_vec_numer, rat_vec_denom, x_s, x_t, _traits->cache());
@@ -360,8 +329,7 @@ public:
 
   public:
     //!
-    Point_2 operator()(const Rational_function& rational_function,
-                       const Algebraic_real_1& x_coordinate)
+    Point_2 operator()(const Rational_function& rational_function, const Algebraic_real_1& x_coordinate) const
     { return Point_2(rational_function, x_coordinate); }
 
     //!
@@ -370,12 +338,11 @@ public:
       typename FT_rat_1::Decompose()(y,y_numer,y_denom);
 
       return Point_2(_traits->cache().get_rational_function(Rational(y_numer, y_denom)),
-                     _traits->algebraic_kernel_d_1()->
-                       construct_algebraic_real_1_object()(x));
+                     _traits->algebraic_kernel_d_1()->construct_algebraic_real_1_object()(x));
     }
 
     //!
-    Point_2 operator()(const Algebraic_real_1& x, const Rational& y) {
+    Point_2 operator()(const Algebraic_real_1& x, const Rational& y) const {
       Integer y_numer;
       Integer y_denom;
       typename FT_rat_1::Decompose()(y, y_numer, y_denom);
@@ -496,8 +463,7 @@ public:
   };
 
   /*! obtains a Construct_max_vertex_2 functor object. */
-  Construct_max_vertex_2 construct_max_vertex_2_object() const
-  { return Construct_max_vertex_2(); }
+  Construct_max_vertex_2 construct_max_vertex_2_object() const { return Construct_max_vertex_2(); }
 
   /*! A functor that checks whether a given curve is vertical. */
   class Is_vertical_2 {
@@ -538,8 +504,7 @@ public:
   };
 
   /*! obtains a Compare_y_at_x_2 functor object. */
-  Compare_y_at_x_2 compare_y_at_x_2_object () const
-  { return Compare_y_at_x_2(_cache); }
+  Compare_y_at_x_2 compare_y_at_x_2_object () const { return Compare_y_at_x_2(_cache); }
 
   /*! A functor that compares the y-coordinates of two curves
    * immediately to the left of their intersection point.
@@ -561,8 +526,7 @@ public:
      * \return The relative position of cv1 with respect to cv2 immdiately to
      *         the left of p: SMALLER, LARGER or EQUAL.
      */
-    Comparison_result operator()(const X_monotone_curve_2& cv1,
-                                 const X_monotone_curve_2& cv2,
+    Comparison_result operator()(const X_monotone_curve_2& cv1, const X_monotone_curve_2& cv2,
                                  const Point_2& p) const {
       // Make sure that p lies on both curves, and that both are defined to its
       // left (so their left endpoint is lexicographically smaller than p).
@@ -581,8 +545,7 @@ public:
   };
 
   /*! obtains a Compare_y_at_x_left_2 functor object. */
-  Compare_y_at_x_left_2 compare_y_at_x_left_2_object() const
-  { return Compare_y_at_x_left_2(_cache); }
+  Compare_y_at_x_left_2 compare_y_at_x_left_2_object() const { return Compare_y_at_x_left_2(_cache); }
 
   /*! A functor that compares the y-coordinates of two curves
    * immediately to the right of their intersection point.
@@ -604,13 +567,10 @@ public:
      * \return The relative position of cv1 with respect to cv2 immdiately to
      *         the right of p: SMALLER, LARGER or EQUAL.
      */
-    Comparison_result operator()(const X_monotone_curve_2& cv1,
-                                 const X_monotone_curve_2& cv2,
-                                 const Point_2& p) const {
+    Comparison_result operator()(const X_monotone_curve_2& cv1, const X_monotone_curve_2& cv2, const Point_2& p) const {
       // Make sure that p lies on both curves, and that both are defined to its
       // left (so their left endpoint is lexicographically smaller than p).
-      CGAL_precondition(cv1.point_position (p,_cache) == EQUAL &&
-                        cv2.point_position (p,_cache) == EQUAL);
+      CGAL_precondition(cv1.point_position (p,_cache) == EQUAL && cv2.point_position (p,_cache) == EQUAL);
 
 
       CGAL_precondition((cv1.right_parameter_space_in_x() != ARR_INTERIOR ||
@@ -783,8 +743,7 @@ public:
   };
 
   /*! obtains a Make_x_monotone_2 functor object. */
-  Make_x_monotone_2 make_x_monotone_2_object() const
-  { return Make_x_monotone_2(); }
+  Make_x_monotone_2 make_x_monotone_2_object() const { return Make_x_monotone_2(); }
 
   /*! A functor that splits a curve at a point. */
   class Split_2 {
@@ -823,9 +782,7 @@ public:
      * \return The past-the-end iterator.
      */
     template <typename OutputIterator>
-    OutputIterator operator()(const X_monotone_curve_2& cv1,
-                              const X_monotone_curve_2& cv2,
-                              OutputIterator oi)  const
+    OutputIterator operator()(const X_monotone_curve_2& cv1, const X_monotone_curve_2& cv2, OutputIterator oi)  const
     { return (cv1.intersect (cv2, oi,_cache)); }
   };
 
@@ -841,8 +798,7 @@ public:
      * \return (true) if the two curves are mergeable - if they are supported
      *         by the same line and share a common endpoint; (false) otherwise.
      */
-    bool operator()(const X_monotone_curve_2& cv1,
-                    const X_monotone_curve_2& cv2) const
+    bool operator()(const X_monotone_curve_2& cv1, const X_monotone_curve_2& cv2) const
     { return (cv1.can_merge_with(cv2)); }
   };
 
@@ -873,9 +829,7 @@ public:
      * \param c Output: The merged curve.
      * \pre The two curves are mergeable.
      */
-    void operator()(const X_monotone_curve_2& cv1,
-                    const X_monotone_curve_2& cv2,
-                    X_monotone_curve_2& c) const {
+    void operator()(const X_monotone_curve_2& cv1, const X_monotone_curve_2& cv2, X_monotone_curve_2& c) const {
       CGAL_precondition(m_traits->are_mergeable_2_object()(cv2, cv1));
 
       c = cv1;
@@ -919,8 +873,7 @@ public:
   };
 
   /*! obtains a Parameter_space_in_x_2 function object */
-  Parameter_space_in_x_2 parameter_space_in_x_2_object() const
-  { return Parameter_space_in_x_2(); }
+  Parameter_space_in_x_2 parameter_space_in_x_2_object() const { return Parameter_space_in_x_2(); }
 
   /*! A function object that obtains the parameter space of a geometric
    * entity along the y-axis
@@ -977,9 +930,7 @@ public:
      * \pre p lies in the interior of the parameter space.
      * \pre the ce end of the line xcv lies on a boundary.
      */
-    Comparison_result operator()(const Point_2& p,
-                                 const X_monotone_curve_2& xcv,
-                                 Arr_curve_end ce) const {
+    Comparison_result operator()(const Point_2& p, const X_monotone_curve_2& xcv, Arr_curve_end ce) const {
       Comparison_result r = xcv.compare_end(ce, p);
       if (r == EQUAL) return EQUAL;
       return (r == NEGATIVE) ? POSITIVE : NEGATIVE ;
@@ -1002,16 +953,13 @@ public:
      * \pre the ce1 end of the line xcv1 lies on a boundary.
      * \pre the ce2 end of the line xcv2 lies on a boundary.
      */
-    Comparison_result operator()(const X_monotone_curve_2 & xcv1,
-                                 Arr_curve_end ce1,
-                                 const X_monotone_curve_2 & xcv2,
-                                 Arr_curve_end ce2) const
+    Comparison_result operator()(const X_monotone_curve_2 & xcv1, Arr_curve_end ce1,
+                                 const X_monotone_curve_2 & xcv2, Arr_curve_end ce2) const
     { return xcv1.compare_ends(ce1, xcv2, ce2); }
   };
 
   /*! obtains a Compare_x_near_boundary_2 function object */
-  Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const
-  { return Compare_x_near_boundary_2(); }
+  Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const { return Compare_x_near_boundary_2(); }
 #endif
 
   /*! A function object that compares the y-coordinates of arc ends near the
@@ -1032,8 +980,7 @@ public:
      * boundary or on the right boundary of the parameter space.
      */
     Compare_y_near_boundary_2(Cache& cache) : _cache(cache) {}
-    Comparison_result operator()(const X_monotone_curve_2 & xcv1,
-                                 const X_monotone_curve_2 & xcv2,
+    Comparison_result operator()(const X_monotone_curve_2 & xcv1, const X_monotone_curve_2 & xcv2,
                                  Arr_curve_end ce) const {
       return (ce == ARR_MIN_END) ?
         xcv1.compare_at_minus_infinity(xcv2,_cache) :
@@ -1042,8 +989,7 @@ public:
   };
 
   /*! obtains a Compare_y_near_boundary_2 function object */
-  Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const
-  { return Compare_y_near_boundary_2(_cache); }
+  Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const { return Compare_y_near_boundary_2(_cache); }
 
 
   /*! A function object that compares at limit
@@ -1055,13 +1001,10 @@ public:
      * of xcv that is defined by ce at its limit.
      * Returns SMALLER, EQUAL, or LARGER accordingly.
      */
-    Comparison_result operator()(const Point_2& p,
-                                 const X_monotone_curve_2&  xcv,
-                                 Arr_curve_end ce) {
+    Comparison_result operator()(const Point_2& p, const X_monotone_curve_2&  xcv, Arr_curve_end ce) const {
       CGAL_precondition(Parameter_space_in_x_2()(xcv,ce) == ARR_INTERIOR);
       CGAL_precondition(Parameter_space_in_y_2()(xcv,ce) != ARR_INTERIOR);
-      return CGAL::compare(p.x(),
-                           (ce == ARR_MIN_END) ? xcv.left_x() : xcv.right_x());
+      return CGAL::compare(p.x(), (ce == ARR_MIN_END) ? xcv.left_x() : xcv.right_x());
     }
 
     /*! compares the curve end of  xcv1 that is defined by ce1
@@ -1069,10 +1012,8 @@ public:
      * at their limits in x.
      * Returns SMALLER, EQUAL, or LARGER accordingly.
      */
-    Comparison_result operator()(const X_monotone_curve_2&  xcv1,
-                                 Arr_curve_end ce1,
-                                 const X_monotone_curve_2&  xcv2,
-                                 Arr_curve_end ce2) {
+    Comparison_result operator()(const X_monotone_curve_2&  xcv1, Arr_curve_end ce1,
+                                 const X_monotone_curve_2&  xcv2, Arr_curve_end ce2) const {
       CGAL_precondition(Parameter_space_in_x_2()(xcv1,ce1) == ARR_INTERIOR);
       CGAL_precondition(Parameter_space_in_y_2()(xcv1,ce1) != ARR_INTERIOR);
       CGAL_precondition(Parameter_space_in_x_2()(xcv2,ce2) == ARR_INTERIOR);
@@ -1085,8 +1026,7 @@ public:
   }; //Compare_x_on_boundary_2
 
   /*! obtains a Compare_x_on_boundary_2 function object */
-  Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const
-  { return Compare_x_on_boundary_2(); }
+  Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const { return Compare_x_on_boundary_2(); }
   //@}
 
   /// \name Functor definitions for the Boolean set-operation traits.
@@ -1105,15 +1045,12 @@ public:
      * at their limits in x.
      * Returns SMALLER, EQUAL, or LARGER accordingly.
      */
-    Comparison_result operator()(const X_monotone_curve_2& xcv1,
-                                 const X_monotone_curve_2& xcv2,
-                                 Arr_curve_end ce) const
+    Comparison_result operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2, Arr_curve_end ce) const
     { return xcv1.compare_near_end(xcv2,ce,_cache); }
   }; //Compare_x_near_boundary_2
 
   /*! obtains a Compare_x_near_boundary_2 function object */
-  Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const
-  { return Compare_x_near_boundary_2(_cache); }
+  Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const { return Compare_x_near_boundary_2(_cache); }
 
   class Compare_endpoints_xy_2 {
   public:
@@ -1123,7 +1060,7 @@ public:
      * \return SMALLER if the curve is directed right;
      *         LARGER if the curve is directed left.
      */
-    Comparison_result operator()(const X_monotone_curve_2& cv) {
+    Comparison_result operator()(const X_monotone_curve_2& cv) const {
       if (cv.is_directed_right()) return (SMALLER);
       else return (LARGER);
     }
@@ -1138,7 +1075,7 @@ public:
      * \param cv The curve.
      * \return The opposite curve.
      */
-    X_monotone_curve_2 operator()(const X_monotone_curve_2& cv) { return (cv.flip()); }
+    X_monotone_curve_2 operator()(const X_monotone_curve_2& cv) const { return (cv.flip()); }
   };
 
   /*! obtains a Construct_opposite_2 functor object. */
@@ -1147,10 +1084,13 @@ public:
   //@}
 
   class Approximate_2 {
-    Approximate_number_type approx_x(const Point_2& p)
-    { return Approximate_number_type(p.x().lower()); }
+  public:
+    using Approximate_number_type = Bound;
 
-    Approximate_number_type approx_y(const Point_2& p) {
+  private:
+    Approximate_number_type approx_x(const Point_2& p) const { return Approximate_number_type(p.x().lower()); }
+
+    Approximate_number_type approx_y(const Point_2& p) const {
       using Polynomial_1 = typename Algebraic_kernel_d_1::Polynomial_1;
 
       typename CGAL::Coercion_traits<Polynomial_1,Bound>::Cast cast;
@@ -1159,7 +1099,9 @@ public:
     }
 
   public:
-    Approximate_number_type operator()(const Point_2& p, int i){
+    /*!
+     */
+    Approximate_number_type operator()(const Point_2& p, int i) const {
       if (i == 0) return approx_x(p);
       if (i == 1) return approx_y(p);
       CGAL_assertion(false);
@@ -1172,7 +1114,7 @@ public:
   void cleanup_cache() const { _cache.cleanup(); }
 }; // Arr_rational_function_traits_2
 
-}  // namespace CGAL {
+} // namespace CGAL {
 
 #include <CGAL/enable_warnings.h>
 

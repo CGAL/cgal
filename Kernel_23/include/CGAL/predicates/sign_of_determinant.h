@@ -18,6 +18,7 @@
 #ifndef CGAL_PREDICATES_SIGN_OF_DETERMINANT_H
 #define CGAL_PREDICATES_SIGN_OF_DETERMINANT_H
 
+#include <array>
 #include <CGAL/determinant.h>
 #include <CGAL/number_utils_classes.h>
 #include <CGAL/number_type_basic.h>
@@ -48,16 +49,16 @@ sign_of_determinant( const RT& a00,  const RT& a01,  const RT& a02,
 
 template <class RT>
 inline
-std::pair<typename Sgn<RT>::result_type,typename Sgn<RT>::result_type>
+std::array<typename Sgn<RT>::result_type,2>
 sign_of_determinants(const RT& a00, const RT& a01, const RT& a02, const RT& b02,
                      const RT& a10, const RT& a11, const RT& a12, const RT& b12,
                      const RT& a20, const RT& a21, const RT& a22, const RT& b22)
 {
-  std::pair<RT,RT> det = determinants(a00, a01, a02, b02,
+  std::array<RT,2> det = determinants(a00, a01, a02, b02,
                                       a10, a11, a12, b12,
                                       a20, a21, a22, b22);
 
- return std::make_pair(CGAL_NTS sign(det.first), CGAL_NTS sign(det.second));
+ return { CGAL_NTS sign(det[0]), CGAL_NTS sign(det[1]) };
 }
 
 

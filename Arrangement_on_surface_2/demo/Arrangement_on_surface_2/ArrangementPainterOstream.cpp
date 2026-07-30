@@ -173,7 +173,8 @@ operator<<(const X_monotone_curve_2& curve) {
   double error = world_xdiff / screen_xdiff;
 
   auto paint_curve = [&](auto&& curve_) {
-    using Approximate_point_2 = typename Traits::Approximate_point_2;
+    using Traits_approximate_2 = typename Traits::Approximate_2;
+    using Approximate_point_2 = typename Traits_approximate_2::Approximate_point_2;
     std::vector<Approximate_point_2> points;
     auto aprox = traits.approximate_2_object();
     aprox(curve_, error, std::back_inserter(points));

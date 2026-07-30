@@ -396,9 +396,11 @@ const char FRAGMENT_SOURCE_CLIPPING_PLANE[]=R"DELIM(
 
 out mediump vec4 out_color;
 
+uniform mediump vec4 u_Color;
+
 void main(void)
 {
-  out_color = vec4(0.0, 0.0, 0.0, 1.0);
+  out_color = u_Color;
 }
 )DELIM";
 
@@ -861,7 +863,7 @@ void main(void)
     discard;
   }
 
-  // Opaque edge: output the solid edge colour. The framebuffer multisampling
+  // Opaque edge: output the solid edge color. The framebuffer multisampling
   // smooths the silhouette, so the edge stays fully solid at any width without
   // any per-pixel blending.
   out_color = fColor;
@@ -869,7 +871,7 @@ void main(void)
 )DELIM";
 
 // Vertex-disk join for the flat edges. Takes each edge (a line) and emits a small
-// screen-space disk at both endpoints, in the edge colour and at the edge width,
+// screen-space disk at both endpoints, in the edge color and at the edge width,
 // so the square-cap corners where flat edges meet are filled. It reuses the same
 // pixel-to-clip conversion as the wide-edge shader, so the disk radius matches the
 // edge half-width. Drawing from the edges (not the point set) skips degenerate

@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.12...3.31)
 project(AABB_traits_benchmark)
 
-find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Core)
+find_package(CGAL REQUIRED)
 
 create_single_source_cgal_program("old_bench_AABB_tree.cpp")
 create_single_source_cgal_program("tree_construction.cpp")

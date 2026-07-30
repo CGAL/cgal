@@ -19,7 +19,7 @@
 #define CGAL_DETERMINANT_H
 
 #include <CGAL/kernel_config.h>
-#include <utility>
+#include <array>
 
 namespace CGAL {
 
@@ -54,7 +54,7 @@ determinant(
 
 template <class RT>
 CGAL_KERNEL_MEDIUM_INLINE
-std::pair<RT,RT>
+std::array<RT,2>
 determinants(
  const RT& a00,  const RT& a01,  const RT& a02, const RT& b02,
  const RT& a10,  const RT& a11,  const RT& a12, const RT& b12,
@@ -67,7 +67,7 @@ determinants(
 // Now compute the minors of rank 3
   const RT m012a = m01*a22 - m02*a12 + m12*a02;
   const RT m012b = m01*b22 - m02*b12 + m12*b02;
-  return std::make_pair(m012a, m012b);
+  return {m012a, m012b};
 }
 
 
