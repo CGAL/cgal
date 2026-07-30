@@ -17,19 +17,11 @@
 
 namespace CGAL
 {
-  inline
-  internal::Hexmeshing::LCC generate_two_refinement_mesh_from_file
-      (const std::string& file, int cube_cells_per_dim, int nb_levels, bool trim=false)
+  template <typename TriangleMesh>
+  internal::Hexmeshing::LCC generate_hexahedral_mesh_using_two_refinement
+  (const TriangleMesh& tmesh, int cube_cells_per_dim, int nb_levels, bool trim=false)
   {
-    internal::Hexmeshing_for_linear_cell_complex hdata(file, cube_cells_per_dim);
-    hdata.two_refinement(nb_levels, trim);
-    return hdata.lcc;
-  }
-
-  template <typename TriangleMesh=internal::Hexmeshing::Polyhedron>
-  internal::Hexmeshing::LCC generate_two_refinement_mesh(TriangleMesh& poly, int cube_cells_per_dim, int nb_levels, bool trim=false)
-  {
-    internal::Hexmeshing_for_linear_cell_complex<TriangleMesh> hdata(poly, cube_cells_per_dim);
+    internal::Hexmeshing_for_linear_cell_complex<TriangleMesh> hdata(tmesh, cube_cells_per_dim);
     hdata.two_refinement(nb_levels, trim);
     return hdata.lcc;
   }
