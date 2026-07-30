@@ -78,8 +78,7 @@
 \cgalCRPSubsection{Operations for Linear Cell Complex}
 - `CGAL::compute_normal_of_cell_0<LCC>`
 - `CGAL::compute_normal_of_cell_2<LCC>`
-- `CGAL::generate_two_refinement_mesh`
-- `CGAL::generate_two_refinement_mesh_from_file`
+- `CGAL::generate_hexahedral_mesh_using_two_refinement`
 
 \cgalCRPSubsection{Draw a Linear Cell Complex}
 - \link PkgDrawLinearCellComplex CGAL::draw<LCC>() \endlink
