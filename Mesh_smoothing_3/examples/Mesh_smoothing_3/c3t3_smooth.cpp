@@ -173,7 +173,7 @@ int main(int argc, char* argv[])
 
     CGAL::dump_c3t3(c3t3_deformed, "c3t3_deformed");
     
-    CGAL::boundary_aware_mesh_smoothing(c3t3_deformed, params::verbose(true), params::number_of_iterations(100));
+    CGAL::boundary_aware_mesh_smoothing(c3t3_deformed, params::verbose(true).number_of_iterations(100));
 
     CGAL::dump_c3t3(c3t3_deformed, "c3t3_smoothed");
 
