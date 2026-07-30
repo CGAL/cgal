@@ -4,7 +4,7 @@
 
 The concept `MeshDataStructure` describes the way the tetrahedral mesh will be accessed and modified.
 
-\sa `CGAL::Mesh_optimization::Mesh_smoother`
+\sa `CGAL::Mesh_smoothing_3::Mesh_smoother`
 
 */
 class MeshDataStructure {
@@ -37,7 +37,7 @@ using Point_3 = unspecified_type;
 /// @{
 
 /*!
-Used only to reserve memory. std::size_t is optional but will avoid warnings.
+std::size_t is optional but will avoid warnings.
 */
 std::size_t nb_cells() const;
 
@@ -47,14 +47,14 @@ std::size_t nb_cells() const;
 std::size_t nb_vertices() const;
 
 /*!
-Access the coordinates of the given point. 
+Access the coordinates of a vertex.
 */
 Point_3 vertex_coordinates(Vertex_descriptor vertex) const;
 
 /*!
-Change the coordinates of the given point. 
+Change the coordinates of a vertex.
 */
-void set_new_vertex_coordinates(Vertex_descriptor vertex, Point_3 coord);
+void set_vertex_coordinates(Vertex_descriptor vertex, Point_3 coord);
 
 /*!
 Provide an iterable range over the Cell_descriptors of the mesh
@@ -62,14 +62,14 @@ Provide an iterable range over the Cell_descriptors of the mesh
 unspecified_type cell_range() const;
 
 /*!
-Access the 4 vertices of a cell. 
-Returns container behaving like std::array<Vertex_descriptor, 4> 
+Access the 4 vertices of a cell.
+Returns container behaving like std::array<Vertex_descriptor, 4>
 */
 unspecified_type cell_vertices(Cell_descriptor cell) const;
 
 /*!
-Optimal shape of the given cell. 
-Returns container behaving like std::array<Point_3, 4> 
+Optimal shape of the given cell.
+Returns container behaving like std::array<Point_3, 4>
 */
 unspecified_type cell_reference_shape(Cell_descriptor cell) const;
 

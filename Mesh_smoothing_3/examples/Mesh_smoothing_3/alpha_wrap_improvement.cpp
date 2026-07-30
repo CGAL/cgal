@@ -79,7 +79,7 @@ public:
     std::size_t nb_vertices() const { return tetmesh.number_of_vertices(); }
 
     Point_3 vertex_coordinates(Vertex_descriptor vertex) const { return tetmesh.point(vertex); }
-    void set_new_vertex_coordinates(Vertex_descriptor vertex, Point_3 coord) {
+    void  set_vertex_coordinates(Vertex_descriptor vertex, Point_3 coord) {
         vertex->set_point(coord);
     }  // only non const
 

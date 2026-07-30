@@ -19,7 +19,7 @@ public:
     unsigned nb_vertices() const { return V.rows(); }
 
     Point_3 vertex_coordinates(Vertex_descriptor vertex) const { return V.row(vertex); }
-    void set_new_vertex_coordinates(int vertex, Point_3 coord) { V.row(vertex) = coord; }
+    void  set_vertex_coordinates(int vertex, Point_3 coord) { V.row(vertex) = coord; }
 
     Contiguous_unsigned_range cell_range() const {
         return Contiguous_unsigned_range{0, nb_cells()};

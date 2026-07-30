@@ -12,7 +12,7 @@ public:
     Point_3 vertex_coordinates(Vertex_descriptor vertex) const override {
         return mesh.vert(vertex);
     }
-    void set_new_vertex_coordinates(int vertex, Point_3 coord) override { mesh.vert(vertex) = coord; }
+    void  set_vertex_coordinates(int vertex, Point_3 coord) override { mesh.vert(vertex) = coord; }
 
     Contiguous_unsigned_range input_cell_range() const override { return Contiguous_unsigned_range{0, mesh.num_polys()}; }
 

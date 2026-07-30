@@ -15,7 +15,7 @@ public:
     Point_3 vertex_coordinates(Vertex_descriptor vertex) const override {
         return mesh.vertices.point(vertex);
     }
-    void set_new_vertex_coordinates(GEO::index_t vertex, Point_3 coord) override { mesh.vertices.point(vertex) = coord; }
+    void  set_vertex_coordinates(GEO::index_t vertex, Point_3 coord) override { mesh.vertices.point(vertex) = coord; }
 
     GEO::index_range input_cell_range() const override { return GEO::index_range{mesh.cells.begin(), mesh.cells.end()}; }
 

@@ -1,4 +1,4 @@
-/* Mesh_optimization: This code was cleaned to be C++ ready and only include orient3d. 
+/* Mesh_smoothing_3: This code was cleaned to be C++ ready and only include orient3d. 
 contributions from Cinolib and libigl were included. 
 */
 
