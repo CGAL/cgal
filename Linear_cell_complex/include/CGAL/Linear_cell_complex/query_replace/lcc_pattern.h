@@ -13,8 +13,8 @@
 #ifndef LCC_PATTERN_H
 #define LCC_PATTERN_H
 
-#include "lcc_barycentric_coord.h"
-#include "cmap_signature.h"
+#include <CGAL/Linear_cell_complex/lcc_barycentric_coord.h>
+#include <CGAL/Linear_cell_complex/query_replace/cmap_signature.h>
 
 #include <CGAL/Barycentric_coordinates_3/tetrahedron_coordinates_3.h>
 //#include <CGAL/Barycentric_coordinates_3/Mean_value_coordinates_3.h>
