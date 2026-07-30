@@ -374,7 +374,7 @@ bool test_move_points_onto_mesh<1>() {
   LCC lcc = create_grid_mesh(4, 4, 4);
   const double xyz_sum = 5.1;
   size_type move_mark = lcc.get_new_mark();
-  auto detectIntersection = [&](LCC& lcc, Dart_handle dart) -> bool {
+  auto detectIntersection = [&](LCC& lcc, Dart_descriptor dart) -> bool {
     auto &face_attr = lcc.attribute<2>(dart)->info();
     Point p = face_attr.dual_edge.source();
     Point q = face_attr.dual_edge.target();
@@ -428,7 +428,7 @@ bool test_move_points_onto_mesh<2>() {
   LCC lcc = create_grid_mesh(4, 4, 4);
   const double xy_size = 1.3;
   size_type move_mark = lcc.get_new_mark();
-  auto detectIntersection = [&](LCC& lcc, Dart_handle dart) -> bool {
+  auto detectIntersection = [&](LCC& lcc, Dart_descriptor dart) -> bool {
     auto &face_attr = lcc.attribute<2>(dart)->info();
     Point p = face_attr.dual_edge.source();
     Point q = face_attr.dual_edge.target();
@@ -492,7 +492,7 @@ bool test_volumes_around_node<1>() {
                                         0b000'100'101'001'010'110'111'011,
                                         0b000'010'011'001'100'110'111'101,
                                         0b000'001'011'010'100'101'111'110};
-  auto checker = [&](std::array<Dart_handle, 8> volumes)->bool {
+  auto checker = [&](std::array<Dart_descriptor, 8> volumes)->bool {
     Point base = lcc.attribute<3>(volumes[0])->info().centroid;
     int code = 0, base_code = !is_approximately_equal_double(base.x(), 0.5) ^ !is_approximately_equal_double(base.y(), 0.5) ^ !is_approximately_equal_double(base.z(), 0.5);
     for(int i = 1; i < 8; i++) {
@@ -514,7 +514,7 @@ bool test_volumes_around_node<1>() {
   auto darts = lcc.darts();
   for(auto dart = darts.begin(); dart != darts.end(); dart++) {
     if(is_approximately_equal_Point({1, 1, 1}, lcc.point(dart))) {
-      std::array<Dart_handle, 8> volumes = volumes_around_node(lcc, dart);
+      std::array<Dart_descriptor, 8> volumes = volumes_around_node(lcc, dart);
       if(!checker(volumes)) {
         return false;
       }
@@ -530,7 +530,7 @@ template<>
 bool test_get_signal<1>() {
   LCC lcc = create_grid_mesh(2, 2, 2);
   size_type test_mark = lcc.get_new_mark();
-  std::array<Dart_handle, 8> volumes;
+  std::array<Dart_descriptor, 8> volumes;
   set_centroids(lcc); // just for setting attributes on 3-cells
 
   auto vertices = lcc.one_dart_per_cell<0>();
@@ -1047,7 +1047,7 @@ bool test_get_neighbors_list_for_smoothing<1>() {
   // CGAL::HexRefinement::render_two_refinement_result_with_mark(lcc, no_mark);
   move_points_onto_mesh_with_volume_fraction(lcc, move_mark, inner_mark);
 
-  std::vector<std::vector<Dart_handle>> neighbors_list = get_neighbors_list_for_smoothing(lcc, move_mark, inner_mark);
+  std::vector<std::vector<Dart_descriptor>> neighbors_list = get_neighbors_list_for_smoothing(lcc, move_mark, inner_mark);
 
   lcc.free_mark(no_mark);
   lcc.free_mark(inner_mark);
@@ -1104,7 +1104,7 @@ bool test_get_neighbors_list_for_smoothing<2>() {
   // CGAL::HexRefinement::render_two_refinement_result_with_mark(lcc, no_mark);
   move_points_onto_mesh_with_volume_fraction(lcc, move_mark, inner_mark);
 
-  std::vector<std::vector<Dart_handle>> neighbors_list = get_neighbors_list_for_smoothing(lcc, move_mark, inner_mark);
+  std::vector<std::vector<Dart_descriptor>> neighbors_list = get_neighbors_list_for_smoothing(lcc, move_mark, inner_mark);
 
   lcc.free_mark(no_mark);
   lcc.free_mark(inner_mark);
@@ -1146,7 +1146,7 @@ template<>
 bool test_surface_smoothing<1>() {
   LCC lcc = create_grid_mesh(4, 4, 4);
 
-  std::array<std::array<Dart_handle, 5>, 5> darts;
+  std::array<std::array<Dart_descriptor, 5>, 5> darts;
 
   size_type surface_mark = lcc.get_new_mark();
   size_type inner_mark = lcc.get_new_mark();
@@ -1207,7 +1207,7 @@ template<>
 bool test_surface_smoothing<2>() {
   LCC lcc = create_grid_mesh(4, 4, 4);
 
-  std::array<std::array<Dart_handle, 5>, 5> darts;
+  std::array<std::array<Dart_descriptor, 5>, 5> darts;
 
   size_type surface_mark = lcc.get_new_mark();
   size_type inner_mark = lcc.get_new_mark();
@@ -1261,13 +1261,10 @@ bool test_surface_smoothing<2>() {
   return true;
 }
 
-
-
-int main() {
-
+int main()
+{
   TestFramework test;
 
-  // テストいっぱい
   test.test("test set_dual_edges", test_set_dual_edges<1>);
   test.test("test __set_gradient_at_dual_node", test_set_gradient_at_dual_node<1>);
   test.test_approximate_value<std::vector<Point>>("test laplacian_smoothing_for_unmarked_cells without move", answer_laplacian_smoothing_for_unmarked_cells<1>(), test_laplacian_smoothing_for_unmarked_cells<1>, [](std::vector<Point> a, std::vector<Point> b)->bool{return is_approximately_equal_Points(a, b);});
@@ -1293,4 +1290,6 @@ int main() {
   test.test("test surface_smoothing a curved plane", test_surface_smoothing<2>);
 
   test.print_summary();
+
+  return EXIT_SUCCESS;
 }

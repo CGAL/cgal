@@ -264,10 +264,13 @@ void render_meshes_at_each_phase() {
   std::cout << "test passed\n" << std::endl;
 }
 
-int main() {
+int main()
+{
   render_meshes_at_each_phase<4, false>();
   render_meshes_at_each_phase<6, false>();
   render_meshes_at_each_phase<20, false>();
   render_meshes_at_each_phase<1, true>();
   render_meshes_at_each_phase<6, true>();
+
+  return EXIT_SUCCESS;
 }
