@@ -133,11 +133,13 @@ using size_type = typename LCC::size_type;
 using DartInfo = LCCItemsForHexmeshing::Dart_wrapper<LCC::Storage>;
 
 // Do not use this, only to satisfy lcc.is_isomorphic_to
+inline
 bool operator==(const DartInfo::VolumeAttrValue& /*first*/,
                 const DartInfo::VolumeAttrValue& /*second*/)
 { return true; }
 
 // Do no use this, only to statisfy lcc.is_isomorphic_to
+inline
 bool operator==(const DartInfo::FaceAttrValue& /*first*/,
                 const DartInfo::FaceAttrValue& /*second*/)
 { return true; }
