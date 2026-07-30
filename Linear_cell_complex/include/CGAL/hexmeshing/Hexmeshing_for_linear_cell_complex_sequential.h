@@ -26,9 +26,7 @@
 #include <CGAL/Linear_cell_complex/query_replace/cmap_query_replace.h>
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Linear_cell_complex_traits.h>
-#include <CGAL/Combinatorial_map_save_load.h>
 #include <CGAL/config.h>
-#include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 #include <vector>
 #include <cstdlib>
 #include <filesystem>
@@ -44,7 +42,7 @@ namespace CGAL::internal
  * including the Linear Cell Complex (LCC), grid configuration, and various
  * markers used during mesh generation and refinement.
  */
-template<typename TriangleMesh=Hexmeshing::Polyhedron>
+template<typename TriangleMesh>
 class Hexmeshing_for_linear_cell_complex
 {
 public:
@@ -85,9 +83,10 @@ public:
   int level = 0;             ///< Current refinement level
   std::array<PlaneSet, 3> first_face_of_planes;  ///< First faces of each plane set (X, Y, Z)
 
-  Hexmeshing_for_linear_cell_complex(const std::string& file, int cube_cells_per_dim) : mesh(file, cube_cells_per_dim) {}
-  Hexmeshing_for_linear_cell_complex(TriangleMesh& poly_out, int cube_cells_per_dim) : mesh(poly_out, cube_cells_per_dim) {}
-  Hexmeshing_for_linear_cell_complex(TriangleMesh poly_out, Hexmeshing::Grid grid_out) : mesh(poly_out, grid_out) {}
+  Hexmeshing_for_linear_cell_complex(const TriangleMesh& poly_out, int cube_cells_per_dim) :
+    mesh(poly_out, cube_cells_per_dim) {}
+  Hexmeshing_for_linear_cell_complex(TriangleMesh poly_out, Hexmeshing::Grid grid_out) :
+    mesh(poly_out, grid_out) {}
 
   /**
    * @brief Fixes invalid dart descriptors after refinement
