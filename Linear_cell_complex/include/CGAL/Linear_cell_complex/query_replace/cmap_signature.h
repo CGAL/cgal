@@ -1162,10 +1162,10 @@ void copy_match(LCC& lcc, const Signature& word,
                 <typename LCC::Dart_descriptor, typename LCC::Dart_descriptor>*
                     copy_to_origin=nullptr)
 {
-  // Construct another map with reversed key and value to find handle from indice
-  std::unordered_map<MyInt, typename LCC::Dart_descriptor> handle_from_indice;
+  // Construct another map with reversed key and value to find descriptor from indice
+  std::unordered_map<MyInt, typename LCC::Dart_descriptor> descriptor_from_indice;
   for(auto pair : indices)
-  { handle_from_indice[pair.second] = pair.first; }
+  { descriptor_from_indice[pair.second] = pair.first; }
 
   std::vector<typename LCC::Dart_descriptor> to_copy; //contains one dart of each cell to copy
 
@@ -1175,7 +1175,7 @@ void copy_match(LCC& lcc, const Signature& word,
 
   for(unsigned int i=1; i<=word.size()/dimension; ++i)
   {
-    typename LCC::Dart_descriptor dh = handle_from_indice.at(i);
+    typename LCC::Dart_descriptor dh = descriptor_from_indice.at(i);
     if(!lcc.is_marked(dh, to_be_copied))
     {
       to_copy.push_back(dh);

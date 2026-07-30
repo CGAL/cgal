@@ -266,7 +266,7 @@ bool save_lcc_surface_into_manifold_vtk(const std::string& filename,
   fo << std::setprecision(10);
 
   // Dump point coordinates and build index map
-  std::unordered_map<typename LCC::Vertex_attribute_handle, std::size_t> index;
+  std::unordered_map<typename LCC::Vertex_attribute_descriptor, std::size_t> index;
   std::size_t nb = 0;
   typename LCC::Dart_descriptor sd;
   for (auto itv = lcc.vertex_attributes().begin(), itvend = lcc.vertex_attributes().end();
