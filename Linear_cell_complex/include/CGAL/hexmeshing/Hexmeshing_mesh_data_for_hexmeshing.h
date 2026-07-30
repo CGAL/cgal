@@ -13,8 +13,12 @@
 #ifndef HEXMESHING_MESH_DATA_FOR_HEXMESHING_H
 #define HEXMESHING_MESH_DATA_FOR_HEXMESHING_H
 
-#include <CGAL/hexmeshing/Hexmeshing_outer_alias.h>
+#include <CGAL/AABB_face_graph_triangle_primitive.h>
+#include <CGAL/AABB_traits_3.h>
+#include <CGAL/AABB_tree.h>
 #include <CGAL/hexmeshing/Hexmeshing_grid.h>
+#include <CGAL/Kernel_traits.h>
+#include <CGAL/Side_of_triangle_mesh.h>
 #include <cstdlib>
 
 namespace CGAL::internal
@@ -23,6 +27,19 @@ namespace CGAL::internal
   class Mesh_data_for_hexmeshing
   {
   public:
+    using Point=typename TriangleMesh::Point;
+    using Kernel=typename CGAL::Kernel_traits<Point>::Kernel;
+    using FT=typename Kernel::FT;
+    using Vector=typename Kernel::Vector_3;
+    using Triangle=typename Kernel::Triangle_3;
+    using Segment=typename Kernel::Segment_3;
+
+    using Primitive=CGAL::AABB_face_graph_triangle_primitive<TriangleMesh>;
+    using AABB_Traits=CGAL::AABB_traits_3<Kernel, Primitive>;
+    using Tree=CGAL::AABB_tree<AABB_Traits>;
+    using Primitive_id=typename Tree::Primitive_id;
+    using Side_of_mesh=CGAL::Side_of_triangle_mesh<TriangleMesh, Kernel>;
+
     Mesh_data_for_hexmeshing(const TriangleMesh& poly_out, int cube_cells_per_dim) :
         poly(poly_out)
     {
@@ -39,9 +56,8 @@ namespace CGAL::internal
       return &grid;
     }
 
-    Hexmeshing::Tree* get_tree_pointer() {
-      return &tree;
-    }
+    Tree* get_tree_pointer()
+    { return &tree; }
 
   private:
     void construct_tree_from_poly()
@@ -67,7 +83,7 @@ namespace CGAL::internal
     }
 
     TriangleMesh poly;
-    Hexmeshing::Tree tree;
+    Tree tree;
     Hexmeshing::Grid grid;
   };
 }

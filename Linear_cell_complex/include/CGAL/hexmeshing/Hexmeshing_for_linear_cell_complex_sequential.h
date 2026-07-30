@@ -21,7 +21,6 @@
 #include <CGAL/hexmeshing/Hexmeshing_load_patterns.h>
 #include <CGAL/hexmeshing/Hexmeshing_two_refinement_algorithm.h>
 #include <CGAL/hexmeshing/Hexmeshing_post_processing.h>
-#include <CGAL/hexmeshing/Hexmeshing_outer_alias.h>
 #include <CGAL/hexmeshing/Hexmeshing_mesh_data_for_hexmeshing.h>
 #include <CGAL/Linear_cell_complex/query_replace/cmap_query_replace.h>
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
@@ -67,7 +66,8 @@ public:
   };
 
   Mesh_data_for_hexmeshing<TriangleMesh> mesh;
-
+  using Tree=typename Mesh_data_for_hexmeshing<TriangleMesh>::Tree;
+  
   // Required initialization
   Hexmeshing::Grid grid;                  ///< Grid configuration defining the mesh structure
   ExternalRessources* ext;    ///< Pointer to external resources for pattern substitution
@@ -283,7 +283,7 @@ public:
 
     Tree* tree = mesh.get_tree_pointer();
     MarkingFunction cellIdentifier = is_volume_intersecting_poly(*tree);
-    DecideInsideFunction decideFunc = is_inner_point(*tree);
+    DecideInsideFunction decideFunc = is_inner_point<TriangleMesh, Tree>(*tree);
 
     ExternalRessources res;
 

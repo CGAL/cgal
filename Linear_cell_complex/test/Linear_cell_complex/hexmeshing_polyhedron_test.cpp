@@ -1,9 +1,9 @@
 #include <CGAL/hexmeshing/Hexmeshing_for_linear_cell_complex_sequential.h>
 #include <CGAL/hexmeshing/Hexmeshing_mesh_data_for_hexmeshing.h>
-#include <CGAL/hexmeshing/Hexmeshing_outer_alias.h>
 #include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
 #include <CGAL/Hexmeshing_generate_two_refinement_mesh.h>
 
+#include <CGAL/Polyhedron_3.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <iostream>
@@ -108,10 +108,12 @@ public:
 };
 
 using namespace CGAL::internal::Hexmeshing;
+using Polyhedron=CGAL::Polyhedron_3<CGAL::internal::Hexmeshing::Kernel>;
 using HalfedgeDS = Polyhedron::HalfedgeDS;
 
 template <int FACE=4>
 Polyhedron create_polyhedron() {
+  using Point=Polyhedron::Point;
   Polyhedron poly;
   Build_icosahedron<HalfedgeDS> icosahedron;
   Build_cube<HalfedgeDS> cube;
@@ -216,9 +218,10 @@ void render_meshes_at_each_phase() {
     lcc = create_refined_test_mesh_with_volume_fraction<FACE>();
   } else {
     Polyhedron poly = create_polyhedron<FACE>();
-    CGAL::internal::Mesh_data_for_hexmeshing mesh(poly, 10);
+    using MDFHM=CGAL::internal::Mesh_data_for_hexmeshing<Polyhedron>;
+    MDFHM mesh(poly, 10);
     auto cellIdentifier = is_volume_intersecting_poly(*mesh.get_tree_pointer());
-    auto decideFunc = is_inner_point(*mesh.get_tree_pointer());
+    auto decideFunc = is_inner_point<Polyhedron, typename MDFHM::Tree>(*mesh.get_tree_pointer());
     const int refinement_level = 1;
     lcc = create_refined_test_mesh<FACE>(refinement_level);
     set_fraction(lcc, 1./(1<<refinement_level), cellIdentifier, decideFunc);

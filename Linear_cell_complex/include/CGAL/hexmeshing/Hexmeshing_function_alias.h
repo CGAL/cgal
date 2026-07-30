@@ -14,7 +14,6 @@
 #define HEXMESHING_FUNCTION_ALIAS_H
 
 #include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
-#include <CGAL/hexmeshing/Hexmeshing_outer_alias.h>
 #include <functional>
 
 namespace CGAL::internal::Hexmeshing

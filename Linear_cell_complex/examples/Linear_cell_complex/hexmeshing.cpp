@@ -3,7 +3,7 @@
 #include <CGAL/draw_linear_cell_complex.h>
 #include <CGAL/Linear_cell_complex/IO/VTK.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
-#include <CGAL/Polyhedron_3.h>
+#include <CGAL/Surface_mesh.h>
 #include <string>
 
 int main(int argc, char** argv)
@@ -13,14 +13,7 @@ int main(int argc, char** argv)
   int nb_levels=(argc<4?2:std::atoi(argv[3]));
   bool trim=(argc<5||std::string("-notrim")!=argv[4])?true:false;
 
-  std::ifstream off_file(filename);
-  if(!off_file.good())
-  {
-    std::cout<<"Input mesh couldn't be read: "<<filename<<std::endl;
-    return EXIT_FAILURE;
-  }
-  
-  CGAL::Polyhedron_3<CGAL::Exact_predicates_inexact_constructions_kernel> poly;
+  CGAL::Surface_mesh<CGAL::Exact_predicates_inexact_constructions_kernel::Point_3> poly;
   CGAL::IO::read_polygon_mesh(filename, poly);
   CGAL::Polygon_mesh_processing::triangulate_faces(poly);
   

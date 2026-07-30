@@ -13,13 +13,19 @@
 #ifndef LCC_ITEMS_FOR_HEXMESHING_H
 #define LCC_ITEMS_FOR_HEXMESHING_H
 
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Linear_cell_complex_traits.h>
 #include <CGAL/hexmeshing/Hexmeshing_generic_point.h>
-#include <CGAL/hexmeshing/Hexmeshing_outer_alias.h>
 
 namespace CGAL::internal::Hexmeshing
 {
+  using Kernel=CGAL::Exact_predicates_inexact_constructions_kernel;
+  using FT=Kernel::FT;
+  using Point=Kernel::Point_3;
+  using Vector=Kernel::Vector_3;
+  using Segment=Kernel::Segment_3;
+
 /**
  * @brief Enumeration representing the type of volume in the hexahedral mesh
  *
@@ -44,9 +50,13 @@ public:
    * This class defines the attributes associated with vertices, faces, and volumes
    * in the hexahedral mesh.
    */
-  template < class Storage >
+  template <class Storage>
   struct Dart_wrapper
   {
+    using Point=typename Storage::Point;
+    using Vector=typename Storage::Vector;
+    using Segment=typename Kernel_traits<Point>::Kernel::Segment_3;
+      
     /**
      * @brief Attribute class for vertices with point information
      *
@@ -124,13 +134,14 @@ public:
   };
 };
 
+using LCCTraits=CGAL::Linear_cell_complex_traits<3, Kernel>;
 using LCC=CGAL::Linear_cell_complex_for_combinatorial_map
     <3,3, LCCTraits, LCCItemsForHexmeshing>;
-using Dart_descriptor = typename LCC::Dart_descriptor;
-using Vertex_descriptor = typename LCC::Vertex_attribute_descriptor;
-using size_type = typename LCC::size_type;
+using Dart_descriptor=typename LCC::Dart_descriptor;
+using Vertex_descriptor=typename LCC::Vertex_attribute_descriptor;
+using size_type=typename LCC::size_type;
 
-using DartInfo = LCCItemsForHexmeshing::Dart_wrapper<LCC::Storage>;
+using DartInfo=LCCItemsForHexmeshing::Dart_wrapper<LCC::Storage>;
 
 // Do not use this, only to satisfy lcc.is_isomorphic_to
 inline

@@ -13,14 +13,17 @@
 #ifndef HEXMESHING_SET_ATTRIBUTES_H
 #define HEXMESHING_SET_ATTRIBUTES_H
 
+#include <CGAL/Eigen_matrix.h>
+#include <CGAL/Eigen_vector.h>
 #include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
 #include <CGAL/hexmeshing/Hexmeshing_two_refinement_utils.h>
 #include <CGAL/hexmeshing/Hexmeshing_function_alias.h>
-#include <CGAL/Eigen_matrix.h>
-#include <CGAL/Eigen_vector.h>
+#include <CGAL/point_generators_3.h>
 
 namespace CGAL::internal::Hexmeshing
 {
+  using RandomPointGenerator=CGAL::Random_points_in_cube_3<Point>;
+  
   inline
   void __set_centroid(LCC& lcc, Dart_descriptor dart)
   {
