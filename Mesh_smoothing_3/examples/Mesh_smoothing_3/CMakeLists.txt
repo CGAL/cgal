@@ -17,10 +17,10 @@ message(STATUS "CGAL_DIR: ${CGAL_DIR}")
 find_package(CGAL REQUIRED)
 find_package(Eigen3 3.3.0 QUIET REQUIRED)
 
-create_single_source_cgal_program("alpha_wrap_improvement.cpp")
+# create_single_source_cgal_program("alpha_wrap_improvement.cpp")
 create_single_source_cgal_program("c3t3_smooth.cpp")
 
-target_link_libraries(alpha_wrap_improvement PRIVATE Eigen3::Eigen)
+# target_link_libraries(alpha_wrap_improvement PRIVATE Eigen3::Eigen)
 target_link_libraries(c3t3_smooth PRIVATE Eigen3::Eigen)
 
 find_package(OpenMP COMPONENTS CXX)
@@ -31,7 +31,7 @@ if(OpenMP_CXX_FOUND)
         set_target_properties(OpenMP::OpenMP_CXX PROPERTIES
                             INTERFACE_COMPILE_OPTIONS "/openmp:llvm")
     endif()
-    target_link_libraries(alpha_wrap_improvement PRIVATE OpenMP::OpenMP_CXX)
+    # target_link_libraries(alpha_wrap_improvement PRIVATE OpenMP::OpenMP_CXX)
     target_link_libraries(c3t3_smooth PRIVATE OpenMP::OpenMP_CXX)
 else()
     message(STATUS "OpenMP was not found.")
