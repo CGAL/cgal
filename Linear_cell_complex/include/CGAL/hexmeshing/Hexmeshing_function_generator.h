@@ -16,14 +16,13 @@
 #include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
 #include <CGAL/hexmeshing/Hexmeshing_AABBTree_tools.h>
 #include <CGAL/hexmeshing/Hexmeshing_set_attributes.h>
-#include <CGAL/hexmeshing/Hexmeshing_outer_alias.h>
 #include <CGAL/hexmeshing/Hexmeshing_function_alias.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <functional>
 
 namespace CGAL::internal::Hexmeshing
 {
-  inline
+  template<typename Tree>
   auto is_volume_intersecting_poly(Tree& tree)
   {
     return [&](LCC& lcc, Dart_descriptor dart)
@@ -92,8 +91,8 @@ namespace CGAL::internal::Hexmeshing
     { return lcc.is_marked(dart, mark); };
   }
 
-  inline
-  auto detect_intersection(Tree& tree, Polyhedron& poly)
+  template<typename Tree, typename Mesh>
+  auto detect_intersection(Tree& tree, Mesh& poly)
   {
     return [&](LCC& lcc, Dart_descriptor dart) -> bool {
       auto &face_attr = lcc.attribute<2>(dart)->info();
@@ -102,29 +101,30 @@ namespace CGAL::internal::Hexmeshing
 
       face_attr.intersection = std::get<Point>((*intersection).first);
 
-      const Primitive_id fd = (*intersection).second;
+      const typename Tree::Primitive_id_id fd = (*intersection).second;
       face_attr.normal = CGAL::Polygon_mesh_processing::compute_face_normal(fd, poly);
 
       return true;
     };
   }
 
-  inline
+  template<typename Mesh, typename Tree>
   auto is_inner_centroid(Tree& tree)
   {
     return [&](LCC& lcc, Dart_descriptor dart) -> bool {
       // if(is_intersect(lcc, dart, tree)) return false;
       // return !is_outside_knowing_no_intersect(lcc.point(dart), tree);
       __set_centroid(lcc, dart);
-      return !is_outside_knowing_no_intersect(lcc.attribute<3>(dart)->info().centroid, tree);
+      return !is_outside_knowing_no_intersect<Mesh, Tree>
+        (lcc.attribute<3>(dart)->info().centroid, tree);
     };
   }
 
-  inline
+  template<typename Mesh, typename Tree>
   auto is_inner_point(Tree& tree)
   {
-    return [&](Point p) -> bool {
-      return !is_outside_knowing_no_intersect(p, tree);
+    return [&](internal::Hexmeshing::Point p) -> bool {
+      return !is_outside_knowing_no_intersect<Mesh, Tree>(p, tree);
     };
   }
 }

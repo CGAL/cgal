@@ -1,13 +1,16 @@
 #include <CGAL/Hexmeshing_generate_two_refinement_mesh.h>
-
+#include <CGAL/Polyhedron_3.h>
 #include <CGAL/config.h>
 #include <string>
 
 
 void render_two_refinement(const std::string& file, int cube_cells_per_dim, int nb_levels = 1)
 {
-  CGAL::generate_two_refinement_mesh_from_file
-    (CGAL::data_file_path("meshes/" + file), cube_cells_per_dim, nb_levels, true);
+  CGAL::Polyhedron_3<CGAL::Exact_predicates_inexact_constructions_kernel> poly;
+  CGAL::IO::read_polygon_mesh(CGAL::data_file_path("meshes/" + file), poly);
+  
+  CGAL::generate_hexahedral_mesh_using_two_refinement
+    (poly, cube_cells_per_dim, nb_levels, true);
 
   // CGAL::render_two_refinement_result(hdata);
   std::cout << "file: " << file << std::endl;
