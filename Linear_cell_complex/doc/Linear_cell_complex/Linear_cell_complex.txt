@@ -305,8 +305,8 @@ The following example shows the use of `generate_two_refinement_mesh` operation 
 
 \cgalExample{Linear_cell_complex/hexmeshing.cpp}
 
-\cgalFigureBegin{fig_hexmeshing_cube,hexmeshing_cube.png}
-Result of the run of the hexmeshing_cube program. A window shows the 3D grid refined for a cubic surface mesh and smoothed.
+\cgalFigureBegin{fig_hexmeshing,hexmeshing.png}
+Result of the run of the hexmeshing program. A window shows the 3D grid refined for the Bunny surface mesh and smoothed.
 \cgalFigureEnd
 
 \subsection Linear_cell_complexWriteVTK Writing a Linear Cell Complex to a VTK File
