@@ -10,8 +10,8 @@
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
 ////////////////////////////////////////////////////////////////////////////////
-#ifndef LCC_GEOMETRY_TRANSFORMATION_H
-#define LCC_GEOMETRY_TRANSFORMATION_H
+#ifndef CGAL_LCC_GEOMETRY_TRANSFORMATION_H
+#define CGAL_LCC_GEOMETRY_TRANSFORMATION_H
 
 #include <CGAL/Aff_transformation_3.h>
 

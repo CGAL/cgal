@@ -10,8 +10,8 @@
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
 ////////////////////////////////////////////////////////////////////////////////
-#ifndef CMAP_3CLOSE_CC_H
-#define CMAP_3CLOSE_CC_H
+#ifndef CGAL_CMAP_3CLOSE_CC_H
+#define CGAL_CMAP_3CLOSE_CC_H
 
 #include <cstddef>
 
@@ -60,4 +60,4 @@ std::size_t close_cc_for_beta3(LCC& lcc, typename LCC::Dart_descriptor dh)
 }
 ////////////////////////////////////////////////////////////////////////////////
 }
-#endif // CMAP_3CLOSE_CC_H
+#endif // CGAL_CMAP_3CLOSE_CC_H

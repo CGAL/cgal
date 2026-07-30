@@ -10,8 +10,8 @@
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 // Contributor(s): Soichiro Yamazaki <soichiro19998@gmail.com>, Théo Bénard <benard320@gmail.com>
 //
-#ifndef HEXMESHING_PLANE_NORMAL_H
-#define HEXMESHING_PLANE_NORMAL_H
+#ifndef CGAL_HEXMESHING_PLANE_NORMAL_H
+#define CGAL_HEXMESHING_PLANE_NORMAL_H
 
 namespace CGAL::internal::Hexmeshing
 {

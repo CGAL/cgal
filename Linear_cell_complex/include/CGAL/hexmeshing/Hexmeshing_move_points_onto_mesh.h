@@ -10,8 +10,8 @@
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 // Contributor(s): Soichiro Yamazaki <soichiro19998@gmail.com>
 //
-#ifndef HEXMESHING_MOVE_POINTS_ONTO_MESH_H
-#define HEXMESHING_MOVE_POINTS_ONTO_MESH_H
+#ifndef CGAL_HEXMESHING_MOVE_POINTS_ONTO_MESH_H
+#define CGAL_HEXMESHING_MOVE_POINTS_ONTO_MESH_H
 
 #include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
 #include <CGAL/hexmeshing/Hexmeshing_two_refinement_mark_utils.h>

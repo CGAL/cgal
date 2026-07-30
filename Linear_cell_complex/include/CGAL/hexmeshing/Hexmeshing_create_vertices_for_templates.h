@@ -10,8 +10,8 @@
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 // Contributor(s): Soichiro Yamazaki <soichiro19998@gmail.com>, Théo Bénard <benard320@gmail.com>
 //
-#ifndef HEXMESHING_CREATE_VERTICES_FOR_TEMPLATES_H
-#define HEXMESHING_CREATE_VERTICES_FOR_TEMPLATES_H
+#ifndef CGAL_HEXMESHING_CREATE_VERTICES_FOR_TEMPLATES_H
+#define CGAL_HEXMESHING_CREATE_VERTICES_FOR_TEMPLATES_H
 
 #include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
 

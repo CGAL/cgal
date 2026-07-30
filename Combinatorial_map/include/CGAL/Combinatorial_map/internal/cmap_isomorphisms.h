@@ -10,8 +10,8 @@
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
 ////////////////////////////////////////////////////////////////////////////////
-#ifndef CMAP_ISOMORPHISMS_H
-#define CMAP_ISOMORPHISMS_H
+#ifndef CGAL_CMAP_ISOMORPHISMS_H
+#define CGAL_CMAP_ISOMORPHISMS_H
 
 #include <CGAL/Handle_hash_function.h>
 #include <CGAL/Unique_hash_map.h>
@@ -683,4 +683,4 @@ bool is_submap(LCC1& lcc1, LCC2& lcc2, bool strict=false,
 }
 ////////////////////////////////////////////////////////////////////////////////
 }
-#endif // CMAP_ISOMORPHISMS_H
+#endif // CGAL_CMAP_ISOMORPHISMS_H

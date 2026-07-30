@@ -10,8 +10,8 @@
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
 ////////////////////////////////////////////////////////////////////////////////
-#ifndef CMAP_COPY_H
-#define CMAP_COPY_H
+#ifndef CGAL_CMAP_COPY_H
+#define CGAL_CMAP_COPY_H
 
 #include <unordered_map>
 #include <CGAL/Combinatorial_map/internal/Combinatorial_map_copy_functors.h>
@@ -526,4 +526,4 @@ std::size_t copy_cell(CMap1& amap1, typename CMap1::Dart_descriptor dh,
 ////////////////////////////////////////////////////////////////////////////////
 } // namespace CGAL::CMap_copy
 ////////////////////////////////////////////////////////////////////////////////
-#endif // CMAP_COPY_H
+#endif // CGAL_CMAP_COPY_H

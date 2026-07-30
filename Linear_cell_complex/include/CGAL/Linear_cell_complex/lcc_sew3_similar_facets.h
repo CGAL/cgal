@@ -10,8 +10,8 @@
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
 ////////////////////////////////////////////////////////////////////////////////
-#ifndef LCC_SEW3_SIMILAR_FACETS_H
-#define LCC_SEW3_SIMILAR_FACETS_H
+#ifndef CGAL_LCC_SEW3_SIMILAR_FACETS_H
+#define CGAL_LCC_SEW3_SIMILAR_FACETS_H
 
 #include <vector>
 #include <map>

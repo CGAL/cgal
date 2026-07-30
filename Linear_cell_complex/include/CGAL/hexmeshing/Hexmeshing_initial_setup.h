@@ -10,8 +10,8 @@
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 // Contributor(s): Soichiro Yamazaki <soichiro19998@gmail.com>, Théo Bénard <benard320@gmail.com>
 //
-#ifndef HEXMESHING_INITIAL_SETUP_H
-#define HEXMESHING_INITIAL_SETUP_H
+#ifndef CGAL_HEXMESHING_INITIAL_SETUP_H
+#define CGAL_HEXMESHING_INITIAL_SETUP_H
 
 #include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
 

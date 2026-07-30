@@ -10,8 +10,8 @@
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 // Contributor(s): Soichiro Yamazaki <soichiro19998@gmail.com>
 //
-#ifndef HEXMESHING_MESH_DATA_FOR_HEXMESHING_H
-#define HEXMESHING_MESH_DATA_FOR_HEXMESHING_H
+#ifndef CGAL_HEXMESHING_MESH_DATA_FOR_HEXMESHING_H
+#define CGAL_HEXMESHING_MESH_DATA_FOR_HEXMESHING_H
 
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/AABB_traits_3.h>

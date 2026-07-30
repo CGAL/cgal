@@ -10,8 +10,8 @@
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 // Contributor(s): Soichiro Yamazaki <soichiro19998@gmail.com>
 //
-#ifndef HEXMESHING_RESOLVE_NON_MANIFOLD_CASE_H
-#define HEXMESHING_RESOLVE_NON_MANIFOLD_CASE_H
+#ifndef CGAL_HEXMESHING_RESOLVE_NON_MANIFOLD_CASE_H
+#define CGAL_HEXMESHING_RESOLVE_NON_MANIFOLD_CASE_H
 
 #include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
 #include <CGAL/hexmeshing/Hexmeshing_two_refinement_utils.h>

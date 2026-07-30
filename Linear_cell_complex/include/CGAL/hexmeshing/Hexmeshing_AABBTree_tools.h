@@ -10,8 +10,8 @@
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 // Contributor(s): Soichiro Yamazaki <soichiro19998@gmail.com>, Théo Bénard <benard320@gmail.com>
 //
-#ifndef HEXMESHING_AABBTREE_TOOLS_H
-#define HEXMESHING_AABBTREE_TOOLS_H
+#ifndef CGAL_HEXMESHING_AABBTREE_TOOLS_H
+#define CGAL_HEXMESHING_AABBTREE_TOOLS_H
 
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
