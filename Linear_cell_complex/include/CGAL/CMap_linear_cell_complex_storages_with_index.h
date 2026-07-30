@@ -220,7 +220,7 @@ namespace CGAL {
     { return mdarts.upper_bound(); }
 
     /** Return if this dart is free for adimension.
-     * @param dh a dart handle
+     * @param dh a dart descriptor
      * @param i the dimension.
      * @return true iff dh is linked with null_dart_descriptor for \em adimension.
      */
@@ -291,7 +291,7 @@ namespace CGAL {
       return  mdarts[ADart].mf[B1];
     }
 
-    // return a handle on the i-attribute
+    // return a descriptor on the i-attribute
     template<unsigned int i>
     typename Attribute_descriptor<i>::type attribute(Dart_descriptor ADart)
     {
@@ -338,7 +338,7 @@ namespace CGAL {
       return get_attribute<i>(ah).is_valid();
     }
 
-    // accessors and modifiers to the attribute ref counting given its handle
+    // accessors and modifiers to the attribute ref counting given its descriptor
     template<unsigned int i>
     std::size_t get_attribute_ref_counting
     (typename Attribute_const_descriptor<i>::type ah) const
@@ -488,7 +488,7 @@ namespace CGAL {
     }
 
   protected:
-    // Set the handle on the i th attribute
+    // Set the descriptor on the i th attribute
     template<unsigned int i>
     void basic_set_dart_attribute(Dart_descriptor dh,
                                   typename Attribute_descriptor<i>::type ah)
