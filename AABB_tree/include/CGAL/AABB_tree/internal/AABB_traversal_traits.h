@@ -215,7 +215,7 @@ public:
 
   bool do_intersect(const Primitive& query, const Node& node) const
   {
-    return m_traits.do_intersect_object()(query, node.bbox());
+    return m_traits.do_intersect_object()(internal::Primitive_helper<AABBTraits>::get_datum(query, m_traits), node.bbox());
   }
 
 private:

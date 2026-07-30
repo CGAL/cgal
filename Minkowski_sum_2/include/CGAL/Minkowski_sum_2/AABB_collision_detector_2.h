@@ -38,8 +38,6 @@ public:
   typedef typename Polygon_2::Edge_const_iterator       Edge_iterator;
   typedef AABB_segment_primitive_2<Kernel, Edge_iterator>
                                                         Tree_segment_2;
-  // typedef AABB_segment_2_primitive<Kernel, Edge_iterator, Polygon_with_holes_2>
-                                                        // Tree_segment_2;
   typedef AABB_traits_2<Kernel, Tree_segment_2>         Tree_traits;
   typedef AABB_tree<Tree_traits>              Tree_2;
 
@@ -73,6 +71,8 @@ public:
   // completely inside of the other one. Q is translated by t.
   bool check_collision(const Point_2 &t)
   {
+    // Aff_transformation_2<Kernel> tr(Translation(), t-ORIGIN);
+    // if(AABB_trees::do_intersect(m_translating_tree, m_stationary_tree, parameters::transformation(tr)))
     if(AABB_trees::do_intersect(m_translating_tree, m_stationary_tree, parameters::transformation(Aff_transformation_2<Kernel>(Translation(), t-ORIGIN))))
       return true;
 
