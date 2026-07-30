@@ -10,8 +10,8 @@
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
 ////////////////////////////////////////////////////////////////////////////////
-#ifndef LCC_BARYCENTRIC_COORD_H
-#define LCC_BARYCENTRIC_COORD_H
+#ifndef CGAL_LCC_BARYCENTRIC_COORD_H
+#define CGAL_LCC_BARYCENTRIC_COORD_H
 
 #include <iostream>
 #include <tuple>

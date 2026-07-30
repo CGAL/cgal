@@ -10,8 +10,8 @@
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 // Contributor(s): Soichiro Yamazaki <soichiro19998@gmail.com>, Théo Bénard <benard320@gmail.com>
 //
-#ifndef HEXMESHING_GET_CELLS_TO_REFINE_H
-#define HEXMESHING_GET_CELLS_TO_REFINE_H
+#ifndef CGAL_HEXMESHING_GET_CELLS_TO_REFINE_H
+#define CGAL_HEXMESHING_GET_CELLS_TO_REFINE_H
 
 #include <CGAL/hexmeshing/Hexmeshing_two_refinement_mark_utils.h>
 #include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>

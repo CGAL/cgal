@@ -10,8 +10,8 @@
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 // Contributor(s): Soichiro Yamazaki <soichiro19998@gmail.com>, Théo Bénard <benard320@gmail.com>
 //
-#ifndef LCC_ITEMS_FOR_HEXMESHING_H
-#define LCC_ITEMS_FOR_HEXMESHING_H
+#ifndef CGAL_LCC_ITEMS_FOR_HEXMESHING_H
+#define CGAL_LCC_ITEMS_FOR_HEXMESHING_H
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>

@@ -10,8 +10,8 @@
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 // Contributor(s): Soichiro Yamazaki <soichiro19998@gmail.com>
 //
-#ifndef HEXMESHING_POST_PROCESSING_H
-#define HEXMESHING_POST_PROCESSING_H
+#ifndef CGAL_HEXMESHING_POST_PROCESSING_H
+#define CGAL_HEXMESHING_POST_PROCESSING_H
 
 #include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
 #include <CGAL/hexmeshing/Hexmeshing_set_attributes.h>

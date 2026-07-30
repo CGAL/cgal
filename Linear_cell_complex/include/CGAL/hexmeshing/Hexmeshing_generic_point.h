@@ -10,8 +10,8 @@
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 // Contributor(s): Soichiro Yamazaki <soichiro19998@gmail.com>, Théo Bénard <benard320@gmail.com>
 //
-#ifndef HEXMESHING_GENERIC_POINT_H
-#define HEXMESHING_GENERIC_POINT_H
+#ifndef CGAL_HEXMESHING_GENERIC_POINT_H
+#define CGAL_HEXMESHING_GENERIC_POINT_H
 
 #include <array>
 

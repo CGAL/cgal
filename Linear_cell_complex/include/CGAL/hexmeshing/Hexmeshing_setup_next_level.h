@@ -11,8 +11,8 @@
 // Contributor(s): Soichiro Yamazaki <soichiro19998@gmail.com>, Théo Bénard <benard320@gmail.com>
 //
 
-#ifndef HEXMESHING_SETUP_NEXT_LEVEL_H
-#define HEXMESHING_SETUP_NEXT_LEVEL_H
+#ifndef CGAL_HEXMESHING_SETUP_NEXT_LEVEL_H
+#define CGAL_HEXMESHING_SETUP_NEXT_LEVEL_H
 
 #include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
 #include <CGAL/hexmeshing/Hexmeshing_function_alias.h>

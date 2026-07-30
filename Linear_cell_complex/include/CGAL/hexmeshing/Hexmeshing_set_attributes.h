@@ -10,8 +10,8 @@
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 // Contributor(s): Soichiro Yamazaki <soichiro19998@gmail.com>
 //
-#ifndef HEXMESHING_SET_ATTRIBUTES_H
-#define HEXMESHING_SET_ATTRIBUTES_H
+#ifndef CGAL_HEXMESHING_SET_ATTRIBUTES_H
+#define CGAL_HEXMESHING_SET_ATTRIBUTES_H
 
 #include <CGAL/Eigen_matrix.h>
 #include <CGAL/Eigen_vector.h>

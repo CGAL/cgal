@@ -10,8 +10,8 @@
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 // Contributor(s): Soichiro Yamazaki <soichiro19998@gmail.com>, Théo Bénard <benard320@gmail.com>
 //
-#ifndef HEXMESHING_PROD_CONS_H
-#define HEXMESHING_PROD_CONS_H
+#ifndef CGAL_HEXMESHING_PROD_CONS_H
+#define CGAL_HEXMESHING_PROD_CONS_H
 
 #include <queue>
 #include <mutex>
