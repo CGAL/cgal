@@ -21,6 +21,12 @@ Release date: December 2026
 - Deprecated the existing overload of `snap_rounding_2()`.
 - Added a new overload of `snap_rounding_2()` that automatically dispatch to either `vertical_slab_snap_rounding_2()` or `hot_pixel_snap_rounding_2()`, depending on the provided traits class.
 
+### [Boolean Operations On Meshes](https://doc.cgal.org/6.3/Manual/packages.html#PkgPMPBooleanOperations)
+
+- The corefinement based operations (including Boolean operations) has been optimised to better
+  handle cases when some identical faces are shared between the input meshes. This leads to a significan speed up
+  in those cases.
+
 ## [Release 6.2](https://github.com/CGAL/cgal/releases/tag/v6.2)
 
 Release date: June 2026
