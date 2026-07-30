@@ -15,7 +15,7 @@ It performs grid-based hexahedral meshing for a given surface mesh with multiple
 \sa `CGAL::Linear_cell_complex_for_combinatorial_map`
 
 */
-  LCC generate_two_refinement_mesh(const std::string& file, int cube_cells_per_dim, int nb_levels, bool trim=false);
+  LCC generate_two_refinement_mesh_from_file(const std::string& file, int cube_cells_per_dim, int nb_levels, bool trim=false);
 
 /*!
 \ingroup PkgLinearCellComplexConstructions
