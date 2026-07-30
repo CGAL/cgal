@@ -18,9 +18,12 @@
 #include <CGAL/Eigen_matrix.h>
 #include <vector>
 
-namespace CGAL::internal::Hexmeshing {
+namespace CGAL::internal::Hexmeshing
+{
   // laplacian smoothing on points which isn't on the surface of the grid and don't have mark
-  void laplacian_smoothing_for_unmarked_cells(LCC& lcc, size_type surface_mark) {
+  inline
+  void laplacian_smoothing_for_unmarked_cells(LCC& lcc, size_type surface_mark)
+  {
     auto vertices = lcc.one_dart_per_cell<0>();
     auto edges = lcc.one_dart_per_cell<1>();
     auto faces = lcc.one_dart_per_cell<2>();
@@ -55,14 +58,18 @@ namespace CGAL::internal::Hexmeshing {
     lcc.free_mark(side_mark);
   }
 
-  void volume_smoothing(LCC& lcc, size_type surface_mark) {
+  inline
+  void volume_smoothing(LCC& lcc, size_type surface_mark)
+  {
     for(int _ = 2; _--;)
       laplacian_smoothing_for_unmarked_cells(lcc, surface_mark);
     // for(int _ = 2; _--;)
     //   shape_improvement_for_unmarked_cells(lcc, surface_mark);
   }
 
-  std::vector<std::vector<Dart_handle>> get_neighbors_list_for_smoothing(LCC& lcc, size_type surface_mark, size_type inner_mark) {
+  inline
+  std::vector<std::vector<Dart_handle>> get_neighbors_list_for_smoothing(LCC& lcc, size_type surface_mark, size_type inner_mark)
+  {
     int count_vertices = set_vertex_ids(lcc);
     std::vector<std::vector<Dart_handle>> neighbors_list(count_vertices);
 
@@ -103,7 +110,9 @@ namespace CGAL::internal::Hexmeshing {
   }
 
   // normals for vertices need to be set
-  void surface_smoothing(LCC& lcc, size_type surface_mark, size_type inner_mark, const double ridge_ratio=0.005) {
+  inline
+  void surface_smoothing(LCC& lcc, size_type surface_mark, size_type inner_mark, const double ridge_ratio=0.005)
+  {
     auto vertices = lcc.one_dart_per_cell<0>();
 
     std::vector<std::vector<Dart_handle>> neighbors_list = get_neighbors_list_for_smoothing(lcc, surface_mark, inner_mark);
@@ -162,6 +171,5 @@ namespace CGAL::internal::Hexmeshing {
     }
   }
 }
-
 
 #endif

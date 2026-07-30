@@ -24,7 +24,8 @@
 #include <boost/container/static_vector.hpp>
 
 
-namespace CGAL::internal::Hexmeshing {
+namespace CGAL::internal::Hexmeshing
+{
   template <typename T>
   // TODO make union_find arg const
   std::vector<typename CGAL::Union_find<T>::handle> get_partitions(CGAL::Union_find<T>& union_find){
@@ -104,6 +105,7 @@ namespace CGAL::internal::Hexmeshing {
    * @param vol A dart handle representing the initial face of the hexahedron
    * @return std::array<Dart_handle, 6> Array of dart handles for all faces
    */
+  inline
   std::array<Dart_handle, 6> faces_of_hex(LCC& lcc, Dart_handle vol){
     std::array<Dart_handle, 6> arr;
     int i = 0;
@@ -185,6 +187,7 @@ namespace CGAL::internal::Hexmeshing {
    * @param dart A dart handle representing the volume
    * @return The volume attribute descriptor
    */
+  inline
   LCC::Attribute_descriptor<3>::type get_or_create_refinement_volume(LCC& lcc, Dart_handle dart){
     auto attr = get_or_create_attr<3>(lcc, dart);
 
@@ -193,7 +196,6 @@ namespace CGAL::internal::Hexmeshing {
       attr->info().type = VolumeType::REFINEMENT;
 
     return attr;
-
   }
 
   /**
@@ -207,6 +209,7 @@ namespace CGAL::internal::Hexmeshing {
    * @param include_self_vol Whether to include the input cell in the result (default: false)
    * @return A static vector containing dart handles for all neighboring cells (max size: 27)
    */
+  inline
   boost::container::static_vector<Dart_handle, 27> cells_26_connectivity(LCC& lcc, Dart_handle dart, bool include_self_vol = false) {
     boost::container::static_vector<Dart_handle, 27> array;
     Dart_handle layers[3] = {
@@ -237,7 +240,6 @@ namespace CGAL::internal::Hexmeshing {
               array.push_back(side_face);
           }
         }
-
       }
     }
 
@@ -257,10 +259,12 @@ namespace CGAL::internal::Hexmeshing {
    * @param node A dart handle representing the node to find faces around
    * @return A static vector containing dart handles for all faces around the node on the plane (max size: 8)
    */
+  inline
   boost::container::static_vector<Dart_handle, 8>
   plane_faces_around_node(LCC& lcc,
-                                    RefinementData &rdata,
-                                    Dart_handle node){
+                          RefinementData &rdata,
+                          Dart_handle node)
+  {
     boost::container::static_vector<Dart_handle, 8> arr;
 
     // Add initial face
@@ -336,7 +340,9 @@ namespace CGAL::internal::Hexmeshing {
    * @param func Trimming function that determines whether a volume should be kept
    *             (returns true to keep, false to remove)
    */
-  void trim_excedent_volumes(LCC& lcc, TrimmingFunction func){
+  inline
+  void trim_excedent_volumes(LCC& lcc, TrimmingFunction func)
+  {
     auto volumes = lcc.one_dart_per_cell<3>();
     for (auto it = volumes.begin(); it != volumes.end(); it++){
       if (func(lcc, it)) continue;
@@ -380,12 +386,14 @@ namespace CGAL::internal::Hexmeshing {
    * @param dart A dart handle representing the node (vertex)
    * @return std::array<Dart_handle, 8> Array of dart handles to the 8 surrounding volumes
    */
+  inline
   std::array<Dart_handle, 8> volumes_around_node(LCC& lcc, Dart_handle dart) {
     std::array<Dart_handle, 8> volumes = {dart, lcc.beta(dart, 3), lcc.beta(dart, 3, 2, 3), lcc.beta(dart, 2, 3),
                                     lcc.beta(dart, 0, 2, 3), lcc.beta(dart, 3, 1, 2, 3), lcc.beta(dart, 3, 2, 3, 1, 2, 3), lcc.beta(dart, 2, 3, 0, 2, 3)};
     return volumes;
   }
 
+  inline
   std::pair<Vector, Vector> get_orthogonal_vectors(const Vector& v) {
     Vector base = (std::abs(v.x()) < std::abs(v.y())) ? Vector(1, 0, 0) : Vector(0, 1, 0);
 
@@ -395,8 +403,5 @@ namespace CGAL::internal::Hexmeshing {
     return {v1/std::sqrt(v1*v1), v2/std::sqrt(v2*v2)};
   }
 }
-
-
-
 
 #endif

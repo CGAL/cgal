@@ -34,10 +34,8 @@
 #include <filesystem>
 #include <string>
 
-
-
-namespace CGAL::internal {
-
+namespace CGAL::internal
+{
 
 /**
  * @brief Core data structure for hexahedral mesh generation and refinement
@@ -47,7 +45,8 @@ namespace CGAL::internal {
  * markers used during mesh generation and refinement.
  */
 template<typename TriangleMesh=Hexmeshing::Polyhedron>
-class Hexmeshing_for_linear_cell_complex {
+class Hexmeshing_for_linear_cell_complex
+{
 public:
   using Kernel = Hexmeshing::Kernel;
   using LCC = Hexmeshing::LCC;
@@ -97,7 +96,8 @@ public:
    * iterates over all attributes to replace invalid handles with valid ones.
    * It ensures the consistency of the mesh structure after modifications.
    */
-  void fix_dart_storage() {
+  void fix_dart_storage()
+  {
     // Data that we'll use to know which plane/cc we are looking for, while iterating on attributes
     using DartRef = std::reference_wrapper<Dart_handle>;
     using CCIdToFace = std::unordered_map<size_t, DartRef>;
@@ -223,14 +223,16 @@ public:
     CGAL_assertion_code(all_valid());
   }
 
-  virtual void reset_temp_vertex_ids() {}
+  virtual void reset_temp_vertex_ids()
+  {}
 
   /**
    * @brief Initializes the mesh data with external resources and grid configuration
    * @param ext Pointer to external resources
    * @param grid Grid configuration for the mesh
    */
-  void init(ExternalRessources* ext, internal::Hexmeshing::Grid grid) {
+  void init(ExternalRessources* ext, internal::Hexmeshing::Grid grid)
+  {
     this->ext = ext;
     this->grid = grid;
   }
@@ -276,9 +278,7 @@ public:
    *             (default: false). When true, trimmingFunction is used to determine
    *             which volumes to keep in the final mesh.
    */
-  void two_refinement(
-      int nb_levels = 1,
-      bool trim = false)
+  void two_refinement(int nb_levels = 1, bool trim = false)
   {
     using namespace internal::Hexmeshing;
 
@@ -297,8 +297,7 @@ public:
     post_processing(lcc, grid.size.x()/(1<<nb_levels), trim, cellIdentifier, decideFunc);
   }
 
-  void two_refinement_without_post_processing(
-      int nb_levels = 1)
+  void two_refinement_without_post_processing(int nb_levels = 1)
   {
     using namespace internal::Hexmeshing;
 
@@ -314,11 +313,5 @@ public:
   }
 };
 
-
-
-
-
 }
-
-
 #endif

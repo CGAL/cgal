@@ -20,12 +20,14 @@
 
 namespace CGAL::internal::Hexmeshing
 {
+  inline
   void mark_1template_face(LCC& lcc, size_type mark)
   {
     auto dart = lcc.one_dart_per_cell<3>().begin();
     lcc.mark_cell<0>(lcc.beta(dart, 0, 2, 0, 0), mark);
   }
 
+  inline
   void mark_2template_face(LCC& lcc, size_type mark)
   {
     auto dart = lcc.one_dart_per_cell<3>().begin();
@@ -33,12 +35,14 @@ namespace CGAL::internal::Hexmeshing
     lcc.mark_cell<0>(lcc.beta(dart, 1), mark);
   }
 
+  inline
   void mark_1template_volume(LCC& lcc, size_type mark)
   {
     auto first = lcc.first_dart();
     lcc.mark_cell<0>(lcc.beta(first, 1, 2, 3, 1, 2, 0), mark);
   }
 
+  inline
   void mark_2template_volume(LCC& lcc, size_type mark)
   {
     auto first = lcc.first_dart();
@@ -50,6 +54,7 @@ namespace CGAL::internal::Hexmeshing
     lcc.mark_cell<0>(node2, mark);
   }
 
+  inline
   void mark_3template_partial_volume(LCC& lcc, size_type mark)
   {
     auto first = lcc.first_dart();
@@ -62,6 +67,7 @@ namespace CGAL::internal::Hexmeshing
     lcc.mark_cell<0>(node3, mark);
   }
 
+  inline
   void mark_4template_volume(LCC& lcc, size_type mark)
   {
     auto first = lcc.first_dart();
@@ -106,6 +112,7 @@ namespace CGAL::internal::Hexmeshing
    * @param regular_templates Pattern substituter for regular hexahedral templates
    * @param partial_3_template Pattern substituter for partial 3-template patterns
    */
+  inline
   void load_patterns(Pattern_substituer<LCC> &regular_templates, Pattern_substituer<LCC>& partial_3_template)
   {
     // BUG Manque des opérateurs de déplacements pour Pattern, le reserve est un fix temporaire
@@ -124,8 +131,5 @@ namespace CGAL::internal::Hexmeshing
     partial_3_template.load_additional_vpattern(CGAL::data_file_path("hexmeshing/vpattern/partial/pattern3.moka"), mark_3template_partial_volume);
   }
 }
-
-
-
 
 #endif

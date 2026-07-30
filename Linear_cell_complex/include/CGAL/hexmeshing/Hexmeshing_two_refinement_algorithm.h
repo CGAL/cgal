@@ -25,7 +25,8 @@
 #include <CGAL/hexmeshing/Hexmeshing_function_alias.h>
 
 
-namespace CGAL::internal::Hexmeshing {
+namespace CGAL::internal::Hexmeshing
+{
   /**
    * @brief Main algorithm for hexahedral mesh refinement
    *
@@ -116,14 +117,11 @@ namespace CGAL::internal::Hexmeshing {
         lcc.unmark_all(hdata.template_mark);
       }
 
-
       lcc.unmark_all(hdata.propagation_face_mark);
     }
 
     thread_remove_ghosts(hdata);
   }
 }
-
-
 
 #endif

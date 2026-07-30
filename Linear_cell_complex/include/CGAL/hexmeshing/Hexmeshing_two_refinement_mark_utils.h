@@ -18,7 +18,8 @@
 #include <CGAL/hexmeshing/Hexmeshing_two_refinement_utils.h>
 #include <cassert>
 
-namespace CGAL::internal::Hexmeshing {
+namespace CGAL::internal::Hexmeshing
+{
   /**
    * @brief Marks all k-cells that are part of a given i-cell
    *
@@ -51,6 +52,7 @@ namespace CGAL::internal::Hexmeshing {
    * @param dart A dart handle representing the face to mark
    * @param mark The mark to apply to the face
    */
+  inline
   void mark_face_unchecked(LCC& lcc, Dart_handle dart, size_type mark){
     auto iterator = lcc.darts_of_cell<2, 1>(dart);
     for (auto dit = iterator.begin(), dend = iterator.end(); dit != dend; dit++) {
@@ -75,6 +77,7 @@ namespace CGAL::internal::Hexmeshing {
    * @param mark The mark to check for
    * @return true if all darts of the half-face are marked, false otherwise
    */
+  inline
   bool is_half_face_marked(const LCC& lcc, LCC::Dart_const_handle dart, size_type mark ){
     auto iterator = lcc.darts_of_cell<2, 1>(dart);
     for (auto dit = iterator.begin(), dend = iterator.end(); dit != dend; dit++) {
@@ -96,6 +99,7 @@ namespace CGAL::internal::Hexmeshing {
    * @param dart A dart handle representing the half-face to mark
    * @param mark The mark to apply to the half-face
    */
+  inline
   void mark_half_face_unchecked(LCC& lcc, Dart_handle dart, size_type mark){
     auto iterator = lcc.darts_of_cell<2, 1>(dart);
 
@@ -121,6 +125,7 @@ namespace CGAL::internal::Hexmeshing {
    * @param faces_to_check Queue of faces that need to be checked for template conflicts
    * @param edge A dart handle representing the marked node (0-cell)
    */
+  inline
   void __expand_0_cell_marking(LCC &lcc, RefinementData &rdata, std::queue<Dart_handle>& faces_to_check, Dart_handle &edge) {
     auto faces = plane_faces_around_node(lcc, rdata, edge);
     int s = faces.size();
@@ -162,6 +167,7 @@ namespace CGAL::internal::Hexmeshing {
    * @param face A dart handle representing the face with template_id=2 to check for diagonal marking
    * @return true if a fix was applied (diagonal pattern was converted to template_id=4), false if the marks were already consecutive
    */
+  inline
   bool fix_mark_connectivity(LCC &lcc, RefinementData &rdata, size_type template_mark, std::queue<Dart_handle>& faces_to_check, Dart_handle face){
     auto edges = lcc.darts_of_cell<2, 1>(face);
 
@@ -193,7 +199,6 @@ namespace CGAL::internal::Hexmeshing {
     face_attr.template_id = 4;
 
     return true;
-
   }
 
   /**
@@ -226,6 +231,7 @@ namespace CGAL::internal::Hexmeshing {
    * @param identified_mark HexMeshingData identified_mark
    * @param hdata Hexahedral meshing data containing the Linear Cell Complex and marks
    */
+  inline
   void mark_identified_cells_from_3_attrs(LCC& lcc, size_type identified_mark) {
     auto& attributes = lcc.attributes<3>();
 
