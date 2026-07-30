@@ -58,7 +58,7 @@ namespace CGAL::internal::Hexmeshing
     // 2 noeuds marqué l'un à coté de l'autre ne produit pas de sommet
     // 1 noeud marqué a coté d'un noeud non marqué produit un sommet
 
-    std::vector<Dart_handle> edges_to_subdivide;
+    std::vector<Dart_descriptor> edges_to_subdivide;
     LCC& lcc = hdata.lcc;
 
     auto arrete_done = lcc.get_new_mark();
@@ -86,10 +86,10 @@ namespace CGAL::internal::Hexmeshing
       }
     }
 
-    for (Dart_handle dart : edges_to_subdivide)
+    for (Dart_descriptor dart : edges_to_subdivide)
     {
-      Dart_handle other_ext = lcc.other_extremity(dart);
-      Dart_handle new_node = lcc.insert_barycenter_in_cell<1>(dart);
+      Dart_descriptor other_ext = lcc.other_extremity(dart);
+      Dart_descriptor new_node = lcc.insert_barycenter_in_cell<1>(dart);
       thread_number_vertex_in_edge(hdata, new_node, dart, other_ext);
     }
 

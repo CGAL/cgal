@@ -57,12 +57,12 @@ namespace CGAL::internal::Hexmeshing
    * @tparam FaceOp Type of the face operation functor
    * @tparam EdgeOp Type of the edge operation functor
    * @param lcc The Linear Cell Complex
-   * @param to_explore Queue of dart handles to explore
+   * @param to_explore Queue of dart descriptors to explore
    * @param face_operation Operation to apply to each face
    * @param edge_operation Operation to apply to each edge
    */
   template <typename FaceOp, typename EdgeOp>
-  inline void __plane_for_each_face(LCC& lcc, std::queue<Dart_handle>& to_explore,
+  inline void __plane_for_each_face(LCC& lcc, std::queue<Dart_descriptor>& to_explore,
                                 const FaceOp&& face_operation,
                                 const EdgeOp&& edge_operation)
   {
@@ -70,7 +70,7 @@ namespace CGAL::internal::Hexmeshing
     size_type edge_mark = lcc.get_new_mark();
 
     while (!to_explore.empty()){
-      Dart_handle face = to_explore.front();
+      Dart_descriptor face = to_explore.front();
       to_explore.pop();
 
       if (lcc.is_whole_cell_marked<2>(face, face_mark)) continue;
@@ -82,7 +82,7 @@ namespace CGAL::internal::Hexmeshing
       for (auto it = edges.begin(), end = edges.end(); it != end; it++){
         if (lcc.is_whole_cell_marked<1>(it, edge_mark)) continue;
         lcc.mark_cell<1>(it, edge_mark);
-        Dart_handle edge = edge_operation(it);
+        Dart_descriptor edge = edge_operation(it);
         if (edge != lcc.null_dart_descriptor)
           to_explore.push(edge);
       }
@@ -95,19 +95,19 @@ namespace CGAL::internal::Hexmeshing
   /**
    * @brief Retrieves all faces of a hexahedral cell
    *
-   * This function returns an array containing dart handles for all six faces of a hexahedron.
+   * This function returns an array containing dart descriptors for all six faces of a hexahedron.
    * The faces are returned in a specific order:
    * 1. The input face (vol)
    * 2-5. The faces adjacent to the edges of the input face
    * 6. The opposite face
    *
    * @param lcc The Linear Cell Complex
-   * @param vol A dart handle representing the initial face of the hexahedron
-   * @return std::array<Dart_handle, 6> Array of dart handles for all faces
+   * @param vol A dart descriptor representing the initial face of the hexahedron
+   * @return std::array<Dart_descriptor, 6> Array of dart descriptors for all faces
    */
   inline
-  std::array<Dart_handle, 6> faces_of_hex(LCC& lcc, Dart_handle vol){
-    std::array<Dart_handle, 6> arr;
+  std::array<Dart_descriptor, 6> faces_of_hex(LCC& lcc, Dart_descriptor vol){
+    std::array<Dart_descriptor, 6> arr;
     int i = 0;
 
     arr[i++] = vol;
@@ -132,17 +132,17 @@ namespace CGAL::internal::Hexmeshing
    * @tparam FaceOp Type of the face operation functor
    * @tparam EdgeOp Type of the edge operation functor
    * @param lcc The Linear Cell Complex
-   * @param start The starting face's dart handle
+   * @param start The starting face's dart descriptor
    * @param face_operation Operation to apply to each face
    * @param edge_operation Operation to apply to each edge
    */
   template <typename FaceOp, typename EdgeOp>
-  void plane_for_each_face(LCC& lcc, std::vector<Dart_handle> starts,
+  void plane_for_each_face(LCC& lcc, std::vector<Dart_descriptor> starts,
                             const FaceOp&& face_operation,
                             const EdgeOp&& edge_operation)
   {
-    std::queue<Dart_handle> to_explore;
-    for (Dart_handle start : starts){
+    std::queue<Dart_descriptor> to_explore;
+    for (Dart_descriptor start : starts){
       to_explore.push(start);
     }
 
@@ -160,11 +160,11 @@ namespace CGAL::internal::Hexmeshing
    *
    * @tparam i The dimension of the cell (0 for vertex, 1 for edge, 2 for face, 3 for volume)
    * @param lcc The Linear Cell Complex
-   * @param dart A dart handle representing the cell
+   * @param dart A dart descriptor representing the cell
    * @return The attribute descriptor for the cell
    */
   template <uint i>
-  typename LCC::Attribute_descriptor<i>::type get_or_create_attr(LCC& lcc, Dart_handle dart){
+  typename LCC::Attribute_descriptor<i>::type get_or_create_attr(LCC& lcc, Dart_descriptor dart){
     auto attr = lcc.attribute<i>(dart);
 
     if (attr == nullptr){
@@ -184,11 +184,11 @@ namespace CGAL::internal::Hexmeshing
    * - cc_id is set to the maximum possible value
    *
    * @param lcc The Linear Cell Complex
-   * @param dart A dart handle representing the volume
+   * @param dart A dart descriptor representing the volume
    * @return The volume attribute descriptor
    */
   inline
-  LCC::Attribute_descriptor<3>::type get_or_create_refinement_volume(LCC& lcc, Dart_handle dart){
+  LCC::Attribute_descriptor<3>::type get_or_create_refinement_volume(LCC& lcc, Dart_descriptor dart){
     auto attr = get_or_create_attr<3>(lcc, dart);
 
     // Previously NONE volumes are tagged as refined
@@ -205,21 +205,21 @@ namespace CGAL::internal::Hexmeshing
    * In a 3D grid, a cell can have up to 26 neighbors.
    *
    * @param lcc The Linear Cell Complex
-   * @param dart A dart handle representing the central cell
+   * @param dart A dart descriptor representing the central cell
    * @param include_self_vol Whether to include the input cell in the result (default: false)
-   * @return A static vector containing dart handles for all neighboring cells (max size: 27)
+   * @return A static vector containing dart descriptors for all neighboring cells (max size: 27)
    */
   inline
-  boost::container::static_vector<Dart_handle, 27> cells_26_connectivity(LCC& lcc, Dart_handle dart, bool include_self_vol = false) {
-    boost::container::static_vector<Dart_handle, 27> array;
-    Dart_handle layers[3] = {
+  boost::container::static_vector<Dart_descriptor, 27> cells_26_connectivity(LCC& lcc, Dart_descriptor dart, bool include_self_vol = false) {
+    boost::container::static_vector<Dart_descriptor, 27> array;
+    Dart_descriptor layers[3] = {
       dart,
       lcc.beta(dart, 3),
       lcc.beta(dart, 2, 1, 1, 2, 3)
     };
 
     for (int i = 0; i < 3; i++){
-      Dart_handle mid_face_dart = layers[i];
+      Dart_descriptor mid_face_dart = layers[i];
 
       if (mid_face_dart == lcc.null_dart_descriptor) continue;
 
@@ -229,13 +229,13 @@ namespace CGAL::internal::Hexmeshing
       for (auto edge_it = edges.begin(), end = edges.end(); edge_it != end; edge_it++){
 
         if (!lcc.is_free<3>(lcc.beta(edge_it, 2))){
-          Dart_handle other_face = lcc.beta(edge_it, 2, 3, 2);
+          Dart_descriptor other_face = lcc.beta(edge_it, 2, 3, 2);
           if (other_face != lcc.null_dart_descriptor)
             array.push_back(other_face);
 
           // TODO If nesting ..
           if (!lcc.is_free<3>(lcc.beta(other_face, 1, 2))){
-            Dart_handle side_face = lcc.beta(other_face, 1, 2, 3, 2);
+            Dart_descriptor side_face = lcc.beta(other_face, 1, 2, 3, 2);
             if (side_face != lcc.null_dart_descriptor)
               array.push_back(side_face);
           }
@@ -250,29 +250,29 @@ namespace CGAL::internal::Hexmeshing
    * @brief Finds all faces around a node that lie on a specific plane
    *
    * This function collects all faces that are adjacent to a given node and lie on the specified plane.
-   * There may be up to 8 faces adjacent to a vertex, where each dart handle belongs to a unique edge
+   * There may be up to 8 faces adjacent to a vertex, where each dart descriptor belongs to a unique edge
    * and a unique face on the plane around the selected node. The function performs a traversal around
    * the node to gather all connected faces on the plane.
    *
    * @param lcc The Linear Cell Complex
    * @param rdata Refinement data containing the current iteration direction
-   * @param node A dart handle representing the node to find faces around
-   * @return A static vector containing dart handles for all faces around the node on the plane (max size: 8)
+   * @param node A dart descriptor representing the node to find faces around
+   * @return A static vector containing dart descriptors for all faces around the node on the plane (max size: 8)
    */
   inline
-  boost::container::static_vector<Dart_handle, 8>
+  boost::container::static_vector<Dart_descriptor, 8>
   plane_faces_around_node(LCC& lcc,
                           RefinementData &rdata,
-                          Dart_handle node)
+                          Dart_descriptor node)
   {
-    boost::container::static_vector<Dart_handle, 8> arr;
+    boost::container::static_vector<Dart_descriptor, 8> arr;
 
     // Add initial face
     arr.push_back(node);
     auto this_face_attr = lcc.attribute<2>(node);
 
-    auto turn_around_edge = [&](Dart_handle edge){
-      Dart_handle adjacent_face = adjacent_face_on_plane(lcc, rdata.iteration, edge);
+    auto turn_around_edge = [&](Dart_descriptor edge){
+      Dart_descriptor adjacent_face = adjacent_face_on_plane(lcc, rdata.iteration, edge);
       auto other_face_attr = lcc.attribute<2>(adjacent_face);
 
       while (adjacent_face != lcc.null_dart_descriptor && this_face_attr != other_face_attr){
@@ -291,7 +291,7 @@ namespace CGAL::internal::Hexmeshing
     };
 
     // Turn around the first edge, gathering faces encountered
-    Dart_handle end = turn_around_edge(node);
+    Dart_descriptor end = turn_around_edge(node);
 
     // If the iteration doesn't loop back to the start, do it again on the opposite edge to that node
     if (lcc.attribute<2>(end) != this_face_attr){
@@ -301,7 +301,7 @@ namespace CGAL::internal::Hexmeshing
     // Check if all found faces are unique, if they are not, this means that the LCC was not properly refined
     auto assertion = [&](){
       std::unordered_set<DartInfo::FaceAttrValue*> faces_set;
-      for (Dart_handle face : arr){
+      for (Dart_descriptor face : arr){
         auto f = lcc.attribute<2>(face);
         CGAL_postcondition_msg(f != nullptr, "plane_faces_around_node: returned array contains nullptr, Is the refinement correctly done ?");
         CGAL_postcondition_msg(true, "plane_faces_around_node: array contains a duplicate face, Is the refinement correctly done ?");
@@ -383,12 +383,12 @@ namespace CGAL::internal::Hexmeshing
    * Each number represents the index in the returned array.
    *
    * @param lcc The Linear Cell Complex
-   * @param dart A dart handle representing the node (vertex)
-   * @return std::array<Dart_handle, 8> Array of dart handles to the 8 surrounding volumes
+   * @param dart A dart descriptor representing the node (vertex)
+   * @return std::array<Dart_descriptor, 8> Array of dart descriptors to the 8 surrounding volumes
    */
   inline
-  std::array<Dart_handle, 8> volumes_around_node(LCC& lcc, Dart_handle dart) {
-    std::array<Dart_handle, 8> volumes = {dart, lcc.beta(dart, 3), lcc.beta(dart, 3, 2, 3), lcc.beta(dart, 2, 3),
+  std::array<Dart_descriptor, 8> volumes_around_node(LCC& lcc, Dart_descriptor dart) {
+    std::array<Dart_descriptor, 8> volumes = {dart, lcc.beta(dart, 3), lcc.beta(dart, 3, 2, 3), lcc.beta(dart, 2, 3),
                                     lcc.beta(dart, 0, 2, 3), lcc.beta(dart, 3, 1, 2, 3), lcc.beta(dart, 3, 2, 3, 1, 2, 3), lcc.beta(dart, 2, 3, 0, 2, 3)};
     return volumes;
   }

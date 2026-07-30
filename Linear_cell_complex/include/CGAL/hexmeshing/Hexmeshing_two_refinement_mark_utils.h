@@ -29,11 +29,11 @@ namespace CGAL::internal::Hexmeshing
    * @tparam i The dimension of the source cell
    * @tparam k The dimension of the cells to mark
    * @param lcc The Linear Cell Complex
-   * @param dart A dart handle representing the i-cell
+   * @param dart A dart descriptor representing the i-cell
    * @param mark The mark to apply to the k-cells
    */
   template <uint i, uint k>
-  void mark_k_cells_of_i_cell(LCC& lcc, Dart_handle dart, size_type mark){
+  void mark_k_cells_of_i_cell(LCC& lcc, Dart_descriptor dart, size_type mark){
     auto iterator = lcc.darts_of_cell<i, 0>(dart);
     for (auto dit = iterator.begin(), dend = iterator.end(); dit != dend; dit++){
       if (!lcc.is_marked(dit, mark)) {
@@ -49,11 +49,11 @@ namespace CGAL::internal::Hexmeshing
    * Unlike safe marking functions, this function does not verify if the face is already marked.
    *
    * @param lcc The Linear Cell Complex
-   * @param dart A dart handle representing the face to mark
+   * @param dart A dart descriptor representing the face to mark
    * @param mark The mark to apply to the face
    */
   inline
-  void mark_face_unchecked(LCC& lcc, Dart_handle dart, size_type mark){
+  void mark_face_unchecked(LCC& lcc, Dart_descriptor dart, size_type mark){
     auto iterator = lcc.darts_of_cell<2, 1>(dart);
     for (auto dit = iterator.begin(), dend = iterator.end(); dit != dend; dit++) {
       lcc.mark(dit, mark);
@@ -73,12 +73,12 @@ namespace CGAL::internal::Hexmeshing
    * without using beta<3> operations, out of the total 8 darts that include beta<3>.
    *
    * @param lcc The Linear Cell Complex
-   * @param dart A dart handle representing the half-face to check
+   * @param dart A dart descriptor representing the half-face to check
    * @param mark The mark to check for
    * @return true if all darts of the half-face are marked, false otherwise
    */
   inline
-  bool is_half_face_marked(const LCC& lcc, LCC::Dart_const_handle dart, size_type mark ){
+  bool is_half_face_marked(const LCC& lcc, LCC::Dart_const_descriptor dart, size_type mark ){
     auto iterator = lcc.darts_of_cell<2, 1>(dart);
     for (auto dit = iterator.begin(), dend = iterator.end(); dit != dend; dit++) {
       if (!lcc.is_marked(dit, mark)) return false;
@@ -96,11 +96,11 @@ namespace CGAL::internal::Hexmeshing
    * Unlike safe marking functions, this function does not verify if the half-face is already marked.
    *
    * @param lcc The Linear Cell Complex
-   * @param dart A dart handle representing the half-face to mark
+   * @param dart A dart descriptor representing the half-face to mark
    * @param mark The mark to apply to the half-face
    */
   inline
-  void mark_half_face_unchecked(LCC& lcc, Dart_handle dart, size_type mark){
+  void mark_half_face_unchecked(LCC& lcc, Dart_descriptor dart, size_type mark){
     auto iterator = lcc.darts_of_cell<2, 1>(dart);
 
     for (auto dit = iterator.begin(), dend = iterator.end(); dit != dend; dit++) {
@@ -123,14 +123,14 @@ namespace CGAL::internal::Hexmeshing
    * @param lcc The Linear Cell Complex
    * @param rdata Refinement data containing the current iteration direction and collections
    * @param faces_to_check Queue of faces that need to be checked for template conflicts
-   * @param edge A dart handle representing the marked node (0-cell)
+   * @param edge A dart descriptor representing the marked node (0-cell)
    */
   inline
-  void __expand_0_cell_marking(LCC &lcc, RefinementData &rdata, std::queue<Dart_handle>& faces_to_check, Dart_handle &edge) {
+  void __expand_0_cell_marking(LCC &lcc, RefinementData &rdata, std::queue<Dart_descriptor>& faces_to_check, Dart_descriptor &edge) {
     auto faces = plane_faces_around_node(lcc, rdata, edge);
     int s = faces.size();
 
-    for (Dart_handle face : faces){
+    for (Dart_descriptor face : faces){
       assert( lcc.attribute<2>(face) != nullptr);
       auto& face_attr =  lcc.attribute<2>(face)->info();
 
@@ -164,21 +164,21 @@ namespace CGAL::internal::Hexmeshing
    * @param rdata Refinement data containing the current iteration direction
    * @param template_mark HexMeshingData template_mark
    * @param faces_to_check Queue of faces that need to be checked for template conflicts
-   * @param face A dart handle representing the face with template_id=2 to check for diagonal marking
+   * @param face A dart descriptor representing the face with template_id=2 to check for diagonal marking
    * @return true if a fix was applied (diagonal pattern was converted to template_id=4), false if the marks were already consecutive
    */
   inline
-  bool fix_mark_connectivity(LCC &lcc, RefinementData &rdata, size_type template_mark, std::queue<Dart_handle>& faces_to_check, Dart_handle face){
+  bool fix_mark_connectivity(LCC &lcc, RefinementData &rdata, size_type template_mark, std::queue<Dart_descriptor>& faces_to_check, Dart_descriptor face){
     auto edges = lcc.darts_of_cell<2, 1>(face);
 
     bool connected = true;
-    Dart_handle edge1 = face;
+    Dart_descriptor edge1 = face;
     if (lcc.is_marked(edge1, template_mark)
       && !lcc.is_marked(lcc.beta(edge1, 1), template_mark)
       &&  lcc.is_marked(lcc.beta(edge1, 1, 1), template_mark))
     { connected = false;}
 
-    Dart_handle edge2 = lcc.beta(face, 1);
+    Dart_descriptor edge2 = lcc.beta(face, 1);
     if (lcc.is_marked(edge2, template_mark)
       && !lcc.is_marked(lcc.beta(edge2, 1), template_mark)
       &&  lcc.is_marked(lcc.beta(edge2, 1, 1), template_mark))

@@ -30,13 +30,13 @@ namespace CGAL::internal::Hexmeshing
    *
    * @param lcc The Linear Cell Complex
    * @param plane The plane normal direction to search for
-   * @param edge A dart handle representing the edge to find adjacent faces for
-   * @return A dart handle to the adjacent face on the plane, or null if not found
+   * @param edge A dart descriptor representing the edge to find adjacent faces for
+   * @return A dart descriptor to the adjacent face on the plane, or null if not found
    */
   inline
-  Dart_handle __adjacent_face_on_plane(LCC& lcc, PlaneNormal plane, Dart_handle edge)
+  Dart_descriptor __adjacent_face_on_plane(LCC& lcc, PlaneNormal plane, Dart_descriptor edge)
   {
-    Dart_handle other_face = lcc.beta(edge, 2);
+    Dart_descriptor other_face = lcc.beta(edge, 2);
     auto this_face_handle = lcc.attribute<2>(edge);
     auto other_face_handle = lcc.attribute<2>(other_face);
 
@@ -80,17 +80,17 @@ namespace CGAL::internal::Hexmeshing
    *
    * @param lcc The Linear Cell Complex
    * @param plane The plane normal direction to search for
-   * @param edge A dart handle representing the edge to find adjacent faces for
+   * @param edge A dart descriptor representing the edge to find adjacent faces for
    * @param additional_volumes Vector to store volumes encountered during the search
-   * @return A dart handle to the adjacent face on the plane, or null if not found
+   * @return A dart descriptor to the adjacent face on the plane, or null if not found
    */
   inline
-  Dart_handle __adjacent_face_on_plane(LCC& lcc, PlaneNormal plane, Dart_handle edge, std::vector<Dart_handle>& additional_volumes)
+  Dart_descriptor __adjacent_face_on_plane(LCC& lcc, PlaneNormal plane, Dart_descriptor edge, std::vector<Dart_descriptor>& additional_volumes)
   {
-    Dart_handle other_face = lcc.beta(edge, 2);
+    Dart_descriptor other_face = lcc.beta(edge, 2);
     auto this_face_handle = lcc.attribute<2>(edge);
     auto other_face_handle = lcc.attribute<2>(other_face);
-    boost::container::static_vector<Dart_handle, 5> __additional_volumes;
+    boost::container::static_vector<Dart_descriptor, 5> __additional_volumes;
 
     assert(this_face_handle != nullptr);
 
@@ -136,13 +136,13 @@ namespace CGAL::internal::Hexmeshing
    *
    * @param lcc The Linear Cell Complex
    * @param plane The plane normal direction to search for
-   * @param edge A dart handle representing the edge to find adjacent faces for
-   * @return A dart handle to the adjacent face on the plane, or null if not found
+   * @param edge A dart descriptor representing the edge to find adjacent faces for
+   * @return A dart descriptor to the adjacent face on the plane, or null if not found
    */
   inline
-  Dart_handle adjacent_face_on_plane(LCC& lcc, PlaneNormal plane, Dart_handle edge)
+  Dart_descriptor adjacent_face_on_plane(LCC& lcc, PlaneNormal plane, Dart_descriptor edge)
   {
-    Dart_handle other_face = __adjacent_face_on_plane(lcc, plane, edge);
+    Dart_descriptor other_face = __adjacent_face_on_plane(lcc, plane, edge);
 
     // This is needed to iterate on 3 templates that are on a grid border, missing a connected volume
     // And preventing iteration the first way
@@ -162,14 +162,14 @@ namespace CGAL::internal::Hexmeshing
    *
    * @param lcc The Linear Cell Complex
    * @param plane The plane normal direction to search for
-   * @param edge A dart handle representing the edge to find adjacent faces for
+   * @param edge A dart descriptor representing the edge to find adjacent faces for
    * @param additionnal_volumes Pointer to vector to store volumes encountered during the search
-   * @return A dart handle to the adjacent face on the plane, or null if not found
+   * @return A dart descriptor to the adjacent face on the plane, or null if not found
    */
   inline
-  Dart_handle adjacent_face_on_plane(LCC& lcc, PlaneNormal plane, Dart_handle edge, std::vector<Dart_handle>* additionnal_volumes)
+  Dart_descriptor adjacent_face_on_plane(LCC& lcc, PlaneNormal plane, Dart_descriptor edge, std::vector<Dart_descriptor>* additionnal_volumes)
   {
-    Dart_handle other_face = __adjacent_face_on_plane(lcc, plane, edge, *additionnal_volumes);
+    Dart_descriptor other_face = __adjacent_face_on_plane(lcc, plane, edge, *additionnal_volumes);
 
     if (other_face == lcc.null_dart_descriptor && !lcc.is_free<3>(edge))
       other_face = __adjacent_face_on_plane(lcc, plane, lcc.beta<3>(edge), *additionnal_volumes);

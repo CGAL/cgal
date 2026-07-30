@@ -50,10 +50,10 @@ class Hexmeshing_for_linear_cell_complex
 public:
   using Kernel = Hexmeshing::Kernel;
   using LCC = Hexmeshing::LCC;
-  using Dart_handle = Hexmeshing::Dart_handle;
+  using Dart_descriptor = Hexmeshing::Dart_descriptor;
   using DartInfo = Hexmeshing::DartInfo;
   using size_type = Hexmeshing::size_type;
-  using PlaneCC = std::vector<Dart_handle>; // One dart per face connected components
+  using PlaneCC = std::vector<Dart_descriptor>; // One dart per face connected components
   using PlaneSet = std::vector<PlaneCC>; // A set of planes
 
   /**
@@ -90,21 +90,21 @@ public:
   Hexmeshing_for_linear_cell_complex(TriangleMesh poly_out, Hexmeshing::Grid grid_out) : mesh(poly_out, grid_out) {}
 
   /**
-   * @brief Fixes invalid dart handles after refinement
+   * @brief Fixes invalid dart descriptors after refinement
    *
-   * After refinement, some dart handles may become invalid. This function
+   * After refinement, some dart descriptors may become invalid. This function
    * iterates over all attributes to replace invalid handles with valid ones.
    * It ensures the consistency of the mesh structure after modifications.
    */
   void fix_dart_storage()
   {
     // Data that we'll use to know which plane/cc we are looking for, while iterating on attributes
-    using DartRef = std::reference_wrapper<Dart_handle>;
+    using DartRef = std::reference_wrapper<Dart_descriptor>;
     using CCIdToFace = std::unordered_map<size_t, DartRef>;
     using InvalidPlaneSet = std::unordered_map<size_t, CCIdToFace>;
     std::array<InvalidPlaneSet, 3> plane_non_valid_faces;
 
-    const auto valid_face = [&](Dart_handle& face, char p, size_t cc_id){
+    const auto valid_face = [&](Dart_descriptor& face, char p, size_t cc_id){
       auto face_attr = lcc.attribute<2>(face);
       auto& face_info = face_attr->info();
       return lcc.is_dart_used(face) && face_attr != nullptr && face_attr->is_valid() && face_info.plane[p] == true && face_info.cc_id == cc_id;
@@ -118,7 +118,7 @@ public:
         CCIdToFace non_valid_face;
 
         for (int cc_id = 0; cc_id < plane_cc.size(); cc_id++){
-          Dart_handle& dart = plane_cc[cc_id];
+          Dart_descriptor& dart = plane_cc[cc_id];
 
           if (!valid_face(dart, p, cc_id)){
             non_valid_face.emplace(cc_id, std::ref(dart));
@@ -148,7 +148,7 @@ public:
       return {};
     };
 
-    const auto fix_face_orientation = [&](Dart_handle face, char plane_normal) -> Dart_handle {
+    const auto fix_face_orientation = [&](Dart_descriptor face, char plane_normal) -> Dart_descriptor {
       auto n0 = lcc.attribute<0>(face)->point();
       auto n1 = lcc.attribute<0>(lcc.beta(face, 1))->point();
       auto n2 = lcc.attribute<0>(lcc.beta(face, 1, 1))->point();

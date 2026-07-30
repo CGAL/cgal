@@ -19,10 +19,10 @@
 
 namespace CGAL::internal::Hexmeshing
 {
-  using TrimmingFunction = std::function<bool(LCC&, Dart_handle)>;
+  using TrimmingFunction = std::function<bool(LCC&, Dart_descriptor)>;
   // Identifies which 3-cell should be refined
-  using MarkingFunction = std::function<bool(LCC&, Dart_handle)>;
-  using DetectingFunction = std::function<bool(LCC&, Dart_handle)>;
+  using MarkingFunction = std::function<bool(LCC&, Dart_descriptor)>;
+  using DetectingFunction = std::function<bool(LCC&, Dart_descriptor)>;
   using DecideInsideFunction = std::function<bool(Point)>;
 }
 
