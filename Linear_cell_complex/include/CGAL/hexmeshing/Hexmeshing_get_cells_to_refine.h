@@ -239,9 +239,12 @@ namespace CGAL::internal::Hexmeshing
         rdata.marked_nodes.push_back(it);
       }
 
-      if (!lcc.is_whole_cell_marked<2>(top_face, explored_face_mark)){
+      if (!lcc.is_marked(top_face, explored_face_mark))
+          //!lcc.is_whole_cell_marked<2>(top_face, explored_face_mark))
+      {
         rdata.faces_to_refine.push_back(top_face);
-        mark_face_unchecked(lcc, top_face, explored_face_mark);
+        lcc.template mark_cell<2>(top_face, explored_face_mark);
+        //mark_face_unchecked(lcc, top_face, explored_face_mark);
       }
     }
   }
@@ -361,16 +364,21 @@ namespace CGAL::internal::Hexmeshing
         auto top_face_1 = lcc.beta(edge, 2);
         auto top_face_2 = lcc.beta(edge, 3, 2);
 
-        if (!lcc.is_whole_cell_marked<2>(top_face_1, explored_faces))
+        if (!lcc.is_marked(top_face_1, explored_faces))
+            //!lcc.is_whole_cell_marked<2>(top_face_1, explored_faces))
         {
           rdata.faces_to_refine.push_back(top_face_1);
-          mark_face_unchecked(lcc, top_face_1, explored_faces);
+          lcc.template mark_cell<2>(top_face_1, explored_faces);
+          //mark_face_unchecked(lcc, top_face_1, explored_faces);
         }
 
-        if (top_face_2 != lcc.null_dart_descriptor && !lcc.is_whole_cell_marked<2>(top_face_2, explored_faces))
+        if (top_face_2!=lcc.null_dart_descriptor &&
+            !lcc.is_marked(top_face_2, explored_faces))
+            // !lcc.is_whole_cell_marked<2>(top_face_2, explored_faces))
         {
           rdata.faces_to_refine.push_back(top_face_2);
-          mark_face_unchecked(lcc, top_face_2, explored_faces);
+          lcc.template mark_cell<2>(top_face_2, explored_faces);
+          // mark_face_unchecked(lcc, top_face_2, explored_faces);
         }
       }
       // Also add the adjacent volumes if there is atleast one marked node
@@ -470,29 +478,16 @@ namespace CGAL::internal::Hexmeshing
 
         vol_attr.iteration = rdata.iteration;
 
-        if (!lcc.is_whole_cell_marked<2>(adjacent_faces[0], explored_face))
+        for(int i=0; i<4; ++i)
         {
-          mark_face_unchecked(lcc, adjacent_faces[0], explored_face);
-          rdata.faces_to_refine.push_back(adjacent_faces[0]);
+          if (!lcc.is_marked(adjacent_faces[i], explored_face))
+            //!lcc.is_whole_cell_marked<2>(adjacent_faces[i], explored_face))
+          {
+            //mark_face_unchecked(lcc, adjacent_faces[i], explored_face);
+            lcc.template mark_cell<2>(adjacent_faces[i], explored_face);
+            rdata.faces_to_refine.push_back(adjacent_faces[i]);
+          }
         }
-
-        if (!lcc.is_whole_cell_marked<2>(adjacent_faces[1], explored_face))
-        {
-          mark_face_unchecked(lcc, adjacent_faces[1], explored_face);
-          rdata.faces_to_refine.push_back(adjacent_faces[1]);
-        }
-      }
-
-      if (node_1_marked && !lcc.is_whole_cell_marked<2>(adjacent_faces[2], explored_face))
-      {
-        mark_face_unchecked(lcc, adjacent_faces[2], explored_face);
-        rdata.faces_to_refine.push_back(adjacent_faces[2]);
-      }
-
-      if (node_2_marked && !lcc.is_whole_cell_marked<2>(adjacent_faces[3], explored_face))
-      {
-        mark_face_unchecked(lcc, adjacent_faces[3], explored_face);
-        rdata.faces_to_refine.push_back(adjacent_faces[3]);
       }
     }
   }
