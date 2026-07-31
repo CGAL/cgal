@@ -119,6 +119,7 @@ void compute_surface_bijection_from_pattern_to_dart(LCC& lcc,
     }
     assert(!pattern.lcc().is_marked(it, treated));
   }
+  CGAL_assertion(lcc.is_whole_map_unmarked(treated));
   pattern.lcc().free_mark(treated);
 }
 ////////////////////////////////////////////////////////////////////////////////

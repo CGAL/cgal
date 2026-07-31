@@ -199,6 +199,7 @@ std::size_t sew3_similar_facets(LCC& lcc,
   auto mark=lcc.get_new_mark();
   lcc.negate_mark(mark);
   std::size_t res=sew3_similar_facets(lcc, mark, epsilon);
+  CGAL_assertion(lcc.is_whole_map_marked(mark));
   lcc.free_mark(mark);
   return res;
 }
