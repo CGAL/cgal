@@ -1,6 +1,6 @@
 /*!
 \example Linear_cell_complex/draw_linear_cell_complex.cpp
-\example Linear_cell_complex/hexmeshing.cpp
+\example Linear_cell_complex/hexmeshing_basic.cpp
 \example Linear_cell_complex/linear_cell_complex_3.cpp
 \example Linear_cell_complex/linear_cell_complex_3_attributes_management.cpp
 \example Linear_cell_complex/linear_cell_complex_3_incremental_builder.cpp

@@ -22,7 +22,8 @@
 namespace CGAL::internal::Hexmeshing
 {
   inline
-  void post_processing(LCC& lcc, double length_of_4_template, bool trim, MarkingFunction cellIdentifier, DecideInsideFunction decideFunc)
+  void post_processing(LCC& lcc, double length_of_4_template, bool trim, bool smooth,
+                       MarkingFunction cellIdentifier, DecideInsideFunction decideFunc)
   {
     size_type move_mark = lcc.get_new_mark();
     size_type inner_mark = lcc.get_new_mark();
@@ -32,12 +33,15 @@ namespace CGAL::internal::Hexmeshing
     move_points_onto_mesh_with_volume_fraction(lcc, move_mark, inner_mark);
 
     // smoothing
-    surface_smoothing(lcc, move_mark, inner_mark);
-    volume_smoothing(lcc, move_mark);
-
+    if(smooth)
+    {
+      surface_smoothing(lcc, move_mark, inner_mark);
+      volume_smoothing(lcc, move_mark);
+    }
+    
     // trimming
     if(trim)
-      trim_excedent_volumes(lcc, is_marked_volume(inner_mark));
+    { trim_excedent_volumes(lcc, is_marked_volume(inner_mark)); }
 
     lcc.free_mark(move_mark);
     lcc.free_mark(inner_mark);
