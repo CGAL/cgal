@@ -59,7 +59,14 @@ public:
   void after_flip(CellHandle /* c */) {}
 };
 
-
+struct Remeshing_steps
+{
+  bool do_split = true;
+  bool do_collapse = true;
+  bool do_flip = true;
+  std::size_t nb_smoothing_iterations = 1;
+  std::size_t nb_flip_smooth_iterations = 3;
+};
 
 template<typename Triangulation
          , typename SizingFunction
@@ -597,7 +604,7 @@ public:
   }
 
   void remesh(const std::size_t& max_it,
-              const std::size_t& nb_extra_iterations)
+              const Remeshing_steps& steps)
   {
     std::size_t it_nb = 0;
     while (it_nb < max_it)
@@ -608,11 +615,20 @@ public:
 #endif
       if (!resolution_reached())
       {
-        split();
-        collapse();
+        if(steps.do_split)
+          split();
+        if(steps.do_collapse)
+          collapse();
       }
-      flip();
-      smooth();
+      if(steps.do_flip)
+        flip();
+
+      std::size_t it_smoothing = 0;
+      while (it_smoothing < steps.nb_smoothing_iterations)
+      {
+        smooth();
+        ++it_smoothing;
+      }
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
       std::cout << "# Iteration " << it_nb << " done : "
@@ -634,7 +650,7 @@ public:
     }
 
     m_vertex_smoother.start_flip_smooth_steps(m_c3t3);
-    while (it_nb < max_it + nb_extra_iterations)
+    while (it_nb < max_it + steps.nb_flip_smooth_iterations)
     {
       ++it_nb;
 
