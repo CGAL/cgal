@@ -16,6 +16,7 @@
 
 #include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
 #include <CGAL/hexmeshing/Hexmeshing_function_alias.h>
+#include <CGAL/Union_find.h>
 #include <vector>
 
 namespace CGAL::internal::Hexmeshing
@@ -156,8 +157,10 @@ namespace CGAL::internal::Hexmeshing
    */
   template <typename HexData>
   void setup_next_level_face(HexData& hdata,
-                            std::unordered_map<LCC::Attribute_descriptor<2>::type, Union_find<Dart_descriptor>::handle>& odd_face_to_handle,
-                            std::unordered_map<LCC::Attribute_descriptor<2>::type, Union_find<Dart_descriptor>::handle>& even_face_to_handle,
+                            std::unordered_map<LCC::Attribute_descriptor<2>::type,
+                                               Union_find<Dart_descriptor>::handle>& odd_face_to_handle,
+                            std::unordered_map<LCC::Attribute_descriptor<2>::type,
+                                               Union_find<Dart_descriptor>::handle>& even_face_to_handle,
                             std::queue<Dart_descriptor>& to_explore,
                             Union_find<Dart_descriptor>& odd_union_find,
                             Union_find<Dart_descriptor>& even_union_find,
@@ -169,10 +172,13 @@ namespace CGAL::internal::Hexmeshing
     auto vol_handle = lcc.attribute<3>(face);
     auto beta3_vol_handle = lcc.attribute<3>(lcc.beta<3>(face));
 
-    bool identified = vol_handle != nullptr && vol_handle->info().type >= VolumeType::ID_EXPANSION;
-    bool beta3_identified = beta3_vol_handle != nullptr && beta3_vol_handle->info().type >= VolumeType::ID_EXPANSION;
+    bool identified = vol_handle != nullptr &&
+                      vol_handle->info().type >= VolumeType::ID_EXPANSION;
+    bool beta3_identified = beta3_vol_handle != nullptr &&
+                            beta3_vol_handle->info().type >= VolumeType::ID_EXPANSION;
 
-    if (lcc.is_whole_cell_marked<2>(face, face_mark)) return;
+    //if (lcc.is_whole_cell_marked<2>(face, face_mark)) return;
+    if(lcc.is_marked(face, face_mark)) { return; }
     lcc.mark_cell<2>(face, face_mark);
 
     auto edges = lcc.darts_of_cell<2, 1>(face);
@@ -180,7 +186,8 @@ namespace CGAL::internal::Hexmeshing
 
     Dart_descriptor back_face = lcc.beta(face, 2, 1, 1, 2);
 
-    for (auto it = edges.begin(), end = edges.end(); it != end; it++){
+    for (auto it = edges.begin(), end = edges.end(); it != end; it++)
+    {
       // Iterate
       CGAL_assertion(lcc.belong_to_same_cell<3>(it, face));
 
@@ -192,7 +199,9 @@ namespace CGAL::internal::Hexmeshing
 
       if (adjacent_face == lcc.null_dart_descriptor) continue;
 
-      if (lcc.is_whole_cell_unmarked<1>(it, edge_mark)){
+      //if (lcc.is_whole_cell_unmarked<1>(it, edge_mark))
+      if(!lcc.is_marked(it, edge_mark))
+      {
         to_explore.push(adjacent_face);
         lcc.mark_cell<1>(it, edge_mark);
       }
@@ -204,13 +213,12 @@ namespace CGAL::internal::Hexmeshing
 
         if (odd_cc_id != nullptr
           && adj_cc_id != odd_face_to_handle.end()
-          && !odd_union_find.same_set(odd_cc_id, adj_cc_id->second)){
-          odd_union_find.unify_sets(odd_cc_id, adj_cc_id->second);
-        }
+          && !odd_union_find.same_set(odd_cc_id, adj_cc_id->second))
+        { odd_union_find.unify_sets(odd_cc_id, adj_cc_id->second); }
 
         if (odd_cc_id == nullptr
           && adj_cc_id != odd_face_to_handle.end())
-          odd_cc_id = odd_union_find.find(adj_cc_id->second);
+        { odd_cc_id = odd_union_find.find(adj_cc_id->second); }
       }
 
       // Even plane union find, only if the studied volume is identified
@@ -299,7 +307,8 @@ namespace CGAL::internal::Hexmeshing
    */
   template <typename HexData>
   void setup_next_level_plane(HexData& hdata){
-    using FaceToHandle = std::unordered_map<LCC::Attribute_descriptor<2>::type, Union_find<Dart_descriptor>::handle>;
+    using FaceToHandle=std::unordered_map<LCC::Attribute_descriptor<2>::type,
+                                          Union_find<Dart_descriptor>::handle>;
     using Union_find = Union_find<Dart_descriptor>;
     using UF_Partition = std::vector<Union_find::handle>;
     using PlaneCC = std::vector<Dart_descriptor>;
@@ -365,15 +374,17 @@ namespace CGAL::internal::Hexmeshing
       return plane_cc;
     };
 
-    for (int p = 0; p < 3; p++){
+    std::deque<Dart_descriptor> tounmark;
+    for (int p = 0; p < 3; p++)
+    {
       PlaneSet& old_plane_set = hdata.first_face_of_planes[p];
       PlaneSet new_plane_set;
 
-      for (int pid = 0; pid < old_plane_set.size(); pid++){
+      for (int pid = 0; pid < old_plane_set.size(); pid++)
+      {
         std::queue<Dart_descriptor> to_explore;
         Union_find odd_union_find, even_union_find;
         FaceToHandle odd_face_to_handle, even_face_to_handle;
-
 
         for (auto start : old_plane_set[pid]){
           // Check the orientation of the face, facing up or down relative to its plane axis
@@ -396,14 +407,19 @@ namespace CGAL::internal::Hexmeshing
           to_explore.push( start );
         }
 
-        while (!to_explore.empty()){
-          Dart_descriptor face = to_explore.front();
+        while (!to_explore.empty())
+        {
+          Dart_descriptor face=to_explore.front();
           to_explore.pop();
+          if(!lcc.is_marked(face, face_mark))
+          { tounmark.push_back(face); }
 
           // TODO write this in a better way, there is so much args / lines
-          setup_next_level_face(hdata, odd_face_to_handle, even_face_to_handle, to_explore, odd_union_find,
-              even_union_find, face, (PlaneNormal)p, pid,
-              edge_mark, face_mark);
+          // faces and edges are marked in this function
+          setup_next_level_face(hdata, odd_face_to_handle, even_face_to_handle,
+                                to_explore, odd_union_find,
+                                even_union_find, face, (PlaneNormal)p, pid,
+                                edge_mark, face_mark);
         }
 
         PlaneCC odd_plane_cc, even_plane_cc;
@@ -416,18 +432,35 @@ namespace CGAL::internal::Hexmeshing
 
         int plane_id = pid * 2;
 
-        new_plane_set.push_back(create_plane(p, plane_id, odd_partitions, odd_union_find, odd_face_to_handle));
-        new_plane_set.push_back(create_plane(p, plane_id+1, even_partitions, even_union_find, even_face_to_handle));
+        new_plane_set.push_back(create_plane(p, plane_id, odd_partitions,
+                                             odd_union_find, odd_face_to_handle));
+        new_plane_set.push_back(create_plane(p, plane_id+1, even_partitions,
+                                             even_union_find, even_face_to_handle));
       }
 
       new_planes[p] = std::move(new_plane_set);
 
-      lcc.unmark_all(edge_mark);
-      lcc.unmark_all(face_mark);
+      for(auto dd: tounmark)
+      {
+        for(auto it=lcc.template darts_of_cell<2>(dd).begin(),
+             itend=lcc.template darts_of_cell<2>(dd).end(); it!=itend; ++it)
+        {
+          lcc.unmark(it, face_mark);
+          if(lcc.is_marked(it, edge_mark))
+          { lcc.template unmark_cell<1>(it, edge_mark); }
+        }
+      }
+      tounmark.clear();
+      CGAL_assertion(lcc.is_whole_map_unmarked(edge_mark));
+      CGAL_assertion(lcc.is_whole_map_unmarked(face_mark));
+      //lcc.unmark_all(edge_mark);
+      //lcc.unmark_all(face_mark);
     }
 
     hdata.first_face_of_planes = std::move(new_planes);
 
+    CGAL_assertion(lcc.is_whole_map_unmarked(edge_mark));
+    CGAL_assertion(lcc.is_whole_map_unmarked(face_mark));
     lcc.free_mark(edge_mark);
     lcc.free_mark(face_mark);
   }

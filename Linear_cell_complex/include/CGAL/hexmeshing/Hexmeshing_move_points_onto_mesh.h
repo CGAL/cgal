@@ -71,14 +71,20 @@ namespace CGAL::internal::Hexmeshing {
   // void move_points_onto_mesh_with_volume_fraction(LCC& lcc, size_type move_mark, size_type inner_mark, double length_of_4_template, MarkingFunction cellIdentifier, DecideInsideFunction decideFunc) {
   //   set_fraction(lcc, length_of_4_template, cellIdentifier, decideFunc);
   inline
-  void move_points_onto_mesh_with_volume_fraction(LCC& lcc, size_type move_mark, size_type inner_mark)
+  void move_points_onto_mesh_with_volume_fraction(LCC& lcc, size_type move_mark,
+                                                  size_type inner_mark)
   {
     const double s = 0.5;
 
     auto volumes = lcc.one_dart_per_cell<3>();
-    int cnt = 0;
-    for(auto it = volumes.begin(); it != volumes.end(); it++) {
-      if(lcc.attribute<3>(it)->info().fraction > s) lcc.mark_cell<3>(it, inner_mark), cnt++;
+    // int cnt = 0;
+    for(auto it = volumes.begin(); it != volumes.end(); it++)
+    {
+      if(lcc.attribute<3>(it)->info().fraction > s)
+      {
+        lcc.mark_cell<3>(it, inner_mark);
+        //cnt++;
+      }
     }
     // std::cout << "Number of inner volumes is: " << cnt << std::endl;
     resolve_non_manifold_case(lcc, s, inner_mark);
@@ -87,7 +93,8 @@ namespace CGAL::internal::Hexmeshing {
 
     size_type set_gradient_mark = lcc.get_new_mark();
 
-    auto detectIntersection = detect_intersection_with_volume_fraction(s, inner_mark, set_gradient_mark);
+    auto detectIntersection =
+        detect_intersection_with_volume_fraction(s, inner_mark, set_gradient_mark);
     move_points_onto_mesh(lcc, move_mark, detectIntersection);
 
     lcc.free_mark(set_gradient_mark);

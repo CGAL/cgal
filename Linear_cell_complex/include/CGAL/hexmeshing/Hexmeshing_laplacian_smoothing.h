@@ -32,7 +32,8 @@ namespace CGAL::internal::Hexmeshing
     const int count_vertices = set_vertex_ids(lcc);
     std::vector<Vector> P_new(count_vertices, CGAL::NULL_VECTOR);
     std::vector<int> count(count_vertices);
-    for(auto edge = edges.begin(); edge != edges.end(); edge++) {
+    for(auto edge = edges.begin(); edge != edges.end(); edge++)
+    {
       auto redge = lcc.beta<1>(edge);
       int id1 = lcc.attribute<0>(edge)->id, id2 = lcc.attribute<0>(redge)->id;
       P_new[id1] += (lcc.point(redge) - CGAL::ORIGIN);
@@ -40,13 +41,16 @@ namespace CGAL::internal::Hexmeshing
       count[id1]++;
       count[id2]++;
     }
-    for(auto face = faces.begin(); face != faces.end(); face++) {
+    for(auto face = faces.begin(); face != faces.end(); face++)
+    {
       if(lcc.is_free<3>(face))
-        mark_k_cells_of_i_cell<2, 0>(lcc, face, side_mark);
+      { mark_k_cells_of_i_cell<2, 0>(lcc, face, side_mark); }
     }
 
-    for(auto vertex = vertices.begin(); vertex != vertices.end(); vertex++) {
-      if(lcc.is_marked(vertex, surface_mark) or lcc.is_marked(vertex, side_mark)) continue;
+    for(auto vertex = vertices.begin(); vertex != vertices.end(); vertex++)
+    {
+      if(lcc.is_marked(vertex, surface_mark) or
+          lcc.is_marked(vertex, side_mark)) continue;
 
       int id = lcc.attribute<0>(vertex)->id;
 

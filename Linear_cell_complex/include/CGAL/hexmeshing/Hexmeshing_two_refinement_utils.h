@@ -63,32 +63,55 @@ namespace CGAL::internal::Hexmeshing
    */
   template <typename FaceOp, typename EdgeOp>
   inline void __plane_for_each_face(LCC& lcc, std::queue<Dart_descriptor>& to_explore,
-                                const FaceOp&& face_operation,
-                                const EdgeOp&& edge_operation)
+                                    const FaceOp&& face_operation,
+                                    const EdgeOp&& edge_operation)
   {
     size_type face_mark = lcc.get_new_mark();
     size_type edge_mark = lcc.get_new_mark();
+    std::deque<Dart_descriptor> tounmark;
 
-    while (!to_explore.empty()){
+    while (!to_explore.empty())
+    {
       Dart_descriptor face = to_explore.front();
       to_explore.pop();
 
-      if (lcc.is_whole_cell_marked<2>(face, face_mark)) continue;
-      lcc.mark_cell<2>(face, face_mark);
+      //if (lcc.is_whole_cell_marked<2>(face, face_mark)) continue;
+      if(!lcc.is_marked(face, face_mark))
+      {
+        lcc.mark_cell<2>(face, face_mark);
+        tounmark.push_back(face);
 
-      auto edges = lcc.darts_of_cell<2,1>(face);
-      face_operation(face, edges);
+        auto edges = lcc.darts_of_cell<2,1>(face);
+        face_operation(face, edges);
 
-      for (auto it = edges.begin(), end = edges.end(); it != end; it++){
-        if (lcc.is_whole_cell_marked<1>(it, edge_mark)) continue;
-        lcc.mark_cell<1>(it, edge_mark);
-        Dart_descriptor edge = edge_operation(it);
-        if (edge != lcc.null_dart_descriptor)
-          to_explore.push(edge);
+        for (auto it = edges.begin(), end = edges.end(); it != end; it++)
+        {
+          //if (lcc.is_whole_cell_marked<1>(it, edge_mark)) continue;
+          if(!lcc.is_marked(it, edge_mark))
+          {
+            lcc.mark_cell<1>(it, edge_mark);
+            Dart_descriptor edge = edge_operation(it);
+            if (edge != lcc.null_dart_descriptor)
+            { to_explore.push(edge); }
+          }
+        }
       }
     }
 
+    for(auto dd: tounmark)
+    {
+      lcc.template unmark_cell<2>(dd, face_mark);
+      for (auto it=lcc.darts_of_cell<2,2>(dd).begin(),
+           itend=lcc.darts_of_cell<2,2>(dd).end(); it!=itend; ++it)
+      {
+        if(lcc.is_marked(it, edge_mark))
+        { lcc.unmark_cell<1>(it, edge_mark); }
+      }
+    }
+
+    CGAL_assertion(lcc.is_whole_map_unmarked(face_mark));
     lcc.free_mark(face_mark);
+    CGAL_assertion(lcc.is_whole_map_unmarked(edge_mark));
     lcc.free_mark(edge_mark);
   }
 
