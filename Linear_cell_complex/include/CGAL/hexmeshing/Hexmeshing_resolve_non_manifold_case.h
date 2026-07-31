@@ -166,6 +166,7 @@ namespace CGAL::internal::Hexmeshing
             for(auto it = vertices.begin(); it != vertices.end(); it++) {
               if(lcc.attribute<0>(vertex)->id == lcc.attribute<0>(it)->id) continue;
               int now_signal = __get_signal(lcc, it, inner_mark);
+              if(now_signal==-1) continue;
               if(is_in_templates[now_signal]) que.emplace(it, now_signal);
             }
           }
