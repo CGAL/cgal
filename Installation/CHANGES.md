@@ -23,8 +23,8 @@ Release date: December 2026
 
 ### [Boolean Operations On Meshes](https://doc.cgal.org/6.3/Manual/packages.html#PkgPMPBooleanOperations)
 
-- The corefinement based operations (including Boolean operations) has been optimised to better
-  handle cases when some identical faces are shared between the input meshes. This leads to a significan speed up
+- The corefinement based operations (including Boolean operations) has been optimized to better
+  handle cases when some identical faces are shared between the input meshes. This leads to a significant speed up
   in those cases.
 
 ## [Release 6.2](https://github.com/CGAL/cgal/releases/tag/v6.2)
