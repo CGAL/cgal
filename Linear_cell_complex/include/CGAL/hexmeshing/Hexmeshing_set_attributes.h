@@ -23,7 +23,7 @@
 namespace CGAL::internal::Hexmeshing
 {
   using RandomPointGenerator=CGAL::Random_points_in_cube_3<Point>;
-  
+
   inline
   void __set_centroid(LCC& lcc, Dart_descriptor dart)
   {
