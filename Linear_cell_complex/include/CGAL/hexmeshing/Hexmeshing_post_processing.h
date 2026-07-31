@@ -38,7 +38,7 @@ namespace CGAL::internal::Hexmeshing
       surface_smoothing(lcc, move_mark, inner_mark);
       volume_smoothing(lcc, move_mark);
     }
-    
+
     // trimming
     if(trim)
     { trim_excedent_volumes(lcc, is_marked_volume(inner_mark)); }
