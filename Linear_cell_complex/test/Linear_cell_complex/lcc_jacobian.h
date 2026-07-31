@@ -1,26 +1,17 @@
-// Copyright (c) 2022 CNRS and LIRIS' Establishments (France).
+// Copyright (c) 2025 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of LCC-Lab.
+// This file is part of CGAL (www.cgal.org)
 //
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// $URL$
+// $Id$
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
 ////////////////////////////////////////////////////////////////////////////////
-#ifndef LCC_JACOBIAN_H
-#define LCC_JACOBIAN_H
+#ifndef CGAL_LCC_JACOBIAN_H
+#define CGAL_LCC_JACOBIAN_H
 
 #include <array>
 #include <utility>
@@ -303,4 +294,4 @@ void display_all_jacobians_of_hex(LCC& lcc, const std::string& other="X")
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-#endif // LCC_JACOBIAN_H
+#endif // CGAL_LCC_JACOBIAN_H
