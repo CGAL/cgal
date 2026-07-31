@@ -56,7 +56,7 @@ public:
     using Point=typename Storage::Point;
     using Vector=typename Storage::Vector;
     using Segment=typename Kernel_traits<Point>::Kernel::Segment_3;
-      
+
     /**
      * @brief Attribute class for vertices with point information
      *

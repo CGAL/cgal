@@ -8,7 +8,7 @@ void render_two_refinement(const std::string& file, int cube_cells_per_dim, int 
 {
   CGAL::Polyhedron_3<CGAL::Exact_predicates_inexact_constructions_kernel> poly;
   CGAL::IO::read_polygon_mesh(CGAL::data_file_path("meshes/" + file), poly);
-  
+
   CGAL::generate_hexahedral_mesh_using_two_refinement
     (poly, cube_cells_per_dim, nb_levels, true);
 

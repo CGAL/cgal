@@ -67,7 +67,7 @@ public:
 
   Mesh_data_for_hexmeshing<TriangleMesh> mesh;
   using Tree=typename Mesh_data_for_hexmeshing<TriangleMesh>::Tree;
-  
+
   // Required initialization
   Hexmeshing::Grid grid;                  ///< Grid configuration defining the mesh structure
   ExternalRessources* ext;    ///< Pointer to external resources for pattern substitution
