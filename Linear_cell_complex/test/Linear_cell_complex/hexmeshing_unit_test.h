@@ -1,4 +1,3 @@
-#include <CGAL/hexmeshing/Hexmeshing_outer_alias.h>
 #include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
 #include <iostream>
 
