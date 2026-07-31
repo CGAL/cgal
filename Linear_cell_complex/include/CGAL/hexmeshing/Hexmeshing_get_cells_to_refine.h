@@ -53,7 +53,10 @@ namespace CGAL::internal::Hexmeshing
     LCC& lcc = hdata.lcc;
     auto& face_attr = lcc.attribute<2>(face)->info();
 
-    if (!lcc.is_whole_cell_unmarked<2>(face, explored_face)) return ;
+    // Since we only mark_cell<2>, we are sure that either all darts are
+    // marked, or none -> no need to test all the face.
+    // if (!lcc.is_whole_cell_unmarked<2>(face, explored_face)) return ;
+    if(lcc.is_marked(face, explored_face)) { return; }
     lcc.mark_cell<2>(face, explored_face);
 
     face_attr.template_id = 0;
@@ -72,21 +75,25 @@ namespace CGAL::internal::Hexmeshing
     auto edges = lcc.darts_of_cell<2,1>(face);
     CGAL_assertion(edges.size() == 4);
     // Add neighboring faces
-    for (auto dit = edges.begin(), dend = edges.end(); dit != dend; dit++){
-      bool edge_explored = lcc.is_whole_cell_marked<1>(dit, explored_edge);
+    for (auto dit = edges.begin(), dend = edges.end(); dit != dend; dit++)
+    {
+      // Same remark here: we don't need to test all the darts of the edge
+      // bool edge_explored =lcc.is_whole_cell_marked<1>(dit, explored_edge);
+      bool edge_explored = lcc.is_marked(dit, explored_edge);
       bool marked = lcc.is_marked(dit, hdata.template_mark);
       bool identified = lcc.is_marked(dit, hdata.identified_mark);
 
-      if (is_markable && !marked && identified){
+      if (is_markable && !marked && identified)
+      {
         lcc.mark_cell<0>(dit, hdata.template_mark);
         rdata.marked_nodes.push_back(dit);
       }
 
-      if (identified){
-        face_attr.template_id++;
-      }
+      if (identified)
+      { face_attr.template_id++; }
 
-      if (!edge_explored) {
+      if (!edge_explored)
+      {
         lcc.mark_cell<1>(dit, explored_edge);
 
         // Also add incident volumes while iterating
@@ -98,7 +105,7 @@ namespace CGAL::internal::Hexmeshing
         }
 
         if (other_face != lcc.null_dart_descriptor)
-          queue.push(other_face);
+        { queue.push(other_face); }
       }
     }
 
@@ -347,7 +354,8 @@ namespace CGAL::internal::Hexmeshing
         // Incident faces normal to the plane
         // We also need to prevent adding twice the faces by marking them
 
-        if (!lcc.is_marked(edge, hdata.template_mark) && !lcc.is_marked(lcc.other_extremity(edge), hdata.template_mark))
+        if (!lcc.is_marked(edge, hdata.template_mark) &&
+            !lcc.is_marked(lcc.other_extremity(edge), hdata.template_mark))
           continue;
 
         auto top_face_1 = lcc.beta(edge, 2);
@@ -521,6 +529,7 @@ namespace CGAL::internal::Hexmeshing
 
     size_type explored_edge = lcc.get_new_mark();
     size_type explored_face = lcc.get_new_mark();
+    std::deque<Dart_descriptor> faces_to_unmark;
 
     PlaneSet& plane_set = hdata.first_face_of_planes[iterationPlane];
 
@@ -536,7 +545,9 @@ namespace CGAL::internal::Hexmeshing
       {
         Dart_descriptor front = to_explore.front();
         to_explore.pop();
-        explore_face_of_plane(hdata, rdata, to_explore, front, explored_edge, explored_face);
+        explore_face_of_plane(hdata, rdata, to_explore, front,
+                              explored_edge, explored_face);
+        faces_to_unmark.push_back(front);
       }
     }
 
@@ -554,7 +565,25 @@ namespace CGAL::internal::Hexmeshing
     get_cells_to_refine_from_plane(hdata, rdata,  explored_face);
     get_cells_to_refine_from_additionnal_volumes(hdata, rdata, explored_face);
 
+    for(auto dd: faces_to_unmark)
+    {
+      for(auto it=lcc.darts_of_cell<2>(dd).begin(),
+           itend=lcc.darts_of_cell<2>(dd).end(); it!=itend; ++it)
+      {
+        lcc.unmark(it, explored_face);
+        if(lcc.is_marked(it, explored_edge))
+        { lcc.unmark_cell<1>(it, explored_edge); }
+      }
+    }
+    for(auto dd: rdata.faces_to_refine)
+    {
+      if(lcc.is_marked(dd, explored_face))
+      { lcc.template unmark_cell<2>(dd, explored_face); }
+    }
+
+    CGAL_assertion(lcc.is_whole_map_unmarked(explored_edge));
     lcc.free_mark(explored_edge);
+    CGAL_assertion(lcc.is_whole_map_unmarked(explored_face));
     lcc.free_mark(explored_face);
   }
 }

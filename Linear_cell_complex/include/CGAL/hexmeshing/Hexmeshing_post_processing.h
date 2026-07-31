@@ -43,7 +43,14 @@ namespace CGAL::internal::Hexmeshing
     if(trim)
     { trim_excedent_volumes(lcc, is_marked_volume(inner_mark)); }
 
+    for(auto it=lcc.darts().begin(), itend=lcc.darts().end(); it!=itend; ++it)
+    {
+      lcc.unmark(it, move_mark);
+      lcc.unmark(it, inner_mark);
+    }
+    CGAL_assertion(lcc.is_whole_map_unmarked(move_mark));
     lcc.free_mark(move_mark);
+    CGAL_assertion(lcc.is_whole_map_unmarked(inner_mark));
     lcc.free_mark(inner_mark);
   }
 }
