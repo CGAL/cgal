@@ -152,10 +152,10 @@ mechanism.
 
 \subsection Linear_cell_complexHexmeshing Hexahedral Two-refinement
 
-A function `generate_hexahedral_mesh_using_two_refinement()` outputs a hexahedral grid created by two refinement algorithm and smoothing described in \cgalCite{cgal:owen2017template-based}.
-Given a surface mesh supplied as any model of `FaceGraph` (e.g., `Polyhedron_3`), it generates a `Linear_cell_complex_for_combinatorial_map` grid in which the regions near the intersections with the input mesh are finely subdivided.
+A function `generate_hexahedral_mesh_using_two_refinement()` outputs a hexahedral grid created by the method described in \cgalCite{cgal:owen2017template-based}: a two refinement algorithm followed by a smoothing.
+Given a surface mesh supplied as any model of `FaceListGraph` (e.g., `Polyhedron_3`), it generates a `Linear_cell_complex_for_combinatorial_map` grid in which the regions near the intersections with the input mesh are finely subdivided.
 It then applies Laplacian smoothing to drive the 3-cell shapes toward more cube-like hexahedra.
-
+3
 \cgalFigureBegin{fig_dragon_summary,dragon_summary.png}
 Example of hexahedral two-refinement for <a href="https://graphics.stanford.edu/data/3Dscanrep/">Stanford dragon</a>. <B>Left</B>: Initial mesh. <B>Middle</B>: Result of the hexahedral 2-refinement. <B>Right</B>: Cross-section of the result of the smoothing.
 \cgalFigureEnd
