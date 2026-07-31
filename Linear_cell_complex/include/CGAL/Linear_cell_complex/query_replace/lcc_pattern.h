@@ -579,14 +579,6 @@ protected:
   size_type m_mark_to_preserve;
   /// For each inner point, its barycentric coordinates for each external point
   std::vector<Barycentric_coord<LCC, 3>> m_barycentric_coords;
-
-  /// Use CGAL (unofficial) package Barycentric_coordinates_3
-  /* CGAL::Surface_mesh<typename LCC::Point> bounding_mesh;
-
-public:
-  CGAL::Barycentric_coordinates::Mean_value_coordinates_3
-  <CGAL::Surface_mesh<typename LCC::Point>,
-   CGAL::Exact_predicates_inexact_constructions_kernel>* mv=nullptr; */
 };
 ///////////////////////////////////////////////////////////////////////////////
 enum Pattern_type
