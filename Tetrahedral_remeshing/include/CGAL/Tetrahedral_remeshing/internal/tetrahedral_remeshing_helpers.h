@@ -2605,12 +2605,26 @@ void dump_medit(const C3t3& c3t3, const char* filename)
   os.close();
 }
 
-template<typename C3t3>
-void dump_c3t3(const C3t3& c3t3, const char* filename_no_extension)
+template <typename T3, typename CornerIndex, typename CurveIndex>
+void dump_c3t3(
+  const CGAL::Mesh_complex_3_in_triangulation_3<T3, CornerIndex, CurveIndex>& c3t3,
+  const char* filename_no_extension)
 {
-//  std::string filename_medit(filename_no_extension);
-//  filename_medit.append(".mesh");
-//  dump_medit(c3t3, filename_medit.c_str());
+  std::string filename_medit(filename_no_extension);
+  filename_medit.append(".mesh");
+  dump_medit(c3t3, filename_medit.c_str());
+
+  std::string filename_binary(filename_no_extension);
+  filename_binary.append(".binary.cgal");
+  dump_binary(c3t3, filename_binary.c_str());
+}
+
+template<typename CDT_3>
+void dump_c3t3(const CDT_3& cdt3, const char* filename_no_extension)
+{
+  std::string filename_off(filename_no_extension);
+  filename_off.append("_facets.off");
+  cdt3.dump_constrained_facets_to_off(filename_off.c_str());
 //
 //  std::string filename_binary(filename_no_extension);
 //  filename_binary.append(".binary.cgal");
