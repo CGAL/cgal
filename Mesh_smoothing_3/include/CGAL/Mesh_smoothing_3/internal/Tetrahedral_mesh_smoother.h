@@ -150,10 +150,10 @@ public:
     enum OPTIMIZATION_TYPE {UNDEFINED, UNTANGLING, STIFFENING, LAPLACIAN, INFLATION};
 
     struct LBFGS_status {
-        unsigned iter = std::numeric_limits<unsigned>::max();
+        unsigned iter = (std::numeric_limits<unsigned>::max)();
         double step = 0.;
         unsigned nbEval = 0;
-        bool enabled() const { return iter != std::numeric_limits<unsigned>::max(); }
+        bool enabled() const { return iter != (std::numeric_limits<unsigned>::max)(); }
     };
 
 
@@ -200,7 +200,7 @@ private:
     std::vector<Tetrahedron_status> _callback_tet_storage;
     Eigen::VectorXd _callback_smoothing_gradient;
     Eigen::VectorXd _callback_boundary_gradient;
-    bool run_callback(OPTIMIZATION_TYPE opt_type, unsigned iter, LBFGS_status lbfgs_status = {std::numeric_limits<unsigned>::max(), 0., 0}, Eigen::VectorXd const *g = nullptr);
+    bool run_callback(OPTIMIZATION_TYPE opt_type, unsigned iter, LBFGS_status lbfgs_status = {(std::numeric_limits<unsigned>::max)(), 0., 0}, Eigen::VectorXd const *g = nullptr);
 
 
 private:
@@ -753,7 +753,7 @@ inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::update_
     double _1999_eps = std::sqrt(1e-18 + 4*1e-2* weighted_det_min*weighted_det_min);
 
     constexpr double forced_decrease_rate = 0.1;
-    double sigma = std::max(forced_decrease_rate, 1 - decrease_rate);
+    double sigma = (std::max)(forced_decrease_rate, 1 - decrease_rate);
     double mu = (1-sigma) * Math_functions::chi(_untangling_eps, weighted_det_min);
     double foldover_eps = 2 * std::sqrt(mu*(mu - weighted_det_min));
 

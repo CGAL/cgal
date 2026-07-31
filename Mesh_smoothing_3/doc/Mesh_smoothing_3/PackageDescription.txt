@@ -32,7 +32,7 @@
 
 \cgalClassifedRefPages
 
-\cgalCRPSection{Fonctions}
+\cgalCRPSection{Functions}
 - `CGAL::boundary_aware_mesh_smoothing()`
 
 */
