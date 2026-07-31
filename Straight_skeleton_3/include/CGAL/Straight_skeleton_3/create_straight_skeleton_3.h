@@ -143,8 +143,7 @@ construct_skeleton(const TriangleMesh& tmesh,
  *
  * constructs the interior or exterior straight skeleton of a 3D polyhedron.
  *
- * Positive time values signify outward construction, while negative values or an empty times range
- * correspond to inward construction.
+ * A positive time value signifies outward construction, while a negative value corresponds to inward construction.
  *
  * Face weights may be passed to represent different front speeds. These values must always be positive
  * since they represent absolute speeds.
@@ -187,6 +186,7 @@ construct_skeleton(const TriangleMesh& tmesh,
  *      \cgalParamDefault{A constant property map with uniform weight `1` for all faces.}
  *      \cgalParamExtra{Precondition: all face weights must be positive.}
  *    \cgalParamNEnd
+ * \cond SKIP_IN_MANUAL
  *    \cgalParamNBegin{config_file_path}
  *      \cgalParamDescription{the path to a configuration file to the algorithm. See the documentation
  *                            of the class `CGAL::Straight_skeletons_3::Configuration` for details.}
@@ -195,6 +195,7 @@ construct_skeleton(const TriangleMesh& tmesh,
  *                        configuration options (see the documentation of the class
  *                        `CGAL::Straight_skeletons_3::Configuration` for details).}
  *    \cgalParamNEnd
+ * \endcond
  *  \cgalNamedParamsEnd
  *
  * \pre The value `max_time` must be either positive or negative (non-zero).

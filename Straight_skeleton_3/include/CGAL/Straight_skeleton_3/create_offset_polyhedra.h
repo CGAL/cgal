@@ -168,8 +168,8 @@ struct Output_processor
  * to the intermediate states of the input mesh during the straight skeleton construction.
  *
  * Positive time values correspond to outward offsetting, while negative values or an empty times
- * range correspond to inward offsetting. Face weights must always be positive since they represent
- * absolute speeds.
+ * range correspond to inward offsetting. Face weights represent absolute speeds and as such
+ * must always be positive.
  *
  * \warning An epsilon geometric perturbation is always applied to the input mesh as to avoid
  * degenerate configurations, See \ref Straight_skeleton_3Limitations for more information.
@@ -181,7 +181,8 @@ struct Output_processor
  *
  * \param tmesh the input triangle mesh whose faces are to be offset
  * \param save_times the times at which the offset polyhedra are to be constructed
- * \param results the output vector of polyhedra that will contain the constructed offset polyhedra
+ * \param results a vector of the offset polyhedra, corresponding to the save times, sorted
+ *                in increasing order of absolute values.
  * \param np_in an optional sequence of \ref bgl_namedparameters "Named Parameters"
  *              among the ones listed below
  *  \cgalNamedParamsBegin
@@ -247,7 +248,7 @@ template <typename TriangleMeshIn, typename PolygonMeshOut,
           typename NamedParametersIn = parameters::Default_named_parameters,
           typename... NamedParametersOut>
 bool create_straight_skeleton_and_offset_polyhedra_3(const TriangleMeshIn& tmesh,
-                                                     const std::vector<FT>& save_times, // intentional copy
+                                                     const std::vector<FT>& save_times,
                                                      std::vector<PolygonMeshOut>& results,
                                                      const NamedParametersIn& np_in = parameters::default_values(),
                                                      const NamedParametersOut&... nps_out)

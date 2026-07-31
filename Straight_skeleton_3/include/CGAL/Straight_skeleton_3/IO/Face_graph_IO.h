@@ -244,8 +244,8 @@ public:
         PMP::region_growing_of_planes_on_faces(tmesh,
                                                CGAL::make_random_access_property_map(region_ids),
                                                CGAL::parameters::cosine_of_maximum_angle(cos_of_max_angle)
-                                                               .region_primitive_map(plane_map)
-                                                               .maximum_distance(max_distance));
+                                                                .region_primitive_map(plane_map)
+                                                                .maximum_distance(max_distance));
 
     static int region_dump_id = -1;
     utils::save_colored_mesh(tmesh, region_ids, "results/regions_" + std::to_string(++region_dump_id) + ".ply");
@@ -259,9 +259,9 @@ public:
                                       CGAL::make_random_access_property_map(region_ids),
                                       nb_regions,
                                       CGAL::make_random_access_property_map(corner_ids),
-                                      CGAL::parameters::cosine_of_maximum_angle(cos_of_max_angle).
-                                                        maximum_distance(max_distance).
-                                                        edge_is_constrained_map(CGAL::make_random_access_property_map(ecm)));
+                                      CGAL::parameters::cosine_of_maximum_angle(cos_of_max_angle)
+                                                       .maximum_distance(max_distance)
+                                                       .edge_is_constrained_map(CGAL::make_random_access_property_map(ecm)));
 
     CGAL_SS3_TRANSF_TRACE_CODE(for (face_descriptor f : faces(tmesh)))
     CGAL_SS3_TRANSF_TRACE("facet " << f << " is in region " << region_ids[f]);
