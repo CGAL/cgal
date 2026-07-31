@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 cmake_minimum_required(VERSION 3.12...3.31)
-project(Apollonius_graph_2_Examples)
+project(Intersections_3_Benchmark)
 
 find_package(CGAL REQUIRED)
 

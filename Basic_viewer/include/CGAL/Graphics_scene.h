@@ -18,7 +18,9 @@
 #include <iostream>
 #include <algorithm>
 #include <array>
+#include <functional>
 #include <map>
+#include <unordered_map>
 #include <queue>
 #include <string>
 #include <tuple>
@@ -509,8 +511,20 @@ protected:
 
   // Clip-plane cap: geometric face de-duplication during volume building. The key
   // is the sorted face vertex positions, so both sides of a shared wall match.
+  // Hashed so the build stays linear on meshes with many faces.
   using Face_key = std::vector<std::array<double, 3>>;
-  std::map<Face_key, unsigned int> m_face_dedup;
+  struct Face_key_hash
+  {
+    std::size_t operator()(const Face_key &k) const
+    {
+      std::size_t h=k.size();
+      for (const std::array<double, 3> &p : k)
+        for (double c : p)
+        { h^=std::hash<double>()(c)+0x9e3779b97f4a7c15ULL+(h<<6)+(h>>2); }
+      return h;
+    }
+  };
+  std::unordered_map<Face_key, unsigned int, Face_key_hash> m_face_dedup;
   bool m_building_volume = false;
 
   // Color of the volume currently being built, inherited by its uncolored faces.
