@@ -19,8 +19,6 @@
 #include <array>
 #include <vector>
 #include <queue>
-#include <cassert>
-
 
 namespace CGAL::internal::Hexmeshing
 {
@@ -126,7 +124,7 @@ namespace CGAL::internal::Hexmeshing
       if(temp != inner_signal) continue;
 
       int id = lcc.attribute<0>(vertex)->id;
-      assert(counter[id] < NUMBER_OF_EPSILONS);
+      CGAL_assertion(counter[id] < NUMBER_OF_EPSILONS);
       double eps = epsilons[counter[id]++];
       std::array<Dart_descriptor, 8> volumes = volumes_around_node(lcc, vertex);
 

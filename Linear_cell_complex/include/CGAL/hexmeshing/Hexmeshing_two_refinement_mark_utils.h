@@ -16,7 +16,6 @@
 #include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
 #include <CGAL/hexmeshing/Hexmeshing_refinement_data.h>
 #include <CGAL/hexmeshing/Hexmeshing_two_refinement_utils.h>
-#include <cassert>
 
 namespace CGAL::internal::Hexmeshing
 {
@@ -62,7 +61,7 @@ namespace CGAL::internal::Hexmeshing
         lcc.mark(lcc.beta<3>(dit), mark);
     }
 
-    assert(lcc.is_whole_cell_marked<2>(dart, mark));
+    CGAL_assertion(lcc.is_whole_cell_marked<2>(dart, mark));
   }
 
   /**
@@ -107,7 +106,7 @@ namespace CGAL::internal::Hexmeshing
       lcc.mark(dit, mark);
     }
 
-    assert(is_half_face_marked(lcc, dart, mark));
+    CGAL_assertion(is_half_face_marked(lcc, dart, mark));
   }
 
   /**
@@ -131,7 +130,7 @@ namespace CGAL::internal::Hexmeshing
     int s = faces.size();
 
     for (Dart_descriptor face : faces){
-      assert( lcc.attribute<2>(face) != nullptr);
+      CGAL_assertion( lcc.attribute<2>(face) != nullptr);
       auto& face_attr =  lcc.attribute<2>(face)->info();
 
       // If the face didn't have any template before, it will have one, so add it in faces to refine
@@ -140,7 +139,7 @@ namespace CGAL::internal::Hexmeshing
       }
 
       face_attr.template_id++;
-      assert(face_attr.template_id <= 4);
+      CGAL_assertion(face_attr.template_id <= 4);
 
       if (face_attr.template_id == 2 || face_attr.template_id == 3)
         faces_to_check.push(face);

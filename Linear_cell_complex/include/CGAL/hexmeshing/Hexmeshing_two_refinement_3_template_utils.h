@@ -16,7 +16,6 @@
 #include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
 #include <CGAL/hexmeshing/Hexmeshing_two_refinement_mark_utils.h>
 #include <CGAL/hexmeshing/Hexmeshing_threads_utils.h>
-#include <cassert>
 
 namespace CGAL::internal::Hexmeshing
 {
@@ -35,7 +34,7 @@ namespace CGAL::internal::Hexmeshing
   Dart_descriptor find_3_template_origin(LCC& lcc, Dart_descriptor marked_face, size_type template_mark) {
 
     auto _edges_count = lcc.darts_of_cell<2,1>(marked_face).size();
-    assert(_edges_count == 6);
+    CGAL_assertion(_edges_count == 6);
 
     Dart_descriptor dart = marked_face;
 
@@ -48,10 +47,10 @@ namespace CGAL::internal::Hexmeshing
         && !lcc.is_marked(lcc.beta(dart, 1), template_mark)
         && !lcc.is_marked(lcc.beta(dart, 1, 1), template_mark))
       {
-        assert(lcc.is_marked(lcc.beta(dart, 1, 1, 1), template_mark));
-        assert(lcc.is_marked(lcc.beta(dart, 1, 1, 1, 1), template_mark));
-        assert(lcc.is_marked(lcc.beta(dart, 1, 1, 1, 1, 1), template_mark));
-        assert(lcc.beta(dart, 1, 1, 1, 1, 1, 1) == dart);
+        CGAL_assertion(lcc.is_marked(lcc.beta(dart, 1, 1, 1), template_mark));
+        CGAL_assertion(lcc.is_marked(lcc.beta(dart, 1, 1, 1, 1), template_mark));
+        CGAL_assertion(lcc.is_marked(lcc.beta(dart, 1, 1, 1, 1, 1), template_mark));
+        CGAL_assertion(lcc.beta(dart, 1, 1, 1, 1, 1, 1) == dart);
         found = true;
         break;
       }
@@ -59,7 +58,7 @@ namespace CGAL::internal::Hexmeshing
       dart = lcc.beta(dart, 1);
     }
 
-    assert(found);
+    CGAL_assertion(found);
 
     return dart;
   }
@@ -105,7 +104,7 @@ namespace CGAL::internal::Hexmeshing
       }
     }
 
-    assert(found);
+    CGAL_assertion(found);
     edges_unmarked[1] = lcc.beta(edges_unmarked[0], 0);
 
     bool is_impossible = false;
@@ -117,7 +116,7 @@ namespace CGAL::internal::Hexmeshing
 
       auto other_face_handle = lcc.attribute<2>(other_face);
 
-      assert(other_face_handle != nullptr);
+      CGAL_assertion(other_face_handle != nullptr);
 
       if (other_face_handle->info().template_id == 3){
         is_impossible = true;
@@ -183,8 +182,8 @@ namespace CGAL::internal::Hexmeshing
     Dart_descriptor face_to_remove_1 = lcc.beta(upper_edge, 2, 1);
     Dart_descriptor face_to_remove_2 = lcc.beta(upper_edge, 2, 1, 1, 2, 1, 2);
 
-    assert(lcc.darts_of_orbit<1>(face_to_remove_1).size() == 2);
-    assert(lcc.darts_of_orbit<1>(face_to_remove_2).size() == 2);
+    CGAL_assertion(lcc.darts_of_orbit<1>(face_to_remove_1).size() == 2);
+    CGAL_assertion(lcc.darts_of_orbit<1>(face_to_remove_2).size() == 2);
 
     // Contract the two remaining 2-darts faces
     lcc.contract_cell<2>(face_to_remove_1);
@@ -195,14 +194,14 @@ namespace CGAL::internal::Hexmeshing
 
     if (face1 != lcc.null_dart_descriptor && face2 != lcc.null_dart_descriptor){
       lcc.sew<3>(face1, face2);
-      assert(lcc.attribute<2>(face1) == lcc.attribute<2>(face2));
+      CGAL_assertion(lcc.attribute<2>(face1) == lcc.attribute<2>(face2));
     }
 
     // Requires at least one face for merging/adding 2-attributes
     std::bitset<3> merged_planes = face1_attr.plane | face2_attr.plane;
     auto merge_face = face1 != lcc.null_dart_descriptor ? face1 : face2;
 
-    assert(merge_face != lcc.null_dart_descriptor);
+    CGAL_assertion(merge_face != lcc.null_dart_descriptor);
 
     // Merge the two previous face attributes bitsets
     auto& merge_face_attr = get_or_create_attr<2>(lcc, merge_face)->info();
@@ -236,7 +235,7 @@ namespace CGAL::internal::Hexmeshing
       LCC& lcc = hdata.lcc;
 
       int nb_edges = lcc.darts_of_cell<2,1>(origin_dart).size();
-      assert(nb_edges == 3);
+      CGAL_assertion(nb_edges == 3);
 
       Dart_descriptor vol2_origin_dart = lcc.beta(origin_dart, 3);
 
@@ -245,7 +244,7 @@ namespace CGAL::internal::Hexmeshing
 
       // Assert the origin dart have different directions on the adjacent volume
       // So assert that their opposite are equal
-      assert(lcc.beta(origin_dart, 1) == lcc.beta(vol2_origin_dart, 0, 3));
+      CGAL_assertion(lcc.beta(origin_dart, 1) == lcc.beta(vol2_origin_dart, 0, 3));
 
       // Face of the two neighboring volumes to the created volume
       Dart_descriptor face1 = lcc.beta(origin_dart, 2, 3);
@@ -299,8 +298,8 @@ namespace CGAL::internal::Hexmeshing
 
     // Partially refine the 3 templates
     for (auto& marked_face : rdata.partial_templates_to_refine){
-      assert(lcc.attribute<2>(marked_face) != nullptr);
-      assert(lcc.attribute<2>(marked_face)->info().template_id == 3);
+      CGAL_assertion(lcc.attribute<2>(marked_face) != nullptr);
+      CGAL_assertion(lcc.attribute<2>(marked_face)->info().template_id == 3);
 
       // Query replace with the partial 3-template, making it into two volumes
       Dart_descriptor origin_dart = find_3_template_origin(lcc, marked_face, hdata.template_mark);
@@ -313,11 +312,11 @@ namespace CGAL::internal::Hexmeshing
       Dart_descriptor upper_edge = lcc.insert_cell_1_in_cell_2(upper_d1, upper_d2);
 
       size_type p = hdata.ext->partial_templates.query_replace_one_volume(lcc, marked_face, hdata.template_mark);
-      assert(p == 0);
+      CGAL_assertion(p == 0);
 
       // Also replace the other connected volume that is 3 template
       p = hdata.ext->partial_templates.query_replace_one_volume(lcc, lcc.beta(marked_face, 3), hdata.template_mark);
-      assert(p == 0);
+      CGAL_assertion(p == 0);
     }
   }
 }

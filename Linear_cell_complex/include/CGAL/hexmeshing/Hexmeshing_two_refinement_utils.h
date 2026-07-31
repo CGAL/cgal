@@ -282,7 +282,7 @@ namespace CGAL::internal::Hexmeshing
         adjacent_face = adjacent_face_on_plane(lcc, rdata.iteration, lcc.beta(adjacent_face, f));
         if (adjacent_face != lcc.null_dart_descriptor){
           // Check if the dart is expectedly turning around the node
-          assert(lcc.belong_to_same_cell<0>(adjacent_face, node) or lcc.belong_to_same_cell<0>(lcc.other_extremity(adjacent_face), node));
+          CGAL_assertion(lcc.belong_to_same_cell<0>(adjacent_face, node) or lcc.belong_to_same_cell<0>(lcc.other_extremity(adjacent_face), node));
         }
         other_face_attr = lcc.attribute<2>(adjacent_face);
       } ;
@@ -305,7 +305,7 @@ namespace CGAL::internal::Hexmeshing
         auto f = lcc.attribute<2>(face);
         CGAL_postcondition_msg(f != nullptr, "plane_faces_around_node: returned array contains nullptr, Is the refinement correctly done ?");
         CGAL_postcondition_msg(true, "plane_faces_around_node: array contains a duplicate face, Is the refinement correctly done ?");
-        assert(faces_set.count(&f->info()) == 0);
+        CGAL_assertion(faces_set.count(&f->info()) == 0);
         faces_set.insert(&f->info());
       }
     };

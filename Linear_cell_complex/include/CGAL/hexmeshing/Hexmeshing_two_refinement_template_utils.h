@@ -129,14 +129,14 @@ namespace CGAL::internal::Hexmeshing
       size_t temp_id = hdata.ext->regular_templates.replace_one_face_from_signature
         (lcc, dart, signature, f_signature_start);
 
-      assert(temp_id < CONST_SIZE_T_MAX);
+      CGAL_assertion(temp_id < CONST_SIZE_T_MAX);
       nbsub++;
 
       if (temp_id == 0) {
         // lcc.mark_cell<1>(lcc.beta(f_signature_start, 1, 1), l_debug_mark_2);
         // lcc.mark_cell<1>(lcc.beta(f_signature_start, 1, 1, 2, 1), l_debug_mark);
         // debug_stream.push(l_thread_id);
-        // assert(false);
+        // CGAL_assertion(false);
         thread_number_vertex_in_1t_face(hdata, f_signature_start);
       }
 
@@ -198,8 +198,8 @@ namespace CGAL::internal::Hexmeshing
       // if (temp > 0) nbsub++;
       // if (temp == 2) temp = 3;
       // if (temp < 10) temp++;
-      // assert(vol_attr.template_id >= 0 && vol_attr.template_id <= 4 && vol_attr.template_id != 3 || vol_attr.template_id == 8);
-      // assert(vol_attr.template_id == temp || temp == CONST_SIZE_T_MAX && (vol_attr.template_id == 0 || vol_attr.template_id == 8));
+      // CGAL_assertion(vol_attr.template_id >= 0 && vol_attr.template_id <= 4 && vol_attr.template_id != 3 || vol_attr.template_id == 8);
+      // CGAL_assertion(vol_attr.template_id == temp || temp == CONST_SIZE_T_MAX && (vol_attr.template_id == 0 || vol_attr.template_id == 8));
     }
 
     return nbsub;

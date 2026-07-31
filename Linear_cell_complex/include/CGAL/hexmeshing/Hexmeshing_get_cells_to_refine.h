@@ -51,7 +51,6 @@ namespace CGAL::internal::Hexmeshing
                              Dart_descriptor face, size_type explored_edge, size_type explored_face)
   {
     LCC& lcc = hdata.lcc;
-
     auto& face_attr = lcc.attribute<2>(face)->info();
 
     if (!lcc.is_whole_cell_unmarked<2>(face, explored_face)) return ;
@@ -71,7 +70,7 @@ namespace CGAL::internal::Hexmeshing
     // }
 
     auto edges = lcc.darts_of_cell<2,1>(face);
-    assert(edges.size() == 4);
+    CGAL_assertion(edges.size() == 4);
     // Add neighboring faces
     for (auto dit = edges.begin(), dend = edges.end(); dit != dend; dit++){
       bool edge_explored = lcc.is_whole_cell_marked<1>(dit, explored_edge);
@@ -157,7 +156,7 @@ namespace CGAL::internal::Hexmeshing
       }
     }
 
-    assert(found);
+    CGAL_assertion(found);
 
     Dart_descriptor face1 = lcc.beta(marked_edge, 2, 1, 1, 2);
     Dart_descriptor face2 = lcc.beta(face1, 0, 2);
@@ -198,7 +197,7 @@ namespace CGAL::internal::Hexmeshing
   {
     LCC& lcc = hdata.lcc;
 
-    assert(lcc.attribute<3>(face) != nullptr);
+    CGAL_assertion(lcc.attribute<3>(face) != nullptr);
     auto &vol_attr = get_or_create_refinement_volume(lcc, face)->info();
     vol_attr.iteration = rdata.iteration;
 
@@ -208,7 +207,7 @@ namespace CGAL::internal::Hexmeshing
     // accessible from the plane.
     Dart_descriptor back_face = lcc.beta(face, 2, 1, 1, 2);
     Dart_descriptor back_volume_face = lcc.beta(back_face, 3);
-    assert(back_volume_face != nullptr);
+    CGAL_assertion(back_volume_face != nullptr);
     auto &back_vol_attr = get_or_create_refinement_volume(lcc, back_volume_face)->info();
 
     if (back_vol_attr.iteration != rdata.iteration){
@@ -306,8 +305,8 @@ namespace CGAL::internal::Hexmeshing
       }
     }
 
-    std::cout << "Number of faces propagated : " << propagated_count << std::endl;
-    std::cout << "Number of faces marked for propagation : " << marked_for_prop_count << std::endl;
+    // std::cout << "Number of faces propagated : " << propagated_count << std::endl;
+    // std::cout << "Number of faces marked for propagation : " << marked_for_prop_count << std::endl;
   }
 
   /**
@@ -439,7 +438,7 @@ namespace CGAL::internal::Hexmeshing
     LCC& lcc = hdata.lcc;
 
     // No additionnal volumes should be found on the first iteration
-    assert(rdata.iteration != 0 || rdata.iteration == 0 && rdata.additionnal_volumes_found.size() == 0);
+    CGAL_assertion(rdata.iteration != 0 || rdata.iteration == 0 && rdata.additionnal_volumes_found.size() == 0);
 
     for (Dart_descriptor initial_edge : rdata.additionnal_volumes_found)
     {
@@ -526,13 +525,15 @@ namespace CGAL::internal::Hexmeshing
     PlaneSet& plane_set = hdata.first_face_of_planes[iterationPlane];
 
     // Explore all even planes
-    for (int i = 1; i < plane_set.size(); i += 2) {
+    for (int i = 1; i < plane_set.size(); i += 2)
+    {
       std::queue<Dart_descriptor> to_explore;
 
       for (auto start : plane_set[i])
-        to_explore.push(start);
+      { to_explore.push(start); }
 
-      while (!to_explore.empty()) {
+      while (!to_explore.empty())
+      {
         Dart_descriptor front = to_explore.front();
         to_explore.pop();
         explore_face_of_plane(hdata, rdata, to_explore, front, explored_edge, explored_face);

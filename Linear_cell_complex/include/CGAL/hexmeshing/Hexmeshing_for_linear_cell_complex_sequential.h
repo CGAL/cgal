@@ -163,7 +163,7 @@ public:
       }();
 
       if (plane_up * normal < 0) {
-        assert(!lcc.is_free<3>(face));
+        CGAL_assertion(!lcc.is_free<3>(face));
         return lcc.beta(face, 3);
       }
 

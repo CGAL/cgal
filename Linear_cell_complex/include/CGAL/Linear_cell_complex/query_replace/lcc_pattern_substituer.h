@@ -185,7 +185,7 @@ public:
       if(res==m_ssignatures.end())
       {
         pattern.compute_barycentric_coord();
-        assert(pattern.lcc().is_marked(dh, pattern.m_mark_faceborder));
+        CGAL_assertion(pattern.lcc().is_marked(dh, pattern.m_mark_faceborder));
         m_ssignatures[signature]=std::make_pair(dh, nb);
       }
       else
@@ -521,7 +521,7 @@ std::size_t query_replace_one_surface(LCC& lcc,
     replace_one_surface_from_dart(lcc, dh2, m_spatterns[res->second.second],
         res->second.first);
     replaced=res->second.second;
-    // assert(lcc.is_valid());
+    // CGAL_assertion(lcc.is_valid());
   }
   // else { std::cout<<"NOT found"<<std::endl; }
   return replaced;
@@ -577,7 +577,10 @@ std::size_t replace_vpatterns(LCC& lcc,
   {
     if(lcc.is_marked(it, amark))
     {
-      lcc.template unmark_cell<3>(it, amark);
+      if(all)
+      { lcc.template unmark_cell<3>(it, amark); }
+      else
+      { lcc.negate_mark(amark); } // All darts are not marked
       // New darts will not be marked
       std::size_t replaced=
           (nosignature?query_replace_one_volume_without_signature
@@ -588,14 +591,16 @@ std::size_t replace_vpatterns(LCC& lcc,
         ++res;
         if(!all)
         {
+          CGAL_assertion(lcc.is_whole_map_unmarked(amark));
           lcc.free_mark(amark);
-          return true;
+          return 1;
         }
         if(trace) { std::cout<<replaced+1<<" "; }
       }
     }
   }
 
+  CGAL_assertion(lcc.is_whole_map_unmarked(amark));
   lcc.free_mark(amark);
   return res;
 }
@@ -613,7 +618,10 @@ std::size_t replace_spatterns(LCC& lcc,
   {
     if(lcc.is_marked(it, amark))
     {
-      lcc.template unmark_cell<3>(it, amark);
+      if(all)
+      { lcc.template unmark_cell<3>(it, amark); }
+      else
+      { lcc.negate_mark(amark); } // All darts are not marked
       // New darts will not be marked
       std::size_t replaced=
           (nosignature?query_replace_one_surface_without_signature
@@ -624,14 +632,16 @@ std::size_t replace_spatterns(LCC& lcc,
         ++res;
         if(!all)
         {
+          CGAL_assertion(lcc.is_whole_map_unmarked(amark));
           lcc.free_mark(amark);
-          return true;
+          return 1;
         }
         if(trace) { std::cout<<replaced+1<<" "; }
       }
     }
   }
 
+  CGAL_assertion(lcc.is_whole_map_unmarked(amark));
   lcc.free_mark(amark);
   return res;
 }
@@ -649,7 +659,10 @@ std::size_t replace_fpatterns(LCC& lcc,
   {
     if(lcc.is_marked(it, amark))
     {
-      lcc.template unmark_cell<2>(it, amark);
+      if(all)
+      { lcc.template unmark_cell<2>(it, amark); }
+      else
+      { lcc.negate_mark(amark); } // All darts are not marked
       // New darts will not be marked
       std::size_t replaced=
           (nosignature?query_replace_one_face_without_signature
@@ -660,14 +673,16 @@ std::size_t replace_fpatterns(LCC& lcc,
         ++res;
         if(!all)
         {
+          CGAL_assertion(lcc.is_whole_map_unmarked(amark));
           lcc.free_mark(amark);
-          return true;
+          return 1;
         }
         if(trace) { std::cout<<replaced+1<<" "; }
       }
     }
   }
 
+  CGAL_assertion(lcc.is_whole_map_unmarked(amark));
   lcc.free_mark(amark);
   return res;
 }

@@ -14,6 +14,7 @@
 #define CGAL_HEXMESHING_CREATE_VERTICES_FOR_TEMPLATES_H
 
 #include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
+#include <deque>
 
 namespace CGAL::internal::Hexmeshing
 {
@@ -57,45 +58,46 @@ namespace CGAL::internal::Hexmeshing
   {
     // 2 noeuds marqué l'un à coté de l'autre ne produit pas de sommet
     // 1 noeud marqué a coté d'un noeud non marqué produit un sommet
-
-    std::vector<Dart_descriptor> edges_to_subdivide;
     LCC& lcc = hdata.lcc;
+    std::deque<Dart_descriptor> edges_to_subdivide, edges_to_unmark;
 
-    auto arrete_done = lcc.get_new_mark();
-
-    int vertices_created = 0;
+    auto edge_done = lcc.get_new_mark();
+    // int vertices_created = 0;
     for (auto dart : rdata.marked_nodes)
     {
-      for (auto nit = lcc.one_dart_per_incident_cell<1, 0>(dart).begin(),
-                nend = lcc.one_dart_per_incident_cell<1, 0>(dart).end();
-          nit != nend;
-          nit++)
+      for (auto nit=lcc.template one_dart_per_incident_cell<1, 0>(dart).begin(),
+                nend=lcc.template one_dart_per_incident_cell<1, 0>(dart).end();
+          nit != nend; nit++)
       {
-        if (lcc.is_marked(nit, arrete_done))
-          continue;
-
-        // If the node is next to an other marked node, we don't have to create vertices
-        if (lcc.is_marked(lcc.beta<1>(nit), hdata.template_mark)){
-          lcc.mark_cell<1>(nit, arrete_done);
-          continue;
+        if (!lcc.is_marked(nit, edge_done))
+        {
+          lcc.template mark_cell<1>(nit, edge_done);
+          // If the node is next to an other marked node, we don't have to create vertices
+          if (!lcc.is_marked(lcc.template beta<1>(nit), hdata.template_mark))
+          {
+            // vertices_created++;
+            edges_to_subdivide.push_back(nit);
+          }
+          else
+          { edges_to_unmark.push_back(nit); }
         }
-
-        vertices_created++;
-        edges_to_subdivide.push_back(nit);
-        lcc.mark_cell<1>(nit, arrete_done);
       }
     }
 
     for (Dart_descriptor dart : edges_to_subdivide)
     {
+      lcc.template unmark_cell<1>(dart, edge_done);
       Dart_descriptor other_ext = lcc.other_extremity(dart);
       Dart_descriptor new_node = lcc.insert_barycenter_in_cell<1>(dart);
       thread_number_vertex_in_edge(hdata, new_node, dart, other_ext);
     }
 
-    std::cout << "Vertices created: " << vertices_created << std::endl;
+    for (Dart_descriptor dart : edges_to_unmark)
+    { lcc.template unmark_cell<1>(dart, edge_done); }
 
-    lcc.free_mark(arrete_done);
+    // std::cout << "Vertices created: " << vertices_created << std::endl;
+    CGAL_assertion(lcc.is_whole_map_unmarked(edge_done));
+    lcc.free_mark(edge_done);
   }
 }
 

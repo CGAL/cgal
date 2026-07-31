@@ -20,7 +20,6 @@
 #include <CGAL/Point_3.h>
 #include <CGAL/Vector_3.h>
 #include <array>
-#include <cassert>
 
 namespace CGAL::internal::Hexmeshing
 {
