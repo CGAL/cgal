@@ -54,23 +54,59 @@ struct Ecm_bind{
 
   typedef typename boost::graph_traits<G>::edge_descriptor edge_descriptor;
 
-  void call_put(G& g, edge_descriptor e, bool b) const
-  {
-    if ( &g==&g1 )
-      put(ecm1,e,b);
-    else
-    {
-      CGAL_assertion( &g==&g2 );
-      put(ecm2,e,b);
-    }
-  }
-
-  bool call_get(G& g, edge_descriptor e) const
+  bool is_constrained(G&g, edge_descriptor e) const
   {
     if ( &g==&g1 )
       return get(ecm1,e);
     CGAL_assertion( &g==&g2 );
     return get(ecm2,e);
+  }
+  void set_constrained(G&g, edge_descriptor e) const
+  {
+    if ( &g==&g1 )
+      put(ecm1,e,true);
+    else
+    {
+      CGAL_assertion( &g==&g2 );
+      put(ecm2,e,true);
+    }
+  }
+  void set_on_intersection(G&g, edge_descriptor e) const
+  {
+    if ( &g==&g1 )
+      put(ecm1,e,true);
+    else
+    {
+      CGAL_assertion( &g==&g2 );
+      put(ecm2,e,true);
+    }
+  }
+  template<class EdgeRange>
+  void set_on_intersection(G&g, const EdgeRange& edge_range) const
+  {
+    if ( &g==&g1 )
+      for (edge_descriptor e : edge_range)
+        put(ecm1,e,true);
+    else
+    {
+      CGAL_assertion( &g==&g2 );
+      for (edge_descriptor e : edge_range)
+        put(ecm2,e,true);
+    }
+  }
+
+  template<class EdgeRange>
+  void reset_on_intersection(G&g, const EdgeRange& edge_range) const
+  {
+    if ( &g==&g1 )
+      for (edge_descriptor e : edge_range)
+        put(ecm1,e,false);
+    else
+    {
+      CGAL_assertion( &g==&g2 );
+      for (edge_descriptor e : edge_range)
+        put(ecm2,e,false);
+    }
   }
 };
 
@@ -80,11 +116,36 @@ struct Ecm_bind<G, No_mark<G>, No_mark<G> >
   No_mark<G> ecm1, ecm2;
   Ecm_bind(G&, G&, const No_mark<G>&, const No_mark<G>&){}
   typedef typename boost::graph_traits<G>::edge_descriptor edge_descriptor;
-  void call_put(G&, edge_descriptor, bool) const {}
-  bool call_get(G&, edge_descriptor) const {
+  void set_constrained(G&, edge_descriptor) const {}
+  void set_on_intersection(G&, edge_descriptor) const {}
+  template<class EdgeRange>
+  void set_on_intersection(G&, const EdgeRange&) const {}
+  template<class EdgeRange>
+  void reset_on_intersection(G&, const EdgeRange&) const {}
+  bool is_constrained(G&, edge_descriptor) const {
     return false;
   }
 };
+
+//~ template <class TriangleMesh, class NP1, class NP2>
+//~ struct Get_Ecm_bind
+//~ {
+
+  //~ constexpr bool default_constraints_1 = is_default_parameter<NP1, internal_np::edge_is_constrained_t>::value;
+  //~ constexpr bool default_marks_1 = is_default_parameter<NP1, internal_np::edge_is_marked_map_t>::value;
+  //~ constexpr bool default_constraints_1 = is_default_parameter<NP2, internal_np::edge_is_constrained_t>::value;
+  //~ constexpr bool default_marks_1 = is_default_parameter<NP2, internal_np::edge_is_marked_map_t>::value;
+
+  //~ using D = Corefinement::No_mark<TriangleMesh>;
+
+  //~ using Cst_map_1 = typename internal_np::Lookup_named_param_def <internal_np::edge_is_constrained_t,NP1,D> ::type;
+  //~ using Cst_map_2 = typename internal_np::Lookup_named_param_def <internal_np::edge_is_constrained_t,NP2,D> ::type;
+  //~ using Mark_map_1 = typename internal_np::Lookup_named_param_def <internal_np::edge_is_marked_map_t,NP1,D> ::type;
+  //~ using Mark_map_2 = typename internal_np::Lookup_named_param_def <internal_np::edge_is_marked_map_t,NP2,D> ::type;
+
+
+//~ };
+
 
 template<class G>
 struct No_extra_output_from_corefinement
@@ -521,30 +582,45 @@ private:
   TriangleMesh* const_mesh_ptr;
 
   template <class Ecm1, class Ecm2>
-  void call_put(Ecm_bind<TriangleMesh, Ecm1, Ecm2>& ecm,
-                TriangleMesh& tm, edge_descriptor ed, bool v)
+  void set_constrained(Ecm_bind<TriangleMesh, Ecm1, Ecm2>& ecm,
+                       TriangleMesh& tm, edge_descriptor ed)
   {
-    ecm.call_put(tm, ed, v);
+    ecm.set_constrained(tm, ed);
   }
   template <class Ecm>
-  void call_put(Ecm& ecm,
-                TriangleMesh&, edge_descriptor ed, bool v)
+  void set_constrained(Ecm& ecm,
+                       TriangleMesh&, edge_descriptor ed)
   {
-    put(ecm, ed, v);
+    put(ecm, ed, true);
   }
 
   template <class Ecm1, class Ecm2>
-  bool call_get(const Ecm_bind<TriangleMesh, Ecm1, Ecm2>& ecm,
+  void set_on_intersection(Ecm_bind<TriangleMesh, Ecm1, Ecm2>& ecm,
+                           TriangleMesh& tm, edge_descriptor ed)
+  {
+    ecm.set_on_intersection(tm, ed);
+  }
+  template <class Ecm>
+  void set_on_intersection(Ecm& ecm,
+                           TriangleMesh&, edge_descriptor ed)
+  {
+    put(ecm, ed, true);
+  }
+
+  template <class Ecm1, class Ecm2>
+  bool is_constrained(const Ecm_bind<TriangleMesh, Ecm1, Ecm2>& ecm,
                 TriangleMesh& tm, edge_descriptor ed)
   {
-    return ecm.call_get(tm, ed);
+    return ecm.is_constrained(tm, ed);
   }
+/*
   template <class Ecm>
   bool call_get(const Ecm& ecm,
                 TriangleMesh&, edge_descriptor ed)
   {
     return get(ecm, ed);
   }
+*/
 // visitor public functions
 public:
   Surface_intersection_visitor_for_corefinement(
@@ -1149,7 +1225,7 @@ public:
       //We need an edge incident to the source vertex of hedge. This is the first opposite edge created.
       bool first=true;
       halfedge_descriptor hedge_incident_to_src=Graph_traits::null_halfedge();
-      bool hedge_is_marked = call_get(marks_on_edges,tm,edge(hedge,tm));
+      bool edge_is_constrained = is_constrained(marks_on_edges,tm,edge(hedge,tm));
       //do split the edges
       CGAL_assertion_code(vertex_descriptor expected_src=source(hedge,tm));
       user_visitor.before_edge_split(hedge, tm);
@@ -1168,8 +1244,8 @@ public:
         }
 
         //update marker tags. If the edge was marked, then the resulting edges in the split must be marked
-        if ( hedge_is_marked )
-          call_put(marks_on_edges,tm,edge(hnew,tm),true);
+        if ( edge_is_constrained )
+          set_constrained(marks_on_edges,tm,edge(hnew,tm));
         user_visitor.new_vertex_added(node_id, target(hnew, tm), tm);
         user_visitor.edge_split(hnew, tm);
 
@@ -1288,7 +1364,7 @@ public:
                 std::tie(h, is_face_border) = halfedge(vi,vn, tm);
                 if (is_face_border)
                 {
-                  call_put(marks_on_edges,tm,edge(h,tm),true);
+                  set_on_intersection(marks_on_edges,tm,edge(h,tm));
                   output_builder.set_edge_per_polyline(tm,std::make_pair(id, id_n),h);
                 }
                 else
@@ -1318,7 +1394,7 @@ public:
           halfedge_descriptor nh = Euler::split_face(a[0].first, a[1].first, tm);
           new_faces.push_back(face(opposite(nh, tm), tm));
 
-          call_put(marks_on_edges,tm,edge(nh,tm),true);
+          set_on_intersection(marks_on_edges,tm,edge(nh,tm));
           output_builder.set_edge_per_polyline(tm,std::make_pair(a[0].second, a[1].second),nh);
         }
 
@@ -1522,7 +1598,7 @@ public:
         //is defined as one of them defines an adjacent face
         //CGAL_assertion(it_poly_hedge!=edge_to_hedge.end());
         if( it_poly_hedge!=edge_to_hedge.end() ){
-          call_put(marks_on_edges,tm,edge(it_poly_hedge->second,tm),true);
+          set_on_intersection(marks_on_edges,tm,edge(it_poly_hedge->second,tm));
           output_builder.set_edge_per_polyline(tm,node_id_pair,it_poly_hedge->second);
         }
         else{
@@ -1532,7 +1608,7 @@ public:
           it_poly_hedge=edge_to_hedge.find(opposite_pair);
           CGAL_assertion( it_poly_hedge!=edge_to_hedge.end() );
 
-          call_put(marks_on_edges,tm,edge(it_poly_hedge->second,tm),true);
+          set_on_intersection(marks_on_edges,tm,edge(it_poly_hedge->second,tm));
           output_builder.set_edge_per_polyline(tm,opposite_pair,it_poly_hedge->second);
         }
       }
@@ -1580,6 +1656,7 @@ public:
     {
       TriangleMesh& tm=*it->first;
       CGAL_assertion(&tm!=const_mesh_ptr);
+      CGAL_assertion(&tm1==&tm || &tm2==&tm);
 
     //   Face_boundaries& face_boundaries=mesh_to_face_boundaries[&tm];
 
@@ -1635,7 +1712,7 @@ public:
               }
               if (did_break) continue;
               std::pair<Node_id,Node_id> edge_pair(node_id,node_id_of_first);
-              call_put(marks_on_edges,tm,edge(hedge,tm),true);
+              set_on_intersection(marks_on_edges,tm,edge(hedge,tm));
               output_builder.set_edge_per_polyline(tm,edge_pair,hedge);
             }
           }
