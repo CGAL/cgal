@@ -1,5 +1,5 @@
 // Copyright (c) 2024
-// INRIA Nancy (France), and Université Gustave Eiffel Marne-la-Vallee (France).
+// INRIA Nancy (France), Université de Lorraine (France), and Université Gustave Eiffel Marne-la-Vallee (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
@@ -16,6 +16,7 @@
 #include <CGAL/license/Triangulation_on_hyperbolic_surface_2.h>
 
 #include <CGAL/Triangulation_on_hyperbolic_surface_2.h>
+#include <CGAL/Delaunay_triangulation_on_hyperbolic_surface_2.h>
 
 #include <CGAL/assertions.h>
 
@@ -47,6 +48,17 @@ std::ostream& operator<<(std::ostream& s, const Hyperbolic_isometry_2<Traits>& i
   return s;
 }
 
+template<class Traits>
+std::istream& operator>>(std::istream& s, Hyperbolic_isometry_2<Traits>& isometry)
+{
+  for (int k=0; k<4; ++k) {
+    typename Traits::Complex c;
+    s >> c;
+    isometry.set_coefficient(k, c);
+    //    void set_coefficient(int index, const Complex_number& coefficient);
+  }
+  return s;
+}
 ////////////////////////////////////////////////////////////////////////////////
 template<class Traits, class Attributes>
 std::ostream& operator<<(std::ostream& s, const Triangulation_on_hyperbolic_surface_2<Traits, Attributes>& triangulation)
@@ -57,6 +69,21 @@ std::ostream& operator<<(std::ostream& s, const Triangulation_on_hyperbolic_surf
 
 template<class Traits, class Attributes>
 void operator>>(std::istream& s, Triangulation_on_hyperbolic_surface_2<Traits, Attributes>& triangulation)
+{
+  triangulation.from_stream(s);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+template<class Traits>
+std::ostream&
+operator<<(std::ostream& s, const Delaunay_triangulation_on_hyperbolic_surface_2<Traits>& triangulation)
+{
+  triangulation.to_stream(s);
+  return s;
+}
+
+template<class Traits>
+void operator>>(std::istream& s, Delaunay_triangulation_on_hyperbolic_surface_2<Traits>& triangulation)
 {
   triangulation.from_stream(s);
 }

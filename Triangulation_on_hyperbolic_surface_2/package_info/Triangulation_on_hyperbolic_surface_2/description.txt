@@ -1,5 +1,9 @@
 Package Triangulation_on_hyperbolic_surface_2 : provides
 triangulations of closed oriented hyperbolic surfaces,
 Delaunay flip algorithm on those triangulations,
+Delaunay triangulations of closed oriented hyperbolic surfaces,
+point location,
+point insertion,
 construction of the triangulations from convex geodesic fundamental domains,
-construction of such domains for genus 2 surfaces
+construction of such domains for genus 2 surfaces,
+construction of an epsilon-net of a closed oriented hyperbolic surface

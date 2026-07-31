@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
   \ingroup PkgHyperbolicSurfaceTriangulation2InputOutput
 
-  inserts the triangulation in a stream.
+  inserts the triangulation into s.
 
   The format of the output is the following.
   Each dart of the triangulation is given an index between \f$ 0 \f$ and \f$ n-1 \f$, where \f$ n \f$
@@ -13,7 +13,7 @@ namespace CGAL {
   If the triangulation has an anchor, then the four next lines print the index of the dart of the anchor,
   and the three vertices of the anchor.
   Then, for every triangle \f$ t \f$, the indices of the three darts of \f$ t \f$ are printed on three distinct lines.
-  Finally, for every edge \f$ e \f$, the indices of the two darts of \f$ e \f$ are printed on two distinct lines, followed by a third line on which the cross ratio of \f$ e \f$ is printed.
+  Finally, for every edge \f$ e \f$, the indices of the two darts of \f$ e \f$ are printed on two distinct lines, followed by two lines on which the cross ratio of \f$ e \f$ is printed.
 
   \pre <code>   Triangulation_on_hyperbolic_surface_2<Traits>::is_valid() </code>
 */
@@ -22,9 +22,9 @@ std::ostream& operator<<(std::ostream& s, const Triangulation_on_hyperbolic_surf
 /*!
   \ingroup PkgHyperbolicSurfaceTriangulation2InputOutput
 
-  extracts the triangulation from a stream.
+  extracts the triangulation from s.
 
-  The format of the input should be the same as the format of the output of
+  The format of the input is the same as the format of the output of
   the '<<' operator for Triangulation_on_hyperbolic_surface_2.
 */
 std::istream& operator>>(std::istream& s, Triangulation_on_hyperbolic_surface_2<Traits>& triangulation);
@@ -32,7 +32,7 @@ std::istream& operator>>(std::istream& s, Triangulation_on_hyperbolic_surface_2<
 /*!
   \ingroup PkgHyperbolicSurfaceTriangulation2InputOutput
 
-  inserts the domain in a stream.
+  inserts the domain into s.
 
   The format of the output is the following.
   The first line prints the number \f$n\f$ of vertices of the domain.
@@ -46,9 +46,9 @@ std::ostream& operator<<(std::ostream& s, const Hyperbolic_fundamental_domain_2<
 /*!
   \ingroup PkgHyperbolicSurfaceTriangulation2InputOutput
 
-  extracts the domain from a stream.
+  extracts the domain from s.
 
-  The format of the input must be the same as the format of the output of
+  The format of the input is the same as the format of the output of
   the '<<' operator for Hyperbolic_fundamental_domain_2.
 */
 std::istream& operator>>(std::istream& s, Hyperbolic_fundamental_domain_2<Traits>& domain);
@@ -56,8 +56,44 @@ std::istream& operator>>(std::istream& s, Hyperbolic_fundamental_domain_2<Traits
 /*!
   \ingroup PkgHyperbolicSurfaceTriangulation2InputOutput
 
-  inserts the isometry in a stream.
+  inserts the isometry into s.
 */
 std::ostream& operator<<(std::ostream& s, const Hyperbolic_isometry_2<Traits>& isometry);
+
+/*!
+  \ingroup PkgHyperbolicSurfaceTriangulation2InputOutput
+
+  extracts the isometry from s.
+
+  The format is a coefficient per line, the matrix is cij and the order is c11, c12, c21, c22.
+*/
+std::istream& operator>>(std::istream& s, Hyperbolic_isometry_2<Traits>& isometry);
+
+/*!
+  \ingroup PkgHyperbolicSurfaceTriangulation2InputOutput
+
+  inserts the Delaunay triangulation into s.
+
+  The format of the output is the following.
+  Each dart of the triangulation is given an index between \f$ 0 \f$ and \f$ n-1 \f$, where \f$ n \f$
+  is the number of darts of the triangulation.
+  The first line contains the number \f$ n \f$ of darts.
+  Then, for every triangle \f$ t \f$, the indices of the three darts of \f$ t \f$ are printed on three distinct lines.
+  The coordinates of the three vertices of its anchor are printed on the next six lines.
+  Finally, for every edge \f$ e \f$, the indices of the two darts of \f$ e \f$ are printed on two distinct lines, followed by two lines on which the cross ratio of \f$ e \f$ is printed.
+
+  \pre <code>   Triangulation_on_hyperbolic_surface_2<Traits>::is_valid() </code>
+*/
+std::istream& operator>>(std::istream& s, Delaunay_triangulation_on_hyperbolic_surface_2<Traits>& triangulation);
+
+/*!
+  \ingroup PkgHyperbolicSurfaceTriangulation2InputOutput
+
+  extracts the Delaunay triangulation from s.
+
+  The format of the input is the same as the format of the output of
+  the '<<' operator for `Delaunay_triangulation_on_hyperbolic_surface_2`.
+*/
+std::ostream& operator<<(std::ostream& s, const Delaunay_triangulation_on_hyperbolic_surface_2<Traits>& triangulation);
 
 } // namespace CGAL
