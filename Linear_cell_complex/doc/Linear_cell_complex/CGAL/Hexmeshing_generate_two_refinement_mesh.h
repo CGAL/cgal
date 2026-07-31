@@ -4,12 +4,13 @@ namespace CGAL {
 \ingroup PkgLinearCellComplexConstructions
 
 generates a pure hexahedral mesh from a triangle mesh using the two refinement algorithm described in \cgalCite{cgal:owen2017template-based}.
+Starts to create a regular grid of `cube_cells_per_dim`\f$ ^3\f$ voxels. Then refine voxels intersected by the surface `nb_levels` times, while creating transitions between refined and non-refined voxels.
 
 \tparam TriangleMesh a model of `FaceListGraph`
-\param tmesh a triangle mesh 
-\param cube_cells_per_dim Grid cells per dimension
+\param tmesh a triangle mesh
+\param cube_cells_per_dim number of grid cells, per dimension
 \param nb_levels How many times to perform refinement
-\param trim to apply trimming to remove volumes that are entirely outside of the surface mesh (default: `false`)
+\param trim `true` to apply trimming, i.e.\ remove volumes that are entirely outside of the surface mesh
 
 \sa `CGAL::Linear_cell_complex_for_combinatorial_map`
 
