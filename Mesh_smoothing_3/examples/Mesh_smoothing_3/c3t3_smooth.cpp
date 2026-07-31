@@ -15,11 +15,6 @@
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/Mesh_3/C3T3_helpers.h>
 
-#include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits_3.h>
-#include <CGAL/AABB_triangle_primitive_3.h>
-#include <CGAL/AABB_segment_primitive_3.h>
-
 #include <CGAL/Kernel/global_functions.h>
 
 #include <map>
@@ -90,8 +85,8 @@ void add_rectangle_in_image(const K::Point_3& rectangle_min, // [0..1]^3
 void deform_c3t3_smooth_fold(C3t3& c3t3, const K::FT& angle, const K::FT& nb_planes)
 {
     typedef C3t3::Point WPoint_3;
-    K::Point_3 center = CGAL::midpoint(K::Point_3(c3t3.bbox().min(0), c3t3.bbox().min(1), c3t3.bbox().min(2)),
-                                       K::Point_3(c3t3.bbox().max(0), c3t3.bbox().max(1), c3t3.bbox().max(2)));
+    K::Point_3 center = CGAL::midpoint(K::Point_3((c3t3.bbox().min)(0), (c3t3.bbox().min)(1), (c3t3.bbox().min)(2)),
+                                       K::Point_3((c3t3.bbox().max)(0), (c3t3.bbox().max)(1), (c3t3.bbox().max)(2)));
     K::Plane_3 start_plane(center, K::Vector_3(1,0,0));
     Tr& triangulation = c3t3.triangulation();
     std::list<Tr::Vertex*> vertices;
@@ -99,7 +94,7 @@ void deform_c3t3_smooth_fold(C3t3& c3t3, const K::FT& angle, const K::FT& nb_pla
     {
         vertices.emplace_back(&vertex);
     }
-    const K::FT angle_smooth_length = (c3t3.bbox().max(0) - c3t3.bbox().min(0)) * 0.1875; // * 0.25;
+    const K::FT angle_smooth_length = ((c3t3.bbox().max)(0) - (c3t3.bbox().min)(0)) * 0.1875; // * 0.25;
     const K::FT angle_smooth_length_increment = angle_smooth_length / nb_planes;
     const K::FT angle_increment = angle/nb_planes;
     const K::FT ca_i = cos(angle_increment);
@@ -172,7 +167,7 @@ int main(int argc, char* argv[])
     deform_c3t3_smooth_fold(c3t3_deformed, 3.141592635 * 0.5, 100);
 
     CGAL::dump_c3t3(c3t3_deformed, "c3t3_deformed");
-    
+
     CGAL::boundary_aware_mesh_smoothing(c3t3_deformed, params::verbose(true).number_of_iterations(100));
 
     CGAL::dump_c3t3(c3t3_deformed, "c3t3_smoothed");

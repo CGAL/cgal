@@ -543,7 +543,7 @@ using cgal_types::C3t3_wrapper;
 * Facets of the `C3t3` mesh structure are defined as boundary, and edges of the `C3t3` mesh structure are used as curve network.
 * It is still required to define the wished boundary queries.
 *
-* \tparam Type of the input mesh complex, model of `MeshComplex_3InTriangulation_3`
+* \tparam C3t3 Type of the input mesh complex, model of `MeshComplex_3InTriangulation_3`
 *
 * \sa `CGAL::Mesh_smoothing_3::Mesh_smoother`
 *

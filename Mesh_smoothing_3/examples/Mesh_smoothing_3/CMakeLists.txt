@@ -3,15 +3,7 @@ project(Mesh_smoothing_3_examples)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_BUILD_TYPE Release)
-if (MSVC)
-    set(CMAKE_CXX_FLAGS "/EHsc")
-    add_compile_definitions(NOMINMAX)
-else()
-    set(CMAKE_CXX_FLAGS "-O3 -g")
-endif()
 
-set(CGAL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../..)
 message(STATUS "CGAL_DIR: ${CGAL_DIR}")
 
 find_package(CGAL REQUIRED)
