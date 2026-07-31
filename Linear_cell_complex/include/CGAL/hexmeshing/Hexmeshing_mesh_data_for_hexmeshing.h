@@ -70,7 +70,7 @@ namespace CGAL::internal
 
     void cubic_grid_from_aabb(int cube_cells_per_dim)
     {
-      assert(cube_cells_per_dim > 2);
+      CGAL_assertion(cube_cells_per_dim > 2);
       auto bbox = tree.bbox();
 
       Hexmeshing::Point center = {bbox.xmin() + (bbox.x_span()/2),

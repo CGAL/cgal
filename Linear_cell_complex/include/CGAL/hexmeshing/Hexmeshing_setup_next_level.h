@@ -17,8 +17,6 @@
 #include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
 #include <CGAL/hexmeshing/Hexmeshing_function_alias.h>
 #include <vector>
-#include <cassert>
-
 
 namespace CGAL::internal::Hexmeshing
 {
@@ -96,19 +94,19 @@ namespace CGAL::internal::Hexmeshing
     size_type size_vol_before = lcc.attributes<3>().size();
 
     for (auto attr_desc : faces_to_delete){
-      assert(lcc.is_attribute_used<2>(attr_desc));
-      assert(lcc.is_valid_attribute<2>(attr_desc));
+      CGAL_assertion(lcc.is_attribute_used<2>(attr_desc));
+      CGAL_assertion(lcc.is_valid_attribute<2>(attr_desc));
       lcc.set_attribute<2>(attr_desc->dart(), nullptr);
     }
 
     for (auto attr_desc : volumes_to_delete){
-      assert(lcc.is_attribute_used<3>(attr_desc));
-      assert(lcc.is_valid_attribute<3>(attr_desc));
+      CGAL_assertion(lcc.is_attribute_used<3>(attr_desc));
+      CGAL_assertion(lcc.is_valid_attribute<3>(attr_desc));
       lcc.set_attribute<3>(attr_desc->dart(), nullptr);
     }
 
-    assert(size_face_before - faces_to_delete.size() == lcc.attributes<2>().size());
-    assert(size_vol_before - volumes_to_delete.size() == lcc.attributes<3>().size());
+    CGAL_assertion(size_face_before - faces_to_delete.size() == lcc.attributes<2>().size());
+    CGAL_assertion(size_vol_before - volumes_to_delete.size() == lcc.attributes<3>().size());
   }
 
   /**
@@ -184,7 +182,7 @@ namespace CGAL::internal::Hexmeshing
 
     for (auto it = edges.begin(), end = edges.end(); it != end; it++){
       // Iterate
-      assert(lcc.belong_to_same_cell<3>(it, face));
+      CGAL_assertion(lcc.belong_to_same_cell<3>(it, face));
 
       // Here we must ensure that the face is always oriented the same way by using __adjacent_face_on_plane
       // We don't care if we miss a grid-border 3-template, because if we didn't found it using this function,
@@ -248,8 +246,8 @@ namespace CGAL::internal::Hexmeshing
         // debug_stream.push(l_thread_id);
         std::this_thread::sleep_for(std::chrono::hours(1));
       }
-      assert(lcc.attribute<2>(back_face) == nullptr);
-      assert(!lcc.is_free<3>(back_face));
+      CGAL_assertion(lcc.attribute<2>(back_face) == nullptr);
+      CGAL_assertion(!lcc.is_free<3>(back_face));
 
       auto back_face_attr = get_or_create_attr<2>(lcc, back_face);
       auto& back_face_info = back_face_attr->info();
@@ -319,7 +317,7 @@ namespace CGAL::internal::Hexmeshing
       auto attr = lcc.attribute<2>(face);
 
       if (attr != nullptr){
-        assert(attr->info().plane[axis]);
+        CGAL_assertion(attr->info().plane[axis]);
         return attr->info().plane_id;
       }
 
@@ -393,7 +391,7 @@ namespace CGAL::internal::Hexmeshing
           //   found = true;
           // }
 
-          // assert(found);
+          // CGAL_assertion(found);
           // to_explore.push(is_facing_backwards ?  lcc.beta(start, 3) : start );
           to_explore.push( start );
         }

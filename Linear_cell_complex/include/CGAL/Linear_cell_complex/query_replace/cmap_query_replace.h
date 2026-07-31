@@ -37,7 +37,7 @@ void compute_face_bijection_from_pattern_to_dart(LCC& lcc,
                                                  typename LCC::size_type markexternal,
                                                  Dart_mapping<LCC>& pattern_to_face)
 {
-  assert(lcc.template is_free<2>(dh1));
+  CGAL_assertion(lcc.template is_free<2>(dh1));
   pattern_to_face.clear();
   typename LCC::Dart_descriptor cur1=dh1;
   typename LCC::Dart_descriptor cur2=dh2;
@@ -69,8 +69,8 @@ void compute_surface_bijection_from_pattern_to_dart(LCC& lcc,
                                                     Dart_mapping<LCC>&
                                                         pattern_to_surface)
 {
-  assert(!pattern.lcc().template is_free<2>(dh1));
-  assert(pattern.lcc().is_marked(dh1, pattern.mark_faceborder()));
+  CGAL_assertion(!pattern.lcc().template is_free<2>(dh1));
+  CGAL_assertion(pattern.lcc().is_marked(dh1, pattern.mark_faceborder()));
   std::queue<std::pair<typename LCC::Dart_descriptor,
                        typename LCC::Dart_descriptor>> to_treat;
   typename LCC::size_type treated=pattern.lcc().get_new_mark();
@@ -90,7 +90,7 @@ void compute_surface_bijection_from_pattern_to_dart(LCC& lcc,
     { other1=pattern.lcc().template beta<2,1>(other1); }
 
     other2=lcc.template beta<1>(cur.second);
-    assert(other1!=lcc.null_descriptor && other2!=lcc.null_descriptor);
+    CGAL_assertion(other1!=lcc.null_descriptor && other2!=lcc.null_descriptor);
     if(!pattern.lcc().is_marked(other1, treated))
     {
       to_treat.push(std::make_pair(other1, other2));
@@ -100,7 +100,7 @@ void compute_surface_bijection_from_pattern_to_dart(LCC& lcc,
     // Process beta2
     other1=pattern.lcc().template beta<2>(cur.first);
     other2=lcc.template beta<2>(cur.second);
-    assert(other1!=lcc.null_descriptor && other2!=lcc.null_descriptor);
+    CGAL_assertion(other1!=lcc.null_descriptor && other2!=lcc.null_descriptor);
     if(!pattern.lcc().is_marked(other1, treated))
     {
       to_treat.push(std::make_pair(other1, other2));
@@ -117,7 +117,7 @@ void compute_surface_bijection_from_pattern_to_dart(LCC& lcc,
       if(!lcc.template is_free<2>(pattern_to_global[it]))
       { lcc.template unsew<2>(pattern_to_global[it]); }
     }
-    assert(!pattern.lcc().is_marked(it, treated));
+    CGAL_assertion(!pattern.lcc().is_marked(it, treated));
   }
   CGAL_assertion(lcc.is_whole_map_unmarked(treated));
   pattern.lcc().free_mark(treated);
@@ -138,7 +138,7 @@ void compute_volume_bijection_from_pattern_to_dart(LCC& lcc,
                                                    Dart_mapping<LCC>&
                                                        pattern_to_volume)
 {
-  assert(lcc.template is_free<3>(dh1));
+  CGAL_assertion(lcc.template is_free<3>(dh1));
   std::queue<std::pair<typename LCC::Dart_descriptor, typename LCC::Dart_descriptor>> to_treat;
   typename LCC::Dart_descriptor other1, other2;
   pattern_to_volume.clear();
@@ -148,13 +148,13 @@ void compute_volume_bijection_from_pattern_to_dart(LCC& lcc,
   {
     auto cur=to_treat.front();
     to_treat.pop();
-    assert(lcc.template is_free<3>(cur.first));
+    CGAL_assertion(lcc.template is_free<3>(cur.first));
     pattern_to_volume[cur.first]=cur.second;
 
     // Process beta1
     other1=lcc.template beta<1>(cur.first);
     other2=lcc.template beta<1>(cur.second);
-    assert(other1!=lcc.null_descriptor && other2!=lcc.null_descriptor);
+    CGAL_assertion(other1!=lcc.null_descriptor && other2!=lcc.null_descriptor);
     if(!lcc.is_marked(other1, markexternal))
     {
       to_treat.push(std::make_pair(other1, other2));
@@ -166,7 +166,7 @@ void compute_volume_bijection_from_pattern_to_dart(LCC& lcc,
     while(!lcc.template is_free<3>(other1))
     { other1=lcc.template beta<3,2>(other1); }
     other2=lcc.template beta<2>(cur.second);
-    assert(other1!=lcc.null_descriptor && other2!=lcc.null_descriptor);
+    CGAL_assertion(other1!=lcc.null_descriptor && other2!=lcc.null_descriptor);
     if(!lcc.is_marked(other1, markexternal))
     {
       to_treat.push(std::make_pair(other1, other2));
@@ -185,7 +185,7 @@ void replace_one_volume_from_dart(LCC& lcc,
                                   Pattern<LCC, 3>& vpattern,
                                   typename LCC::Dart_descriptor dh2)
 {
-  assert(is_volume_isomorphic_to_vpattern_from_dart(lcc, dh1,
+  CGAL_assertion(is_volume_isomorphic_to_vpattern_from_dart(lcc, dh1,
                                                     vpattern.lcc(), dh2,
                                                     LCC::INVALID_MARK,
                                                     LCC::INVALID_MARK,
@@ -197,7 +197,7 @@ void replace_one_volume_from_dart(LCC& lcc,
   // 1) Copy pattern into lcc. New darts are not marked
   lcc.copy(vpattern.lcc(), &pattern_to_global);
   // 2) Compute old_3sew to store 3-links of darts in volume(dh2)
-  assert(vpattern.lcc().darts().owns(dh2));
+  CGAL_assertion(vpattern.lcc().darts().owns(dh2));
   compute_volume_bijection_from_pattern_to_dart
       (lcc, pattern_to_global[dh2], dh1, amark,
        links_from_pattern_to_volume);
@@ -227,8 +227,8 @@ void replace_one_volume_from_dart(LCC& lcc,
 
   for(auto curdh: links_from_pattern_to_volume)
   { lcc.erase_dart(curdh.first); }
-  // assert(lcc.is_valid());
-  assert(lcc.is_whole_map_unmarked(amark));
+  // CGAL_assertion(lcc.is_valid());
+  CGAL_assertion(lcc.is_whole_map_unmarked(amark));
   lcc.free_mark(amark);
 }
 ////////////////////////////////////////////////////////////////////////////////
@@ -301,9 +301,9 @@ void replace_one_face_from_dart(LCC& lcc,
     { lcc.erase_dart(lcc.template beta<3>(curdh.first)); }
     lcc.erase_dart(curdh.first);
   }
-  assert(lcc.is_whole_map_unmarked(amark));
+  CGAL_assertion(lcc.is_whole_map_unmarked(amark));
   lcc.free_mark(amark);
-  // assert(lcc.is_valid());
+  // CGAL_assertion(lcc.is_valid());
 }
 ////////////////////////////////////////////////////////////////////////////////
 /// Replace surface(dh1) by the spattern, knowing that the border of
@@ -366,7 +366,7 @@ void replace_one_surface_from_dart(LCC& lcc,
     { lcc.erase_dart(lcc.template beta<3>(curdh.first)); }
     lcc.erase_dart(curdh.first);
   }
-  assert(lcc.is_whole_map_unmarked(amark));
+  CGAL_assertion(lcc.is_whole_map_unmarked(amark));
   lcc.free_mark(amark);
 }
 ////////////////////////////////////////////////////////////////////////////////

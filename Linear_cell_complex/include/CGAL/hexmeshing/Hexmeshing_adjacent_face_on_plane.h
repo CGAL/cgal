@@ -40,7 +40,7 @@ namespace CGAL::internal::Hexmeshing
     auto this_face_handle = lcc.attribute<2>(edge);
     auto other_face_handle = lcc.attribute<2>(other_face);
 
-    assert(this_face_handle != nullptr);
+    CGAL_assertion(this_face_handle != nullptr);
 
     // Early exit if the beta(2) face is already on the plane
     if (other_face_handle != nullptr
@@ -92,7 +92,7 @@ namespace CGAL::internal::Hexmeshing
     auto other_face_handle = lcc.attribute<2>(other_face);
     boost::container::static_vector<Dart_descriptor, 5> __additional_volumes;
 
-    assert(this_face_handle != nullptr);
+    CGAL_assertion(this_face_handle != nullptr);
 
     // Early exit if the beta(2) face is already on the plane
     if (other_face_handle != nullptr && other_face_handle->info().plane[plane])

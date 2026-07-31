@@ -50,7 +50,7 @@ namespace CGAL::internal::Hexmeshing
   {
     LCC& lcc = hdata.lcc;
 
-    assert(nb_levels >= 1 && current_lvl >= 0);
+    CGAL_assertion(nb_levels >= 1 && current_lvl >= 0);
 
     // TODO Reformulate, information not up to date
 

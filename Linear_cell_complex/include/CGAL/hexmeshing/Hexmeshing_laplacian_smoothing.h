@@ -50,7 +50,7 @@ namespace CGAL::internal::Hexmeshing
 
       int id = lcc.attribute<0>(vertex)->id;
 
-      assert(count[id]);
+      CGAL_assertion(count[id]);
 
       lcc.point(vertex) = CGAL::ORIGIN + P_new[id]/count[id];
     }

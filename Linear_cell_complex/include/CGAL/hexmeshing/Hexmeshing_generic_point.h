@@ -49,8 +49,8 @@ namespace CGAL::internal::Hexmeshing
     GenericPointForHexmeshing& operator+=(const GenericPointForHexmeshing& p) { *this = *this + p; return *this; }
     GenericPointForHexmeshing& operator-=(const GenericPointForHexmeshing& p) { *this = *this - p; return *this; }
     GenericPointForHexmeshing& operator/=(const GenericPointForHexmeshing& p) { *this = *this / p; return *this; }
-    T& operator[](int i) { assert(i >= 0 && i <= 2); return i == 0 ? x : i == 1 ? y : i == 2 ? z : z; };
-    const T& operator[](int i) const { assert(i >= 0 && i <= 2); return i == 0 ? x : i == 1 ? y : i == 2 ? z : z; };
+    T& operator[](int i) { CGAL_assertion(i >= 0 && i <= 2); return i == 0 ? x : i == 1 ? y : i == 2 ? z : z; };
+    const T& operator[](int i) const { CGAL_assertion(i >= 0 && i <= 2); return i == 0 ? x : i == 1 ? y : i == 2 ? z : z; };
     bool operator==(const GenericPointForHexmeshing& p) const { return p.x == x && p.y == y && p.z == z; }
     bool operator!=(const GenericPointForHexmeshing& p) const { return p.x != x or p.y != y or p.z != z; }
 

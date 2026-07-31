@@ -14,7 +14,6 @@
 #define CMAP_SIGNATURE_H
 
 #include <boost/container_hash/hash.hpp>
-#include <cassert>
 #include <functional>
 #include <iostream>
 #include <queue>
@@ -121,7 +120,7 @@ bool compute_fword_from_dart(CMAP& cmap,
         if(word.back()>signature[word.size()-1])
         {
           bigger=true;
-          assert(word>signature);
+          CGAL_assertion(word>signature);
         }
       }
     }
@@ -139,10 +138,10 @@ bool compute_fword_from_dart(CMAP& cmap,
 
   if(signature.empty() || (!bigger && !same_prefix))
   {
-    assert(signature.empty() || word<signature);
+    CGAL_assertion(signature.empty() || word<signature);
     return true; // word<signature
   }
-  assert(!signature.empty() && word>=signature);
+  CGAL_assertion(!signature.empty() && word>=signature);
   return false; // word>=signature
 
 }
@@ -301,7 +300,7 @@ bool compute_vword_from_dart(CMAP& cmap,
           if(word.back()>signature[word.size()-1])
           {
             bigger=true;
-            assert(word>signature);
+            CGAL_assertion(word>signature);
           }
         }
       }
@@ -311,16 +310,16 @@ bool compute_vword_from_dart(CMAP& cmap,
     for(auto f: {next, opposite})
     {
       other=f(cur);
-      assert(other!=cmap.null_descriptor);
+      CGAL_assertion(other!=cmap.null_descriptor);
       if(!cmap.is_marked(other, amark))
       {
         to_treat.push(other);
         cmap.mark(other, amark);
         to_unmark.push_back(other);
-        assert(nb!=std::numeric_limits<MyInt>::max());
+        CGAL_assertion(nb!=std::numeric_limits<MyInt>::max());
         indices[other]=nb++;
       }
-      assert(indices.count(other)==1);
+      CGAL_assertion(indices.count(other)==1);
       word.push_back(indices[other]);
       if(same_prefix && !signature.empty())
       {
@@ -330,7 +329,7 @@ bool compute_vword_from_dart(CMAP& cmap,
           if(word.back()>signature[word.size()-1])
           {
             bigger=true;
-            assert(word>signature);
+            CGAL_assertion(word>signature);
           }
         }
       }
@@ -352,10 +351,10 @@ bool compute_vword_from_dart(CMAP& cmap,
   cmap.free_mark(amark);
   if(signature.empty() || (!bigger && !same_prefix))
   {
-    assert(signature.empty() || word<signature);
+    CGAL_assertion(signature.empty() || word<signature);
     return true; // word<signature
   }
-  assert(!signature.empty() && word>=signature);
+  CGAL_assertion(!signature.empty() && word>=signature);
   return false; // word>=signature
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -954,7 +953,7 @@ bool check_word_from_dart(CMAP& cmap,
 
     //get the index of the dart
     //safety check for debug : only one dart got indexed and dn has an index
-    assert(indices.find(dk) != indices.end() && indices[dk]> 0) ;
+    CGAL_assertion(indices.find(dk) != indices.end() && indices[dk]> 0) ;
     MyInt k = indices[dk] ;
 
     //iterate over its neighboring darts in increasing dimension order
@@ -978,7 +977,7 @@ bool check_word_from_dart(CMAP& cmap,
       //push dn to queue if it received an index
       if(indices.size()>nb_indexed) {
         //safety check for debug : only one dart got indexed and dn has an index
-        assert(indices.size()==nb_indexed+1 && indices.find(dn)!=indices.end());
+        CGAL_assertion(indices.size()==nb_indexed+1 && indices.find(dn)!=indices.end());
         if(indices[dn]!=NOMATCH) {
           //dn received a true index, push it to the queue to treat it
           to_treat.push(dn);

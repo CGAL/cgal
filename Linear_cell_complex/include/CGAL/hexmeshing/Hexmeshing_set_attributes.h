@@ -40,7 +40,7 @@ namespace CGAL::internal::Hexmeshing
       vertex_count++;
     }
 
-    assert(vertex_count == 8);
+    CGAL_assertion(vertex_count == 8);
 
     vol_attr.centroid = CGAL::ORIGIN + centroid / vertex_count;
   }
@@ -70,7 +70,7 @@ namespace CGAL::internal::Hexmeshing
         vertex_count++;
       }
 
-      assert(vertex_count == 4);
+      CGAL_assertion(vertex_count == 4);
 
       p2 = CGAL::ORIGIN + (p2 - CGAL::ORIGIN) / vertex_count;
     }

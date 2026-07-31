@@ -13,7 +13,6 @@
 #ifndef CMAP_QUERY_REPLACE_GEOMETRY_H
 #define CMAP_QUERY_REPLACE_GEOMETRY_H
 
-#include <cassert>
 #include <tuple>
 #include <unordered_map>
 
@@ -45,8 +44,8 @@ compute_point_2D(LCC& lcc,
   for(std::tuple<typename LCC::Dart_descriptor, double, double, double>& e:
        m_barycentric_coords.m_coords)
   {
-    assert(pattern_to_global.find(std::get<0>(e))!=pattern_to_global.end());
-    assert(links_from_pattern_to_face.find(pattern_to_global[std::get<0>(e)])
+    CGAL_assertion(pattern_to_global.find(std::get<0>(e))!=pattern_to_global.end());
+    CGAL_assertion(links_from_pattern_to_face.find(pattern_to_global[std::get<0>(e)])
            !=links_from_pattern_to_face.end());
     cur=links_from_pattern_to_face[pattern_to_global[std::get<0>(e)]];
     dh1=lcc.other_extremity(cur);
@@ -58,7 +57,7 @@ compute_point_2D(LCC& lcc,
       ++nb;
     }
   }
-  assert(nb>0);
+  CGAL_assertion(nb>0);
   return typename LCC::Point(res.x()/nb, res.y()/nb, res.z()/nb);
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -76,8 +75,8 @@ compute_point_3D(LCC& lcc,
   for(std::tuple<typename LCC::Dart_descriptor, double, double, double, double>&
            e: m_barycentric_coords.m_coords)
   {
-    assert(pattern_to_global.find(std::get<0>(e))!=pattern_to_global.end());
-    assert(links_from_pattern_to_volume.find(pattern_to_global[std::get<0>(e)])
+    CGAL_assertion(pattern_to_global.find(std::get<0>(e))!=pattern_to_global.end());
+    CGAL_assertion(links_from_pattern_to_volume.find(pattern_to_global[std::get<0>(e)])
         !=links_from_pattern_to_volume.end());
     cur=links_from_pattern_to_volume[pattern_to_global[std::get<0>(e)]];
     dh1=lcc.template beta<0>(cur);
@@ -93,7 +92,7 @@ compute_point_3D(LCC& lcc,
       ++nb;
     }
   }
-  assert(nb>0);
+  CGAL_assertion(nb>0);
   return typename LCC::Point(res.x()/nb, res.y()/nb, res.z()/nb);
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -104,7 +103,7 @@ compute_point_3D_v2(LCC& lcc,
                     Dart_mapping<LCC>& pattern_to_global,
                     Barycentric_coord<LCC, 3>& m_barycentric_coords)
 {
-  assert(!m_barycentric_coords.m_coords.empty());
+  CGAL_assertion(!m_barycentric_coords.m_coords.empty());
   typename LCC::Point p;
   typename LCC::Vector res=CGAL::NULL_VECTOR;
   typename LCC::Dart_descriptor cur, dh1, dh2, dh3;
@@ -116,8 +115,8 @@ compute_point_3D_v2(LCC& lcc,
   for(std::tuple<typename LCC::Dart_descriptor, double, double, double, double>& e:
       m_barycentric_coords.m_coords)
   {
-    assert(pattern_to_global.find(std::get<0>(e))!=pattern_to_global.end());
-    assert(links_from_pattern_to_volume.find(pattern_to_global[std::get<0>(e)])
+    CGAL_assertion(pattern_to_global.find(std::get<0>(e))!=pattern_to_global.end());
+    CGAL_assertion(links_from_pattern_to_volume.find(pattern_to_global[std::get<0>(e)])
         !=links_from_pattern_to_volume.end());
     cur=links_from_pattern_to_volume[pattern_to_global[std::get<0>(e)]];
     dh1=lcc.other_extremity(cur);
@@ -134,7 +133,7 @@ compute_point_3D_v2(LCC& lcc,
       ++nb;
     }
   }
-  assert(nb>0);
+  CGAL_assertion(nb>0);
   return typename LCC::Point(res.x()/nb, res.y()/nb, res.z()/nb);
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -148,7 +147,7 @@ void transform_geometry_of_fpattern(LCC& lcc,
 {
   for(Barycentric_coord<LCC, 1>& inner: pattern.barycentric_coords())
   {
-    assert(pattern_to_global.find(inner.m_dart)!=pattern_to_global.end());
+    CGAL_assertion(pattern_to_global.find(inner.m_dart)!=pattern_to_global.end());
     typename LCC::Dart_descriptor res=pattern_to_global[inner.m_dart];
     // TODO avoid to recompute barycenters several times (?)
     lcc.point(res)=compute_point_2D(lcc,
@@ -168,7 +167,7 @@ void transform_geometry_of_spattern(LCC& lcc,
 {
   for(Barycentric_coord<LCC, 1>& inner: pattern.barycentric_coords())
   {
-    assert(pattern_to_global.find(inner.m_dart)!=pattern_to_global.end());
+    CGAL_assertion(pattern_to_global.find(inner.m_dart)!=pattern_to_global.end());
     typename LCC::Dart_descriptor res=pattern_to_global[inner.m_dart];
     // TODO avoid to recompute barycenters several times (?)
     lcc.point(res)=compute_point_2D(lcc,
@@ -193,7 +192,7 @@ void transform_geometry_of_vpattern(LCC& lcc, typename LCC::size_type /*amark*/,
   std::unordered_set<typename LCC::Point> points;
   for(const auto& it: links_from_pattern_to_volume) // This is only "surviving" darts
   {
-    assert(lcc.is_marked(it.first, amark));
+    CGAL_assertion(lcc.is_marked(it.first, amark));
     if(!lcc.is_marked(it.first, surviving_vertex))
     {
       points.insert(lcc.point(it.second)); // Survinv point in the match
@@ -237,13 +236,13 @@ void transform_geometry_of_vpattern(LCC& lcc, typename LCC::size_type /*amark*/,
     if(lcc.is_marked(it.second, surviving_vertex))
     { lcc.template unmark_cell<0>(it.second, surviving_vertex); }
   }
-  assert(lcc.is_whole_map_unmarked(surviving_vertex));
+  CGAL_assertion(lcc.is_whole_map_unmarked(surviving_vertex));
   lcc.free_mark(surviving_vertex);
 */
   // return;
   for(Barycentric_coord<LCC, 3>& inner: pattern.barycentric_coords())
   {
-    assert(pattern_to_global.find(inner.m_dart)!=pattern_to_global.end());
+    CGAL_assertion(pattern_to_global.find(inner.m_dart)!=pattern_to_global.end());
     typename LCC::Dart_descriptor res=pattern_to_global[inner.m_dart];
     // std::cout<<"[transform_geometry_of_vpattern] "<<lcc.point()<<" -> before "
     //          <<lcc.point()<<" and  after ";

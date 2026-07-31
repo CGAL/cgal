@@ -61,8 +61,8 @@ namespace CGAL::internal::Hexmeshing
    */
   template <typename HexData>
   void two_refinement_algorithm(HexData& hdata, MarkingFunction& cellIdentifier, int nb_levels, int thread_id = 0){
-    // static_assert(std::is_same_v<HexData, HexMeshingData> or std::is_same_v<HexData, ProcessData>);
-    // static_assert(std::is_base_of_v<HexMeshingData, HexData>);
+    // static_CGAL_assertion(std::is_same_v<HexData, HexMeshingData> or std::is_same_v<HexData, ProcessData>);
+    // static_CGAL_assertion(std::is_base_of_v<HexMeshingData, HexData>);
 
     LCC& lcc = hdata.lcc;
 

@@ -23,7 +23,6 @@
 //#include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 //#include <CGAL/Surface_mesh.h>
 
-#include <cassert>
 #include <queue>
 #include <tuple>
 #include <unordered_map>
@@ -117,9 +116,11 @@ public:
         }
       }
     }
+    CGAL_assertion(m_lcc.is_whole_map_unmarked(old_vertex));
     m_lcc.free_mark(old_vertex);
+    CGAL_assertion(m_lcc.is_whole_map_marked(vertex_treated));
     m_lcc.free_mark(vertex_treated);
-    assert(nb1>0);
+    CGAL_assertion(nb1>0);
     bary2=Point(bary2.x()/nb1, bary2.y()/nb1, bary2.z()/nb1);
 
     nb1=0;
@@ -165,6 +166,8 @@ public:
     }
 
     compute_barycentric_coord(surviving);
+    /// Here some darts are marked and others not: but this does not
+    // change the complexity, thus we let free_mark to unmark all darts.
     m_lcc.free_mark(surviving);
   }
 
@@ -313,7 +316,7 @@ public:
           }
         }
 
-        assert(nb1>0);
+        CGAL_assertion(nb1>0);
         // Now compute the barycentric coordinates of inner vertices
         if(new_vertices.size()>0)
         {
@@ -361,11 +364,12 @@ public:
             { m_lcc.template unmark_cell<0>(itd, vertex_treated);}
           }
         }
-        assert(m_lcc.is_whole_map_unmarked(vertex_treated));
+        CGAL_assertion(m_lcc.is_whole_map_unmarked(vertex_treated));
       }
     }
-    assert(m_lcc.is_whole_map_marked(treated));
+    CGAL_assertion(m_lcc.is_whole_map_marked(treated));
     m_lcc.free_mark(treated);
+    CGAL_assertion(m_lcc.is_whole_map_marked(vertex_treated));
     m_lcc.free_mark(vertex_treated);
  }
 
@@ -383,6 +387,8 @@ public:
     }
 
     compute_barycentric_coord(surviving);
+    /// Here some darts are marked and others not: but this does not
+    // change the complexity, thus we let free_mark to unmark all darts.
     m_lcc.free_mark(surviving);
   }
 
@@ -504,11 +510,11 @@ public:
         }
       }
     }
-    assert(m_lcc.is_whole_map_unmarked(old_vertex));
-    assert(m_lcc.is_whole_map_marked(vertex_treated));
+    CGAL_assertion(m_lcc.is_whole_map_unmarked(old_vertex));
     m_lcc.free_mark(old_vertex);
+    CGAL_assertion(m_lcc.is_whole_map_marked(vertex_treated));
     m_lcc.free_mark(vertex_treated);
-    assert(nb1>0);
+    CGAL_assertion(nb1>0);
     bary3=Point(bary3.x()/nb1, bary3.y()/nb1, bary3.z()/nb1);
 
     nb1=0;
@@ -565,6 +571,8 @@ public:
     }
 
     compute_barycentric_coord(surviving);
+    /// Here some darts are marked and others not: but this does not
+    // change the complexity, thus we let free_mark to unmark all darts.
     m_lcc.free_mark(surviving);
   }
 
