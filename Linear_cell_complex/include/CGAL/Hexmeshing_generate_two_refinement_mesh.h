@@ -11,7 +11,6 @@
 // Contributor(s): Soichiro Yamazaki <soichiro19998@gmail.com>
 //
 #include <CGAL/hexmeshing/Hexmeshing_for_linear_cell_complex_sequential.h>
-#include <CGAL/hexmeshing/Hexmeshing_outer_alias.h>
 #include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
 #include <string>
 
@@ -19,10 +18,10 @@ namespace CGAL
 {
   template <typename TriangleMesh>
   internal::Hexmeshing::LCC generate_hexahedral_mesh_using_two_refinement
-  (const TriangleMesh& tmesh, int cube_cells_per_dim, int nb_levels, bool trim=false)
+  (const TriangleMesh& tmesh, int cube_cells_per_dim, int nb_levels, bool trim=true, bool smooth=true)
   {
     internal::Hexmeshing_for_linear_cell_complex<TriangleMesh> hdata(tmesh, cube_cells_per_dim);
-    hdata.two_refinement(nb_levels, trim);
+    hdata.two_refinement(nb_levels, trim, smooth);
     return hdata.lcc;
   }
 }

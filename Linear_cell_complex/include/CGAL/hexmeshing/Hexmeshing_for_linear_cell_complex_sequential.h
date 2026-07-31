@@ -274,10 +274,11 @@ public:
    * @param mesh Grid configuration defining the initial mesh structure and dimensions
    * @param nb_levels Number of refinement levels to perform (default: 1)
    * @param trim Whether to apply trimming to remove excess volumes after refinement
-   *             (default: false). When true, trimmingFunction is used to determine
+   *             (default: true). When true, trimmingFunction is used to determine
    *             which volumes to keep in the final mesh.
+   * @param smooth Whether to smooth the hexahedral mesh, to fit to the initial surface.
    */
-  void two_refinement(int nb_levels = 1, bool trim = false)
+  void two_refinement(int nb_levels=1, bool trim=true, bool smooth=true)
   {
     using namespace internal::Hexmeshing;
 
@@ -293,22 +294,8 @@ public:
     two_refinement_algorithm(*this, cellIdentifier, nb_levels);
 
     // assumes grid cells to be cubes
-    post_processing(lcc, grid.size.x()/(1<<nb_levels), trim, cellIdentifier, decideFunc);
-  }
-
-  void two_refinement_without_post_processing(int nb_levels = 1)
-  {
-    using namespace internal::Hexmeshing;
-
-    Tree* tree = mesh.get_tree_pointer();
-    MarkingFunction cellIdentifier = is_volume_intersecting_poly(*tree);
-
-    ExternalRessources res;
-
-    load_patterns(res.regular_templates, res.partial_templates);
-    init(&res, *mesh.get_grid_pointer());
-
-    two_refinement_algorithm(*this, cellIdentifier, nb_levels);
+    post_processing(lcc, grid.size.x()/(1<<nb_levels), trim, smooth,
+                    cellIdentifier, decideFunc);
   }
 };
 

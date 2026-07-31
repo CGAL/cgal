@@ -303,10 +303,10 @@ Result of the run of the linear_cell_complex_3_insert program. A window shows th
 
 The following example shows the use of the `generate_hexahedral_mesh_using_two_refinement()` function that creates a hexahedral LCC grid for a given surface mesh.
 
-\cgalExample{Linear_cell_complex/hexmeshing.cpp}
+\cgalExample{Linear_cell_complex/hexmeshing_basic.cpp}
 
 \cgalFigureBegin{fig_hexmeshing,hexmeshing.png}
-Result of the run of the hexmeshing program. A window shows the 3D grid refined for the Bunny surface mesh and smoothed.
+Result of the run of the hexmeshing_basic program. A window shows the 3D grid refined for the Bunny surface mesh and smoothed.
 \cgalFigureEnd
 
 \subsection Linear_cell_complexWriteVTK Writing a Linear Cell Complex to a VTK File
