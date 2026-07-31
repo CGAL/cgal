@@ -348,6 +348,7 @@ bool compute_vword_from_dart(CMAP& cmap,
 
   for(auto dhtou: to_unmark)
   { cmap.unmark(dhtou, amark); }
+  CGAL_assertion(cmap.is_whole_map_unmarked(amark));
   cmap.free_mark(amark);
   if(signature.empty() || (!bigger && !same_prefix))
   {
@@ -1185,6 +1186,15 @@ void copy_match(LCC& lcc, const Signature& word,
 
   CGAL::CMap_copy::copy_cells<dimension>(lcc, to_copy, lcc_copy,
                                          origin_to_copy, copy_to_origin);
+
+  /// Unmark darts
+  for(unsigned int i=1; i<=word.size()/dimension; ++i)
+  {
+    typename LCC::Dart_descriptor dh = descriptor_from_indice.at(i);
+    if(lcc.is_marked(dh, to_be_copied))
+    { lcc.template unmark_cell<dimension>(dh, to_be_copied); }
+  }
+  CGAL_assertion(lcc.is_whole_map_unmarked(to_be_copied));
   lcc.free_mark(to_be_copied);
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -1238,6 +1248,7 @@ public:
       }
     }
 
+    CGAL_assertion(lcc.is_whole_map_marked(treated));
     lcc.free_mark(treated);
   }
 
