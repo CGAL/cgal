@@ -17,7 +17,7 @@ int main(int argc, char** argv)
      (argc>5 && std::string("-notrim")==argv[5])) { trim=false; }
   if((argc>4 && std::string("-nosmooth")==argv[4]) ||
      (argc>5 && std::string("-nosmooth")==argv[5])) { smooth=false; }
-       
+
   CGAL::Surface_mesh<CGAL::Exact_predicates_inexact_constructions_kernel::Point_3> poly;
   CGAL::IO::read_polygon_mesh(filename, poly);
   CGAL::Polygon_mesh_processing::triangulate_faces(poly);
