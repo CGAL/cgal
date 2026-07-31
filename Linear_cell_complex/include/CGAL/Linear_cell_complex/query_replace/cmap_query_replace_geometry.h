@@ -17,7 +17,7 @@
 #include <tuple>
 #include <unordered_map>
 
-#include <CGAL/Linear_cell_complex/query_replace/lcc_barycentric_coord.h>
+#include <CGAL/Linear_cell_complex/lcc_barycentric_coord.h>
 #include <CGAL/Linear_cell_complex/query_replace/lcc_pattern.h>
 
 namespace CGAL::internal
