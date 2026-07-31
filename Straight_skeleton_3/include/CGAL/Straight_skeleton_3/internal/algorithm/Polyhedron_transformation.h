@@ -272,12 +272,17 @@ public:
     CGAL_SS3_DEBUG_SPTR(facet_l);
     CGAL_SS3_DEBUG_SPTR(facet_r);
 
+    CGAL_SS3_TRANSF_TRACE_V(32, "has_coplanar F" << facet_l->id() << ", F" << facet_r->id());
+
     if (epsilon == 0.) {
       return (facet_l->get_plane() == facet_r->get_plane()); // planes are normalized
     }
 
     const Vector_3 normal_l = facet_l->get_plane().orthogonal_vector();
     const Vector_3 normal_r = facet_r->get_plane().orthogonal_vector();
+    CGAL_SS3_TRANSF_TRACE_V(32, "  normal_l: " << normal_l);
+    CGAL_SS3_TRANSF_TRACE_V(32, "  normal_r: " << normal_r);
+    CGAL_SS3_TRANSF_TRACE_V(32, "  angle: " << CGAL::approximate_angle(normal_l, normal_r));
 
     // these sqrt are tolerated because it does not matter for robustness
     const FT length_l = CGAL::approximate_sqrt(normal_l.squared_length());
@@ -290,6 +295,7 @@ public:
       diff_sq_length += square(diff);
     }
 
+    CGAL_SS3_TRANSF_TRACE_V(32, "  diff " << diff_sq_length << " " << square(epsilon));
     return (diff_sq_length < square(epsilon));
   }
 
@@ -685,7 +691,7 @@ public:
   // resets using the first 3 planes, even if there are more
   static bool reset_point(const VertexSPtr& vertex)
   {
-    CGAL_SS3_TRANSF_TRACE_V(16, "reset_point() of " << vertex->to_string());
+    CGAL_SS3_TRANSF_TRACE_V(64, "reset_point() of " << vertex->to_string());
     CGAL_SS3_DEBUG_SPTR(vertex);
 
     CGAL_warning(vertex->degree() == 3);
