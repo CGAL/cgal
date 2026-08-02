@@ -1250,11 +1250,14 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
     c3t3.triangulation().finite_incident_cells(v1_init,
       std::inserter(cells_to_insert, cells_to_insert.end()));
 
-    if(!is_cells_set_manifold(c3t3, cells_to_insert))
-      return Vertex_handle();
-
+    // the angle test is the one that discards most candidates, and the cheaper
+    // of the two : it walks the star once, where is_cells_set_manifold() walks
+    // the star of each of its vertices
     if(collapse_keeps_angles_acceptable(edge, c3t3, collapse_type, cells_to_insert)
          == ANGLES_REJECTED)
+      return Vertex_handle();
+
+    if(!is_cells_set_manifold(c3t3, cells_to_insert))
       return Vertex_handle();
 
     CollapseTriangulation<C3t3> local_tri(edge, cells_to_insert, collapse_type);
