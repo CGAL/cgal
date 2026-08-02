@@ -1253,24 +1253,26 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
     // the angle test is the one that discards most candidates, and the cheaper
     // of the two : it walks the star once, where is_cells_set_manifold() walks
     // the star of each of its vertices
-    if(collapse_keeps_angles_acceptable(edge, c3t3, collapse_type, cells_to_insert)
-         == ANGLES_REJECTED)
+    const Angle_verdict angles
+      = collapse_keeps_angles_acceptable(edge, c3t3, collapse_type, cells_to_insert);
+    if(angles == ANGLES_REJECTED)
       return Vertex_handle();
 
     if(!is_cells_set_manifold(c3t3, cells_to_insert))
       return Vertex_handle();
 
-    CollapseTriangulation<C3t3> local_tri(edge, cells_to_insert, collapse_type);
-
-    Result_type res = local_tri.collapse();
-    if (res == VALID)
+    if(angles == ANGLES_UNDECIDED)
     {
-#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
-      if (in_cx)
-        nb_valid_collapse++;
-#endif
-      return collapse(edge, collapse_type, cell_selector, c3t3, short_edges);
+      CollapseTriangulation<C3t3> local_tri(edge, cells_to_insert, collapse_type);
+      if(local_tri.collapse() != VALID)
+        return Vertex_handle();
     }
+
+#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
+    if (in_cx)
+      nb_valid_collapse++;
+#endif
+    return collapse(edge, collapse_type, cell_selector, c3t3, short_edges);
   }
 #ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
   else if (in_cx)
