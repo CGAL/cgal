@@ -8,6 +8,10 @@ Release date: December 2026
 
 - **Breaking change**: Enhanced the metadata traits-class decorators `Arr_counting_traits_2` and `Arr_tracing_traits_2`. Each is (still) parameterized with another traits class being decorated, but it does not inherit from it. In addition one can get and set a smart pointer to the class being decorated.
 
+### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/6.3/Manual/packages.html#PkgKernel23)
+
+- Add operator to functor `Orientation_3` that takes 5 points as argument, with the last two getting tested against the first three points
+
 ### [2D Snap Rounding](https://doc.cgal.org/6.2/Manual/packages.html#PkgSnapRounding2) (major changes)
 
 - Added the function `vertical_slab_snap_rounding_2()`, a new snap rounding algorithm that offers better performance and supports a wider range of rounding schemes, including floating-point coordinate representations.
@@ -16,6 +20,12 @@ Release date: December 2026
 - Added the function `hot_pixel_snap_rounding_2()`, a new API exposing the original hot-pixel snap rounding algorithm.
 - Deprecated the existing overload of `snap_rounding_2()`.
 - Added a new overload of `snap_rounding_2()` that automatically dispatch to either `vertical_slab_snap_rounding_2()` or `hot_pixel_snap_rounding_2()`, depending on the provided traits class.
+
+### [Boolean Operations On Meshes](https://doc.cgal.org/6.3/Manual/packages.html#PkgPMPBooleanOperations)
+
+- The corefinement based operations (including Boolean operations) has been optimized to better
+  handle cases when some identical faces are shared between the input meshes. This leads to a significant speed up
+  in those cases.
 
 ## [Release 6.2](https://github.com/CGAL/cgal/releases/tag/v6.2)
 
