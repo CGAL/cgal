@@ -18,6 +18,7 @@
 #include <boost/bimap.hpp>
 #include <boost/bimap/set_of.hpp>
 #include <boost/bimap/multiset_of.hpp>
+#include <boost/container/flat_set.hpp>
 #include <boost/container/small_vector.hpp>
 #include <boost/functional/hash.hpp>
 
@@ -1078,6 +1079,83 @@ bool is_cells_set_manifold(const C3t3&,
   return true;
 }
 
+enum Angle_verdict { ANGLES_REJECTED, ANGLES_ACCEPTED, ANGLES_UNDECIDED };
+
+template<typename C3t3, typename CellRange>
+Angle_verdict collapse_keeps_angles_acceptable(const typename C3t3::Edge& edge,
+                                      const C3t3& c3t3,
+                                      const Collapse_type collapse_type,
+                                      const CellRange& star)
+{
+  using Tr = typename C3t3::Triangulation;
+  using Cell_handle = typename Tr::Cell_handle;
+  using Vertex_handle = typename Tr::Vertex_handle;
+  using Point_3 = typename Tr::Point;
+  using Vector_3 = typename Tr::Geom_traits::Vector_3;
+  using Subdomain_index = typename C3t3::Subdomain_index;
+
+  const Dihedral_angle_cosine acceptable_max_cos{0.995}; // 0.995 cos <=> 5.7 degrees
+
+  const Tr& tr = c3t3.triangulation();
+  const Vertex_handle v0 = edge.first->vertex(edge.second);
+  const Vertex_handle v1 = edge.first->vertex(edge.third);
+
+  Vector_3 new_pos = vec(v0->point());
+  if (collapse_type == TO_MIDPOINT)
+    new_pos = new_pos + 0.5 * Vector_3(point(v0->point()), point(v1->point()));
+  else if (collapse_type == TO_V1)
+    new_pos = vec(point(v1->point()));
+  const auto p_new = point(Point_3(new_pos.x(), new_pos.y(), new_pos.z()));
+
+  boost::container::flat_set<Cell_handle,
+    std::less<Cell_handle>,
+    boost::container::small_vector<Cell_handle, 32> > cells_to_remove;
+
+  typename Tr::Cell_circulator circ = tr.incident_cells(edge);
+  const typename Tr::Cell_circulator done = circ;
+  do { cells_to_remove.insert(circ); } while (++circ != done);
+
+  boost::container::small_vector<Cell_handle, 64> cells_to_update;
+  tr.incident_cells(v1, std::back_inserter(cells_to_update));
+
+  const Dihedral_angle_cosine curr_max_cos
+    = (std::max)(max_cos_dihedral_angle_in_range(tr, cells_to_remove, false),
+                 max_cos_dihedral_angle_in_range(tr, cells_to_update, false));
+
+  const double angle_margin = 1e-9;
+  const double acceptable_sq = acceptable_max_cos.signed_square_value();
+  const double curr_max_sq = curr_max_cos.signed_square_value();
+  bool undecided = false;
+
+  const auto& gt = tr.geom_traits();
+  for (const Cell_handle c : star)
+  {
+    if (cells_to_remove.find(c) != cells_to_remove.end())
+      continue;
+    if (tr.is_infinite(c) || c->subdomain_index() == Subdomain_index())
+      continue;
+
+    auto p_at = [&](const int i)
+    {
+      const Vertex_handle v = c->vertex(i);
+      return (v == v0 || v == v1) ? p_new : point(v->point());
+    };
+    const Dihedral_angle_cosine after
+      = max_cos_dihedral_angle(p_at(0), p_at(1), p_at(2), p_at(3), gt);
+    const double after_sq = after.signed_square_value();
+
+    if (CGAL::abs(after_sq - curr_max_sq) < angle_margin
+     || CGAL::abs(after_sq - acceptable_sq) < angle_margin)
+    {
+      undecided = true;
+      continue;
+    }
+    if (curr_max_cos < after && acceptable_max_cos < after)
+      return ANGLES_REJECTED;
+  }
+  return undecided ? ANGLES_UNDECIDED : ANGLES_ACCEPTED;
+}
+
 template<typename C3t3,
          typename Sizing,
          typename CellSelector,
@@ -1173,6 +1251,10 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
       std::inserter(cells_to_insert, cells_to_insert.end()));
 
     if(!is_cells_set_manifold(c3t3, cells_to_insert))
+      return Vertex_handle();
+
+    if(collapse_keeps_angles_acceptable(edge, c3t3, collapse_type, cells_to_insert)
+         == ANGLES_REJECTED)
       return Vertex_handle();
 
     CollapseTriangulation<C3t3> local_tri(edge, cells_to_insert, collapse_type);
