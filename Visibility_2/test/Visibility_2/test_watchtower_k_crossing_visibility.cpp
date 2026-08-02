@@ -13,21 +13,33 @@
 //
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Arr_segment_traits_2.h>
-#include <CGAL/Arrangement_2.h>
 #include <CGAL/Watchtower_k_crossing_visibility_2.h>
 
 #include <iostream>
+#include <vector>
 
 int main() {
   typedef CGAL::Exact_predicates_exact_constructions_kernel     Kernel;
-  typedef CGAL::Arr_segment_traits_2<Kernel>                    Traits_2;
-  typedef CGAL::Arrangement_2<Traits_2>                         Arrangement_2;
-  typedef CGAL::Watchtower_k_crossing_visibility_2<Arrangement_2>
-                                        Watchtower_k_crossing_visibility_2;
+  typedef Kernel::Point_2                                       Point_2;
 
-  Watchtower_k_crossing_visibility_2 visibility;
-  CGAL_USE(visibility);
+  // x-monotone terrain, vertices in increasing x order
+  std::vector<Point_2> terrain;
+  terrain.emplace_back(0, 0);
+  terrain.emplace_back(1, 3);
+  terrain.emplace_back(2, 1);
+  terrain.emplace_back(3, 4);
+  terrain.emplace_back(4, 0);
+
+  const unsigned int k = 1;
+
+  const Point_2 w_cont = CGAL::continuous_watchtower_k_crossing_visibility_2(
+                     terrain.begin(), terrain.end(), k);
+
+  const Point_2 w_disc = CGAL::discrete_watchtower_k_crossing_visibility_2(
+                     terrain.begin(), terrain.end(), k);
+
+  std::cout << "continuous: " << w_cont << std::endl;
+  std::cout << "discrete:   " << w_disc << std::endl;
 
   return 0;
 }
