@@ -25,6 +25,7 @@
 
 #include <unordered_map>
 #include <unordered_set>
+#include <algorithm>
 #include <limits>
 #include <queue>
 
@@ -88,7 +89,7 @@ void update_c3t3_facets(C3t3& c3t3,
 template<typename C3t3, typename IncCellsVectorMap, typename CellSelector>
 Sliver_removal_result flip_3_to_2(typename C3t3::Edge& edge,
                                   C3t3& c3t3,
-                                  const std::vector<typename C3t3::Vertex_handle>& vertices_around_edge,
+                                  const boost::container::small_vector<typename C3t3::Vertex_handle, 16>& vertices_around_edge,
                                   const Flip_Criterion& criterion,
                                   IncCellsVectorMap& inc_cells,
                                   CellSelector& cell_selector)
@@ -1096,8 +1097,12 @@ Sliver_removal_result find_best_flip(typename C3t3::Edge& edge,
   Facet_circulator circ = tr.incident_facets(edge);
   Facet_circulator done = circ;
 
-  //Identify the vertices around this edge
-  std::unordered_set<Vertex_handle> vertices_around_edge;
+  //Identify the vertices around this edge. The ring of apices around an edge
+  //holds a handful of distinct vertices, so they are kept inline and scanned
+  //rather than hashed. flip_3_to_2 does not depend on their order : it picks
+  //vh2/vh3 by testing each vertex against ch0/ch1 individually, and is_facet
+  //is symmetric in its three vertices.
+  boost::container::small_vector<Vertex_handle, 16> vertices_around_edge;
   bool boundary_edge = false;
   bool hull_edge = false;
 
@@ -1111,7 +1116,9 @@ Sliver_removal_result find_best_flip(typename C3t3::Edge& edge,
       Vertex_handle vi = circ->first->vertex(indices(circ->second, i));
       if (vi != v0 && vi != v1)
       {
-        vertices_around_edge.insert(vi);
+        if (std::find(vertices_around_edge.begin(), vertices_around_edge.end(), vi)
+            == vertices_around_edge.end())
+          vertices_around_edge.push_back(vi);
 
         if ( circ->first->subdomain_index()
              != circ->first->neighbor(circ->second)->subdomain_index())
@@ -1142,9 +1149,7 @@ Sliver_removal_result find_best_flip(typename C3t3::Edge& edge,
   {
     if (!boundary_edge && !hull_edge)
     {
-      std::vector<Vertex_handle> vertices;
-      vertices.insert(vertices.end(), vertices_around_edge.begin(), vertices_around_edge.end());
-      res = flip_3_to_2(edge, c3t3, vertices, criterion, inc_cells, cell_selector);
+      res = flip_3_to_2(edge, c3t3, vertices_around_edge, criterion, inc_cells, cell_selector);
     }
   }
   else
