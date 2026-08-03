@@ -12,7 +12,8 @@
 #ifndef CGAL_IO_MEDIT_H
 #define CGAL_IO_MEDIT_H
 
-#include <fstream>
+#include <CGAL/assertions.h>
+#include <CGAL/Kernel_traits.h>
 #include <iostream>
 #include <string>
 #include <tuple>
@@ -277,9 +278,5 @@ bool read_MEDIT(std::istream& is,
 } // namespace IO
 
 } // namespace CGAL
-
-#include <CGAL/IO/PLY/read_ply_points.h>
-#include <CGAL/IO/PLY/write_ply_points.h>
-
 
 #endif // CGAL_IO_MEDIT_H
