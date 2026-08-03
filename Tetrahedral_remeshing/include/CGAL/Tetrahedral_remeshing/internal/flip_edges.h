@@ -569,23 +569,36 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
   Facet_circulator curr_fcirc = tr.incident_facets(edge);
   Facet_circulator curr_fdone = curr_fcirc;
 
-  //Only keep the possible flips
-  std::vector<Vertex_handle> opposite_vertices;
-  int nb_cells_around_edge = 0;
+  //Collect the vertex opposite to the edge in each facet around it, in
+  //circulation order. The chord test below used to re-circulate the facets
+  //around the edge once per such vertex to enumerate the other apices; those
+  //are the same vertices collected here, so the tests can be indexed on the
+  //ring instead. is_edge_uv is read-only, so stopping at the first chord
+  //found yields the same verdict as running the ring to its end.
+  boost::container::small_vector<Vertex_handle, 32> ring_apices;
   do
   {
-    Vertex_handle vh;
-    //Get the ids of the opposite vertices
+    //Get the id of the opposite vertex
     for (int i = 0; i < 3; ++i)
     {
       Vertex_handle curr_vertex = curr_fcirc->first->vertex(
                                     indices(curr_fcirc->second, i));
       if (curr_vertex != vh0 && curr_vertex != vh1)
       {
-        vh = curr_vertex;
+        ring_apices.push_back(curr_vertex);
         break;
       }
     }
+  }
+  while (++curr_fcirc != curr_fdone);
+
+  //Only keep the possible flips
+  std::vector<Vertex_handle> opposite_vertices;
+  int nb_cells_around_edge = 0;
+  const int n_apices = static_cast<int>(ring_apices.size());
+  for (int p = 0; p < n_apices; ++p)
+  {
+    const Vertex_handle vh = ring_apices[p];
 
     if(tr.is_infinite(vh))
       continue;
@@ -594,37 +607,23 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
     if (o_inc_vh.empty())
       tr.incident_cells(vh, std::back_inserter(o_inc_vh));
 
-    Facet_circulator facet_circulator = curr_fcirc;
-    Facet_circulator facet_done = curr_fcirc;
-
-    facet_done--;
-    facet_circulator++;
-    facet_circulator++;
+    //a chord is an edge joining vh to an apex that is not one of its two
+    //neighbors on the ring (positions p-1 and p+1)
     bool is_edge = false;
-    do
+    for (int j = p + 2; j <= p + n_apices - 2; ++j)
     {
-      //Get the ids of the opposite vertices
-      for (int i = 0; i < 3; ++i)
+      if (is_edge_uv(vh, ring_apices[j % n_apices], o_inc_vh))
       {
-        Vertex_handle curr_vertex = facet_circulator->first->vertex(
-                                      indices(facet_circulator->second, i));
-        if (curr_vertex != vh0  && curr_vertex != vh1)
-        {
-          if (is_edge_uv(vh, curr_vertex, o_inc_vh))
-          {
-            is_edge = true;
-            break;
-          }
-        }
+        is_edge = true;
+        break;
       }
-    } while (++facet_circulator != facet_done);
+    }
 
     if (!is_edge)
       opposite_vertices.push_back(vh);
 
     nb_cells_around_edge++;
   }
-  while (++curr_fcirc != curr_fdone);
   if (nb_cells_around_edge < 4)
     return;
 
