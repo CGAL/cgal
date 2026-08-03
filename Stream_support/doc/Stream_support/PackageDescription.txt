@@ -44,8 +44,8 @@
 /// I/O Functions for the \ref IOStreamXYZ
 /// \ingroup IOstreamFunctions
 
-/// \defgroup PkgStreamSupportIoFuncsMEDIT MEDIT I/O Functions
-/// I/O Functions for the \ref IOStreamMEDIT
+/// \defgroup PkgStreamSupportIoFuncsMedit MEDIT I/O Functions
+/// I/O Functions for the \ref IOStreamMedit
 /// \ingroup IOstreamFunctions
 
 /// \defgroup PkgStreamSupportEnumRef I/O Enums
