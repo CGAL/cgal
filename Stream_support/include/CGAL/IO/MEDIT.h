@@ -20,6 +20,7 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
+#include <array>
 #include <boost/unordered_map.hpp>
 
 namespace CGAL {
