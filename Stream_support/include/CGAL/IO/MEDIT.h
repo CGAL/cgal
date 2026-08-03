@@ -7,7 +7,7 @@
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s) : Simon Giraudot
+// Author(s) : Mael Rouxel-Labbé, Andreas Fabri
 
 #ifndef CGAL_IO_MEDIT_H
 #define CGAL_IO_MEDIT_H
@@ -19,7 +19,7 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
-#include <unordered_map>
+#include <boost/unordered_map.hpp>
 
 namespace CGAL {
 
