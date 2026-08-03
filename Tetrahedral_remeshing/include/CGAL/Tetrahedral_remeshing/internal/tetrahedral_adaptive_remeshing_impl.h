@@ -654,8 +654,10 @@ public:
     {
       ++it_nb;
 
-      flip();
-      smooth();
+      if(steps.do_flip)
+        flip();
+      if(steps.nb_smoothing_iterations > 0)
+        smooth();
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
       std::cout << "# Iteration " << it_nb << " (flip and smooth only) done : "
