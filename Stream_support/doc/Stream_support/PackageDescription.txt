@@ -44,7 +44,7 @@
 /// I/O Functions for the \ref IOStreamXYZ
 /// \ingroup IOstreamFunctions
 
-/// \defgroup PkgStreamSupportIoFuncsMedit MEDIT I/O Functions
+/// \defgroup PkgStreamSupportIoFuncsMEDIT MEDIT I/O Functions
 /// I/O Functions for the \ref IOStreamMedit
 /// \ingroup IOstreamFunctions
 
