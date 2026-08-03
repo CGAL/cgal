@@ -790,51 +790,6 @@ output_to_medit(std::ostream& os,
 
 namespace IO {
 
-/**
- * @ingroup PkgSMDS3IOFunctions
- * @deprecated This function is deprecated. Users should instead use `CGAL::IO::write_MEDIT()`
- * @brief outputs a mesh complex to the medit (`.mesh`) file format.
-        See \cgalCite{frey:inria-00069921} for a comprehensive description of this file format.
- * @param os the output stream
- * @param c3t3 the mesh complex
- * @param renumber_subdomain_indices if `true`, labels of cells are renumbered into `[1..nb_of_labels]`
- * @param show_patches if `true`, patches are labeled with different labels than
- *                     cells. If `false`, each surface facet is written twice,
- *                     using the label of each adjacent cell.
- * \see \ref IOStreamMedit
- */
-template <class C3T3>
-void
-output_to_medit(std::ostream& os,
-                const C3T3& c3t3,
-                bool renumber_subdomain_indices, // = false,
-                bool show_patches // = false
-#ifndef DOXYGEN_RUNNING
-              , bool all_vertices // = true
-              , bool all_cells    // = false
-#endif
-)
-{
-  using namespace CGAL::SMDS_3;
-  if ( renumber_subdomain_indices )
-  {
-    if ( show_patches )
-      CGAL::SMDS_3::output_to_medit<C3T3,RENUMBER_SUBDOMAINS,RENUMBER_SURFACE_PATCH_INDICES>(
-          os, c3t3, all_vertices, all_cells);
-    else
-      CGAL::SMDS_3::output_to_medit<C3T3,RENUMBER_SUBDOMAINS,USE_CELL_INDICES>(os, c3t3,
-        all_vertices, all_cells);
-  }
-  else
-  {
-    if ( show_patches )
-      CGAL::SMDS_3::output_to_medit<C3T3,USE_SUBDOMAIN_INDICES,RENUMBER_SURFACE_PATCH_INDICES>(
-          os, c3t3, all_vertices, all_cells);
-    else
-      CGAL::SMDS_3::output_to_medit<C3T3,USE_SUBDOMAIN_INDICES,USE_CELL_INDICES>(os, c3t3,
-        all_vertices, all_cells);
-  }
-}
 
 /**
  * @ingroup PkgSMDS3IOFunctions
