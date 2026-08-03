@@ -75,6 +75,23 @@ uniform highp   vec4  u_PointPlane;
 uniform mediump float u_RenderingMode;
 uniform mediump float u_RenderingTransparency;
 
+// Colour by value: 0 keeps the vertex colour, otherwise a palette index. The
+// value shown is the signed distance from the fragment to the clipping plane,
+// normalised to [u_ValueMin, u_ValueMax].
+uniform mediump float u_ColorMapMode;
+uniform mediump float u_ValueMin;
+uniform mediump float u_ValueMax;
+
+vec3 colour_palette(float t, float mode)
+{
+  if (mode < 1.5)
+  { return clamp(vec3(t*3.0, t*3.0-1.0, t*3.0-2.0), 0.0, 1.0); } // heat
+  if (mode < 2.5)
+  { return clamp(vec3(1.5-abs(4.0*t-3.0), 1.5-abs(4.0*t-2.0), 1.5-abs(4.0*t-1.0)),
+                 0.0, 1.0); } // jet
+  return vec3(t); // grey ramp
+}
+
 void main(void)
 {
   highp vec3 L = u_LightPos.xyz - vs_fP.xyz;
@@ -84,9 +101,18 @@ void main(void)
   L = normalize(L);
   V = normalize(V);
 
+  // Base colour is the vertex colour, or a palette applied to the value.
+  vec3 base = fColor.rgb;
+  if (u_ColorMapMode > 0.5)
+  {
+    float value = dot(ls_fP.xyz-u_PointPlane.xyz, normalize(u_ClipPlane.xyz));
+    float t = clamp((value-u_ValueMin)/max(u_ValueMax-u_ValueMin, 1e-6), 0.0, 1.0);
+    base = colour_palette(t, u_ColorMapMode);
+  }
+
   highp vec3 R = reflect(-L, a_Normal);
-  highp vec4 diffuse = vec4(max(dot(a_Normal,L), 0.0) * u_LightDiff.rgb * fColor.rgb, 1.0);
-  highp vec4 ambient = vec4(u_LightAmb.rgb * fColor.rgb, 1.0);
+  highp vec4 diffuse = vec4(max(dot(a_Normal,L), 0.0) * u_LightDiff.rgb * base, 1.0);
+  highp vec4 ambient = vec4(u_LightAmb.rgb * base, 1.0);
   highp vec4 specular = pow(max(dot(R,V), 0.0), u_SpecPower) * u_LightSpec;
 
   // onPlane == 1: inside clipping plane, should be solid;
