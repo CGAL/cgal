@@ -790,6 +790,36 @@ output_to_medit(std::ostream& os,
 
 namespace IO {
 
+template <class C3T3>
+void
+output_to_medit(std::ostream& os,
+                const C3T3& c3t3,
+                bool renumber_subdomain_indices, // = false,
+                bool show_patches // = false
+              , bool all_vertices // = true
+              , bool all_cells    // = false
+)
+{
+  using namespace CGAL::SMDS_3;
+  if ( renumber_subdomain_indices )
+  {
+    if ( show_patches )
+      CGAL::SMDS_3::output_to_medit<C3T3,RENUMBER_SUBDOMAINS,RENUMBER_SURFACE_PATCH_INDICES>(
+          os, c3t3, all_vertices, all_cells);
+    else
+      CGAL::SMDS_3::output_to_medit<C3T3,RENUMBER_SUBDOMAINS,USE_CELL_INDICES>(os, c3t3,
+        all_vertices, all_cells);
+  }
+  else
+  {
+    if ( show_patches )
+      CGAL::SMDS_3::output_to_medit<C3T3,USE_SUBDOMAIN_INDICES,RENUMBER_SURFACE_PATCH_INDICES>(
+          os, c3t3, all_vertices, all_cells);
+    else
+      CGAL::SMDS_3::output_to_medit<C3T3,USE_SUBDOMAIN_INDICES,USE_CELL_INDICES>(os, c3t3,
+        all_vertices, all_cells);
+  }
+}
 
 /**
  * @ingroup PkgSMDS3IOFunctions
@@ -993,9 +1023,6 @@ bool read_MEDIT(std::istream& in,
 
 } // namespace IO
 
-#ifndef CGAL_NO_DEPRECATED_CODE
-using IO::output_to_medit;
-#endif
 
 } // end namespace CGAL
 
