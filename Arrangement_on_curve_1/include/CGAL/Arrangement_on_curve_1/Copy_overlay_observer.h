@@ -54,7 +54,7 @@ public:
   {}
 
   // 1. Two vertices coincide: defaults to copying data from vertex A
-  void create_vertex(Vertex_const_descriptor_a v_a, Vertex_const_descriptor_b, Vertex_descriptor_r v_res) {
+  void create_vertex_vv(Vertex_const_descriptor_a v_a, Vertex_const_descriptor_b, Vertex_descriptor_r v_res) {
     using Vertex_data_r = typename Vertex_data_map_r::value_type;
     if constexpr (! std::is_void_v<Vertex_data_r>) {
       using Vertex_data_a = typename Vertex_data_map_a::value_type;
@@ -65,7 +65,7 @@ public:
   }
 
   // 2. Vertex A splits Edge B: copies data from vertex A
-  void create_vertex(Vertex_const_descriptor_a v_a, Edge_const_descriptor_b, Vertex_descriptor_r v_res) {
+  void create_vertex_ve(Vertex_const_descriptor_a v_a, Edge_const_descriptor_b, Vertex_descriptor_r v_res) {
     using Vertex_data_r = typename Vertex_data_map_r::value_type;
     if constexpr (! std::is_void_v<Vertex_data_r>) {
       using Vertex_data_a = typename Vertex_data_map_a::value_type;
@@ -76,7 +76,7 @@ public:
   }
 
   // 3. Edge A is split by Vertex B: copies data from vertex B
-  void create_vertex(Edge_const_descriptor_a, Vertex_const_descriptor_b v_b, Vertex_descriptor_r v_res) {
+  void create_vertex_ev(Edge_const_descriptor_a, Vertex_const_descriptor_b v_b, Vertex_descriptor_r v_res) {
     using Vertex_data_r = typename Vertex_data_map_r::value_type;
     if constexpr (! std::is_void_v<Vertex_data_r>) {
       using Vertex_data_b = typename Vertex_data_map_b::value_type;
@@ -87,7 +87,7 @@ public:
   }
 
   // 4. Two edges overlap: defaults to copying data from edge A
-  void create_edge(Edge_const_descriptor_a e_a, Edge_const_descriptor_b, Edge_descriptor_r e_res) {
+  void create_edge_ee(Edge_const_descriptor_a e_a, Edge_const_descriptor_b, Edge_descriptor_r e_res) {
     using Edge_data_r = typename Edge_data_map_r::value_type;
     if constexpr (! std::is_void_v<Edge_data_r>) {
       using Edge_data_a = typename Edge_data_map_a::value_type;

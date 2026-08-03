@@ -36,15 +36,15 @@ locate_impl(Arrangement_on_curve_1<GeometryTraits, TopologyTraits>& arr, const t
     auto curr_v = arr.right_vertex(curr_e);
     auto res = cmp(p, get(v_pnt_map, curr_v));
 
-    if (res == EQUAL) return Result{curr_v};   // the point coincides with a vertex
-    if (res == SMALLER) return Result{curr_e}; // the point lies strictly to the left of the current vertex
+    if (res == EQUAL) return Result{std::in_place_index<0>, curr_v};   // point coincides with vertex
+    if (res == SMALLER) return Result{std::in_place_index<1>, curr_e}; // point lies strictly to left of current vertex
 
-    // LARGER: the point lies strictly to the right of the current vertex; Move to the right of this vertex
+    // LARGER: move to right edge of this vertex
     curr_e = arr.right_edge(curr_v);
   }
 
-  // The point is to the right of all existing vertices (or the arrangement is empty)
-  return Result{curr_e};
+  // The point is to the right of all existing vertices (or arrangement is empty)
+  return Result{std::in_place_index<1>, curr_e};
 }
 
 // ==========================================
@@ -57,7 +57,7 @@ locate(Arrangement_on_curve_1<GeometryTraits, TopologyTraits>& arr, const typena
 
 // ==========================================
 // LOCATE (Const)
-// Delegates to the mutable impl via a const_cast (safe: we do not mutate).
+// Delegates to mutable impl via a const_cast (safe: does not mutate).
 // ==========================================
 template <typename GeometryTraits, typename TopologyTraits>
 typename Arrangement_on_curve_1<GeometryTraits, TopologyTraits>::Const_location_result
@@ -69,15 +69,13 @@ locate(const Arrangement_on_curve_1<GeometryTraits, TopologyTraits>& arr, const 
 
   auto mutable_result = locate_impl(const_cast<Arrangement_on_curve_1<GeometryTraits, TopologyTraits>&>(arr), p);
 
-  // Convert mutable descriptors → const descriptors.
-  using Vertex_descriptor = typename Arr::Vertex_descriptor;
-  using Edge_descriptor = typename Arr::Edge_descriptor;
+  if (mutable_result.index() == 0) {
+    auto v = std::get<0>(mutable_result);
+    return Result{std::in_place_index<0>, Vertex_const_descriptor{v}};
+  }
 
-  if (std::holds_alternative<Vertex_descriptor>(mutable_result))
-    return Result{Vertex_const_descriptor{std::get<Vertex_descriptor>(mutable_result)}};
-  if (std::holds_alternative<Edge_descriptor>(mutable_result))
-    return Result{Edge_const_descriptor{std::get<Edge_descriptor>(mutable_result)}};
-  return Result{static_cast<void*>(nullptr)};
+  auto e = std::get<1>(mutable_result);
+  return Result{std::in_place_index<1>, Edge_const_descriptor{e}};
 }
 
 } // namespace Arrangement_on_curve_1

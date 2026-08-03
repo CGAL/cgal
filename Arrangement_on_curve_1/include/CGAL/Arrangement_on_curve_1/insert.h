@@ -8,6 +8,7 @@
 #define CGAL_ARRANGEMENT_ON_CURVE_1_INSERT_H
 
 #include <iterator>
+#include <variant>
 
 #include <CGAL/Arrangement_on_curve_1/Arrangement_on_curve_1.h>
 #include <CGAL/Arrangement_on_curve_1/locate.h>
@@ -27,10 +28,18 @@ insert(Arrangement_on_curve_1<GeometryTraits, TopologyTraits>& arr, const typena
 
   auto loc = locate(arr, p);
 
-  // Point already exists → return existing vertex.
-  if (std::holds_alternative<Vertex_descriptor>(loc)) return std::get<Vertex_descriptor>(loc);
+  // 1. In Vector Mode (`UseVector` = true): Location_result is `std::variant<std::size_t, std::size_t>`.
+  // Checking `loc.index() == 0` and retrieving `std::get<0>(loc)` or `std::get<1>(loc)` avoids type-based
+  // lookup entirely, preventing the exactly_once static assertion failure.
+  //
+  // 2. In List Mode (`UseVector` = false): Index 0 unambiguously maps to Vertex_descriptor (iterator)
+  // and Index 1 maps to Edge_descriptor (iterator), making index-based access completely generic and safe across
+  // both storage modes.
 
-  auto e = std::get<Edge_descriptor>(loc);
+  // Point already exists; return existing vertex.
+  if (loc.index() == 0) return std::get<0>(loc);
+
+  auto e = std::get<1>(loc);
 
   bool has_left = arr.has_left_vertex(e);
   bool has_right = arr.has_right_vertex(e);

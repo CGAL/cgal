@@ -44,20 +44,21 @@ public:
 
   class Compare_x_1 {
   private:
-    Shared_geom_traits_2 m_traits_2;
+    // Use const reference to eliminate ref-count overhead
+    const Geom_traits_2& m_traits;
 
   public:
-    Compare_x_1(Shared_geom_traits_2 t2) : m_traits_2(std::move(t2)) {}
+    Compare_x_1(const Geom_traits_2& traits) : m_traits(std::move(traits)) {}
 
     Comparison_result operator()(const Point_1& p1, const Point_1& p2) const {
       // Lexicographic (x, then y) comparison.
-      auto cmp_xy_obj = m_traits_2->compare_xy_2_object();
+      auto cmp_xy_obj = m_traits.compare_xy_2_object();
       auto cmp_xy = cmp_xy_obj(p1, p2);
       if (cmp_xy == EQUAL) return EQUAL;
 
       // The master arc is either x-monotone or a single vertical segment.
       // If it is x-monotone, the points are ordered by their x-coordinates.
-      auto cmp_x_obj = m_traits_2->compare_x_2_object();
+      auto cmp_x_obj = m_traits.compare_x_2_object();
       auto cmp_x = cmp_x_obj(p1, p2);
       if (cmp_x != EQUAL) return cmp_x;
 
@@ -69,7 +70,7 @@ public:
     }
   };
 
-  Compare_x_1 compare_x_1_object() const { return Compare_x_1(m_traits_2); }
+  Compare_x_1 compare_x_1_object() const { return Compare_x_1(*m_traits_2); }
 
 private:
   Shared_geom_traits_2 m_traits_2;

@@ -175,8 +175,8 @@ int main() {
   auto loc = CGAL::Arrangement_on_curve_1::locate(arr_1d, query);
 
   std::cout << "\nLocating the apex point (x = 0, y = 5):\n";
-  if (std::holds_alternative<Arrangement_1::Vertex_descriptor>(loc)) {
-    auto v = std::get<Arrangement_1::Vertex_descriptor>(loc);
+  if (loc.index() == 0) {
+    auto v = std::get<0>(loc);
     std::cout << "  Found existing vertex: " << get(v_data_map, v) << "\n";
   }
   else {

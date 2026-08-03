@@ -25,10 +25,10 @@ public:
   Default_overlay_observer(const ArrangementA&, const ArrangementB&, ArrangementR&) {}
 
   // 4 Core Required Intersection Callbacks (Nops)
-  void create_vertex(Vertex_descriptor_a, Vertex_descriptor_b, Vertex_descriptor_r) {}
-  void create_vertex(Vertex_descriptor_a, Edge_descriptor_b, Vertex_descriptor_r) {}
-  void create_vertex(Edge_descriptor_a, Vertex_descriptor_b, Vertex_descriptor_r) {}
-  void create_edge(Edge_descriptor_a, Edge_descriptor_b, Edge_descriptor_r) {}
+  void create_vertex_vv(Vertex_descriptor_a, Vertex_descriptor_b, Vertex_descriptor_r) {}
+  void create_vertex_ve(Vertex_descriptor_a, Edge_descriptor_b, Vertex_descriptor_r) {}
+  void create_vertex_ev(Edge_descriptor_a, Vertex_descriptor_b, Vertex_descriptor_r) {}
+  void create_edge_ee(Edge_descriptor_a, Edge_descriptor_b, Edge_descriptor_r) {}
 };
 
 } // namespace Arrangement_on_curve_1

@@ -46,7 +46,7 @@ void overlay(const Arrangement_on_curve_1<GeometryTraitsA, TopologyTraitsA>& arr
   auto e_a = arr_a.unbounded_left_edge();
   auto e_b = arr_b.unbounded_left_edge();
   auto e_res = arr_res.unbounded_left_edge();
-  observer.create_edge(e_a, e_b, e_res);
+  observer.create_edge_ee(e_a, e_b, e_res);
   while (arr_a.has_right_vertex(e_a) && arr_b.has_right_vertex(e_b)) {
     auto v_a = arr_a.right_vertex(e_a);
     auto p_a = get(arr_a.vertex_point_map(), v_a);
@@ -56,47 +56,47 @@ void overlay(const Arrangement_on_curve_1<GeometryTraitsA, TopologyTraitsA>& arr
 
     if (cmp == EQUAL) {
       auto v_res = arr_res.split_edge(e_res, p_a);
-      observer.create_vertex(v_a, v_b, v_res);
+      observer.create_vertex_vv(v_a, v_b, v_res);
       e_a = arr_a.right_edge(v_a);
       e_b = arr_b.right_edge(v_b);
       e_res = arr_res.right_edge(v_res);
-      observer.create_edge(e_a, e_b, e_res);
+      observer.create_edge_ee(e_a, e_b, e_res);
       continue;
     }
     else if (cmp == SMALLER) {
       auto v_res = arr_res.split_edge(e_res, p_a);
-      observer.create_vertex(v_a, e_b, v_res);
+      observer.create_vertex_ve(v_a, e_b, v_res);
       e_a = arr_a.right_edge(v_a);
       e_res = arr_res.right_edge(v_res);
-      observer.create_edge(e_a, e_b, e_res);
+      observer.create_edge_ee(e_a, e_b, e_res);
       continue;
     }
     CGAL_assertion(cmp == LARGER);
     auto v_res = arr_res.split_edge(e_res, p_b);
-    observer.create_vertex(e_a, v_b, v_res);
+    observer.create_vertex_ev(e_a, v_b, v_res);
     e_b = arr_b.right_edge(v_b);
     e_res = arr_res.right_edge(v_res);
-    observer.create_edge(e_a, e_b, e_res);
+    observer.create_edge_ee(e_a, e_b, e_res);
   }
 
   while (arr_a.has_right_vertex(e_a)) {
     auto v_a = arr_a.right_vertex(e_a);
     auto p_a = get(arr_a.vertex_point_map(), v_a);
     auto v_res = arr_res.split_edge(e_res, p_a);
-    observer.create_vertex(v_a, e_b, v_res);
+    observer.create_vertex_ve(v_a, e_b, v_res);
     e_a = arr_a.right_edge(v_a);
     e_res = arr_res.right_edge(v_res);
-    observer.create_edge(e_a, e_b, e_res);
+    observer.create_edge_ee(e_a, e_b, e_res);
   }
 
   while (arr_b.has_right_vertex(e_b)) {
     auto v_b = arr_b.right_vertex(e_b);
     auto p_b = get(arr_b.vertex_point_map(), v_b);
     auto v_res = arr_res.split_edge(e_res, p_b);
-    observer.create_vertex(e_a, v_b, v_res);
+    observer.create_vertex_ev(e_a, v_b, v_res);
     e_b = arr_b.right_edge(v_b);
     e_res = arr_res.right_edge(v_res);
-    observer.create_edge(e_a, e_b, e_res);
+    observer.create_edge_ee(e_a, e_b, e_res);
   }
 }
 
