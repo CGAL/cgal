@@ -1308,10 +1308,15 @@ bool topology_test(const typename C3t3::Edge& edge,
       for (int i = 1; i < 4; i++)
       {
         Vertex_handle vi = f.first->vertex((f.second + i) % 4);
-        if (vi != v0 && vi != v1 && nb_incident_subdomains(vi, c3t3) > 1)
+        if (vi != v0 && vi != v1)
         {
-          if (is_edge_in_complex(v0, vi, c3t3)
-              && is_edge_in_complex(v1, vi, c3t3))
+          //(v0,vi) and (v1,vi) are edges of f, so testing them for the
+          //complex needs no is_edge() star walk, and feature edges are rare
+          //enough that the subdomain star walk is skipped almost always.
+          //The three tests are pure, so the conjunction is unchanged.
+          if (c3t3.is_in_complex(v0, vi)
+              && c3t3.is_in_complex(v1, vi)
+              && nb_incident_subdomains(vi, c3t3) > 1)
             return false;
         }
       }
