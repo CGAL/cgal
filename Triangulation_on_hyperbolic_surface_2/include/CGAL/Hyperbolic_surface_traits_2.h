@@ -44,7 +44,7 @@ public:
     orientation tests are used.
   */
 template <typename Number = FT, typename Point = Hyperbolic_point_2>
-static Number cosh_of_hyperbolic_distance(Point const& u, Hyperbolic_point_2 const& v)
+static Number cosh_of_hyperbolic_distance(const Point& u, const Hyperbolic_point_2& v)
 {
       Number num = (u.x() - v.x()) * (u.x() - v.x()) + (u.y() - v.y()) * (u.y() - v.y());
       Number den = (1 - (u.x() * u.x() + u.y() * u.y())) * (1 - (v.x() * v.x() + v.y() * v.y()));
