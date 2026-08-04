@@ -1194,11 +1194,34 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
   return Vertex_handle();
 }
 
+template<typename C3T3>
+using Vertex_patch_cache = std::unordered_map<
+    typename C3T3::Vertex_handle,
+    std::optional<typename C3T3::Surface_patch_index> >;
+
+// surface_patch_index(v) walks v's whole incident-facet star. The initial
+// scan over all finite edges in collapse_short_edges() reaches the same
+// vertex once per incident edge, and the scan does not modify the mesh, so
+// the first answer stays valid for the rest of it.
+template<typename C3T3>
+const std::optional<typename C3T3::Surface_patch_index>&
+cached_surface_patch_index(const typename C3T3::Vertex_handle v,
+                           const C3T3& c3t3,
+                           Vertex_patch_cache<C3T3>& cache)
+{
+  const auto it = cache.find(v);
+  if (it != cache.end())
+    return it->second;
+
+  return cache.emplace(v, surface_patch_index(v, c3t3)).first->second;
+}
+
 template<typename C3T3, typename CellSelector>
 auto can_be_collapsed(const typename C3T3::Edge& e,
                       const C3T3& c3t3,
                       const bool protect_boundaries,
-                      CellSelector cell_selector)
+                      CellSelector cell_selector,
+                      Vertex_patch_cache<C3T3>* patch_cache = nullptr)
 {
   struct Collapsible
   {
@@ -1224,8 +1247,12 @@ auto can_be_collapsed(const typename C3T3::Edge& e,
 
     if(v0->in_dimension() != 3 && v1->in_dimension() != 3)
     {
-      const auto patch_v0 = surface_patch_index(v0, c3t3);
-      const auto patch_v1 = surface_patch_index(v1, c3t3);
+      const auto patch_v0 = patch_cache
+        ? cached_surface_patch_index(v0, c3t3, *patch_cache)
+        : surface_patch_index(v0, c3t3);
+      const auto patch_v1 = patch_cache
+        ? cached_surface_patch_index(v1, c3t3, *patch_cache)
+        : surface_patch_index(v1, c3t3);
 
       if(patch_v0 != std::nullopt && patch_v1 != std::nullopt && patch_v0 != patch_v1)
         return Collapsible{false, boundary};
@@ -1268,9 +1295,11 @@ void collapse_short_edges(C3T3& c3t3,
 
   //collect long edges
   Boost_bimap short_edges;
+  Vertex_patch_cache<C3T3> patch_cache;
   for (const Edge& e : tr.finite_edges())
   {
-    auto [collapsible, boundary] = can_be_collapsed(e, c3t3, protect_boundaries, cell_selector);
+    auto [collapsible, boundary]
+      = can_be_collapsed(e, c3t3, protect_boundaries, cell_selector, &patch_cache);
     if (!collapsible)
       continue;
 
