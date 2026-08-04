@@ -18,6 +18,7 @@
 #include <boost/bimap.hpp>
 #include <boost/bimap/set_of.hpp>
 #include <boost/bimap/multiset_of.hpp>
+#include <boost/bimap/unordered_set_of.hpp>
 #include <boost/container/small_vector.hpp>
 #include <boost/functional/hash.hpp>
 
@@ -1252,8 +1253,12 @@ void collapse_short_edges(C3T3& c3t3,
   typedef typename T3::Vertex_handle         Vertex_handle;
 
   typedef typename T3::Geom_traits::FT FT;
+  // the element side is only ever searched, never walked in order, so it is
+  // hashed : keeping it sorted meant comparing pairs of vertex handles
+  // O(log n) times for every edge the last collapse touched. The priority
+  // side keeps its order, which is what decides what runs next.
   typedef boost::bimap<
-        boost::bimaps::set_of<Edge, Compare_edges<Edge> >,
+        boost::bimaps::unordered_set_of<Edge, Hash_edges<Edge>, Equal_edges<Edge> >,
         boost::bimaps::multiset_of<FT, std::less<FT> > >  Boost_bimap;
   typedef typename Boost_bimap::value_type            short_edge;
 

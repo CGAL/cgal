@@ -31,6 +31,7 @@
 #include <boost/container/flat_set.hpp>
 #include <boost/container/small_vector.hpp>
 #include <boost/bimap.hpp>
+#include <boost/functional/hash.hpp>
 
 #include <optional>
 
@@ -611,6 +612,26 @@ struct Compare_edges
   bool operator()(const Edge& e1, const Edge& e2) const
   {
     return make_vertex_pair(e1) < make_vertex_pair(e2);
+  }
+};
+
+// Same equivalence as `Compare_edges`, for the indices that only need to find
+// an edge again rather than keep the edges in order.
+template<typename Edge>
+struct Hash_edges
+{
+  std::size_t operator()(const Edge& e) const
+  {
+    return boost::hash<decltype(make_vertex_pair(e))>()(make_vertex_pair(e));
+  }
+};
+
+template<typename Edge>
+struct Equal_edges
+{
+  bool operator()(const Edge& e1, const Edge& e2) const
+  {
+    return make_vertex_pair(e1) == make_vertex_pair(e2);
   }
 };
 
