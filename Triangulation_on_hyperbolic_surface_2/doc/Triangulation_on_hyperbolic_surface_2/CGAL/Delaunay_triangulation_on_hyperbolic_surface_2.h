@@ -157,7 +157,7 @@ public:
 
     If `query` lies outside the triangle, `li` is set to the index of the first edge such that `query` and the third point of the triangle lie on different sides.
   */
-  void relative_locate(Point const & query, Locate_type& lt, unsigned & li, Anchor const & anch) const;
+  void relative_locate(Point const & query, Locate_type & lt, unsigned & li, Anchor const & anch) const;
 
   /*!
     \return the anchor representing the lift of the triangle in which `query` lies.

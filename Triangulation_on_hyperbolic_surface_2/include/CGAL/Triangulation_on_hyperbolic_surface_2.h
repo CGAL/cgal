@@ -110,7 +110,7 @@ public:
   void flip(Dart_descriptor dart);
   bool is_Delaunay() const;
   int make_Delaunay();
-  std::vector<std::tuple<Dart_const_descriptor, Point, Point, Point> > lift(Anchor const & anchor, bool center=true) const;
+  std::vector<std::tuple<Dart_const_descriptor, Point, Point, Point> > lift(const Anchor& anchor, bool center=true) const;
   std::vector<std::tuple<Dart_const_descriptor, Point, Point, Point> > lift(bool center=true) const;
   std::ostream& lift_to_json(std::ostream& s, std::vector< std::tuple< Dart_const_descriptor, Point, Point, Point > >lift) const;
   bool is_valid() const;

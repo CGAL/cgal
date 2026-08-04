@@ -139,7 +139,7 @@ class Hyperbolic_surface_Delaunay_traits_2
   typedef Hyperbolic_surface_Delaunay_traits_2<HyperbolicSurfaceTraitsClass>    Self;
   typedef Construct_approximate_hyperbolic_circumcenter_2_f<Self>   Construct_approximate_hyperbolic_circumcenter_2;
 
-  static unsigned const DOUBLE_PREC = 53;
+  static const unsigned DOUBLE_PREC = 53;
 
   Construct_approximate_hyperbolic_circumcenter_2
     construct_approximate_hyperbolic_circumcenter_2_object() const

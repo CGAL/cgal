@@ -3,7 +3,7 @@
   \cgalConcept
 
 
-  \cgalRefines{HyperbolicSurfaceTriangulationTraits_2}
+  \cgalRefines{HyperbolicSurfaceTraits_2}
 
   \cgalHasModelsBegin
   \cgalHasModels{CGAL::Hyperbolic_surface_Delaunay_traits_2}

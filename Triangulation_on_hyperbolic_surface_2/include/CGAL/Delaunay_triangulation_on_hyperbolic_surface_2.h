@@ -74,26 +74,26 @@ public:
     };
 
     //---------- CONSTRUCTORS
-    Delaunay_triangulation_on_hyperbolic_surface_2(Traits & gt) : gt_(gt) {};
-    Delaunay_triangulation_on_hyperbolic_surface_2(Traits & gt, CMap & cmap, Anchor & anch);
-    Delaunay_triangulation_on_hyperbolic_surface_2(Traits & gt, Hyperbolic_fundamental_domain_2<Traits> const & domain);
-    Delaunay_triangulation_on_hyperbolic_surface_2(Traits & gt, Base & triangulation);
+    Delaunay_triangulation_on_hyperbolic_surface_2(Traits& gt) : gt_(gt) {};
+    Delaunay_triangulation_on_hyperbolic_surface_2(Traits& gt, CMap& cmap, Anchor& anch);
+    Delaunay_triangulation_on_hyperbolic_surface_2(Traits& gt, const Hyperbolic_fundamental_domain_2<Traits>& domain);
+    Delaunay_triangulation_on_hyperbolic_surface_2(Traits& gt, Base& triangulation);
 
     //---------- UTILITIES
-    Anchor & anchor(Dart_descriptor const dart);
-    Anchor const & anchor(Dart_const_descriptor const dart) const;
-    Anchor & anchor();
-    Anchor const & anchor() const;
-    unsigned index_in_anchor(Dart_const_descriptor const dart) const;
-    Dart_descriptor ith_dart(unsigned i, Anchor const & anch);
+    Anchor& anchor(const Dart_descriptor dart);
+    const Anchor& anchor(const Dart_const_descriptor dart) const;
+    Anchor& anchor();
+    const Anchor& anchor() const;
+    unsigned index_in_anchor(const Dart_const_descriptor dart) const;
+    Dart_descriptor ith_dart(unsigned i, const Anchor& anch);
     bool is_valid() const;
 
     //---------- location and insertion
-    void relative_locate(Point const & query, Locate_type& lt, unsigned & li, Anchor const & anch) const;
-    Anchor locate(Point const & query, Locate_walk walk = STRAIGHT); // const ?
-    Anchor locate(Point const & query, Locate_type & lt, unsigned & li, unsigned & ld, Anchor const & hint, Locate_walk walk = STRAIGHT); // const ?
-    void insert(Point const & query, Anchor & hint);
-    void insert(Point const & query);
+    void relative_locate(const Point& query, Locate_type& lt, unsigned& li, const Anchor& anch) const;
+    Anchor locate(const Point& query, Locate_walk walk = STRAIGHT); // const ?
+    Anchor locate(const Point& query, Locate_type& lt, unsigned& li, unsigned& ld, const Anchor& hint, Locate_walk walk = STRAIGHT); // const ?
+    void insert(const Point& query, Anchor& hint);
+    void insert(const Point& query);
 
     //---------- eps-net methods
     bool construct_epsilon_net(double const epsilon);
@@ -117,9 +117,9 @@ public:
  private:
     Traits gt_;
     double epsilon_;
-    unsigned const NULL_INDEX = -1;
-    unsigned const NB_SIDES = 3;
-    unsigned const DOUBLE_PREC = 53;
+    const unsigned NULL_INDEX = -1;
+    const unsigned NB_SIDES = 3;
+    const unsigned DOUBLE_PREC = 53;
 
     //---------- CONSTRUCTORS
     void set_anchors();
@@ -127,28 +127,28 @@ public:
     //---------- UTILITIES
     unsigned ccw(unsigned i) const;
     unsigned cw(unsigned i) const;
-    void set_attribute(Dart_descriptor dart, Anchor const & anchor);
-    void set_attribute(Dart_descriptor dart, Complex_number const & cross_ratio);
-    void update_infos(Dart_descriptor dart, Point const & r, Point const & s, Point const & t, Point const & query);
+    void set_attribute(Dart_descriptor dart, const Anchor& anchor);
+    void set_attribute(Dart_descriptor dart, const Complex_number& cross_ratio);
+    void update_infos(Dart_descriptor dart, const Point& r, const Point& s, const Point& t, const Point& query);
 
     //---------- location and insertion
-    Anchor locate_visibility_walk(Point const & query, Locate_type & lt, unsigned & li, unsigned & ld, Anchor const & hint); // const ?
-    Anchor locate_straight_walk(Point const & query, Locate_type & lt, unsigned & li, unsigned & ld, Anchor const & hint); // const ?
-    std::vector<Dart_descriptor> insert_in_face(Point const & query, Anchor & anch);  // return dart_descriptor
-    std::vector<Dart_descriptor> insert_in_edge(Point const & query, unsigned & li, Anchor & anch);
-    std::vector<Dart_descriptor> split_insert(Point const & query, Anchor & anch, Locate_walk walk = STRAIGHT);
+    Anchor locate_visibility_walk(const Point& query, Locate_type & lt, unsigned & li, unsigned & ld, const Anchor& hint); // const ?
+    Anchor locate_straight_walk(const Point& query, Locate_type & lt, unsigned & li, unsigned & ld, const Anchor& hint); // const ?
+    std::vector<Dart_descriptor> insert_in_face(const Point& query, Anchor & anch);  // return dart_descriptor
+    std::vector<Dart_descriptor> insert_in_edge(const Point& query, unsigned & li, Anchor & anch);
+    std::vector<Dart_descriptor> split_insert(const Point& query, Anchor & anch, Locate_walk walk = STRAIGHT);
 
     //---------- Delaunay related methods
     void flip(Dart_descriptor dart);
     unsigned make_Delaunay();
-    void push_flippable_edge(Dart_descriptor const dart, std::list<Dart_descriptor> & darts_to_flip);
+    void push_flippable_edge(const Dart_descriptor dart, std::list<Dart_descriptor> & darts_to_flip);
     unsigned restore_Delaunay(std::list<Dart_descriptor> & darts_to_flip, std::vector<Dart_descriptor> & flipped_darts);
 
     //---------- eps-net methods
-    Voronoi_point circumcenter(Anchor const & anch) const;
-    Point approx_circumcenter_from_anchor(Anchor const & anch) const;
+    Voronoi_point circumcenter(const Anchor& anch) const;
+    Point approx_circumcenter_from_anchor(const Anchor& anch) const;
     //  Point approx_circumcenter_from_c(Voronoi_point const & c) const;
-    void push_triangle(Dart_descriptor const dart, std::list<Dart_descriptor> & triangles, size_t & triangles_list_mark);
+    void push_triangle(const Dart_descriptor dart, std::list<Dart_descriptor> & triangles, size_t & triangles_list_mark);
 };
 
 
@@ -165,7 +165,7 @@ Delaunay_triangulation_on_hyperbolic_surface_2( Traits & gt, CMap & cmap, Anchor
 
 template<class Traits>
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-Delaunay_triangulation_on_hyperbolic_surface_2( Traits & gt, Hyperbolic_fundamental_domain_2<Traits> const & domain)
+Delaunay_triangulation_on_hyperbolic_surface_2( Traits & gt, const Hyperbolic_fundamental_domain_2<Traits>& domain)
   : Base(domain), gt_(gt)
 {
     Base::make_Delaunay();
@@ -234,15 +234,15 @@ set_anchors()
 template<class Traits>
 typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Anchor&
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-anchor(Dart_descriptor const dart)
+anchor(const Dart_descriptor dart)
 {
     return this->combinatorial_map_.template info<2>(dart);
 }
 
 template<class Traits>
-typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Anchor const &
+const typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Anchor&
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-anchor(Dart_const_descriptor const dart) const
+anchor(const Dart_const_descriptor dart) const
 {
     return this->combinatorial_map_.template info<2>(dart);
 }
@@ -256,7 +256,7 @@ anchor()
 }
 
 template<class Traits>
-typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Anchor const &
+const typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Anchor&
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
 anchor() const
 {
@@ -266,10 +266,10 @@ anchor() const
 template<class Traits>
 unsigned
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-index_in_anchor(Dart_const_descriptor const dart) const
+index_in_anchor(const Dart_const_descriptor dart) const
 {
     unsigned index = NULL_INDEX;
-    Anchor const & anch = anchor(dart);
+    const Anchor& anch = anchor(dart);
     Dart_const_descriptor current_dart = anch.dart;
     for (unsigned i = 0; i < NB_SIDES; ++i) {
         if (current_dart == dart) {
@@ -285,7 +285,7 @@ index_in_anchor(Dart_const_descriptor const dart) const
 template<class Traits>
 typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Dart_descriptor
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-ith_dart(unsigned i, Anchor const & anch)
+ith_dart(unsigned i, const Anchor& anch)
 {
     Dart_descriptor dart = anch.dart;
     for (unsigned j = 0; j < i; ++j) {
@@ -315,7 +315,7 @@ cw(unsigned i) const
 template<class Traits>
 void
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-set_attribute(Dart_descriptor dart, Anchor const & anchor)
+set_attribute(Dart_descriptor dart, const Anchor& anchor)
 {
     this->combinatorial_map_.template set_attribute<2>(dart,
         this->combinatorial_map_.template create_attribute<2>(anchor));
@@ -324,7 +324,7 @@ set_attribute(Dart_descriptor dart, Anchor const & anchor)
 template<class Traits>
 void
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-set_attribute(Dart_descriptor dart, Complex_number const & cross_ratio)
+set_attribute(Dart_descriptor dart, const Complex_number& cross_ratio)
 {
     this->combinatorial_map_.template set_attribute<1>(dart,
         this->combinatorial_map_.template create_attribute<1>(cross_ratio));
@@ -340,14 +340,14 @@ is_valid() const
     }
 
     for (typename Face_const_range::const_iterator it = Base::faces_const_range().begin(); it != Base::faces_const_range().end(); ++it) {
-        Anchor const & current = anchor(it);
+        const Anchor& current = anchor(it);
         Dart_const_descriptor current_dart = current.dart;
 
         for (unsigned i = 0; i < NB_SIDES; ++i) {
             Dart_const_descriptor opposite_dart = Base::const_opposite(current_dart);
-            Point const & c1 = current.vertices[i];
-            Point const & a1 = current.vertices[ccw(i)];
-            Point const & b1 = current.vertices[cw(i)];
+            const Point& c1 = current.vertices[i];
+            const Point& a1 = current.vertices[ccw(i)];
+            const Point& b1 = current.vertices[cw(i)];
             CGAL_assertion(norm(Complex_number(a1.x(), a1.y())) < Number(1));
             CGAL_assertion(norm(Complex_number(b1.x(), b1.y())) < Number(1));
             CGAL_assertion(norm(Complex_number(c1.x(), c1.y())) < Number(1));
@@ -355,9 +355,9 @@ is_valid() const
             Point d1 = Base::fourth_point_from_cross_ratio(a1, b1, c1, cross_ratio);
 
             unsigned j = index_in_anchor(opposite_dart);
-            Anchor const & neighbor = anchor(opposite_dart);
-            Point const & a2 = neighbor.vertices[j];
-            Point const & c2 = neighbor.vertices[ccw(j)];
+            const Anchor& neighbor = anchor(opposite_dart);
+            const Point& a2 = neighbor.vertices[j];
+            const Point& c2 = neighbor.vertices[ccw(j)];
             Isometry pair_sides = isometry_pairing_the_sides<Traits>(a2, c2, a1, c1);
             CGAL_assertion(pair_sides.evaluate(a2) == a1);
             CGAL_assertion(pair_sides.evaluate(c2) == c1);
@@ -384,7 +384,7 @@ is_valid() const
 template<class Traits>
 void
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-  relative_locate(Point const & query, Locate_type& lt, unsigned & li, Anchor const & anch) const {
+  relative_locate(const Point& query, Locate_type& lt, unsigned & li, const Anchor& anch) const {
     lt = FACE;
     li = NULL_INDEX;
     //Traits gt;//MARC?? TO BE REMOVED
@@ -413,7 +413,7 @@ Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
 template<class Traits>
 typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Anchor
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-locate_visibility_walk(Point const & query, Locate_type & lt, unsigned & li, unsigned & ld, Anchor const & hint)
+locate_visibility_walk(const Point& query, Locate_type & lt, unsigned & li, unsigned & ld, const Anchor& hint)
 {
     CGAL_precondition(norm(Complex_number(query.x(), query.y())) < Number(1));
     CGAL_expensive_precondition(is_valid());
@@ -461,7 +461,7 @@ locate_visibility_walk(Point const & query, Locate_type & lt, unsigned & li, uns
 template<class Traits>
 typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Anchor
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-locate_straight_walk(Point const & query, Locate_type & lt, unsigned & li, unsigned & ld, Anchor const & hint)
+locate_straight_walk(const Point& query, Locate_type & lt, unsigned & li, unsigned & ld, const Anchor& hint)
 {
     CGAL_precondition(norm(Complex_number(query.x(), query.y())) < Number(1));
 
@@ -518,7 +518,7 @@ locate_straight_walk(Point const & query, Locate_type & lt, unsigned & li, unsig
 template<class Traits>
 typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Anchor
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-locate(Point const & query, Locate_walk walk)
+locate(const Point& query, Locate_walk walk)
 {
     Locate_type lt = OUTSIDE;
     unsigned li = 0;
@@ -529,7 +529,7 @@ locate(Point const & query, Locate_walk walk)
 template<class Traits>
 typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Anchor
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-locate(Point const & query, Locate_type & lt, unsigned & li, unsigned & ld, Anchor const & hint, Locate_walk walk)
+locate(const Point& query, Locate_type & lt, unsigned & li, unsigned & ld, const Anchor& hint, Locate_walk walk)
 {
     if (walk == VISIBILITY) {
         return locate_visibility_walk(query, lt, li, ld, hint);
@@ -546,7 +546,7 @@ locate(Point const & query, Locate_type & lt, unsigned & li, unsigned & ld, Anch
 template<class Traits>
 void
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-update_infos(Dart_descriptor dart, Point const & r, Point const & s, Point const & t, Point const & query)
+update_infos(Dart_descriptor dart, const Point& r, const Point& s, const Point& t, const Point& query)
 {
     // compute new cross-ratio
     Complex_number old_cr = Base::get_cross_ratio(dart);
@@ -571,7 +571,7 @@ update_infos(Dart_descriptor dart, Point const & r, Point const & s, Point const
 template<class Traits>
 std::vector<typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Dart_descriptor>
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-insert_in_face(Point const & query, Anchor & anch)
+insert_in_face(const Point& query, Anchor & anch)
 {
     Dart_descriptor current_dart = anch.dart;
     this->combinatorial_map_.insert_cell_0_in_cell_2(anch.dart);
@@ -593,7 +593,7 @@ insert_in_face(Point const & query, Anchor & anch)
 template<class Traits>
 std::vector<typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Dart_descriptor>
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-insert_in_edge(Point const & query, unsigned & li, Anchor & anch)
+insert_in_edge(const Point& query, unsigned & li, Anchor & anch)
 {
     // find dart on which we insert query
     Dart_descriptor insertion_dart = ith_dart(li, anch);
@@ -638,7 +638,7 @@ insert_in_edge(Point const & query, unsigned & li, Anchor & anch)
 template<class Traits>
 std::vector<typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Dart_descriptor>
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-split_insert(Point const & query, Anchor & anch, Locate_walk walk)
+split_insert(const Point& query, Anchor & anch, Locate_walk walk)
 {
     Locate_type lt = OUTSIDE;
     unsigned li = 0;
@@ -693,11 +693,11 @@ flip(Dart_descriptor dart)
 template<class Traits>
 void
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-push_flippable_edge(Dart_descriptor const dart, std::list<Dart_descriptor>& darts_to_flip)
+push_flippable_edge(const Dart_descriptor dart, std::list<Dart_descriptor>& darts_to_flip)
 {
     if (Base::is_Delaunay_flippable(dart)) {
         bool already_there = false;
-        for (Dart_descriptor const & dart_to_flip : darts_to_flip) {
+        for (const Dart_descriptor& dart_to_flip : darts_to_flip) {
             if (dart_to_flip == dart || dart_to_flip == Base::opposite(dart)) {
                 already_there = true;
                 break;
@@ -759,7 +759,7 @@ make_Delaunay()
 template<class Traits>
 void
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-insert(Point const & query, Anchor & hint)
+insert(const Point& query, Anchor & hint)
 {
     CGAL_precondition(norm(Complex_number(query.x(), query.y())) < Number(1));
     CGAL_expensive_precondition(is_valid());
@@ -778,7 +778,7 @@ insert(Point const & query, Anchor & hint)
 template<class Traits>
 void
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-insert(Point const & query)
+insert(const Point& query)
 {
     insert(query, anchor());
 }
@@ -788,7 +788,7 @@ insert(Point const & query)
 template<class Traits>
 typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Voronoi_point
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-circumcenter(Anchor const & anch) const
+circumcenter(const Anchor& anch) const
 { CGAL_precondition(gt_.is_Delaunay_hyperbolic_2_object()(anch.vertices[0], anch.vertices[1], anch.vertices[2]));
   typename Traits::Construct_hyperbolic_circumcenter_2 chc = gt_.construct_hyperbolic_circumcenter_2_object();
   return chc(anch.vertices[0], anch.vertices[1], anch.vertices[2]);
@@ -797,7 +797,7 @@ circumcenter(Anchor const & anch) const
 template<class Traits>
 typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Point
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-approx_circumcenter_from_anchor(Anchor const & anch) const
+approx_circumcenter_from_anchor(const Anchor& anch) const
 {
   typename Traits::Construct_approximate_hyperbolic_circumcenter_2 cahc = gt_.construct_approximate_hyperbolic_circumcenter_2_object();
   return  cahc(anch.vertices[0], anch.vertices[1], anch.vertices[2]);
@@ -820,7 +820,7 @@ approx_circumcenter_from_c(Voronoi_point const & c) const
 template<class Traits>
 void
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-push_triangle(Dart_descriptor const dart, std::list<Dart_descriptor> & triangles, size_t & triangles_list_mark)
+push_triangle(const Dart_descriptor dart, std::list<Dart_descriptor> & triangles, size_t & triangles_list_mark)
 {
     this->combinatorial_map_.unmark(Base::ccw(dart), triangles_list_mark);
     this->combinatorial_map_.unmark(Base::cw(dart), triangles_list_mark);
@@ -831,12 +831,12 @@ push_triangle(Dart_descriptor const dart, std::list<Dart_descriptor> & triangles
 template<class Traits>
 bool
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-construct_epsilon_net(double const epsilon)
+construct_epsilon_net(const double epsilon)
 {
     epsilon_ = epsilon;
     CGAL_precondition(is_epsilon_packing(epsilon));
-    Interval const cosh_epsilon_interval = std::cosh(epsilon);
-    Number const BOUND = upper(cosh_epsilon_interval);
+    const Interval cosh_epsilon_interval = std::cosh(epsilon);
+    const Number BOUND = upper(cosh_epsilon_interval);
     size_t triangles_list_mark = this->combinatorial_map_.get_new_mark();
 
     std::list<Dart_descriptor> triangles;
@@ -860,7 +860,7 @@ construct_epsilon_net(double const epsilon)
 	    }
 	    std::vector<Dart_descriptor> darts_of_new_anchors = split_insert(approx_c, current_anchor, VISIBILITY);
 	    std::list<Dart_descriptor> darts_to_flip;
-	    for (Dart_descriptor const & dart : darts_of_new_anchors) {
+	    for (const Dart_descriptor& dart : darts_of_new_anchors) {
 	      push_triangle(dart, triangles, triangles_list_mark);
 	      push_flippable_edge(dart, darts_to_flip);
 	      push_flippable_edge(Base::ccw(dart), darts_to_flip);
@@ -868,7 +868,7 @@ construct_epsilon_net(double const epsilon)
 
 	    std::vector<Dart_descriptor> flipped_darts;
 	    restore_Delaunay(darts_to_flip, flipped_darts);
-	    for (Dart_descriptor const & dart : flipped_darts) {
+	    for (const Dart_descriptor& dart : flipped_darts) {
 	      push_triangle(dart, triangles, triangles_list_mark);
 	      push_triangle(Base::opposite(dart), triangles, triangles_list_mark);
 	    }
@@ -964,7 +964,7 @@ covering_value() const
   for (typename Face_const_range::const_iterator it = this->combinatorial_map_.template one_dart_per_cell<2>().begin();
        it != this->combinatorial_map_.template one_dart_per_cell<2>().end(); ++it) {
     Dart_const_descriptor current_dart = it;
-    const Anchor & current_anchor = anchor(current_dart);
+    const Anchor& current_anchor = anchor(current_dart);
     Voronoi_point c = circumcenter(current_anchor);
     radius = gt_.template cosh_of_hyperbolic_distance<Algebraic_number,Voronoi_point>(c, current_anchor.vertices[0]);
     if (radius > max_radius) {
@@ -1059,10 +1059,10 @@ typename Traits::FT
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
 dart_cosh_length(Dart_const_descriptor dart) const
 {
-  Anchor const & current_anchor = anchor(dart);
+  const Anchor& current_anchor = anchor(dart);
   unsigned index = index_in_anchor(dart);
-  Point const & a = current_anchor.vertices[index];
-  Point const & b = current_anchor.vertices[ccw(index)];
+  const Point& a = current_anchor.vertices[index];
+  const Point& b = current_anchor.vertices[ccw(index)];
   return gt_.cosh_of_hyperbolic_distance(a, b);
 }
 

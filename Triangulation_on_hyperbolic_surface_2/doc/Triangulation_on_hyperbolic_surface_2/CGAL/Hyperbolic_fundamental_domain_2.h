@@ -59,7 +59,7 @@ public:
 
     \pre <code> is_valid() </code>
   */
-  const Point& vertex(std::size_t i) const;
+  const Point & vertex(std::size_t i) const;
 
   /*!
     returns the index of the side paired to the i-th side.
