@@ -29,9 +29,11 @@
 #include <CGAL/IO/File_binary_mesh_3.h>
 
 #include <boost/container/flat_set.hpp>
+#include <functional>
 #include <boost/container/small_vector.hpp>
 #include <boost/bimap.hpp>
 #include <boost/functional/hash.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 
 #include <optional>
 
@@ -981,16 +983,33 @@ OutputIterator incident_surface_patches(const typename C3t3::Vertex_handle& v,
   return oit;
 }
 
+// Counting how many distinct indices a simplex touches needs no container of
+// its own : a vertex or an edge sees a handful of them, so the ones already
+// seen are kept inline and scanned.
+template<typename Index>
+struct Distinct_index_counter
+{
+  boost::container::small_vector<Index, 8> seen;
+
+  void operator()(const Index& i)
+  {
+    for (const Index& s : seen)
+      if (s == i)
+        return;
+    seen.push_back(i);
+  }
+};
+
 template<typename C3t3>
 std::size_t nb_incident_subdomains(const typename C3t3::Vertex_handle v,
                                    const C3t3& c3t3)
 {
   typedef typename C3t3::Subdomain_index Subdomain_index;
 
-  std::unordered_set<Subdomain_index> indices;
-  incident_subdomains(v, c3t3, std::inserter(indices, indices.begin()));
+  Distinct_index_counter<Subdomain_index> counter;
+  incident_subdomains(v, c3t3, boost::make_function_output_iterator(std::ref(counter)));
 
-  return indices.size();
+  return counter.seen.size();
 }
 
 template<typename C3t3>
@@ -999,10 +1018,10 @@ std::size_t nb_incident_subdomains(const typename C3t3::Edge& e,
 {
   typedef typename C3t3::Subdomain_index Subdomain_index;
 
-  std::unordered_set<Subdomain_index> indices;
-  incident_subdomains(e, c3t3, std::inserter(indices, indices.begin()));
+  Distinct_index_counter<Subdomain_index> counter;
+  incident_subdomains(e, c3t3, boost::make_function_output_iterator(std::ref(counter)));
 
-  return indices.size();
+  return counter.seen.size();
 }
 
 template <typename C3t3>
@@ -1011,10 +1030,10 @@ std::size_t nb_incident_surface_patches(const typename C3t3::Edge& e,
 {
   typedef typename C3t3::Surface_patch_index Surface_patch_index;
 
-  std::unordered_set<Surface_patch_index, boost::hash<Surface_patch_index>> indices;
-  incident_surface_patches(e, c3t3, std::inserter(indices, indices.begin()));
+  Distinct_index_counter<Surface_patch_index> counter;
+  incident_surface_patches(e, c3t3, boost::make_function_output_iterator(std::ref(counter)));
 
-  return indices.size();
+  return counter.seen.size();
 }
 
 template<typename OutputIterator, typename C3t3>
