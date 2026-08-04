@@ -73,42 +73,46 @@ public:
     typedef std::array<int, 3> Facet;
     typedef std::array<int, 4> Tet;
 
-    std::unordered_set<Vertex_handle> vertices_to_insert;
-    for (Cell_handle ch : cells_to_insert)
+    /*vertex of main tr - vertex of collapse tr*/
+    // the star holds around twenty distinct vertices, so a linear scan over
+    // handles compares cheaper than hashing them : hashing a compact-container
+    // iterator goes through Time_stamper, and this runs on every attempt
+    boost::container::small_vector<std::pair<Vertex_handle, int>, 32> v2i;
+    const auto index_of = [&v2i](const Vertex_handle vh) -> int
     {
-      for(int i = 0; i < 4; ++i)
-        vertices_to_insert.insert(ch->vertex(i));
-    }
+      for (const std::pair<Vertex_handle, int>& p : v2i)
+        if (p.first == vh)
+          return p.second;
+      return -1;
+    };
 
-    CGAL_expensive_assertion(vertices_to_insert.end()
-      != std::find(vertices_to_insert.begin(), vertices_to_insert.end(), v1_init));
-    CGAL_expensive_assertion(vertices_to_insert.end()
-      != std::find(vertices_to_insert.begin(), vertices_to_insert.end(), v0_init));
-
-    std::unordered_map<Vertex_handle, int> v2i;/*vertex of main tr - vertex of collapse tr*/
-
-    //To add the vertices only once
     std::vector<Point_3> points;
-    int index = 0;
-    for (Vertex_handle vh : vertices_to_insert)
-    {
-      if (v2i.find(vh) == v2i.end())
-      {
-        points.push_back(vh->point());
-        v2i.insert(std::make_pair(vh, index++));
-      }
-    }
-
     std::vector<Tet> finite_cells;
     std::vector<int> subdomains;
+    finite_cells.reserve(cells_to_insert.size());
+    subdomains.reserve(cells_to_insert.size());
+
     for (Cell_handle ch : cells_to_insert)
     {
-      finite_cells.push_back( { v2i.at(ch->vertex(0)),
-                                v2i.at(ch->vertex(1)),
-                                v2i.at(ch->vertex(2)),
-                                v2i.at(ch->vertex(3)) } );
+      Tet tet;
+      for (int i = 0; i < 4; ++i)
+      {
+        const Vertex_handle vh = ch->vertex(i);
+        int id = index_of(vh);
+        if (id == -1)
+        {
+          id = static_cast<int>(points.size());
+          v2i.emplace_back(vh, id);
+          points.push_back(vh->point());
+        }
+        tet[i] = id;
+      }
+      finite_cells.push_back(tet);
       subdomains.push_back(ch->subdomain_index());
     }
+
+    CGAL_expensive_assertion(index_of(v1_init) != -1);
+    CGAL_expensive_assertion(index_of(v0_init) != -1);
 
     // finished
     std::vector<Vertex_handle> new_vertices;
@@ -123,8 +127,8 @@ public:
       CGAL_assertion(triangulation.infinite_vertex() == new_vertices[0]);
 
       // update()
-      vh0 = new_vertices[v2i.at(v0_init) + 1];
-      vh1 = new_vertices[v2i.at(v1_init) + 1];
+      vh0 = new_vertices[index_of(v0_init) + 1];
+      vh1 = new_vertices[index_of(v1_init) + 1];
 
       Cell_handle ch;
       int i0, i1;
