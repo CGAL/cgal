@@ -1586,9 +1586,16 @@ auto midpoint_with_info(const typename C3t3::Edge& e,
   const int midpoint_dim = boundary_edge
     ? (std::max)(u->in_dimension(), v->in_dimension())
     : 3;
+  // the midpoint lies on `e`, and all the cells incident to an edge that is not
+  // on a boundary share one subdomain : locating the midpoint would return one
+  // of them, so `e.first` already carries the answer
+  CGAL_expensive_assertion(boundary_edge
+    || subdomain_index_at_point_3(midpoint_pt, e.first, c3t3.triangulation())
+         == e.first->subdomain_index());
+
   const Index midpoint_index = boundary_edge
     ? max_dimension_index(c3t3.triangulation().vertices(e))
-    : subdomain_index_at_point_3(midpoint_pt, e.first, c3t3.triangulation());
+    : Index(e.first->subdomain_index());
 
   return Midpoint_with_info{midpoint_pt, midpoint_dim, midpoint_index};
 }
