@@ -1038,36 +1038,33 @@ bool is_cells_set_manifold(const C3t3&,
   typedef std::array<Vh, 3> FV;
   typedef std::pair<Vh, Vh> EV;
 
-  std::unordered_map<FV, int, boost::hash<FV>> facets;
+  // A facet is shared by exactly two cells, so it bounds the set when its
+  // neighbour is outside : the triangulation already answers that, and asking
+  // it costs one lookup of a cell handle where counting the facets of the set
+  // meant hashing a triple of vertex handles for every facet of every cell.
+  std::unordered_map<EV, int, boost::hash<EV>> edges;
+  edges.reserve(4 * cells.size());
+
   for (Cell_handle c : cells)
   {
     for (int i = 0; i < 4; ++i)
     {
+      if (cells.find(c->neighbor(i)) != cells.end())
+        continue; // shared with another cell of the set
+
       const FV fvi = make_vertex_array(c->vertex((i + 1) % 4),
         c->vertex((i + 2) % 4),
         c->vertex((i + 3) % 4));
-      typename std::unordered_map<FV, int, boost::hash<FV>>::iterator fit = facets.find(fvi);
-      if (fit == facets.end())
-        facets.insert(std::make_pair(fvi, 1));
-      else
-        fit->second++;
-    }
-  }
 
-  std::unordered_map<EV, int, boost::hash<EV>> edges;
-  for (const auto& fvv : facets)
-  {
-    if (fvv.second != 1)
-      continue;
-
-    for (int i = 0; i < 3; ++i)
-    {
-      const EV evi = make_vertex_pair(fvv.first[i], fvv.first[(i + 1) % 3]);
-      typename std::unordered_map<EV, int, boost::hash<EV>>::iterator eit = edges.find(evi);
-      if (eit == edges.end())
-        edges.insert(std::make_pair(evi, 1));
-      else
-        eit->second++;
+      for (int k = 0; k < 3; ++k)
+      {
+        const EV evi = make_vertex_pair(fvi[k], fvi[(k + 1) % 3]);
+        typename std::unordered_map<EV, int, boost::hash<EV>>::iterator eit = edges.find(evi);
+        if (eit == edges.end())
+          edges.insert(std::make_pair(evi, 1));
+        else
+          eit->second++;
+      }
     }
   }
 
