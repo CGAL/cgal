@@ -322,15 +322,22 @@ public:
     if(!m_are_buffers_initialized)
     { initialize_buffers(); }
 
-    // Whole-volume clipping: decide once per frame which volumes are kept, so the
-    // face pass and the whole-volume edge filter share the same result.
-    m_volumes_kept.clear();
+    // Whole-volume clipping: decide which volumes are kept, so the face pass and
+    // the whole-volume edge filter share the same result. The kept set depends
+    // only on the plane, so recompute it only when the plane moves (or the scene
+    // changed), not every frame.
     if (m_use_clipping_plane == CLIPPING_PLANE_VOLUMES)
     {
       const std::size_t nv=m_scene.get_volume_faces().size();
-      m_volumes_kept.assign(nv, 0);
-      for (std::size_t v=0; v<nv; ++v)
-      { if (volume_kept(v, clipPlane, plane_point)) { m_volumes_kept[v]=1; } }
+      if (clipPlane!=m_last_vol_clip_plane || plane_point!=m_last_vol_plane_point ||
+          m_volumes_kept.size()!=nv)
+      {
+        m_volumes_kept.assign(nv, 0);
+        for (std::size_t v=0; v<nv; ++v)
+        { if (volume_kept(v, clipPlane, plane_point)) { m_volumes_kept[v]=1; } }
+        m_last_vol_clip_plane=clipPlane;
+        m_last_vol_plane_point=plane_point;
+      }
     }
 
     QVector3D color;
@@ -1846,6 +1853,7 @@ protected:
 
     m_cap_closed_valid = false; // clip-plane cap: recompute closedness lazily
     m_clip_owners_valid = false; // whole-volume clip: recompute edge/vertex owners lazily
+    m_volumes_kept.clear(); // whole-volume clip: force the kept set to recompute
     m_are_buffers_initialized = true;
   }
 
@@ -2532,7 +2540,9 @@ protected:
 
   int m_use_clipping_plane=CLIPPING_PLANE_OFF;
   int m_clip_edges_vertices=CLIP_EV_ALL; // Shift+C: how edges/vertices are clipped
-  std::vector<char> m_volumes_kept; // whole-volume clip: per volume, 1 if kept this frame
+  std::vector<char> m_volumes_kept; // whole-volume clip: per volume, 1 if kept
+  QVector4D m_last_vol_clip_plane; // whole-volume clip: plane m_volumes_kept was computed for
+  QVector4D m_last_vol_plane_point;
   std::vector<std::vector<unsigned int>> m_edge_owners; // whole-volume clip: per edge, owning volumes
   std::vector<std::vector<unsigned int>> m_point_owners; // whole-volume clip: per vertex, owning volumes
   bool m_clip_owners_valid = false; // whole-volume clip: are the owner lists up to date
