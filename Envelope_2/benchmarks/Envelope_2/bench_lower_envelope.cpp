@@ -36,14 +36,14 @@
 // We attach a dummy char label (unused) solely to satisfy the wrapper's
 // interface — this matches the pattern used in the reference example.
 // ---------------------------------------------------------------------------
-using NT              = CGAL::Exact_rational;
-using Kernel          = CGAL::Cartesian<NT>;
+using NT = CGAL::Exact_rational;
+using Kernel = CGAL::Cartesian<NT>;
 using Segment_traits  = CGAL::Arr_segment_traits_2<Kernel>;
-using Traits_2        = CGAL::Arr_curve_data_traits_2<Segment_traits, char>;
-using Point_2         = Traits_2::Point_2;
-using Segment_2       = Traits_2::X_monotone_curve_2;  // the wrapped curve type
-using Base_segment_2  = Segment_traits::X_monotone_curve_2;
-using Diagram_1       = CGAL::Envelope_diagram_1<Traits_2>;
+using Traits_2 = CGAL::Arr_curve_data_traits_2<Segment_traits, char>;
+using Point_2 = Traits_2::Point_2;
+using Segment_2 = Traits_2::X_monotone_curve_2;  // the wrapped curve type
+using Base_segment_2 = Segment_traits::X_monotone_curve_2;
+using Diagram_1 = CGAL::Envelope_diagram_1<Traits_2>;
 
 // ---------------------------------------------------------------------------
 // Generate `n` random x-monotone segments.
@@ -73,10 +73,13 @@ generate_segments(std::size_t n, int coord_range, std::mt19937& rng) {
 // ---------------------------------------------------------------------------
 // Run one lower-envelope computation and return {elapsed_ms, #vertices, #edges}.
 // ---------------------------------------------------------------------------
-struct Run_result { double ms; std::size_t vertices; std::size_t edges; };
+struct Run_result {
+  double ms;
+  std::size_t vertices;
+  std::size_t edges;
+};
 
-static Run_result run_once(std::vector<Segment_2>& segs,
-                           const Traits_2& traits) {
+static Run_result run_once(std::vector<Segment_2>& segs, const Traits_2& traits) {
   Diagram_1 diag;
   auto t0 = std::chrono::steady_clock::now();
   CGAL::lower_envelope_x_monotone_2(segs.begin(), segs.end(), diag, traits);
@@ -92,7 +95,7 @@ static Run_result run_once(std::vector<Segment_2>& segs,
     while (ec != diag.rightmost()) {
       ++nv; // the vertex to the right of ec
       ++ne; // the edge to the right of that vertex
-      ec = ec->right()->right();
+      ec = diag.right_edge(diag.right_vertex(ec));
     }
   }
 
@@ -103,10 +106,14 @@ static Run_result run_once(std::vector<Segment_2>& segs,
 // Statistics helpers
 // ---------------------------------------------------------------------------
 static double mean(const std::vector<double>& v) {
-  double s = 0; for (double x : v) s += x; return s / v.size();
+  double s = 0;
+  for (double x : v) s += x;
+  return s / v.size();
 }
+
 static double stddev(const std::vector<double>& v, double m) {
-  double s = 0; for (double x : v) s += (x-m)*(x-m);
+  double s = 0;
+  for (double x : v) s += (x-m)*(x-m);
   return std::sqrt(s / v.size());
 }
 
@@ -118,13 +125,10 @@ int main(int argc, char* argv[]) {
   unsigned seed = 42;
   unsigned reps = 5;          // repetitions per input size
   for (int i = 1; i < argc; ++i) {
-    if (std::strcmp(argv[i], "--seed") == 0 && i+1 < argc)
-      seed = static_cast<unsigned>(std::stoul(argv[++i]));
-    else if (std::strcmp(argv[i], "--reps") == 0 && i+1 < argc)
-      reps = static_cast<unsigned>(std::stoul(argv[++i]));
+    if (std::strcmp(argv[i], "--seed") == 0 && i+1 < argc) seed = static_cast<unsigned>(std::stoul(argv[++i]));
+    else if (std::strcmp(argv[i], "--reps") == 0 && i+1 < argc) reps = static_cast<unsigned>(std::stoul(argv[++i]));
     else {
-      std::cerr << "Usage: " << argv[0]
-                << " [--seed <uint>] [--reps <uint>]\n";
+      std::cerr << "Usage: " << argv[0] << " [--seed <uint>] [--reps <uint>]\n";
       return 1;
     }
   }
@@ -145,8 +149,8 @@ int main(int argc, char* argv[]) {
             << "# seed=" << seed << "  reps=" << reps << "\n"
             << "#\n"
             << std::left
-            << std::setw(8)  << "n"
-            << std::setw(8)  << "reps"
+            << std::setw(8) << "n"
+            << std::setw(8) << "reps"
             << std::setw(14) << "mean_ms"
             << std::setw(14) << "stddev_ms"
             << std::setw(14) << "mean_verts"
@@ -180,8 +184,8 @@ int main(int argc, char* argv[]) {
     double me  = sum_edges / reps;
 
     std::cout << std::left
-              << std::setw(8)  << n
-              << std::setw(8)  << reps
+              << std::setw(8) << n
+              << std::setw(8) << reps
               << std::setw(14) << std::fixed << std::setprecision(3) << m
               << std::setw(14) << sd
               << std::setw(14) << std::setprecision(1) << mv

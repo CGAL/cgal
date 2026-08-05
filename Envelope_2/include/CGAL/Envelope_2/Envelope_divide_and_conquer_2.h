@@ -32,30 +32,30 @@ namespace CGAL {
 template <typename Traits_, typename Diagram_>
 class Envelope_divide_and_conquer_2 {
 public:
-  using Traits_2 =  Traits_;
-  using Point_2 =  typename Traits_2::Point_2;
-  using X_monotone_curve_2 =  typename Traits_2::X_monotone_curve_2;
-  using Curve_2 =  typename Traits_2::Curve_2;
+  using Traits_2 = Traits_;
+  using Point_2 = typename Traits_2::Point_2;
+  using X_monotone_curve_2 = typename Traits_2::X_monotone_curve_2;
+  using Curve_2 = typename Traits_2::Curve_2;
 
-  using Envelope_diagram_1 =  Diagram_;
+  using Envelope_diagram_1 = Diagram_;
 
 protected:
-  using Self =  Envelope_divide_and_conquer_2<Traits_2, Envelope_diagram_1>;
+  using Self = Envelope_divide_and_conquer_2<Traits_2, Envelope_diagram_1>;
 
   enum Envelope_type {
     LOWER,
     UPPER
   };
 
-  using Vertex_const_handle =  typename Envelope_diagram_1::Vertex_const_handle;
-  using Vertex_handle =  typename Envelope_diagram_1::Vertex_handle;
-  using Edge_const_handle =  typename Envelope_diagram_1::Edge_const_handle;
-  using Edge_handle =  typename Envelope_diagram_1::Edge_handle;
+  using Vertex_const_handle = typename Envelope_diagram_1::Vertex_const_handle;
+  using Vertex_handle = typename Envelope_diagram_1::Vertex_handle;
+  using Edge_const_handle = typename Envelope_diagram_1::Edge_const_handle;
+  using Edge_handle = typename Envelope_diagram_1::Edge_handle;
 
-  using Curve_pointer_vector =  std::vector<X_monotone_curve_2 *>;
-  using Curve_pointer_iterator =  typename Curve_pointer_vector::iterator;
+  using Curve_pointer_vector = std::vector<X_monotone_curve_2 *>;
+  using Curve_pointer_iterator = typename Curve_pointer_vector::iterator;
 
-  using Traits_adaptor_2 =  Arr_traits_adaptor_2<Traits_2>;
+  using Traits_adaptor_2 = Arr_traits_adaptor_2<Traits_2>;
 
   // Data members:
   std::shared_ptr<const Traits_2> traits_ptr;

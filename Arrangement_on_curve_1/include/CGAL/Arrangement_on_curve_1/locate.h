@@ -17,7 +17,8 @@ namespace Arrangement_on_curve_1 {
 
 // ==========================================
 // Internal helper: locate, returning mutable descriptors.
-// Walks the sorted vertex sequence and finds where p falls.
+// Uses O(log n) binary search when BinarySearch = true,
+// otherwise falls back to O(n) topological graph traversal.
 // ==========================================
 template <typename GeometryTraits, typename TopologyTraits>
 typename Arrangement_on_curve_1<GeometryTraits, TopologyTraits>::Location_result
@@ -26,25 +27,50 @@ locate_impl(Arrangement_on_curve_1<GeometryTraits, TopologyTraits>& arr, const t
   using Result = typename Arr::Location_result;
 
   auto cmp = arr.geometry_traits_1().compare_x_1_object();
-  auto v_pnt_map = arr.vertex_point_map();
 
-  // Start with the leftmost unbounded edge (-inf, ...)
-  auto curr_e = arr.unbounded_left_edge();
+  // --------------------------------------------------------------------------
+  // 1. FAST PATH: Binary Search (O(log n))
+  // --------------------------------------------------------------------------
+  if constexpr (TopologyTraits::binary_search_enabled) {
+    auto& topo = arr.topology_traits();
+    if (topo.is_empty()) return Result{std::in_place_index<1>, topo.unbounded_left_edge()};
 
-  // Proceed to the right by traversing the topological graph
-  while (arr.has_right_vertex(curr_e)) {
-    auto curr_v = arr.right_vertex(curr_e);
-    auto res = cmp(p, get(v_pnt_map, curr_v));
+    std::size_t idx = topo.binary_search_vertex(p, cmp);
 
-    if (res == EQUAL) return Result{std::in_place_index<0>, curr_v};   // point coincides with vertex
-    if (res == SMALLER) return Result{std::in_place_index<1>, curr_e}; // point lies strictly to left of current vertex
+    // p is to the right of all existing vertices
+    if (idx == topo.number_of_vertices()) return Result{std::in_place_index<1>, topo.unbounded_right_edge()};
 
-    // LARGER: move to right edge of this vertex
-    curr_e = arr.right_edge(curr_v);
+    // Check if p coincides with the vertex at idx
+    if (cmp(p, topo.vertex_point(idx)) == CGAL::EQUAL) return Result{std::in_place_index<0>, idx};
+
+    // p is strictly to the left of vertex at idx;
+    // thus, p lies in the edge immediately to the left of vertex idx.
+    return Result{std::in_place_index<1>, topo.left_edge(idx)};
   }
+  // --------------------------------------------------------------------------
+  // 2. LINEAR PATH: Sequential Topological Walk (O(n))
+  // --------------------------------------------------------------------------
+  else {
+    auto v_pnt_map = arr.vertex_point_map();
 
-  // The point is to the right of all existing vertices (or arrangement is empty)
-  return Result{std::in_place_index<1>, curr_e};
+    // Start with the leftmost unbounded edge (-inf, ...)
+    auto curr_e = arr.unbounded_left_edge();
+
+    // Proceed to the right by traversing the topological graph
+    while (arr.has_right_vertex(curr_e)) {
+      auto curr_v = arr.right_vertex(curr_e);
+      auto res = cmp(p, get(v_pnt_map, curr_v));
+
+      if (res == CGAL::EQUAL) return Result{std::in_place_index<0>, curr_v}; // point coincides with vertex
+      if (res == CGAL::SMALLER) return Result{std::in_place_index<1>, curr_e}; // point lies strictly to left of current vertex
+
+      // LARGER: move to right edge of this vertex
+      curr_e = arr.right_edge(curr_v);
+    }
+
+    // The point is to the right of all existing vertices (or arrangement is empty)
+    return Result{std::in_place_index<1>, curr_e};
+  }
 }
 
 // ==========================================

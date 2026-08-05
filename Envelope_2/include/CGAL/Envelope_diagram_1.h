@@ -38,7 +38,7 @@ class Envelope_diagram_1 :
       typename Traits_::Point_2,
       std::list<typename Traits_::X_monotone_curve_2>,
       std::list<typename Traits_::X_monotone_curve_2>,
-      Allocator>> {
+      Allocator, false, false>> {
 public:
   using Traits_2 = Traits_;
   using Point_2 = typename Traits_2::Point_2;
@@ -49,8 +49,8 @@ public:
   using Size = std::size_t;
 
   using Geom_traits_1 = Arrangement_on_curve_1::Geom_traits_2_adaptor_1<Traits_2>;
-  using Topol_traits  = Arrangement_on_curve_1::Unbounded_topology_traits<
-    Point_2, Curve_container, Curve_container, Allocator>;
+  using Topol_traits =
+    Arrangement_on_curve_1::Unbounded_topology_traits<Point_2, Curve_container, Curve_container, Allocator, false, false>;
 
   using Base = Arrangement_on_curve_1::Arrangement_on_curve_1<Geom_traits_1, Topol_traits>;
 
@@ -98,32 +98,44 @@ public:
 
   void set_point(Vertex_handle v, const Point_2& p) { put(this->vertex_point_map(), v, p); }
 
-  Curve_container& curves(Vertex_handle v) { return get(this->vertex_data_map(), v); }
+  Curve_container& vertex_curves(Vertex_handle v) { return get(this->vertex_data_map(), v); }
+  const Curve_container& vertex_curves(Vertex_const_handle v) const { return get(this->vertex_data_map(), v); }
 
-  const Curve_container& curves(Vertex_const_handle v) const { return get(this->vertex_data_map(), v); }
+  Curve_container& edge_curves(Edge_handle e) { return get(this->edge_data_map(), e); }
+  const Curve_container& edge_curves(Edge_const_handle e) const { return get(this->edge_data_map(), e); }
 
-  Curve_container& curves(Edge_handle e) { return get(this->edge_data_map(), e); }
+  Size number_of_vertex_curves(Vertex_const_handle v) const { return vertex_curves(v).size(); }
+  Size number_of_edge_curves(Edge_const_handle e) const { return edge_curves(e).size(); }
 
-  const Curve_container& curves(Edge_const_handle e) const { return get(this->edge_data_map(), e); }
+  bool empty_vertex_curves(Vertex_const_handle v) const { return vertex_curves(v).empty(); }
+  bool empty_edge_curves(Edge_const_handle e) const { return edge_curves(e).empty(); }
 
-  bool is_empty_edge(Edge_const_handle e) const { return curves(e).empty(); }
+  const X_monotone_curve_2& vertex_curve(Vertex_const_handle v) const {
+    CGAL_precondition(! empty_vertex_curves(v));
+    return vertex_curves(v).front();
+  }
 
-  void add_curve(Edge_handle e, const X_monotone_curve_2& cv) { curves(e).push_back(cv); }
+  const X_monotone_curve_2& edge_curve(Edge_const_handle e) const {
+    CGAL_precondition(! empty_edge_curves(e));
+    return edge_curves(e).front();
+  }
 
-  void add_curve(Vertex_handle v, const X_monotone_curve_2& cv) { curves(v).push_back(cv); }
+  void add_edge_curve(Edge_handle e, const X_monotone_curve_2& cv) { edge_curves(e).push_back(cv); }
 
-  void add_curves(Edge_handle e, Curve_const_iterator begin, Curve_const_iterator end) {
-    auto& c = curves(e);
+  void add_vertex_curve(Vertex_handle v, const X_monotone_curve_2& cv) { vertex_curves(v).push_back(cv); }
+
+  void add_edge_curves(Edge_handle e, Curve_const_iterator begin, Curve_const_iterator end) {
+    auto& c = edge_curves(e);
     for (auto it = begin; it != end; ++it) c.push_back(*it);
   }
 
-  void add_curves(Vertex_handle v, Curve_const_iterator begin, Curve_const_iterator end) {
-    auto& c = curves(v);
+  void add_vertex_curves(Vertex_handle v, Curve_const_iterator begin, Curve_const_iterator end) {
+    auto& c = vertex_curves(v);
     for (auto it = begin; it != end; ++it) c.push_back(*it);
   }
 
-  void clear_curves(Vertex_handle v) { curves(v).clear(); }
-  void clear_curves(Edge_handle e)   { curves(e).clear(); }
+  void clear_vertex_curves(Vertex_handle v) { vertex_curves(v).clear(); }
+  void clear_edge_curves(Edge_handle e) { edge_curves(e).clear(); }
 
   // --------------------------------------------------------------------------
   // TOPOLOGY MUTATION HELPER DELEGATES

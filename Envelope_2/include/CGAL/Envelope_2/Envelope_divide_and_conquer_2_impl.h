@@ -63,7 +63,7 @@ template <typename Traits, typename Diagram>
 void Envelope_divide_and_conquer_2<Traits,Diagram>::
 _construct_singleton_diagram(const X_monotone_curve_2& cv, Envelope_diagram_1& out_d) {
   CGAL_assertion(out_d.leftmost() == out_d.rightmost());
-  CGAL_assertion(out_d.is_empty_edge(out_d.leftmost()));
+  CGAL_assertion(out_d.empty_edge_curves(out_d.leftmost()));
 
   auto& topo = out_d.topology_traits();
 
@@ -72,7 +72,7 @@ _construct_singleton_diagram(const X_monotone_curve_2& cv, Envelope_diagram_1& o
     if (traits->parameter_space_in_x_2_object()(cv, ARR_MAX_END) != ARR_INTERIOR) {
       // The curve is defined over (-oo, oo), so its diagram contains
       // only a single edge.
-      out_d.add_curve(out_d.leftmost(), cv);
+      out_d.add_edge_curve(out_d.leftmost(), cv);
       return;
     }
 
@@ -83,11 +83,11 @@ _construct_singleton_diagram(const X_monotone_curve_2& cv, Envelope_diagram_1& o
     Vertex_handle v = out_d.new_vertex(traits->construct_max_vertex_2_object()(cv));
     Edge_handle e_right = out_d.new_edge();
 
-    out_d.add_curve(v, cv);
+    out_d.add_vertex_curve(v, cv);
     topo.set_left_edge(v, out_d.leftmost());
     topo.set_right_edge(v, e_right);
 
-    out_d.add_curve(out_d.leftmost(), cv);
+    out_d.add_edge_curve(out_d.leftmost(), cv);
     topo.set_right_vertex(out_d.leftmost(), v);
 
     topo.set_left_vertex(e_right, v);
@@ -103,11 +103,11 @@ _construct_singleton_diagram(const X_monotone_curve_2& cv, Envelope_diagram_1& o
     Vertex_handle v = out_d.new_vertex(traits->construct_min_vertex_2_object()(cv));
     Edge_handle e_left = out_d.new_edge();
 
-    out_d.add_curve(v, cv);
+    out_d.add_vertex_curve(v, cv);
     topo.set_left_edge(v, e_left);
     topo.set_right_edge(v, out_d.rightmost());
 
-    out_d.add_curve(out_d.rightmost(), cv);
+    out_d.add_edge_curve(out_d.rightmost(), cv);
     topo.set_left_vertex(out_d.rightmost(), v);
 
     topo.set_right_vertex(e_left, v);
@@ -126,15 +126,15 @@ _construct_singleton_diagram(const X_monotone_curve_2& cv, Envelope_diagram_1& o
   Edge_handle e_right = out_d.new_edge();
   Edge_handle e = out_d.leftmost();
 
-  out_d.add_curve(v1, cv);
+  out_d.add_vertex_curve(v1, cv);
   topo.set_left_edge(v1, e_left);
   topo.set_right_edge(v1, e);
 
-  out_d.add_curve(v2, cv);
+  out_d.add_vertex_curve(v2, cv);
   topo.set_left_edge(v2, e);
   topo.set_right_edge(v2, e_right);
 
-  out_d.add_curve(e, cv);
+  out_d.add_edge_curve(e, cv);
   topo.set_left_vertex(e, v1);
   topo.set_right_vertex(e, v2);
 
@@ -187,26 +187,22 @@ _merge_envelopes(const Envelope_diagram_1& d1, const Envelope_diagram_1& d2, Env
       next_v = (res_v == SMALLER) ? v1 : v2;
     }
 
-    if (! d1.is_empty_edge(e1) && ! d2.is_empty_edge(e2)) {
+    if (! d1.empty_edge_curves(e1) && ! d2.empty_edge_curves(e2))
       _merge_two_intervals(e1, is_leftmost1, e2, is_leftmost2, next_v, next_exists, res_v, d1, d2, out_d);
-    }
-    else if (! d1.is_empty_edge(e1) && d2.is_empty_edge(e2)) {
+    else if (! d1.empty_edge_curves(e1) && d2.empty_edge_curves(e2))
       _merge_single_interval(e1, e2, next_v, next_exists, res_v, d1, d2, out_d);
-    }
-    else if (d1.is_empty_edge(e1) && ! d2.is_empty_edge(e2))
-    {
+    else if (d1.empty_edge_curves(e1) && ! d2.empty_edge_curves(e2))
       _merge_single_interval(e2, e1, next_v, next_exists, CGAL::opposite(res_v), d2, d1, out_d);
-    }
     else {
       if (next_exists) {
         const Point_2& p_next = (res_v == SMALLER) ? d1.point(v1) : d2.point(v2);
         Vertex_handle new_v = _append_vertex(out_d, p_next, e1, d1);
         switch(res_v) {
-        case SMALLER: out_d.add_curves(new_v, d1.curves(v1).begin(), d1.curves(v1).end()); break;
-        case LARGER: out_d.add_curves(new_v, d2.curves(v2).begin(), d2.curves(v2).end()); break;
+        case SMALLER: out_d.add_vertex_curves(new_v, d1.vertex_curves(v1).begin(), d1.vertex_curves(v1).end()); break;
+        case LARGER: out_d.add_vertex_curves(new_v, d2.vertex_curves(v2).begin(), d2.vertex_curves(v2).end()); break;
         case EQUAL:
-          out_d.add_curves(new_v, d1.curves(v1).begin(), d1.curves(v1).end());
-          out_d.add_curves(new_v, d2.curves(v2).begin(), d2.curves(v2).end());
+          out_d.add_vertex_curves(new_v, d1.vertex_curves(v1).begin(), d1.vertex_curves(v1).end());
+          out_d.add_vertex_curves(new_v, d2.vertex_curves(v2).begin(), d2.vertex_curves(v2).end());
           break;
         }
       }
@@ -273,7 +269,7 @@ _merge_single_interval(Edge_const_handle e, Edge_const_handle other_edge, Vertex
                        Comparison_result origin_of_v, const Envelope_diagram_1& in_d, const Envelope_diagram_1& other_d,
                        Envelope_diagram_1& out_d) {
   if (! v_exists) {
-    out_d.add_curves(out_d.rightmost(), in_d.curves(e).begin(), in_d.curves(e).end());
+    out_d.add_edge_curves(out_d.rightmost(), in_d.edge_curves(e).begin(), in_d.edge_curves(e).end());
     return;
   }
 
@@ -281,7 +277,7 @@ _merge_single_interval(Edge_const_handle e, Edge_const_handle other_edge, Vertex
 
   if (origin_of_v == SMALLER) {
     new_v = _append_vertex(out_d, in_d.point(v), e, in_d);
-    out_d.add_curves(new_v, in_d.curves(v).begin(), in_d.curves(v).end());
+    out_d.add_vertex_curves(new_v, in_d.vertex_curves(v).begin(), in_d.vertex_curves(v).end());
     return;
   }
 
@@ -289,21 +285,21 @@ _merge_single_interval(Edge_const_handle e, Edge_const_handle other_edge, Vertex
     new_v = _append_vertex(out_d, in_d.point(v), e, in_d);
     Vertex_const_handle v1 = in_d.right_vertex(e);
     Vertex_const_handle v2 = other_d.right_vertex(other_edge);
-    out_d.add_curves(new_v, in_d.curves(v1).begin(), in_d.curves(v1).end());
-    out_d.add_curves(new_v, other_d.curves(v2).begin(), other_d.curves(v2).end());
+    out_d.add_vertex_curves(new_v, in_d.vertex_curves(v1).begin(), in_d.vertex_curves(v1).end());
+    out_d.add_vertex_curves(new_v, other_d.vertex_curves(v2).begin(), other_d.vertex_curves(v2).end());
     return;
   }
 
   const Point_2& p_v = other_d.point(v);
-  const X_monotone_curve_2& cv_e = in_d.curves(e).front();
+  const X_monotone_curve_2& cv_e = in_d.edge_curves(e).front();
 
   Comparison_result res = traits->compare_y_at_x_2_object()(p_v, cv_e);
 
   if ((res == EQUAL) || (env_type == LOWER && res == SMALLER) || (env_type == UPPER && res == LARGER)) {
     new_v = _append_vertex(out_d, p_v, e, in_d);
-    out_d.add_curves(new_v, other_d.curves(v).begin(), other_d.curves(v).end());
+    out_d.add_vertex_curves(new_v, other_d.vertex_curves(v).begin(), other_d.vertex_curves(v).end());
 
-    if (res == EQUAL) out_d.add_curves(new_v, in_d.curves(e).begin(), in_d.curves(e).end());
+    if (res == EQUAL) out_d.add_vertex_curves(new_v, in_d.edge_curves(e).begin(), in_d.edge_curves(e).end());
   }
 }
 
@@ -371,8 +367,7 @@ compare_y_at_end(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
       else return CGAL::opposite(l_res);
     }
 
-    const Point_2& left2 =
-      (curve_end == ARR_MIN_END) ? min_vertex(xcv2) : max_vertex(xcv2);
+    const Point_2& left2 = (curve_end == ARR_MIN_END) ? min_vertex(xcv2) : max_vertex(xcv2);
 
     const auto cmp_x_point_curve_end = traits->compare_x_point_curve_end_2_object();
     Comparison_result l_res = cmp_x_point_curve_end(left2, xcv1, curve_end);
@@ -412,7 +407,7 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1, Edge_const_handle 
                      const Envelope_diagram_1& d1, const Envelope_diagram_1& d2, Envelope_diagram_1& out_d) {
   typedef std::pair<Point_2, typename Traits::Multiplicity>  Intersection_point;
 
-  Comparison_result current_res = compare_y_at_end(d1.curves(e1).front(), d2.curves(e2).front(), ARR_MIN_END);
+  Comparison_result current_res = compare_y_at_end(d1.edge_curves(e1).front(), d2.edge_curves(e2).front(), ARR_MIN_END);
   if (env_type == UPPER) current_res = CGAL::opposite(current_res);
 
   std::optional<Point_2> p_leftmost;
@@ -434,7 +429,7 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1, Edge_const_handle 
   const X_monotone_curve_2* intersection_curve;
   const Intersection_point* intersection_point;
 
-  traits->intersect_2_object()(d1.curves(e1).front(), d2.curves(e2).front(), std::back_inserter(objects));
+  traits->intersect_2_object()(d1.edge_curves(e1).front(), d2.edge_curves(e2).front(), std::back_inserter(objects));
 
   bool equal_at_v = false;
 
@@ -465,8 +460,8 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1, Edge_const_handle 
           _append_vertex(out_d, intersection_point->first, e2, d2);
 
         if (equal_at_v == false) {
-          out_d.add_curves(new_v, d1.curves(e1).begin(), d1.curves(e1).end());
-          out_d.add_curves(new_v, d2.curves(e2).begin(), d2.curves(e2).end());
+          out_d.add_vertex_curves(new_v, d1.edge_curves(e1).begin(), d1.edge_curves(e1).end());
+          out_d.add_vertex_curves(new_v, d2.edge_curves(e2).begin(), d2.edge_curves(e2).end());
         }
 
         p_leftmost = intersection_point->first;
@@ -476,7 +471,7 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1, Edge_const_handle 
         current_res = CGAL::opposite(current_res);
       }
       else if (((intersection_point->second == 0) || (current_res == EQUAL)) && (equal_at_v == false)) {
-        current_res = traits->compare_y_at_x_right_2_object()(d1.curves(e1).front(), d2.curves(e2).front(),
+        current_res = traits->compare_y_at_x_right_2_object()(d1.edge_curves(e1).front(), d2.edge_curves(e2).front(),
                                                               intersection_point->first);
         if (env_type == UPPER) current_res = CGAL::opposite (current_res);
       }
@@ -516,8 +511,8 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1, Edge_const_handle 
           _append_vertex(out_d, pt_left, e1, d1) : _append_vertex(out_d, pt_left, e2, d2);
 
         if (equal_at_v == false) {
-          out_d.add_curves(new_v, d1.curves(e1).begin(), d1.curves(e1).end());
-          out_d.add_curves(new_v, d2.curves(e2).begin(), d2.curves(e2).end());
+          out_d.add_vertex_curves(new_v, d1.edge_curves(e1).begin(), d1.edge_curves(e1).end());
+          out_d.add_vertex_curves(new_v, d2.edge_curves(e2).begin(), d2.edge_curves(e2).end());
         }
 
         p_leftmost = pt_left;
@@ -526,11 +521,11 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1, Edge_const_handle 
       if (is_in_x_range && has_right && (! v_exists || (traits->compare_xy_2_object()(pt_right, *p_v) == SMALLER))) {
         Vertex_handle new_v = _append_vertex(out_d, pt_right, e1, d1);
         Edge_handle e_left = out_d.left_edge(new_v);
-        out_d.add_curves(e_left, d2.curves(e2).begin(), d2.curves(e2).end());
+        out_d.add_edge_curves(e_left, d2.edge_curves(e2).begin(), d2.edge_curves(e2).end());
 
         CGAL_assertion(equal_at_v == false);
-        out_d.add_curves(new_v, d1.curves(e1).begin(), d1.curves(e1).end());
-        out_d.add_curves(new_v, d2.curves(e2).begin(), d2.curves(e2).end());
+        out_d.add_vertex_curves(new_v, d1.edge_curves(e1).begin(), d1.edge_curves(e1).end());
+        out_d.add_vertex_curves(new_v, d2.edge_curves(e2).begin(), d2.edge_curves(e2).end());
 
         p_leftmost = pt_right;
       }
@@ -539,7 +534,7 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1, Edge_const_handle 
         if (v_exists) {
           Vertex_handle new_v = _append_vertex(out_d, *p_v, e1, d1);
           Edge_handle e_left = out_d.left_edge(new_v);
-          out_d.add_curves(e_left, d2.curves(e2).begin(), d2.curves(e2).end());
+          out_d.add_edge_curves(e_left, d2.edge_curves(e2).begin(), d2.edge_curves(e2).end());
         }
 
         equal_at_v = true;
@@ -547,7 +542,8 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1, Edge_const_handle 
         break;
       }
 
-      current_res = traits->compare_y_at_x_right_2_object()(d1.curves(e1).front(), d2.curves(e2).front(), pt_right);
+      current_res =
+        traits->compare_y_at_x_right_2_object()(d1.edge_curves(e1).front(), d2.edge_curves(e2).front(), pt_right);
       if (env_type == UPPER) current_res = CGAL::opposite (current_res);
     }
   }
@@ -562,15 +558,15 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1, Edge_const_handle 
       if (origin_of_v == EQUAL) {
         Vertex_const_handle v1 = d1.right_vertex(e1);
         Vertex_const_handle v2 = d2.right_vertex(e2);
-        out_d.add_curves(v_to_be_updated, d1.curves(v1).begin(), d1.curves(v1).end());
-        out_d.add_curves(v_to_be_updated, d2.curves(v2).begin(), d2.curves(v2).end());
+        out_d.add_vertex_curves(v_to_be_updated, d1.vertex_curves(v1).begin(), d1.vertex_curves(v1).end());
+        out_d.add_vertex_curves(v_to_be_updated, d2.vertex_curves(v2).begin(), d2.vertex_curves(v2).end());
       }
       else {
         const Envelope_diagram_1& src_d = (origin_of_v == SMALLER) ? d2 : d1;
         Edge_const_handle e = (origin_of_v == SMALLER) ? e2 : e1;
 
-        out_d.add_curves(v_to_be_updated, src_d.curves(v).begin(), src_d.curves(v).end());
-        out_d.add_curves(v_to_be_updated, src_d.curves(e).begin(), src_d.curves(e).end());
+        out_d.add_vertex_curves(v_to_be_updated, src_d.vertex_curves(v).begin(), src_d.vertex_curves(v).end());
+        out_d.add_vertex_curves(v_to_be_updated, src_d.edge_curves(e).begin(), src_d.edge_curves(e).end());
       }
     }
 
@@ -580,16 +576,16 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1, Edge_const_handle 
   if (! v_exists) {
     switch (current_res) {
     case SMALLER:
-      out_d.add_curves(out_d.rightmost(), d1.curves(e1).begin(), d1.curves(e1).end());
+      out_d.add_edge_curves(out_d.rightmost(), d1.edge_curves(e1).begin(), d1.edge_curves(e1).end());
       return;
 
      case LARGER:
-      out_d.add_curves(out_d.rightmost(), d2.curves(e2).begin(), d2.curves(e2).end());
+      out_d.add_edge_curves(out_d.rightmost(), d2.edge_curves(e2).begin(), d2.edge_curves(e2).end());
       return;
 
      case EQUAL:
-      out_d.add_curves(out_d.rightmost(), d1.curves(e1).begin(), d1.curves(e1).end());
-      out_d.add_curves(out_d.rightmost(), d2.curves(e2).begin(), d2.curves(e2).end());
+      out_d.add_edge_curves(out_d.rightmost(), d1.edge_curves(e1).begin(), d1.edge_curves(e1).end());
+      out_d.add_edge_curves(out_d.rightmost(), d2.edge_curves(e2).begin(), d2.edge_curves(e2).end());
       return;
 
      default:
@@ -603,25 +599,25 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1, Edge_const_handle 
 
     if (origin_of_v == SMALLER) {
       new_v = _append_vertex(out_d, d1.point(v), e1, d1);
-      out_d.add_curves(new_v, d1.curves(v).begin(), d1.curves(v).end());
+      out_d.add_vertex_curves(new_v, d1.vertex_curves(v).begin(), d1.vertex_curves(v).end());
     }
     else {
       if (origin_of_v == EQUAL) {
         new_v = _append_vertex(out_d, d2.point(v), e1, d1);
-        out_d.add_curves(new_v, d2.curves(v).begin(), d2.curves(v).end());
+        out_d.add_vertex_curves(new_v, d2.vertex_curves(v).begin(), d2.vertex_curves(v).end());
 
         Vertex_const_handle v1 = d1.right_vertex(e1);
-        out_d.add_curves(new_v, d1.curves(v1).begin(), d1.curves(v1).end());
+        out_d.add_vertex_curves(new_v, d1.vertex_curves(v1).begin(), d1.vertex_curves(v1).end());
       }
       else {
         const Point_2& p_v = d2.point(v);
-        const Comparison_result res = traits->compare_y_at_x_2_object()(p_v, d1.curves(e1).front());
+        const Comparison_result res = traits->compare_y_at_x_2_object()(p_v, d1.edge_curves(e1).front());
 
         if (res == EQUAL || ((env_type == LOWER) && (res == SMALLER)) || ((env_type == UPPER) && (res == LARGER))) {
           new_v = _append_vertex(out_d, p_v, e1, d1);
-          out_d.add_curves(new_v, d2.curves(v).begin(), d2.curves(v).end());
+          out_d.add_vertex_curves(new_v, d2.vertex_curves(v).begin(), d2.vertex_curves(v).end());
 
-          if (res == EQUAL) out_d.add_curves(new_v, d1.curves(e1).begin(), d1.curves(e1).end());
+          if (res == EQUAL) out_d.add_vertex_curves(new_v, d1.edge_curves(e1).begin(), d1.edge_curves(e1).end());
         }
       }
     }
@@ -631,22 +627,22 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1, Edge_const_handle 
 
     if (origin_of_v != SMALLER) {
       new_v = _append_vertex(out_d, d2.point(v), e2, d2);
-      out_d.add_curves(new_v, d2.curves(v).begin(), d2.curves(v).end());
+      out_d.add_vertex_curves(new_v, d2.vertex_curves(v).begin(), d2.vertex_curves(v).end());
 
       if (origin_of_v == EQUAL) {
         Vertex_const_handle v1 = d1.right_vertex(e1);
-        out_d.add_curves(new_v, d1.curves(v1).begin(), d1.curves(v1).end());
+        out_d.add_vertex_curves(new_v, d1.vertex_curves(v1).begin(), d1.vertex_curves(v1).end());
       }
     }
     else {
       const Point_2& p_v = d1.point(v);
-      const Comparison_result res = traits->compare_y_at_x_2_object()(p_v, d2.curves(e2).front());
+      const Comparison_result res = traits->compare_y_at_x_2_object()(p_v, d2.edge_curves(e2).front());
 
       if (res == EQUAL || ((env_type == LOWER) && (res == SMALLER)) || ((env_type == UPPER) && (res == LARGER))) {
         new_v = _append_vertex(out_d, p_v, e2, d2);
-        out_d.add_curves(new_v, d1.curves(v).begin(), d1.curves(v).end());
+        out_d.add_vertex_curves(new_v, d1.vertex_curves(v).begin(), d1.vertex_curves(v).end());
 
-        if (res == EQUAL) out_d.add_curves(new_v, d2.curves(e2).begin(), d2.curves(e2).end());
+        if (res == EQUAL) out_d.add_vertex_curves(new_v, d2.edge_curves(e2).begin(), d2.edge_curves(e2).end());
       }
     }
   }
@@ -667,7 +663,7 @@ _append_vertex(Envelope_diagram_1& diag, const Point_2& p, Edge_const_handle e, 
   Vertex_handle new_v = diag.new_vertex(p);
   Edge_handle new_e = diag.new_edge();
 
-  if (! in_d.is_empty_edge(e)) diag.add_curves(new_e, in_d.curves(e).begin(), in_d.curves(e).end());
+  if (! in_d.empty_edge_curves(e)) diag.add_edge_curves(new_e, in_d.edge_curves(e).begin(), in_d.edge_curves(e).end());
 
   // Connect the new vertex.
   topo.set_left_edge(new_v, new_e);
@@ -776,28 +772,28 @@ _merge_vertical_segments(Curve_pointer_vector& vert_vec, Envelope_diagram_1& out
       res = comp_xy(p, out_d.point(v));
 
       if (res == EQUAL) {
-        out_d.add_curves(v, env_cvs.begin(), env_cvs.end());
+        out_d.add_vertex_curves(v, env_cvs.begin(), env_cvs.end());
       }
       else if ((env_type == LOWER && res == SMALLER) || (env_type == UPPER && res == LARGER)) {
-        out_d.clear_curves(v);
-        out_d.add_curves(v, env_cvs.begin(), env_cvs.end());
+        out_d.clear_vertex_curves(v);
+        out_d.add_vertex_curves(v, env_cvs.begin(), env_cvs.end());
       }
     }
     else {
       Vertex_handle new_v;
 
-      if (out_d.is_empty_edge(e)) {
+      if (out_d.empty_edge_curves(e)) {
         new_v = _split_edge(out_d, p, e);
-        out_d.add_curves(new_v, env_cvs.begin(), env_cvs.end());
+        out_d.add_vertex_curves(new_v, env_cvs.begin(), env_cvs.end());
       }
       else {
-        res = comp_y_at_x(p, out_d.curves(e).front());
+        res = comp_y_at_x(p, out_d.edge_curves(e).front());
 
         if (((env_type == LOWER) && (res != LARGER)) || ((env_type == UPPER) && (res != SMALLER))) {
           new_v = _split_edge(out_d, p, e);
-          out_d.add_curves(new_v, env_cvs.begin(), env_cvs.end());
+          out_d.add_vertex_curves(new_v, env_cvs.begin(), env_cvs.end());
 
-          if (res == EQUAL) out_d.add_curve(new_v, out_d.curves(e).front());
+          if (res == EQUAL) out_d.add_vertex_curve(new_v, out_d.edge_curves(e).front());
         }
       }
     }
@@ -822,7 +818,7 @@ _split_edge(Envelope_diagram_1& diag, const Point_2& p, Edge_handle e) {
   Edge_handle new_e = diag.new_edge();
 
   // Duplicate the curves container associated with e.
-  if (! diag.is_empty_edge(e)) diag.add_curves(new_e, diag.curves(e).begin(), diag.curves(e).end());
+  if (! diag.empty_edge_curves(e)) diag.add_edge_curves(new_e, diag.edge_curves(e).begin(), diag.edge_curves(e).end());
 
   // Connect the new vertex between e and new_e.
   topo.set_left_edge(new_v, e);
