@@ -50,7 +50,8 @@ public:
 
   using Geom_traits_1 = Arrangement_on_curve_1::Geom_traits_2_adaptor_1<Traits_2>;
   using Topol_traits =
-    Arrangement_on_curve_1::Unbounded_topology_traits<Point_2, Curve_container, Curve_container, Allocator, false, false>;
+    Arrangement_on_curve_1::Unbounded_topology_traits<Point_2, Curve_container, Curve_container, Allocator,
+                                                      false, false>;
 
   using Base = Arrangement_on_curve_1::Arrangement_on_curve_1<Geom_traits_1, Topol_traits>;
 
@@ -61,13 +62,25 @@ public:
   using Edge_const_handle = typename Base::Edge_const_descriptor;
 
 public:
-  /*! Default constructor. */
+  /*! Default constructor.
+   * Constructs an empty diagram with a default-constructed geometry traits.
+   * Used when a diagram is needed before the traits is known (rare).
+   */
   Envelope_diagram_1() : Base() {}
 
-  /*! Constructor passing a 2D geometry traits shared pointer. */
+  /*! Constructor passing a 2D geometry traits shared pointer.
+   * This is the preferred constructor; it avoids a heap allocation by
+   * sharing the traits object rather than copying it.
+   */
   Envelope_diagram_1(std::shared_ptr<const Traits_2> traits_2_ptr) :
     Base(std::make_shared<const Geom_traits_1>(traits_2_ptr))
   {}
+
+  /*! Constructor passing a 2D geometry traits adaptor shared pointer.
+   * This is the preferred constructor; it avoids a heap allocation by
+   * sharing the traits object rather than copying it.
+   */
+  Envelope_diagram_1(std::shared_ptr<const Geom_traits_1> traits_2_ptr) : Base(traits_2_ptr) {}
 
   Envelope_diagram_1(const Envelope_diagram_1&) = default;
   Envelope_diagram_1& operator=(const Envelope_diagram_1&) = default;
@@ -89,7 +102,15 @@ public:
   void set_leftmost(Edge_handle e) { this->topology_traits().set_unbounded_left_edge(e); }
   void set_rightmost(Edge_handle e) { this->topology_traits().set_unbounded_right_edge(e); }
 
-  void clear() { Base::operator=(Base(this->shared_geometry_traits_1())); }
+  void clear() {
+    // Reset the topology traits in-place (clears all vertex/edge lists and
+    // reinitialises the single unbounded edge) without touching the shared
+    // geometry traits pointer.
+    // This is strictly faster than Base::operator=(Base(...)) which would
+    // copy the shared_ptr (atomic increment + later decrement) and also
+    // call make_shared<Geom_traits_1> in the default-constructor path.
+    this->topology_traits() = Topol_traits{};
+  }
 
   // --------------------------------------------------------------------------
   // CURVE DATA ACCESSORS & MUTATORS
