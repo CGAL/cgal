@@ -348,15 +348,15 @@ private:
       const Cell_handle c = f.first;
       const Cell_handle neigh = f.first->neighbor(f.second);
 
-      Vector_3 start_ref = CGAL::Tetrahedral_remeshing::normal(f, tr.geom_traits());
+      Vector_3 n = CGAL::Tetrahedral_remeshing::normal(f, tr.geom_traits());
       if (c3t3.triangulation().is_infinite(neigh)
        || c3t3.subdomain_index(neigh) < c3t3.subdomain_index(c))
-        start_ref = opp(start_ref);
+        n = opp(n);
 
-      fnormals[f] = start_ref;
+      fnormals[f] = n; // n has length equal to the area of the facet
     }
 
-    // normalize normals and accumulate them in normals_map
+    // accumulate the normals in normals_map
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     std::ofstream osf("dump_facet_normals.polylines.txt");
 #endif
@@ -371,9 +371,8 @@ private:
       for (const Vertex_handle vi : tr.vertices(f))
       {
         typename VertexNormalsMap::iterator patch_vector_it = normals_map.find(vi);
-
-        if (patch_vector_it == normals_map.end()
-            || patch_vector_it->second.find(surf_i) == patch_vector_it->second.end())
+        if (   patch_vector_it == normals_map.end() //vertex not found
+            || patch_vector_it->second.find(surf_i) == patch_vector_it->second.end())//patch not found
         {
           normals_map[vi][surf_i] = n;
         }
