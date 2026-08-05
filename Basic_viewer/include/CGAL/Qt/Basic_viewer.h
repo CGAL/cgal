@@ -125,6 +125,7 @@ public:
     setKeyDescription(::Qt::Key_V, "Toggles vertices display");
     setKeyDescription(::Qt::Key_W, "Toggles faces display");
     setKeyDescription(::Qt::Key_D, "Cycle colouring faces by value (distance to the plane)");
+    setKeyDescription(::Qt::ShiftModifier, ::Qt::Key_D, "Colour by value: per cell (flat) or smooth");
     setKeyDescription(::Qt::Key_Plus, "Increase size of edges");
     setKeyDescription(::Qt::Key_Minus, "Decrease size of edges");
     setKeyDescription(::Qt::ControlModifier, ::Qt::Key_Plus, "Increase size of vertices");
@@ -741,7 +742,32 @@ public:
         rendering_program_face.setUniformValue("u_ValueMax", static_cast<GLfloat>(sceneRadius()));
 
         vao[VAO_FACES].bind();
-        glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(m_scene.number_of_elements(GS::POS_FACES)));
+        const std::vector<std::vector<unsigned int>> &vols=m_scene.get_volume_faces();
+        if (m_color_map!=0 && m_color_per_cell && !vols.empty())
+        {
+          // Colour by value, per cell: one flat colour per volume, taken from its
+          // centre, so neighbouring cells do not melt into one.
+          rendering_program_face.setUniformValue("u_ColorPerCell", static_cast<GLint>(1));
+          const std::vector<CGAL::Bbox_3> &bb=m_scene.get_volume_bboxes();
+          for (std::size_t v=0; v<vols.size(); ++v)
+          {
+            const CGAL::Bbox_3 &b=bb[v];
+            rendering_program_face.setUniformValue("u_CellCentroid",
+              QVector3D(float((b.xmin()+b.xmax())*0.5), float((b.ymin()+b.ymax())*0.5),
+                        float((b.zmin()+b.zmax())*0.5)));
+            for (unsigned int fi : vols[v])
+            {
+              const std::pair<unsigned int, unsigned int> &r=m_scene.face_range(fi);
+              glDrawArrays(GL_TRIANGLES, static_cast<GLint>(r.first),
+                           static_cast<GLsizei>(r.second));
+            }
+          }
+        }
+        else
+        {
+          rendering_program_face.setUniformValue("u_ColorPerCell", static_cast<GLint>(0));
+          glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(m_scene.number_of_elements(GS::POS_FACES)));
+        }
         glDisable(GL_POLYGON_OFFSET_FILL);
       };
 
@@ -2312,6 +2338,14 @@ protected:
         }
         update();
       }
+      else if ((e->key()==::Qt::Key_D) && (modifiers==::Qt::ShiftModifier))
+      {
+        // Colour by value: one flat colour per cell instead of a smooth gradient,
+        // so neighbouring cells with a close value do not melt together.
+        m_color_per_cell=!m_color_per_cell;
+        displayMessage(QString("Colour by value per cell=%1.").arg(m_color_per_cell?"true":"false"));
+        update();
+      }
       else if ((e->key()==::Qt::Key_Plus) && (!modifiers.testFlag(::Qt::ControlModifier))) // No ctrl
       {
         m_size_edges+=.5;
@@ -2568,6 +2602,7 @@ protected:
   std::vector<std::vector<unsigned int>> m_point_owners; // whole-volume clip: per vertex, owning volumes
   bool m_clip_owners_valid = false; // whole-volume clip: are the owner lists up to date
   int m_color_map=0; // colour by value: 0 off, 1 heat, 2 jet, 3 grey ramp
+  bool m_color_per_cell=false; // colour by value: one flat colour per cell (Shift+D)
   CGAL::qglviewer::ManipulatedFrame* m_frame_plane=nullptr;
 
   // Buffer for clipping plane is not stored in the scene because it is not
