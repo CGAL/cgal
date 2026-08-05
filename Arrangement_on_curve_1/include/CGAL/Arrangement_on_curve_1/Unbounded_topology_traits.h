@@ -480,8 +480,8 @@ public:
   // --------------------------------------------------------------------------
   Edge_descriptor left_edge(Vertex_descriptor v) { return v_ref(v).m_left; }
   Edge_descriptor right_edge(Vertex_descriptor v) { return v_ref(v).m_right; }
-  Vertex_descriptor left_vertex(Edge_descriptor   e) { return e_ref(e).m_left; }
-  Vertex_descriptor right_vertex(Edge_descriptor   e) { return e_ref(e).m_right; }
+  Vertex_descriptor left_vertex(Edge_descriptor e) { return e_ref(e).m_left; }
+  Vertex_descriptor right_vertex(Edge_descriptor e) { return e_ref(e).m_right; }
 
   Edge_const_descriptor left_edge(Vertex_const_descriptor v) const { return v_ref(v).m_left; }
   Edge_const_descriptor right_edge(Vertex_const_descriptor v) const { return v_ref(v).m_right; }
