@@ -1079,6 +1079,44 @@ bool is_cells_set_manifold(const C3t3&,
   return true;
 }
 
+template<typename C3t3>
+bool collapse_avoids_infinite_adjacency(const typename C3t3::Edge& edge,
+                                        const Collapse_type collapse_type,
+                                        const C3t3& c3t3)
+{
+  typedef typename C3t3::Triangulation   Tr;
+  typedef typename Tr::Cell_handle       Cell_handle;
+  typedef typename Tr::Vertex_handle     Vertex_handle;
+  typedef typename Tr::Cell_circulator   Cell_circulator;
+
+  const Tr& tr = c3t3.triangulation();
+
+  const Vertex_handle v0 = edge.first->vertex(edge.second);
+  const Vertex_handle v1 = edge.first->vertex(edge.third);
+  const Vertex_handle vkept    = (collapse_type == TO_V1) ? v1 : v0;
+  const Vertex_handle vdeleted = (collapse_type == TO_V1) ? v0 : v1;
+
+  Cell_circulator circ = tr.incident_cells(edge);
+  const Cell_circulator done = circ;
+  do
+  {
+    const int v0_id = circ->index(vkept);
+    const int v1_id = circ->index(vdeleted);
+
+    const Cell_handle n0_ch = circ->neighbor(v0_id);
+    const Cell_handle n1_ch = circ->neighbor(v1_id);
+
+    const int ch_id_in_n0 = n0_ch->index(circ);
+    const int ch_id_in_n1 = n1_ch->index(circ);
+
+    if (tr.is_infinite(n0_ch->vertex(ch_id_in_n0))
+     && tr.is_infinite(n1_ch->vertex(ch_id_in_n1)))
+      return false;
+  } while (++circ != done);
+
+  return true;
+}
+
 enum Angle_verdict { ANGLES_REJECTED, ANGLES_ACCEPTED, ANGLES_UNDECIDED };
 
 template<typename C3t3, typename CellRange>
@@ -1266,6 +1304,10 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
       CollapseTriangulation<C3t3> local_tri(edge, cells_to_insert, collapse_type);
       if(local_tri.collapse() != VALID)
         return Vertex_handle();
+    }
+    else if(!collapse_avoids_infinite_adjacency<C3t3>(edge, collapse_type, c3t3))
+    {
+      return Vertex_handle();
     }
 
 #ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
