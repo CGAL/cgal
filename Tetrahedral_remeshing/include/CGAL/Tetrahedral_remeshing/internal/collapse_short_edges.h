@@ -443,10 +443,10 @@ bool collapse_keeps_orientations(const CellRange& star,
     if (ch->has_vertex(v_other))
       continue;
 
-    std::array<Point, 4> pts = { ch->vertex(0)->point(),
-                                 ch->vertex(1)->point(),
-                                 ch->vertex(2)->point(),
-                                 ch->vertex(3)->point() };
+    std::array<Point, 4> pts = { point(ch->vertex(0)->point()),
+                                 point(ch->vertex(1)->point()),
+                                 point(ch->vertex(2)->point()),
+                                 point(ch->vertex(3)->point()) };
     pts[ch->index(v_moved)] = new_pos;
     if (CGAL::orientation(pts[0], pts[1], pts[2], pts[3]))
         != CGAL::POSITIVE)
