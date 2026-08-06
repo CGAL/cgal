@@ -988,6 +988,22 @@ public:
           clipping_plane_rendering_transparency);
         rendering_program_face.setUniformValue("u_ClipPlane", clipPlane);
         rendering_program_face.setUniformValue("u_PointPlane", plane_point);
+        // Colour by value: the kept volumes follow the same colour map as the other
+        // face modes, per fragment or one flat value per cell.
+        rendering_program_face.setUniformValue("u_ColorMapMode", static_cast<GLfloat>(m_color_map));
+        rendering_program_face.setUniformValue("u_ValueMin", static_cast<GLfloat>(-sceneRadius()));
+        rendering_program_face.setUniformValue("u_ValueMax", static_cast<GLfloat>(sceneRadius()));
+        const bool per_cell=(m_color_map!=0 && m_color_value!=0 && num_volumes!=0);
+        const bool size_mode=(m_color_value==2);
+        if (per_cell && size_mode)
+        {
+          if (!m_cell_sizes_valid) { compute_cell_sizes(); }
+          rendering_program_face.setUniformValue("u_ValueMin", static_cast<GLfloat>(m_cell_size_min));
+          rendering_program_face.setUniformValue("u_ValueMax", static_cast<GLfloat>(m_cell_size_max));
+        }
+        rendering_program_face.setUniformValue("u_ColorPerCell", static_cast<GLint>(per_cell?1:0));
+        const QVector3D n=QVector3D(clipPlane).normalized();
+        const QVector3D pt=plane_point.toVector3D();
 
         vao[VAO_FACES].bind();
         if (num_volumes == 0)
@@ -997,9 +1013,24 @@ public:
         }
         else
         {
+          const std::vector<CGAL::Bbox_3> &bb = m_scene.get_volume_bboxes();
           for (std::size_t v = 0; v < num_volumes; ++v)
           {
             if (!m_volumes_kept[v]) { continue; }
+            if (per_cell)
+            {
+              float value;
+              if (size_mode) { value=m_cell_sizes[v]; }
+              else
+              {
+                const CGAL::Bbox_3 &b=bb[v];
+                const QVector3D c(float((b.xmin()+b.xmax())*0.5),
+                                  float((b.ymin()+b.ymax())*0.5),
+                                  float((b.zmin()+b.zmax())*0.5));
+                value=QVector3D::dotProduct(c-pt, n);
+              }
+              rendering_program_face.setUniformValue("u_CellValue", static_cast<GLfloat>(value));
+            }
             for (unsigned int fi : volumes[v])
             {
               const std::pair<unsigned int, unsigned int> &r = m_scene.face_range(fi);
