@@ -23,14 +23,6 @@
  */
 class AosApproximateTraits_2 {
 public:
-  /// \name Types
-  /// @{
-
-  //! the approximate point.
-  typedef unspecified_type Approximate_point_2;
-
-  /// @}
-
   /// \name Functor Types
   /// @{
 
