@@ -125,7 +125,7 @@ public:
     setKeyDescription(::Qt::Key_V, "Toggles vertices display");
     setKeyDescription(::Qt::Key_W, "Toggles faces display");
     setKeyDescription(::Qt::Key_D, "Cycle colouring faces by value (distance to the plane)");
-    setKeyDescription(::Qt::ShiftModifier, ::Qt::Key_D, "Colour by value: per cell (flat) or smooth");
+    setKeyDescription(::Qt::ShiftModifier, ::Qt::Key_D, "Colour by value: distance smooth, distance per cell, size per cell");
     setKeyDescription(::Qt::Key_Plus, "Increase size of edges");
     setKeyDescription(::Qt::Key_Minus, "Decrease size of edges");
     setKeyDescription(::Qt::ControlModifier, ::Qt::Key_Plus, "Increase size of vertices");
@@ -743,18 +743,35 @@ public:
 
         vao[VAO_FACES].bind();
         const std::vector<std::vector<unsigned int>> &vols=m_scene.get_volume_faces();
-        if (m_color_map!=0 && m_color_per_cell && !vols.empty())
+        if (m_color_map!=0 && m_color_value!=0 && !vols.empty())
         {
-          // Colour by value, per cell: one flat colour per volume, taken from its
-          // centre, so neighbouring cells do not melt into one.
+          // Per cell: draw each volume with one flat value, so a whole cell takes
+          // one colour and neighbouring cells do not melt into one. The value is the
+          // centre's distance to the plane, or the cell size.
           rendering_program_face.setUniformValue("u_ColorPerCell", static_cast<GLint>(1));
           const std::vector<CGAL::Bbox_3> &bb=m_scene.get_volume_bboxes();
+          const bool size_mode=(m_color_value==2);
+          if (size_mode)
+          {
+            if (!m_cell_sizes_valid) { compute_cell_sizes(); }
+            rendering_program_face.setUniformValue("u_ValueMin", static_cast<GLfloat>(m_cell_size_min));
+            rendering_program_face.setUniformValue("u_ValueMax", static_cast<GLfloat>(m_cell_size_max));
+          }
+          const QVector3D n=QVector3D(clipPlane).normalized();
+          const QVector3D pt=plane_point.toVector3D();
           for (std::size_t v=0; v<vols.size(); ++v)
           {
-            const CGAL::Bbox_3 &b=bb[v];
-            rendering_program_face.setUniformValue("u_CellCentroid",
-              QVector3D(float((b.xmin()+b.xmax())*0.5), float((b.ymin()+b.ymax())*0.5),
-                        float((b.zmin()+b.zmax())*0.5)));
+            float value;
+            if (size_mode) { value=m_cell_sizes[v]; }
+            else
+            {
+              const CGAL::Bbox_3 &b=bb[v];
+              const QVector3D c(float((b.xmin()+b.xmax())*0.5),
+                                float((b.ymin()+b.ymax())*0.5),
+                                float((b.zmin()+b.zmax())*0.5));
+              value=QVector3D::dotProduct(c-pt, n);
+            }
+            rendering_program_face.setUniformValue("u_CellValue", static_cast<GLfloat>(value));
             for (unsigned int fi : vols[v])
             {
               const std::pair<unsigned int, unsigned int> &r=m_scene.face_range(fi);
@@ -1746,9 +1763,30 @@ protected:
     }
   }
 
+  // Colour by value (size): one size per cell, the bounding-box volume, with the
+  // range over all cells so the palette spans from the smallest to the largest.
+  void compute_cell_sizes()
+  {
+    const std::vector<CGAL::Bbox_3> &bb=m_scene.get_volume_bboxes();
+    m_cell_sizes.resize(bb.size());
+    m_cell_size_min=(std::numeric_limits<float>::max)();
+    m_cell_size_max=0.f;
+    for (std::size_t v=0; v<bb.size(); ++v)
+    {
+      const CGAL::Bbox_3 &b=bb[v];
+      const float s=float((b.xmax()-b.xmin())*(b.ymax()-b.ymin())*(b.zmax()-b.zmin()));
+      m_cell_sizes[v]=s;
+      if (s<m_cell_size_min) { m_cell_size_min=s; }
+      if (s>m_cell_size_max) { m_cell_size_max=s; }
+    }
+    if (bb.empty()) { m_cell_size_min=0.f; m_cell_size_max=1.f; }
+    m_cell_sizes_valid=true;
+  }
+
   void initialize_buffers()
   {
     set_camera_mode();
+    m_cell_sizes_valid=false; // colour by value: the scene may have changed
     rendering_program_p_l.bind();
 
     unsigned int bufn = 0;
@@ -2340,10 +2378,17 @@ protected:
       }
       else if ((e->key()==::Qt::Key_D) && (modifiers==::Qt::ShiftModifier))
       {
-        // Colour by value: one flat colour per cell instead of a smooth gradient,
-        // so neighbouring cells with a close value do not melt together.
-        m_color_per_cell=!m_color_per_cell;
-        displayMessage(QString("Colour by value per cell=%1.").arg(m_color_per_cell?"true":"false"));
+        // Colour by value: pick the value and how it is shown. Distance to the plane
+        // as a smooth gradient, the same distance as one flat colour per cell, then
+        // the cell size as one flat colour per cell.
+        m_color_value=(m_color_value+1)%3;
+        switch(m_color_value)
+        {
+        case 0: displayMessage(QString("Colour by value = distance (smooth)")); break;
+        case 1: displayMessage(QString("Colour by value = distance (per cell)")); break;
+        case 2: displayMessage(QString("Colour by value = size (per cell)")); break;
+        default: break;
+        }
         update();
       }
       else if ((e->key()==::Qt::Key_Plus) && (!modifiers.testFlag(::Qt::ControlModifier))) // No ctrl
@@ -2602,7 +2647,12 @@ protected:
   std::vector<std::vector<unsigned int>> m_point_owners; // whole-volume clip: per vertex, owning volumes
   bool m_clip_owners_valid = false; // whole-volume clip: are the owner lists up to date
   int m_color_map=0; // colour by value: 0 off, 1 heat, 2 jet, 3 grey ramp
-  bool m_color_per_cell=false; // colour by value: one flat colour per cell (Shift+D)
+  int m_color_value=0; // colour by value source (Shift+D): 0 distance smooth,
+                       // 1 distance per cell, 2 size per cell
+  std::vector<float> m_cell_sizes; // colour by value: per-cell size (bbox volume)
+  float m_cell_size_min=0.f; // colour by value: size range for the palette
+  float m_cell_size_max=1.f;
+  bool m_cell_sizes_valid=false; // colour by value: recompute the sizes on scene change
   CGAL::qglviewer::ManipulatedFrame* m_frame_plane=nullptr;
 
   // Buffer for clipping plane is not stored in the scene because it is not

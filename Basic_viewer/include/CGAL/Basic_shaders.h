@@ -81,10 +81,10 @@ uniform mediump float u_RenderingTransparency;
 uniform mediump float u_ColorMapMode;
 uniform mediump float u_ValueMin;
 uniform mediump float u_ValueMax;
-// Per cell: use the cell centre instead of the fragment position, so a whole cell
-// takes one flat colour and neighbouring cells do not melt together.
+// Per cell: the viewer gives one value for the whole cell (its centre distance or
+// its size), so a whole cell takes one flat colour and neighbouring cells do not melt.
 uniform int           u_ColorPerCell;
-uniform highp   vec3  u_CellCentroid;
+uniform highp   float u_CellValue;
 
 vec3 colour_palette(float t, float mode)
 {
@@ -109,8 +109,8 @@ void main(void)
   vec3 base = fColor.rgb;
   if (u_ColorMapMode > 0.5)
   {
-    vec3 p = (u_ColorPerCell != 0) ? u_CellCentroid : ls_fP.xyz;
-    float value = dot(p-u_PointPlane.xyz, normalize(u_ClipPlane.xyz));
+    float value = (u_ColorPerCell != 0) ? u_CellValue
+                : dot(ls_fP.xyz-u_PointPlane.xyz, normalize(u_ClipPlane.xyz));
     float t = clamp((value-u_ValueMin)/max(u_ValueMax-u_ValueMin, 1e-6), 0.0, 1.0);
     base = colour_palette(t, u_ColorMapMode);
   }
