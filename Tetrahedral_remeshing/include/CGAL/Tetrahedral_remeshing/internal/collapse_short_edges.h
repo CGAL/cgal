@@ -436,7 +436,7 @@ bool collapse_keeps_orientations(const CellRange& star,
                                  const typename C3t3::Vertex_handle v_other,
                                  const typename C3t3::Triangulation::Geom_traits::Point_3& new_pos)
 {
-  typedef typename C3t3::Triangulation::Point Point;
+  typedef typename C3t3::Triangulation::Geom_traits::Point_3 Point;
 
   for (const auto& ch : star)
   {
