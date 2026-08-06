@@ -349,6 +349,23 @@ namespace Eigen {
     };
   };
 
+  template<class A, class B, class C>struct ScalarBinaryOpTraits;
+  template<typename BinaryOp>
+    struct ScalarBinaryOpTraits<CGAL::Gmpfi, double, BinaryOp> {
+      typedef CGAL::Gmpfi ReturnType;
+    };
+  template<typename BinaryOp>
+    struct ScalarBinaryOpTraits<double, CGAL::Gmpfi, BinaryOp> {
+      typedef CGAL::Gmpfi ReturnType;
+    };
+
+namespace internal {
+    template<class> struct significant_decimals_impl;
+    template<>
+      struct significant_decimals_impl<CGAL::Gmpfi>
+      : significant_decimals_impl<typename CGAL::Gmpfi::value_type> { };
+
+
   // Without this, when computing some decompositions for a matrix of
     // intervals, Eigen looks for the largest element in a column (for
     // instance). There may easily be 2 equal, slightly imprecise numbers that
@@ -398,7 +415,7 @@ namespace Eigen {
       };
     };
 
-
+  }
 
 
 }
