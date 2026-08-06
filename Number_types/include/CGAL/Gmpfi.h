@@ -357,7 +357,7 @@ namespace Eigen {
     // strategy for picking the pivot.
     template<typename> struct scalar_score_coeff_op;
 
-    template<> struct scalar_score_coeff_op<CGAL::Gmpfi> {> {
+    template<> struct scalar_score_coeff_op<CGAL::Gmpfi> {
       // If all coeffs can be 0, it is essential to designate as the best one
       // that can be non-zero and has a non-zero score, if there is one.
       struct result_type : boost::totally_ordered1<result_type> {
