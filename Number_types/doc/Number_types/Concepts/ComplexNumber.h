@@ -1,5 +1,5 @@
 /*!
-  \ingroup PkgHyperbolicSurfaceTriangulation2Concepts
+  \ingroup PkgNumberTypesConcepts
   \cgalConcept
 
   Describes a complex number type over a `FieldNumberType` for its real and imaginary parts.
