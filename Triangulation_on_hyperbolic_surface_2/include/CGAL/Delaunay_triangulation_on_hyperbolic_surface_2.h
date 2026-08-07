@@ -1094,7 +1094,7 @@ to_stream(std::ostream & s) const
         s << darts_ids[Base::const_ccw(it)] << std::endl;
         Anchor anch = anchor(it);
         s << darts_ids[anch.dart] << std::endl;
-        for(int i = 0; i < NB_SIDES ; ++i) {
+        for(unsigned i = 0; i < NB_SIDES ; ++i) {
             s << anch.vertices[i].x() << std::endl;
             s << anch.vertices[i].y() << std::endl;
         }

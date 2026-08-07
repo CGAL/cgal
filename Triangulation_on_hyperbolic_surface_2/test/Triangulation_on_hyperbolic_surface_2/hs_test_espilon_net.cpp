@@ -51,7 +51,7 @@ Domain build_domain()
     return Domain(vertices, pairings);
 }
 
-int main(int argc, char *argv[])
+int main()
 {
     Domain domain = build_domain();
     Del_Traits gt = Del_Traits();
