@@ -448,8 +448,7 @@ bool collapse_keeps_orientations(const CellRange& star,
                                  point(ch->vertex(2)->point()),
                                  point(ch->vertex(3)->point()) };
     pts[ch->index(v_moved)] = new_pos;
-    if (CGAL::orientation(pts[0], pts[1], pts[2], pts[3]))
-        != CGAL::POSITIVE)
+    if (CGAL::orientation(pts[0], pts[1], pts[2], pts[3]) != CGAL::POSITIVE)
       return false;
   }
   return true;
@@ -1184,10 +1183,10 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
   const auto orientations_ok = [&](const Collapse_type ct, const Point& pos)
   {
     if ((ct == TO_V1 || ct == TO_MIDPOINT)
-        && !collapse_keeps_orientations<C3t3>(star_of_v0(), v0, v1, pos))
+        && !collapse_keeps_orientations<C3t3>(star_of_v0(), v0, v1, point(pos)))
       return false;
     if ((ct == TO_V0 || ct == TO_MIDPOINT)
-        && !collapse_keeps_orientations<C3t3>(star_of_v1(), v1, v0, pos))
+        && !collapse_keeps_orientations<C3t3>(star_of_v1(), v1, v0, point(pos)))
       return false;
     return true;
   };
