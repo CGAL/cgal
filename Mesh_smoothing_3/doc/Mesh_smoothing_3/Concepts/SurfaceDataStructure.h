@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgMeshSmoothing3Concepts
+\ingroup pkgMeshSmoothing3Concepts
 \cgalConcept
 
 The concept `SurfaceDataStructure` describes the way the surface mesh will be accessed.
@@ -57,7 +57,7 @@ Returns an identifier (patch id, face id, ...) related to a face.
 Surface_patch_index patch_id(Face_descriptor face) const;
 
 /*!
-Provides an iterable range of Vertex_descriptor as defined in `MeshDataStructure` to iterate over the vertices of a face. 
+Provides an iterable range of Vertex_descriptor as defined in `MeshDataStructure` to iterate over the vertices of a face.
 */
 unspecified_type face_vertices(Face_descriptor face) const;
 
