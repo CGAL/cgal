@@ -121,7 +121,7 @@ get(const Edge_to_point_property_map<C3t3>&, const typename C3t3::Edge& e)
 
 
 /*!
-* \ingroup pkgMeshSmoothing3Fonctions
+* \ingroup pkgMeshSmoothing3Functions
 * Smooth a tetrahedral mesh while preserving the boundary and curve features.
 *
 * This function takes as input a `Mesh_complex_3_in_triangulation_3` and will iteratively
