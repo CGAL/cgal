@@ -1,7 +1,13 @@
 /// \defgroup PkgMeshSmoothing3Ref Reference Manual
-
-/// \defgroup pkgMeshSmoothing3Fonctions Functions
+/// \defgroup pkgMeshSmoothing3Concepts Concepts
 /// \ingroup PkgMeshSmoothing3Ref
+
+/// \defgroup pkgMeshSmoothing3Classes Classes
+/// \ingroup PkgMeshSmoothing3Ref
+
+/// \defgroup pkgMeshSmoothing3Functions Functions
+/// \ingroup PkgMeshSmoothing3Ref
+
 
 
 /*!

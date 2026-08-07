@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgMeshSmoothing3Concepts
+\ingroup pkgMeshSmoothing3Concepts
 \cgalConcept
 
 The concept `MeshDataStructure` describes the way the tetrahedral mesh will be accessed and modified.

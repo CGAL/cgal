@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgMeshSmoothing3Concepts
+\ingroup pkgMeshSmoothing3Concepts
 \cgalConcept
 
 The concept `PolylinesDataStructure` describes the way the curves on the mesh will be accessed.
