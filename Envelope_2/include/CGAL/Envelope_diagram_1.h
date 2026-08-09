@@ -102,15 +102,7 @@ public:
   void set_leftmost(Edge_handle e) { this->topology_traits().set_unbounded_left_edge(e); }
   void set_rightmost(Edge_handle e) { this->topology_traits().set_unbounded_right_edge(e); }
 
-  void clear() {
-    // Reset the topology traits in-place (clears all vertex/edge lists and
-    // reinitialises the single unbounded edge) without touching the shared
-    // geometry traits pointer.
-    // This is strictly faster than Base::operator=(Base(...)) which would
-    // copy the shared_ptr (atomic increment + later decrement) and also
-    // call make_shared<Geom_traits_1> in the default-constructor path.
-    this->topology_traits() = Topol_traits{};
-  }
+  void clear() { this->topology_traits().clear(); }
 
   // --------------------------------------------------------------------------
   // CURVE DATA ACCESSORS & MUTATORS
