@@ -131,6 +131,11 @@ public:
     Curve_pointer_vector reg_vec;
     Curve_pointer_vector vert_vec;
 
+    // Pre-reserve to avoid vector buffer growth
+    auto num_curves = std::distance(begin, end);
+    reg_vec.reserve(num_curves);
+    vert_vec.reserve(num_curves);
+
     for (auto iter = begin; iter != end; ++iter) {
       if (is_vertical(*iter)) vert_vec.push_back(&(*iter));
       else reg_vec.push_back(&(*iter));
