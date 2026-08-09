@@ -422,6 +422,22 @@ public:
     std::swap(m_unbounded_right_edge, other.m_unbounded_right_edge);
   }
 
+  /*! clears
+   */
+  void clear() {
+    m_vertices.clear();
+    m_edges.clear();
+    m_edges.emplace_back();
+    if constexpr (UseVector) {
+      m_unbounded_left_edge = 0;
+      m_unbounded_right_edge = 0;
+    }
+    else {
+      m_unbounded_left_edge = m_edges.begin();
+      m_unbounded_right_edge = m_edges.begin();
+    }
+  }
+
   // --------------------------------------------------------------------------
   // QUERIES
   // --------------------------------------------------------------------------
