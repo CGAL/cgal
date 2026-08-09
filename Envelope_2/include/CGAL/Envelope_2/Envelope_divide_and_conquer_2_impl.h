@@ -375,7 +375,6 @@ compare_y_at_end(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
     }
 
     const Point_2& left2 = (curve_end == ARR_MIN_END) ? min_vertex(xcv2) : max_vertex(xcv2);
-
     const auto cmp_x_point_curve_end = m_traits->compare_x_point_curve_end_2_object();
     Comparison_result l_res = cmp_x_point_curve_end(left2, xcv1, curve_end);
 
@@ -387,20 +386,15 @@ compare_y_at_end(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
   }
   else if (ps_y2 != ARR_INTERIOR) {
     const Point_2& left1 = (curve_end == ARR_MIN_END) ? min_vertex(xcv1) : max_vertex(xcv1);
-
     const auto cmp_x_point_curve_end = m_traits->compare_x_point_curve_end_2_object();
     Comparison_result l_res = cmp_x_point_curve_end(left1, xcv2, curve_end);
-
     return ((l_res == LARGER) ? compare_y_at_x(left1, xcv2) : ((ps_y2 == ARR_BOTTOM_BOUNDARY) ? LARGER : SMALLER));
   }
 
   const auto compare_xy = m_traits->compare_xy_2_object();
-
   const Point_2& left1 = (curve_end == ARR_MIN_END) ? min_vertex(xcv1) : max_vertex(xcv1);
   const Point_2& left2 = (curve_end == ARR_MIN_END) ? min_vertex(xcv2) : max_vertex(xcv2);
-
   Comparison_result l_res = compare_xy(left1, left2);
-
   return ((l_res != SMALLER) ? compare_y_at_x(left1, xcv2) : CGAL::opposite(compare_y_at_x(left2, xcv1)));
 }
 
@@ -443,7 +437,7 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1, Edge_const_handle 
   const Point_2* p_v = v_exists ? &( (origin_of_v == SMALLER) ? d1.point(v) : d2.point(v) ) : nullptr;
 
   while (! objects.empty()) {
-    auto obj = objects.front();
+    auto obj = std::move(objects.front());
     objects.pop_front();
 
     if ((intersection_point = std::get_if<Intersection_point>(&obj)) != nullptr) {
@@ -559,7 +553,6 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1, Edge_const_handle 
     Edge_handle e_last = out_d.rightmost();
     if (out_d.has_left_vertex(e_last)) {
       Vertex_handle v_to_be_updated = out_d.left_vertex(e_last);
-
       if (origin_of_v == EQUAL) {
         Vertex_const_handle v1 = d1.right_vertex(e1);
         Vertex_const_handle v2 = d2.right_vertex(e2);
@@ -569,18 +562,16 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1, Edge_const_handle 
       else {
         const Envelope_diagram_1& src_d = (origin_of_v == SMALLER) ? d2 : d1;
         Edge_const_handle e = (origin_of_v == SMALLER) ? e2 : e1;
-
         out_d.add_vertex_curves(v_to_be_updated, src_d.vertex_curves(v).begin(), src_d.vertex_curves(v).end());
         out_d.add_vertex_curves(v_to_be_updated, src_d.edge_curves(e).begin(), src_d.edge_curves(e).end());
       }
     }
-
     return;
   }
 
   if (! v_exists) {
     switch (current_res) {
-    case SMALLER:
+     case SMALLER:
       out_d.add_edge_curves(out_d.rightmost(), d1.edge_curves(e1).begin(), d1.edge_curves(e1).end());
       return;
 
@@ -600,59 +591,47 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1, Edge_const_handle 
   }
 
   if (current_res == SMALLER) {
-    Vertex_handle new_v;
-
     if (origin_of_v == SMALLER) {
-      new_v = _append_vertex(out_d, d1.point(v), e1, d1);
+      Vertex_handle new_v = _append_vertex(out_d, d1.point(v), e1, d1);
       out_d.add_vertex_curves(new_v, d1.vertex_curves(v).begin(), d1.vertex_curves(v).end());
+      return;
     }
-    else {
-      if (origin_of_v == EQUAL) {
-        new_v = _append_vertex(out_d, d2.point(v), e1, d1);
-        out_d.add_vertex_curves(new_v, d2.vertex_curves(v).begin(), d2.vertex_curves(v).end());
 
-        Vertex_const_handle v1 = d1.right_vertex(e1);
-        out_d.add_vertex_curves(new_v, d1.vertex_curves(v1).begin(), d1.vertex_curves(v1).end());
-      }
-      else {
-        const Point_2& p_v = d2.point(v);
-        const Comparison_result res = m_traits->compare_y_at_x_2_object()(p_v, d1.edge_curves(e1).front());
-
-        if (res == EQUAL || ((m_env_type == LOWER) && (res == SMALLER)) || ((m_env_type == UPPER) && (res == LARGER))) {
-          new_v = _append_vertex(out_d, p_v, e1, d1);
-          out_d.add_vertex_curves(new_v, d2.vertex_curves(v).begin(), d2.vertex_curves(v).end());
-
-          if (res == EQUAL) out_d.add_vertex_curves(new_v, d1.edge_curves(e1).begin(), d1.edge_curves(e1).end());
-        }
-      }
-    }
-  }
-  else {
-    Vertex_handle new_v;
-
-    if (origin_of_v != SMALLER) {
-      new_v = _append_vertex(out_d, d2.point(v), e2, d2);
+    if (origin_of_v == EQUAL) {
+      Vertex_handle new_v = _append_vertex(out_d, d2.point(v), e1, d1);
       out_d.add_vertex_curves(new_v, d2.vertex_curves(v).begin(), d2.vertex_curves(v).end());
-
-      if (origin_of_v == EQUAL) {
-        Vertex_const_handle v1 = d1.right_vertex(e1);
-        out_d.add_vertex_curves(new_v, d1.vertex_curves(v1).begin(), d1.vertex_curves(v1).end());
-      }
+      Vertex_const_handle v1 = d1.right_vertex(e1);
+      out_d.add_vertex_curves(new_v, d1.vertex_curves(v1).begin(), d1.vertex_curves(v1).end());
+      return;
     }
-    else {
-      const Point_2& p_v = d1.point(v);
-      const Comparison_result res = m_traits->compare_y_at_x_2_object()(p_v, d2.edge_curves(e2).front());
 
-      if (res == EQUAL || ((m_env_type == LOWER) && (res == SMALLER)) || ((m_env_type == UPPER) && (res == LARGER))) {
-        new_v = _append_vertex(out_d, p_v, e2, d2);
-        out_d.add_vertex_curves(new_v, d1.vertex_curves(v).begin(), d1.vertex_curves(v).end());
-
-        if (res == EQUAL) out_d.add_vertex_curves(new_v, d2.edge_curves(e2).begin(), d2.edge_curves(e2).end());
-      }
+    const Point_2& p2 = d2.point(v);
+    const Comparison_result res = m_traits->compare_y_at_x_2_object()(p2, d1.edge_curves(e1).front());
+    if (res == EQUAL || ((m_env_type == LOWER) && (res == SMALLER)) || ((m_env_type == UPPER) && (res == LARGER))) {
+      Vertex_handle new_v = _append_vertex(out_d, p2, e1, d1);
+      out_d.add_vertex_curves(new_v, d2.vertex_curves(v).begin(), d2.vertex_curves(v).end());
+      if (res == EQUAL) out_d.add_vertex_curves(new_v, d1.edge_curves(e1).begin(), d1.edge_curves(e1).end());
     }
+    return;
   }
 
-  return;
+  if (origin_of_v != SMALLER) {
+    Vertex_handle new_v = _append_vertex(out_d, d2.point(v), e2, d2);
+    out_d.add_vertex_curves(new_v, d2.vertex_curves(v).begin(), d2.vertex_curves(v).end());
+    if (origin_of_v == EQUAL) {
+      Vertex_const_handle v1 = d1.right_vertex(e1);
+      out_d.add_vertex_curves(new_v, d1.vertex_curves(v1).begin(), d1.vertex_curves(v1).end());
+    }
+    return;
+  }
+
+  const Point_2& p1 = d1.point(v);
+  const Comparison_result res = m_traits->compare_y_at_x_2_object()(p1, d2.edge_curves(e2).front());
+  if (res == EQUAL || ((m_env_type == LOWER) && (res == SMALLER)) || ((m_env_type == UPPER) && (res == LARGER))) {
+    Vertex_handle new_v = _append_vertex(out_d, p1, e2, d2);
+    out_d.add_vertex_curves(new_v, d1.vertex_curves(v).begin(), d1.vertex_curves(v).end());
+    if (res == EQUAL) out_d.add_vertex_curves(new_v, d2.edge_curves(e2).begin(), d2.edge_curves(e2).end());
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -785,19 +764,15 @@ _merge_vertical_segments(Curve_pointer_vector& vert_vec, Envelope_diagram_1& out
       }
     }
     else {
-      Vertex_handle new_v;
-
       if (out_d.empty_edge_curves(e)) {
-        new_v = _split_edge(out_d, p, e);
+        Vertex_handle new_v = _split_edge(out_d, p, e);
         out_d.add_vertex_curves(new_v, env_cvs.begin(), env_cvs.end());
       }
       else {
         res = comp_y_at_x(p, out_d.edge_curves(e).front());
-
         if (((m_env_type == LOWER) && (res != LARGER)) || ((m_env_type == UPPER) && (res != SMALLER))) {
-          new_v = _split_edge(out_d, p, e);
+          Vertex_handle new_v = _split_edge(out_d, p, e);
           out_d.add_vertex_curves(new_v, env_cvs.begin(), env_cvs.end());
-
           if (res == EQUAL) out_d.add_vertex_curve(new_v, out_d.edge_curves(e).front());
         }
       }
@@ -805,8 +780,6 @@ _merge_vertical_segments(Curve_pointer_vector& vert_vec, Envelope_diagram_1& out
 
     iter = next;
   }
-
-  return;
 }
 
 // ---------------------------------------------------------------------------
