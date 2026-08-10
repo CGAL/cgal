@@ -47,11 +47,10 @@ bool read_segments(const char* filename, Coord_input_format format, Curve_list& 
   }
 
   // Read the segments.
-  unsigned int n_segments;
+  std::size_t n_segments;
   ifile >> n_segments;
 
-  unsigned int k;
-  for (k = 0; k < n_segments; k++) {
+  for (std::size_t k = 0; k < n_segments; ++k) {
     NT x1, y1, x2, y2;
 
     // Read the coordinates of the current segment.
@@ -108,24 +107,23 @@ bool find_curve(I begin, I end, const Curve_2& c) {
  */
 bool check_envelope(const Curve_list& segs, const Diagram_1& diag, bool is_lower) {
   // Go over minimization diagram.
-  Diagram_1::Edge_const_handle e = diag.leftmost();
-  Diagram_1::Vertex_const_handle v;
+  auto e = diag.leftmost();
 
   // If the diagram is empty, the segment set must also be empty.
   if (e == diag.rightmost()) return (segs.empty());
 
   // Start from the first finite edge.
   Kernel ker;
-  Kernel::Construct_midpoint_2 midpoint = ker.construct_midpoint_2_object();
-  Kernel::Construct_min_vertex_2 min_ver = ker.construct_min_vertex_2_object();
-  Kernel::Construct_max_vertex_2 max_ver = ker.construct_max_vertex_2_object();
-  Kernel::Compare_y_at_x_2 comp_y_at_x = ker.compare_y_at_x_2_object();
+  auto midpoint = ker.construct_midpoint_2_object();
+  auto min_ver = ker.construct_min_vertex_2_object();
+  auto max_ver = ker.construct_max_vertex_2_object();
+  auto comp_y_at_x = ker.compare_y_at_x_2_object();
   Point_2 p_mid;
   CGAL::Comparison_result res1, res2;
   CGAL::Comparison_result y_res;
   Curve_list::const_iterator sit;
 
-  v = diag.right_vertex(e);
+  auto v = diag.right_vertex(e);
   e = diag.right_edge(v);
 
   while (e != diag.rightmost()) {
@@ -240,7 +238,7 @@ bool check_envelope(const Curve_list& segs, const Diagram_1& diag, bool is_lower
 /*!
  * The main program.
  */
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
   if (argc % 2 == 0 || argc == 1) {
     std::cerr << "Usage: " << argv[0] << " <input file> [ -q | -i | -d ]" << std::endl;
     return (1);
@@ -275,7 +273,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Compute the upper envelope.
-    Diagram_1              max_diag;
+    Diagram_1 max_diag;
 
     CGAL::upper_envelope_2(segments.begin(), segments.end(), max_diag);
 

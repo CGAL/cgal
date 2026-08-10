@@ -39,7 +39,7 @@ int main() {
   CGAL::lower_envelope_x_monotone_2(segments.begin(), segments.end(), min_diag);
 
   // Print the minimization diagram using the new API functions on min_diag.
-  Diagram_1::Edge_const_handle e = min_diag.leftmost();
+  Diagram_1::Edge_const_descriptor e = min_diag.leftmost();
   while (e != min_diag.rightmost()) {
     std::cout << "Edge:";
     if (! min_diag.empty_edge_curves(e)) {

@@ -49,12 +49,12 @@ protected:
     UPPER
   };
 
-  using Vertex_const_handle = typename Envelope_diagram_1::Vertex_const_handle;
-  using Vertex_handle = typename Envelope_diagram_1::Vertex_handle;
-  using Edge_const_handle = typename Envelope_diagram_1::Edge_const_handle;
-  using Edge_handle = typename Envelope_diagram_1::Edge_handle;
+  using Vertex_const_descriptor = typename Envelope_diagram_1::Vertex_const_descriptor;
+  using Vertex_descriptor = typename Envelope_diagram_1::Vertex_descriptor;
+  using Edge_const_descriptor = typename Envelope_diagram_1::Edge_const_descriptor;
+  using Edge_descriptor = typename Envelope_diagram_1::Edge_descriptor;
 
-  using Curve_pointer_vector = std::vector<X_monotone_curve_2 *>;
+  using Curve_pointer_vector = std::vector<X_monotone_curve_2*>;
   using Curve_pointer_iterator = typename Curve_pointer_vector::iterator;
 
   using Traits_adaptor_2 = Arr_traits_adaptor_2<Traits_2>;
@@ -209,7 +209,7 @@ protected:
    *         EQUAL if v1 = v2.
    */
   Comparison_result _compare_vertices(const Envelope_diagram_1& d1, const Envelope_diagram_1& d2,
-                                      Vertex_const_handle v1, Vertex_const_handle v2, bool& same_x) const;
+                                      Vertex_const_descriptor v1, Vertex_const_descriptor v2, bool& same_x) const;
 
   /*! Deal with an interval which is non-empty in one of the merged diagrams
    * and empty in the other.
@@ -223,8 +223,8 @@ protected:
    *                    the same place.
    * \param out_d The merged diagram.
    */
-  void _merge_single_interval(Edge_const_handle e, Edge_const_handle other_edge,
-                              Vertex_const_handle v, bool v_exists, Comparison_result origin_of_v,
+  void _merge_single_interval(Edge_const_descriptor e, Edge_const_descriptor other_edge,
+                              Vertex_const_descriptor v, bool v_exists, Comparison_result origin_of_v,
                               const Envelope_diagram_1& in_d, const Envelope_diagram_1& other_d,
                               Envelope_diagram_1& out_d);
 
@@ -240,8 +240,7 @@ protected:
    * \return
    * \todo Move it to Arr_traits_adaptor ?
    */
-  Comparison_result compare_y_at_end(const X_monotone_curve_2& xcv1,
-                                     const X_monotone_curve_2& xcv2,
+  Comparison_result compare_y_at_end(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
                                      Arr_curve_end curve_end) const;
 
   /*! Merge two non-empty intervals into the merged diagram.
@@ -257,8 +256,8 @@ protected:
    *                    is still taken from e2.
    * \param out_d The merged diagram.
    */
-  void _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1, Edge_const_handle e2, bool is_leftmost2,
-                            Vertex_const_handle v, bool v_exists, Comparison_result origin_of_v,
+  void _merge_two_intervals(Edge_const_descriptor e1, bool is_leftmost1, Edge_const_descriptor e2, bool is_leftmost2,
+                            Vertex_const_descriptor v, bool v_exists, Comparison_result origin_of_v,
                             const Envelope_diagram_1& d1, const Envelope_diagram_1& d2, Envelope_diagram_1& out_d);
 
   /*! Append a vertex to the given diagram: The new vertex that represents the
@@ -268,27 +267,27 @@ protected:
    * \param diag The diagram.
    * \param p The point that the new vertex is associated with.
    * \param e The input edge.
-   * \return A handle for the vertex.
+   * \return A descriptor for the vertex.
    */
-  Vertex_handle _append_vertex(Envelope_diagram_1& diag, const Point_2& p, Edge_const_handle e,
-                               const Envelope_diagram_1& in_d);
+  Vertex_descriptor _append_vertex(Envelope_diagram_1& diag, const Point_2& p, Edge_const_descriptor e,
+                                   const Envelope_diagram_1& in_d);
 
   /*! \struct
    * A functor used to sort vertical segments by their x-coordinate.
    */
   class Less_vertical_segment {
   private:
-    typename Traits_2::Compare_x_2 comp_x;
-    typename Traits_2::Construct_min_vertex_2 min_vertex;
+    typename Traits_2::Compare_x_2 m_comp_x;
+    typename Traits_2::Construct_min_vertex_2 m_min_vertex;
 
   public:
     Less_vertical_segment(const Traits_2* traits) :
-      comp_x(traits->compare_x_2_object()),
-      min_vertex(traits->construct_min_vertex_2_object())
+      m_comp_x(traits->compare_x_2_object()),
+      m_min_vertex(traits->construct_min_vertex_2_object())
     {}
 
     bool operator()(const X_monotone_curve_2* cv1, const X_monotone_curve_2* cv2) const
-    { return(comp_x(min_vertex(*cv1), min_vertex(*cv2)) == SMALLER); }
+    { return(m_comp_x(m_min_vertex(*cv1), m_min_vertex(*cv2)) == SMALLER); }
   };
 
   /*! Merge the vertical segments into the lower/upper envelope given as a
@@ -303,9 +302,9 @@ protected:
    * \param diag The diagram.
    * \param p The point that the new vertex is associated with.
    * \param e The edge to split.
-   * \return A handle for the vertex.
+   * \return A descriptor for the vertex.
    */
-  Vertex_handle _split_edge(Envelope_diagram_1& diag, const Point_2& p, Edge_handle e);
+  Vertex_descriptor _split_edge(Envelope_diagram_1& diag, const Point_2& p, Edge_descriptor e);
 };
 
 } // namespace CGAL

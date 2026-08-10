@@ -21,7 +21,7 @@ using Diagram_1 = CGAL::Envelope_diagram_1<Traits_2>;
 
 /*! Print the given envelope diagram. */
 void print_diagram (const Diagram_1& diag) {
-  Diagram_1::Edge_const_handle e = diag.leftmost();
+  Diagram_1::Edge_const_descriptor e = diag.leftmost();
   while (e != diag.rightmost()) {
     std::cout << "Edge: ";
     if (! diag.empty_edge_curves(e)) {

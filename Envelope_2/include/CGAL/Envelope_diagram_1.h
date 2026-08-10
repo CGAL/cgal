@@ -54,7 +54,12 @@ public:
 
   using Base = Arrangement_on_curve_1::Arrangement_on_curve_1<Geom_traits_1, Topol_traits>;
 
-  // Descriptors are the native handles used everywhere
+  using Vertex_descriptor = typename Base::Vertex_descriptor;
+  using Vertex_const_descriptor = typename Base::Vertex_const_descriptor;
+  using Edge_descriptor = typename Base::Edge_descriptor;
+  using Edge_const_descriptor = typename Base::Edge_const_descriptor;
+
+  // Backward compatibility (limited)
   using Vertex_handle = typename Base::Vertex_descriptor;
   using Vertex_const_handle = typename Base::Vertex_const_descriptor;
   using Edge_handle = typename Base::Edge_descriptor;
@@ -92,73 +97,73 @@ public:
   // --------------------------------------------------------------------------
   // DIAGRAM BOUNDARY ACCESSORS
   // --------------------------------------------------------------------------
-  Edge_const_handle leftmost() const { return this->unbounded_left_edge(); }
-  Edge_handle leftmost() { return this->unbounded_left_edge(); }
+  Edge_const_descriptor leftmost() const { return this->unbounded_left_edge(); }
+  Edge_descriptor leftmost() { return this->unbounded_left_edge(); }
 
-  Edge_const_handle rightmost() const { return this->unbounded_right_edge(); }
-  Edge_handle rightmost() { return this->unbounded_right_edge(); }
+  Edge_const_descriptor rightmost() const { return this->unbounded_right_edge(); }
+  Edge_descriptor rightmost() { return this->unbounded_right_edge(); }
 
-  void set_leftmost(Edge_handle e) { this->topology_traits().set_unbounded_left_edge(e); }
-  void set_rightmost(Edge_handle e) { this->topology_traits().set_unbounded_right_edge(e); }
+  void set_leftmost(Edge_descriptor e) { this->topology_traits().set_unbounded_left_edge(e); }
+  void set_rightmost(Edge_descriptor e) { this->topology_traits().set_unbounded_right_edge(e); }
 
   void clear() { this->topology_traits().clear(); }
 
   // --------------------------------------------------------------------------
   // CURVE DATA ACCESSORS & MUTATORS
   // --------------------------------------------------------------------------
-  const Point_2& point(Vertex_const_handle v) const { return get(this->vertex_point_map(), v); }
+  const Point_2& point(Vertex_const_descriptor v) const { return get(this->vertex_point_map(), v); }
 
-  void set_point(Vertex_handle v, const Point_2& p) { put(this->vertex_point_map(), v, p); }
+  void set_point(Vertex_descriptor v, const Point_2& p) { put(this->vertex_point_map(), v, p); }
 
-  Curve_container& vertex_curves(Vertex_handle v) { return get(this->vertex_data_map(), v); }
-  const Curve_container& vertex_curves(Vertex_const_handle v) const { return get(this->vertex_data_map(), v); }
+  Curve_container& vertex_curves(Vertex_descriptor v) { return get(this->vertex_data_map(), v); }
+  const Curve_container& vertex_curves(Vertex_const_descriptor v) const { return get(this->vertex_data_map(), v); }
 
-  Curve_container& edge_curves(Edge_handle e) { return get(this->edge_data_map(), e); }
-  const Curve_container& edge_curves(Edge_const_handle e) const { return get(this->edge_data_map(), e); }
+  Curve_container& edge_curves(Edge_descriptor e) { return get(this->edge_data_map(), e); }
+  const Curve_container& edge_curves(Edge_const_descriptor e) const { return get(this->edge_data_map(), e); }
 
-  Size number_of_vertex_curves(Vertex_const_handle v) const { return vertex_curves(v).size(); }
-  Size number_of_edge_curves(Edge_const_handle e) const { return edge_curves(e).size(); }
+  Size number_of_vertex_curves(Vertex_const_descriptor v) const { return vertex_curves(v).size(); }
+  Size number_of_edge_curves(Edge_const_descriptor e) const { return edge_curves(e).size(); }
 
-  bool empty_vertex_curves(Vertex_const_handle v) const { return vertex_curves(v).empty(); }
-  bool empty_edge_curves(Edge_const_handle e) const { return edge_curves(e).empty(); }
+  bool empty_vertex_curves(Vertex_const_descriptor v) const { return vertex_curves(v).empty(); }
+  bool empty_edge_curves(Edge_const_descriptor e) const { return edge_curves(e).empty(); }
 
-  const X_monotone_curve_2& vertex_curve(Vertex_const_handle v) const {
+  const X_monotone_curve_2& vertex_curve(Vertex_const_descriptor v) const {
     CGAL_precondition(! empty_vertex_curves(v));
     return vertex_curves(v).front();
   }
 
-  const X_monotone_curve_2& edge_curve(Edge_const_handle e) const {
+  const X_monotone_curve_2& edge_curve(Edge_const_descriptor e) const {
     CGAL_precondition(! empty_edge_curves(e));
     return edge_curves(e).front();
   }
 
-  void add_edge_curve(Edge_handle e, const X_monotone_curve_2& cv) { edge_curves(e).push_back(cv); }
+  void add_edge_curve(Edge_descriptor e, const X_monotone_curve_2& cv) { edge_curves(e).push_back(cv); }
 
-  void add_vertex_curve(Vertex_handle v, const X_monotone_curve_2& cv) { vertex_curves(v).push_back(cv); }
+  void add_vertex_curve(Vertex_descriptor v, const X_monotone_curve_2& cv) { vertex_curves(v).push_back(cv); }
 
-  void add_edge_curves(Edge_handle e, Curve_const_iterator begin, Curve_const_iterator end) {
+  void add_edge_curves(Edge_descriptor e, Curve_const_iterator begin, Curve_const_iterator end) {
     auto& c = edge_curves(e);
     for (auto it = begin; it != end; ++it) c.push_back(*it);
   }
 
-  void add_vertex_curves(Vertex_handle v, Curve_const_iterator begin, Curve_const_iterator end) {
+  void add_vertex_curves(Vertex_descriptor v, Curve_const_iterator begin, Curve_const_iterator end) {
     auto& c = vertex_curves(v);
     for (auto it = begin; it != end; ++it) c.push_back(*it);
   }
 
-  void clear_vertex_curves(Vertex_handle v) { vertex_curves(v).clear(); }
-  void clear_edge_curves(Edge_handle e) { edge_curves(e).clear(); }
+  void clear_vertex_curves(Vertex_descriptor v) { vertex_curves(v).clear(); }
+  void clear_edge_curves(Edge_descriptor e) { edge_curves(e).clear(); }
 
   // --------------------------------------------------------------------------
   // TOPOLOGY MUTATION HELPER DELEGATES
   // --------------------------------------------------------------------------
-  Vertex_handle new_vertex(const Point_2& p) { return this->topology_traits().create_vertex(p); }
+  Vertex_descriptor new_vertex(const Point_2& p) { return this->topology_traits().create_vertex(p); }
 
-  Edge_handle new_edge() { return this->topology_traits().create_edge(); }
+  Edge_descriptor new_edge() { return this->topology_traits().create_edge(); }
 
-  void delete_vertex(Vertex_handle v) { this->topology_traits().erase_vertex(v); }
+  void delete_vertex(Vertex_descriptor v) { this->topology_traits().erase_vertex(v); }
 
-  void delete_edge(Edge_handle e) { this->topology_traits().erase_edge(e); }
+  void delete_edge(Edge_descriptor e) { this->topology_traits().erase_edge(e); }
 };
 
 } // namespace CGAL

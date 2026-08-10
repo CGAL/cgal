@@ -209,8 +209,8 @@ _construct_singleton_diagram(const X_monotone_curve_2& cv, Envelope_diagram_1& o
     // Create a vertex and associate it with the right endpoint of cv.
     CGAL_precondition(m_traits->parameter_space_in_y_2_object()(cv, ARR_MAX_END) == ARR_INTERIOR);
 
-    Vertex_handle v = out_d.new_vertex(m_traits->construct_max_vertex_2_object()(cv));
-    Edge_handle e_right = out_d.new_edge();
+    Vertex_descriptor v = out_d.new_vertex(m_traits->construct_max_vertex_2_object()(cv));
+    Edge_descriptor e_right = out_d.new_edge();
 
     out_d.add_vertex_curve(v, cv);
     topo.set_left_edge(v, out_d.leftmost());
@@ -229,8 +229,8 @@ _construct_singleton_diagram(const X_monotone_curve_2& cv, Envelope_diagram_1& o
     // Create a vertex and associate it with the left endpoint of cv.
     CGAL_precondition(m_traits->parameter_space_in_y_2_object()(cv, ARR_MIN_END) == ARR_INTERIOR);
 
-    Vertex_handle v = out_d.new_vertex(m_traits->construct_min_vertex_2_object()(cv));
-    Edge_handle e_left = out_d.new_edge();
+    Vertex_descriptor v = out_d.new_vertex(m_traits->construct_min_vertex_2_object()(cv));
+    Edge_descriptor e_left = out_d.new_edge();
 
     out_d.add_vertex_curve(v, cv);
     topo.set_left_edge(v, e_left);
@@ -248,12 +248,12 @@ _construct_singleton_diagram(const X_monotone_curve_2& cv, Envelope_diagram_1& o
   CGAL_precondition(m_traits->parameter_space_in_y_2_object()(cv, ARR_MIN_END) == ARR_INTERIOR);
   CGAL_precondition(m_traits->parameter_space_in_y_2_object()(cv, ARR_MAX_END) == ARR_INTERIOR);
 
-  Vertex_handle v1 = out_d.new_vertex(m_traits->construct_min_vertex_2_object()(cv));
-  Vertex_handle v2 = out_d.new_vertex(m_traits->construct_max_vertex_2_object()(cv));
+  Vertex_descriptor v1 = out_d.new_vertex(m_traits->construct_min_vertex_2_object()(cv));
+  Vertex_descriptor v2 = out_d.new_vertex(m_traits->construct_max_vertex_2_object()(cv));
 
-  Edge_handle e_left = out_d.new_edge();
-  Edge_handle e_right = out_d.new_edge();
-  Edge_handle e = out_d.leftmost();
+  Edge_descriptor e_left = out_d.new_edge();
+  Edge_descriptor e_right = out_d.new_edge();
+  Edge_descriptor e = out_d.leftmost();
 
   out_d.add_vertex_curve(v1, cv);
   topo.set_left_edge(v1, e_left);
@@ -280,13 +280,13 @@ _construct_singleton_diagram(const X_monotone_curve_2& cv, Envelope_diagram_1& o
 template <typename Traits, typename Diagram>
 void Envelope_divide_and_conquer_2<Traits,Diagram>::
 _merge_envelopes(const Envelope_diagram_1& d1, const Envelope_diagram_1& d2, Envelope_diagram_1& out_d) {
-  Edge_const_handle e1 = d1.leftmost();
+  Edge_const_descriptor e1 = d1.leftmost();
   bool is_leftmost1 = true;
-  Vertex_const_handle v1{};
-  Edge_const_handle e2 = d2.leftmost();
+  Vertex_const_descriptor v1{};
+  Edge_const_descriptor e2 = d2.leftmost();
   bool is_leftmost2 = true;
-  Vertex_const_handle v2{};
-  Vertex_const_handle next_v{};
+  Vertex_const_descriptor v2{};
+  Vertex_const_descriptor next_v{};
   bool next_exists = true;
   Comparison_result res_v = EQUAL;
   bool same_x = false;
@@ -324,7 +324,7 @@ _merge_envelopes(const Envelope_diagram_1& d1, const Envelope_diagram_1& d2, Env
       // Both empty.
       if (next_exists) {
         const Point_2& p_next = (res_v == SMALLER) ? d1.point(v1) : d2.point(v2);
-        Vertex_handle new_v = _append_vertex(out_d, p_next, e1, d1);
+        Vertex_descriptor new_v = _append_vertex(out_d, p_next, e1, d1);
         switch(res_v) {
          case SMALLER: out_d.add_vertex_curves(new_v, d1.vertex_curves(v1).begin(), d1.vertex_curves(v1).end()); break;
          case LARGER: out_d.add_vertex_curves(new_v, d2.vertex_curves(v2).begin(), d2.vertex_curves(v2).end()); break;
@@ -373,7 +373,7 @@ _merge_envelopes(const Envelope_diagram_1& d1, const Envelope_diagram_1& d2, Env
 template <typename Traits, typename Diagram>
 Comparison_result Envelope_divide_and_conquer_2<Traits,Diagram>::
 _compare_vertices(const Envelope_diagram_1& d1, const Envelope_diagram_1& d2,
-                  Vertex_const_handle v1, Vertex_const_handle v2, bool& same_x) const {
+                  Vertex_const_descriptor v1, Vertex_const_descriptor v2, bool& same_x) const {
   Comparison_result res = m_traits->compare_x_2_object()(d1.point(v1), d2.point(v2));
 
   if (res != EQUAL) {
@@ -391,24 +391,24 @@ _compare_vertices(const Envelope_diagram_1& d1, const Envelope_diagram_1& d2,
 //
 template <typename Traits, typename Diagram>
 void Envelope_divide_and_conquer_2<Traits,Diagram>::
-_merge_single_interval(Edge_const_handle e, Edge_const_handle other_edge, Vertex_const_handle v, bool v_exists,
-                       Comparison_result origin_of_v, const Envelope_diagram_1& in_d, const Envelope_diagram_1& other_d,
-                       Envelope_diagram_1& out_d) {
+_merge_single_interval(Edge_const_descriptor e, Edge_const_descriptor other_edge, Vertex_const_descriptor v,
+                       bool v_exists, Comparison_result origin_of_v,
+                       const Envelope_diagram_1& in_d, const Envelope_diagram_1& other_d, Envelope_diagram_1& out_d) {
   if (! v_exists) {
     out_d.add_edge_curves(out_d.rightmost(), in_d.edge_curves(e).begin(), in_d.edge_curves(e).end());
     return;
   }
 
   if (origin_of_v == SMALLER) {
-    Vertex_handle new_v = _append_vertex(out_d, in_d.point(v), e, in_d);
+    Vertex_descriptor new_v = _append_vertex(out_d, in_d.point(v), e, in_d);
     out_d.add_vertex_curves(new_v, in_d.vertex_curves(v).begin(), in_d.vertex_curves(v).end());
     return;
   }
 
   if (origin_of_v == EQUAL) {
-    Vertex_handle new_v = _append_vertex(out_d, in_d.point(v), e, in_d);
-    Vertex_const_handle v1 = in_d.right_vertex(e);
-    Vertex_const_handle v2 = other_d.right_vertex(other_edge);
+    Vertex_descriptor new_v = _append_vertex(out_d, in_d.point(v), e, in_d);
+    Vertex_const_descriptor v1 = in_d.right_vertex(e);
+    Vertex_const_descriptor v2 = other_d.right_vertex(other_edge);
     out_d.add_vertex_curves(new_v, in_d.vertex_curves(v1).begin(), in_d.vertex_curves(v1).end());
     out_d.add_vertex_curves(new_v, other_d.vertex_curves(v2).begin(), other_d.vertex_curves(v2).end());
     return;
@@ -420,7 +420,7 @@ _merge_single_interval(Edge_const_handle e, Edge_const_handle other_edge, Vertex
   Comparison_result res = m_traits->compare_y_at_x_2_object()(p_v, cv_e);
 
   if ((res == EQUAL) || (m_env_type == LOWER && res == SMALLER) || (m_env_type == UPPER && res == LARGER)) {
-    Vertex_handle new_v = _append_vertex(out_d, p_v, e, in_d);
+    Vertex_descriptor new_v = _append_vertex(out_d, p_v, e, in_d);
     out_d.add_vertex_curves(new_v, other_d.vertex_curves(v).begin(), other_d.vertex_curves(v).end());
     if (res == EQUAL) out_d.add_vertex_curves(new_v, in_d.edge_curves(e).begin(), in_d.edge_curves(e).end());
   }
@@ -521,8 +521,8 @@ compare_y_at_end(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
 //
 template <typename Traits, typename Diagram>
 void Envelope_divide_and_conquer_2<Traits,Diagram>::
-_merge_two_intervals(Edge_const_handle e1, bool is_leftmost1, Edge_const_handle e2, bool is_leftmost2,
-                     Vertex_const_handle v, bool v_exists, Comparison_result origin_of_v,
+_merge_two_intervals(Edge_const_descriptor e1, bool is_leftmost1, Edge_const_descriptor e2, bool is_leftmost2,
+                     Vertex_const_descriptor v, bool v_exists, Comparison_result origin_of_v,
                      const Envelope_diagram_1& d1, const Envelope_diagram_1& d2, Envelope_diagram_1& out_d) {
   using Intersection_point = std::pair<Point_2, typename Traits::Multiplicity>;
 
@@ -574,7 +574,7 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1, Edge_const_handle 
       if (is_in_x_range) {
         CGAL_assertion(current_res != EQUAL);
 
-        Vertex_handle new_v = (current_res == SMALLER) ?
+        Vertex_descriptor new_v = (current_res == SMALLER) ?
           _append_vertex(out_d, intersection_point->first, e1, d1) :
           _append_vertex(out_d, intersection_point->first, e2, d2);
 
@@ -624,7 +624,7 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1, Edge_const_handle 
           (! p_leftmost || (m_traits->compare_xy_2_object()(pt_left, *p_leftmost) == LARGER))) {
         CGAL_assertion(current_res != EQUAL);
 
-        Vertex_handle new_v = (current_res == SMALLER) ?
+        Vertex_descriptor new_v = (current_res == SMALLER) ?
           _append_vertex(out_d, pt_left, e1, d1) : _append_vertex(out_d, pt_left, e2, d2);
 
         if (equal_at_v == false) {
@@ -636,8 +636,8 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1, Edge_const_handle 
       }
 
       if (is_in_x_range && has_right && (! v_exists || (m_traits->compare_xy_2_object()(pt_right, *p_v) == SMALLER))) {
-        Vertex_handle new_v = _append_vertex(out_d, pt_right, e1, d1);
-        Edge_handle e_left = out_d.left_edge(new_v);
+        Vertex_descriptor new_v = _append_vertex(out_d, pt_right, e1, d1);
+        Edge_descriptor e_left = out_d.left_edge(new_v);
         out_d.add_edge_curves(e_left, d2.edge_curves(e2).begin(), d2.edge_curves(e2).end());
 
         CGAL_assertion(equal_at_v == false);
@@ -649,8 +649,8 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1, Edge_const_handle 
 
       if (has_right == false || (v_exists && m_traits->compare_xy_2_object()(pt_right, *p_v) != SMALLER)) {
         if (v_exists) {
-          Vertex_handle new_v = _append_vertex(out_d, *p_v, e1, d1);
-          Edge_handle e_left = out_d.left_edge(new_v);
+          Vertex_descriptor new_v = _append_vertex(out_d, *p_v, e1, d1);
+          Edge_descriptor e_left = out_d.left_edge(new_v);
           out_d.add_edge_curves(e_left, d2.edge_curves(e2).begin(), d2.edge_curves(e2).end());
         }
 
@@ -668,20 +668,20 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1, Edge_const_handle 
   if (equal_at_v) {
     CGAL_assertion(v_exists);
 
-    Edge_handle e_last = out_d.rightmost();
+    Edge_descriptor e_last = out_d.rightmost();
     if (! out_d.has_left_vertex(e_last)) return;
 
-    Vertex_handle v_to_be_updated = out_d.left_vertex(e_last);
+    Vertex_descriptor v_to_be_updated = out_d.left_vertex(e_last);
     if (origin_of_v == EQUAL) {
-      Vertex_const_handle v1 = d1.right_vertex(e1);
-      Vertex_const_handle v2 = d2.right_vertex(e2);
+      Vertex_const_descriptor v1 = d1.right_vertex(e1);
+      Vertex_const_descriptor v2 = d2.right_vertex(e2);
       out_d.add_vertex_curves(v_to_be_updated, d1.vertex_curves(v1).begin(), d1.vertex_curves(v1).end());
       out_d.add_vertex_curves(v_to_be_updated, d2.vertex_curves(v2).begin(), d2.vertex_curves(v2).end());
       return;
     }
 
     const Envelope_diagram_1& src_d = (origin_of_v == SMALLER) ? d2 : d1;
-    Edge_const_handle e = (origin_of_v == SMALLER) ? e2 : e1;
+    Edge_const_descriptor e = (origin_of_v == SMALLER) ? e2 : e1;
     out_d.add_vertex_curves(v_to_be_updated, src_d.vertex_curves(v).begin(), src_d.vertex_curves(v).end());
     out_d.add_vertex_curves(v_to_be_updated, src_d.edge_curves(e).begin(), src_d.edge_curves(e).end());
     return;
@@ -710,15 +710,15 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1, Edge_const_handle 
 
   if (current_res == SMALLER) {
     if (origin_of_v == SMALLER) {
-      Vertex_handle new_v = _append_vertex(out_d, d1.point(v), e1, d1);
+      Vertex_descriptor new_v = _append_vertex(out_d, d1.point(v), e1, d1);
       out_d.add_vertex_curves(new_v, d1.vertex_curves(v).begin(), d1.vertex_curves(v).end());
       return;
     }
 
     if (origin_of_v == EQUAL) {
-      Vertex_handle new_v = _append_vertex(out_d, d2.point(v), e1, d1);
+      Vertex_descriptor new_v = _append_vertex(out_d, d2.point(v), e1, d1);
       out_d.add_vertex_curves(new_v, d2.vertex_curves(v).begin(), d2.vertex_curves(v).end());
-      Vertex_const_handle v1 = d1.right_vertex(e1);
+      Vertex_const_descriptor v1 = d1.right_vertex(e1);
       out_d.add_vertex_curves(new_v, d1.vertex_curves(v1).begin(), d1.vertex_curves(v1).end());
       return;
     }
@@ -726,7 +726,7 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1, Edge_const_handle 
     const Point_2& p2 = d2.point(v);
     const Comparison_result res = m_traits->compare_y_at_x_2_object()(p2, d1.edge_curves(e1).front());
     if (res == EQUAL || ((m_env_type == LOWER) && (res == SMALLER)) || ((m_env_type == UPPER) && (res == LARGER))) {
-      Vertex_handle new_v = _append_vertex(out_d, p2, e1, d1);
+      Vertex_descriptor new_v = _append_vertex(out_d, p2, e1, d1);
       out_d.add_vertex_curves(new_v, d2.vertex_curves(v).begin(), d2.vertex_curves(v).end());
       if (res == EQUAL) out_d.add_vertex_curves(new_v, d1.edge_curves(e1).begin(), d1.edge_curves(e1).end());
     }
@@ -734,10 +734,10 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1, Edge_const_handle 
   }
 
   if (origin_of_v != SMALLER) {
-    Vertex_handle new_v = _append_vertex(out_d, d2.point(v), e2, d2);
+    Vertex_descriptor new_v = _append_vertex(out_d, d2.point(v), e2, d2);
     out_d.add_vertex_curves(new_v, d2.vertex_curves(v).begin(), d2.vertex_curves(v).end());
     if (origin_of_v == EQUAL) {
-      Vertex_const_handle v1 = d1.right_vertex(e1);
+      Vertex_const_descriptor v1 = d1.right_vertex(e1);
       out_d.add_vertex_curves(new_v, d1.vertex_curves(v1).begin(), d1.vertex_curves(v1).end());
     }
     return;
@@ -746,7 +746,7 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1, Edge_const_handle 
   const Point_2& p1 = d1.point(v);
   const Comparison_result res = m_traits->compare_y_at_x_2_object()(p1, d2.edge_curves(e2).front());
   if (res == EQUAL || ((m_env_type == LOWER) && (res == SMALLER)) || ((m_env_type == UPPER) && (res == LARGER))) {
-    Vertex_handle new_v = _append_vertex(out_d, p1, e2, d2);
+    Vertex_descriptor new_v = _append_vertex(out_d, p1, e2, d2);
     out_d.add_vertex_curves(new_v, d1.vertex_curves(v).begin(), d1.vertex_curves(v).end());
     if (res == EQUAL) out_d.add_vertex_curves(new_v, d2.edge_curves(e2).begin(), d2.edge_curves(e2).end());
   }
@@ -756,14 +756,14 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1, Edge_const_handle 
 // Append a vertex to the given diagram.
 //
 template <typename Traits, typename Diagram>
-typename Envelope_divide_and_conquer_2<Traits,Diagram>::Vertex_handle
+typename Envelope_divide_and_conquer_2<Traits,Diagram>::Vertex_descriptor
 Envelope_divide_and_conquer_2<Traits,Diagram>::
-_append_vertex(Envelope_diagram_1& diag, const Point_2& p, Edge_const_handle e, const Envelope_diagram_1& in_d) {
+_append_vertex(Envelope_diagram_1& diag, const Point_2& p, Edge_const_descriptor e, const Envelope_diagram_1& in_d) {
   auto& topo = diag.topology_traits();
 
   // Create the new vertex and the new edge.
-  Vertex_handle new_v = diag.new_vertex(p);
-  Edge_handle new_e = diag.new_edge();
+  Vertex_descriptor new_v = diag.new_vertex(p);
+  Edge_descriptor new_e = diag.new_edge();
 
   if (! in_d.empty_edge_curves(e)) diag.add_edge_curves(new_e, in_d.edge_curves(e).begin(), in_d.edge_curves(e).end());
 
@@ -776,7 +776,7 @@ _append_vertex(Envelope_diagram_1& diag, const Point_2& p, Edge_const_handle e, 
     // rightmost edge of the diagram.
     topo.set_right_vertex(new_e, new_v);
 
-    Vertex_handle last_v = diag.left_vertex(diag.rightmost());
+    Vertex_descriptor last_v = diag.left_vertex(diag.rightmost());
     topo.set_left_vertex(new_e, last_v);
     topo.set_right_edge(last_v, new_e);
     topo.set_left_vertex(diag.rightmost(), new_v);
@@ -808,8 +808,8 @@ _merge_vertical_segments(Curve_pointer_vector& vert_vec, Envelope_diagram_1& out
   auto min_vertex = m_traits->construct_min_vertex_2_object();
   auto max_vertex = m_traits->construct_max_vertex_2_object();
 
-  Edge_handle e = out_d.leftmost();
-  Vertex_handle v{};
+  Edge_descriptor e = out_d.leftmost();
+  Vertex_descriptor v{};
   Curve_pointer_iterator iter = vert_vec.begin();
   Curve_pointer_iterator next;
   Comparison_result res;
@@ -883,13 +883,13 @@ _merge_vertical_segments(Curve_pointer_vector& vert_vec, Envelope_diagram_1& out
     }
     else {
       if (out_d.empty_edge_curves(e)) {
-        Vertex_handle new_v = _split_edge(out_d, p, e);
+        Vertex_descriptor new_v = _split_edge(out_d, p, e);
         out_d.add_vertex_curves(new_v, env_cvs.begin(), env_cvs.end());
       }
       else {
         res = comp_y_at_x(p, out_d.edge_curves(e).front());
         if (((m_env_type == LOWER) && (res != LARGER)) || ((m_env_type == UPPER) && (res != SMALLER))) {
-          Vertex_handle new_v = _split_edge(out_d, p, e);
+          Vertex_descriptor new_v = _split_edge(out_d, p, e);
           out_d.add_vertex_curves(new_v, env_cvs.begin(), env_cvs.end());
           if (res == EQUAL) out_d.add_vertex_curve(new_v, out_d.edge_curves(e).front());
         }
@@ -904,14 +904,14 @@ _merge_vertical_segments(Curve_pointer_vector& vert_vec, Envelope_diagram_1& out
 // Split a given diagram edge by inserting a vertex in its interior.
 //
 template <typename Traits, typename Diagram>
-typename Envelope_divide_and_conquer_2<Traits,Diagram>::Vertex_handle
+typename Envelope_divide_and_conquer_2<Traits,Diagram>::Vertex_descriptor
 Envelope_divide_and_conquer_2<Traits,Diagram>::
-_split_edge(Envelope_diagram_1& diag, const Point_2& p, Edge_handle e) {
+_split_edge(Envelope_diagram_1& diag, const Point_2& p, Edge_descriptor e) {
   auto& topo = diag.topology_traits();
 
   // Create the new vertex and the new edge.
-  Vertex_handle new_v = diag.new_vertex(p);
-  Edge_handle new_e = diag.new_edge();
+  Vertex_descriptor new_v = diag.new_vertex(p);
+  Edge_descriptor new_e = diag.new_edge();
 
   // Duplicate the curves container associated with e.
   if (! diag.empty_edge_curves(e)) diag.add_edge_curves(new_e, diag.edge_curves(e).begin(), diag.edge_curves(e).end());
@@ -922,7 +922,7 @@ _split_edge(Envelope_diagram_1& diag, const Point_2& p, Edge_handle e) {
 
   topo.set_left_vertex(new_e, new_v);
   if (e != diag.rightmost()) {
-    Vertex_handle v_right = diag.right_vertex(e);
+    Vertex_descriptor v_right = diag.right_vertex(e);
     topo.set_right_vertex(new_e, v_right);
     topo.set_left_edge(v_right, new_e);
   }

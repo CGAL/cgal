@@ -63,7 +63,7 @@ int main (int argc, char* argv[]) {
   // order. We start by traversing the minimization diagram from left to
   // right, then the maximization diagram from right to left.
   std::cout << "The convex hull of " << points.size() << " input points:";
-  Diagram_1::Edge_const_handle e = min_diag.leftmost();
+  Diagram_1::Edge_const_descriptor e = min_diag.leftmost();
   while (e != min_diag.rightmost()) {
     std::cout << " (" << points[min_diag.edge_curve(e).data()] << ')';
     auto v = min_diag.right_vertex(e);
