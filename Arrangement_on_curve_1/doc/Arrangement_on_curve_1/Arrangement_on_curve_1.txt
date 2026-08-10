@@ -1,4 +1,5 @@
 namespace CGAL {
+namespace Arrangement_on_curve_1 {
 /*!
 
 \mainpage User Manual
@@ -220,4 +221,6 @@ These attributes can be read or modified cleanly using standard Boost lvalue pro
 accessed via `vertex_data_map()` and `edge_data_map()`.
 
 */
-} /* namespace CGAL */
+
+| // namespace Arrangement_on_curve_1
+} // namespace CGAL
