@@ -360,11 +360,6 @@ namespace Eigen {
     };
 
 namespace internal {
-    template<class> struct significant_decimals_impl;
-    template<>
-      struct significant_decimals_impl<CGAL::Gmpfi>
-      : significant_decimals_impl<typename CGAL::Gmpfi::value_type> { };
-
 
   // Without this, when computing some decompositions for a matrix of
     // intervals, Eigen looks for the largest element in a column (for
