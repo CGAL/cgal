@@ -34,11 +34,10 @@ template <typename Traits_, typename Allocator = CGAL_ALLOCATOR(int)>
 class Envelope_diagram_1 :
   public Arrangement_on_curve_1::Arrangement_on_curve_1<
     Arrangement_on_curve_1::Geom_traits_2_adaptor_1<Traits_>,
-    Arrangement_on_curve_1::Unbounded_topology_traits<
-      typename Traits_::Point_2,
-      std::list<typename Traits_::X_monotone_curve_2>,
-      std::list<typename Traits_::X_monotone_curve_2>,
-      Allocator, false, false>> {
+    Arrangement_on_curve_1::Unbounded_topology_traits<typename Traits_::Point_2,
+                                                      std::list<typename Traits_::X_monotone_curve_2>,
+                                                      std::list<typename Traits_::X_monotone_curve_2>,
+                                                      Allocator, false, false>> {
 public:
   using Traits_2 = Traits_;
   using Point_2 = typename Traits_2::Point_2;

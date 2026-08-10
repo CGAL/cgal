@@ -29,7 +29,7 @@ namespace CGAL {
  * \param diag Output: The minimization diagram.
  * \pre The value-type of the iterator is Traits::Curve_2.
  */
-template <class InputIterator, class EnvelopeDiagram>
+template <typename InputIterator, typename EnvelopeDiagram>
 void lower_envelope_2(InputIterator begin, InputIterator end, EnvelopeDiagram& diag) {
   using Traits_2 = typename EnvelopeDiagram::Traits_2;
   using Envelope_2 = Envelope_divide_and_conquer_2<Traits_2, EnvelopeDiagram>;
@@ -43,7 +43,7 @@ void lower_envelope_2(InputIterator begin, InputIterator end, EnvelopeDiagram& d
  * \param diag Output: The maximization diagram.
  * \pre The value-type of the iterator is Traits::Curve_2.
  */
-template <class InputIterator, class EnvelopeDiagram>
+template <typename InputIterator, typename EnvelopeDiagram>
 void upper_envelope_2(InputIterator begin, InputIterator end, EnvelopeDiagram& diag) {
   using Traits_2 = typename EnvelopeDiagram::Traits_2;
   using Envelope_2 = Envelope_divide_and_conquer_2<Traits_2, EnvelopeDiagram>;
@@ -57,7 +57,7 @@ void upper_envelope_2(InputIterator begin, InputIterator end, EnvelopeDiagram& d
  * \param diag Output: The minimization diagram.
  * \pre The value-type of the iterator is Traits::X_monotone_curve_2.
  */
-template <class InputIterator, class EnvelopeDiagram>
+template <typename InputIterator, typename EnvelopeDiagram>
 void lower_envelope_x_monotone_2(InputIterator begin, InputIterator end, EnvelopeDiagram& diag) {
   using Traits_2 = typename EnvelopeDiagram::Traits_2;
   using Envelope_2 = Envelope_divide_and_conquer_2<Traits_2, EnvelopeDiagram>;
@@ -73,7 +73,7 @@ void lower_envelope_x_monotone_2(InputIterator begin, InputIterator end, Envelop
  * \param traits The arrangement traits responsible for the x-monotone curves.
  * \pre The value-type of the iterator is Traits::X_monotone_curve_2.
  */
-template <class InputIterator, class EnvelopeDiagram, class Traits>
+template <typename InputIterator, typename EnvelopeDiagram, typename Traits>
 void lower_envelope_x_monotone_2(InputIterator begin, InputIterator end, EnvelopeDiagram& diag, const Traits& traits) {
   using Traits_2 = typename EnvelopeDiagram::Traits_2;
   using Envelope_2 = Envelope_divide_and_conquer_2<Traits_2, EnvelopeDiagram>;
@@ -87,7 +87,7 @@ void lower_envelope_x_monotone_2(InputIterator begin, InputIterator end, Envelop
  * \param diag Output: The maximization diagram.
  * \pre The value-type of the iterator is Traits::X_monotone_curve_2.
  */
-template <class InputIterator, class EnvelopeDiagram>
+template <typename InputIterator, typename EnvelopeDiagram>
 void upper_envelope_x_monotone_2(InputIterator begin, InputIterator end, EnvelopeDiagram& diag) {
   using Traits_2 = typename EnvelopeDiagram::Traits_2;
   using Envelope_2 = Envelope_divide_and_conquer_2<Traits_2, EnvelopeDiagram>;
@@ -102,7 +102,7 @@ void upper_envelope_x_monotone_2(InputIterator begin, InputIterator end, Envelop
  * \param traits The arrangement traits responsible for the x-monotone curves.
  * \pre The value-type of the iterator is Traits::X_monotone_curve_2.
  */
-template <class InputIterator, class EnvelopeDiagram, class Traits>
+template <typename InputIterator, typename EnvelopeDiagram, typename Traits>
 void upper_envelope_x_monotone_2(InputIterator begin, InputIterator end, EnvelopeDiagram& diag, const Traits& traits) {
   using Traits_2 = typename EnvelopeDiagram::Traits_2;
   using Envelope_2 = Envelope_divide_and_conquer_2<Traits_2, EnvelopeDiagram>;
