@@ -33,9 +33,9 @@ namespace Envelope_2 {
 template <typename InputIterator, typename EnvelopeDiagram>
 void lower_envelope_2(InputIterator begin, InputIterator end, EnvelopeDiagram& diag) {
   using Traits_2 = typename EnvelopeDiagram::Traits_2;
-  using Envelope_2 = Envelope_divide_and_conquer_2<Traits_2, EnvelopeDiagram>;
-  Envelope_2 env;
-  env.insert_curves(begin, end, true /* Lower envelope */, diag);
+  using Dac = Envelope_divide_and_conquer_2<Traits_2, EnvelopeDiagram>;
+  Dac env(Dac::LOWER);
+  env.insert_curves(begin, end, diag);
 }
 
 /*! computes the upper envelope of a range of curves.
@@ -47,9 +47,9 @@ void lower_envelope_2(InputIterator begin, InputIterator end, EnvelopeDiagram& d
 template <typename InputIterator, typename EnvelopeDiagram>
 void upper_envelope_2(InputIterator begin, InputIterator end, EnvelopeDiagram& diag) {
   using Traits_2 = typename EnvelopeDiagram::Traits_2;
-  using Envelope_2 = Envelope_divide_and_conquer_2<Traits_2, EnvelopeDiagram>;
-  Envelope_2 env;
-  env.insert_curves(begin, end, false /* Upper envelope */, diag);
+  using Dac = Envelope_divide_and_conquer_2<Traits_2, EnvelopeDiagram>;
+  Dac env(Dac::UPPER);
+  env.insert_curves(begin, end, diag);
 }
 
 /*! computes the lower envelope of a range of x-monotone curves.
@@ -61,9 +61,9 @@ void upper_envelope_2(InputIterator begin, InputIterator end, EnvelopeDiagram& d
 template <typename InputIterator, typename EnvelopeDiagram>
 void lower_envelope_x_monotone_2(InputIterator begin, InputIterator end, EnvelopeDiagram& diag) {
   using Traits_2 = typename EnvelopeDiagram::Traits_2;
-  using Envelope_2 = Envelope_divide_and_conquer_2<Traits_2, EnvelopeDiagram>;
-  Envelope_2 env;
-  env.insert_x_monotone_curves(begin, end, true /* Lower envelope */, diag);
+  using Dac = Envelope_divide_and_conquer_2<Traits_2, EnvelopeDiagram>;
+  Dac env(Dac::LOWER);
+  env.insert_x_monotone_curves(begin, end, diag);
 }
 
 /*! computes the lower envelope of a range of x-monotone curves.
@@ -77,9 +77,9 @@ void lower_envelope_x_monotone_2(InputIterator begin, InputIterator end, Envelop
 template <typename InputIterator, typename EnvelopeDiagram, typename Traits>
 void lower_envelope_x_monotone_2(InputIterator begin, InputIterator end, EnvelopeDiagram& diag, const Traits& traits) {
   using Traits_2 = typename EnvelopeDiagram::Traits_2;
-  using Envelope_2 = Envelope_divide_and_conquer_2<Traits_2, EnvelopeDiagram>;
-  Envelope_2 env(&traits);
-  env.insert_x_monotone_curves(begin, end, true /* Lower envelope */, diag);
+  using Dac = Envelope_divide_and_conquer_2<Traits_2, EnvelopeDiagram>;
+  Dac env(Dac::LOWER, &traits);
+  env.insert_x_monotone_curves(begin, end, diag);
 }
 
 /*! computes the upper envelope of a range of x-monotone curves.
@@ -91,9 +91,9 @@ void lower_envelope_x_monotone_2(InputIterator begin, InputIterator end, Envelop
 template <typename InputIterator, typename EnvelopeDiagram>
 void upper_envelope_x_monotone_2(InputIterator begin, InputIterator end, EnvelopeDiagram& diag) {
   using Traits_2 = typename EnvelopeDiagram::Traits_2;
-  using Envelope_2 = Envelope_divide_and_conquer_2<Traits_2, EnvelopeDiagram>;
-  Envelope_2 env;
-  env.insert_x_monotone_curves(begin, end, false /* Upper envelope */, diag);
+  using Dac = Envelope_divide_and_conquer_2<Traits_2, EnvelopeDiagram>;
+  Dac env(Dac::UPPER);
+  env.insert_x_monotone_curves(begin, end, diag);
 }
 
 /*! computes the upper envelope of a range of x-monotone curves.
@@ -106,9 +106,9 @@ void upper_envelope_x_monotone_2(InputIterator begin, InputIterator end, Envelop
 template <typename InputIterator, typename EnvelopeDiagram, typename Traits>
 void upper_envelope_x_monotone_2(InputIterator begin, InputIterator end, EnvelopeDiagram& diag, const Traits& traits) {
   using Traits_2 = typename EnvelopeDiagram::Traits_2;
-  using Envelope_2 = Envelope_divide_and_conquer_2<Traits_2, EnvelopeDiagram>;
-  Envelope_2 env(&traits);
-  env.insert_x_monotone_curves(begin, end, false /* Upper envelope */, diag);
+  using Dac = Envelope_divide_and_conquer_2<Traits_2, EnvelopeDiagram>;
+  Dac env(Dac::UPPER, &traits);
+  env.insert_x_monotone_curves(begin, end, diag);
 }
 
 } // namespace Envelope_2

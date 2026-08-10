@@ -22,9 +22,6 @@
  * through the diagram's public interface rather than through raw node-pointer
  * arrow operators, because the new Envelope_diagram_1 derives from
  * Arrangement_on_curve_1 and stores curve data in property maps.
- *
- * Navigation shortcuts (v_left, v_right, e_left, e_right, …) are static
- * helpers defined in Env_divide_and_conquer_2.h.
  */
 
 #include <optional>
@@ -43,22 +40,16 @@ void Envelope_divide_and_conquer_2<Traits,Diagram>::
 _construct_envelope_non_vertical(Curve_pointer_iterator begin, Curve_pointer_iterator end, Envelope_diagram_1& out_d) {
   out_d.clear();
 
-  if (begin == end) return;
-
-  // Check if the range contains just a single curve.
-  Curve_pointer_iterator iter = begin;
-  ++iter;
-
-  if (iter == end) {
-    // Construct a singleton diagram, which matches a single curve.
-    _construct_singleton_diagram(*(*begin), out_d);
+  const std::size_t n = std::distance(begin, end);
+  if (n == 0) return;
+  if (n == 1) {
+    _construct_singleton_diagram(*(*begin), out_d);     // construct a diagram of a single curve.
     return;
   }
 
   // Divide the given range of curves into two.
-  std::size_t size = std::distance(begin, end);
   Curve_pointer_iterator div_it = begin;
-  std::advance(div_it, size / 2);
+  std::advance(div_it, n / 2);
 
   // Construct the diagrams (envelopes) for the two sub-ranges recursively
   // and then merge the two diagrams to obtain the result.

@@ -42,13 +42,13 @@ public:
 
   using Envelope_diagram_1 = Diagram_;
 
-protected:
-  using Self = Envelope_divide_and_conquer_2<Traits_2, Envelope_diagram_1>;
-
   enum Envelope_type {
     LOWER,
     UPPER
   };
+
+protected:
+  using Self = Envelope_divide_and_conquer_2<Traits_2, Envelope_diagram_1>;
 
   using Vertex_const_descriptor = typename Envelope_diagram_1::Vertex_const_descriptor;
   using Vertex_descriptor = typename Envelope_diagram_1::Vertex_descriptor;
@@ -79,9 +79,9 @@ private:
 public:
   /*! Default constructor.
    */
-  Envelope_divide_and_conquer_2() :
+  Envelope_divide_and_conquer_2(Envelope_type type = LOWER) :
     m_own_traits(true),
-    m_env_type(LOWER)
+    m_env_type(type)
   { m_traits = new Traits_adaptor_2; }
 
   /*! Constructor with a traits object.
@@ -90,6 +90,14 @@ public:
   Envelope_divide_and_conquer_2(const Traits_2* _traits) :
     m_own_traits(false),
     m_env_type(LOWER)
+  { m_traits = static_cast<const Traits_adaptor_2*>(_traits); }
+
+  /*! Constructor with a traits object.
+   * \param _traits The traits object.
+   */
+  Envelope_divide_and_conquer_2(Envelope_type type, const Traits_2* _traits) :
+    m_own_traits(false),
+    m_env_type(type)
   { m_traits = static_cast<const Traits_adaptor_2*>(_traits); }
 
   /*! Destructor.
@@ -103,7 +111,7 @@ public:
    * \param diagram Output: The minimization (or maximization) diagram.
    */
   template <typename CurvesIterator>
-  void insert_curves(CurvesIterator begin, CurvesIterator end, bool type, Envelope_diagram_1& diagram) {
+  void insert_curves(CurvesIterator begin, CurvesIterator end, Envelope_diagram_1& diagram) {
     // Subdivide the curves into x-monotone subcurves.
     std::list<std::variant<Point_2, X_monotone_curve_2>> objects;
     std::list<X_monotone_curve_2> x_curves;
@@ -119,7 +127,7 @@ public:
     }
 
     // Construct the envelope of the x-monotone curves.
-    insert_x_monotone_curves(x_curves.begin(), x_curves.end(), type, diagram);
+    insert_x_monotone_curves(x_curves.begin(), x_curves.end(), diagram);
   }
 
   /*! Construct the lower (or upper) envelope to the given range of
@@ -130,10 +138,7 @@ public:
    * \param diagram Output: The minimization (or maximization) diagram.
    */
   template <typename XCurvesIterator>
-  void insert_x_monotone_curves(XCurvesIterator begin, XCurvesIterator end, bool type, Envelope_diagram_1& diagram) {
-    // Set the envelope type.
-    m_env_type = (type ? LOWER : UPPER);
-
+  void insert_x_monotone_curves(XCurvesIterator begin, XCurvesIterator end, Envelope_diagram_1& diagram) {
     // Separate the regular curves from the vertical ones.
     auto is_vertical = m_traits->is_vertical_2_object();
 
