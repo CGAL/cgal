@@ -19,6 +19,7 @@
 
 #include <CGAL/AABB_primitive.h>
 #include <iterator>
+#include <optional>
 
 namespace CGAL {
 
