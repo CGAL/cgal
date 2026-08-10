@@ -9,13 +9,6 @@
 // Output (tab-separated, one header line then one row per input size):
 //   n   reps   mean_ms   stddev_ms   mean_vertices   mean_edges
 
-#include <CGAL/Exact_rational.h>
-#include <CGAL/Cartesian.h>
-#include <CGAL/Arr_segment_traits_2.h>
-#include <CGAL/Arr_curve_data_traits_2.h>
-#include <CGAL/Envelope_diagram_1.h>
-#include <CGAL/envelope_2.h>
-
 #include <algorithm>
 #include <chrono>
 #include <cmath>
@@ -26,6 +19,13 @@
 #include <string>
 #include <iomanip>
 #include <vector>
+
+#include <CGAL/Exact_rational.h>
+#include <CGAL/Cartesian.h>
+#include <CGAL/Arr_segment_traits_2.h>
+#include <CGAL/Arr_curve_data_traits_2.h>
+#include <CGAL/Envelope_2/Envelope_diagram_1.h>
+#include <CGAL/Envelope_2/envelope_2.h>
 
 // ---------------------------------------------------------------------------
 // Type setup.
@@ -43,7 +43,7 @@ using Traits_2 = CGAL::Arr_curve_data_traits_2<Segment_traits, char>;
 using Point_2 = Traits_2::Point_2;
 using Segment_2 = Traits_2::X_monotone_curve_2;  // the wrapped curve type
 using Base_segment_2 = Segment_traits::X_monotone_curve_2;
-using Diagram_1 = CGAL::Envelope_diagram_1<Traits_2>;
+using Diagram_1 = CGAL::Envelope_2::Envelope_diagram_1<Traits_2>;
 
 // ---------------------------------------------------------------------------
 // Generate `n` random x-monotone segments.
@@ -82,7 +82,7 @@ struct Run_result {
 static Run_result run_once(std::vector<Segment_2>& segs, const Traits_2& traits) {
   Diagram_1 diag;
   auto t0 = std::chrono::steady_clock::now();
-  CGAL::lower_envelope_x_monotone_2(segs.begin(), segs.end(), diag, traits);
+  CGAL::Envelope_2::lower_envelope_x_monotone_2(segs.begin(), segs.end(), diag, traits);
   auto t1 = std::chrono::steady_clock::now();
 
   double ms = std::chrono::duration<double, std::milli>(t1 - t0).count();
@@ -135,9 +135,7 @@ int main(int argc, char* argv[]) {
 
   // -- Benchmark parameters -------------------------------------------------
   // Input sizes to test.  Geometric progression: 100, 200, 400, ..., 25600.
-  const std::vector<std::size_t> sizes = {
-    100, 200, 400, 800, 1600, 3200, 6400, 12800, 25600
-  };
+  const std::vector<std::size_t> sizes = { 100, 200, 400, 800, 1600, 3200, 6400, 12800, 25600 };
 
   // Coordinate range: sqrt(n) * 4 gives moderate intersection density without
   // degenerating to a fully overlapping clump.  We reuse a fixed range
@@ -164,7 +162,8 @@ int main(int argc, char* argv[]) {
   for (std::size_t n : sizes) {
     std::vector<double> times;
     times.reserve(reps);
-    double sum_verts = 0, sum_edges = 0;
+    double sum_verts = 0;
+    double sum_edges = 0;
 
     for (unsigned r = 0; r < reps; ++r) {
       // Each repetition gets a distinct seed derived from the base seed, n,
@@ -178,10 +177,10 @@ int main(int argc, char* argv[]) {
       sum_edges += static_cast<double>(res.edges);
     }
 
-    double m   = mean(times);
-    double sd  = stddev(times, m);
-    double mv  = sum_verts / reps;
-    double me  = sum_edges / reps;
+    double m = mean(times);
+    double sd = stddev(times, m);
+    double mv = sum_verts / reps;
+    double me = sum_edges / reps;
 
     std::cout << std::left
               << std::setw(8) << n
