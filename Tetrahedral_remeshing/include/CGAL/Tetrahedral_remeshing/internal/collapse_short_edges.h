@@ -26,6 +26,7 @@
 #include <algorithm>
 #include <unordered_map>
 #include <unordered_set>
+#include <type_traits>
 #include <utility>
 #include <unordered_set>
 
@@ -50,6 +51,42 @@ enum Result_type   { VALID,
                      V_PROBLEM, C_PROBLEM, E_PROBLEM,
                      ANGLE_PROBLEM,
                      TOPOLOGICAL_PROBLEM, ORIENTATION_PROBLEM, SHARED_NEIGHBOR_PROBLEM };
+
+// A cell `c` incident to the edge being collapsed, with the two cells `n0`/`n1`
+// that will take its place once it is removed, and the index of `c` in each of
+// them. Collapsing the edge amounts to gluing `n0` and `n1` to each other
+// across those indices.
+template<typename Cell_handle>
+struct Collapse_star_cell
+{
+  Cell_handle c;
+  Cell_handle n0, n1;
+  int c_in_n0, c_in_n1;
+
+  // The two cells would end up pointing at the infinite vertex across from one
+  // another, which is not a valid triangulation.
+  template<typename Tr>
+  bool has_infinite_adjacency(const Tr& tr) const
+  {
+    return tr.is_infinite(n0->vertex(c_in_n0))
+        && tr.is_infinite(n1->vertex(c_in_n1));
+  }
+};
+
+// `c` must be a cell incident to the edge (`v0`, `v1`) being collapsed, and
+// this must be called before any neighbor around that edge is rewired:
+// `index()` looks `c` up in the neighbor array of `n0`/`n1`, so it would no
+// longer find it once `set_neighbor()` has run.
+template<typename CellRef, typename Vertex_handle>
+auto make_collapse_star_cell(CellRef c, Vertex_handle v0, Vertex_handle v1)
+{
+  using Cell_handle = std::decay_t<decltype(c->neighbor(0))>;
+
+  const Cell_handle n0 = c->neighbor(c->index(v0));
+  const Cell_handle n1 = c->neighbor(c->index(v1));
+
+  return Collapse_star_cell<Cell_handle>{c, n0, n1, n0->index(c), n1->index(c)};
+}
 
 template<typename C3t3>
 class CollapseTriangulation
@@ -181,41 +218,33 @@ public:
 
       do
       {
-        int v0_id = circ->index(vh0);
-        int v1_id = circ->index(vh1);
+        const auto sc = make_collapse_star_cell(circ, vh0, vh1);
 
-        Cell_handle n0_ch = circ->neighbor(v0_id);
-        Cell_handle n1_ch = circ->neighbor(v1_id);
-
-        int ch_id_in_n0 = n0_ch->index(circ);
-        int ch_id_in_n1 = n1_ch->index(circ);
-
-        if (n0_ch->has_neighbor(n1_ch))
+        if (sc.n0->has_neighbor(sc.n1))
           return SHARED_NEIGHBOR_PROBLEM;
 
         //Update neighbors before removing cell
-        n0_ch->set_neighbor(ch_id_in_n0, n1_ch);
-        n1_ch->set_neighbor(ch_id_in_n1, n0_ch);
+        sc.n0->set_neighbor(sc.c_in_n0, sc.n1);
+        sc.n1->set_neighbor(sc.c_in_n1, sc.n0);
 
-        Subdomain_index si_n0 = n0_ch->subdomain_index();
-        Subdomain_index si_n1 = n1_ch->subdomain_index();
+        Subdomain_index si_n0 = sc.n0->subdomain_index();
+        Subdomain_index si_n1 = sc.n1->subdomain_index();
         Subdomain_index si = circ->subdomain_index();
 
         if (si_n0 != si && si_n1 != si)
           return TOPOLOGICAL_PROBLEM;
 
-        if ( triangulation.is_infinite(n0_ch->vertex(ch_id_in_n0))
-             && triangulation.is_infinite(n1_ch->vertex(ch_id_in_n1)))
+        if (sc.has_infinite_adjacency(triangulation))
           return TOPOLOGICAL_PROBLEM;
 
-        if ( triangulation.is_infinite(n0_ch)
-             && triangulation.is_infinite(n1_ch)
+        if ( triangulation.is_infinite(sc.n0)
+             && triangulation.is_infinite(sc.n1)
              && !triangulation.is_infinite(circ))
           return TOPOLOGICAL_PROBLEM;
 
-        cells_to_remove.push_back(circ);
+        cells_to_remove.push_back(sc.c);
 
-        invalid_cells.insert(circ);
+        invalid_cells.insert(sc.c);
 
       } while (++circ != done);
 
@@ -827,24 +856,36 @@ collapse(const typename C3t3::Cell_handle ch,
   std::vector<Cell_handle> incident_to_vdeleted;
   tr.incident_cells(vdeleted, std::back_inserter(incident_to_vdeleted));
 
-  boost::container::small_vector<Cell_handle, 30> incident_to_edge;
+  // Resolve the whole star first, without modifying anything: rejecting the
+  // collapse once some neighbors have been rewired would leave the
+  // triangulation half-collapsed.
+  boost::container::small_vector<Collapse_star_cell<Cell_handle>, 30> incident_to_edge;
   Cell_circulator circ = tr.incident_cells(ch, to, from);
   Cell_circulator done = circ;
   do
   {
+    const auto sc = make_collapse_star_cell(circ, vkept, vdeleted);
+
+    if (sc.has_infinite_adjacency(tr))
+      return Vertex_handle();
+
+    incident_to_edge.push_back(sc);
+  }
+  while (++circ != done);
+
+  for (const auto& sc : incident_to_edge)
+  {
     for (int i = 0; i < 4; ++i)
     {
-      const Vertex_handle vi = circ->vertex(i);
+      const Vertex_handle vi = sc.c->vertex(i);
       if (vi != vkept && vi != vdeleted)
       {
-        const Facet fi(circ, i);
+        const Facet fi(sc.c, i);
         if (c3t3.is_in_complex(fi))
           c3t3.remove_from_complex(fi);
       }
     }
-    incident_to_edge.push_back(circ);
   }
-  while (++circ != done);
 
   if(c3t3.is_in_complex(ch->vertex(from), ch->vertex(to)))
     c3t3.remove_from_complex(ch->vertex(from), ch->vertex(to));
@@ -852,46 +893,31 @@ collapse(const typename C3t3::Cell_handle ch,
   std::vector<Cell_handle> cells_to_remove;
   std::unordered_set<Cell_handle> invalid_cells;
 
-  for(const Cell_handle& c : incident_to_edge)
+  for(const auto& sc : incident_to_edge)
   {
-    const int v0_id = c->index(vkept);
-    const int v1_id = c->index(vdeleted);
-
-    Cell_handle n0_ch = c->neighbor(v0_id);
-    Cell_handle n1_ch = c->neighbor(v1_id);
-
-    const int ch_id_in_n0 = n0_ch->index(c);
-    const int ch_id_in_n1 = n1_ch->index(c);
-
     //Merge surface patch indices
-    merge_surface_patch_indices(Facet(n0_ch, ch_id_in_n0),
-                                Facet(n1_ch, ch_id_in_n1),
+    merge_surface_patch_indices(Facet(sc.n0, sc.c_in_n0),
+                                Facet(sc.n1, sc.c_in_n1),
                                 c3t3);
 
     //Update neighbors before removing cell
-    n0_ch->set_neighbor(ch_id_in_n0, n1_ch);
-    n1_ch->set_neighbor(ch_id_in_n1, n0_ch);
+    sc.n0->set_neighbor(sc.c_in_n0, sc.n1);
+    sc.n1->set_neighbor(sc.c_in_n1, sc.n0);
 
     //Update vertices cell pointer
     for (int i = 0; i < 3; i++)
     {
-      int vid = Tr::vertex_triple_index(ch_id_in_n0, i);
-      n0_ch->vertex(vid)->set_cell(n0_ch);
+      int vid = Tr::vertex_triple_index(sc.c_in_n0, i);
+      sc.n0->vertex(vid)->set_cell(sc.n0);
     }
     for (int i = 0; i < 3; i++)
     {
-      int vid = Tr::vertex_triple_index(ch_id_in_n1, i);
-      n1_ch->vertex(vid)->set_cell(n1_ch);
+      int vid = Tr::vertex_triple_index(sc.c_in_n1, i);
+      sc.n1->vertex(vid)->set_cell(sc.n1);
     }
 
-    if (tr.is_infinite(n0_ch->vertex(ch_id_in_n0))
-      && tr.is_infinite(n1_ch->vertex(ch_id_in_n1)))
-    {
-      std::cout << "Collapse infinite issue!" << std::endl;
-      return Vertex_handle();
-    }
-    cells_to_remove.push_back(c);
-    invalid_cells.insert(c);
+    cells_to_remove.push_back(sc.c);
+    invalid_cells.insert(sc.c);
   }
 
   const Vertex_handle infinite_vertex = tr.infinite_vertex();
@@ -1075,44 +1101,6 @@ bool is_cells_set_manifold(const C3t3&,
   for (const auto& evv : edges)
     if (evv.second != 2)
       return false;
-
-  return true;
-}
-
-template<typename C3t3>
-bool collapse_avoids_infinite_adjacency(const typename C3t3::Edge& edge,
-                                        const Collapse_type collapse_type,
-                                        const C3t3& c3t3)
-{
-  typedef typename C3t3::Triangulation   Tr;
-  typedef typename Tr::Cell_handle       Cell_handle;
-  typedef typename Tr::Vertex_handle     Vertex_handle;
-  typedef typename Tr::Cell_circulator   Cell_circulator;
-
-  const Tr& tr = c3t3.triangulation();
-
-  const Vertex_handle v0 = edge.first->vertex(edge.second);
-  const Vertex_handle v1 = edge.first->vertex(edge.third);
-  const Vertex_handle vkept    = (collapse_type == TO_V1) ? v1 : v0;
-  const Vertex_handle vdeleted = (collapse_type == TO_V1) ? v0 : v1;
-
-  Cell_circulator circ = tr.incident_cells(edge);
-  const Cell_circulator done = circ;
-  do
-  {
-    const int v0_id = circ->index(vkept);
-    const int v1_id = circ->index(vdeleted);
-
-    const Cell_handle n0_ch = circ->neighbor(v0_id);
-    const Cell_handle n1_ch = circ->neighbor(v1_id);
-
-    const int ch_id_in_n0 = n0_ch->index(circ);
-    const int ch_id_in_n1 = n1_ch->index(circ);
-
-    if (tr.is_infinite(n0_ch->vertex(ch_id_in_n0))
-     && tr.is_infinite(n1_ch->vertex(ch_id_in_n1)))
-      return false;
-  } while (++circ != done);
 
   return true;
 }
@@ -1304,10 +1292,6 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
       CollapseTriangulation<C3t3> local_tri(edge, cells_to_insert, collapse_type);
       if(local_tri.collapse() != VALID)
         return Vertex_handle();
-    }
-    else if(!collapse_avoids_infinite_adjacency<C3t3>(edge, collapse_type, c3t3))
-    {
-      return Vertex_handle();
     }
 
 #ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
