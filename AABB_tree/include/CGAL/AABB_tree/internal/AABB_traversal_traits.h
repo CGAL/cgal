@@ -104,7 +104,7 @@ private:
 /**
  * @class Listing_intersection_traits
  */
-template<typename AABBTraits, typename Query, typename Output_iterator>
+template<typename AABBTraits, typename Query, typename OutputIterator>
 class Listing_intersection_traits
 {
   typedef typename AABBTraits::FT FT;
@@ -117,7 +117,7 @@ class Listing_intersection_traits
   typedef ::CGAL::AABB_node<AABBTraits> Node;
 
 public:
-  Listing_intersection_traits(Output_iterator out_it, const AABBTraits& traits)
+  Listing_intersection_traits(OutputIterator out_it, const AABBTraits& traits)
     : m_out_it(out_it), m_traits(traits) {}
 
   constexpr bool go_further() const { return true; }
@@ -139,7 +139,7 @@ public:
   }
 
 private:
-  Output_iterator m_out_it;
+  OutputIterator m_out_it;
   const AABBTraits& m_traits;
 };
 
@@ -147,7 +147,7 @@ private:
 /**
  * @class Listing_primitive_traits
  */
-template<typename AABBTraits, typename Query, typename Output_iterator>
+template<typename AABBTraits, typename Query, typename OutputIterator>
 class Listing_primitive_traits
 {
   typedef typename AABBTraits::FT FT;
@@ -160,7 +160,7 @@ class Listing_primitive_traits
   typedef ::CGAL::AABB_node<AABBTraits> Node;
 
 public:
-  Listing_primitive_traits(Output_iterator out_it, const AABBTraits& traits)
+  Listing_primitive_traits(OutputIterator out_it, const AABBTraits& traits)
     : m_out_it(out_it), m_traits(traits) {}
 
   constexpr bool go_further() const { return true; }
@@ -179,7 +179,7 @@ public:
   }
 
 private:
-  Output_iterator m_out_it;
+  OutputIterator m_out_it;
   const AABBTraits& m_traits;
 };
 
@@ -187,7 +187,7 @@ private:
  * @class Listing_distinct_primitive_traits
  * used by `all_pairs_of_intersecting_primitives()` to avoid reporting `(i, i)` and twice `(i, j)`.
  */
-template<typename AABBTraits, typename Output_iterator>
+template<typename AABBTraits, typename OutputIterator>
 class Listing_distinct_primitive_traits
 {
   typedef typename AABBTraits::FT FT;
@@ -200,7 +200,7 @@ class Listing_distinct_primitive_traits
   typedef ::CGAL::AABB_node<AABBTraits> Node;
 
 public:
-  Listing_distinct_primitive_traits(Output_iterator out_it, const AABBTraits& traits)
+  Listing_distinct_primitive_traits(OutputIterator out_it, const AABBTraits& traits)
     : m_out_it(out_it), m_traits(traits) {}
 
   constexpr bool go_further() const { return true; }
@@ -219,7 +219,7 @@ public:
   }
 
 private:
-  Output_iterator m_out_it;
+  OutputIterator m_out_it;
   const AABBTraits& m_traits;
 };
 

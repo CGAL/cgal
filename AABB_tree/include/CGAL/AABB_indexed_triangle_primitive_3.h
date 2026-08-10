@@ -36,20 +36,20 @@ struct Triangle_3_from_triangle_soup_property_map
 
   Triangle_3_from_triangle_soup_property_map(){}
   template <class PM=PointMap, std::enable_if_t<std::is_default_constructible_v<PM>, int> = 0>
-  Triangle_3_from_triangle_soup_property_map(const PointRange &pts_, const FaceRange &triangles_) : pts(&pts_), triangles(&triangles_){}
-  Triangle_3_from_triangle_soup_property_map(const PointRange &pts_, const FaceRange &triangles_, PointMap pmap) : pts(&pts_), triangles(&triangles_), pmap(pmap) {}
+  Triangle_3_from_triangle_soup_property_map(const PointRange &pts_, const FaceRange &triangles_) : pts(&pts_), triangles(&triangles_), pmap(std::make_optional(PointMap())){}
+  Triangle_3_from_triangle_soup_property_map(const PointRange &pts_, const FaceRange &triangles_, PointMap pmap) : pts(&pts_), triangles(&triangles_), pmap(std::make_optional(pmap)) {}
 
   inline friend value_type
   get(const Self &s, const key_type &i)
   {
-    return GeomTraits().construct_triangle_3_object()(get(s.pmap, (*s.pts)[(*s.triangles)[i][0]]),
-                                                      get(s.pmap, (*s.pts)[(*s.triangles)[i][1]]),
-                                                      get(s.pmap, (*s.pts)[(*s.triangles)[i][2]]));
+    return GeomTraits().construct_triangle_3_object()(get(*s.pmap, (*s.pts)[(*s.triangles)[i][0]]),
+                                                      get(*s.pmap, (*s.pts)[(*s.triangles)[i][1]]),
+                                                      get(*s.pmap, (*s.pts)[(*s.triangles)[i][2]]));
   }
 
   const PointRange *pts;
   const FaceRange *triangles;
-  PointMap pmap;
+  std::optional<PointMap> pmap;
 };
 
 template <class GeomTraits, class PointRange, class FaceRange, class PointMap>
@@ -64,18 +64,18 @@ struct Reference_point_from_triangle_soup_property_map
 
   Reference_point_from_triangle_soup_property_map(){}
   template <class PM=PointMap, std::enable_if_t<std::is_default_constructible_v<PM>, int> = 0>
-  Reference_point_from_triangle_soup_property_map(const PointRange &pts_, const FaceRange &triangles_) : pts(&pts_), triangles(&triangles_){}
-  Reference_point_from_triangle_soup_property_map(const PointRange &pts_, const FaceRange &triangles_, PointMap pmap) : pts(&pts_), triangles(&triangles_), pmap(pmap) {}
+  Reference_point_from_triangle_soup_property_map(const PointRange &pts_, const FaceRange &triangles_) : pts(&pts_), triangles(&triangles_), pmap(std::make_optional(PointMap())){}
+  Reference_point_from_triangle_soup_property_map(const PointRange &pts_, const FaceRange &triangles_, PointMap pmap) : pts(&pts_), triangles(&triangles_), pmap(std::make_optional(pmap)) {}
 
   inline friend value_type
   get(const Self &s, const key_type &i)
   {
-    return get(s.pmap, (*s.pts)[(*s.triangles)[i][0]]);
+    return get(*s.pmap, (*s.pts)[(*s.triangles)[i][0]]);
   }
 
   const PointRange *pts;
   const FaceRange *triangles;
-  PointMap pmap;
+  std::optional<PointMap> pmap;
 };
 }//namespace internal
 

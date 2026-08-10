@@ -71,8 +71,6 @@ public:
   // completely inside of the other one. Q is translated by t.
   bool check_collision(const Point_2 &t)
   {
-    // Aff_transformation_2<Kernel> tr(Translation(), t-ORIGIN);
-    // if(AABB_trees::do_intersect(m_translating_tree, m_stationary_tree, parameters::transformation(tr)))
     if(AABB_trees::do_intersect(m_translating_tree, m_stationary_tree, parameters::transformation(Aff_transformation_2<Kernel>(Translation(), t-ORIGIN))))
       return true;
 
