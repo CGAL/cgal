@@ -10,8 +10,8 @@
 // Author(s): Ron Wein   <wein@post.tau.ac.il>
 //            Efi Fogel  <efifogel@gmail.com>
 
-#ifndef CGAL_ENVELOPE_DIVIDE_AND_CONQUER_2_H
-#define CGAL_ENVELOPE_DIVIDE_AND_CONQUER_2_H
+#ifndef CGAL_ENVELOPE_2_ENVELOPE_DIVIDE_AND_CONQUER_2_H
+#define CGAL_ENVELOPE_2_ENVELOPE_DIVIDE_AND_CONQUER_2_H
 
 #include <CGAL/license/Envelope_2.h>
 
@@ -24,6 +24,7 @@
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 
 namespace CGAL {
+namespace Envelope_2 {
 
 #define CGAL_VALUE_BASED_POOL 1
 
@@ -307,6 +308,7 @@ protected:
   Vertex_descriptor _split_edge(Envelope_diagram_1& diag, const Point_2& p, Edge_descriptor e);
 };
 
+} // namespace Envelope_2
 } // namespace CGAL
 
 #include <CGAL/Envelope_2/Envelope_divide_and_conquer_2_impl.h>

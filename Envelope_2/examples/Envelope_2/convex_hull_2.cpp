@@ -8,8 +8,8 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_linear_traits_2.h>
 #include <CGAL/Arr_curve_data_traits_2.h>
-#include <CGAL/Envelope_diagram_1.h>
-#include <CGAL/envelope_2.h>
+#include <CGAL/Envelope_2/Envelope_diagram_1.h>
+#include <CGAL/Envelope_2/envelope_2.h>
 
 using Number_type = CGAL::Exact_rational;
 using Kernel = CGAL::Cartesian<Number_type>;
@@ -18,7 +18,7 @@ using Point_2 = Linear_traits_2::Point_2;
 using Line_2 = Linear_traits_2::Line_2;
 using Traits_2 = CGAL::Arr_curve_data_traits_2<Linear_traits_2, unsigned int>;
 using Dual_line_2 = Traits_2::X_monotone_curve_2;
-using Diagram_1 = CGAL::Envelope_diagram_1<Traits_2>;
+using Diagram_1 = CGAL::Envelope_2::Envelope_diagram_1<Traits_2>;
 
 int main (int argc, char* argv[]) {
   // Read the points from the input file.
@@ -56,8 +56,8 @@ int main (int argc, char* argv[]) {
   // the lower part of the convex hull.
   Diagram_1 min_diag;
   Diagram_1 max_diag;
-  lower_envelope_x_monotone_2(dual_lines.begin(), dual_lines.end(), min_diag);
-  upper_envelope_x_monotone_2(dual_lines.begin(), dual_lines.end(), max_diag);
+  CGAL::Envelope_2::lower_envelope_x_monotone_2(dual_lines.begin(), dual_lines.end(), min_diag);
+  CGAL::Envelope_2::upper_envelope_x_monotone_2(dual_lines.begin(), dual_lines.end(), max_diag);
 
   // Output the points along the boundary convex hull in counterclockwise
   // order. We start by traversing the minimization diagram from left to

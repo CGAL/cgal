@@ -10,8 +10,8 @@
 // Author(s) : Ron Wein   <wein@post.tau.ac.il>
 //             Efi Fogel  <efifogel@gmail.com>
 
-#ifndef CGAL_ENVELOPE_DIVIDE_AND_CONQUER_2_IMPL_H
-#define CGAL_ENVELOPE_DIVIDE_AND_CONQUER_2_IMPL_H
+#ifndef CGAL_ENVELOPE_2_ENVELOPE_DIVIDE_AND_CONQUER_2_IMPL_H
+#define CGAL_ENVELOPE_2_ENVELOPE_DIVIDE_AND_CONQUER_2_IMPL_H
 
 #include <CGAL/license/Envelope_2.h>
 
@@ -27,12 +27,12 @@
  * helpers defined in Env_divide_and_conquer_2.h.
  */
 
-
 #include <optional>
 #include <algorithm>
 // #include <bit>
 
 namespace CGAL {
+namespace Envelope_2 {
 
 // ---------------------------------------------------------------------------
 // Construct the lower/upper envelope of non-vertical curves.
@@ -430,9 +430,9 @@ _merge_single_interval(Edge_const_descriptor e, Edge_const_descriptor other_edge
 // Compare y-coordinates of two curves at endpoints.
 //
 template <typename Traits, typename Diagram>
-Comparison_result Envelope_divide_and_conquer_2<Traits,Diagram>::
+Comparison_result Envelope_divide_and_conquer_2<Traits, Diagram>::
 compare_y_at_end(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2, Arr_curve_end curve_end) const {
-  CGAL_precondition(traits->is_in_x_range_2_object()(xcv1, xcv2));
+  CGAL_precondition(m_traits->is_in_x_range_2_object()(xcv1, xcv2));
 
   const auto compare_y_at_x = m_traits->compare_y_at_x_2_object();
   const auto min_vertex = m_traits->construct_min_vertex_2_object();
@@ -935,6 +935,7 @@ _split_edge(Envelope_diagram_1& diag, const Point_2& p, Edge_descriptor e) {
   return new_v;
 }
 
+} // namespace Envelope_2
 } // namespace CGAL
 
 #endif

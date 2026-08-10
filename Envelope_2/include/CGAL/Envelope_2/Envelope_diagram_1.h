@@ -17,14 +17,14 @@
 
 #include <list>
 #include <memory>
-#include <CGAL/basic.h>
-#include <CGAL/memory.h>
 
+#include <CGAL/memory.h>
 #include <CGAL/Arrangement_on_curve_1/Arrangement_on_curve_1.h>
 #include <CGAL/Arrangement_on_curve_1/Geom_traits_2_adaptor_1.h>
 #include <CGAL/Arrangement_on_curve_1/Unbounded_topology_traits.h>
 
 namespace CGAL {
+namespace Envelope_2 {
 
 /*! \class Envelope_diagram_1
  * A minimization (or maximization) diagram representing the lower (or upper)
@@ -228,6 +228,7 @@ public:
   void clear_edge_curves(Edge_descriptor e) { edge_curves(e).clear(); }
 };
 
+} // namespace Envelope_2
 } // namespace CGAL
 
 #endif

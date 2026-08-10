@@ -1,14 +1,14 @@
-#include <CGAL/Exact_rational.h>
-#include <CGAL/Cartesian.h>
-#include <CGAL/Arr_segment_traits_2.h>
-#include <CGAL/Arr_curve_data_traits_2.h>
-#include <CGAL/Envelope_diagram_1.h>
-#include <CGAL/envelope_2.h>
-
 #include <list>
 #include <iostream>
 #include <fstream>
 #include <cstring>
+
+#include <CGAL/Exact_rational.h>
+#include <CGAL/Cartesian.h>
+#include <CGAL/Arr_segment_traits_2.h>
+#include <CGAL/Arr_curve_data_traits_2.h>
+#include <CGAL/Envelope_2/Envelope_diagram_1.h>
+#include <CGAL/Envelope_2/envelope_2.h>
 
 using std::strcmp;
 
@@ -20,13 +20,13 @@ using Traits_2 = CGAL::Arr_curve_data_traits_2<Segment_traits_2, int>;
 using Point_2 = Traits_2::Point_2;
 using Segment_2 = Segment_traits_2::Curve_2;
 using Curve_2 = Traits_2::Curve_2;
-using Diagram_1 = CGAL::Envelope_diagram_1<Traits_2>;
+using Diagram_1 = CGAL::Envelope_2::Envelope_diagram_1<Traits_2>;
 using Curve_list = std::list<Curve_2>;
 
 enum Coord_input_format {
-  F_RATIONAL,            // Coordinates given as rational numbers.
-  F_INTEGER,             // Coordinates given as integers.
-  F_DOUBLE               // Coordinates given as doubles (with decimal points).
+  F_RATIONAL,            // coordinates given as rational numbers.
+  F_INTEGER,             // coordinates given as integers.
+  F_DOUBLE               // coordinates given as doubles (with decimal points).
 };
 
 /*! reads a set of line segments from an input file.
@@ -249,7 +249,7 @@ int main(int argc, char* argv[]) {
     std::cout << "Checking input file: " << argv[2*i + 1] << std::endl;
 
     // Determine the input format.
-    Coord_input_format   format = F_RATIONAL;
+    Coord_input_format format = F_RATIONAL;
 
     if (strcmp(argv[2*i + 2], "-i") == 0 || strcmp(argv[2*i + 2], "-I") == 0) format = F_INTEGER;
     else if (strcmp(argv[2*i + 2], "-d") == 0 || strcmp(argv[2*i + 2], "-D") == 0) format = F_DOUBLE;
@@ -261,7 +261,7 @@ int main(int argc, char* argv[]) {
     // Compute their lower envelope.
     Diagram_1 min_diag;
 
-    CGAL::lower_envelope_2(segments.begin(), segments.end(), min_diag);
+    CGAL::Envelope_2::lower_envelope_2(segments.begin(), segments.end(), min_diag);
 
     // Check the lower envelope.
     if (! check_envelope(segments, min_diag, true)) {
@@ -275,10 +275,10 @@ int main(int argc, char* argv[]) {
     // Compute the upper envelope.
     Diagram_1 max_diag;
 
-    CGAL::upper_envelope_2(segments.begin(), segments.end(), max_diag);
+    CGAL::Envelope_2::upper_envelope_2(segments.begin(), segments.end(), max_diag);
 
     // Check the upper envelope.
-    if (! check_envelope (segments, max_diag, false)) {
+    if (! check_envelope(segments, max_diag, false)) {
       std::cerr << "Problems in the upper-envelope computation." << std::endl;
       return (1);
     }

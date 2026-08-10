@@ -15,11 +15,23 @@
 
 #include <CGAL/license/Envelope_2.h>
 
-/*! \file
- * Global functions for computing lower and upper envelopes of curves in the plane.
- */
+#define CGAL_DEPRECATED_HEADER "<CGAL/envelope_2.h>"
+#define CGAL_REPLACEMENT_HEADER "<CGAL/Envelope_2/envelope_2>"
+#include <CGAL/Installation/internal/deprecation_warning.h>
 
-#include <CGAL/Envelope_2/Envelope_divide_and_conquer_2.h>
+#if (defined __GNUC__)
+  #if !(defined __STRICT_ANSI__)
+  #warning "envelope_2.h is DEPRECATED, please include Envelope_2/envelope_2.h instead."
+  #endif
+#elif (defined _MSC_VER)
+  #pragma message("envelope_2.h is DEPRECATED, please include Envelope_2/envelope_2.h instead")
+#endif
+
+#include <CGAL/Envelope_2/envelope_2.h>
+
+/*! \file
+ * Deprecated global functions for computing lower and upper envelopes of curves in the plane.
+ */
 
 namespace CGAL {
 
@@ -30,12 +42,8 @@ namespace CGAL {
  * \pre The value-type of the iterator is Traits::Curve_2.
  */
 template <typename InputIterator, typename EnvelopeDiagram>
-void lower_envelope_2(InputIterator begin, InputIterator end, EnvelopeDiagram& diag) {
-  using Traits_2 = typename EnvelopeDiagram::Traits_2;
-  using Envelope_2 = Envelope_divide_and_conquer_2<Traits_2, EnvelopeDiagram>;
-  Envelope_2 env;
-  env.insert_curves(begin, end, true /* Lower envelope */, diag);
-}
+CGAL_DEPRECATED void lower_envelope_2(InputIterator begin, InputIterator end, EnvelopeDiagram& diag)
+{ Envelope_2::lower_envelope_2(begin, end, diag); }
 
 /*! computes the upper envelope of a range of curves.
  * \param begin An iterator for the first curve.
@@ -44,12 +52,8 @@ void lower_envelope_2(InputIterator begin, InputIterator end, EnvelopeDiagram& d
  * \pre The value-type of the iterator is Traits::Curve_2.
  */
 template <typename InputIterator, typename EnvelopeDiagram>
-void upper_envelope_2(InputIterator begin, InputIterator end, EnvelopeDiagram& diag) {
-  using Traits_2 = typename EnvelopeDiagram::Traits_2;
-  using Envelope_2 = Envelope_divide_and_conquer_2<Traits_2, EnvelopeDiagram>;
-  Envelope_2 env;
-  env.insert_curves(begin, end, false /* Upper envelope */, diag);
-}
+CGAL_DEPRECATED void upper_envelope_2(InputIterator begin, InputIterator end, EnvelopeDiagram& diag)
+{ Envelope_2::upper_envelope_2(begin, end, diag); }
 
 /*! computes the lower envelope of a range of x-monotone curves.
  * \param begin An iterator for the first x-monotone curve.
@@ -58,12 +62,8 @@ void upper_envelope_2(InputIterator begin, InputIterator end, EnvelopeDiagram& d
  * \pre The value-type of the iterator is Traits::X_monotone_curve_2.
  */
 template <typename InputIterator, typename EnvelopeDiagram>
-void lower_envelope_x_monotone_2(InputIterator begin, InputIterator end, EnvelopeDiagram& diag) {
-  using Traits_2 = typename EnvelopeDiagram::Traits_2;
-  using Envelope_2 = Envelope_divide_and_conquer_2<Traits_2, EnvelopeDiagram>;
-  Envelope_2 env;
-  env.insert_x_monotone_curves(begin, end, true /* Lower envelope */, diag);
-}
+CGAL_DEPRECATED void lower_envelope_x_monotone_2(InputIterator begin, InputIterator end, EnvelopeDiagram& diag)
+{ Envelope_2::lower_envelope_x_monotone_2(begin, end, diag); }
 
 /*! computes the lower envelope of a range of x-monotone curves.
  * Compute the lower envelope of a range of x-monotone curves.
@@ -74,12 +74,9 @@ void lower_envelope_x_monotone_2(InputIterator begin, InputIterator end, Envelop
  * \pre The value-type of the iterator is Traits::X_monotone_curve_2.
  */
 template <typename InputIterator, typename EnvelopeDiagram, typename Traits>
-void lower_envelope_x_monotone_2(InputIterator begin, InputIterator end, EnvelopeDiagram& diag, const Traits& traits) {
-  using Traits_2 = typename EnvelopeDiagram::Traits_2;
-  using Envelope_2 = Envelope_divide_and_conquer_2<Traits_2, EnvelopeDiagram>;
-  Envelope_2 env(&traits);
-  env.insert_x_monotone_curves(begin, end, true /* Lower envelope */, diag);
-}
+CGAL_DEPRECATED void lower_envelope_x_monotone_2(InputIterator begin, InputIterator end, EnvelopeDiagram& diag,
+                                                 const Traits& traits)
+{ Envelope_2::lower_envelope_x_monotone_2(begin, end, diag, traits); }
 
 /*! computes the upper envelope of a range of x-monotone curves.
  * \param begin An iterator for the first x-monotone curve.
@@ -88,12 +85,8 @@ void lower_envelope_x_monotone_2(InputIterator begin, InputIterator end, Envelop
  * \pre The value-type of the iterator is Traits::X_monotone_curve_2.
  */
 template <typename InputIterator, typename EnvelopeDiagram>
-void upper_envelope_x_monotone_2(InputIterator begin, InputIterator end, EnvelopeDiagram& diag) {
-  using Traits_2 = typename EnvelopeDiagram::Traits_2;
-  using Envelope_2 = Envelope_divide_and_conquer_2<Traits_2, EnvelopeDiagram>;
-  Envelope_2 env;
-  env.insert_x_monotone_curves(begin, end, false /* Upper envelope */, diag);
-}
+CGAL_DEPRECATED void upper_envelope_x_monotone_2(InputIterator begin, InputIterator end, EnvelopeDiagram& diag)
+{ Envelope_2::upper_envelope_x_monotone_2(begin, end, diag); }
 
 /*! computes the upper envelope of a range of x-monotone curves.
  * \param begin An iterator for the first x-monotone curve.
@@ -103,13 +96,10 @@ void upper_envelope_x_monotone_2(InputIterator begin, InputIterator end, Envelop
  * \pre The value-type of the iterator is Traits::X_monotone_curve_2.
  */
 template <typename InputIterator, typename EnvelopeDiagram, typename Traits>
-void upper_envelope_x_monotone_2(InputIterator begin, InputIterator end, EnvelopeDiagram& diag, const Traits& traits) {
-  using Traits_2 = typename EnvelopeDiagram::Traits_2;
-  using Envelope_2 = Envelope_divide_and_conquer_2<Traits_2, EnvelopeDiagram>;
-  Envelope_2 env(&traits);
-  env.insert_x_monotone_curves(begin, end, false /* Upper envelope */, diag);
-}
+CGAL_DEPRECATED void upper_envelope_x_monotone_2(InputIterator begin, InputIterator end, EnvelopeDiagram& diag,
+                                                 const Traits& traits)
+{ Envelope_2::upper_envelope_x_monotone_2(begin, end, diag, traits); }
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif
