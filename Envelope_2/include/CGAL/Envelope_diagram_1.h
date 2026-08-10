@@ -95,75 +95,137 @@ public:
   ~Envelope_diagram_1() = default;
 
   // --------------------------------------------------------------------------
-  // DIAGRAM BOUNDARY ACCESSORS
+  // Diagram Accessors
   // --------------------------------------------------------------------------
+
+  /*! obtains the leftmost edge of the diagram.
+   */
   Edge_const_descriptor leftmost() const { return this->unbounded_left_edge(); }
   Edge_descriptor leftmost() { return this->unbounded_left_edge(); }
 
+  /*! obtains the rightmost edge of the diagram.
+   */
   Edge_const_descriptor rightmost() const { return this->unbounded_right_edge(); }
   Edge_descriptor rightmost() { return this->unbounded_right_edge(); }
 
+  // --------------------------------------------------------------------------
+  // Diagram Modifiers
+  // --------------------------------------------------------------------------
+
+  /*! sets the leftmost edge of the diagram to be `e`.
+   */
   void set_leftmost(Edge_descriptor e) { this->topology_traits().set_unbounded_left_edge(e); }
+
+  /*! sets the rightmost edge of the diagram to be `e`.
+   */
   void set_rightmost(Edge_descriptor e) { this->topology_traits().set_unbounded_right_edge(e); }
 
+  /*! creates a new diagram vertex, associated with a given point.
+   */
+  Vertex_descriptor new_vertex(const Point_2& p) { return this->topology_traits().create_vertex(p); }
+
+  /*! creates a new diagram edge.
+   */
+  Edge_descriptor new_edge() { return this->topology_traits().create_edge(); }
+
+  /*! deletes a given vertex.
+   */
+  void delete_vertex(Vertex_descriptor v) { this->topology_traits().erase_vertex(v); }
+
+  /*! deletes a given edge.
+   */
+  void delete_edge(Edge_descriptor e) { this->topology_traits().erase_edge(e); }
+
+  /*! clears the diagram; leavs only one unbounded edge.
+   */
   void clear() { this->topology_traits().clear(); }
 
   // --------------------------------------------------------------------------
-  // CURVE DATA ACCESSORS & MUTATORS
+  // Curve Data Accessors
   // --------------------------------------------------------------------------
+
+  /*! obtains the point associated with a given vertex.
+   */
   const Point_2& point(Vertex_const_descriptor v) const { return get(this->vertex_point_map(), v); }
 
-  void set_point(Vertex_descriptor v, const Point_2& p) { put(this->vertex_point_map(), v, p); }
-
+  /*! obtains the diagram curves associated with a given vertex.
+   */
   Curve_container& vertex_curves(Vertex_descriptor v) { return get(this->vertex_data_map(), v); }
   const Curve_container& vertex_curves(Vertex_const_descriptor v) const { return get(this->vertex_data_map(), v); }
 
+  /*! obtains the diagram curves associated with a given edge.
+   */
   Curve_container& edge_curves(Edge_descriptor e) { return get(this->edge_data_map(), e); }
   const Curve_container& edge_curves(Edge_const_descriptor e) const { return get(this->edge_data_map(), e); }
 
+  /*! obtains the number of curves associated with a given vertex.
+   */
   Size number_of_vertex_curves(Vertex_const_descriptor v) const { return vertex_curves(v).size(); }
+
+  /*! obtains the number of curves associated with a given edge.
+   */
   Size number_of_edge_curves(Edge_const_descriptor e) const { return edge_curves(e).size(); }
 
+  /*! determines whether there are no curves associated with a given vertex.
+   */
   bool empty_vertex_curves(Vertex_const_descriptor v) const { return vertex_curves(v).empty(); }
+
+  /*! determines whether there are no curves associated with a given edge.
+   */
   bool empty_edge_curves(Edge_const_descriptor e) const { return edge_curves(e).empty(); }
 
+  /*! obtains the first curve associated with a given vertex.
+   * \pre `empty_vertex_curves(v)` is `false`.
+   */
   const X_monotone_curve_2& vertex_curve(Vertex_const_descriptor v) const {
     CGAL_precondition(! empty_vertex_curves(v));
     return vertex_curves(v).front();
   }
 
+  /*! obtains the first curve associated with a given edge.
+   * \pre `empty_vertex_curves(v)` is `false`.
+   */
   const X_monotone_curve_2& edge_curve(Edge_const_descriptor e) const {
     CGAL_precondition(! empty_edge_curves(e));
     return edge_curves(e).front();
   }
 
-  void add_edge_curve(Edge_descriptor e, const X_monotone_curve_2& cv) { edge_curves(e).push_back(cv); }
+  // --------------------------------------------------------------------------
+  // Curve Data Modifiers
+  // --------------------------------------------------------------------------
+  /*! sets the point associated with a given vertex.
+   */
+  void set_point(Vertex_descriptor v, const Point_2& p) { put(this->vertex_point_map(), v, p); }
 
-  void add_vertex_curve(Vertex_descriptor v, const X_monotone_curve_2& cv) { vertex_curves(v).push_back(cv); }
+  /*! adds an \f$x\f$-monotone curve to the list of curves associated with a given vertex.
+   */
+  void add_vertex_curve(Vertex_descriptor v, const X_monotone_curve_2& xcv) { vertex_curves(v).push_back(xcv); }
 
-  void add_edge_curves(Edge_descriptor e, Curve_const_iterator begin, Curve_const_iterator end) {
-    auto& c = edge_curves(e);
-    for (auto it = begin; it != end; ++it) c.push_back(*it);
-  }
+  /*! adds an \f$x\f$-monotone curve to the list of curves associated with a given edge.
+   */
+  void add_edge_curve(Edge_descriptor e, const X_monotone_curve_2& xcv) { edge_curves(e).push_back(xcv); }
 
+  /*! adds a range of \f$x\f$-monotone curves to the list of curves associated with a given vertex.
+   */
   void add_vertex_curves(Vertex_descriptor v, Curve_const_iterator begin, Curve_const_iterator end) {
     auto& c = vertex_curves(v);
     for (auto it = begin; it != end; ++it) c.push_back(*it);
   }
 
+  /*! adds a range of \f$x\f$-monotone curves to the list of curves associated with a given edge.
+   */
+  void add_edge_curves(Edge_descriptor e, Curve_const_iterator begin, Curve_const_iterator end) {
+    auto& c = edge_curves(e);
+    for (auto it = begin; it != end; ++it) c.push_back(*it);
+  }
+
+  /*! clears the curves associated with a given vertex.
+   */
   void clear_vertex_curves(Vertex_descriptor v) { vertex_curves(v).clear(); }
+
+  /*! clears the curves associated with a given edge.
+   */
   void clear_edge_curves(Edge_descriptor e) { edge_curves(e).clear(); }
-
-  // --------------------------------------------------------------------------
-  // TOPOLOGY MUTATION HELPER DELEGATES
-  // --------------------------------------------------------------------------
-  Vertex_descriptor new_vertex(const Point_2& p) { return this->topology_traits().create_vertex(p); }
-
-  Edge_descriptor new_edge() { return this->topology_traits().create_edge(); }
-
-  void delete_vertex(Vertex_descriptor v) { this->topology_traits().erase_vertex(v); }
-
-  void delete_edge(Edge_descriptor e) { this->topology_traits().erase_edge(e); }
 };
 
 } // namespace CGAL
