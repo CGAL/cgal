@@ -25,7 +25,7 @@ closest point from a point query to a set of triangles.
 
 Similarly to the package \ref chapterBoxIntersection "Intersecting Sequences of dD Iso-oriented Boxes",
 this component might also be used for finding all intersecting pairs of objects,
-and can even achieves better performances when running on several threads.
+and can even achieve a better performance when running on several threads.
 
 The AABB tree data structure takes as input an iterator range of
 geometric data, which is then converted into primitives. From these
@@ -118,7 +118,7 @@ These functions provide an alternative to `CGAL::box_intersection_d()`. In pract
 particularly when using a parallel execution tag (see \ref aabb_tree_perf).
 
 Note that compared to `CGAL::box_intersection_d()`, the tree of primitives is actually constructed. It becomes even more interesting in term of runtime
-if several calls to the aforementioned intersection functions are called with the same tree.
+if several calls to the aforementioned intersection functions are done with the same tree.
 
 \section aabb_tree_examples Examples
 
@@ -233,7 +233,7 @@ construction time, the memory occupancy and the number of queries per
 second for a variety of intersection and distance queries. The machine
 used is a PC running Linux Mint with an Intel CPU Core Ultra 7 155H with 16 cores and 32GB of RAM.
 By default, the kernel used is `Simple_cartesian<double>` (the fastest in our experiments). The
-program has been compiled with gcc 13.3 2023 compiler with the O3
+program has been compiled with the compiler gcc 13.3 2023 with the `O3`
 option which maximizes speed.
 
 \subsection aabb_tree_perf_cons Construction
@@ -241,7 +241,7 @@ option which maximizes speed.
 The surface triangle mesh chosen for benchmarking the tree
 construction is the knot model (14,400 triangles) depicted by
 \cgalFigureRef{figAABB-tree-bench}. We measure the tree construction time (both
-AABB tree alone and AABB tree with internal KD-tree) for four denser versions if the knot model.
+AABB tree alone and AABB tree with internal KD-tree) for four denser versions of the knot model.
 
 
 |  Number of triangles | Construction (in ms) (Parallel) | (Sequential) | Construction with internal KD-tree (in ms) (Parallel) | (Sequential) |
@@ -349,14 +349,11 @@ inside the bounding box.
 
 \subsection aabb_two_trees_perf Intersection of Two AABB Trees
 
-We test the intersection of two AABB trees using 3 models: iphigenia and the Nefertiti that are two common models of mesh processing and twisted knot to maximize the number of intersection. For each model,
+We test the intersection of two AABB trees using 3 models: two common models of mesh processing (Iphigenia and Nefertiti), and twisted knot to maximize the number of intersection. For each model,
 we test their intersection with a translated version of themselves (Note: We do not exploit the fact that it is the same model, the tree is built twice).
 We compare here `CGAL::AABB_trees::all_pairs_of_intersecting_primitives()` and `CGAL::box_intersection_d()`.
 
-We exhibit the performance of the intersection of two AABB trees using three models: Iphigenia and Nefertiti \cgalFigureRef{figAABB-tree-bench}, which are widely used benchmark meshes in geometry processing, and a twisted knot \cgalFigureRef{figAABB-tree-bench}, chosen to maximize the number of intersections.
 
-For each model, we compute the intersections between the model and a translated copy of itself. Although both trees are built from the same mesh, we intentionally construct the AABB tree twice and do not exploit this fact.
-We compare the performance of `CGAL::AABB_trees::all_pairs_of_intersecting_primitives()` with that of `CGAL::box_intersection_d()`.
 
 \cgalFigureBegin{figAABB-tree-model,iphigenia.png, nefertiti.png, twisted_knot.png}
 The three input models used to illustrate AABB trees intersection performance. Iphigenia (left), Nefertiti (center), Twisted knot (right).

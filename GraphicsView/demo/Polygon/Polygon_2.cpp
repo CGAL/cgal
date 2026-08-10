@@ -1,4 +1,3 @@
-
 #include <fstream>
 // CGAL headers
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -14,7 +13,6 @@
 #include <boost/config.hpp>
 #include <boost/version.hpp>
 #include <CGAL/IO/WKT.h>
-
 
 // Qt headers
 #include <QtGui>

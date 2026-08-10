@@ -54,7 +54,7 @@ class Polygon_2_edge_iterator {
     typedef typename Container_::const_iterator const_iterator;
     typedef typename Container_::difference_type difference_type;
     typedef value_type*           pointer;
-    typedef value_type            reference; // The values are built on fly and thus *it lead to compilation error when trying to get a reference
+    typedef value_type            reference; // The values are built on fly and thus it leads to a compilation error when trying to get a reference
   private:
     const Container_* container;   // needed for dereferencing the last edge
     const_iterator first_vertex;   // points to the first vertex of the edge

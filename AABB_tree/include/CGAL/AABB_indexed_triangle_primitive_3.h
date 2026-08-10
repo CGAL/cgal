@@ -96,7 +96,7 @@ struct Reference_point_from_triangle_soup_property_map
  * \tparam CacheDatum is either `CGAL::Tag_true` or `CGAL::Tag_false`. In the former case,
  *         the datum is stored in the primitive, while in the latter it is
  *         constructed on the fly to reduce the memory footprint.
- *         The default is `CGAL::Tag_false` (datum is not stored).
+ *         The default is `CGAL::Tag_false`, that is the datum is not stored.
  * \tparam PointMap is a model of `ReadablePropertyMap` with its key type being the value type of `PointRange` and the value type being a `Point_3`.
  *         The default is \link Identity_property_map `CGAL::Identity_property_map`\endlink<PointRange::value_type>.
  *

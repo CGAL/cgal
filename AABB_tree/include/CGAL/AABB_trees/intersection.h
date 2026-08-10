@@ -46,7 +46,7 @@ namespace AABB_trees {
   ///   \cgalParamNEnd
   ///   \cgalParamNBegin{transformation}
   ///     \cgalParamDescription{An affine transformation apply to `tree1` (`tree2`)}
-  ///     \cgalParamType{`CGAL::Aff_transformation_3<Kernel>` where `Kernel` is the kernel associated with `AABBTree1::AABB_traits::Point` (`AABBTree2::AABB_traits::Point`)}
+  ///     \cgalParamType{`CGAL::Aff_transformation_3<Kernel>` where `Kernel` is deduced from `AABBTree1::AABB_traits::Point`, using `Kernel_traits`}
   ///     \cgalParamDefault{An identity transformation}
   ///   \cgalParamNEnd
   /// \cgalNamedParamsEnd
@@ -98,9 +98,9 @@ namespace AABB_trees {
 
   /// \ingroup PkgAABBTreeRef
   ///
-  /// \brief Computes all pairs of intersecting primitive from two AABB trees.
+  /// \brief computes all pairs of intersecting primitive from two AABB trees.
   ///
-  /// Traverses both trees and outputs all pairs of primitives that intersect.
+  /// Both trees are traversed and all pairs of primitives that intersect are collected.
   /// Each output element is a pair `(id1, id2)` where:
   ///       - `id1` is the ID of a primitive from `tree1`
   ///       - `id2` is the ID of a primitive from `tree2`
@@ -171,7 +171,7 @@ namespace AABB_trees {
 
   /// \ingroup PkgAABBTreeRef
   ///
-  /// \brief Computes all pairs of primitives from a single AABB tree that are intersecting.
+  /// \brief computes all pairs of primitives from a single AABB tree that are intersecting.
   ///
   /// \note Whether two objects that share a common subfeature (e.g., two triangles sharing an edge) are considered to intersect depends on the primitive type used.
   ///
