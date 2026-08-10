@@ -69,6 +69,20 @@ public:
     return ccdt_3_data_;
   }
 
+  ///////// for C3T3 : dummy implementation for compilation purposes
+  using Subdomain_index = int;
+  Subdomain_index subdomain_index() const { return 1; } // dummy value, not used in the implementation of CCDT
+  // todo : remove this function and the corresponding typedef, as they are not used in the implementation of CCDT, and
+  // are only here to satisfy the requirements of the concept `SimplicialMeshCellBase_3`
+  // for tetrahedral remeshing
+  // PLUS value 1 does not make any sense in the general case
+  void set_subdomain_index(Subdomain_index) {}
+  void reset_cache_validity() {}
+  bool is_cache_valid() const { return false;}
+  void set_sliver_value(double) {}
+  double sliver_value() const { return 0.; }
+  ///////// end of for C3T3
+
   static std::string io_signature() {
     static_assert(
         std::is_same_v<

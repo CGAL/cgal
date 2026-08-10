@@ -39,6 +39,8 @@
 #include <ostream>
 #include <string>
 #include <tuple>
+#include <type_traits>
+#include <variant>
 
 namespace CGAL {
 
@@ -113,7 +115,10 @@ public:
   using Curve_index = CurveIndex;
   using Corner_index = CornerIndex;
 
-  using Index = Variant_with_no_duplicate_t<Subdomain_index, Surface_patch_index, Curve_index, Corner_index>;
+  using Index_variant = Variant_with_no_duplicate_t<Subdomain_index, Surface_patch_index, Curve_index, Corner_index>;
+  using Index = std::conditional_t<std::variant_size_v<Index_variant> == 1,
+                                   std::variant_alternative_t<0, Index_variant>,
+                                   Index_variant>;
 
   using FT = typename Gt::FT;
 

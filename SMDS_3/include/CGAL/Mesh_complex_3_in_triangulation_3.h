@@ -215,15 +215,15 @@ public:
   /*!
   Index type.
   */
-  typedef typename Tr::Vertex::Index Index;
+  typedef typename Tr::Triangulation_data_structure::Vertex::Index Index;
   /*!
   Surface index type.
   */
-  typedef typename Tr::Cell::Surface_patch_index Surface_patch_index;
+  typedef typename Tr::Triangulation_data_structure::Cell::Surface_patch_index Surface_patch_index;
   /*!
   Subdomain index type.
   */
-  typedef typename Tr::Cell::Subdomain_index Subdomain_index;
+  typedef typename Tr::Triangulation_data_structure::Cell::Subdomain_index Subdomain_index;
   /*!
   Corner index type.
   */
