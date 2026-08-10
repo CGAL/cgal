@@ -1,5 +1,6 @@
-
 namespace CGAL {
+namespace Envelope_2 {
+
 /*!
 
 \mainpage User Manual
@@ -198,4 +199,6 @@ that compute envelopes of arbitrary curves.
 \cgalExample{Envelope_2/envelope_circles.cpp}
 
 */
-} /* namespace CGAL */
+
+} // namespace Envelope_2
+} // namespace CGAL
