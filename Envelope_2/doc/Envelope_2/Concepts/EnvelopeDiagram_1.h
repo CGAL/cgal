@@ -81,7 +81,7 @@ typedef unspecified_type Edge_const_descriptor;
 /// @{
 
 /*! constructs an empty diagram containing one unbounded edge,
- * which corresponds to the entire plane and has no \f$ x\f$-monotone
+ * which corresponds to the entire plane and has no \f$x\f$-monotone
  * curves that are associated with it.
  */
 EnvelopeDiagram_1();
