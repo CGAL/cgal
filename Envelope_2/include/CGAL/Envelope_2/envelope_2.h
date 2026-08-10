@@ -1,0 +1,117 @@
+// Copyright (c) 2006  Tel-Aviv University (Israel).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s): Ron Wein   <wein@post.tau.ac.il>
+//            Efi Fogel  <efifogel@gmail.com>
+
+#ifndef CGAL_ENVELOPE_2_ENVELOPE_2_H
+#define CGAL_ENVELOPE_2_ENVELOPE_2_H
+
+#include <CGAL/license/Envelope_2.h>
+
+/*! \file
+ * Global functions for computing lower and upper envelopes of curves in the plane.
+ */
+
+#include <CGAL/Envelope_2/Envelope_divide_and_conquer_2.h>
+
+namespace CGAL {
+namespace Envelope_2 {
+
+/*! computes the lower envelope of a range of curves.
+ * \param begin An iterator for the first curve.
+ * \param end A past-the-end iterator for the curves.
+ * \param diag Output: The minimization diagram.
+ * \pre The value-type of the iterator is Traits::Curve_2.
+ */
+template <typename InputIterator, typename EnvelopeDiagram>
+void lower_envelope_2(InputIterator begin, InputIterator end, EnvelopeDiagram& diag) {
+  using Traits_2 = typename EnvelopeDiagram::Traits_2;
+  using Envelope_2 = Envelope_divide_and_conquer_2<Traits_2, EnvelopeDiagram>;
+  Envelope_2 env;
+  env.insert_curves(begin, end, true /* Lower envelope */, diag);
+}
+
+/*! computes the upper envelope of a range of curves.
+ * \param begin An iterator for the first curve.
+ * \param end A past-the-end iterator for the curves.
+ * \param diag Output: The maximization diagram.
+ * \pre The value-type of the iterator is Traits::Curve_2.
+ */
+template <typename InputIterator, typename EnvelopeDiagram>
+void upper_envelope_2(InputIterator begin, InputIterator end, EnvelopeDiagram& diag) {
+  using Traits_2 = typename EnvelopeDiagram::Traits_2;
+  using Envelope_2 = Envelope_divide_and_conquer_2<Traits_2, EnvelopeDiagram>;
+  Envelope_2 env;
+  env.insert_curves(begin, end, false /* Upper envelope */, diag);
+}
+
+/*! computes the lower envelope of a range of x-monotone curves.
+ * \param begin An iterator for the first x-monotone curve.
+ * \param end A past-the-end iterator for the x-monotone curves.
+ * \param diag Output: The minimization diagram.
+ * \pre The value-type of the iterator is Traits::X_monotone_curve_2.
+ */
+template <typename InputIterator, typename EnvelopeDiagram>
+void lower_envelope_x_monotone_2(InputIterator begin, InputIterator end, EnvelopeDiagram& diag) {
+  using Traits_2 = typename EnvelopeDiagram::Traits_2;
+  using Envelope_2 = Envelope_divide_and_conquer_2<Traits_2, EnvelopeDiagram>;
+  Envelope_2 env;
+  env.insert_x_monotone_curves(begin, end, true /* Lower envelope */, diag);
+}
+
+/*! computes the lower envelope of a range of x-monotone curves.
+ * Compute the lower envelope of a range of x-monotone curves.
+ * \param begin An iterator for the first x-monotone curve.
+ * \param end A past-the-end iterator for the x-monotone curves.
+ * \param diag Output: The minimization diagram.
+ * \param traits The arrangement traits responsible for the x-monotone curves.
+ * \pre The value-type of the iterator is Traits::X_monotone_curve_2.
+ */
+template <typename InputIterator, typename EnvelopeDiagram, typename Traits>
+void lower_envelope_x_monotone_2(InputIterator begin, InputIterator end, EnvelopeDiagram& diag, const Traits& traits) {
+  using Traits_2 = typename EnvelopeDiagram::Traits_2;
+  using Envelope_2 = Envelope_divide_and_conquer_2<Traits_2, EnvelopeDiagram>;
+  Envelope_2 env(&traits);
+  env.insert_x_monotone_curves(begin, end, true /* Lower envelope */, diag);
+}
+
+/*! computes the upper envelope of a range of x-monotone curves.
+ * \param begin An iterator for the first x-monotone curve.
+ * \param end A past-the-end iterator for the x-monotone curves.
+ * \param diag Output: The maximization diagram.
+ * \pre The value-type of the iterator is Traits::X_monotone_curve_2.
+ */
+template <typename InputIterator, typename EnvelopeDiagram>
+void upper_envelope_x_monotone_2(InputIterator begin, InputIterator end, EnvelopeDiagram& diag) {
+  using Traits_2 = typename EnvelopeDiagram::Traits_2;
+  using Envelope_2 = Envelope_divide_and_conquer_2<Traits_2, EnvelopeDiagram>;
+  Envelope_2 env;
+  env.insert_x_monotone_curves(begin, end, false /* Upper envelope */, diag);
+}
+
+/*! computes the upper envelope of a range of x-monotone curves.
+ * \param begin An iterator for the first x-monotone curve.
+ * \param end A past-the-end iterator for the x-monotone curves.
+ * \param diag Output: The maximization diagram.
+ * \param traits The arrangement traits responsible for the x-monotone curves.
+ * \pre The value-type of the iterator is Traits::X_monotone_curve_2.
+ */
+template <typename InputIterator, typename EnvelopeDiagram, typename Traits>
+void upper_envelope_x_monotone_2(InputIterator begin, InputIterator end, EnvelopeDiagram& diag, const Traits& traits) {
+  using Traits_2 = typename EnvelopeDiagram::Traits_2;
+  using Envelope_2 = Envelope_divide_and_conquer_2<Traits_2, EnvelopeDiagram>;
+  Envelope_2 env(&traits);
+  env.insert_x_monotone_curves(begin, end, false /* Upper envelope */, diag);
+}
+
+} // namespace Envelope_2
+} // namespace CGAL
+
+#endif
