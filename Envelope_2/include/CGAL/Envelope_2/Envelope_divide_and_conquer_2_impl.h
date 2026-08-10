@@ -30,12 +30,14 @@
 
 #include <optional>
 #include <algorithm>
+// #include <bit>
 
 namespace CGAL {
 
 // ---------------------------------------------------------------------------
 // Construct the lower/upper envelope of non-vertical curves.
 //
+#if 1
 template <typename Traits, typename Diagram>
 void Envelope_divide_and_conquer_2<Traits,Diagram>::
 _construct_envelope_non_vertical(Curve_pointer_iterator begin, Curve_pointer_iterator end, Envelope_diagram_1& out_d) {
@@ -50,24 +52,138 @@ _construct_envelope_non_vertical(Curve_pointer_iterator begin, Curve_pointer_ite
   if (iter == end) {
     // Construct a singleton diagram, which matches a single curve.
     _construct_singleton_diagram(*(*begin), out_d);
+    return;
   }
-  else {
-    // Divide the given range of curves into two.
-    std::size_t size = std::distance(begin, end);
-    Curve_pointer_iterator div_it = begin;
-    std::advance(div_it, size / 2);
 
-    // Construct the diagrams (envelopes) for the two sub-ranges recursively
-    // and then merge the two diagrams to obtain the result.
-    Envelope_diagram_1 d1(out_d.shared_geometry_traits_1());
-    Envelope_diagram_1 d2(out_d.shared_geometry_traits_1());
+  // Divide the given range of curves into two.
+  std::size_t size = std::distance(begin, end);
+  Curve_pointer_iterator div_it = begin;
+  std::advance(div_it, size / 2);
 
-    _construct_envelope_non_vertical(begin, div_it, d1);
-    _construct_envelope_non_vertical(div_it, end, d2);
+  // Construct the diagrams (envelopes) for the two sub-ranges recursively
+  // and then merge the two diagrams to obtain the result.
+  Envelope_diagram_1 d1(out_d.shared_geometry_traits_1());
+  Envelope_diagram_1 d2(out_d.shared_geometry_traits_1());
 
-    _merge_envelopes(d1, d2, out_d);
-  }
+  _construct_envelope_non_vertical(begin, div_it, d1);
+  _construct_envelope_non_vertical(div_it, end, d2);
+
+  _merge_envelopes(d1, d2, out_d);
 }
+#else
+// ---------------------------------------------------------------------------
+// Construct the lower/upper envelope of non-vertical curves.
+// Reuses intermediate diagram instances from a local pool to bound allocations
+// to O(log N) total constructed objects across the entire recursion tree.
+//
+template <typename Traits, typename Diagram>
+void Envelope_divide_and_conquer_2<Traits, Diagram>::
+_construct_envelope_non_vertical(Curve_pointer_iterator begin, Curve_pointer_iterator end, Envelope_diagram_1& out_d) {
+  out_d.clear();
+
+  const std::size_t n = std::distance(begin, end);
+  if (n == 0) return;
+  if (n == 1) {
+    _construct_singleton_diagram(*(*begin), out_d);     // construct a diagram of a single curve.
+    return;
+  }
+
+  // Approximate peak intermediate diagrams required: ~2 * ceil(log2(N))
+  std::size_t max_depth = 0;
+  max_depth = 64 - __builtin_clzll(n - 1);
+  // const std::size_t max_depth = (n > 1) ? std::bit_width(n - 1) : 0; // C++20
+  const std::size_t max_diagrams = 2 * max_depth;
+  m_diagram_pool.reserve(max_diagrams);
+
+#if CGAL_VALUE_BASED_POOL==1
+  std::size_t pool_active_count = 0;
+  _construct_envelope_non_vertical_pooled(begin, end, out_d, pool_active_count);
+#else
+  _construct_envelope_non_vertical_pooled(begin, end, out_d);
+#endif
+
+  // Clear
+#if ! defined(CGAL_VALUE_BASED_POOL) || (CGAL_VALUE_BASED_POOL!=1)
+  for (auto* diag : m_diagram_pool) delete diag;
+#endif
+  m_diagram_pool.clear();
+}
+
+// ---------------------------------------------------------------------------
+// Internal recursive call reusing intermediate diagrams from the pool.
+//
+#if CGAL_VALUE_BASED_POOL==1
+template <typename Traits, typename Diagram>
+void Envelope_divide_and_conquer_2<Traits, Diagram>::
+_construct_envelope_non_vertical_pooled(Curve_pointer_iterator begin, Curve_pointer_iterator end,
+                                        Envelope_diagram_1& out_d, std::size_t& pool_active_count) {
+#else
+template <typename Traits, typename Diagram>
+void Envelope_divide_and_conquer_2<Traits, Diagram>::
+_construct_envelope_non_vertical_pooled(Curve_pointer_iterator begin, Curve_pointer_iterator end,
+                                        Envelope_diagram_1& out_d) {
+#endif
+  const std::size_t n = std::distance(begin, end);
+
+  if (n == 1) {
+    _construct_singleton_diagram(*(*begin), out_d);     // construct a diagram of a single curve.
+    return;
+  }
+
+  // Divide step
+  Curve_pointer_iterator div_it = begin;
+  std::advance(div_it, n / 2);
+
+#if CGAL_VALUE_BASED_POOL==1
+  auto acquire_diagram = [&]() -> Envelope_diagram_1& {
+    if (pool_active_count < m_diagram_pool.size()) {
+      // Reuse an existing diagram from previous sub-trees
+      Envelope_diagram_1& diag = m_diagram_pool[pool_active_count++];
+      diag.clear();
+      return diag;
+    }
+
+    // Construct a new instance initialized with out_d's geometry traits
+    m_diagram_pool.emplace_back(out_d.shared_geometry_traits_1());
+    ++pool_active_count;
+    return m_diagram_pool.back();
+  };
+
+  // Conquer step
+  Envelope_diagram_1& d1 = acquire_diagram();
+  _construct_envelope_non_vertical_pooled(begin, div_it, d1, pool_active_count);
+  Envelope_diagram_1& d2 = acquire_diagram();
+  _construct_envelope_non_vertical_pooled(div_it, end, d2, pool_active_count);
+
+  // Merge step
+  _merge_envelopes(d1, d2, out_d);
+
+  // Return both diagrams to the pool for sibling reuse
+  pool_active_count -= 2;
+#else
+  auto acquire_diagram = [&]() -> Envelope_diagram_1* {
+    if (m_diagram_pool.empty()) return new Envelope_diagram_1(out_d.shared_geometry_traits_1());
+    auto* diag = m_diagram_pool.back();
+    m_diagram_pool.pop_back();
+    diag->clear();
+    return diag;
+  };
+
+  // Conquer step
+  Envelope_diagram_1* d1_ptr = acquire_diagram();
+  _construct_envelope_non_vertical_pooled(begin, div_it, *d1_ptr);
+  Envelope_diagram_1* d2_ptr = acquire_diagram();
+  _construct_envelope_non_vertical_pooled(div_it, end, *d2_ptr);
+
+  // Merge step
+  _merge_envelopes(*d1_ptr, *d2_ptr, out_d);
+
+  // Return handles to pool for immediate reuse
+  m_diagram_pool.push_back(d1_ptr);
+  m_diagram_pool.push_back(d2_ptr);
+#endif
+}
+#endif
 
 // ---------------------------------------------------------------------------
 // Construct a singleton diagram, which matches a single curve.
@@ -344,7 +460,8 @@ compare_y_at_end(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
 
     return CGAL::opposite(res);
   }
-  else if (ps_x2 != ARR_INTERIOR) {
+
+  if (ps_x2 != ARR_INTERIOR) {
     const auto param_space_in_y = m_traits->parameter_space_in_y_2_object();
     const Arr_parameter_space ps_y1 = param_space_in_y(xcv1, curve_end);
 
@@ -364,14 +481,14 @@ compare_y_at_end(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
   if (ps_y1 != ARR_INTERIOR) {
     if (ps_y2 != ARR_INTERIOR) {
       if ((ps_y1 == ARR_BOTTOM_BOUNDARY) && (ps_y2 == ARR_TOP_BOUNDARY)) return SMALLER;
-      else if ((ps_y1 == ARR_TOP_BOUNDARY) && (ps_y2 == ARR_BOTTOM_BOUNDARY)) return LARGER;
+      if ((ps_y1 == ARR_TOP_BOUNDARY) && (ps_y2 == ARR_BOTTOM_BOUNDARY)) return LARGER;
 
       const auto cmp_x_curve_ends = m_traits->compare_x_curve_ends_2_object();
       Comparison_result l_res = cmp_x_curve_ends(xcv1, curve_end, xcv2, curve_end);
       CGAL_assertion(l_res != EQUAL);
 
       if (ps_y1 == ARR_TOP_BOUNDARY) return l_res;
-      else return CGAL::opposite(l_res);
+      return CGAL::opposite(l_res);
     }
 
     const Point_2& left2 = (curve_end == ARR_MIN_END) ? min_vertex(xcv2) : max_vertex(xcv2);
@@ -382,9 +499,10 @@ compare_y_at_end(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
       Comparison_result res = compare_y_at_x(left2, xcv1);
       return CGAL::opposite(res);
     }
-    else return ((ps_y1 == ARR_BOTTOM_BOUNDARY) ? SMALLER : LARGER);
+    return ((ps_y1 == ARR_BOTTOM_BOUNDARY) ? SMALLER : LARGER);
   }
-  else if (ps_y2 != ARR_INTERIOR) {
+
+  if (ps_y2 != ARR_INTERIOR) {
     const Point_2& left1 = (curve_end == ARR_MIN_END) ? min_vertex(xcv1) : max_vertex(xcv1);
     const auto cmp_x_point_curve_end = m_traits->compare_x_point_curve_end_2_object();
     Comparison_result l_res = cmp_x_point_curve_end(left1, xcv2, curve_end);
@@ -551,21 +669,21 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1, Edge_const_handle 
     CGAL_assertion(v_exists);
 
     Edge_handle e_last = out_d.rightmost();
-    if (out_d.has_left_vertex(e_last)) {
-      Vertex_handle v_to_be_updated = out_d.left_vertex(e_last);
-      if (origin_of_v == EQUAL) {
-        Vertex_const_handle v1 = d1.right_vertex(e1);
-        Vertex_const_handle v2 = d2.right_vertex(e2);
-        out_d.add_vertex_curves(v_to_be_updated, d1.vertex_curves(v1).begin(), d1.vertex_curves(v1).end());
-        out_d.add_vertex_curves(v_to_be_updated, d2.vertex_curves(v2).begin(), d2.vertex_curves(v2).end());
-      }
-      else {
-        const Envelope_diagram_1& src_d = (origin_of_v == SMALLER) ? d2 : d1;
-        Edge_const_handle e = (origin_of_v == SMALLER) ? e2 : e1;
-        out_d.add_vertex_curves(v_to_be_updated, src_d.vertex_curves(v).begin(), src_d.vertex_curves(v).end());
-        out_d.add_vertex_curves(v_to_be_updated, src_d.edge_curves(e).begin(), src_d.edge_curves(e).end());
-      }
+    if (! out_d.has_left_vertex(e_last)) return;
+
+    Vertex_handle v_to_be_updated = out_d.left_vertex(e_last);
+    if (origin_of_v == EQUAL) {
+      Vertex_const_handle v1 = d1.right_vertex(e1);
+      Vertex_const_handle v2 = d2.right_vertex(e2);
+      out_d.add_vertex_curves(v_to_be_updated, d1.vertex_curves(v1).begin(), d1.vertex_curves(v1).end());
+      out_d.add_vertex_curves(v_to_be_updated, d2.vertex_curves(v2).begin(), d2.vertex_curves(v2).end());
+      return;
     }
+
+    const Envelope_diagram_1& src_d = (origin_of_v == SMALLER) ? d2 : d1;
+    Edge_const_handle e = (origin_of_v == SMALLER) ? e2 : e1;
+    out_d.add_vertex_curves(v_to_be_updated, src_d.vertex_curves(v).begin(), src_d.vertex_curves(v).end());
+    out_d.add_vertex_curves(v_to_be_updated, src_d.edge_curves(e).begin(), src_d.edge_curves(e).end());
     return;
   }
 
@@ -684,11 +802,11 @@ _merge_vertical_segments(Curve_pointer_vector& vert_vec, Envelope_diagram_1& out
 
   std::sort(vert_vec.begin(), vert_vec.end(), les_vert);
 
-  typename Traits_adaptor_2::Compare_x_2 comp_x = m_traits->compare_x_2_object();
-  typename Traits_adaptor_2::Compare_xy_2 comp_xy = m_traits->compare_xy_2_object();
-  typename Traits_adaptor_2::Compare_y_at_x_2 comp_y_at_x = m_traits->compare_y_at_x_2_object();
-  typename Traits_adaptor_2::Construct_min_vertex_2 min_vertex = m_traits->construct_min_vertex_2_object();
-  typename Traits_adaptor_2::Construct_max_vertex_2 max_vertex = m_traits->construct_max_vertex_2_object();
+  auto comp_x = m_traits->compare_x_2_object();
+  auto comp_xy = m_traits->compare_xy_2_object();
+  auto comp_y_at_x = m_traits->compare_y_at_x_2_object();
+  auto min_vertex = m_traits->construct_min_vertex_2_object();
+  auto max_vertex = m_traits->construct_max_vertex_2_object();
 
   Edge_handle e = out_d.leftmost();
   Vertex_handle v{};

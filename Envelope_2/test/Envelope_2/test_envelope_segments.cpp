@@ -135,8 +135,8 @@ bool check_envelope(const Curve_list& segs, const Diagram_1& diag, bool is_lower
     // Get the midpoint of the current edge.
     p_mid = midpoint(p_left, p_right);
 
-    const auto& e_curves = diag.curves(e);
-    const auto& v_curves = diag.curves(v);
+    const auto& e_curves = diag.edge_curves(e);
+    const auto& v_curves = diag.vertex_curves(v);
 
     // Check that all associated curves are equal at p_mid:
     for (auto it = e_curves.begin(); it != e_curves.end(); ++it) {
@@ -166,7 +166,7 @@ bool check_envelope(const Curve_list& segs, const Diagram_1& diag, bool is_lower
 
       if (res1 != CGAL::SMALLER && res2 != CGAL::LARGER) {
         // Check the diagram edge.
-        if (diag.is_empty_edge(e)) {
+        if (diag.empty_edge_curves(e)) {
           // If p_mid is in the x-range of the given segment, the current edge
           // cannot be empty.
           std::cerr << "The edge (" << p_left << ") -> (" << p_right << ") is empty, "

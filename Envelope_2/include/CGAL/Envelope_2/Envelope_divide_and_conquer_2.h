@@ -25,6 +25,8 @@
 
 namespace CGAL {
 
+#define CGAL_VALUE_BASED_POOL 1
+
 /*! \class Envelope_divide_and_conquer_2
  * A class implementing the divide-and-conquer algorithm for computing the
  * lower (or upper) envelope of a set of curves.
@@ -57,10 +59,17 @@ protected:
 
   using Traits_adaptor_2 = Arr_traits_adaptor_2<Traits_2>;
 
+private:
   // Data members:
   const Traits_adaptor_2* m_traits;     // the traits object.
   bool m_own_traits;                    // whether we own the traits object.
   Envelope_type m_env_type;             // either LOWER or UPPER.
+
+#if CGAL_VALUE_BASED_POOL==1
+  std::vector<Envelope_diagram_1> m_diagram_pool;
+#else
+  std::vector<Envelope_diagram_1*> m_diagram_pool;
+#endif
 
   // Copy constructor and assignment operator - not supported.
   Envelope_divide_and_conquer_2(const Self&) = delete;
@@ -84,8 +93,7 @@ public:
 
   /*! Destructor.
    */
-  ~Envelope_divide_and_conquer_2()
-  { if (m_own_traits) delete m_traits; }
+  ~Envelope_divide_and_conquer_2() { if (m_own_traits) delete m_traits; }
 
   /*! Construct the lower (or upper) envelope to the given range of curves.
    * \param begin An iterator pointing at the beginning of the curves range.
@@ -161,6 +169,16 @@ protected:
    */
   void _construct_envelope_non_vertical(Curve_pointer_iterator begin, Curve_pointer_iterator end,
                                         Envelope_diagram_1& out_d);
+
+  /*!
+   */
+#if CGAL_VALUE_BASED_POOL==1
+  void _construct_envelope_non_vertical_pooled(Curve_pointer_iterator begin, Curve_pointer_iterator end,
+                                               Envelope_diagram_1& out_d, std::size_t& pool_active_count);
+#else
+  void _construct_envelope_non_vertical_pooled(Curve_pointer_iterator begin, Curve_pointer_iterator end,
+                                               Envelope_diagram_1& out_d);
+#endif
 
   /*! Construct a singleton diagram, which matches a single curve.
    * \param cv The x-monotone curve.
