@@ -10,8 +10,8 @@
 // Author(s): Ron Wein   <wein@post.tau.ac.il>
 //            Efi Fogel  <efif@post.tau.ac.il>
 
-#ifndef CGAL_ENVELOPE_DIAGRAM_1_H
-#define CGAL_ENVELOPE_DIAGRAM_1_H
+#ifndef CGAL_ENVELOPE_2_ENVELOPE_DIAGRAM_1_H
+#define CGAL_ENVELOPE_2_ENVELOPE_DIAGRAM_1_H
 
 #include <CGAL/license/Envelope_2.h>
 
