@@ -22,6 +22,7 @@
 
 #include <CGAL/Arr_enums.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
+#include <CGAL/Arr_tags.h>
 
 namespace CGAL {
 namespace Envelope_2 {
@@ -42,10 +43,7 @@ public:
 
   using Envelope_diagram_1 = Diagram_;
 
-  enum Envelope_type {
-    LOWER,
-    UPPER
-  };
+  enum Envelope_type { LOWER, UPPER };
 
 protected:
   using Self = Envelope_divide_and_conquer_2<Traits_2, Envelope_diagram_1>;
@@ -60,6 +58,16 @@ protected:
 
   using Traits_adaptor_2 = Arr_traits_adaptor_2<Traits_2>;
 
+  // All sides
+  using Left_side_category = typename CGAL::internal::Arr_complete_left_side_category<Traits_2>::Category;
+  using Bottom_side_category = typename CGAL::internal::Arr_complete_bottom_side_category<Traits_2>::Category;
+  using Top_side_category = typename CGAL::internal::Arr_complete_top_side_category<Traits_2>::Category;
+  using Right_side_category = typename CGAL::internal::Arr_complete_right_side_category<Traits_2>::Category;
+  using Are_all_sides_oblivious_category = typename Arr_all_sides_oblivious_category<Left_side_category,
+                                                                                     Bottom_side_category,
+                                                                                     Top_side_category,
+                                                                                     Right_side_category>::result;
+
 private:
   // Data members:
   const Traits_adaptor_2* m_traits;     // the traits object.
@@ -72,42 +80,41 @@ private:
   std::vector<Envelope_diagram_1*> m_diagram_pool;
 #endif
 
-  // Copy constructor and assignment operator - not supported.
+  // copy constructor and assignment operator - not supported.
   Envelope_divide_and_conquer_2(const Self&) = delete;
   Self& operator=(const Self&) = delete;
 
 public:
-  /*! Default constructor.
+  /*! default constructor.
    */
   Envelope_divide_and_conquer_2(Envelope_type type = LOWER) :
     m_own_traits(true),
     m_env_type(type)
   { m_traits = new Traits_adaptor_2; }
 
-  /*! Constructor with a traits object.
-   * \param _traits The traits object.
+  /*! constructor with a traits object.
+   * \param traits The traits object.
    */
-  Envelope_divide_and_conquer_2(const Traits_2* _traits) :
+  Envelope_divide_and_conquer_2(const Traits_2* traits) :
     m_own_traits(false),
     m_env_type(LOWER)
-  { m_traits = static_cast<const Traits_adaptor_2*>(_traits); }
+  { m_traits = static_cast<const Traits_adaptor_2*>(traits); }
 
-  /*! Constructor with a traits object.
-   * \param _traits The traits object.
+  /*! constructor with a traits object.
+   * \param traits The traits object.
    */
-  Envelope_divide_and_conquer_2(Envelope_type type, const Traits_2* _traits) :
+  Envelope_divide_and_conquer_2(Envelope_type type, const Traits_2* traits) :
     m_own_traits(false),
     m_env_type(type)
-  { m_traits = static_cast<const Traits_adaptor_2*>(_traits); }
+  { m_traits = static_cast<const Traits_adaptor_2*>(traits); }
 
-  /*! Destructor.
+  /*! destructor.
    */
   ~Envelope_divide_and_conquer_2() { if (m_own_traits) delete m_traits; }
 
-  /*! Construct the lower (or upper) envelope to the given range of curves.
+  /*! constructs the lower (or upper) envelope to the given range of curves.
    * \param begin An iterator pointing at the beginning of the curves range.
    * \param end A past-the-end iterator for the curves range.
-   * \param type The envelope type (true for lower, false of upper).
    * \param diagram Output: The minimization (or maximization) diagram.
    */
   template <typename CurvesIterator>
@@ -130,11 +137,10 @@ public:
     insert_x_monotone_curves(x_curves.begin(), x_curves.end(), diagram);
   }
 
-  /*! Construct the lower (or upper) envelope to the given range of
+  /*! constructs the lower (or upper) envelope to the given range of
    * x-monotone curves.
    * \param begin An iterator pointing at the beginning of the curves range.
    * \param end A past-the-end iterator for the curves range.
-   * \param type The envelope type (true for lower, false for upper).
    * \param diagram Output: The minimization (or maximization) diagram.
    */
   template <typename XCurvesIterator>
@@ -162,13 +168,13 @@ public:
     if (! vert_vec.empty()) _merge_vertical_segments(vert_vec, diagram);
   }
 
-  /*! Get the traits object.
+  /*! obtains the traits object.
    * \return A pointer to the traits object.
    */
   const Traits_2* geometry_traits() const { return m_traits; }
 
 protected:
-  /*! Construct the lower/upper envelope of the given list of non-vertical curves.
+  /*! constructs the lower/upper envelope of the given list of non-vertical curves.
    * \param begin The first x-monotone curve.
    * \param end A past-the-end iterator for the curves.
    * \param out_d Output: The minimization (or maximization) diagram.
@@ -186,13 +192,16 @@ protected:
                                                Envelope_diagram_1& out_d);
 #endif
 
-  /*! Construct a singleton diagram, which matches a single curve.
+  /*! constructs a diagram of a single curve.
    * \param cv The x-monotone curve.
    * \param out_d Output: The minimization (or maximization) diagram.
    */
-  void _construct_singleton_diagram(const X_monotone_curve_2& cv, Envelope_diagram_1& out_d);
+  void _construct_singleton_diagram(const X_monotone_curve_2& xcv, Envelope_diagram_1& out_d,
+                                    Arr_all_sides_oblivious_tag);
+  void _construct_singleton_diagram(const X_monotone_curve_2& xcv, Envelope_diagram_1& out_d,
+                                    Arr_not_all_sides_oblivious_tag);
 
-  /* Merge two minimization (or maximization) diagrams.
+  /* merges two minimization (or maximization) diagrams.
    * \param d1 The first diagram,
    *           representing the envelope of the curve set C1.
    * \param d2 The second diagram,
@@ -202,7 +211,7 @@ protected:
    */
   void _merge_envelopes(const Envelope_diagram_1& d1, const Envelope_diagram_1& d2, Envelope_diagram_1& out_d);
 
-  /*! Compare two vertices.
+  /*! compares two vertices.
    * \param v1 The first vertex.
    * \param v2 The second vertex.
    * \param same_x Output parameter: TRUE iff x(v1) = x(v2).
@@ -217,7 +226,7 @@ protected:
   Comparison_result _compare_vertices(const Envelope_diagram_1& d1, const Envelope_diagram_1& d2,
                                       Vertex_const_descriptor v1, Vertex_const_descriptor v2, bool& same_x) const;
 
-  /*! Deal with an interval which is non-empty in one of the merged diagrams
+  /*! deals with an interval which is non-empty in one of the merged diagrams
    * and empty in the other.
    * \param e The non-empty edge.
    * \param other_edge The empty edge.
@@ -234,22 +243,21 @@ protected:
                               const Envelope_diagram_1& in_d, const Envelope_diagram_1& other_d,
                               Envelope_diagram_1& out_d);
 
-  /*! Compare the $y$-coordinates of two curves at their endpoints
-   * The function compares the $y$ values of two curves with a joint
-   * range of $x$ values, at the end of the joint range.
+  /*! compares the \f$y\f$-coordinates of two curves at their endpoints
+   * The function compares the \f$y\f$ values of two curves with a joint
+   * range of \f$x\f$ values, at the end of the joint range.
    * \param xcv1 The first curve
    * \param xcv2 The second curve
-   * \param curve_end ARR_MIN_END - compare the $y$ value of the smaller
-   * endpoint, ARR_MAX_END - compare the $y$ value of the larger endpoint.
-   * \pre The two $x$-monotone curves need to have a partially overlapping
-   * $x$-ranges.
+   * \param curve_end `ARR_MIN_END` - compare the \f$y\f$ value of the smaller endpoint,
+   *                  `ARR_MAX_END` - compare the \f$y\f$ value of the larger endpoint.
+   * \pre The two \f$x\f$-monotone curves need to have a partially overlapping \f$x\f$-ranges.
    * \return
    * \todo Move it to Arr_traits_adaptor ?
    */
   Comparison_result compare_y_at_end(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
                                      Arr_curve_end curve_end) const;
 
-  /*! Merge two non-empty intervals into the merged diagram.
+  /*! merges two non-empty intervals into the merged diagram.
    * \param e1 The first non-empty edge.
    * \param is_leftmost1 Is it the leftmost edge in its diagram.
    * \param e2 The second non-empty edge.
@@ -266,7 +274,7 @@ protected:
                             Vertex_const_descriptor v, bool v_exists, Comparison_result origin_of_v,
                             const Envelope_diagram_1& d1, const Envelope_diagram_1& d2, Envelope_diagram_1& out_d);
 
-  /*! Append a vertex to the given diagram: The new vertex that represents the
+  /*! appends a vertex to the given diagram: The new vertex that represents the
    * given point as the new rightmost vertex of the diagram. The edge
    * between the current rightmost vertex and the new one contains the same
    * curves as the input edge.
@@ -296,15 +304,15 @@ protected:
     { return(m_comp_x(m_min_vertex(*cv1), m_min_vertex(*cv2)) == SMALLER); }
   };
 
-  /*! Merge the vertical segments into the lower/upper envelope given as a
+  /*! merges the vertical segments into the lower/upper envelope given as a
    * minimization (or maximization) diagram.
    * \param vert_vec The list of vertical segments.
    * \param out_d The input minimization (or maximization) diagram.
-   *             The function merges the vertical segments into this diagram.
+   *              The function merges the vertical segments into this diagram.
    */
   void _merge_vertical_segments(Curve_pointer_vector& vert_vec, Envelope_diagram_1& out_d);
 
-  /*! Split a given diagram edge by inserting a vertex in its interior.
+  /*! splits a given diagram edge by inserting a vertex in its interior.
    * \param diag The diagram.
    * \param p The point that the new vertex is associated with.
    * \param e The edge to split.
