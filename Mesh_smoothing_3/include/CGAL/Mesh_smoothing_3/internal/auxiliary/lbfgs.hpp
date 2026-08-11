@@ -23,6 +23,7 @@
 // THE SOFTWARE.
 //
 // Taken from https://github.com/ZJU-FAST-Lab/LBFGS-Lite
+//
 // SPDX-License-Identifier: MIT
 //
 
