@@ -31,9 +31,8 @@
 namespace CGAL {
 namespace Envelope_2 {
 
-// ---------------------------------------------------------------------------
-// Construct the lower/upper envelope of non-vertical curves.
-//
+/*! constructs the lower/upper envelope of non-vertical curves.
+ */
 #if 1
 template <typename Traits, typename Diagram>
 void Envelope_divide_and_conquer_2<Traits,Diagram>::
@@ -62,11 +61,10 @@ _construct_envelope_non_vertical(Curve_pointer_iterator begin, Curve_pointer_ite
   _merge_envelopes(d1, d2, out_d);
 }
 #else
-// ---------------------------------------------------------------------------
-// Construct the lower/upper envelope of non-vertical curves.
-// Reuses intermediate diagram instances from a local pool to bound allocations
-// to O(log N) total constructed objects across the entire recursion tree.
-//
+/*! constructs the lower/upper envelope of non-vertical curves.
+ * Reuses intermediate diagram instances from a local pool to bound allocations
+ * to O(log N) total constructed objects across the entire recursion tree.
+ */
 template <typename Traits, typename Diagram>
 void Envelope_divide_and_conquer_2<Traits, Diagram>::
 _construct_envelope_non_vertical(Curve_pointer_iterator begin, Curve_pointer_iterator end, Envelope_diagram_1& out_d) {
@@ -100,9 +98,8 @@ _construct_envelope_non_vertical(Curve_pointer_iterator begin, Curve_pointer_ite
   m_diagram_pool.clear();
 }
 
-// ---------------------------------------------------------------------------
-// Internal recursive call reusing intermediate diagrams from the pool.
-//
+/*! internal recursive call reusing intermediate diagrams from the pool.
+ */
 #if CGAL_VALUE_BASED_POOL==1
 template <typename Traits, typename Diagram>
 void Envelope_divide_and_conquer_2<Traits, Diagram>::
@@ -177,11 +174,13 @@ _construct_envelope_non_vertical_pooled(Curve_pointer_iterator begin, Curve_poin
 #endif
 
 /*! constructs a diagram of a single curve.
+ * \param xcv the curve
+ * \param out_d the output diagram
+ * This is the implementation for the case where all 4 boundary sides are oblivious.
  */
 template <typename Traits, typename Diagram>
 void Envelope_divide_and_conquer_2<Traits,Diagram>::
-_construct_singleton_diagram(const X_monotone_curve_2& xcv, Envelope_diagram_1& out_d,
-                             Arr_all_sides_oblivious_tag) {
+_construct_singleton_diagram(const X_monotone_curve_2& xcv, Envelope_diagram_1& out_d, Arr_all_sides_oblivious_tag) {
   CGAL_assertion(out_d.leftmost() == out_d.rightmost());
   CGAL_assertion(out_d.empty_edge_curves(out_d.leftmost()));
 
@@ -214,11 +213,13 @@ _construct_singleton_diagram(const X_monotone_curve_2& xcv, Envelope_diagram_1& 
 }
 
 /*! constructs a diagram of a single curve.
+ * \param xcv the curve
+ * \param out_d the output diagram
+ * This is the implementation for the case where at least one of the 4 boundary sides are not oblivious.
  */
 template <typename Traits, typename Diagram>
 void Envelope_divide_and_conquer_2<Traits,Diagram>::
-_construct_singleton_diagram(const X_monotone_curve_2& xcv, Envelope_diagram_1& out_d,
-                             Arr_not_all_sides_oblivious_tag) {
+_construct_singleton_diagram(const X_monotone_curve_2& xcv, Envelope_diagram_1& out_d, Arr_not_all_sides_oblivious_tag) {
   CGAL_assertion(out_d.leftmost() == out_d.rightmost());
   CGAL_assertion(out_d.empty_edge_curves(out_d.leftmost()));
 
@@ -279,9 +280,8 @@ _construct_singleton_diagram(const X_monotone_curve_2& xcv, Envelope_diagram_1& 
   _construct_singleton_diagram(xcv, out_d, Arr_all_sides_oblivious_tag());
 }
 
-// ---------------------------------------------------------------------------
-// Merge two minimization (or maximization) diagrams.
-//
+/*! merges two minimization (or maximization) diagrams.
+ */
 template <typename Traits, typename Diagram>
 void Envelope_divide_and_conquer_2<Traits,Diagram>::
 _merge_envelopes(const Envelope_diagram_1& d1, const Envelope_diagram_1& d2, Envelope_diagram_1& out_d) {
@@ -372,9 +372,8 @@ _merge_envelopes(const Envelope_diagram_1& d1, const Envelope_diagram_1& d2, Env
   } while (next_exists);
 }
 
-// ---------------------------------------------------------------------------
-// Compare two diagram vertices.
-//
+/*! compares two diagram vertices.
+ */
 template <typename Traits, typename Diagram>
 Comparison_result Envelope_divide_and_conquer_2<Traits,Diagram>::
 _compare_vertices(const Envelope_diagram_1& d1, const Envelope_diagram_1& d2,
@@ -391,9 +390,8 @@ _compare_vertices(const Envelope_diagram_1& d1, const Envelope_diagram_1& d2,
   return (m_env_type == UPPER) ? CGAL::opposite(res) : res;
 }
 
-// ---------------------------------------------------------------------------
-// Deal with an interval which is non-empty in one diagram and empty in the other.
-//
+/*! deals with an interval which is non-empty in one diagram and empty in the other.
+ */
 template <typename Traits, typename Diagram>
 void Envelope_divide_and_conquer_2<Traits,Diagram>::
 _merge_single_interval(Edge_const_descriptor e, Edge_const_descriptor other_edge, Vertex_const_descriptor v,
@@ -431,12 +429,30 @@ _merge_single_interval(Edge_const_descriptor e, Edge_const_descriptor other_edge
   }
 }
 
-// ---------------------------------------------------------------------------
-// Compare y-coordinates of two curves at endpoints.
-//
+/*! compares \f$y\f$-coordinates of two curves at endpoints.
+ * This is the implementation for the case where all 4 boundary sides are oblivious.
+ */
 template <typename Traits, typename Diagram>
 Comparison_result Envelope_divide_and_conquer_2<Traits, Diagram>::
-compare_y_at_end(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2, Arr_curve_end curve_end) const {
+compare_y_at_end(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2, Arr_curve_end curve_end,
+                 Arr_all_sides_oblivious_tag) const {
+  const auto min_vertex = m_traits->construct_min_vertex_2_object();
+  const auto max_vertex = m_traits->construct_max_vertex_2_object();
+  const auto compare_xy = m_traits->compare_xy_2_object();
+  const Point_2& left1 = (curve_end == ARR_MIN_END) ? min_vertex(xcv1) : max_vertex(xcv1);
+  const Point_2& left2 = (curve_end == ARR_MIN_END) ? min_vertex(xcv2) : max_vertex(xcv2);
+  Comparison_result l_res = compare_xy(left1, left2);
+  const auto compare_y_at_x = m_traits->compare_y_at_x_2_object();
+  return ((l_res != SMALLER) ? compare_y_at_x(left1, xcv2) : CGAL::opposite(compare_y_at_x(left2, xcv1)));
+}
+
+/*! compares \f$y\f$-coordinates of two curves at endpoints.
+ * This is the implementation for the case where at least one of the 4 boundary sides are not oblivious.
+ */
+template <typename Traits, typename Diagram>
+Comparison_result Envelope_divide_and_conquer_2<Traits, Diagram>::
+compare_y_at_end(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2, Arr_curve_end curve_end,
+                 Arr_not_all_sides_oblivious_tag) const {
   CGAL_precondition(m_traits->is_in_x_range_2_object()(xcv1, xcv2));
 
   const auto compare_y_at_x = m_traits->compare_y_at_x_2_object();
@@ -448,90 +464,88 @@ compare_y_at_end(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
   const Arr_parameter_space ps_x2 = param_space_in_x(xcv2, curve_end);
 
   if (ps_x1 != ARR_INTERIOR) {
-    if (ps_x2 != ARR_INTERIOR) {
-      const auto cmp_y_near_boundary = m_traits->compare_y_near_boundary_2_object();
-      return cmp_y_near_boundary(xcv1, xcv2, curve_end);
-    }
+    if (ps_x2 != ARR_INTERIOR) return m_traits->compare_y_curve_ends_2_object()(xcv1, xcv2, curve_end);
 
-    const auto param_space_in_y = m_traits->parameter_space_in_y_2_object();
-    const Arr_parameter_space ps_y2 = param_space_in_y(xcv2, curve_end);
+    // xvc1 on x-boundary; xcv2 not on x-boundary
+    const Arr_parameter_space ps_y2 = m_traits->parameter_space_in_y_2_object()(xcv2, curve_end);
 
     if (ps_y2 == ARR_BOTTOM_BOUNDARY) return LARGER;
-    else if (ps_y2 == ARR_TOP_BOUNDARY) return SMALLER;
+    if (ps_y2 == ARR_TOP_BOUNDARY) return SMALLER;
 
+    // xvc1 on x-boundary; xcv2 is interior
     Comparison_result res = (curve_end == ARR_MIN_END) ?
-      compare_y_at_x(min_vertex(xcv2), xcv1) :
-      compare_y_at_x(max_vertex(xcv2), xcv1);
-
+      compare_y_at_x(min_vertex(xcv2), xcv1) : compare_y_at_x(max_vertex(xcv2), xcv1);
     return CGAL::opposite(res);
   }
 
+  // xcv1 not on x-boundary
   if (ps_x2 != ARR_INTERIOR) {
-    const auto param_space_in_y = m_traits->parameter_space_in_y_2_object();
-    const Arr_parameter_space ps_y1 = param_space_in_y(xcv1, curve_end);
+    // xcv1 not on x-boundary; xcv2 on x-boundary
+    const Arr_parameter_space ps_y1 = m_traits->parameter_space_in_y_2_object()(xcv1, curve_end);
 
     if (ps_y1 == ARR_BOTTOM_BOUNDARY) return SMALLER;
-    else if (ps_y1 == ARR_TOP_BOUNDARY) return LARGER;
+    if (ps_y1 == ARR_TOP_BOUNDARY) return LARGER;
 
-    Comparison_result res = (curve_end == ARR_MIN_END) ?
-      compare_y_at_x(min_vertex(xcv1), xcv2) :
-      compare_y_at_x(max_vertex(xcv1), xcv2);
-    return res;
+    // xcv1 not on x-boundary; xcv2 on x-boundary; xcv1 and xcv2 on the same y-boundary
+    return (curve_end == ARR_MIN_END) ? compare_y_at_x(min_vertex(xcv1), xcv2) : compare_y_at_x(max_vertex(xcv1), xcv2);
   }
 
+  // xcv1 not on x-boundary; xcv2 not on x-boundary
   const auto param_space_in_y = m_traits->parameter_space_in_y_2_object();
   const Arr_parameter_space ps_y1 = param_space_in_y(xcv1, curve_end);
   const Arr_parameter_space ps_y2 = param_space_in_y(xcv2, curve_end);
 
   if (ps_y1 != ARR_INTERIOR) {
     if (ps_y2 != ARR_INTERIOR) {
+      // xcv1 on y-boundary; xcv2 on y-boundary.
+      // we readily know their relative position (recall that they do not instersect).
       if ((ps_y1 == ARR_BOTTOM_BOUNDARY) && (ps_y2 == ARR_TOP_BOUNDARY)) return SMALLER;
       if ((ps_y1 == ARR_TOP_BOUNDARY) && (ps_y2 == ARR_BOTTOM_BOUNDARY)) return LARGER;
 
+      // xcv1 and xcv2 on the same y-boundary.
+      // Check which asymptote is the rightmost.
       const auto cmp_x_curve_ends = m_traits->compare_x_curve_ends_2_object();
       Comparison_result l_res = cmp_x_curve_ends(xcv1, curve_end, xcv2, curve_end);
       CGAL_assertion(l_res != EQUAL);
-
-      if (ps_y1 == ARR_TOP_BOUNDARY) return l_res;
-      return CGAL::opposite(l_res);
+      return (ps_y1 == ARR_TOP_BOUNDARY) ? l_res : CGAL::opposite(l_res);
     }
 
+    // xcv1 not on y-boundary; xcv2 is interior.
+    // Compare the x-positions of this endpoint and the asymptote.
     const Point_2& left2 = (curve_end == ARR_MIN_END) ? min_vertex(xcv2) : max_vertex(xcv2);
     const auto cmp_x_point_curve_end = m_traits->compare_x_point_curve_end_2_object();
     Comparison_result l_res = cmp_x_point_curve_end(left2, xcv1, curve_end);
 
-    if (l_res == LARGER) {
-      Comparison_result res = compare_y_at_x(left2, xcv1);
-      return CGAL::opposite(res);
-    }
-    return ((ps_y1 == ARR_BOTTOM_BOUNDARY) ? SMALLER : LARGER);
+    // If left2 lies in the x-range of xcv1, it is safe to compare; otherwise, xcv1 is below or above xcv2.
+    return (l_res == LARGER) ?
+      CGAL::opposite(compare_y_at_x(left2, xcv1)) : ((ps_y1 == ARR_BOTTOM_BOUNDARY) ? SMALLER : LARGER);
   }
 
   if (ps_y2 != ARR_INTERIOR) {
+    // xcv1 is interior; xcv2 is on y-boundary.
+    // Compare the x-positions of this endpoint and the asymptote.
     const Point_2& left1 = (curve_end == ARR_MIN_END) ? min_vertex(xcv1) : max_vertex(xcv1);
     const auto cmp_x_point_curve_end = m_traits->compare_x_point_curve_end_2_object();
     Comparison_result l_res = cmp_x_point_curve_end(left1, xcv2, curve_end);
-    return ((l_res == LARGER) ? compare_y_at_x(left1, xcv2) : ((ps_y2 == ARR_BOTTOM_BOUNDARY) ? LARGER : SMALLER));
+
+    // If left1 lies in the x-range of xcv2, it is safe to compare:
+    return ((l_res == LARGER) ? (compare_y_at_x(left1, xcv2)) : ((ps_y2 == ARR_BOTTOM_BOUNDARY) ? LARGER : SMALLER));
   }
 
-  const auto compare_xy = m_traits->compare_xy_2_object();
-  const Point_2& left1 = (curve_end == ARR_MIN_END) ? min_vertex(xcv1) : max_vertex(xcv1);
-  const Point_2& left2 = (curve_end == ARR_MIN_END) ? min_vertex(xcv2) : max_vertex(xcv2);
-  Comparison_result l_res = compare_xy(left1, left2);
-  return ((l_res != SMALLER) ? compare_y_at_x(left1, xcv2) : CGAL::opposite(compare_y_at_x(left2, xcv1)));
+  return compare_y_at_end(xcv1, xcv2, curve_end, Arr_all_sides_oblivious_tag());
 }
 
-// ---------------------------------------------------------------------------
-// Merge two non-empty intervals into the merged diagram.
-//
+/*! merges two non-empty intervals into the merged diagram.
+ */
 template <typename Traits, typename Diagram>
-void Envelope_divide_and_conquer_2<Traits,Diagram>::
+void Envelope_divide_and_conquer_2<Traits, Diagram>::
 _merge_two_intervals(Edge_const_descriptor e1, bool is_leftmost1, Edge_const_descriptor e2, bool is_leftmost2,
                      Vertex_const_descriptor v, bool v_exists, Comparison_result origin_of_v,
                      const Envelope_diagram_1& d1, const Envelope_diagram_1& d2, Envelope_diagram_1& out_d) {
   using Intersection_point = std::pair<Point_2, typename Traits::Multiplicity>;
 
-  Comparison_result current_res = compare_y_at_end(d1.edge_curve(e1), d2.edge_curve(e2), ARR_MIN_END);
+  Comparison_result current_res =
+    compare_y_at_end(d1.edge_curve(e1), d2.edge_curve(e2), ARR_MIN_END, Are_all_sides_oblivious_category());
   if (m_env_type == UPPER) current_res = CGAL::opposite(current_res);
 
   std::optional<Point_2> p_leftmost;
@@ -795,10 +809,9 @@ _append_vertex(Envelope_diagram_1& diag, const Point_2& p, Edge_const_descriptor
   return new_v;
 }
 
-// ---------------------------------------------------------------------------
-// Merge the vertical segments into the envelope given as a minimization
-// (or maximization) diagram.
-//
+/*! merges the vertical segments into the envelope given as a minimization
+ * (or maximization) diagram.
+ */
 template <typename Traits, typename Diagram>
 void Envelope_divide_and_conquer_2<Traits, Diagram>::
 _merge_vertical_segments(Curve_pointer_vector& vert_vec, Envelope_diagram_1& out_d) {
@@ -904,9 +917,8 @@ _merge_vertical_segments(Curve_pointer_vector& vert_vec, Envelope_diagram_1& out
   }
 }
 
-// ---------------------------------------------------------------------------
-// Split a given diagram edge by inserting a vertex in its interior.
-//
+/*! splits a given diagram edge by inserting a vertex in its interior.
+ */
 template <typename Traits, typename Diagram>
 typename Envelope_divide_and_conquer_2<Traits,Diagram>::Vertex_descriptor
 Envelope_divide_and_conquer_2<Traits,Diagram>::

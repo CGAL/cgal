@@ -195,9 +195,16 @@ protected:
   /*! constructs a diagram of a single curve.
    * \param cv The x-monotone curve.
    * \param out_d Output: The minimization (or maximization) diagram.
+   * This is the implementation for the case where all 4 boundary sides are oblivious.
    */
   void _construct_singleton_diagram(const X_monotone_curve_2& xcv, Envelope_diagram_1& out_d,
                                     Arr_all_sides_oblivious_tag);
+
+  /*! constructs a diagram of a single curve.
+   * \param cv The x-monotone curve.
+   * \param out_d Output: The minimization (or maximization) diagram.
+   * This is the implementation for the case where at least one of the 4 boundary sides are not oblivious.
+   */
   void _construct_singleton_diagram(const X_monotone_curve_2& xcv, Envelope_diagram_1& out_d,
                                     Arr_not_all_sides_oblivious_tag);
 
@@ -251,11 +258,14 @@ protected:
    * \param curve_end `ARR_MIN_END` - compare the \f$y\f$ value of the smaller endpoint,
    *                  `ARR_MAX_END` - compare the \f$y\f$ value of the larger endpoint.
    * \pre The two \f$x\f$-monotone curves need to have a partially overlapping \f$x\f$-ranges.
-   * \return
-   * \todo Move it to Arr_traits_adaptor ?
+   * \return `SMALLER` - the end of `xcv1` is below the end of `xcv2`.
+   *         `EQUAL`   - the end of `xcv1` and the end of `xcv2` have the same \f$y\f$ coordinates.
+   * \       `LARGER`  - the end of `xcv1` is above the end of `xcv2`.
    */
   Comparison_result compare_y_at_end(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
-                                     Arr_curve_end curve_end) const;
+                                     Arr_curve_end curve_end, Arr_all_sides_oblivious_tag) const;
+  Comparison_result compare_y_at_end(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
+                                     Arr_curve_end curve_end, Arr_not_all_sides_oblivious_tag) const;
 
   /*! merges two non-empty intervals into the merged diagram.
    * \param e1 The first non-empty edge.
