@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+//
 // The MIT License
 //
 // Copyright (c) 1990 Jorge Nocedal
@@ -24,7 +26,6 @@
 //
 // Taken from https://github.com/ZJU-FAST-Lab/LBFGS-Lite
 //
-// SPDX-License-Identifier: MIT
 //
 
 #ifndef LBFGS_HPP
