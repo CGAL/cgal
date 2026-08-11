@@ -34,6 +34,7 @@
 
 #include <QApplication>
 #include <QKeyEvent>
+#include <QPainter>
 
 #include <CGAL/Qt/qglviewer.h>
 #include <CGAL/Qt/manipulatedFrame.h>
@@ -1159,6 +1160,10 @@ public:
       glEnable(GL_LIGHTING);
     }
 
+    // Colour by value: show the palette and the value range as a small legend.
+    if (m_color_map!=0)
+    { draw_color_legend(); }
+
     // Multiply matrix to get in the frame coordinate system.
     // glMultMatrixd(manipulatedFrame()->matrix()); // Linker error
     // Scale down the drawings
@@ -1812,6 +1817,47 @@ protected:
     }
     if (bb.empty()) { m_cell_size_min=0.f; m_cell_size_max=1.f; }
     m_cell_sizes_valid=true;
+  }
+
+  // Colour by value: the palette as a QColor, matching colour_palette() in the
+  // shader, so the legend bar shows the same colours as the faces.
+  QColor legend_palette_color(float t) const
+  {
+    auto cl=[](float x){ return x<0.f ? 0.f : (x>1.f ? 1.f : x); };
+    float r, g, b;
+    if (m_color_map<2) { r=cl(t*3.f); g=cl(t*3.f-1.f); b=cl(t*3.f-2.f); } // heat
+    else if (m_color_map<3) { r=cl(1.5f-std::abs(4.f*t-3.f)); // jet
+                              g=cl(1.5f-std::abs(4.f*t-2.f));
+                              b=cl(1.5f-std::abs(4.f*t-1.f)); }
+    else { r=g=b=cl(t); } // grey ramp
+    return QColor(int(r*255.f), int(g*255.f), int(b*255.f));
+  }
+
+  // Colour by value: draw a small legend, a gradient bar with the value range, so
+  // the colours read as numbers. The range and label match the current value.
+  void draw_color_legend()
+  {
+    const bool size_mode=(m_color_value==2 && !m_scene.get_volume_faces().empty());
+    double vmin, vmax;
+    if (size_mode)
+    { if (!m_cell_sizes_valid) { compute_cell_sizes(); }
+      vmin=m_cell_size_min; vmax=m_cell_size_max; }
+    else { vmin=-sceneRadius(); vmax=sceneRadius(); }
+
+    const int barW=16, barH=150;
+    const int x=width()-barW-70, y=height()-barH-30;
+    QPainter painter(this);
+    for (int i=0; i<barH; ++i)
+    {
+      const float t=1.f-float(i)/float(barH-1); // top of the bar is the max value
+      painter.fillRect(x, y+i, barW, 1, legend_palette_color(t));
+    }
+    painter.setPen(::Qt::black);
+    painter.drawRect(x, y, barW, barH);
+    painter.drawText(x-2, y-8, QString(size_mode ? "size" : "distance"));
+    painter.drawText(x+barW+5, y+11, QString::number(vmax, 'g', 3));
+    painter.drawText(x+barW+5, y+barH, QString::number(vmin, 'g', 3));
+    painter.end();
   }
 
   void initialize_buffers()
