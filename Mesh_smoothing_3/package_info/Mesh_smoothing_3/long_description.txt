@@ -1,6 +1,6 @@
 This component takes a 3D volumetric mesh as input and updates its vertices' coordinates to improve
-a trade-off between element quality and the fitting to various geometric targets. 
+a trade-off between element quality and the fitting to various geometric targets.
 The geometric target is defined through an oracle that for each "boundary" element returns
-the tangent space it should align to. The smoothing process will iteratively relocate the vertices 
-of the mesh to best fit these targets while improving the quality of the elements. 
-The final result is guaranteed to be free of inverted elements. 
+the tangent space it should align to. The smoothing process will iteratively relocate the vertices
+of the mesh to best fit these targets while improving the quality of the elements.
+The final result is guaranteed to be free of inverted elements.

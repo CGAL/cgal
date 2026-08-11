@@ -218,8 +218,8 @@ int main(int argc, char** argv)
 
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     // remeshing the interior
-    CGAL::tetrahedral_isotropic_remeshing(tr, l, CGAL::parameters::remesh_boundaries(false).number_of_iterations(5));  
-    // Remeshing the surface may lead to worse quality around features because of point equidistribution on the surface. 
+    CGAL::tetrahedral_isotropic_remeshing(tr, l, CGAL::parameters::remesh_boundaries(false).number_of_iterations(5));
+    // Remeshing the surface may lead to worse quality around features because of point equidistribution on the surface.
     std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
     std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::milliseconds> (end - begin).count() << "[ms]" << std::endl;
     std::cout << "AFTER REMESHING: " << tr.number_of_vertices() << " vertices, " << tr.number_of_cells() << " cells" << std::endl;
@@ -259,7 +259,7 @@ int main(int argc, char** argv)
             }
 
         }
-    } 
+    }
 
     Tetrahedral_mesh_wrapper mesh_wrapper(tr, {1,2});
     Triangle_boundary_wrapper boundary_wrapper {boundary_faces};

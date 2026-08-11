@@ -168,7 +168,7 @@ int main(int argc, char** argv) {
     curves.facets.clear();
     curves.cells.clear();
     curves.vertices.remove_isolated();
-    
+
     GEO::mesh_save(mesh, "input.mesh");
     GEO::mesh_save(surface, "surf.mesh");
     GEO::mesh_save(curves, "curves.mesh");
