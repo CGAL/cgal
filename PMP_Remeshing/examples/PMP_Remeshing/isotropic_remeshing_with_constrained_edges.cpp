@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
   PMP::isotropic_remeshing(faces(mesh),
                           0.1,
                           mesh,
-                          PMP::parameters::edge_is_protected_map(Border_pmap(mesh))
+                          CGAL::parameters::edge_is_protected_map(Border_pmap(mesh))
                           .face_patch_map(pid)
                           .edge_is_constrained_map(eif)
                           .number_of_iterations(3));
