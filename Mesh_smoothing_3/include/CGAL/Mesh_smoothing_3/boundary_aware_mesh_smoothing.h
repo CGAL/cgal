@@ -131,16 +131,16 @@ get(const Edge_to_point_property_map<C3t3>&, const typename C3t3::Edge& e)
 * and is capable of recovering inverted tetrahedra in the mesh.
 * A valid input mesh is guaranteed to remain valid after and during the smoothing.
 *
-* @tparam C3t3 is a `Mesh_complex_3_in_triangulation_3` type.
-* @tparam NamedParameters is a sequence of named parameters.
+* @tparam C3t3 model of `MeshComplex_3InTriangulation_3`
+* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * @param c3t3 is the tetrahedral mesh to smooth.
 * @param np is an optional sequence of \ref bgl_namedparameters "Named Parameters"
 *          among the ones listed below
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{number_of_iterations}
-*     \cgalParamDescription{the number of iterations for the full sequence of atomic operations
-*                           performed (listed in the above description)}
+*     \cgalParamDescription{Maximum number of iterations for the outer loop of the smoothing/untangling algorithm.
+                            Algorithm will stop before if it reaches convergence.}
 *     \cgalParamType{unsigned int}
 *     \cgalParamDefault{`100`}
 *   \cgalParamNEnd

@@ -25,6 +25,12 @@
 #include <functional>
 
 
+/*
+TODO from the PR:
+ - use CGAL for predicates
+ - use color text from cgal
+*/
+
 
 namespace CGAL {
 
