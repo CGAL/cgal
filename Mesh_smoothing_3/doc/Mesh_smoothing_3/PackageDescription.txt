@@ -12,7 +12,7 @@
 
 /*!
 \addtogroup PkgMeshSmoothing3Ref
-\cgalPkgDescriptionBegin{3D Mesh Smoothing, PkgMeshSmoothing3}
+\cgalPkgDescriptionBegin{3D Mesh Volume Smoothing, PkgMeshSmoothing3}
 \cgalPkgPicture{Mesh_smoothing_pkg.png}
 
 \cgalPkgSummaryBegin
