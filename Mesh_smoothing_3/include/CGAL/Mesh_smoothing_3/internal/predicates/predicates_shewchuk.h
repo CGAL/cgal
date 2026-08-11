@@ -1,3 +1,7 @@
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
 // SPDX-License-Identifier: PD
 
 /* Mesh_smoothing_3: This code was cleaned to be C++ ready and only include orient3d.
