@@ -300,19 +300,35 @@ class Triangulation_3_wrapper {
     Triangulation_3 &tr;
 };
 
+template <class C3t3>
+typename C3t3::Triangulation::Geom_traits::Point_3
+get_point(typename C3t3::Vertex_handle vh)
+{
+  using T3=typename C3t3::Triangulation;
+  if constexpr (std::is_same_v<typename T3::Geom_traits::Weighted_point_3,
+                               typename T3::Vertex::Point>)
+    return vh->point().point();
+  else
+    return vh->point();
+}
+
 template <typename C3t3>
 class C3t3_wrapper {
 public:
-    using Cell_descriptor = C3t3::Cell_handle;
-    using Vertex_descriptor = C3t3::Vertex_handle;
-    using Face_descriptor = C3t3::Facet;
-    using Edge_descriptor = C3t3::Edge;
-    using Normal_3 = C3t3::Triangulation::Geom_traits::Vector_3;
-    using Point_3 = C3t3::Triangulation::Geom_traits::Point_3;
-    using Weighted_point_3 = C3t3::Triangulation::Geom_traits::Weighted_point_3;
+    C3t3_wrapper(C3t3 &c3t3)
+      :c3t3(c3t3)
+    {}
 
+    using Cell_descriptor = typename C3t3::Cell_handle;
+    using Vertex_descriptor = typename C3t3::Vertex_handle;
+    using Face_descriptor = typename C3t3::Facet;
+    using Edge_descriptor = typename C3t3::Edge;
+    using Normal_3 = typename C3t3::Triangulation::Geom_traits::Vector_3;
+    using Point_3 = typename C3t3::Triangulation::Geom_traits::Point_3;
+    using Weighted_point_3 = typename C3t3::Triangulation::Geom_traits::Weighted_point_3;
     using Surface_patch_index = C3t3::Surface_patch_index;
     using Curve_index = C3t3::Curve_index;
+    using Construct_point_3 = typename C3t3::Triangulation::Geom_traits::Construct_point_3;
 
     std::size_t nb_cells() const { return c3t3.number_of_cells(); }
     std::size_t nb_faces() const { return c3t3.number_of_facets(); }
@@ -320,9 +336,12 @@ public:
     std::size_t nb_vertices() const { return c3t3.triangulation().number_of_vertices(); }
 
     decltype(auto) vertex_coordinates(Vertex_descriptor vertex) const {
-        return c3t3.triangulation().point(vertex).point(); // c3t3 holds weighted points
+        return get_point<C3t3>(vertex); // c3t3 holds weighted points
     }
-    void  set_vertex_coordinates(Vertex_descriptor vertex, const Point_3& coord) { vertex->set_point(Weighted_point_3{coord}); }
+    void  set_vertex_coordinates(Vertex_descriptor vertex, const Point_3& coord)
+    {
+      vertex->set_point(Construct_point_3()(coord));
+    }
     auto cell_range() const { return c3t3.cells_in_complex(); }
     std::array<Vertex_descriptor, 4> cell_vertices(Cell_descriptor cell) const {
         std::array<Vertex_descriptor, 4> vertices;

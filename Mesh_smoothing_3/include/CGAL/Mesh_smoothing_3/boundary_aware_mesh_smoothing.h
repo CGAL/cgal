@@ -32,6 +32,8 @@ namespace CGAL {
 namespace Mesh_smoothing_3 {
 namespace internal {
 
+using CGAL::Mesh_smoothing_3::cgal_types::get_point;
+
 template<typename C3t3>
 struct Facet_to_triangle_property_map
 {
@@ -50,9 +52,9 @@ get(const Facet_to_triangle_property_map<C3t3>&, const typename C3t3::Facet& f)
     using K = typename Tr::Geom_traits;
     const typename Tr::Cell_handle cell = f.first;
     const int i = f.second;
-    const typename K::Point_3& p0 = cell->vertex((i + 1) % 4)->point().point();
-    const typename K::Point_3& p1 = cell->vertex((i + 2) % 4)->point().point();
-    const typename K::Point_3& p2 = cell->vertex((i + 3) % 4)->point().point();
+    const typename K::Point_3& p0 = get_point<C3t3>(cell->vertex((i + 1) % 4));
+    const typename K::Point_3& p1 = get_point<C3t3>(cell->vertex((i + 2) % 4));
+    const typename K::Point_3& p2 = get_point<C3t3>(cell->vertex((i + 3) % 4));
     return typename K::Triangle_3(p0, p1, p2);
 }
 
@@ -73,7 +75,7 @@ get(const Facet_to_point_property_map<C3t3>&, const typename C3t3::Facet& f)
     using Tr = typename C3t3::Triangulation;
     const typename Tr::Cell_handle cell = f.first;
     const int i = f.second;
-    return cell->vertex((i + 1) % 4)->point().point();
+    return get_point<C3t3>(cell->vertex((i + 1) % 4));
 }
 
 template<typename C3t3>
@@ -93,8 +95,8 @@ get(const Edge_to_segment_property_map<C3t3>&, const typename C3t3::Edge& e)
     using Tr = typename C3t3::Triangulation;
     using K = typename Tr::Geom_traits;
     const typename Tr::Cell_handle cell = e.first;
-    return typename K::Segment_3(cell->vertex(e.second)->point().point(),
-                                cell->vertex(e.third)->point().point());
+    return typename K::Segment_3(get_point<C3t3>(cell->vertex(e.second)),
+                                 get_point<C3t3>(cell->vertex(e.third)));
 }
 
 template<typename C3t3>
@@ -113,7 +115,7 @@ get(const Edge_to_point_property_map<C3t3>&, const typename C3t3::Edge& e)
 {
     using Tr = typename C3t3::Triangulation;
     const typename Tr::Cell_handle cell = e.first;
-    return cell->vertex(e.second)->point().point();
+    return get_point<C3t3>(cell->vertex(e.second));
 }
 
 } // namespace internal
