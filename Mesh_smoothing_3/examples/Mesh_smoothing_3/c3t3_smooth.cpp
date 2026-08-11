@@ -42,20 +42,22 @@ int main(int argc, char* argv[])
     C3t3 c3t3;
 
     std::ifstream is(filename, std::ios_base::in);
-    if(!CGAL::IO::read_MEDIT(is, c3t3))
+    Triangulation tr;
+    if(!CGAL::IO::read_MEDIT(is,tr))
     {
         std::cerr << "Failed to read" << std::endl;
         return EXIT_FAILURE;
     }
+    c3t3.set_triangulation(std::move(tr));
 
     std::ofstream os("c3t3_initial.mesh");
-    CGAL::IO::write_MEDIT(os, c3t3, CGAL::parameters::all_vertices(true));
+    CGAL::IO::write_MEDIT(os, c3t3.triangulation(), CGAL::parameters::all_vertices(true));
     os.close();
 
     CGAL::boundary_aware_mesh_smoothing(c3t3, params::verbose(true).number_of_iterations(100));
 
     std::ifstream is2("c3t3_smoothed.mesh");
-    if(!CGAL::IO::read_MEDIT(is2, c3t3))
+    if(!CGAL::IO::read_MEDIT(is2, c3t3.triangulation()))
     {
         std::cerr << "Failed to read (#2)" << std::endl;
         return EXIT_FAILURE;
