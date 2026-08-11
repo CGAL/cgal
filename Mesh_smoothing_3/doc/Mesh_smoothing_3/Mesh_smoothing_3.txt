@@ -26,15 +26,15 @@ optimization.
 \subsection ssecMeshSmoothingAlgorithm Smoothing and Fitting Algorithm
 
 The algorithm optimizes vertex positions according to an element-quality
-energy. It currently uses a conformal energy (MIPS3D) that improves 
+energy. It currently uses a conformal energy (MIPS3D) that improves
 the dihedral angles of the cells. Interior vertices are moved
 to improve the volume mesh, while boundary vertices can additionally be
 attracted towards a target geometry.
 
-The energy incorporates a barrier term preventing element inversion. 
-For an initially valid mesh, all accepted optimization steps preserve element orientation, 
-providing a validity guarantee while the element quality is improved. 
-The use of a penalization approach allows the optimizer to start from an invalid meshes, 
+The energy incorporates a barrier term preventing element inversion.
+For an initially valid mesh, all accepted optimization steps preserve element orientation,
+providing a validity guarantee while the element quality is improved.
+The use of a penalization approach allows the optimizer to start from an invalid meshes,
 and recover a valid configuration by untangling inverted elements.
 
 Geometric targets can be specified at several dimensions:
@@ -57,7 +57,7 @@ can recover curvature discontinuities enabling automatic feature recovery/preser
 
 \section secMeshSmoothing3API API
 
-The main function of the package is `CGAL::boundary_aware_mesh_smoothing()`, 
+The main function of the package is `CGAL::boundary_aware_mesh_smoothing()`,
 which takes a `CGAL::Mesh_complex_3_in_triangulation_3` as input and updates its vertex coordinates to improve element quality and fit to geometric targets.
 
 \section secMeshSmoothing3Examples Examples
