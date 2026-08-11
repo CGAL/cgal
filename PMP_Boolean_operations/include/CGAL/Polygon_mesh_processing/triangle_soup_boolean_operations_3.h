@@ -13,6 +13,8 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_TRIANGLE_SOUP_BOOLEAN_OPERATIONS_3_H
 #define CGAL_POLYGON_MESH_PROCESSING_TRIANGLE_SOUP_BOOLEAN_OPERATIONS_3_H
 
+#include <CGAL/license/Polygon_mesh_processing/autorefinement.h>
+
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Polygon_mesh_processing/autorefinement.h>
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/predicates.h>
@@ -610,9 +612,19 @@ update_output(PointRange& out_points,  TriangleRange& out_triangles, std::size_t
 namespace Polygon_mesh_processing
 {
 
-template <class Concurrency_tag = Sequential_tag, class PointRange, class TriangleRange>
-void compute_self_union(PointRange& points, TriangleRange& triangles)
+#ifndef DOXYGEN_RUNNING
+template <class PointRange, class TriangleRange, class NamedParameters = parameters::Default_named_parameters>
+void compute_self_union(PointRange& points, TriangleRange& triangles,
+                        const NamedParameters& np = parameters::default_values())
 {
+  CGAL_USE(np);
+
+  typedef typename internal_np::Lookup_named_param_def <
+    internal_np::concurrency_tag_t,
+    NamedParameters,
+    Sequential_tag
+  > ::type Concurrency_tag;
+
   namespace PMP = CGAL::Polygon_mesh_processing;
   using namespace boolops_3;
 
@@ -847,12 +859,58 @@ void compute_self_union(PointRange& points, TriangleRange& triangles)
   }
   boolops_3::update_output<Concurrency_tag>(points, triangles, nb_out_triangles, to_keep);
 }
+#endif
 
-template <class Concurrency_tag = Sequential_tag, class PointRange, class TriangleRange>
+/**
+  * \ingroup PMP_boolop_soup_grp
+  *
+  * computes the union of two volumes, each bounded by a triangle soup.
+  *
+  * \pre \link CGAL::Polygon_mesh_processing::does_triangle_soup_self_intersect() `!CGAL::Polygon_mesh_processing::does_triangle_soup_self_intersect(points_1, triangles_1)` \endlink
+  * \pre \link CGAL::Polygon_mesh_processing::does_triangle_soup_self_intersect() `!CGAL::Polygon_mesh_processing::does_triangle_soup_self_intersect(points_2, triangles_2)` \endlink
+  *
+  * @tparam PointRange a model of the concepts `RandomAccessContainer` whose value type is `GeomTraits::Point_3` as value type, `GeomTraits` being the type of the named parameter `geom_traits`.
+  * @tparam TriangleRange a model of the concept `RandomAccessContainer` whose `value_type` is a model of the concept `RandomAccessContainer` whose `value_type` is `std::size_t`.
+  *
+  * @param points_1 points of the first triangle soup.
+  * @param triangles_1 triangles of the first triangle soup, each element in the vector describes a triangle using the indices of the points in `points_1`.
+  *
+  * @param points_2 points of the second triangle soup.
+  * @param triangles_2 triangles of the second triangle soup, each element in the vector describes a triangle using the indices of the points in `points_2`.
+  *
+  * @param out_points points of the output triangle soup bounding the volume result of the Boolean operation.
+  * @param out_triangles triangles of the ouput triangle soup, each element in the vector describes a triangle using the indices of the points in `out_points`.
+  *
+  * @param np optional sequence of named parameters among the ones listed below
+  *
+  * \cgalNamedParamsBegin
+  *   \cgalParamNBegin{concurrency_tag}
+  *     \cgalParamDescription{a tag indicating if the task should be done using one or several threads.}
+  *     \cgalParamType{Either `CGAL::Sequential_tag`, or `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`}
+  *     \cgalParamDefault{`CGAL::Sequential_tag`}
+  *   \cgalParamNEnd
+  *   \cgalParamNBegin{geom_traits}
+  *     \cgalParamDescription{an instance of a geometric traits class}
+  *     \cgalParamType{a class model of `Kernel`}
+  *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+  *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+  *   \cgalParamNEnd
+  * \cgalNamedParamsEnd
+  */
+template <class PointRange, class TriangleRange, class NamedParameters = parameters::Default_named_parameters>
 void compute_union(const PointRange& points_1, const TriangleRange& triangles_1,
                    const PointRange& points_2, const TriangleRange& triangles_2,
-                         PointRange& out_points,     TriangleRange& out_triangles)
+                         PointRange& out_points,     TriangleRange& out_triangles,
+                   const NamedParameters& np = parameters::default_values())
 {
+  CGAL_USE(np);
+
+  typedef typename internal_np::Lookup_named_param_def <
+    internal_np::concurrency_tag_t,
+    NamedParameters,
+    Sequential_tag
+  > ::type Concurrency_tag;
+
   using namespace boolops_3;
   Selection_data data_out=prepare_data<Concurrency_tag>(points_1, triangles_1, points_2, triangles_2, out_points, out_triangles);
   const unsigned int nb_meshes=2;
@@ -891,11 +949,25 @@ void compute_union(const PointRange& points_1, const TriangleRange& triangles_1,
   boolops_3::update_output<Concurrency_tag>(out_points, out_triangles, nb_out_triangles, to_keep);
 }
 
-template <class Concurrency_tag = Sequential_tag, class PointRange, class TriangleRange>
+/**
+  * \ingroup PMP_boolop_soup_grp
+  * computes the intersection of two volumes, each bounded by a triangle soup.
+  * \copydetails CGAL::Polygon_mesh_processing::compute_union()
+  */
+template <class PointRange, class TriangleRange, class NamedParameters = parameters::Default_named_parameters>
 void compute_intersection(const PointRange& points_1, const TriangleRange& triangles_1,
                           const PointRange& points_2, const TriangleRange& triangles_2,
-                                PointRange& out_points,     TriangleRange& out_triangles)
+                                PointRange& out_points,     TriangleRange& out_triangles,
+                          const NamedParameters& np = parameters::default_values())
 {
+  CGAL_USE(np);
+
+  typedef typename internal_np::Lookup_named_param_def <
+    internal_np::concurrency_tag_t,
+    NamedParameters,
+    Sequential_tag
+  > ::type Concurrency_tag;
+
   using namespace boolops_3;
   Selection_data data_out=prepare_data<Concurrency_tag>(points_1, triangles_1, points_2, triangles_2, out_points, out_triangles);
   const unsigned int nb_meshes=2;
@@ -935,11 +1007,25 @@ void compute_intersection(const PointRange& points_1, const TriangleRange& trian
   boolops_3::update_output<Concurrency_tag>(out_points, out_triangles, nb_out_triangles, to_keep);
 }
 
-template <class Concurrency_tag = Sequential_tag, class PointRange, class TriangleRange>
+/**
+  * \ingroup PMP_boolop_soup_grp
+  * computes the difference of two volumes, each bounded by a triangle soup.
+  * \copydetails CGAL::Polygon_mesh_processing::compute_union()
+  */
+template <class PointRange, class TriangleRange, class NamedParameters = parameters::Default_named_parameters>
 void compute_difference(const PointRange& points_1, const TriangleRange& triangles_1,
                         const PointRange& points_2, const TriangleRange& triangles_2,
-                              PointRange& out_points,     TriangleRange& out_triangles)
+                              PointRange& out_points,     TriangleRange& out_triangles,
+                        const NamedParameters& np = parameters::default_values())
 {
+  CGAL_USE(np);
+
+  typedef typename internal_np::Lookup_named_param_def <
+    internal_np::concurrency_tag_t,
+    NamedParameters,
+    Sequential_tag
+  > ::type Concurrency_tag;
+
   using namespace boolops_3;
   Selection_data data_out=prepare_data<Concurrency_tag>(points_1, triangles_1, points_2, triangles_2, out_points, out_triangles);
   // const unsigned int nb_meshes=2;

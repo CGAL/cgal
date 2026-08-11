@@ -33,12 +33,14 @@ void run(std::string f1, std::string f2)
   CGAL::IO::read_polygon_soup(f1, points_1, triangles_1);
   CGAL::IO::read_polygon_soup(f2, points_2, triangles_2);
 
+  auto bo_np = CGAL::parameters::concurrency_tag(Concurrency_tag());
+
 {
   std::vector<Exact_point> points_res;
   std::vector<Triangle> triangles_res;
   CGAL::Real_timer timer;
   timer.start();
-  PMP::compute_union<Concurrency_tag>(points_1, triangles_1, points_2, triangles_2, points_res, triangles_res);
+  PMP::compute_union(points_1, triangles_1, points_2, triangles_2, points_res, triangles_res, bo_np);
   timer.stop();
   std::cout << "Done in " << timer.time() << "\n";
 
@@ -49,7 +51,7 @@ void run(std::string f1, std::string f2)
   std::vector<Triangle> triangles_res;
   CGAL::Real_timer timer;
   timer.start();
-  PMP::compute_intersection<Concurrency_tag>(points_1, triangles_1, points_2, triangles_2, points_res, triangles_res);
+  PMP::compute_intersection(points_1, triangles_1, points_2, triangles_2, points_res, triangles_res, bo_np);
   timer.stop();
   std::cout << "Done in " << timer.time() << "\n";
 
@@ -60,7 +62,7 @@ void run(std::string f1, std::string f2)
   std::vector<Triangle> triangles_res;
   CGAL::Real_timer timer;
   timer.start();
-  PMP::compute_difference<Concurrency_tag>(points_1, triangles_1, points_2, triangles_2, points_res, triangles_res);
+  PMP::compute_difference(points_1, triangles_1, points_2, triangles_2, points_res, triangles_res, bo_np);
   timer.stop();
   std::cout << "Done in " << timer.time() << "\n";
 
