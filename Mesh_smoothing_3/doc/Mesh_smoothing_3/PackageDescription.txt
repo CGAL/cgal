@@ -22,7 +22,8 @@
              The geometric target is defined through an oracle that for each "boundary" element returns
              the tangent space it should align to. The smoothing process will iteratively relocate the vertices
              of the mesh to best fit these targets while improving the quality of the elements.
-             The final result is guaranteed to be free of inverted elements. }
+             The final result is guaranteed to remain free of inverted elements from a valid input.
+             Starting from an invalid mesh, the algorithm will attempt to untangle it and recover a valid configuration.}
 \cgalPkgManuals{Chapter_3D_Mesh_smoothing,PkgMeshSmoothing3Ref}
 \cgalPkgSummaryEnd
 
