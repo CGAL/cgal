@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: PD
 
 /* Mesh_smoothing_3: This code was cleaned to be C++ ready and only include orient3d.
 contributions from Cinolib and libigl were included.
