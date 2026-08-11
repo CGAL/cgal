@@ -39,7 +39,7 @@ have essentially the same semantics as in the `Segment_Delaunay_graph_2<Gt,St,DS
 `SegmentDelaunayGraphTraits_2` concept.
 
 \tparam St must be a model of `SegmentDelaunayGraphStorageTraits_2`.
-        By default, the storage traits is instantiated by `Segment_Delaunay_graph_storage_traits_2<Gt>`.
+        By default, the storage traits is instantiated with `Segment_Delaunay_graph_storage_traits_2<Gt>`.
 
 \tparam STag The third template
 parameter controls whether or not segments are added in the upper

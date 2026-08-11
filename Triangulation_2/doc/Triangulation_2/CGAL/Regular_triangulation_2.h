@@ -188,7 +188,7 @@ typedef unspecified_type Hidden_vertices_iterator;
 /// @{
 
 /*!
-Introduces an empty regular triangulation.
+introduces an empty regular triangulation.
 */
 Regular_triangulation_2(const Traits& gt = Traits());
 
@@ -278,7 +278,7 @@ void remove(Vertex_handle v);
 /// @{
 
 /*!
-outputs  the faces, boundary edges, and hidden vertices of the
+outputs the faces, boundary edges, and hidden vertices of the
 conflict zone of point `p` to output iterators.
 
 \tparam OutputItFaces is an output iterator with `Face_handle` as
@@ -388,7 +388,7 @@ OutputItHiddenVertices vit,
 Face_handle start) const;
 
 /*!
-Returns the vertex of the triangulation which is nearest to `p`
+returns the vertex of the triangulation which is nearest to `p`
 with respect to the power distance. This means that the power of the
 query point `p` with respect to the weighted point in the nearest
 vertex is smaller than the power of `p` with respect to the
@@ -418,7 +418,7 @@ starts at an arbitrary hidden vertex.
 Hidden_vertices_iterator hidden_vertices_begin() const;
 
 /*!
-past the end iterator for the sequence of hidden vertices.
+Past-the-end iterator for the sequence of hidden vertices.
 */
 Hidden_vertices_iterator hidden_vertices_end() const;
 
@@ -439,7 +439,7 @@ starts at an arbitrary unhidden vertex.
 All_vertices_iterator all_vertices_begin() const;
 
 /*!
-past the end iterator.
+Past-the-end iterator.
 */
 All_vertices_iterator all_vertices_end() const;
 
@@ -473,12 +473,12 @@ otherwise.
 Object dual(const Edge &e) const;
 
 /*!
-Idem
+Idem.
 */
 Object dual(const Edge_circulator& ec) const;
 
 /*!
-Idem
+Idem.
 */
 Object dual(const Edge_iterator& ei) const;
 
@@ -494,7 +494,7 @@ Stream& draw_dual(Stream & ps);
 /// @{
 
 /*!
-Returns the power test of `p` with respect to the
+returns the power test of `p` with respect to the
 power circle associated with `f`.
 */
 Oriented_side
@@ -507,7 +507,7 @@ const Weighted_point& p) const;
 /// @{
 
 /*!
-Tests the validity of the triangulation as a
+tests the validity of the triangulation as a
 `Triangulation_2` and additionally test the regularity of the
 triangulation. This method is useful to debug regular triangulation
 algorithms implemented by the user.

@@ -475,6 +475,16 @@ compare_lexicographically(const Point_3<K> &p,
 template < class K >
 inline
 typename K::Comparison_result
+compare_projection_along_direction(const Point_3<K> &p,
+                                   const Point_3<K> &q,
+                                   const Direction_3<K> &dir)
+{
+  return internal::compare_projection_along_direction(p, q, dir, K());
+}
+
+template < class K >
+inline
+typename K::Comparison_result
 compare_signed_distance_to_plane(const Plane_3<K> &h,
                                  const Point_3<K> &p,
                                  const Point_3<K> &q)

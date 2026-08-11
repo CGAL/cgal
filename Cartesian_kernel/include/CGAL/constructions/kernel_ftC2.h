@@ -37,6 +37,25 @@ midpointC2( const FT &px, const FT &py,
 template < class FT >
 CGAL_KERNEL_LARGE_INLINE
 void
+determinants_for_circumcenterC2(const FT &px, const FT &py,
+                                const FT &qx, const FT &qy,
+                                const FT &rx, const FT &ry,
+                                FT &num_x, FT &num_y, FT& den)
+{
+  FT dqx = qx - px;
+  FT dqy = qy - py;
+  FT drx = rx - px;
+  FT dry = ry - py;
+  FT r2 = CGAL_NTS square(drx) + CGAL_NTS square(dry);
+  FT q2 = CGAL_NTS square(dqx) + CGAL_NTS square(dqy);
+  den = determinant(dqx, dqy, drx, dry);
+  num_x = determinant(dry, dqy, r2, q2);
+  num_y = determinant(drx, dqx, r2, q2);
+}
+
+template < class FT >
+CGAL_KERNEL_LARGE_INLINE
+void
 circumcenter_translateC2(const FT &dqx, const FT &dqy,
                          const FT &drx, const FT &dry,
                                FT &dcx,       FT &dcy)
@@ -338,47 +357,49 @@ line_project_pointC2(const FT &la, const FT &lb, const FT &lc,
 
 template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
-FT
+void
 squared_radiusC2(const FT &px, const FT &py,
                  const FT &qx, const FT &qy,
                  const FT &rx, const FT &ry,
-                 FT &x, FT &y )
+                 FT &num, FT &den)
 {
-  circumcenter_translateC2(qx-px, qy-py, rx-px, ry-py, x, y);
-  FT r2 = CGAL_NTS square(x) + CGAL_NTS square(y);
-  x += px;
-  y += py;
-  return r2;
-}
+  // Translate r to origin to simplify the expression.
+  FT prx = px - rx;
+  FT pry = py - ry;
+  FT pr2 = CGAL_NTS square(prx) + CGAL_NTS square(pry);
+  FT qrx = qx - rx;
+  FT qry = qy - ry;
+  FT qr2 = CGAL_NTS square(qrx) + CGAL_NTS square(qry);
 
-template < class FT >
-CGAL_KERNEL_MEDIUM_INLINE
-FT
-squared_radiusC2(const FT &px, const FT &py,
-                 const FT &qx, const FT &qy,
-                 const FT &rx, const FT &ry)
-{
-  FT x, y;
-  circumcenter_translateC2<FT>(qx-px, qy-py, rx-px, ry-py, x, y);
-  return CGAL_NTS square(x) + CGAL_NTS square(y);
+  FT num_x = determinant(qry, qr2,
+                         pry, pr2);
+  FT num_y = determinant(qrx, qr2,
+                         prx, pr2);
+  FT dden = determinant(qrx, qry,
+                        prx, pry);
+
+  num = CGAL_NTS square(num_x) + CGAL_NTS square(num_y);
+  den = CGAL_NTS square(2 * dden);
 }
 
 template < class FT >
 inline
 FT
-squared_distanceC2( const FT &px, const FT &py,
-                    const FT &qx, const FT &qy)
+squared_distanceC2(const FT &px, const FT &py,
+                   const FT &qx, const FT &qy)
 {
   return CGAL_NTS square(px-qx) + CGAL_NTS square(py-qy);
 }
 
 template < class FT >
 inline
-FT
+void
 squared_radiusC2(const FT &px, const FT &py,
-                 const FT &qx, const FT &qy)
+                 const FT &qx, const FT &qy,
+                 FT &num, FT &den)
 {
-  return squared_distanceC2(px, py,qx, qy) / 4;
+  num = squared_distanceC2(px, py,qx, qy);
+  den = 4;
 }
 
 template < class FT >
@@ -414,6 +435,26 @@ scaled_distance_to_lineC2( const FT &px, const FT &py,
 
 template < class RT >
 void
+determinants_for_weighted_circumcenterC2(const RT &px, const RT &py, const RT &pw,
+                                         const RT &qx, const RT &qy, const RT &qw,
+                                         const RT &rx, const RT &ry, const RT &rw,
+                                         RT &num_x, RT &num_y, RT& den)
+{
+  RT dqx = qx - px;
+  RT dqy = qy - py;
+  RT dqw = qw - pw;
+  RT drx = rx - px;
+  RT dry = ry - py;
+  RT drw = rw - pw;
+  RT r2 = CGAL_NTS square(drx) + CGAL_NTS square(dry) - drw;
+  RT q2 = CGAL_NTS square(dqx) + CGAL_NTS square(dqy) - dqw;
+  den = determinant(dqx, dqy, drx, dry);
+  num_x = determinant(dry, dqy, r2, q2);
+  num_y = determinant(drx, dqx, r2, q2);
+}
+
+template < class RT >
+void
 weighted_circumcenter_translateC2(const RT &dqx, const RT &dqy, const RT &dqw,
                                   const RT &drx, const RT &dry, const RT &drw,
                                   RT &dcx, RT &dcy)
@@ -438,7 +479,6 @@ weighted_circumcenter_translateC2(const RT &dqx, const RT &dqy, const RT &dqw,
   dcy = - determinant (drx, dqx, r2, q2) / den;
 }
 
-//template < class RT >
 template < class RT, class We>
 void
 weighted_circumcenterC2( const RT &px, const RT &py, const We &pw,
@@ -450,6 +490,40 @@ weighted_circumcenterC2( const RT &px, const RT &py, const We &pw,
   RT drw = RT(rw-pw);
 
   weighted_circumcenter_translateC2<RT>(qx-px, qy-py, dqw,rx-px, ry-py,drw,x, y);
+  x += px;
+  y += py;
+}
+
+template < class RT >
+void
+weighted_circumcenter_translateC2(const RT &dqx, const RT &dqy, const RT &dqw,
+                                  RT &dcx, RT &dcy)
+{
+  // Given 2 points P, Q, this function takes as input:
+  // qx-px, qy-py,qw-pw.  And returns cx-px, cy-py,
+  // where (cx, cy) are the coordinates of the circumcenter C.
+
+  // What we do is intersect the radical axis
+  RT dqx2 = CGAL_NTS square(dqx);
+  RT dqy2 = CGAL_NTS square(dqy);
+  RT q2 = dqx2 + dqy2 - dqw;
+
+  RT den = RT(2) * dqx2 + RT(2) * dqy2;
+  CGAL_assertion ( den != RT(0) );
+
+  dcx =   determinant (dqy, q2, dqw) / den;
+  dcy = - determinant (dqx, q2, dqw) / den;
+}
+
+template < class RT, class We>
+void
+weighted_circumcenterC2(const RT &px, const RT &py, const We &pw,
+                        const RT &qx, const RT &qy, const We &qw,
+                        RT &x, RT &y)
+{
+  RT dqw = RT(qw-pw);
+
+  weighted_circumcenter_translateC2<RT>(qx-px, qy-py, dqw, x, y);
   x += px;
   y += py;
 }

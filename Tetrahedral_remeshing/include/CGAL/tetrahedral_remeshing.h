@@ -85,7 +85,7 @@ namespace CGAL
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * @param tr the triangulation to be remeshed, of type `Triangulation_3<Traits, TDS, SLDS>`.
-*           `Remeshing_triangulation` is a helper class that satisfies all the requirements
+*           `CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3` is a helper class that satisfies all the requirements
 *           of its template parameters.
 * @param sizing the target edge length. This parameter provides a
 *          mesh density target for the remeshing algorithm.
@@ -210,21 +210,16 @@ void tetrahedral_isotropic_remeshing(
                        false);
 
   auto cell_select
-    = choose_parameter(get_parameter(np, internal_np::cell_selector),
-                                     typename Remesher_types::Default_Selection_functor());
+    = choose_parameter<typename Remesher_types::Default_Selection_functor>(get_parameter(np, internal_np::cell_selector));
 
-  auto vcmap = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
-                                typename Remesher_types::Default_VCMap(false));
+  auto vcmap = choose_parameter<typename Remesher_types::Default_VCMap>(get_parameter(np, internal_np::vertex_is_constrained));
 
-  auto ecmap = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
-                                typename Remesher_types::Default_ECMap(false));
+  auto ecmap = choose_parameter<typename Remesher_types::Default_ECMap>(get_parameter(np, internal_np::edge_is_constrained));
 
-  auto fcmap = choose_parameter(get_parameter(np, internal_np::facet_is_constrained),
-                                typename Remesher_types::Default_FCMap(false));
+  auto fcmap = choose_parameter<typename Remesher_types::Default_FCMap>(get_parameter(np, internal_np::facet_is_constrained));
 
   // Advanced and non documented parameters
-  auto visitor = choose_parameter(get_parameter(np, internal_np::visitor),
-                                  typename Remesher_types::Default_Visitor());
+  auto visitor = choose_parameter<typename Remesher_types::Default_Visitor>(get_parameter(np, internal_np::visitor));
 
   auto nb_extra_iterations
     = choose_parameter(get_parameter(np, internal_np::nb_flip_smooth_iterations),
@@ -373,8 +368,7 @@ convert_to_triangulation_3(
   using ECMap = typename Remesher_types::ECMap;
   if (!std::is_same_v<ECMap, Default_edge_pmap>)
   {
-    ECMap ecmap = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
-                                   Default_edge_pmap(false));
+    ECMap ecmap = choose_parameter<Default_edge_pmap>(get_parameter(np, internal_np::edge_is_constrained));
     for (auto e : c3t3.edges_in_complex())
     {
       const auto evv = CGAL::Tetrahedral_remeshing::make_vertex_pair(e);//ordered pair
@@ -386,8 +380,7 @@ convert_to_triangulation_3(
   using VCMap = typename Remesher_types::VCMap;
   if (!std::is_same_v<VCMap, Default_vertex_pmap>)
   {
-    VCMap vcmap = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
-                                   Default_vertex_pmap(false));
+    VCMap vcmap = choose_parameter<Default_vertex_pmap>(get_parameter(np, internal_np::vertex_is_constrained));
     for (auto v : c3t3.vertices_in_complex())
     {
       put(vcmap, v, true);
@@ -470,22 +463,17 @@ void tetrahedral_isotropic_remeshing(
         false);
 
   auto cell_select
-    = choose_parameter(get_parameter(np, internal_np::cell_selector),
-        typename Remesher_types::Default_Selection_functor());
+    = choose_parameter<typename Remesher_types::Default_Selection_functor>(get_parameter(np, internal_np::cell_selector));
 
-  auto vcmap = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
-                                typename Remesher_types::Default_VCMap(false));
+  auto vcmap = choose_parameter<typename Remesher_types::Default_VCMap>(get_parameter(np, internal_np::vertex_is_constrained));
 
-  auto ecmap = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
-                                typename Remesher_types::Default_ECMap(false));
+  auto ecmap = choose_parameter<typename Remesher_types::Default_ECMap>(get_parameter(np, internal_np::edge_is_constrained));
 
-  auto fcmap = choose_parameter(get_parameter(np, internal_np::facet_is_constrained),
-                                typename Remesher_types::Default_FCMap(false));
+  auto fcmap = choose_parameter<typename Remesher_types::Default_FCMap>(get_parameter(np, internal_np::facet_is_constrained));
 
   // Advanced and non documented parameters
   auto visitor
-    = choose_parameter(get_parameter(np, internal_np::visitor),
-        typename Remesher_types::Default_Visitor());
+    = choose_parameter<typename Remesher_types::Default_Visitor>(get_parameter(np, internal_np::visitor));
 
   auto nb_extra_iterations
     = choose_parameter(get_parameter(np, internal_np::nb_flip_smooth_iterations),

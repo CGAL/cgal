@@ -42,9 +42,9 @@ int main(int, char**)
   for(vertex_descriptor v : vertices(sm))
     put(apm, v, true);
 
-  typedef CGAL::dynamic_edge_property_t<bool>                                Contraint_property;
-  typedef typename boost::property_map<Polygon_mesh, Contraint_property>::type ECM;
-  ECM ecm = get(Contraint_property(), sm);
+  typedef CGAL::dynamic_edge_property_t<bool>                                Constraint_property;
+  typedef typename boost::property_map<Polygon_mesh, Constraint_property>::type ECM;
+  ECM ecm = get(Constraint_property(), sm);
 
   for(edge_descriptor e : edges(sm))
     put(ecm, e, true);

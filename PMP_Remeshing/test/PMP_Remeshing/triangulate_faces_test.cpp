@@ -90,6 +90,7 @@ test_triangulate_face_range(const std::string& filename)
 
   typedef typename K::Point_3                    Point;
   typedef CGAL::Surface_mesh<Point>          Surface_mesh;
+  typedef typename boost::graph_traits<Surface_mesh>::face_descriptor face_descriptor;
 
   Surface_mesh mesh;
   std::ifstream input(filename);
@@ -114,6 +115,10 @@ test_triangulate_face_range(const std::string& filename)
   }
 
   assert(CGAL::is_triangle_mesh(mesh));
+
+  // For compilation
+  std::vector<face_descriptor> face_range(faces(mesh).begin(), faces(mesh).end());
+  CGAL::Polygon_mesh_processing::triangulate_faces(face_range, mesh);
 
   // For compilation
   CGAL::Polygon_mesh_processing::triangulate_faces(faces(mesh), mesh,

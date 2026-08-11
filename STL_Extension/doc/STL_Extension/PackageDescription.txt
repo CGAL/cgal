@@ -100,7 +100,7 @@
 - `CGAL::Sixtuple<T>`
 - `CGAL::Triple<T1, T2, T3>`
 - `CGAL::Quadruple<T1, T2, T3, T4>`
-- `CGAL::Boolean_tag<bool value>`
+- `CGAL::Boolean_tag<B>`
 - `CGAL::Tag_true`
 - `CGAL::Tag_false`
 - `CGAL::Null_tag`

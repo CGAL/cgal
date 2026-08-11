@@ -19,7 +19,7 @@ the triangulation.
 
 \tparam Vb must be a vertex base class from which
 `Triangulation_vertex_base_with_info_3` derives. By default
-this parameter is instantiated by
+this parameter is instantiated with
 `Triangulation_vertex_base_2<Traits>`.
 
 \cgalModelsBareBegin
@@ -52,13 +52,13 @@ typedef Info Info;
 /// @{
 
 /*!
-Returns a const reference to the object of type `Info` stored in the
+returns a const reference to the object of type `Info` stored in the
 vertex.
 */
 const Info& info() const;
 
 /*!
-Returns a reference to the object of type `Info` stored in the vertex.
+returns a reference to the object of type `Info` stored in the vertex.
 */
 Info& info();
 

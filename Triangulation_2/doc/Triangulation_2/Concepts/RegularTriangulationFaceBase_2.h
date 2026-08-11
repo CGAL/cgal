@@ -60,7 +60,7 @@ typedef std::list<Vertex_handle> Vertex_list;
 /// @{
 
 /*!
-Returns a reference to the list of vertices hidden by the face.
+returns a reference to the list of vertices hidden by the face.
 */
 Vertex_list& vertex_list();
 

@@ -27,7 +27,7 @@ are not ghost faces <em>solid faces</em>, and edges of such faces <em>solid edge
 \tparam TDS is the triangulation data structure; it must be a model of the concept `TriangulationDataStructure_2`,
         whose vertex base must be a model of `TriangulationOnSphereVertexBase_2` and whose face base
         must be a model of `TriangulationOnSphereFaceBase_2`. By default, the triangulation data structure
-        is instantiated by `Triangulation_data_structure_2<Triangulation_on_sphere_vertex_base_2<Gt>, Triangulation_on_sphere_face_base_2<Gt> >`.
+        is instantiated with `Triangulation_data_structure_2<Triangulation_on_sphere_vertex_base_2<Gt>, Triangulation_on_sphere_face_base_2<Gt> >`.
 
 \sa `CGAL::Delaunay_triangulation_on_sphere_2<Traits, TDS>`
 */

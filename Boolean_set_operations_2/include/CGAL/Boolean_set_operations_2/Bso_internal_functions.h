@@ -69,7 +69,7 @@ inline bool r_do_intersect(InputIterator begin, InputIterator end,
                         convert_polygon_iterator(end, ptraits), traits, k);
 }
 
-// Souble Range
+// Double Range
 // With Traits
 template <typename InputIterator1, typename InputIterator2, typename Traits>
 inline bool r_do_intersect(InputIterator1 begin1, InputIterator1 end1,
@@ -182,7 +182,7 @@ inline OutputIterator r_intersection(InputIterator begin, InputIterator end,
                         convert_polygon_back(oi, *begin), traits, k);
 }
 
-// Souble Range
+// Double Range
 // With Traits
 template <typename InputIterator1, typename InputIterator2,
           typename OutputIterator, typename Traits>

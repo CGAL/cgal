@@ -162,12 +162,17 @@ bool has_on_boundary(const Point_2<Kernel> &p) const;
 /*!
 
 */
-bool has_on_bounded_side(const Point_2<Kernel> &p) const;
+bool has_on_unbounded_side(const Point_2<Kernel>& p) const;
 
 /*!
 
 */
-bool has_on_unbounded_side(const Point_2<Kernel> &p) const;
+bool has_on_unbounded_side(const Iso_rectangle_2<Kernel>& i) const;
+
+/*!
+
+*/
+bool has_on_unbounded_side(const Segment_2<Kernel>& s) const;
 
 /// @}
 

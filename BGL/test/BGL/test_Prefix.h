@@ -461,8 +461,6 @@ struct Surface_fixture_6 {
     assert(is_reading_successful);
     assert(CGAL::is_valid_polygon_mesh(m));
 
-    typename boost::graph_traits<Graph>::halfedge_descriptor h;
-
     h1 = halfedge(*faces(m).first, m);
 
     h2 = next(next(h1,m),m);

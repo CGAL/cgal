@@ -543,9 +543,6 @@ public :
     return Interval_nt<true>(i.inf(), i.sup());
   }
 
-  Interval_nt_advanced approx_adv() const
-  { return this->ptr()->approx(); }
-
 private:
   static double & relative_precision_of_to_double_internal()
   {

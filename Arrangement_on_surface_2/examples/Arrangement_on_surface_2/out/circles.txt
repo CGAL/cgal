@@ -1,0 +1,1 @@
+The vertex with maximal degree in the arrangement is: v_max = (4 3) with degree 6.

@@ -1,0 +1,6 @@
+Writing
+The arrangement size:
+   |V| = 6,  |E| = 5,  |F| = 2
+Reading
+The arrangement size:
+   |V| = 6,  |E| = 5,  |F| = 2

@@ -93,7 +93,6 @@ ALIASES                = "cgal=%CGAL" \
                          "libpointmatcher=libpointmatcher" \
                          "core=Core" \
                          "mpfi=MPFI" \
-                         "ntl=NTL" \
                          "pdb=PDB" \
                          "esbtl=ESBTL" \
                          "tbb=TBB" \
@@ -123,18 +122,18 @@ ALIASES                = "cgal=%CGAL" \
                          "cgalExample{1}=<b>Example: </b> \ref \1 \n<details><summary>Show / Hide</summary> \include \1 </details>" \
                          "cgalFigureAnchor{1}=\anchor fig__\1" \
                          "cgalFigureRef{1}=\ref fig__\1" \
-                         "cgalFigureBegin{2}=\anchor fig__\1 ^^ \image html \2 ^^ \image latex \2 \"\" width=15cm ^^ <div class=\"cgal_figure_caption\"> ^^ \ref fig__\1" \
-                         "cgalFigureBegin{3}=\anchor fig__\1 ^^  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=7.5cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=7.5cm ^^ </TD> </TR> </TABLE> </CENTER> <div class=\"cgal_figure_caption\"> ^^ \ref fig__\1" \
-                         "cgalFigureBegin{4}=\anchor fig__\1 ^^  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=5cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=5cm ^^ </TD> <TD> \image html \4 ^^ \image latex \4 \"\" width=5cm ^^ </TD> </TR> </TABLE> </CENTER> <div class=\"cgal_figure_caption\"> ^^ \ref fig__\1" \
-                         "cgalFigureBegin{5}=\anchor fig__\1 ^^  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=3.75cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=3.75cm ^^ </TD> <TD> \image html \4 ^^ \image latex \4 \"\" width=3.75cm ^^ </TD> <TD> \image html \5 ^^ \image latex \5 \"\" width=3.75cm ^^ </TD> </TR> </TABLE> </CENTER> <div class=\"cgal_figure_caption\"> ^^ \ref fig__\1" \
-                         "cgalFigureBegin{6}=\anchor fig__\1 ^^  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=3cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=3cm ^^ </TD> <TD> \image html \4 ^^ \image latex \4 \"\" width=3cm ^^ </TD> <TD> \image html \5 ^^ \image latex \5 \"\" width=3cm ^^ </TD> <TD> \image html \6 ^^ \image latex \6 \"\" width=3cm ^^ </TD> </TR> </TABLE> </CENTER> <div class=\"cgal_figure_caption\"> ^^ \ref fig__\1" \
-                         "cgalFigureBegin{7}=\anchor fig__\1 ^^  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=2.5cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=2.5cm ^^ </TD> <TD> \image html \4 ^^ \image latex \4 \"\" width=2.5cm ^^ </TD> <TD> \image html \5 ^^ \image latex \5 \"\" width=2.5cm ^^ </TD> <TD> \image html \6 ^^ \image latex \6 \"\" width=2.5cm ^^ </TD> <TD> \image html \7 ^^ \image latex \7 \"\" width=2.5cm ^^ </TD> </TR> </TABLE> </CENTER> <div class=\"cgal_figure_caption\"> ^^ \ref fig__\1" \
-                         "cgalFigureBegin{8}=\anchor fig__\1 ^^  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=2.1cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=2.1cm ^^ </TD> <TD> \image html \4 ^^ \image latex \4 \"\" width=2.1cm ^^ </TD> <TD> \image html \5 ^^ \image latex \5 \"\" width=2.1cm ^^ </TD> <TD> \image html \6 ^^ \image latex \6 \"\" width=2.1cm ^^ </TD> <TD> \image html \7 ^^ \image latex \7 \"\" width=2.1cm ^^ </TD> <TD> \image html \8 ^^ \image latex \8 \"\" width=2.1cm ^^ </TD> </TR> </TABLE> </CENTER> <div class=\"cgal_figure_caption\"> ^^ \ref fig__\1" \
-                         "cgalFigureBegin{9}=\anchor fig__\1 ^^  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=1.9cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=1.9cm ^^ </TD> <TD> \image html \4 ^^ \image latex \4 \"\" width=1.9cm ^^ </TD> <TD> \image html \5 ^^ \image latex \5 \"\" width=1.9cm ^^ </TD> <TD> \image html \6 ^^ \image latex \6 \"\" width=1.9cm ^^ </TD> <TD> \image html \7 ^^ \image latex \7 \"\" width=1.9cm ^^ </TD> <TD> \image html \8 ^^ \image latex \8 \"\" width=1.9cm ^^ </TD> <TD> \image html \9 ^^ \image latex \9 \"\" width=1.9cm ^^ </TD> </TR> </TABLE> </CENTER> <div class=\"cgal_figure_caption\"> ^^ \ref fig__\1" \
-                         "cgalFigureBegin{10}=\anchor fig__\1 ^^ <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=1.6cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=1.6cm ^^ </TD> <TD> \image html \4 ^^ \image latex \4 \"\" width=1.6cm ^^ </TD> <TD> \image html \5 ^^ \image latex \5 \"\" width=1.6cm ^^ </TD> <TD> \image html \6 ^^ \image latex \6 \"\" width=1.6cm ^^ </TD> <TD> \image html \7 ^^ \image latex \7 \"\" width=1.6cm ^^ </TD> <TD> \image html \8 ^^ \image latex \8 \"\" width=1.6cm ^^ </TD> <TD> \image html \9 ^^ \image latex \9 \"\" width=1.6cm ^^ </TD> <TD> \image html \10 ^^ \image latex \10 \"\" width=1.6cm ^^ </TD> </TR> </TABLE> </CENTER> <div class=\"cgal_figure_caption\"> ^^ \ref fig__\1" \
-                         "cgalFigureEnd= </div><br>" \
-                         "cgalFigureCaptionBegin{1}=<div class=\"cgal_figure_caption\"> \ref fig__\1" \
-                         "cgalFigureCaptionEnd=</div><br>" \
+                         "cgalFigureBegin{2}=\anchor fig__\1 ^^ \image html \2 ^^ \image latex \2 \"\" width=15cm ^^ \htmlonly[block] <div class=\"cgal_figure_caption\"> \endhtmlonly ^^ \ref fig__\1" \
+                         "cgalFigureBegin{3}=\anchor fig__\1 ^^  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=7.5cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=7.5cm ^^ </TD> </TR> </TABLE> </CENTER> \htmlonly[block] <div class=\"cgal_figure_caption\"> \endhtmlonly ^^ \ref fig__\1" \
+                         "cgalFigureBegin{4}=\anchor fig__\1 ^^  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=5cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=5cm ^^ </TD> <TD> \image html \4 ^^ \image latex \4 \"\" width=5cm ^^ </TD> </TR> </TABLE> </CENTER> \htmlonly[block] <div class=\"cgal_figure_caption\"> \endhtmlonly ^^ \ref fig__\1" \
+                         "cgalFigureBegin{5}=\anchor fig__\1 ^^  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=3.75cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=3.75cm ^^ </TD> <TD> \image html \4 ^^ \image latex \4 \"\" width=3.75cm ^^ </TD> <TD> \image html \5 ^^ \image latex \5 \"\" width=3.75cm ^^ </TD> </TR> </TABLE> </CENTER> \htmlonly[block] <div class=\"cgal_figure_caption\"> \endhtmlonly ^^ \ref fig__\1" \
+                         "cgalFigureBegin{6}=\anchor fig__\1 ^^  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=3cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=3cm ^^ </TD> <TD> \image html \4 ^^ \image latex \4 \"\" width=3cm ^^ </TD> <TD> \image html \5 ^^ \image latex \5 \"\" width=3cm ^^ </TD> <TD> \image html \6 ^^ \image latex \6 \"\" width=3cm ^^ </TD> </TR> </TABLE> </CENTER> \htmlonly[block] <div class=\"cgal_figure_caption\"> \endhtmlonly ^^ \ref fig__\1" \
+                         "cgalFigureBegin{7}=\anchor fig__\1 ^^  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=2.5cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=2.5cm ^^ </TD> <TD> \image html \4 ^^ \image latex \4 \"\" width=2.5cm ^^ </TD> <TD> \image html \5 ^^ \image latex \5 \"\" width=2.5cm ^^ </TD> <TD> \image html \6 ^^ \image latex \6 \"\" width=2.5cm ^^ </TD> <TD> \image html \7 ^^ \image latex \7 \"\" width=2.5cm ^^ </TD> </TR> </TABLE> </CENTER> \htmlonly[block] <div class=\"cgal_figure_caption\"> \endhtmlonly ^^ \ref fig__\1" \
+                         "cgalFigureBegin{8}=\anchor fig__\1 ^^  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=2.1cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=2.1cm ^^ </TD> <TD> \image html \4 ^^ \image latex \4 \"\" width=2.1cm ^^ </TD> <TD> \image html \5 ^^ \image latex \5 \"\" width=2.1cm ^^ </TD> <TD> \image html \6 ^^ \image latex \6 \"\" width=2.1cm ^^ </TD> <TD> \image html \7 ^^ \image latex \7 \"\" width=2.1cm ^^ </TD> <TD> \image html \8 ^^ \image latex \8 \"\" width=2.1cm ^^ </TD> </TR> </TABLE> </CENTER> \htmlonly[block] <div class=\"cgal_figure_caption\"> \endhtmlonly ^^ \ref fig__\1" \
+                         "cgalFigureBegin{9}=\anchor fig__\1 ^^  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=1.9cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=1.9cm ^^ </TD> <TD> \image html \4 ^^ \image latex \4 \"\" width=1.9cm ^^ </TD> <TD> \image html \5 ^^ \image latex \5 \"\" width=1.9cm ^^ </TD> <TD> \image html \6 ^^ \image latex \6 \"\" width=1.9cm ^^ </TD> <TD> \image html \7 ^^ \image latex \7 \"\" width=1.9cm ^^ </TD> <TD> \image html \8 ^^ \image latex \8 \"\" width=1.9cm ^^ </TD> <TD> \image html \9 ^^ \image latex \9 \"\" width=1.9cm ^^ </TD> </TR> </TABLE> </CENTER> \htmlonly[block] <div class=\"cgal_figure_caption\"> \endhtmlonly ^^ \ref fig__\1" \
+                         "cgalFigureBegin{10}=\anchor fig__\1 ^^ <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=1.6cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=1.6cm ^^ </TD> <TD> \image html \4 ^^ \image latex \4 \"\" width=1.6cm ^^ </TD> <TD> \image html \5 ^^ \image latex \5 \"\" width=1.6cm ^^ </TD> <TD> \image html \6 ^^ \image latex \6 \"\" width=1.6cm ^^ </TD> <TD> \image html \7 ^^ \image latex \7 \"\" width=1.6cm ^^ </TD> <TD> \image html \8 ^^ \image latex \8 \"\" width=1.6cm ^^ </TD> <TD> \image html \9 ^^ \image latex \9 \"\" width=1.6cm ^^ </TD> <TD> \image html \10 ^^ \image latex \10 \"\" width=1.6cm ^^ </TD> </TR> </TABLE> </CENTER> \htmlonly[block] <div class=\"cgal_figure_caption\"> \endhtmlonly ^^ \ref fig__\1" \
+                         "cgalFigureEnd=\htmlonly[block] </div> \endhtmlonly <br>" \
+                         "cgalFigureCaptionBegin{1}=\htmlonly[block] <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1" \
+                         "cgalFigureCaptionEnd=\htmlonly[block] </div> \endhtmlonly <br>" \
                          "cgalConcept=\details <div id=\"CGALConcept\"></div>^^ \brief" \
                          "cgalConceptNamespace=\details <div id=\"CGALConceptNS\"></div>^^ \brief" \
                          "cgalRefines=Refines" \
@@ -161,11 +160,11 @@ ALIASES                = "cgal=%CGAL" \
                          "cgalHasModels{1}=<dt></dt><dd>`\1`</dd>" \
                          "cgalHasModelsBare{1}=<dt></dt><dd>\1</dd>" \
                          "cgalHasModelsEnd=</dl>" \
-                         "cgalDebugBegin=<div class=\"CGALDebug\"> <div>Debugging Support</div> ^^" \
-                         "cgalDebugEnd=</div>" \
+                         "cgalDebugBegin=\htmlonly[block] <div class=\"CGALDebug\"> <div>Debugging Support</div> \endhtmlonly ^^" \
+                         "cgalDebugEnd=\htmlonly[block] </div> \endhtmlonly" \
                          "cgalDebugFunction=This is a function for debugging purpose." \
-                         "cgalAdvancedBegin=^^ <div class=\"CGALAdvanced\"> <div>Advanced</div> ^^" \
-                         "cgalAdvancedEnd=\noop ^^ </div> " \
+                         "cgalAdvancedBegin=^^ \htmlonly[block] <div class=\"CGALAdvanced\"> <div>Advanced</div> \endhtmlonly ^^" \
+                         "cgalAdvancedEnd=\noop ^^ \htmlonly[block] </div> \endhtmlonly" \
                          "cgalAdvancedFunction=This is an advanced function." \
                          "cgalAdvancedClass=This is an advanced class." \
                          "cgalAdvancedType=This is an advanced type." \
@@ -199,16 +198,16 @@ ALIASES                = "cgal=%CGAL" \
                          "cgalCRPSection{1}=<h2>\1</h2>" \
                          "cgalCRPSubsection{1}=<h3>\1</h3>" \
                          "cgalCite{1}=<!-- -->\cite \1" \
-                         "cgalPackageSection{2}=<div class=\"package_section\">\section \1 \2 ^^ </div>" \
+                         "cgalPackageSection{2}=\htmlonly[block] <div class=\"package_section\">\endhtmlonly \section \1 \2 ^^ \htmlonly[block] </div>\endhtmlonly" \
                          "cgalNamedParamsBegin=<dl class=\"params\"><dt>Optional Named Parameters</dt><dd> <table class=\"params\">" \
                          "cgalNamedParamsBegin{1}=<dl class=\"params\"><dt>\1</dt><dd> <table class=\"params\">" \
                          "cgalNamedParamsEnd=</table> </dd> </dl>" \
-                         "cgalParamNBegin{1}=<tr><td class> \htmlonly[block] <button class=\"collapsible\">\endhtmlonly <b>\1</b> \htmlonly[block]</button>\endhtmlonly<div class=\"content\"><ul>" \
+                         "cgalParamNBegin{1}=<tr><td class> \htmlonly[block] <button class=\"collapsible\">\endhtmlonly <b>\1</b> \htmlonly[block]</button> <div class=\"content\">\endhtmlonly<ul>" \
                          "cgalParamDescription{1}=<li>\1</li>" \
                          "cgalParamType{1}=<li><b>Type: </b>\1</li>" \
                          "cgalParamDefault{1}=<li><b>%Default: </b>\1</li>" \
                          "cgalParamExtra{1}=<li><b>Extra: </b>\1</li>" \
-                         "cgalParamNEnd=</ul></div></td><td></td></tr>" \
+                         "cgalParamNEnd=</ul> \htmlonly[block] </div> \endhtmlonly </td><td></td></tr>" \
                          "cgalParamSectionBegin{1}=\cgalParamNBegin{\1}" \
                          "cgalParamSectionEnd=\cgalParamNEnd" \
                          "cgalParamPrecondition{1}=<li><b>Precondition: </b>\1</li>" \
@@ -461,6 +460,9 @@ ALPHABETICAL_INDEX     = NO
 # Configuration options related to the HTML output
 #---------------------------------------------------------------------------
 
+#workaround removal of jquery in recent versions of doxygen
+HTML_EXTRA_FILES += ${CGAL_DOC_RESOURCE_DIR}/jquery.js
+
 #
 # To get valid HTML the header file that includes any scripts and style sheets
 # that Doxygen needs, which is dependent on the configuration options used (e.g.
@@ -487,6 +489,21 @@ HTML_HEADER            = ${CGAL_DOC_HEADER_PACKAGE}
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
 HTML_FOOTER            = ${CGAL_DOC_RESOURCE_DIR}/footer.html
+
+# If the HTML_DYNAMIC_SECTIONS tag is set to YES then the generated HTML
+# documentation will contain sections that can be hidden and shown after the
+# page has loaded.
+# The default value is: NO.
+# This tag requires that the tag GENERATE_HTML is set to YES.
+
+HTML_DYNAMIC_SECTIONS  = YES
+
+# If the HTML_CODE_FOLDING tag is set to YES then classes and functions can be
+# dynamically folded and expanded in the generated HTML source code.
+# The default value is: YES.
+# This tag requires that the tag GENERATE_HTML is set to YES.
+
+HTML_CODE_FOLDING      = NO
 
 # Doxygen stores a couple of settings persistently in the browser (via e.g.
 # cookies). By default these settings apply to all HTML pages generated by
@@ -829,7 +846,7 @@ INTERACTIVE_SVG        = YES
 
 GENERATE_LEGEND        = NO
 
-# Flag available on in https://github.com/CGAL/doxygen/tree/release_1_9_6_patched
+# Flag available on in https://github.com/CGAL/doxygen/tree/release_1_17_0_patched
 # When the EXTRACT_ALL tag is set to YES and a member or class has no
 # documentation, no detailed section will be produced if the
 # NO_ADDITIONAL_DETAILS tag is set to YES. This tag has no effect if

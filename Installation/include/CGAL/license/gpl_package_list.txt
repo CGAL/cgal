@@ -2,6 +2,7 @@ AABB_tree 3D Fast Intersection and Distance Computation
 Advancing_front_surface_reconstruction Advancing Front Surface Reconstruction
 Alpha_shapes_2 2D Alpha Shapes
 Alpha_shapes_3 3D Alpha Shapes
+Alpha_wrap_2 2D Alpha Wrapping
 Alpha_wrap_3 3D Alpha Wrapping
 Apollonius_graph_2 2D Apollonius Graphs (Delaunay Graphs of Disks)
 Arrangement_on_surface_2 2D Arrangements
@@ -94,6 +95,7 @@ Straight_skeleton_extrusion_2 2D Straight Skeleton Extrusion
 Stream_lines_2 2D Placement of Streamlines
 Surface_mesh_approximation Triangulated Surface Mesh Approximation
 Surface_mesh_deformation Triangulated Surface Mesh Deformation
+Surface_mesh_decomposition Triangulated Surface Mesh Decomposition
 Surface_mesher 3D Surface Mesh Generation
 Surface_mesh Surface Mesh
 Surface_mesh_parameterization Triangulated Surface Mesh Parameterization

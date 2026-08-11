@@ -96,6 +96,8 @@ public:
   typedef typename GeomTraits::FT                                              FT;
 
 public:
+  GarlandHeckbert_plane_and_line_policies() = delete;
+
   template<typename NP = parameters::Default_named_parameters>
   GarlandHeckbert_plane_and_line_policies(TriangleMesh& tmesh, const NP& np = parameters::default_values()):
     Base(tmesh,

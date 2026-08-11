@@ -1,7 +1,8 @@
 #ifndef SCENE_POLYGON_SOUP_ITEM_H
 #define SCENE_POLYGON_SOUP_ITEM_H
 #include "Scene_polygon_soup_item_config.h"
-#include  <CGAL/Three/Scene_item_rendering_helper.h>
+#include <CGAL/Three/Scene_item_rendering_helper.h>
+#include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
 #include "SMesh_type.h"
 
 #include <iostream>
@@ -186,7 +187,7 @@ public Q_SLOTS:
     bool orient(std::vector<std::size_t>& non_manifold_vertices);
     bool exportAsSurfaceMesh(SMesh*);
     void inside_out();
-    void repair(bool erase_dup, bool req_same_orientation);
+    void repair(CGAL::Polygon_mesh_processing::Duplicate_polygon_erase_policy erase_policy, bool req_same_orientation);
     bool triangulate();
 
     void setDisplayNonManifoldEdges(const bool);

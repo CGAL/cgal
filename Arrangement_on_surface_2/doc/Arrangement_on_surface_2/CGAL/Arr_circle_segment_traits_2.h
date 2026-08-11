@@ -266,7 +266,7 @@ public:
      */
     const Point_2& target() const;
 
-    /*! returns true if `xcv` is directed right, false otherwise.
+    /*! returns `true` if `xcv` is directed right, `false` otherwise.
      */
     bool is_directed_right() const;
 

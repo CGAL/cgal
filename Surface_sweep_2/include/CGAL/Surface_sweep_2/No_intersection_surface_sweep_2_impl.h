@@ -7,10 +7,10 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Baruch Zukerman  <baruchzu@post.tau.ac.il>
-//                 Efi Fogel        <efif@post.tau.ac.il>
-//                 Eric Berberich   <eric.berberich@cgal.org>
-//                 (based on old version by Tali Zvi)
+// Author(s) : Baruch Zukerman  <baruchzu@post.tau.ac.il>
+//             Efi Fogel        <efif@post.tau.ac.il>
+//             Eric Berberich   <eric.berberich@cgal.org>
+//             (based on old version by Tali Zvi)
 
 #ifndef CGAL_NO_INTERSECTION_SURFACE_SWEEP_2_IMPL_H
 #define CGAL_NO_INTERSECTION_SURFACE_SWEEP_2_IMPL_H
@@ -39,7 +39,8 @@ No_intersection_surface_sweep_2(Visitor* visitor) :
   m_queue(new Event_queue(m_queueEventLess)),
   m_statusLine(m_statusLineCurveLess),
   m_status_line_insert_hint(m_statusLine.begin()),
-  m_num_of_subCurves(0),
+  m_num_subcurves(0),
+  m_num_allocated_subcurves(0),
   m_visitor(visitor)
 #ifdef CGAL_SS_VERBOSE
   , m_indent_size(0)
@@ -61,7 +62,8 @@ No_intersection_surface_sweep_2(const Gt2* traits, Visitor* visitor) :
   m_queue(new Event_queue(m_queueEventLess)),
   m_statusLine(m_statusLineCurveLess),
   m_status_line_insert_hint(m_statusLine.begin()),
-  m_num_of_subCurves(0),
+  m_num_subcurves(0),
+  m_num_allocated_subcurves(0),
   m_visitor(visitor)
 #ifdef CGAL_SS_VERBOSE
   , m_indent_size(0)
@@ -73,8 +75,7 @@ No_intersection_surface_sweep_2(const Gt2* traits, Visitor* visitor) :
 // Destructor.
 //
 template <typename Vis>
-No_intersection_surface_sweep_2<Vis>::~No_intersection_surface_sweep_2()
-{
+No_intersection_surface_sweep_2<Vis>::~No_intersection_surface_sweep_2() {
   // Free the traits-class object, if we own it.
   if (m_traitsOwner) delete m_traits;
 
@@ -86,11 +87,10 @@ No_intersection_surface_sweep_2<Vis>::~No_intersection_surface_sweep_2()
 // Stop the sweep-line process.
 //
 template <typename Vis>
-void No_intersection_surface_sweep_2<Vis>::stop_sweep()
-{
+void No_intersection_surface_sweep_2<Vis>::stop_sweep() {
   // Clear the event queue, deallocating all events but the current one
   // (the first event in the queue).
-  Event_queue_iterator qiter= this->m_queue->begin();
+  Event_queue_iterator qiter = this->m_queue->begin();
 
   for (++qiter; qiter != this->m_queue->end(); ++qiter)
     this->deallocate_event(*qiter);
@@ -100,7 +100,7 @@ void No_intersection_surface_sweep_2<Vis>::stop_sweep()
   m_status_line_insert_hint = this->m_statusLine.begin();
 
   // Empty the event queue, and leave only the first event there.
-  CGAL_assertion(!m_queue->empty());
+  CGAL_assertion(! m_queue->empty());
   Event_queue_iterator second = m_queue->begin();
   ++second;
   while (second != m_queue->end()) {
@@ -113,20 +113,17 @@ void No_intersection_surface_sweep_2<Vis>::stop_sweep()
 
 //-----------------------------------------------------------------------------
 // Deallocate event object..
+// Remove the event from the set of allocated events.
 //
 template <typename Vis>
 void No_intersection_surface_sweep_2<Vis>::deallocate_event(Event* event)
-{
-  // Remove the event from the set of allocated events.
-  m_allocated_events.erase(m_allocated_events.iterator_to(*event));
-}
+{ m_allocated_events.erase(m_allocated_events.iterator_to(*event)); }
 
 //-----------------------------------------------------------------------------
 // Perform the main sweep-line loop.
 //
 template <typename Vis>
-void No_intersection_surface_sweep_2<Vis>::_sweep()
-{
+void No_intersection_surface_sweep_2<Vis>::_sweep() {
   CGAL_SS_PRINT_TEXT("Ordered sequence of ");
   CGAL_SS_PRINT(m_queue->size());
   CGAL_SS_PRINT_TEXT(" initial events:");
@@ -167,10 +164,7 @@ void No_intersection_surface_sweep_2<Vis>::_sweep()
     // Inform the visitor about the event. The visitor also determines whether
     // it is possible to deallocate the event now, or will it be deallocated
     // later (at the visitor's responsibility).
-    if (m_visitor->after_handle_event(m_currentEvent,
-                                      m_status_line_insert_hint,
-                                      m_is_event_on_above))
-    {
+    if (m_visitor->after_handle_event(m_currentEvent, m_status_line_insert_hint, m_is_event_on_above)) {
       // It is possible to deallocate the event:
       deallocate_event(m_currentEvent);
     }
@@ -181,116 +175,96 @@ void No_intersection_surface_sweep_2<Vis>::_sweep()
   }
 }
 
-//-----------------------------------------------------------------------------
-// Initialize the data structures for the sweep-line algorithm.
-//
+/*! initializes the data structures for the sweep-line algorithm.
+ */
 template <typename Vis>
-void No_intersection_surface_sweep_2<Vis>::_init_structures()
-{
+void No_intersection_surface_sweep_2<Vis>::_init_structures() {
   CGAL_assertion(m_queue->empty());
   CGAL_assertion((m_statusLine.size() == 0));
 
   // Allocate all of the Subcurve objects as one block. Don't allocate
   // anything when there are no subcurves.
-  if (m_num_of_subCurves > 0)
-    m_subCurves = m_subCurveAlloc.allocate(m_num_of_subCurves);
+  if (m_num_subcurves > 0) m_subcurves = m_subCurveAlloc.allocate(m_num_subcurves);
 }
 
-//-----------------------------------------------------------------------------
-// Complete the sweep (complete the data structures).
-//
+/*! clears the sweep data structures.
+ */
 template <typename Vis>
-void No_intersection_surface_sweep_2<Vis>::_complete_sweep()
-{
+void No_intersection_surface_sweep_2<Vis>::_clear() {
+  // Free all subcurve objects.
+  for (std::size_t i = 0; i < m_num_allocated_subcurves; ++i)
+    std::allocator_traits<Subcurve_alloc>::destroy(m_subCurveAlloc, m_subcurves + i);
+  m_num_allocated_subcurves = 0;
+  if (m_num_subcurves > 0) m_subCurveAlloc.deallocate(m_subcurves, m_num_subcurves);
+  m_num_subcurves = 0;
+}
+
+/*! completes the sweep (complete the data structures).
+ */
+template <typename Vis>
+void No_intersection_surface_sweep_2<Vis>::_complete_sweep() {
   CGAL_assertion(m_queue->empty());
   CGAL_assertion((m_statusLine.size() == 0));
-
-  // Free all subcurve objects.
-  for (unsigned int i = 0; i < m_num_of_subCurves; ++i){
-    std::allocator_traits<Subcurve_alloc>::destroy(m_subCurveAlloc, m_subCurves + i);
-  }
-
-  if (m_num_of_subCurves > 0)
-    m_subCurveAlloc.deallocate(m_subCurves, m_num_of_subCurves);
+  _clear();
 }
 
-//-----------------------------------------------------------------------------
-// Initialize an event associated with a point.
-//
+/*! Initialize an event associated with a point.
+ */
 template <typename Vis>
-void No_intersection_surface_sweep_2<Vis>::_init_point(const Point_2& pt,
-                                                       Attribute type)
-{
+bool No_intersection_surface_sweep_2<Vis>::_init_point(const Point_2& pt, Attribute type) {
   // Create the event, or obtain an existing event in the queue.
   Arr_parameter_space ps_x = m_traits->parameter_space_in_x_2_object()(pt);
   Arr_parameter_space ps_y = m_traits->parameter_space_in_y_2_object()(pt);
-#if 0
-  CGAL::set_pretty_mode(std::cout);
-  std::cout << "init pt ps_x: " << ps_x << std::endl;
-  std::cout << "init pt ps_y: " << ps_y << std::endl;
-#endif
-
-  const std::pair<Event*, bool>& pair_res =
-    _push_event(pt, type, ps_x, ps_y);
-
-  bool is_new = pair_res.second;
-  m_visitor->update_event(pair_res.first, pt, is_new);
+  const auto [event, is_new, overlap] = _push_event(pt, type, ps_x, ps_y);
+  m_visitor->update_event(event, pt, is_new);
+  return overlap;
 }
 
 //-----------------------------------------------------------------------------
 // Initialize the events associated with an x-monotone curve.
 //
 template <typename Vis>
-void No_intersection_surface_sweep_2<Vis>::
-_init_curve(const X_monotone_curve_2& curve, unsigned int index)
-{
+bool No_intersection_surface_sweep_2<Vis>::_init_curve(const X_monotone_curve_2& curve) {
   // Construct and initialize a subcurve object.
-  Subcurve* sc = m_subCurves + index;
-  std::allocator_traits<Subcurve_alloc>::construct(m_subCurveAlloc, sc, m_masterSubcurve );
+  Subcurve* sc = m_subcurves + m_num_allocated_subcurves++;
+  std::allocator_traits<Subcurve_alloc>::construct(m_subCurveAlloc, sc, m_masterSubcurve);
   sc->set_hint(this->m_statusLine.end());
   sc->init(curve);
 
   // Create two events associated with the curve ends, respectively.
-  _init_curve_end(curve, ARR_MAX_END, sc, All_sides_oblivious_category());
-  _init_curve_end(curve, ARR_MIN_END, sc, All_sides_oblivious_category());
+  bool overlap1 = _init_curve_end(curve, ARR_MAX_END, sc, All_sides_oblivious_category());
+  bool overlap2 = _init_curve_end(curve, ARR_MIN_END, sc, All_sides_oblivious_category());
+
+  return overlap1 || overlap2;
 }
 
-//-----------------------------------------------------------------------------
-// Initialize an event associated with an x-monotone curve end.
-// This is the implementation for the case where all 4 boundary sides are
-// oblivious.
-//
+/*! Initialize an event associated with an x-monotone curve end.
+ * This is the implementation for the case where all 4 boundary sides are oblivious.
+ */
 template <typename Vis>
-void No_intersection_surface_sweep_2<Vis>::
-_init_curve_end(const X_monotone_curve_2& cv, Arr_curve_end ind, Subcurve* sc,
-                Arr_all_sides_oblivious_tag)
-{
-  const Attribute end_attr =
-    (ind == ARR_MIN_END) ? Event::LEFT_END : Event::RIGHT_END;
+bool No_intersection_surface_sweep_2<Vis>::
+_init_curve_end(const X_monotone_curve_2& cv, Arr_curve_end ind, Subcurve* sc, Arr_all_sides_oblivious_tag) {
+  const Attribute end_attr = (ind == ARR_MIN_END) ? Event::LEFT_END : Event::RIGHT_END;
 
   const Point_2& pt = (ind == ARR_MIN_END) ?
     m_traits->construct_min_vertex_2_object()(cv) :
     m_traits->construct_max_vertex_2_object()(cv);
 
   // Create the corresponding event and push it into the event queue.
-  std::pair<Event*, bool> pair_res =
-    _push_event(pt, end_attr, ARR_INTERIOR, ARR_INTERIOR, sc);
+  const auto [event, is_new, overlap] = _push_event(pt, end_attr, ARR_INTERIOR, ARR_INTERIOR, sc);
 
   // Inform the visitor in case we updated an existing event.
-  m_visitor->update_event(pair_res.first, pt, cv, ind, pair_res.second);
+  m_visitor->update_event(event, pt, cv, ind, is_new);
+  return overlap;
 }
 
-//-----------------------------------------------------------------------------
-// Initialize an event associated with an x-monotone curve end.
-// This is the implementation for the case where there is at least one boundary
-// side that is not oblivious.
-//
-//
+/*! Initialize an event associated with an x-monotone curve end.
+ * This is the implementation for the case where there is at least one boundary
+ * side that is not oblivious.
+ */
 template <typename Vis>
-void No_intersection_surface_sweep_2<Vis>::
-_init_curve_end(const X_monotone_curve_2& cv, Arr_curve_end ind, Subcurve* sc,
-                Arr_not_all_sides_oblivious_tag)
-{
+bool No_intersection_surface_sweep_2<Vis>::
+_init_curve_end(const X_monotone_curve_2& cv, Arr_curve_end ind, Subcurve* sc, Arr_not_all_sides_oblivious_tag) {
   const Attribute end_attr =
     (ind == ARR_MIN_END) ? Event::LEFT_END : Event::RIGHT_END;
 
@@ -306,34 +280,33 @@ _init_curve_end(const X_monotone_curve_2& cv, Arr_curve_end ind, Subcurve* sc,
       m_traits->construct_max_vertex_2_object()(cv);
 
     // Create the corresponding event and push it into the event queue.
-    std::pair<Event*, bool> pair_res =
+    const auto [event, is_new, overlap] =
       ((ps_x == ARR_INTERIOR) && (ps_y == ARR_INTERIOR)) ?
       _push_event(pt, end_attr, ps_x, ps_y, sc) :
       _push_event(cv, ind, end_attr, ps_x, ps_y, sc);
 
     // Inform the visitor in case we updated an existing event.
-    Event* e = pair_res.first;
-    CGAL_assertion(e->is_closed());
-    m_visitor->update_event(e, pt, cv, ind, pair_res.second);
-    return;
+    CGAL_assertion(event->is_closed());
+    m_visitor->update_event(event, pt, cv, ind, is_new);
+    return overlap;
   }
 
   // The curve end is open.
   // Create the corresponding event and push it into the event queue.
-  std::pair<Event*, bool> pair_res =
-    _push_event(cv, ind, end_attr, ps_x, ps_y, sc);
+  const auto [event, is_new, overlap] = _push_event(cv, ind, end_attr, ps_x, ps_y, sc);
 
   // Inform the visitor in case we updated an existing event.
-  Event* e = pair_res.first;
-  CGAL_assertion(! e->is_closed());
-  m_visitor->update_event(e, cv, ind, pair_res.second);
+  CGAL_assertion(! event->is_closed());
+  m_visitor->update_event(event, cv, ind, is_new);
+  return overlap;
 }
 
+/*!
+ */
 template <typename Vis>
-void No_intersection_surface_sweep_2<Vis>::
+bool No_intersection_surface_sweep_2<Vis>::
 _init_curve_end(const X_monotone_curve_2& cv, Arr_curve_end ind, Subcurve* sc,
-                std::vector<Event_queue_iterator>& events, std::size_t index)
-{
+                std::vector<Event_queue_iterator>& events, std::size_t index) {
   // Get the boundary conditions of the curve end.
   const Attribute  end_attr =
     (ind == ARR_MIN_END) ? Event::LEFT_END : Event::RIGHT_END;
@@ -342,40 +315,35 @@ _init_curve_end(const X_monotone_curve_2& cv, Arr_curve_end ind, Subcurve* sc,
   Arr_parameter_space ps_y = m_traits->parameter_space_in_y_2_object()(cv, ind);
 
   // Create the corresponding event and push it into the event queue.
-  std::pair<Event*, bool> pair_res;
-
   if (m_traits->is_closed_2_object()(cv, ind)) {
     // The curve end is closed and thus associated with a valid endpoint.
     const Point_2& pt = (ind == ARR_MIN_END) ?
       m_traits->construct_min_vertex_2_object()(cv) :
       m_traits->construct_max_vertex_2_object()(cv);
 
-    pair_res = ((ps_x == ARR_INTERIOR) && (ps_y == ARR_INTERIOR)) ?
+    const auto [event, is_new, overlap] = ((ps_x == ARR_INTERIOR) && (ps_y == ARR_INTERIOR)) ?
       _push_event(pt, end_attr, ps_x, ps_y, sc, events, index) :
       _push_event(cv, ind, end_attr, ps_x, ps_y, sc, pt, events, index);
 
     // Inform the visitor in case we updated an existing event.
-    Event* e = pair_res.first;
-    CGAL_assertion(e->is_closed());
-    m_visitor->update_event(e, pt, cv, ind, pair_res.second);
+    CGAL_assertion(event->is_closed());
+    m_visitor->update_event(event, pt, cv, ind, is_new);
+    return overlap;
   }
-  else {
-    // The curve end is open, insert it into the event queue.
-    pair_res = _push_event(cv, ind, end_attr, ps_x, ps_y, sc);
 
-    // Inform the visitor in case we updated an existing event.
-    Event* e = pair_res.first;
-    CGAL_assertion(! e->is_closed());
-    _update_event_at_open_boundary(e, cv, ind, pair_res.second);
-  }
+  // The curve end is open, insert it into the event queue.
+  const auto [event, is_new, overlap] = _push_event(cv, ind, end_attr, ps_x, ps_y, sc);
+
+  // Inform the visitor in case we updated an existing event.
+  CGAL_assertion(! event->is_closed());
+  _update_event_at_open_boundary(event, cv, ind, is_new);
+  return overlap;
 }
 
-//-----------------------------------------------------------------------------
-// Handle the subcurves to the left of the current event point.
-//
+/*! handles the subcurves to the left of the current event point.
+ */
 template <typename Vis>
-void No_intersection_surface_sweep_2<Vis>::_handle_left_curves()
-{
+void No_intersection_surface_sweep_2<Vis>::_handle_left_curves() {
   CGAL_SS_PRINT_START_EOL("handling left curves at (");
   CGAL_SS_DEBUG(PrintEvent(m_currentEvent));
   CGAL_SS_PRINT_EOL();
@@ -397,8 +365,7 @@ void No_intersection_surface_sweep_2<Vis>::_handle_left_curves()
 
   CGAL_SS_PRINT_TEXT("left curves before sorting:");
   CGAL_SS_PRINT_EOL();
-  CGAL_SS_DEBUG(if (m_currentEvent->left_curves_begin() !=
-                    m_currentEvent->left_curves_end())
+  CGAL_SS_DEBUG(if (m_currentEvent->left_curves_begin() != m_currentEvent->left_curves_end())
                 { print_event_info(m_currentEvent); });
 
   // Use the status-line to sort all left subcurves incident to the current
@@ -411,8 +378,7 @@ void No_intersection_surface_sweep_2<Vis>::_handle_left_curves()
 
   CGAL_SS_PRINT_TEXT("left curves after sorting:");
   CGAL_SS_PRINT_EOL();
-  CGAL_SS_DEBUG(if (m_currentEvent->left_curves_begin() !=
-                    m_currentEvent->left_curves_end() )
+  CGAL_SS_DEBUG(if (m_currentEvent->left_curves_begin() != m_currentEvent->left_curves_end())
                 { print_event_info(m_currentEvent); });
 
   // Remove all left subcurves from the status line, and inform the visitor
@@ -430,26 +396,22 @@ void No_intersection_surface_sweep_2<Vis>::_handle_left_curves()
   CGAL_SS_PRINT_END_EOL("handling left curves");
 }
 
-//-----------------------------------------------------------------------------
-// Handle an event that does not have any incident left curves.
-//
+/*! handles an event that does not have any incident left curves.
+ */
 template <typename Vis>
 void No_intersection_surface_sweep_2<Vis>::
-_handle_event_without_left_curves(Arr_all_sides_oblivious_tag)
-{
+_handle_event_without_left_curves(Arr_all_sides_oblivious_tag) {
   const std::pair<Status_line_iterator, bool>& pair_res =
     m_statusLine.find_lower(m_currentEvent->point(), m_statusLineCurveLess);
   m_status_line_insert_hint = pair_res.first;
   m_is_event_on_above = pair_res.second;
 }
 
-//-----------------------------------------------------------------------------
-// Handle an event that does not have any incident left curves.
-//
+/*! handles an event that does not have any incident left curves.
+ */
 template <typename Vis>
 void No_intersection_surface_sweep_2<Vis>::
-_handle_event_without_left_curves(Arr_all_sides_not_finite_tag)
-{
+_handle_event_without_left_curves(Arr_all_sides_not_finite_tag) {
   // Check if the event is a boundary event or not.
   const Arr_parameter_space ps_x = m_currentEvent->parameter_space_in_x();
   const Arr_parameter_space ps_y = m_currentEvent->parameter_space_in_y();
@@ -480,13 +442,11 @@ _handle_event_without_left_curves(Arr_all_sides_not_finite_tag)
   m_status_line_insert_hint = m_statusLine.begin();
 }
 
-//-----------------------------------------------------------------------------
-// Handle an event that does not have any incident left curves.
-//
+/*! handles an event that does not have any incident left curves.
+ */
 template <typename Vis>
 void No_intersection_surface_sweep_2<Vis>::
-_handle_event_without_left_curves(Arr_not_all_sides_not_finite_tag)
-{
+_handle_event_without_left_curves(Arr_not_all_sides_not_finite_tag) {
   // Check if the event is a boundary event or not.
   const Arr_parameter_space ps_x = m_currentEvent->parameter_space_in_x();
   const Arr_parameter_space ps_y = m_currentEvent->parameter_space_in_y();
@@ -528,13 +488,11 @@ _handle_event_without_left_curves(Arr_not_all_sides_not_finite_tag)
   m_status_line_insert_hint = m_statusLine.end();
 }
 
-//-----------------------------------------------------------------------------
-// Sort the left subcurves of an event point according to their order in
-// their status line (no geometric comprasions are needed).
-//
+/*! sorts the left subcurves of an event point according to their order in
+ * their status line (no geometric comprasions are needed).
+ */
 template <typename Vis>
-void No_intersection_surface_sweep_2<Vis>::_sort_left_curves()
-{
+void No_intersection_surface_sweep_2<Vis>::_sort_left_curves() {
   CGAL_SS_PRINT_START_EOL("sorting left curves");
   CGAL_assertion(m_currentEvent->has_left_curves());
 
@@ -551,8 +509,7 @@ void No_intersection_surface_sweep_2<Vis>::_sort_left_curves()
   Status_line_iterator end = sl_iter;
   for (++end; end != m_statusLine.end(); ++end) {
     if (std::find(m_currentEvent->left_curves_begin(),
-                  m_currentEvent->left_curves_end(), *end) ==
-        m_currentEvent->left_curves_end())
+                  m_currentEvent->left_curves_end(), *end) == m_currentEvent->left_curves_end())
       break;
   }
 
@@ -571,9 +528,7 @@ void No_intersection_surface_sweep_2<Vis>::_sort_left_curves()
   // associated with the current event.
   for (--sl_iter; sl_iter != m_statusLine.begin(); --sl_iter) {
     if (std::find(m_currentEvent->left_curves_begin(),
-                  m_currentEvent->left_curves_end(), *sl_iter) ==
-        m_currentEvent->left_curves_end())
-    {
+                  m_currentEvent->left_curves_end(), *sl_iter) == m_currentEvent->left_curves_end()) {
       // Associate the sorted range of subcurves with the event.
       m_currentEvent->replace_left_curves(++sl_iter, end);
       CGAL_SS_PRINT_END_EOL("sorting left curves");
@@ -585,8 +540,7 @@ void No_intersection_surface_sweep_2<Vis>::_sort_left_curves()
   // associated with the current event, and select the (sorted) range of
   // subcurves accordingly.
   if (std::find(m_currentEvent->left_curves_begin(),
-                m_currentEvent->left_curves_end(), *sl_iter) ==
-      m_currentEvent->left_curves_end())
+                m_currentEvent->left_curves_end(), *sl_iter) == m_currentEvent->left_curves_end())
     m_currentEvent->replace_left_curves(++sl_iter, end);
   else
     m_currentEvent->replace_left_curves(sl_iter, end);
@@ -594,12 +548,10 @@ void No_intersection_surface_sweep_2<Vis>::_sort_left_curves()
   CGAL_SS_PRINT_END_EOL("sorting left curves");
 }
 
-//-----------------------------------------------------------------------------
-// Handle the subcurves to the right of the current event point.
-//
+/*! handles the subcurves to the right of the current event point.
+ */
 template <typename Vis>
-void No_intersection_surface_sweep_2<Vis>::_handle_right_curves()
-{
+void No_intersection_surface_sweep_2<Vis>::_handle_right_curves() {
   CGAL_SS_PRINT_START("Handling right curves at (");
   CGAL_SS_DEBUG(PrintEvent(m_currentEvent));
   CGAL_SS_PRINT_EOL();
@@ -624,8 +576,7 @@ void No_intersection_surface_sweep_2<Vis>::_handle_right_curves()
     // sc->right_event()->add_curve_to_left(sc);
 
     // Insert the curve into the status line.
-    Status_line_iterator sl_iter =
-      m_statusLine.insert_before(m_status_line_insert_hint, sc);
+    Status_line_iterator sl_iter = m_statusLine.insert_before(m_status_line_insert_hint, sc);
     sc->set_hint(sl_iter);
 
     CGAL_SS_DEBUG(PrintStatusLine(););
@@ -636,31 +587,24 @@ void No_intersection_surface_sweep_2<Vis>::_handle_right_curves()
   CGAL_SS_PRINT_END_EOL("handling right curves done");
 }
 
-//-----------------------------------------------------------------------------
-// Add a subcurve to the right of an event point.
-//
+/*! add a subcurve to the right of an event point.
+ */
 template <typename Vis>
-bool No_intersection_surface_sweep_2<Vis>::_add_curve_to_right(Event* event,
-                                                               Subcurve* curve)
-{
+bool No_intersection_surface_sweep_2<Vis>::_add_curve_to_right(Event* event, Subcurve* curve) {
 #if defined(CGAL_NO_ASSERTIONS)
   (void) event->add_curve_to_right(curve, m_traits);
 #else
-  std::pair<bool, Event_subcurve_iterator> pair_res =
-     event->add_curve_to_right(curve, m_traits);
+  std::pair<bool, Event_subcurve_iterator> pair_res = event->add_curve_to_right(curve, m_traits);
   CGAL_assertion(!pair_res.first);
 #endif
 
   return false;
 }
 
-//-----------------------------------------------------------------------------
-// Remove a curve from the status line.
-//
+/*! removes a curve from the status line.
+ */
 template <typename Vis>
-void No_intersection_surface_sweep_2<Vis>::
-_remove_curve_from_status_line(Subcurve* sc)
-{
+void No_intersection_surface_sweep_2<Vis>::_remove_curve_from_status_line(Subcurve* sc) {
   CGAL_SS_PRINT_START("removing a curve from the status line, ");
   CGAL_SS_PRINT_CURVE(sc);
   CGAL_SS_PRINT_EOL();
@@ -681,58 +625,51 @@ _remove_curve_from_status_line(Subcurve* sc)
   CGAL_SS_PRINT_END_EOL("removing a curve from the status line");
 }
 
-//-----------------------------------------------------------------------------
-// Allocate an event object associated with a valid point.
-//
+/*! allocates an event object associated with a valid point.
+ */
 template <typename Vis>
 typename No_intersection_surface_sweep_2<Vis>::Event*
 No_intersection_surface_sweep_2<Vis>::_allocate_event(const Point_2& pt,
                                                       Attribute type,
                                                       Arr_parameter_space ps_x,
-                                                      Arr_parameter_space ps_y)
-{
+                                                      Arr_parameter_space ps_y) {
   // Allocate the event.
   Event* e = &*m_allocated_events.emplace();
   e->init(pt, type, ps_x, ps_y);
   return e;
 }
 
-//-----------------------------------------------------------------------------
-// Allocate an event at open boundary,
-// which is not associated with a valid point.
-//
+/*! allocates an event at open boundary,
+ * which is not associated with a valid point.
+ */
 template <typename Vis>
 typename No_intersection_surface_sweep_2<Vis>::Event*
 No_intersection_surface_sweep_2<Vis>::
 _allocate_event_at_open_boundary(Attribute type,
                                  Arr_parameter_space ps_x,
-                                 Arr_parameter_space ps_y)
-{
+                                 Arr_parameter_space ps_y) {
   Event* e = &*m_allocated_events.emplace();
   e->init_at_open_boundary(type, ps_x, ps_y);
   return e;
 }
 
-//-----------------------------------------------------------------------------
-// Push a closed event point into the event queue.
-//
+/*! pushes a closed event point into the event queue.
+ */
 template <typename Vis>
-std::pair<typename No_intersection_surface_sweep_2<Vis>::Event*, bool>
+std::tuple<typename No_intersection_surface_sweep_2<Vis>::Event*, bool, bool>
 No_intersection_surface_sweep_2<Vis>::_push_event(const Point_2& pt,
                                                   Attribute type,
                                                   Arr_parameter_space ps_x,
                                                   Arr_parameter_space ps_y,
-                                                  Subcurve* sc)
-{
+                                                  Subcurve* sc) {
   // Look for the point in the event queue.
   Event* e;
   m_queueEventLess.set_parameter_space_in_x(ps_x);
   m_queueEventLess.set_parameter_space_in_y(ps_y);
 
-  const std::pair<Event_queue_iterator, bool>& pair_res =
-    m_queue->find_lower(pt, m_queueEventLess);
+  const std::pair<Event_queue_iterator, bool>& pair_res = m_queue->find_lower(pt, m_queueEventLess);
   const bool exist = pair_res.second;
-  if (!exist) {
+  if (! exist) {
     // The point is not found in the event queue - create a new event and
     // insert it into the queue.
     e = _allocate_event(pt, type, ps_x, ps_y);
@@ -752,7 +689,7 @@ No_intersection_surface_sweep_2<Vis>::_push_event(const Point_2& pt,
   // endpoints, update the event and the subcurve records accordingly.
   // Note that this must be done before we actually insert the new event
   // into the event queue.
-  _add_curve(e, sc, type);
+  bool overlap = _add_curve(e, sc, type);
 
   // Insert the new event into the queue using the hint we got when we
   // looked for it.
@@ -769,27 +706,26 @@ No_intersection_surface_sweep_2<Vis>::_push_event(const Point_2& pt,
 
   // Return the resulting event and a flag indicating whether we have created
   // a new event.
-  return (std::make_pair(e, !exist));
+  return std::make_tuple(e, ! exist, overlap);
 }
 
+/*!
+ */
 template <typename Vis>
-std::pair<typename No_intersection_surface_sweep_2<Vis>::Event*, bool>
+std::tuple<typename No_intersection_surface_sweep_2<Vis>::Event*, bool, bool>
 No_intersection_surface_sweep_2<Vis>::_push_event(const Point_2& pt,
                                                   Attribute type,
                                                   Arr_parameter_space ps_x,
                                                   Arr_parameter_space ps_y,
                                                   Subcurve* sc,
                                                   std::vector<Event_queue_iterator>& events,
-                                                  std::size_t index)
-{
+                                                  std::size_t index) {
   Event* e;
 
-  std::pair<Event_queue_iterator, bool>
-    pair_res = std::make_pair (events[index], true);
+  std::pair<Event_queue_iterator, bool> pair_res = std::make_pair(events[index], true);
 
   // If event does not exist
-  if (events[index] == Event_queue_iterator())
-  {
+  if (events[index] == Event_queue_iterator()) {
     // Still look for the curve end in the event queue in case two
     // points are the same in the vertex range
     m_queueEventLess.set_parameter_space_in_x(ps_x);
@@ -817,12 +753,11 @@ No_intersection_surface_sweep_2<Vis>::_push_event(const Point_2& pt,
   // endpoints, update the event and the subcurve records accordingly.
   // Note that this must be done before we actually insert the new event
   // into the event queue.
-  _add_curve(e, sc, type);
+  bool overlap = _add_curve(e, sc, type);
 
   // Insert the new event into the queue using the hint we got when we
   // looked for it.
-  if (! exist)
-    events[index] = m_queue->insert_before(pair_res.first, e);
+  if (! exist) events[index] = m_queue->insert_before(pair_res.first, e);
 
 #ifdef CGAL_SS_VERBOSE
   if (! exist) {
@@ -835,21 +770,19 @@ No_intersection_surface_sweep_2<Vis>::_push_event(const Point_2& pt,
 
   // Return the resulting event and a flag indicating whether we have created
   // a new event.
-  return (std::make_pair(e, !exist));
+  return std::make_tuple(e, ! exist, overlap);
 }
 
-//-----------------------------------------------------------------------------
-// Push an event point associated with a curve end into the event queue.
-//
+/* pushes an event point associated with a curve end into the event queue.
+ */
 template <typename Vis>
-std::pair<typename No_intersection_surface_sweep_2<Vis>::Event*, bool>
+std::tuple<typename No_intersection_surface_sweep_2<Vis>::Event*, bool, bool>
 No_intersection_surface_sweep_2<Vis>::_push_event(const X_monotone_curve_2& cv,
                                                   Arr_curve_end ind,
                                                   Attribute type,
                                                   Arr_parameter_space ps_x,
                                                   Arr_parameter_space ps_y,
-                                                  Subcurve* sc)
-{
+                                                  Subcurve* sc) {
   // Look for the curve end in the event queue.
   Event* e;
 
@@ -857,8 +790,7 @@ No_intersection_surface_sweep_2<Vis>::_push_event(const X_monotone_curve_2& cv,
   m_queueEventLess.set_parameter_space_in_y(ps_y);
   m_queueEventLess.set_index(ind);
 
-  const std::pair<Event_queue_iterator, bool>& pair_res =
-    m_queue->find_lower(cv, m_queueEventLess);
+  const std::pair<Event_queue_iterator, bool>& pair_res = m_queue->find_lower(cv, m_queueEventLess);
   const bool exist = pair_res.second;
 
   if (! exist) {
@@ -882,12 +814,6 @@ No_intersection_surface_sweep_2<Vis>::_push_event(const X_monotone_curve_2& cv,
     // The event associated with the given curve end already exists in the
     // queue, so we just have to update it.
     e = *(pair_res.first);
-#if 0
-    std::cout << "ps_x: " << ps_x << std::endl;
-    std::cout << "ps_y: " << ps_y << std::endl;
-    std::cout << "es_x: " << e->parameter_space_in_x() << std::endl;
-    std::cout << "es_y: " << e->parameter_space_in_y() << std::endl;
-#endif
     CGAL_assertion(e->parameter_space_in_x() == ps_x);
     CGAL_assertion(e->parameter_space_in_y() == ps_y);
 
@@ -898,17 +824,19 @@ No_intersection_surface_sweep_2<Vis>::_push_event(const X_monotone_curve_2& cv,
   // endpoints, update the event and the subcurve records accordingly.
   // Note that this must be done before we actually insert the new event
   // into the event queue.
-  _add_curve(e, sc, type);
+  bool overlap = _add_curve(e, sc, type);
 
   // Insert the new event into the queue using the hint we got when we
   // looked for it.
   if (! exist) m_queue->insert_before(pair_res.first, e);
 
-  return (std::make_pair(e, !exist));
+  return std::make_tuple(e, ! exist, overlap);
 }
 
+/*! pushes an event point associated with a curve end into the event queue.
+ */
 template <typename Vis>
-std::pair<typename No_intersection_surface_sweep_2<Vis>::Event*, bool>
+std::tuple<typename No_intersection_surface_sweep_2<Vis>::Event*, bool, bool>
 No_intersection_surface_sweep_2<Vis>::_push_event(const X_monotone_curve_2& cv,
                                                   Arr_curve_end ind,
                                                   Attribute type,
@@ -917,16 +845,13 @@ No_intersection_surface_sweep_2<Vis>::_push_event(const X_monotone_curve_2& cv,
                                                   Subcurve* sc,
                                                   const Point_2& pt,
                                                   std::vector<Event_queue_iterator>& events,
-                                                  std::size_t index)
-{
+                                                  std::size_t index) {
   Event* e;
 
-  std::pair<Event_queue_iterator, bool>
-    pair_res = std::make_pair (events[index], true);
+  std::pair<Event_queue_iterator, bool> pair_res = std::make_pair (events[index], true);
 
   // If event does not exist
-  if (events[index] == Event_queue_iterator())
-  {
+  if (events[index] == Event_queue_iterator()) {
     // Still look for the curve end in the event queue in case two
     // points are the same in the vertex range
 
@@ -934,8 +859,7 @@ No_intersection_surface_sweep_2<Vis>::_push_event(const X_monotone_curve_2& cv,
     m_queueEventLess.set_parameter_space_in_y(ps_y);
     m_queueEventLess.set_index(ind);
 
-    pair_res =
-      m_queue->find_lower(cv, m_queueEventLess);
+    pair_res = m_queue->find_lower(cv, m_queueEventLess);
   }
 
   bool exist = pair_res.second;
@@ -953,8 +877,7 @@ No_intersection_surface_sweep_2<Vis>::_push_event(const X_monotone_curve_2& cv,
     // The event associated with the given curve end already exists in the
     // queue, so we just have to update it.
     e = *(pair_res.first);
-    CGAL_assertion((e->parameter_space_in_x() == ps_x) &&
-                   (e->parameter_space_in_y() == ps_y));
+    CGAL_assertion((e->parameter_space_in_x() == ps_x) && (e->parameter_space_in_y() == ps_y));
 
     e->set_attribute(type);
   }
@@ -963,36 +886,31 @@ No_intersection_surface_sweep_2<Vis>::_push_event(const X_monotone_curve_2& cv,
   // endpoints, update the event and the subcurve records accordingly.
   // Note that this must be done before we actually insert the new event
   // into the event queue.
-  _add_curve(e, sc, type);
+  bool overlap = _add_curve(e, sc, type);
 
   // Insert the new event into the queue using the hint we got when we
   // looked for it.
-  if (! exist)
-    events[index] = m_queue->insert_before(pair_res.first, e);
+  if (! exist) events[index] = m_queue->insert_before(pair_res.first, e);
 
-  return (std::make_pair(e, !exist));
+  return std::make_tuple(e, ! exist, overlap);
 }
 
-//-----------------------------------------------------------------------------
-// add a curve as a right curve or left curve when the event is created
-// or updated.
-//
+/*! adds a curve as a right curve or left curve when the event is created or updated.
+ */
 template <typename Vis>
-void No_intersection_surface_sweep_2<Vis>::_add_curve(Event* e, Subcurve* sc,
-                                                      Attribute type)
-{
-  if (sc == nullptr) return;
+bool No_intersection_surface_sweep_2<Vis>::_add_curve(Event* e, Subcurve* sc, Attribute type) {
+  if (sc == nullptr) return false;
 
   if (type == Event::LEFT_END) {
     sc->set_left_event(e);
-    _add_curve_to_right(e, sc);
-    return;
+    bool overlap = _add_curve_to_right(e, sc);
+    return overlap;
   }
 
   CGAL_assertion(type == Event::RIGHT_END);
   sc->set_right_event(e);
-  // Defer the insertion of the curve to the left-curves of the right event.
   e->add_curve_to_left(sc);
+  return false;
 }
 
 } // namespace Surface_sweep_2

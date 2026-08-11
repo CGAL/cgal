@@ -54,6 +54,7 @@
 #endif
 #endif
 
+// Thingi10K/raw_meshes/101633.stl is getting a huge speed up when switched on
 #ifdef CGAL_AUTOREF_USE_FIXED_PROJECTION_TRAITS
 #include <CGAL/Kernel_23/internal/Projection_traits_3.h>
 #endif
@@ -1097,6 +1098,7 @@ bool autorefine_triangle_soup(PointRange& soup_points,
   CGAL_PMP_AUTOREFINE_VERBOSE("collect intersecting pairs");
 
 #if defined(CGAL_AUTOREFINE_DEBUG_COUNTERS) || defined(CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS)
+  std::string mode = parallel_execution ? "parallel" : "sequential";
   CGAL::Real_timer timer;
   timer.start();
 #endif
@@ -1111,7 +1113,8 @@ bool autorefine_triangle_soup(PointRange& soup_points,
 
 #if defined(CGAL_AUTOREFINE_DEBUG_COUNTERS) || defined(CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS)
   timer.stop();
-  std::cout << "collecting intersecting pairs took " << timer.time() << "\n";
+  std::cout << "collecting intersecting pairs took (" << mode << ") " << timer.time() << "\n";
+  t.reset();
 #endif
 
   if (si_pairs.empty())
@@ -1177,16 +1180,21 @@ bool autorefine_triangle_soup(PointRange& soup_points,
     all_triangle_data[tid].point_locations[2]=-3;
   }
 
-  CGAL_PMP_AUTOREFINE_VERBOSE("compute intersections");
+  CGAL_PMP_AUTOREFINE_VERBOSE("compute intersections ("+std::to_string(si_pairs.size())+")");
 #ifdef CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS
-  Real_timer t;
   t.start();
 #endif
   std::set<std::pair<std::size_t, std::size_t> > intersecting_triangles;
   std::set<std::pair<std::size_t, std::size_t> > coplanar_triangles;
   //TODO: PARALLEL_FOR #2
+#ifdef CGAL_AUTOREF_USE_PROGRESS_DISPLAY
+  boost::timer::progress_display pd_ci(si_pairs.size());
+#endif
   for (const Pair_of_triangle_ids& p : si_pairs)
   {
+#ifdef CGAL_AUTOREF_USE_PROGRESS_DISPLAY
+    ++pd_ci;
+#endif
     int i1 = tri_inter_ids[p.first],
         i2 = tri_inter_ids[p.second];
 
@@ -1380,7 +1388,7 @@ bool autorefine_triangle_soup(PointRange& soup_points,
   t.reset();
 #endif
 
-  CGAL_PMP_AUTOREFINE_VERBOSE("triangulate faces");
+  CGAL_PMP_AUTOREFINE_VERBOSE("triangulate faces ("+std::to_string(triangles.size())+")");
   // now refine triangles
 #ifdef CGAL_LINKED_WITH_TBB
   std::conditional_t<parallel_execution,
@@ -1539,9 +1547,6 @@ bool autorefine_triangle_soup(PointRange& soup_points,
 #endif
 
   std::size_t offset = soup_triangles_out.size();
-#ifdef CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS
-  std::string mode = "parallel";
-#endif
 
 // It might be possible to optimize the hardcoded value below
 // but the less triangles the faster will anyway be the operation.
@@ -1873,11 +1878,7 @@ void
 autorefine(      TriangleMesh& tm,
            const NamedParameters& np = parameters::default_values())
 {
-  using parameters::choose_parameter;
-  using parameters::get_parameter;
-
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type GT;
-  // GT traits = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
   std::vector<typename GT::Point_3> soup_points;
   std::vector<std::array<std::size_t, 3> > soup_triangles;

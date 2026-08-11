@@ -12,28 +12,8 @@
 
 #define CGAL_DEPRECATED_HEADER "<CGAL/atomic.h>"
 #define CGAL_REPLACEMENT_HEADER "<CGAL/config.h>"
+#include <CGAL/Installation/internal/deprecation_warning.h>
 
 #include <CGAL/config.h>
-
-#ifdef CGAL_HAS_THREADS
-
-#    include <atomic>
-
-namespace CGAL {
-namespace cpp11 {
-using std::atomic;
-
-using std::memory_order_relaxed;
-using std::memory_order_consume;
-using std::memory_order_acquire;
-using std::memory_order_release;
-using std::memory_order_acq_rel;
-using std::memory_order_seq_cst;
-
-using std::atomic_thread_fence;
-} }
-#else
-#  define CGAL_NO_ATOMIC "No atomic because CGAL_HAS_NO_THREADS is defined."
-#endif // CGAL_HAS_THREADS
 
 #endif // CGAL_ATOMIC_H

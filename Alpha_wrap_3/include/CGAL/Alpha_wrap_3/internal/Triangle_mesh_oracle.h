@@ -130,6 +130,10 @@ public:
     using VPM = typename GetVertexPointMap<TriangleMesh>::const_type;
     using Point_ref = typename boost::property_traits<VPM>::reference;
 
+#ifdef CGAL_AW3_DEBUG
+    std::cout << "Insert into AABB tree (" << faces(tmesh).size() << " faces)..." << std::endl;
+#endif
+
     CGAL_precondition(CGAL::is_triangle_mesh(tmesh));
 
     if(is_empty(tmesh))
@@ -139,10 +143,6 @@ public:
 #endif
       return;
     }
-
-#ifdef CGAL_AW3_DEBUG
-    std::cout << "Insert into AABB tree (faces)..." << std::endl;
-#endif
 
     VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                get_const_property_map(vertex_point, tmesh));
@@ -176,7 +176,7 @@ public:
     this->tree().accelerate_distance_queries();
 
 #ifdef CGAL_AW3_DEBUG
-    std::cout << "Tree: " << this->tree().size() << " primitives (" << num_faces(tmesh) << " faces in input)" << std::endl;
+    std::cout << "Tree: " << this->tree().size() << " primitives" << std::endl;
 #endif
   }
 };
