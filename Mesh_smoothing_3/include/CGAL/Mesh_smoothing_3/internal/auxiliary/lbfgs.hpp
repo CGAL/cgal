@@ -1,3 +1,7 @@
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
 // SPDX-License-Identifier: MIT
 //
 // The MIT License
