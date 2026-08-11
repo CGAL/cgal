@@ -55,6 +55,7 @@
 #include <sstream>
 #include <stack>
 #include <string>
+#include <string_view>
 #include <type_traits>
 #include <unordered_map>
 #include <utility>
@@ -181,13 +182,13 @@ CDT_options::CDT_options(int argc, char* argv[]) {
                  "max distance for coplanar polygons");
 
   app.add_option("--dump-patches-after-merge", dump_patches_after_merge_filename,
-                 "dump patches after merging facets in PLY");
+                 "dump patches after merging facets in PLY")->option_text("FILENAME");
   app.add_option("--dump-surface-mesh-after-merge", dump_surface_mesh_after_merge_filename,
-                 "dump surface mesh after merging facets in OFF");
+                 "dump surface mesh after merging facets in OFF")->option_text("FILENAME");
   app.add_option("--dump-patches-borders-prefix", dump_patches_borders_prefix,
-                 "dump patches borders");
+                 "dump patches borders")->option_text("PREFIX");
   app.add_option("--dump-after-conforming", dump_after_conforming_filename,
-                 "dump mesh after conforming in OFF");
+                 "dump mesh after conforming in OFF")->option_text("FILENAME");
 
   app.add_flag("--debug-Steiner-points", debug_Steiner_points,
                "debug Steiner point insertion");
@@ -238,8 +239,80 @@ CDT_options::CDT_options(int argc, char* argv[]) {
                use_epeck_for_Steiner_points,
                "use exact kernel for Steiner point computations");
 
-  app.add_option("input.off", input_filename, "input mesh");
-  app.add_option("output.off", output_filename, "output mesh");
+  app.add_option("--input,input_mesh", input_filename, "input mesh")->option_text("INPUT_FILENAME");
+  app.add_option("--output,output_mesh", output_filename, "output mesh")->option_text("FILENAME");
+
+  auto quote_colon = [](std::string_view s) {
+    auto nb_colons = std::count(s.begin(), s.end(), ':');
+    std::string result;
+    result.reserve(s.size() + nb_colons); // reserve space for the extra backslashes
+    for(char c : s) {
+      if(c == ':') {
+        result.push_back('\\');
+        result.push_back(':');
+      } else {
+        result.push_back(c);
+      }
+    }
+    return result;
+  };
+
+  auto optspec = [&,positional=0](const CLI::Option* opt, std::string_view name = "") mutable {
+    std::ostringstream oss;
+    oss << " '";
+    if(name.empty()) {
+      oss << opt->get_name(opt->get_positional());
+    } else {
+      if(name[0] == '-') {
+        oss << name;
+      }
+      else {
+        oss << ++positional;
+      }
+      if(name[0] == '-' && opt->get_expected() > 0) {
+        oss << "=-";
+      }
+      if(!opt->get_option_text().empty()) {
+          oss << "::" << quote_colon(opt->get_description()) << ":_files";
+      } else {
+        if(opt->has_description()) {
+          oss << "[" << quote_colon(opt->get_description()) << "]";
+        }
+      }
+    }
+    oss << "'";
+    return oss.str();
+  };
+
+  app.add_flag_callback("--completion",[&]() {
+    std::cout <<
+R"(#compdef _cdt_3_from_off cdt_3_from_off
+
+_cdt_3_from_off() {
+  _arguments \
+)";
+    for(const auto* opt : app.get_options()) {
+      if(opt->get_group().empty()) continue;
+      if(opt->get_positional()) {
+        std::cout << " " << optspec(opt, opt->get_name(true));
+      }
+      std::string all_names = opt->get_name(false, true, true);
+      for(std::string::size_type prev = 0, pos = all_names.find(',');;)
+      {
+        const auto name = std::string_view(all_names.data() + prev,
+                                           (std::min)(pos, all_names.size()) - prev);
+        if(!name.empty() && name.front() == '-') {
+          std::cout << " " << optspec(opt, name);
+        }
+        if(pos == std::string::npos) break;
+        prev = pos + 1;
+        pos = all_names.find(',', prev);
+      }
+      std::cout << "\\\n";
+    }
+    std::cout << "\n}\n";
+    std::exit(0);
+  })->group("");
 
   for(auto* option : app.get_options()) {
     option->always_capture_default(true);
