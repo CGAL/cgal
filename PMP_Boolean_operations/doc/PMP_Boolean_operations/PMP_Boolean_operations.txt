@@ -18,7 +18,7 @@ of the geometry processing toolkit, with numerous applications in CAD and
 computer graphics. As an example, it constitutes the essential operation of Constructive Solid Geometry (CSG).
 
 This \cgal package offers functions to compute the union, intersection, and difference
-of volumes bounded by triangle meshes. The core of the method is the <em>corefinement</em> technique,
+of volumes bounded by triangle meshes and triangle soups. The core of the method is the <em>corefinement</em> technique,
 which refines two meshes such that they become conformal.
 This technique is re-used to also propose functions that enable trimming a mesh ("clipping")
 and bisecting a mesh ("splitting") with a plane, a box, or another mesh.
@@ -322,6 +322,8 @@ and Léo Vaque \cgalCite{valquelazard2025}, and implemented by Léo Valque in 20
 The kernel functions and the specialization of clipping and plane refinement to convex
 inputs were implemented in 2025 by Léo Valque, inspired by the work of Sorgente et al.
 \cgalCite{sorgente2022polyhedron}.
+
+The illustrations of the package pays homage to French sculptor and painter Sacha Sosno.
 
 */
 } /* namespace CGAL */
