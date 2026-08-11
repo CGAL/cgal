@@ -31,7 +31,7 @@ the dihedral angles of the cells. Interior vertices are moved
 to improve the volume mesh, while boundary vertices can additionally be
 attracted towards a target geometry.
 
-The energy possesses a barrier term preventing element inversion. 
+The energy incorporates a barrier term preventing element inversion. 
 For an initially valid mesh, all accepted optimization steps preserve element orientation, 
 providing a validity guarantee while the element quality is improved. 
 The use of a penalization approach allows the optimizer to start from an invalid meshes, 
