@@ -169,6 +169,28 @@ void boundary_aware_mesh_smoothing  (
     const std::size_t max_iterations =
         choose_parameter(get_parameter(np, internal_np::number_of_iterations), 100u);
 
+
+    typedef typename internal_np::Lookup_named_param_def <
+        internal_np::vertex_is_constrained_t,
+        NamedParameters,
+        Static_boolean_property_map<typename C3t3::Vertex_handle, false> // default (no constraint pmap)
+    > ::type VCMap;
+    VCMap vcmap = choose_parameter<Static_boolean_property_map<typename C3t3::Vertex_handle, false>>(get_parameter(np, internal_np::vertex_is_constrained));
+
+    typedef typename internal_np::Lookup_named_param_def <
+        internal_np::edge_is_constrained_t,
+        NamedParameters,
+        Static_boolean_property_map<typename C3t3::Edge, false> // default (no constraint pmap)
+    > ::type ECMap;
+    ECMap ecmap = choose_parameter<Static_boolean_property_map<typename C3t3::Edge, false>>(get_parameter(np, internal_np::edge_is_constrained));
+
+    typedef typename internal_np::Lookup_named_param_def <
+        internal_np::facet_is_constrained_t,
+        NamedParameters,
+        Static_boolean_property_map<typename C3t3::Facet, false> // default (no constraint pmap)
+    > ::type FCMap;
+    FCMap fcmap = choose_parameter<Static_boolean_property_map<typename C3t3::Facet, false>>(get_parameter(np, internal_np::facet_is_constrained));
+
     const C3t3 ref(c3t3);
 
     using Surface_patch_index = typename C3t3::Surface_patch_index;
@@ -226,10 +248,34 @@ void boundary_aware_mesh_smoothing  (
 
     CGAL::Mesh_smoothing_3::C3t3_smoother smoother(c3t3);
 
+    
+    // locks through property maps
+    for (auto v : c3t3.triangulation().finite_vertex_handles()) {
+        if (!get(vcmap, v)) continue;
+        smoother.set_vertex_lock(v, true);
+    }
+
+    // for (auto e : c3t3.triangulation().finite_edges_handles()) {
+    //     if (!get(ecmap, e)) continue;
+    //     for (auto v : c3t3.triangulation().edge_vertices(e)) {
+    //         smoother.set_vertex_lock(v, true);
+    //     }
+    // }
+
+    // for (auto f : c3t3.triangulation().finite_facets_handles()) {
+    //     if (!get(fcmap, f)) continue;
+    //     for (auto v : c3t3.triangulation().facet_vertices(f)) {
+    //         smoother.set_vertex_lock(v, true);
+    //     }
+    // }
+
+
+    // locks corners
     for (auto c : c3t3.vertices_in_complex()) {
         smoother.set_vertex_lock(c, true);
     }
 
+    // setting queries, C3t3_smoother automatically assigns boundaries
     smoother.set_boundary_query([&](const Point_3& pt, Surface_patch_index id, double /*radius*/) {
         auto res = facet_trees.at(id).closest_point_and_primitive(pt);
         Point_3 closest_point = res.first;
