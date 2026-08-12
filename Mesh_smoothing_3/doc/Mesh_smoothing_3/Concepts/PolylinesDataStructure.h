@@ -26,7 +26,7 @@ Index associated with an edge to identify the curve it belongs to. This is used 
 using Curve_index = unspecified_type;
 
 /*!
-Descriptor used to access a vertex information. Should be compatible with the one used in MeshDataStructure.
+Descriptor used to access a vertex information. Must be compatible with the one used in MeshDataStructure.
 */
 using Vertex_descriptor = unspecified_type;
 
