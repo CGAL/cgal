@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
   std::size_t number_of_patches =
       PMP::sharp_edges_segmentation(mesh, 90, eif, pid);
   std::cout << "The input mesh has been segmented into " << number_of_patches << " patches." << std::endl;
-  std::cout << "Number of constained edges : " << count_edges(mesh, eif) << std::endl;
+  std::cout << "Number of constrained edges : " << count_edges(mesh, eif) << std::endl;
   std::cout << "Number of protected edges : " << count_edges(mesh, Border_pmap(mesh)) << std::endl;
 
   // Border edges are protected (i.e. kept identical),
@@ -77,7 +77,7 @@ int main(int argc, char* argv[])
                           .number_of_iterations(3));
   std::cout << std::endl;
   std::cout << "Remeshing done." << std::endl;
-  std::cout << "Number of constained edges : " << count_edges(mesh, eif) << std::endl;
+  std::cout << "Number of constrained edges : " << count_edges(mesh, eif) << std::endl;
   std::cout << "Number of protected edges : " << count_edges(mesh, Border_pmap(mesh)) << std::endl;
 
   CGAL::IO::write_polygon_mesh("out.ply", mesh,

@@ -25,7 +25,7 @@ Release date: December 2026
 
 - Added a new parameter `edge_is_protected_map` to
 [`void CGAL::Polygon_mesh_processing::isotropic_remeshing()`](https://doc.cgal.org/6.3/PMP_Remeshing/group__PMP__local__remeshing__grp.html),
- to distinguish betweeen "constrained" edges that can be resampled while the constrained edges polyline graph remains topologically unchanged,
+ to distinguish between "constrained" edges that can be resampled while the constrained edges polyline graph remains topologically unchanged,
  and "protected" edges that may not be modified at all by remeshing.
 
 ### [Boolean Operations On Meshes](https://doc.cgal.org/6.3/Manual/packages.html#PkgPMPBooleanOperations)
