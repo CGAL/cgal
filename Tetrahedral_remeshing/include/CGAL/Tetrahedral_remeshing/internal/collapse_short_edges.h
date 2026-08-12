@@ -1031,7 +1031,6 @@ typename C3t3::Vertex_handle collapse(typename C3t3::Edge& edge,
     vh1->set_point(new_position);
 
     vh = collapse(edge.first, edge.second, edge.third, cell_selector, c3t3, short_edges);
-    c3t3.set_dimension(vh, (std::min)(dim_vh0, dim_vh1));
   }
   else //Collapse at vertex
   {
@@ -1039,7 +1038,6 @@ typename C3t3::Vertex_handle collapse(typename C3t3::Edge& edge,
     {
       vh0->set_point(p1);
       vh = collapse(edge.first, edge.third, edge.second, cell_selector, c3t3, short_edges);
-      c3t3.set_dimension(vh, (std::min)(dim_vh0, dim_vh1));
     }
     else //Collapse at v0
     {
@@ -1047,12 +1045,23 @@ typename C3t3::Vertex_handle collapse(typename C3t3::Edge& edge,
       {
         vh1->set_point(p0);
         vh = collapse(edge.first, edge.second, edge.third, cell_selector, c3t3, short_edges);
-        c3t3.set_dimension(vh, (std::min)(dim_vh0, dim_vh1));
       }
       else
         CGAL_assertion(false);
     }
   }
+
+  // collapse() rejects an infinite adjacency before it rewires anything, so
+  // the star is still the one we found. The two points are not : they were
+  // moved above, in the expectation of a collapse that did not happen.
+  if (vh == Vertex_handle())
+  {
+    vh0->set_point(p0);
+    vh1->set_point(p1);
+    return vh;
+  }
+
+  c3t3.set_dimension(vh, (std::min)(dim_vh0, dim_vh1));
   return vh;
 }
 
