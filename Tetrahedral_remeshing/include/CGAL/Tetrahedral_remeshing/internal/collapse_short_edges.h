@@ -20,6 +20,7 @@
 #include <boost/bimap/multiset_of.hpp>
 #include <boost/container/flat_set.hpp>
 #include <boost/container/small_vector.hpp>
+#include <boost/container/flat_set.hpp>
 #include <boost/functional/hash.hpp>
 
 #include <vector>
@@ -757,7 +758,10 @@ bool are_edge_lengths_valid(const typename C3t3::Edge& edge,
   else
     CGAL_assertion(false);
 
-  std::unordered_map<Vertex_handle, FT> edges_sqlength_after_collapse;
+  boost::container::flat_set<Vertex_handle,
+    std::less<Vertex_handle>,
+    boost::container::small_vector<Vertex_handle, 64> > examined;
+
   for (const Edge& ei : inc_edges)
   {
     if (is_outside(ei, c3t3, cell_selector))
@@ -769,15 +773,12 @@ bool are_edge_lengths_valid(const typename C3t3::Edge& edge,
     if (vh == v0 || vh == v1)
       continue;
 
-    FT sqlen = FT(0);
-    if (edges_sqlength_after_collapse.find(vh) == edges_sqlength_after_collapse.end())
-    {
-      sqlen = CGAL::squared_distance(point(new_pos), point(vh->point()));
-      edges_sqlength_after_collapse[vh] = sqlen;
-    }
-    else
-      sqlen = edges_sqlength_after_collapse[vh];
+    // a vertex adjacent to both extremities is met once per star, and the test
+    // below reads nothing but `vh` : running it again cannot change its outcome
+    if (!examined.insert(vh).second)
+      continue;
 
+    const FT sqlen = CGAL::squared_distance(point(new_pos), point(vh->point()));
     const FT sizing_at_vh = sizing_at_vertex(vh, sizing, c3t3, cell_selector);
     const FT sqhigh
         = CGAL::square(FT(4) / FT(3)) * (std::max)(CGAL::square(sizing_at_vh),
