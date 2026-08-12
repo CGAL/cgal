@@ -15,7 +15,6 @@
 
 #include <CGAL/license/Mesh_smoothing_3.h>
 
-#include <CGAL/Mesh_smoothing_3/internal/predicates/predicates.h>
 #include <CGAL/Mesh_smoothing_3/internal/math_functions.h>
 #include <CGAL/Mesh_smoothing_3/internal/Function_minimizer.h>
 #include <CGAL/Mesh_smoothing_3/internal/utils/log_time.h>
@@ -653,7 +652,7 @@ unsigned Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::evaluate_e
     for (int iter_t = 0; iter_t < static_cast<int>(_tet_storage.size()); ++iter_t) {
         unsigned t = static_cast<unsigned>(iter_t);
         Tet_storage const &tet = _tet_storage[t];
-        bool exact_check = exact_predicates::positive_tetrahedra({
+        bool exact_check = Math_functions::strictly_positive_tetrahedra({
             Math_functions::sub_line_vector(coords,tet.verts[0]),
             Math_functions::sub_line_vector(coords,tet.verts[1]),
             Math_functions::sub_line_vector(coords,tet.verts[2]),
