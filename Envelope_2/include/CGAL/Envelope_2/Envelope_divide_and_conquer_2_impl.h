@@ -186,11 +186,11 @@ _construct_singleton_diagram(const X_monotone_curve_2& xcv, Envelope_diagram_1& 
 
   auto& topo = out_d.topology_traits();
 
-  Vertex_descriptor v1 = out_d.new_vertex(m_traits->construct_min_vertex_2_object()(xcv));
-  Vertex_descriptor v2 = out_d.new_vertex(m_traits->construct_max_vertex_2_object()(xcv));
+  Vertex_descriptor v1 = out_d.create_vertex(m_traits->construct_min_vertex_2_object()(xcv));
+  Vertex_descriptor v2 = out_d.create_vertex(m_traits->construct_max_vertex_2_object()(xcv));
 
-  Edge_descriptor e_left = out_d.new_edge();
-  Edge_descriptor e_right = out_d.new_edge();
+  Edge_descriptor e_left = out_d.create_edge();
+  Edge_descriptor e_right = out_d.create_edge();
   Edge_descriptor e = out_d.leftmost();
 
   out_d.add_vertex_curve(v1, xcv);
@@ -238,8 +238,8 @@ _construct_singleton_diagram(const X_monotone_curve_2& xcv, Envelope_diagram_1& 
     // Create a vertex and associate it with the right endpoint of xcv.
     CGAL_precondition(m_traits->parameter_space_in_y_2_object()(xcv, ARR_MAX_END) == ARR_INTERIOR);
 
-    Vertex_descriptor v = out_d.new_vertex(m_traits->construct_max_vertex_2_object()(xcv));
-    Edge_descriptor e_right = out_d.new_edge();
+    Vertex_descriptor v = out_d.create_vertex(m_traits->construct_max_vertex_2_object()(xcv));
+    Edge_descriptor e_right = out_d.create_edge();
 
     out_d.add_vertex_curve(v, xcv);
     topo.set_left_edge(v, out_d.leftmost());
@@ -258,8 +258,8 @@ _construct_singleton_diagram(const X_monotone_curve_2& xcv, Envelope_diagram_1& 
     // Create a vertex and associate it with the left endpoint of xcv.
     CGAL_precondition(m_traits->parameter_space_in_y_2_object()(xcv, ARR_MIN_END) == ARR_INTERIOR);
 
-    Vertex_descriptor v = out_d.new_vertex(m_traits->construct_min_vertex_2_object()(xcv));
-    Edge_descriptor e_left = out_d.new_edge();
+    Vertex_descriptor v = out_d.create_vertex(m_traits->construct_min_vertex_2_object()(xcv));
+    Edge_descriptor e_left = out_d.create_edge();
 
     out_d.add_vertex_curve(v, xcv);
     topo.set_left_edge(v, e_left);
@@ -780,8 +780,8 @@ _append_vertex(Envelope_diagram_1& diag, const Point_2& p, Edge_const_descriptor
   auto& topo = diag.topology_traits();
 
   // Create the new vertex and the new edge.
-  Vertex_descriptor new_v = diag.new_vertex(p);
-  Edge_descriptor new_e = diag.new_edge();
+  Vertex_descriptor new_v = diag.create_vertex(p);
+  Edge_descriptor new_e = diag.create_edge();
 
   if (! in_d.empty_edge_curves(e)) diag.add_edge_curves(new_e, in_d.edge_curves(e).begin(), in_d.edge_curves(e).end());
 
@@ -926,8 +926,8 @@ _split_edge(Envelope_diagram_1& diag, const Point_2& p, Edge_descriptor e) {
   auto& topo = diag.topology_traits();
 
   // Create the new vertex and the new edge.
-  Vertex_descriptor new_v = diag.new_vertex(p);
-  Edge_descriptor new_e = diag.new_edge();
+  Vertex_descriptor new_v = diag.create_vertex(p);
+  Edge_descriptor new_e = diag.create_edge();
 
   // Duplicate the curves container associated with e.
   if (! diag.empty_edge_curves(e)) diag.add_edge_curves(new_e, diag.edge_curves(e).begin(), diag.edge_curves(e).end());

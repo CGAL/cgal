@@ -47,6 +47,7 @@ The class `Arrangement_on_curve_1<Traits>` encapsulates a data structure that ma
 
 \cgalCRPSection{Concepts}
 
+- `ArrangementOnCurve_1`
 - `AocTraits_1`
 
 \cgalCRPSection{Geometric Object Concepts}

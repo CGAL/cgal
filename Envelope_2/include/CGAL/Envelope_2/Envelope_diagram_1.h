@@ -37,7 +37,7 @@ class Envelope_diagram_1 :
     Arrangement_on_curve_1::Unbounded_topology_traits<typename Traits_::Point_2,
                                                       std::list<typename Traits_::X_monotone_curve_2>,
                                                       std::list<typename Traits_::X_monotone_curve_2>,
-                                                      Allocator, false, false>> {
+                                                      false, false, Allocator>> {
 public:
   using Traits_2 = Traits_;
   using Point_2 = typename Traits_2::Point_2;
@@ -45,12 +45,12 @@ public:
   using Curve_container = std::list<X_monotone_curve_2>;
   using Curve_iterator = typename Curve_container::iterator;
   using Curve_const_iterator = typename Curve_container::const_iterator;
-  using Size = std::size_t;
+  using Curve_size = std::size_t;
 
   using Geom_traits_1 = Arrangement_on_curve_1::Geom_traits_2_adaptor_1<Traits_2>;
   using Topol_traits =
-    Arrangement_on_curve_1::Unbounded_topology_traits<Point_2, Curve_container, Curve_container, Allocator,
-                                                      false, false>;
+    Arrangement_on_curve_1::Unbounded_topology_traits<Point_2, Curve_container, Curve_container, false, false,
+                                                      Allocator>;
 
   using Base = Arrangement_on_curve_1::Arrangement_on_curve_1<Geom_traits_1, Topol_traits>;
 
@@ -120,26 +120,6 @@ public:
    */
   void set_rightmost(Edge_descriptor e) { this->topology_traits().set_unbounded_right_edge(e); }
 
-  /*! creates a new diagram vertex, associated with a given point.
-   */
-  Vertex_descriptor new_vertex(const Point_2& p) { return this->topology_traits().create_vertex(p); }
-
-  /*! creates a new diagram edge.
-   */
-  Edge_descriptor new_edge() { return this->topology_traits().create_edge(); }
-
-  /*! deletes a given vertex.
-   */
-  void delete_vertex(Vertex_descriptor v) { this->topology_traits().erase_vertex(v); }
-
-  /*! deletes a given edge.
-   */
-  void delete_edge(Edge_descriptor e) { this->topology_traits().erase_edge(e); }
-
-  /*! clears the diagram; leavs only one unbounded edge.
-   */
-  void clear() { this->topology_traits().clear(); }
-
   // --------------------------------------------------------------------------
   // Curve Data Accessors
   // --------------------------------------------------------------------------
@@ -160,11 +140,11 @@ public:
 
   /*! obtains the number of curves associated with a given vertex.
    */
-  Size number_of_vertex_curves(Vertex_const_descriptor v) const { return vertex_curves(v).size(); }
+  Curve_size number_of_vertex_curves(Vertex_const_descriptor v) const { return vertex_curves(v).size(); }
 
   /*! obtains the number of curves associated with a given edge.
    */
-  Size number_of_edge_curves(Edge_const_descriptor e) const { return edge_curves(e).size(); }
+  Curve_size number_of_edge_curves(Edge_const_descriptor e) const { return edge_curves(e).size(); }
 
   /*! determines whether there are no curves associated with a given vertex.
    */

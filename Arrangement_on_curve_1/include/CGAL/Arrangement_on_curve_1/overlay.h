@@ -31,12 +31,12 @@ void overlay(const Arrangement_on_curve_1<GeometryTraitsA, TopologyTraitsA>& arr
   // If the Result arrangement uses the exact same traits type as Input A,
   // we can share the pointer instance instead of keeping separate identical copies.
   if constexpr (std::is_same_v<GeometryTraitsA, GeometryTraitsRes>) {
-    if (arr_res.is_empty() && arr_res.shared_geometry_traits_1() != arr_a.shared_geometry_traits_1()) {
+    if (arr_res.empty() && arr_res.shared_geometry_traits_1() != arr_a.shared_geometry_traits_1()) {
       arr_res.reset_shared_geometry_traits(arr_a.shared_geometry_traits_1());
     }
   }
   else if constexpr (std::is_same_v<GeometryTraitsB, GeometryTraitsRes>) {
-    if (arr_res.is_empty() && arr_res.shared_geometry_traits_1() != arr_b.shared_geometry_traits_1()) {
+    if (arr_res.empty() && arr_res.shared_geometry_traits_1() != arr_b.shared_geometry_traits_1()) {
       arr_res.reset_shared_geometry_traits(arr_b.shared_geometry_traits_1());
     }
   }

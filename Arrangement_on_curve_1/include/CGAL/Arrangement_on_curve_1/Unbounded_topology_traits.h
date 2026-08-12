@@ -69,9 +69,9 @@ template <> struct Map_param_traits<void> { using type = int; }; // Safe dummy f
 // ============================================================================
 
 template <typename Point_1, typename VertexData = void, typename EdgeData = void,
-          typename Allocator = std::allocator<char>, bool UseVector = true, bool BinarySearch = true>
+          bool UseVector = false, bool BinarySearch = false, typename Allocator = std::allocator<char>>
 class Unbounded_topology_traits {
-  static_assert(!BinarySearch || UseVector,
+  static_assert(! BinarySearch || UseVector,
     "BinarySearch = true requires UseVector = true: binary search is only "
     "available over a random-access container.");
 
@@ -118,6 +118,8 @@ public:
   using Edge_descriptor = std::conditional_t<UseVector, std::size_t, typename Edge_container::iterator>;
   using Vertex_const_descriptor = std::conditional_t<UseVector, std::size_t, typename Vertex_container::const_iterator>;
   using Edge_const_descriptor = std::conditional_t<UseVector, std::size_t, typename Edge_container::const_iterator>;
+
+  using Size = std::size_t;
 
   // --------------------------------------------------------------------------
   // Vertex and Edge node types.
@@ -172,6 +174,7 @@ public:
   public:
     List_descriptor_iterator() = default;
     explicit List_descriptor_iterator(ListConstIterator it) : List_descriptor_iterator::iterator_adaptor_(it) {}
+
   private:
     ListConstIterator dereference() const { return this->base(); }
   };
@@ -442,9 +445,9 @@ public:
   // QUERIES
   // --------------------------------------------------------------------------
 
-  bool is_empty() const { return m_vertices.empty(); }
-  size_t number_of_vertices() const { return m_vertices.size(); }
-  size_t number_of_edges() const { return m_edges.size(); }
+  bool empty() const { return m_vertices.empty(); }
+  Size number_of_vertices() const { return m_vertices.size(); }
+  Size number_of_edges() const { return m_edges.size(); }
 
   Vertex_point_map vertex_point_map() const { return Vertex_point_map(const_cast<Vertex_container*>(&m_vertices)); }
   Vertex_data_map vertex_data_map() const { return Vertex_data_map(const_cast<Vertex_container*>(&m_vertices)); }

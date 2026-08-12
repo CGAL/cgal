@@ -33,7 +33,7 @@ locate_impl(Arrangement_on_curve_1<GeometryTraits, TopologyTraits>& arr, const t
   // --------------------------------------------------------------------------
   if constexpr (TopologyTraits::binary_search_enabled) {
     auto& topo = arr.topology_traits();
-    if (topo.is_empty()) return Result{std::in_place_index<1>, topo.unbounded_left_edge()};
+    if (arr.empty()) return Result{std::in_place_index<1>, topo.unbounded_left_edge()};
 
     std::size_t idx = topo.binary_search_vertex(p, cmp);
 

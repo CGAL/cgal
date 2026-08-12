@@ -1,4 +1,5 @@
 namespace CGAL {
+namespace Envelope_2 {
 
 /*!
  * \ingroup PkgEnvelope2Ref
@@ -21,6 +22,7 @@ template< typename Traits >
 class Envelope_diagram_1 {
 public:
 
-}; /* end Envelope_diagram_1 */
+}; // end Envelope_diagram_1
 
-} /* end namespace CGAL */
+} // end namespace Envelope_2
+} // end namespace CGAL

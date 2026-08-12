@@ -10,7 +10,7 @@
 using Kernel = CGAL::Exact_predicates_exact_constructions_kernel;
 using Geom_traits = CGAL::Arrangement_on_curve_1::Ft_traits_1<Kernel>;
 using Point = Geom_traits::Point_1;
-using Topo_traits = CGAL::Arrangement_on_curve_1::Unbounded_topology_traits<Point, std::string, void>;
+using Topo_traits = CGAL::Arrangement_on_curve_1::Unbounded_topology_traits<Point, std::string, void, true, true>;
 using Arrangement = CGAL::Arrangement_on_curve_1::Arrangement_on_curve_1<Geom_traits, Topo_traits>;
 
 int main() {
@@ -18,9 +18,9 @@ int main() {
   Arrangement arr(traits_ptr);
 
   std::cout << "Inserting raw coordinate fields into 1D track...\n";
-  auto v1 = CGAL::Arrangement_on_curve_1::insert(arr, Kernel::FT(10.5));
   auto v2 = CGAL::Arrangement_on_curve_1::insert(arr, Kernel::FT(2.0));
   auto v3 = CGAL::Arrangement_on_curve_1::insert(arr, Kernel::FT(5.25));
+  auto v1 = CGAL::Arrangement_on_curve_1::insert(arr, Kernel::FT(10.5));
 
   // Modify user-extended data fields on vertices
   auto v_data_map = arr.vertex_data_map();

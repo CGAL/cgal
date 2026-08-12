@@ -53,7 +53,7 @@ typedef Traits_2::X_monotone_curve_2 X_monotone_curve_2;
 
 /*! the size type (convertible to `size_t`).
  */
-typedef unspecified_type Size;
+typedef unspecified_type Curve_size;
 
 /*! an iterator for the \f$ x\f$-monotone curves that induce a diagram feature, with value type `X_monotone_curve_2`.
  */
@@ -116,26 +116,6 @@ void set_leftmost(Edge_const_descriptor e);
  */
 void set_rightmost(Edge_const_descriptor e);
 
-/*! creates a new diagram vertex associated with a given point.
- */
-Vertex_descriptor new_vertex(const Point_2& p);
-
-/*! creates a new diagram edge.
- */
-Edge_descriptor new_edge();
-
-/*! deletes the given vertex.
- */
-void delete_vertex(Vertex_descriptor v);
-
-/*! deletes the given edge.
- */
-void delete_edge(Edge_descriptor e);
-
-/*! clears the diagram; leavs only one unbounded edge.
- */
-void clear();
-
 /// @}
 
 /// \name Curve Data Accessors
@@ -155,11 +135,11 @@ const Curve_container& edge_curves(Edge_descriptor e) const;
 
 /*! obtains the number of curves associated with a given vertex.
  */
-Size number_of_vertex_curves(Vertex_const_descriptor v) const;
+Curve_size number_of_vertex_curves(Vertex_const_descriptor v) const;
 
 /*! obtains the number of curves associated with a given edge.
  */
-Size number_of_edge_curves(Edge_const_descriptor e) const;
+Curve_size number_of_edge_curves(Edge_const_descriptor e) const;
 
 /*! determines whether there are no curves associated with a given vertex.
  */

@@ -39,6 +39,8 @@ public:
   using Vertex_const_descriptor = typename Topology_traits::Vertex_const_descriptor;
   using Edge_const_descriptor = typename Topology_traits::Edge_const_descriptor;
 
+  using Size = typename Topology_traits::Size;
+
   // Location result: a point is either ON a vertex or INSIDE an edge
   using Location_result = std::variant<Vertex_descriptor, Edge_descriptor>;
   using Const_location_result = std::variant<Vertex_const_descriptor, Edge_const_descriptor>;
@@ -96,16 +98,58 @@ public:
     m_topology_traits(alloc)
   { CGAL_assertion(m_geometry_traits != nullptr); }
 
-  // ACCESSORS
+  // Modifiers
+
+  /*! creates a new vertex, enforcing the rightmost ordering invariant when BinarySearch is active.
+   */
+  Vertex_descriptor create_vertex(const Point_1& p) {
+    if constexpr (TopologyTraits::binary_search_enabled) {
+      // Enforce that new vertices are inserted strictly in left-to-right order.
+      CGAL_assertion_msg(empty() ||
+                         m_geometry_traits->compare_x_1_object()
+                         (m_topology_traits.vertex_point(m_topology_traits.number_of_vertices() - 1), p) == CGAL::SMALLER,
+        "When BinarySearch = true, vertices must be created in strictly increasing x-order.");
+    }
+
+    return m_topology_traits.create_vertex(p);
+  }
+
+  /*! creates an new edge.
+   */
+  Edge_descriptor create_edge() { return m_topology_traits.create_edge(); }
+
+  /*! destroys a given vertex.
+   */
+  void destroy_vertex(Vertex_descriptor v) {
+    if constexpr (TopologyTraits::binary_search_enabled) {
+      // Enforce that only the rightmost vertex can be destroyed in O(1) time
+      // without invalidating stored vertex indices in existing edges.
+      CGAL_assertion_msg(v == this->topology_traits().number_of_vertices() - 1,
+                         "When BinarySearch = true, only the rightmost vertex can be destroyed.");
+    }
+
+    this->topology_traits().erase_vertex(v);
+  }
+
+  /*! destroys a given edge.
+   */
+  void destroy_edge(Edge_descriptor e) { this->topology_traits().erase_edge(e); }
+
+  /*! clears
+   */
+  void clear() { m_topology_traits.clear(); }
+
+  // Accessors
+
   const Geometry_traits_1& geometry_traits_1() const { return *m_geometry_traits; }
   Shared_geometry_traits shared_geometry_traits_1() const { return m_geometry_traits; }
 
   const Topology_traits& topology_traits() const { return m_topology_traits; }
   Topology_traits& topology_traits() { return m_topology_traits; }
 
-  bool is_empty() const { return m_topology_traits.is_empty(); }
-  size_t number_of_vertices() const { return m_topology_traits.number_of_vertices(); }
-  size_t number_of_edges() const { return m_topology_traits.number_of_edges(); }
+  bool empty() const { return m_topology_traits.empty(); }
+  Size number_of_vertices() const { return m_topology_traits.number_of_vertices(); }
+  Size number_of_edges() const { return m_topology_traits.number_of_edges(); }
 
   auto vertices() const { return m_topology_traits.vertices(); }
   auto edges() const { return m_topology_traits.edges(); }
@@ -138,7 +182,7 @@ public:
 
   void reset_shared_geometry_traits(Shared_geometry_traits new_shared_geom_tr) {
     // Safety check: changing traits on a populated structure is highly dangerous
-    CGAL_precondition_msg(is_empty(), "Cannot reset the geometry traits pointer of a non-empty arrangement.");
+    CGAL_precondition_msg(empty(), "Cannot reset the geometry traits pointer of a non-empty arrangement.");
     CGAL_assertion(new_shared_geom_tr != nullptr);
     m_geometry_traits = new_shared_geom_tr;
   }
@@ -177,79 +221,101 @@ public:
     return v;
   }
 
-  // Insert a new vertex p strictly to the left of an existing first vertex v_first.
+  /*! inserts a new vertex p strictly to the left of an existing vertex.
+   */
   Vertex_descriptor insert_before(Vertex_descriptor v, const Point_1& p) {
-    auto& topo = m_topology_traits;
+    if constexpr (TopologyTraits::binary_search_enabled) {
+      CGAL_error_msg("insert_before() cannot be invoked when TopologyTraits::binary_search_enabled is true. "
+                     "Vertices must be appended in strictly increasing x-order.");
+    }
 
-    Edge_descriptor e_left = topo.left_edge(v);
-    Vertex_descriptor v_new = topo.create_vertex(p);
+    Vertex_descriptor v_new = create_vertex(p);
+    Edge_descriptor e_between = create_edge();
+
+    Edge_descriptor e_left = m_topology_traits.left_edge(v);
 
     // Create a new edge to sit between v_new and v: (v_new, v)
-    Edge_descriptor e_between = topo.create_edge();
-    topo.set_left_vertex(e_between, v_new);
-    topo.set_right_vertex(e_between, v);
+    m_topology_traits.set_left_vertex(e_between, v_new);
+    m_topology_traits.set_right_vertex(e_between, v);
 
     // The old left edge now terminates at v_new on its right
-    topo.set_right_vertex(e_left, v_new);
+    m_topology_traits.set_right_vertex(e_left, v_new);
 
     // v_new sits between e_left and e_between.
-    topo.set_left_edge(v_new, e_left);
-    topo.set_right_edge(v_new, e_between);
+    m_topology_traits.set_left_edge(v_new, e_left);
+    m_topology_traits.set_right_edge(v_new, e_between);
 
     // v's left edge is now e_between.
-    topo.set_left_edge(v, e_between);
+    m_topology_traits.set_left_edge(v, e_between);
 
     return v_new;
   }
 
-  // Insert a new vertex p strictly to the right of an existing last vertex v.
+  /*! inserts a new vertex p strictly to the right of an existing last vertex v.
+   */
   Vertex_descriptor insert_after(Vertex_descriptor v, const Point_1& p) {
-    auto& topo = m_topology_traits;
+    if constexpr (TopologyTraits::binary_search_enabled) {
+      // Enforce that v is the current rightmost vertex
+      CGAL_assertion_msg(v == m_topology_traits.number_of_vertices() - 1,
+                         "When BinarySearch = true, insert_after() can only be called on the rightmost vertex.");
+    }
 
-    Edge_descriptor e_right = topo.right_edge(v);
-    Vertex_descriptor v_new = topo.create_vertex(p);
+    Vertex_descriptor v_new = create_vertex(p);
+    Edge_descriptor e_between = create_edge();
+
+    Edge_descriptor e_right = m_topology_traits.right_edge(v);
 
     // Create a new edge to sit between v_new and v: (v_new, v)
-     Edge_descriptor e_between = topo.create_edge();
-    topo.set_left_vertex(e_between, v);
-    topo.set_right_vertex(e_between, v_new);
+    m_topology_traits.set_left_vertex(e_between, v);
+    m_topology_traits.set_right_vertex(e_between, v_new);
 
     // The old right edge now starts from v_new
-    topo.set_left_vertex(e_right, v_new);
+    m_topology_traits.set_left_vertex(e_right, v_new);
 
     // v_new is wired between e_between and e_right.
-    topo.set_left_edge(v_new, e_between);
-    topo.set_right_edge(v_new, e_right);
+    m_topology_traits.set_left_edge(v_new, e_between);
+    m_topology_traits.set_right_edge(v_new, e_right);
 
     // v's right edge is now e_between.
-    topo.set_right_edge(v, e_between);
+    m_topology_traits.set_right_edge(v, e_between);
 
     return v_new;
   }
 
-  // Split the edge e by inserting a new vertex p inside it.
-  // e becomes the left sub-edge; a new edge becomes the right sub-edge.
+  /*! splits the edge e by inserting a new vertex p inside it.
+   * e becomes the left sub-edge; a new edge becomes the right sub-edge.
+   */
   Vertex_descriptor split_edge(Edge_descriptor e, const Point_1& p) {
-     auto& topo = m_topology_traits;
+    if constexpr (TopologyTraits::binary_search_enabled) {
+      // 1. Must split the rightmost unbounded edge (no right vertex)
+      CGAL_assertion_msg(! m_topology_traits.has_right_vertex(e),
+                         "When BinarySearch = true, split_edge() can only be called on the rightmost unbounded edge.");
 
-    Vertex_descriptor v_new = topo.create_vertex(p);
-    Edge_descriptor e_right = topo.create_edge();
+      // 2. If e has a left vertex, it MUST be the current rightmost vertex in the vector.
+      // (If e has no left vertex, it's the initial (-inf, +inf) edge of an empty arrangement.)
+      CGAL_assertion_msg(! m_topology_traits.has_left_vertex(e) ||
+                         m_topology_traits.left_vertex(e) == m_topology_traits.number_of_vertices() - 1,
+                         "When BinarySearch = true, the edge being split must originate from the rightmost vertex.");
+    }
+
+    Vertex_descriptor v_new = create_vertex(p);
+    Edge_descriptor e_right = create_edge();
 
     // If e has a right vertex, transfer it to e_right.
-    if (topo.has_right_vertex(e)) {
-      Vertex_descriptor v_old_right = topo.right_vertex(e);
-      topo.set_right_vertex(e_right, v_old_right);
-      topo.set_left_edge(v_old_right, e_right);
+    if (m_topology_traits.has_right_vertex(e)) {
+      Vertex_descriptor v_old_right = m_topology_traits.right_vertex(e);
+      m_topology_traits.set_right_vertex(e_right, v_old_right);
+      m_topology_traits.set_left_edge(v_old_right, e_right);
     }
     // e_right's left vertex is v_new.
-    topo.set_left_vertex(e_right, v_new);
+    m_topology_traits.set_left_vertex(e_right, v_new);
 
     // e (the left sub-edge) now ends at v_new.
-    topo.set_right_vertex(e, v_new);
+    m_topology_traits.set_right_vertex(e, v_new);
 
     // Wire v_new between e and e_right.
-    topo.set_left_edge(v_new, e);
-    topo.set_right_edge(v_new, e_right);
+    m_topology_traits.set_left_edge(v_new, e);
+    m_topology_traits.set_right_edge(v_new, e_right);
 
     return v_new;
   }
@@ -257,24 +323,22 @@ public:
   // Remove vertex v from the arrangement.
   // Merge its two adjacent edges into one, keeping the left edge and removing the right.
   void remove(Vertex_descriptor v) {
-    auto& topo = m_topology_traits;
-
-    Edge_descriptor e_left  = topo.left_edge(v);
-    Edge_descriptor e_right = topo.right_edge(v);
+    Edge_descriptor e_left = m_topology_traits.left_edge(v);
+    Edge_descriptor e_right = m_topology_traits.right_edge(v);
 
     // Extend e_left to cover the span formerly covered by e_right.
-    if (topo.has_right_vertex(e_right)) {
-      Vertex_descriptor v_right = topo.right_vertex(e_right);
-      topo.set_right_vertex(e_left, v_right);
-      topo.set_left_edge(v_right, e_left);
+    if (m_topology_traits.has_right_vertex(e_right)) {
+      Vertex_descriptor v_right = m_topology_traits.right_vertex(e_right);
+      m_topology_traits.set_right_vertex(e_left, v_right);
+      m_topology_traits.set_left_edge(v_right, e_left);
     }
     else {
-      topo.clear_right_vertex(e_left);
+      m_topology_traits.clear_right_vertex(e_left);
     }
 
-    // Remove the now-redundant right edge and the vertex.
-    topo.erase_edge(e_right);
-    topo.erase_vertex(v);
+    // Destroy the now-redundant right edge and the vertex.
+    destroy_edge(e_right);
+    destroy_vertex(v);
   }
 };
 
