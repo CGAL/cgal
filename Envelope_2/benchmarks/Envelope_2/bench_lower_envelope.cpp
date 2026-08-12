@@ -79,7 +79,7 @@ struct Run_result {
   std::size_t edges;
 };
 
-static Run_result run_once(std::vector<Segment_2>& segs, const Traits_2& traits) {
+static Run_result run_once(std::vector<Segment_2>& segs, std::shared_ptr<const Traits_2> traits) {
   Diagram_1 diag;
   auto t0 = std::chrono::steady_clock::now();
   CGAL::Envelope_2::lower_envelope_x_monotone_2(segs.begin(), segs.end(), diag, traits);
@@ -156,7 +156,7 @@ int main(int argc, char* argv[]) {
             << "\n";
 
   // Shared traits object: reusing it improves speed if the traits caches data.
-  Traits_2 traits;
+  auto traits = std::make_shared<const Traits_2>();
 
   // -- Run benchmarks -------------------------------------------------------
   for (std::size_t n : sizes) {

@@ -76,7 +76,7 @@ CGAL_DEPRECATED void lower_envelope_x_monotone_2(InputIterator begin, InputItera
 template <typename InputIterator, typename EnvelopeDiagram, typename Traits>
 CGAL_DEPRECATED void lower_envelope_x_monotone_2(InputIterator begin, InputIterator end, EnvelopeDiagram& diag,
                                                  const Traits& traits)
-{ Envelope_2::lower_envelope_x_monotone_2(begin, end, diag, traits); }
+{ Envelope_2::lower_envelope_x_monotone_2(begin, end, diag, std::make_shared<const Traits>(traits)); }
 
 /*! computes the upper envelope of a range of x-monotone curves.
  * \param begin An iterator for the first x-monotone curve.
@@ -98,7 +98,7 @@ CGAL_DEPRECATED void upper_envelope_x_monotone_2(InputIterator begin, InputItera
 template <typename InputIterator, typename EnvelopeDiagram, typename Traits>
 CGAL_DEPRECATED void upper_envelope_x_monotone_2(InputIterator begin, InputIterator end, EnvelopeDiagram& diag,
                                                  const Traits& traits)
-{ Envelope_2::upper_envelope_x_monotone_2(begin, end, diag, traits); }
+{ Envelope_2::upper_envelope_x_monotone_2(begin, end, diag, std::make_shared<const Traits>(traits)); }
 
 } // namespace CGAL
 

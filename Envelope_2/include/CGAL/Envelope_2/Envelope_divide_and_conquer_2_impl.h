@@ -274,8 +274,8 @@ _construct_singleton_diagram(const X_monotone_curve_2& xcv, Envelope_diagram_1& 
   }
 
   // If we reached here, the curve is defined over a bounded x-range: [x1, x2]
-  CGAL_assertion(m_traits->parameter_space_in_x_2_object()(cv, ARR_MIN_END) == ARR_INTERIOR);
-  CGAL_assertion(m_traits->parameter_space_in_x_2_object()(cv, ARR_MAX_END) == ARR_INTERIOR);
+  CGAL_assertion(m_traits->parameter_space_in_x_2_object()(xcv, ARR_MIN_END) == ARR_INTERIOR);
+  CGAL_assertion(m_traits->parameter_space_in_x_2_object()(xcv, ARR_MAX_END) == ARR_INTERIOR);
 
   _construct_singleton_diagram(xcv, out_d, Arr_all_sides_oblivious_tag());
 }
@@ -815,7 +815,7 @@ _append_vertex(Envelope_diagram_1& diag, const Point_2& p, Edge_const_descriptor
 template <typename Traits, typename Diagram>
 void Envelope_divide_and_conquer_2<Traits, Diagram>::
 _merge_vertical_segments(Curve_pointer_vector& vert_vec, Envelope_diagram_1& out_d) {
-  Less_vertical_segment les_vert(m_traits);
+  Less_vertical_segment les_vert(&*m_traits);
 
   std::sort(vert_vec.begin(), vert_vec.end(), les_vert);
 

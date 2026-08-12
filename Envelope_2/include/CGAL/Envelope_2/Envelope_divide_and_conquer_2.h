@@ -42,6 +42,7 @@ public:
   using Curve_2 = typename Traits_2::Curve_2;
 
   using Envelope_diagram_1 = Diagram_;
+  using Shared_traits = std::shared_ptr<const Traits_2>;
 
   enum Envelope_type { LOWER, UPPER };
 
@@ -57,6 +58,7 @@ protected:
   using Curve_pointer_iterator = typename Curve_pointer_vector::iterator;
 
   using Traits_adaptor_2 = Arr_traits_adaptor_2<Traits_2>;
+  using Shared_traits_adaptor = std::shared_ptr<const Traits_adaptor_2>;
 
   // All sides
   using Left_side_category = typename CGAL::internal::Arr_complete_left_side_category<Traits_2>::Category;
@@ -70,8 +72,7 @@ protected:
 
 private:
   // Data members:
-  const Traits_adaptor_2* m_traits;     // the traits object.
-  bool m_own_traits;                    // whether we own the traits object.
+  Shared_traits_adaptor m_traits;       // the traits object.
   Envelope_type m_env_type;             // either LOWER or UPPER.
 
 #if CGAL_VALUE_BASED_POOL==1
@@ -88,29 +89,29 @@ public:
   /*! default constructor.
    */
   Envelope_divide_and_conquer_2(Envelope_type type = LOWER) :
-    m_own_traits(true),
+    m_traits(std::make_shared<const Traits_adaptor_2>()),
     m_env_type(type)
-  { m_traits = new Traits_adaptor_2; }
+  {}
 
   /*! constructor with a traits object.
    * \param traits The traits object.
    */
-  Envelope_divide_and_conquer_2(const Traits_2* traits) :
-    m_own_traits(false),
+  Envelope_divide_and_conquer_2(Shared_traits traits) :
+    m_traits(std::static_pointer_cast<const Traits_adaptor_2>(traits)),
     m_env_type(LOWER)
-  { m_traits = static_cast<const Traits_adaptor_2*>(traits); }
+  {}
 
   /*! constructor with a traits object.
    * \param traits The traits object.
    */
-  Envelope_divide_and_conquer_2(Envelope_type type, const Traits_2* traits) :
-    m_own_traits(false),
+  Envelope_divide_and_conquer_2(Envelope_type type, Shared_traits traits) :
+    m_traits(std::static_pointer_cast<const Traits_adaptor_2>(traits)),
     m_env_type(type)
-  { m_traits = static_cast<const Traits_adaptor_2*>(traits); }
+  {}
 
   /*! destructor.
    */
-  ~Envelope_divide_and_conquer_2() { if (m_own_traits) delete m_traits; }
+  ~Envelope_divide_and_conquer_2() {}
 
   /*! constructs the lower (or upper) envelope to the given range of curves.
    * \param begin An iterator pointing at the beginning of the curves range.

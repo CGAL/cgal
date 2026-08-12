@@ -75,10 +75,11 @@ void lower_envelope_x_monotone_2(InputIterator begin, InputIterator end, Envelop
  * \pre The value-type of the iterator is Traits::X_monotone_curve_2.
  */
 template <typename InputIterator, typename EnvelopeDiagram, typename Traits>
-void lower_envelope_x_monotone_2(InputIterator begin, InputIterator end, EnvelopeDiagram& diag, const Traits& traits) {
+void lower_envelope_x_monotone_2(InputIterator begin, InputIterator end, EnvelopeDiagram& diag,
+                                 std::shared_ptr<const Traits> traits) {
   using Traits_2 = typename EnvelopeDiagram::Traits_2;
   using Dac = Envelope_divide_and_conquer_2<Traits_2, EnvelopeDiagram>;
-  Dac env(Dac::LOWER, &traits);
+  Dac env(Dac::LOWER, traits);
   env.insert_x_monotone_curves(begin, end, diag);
 }
 
@@ -104,10 +105,11 @@ void upper_envelope_x_monotone_2(InputIterator begin, InputIterator end, Envelop
  * \pre The value-type of the iterator is Traits::X_monotone_curve_2.
  */
 template <typename InputIterator, typename EnvelopeDiagram, typename Traits>
-void upper_envelope_x_monotone_2(InputIterator begin, InputIterator end, EnvelopeDiagram& diag, const Traits& traits) {
+void upper_envelope_x_monotone_2(InputIterator begin, InputIterator end, EnvelopeDiagram& diag,
+                                 std::shared_ptr<const Traits> traits) {
   using Traits_2 = typename EnvelopeDiagram::Traits_2;
   using Dac = Envelope_divide_and_conquer_2<Traits_2, EnvelopeDiagram>;
-  Dac env(Dac::UPPER, &traits);
+  Dac env(Dac::UPPER, traits);
   env.insert_x_monotone_curves(begin, end, diag);
 }
 
