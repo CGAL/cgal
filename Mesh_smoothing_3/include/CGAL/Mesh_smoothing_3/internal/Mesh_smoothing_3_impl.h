@@ -15,8 +15,7 @@
 
 #include <CGAL/license/Mesh_smoothing_3.h>
 
-#include <CGAL/Mesh_smoothing_3/internal/math_functions.h>
-#include <CGAL/Mesh_smoothing_3/internal/utils/colorized_text.h>
+#include <CGAL/Mesh_smoothing_3/internal/utils/math_functions.h>
 
 namespace CGAL {
 
@@ -217,7 +216,8 @@ void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::check_refs() {
     // }
     // assert(!input_contains_invalid_references);
     // if (input_contains_invalid_references && _verbose) {
-    //     Mesh_smoothing_3_internal::Colorized_print("Mesh_smoother: some tetrahedron reference shapes are invalid (negative volume). Results may be incorrect.", Mesh_smoothing_3_internal::ConsoleTextColor::Red);
+    //     CGAL::IO::Color_stream_guard bright_red(std::cout, CGAL::IO::Ansi_color::BrightBlue);
+    //     std::cout << "Mesh_smoother: some tetrahedron reference shapes are invalid (negative volume). Results may be incorrect." << std::endl;
     // }
 }
 
