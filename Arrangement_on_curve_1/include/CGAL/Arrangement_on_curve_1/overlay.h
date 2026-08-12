@@ -23,10 +23,11 @@ namespace Arrangement_on_curve_1 {
 // ============================================================================
 template <typename GeometryTraitsA, typename GeometryTraitsB, typename GeometryTraitsRes,
           typename TopologyTraitsA, typename TopologyTraitsB, typename TopologyTraitsRes,
+          bool BinarySearchA, bool BinarySearchB, bool BinarySearchRes,
           typename OverlayObserver>
-void overlay(const Arrangement_on_curve_1<GeometryTraitsA, TopologyTraitsA>& arr_a,
-             const Arrangement_on_curve_1<GeometryTraitsB, TopologyTraitsB>& arr_b,
-             Arrangement_on_curve_1<GeometryTraitsRes, TopologyTraitsRes>& arr_res,
+void overlay(const Arrangement_on_curve_1<GeometryTraitsA, TopologyTraitsA, BinarySearchA>& arr_a,
+             const Arrangement_on_curve_1<GeometryTraitsB, TopologyTraitsB, BinarySearchB>& arr_b,
+             Arrangement_on_curve_1<GeometryTraitsRes, TopologyTraitsRes, BinarySearchRes>& arr_res,
              OverlayObserver& observer) {
   // If the Result arrangement uses the exact same traits type as Input A,
   // we can share the pointer instance instead of keeping separate identical copies.
@@ -104,10 +105,11 @@ void overlay(const Arrangement_on_curve_1<GeometryTraitsA, TopologyTraitsA>& arr
 // Overlay without observer; uses Default_overlay_observer)
 // ============================================================================
 template <typename GeometryTraitsA, typename GeometryTraitsB, typename GeometryTraitsRes,
-          typename TopologyTraitsA, typename TopologyTraitsB, typename TopologyTraitsRes>
-void overlay(const Arrangement_on_curve_1<GeometryTraitsA, TopologyTraitsA>& arr_a,
-             const Arrangement_on_curve_1<GeometryTraitsB, TopologyTraitsB>& arr_b,
-             Arrangement_on_curve_1<GeometryTraitsRes, TopologyTraitsRes>& arr_res) {
+          typename TopologyTraitsA, typename TopologyTraitsB, typename TopologyTraitsRes,
+          bool BinarySearchA, bool BinarySearchB, bool BinarySearchRes>
+void overlay(const Arrangement_on_curve_1<GeometryTraitsA, TopologyTraitsA, BinarySearchA>& arr_a,
+             const Arrangement_on_curve_1<GeometryTraitsB, TopologyTraitsB, BinarySearchB>& arr_b,
+             Arrangement_on_curve_1<GeometryTraitsRes, TopologyTraitsRes, BinarySearchRes>& arr_res) {
   using Arr_a = Arrangement_on_curve_1<GeometryTraitsA, TopologyTraitsA>;
   using Arr_b = Arrangement_on_curve_1<GeometryTraitsB, TopologyTraitsB>;
   using Arr_res = Arrangement_on_curve_1<GeometryTraitsRes, TopologyTraitsRes>;

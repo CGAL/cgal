@@ -37,7 +37,8 @@ class Envelope_diagram_1 :
     Arrangement_on_curve_1::Unbounded_topology_traits<typename Traits_::Point_2,
                                                       std::list<typename Traits_::X_monotone_curve_2>,
                                                       std::list<typename Traits_::X_monotone_curve_2>,
-                                                      false, false, Allocator>> {
+                                                      false, Allocator>,
+    false> {
 public:
   using Traits_2 = Traits_;
   using Point_2 = typename Traits_2::Point_2;
@@ -49,10 +50,9 @@ public:
 
   using Geom_traits_1 = Arrangement_on_curve_1::Geom_traits_2_adaptor_1<Traits_2>;
   using Topol_traits =
-    Arrangement_on_curve_1::Unbounded_topology_traits<Point_2, Curve_container, Curve_container, false, false,
-                                                      Allocator>;
+    Arrangement_on_curve_1::Unbounded_topology_traits<Point_2, Curve_container, Curve_container, false, Allocator>;
 
-  using Base = Arrangement_on_curve_1::Arrangement_on_curve_1<Geom_traits_1, Topol_traits>;
+  using Base = Arrangement_on_curve_1::Arrangement_on_curve_1<Geom_traits_1, Topol_traits, false>;
 
   using Vertex_descriptor = typename Base::Vertex_descriptor;
   using Vertex_const_descriptor = typename Base::Vertex_const_descriptor;
@@ -73,8 +73,6 @@ public:
   Envelope_diagram_1() : Base() {}
 
   /*! Constructor passing a 2D geometry traits shared pointer.
-   * This is the preferred constructor; it avoids a heap allocation by
-   * sharing the traits object rather than copying it.
    */
   Envelope_diagram_1(std::shared_ptr<const Traits_2> traits_2_ptr) :
     Base(std::make_shared<const Geom_traits_1>(traits_2_ptr))

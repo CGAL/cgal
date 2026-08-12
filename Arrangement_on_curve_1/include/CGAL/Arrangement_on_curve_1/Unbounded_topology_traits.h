@@ -56,25 +56,17 @@ template <> struct Map_param_traits<void> { using type = int; }; // Safe dummy f
 //   Point_1      - the geometric point type stored at each vertex.
 //   VertexData   - optional user data attached to each vertex (void = none).
 //   EdgeData     - optional user data attached to each edge (void = none).
-//   Allocator    - allocator for the internal containers.
 //   UseVector    - when true, store vertices and edges in std::vector instead
 //                  of std::list.  std::vector gives cache-friendly traversal
 //                  and enables binary search in locate(), but descriptors
 //                  change from iterators (list mode) to integer indices
 //                  (vector mode) because vector iterators are invalidated on
 //                  every insertion that causes reallocation.
-//   BinarySearch - when true (requires UseVector = true), the locate()
-//                  function in locate.h uses a binary search over the sorted
-//                  vertex vector, reducing locate from O(n) to O(log n).
+//   Allocator    - allocator for the internal containers.
 // ============================================================================
-
 template <typename Point_1, typename VertexData = void, typename EdgeData = void,
-          bool UseVector = false, bool BinarySearch = false, typename Allocator = std::allocator<char>>
+          bool UseVector = false, typename Allocator = std::allocator<char>>
 class Unbounded_topology_traits {
-  static_assert(! BinarySearch || UseVector,
-    "BinarySearch = true requires UseVector = true: binary search is only "
-    "available over a random-access container.");
-
 public:
   struct Vertex;
   struct Edge;
@@ -103,8 +95,10 @@ public:
   //   - erase() is O(n) and shifts subsequent elements; all stored indices
   //     above the erased slot are patched automatically (see erase_vertex /
   //     erase_edge).
-  //   - locate() is O(log n) when BinarySearch = true.
+  //   - locate() is O(log n) when binary search is enabled.
   // --------------------------------------------------------------------------
+  static constexpr bool use_vector = UseVector;
+
   using Vertex_container =
     std::conditional_t<UseVector, std::vector<Vertex, Vertex_allocator>, std::list<Vertex, Vertex_allocator>>;
 
@@ -590,46 +584,6 @@ public:
     }
     if (m_unbounded_left_edge > e) --m_unbounded_left_edge;
     if (m_unbounded_right_edge > e) --m_unbounded_right_edge;
-  }
-
-  // --------------------------------------------------------------------------
-  // BINARY SEARCH SUPPORT (only available / called when UseVector = true)
-  //
-  // locate.h calls binary_search_vertex() when the topology traits has
-  // BinarySearch = true (detected via the static constexpr below).
-  //
-  // The vertex vector is maintained in left-to-right sorted order by
-  // Arrangement_on_curve_1's high-level insert operations.  We perform a
-  // standard lower_bound-style search using the geometry traits' comparator.
-  //
-  // Returns:
-  //   - the index of the matching vertex if p coincides with one, or
-  //   - the index of the first vertex whose x-coordinate is > p, which is
-  //     the right endpoint of the edge that contains p.
-  //     (An out-of-range index equal to m_vertices.size() means p is to the
-  //      right of all vertices, i.e. it lies in the rightmost edge.)
-  //
-  // The caller distinguishes the two cases by comparing the returned index
-  // against m_vertices.size() and, if in range, by checking whether cmp
-  // returns EQUAL for the vertex at that index.
-  // --------------------------------------------------------------------------
-  static constexpr bool binary_search_enabled = BinarySearch;
-
-  template <typename Compare>
-  std::size_t binary_search_vertex(const Point_1& p, Compare cmp) const {
-    static_assert(UseVector,
-      "binary_search_vertex() is only available when UseVector = true.");
-
-    std::size_t lo = 0, hi = m_vertices.size();
-    while (lo < hi) {
-      std::size_t mid = lo + (hi - lo) / 2;
-      auto res = cmp(m_vertices[mid].m_point, p);
-      if (res == CGAL::SMALLER) lo = mid + 1;
-      else if (res == CGAL::LARGER)  hi = mid;
-      else return mid; // EQUAL — vertex found
-    }
-    // p is not at any vertex; lo is the index of the first vertex > p.
-    return lo;
   }
 
 private:

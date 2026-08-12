@@ -20,10 +20,11 @@ namespace Arrangement_on_curve_1 {
 // Uses O(log n) binary search when BinarySearch = true,
 // otherwise falls back to O(n) topological graph traversal.
 // ==========================================
-template <typename GeometryTraits, typename TopologyTraits>
-typename Arrangement_on_curve_1<GeometryTraits, TopologyTraits>::Location_result
-locate_impl(Arrangement_on_curve_1<GeometryTraits, TopologyTraits>& arr, const typename GeometryTraits::Point_1& p) {
-  using Arr = Arrangement_on_curve_1<GeometryTraits, TopologyTraits>;
+template <typename GeometryTraits_1, typename TopologyTraits, bool BinarySearch>
+typename Arrangement_on_curve_1<GeometryTraits_1, TopologyTraits, BinarySearch>::Location_result
+locate_impl(Arrangement_on_curve_1<GeometryTraits_1, TopologyTraits, BinarySearch>& arr,
+            const typename GeometryTraits_1::Point_1& p) {
+  using Arr = Arrangement_on_curve_1<GeometryTraits_1, TopologyTraits, BinarySearch>;
   using Result = typename Arr::Location_result;
 
   auto cmp = arr.geometry_traits_1().compare_x_1_object();
@@ -31,11 +32,11 @@ locate_impl(Arrangement_on_curve_1<GeometryTraits, TopologyTraits>& arr, const t
   // --------------------------------------------------------------------------
   // 1. FAST PATH: Binary Search (O(log n))
   // --------------------------------------------------------------------------
-  if constexpr (TopologyTraits::binary_search_enabled) {
+  if constexpr (Arr::binary_search_enabled) {
     auto& topo = arr.topology_traits();
     if (arr.empty()) return Result{std::in_place_index<1>, topo.unbounded_left_edge()};
 
-    std::size_t idx = topo.binary_search_vertex(p, cmp);
+    std::size_t idx = arr.binary_search_vertex(p, cmp);
 
     // p is to the right of all existing vertices
     if (idx == topo.number_of_vertices()) return Result{std::in_place_index<1>, topo.unbounded_right_edge()};
@@ -76,24 +77,29 @@ locate_impl(Arrangement_on_curve_1<GeometryTraits, TopologyTraits>& arr, const t
 // ==========================================
 // LOCATE (Mutable)
 // ==========================================
-template <typename GeometryTraits, typename TopologyTraits>
-typename Arrangement_on_curve_1<GeometryTraits, TopologyTraits>::Location_result
-locate(Arrangement_on_curve_1<GeometryTraits, TopologyTraits>& arr, const typename GeometryTraits::Point_1& p)
+template <typename GeometryTraits_1, typename TopologyTraits, bool BinarySearch>
+typename Arrangement_on_curve_1<GeometryTraits_1, TopologyTraits, BinarySearch>::Location_result
+locate(Arrangement_on_curve_1<GeometryTraits_1, TopologyTraits, BinarySearch>& arr,
+       const typename GeometryTraits_1::Point_1& p)
 { return locate_impl(arr, p); }
 
 // ==========================================
 // LOCATE (Const)
 // Delegates to mutable impl via a const_cast (safe: does not mutate).
 // ==========================================
-template <typename GeometryTraits, typename TopologyTraits>
-typename Arrangement_on_curve_1<GeometryTraits, TopologyTraits>::Const_location_result
-locate(const Arrangement_on_curve_1<GeometryTraits, TopologyTraits>& arr, const typename GeometryTraits::Point_1& p) {
-  using Arr = Arrangement_on_curve_1<GeometryTraits, TopologyTraits>;
+template <typename GeometryTraits_1, typename TopologyTraits, bool BinarySearch>
+typename Arrangement_on_curve_1<GeometryTraits_1, TopologyTraits, BinarySearch>::Const_location_result
+locate(const Arrangement_on_curve_1<GeometryTraits_1, TopologyTraits, BinarySearch>& arr,
+       const typename GeometryTraits_1::Point_1& p) {
+  using Geometry_traits_1 = GeometryTraits_1;
+  using Topology_traits = TopologyTraits;
+
+  using Arr = Arrangement_on_curve_1<Geometry_traits_1, Topology_traits, BinarySearch>;
   using Vertex_const_descriptor = typename Arr::Vertex_const_descriptor;
   using Edge_const_descriptor = typename Arr::Edge_const_descriptor;
   using Result = typename Arr::Const_location_result;
 
-  auto mutable_result = locate_impl(const_cast<Arrangement_on_curve_1<GeometryTraits, TopologyTraits>&>(arr), p);
+  auto mutable_result = locate_impl(const_cast<Arr&>(arr), p);
 
   if (mutable_result.index() == 0) {
     auto v = std::get<0>(mutable_result);

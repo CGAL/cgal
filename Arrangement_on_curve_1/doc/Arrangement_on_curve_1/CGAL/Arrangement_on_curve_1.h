@@ -9,13 +9,24 @@ namespace Arrangement_on_curve_1 {
  *         types and a `Compare_x_1` functor to sort points linearly along the continuous curve trajectory.
  * \tparam TopologyTraits must be a model of the 1D arrangement topology traits concept,
  *         managing container allocations, structural adjacency records, and property mappings.
+ * \tparam BinarySearch when true (requires `TopologyTraits::UseVector = true`), the `locate()` function
+ *         uses a binary search over the sorted vertex vector, reducing locate from \f$O(n)\f$ to \fSO(\log n)\f$.
+ *         However, insertion and removal of vertices is limited to rightmost vertices only.
  *
- * An arrangement object maintains a smart pointer to a shared immutable geometry traits object,
- * optimizing lifecycle tracking and enabling efficient data synchronization across topological overlays.
+ * An object, the type of which is an instance of the class template
+ * `Arrangement_on_curve_1<GeometryTraits_1,TopologyTraits,BinarySearch>`,
+ * represents the subdivision as a linked list of alternating vertices and
+ * edges.  Thus, the operations that obtain incident cells provided by the class
+ * template take constant time, and the space needed to store the arrangement is
+ * linear in the complexity of the arrangement.
+ *
+ * An arrangement object maintains a smart pointer to a shared immutable
+ * geometry traits object, optimizing lifecycle tracking and enabling efficient
+ * data synchronization across topological overlays.
  *
  * \sa `AocTraits_1`
  */
-template <typename GeometryTraits_1, typename TopologyTraits>
+template <typename GeometryTraits_1, typename TopologyTraits, bool BinarySearch = false>
 class Arrangement_on_curve_1 {
 public:
   /// \name Types

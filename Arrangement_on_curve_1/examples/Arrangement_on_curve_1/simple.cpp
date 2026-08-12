@@ -10,8 +10,8 @@
 using Kernel = CGAL::Exact_predicates_exact_constructions_kernel;
 using Geom_traits = CGAL::Arrangement_on_curve_1::Ft_traits_1<Kernel>;
 using Point = Geom_traits::Point_1;
-using Topo_traits = CGAL::Arrangement_on_curve_1::Unbounded_topology_traits<Point, std::string, void, true, true>;
-using Arrangement = CGAL::Arrangement_on_curve_1::Arrangement_on_curve_1<Geom_traits, Topo_traits>;
+using Topo_traits = CGAL::Arrangement_on_curve_1::Unbounded_topology_traits<Point, std::string, void, true>;
+using Arrangement = CGAL::Arrangement_on_curve_1::Arrangement_on_curve_1<Geom_traits, Topo_traits, true>;
 
 int main() {
   auto traits_ptr = std::make_shared<const Geom_traits>();

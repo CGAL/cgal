@@ -14,7 +14,7 @@ namespace Arrangement_on_curve_1 {
  *
  * A model of the concept `ArrangementOnCurve_1` can be used to represent a 1D
  * subdivision of a continuous geometric curve (a 1D "master curve" or line
- * space) into alternating vertices and edges.
+ * space) into alternating vertices and edges, collectively referred to as cells.
  */
 class ArrangementOnCurve_1 {
 public:

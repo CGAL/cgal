@@ -19,10 +19,11 @@ namespace Arrangement_on_curve_1 {
 
 /*! inserts a point into an arrangement on a curve.
  */
-template <typename GeometryTraits, typename TopologyTraits>
-typename Arrangement_on_curve_1<GeometryTraits, TopologyTraits>::Vertex_descriptor
-insert(Arrangement_on_curve_1<GeometryTraits, TopologyTraits>& arr, const typename GeometryTraits::Point_1& p) {
-  using Arr = Arrangement_on_curve_1<GeometryTraits, TopologyTraits>;
+template <typename GeometryTraits, typename TopologyTraits, bool BinarySearch>
+typename Arrangement_on_curve_1<GeometryTraits, TopologyTraits, BinarySearch>::Vertex_descriptor
+insert(Arrangement_on_curve_1<GeometryTraits, TopologyTraits, BinarySearch>& arr,
+       const typename GeometryTraits::Point_1& p) {
+  using Arr = Arrangement_on_curve_1<GeometryTraits, TopologyTraits, BinarySearch>;
   using Vertex_descriptor = typename Arr::Vertex_descriptor;
   using Edge_descriptor = typename Arr::Edge_descriptor;
 

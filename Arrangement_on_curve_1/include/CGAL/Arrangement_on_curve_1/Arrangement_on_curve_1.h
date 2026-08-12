@@ -17,12 +17,27 @@
 namespace CGAL {
 namespace Arrangement_on_curve_1 {
 
+/*! \class Arrangement_on_curve_1
+ * \tparam GeometryTraits_1
+ *
+ * \tparam TopologyTraits
+ *
+ * \tparam BinarySearch when true (requires UseVector = true), the locate()
+ *                      function in locate.h uses a binary search over the sorted
+ *                      vertex vector, reducing locate from O(n) to O(log n).
+ */
 template <typename GeometryTraits_1,
-          typename TopologyTraits = Unbounded_topology_traits<typename GeometryTraits_1::Point_1>>
+          typename TopologyTraits = Unbounded_topology_traits<typename GeometryTraits_1::Point_1>,
+          bool BinarySearch = false>
 class Arrangement_on_curve_1 {
+  static_assert(! BinarySearch || TopologyTraits::use_vector,
+    "BinarySearch = true requires TopologyTraits::UseVector = true: binary search is only "
+    "available over a random-access container.");
+
 public:
   using Geometry_traits_1 = GeometryTraits_1;
   using Topology_traits = TopologyTraits;
+  static constexpr bool binary_search_enabled = BinarySearch;
 
   // Define a clean type alias for the traits smart pointer
   using Shared_geometry_traits = std::shared_ptr<const Geometry_traits_1>;
@@ -50,7 +65,7 @@ private:
   Topology_traits m_topology_traits;
 
 public:
-  // --------------------------------------------------------------------------
+  // ==========================================================================
   // Special member functions.
   //
   // The destructor, move constructor, and move assignment are all correct as
@@ -62,7 +77,7 @@ public:
   // intentional: they delegate entirely to TopologyTraits's copy operations,
   // which perform the non-trivial cross-reference patching needed to produce a
   // fully independent copy with valid internal iterators.
-  // --------------------------------------------------------------------------
+  // ==========================================================================
   ~Arrangement_on_curve_1() = default;
 
   Arrangement_on_curve_1(const Arrangement_on_curve_1&) = default;
@@ -90,20 +105,22 @@ public:
   { CGAL_assertion(m_geometry_traits != nullptr); }
 
   // 4. Allocator-aware constructor.
-  //    Constructs an empty arrangement whose internal topology traits (and
-  //    therefore its vertex/edge lists) use the supplied allocator.
-  //    Requires that TopologyTraits is constructible from an Allocator_type.
+  // Constructs an empty arrangement whose internal topology traits (and
+  // therefore its vertex/edge lists) use the supplied allocator.
+  // Requires that TopologyTraits is constructible from an Allocator_type.
   Arrangement_on_curve_1(Shared_geometry_traits shared_geom_tr, const Allocator_type& alloc) :
     m_geometry_traits(std::move(shared_geom_tr)),
     m_topology_traits(alloc)
   { CGAL_assertion(m_geometry_traits != nullptr); }
 
-  // Modifiers
+  // ==========================================================================
+  // MODIFIERS
+  // ==========================================================================
 
   /*! creates a new vertex, enforcing the rightmost ordering invariant when BinarySearch is active.
    */
   Vertex_descriptor create_vertex(const Point_1& p) {
-    if constexpr (TopologyTraits::binary_search_enabled) {
+    if constexpr (binary_search_enabled) {
       // Enforce that new vertices are inserted strictly in left-to-right order.
       CGAL_assertion_msg(empty() ||
                          m_geometry_traits->compare_x_1_object()
@@ -121,7 +138,7 @@ public:
   /*! destroys a given vertex.
    */
   void destroy_vertex(Vertex_descriptor v) {
-    if constexpr (TopologyTraits::binary_search_enabled) {
+    if constexpr (binary_search_enabled) {
       // Enforce that only the rightmost vertex can be destroyed in O(1) time
       // without invalidating stored vertex indices in existing edges.
       CGAL_assertion_msg(v == this->topology_traits().number_of_vertices() - 1,
@@ -139,7 +156,16 @@ public:
    */
   void clear() { m_topology_traits.clear(); }
 
-  // Accessors
+  void reset_shared_geometry_traits(Shared_geometry_traits new_shared_geom_tr) {
+    // Safety check: changing traits on a populated structure is highly dangerous
+    CGAL_precondition_msg(empty(), "Cannot reset the geometry traits pointer of a non-empty arrangement.");
+    CGAL_assertion(new_shared_geom_tr != nullptr);
+    m_geometry_traits = new_shared_geom_tr;
+  }
+
+  // ==========================================================================
+  // ACCESSORS
+  // ==========================================================================
 
   const Geometry_traits_1& geometry_traits_1() const { return *m_geometry_traits; }
   Shared_geometry_traits shared_geometry_traits_1() const { return m_geometry_traits; }
@@ -176,16 +202,8 @@ public:
   bool has_left_vertex(Edge_const_descriptor e) const { return m_topology_traits.has_left_vertex(e); }
   bool has_right_vertex(Edge_const_descriptor e) const { return m_topology_traits.has_right_vertex(e); }
 
-  // Setters
-  // Returns the allocator used by the internal topology traits.
+  // obtains the allocator used by the internal topology traits.
   Allocator_type get_allocator() const noexcept { return m_topology_traits.get_allocator(); }
-
-  void reset_shared_geometry_traits(Shared_geometry_traits new_shared_geom_tr) {
-    // Safety check: changing traits on a populated structure is highly dangerous
-    CGAL_precondition_msg(empty(), "Cannot reset the geometry traits pointer of a non-empty arrangement.");
-    CGAL_assertion(new_shared_geom_tr != nullptr);
-    m_geometry_traits = new_shared_geom_tr;
-  }
 
   // ============================================================================
   // HIGH-LEVEL TOPOLOGICAL OPERATIONS
@@ -224,8 +242,8 @@ public:
   /*! inserts a new vertex p strictly to the left of an existing vertex.
    */
   Vertex_descriptor insert_before(Vertex_descriptor v, const Point_1& p) {
-    if constexpr (TopologyTraits::binary_search_enabled) {
-      CGAL_error_msg("insert_before() cannot be invoked when TopologyTraits::binary_search_enabled is true. "
+    if constexpr (binary_search_enabled) {
+      CGAL_error_msg("insert_before() cannot be invoked when binary_search_enabled is true. "
                      "Vertices must be appended in strictly increasing x-order.");
     }
 
@@ -254,7 +272,7 @@ public:
   /*! inserts a new vertex p strictly to the right of an existing last vertex v.
    */
   Vertex_descriptor insert_after(Vertex_descriptor v, const Point_1& p) {
-    if constexpr (TopologyTraits::binary_search_enabled) {
+    if constexpr (binary_search_enabled) {
       // Enforce that v is the current rightmost vertex
       CGAL_assertion_msg(v == m_topology_traits.number_of_vertices() - 1,
                          "When BinarySearch = true, insert_after() can only be called on the rightmost vertex.");
@@ -286,7 +304,7 @@ public:
    * e becomes the left sub-edge; a new edge becomes the right sub-edge.
    */
   Vertex_descriptor split_edge(Edge_descriptor e, const Point_1& p) {
-    if constexpr (TopologyTraits::binary_search_enabled) {
+    if constexpr (binary_search_enabled) {
       // 1. Must split the rightmost unbounded edge (no right vertex)
       CGAL_assertion_msg(! m_topology_traits.has_right_vertex(e),
                          "When BinarySearch = true, split_edge() can only be called on the rightmost unbounded edge.");
@@ -339,6 +357,45 @@ public:
     // Destroy the now-redundant right edge and the vertex.
     destroy_edge(e_right);
     destroy_vertex(v);
+  }
+
+  // ==================================================================
+  // BINARY SEARCH SUPPORT (only available / called when Topology_traits::UseVector = true)
+  //
+  // locate.h calls binary_search_vertex() when the topology traits has
+  // BinarySearch = true (detected via the static constexpr below).
+  //
+  // The vertex vector is maintained in left-to-right sorted order by
+  // Arrangement_on_curve_1's high-level insert operations.  We perform a
+  // standard lower_bound-style search using the geometry traits' comparator.
+  //
+  // Returns:
+  //   - the index of the matching vertex if p coincides with one, or
+  //   - the index of the first vertex whose x-coordinate is > p, which is
+  //     the right endpoint of the edge that contains p.
+  //     (An out-of-range index equal to m_vertices.size() means p is to the
+  //      right of all vertices, i.e. it lies in the rightmost edge.)
+  //
+  // The caller distinguishes the two cases by comparing the returned index
+  // against m_vertices.size() and, if in range, by checking whether cmp
+  // returns EQUAL for the vertex at that index.
+  // ==================================================================
+  template <typename Compare>
+  std::size_t binary_search_vertex(const Point_1& p, Compare cmp) const {
+    static_assert(Topology_traits::use_vector, "binary_search_vertex() is only available when use_vector = true.");
+
+    const auto& vertices = m_topology_traits.raw_vertices();
+
+    std::size_t lo = 0, hi = vertices.size();
+    while (lo < hi) {
+      std::size_t mid = lo + (hi - lo) / 2;
+      auto res = cmp(vertices[mid].m_point, p);
+      if (res == CGAL::SMALLER) lo = mid + 1;
+      else if (res == CGAL::LARGER)  hi = mid;
+      else return mid; // EQUAL — vertex found
+    }
+    // p is not at any vertex; lo is the index of the first vertex > p.
+    return lo;
   }
 };
 
