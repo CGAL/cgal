@@ -40,13 +40,12 @@ int main(int argc, char* argv[])
     C3t3 c3t3;
 
     std::ifstream is(filename, std::ios_base::in);
-    Triangulation tr;
-    if(!CGAL::IO::read_MEDIT(is,tr))
+    if(!CGAL::IO::read_MEDIT(is,c3t3.triangulation()))
     {
-        std::cerr << "Failed to read" << std::endl;
-        return EXIT_FAILURE;
+      std::cerr << "Failed to read" << std::endl;
+      return EXIT_FAILURE;
     }
-    c3t3.set_triangulation(std::move(tr));
+    c3t3.rescan_after_load_of_triangulation();
 
     std::ofstream os("c3t3_initial.mesh");
     CGAL::IO::write_MEDIT(os, c3t3.triangulation(), CGAL::parameters::all_vertices(true));
