@@ -202,6 +202,8 @@ void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::set_update_valid
 template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
 void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::check_refs() {
     // when is it that the input tetrahedra is wrong, or is it just tangled?
+    // I didn't find a good way to sanitize the inputs because of the variety of input garbage :(
+
     // bool input_contains_invalid_references = false;
     // for (auto cell : _mesh.cell_range()) {
     //     auto ref = _mesh.cell_reference_shape(cell);
