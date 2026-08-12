@@ -15,7 +15,7 @@
 
 #include <CGAL/license/Mesh_smoothing_3.h>
 
-#include <CGAL/Mesh_smoothing_3/internal/utils/colorized_text.h>
+#include <CGAL/IO/Color_ostream.h>
 
 #include <chrono>
 #include <iostream>
@@ -37,13 +37,15 @@ public:
 
     void log_sub_step(std::string const &subTitle, std::string const &subText = "") {
         auto now = std::chrono::steady_clock::now();
-        Colorized_print("[Time log] "+ _title + " > " + subTitle + " = " + std::to_string(static_cast<double>(std::chrono::duration_cast<std::chrono::milliseconds>(now - lastSubStep).count()) / 1000.) + "s. " + subText, ConsoleTextColor::Blue);
+        CGAL::IO::Color_stream_guard blue(std::cout, CGAL::IO::Ansi_color::Blue);
+        std::cout << "[Time log] " << _title << " > " << subTitle << " = " << static_cast<double>(std::chrono::duration_cast<std::chrono::milliseconds>(now - lastSubStep).count()) / 1000. << "s. " << subText << std::endl;
         lastSubStep = now;
     }
 
     void log_total_time() {
         auto now = std::chrono::steady_clock::now();
-        Colorized_print("[Time log] "+ _title + " > " + " = " + std::to_string(static_cast<double>(std::chrono::duration_cast<std::chrono::milliseconds>(now - begin).count()) / 1000.) + "s. ", ConsoleTextColor::BrightBlue);
+        CGAL::IO::Color_stream_guard bright_blue(std::cout, CGAL::IO::Ansi_color::BrightBlue);
+        std::cout << "[Time log] " << _title << " > " << " = " << static_cast<double>(std::chrono::duration_cast<std::chrono::milliseconds>(now - begin).count()) / 1000. << "s. " << std::endl;
     }
 private:
     std::chrono::steady_clock::time_point begin;

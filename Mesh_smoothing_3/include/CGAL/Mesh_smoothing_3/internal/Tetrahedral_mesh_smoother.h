@@ -15,9 +15,12 @@
 
 #include <CGAL/license/Mesh_smoothing_3.h>
 
-#include <CGAL/Mesh_smoothing_3/internal/math_functions.h>
-#include <CGAL/Mesh_smoothing_3/internal/Function_minimizer.h>
+#include <CGAL/Mesh_smoothing_3/internal/utils/math_functions.h>
+#include <CGAL/Mesh_smoothing_3/internal/utils/Function_minimizer.h>
 #include <CGAL/Mesh_smoothing_3/internal/utils/log_time.h>
+
+
+#include <CGAL/IO/Color_ostream.h>
 
 #include <Eigen/Eigen>
 
@@ -1496,17 +1499,25 @@ inline bool Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::run_qua
     number_of_lbfgs_iter = 0;
 
     Time_log logging("Tetrahedral_mesh_smoother");
-    if (_det_min <= 0) {
-        Colorized_print("Inverted elements detected, Tetrahedral_mesh_smoother will first try to untangle them.", ConsoleTextColor::BrightRed);
+    if (_det_min <= 0) { 
+        {
+            CGAL::IO::Color_stream_guard bright_red(std::cout, CGAL::IO::Ansi_color::BrightRed);
+            std::cout << "Inverted elements detected, Tetrahedral_mesh_smoother will first try to untangle them." << std::endl;
+        }
         run_untangling(1500);
         if (_det_min <= 0) {
-            Colorized_print("Input mesh still contains inverted elements, Tetrahedral_mesh_smoother cannot run its quality maximization routine.", ConsoleTextColor::BrightRed);
+            CGAL::IO::Color_stream_guard bright_red(std::cout, CGAL::IO::Ansi_color::BrightRed);
+            std::cout << "Input mesh still contains inverted elements, Tetrahedral_mesh_smoother cannot run its quality maximization routine." << std::endl;
             return false;
         }
-        Colorized_print("Untangling was success. Now maximizing worst quality.", ConsoleTextColor::BrightBlue);
+        {
+            CGAL::IO::Color_stream_guard bright_red(std::cout, CGAL::IO::Ansi_color::BrightBlue);
+            std::cout << "Untangling was success. Now maximizing worst quality." << std::endl;
+        }
     }
     else {
-        Colorized_print("Running standard elliptic energy before quality maximization.", ConsoleTextColor::BrightRed);
+        CGAL::IO::Color_stream_guard bright_red(std::cout, CGAL::IO::Ansi_color::BrightRed);
+        std::cout << "Running standard elliptic energy before quality maximization." << std::endl;
         run_untangling(2);
     }
     update_local_size();
