@@ -93,7 +93,7 @@ public:
 
 
     using Size_query = std::function<double (unsigned vertex_id, Eigen::Vector3d coord)>;
-    using Size_batch_query = std::function<void (std::vector<unsigned> const &vertices, std::vector<Eigen::Vector3d> coords, std::vector<double> &sizes)>;
+    using Size_batch_query = std::function<void (std::vector<unsigned> const &vertices, std::vector<Eigen::Vector3d> const &coords, std::vector<double> &sizes)>;
 
     void set_target_sizing(Size_query query); // todo: implement and use.
     void set_target_sizing(Size_batch_query query);
@@ -1374,7 +1374,7 @@ inline bool Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::run_unt
         if (!laplacian_precond) return d;
         if (verbose) logging.restart();
         Eigen::VectorXd md = linear_solver.solve(d);
-        for (unsigned i = 0; i < _coords.size(); ++i) {
+        for (unsigned i = 0; i < x.size(); ++i) {
             if (_locks[i]) md[i] = 0;
         }
         double scale_back = 1.;

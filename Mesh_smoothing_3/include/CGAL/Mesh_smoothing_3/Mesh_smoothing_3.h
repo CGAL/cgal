@@ -562,8 +562,8 @@ private:
 
 public:
     C3t3_smoother(C3t3 &c3t3)
-    : mesh_wrapper(c3t3)
-    , Mesh_smoother<C3t3_wrapper<C3t3>, C3t3_wrapper<C3t3>, C3t3_wrapper<C3t3>>(mesh_wrapper, mesh_wrapper, mesh_wrapper)
+    : Mesh_smoother<C3t3_wrapper<C3t3>, C3t3_wrapper<C3t3>, C3t3_wrapper<C3t3>>(mesh_wrapper, mesh_wrapper, mesh_wrapper)
+    , mesh_wrapper(c3t3)
     {}
 
 };

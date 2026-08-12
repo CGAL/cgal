@@ -39,12 +39,12 @@ namespace default_structures {
         std::size_t nb_cells() const { return 0; }
         std::size_t nb_vertices() const { return 0; }
 
-        Point_3 vertex_coordinates(Vertex_descriptor vertex) const { return {0.,0.,0.}; }
-        void  set_vertex_coordinates(Vertex_descriptor vertex, Point_3 coord) {}   // only non const
+        Point_3 vertex_coordinates(Vertex_descriptor) const { return {0.,0.,0.}; }
+        void  set_vertex_coordinates(Vertex_descriptor, Point_3) {}   // only non const
 
         std::vector<Cell_descriptor> cell_range() const { return {}; } // should return a range of Cell_descriptor
-        std::array<Vertex_descriptor, 4> cell_vertices(Cell_descriptor cell) const { return {0,0,0,0}; } // can return anything of size 4 with [int] operator
-        std::array<Point_3, 4> cell_reference_shape(Cell_descriptor cell) const {
+        std::array<Vertex_descriptor, 4> cell_vertices(Cell_descriptor) const { return {0,0,0,0}; } // can return anything of size 4 with [int] operator
+        std::array<Point_3, 4> cell_reference_shape(Cell_descriptor) const {
             return Shapes::VTK_TETRAHEDRON<Point_3>();
         }
     };
@@ -107,7 +107,7 @@ namespace basic_structures {
 
         utils::Contiguous_unsigned_range cell_range() const { return utils::Contiguous_unsigned_range{0, nb_cells()}; }
         std::array<Vertex_descriptor, 4> cell_vertices(Cell_descriptor cell) const { return _tetrahedra[cell]; }
-        std::array<Point_3, 4> cell_reference_shape(Cell_descriptor cell) const {
+        std::array<Point_3, 4> cell_reference_shape(Cell_descriptor) const {
             return Shapes::VTK_TETRAHEDRON<Point_3>();
         }
     public:
@@ -350,7 +350,7 @@ public:
         }
         return vertices;
     }
-    std::array<Point_3, 4> cell_reference_shape(Cell_descriptor cell) const {
+    std::array<Point_3, 4> cell_reference_shape(Cell_descriptor) const {
         return Shapes::VTK_TETRAHEDRON<Point_3>();
     }
 

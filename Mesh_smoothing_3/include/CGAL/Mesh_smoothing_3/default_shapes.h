@@ -36,9 +36,9 @@ namespace Shapes {
 
         virtual unsigned nb_vertices() const { return 0; }
 
-        virtual unsigned inner_tetrahedra_local_vert(unsigned tet, unsigned tet_vert) const { return 0; }
+        virtual unsigned inner_tetrahedra_local_vert(unsigned, unsigned) const { return 0; }
 
-        virtual Point3 vertex_reference_coordinates(unsigned local_vert) const { return Point3(); }
+        virtual Point3 vertex_reference_coordinates(unsigned) const { return Point3(); }
 
         std::array<Point3, 4> inner_tetrahedra_reference_shape(unsigned tet) const {
             return {
