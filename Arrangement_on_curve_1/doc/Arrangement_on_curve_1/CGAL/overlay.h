@@ -20,20 +20,20 @@ namespace Arrangement_on_curve_1 {
  * \pre `arr_r` does not refer to either `arr_a` or `arr_b` (that is,
  * overlay in place is not supported).
  *
- * \pre The overlay-observer object `observer` must model the `OverlayObserver`
+ * \pre The overlay-visitor object `visitor` must model the `OverlayVisitor`
  * concept; this object consists of callback functions that update the vertices
  * and edges of the resulting arrangement based of the vertices and edges of the
  * input arrangements that indice them.
  *
- * \sa `OverlayObserver`
+ * \sa `OverlayVisitor`
  */
 template <typename GeometryTraitsA, typename GeometryTraitsB, typename GeometryTraitsRes,
           typename TopologyTraitsA, typename TopologyTraitsB, typename TopologyTraitsRes,
-          typename OverlayObserver>
+          typename OverlayVisitor>
 void overlay(const Arrangement_on_curve_1<GeometryTraitsA, TopologyTraitsA>& arr_a,
              const Arrangement_on_curve_1<GeometryTraitsB, TopologyTraitsB>& arr_b,
              Arrangement_on_curve_1<GeometryTraitsRes, TopologyTraitsRes>& arr_r,
-             OverlayObserver& observer);
+             OverlayVisitor& visitor);
 
 /*! \ingroup PkgArrangementOnCurve1Funcs
  * computes the overlay of two input 1D arrangement objects `arr_a` and `arr_b`,

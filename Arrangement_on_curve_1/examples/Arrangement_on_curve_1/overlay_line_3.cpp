@@ -16,13 +16,13 @@
 #include <CGAL/Arrangement_on_curve_1/overlay.h>
 #include <CGAL/Arrangement_on_curve_1/Unbounded_topology_traits.h>
 #include <CGAL/Arrangement_on_curve_1/Line_3_traits_1.h>
-#include <CGAL/Arrangement_on_curve_1/Copy_overlay_observer.h>
+#include <CGAL/Arrangement_on_curve_1/Copy_overlay_visitor.h>
 
 using Kernel = CGAL::Exact_predicates_exact_constructions_kernel;
 using Traits = CGAL::Arrangement_on_curve_1::Line_3_traits_1<Kernel>;
 using Topo = CGAL::Arrangement_on_curve_1::Unbounded_topology_traits<typename Traits::Point_1, std::string, void>;
 using Arrangement = CGAL::Arrangement_on_curve_1::Arrangement_on_curve_1<Traits, Topo>;
-using Observer = CGAL::Arrangement_on_curve_1::Copy_overlay_observer<Arrangement, Arrangement, Arrangement>;
+using Visitor = CGAL::Arrangement_on_curve_1::Copy_overlay_visitor<Arrangement, Arrangement, Arrangement>;
 
 int main() {
   // Define an infinite master 3D line passing through (0,0,0) with direction vector (1,1,1)
@@ -58,13 +58,13 @@ int main() {
   put(v2_data, v2_B, std::string("Station Beta (Updated)"));
   put(v2_data, v2_C, std::string("Station Gamma"));
 
-  // Instantiate the concrete data copying observer
-  std::cout << "\nInstantiating the copying observer interface...\n";
-  Observer observer(arr1, arr2, res_arr);
+  // Instantiate the concrete data copying visitor
+  std::cout << "\nInstantiating the copying visitor interface...\n";
+  Visitor visitor(arr1, arr2, res_arr);
 
   // Compute the topological overlay
   std::cout << "Computing the arrangement overlay along the 3D line track...\n";
-  CGAL::Arrangement_on_curve_1::overlay(arr1, arr2, res_arr, observer);
+  CGAL::Arrangement_on_curve_1::overlay(arr1, arr2, res_arr, visitor);
 
   // Traverse and inspect the merged arrangement sequence
   std::cout << "\nResulting Overlay Arrangement Sequence:\n";

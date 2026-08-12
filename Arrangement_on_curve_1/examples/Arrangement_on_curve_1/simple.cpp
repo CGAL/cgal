@@ -7,6 +7,9 @@
 #include <CGAL/Arrangement_on_curve_1/insert.h>
 #include <CGAL/Arrangement_on_curve_1/Unbounded_topology_traits.h>
 
+// Use std::vector to store the vertices and force increasing lexicographical order on the vertices.
+// It forces inserting the points in increasing lexicographical order.
+
 using Kernel = CGAL::Exact_predicates_exact_constructions_kernel;
 using Geom_traits = CGAL::Arrangement_on_curve_1::Ft_traits_1<Kernel>;
 using Point = Geom_traits::Point_1;

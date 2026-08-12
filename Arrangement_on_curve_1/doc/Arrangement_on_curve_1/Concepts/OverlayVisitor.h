@@ -4,15 +4,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef CGAL_OVERLAY_OBSERVER_H
-#define CGAL_OVERLAY_OBSERVER_H
+#ifndef CGAL_OVERLAY_VISITOR_H
+#define CGAL_OVERLAY_VISITOR_H
 
 namespace CGAL {
 
 /*! \ingroup PkgArrangementOnCurve1Concepts
  * \cgalConcept
  *
- * A model of the `OverlayObserver` concept contains callback functions invoked
+ * A model of the `OverlayVisitor` concept contains callback functions invoked
  * while the overlay operation of two input arrangements progresses.  Models of
  * the concept are used by the free function `Arrangement_on_curve_1::overlay()`
  * to maintain the auxiliary data stored with the cells (i.e., vertices and
@@ -20,8 +20,8 @@ namespace CGAL {
  * input cells.
  *
  * \cgalHasModelsBegin
- * \cgalHasModels{CGAL::Arrangement_on_curve_1::Default_overlay_observer<ArrangementA, ArrangementB, ArrangementR>}
- * \cgalHasModels{CGAL::Arrangement_on_curve_1::Copy_overlay_observer<ArrangementA, ArrangementB, ArrangementR>}
+ * \cgalHasModels{CGAL::Arrangement_on_curve_1::Default_overlay_visitor<ArrangementA, ArrangementB, ArrangementR>}
+ * \cgalHasModels{CGAL::Arrangement_on_curve_1::Copy_overlay_visitor<ArrangementA, ArrangementB, ArrangementR>}
  * \cgalHasModelsEnd
  *
  * \sa `overlay`

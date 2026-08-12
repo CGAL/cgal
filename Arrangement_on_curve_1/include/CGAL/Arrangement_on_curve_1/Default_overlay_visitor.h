@@ -4,14 +4,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef CGAL_ARRANGEMENT_ON_CURVE_1_DEFAULT_OVERLAY_OBSERVER_H
-#define CGAL_ARRANGEMENT_ON_CURVE_1_DEFAULT_OVERLAY_OBSERVER_H
+#ifndef CGAL_ARRANGEMENT_ON_CURVE_1_DEFAULT_OVERLAY_VISITOR_H
+#define CGAL_ARRANGEMENT_ON_CURVE_1_DEFAULT_OVERLAY_VISITOR_H
 
 namespace CGAL {
 namespace Arrangement_on_curve_1 {
 
 template <typename ArrangementA, typename ArrangementB, typename ArrangementR>
-class Default_overlay_observer {
+class Default_overlay_visitor {
 public:
   using Vertex_descriptor_a = typename ArrangementA::Vertex_descriptor;
   using Vertex_descriptor_b = typename ArrangementB::Vertex_descriptor;
@@ -22,7 +22,7 @@ public:
   using Edge_descriptor_r = typename ArrangementR::Edge_descriptor;
 
 public:
-  Default_overlay_observer(const ArrangementA&, const ArrangementB&, ArrangementR&) {}
+  Default_overlay_visitor(const ArrangementA&, const ArrangementB&, ArrangementR&) {}
 
   // 4 Core Required Intersection Callbacks (Nops)
   void create_vertex_vv(Vertex_descriptor_a, Vertex_descriptor_b, Vertex_descriptor_r) {}

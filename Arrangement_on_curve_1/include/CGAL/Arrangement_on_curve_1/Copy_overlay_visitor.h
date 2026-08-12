@@ -4,8 +4,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef CGAL_ARRANGEMENT_ON_CURVE_1_COPY_OVERLAY_OBSERVER_H
-#define CGAL_ARRANGEMENT_ON_CURVE_1_COPY_OVERLAY_OBSERVER_H
+#ifndef CGAL_ARRANGEMENT_ON_CURVE_1_COPY_OVERLAY_VISITOR_H
+#define CGAL_ARRANGEMENT_ON_CURVE_1_COPY_OVERLAY_VISITOR_H
 
 #include <type_traits>
 
@@ -15,7 +15,7 @@ namespace CGAL {
 namespace Arrangement_on_curve_1 {
 
 template <typename ArrangementA, typename ArrangementB, typename ArrangementR>
-class Copy_overlay_observer {
+class Copy_overlay_visitor {
 public:
   using Vertex_const_descriptor_a = typename ArrangementA::Vertex_const_descriptor;
   using Vertex_const_descriptor_b = typename ArrangementB::Vertex_const_descriptor;
@@ -44,7 +44,7 @@ private:
   Edge_data_map_b m_e_map_b;
 
 public:
-  Copy_overlay_observer(const ArrangementA& arr_a, const ArrangementB& arr_b, ArrangementR& arr_r) :
+  Copy_overlay_visitor(const ArrangementA& arr_a, const ArrangementB& arr_b, ArrangementR& arr_r) :
     m_v_map_r(arr_r.vertex_data_map()),
     m_e_map_r(arr_r.edge_data_map()),
     m_v_map_a(arr_a.vertex_data_map()),
