@@ -18,9 +18,9 @@
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 
 using Subdomain_index = int;
-using Surface_patch_index = unsigned char;
-using Curve_index = char;
-using Corner_index = short;
+using Surface_patch_index = unsigned;
+using Curve_index = unsigned;
+using Corner_index = unsigned;
 
 using Cb = CGAL::Simplicial_mesh_cell_base_3<K, Subdomain_index, Surface_patch_index>;
 using Vb = CGAL::Simplicial_mesh_vertex_base_3<K, Subdomain_index, Surface_patch_index,
