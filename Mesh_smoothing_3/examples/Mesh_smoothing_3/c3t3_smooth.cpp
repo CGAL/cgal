@@ -31,8 +31,6 @@ using Triangulation = CGAL::Triangulation_3<K, Tds>;
 
 using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<Triangulation>;
 
-// To avoid verbose function and named parameters call
-namespace params = CGAL::parameters;
 
 int main(int argc, char* argv[])
 {
@@ -54,14 +52,11 @@ int main(int argc, char* argv[])
     CGAL::IO::write_MEDIT(os, c3t3.triangulation(), CGAL::parameters::all_vertices(true));
     os.close();
 
-    // CGAL::boundary_aware_mesh_smoothing(c3t3, params::verbose(true).number_of_iterations(100));
+    CGAL::boundary_aware_mesh_smoothing(c3t3, CGAL::parameters::verbose(true).number_of_iterations(100));
 
-    std::ifstream is2("c3t3_smoothed.mesh");
-    if(!CGAL::IO::read_MEDIT(is2, c3t3.triangulation()))
-    {
-        std::cerr << "Failed to read (#2)" << std::endl;
-        return EXIT_FAILURE;
-    }
+    std::ofstream os2("c3t3_smoothed.mesh");
+    CGAL::IO::write_MEDIT(os2, c3t3.triangulation(), CGAL::parameters::all_vertices(true));
+    os2.close();
 
     std::cout << "Done" << std::endl;
     return EXIT_SUCCESS;
