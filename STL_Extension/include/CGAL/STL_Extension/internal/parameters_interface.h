@@ -193,6 +193,7 @@ CGAL_add_named_parameter(refitting_t, refitting, refitting)
 CGAL_add_named_parameter(volume_error_t, volume_error, volume_error)
 CGAL_add_named_parameter(maximum_number_of_convex_volumes_t, maximum_number_of_convex_volumes, maximum_number_of_convex_volumes)
 CGAL_add_named_parameter(split_at_concavity_t, split_at_concavity, split_at_concavity)
+CGAL_add_named_parameter(use_inverse_transformation_t, use_inverse_transformation, use_inverse_transformation)
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 CGAL_add_named_parameter(erase_all_duplicates_t, erase_all_duplicates, erase_all_duplicates)

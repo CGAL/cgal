@@ -102,6 +102,12 @@ Bbox_3 compute_transformed_bbox(const CGAL::Aff_transformation_3<Kernel>& at, co
 }
 
 template<class Kernel>
+Bbox_3 compute_transformed_bbox(const CGAL::Aff_transformation_3<Kernel>& at, const Bbox_3& bbox)
+{
+  return compute_transformed_bbox(at, bbox, at.has_rotation());
+}
+
+template<class Kernel>
 Bbox_2 compute_transformed_bbox(const CGAL::Aff_transformation_2<Kernel>& at, const Bbox_2& bbox, bool has_rotation)
 {
   typedef Simple_cartesian<Interval_nt<false>> AK;
@@ -128,6 +134,12 @@ Bbox_2 compute_transformed_bbox(const CGAL::Aff_transformation_2<Kernel>& at, co
   ps[3] = a_at( AK::Point_2(xtrm[1], xtrm[3]) );
 
   return bbox_2(ps, ps+4);
+}
+
+template<class Kernel>
+Bbox_2 compute_transformed_bbox(const CGAL::Aff_transformation_2<Kernel>& at, const Bbox_2& bbox)
+{
+  return compute_transformed_bbox(at, bbox, at.has_rotation());
 }
 
 } } //namespace CGAL::internal

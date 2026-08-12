@@ -49,6 +49,13 @@ namespace AABB_trees {
   ///     \cgalParamType{`CGAL::Aff_transformation_3<Kernel>` where `Kernel` is deduced from `AABBTree1::AABB_traits::Point`, using `Kernel_traits`}
   ///     \cgalParamDefault{An identity transformation}
   ///   \cgalParamNEnd
+  ///   \cgalParamNBegin{use_inverse_transformation}
+  ///     \cgalParamDescription{If true, the inverse of the transformations are used to accelerate the queries.
+  ///     \cgalParamType{`CGAL::Tag_true` or `CGAL::Tag_false`}
+  ///     \cgalParamDefault{`CGAL::Tag_true`}
+  ///     \cgalParamExtra{The result may be less accurate than using the original transformations.}
+  ///     \cgalParamExtra{`np1` only}
+  ///   \cgalParamNEnd
   /// \cgalNamedParamsEnd
   ///
   /// \return `true` if at least one primitive of `tree1` intersects
@@ -71,6 +78,16 @@ namespace AABB_trees {
                                           Sequential_tag
                                         > ::type;
 
+    // Early exit if one of the trees is empty
+    if(tree1.empty() || tree2.empty())
+      return false;
+
+    using Inverse_tag = typename internal_np::Lookup_named_param_def <
+                                          internal_np::use_inverse_transformation_t,
+                                          NamedParameters1,
+                                          Tag_true
+                                        > ::type;
+
     if constexpr(is_default_parameter<NamedParameters1, internal_np::transformation_t>::value &&
                  is_default_parameter<NamedParameters2, internal_np::transformation_t>::value)
     {
@@ -89,7 +106,7 @@ namespace AABB_trees {
       Aff_tr tr2 = choose_parameter(get_parameter(np2, internal_np::transformation), Aff_tr(Identity_transformation()));
       CGAL::internal::AABB_tree::Two_trees_do_intersect_traits_with_transformation<typename AABBTree1::AABB_traits,
                                                                                    typename AABBTree2::AABB_traits,
-                                                                                   Aff_tr, false>
+                                                                                   Aff_tr, false, Inverse_tag>
                                                         traversal_traits(tree1.traits(), tree2.traits(), tr1, tr2);
       CGAL::internal::AABB_tree::two_trees_traversal(tree1, tree2, traversal_traits);
       return traversal_traits.is_intersection_found();
@@ -145,6 +162,10 @@ namespace AABB_trees {
                                           NamedParameters1,
                                           Sequential_tag
                                         > ::type;
+
+    // Early exit if one of the trees is empty
+    if(tree1.empty() || tree2.empty())
+      return;
 
     if constexpr(is_default_parameter<NamedParameters1, internal_np::transformation_t>::value &&
                  is_default_parameter<NamedParameters2, internal_np::transformation_t>::value)

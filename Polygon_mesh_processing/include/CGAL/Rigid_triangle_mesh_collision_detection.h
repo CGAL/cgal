@@ -18,7 +18,7 @@
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits_3.h>
-#include <CGAL/Polygon_mesh_processing/internal/AABB_traversal_traits_with_transformation.h>
+#include <CGAL/AABB_trees/intersection.h>
 #include <CGAL/Polygon_mesh_processing/internal/Side_of_triangle_mesh/Point_inside_vertical_ray_cast.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
@@ -35,6 +35,42 @@
 #endif
 
 namespace CGAL {
+
+namespace internal {
+
+// helper for Point_inside_vertical_ray_cast
+template <class AABBTraits>
+class Transformed_tree_helper
+{
+  typedef CGAL::AABB_tree<AABBTraits> Tree;
+  typedef CGAL::AABB_node<AABBTraits> Node;
+  typedef Aff_transformation_3<typename AABBTraits::Geom_traits> Transformation;
+
+  Transformation m_tr;
+
+public:
+
+  Transformed_tree_helper(){}
+  Transformed_tree_helper(const Transformation& tr): m_tr(tr){}
+
+  Bbox_3 get_tree_bbox(const Tree& tree) const
+  {
+    return compute_transformed_bbox(m_tr, tree.bbox());
+  }
+
+  typename AABBTraits::Primitive::Datum
+  get_primitive_datum(const typename AABBTraits::Primitive& primitive, const AABBTraits& traits) const
+  {
+    return internal::Primitive_helper<AABBTraits>::get_datum(primitive, traits).transform(m_tr);
+  }
+
+  Bbox_3 get_node_bbox(const Node& node) const
+  {
+    return compute_transformed_bbox(m_tr, node.bbox());
+  }
+};
+
+}
 
 /*!
  * \ingroup PMP_intersection_grp
@@ -56,13 +92,16 @@ namespace CGAL {
  * @tparam Has_rotation tag indicating whether the transformations applied to meshes may contain rotations (\link Tag_true `Tag_true`\endlink)
  *                      or if only translations and scalings are applied (\link Tag_false `Tag_false`\endlink). Some optimizations are
  *                      switched on in case there are no rotations.
+ * @tparam Use_inverse_transformation if true, the inverse of the transformations are used to accelerate the queries.
+                        The result may be less accurate than using the original transformations.
  */
 template <class TriangleMesh,
           class VertexPointMap = Default,
           class Kernel = Default,
           class AABBTree = Default,
-          class Has_rotation = CGAL::Tag_true>
-class Rigid_triangle_mesh_collision_detection
+          class Has_rotation = CGAL::Tag_true,
+          bool Use_inverse_transformation = true>
+struct Rigid_triangle_mesh_collision_detection
 {
 // Vertex point map type
   typedef typename property_map_selector<TriangleMesh, boost::vertex_point_t
@@ -83,17 +122,14 @@ class Rigid_triangle_mesh_collision_detection
   typedef typename Tree::AABB_traits                                Tree_traits;
 
 // Transformed Tree traversal traits
-  typedef Do_intersect_traversal_traits_with_transformation<Tree_traits,
-                                                            K,
-                                                            Has_rotation>
-                                                               Traversal_traits;
+  typedef internal::AABB_tree::Do_intersect_traits<Tree_traits, K> Traversal_traits;
 
 // Data members
   std::vector<bool> m_own_aabb_trees;
   std::vector<Tree*> m_aabb_trees;
+  std::vector<Aff_transformation_3<K> > m_transformations;
   std::vector<bool> m_is_closed;
   std::vector< std::vector<typename K::Point_3> > m_points_per_cc;
-  std::vector<Traversal_traits> m_traversal_traits;
   std::size_t m_free_id; // position in m_id_pool of the first free element
   std::vector<std::size_t> m_id_pool; // 0-> m_id_pool-1 are valid mesh ids
 #if CGAL_RMCD_CACHE_BOXES
@@ -112,7 +148,7 @@ class Rigid_triangle_mesh_collision_detection
       m_aabb_trees.resize(m_free_id, nullptr);
       m_is_closed.resize(m_free_id);
       m_points_per_cc.resize(m_free_id);
-      m_traversal_traits.resize(m_free_id);
+      m_transformations.resize(m_free_id);
   #if CGAL_RMCD_CACHE_BOXES
       m_bboxes.resize(m_free_id);
       m_bboxes_is_invalid.resize(m_free_id, true);
@@ -133,15 +169,27 @@ class Rigid_triangle_mesh_collision_detection
   {
     typename K::Construct_ray_3     ray_functor;
     typename K::Construct_vector_3  vector_functor;
-    typedef typename Traversal_traits::Transformed_tree_helper Helper;
 
     for(const typename K::Point_3& q : m_points_per_cc[id_B])
     {
-      if( internal::Point_inside_vertical_ray_cast<K, Tree, Helper>(m_traversal_traits[id_A].get_helper())(
-            m_traversal_traits[id_B].transformation()( q ), *m_aabb_trees[id_A],
-            ray_functor, vector_functor) == CGAL::ON_BOUNDED_SIDE)
+      if constexpr(Use_inverse_transformation)
       {
-        return true;
+        if( internal::Point_inside_vertical_ray_cast<K, Tree>()(
+            m_transformations[id_A].inverse()(m_transformations[id_B](q)), *m_aabb_trees[id_A],
+            ray_functor, vector_functor) == CGAL::ON_BOUNDED_SIDE)
+        {
+          return true;
+        }
+      }
+      else
+      {
+        internal::Transformed_tree_helper<Tree_traits> helper(m_transformations[id_A]);
+        if( internal::Point_inside_vertical_ray_cast<K, Tree, internal::Transformed_tree_helper<Tree_traits> >(helper)(
+            m_transformations[id_B](q), *m_aabb_trees[id_A],
+            ray_functor, vector_functor) == CGAL::ON_BOUNDED_SIDE)
+        {
+          return true;
+        }
       }
     }
     return false;
@@ -153,11 +201,8 @@ class Rigid_triangle_mesh_collision_detection
 #if CGAL_RMCD_CACHE_BOXES
     if (!do_overlap(m_bboxes[id_B], m_bboxes[id_A])) continue;
 #endif
-
-    Do_intersect_traversal_traits_for_two_trees<Tree_traits, K, Has_rotation> traversal_traits(
-      m_aabb_trees[id_B]->traits(), m_traversal_traits[id_B].transformation(), m_traversal_traits[id_A]);
-    m_aabb_trees[id_B]->traversal(*m_aabb_trees[id_A], traversal_traits);
-    return traversal_traits.is_intersection_found();
+    if(AABB_trees::do_intersect(*m_aabb_trees[id_A], *m_aabb_trees[id_B], parameters::transformation(m_transformations[id_A]), parameters::transformation(m_transformations[id_B]))) return true;
+    return false;
   }
 
 public:
@@ -203,7 +248,7 @@ public:
     m_aabb_trees = std::move(other.m_aabb_trees);
     m_is_closed = std::move(other.m_is_closed);
     m_points_per_cc = std::move(other.m_points_per_cc);
-    m_traversal_traits = std::move(other.m_traversal_traits);
+    m_transformations = std::move(other.m_transformations);
     m_free_id = std::move(other.m_free_id);
     m_id_pool = std::move(other.m_id_pool);
 
@@ -264,7 +309,7 @@ public:
     Tree* t = new Tree(std::begin(faces(tm)), std::end(faces(tm)), tm, vpm);
     t->build();
     m_aabb_trees[id] = t;
-    m_traversal_traits[id] = Traversal_traits(m_aabb_trees[id]->traits());
+    m_transformations[id] = Aff_transformation_3<K>(CGAL::IDENTITY);
     add_cc_points(tm, id, np);
 
     return id;
@@ -312,7 +357,7 @@ public:
     m_is_closed[id] = is_closed(tm);
     m_own_aabb_trees[id] = false ;
     m_aabb_trees[id] = const_cast<Tree*>(&tree);
-    m_traversal_traits[id] = Traversal_traits(m_aabb_trees[id]->traits());
+    m_transformations[id] = Aff_transformation_3<K>(CGAL::IDENTITY);
     collect_one_point_per_connected_component(tm, m_points_per_cc[id], np);
     return id;
   }
@@ -323,7 +368,7 @@ public:
   void set_transformation(std::size_t mesh_id, const Aff_transformation_3<K>& aff_trans)
   {
     CGAL_assertion(m_aabb_trees[mesh_id] != nullptr);
-    m_traversal_traits[mesh_id].set_transformation(aff_trans);
+    m_transformations[mesh_id] = aff_trans;
 #if CGAL_RMCD_CACHE_BOXES
     m_bboxes_is_invalid.set(mesh_id);
 #endif
@@ -468,7 +513,7 @@ public:
     m_aabb_trees.reserve(size);
     m_is_closed.reserve(size);
     m_points_per_cc.reserve(size);
-    m_traversal_traits.reserve(size);
+    m_transformations.reserve(size);
 #if CGAL_RMCD_CACHE_BOXES
     m_bboxes.reserve(size);
 #endif
@@ -627,7 +672,7 @@ public:
     m_is_closed[id] = is_closed;
     m_own_aabb_trees[id] = false ;
     m_aabb_trees[id] = const_cast<Tree*>(&tree);
-    m_traversal_traits[id] = Traversal_traits(m_aabb_trees[id]->traits());
+    m_transformations[id] = Aff_transformation_3<K>(CGAL::IDENTITY);
     m_points_per_cc[id] = points_per_cc;
 
     return id;

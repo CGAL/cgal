@@ -347,8 +347,6 @@ public:
 
     typedef typename Kernel_traits<Point>::Kernel K1;
     typedef typename AABB_tree::AABB_traits AABB_traits;
-    typedef internal::Default_tree_helper<AABB_tree> Helper;
-    Helper helper;
 
     static const unsigned int seed = 1340818006;
     CGAL::Random rg(seed); // seed some value for make it easy to debug
@@ -363,8 +361,8 @@ public:
        std::pair<boost::logic::tribool,std::size_t>
           status( boost::logic::tribool(boost::logic::indeterminate), 0);
 
-      internal::K2_Ray_3_K1_Triangle_3_traversal_traits<AABB_traits, K1, K2, Helper>
-        traversal_traits(status, tree_ptr->traits(), helper);
+      internal::K2_Ray_3_K1_Triangle_3_traversal_traits<AABB_traits, K1, K2>
+        traversal_traits(status, tree_ptr->traits());
 
       tree_ptr->traversal(query, traversal_traits);
 
