@@ -207,7 +207,7 @@ public:
       return polyhedron;
 
 #ifdef CGAL_SS3_DUMP_FILES
-    IO::write_OBJ("results/loaded.obj", polyhedron, parameters::do_not_triangulate_faces(false));
+    IO::write_OBJ("results/loaded.obj", polyhedron, parameters::do_not_triangulate_faces(true));
 #endif
 
 #if 1
