@@ -654,7 +654,7 @@ void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::initialise_curve
         break;
     case BATCH_POINT_QUERY:
         {
-            typename Tetrahedral_mesh_smoother::Curve_batch_query curve_query = [&](std::vector<std::array<Eigen::Vector3d, 2>> const &edges, std::vector<Curve_index> curve_ids, std::vector<typename Tetrahedral_mesh_smoother::Curve_tangent> &results) {
+            typename Tetrahedral_mesh_smoother::Curve_batch_query curve_query = [&](std::vector<std::array<Eigen::Vector3d, 2>> const &edges, std::vector<Curve_index> const &, std::vector<typename Tetrahedral_mesh_smoother::Curve_tangent> &results) {
                 if (edges.size() != _curve_batch_info_points.size()) {
                     _curve_batch_info_points.resize(edges.size());
                     _curve_batch_info_radii.resize(edges.size());
@@ -684,7 +684,7 @@ void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::initialise_curve
         break;
     case BATCH_ELEMENT_QUERY:
         {
-            typename Tetrahedral_mesh_smoother::Curve_batch_query curve_query = [&](std::vector<std::array<Eigen::Vector3d, 2>> const &edges, std::vector<Curve_index> curve_ids, std::vector<typename Tetrahedral_mesh_smoother::Curve_tangent> &results) {
+            typename Tetrahedral_mesh_smoother::Curve_batch_query curve_query = [&](std::vector<std::array<Eigen::Vector3d, 2>> const &edges, std::vector<Curve_index> const &, std::vector<typename Tetrahedral_mesh_smoother::Curve_tangent> &results) {
                 if (edges.size() != _curve_batch_info_edges.size()) {
                     _curve_batch_info_edges.resize(edges.size());
                     _curve_batch_tangents.resize(edges.size());
@@ -732,7 +732,7 @@ void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::initialise_smoot
         smoother.set_validation_query(
             [&](Eigen::VectorXd const &coords) {
                 for (auto &[v, pt]: _current_coords_to_check) {
-                    Eigen::Vector3d live_pt = Mesh_smoothing_3_internal::Math_functions::sub_col_vector(_compressed_coords, _vertex_original_to_compressed.at(v));
+                    Eigen::Vector3d live_pt = Mesh_smoothing_3_internal::Math_functions::sub_col_vector(coords, _vertex_original_to_compressed.at(v));
                     pt = convert_to_user(live_pt);
                 }
                 return _update_validator(_current_coords_to_check);
