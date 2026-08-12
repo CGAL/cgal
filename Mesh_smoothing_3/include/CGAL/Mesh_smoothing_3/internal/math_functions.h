@@ -17,6 +17,9 @@
 
 #include <Eigen/Eigen>
 
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Kernel/global_functions_3.h>
+
 namespace CGAL {
 
 namespace Mesh_smoothing_3_internal {
@@ -61,6 +64,19 @@ namespace Math_functions {
         K.col(1) = J.col(2).cross(J.col(0));
         K.col(2) = J.col(0).cross(J.col(1));
         return K;
+    }
+
+    inline bool strictly_positive_tetrahedra(std::array<Eigen::Vector3d, 4> const &tetrahedra) {
+
+        using Kernel  = CGAL::Exact_predicates_inexact_constructions_kernel;
+        using Point_3 = Kernel::Point_3;
+
+        Point_3 const pa(tetrahedra[0].x(), tetrahedra[0].y(), tetrahedra[0].z());
+        Point_3 const pb(tetrahedra[1].x(), tetrahedra[1].y(), tetrahedra[1].z());
+        Point_3 const pc(tetrahedra[2].x(), tetrahedra[2].y(), tetrahedra[2].z());
+        Point_3 const pd(tetrahedra[3].x(), tetrahedra[3].y(), tetrahedra[3].z());
+
+        return CGAL::orientation(pa, pb, pc, pd) == CGAL::POSITIVE;
     }
 
 } } } // end of CGAL::Mesh_smoothing_3_internal::Math_functions namespace
