@@ -37,7 +37,7 @@ namespace params = CGAL::parameters;
 int main(int argc, char* argv[])
 {
     std::string filename = (argc > 1) ? std::string(argv[1])
-                        : CGAL::data_file_path("meshes/mambo_m3.mesh");
+                        : "../data/mambo_m3.mesh";
 
     C3t3 c3t3;
 
@@ -54,7 +54,7 @@ int main(int argc, char* argv[])
     CGAL::IO::write_MEDIT(os, c3t3.triangulation(), CGAL::parameters::all_vertices(true));
     os.close();
 
-    CGAL::boundary_aware_mesh_smoothing(c3t3, params::verbose(true).number_of_iterations(100));
+    // CGAL::boundary_aware_mesh_smoothing(c3t3, params::verbose(true).number_of_iterations(100));
 
     std::ifstream is2("c3t3_smoothed.mesh");
     if(!CGAL::IO::read_MEDIT(is2, c3t3.triangulation()))
