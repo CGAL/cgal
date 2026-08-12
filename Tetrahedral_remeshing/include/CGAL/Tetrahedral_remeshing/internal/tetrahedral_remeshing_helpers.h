@@ -976,6 +976,63 @@ std::size_t nb_incident_subdomains(const typename C3t3::Vertex_handle v,
   return indices.size();
 }
 
+// `nb_incident_subdomains(v, c3t3) > 1`, without counting the whole star. The
+// traversal is the one `TDS_3::incident_cells_3()` performs - from v's cell,
+// across the facets that contain v, marking cells as it goes - so it sees the
+// same cells in the same order, and stops as soon as a second index appears.
+// The marks are the TDS's own conflict flags and are cleared before
+// returning, so this must not be called from inside another marking
+// traversal; topology_test, which calls it, is not.
+template<typename C3t3>
+bool has_several_incident_subdomains(const typename C3t3::Vertex_handle v,
+                                     const C3t3& c3t3)
+{
+  typedef typename C3t3::Triangulation::Cell_handle Cell_handle;
+  CGAL_USE(c3t3);
+
+  const Cell_handle start = v->cell();
+  const auto si0 = start->subdomain_index();
+
+  boost::container::small_vector<Cell_handle, 128> marked;
+  boost::container::small_vector<Cell_handle, 128> to_visit;
+
+  start->tds_data().mark_in_conflict();
+  marked.push_back(start);
+  to_visit.push_back(start);
+
+  bool several = false;
+  while (!to_visit.empty())
+  {
+    const Cell_handle c = to_visit.back();
+    to_visit.pop_back();
+
+    if (c->subdomain_index() != si0)
+    {
+      several = true;
+      break;
+    }
+
+    for (int i = 0; i < 4; ++i)
+    {
+      if (c->vertex(i) == v)
+        continue;
+
+      const Cell_handle n = c->neighbor(i);
+      if (!n->tds_data().is_clear())
+        continue;
+
+      n->tds_data().mark_in_conflict();
+      marked.push_back(n);
+      to_visit.push_back(n);
+    }
+  }
+
+  for (const Cell_handle c : marked)
+    c->tds_data().clear();
+
+  return several;
+}
+
 template<typename C3t3>
 std::size_t nb_incident_subdomains(const typename C3t3::Edge& e,
                                    const C3t3& c3t3)
@@ -1320,7 +1377,7 @@ bool topology_test(const typename C3t3::Edge& edge,
           //The three tests are pure, so the conjunction is unchanged.
           if (c3t3.is_in_complex(v0, vi)
               && c3t3.is_in_complex(v1, vi)
-              && nb_incident_subdomains(vi, c3t3) > 1)
+              && has_several_incident_subdomains(vi, c3t3))
             return false;
         }
       }
