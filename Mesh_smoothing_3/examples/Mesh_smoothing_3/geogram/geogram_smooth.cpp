@@ -134,7 +134,7 @@ int main(int argc, char** argv) {
             normal[f] = GEO::vec3(0., 0., 1.);
     }
 
-    auto query = [&](GEO::vec3 const &coord, unsigned surface_id, double radius) -> std::tuple<GEO::vec3, GEO::vec3, double> {
+    auto query = [&](GEO::vec3 const &coord, unsigned, double) -> std::tuple<GEO::vec3, GEO::vec3, double> {
         GEO::vec3 res;
         double sqr_dist;
         GEO::index_t facet = aabb.nearest_facet(coord, res, sqr_dist);

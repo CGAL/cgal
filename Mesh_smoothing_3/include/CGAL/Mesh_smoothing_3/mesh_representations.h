@@ -59,9 +59,9 @@ namespace default_structures {
             using Surface_patch_index = unsigned;
             std::size_t nb_faces() const { return 0; }
             std::vector<Face_descriptor> face_range() const { return {}; }
-            std::size_t nb_face_vertices(Face_descriptor face) const { return 0; }
+            std::size_t nb_face_vertices(Face_descriptor) const { return 0; }
             Surface_patch_index patch_id(Face_descriptor) const { return 0; }
-            std::vector<Vertex_descriptor> face_vertices(Face_descriptor face) const { return {}; }
+            std::vector<Vertex_descriptor> face_vertices(Face_descriptor) const { return {}; }
     };
 
 
@@ -74,7 +74,7 @@ namespace default_structures {
             std::size_t nb_edges() const { return 0; }
             std::vector<Edge_descriptor> edge_range() const { return {}; }
             Curve_index curve_id(Edge_descriptor) const { return 0; }
-            Vertex_descriptor edge_vertex(Edge_descriptor edge, unsigned i) const { return Vertex_descriptor(); }
+            Vertex_descriptor edge_vertex(Edge_descriptor, unsigned) const { return Vertex_descriptor(); }
     };
 
 }
@@ -173,7 +173,7 @@ namespace helper_structures {
         virtual VertexDescriptor get_cell_vertex(InputCellDescriptor cell, unsigned local_Vertex_descriptor) const = 0;
 
         bool has_reference_mesh = false;
-        virtual Point3 get_ref_vertex_coordinates(VertexDescriptor vertex) const { return Point3(); } // redefine if has_reference_mesh == true
+        virtual Point3 get_ref_vertex_coordinates(VertexDescriptor) const { return Point3(); } // redefine if has_reference_mesh == true
 
 
     public:
