@@ -14,7 +14,6 @@
 \addtogroup PkgMeshSmoothing3Ref
 \cgalPkgDescriptionBegin{3D Mesh Volume Smoothing, PkgMeshSmoothing3}
 \cgalPkgPicture{Mesh_smoothing_pkg.png}
-
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{François Protais}
 \cgalPkgDesc{This component takes a 3D volumetric mesh as input and updates its vertices' coordinates to improve
@@ -26,15 +25,12 @@
              Starting from an invalid mesh, the algorithm will attempt to untangle it and recover a valid configuration.}
 \cgalPkgManuals{Chapter_3D_Mesh_smoothing,PkgMeshSmoothing3Ref}
 \cgalPkgSummaryEnd
-
 \cgalPkgShortInfoBegin
 \cgalPkgSince{6.3}
 \cgalPkgDependsOn{\ref PkgTriangulation3}
 \cgalPkgBib{cgal:p_ms3}
-\cgalPkgLicense{\ref licensesGPL "GPL"}
-
+\cgalPkgLicense{\ref licensesGPL "GPL" }
 \cgalPkgShortInfoEnd
-
 \cgalPkgDescriptionEnd
 
 \cgalClassifedRefPages
