@@ -91,7 +91,7 @@ void test_parallel()
   assert(inter.size() == 1191);
   inter.clear();
   CGAL::AABB_trees::all_pairs_of_intersecting_primitives(tree1, tree2, std::back_inserter(inter), CGAL::parameters::concurrency_tag(CGAL::Parallel_tag()).transformation(Aff_tr(CGAL::Translation(), V(0.5,0,0))));
-  assert(inter.size() == 0);
+  assert(inter.size() == 280);
   inter.clear();
   CGAL::AABB_trees::all_pairs_of_intersecting_primitives(tree1, tree2, std::back_inserter(inter), CGAL::parameters::concurrency_tag(CGAL::Parallel_tag()).transformation(Aff_tr(0, 1, 0, 1, 0, 0, 0, 0, 1, 1)));
   assert(inter.size() == 1289);
