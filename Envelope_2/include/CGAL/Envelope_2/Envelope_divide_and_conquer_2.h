@@ -23,18 +23,17 @@
 #include <CGAL/Arr_enums.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 #include <CGAL/Arr_tags.h>
+#include <CGAL/Envelope_2/Envelope_diagram_pool.h>
 
 namespace CGAL {
 namespace Envelope_2 {
-
-#define CGAL_VALUE_BASED_POOL 1
 
 /*! \class Envelope_divide_and_conquer_2
  * A class implementing the divide-and-conquer algorithm for computing the
  * lower (or upper) envelope of a set of curves.
  */
-template <typename Traits_, typename Diagram_>
-class Envelope_divide_and_conquer_2 {
+template <typename Traits_, typename Diagram_, bool Pooled = true, bool ValueBasedPool = true>
+class Envelope_divide_and_conquer_2 : public Envelope_diagram_pool<Diagram_, Pooled, ValueBasedPool> {
 public:
   using Traits_2 = Traits_;
   using Point_2 = typename Traits_2::Point_2;
@@ -47,7 +46,7 @@ public:
   enum Envelope_type { LOWER, UPPER };
 
 protected:
-  using Self = Envelope_divide_and_conquer_2<Traits_2, Envelope_diagram_1>;
+  using Self = Envelope_divide_and_conquer_2<Traits_2, Envelope_diagram_1, Pooled, ValueBasedPool>;
 
   using Vertex_const_descriptor = typename Envelope_diagram_1::Vertex_const_descriptor;
   using Vertex_descriptor = typename Envelope_diagram_1::Vertex_descriptor;
@@ -74,12 +73,6 @@ private:
   // Data members:
   Shared_traits_adaptor m_traits;       // the traits object.
   Envelope_type m_env_type;             // either LOWER or UPPER.
-
-#if CGAL_VALUE_BASED_POOL==1
-  std::vector<Envelope_diagram_1> m_diagram_pool;
-#else
-  std::vector<Envelope_diagram_1*> m_diagram_pool;
-#endif
 
   // copy constructor and assignment operator - not supported.
   Envelope_divide_and_conquer_2(const Self&) = delete;
@@ -122,13 +115,15 @@ public:
   void insert_curves(CurvesIterator begin, CurvesIterator end, Envelope_diagram_1& diagram) {
     // Subdivide the curves into x-monotone subcurves.
     std::list<std::variant<Point_2, X_monotone_curve_2>> objects;
-    std::list<X_monotone_curve_2> x_curves;
+    std::vector<X_monotone_curve_2> x_curves;
+
+    auto num_curves = std::distance(begin, end);
+    x_curves.reserve(num_curves);
 
     for (auto it = begin; it != end; ++it) {
       // Split the current curve to x-monotone subcurves.
       objects.clear();
       m_traits->make_x_monotone_2_object()(*it, std::back_inserter(objects));
-
       for (auto obj_it = objects.begin(); obj_it != objects.end(); ++obj_it) {
         if (const auto* xcv_ptr = std::get_if<X_monotone_curve_2>(&(*obj_it))) x_curves.push_back(*xcv_ptr);
       }
@@ -163,7 +158,15 @@ public:
     }
 
     // Construct the envelope for the non-vertical curves.
-    _construct_envelope_non_vertical(reg_vec.begin(), reg_vec.end(), diagram);
+    if (! reg_vec.empty()) {
+      if constexpr (! Pooled) _construct_envelope_non_vertical(reg_vec.begin(), reg_vec.end(), diagram);
+      else {
+        const std::size_t n = std::distance(begin, end);
+        this->init_pool(n);
+        _construct_envelope_non_vertical_pooled(reg_vec.begin(), reg_vec.end(), diagram);
+        this->clear_pool();
+      }
+    }
 
     // Merge the vertical segments.
     if (! vert_vec.empty()) _merge_vertical_segments(vert_vec, diagram);
@@ -183,15 +186,13 @@ protected:
   void _construct_envelope_non_vertical(Curve_pointer_iterator begin, Curve_pointer_iterator end,
                                         Envelope_diagram_1& out_d);
 
-  /*!
+  /*! constructs the lower/upper envelope of the given list of non-vertical curves.
+   * \param begin The first x-monotone curve.
+   * \param end A past-the-end iterator for the curves.
+   * \param out_d Output: The minimization (or maximization) diagram.
    */
-#if CGAL_VALUE_BASED_POOL==1
-  void _construct_envelope_non_vertical_pooled(Curve_pointer_iterator begin, Curve_pointer_iterator end,
-                                               Envelope_diagram_1& out_d, std::size_t& pool_active_count);
-#else
   void _construct_envelope_non_vertical_pooled(Curve_pointer_iterator begin, Curve_pointer_iterator end,
                                                Envelope_diagram_1& out_d);
-#endif
 
   /*! constructs a diagram of a single curve.
    * \param cv The x-monotone curve.

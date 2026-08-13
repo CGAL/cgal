@@ -32,19 +32,23 @@ namespace CGAL {
 namespace Envelope_2 {
 
 /*! constructs the lower/upper envelope of non-vertical curves.
+ * Non-pooled strategy (<false, false>): dynamic allocation per recursive step.
  */
-#if 1
-template <typename Traits, typename Diagram>
-void Envelope_divide_and_conquer_2<Traits,Diagram>::
+template <typename Traits, typename Diagram, bool Pooled, bool ValueBasedPool>
+void Envelope_divide_and_conquer_2<Traits, Diagram, Pooled, ValueBasedPool>::
 _construct_envelope_non_vertical(Curve_pointer_iterator begin, Curve_pointer_iterator end, Envelope_diagram_1& out_d) {
   out_d.clear();
 
-  const std::size_t n = std::distance(begin, end);
-  if (n == 0) return;
-  if (n == 1) {
+  Curve_pointer_iterator iter = begin;
+  if (iter == end) return;
+
+  ++iter;
+  if (iter == end) {
     _construct_singleton_diagram(*(*begin), out_d, Are_all_sides_oblivious_category());
     return;
   }
+
+  const std::size_t n = std::distance(begin, end);
 
   // Divide the given range of curves into two.
   Curve_pointer_iterator div_it = begin;
@@ -60,126 +64,57 @@ _construct_envelope_non_vertical(Curve_pointer_iterator begin, Curve_pointer_ite
 
   _merge_envelopes(d1, d2, out_d);
 }
-#else
+
 /*! constructs the lower/upper envelope of non-vertical curves.
+ * Pooled strategy (<true, false> and <true, true>): reuses pooled diagrams.
  * Reuses intermediate diagram instances from a local pool to bound allocations
  * to O(log N) total constructed objects across the entire recursion tree.
+ *
+ * \pre the input range is not empty
  */
-template <typename Traits, typename Diagram>
-void Envelope_divide_and_conquer_2<Traits, Diagram>::
-_construct_envelope_non_vertical(Curve_pointer_iterator begin, Curve_pointer_iterator end, Envelope_diagram_1& out_d) {
-  out_d.clear();
-
-  const std::size_t n = std::distance(begin, end);
-  if (n == 0) return;
-  if (n == 1) {
-    _construct_singleton_diagram(*(*begin), out_d, Are_all_sides_oblivious_category());
-    return;
-  }
-
-  // Approximate peak intermediate diagrams required: ~2 * ceil(log2(N))
-  std::size_t max_depth = 0;
-  max_depth = 64 - __builtin_clzll(n - 1);
-  // const std::size_t max_depth = (n > 1) ? std::bit_width(n - 1) : 0; // C++20
-  const std::size_t max_diagrams = 2 * max_depth;
-  m_diagram_pool.reserve(max_diagrams);
-
-#if CGAL_VALUE_BASED_POOL==1
-  std::size_t pool_active_count = 0;
-  _construct_envelope_non_vertical_pooled(begin, end, out_d, pool_active_count);
-#else
-  _construct_envelope_non_vertical_pooled(begin, end, out_d);
-#endif
-
-  // Clear
-#if ! defined(CGAL_VALUE_BASED_POOL) || (CGAL_VALUE_BASED_POOL!=1)
-  for (auto* diag : m_diagram_pool) delete diag;
-#endif
-  m_diagram_pool.clear();
-}
-
-/*! internal recursive call reusing intermediate diagrams from the pool.
- */
-#if CGAL_VALUE_BASED_POOL==1
-template <typename Traits, typename Diagram>
-void Envelope_divide_and_conquer_2<Traits, Diagram>::
-_construct_envelope_non_vertical_pooled(Curve_pointer_iterator begin, Curve_pointer_iterator end,
-                                        Envelope_diagram_1& out_d, std::size_t& pool_active_count) {
-#else
-template <typename Traits, typename Diagram>
-void Envelope_divide_and_conquer_2<Traits, Diagram>::
+template <typename Traits, typename Diagram, bool Pooled, bool ValueBasedPool>
+void Envelope_divide_and_conquer_2<Traits, Diagram, Pooled, ValueBasedPool>::
 _construct_envelope_non_vertical_pooled(Curve_pointer_iterator begin, Curve_pointer_iterator end,
                                         Envelope_diagram_1& out_d) {
-#endif
-  const std::size_t n = std::distance(begin, end);
+  out_d.clear();
 
-  if (n == 1) {
+  Curve_pointer_iterator iter = begin;
+  CGAL_assertion(iter != end);
+
+  ++iter;
+  if (iter == end) {
     _construct_singleton_diagram(*(*begin), out_d, Are_all_sides_oblivious_category());
     return;
   }
 
-  // Divide step
+  // Divide
+  const std::size_t n = std::distance(begin, end);
   Curve_pointer_iterator div_it = begin;
   std::advance(div_it, n / 2);
 
-#if CGAL_VALUE_BASED_POOL==1
-  auto acquire_diagram = [&]() -> Envelope_diagram_1& {
-    if (pool_active_count < m_diagram_pool.size()) {
-      // Reuse an existing diagram from previous sub-trees
-      Envelope_diagram_1& diag = m_diagram_pool[pool_active_count++];
-      diag.clear();
-      return diag;
-    }
+  // Borrow intermediate diagrams from the pool base class
+  Envelope_diagram_1* d1_ptr = this->acquire_diagram(out_d);
+  Envelope_diagram_1* d2_ptr = this->acquire_diagram(out_d);
 
-    // Construct a new instance initialized with out_d's geometry traits
-    m_diagram_pool.emplace_back(out_d.shared_geometry_traits_1());
-    ++pool_active_count;
-    return m_diagram_pool.back();
-  };
-
-  // Conquer step
-  Envelope_diagram_1& d1 = acquire_diagram();
-  _construct_envelope_non_vertical_pooled(begin, div_it, d1, pool_active_count);
-  Envelope_diagram_1& d2 = acquire_diagram();
-  _construct_envelope_non_vertical_pooled(div_it, end, d2, pool_active_count);
-
-  // Merge step
-  _merge_envelopes(d1, d2, out_d);
-
-  // Return both diagrams to the pool for sibling reuse
-  pool_active_count -= 2;
-#else
-  auto acquire_diagram = [&]() -> Envelope_diagram_1* {
-    if (m_diagram_pool.empty()) return new Envelope_diagram_1(out_d.shared_geometry_traits_1());
-    auto* diag = m_diagram_pool.back();
-    m_diagram_pool.pop_back();
-    diag->clear();
-    return diag;
-  };
-
-  // Conquer step
-  Envelope_diagram_1* d1_ptr = acquire_diagram();
+  // Conquer
   _construct_envelope_non_vertical_pooled(begin, div_it, *d1_ptr);
-  Envelope_diagram_1* d2_ptr = acquire_diagram();
   _construct_envelope_non_vertical_pooled(div_it, end, *d2_ptr);
 
   // Merge step
   _merge_envelopes(*d1_ptr, *d2_ptr, out_d);
 
-  // Return handles to pool for immediate reuse
-  m_diagram_pool.push_back(d1_ptr);
-  m_diagram_pool.push_back(d2_ptr);
-#endif
+  // Return handles to the pool
+  this->release_diagram(d1_ptr);
+  this->release_diagram(d2_ptr);
 }
-#endif
 
 /*! constructs a diagram of a single curve.
  * \param xcv the curve
  * \param out_d the output diagram
  * This is the implementation for the case where all 4 boundary sides are oblivious.
  */
-template <typename Traits, typename Diagram>
-void Envelope_divide_and_conquer_2<Traits,Diagram>::
+template <typename Traits, typename Diagram, bool Pooled, bool ValueBasedPool>
+void Envelope_divide_and_conquer_2<Traits, Diagram, Pooled, ValueBasedPool>::
 _construct_singleton_diagram(const X_monotone_curve_2& xcv, Envelope_diagram_1& out_d, Arr_all_sides_oblivious_tag) {
   CGAL_assertion(out_d.leftmost() == out_d.rightmost());
   CGAL_assertion(out_d.empty_edge_curves(out_d.leftmost()));
@@ -217,8 +152,8 @@ _construct_singleton_diagram(const X_monotone_curve_2& xcv, Envelope_diagram_1& 
  * \param out_d the output diagram
  * This is the implementation for the case where at least one of the 4 boundary sides are not oblivious.
  */
-template <typename Traits, typename Diagram>
-void Envelope_divide_and_conquer_2<Traits,Diagram>::
+template <typename Traits, typename Diagram, bool Pooled, bool ValueBasedPool>
+void Envelope_divide_and_conquer_2<Traits, Diagram, Pooled, ValueBasedPool>::
 _construct_singleton_diagram(const X_monotone_curve_2& xcv, Envelope_diagram_1& out_d, Arr_not_all_sides_oblivious_tag) {
   CGAL_assertion(out_d.leftmost() == out_d.rightmost());
   CGAL_assertion(out_d.empty_edge_curves(out_d.leftmost()));
@@ -282,8 +217,8 @@ _construct_singleton_diagram(const X_monotone_curve_2& xcv, Envelope_diagram_1& 
 
 /*! merges two minimization (or maximization) diagrams.
  */
-template <typename Traits, typename Diagram>
-void Envelope_divide_and_conquer_2<Traits,Diagram>::
+template <typename Traits, typename Diagram, bool Pooled, bool ValueBasedPool>
+void Envelope_divide_and_conquer_2<Traits, Diagram, Pooled, ValueBasedPool>::
 _merge_envelopes(const Envelope_diagram_1& d1, const Envelope_diagram_1& d2, Envelope_diagram_1& out_d) {
   Edge_const_descriptor e1 = d1.leftmost();
   bool is_leftmost1 = true;
@@ -374,8 +309,8 @@ _merge_envelopes(const Envelope_diagram_1& d1, const Envelope_diagram_1& d2, Env
 
 /*! compares two diagram vertices.
  */
-template <typename Traits, typename Diagram>
-Comparison_result Envelope_divide_and_conquer_2<Traits,Diagram>::
+template <typename Traits, typename Diagram, bool Pooled, bool ValueBasedPool>
+Comparison_result Envelope_divide_and_conquer_2<Traits, Diagram, Pooled, ValueBasedPool>::
 _compare_vertices(const Envelope_diagram_1& d1, const Envelope_diagram_1& d2,
                   Vertex_const_descriptor v1, Vertex_const_descriptor v2, bool& same_x) const {
   Comparison_result res = m_traits->compare_x_2_object()(d1.point(v1), d2.point(v2));
@@ -392,8 +327,8 @@ _compare_vertices(const Envelope_diagram_1& d1, const Envelope_diagram_1& d2,
 
 /*! deals with an interval which is non-empty in one diagram and empty in the other.
  */
-template <typename Traits, typename Diagram>
-void Envelope_divide_and_conquer_2<Traits,Diagram>::
+template <typename Traits, typename Diagram, bool Pooled, bool ValueBasedPool>
+void Envelope_divide_and_conquer_2<Traits, Diagram, Pooled, ValueBasedPool>::
 _merge_single_interval(Edge_const_descriptor e, Edge_const_descriptor other_edge, Vertex_const_descriptor v,
                        bool v_exists, Comparison_result origin_of_v,
                        const Envelope_diagram_1& in_d, const Envelope_diagram_1& other_d, Envelope_diagram_1& out_d) {
@@ -432,8 +367,8 @@ _merge_single_interval(Edge_const_descriptor e, Edge_const_descriptor other_edge
 /*! compares \f$y\f$-coordinates of two curves at endpoints.
  * This is the implementation for the case where all 4 boundary sides are oblivious.
  */
-template <typename Traits, typename Diagram>
-Comparison_result Envelope_divide_and_conquer_2<Traits, Diagram>::
+template <typename Traits, typename Diagram, bool Pooled, bool ValueBasedPool>
+Comparison_result Envelope_divide_and_conquer_2<Traits, Diagram, Pooled, ValueBasedPool>::
 compare_y_at_end(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2, Arr_curve_end curve_end,
                  Arr_all_sides_oblivious_tag) const {
   const auto min_vertex = m_traits->construct_min_vertex_2_object();
@@ -449,8 +384,8 @@ compare_y_at_end(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
 /*! compares \f$y\f$-coordinates of two curves at endpoints.
  * This is the implementation for the case where at least one of the 4 boundary sides are not oblivious.
  */
-template <typename Traits, typename Diagram>
-Comparison_result Envelope_divide_and_conquer_2<Traits, Diagram>::
+template <typename Traits, typename Diagram, bool Pooled, bool ValueBasedPool>
+Comparison_result Envelope_divide_and_conquer_2<Traits, Diagram, Pooled, ValueBasedPool>::
 compare_y_at_end(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2, Arr_curve_end curve_end,
                  Arr_not_all_sides_oblivious_tag) const {
   CGAL_precondition(m_traits->is_in_x_range_2_object()(xcv1, xcv2));
@@ -537,8 +472,8 @@ compare_y_at_end(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
 
 /*! merges two non-empty intervals into the merged diagram.
  */
-template <typename Traits, typename Diagram>
-void Envelope_divide_and_conquer_2<Traits, Diagram>::
+template <typename Traits, typename Diagram, bool Pooled, bool ValueBasedPool>
+void Envelope_divide_and_conquer_2<Traits, Diagram, Pooled, ValueBasedPool>::
 _merge_two_intervals(Edge_const_descriptor e1, bool is_leftmost1, Edge_const_descriptor e2, bool is_leftmost2,
                      Vertex_const_descriptor v, bool v_exists, Comparison_result origin_of_v,
                      const Envelope_diagram_1& d1, const Envelope_diagram_1& d2, Envelope_diagram_1& out_d) {
@@ -773,9 +708,9 @@ _merge_two_intervals(Edge_const_descriptor e1, bool is_leftmost1, Edge_const_des
 // ---------------------------------------------------------------------------
 // Append a vertex to the given diagram.
 //
-template <typename Traits, typename Diagram>
-typename Envelope_divide_and_conquer_2<Traits,Diagram>::Vertex_descriptor
-Envelope_divide_and_conquer_2<Traits,Diagram>::
+template <typename Traits, typename Diagram, bool Pooled, bool ValueBasedPool>
+typename Envelope_divide_and_conquer_2<Traits, Diagram, Pooled, ValueBasedPool>::Vertex_descriptor
+Envelope_divide_and_conquer_2<Traits, Diagram, Pooled, ValueBasedPool>::
 _append_vertex(Envelope_diagram_1& diag, const Point_2& p, Edge_const_descriptor e, const Envelope_diagram_1& in_d) {
   auto& topo = diag.topology_traits();
 
@@ -809,11 +744,10 @@ _append_vertex(Envelope_diagram_1& diag, const Point_2& p, Edge_const_descriptor
   return new_v;
 }
 
-/*! merges the vertical segments into the envelope given as a minimization
- * (or maximization) diagram.
+/*! merges the vertical segments into the envelope given as a minimization (or maximization) diagram.
  */
-template <typename Traits, typename Diagram>
-void Envelope_divide_and_conquer_2<Traits, Diagram>::
+template <typename Traits, typename Diagram, bool Pooled, bool ValueBasedPool>
+void Envelope_divide_and_conquer_2<Traits, Diagram, Pooled, ValueBasedPool>::
 _merge_vertical_segments(Curve_pointer_vector& vert_vec, Envelope_diagram_1& out_d) {
   Less_vertical_segment les_vert(&*m_traits);
 
@@ -919,9 +853,9 @@ _merge_vertical_segments(Curve_pointer_vector& vert_vec, Envelope_diagram_1& out
 
 /*! splits a given diagram edge by inserting a vertex in its interior.
  */
-template <typename Traits, typename Diagram>
-typename Envelope_divide_and_conquer_2<Traits,Diagram>::Vertex_descriptor
-Envelope_divide_and_conquer_2<Traits,Diagram>::
+template <typename Traits, typename Diagram, bool Pooled, bool ValueBasedPool>
+typename Envelope_divide_and_conquer_2<Traits, Diagram, Pooled, ValueBasedPool>::Vertex_descriptor
+Envelope_divide_and_conquer_2<Traits, Diagram, Pooled, ValueBasedPool>::
 _split_edge(Envelope_diagram_1& diag, const Point_2& p, Edge_descriptor e) {
   auto& topo = diag.topology_traits();
 
