@@ -152,6 +152,27 @@ get(const Edge_to_point_property_map<C3t3>&, const typename C3t3::Edge& e)
 *     \cgalParamType{`bool`}
 *     \cgalParamDefault{`false`}
 *   \cgalParamNEnd
+*   \cgalParamNBegin{vertex_is_constrained_map}
+*     \cgalParamDescription{a property map containing the constrained-or-not status of each vertex of the triangulation in the `c3t3`.}
+*     \cgalParamType{a class model of `ReadPropertyMap` with `C3t3::Vertex_handle`
+*                    as key type and `bool` as value type. It must be default constructible.}
+*     \cgalParamDefault{a default property map where no vertex is constrained}
+*     \cgalParamExtra{A constrained vertex will not be moved by smoothing.}
+*   \cgalParamNEnd
+*   \cgalParamNBegin{edge_is_constrained_map}
+*     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of the triangulation in the `c3t3`.}
+*     \cgalParamType{a class model of `ReadPropertyMap` with `std::pair<C3t3::Vertex_handle, C3t3::Vertex_handle>`
+*                    as key type and `bool` as value type. It must be default constructible.}
+*     \cgalParamDefault{a default property map where no edge is constrained}
+*     \cgalParamExtra{Vertices of a constrained edge will not be moved by the smoothing.}
+*   \cgalParamNEnd
+*   \cgalParamNBegin{facet_is_constrained_map}
+*     \cgalParamDescription{a property map containing the constrained-or-not status of each facet of the triangulation in the `c3t3`.}
+*     \cgalParamType{a class model of `ReadPropertyMap` with `C3t3::Facet`
+*                    as key type and `bool` as value type. It must be default constructible.}
+*     \cgalParamDefault{a default property map where no facet is constrained}
+*     \cgalParamExtra{Vertices of a constrained facet will not be moved by smoothing.}
+*   \cgalParamNEnd
 * \cgalNamedParamsEnd
 */
 template<typename C3t3,
@@ -180,9 +201,9 @@ void boundary_aware_mesh_smoothing  (
     typedef typename internal_np::Lookup_named_param_def <
         internal_np::edge_is_constrained_t,
         NamedParameters,
-        Static_boolean_property_map<typename C3t3::Edge, false> // default (no constraint pmap)
+        Static_boolean_property_map<std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>, false> // default (no constraint pmap)
     > ::type ECMap;
-    ECMap ecmap = choose_parameter<Static_boolean_property_map<typename C3t3::Edge, false>>(get_parameter(np, internal_np::edge_is_constrained));
+    ECMap ecmap = choose_parameter<Static_boolean_property_map<std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>, false>>(get_parameter(np, internal_np::edge_is_constrained));
 
     typedef typename internal_np::Lookup_named_param_def <
         internal_np::facet_is_constrained_t,
@@ -255,20 +276,20 @@ void boundary_aware_mesh_smoothing  (
         smoother.set_vertex_lock(v, true);
     }
 
-    // for (auto e : c3t3.triangulation().finite_edges_handles()) {
-    //     if (!get(ecmap, e)) continue;
-    //     for (auto v : c3t3.triangulation().edge_vertices(e)) {
-    //         smoother.set_vertex_lock(v, true);
-    //     }
-    // }
+    for (const auto& e : c3t3.triangulation().finite_edges()) {
+        const auto vertices = c3t3.triangulation().vertices(e);
+        if (get(ecmap, {vertices[0], vertices[1]}) || get(ecmap, {vertices[1], vertices[0]})) {
+            smoother.set_vertex_lock(vertices[0], true);
+            smoother.set_vertex_lock(vertices[1], true);
+        }
+    }
 
-    // for (auto f : c3t3.triangulation().finite_facets_handles()) {
-    //     if (!get(fcmap, f)) continue;
-    //     for (auto v : c3t3.triangulation().facet_vertices(f)) {
-    //         smoother.set_vertex_lock(v, true);
-    //     }
-    // }
-
+    for (const auto& f : c3t3.triangulation().finite_facets()) {
+        if (get(fcmap, f)) {
+            for (const auto& v : c3t3.triangulation().vertices(f))
+                smoother.set_vertex_lock(v, true);
+        }
+    }
 
     // locks corners
     for (auto c : c3t3.vertices_in_complex()) {
