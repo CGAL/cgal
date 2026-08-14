@@ -739,8 +739,9 @@ public:
         // Colour by value: the value is the distance to the clipping plane, scaled
         // by the scene radius each side of it.
         rendering_program_face.setUniformValue("u_ColorMapMode", static_cast<GLfloat>(m_color_map));
-        rendering_program_face.setUniformValue("u_ValueMin", static_cast<GLfloat>(-sceneRadius()));
-        rendering_program_face.setUniformValue("u_ValueMax", static_cast<GLfloat>(sceneRadius()));
+        { double dvmin, dvmax; distance_value_range(clipPlane, plane_point, dvmin, dvmax);
+          rendering_program_face.setUniformValue("u_ValueMin", static_cast<GLfloat>(dvmin));
+          rendering_program_face.setUniformValue("u_ValueMax", static_cast<GLfloat>(dvmax)); }
 
         vao[VAO_FACES].bind();
         const std::vector<std::vector<unsigned int>> &vols=m_scene.get_volume_faces();
@@ -992,8 +993,9 @@ public:
         // Colour by value: the kept volumes follow the same colour map as the other
         // face modes, per fragment or one flat value per cell.
         rendering_program_face.setUniformValue("u_ColorMapMode", static_cast<GLfloat>(m_color_map));
-        rendering_program_face.setUniformValue("u_ValueMin", static_cast<GLfloat>(-sceneRadius()));
-        rendering_program_face.setUniformValue("u_ValueMax", static_cast<GLfloat>(sceneRadius()));
+        { double dvmin, dvmax; distance_value_range(clipPlane, plane_point, dvmin, dvmax);
+          rendering_program_face.setUniformValue("u_ValueMin", static_cast<GLfloat>(dvmin));
+          rendering_program_face.setUniformValue("u_ValueMax", static_cast<GLfloat>(dvmax)); }
         const bool per_cell=(m_color_map!=0 && m_color_value!=0 && num_volumes!=0);
         const bool size_mode=(m_color_value==2);
         if (per_cell && size_mode)
@@ -1162,7 +1164,7 @@ public:
 
     // Colour by value: show the palette and the value range as a small legend.
     if (m_color_map!=0)
-    { draw_color_legend(); }
+    { draw_color_legend(clipPlane, plane_point); }
 
     // Multiply matrix to get in the frame coordinate system.
     // glMultMatrixd(manipulatedFrame()->matrix()); // Linker error
@@ -1850,16 +1852,40 @@ protected:
     return QColor(int(r*255.f), int(g*255.f), int(b*255.f));
   }
 
+  // Colour by value (distance): the actual signed-distance range the geometry spans
+  // along the plane normal, from the scene bounding-box corners, so the palette and
+  // the legend cover the values really present rather than the whole scene radius
+  // (which left the colours bunched in the middle of the ramp).
+  void distance_value_range(const QVector4D &clipPlane, const QVector4D &plane_point,
+                            double &vmin, double &vmax)
+  {
+    const CGAL::Bbox_3 b=m_scene.bounding_box();
+    const QVector3D n=QVector3D(clipPlane).normalized();
+    const QVector3D pt=plane_point.toVector3D();
+    vmin=(std::numeric_limits<double>::max)();
+    vmax=-(std::numeric_limits<double>::max)();
+    for (int c=0; c<8; ++c)
+    {
+      const QVector3D corner(float((c&1) ? b.xmax() : b.xmin()),
+                             float((c&2) ? b.ymax() : b.ymin()),
+                             float((c&4) ? b.zmax() : b.zmin()));
+      const double d=QVector3D::dotProduct(corner-pt, n);
+      if (d<vmin) { vmin=d; }
+      if (d>vmax) { vmax=d; }
+    }
+    if (vmax-vmin<1e-6) { vmax=vmin+1.0; } // guard a degenerate (flat) range
+  }
+
   // Colour by value: draw a small legend, a gradient bar with the value range, so
   // the colours read as numbers. The range and label match the current value.
-  void draw_color_legend()
+  void draw_color_legend(const QVector4D &clipPlane, const QVector4D &plane_point)
   {
     const bool size_mode=(m_color_value==2 && !m_scene.get_volume_faces().empty());
     double vmin, vmax;
     if (size_mode)
     { if (!m_cell_sizes_valid) { compute_cell_sizes(); }
       vmin=m_cell_size_min; vmax=m_cell_size_max; }
-    else { vmin=-sceneRadius(); vmax=sceneRadius(); }
+    else { distance_value_range(clipPlane, plane_point, vmin, vmax); }
 
     const int barW=16, barH=150;
     const int x=width()-barW-70, y=height()-barH-30;
