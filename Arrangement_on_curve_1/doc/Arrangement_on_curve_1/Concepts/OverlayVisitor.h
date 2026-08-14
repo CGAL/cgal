@@ -26,7 +26,7 @@ namespace CGAL {
  *
  * \sa `overlay`
  */
-class OverlayOnserver {
+class OverlayVisitor {
 public:
   //! a constant descriptor of a vertex in the first input arrangement.
   typedef Vertex_const_descriptor_a;

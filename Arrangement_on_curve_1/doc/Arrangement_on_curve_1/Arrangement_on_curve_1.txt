@@ -60,7 +60,7 @@ A 1D arrangement breaks a continuous track down into two alternating topological
 - **Vertices**: Represent 0-dimensional points embedded along the curve trajectory.
 - **Edges**: Represent 1-dimensional open intervals bounded by vertices on their left, right, or extending to infinity.
 
-The topology traits class maintains explicit constant-time $O(1)$ boundaries tracking pointers, `unbounded_left_edge`
+The topology traits class maintains explicit constant-time \f$O(1)\f$ boundaries tracking pointers, `unbounded_left_edge`
 (spanning from \f$-\infty\f$) and `unbounded_right_edge` (spanning to \f$+\infty\f$), anchoring the outer limits of the
 arrangement track.
 
@@ -175,10 +175,10 @@ underlying curve).  The algorithm performs a synchronized
 left-to-right sweep across both structures simultaneously.
 
 An overloaded version accepts a forth argument, referred to as the
-observer, is also supported. As intersections, point overlaps, or edge
+visitor, is also supported. As intersections, point overlaps, or edge
 segment splits are discovered, the process notifies user-specified
-callback functions defined in the observer object, which must be a
-model of the `OverlayObserver` concept. These functions can then apply
+callback functions defined in the visitor object, which must be a
+model of the `OverlayVisitor` concept. These functions can then apply
 custom logic to automatically combine, translate, or synchronize
 extended user cells (i.e., vertices and edges) from the input
 arrangements into the resulting output cells.
@@ -205,7 +205,7 @@ The package provides four built-in geometry traits models covering different dim
 - `Ft_traits_1<Kernel>`: A minimal, scalar traits model parameterizing an arrangement directly using a numerical coordinate field type scalar along a flat number line.
 - `Line_2_traits_1<Kernel>`: Supports tracking points along an infinite straight line embedded in 2D space. Points are ordered by projecting them onto the 2D supporting line equation.
 - `Line_3_traits_1<Kernel>`: Supports tracking points along a 3D spatial trajectory line by projecting 3D coordinates onto its directional vector.
-- `Line_d_traits_1<Kernel>`: Scales the 1D arrangement concept across arbitrary $d$-dimensional space by computing inner dot products across coordinate ranges via Cartesian iterators.
+- `Line_d_traits_1<Kernel>`: Scales the 1D arrangement concept across arbitrary \f$d\f$-dimensional space by computing inner dot products across coordinate ranges via Cartesian iterators.
 
 <!-- ----------------------------------------------------------------------- -->
 \section aoc_sec-extending Extending the Arrangement
@@ -222,5 +222,5 @@ accessed via `vertex_data_map()` and `edge_data_map()`.
 
 */
 
-| // namespace Arrangement_on_curve_1
+} // namespace Arrangement_on_curve_1
 } // namespace CGAL
