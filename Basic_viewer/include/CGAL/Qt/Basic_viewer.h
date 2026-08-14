@@ -1829,7 +1829,24 @@ protected:
     else if (m_color_map<3) { r=cl(1.5f-std::abs(4.f*t-3.f)); // jet
                               g=cl(1.5f-std::abs(4.f*t-2.f));
                               b=cl(1.5f-std::abs(4.f*t-1.f)); }
-    else { r=g=b=cl(t); } // grey ramp
+    else if (m_color_map<4) { r=g=b=cl(t); } // grey ramp
+    else
+    { // viridis, the same coefficients as colour_palette() in Basic_shaders.h
+      static const float C[7][3]={
+        { 0.277727f,  0.005407f,  0.334100f},
+        { 0.105093f,  1.404614f,  1.384590f},
+        {-0.330862f,  0.214848f,  0.095095f},
+        {-4.634230f, -5.799101f, -19.332441f},
+        { 6.228270f, 14.179933f,  56.690553f},
+        { 4.776385f,-13.745145f, -65.353033f},
+        {-5.435456f,  4.645853f,  26.312435f}};
+      float rgb[3];
+      for (int k=0; k<3; ++k)
+      { float v=C[6][k];
+        for (int j=5; j>=0; --j) { v=C[j][k]+t*v; }
+        rgb[k]=cl(v); }
+      r=rgb[0]; g=rgb[1]; b=rgb[2];
+    }
     return QColor(int(r*255.f), int(g*255.f), int(b*255.f));
   }
 
@@ -2442,13 +2459,14 @@ protected:
       {
         // Colour the faces by a value (here the distance to the clipping plane):
         // off, then the heat, jet and grey palettes.
-        m_color_map=(m_color_map+1)%4;
+        m_color_map=(m_color_map+1)%5;
         switch(m_color_map)
         {
         case 0: displayMessage(QString("Colour by value = off")); break;
-        case 1: displayMessage(QString("Colour by value = heat (distance to plane)")); break;
-        case 2: displayMessage(QString("Colour by value = jet (distance to plane)")); break;
-        case 3: displayMessage(QString("Colour by value = grey (distance to plane)")); break;
+        case 1: displayMessage(QString("Colour by value = heat")); break;
+        case 2: displayMessage(QString("Colour by value = jet")); break;
+        case 3: displayMessage(QString("Colour by value = grey")); break;
+        case 4: displayMessage(QString("Colour by value = viridis")); break;
         default: break;
         }
         update();
