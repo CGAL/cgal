@@ -52,6 +52,8 @@ struct Graphics_scene_options<DS, VertexDescriptor, EdgeDescriptor, FaceDescript
     colored_face=[](const DS &, face_descriptor)->bool { return false; };
 
     face_wireframe=[](const DS &, face_descriptor)->bool { return false; };
+
+    valued_face=[](const DS &, face_descriptor)->bool { return false; };
   }
 
   // The seven following functions should not be null
@@ -64,6 +66,12 @@ struct Graphics_scene_options<DS, VertexDescriptor, EdgeDescriptor, FaceDescript
   std::function<bool(const DS &, face_descriptor)>   colored_face;
 
   std::function<bool(const DS &, face_descriptor)> face_wireframe;
+
+  // Colour by value: valued_face marks a face that carries a scalar value,
+  // face_value returns it, and face_value_name labels the legend.
+  std::function<bool(const DS &, face_descriptor)>  valued_face;
+  std::function<float(const DS &, face_descriptor)> face_value;
+  std::string face_value_name;
 
   // These functions must be non null if the corresponding colored_XXX function
   // returns true.

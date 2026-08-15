@@ -252,6 +252,11 @@ public:
     return m_buffer_for_faces.is_a_face_started();
   }
 
+  // Colour by value: set the scalar value of the face about to be built, and the
+  // legend name for the value. The viewer colours the faces by these when asked.
+  void set_face_value(float v) { m_current_face_value=v; m_has_face_values=true; }
+  void set_value_name(const std::string &n) { m_value_name=n; }
+
   void face_begin()
   {
     if (a_face_started())
@@ -314,6 +319,7 @@ public:
         const unsigned int idx=static_cast<unsigned int>(m_faces.size());
         m_faces.emplace_back(m_current_face_start,
                              number_of_elements(POS_FACES)-m_current_face_start);
+        record_current_face_value();
         m_face_dedup.emplace(std::move(key), idx);
         m_volume_faces.back().push_back(idx);
         return;
@@ -324,6 +330,22 @@ public:
     // Record this face's vertex range in POS_FACES, for the clip-plane cap.
     m_faces.emplace_back(m_current_face_start,
                          number_of_elements(POS_FACES) - m_current_face_start);
+    record_current_face_value();
+  }
+
+  // Colour by value: store the value of the face just committed, parallel to
+  // m_faces, and keep the min and max for the palette range.
+  void record_current_face_value()
+  {
+    if (m_has_face_values)
+    {
+      if (m_face_values.empty())
+      { m_face_value_min=m_face_value_max=m_current_face_value; }
+      else
+      { if (m_current_face_value<m_face_value_min) { m_face_value_min=m_current_face_value; }
+        if (m_current_face_value>m_face_value_max) { m_face_value_max=m_current_face_value; } }
+    }
+    m_face_values.push_back(m_current_face_value);
   }
 
   // Clip-plane cap: a volume groups the faces added until volume_end, de-duplicated
@@ -365,6 +387,14 @@ public:
 
   const std::vector<CGAL::Bbox_3> &get_volume_bboxes() const
   { return m_volume_bboxes; }
+
+  // Colour by value: the per-face values set by the drawer, whether any were set,
+  // the legend name, and the value range.
+  const std::vector<float> &get_face_values() const { return m_face_values; }
+  bool has_face_values() const { return m_has_face_values; }
+  const std::string &value_name() const { return m_value_name; }
+  float face_value_min() const { return m_face_value_min; }
+  float face_value_max() const { return m_face_value_max; }
 
   template <typename KPoint>
   void add_text(const KPoint &kp, const std::string &txt)
@@ -508,6 +538,16 @@ protected:
   std::vector<CGAL::IO::Color> m_volume_colors;
   std::vector<CGAL::Bbox_3> m_volume_bboxes;
   unsigned int m_current_face_start = 0;
+
+  // Colour by value: an optional scalar per face, set by the drawer, that the viewer
+  // maps to a palette (like the colour, but any float). Each value is parallel to
+  // m_faces; m_value_name labels the legend.
+  std::vector<float> m_face_values;
+  float m_current_face_value = 0.f;
+  bool m_has_face_values = false;
+  std::string m_value_name;
+  float m_face_value_min = 0.f;
+  float m_face_value_max = 1.f;
 
   // Clip-plane cap: geometric face de-duplication during volume building. The key
   // is the sorted face vertex positions, so both sides of a shared wall match.

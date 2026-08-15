@@ -745,7 +745,24 @@ public:
 
         vao[VAO_FACES].bind();
         const std::vector<std::vector<unsigned int>> &vols=m_scene.get_volume_faces();
-        if (m_color_map!=0 && m_color_value!=0 && !vols.empty())
+        if (m_color_map!=0 && m_color_value==3 && m_scene.has_face_values())
+        {
+          // User value: one flat value per face, provided by the drawer (for example
+          // the aspect ratio of the face), mapped to the palette.
+          rendering_program_face.setUniformValue("u_ColorPerCell", static_cast<GLint>(1));
+          rendering_program_face.setUniformValue("u_ValueMin", static_cast<GLfloat>(m_scene.face_value_min()));
+          rendering_program_face.setUniformValue("u_ValueMax", static_cast<GLfloat>(m_scene.face_value_max()));
+          const std::vector<float> &fvals=m_scene.get_face_values();
+          const unsigned int nf=m_scene.number_of_faces();
+          for (unsigned int f=0; f<nf && f<fvals.size(); ++f)
+          {
+            rendering_program_face.setUniformValue("u_CellValue", static_cast<GLfloat>(fvals[f]));
+            const std::pair<unsigned int, unsigned int> &r=m_scene.face_range(f);
+            glDrawArrays(GL_TRIANGLES, static_cast<GLint>(r.first),
+                         static_cast<GLsizei>(r.second));
+          }
+        }
+        else if (m_color_map!=0 && (m_color_value==1 || m_color_value==2) && !vols.empty())
         {
           // Per cell: draw each volume with one flat value, so a whole cell takes
           // one colour and neighbouring cells do not melt into one. The value is the
@@ -1873,19 +1890,27 @@ protected:
       if (d<vmin) { vmin=d; }
       if (d>vmax) { vmax=d; }
     }
-    if (vmax-vmin<1e-6) { vmax=vmin+1.0; } // guard a degenerate (flat) range
   }
 
   // Colour by value: draw a small legend, a gradient bar with the value range, so
   // the colours read as numbers. The range and label match the current value.
   void draw_color_legend(const QVector4D &clipPlane, const QVector4D &plane_point)
   {
-    const bool size_mode=(m_color_value==2 && !m_scene.get_volume_faces().empty());
     double vmin, vmax;
-    if (size_mode)
+    QString label;
+    if (m_color_value==3 && m_scene.has_face_values())
+    { vmin=m_scene.face_value_min(); vmax=m_scene.face_value_max();
+      label=QString(m_scene.value_name().c_str()); }
+    else if (m_color_value==2 && !m_scene.get_volume_faces().empty())
     { if (!m_cell_sizes_valid) { compute_cell_sizes(); }
-      vmin=m_cell_size_min; vmax=m_cell_size_max; }
-    else { distance_value_range(clipPlane, plane_point, vmin, vmax); }
+      vmin=m_cell_size_min; vmax=m_cell_size_max; label=QString("size"); }
+    else
+    { distance_value_range(clipPlane, plane_point, vmin, vmax); label=QString("distance"); }
+
+    // No range to map (a uniform value, e.g. a flat mesh with a parallel plane):
+    // skip the legend rather than show a misleading full gradient. The threshold is
+    // relative to the value magnitude, so it holds at any scale.
+    if (vmax-vmin<=1e-6*(std::fabs(vmin)+std::fabs(vmax))) { return; }
 
     const int barW=16, barH=150;
     const int x=width()-barW-70, y=height()-barH-30;
@@ -1897,7 +1922,7 @@ protected:
     }
     painter.setPen(::Qt::black);
     painter.drawRect(x, y, barW, barH);
-    painter.drawText(x-2, y-8, QString(size_mode ? "size" : "distance"));
+    painter.drawText(x-2, y-8, label);
     painter.drawText(x+barW+5, y+11, QString::number(vmax, 'g', 3));
     painter.drawText(x+barW+5, y+barH, QString::number(vmin, 'g', 3));
     painter.end();
@@ -2499,15 +2524,24 @@ protected:
       }
       else if ((e->key()==::Qt::Key_D) && (modifiers==::Qt::ShiftModifier))
       {
-        // Colour by value: pick the value and how it is shown. Distance to the plane
-        // as a smooth gradient, the same distance as one flat colour per cell, then
-        // the cell size as one flat colour per cell.
-        m_color_value=(m_color_value+1)%3;
+        // Colour by value: pick the value and how it is shown. Skip the modes that
+        // do not apply to the current scene: the per-cell and size modes need
+        // volumes, and the user value needs values set by the drawer. This keeps the
+        // message, the faces and the legend in agreement.
+        const bool has_vols=!m_scene.get_volume_faces().empty();
+        const bool has_vals=m_scene.has_face_values();
+        for (int step=1; step<=4; ++step)
+        {
+          const int m=(m_color_value+step)%4;
+          if (m==0 || ((m==1 || m==2) && has_vols) || (m==3 && has_vals))
+          { m_color_value=m; break; }
+        }
         switch(m_color_value)
         {
         case 0: displayMessage(QString("Colour by value = distance (smooth)")); break;
         case 1: displayMessage(QString("Colour by value = distance (per cell)")); break;
         case 2: displayMessage(QString("Colour by value = size (per cell)")); break;
+        case 3: displayMessage(QString("Colour by value = %1 (per face)").arg(m_scene.value_name().c_str())); break;
         default: break;
         }
         update();

@@ -60,6 +60,9 @@ void compute_elements(const FG &fg,
 
   if (gs_options.are_faces_enabled())
   {
+    // Colour by value: name the value once, for the legend.
+    if (!gs_options.face_value_name.empty())
+    { graphics_scene.set_value_name(gs_options.face_value_name); }
     for (auto fh : faces(fg))
     {
       if (fh != boost::graph_traits<FG>::null_face() && // face exists
@@ -78,6 +81,9 @@ void compute_elements(const FG &fg,
           hd = next(hd, fg);
         }
         while (hd != first_hd);
+        // Colour by value: attach the face's scalar value before committing it.
+        if (gs_options.valued_face(fg, fh))
+        { graphics_scene.set_face_value(gs_options.face_value(fg, fh)); }
         graphics_scene.face_end();
       }
     }
