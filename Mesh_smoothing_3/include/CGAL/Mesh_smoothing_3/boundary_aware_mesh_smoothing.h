@@ -194,6 +194,7 @@ public:
         }
         build_trees();
     }
+private:
     std::optional<C3t3> _local_copy;
     C3t3 const* _c3t3;
 
@@ -247,7 +248,7 @@ public:
 /*!
 * \ingroup pkgMeshSmoothing3Projection
 *
-* \brief provides a empty class to disable projections
+* \brief provides an empty class to disable projections
 *
 * @tparam C3t3 model of `MeshComplex_3InTriangulation_3`
 *
