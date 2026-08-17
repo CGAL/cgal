@@ -82,7 +82,7 @@ as the initial mesh is already of good quality for its current geometric target.
 Notice that the elements were able to slide on their respective patches, 
 while still preserving sharpness and key features.
 
-`bunny.mesh` files only contains volume elements, as such, the smoother will not try to preserve any surfaces.
+`bunny.mesh` file only contains volume elements, as such, the smoother will not try to preserve any surfaces.
 The result will be a bumpy surface, but with significantly higher quality volume elements.
 \cgalFigureEnd
 
