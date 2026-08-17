@@ -35,7 +35,7 @@ using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<Triangulation>;
 int main(int argc, char* argv[])
 {
     std::string filename = (argc > 1) ? std::string(argv[1])
-                          : "../data/mambo_m3.mesh";
+                                      : "../data/mambo_m3.mesh";
 
     C3t3 c3t3;
 
@@ -51,7 +51,11 @@ int main(int argc, char* argv[])
     CGAL::IO::write_MEDIT(os, c3t3.triangulation(), CGAL::parameters::all_vertices(true));
     os.close();
 
-    CGAL::boundary_aware_mesh_smoothing(c3t3, CGAL::parameters::verbose(true).number_of_iterations(100));
+    CGAL::boundary_aware_mesh_smoothing(
+        c3t3,
+        CGAL::Mesh_smoothing_3::C3t3_mesh_projector(c3t3, true),
+        CGAL::parameters::verbose(true).number_of_iterations(100)
+    );
 
     std::ofstream os2("c3t3_smoothed.mesh");
     CGAL::IO::write_MEDIT(os2, c3t3.triangulation(), CGAL::parameters::all_vertices(true));

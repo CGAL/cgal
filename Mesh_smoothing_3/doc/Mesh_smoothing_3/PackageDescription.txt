@@ -8,7 +8,8 @@
 /// \defgroup pkgMeshSmoothing3Functions Functions
 /// \ingroup PkgMeshSmoothing3Ref
 
-
+/// \defgroup pkgMeshSmoothing3Projection Projection functions
+/// \ingroup PkgMeshSmoothing3Ref
 
 /*!
 \addtogroup PkgMeshSmoothing3Ref

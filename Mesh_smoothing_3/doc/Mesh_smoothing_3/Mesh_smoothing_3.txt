@@ -58,7 +58,8 @@ can recover curvature discontinuities enabling automatic feature recovery/preser
 \section secMeshSmoothing3API API
 
 The main function of the package is `CGAL::boundary_aware_mesh_smoothing()`,
-which takes a `CGAL::Mesh_complex_3_in_triangulation_3` as input and updates its vertex coordinates to improve element quality and fit to geometric targets.
+which takes a `CGAL::Mesh_complex_3_in_triangulation_3` as input and updates its vertex coordinates to 
+improve element quality and fit to geometric targets defined through a `CGAL::Mesh_smoothing_3::C3t3Projector`.
 
 \section secMeshSmoothing3Examples Examples
 
@@ -66,10 +67,11 @@ which takes a `CGAL::Mesh_complex_3_in_triangulation_3` as input and updates its
 
 The following example demonstrates the direct use of the smoother on a
 `CGAL::Mesh_complex_3_in_triangulation_3`. A `C3t3` is read from a medit file with
-its surface patches, and `boundary_aware_mesh_smoothing`
-is then called to improve the mesh quality while preserving the input surface.
-Note that CGAL reader does not currently read the feature edges from medit files,
-so the current example will only preserve input patches.
+its surface patches, and `CGAL::boundary_aware_mesh_smoothing`
+is then called to improve the mesh quality while preserving the input surface using 
+the `CGAL::Mesh_smoothing_3::C3t3_mesh_projector` class. Note that CGAL reader does
+ not currently read the feature edges from medit files, so the current example 
+ will only preserve input patches.
 
 
 \cgalFigureAnchor{1}
@@ -81,7 +83,6 @@ Running the smoother on `mambo_m3.mesh` will slightly improve dihedral angles,
 as the initial mesh is already of good quality for its current geometric target.
 Notice that the elements were able to slide on their respective patches,
 while still preserving sharpness and key features.
-
 `bunny.mesh` file only contains volume elements, as such, the smoother will not try to preserve any surfaces.
 The result will be a bumpy surface, but with significantly higher quality volume elements.
 \cgalFigureEnd

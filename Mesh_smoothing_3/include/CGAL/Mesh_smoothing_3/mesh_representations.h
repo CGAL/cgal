@@ -326,8 +326,8 @@ public:
     using Normal_3 = typename C3t3::Triangulation::Geom_traits::Vector_3;
     using Point_3 = typename C3t3::Triangulation::Geom_traits::Point_3;
     using Weighted_point_3 = typename C3t3::Triangulation::Geom_traits::Weighted_point_3;
-    using Surface_patch_index = C3t3::Surface_patch_index;
-    using Curve_index = C3t3::Curve_index;
+    using Surface_patch_index = std::pair<typename C3t3::Surface_patch_index, Face_descriptor>;
+    using Curve_index = std::pair<typename C3t3::Curve_index, Edge_descriptor>;
     using Construct_point_3 = typename C3t3::Triangulation::Geom_traits::Construct_point_3;
 
     std::size_t nb_cells() const { return c3t3.number_of_cells(); }
@@ -356,7 +356,7 @@ public:
 
     auto face_range() const { return c3t3.facets_in_complex(); }
     std::size_t nb_face_vertices(Face_descriptor face) const { return 3; }
-    Surface_patch_index patch_id(Face_descriptor face) const { return c3t3.surface_patch_index(face); }
+    Surface_patch_index patch_id(Face_descriptor face) const { return {c3t3.surface_patch_index(face), face}; }
     std::vector<Vertex_descriptor> face_vertices(Face_descriptor face) const {
         std::vector<Vertex_descriptor> vertices(3);
         for (int i = 1; i < 4; ++i) {
@@ -366,7 +366,7 @@ public:
     }
 
     auto edge_range() const { return c3t3.edges_in_complex(); }
-    Curve_index curve_id(Edge_descriptor edge) const { return c3t3.curve_index(edge); }
+    Curve_index curve_id(Edge_descriptor edge) const { return {c3t3.curve_index(edge), edge}; }
     Vertex_descriptor edge_vertex(Edge_descriptor edge, unsigned i) const {
         assert(i < 2);
         return edge.first->vertex(i == 0 ? edge.second : edge.third);

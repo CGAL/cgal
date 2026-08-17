@@ -3,8 +3,9 @@
 PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - 3D Mesh Smoothing"
 
 # custom options for this package
+EXTRACT_ALL                = false
 HIDE_UNDOC_MEMBERS         =  true
 HIDE_UNDOC_CLASSES         =  true
 
-EXCLUDE += \
-  include/CGAL/Mesh_smoothing_3/Mesh_smoothing_3.h \
+INPUT += \
+      ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Mesh_smoothing_3/Boundary_aware_mesh_smoothing.h \
