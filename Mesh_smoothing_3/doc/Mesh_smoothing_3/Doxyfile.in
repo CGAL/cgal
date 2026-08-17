@@ -2,10 +2,9 @@
 
 PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - 3D Mesh Smoothing"
 
-# custom options for this package
-EXTRACT_ALL                = false
-HIDE_UNDOC_MEMBERS         =  true
-HIDE_UNDOC_CLASSES         =  true
+HIDE_UNDOC_MEMBERS = true
+HIDE_UNDOC_CLASSES = true
 
-INPUT += \
-      ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Mesh_smoothing_3/Boundary_aware_mesh_smoothing.h \
+INPUT = ${CGAL_PACKAGE_DOC_DIR}/PackageDescription.txt
+INPUT += ${CGAL_PACKAGE_DOC_DIR}/Concepts/C3t3Projector.h
+INPUT += ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Mesh_smoothing_3/boundary_aware_mesh_smoothing.h
