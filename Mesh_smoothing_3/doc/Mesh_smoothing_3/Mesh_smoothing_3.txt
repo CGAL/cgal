@@ -62,12 +62,29 @@ which takes a `CGAL::Mesh_complex_3_in_triangulation_3` as input and updates its
 
 \section secMeshSmoothing3Examples Examples
 
-\subsection ssecMeshSmoothingC3t3 Direct Smoothing of a C3t3
+\subsection ssecMeshSmoothingC3t3 Direct smoothing of a C3t3
 
 The following example demonstrates the direct use of the smoother on a
-`CGAL::Mesh_complex_3_in_triangulation_3`. A multi-domain `C3t3` is generated
-from a labeled image and deformed to create an initial input. The
-`boundary_aware_mesh_smoothing` is then called on the generated `C3t3`.
+`CGAL::Mesh_complex_3_in_triangulation_3`. A `C3t3` is read from a medit file with 
+its surface patches, and `boundary_aware_mesh_smoothing` 
+is then called to improve the mesh quality while preserving the input surface.
+Note that CGAL reader does not currently read the feature edges from medit files, 
+so the current example will only preserve input patches.
+
+
+\cgalFigureAnchor{1}
+<center>
+<img src="c3t3_smooth.jpg" style="max-width:80%;"/>
+</center>
+\cgalFigureCaptionBegin{1}
+Running the smoother on `mambo_m3.mesh` will slightly improve dihedral angles, 
+as the initial mesh is already of good quality for its current geometric target.
+Notice that the elements were able to slide on their respective patches, 
+while still preserving sharpness and key features.
+
+`bunny.mesh` files only contains volume elements, as such, the smoother will not try to preserve any surfaces.
+The result will be a bumpy surface, but with significantly higher quality volume elements.
+\cgalFigureEnd
 
 \cgalExample{Mesh_smoothing_3/c3t3_smooth.cpp}
 
