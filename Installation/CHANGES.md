@@ -34,6 +34,13 @@ Release date: December 2026
   handle cases when some identical faces are shared between the input meshes. This leads to a significant speed up
   in those cases.
 
+### [Basic Viewer](https://doc.cgal.org/6.3/Manual/packages.html#PkgBasicViewer)
+
+- Added the possibility to colour the faces by a value mapped to a colour palette: the
+  distance to the clipping plane, the cell size, or a scalar value provided by the drawer.
+  A drawer can attach a value to each face through the new `Graphics_scene_options` functions
+  `valued_face` and `face_value` (with `face_value_name` for the legend). As an example, the
+  surface mesh drawer exposes the aspect ratio of each face.
 
 ## [Release 6.2](https://github.com/CGAL/cgal/releases/tag/v6.2)
 
