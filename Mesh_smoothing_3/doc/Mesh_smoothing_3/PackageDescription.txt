@@ -2,13 +2,10 @@
 /// \defgroup pkgMeshSmoothing3Concepts Concepts
 /// \ingroup PkgMeshSmoothing3Ref
 
-/// \defgroup pkgMeshSmoothing3Classes Classes
-/// \ingroup PkgMeshSmoothing3Ref
-
 /// \defgroup pkgMeshSmoothing3Functions Functions
 /// \ingroup PkgMeshSmoothing3Ref
 
-/// \defgroup pkgMeshSmoothing3Projection Projection functions
+/// \defgroup pkgMeshSmoothing3Projection Projection classes
 /// \ingroup PkgMeshSmoothing3Ref
 
 /*!
@@ -28,7 +25,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{6.3}
-\cgalPkgDependsOn{\ref PkgTriangulation3}
+\cgalPkgDependsOn{\ref PkgSMDS3 and \ref PkgAABBTree}
 \cgalPkgBib{cgal:p_ms3}
 \cgalPkgLicense{\ref licensesGPL "GPL" }
 \cgalPkgShortInfoEnd
