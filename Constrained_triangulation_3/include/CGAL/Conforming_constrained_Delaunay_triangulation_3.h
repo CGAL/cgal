@@ -1494,9 +1494,10 @@ public:
 // ----------------------------------------------------------
 template <typename T_3>
 class Conforming_constrained_Delaunay_triangulation_3_impl : public Conforming_Delaunay_triangulation_3<T_3> {
+  Conforming_constrained_Delaunay_triangulation_3_impl& tr() { return *this; };
+  const Conforming_constrained_Delaunay_triangulation_3_impl& tr() const { return *this; };
 public:
   using Conforming_Dt = Conforming_Delaunay_triangulation_3<T_3>;
-  using Conforming_Dt::tr;
   static_assert(Conforming_Dt::t_3_is_not_movable || CGAL::is_nothrow_movable_v<Conforming_Dt>);
 
   using Vertex_handle = typename T_3::Vertex_handle;
@@ -5055,10 +5056,10 @@ private:
                                     with_point(vt[0]), with_point(vt[1]), with_point(vt[2]));
         }
       }
-      this->copy_triangulation_into_hole(map_upper_cavity_vertices_to_ambient_vertices,
-                                         std::move(outer_map),
-                                         upper_inner_map,
-                                         this->new_cells_output_iterator());
+      tr().copy_triangulation_into_hole(map_upper_cavity_vertices_to_ambient_vertices,
+                                        std::move(outer_map),
+                                        upper_inner_map,
+                                        this->new_cells_output_iterator());
     }
     if(this->debug().copy_triangulation_into_hole()) {
       std::cerr << "# glu the lower triangulation of the cavity\n";
@@ -5125,8 +5126,14 @@ private:
       set_facet_constrained(T_3::mirror_facet(f), face_index, f2d);
       f2d->info().missing_subface = false;
     }
+
+    if(this->has_constrained_edges_to_restore()) {
+      this->restore_constrained_edges(insert_in_conflict_visitor);
+    }
+
+    // CGAL_assertion(has_all_constrained_edges());
     CGAL_assume(!this->debug().validity() || this->is_valid(true));
-  };
+  }
 
   // -------------------------
   // end of restore_subface_region
@@ -5527,7 +5534,22 @@ private:
     }
   }
 
+  bool has_all_constrained_edges() const {
+    bool result = true;
+    for(const auto& [va, vb] : this->all_constrained_edges()) {
+      const bool is_3d = this->is_edge(va, vb);
+      if(!is_3d) {
+        std::cerr << cdt_3_format("Edge is not 3D: ({} , {})\n", display_vert(va), display_vert(vb));
+        result = false;
+      }
+    }
+    return result;
+  }
+
   bool restore_face(CDT_3_signed_index face_index) {
+    // CGAL_assertion(has_all_constrained_edges());
+    // auto _ = CGAL::make_scope_exit([&]() { CGAL_assertion(has_all_constrained_edges()); });
+
     CDT_2& non_const_cdt_2 = this->non_const_face_cdt_2(face_index);
     const CDT_2& cdt_2 = non_const_cdt_2;
     if constexpr (cdt_3_can_use_cxx20_format())
