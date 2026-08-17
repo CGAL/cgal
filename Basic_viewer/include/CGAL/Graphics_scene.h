@@ -252,9 +252,11 @@ public:
     return m_buffer_for_faces.is_a_face_started();
   }
 
-  // Colour by value: set the scalar value of the face about to be built, and the
-  // legend name for the value. The viewer colours the faces by these when asked.
+  /// sets the scalar value of the face currently being built. The viewer can colour
+  /// the faces by these values, normalised over their range and mapped to a palette.
   void set_face_value(float v) { m_current_face_value=v; m_has_face_values=true; }
+
+  /// sets the name of the value, shown in the viewer's colour legend.
   void set_value_name(const std::string &n) { m_value_name=n; }
 
   void face_begin()

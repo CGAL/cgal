@@ -67,10 +67,17 @@ struct Graphics_scene_options<DS, VertexDescriptor, EdgeDescriptor, FaceDescript
 
   std::function<bool(const DS &, face_descriptor)> face_wireframe;
 
-  // Colour by value: valued_face marks a face that carries a scalar value,
-  // face_value returns it, and face_value_name labels the legend.
+  /// `std::function` that returns `true` if the given face carries a scalar value to
+  /// colour it by, `false` otherwise. `false` by default.
   std::function<bool(const DS &, face_descriptor)>  valued_face;
+
+  /// `std::function` that returns the scalar value of the given face. Called only
+  /// when `valued_face()` returns `true`. The viewer normalises the values over their
+  /// range and maps them to a colour palette.
   std::function<float(const DS &, face_descriptor)> face_value;
+
+  /// The name of the value, shown in the viewer's colour legend (for example
+  /// "aspect ratio"). Empty by default.
   std::string face_value_name;
 
   // These functions must be non null if the corresponding colored_XXX function
