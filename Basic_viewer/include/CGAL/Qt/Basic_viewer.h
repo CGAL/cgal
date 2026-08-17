@@ -1034,8 +1034,28 @@ public:
         vao[VAO_FACES].bind();
         if (num_volumes == 0)
         {
-          glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(
-            m_scene.number_of_elements(GS::POS_FACES)));
+          // No volumes (a surface mesh, for example): there is nothing to clip whole,
+          // so colour all faces by value, including the drawer's per-face value.
+          if (m_color_map!=0 && m_color_value==3 && m_scene.has_face_values())
+          {
+            rendering_program_face.setUniformValue("u_ColorPerCell", static_cast<GLint>(1));
+            rendering_program_face.setUniformValue("u_ValueMin", static_cast<GLfloat>(m_scene.face_value_min()));
+            rendering_program_face.setUniformValue("u_ValueMax", static_cast<GLfloat>(m_scene.face_value_max()));
+            const std::vector<float> &fvals=m_scene.get_face_values();
+            const unsigned int nf=m_scene.number_of_faces();
+            for (unsigned int f=0; f<nf && f<fvals.size(); ++f)
+            {
+              rendering_program_face.setUniformValue("u_CellValue", static_cast<GLfloat>(fvals[f]));
+              const std::pair<unsigned int, unsigned int> &r=m_scene.face_range(f);
+              glDrawArrays(GL_TRIANGLES, static_cast<GLint>(r.first),
+                           static_cast<GLsizei>(r.second));
+            }
+          }
+          else
+          {
+            glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(
+              m_scene.number_of_elements(GS::POS_FACES)));
+          }
         }
         else
         {
