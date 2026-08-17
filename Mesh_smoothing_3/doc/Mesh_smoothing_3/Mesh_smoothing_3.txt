@@ -74,7 +74,7 @@ so the current example will only preserve input patches.
 
 \cgalFigureAnchor{1}
 <center>
-<img src="c3t3_smooth.jpg" style="max-width:80%;"/>
+<img src="c3t3_smooth.png" style="max-width:80%;"/>
 </center>
 \cgalFigureCaptionBegin{1}
 Running the smoother on `mambo_m3.mesh` will slightly improve dihedral angles,
