@@ -25,7 +25,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{6.3}
-\cgalPkgDependsOn{\ref PkgSMDS3 and \ref PkgAABBTree}
+\cgalPkgDependsOn{\ref PkgSMDS3, \ref PkgAABBTree and \ref thirdpartyEigen}
 \cgalPkgBib{cgal:p_ms3}
 \cgalPkgLicense{\ref licensesGPL "GPL" }
 \cgalPkgShortInfoEnd
