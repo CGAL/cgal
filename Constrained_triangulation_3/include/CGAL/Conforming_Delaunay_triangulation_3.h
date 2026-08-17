@@ -382,24 +382,29 @@ protected:
     Insert_in_conflict_visitor(Conforming_Delaunay_triangulation_3* self) : self(self) {}
 
     template <class InputIterator>
-    void process_cells_in_conflict(InputIterator cell_it, InputIterator end) {
+    void process_cells_in_conflict(InputIterator cell_it, InputIterator end)
+    {
       const CGAL::unordered_flat_set<Cell_handle> cells_set(cell_it, end);
-      std::set<std::pair<Vertex_handle, Vertex_handle>> edges_in_conflict;
-      auto d = self->tr().dimension();
-      for( ; cell_it != end; ++cell_it ) {
-        for( int i = 0; i < d; ++i ) {
-          const auto n = (*cell_it)->neighbor(i);
-          if(cells_set.find(n) == cells_set.end()) continue;
-          // here: (c, i) is a facet internal to the conflict region
-          for(int j = 0; j < 3; ++j ) {
-            auto v1 = (*cell_it)->vertex(self->tr().vertex_triple_index(i, j));
-            auto v2 = (*cell_it)->vertex(self->tr().vertex_triple_index(i, self->tr().cw(j)));
-            if(self->tr().is_infinite(v1) || self->tr().is_infinite(v2)) continue;
-            edges_in_conflict.insert(CGAL::make_sorted_pair(v1, v2));
+      std::set<Facet> border_facets;
+      std::set<std::pair<Vertex_handle, Vertex_handle>> cavity_edges;
+      for(auto c : cells_set) {
+        for(int i = 0; i < 4; ++i) {
+          if(!cells_set.count(c->neighbor(i))) {
+            border_facets.emplace(c, i);
+          }
+          for(int j = i + 1; j < 4; ++j) {
+            cavity_edges.emplace(make_sorted_pair(c->vertex(i), c->vertex(j)));
           }
         }
       }
-      for(auto [v1, v2]: edges_in_conflict) {
+      for(auto f : border_facets) {
+        const auto f_vertices = T_3::vertices(f);
+        for(int i = 0; i < 3; ++i) {
+          cavity_edges.erase(make_sorted_pair(f_vertices[i], f_vertices[T_3::ccw(i)]));
+        }
+      }
+
+      for(auto [v1, v2]: cavity_edges) {
         if(self->use_finite_edges_map()) {
           auto v1_index = v1->time_stamp();
           [[maybe_unused]] auto nb_erased = self->all_finite_edges[v1_index].erase(v2);
@@ -677,6 +682,10 @@ public:
                        });
   }
 
+  auto all_constrained_edges () const {
+    return constraint_hierarchy.subconstraints();
+  }
+
   enum class Check_distance { SQUARED_DISTANCE, NON_SQUARED_DISTANCE };
 
   void check_segment_vertex_distance_or_throw(Vertex_handle va,
@@ -819,6 +828,15 @@ protected:
     }
   }
 
+  bool has_constrained_edges_to_restore() const {
+    return !subconstraints_to_conform.empty();
+  }
+
+  template <typename Visitor>
+  void restore_constrained_edges(Visitor& visitor) {
+    return restore_Delaunay(visitor);
+  }
+
   template <typename Visitor>
   void restore_Delaunay(Visitor& visitor) {
     update_all_finite_edges();
@@ -890,6 +908,34 @@ protected:
     const Vertex_handle vb = subconstraint.second;
     CGAL_assertion(va != vb);
     if(!this->is_edge(va, vb)) {
+#ifdef CGAL_CT3_FLIP_BEFORE_INSERTING_STEINER_POINTS
+      // try to flip facet crossed by [va, vb] to make it an
+      // edge of the triangulation
+      std::vector<Cell_handle> inc_cells;
+      this->incident_cells(va, std::back_inserter(inc_cells));
+      for(auto c : inc_cells)
+      {
+        int ia = c->index(va);
+        if(c->neighbor(ia)->has_vertex(vb))
+        {
+          if(this->flip(Facet(c, ia)))
+          {
+            std::cout << "flipped facet to make edge ("
+                      << display_vert(va) << ", " << display_vert(vb)
+                      << ") an edge in the triangulation\n";
+            this->is_Delaunay = false;
+            CGAL_assertion(this->is_edge(va, vb));
+            return true;
+          }
+          else
+          {
+            std::cout << "-- flip failed to make edge (" << display_vert(va) << ", " << display_vert(vb)
+                      << ") an edge in the triangulation\n";
+          }
+          break;
+        }
+      }
+#endif
       const auto& [steiner_pt, hint, ref_vertex] = construct_Steiner_point(constraint, subconstraint);
       [[maybe_unused]] const auto v =
           insert_Steiner_point_on_subconstraint(steiner_pt, hint, subconstraint, constraint, visitor);
@@ -909,6 +955,11 @@ protected:
   }
 
 public:
+  bool is_a_constrained_edge(Vertex_handle va, Vertex_handle vb) const {
+    auto [contexts_begin, contexts_end] = this->constraint_hierarchy.contexts(va, vb);
+    return (contexts_begin != contexts_end);
+  }
+
   Constrained_polyline_id constraint_from_extremities(Vertex_handle va, Vertex_handle vb) const {
     if(va->ccdt_3_data().number_of_incident_constraints() == 0 || vb->ccdt_3_data().number_of_incident_constraints() == 0)
     {
