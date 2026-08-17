@@ -33,6 +33,9 @@ Release date: December 2026
 - The corefinement based operations (including Boolean operations) has been optimized to better
   handle cases when some identical faces are shared between the input meshes. This leads to a significant speed up
   in those cases.
+- Added new multithreading compatible functions operating directly on triangle soups, enabling the handling of non-manifold input and output volumes:
+  `CGAL::Polygon_mesh_processing::compute_union()`, `CGAL::Polygon_mesh_processing::compute_intersection()`, and
+  `CGAL::Polygon_mesh_processing::compute_difference()`.
 
 
 ## [Release 6.2](https://github.com/CGAL/cgal/releases/tag/v6.2)
