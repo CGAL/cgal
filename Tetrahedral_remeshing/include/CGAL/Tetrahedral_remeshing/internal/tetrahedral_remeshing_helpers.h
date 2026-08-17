@@ -31,6 +31,7 @@
 #include <boost/container/flat_set.hpp>
 #include <boost/container/small_vector.hpp>
 #include <boost/bimap.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 
 #include <optional>
 
@@ -811,15 +812,18 @@ surface_patch_index(const typename C3t3::Vertex_handle v,
                     const C3t3& c3t3)
 {
   typedef typename C3t3::Facet Facet;
-  std::vector<Facet> facets;
-  c3t3.triangulation().incident_facets(v, std::back_inserter(facets));
+  std::optional<typename C3t3::Surface_patch_index> patch;
 
-  for(const Facet& f : facets)
-  {
-    if (c3t3.is_in_complex(f))
-      return c3t3.surface_patch_index(f);
-  }
-  return std::nullopt;
+  // the star is examined through an output iterator rather than collected :
+  // only the first facet of the complex is of interest
+  c3t3.triangulation().incident_facets(v,
+    boost::make_function_output_iterator([&](const Facet& f)
+    {
+      if (patch == std::nullopt && c3t3.is_in_complex(f))
+        patch = c3t3.surface_patch_index(f);
+    }));
+
+  return patch;
 }
 
 template<typename C3t3>
@@ -1586,9 +1590,16 @@ auto midpoint_with_info(const typename C3t3::Edge& e,
   const int midpoint_dim = boundary_edge
     ? (std::max)(u->in_dimension(), v->in_dimension())
     : 3;
+  // the midpoint lies on `e`, and all the cells incident to an edge that is not
+  // on a boundary share one subdomain : locating the midpoint would return one
+  // of them, so `e.first` already carries the answer
+  CGAL_expensive_assertion(boundary_edge
+    || subdomain_index_at_point_3(midpoint_pt, e.first, c3t3.triangulation())
+         == e.first->subdomain_index());
+
   const Index midpoint_index = boundary_edge
     ? max_dimension_index(c3t3.triangulation().vertices(e))
-    : subdomain_index_at_point_3(midpoint_pt, e.first, c3t3.triangulation());
+    : Index(e.first->subdomain_index());
 
   return Midpoint_with_info{midpoint_pt, midpoint_dim, midpoint_index};
 }

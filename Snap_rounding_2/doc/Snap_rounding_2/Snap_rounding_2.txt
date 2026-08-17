@@ -26,7 +26,7 @@ Two segments that do intersect (a), these segment with their intersection point 
 
 To solve the problem of naive rounding, multiple methods have been developed converting arbitrary-precision arrangements of segments into a representation with reduced precision while preventing the introduction of new intersections and
 preserving the topology "up to collapse". More formally, seeing the rounding as a movement, if two points became equal during the motion, they must be equal at the end of the motion. This package provides two such algorithms:
-- **Hot Pixel Snap Rounding**: the classic method for guaranteed rounding, commonly known as Snap Rounding in the litterature \cgalCite{gght-srlse-97}, \cgalCite{gm-rad-98}, \cgalCite{h-psifp-99}, \cgalCite{cgal:hp-isr-02}.
+- **Hot Pixel Snap Rounding**: the classic method for guaranteed rounding, commonly known as Snap Rounding in the literature \cgalCite{gght-srlse-97}, \cgalCite{gm-rad-98}, \cgalCite{h-psifp-99}, \cgalCite{cgal:hp-isr-02}.
 It subdivides segments at the pixels that contain the vertices of the arrangement.
 - **Vertical Slab Snap Rounding**: a recent method introduced by Lazard and Valque \cgalCite{valque2024snaprounding}, which subdivides segments with vertical slabs passing through the vertices.
 
@@ -92,7 +92,7 @@ An arrangement of segments before subdividing the segments (a), after subdividin
 
 \section FSR_Perf Snap Rounding Performance
 We evaluate the different methods on two tests:
-In the first test, the segment endpoints are chosen uniformly and independantly in the unit box.
+In the first test, the segment endpoints are chosen uniformly and independently in the unit box.
 In the second test, we generate perturbed copies of a given segment. This experiment is repeated several times using different input segments.
 The two pixel sizes for Hot Pixel Snap Rounding are chosen such that the rounding shift is of the same order of magnitude as the rounding induced by using `double` or `float` coordinates.
 

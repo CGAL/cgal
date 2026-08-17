@@ -19,6 +19,7 @@
 #include <boost/bimap/set_of.hpp>
 #include <boost/bimap/multiset_of.hpp>
 #include <boost/container/small_vector.hpp>
+#include <boost/container/flat_set.hpp>
 #include <boost/functional/hash.hpp>
 
 #include <vector>
@@ -727,7 +728,10 @@ bool are_edge_lengths_valid(const typename C3t3::Edge& edge,
   else
     CGAL_assertion(false);
 
-  std::unordered_map<Vertex_handle, FT> edges_sqlength_after_collapse;
+  boost::container::flat_set<Vertex_handle,
+    std::less<Vertex_handle>,
+    boost::container::small_vector<Vertex_handle, 64> > examined;
+
   for (const Edge& ei : inc_edges)
   {
     if (is_outside(ei, c3t3, cell_selector))
@@ -739,15 +743,12 @@ bool are_edge_lengths_valid(const typename C3t3::Edge& edge,
     if (vh == v0 || vh == v1)
       continue;
 
-    FT sqlen = FT(0);
-    if (edges_sqlength_after_collapse.find(vh) == edges_sqlength_after_collapse.end())
-    {
-      sqlen = CGAL::squared_distance(point(new_pos), point(vh->point()));
-      edges_sqlength_after_collapse[vh] = sqlen;
-    }
-    else
-      sqlen = edges_sqlength_after_collapse[vh];
+    // a vertex adjacent to both extremities is met once per star, and the test
+    // below reads nothing but `vh` : running it again cannot change its outcome
+    if (!examined.insert(vh).second)
+      continue;
 
+    const FT sqlen = CGAL::squared_distance(point(new_pos), point(vh->point()));
     const FT sizing_at_vh = sizing_at_vertex(vh, sizing, c3t3, cell_selector);
     const FT sqhigh
         = CGAL::square(FT(4) / FT(3)) * (std::max)(CGAL::square(sizing_at_vh),
@@ -1219,11 +1220,17 @@ auto can_be_collapsed(const typename C3T3::Edge& e,
 
   if(!boundary && !in_cx)
   {
-    auto patch_v0 = surface_patch_index(e.first->vertex(e.second), c3t3);
-    auto patch_v1 = surface_patch_index(e.first->vertex(e.third), c3t3);
+    const auto v0 = e.first->vertex(e.second);
+    const auto v1 = e.first->vertex(e.third);
 
-    if(patch_v0 != std::nullopt && patch_v1 != std::nullopt && patch_v0 != patch_v1)
-      return Collapsible{false, boundary};
+    if(v0->in_dimension() != 3 && v1->in_dimension() != 3)
+    {
+      const auto patch_v0 = surface_patch_index(v0, c3t3);
+      const auto patch_v1 = surface_patch_index(v1, c3t3);
+
+      if(patch_v0 != std::nullopt && patch_v1 != std::nullopt && patch_v0 != patch_v1)
+        return Collapsible{false, boundary};
+    }
   }
 
 //   if(!is_internal(e, c3t3, cell_selector))

@@ -20,6 +20,7 @@ CGAL_add_named_parameter(visitor_t, visitor, visitor)
 CGAL_add_named_parameter(point_t, point_map, point_map)
 
 CGAL_add_named_parameter(edge_is_constrained_t, edge_is_constrained, edge_is_constrained_map)
+CGAL_add_named_parameter(edge_is_protected_t, edge_is_protected, edge_is_protected_map)
 CGAL_add_named_parameter(edge_is_marked_map_t, edge_is_marked_map, edge_is_marked_map)
 CGAL_add_named_parameter(first_index_t, first_index, first_index)
 CGAL_add_named_parameter(number_of_iterations_t, number_of_iterations, number_of_iterations)

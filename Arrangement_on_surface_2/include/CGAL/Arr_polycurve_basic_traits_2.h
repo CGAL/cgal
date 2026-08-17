@@ -7,10 +7,10 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Efi Fogel <efif@post.tau.ac.il>
-//                 Ron Wein  <wein@post.tau.ac.il>
-//                 Dror Atariah <dror.atariah@fu-berlin.de>
-//                 Waqar Khan <wkhan@mpi-inf.mpg.de>
+// Author(s) : Efi Fogel <efif@post.tau.ac.il>
+//             Ron Wein  <wein@post.tau.ac.il>
+//             Dror Atariah <dror.atariah@fu-berlin.de>
+//             Waqar Khan <wkhan@mpi-inf.mpg.de>
 
 #ifndef CGAL_ARR_POLYCURVE_BASIC_TRAITS_2_H
 #define CGAL_ARR_POLYCURVE_BASIC_TRAITS_2_H
@@ -60,8 +60,7 @@ public:
                                               Right_side_category>::result;
 
   using Bottom_or_top_sides_category =
-    typename Arr_two_sides_category<Bottom_side_category,
-                                    Top_side_category>::result;
+    typename Arr_two_sides_category<Bottom_side_category, Top_side_category>::result;
 
   using Point_2 = typename Subcurve_traits_2::Point_2;
   using X_monotone_subcurve_2 = typename Subcurve_traits_2::X_monotone_curve_2;
@@ -101,8 +100,7 @@ public:
    * this polycurve traits own its subcurve traits as well
    * \param other the other traits.
    */
-  Arr_polycurve_basic_traits_2(const Arr_polycurve_basic_traits_2& other)
-  {
+  Arr_polycurve_basic_traits_2(const Arr_polycurve_basic_traits_2& other) {
     m_subcurve_traits = (other.m_own_traits) ?
       new Subcurve_traits_2() : other.m_subcurve_traits;
     m_own_traits = other.m_own_traits;
@@ -112,14 +110,12 @@ public:
    * Deletes the subcurve tarits class in case it was constructed during the
    * construction of this.
    */
-  ~Arr_polycurve_basic_traits_2()
-  { if (m_own_traits) delete m_subcurve_traits; }
+  ~Arr_polycurve_basic_traits_2() { if (m_own_traits) delete m_subcurve_traits; }
 
   /*! obtains the subcurve traits.
    * \return the subcurve traits.
    */
-  const Subcurve_traits_2* subcurve_traits_2() const
-  { return m_subcurve_traits; }
+  const Subcurve_traits_2* subcurve_traits_2() const { return m_subcurve_traits; }
 
   /// \name Types and functors defined here, required by the
   // ArrangementBasicTraits concept.
@@ -145,9 +141,7 @@ public:
     friend class Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     /*! constructs. */
-    Compare_x_2(const Polycurve_basic_traits_2& traits) :
-      m_poly_traits(traits)
-    {}
+    Compare_x_2(const Polycurve_basic_traits_2& traits) : m_poly_traits(traits) {}
 
   public:
     /*! compares the \f$x\f$-coordinates of two directional points.
@@ -170,8 +164,7 @@ public:
      *            `ARR_MAX_END` - the maximal end of `xs1`.
      * \param p2 the second curve end.
      */
-    Comparison_result operator()(const X_monotone_subcurve_2& xs1,
-                                 Arr_curve_end ce1, const Point_2& p2)
+    Comparison_result operator()(const X_monotone_subcurve_2& xs1, Arr_curve_end ce1, const Point_2& p2)
     { return operator()(xs1, ce1, p2, All_sides_oblivious_category()); }
 
     /*! compares two ends of \f$x\f$-monotone curves in x.
@@ -186,16 +179,13 @@ public:
      *            `ARR_MIN_END` - the minimal end of `xs2` or
      *            `ARR_MAX_END` - the maximal end of `xs2`.
      */
-    Comparison_result operator()(const X_monotone_subcurve_2& xs1,
-                                 Arr_curve_end ce1,
-                                 const X_monotone_subcurve_2& xs2,
-                                 Arr_curve_end ce2)
+    Comparison_result operator()(const X_monotone_subcurve_2& xs1, Arr_curve_end ce1,
+                                 const X_monotone_subcurve_2& xs2, Arr_curve_end ce2)
     { return operator()(xs1, ce1, xs2, ce2, All_sides_oblivious_category()); }
 
   private:
     // Oblivious implementation
-    Comparison_result operator()(const X_monotone_subcurve_2& xs1,
-                                 Arr_curve_end ce1, const Point_2& p2,
+    Comparison_result operator()(const X_monotone_subcurve_2& xs1, Arr_curve_end ce1, const Point_2& p2,
                                  Arr_all_sides_oblivious_tag) const {
       const auto* geom_traits = m_poly_traits.subcurve_traits_2();
       auto p1 = (ce1 == ARR_MAX_END) ?
@@ -205,8 +195,7 @@ public:
     }
 
     // Boundary implementation
-    Comparison_result operator()(const X_monotone_subcurve_2& xs1,
-                                 Arr_curve_end ce1, const Point_2& p2,
+    Comparison_result operator()(const X_monotone_subcurve_2& xs1, Arr_curve_end ce1, const Point_2& p2,
                                  Arr_not_all_sides_oblivious_tag) const {
       const auto* geom_traits = m_poly_traits.subcurve_traits_2();
       auto ps_x = geom_traits->parameter_space_in_x_2_object();
@@ -230,10 +219,8 @@ public:
     }
 
     // Oblivious implementation
-    Comparison_result operator()(const X_monotone_subcurve_2& xs1,
-                                 Arr_curve_end ce1,
-                                 const X_monotone_subcurve_2& xs2,
-                                 Arr_curve_end ce2,
+    Comparison_result operator()(const X_monotone_subcurve_2& xs1, Arr_curve_end ce1,
+                                 const X_monotone_subcurve_2& xs2, Arr_curve_end ce2,
                                  Arr_all_sides_oblivious_tag) const {
       const auto* geom_traits = m_poly_traits.subcurve_traits_2();
       auto p1 = (ce1 == ARR_MAX_END) ?
@@ -246,10 +233,8 @@ public:
     }
 
     // Boundary implementation
-    Comparison_result operator()(const X_monotone_subcurve_2& xs1,
-                                 Arr_curve_end ce1,
-                                 const X_monotone_subcurve_2& xs2,
-                                 Arr_curve_end ce2,
+    Comparison_result operator()(const X_monotone_subcurve_2& xs1, Arr_curve_end ce1,
+                                 const X_monotone_subcurve_2& xs2, Arr_curve_end ce2,
                                  Arr_not_all_sides_oblivious_tag) const {
       const auto* geom_traits = m_poly_traits.subcurve_traits_2();
       auto ps_x = geom_traits->parameter_space_in_x_2_object();
@@ -308,9 +293,7 @@ public:
     friend class Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     /*! constructs. */
-    Compare_xy_2(const Polycurve_basic_traits_2& traits) :
-      m_poly_traits(traits)
-    {}
+    Compare_xy_2(const Polycurve_basic_traits_2& traits) : m_poly_traits(traits) {}
 
   public:
     /*! compares two directional points lexigoraphically: by \f$x\f$, then by
@@ -337,8 +320,7 @@ public:
      *            `ARR_MAX_END` - the lexicographically largest end of `xs1`.
      * \param p2 the second curve end.
      */
-    Comparison_result operator()(const X_monotone_subcurve_2& xs1,
-                                 Arr_curve_end ce1, const Point_2& p2)
+    Comparison_result operator()(const X_monotone_subcurve_2& xs1, Arr_curve_end ce1, const Point_2& p2)
     { return operator()(xs1, ce1, p2, All_sides_oblivious_category()); }
 
     /*! compares two ends of \f$x\f$-monotone curves lexicographically.
@@ -353,16 +335,13 @@ public:
      *            `ARR_MIN_END` - the minimal end of `xs2` or
      *            `ARR_MAX_END` - the maximal end of `xs2`.
      */
-    Comparison_result operator()(const X_monotone_subcurve_2& xs1,
-                                 Arr_curve_end ce1,
-                                 const X_monotone_subcurve_2& xs2,
-                                 Arr_curve_end ce2)
+    Comparison_result operator()(const X_monotone_subcurve_2& xs1, Arr_curve_end ce1,
+                                 const X_monotone_subcurve_2& xs2, Arr_curve_end ce2)
     { return operator()(xs1, ce1, xs2, ce2, All_sides_oblivious_category()); }
 
   private:
     // Oblivious implementation
-    Comparison_result operator()(const X_monotone_subcurve_2& xs1,
-                                 Arr_curve_end ce1, const Point_2& p2,
+    Comparison_result operator()(const X_monotone_subcurve_2& xs1, Arr_curve_end ce1, const Point_2& p2,
                                  Arr_all_sides_oblivious_tag) const {
       const auto* geom_traits = m_poly_traits.subcurve_traits_2();
       auto p1 = (ce1 == ARR_MAX_END) ?
@@ -372,8 +351,7 @@ public:
     }
 
     // Boundary implementation
-    Comparison_result operator()(const X_monotone_subcurve_2& xs1,
-                                 Arr_curve_end ce1, const Point_2& p2,
+    Comparison_result operator()(const X_monotone_subcurve_2& xs1, Arr_curve_end ce1, const Point_2& p2,
                                  Arr_not_all_sides_oblivious_tag) const {
       const auto* geom_traits = m_poly_traits.subcurve_traits_2();
       auto ps_x = geom_traits->parameter_space_in_x_2_object();
@@ -403,10 +381,8 @@ public:
     }
 
     // Oblivious implementation
-    Comparison_result operator()(const X_monotone_subcurve_2& xs1,
-                                 Arr_curve_end ce1,
-                                 const X_monotone_subcurve_2& xs2,
-                                 Arr_curve_end ce2,
+    Comparison_result operator()(const X_monotone_subcurve_2& xs1, Arr_curve_end ce1,
+                                 const X_monotone_subcurve_2& xs2, Arr_curve_end ce2,
                                  Arr_all_sides_oblivious_tag) const {
       const auto* geom_traits = m_poly_traits.subcurve_traits_2();
       auto p1 = (ce1 == ARR_MAX_END) ?
@@ -419,10 +395,8 @@ public:
     }
 
     // Boundary implementation
-    Comparison_result operator()(const X_monotone_subcurve_2& xs1,
-                                 Arr_curve_end ce1,
-                                 const X_monotone_subcurve_2& xs2,
-                                 Arr_curve_end ce2,
+    Comparison_result operator()(const X_monotone_subcurve_2& xs1, Arr_curve_end ce1,
+                                 const X_monotone_subcurve_2& xs2, Arr_curve_end ce2,
                                  Arr_not_all_sides_oblivious_tag) const {
       const auto* geom_traits = m_poly_traits.subcurve_traits_2();
       auto ps_x = geom_traits->parameter_space_in_x_2_object();
@@ -531,9 +505,7 @@ public:
     friend class Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     /*! constructs. */
-    Construct_min_vertex_2(const Polycurve_basic_traits_2& traits) :
-      m_poly_traits(traits)
-    {}
+    Construct_min_vertex_2(const Polycurve_basic_traits_2& traits) : m_poly_traits(traits) {}
 
   public:
     /*! obtains the left endpoint of the \f$x\f$-monotone polycurve. The return
@@ -543,8 +515,7 @@ public:
      * \return the lexicographically smallest endpoint.
      */
     using Subcurve_ctr = typename Subcurve_traits_2::Construct_min_vertex_2;
-    decltype(std::declval<Subcurve_ctr>().
-             operator()(std::declval<X_monotone_subcurve_2>()))
+    decltype(std::declval<Subcurve_ctr>().operator()(std::declval<X_monotone_subcurve_2>()))
     operator()(const X_monotone_curve_2& xcv) const {
       CGAL_assertion(xcv.number_of_subcurves() > 0);
 
@@ -553,14 +524,12 @@ public:
       if (geom_traits->compare_endpoints_xy_2_object()(xcv[0]) == SMALLER)
         return geom_traits->construct_min_vertex_2_object()(xcv[0]);
       else
-        return geom_traits->
-          construct_min_vertex_2_object()(xcv[xcv.number_of_subcurves()-1]);
+        return geom_traits->construct_min_vertex_2_object()(xcv[xcv.number_of_subcurves()-1]);
     }
   };
 
   /*! obtains a Construct_min_vertex_2 functor object. */
-  Construct_min_vertex_2 construct_min_vertex_2_object() const
-  { return Construct_min_vertex_2(*this); }
+  Construct_min_vertex_2 construct_min_vertex_2_object() const { return Construct_min_vertex_2(*this); }
 
   /*! A functor that obtain the lexicographically largest endpoint of an
    * \f$x\f$-monotone curve.
@@ -576,9 +545,7 @@ public:
     friend class Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     /*! constructs. */
-    Construct_max_vertex_2(const Polycurve_basic_traits_2& traits) :
-      m_poly_traits(traits)
-    {}
+    Construct_max_vertex_2(const Polycurve_basic_traits_2& traits) : m_poly_traits(traits) {}
 
   public:
     /*! obtains the right endpoint of the \f$x\f$-monotone polycurve. The return
@@ -588,8 +555,7 @@ public:
      * \return the lexicographically largest endpoint.
      */
     using Subcurve_ctr = typename Subcurve_traits_2::Construct_max_vertex_2;
-    decltype(std::declval<Subcurve_ctr>().
-             operator()(std::declval<X_monotone_subcurve_2>()))
+    decltype(std::declval<Subcurve_ctr>().operator()(std::declval<X_monotone_subcurve_2>()))
     operator()(const X_monotone_curve_2& xcv) const {
       CGAL_assertion(xcv.number_of_subcurves() > 0);
       const auto* geom_traits = m_poly_traits.subcurve_traits_2();
@@ -616,9 +582,7 @@ public:
     friend class Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     /*! constructs. */
-    Is_vertical_2(const Polycurve_basic_traits_2& traits) :
-      m_poly_traits(traits)
-    {}
+    Is_vertical_2(const Polycurve_basic_traits_2& traits) : m_poly_traits(traits) {}
 
   public:
     /*! checks whether the given \f$x\f$-monotone curve is a vertical segment.
@@ -643,10 +607,8 @@ public:
   class Compare_y_at_x_2 {
   private:
     // Oblivious implementation
-    Comparison_result operator()(const X_monotone_subcurve_2& xs1,
-                                 Arr_curve_end ce1,
-                                 const X_monotone_subcurve_2& xs2,
-                                 Arr_all_sides_oblivious_tag) const {
+    Comparison_result operator()(const X_monotone_subcurve_2& xs1, Arr_curve_end ce1,
+                                 const X_monotone_subcurve_2& xs2, Arr_all_sides_oblivious_tag) const {
       const auto* geom_traits = m_poly_traits.subcurve_traits_2();
       auto p = (ce1 == ARR_MAX_END) ?
         geom_traits->construct_max_vertex_2_object()(xs1) :
@@ -655,10 +617,8 @@ public:
     }
 
     // Boundary implementation
-    Comparison_result operator()(const X_monotone_subcurve_2& xs1,
-                                 Arr_curve_end ce1,
-                                 const X_monotone_subcurve_2& xs2,
-                                 Arr_not_all_sides_oblivious_tag) const {
+    Comparison_result operator()(const X_monotone_subcurve_2& xs1, Arr_curve_end ce1,
+                                 const X_monotone_subcurve_2& xs2, Arr_not_all_sides_oblivious_tag) const {
       const auto* geom_traits = m_poly_traits.subcurve_traits_2();
       auto ps_x = geom_traits->parameter_space_in_x_2_object();
       auto ps_y = geom_traits->parameter_space_in_y_2_object();
@@ -695,8 +655,7 @@ public:
     }
 
     // Compare vertical
-    Comparison_result compare_vertical(const Point_2& p,
-                                       const X_monotone_curve_2& xcv) const {
+    Comparison_result compare_vertical(const Point_2& p, const X_monotone_curve_2& xcv) const {
       const auto* geom_traits = m_poly_traits.subcurve_traits_2();
 #ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
       const Comparison_result l2r_smaller = SMALLER;
@@ -715,8 +674,7 @@ public:
     }
 
     // Compare non_vertical
-    Comparison_result compare_non_vertical(const Point_2& p,
-                                           const X_monotone_curve_2& xcv) const {
+    Comparison_result compare_non_vertical(const Point_2& p, const X_monotone_curve_2& xcv) const {
       const auto* geom_traits = m_poly_traits.subcurve_traits_2();
       // Get the index of the subcurve in xcv containing p.
       auto i = m_poly_traits.locate_impl(xcv, p, All_sides_oblivious_category());
@@ -727,8 +685,7 @@ public:
     }
 
     // Oblivious implementation
-    Comparison_result operator()(const Point_2& p,
-                                 const X_monotone_curve_2& xcv,
+    Comparison_result operator()(const Point_2& p, const X_monotone_curve_2& xcv,
                                  Arr_all_sides_oblivious_tag) const {
       if (! m_poly_traits.is_vertical_2_object()(xcv))
         return compare_non_vertical(p, xcv);
@@ -736,8 +693,7 @@ public:
     }
 
     // Boundary implementation
-    Comparison_result operator()(const Point_2& p,
-                                 const X_monotone_curve_2& xcv,
+    Comparison_result operator()(const Point_2& p, const X_monotone_curve_2& xcv,
                                  Arr_not_all_sides_oblivious_tag) const {
       if (! m_poly_traits.is_vertical_2_object()(xcv)) {
         const auto* geom_traits = m_poly_traits.subcurve_traits_2();
@@ -760,9 +716,7 @@ public:
     friend class Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     /*! constructs. */
-    Compare_y_at_x_2(const Polycurve_basic_traits_2& traits) :
-      m_poly_traits(traits)
-    {}
+    Compare_y_at_x_2(const Polycurve_basic_traits_2& traits) : m_poly_traits(traits) {}
 
   public:
     /*! obtains the location of the given point with respect to the input curve.
@@ -774,8 +728,7 @@ public:
      *   `LARGER` if \f$y\f$(p) > cv(x(p)), i.e. the point is above the curve;
      *   `EQUAL` if `p` lies on the curve.
      */
-    Comparison_result operator()(const Point_2& p,
-                                 const X_monotone_curve_2& xcv) const
+    Comparison_result operator()(const Point_2& p, const X_monotone_curve_2& xcv) const
     { return operator()(p, xcv, All_sides_oblivious_category()); }
 
     /*! obtains the location of the given curve_end with respect to the input
@@ -792,15 +745,13 @@ public:
      *          is above the curve `xcv`;
      *         `EQUAL` if the curve-end lies on the curve `xcv`.
      */
-    Comparison_result operator()(const X_monotone_subcurve_2& xs1,
-                                 Arr_curve_end ce1,
+    Comparison_result operator()(const X_monotone_subcurve_2& xs1, Arr_curve_end ce1,
                                  const X_monotone_subcurve_2& xs2) const
     { return operator()(xs1, ce1, xs2, All_sides_oblivious_category()); }
   };
 
   /*! obtains a Compare_y_at_x_2 functor object. */
-  Compare_y_at_x_2 compare_y_at_x_2_object() const
-  { return Compare_y_at_x_2(*this); }
+  Compare_y_at_x_2 compare_y_at_x_2_object() const { return Compare_y_at_x_2(*this); }
 
   /*! A functor that compares the \f$y\f$-coordinates of two \f$x\f$-monotone
    * curves immediately to the left of their intersection point.
@@ -831,9 +782,7 @@ public:
      * \return the relative position of `cv1` with respect to `cv2` immdiately
      *         to the left of `p`: `SMALLER`, `LARGER`, or `EQUAL`.
      */
-    Comparison_result operator()(const X_monotone_curve_2& cv1,
-                                 const X_monotone_curve_2& cv2,
-                                 const Point_2& p) const {
+    Comparison_result operator()(const X_monotone_curve_2& cv1, const X_monotone_curve_2& cv2, const Point_2& p) const {
       // Get the indices of the subcurves in cv1 and cv2 containing p and
       // defined to its left.
       std::size_t i1 = m_poly_traits.locate_side(cv1, p, false);
@@ -881,9 +830,7 @@ public:
      * \return the relative position of `cv1` with respect to `cv2` immdiately
      *         to the right of `p`: `SMALLER`, `LARGER`, or `EQUAL`.
      */
-    Comparison_result operator()(const X_monotone_curve_2& cv1,
-                                 const X_monotone_curve_2& cv2,
-                                 const Point_2& p) const {
+    Comparison_result operator()(const X_monotone_curve_2& cv1, const X_monotone_curve_2& cv2, const Point_2& p) const {
       // Get the indices of the subcurves in cv1 and cv2 containing p and
       // defined to its right.
       std::size_t i1 = m_poly_traits.locate_side(cv1, p, true);
@@ -900,8 +847,7 @@ public:
 
   /*! obtains a Compare_y_at_x_right_2 functor object.
    */
-  Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
-  { return Compare_y_at_x_right_2(*this); }
+  Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const { return Compare_y_at_x_right_2(*this); }
 
   /*! A functor that checks whether two points and two \f$x\f$-monotone
    * curves are identical.
@@ -934,8 +880,7 @@ public:
      * \param cv2 the second curve.
      * \return `true` if the two curves are the same; `false` otherwise.
      */
-    bool operator()(const X_monotone_curve_2& cv1,
-                    const X_monotone_curve_2& cv2) const {
+    bool operator()(const X_monotone_curve_2& cv1, const X_monotone_curve_2& cv2) const {
       // Check the pairwise equality of the contained subcurves.
       const auto* geom_traits = m_poly_traits.subcurve_traits_2();
       auto equal = geom_traits->equal_2_object();
@@ -972,11 +917,9 @@ public:
       Comparison_result is_cv2_left_to_right = cmp_endpt(cv2[0]);
 
       while ((i < (n1-1)) || (j < (n2-1))) {
-        std::size_t cv1_seg_ind = (SMALLER == is_cv1_left_to_right) ?
-          i :  n1 - 1 - i;
+        std::size_t cv1_seg_ind = (SMALLER == is_cv1_left_to_right) ? i :  n1 - 1 - i;
         auto point1 = max_vertex(cv1[cv1_seg_ind]);
-        std::size_t cv2_seg_ind = (SMALLER == is_cv2_left_to_right) ?
-          j :  n2 - 1 - j;
+        std::size_t cv2_seg_ind = (SMALLER == is_cv2_left_to_right) ? j :  n2 - 1 - j;
         auto point2 = max_vertex(cv2[cv2_seg_ind]);
         bool res = equal(point1, point2);
         // Easy case - the two points are equal
@@ -1020,9 +963,7 @@ public:
     friend class Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     /*! constructs. */
-    Compare_endpoints_xy_2(const Polycurve_basic_traits_2& traits) :
-      m_poly_traits(traits)
-    {}
+    Compare_endpoints_xy_2(const Polycurve_basic_traits_2& traits) : m_poly_traits(traits) {}
 
   public:
     /*! compares the endpoints of an \(x\)-monotone curve lexicographically.
@@ -1043,8 +984,7 @@ public:
   // AosDirectionalXMonotoneTraits_2 concept.
   //@{
 
-  Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const
-  { return Compare_endpoints_xy_2(*this); }
+  Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const { return Compare_endpoints_xy_2(*this); }
 
   /*! A functor that construct an \f$x\f$-monotone curve with the same endpoints
    * of a given curve, but directed in the opposite direction.
@@ -1060,9 +1000,7 @@ public:
     friend class Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     /*! constructs */
-    Construct_opposite_2(const Polycurve_basic_traits_2& traits) :
-      m_poly_traits(traits)
-    {}
+    Construct_opposite_2(const Polycurve_basic_traits_2& traits) : m_poly_traits(traits) {}
 
   public:
     /*! constructs the reversed \f$x\f$-monotone polycurve of the input.
@@ -1078,14 +1016,12 @@ public:
       auto const_op = geom_traits->construct_opposite_2_object();
       std::vector<X_monotone_subcurve_2> rev_segs(xcv.number_of_subcurves());;
       auto tit = rev_segs.begin();
-      for (auto sit = xcv.subcurves_begin(); sit != xcv.subcurves_end(); ++sit)
-        *tit++ = const_op(*sit);
+      for (auto sit = xcv.subcurves_begin(); sit != xcv.subcurves_end(); ++sit) *tit++ = const_op(*sit);
       return X_monotone_curve_2(rev_segs.rbegin(), rev_segs.rend());
     }
   };
 
-  Construct_opposite_2 construct_opposite_2_object() const
-  { return Construct_opposite_2(*this); }
+  Construct_opposite_2 construct_opposite_2_object() const { return Construct_opposite_2(*this); }
 
   /*! \class Do_intersect
    * A functor for intersection detection
@@ -1100,9 +1036,7 @@ public:
     friend class Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     /*! constructs */
-    Do_intersect_2(const Polycurve_basic_traits_2& traits) :
-      m_poly_traits(traits)
-    {}
+    Do_intersect_2(const Polycurve_basic_traits_2& traits) : m_poly_traits(traits) {}
 
   public:
     /*! determines whether two given \f$x\f$-monotone curves intersect.
@@ -1300,24 +1234,19 @@ public:
   template <typename T>
   struct has_approximate_2<T, void_t<typename T::Approximate_2>> {
     // Specialization for types holding a nested type T::Approximate_2
-    using Approximate_number_type = typename T::Approximate_number_type;
     using Approximate_2 = typename T::Approximate_2;
-    using Approximate_point_2 = typename T::Approximate_point_2;
-    using Approximate_kernel = typename T::Approximate_kernel;
+    using Approximate_number_type = typename Approximate_2::Approximate_number_type;
+    using Approximate_point_2 = typename Approximate_2::Approximate_point_2;
+    using Approximate_kernel = typename Approximate_2::Approximate_kernel;
   };
 
-  using Approximate_number_type =
-    typename has_approximate_2<Subcurve_traits_2>::Approximate_number_type;
-  using Approximate_2 =
-    typename has_approximate_2<Subcurve_traits_2>::Approximate_2;
-  using Approximate_point_2 =
-    typename has_approximate_2<Subcurve_traits_2>::Approximate_point_2;
-  using Approximate_kernel =
-    typename has_approximate_2<Subcurve_traits_2>::Approximate_kernel;
+  using Approximate_number_type = typename has_approximate_2<Subcurve_traits_2>::Approximate_number_type;
+  using Approximate_2 = typename has_approximate_2<Subcurve_traits_2>::Approximate_2;
+  using Approximate_point_2 = typename has_approximate_2<Subcurve_traits_2>::Approximate_point_2;
+  using Approximate_kernel = typename has_approximate_2<Subcurve_traits_2>::Approximate_kernel;
 
   /*! obtains an Approximate_2 functor object. */
-  Approximate_2 approximate_2_object_impl(std::false_type) const
-  { return subcurve_traits_2()->approximate_2_object(); }
+  Approximate_2 approximate_2_object_impl(std::false_type) const { return subcurve_traits_2()->approximate_2_object(); }
 
   Approximate_2 approximate_2_object_impl(std::true_type) const { }
 
@@ -1329,16 +1258,13 @@ public:
   //! A functor that constructs a point.
   class Construct_point_2 {
   protected:
-    using Polycurve_basic_traits_2 =
-      Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
+    using Polycurve_basic_traits_2 = Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     //! The polycurve traits (in case it has state).
     const Polycurve_basic_traits_2& m_poly_traits;
 
     /*! constructs. */
-    Construct_point_2(const Polycurve_basic_traits_2& traits) :
-      m_poly_traits(traits)
-    {}
+    Construct_point_2(const Polycurve_basic_traits_2& traits) : m_poly_traits(traits) {}
 
     friend class Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
@@ -1355,14 +1281,12 @@ public:
   };
 
   /*! obtains a Construct_x_monotone_curve_2 functor object. */
-  Construct_point_2 construct_point_2_object() const
-  { return Construct_point_2(*this); }
+  Construct_point_2 construct_point_2_object() const { return Construct_point_2(*this); }
 
   //! A functor that constructs an \f$x\f$-monotone curve.
   class Construct_x_monotone_curve_2 {
   protected:
-    using Polycurve_basic_traits_2 =
-      Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
+    using Polycurve_basic_traits_2 = Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     //! The polycurve traits (in case it has state).
     const Polycurve_basic_traits_2& m_poly_traits;
@@ -1370,9 +1294,7 @@ public:
     friend class Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     /*! constructs. */
-    Construct_x_monotone_curve_2(const Polycurve_basic_traits_2& traits) :
-      m_poly_traits(traits)
-    {}
+    Construct_x_monotone_curve_2(const Polycurve_basic_traits_2& traits) : m_poly_traits(traits) {}
 
   public:
     /*! obtains an \f$x\f$-monotone polycurve that consists of one given
@@ -1413,8 +1335,7 @@ public:
      * \f$x\f$-monotone polycurve.
      */
     template <typename ForwardIterator>
-    X_monotone_curve_2 operator()(ForwardIterator begin,
-                                  ForwardIterator end) const {
+    X_monotone_curve_2 operator()(ForwardIterator begin, ForwardIterator end) const {
       using VT = typename std::iterator_traits<ForwardIterator>::value_type;
       using Is_point = typename std::is_same<VT,Point_2>::type;
 
@@ -1432,9 +1353,7 @@ public:
      * \post by the construction the returned polycurve is well-oriented.
      */
     template <typename ForwardIterator>
-    X_monotone_curve_2 constructor_impl(ForwardIterator /* begin */,
-                                        ForwardIterator /* end */,
-                                        std::true_type) const
+    X_monotone_curve_2 constructor_impl(ForwardIterator /* begin */, ForwardIterator /* end */, std::true_type) const
     { CGAL_error_msg("Cannot construct a polycurve from a range of points!"); }
 
     /*! obtains an \f$x\f$-monotone polycurve from a range of subcurves.
@@ -1453,9 +1372,7 @@ public:
      *         depending on the subcurves in the input.
      */
     template <typename ForwardIterator>
-    X_monotone_curve_2 constructor_impl(ForwardIterator begin,
-                                        ForwardIterator end,
-                                        std::false_type) const {
+    X_monotone_curve_2 constructor_impl(ForwardIterator begin, ForwardIterator end, std::false_type) const {
       CGAL_precondition_msg
         (
          begin != end,
@@ -1577,8 +1494,7 @@ public:
      *                          from the left at the curve right end.
      * \pre xcv does not coincide with the vertical identification curve.
      */
-    Arr_parameter_space operator()(const X_monotone_curve_2& xcv,
-                                   Arr_curve_end ce) const {
+    Arr_parameter_space operator()(const X_monotone_curve_2& xcv, Arr_curve_end ce) const {
       const auto* geom_traits = m_poly_traits.subcurve_traits_2();
       auto cmp_endpt = geom_traits->compare_endpoints_xy_2_object();
       Comparison_result direction = cmp_endpt(xcv[0]);
@@ -1601,8 +1517,7 @@ public:
   };
 
   /*! obtains a Parameter_space_in_x_2 function object */
-  Parameter_space_in_x_2 parameter_space_in_x_2_object() const
-  { return Parameter_space_in_x_2(*this); }
+  Parameter_space_in_x_2 parameter_space_in_x_2_object() const { return Parameter_space_in_x_2(*this); }
 
   /*! A function object that obtains the parameter space of a geometric
    * entity along the \f$y\f$-axis
@@ -1618,9 +1533,7 @@ public:
     friend class Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     /*! constructs. */
-    Parameter_space_in_y_2(const Polycurve_basic_traits_2& traits) :
-      m_poly_traits(traits)
-    {}
+    Parameter_space_in_y_2(const Polycurve_basic_traits_2& traits) : m_poly_traits(traits) {}
 
   public:
     /*! obtains the parameter space at the end of an curve along the
@@ -1642,8 +1555,7 @@ public:
      *                            curve right end.
      * There are no horizontal identification curves!
      */
-    Arr_parameter_space operator()(const X_monotone_curve_2& xcv,
-                                   Arr_curve_end ce) const {
+    Arr_parameter_space operator()(const X_monotone_curve_2& xcv, Arr_curve_end ce) const {
       const auto* geom_traits = m_poly_traits.subcurve_traits_2();
       auto cmp_endpt = geom_traits->compare_endpoints_xy_2_object();
       Comparison_result direction = cmp_endpt(xcv[0]);
@@ -1667,8 +1579,7 @@ public:
   };
 
   /*! obtains a Parameter_space_in_y_2 function object */
-  Parameter_space_in_y_2 parameter_space_in_y_2_object() const
-  { return Parameter_space_in_y_2(*this); }
+  Parameter_space_in_y_2 parameter_space_in_y_2_object() const { return Parameter_space_in_y_2(*this); }
 
   /*! A functor that compares the \f$x\f$-coordinate of curve-ends and points on
    * the boundary of the parameter space.
@@ -1684,9 +1595,7 @@ public:
     friend class Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     /*! constructs. */
-    Compare_x_on_boundary_2(const Polycurve_basic_traits_2& traits) :
-      m_poly_traits(traits)
-    {}
+    Compare_x_on_boundary_2(const Polycurve_basic_traits_2& traits) : m_poly_traits(traits) {}
 
   public:
     /*! compares the \f$x\f$-coordinates of a point with the \f$x\f$-coordinate
@@ -1704,9 +1613,7 @@ public:
      * \pre the `ce` end of `xcv` lies on the top boundary.
      * \pre `xcv` does not coincide with the vertical identification curve.
      */
-    Comparison_result operator()(const Point_2& point,
-                                 const X_monotone_curve_2& xcv,
-                                 Arr_curve_end ce) const
+    Comparison_result operator()(const Point_2& point, const X_monotone_curve_2& xcv, Arr_curve_end ce) const
     { return operator()(point, xcv, ce, Bottom_or_top_sides_category()); }
 
     /*! compares the \f$x\f$-coordinates of 2 curve-ends on the boundary of the
@@ -1730,19 +1637,15 @@ public:
      * \pre `xcv1` does not coincide with the vertical identification curve.
      * \pre `xcv2` does not coincide with the vertical identification curve.
      */
-    Comparison_result operator()(const X_monotone_curve_2& xcv1,
-                                 Arr_curve_end ce1,
-                                 const X_monotone_curve_2& xcv2,
-                                 Arr_curve_end ce2) const
+    Comparison_result operator()(const X_monotone_curve_2& xcv1, Arr_curve_end ce1,
+                                 const X_monotone_curve_2& xcv2, Arr_curve_end ce2) const
     { return operator()(xcv1, ce1, xcv2, ce2, Bottom_or_top_sides_category()); }
 
   private:
     /*! compares the \f$x\f$-coordinates of a point with the
      * \f$x\f$-coordinate of an \f$x\f$-monotone curve-end on the boundary.
      */
-    Comparison_result operator()(const Point_2& point,
-                                 const X_monotone_curve_2& xcv,
-                                 Arr_curve_end ce,
+    Comparison_result operator()(const Point_2& point, const X_monotone_curve_2& xcv, Arr_curve_end ce,
                                  Arr_boundary_cond_tag) const {
       const auto* geom_traits = m_poly_traits.subcurve_traits_2();
       auto cmp_endpt = geom_traits->compare_endpoints_xy_2_object();
@@ -1757,10 +1660,8 @@ public:
     /*! compares the \f$x\f$-coordinates of 2 curve-ends on the boundary
      * of the parameter space.
      */
-    Comparison_result operator()(const X_monotone_curve_2& xcv1,
-                                 Arr_curve_end ce1,
-                                 const X_monotone_curve_2& xcv2,
-                                 Arr_curve_end ce2,
+    Comparison_result operator()(const X_monotone_curve_2& xcv1, Arr_curve_end ce1,
+                                 const X_monotone_curve_2& xcv2, Arr_curve_end ce2,
                                  Arr_boundary_cond_tag) const {
       const auto* geom_traits = m_poly_traits.subcurve_traits_2();
       auto cmp_endpt = geom_traits->compare_endpoints_xy_2_object();
@@ -1777,8 +1678,7 @@ public:
       return geom_traits->compare_x_on_boundary_2_object()(xs1, ce1, xs2, ce2);
     }
 
-    size_type get_curve_index(const X_monotone_curve_2& xcv,
-                              const Arr_curve_end ce) const
+    size_type get_curve_index(const X_monotone_curve_2& xcv, const Arr_curve_end ce) const
     { return (ce == ARR_MIN_END) ? 0 : xcv.number_of_subcurves() - 1; }
 
     /*! given a point \f$p\f$, an \f$x\f$-monotone curve \f$C(t) =
@@ -1788,9 +1688,7 @@ public:
      * space is unbounded, a precondition ensures that \f$C\f$ has a vertical
      * asymptote at its \f$d\f$-end; that is limit{t => d} X(t) is finite.
      */
-    Comparison_result operator()(const Point_2& p,
-                                 const X_monotone_curve_2& xcv,
-                                 Arr_curve_end ce,
+    Comparison_result operator()(const Point_2& p, const X_monotone_curve_2& xcv, Arr_curve_end ce,
                                  Arr_has_open_side_tag) const {
       const auto* geom_traits = m_poly_traits.subcurve_traits_2();
       auto cmp_x_on_boundary = geom_traits->compare_x_on_boundary_2_object();
@@ -1809,10 +1707,8 @@ public:
      * \f$C_1\f$ and \f$C_2\f$ have vertical asymptotes at their respective
      * ends; that is, limit{t => d1} X1(t) and limit{t => d2} X2(t) are finite.
     */
-    Comparison_result operator()(const X_monotone_curve_2& xcv1,
-                                 Arr_curve_end ce1/* for xcv1 */,
-                                 const X_monotone_curve_2& xcv2,
-                                 Arr_curve_end ce2/*! for xcv2 */,
+    Comparison_result operator()(const X_monotone_curve_2& xcv1, Arr_curve_end ce1,
+                                 const X_monotone_curve_2& xcv2, Arr_curve_end ce2,
                                  Arr_has_open_side_tag) const {
       const auto* geom_traits = m_poly_traits.subcurve_traits_2();
       auto cmp_x_on_boundary = geom_traits->compare_x_on_boundary_2_object();
@@ -1821,10 +1717,8 @@ public:
       return cmp_x_on_boundary(xcv1[index_1], ce1, xcv2[index_2], ce2);
     }
 
-    Comparison_result operator()(const X_monotone_curve_2& xcv,
-                                 Arr_curve_end ce1/* for xcv */,
-                                 const X_monotone_subcurve_2& xseg,
-                                 Arr_curve_end ce2/*! for xseg */) const {
+    Comparison_result operator()(const X_monotone_curve_2& xcv, Arr_curve_end ce1,
+                                 const X_monotone_subcurve_2& xseg, Arr_curve_end ce2) const {
       const auto* geom_traits = m_poly_traits.subcurve_traits_2();
       auto cmp_x_on_boundary = geom_traits->compare_x_on_boundary_2_object();
       size_type index = this->get_curve_index(xcv, ce1);
@@ -1833,8 +1727,7 @@ public:
   };
 
   /*! obtains a Compare_x_on_boundary_2 function object. */
-  Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const
-  { return Compare_x_on_boundary_2(*this); }
+  Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const { return Compare_x_on_boundary_2(*this); }
 
   /*! A functor that compares the \f$x\f$-coordinates of curve ends near the
    * boundary of the parameter space.
@@ -1849,17 +1742,13 @@ public:
 
     friend class Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
-    Compare_x_near_boundary_2(const Polycurve_basic_traits_2& traits) :
-      m_poly_traits(traits)
-    {}
+    Compare_x_near_boundary_2(const Polycurve_basic_traits_2& traits) : m_poly_traits(traits) {}
 
   public:
-    size_type get_curve_index(const X_monotone_curve_2& xcv,
-                              const Arr_curve_end ce) const
+    size_type get_curve_index(const X_monotone_curve_2& xcv, const Arr_curve_end ce) const
     { return (ce == ARR_MIN_END) ? 0 : xcv.number_of_subcurves() - 1; }
 
-    Comparison_result operator()(const X_monotone_curve_2& xcv1,
-                                 const X_monotone_curve_2& xcv2,
+    Comparison_result operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
                                  Arr_curve_end ce) const {
       const auto* geom_traits = m_poly_traits.subcurve_traits_2();
       auto cmp_x_near_boundary = geom_traits->compare_x_near_boundary_2_object();
@@ -1870,8 +1759,7 @@ public:
     }
   };
 
-  Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const
-  { return Compare_x_near_boundary_2(*this); }
+  Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const { return Compare_x_near_boundary_2(*this); }
 
   /*! A functor that compares the \f$y\f$-coordinate of two given points
    * that lie on the vertical identification curve.
@@ -1887,9 +1775,7 @@ public:
     friend class Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     /*! constructs. */
-    Compare_y_on_boundary_2(const Polycurve_basic_traits_2& traits) :
-      m_poly_traits(traits)
-    {}
+    Compare_y_on_boundary_2(const Polycurve_basic_traits_2& traits) : m_poly_traits(traits) {}
 
   public:
     /*! compares the \f$y\f$-coordinate of two given points that lie on the
@@ -1909,8 +1795,7 @@ public:
   };
 
   /*! obtains a Compare_y_on_boundary_2 function object */
-  Compare_y_on_boundary_2 compare_y_on_boundary_2_object() const
-  { return Compare_y_on_boundary_2(*this); }
+  Compare_y_on_boundary_2 compare_y_on_boundary_2_object() const { return Compare_y_on_boundary_2(*this); }
 
   /*! A functor that compares the \f$y\f$-coordinates of curve-ends near the
    * boundary of the parameter space.
@@ -1926,9 +1811,7 @@ public:
     friend class Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     /*! constructs. */
-    Compare_y_near_boundary_2(const Polycurve_basic_traits_2& traits) :
-      m_poly_traits(traits)
-    {}
+    Compare_y_near_boundary_2(const Polycurve_basic_traits_2& traits) : m_poly_traits(traits) {}
 
   public:
     /*! compares the \f$y\f$-coordinates of 2 curves at their ends near the
@@ -1944,8 +1827,7 @@ public:
      *      that they cannot be vertical).
      * There is no horizontal identification curve!
      */
-    Comparison_result operator()(const X_monotone_curve_2& xcv1,
-                                 const X_monotone_curve_2& xcv2,
+    Comparison_result operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
                                  Arr_curve_end ce) const {
       const auto* geom_traits = m_poly_traits.subcurve_traits_2();
       auto cmp_endpt = geom_traits->compare_endpoints_xy_2_object();
@@ -1964,8 +1846,7 @@ public:
   };
 
   /*! obtains a Compare_y_near_boundary_2 function object */
-  Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const
-  { return Compare_y_near_boundary_2(*this); }
+  Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const { return Compare_y_near_boundary_2(*this); }
 
   /*! A functor that indicates whether a geometric object lies on the
    * vertical identification curve.
@@ -1981,9 +1862,7 @@ public:
     friend class Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     /*! constructs. */
-    Is_on_y_identification_2(const Polycurve_basic_traits_2& traits) :
-      m_poly_traits(traits)
-    {}
+    Is_on_y_identification_2(const Polycurve_basic_traits_2& traits) : m_poly_traits(traits) {}
 
   public:
     /*! determines whether a point lies in the vertical boundary.
@@ -2009,16 +1888,14 @@ public:
   };
 
   /*! obtains a Is_on_y_identification_2 function object */
-  Is_on_y_identification_2 is_on_y_identification_2_object() const
-  { return Is_on_y_identification_2(*this); }
+  Is_on_y_identification_2 is_on_y_identification_2_object() const { return Is_on_y_identification_2(*this); }
 
   /*! A functor that indicates whether a geometric object lies on the
    * horizontal identification curve.
    */
   class Is_on_x_identification_2 {
   protected:
-    using Polycurve_basic_traits_2 =
-      Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
+    using Polycurve_basic_traits_2 = Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     //! The polycurve traits (in case it has state).
     const Polycurve_basic_traits_2& m_poly_traits;
@@ -2026,9 +1903,7 @@ public:
     friend class Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     /*! constructs. */
-    Is_on_x_identification_2(const Polycurve_basic_traits_2& traits) :
-      m_poly_traits(traits)
-    {}
+    Is_on_x_identification_2(const Polycurve_basic_traits_2& traits) : m_poly_traits(traits) {}
 
   public:
     /*! determines whether a point lies in the vertical boundary.
@@ -2054,8 +1929,7 @@ public:
   };
 
   /*! obtains a Is_on_x_identification_2 function object */
-  Is_on_x_identification_2 is_on_x_identification_2_object() const
-  { return Is_on_x_identification_2(*this); }
+  Is_on_x_identification_2 is_on_x_identification_2_object() const { return Is_on_x_identification_2(*this); }
 
   //@}
 
@@ -2073,8 +1947,7 @@ public:
     }
   };
 
-  Number_of_points_2 number_of_points_2_object() const
-  { return Number_of_points_2(); }
+  Number_of_points_2 number_of_points_2_object() const { return Number_of_points_2(); }
 
   /* Functor to augment a polycurve by adding a subcurve at the back.
    * TODO: Test all the operator()'s. (Don't forget vertical cases!)
@@ -2090,22 +1963,18 @@ public:
     friend class Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     /*! constructs. */
-    Push_back_2(const Polycurve_basic_traits_2& traits) :
-      m_poly_traits(traits)
-    {}
+    Push_back_2(const Polycurve_basic_traits_2& traits) : m_poly_traits(traits) {}
 
   public:
     /*! appends a subcurve to an existing \f$x\f$-monotone polycurve at the back.
      */
-    void operator()(X_monotone_curve_2& xcv, const X_monotone_subcurve_2& seg)
-      const
+    void operator()(X_monotone_curve_2& xcv, const X_monotone_subcurve_2& seg) const
     { push_back_2_impl<void*>(xcv, seg, All_sides_oblivious_category()); }
 
   private:
     // Oblivious implementation
     template <typename>
-    void push_back_2_impl(X_monotone_curve_2& xcv,
-                          const X_monotone_subcurve_2& seg,
+    void push_back_2_impl(X_monotone_curve_2& xcv, const X_monotone_subcurve_2& seg,
                           Arr_all_sides_oblivious_tag) const {
       CGAL_precondition_code
         (
@@ -2124,24 +1993,18 @@ public:
                                 (! is_vertical(xcv[0]) && ! is_vertical(seg))),
                                "xcv is vertical and seg is not or vice versa!");
 
-         CGAL_precondition_msg((num_seg == 0) ||
-                               (cmp_endpts(xcv[0]) == dir),
+         CGAL_precondition_msg((num_seg == 0) || (cmp_endpts(xcv[0]) == dir),
                                "xcv and seg do not have the same orientation!");
 
-           CGAL_precondition_msg((num_seg == 0) ||
-                                 ! equal(get_min_v(seg), get_max_v(seg)),
+           CGAL_precondition_msg((num_seg == 0) || ! equal(get_min_v(seg), get_max_v(seg)),
                                  "Seg degenerates to a point!");
 
            CGAL_precondition_msg((num_seg == 0) ||
-                                 (((dir != SMALLER) ||
-                                   equal(get_max_v(xcv[num_seg-1]),
-                                         get_min_v(seg)))),
+                                 (((dir != SMALLER) || equal(get_max_v(xcv[num_seg-1]), get_min_v(seg)))),
                                  "Seg does not connect to the right!");
 
            CGAL_precondition_msg((num_seg == 0) ||
-                                 (((dir != LARGER) ||
-                                   equal(get_min_v(xcv[num_seg-1]),
-                                         get_max_v(seg)))),
+                                 (((dir != LARGER) || equal(get_min_v(xcv[num_seg-1]), get_max_v(seg)))),
                                  "Seg does not connect to the left!");
          ); // precondition code ends
 
@@ -2150,8 +2013,7 @@ public:
 
     // Boundary implementation
     template <typename>
-    void push_back_2_impl(X_monotone_curve_2& xcv,
-                          const X_monotone_subcurve_2& seg,
+    void push_back_2_impl(X_monotone_curve_2& xcv, const X_monotone_subcurve_2& seg,
                           Arr_not_all_sides_oblivious_tag) const {
       CGAL_precondition_code
         (
@@ -2172,8 +2034,7 @@ public:
                                 (! is_vertical(xcv[0]) && ! is_vertical(seg))),
                                "xcv is vertical and seg is not or vice versa!");
 
-         CGAL_precondition_msg((num_seg == 0) ||
-                               (cmp_endpts(xcv[0]) == dir),
+         CGAL_precondition_msg((num_seg == 0) || (cmp_endpts(xcv[0]) == dir),
                                "xcv and seg do not have the same orientation!");
 
          const Arr_parameter_space min_x_seg = ps_x(seg, ARR_MIN_END);
@@ -2182,44 +2043,30 @@ public:
          const Arr_parameter_space max_y_seg = ps_y(seg, ARR_MAX_END);
 
          CGAL_precondition_code(const Arr_parameter_space min_x_cv =
-                                ((num_seg>0) ?
-                                 ps_x(xcv[num_seg-1], ARR_MIN_END) :
-                                 ARR_INTERIOR));
+                                ((num_seg>0) ? ps_x(xcv[num_seg-1], ARR_MIN_END) : ARR_INTERIOR));
          CGAL_precondition_code(const Arr_parameter_space min_y_cv =
-                                ((num_seg>0) ?
-                                 ps_y(xcv[num_seg-1], ARR_MIN_END) :
-                                 ARR_INTERIOR));
+                                ((num_seg>0) ? ps_y(xcv[num_seg-1], ARR_MIN_END) : ARR_INTERIOR));
          CGAL_precondition_code(const Arr_parameter_space max_x_cv =
-                                ((num_seg>0) ?
-                                 ps_x(xcv[num_seg-1], ARR_MAX_END) :
-                                 ARR_INTERIOR));
+                                ((num_seg>0) ? ps_x(xcv[num_seg-1], ARR_MAX_END) : ARR_INTERIOR));
          CGAL_precondition_code(const Arr_parameter_space max_y_cv =
-                                ((num_seg>0) ?
-                                 ps_y(xcv[num_seg-1], ARR_MAX_END) :
-                                 ARR_INTERIOR));
+                                ((num_seg>0) ? ps_y(xcv[num_seg-1], ARR_MAX_END) : ARR_INTERIOR));
 
          // A subcurve should not be pushed if the polycurve is directed to
          // the right and reaches the boundary.
-         CGAL_precondition_msg(((dir != SMALLER) ||
-                                ((max_x_cv == ARR_INTERIOR) &&
-                                 (max_y_cv == ARR_INTERIOR))),
+         CGAL_precondition_msg(((dir != SMALLER) || ((max_x_cv == ARR_INTERIOR) && (max_y_cv == ARR_INTERIOR))),
                                "Polycurve reaches the boundary to the right."
                                "Can not push back any subcurve further.");
 
          // A subcurve should not be pushed if the polycurve is directed to
          // the left and reaches the boundary.
-         CGAL_precondition_msg(((dir != LARGER) ||
-                                ((min_x_cv == ARR_INTERIOR) &&
-                                 (min_y_cv == ARR_INTERIOR))),
+         CGAL_precondition_msg(((dir != LARGER) || ((min_x_cv == ARR_INTERIOR) && (min_y_cv == ARR_INTERIOR))),
                                "Polycurve reaches the boundary to the left."
                                "Can not push back any subcurve further.");
 
          // Something like a line should not be pushed if there is already a
          // subcurve present in the polycurve.
-         CGAL_precondition_msg((((min_x_seg == ARR_INTERIOR) &&
-                                 (min_y_seg == ARR_INTERIOR)) ||
-                                ((max_x_seg == ARR_INTERIOR) &&
-                                 (max_y_seg == ARR_INTERIOR)) ||
+         CGAL_precondition_msg((((min_x_seg == ARR_INTERIOR) && (min_y_seg == ARR_INTERIOR)) ||
+                                ((max_x_seg == ARR_INTERIOR) && (max_y_seg == ARR_INTERIOR)) ||
                                 (num_seg == 0)),
                                "Subcurve reaching the boundary at both ends "
                                "can not be pushed if there is already one or "
@@ -2228,24 +2075,19 @@ public:
          if ((min_x_seg == ARR_INTERIOR) && (min_y_seg == ARR_INTERIOR) &&
              (max_x_seg == ARR_INTERIOR) && (max_y_seg == ARR_INTERIOR))
          {
-           CGAL_precondition_msg((num_seg == 0) ||
-                                 ! equal(get_min_v(seg), get_max_v(seg)),
+           CGAL_precondition_msg((num_seg == 0) || ! equal(get_min_v(seg), get_max_v(seg)),
                                  "Seg degenerates to a point!");
          }
 
          if ((min_x_seg == ARR_INTERIOR) && (min_y_seg == ARR_INTERIOR)) {
            CGAL_precondition_msg((num_seg == 0) ||
-                                 (((dir != SMALLER) ||
-                                   equal(get_max_v(xcv[num_seg-1]),
-                                         get_min_v(seg)))),
+                                 (((dir != SMALLER) || equal(get_max_v(xcv[num_seg-1]), get_min_v(seg)))),
                                  "Seg does not connect to the right!");
          }
 
          if ((max_x_seg == ARR_INTERIOR) && (max_y_seg == ARR_INTERIOR)) {
            CGAL_precondition_msg((num_seg == 0) ||
-                                 (((dir != LARGER) ||
-                                   equal(get_min_v(xcv[num_seg-1]),
-                                         get_max_v(seg)))),
+                                 (((dir != LARGER) || equal(get_min_v(xcv[num_seg-1]), get_max_v(seg)))),
                                  "Seg does not connect to the left!");
          }
          ); // precondition code ends
@@ -2271,21 +2113,17 @@ public:
     friend class Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
     /*! constructs. */
-    Push_front_2(const Polycurve_basic_traits_2& traits) :
-      m_poly_traits(traits)
-    {}
+    Push_front_2(const Polycurve_basic_traits_2& traits) : m_poly_traits(traits) {}
 
   public:
     /* Append a subcurve `seg` to an existing polycurve `xcv` at the front. */
-    void operator()(X_monotone_curve_2& xcv, const X_monotone_subcurve_2& seg)
-      const
+    void operator()(X_monotone_curve_2& xcv, const X_monotone_subcurve_2& seg) const
     { push_front_2_impl<void*>(xcv, seg, All_sides_oblivious_category()); }
 
   private:
     // Oblivious implementation
     template <typename>
-    void push_front_2_impl(X_monotone_curve_2& xcv,
-                           const X_monotone_subcurve_2& seg,
+    void push_front_2_impl(X_monotone_curve_2& xcv, const X_monotone_subcurve_2& seg,
                            Arr_all_sides_oblivious_tag) const {
       CGAL_precondition_code
         (
@@ -2304,22 +2142,16 @@ public:
                                 (! is_vertical(xcv[0]) && !is_vertical(seg))),
                                "xcv is vertical and seg is not or vice versa!");
 
-         CGAL_precondition_msg((num_seg == 0) ||
-                               (cmp_endpts(xcv[0]) == dir),
+         CGAL_precondition_msg((num_seg == 0) || (cmp_endpts(xcv[0]) == dir),
                                "xcv and seg do not have the same orientation!");
 
 
-           CGAL_precondition_msg((num_seg == 0) ||
-                                 ! equal(get_min_v(seg), get_max_v(seg)),
+           CGAL_precondition_msg((num_seg == 0) || ! equal(get_min_v(seg), get_max_v(seg)),
                                  "Seg degenerates to a point!");
-           CGAL_precondition_msg((num_seg == 0) ||
-                                 (((dir != SMALLER) ||
-                                   equal(get_min_v(xcv[0]), get_max_v(seg)))),
+           CGAL_precondition_msg((num_seg == 0) || (((dir != SMALLER) || equal(get_min_v(xcv[0]), get_max_v(seg)))),
                                  "Seg does not connect to the left!");
 
-           CGAL_precondition_msg((num_seg == 0) ||
-                                 (((dir != LARGER) ||
-                                   equal(get_max_v(xcv[0]), get_min_v(seg)))),
+           CGAL_precondition_msg((num_seg == 0) || (((dir != LARGER) || equal(get_max_v(xcv[0]), get_min_v(seg)))),
                                  "Seg does not connect to the right!");
          ); // precondition code ends
       xcv.push_front(seg);
@@ -2327,8 +2159,7 @@ public:
 
     // Boundary implementation
     template <typename>
-    void push_front_2_impl(X_monotone_curve_2& xcv,
-                           const X_monotone_subcurve_2& seg,
+    void push_front_2_impl(X_monotone_curve_2& xcv, const X_monotone_subcurve_2& seg,
                            Arr_not_all_sides_oblivious_tag) const {
       CGAL_precondition_code
         (
@@ -2349,8 +2180,7 @@ public:
                                 (! is_vertical(xcv[0]) && ! is_vertical(seg))),
                                "xcv is vertical and seg is not or vice versa!");
 
-         CGAL_precondition_msg((num_seg == 0) ||
-                               (cmp_endpts(xcv[0]) == dir),
+         CGAL_precondition_msg((num_seg == 0) || (cmp_endpts(xcv[0]) == dir),
                                "xcv and seg do not have the same orientation!");
 
          const Arr_parameter_space min_x_seg = ps_x(seg, ARR_MIN_END);
@@ -2360,10 +2190,8 @@ public:
 
          // Something like line should not be pushed if there is already a
          // subcurve present in the polycurve.
-         CGAL_precondition_msg((((min_x_seg == ARR_INTERIOR) &&
-                                 (min_y_seg == ARR_INTERIOR)) ||
-                                ((max_x_seg == ARR_INTERIOR) &&
-                                 (max_y_seg == ARR_INTERIOR)) ||
+         CGAL_precondition_msg((((min_x_seg == ARR_INTERIOR) && (min_y_seg == ARR_INTERIOR)) ||
+                                ((max_x_seg == ARR_INTERIOR) && (max_y_seg == ARR_INTERIOR)) ||
                                 (num_seg == 0)),
                                "Subcurve reaching the boundary at both ends"
                                "can not be pushed if there is already one "
@@ -2371,12 +2199,8 @@ public:
 
          // Something like Ray should not be pushed front if there
          // is already one or more subcurves present in polycurve.
-         CGAL_precondition_msg((((dir == SMALLER) &&
-                                 (max_x_seg == ARR_INTERIOR) &&
-                                 (max_y_seg == ARR_INTERIOR)) ||
-                                ((dir == LARGER) &&
-                                 (min_x_seg == ARR_INTERIOR) &&
-                                 (min_y_seg == ARR_INTERIOR)) ||
+         CGAL_precondition_msg((((dir == SMALLER) && (max_x_seg == ARR_INTERIOR) && (max_y_seg == ARR_INTERIOR)) ||
+                                ((dir == LARGER) && (min_x_seg == ARR_INTERIOR) && (min_y_seg == ARR_INTERIOR)) ||
                                 (num_seg == 0)),
                                "Subcurve reaching the boundary at the "
                                "connecting end can not be pushed ");
@@ -2384,22 +2208,17 @@ public:
          if ((min_x_seg == ARR_INTERIOR) && (min_y_seg == ARR_INTERIOR) &&
              (max_x_seg == ARR_INTERIOR) && (max_y_seg == ARR_INTERIOR))
          {
-           CGAL_precondition_msg((num_seg == 0) ||
-                                 ! equal(get_min_v(seg), get_max_v(seg)),
+           CGAL_precondition_msg((num_seg == 0) || ! equal(get_min_v(seg), get_max_v(seg)),
                                  "Seg degenerates to a point!");
          }
 
          if ((max_x_seg == ARR_INTERIOR) && (max_y_seg == ARR_INTERIOR)) {
-           CGAL_precondition_msg((num_seg == 0) ||
-                                 (((dir != SMALLER) ||
-                                   equal(get_min_v(xcv[0]), get_max_v(seg)))),
+           CGAL_precondition_msg((num_seg == 0) || (((dir != SMALLER) || equal(get_min_v(xcv[0]), get_max_v(seg)))),
                                  "Seg does not connect to the left!");
          }
 
          if ((min_x_seg == ARR_INTERIOR) && (min_y_seg == ARR_INTERIOR)) {
-           CGAL_precondition_msg((num_seg == 0) ||
-                                 (((dir != LARGER) ||
-                                   equal(get_max_v(xcv[0]), get_min_v(seg)))),
+           CGAL_precondition_msg((num_seg == 0) || (((dir != LARGER) || equal(get_max_v(xcv[0]), get_min_v(seg)))),
                                  "Seg does not connect to the right!");
          }
          ); // precondition code ends
@@ -2429,10 +2248,7 @@ public:
     /*! returns a trimmed version of the polycurve with `source` and
      * `target` as end points.
      */
-    X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv,
-                                  const Point_2& source,
-                                  const Point_2& target) const
-    {
+    X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv, const Point_2& source, const Point_2& target) const {
       const auto* geom_traits = m_poly_traits.subcurve_traits_2();
       auto min_vertex = geom_traits->construct_min_vertex_2_object();
       auto max_vertex = geom_traits->construct_max_vertex_2_object();
@@ -2484,39 +2300,31 @@ public:
 
       // Push the trimmed version of the source subcurve.
       // if (sorientation == SMALLER && source != src_max_vertex)
-      if ((orientation == SMALLER) &&
-          ! geom_traits->equal_2_object()(src, src_max_vertex)) {
-        if (src_id != trg_id)
-          trimmed_subcurves.push_back(trim(xcv[src_id], src, src_max_vertex));
+      if ((orientation == SMALLER) && ! geom_traits->equal_2_object()(src, src_max_vertex)) {
+        if (src_id != trg_id) trimmed_subcurves.push_back(trim(xcv[src_id], src, src_max_vertex));
         else trimmed_subcurves.push_back(trim(xcv[src_id], src, trg));
       }
       // else if(orientation == LARGER && source != src_min_vertex)
-      else if ((orientation == LARGER) &&
-               ! geom_traits->equal_2_object()(src, src_min_vertex)) {
-        if (src_id != trg_id)
-          trimmed_subcurves.push_back(trim(xcv[src_id], src, src_min_vertex));
+      else if ((orientation == LARGER) && ! geom_traits->equal_2_object()(src, src_min_vertex)) {
+        if (src_id != trg_id) trimmed_subcurves.push_back(trim(xcv[src_id], src, src_min_vertex));
         else trimmed_subcurves.push_back(trim(xcv[src_id], src, trg));
       }
 
       // Push the middle subcurves as they are.
-      for (size_t i = src_id+1; i < trg_id; ++i)
-        trimmed_subcurves.push_back(xcv[i]);
+      for (size_t i = src_id+1; i < trg_id; ++i) trimmed_subcurves.push_back(xcv[i]);
 
       // Push the appropriately trimmed target subcurve.
       if (src_id != trg_id) {
         // if (orientation == SMALLER && target != trg_min_vertex)
-        if ((orientation == SMALLER) &&
-            ! geom_traits->equal_2_object()(trg, trg_min_vertex))
+        if ((orientation == SMALLER) && ! geom_traits->equal_2_object()(trg, trg_min_vertex))
           trimmed_subcurves.push_back(trim(xcv[trg_id], trg_min_vertex, trg));
 
         // else if (orientation == LARGER && target != trg_max_vertex)
-        else if ((orientation == LARGER) &&
-                 ! geom_traits->equal_2_object()(trg, trg_max_vertex))
+        else if ((orientation == LARGER) && ! geom_traits->equal_2_object()(trg, trg_max_vertex))
           trimmed_subcurves.push_back(trim(xcv[trg_id], trg_max_vertex, trg));
       }
 
-      return X_monotone_curve_2(trimmed_subcurves.begin(),
-                                trimmed_subcurves.end());
+      return X_monotone_curve_2(trimmed_subcurves.begin(), trimmed_subcurves.end());
     }
   };
 
@@ -2545,8 +2353,7 @@ protected:
   std::size_t locate_gen(const X_monotone_curve_2& cv, Compare compare) const {
     // The direction of cv. SMALLER means left-to-right and
     // otherwise right-to-left
-    Comparison_result direction =
-      subcurve_traits_2()->compare_endpoints_xy_2_object()(cv[0]);
+    Comparison_result direction = subcurve_traits_2()->compare_endpoints_xy_2_object()(cv[0]);
     std::size_t from, to;
     if (direction == SMALLER) {
       from = 0;
@@ -2568,18 +2375,15 @@ protected:
 
     // Perform a binary search to locate the subcurve that contains q in its
     // range:
-    while (((direction == SMALLER) && (to > from)) ||
-           ((direction == LARGER) && (to < from))) {
+    while (((direction == SMALLER) && (to > from)) || ((direction == LARGER) && (to < from))) {
       std::size_t mid = (from + to) / 2;
-      if (((direction == SMALLER) && (mid > from)) ||
-          ((direction == LARGER) && (mid < from))) {
+      if (((direction == SMALLER) && (mid > from)) || ((direction == LARGER) && (mid < from))) {
         Comparison_result res_mid = compare(cv[mid], ARR_MIN_END);
         if (res_mid == EQUAL) {
           // Ensure that the returned subcurve contains the query point
           // on its right end (if possible)
           if ((direction == SMALLER) && (mid > 0)) --mid;
-          else if ((direction == LARGER) &&
-                   ((mid + 1) < cv.number_of_subcurves()))
+          else if ((direction == LARGER) && ((mid + 1) < cv.number_of_subcurves()))
             ++mid;
           return mid;
         }
@@ -2587,8 +2391,7 @@ protected:
         else to = (direction == SMALLER) ? mid - 1 : mid + 1;
       }
       else {
-        CGAL_assertion(((direction == SMALLER) && (mid < to)) ||
-                       ((direction == LARGER) && (mid > to)));
+        CGAL_assertion(((direction == SMALLER) && (mid < to)) || ((direction == LARGER) && (mid > to)));
         Comparison_result res_mid = compare(cv[mid], ARR_MAX_END);
         if (res_mid == EQUAL) return mid;
         if (res_mid == res_to) to = mid;
@@ -2644,8 +2447,7 @@ protected:
     {}
 
     // Compare a given curve-end with the stored point.
-    Comparison_result operator()(const X_monotone_subcurve_2& xs,
-                                 Arr_curve_end ce)
+    Comparison_result operator()(const X_monotone_subcurve_2& xs, Arr_curve_end ce)
     { return m_compare(xs, ce, m_point); }
   };
 
@@ -2667,8 +2469,7 @@ protected:
     {}
 
     // Compare the given curve-end with the stored curve end.
-    Comparison_result operator()(const X_monotone_subcurve_2& xs,
-                                 Arr_curve_end ce)
+    Comparison_result operator()(const X_monotone_subcurve_2& xs, Arr_curve_end ce)
     { return m_compare(xs, ce, m_x_monotone_subcurve, m_curve_end); }
   };
 
@@ -2680,9 +2481,7 @@ protected:
    * \param(in) xs the given curve.
    * \param(in) ce the curve-end indicator.
    */
-  std::size_t locate_impl(const X_monotone_curve_2& xcv,
-                          const X_monotone_subcurve_2& xs,
-                          Arr_curve_end ce,
+  std::size_t locate_impl(const X_monotone_curve_2& xcv, const X_monotone_subcurve_2& xs, Arr_curve_end ce,
                           Arr_not_all_sides_oblivious_tag) const {
     const Subcurve_traits_2* geom_traits = subcurve_traits_2();
     if (geom_traits->is_vertical_2_object()(xcv[0])) {
@@ -2710,9 +2509,7 @@ protected:
    * \param(in) xs the given curve.
    * \param(in) cd the curve-end indicator.
    */
-  std::size_t locate_impl(const X_monotone_curve_2& xcv,
-                          const X_monotone_subcurve_2& xs,
-                          Arr_curve_end ce,
+  std::size_t locate_impl(const X_monotone_curve_2& xcv, const X_monotone_subcurve_2& xs, Arr_curve_end ce,
                           Arr_all_sides_oblivious_tag) const {
     const Subcurve_traits_2* geom_traits = subcurve_traits_2();
     auto p = (ce == ARR_MAX_END) ?
@@ -2727,9 +2524,7 @@ protected:
    * \param(in) xcv the given polycurve.
    * \param(in) p the query point.
    */
-  std::size_t locate_impl(const X_monotone_curve_2& xcv,
-                          const Point_2& p,
-                          Arr_not_all_sides_oblivious_tag) const {
+  std::size_t locate_impl(const X_monotone_curve_2& xcv, const Point_2& p, Arr_not_all_sides_oblivious_tag) const {
     const Subcurve_traits_2* geom_traits = subcurve_traits_2();
     if (geom_traits->is_vertical_2_object()(xcv[0])) {
       CGAL_precondition_code
@@ -2754,8 +2549,7 @@ protected:
    * \param(in) xcv the given polycurve.
    * \param(in) p the query point.
    */
-  std::size_t locate_impl(const X_monotone_curve_2& xcv, const Point_2& p,
-                          Arr_all_sides_oblivious_tag) const
+  std::size_t locate_impl(const X_monotone_curve_2& xcv, const Point_2& p, Arr_all_sides_oblivious_tag) const
   { return locate(xcv, p); }
 
   //
@@ -2771,8 +2565,7 @@ protected:
          if (res != EQUAL) return INVALID_INDEX;
          );
 
-      Compare_points<Compare_xy_2> compare(*geom_traits,
-                                           compare_xy_2_object(), q);
+      Compare_points<Compare_xy_2> compare(*geom_traits, compare_xy_2_object(), q);
       return locate_gen(xcv, compare);
     }
 
@@ -2789,8 +2582,7 @@ protected:
    * \return an index \f$i\f$ such that subcurves[i] is defined to the left (or
    *         to the right) of `q`, or `INVALID_INDEX` if no such subcurve exists.
    */
-  std::size_t locate_side(const X_monotone_curve_2& cv,
-                          const Point_2& q, const bool& to_right) const {
+  std::size_t locate_side(const X_monotone_curve_2& cv, const Point_2& q, const bool& to_right) const {
     // First locate a subcurve subcurves[i] that contains q in its x-range.
     std::size_t i = locate(cv, q);
     if (i == INVALID_INDEX) return INVALID_INDEX;
