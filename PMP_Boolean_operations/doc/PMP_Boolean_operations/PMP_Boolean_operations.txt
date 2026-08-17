@@ -145,7 +145,7 @@ possible, the input mesh will still be corefined.
 
 If the input meshes contain triangles that are coplanar, it is guaranteed that the triangulations of those triangles
 in the two corefined meshes will be identical. Also all edges of those refined triangles will be reported as intersection
-edges (both in the function `CGAL::Polygon_mesh_processing::polyline_intersection()` and in the named parameter
+edges (both in the function `CGAL::Polygon_mesh_processing::intersection_polylines()` and in the named parameter
 `edge_is_constrained_map()` of corefine prefixed functions).
 
 \subsubsection coref_bolop_input_autorefsub Autorefinement
