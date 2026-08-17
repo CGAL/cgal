@@ -1940,7 +1940,7 @@ protected:
     { if (!m_cell_sizes_valid) { compute_cell_sizes(); }
       vmin=m_cell_size_min; vmax=m_cell_size_max; label=QString("size"); }
     else
-    { distance_value_range(clipPlane, plane_point, vmin, vmax); label=QString("distance to plane"); }
+    { distance_value_range(clipPlane, plane_point, vmin, vmax); label=QString("distance to clipping plane"); }
 
     // No range to map (a uniform value, e.g. a flat mesh with a parallel plane):
     // skip the legend rather than show a misleading full gradient. The threshold is
@@ -1957,7 +1957,10 @@ protected:
     }
     painter.setPen(::Qt::black);
     painter.drawRect(x, y, barW, barH);
-    painter.drawText(x-2, y-8, label);
+    // Right-align the label so a long name grows to the left, into empty space,
+    // instead of running off the right edge.
+    painter.drawText(QRect(0, y-22, x+barW+40, 16),
+                     ::Qt::AlignRight | ::Qt::AlignVCenter, label);
     painter.drawText(x+barW+5, y+11, QString::number(vmax, 'g', 3));
     painter.drawText(x+barW+5, y+barH, QString::number(vmin, 'g', 3));
     painter.end();
