@@ -29,7 +29,7 @@ public:
   using Base_point_2 = typename Kernel::Point_2;
 
   using Point_2 = typename boost::property_traits<PointPropertyMap>::key_type;
-  // Using std::pair creates an ambigous case between X_monotone_curve_2 and std::pair<Point_2, Multiplicity>
+  // Using std::pair creates an ambiguous case between X_monotone_curve_2 and std::pair<Point_2, Multiplicity>
   struct X_monotone_curve_2{
     X_monotone_curve_2(){}
     X_monotone_curve_2(Point_2 a, Point_2 b): first(a), second(b){}

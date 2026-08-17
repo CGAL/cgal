@@ -209,7 +209,8 @@ public:
     const Nodes_vector& nodes,
     bool input_have_coplanar_faces,
     const boost::dynamic_bitset<>& is_node_of_degree_one,
-    const Mesh_to_map_node&)
+    const Mesh_to_map_node&,
+    const std::vector<std::pair<face_descriptor, face_descriptor>>&)
   {
     // first build an unordered_map mapping a vertex to its node id + a set
     // of all intersection edges

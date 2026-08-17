@@ -74,6 +74,10 @@ int main()
   test<CGAL::Exact_predicates_exact_constructions_kernel>();
 
 #if defined(CGAL_USE_CORE) || defined(CGAL_USE_LEDA)
+
+#if defined(CGAL_USE_LEDA)
+  leda_real::set_output_mode(leda_real::IO_to_double);
+#endif
   test<CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt>();
   test<CGAL::Exact_predicates_exact_constructions_kernel_with_kth_root>();
   test<CGAL::Exact_predicates_exact_constructions_kernel_with_root_of>();

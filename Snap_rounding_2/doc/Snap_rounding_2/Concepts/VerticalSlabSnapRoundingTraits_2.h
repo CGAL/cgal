@@ -187,7 +187,7 @@ class Evaluate
   public:
 
   /*!
-  Given a point, evaluates its exact value. For example, for a point using `CGAL::Lazy_exact<CGAL::Eaxct_rational>`, this consists of computing its rational coordinates. A subsequent call to `ConstructRoundedPoint_2` or `ComputeSquaredRoundBound_2` will then use a higher precision.
+  Given a point, evaluates its exact value. For example, for a point using `CGAL::Lazy_exact<CGAL::Exact_rational>`, this consists of computing its rational coordinates. A subsequent call to `ConstructRoundedPoint_2` or `ComputeSquaredRoundBound_2` will then use a higher precision.
   */
   void operator()(Point_2 p);
 };

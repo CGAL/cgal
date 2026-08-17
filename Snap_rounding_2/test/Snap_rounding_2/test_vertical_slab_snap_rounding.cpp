@@ -228,7 +228,7 @@ void test_random_polygons(CGAL::Random &r, size_t nb_polygons, size_t nb_pts){
   assert(!CGAL::Surface_sweep_2::do_intersect(segs.begin(), segs.end(), false));
 }
 
-void test_almost_indentical_segments(CGAL::Random &r, size_t nb_segments, Vector_2 source, Vector_2 target){
+void test_almost_identical_segments(CGAL::Random &r, size_t nb_segments, Vector_2 source, Vector_2 target){
   // Difficult test
 #ifdef BENCH_AND_VERBOSE_SNAP_ROUNDING_2
   std::cout << "Test with almost identical segments from " << source << " to " << target << std::endl;
@@ -287,13 +287,13 @@ void test_iterative_square_intersection(CGAL::Random &r, size_t nb_iterations){
   }
 }
 
-void test_multi_almost_indentical_segments(CGAL::Random &r, size_t nb_segments){
+void test_multi_almost_identical_segments(CGAL::Random &r, size_t nb_segments){
   double x1=1;
   for(double y1=-1; y1<=1; ++y1)
     for(double x2=x1; x2<=1; ++x2)
       for(double y2=y1; y2<=1; ++y2)
         if(Vector_2(x1,y1)!=Vector_2(x2,y2))
-          test_almost_indentical_segments(r, nb_segments, Vector_2(x1,y1), Vector_2(x2,y2));
+          test_almost_identical_segments(r, nb_segments, Vector_2(x1,y1), Vector_2(x2,y2));
 }
 
 void fix_test(){
@@ -408,11 +408,11 @@ int main(int argc,char *argv[])
   test_polygons();
 
   test_fully_random(r,300);
-  test_multi_almost_indentical_segments(r,25);
+  test_multi_almost_identical_segments(r,25);
   test_random_polygons(r,10,50);
 
   // Heavy test
-  // test_multi_almost_indentical_segments(r,250);
+  // test_multi_almost_identical_segments(r,250);
   // test_random_polygons(r,100,20);
   // test_iterative_square_intersection(r, 2000); // Quite slow
   return(0);

@@ -27,7 +27,7 @@ namespace CGAL {
 
 namespace internal::vertical_slab_snap_rounding_impl {
 
-// Duplicate from PMP::triangle_soup_snap_rounding to avoid dependancies. TODO Factorize
+// Duplicate from PMP::triangle_soup_snap_rounding to avoid dependencies. TODO Factorize
 
 // Certified ceil function for exact number types
 template <class NT> double double_ceil(const Lazy_exact_nt< NT > &x);

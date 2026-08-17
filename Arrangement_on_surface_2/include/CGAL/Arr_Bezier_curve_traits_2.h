@@ -739,7 +739,7 @@ public:
      * \param cv The curve.
      * \return The opposite curve.
      */
-    X_monotone_curve_2 operator()(const X_monotone_curve_2& cv) { return (cv.flip()); }
+    X_monotone_curve_2 operator()(const X_monotone_curve_2& cv) const { return (cv.flip()); }
   };
 
   /*! obtains a `Construct_opposite_2` functor object. */
