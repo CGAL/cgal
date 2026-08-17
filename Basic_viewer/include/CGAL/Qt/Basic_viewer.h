@@ -910,6 +910,12 @@ public:
             QVector4D capcol;
             if (num_volumes == 0)
             { capcol = QVector4D(0.6f, 0.6f, 0.6f, 1.0f); }
+            else if (m_color_map!=0)
+            { // Colour by value: cap follows the palette, like the volume's faces.
+              const QColor cc=volume_value_color(v, clipPlane, plane_point);
+              capcol = QVector4D(float(cc.redF()), float(cc.greenF()),
+                                 float(cc.blueF()), 1.0f);
+            }
             else
             {
               const CGAL::IO::Color &c = vcolors[v];
@@ -1892,6 +1898,35 @@ protected:
     }
   }
 
+  // Colour by value: the palette colour for a volume's clip-plane cap. The cap faces
+  // carry no value of their own, so the cap takes the value the volume shows: its
+  // size, its centre distance, or the mean of its per-face values.
+  QColor volume_value_color(std::size_t v, const QVector4D &clipPlane,
+                            const QVector4D &plane_point)
+  {
+    const std::vector<std::vector<unsigned int>> &vols=m_scene.get_volume_faces();
+    double vmin, vmax, value;
+    if (m_color_value==3 && m_scene.has_face_values())
+    { vmin=m_scene.face_value_min(); vmax=m_scene.face_value_max();
+      const std::vector<float> &fv=m_scene.get_face_values();
+      double sum=0.0; std::size_t n=0;
+      for (unsigned int fi : vols[v]) { if (fi<fv.size()) { sum+=fv[fi]; ++n; } }
+      value=(n>0) ? sum/double(n) : vmin; }
+    else if (m_color_value==2)
+    { if (!m_cell_sizes_valid) { compute_cell_sizes(); }
+      vmin=m_cell_size_min; vmax=m_cell_size_max; value=m_cell_sizes[v]; }
+    else
+    { distance_value_range(clipPlane, plane_point, vmin, vmax);
+      const CGAL::Bbox_3 &b=m_scene.get_volume_bboxes()[v];
+      const QVector3D c(float((b.xmin()+b.xmax())*0.5), float((b.ymin()+b.ymax())*0.5),
+                        float((b.zmin()+b.zmax())*0.5));
+      value=QVector3D::dotProduct(c-plane_point.toVector3D(),
+                                  QVector3D(clipPlane).normalized()); }
+    double t=(vmax-vmin>1e-12) ? (value-vmin)/(vmax-vmin) : 0.0;
+    t=(t<0.0) ? 0.0 : (t>1.0 ? 1.0 : t);
+    return legend_palette_color(float(t));
+  }
+
   // Colour by value: draw a small legend, a gradient bar with the value range, so
   // the colours read as numbers. The range and label match the current value.
   void draw_color_legend(const QVector4D &clipPlane, const QVector4D &plane_point)
@@ -1905,7 +1940,7 @@ protected:
     { if (!m_cell_sizes_valid) { compute_cell_sizes(); }
       vmin=m_cell_size_min; vmax=m_cell_size_max; label=QString("size"); }
     else
-    { distance_value_range(clipPlane, plane_point, vmin, vmax); label=QString("distance"); }
+    { distance_value_range(clipPlane, plane_point, vmin, vmax); label=QString("distance to plane"); }
 
     // No range to map (a uniform value, e.g. a flat mesh with a parallel plane):
     // skip the legend rather than show a misleading full gradient. The threshold is
