@@ -66,9 +66,6 @@ struct Primitive_helper<AABBTraits,false>{
   static Reference_point_type get_reference_point(const typename AABBTraits::Primitive& p,const AABBTraits&) {return p.reference_point();}
 };
 
-std::size_t compteur = 0;
-std::size_t compteur_r = 0;
-
 #include <CGAL/Aff_transformation_3.h>
 #include <CGAL/Bbox_3.h>
 
@@ -279,7 +276,6 @@ Bbox_3 compute_transformed_bbox(const CGAL::Aff_transformation_3<Kernel>& at, co
     return bbox_3(ps, ps+2);
   }
 
-  compteur_r++;
   AK::Point_3 ps[8];
   ps[0] = a_at( AK::Point_3(xtrm[0], xtrm[2], xtrm[4]) );
   ps[1] = a_at( AK::Point_3(xtrm[0], xtrm[2], xtrm[5]) );
