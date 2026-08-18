@@ -88,6 +88,7 @@ typedef typename Map::SHalfloop_const_handle SHalfloop_const_handle;
 typedef typename Map::SHalfloop_const_iterator SHalfloop_const_iterator;
 typedef typename Map::SFace_const_handle SFace_const_handle;
 typedef typename Map::SFace_const_iterator SFace_const_iterator;
+typedef typename Map::Object_handle Object_handle;
 
 /*{\Mtext Local types are handles, iterators and circulators of the
 following kind: |SVertex_handle|, |SVertex_iterator|, |SHalfedge_handle|,
