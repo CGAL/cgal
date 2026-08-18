@@ -28,6 +28,7 @@
 
 #include <utility>
 #include <istream>
+#include <cmath>
 
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Kernel/mpl.h>
@@ -666,31 +667,54 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
       : public CGAL::cpp98::unary_function< Type, double > {
       public:
         double operator()( const Type& x ) const {
-        // Original global function was marked with an TODO!!
-          if (x.num == 0 )
-            return 0;
+          if (x.num == 0)
+            return 0.0;
 
-          double nd = CGAL_NTS to_double( x.num );
+          if (x.den == 1)
+            return CGAL_NTS to_double(x.num);
 
-          if (x.den == 1 )
-            return nd;
+          // Compute to_double(num) / to_double(den) without:
+          //  - RT (ring-type) division (issue #1053 / issue #1815), and
+          //  - incorrect results when to_double() overflows to ±infinity.
+          //
+          // Fast path: both fit in a normal double → simple division.
+          double nd = CGAL_NTS to_double(x.num);
+          double dd = CGAL_NTS to_double(x.den);
 
-          double dd = CGAL_NTS to_double( x.den );
+          if (CGAL_NTS is_finite(nd) && CGAL_NTS is_finite(dd))
+            return nd / dd;
 
-          if ( CGAL_NTS is_finite( x.den ) && CGAL_NTS is_finite( x.num ) )
-            return nd/dd;
+          // Slow path: at least one overflows to ±inf.
+          // Use to_interval on numerator and denominator independently and
+          // divide the resulting intervals.  The midpoint of the resulting
+          // interval is the best double approximation we can obtain without
+          // RT arithmetic.
+          //
+          // Note: when *both* num and den overflow double, to_interval()
+          // returns intervals containing ±infinity for each.  The resulting
+          // quotient interval is then very wide (e.g. [0, +inf]) and the
+          // midpoint is meaningless.  This is an inherent limitation for
+          // generic ring types that lack to_double_exp().  Number types
+          // for which this matters (MP_Float, Gmpz, Gmpzf) provide
+          // specializations of To_double that avoid this path.
+          const Interval_nt<> nI(CGAL_NTS to_interval(x.num));
+          const Interval_nt<> dI(CGAL_NTS to_interval(x.den));
+          const Interval_nt<> quot = nI / dI;
 
-          if ( CGAL_NTS abs(x.num) > CGAL_NTS abs(x.den) )
-          {
-              NT  nt_div = x.num / x.den;
-              double divd = CGAL_NTS to_double(nt_div);
-              if ( divd >= std::ldexp(1.0,53) )
-              { return divd; }
-          }
-          if ( CGAL_NTS abs(x.num) < CGAL_NTS abs(x.den) )
-          { return 1.0 / CGAL_NTS to_double( NT(1) / x ); }
+          // Use inf + (sup - inf) * 0.5 instead of (inf + sup) * 0.5
+          // to avoid overflow when both bounds are near DBL_MAX.
+          double mid = quot.inf() + (quot.sup() - quot.inf()) * 0.5;
 
-          return nd/dd;
+          if (CGAL_NTS is_finite(mid))
+            return mid;
+
+          // Both num and den overflow; return the largest representable
+          // finite value with the correct sign.
+          if (quot.inf() >= 0.0)
+            return (std::numeric_limits<double>::max)();
+          if (quot.sup() <= 0.0)
+            return -(std::numeric_limits<double>::max)();
+          return 0.0;
         }
     };
 
