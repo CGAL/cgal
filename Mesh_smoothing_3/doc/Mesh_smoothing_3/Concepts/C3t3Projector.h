@@ -64,6 +64,11 @@ using Curve_edge = `std::pair<Curve_index, Edge>`;
 
 /// @}
 
+
+/// \name Operations
+/// The following functions are used to project entities
+/// @{
+
 /*!
 Return the plane the patch face should align to. 
 */
