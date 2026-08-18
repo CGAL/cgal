@@ -271,6 +271,9 @@ public:
     \brief checks the validity of the ground truth with respect to the
     label set.
 
+    \note indices of labels must be sequential, starting from zero and
+    with no gaps (i.e. 0, 1, 2,...).
+
     \param ground_truth range of label indices. This function checks
     that all these indices are either -1 (for unclassified) or a valid
     index of one of the labels. If at least one of the indices is out
