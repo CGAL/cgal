@@ -664,11 +664,11 @@ public:
       f.first->set_neighbor(f.second, nc);
 
       vertex_pair_facet_map.set({u, v}, {local_facet_index,
-                                         static_cast<unsigned char>(nc->index(w))});
+                                         static_cast<unsigned char>(2)});
       vertex_pair_facet_map.set({v, w}, {local_facet_index,
-                                         static_cast<unsigned char>(nc->index(u))});
+                                         static_cast<unsigned char>(1)});
       vertex_pair_facet_map.set({w, u}, {local_facet_index,
-                                         static_cast<unsigned char>(nc->index(v))});
+                                         static_cast<unsigned char>(0)});
     }
 
     for(auto it = vertex_pair_facet_map.begin(); it != vertex_pair_facet_map.end(); ++it){
