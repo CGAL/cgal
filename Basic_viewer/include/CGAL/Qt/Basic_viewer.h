@@ -736,8 +736,9 @@ public:
         rendering_program_face.setUniformValue("u_RenderingTransparency", clipping_plane_rendering_transparency);
         rendering_program_face.setUniformValue("u_ClipPlane", clipPlane);
         rendering_program_face.setUniformValue("u_PointPlane", plane_point);
-        // Colour by value: the value is the distance to the clipping plane, scaled
-        // by the scene radius each side of it.
+        // Colour by value: the value is the distance to the clipping plane, over a scale
+        // anchored at the plane (0) and growing into the kept half, so moving the plane
+        // sweeps the colours instead of leaving them unchanged.
         rendering_program_face.setUniformValue("u_ColorMapMode", static_cast<GLfloat>(m_color_map));
         { double dvmin, dvmax; distance_value_range(clipPlane, plane_point, dvmin, dvmax);
           rendering_program_face.setUniformValue("u_ValueMin", static_cast<GLfloat>(dvmin));
@@ -1902,20 +1903,29 @@ protected:
   void distance_value_range(const QVector4D &clipPlane, const QVector4D &plane_point,
                             double &vmin, double &vmax)
   {
+    // Colour by distance to the clipping plane, anchored at the plane: 0 at the plane
+    // (one end of the palette), growing into the kept (solid) half up to its farthest
+    // point. The kept half is dot(pos-pt, n) > 0 (see onPlane in the shader). We do not
+    // use the symmetric bounding-box span, which would (a) shift with the plane so both
+    // range ends moved with the distances and the colours never changed when the plane
+    // was only translated (they did on rotation), and (b) advertise in the legend the
+    // colours of the clipped-away half, which no visible face shows. Anchored at the
+    // plane the colours sweep as the plane is moved (the farthest distance changes), and
+    // the legend matches the visible faces.
     const CGAL::Bbox_3 b=m_scene.bounding_box();
     const QVector3D n=QVector3D(clipPlane).normalized();
     const QVector3D pt=plane_point.toVector3D();
-    vmin=(std::numeric_limits<double>::max)();
-    vmax=-(std::numeric_limits<double>::max)();
+    double dmax=0.0;
     for (int c=0; c<8; ++c)
     {
       const QVector3D corner(float((c&1) ? b.xmax() : b.xmin()),
                              float((c&2) ? b.ymax() : b.ymin()),
                              float((c&4) ? b.zmax() : b.zmin()));
       const double d=QVector3D::dotProduct(corner-pt, n);
-      if (d<vmin) { vmin=d; }
-      if (d>vmax) { vmax=d; }
+      if (d>dmax) { dmax=d; }
     }
+    vmin=0.0;
+    vmax=dmax;
   }
 
   // Colour by value: the palette colour for a volume's clip-plane cap. The cap faces
