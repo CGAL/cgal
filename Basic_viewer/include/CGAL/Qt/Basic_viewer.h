@@ -115,6 +115,7 @@ public:
     // Add custom key description (see keyPressEvent).
     setKeyDescription(::Qt::Key_C, "Switch clipping plane display mode");
     setKeyDescription(::Qt::AltModifier, ::Qt::Key_C, "Toggle clipping plane rendering on/off");
+    setKeyDescription(::Qt::ShiftModifier, ::Qt::Key_C, "Switch how edges/vertices are clipped (all/partial)");
     setKeyDescription(::Qt::Key_E, "Toggles edges display");
     setKeyDescription(::Qt::Key_M, "Toggles mono color");
     setKeyDescription(::Qt::Key_N, "Inverse direction of normals");
@@ -321,6 +322,24 @@ public:
     if(!m_are_buffers_initialized)
     { initialize_buffers(); }
 
+    // Whole-volume clipping: decide which volumes are kept, so the face pass and
+    // the whole-volume edge filter share the same result. The kept set depends
+    // only on the plane, so recompute it only when the plane moves (or the scene
+    // changed), not every frame.
+    if (m_use_clipping_plane == CLIPPING_PLANE_VOLUMES)
+    {
+      const std::size_t nv=m_scene.get_volume_faces().size();
+      if (clipPlane!=m_last_vol_clip_plane || plane_point!=m_last_vol_plane_point ||
+          m_volumes_kept.size()!=nv)
+      {
+        m_volumes_kept.assign(nv, 0);
+        for (std::size_t v=0; v<nv; ++v)
+        { if (volume_kept(v, clipPlane, plane_point)) { m_volumes_kept[v]=1; } }
+        m_last_vol_clip_plane=clipPlane;
+        m_last_vol_plane_point=plane_point;
+      }
+    }
+
     QVector3D color;
     attrib_buffers(this);
 
@@ -352,23 +371,10 @@ public:
           rendering_program_sphere.setUniformValue("u_RenderingMode", rendering_mode);
 
           vao[VAO_POINTS].bind();
-          glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(m_scene.number_of_elements(GS::POS_POINTS)));
+          draw_points_for_vertices();
         };
 
-        enum {
-          DRAW_ALL = -1, // draw all
-          DRAW_INSIDE_ONLY, // draw only the part inside the clipping plane
-          DRAW_OUTSIDE_ONLY // draw only the part outside the clipping plane
-        };
-
-        if (m_use_clipping_plane == CLIPPING_PLANE_SOLID_HALF_ONLY)
-        {
-          renderer(DRAW_INSIDE_ONLY);
-        }
-        else
-        {
-          renderer(DRAW_ALL);
-        }
+        renderer(vertex_clip_render_mode());
 
         rendering_program_sphere.release();
       }
@@ -399,23 +405,10 @@ public:
           rendering_program_p_l.setUniformValue("u_RenderingMode", rendering_mode);
 
           vao[VAO_POINTS].bind();
-          glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(m_scene.number_of_elements(GS::POS_POINTS)));
+          draw_points_for_vertices();
         };
 
-        enum {
-          DRAW_ALL = -1, // draw all
-          DRAW_INSIDE_ONLY, // draw only the part inside the clipping plane
-          DRAW_OUTSIDE_ONLY // draw only the part outside the clipping plane
-        };
-
-        if (m_use_clipping_plane == CLIPPING_PLANE_SOLID_HALF_ONLY)
-        {
-          renderer(DRAW_INSIDE_ONLY);
-        }
-        else
-        {
-          renderer(DRAW_ALL);
-        }
+        renderer(vertex_clip_render_mode());
 
         rendering_program_p_l.release();
       }
@@ -463,7 +456,7 @@ public:
           rendering_program_cylinder.setUniformValue("u_RenderingMode", rendering_mode);
 
           vao[VAO_SEGMENTS].bind();
-          glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(m_scene.number_of_elements(GS::POS_SEGMENTS)));
+          draw_segments_for_edges();
           rendering_program_cylinder.release();
 
           // 2. A sphere at each edge endpoint, in the edge color and at the tube
@@ -491,24 +484,11 @@ public:
           rendering_program_join_sphere.setUniformValue("u_RenderingMode", rendering_mode);
 
           vao[VAO_SEGMENTS].bind();
-          glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(m_scene.number_of_elements(GS::POS_SEGMENTS)));
+          draw_segments_for_edges();
           rendering_program_join_sphere.release();
         };
 
-        enum {
-          DRAW_ALL = -1, // draw all
-          DRAW_INSIDE_ONLY, // draw only the part inside the clipping plane
-          DRAW_OUTSIDE_ONLY // draw only the part outside the clipping plane
-        };
-
-        if (m_use_clipping_plane == CLIPPING_PLANE_SOLID_HALF_ONLY)
-        {
-          renderer(DRAW_INSIDE_ONLY);
-        }
-        else
-        {
-          renderer(DRAW_ALL);
-        }
+        renderer(edge_clip_render_mode());
 
         rendering_program_cylinder.release();
       }
@@ -553,7 +533,7 @@ public:
           // The opaque edges are drawn solid; the framebuffer multisampling does
           // the anti-aliasing, so no blending is needed here.
           vao[VAO_SEGMENTS].bind();
-          glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(m_scene.number_of_elements(GS::POS_SEGMENTS)));
+          draw_segments_for_edges();
 
           // Fill the square-cap corners where flat edges meet with a disk at each
           // edge endpoint, in the edge color and at the edge width. Drawn from the
@@ -579,24 +559,11 @@ public:
           rendering_program_edge_disk.setUniformValue("u_PointPlane", plane_point);
           rendering_program_edge_disk.setUniformValue("u_RenderingMode", rendering_mode);
           vao[VAO_SEGMENTS].bind();
-          glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(m_scene.number_of_elements(GS::POS_SEGMENTS)));
+          draw_segments_for_edges();
           rendering_program_edge_disk.release();
         };
 
-        enum {
-          DRAW_ALL = -1, // draw all
-          DRAW_INSIDE_ONLY, // draw only the part inside the clipping plane
-          DRAW_OUTSIDE_ONLY // draw only the part outside the clipping plane
-        };
-
-        if (m_use_clipping_plane == CLIPPING_PLANE_SOLID_HALF_ONLY)
-        {
-          renderer(DRAW_INSIDE_ONLY);
-        }
-        else
-        {
-          renderer(DRAW_ALL);
-        }
+        renderer(edge_clip_render_mode());
 
         rendering_program_line.release();
       }
@@ -625,23 +592,10 @@ public:
           rendering_program_p_l.setUniformValue("u_RenderingMode", rendering_mode);
 
           vao[VAO_SEGMENTS].bind();
-          glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(m_scene.number_of_elements(GS::POS_SEGMENTS)));
+          draw_segments_for_edges();
         };
 
-        enum {
-          DRAW_ALL = -1,
-          DRAW_INSIDE_ONLY,
-          DRAW_OUTSIDE_ONLY
-        };
-
-        if (m_use_clipping_plane == CLIPPING_PLANE_SOLID_HALF_ONLY)
-        {
-          renderer(DRAW_INSIDE_ONLY);
-        }
-        else
-        {
-          renderer(DRAW_ALL);
-        }
+        renderer(edge_clip_render_mode());
 
         rendering_program_p_l.release();
       }
@@ -831,8 +785,7 @@ public:
         // 4. render clipping plane here
         renderer_clipping_plane(clipping_plane_rendering);
       }
-      else if (m_use_clipping_plane == CLIPPING_PLANE_SOLID_HALF_WIRE_HALF ||
-               m_use_clipping_plane == CLIPPING_PLANE_SOLID_HALF_ONLY)
+      else if (m_use_clipping_plane == CLIPPING_PLANE_SOLID_HALF_ONLY)
       {
         // 1. draw solid HALF
         renderer(DRAW_SOLID_HALF);
@@ -955,6 +908,60 @@ public:
         }
 
         // 2. render clipping plane here
+        renderer_clipping_plane(clipping_plane_rendering);
+      }
+      else if (m_use_clipping_plane == CLIPPING_PLANE_VOLUMES)
+      {
+        // Whole-volume clipping: draw each volume that is not entirely clipped
+        // away as a whole (no cut, no cap). Straddling volumes are kept.
+        const std::vector<std::vector<unsigned int>> &volumes =
+          m_scene.get_volume_faces();
+        const std::size_t num_volumes = volumes.size();
+
+        glEnable(GL_POLYGON_OFFSET_FILL);
+        glPolygonOffset(2.0, 2.0);
+        glDepthFunc(GL_LESS);
+
+        rendering_program_face.bind();
+        if (m_use_default_color)
+        {
+          auto fc = m_scene.get_default_color_face();
+          rendering_program_face.setUniformValue("u_DefaultColor",
+            QVector3D((double)fc.red()/255.0, (double)fc.green()/255.0,
+                      (double)fc.blue()/255.0));
+          rendering_program_face.setUniformValue("u_UseDefaultColor", static_cast<GLint>(1));
+        }
+        else
+        { rendering_program_face.setUniformValue("u_UseDefaultColor", static_cast<GLint>(0)); }
+        rendering_program_face.setUniformValue("u_RenderingMode",
+          static_cast<float>(DRAW_SOLID_ALL));
+        rendering_program_face.setUniformValue("u_RenderingTransparency",
+          clipping_plane_rendering_transparency);
+        rendering_program_face.setUniformValue("u_ClipPlane", clipPlane);
+        rendering_program_face.setUniformValue("u_PointPlane", plane_point);
+
+        vao[VAO_FACES].bind();
+        if (num_volumes == 0)
+        {
+          glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(
+            m_scene.number_of_elements(GS::POS_FACES)));
+        }
+        else
+        {
+          for (std::size_t v = 0; v < num_volumes; ++v)
+          {
+            if (!m_volumes_kept[v]) { continue; }
+            for (unsigned int fi : volumes[v])
+            {
+              const std::pair<unsigned int, unsigned int> &r = m_scene.face_range(fi);
+              glDrawArrays(GL_TRIANGLES, static_cast<GLint>(r.first),
+                           static_cast<GLsizei>(r.second));
+            }
+          }
+        }
+        vao[VAO_FACES].release();
+        glDisable(GL_POLYGON_OFFSET_FILL);
+
         renderer_clipping_plane(clipping_plane_rendering);
       }
       else
@@ -1458,6 +1465,163 @@ protected:
     return (lo-d)<=0.0 && (hi-d)>=0.0;
   }
 
+  // Whole-volume clipping: true if volume v has a vertex on the kept side of the
+  // plane (dot(p-point, normal)>=0). A straddling volume is kept, so it is hidden
+  // only when every vertex is clipped away. Bbox fast-path first, then an exact
+  // vertex scan when the box straddles (its corners are not real vertices).
+  bool volume_kept(std::size_t v,
+                   const QVector4D &normal, const QVector4D &point) const
+  {
+    const CGAL::Bbox_3 &b=m_scene.get_volume_bboxes()[v];
+    const double nx=normal.x(), ny=normal.y(), nz=normal.z();
+    const double d=nx*point.x()+ny*point.y()+nz*point.z();
+    double lo=0.0, hi=0.0;
+    if (nx>=0){ lo+=nx*b.xmin(); hi+=nx*b.xmax(); } else { lo+=nx*b.xmax(); hi+=nx*b.xmin(); }
+    if (ny>=0){ lo+=ny*b.ymin(); hi+=ny*b.ymax(); } else { lo+=ny*b.ymax(); hi+=ny*b.ymin(); }
+    if (nz>=0){ lo+=nz*b.zmin(); hi+=nz*b.zmax(); } else { lo+=nz*b.zmax(); hi+=nz*b.zmin(); }
+    if (hi-d<0.0) { return false; } // whole box clipped away
+    if (lo-d>=0.0) { return true; } // whole box on the kept side
+    const std::vector<BufferType> &pos=m_scene.get_array_of_index(GS::POS_FACES);
+    for (unsigned int fi : m_scene.get_volume_faces()[v])
+    {
+      const std::pair<unsigned int, unsigned int> &r=m_scene.face_range(fi);
+      for (unsigned int k=0; k<r.second; ++k)
+      {
+        const std::size_t i=3*(std::size_t(r.first)+k);
+        if (nx*pos[i]+ny*pos[i+1]+nz*pos[i+2]-d>=0.0) { return true; }
+      }
+    }
+    return false;
+  }
+
+  // Rendering mode (u_RenderingMode) for edges under Shift+C: 0 is the shader's
+  // kept-side cut, -1 draws all with no shader clip. Only "partial" over the
+  // solid-only face mode asks the shader to cut; the whole-volume case draws all
+  // (no cut) and filters whole edges by volume in draw_segments_for_edges.
+  float edge_clip_render_mode() const
+  {
+    if (m_clip_edges_vertices==CLIP_EV_PARTIAL &&
+        m_use_clipping_plane==CLIPPING_PLANE_SOLID_HALF_ONLY)
+    { return 0.0f; }
+    return -1.0f;
+  }
+
+  // Rendering mode for vertices: "partial" over the solid-only face mode keeps
+  // only the kept side (0, the shader clip); the whole-volume case draws all
+  // (-1) and filters vertices by volume in draw_points_for_vertices, like the
+  // edges. All / off / transparent draw them all (-1).
+  float vertex_clip_render_mode() const
+  {
+    if (m_clip_edges_vertices==CLIP_EV_PARTIAL &&
+        m_use_clipping_plane==CLIPPING_PLANE_SOLID_HALF_ONLY)
+    { return 0.0f; }
+    return -1.0f;
+  }
+
+  // Whole-volume clipping: for each edge (POS_SEGMENTS) and each vertex
+  // (POS_POINTS), the volumes it belongs to, found by matching positions to the
+  // volume face vertices. Cached, recomputed lazily. Empty when no volumes.
+  void compute_clip_owners()
+  {
+    m_edge_owners.clear();
+    m_point_owners.clear();
+    const std::vector<std::vector<unsigned int>> &volumes=m_scene.get_volume_faces();
+    const std::size_t num_volumes=volumes.size();
+    if (num_volumes==0) { return; }
+
+    const std::vector<BufferType> &fpos=m_scene.get_array_of_index(GS::POS_FACES);
+
+    // Each vertex position maps to the volumes whose faces use it (ascending).
+    std::map<std::tuple<float, float, float>, std::vector<unsigned int>> pos_to_vol;
+    for (std::size_t v=0; v<num_volumes; ++v)
+    {
+      for (unsigned int fi : volumes[v])
+      {
+        const std::pair<unsigned int, unsigned int> &r=m_scene.face_range(fi);
+        for (unsigned int k=0; k<r.second; ++k)
+        {
+          const std::size_t i=3*(std::size_t(r.first)+k);
+          std::vector<unsigned int> &lst=
+            pos_to_vol[std::make_tuple(fpos[i], fpos[i+1], fpos[i+2])];
+          if (lst.empty() || lst.back()!=v) { lst.push_back((unsigned int)v); }
+        }
+      }
+    }
+
+    // An edge is owned by the volumes that contain both of its endpoints.
+    const std::vector<BufferType> &lpos=m_scene.get_array_of_index(GS::POS_SEGMENTS);
+    const unsigned int num_edges=m_scene.number_of_elements(GS::POS_SEGMENTS)/2;
+    m_edge_owners.resize(num_edges);
+    for (unsigned int e=0; e<num_edges; ++e)
+    {
+      const std::size_t a=3*std::size_t(2*e), b=3*std::size_t(2*e+1);
+      auto ia=pos_to_vol.find(std::make_tuple(lpos[a], lpos[a+1], lpos[a+2]));
+      auto ib=pos_to_vol.find(std::make_tuple(lpos[b], lpos[b+1], lpos[b+2]));
+      if (ia==pos_to_vol.end() || ib==pos_to_vol.end()) { continue; }
+      const std::vector<unsigned int> &A=ia->second, &B=ib->second;
+      std::size_t x=0, y=0;
+      while (x<A.size() && y<B.size())
+      {
+        if (A[x]<B[y]) { ++x; }
+        else if (B[y]<A[x]) { ++y; }
+        else { m_edge_owners[e].push_back(A[x]); ++x; ++y; }
+      }
+    }
+
+    // A vertex is owned by the volumes that contain its position.
+    const std::vector<BufferType> &ppos=m_scene.get_array_of_index(GS::POS_POINTS);
+    const unsigned int num_points=m_scene.number_of_elements(GS::POS_POINTS);
+    m_point_owners.resize(num_points);
+    for (unsigned int p=0; p<num_points; ++p)
+    {
+      const std::size_t i=3*std::size_t(p);
+      auto it=pos_to_vol.find(std::make_tuple(ppos[i], ppos[i+1], ppos[i+2]));
+      if (it!=pos_to_vol.end()) { m_point_owners[p]=it->second; }
+    }
+  }
+
+  // Draw the segment buffer for the current edge clip state. In "partial" over the
+  // whole-volume face mode, draw only the edges of the kept volumes, so a kept
+  // volume shows all of its edges. Otherwise draw the whole buffer (the shader
+  // does the solid-only cut). Reuses the bound program and VAO.
+  void draw_segments_for_edges()
+  {
+    const GLsizei n=static_cast<GLsizei>(m_scene.number_of_elements(GS::POS_SEGMENTS));
+    if (!(m_clip_edges_vertices==CLIP_EV_PARTIAL &&
+          m_use_clipping_plane==CLIPPING_PLANE_VOLUMES) ||
+        m_scene.get_volume_faces().empty())
+    { glDrawArrays(GL_LINES, 0, n); return; }
+
+    if (!m_clip_owners_valid) { compute_clip_owners(); m_clip_owners_valid=true; }
+    for (std::size_t e=0; e<m_edge_owners.size(); ++e)
+    {
+      bool draw=false;
+      for (unsigned int v : m_edge_owners[e]) { if (m_volumes_kept[v]) { draw=true; break; } }
+      if (draw) { glDrawArrays(GL_LINES, static_cast<GLint>(2*e), 2); }
+    }
+  }
+
+  // Draw the point buffer for the current vertex clip state. In "partial" over the
+  // whole-volume face mode, draw only the vertices of the kept volumes, like the
+  // edges. Otherwise draw the whole buffer (the shader does the solid-only clip).
+  // Reuses the bound program and VAO.
+  void draw_points_for_vertices()
+  {
+    const GLsizei n=static_cast<GLsizei>(m_scene.number_of_elements(GS::POS_POINTS));
+    if (!(m_clip_edges_vertices==CLIP_EV_PARTIAL &&
+          m_use_clipping_plane==CLIPPING_PLANE_VOLUMES) ||
+        m_scene.get_volume_faces().empty())
+    { glDrawArrays(GL_POINTS, 0, n); return; }
+
+    if (!m_clip_owners_valid) { compute_clip_owners(); m_clip_owners_valid=true; }
+    for (std::size_t p=0; p<m_point_owners.size(); ++p)
+    {
+      bool draw=false;
+      for (unsigned int v : m_point_owners[p]) { if (m_volumes_kept[v]) { draw=true; break; } }
+      if (draw) { glDrawArrays(GL_POINTS, static_cast<GLint>(p), 1); }
+    }
+  }
+
   // Clip-plane cap: framebuffer-pixel rectangle of a world box under mvp/viewport.
   // Returns false if a corner is behind the camera (caller clears the full screen).
   static bool bbox_scissor(const CGAL::Bbox_3 &b, const QMatrix4x4 &mvp,
@@ -1688,6 +1852,8 @@ protected:
     }
 
     m_cap_closed_valid = false; // clip-plane cap: recompute closedness lazily
+    m_clip_owners_valid = false; // whole-volume clip: recompute edge/vertex owners lazily
+    m_volumes_kept.clear(); // whole-volume clip: force the kept set to recompute
     m_are_buffers_initialized = true;
   }
 
@@ -2024,8 +2190,8 @@ protected:
           {
           case CLIPPING_PLANE_OFF: displayMessage(QString("Draw clipping = false")); break;
           case CLIPPING_PLANE_SOLID_HALF_TRANSPARENT_HALF: clipping_plane_rendering=true; displayMessage(QString("Draw clipping = solid half & transparent half")); break;
-          case CLIPPING_PLANE_SOLID_HALF_WIRE_HALF: displayMessage(QString("Draw clipping = solid half & wireframe half")); break;
           case CLIPPING_PLANE_SOLID_HALF_ONLY: displayMessage(QString("Draw clipping = solid half only")); break;
+          case CLIPPING_PLANE_VOLUMES: displayMessage(QString("Draw clipping = whole volumes")); break;
           default: break;
           }
           update();
@@ -2041,6 +2207,20 @@ protected:
           displayMessage(QString("Draw clipping plane=%1.").arg(clipping_plane_rendering?"true":"false"));
           update();
         }
+      }
+      else if ((e->key()==::Qt::Key_C) && (modifiers==::Qt::ShiftModifier))
+      {
+        // Cycle how edges and vertices react to the clipping plane: all, or
+        // partial (clipped to match the current face mode on C).
+        if (!isOpenGL_3_2()) return;
+        m_clip_edges_vertices=(m_clip_edges_vertices+1)%CLIP_EV_END_INDEX;
+        switch(m_clip_edges_vertices)
+        {
+        case CLIP_EV_ALL: displayMessage(QString("Clip edges/vertices = all")); break;
+        case CLIP_EV_PARTIAL: displayMessage(QString("Clip edges/vertices = partial")); break;
+        default: break;
+        }
+        update();
       }
       else if ((e->key()==::Qt::Key_E) && (modifiers==::Qt::NoButton))
       {
@@ -2345,12 +2525,27 @@ protected:
   enum {
     CLIPPING_PLANE_OFF = 0,
     CLIPPING_PLANE_SOLID_HALF_TRANSPARENT_HALF,
-    CLIPPING_PLANE_SOLID_HALF_WIRE_HALF,
     CLIPPING_PLANE_SOLID_HALF_ONLY,
+    CLIPPING_PLANE_VOLUMES, // draw whole volumes on the kept side, no cut
     CLIPPING_PLANE_END_INDEX
   };
 
+  // How edges and vertices react to the clipping plane, cycled by Shift+C and
+  // independent of the face mode above (only used when a clipping plane is on).
+  enum {
+    CLIP_EV_ALL = 0, // draw every edge and vertex
+    CLIP_EV_PARTIAL, // clip edges/vertices to match the face mode (see the helpers)
+    CLIP_EV_END_INDEX
+  };
+
   int m_use_clipping_plane=CLIPPING_PLANE_OFF;
+  int m_clip_edges_vertices=CLIP_EV_ALL; // Shift+C: how edges/vertices are clipped
+  std::vector<char> m_volumes_kept; // whole-volume clip: per volume, 1 if kept
+  QVector4D m_last_vol_clip_plane; // whole-volume clip: plane m_volumes_kept was computed for
+  QVector4D m_last_vol_plane_point;
+  std::vector<std::vector<unsigned int>> m_edge_owners; // whole-volume clip: per edge, owning volumes
+  std::vector<std::vector<unsigned int>> m_point_owners; // whole-volume clip: per vertex, owning volumes
+  bool m_clip_owners_valid = false; // whole-volume clip: are the owner lists up to date
   CGAL::qglviewer::ManipulatedFrame* m_frame_plane=nullptr;
 
   // Buffer for clipping plane is not stored in the scene because it is not
