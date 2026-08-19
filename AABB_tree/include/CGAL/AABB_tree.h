@@ -938,7 +938,7 @@ public:
                                     ConstPointIterator beyond)
   {
     clear_search_tree();
-    m_p_search_tree = std::make_unique<Search_tree, ConcurrencyTag>(first, beyond);
+    m_p_search_tree = std::make_unique<Search_tree>(first, beyond, ConcurrencyTag());
 #ifdef CGAL_HAS_THREADS
       m_atomic_search_tree_constructed.store(true, std::memory_order_release); // in case build_kd_tree() is triggered by a call to best_hint()
 #else
