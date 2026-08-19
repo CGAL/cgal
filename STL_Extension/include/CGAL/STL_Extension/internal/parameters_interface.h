@@ -169,6 +169,7 @@ CGAL_add_named_parameter(mesh_facet_topology_t, mesh_facet_topology, mesh_facet_
 CGAL_add_named_parameter(polyline_constraints_t, polyline_constraints, polyline_constraints)
 CGAL_add_named_parameter(do_scale_t, do_scale, do_scale)
 CGAL_add_named_parameter(vertex_corner_map_t, vertex_corner_map, vertex_corner_map)
+CGAL_add_named_parameter(number_of_corners_t, number_of_corners, number_of_corners)
 CGAL_add_named_parameter(patch_normal_map_t, patch_normal_map, patch_normal_map)
 CGAL_add_named_parameter(region_primitive_map_t, region_primitive_map, region_primitive_map)
 CGAL_add_named_parameter(postprocess_regions_t, postprocess_regions, postprocess_regions)

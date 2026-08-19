@@ -832,6 +832,7 @@ bool decimate_impl(const TriangleMeshIn& tm_in,
                    bool do_not_triangulate_faces,
                    VertexCornerMapOut vcorner_map_out,
                    FacePatchMapOut fpatch_map_out,
+                   std::size_t& nb_unique_corners,
                    Visitor& visitor,
                    std::vector<typename Kernel::Vector_3>& face_normals)
 {
@@ -867,7 +868,8 @@ bool decimate_impl(const TriangleMeshIn& tm_in,
                                                 face_normals);
 
   std::map<std::size_t, std::size_t> duplicated_corners;
-  std::size_t nb_unique_corners=corners.size();
+  nb_unique_corners=corners.size();
+
   if (!is_polygon_soup_a_polygon_mesh(faces))
   {
 #ifdef CGAL_DEBUG_DECIMATION
@@ -885,7 +887,6 @@ bool decimate_impl(const TriangleMeshIn& tm_in,
     };
     Orient_visitor ov;
     ov.duplicated_corners_ptr=&duplicated_corners;
-    decimate_success=false;
     orient_polygon_soup(corners, faces, parameters::visitor(ov));
   }
 
@@ -1362,9 +1363,8 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
  *  vertices incident to more than two patches (or two patches + one mesh boundary) are called *corners*.
  *  `pm_out` contains the 2D constrained Delaunay triangulation of each patch using only corner vertices
  *  on the boundary of the patch.
- *
- *  \warning if `tm_in` contains a non-manifold vertex, `pm_out` will be empty. Those vertices must be
- *           duplicated with `duplicate_non_manifold_vertices()` to get an output.
+ *  \returns `true` if all patches could be re-triangulated and `false` otherwise.
+ *           If a patch could not be re-triangulated, it will be the same as in the input.
  *
  *  \tparam TriangleMeshIn a model of `HalfedgeListGraph` and `FaceListGraph`
  *  \tparam PolygonMeshOut a model of `MutableFaceGraph`
@@ -1466,7 +1466,7 @@ template <typename TriangleMeshIn,
           typename PolygonMeshOut,
           typename NamedParametersIn = parameters::Default_named_parameters,
           typename NamedParametersOut = parameters::Default_named_parameters>
-void remesh_planar_patches(const TriangleMeshIn& tm_in,
+bool remesh_planar_patches(const TriangleMeshIn& tm_in,
                                  PolygonMeshOut& pm_out,
                            const NamedParametersIn& np_in = parameters::default_values(),
                            const NamedParametersOut& np_out = parameters::default_values())
@@ -1527,20 +1527,26 @@ void remesh_planar_patches(const TriangleMeshIn& tm_in,
 
   bool do_not_triangulate_faces = choose_parameter(get_parameter(np_out, internal_np::do_not_triangulate_faces), false);
 
+  std::size_t default_nb_unique_corners;
+  std::size_t* nb_unique_corners_ptr=choose_parameter(get_parameter(np_out, internal_np::number_of_corners),
+                                                      &default_nb_unique_corners);
+
   std::pair<std::size_t, std::size_t> nb_corners_and_nb_cc =
     Planar_segmentation::tag_corners_and_constrained_edges<Traits>(tm_in, coplanar_cos_threshold, vertex_corner_id, edge_is_constrained, face_cc_ids, vpm_in);
   std::vector< typename Traits::Vector_3 > face_normals(nb_corners_and_nb_cc.second, NULL_VECTOR);
-  Planar_segmentation::decimate_impl<Traits>(tm_in, pm_out,
-                                             nb_corners_and_nb_cc,
-                                             vertex_corner_id,
-                                             edge_is_constrained,
-                                             face_cc_ids,
-                                             vpm_in, vpm_out,
-                                             do_not_triangulate_faces,
-                                             get_parameter(np_out, internal_np::vertex_corner_map),
-                                             get_parameter(np_out, internal_np::face_patch),
-                                             visitor,
-                                             face_normals);
+
+  return Planar_segmentation::decimate_impl<Traits>(tm_in, pm_out,
+                                                    nb_corners_and_nb_cc,
+                                                    vertex_corner_id,
+                                                    edge_is_constrained,
+                                                    face_cc_ids,
+                                                    vpm_in, vpm_out,
+                                                    do_not_triangulate_faces,
+                                                    get_parameter(np_out, internal_np::vertex_corner_map),
+                                                    get_parameter(np_out, internal_np::face_patch),
+                                                    *nb_unique_corners_ptr,
+                                                    visitor,
+                                                    face_normals);
 }
 
 /*!
@@ -1553,7 +1559,8 @@ void remesh_planar_patches(const TriangleMeshIn& tm_in,
  *  with the functions `region_growing_of_planes_on_faces()` and `detect_corners_of_regions()`.
  *  If a patch cannot be triangulated, it is left untouched in the output and all its vertices become corners
  *  so that the output is still a valid conformal triangle mesh.
- *  \returns `true` if all patches could be triangulated and `false` otherwise.
+ *  \returns `true` if all patches could be re-triangulated and `false` otherwise.
+ *           If a patch could not be re-triangulated, it will be the same as in the input.
  *
  *  \tparam TriangleMeshIn a model of `HalfedgeListGraph` and `FaceListGraph`
  *  \tparam PolygonMeshOut a model of `MutableFaceGraph`
@@ -1630,6 +1637,22 @@ void remesh_planar_patches(const TriangleMeshIn& tm_in,
  *                     as key type and `std::size_t` as value type}
  *      \cgalParamDefault{None}
  *    \cgalParamNEnd
+ *    \cgalParamNBegin{number_of_corners}
+ *      \cgalParamDescription{fill the pointed variable with the number of corners. If the internal intermediate output was manifold
+ *                            it is equal to the number of vertices of vertices `pm_out`, and otherwise it is the number of corners
+ *                            before duplicating some of them to make the graph of `pm_out` manifold.
+ *                            In particular, the elements in the range `vertices(pm_out)` after the number of corners are duplicated vertices.}
+ *      \cgalParamType{a pointer to a variable of type `std::size_t`}
+ *      \cgalParamDefault{None}
+ *    \cgalParamNEnd
+ *    \cgalParamNBegin{number_of_corners}
+ *      \cgalParamDescription{fill the pointed variable with the number of corners. If the internal intermediate output was manifold
+ *                            it is equal to the number of vertices of vertices `pm_out`, and otherwise it is the number of corners
+ *                            before duplicating some of them to make the graph of `pm_out` manifold.
+ *                            In particular, the elements in the range `vertices(pm_out)` after the number of corners are duplicated vertices.}
+ *      \cgalParamType{a pointer to a variable of type `std::size_t`}
+ *      \cgalParamDefault{None}
+ *    \cgalParamNEnd
  *    \cgalParamNBegin{visitor}
  *      \cgalParamDescription{a callable with `visitor(pm_out)` being called once `tm_in` is no longer needed
  *                            and before `pm_out` starts being built. It should be used in the case when `tm_in` and `pm_out` are the same mesh,
@@ -1675,6 +1698,10 @@ bool remesh_almost_planar_patches(const TriangleMeshIn& tm_in,
 
   bool do_not_triangulate_faces = choose_parameter(get_parameter(np_out, internal_np::do_not_triangulate_faces), false);
 
+  std::size_t default_nb_unique_corners;
+  std::size_t* nb_unique_corners_ptr=choose_parameter(get_parameter(np_out, internal_np::number_of_corners),
+                                                      &default_nb_unique_corners);
+
   std::vector< typename Traits::Vector_3 > face_normals;
   Planar_segmentation::init_face_normals(face_normals, nb_patches, get_parameter(np_in, internal_np::patch_normal_map));
   return Planar_segmentation::decimate_impl<Traits>(tm_in, pm_out,
@@ -1683,6 +1710,7 @@ bool remesh_almost_planar_patches(const TriangleMeshIn& tm_in,
                                                     do_not_triangulate_faces,
                                                     get_parameter(np_out, internal_np::vertex_corner_map),
                                                     get_parameter(np_out, internal_np::face_patch),
+                                                    *nb_unique_corners_ptr,
                                                     visitor,
                                                     face_normals);
 }
