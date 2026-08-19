@@ -284,11 +284,7 @@ public:
     using Facet = typename C3t3::Facet;
     using Patch_face = std::pair<Surface_patch_index, Facet>;
 
-    Projection patch_projection_plane(Patch_face, std::vector<Point_3> const &) const {
-        Point_3 face_center = CGAL::centroid(face_points.begin(), face_points.end());
-        Vector_3 normal = CGAL::unit_normal(face_points[0], face_points[1], face_points[2]); // only works for triangles, but let's start with that
-        Ray_3 ray_positive(face_center,  normal);
-        Ray_3 ray_negative(face_center, -normal);
+    Projection patch_projection_plane(Patch_face, std::vector<Point_3> const &face_points) const {
         return Projection{Point_3(), Vector_3(), false};
     }
 
@@ -327,8 +323,12 @@ public:
     using Facet = typename C3t3::Facet;
     using Patch_face = std::pair<Surface_patch_index, Facet>;
 
-    Projection patch_projection_plane(Patch_face, std::vector<Point_3> const &) const {
-        return Projection();
+    Projection patch_projection_plane(Patch_face, std::vector<Point_3> const &face_points) const {
+        Point_3 face_center = CGAL::centroid(face_points.begin(), face_points.end());
+        Vector_3 normal = CGAL::unit_normal(face_points[0], face_points[1], face_points[2]); // only works for triangles, but let's start with that
+        Ray_3 ray_positive(face_center,  normal);
+        Ray_3 ray_negative(face_center, -normal);
+        return Projection{Point_3(), Vector_3(), false};
     }
 
     using Curve_index = typename C3t3::Curve_index;
