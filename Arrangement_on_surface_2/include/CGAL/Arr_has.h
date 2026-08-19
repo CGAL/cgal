@@ -234,25 +234,25 @@ template <typename T>
 struct has_approximate_2<T, std::void_t<typename T::Approximate_2>> : std::true_type {};
 
 /* Fallback selected if `Approximate_2`, nested in the traits `T` below,
- * does not define an operator that aproximates a point.
+ * does not define an operator that approximates a point.
  */
 template <typename, typename = std::void_t<>>
 struct has_approximate_2_point : std::false_type {};
 
-// Partial specialization selected if `T::Approximate_2` defines an operator that aproximates a point.
+// Partial specialization selected if `T::Approximate_2` defines an operator that approximates a point.
 template <typename T>
 struct has_approximate_2_point<T,
                                std::void_t<decltype(std::declval<typename T::Approximate_2&>()
                                                     (std::declval<const typename T::Point_2&>()))>> : std::true_type {};
 
 /* Fallback selected if `Approximate_2`, nested in the traits `T` below,
- * does not define an operator that aproximates a bounded \f$x\f$-monotone curve.
+ * does not define an operator that approximates a bounded \f$x\f$-monotone curve.
  */
 template <typename, typename = std::void_t<>>
 struct has_approximate_2_xcv : std::false_type {};
 
 /* Partial specialization selected if `T::Approximate_2` defines an operator
- * that aproximates a bounded \f$x\f$-monotone curve.
+ * that approximates a bounded \f$x\f$-monotone curve.
  */
 template <typename T>
 struct has_approximate_2_xcv<T,
@@ -263,13 +263,13 @@ struct has_approximate_2_xcv<T,
                                                    std::declval<bool>()))>> : std::true_type {};
 
 /* Fallback selected if `Approximate_2`, nested in the traits `T` below,
- * does not define an operator that aproximates an ubounded \f$x\f$-monotone curve.
+ * does not define an operator that approximates an ubounded \f$x\f$-monotone curve.
  */
 template <typename, typename = std::void_t<>>
 struct has_approximate_2_xcv_bounds : std::false_type {};
 
 /* Partial specialization selected if `T::Approximate_2` defines an operator
- * that aproximates an unbounded \f$x\f$-monotone curve.
+ * that approximates an unbounded \f$x\f$-monotone curve.
  */
 template <typename T>
 struct has_approximate_2_xcv_bounds<T,
