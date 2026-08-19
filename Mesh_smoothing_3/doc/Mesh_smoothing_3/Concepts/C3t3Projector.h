@@ -72,7 +72,7 @@ using Curve_edge = `std::pair<Curve_index, Edge>`;
 /*!
 Return the plane the patch face should align to. 
 */
-`std::pair<Point_3, Vector_3>` patch_projection_plane(Patch_face patch_face, Point_3 face_center, double face_radius) const;
+std::pair<Point_3, Vector_3> patch_projection_plane(Patch_face patch_face, std::vector<Point_3> face_points) const;
 
 /*!
 Return if a patch face should be projected or not. 
@@ -83,7 +83,7 @@ bool project_patch_face(Patch_face patch_face) const;
 /*!
 Return the line the curve edge should align to. 
 */
-std::pair<Point_3, Vector_3> curve_projection_tangent(Curve_edge curve_edge, Point_3 edge_center, double segment_size) const;
+std::pair<Point_3, Vector_3> curve_projection_tangent(Curve_edge curve_edge, std::array<Point_3,2> edge_points) const;
 
 /*!
 Return if a curve edge should be projected or not. 

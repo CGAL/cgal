@@ -272,6 +272,9 @@ void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::create_compress_
         }
         return (*res.first).second;
     };
+
+    // initialize volume
+
     _tetrahedra.reserve(_mesh.nb_cells());
     _tetrahedron_refs.reserve(_mesh.nb_cells());
     for (auto cell : _mesh.cell_range()) {
@@ -300,7 +303,6 @@ void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::create_compress_
 
     _tetrahedra.shrink_to_fit();
     _tetrahedron_refs.shrink_to_fit();
-    _compressed_coords = Eigen::Map<Eigen::VectorXd>(temp_coordinates_storage.data(), static_cast<Eigen::Index>(temp_coordinates_storage.size()));
 
     // computing vertex -> tet data structure
     std::vector<unsigned> curr_id(nb_points,0);
@@ -314,8 +316,61 @@ void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::create_compress_
             _vert2tet_corner[v][curr_id[v]++] = 4*t+i;
         }
     }
-    initialize_boundary();
-    initialize_curve_network();
+
+    // initialize boundary
+    
+    std::vector<unsigned> currFace(10);
+    _bnd_faces.reserve(_boundary.nb_faces());
+    _face_surface_id.reserve(_boundary.nb_faces());
+    std::unordered_map<unsigned, std::vector<std::array<unsigned, 2>>> vert2faces; // todo: maybe use a map from boost
+    for (auto face : _boundary.face_range()) {
+        bool hasUnlocked = false;
+        for (auto vertex_descriptor : _boundary.face_vertices(face)) {
+            if (!is_vert_locked(vertex_descriptor)) {
+                hasUnlocked = true;
+                break;
+            }
+        }
+        if (!hasUnlocked) continue;
+        currFace.clear();
+        for (auto vertex_descriptor : _boundary.face_vertices(face)) {
+            currFace.push_back(get_compressed_point_id(vertex_descriptor));
+        }
+        for (unsigned i = 0; i < currFace.size(); ++i) {
+            if (_lock_boundary) {
+                for (unsigned d = 0; d < 3; ++d) {
+                    _compressed_locks[3*currFace[i]+d] = true;
+                }
+            }
+            std::array<unsigned, 2> location_pair = {static_cast<unsigned>(_bnd_faces.size()), i};
+            auto res = vert2faces.emplace(currFace[i], std::vector<std::array<unsigned, 2>>{location_pair});
+            if (!res.second) (*res.first).second.push_back(location_pair);
+        }
+        _bnd_faces.push_back(currFace);
+        _face_surface_id.push_back(_boundary.patch_id(face));
+    }
+    // not ordered, do a sort? then I lose memory alignment? check if becomes bottleneck
+    _vert_and_face_corners.assign(vert2faces.begin(), vert2faces.end());
+
+
+    // initialize curve network
+
+    _curve_edges.reserve(_edge_network.nb_edges());
+    _curve_ids.reserve(_edge_network.nb_edges());
+    for (auto edge : _edge_network.edge_range()) {
+        Vertex_descriptor v0 = _edge_network.edge_vertex(edge, 0);
+        Vertex_descriptor v1 = _edge_network.edge_vertex(edge, 1);
+        if (is_vert_locked(v0) && is_vert_locked(v1)) continue;
+        _curve_edges.push_back({get_compressed_point_id(v0), get_compressed_point_id(v1)});
+        _curve_ids.push_back(_edge_network.curve_id(edge));
+    }
+
+
+
+    // initialize rest of data
+    _point_targets.reserve(_vertex_target_positions.size());
+
+    _compressed_coords = Eigen::Map<Eigen::VectorXd>(temp_coordinates_storage.data(), static_cast<Eigen::Index>(temp_coordinates_storage.size()));
 
     if (_update_validator != nullptr) {
         _current_coords_to_check.reserve(_mesh.nb_vertices());
