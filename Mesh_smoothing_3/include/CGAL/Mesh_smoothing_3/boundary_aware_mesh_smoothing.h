@@ -21,6 +21,7 @@
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_primitive.h>
+#include <CGAL/centroid.h>
 
 #include <map>
 #include <vector>
@@ -121,6 +122,16 @@ get(const Edge_to_point_property_map<C3t3>&, const typename C3t3::Edge& e)
 } // namespace internal
 
 
+
+template <typename Point3,
+          typename Vector3>
+struct Projection_data {
+    Point3 origin = Point3();
+    Vector3 vector = Vector3();
+    bool activated = true;
+    double weight = 1.;
+};
+
 /*!
 * \ingroup pkgMeshSmoothing3Projection
 *
@@ -143,36 +154,39 @@ class C3t3_mesh_projector {
 public:
     using Point_3 = typename K::Point_3;
     using Vector_3 = typename K::Vector_3;
+    using Projection = Projection_data<Point_3, Vector_3>;
 
     using Surface_patch_index = typename C3t3::Surface_patch_index;
     using Facet = typename C3t3::Facet;
     using Patch_face = std::pair<Surface_patch_index, Facet>;
 
-    std::pair<Point_3, Vector_3> patch_projection_plane(Patch_face patch_face, Point_3 face_center, double /*face_radius*/) const {
+    Projection patch_projection_plane(Patch_face patch_face, std::vector<Point_3> const &face_points) const {
+        Projection projection;
+        Point_3 face_center = CGAL::centroid(face_points.begin(), face_points.end());
         auto res = _facet_trees.at(patch_face.first).closest_point_and_primitive(face_center);
-        Point_3 closest_point = res.first;
+        projection.origin = res.first;
         const auto triangle = _c3t3->triangulation().triangle(res.second);
-        Vector_3 normal = CGAL::unit_normal(triangle.vertex(0), triangle.vertex(1), triangle.vertex(2));
-        return {closest_point, normal};
+        projection.vector = CGAL::unit_normal(triangle.vertex(0), triangle.vertex(1), triangle.vertex(2));
+        return projection;
     }
-    bool project_patch_face(Patch_face) const { return true; }
 
     using Curve_index = typename C3t3::Curve_index;
     using Edge = typename C3t3::Edge;
     using Curve_edge = std::pair<Curve_index, Edge>;
 
-    std::pair<Point_3, Vector_3> curve_projection_tangent(Curve_edge curve_edge, Point_3 edge_center, double /*segment_size*/) const {
+    Projection curve_projection_tangent(Curve_edge curve_edge, std::array<Point_3,2> const &edge_points) const {
+        Projection projection;
+        Point_3 edge_center = CGAL::midpoint(edge_points[0], edge_points[1]);
         auto res = _edge_trees.at(curve_edge.first).closest_point_and_primitive(edge_center);
-        Point_3 closest_point = res.first;
+        projection.origin =  res.first;
         const auto segment = _c3t3->triangulation().segment(res.second);
-        Vector_3 direction = (segment.target() - segment.source());
-        if (direction.squared_length() > 1e-8) {
-            direction /= CGAL::sqrt(direction.squared_length());
+        projection.vector = (segment.target() - segment.source());
+        if (projection.vector.squared_length() > 1e-8) {
+            projection.vector /= CGAL::sqrt(projection.vector.squared_length());
         }
-        return {closest_point, direction};
+        return projection;
     }
 
-    bool project_curve_edge(Curve_edge) const { return true; }
 
 public:
 
@@ -264,26 +278,82 @@ class C3t3_no_projection {
 public:
     using Point_3 = typename K::Point_3;
     using Vector_3 = typename K::Vector_3;
+    using Projection = Projection_data<Point_3, Vector_3>;
 
     using Surface_patch_index = typename C3t3::Surface_patch_index;
     using Facet = typename C3t3::Facet;
     using Patch_face = std::pair<Surface_patch_index, Facet>;
 
-    std::pair<Point_3, Vector_3> patch_projection_plane(Patch_face, Point_3, double) const {
-        return {Point_3(), Vector_3()};
+    Projection patch_projection_plane(Patch_face, std::vector<Point_3> const &) const {
+        Point_3 face_center = CGAL::centroid(face_points.begin(), face_points.end());
+        Vector_3 normal = CGAL::unit_normal(face_points[0], face_points[1], face_points[2]); // only works for triangles, but let's start with that
+        Ray_3 ray_positive(face_center,  normal);
+        Ray_3 ray_negative(face_center, -normal);
+        return Projection{Point_3(), Vector_3(), false};
     }
-    bool project_patch_face(Patch_face) const { return false; }
 
     using Curve_index = typename C3t3::Curve_index;
     using Edge = typename C3t3::Edge;
     using Curve_edge = std::pair<Curve_index, Edge>;
 
-    std::pair<Point_3, Vector_3> curve_projection_tangent(Curve_edge, Point_3, double) const {
-        return {Point_3(), Vector_3()};
+    Projection curve_projection_tangent(Curve_edge, std::array<Point_3,2> const &) const {
+        return Projection{Point_3(), Vector_3(), false};
     }
-    bool project_curve_edge(Curve_edge) const { return false; }
     
 };
+
+
+/*
+* \ingroup pkgMeshSmoothing3Projection
+*
+* \brief provides projection to a Mesh Domain
+*
+* @tparam C3t3 model of `MeshDomain_3`
+*
+* \cgalModels{C3t3Projector}
+*
+\sa `CGAL::boundary_aware_mesh_smoothing`
+*
+*/
+template<typename C3t3, typename MeshDomain>
+class Mesh_domain_projection {
+    using K = typename C3t3::Triangulation::Geom_traits;
+public:
+    using Point_3 = typename K::Point_3;
+    using Vector_3 = typename K::Vector_3;
+    using Projection = Projection_data<Point_3, Vector_3>;
+
+    using Surface_patch_index = typename C3t3::Surface_patch_index;
+    using Facet = typename C3t3::Facet;
+    using Patch_face = std::pair<Surface_patch_index, Facet>;
+
+    Projection patch_projection_plane(Patch_face, std::vector<Point_3> const &) const {
+        return Projection();
+    }
+
+    using Curve_index = typename C3t3::Curve_index;
+    using Edge = typename C3t3::Edge;
+    using Curve_edge = std::pair<Curve_index, Edge>;
+
+    Projection curve_projection_tangent(Curve_edge, std::array<Point_3,2> const &) const {
+        return Projection();
+    }
+
+public: 
+
+    /*
+        Class constructor
+
+        \param mesh_domain contains the domain used for projection
+
+    */
+    Mesh_domain_projection(MeshDomain const& mesh_domain)
+    : _domain(mesh_domain)
+    {}
+
+    MeshDomain const& _domain;
+};
+
 } // namespace Mesh_smoothing_3
 
 /*!
@@ -415,16 +485,16 @@ void boundary_aware_mesh_smoothing  (
     using Vector_3 = typename  C3t3::Triangulation::Geom_traits::Vector_3;
 
     // converting Projector to Mesh_smoothing_3 queries
-    smoother.set_boundary_query([&](const Point_3& pt, std::pair<typename C3t3::Surface_patch_index, typename C3t3::Facet> patch_face, double radius) {
-        if (!projector.project_patch_face(patch_face)) return std::make_tuple(Point_3(0.,0.,0.), Vector_3{1.,0.,0.}, 0.);
-        auto [point, normal] = projector.patch_projection_plane(patch_face, pt, radius);
-        return std::make_tuple(point, normal, 1.0);
+    smoother.set_boundary_query([&](std::vector<Point_3> const& pts, std::pair<typename C3t3::Surface_patch_index, typename C3t3::Facet> patch_face) {
+        Mesh_smoothing_3::Projection_data<Point_3, Vector_3> proj = projector.patch_projection_plane(patch_face, pts);
+        if (!proj.activated) proj.weight = 0.;
+        return std::make_tuple(proj.origin, proj.vector, proj.weight);
     });
 
-    smoother.set_curves_query([&](const Point_3& pt, std::pair<typename C3t3::Curve_index, typename C3t3::Edge> curve_edge, double segment_size) {
-        if (!projector.project_curve_edge(curve_edge)) return std::make_tuple(Point_3(0.,0.,0.), Vector_3{1.,0.,0.}, 0.);
-        auto [point, tangent] = projector.curve_projection_tangent(curve_edge, pt, segment_size);
-        return std::make_tuple(point, tangent, 1.0);
+    smoother.set_curves_query([&](std::array<Point_3, 2> const& pts, std::pair<typename C3t3::Curve_index, typename C3t3::Edge> curve_edge) {
+        Mesh_smoothing_3::Projection_data<Point_3, Vector_3> proj = projector.curve_projection_tangent(curve_edge, pts);
+        if (!proj.activated) proj.weight = 0.;
+        return std::make_tuple(proj.origin, proj.vector, proj.weight);
     });
 
     smoother.set_verbose(verbose);
