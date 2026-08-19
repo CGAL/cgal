@@ -40,7 +40,7 @@ template < class R_ >
 class Aff_transformationC3
   : public Handle_for_virtual<Aff_transformation_rep_baseC3<R_> >
 {
-  // friend class PlaneC3<R_>; // FIXME: why ?
+  friend class PlaneC3<R_>; // FIXME: why ?
 
   typedef typename R_::FT                   FT;
   typedef Aff_transformation_rep_baseC3<R_> Aff_t_base;

@@ -83,9 +83,9 @@ struct Reference_point_from_triangle_soup_property_map
 
 /*!
  * \ingroup PkgAABBTreeRef
- * Primitive type that uses as identifier an iterator with a range of three indices as `value_type`.
- * The iterator from which the primitive is built should not be invalided
- * while the AABB tree holding the primitive is in use.
+ * Primitive type that uses as an identifier an index into a range of triplets of indices as its `value_type`.
+ * The range of triplets and the range of points must not be invalidated
+ * while the AABB tree holding this primitive is in use.
  *
  * \cgalModels{AABBPrimitive}
  *

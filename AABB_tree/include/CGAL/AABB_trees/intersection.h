@@ -58,6 +58,8 @@ namespace AABB_trees {
   ///   \cgalParamNEnd
   /// \cgalNamedParamsEnd
   ///
+  /// \warning The `Do_intersect` functors of the `AABBTraits` of both AABB trees should accept the Datum type of the other tree as the Query type.
+  ///
   /// \return `true` if at least one primitive of `tree1` intersects
   /// a primitive of `tree2`, and `false` otherwise.
   template< typename AABBTree1,

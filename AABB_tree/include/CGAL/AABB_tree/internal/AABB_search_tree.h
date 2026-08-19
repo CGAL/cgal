@@ -47,7 +47,7 @@ private:
   }
 
 public:
-  template <class ConstPointIterator>
+  template <class ConcurrencyTag=Sequential_tag, class ConstPointIterator>
   AABB_search_tree(ConstPointIterator begin, ConstPointIterator beyond)
       : m_tree{}
   {
@@ -58,6 +58,8 @@ public:
       ++begin;
     }
     m_tree.insert(points.begin(), points.end());
+    if constexpr(std::is_same_v<ConcurrencyTag, Parallel_tag>)
+      build<ConcurrencyTag>();
   }
 
   template <class ConcurrencyTag=Sequential_tag>

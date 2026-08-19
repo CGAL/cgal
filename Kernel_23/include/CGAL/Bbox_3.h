@@ -57,22 +57,24 @@ public:
   inline bool operator!=(const Bbox_3 &b) const;
 
   inline int dimension() const;
-  double xmin() const;
-  double ymin() const;
-  double zmin() const;
-  double xmax() const;
-  double ymax() const;
-  double zmax() const;
-  double x_span() const;
-  double y_span() const;
-  double z_span() const;
-  double squared_diagonal_length() const;
+  inline double xmin() const;
+  inline double ymin() const;
+  inline double zmin() const;
+  inline double xmax() const;
+  inline double ymax() const;
+  inline double zmax() const;
+  inline double x_span() const;
+  inline double y_span() const;
+  inline double z_span() const;
+  inline double squared_diagonal_length() const;
 
   inline double min BOOST_PREVENT_MACRO_SUBSTITUTION (int i) const;
   inline double max BOOST_PREVENT_MACRO_SUBSTITUTION (int i) const;
 
   inline double min_coord(int i) const { return (min)(i); }
   inline double max_coord(int i) const { return (max)(i); }
+
+  inline int largest_span_index() const;
 
   Bbox_3  operator+(const Bbox_3& b) const;
   Bbox_3& operator+=(const Bbox_3& b);
@@ -125,6 +127,10 @@ inline double Bbox_3::z_span() const {
 
 inline double Bbox_3::squared_diagonal_length() const {
   return x_span()*x_span() + y_span()*y_span() + z_span()*z_span();
+}
+
+inline int Bbox_3::largest_span_index() const {
+  return (x_span()>=y_span()) ? ((x_span()>=z_span()) ? 0 : 2) : ((y_span()>=z_span()) ? 1 : 2);
 }
 
 inline

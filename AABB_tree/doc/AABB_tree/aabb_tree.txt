@@ -219,7 +219,7 @@ primitive internally uses a `boost::iterator_adaptor`.
 
 \subsection aabb_tree_examples_9 Intersection of Two Trees
 
-In the following example, we compute all the intersections between two tetrahedra. The tetrahedra
+In the following example, we compute all the intersections between two triangle soups both representing a tetrahedron. The triangle soups
 are stored as a vector of `Triangle_3`. We first compute if the tetrahedra do intersect and then we
 compute the indices of the intersecting triangles.
 
