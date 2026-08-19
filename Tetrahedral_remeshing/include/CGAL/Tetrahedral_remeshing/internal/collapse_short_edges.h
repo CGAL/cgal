@@ -18,6 +18,7 @@
 #include <boost/bimap.hpp>
 #include <boost/bimap/set_of.hpp>
 #include <boost/bimap/multiset_of.hpp>
+#include <boost/bimap/unordered_set_of.hpp>
 #include <boost/container/small_vector.hpp>
 #include <boost/container/flat_set.hpp>
 #include <boost/functional/hash.hpp>
@@ -74,42 +75,46 @@ public:
     typedef std::array<int, 3> Facet;
     typedef std::array<int, 4> Tet;
 
-    std::unordered_set<Vertex_handle> vertices_to_insert;
-    for (Cell_handle ch : cells_to_insert)
+    /*vertex of main tr - vertex of collapse tr*/
+    // the star holds around twenty distinct vertices, so a linear scan over
+    // handles compares cheaper than hashing them : hashing a compact-container
+    // iterator goes through Time_stamper, and this runs on every attempt
+    boost::container::small_vector<std::pair<Vertex_handle, int>, 32> v2i;
+    const auto index_of = [&v2i](const Vertex_handle vh) -> int
     {
-      for(int i = 0; i < 4; ++i)
-        vertices_to_insert.insert(ch->vertex(i));
-    }
+      for (const std::pair<Vertex_handle, int>& p : v2i)
+        if (p.first == vh)
+          return p.second;
+      return -1;
+    };
 
-    CGAL_expensive_assertion(vertices_to_insert.end()
-      != std::find(vertices_to_insert.begin(), vertices_to_insert.end(), v1_init));
-    CGAL_expensive_assertion(vertices_to_insert.end()
-      != std::find(vertices_to_insert.begin(), vertices_to_insert.end(), v0_init));
-
-    std::unordered_map<Vertex_handle, int> v2i;/*vertex of main tr - vertex of collapse tr*/
-
-    //To add the vertices only once
     std::vector<Point_3> points;
-    int index = 0;
-    for (Vertex_handle vh : vertices_to_insert)
-    {
-      if (v2i.find(vh) == v2i.end())
-      {
-        points.push_back(vh->point());
-        v2i.insert(std::make_pair(vh, index++));
-      }
-    }
-
     std::vector<Tet> finite_cells;
     std::vector<int> subdomains;
+    finite_cells.reserve(cells_to_insert.size());
+    subdomains.reserve(cells_to_insert.size());
+
     for (Cell_handle ch : cells_to_insert)
     {
-      finite_cells.push_back( { v2i.at(ch->vertex(0)),
-                                v2i.at(ch->vertex(1)),
-                                v2i.at(ch->vertex(2)),
-                                v2i.at(ch->vertex(3)) } );
+      Tet tet;
+      for (int i = 0; i < 4; ++i)
+      {
+        const Vertex_handle vh = ch->vertex(i);
+        int id = index_of(vh);
+        if (id == -1)
+        {
+          id = static_cast<int>(points.size());
+          v2i.emplace_back(vh, id);
+          points.push_back(vh->point());
+        }
+        tet[i] = id;
+      }
+      finite_cells.push_back(tet);
       subdomains.push_back(ch->subdomain_index());
     }
+
+    CGAL_expensive_assertion(index_of(v1_init) != -1);
+    CGAL_expensive_assertion(index_of(v0_init) != -1);
 
     // finished
     std::vector<Vertex_handle> new_vertices;
@@ -124,8 +129,8 @@ public:
       CGAL_assertion(triangulation.infinite_vertex() == new_vertices[0]);
 
       // update()
-      vh0 = new_vertices[v2i.at(v0_init) + 1];
-      vh1 = new_vertices[v2i.at(v1_init) + 1];
+      vh0 = new_vertices[index_of(v0_init) + 1];
+      vh1 = new_vertices[index_of(v1_init) + 1];
 
       Cell_handle ch;
       int i0, i1;
@@ -1039,36 +1044,33 @@ bool is_cells_set_manifold(const C3t3&,
   typedef std::array<Vh, 3> FV;
   typedef std::pair<Vh, Vh> EV;
 
-  std::unordered_map<FV, int, boost::hash<FV>> facets;
+  // A facet is shared by exactly two cells, so it bounds the set when its
+  // neighbour is outside : the triangulation already answers that, and asking
+  // it costs one lookup of a cell handle where counting the facets of the set
+  // meant hashing a triple of vertex handles for every facet of every cell.
+  std::unordered_map<EV, int, boost::hash<EV>> edges;
+  edges.reserve(4 * cells.size());
+
   for (Cell_handle c : cells)
   {
     for (int i = 0; i < 4; ++i)
     {
+      if (cells.find(c->neighbor(i)) != cells.end())
+        continue; // shared with another cell of the set
+
       const FV fvi = make_vertex_array(c->vertex((i + 1) % 4),
         c->vertex((i + 2) % 4),
         c->vertex((i + 3) % 4));
-      typename std::unordered_map<FV, int, boost::hash<FV>>::iterator fit = facets.find(fvi);
-      if (fit == facets.end())
-        facets.insert(std::make_pair(fvi, 1));
-      else
-        fit->second++;
-    }
-  }
 
-  std::unordered_map<EV, int, boost::hash<EV>> edges;
-  for (const auto& fvv : facets)
-  {
-    if (fvv.second != 1)
-      continue;
-
-    for (int i = 0; i < 3; ++i)
-    {
-      const EV evi = make_vertex_pair(fvv.first[i], fvv.first[(i + 1) % 3]);
-      typename std::unordered_map<EV, int, boost::hash<EV>>::iterator eit = edges.find(evi);
-      if (eit == edges.end())
-        edges.insert(std::make_pair(evi, 1));
-      else
-        eit->second++;
+      for (int k = 0; k < 3; ++k)
+      {
+        const EV evi = make_vertex_pair(fvi[k], fvi[(k + 1) % 3]);
+        typename std::unordered_map<EV, int, boost::hash<EV>>::iterator eit = edges.find(evi);
+        if (eit == edges.end())
+          edges.insert(std::make_pair(evi, 1));
+        else
+          eit->second++;
+      }
     }
   }
 
@@ -1252,8 +1254,12 @@ void collapse_short_edges(C3T3& c3t3,
   typedef typename T3::Vertex_handle         Vertex_handle;
 
   typedef typename T3::Geom_traits::FT FT;
+  // the element side is only ever searched, never walked in order, so it is
+  // hashed : keeping it sorted meant comparing pairs of vertex handles
+  // O(log n) times for every edge the last collapse touched. The priority
+  // side keeps its order, which is what decides what runs next.
   typedef boost::bimap<
-        boost::bimaps::set_of<Edge, Compare_edges<Edge> >,
+        boost::bimaps::unordered_set_of<Edge, Hash_edges<Edge>, Equal_edges<Edge> >,
         boost::bimaps::multiset_of<FT, std::less<FT> > >  Boost_bimap;
   typedef typename Boost_bimap::value_type            short_edge;
 
