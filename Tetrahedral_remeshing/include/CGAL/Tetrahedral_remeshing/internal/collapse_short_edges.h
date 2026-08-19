@@ -27,6 +27,7 @@
 #include <algorithm>
 #include <unordered_map>
 #include <unordered_set>
+#include <type_traits>
 #include <utility>
 #include <unordered_set>
 
@@ -51,6 +52,42 @@ enum Result_type   { VALID,
                      V_PROBLEM, C_PROBLEM, E_PROBLEM,
                      ANGLE_PROBLEM,
                      TOPOLOGICAL_PROBLEM, ORIENTATION_PROBLEM, SHARED_NEIGHBOR_PROBLEM };
+
+// A cell `c` incident to the edge being collapsed, with the two cells `n0`/`n1`
+// that will take its place once it is removed, and the index of `c` in each of
+// them. Collapsing the edge amounts to gluing `n0` and `n1` to each other
+// across those indices.
+template<typename Cell_handle>
+struct Collapse_star_cell
+{
+  Cell_handle c;
+  Cell_handle n0, n1;
+  int c_in_n0, c_in_n1;
+
+  // The two cells would end up pointing at the infinite vertex across from one
+  // another, which is not a valid triangulation.
+  template<typename Tr>
+  bool has_infinite_adjacency(const Tr& tr) const
+  {
+    return tr.is_infinite(n0->vertex(c_in_n0))
+        && tr.is_infinite(n1->vertex(c_in_n1));
+  }
+};
+
+// `c` must be a cell incident to the edge (`v0`, `v1`) being collapsed, and
+// this must be called before any neighbor around that edge is rewired:
+// `index()` looks `c` up in the neighbor array of `n0`/`n1`, so it would no
+// longer find it once `set_neighbor()` has run.
+template<typename CellRef, typename Vertex_handle>
+auto make_collapse_star_cell(CellRef c, Vertex_handle v0, Vertex_handle v1)
+{
+  using Cell_handle = std::decay_t<decltype(c->neighbor(0))>;
+
+  const Cell_handle n0 = c->neighbor(c->index(v0));
+  const Cell_handle n1 = c->neighbor(c->index(v1));
+
+  return Collapse_star_cell<Cell_handle>{c, n0, n1, n0->index(c), n1->index(c)};
+}
 
 template<typename C3t3>
 class CollapseTriangulation
@@ -186,41 +223,33 @@ public:
 
       do
       {
-        int v0_id = circ->index(vh0);
-        int v1_id = circ->index(vh1);
+        const auto sc = make_collapse_star_cell(circ, vh0, vh1);
 
-        Cell_handle n0_ch = circ->neighbor(v0_id);
-        Cell_handle n1_ch = circ->neighbor(v1_id);
-
-        int ch_id_in_n0 = n0_ch->index(circ);
-        int ch_id_in_n1 = n1_ch->index(circ);
-
-        if (n0_ch->has_neighbor(n1_ch))
+        if (sc.n0->has_neighbor(sc.n1))
           return SHARED_NEIGHBOR_PROBLEM;
 
         //Update neighbors before removing cell
-        n0_ch->set_neighbor(ch_id_in_n0, n1_ch);
-        n1_ch->set_neighbor(ch_id_in_n1, n0_ch);
+        sc.n0->set_neighbor(sc.c_in_n0, sc.n1);
+        sc.n1->set_neighbor(sc.c_in_n1, sc.n0);
 
-        Subdomain_index si_n0 = n0_ch->subdomain_index();
-        Subdomain_index si_n1 = n1_ch->subdomain_index();
+        Subdomain_index si_n0 = sc.n0->subdomain_index();
+        Subdomain_index si_n1 = sc.n1->subdomain_index();
         Subdomain_index si = circ->subdomain_index();
 
         if (si_n0 != si && si_n1 != si)
           return TOPOLOGICAL_PROBLEM;
 
-        if ( triangulation.is_infinite(n0_ch->vertex(ch_id_in_n0))
-             && triangulation.is_infinite(n1_ch->vertex(ch_id_in_n1)))
+        if (sc.has_infinite_adjacency(triangulation))
           return TOPOLOGICAL_PROBLEM;
 
-        if ( triangulation.is_infinite(n0_ch)
-             && triangulation.is_infinite(n1_ch)
+        if ( triangulation.is_infinite(sc.n0)
+             && triangulation.is_infinite(sc.n1)
              && !triangulation.is_infinite(circ))
           return TOPOLOGICAL_PROBLEM;
 
-        cells_to_remove.push_back(circ);
+        cells_to_remove.push_back(sc.c);
 
-        invalid_cells.insert(circ);
+        invalid_cells.insert(sc.c);
 
       } while (++circ != done);
 
@@ -858,24 +887,36 @@ collapse(const typename C3t3::Cell_handle ch,
   std::vector<Cell_handle> incident_to_vdeleted;
   tr.incident_cells(vdeleted, std::back_inserter(incident_to_vdeleted));
 
-  boost::container::small_vector<Cell_handle, 30> incident_to_edge;
+  // Resolve the whole star first, without modifying anything: rejecting the
+  // collapse once some neighbors have been rewired would leave the
+  // triangulation half-collapsed.
+  boost::container::small_vector<Collapse_star_cell<Cell_handle>, 30> incident_to_edge;
   Cell_circulator circ = tr.incident_cells(ch, to, from);
   Cell_circulator done = circ;
   do
   {
+    const auto sc = make_collapse_star_cell(circ, vkept, vdeleted);
+
+    if (sc.has_infinite_adjacency(tr))
+      return Vertex_handle();
+
+    incident_to_edge.push_back(sc);
+  }
+  while (++circ != done);
+
+  for (const auto& sc : incident_to_edge)
+  {
     for (int i = 0; i < 4; ++i)
     {
-      const Vertex_handle vi = circ->vertex(i);
+      const Vertex_handle vi = sc.c->vertex(i);
       if (vi != vkept && vi != vdeleted)
       {
-        const Facet fi(circ, i);
+        const Facet fi(sc.c, i);
         if (c3t3.is_in_complex(fi))
           c3t3.remove_from_complex(fi);
       }
     }
-    incident_to_edge.push_back(circ);
   }
-  while (++circ != done);
 
   if(c3t3.is_in_complex(ch->vertex(from), ch->vertex(to)))
     c3t3.remove_from_complex(ch->vertex(from), ch->vertex(to));
@@ -883,46 +924,31 @@ collapse(const typename C3t3::Cell_handle ch,
   std::vector<Cell_handle> cells_to_remove;
   std::unordered_set<Cell_handle> invalid_cells;
 
-  for(const Cell_handle& c : incident_to_edge)
+  for(const auto& sc : incident_to_edge)
   {
-    const int v0_id = c->index(vkept);
-    const int v1_id = c->index(vdeleted);
-
-    Cell_handle n0_ch = c->neighbor(v0_id);
-    Cell_handle n1_ch = c->neighbor(v1_id);
-
-    const int ch_id_in_n0 = n0_ch->index(c);
-    const int ch_id_in_n1 = n1_ch->index(c);
-
     //Merge surface patch indices
-    merge_surface_patch_indices(Facet(n0_ch, ch_id_in_n0),
-                                Facet(n1_ch, ch_id_in_n1),
+    merge_surface_patch_indices(Facet(sc.n0, sc.c_in_n0),
+                                Facet(sc.n1, sc.c_in_n1),
                                 c3t3);
 
     //Update neighbors before removing cell
-    n0_ch->set_neighbor(ch_id_in_n0, n1_ch);
-    n1_ch->set_neighbor(ch_id_in_n1, n0_ch);
+    sc.n0->set_neighbor(sc.c_in_n0, sc.n1);
+    sc.n1->set_neighbor(sc.c_in_n1, sc.n0);
 
     //Update vertices cell pointer
     for (int i = 0; i < 3; i++)
     {
-      int vid = Tr::vertex_triple_index(ch_id_in_n0, i);
-      n0_ch->vertex(vid)->set_cell(n0_ch);
+      int vid = Tr::vertex_triple_index(sc.c_in_n0, i);
+      sc.n0->vertex(vid)->set_cell(sc.n0);
     }
     for (int i = 0; i < 3; i++)
     {
-      int vid = Tr::vertex_triple_index(ch_id_in_n1, i);
-      n1_ch->vertex(vid)->set_cell(n1_ch);
+      int vid = Tr::vertex_triple_index(sc.c_in_n1, i);
+      sc.n1->vertex(vid)->set_cell(sc.n1);
     }
 
-    if (tr.is_infinite(n0_ch->vertex(ch_id_in_n0))
-      && tr.is_infinite(n1_ch->vertex(ch_id_in_n1)))
-    {
-      std::cout << "Collapse infinite issue!" << std::endl;
-      return Vertex_handle();
-    }
-    cells_to_remove.push_back(c);
-    invalid_cells.insert(c);
+    cells_to_remove.push_back(sc.c);
+    invalid_cells.insert(sc.c);
   }
 
   const Vertex_handle infinite_vertex = tr.infinite_vertex();
@@ -1036,7 +1062,6 @@ typename C3t3::Vertex_handle collapse(typename C3t3::Edge& edge,
     vh1->set_point(new_position);
 
     vh = collapse(edge.first, edge.second, edge.third, cell_selector, c3t3, short_edges);
-    c3t3.set_dimension(vh, (std::min)(dim_vh0, dim_vh1));
   }
   else //Collapse at vertex
   {
@@ -1044,7 +1069,6 @@ typename C3t3::Vertex_handle collapse(typename C3t3::Edge& edge,
     {
       vh0->set_point(p1);
       vh = collapse(edge.first, edge.third, edge.second, cell_selector, c3t3, short_edges);
-      c3t3.set_dimension(vh, (std::min)(dim_vh0, dim_vh1));
     }
     else //Collapse at v0
     {
@@ -1052,12 +1076,23 @@ typename C3t3::Vertex_handle collapse(typename C3t3::Edge& edge,
       {
         vh1->set_point(p0);
         vh = collapse(edge.first, edge.second, edge.third, cell_selector, c3t3, short_edges);
-        c3t3.set_dimension(vh, (std::min)(dim_vh0, dim_vh1));
       }
       else
         CGAL_assertion(false);
     }
   }
+
+  // collapse() rejects an infinite adjacency before it rewires anything, so
+  // the star is still the one we found. The two points are not : they were
+  // moved above, in the expectation of a collapse that did not happen.
+  if (vh == Vertex_handle())
+  {
+    vh0->set_point(p0);
+    vh1->set_point(p1);
+    return vh;
+  }
+
+  c3t3.set_dimension(vh, (std::min)(dim_vh0, dim_vh1));
   return vh;
 }
 
@@ -1105,6 +1140,83 @@ bool is_cells_set_manifold(const C3t3&,
       return false;
 
   return true;
+}
+
+enum Angle_verdict { ANGLES_REJECTED, ANGLES_ACCEPTED, ANGLES_UNDECIDED };
+
+template<typename C3t3, typename CellRange>
+Angle_verdict collapse_keeps_angles_acceptable(const typename C3t3::Edge& edge,
+                                      const C3t3& c3t3,
+                                      const Collapse_type collapse_type,
+                                      const CellRange& star)
+{
+  using Tr = typename C3t3::Triangulation;
+  using Cell_handle = typename Tr::Cell_handle;
+  using Vertex_handle = typename Tr::Vertex_handle;
+  using Point_3 = typename Tr::Point;
+  using Vector_3 = typename Tr::Geom_traits::Vector_3;
+  using Subdomain_index = typename C3t3::Subdomain_index;
+
+  const Dihedral_angle_cosine acceptable_max_cos{0.995}; // 0.995 cos <=> 5.7 degrees
+
+  const Tr& tr = c3t3.triangulation();
+  const Vertex_handle v0 = edge.first->vertex(edge.second);
+  const Vertex_handle v1 = edge.first->vertex(edge.third);
+
+  Vector_3 new_pos = vec(v0->point());
+  if (collapse_type == TO_MIDPOINT)
+    new_pos = new_pos + 0.5 * Vector_3(point(v0->point()), point(v1->point()));
+  else if (collapse_type == TO_V1)
+    new_pos = vec(point(v1->point()));
+  const auto p_new = point(Point_3(new_pos.x(), new_pos.y(), new_pos.z()));
+
+  boost::container::flat_set<Cell_handle,
+    std::less<Cell_handle>,
+    boost::container::small_vector<Cell_handle, 32> > cells_to_remove;
+
+  typename Tr::Cell_circulator circ = tr.incident_cells(edge);
+  const typename Tr::Cell_circulator done = circ;
+  do { cells_to_remove.insert(circ); } while (++circ != done);
+
+  boost::container::small_vector<Cell_handle, 64> cells_to_update;
+  tr.incident_cells(v1, std::back_inserter(cells_to_update));
+
+  const Dihedral_angle_cosine curr_max_cos
+    = (std::max)(max_cos_dihedral_angle_in_range(tr, cells_to_remove, false),
+                 max_cos_dihedral_angle_in_range(tr, cells_to_update, false));
+
+  const double angle_margin = 1e-9;
+  const double acceptable_sq = acceptable_max_cos.signed_square_value();
+  const double curr_max_sq = curr_max_cos.signed_square_value();
+  bool undecided = false;
+
+  const auto& gt = tr.geom_traits();
+  for (const Cell_handle c : star)
+  {
+    if (cells_to_remove.find(c) != cells_to_remove.end())
+      continue;
+    if (tr.is_infinite(c) || c->subdomain_index() == Subdomain_index())
+      continue;
+
+    auto p_at = [&](const int i)
+    {
+      const Vertex_handle v = c->vertex(i);
+      return (v == v0 || v == v1) ? p_new : point(v->point());
+    };
+    const Dihedral_angle_cosine after
+      = max_cos_dihedral_angle(p_at(0), p_at(1), p_at(2), p_at(3), gt);
+    const double after_sq = after.signed_square_value();
+
+    if (CGAL::abs(after_sq - curr_max_sq) < angle_margin
+     || CGAL::abs(after_sq - acceptable_sq) < angle_margin)
+    {
+      undecided = true;
+      continue;
+    }
+    if (curr_max_cos < after && acceptable_max_cos < after)
+      return ANGLES_REJECTED;
+  }
+  return undecided ? ANGLES_UNDECIDED : ANGLES_ACCEPTED;
 }
 
 template<typename C3t3,
@@ -1241,20 +1353,29 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
     for (const Cell_handle ch : star_of_v1())
       cells_to_insert.insert(ch);
 
+    // the angle test is the one that discards most candidates, and the cheaper
+    // of the two : it walks the star once, where is_cells_set_manifold() walks
+    // the star of each of its vertices
+    const Angle_verdict angles
+      = collapse_keeps_angles_acceptable(edge, c3t3, collapse_type, cells_to_insert);
+    if(angles == ANGLES_REJECTED)
+      return Vertex_handle();
+
     if(!is_cells_set_manifold(c3t3, cells_to_insert))
       return Vertex_handle();
 
-    CollapseTriangulation<C3t3> local_tri(edge, cells_to_insert, collapse_type);
-
-    Result_type res = local_tri.collapse();
-    if (res == VALID)
+    if(angles == ANGLES_UNDECIDED)
     {
-#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
-      if (in_cx)
-        nb_valid_collapse++;
-#endif
-      return collapse(edge, collapse_type, cell_selector, c3t3, short_edges);
+      CollapseTriangulation<C3t3> local_tri(edge, cells_to_insert, collapse_type);
+      if(local_tri.collapse() != VALID)
+        return Vertex_handle();
     }
+
+#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
+    if (in_cx)
+      nb_valid_collapse++;
+#endif
+    return collapse(edge, collapse_type, cell_selector, c3t3, short_edges);
   }
 #ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
   else if (in_cx)
