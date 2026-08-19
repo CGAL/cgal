@@ -1106,7 +1106,7 @@ bool is_cells_set_manifold(const C3t3&,
   typedef std::pair<Vh, Vh> EV;
 
   // A facet is shared by exactly two cells, so it bounds the set when its
-  // neighbour is outside : the triangulation already answers that, and asking
+  // neighbor is outside : the triangulation already answers that, and asking
   // it costs one lookup of a cell handle where counting the facets of the set
   // meant hashing a triple of vertex handles for every facet of every cell.
   std::unordered_map<EV, int, boost::hash<EV>> edges;
