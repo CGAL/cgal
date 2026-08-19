@@ -100,6 +100,7 @@ struct Debug_options {
     use_epeck_for_normals,
     use_epeck_for_Steiner_points,
     move_Steiner_vertices_allow_negative_tets,
+    use_flips_to_recover_segments,
     nb_of_flags
   };
 
@@ -180,6 +181,9 @@ struct Debug_options {
 
   bool use_epeck_for_Steiner_points() const { return get(Flag::use_epeck_for_Steiner_points); }
   void use_epeck_for_Steiner_points(bool b) { get(Flag::use_epeck_for_Steiner_points) = b; }
+
+  bool use_flips_to_recover_segments() const { return get(Flag::use_flips_to_recover_segments); }
+  void use_flips_to_recover_segments(bool b) { get(Flag::use_flips_to_recover_segments) = b; }
 
   double segment_vertex_epsilon() const { return segment_vertex_epsilon_; }
   void set_segment_vertex_epsilon(double eps) { segment_vertex_epsilon_ = eps; }
@@ -908,34 +912,34 @@ protected:
     const Vertex_handle vb = subconstraint.second;
     CGAL_assertion(va != vb);
     if(!this->is_edge(va, vb)) {
-#ifdef CGAL_CT3_FLIP_BEFORE_INSERTING_STEINER_POINTS
-      // try to flip facet crossed by [va, vb] to make it an
-      // edge of the triangulation
-      std::vector<Cell_handle> inc_cells;
-      this->incident_cells(va, std::back_inserter(inc_cells));
-      for(auto c : inc_cells)
-      {
-        int ia = c->index(va);
-        if(c->neighbor(ia)->has_vertex(vb))
+      if(options().use_flips_to_recover_segments()) {
+        // try to flip facet crossed by [va, vb] to make it an
+        // edge of the triangulation
+        std::vector<Cell_handle> inc_cells;
+        this->incident_cells(va, std::back_inserter(inc_cells));
+        for(auto c : inc_cells)
         {
-          if(this->flip(Facet(c, ia)))
+          int ia = c->index(va);
+          if(c->neighbor(ia)->has_vertex(vb))
           {
-            std::cout << "flipped facet to make edge ("
-                      << display_vert(va) << ", " << display_vert(vb)
-                      << ") an edge in the triangulation\n";
-            this->is_Delaunay = false;
-            CGAL_assertion(this->is_edge(va, vb));
-            return true;
+            if(this->flip(Facet(c, ia)))
+            {
+              std::cout << "flipped facet to make edge ("
+                        << display_vert(va) << ", " << display_vert(vb)
+                        << ") an edge in the triangulation\n";
+              this->is_Delaunay = false;
+              CGAL_assertion(this->is_edge(va, vb));
+              return true;
+            }
+            else
+            {
+              std::cout << "-- flip failed to make edge (" << display_vert(va) << ", " << display_vert(vb)
+                        << ") an edge in the triangulation\n";
+            }
+            break;
           }
-          else
-          {
-            std::cout << "-- flip failed to make edge (" << display_vert(va) << ", " << display_vert(vb)
-                      << ") an edge in the triangulation\n";
-          }
-          break;
         }
       }
-#endif
       const auto& [steiner_pt, hint, ref_vertex] = construct_Steiner_point(constraint, subconstraint);
       [[maybe_unused]] const auto v =
           insert_Steiner_point_on_subconstraint(steiner_pt, hint, subconstraint, constraint, visitor);

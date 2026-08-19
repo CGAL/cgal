@@ -1,6 +1,5 @@
 #include <CGAL/config.h>
 
-// #define CGAL_CT3_FLIP_BEFORE_INSERTING_STEINER_POINTS 1
 #define CGAL_T3_ALLOW_NEGATIVE_VOLUME 1
 #define CGAL_TETRAHEDRAL_REMESHING_VERBOSE 1
 // #define CGAL_CDT_2_DEBUG_INTERSECTIONS 1
@@ -127,6 +126,12 @@ struct CDT_options
   bool        debug_polygon_insertion             = false;
   bool        debug_restore_faces                 = false;
   bool        use_finite_edges_map                = false;
+  bool        use_flips_to_recover_segments       =
+#ifdef CGAL_CT3_FLIP_BEFORE_INSERTING_STEINER_POINTS
+                                                    true;
+#else
+                                                    false;
+#endif
   bool        move_Steiner_vertices_to_the_volume = true;
   bool        allow_moving_Steiner_vertices_to_create_negative_tets = false;
   bool        use_epeck_for_normals               = false;
@@ -228,6 +233,8 @@ CDT_options::CDT_options(int argc, char* argv[]) {
 
   app.add_flag("--use-finite-edges-map", use_finite_edges_map,
                "use a hash map for finite edges");
+  app.add_flag("--use-flips-to-recover-segments", use_flips_to_recover_segments,
+               "use flips to recover constrained segments");
   app.add_flag("--move-Steiner-vertices-to-the-volume,!--no-move-Steiner-vertices-to-the-volume",
                move_Steiner_vertices_to_the_volume,
                "move Steiner vertices to the volume");
@@ -358,6 +365,7 @@ CGAL::CDT_3::Debug_options cdt_debug_options(const CDT_options& options) {
   cdt_debug.restore_faces(options.debug_restore_faces);
   cdt_debug.copy_triangulation_into_hole(options.debug_copy_triangulation_into_hole);
   cdt_debug.use_finite_edges_map(options.use_finite_edges_map);
+  cdt_debug.use_flips_to_recover_segments(options.use_flips_to_recover_segments);
   cdt_debug.display_statistics(!options.quiet);
   cdt_debug.use_epeck_for_normals(options.use_epeck_for_normals);
   cdt_debug.use_epeck_for_Steiner_points(options.use_epeck_for_Steiner_points);
