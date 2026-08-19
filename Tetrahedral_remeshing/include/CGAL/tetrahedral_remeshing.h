@@ -577,8 +577,12 @@ void tetrahedral_isotropic_remeshing(CDT_3& cdt3,
   // Advanced and non documented parameters
   auto visitor = choose_parameter(get_parameter(np, internal_np::visitor), typename Remesher_types::Default_Visitor());
 
-  auto nb_extra_iterations =
-      choose_parameter(get_parameter(np, internal_np::nb_flip_smooth_iterations), std::size_t{3});
+  Tetrahedral_remeshing::internal::Remeshing_steps steps{
+      choose_parameter(get_parameter(np, internal_np::do_split), true),
+      choose_parameter(get_parameter(np, internal_np::do_collapse), true),
+      choose_parameter(get_parameter(np, internal_np::do_flip), true),
+      choose_parameter(get_parameter(np, internal_np::nb_smoothing_iterations), std::size_t{1}),
+      choose_parameter(get_parameter(np, internal_np::nb_flip_smooth_iterations), std::size_t{3})};
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
   std::cout << "Tetrahedral remeshing ("
@@ -602,7 +606,7 @@ void tetrahedral_isotropic_remeshing(CDT_3& cdt3,
   nb_extra_iterations = 0;
 #endif
 
-  remesher.remesh(max_it, nb_extra_iterations);
+  remesher.remesh(max_it, steps);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
   const double angle_bound = 5.0;

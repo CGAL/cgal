@@ -811,8 +811,8 @@ int go(Mesh mesh, CDT_options options) {
     }
     CGAL::tetrahedral_isotropic_remeshing(
           cdt,
-          bbox_max_span,
-          CGAL::parameters::number_of_iterations(30)
+          3 * bbox_max_span,
+          CGAL::parameters::number_of_iterations(30).nb_flip_smooth_iterations(20u)
           .remesh_boundaries(false));
     // CGAL_assertion(cdt.tr().tds().is_valid(true));
     std::cout << cdt.statistics() << "\n";
