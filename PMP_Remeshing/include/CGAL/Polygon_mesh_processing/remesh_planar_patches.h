@@ -1453,6 +1453,14 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
  *                     as key type and `std::size_t` as value type}
  *      \cgalParamDefault{None}
  *    \cgalParamNEnd
+ *    \cgalParamNBegin{number_of_corners}
+ *      \cgalParamDescription{fill the pointed variable with the number of corners. If the internal intermediate output was manifold
+ *                            it is equal to the number of vertices of vertices `pm_out`, and otherwise it is the number of corners
+ *                            before duplicating some of them to make the graph of `pm_out` manifold.
+ *                            In particular, the elements in the range `vertices(pm_out)` after the number of corners are duplicated vertices.}
+ *      \cgalParamType{a pointer to a variable of type `std::size_t`}
+ *      \cgalParamDefault{None}
+ *    \cgalParamNEnd
  *    \cgalParamNBegin{visitor}
  *      \cgalParamDescription{a callable with `visitor(pm_out)` being called once `tm_in` is no longer needed
  *                            and before `pm_out` starts being built. It should be used in the case when `tm_in` and `pm_out` are the same mesh,
@@ -1635,14 +1643,6 @@ bool remesh_planar_patches(const TriangleMeshIn& tm_in,
  *                            an id in the range `[0, number of corners - 1]`}
  *      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMeshOut>::%vertex_descriptor`
  *                     as key type and `std::size_t` as value type}
- *      \cgalParamDefault{None}
- *    \cgalParamNEnd
- *    \cgalParamNBegin{number_of_corners}
- *      \cgalParamDescription{fill the pointed variable with the number of corners. If the internal intermediate output was manifold
- *                            it is equal to the number of vertices of vertices `pm_out`, and otherwise it is the number of corners
- *                            before duplicating some of them to make the graph of `pm_out` manifold.
- *                            In particular, the elements in the range `vertices(pm_out)` after the number of corners are duplicated vertices.}
- *      \cgalParamType{a pointer to a variable of type `std::size_t`}
  *      \cgalParamDefault{None}
  *    \cgalParamNEnd
  *    \cgalParamNBegin{number_of_corners}
