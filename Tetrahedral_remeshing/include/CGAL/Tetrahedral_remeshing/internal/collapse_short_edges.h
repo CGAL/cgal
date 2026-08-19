@@ -434,6 +434,32 @@ bool is_valid_collapse(const typename C3t3::Edge& edge,
   return true;
 }
 
+// The cells of `star` keep a positive orientation once `v_moved` is at
+// `new_pos`. Cells that also have `v_other` disappear with the collapse.
+template<typename C3t3, typename CellRange>
+bool collapse_keeps_orientations(const CellRange& star,
+                                 const typename C3t3::Vertex_handle v_moved,
+                                 const typename C3t3::Vertex_handle v_other,
+                                 const typename C3t3::Triangulation::Geom_traits::Point_3& new_pos)
+{
+  typedef typename C3t3::Triangulation::Geom_traits::Point_3 Point;
+
+  for (const auto& ch : star)
+  {
+    if (ch->has_vertex(v_other))
+      continue;
+
+    std::array<Point, 4> pts = { point(ch->vertex(0)->point()),
+                                 point(ch->vertex(1)->point()),
+                                 point(ch->vertex(2)->point()),
+                                 point(ch->vertex(3)->point()) };
+    pts[ch->index(v_moved)] = new_pos;
+    if (CGAL::orientation(pts[0], pts[1], pts[2], pts[3]) != CGAL::POSITIVE)
+      return false;
+  }
+  return true;
+}
+
 template<typename C3t3>
 bool is_valid_collapse(const typename C3t3::Edge& edge,
                        const Collapse_type& collapse_type,
@@ -1125,17 +1151,60 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
     new_pos = Point(CGAL::midpoint(point(v0->point()), point(v1->point())));
   }
 
-  if (!is_valid_collapse(edge, collapse_type, new_pos, c3t3))
+  // The ring test depends on neither the collapse type nor the new position,
+  // so it settles all three attempts below at once - and it is the cheap one:
+  // one cell circulation, against a star walk plus an orientation predicate
+  // per cell of the star.
+  if (!is_valid_collapse(edge, c3t3))
+    return Vertex_handle();
+
+  // Each attempt below walks the star of v0 and/or of v1, and so do the angle
+  // and manifold tests further down. The mesh is not touched in between, so
+  // each star is walked once here and handed to all of them.
+  boost::container::small_vector<Cell_handle, 64> star_v0, star_v1;
+  bool has_star_v0 = false;
+  bool has_star_v1 = false;
+  const auto star_of_v0 = [&]() -> const boost::container::small_vector<Cell_handle, 64>&
+  {
+    if (!has_star_v0)
+    {
+      c3t3.triangulation().finite_incident_cells(v0, std::back_inserter(star_v0));
+      has_star_v0 = true;
+    }
+    return star_v0;
+  };
+  const auto star_of_v1 = [&]() -> const boost::container::small_vector<Cell_handle, 64>&
+  {
+    if (!has_star_v1)
+    {
+      c3t3.triangulation().finite_incident_cells(v1, std::back_inserter(star_v1));
+      has_star_v1 = true;
+    }
+    return star_v1;
+  };
+
+  const auto orientations_ok = [&](const Collapse_type ct, const Point& pos)
+  {
+    if ((ct == TO_V1 || ct == TO_MIDPOINT)
+        && !collapse_keeps_orientations<C3t3>(star_of_v0(), v0, v1, point(pos)))
+      return false;
+    if ((ct == TO_V0 || ct == TO_MIDPOINT)
+        && !collapse_keeps_orientations<C3t3>(star_of_v1(), v1, v0, point(pos)))
+      return false;
+    return true;
+  };
+
+  if (!orientations_ok(collapse_type, new_pos))
   {
     if (collapse_type == TO_MIDPOINT)
     {
       // with TO_MIDPOINT, we are authorized to test TO_V0 and TO_V1
-      if (is_valid_collapse(edge, TO_V0, v0->point(), c3t3))
+      if (orientations_ok(TO_V0, v0->point()))
       {
         collapse_type = TO_V0;
         new_pos = v0->point();
       }
-      else if (is_valid_collapse(edge, TO_V1, v1->point(), c3t3))
+      else if (orientations_ok(TO_V1, v1->point()))
       {
         collapse_type = TO_V1;
         new_pos = v1->point();
@@ -1166,14 +1235,11 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
                        edge.first->vertex(edge.second),
                        edge.first->vertex(edge.third)));
 
-    Vertex_handle v0_init = edge.first->vertex(edge.second);
-    Vertex_handle v1_init = edge.first->vertex(edge.third);
-
     std::unordered_set<Cell_handle> cells_to_insert;
-    c3t3.triangulation().finite_incident_cells(v0_init,
-      std::inserter(cells_to_insert, cells_to_insert.end()));
-    c3t3.triangulation().finite_incident_cells(v1_init,
-      std::inserter(cells_to_insert, cells_to_insert.end()));
+    for (const Cell_handle ch : star_of_v0())
+      cells_to_insert.insert(ch);
+    for (const Cell_handle ch : star_of_v1())
+      cells_to_insert.insert(ch);
 
     if(!is_cells_set_manifold(c3t3, cells_to_insert))
       return Vertex_handle();
@@ -1197,11 +1263,34 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
   return Vertex_handle();
 }
 
+template<typename C3T3>
+using Vertex_patch_cache = std::unordered_map<
+    typename C3T3::Vertex_handle,
+    std::optional<typename C3T3::Surface_patch_index> >;
+
+// surface_patch_index(v) walks v's whole incident-facet star. The initial
+// scan over all finite edges in collapse_short_edges() reaches the same
+// vertex once per incident edge, and the scan does not modify the mesh, so
+// the first answer stays valid for the rest of it.
+template<typename C3T3>
+const std::optional<typename C3T3::Surface_patch_index>&
+cached_surface_patch_index(const typename C3T3::Vertex_handle v,
+                           const C3T3& c3t3,
+                           Vertex_patch_cache<C3T3>& cache)
+{
+  const auto it = cache.find(v);
+  if (it != cache.end())
+    return it->second;
+
+  return cache.emplace(v, surface_patch_index(v, c3t3)).first->second;
+}
+
 template<typename C3T3, typename CellSelector>
 auto can_be_collapsed(const typename C3T3::Edge& e,
                       const C3T3& c3t3,
                       const bool protect_boundaries,
-                      CellSelector cell_selector)
+                      CellSelector cell_selector,
+                      Vertex_patch_cache<C3T3>* patch_cache = nullptr)
 {
   struct Collapsible
   {
@@ -1227,8 +1316,12 @@ auto can_be_collapsed(const typename C3T3::Edge& e,
 
     if(v0->in_dimension() != 3 && v1->in_dimension() != 3)
     {
-      const auto patch_v0 = surface_patch_index(v0, c3t3);
-      const auto patch_v1 = surface_patch_index(v1, c3t3);
+      const auto patch_v0 = patch_cache
+        ? cached_surface_patch_index(v0, c3t3, *patch_cache)
+        : surface_patch_index(v0, c3t3);
+      const auto patch_v1 = patch_cache
+        ? cached_surface_patch_index(v1, c3t3, *patch_cache)
+        : surface_patch_index(v1, c3t3);
 
       if(patch_v0 != std::nullopt && patch_v1 != std::nullopt && patch_v0 != patch_v1)
         return Collapsible{false, boundary};
@@ -1275,9 +1368,11 @@ void collapse_short_edges(C3T3& c3t3,
 
   //collect long edges
   Boost_bimap short_edges;
+  Vertex_patch_cache<C3T3> patch_cache;
   for (const Edge& e : tr.finite_edges())
   {
-    auto [collapsible, boundary] = can_be_collapsed(e, c3t3, protect_boundaries, cell_selector);
+    auto [collapsible, boundary]
+      = can_be_collapsed(e, c3t3, protect_boundaries, cell_selector, &patch_cache);
     if (!collapsible)
       continue;
 

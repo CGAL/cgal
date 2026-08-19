@@ -918,11 +918,14 @@ OutputIterator incident_subdomains(const typename C3t3::Vertex_handle v,
                                    OutputIterator oit)
 {
   typedef typename C3t3::Triangulation::Cell_handle Cell_handle;
-  std::vector<Cell_handle> cells;
-  c3t3.triangulation().incident_cells(v, std::back_inserter(cells));
 
-  for (std::size_t i = 0; i < cells.size(); ++i)
-    *oit++ = cells[i]->subdomain_index();
+  // only the subdomain index of each cell of the star is wanted, so the star
+  // is read as it is walked rather than collected first
+  c3t3.triangulation().incident_cells(v,
+    boost::make_function_output_iterator([&](const Cell_handle c)
+    {
+      *oit++ = c->subdomain_index();
+    }));
 
   return oit;
 }
