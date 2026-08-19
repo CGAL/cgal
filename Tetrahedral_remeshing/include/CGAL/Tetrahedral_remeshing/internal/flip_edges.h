@@ -496,6 +496,15 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
           keep = false;
           break;
         }
+
+        // the worst angle of the flip only ever grows from here, so once it has
+        // reached the one the edge already has, this vertex cannot be kept -
+        // unless the cells are inverted, where it is kept whatever it measures
+        if (is_sliver_well_oriented && !(max_flip_cos_dh < curr_max_cos_dh))
+        {
+          keep = false;
+          break;
+        }
       }
     }
     facets.clear();
@@ -676,6 +685,15 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
         }
 
         if (max_flip_cos_dh.is_one())//it will not get worse than 1.
+        {
+          keep = false;
+          break;
+        }
+
+        // the worst angle of the flip only ever grows from here, so once it has
+        // reached the one the edge already has, this vertex cannot be kept -
+        // unless the cells are inverted, where it is kept whatever it measures
+        if (is_sliver_well_oriented && !(max_flip_cos_dh < curr_max_cosdh))
         {
           keep = false;
           break;

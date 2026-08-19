@@ -1,105 +1,103 @@
-#include <CGAL/Cartesian.h>
-#include <CGAL/Quotient.h>
-#include <CGAL/MP_Float.h>
-#include <CGAL/Snap_rounding_traits_2.h>
+#include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
+
+#include <CGAL/Hot_pixel_snap_rounding_traits_2.h>
+#include <CGAL/Double_grid_snap_rounding_traits_2.h>
+#include <CGAL/Float_grid_snap_rounding_traits_2.h>
+#include <CGAL/Integer_grid_snap_rounding_traits_2.h>
 #include <CGAL/Snap_rounding_2.h>
 #include <cstdlib>
 
-typedef CGAL::Quotient<CGAL::MP_Float>          Number_Type;
-typedef CGAL::Cartesian<Number_Type>            Rep;
-typedef CGAL::Snap_rounding_traits_2<Rep>       Sr_traits;
-typedef Rep::Segment_2                          Segment_2;
-typedef Rep::Point_2                            Point_2;
-typedef std::list<Segment_2>                    Seg_list;
-typedef std::list<Point_2>                      Point_list;
-typedef std::list<Point_list>                   Point_list_list;
+#ifndef CGAL_NO_DEPRECATED_CODE
+#include <CGAL/Snap_rounding_traits_2.h>
+#endif // CGAL_NO_DEPRECATED_CODE
 
-bool read_data(int argc, char *argv[], Number_Type &prec, Seg_list &seg_list)
-{
-  if (argc != 3) {
-    std::cerr << "syntex: test <input file name> <output file name>\n";
-    return false;
-  }
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
-  std::ifstream is(argv[1]);
+typedef CGAL::Exact_predicates_exact_constructions_kernel       Kernel;
+typedef Kernel::Segment_2                                       Segment_2;
+typedef Kernel::Point_2                                         Point_2;
+typedef std::vector< Point_2 >                                  Polyline_2;
+typedef Kernel::Vector_2                                        Vector_2;
+typedef Kernel::FT                                              FT;
 
-  if (is.fail()) {
-    std::cerr << "Bad input file : " << argv[1] << std::endl;
-    return false;
-  }
+void test_api(){
+  std::vector< Segment_2 > segs;
+  std::vector< boost::container::small_vector<Point_2, 2> > out_segs;
+  std::vector< Polyline_2 > out_poly;
 
-  unsigned int number_of_segments;
-  is >> number_of_segments;
+  FT e(std::pow(2, -60));
+  segs.emplace_back(Point_2(1-e, 1), Point_2(-1-e, -1+2*e));
+  segs.emplace_back(Point_2(e/2, e/2), Point_2(1, -1));
+  segs.emplace_back(Point_2(0, 2-e/2), Point_2(2, 0));
+  segs.emplace_back(Point_2(0, 2-e/2), Point_2(-2+e, -4));
+  segs.emplace_back(Point_2(-2, 2), Point_2(2, 2));
+  segs.emplace_back(Point_2(7, 7), Point_2(7+e, 7+e));
+  segs.emplace_back(Point_2(5, 7-e), Point_2(9, 7-e));
 
-  is >> prec;
+  // Default
+  snap_rounding_2(segs, out_segs, CGAL::parameters::output_unique_segments(true));
+  snap_rounding_2(segs, out_poly);
+  assert(out_segs.size() == 11);
+  assert(out_poly.size() == 7);
+  out_segs.clear();
+  out_poly.clear();
 
-  if (number_of_segments < 1) {
-    std::cerr << "Bad input file(number of segments)" << argv[1] << std::endl;
-    std::exit(1);
-  }
+  // VSSR Traits
+  snap_rounding_2(segs, out_segs, CGAL::parameters::output_unique_segments(true).geom_traits(CGAL::Float_grid_snap_rounding_traits_2<Kernel>()));
+  snap_rounding_2(segs, out_poly, CGAL::parameters::geom_traits(CGAL::Float_grid_snap_rounding_traits_2<Kernel>()));
+  assert(out_segs.size() == 11);
+  assert(out_poly.size() == 7);
+  out_segs.clear();
+  out_poly.clear();
 
-  unsigned int i;
-  for (i = 0; i < number_of_segments; ++i) {
-    Number_Type x1, y1, x2, y2;
-    is >> x1;
-    is >> y1;
-    is >> x2;
-    is >> y2;
-    seg_list.push_back(Segment_2(Point_2(x1,y1),Point_2(x2,y2)));
-  }
-  return true;
+  // HPSR Traits
+  snap_rounding_2(segs, out_segs, CGAL::parameters::output_unique_segments(true).geom_traits(CGAL::Hot_pixel_snap_rounding_traits_2<Kernel>()));
+  snap_rounding_2(segs, out_poly, CGAL::parameters::geom_traits(CGAL::Hot_pixel_snap_rounding_traits_2<Kernel>()));
+  assert(out_segs.size() == 8);
+  assert(out_poly.size() == 7);
+  out_segs.clear();
+  out_poly.clear();
 }
 
-void print_out(std::ostream& out,
-               Point_list_list::iterator begin_iter,
-               Point_list_list::iterator end_iter)
-{
-  int counter = 0;
-  std::list<std::list<Point_2> >::iterator i;
-  for(i = begin_iter; i != end_iter; ++i) {
-    out << "Polyline number " << ++counter << ":\n";
-    std::list<Point_2>::iterator i2;
-    for (i2 = i->begin(); i2 != i->end(); ++i2)
-      out << "    (" << CGAL::to_double(i2->x()) << ":"
-          << CGAL::to_double(i2->y()) << ")\n";
+#ifndef CGAL_NO_DEPRECATED_CODE
+void test_deprecated(){
+  using Deprecated_traits = CGAL::Snap_rounding_traits_2<Kernel>;
+  using New_traits = CGAL::Hot_pixel_snap_rounding_traits_2<Kernel>;
 
-    out << std::endl;
-  }
+  std::vector< Segment_2 > segs;
+  std::vector< Polyline_2 > out_poly;
+  FT e(std::pow(2, -60));
+  segs.emplace_back(Point_2(1-e, 1), Point_2(-1-e, -1+2*e));
+  segs.emplace_back(Point_2(e/2, e/2), Point_2(1, -1));
+  segs.emplace_back(Point_2(0, 2-e/2), Point_2(2, 0));
+  segs.emplace_back(Point_2(0, 2-e/2), Point_2(-2+e, -4));
+  segs.emplace_back(Point_2(-2, 2), Point_2(2, 2));
+  segs.emplace_back(Point_2(7, 7), Point_2(7+e, 7+e));
+  segs.emplace_back(Point_2(5, 7-e), Point_2(9, 7-e));
+
+  // Test new API with deprecated traits
+  snap_rounding_2(segs, out_poly, CGAL::parameters::geom_traits(Deprecated_traits()));
+  assert(out_poly.size() == 7);
+  out_poly.clear();
+
+  // Test deprecated API with new traits name
+  CGAL::snap_rounding_2<New_traits> (segs.begin(), segs.end(), out_poly, 1.);
+  assert(out_poly.size() == 7);
+  out_poly.clear();
+
+  // Test deprecated API with deprecated traits
+  CGAL::snap_rounding_2<Deprecated_traits> (segs.begin(), segs.end(), out_poly, 1.);
+  assert(out_poly.size() == 7);
+  out_poly.clear();
 }
+#endif // CGAL_NO_DEPRECATED_CODE
 
-int main(int argc,char *argv[])
+int main(int /*argc*/,char** /*argv*/)
 {
-  Seg_list seg_list;
-  Point_list_list output_list;
-
-  Number_Type prec;
-
-  if (!read_data(argc,argv,prec,seg_list))
-    return -1;
-  std::ofstream out(argv[2]);
-
-  CGAL::snap_rounding_2<Sr_traits, Seg_list::const_iterator,
-                        Point_list_list>(seg_list.begin(),
-                                         seg_list.end(),
-                                         output_list,
-                                         prec, true, false, 3);
-
-  out << "input segments" << std::endl;
-  std::list<Segment_2>::iterator i1;
-  for (i1 = seg_list.begin(); i1 != seg_list.end(); ++i1)
-    out << *i1 << std::endl;
-
-  out << std::endl << "the output" << std::endl;
-  print_out(out, output_list.begin(),output_list.end());
-
-  out << std::endl << "testing sr" << std::endl;
-  output_list.clear();
-  CGAL::snap_rounding_2<Sr_traits, Seg_list::const_iterator,
-                        Point_list_list>(seg_list.begin(),
-                                         seg_list.end(),
-                                         output_list,
-                                         prec, false, false, 3);
-  print_out(out, output_list.begin(),output_list.end());
+  test_api();
+#ifndef CGAL_NO_DEPRECATED_CODE
+  test_deprecated();
+#endif // CGAL_NO_DEPRECATED_CODE
 
   return(0);
 }
