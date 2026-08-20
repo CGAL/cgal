@@ -5,17 +5,17 @@
 The concept `TangentSpace` describes a local tangent 
 space use for projection on patches or curves.
 
-\sa `CGAL::Mesh_smoothin_3::ConstructTangentSpace`
+\sa `ConstructTangentSpace`
 
 */
 class TangentSpace {
-private:
+public:
 
 /// \name Types
 /// @{
 
 /*!
-defines Point_3 and Vector_3
+Geometric traits defining `Point_3` and `Vector_3`.
 */
 using Geom_traits = unspecified_type;
 
@@ -34,7 +34,6 @@ using Vector_3 = Geom_traits::Vector_3;
 
 
 /// \name Operations
-/// The following operation defines the tangent space
 /// @{
 
 /*!
@@ -44,18 +43,21 @@ Point_3 origin() const;
 
 
 /*!
-returns the vector use to define the space: normal for a plane (Surface) and direction for a line (Curve).
+Returns the vector defining the tangent space:
+a normal for a surface and a tangent direction for a curve.
 */
 Vector_3 vector() const;
 
 /*!
-returns the projection mode on the tangent space
+returns the projection weighting mode.
 */
-Mesh_smoothing_3::PROJECTION_WEIGHT_MODE projection_mode() const;
+CGAL::Mesh_smoothing_3::Projection_weight_mode  projection_mode() const;
 
 /*!
-returns weight to use for projection on tangent space. 
-Used only if `projection_mode() == PROJECTION_WEIGHT_MODE::CUSTOM`. 
+returns the custom projection weight.
+
+This value is used only when `projection_mode()` returns
+`CGAL::Mesh_smoothing_3::Projection_weight_mode::CUSTOM`.
 */
 double custom_weight() const;
 
