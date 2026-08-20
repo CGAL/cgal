@@ -33,6 +33,29 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace internal {
 
+template<class Visitor, class PolygonMesh>
+struct Wrap_visitor_for_triangulation: public Triangulate_faces::Default_visitor<PolygonMesh>
+{
+  Wrap_visitor_for_triangulation(const PolygonMesh &pm, Visitor &v): pm(pm), visitor(v){}
+
+  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+
+  void before_subface_creations(face_descriptor f_old) {
+    visitor.before_subface_creations(f_old, pm);
+  }
+  void after_subface_creations() {
+    visitor.after_subface_creations(pm);
+  }
+  void after_subface_created(face_descriptor f_new) {
+    visitor.after_subface_created(f_new, pm);
+  }
+
+private:
+  const PolygonMesh &pm;
+  Visitor &visitor;
+};
+
 /**
   * Given a convex mesh and a plane, return an halfedge crossing the plane from a vertex on positive side to a vertex on the plane or the negative side.
   * Return a null halfedge if the mesh and the plane do not intersect.
@@ -194,13 +217,13 @@ refine_convex_with_plane(PolygonMesh& pm,
 
   if(oriented_side(plane, get(vpm, target(h,pm)))!=ON_ORIENTED_BOUNDARY)
   {
-    //split the first edge
+    // split the first edge
     auto pts = make_sorted_pair(get(vpm, source(h, pm)), get(vpm, target(h, pm)));
     typename GT::Point_3 ip = intersection_point(plane, pts.first, pts.second);
     visitor.before_edge_split(h, pm);
     h = CGAL::Euler::split_edge(h, pm);
     put(vpm, target(h, pm), ip);
-    // visitor.new_vertex_added(vpm.size()-1, target(h,pm), pm);
+    visitor.new_vertex_added(std::numeric_limits<std::size_t>::max(), target(h,pm), pm);
     visitor.edge_split(h, pm);
     visitor.after_edge_split();
   }
@@ -244,7 +267,7 @@ refine_convex_with_plane(PolygonMesh& pm,
       visitor.before_edge_split(h, pm);
       h = CGAL::Euler::split_edge(h, pm);
       put(vpm, target(h, pm), ip);
-      // visitor.new_vertex_added(vpm.size()-1, target(h,pm), pm);
+      visitor.new_vertex_added(std::numeric_limits<std::size_t>::max(), target(h,pm), pm);
       visitor.edge_split(h, pm);
       visitor.after_edge_split();
     }
@@ -262,12 +285,17 @@ refine_convex_with_plane(PolygonMesh& pm,
     set_halfedge(target(sh, pm), sh, pm);
     visitor.add_retriangulation_edge(sh, pm);
 
+    // The input is assumed to be triangulated
     if (triangulate){
       halfedge_descriptor sh_opp = opposite(sh, pm);
       if(!is_triangle(sh_opp, pm)){
         visitor.before_subface_created(pm);
+        visitor.before_subface_creations(face(sh_opp, pm), pm);
         halfedge_descriptor newh = CGAL::Euler::split_face(sh_opp, next(next(sh_opp, pm), pm), pm);
+        if constexpr(is_f2f_map)
+          put(f2f, face(opposite(newh, pm), pm), get(f2f, face(newh, pm)));
         visitor.after_subface_created(face(opposite(newh, pm), pm), pm);
+        visitor.after_subface_creations(pm);
         visitor.add_retriangulation_edge(newh, pm);
       }
     }
@@ -297,6 +325,7 @@ remove_bounded_region_and_fill(PolygonMesh& pm,
   using parameters::choose_parameter;
   using parameters::is_default_parameter;
   using parameters::get_parameter;
+  using parameters::get_parameter_reference;
 
   // graph typedefs
   using BGT = boost::graph_traits<PolygonMesh>;
@@ -306,9 +335,9 @@ remove_bounded_region_and_fill(PolygonMesh& pm,
   using vertex_descriptor = typename BGT::vertex_descriptor;
 
   // np typedefs
-  // using Default_ecm = Static_boolean_property_map<edge_descriptor, false>;
-  // using Default_visitor = Corefinement::Default_visitor<PolygonMesh>;
-  // using Visitor_ref = typename internal_np::Lookup_named_param_def<internal_np::visitor_t, NamedParameters, Default_visitor>::reference;
+  using Default_ecm = Static_boolean_property_map<edge_descriptor, false>;
+  using Default_visitor = Corefinement::Default_visitor<PolygonMesh>;
+  using Visitor_ref = typename internal_np::Lookup_named_param_def<internal_np::visitor_t, NamedParameters, Default_visitor>::reference;
   using GT = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
   // GT traits = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
@@ -320,9 +349,9 @@ remove_bounded_region_and_fill(PolygonMesh& pm,
   if constexpr (update_bbox)
     bbox_pointer = get_parameter(np, internal_np::bounding_box);
 
-  // Default_visitor default_visitor;
-  // Visitor_ref visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
-  // constexpr bool has_visitor = !std::is_same_v<Default_visitor, std::remove_cv_t<std::remove_reference_t<Visitor_ref>>>;
+  Default_visitor default_visitor;
+  Visitor_ref visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
+  constexpr bool has_visitor = !std::is_same_v<Default_visitor, std::remove_cv_t<std::remove_reference_t<Visitor_ref>>>;
 
   // Used only if do_triangulate_faces or bounding_box check
   auto vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
@@ -423,6 +452,7 @@ remove_bounded_region_and_fill(PolygonMesh& pm,
 
   // Fill the hole
   if (clip_volume && faces(pm).size()>1){ // If there is only one face, the output is flat does not need to be closed
+    visitor.before_face_copy(BGT::null_face(), pm, pm);
     face_descriptor f=add_face(pm);
     for(auto h: boundaries){
       set_face(h, f, pm);
@@ -433,8 +463,16 @@ remove_bounded_region_and_fill(PolygonMesh& pm,
       auto f2f = choose_parameter<Default_f2f_map>(get_parameter(np, internal_np::face_to_face_map));
       put(f2f, f, plane_fd);
     }
-    if(triangulate)
-      triangulate_face(f, pm, parameters::vertex_point_map(vpm));
+    visitor.after_face_copy(BGT::null_face(), pm, f, pm);
+
+    if(triangulate){
+      if constexpr(has_visitor){
+        Wrap_visitor_for_triangulation wrap_visitor(pm, visitor);
+        triangulate_face(f, pm, parameters::vertex_point_map(vpm).visitor(visitor));
+      } else {
+        triangulate_face(f, pm, parameters::vertex_point_map(vpm));
+      }
+    }
   } else {
     for(auto h: boundaries){
       set_face(h, BGT::null_face(), pm);
@@ -534,7 +572,7 @@ clip_convex(PolygonMesh& pm,
     return *vertices(pm).begin();
 
   } else if(faces(pm).size()==1){
-    // Dimension == 2
+    // Dimension == 2 with only one face
     halfedge_descriptor h_start = halfedge(*faces(pm).begin(), pm);
     // halfedge_descriptor h = next(h_start, pm);
     halfedge_descriptor h = h_start;
