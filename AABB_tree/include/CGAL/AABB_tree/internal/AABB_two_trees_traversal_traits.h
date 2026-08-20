@@ -145,7 +145,6 @@ public:
 
   bool do_intersect(const Node1& node1, const Node2& node2) const
   {
-    // TODO write a specific do_intersect function between two OBBs
     return do_overlap(compute_transformed_bbox(m_tr1, node1.bbox(), m_tr1_has_rotation), compute_transformed_bbox(m_tr2, node2.bbox(), m_tr2_has_rotation));
   }
 
@@ -183,7 +182,6 @@ public:
 
   void intersection(const Primitive& primitive1, const Node& node2, std::size_t nb_primitives_2)
   {
-    // TODO Since we are in a symmetric case, maybe we can ignore this call
     using Wrap_iterator = Wrap_output_iterator<true, typename Primitive::Id, OutputIterator>;
     Wrap_iterator wrap_out(primitive1.id(), out);
     Listing_distinct_primitive_traits<AABBTraits, Wrap_iterator> traits(wrap_out, m_traits);
