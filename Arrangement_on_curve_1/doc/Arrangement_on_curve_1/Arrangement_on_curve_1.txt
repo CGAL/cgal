@@ -74,7 +74,7 @@ A 1D arrangement breaks a continuous track down into two alternating topological
 <!-- ----------------------------------------------------------------------- -->
 
 The primary interface is provided by the class template
-`CGAL::Arrangement_on_curve_1::Arrangement_on_curve_1<GeometryTraits_1,TopologyTraits, BinarySearch>`,
+`Arrangement_on_curve_1<GeometryTraits_1,TopologyTraits, BinarySearch>`,
 which models the concept `ArrangementOnCurve_1`.
 It exposes safe APIs for query evaluations while delegating memory
 container allocations, incidence cell updates, and property map
@@ -134,7 +134,7 @@ modifiers to handle structured manual assembly:
   subdivides an bounded or unbounded edge at the designated point `p`, introducing a new interior vertex.
 
 Note that when the template parameter `BinarySearch` of
-`CGAL::Arrangement_on_curve_1::Arrangement_on_curve_1<GeometryTraits_1,TopologyTraits, BinarySearch>`
+`Arrangement_on_curve_1<GeometryTraits_1,TopologyTraits, BinarySearch>`
 is set to `true`
 - The function `ArrangementOnCurve_1::insert_before()` is not supported at all.
 
@@ -165,7 +165,7 @@ the overall topological continuity of the curve.
 <!-- ----------------------------------------------------------------------- -->
 
 Given a query point \f$p\f$, the call
-\link CGAL::Arrangement_on_curve_1::locate() `locate(arr, q)`\endlink
+\link locate() `locate(arr, q)`\endlink
 locates the query point `q` in the given arrangement `arr`. The function
 returns a discriminated union container of type
 `ArrangementOnCurve_1::Const_location_result`
@@ -188,9 +188,9 @@ that stores a not-const descriptor is also supported.
 <!-- ----------------------------------------------------------------------- -->
 
 A high-level free to insert points into the arrangement is provided. The call
-\link CGAL::Arrangement_on_curve_1::insert() `arr.insert(arr, p)`\endlink
+\link insert() `arr.insert(arr, p)`\endlink
 invokes the function. It first calls
-\link CGAL::Arrangement_on_curve_1::locate() `locate(arr, p)`\endlink
+\link locate() `locate(arr, p)`\endlink
 internally to find where the point `p` is located. If the point
 already matches an existing vertex, the descriptor of that vertex is
 returned. Otherwise, the function invokes
@@ -204,8 +204,7 @@ as needed to safely update the topology.
 \subsection aoc_ssec-free_overlay Overlaying Two Arrangements
 <!-- ----------------------------------------------------------------------- -->
 
-The call
-\link CGAL::Arrangement_on_curve_1::overlay() `arr.overlay(arr_a, arr_b, arr_r)`\endlink
+The call \link overlay() `arr.overlay(arr_a, arr_b, arr_r)`\endlink
 combines two input arrangements `arr_a` and `arr_b` aligned along the
 same continuous supporting curve into a single unified output
 arrangement `arr_r` (embedded in the same underlying curve).  The
@@ -232,9 +231,9 @@ cells.
 A model of the geometry traits must satisfy the requirements of the
 `AocTraits_1` concept.  It defines the types for geometric points
 (\link ArrangementOnCurve_1::Point_1 `Point_1`\endlink) and provides a
-factory function producing a `Compare_x_1` comparison functor. This
-functor must provide a strict linear ordering predicate, returning
-`SMALLER`, `EQUAL`, or `LARGER` when comparing two points along the curve
+factory function producing a \link AocTraits_1::Compare_x_1 `Compare_x_1`\endlink
+comparison functor. This functor must provide a strict linear ordering predicate,
+returning `SMALLER`, `EQUAL`, or `LARGER` when comparing two points along the curve
 direction.
 
 <!-- ----------------------------------------------------------------------- -->
