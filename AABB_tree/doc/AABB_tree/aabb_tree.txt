@@ -23,7 +23,7 @@ triangles, or plane objects (planes, triangles) against sets of
 segments. An example of a distance query consists of finding the
 closest point from a point query to a set of triangles.
 
-Similarly to the package \ref chapterBoxIntersection "Intersecting Sequences of dD Iso-oriented Boxes",
+Similarly to the package \ref PkgBoxIntersectionD,
 this component might also be used for finding all intersecting pairs of objects,
 and can even achieve a better performance when running on several threads.
 
