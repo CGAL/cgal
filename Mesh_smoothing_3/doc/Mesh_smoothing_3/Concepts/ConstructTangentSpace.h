@@ -14,7 +14,7 @@ mesh edge on target feature curves.
 
 */
 class ConstructTangentSpace {
-private:
+public:
 
 /// \name Types
 /// @{
@@ -58,14 +58,14 @@ using Curve_edge = std::pair<C3t3::Curve_index, C3t3::Edge>;
 returns a plane tangent to the patch to which its facet should align too. 
 The list of Point_3 contains its current vertices location.  
 */
-Tangent_space<Geom_traits> patch_face_projection_plane(Patch_face patch_face, std::vector<Point_3> face_points) const;
+TangentSpace<Geom_traits> patch_face_projection_plane(Patch_face patch_face, std::vector<Point_3> face_points) const;
 
 
 /*!
 returns a line tangent to the curve to which its edge should align too. 
 The array contains the two locations of its vertices.  
 */
-Tangent_space<Geom_traits> curve_edge_projection_line(Curve_edge curve_edge, std::array<Point_3,2> edge_points) const;
+TangentSpace<Geom_traits> curve_edge_projection_line(Curve_edge curve_edge, std::array<Point_3,2> edge_points) const;
 
 
 /// @}

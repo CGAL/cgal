@@ -123,9 +123,18 @@ get(const Edge_to_point_property_map<C3t3>&, const typename C3t3::Edge& e)
 
 
 /*!
- * weight mode for projection to tangent space
+ * \ingroup pkgMeshSmoothing3Projection
+ *
+ * \brief Specifies the weight used for projection onto a tangent space.
  */
-enum PROJECTION_WEIGHT_MODE {DEFAULT, STRONG, SOFT, NONE, CUSTOM};
+enum class Projection_weight_mode
+{
+  DEFAULT, ///< Standard projection weight (1.).
+  STRONG,  ///< Strong projection constraint (10.).
+  SOFT,    ///< Weak projection constraint (1e-3).
+  NONE,    ///< Disable projection.
+  CUSTOM   ///< Use the weight returned by `TangentSpace::custom_weight()`.
+};
 
 /* not documented but: 
 * \cgalModels{TangentSpace}
@@ -137,12 +146,12 @@ struct Tangent_space {
 
     Point_3 _origin = Point_3();
     Vector_3 _vector = Vector_3();
-    PROJECTION_WEIGHT_MODE _mode = PROJECTION_WEIGHT_MODE::DEFAULT;
+    Projection_weight_mode _mode = Projection_weight_mode::DEFAULT;
     double _weight = 1.;
 
     Point_3 origin() const { return _origin; }
     Vector_3 vector() const { return _vector; }
-    PROJECTION_WEIGHT_MODE projection_mode() const { return _mode; }
+    Projection_weight_mode projection_mode() const { return _mode; }
     double custom_weight() const { return _weight; }
 
 };
@@ -165,7 +174,7 @@ struct Tangent_space {
 */
 template<typename C3t3>
 class C3t3_mesh_projector {
-private:
+public:
     using Geom_traits = typename C3t3::Triangulation::Geom_traits;
     using Point_3 = Geom_traits::Point_3;
 
@@ -178,7 +187,7 @@ private:
     using Curve_edge = std::pair<Curve_index, Edge>;
 
 public:
-    Tangent_space<Geom_traits> patch_projection_plane(Patch_face patch_face, std::vector<Point_3> const &face_points) const {
+    Tangent_space<Geom_traits> patch_face_projection_plane(Patch_face patch_face, std::vector<Point_3> const &face_points) const {
         Tangent_space<Geom_traits> projection;
         Point_3 face_center = CGAL::centroid(face_points.begin(), face_points.end());
         auto res = _facet_trees.at(patch_face.first).closest_point_and_primitive(face_center);
@@ -188,7 +197,7 @@ public:
         return projection;
     }
 
-    Tangent_space<Geom_traits> curve_projection_tangent(Curve_edge curve_edge, std::array<Point_3,2> const &edge_points) const {
+    Tangent_space<Geom_traits> curve_edge_projection_line(Curve_edge curve_edge, std::array<Point_3,2> const &edge_points) const {
         Tangent_space<Geom_traits> projection;
         Point_3 edge_center = CGAL::midpoint(edge_points[0], edge_points[1]);
         auto res = _edge_trees.at(curve_edge.first).closest_point_and_primitive(edge_center);
@@ -207,7 +216,7 @@ public:
     /*!
         Class constructor
 
-        \param c3t3 contains the mesh used for projection. A copy is done at construction
+        \param c3t3 contains the mesh used for projection. A copy is done at construction.
 
     */
     C3t3_mesh_projector(C3t3 const& c3t3)
@@ -270,19 +279,19 @@ private:
 /*!
 * \ingroup pkgMeshSmoothing3Projection
 *
-* \brief provides an empty class to disable projections, i.e. free boundary
+* \brief provides an empty class to disable projections, meaning free boundaries.
 *
 * @tparam C3t3 model of `MeshComplex_3InTriangulation_3`
 *
 * \cgalModels{ConstructTangentSpace}
 *
 \sa `CGAL::boundary_aware_mesh_smoothing`
-\sa `CGAL::Mesh_smoothing_3::C3t3_mesh_projection`
+\sa `CGAL::Mesh_smoothing_3::C3t3_mesh_projector`
 *
 */
 template<typename C3t3>
 class C3t3_no_projection {
-private:
+public:
     using Geom_traits = typename C3t3::Triangulation::Geom_traits;
     using Point_3 = Geom_traits::Point_3;
     using Patch_face = std::pair<typename C3t3::Surface_patch_index, typename C3t3::Facet>;
@@ -290,12 +299,12 @@ private:
 
 public:
 
-    Tangent_space<Geom_traits> patch_projection_plane(Patch_face, std::vector<Point_3> const &) const {
-        return Tangent_space<Geom_traits>{Point_3(), Geom_traits::Vector_3(), PROJECTION_WEIGHT_MODE::NONE, 0.};
+    Tangent_space<Geom_traits> patch_face_projection_plane(Patch_face, std::vector<Point_3> const &) const {
+        return Tangent_space<Geom_traits>{Point_3(), Geom_traits::Vector_3(), Projection_weight_mode::NONE, 0.};
     }
 
-    Tangent_space<Geom_traits> curve_projection_tangent(Curve_edge, std::array<Point_3,2> const &) const {
-        return Tangent_space<Geom_traits>{Point_3(), Geom_traits::Vector_3(), PROJECTION_WEIGHT_MODE::NONE, 0.};
+    Tangent_space<Geom_traits> curve_edge_projection_line(Curve_edge, std::array<Point_3,2> const &) const {
+        return Tangent_space<Geom_traits>{Point_3(), Geom_traits::Vector_3(), Projection_weight_mode::NONE, 0.};
     }
 
 };
@@ -312,6 +321,8 @@ public:
 * The algorithm will recover curvature discontinuities (sharp features) in a patch,
 * and is capable of recovering inverted tetrahedra in the mesh.
 * An input mesh with only positively oriented elements is guaranteed to remain so during the smoothing procedure.
+*
+* \warning This function updates vertex positions without modifying connectivity, and therefore does not preserve Delaunay properties.
 *
 * @tparam C3t3 model of `MeshComplex_3InTriangulation_3`
 * @tparam CTS model of `ConstructTangentSpace`
@@ -433,22 +444,22 @@ void boundary_aware_mesh_smoothing  (
     using Tangent_space = Mesh_smoothing_3::Tangent_space<typename C3t3::Triangulation::Geom_traits>;
 
     auto proj_weight = [](Tangent_space const &ts) {
-        using Mesh_smoothing_3::PROJECTION_WEIGHT_MODE;
+        using Mesh_smoothing_3::Projection_weight_mode;
         switch (ts.projection_mode())
         {
-        case PROJECTION_WEIGHT_MODE::DEFAULT:
+        case Projection_weight_mode::DEFAULT:
             return 1.;
             break;
-        case PROJECTION_WEIGHT_MODE::STRONG:
+        case Projection_weight_mode::STRONG:
             return 10.;
             break;
-        case PROJECTION_WEIGHT_MODE::SOFT:
+        case Projection_weight_mode::SOFT:
             return 1e-3;
             break;
-        case PROJECTION_WEIGHT_MODE::NONE:
+        case Projection_weight_mode::NONE:
             return 0.;
             break;
-        case PROJECTION_WEIGHT_MODE::CUSTOM:
+        case Projection_weight_mode::CUSTOM:
             return ts.custom_weight();
             break;
         default:
@@ -459,12 +470,12 @@ void boundary_aware_mesh_smoothing  (
 
     // converting Projector to Mesh_smoothing_3 queries
     smoother.set_boundary_query([&](std::vector<Point_3> const& pts, std::pair<typename C3t3::Surface_patch_index, typename C3t3::Facet> patch_face) {
-        Tangent_space proj = cts.patch_projection_plane(patch_face, pts);
+        Tangent_space proj = cts.patch_face_projection_plane(patch_face, pts);
         return std::make_tuple(proj.origin(), proj.vector(), proj_weight(proj));
     });
 
     smoother.set_curves_query([&](std::array<Point_3, 2> const& pts, std::pair<typename C3t3::Curve_index, typename C3t3::Edge> curve_edge) {
-        Tangent_space proj = cts.curve_projection_tangent(curve_edge, pts);
+        Tangent_space proj = cts.curve_edge_projection_line(curve_edge, pts);
         return std::make_tuple(proj.origin(), proj.vector(), proj_weight(proj));
     });
 
