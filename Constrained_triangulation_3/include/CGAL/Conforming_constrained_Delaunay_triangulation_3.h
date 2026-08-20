@@ -16,7 +16,7 @@
 
 #include <CGAL/Conforming_constrained_Delaunay_triangulation_3_fwd.h>
 
-#include <CGAL/Constrained_triangulation_3/internal/config.h>
+#include <CGAL/Constrained_triangulation_3/internal/config.h> // IWYU pragma: export
 
 #include <CGAL/Algebraic_structure_traits.h>
 #include <CGAL/assertions.h>
@@ -2881,12 +2881,12 @@ protected:
           auto c = *cell_it;
           for(int li = first_li; li < 4; ++li) {
             if(c->ccdt_3_data().is_facet_constrained(li)) {
-  #if CGAL_CDT_3_DEBUG_MISSING_TRIANGLES
-              auto face_id = static_cast<std::size_t>(c->ccdt_3_data().face_constraint_index(li));
-              auto fh_2 = c->ccdt_3_data().face_2(self->face_cdt_2(face_id), li);
-              std::cerr << "Add missing triangle (from visitor), face F#" << face_id << ": \n";
-              self->write_2d_triangle(std::cerr, fh_2);
-  #endif // CGAL_CDT_3_DEBUG_MISSING_TRIANGLES
+              if(self->debug().missing_triangles()) {
+                auto face_id = static_cast<std::size_t>(c->ccdt_3_data().face_constraint_index(li));
+                auto fh_2 = c->ccdt_3_data().face_2(self->face_cdt_2(face_id), li);
+                std::cerr << "Add missing triangle (from visitor), face F#" << face_id << ": \n";
+                self->write_2d_triangle(std::cerr, fh_2);
+              }
               self->register_facet_to_be_constrained(c, li);
             }
           }
@@ -3918,10 +3918,10 @@ private:
         fh->info().missing_subface = true;
         this->face_constraint_misses_subfaces_set(static_cast<std::size_t>(polygon_constraint_id));
         something_has_changed = true;
-#if CGAL_CDT_3_DEBUG_MISSING_TRIANGLES
-        std::cerr << cdt_3_format("Missing triangle in polygon #{}:\n", polygon_constraint_id);
-        write_triangle(std::cerr, v0, v1, v2);
-#endif // CGAL_CDT_3_DEBUG_MISSING_TRIANGLES
+        if(this->debug().missing_triangles()) {
+          std::cerr << cdt_3_format("Missing triangle in polygon #{}:\n", polygon_constraint_id);
+          write_triangle(std::cerr, v0, v1, v2);
+        }
       } else {
         const auto [facet, orient] = *is_facet;
         fh->info().missing_subface = false;

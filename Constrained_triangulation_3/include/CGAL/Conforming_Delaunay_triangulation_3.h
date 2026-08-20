@@ -14,7 +14,7 @@
 
 #include <CGAL/license/Constrained_triangulation_3.h>
 
-#include <CGAL/Constrained_triangulation_3/internal/config.h>
+#include <CGAL/Constrained_triangulation_3/internal/config.h> // IWYU pragma: export
 
 #include <CGAL/Algebraic_structure_traits.h>
 #include <CGAL/Bbox_3.h>
@@ -81,6 +81,7 @@ struct Debug_options {
     conforming,
     input_faces,
     missing_region,
+    debug_missing_triangles,
     regions,
     copy_triangulation_into_hole,
     validity,
@@ -117,6 +118,9 @@ struct Debug_options {
 
   bool missing_region() const { return get(Flag::missing_region); }
   void missing_region(bool b) { get(Flag::missing_region) = b; }
+
+  bool missing_triangles() const { return get(Flag::debug_missing_triangles); }
+  void missing_triangles(bool b) { get(Flag::debug_missing_triangles) = b; }
 
   bool regions() const { return get(Flag::regions); }
   void regions(bool b) { get(Flag::regions) = b; }
