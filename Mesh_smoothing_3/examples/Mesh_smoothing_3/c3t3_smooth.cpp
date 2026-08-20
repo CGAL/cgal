@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
 
     CGAL::boundary_aware_mesh_smoothing(
         c3t3,
-        CGAL::Mesh_smoothing_3::C3t3_mesh_projector(c3t3, true),
+        CGAL::Mesh_smoothing_3::C3t3_mesh_projector(c3t3),
         CGAL::parameters::verbose(true).number_of_iterations(100)
     );
 

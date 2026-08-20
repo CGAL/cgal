@@ -2,10 +2,10 @@
 /// \defgroup pkgMeshSmoothing3Concepts Concepts
 /// \ingroup PkgMeshSmoothing3Ref
 
-/// \defgroup pkgMeshSmoothing3Functions Functions
+/// \defgroup pkgMeshSmoothing3Projection Projection classes
 /// \ingroup PkgMeshSmoothing3Ref
 
-/// \defgroup pkgMeshSmoothing3Projection Projection classes
+/// \defgroup pkgMeshSmoothing3Functions Functions
 /// \ingroup PkgMeshSmoothing3Ref
 
 /*!
@@ -32,6 +32,14 @@
 \cgalPkgDescriptionEnd
 
 \cgalClassifedRefPages
+
+\cgalCRPSection{Concepts}
+- `TangentSpace`
+- `ConstructTangentSpace`
+
+\cgalCRPSection{Projection class}
+- `CGAL::Mesh_smoothing_3::C3t3_mesh_projector`
+- `CGAL::Mesh_smoothing_3::C3t3_no_projection`
 
 \cgalCRPSection{Functions}
 - `CGAL::boundary_aware_mesh_smoothing()`

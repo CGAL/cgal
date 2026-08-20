@@ -122,27 +122,42 @@ get(const Edge_to_point_property_map<C3t3>&, const typename C3t3::Edge& e)
 } // namespace internal
 
 
+/*!
+ * weight mode for projection to tangent space
+ */
+enum PROJECTION_WEIGHT_MODE {DEFAULT, STRONG, SOFT, NONE, CUSTOM};
 
-template <typename Point3,
-          typename Vector3>
-struct Projection_data {
-    Point3 origin = Point3();
-    Vector3 vector = Vector3();
-    bool activated = true;
-    double weight = 1.;
+/* not documented but: 
+* \cgalModels{TangentSpace}
+*/
+template <typename GeomTraits>
+struct Tangent_space {
+    using Point_3 = GeomTraits::Point_3;
+    using Vector_3 = GeomTraits::Vector_3;
+
+    Point_3 _origin = Point_3();
+    Vector_3 _vector = Vector_3();
+    PROJECTION_WEIGHT_MODE _mode = PROJECTION_WEIGHT_MODE::DEFAULT;
+    double _weight = 1.;
+
+    Point_3 origin() const { return _origin; }
+    Vector_3 vector() const { return _vector; }
+    PROJECTION_WEIGHT_MODE projection_mode() const { return _mode; }
+    double custom_weight() const { return _weight; }
+
 };
 
 /*!
 * \ingroup pkgMeshSmoothing3Projection
 *
-* \brief provides projection functions to a mesh defined in a `Mesh_complex_3_in_triangulation_3` 
+* \brief provides projection functions to a mesh defined in a `Mesh_complex_3_in_triangulation_3`
 *
-* The class `Mesh_smoother` creates an AABB_tree for each patch and curve on the mesh. 
+* The class `Mesh_smoother` creates an AABB_tree for each patch and curve on the mesh.
 * It then defines queries re-projecting entities on the mesh depending on their patch/curve index.
 *
 * @tparam C3t3 model of `MeshComplex_3InTriangulation_3`
 *
-* \cgalModels{C3t3Projector}
+* \cgalModels{ConstructTangentSpace}
 *
 \sa `CGAL::boundary_aware_mesh_smoothing`
 \sa `CGAL::Mesh_smoothing_3::C3t3_no_projection`
@@ -150,39 +165,38 @@ struct Projection_data {
 */
 template<typename C3t3>
 class C3t3_mesh_projector {
-    using K = typename C3t3::Triangulation::Geom_traits;
-public:
-    using Point_3 = typename K::Point_3;
-    using Vector_3 = typename K::Vector_3;
-    using Projection = Projection_data<Point_3, Vector_3>;
+private:
+    using Geom_traits = typename C3t3::Triangulation::Geom_traits;
+    using Point_3 = Geom_traits::Point_3;
 
-    using Surface_patch_index = typename C3t3::Surface_patch_index;
     using Facet = typename C3t3::Facet;
-    using Patch_face = std::pair<Surface_patch_index, Facet>;
+    using Surface_patch_index = typename C3t3::Surface_patch_index;
+    using Edge = typename C3t3::Edge;
+    using Curve_index = typename C3t3::Curve_index;
 
-    Projection patch_projection_plane(Patch_face patch_face, std::vector<Point_3> const &face_points) const {
-        Projection projection;
+    using Patch_face = std::pair<Surface_patch_index, Facet>;
+    using Curve_edge = std::pair<Curve_index, Edge>;
+
+public:
+    Tangent_space<Geom_traits> patch_projection_plane(Patch_face patch_face, std::vector<Point_3> const &face_points) const {
+        Tangent_space<Geom_traits> projection;
         Point_3 face_center = CGAL::centroid(face_points.begin(), face_points.end());
         auto res = _facet_trees.at(patch_face.first).closest_point_and_primitive(face_center);
-        projection.origin = res.first;
-        const auto triangle = _c3t3->triangulation().triangle(res.second);
-        projection.vector = CGAL::unit_normal(triangle.vertex(0), triangle.vertex(1), triangle.vertex(2));
+        projection._origin = res.first;
+        const auto triangle = _c3t3.triangulation().triangle(res.second);
+        projection._vector = CGAL::unit_normal(triangle.vertex(0), triangle.vertex(1), triangle.vertex(2));
         return projection;
     }
 
-    using Curve_index = typename C3t3::Curve_index;
-    using Edge = typename C3t3::Edge;
-    using Curve_edge = std::pair<Curve_index, Edge>;
-
-    Projection curve_projection_tangent(Curve_edge curve_edge, std::array<Point_3,2> const &edge_points) const {
-        Projection projection;
+    Tangent_space<Geom_traits> curve_projection_tangent(Curve_edge curve_edge, std::array<Point_3,2> const &edge_points) const {
+        Tangent_space<Geom_traits> projection;
         Point_3 edge_center = CGAL::midpoint(edge_points[0], edge_points[1]);
         auto res = _edge_trees.at(curve_edge.first).closest_point_and_primitive(edge_center);
-        projection.origin =  res.first;
-        const auto segment = _c3t3->triangulation().segment(res.second);
-        projection.vector = (segment.target() - segment.source());
-        if (projection.vector.squared_length() > 1e-8) {
-            projection.vector /= CGAL::sqrt(projection.vector.squared_length());
+        projection._origin =  res.first;
+        const auto segment = _c3t3.triangulation().segment(res.second);
+        projection._vector = (segment.target() - segment.source());
+        if (projection._vector.squared_length() > 1e-8) {
+            projection._vector /= CGAL::sqrt(projection._vector.squared_length());
         }
         return projection;
     }
@@ -193,25 +207,19 @@ public:
     /*!
         Class constructor
 
-        \param c3t3 contains the mesh used for projection
-        \param copy_data boolean to copy mesh data or to keep a pointer to the input one. 
+        \param c3t3 contains the mesh used for projection. A copy is done at construction
 
     */
-    C3t3_mesh_projector(C3t3 const& c3t3, bool copy_data = false)
+    C3t3_mesh_projector(C3t3 const& c3t3)
+    : _c3t3(c3t3)
     {
-        if (copy_data) {
-            _local_copy = c3t3;
-            _c3t3 = &*_local_copy;
-        }
-        else {
-            _c3t3 = &c3t3;
-        }
         build_trees();
     }
 private:
-    std::optional<C3t3> _local_copy;
-    C3t3 const* _c3t3;
+    C3t3 _c3t3;
 
+
+    using K = typename C3t3::Triangulation::Geom_traits;
 
     using Facet_to_triangle_map = internal::Facet_to_triangle_property_map<C3t3>;
     using Facet_to_point_map = internal::Facet_to_point_property_map<C3t3>;
@@ -239,13 +247,13 @@ private:
 
     void build_trees() {
         std::map<Surface_patch_index, std::vector<Facet>> facets_by_patch;
-        for (const auto& f : _c3t3->facets_in_complex()) {
-            facets_by_patch[_c3t3->surface_patch_index(f)].push_back(f);
+        for (const auto& f : _c3t3.facets_in_complex()) {
+            facets_by_patch[_c3t3.surface_patch_index(f)].push_back(f);
         }
 
         std::map<Curve_index, std::vector<Edge>> edges_by_curve;
-        for (const auto& e : _c3t3->edges_in_complex()) {
-            edges_by_curve[_c3t3->curve_index(e)].push_back(e);
+        for (const auto& e : _c3t3.edges_in_complex()) {
+            edges_by_curve[_c3t3.curve_index(e)].push_back(e);
         }
 
         for (auto& kv : facets_by_patch) {
@@ -262,11 +270,11 @@ private:
 /*!
 * \ingroup pkgMeshSmoothing3Projection
 *
-* \brief provides an empty class to disable projections
+* \brief provides an empty class to disable projections, i.e. free boundary
 *
 * @tparam C3t3 model of `MeshComplex_3InTriangulation_3`
 *
-* \cgalModels{C3t3Projector}
+* \cgalModels{ConstructTangentSpace}
 *
 \sa `CGAL::boundary_aware_mesh_smoothing`
 \sa `CGAL::Mesh_smoothing_3::C3t3_mesh_projection`
@@ -274,84 +282,22 @@ private:
 */
 template<typename C3t3>
 class C3t3_no_projection {
-    using K = typename C3t3::Triangulation::Geom_traits;
+private:
+    using Geom_traits = typename C3t3::Triangulation::Geom_traits;
+    using Point_3 = Geom_traits::Point_3;
+    using Patch_face = std::pair<typename C3t3::Surface_patch_index, typename C3t3::Facet>;
+    using Curve_edge = std::pair<typename C3t3::Curve_index, typename C3t3::Edge>;
+
 public:
-    using Point_3 = typename K::Point_3;
-    using Vector_3 = typename K::Vector_3;
-    using Projection = Projection_data<Point_3, Vector_3>;
 
-    using Surface_patch_index = typename C3t3::Surface_patch_index;
-    using Facet = typename C3t3::Facet;
-    using Patch_face = std::pair<Surface_patch_index, Facet>;
-
-    Projection patch_projection_plane(Patch_face, std::vector<Point_3> const &face_points) const {
-        return Projection{Point_3(), Vector_3(), false};
+    Tangent_space<Geom_traits> patch_projection_plane(Patch_face, std::vector<Point_3> const &) const {
+        return Tangent_space<Geom_traits>{Point_3(), Geom_traits::Vector_3(), PROJECTION_WEIGHT_MODE::NONE, 0.};
     }
 
-    using Curve_index = typename C3t3::Curve_index;
-    using Edge = typename C3t3::Edge;
-    using Curve_edge = std::pair<Curve_index, Edge>;
-
-    Projection curve_projection_tangent(Curve_edge, std::array<Point_3,2> const &) const {
-        return Projection{Point_3(), Vector_3(), false};
-    }
-    
-};
-
-
-/*
-* \ingroup pkgMeshSmoothing3Projection
-*
-* \brief provides projection to a Mesh Domain
-*
-* @tparam C3t3 model of `MeshDomain_3`
-*
-* \cgalModels{C3t3Projector}
-*
-\sa `CGAL::boundary_aware_mesh_smoothing`
-*
-*/
-template<typename C3t3, typename MeshDomain>
-class Mesh_domain_projection {
-    using K = typename C3t3::Triangulation::Geom_traits;
-public:
-    using Point_3 = typename K::Point_3;
-    using Vector_3 = typename K::Vector_3;
-    using Projection = Projection_data<Point_3, Vector_3>;
-
-    using Surface_patch_index = typename C3t3::Surface_patch_index;
-    using Facet = typename C3t3::Facet;
-    using Patch_face = std::pair<Surface_patch_index, Facet>;
-
-    Projection patch_projection_plane(Patch_face, std::vector<Point_3> const &face_points) const {
-        Point_3 face_center = CGAL::centroid(face_points.begin(), face_points.end());
-        Vector_3 normal = CGAL::unit_normal(face_points[0], face_points[1], face_points[2]); // only works for triangles, but let's start with that
-        Ray_3 ray_positive(face_center,  normal);
-        Ray_3 ray_negative(face_center, -normal);
-        return Projection{Point_3(), Vector_3(), false};
+    Tangent_space<Geom_traits> curve_projection_tangent(Curve_edge, std::array<Point_3,2> const &) const {
+        return Tangent_space<Geom_traits>{Point_3(), Geom_traits::Vector_3(), PROJECTION_WEIGHT_MODE::NONE, 0.};
     }
 
-    using Curve_index = typename C3t3::Curve_index;
-    using Edge = typename C3t3::Edge;
-    using Curve_edge = std::pair<Curve_index, Edge>;
-
-    Projection curve_projection_tangent(Curve_edge, std::array<Point_3,2> const &) const {
-        return Projection();
-    }
-
-public: 
-
-    /*
-        Class constructor
-
-        \param mesh_domain contains the domain used for projection
-
-    */
-    Mesh_domain_projection(MeshDomain const& mesh_domain)
-    : _domain(mesh_domain)
-    {}
-
-    MeshDomain const& _domain;
 };
 
 } // namespace Mesh_smoothing_3
@@ -363,23 +309,25 @@ public:
 * This function takes as input a `Mesh_complex_3_in_triangulation_3` and will iteratively
 * move its vertices to improve the quality of the tetrahedra while preserving (softly) the boundary and curve features through projection queries.
 * Vertices will stay close to their original entity (surface patch or curve). Corners are locked on their original position.
-* The code is capable of recovering curvature discontinuities (sharp features) in a patch,
+* The algorithm will recover curvature discontinuities (sharp features) in a patch,
 * and is capable of recovering inverted tetrahedra in the mesh.
-* A valid input mesh is guaranteed to remain valid after and during the smoothing.
+* An input mesh with only positively oriented elements is guaranteed to remain so during the smoothing procedure.
 *
 * @tparam C3t3 model of `MeshComplex_3InTriangulation_3`
-* @tparam Projector model of `C3t3Projector`
+* @tparam CTS model of `ConstructTangentSpace`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 *
-* @param c3t3 is the tetrahedral mesh to smooth.
-* @param projector is the support to re-project faces and edges on their respective patches and curves.
-* @param np is an optional sequence of \ref bgl_namedparameters "Named Parameters"
+* @param c3t3 tetrahedral mesh to smooth.
+* @param cts support to re-project faces and edges on their respective patches and curves.
+* @param np optional sequence of \ref bgl_namedparameters "Named Parameters"
 *          among the ones listed below
+*
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{number_of_iterations}
-*     \cgalParamDescription{Maximum number of iterations for the outer loop of the smoothing/untangling algorithm.
-                            Algorithm will stop before if it reaches convergence.}
+*     \cgalParamDescription{Maximum nb of iterations of the smoothing algorithm .
+                            Algorithm will stop before if it reaches convergence.
+                            Untangling usually requires more iterations (up to thousands) for hard cases. }
 *     \cgalParamType{unsigned int}
 *     \cgalParamDefault{`100`}
 *   \cgalParamNEnd
@@ -391,21 +339,21 @@ public:
 *   \cgalParamNEnd
 *   \cgalParamNBegin{vertex_is_constrained_map}
 *     \cgalParamDescription{a property map containing the constrained-or-not status of each vertex of the triangulation in the `c3t3`.}
-*     \cgalParamType{a class model of `ReadPropertyMap` with `C3t3::Vertex_handle`
+*     \cgalParamType{a class model of `ReadablePropertyMap` with `C3t3::Vertex_handle`
 *                    as key type and `bool` as value type. It must be default constructible.}
 *     \cgalParamDefault{a default property map where no vertex is constrained}
 *     \cgalParamExtra{A constrained vertex will not be moved by smoothing.}
 *   \cgalParamNEnd
 *   \cgalParamNBegin{edge_is_constrained_map}
 *     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of the triangulation in the `c3t3`.}
-*     \cgalParamType{a class model of `ReadPropertyMap` with `std::pair<C3t3::Vertex_handle, C3t3::Vertex_handle>`
+*     \cgalParamType{a class model of `ReadablePropertyMap` with `std::pair<C3t3::Vertex_handle, C3t3::Vertex_handle>`
 *                    as key type and `bool` as value type. It must be default constructible.}
 *     \cgalParamDefault{a default property map where no edge is constrained}
 *     \cgalParamExtra{Vertices of a constrained edge will not be moved by the smoothing.}
 *   \cgalParamNEnd
 *   \cgalParamNBegin{facet_is_constrained_map}
 *     \cgalParamDescription{a property map containing the constrained-or-not status of each facet of the triangulation in the `c3t3`.}
-*     \cgalParamType{a class model of `ReadPropertyMap` with `C3t3::Facet`
+*     \cgalParamType{a class model of `ReadablePropertyMap` with `C3t3::Facet`
 *                    as key type and `bool` as value type. It must be default constructible.}
 *     \cgalParamDefault{a default property map where no facet is constrained}
 *     \cgalParamExtra{Vertices of a constrained facet will not be moved by smoothing.}
@@ -413,11 +361,11 @@ public:
 * \cgalNamedParamsEnd
 */
 template<typename C3t3,
-         typename Projector = Mesh_smoothing_3::C3t3_no_projection<C3t3>,
+         typename CTS,
          typename NamedParameters = parameters::Default_named_parameters>
 void boundary_aware_mesh_smoothing  (
     C3t3& c3t3,
-    Projector const & projector = Projector(),
+    CTS const & cts,
     NamedParameters const & np = parameters::default_values()
 )
 {
@@ -482,19 +430,42 @@ void boundary_aware_mesh_smoothing  (
     }
 
     using Point_3 = typename  C3t3::Triangulation::Geom_traits::Point_3;
-    using Vector_3 = typename  C3t3::Triangulation::Geom_traits::Vector_3;
+    using Tangent_space = Mesh_smoothing_3::Tangent_space<typename C3t3::Triangulation::Geom_traits>;
+
+    auto proj_weight = [](Tangent_space const &ts) {
+        using Mesh_smoothing_3::PROJECTION_WEIGHT_MODE;
+        switch (ts.projection_mode())
+        {
+        case PROJECTION_WEIGHT_MODE::DEFAULT:
+            return 1.;
+            break;
+        case PROJECTION_WEIGHT_MODE::STRONG:
+            return 10.;
+            break;
+        case PROJECTION_WEIGHT_MODE::SOFT:
+            return 1e-3;
+            break;
+        case PROJECTION_WEIGHT_MODE::NONE:
+            return 0.;
+            break;
+        case PROJECTION_WEIGHT_MODE::CUSTOM:
+            return ts.custom_weight();
+            break;
+        default:
+            return 1.;
+            break;
+        }
+    };
 
     // converting Projector to Mesh_smoothing_3 queries
     smoother.set_boundary_query([&](std::vector<Point_3> const& pts, std::pair<typename C3t3::Surface_patch_index, typename C3t3::Facet> patch_face) {
-        Mesh_smoothing_3::Projection_data<Point_3, Vector_3> proj = projector.patch_projection_plane(patch_face, pts);
-        if (!proj.activated) proj.weight = 0.;
-        return std::make_tuple(proj.origin, proj.vector, proj.weight);
+        Tangent_space proj = cts.patch_projection_plane(patch_face, pts);
+        return std::make_tuple(proj.origin(), proj.vector(), proj_weight(proj));
     });
 
     smoother.set_curves_query([&](std::array<Point_3, 2> const& pts, std::pair<typename C3t3::Curve_index, typename C3t3::Edge> curve_edge) {
-        Mesh_smoothing_3::Projection_data<Point_3, Vector_3> proj = projector.curve_projection_tangent(curve_edge, pts);
-        if (!proj.activated) proj.weight = 0.;
-        return std::make_tuple(proj.origin, proj.vector, proj.weight);
+        Tangent_space proj = cts.curve_projection_tangent(curve_edge, pts);
+        return std::make_tuple(proj.origin(), proj.vector(), proj_weight(proj));
     });
 
     smoother.set_verbose(verbose);
