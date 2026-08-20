@@ -11,7 +11,7 @@ namespace Arrangement_on_curve_1 {
  *         managing container allocations, structural adjacency records, and property mappings.
  * \tparam BinarySearch when true (requires `TopologyTraits::UseVector = true`), the `locate()` function
  *         uses a binary search over the sorted vertex vector, reducing locate from \f$O(n)\f$ to \f$O(\log n)\f$.
- *         However, insertion and removal of vertices is limited to rightmost vertices only.
+ *         However, insertion and removal of vertices are limited to rightmost vertices only.
  *
  * An object, the type of which is an instance of the class template
  * `Arrangement_on_curve_1<GeometryTraits_1,TopologyTraits,BinarySearch>`,

@@ -4,15 +4,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef CGAL_AOC_TRAITS_1_H
-#define CGAL_AOC_TRAITS_1_H
-
-#include <CGAL/enum.h>
-
-namespace CGAL {
-
-/*! \ingroup PkgArrangementOnCurve1Concepts
+/*! \ingroup PkgArrangementOnCurve1ConceptsTraits
  * \cgalConcept
+ *
+ * The concept `AocTraits_1` defines the minimal set of geometric
+ * predicates needed for the construction and maintenance of objects of the
+ * class `Arrangement_on_curve_1`, as well as performing simple queries (such as
+ * point-location queries) on such arrangements.
+ *
+ * \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
  *
  * \cgalHasModelsBegin
  * \cgalHasModels{CGAL::Arrangement_on_curve_1::Ft_traits_1<Kernel>}
@@ -24,18 +24,26 @@ namespace CGAL {
  */
 class AocTraits_1 {
 public:
-  /// A point guaranteed to lie on the master curve
+  /// \name Types
+  /// @{
+
+  /// models the concept AocTraits::Point_1.
   typedef unspecified_type Point_1;
 
-  /// Functor evaluating relative positions along the curve parameterization
-  class Compare_x_1 {
-  public:
-    Comparison_result operator()(const Point_1& p1, const Point_1& p2) const;
-  };
+  /// @}
 
-  Compare_position_1 compare_x_1_object() const;
+  /// \name Functor Types
+  /// @{
+
+  /// models the concept AocTraits::CompareX_1.
+  typedef unspecified_type Compare_x_1;
+
+  /// @}
+
+  /// \name Accessing Functor Objects
+  /// @{
+
+  Compare_x_1 compare_x_1_object() const;
+
+  /// @}
 };
-
-} // namespace CGAL
-
-#endif

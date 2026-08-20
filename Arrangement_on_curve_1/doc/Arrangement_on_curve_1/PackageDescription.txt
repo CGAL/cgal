@@ -7,6 +7,15 @@
 /// The namespace containing concepts specific to 1D Arrangements.
 namespace AocTraits {}
 
+/// \defgroup PkgArrangementOnCurve1ConceptsGeometricObjects Geometric Object Concepts
+/// \ingroup PkgArrangementOnCurve1Concepts
+
+/// \defgroup PkgArrangementOnCurve1ConceptsFunctionObjects Function Object Concepts
+/// \ingroup PkgArrangementOnCurve1Concepts
+
+/// \defgroup PkgArrangementOnCurve1ConceptsTraits Geometry Traits Concepts
+/// \ingroup PkgArrangementOnCurve1Concepts
+
 /// \defgroup PkgArrangementOnCurve1IO I/O
 /// \ingroup PkgArrangementOnCurve1Ref
 
@@ -17,6 +26,9 @@ namespace AocTraits {}
 /// \ingroup PkgArrangementOnCurve1IO
 
 /// \defgroup PkgArrangementOnCurve1Funcs Free Functions
+/// \ingroup PkgArrangementOnCurve1Ref
+
+/// \defgroup PkgArrangementOnCurve1TraitsClasses Geometry Traits Classes
 /// \ingroup PkgArrangementOnCurve1Ref
 
 /*!
@@ -52,9 +64,11 @@ The class `Arrangement_on_curve_1<Traits>` encapsulates a data structure that ma
 
 \cgalCRPSection{Geometric Object Concepts}
 
+- `AocTraits::Point_1`
+
 \cgalCRPSection{Function Object Concepts}
 
-- `AosTraits::CompareX_1`
+- `AocTraits::CompareX_1`
 
 \cgalCRPSection{Classes}
 

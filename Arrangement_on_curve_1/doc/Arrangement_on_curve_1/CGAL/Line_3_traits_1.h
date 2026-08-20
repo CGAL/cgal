@@ -5,8 +5,7 @@
 namespace CGAL {
 namespace Arrangement_on_curve_1 {
 
-/**
- * \ingroup PkgArrangementOnCurve1Ref
+/** \ingroup PkgArrangementOnCurve1TraitsClasses
  *
  * \brief `Line_3_traits_1` is a geometric traits model of `AocTraits_1` designed for
  * subdivisions along an infinite supporting line embedded in 3D Euclidean space.

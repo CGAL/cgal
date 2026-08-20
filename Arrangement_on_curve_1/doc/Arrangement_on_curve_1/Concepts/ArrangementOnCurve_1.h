@@ -2,9 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-namespace CGAL {
-namespace Arrangement_on_curve_1 {
-
 /*! \ingroup PkgArrangementOnCurve1Concepts
  * \cgalConcept
  *
@@ -91,21 +88,53 @@ public:
    */
   auto edge_data_map() const;
 
-  /*! obtains a handle to the leftmost unbounded edge spanning \f$(-\infty, v_{first})\f$.
+  /*! obtains the descriptor of the leftmost unbounded edge spanning \f$(-\infty, v_{first})\f$.
    */
   Edge_descriptor unbounded_left_edge();
 
-  /*! obtains a constant handle to the leftmost unbounded edge.
+  /*! obtains the constant descriptor of the leftmost unbounded edge.
    */
   Edge_const_descriptor unbounded_left_edge() const;
 
-  /*! obtains a handle to the rightmost unbounded edge spanning \f$(v_{last}, +\infty)\f$.
+  /*! obtains the descriptor of the rightmost unbounded edge spanning \f$(v_{last}, +\infty)\f$.
    */
   Edge_descriptor unbounded_right_edge();
 
-  /*! obtains a constant handle to the rightmost unbounded edge.
+  /*! obtains the constant descriptor of the rightmost unbounded edge.
    */
   Edge_const_descriptor unbounded_right_edge() const;
+
+  /*! obtains the descriptor of the left vertex of an edge.
+   * \param e the edge.
+   */
+  Vertex_const_descriptor left_vertex(Edge_const_descriptor e) const { return m_topology_traits.left_vertex(e); }
+
+  /*! obtains the descriptor of the vertex of an edge.
+   * \param e the edge.
+   */
+  Vertex_const_descriptor right_vertex(Edge_const_descriptor e) const { return m_topology_traits.right_vertex(e); }
+
+  /*! obtains the descriptor of left edge of a vertex.
+   * \param v the vertex.
+   * \pre `has_left_vertex(e)` evaluates to `true`.
+   */
+  Edge_const_descriptor left_edge(Vertex_const_descriptor v) const{ return m_topology_traits.left_edge(v); }
+
+  /*! obtains the descriptor of right edge of a vertex.
+   * \param v the vertex.
+   * \pre `has_right_vertex(e)` evaluates to `true`.
+   */
+  Edge_const_descriptor right_edge(Vertex_const_descriptor v) const { return m_topology_traits.right_edge(v); }
+
+  /*! determines whether an edge has a left vertex.
+   * \param e the edge.
+   */
+  bool has_left_vertex(Edge_const_descriptor e) const { return m_topology_traits.has_left_vertex(e); }
+
+  /*! determines whether an edge has a right vertex.
+   * \param e the edge.
+   */
+  bool has_right_vertex(Edge_const_descriptor e) const { return m_topology_traits.has_right_vertex(e); }
 
   /// @}
 
@@ -117,8 +146,23 @@ public:
    */
   void reset_shared_geometry_traits(Shared_geometry_traits new_shared_traits_traits);
 
+  /* inserts the very first point into an empty arrangement.
+   * The single unbounded edge is split into (\f$(-\infty\f$, `v`) and (`v`, \f$(+\infty\f$).
+   */
+  Vertex_descriptor insert_empty(const Point_1& p);
+
+   /*! inserts a new point `p` strictly to the left of an existing vertex `v`.
+   */
+  Vertex_descriptor insert_before(Vertex_descriptor v, const Point_1& p);
+
+  /*! inserts a new point `p` strictly to the right of an existing vertex `v`.
+   */
+  Vertex_descriptor insert_after(Vertex_descriptor v, const Point_1& p);
+
+  /*! splits the edge `e` by inserting a new point `p` inside it.
+   * `e` becomes the left sub-edge; a new edge becomes the right sub-edge.
+   */
+  Vertex_descriptor split_edge(Edge_descriptor e, const Point_1& p);
+
   /// @}
 };
-
-} // namespace Arrangement_on_curve_1
-} // namespace CGAL

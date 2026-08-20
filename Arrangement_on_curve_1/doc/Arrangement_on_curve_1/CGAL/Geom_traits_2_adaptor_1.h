@@ -7,7 +7,7 @@
 namespace CGAL {
 namespace Arrangement_on_curve_1 {
 
-/*! \ingroup PkgArrangementOnCurve1Ref
+/*! \ingroup PkgArrangementOnCurve1TraitsClasses
  *
  * adapts any 2D geometry traits class of the 2D Arrangements package (i.e., any
  * model of the `ArrangementTraits_2` concept, or a refinement thereof) into a 1D

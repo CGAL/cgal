@@ -5,8 +5,7 @@
 namespace CGAL {
 namespace Arrangement_on_curve_1 {
 
-/**
- * \ingroup PkgArrangementOnCurve1Ref
+/** \ingroup PkgArrangementOnCurve1TraitsClasses
  *
  * \brief `Ft_traits_1` is a minimal, scalar model of the `AocTraits_1` concept.
  *

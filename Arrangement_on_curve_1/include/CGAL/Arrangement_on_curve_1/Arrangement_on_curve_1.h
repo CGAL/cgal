@@ -209,8 +209,9 @@ public:
   // HIGH-LEVEL TOPOLOGICAL OPERATIONS
   // ============================================================================
 
-  // Insert the very first vertex into an empty arrangement.
-  // The single unbounded edge is split into: (-inf, v) and (v, +inf).
+  /* inserts the very first point into an empty arrangement.
+   * The single unbounded edge is split into (\f$(-\infty\f$, `v`) and (`v`, \f$(+\infty\f$).
+   */
   Vertex_descriptor insert_empty(const Point_1& p) {
     auto& topo = m_topology_traits;
 
@@ -239,7 +240,7 @@ public:
     return v;
   }
 
-  /*! inserts a new vertex p strictly to the left of an existing vertex.
+  /*! inserts a new point `p` strictly to the left of an existing vertex `v`.
    */
   Vertex_descriptor insert_before(Vertex_descriptor v, const Point_1& p) {
     if constexpr (binary_search_enabled) {
@@ -269,7 +270,7 @@ public:
     return v_new;
   }
 
-  /*! inserts a new vertex p strictly to the right of an existing last vertex v.
+  /*! inserts a new point `p` strictly to the right of an existing vertex `v`.
    */
   Vertex_descriptor insert_after(Vertex_descriptor v, const Point_1& p) {
     if constexpr (binary_search_enabled) {
@@ -300,8 +301,8 @@ public:
     return v_new;
   }
 
-  /*! splits the edge e by inserting a new vertex p inside it.
-   * e becomes the left sub-edge; a new edge becomes the right sub-edge.
+  /*! splits the edge `e` by inserting a new point `p` inside it.
+   * `e` becomes the left sub-edge; a new edge becomes the right sub-edge.
    */
   Vertex_descriptor split_edge(Edge_descriptor e, const Point_1& p) {
     if constexpr (binary_search_enabled) {
@@ -338,8 +339,9 @@ public:
     return v_new;
   }
 
-  // Remove vertex v from the arrangement.
-  // Merge its two adjacent edges into one, keeping the left edge and removing the right.
+  /*! removes a vertex from the arrangement.
+   * It merges its two adjacent edges into one, keeping the left edge and removing the right.
+   */
   void remove(Vertex_descriptor v) {
     Edge_descriptor e_left = m_topology_traits.left_edge(v);
     Edge_descriptor e_right = m_topology_traits.right_edge(v);
