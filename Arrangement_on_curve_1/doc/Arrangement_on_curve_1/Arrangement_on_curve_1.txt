@@ -149,7 +149,7 @@ is set to `true`
 <!-- ----------------------------------------------------------------------- -->
 
 A vertex `v` can be removed from the arrangement using the call
-\link CGAL::Arrangement_on_curve_1::Arrangement_on_curve_1::remove() `arr.remove(v)`\endlink.
+\link ArrangementOnCurve_1::remove() `arr.remove(v)`\endlink.
 
 Removing a vertex removes its point from the track and merges its left
 and right flanking edge back into a single unified edge, preserving

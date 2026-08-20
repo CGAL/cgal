@@ -146,12 +146,28 @@ public:
    */
   void reset_shared_geometry_traits(Shared_geometry_traits new_shared_traits_traits);
 
+  /*! creates a new vertex, enforcing the rightmost ordering invariant when BinarySearch is active.
+   */
+  Vertex_descriptor create_vertex(const Point_1& p);
+
+  /*! creates an new edge.
+   */
+  Edge_descriptor create_edge();
+
+  /*! destroys a given vertex.
+   */
+  void destroy_vertex(Vertex_descriptor v);
+
+  /*! destroys a given edge.
+   */
+  void destroy_edge(Edge_descriptor e);
+
   /* inserts the very first point into an empty arrangement.
    * The single unbounded edge is split into (\f$(-\infty\f$, `v`) and (`v`, \f$(+\infty\f$).
    */
   Vertex_descriptor insert_empty(const Point_1& p);
 
-   /*! inserts a new point `p` strictly to the left of an existing vertex `v`.
+  /*! inserts a new point `p` strictly to the left of an existing vertex `v`.
    */
   Vertex_descriptor insert_before(Vertex_descriptor v, const Point_1& p);
 
@@ -163,6 +179,11 @@ public:
    * `e` becomes the left sub-edge; a new edge becomes the right sub-edge.
    */
   Vertex_descriptor split_edge(Edge_descriptor e, const Point_1& p);
+
+  /*! removes an active vertex node from the 1D track, cleanly merging its left
+   * and right segments into an individual unified edge.
+   */
+  void remove(Vertex_descriptor v);
 
   /// @}
 };

@@ -78,50 +78,6 @@ public:
   Topology_traits& topology_traits();
 
   /// @}
-
-  /// \name Modification Modifiers
-  /// @{
-
-  /*! creates a new vertex, enforcing the rightmost ordering invariant when BinarySearch is active.
-   */
-  Vertex_descriptor create_vertex(const Point_1& p);
-
-  /*! creates an new edge.
-   */
-  Edge_descriptor create_edge();
-
-  /*! destroys a given vertex.
-   */
-  void destroy_vertex(Vertex_descriptor v);
-
-  /*! destroys a given edge.
-   */
-  void destroy_edge(Edge_descriptor e);
-
-  /*! inserts the first structural node into an empty subdivision context;
-   * splits the singular unbounded sequence edge into an absolute left-infinity
-   * edge and an absolute right-infinity edge.
-   */
-  Vertex_descriptor insert_empty(const Point_1& p);
-
-  /*! inserts a point strictly to the left of the leftmost vertex.
-   */
-  Vertex_descriptor insert_before(Vertex_descriptor v, const Point_1& p);
-
-  /*! inserts a point strictly to the right of the rightmost vertex.
-   */
-  Vertex_descriptor insert_after(Vertex_descriptor v, const Point_1& p);
-
-  /*! splits an existing edge interval at the designated coordinate parameter position.
-   */
-  Vertex_descriptor split_edge(Edge_descriptor e, const Point_1& p);
-
-  /*! removes an active vertex node from the 1D track, cleanly merging its left
-   * and right segments into an individual unified edge.
-   */
-  void remove(Vertex_descriptor v);
-
-  /// @}
 };
 
 } // end namespace Arrangement_on_curve_1
