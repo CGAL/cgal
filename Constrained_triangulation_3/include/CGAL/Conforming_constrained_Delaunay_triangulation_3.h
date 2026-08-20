@@ -1640,10 +1640,6 @@ protected:
   using Constraint_hierarchy = typename Conforming_Dt::Constraint_hierarchy;
   using Subconstraint = typename Constraint_hierarchy::Subconstraint;
 
-  using Conforming_Dt::with_offset;
-  using Conforming_Dt::with_point;
-  using Conforming_Dt::with_point_and_info;
-
 public:
   using Constrained_polyline_id = typename Constraint_hierarchy::Constraint_id;
 

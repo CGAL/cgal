@@ -1241,10 +1241,25 @@ struct With_offset_tag {
                    // from 0 to number_of_vertices-1.
 };
 
+template <typename T>
+inline auto with_offset(T&& v) {
+  return IO::oformat(std::forward<T>(v), With_offset_tag{});
+}
+
 struct With_point_tag : public With_offset_tag {
 };
 
+template <typename T>
+inline auto with_point(T&& v) {
+  return IO::oformat(std::forward<T>(v), With_point_tag{});
+}
+
 struct With_point_and_info_tag : public With_point_tag {};
+
+template <typename T>
+inline auto with_point_and_info(T&& v) {
+  return IO::oformat(std::forward<T>(v), With_point_and_info_tag{});
+}
 
 template <class DSC, bool Const>
 struct Output_rep<CGAL::internal::CC_iterator<DSC, Const>, With_offset_tag>

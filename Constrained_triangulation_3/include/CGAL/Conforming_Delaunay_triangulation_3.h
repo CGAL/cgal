@@ -330,21 +330,6 @@ public:
   inline static With_point_tag with_point_tag{ {-1} };
   inline static With_point_and_info_tag with_point_and_info_tag{ { {-1} } };
 
-  template <typename T>
-  static auto with_offset(T&& arg) {
-    return IO::oformat(std::forward<T>(arg), with_offset_tag);
-  };
-
-  template <typename T>
-  static auto with_point(T&& arg) {
-    return IO::oformat(std::forward<T>(arg), with_point_tag);
-  };
-
-  template <typename T>
-  static auto with_point_and_info(T&& arg) {
-    return IO::oformat(std::forward<T>(arg), with_point_and_info_tag);
-  };
-
   Conforming_Delaunay_triangulation_3(const Geom_traits& gt = Geom_traits())
     : T_3(gt)
   {
