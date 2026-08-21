@@ -53,6 +53,16 @@ void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::set_predicates_m
     _predicates_mode = mode;
 }
 
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::set_maximum_running_time(double time_limit) {
+    _time_limit = time_limit;
+}
+
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::set_maximum_number_of_metric_evaluations(int max_nb_metric_evaluations) {
+    _max_nb_metric_evaluations = max_nb_metric_evaluations;
+}
+
 
 template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
 void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::set_minimum_valid_edge_size(double val) {
@@ -804,8 +814,24 @@ void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::initialise_smoot
     smoother.min_valid_edge_size = _min_valid_edge_size / _scale;
     smoother.boundary_weight = _boundary_weight;
     smoother.fine_time_logging = _verbose && _tetrahedra.size() > 15'000'000; // todo: add a number of core specific threshold here
+    smoother.time_limit = _time_limit;
+    smoother.max_nb_metric_evaluations = _max_nb_metric_evaluations;
+
+    smoother.smoother_status = &_smoothing_status;
 }
 
+namespace internal {
+    std::pair<unsigned, unsigned> get_nb_inverted_cells(std::vector<double> const &determinants, std::vector<bool> const &exact_checks) {
+        unsigned nb_det_inverted = 0;
+        unsigned nb_exactly_inverted = 0;
+        for (unsigned i = 0; i < determinants.size(); ++i) {
+            if (determinants[i] <= 0) ++nb_det_inverted;
+            if (!exact_checks[i]) ++nb_exactly_inverted;
+        }
+
+        return {nb_det_inverted, nb_exactly_inverted};
+    }
+}
 
 template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
 std::pair<unsigned, unsigned> Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::get_nb_of_inverted_cells(Cell_descriptor_map<std::pair<double, bool>> *cell_determinants) {
@@ -817,45 +843,48 @@ std::pair<unsigned, unsigned> Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeN
     auto determinants = smoother.get_determinants();
     auto exact_checks = smoother.get_predicate_is_positive();
 
-    unsigned nb_det_inverted = 0;
-    unsigned nb_exactly_inverted = 0;
-    for (unsigned i = 0; i < determinants.size(); ++i) {
-        if (determinants[i] <= 0) ++nb_det_inverted;
-        if (!exact_checks[i]) ++nb_exactly_inverted;
-    }
-
     if (cell_determinants != nullptr) {
         for (auto [cell_descriptor, compressed_id] : _cell_original_to_compressed) {
             (*cell_determinants)[cell_descriptor] = {determinants[compressed_id], exact_checks[compressed_id]};
         }
     }
 
-    return {nb_det_inverted, nb_exactly_inverted};
+    return get_nb_inverted_cells(determinants, exact_checks);
 }
 
 template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-bool Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::run() {
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::set_input_smoothing_status(Smoothing_status const &status) {
+    _smoothing_status = status;
+}
+
+
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
+Smoothing_status Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::run() {
+    if (!_smoothing_status.in_progress()) _smoothing_status = Smoothing_status();
+    
     check_refs();
     create_compress_sorted_data();
     rescale_geometry();
     Tetrahedral_mesh_smoother smoother(_compressed_coords, _compressed_locks, _tetrahedra, _tetrahedron_refs, _vert2tet_corner);
 
+    auto [nb_det_inverted, nb_exactly_inverted] = internal::get_nb_inverted_cells(smoother.get_determinants(), smoother.get_predicate_is_positive());
+    _smoothing_status.nb_initial_invalid_elements = _predicates_mode > Parameters::NO_CHECK ? nb_exactly_inverted : nb_det_inverted;
+
     initialise_smoother(smoother);
-    bool result = false;
+    _smoothing_status.add_time(true);
     switch (_optimization_mode)
     {
     case Parameters::CONFORMAL:
-        result = smoother.run_untangling(_max_number_of_iteration);
+        smoother.run_untangling(_max_number_of_iteration);
         break;
     case Parameters::MIXED_WITH_SIZE:
         assert(false /*Not implemented yet*/);
         break;
     case Parameters::LAPLACIAN:
-        result = true;
         smoother.run_laplacian_gradient_descent(_max_number_of_iteration);
         break;
     case Parameters::MIN_MAXING_CONFORMAL:
-        result = smoother.run_quality_maximization(_max_number_of_iteration);
+        smoother.run_quality_maximization(_max_number_of_iteration);
         break;
 
     default:
@@ -866,7 +895,12 @@ bool Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::run() {
     update_mesh_coordinates();
     _nb_lbfgs_iterations = smoother.number_of_lbfgs_iter;
     _nb_predicates_invalid_steps = smoother.get_number_of_invalid_steps_with_predicates();
-    return result;
+    
+    std::tie(nb_det_inverted, nb_exactly_inverted) = internal::get_nb_inverted_cells(smoother.get_determinants(), smoother.get_predicate_is_positive());
+    _smoothing_status.nb_invalid_elements = _predicates_mode > Parameters::NO_CHECK ? nb_exactly_inverted : nb_det_inverted;
+    _smoothing_status.add_time(true);
+    _smoothing_status.conclude();
+    return _smoothing_status;
 }
 
 } } // end of CGAL::Mesh_smoothing_3 namespace

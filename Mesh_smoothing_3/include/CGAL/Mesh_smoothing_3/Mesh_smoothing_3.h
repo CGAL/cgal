@@ -16,6 +16,7 @@
 #include <CGAL/license/Mesh_smoothing_3.h>
 
 #include <CGAL/Mesh_smoothing_3/mesh_representations.h>
+#include <CGAL/Mesh_smoothing_3/Smoothing_status.h>
 #include <CGAL/Mesh_smoothing_3/internal/Tetrahedral_mesh_smoother.h>
 
 #include <Eigen/Eigen>
@@ -23,12 +24,6 @@
 #include <cassert>
 #include <unordered_map>
 #include <functional>
-
-
-/*
-TODO from the PR:
- - use color text from cgal
-*/
 
 
 namespace CGAL {
@@ -51,6 +46,7 @@ namespace Parameters {
 }
 
 /*!
+* WHILE DOCUMENTED, IT IS NOT CURRENTLY INTEGRATED IN CGAL OFFICIAL API
 * \ingroup pkgMeshSmoothing3Classes
 *
 * \brief smooth a tetrahedral mesh with optional constraints on the boundary and along a curve network
@@ -358,17 +354,32 @@ public:
     */
     void set_boundary_weight(double weight); // large values can lead to convergence issues
 
-
-
     /*!
         Set boundary with pre-set recommended parameters.
     */
     void set_boundary_weight(Parameters::BOUNDARY_WEIGHTING_MODE mode);
 
+
+    // used to share timings with wrappers
+    void set_input_smoothing_status(Smoothing_status const &status);
+
+    /*!
+        Set the maximum running time for the smoothing process in seconds.
+        Pre-processing will not be stopped and negative times will be ignored.
+        Default is -1, which means no limit.
+    */
+    void set_maximum_running_time(double time_limit);
+
+    /*!
+        Set the maximum number of metric evaluations for the smoothing process.
+        Default is -1, which means no limit.
+    */
+    void set_maximum_number_of_metric_evaluations(int max_nb_metric_evaluations);
+
     /*!
         Start the optimization procedure
     */
-    bool run();
+    Smoothing_status run();
 
 public: // for advanced usage. Do not touch if you do not know what you are doing.
 
@@ -432,12 +443,15 @@ private:
     BoundaryMesh const &_boundary;
     EdgeNetwork const &_edge_network;
     std::vector<std::tuple<Vertex_descriptor, Point_3, double>> _vertex_target_positions;
+    Smoothing_status _smoothing_status;
 
     // options
     bool _verbose = false;
     bool _lock_boundary = true;
     Parameters::OPTIMIZATION_MODE _optimization_mode = Parameters::CONFORMAL;
     Parameters::PREDICATES_MODE _predicates_mode = Parameters::NO_CHECK;
+    double _time_limit = -1.;
+    int _max_nb_metric_evaluations = -1;
 
     unsigned _max_number_of_iteration = 1000;
     double _min_valid_edge_size = 1e-6;
