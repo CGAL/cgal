@@ -170,6 +170,157 @@ find_crossing_edge(PolygonMesh& pm,
 
 /**
   * Given a convex mesh, a plane and an halfedge crossing the plane from positive side, refine the mesh with the plane
+  * Go in the opposite direction, use only for input with boundaries
+  */
+template <class PolygonMesh, class Plane_3, class NamedParameters =  parameters::Default_named_parameters>
+std::vector<typename boost::graph_traits<PolygonMesh>::halfedge_descriptor>
+refine_convex_with_plane_using_opposite_direction(PolygonMesh& pm,
+                                                  const Plane_3& plane,
+                                                  typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
+                                                  const NamedParameters& np = parameters::default_values())
+{
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+  using parameters::get_parameter_reference;
+
+  // graph typedefs
+  using BGT = boost::graph_traits<PolygonMesh>;
+  using face_descriptor = typename BGT::face_descriptor;
+  using halfedge_descriptor = typename BGT::halfedge_descriptor;
+  using vertex_descriptor = typename BGT::vertex_descriptor;
+
+  // np typedefs
+  using Default_visitor = Corefinement::Default_visitor<PolygonMesh>;
+  using Visitor_ref = typename internal_np::Lookup_named_param_def<internal_np::visitor_t, NamedParameters, Default_visitor>::reference;
+  using GT = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
+  GT traits = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
+
+  using Default_f2f_map = boost::associative_property_map<std::map<face_descriptor, face_descriptor>>;
+  constexpr bool is_f2f_map = !parameters::is_default_parameter<NamedParameters, internal_np::face_to_face_map_t>::value;
+  auto f2f = choose_parameter<Default_f2f_map>(get_parameter(np, internal_np::face_to_face_map));
+
+  Default_visitor default_visitor;
+  Visitor_ref visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
+  // constexpr bool has_visitor = !std::is_same_v<Default_visitor, std::remove_cv_t<std::remove_reference_t<Visitor_ref>>>;
+
+  auto vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                              get_property_map(vertex_point, pm));
+
+  // config flags
+  bool triangulate = !choose_parameter(get_parameter(np, internal_np::do_not_triangulate_faces), true);
+
+  auto oriented_side = traits.oriented_side_3_object();
+  auto intersection_point = traits.construct_plane_line_intersection_point_3_object();
+
+  // ____ Cut the convex along the plane by marching along crossing edges starting from the previous edge _____
+  std::vector<halfedge_descriptor> boundaries;
+
+  if(oriented_side(plane, get(vpm, target(h,pm)))!=ON_ORIENTED_BOUNDARY)
+  {
+    // split the first edge
+    auto pts = make_sorted_pair(get(vpm, source(h, pm)), get(vpm, target(h, pm)));
+    typename GT::Point_3 ip = intersection_point(plane, pts.first, pts.second);
+    visitor.before_edge_split(h, pm);
+    h = CGAL::Euler::split_edge(h, pm);
+    put(vpm, target(h, pm), ip);
+    visitor.new_vertex_added(std::numeric_limits<std::size_t>::max(), target(h,pm), pm);
+    visitor.edge_split(h, pm);
+    visitor.after_edge_split();
+  }
+
+  vertex_descriptor v_start = target(h, pm);
+  halfedge_descriptor h_start=h;
+  do{
+    halfedge_descriptor h_previous = h;
+    CGAL_assertion(oriented_side(plane, get(vpm, source(h,pm)))==ON_NEGATIVE_SIDE);
+    CGAL_assertion(oriented_side(plane, get(vpm, target(h,pm)))==ON_ORIENTED_BOUNDARY);
+
+    h = next(h, pm);
+    Oriented_side side_trg = oriented_side(plane, get(vpm, target(h,pm)));
+
+    if(side_trg != ON_POSITIVE_SIDE){
+      // The face does not cross the plane, we look for a face incident to the same vertex than h that crosses the plane.
+      while(side_trg == ON_ORIENTED_BOUNDARY){
+        // The edge is along the plane, add it to boundaries
+        boundaries.emplace_back(h);
+        set_halfedge(target(h, pm), h, pm);
+        h = next(h, pm);
+        side_trg=oriented_side(plane, get(vpm, target(h,pm)));
+      }
+      // continue on next face
+      h = opposite(h, pm);
+
+      // if h is a border, end the function
+      if(is_border(h, pm))
+        return boundaries;
+      continue;
+    }
+
+    // Search a crossing edge
+    h = next(h, pm);
+    side_trg=oriented_side(plane, get(vpm, target(h,pm)));
+    while(side_trg == ON_POSITIVE_SIDE){
+      h = next(h,pm);
+      side_trg=oriented_side(plane, get(vpm, target(h,pm)));
+    }
+
+    if(side_trg != ON_ORIENTED_BOUNDARY){
+      // Split the edge
+      auto pts = make_sorted_pair(get(vpm, source(h,pm)), get(vpm, target(h,pm)));
+      typename GT::Point_3 ip = intersection_point(plane, pts.first, pts.second);
+      visitor.before_edge_split(h, pm);
+      h = CGAL::Euler::split_edge(h, pm);
+      put(vpm, target(h, pm), ip);
+      visitor.new_vertex_added(std::numeric_limits<std::size_t>::max(), target(h,pm), pm);
+      visitor.edge_split(h, pm);
+      visitor.after_edge_split();
+    }
+
+    // Split the face
+    visitor.before_subface_created(pm);
+    visitor.before_subface_creations(face(h, pm), pm);
+    halfedge_descriptor sh = CGAL::Euler::split_face(h_previous, h, pm);
+    if constexpr(is_f2f_map)
+      put(f2f, face(opposite(sh, pm), pm), get(f2f, face(sh, pm)));
+
+    visitor.after_subface_created(face(h, pm), pm);
+    visitor.after_subface_creations(pm);
+    boundaries.emplace_back(sh);
+    set_halfedge(target(sh, pm), sh, pm);
+    visitor.add_retriangulation_edge(sh, pm);
+
+    // The input is assumed to be triangulated
+    if (triangulate){
+      halfedge_descriptor sh_opp = opposite(sh, pm);
+      if(!is_triangle(sh_opp, pm)){
+        visitor.before_subface_created(pm);
+        visitor.before_subface_creations(face(sh_opp, pm), pm);
+        halfedge_descriptor newh = CGAL::Euler::split_face(sh_opp, next(next(sh_opp, pm), pm), pm);
+        if constexpr(is_f2f_map)
+          put(f2f, face(opposite(newh, pm), pm), get(f2f, face(newh, pm)));
+        visitor.after_subface_created(face(opposite(newh, pm), pm), pm);
+        visitor.after_subface_creations(pm);
+        visitor.add_retriangulation_edge(newh, pm);
+      }
+    }
+
+    CGAL_assertion(target(sh, pm) == target(h, pm));
+    h = opposite(next(sh,pm), pm);
+
+    // if h is a border, end the function
+    if(is_border(h, pm))
+      return boundaries;
+
+    // During the loop, if a mesh vertex lies on the plane, we look for a face incident to that vertex that crosses the plane.
+    // The second part of the while-condition ensures we don't exit prematurely
+  } while(target(h, pm)!=v_start || (boundaries.empty() && h!=h_start));
+
+  CGAL_assertion(is_valid_polygon_mesh(pm));
+  return boundaries;
+}
+
+/**
+  * Given a convex mesh, a plane and an halfedge crossing the plane from positive side, refine the mesh with the plane
   */
 template <class PolygonMesh, class Plane_3, class NamedParameters =  parameters::Default_named_parameters>
 std::vector<typename boost::graph_traits<PolygonMesh>::halfedge_descriptor>
@@ -189,7 +340,6 @@ refine_convex_with_plane(PolygonMesh& pm,
   using vertex_descriptor = typename BGT::vertex_descriptor;
 
   // np typedefs
-  // using Default_ecm = Static_boolean_property_map<edge_descriptor, false>;
   using Default_visitor = Corefinement::Default_visitor<PolygonMesh>;
   using Visitor_ref = typename internal_np::Lookup_named_param_def<internal_np::visitor_t, NamedParameters, Default_visitor>::reference;
   using GT = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
@@ -249,6 +399,14 @@ refine_convex_with_plane(PolygonMesh& pm,
       }
       // continue on next face
       h = opposite(h, pm);
+
+      // Specific case with boundaries, we explore in the opposite direction
+      if(is_border(h, pm)){
+        auto other_direction_boundaries = refine_convex_with_plane_using_opposite_direction(pm, plane, opposite(h_start, pm), np);
+        std::reverse(other_direction_boundaries.begin(), other_direction_boundaries.end());
+        other_direction_boundaries.insert(other_direction_boundaries.begin(), boundaries.begin(), boundaries.end());
+        return boundaries;
+      }
       continue;
     }
 
@@ -303,6 +461,14 @@ refine_convex_with_plane(PolygonMesh& pm,
     CGAL_assertion(target(sh, pm) == target(h, pm));
     h = opposite(next(sh,pm), pm);
 
+    // Specific case with boundaries, we explore in the opposite direction
+    if(is_border(h, pm)){
+      auto other_direction_boundaries = refine_convex_with_plane_using_opposite_direction(pm, plane, opposite(h_start, pm), np);
+      std::reverse(other_direction_boundaries.begin(), other_direction_boundaries.end());
+      other_direction_boundaries.insert(other_direction_boundaries.begin(), boundaries.begin(), boundaries.end());
+      return boundaries;
+    }
+
     // During the loop, if a mesh vertex lies on the plane, we look for a face incident to that vertex that crosses the plane.
     // The second part of the while-condition ensures we don't exit prematurely
   } while(target(h, pm)!=v_start || (boundaries.empty() && h!=h_start));
@@ -335,7 +501,6 @@ remove_bounded_region_and_fill(PolygonMesh& pm,
   using vertex_descriptor = typename BGT::vertex_descriptor;
 
   // np typedefs
-  using Default_ecm = Static_boolean_property_map<edge_descriptor, false>;
   using Default_visitor = Corefinement::Default_visitor<PolygonMesh>;
   using Visitor_ref = typename internal_np::Lookup_named_param_def<internal_np::visitor_t, NamedParameters, Default_visitor>::reference;
   using GT = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
@@ -468,7 +633,7 @@ remove_bounded_region_and_fill(PolygonMesh& pm,
     if(triangulate){
       if constexpr(has_visitor){
         Wrap_visitor_for_triangulation wrap_visitor(pm, visitor);
-        triangulate_face(f, pm, parameters::vertex_point_map(vpm).visitor(visitor));
+        triangulate_face(f, pm, parameters::vertex_point_map(vpm).visitor(wrap_visitor));
       } else {
         triangulate_face(f, pm, parameters::vertex_point_map(vpm));
       }
@@ -523,13 +688,13 @@ clip_convex(PolygonMesh& pm,
 
   Default_visitor default_visitor;
   Visitor_ref visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
-  // constexpr bool has_visitor = !std::is_same_v<Default_visitor, std::remove_cv_t<std::remove_reference_t<Visitor_ref>>>;
+  constexpr bool has_visitor = !std::is_same_v<Default_visitor, std::remove_cv_t<std::remove_reference_t<Visitor_ref>>>;
 
   auto vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                               get_property_map(vertex_point, pm));
 
   // config flags
-  // bool triangulate = !choose_parameter(get_parameter(np, internal_np::do_not_triangulate_faces), true);
+  bool triangulate = !choose_parameter(get_parameter(np, internal_np::do_not_triangulate_faces), true);
 
   auto oriented_side = traits.oriented_side_3_object();
   auto intersection_point = traits.construct_plane_line_intersection_point_3_object();
@@ -630,6 +795,14 @@ clip_convex(PolygonMesh& pm,
       set_next(src_split, split_edge, pm);
       set_next(opposite(split_edge, pm), opposite(src_split, pm), pm);
       set_halfedge(*faces(pm).begin(), split_edge, pm);
+      if(triangulate){
+        if constexpr(has_visitor){
+          Wrap_visitor_for_triangulation wrap_visitor(pm, visitor);
+          triangulate_face(face(split_edge, pm), pm, parameters::vertex_point_map(vpm).visitor(wrap_visitor));
+        } else {
+          triangulate_face(face(split_edge, pm), pm, parameters::vertex_point_map(vpm));
+        }
+      }
     }
 
     if(vertices(pm).size() < 3){
