@@ -55,7 +55,6 @@ namespace CGAL {
   template <typename AABBTraits>
   class AABB_tree
   {
-  private:
     // internal KD-tree used to accelerate the distance queries
     typedef AABB_search_tree<AABBTraits> Search_tree;
 
@@ -64,8 +63,10 @@ namespace CGAL {
 
     typedef internal::Primitive_helper<AABBTraits> Helper;
     typedef AABB_tree<AABBTraits> Self;
+    typedef AABB_node<AABBTraits> Node;
 
   public:
+
     typedef AABBTraits AABB_traits;
 
     /// \name Types
@@ -214,6 +215,55 @@ namespace CGAL {
 
     /// returns \c true, iff the tree contains no primitive.
     bool empty() const { return m_primitives.empty(); }
+
+
+private:
+
+  template<typename ConstPrimitiveIterator, typename ComputeNewBbox>
+  void
+  accomodate_update_of_primitives_impl(Node* node,
+                                       ConstPrimitiveIterator first,
+                                       ConstPrimitiveIterator beyond,
+                                       const std::size_t range,
+                                       const ComputeNewBbox& compute_new_bbox)
+  {
+    Bounding_box new_box = compute_new_bbox(first, beyond);
+    node->set_bbox(new_box);
+    switch(range)
+    {
+    case 2:
+      break;
+    case 3:
+      accomodate_update_of_primitives_impl(node->right_child(), first+1, beyond, 2, compute_new_bbox);
+      break;
+    default:
+      const std::size_t new_range = range/2;
+      accomodate_update_of_primitives_impl(node->left_child(), first, first + new_range, new_range, compute_new_bbox);
+      accomodate_update_of_primitives_impl(node->right_child(), first + new_range, beyond, range - new_range, compute_new_bbox);
+    }
+  }
+
+public:
+
+    /// updates the tree for an upcoming update of the primitives,
+    /// The tree is not changed, only the bounding boxes of the nodes are increased.
+    /// In case of large update of the primitives, the tree might endup being unbalanced.
+    template <class ComputeNewBbox>
+    void accomodate_update_of_primitives(const ComputeNewBbox& compute_new_bbox)
+    {
+      if (m_primitives.empty()) return;
+
+      accomodate_update_of_primitives_impl(root_node(),
+                                           m_primitives.begin(), m_primitives.end(),
+                                           m_primitives.size(),
+                                           compute_new_bbox);
+    }
+
+    void accomodate_update_of_primitives()
+    {
+      accomodate_update_of_primitives(m_traits.compute_bbox_object());
+    }
+
     ///@}
 
   private:
@@ -556,7 +606,6 @@ public:
     }
 
   private:
-    typedef AABB_node<AABBTraits> Node;
 
     /**
      * @brief Builds the tree by recursive expansion.
