@@ -136,7 +136,7 @@ enum class Projection_weight_mode
   CUSTOM   ///< Use the weight returned by `TangentSpace::custom_weight()`.
 };
 
-/* not documented but: 
+/* not documented but:
 * \cgalModels{TangentSpace}
 */
 template <typename GeomTraits>
