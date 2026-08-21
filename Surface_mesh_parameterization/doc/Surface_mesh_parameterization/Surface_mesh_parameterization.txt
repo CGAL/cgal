@@ -206,7 +206,7 @@ Different choices exist for such border parameterization methods, described in S
 `Surface_mesh_parameterization::Barycentric_mapping_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
 
 The Barycentric Mapping parameterization method has been introduced by
-Tutte \cgalCite{t-hdg-63}. In parameter space, each vertex is
+\cgalCite{t-hdg-63}. In parameter space, each vertex is
 placed at the barycenter of its neighbors to achieve the so-called
 convex combination condition. This algorithm amounts to solve one
 sparse linear system for each set of parameter coordinates, with a
@@ -231,7 +231,7 @@ Tutte Barycentric mapping parameterization (the blue line depicts the cut graph)
 `Surface_mesh_parameterization::Discrete_authalic_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
 
 The Discrete Authalic parameterization method has been introduced by
-Desbrun et al. \cgalCite{cgal:dma-ipsm-02}. It corresponds to
+\cgalCite{cgal:dma-ipsm-02}. It corresponds to
 a weak formulation of an area-preserving method, and in essence
 locally minimizes the area distortion. A one-to-one mapping is
 guaranteed only if the convex combination condition is fulfilled and
@@ -252,10 +252,9 @@ Discrete Authalic Parameterization (the blue line depicts the cut graph). Rightm
 `Surface_mesh_parameterization::Discrete_conformal_map_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
 
 Discrete Conformal Map parameterization has been introduced to the graphics community
-by Eck et al. \cgalCite{cgal:eddhls-maam-95}. It attempts to
+by \cgalCite{cgal:eddhls-maam-95}. It attempts to
 lower angle deformation by minimizing a discrete version of the
-Dirichlet energy as derived by Pinkall and
-Polthier \cgalCite{cgal:pp-cdmsc-93}. A one-to-one mapping is guaranteed
+Dirichlet energy as derived by \cgalCite{cgal:pp-cdmsc-93}. A one-to-one mapping is guaranteed
 only when the two following conditions are fulfilled: the barycentric mapping
 condition (each vertex in parameter space is a convex combination of
 its neighboring vertices), and the border is convex.
@@ -278,7 +277,7 @@ Discrete Conformal Map. Rightmost: parameter space.
 `Surface_mesh_parameterization::Mean_value_coordinates_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
 
 The Mean Value Coordinates parameterization method has been introduced
-by Floater \cgalCite{cgal:f-mvc-03}. Each vertex in parameter space is
+by \cgalCite{cgal:f-mvc-03}. Each vertex in parameter space is
 optimized to be a convex combination of its neighboring vertices.
 This method is in essence an approximation of the Discrete Conformal Map,
 with a guaranteed one-to-one mapping when the border is convex. This method
@@ -298,11 +297,11 @@ Floater Mean Value Coordinates. Rightmost: parameter space.
 `Surface_mesh_parameterization::Iterative_authalic_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
 
 The Iterative Authalic parameterization method has been introduced by
-Jain et al. \cgalCite{cgal:j-lrsspp-19}. This parameterization
+\cgalCite{cgal:j-lrsspp-19}. This parameterization
 is a fixed border parameterization and is part of the authalic parameterization family,
 meaning that it aims to minimize area distortion between the input surface mesh and the parameterized output.
 More precisely, the approach used by this parameterizer is to iteratively redistribute
-the \f$ L_2\f$ stretch - as defined by Sander et al. \cgalCite{cgal:ssgh-tmpm-01} - over the mesh.
+the \f$ L_2\f$ stretch - as defined by \cgalCite{cgal:ssgh-tmpm-01} - over the mesh.
 
 \cgalFigureAnchor{Surface_mesh_parameterizationfigiterativeauthalic}
 <center>
@@ -369,7 +368,7 @@ For free border parameterization methods, the vertices of the border are free to
 `Surface_mesh_parameterization::LSCM_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
 
 The Least Squares Conformal Maps (LSCM) parameterization method has
-been introduced by L&eacute;vy et al. \cgalCite{cgal:lprm-lscm-02}.
+been introduced by \cgalCite{cgal:lprm-lscm-02}.
 It corresponds to a conformal method with a free border (at least two
 vertices have to be constrained to obtain a unique solution), which
 allows further lowering of the angle distortion. A one-to-one mapping
@@ -389,7 +388,7 @@ Least Squares Conformal Maps. Rightmost: parameter space.
 
 `Surface_mesh_parameterization::ARAP_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
 
-An as-rigid-as-possible parameterization was introduced by Liu et al. \cgalCite{liu2008local}.
+An as-rigid-as-possible parameterization was introduced by \cgalCite{liu2008local}.
 It is a shape-preserving method based on an iterative energy minimization process.
 Each step alternates a local optimization technique to find the best local mapping
 and a global stitching technique equivalent to the resolution of a linear system
@@ -437,7 +436,7 @@ to a disk.
 
 `Surface_mesh_parameterization::Orbifold_Tutte_parameterizer_3<SeamMesh, SolverTraits>`
 
-Orbifold-Tutte Planar Embedding was introduced by Aigerman and Lipman \cgalCite{aigerman2015orbifold}
+Orbifold-Tutte Planar Embedding was introduced by \cgalCite{aigerman2015orbifold}
 and is a generalization of Tutte’s embedding to other topologies, and in particular
 spheres, which we consider here. The orbifold-Tutte embedding bijectively maps
 the original surface, that is required to be a topological ball, to a canonical,

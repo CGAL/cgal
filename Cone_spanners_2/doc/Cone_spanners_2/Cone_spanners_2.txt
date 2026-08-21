@@ -157,7 +157,7 @@ If you want more properties other than `Point_2` for vertices, you can still
 construct external properties by using property maps.
 
 In constructing Theta graphs, this functor uses the algorithm from
-Chapter 4 of the book by Narasimhan and Smid \cgalCite{cgal:ns-gsn-07}.
+Chapter 4 of the book by \cgalCite{cgal:ns-gsn-07}.
 Basically, it is a sweep line algorithm and uses a
 balanced search tree to store the vertices that have already been scanned.
 It has the complexity of \cgalBigO{n \log n}, where \f$n\f$ is the number of vertices in the plane.
