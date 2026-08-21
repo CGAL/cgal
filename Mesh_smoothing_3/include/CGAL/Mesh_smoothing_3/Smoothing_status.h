@@ -13,6 +13,8 @@
 #ifndef CGAL_MESH_SMOOTHING_3_SMOOTHING_STATUS_H
 #define CGAL_MESH_SMOOTHING_3_SMOOTHING_STATUS_H
 
+#include <CGAL/license/Mesh_smoothing_3.h>
+
 #include <chrono>
 
 namespace CGAL {
