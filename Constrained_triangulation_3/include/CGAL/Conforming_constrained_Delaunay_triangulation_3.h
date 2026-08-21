@@ -5190,19 +5190,21 @@ private:
     const auto [v0, v1, v2] = tr.vertices(f);
     auto v = vertex_of_cdt_2_functor(cdt_2);
 
-    const auto cdt_2_v0 = v(tr.point(v0));
-    const auto cdt_2_v1 = v(tr.point(v1));
-    const auto cdt_2_v2 = v(tr.point(v2));
+    try {
+      const auto cdt_2_v0 = v(tr.point(v0));
+      const auto cdt_2_v1 = v(tr.point(v1));
+      const auto cdt_2_v2 = v(tr.point(v2));
 
-    CDT_2_face_handle fh;
-    const bool is_face = cdt_2.is_face(cdt_2_v0, cdt_2_v1, cdt_2_v2, fh);
-    if(is_face && fh->info().is_in_region != 0) {
-      const int index_v0 = fh->index(cdt_2_v0);
-      const bool reverse_orientation = (cdt_2_v2 == fh->vertex(T_3::ccw(index_v0)));
-      return Oriented_face_of_cdt_2{fh, reverse_orientation};
+      CDT_2_face_handle fh;
+      const bool is_face = cdt_2.is_face(cdt_2_v0, cdt_2_v1, cdt_2_v2, fh);
+      if(is_face && fh->info().is_outside_the_face != OUTSIDE) {
+        const int index_v0 = fh->index(cdt_2_v0);
+        const bool reverse_orientation = (cdt_2_v2 == fh->vertex(T_3::ccw(index_v0)));
+        return Oriented_face_of_cdt_2{fh, reverse_orientation};
+      }
+    } catch(CGAL::Failure_exception&) {
     }
-    else
-      return std::nullopt;
+    return std::nullopt;
   }
 
   std::optional<std::pair<Facet, Orientation>>
@@ -5235,6 +5237,38 @@ private:
     } else {
       return std::nullopt;
     }
+  }
+
+  bool constrained_facet_has_2d_triangle(Facet facet) const
+  {
+    const auto face_index = face_constraint_index(facet);
+    if(face_index < 0 || static_cast<std::size_t>(face_index) >= face_data.size() ||
+       face_data[face_index].skip_face)
+    {
+      return false;
+    }
+
+    const auto& cdt_2 = face_cdt_2(face_index);
+    auto opt = facet_is_facet_of_cdt_2(*this, facet, cdt_2);
+    return opt.has_value();
+  }
+
+  bool has_extra_constrained_facets() const
+  {
+    bool result = true;
+    for(const auto facet : constrained_facets()) {
+      if(constrained_facet_has_2d_triangle(facet)) {
+        continue;
+      }
+      result = false;
+      if(this->debug().restore_faces() || this->debug().conforming_validation()) {
+        std::cerr << "ERROR: constrained 3D facet"
+                  << display_facet("    ", facet, With_point_and_info_tag{})
+                  << "\n  has no corresponding 2D triangle in face #"
+                  << face_constraint_index(facet) << '\n';
+      }
+    }
+    return result;
   }
 
   auto edge_of_cdt_2(const CDT_2& cdt_2, const Vertex_handle va, const Vertex_handle vb) const
@@ -5888,6 +5922,9 @@ public:
         recheck_for_missing_subfaces() &&
             are_there_any_face_constraint_misses_subfaces() == false,
         "All faces have been restored, but the triangulation is still not a CDT. This should not happen.");
+    CGAL_assertion_msg(
+        has_extra_constrained_facets(),
+        "All faces have been restored, but the triangulation has extra constrained facets. This should not happen.");
   }
 
   void add_bbox_points() {
