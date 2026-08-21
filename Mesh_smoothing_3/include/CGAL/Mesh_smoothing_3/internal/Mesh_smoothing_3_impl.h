@@ -821,7 +821,7 @@ void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::initialise_smoot
 }
 
 namespace internal {
-    std::pair<unsigned, unsigned> get_nb_inverted_cells(std::vector<double> const &determinants, std::vector<bool> const &exact_checks) {
+    inline std::pair<unsigned, unsigned> get_nb_inverted_cells(std::vector<double> const &determinants, std::vector<bool> const &exact_checks) {
         unsigned nb_det_inverted = 0;
         unsigned nb_exactly_inverted = 0;
         for (unsigned i = 0; i < determinants.size(); ++i) {
