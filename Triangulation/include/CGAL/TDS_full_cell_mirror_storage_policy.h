@@ -56,8 +56,16 @@ public:
     {
         Base::swap_vertices(d1, d2);
         std::swap(mirror_vertices_[d1], mirror_vertices_[d2]);
-        Base::neighbors_[d1]->set_mirror_index(mirror_vertices_[d1], d1);
-        Base::neighbors_[d2]->set_mirror_index(mirror_vertices_[d2], d2);
+
+        // Update the mirror indices in the neighboring full cells so that the
+        // bidirectional neighbor relationship remains consistent after the swap.
+        if (Base::neighbors_[d1] != Full_cell_handle()){
+             Base::neighbors_[d1]->set_mirror_index(mirror_vertices_[d1], d1);
+        }
+
+        if (Base::neighbors_[d2] != Full_cell_handle()){
+            Base::neighbors_[d2]->set_mirror_index(mirror_vertices_[d2], d2);
+        }
     }
 };
 
