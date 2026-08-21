@@ -55,7 +55,7 @@ template<typename Gt,
          typename Cb = Remeshing_cell_base_3<Gt>
 >
 class Remeshing_triangulation_3
-  : public CGAL::Triangulation_3<Gt, CGAL::Triangulation_data_structure_3<Vb,Cb> >
+  : public CGAL::Triangulation_3<Gt, CGAL::Triangulation_data_structure_3<Vb,Cb,Concurrency_tag> >
 {
 public:
   typedef Vb Remeshing_Vb;
