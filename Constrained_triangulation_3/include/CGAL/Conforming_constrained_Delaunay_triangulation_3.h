@@ -1646,18 +1646,18 @@ protected:
     return with_point_and_info(v);
   }
 
-  auto display_facet(std::string_view prefix, Facet f) const {
-    return IO::oformat([&,prefix,f](auto& out) -> auto& {
-      const auto vertices = tr().vertices(f);
-      return out << cdt_3_format("\n{}{}"
-                                 "\n{}{}"
-                                 "\n{}{}"
-                                 "\n{}(fourth vertex of its cell: {})",
-                                 prefix, with_offset(vertices[0]),
-                                 prefix, with_offset(vertices[1]),
-                                 prefix, with_offset(vertices[2]),
-                                 prefix, with_offset(f.first->vertex((f.second))));
-    }, IO_manip_tag{});
+  template <typename Tag = With_offset_tag>
+  auto display_facet(std::string_view prefix, Facet f, Tag tag = {}) const {
+    return IO::oformat(
+        [prefix, tag, vertices = tr().vertices(f), v4 = f.first->vertex((f.second))](auto& out) -> auto& {
+          return out << cdt_3_format("\n{}{}"
+                                     "\n{}{}"
+                                     "\n{}{}"
+                                     "\n{}(fourth vertex of its cell: {})",
+                                     prefix, IO::oformat(vertices[0], tag), prefix, IO::oformat(vertices[1], tag),
+                                     prefix, IO::oformat(vertices[2], tag), prefix, IO::oformat(v4, tag));
+        },
+        IO_manip_tag{});
   }
 
   const auto& dbg() const { return this->debug(); }
