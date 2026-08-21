@@ -2,7 +2,7 @@
 \ingroup pkgMeshSmoothing3Concepts
 \cgalConcept
 
-The concept `TangentSpace` describes a local tangent 
+The concept `TangentSpace` describes a local tangent
 space used for projection on patches or curves.
 
 \sa `ConstructTangentSpace`

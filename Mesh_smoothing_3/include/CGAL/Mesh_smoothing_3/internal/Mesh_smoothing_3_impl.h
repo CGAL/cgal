@@ -318,7 +318,7 @@ void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::create_compress_
     }
 
     // initialize boundary
-    
+
     std::vector<unsigned> currFace(10);
     _bnd_faces.reserve(_boundary.nb_faces());
     _face_surface_id.reserve(_boundary.nb_faces());

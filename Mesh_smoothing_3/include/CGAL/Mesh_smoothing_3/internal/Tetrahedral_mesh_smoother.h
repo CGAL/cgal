@@ -1499,7 +1499,7 @@ inline bool Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::run_qua
     number_of_lbfgs_iter = 0;
 
     Time_log logging("Tetrahedral_mesh_smoother");
-    if (_det_min <= 0) { 
+    if (_det_min <= 0) {
         {
             CGAL::IO::Color_stream_guard bright_red(std::cout, CGAL::IO::Ansi_color::BrightRed);
             std::cout << "Inverted elements detected, Tetrahedral_mesh_smoother will first try to untangle them." << std::endl;

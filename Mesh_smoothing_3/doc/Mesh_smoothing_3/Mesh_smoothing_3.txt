@@ -68,7 +68,7 @@ The main function of the package is `CGAL::boundary_aware_mesh_smoothing()`,
 which takes a `CGAL::Mesh_complex_3_in_triangulation_3` as input mesh and a `ConstructTangentSpace` for re-projections.
 It then updates its vertex coordinates to improve element quality and fit geometric targets.
 
-`CGAL::Mesh_smoothing_3::C3t3_mesh_projector` provides a model of `ConstructTangentSpace` to fit an existing mesh 
+`CGAL::Mesh_smoothing_3::C3t3_mesh_projector` provides a model of `ConstructTangentSpace` to fit an existing mesh
 in a `CGAL::Mesh_complex_3_in_triangulation_3`.
 
 \warning
