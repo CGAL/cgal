@@ -271,34 +271,6 @@ namespace helper_structures {
 
 // WORK IN PROGRESS
 namespace cgal_types {
-template <typename Triangulation_3>
-class Triangulation_3_wrapper {
-    using Cell_descriptor = Triangulation_3::Cell_handle;
-    using Vertex_descriptor = Triangulation_3::Vertex_handle;
-    using Point_3 = Triangulation_3::Geom_traits::Point_3;
-
-    std::size_t nb_cells() const { return tr.number_of_finite_cells(); }
-    std::size_t nb_vertices() const { return tr.number_of_vertices(); }
-
-    decltype(auto) vertex_coordinates(Vertex_descriptor vertex) const { return tr.point(vertex); }
-    void  set_vertex_coordinates(Vertex_descriptor vertex, const Point_3& coord) {
-        vertex->set_point(coord);
-    }
-
-    auto cell_range() const { return tr.finite_cell_handles(); }
-    std::array<Vertex_descriptor, 4> cell_vertices(Cell_descriptor cell) const {
-        std::array<Vertex_descriptor, 4> vertices;
-        for (int i = 0; i < 4; ++i) {
-            vertices[static_cast<unsigned>(i)] = cell->vertex(i);
-        }
-        return vertices;
-    }
-    std::array<Point_3, 4> cell_reference_shape(Cell_descriptor cell) const {
-        return Shapes::VTK_TETRAHEDRON<Point_3>();
-    }
-
-    Triangulation_3 &tr;
-};
 
 template <class C3t3>
 typename C3t3::Triangulation::Geom_traits::Point_3
