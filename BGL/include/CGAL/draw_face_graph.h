@@ -82,7 +82,7 @@ void compute_elements(const FG &fg,
         }
         while (hd != first_hd);
         // Colour by value: attach the face's scalar value before committing it.
-        if (gs_options.valued_face(fg, fh))
+        if (gs_options.is_face_valued(fg, fh))
         { graphics_scene.set_face_value(gs_options.face_value(fg, fh)); }
         graphics_scene.face_end();
       }

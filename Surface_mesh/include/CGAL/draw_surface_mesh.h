@@ -148,7 +148,7 @@ struct Graphics_scene_options_surface_mesh
     // Colour by value: expose the aspect ratio (longest edge / shortest edge) of
     // each face, so the viewer can colour the mesh by it (Shift+D).
     this->face_value_name="aspect ratio";
-    this->valued_face=[](const SM &, face_descriptor)->bool { return true; };
+    this->is_face_valued=[](const SM &, face_descriptor)->bool { return true; };
     this->face_value=[](const SM &sm, face_descriptor f)->float
     {
       double l2min=(std::numeric_limits<double>::max)(), l2max=0.0;
