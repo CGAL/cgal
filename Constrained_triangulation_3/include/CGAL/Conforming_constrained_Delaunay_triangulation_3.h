@@ -186,16 +186,14 @@ auto segment_soup_to_polylines(const Range_of_segments& segment_soup) {
     boost::add_edge(va, vb, graph);
   }
 
-  struct Polylines_visitor
-  {
+  struct {
     Graph& graph;
     std::vector<std::vector<Point>>& polylines;
 
     void start_new_polyline() { polylines.emplace_back(); }
     void add_node(typename Graph::vertex_descriptor vd) { polylines.back().push_back(graph[vd]); }
     void end_polyline() {}
-  };
-  Polylines_visitor visitor{graph, polylines};
+  } visitor{graph, polylines};
   CGAL::split_graph_into_polylines(graph, visitor);
 
   return polylines;
