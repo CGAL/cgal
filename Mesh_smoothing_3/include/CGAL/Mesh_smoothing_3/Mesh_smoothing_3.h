@@ -414,15 +414,15 @@ public: // for advanced usage. Do not touch if you do not know what you are doin
 
 public: // for advanced monitoring
 
-    using Iteration_status = Tetrahedral_mesh_smoother::Iteration_status;
-    using Vertex_status = Tetrahedral_mesh_smoother::Vertex_status;
-    using Cell_status = Tetrahedral_mesh_smoother::Tetrahedron_status;
+    using Iteration_status = typename Tetrahedral_mesh_smoother::Iteration_status;
+    using Vertex_status = typename Tetrahedral_mesh_smoother::Vertex_status;
+    using Cell_status = typename Tetrahedral_mesh_smoother::Tetrahedron_status;
 
     using Callback_function = std::function<bool (Iteration_status const &status,
                                                   Vertex_descriptor_map<Vertex_status> const &vertex_data,
                                                   Cell_descriptor_map<Cell_status> const &cell_data
                                                  )>;
-    using Callback_setting = Tetrahedral_mesh_smoother::DEBUG_CALLBACK_SETTING;
+    using Callback_setting = typename Tetrahedral_mesh_smoother::DEBUG_CALLBACK_SETTING;
     void set_callback_function(Callback_function callback_function, Callback_setting setting = Callback_setting::OUTER_ITER);
 
 private:
