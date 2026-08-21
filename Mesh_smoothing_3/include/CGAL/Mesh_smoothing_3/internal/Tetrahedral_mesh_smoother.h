@@ -112,7 +112,7 @@ public:
     void set_starting_untangling_epsilon(double eps) { start_untangle_eps = eps; };
 
 
-    
+
 
     double min_valid_edge_size = 1e-6;
 

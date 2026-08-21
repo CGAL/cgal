@@ -861,7 +861,7 @@ void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::set_input_smooth
 template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
 Smoothing_status Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::run() {
     if (!_smoothing_status.in_progress()) _smoothing_status = Smoothing_status();
-    
+
     check_refs();
     create_compress_sorted_data();
     rescale_geometry();
@@ -895,7 +895,7 @@ Smoothing_status Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::run(
     update_mesh_coordinates();
     _nb_lbfgs_iterations = smoother.number_of_lbfgs_iter;
     _nb_predicates_invalid_steps = smoother.get_number_of_invalid_steps_with_predicates();
-    
+
     std::tie(nb_det_inverted, nb_exactly_inverted) = internal::get_nb_inverted_cells(smoother.get_determinants(), smoother.get_predicate_is_positive());
     _smoothing_status.nb_invalid_elements = _predicates_mode > Parameters::NO_CHECK ? nb_exactly_inverted : nb_det_inverted;
     _smoothing_status.add_time(true);
