@@ -2907,6 +2907,35 @@ protected:
 
     void hide_point(Cell_handle, const Point_3 &) const {}
 
+    bool is_facet_protected(Facet f) const {
+      return self->is_facet_constrained(f);
+    }
+
+    void after_flip23(Vertex_handle va, Vertex_handle vb, Facet facet) const {
+      const auto [cell, _] = facet;
+      const auto ia = cell->index(va);
+      const auto ib = cell->index(vb);
+      const auto ic = Tds::next_around_edge(ia, ib);
+      const auto id = Tds::next_around_edge(ib, ia);
+
+      for(const auto cell : make_array(cell, cell->neighbor(ic), cell->neighbor(id))) {
+        const auto ia = cell->index(va);
+        const auto ib = cell->index(vb);
+        for(auto index : make_array(ia, ib)) {
+          const Facet f{cell, index};
+          const auto [mirror_cell, mirror_index] = self->mirror_facet(f);
+          if(mirror_cell->ccdt_3_data().is_facet_constrained(mirror_index)) {
+            auto face_id = self->face_constraint_index(mirror_cell, mirror_index);
+            const CDT_2& cdt_2 = self->face_cdt_2(face_id);
+            const auto f2d = mirror_cell->ccdt_3_data().face_2(cdt_2, mirror_index);
+            self->set_facet_constrained(f, face_id, f2d);
+          } else {
+            self->set_facet_as_not_constrained(f);
+          }
+        }
+      }
+    }
+
     void insert_Steiner_point_on_constraint(Constrained_polyline_id constraint,
                                             Vertex_handle va,
                                             Vertex_handle vb,
@@ -4589,7 +4618,7 @@ private:
   // -------------------------
 
   template <typename Fh_region>
-  void restore_subface_region(CDT_3_signed_index face_index, int region_index,
+  bool restore_subface_region(CDT_3_signed_index face_index, int region_index,
                               CDT_2& non_const_cdt_2, Fh_region& non_const_fh_region)
   {
     if(this->debug().regions()) {
@@ -4734,7 +4763,7 @@ private:
     };
     if(!found_edge_opt) {
       if(try_flip_region_size_4()) {
-        return;
+        return true;
       }
       // {
       //   Conforming_constrained_Delaunay_triangulation_3_impl new_tr;
@@ -5120,13 +5149,15 @@ private:
       set_facet_constrained(T_3::mirror_facet(f), face_index, f2d);
       f2d->info().missing_subface = false;
     }
-
+    bool result = true;
     if(this->has_constrained_edges_to_restore()) {
       this->restore_constrained_edges(insert_in_conflict_visitor);
+      result = false;
     }
 
     // CGAL_assertion(has_all_constrained_edges());
     CGAL_assume(!this->debug().validity() || this->is_valid(true));
+    return result;
   }
 
   // -------------------------
@@ -5614,13 +5645,15 @@ private:
           insert_mid_point_in_constrained_edge(va_3d, vb_3d);
         }
       };
+      bool result = false;
       try {
-        restore_subface_region(face_index, region_index++, non_const_cdt_2, fh_region);
+        result = restore_subface_region(face_index, region_index++, non_const_cdt_2, fh_region);
       }
       catch(Next_region& e) {
         handle_error_with_region(e.what(), e.fh_2d);
         return false;
       }
+      if(!result) return false;
     }
     return true;
   }

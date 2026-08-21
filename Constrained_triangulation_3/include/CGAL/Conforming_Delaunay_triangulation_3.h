@@ -24,6 +24,7 @@
 #include <CGAL/enum.h>
 #include <CGAL/functional.h>
 #include <CGAL/kernel_assertions.h>
+#include <CGAL/IO/io_tags.h>
 #include <CGAL/Number_types/internal/Exact_type_selector.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/SMDS_3/io_signature.h>
@@ -360,6 +361,27 @@ protected:
     return IO::oformat(v, with_point_tag);
   }
 
+  auto display_facet(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2) const {
+    return IO::oformat(
+        [v0, v1, v2, this](std::ostream& os) -> auto& {
+          os << "(" << this->display_vert(v0) << ", " << this->display_vert(v1) << ", " << this->display_vert(v2)
+             << ")";
+          return os;
+        },
+        IO_manip_tag{});
+  }
+
+  auto display_facet(Facet f) const {
+    return IO::oformat(
+        [f, this](std::ostream& os) -> auto& {
+          auto [v0, v1, v2] = T_3::vertices(f);
+          os << "(" << this->display_vert(v0) << ", " << this->display_vert(v1) << ", " << this->display_vert(v2)
+             << ")";
+          return os;
+        },
+        IO_manip_tag{});
+  }
+
   auto display_subcstr(Subconstraint subconstraint) const {
     auto [va, vb] = subconstraint;
     std::stringstream os;
@@ -447,6 +469,10 @@ protected:
                                             [[maybe_unused]] Vertex_handle v_Steiner) const
     {
     }
+
+    bool is_facet_protected(Facet ) const { return false; }
+
+    void after_flip23(Vertex_handle, Vertex_handle, Facet) const {}
 
     Vertex_handle insert_in_triangulation(const Point& p, Locate_type lt, Cell_handle c, int li, int lj) {
       return self->insert_impl_do_not_split(p, lt, c, li, lj, *this);
@@ -911,9 +937,18 @@ protected:
           int ia = c->index(va);
           if(c->neighbor(ia)->has_vertex(vb))
           {
-            if(this->flip(Facet(c, ia)))
+            Facet facet{c, ia};
+            if(visitor.is_facet_protected(facet)) {
+              std::cerr << "-- facet " << display_facet(facet)
+                        << " is protected, cannot flip to make edge (" << display_vert(va) << ", " << display_vert(vb)
+                        << ") an edge in the triangulation\n";
+              break;
+            }
+            auto [v0, v1, v2] = this->vertices(facet);
+            if(this->flip(facet))
             {
-              std::cout << "flipped facet to make edge ("
+              visitor.after_flip23(va, vb, facet);
+              std::cerr << "flipped facet " << display_facet(v0, v1, v2) << " to make edge ("
                         << display_vert(va) << ", " << display_vert(vb)
                         << ") an edge in the triangulation\n";
               this->is_Delaunay = false;
@@ -922,7 +957,7 @@ protected:
             }
             else
             {
-              std::cout << "-- flip failed to make edge (" << display_vert(va) << ", " << display_vert(vb)
+              std::cerr << "-- flip failed to make edge (" << display_vert(va) << ", " << display_vert(vb)
                         << ") an edge in the triangulation\n";
             }
             break;
