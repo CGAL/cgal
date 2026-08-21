@@ -3,7 +3,7 @@
 \cgalConcept
 
 The concept `TangentSpace` describes a local tangent 
-space use for projection on patches or curves.
+space used for projection on patches or curves.
 
 \sa `ConstructTangentSpace`
 
