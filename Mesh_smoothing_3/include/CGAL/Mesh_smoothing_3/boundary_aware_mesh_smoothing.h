@@ -141,8 +141,8 @@ enum class Projection_weight_mode
 */
 template <typename GeomTraits>
 struct Tangent_space {
-    using Point_3 = GeomTraits::Point_3;
-    using Vector_3 = GeomTraits::Vector_3;
+    using Point_3 = typename GeomTraits::Point_3;
+    using Vector_3 = typename GeomTraits::Vector_3;
 
     Point_3 _origin = Point_3();
     Vector_3 _vector = Vector_3();
@@ -176,7 +176,7 @@ template<typename C3t3>
 class C3t3_mesh_projector {
 public:
     using Geom_traits = typename C3t3::Triangulation::Geom_traits;
-    using Point_3 = Geom_traits::Point_3;
+    using Point_3 = typename Geom_traits::Point_3;
 
     using Facet = typename C3t3::Facet;
     using Surface_patch_index = typename C3t3::Surface_patch_index;
@@ -293,7 +293,7 @@ template<typename C3t3>
 class C3t3_no_projection {
 public:
     using Geom_traits = typename C3t3::Triangulation::Geom_traits;
-    using Point_3 = Geom_traits::Point_3;
+    using Point_3 = typename Geom_traits::Point_3;
     using Patch_face = std::pair<typename C3t3::Surface_patch_index, typename C3t3::Facet>;
     using Curve_edge = std::pair<typename C3t3::Curve_index, typename C3t3::Edge>;
 
