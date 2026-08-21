@@ -20,7 +20,6 @@ Moreover, `CGAL::Algebraic_structure_traits< FieldWithRootOf >` is a model of `A
 \sa `Field`
 \sa `FieldWithSqrt`
 \sa `FieldWithKthRoot`
-\sa `FieldWithRootOf`
 \sa `AlgebraicStructureTraits`
 
 */

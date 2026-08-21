@@ -100,6 +100,8 @@
 - `CGAL::Number_type_checker<NT1,NT2,Comparator>`
 - `CGAL::Exact_integer`
 - `CGAL::Exact_rational`
+- `CGAL::Z2`
+- `CGAL::Zp`
 
 \cgalCRPSection{Relates Rational}
 
