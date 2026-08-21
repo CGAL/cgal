@@ -1,14 +1,15 @@
-// This file is part of CGAL (www.cgal.org).
+// Copyright (c) 1990 Jorge Nocedal
+// Copyright (c) 2007-2010 Naoaki Okazaki
+// Copyright (c) 2020-2022 Zhepei Wang
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: MIT
 //
-// The MIT License
+// This file is distributed with CGAL (www.cgal.org).
 //
-// Copyright (c) 1990 Jorge Nocedal
-// Copyright (c) 2007-2010 Naoaki Okazaki
-// Copyright (c) 2020-2022 Zhepei Wang
+//
+// The MIT License
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
