@@ -34,6 +34,7 @@ file(
   GLOB cppfiles
   RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
+include_directories(../../include)
 foreach(cppfile ${cppfiles})
   if("${cppfile}" STREQUAL "test_3mf_to_sm.cpp")
     if(3MF_LIBRARIES
@@ -64,6 +65,11 @@ foreach(cppfile ${cppfiles})
         endif() #VTK_FOUND
       else()
         create_single_source_cgal_program("${cppfile}")
+        if("${cppfile}" STREQUAL "test_GLTF.cpp")
+          target_sources(test_GLTF PRIVATE
+            ${CMAKE_CURRENT_SOURCE_DIR}/../../include/CGAL/IO/GLTF/tiny_gltf_impl.cpp
+          )
+        endif()
       endif()
     endif()
   endif()
