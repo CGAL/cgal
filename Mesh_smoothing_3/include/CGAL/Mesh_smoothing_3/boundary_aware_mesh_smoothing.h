@@ -337,8 +337,8 @@ public:
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{number_of_iterations}
 *     \cgalParamDescription{Maximum nb of iterations of the smoothing algorithm .
-                            Algorithm will stop before if it reaches convergence.
-                            Untangling usually requires more iterations (up to thousands) for hard cases. }
+*                           Algorithm will stop before if it reaches convergence.
+*                           Untangling usually requires more iterations (up to thousands) for hard cases. }
 *     \cgalParamType{unsigned int}
 *     \cgalParamDefault{`100`}
 *   \cgalParamNEnd
@@ -347,6 +347,18 @@ public:
 *                           process to the standard output.}
 *     \cgalParamType{`bool`}
 *     \cgalParamDefault{`false`}
+*   \cgalParamNEnd
+*   \cgalParamNBegin{maximum_running_time}
+*     \cgalParamDescription{Maximum allowed time for the smoothing process in seconds.}
+*     \cgalParamType{`double`}
+*     \cgalParamDefault{`-1`}
+*     \cgalParamExtra{Pre-processing will not be stopped and negative times will be ignored.}
+*   \cgalParamNEnd
+*   \cgalParamNBegin{maximum_number}
+*     \cgalParamDescription{Maximum number of quality evaluations for smoothing.}
+*     \cgalParamType{`int`}
+*     \cgalParamDefault{`-1`}
+*     \cgalParamExtra{Strongly correlated to running time but will scale linearly with mesh size.}
 *   \cgalParamNEnd
 *   \cgalParamNBegin{vertex_is_constrained_map}
 *     \cgalParamDescription{a property map containing the constrained-or-not status of each vertex of the triangulation in the `c3t3`.}
@@ -370,16 +382,21 @@ public:
 *     \cgalParamExtra{Vertices of a constrained facet will not be moved by smoothing.}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
+*
+*
+* \return a `Mesh_smoothing_3::Smoothing_status` object containing information about the smoothing process and convergence.
+*
 */
 template<typename C3t3,
          typename CTS,
          typename NamedParameters = parameters::Default_named_parameters>
-void boundary_aware_mesh_smoothing  (
+Mesh_smoothing_3::Smoothing_status boundary_aware_mesh_smoothing  (
     C3t3& c3t3,
     CTS const & cts,
     NamedParameters const & np = parameters::default_values()
 )
 {
+    Mesh_smoothing_3::Smoothing_status return_status;
     using parameters::choose_parameter;
     using parameters::get_parameter;
 
@@ -410,6 +427,10 @@ void boundary_aware_mesh_smoothing  (
     > ::type FCMap;
     FCMap fcmap = choose_parameter<Static_boolean_property_map<typename C3t3::Facet, false>>(get_parameter(np, internal_np::facet_is_constrained));
 
+
+    int max_nb_metric_evaluations = choose_parameter(get_parameter(np, internal_np::maximum_number), -1);
+
+    double time_limit = choose_parameter(get_parameter(np, internal_np::maximum_running_time), -1.);
 
     // C3t3_smoother will automatically mark facets and features
     CGAL::Mesh_smoothing_3::C3t3_smoother smoother(c3t3);
@@ -479,9 +500,19 @@ void boundary_aware_mesh_smoothing  (
         return std::make_tuple(proj.origin(), proj.vector(), proj_weight(proj));
     });
 
+    smoother.set_predicates_mode(Mesh_smoothing_3::Parameters::STRONG_ENFORCEMENT);
     smoother.set_verbose(verbose);
     smoother.set_max_number_of_iteration(max_iterations);
-    smoother.run();
+    smoother.set_maximum_running_time(time_limit);
+    smoother.set_maximum_number_of_metric_evaluations(max_nb_metric_evaluations);
+
+    return_status.add_time(true);
+
+    smoother.set_input_smoothing_status(return_status);
+
+    return_status = smoother.run();
+
+    return return_status;
 }
 
 }

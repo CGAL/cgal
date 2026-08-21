@@ -83,8 +83,8 @@ int main(int argc, char *argv[])
 
     smoother.set_vertex_target_positions(handles);
 
-    bool res = smoother.run();
+    auto res = smoother.run();
 
-    std::cerr << "Smoothing result = " << (res ? "SUCCESS" : "FAILURE") << std::endl;
+    std::cerr << "Smoothing result = " << (res.valid_mesh() ? "SUCCESS" : "FAILURE") << std::endl;
     igl::writeMESH("handle_output.mesh", V, T, F);
 }

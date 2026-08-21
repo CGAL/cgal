@@ -49,11 +49,17 @@ int main(int argc, char* argv[])
     CGAL::IO::write_MEDIT(os, c3t3.triangulation(), CGAL::parameters::all_vertices(true));
     os.close();
 
+    auto result = 
     CGAL::boundary_aware_mesh_smoothing(
         c3t3,
         CGAL::Mesh_smoothing_3::C3t3_mesh_projector(c3t3),
         CGAL::parameters::verbose(true).number_of_iterations(100)
     );
+
+    std::cout << "Number of inverted elements: " << result.nb_invalid_elements << std::endl;
+    std::cout << "Number of vertex updates: " << result.nb_vertex_updates << std::endl;
+    std::cout << "Pre-processing time: " << result.pre_processing_time << std::endl;
+    std::cout << "Smoothing time: " << result.optimization_time << std::endl;
 
     std::ofstream os2("c3t3_smoothed.mesh");
     CGAL::IO::write_MEDIT(os2, c3t3.triangulation(), CGAL::parameters::all_vertices(true));
