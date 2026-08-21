@@ -2933,6 +2933,8 @@ protected:
             self->set_facet_as_not_constrained(f);
           }
         }
+        const auto ic = Tds::next_around_edge(ia, ib);
+        self->set_facet_as_not_constrained({cell, ic});
       }
     }
 
