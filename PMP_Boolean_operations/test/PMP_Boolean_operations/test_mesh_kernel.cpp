@@ -254,7 +254,6 @@ template<class Mesh, class Plane_3>
 void test_clip_convex_with_triangulation_on_mesh(const Mesh &m, const Plane_3 &pl){
   using K =typename CGAL::Kernel_traits<typename Plane_3::value_type>::Kernel;
   using Pl = typename K::Plane_3;
-  using Pl_3P = typename PMP::internal::Three_point_cut_plane_traits<K>::Plane_3;
 
   auto m_copy = m;
   PMP::triangulate_faces(m_copy);
