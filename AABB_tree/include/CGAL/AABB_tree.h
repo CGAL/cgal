@@ -81,6 +81,9 @@ namespace CGAL {
     typedef typename AABBTraits::Primitive Primitive;
     /// Identifier for a primitive in the tree.
     typedef typename Primitive::Id Primitive_id;
+    #ifndef DOXYGEN_RUNNING
+    using Primitive_iterator = typename Primitives::iterator;
+    #endif
     /// Unsigned integral size type.
     typedef typename Primitives::size_type size_type;
     /// Type of bounding box.
@@ -458,6 +461,21 @@ public:
       return build_kd_tree(first,beyond);
     }
 
+    /// constructs an internal KD-tree containing the specified point
+    /// set, to be used as the set of potential hints for accelerating
+    /// the distance queries. Note that the search tree built in
+    /// this function will not be invalidated by the insertion of a new
+    /// primitive, and an explicit call to `accelerate_distance_queries()`
+    /// is needed to update the search tree.
+    /// \tparam ConstPointIterator is an iterator with a value type being the key type of `PointMap`
+    /// \tparam PointMap a model of `ReadablePropertyMap` with the value type of `ConstPointIterator` as key type and `Point` as value type.
+    template<typename ConstPointIterator, typename PointMap>
+    bool accelerate_distance_queries(ConstPointIterator first, ConstPointIterator beyond, PointMap pmap)
+    {
+      return build_kd_tree(make_transform_iterator_from_property_map (first, pmap),
+                           make_transform_iterator_from_property_map (beyond, pmap));
+    }
+
     /// returns the minimum squared distance between the query point
     /// and all input primitives. The internal KD-tree is not used.
     /// \pre `!empty()`
@@ -622,6 +640,12 @@ public:
       return Helper::get_datum(p, this->traits());
     }
 
+    // warning: the tree must have been built
+    const Search_tree& kd_tree() const
+    {
+      return *m_p_search_tree;
+    }
+
   private:
     //Traits class
     AABBTraits m_traits;
@@ -651,11 +675,16 @@ public:
       return std::addressof(m_nodes[0]);
     }
 
+    Primitive_iterator primitives_begin() { return m_primitives.begin(); };
+    Primitive_iterator primitives_end() { return m_primitives.end(); };
+
     Node& new_node()
     {
       m_nodes.emplace_back();
       return m_nodes.back();
     }
+
+    std::size_t nb_node() const { return m_nodes.size(); }
   private:
     const Primitive& singleton_data() const {
       CGAL_assertion(size() == 1);

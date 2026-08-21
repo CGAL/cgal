@@ -1,0 +1,36 @@
+/// \defgroup PkgVMASRef Reference Manual
+
+/// \defgroup PkgVMASTraitsClasses Traits Classes
+/// \ingroup PkgVMASRef
+
+/*!
+\addtogroup PkgVMASRef
+\cgalPkgDescriptionBegin{Dynamic Skeletonization Via Variational Medial Axis Sampling,PkgVMAS}
+\cgalPkgPicture{pkg-vmas.png}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Qijia Huang}
+\cgalPkgDesc{The package provides an implementation of a dynamic approximation of the medial axis.
+             This approximation features a collection of bi-tangent spheres, with edges and triangles connecting there centers.
+             Spheres can be added or removed and the resulting set of edges and triangles will be updated accordingly.}
+\cgalPkgManuals{Chapter_VMAS,PkgVMASRef}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{6.3}
+\cgalPkgDependsOn{\ref PkgSpatialSearchingD and \ref thirdpartyEigen}
+\cgalPkgBib{cgal:dsvvmas-h}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgShortInfoEnd
+
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Functions}
+- `CGAL::extract_variational_medial_skeleton()`
+
+\cgalCRPSection{Classes}
+- `CGAL::Variational_medial_axis_sampling`
+- `CGAL::Medial_skeleton`
+*/
