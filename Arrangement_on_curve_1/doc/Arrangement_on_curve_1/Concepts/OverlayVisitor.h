@@ -4,9 +4,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
-#ifndef CGAL_OVERLAY_VISITOR_H
-#define CGAL_OVERLAY_VISITOR_H
-
 /*! \ingroup PkgArrangementOnCurve1Concepts
  * \cgalConcept
  *
@@ -70,5 +67,3 @@ public:
    */
   void create_edge(Edge_const_descriptor_a e_a, Edge_const_descriptor_b e_b, Edge_descriptor_r e_res);
 }
-
-#endif

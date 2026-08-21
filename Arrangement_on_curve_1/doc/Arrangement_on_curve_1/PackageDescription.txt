@@ -16,6 +16,9 @@ namespace AocTraits {}
 /// \defgroup PkgArrangementOnCurve1ConceptsTraits Geometry Traits Concepts
 /// \ingroup PkgArrangementOnCurve1Concepts
 
+/// \defgroup PkgArrangementOnCurve1ConceptsTopologyTraits Topology Object Concepts
+/// \ingroup PkgArrangementOnCurve1Concepts
+
 /// \defgroup PkgArrangementOnCurve1IO I/O
 /// \ingroup PkgArrangementOnCurve1Ref
 
@@ -61,6 +64,7 @@ The class `Arrangement_on_curve_1<Traits>` encapsulates a data structure that ma
 
 - `ArrangementOnCurve_1`
 - `AocTraits_1`
+- `AocTopologyTraits`
 
 \cgalCRPSection{Geometric Object Concepts}
 
@@ -72,7 +76,8 @@ The class `Arrangement_on_curve_1<Traits>` encapsulates a data structure that ma
 
 \cgalCRPSection{Classes}
 
-- `CGAL::Arrangement_on_curves_1<GeometryTraits_1,TopologyTraits>`
+- `CGAL::Arrangement_on_curves_1::Arrangement_on_curves_1<GeometryTraits_1,TopologyTraits>`
+- `CGAL::Arrangement_on_curves_1::Unbounded_topology_traits<Point_1, VertexData, EdgeData, UseVector, Allocator>`
 
 \cgalCRPSection{Functions}
 
