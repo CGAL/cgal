@@ -13,6 +13,7 @@
 
 /*! High-level operations.
 \cgalInclude{CGAL/Linear_cell_complex_operations.h}
+\cgalInclude{CGAL/Hexmeshing_generate_two_refinement_mesh.h}
 */
 /// \defgroup PkgLinearCellComplexOperations Operations for Linear Cell Complex
 /// \ingroup PkgLinearCellComplexRef
@@ -77,6 +78,7 @@
 \cgalCRPSubsection{Operations for Linear Cell Complex}
 - `CGAL::compute_normal_of_cell_0<LCC>`
 - `CGAL::compute_normal_of_cell_2<LCC>`
+- `CGAL::generate_hexahedral_mesh_using_two_refinement`
 
 \cgalCRPSubsection{Draw a Linear Cell Complex}
 - \link PkgDrawLinearCellComplex CGAL::draw<LCC>() \endlink
