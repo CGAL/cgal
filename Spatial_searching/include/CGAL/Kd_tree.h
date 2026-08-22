@@ -300,11 +300,6 @@ public:
     return pts.empty();
   }
 
-  void build()
-  {
-    build<Sequential_tag>();
-  }
-
   /*
     Note about parallel `build()`. Several different strategies have
     been tried, among which:
@@ -325,7 +320,7 @@ public:
     * the parallel computations are launched using
       `tbb::parallel_invoke`
   */
-  template <typename ConcurrencyTag>
+  template <typename ConcurrencyTag = Sequential_tag>
   void
   build()
   {
