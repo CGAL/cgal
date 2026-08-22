@@ -1,0 +1,3 @@
+/*!
+\example Mesh_smoothing_3/c3t3_smooth.cpp
+*/

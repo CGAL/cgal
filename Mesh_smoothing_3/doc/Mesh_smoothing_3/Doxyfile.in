@@ -1,0 +1,15 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - 3D Mesh Volume Smoothing"
+
+EXTRACT_ALL = NO
+HIDE_UNDOC_MEMBERS = YES
+HIDE_UNDOC_CLASSES = YES
+
+INPUT  = ${CGAL_PACKAGE_DOC_DIR}/PackageDescription.txt
+INPUT += ${CGAL_PACKAGE_DOC_DIR}/Mesh_smoothing_3.txt
+INPUT += ${CGAL_PACKAGE_DOC_DIR}/examples.txt
+INPUT += ${CGAL_PACKAGE_DOC_DIR}/Concepts/ConstructTangentSpace.h
+INPUT += ${CGAL_PACKAGE_DOC_DIR}/Concepts/TangentSpace.h
+INPUT += ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Mesh_smoothing_3/boundary_aware_mesh_smoothing.h
+INPUT += ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Mesh_smoothing_3/Smoothing_status.h
