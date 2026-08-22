@@ -7,9 +7,7 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Ron Wein   <wein@post.tau.ac.il>
-
-#include <CGAL/basic.h>
+// Author(s) : Ron Wein   <wein@post.tau.ac.il>
 
 #ifndef CGAL_ENV_DEFAULT_DIAGRAM_1_H
 #define CGAL_ENV_DEFAULT_DIAGRAM_1_H
@@ -38,4 +36,3 @@ class Env_default_diagram_1 : public Envelope_diagram_1<Traits_, Allocator>{};
 } //namespace CGAL
 
 #endif
-
