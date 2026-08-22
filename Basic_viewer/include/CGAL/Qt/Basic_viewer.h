@@ -34,6 +34,7 @@
 
 #include <QApplication>
 #include <QKeyEvent>
+#include <QPainter>
 
 #include <CGAL/Qt/qglviewer.h>
 #include <CGAL/Qt/manipulatedFrame.h>
@@ -124,6 +125,8 @@ public:
     setKeyDescription(::Qt::Key_U, "Move camera direction upside down");
     setKeyDescription(::Qt::Key_V, "Toggles vertices display");
     setKeyDescription(::Qt::Key_W, "Toggles faces display");
+    setKeyDescription(::Qt::Key_D, "Cycle colouring faces by value (distance to the plane)");
+    setKeyDescription(::Qt::ShiftModifier, ::Qt::Key_D, "Colour by value: distance smooth, distance per cell, size per cell");
     setKeyDescription(::Qt::Key_Plus, "Increase size of edges");
     setKeyDescription(::Qt::Key_Minus, "Decrease size of edges");
     setKeyDescription(::Qt::ControlModifier, ::Qt::Key_Plus, "Increase size of vertices");
@@ -733,9 +736,75 @@ public:
         rendering_program_face.setUniformValue("u_RenderingTransparency", clipping_plane_rendering_transparency);
         rendering_program_face.setUniformValue("u_ClipPlane", clipPlane);
         rendering_program_face.setUniformValue("u_PointPlane", plane_point);
+        // Colour by value: the value is the distance to the clipping plane, over a scale
+        // anchored at the plane (0) and growing into the kept half, so moving the plane
+        // sweeps the colours instead of leaving them unchanged.
+        rendering_program_face.setUniformValue("u_ColorMapMode", static_cast<GLfloat>(m_color_map));
+        { double dvmin, dvmax; distance_value_range(clipPlane, plane_point, dvmin, dvmax);
+          rendering_program_face.setUniformValue("u_ValueMin", static_cast<GLfloat>(dvmin));
+          rendering_program_face.setUniformValue("u_ValueMax", static_cast<GLfloat>(dvmax)); }
 
         vao[VAO_FACES].bind();
-        glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(m_scene.number_of_elements(GS::POS_FACES)));
+        const std::vector<std::vector<unsigned int>> &vols=m_scene.get_volume_faces();
+        if (m_color_map!=0 && m_color_value==3 && m_scene.has_face_values())
+        {
+          // User value: one flat value per face, provided by the drawer (for example
+          // the aspect ratio of the face), mapped to the palette.
+          rendering_program_face.setUniformValue("u_ColorPerCell", static_cast<GLint>(1));
+          rendering_program_face.setUniformValue("u_ValueMin", static_cast<GLfloat>(m_scene.face_value_min()));
+          rendering_program_face.setUniformValue("u_ValueMax", static_cast<GLfloat>(m_scene.face_value_max()));
+          const std::vector<float> &fvals=m_scene.get_face_values();
+          const unsigned int nf=m_scene.number_of_faces();
+          for (unsigned int f=0; f<nf && f<fvals.size(); ++f)
+          {
+            rendering_program_face.setUniformValue("u_CellValue", static_cast<GLfloat>(fvals[f]));
+            const std::pair<unsigned int, unsigned int> &r=m_scene.face_range(f);
+            glDrawArrays(GL_TRIANGLES, static_cast<GLint>(r.first),
+                         static_cast<GLsizei>(r.second));
+          }
+        }
+        else if (m_color_map!=0 && (m_color_value==1 || m_color_value==2) && !vols.empty())
+        {
+          // Per cell: draw each volume with one flat value, so a whole cell takes
+          // one colour and neighbouring cells do not melt into one. The value is the
+          // centre's distance to the plane, or the cell size.
+          rendering_program_face.setUniformValue("u_ColorPerCell", static_cast<GLint>(1));
+          const std::vector<CGAL::Bbox_3> &bb=m_scene.get_volume_bboxes();
+          const bool size_mode=(m_color_value==2);
+          if (size_mode)
+          {
+            if (!m_cell_sizes_valid) { compute_cell_sizes(); }
+            rendering_program_face.setUniformValue("u_ValueMin", static_cast<GLfloat>(m_cell_size_min));
+            rendering_program_face.setUniformValue("u_ValueMax", static_cast<GLfloat>(m_cell_size_max));
+          }
+          const QVector3D n=QVector3D(clipPlane).normalized();
+          const QVector3D pt=plane_point.toVector3D();
+          for (std::size_t v=0; v<vols.size(); ++v)
+          {
+            float value;
+            if (size_mode) { value=m_cell_sizes[v]; }
+            else
+            {
+              const CGAL::Bbox_3 &b=bb[v];
+              const QVector3D c(float((b.xmin()+b.xmax())*0.5),
+                                float((b.ymin()+b.ymax())*0.5),
+                                float((b.zmin()+b.zmax())*0.5));
+              value=QVector3D::dotProduct(c-pt, n);
+            }
+            rendering_program_face.setUniformValue("u_CellValue", static_cast<GLfloat>(value));
+            for (unsigned int fi : vols[v])
+            {
+              const std::pair<unsigned int, unsigned int> &r=m_scene.face_range(fi);
+              glDrawArrays(GL_TRIANGLES, static_cast<GLint>(r.first),
+                           static_cast<GLsizei>(r.second));
+            }
+          }
+        }
+        else
+        {
+          rendering_program_face.setUniformValue("u_ColorPerCell", static_cast<GLint>(0));
+          glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(m_scene.number_of_elements(GS::POS_FACES)));
+        }
         glDisable(GL_POLYGON_OFFSET_FILL);
       };
 
@@ -842,6 +911,12 @@ public:
             QVector4D capcol;
             if (num_volumes == 0)
             { capcol = QVector4D(0.6f, 0.6f, 0.6f, 1.0f); }
+            else if (m_color_map!=0)
+            { // Colour by value: cap follows the palette, like the volume's faces.
+              const QColor cc=volume_value_color(v, clipPlane, plane_point);
+              capcol = QVector4D(float(cc.redF()), float(cc.greenF()),
+                                 float(cc.blueF()), 1.0f);
+            }
             else
             {
               const CGAL::IO::Color &c = vcolors[v];
@@ -939,18 +1014,70 @@ public:
           clipping_plane_rendering_transparency);
         rendering_program_face.setUniformValue("u_ClipPlane", clipPlane);
         rendering_program_face.setUniformValue("u_PointPlane", plane_point);
+        // Colour by value: the kept volumes follow the same colour map as the other
+        // face modes, per fragment or one flat value per cell.
+        rendering_program_face.setUniformValue("u_ColorMapMode", static_cast<GLfloat>(m_color_map));
+        { double dvmin, dvmax; distance_value_range(clipPlane, plane_point, dvmin, dvmax);
+          rendering_program_face.setUniformValue("u_ValueMin", static_cast<GLfloat>(dvmin));
+          rendering_program_face.setUniformValue("u_ValueMax", static_cast<GLfloat>(dvmax)); }
+        const bool per_cell=(m_color_map!=0 && m_color_value!=0 && num_volumes!=0);
+        const bool size_mode=(m_color_value==2);
+        if (per_cell && size_mode)
+        {
+          if (!m_cell_sizes_valid) { compute_cell_sizes(); }
+          rendering_program_face.setUniformValue("u_ValueMin", static_cast<GLfloat>(m_cell_size_min));
+          rendering_program_face.setUniformValue("u_ValueMax", static_cast<GLfloat>(m_cell_size_max));
+        }
+        rendering_program_face.setUniformValue("u_ColorPerCell", static_cast<GLint>(per_cell?1:0));
+        const QVector3D n=QVector3D(clipPlane).normalized();
+        const QVector3D pt=plane_point.toVector3D();
 
         vao[VAO_FACES].bind();
         if (num_volumes == 0)
         {
-          glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(
-            m_scene.number_of_elements(GS::POS_FACES)));
+          // No volumes (a surface mesh, for example): there is nothing to clip whole,
+          // so colour all faces by value, including the drawer's per-face value.
+          if (m_color_map!=0 && m_color_value==3 && m_scene.has_face_values())
+          {
+            rendering_program_face.setUniformValue("u_ColorPerCell", static_cast<GLint>(1));
+            rendering_program_face.setUniformValue("u_ValueMin", static_cast<GLfloat>(m_scene.face_value_min()));
+            rendering_program_face.setUniformValue("u_ValueMax", static_cast<GLfloat>(m_scene.face_value_max()));
+            const std::vector<float> &fvals=m_scene.get_face_values();
+            const unsigned int nf=m_scene.number_of_faces();
+            for (unsigned int f=0; f<nf && f<fvals.size(); ++f)
+            {
+              rendering_program_face.setUniformValue("u_CellValue", static_cast<GLfloat>(fvals[f]));
+              const std::pair<unsigned int, unsigned int> &r=m_scene.face_range(f);
+              glDrawArrays(GL_TRIANGLES, static_cast<GLint>(r.first),
+                           static_cast<GLsizei>(r.second));
+            }
+          }
+          else
+          {
+            glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(
+              m_scene.number_of_elements(GS::POS_FACES)));
+          }
         }
         else
         {
+          const std::vector<CGAL::Bbox_3> &bb = m_scene.get_volume_bboxes();
           for (std::size_t v = 0; v < num_volumes; ++v)
           {
             if (!m_volumes_kept[v]) { continue; }
+            if (per_cell)
+            {
+              float value;
+              if (size_mode) { value=m_cell_sizes[v]; }
+              else
+              {
+                const CGAL::Bbox_3 &b=bb[v];
+                const QVector3D c(float((b.xmin()+b.xmax())*0.5),
+                                  float((b.ymin()+b.ymax())*0.5),
+                                  float((b.zmin()+b.zmax())*0.5));
+                value=QVector3D::dotProduct(c-pt, n);
+              }
+              rendering_program_face.setUniformValue("u_CellValue", static_cast<GLfloat>(value));
+            }
             for (unsigned int fi : volumes[v])
             {
               const std::pair<unsigned int, unsigned int> &r = m_scene.face_range(fi);
@@ -1078,6 +1205,10 @@ public:
       }
       glEnable(GL_LIGHTING);
     }
+
+    // Colour by value: show the palette and the value range as a small legend.
+    if (m_color_map!=0)
+    { draw_color_legend(clipPlane, plane_point); }
 
     // Multiply matrix to get in the frame coordinate system.
     // glMultMatrixd(manipulatedFrame()->matrix()); // Linker error
@@ -1714,9 +1845,161 @@ protected:
     }
   }
 
+  // Colour by value (size): one size per cell, the bounding-box volume, with the
+  // range over all cells so the palette spans from the smallest to the largest.
+  void compute_cell_sizes()
+  {
+    const std::vector<CGAL::Bbox_3> &bb=m_scene.get_volume_bboxes();
+    m_cell_sizes.resize(bb.size());
+    m_cell_size_min=(std::numeric_limits<float>::max)();
+    m_cell_size_max=0.f;
+    for (std::size_t v=0; v<bb.size(); ++v)
+    {
+      const CGAL::Bbox_3 &b=bb[v];
+      const float s=float((b.xmax()-b.xmin())*(b.ymax()-b.ymin())*(b.zmax()-b.zmin()));
+      m_cell_sizes[v]=s;
+      if (s<m_cell_size_min) { m_cell_size_min=s; }
+      if (s>m_cell_size_max) { m_cell_size_max=s; }
+    }
+    if (bb.empty()) { m_cell_size_min=0.f; m_cell_size_max=1.f; }
+    m_cell_sizes_valid=true;
+  }
+
+  // Colour by value: the palette as a QColor, matching colour_palette() in the
+  // shader, so the legend bar shows the same colours as the faces.
+  QColor legend_palette_color(float t) const
+  {
+    auto cl=[](float x){ return x<0.f ? 0.f : (x>1.f ? 1.f : x); };
+    float r, g, b;
+    if (m_color_map<2) { r=cl(t*3.f); g=cl(t*3.f-1.f); b=cl(t*3.f-2.f); } // heat
+    else if (m_color_map<3) { r=cl(1.5f-std::abs(4.f*t-3.f)); // jet
+                              g=cl(1.5f-std::abs(4.f*t-2.f));
+                              b=cl(1.5f-std::abs(4.f*t-1.f)); }
+    else if (m_color_map<4) { r=g=b=cl(t); } // grey ramp
+    else
+    { // viridis, the same coefficients as colour_palette() in Basic_shaders.h
+      static const float C[7][3]={
+        { 0.277727f,  0.005407f,  0.334100f},
+        { 0.105093f,  1.404614f,  1.384590f},
+        {-0.330862f,  0.214848f,  0.095095f},
+        {-4.634230f, -5.799101f, -19.332441f},
+        { 6.228270f, 14.179933f,  56.690553f},
+        { 4.776385f,-13.745145f, -65.353033f},
+        {-5.435456f,  4.645853f,  26.312435f}};
+      float rgb[3];
+      for (int k=0; k<3; ++k)
+      { float v=C[6][k];
+        for (int j=5; j>=0; --j) { v=C[j][k]+t*v; }
+        rgb[k]=cl(v); }
+      r=rgb[0]; g=rgb[1]; b=rgb[2];
+    }
+    return QColor(int(r*255.f), int(g*255.f), int(b*255.f));
+  }
+
+  // Colour by value (distance): the actual signed-distance range the geometry spans
+  // along the plane normal, from the scene bounding-box corners, so the palette and
+  // the legend cover the values really present rather than the whole scene radius
+  // (which left the colours bunched in the middle of the ramp).
+  void distance_value_range(const QVector4D &clipPlane, const QVector4D &plane_point,
+                            double &vmin, double &vmax)
+  {
+    // Colour by distance to the clipping plane, anchored at the plane: 0 at the plane
+    // (one end of the palette), growing into the kept (solid) half up to its farthest
+    // point. The kept half is dot(pos-pt, n) > 0 (see onPlane in the shader). We do not
+    // use the symmetric bounding-box span, which would (a) shift with the plane so both
+    // range ends moved with the distances and the colours never changed when the plane
+    // was only translated (they did on rotation), and (b) advertise in the legend the
+    // colours of the clipped-away half, which no visible face shows. Anchored at the
+    // plane the colours sweep as the plane is moved (the farthest distance changes), and
+    // the legend matches the visible faces.
+    const CGAL::Bbox_3 b=m_scene.bounding_box();
+    const QVector3D n=QVector3D(clipPlane).normalized();
+    const QVector3D pt=plane_point.toVector3D();
+    double dmax=0.0;
+    for (int c=0; c<8; ++c)
+    {
+      const QVector3D corner(float((c&1) ? b.xmax() : b.xmin()),
+                             float((c&2) ? b.ymax() : b.ymin()),
+                             float((c&4) ? b.zmax() : b.zmin()));
+      const double d=QVector3D::dotProduct(corner-pt, n);
+      if (d>dmax) { dmax=d; }
+    }
+    vmin=0.0;
+    vmax=dmax;
+  }
+
+  // Colour by value: the palette colour for a volume's clip-plane cap. The cap faces
+  // carry no value of their own, so the cap takes the value the volume shows: its
+  // size, its centre distance, or the mean of its per-face values.
+  QColor volume_value_color(std::size_t v, const QVector4D &clipPlane,
+                            const QVector4D &plane_point)
+  {
+    const std::vector<std::vector<unsigned int>> &vols=m_scene.get_volume_faces();
+    double vmin, vmax, value;
+    if (m_color_value==3 && m_scene.has_face_values())
+    { vmin=m_scene.face_value_min(); vmax=m_scene.face_value_max();
+      const std::vector<float> &fv=m_scene.get_face_values();
+      double sum=0.0; std::size_t n=0;
+      for (unsigned int fi : vols[v]) { if (fi<fv.size()) { sum+=fv[fi]; ++n; } }
+      value=(n>0) ? sum/double(n) : vmin; }
+    else if (m_color_value==2)
+    { if (!m_cell_sizes_valid) { compute_cell_sizes(); }
+      vmin=m_cell_size_min; vmax=m_cell_size_max; value=m_cell_sizes[v]; }
+    else
+    { distance_value_range(clipPlane, plane_point, vmin, vmax);
+      const CGAL::Bbox_3 &b=m_scene.get_volume_bboxes()[v];
+      const QVector3D c(float((b.xmin()+b.xmax())*0.5), float((b.ymin()+b.ymax())*0.5),
+                        float((b.zmin()+b.zmax())*0.5));
+      value=QVector3D::dotProduct(c-plane_point.toVector3D(),
+                                  QVector3D(clipPlane).normalized()); }
+    double t=(vmax-vmin>1e-12) ? (value-vmin)/(vmax-vmin) : 0.0;
+    t=(t<0.0) ? 0.0 : (t>1.0 ? 1.0 : t);
+    return legend_palette_color(float(t));
+  }
+
+  // Colour by value: draw a small legend, a gradient bar with the value range, so
+  // the colours read as numbers. The range and label match the current value.
+  void draw_color_legend(const QVector4D &clipPlane, const QVector4D &plane_point)
+  {
+    double vmin, vmax;
+    QString label;
+    if (m_color_value==3 && m_scene.has_face_values())
+    { vmin=m_scene.face_value_min(); vmax=m_scene.face_value_max();
+      label=QString(m_scene.value_name().c_str()); }
+    else if (m_color_value==2 && !m_scene.get_volume_faces().empty())
+    { if (!m_cell_sizes_valid) { compute_cell_sizes(); }
+      vmin=m_cell_size_min; vmax=m_cell_size_max; label=QString("size"); }
+    else
+    { distance_value_range(clipPlane, plane_point, vmin, vmax); label=QString("distance to clipping plane"); }
+
+    // No range to map (a uniform value, e.g. a flat mesh with a parallel plane):
+    // skip the legend rather than show a misleading full gradient. The threshold is
+    // relative to the value magnitude, so it holds at any scale.
+    if (vmax-vmin<=1e-6*(std::fabs(vmin)+std::fabs(vmax))) { return; }
+
+    const int barW=16, barH=150;
+    const int x=width()-barW-70, y=height()-barH-30;
+    QPainter painter(this);
+    for (int i=0; i<barH; ++i)
+    {
+      const float t=1.f-float(i)/float(barH-1); // top of the bar is the max value
+      painter.fillRect(x, y+i, barW, 1, legend_palette_color(t));
+    }
+    painter.setPen(::Qt::black);
+    painter.drawRect(x, y, barW, barH);
+    // Right-align the label so a long name grows to the left, into empty space,
+    // instead of running off the right edge.
+    painter.drawText(QRect(0, y-22, x+barW+40, 16),
+                     ::Qt::AlignRight | ::Qt::AlignVCenter, label);
+    painter.drawText(x+barW+5, y+11, QString::number(vmax, 'g', 3));
+    painter.drawText(x+barW+5, y+barH, QString::number(vmin, 'g', 3));
+    painter.end();
+  }
+
   void initialize_buffers()
   {
     set_camera_mode();
+    m_cell_sizes_valid=false; // colour by value: the scene may have changed
     rendering_program_p_l.bind();
 
     unsigned int bufn = 0;
@@ -2291,6 +2574,46 @@ protected:
         displayMessage(QString("Draw faces=%1.").arg(m_draw_faces?"true":"false"));
         update();
       }
+      else if ((e->key()==::Qt::Key_D) && (modifiers==::Qt::NoButton))
+      {
+        // Colour the faces by a value (here the distance to the clipping plane):
+        // off, then the heat, jet and grey palettes.
+        m_color_map=(m_color_map+1)%5;
+        switch(m_color_map)
+        {
+        case 0: displayMessage(QString("Colour by value = off")); break;
+        case 1: displayMessage(QString("Colour by value = heat")); break;
+        case 2: displayMessage(QString("Colour by value = jet")); break;
+        case 3: displayMessage(QString("Colour by value = grey")); break;
+        case 4: displayMessage(QString("Colour by value = viridis")); break;
+        default: break;
+        }
+        update();
+      }
+      else if ((e->key()==::Qt::Key_D) && (modifiers==::Qt::ShiftModifier))
+      {
+        // Colour by value: pick the value and how it is shown. Skip the modes that
+        // do not apply to the current scene: the per-cell and size modes need
+        // volumes, and the user value needs values set by the drawer. This keeps the
+        // message, the faces and the legend in agreement.
+        const bool has_vols=!m_scene.get_volume_faces().empty();
+        const bool has_vals=m_scene.has_face_values();
+        for (int step=1; step<=4; ++step)
+        {
+          const int m=(m_color_value+step)%4;
+          if (m==0 || ((m==1 || m==2) && has_vols) || (m==3 && has_vals))
+          { m_color_value=m; break; }
+        }
+        switch(m_color_value)
+        {
+        case 0: displayMessage(QString("Colour by value = distance (smooth)")); break;
+        case 1: displayMessage(QString("Colour by value = distance (per cell)")); break;
+        case 2: displayMessage(QString("Colour by value = size (per cell)")); break;
+        case 3: displayMessage(QString("Colour by value = %1 (per face)").arg(m_scene.value_name().c_str())); break;
+        default: break;
+        }
+        update();
+      }
       else if ((e->key()==::Qt::Key_Plus) && (!modifiers.testFlag(::Qt::ControlModifier))) // No ctrl
       {
         m_size_edges+=.5;
@@ -2546,6 +2869,13 @@ protected:
   std::vector<std::vector<unsigned int>> m_edge_owners; // whole-volume clip: per edge, owning volumes
   std::vector<std::vector<unsigned int>> m_point_owners; // whole-volume clip: per vertex, owning volumes
   bool m_clip_owners_valid = false; // whole-volume clip: are the owner lists up to date
+  int m_color_map=0; // colour by value: 0 off, 1 heat, 2 jet, 3 grey ramp
+  int m_color_value=0; // colour by value source (Shift+D): 0 distance smooth,
+                       // 1 distance per cell, 2 size per cell
+  std::vector<float> m_cell_sizes; // colour by value: per-cell size (bbox volume)
+  float m_cell_size_min=0.f; // colour by value: size range for the palette
+  float m_cell_size_max=1.f;
+  bool m_cell_sizes_valid=false; // colour by value: recompute the sizes on scene change
   CGAL::qglviewer::ManipulatedFrame* m_frame_plane=nullptr;
 
   // Buffer for clipping plane is not stored in the scene because it is not

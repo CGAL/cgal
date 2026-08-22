@@ -52,6 +52,8 @@ struct Graphics_scene_options<DS, VertexDescriptor, EdgeDescriptor, FaceDescript
     colored_face=[](const DS &, face_descriptor)->bool { return false; };
 
     face_wireframe=[](const DS &, face_descriptor)->bool { return false; };
+
+    is_face_valued=[](const DS &, face_descriptor)->bool { return false; };
   }
 
   // The seven following functions should not be null
@@ -64,6 +66,19 @@ struct Graphics_scene_options<DS, VertexDescriptor, EdgeDescriptor, FaceDescript
   std::function<bool(const DS &, face_descriptor)>   colored_face;
 
   std::function<bool(const DS &, face_descriptor)> face_wireframe;
+
+  /// `std::function` that returns `true` if the given face carries a scalar value to
+  /// colour it by, `false` otherwise. `false` by default.
+  std::function<bool(const DS &, face_descriptor)>  is_face_valued;
+
+  /// `std::function` that returns the scalar value of the given face. Called only
+  /// when `is_face_valued()` returns `true`. The viewer normalises the values over their
+  /// range and maps them to a colour palette.
+  std::function<float(const DS &, face_descriptor)> face_value;
+
+  /// The name of the value, shown in the viewer's colour legend (for example
+  /// "aspect ratio"). Empty by default.
+  std::string face_value_name;
 
   // These functions must be non null if the corresponding colored_XXX function
   // returns true.
