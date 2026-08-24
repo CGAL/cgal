@@ -196,7 +196,8 @@ namespace AABB_trees {
   ///
   /// \brief computes all pairs of primitives from a single AABB tree that are intersecting.
   ///
-  /// \note Whether two objects that share a common subfeature (e.g., two triangles sharing an edge) are considered to intersect depends on the primitive type used.
+  /// \note Two primitives do intersect if their datum do intersect according to the traits of the tree. Thus, with all documented traits in CGAL, two triangles sharing
+  /// a vertex are considered to intersect, and similarly for other primitives types and types of intersection.
   ///
   /// Intersections of a primitive with itself are not reported, and each intersecting
   /// pair of distinct primitives is reported only once.

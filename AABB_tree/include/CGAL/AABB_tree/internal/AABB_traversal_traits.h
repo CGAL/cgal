@@ -185,7 +185,7 @@ private:
 
 /**
  * It is more efficient to apply the inverse transformation to the query and then use the original traits,
-* but computing an inverse is less numerically stable than applying the transformation to the primitives.
+ * but except if the constructions are exact, the result may differ from applying the original transformation to the tree.
  * @class Listing_primitive_traits_with_transformation
  */
 template<typename AABBTraits, typename Query, typename OutputIterator, typename SUPPORTS_ROTATION = CGAL::Tag_true>
@@ -370,7 +370,7 @@ private:
 
 /**
  * It is more efficient to apply the inverse transformation to the query and then use the original traits,
-* but computing an inverse is less numerically stable than applying the transformation to the primitives.
+ * but except if the constructions are exact, the result may differ from applying the original transformation to the tree.
  * @class Do_intersect_traits_with_transformation
  */
 template<typename AABBTraits, typename Query, typename SUPPORTS_ROTATION = CGAL::Tag_true>

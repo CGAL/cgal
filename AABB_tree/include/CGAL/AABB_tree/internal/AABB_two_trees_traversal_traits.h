@@ -321,7 +321,8 @@ public:
 
   void intersection(const Primitive1& primitive1, const Node2& node2, std::size_t nb_primitives_2)
   {
-    // Use inverse transformation is faster but less numerically stable.
+    // It is more efficient to apply the inverse transformation to the query and then use the original traits,
+    // but except if the constructions are exact, the result may differ from applying the original transformation to the tree.
     if constexpr(Use_inverse_transformation::value)
     {
       Do_intersect_traits<AABBTraits2, typename AABBTraits1::Primitive::Datum> traits(m_traits2);
