@@ -450,3 +450,6 @@ CGAL_add_named_parameter(with_plc_face_id_t, with_plc_face_id, with_plc_face_id)
 
 // List of named parameters used in the package 'Barycentric_coordinates_3'
 CGAL_add_named_parameter(computation_policy_t, computation_policy, computation_policy)
+
+//List of named parameters used in Mesh_smoothing_3
+CGAL_add_named_parameter(max_number_of_evaluations_t, max_number_of_evaluations, max_number_of_evaluations)

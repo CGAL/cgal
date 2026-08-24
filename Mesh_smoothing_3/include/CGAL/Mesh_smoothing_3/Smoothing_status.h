@@ -24,7 +24,7 @@ namespace Mesh_smoothing_3 {
 /*!
  * \ingroup pkgMeshSmoothing3Functions
  *
- * \brief Status reached by the mesh smoothing algorithm.
+ * \brief Return code of the mesh smoothing.
  */
 enum class Smoothing_return_code
 {
@@ -40,20 +40,20 @@ enum class Smoothing_return_code
 /*!
  * \ingroup pkgMeshSmoothing3Functions
  *
- * \brief Return status of the mesh smoothing algorithm.
+ * \brief Status of the mesh smoothing process.
  */
 struct Smoothing_status {
     Smoothing_return_code return_code = Smoothing_return_code::ALL_VERTICES_FROZEN; ///< Return code of the smoothing algorithm.
     unsigned nb_iterations = 0; ///< Number of smoothing/untangling iterations performed.
     unsigned nb_vertex_updates = 0; ///< Number of times vertices were updated.
     unsigned nb_metric_evaluations = 0; ///< Number of times the quality metric was evaluated for optimization.
-    unsigned nb_initial_invalid_elements = 0; ///< Number of invalid elements (negative orientation) in the mesh at the beginning of the smoothing process.
-    unsigned nb_invalid_elements = 0; ///< Number of invalid elements (negative orientation) in the mesh at the end of the smoothing process.
-    double total_time = 0.; ///< Total time spent in the smoothing algorithm in seconds.
-    double pre_processing_time = 0.; ///< Time spent in the preprocessing step in seconds.
-    double optimization_time = 0.; ///< Time spent in the optimization step in seconds.
+    unsigned nb_initial_invalid_elements = 0; ///< Number of negatively oriented elements in the mesh at the beginning of the smoothing process.
+    unsigned nb_invalid_elements = 0; ///< Number of negatively oriented elements in the mesh at the end of the smoothing process.
+    double total_time = 0.; ///< Total time spent in the smoothing algorithm, in seconds.
+    double pre_processing_time = 0.; ///< Time spent in the preprocessing step, in seconds.
+    double optimization_time = 0.; ///< Time spent in the optimization step, in seconds.
 
-    bool valid_mesh() const { return nb_invalid_elements == 0; } ///< Returns true if the mesh is valid (no negatively oriented elements).
+    bool valid_mesh() const { return nb_invalid_elements == 0; } ///< returns true if the mesh is valid (no negatively oriented elements).
 
 
 // internal usage
