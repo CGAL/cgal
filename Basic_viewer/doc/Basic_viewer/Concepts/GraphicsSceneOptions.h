@@ -78,7 +78,7 @@ public:
   /// `std::function` that returns `true` when call for faces having an associated a scalar value, and `false` otherwise. `false` by default.
   std::function<bool(const DS &, face_descriptor)> is_face_valued;
 
-  /// `std::function` that returns the scalar value of the given face. Used only when
+  /// `std::function` that returns the associated scalar value of a face. Called only if
   /// `is_face_valued()` returns `true`. The viewer normalizes the values over their range
   /// and maps them to a color palette.
   std::function<float(const DS &, face_descriptor)> face_value;
