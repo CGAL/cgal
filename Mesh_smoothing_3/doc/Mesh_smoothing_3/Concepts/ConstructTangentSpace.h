@@ -46,6 +46,11 @@ Edge associated with a curve
 */
 using Curve_edge = std::pair<C3t3::Curve_index, C3t3::Edge>;
 
+/*!
+Model of `TangentSpace`
+*/
+using Tangent_space = unspecified_type;
+
 
 /// @}
 
@@ -58,14 +63,14 @@ using Curve_edge = std::pair<C3t3::Curve_index, C3t3::Edge>;
 returns a plane tangent to the patch to which its facet should align too.
 The list of Point_3 contains its current vertices location.
 */
-TangentSpace<Geom_traits> patch_face_projection_plane(Patch_face patch_face, std::vector<Point_3> face_points) const;
+Tangent_space patch_face_projection_plane(Patch_face patch_face, std::vector<Point_3> face_points) const;
 
 
 /*!
 returns a line tangent to the curve to which its edge should align too.
-The array contains the two locations of its vertices.
+The array contains the two current locations of its vertices.
 */
-TangentSpace<Geom_traits> curve_edge_projection_line(Curve_edge curve_edge, std::array<Point_3,2> edge_points) const;
+Tangent_space curve_edge_projection_line(Curve_edge curve_edge, std::array<Point_3,2> edge_points) const;
 
 
 /// @}
