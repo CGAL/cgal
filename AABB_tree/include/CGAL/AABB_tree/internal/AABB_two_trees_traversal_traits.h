@@ -174,7 +174,10 @@ public:
 
   bool do_intersect(const Node1& node1, const Node2& node2) const
   {
-    return do_overlap(compute_transformed_bbox(m_tr1, node1.bbox(), m_tr1_has_rotation), compute_transformed_bbox(m_tr2, node2.bbox(), m_tr2_has_rotation));
+    if(m_tr1_has_rotation || m_tr2_has_rotation)
+      return do_intersect_OBB(node1.bbox(), node2.bbox(), m_tr1, m_tr2);
+    else
+      return do_intersect_transformed_BB(node1.bbox(), node2.bbox(), m_tr1, m_tr2);
   }
 
 private:
@@ -367,7 +370,10 @@ public:
 
   bool do_intersect(const Node1& node1, const Node2& node2) const
   {
-    return do_overlap(compute_transformed_bbox(m_tr1, node1.bbox(), m_tr1_has_rotation), compute_transformed_bbox(m_tr2, node2.bbox(), m_tr2_has_rotation));
+    if(m_tr1_has_rotation || m_tr2_has_rotation)
+      return do_intersect_OBB(node1.bbox(), node2.bbox(), m_tr1, m_tr2);
+    else
+      return do_intersect_transformed_BB(node1.bbox(), node2.bbox(), m_tr1, m_tr2);
   }
 
   bool is_intersection_found() const { return m_is_found; }
