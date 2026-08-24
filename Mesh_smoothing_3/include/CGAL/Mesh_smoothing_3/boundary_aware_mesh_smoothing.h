@@ -178,7 +178,7 @@ Mesh_smoothing_3::Smoothing_status boundary_aware_mesh_smoothing  (
     }
 
     using Point_3 = typename  C3t3::Triangulation::Geom_traits::Point_3;
-    using Tangent_space = CTS::Tangent_space;
+    using Tangent_space = typename CTS::Tangent_space;
 
     auto proj_weight = [](Tangent_space const &ts) {
         using Mesh_smoothing_3::Projection_weight_mode;

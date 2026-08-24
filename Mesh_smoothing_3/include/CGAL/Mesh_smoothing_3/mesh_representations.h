@@ -16,6 +16,7 @@
 #include <CGAL/license/Mesh_smoothing_3.h>
 
 #include <CGAL/Mesh_smoothing_3/default_shapes.h>
+#include <CGAL/Mesh_smoothing_3/internal/type_definitions.h>
 
 #include <Eigen/Eigen>
 
@@ -272,17 +273,6 @@ namespace helper_structures {
 // WORK IN PROGRESS
 namespace cgal_types {
 
-template <class C3t3>
-typename C3t3::Triangulation::Geom_traits::Point_3
-get_point(typename C3t3::Vertex_handle vh)
-{
-  using T3=typename C3t3::Triangulation;
-  if constexpr (std::is_same_v<typename T3::Geom_traits::Weighted_point_3,
-                               typename T3::Vertex::Point>)
-    return vh->point().point();
-  else
-    return vh->point();
-}
 
 template <typename C3t3>
 class C3t3_wrapper {
@@ -308,7 +298,7 @@ public:
     std::size_t nb_vertices() const { return c3t3.triangulation().number_of_vertices(); }
 
     decltype(auto) vertex_coordinates(Vertex_descriptor vertex) const {
-        return get_point<C3t3>(vertex); // c3t3 holds weighted points
+        return Mesh_smoothing_3_internal::get_point<C3t3>(vertex); // c3t3 holds weighted points
     }
     void  set_vertex_coordinates(Vertex_descriptor vertex, const Point_3& coord)
     {

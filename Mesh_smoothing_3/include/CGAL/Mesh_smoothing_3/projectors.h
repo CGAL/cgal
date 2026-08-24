@@ -16,9 +16,8 @@
 
 #include <CGAL/license/Mesh_smoothing_3.h>
 
-#include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits_3.h>
-#include <CGAL/AABB_primitive.h>
+#include <CGAL/Mesh_smoothing_3/internal/type_definitions.h>
+
 #include <CGAL/centroid.h>
 
 #include <map>
@@ -29,96 +28,6 @@
 namespace CGAL {
 
 namespace Mesh_smoothing_3 {
-namespace internal {
-
-using CGAL::Mesh_smoothing_3::cgal_types::get_point;
-
-template<typename C3t3>
-struct Facet_to_triangle_property_map
-{
-    using key_type = typename C3t3::Facet;
-    using K = typename C3t3::Triangulation::Geom_traits;
-    using value_type = typename K::Triangle_3;
-    using reference = value_type;
-    using category = boost::readable_property_map_tag;
-};
-
-template<typename C3t3>
-inline typename Facet_to_triangle_property_map<C3t3>::reference
-get(const Facet_to_triangle_property_map<C3t3>&, const typename C3t3::Facet& f)
-{
-    using Tr = typename C3t3::Triangulation;
-    using K = typename Tr::Geom_traits;
-    const typename Tr::Cell_handle cell = f.first;
-    const int i = f.second;
-    const typename K::Point_3& p0 = get_point<C3t3>(cell->vertex((i + 1) % 4));
-    const typename K::Point_3& p1 = get_point<C3t3>(cell->vertex((i + 2) % 4));
-    const typename K::Point_3& p2 = get_point<C3t3>(cell->vertex((i + 3) % 4));
-    return typename K::Triangle_3(p0, p1, p2);
-}
-
-template<typename C3t3>
-struct Facet_to_point_property_map
-{
-    using key_type = typename C3t3::Facet;
-    using K = typename C3t3::Triangulation::Geom_traits;
-    using value_type = typename K::Point_3;
-    using reference = value_type;
-    using category = boost::readable_property_map_tag;
-};
-
-template<typename C3t3>
-inline typename Facet_to_point_property_map<C3t3>::reference
-get(const Facet_to_point_property_map<C3t3>&, const typename C3t3::Facet& f)
-{
-    using Tr = typename C3t3::Triangulation;
-    const typename Tr::Cell_handle cell = f.first;
-    const int i = f.second;
-    return get_point<C3t3>(cell->vertex((i + 1) % 4));
-}
-
-template<typename C3t3>
-struct Edge_to_segment_property_map
-{
-    using key_type = typename C3t3::Edge;
-    using K = typename C3t3::Triangulation::Geom_traits;
-    using value_type = typename K::Segment_3;
-    using reference = value_type;
-    using category = boost::readable_property_map_tag;
-};
-
-template<typename C3t3>
-inline typename Edge_to_segment_property_map<C3t3>::reference
-get(const Edge_to_segment_property_map<C3t3>&, const typename C3t3::Edge& e)
-{
-    using Tr = typename C3t3::Triangulation;
-    using K = typename Tr::Geom_traits;
-    const typename Tr::Cell_handle cell = e.first;
-    return typename K::Segment_3(get_point<C3t3>(cell->vertex(e.second)),
-                                 get_point<C3t3>(cell->vertex(e.third)));
-}
-
-template<typename C3t3>
-struct Edge_to_point_property_map
-{
-    using key_type = typename C3t3::Edge;
-    using K = typename C3t3::Triangulation::Geom_traits;
-    using value_type = typename K::Point_3;
-    using reference = value_type;
-    using category = boost::readable_property_map_tag;
-};
-
-template<typename C3t3>
-inline typename Edge_to_point_property_map<C3t3>::reference
-get(const Edge_to_point_property_map<C3t3>&, const typename C3t3::Edge& e)
-{
-    using Tr = typename C3t3::Triangulation;
-    const typename Tr::Cell_handle cell = e.first;
-    return get_point<C3t3>(cell->vertex(e.second));
-}
-
-} // namespace internal
-
 
 /*!
  * \ingroup pkgMeshSmoothing3Projection
@@ -227,29 +136,8 @@ public:
 private:
     C3t3 _c3t3;
 
-
-    using K = typename C3t3::Triangulation::Geom_traits;
-
-    using Facet_to_triangle_map = internal::Facet_to_triangle_property_map<C3t3>;
-    using Facet_to_point_map = internal::Facet_to_point_property_map<C3t3>;
-    using Edge_to_segment_map = internal::Edge_to_segment_property_map<C3t3>;
-    using Edge_to_point_map = internal::Edge_to_point_property_map<C3t3>;
-
-    using Facet_primitive = CGAL::AABB_primitive<Facet,
-                                                Facet_to_triangle_map,
-                                                Facet_to_point_map,
-                                                CGAL::Tag_false,
-                                                CGAL::Tag_false>;
-    using Facet_traits = CGAL::AABB_traits_3<K, Facet_primitive>;
-    using Facet_tree = CGAL::AABB_tree<Facet_traits>;
-
-    using Edge_primitive = CGAL::AABB_primitive<Edge,
-                                                Edge_to_segment_map,
-                                                Edge_to_point_map,
-                                                CGAL::Tag_false,
-                                                CGAL::Tag_false>;
-    using Edge_traits = CGAL::AABB_traits_3<K, Edge_primitive>;
-    using Edge_tree = CGAL::AABB_tree<Edge_traits>;
+    using Facet_tree = typename Mesh_smoothing_3_internal::Facet_tree<C3t3>;
+    using Edge_tree = typename Mesh_smoothing_3_internal::Edge_tree<C3t3>;
 
     std::map<Surface_patch_index, Facet_tree> _facet_trees;
     std::map<Curve_index, Edge_tree> _edge_trees;
