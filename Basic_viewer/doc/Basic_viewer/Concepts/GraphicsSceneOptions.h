@@ -75,8 +75,7 @@ public:
   /// `nullptr` by default.
   std::function<CGAL::IO::Color(const DS &, face_descriptor)> face_color;
 
-  /// `std::function` that returns `true` if the given face carries a scalar value to
-  /// colour it by, `false` otherwise. `false` by default.
+  /// `std::function` that returns `true` when call for faces having an associated a scalar value, and `false` otherwise. `false` by default.
   std::function<bool(const DS &, face_descriptor)> is_face_valued;
 
   /// `std::function` that returns the scalar value of the given face. Used only when
