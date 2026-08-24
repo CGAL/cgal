@@ -223,7 +223,7 @@ refine_convex_with_plane_using_opposite_direction(PolygonMesh& pm,
     visitor.before_edge_split(h, pm);
     h = CGAL::Euler::split_edge(h, pm);
     put(vpm, target(h, pm), ip);
-    visitor.new_vertex_added(std::numeric_limits<std::size_t>::max(), target(h,pm), pm);
+    visitor.new_vertex_added((std::numeric_limits<std::size_t>::max)(), target(h,pm), pm);
     visitor.edge_split(h, pm);
     visitor.after_edge_split();
   }
@@ -271,7 +271,7 @@ refine_convex_with_plane_using_opposite_direction(PolygonMesh& pm,
       visitor.before_edge_split(h, pm);
       h = CGAL::Euler::split_edge(h, pm);
       put(vpm, target(h, pm), ip);
-      visitor.new_vertex_added(std::numeric_limits<std::size_t>::max(), target(h,pm), pm);
+      visitor.new_vertex_added((std::numeric_limits<std::size_t>::max)(), target(h,pm), pm);
       visitor.edge_split(h, pm);
       visitor.after_edge_split();
     }
@@ -373,7 +373,7 @@ refine_convex_with_plane(PolygonMesh& pm,
     visitor.before_edge_split(h, pm);
     h = CGAL::Euler::split_edge(h, pm);
     put(vpm, target(h, pm), ip);
-    visitor.new_vertex_added(std::numeric_limits<std::size_t>::max(), target(h,pm), pm);
+    visitor.new_vertex_added((std::numeric_limits<std::size_t>::max)(), target(h,pm), pm);
     visitor.edge_split(h, pm);
     visitor.after_edge_split();
   }
@@ -425,7 +425,7 @@ refine_convex_with_plane(PolygonMesh& pm,
       visitor.before_edge_split(h, pm);
       h = CGAL::Euler::split_edge(h, pm);
       put(vpm, target(h, pm), ip);
-      visitor.new_vertex_added(std::numeric_limits<std::size_t>::max(), target(h,pm), pm);
+      visitor.new_vertex_added((std::numeric_limits<std::size_t>::max)(), target(h,pm), pm);
       visitor.edge_split(h, pm);
       visitor.after_edge_split();
     }
