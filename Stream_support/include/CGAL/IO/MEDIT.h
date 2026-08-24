@@ -256,9 +256,9 @@ bool read_MEDIT(std::istream& is,
  *
  * \param is the input stream
  * \param points points of the soup of cells
- * \param finite_cells Each element in it describes a cell
+ * \param finite_cells each element in it describes a cell
  *        using the indices of the points in `points`
- * \param subdomains Each element in it describes the subdomain index of the corresponding cell in `finite_cells`
+ * \param subdomains each element in it describes the subdomain index of the corresponding cell in `finite_cells`
  * \param verbose if `true`, prints information about the reading process
  *
  * \returns `true` if the reading was successful, `false` otherwise.

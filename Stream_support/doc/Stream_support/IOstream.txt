@@ -177,9 +177,9 @@ int main()
 \subsubsection IOstreamUsingOutputFormatting Using Output Formatting
 
 To ensure that non-\cgal types are formatted correctly (i.e., respecting \link PkgStreamSupportEnumRef `IO::Mode` \endlink),
-`oformat()` can be used.
+`CGAL::IO::oformat()` can be used.
 For types with a `Output_rep` specialization, the respective output routine of `Output_rep`
-will be called by `oformat()`. Otherwise, the stream output operator will be called.
+will be called by `CGAL::IO::oformat()`. Otherwise, the stream output operator will be called.
 
 \code{.cpp}
 std::cout << CGAL::IO::oformat( myobject );
@@ -255,9 +255,9 @@ for drawing operations in many \cgal output streams.
 Each color is defined by a triple of integers `(r,g,b)` with
 0 \f$ \le \f$ r,g,b \f$ \le \f$ 255, the so-called <I>rgb-value</I> of the color.
 There are a 11 predefined `Color` functions available:
-`black()`, `white()`, `gray()`, `red()`, `green()`,
-`deep_blue()`, `blue()`, `purple()`, `violet()`, `orange()`,
-and `yellow()`.
+`CGAL::IO::black()`, `CGAL::IO::white()`, `CGAL::IO::gray()`, `CGAL::IO::red()`, `CGAL::IO::green()`,
+`CGAL::IO::deep_blue()`, `CGAL::IO::blue()`, `CGAL::IO::purple()`, `CGAL::IO::violet()`, `CGAL::IO::orange()`,
+and `CGAL::IO::yellow()`.
 
 \subsection IOstreamStream Stream Support
 
@@ -376,7 +376,7 @@ The file formats supported for `CGAL::Point_set_3` are detailed in the table bel
 \subsection IOstreamPolygonSoupIO Polygon Soup IO
 A polygon soup is a set of polygons with no global combinatorial information,
 stored in a two containers: one storing the points, and the other one storing
-their indices per face (i.e a vector of 3 integers represent a triangle face).
+their indices per face (i.e., a vector of 3 integers represent a triangle face).
 
 <table class="iotable">
   <tr>
@@ -505,7 +505,7 @@ which can perform some combinatorial repairing to ensure the input data is a 2-m
 
   <tr>
     <th>\ref IOStreamMedit "MEDIT"</th>
-    <td>`CGAL::IO::read_MEDIT()`</td>
+    <td>\link CGAL::IO::read_MEDIT(std::istream&, PointRange&, CellRange&, std::vector<int>&,bool) `CGAL::IO::read_MEDIT()` \endlink</td>
     <td><center> - </center></td>
   </tr>
 </table>
