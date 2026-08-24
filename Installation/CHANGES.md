@@ -36,7 +36,7 @@ Release date: December 2026
 
 ### [Basic Viewer](https://doc.cgal.org/6.3/Manual/packages.html#PkgBasicViewer)
 
-- Added the possibility to colour the faces by a value mapped to a colour palette: the
+- Added the possibility to color the faces by a value mapped to a color palette: the
   distance to the clipping plane, the cell size, or a scalar value provided by the drawer.
   A drawer can attach a value to each face through the new `Graphics_scene_options` functions
   `is_face_valued` and `face_value` (with `face_value_name` for the legend). As an example, the

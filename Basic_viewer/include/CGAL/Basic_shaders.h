@@ -75,18 +75,18 @@ uniform highp   vec4  u_PointPlane;
 uniform mediump float u_RenderingMode;
 uniform mediump float u_RenderingTransparency;
 
-// Colour by value: 0 keeps the vertex colour, otherwise a palette index. The
+// Color by value: 0 keeps the vertex color, otherwise a palette index. The
 // value shown is the signed distance from the fragment to the clipping plane,
 // normalised to [u_ValueMin, u_ValueMax].
 uniform mediump float u_ColorMapMode;
 uniform mediump float u_ValueMin;
 uniform mediump float u_ValueMax;
 // Per cell: the viewer gives one value for the whole cell (its centre distance or
-// its size), so a whole cell takes one flat colour and neighbouring cells do not melt.
+// its size), so a whole cell takes one flat color and neighbouring cells do not melt.
 uniform int           u_ColorPerCell;
 uniform highp   float u_CellValue;
 
-vec3 colour_palette(float t, float mode)
+vec3 color_palette(float t, float mode)
 {
   if (mode < 1.5)
   { return clamp(vec3(t*3.0, t*3.0-1.0, t*3.0-2.0), 0.0, 1.0); } // heat
@@ -116,14 +116,14 @@ void main(void)
   L = normalize(L);
   V = normalize(V);
 
-  // Base colour is the vertex colour, or a palette applied to the value.
+  // Base color is the vertex color, or a palette applied to the value.
   vec3 base = fColor.rgb;
   if (u_ColorMapMode > 0.5)
   {
     float value = (u_ColorPerCell != 0) ? u_CellValue
                 : dot(ls_fP.xyz-u_PointPlane.xyz, normalize(u_ClipPlane.xyz));
     float t = clamp((value-u_ValueMin)/max(u_ValueMax-u_ValueMin, 1e-6), 0.0, 1.0);
-    base = colour_palette(t, u_ColorMapMode);
+    base = color_palette(t, u_ColorMapMode);
   }
 
   highp vec3 R = reflect(-L, a_Normal);

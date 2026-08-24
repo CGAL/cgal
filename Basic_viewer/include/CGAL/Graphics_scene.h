@@ -252,11 +252,11 @@ public:
     return m_buffer_for_faces.is_a_face_started();
   }
 
-  /// sets the scalar value of the face currently being built. The viewer can colour
+  /// sets the scalar value of the face currently being built. The viewer can color
   /// the faces by these values, normalised over their range and mapped to a palette.
   void set_face_value(float v) { m_current_face_value=v; m_has_face_values=true; }
 
-  /// sets the name of the value, shown in the viewer's colour legend.
+  /// sets the name of the value, shown in the viewer's color legend.
   void set_value_name(const std::string &n) { m_value_name=n; }
 
   void face_begin()
@@ -335,7 +335,7 @@ public:
     record_current_face_value();
   }
 
-  // Colour by value: store the value of the face just committed, parallel to
+  // Color by value: store the value of the face just committed, parallel to
   // m_faces, and keep the min and max for the palette range.
   void record_current_face_value()
   {
@@ -390,7 +390,7 @@ public:
   const std::vector<CGAL::Bbox_3> &get_volume_bboxes() const
   { return m_volume_bboxes; }
 
-  // Colour by value: the per-face values set by the drawer, whether any were set,
+  // Color by value: the per-face values set by the drawer, whether any were set,
   // the legend name, and the value range.
   const std::vector<float> &get_face_values() const { return m_face_values; }
   bool has_face_values() const { return m_has_face_values; }
@@ -541,8 +541,8 @@ protected:
   std::vector<CGAL::Bbox_3> m_volume_bboxes;
   unsigned int m_current_face_start = 0;
 
-  // Colour by value: an optional scalar per face, set by the drawer, that the viewer
-  // maps to a palette (like the colour, but any float). Each value is parallel to
+  // Color by value: an optional scalar per face, set by the drawer, that the viewer
+  // maps to a palette (like the color, but any float). Each value is parallel to
   // m_faces; m_value_name labels the legend.
   std::vector<float> m_face_values;
   float m_current_face_value = 0.f;

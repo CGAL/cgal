@@ -125,8 +125,8 @@ public:
     setKeyDescription(::Qt::Key_U, "Move camera direction upside down");
     setKeyDescription(::Qt::Key_V, "Toggles vertices display");
     setKeyDescription(::Qt::Key_W, "Toggles faces display");
-    setKeyDescription(::Qt::Key_D, "Cycle colouring faces by value (distance to the plane)");
-    setKeyDescription(::Qt::ShiftModifier, ::Qt::Key_D, "Colour by value: distance smooth, distance per cell, size per cell");
+    setKeyDescription(::Qt::Key_D, "Cycle coloring faces by value (distance to the plane)");
+    setKeyDescription(::Qt::ShiftModifier, ::Qt::Key_D, "Color by value: distance smooth, distance per cell, size per cell");
     setKeyDescription(::Qt::Key_Plus, "Increase size of edges");
     setKeyDescription(::Qt::Key_Minus, "Decrease size of edges");
     setKeyDescription(::Qt::ControlModifier, ::Qt::Key_Plus, "Increase size of vertices");
@@ -736,9 +736,9 @@ public:
         rendering_program_face.setUniformValue("u_RenderingTransparency", clipping_plane_rendering_transparency);
         rendering_program_face.setUniformValue("u_ClipPlane", clipPlane);
         rendering_program_face.setUniformValue("u_PointPlane", plane_point);
-        // Colour by value: the value is the distance to the clipping plane, over a scale
+        // Color by value: the value is the distance to the clipping plane, over a scale
         // anchored at the plane (0) and growing into the kept half, so moving the plane
-        // sweeps the colours instead of leaving them unchanged.
+        // sweeps the colors instead of leaving them unchanged.
         rendering_program_face.setUniformValue("u_ColorMapMode", static_cast<GLfloat>(m_color_map));
         { double dvmin, dvmax; distance_value_range(clipPlane, plane_point, dvmin, dvmax);
           rendering_program_face.setUniformValue("u_ValueMin", static_cast<GLfloat>(dvmin));
@@ -766,7 +766,7 @@ public:
         else if (m_color_map!=0 && (m_color_value==1 || m_color_value==2) && !vols.empty())
         {
           // Per cell: draw each volume with one flat value, so a whole cell takes
-          // one colour and neighbouring cells do not melt into one. The value is the
+          // one color and neighbouring cells do not melt into one. The value is the
           // centre's distance to the plane, or the cell size.
           rendering_program_face.setUniformValue("u_ColorPerCell", static_cast<GLint>(1));
           const std::vector<CGAL::Bbox_3> &bb=m_scene.get_volume_bboxes();
@@ -912,7 +912,7 @@ public:
             if (num_volumes == 0)
             { capcol = QVector4D(0.6f, 0.6f, 0.6f, 1.0f); }
             else if (m_color_map!=0)
-            { // Colour by value: cap follows the palette, like the volume's faces.
+            { // Color by value: cap follows the palette, like the volume's faces.
               const QColor cc=volume_value_color(v, clipPlane, plane_point);
               capcol = QVector4D(float(cc.redF()), float(cc.greenF()),
                                  float(cc.blueF()), 1.0f);
@@ -1014,7 +1014,7 @@ public:
           clipping_plane_rendering_transparency);
         rendering_program_face.setUniformValue("u_ClipPlane", clipPlane);
         rendering_program_face.setUniformValue("u_PointPlane", plane_point);
-        // Colour by value: the kept volumes follow the same colour map as the other
+        // Color by value: the kept volumes follow the same color map as the other
         // face modes, per fragment or one flat value per cell.
         rendering_program_face.setUniformValue("u_ColorMapMode", static_cast<GLfloat>(m_color_map));
         { double dvmin, dvmax; distance_value_range(clipPlane, plane_point, dvmin, dvmax);
@@ -1036,7 +1036,7 @@ public:
         if (num_volumes == 0)
         {
           // No volumes (a surface mesh, for example): there is nothing to clip whole,
-          // so colour all faces by value, including the drawer's per-face value.
+          // so color all faces by value, including the drawer's per-face value.
           if (m_color_map!=0 && m_color_value==3 && m_scene.has_face_values())
           {
             rendering_program_face.setUniformValue("u_ColorPerCell", static_cast<GLint>(1));
@@ -1206,7 +1206,7 @@ public:
       glEnable(GL_LIGHTING);
     }
 
-    // Colour by value: show the palette and the value range as a small legend.
+    // Color by value: show the palette and the value range as a small legend.
     if (m_color_map!=0)
     { draw_color_legend(clipPlane, plane_point); }
 
@@ -1845,7 +1845,7 @@ protected:
     }
   }
 
-  // Colour by value (size): one size per cell, the bounding-box volume, with the
+  // Color by value (size): one size per cell, the bounding-box volume, with the
   // range over all cells so the palette spans from the smallest to the largest.
   void compute_cell_sizes()
   {
@@ -1865,8 +1865,8 @@ protected:
     m_cell_sizes_valid=true;
   }
 
-  // Colour by value: the palette as a QColor, matching colour_palette() in the
-  // shader, so the legend bar shows the same colours as the faces.
+  // Color by value: the palette as a QColor, matching color_palette() in the
+  // shader, so the legend bar shows the same colors as the faces.
   QColor legend_palette_color(float t) const
   {
     auto cl=[](float x){ return x<0.f ? 0.f : (x>1.f ? 1.f : x); };
@@ -1877,7 +1877,7 @@ protected:
                               b=cl(1.5f-std::abs(4.f*t-1.f)); }
     else if (m_color_map<4) { r=g=b=cl(t); } // grey ramp
     else
-    { // viridis, the same coefficients as colour_palette() in Basic_shaders.h
+    { // viridis, the same coefficients as color_palette() in Basic_shaders.h
       static const float C[7][3]={
         { 0.277727f,  0.005407f,  0.334100f},
         { 0.105093f,  1.404614f,  1.384590f},
@@ -1896,21 +1896,21 @@ protected:
     return QColor(int(r*255.f), int(g*255.f), int(b*255.f));
   }
 
-  // Colour by value (distance): the actual signed-distance range the geometry spans
+  // Color by value (distance): the actual signed-distance range the geometry spans
   // along the plane normal, from the scene bounding-box corners, so the palette and
   // the legend cover the values really present rather than the whole scene radius
-  // (which left the colours bunched in the middle of the ramp).
+  // (which left the colors bunched in the middle of the ramp).
   void distance_value_range(const QVector4D &clipPlane, const QVector4D &plane_point,
                             double &vmin, double &vmax)
   {
-    // Colour by distance to the clipping plane, anchored at the plane: 0 at the plane
+    // Color by distance to the clipping plane, anchored at the plane: 0 at the plane
     // (one end of the palette), growing into the kept (solid) half up to its farthest
     // point. The kept half is dot(pos-pt, n) > 0 (see onPlane in the shader). We do not
     // use the symmetric bounding-box span, which would (a) shift with the plane so both
-    // range ends moved with the distances and the colours never changed when the plane
+    // range ends moved with the distances and the colors never changed when the plane
     // was only translated (they did on rotation), and (b) advertise in the legend the
-    // colours of the clipped-away half, which no visible face shows. Anchored at the
-    // plane the colours sweep as the plane is moved (the farthest distance changes), and
+    // colors of the clipped-away half, which no visible face shows. Anchored at the
+    // plane the colors sweep as the plane is moved (the farthest distance changes), and
     // the legend matches the visible faces.
     const CGAL::Bbox_3 b=m_scene.bounding_box();
     const QVector3D n=QVector3D(clipPlane).normalized();
@@ -1928,7 +1928,7 @@ protected:
     vmax=dmax;
   }
 
-  // Colour by value: the palette colour for a volume's clip-plane cap. The cap faces
+  // Color by value: the palette color for a volume's clip-plane cap. The cap faces
   // carry no value of their own, so the cap takes the value the volume shows: its
   // size, its centre distance, or the mean of its per-face values.
   QColor volume_value_color(std::size_t v, const QVector4D &clipPlane,
@@ -1957,8 +1957,8 @@ protected:
     return legend_palette_color(float(t));
   }
 
-  // Colour by value: draw a small legend, a gradient bar with the value range, so
-  // the colours read as numbers. The range and label match the current value.
+  // Color by value: draw a small legend, a gradient bar with the value range, so
+  // the colors read as numbers. The range and label match the current value.
   void draw_color_legend(const QVector4D &clipPlane, const QVector4D &plane_point)
   {
     double vmin, vmax;
@@ -1999,7 +1999,7 @@ protected:
   void initialize_buffers()
   {
     set_camera_mode();
-    m_cell_sizes_valid=false; // colour by value: the scene may have changed
+    m_cell_sizes_valid=false; // color by value: the scene may have changed
     rendering_program_p_l.bind();
 
     unsigned int bufn = 0;
@@ -2576,23 +2576,23 @@ protected:
       }
       else if ((e->key()==::Qt::Key_D) && (modifiers==::Qt::NoButton))
       {
-        // Colour the faces by a value (here the distance to the clipping plane):
+        // Color the faces by a value (here the distance to the clipping plane):
         // off, then the heat, jet and grey palettes.
         m_color_map=(m_color_map+1)%5;
         switch(m_color_map)
         {
-        case 0: displayMessage(QString("Colour by value = off")); break;
-        case 1: displayMessage(QString("Colour by value = heat")); break;
-        case 2: displayMessage(QString("Colour by value = jet")); break;
-        case 3: displayMessage(QString("Colour by value = grey")); break;
-        case 4: displayMessage(QString("Colour by value = viridis")); break;
+        case 0: displayMessage(QString("Color by value = off")); break;
+        case 1: displayMessage(QString("Color by value = heat")); break;
+        case 2: displayMessage(QString("Color by value = jet")); break;
+        case 3: displayMessage(QString("Color by value = grey")); break;
+        case 4: displayMessage(QString("Color by value = viridis")); break;
         default: break;
         }
         update();
       }
       else if ((e->key()==::Qt::Key_D) && (modifiers==::Qt::ShiftModifier))
       {
-        // Colour by value: pick the value and how it is shown. Skip the modes that
+        // Color by value: pick the value and how it is shown. Skip the modes that
         // do not apply to the current scene: the per-cell and size modes need
         // volumes, and the user value needs values set by the drawer. This keeps the
         // message, the faces and the legend in agreement.
@@ -2606,10 +2606,10 @@ protected:
         }
         switch(m_color_value)
         {
-        case 0: displayMessage(QString("Colour by value = distance (smooth)")); break;
-        case 1: displayMessage(QString("Colour by value = distance (per cell)")); break;
-        case 2: displayMessage(QString("Colour by value = size (per cell)")); break;
-        case 3: displayMessage(QString("Colour by value = %1 (per face)").arg(m_scene.value_name().c_str())); break;
+        case 0: displayMessage(QString("Color by value = distance (smooth)")); break;
+        case 1: displayMessage(QString("Color by value = distance (per cell)")); break;
+        case 2: displayMessage(QString("Color by value = size (per cell)")); break;
+        case 3: displayMessage(QString("Color by value = %1 (per face)").arg(m_scene.value_name().c_str())); break;
         default: break;
         }
         update();
@@ -2869,13 +2869,13 @@ protected:
   std::vector<std::vector<unsigned int>> m_edge_owners; // whole-volume clip: per edge, owning volumes
   std::vector<std::vector<unsigned int>> m_point_owners; // whole-volume clip: per vertex, owning volumes
   bool m_clip_owners_valid = false; // whole-volume clip: are the owner lists up to date
-  int m_color_map=0; // colour by value: 0 off, 1 heat, 2 jet, 3 grey ramp
-  int m_color_value=0; // colour by value source (Shift+D): 0 distance smooth,
+  int m_color_map=0; // color by value: 0 off, 1 heat, 2 jet, 3 grey ramp
+  int m_color_value=0; // color by value source (Shift+D): 0 distance smooth,
                        // 1 distance per cell, 2 size per cell
-  std::vector<float> m_cell_sizes; // colour by value: per-cell size (bbox volume)
-  float m_cell_size_min=0.f; // colour by value: size range for the palette
+  std::vector<float> m_cell_sizes; // color by value: per-cell size (bbox volume)
+  float m_cell_size_min=0.f; // color by value: size range for the palette
   float m_cell_size_max=1.f;
-  bool m_cell_sizes_valid=false; // colour by value: recompute the sizes on scene change
+  bool m_cell_sizes_valid=false; // color by value: recompute the sizes on scene change
   CGAL::qglviewer::ManipulatedFrame* m_frame_plane=nullptr;
 
   // Buffer for clipping plane is not stored in the scene because it is not
