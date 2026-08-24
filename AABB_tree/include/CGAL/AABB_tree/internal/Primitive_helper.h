@@ -70,11 +70,12 @@ struct Primitive_helper<AABBTraits,false>{
 
 #include <cmath>
 
+// Test intersection of two bbox according to two transformation without rotation
 template <typename Kernel>
 bool do_intersect_transformed_BB(const CGAL::Bbox_3& b1,
-                     const CGAL::Bbox_3& b2,
-                     const CGAL::Aff_transformation_3<Kernel>& t1,
-                     const CGAL::Aff_transformation_3<Kernel>& t2)
+                                 const CGAL::Bbox_3& b2,
+                                 const CGAL::Aff_transformation_3<Kernel>& t1,
+                                 const CGAL::Aff_transformation_3<Kernel>& t2)
 {
   typedef Simple_cartesian<Interval_nt_advanced> AK;
   typedef Cartesian_converter<Kernel, AK>    C2F;
@@ -102,6 +103,7 @@ bool do_intersect_transformed_BB(const CGAL::Bbox_3& b1,
 // Tests if two oriented bounding boxes (OBBs) intersect using the Separating Axis Theorem (SAT).
 // Tests separation along the 6 principal axes (3 from each OBB).
 // Note: Does not test the 9 cross-product axes for efficiency; thus false positives may be returned.
+// TODO: This could be accelerated using static filters instead of Intervals
 template <typename Kernel>
 bool do_intersect_OBB(const Bbox_3& b1,
                       const Bbox_3& b2,
@@ -167,9 +169,9 @@ bool do_intersect_OBB(const Bbox_3& b1,
 
 template <typename Kernel>
 bool do_intersect_transformed_BB(const CGAL::Bbox_2& b1,
-                     const CGAL::Bbox_2& b2,
-                     const CGAL::Aff_transformation_2<Kernel>& t1,
-                     const CGAL::Aff_transformation_2<Kernel>& t2)
+                                 const CGAL::Bbox_2& b2,
+                                 const CGAL::Aff_transformation_2<Kernel>& t1,
+                                 const CGAL::Aff_transformation_2<Kernel>& t2)
 {
   typedef Simple_cartesian<Interval_nt_advanced> AK;
   typedef Cartesian_converter<Kernel, AK>    C2F;

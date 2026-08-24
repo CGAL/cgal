@@ -100,7 +100,7 @@ template <class TriangleMesh,
           class Kernel = Default,
           class AABBTree = Default,
           class Has_rotation = CGAL::Tag_true,
-          bool Use_inverse_transformation = true>
+          bool Use_inverse_transformation = false>
 struct Rigid_triangle_mesh_collision_detection
 {
 // Vertex point map type
@@ -201,7 +201,15 @@ struct Rigid_triangle_mesh_collision_detection
 #if CGAL_RMCD_CACHE_BOXES
     if (!do_overlap(m_bboxes[id_B], m_bboxes[id_A])) continue;
 #endif
-    if(AABB_trees::do_intersect(*m_aabb_trees[id_A], *m_aabb_trees[id_B], parameters::transformation(m_transformations[id_A]), parameters::transformation(m_transformations[id_B]))) return true;
+    if constexpr(Use_inverse_transformation){
+      if(AABB_trees::do_intersect(*m_aabb_trees[id_A], *m_aabb_trees[id_B],
+                                   parameters::transformation(m_transformations[id_A]).use_inverse_transformation(CGAL::Tag_true()),
+                                   parameters::transformation(m_transformations[id_B]))) return true;
+    } else {
+      if(AABB_trees::do_intersect(*m_aabb_trees[id_A], *m_aabb_trees[id_B],
+                                   parameters::transformation(m_transformations[id_A]).use_inverse_transformation(CGAL::Tag_false()),
+                                   parameters::transformation(m_transformations[id_B]))) return true;
+    }
     return false;
   }
 
