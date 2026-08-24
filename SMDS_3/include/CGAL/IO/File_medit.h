@@ -1001,6 +1001,8 @@ void write_MEDIT(std::ostream& os,
  * data structure (see `TriangulationDataStructure_3 `),
  * positively oriented cells,
  * and cover the geometric convex hull of all points in `t3`.
+ *
+ *  \see \ref IOStreamMedit
  */
 template<typename T3, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_MEDIT(std::istream& in,

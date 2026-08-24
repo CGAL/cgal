@@ -53,6 +53,7 @@ bool read_MEDIT(std::istream& is,
 
   int dim;
   int nv, nf, ntet, ref;
+  int offset = points.size();
   std::string word;
 
   is >> word >> dim; // MeshVersionFormatted 1
@@ -133,9 +134,9 @@ bool read_MEDIT(std::istream& is,
           has_negative_surface_patch_ids |= (surface_patch_id < 0);
           max_surface_patch_id = (std::max)(max_surface_patch_id, surface_patch_id);
           Facet facet;
-          facet[0] = n[0] - 1;
-          facet[1] = n[1] - 1;
-          facet[2] = n[2] - 1;
+          facet[0] = offset + n[0] - 1;
+          facet[1] = offset + n[1] - 1;
+          facet[2] = offset + n[2] - 1;
 
           if(verbose)
             std::cout << "Looking at face #" << i << ": " << n[0] << " " << n[1] << " " << n[2] << std::endl;
@@ -211,10 +212,10 @@ bool read_MEDIT(std::istream& is,
         )
 
         Tet_with_ref t;
-        t[0] = n[0] - 1;
-        t[1] = n[1] - 1;
-        t[2] = n[2] - 1;
-        t[3] = n[3] - 1;
+        t[0] = offset + n[0] - 1;
+        t[1] = offset + n[1] - 1;
+        t[2] = offset + n[2] - 1;
+        t[3] = offset + n[3] - 1;
 
         finite_cells.push_back(t);
         subdomains.push_back(reference);
@@ -224,7 +225,7 @@ bool read_MEDIT(std::istream& is,
 
   if (verbose)
   {
-    std::cout << points.size() << " points" << std::endl;
+    std::cout << points.size() - std::size_t(offset) << " points" << std::endl;
     std::cout << border_facets.size() << " border facets" << std::endl;
     std::cout << finite_cells.size() << " cells" << std::endl;
   }
@@ -246,6 +247,8 @@ bool read_MEDIT(std::istream& is,
  *
  * \brief reads the content of `is` into `points` and `finite_cells`.
  *
+ * See \cgalCite{frey:inria-00069921} for a comprehensive description of the medit (`.mesh`) file format.
+ *
  * \attention The cell soup is not cleared, and the data from the stream are appended.
  *
  * \tparam PointRange a model of the concept `BackInsertionSequence` whose value type is the point type
@@ -255,10 +258,12 @@ bool read_MEDIT(std::istream& is,
  * \param points points of the soup of cells
  * \param finite_cells Each element in it describes a cell
  *        using the indices of the points in `points`
- *  \param subdomains Each element in it describes the subdomain index of the corresponding cell in `finite_cells`
- *  \param verbose if `true`, prints information about the reading process
+ * \param subdomains Each element in it describes the subdomain index of the corresponding cell in `finite_cells`
+ * \param verbose if `true`, prints information about the reading process
  *
  * \returns `true` if the reading was successful, `false` otherwise.
+ *
+ *  \see \ref IOStreamMedit
  */
 
 template<class PointRange, class CellRange>
