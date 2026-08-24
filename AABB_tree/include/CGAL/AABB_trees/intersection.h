@@ -117,7 +117,7 @@ namespace AABB_trees {
 
   /// \ingroup PkgAABBTreeRef
   ///
-  /// \brief computes all pairs of intersecting primitive from two AABB trees.
+  /// \brief computes all pairs of intersecting primitives from two AABB trees.
   ///
   /// Both trees are traversed and all pairs of primitives that intersect are collected.
   /// Each output element is a pair `(id1, id2)` where:
@@ -140,7 +140,7 @@ namespace AABB_trees {
   ///   \cgalParamNBegin{transformation}
   ///     \cgalParamDescription{An affine transformation apply to `tree1` (`tree2`)}
   ///     \cgalParamType{`CGAL::Aff_transformation_3<Kernel>` where `Kernel` is the kernel associated with `AABBTree1::AABB_traits::Point` (`AABBTree2::AABB_traits::Point`)}
-  ///     \cgalParamDefault{An identity transformation}
+  ///     \cgalParamDefault{The identity transformation}
   ///   \cgalParamNEnd
   /// \cgalNamedParamsEnd
   ///
