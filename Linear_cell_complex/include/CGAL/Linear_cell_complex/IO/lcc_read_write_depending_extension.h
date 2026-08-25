@@ -19,7 +19,7 @@
 #include <CGAL/Combinatorial_map_save_load.h>
 #include <CGAL/Linear_cell_complex_constructors.h>
 
-#include <CGAL/Linear_cell_complex/IO/import_moka.h>
+#include <CGAL/Linear_cell_complex/IO/MOKA.h>
 #include <CGAL/Linear_cell_complex/IO/lcc_read_write_voro.h>
 #include <CGAL/Linear_cell_complex/IO/lcc_save_direct.h>
 #include <CGAL/Linear_cell_complex/IO/lcc_save_load_mesh.h>
@@ -85,7 +85,7 @@ typename LCC::Dart_descriptor read_depending_extension(const std::string& filena
   else if(ext==".mesh" || ext==".toposim")
   { res=load_object_3D(filename, lcc); }
   else if(ext==".moka")
-  { res=import_from_moka(lcc, filename.c_str()); }
+  { res=read_MOKA(lcc, filename.c_str()); }
   else if(ext==".obj")
   { res=lcc_read_obj(lcc, filename); }
   else if(ext==".off")
@@ -141,7 +141,7 @@ bool write_depending_extension(const std::string& filename,
   else if(ext==".mesh" || ext==".toposim")
   { res=save_object_3D(filename, lcc); }
   else if(ext==".moka")
-  { res=export_to_moka(lcc, filename.c_str()); }
+  { res=write_MOKA(lcc, filename.c_str()); }
   else if(ext==".obj")
   {
     if(transform_lcc_into_manifold)

@@ -42,7 +42,7 @@ struct GDart
 };
 
 template<typename LCC>
-bool import_from_moka(LCC& lcc, const char* filename)
+bool read_MOKA(LCC& lcc, const char* filename)
 {
   typedef typename LCC::Point Point;
 
@@ -190,7 +190,7 @@ bool import_from_moka(LCC& lcc, const char* filename)
 }
 
 template<typename LCC>
-bool export_to_moka(LCC& lcc, const char* filename)
+bool write_MOKA(LCC& lcc, const char* filename)
 {
   std::ofstream os(filename);
   if (!os)
