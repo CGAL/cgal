@@ -6,6 +6,7 @@
  * \cgalConcept
  *
  * \cgalHasModelsBegin
+ * \cgalRefines{DefaultConstructible}
  * \cgalHasModels{CGAL::Arrangement_on_curve_1::Arrangement_on_curve_1<GeometryTraits_1, TopologyTraits, BinarySearch>}
  * \cgalHasModelsEnd
  *
@@ -42,15 +43,6 @@ public:
    */
   typedef std::variant<Vertex_descriptor, Edge_descriptor> Location_result;
   typedef std::variant<Vertex_const_descriptor, Edge_const_descriptor> Const_location_result;
-  /// @}
-
-  /// \name Creation
-  /// @{
-
-  /*! Default Constructor. Allocates a new default-constructed instance on the heap.
-   */
-  ArrangementOnCurve_1();
-
   /// @}
 
   /// \name Accessors
