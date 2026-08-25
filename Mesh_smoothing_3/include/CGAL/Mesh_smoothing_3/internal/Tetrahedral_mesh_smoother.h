@@ -1330,6 +1330,16 @@ inline bool Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::run_unt
     if (verbose) std::cout << "Nb of energy terms (tetrahedra): " << _tet_storage.size() << std::endl;
     if (verbose) std::cout << "Nb of used OpenMP core: " << Eigen::nbThreads( ) << std::endl;
 
+    if (exact_predicate_status) {
+        unsigned curr_invalid = evaluate_exact_predicates();
+        if (verbose) std::cout << "Exact predicate check: " << curr_invalid << " invalid tetrahedra" << std::endl;
+        if (curr_invalid != 0) {
+            exact_predicate_linesearch_enforcement = false; // would not move otherwise
+            exact_predicate_optimization_check = false; // would be way too talkative
+        }
+        _predicates_nb_invalid_steps = 0;
+    }
+
     _NO_UNTANGLING_EPS = 1e-12;
     _untangling_ref_eps = 1e-1;
 
@@ -1344,15 +1354,7 @@ inline bool Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::run_unt
     if (verbose && has_curves_and_points_terms()) std::cout << "Curves and point energy: " << curves_and_points_energies(_coords)  << std::endl;
 
 
-    if (exact_predicate_status) {
-        unsigned curr_invalid = evaluate_exact_predicates();
-        if (verbose) std::cout << "Exact predicate check: " << curr_invalid << " invalid tetrahedra" << std::endl;
-        if (curr_invalid != 0) {
-            exact_predicate_linesearch_enforcement = false; // would not move otherwise
-            exact_predicate_optimization_check = false; // would be way too talkative
-        }
-        _predicates_nb_invalid_steps = 0;
-    }
+
 
     if (run_callback(UNTANGLING, 0)) {
         if (verbose) std::cout << "Early callback stop. Returning false." << std::endl;
