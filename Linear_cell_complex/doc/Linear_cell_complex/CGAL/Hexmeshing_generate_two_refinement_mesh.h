@@ -11,7 +11,7 @@ Starts to create a regular grid of `cube_cells_per_dim`\f$ ^3\f$ voxels. Then re
 \param cube_cells_per_dim number of grid cells, per dimension
 \param nb_levels How many times to perform refinement
 \param trim `true` to apply trimming, i.e., remove volumes that are entirely outside of the surface mesh
-\param smooth `true` to smooth the hexahedral mesh, using a 3D laplacian smoothing method
+\param smooth `true` to smooth the hexahedral mesh, using a 3D Laplacian smoothing method
 
 \sa `CGAL::Linear_cell_complex_for_combinatorial_map`
 
