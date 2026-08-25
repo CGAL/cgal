@@ -37,7 +37,7 @@ namespace AocTraits {}
 /*!
 \addtogroup PkgArrangementOnCurve1Ref
 \cgalPkgDescriptionBegin{1D Arrangements,PkgArrangementOnCurve1}
-\cgalPkgPicture{semicircle.png}
+\cgalPkgPicture{Arrangement_on_curve_1.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Efi Fogel}
 \cgalPkgDesc{This package can be used to construct, maintain, alter, and display arrangements on a curve. Once an arrangement is constructed, the package can be used to obtain results of various queries on the arrangement, such as point location. The package also supports operations on arrangements, such as computing the overlay of two arrangements.   Arrangements and arrangement components can also be extended to store additional data.}
