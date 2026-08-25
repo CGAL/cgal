@@ -159,17 +159,20 @@ Mesh_smoothing_3::Smoothing_status boundary_aware_mesh_smoothing  (
 
     for (const auto& e : c3t3.triangulation().finite_edges()) {
         const auto vertices = c3t3.triangulation().vertices(e);
-        if (get(ecmap, {vertices[0], vertices[1]}) || get(ecmap, {vertices[1], vertices[0]})) {
+        const std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle> edge_01{vertices[0], vertices[1]};
+        const std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle> edge_10{vertices[1], vertices[0]};
+        if (get(ecmap, edge_01) || get(ecmap, edge_10)) {
             smoother.set_vertex_lock(vertices[0], true);
             smoother.set_vertex_lock(vertices[1], true);
         }
     }
 
     for (const auto& f : c3t3.triangulation().finite_facets()) {
-        if (get(fcmap, f)) {
-            for (const auto& v : c3t3.triangulation().vertices(f))
-                smoother.set_vertex_lock(v, true);
-        }
+       const auto mirror_f = c3t3.triangulation().mirror_facet(f);
+       if (get(fcmap, f) || get(fcmap, mirror_f)) {
+           for (const auto& v : c3t3.triangulation().vertices(f))
+               smoother.set_vertex_lock(v, true);
+       }
     }
 
     // locks corners
@@ -234,4 +237,3 @@ Mesh_smoothing_3::Smoothing_status boundary_aware_mesh_smoothing  (
 }
 
 #endif // CGAL_MESH_SMOOTHING_3_BOUNDARY_AWARE_MESH_SMOOTHING_H
-
