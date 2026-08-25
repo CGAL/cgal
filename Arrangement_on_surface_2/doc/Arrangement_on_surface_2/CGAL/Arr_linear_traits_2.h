@@ -139,21 +139,27 @@ public:
     /// @}
   }; /* end Arr_linear_traits_2::X_monotone_curve_2 */
 
+  /*! \class Trim_2
+   * A functor for triming curves.
+   */
   class Trim_2 {
   public:
-    /// \name Creation
-    /// @{
-
-    /*! trims the given \f$x\f$-monotone curve to an from `src` to `tgt`.
-     * \ pre `src` and `tgt` lies on the curve
+    /*! trims the given \f$x\f$-monotone curve from `src` to `tgt`.
+     * \param xcv The segment.
+     * \param src The new source point.
+     * \param trg The new target point.
+     * \pre `src` and `trg` lie on `xcv`.
      */
-    X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv,
-                                  const Point_2& src,
-                                  const Point_2& tgt) const;
-    /// @}
-  } /* end Arr_linear_traits_2::Trim_2 */
+    X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv, const Point_2& src, const Point_2& trg) const;
+  };
+
+  /// \name Accessing Functor Objects
+  /// @{
 
   Trim_2 trim_2_object() const;
+
+  /// @}
+
 }; /* end Arr_linear_traits_2 */
 
 } /* end namespace CGAL */
