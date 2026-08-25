@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup PkgLinearCellComplexConstructions
 
-generates a pure hexahedral mesh from a triangle mesh using the two refinement algorithm described in \cgalCite{cgal:owen2017template-based}.
+generates a pure hexahedral mesh from a triangle mesh using the two-refinement algorithm described in \cgalCite{cgal:owen2017template-based}.
 Starts to create a regular grid of `cube_cells_per_dim`\f$ ^3\f$ voxels. Then refines voxels intersected by the surface `nb_levels` times, while creating transitions between refined and non-refined voxels.
 
 \tparam TriangleMesh a model of `FaceListGraph`
