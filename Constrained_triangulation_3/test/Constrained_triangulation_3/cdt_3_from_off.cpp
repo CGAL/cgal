@@ -114,6 +114,7 @@ struct CDT_options
   bool        debug_input_faces                   = false;
   bool        debug_missing_regions               = false;
   bool        debug_missing_triangles             = false;
+  bool        debug_flips                         = false;
   bool        debug_regions                       = false;
   bool        debug_copy_triangulation_into_hole  = false;
   bool        debug_validity                      = false;
@@ -209,6 +210,7 @@ CDT_options::CDT_options(int argc, char* argv[]) {
   app.add_flag("--debug-input-faces", debug_input_faces, "debug input faces");
   app.add_flag("--debug-missing-regions", debug_missing_regions, "debug missing regions");
   app.add_flag("--debug-missing-triangles", debug_missing_triangles, "debug missing triangles");
+  app.add_flag("--debug-flips", debug_flips, "debug flips");
   app.add_flag("--debug-regions", debug_regions, "debug regions");
   app.add_flag("--debug_copy_triangulation_into_hole", debug_copy_triangulation_into_hole,
                "debug copy_triangulation_into_hole");
@@ -353,6 +355,7 @@ CGAL::CDT_3::Debug_options cdt_debug_options(const CDT_options& options) {
   cdt_debug.input_faces(options.debug_input_faces);
   cdt_debug.missing_region(options.verbose_level > 1 || options.debug_missing_regions);
   cdt_debug.missing_triangles(options.debug_missing_triangles);
+  cdt_debug.flips(options.debug_flips);
   cdt_debug.regions(options.debug_regions);
   cdt_debug.validity(options.debug_validity);
   cdt_debug.finite_edges_map(options.debug_finite_edges_map);

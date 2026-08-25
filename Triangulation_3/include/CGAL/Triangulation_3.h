@@ -1103,6 +1103,9 @@ public:
     // c will be replaced by one of the new cells
     return flip(f.first, f.second);
   }
+  std::optional<int> edge_preventing_the_flip(Cell_handle c, int i) const;
+  bool is_flippable(const Facet& f) const { return is_flippable(f.first, f.second); }
+  bool is_flippable(Cell_handle c, int i) const;
   bool flip(Cell_handle c, int i);
   void flip_flippable(const Facet& f) { flip_flippable(f.first, f.second); }
   void flip_flippable(Cell_handle c, int i);
@@ -3750,57 +3753,51 @@ bool
 Triangulation_3<GT,Tds,Lds>::
 flip(Cell_handle c, int i)
 {
+  if(!is_flippable(c, i))
+    return false;
+
+  _tds.flip_flippable(c, i);
+  return true;
+}
+
+template < class GT, class Tds, class Lds >
+std::optional<int>
+Triangulation_3<GT,Tds,Lds>::
+edge_preventing_the_flip(Cell_handle c, int i) const
+{
   CGAL_precondition((dimension() == 3) && (0<=i) && (i<4) &&
                     (number_of_vertices() >= 5));
 
   Cell_handle n = c->neighbor(i);
   int in = n->index(c);
   if(is_infinite(c) || is_infinite(n))
-    return false;
+    return { -1 };
 
-  if(i%2 == 1)
-  {
-    if(orientation(c->vertex((i+1)&3)->point(),
-                   c->vertex((i+2)&3)->point(),
-                   n->vertex(in)->point(),
-                   c->vertex(i)->point()) != POSITIVE)
-      return false;
+  Vertex_handle va = c->vertex(i);
+  Vertex_handle vb = n->vertex(in);
+  auto face_vert = vertices(Facet{c, i});
 
-    if(orientation(c->vertex((i+2)&3)->point(),
-                   c->vertex((i+3)&3)->point(),
-                   n->vertex(in)->point(),
-                   c->vertex(i)->point()) != POSITIVE)
-      return false;
+  if(orientation(face_vert[0]->point(),
+                 face_vert[1]->point(),
+                 vb->point(),
+                 va->point()) != POSITIVE) return {2};
+  if(orientation(face_vert[1]->point(),
+                 face_vert[2]->point(),
+                 vb->point(),
+                 va->point()) != POSITIVE) return {0};
+  if(orientation(face_vert[2]->point(),
+                 face_vert[0]->point(),
+                 vb->point(),
+                 va->point()) != POSITIVE) return {1};
+  return std::nullopt;
+}
 
-    if(orientation(c->vertex((i+3)&3)->point(),
-                   c->vertex((i+1)&3)->point(),
-                   n->vertex(in)->point(),
-                   c->vertex(i)->point()) != POSITIVE)
-      return false;
-  }
-  else
-  {
-    if(orientation(c->vertex((i+2)&3)->point(),
-                   c->vertex((i+1)&3)->point(),
-                   n->vertex(in)->point(),
-                   c->vertex(i)->point()) != POSITIVE)
-      return false;
-
-    if(orientation(c->vertex((i+3)&3)->point(),
-                   c->vertex((i+2)&3)->point(),
-                   n->vertex(in)->point(),
-                   c->vertex(i)->point()) != POSITIVE)
-      return false;
-
-    if(orientation(c->vertex((i+1)&3)->point(),
-                   c->vertex((i+3)&3)->point(),
-                   n->vertex(in)->point(),
-                   c->vertex(i)->point()) != POSITIVE)
-      return false;
-  }
-
-  _tds.flip_flippable(c, i);
-  return true;
+template < class GT, class Tds, class Lds >
+bool
+Triangulation_3<GT,Tds,Lds>::
+is_flippable(Cell_handle c, int i) const
+{
+  return edge_preventing_the_flip(c, i) == std::nullopt;
 }
 
 template < class GT, class Tds, class Lds >
@@ -3808,43 +3805,7 @@ void
 Triangulation_3<GT,Tds,Lds>::
 flip_flippable(Cell_handle c, int i)
 {
-  CGAL_precondition((dimension() == 3) && (0<=i) && (i<4) &&
-                    (number_of_vertices() >= 5));
-  CGAL_precondition_code(Cell_handle n = c->neighbor(i););
-  CGAL_precondition_code(int in = n->index(c););
-  CGAL_precondition((! is_infinite(c)) &&(! is_infinite(n)));
-
-  if(i%2 == 1)
-  {
-    CGAL_precondition(orientation(c->vertex((i+1)&3)->point(),
-                                  c->vertex((i+2)&3)->point(),
-                                  n->vertex(in)->point(),
-                                  c->vertex(i)->point()) == POSITIVE);
-    CGAL_precondition(orientation(c->vertex((i+2)&3)->point(),
-                                  c->vertex((i+3)&3)->point(),
-                                  n->vertex(in)->point(),
-                                  c->vertex(i)->point()) == POSITIVE);
-    CGAL_precondition(orientation(c->vertex((i+3)&3)->point(),
-                                  c->vertex((i+1)&3)->point(),
-                                  n->vertex(in)->point(),
-                                  c->vertex(i)->point()) == POSITIVE);
-  }
-  else
-  {
-    CGAL_precondition(orientation(c->vertex((i+2)&3)->point(),
-                                  c->vertex((i+1)&3)->point(),
-                                  n->vertex(in)->point(),
-                                  c->vertex(i)->point()) == POSITIVE);
-    CGAL_precondition(orientation(c->vertex((i+3)&3)->point(),
-                                  c->vertex((i+2)&3)->point(),
-                                  n->vertex(in)->point(),
-                                  c->vertex(i)->point()) == POSITIVE);
-    CGAL_precondition(orientation(c->vertex((i+1)&3)->point(),
-                                  c->vertex((i+3)&3)->point(),
-                                  n->vertex(in)->point(),
-                                  c->vertex(i)->point()) == POSITIVE);
-  }
-
+  CGAL_precondition(is_flippable(c, i));
   _tds.flip_flippable(c, i);
 }
 

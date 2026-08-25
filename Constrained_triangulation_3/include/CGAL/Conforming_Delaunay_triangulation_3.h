@@ -46,6 +46,7 @@
 #include <algorithm>
 #include <array>
 #include <bitset>
+#include <cstddef>
 #include <fstream>
 #include <functional>
 #include <ios>
@@ -83,6 +84,7 @@ struct Debug_options {
     input_faces,
     missing_region,
     debug_missing_triangles,
+    flips,
     regions,
     copy_triangulation_into_hole,
     validity,
@@ -122,6 +124,9 @@ struct Debug_options {
 
   bool missing_triangles() const { return get(Flag::debug_missing_triangles); }
   void missing_triangles(bool b) { get(Flag::debug_missing_triangles) = b; }
+
+  bool flips() const { return get(Flag::flips); }
+  void flips(bool b) { get(Flag::flips) = b; }
 
   bool regions() const { return get(Flag::regions); }
   void regions(bool b) { get(Flag::regions) = b; }
@@ -917,6 +922,94 @@ protected:
     return v;
   }
 
+  template <typename Pred>
+  std::optional<Cell_handle>
+  find_in_incident_cells(Vertex_handle v, Pred pred) const
+  {
+    boost::container::flat_set<Cell_handle, std::less<>,
+                               boost::container::small_vector<Cell_handle, 128>> found_cells;
+    boost::container::small_vector<Cell_handle, 128> cells;
+    cells.push_back(v->cell());
+    found_cells.insert(cells[0]);
+    std::size_t head=0;
+    do {
+      Cell_handle c = cells[head];
+      if(pred(c)) return c;
+      for (int i=0; i<4; ++i) {
+        if (c->vertex(i) == v) continue;
+        Cell_handle next = c->neighbor(i);
+        if (! found_cells.insert(next).second ) continue;
+        cells.push_back(next);
+      }
+      ++head;
+    } while(head != cells.size());
+    return std::nullopt;
+  }
+
+  bool remove_edge_by_flips(Edge edge_preventing_flip, auto& visitor)
+  {
+    return false;
+  }
+
+  // try to flip facet crossed by [va, vb] to make it an edge of the triangulation
+  template <typename Visitor>
+  bool recover_subconstraint_by_flips(Subconstraint subconstraint,
+                                      [[maybe_unused]] Constrained_polyline_id constraint,
+                                      Visitor& visitor)
+  {
+    const Vertex_handle va = subconstraint.first;
+    const Vertex_handle vb = subconstraint.second;
+    CGAL_assertion(va != vb);
+    const auto cell_opt = find_in_incident_cells(va, [&](Cell_handle c) {
+      int ia = c->index(va);
+      return c->neighbor(ia)->has_vertex(vb);
+    });
+    if(cell_opt.has_value())
+    {
+      auto c = cell_opt.value();
+      int ia = c->index(va);
+      Facet facet{c, ia};
+      if(visitor.is_facet_protected(facet)) {
+        if(debug().flips()) {
+          std::cerr << "-- facet " << display_facet(facet)
+                    << " is protected, cannot flip to make edge (" << display_vert(va) << ", " << display_vert(vb)
+                    << ") an edge in the triangulation\n";
+        }
+      } else {
+        auto [v0, v1, v2] = this->vertices(facet);
+        auto opt_edge_preventing_flip = this->edge_preventing_the_flip(c, ia);
+        if(!opt_edge_preventing_flip.has_value())
+        {
+          this->flip_flippable(facet);
+          visitor.after_flip23(va, vb, facet);
+          if(debug().flips()) {
+            std::cerr << "flipped facet " << display_facet(v0, v1, v2) << " to make edge ("
+                      << display_vert(va) << ", " << display_vert(vb)
+                      << ") an edge in the triangulation\n";
+          }
+          this->is_Delaunay = false;
+          CGAL_assertion(this->is_edge(va, vb));
+          return true;
+        }
+        else
+        {
+          int edge_index = opt_edge_preventing_flip.value();
+          Edge edge_preventing_flip{c,
+                                    this->vertex_triple_index(ia, this->ccw(edge_index)),
+                                    this->vertex_triple_index(ia, this-> cw(edge_index))};
+          if(debug().flips()) {
+            std::cerr << "-- flip failed to make edge (" << display_vert(va) << ", " << display_vert(vb)
+                      << ") an edge in the triangulation: edge ( "
+                      << display_vert(c->vertex(edge_preventing_flip.second)) << "  "
+                      << display_vert(c->vertex(edge_preventing_flip.third)) << " ) is in the way\n";
+          }
+          // remove_edge_by_flips(edge_preventing_flip, visitor);
+        }
+      }
+    }
+    return false;
+  }
+
   /// Return `true` if a Steiner point was inserted
   template <typename Visitor>
   bool conform_subconstraint(Subconstraint subconstraint,
@@ -926,60 +1019,31 @@ protected:
     const Vertex_handle va = subconstraint.first;
     const Vertex_handle vb = subconstraint.second;
     CGAL_assertion(va != vb);
-    if(!this->is_edge(va, vb)) {
-      if(options().use_flips_to_recover_segments()) {
-        // try to flip facet crossed by [va, vb] to make it an
-        // edge of the triangulation
-        std::vector<Cell_handle> inc_cells;
-        this->incident_cells(va, std::back_inserter(inc_cells));
-        for(auto c : inc_cells)
-        {
-          int ia = c->index(va);
-          if(c->neighbor(ia)->has_vertex(vb))
-          {
-            Facet facet{c, ia};
-            if(visitor.is_facet_protected(facet)) {
-              std::cerr << "-- facet " << display_facet(facet)
-                        << " is protected, cannot flip to make edge (" << display_vert(va) << ", " << display_vert(vb)
-                        << ") an edge in the triangulation\n";
-              break;
-            }
-            auto [v0, v1, v2] = this->vertices(facet);
-            if(this->flip(facet))
-            {
-              visitor.after_flip23(va, vb, facet);
-              std::cerr << "flipped facet " << display_facet(v0, v1, v2) << " to make edge ("
-                        << display_vert(va) << ", " << display_vert(vb)
-                        << ") an edge in the triangulation\n";
-              this->is_Delaunay = false;
-              CGAL_assertion(this->is_edge(va, vb));
-              return true;
-            }
-            else
-            {
-              std::cerr << "-- flip failed to make edge (" << display_vert(va) << ", " << display_vert(vb)
-                        << ") an edge in the triangulation\n";
-            }
-            break;
-          }
-        }
+    if(this->is_edge(va, vb)) {
+      if(debug().subconstraints_to_conform()) {
+        std::cerr << "conform_subconstraint>> subconstraint " << display_subcstr(subconstraint)
+                  << " is already an edge in the triangulation.\n";
       }
-      const auto& [steiner_pt, hint, ref_vertex] = construct_Steiner_point(constraint, subconstraint);
-      [[maybe_unused]] const auto v =
-          insert_Steiner_point_on_subconstraint(steiner_pt, hint, subconstraint, constraint, visitor);
-      if(debug().Steiner_points()) {
-        const auto [c_start, c_end] = constraint_extremities(constraint);
-        std::cerr << "(" << with_offset(va) << ", " << with_offset(vb) << ")";
-        std::cerr << ": [ " << display_vert(c_start) << " - " << display_vert(c_end) << " ] ";
-        std::cerr << "  new vertex " << display_vert(v) << '\n';
+      return false;
+    }
+    if(options().use_flips_to_recover_segments() && recover_subconstraint_by_flips(subconstraint, constraint, visitor))
+    {
+      if(debug().subconstraints_to_conform()) {
+        std::cerr << "conform_subconstraint>> subconstraint " << display_subcstr(subconstraint)
+                  << " was recovered by flips.\n";
       }
       return true;
-    } else if(debug().subconstraints_to_conform()) {
-      std::cerr << "conform_subconstraint>> subconstraint " << display_subcstr(subconstraint)
-                << " is already an edge in the triangulation.\n";
     }
-
-    return false;
+    const auto& [steiner_pt, hint, ref_vertex] = construct_Steiner_point(constraint, subconstraint);
+    [[maybe_unused]] const auto v =
+        insert_Steiner_point_on_subconstraint(steiner_pt, hint, subconstraint, constraint, visitor);
+    if(debug().Steiner_points()) {
+      const auto [c_start, c_end] = constraint_extremities(constraint);
+      std::cerr << "(" << with_offset(va) << ", " << with_offset(vb) << ")";
+      std::cerr << ": [ " << display_vert(c_start) << " - " << display_vert(c_end) << " ] ";
+      std::cerr << "  new vertex " << display_vert(v) << '\n';
+    }
+    return true;
   }
 
 public:
