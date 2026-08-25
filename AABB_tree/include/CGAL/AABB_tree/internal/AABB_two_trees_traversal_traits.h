@@ -145,7 +145,7 @@ public:
     {
       using Wrap_iterator = Wrap_output_iterator<true, typename Primitive1::Id, OutputIterator>;
       Wrap_iterator wrap_out(primitive1.id(), out);
-      Listing_primitive_traits_with_transformation<AABBTraits2, typename AABBTraits1::Primitive::Datum, Wrap_iterator> traits(wrap_out, m_traits2, m_tr2);
+      Listing_primitive_traits_with_transformation<AABBTraits2, typename AABBTraits1::Primitive::Datum, Wrap_iterator, AffTransformation> traits(wrap_out, m_traits2, m_tr2);
       auto datum = (internal::Primitive_helper<AABBTraits1>::get_datum(primitive1, m_traits1).transform(m_tr1));
       node2.traversal( datum, traits, nb_primitives_2);
     }
@@ -166,7 +166,7 @@ public:
     {
       using Wrap_iterator = Wrap_output_iterator<true, typename Primitive2::Id, OutputIterator>;
       Wrap_iterator wrap_out(primitive2.id(), out);
-      Listing_primitive_traits_with_transformation<AABBTraits1, typename AABBTraits2::Primitive::Datum, Wrap_iterator> traits(wrap_out, m_traits1, m_tr1);
+      Listing_primitive_traits_with_transformation<AABBTraits1, typename AABBTraits2::Primitive::Datum, Wrap_iterator, AffTransformation> traits(wrap_out, m_traits1, m_tr1);
       auto datum = (internal::Primitive_helper<AABBTraits2>::get_datum(primitive2, m_traits2).transform(m_tr2));
       node1.traversal( datum, traits, nb_primitives_1);
     }
@@ -337,7 +337,7 @@ public:
     }
     else
     {
-      Do_intersect_traits_with_transformation<AABBTraits2, typename AABBTraits1::Primitive::Datum> traits(m_traits2, m_tr2);
+      Do_intersect_traits_with_transformation<AABBTraits2, typename AABBTraits1::Primitive::Datum, AffTransformation> traits(m_traits2, m_tr2);
       auto datum = (internal::Primitive_helper<AABBTraits1>::get_datum(primitive1, m_traits1).transform(m_tr1));
       node2.traversal( datum, traits, nb_primitives_2);
 
@@ -359,7 +359,7 @@ public:
     }
     else
     {
-      Do_intersect_traits_with_transformation<AABBTraits1, typename AABBTraits2::Primitive::Datum> traits(m_traits1, m_tr1);
+      Do_intersect_traits_with_transformation<AABBTraits1, typename AABBTraits2::Primitive::Datum, AffTransformation> traits(m_traits1, m_tr1);
       auto datum = (internal::Primitive_helper<AABBTraits2>::get_datum(primitive2, m_traits2).transform(m_tr2));
       node1.traversal( datum, traits, nb_primitives_1);
 
