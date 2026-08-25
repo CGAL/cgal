@@ -22,7 +22,8 @@ int main(int argc, char** argv)
   CGAL::IO::read_polygon_mesh(filename, poly);
   CGAL::Polygon_mesh_processing::triangulate_faces(poly);
 
-  auto lcc=CGAL::generate_hexahedral_mesh_using_two_refinement
+  using LCC=CGAL::Linear_cell_complex_for_combinatorial_map<3,3>;
+  LCC lcc=CGAL::generate_hexahedral_mesh_using_two_refinement<LCC>
      (poly, cube_cells_per_dim, nb_levels, trim, smooth);
 
   CGAL::draw(lcc);
