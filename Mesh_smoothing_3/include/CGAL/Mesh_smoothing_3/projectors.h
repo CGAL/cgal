@@ -190,11 +190,11 @@ public:
 public:
 
     Tangent_space patch_face_projection_plane(Patch_face, std::vector<Point_3> const &) const {
-        return Tangent_space{Point_3(), Geom_traits::Vector_3(), Projection_weight_mode::NONE, 0.};
+        return Tangent_space{Point_3(0.,0.,0.), Geom_traits::Vector_3(0.,0.,1.), Projection_weight_mode::NONE, 0.};
     }
 
     Tangent_space curve_edge_projection_line(Curve_edge, std::array<Point_3,2> const &) const {
-        return Tangent_space{Point_3(), Geom_traits::Vector_3(), Projection_weight_mode::NONE, 0.};
+        return Tangent_space{Point_3(0.,0.,0.), Geom_traits::Vector_3(1.,0.,0.), Projection_weight_mode::NONE, 0.};
     }
 
 };
