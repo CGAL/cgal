@@ -29,10 +29,11 @@ namespace Arrangement_on_curve_1 {
  */
 template <typename GeometryTraitsA, typename GeometryTraitsB, typename GeometryTraitsRes,
           typename TopologyTraitsA, typename TopologyTraitsB, typename TopologyTraitsRes,
+          bool BinarySearchA, bool BinarySearchB, bool BinarySearchRes,
           typename OverlayVisitor>
-void overlay(const Arrangement_on_curve_1<GeometryTraitsA, TopologyTraitsA>& arr_a,
-             const Arrangement_on_curve_1<GeometryTraitsB, TopologyTraitsB>& arr_b,
-             Arrangement_on_curve_1<GeometryTraitsRes, TopologyTraitsRes>& arr_r,
+void overlay(const Arrangement_on_curve_1<GeometryTraitsA, TopologyTraitsA, BinarySearchA>& arr_a,
+             const Arrangement_on_curve_1<GeometryTraitsB, TopologyTraitsB, BinarySearchB>& arr_b,
+             Arrangement_on_curve_1<GeometryTraitsRes, TopologyTraitsRes, BinarySearchRes>& arr_r,
              OverlayVisitor& visitor);
 
 /*! \ingroup PkgArrangementOnCurve1Funcs
@@ -49,10 +50,11 @@ void overlay(const Arrangement_on_curve_1<GeometryTraitsA, TopologyTraitsA>& arr
  * "self overlay" (or overlay in place) is not supported).
  */
 template <typename GeometryTraitsA, typename GeometryTraitsB, typename GeometryTraitsRes,
-          typename TopologyTraitsA, typename TopologyTraitsB, typename TopologyTraitsRes>
-void overlay(const Arrangement_on_curve_1<GeometryTraitsA, TopologyTraitsA>& arr_a,
-             const Arrangement_on_curve_1<GeometryTraitsB, TopologyTraitsB>& arr_b,
-             Arrangement_on_curve_1<GeometryTraitsRes, TopologyTraitsRes>& arr_r);
+          typename TopologyTraitsA, typename TopologyTraitsB, typename TopologyTraitsRes,
+          bool BinarySearchA, bool BinarySearchB, bool BinarySearchRes>
+void overlay(const Arrangement_on_curve_1<GeometryTraitsA, TopologyTraitsA, BinarySearchA>& arr_a,
+             const Arrangement_on_curve_1<GeometryTraitsB, TopologyTraitsB, BinarySearchB>& arr_b,
+             Arrangement_on_curve_1<GeometryTraitsRes, TopologyTraitsRes, BinarySearchRes>& arr_r);
 
 } // namespace Arrangement_on_curve_1
 } // namespace CGAL

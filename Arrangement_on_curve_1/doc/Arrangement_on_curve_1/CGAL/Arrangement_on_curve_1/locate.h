@@ -24,9 +24,10 @@ namespace Arrangement_on_curve_1 {
  * using the geometry traits functor to locate the precise cell containing the
  * query point parameter.
  */
-template <typename GeometryTraits, typename TopologyTraits>
-typename Arrangement_on_curve_1<GeometryTraits, TopologyTraits>::Const_location_result
-locate(Arrangement_on_curve_1<GeometryTraits, TopologyTraits>& arr, const typename GeometryTraits::Point_1& q);
+template <typename GeometryTraits, typename TopologyTraits, bool BinarySearch>
+typename Arrangement_on_curve_1<GeometryTraits, TopologyTraits, BinarySearch>::Const_location_result
+locate(Arrangement_on_curve_1<GeometryTraits, TopologyTraits, BinarySearch>& arr,
+       const typename GeometryTraits::Point_1& q);
 
 /*! \ingroup PkgArrangementOnCurve1Funcs
  * locates a query point in a given arrangement.
@@ -44,9 +45,10 @@ locate(Arrangement_on_curve_1<GeometryTraits, TopologyTraits>& arr, const typena
  * `unbounded_left_edge()`, using the geometry traits functor to locate the
  * precise cell containing the query point parameter.
  */
-template <typename GeometryTraits, typename TopologyTraits>
-typename Arrangement_on_curve_1<GeometryTraits, TopologyTraits>::Location_result
-locate(Arrangement_on_curve_1<GeometryTraits, TopologyTraits>& arr, const typename GeometryTraits::Point_1& q);
+template <typename GeometryTraits, typename TopologyTraits, bool BinarySearch>
+typename Arrangement_on_curve_1<GeometryTraits, TopologyTraits, BinarySearch>::Location_result
+locate(Arrangement_on_curve_1<GeometryTraits, TopologyTraits, BinarySearch>& arr,
+       const typename GeometryTraits::Point_1& q);
 
 } // namespace Arrangement_on_curve_1
 } // namespace CGAL

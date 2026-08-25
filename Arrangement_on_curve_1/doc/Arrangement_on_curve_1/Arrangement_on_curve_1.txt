@@ -21,7 +21,8 @@ offers an efficient mechanism to maintain ordered sequences of points
 across diverse geometric tracking scenarios.
 \cgalFigureRef{aoc_fig-semicircle} shows a 1D arrangement embedded on
 the closed upper semicircle.  It has seven vertices
-\f$v_0,v_1,...,v_6\f$ and six edges \f$e_0, e_1, ..., e_5\f$.
+\f$v_0,v_1,...,v_6\f$ and six edges \f$e_0, e_1, ..., e_5\f$; see
+\ref Arrangement_on_curve_1/arr_on_circle_segment.cpp.
 
 \cgalFigureBegin{aoc_fig-semicircle,semicircle.png}
 \cgalFigureEnd
@@ -54,8 +55,13 @@ overhead.
 This manual walks through the structural elements of basic 1D
 subdivisions, methods for traversing topology pools, techniques for
 point location, procedures for overlay operations, the requirements
-for writing custom geometry traits, and the mechanism for extending
-arrangement cells (i.e., vertices and edges) via property maps or .
+for writing custom geometry traits, the mechanism for extending
+arrangement cells (i.e., vertices and edges), and the means of
+accessing cell properties (including extended data) via property maps.
+
+The types and free functions referred to throughout this chapter are
+defined under the namespace `CGAL::Arrangement_on_curve_1`.
+
 
 <!-- ======================================================================= -->
 \section aoc_sec-basic Basic Arrangements

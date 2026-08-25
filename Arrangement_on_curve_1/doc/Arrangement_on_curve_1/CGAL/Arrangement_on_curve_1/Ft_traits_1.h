@@ -12,7 +12,7 @@ namespace Arrangement_on_curve_1 {
  * It parameterizes a 1D arrangement directly using a coordinate field type
  * (\c Kernel::FT) representing a continuous horizontal number line \f$(-\infty, +\infty)\f$.
  *
- * \tparam Kernel must be a standard CGAL Kernel model (e.g., `Exact_predicates_exact_constructions_kernel`).
+ * \tparam Kernel must be a standard \cgal `Kernel` model (e.g., `Exact_predicates_exact_constructions_kernel`).
  *
  * \cgalModels{AocTraits_1}
  */

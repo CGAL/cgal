@@ -78,6 +78,16 @@ public:
   Topology_traits& topology_traits();
 
   /// @}
+
+  /// \name Modifiers
+  /// @{
+
+  /*! resets the shared smart pointer allowing empty arrangements to bind to a separate existing traits memory frame.
+   * \pre `is_empty() == true`
+   */
+  void reset_shared_geometry_traits(Shared_geometry_traits new_shared_traits_traits);
+
+  /// @}
 };
 
 } // end namespace Arrangement_on_curve_1

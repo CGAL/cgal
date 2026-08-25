@@ -50,9 +50,16 @@ namespace AocTraits {}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-Given a set \f$\mathcal{P}\f$ of points on a curve, the <I>arrangement</I> \f$ {\mathcal A}({\mathcal P})\f$ is the subdivision of the curve induced by the points in \f$\mathcal{P}\f$ into maximally connected cells. The cells can be \f$0\f$-dimensional (<I>vertices</I>) or \f$1\f$-dimensional (<I>edges</I>).
+Given a set \f$\mathcal{P}\f$ of points on a curve, the <I>arrangement</I>
+\f${\mathcal A}({\mathcal P})\f$ is the subdivision of the curve induced by
+the points in \f$\mathcal{P}\f$ into maximally connected cells. The cells
+can be \f$0\f$-dimensional (<I>vertices</I>) or \f$1\f$-dimensional (<I>edges</I>).
 
-The class `Arrangement_on_curve_1<Traits>` encapsulates a data structure that maintains arrangements of points. It comes with a variety of algorithms that operate on 1D arrangements, such as point-location queries and overlay computations, which are implemented as peripheral classes or as free (global) functions.
+The class `Arrangement_on_curve_1<GeometryTraits_1, TopologyTraits, BinarySearch>`
+encapsulates a data structure that maintains arrangements of points. It comes with
+a variety of algorithms that operate on 1D arrangements, such as point-location
+queries and overlay computations, which are implemented as peripheral classes or
+as free (global) functions.
 
 \cgalClassifedRefPages
 
@@ -76,16 +83,14 @@ The class `Arrangement_on_curve_1<Traits>` encapsulates a data structure that ma
 
 \cgalCRPSection{Classes}
 
-- `CGAL::Arrangement_on_curves_1::Arrangement_on_curves_1<GeometryTraits_1,TopologyTraits>`
-- `CGAL::Arrangement_on_curves_1::Unbounded_topology_traits<Point_1, VertexData, EdgeData, UseVector, Allocator>`
+- `CGAL::Arrangement_on_curve_1::Arrangement_on_curve_1<GeometryTraits_1, TopologyTraits, BinarySearch>`
+- `CGAL::Arrangement_on_curve_1::Unbounded_topology_traits<Point_1, VertexData, EdgeData, UseVector, Allocator>`
 
 \cgalCRPSection{Functions}
 
-- `CGAL::insert()`
-- `CGAL::locate()`
-- `CGAL::overlay()`
-- `CGAL::IO::read()`
-- `CGAL::IO::write()`
+- `CGAL::Arrangement_on_curve_1::insert()`
+- `CGAL::Arrangement_on_curve_1::locate()`
+- `CGAL::Arrangement_on_curve_1::overlay()`
 - \link PkgArrangementOnCurve1op_left_shift `CGAL::operator<<` \endlink
 - \link PkgArrangementOnCurve1op_right_shift `CGAL::operator<<` \endlink
 

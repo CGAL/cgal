@@ -15,9 +15,9 @@ namespace Arrangement_on_curve_1 {
  * inserted. Auxiliary data that may be attached to the vertices and edges is
  * ignored.
  */
-template <typename GeometryTraits_1, typename TopologyTraits>
+  template <typename GeometryTraits_1, typename TopologyTraits, bool BinarySearch>
 std::ostream& operator<<(std::ostream& os,
-                         const Arrangement_on_curve_1<GeometryTraits_1, TopologyTraits>& arr);
+                         const Arrangement_on_curve_1<GeometryTraits_1, TopologyTraits, BinarySearch>& arr);
 
 /*! \ingroup PkgArrangementOnCurve1op_right_shift
  *
@@ -25,9 +25,9 @@ std::ostream& operator<<(std::ostream& os,
  * geometric and topological features of the arrangement are read and no
  * auxiliary data is attached to the vertices and edges.
  */
-template <typename GeometryTraits_1, typename TopologyTraits>
+  template <typename GeometryTraits_1, typename TopologyTraits, bool BinarySearch>
 std::istream& operator>>(std::istream& is,
-                         Arrangement_on_curve_1<GeometryTraits_1, TopologyTraits>& arr);
+                         Arrangement_on_curve_1<GeometryTraits_1, TopologyTraits, BinarySearch>& arr);
 
 } // namespace Arrangement_on_curve_1
 } // namespace CGAL

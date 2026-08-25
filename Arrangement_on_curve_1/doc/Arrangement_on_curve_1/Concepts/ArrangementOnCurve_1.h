@@ -6,7 +6,7 @@
  * \cgalConcept
  *
  * \cgalHasModelsBegin
- * \cgalHasModels{CGAL::Arrangement_on_curve_1::Arrangement_on_curve_1<GeometryTraits_1, TopologyTraits>}
+ * \cgalHasModels{CGAL::Arrangement_on_curve_1::Arrangement_on_curve_1<GeometryTraits_1, TopologyTraits, BinarySearch>}
  * \cgalHasModelsEnd
  *
  * A model of the concept `ArrangementOnCurve_1` can be used to represent a 1D
@@ -138,13 +138,8 @@ public:
 
   /// @}
 
-  /// \name Modification Modifiers
+  /// \name Modifiers
   /// @{
-
-  /*! safety resets function allowing empty arrangements to bind to a separate existing traits memory frame.
-   * \pre `is_empty() == true`
-   */
-  void reset_shared_geometry_traits(Shared_geometry_traits new_shared_traits_traits);
 
   /*! creates a new vertex, enforcing the rightmost ordering invariant when BinarySearch is active.
    */
