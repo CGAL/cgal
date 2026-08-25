@@ -53,7 +53,7 @@ bool read_MEDIT(std::istream& is,
 
   int dim;
   int nv, nf, ntet, ref;
-  int offset = points.size();
+  int offset = static_cast<int>(points.size());
   std::string word;
 
   is >> word >> dim; // MeshVersionFormatted 1
