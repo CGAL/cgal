@@ -31,25 +31,13 @@ C3t3 load_example_mesh()
 {
   C3t3 c3t3;
   std::ifstream is(MS3_EXAMPLE_MESH_FILE, std::ios::in);
-  std::cerr << "loading_path=" << MS3_EXAMPLE_MESH_FILE << " open=" << is.good() << "\n";
   assert(is);
   const bool read_ok = CGAL::IO::read_MEDIT(is, c3t3.triangulation());
-  std::cerr << "read_ok=" << read_ok
-            << " vertices_after_read=" << c3t3.triangulation().number_of_vertices()
-            << " cells_after_read=" << c3t3.triangulation().number_of_finite_cells() << "\n";
   assert(read_ok);
   c3t3.rescan_after_load_of_triangulation();
-  std::cerr << "vertices_after_rescan=" << c3t3.triangulation().number_of_vertices()
-            << " cells_after_rescan=" << c3t3.triangulation().number_of_finite_cells() << "\n";
   return c3t3;
 }
 
-void save_mesh(char const* filename, C3t3 const& c3t3)
-{
-  std::ofstream os(filename, std::ios::out);
-  assert(os);
-  CGAL::IO::write_MEDIT(os, c3t3.triangulation(), CGAL::parameters::all_vertices(true));
-}
 
 template <typename C3t3T>
 std::vector<Point_3> sorted_vertices(C3t3T const& c3t3)
@@ -116,7 +104,6 @@ void assert_time_breakdown_close(CGAL::Mesh_smoothing_3::Smoothing_status const&
 
 void test_verbose_has_no_impact()
 {
-  std::cerr << "[test_verbose_has_no_impact]\n";
   auto quiet = load_example_mesh();
   auto verbose = quiet;
 
@@ -137,7 +124,6 @@ void test_verbose_has_no_impact()
 
 void test_example_integration()
 {
-  std::cerr << "[test_example_integration]\n";
   auto before = load_example_mesh();
   auto after = before;
 
@@ -156,7 +142,6 @@ void test_example_integration()
 
 void test_mono_core_reproducibility()
 {
-  std::cerr << "[test_mono_core_reproducibility]\n";
   const int previous_threads = Eigen::nbThreads();
   Eigen::setNbThreads(1);
   assert(Eigen::nbThreads() == 1);
@@ -183,18 +168,10 @@ void test_mono_core_reproducibility()
 
 void test_random_inner_untangling_integration()
 {
-  std::cerr << "[test_random_inner_untangling_integration]\n";
   std::mt19937 rng(424242u);
-  std::cerr << "mesh_path=" << MS3_EXAMPLE_MESH_FILE << '\n';
   auto target = load_example_mesh();
-  std::cerr << "mesh_vertices=" << target.triangulation().number_of_vertices()
-            << " cells=" << target.triangulation().number_of_finite_cells()
-            << " facets=" << target.number_of_facets_in_complex()
-            << " edges=" << target.number_of_edges_in_complex()
-            << '\n';
   auto projector = CGAL::Mesh_smoothing_3::C3t3_mesh_projector<C3t3>(target);
   auto perturbed = target;
-  save_mesh("test_boundary_aware_mesh_smoothing_integration_target.mesh", target);
 
   std::vector<Vertex_handle> interior;
   for (auto v : perturbed.triangulation().finite_vertex_handles()) {
@@ -211,26 +188,21 @@ void test_random_inner_untangling_integration()
   const double shift = untangle_amplitude * diag;
   std::uniform_real_distribution<double> du(-shift, shift);
 
+
+
   for (std::size_t i = 0; i < 100; ++i) {
     auto p = interior[i]->point();
     interior[i]->set_point(Point_3(CGAL::to_double(p.x()) + du(rng),
                                    CGAL::to_double(p.y()) + du(rng),
                                    CGAL::to_double(p.z()) + du(rng)));
   }
-  save_mesh("test_boundary_aware_mesh_smoothing_integration_perturbed.mesh", perturbed);
+
 
   auto status = CGAL::boundary_aware_mesh_smoothing(
       perturbed,
       projector,
       CGAL::parameters::verbose(true).number_of_iterations(untangle_iterations));
-  save_mesh("test_boundary_aware_mesh_smoothing_integration_smoothed.mesh", perturbed);
 
-  std::cerr << "initial_invalid=" << status.nb_initial_invalid_elements
-            << " final_invalid=" << status.nb_invalid_elements
-            << " valid=" << status.valid_mesh()
-            << " it=" << status.nb_iterations
-            << " updates=" << status.nb_vertex_updates
-            << " return=" << int(status.return_code) << '\n';
 
   assert(status.nb_initial_invalid_elements > 0);
   assert(status.nb_invalid_elements == 0);
