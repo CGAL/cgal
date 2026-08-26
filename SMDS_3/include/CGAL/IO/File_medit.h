@@ -1036,6 +1036,81 @@ bool read_MEDIT(std::istream& in,
   return b;
 }
 
+/**
+ * @ingroup PkgSMDS3IOFunctions
+ * @brief reads a mesh complex written in the medit (`.mesh`) file format.
+ *   See \cgalCite{frey:inria-00069921} for a comprehensive description of this file format.
+ * @tparam T3 can be instantiated with any 3D triangulation of \cgal provided that its
+ *  vertex and cell base class are models of the concepts `MeshVertexBase_3` and `MeshCellBase_3`,
+ *  respectively.
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+ *
+ * @todo write documentation
+ */
+template <typename T3,
+          typename Corner_index,
+          typename Curve_index,
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool read_MEDIT(std::istream& in,
+                CGAL::Mesh_complex_3_in_triangulation_3<T3, Corner_index, Curve_index>& c3t3,
+                const CGAL_NP_CLASS& np = parameters::default_values())
+{
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  // Default non_manifold value is true if the triangulation periodic, false otherwise
+  const bool non_manifold = choose_parameter(get_parameter(np, internal_np::allow_non_manifold),
+                                             std::is_same<typename T3::Periodic_tag, Tag_true>::value);
+  const bool verbose = choose_parameter(get_parameter(np, internal_np::verbose), false);
+
+  bool built = CGAL::SMDS_3::build_triangulation_from_file(in, c3t3.triangulation(),
+                                                           verbose,
+                                                           false /*replace_domain_0*/,
+                                                           non_manifold);
+  if(!built)
+  {
+    c3t3.triangulation().clear();
+    return built;
+  }
+
+  using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<T3, Corner_index, Curve_index>;
+  using Cell_handle = typename C3t3::Triangulation::Cell_handle;
+  using Facet = typename C3t3::Triangulation::Facet;
+  using Subdomain_index = typename C3t3::Subdomain_index;
+
+  c3t3.rescan_after_load_of_triangulation(); // fix counters for facets and cells
+  for(Cell_handle cit : c3t3.triangulation().finite_cell_handles())
+  {
+    if(cit->subdomain_index() != Subdomain_index())
+      c3t3.add_to_complex(cit, cit->subdomain_index());
+
+    for(int i = 0; i < 4; ++i) {
+      if(cit->surface_patch_index(i) > 0)
+        c3t3.add_to_complex(cit, i, cit->surface_patch_index(i));
+    }
+  }
+
+  // if there is no facet in the complex, we add the border facets.
+  if(c3t3.number_of_facets_in_complex() == 0)
+  {
+    for(Facet fit : c3t3.triangulation().finite_facets())
+    {
+      Cell_handle c = fit.first;
+      Cell_handle nc = c->neighbor(fit.second);
+
+      // By definition, Subdomain_index() is supposed to be the id of the exterior
+      if(c->subdomain_index() != Subdomain_index() &&
+         nc->subdomain_index() == Subdomain_index())
+      {
+        // Color the border facet with the index of its cell
+        c3t3.add_to_complex(c, fit.second, c->subdomain_index());
+      }
+    }
+  }
+
+  return built;
+}
+
 } // namespace IO
 
 #ifndef CGAL_NO_DEPRECATED_CODE
