@@ -946,8 +946,11 @@ protected:
     return std::nullopt;
   }
 
-  bool remove_edge_by_flips(Edge edge_preventing_flip, auto& visitor)
+  template <typename Visitor>
+  bool remove_edge_by_flips(Edge edge_preventing_flip, Visitor& visitor)
   {
+    CGAL_USE(edge_preventing_flip);
+    CGAL_USE(visitor);
     return false;
   }
 
@@ -960,53 +963,67 @@ protected:
     const Vertex_handle va = subconstraint.first;
     const Vertex_handle vb = subconstraint.second;
     CGAL_assertion(va != vb);
-    const auto cell_opt = find_in_incident_cells(va, [&](Cell_handle c) {
-      int ia = c->index(va);
-      return c->neighbor(ia)->has_vertex(vb);
-    });
-    if(cell_opt.has_value())
-    {
-      auto c = cell_opt.value();
-      int ia = c->index(va);
-      Facet facet{c, ia};
-      if(visitor.is_facet_protected(facet)) {
-        if(debug().flips()) {
-          std::cerr << "-- facet " << display_facet(facet)
-                    << " is protected, cannot flip to make edge (" << display_vert(va) << ", " << display_vert(vb)
-                    << ") an edge in the triangulation\n";
-        }
-      } else {
-        auto [v0, v1, v2] = this->vertices(facet);
-        auto opt_edge_preventing_flip = this->edge_preventing_the_flip(c, ia);
-        if(!opt_edge_preventing_flip.has_value())
-        {
-          this->flip_flippable(facet);
-          visitor.after_flip23(va, vb, facet);
-          if(debug().flips()) {
-            std::cerr << "flipped facet " << display_facet(v0, v1, v2) << " to make edge ("
-                      << display_vert(va) << ", " << display_vert(vb)
-                      << ") an edge in the triangulation\n";
+    auto simplex_it = tr().segment_traverser_simplices_begin(va, vb);
+    while(true) {
+      switch(simplex_it->dimension()) {
+        case 0: {
+          const auto v = static_cast<Vertex_handle>(*simplex_it);
+          if(v == vb) {
+            return true;
           }
-          this->is_Delaunay = false;
-          CGAL_assertion(this->is_edge(va, vb));
-          return true;
+          CGAL_assertion(v == va);
+          ++simplex_it;
+          break;
         }
-        else
-        {
-          int edge_index = opt_edge_preventing_flip.value();
-          Edge edge_preventing_flip{c,
-                                    this->vertex_triple_index(ia, this->ccw(edge_index)),
-                                    this->vertex_triple_index(ia, this-> cw(edge_index))};
-          if(debug().flips()) {
-            std::cerr << "-- flip failed to make edge (" << display_vert(va) << ", " << display_vert(vb)
-                      << ") an edge in the triangulation: edge ( "
-                      << display_vert(c->vertex(edge_preventing_flip.second)) << "  "
-                      << display_vert(c->vertex(edge_preventing_flip.third)) << " ) is in the way\n";
+        case 1: return false;
+        case 2: {
+          const auto facet = tr().mirror_facet(static_cast<Facet>(*simplex_it));
+          const auto [c, facet_index] = facet;
+          CGAL_assertion(c->vertex(facet_index) == va);
+          if(visitor.is_facet_protected(facet)) {
+            if(debug().flips()) {
+              std::cerr << "-- facet " << display_facet(facet)
+                        << " is protected, cannot flip to make edge (" << display_vert(va) << ", " << display_vert(vb)
+                        << ") an edge in the triangulation\n";
+            }
+            return false;
           }
-          // remove_edge_by_flips(edge_preventing_flip, visitor);
+          const auto [v0, v1, v2] = tr().vertices(facet);
+          const auto opt_edge_preventing_flip = tr().edge_preventing_the_flip(c, facet_index);
+          if(!opt_edge_preventing_flip.has_value())
+          {
+            const auto [other_cell, other_index] = tr().mirror_facet(facet);
+            const auto next_v = other_cell->vertex(other_index);
+            tr().flip_flippable(facet);
+            visitor.after_flip23(va, next_v, facet);
+            if(debug().flips()) {
+              std::cerr << "flipped facet " << display_facet(v0, v1, v2) << " to make edge ("
+                        << display_vert(va) << ", " << display_vert(vb)
+                        << ") an edge in the triangulation\n";
+            }
+            this->is_Delaunay = false;
+            simplex_it = tr().segment_traverser_simplices_begin(va, vb);
+            break;
+          }
+          else
+          {
+            int edge_index = opt_edge_preventing_flip.value();
+            Edge edge_preventing_flip{c,
+                                      tr().vertex_triple_index(facet_index, tr().ccw(edge_index)),
+                                      tr().vertex_triple_index(facet_index, tr(). cw(edge_index))};
+            if(debug().flips()) {
+              std::cerr << "-- flip failed to make edge (" << display_vert(va) << ", " << display_vert(vb)
+                        << ") an edge in the triangulation: edge ( "
+                        << display_vert(c->vertex(edge_preventing_flip.second)) << ",  "
+                        << display_vert(c->vertex(edge_preventing_flip.third)) << " ) is in the way\n";
+            }
+            return false;
+            // remove_edge_by_flips(edge_preventing_flip, visitor);
+          }
         }
+        case 3: ++simplex_it; break;
       }
-    }
+    } // end while(true)
     return false;
   }
 
