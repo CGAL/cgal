@@ -115,11 +115,9 @@ struct Fixture
   Edge curve_edge_1;
   Edge curve_edge_2;
   Edge unmarked_edge;
-  Vertex_handle corner;
-  Vertex_handle movable;
 };
 
-inline Fixture make_fixture(bool second_cell_in_complex = false, bool distort_other_cell = false)
+inline Fixture make_fixture()
 {
   Fixture f;
   auto& tr = f.c3t3.triangulation();
@@ -132,19 +130,6 @@ inline Fixture make_fixture(bool second_cell_in_complex = false, bool distort_ot
 
   f.complex_cell = find_cell_with_vertex(tr, f.v[3]);
   f.other_cell = find_cell_with_vertex(tr, f.v[4]);
-
-  if (second_cell_in_complex) {
-    f.c3t3.add_to_complex(f.other_cell, 7);
-  }
-  if (distort_other_cell) {
-    f.v[4]->set_point(Point_3(0.15, 0.2, 3.0));
-    if (CGAL::orientation(f.other_cell->vertex(0)->point(),
-                          f.other_cell->vertex(1)->point(),
-                          f.other_cell->vertex(2)->point(),
-                          f.other_cell->vertex(3)->point()) != CGAL::NEGATIVE) {
-      f.v[4]->set_point(Point_3(0.15, 0.2, -3.0));
-    }
-  }
 
   f.c3t3.add_to_complex(f.complex_cell, 3);
 
