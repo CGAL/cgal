@@ -949,6 +949,18 @@ protected:
   template <typename Visitor>
   bool remove_edge_by_flips(Edge edge_preventing_flip, Visitor& visitor)
   {
+    const auto [va, vb] = tr().vertices(edge_preventing_flip);
+    if(is_a_constrained_edge(va, vb)) {
+      if(debug().flips()) {
+        std::cerr << "-- edge (" << display_vert(va) << ", " << display_vert(vb)
+                  << ") is a constrained edge, cannot remove it\n";
+      }
+      return false;
+    }
+    if(debug().flips()) {
+      std::cerr << "-- edge (" << display_vert(va) << ", " << display_vert(vb)
+                << ") is NOT a constrained edge\n";
+    }
     CGAL_USE(edge_preventing_flip);
     CGAL_USE(visitor);
     return false;
@@ -975,7 +987,17 @@ protected:
           ++simplex_it;
           break;
         }
-        case 1: return false;
+        case 1: {
+          const auto [v0, v1] = tr().vertices(static_cast<Edge>(*simplex_it));
+          if( ( v0 == va && v1 == vb) || (v0 == vb && v1 == va) ) {
+            if(debug().flips()) {
+              std::cerr << "-- flip restored edge (" << display_vert(va) << ", " << display_vert(vb) << ")\n";
+            }
+            return true;
+          } else {
+            return false;
+          }
+        }
         case 2: {
           const auto facet = tr().mirror_facet(static_cast<Facet>(*simplex_it));
           const auto [c, facet_index] = facet;
@@ -1017,8 +1039,7 @@ protected:
                         << display_vert(c->vertex(edge_preventing_flip.second)) << ",  "
                         << display_vert(c->vertex(edge_preventing_flip.third)) << " ) is in the way\n";
             }
-            return false;
-            // remove_edge_by_flips(edge_preventing_flip, visitor);
+            return remove_edge_by_flips(edge_preventing_flip, visitor);
           }
         }
         case 3: ++simplex_it; break;
