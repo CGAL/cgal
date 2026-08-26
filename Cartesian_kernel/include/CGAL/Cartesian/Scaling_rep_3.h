@@ -40,38 +40,38 @@ public:
 
   Scaling_repC3() {}
   Scaling_repC3(const FT &s) : scalefactor_(s) {}
-  virtual ~Scaling_repC3() {}
+  ~Scaling_repC3() override {}
 
-  virtual Point_3      transform(const Point_3 &p) const
+  Point_3      transform(const Point_3 &p) const override
   {
     return Point_3(scalefactor_ * p.x(),
                    scalefactor_ * p.y(),
                    scalefactor_ * p.z());
   }
 
-  virtual Vector_3     transform(const Vector_3 &v) const
+  Vector_3     transform(const Vector_3 &v) const override
   {
     return Vector_3(scalefactor_ * v.x(), scalefactor_ * v.y(),
                     scalefactor_ * v.z());
   }
 
-  virtual Direction_3  transform(const Direction_3 &d) const
+  Direction_3  transform(const Direction_3 &d) const override
   {
     return d;
   }
 
-  virtual Plane_3  transform(const Plane_3 &p) const
+  Plane_3  transform(const Plane_3 &p) const override
   {
     // direction ( which is (p.a(), p.b(), p.c())) does not change
     return Plane_3(p.a(),p.b(),p.c(), p.d()*scalefactor_);
   }
 
-  virtual Aff_transformation_3 operator*(const Transformation_base_3 &t) const
+  Aff_transformation_3 operator*(const Transformation_base_3 &t) const override
   {
     return t.compose(*this);
   }
 
-  virtual Aff_transformation_3 compose(const Transformation_3 &t) const
+  Aff_transformation_3 compose(const Transformation_3 &t) const override
   {
     return Aff_transformation_3(scalefactor_ * t.t11,
                                 scalefactor_ * t.t12,
@@ -89,7 +89,7 @@ public:
                                 t.t34);
   }
 
-  virtual Aff_transformation_3 compose(const Translation_3 &t) const
+  Aff_transformation_3 compose(const Translation_3 &t) const override
   {
     FT ft0(0);
     return Aff_transformation_3(scalefactor_,
@@ -108,39 +108,39 @@ public:
                                 t.translationvector_.z());
   }
 
-  virtual Aff_transformation_3 compose(const Scaling_3 &t) const
+  Aff_transformation_3 compose(const Scaling_3 &t) const override
   {
     return Aff_transformation_3(SCALING, scalefactor_*t.scalefactor_);
   }
 
-  virtual Aff_transformation_3 inverse() const
+  Aff_transformation_3 inverse() const override
   {
     return Aff_transformation_3(SCALING, FT(1)/scalefactor_);
   }
 
-  virtual Aff_transformation_3 transpose() const
+  Aff_transformation_3 transpose() const override
   {
     return Aff_transformation_3(SCALING, scalefactor_);
   }
 
-  virtual bool is_even() const
+  bool is_even() const override
   {
     return true;
   }
 
-  virtual bool is_scaling() const
+  bool is_scaling() const override
   {
     return true;
   }
 
-  virtual FT cartesian(int i, int j) const
+  FT cartesian(int i, int j) const override
   {
     if (i!=j) return FT(0);
     if (i==3) return FT(1);
     return scalefactor_;
   }
 
-  virtual std::ostream &print(std::ostream &os) const
+  std::ostream &print(std::ostream &os) const override
   {
     os << "Aff_transformationC3(" << scalefactor_ << ")";
     return os;
