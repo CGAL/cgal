@@ -1432,7 +1432,7 @@ inline bool Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::run_unt
             ++smoother_status->nb_vertex_updates;
             smoother_status->nb_metric_evaluations += nbEval;
 
-            if (time_limit >= 0 && smoother_status->total_time > time_limit) stop_required = true;
+            if (time_limit > 0 && smoother_status->total_time > time_limit) stop_required = true;
             if (max_nb_metric_evaluations > 0 && smoother_status->nb_metric_evaluations > static_cast<unsigned>(max_nb_metric_evaluations)) stop_required = true;
 
             bool significant_step = false;
