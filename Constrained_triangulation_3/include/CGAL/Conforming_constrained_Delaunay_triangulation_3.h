@@ -1646,7 +1646,7 @@ protected:
     return with_point_and_info(v);
   }
 
-  template <typename Tag = With_offset_tag>
+  template <typename Tag = With_point_tag>
   auto display_facet(std::string_view prefix, Facet f, Tag tag = {}) const {
     return IO::oformat(
         [prefix, tag, vertices = tr().vertices(f), v4 = f.first->vertex((f.second))](auto& out) -> auto& {
@@ -1699,6 +1699,7 @@ public:
   {
     CGAL_assertion(fh == CDT_2_face_handle{} || same_triple(f, fh, o));
     CGAL_assertion(o == EQUAL);
+    CGAL_assertion(fh == CDT_2_face_handle{} || fh->info().is_outside_the_face != OUTSIDE);
 
     const auto [c, facet_index] = f;
     c->ccdt_3_data().set_facet_constraint(facet_index, polygon_constraint_id, fh);
@@ -2923,12 +2924,14 @@ protected:
         const auto ib = cell->index(vb);
         for(auto index : make_array(ia, ib)) {
           const Facet f{cell, index};
-          const auto [mirror_cell, mirror_index] = self->mirror_facet(f);
+          const Facet mirror_facet = self->mirror_facet(f);
+          const auto [mirror_cell, mirror_index] = mirror_facet;
           if(mirror_cell->ccdt_3_data().is_facet_constrained(mirror_index)) {
             auto face_id = self->face_constraint_index(mirror_cell, mirror_index);
             const CDT_2& cdt_2 = self->face_cdt_2(face_id);
             const auto f2d = mirror_cell->ccdt_3_data().face_2(cdt_2, mirror_index);
-            self->set_facet_constrained(f, face_id, f2d);
+            Facet oriented_facet = self->same_triple(f, f2d) ? f : mirror_facet;
+            self->set_facet_constrained(oriented_facet, face_id, f2d);
           } else {
             self->set_facet_as_not_constrained(f);
           }
@@ -2991,11 +2994,13 @@ protected:
         do {
           auto is_facet = self->is_2d_face_also_a_3d_facet(fc);
           if(!is_facet) {
-            fc->info().missing_subface = true;
+            fc->info().missing_subface = (fc->info().is_outside_the_face != OUTSIDE);
           } else {
-            const auto [facet, orient] = *is_facet;
-            fc->info().missing_subface = false;
-            self->set_facet_constrained(facet, polygon_id, fc, orient);
+            if((fc->info().is_outside_the_face != OUTSIDE)) {
+              const auto [facet, orient] = *is_facet;
+              fc->info().missing_subface = false;
+              self->set_facet_constrained(facet, polygon_id, fc, orient);
+            }
           }
           const auto v_Steiner_index = fc->index(v_Steiner_2d);
           const auto other_edge = cdt_2.mirror_edge({fc, v_Steiner_index});
