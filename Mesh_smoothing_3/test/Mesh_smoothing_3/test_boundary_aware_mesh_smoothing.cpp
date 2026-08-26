@@ -111,6 +111,22 @@ void test_classification_and_structure()
   for (auto const& e : before_edges) before_curves[e] = fixture.c3t3.curve_index(e);
   for (auto v : before_vertices) before_corners[v] = fixture.c3t3.corner_index(v);
 
+
+  auto& tr = fixture.c3t3.triangulation();
+
+  const auto nb_vertices_before = tr.number_of_vertices();
+  const auto nb_cells_before = tr.number_of_finite_cells();
+
+  std::map<Cell_handle, std::array<Vertex_handle, 4>> connectivity_before;
+  for (auto c : tr.finite_cell_handles()) {
+    connectivity_before[c] = {
+      c->vertex(0),
+      c->vertex(1),
+      c->vertex(2),
+      c->vertex(3)
+    };
+  }
+
   Recording_cts<C3t3> cts;
   install_default_queries(cts);
 
@@ -135,21 +151,6 @@ void test_classification_and_structure()
   }
   for (auto v : before_vertices) {
     assert(before_corners[v] == fixture.c3t3.corner_index(v));
-  }
-
-  auto& tr = fixture.c3t3.triangulation();
-
-  const auto nb_vertices_before = tr.number_of_vertices();
-  const auto nb_cells_before = tr.number_of_finite_cells();
-
-  std::map<Cell_handle, std::array<Vertex_handle, 4>> connectivity_before;
-  for (auto c : tr.finite_cell_handles()) {
-    connectivity_before[c] = {
-      c->vertex(0),
-      c->vertex(1),
-      c->vertex(2),
-      c->vertex(3)
-    };
   }
 
   expect_only_expected_queries(
