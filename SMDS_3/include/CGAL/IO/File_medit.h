@@ -504,6 +504,7 @@ struct Medit_pmap_generator<C3T3, USE_SUBDOMAIN_INDICES, RENUMBER_SURFACE_PATCH_
 
 template <class Tr,
           class Vertices_range,
+          class Edges_range,
           class Facets_range,
           class Cells_range,
           class Vertex_index_property_map,
@@ -514,6 +515,7 @@ void
 output_to_medit(std::ostream& os,
                 const Tr& tr,
                 const Vertices_range& vertices,
+                const Edges_range& edges,
                 const Facets_range& facets,
                 const Cells_range& cells,
                 const Vertex_index_property_map& vertex_pmap,
@@ -607,6 +609,44 @@ output_to_medit(std::ostream& os,
       os << V[v] << ' ';
     os << get(cell_pmap, c) << '\n';
   }
+
+  //-------------------------------------------------------
+  // Corners
+  //-------------------------------------------------------
+  std::vector<typename Tr::Vertex_handle> corners;
+  for(const auto& v : vertices) {
+    if(v->in_dimension() == 0) {
+      corners.push_back(v);
+    }
+  }
+  os << "Corners\n"
+     << size(corners) << '\n';
+  for(const auto& v : corners) {
+    os << V[v] << '\n';
+  }
+
+  //-------------------------------------------------------
+  // Edges
+  //-------------------------------------------------------
+  os << "Edges\n"
+     << size(edges) << '\n';
+  for(const auto& e : edges)
+  {
+    auto [vh1, vh2] = tr.vertices(e);
+    auto index = (vh1->in_dimension() == 1)
+                   ? vh1->index()
+                    : (vh2->in_dimension() == 1 ? vh2->index() : 42 /*todo : magic id*/);
+    os << V[vh1] << ' ' << V[vh2] << ' ';
+    std::visit([&](const auto& i) { os << i << '\n'; }, index);
+    os << '\n';
+  }
+
+  //-------------------------------------------------------
+  // Ridges (???)
+  //-------------------------------------------------------
+  //"Ridges"
+  //number of ridges
+  //a list of ids (one per line)
 
   //-------------------------------------------------------
   // End
@@ -757,6 +797,7 @@ output_to_medit(std::ostream& os,
   auto output_to_medit = [&](const auto& vertices, const auto& cells) {
     CGAL::SMDS_3::output_to_medit(os, tr,
                                   vertices,
+                                  c3t3.edges_in_complex(),
                                   c3t3.facets_in_complex(),
                                   cells,
                                   vertex_pmap, facet_pmap, cell_pmap, facet_pmap_twice,
