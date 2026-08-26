@@ -2697,10 +2697,9 @@ protected:
           auto kernel_center_point = *opt_kernel_center_point;
           central_points->push_back(kernel_center_point);
           if(dbg().move_Steiner_vertices_level() > 1) {
-            std::cerr << *opt_kernel_center_point
-                      << " (distance to vertex: " << CGAL::sqrt(CGAL::squared_distance(kernel_center_point, v->point()))
-                    << ")"
-                    << "\n";
+            std::cerr << *opt_kernel_center_point << " (distance to vertex: "
+                      << CGAL::approximate_sqrt(CGAL::squared_distance(kernel_center_point, v->point())) << ")"
+                      << "\n";
           }
         } else {
           if(dbg().move_Steiner_vertices_level() > 1) {
