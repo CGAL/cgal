@@ -28,6 +28,12 @@
 #include <CGAL/assertions.h>
 #include <CGAL/Compact_container.h>
 #include <CGAL/Triangulation_utils_3.h>
+#include <CGAL/Handle_hash_function.h>
+#include <CGAL/IO/io.h>
+#include <CGAL/Iterator_range.h>
+#include <CGAL/enum.h>
+#include <CGAL/tags.h>
+#include <CGAL/utility.h>
 
 #include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/Triangulation_cell_base_3.h>
@@ -46,13 +52,15 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Spatial_lock_grid_3.h>
 
+#include <boost/container/small_vector.hpp>
+#include <boost/property_map/function_property_map.hpp>
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <boost/property_map/function_property_map.hpp>
+#include <boost/tuple/tuple.hpp>
 #include <boost/unordered_map.hpp>
+#include <boost/unordered/unordered_map_fwd.hpp>
 #include <boost/utility/result_of.hpp>
-#include <boost/container/small_vector.hpp>
 
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/STL_Extension/internal/info_check.h>
@@ -69,14 +77,19 @@
 # include <tbb/scalable_allocator.h>
 #endif
 
+#include <array>
+#include <cstddef>
 #include <iostream>
+#include <iterator>
 #include <list>
-#include <set>
 #include <map>
+#include <optional>
+#include <set>
+#include <stack>
+#include <type_traits>
 #include <unordered_map>
 #include <utility>
-#include <stack>
-#include <array>
+#include <vector>
 
 #define CGAL_TRIANGULATION_3_USE_THE_4_POINTS_CONSTRUCTOR
 
@@ -4497,7 +4510,7 @@ test_dim_down(Vertex_handle v) const
   }
   else // dimension() == 1 or 0
   {
-    return number_of_vertices() == (size_type) dimension() + 1;
+    return number_of_vertices() == static_cast<size_type>(dimension()) + 1;
   }
 
   return true;
