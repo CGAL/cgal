@@ -59,7 +59,7 @@ void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::set_maximum_runn
 }
 
 template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::set_maximum_number_of_metric_evaluations(int max_nb_metric_evaluations) {
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::set_maximum_number_of_metric_evaluations(unsigned max_nb_metric_evaluations) {
     _max_nb_metric_evaluations = max_nb_metric_evaluations;
 }
 

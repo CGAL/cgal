@@ -79,53 +79,6 @@ std::vector<typename C3t3T::Vertex_handle> collect_vertices_in_complex(C3t3T con
 }
 
 template <typename C3t3T>
-void assert_structure_preserved(C3t3T const& before, C3t3T const& after)
-{
-  assert(before.triangulation().number_of_vertices() == after.triangulation().number_of_vertices());
-  assert(before.triangulation().number_of_finite_cells() == after.triangulation().number_of_finite_cells());
-  assert(before.c3t3.number_of_cells_in_complex() == after.c3t3.number_of_cells_in_complex());
-  assert(before.c3t3.number_of_facets_in_complex() == after.c3t3.number_of_facets_in_complex());
-  assert(before.c3t3.number_of_edges_in_complex() == after.c3t3.number_of_edges_in_complex());
-  assert(before.c3t3.number_of_vertices_in_complex() == after.c3t3.number_of_vertices_in_complex());
-
-  auto before_cells = collect_cells_in_complex(before.c3t3);
-  auto after_cells = collect_cells_in_complex(after.c3t3);
-  assert(before_cells.size() == after_cells.size());
-  for (auto c : before_cells) {
-    assert(has_value(after_cells, c));
-    assert(c->subdomain_index() == after.c3t3.subdomain_index(c));
-    for (int i = 0; i < 4; ++i) {
-      assert(c->vertex(i) == c->vertex(i));
-    }
-  }
-
-  auto before_facets = collect_facets_in_complex(before.c3t3);
-  auto after_facets = collect_facets_in_complex(after.c3t3);
-  assert(before_facets.size() == after_facets.size());
-  for (auto const& f : before_facets) {
-    assert(has_value(after_facets, f));
-    assert(before.c3t3.surface_patch_index(f) == after.c3t3.surface_patch_index(f));
-  }
-
-  auto before_edges = collect_edges_in_complex(before.c3t3);
-  auto after_edges = collect_edges_in_complex(after.c3t3);
-  assert(before_edges.size() == after_edges.size());
-  for (auto const& e : before_edges) {
-    assert(has_value(after_edges, e));
-    assert(before.c3t3.curve_index(e) == after.c3t3.curve_index(e));
-  }
-
-  auto before_vertices = collect_vertices_in_complex(before.c3t3);
-  auto after_vertices = collect_vertices_in_complex(after.c3t3);
-  assert(before_vertices.size() == after_vertices.size());
-  for (auto v : before_vertices) {
-    assert(has_value(after_vertices, v));
-    assert(before.c3t3.corner_index(v) == after.c3t3.corner_index(v));
-    assert(before.c3t3.in_dimension(v) == after.c3t3.in_dimension(v));
-  }
-}
-
-template <typename C3t3T>
 void install_default_queries(Recording_cts<C3t3T>& cts)
 {
   using GT = typename Recording_cts<C3t3T>::Geom_traits;
@@ -209,7 +162,7 @@ void test_zero_bounds_and_invalid_counting()
 
     auto status = CGAL::boundary_aware_mesh_smoothing(
         fixture.c3t3, cts,
-        CGAL::parameters::number_of_iterations(1).max_number_of_evaluations(0));
+        CGAL::parameters::number_of_iterations(1).max_number_of_evaluations(1));
 
     assert(status.return_code == CGAL::Mesh_smoothing_3::Smoothing_return_code::MAX_NUMBER_OF_METRIC_EVALUATIONS_REACHED);
     assert(status.nb_iterations > 0);
@@ -229,7 +182,7 @@ void test_zero_bounds_and_invalid_counting()
 
     auto status = CGAL::boundary_aware_mesh_smoothing(
         fixture.c3t3, cts,
-        CGAL::parameters::number_of_iterations(1).maximum_running_time(0));
+        CGAL::parameters::number_of_iterations(1).maximum_running_time(1e-9));
 
     assert(status.return_code == CGAL::Mesh_smoothing_3::Smoothing_return_code::TIME_LIMIT_REACHED);
     assert(status.nb_iterations > 0);
@@ -397,6 +350,75 @@ void test_hard_constraints_and_frozen_status()
   }
 }
 
+void test_corner_is_fixed()
+{
+  auto fixture = make_fixture(false, false);
+
+  auto corner = fixture.v[0];
+  const Point_3 corner_before = corner->point();
+
+  // Deliberately deteriorate the tetrahedron around the corner.
+  fixture.v[1]->set_point(Point_3(0.30, 0.02, 0.00));
+  fixture.v[2]->set_point(Point_3(0.03, 0.30, 0.00));
+  fixture.v[3]->set_point(Point_3(0.03, 0.03, 0.12));
+
+  std::array<Point_3, 3> movable_before = {
+    fixture.v[1]->point(),
+    fixture.v[2]->point(),
+    fixture.v[3]->point()
+  };
+
+  auto status = CGAL::boundary_aware_mesh_smoothing(
+    fixture.c3t3,
+    CGAL::Mesh_smoothing_3::C3t3_no_projection<C3t3>(),
+    CGAL::parameters::number_of_iterations(5));
+
+  assert_all_finite(fixture.c3t3);
+
+  // The C3t3 corner is a hard constraint.
+  assert(same_point(corner_before, corner->point()));
+
+  // But smoothing genuinely did something to the surrounding mesh.
+  const bool another_vertex_moved =
+    !same_point(movable_before[0], fixture.v[1]->point()) ||
+    !same_point(movable_before[1], fixture.v[2]->point()) ||
+    !same_point(movable_before[2], fixture.v[3]->point());
+
+  assert(another_vertex_moved);
+  assert(status.nb_vertex_updates > 0);
+}
+
+void test_zero_iterations()
+{
+  auto fixture = make_fixture(false, false);
+
+  Recording_cts<C3t3> cts;
+  install_default_queries(cts);
+
+  std::map<Vertex_handle, Point_3> before;
+  for (auto v : fixture.c3t3.triangulation().finite_vertex_handles())
+    before[v] = v->point();
+
+  auto status = CGAL::boundary_aware_mesh_smoothing(
+    fixture.c3t3,
+    cts,
+    CGAL::parameters::number_of_iterations(0));
+
+  assert(status.return_code ==
+         CGAL::Mesh_smoothing_3::Smoothing_return_code::MAX_ITERATIONS_REACHED);
+
+  assert(status.nb_iterations == 0);
+  assert(status.nb_vertex_updates == 0);
+  assert(status.nb_metric_evaluations == 0);
+
+  // Preprocessing is allowed, but positions must not be updated.
+  for (auto v : fixture.c3t3.triangulation().finite_vertex_handles()) {
+    assert(same_point(before[v], v->point()));
+  }
+
+  assert_all_finite(fixture.c3t3);
+}
+
 } // namespace
 
 int main()
@@ -405,5 +427,7 @@ int main()
   test_zero_bounds_and_invalid_counting();
   test_all_vertices_frozen_status();
   test_hard_constraints_and_frozen_status();
+  test_corner_is_fixed();
+  test_zero_iterations();
   return EXIT_SUCCESS;
 }

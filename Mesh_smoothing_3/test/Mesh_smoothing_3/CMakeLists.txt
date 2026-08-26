@@ -18,7 +18,7 @@ target_link_libraries(test_boundary_aware_mesh_smoothing PRIVATE CGAL::Eigen3_su
 target_link_libraries(test_boundary_aware_mesh_smoothing_projectors PRIVATE CGAL::Eigen3_support)
 target_link_libraries(test_boundary_aware_mesh_smoothing_integration PRIVATE CGAL::Eigen3_support)
 target_compile_definitions(test_boundary_aware_mesh_smoothing_integration PRIVATE
-  MS3_EXAMPLE_MESH_FILE="${CMAKE_CURRENT_SOURCE_DIR}/../../examples/Mesh_smoothing_3/data/sphere.mesh")
+  MS3_EXAMPLE_MESH_FILE="${CMAKE_CURRENT_SOURCE_DIR}/data/sphere.mesh")
 
 if(OpenMP_CXX_FOUND)
   target_link_libraries(test_boundary_aware_mesh_smoothing_integration PRIVATE OpenMP::OpenMP_CXX)

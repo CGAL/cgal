@@ -210,6 +210,130 @@ void test_random_inner_untangling_integration()
   assert_time_breakdown_close(status);
 }
 
+void test_constraint_maps_integration()
+{
+  auto target = load_example_mesh();
+  auto smoothed = target;
+  auto& tr = smoothed.triangulation();
+
+  // Find two different unmarked edges.
+  Edge edge_forward;
+  Edge edge_reverse;
+  bool found_forward = false;
+  bool found_reverse = false;
+
+  auto edge_vertices = [](Edge const& e) {
+    return std::make_pair(e.first->vertex(e.second), e.first->vertex(e.third));
+  };
+
+  for (auto const& e : tr.finite_edges()) {
+    if (smoothed.is_in_complex(e))
+      continue;
+
+    if (!found_forward) {
+      edge_forward = e;
+      found_forward = true;
+      continue;
+    }
+
+    const auto ev0 = edge_vertices(edge_forward);
+    const auto ev1 = edge_vertices(e);
+
+    // Prefer two distinct edges so both conventions are tested independently.
+    if (ev1 != ev0 &&
+        ev1 != std::make_pair(ev0.second, ev0.first)) {
+      edge_reverse = e;
+      found_reverse = true;
+      break;
+    }
+  }
+
+  assert(found_forward);
+  assert(found_reverse);
+
+  // Find an unmarked finite facet.
+  Facet constrained_facet;
+  bool found_facet = false;
+
+  for (auto const& f : tr.finite_facets()) {
+    if (!smoothed.is_in_complex(f)) {
+      constrained_facet = f;
+      found_facet = true;
+      break;
+    }
+  }
+
+  assert(found_facet);
+
+  const auto e0 = edge_vertices(edge_forward);
+  const auto e1 = edge_vertices(edge_reverse);
+  const std::array<Vertex_handle, 3> fv = {
+    constrained_facet.first->vertex((constrained_facet.second + 1) % 4),
+    constrained_facet.first->vertex((constrained_facet.second + 2) % 4),
+    constrained_facet.first->vertex((constrained_facet.second + 3) % 4)
+  };
+
+  std::map<std::pair<Vertex_handle, Vertex_handle>, bool> emap;
+
+  // First edge in the iterator's orientation.
+  emap[{e0.first, e0.second}] = true;
+
+  // Second edge deliberately in reverse orientation.
+  emap[{e1.second, e1.first}] = true;
+
+  std::map<Facet, bool> fmap;
+
+  // Also exercise the mirror representation.
+  fmap[tr.mirror_facet(constrained_facet)] = true;
+
+  std::vector<Vertex_handle> locked = {
+    e0.first, e0.second,
+    e1.first, e1.second,
+    fv[0], fv[1], fv[2]
+  };
+
+  std::sort(locked.begin(), locked.end());
+  locked.erase(std::unique(locked.begin(), locked.end()), locked.end());
+
+  std::map<Vertex_handle, Point_3> before;
+  for (auto v : tr.finite_vertex_handles())
+    before[v] = v->point();
+
+  auto projector =
+    CGAL::Mesh_smoothing_3::C3t3_mesh_projector<C3t3>(target);
+
+  auto status = CGAL::boundary_aware_mesh_smoothing(
+    smoothed,
+    projector,
+    CGAL::parameters::
+      edge_is_constrained_map(boost::make_assoc_property_map(emap))
+      .facet_is_constrained_map(boost::make_assoc_property_map(fmap))
+      .number_of_iterations(max_iterations));
+
+  assert(status.nb_vertex_updates > 0);
+
+  // Every vertex incident to a constrained edge/facet must be unchanged.
+  for (auto v : locked) {
+    assert(same_point(before[v], v->point()));
+  }
+
+  // Ensure the test did not pass simply because the entire mesh stayed fixed.
+  bool unlocked_vertex_moved = false;
+
+  for (auto v : tr.finite_vertex_handles()) {
+    if (std::find(locked.begin(), locked.end(), v) != locked.end())
+      continue;
+
+    if (!same_point(before[v], v->point())) {
+      unlocked_vertex_moved = true;
+      break;
+    }
+  }
+
+  assert(unlocked_vertex_moved);
+  assert_all_finite(smoothed);
+}
+
 } // namespace
 
 int main()
@@ -218,5 +342,6 @@ int main()
   test_example_integration();
   test_mono_core_reproducibility();
   test_random_inner_untangling_integration();
+  test_constraint_maps_integration();
   return EXIT_SUCCESS;
 }

@@ -55,7 +55,7 @@ namespace CGAL {
 *     \cgalParamDescription{Maximum nb of iterations of the smoothing algorithm .
 *                           Algorithm will stop before if it reaches convergence.
 *                           Untangling usually requires more iterations (up to thousands) for hard cases. }
-*     \cgalParamType{unsigned int}
+*     \cgalParamType{`unsigned int`}
 *     \cgalParamDefault{`100`}
 *   \cgalParamNEnd
 *   \cgalParamNBegin{verbose}
@@ -67,13 +67,13 @@ namespace CGAL {
 *   \cgalParamNBegin{maximum_running_time}
 *     \cgalParamDescription{Maximum allowed time for the smoothing process in seconds.}
 *     \cgalParamType{`double`}
-*     \cgalParamDefault{`-1`}
-*     \cgalParamExtra{Pre-processing will not be stopped and negative times will be ignored.}
+*     \cgalParamDefault{`0.`}
+*     \cgalParamExtra{Pre-processing will not be stopped.}
 *   \cgalParamNEnd
 *   \cgalParamNBegin{max_number_of_evaluations}
 *     \cgalParamDescription{Maximum number of quality metric evaluations for smoothing.}
-*     \cgalParamType{`int`}
-*     \cgalParamDefault{`-1`}
+*     \cgalParamType{`unsigned int`}
+*     \cgalParamDefault{`0`}
 *     \cgalParamExtra{Strongly correlated to running time but will scale linearly with mesh size.}
 *   \cgalParamNEnd
 *   \cgalParamNBegin{vertex_is_constrained_map}
@@ -144,9 +144,9 @@ Mesh_smoothing_3::Smoothing_status boundary_aware_mesh_smoothing  (
     FCMap fcmap = choose_parameter<Static_boolean_property_map<typename C3t3::Facet, false>>(get_parameter(np, internal_np::facet_is_constrained));
 
 
-    int max_nb_metric_evaluations = choose_parameter(get_parameter(np, internal_np::max_number_of_evaluations), -1);
+    unsigned max_nb_metric_evaluations = choose_parameter(get_parameter(np, internal_np::max_number_of_evaluations), 0);
 
-    double time_limit = choose_parameter(get_parameter(np, internal_np::maximum_running_time), -1.);
+    double time_limit = choose_parameter(get_parameter(np, internal_np::maximum_running_time), 0.);
 
     // C3t3_smoother will automatically mark facets and features
     CGAL::Mesh_smoothing_3::C3t3_smoother smoother(c3t3);
