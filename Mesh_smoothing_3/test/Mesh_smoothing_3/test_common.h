@@ -50,8 +50,9 @@ using Cell_handle = C3t3::Cell_handle;
 using Facet = C3t3::Facet;
 using Edge = C3t3::Edge;
 
-inline bool same_point(Point_3 const& a, Point_3 const& b)
+inline bool same_point(Point_3 const& a, Point_3 const& b, bool exact = true)
 {
+  if (exact) return a == b;
   auto d = a - b;
   return d.squared_length() <= 1e-20;
 }

@@ -490,6 +490,7 @@ void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::rescale_geometry
 template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
 void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::update_mesh_coordinates() {
     for (auto [vertex_descriptor, compressed_id] : _vertex_original_to_compressed) {
+        if (_compressed_locks[3*compressed_id] && _compressed_locks[3*compressed_id+1] && _compressed_locks[3*compressed_id+2]) continue;
         Eigen::Vector3d pt = Mesh_smoothing_3_internal::Math_functions::sub_col_vector(_compressed_coords, compressed_id);
         _mesh. set_vertex_coordinates(vertex_descriptor, convert_to_user(pt));
     }

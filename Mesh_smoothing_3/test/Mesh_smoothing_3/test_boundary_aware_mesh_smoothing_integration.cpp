@@ -140,6 +140,22 @@ void test_example_integration()
   assert(any_vertex_moved(before, after));
 }
 
+void test_no_early_stopping()
+{
+  auto c3t3 = load_example_mesh();
+
+  auto status = CGAL::boundary_aware_mesh_smoothing(
+      c3t3,
+      CGAL::Mesh_smoothing_3::C3t3_mesh_projector(c3t3),
+      CGAL::parameters::verbose(false).number_of_iterations(2));
+
+  assert(status.valid_mesh());
+  assert(status.nb_iterations == 2);
+  assert(status.nb_vertex_updates > 100);
+  assert(status.return_code == CGAL::Mesh_smoothing_3::Smoothing_return_code::CONVERGENCE_REACHED); // sphere will converge in 2 iterations (to change)
+  assert_time_breakdown_close(status);
+}
+
 void test_mono_core_reproducibility()
 {
   const int previous_threads = Eigen::nbThreads();
@@ -201,7 +217,7 @@ void test_random_inner_untangling_integration()
   auto status = CGAL::boundary_aware_mesh_smoothing(
       perturbed,
       projector,
-      CGAL::parameters::verbose(true).number_of_iterations(untangle_iterations));
+      CGAL::parameters::verbose(false).number_of_iterations(untangle_iterations));
 
 
   assert(status.nb_initial_invalid_elements > 0);
@@ -340,6 +356,7 @@ int main()
 {
   test_verbose_has_no_impact();
   test_example_integration();
+  test_no_early_stopping();
   test_mono_core_reproducibility();
   test_random_inner_untangling_integration();
   test_constraint_maps_integration();
