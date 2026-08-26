@@ -42,7 +42,7 @@ Projection_fixture make_projection_fixture()
 
 void test_direct_projector()
 {
-  auto fixture = make_fixture(false, false);
+  auto fixture = make_fixture();
   CGAL::Mesh_smoothing_3::C3t3_mesh_projector<C3t3> projector(fixture.c3t3);
 
   auto patch = projector.patch_face_projection_plane(
@@ -114,7 +114,7 @@ void test_projection_weights()
 
 void test_no_projection_smoke()
 {
-  auto fixture = make_fixture(false, false);
+  auto fixture = make_fixture();
   auto before = finite_vertices(fixture.c3t3);
 
   auto status = CGAL::boundary_aware_mesh_smoothing(

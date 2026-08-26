@@ -97,7 +97,7 @@ void install_default_queries(Recording_cts<C3t3T>& cts)
 
 void test_classification_and_structure()
 {
-  auto fixture = make_fixture(false, false);
+  auto fixture = make_fixture();
   auto before_cells = collect_cells_in_complex(fixture.c3t3);
   auto before_facets = collect_facets_in_complex(fixture.c3t3);
   auto before_edges = collect_edges_in_complex(fixture.c3t3);
@@ -137,6 +137,21 @@ void test_classification_and_structure()
     assert(before_corners[v] == fixture.c3t3.corner_index(v));
   }
 
+  auto& tr = fixture.c3t3.triangulation();
+
+  const auto nb_vertices_before = tr.number_of_vertices();
+  const auto nb_cells_before = tr.number_of_finite_cells();
+
+  std::map<Cell_handle, std::array<Vertex_handle, 4>> connectivity_before;
+  for (auto c : tr.finite_cell_handles()) {
+    connectivity_before[c] = {
+      c->vertex(0),
+      c->vertex(1),
+      c->vertex(2),
+      c->vertex(3)
+    };
+  }
+
   expect_only_expected_queries(
       cts,
       {std::make_pair(11u, fixture.shared_facet), std::make_pair(12u, fixture.complex_facet_2)},
@@ -150,12 +165,21 @@ void test_classification_and_structure()
   assert(!has_query(cts, std::make_pair(21u, edge_ab)));
   assert(!has_query(cts, std::make_pair(21u, edge_ac)));
   assert(!has_query(cts, std::make_pair(21u, edge_bc)));
+
+  assert(tr.number_of_vertices() == nb_vertices_before);
+  assert(tr.number_of_finite_cells() == nb_cells_before);
+
+  for (const auto& [c, vertices] : connectivity_before) {
+    for (int i = 0; i < 4; ++i) {
+      assert(c->vertex(i) == vertices[i]);
+    }
+  }
 }
 
-void test_zero_bounds_and_invalid_counting()
+void test_stopping_limits_and_invalid_counting()
 {
   {
-    auto fixture = make_fixture(false, false);
+    auto fixture = make_fixture();
     auto before = finite_vertices(fixture.c3t3);
     Recording_cts<C3t3> cts;
     install_default_queries(cts);
@@ -174,8 +198,8 @@ void test_zero_bounds_and_invalid_counting()
     }
   }
 
-  {
-    auto fixture = make_fixture(false, false);
+  { 
+    auto fixture = make_fixture();
     auto before = finite_vertices(fixture.c3t3);
     Recording_cts<C3t3> cts;
     install_default_queries(cts);
@@ -194,13 +218,14 @@ void test_zero_bounds_and_invalid_counting()
     }
   }
 
-  {
-    auto fixture = make_fixture(false, true);
-    auto o = CGAL::orientation(fixture.other_cell->vertex(0)->point(),
+  { // check that we are not counting invalid elements that are not in the c3t3 complex
+    auto fixture = make_fixture();
+    fixture.v[4]->set_point(Point_3(0.15, 0.2, 3.0));
+
+    assert(CGAL::orientation(fixture.other_cell->vertex(0)->point(),
                                fixture.other_cell->vertex(1)->point(),
                                fixture.other_cell->vertex(2)->point(),
-                               fixture.other_cell->vertex(3)->point());
-    assert(o == CGAL::NEGATIVE);
+                               fixture.other_cell->vertex(3)->point()) == CGAL::NEGATIVE);
 
     Recording_cts<C3t3> cts;
     install_default_queries(cts);
@@ -216,7 +241,7 @@ void test_zero_bounds_and_invalid_counting()
 
 void test_all_vertices_frozen_status()
 {
-  auto fixture = make_fixture(false, false);
+  auto fixture = make_fixture();
   std::map<Vertex_handle, bool> vmap;
   for (auto v : fixture.c3t3.triangulation().finite_vertex_handles()) {
     vmap[v] = true;
@@ -242,7 +267,7 @@ void test_all_vertices_frozen_status()
 void test_hard_constraints_and_frozen_status()
 {
   {
-    auto fixture = make_fixture(false, false);
+    auto fixture = make_fixture();
     std::map<Vertex_handle, bool> vmap;
     vmap[fixture.v[1]] = true;
 
@@ -261,7 +286,7 @@ void test_hard_constraints_and_frozen_status()
   }
 
   {
-    auto fixture = make_fixture(false, false);
+    auto fixture = make_fixture();
     std::map<std::pair<Vertex_handle, Vertex_handle>, bool> emap;
     emap[std::make_pair(fixture.v[3], fixture.v[1])] = true;
 
@@ -280,7 +305,7 @@ void test_hard_constraints_and_frozen_status()
   }
 
   {
-    auto fixture = make_fixture(false, false);
+    auto fixture = make_fixture();
     std::map<std::pair<Vertex_handle, Vertex_handle>, bool> emap;
     emap[std::make_pair(fixture.v[1], fixture.v[3])] = true;
 
@@ -299,7 +324,7 @@ void test_hard_constraints_and_frozen_status()
   }
 
   {
-    auto fixture = make_fixture(false, false);
+    auto fixture = make_fixture();
     std::map<Facet, bool> fmap;
     fmap[fixture.c3t3.triangulation().mirror_facet(fixture.shared_facet)] = true;
 
@@ -321,7 +346,7 @@ void test_hard_constraints_and_frozen_status()
   }
 
   {
-    auto fixture = make_fixture(false, false);
+    auto fixture = make_fixture();
     std::map<Vertex_handle, bool> vmap;
     std::map<std::pair<Vertex_handle, Vertex_handle>, bool> emap;
     std::map<Facet, bool> fmap;
@@ -352,7 +377,7 @@ void test_hard_constraints_and_frozen_status()
 
 void test_corner_is_fixed()
 {
-  auto fixture = make_fixture(false, false);
+  auto fixture = make_fixture();
 
   auto corner = fixture.v[0];
   const Point_3 corner_before = corner->point();
@@ -390,7 +415,7 @@ void test_corner_is_fixed()
 
 void test_zero_iterations()
 {
-  auto fixture = make_fixture(false, false);
+  auto fixture = make_fixture();
 
   Recording_cts<C3t3> cts;
   install_default_queries(cts);
@@ -425,7 +450,7 @@ void test_zero_iterations()
 int main()
 {
   test_classification_and_structure();
-  test_zero_bounds_and_invalid_counting();
+  test_stopping_limits_and_invalid_counting();
   test_all_vertices_frozen_status();
   test_hard_constraints_and_frozen_status();
   test_corner_is_fixed();
