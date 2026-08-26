@@ -5258,17 +5258,25 @@ private:
   bool has_extra_constrained_facets() const
   {
     bool result = true;
+    const bool debug = this->debug().flips() || this->debug().restore_faces() || this->debug().conforming_validation();
+    std::vector<Facet> extra_facets;
     for(const auto facet : constrained_facets()) {
       if(constrained_facet_has_2d_triangle(facet)) {
         continue;
       }
       result = false;
-      if(this->debug().restore_faces() || this->debug().conforming_validation()) {
+      if(debug) {
+        extra_facets.push_back(facet);
         std::cerr << "ERROR: constrained 3D facet"
                   << display_facet("    ", facet, With_point_and_info_tag{})
                   << "\n  has no corresponding 2D triangle in face #"
                   << face_constraint_index(facet) << '\n';
       }
+    }
+    if(debug && !extra_facets.empty()) {
+      std::ofstream dump("dump_extra_constrained_facets.off");
+      dump.precision(17);
+      write_facets(dump, *this, extra_facets);
     }
     return result;
   }
