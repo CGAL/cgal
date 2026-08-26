@@ -101,33 +101,6 @@ inline Cell_handle find_cell_with_vertex(Tr const& tr, Vertex_handle v)
   return fallback;
 }
 
-inline std::array<Vertex_handle, 3> facet_vertices(Facet const& f)
-{
-  return {f.first->vertex((f.second + 1) % 4),
-          f.first->vertex((f.second + 2) % 4),
-          f.first->vertex((f.second + 3) % 4)};
-}
-
-inline std::pair<Vertex_handle, Vertex_handle> edge_vertices(Edge const& e)
-{
-  return {e.first->vertex(e.second), e.first->vertex(e.third)};
-}
-
-inline bool same_facet(Facet const& a, Facet const& b)
-{
-  return a.first == b.first && a.second == b.second;
-}
-
-inline bool same_edge(Edge const& a, Edge const& b)
-{
-  return edge_vertices(a) == edge_vertices(b);
-}
-
-template <typename Range, typename T, typename Pred>
-inline bool contains_if(Range const& range, T const& value, Pred pred)
-{
-  return std::any_of(range.begin(), range.end(), [&](auto const& x) { return pred(x, value); });
-}
 
 struct Fixture
 {
@@ -231,70 +204,6 @@ inline void assert_all_finite(C3t3T const& c3t3)
 {
   for (auto v : c3t3.triangulation().finite_vertex_handles()) {
     assert(finite_point(v->point()));
-  }
-}
-
-template <typename T>
-inline bool has_value(std::vector<T> const& values, T const& value)
-{
-  return std::find(values.begin(), values.end(), value) != values.end();
-}
-
-template <typename C3t3T>
-inline void assert_structure_preserved(C3t3T const& before, C3t3T const& after)
-{
-  using Cell_handle = typename C3t3T::Cell_handle;
-  using Facet = typename C3t3T::Facet;
-  using Edge = typename C3t3T::Edge;
-  using Vertex_handle = typename C3t3T::Vertex_handle;
-
-  assert(before.triangulation().number_of_vertices() == after.triangulation().number_of_vertices());
-  assert(before.triangulation().number_of_finite_cells() == after.triangulation().number_of_finite_cells());
-
-  assert(before.number_of_cells_in_complex() == after.number_of_cells_in_complex());
-  assert(before.number_of_facets_in_complex() == after.number_of_facets_in_complex());
-  assert(before.number_of_edges_in_complex() == after.number_of_edges_in_complex());
-  assert(before.number_of_vertices_in_complex() == after.number_of_vertices_in_complex());
-
-  auto before_cells = std::vector<Cell_handle>(before.cells_in_complex().begin(),
-                                               before.cells_in_complex().end());
-  auto after_cells = std::vector<Cell_handle>(after.cells_in_complex().begin(),
-                                              after.cells_in_complex().end());
-  assert(before_cells.size() == after_cells.size());
-  for (auto c : before_cells) {
-    assert(has_value(after_cells, c));
-    assert(before.subdomain_index(c) == after.subdomain_index(c));
-  }
-
-  auto before_facets = std::vector<Facet>(before.facets_in_complex().begin(),
-                                          before.facets_in_complex().end());
-  auto after_facets = std::vector<Facet>(after.facets_in_complex().begin(),
-                                         after.facets_in_complex().end());
-  assert(before_facets.size() == after_facets.size());
-  for (auto const& f : before_facets) {
-    assert(has_value(after_facets, f));
-    assert(before.surface_patch_index(f) == after.surface_patch_index(f));
-  }
-
-  auto before_edges = std::vector<Edge>(before.edges_in_complex().begin(),
-                                        before.edges_in_complex().end());
-  auto after_edges = std::vector<Edge>(after.edges_in_complex().begin(),
-                                       after.edges_in_complex().end());
-  assert(before_edges.size() == after_edges.size());
-  for (auto const& e : before_edges) {
-    assert(has_value(after_edges, e));
-    assert(before.curve_index(e) == after.curve_index(e));
-  }
-
-  auto before_vertices = std::vector<Vertex_handle>(before.vertices_in_complex().begin(),
-                                                    before.vertices_in_complex().end());
-  auto after_vertices = std::vector<Vertex_handle>(after.vertices_in_complex().begin(),
-                                                   after.vertices_in_complex().end());
-  assert(before_vertices.size() == after_vertices.size());
-  for (auto v : before_vertices) {
-    assert(has_value(after_vertices, v));
-    assert(before.corner_index(v) == after.corner_index(v));
-    assert(before.in_dimension(v) == after.in_dimension(v));
   }
 }
 

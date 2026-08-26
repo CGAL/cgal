@@ -365,16 +365,16 @@ public:
 
     /*!
         Set the maximum running time for the smoothing process in seconds.
-        Pre-processing will not be stopped and negative times will be ignored.
-        Default is -1, which means no limit.
+        Pre-processing will not be stopped.
+        Default is 0., which means no limit.
     */
     void set_maximum_running_time(double time_limit);
 
     /*!
         Set the maximum number of metric evaluations for the smoothing process.
-        Default is -1, which means no limit.
+        Default is 0, which means no limit.
     */
-    void set_maximum_number_of_metric_evaluations(int max_nb_metric_evaluations);
+    void set_maximum_number_of_metric_evaluations(unsigned max_nb_metric_evaluations);
 
     /*!
         Start the optimization procedure
@@ -450,8 +450,8 @@ private:
     bool _lock_boundary = true;
     Parameters::OPTIMIZATION_MODE _optimization_mode = Parameters::CONFORMAL;
     Parameters::PREDICATES_MODE _predicates_mode = Parameters::NO_CHECK;
-    double _time_limit = -1.;
-    int _max_nb_metric_evaluations = -1;
+    double _time_limit = 0.;
+    unsigned _max_nb_metric_evaluations = 0;
 
     unsigned _max_number_of_iteration = 1000;
     double _min_valid_edge_size = 1e-6;

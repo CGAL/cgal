@@ -141,8 +141,8 @@ public:
     unsigned number_of_outer_iter = 0;
     unsigned number_of_lbfgs_iter = 0;
 
-    double time_limit = -1.;
-    int max_nb_metric_evaluations = -1;
+    double time_limit = 0.;
+    unsigned max_nb_metric_evaluations = 0;
     CGAL::Mesh_smoothing_3::Smoothing_status * smoother_status = nullptr;
 
 public:
@@ -1433,7 +1433,7 @@ inline bool Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::run_unt
             smoother_status->nb_metric_evaluations += nbEval;
 
             if (time_limit >= 0 && smoother_status->total_time > time_limit) stop_required = true;
-            if (max_nb_metric_evaluations >= 0 && smoother_status->nb_metric_evaluations > static_cast<unsigned>(max_nb_metric_evaluations)) stop_required = true;
+            if (max_nb_metric_evaluations > 0 && smoother_status->nb_metric_evaluations > static_cast<unsigned>(max_nb_metric_evaluations)) stop_required = true;
 
             bool significant_step = false;
             if (exact_predicate_optimization_check) {
@@ -1470,12 +1470,12 @@ inline bool Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::run_unt
         if (verbose && has_curves_and_points_terms()) std::cout << "    Curves&Points: " << e_curve_points_prev << " -> " << e_curve_points << std::endl;;
         if (verbose) std::cout << "    Status: " << opt.get_message() << std::endl;
 
-        if (time_limit >= 0 && smoother_status->total_time > time_limit) {
+        if (time_limit > 0 && smoother_status->total_time > time_limit) {
             if (verbose) std::cout << "Time limit reached, stopping." << " ( " << smoother_status->total_time << "s / " << time_limit << "s )" << std::endl;
             smoother_status->return_code = CGAL::Mesh_smoothing_3::Smoothing_return_code::TIME_LIMIT_REACHED;
             break;
         }
-        if (max_nb_metric_evaluations >= 0 && smoother_status->nb_metric_evaluations > static_cast<unsigned>(max_nb_metric_evaluations)) {
+        if (max_nb_metric_evaluations > 0 && smoother_status->nb_metric_evaluations > static_cast<unsigned>(max_nb_metric_evaluations)) {
             if (verbose) std::cout << "Max number of metric evaluations reached, stopping." << " ( " << smoother_status->nb_metric_evaluations << " / " << max_nb_metric_evaluations << " )" << std::endl;
             smoother_status->return_code = CGAL::Mesh_smoothing_3::Smoothing_return_code::MAX_NUMBER_OF_METRIC_EVALUATIONS_REACHED;
             break;
