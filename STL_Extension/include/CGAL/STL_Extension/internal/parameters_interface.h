@@ -451,6 +451,5 @@ CGAL_add_named_parameter(with_plc_face_id_t, with_plc_face_id, with_plc_face_id)
 CGAL_add_named_parameter(computation_policy_t, computation_policy, computation_policy)
 
 // List of named parameters used in the package 'Linear_cell_complex'
-CGAL_add_named_parameter(trim_mesh_t, trim_mesh, trim_mesh)
-CGAL_add_named_parameter(smooth_mesh_t, smooth_mesh, smooth_mesh)
+CGAL_add_named_parameter(use_triming_t, use_triming, use_triming)
 

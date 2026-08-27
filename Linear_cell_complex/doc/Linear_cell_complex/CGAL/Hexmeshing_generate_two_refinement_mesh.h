@@ -17,13 +17,13 @@ Starts to create a regular grid of `cube_cells_per_dim`\f$ ^3\f$ voxels. Then re
 @param np n optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
 
 \cgalNamedParamsBegin
-  \cgalParamNBegin{trim_mesh}
+  \cgalParamNBegin{use_triming}
     \cgalParamDescription{trims exterior mesh elements, i.e., remove volumes that are entirely outside of `tmesh`}
     \cgalParamType{`bool`}
     \cgalParamDefault{`true`}
   \cgalParamNEnd
 
-  \cgalParamNBegin{smooth_mesh}
+  \cgalParamNBegin{use_smoothing}
    \cgalParamDescription{applies Laplacian smoothing to project boundary vertices onto `tmesh`}
     \cgalParamType{`bool`}
     \cgalParamDefault{`true`}

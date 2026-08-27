@@ -10,7 +10,7 @@ void render_two_refinement(const std::string& file, int cube_cells_per_dim, int 
   CGAL::IO::read_polygon_mesh(CGAL::data_file_path("meshes/" + file), poly);
 
   CGAL::generate_hexahedral_mesh_using_two_refinement
-    (poly, cube_cells_per_dim, nb_levels,  CGAL::parameters::trim_mesh(true));
+    (poly, cube_cells_per_dim, nb_levels,  CGAL::parameters::use_triming(true));
 
   // CGAL::render_two_refinement_result(hdata);
   std::cout << "file: " << file << std::endl;
