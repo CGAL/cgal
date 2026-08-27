@@ -14,6 +14,11 @@
 #ifndef CGAL_TETRAHEDRON_SOUP_TO_LCC_H
 #define CGAL_TETRAHEDRON_SOUP_TO_LCC_H
 
+#include <vector>
+#include <array>
+#include <unordered_map>
+#include <algorithm>
+
 namespace CGAL
 {
   template <class LCC, class PointRange, class TetraRange>
