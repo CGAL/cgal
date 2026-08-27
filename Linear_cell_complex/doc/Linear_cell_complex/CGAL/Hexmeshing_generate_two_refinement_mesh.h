@@ -17,7 +17,7 @@ Starts to create a regular grid of `cube_cells_per_dim`\f$ ^3\f$ voxels. Then re
 @param np n optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
 
 \cgalNamedParamsBegin
-\cgalParamNBegin{use_triming}
+\cgalParamNBegin{use_trimming}
   \cgalParamDescription{trims exterior mesh elements, i.e., remove volumes that are entirely outside of `tmesh`}
   \cgalParamType{`bool`}
   \cgalParamDefault{`true`}
