@@ -7,10 +7,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 message(STATUS "CGAL_DIR: ${CGAL_DIR}")
 
 find_package(CGAL REQUIRED)
-find_package(Eigen3 3.3.0 QUIET REQUIRED)
+find_package(Eigen3 QUIET)
+
+if (NOT TARGET CGAL::Eigen3_support)
+  message("NOTICE: This project requires the Eigen library, and will not be compiled.")
+  return()
+endif()
 
 create_single_source_cgal_program("c3t3_smooth.cpp")
-target_link_libraries(c3t3_smooth PRIVATE Eigen3::Eigen)
+target_link_libraries(c3t3_smooth PRIVATE CGAL::Eigen3_support)
 
 find_package(OpenMP COMPONENTS CXX)
 if(OpenMP_CXX_FOUND)
@@ -31,7 +36,7 @@ option(MAKE_LIB_LINKING_EXAMPLES "Build examples of other meshing libs that link
 
 if (MAKE_LIB_LINKING_EXAMPLES)
     create_single_source_cgal_program("alpha_wrap_improvement.cpp")
-    target_link_libraries(alpha_wrap_improvement PRIVATE Eigen3::Eigen)
+    target_link_libraries(alpha_wrap_improvement PRIVATE CGAL::Eigen3_support)
     if(OpenMP_CXX_FOUND)
         target_link_libraries(alpha_wrap_improvement PRIVATE OpenMP::OpenMP_CXX)
     endif()
