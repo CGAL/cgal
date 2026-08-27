@@ -281,6 +281,57 @@ bool read_MEDIT(std::istream& is,
                               read_border_facets, verbose, is_CGAL_mesh);
 }
 
+
+/*!
+ * \ingroup PkgStreamSupportIoFuncsMEDIT
+ *
+ * \brief writes the `points` and `finite_cells`.
+ *
+ * See \cgalCite{frey:inria-00069921} for a comprehensive description of the medit (`.mesh`) file format.
+ *
+ *
+ * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type
+ * \tparam CellRange a model of the concept `RandomAccessContainer`
+ *                   whose `value_type` is a model of the concept `RandomAccessContainer`
+ *                   whose `value_type` is `std::size_t`.
+ *
+ * \param os the output stream
+ * \param points points of the soup of cells
+ * \param finite_cells each element in it describes a cell
+ *        using the indices of the points in `points`
+ * \param subdomains each element in it describes the subdomain index of the corresponding cell in `finite_cells`
+ *
+ * \returns `true` if the writing was successful, `false` otherwise.
+ *
+ *  \see \ref IOStreamMedit
+ */
+
+template<class PointRange, class CellRange>
+bool write_MEDIT(std::ostream& os,
+                 const PointRange& points,
+                 const CellRange& finite_cells,
+                 const std::vector<int>& subdomains)
+
+{
+  using Point_3 = typename PointRange::value_type;
+
+  if(!os)
+    return false;
+  os << "MeshVersionFormatted 1\nDimension 3\nVertices\n";
+  os << points.size() << "\n";
+  for (const Point_3& p : points)
+    os << p << " 0\n";
+  os << "Triangles\n0\nTetrahedra\n";
+  os << finite_cells.size() << "\n";
+  for (std::size_t k=0; k<finite_cells.size(); ++k)
+    os << finite_cells[k][0]+1 << " "
+       << finite_cells[k][1]+1 << " "
+       << finite_cells[k][2]+1 << " "
+       << finite_cells[k][3]+1 << " " << subdomains[k] << "\n";
+  os <<"End\n";
+  return true;
+}
+
 } // namespace IO
 
 } // namespace CGAL
