@@ -9,7 +9,7 @@ find_package( CGAL REQUIRED )
 create_single_source_cgal_program("Triangulation_on_hyperbolic_surface_2.cpp")
 
 if (GMP_FOUND AND MPFR_FOUND)
-  create_single_source_cgal_program("Triangulation_on_hyperbolic_surface_2.cpp")
+  create_single_source_cgal_program("Delaunay_triangulation_on_hyperbolic_surface_2.cpp")
 else()
   message("NOTICE: Some examples require the GMP and MPFR libraries, and will not be compiled.")
 endif()
