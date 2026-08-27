@@ -114,7 +114,6 @@ template<class Traits>
 std::ostream&
   Dirichlet_to_json(Hyperbolic_fundamental_domain_2<Traits> & domain, std::ostream& s)
 {
-    typedef typename Traits::Point_2                                    Point;
     typedef typename Traits::Hyperbolic_Voronoi_point_2                 Voronoi_point;
 
     std::vector<Voronoi_point> vertices = Dirichlet_vertices(domain);
