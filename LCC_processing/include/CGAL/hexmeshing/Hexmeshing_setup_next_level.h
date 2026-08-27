@@ -14,6 +14,8 @@
 #ifndef CGAL_HEXMESHING_SETUP_NEXT_LEVEL_H
 #define CGAL_HEXMESHING_SETUP_NEXT_LEVEL_H
 
+#include <CGAL/license/LCC_processing.h>
+
 #include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
 #include <CGAL/hexmeshing/Hexmeshing_function_alias.h>
 #include <CGAL/Union_find.h>

@@ -9,9 +9,11 @@
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
-////////////////////////////////////////////////////////////////////////////////
-#ifndef CMAP_SIGNATURE_H
-#define CMAP_SIGNATURE_H
+
+#ifndef CGAL_CMAP_SIGNATURE_H
+#define CGAL_CMAP_SIGNATURE_H
+
+#include <CGAL/license/LCC_processing.h>
 
 #include <boost/container_hash/hash.hpp>
 #include <functional>
@@ -1262,4 +1264,4 @@ public:
 };
 ///////////////////////////////////////////////////////////////////////////////
 }
-#endif // CMAP_SIGNATURE_H
+#endif // CGAL_CMAP_SIGNATURE_H

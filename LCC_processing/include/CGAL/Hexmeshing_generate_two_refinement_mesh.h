@@ -10,8 +10,11 @@
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 // Contributor(s): Soichiro Yamazaki <soichiro19998@gmail.com>
 //
+
 #ifndef CGAL_HEXMESHING_GENERATE_TWO_REFINEMENT_MESH_H
 #define CGAL_HEXMESHING_GENERATE_TWO_REFINEMENT_MESH_H 1
+
+#include <CGAL/license/LCC_processing.h>
 
 #include <CGAL/hexmeshing/Hexmeshing_for_linear_cell_complex_sequential.h>
 #include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
