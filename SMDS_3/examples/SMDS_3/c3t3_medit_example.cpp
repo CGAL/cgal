@@ -6,8 +6,6 @@
 #include <CGAL/Simplicial_mesh_vertex_base_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 
-#include <CGAL/tetrahedral_remeshing.h>
-
 #include <CGAL/tags.h>
 
 #include <CGAL/IO/File_medit.h>
@@ -40,9 +38,11 @@ int main(int argc, char* argv[])
                        : CGAL::data_file_path("meshes/elephant.mesh");
 
   Triangulation tr;
+  C3t3 c3t3;
+  c3t3.triangulation() = std::move(tr);
 
   std::ifstream is(filename, std::ios_base::in);
-  if(!CGAL::IO::read_MEDIT(is, tr))
+  if(!CGAL::IO::read_MEDIT(is, c3t3))
   {
     std::cerr << "Failed to read" << std::endl;
     return EXIT_FAILURE;
@@ -51,12 +51,12 @@ int main(int argc, char* argv[])
   // [call a remeshing algorithm]
 
   std::ofstream os("after_remeshing.mesh");
-  CGAL::IO::write_MEDIT(os, tr, CGAL::parameters::all_vertices(true));
+  CGAL::IO::write_MEDIT(os, c3t3);
   os.close();
 
   Triangulation tr2;
   std::ifstream is2("after_remeshing.mesh");
-  if(!CGAL::IO::read_MEDIT(is2, tr2))
+  if(!CGAL::IO::read_MEDIT(is2, c3t3))
   {
     std::cerr << "Failed to read (#2)" << std::endl;
     return EXIT_FAILURE;
