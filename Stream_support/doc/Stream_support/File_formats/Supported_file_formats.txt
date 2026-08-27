@@ -558,7 +558,7 @@ The following \cgal data structures can be exported into the `.mesh` file format
 
 The following function enables to read and write a tetrahedron soup
 - \link CGAL::IO::read_MEDIT(std::istream&, PointRange&, CellRange&, std::vector<int>&,bool) `CGAL::IO::read_MEDIT()` \endlink
-- \link CGAL::IO::write_MEDIT(std::ostream&, PointRange&, CellRange&, std::vector<int>&) `CGAL::IO::writeMEDIT()` \endlink
+- \link CGAL::IO::write_MEDIT(std::ostream&, const PointRange&, const CellRange&, const std::vector<int>&) `CGAL::IO::writeMEDIT()` \endlink
 
 \section IOStreamTetgen Tetgen File Format
 
