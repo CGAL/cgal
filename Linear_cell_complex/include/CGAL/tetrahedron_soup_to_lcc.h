@@ -21,6 +21,30 @@
 
 namespace CGAL
 {
+/**
+ * @ingroup PkgLinearCellComplexConstructions
+ *
+ * \brief imports a 3D tetrahedron soup into a linear cell complex.
+ *
+ * Creates a 3D linear cell complex in `lcc` from a set of points and a range
+ * of tetrahedra defined by indices into `points`. The topological 3-combinatorial
+ * map is constructed by sewing adjacent 3-volumes (tetrahedra) along matching 2-faces.
+ *
+ * @tparam LCC a model of the `LinearCellComplex` concept.
+ * @tparam PointRange a model of `RandomAccessContainer` with `Point_3` as value type, being compatible with the point type of LCC.
+ * @tparam TetraRange a model of `ConstRange` where each element is a container of 4 point indices, accessible using `operator[](int)`.
+ *
+ * @param points range of 3D points.
+ * @param tetras range of tetrahedra, where each tetrahedron is represented by 4 indices corresponding to entries in `points`.
+ * @param lcc the target linear cell complex.
+ *
+ * @return a descriptor to a dart of the created complex, or `LCC::null_descriptor` if the input is empty.
+ *
+ * @pre `LCC::dimension >= 3` and `LCC::ambient_dimension == 3`.
+ * @pre Indices in `tetras` must be valid 0-based indices into `points`.
+ *
+ * @sa `CGAL::triangulation_3_to_lcc()`
+ */
   template <class LCC, class PointRange, class TetraRange>
   typename LCC::Dart_descriptor
   tetrahedron_soup_to_lcc(const PointRange& points,
