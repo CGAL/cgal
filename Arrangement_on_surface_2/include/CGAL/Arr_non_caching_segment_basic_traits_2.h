@@ -119,8 +119,7 @@ public:
      * \return The relative position of `cv1` with respect to `cv2` immdiately
      *         to the left of `p`: `SMALLER`, `LARGER`, or `EQUAL`.
      */
-    Comparison_result operator()(const X_monotone_curve_2& cv1,
-                                 const X_monotone_curve_2& cv2,
+    Comparison_result operator()(const X_monotone_curve_2& cv1, const X_monotone_curve_2& cv2,
                                  const Point_2& CGAL_precondition_code(p)) const {
       Kernel kernel;
 
@@ -135,16 +134,13 @@ public:
           kernel.construct_vertex_2_object();
         const Point_2& source1 = construct_vertex(cv1, 0);
         const Point_2& target1 = construct_vertex(cv1, 1);
-        const Point_2& left1 =
-          (kernel.less_xy_2_object()(source1, target1)) ? source1 : target1;
+        const Point_2& left1 = (kernel.less_xy_2_object()(source1, target1)) ? source1 : target1;
         const Point_2& source2 = construct_vertex(cv2, 0);
         const Point_2& target2 = construct_vertex(cv2, 1);
-        const Point_2& left2 =
-          (kernel.less_xy_2_object()(source2, target2)) ? source2 : target2;
+        const Point_2& left2 = (kernel.less_xy_2_object()(source2, target2)) ? source2 : target2;
         );
 
-      CGAL_precondition(compare_xy(left1, p) == SMALLER &&
-                        compare_xy(left2, p) == SMALLER);
+      CGAL_precondition(compare_xy(left1, p) == SMALLER && compare_xy(left2, p) == SMALLER);
 
       // Compare the slopes of the two segments to determine thir relative
       // position immediately to the left of q.
@@ -155,8 +151,7 @@ public:
   };
 
   /*! obtains a `Compare_y_at_x_left_2` functor object. */
-  Compare_y_at_x_left_2 compare_y_at_x_left_2_object() const
-  { return Compare_y_at_x_left_2(); }
+  Compare_y_at_x_left_2 compare_y_at_x_left_2_object() const { return Compare_y_at_x_left_2(); }
 
   /*! \class
    * A functor for comparing two segments to the right of a point.
@@ -174,8 +169,7 @@ public:
      *         to the right of `p`: `SMALLER`, `LARGER`, or `EQUAL`.
      */
 
-    Comparison_result operator()(const X_monotone_curve_2& cv1,
-                                 const X_monotone_curve_2& cv2,
+    Comparison_result operator()(const X_monotone_curve_2& cv1, const X_monotone_curve_2& cv2,
                                  const Point_2& CGAL_precondition_code(p)) const {
       Kernel kernel;
 
@@ -190,16 +184,13 @@ public:
           kernel.construct_vertex_2_object();
         const Point_2& source1 = construct_vertex(cv1, 0);
         const Point_2& target1 = construct_vertex(cv1, 1);
-        const Point_2& right1 =
-          (kernel.less_xy_2_object()(source1, target1)) ? target1 : source1;
+        const Point_2& right1 = (kernel.less_xy_2_object()(source1, target1)) ? target1 : source1;
         const Point_2& source2 = construct_vertex(cv2, 0);
         const Point_2& target2 = construct_vertex(cv2, 1);
-        const Point_2& right2 =
-          (kernel.less_xy_2_object()(source2, target2)) ? target2 : source2;
+        const Point_2& right2 = (kernel.less_xy_2_object()(source2, target2)) ? target2 : source2;
         );
 
-      CGAL_precondition(compare_xy(right1, p) == LARGER &&
-                        compare_xy(right2, p) == LARGER);
+      CGAL_precondition(compare_xy(right1, p) == LARGER && compare_xy(right2, p) == LARGER);
 
       // Compare the slopes of the two segments to determine thir relative
       // position immediately to the left of q.
@@ -208,8 +199,7 @@ public:
   };
 
   /*! obtains a `Compare_y_at_x_right_2` functor object. */
-  Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
-  { return Compare_y_at_x_right_2(); }
+  Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const { return Compare_y_at_x_right_2(); }
 
   /*! \class Do_intersect
    * A functor for intersection detection
@@ -249,10 +239,6 @@ public:
 
   /// \name Functor definitions for the landmarks point-location strategy.
   //@{
-  using Approximate_number_type = double;
-  using Approximate_kernel = CGAL::Simple_cartesian<Approximate_number_type>;
-  using Approximate_point_2 = Approximate_kernel::Point_2;
-
   class Approximate_2 {
   protected:
     using Traits = Arr_non_caching_segment_basic_traits_2<Kernel>;
@@ -268,6 +254,10 @@ public:
     friend class Arr_non_caching_segment_basic_traits_2<Kernel>;
 
   public:
+    using Approximate_number_type = double;
+    using Approximate_kernel = CGAL::Simple_cartesian<Approximate_number_type>;
+    using Approximate_point_2 = Approximate_kernel::Point_2;
+
     /*! obtains an approximation of a point coordinate.
      * \param p The exact point.
      * \param i The coordinate index (either 0 or 1).

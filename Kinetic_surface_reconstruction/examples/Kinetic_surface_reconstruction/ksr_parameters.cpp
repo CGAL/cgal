@@ -1,4 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Kinetic_surface_reconstruction_3.h>
 #include <CGAL/Point_set_3.h>
 #include <CGAL/Point_set_3/IO.h>
@@ -9,6 +10,9 @@
 #include <CGAL/mst_orient_normals.h>
 #include <CGAL/bounding_box.h>
 #include <sstream>
+#include <filesystem>
+#include <CGAL/boost/graph/IO/OFF.h>
+#include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
 
 #include "include/Parameters.h"
 #include "include/Terminal_parser.h"
@@ -18,6 +22,7 @@ using FT = typename Kernel::FT;
 using Point_3 = typename Kernel::Point_3;
 using Vector_3 = typename Kernel::Vector_3;
 using Segment_3 = typename Kernel::Segment_3;
+using Plane_3 = typename Kernel::Plane_3;
 
 using Point_set = CGAL::Point_set_3<Point_3>;
 using Point_map = typename Point_set::Point_map;
@@ -97,13 +102,20 @@ int main(const int argc, const char** argv) {
   Parameters parameters;
   parse_terminal(parser, parameters);
 
-  // If no input data is provided, use input from data directory.
+  //If no input data is provided, use input from data directory.
   if (parameters.data.empty())
     parameters.data = CGAL::data_file_path("points_3/building.ply");
 
+  Point_set point_set;
+  std::vector<std::pair<Plane_3, std::vector<typename Point_set::Index>>> regions;
+  std::filesystem::path path = parameters.data;
+
   // Input.
-  Point_set point_set(parameters.with_normals);
-  CGAL::IO::read_point_set(parameters.data, point_set);
+  if (!regions.empty())
+    std::cout << regions.size() << " planar shapes loaded" << std::endl;
+
+  if (regions.empty() && !parameters.data.empty())
+    CGAL::IO::read_point_set(parameters.data, point_set);
 
   if (point_set.size() == 0) {
     std::cout << "input file not found or empty!" << std::endl;
@@ -162,22 +174,54 @@ int main(const int argc, const char** argv) {
     .regularize_orthogonality(parameters.regorthogonal)
     .regularize_axis_symmetry(parameters.regsymmetric)
     .angle_tolerance(parameters.angle_tolerance)
-    .maximum_offset(parameters.maximum_offset);
+    .maximum_offset(parameters.maximum_offset)
+    .bbox_dilation_ratio(1.1);
 
   // Algorithm.
   KSR ksr(point_set, param);
 
+  typename KSR::LCC lcc_input;
+  std::string lcc_file = path.filename().generic_string() + "_" + to_stringp(parameters.maximum_distance) + "_" + to_stringp(parameters.maximum_angle) + "_" + std::to_string(parameters.min_region_size) + ".lcc";
+
+  if (!regions.empty() && std::filesystem::exists(lcc_file)) {
+    std::ifstream lccfile(lcc_file);
+    if (lccfile.is_open()) {
+      lccfile >> lcc_input;
+      lccfile.close();
+    }
+  }
+
   Timer timer;
   timer.start();
-  std::size_t num_shapes = ksr.detect_planar_shapes(param);
 
-  std::cout << num_shapes << " regularized detected planar shapes" << std::endl;
+  if (regions.empty())
+    ksr.detect_planar_shapes(param);
+  else if (lcc_input.template one_dart_per_cell<3>().empty() && lcc_input.template one_dart_per_cell<3>().empty())
+      ksr.insert_planar_shapes(regions);
 
-  FT after_shape_detection = timer.time();
+  if (lcc_input.template one_dart_per_cell<3>().empty()) {
+    std::cout << ksr.planar_shapes().size() << " planar shapes regularized into ";
+    ksr.regularize_planar_shapes(param);
+    std::cout << ksr.planar_shapes().size() << std::endl;
+  }
 
-  ksr.partition(parameters.k_intersections);
+  FT after_shape_detection = 0;
+  FT after_partition = 0;
 
-  FT after_partition = timer.time();
+  if (!lcc_input.template one_dart_per_cell<3>().empty())
+    ksr.insert_planar_shapes_and_linear_cell_complex(regions, lcc_input);
+  else {
+    after_shape_detection = timer.time();
+
+    ksr.partition(parameters.k_intersections, param);
+
+    after_partition = timer.time();
+
+    const typename KSR::LCC& lcc = ksr.get_linear_cell_complex();
+    std::ofstream file(lcc_file);
+    file << lcc;
+    file.close();
+  }
 
   std::vector<Point_3> vtx;
   std::vector<std::vector<std::size_t> > polylist;
@@ -199,9 +243,8 @@ int main(const int argc, const char** argv) {
     CGAL::IO::write_polygon_soup("polylist_" + std::to_string(parameters.graphcut_lambda) + (parameters.use_ground ? "_g" : "_") + ".off", vtx, polylist);
 
   timer.stop();
-  const FT time = static_cast<FT>(timer.time());
 
-  std::vector<FT> lambdas{ 0.3, 0.5, 0.6, 0.7, 0.73, 0.75, 0.77, 0.8, 0.9, 0.95, 0.99 };
+  std::vector<FT> lambdas{ 0.3, 0.4, 0.5, 0.6, 0.7, 0.73, 0.75, 0.77, 0.8, 0.9, 0.95, 0.99 };
 
   bool non_empty = false;
 
@@ -226,7 +269,7 @@ int main(const int argc, const char** argv) {
   std::cout << "Shape detection and initialization\nof kinetic partition:     " << after_shape_detection << " seconds!" << std::endl;
   std::cout << "Kinetic partition:        " << (after_partition - after_shape_detection) << " seconds!" << std::endl;
   std::cout << "Kinetic reconstruction:   " << (after_reconstruction - after_partition) << " seconds!" << std::endl;
-  std::cout << "Total time:               " << time << " seconds!" << std::endl << std::endl;
+  std::cout << "Total time:               " << after_reconstruction << " seconds!" << std::endl << std::endl;
 
   return (non_empty) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

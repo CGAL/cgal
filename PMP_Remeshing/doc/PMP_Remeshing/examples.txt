@@ -6,6 +6,7 @@
 \example PMP_Remeshing/isotropic_remeshing_example.cpp
 \example PMP_Remeshing/isotropic_remeshing_of_patch_example.cpp
 \example PMP_Remeshing/isotropic_remeshing_with_allow_move.cpp
+\example PMP_Remeshing/isotropic_remeshing_with_constrained_edges.cpp
 \example PMP_Remeshing/isotropic_remeshing_with_custom_sizing_example.cpp
 \example PMP_Remeshing/isotropic_remeshing_with_sizing_example.cpp
 \example PMP_Remeshing/mesh_smoothing_example.cpp

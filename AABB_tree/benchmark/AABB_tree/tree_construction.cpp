@@ -1,12 +1,14 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/Polygon_mesh_processing/bbox.h>
+#include <CGAL/IO/polygon_mesh_io.h>
 
 #include <CGAL/Timer.h>
+#include <CGAL/Real_timer.h>
 
 #include <iostream>
 #include <fstream>
@@ -61,30 +63,52 @@ struct Compute_bbox {
   BBM bbm;
 };
 
-template <class K>
+template <typename ConcurrencyTag, class K>
 void run(std::string input)
 {
   typedef typename K::Point_3 Point_3;
   typedef CGAL::Surface_mesh<Point_3> Mesh;
   typedef CGAL::AABB_face_graph_triangle_primitive<Mesh> Primitive;
-  typedef CGAL::AABB_traits<K, Primitive> Traits;
+  typedef CGAL::AABB_traits_3<K, Primitive> Traits;
   typedef CGAL::AABB_tree<Traits> Tree;
 
   Mesh tm;
-  std::ifstream(input) >> tm;
+  CGAL::IO::read_polygon_mesh(input, tm);
 
   {
   Tree tree(faces(tm).begin(), faces(tm).end(), tm);
-  CGAL::Timer time;
+  CGAL::Real_timer time;
   time.start();
-  tree.build();
-  time.stop();
+  tree.template build<ConcurrencyTag>();
   std::cout << "  build() time: " << time.time() << "\n";
+  tree.template accelerate_distance_queries<ConcurrencyTag>();
+  std::cout << "  build() + build kd-tree time: " << time.time() << "\n";
+  }
+
+  {
+  typedef CGAL::dynamic_face_property_t<CGAL::Bbox_3> Face_bbox_tag;
+  typedef typename boost::property_map<Mesh,  Face_bbox_tag >::type BboxMap;
+  typedef CGAL::AABB_traits_3<K, Primitive, BboxMap> BTraits;
+  typedef CGAL::AABB_tree<BTraits> BTree;
+
+  auto bb = get( Face_bbox_tag(), tm);
+  for(auto fd : faces(tm))
+      put(bb, fd, CGAL::Polygon_mesh_processing::face_bbox(fd, tm));
+
+  BTraits traits(bb);
+  BTree tree(traits);
+  tree.insert(faces(tm).begin(), faces(tm).end(), tm);
+  CGAL::Real_timer time;
+  time.start();
+  tree.template build<ConcurrencyTag>();
+  std::cout << "  build() with reference bbox time: " << time.time() << "\n";
+  tree.template accelerate_distance_queries<ConcurrencyTag>();
+  std::cout << "  build() with reference bbox + build kd-tree time: " << time.time() << "\n";
   }
 
   {
   Tree tree(faces(tm).begin(), faces(tm).end(), tm);
-  CGAL::Timer time;
+  CGAL::Real_timer time;
   time.start();
 
   typedef CGAL::Pointer_property_map<CGAL::Bbox_3>::type BBM;
@@ -108,17 +132,26 @@ void run(std::string input)
 
   Compute_bbox<BBM> compute_bbox(bbm);
   Split_primitives<RPM> split_primitives(rpm);
-  tree.custom_build(compute_bbox, split_primitives);
-  time.stop();
+  tree.template custom_build<ConcurrencyTag>(compute_bbox, split_primitives);
   std::cout << "  custom_build() time: " << time.time() << "\n";
+  tree.template accelerate_distance_queries<ConcurrencyTag>();
+  std::cout << "  custom_build() + build kd-tree time: " << time.time() << "\n";
   }
 }
 
 int main(int, char** argv)
 {
+  std::cout << "Build with Cartesian\n";
+  run<CGAL::Parallel_tag, CGAL::Simple_cartesian<double>>(argv[1]);
   std::cout << "Build with Epick\n";
-  run<CGAL::Epick>(argv[1]);
+  run<CGAL::Parallel_tag, CGAL::Epick>(argv[1]);
   std::cout << "Build with Epeck\n";
-  run<CGAL::Epeck>(argv[1]);
+  run<CGAL::Parallel_tag, CGAL::Epeck>(argv[1]);
+  std::cout << "Build with Cartesian (Sequential) \n";
+  run<CGAL::Sequential_tag, CGAL::Simple_cartesian<double>>(argv[1]);
+  std::cout << "Build with Epick (Sequential) \n";
+  run<CGAL::Sequential_tag, CGAL::Epick>(argv[1]);
+  std::cout << "Build with Epeck (Sequential) \n";
+  run<CGAL::Sequential_tag, CGAL::Epeck>(argv[1]);
   return EXIT_SUCCESS;
 }

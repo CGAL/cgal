@@ -184,8 +184,8 @@ any structure the user needs. Handling of %LAS files works similarly
 with the difference that the property names and types are fixed and
 defined by the %LAS standard.
 
-Functions `read_PLY_with_properties()` and
-`read_LAS_with_properties()` allow the user to read any
+Functions `CGAL::IO::read_PLY_with_properties()` and
+`CGAL::IO::read_LAS_with_properties()` allow the user to read any
 property needed. The user must provide a set of property handlers that
 are used to instantiate number types and complex objects from %PLY/%LAS
 properties. This handlers are either:
@@ -196,13 +196,13 @@ descriptor
 - a tuple consisting of a property map, a functor to construct the
 objects wanted and multiple %PLY/%LAS property descriptors
 
-Output functions `write_PLY_with_properties()` and
-`write_LAS_with_properties()` work similarly.
+Output functions `CGAL::IO::write_PLY_with_properties()` and
+`CGAL::IO::write_LAS_with_properties()` work similarly.
 
 \subsubsection Point_set_processing_3Example_ply_write PLY Writing Example
 
 The following example shows how to call
-`write_PLY_with_properties()` to write a point set with points,
+`CGAL::IO::write_PLY_with_properties()` to write a point set with points,
 RGB colors and intensity. Notice that in order to write a complex
 object, users need to provide an overload of `CGAL::Output_rep`.
 
@@ -211,7 +211,7 @@ object, users need to provide an overload of `CGAL::Output_rep`.
 \subsubsection Point_set_processing_3Example_ply_read PLY Reading Example
 
 The following example shows how to call
-`read_PLY_with_properties()` to read a point set with points,
+`CGAL::IO::read_PLY_with_properties()` to read a point set with points,
 normals, RGB colors and intensity and stores these attributes in a
 user-defined container.
 
@@ -220,7 +220,7 @@ user-defined container.
 \subsubsection Point_set_processing_3Example_las_read LAS Reading Example
 
 The following example shows how to call
-`read_LAS_with_properties()` to read a point set with points
+`CGAL::IO::read_LAS_with_properties()` to read a point set with points
 and RGBI colors and stores these attributes in a user-defined
 container.
 

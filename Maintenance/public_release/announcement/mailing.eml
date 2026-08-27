@@ -1,71 +1,328 @@
-Subject: CGAL 5.5.5, 5.6.2, 6.0, and 6.0.1 Released, Computational Geometry Algorithms Library
+Subject: CGAL 6.2 Released, Computational Geometry Algorithms Library
 Content-Type: text/plain; charset="utf-8"
 Body:
 
-The CGAL Open Source Project is pleased to announce the recent releases
-of CGAL versions 5.5.5, 5.6.2, 6.0, and 6.0.1.
-
-## CGAL version 6.0
-
-CGAL version 6.0 was released on September 27, 2024. Following the
-discovery of early issues, version 6.0.1 was subsequently released on
-October 22, 2024.
-
-This version is a major release, with many new features and
-improvements.
-
-General changes
-
--   C++17 Requirement: CGAL 6.0 requires a C++17 compatible compiler.
--   GMP/MPFR Optional: GMP/MPFR are no longer mandatory;
-    Boost.Multiprecision can be used.
--   Qt6 Demos: All demos are now based on Qt6.
--   Polyhedral Surface: The demo has been renamed to “CGAL Lab” and
-    moved to its own directory in demo/Lab/.
-
-New Packages
-
--   Kinetic Space Partition: Partition of the space from planar input
-    shapes.
--   Kinetic Surface Reconstruction: Reconstructs surfaces from point
-    clouds.
--   Basic Viewer: Interactive visualization for various CGAL packages.
--   Polygon Repair: Algorithms to repair 2D polygons and multipolygons.
-
-Breaking Changes
-
--   CMake Changes: UseCGAL.cmake removed; use CGAL::CGAL target instead.
--   Kernel: Replaced boost::variant with std::variant and
-    boost::optional with std::optional in the intersection functions.
-
-Enhancements
-
--   AABB Tree: Now supports 2D and 3D primitives.
-
-See the announcement of CGAL version 6.0.1 for more details:
-
-  https://www.cgal.org/2024/10/22/cgal601/
+The CGAL Open Source Project is pleased to announce the release 6.2 of
+CGAL, the Computational Geometry Algorithms Library.
 
 
+Besides fixes and general enhancements to existing packages, the
+following has changed since CGAL 6.1:
 
-## Bug-fix releases
+General Changes
 
--   CGAL version 5.5.5 has been published. This is the last bug-fix
-    release for CGAL-5.5.
--   CGAL version 5.6.2 has been published. This is the second bug-fix
-    release for CGAL-5.6.
+- The new list of supported compilers is:
+  - Visual C++ 15.9, 16.10, 17.14, 18.0 (from Visual Studio 2017, 2019,
+    2022, and 2026) or later
+  - Gnu g++ 13.3.0 or later (on Linux)
+  - LLVM Clang version 22.0.0 or later (on Linux)
+  - Apple Clang compiler versions 14.0.0 or later (on macOS)
+- The minimal supported version of Boost is still 1.74.0, but only
+  versions 1.79.0 and later were tested.
 
-These releases include various bug fixes and enhancements. For more details,
-please visit:
+2D Alpha Wrapping (new package)
 
-  https://www.cgal.org/2024/10/22/cgal555/
-  https://www.cgal.org/2024/10/22/cgal562/
+- This component takes a polygon soup, a 2D segment soup, and/or a 2D
+  point set as input, and generates a valid (watertight,
+  intersection-free and 1-manifold) multi-polygon that strictly encloses
+  the input. The algorithm proceeds by shrink-wrapping and refining a 2D
+  Delaunay triangulation starting from a loose bounding box of the
+  input. Two user-defined parameters, alpha and offset, offer control
+  over the maximum size of cavities where the shrink-wrapping process
+  can enter, and the tightness of the final polygon(s) to the input,
+  respectively. Once combined, these parameters provide a means to trade
+  fidelity to the input for complexity of the output.
+
+  See also the associated news entry.
+
+Generalized Barycentric Coordinates 3 (new package)
+
+- This package provides functions to compute various types of
+  generalized barycentric coordinates (Wachspress, mean value, discrete
+  harmonic and tetrahedron coordinates) for points located inside closed
+  convex 3D polyhedra.
+
+Polygon Mesh Processing (major changes)
+
+- The “Polygon Mesh Processing” package has been reorganized into
+  several packages. “Polygon Mesh Processing” retains the core
+  functionalities, while advanced and specialized features have been
+  moved to dedicated packages:
+  - Boolean Operations On Meshes: algorithms for Boolean operations on
+    polygon meshes; clipping, splitting, and slicing with planes, boxes,
+    or other meshes; and kernel computations.
+  - Meshing and Remeshing of Polygon Meshes: algorithms for meshing and
+    remeshing, such as triangulation, refinement, simplification,
+    optimization, and smoothing.
+  - Polygon Mesh Repair: tools for detecting and correcting
+    combinatorial and geometric defects in polygon meshes and polygon
+    soups, including face orientation, hole filling, removal of
+    degeneracies, and boundary stitching. This split does not induce any
+    breaking change and is fully transparent: header includes such as
+    #include <CGAL/Polygon_mesh_processing/XXX.h> do not need to be
+    changed and will include the appropriate header from the new
+    packages.
+
+2D and 3D Linear Geometry Kernel
+
+- Breaking change: The functors Do_intersect_2 and Do_intersect_3 for
+  intersection now correctly honor the definition of a Circle_2 (resp.
+  Sphere_3) as a 1-manifold (resp. 2-manifold) without borders. In other
+  words, a circle is not a disk, and a sphere is not a ball.
+  Consequently, Circle_2/Segment_2, Sphere_3/Bbox_3,
+  Sphere_3/Iso_cuboid_3 no longer consider inclusion as an intersection.
+  This behavior is consistent with other intersection combinations
+  involving Circle_2 and Sphere_3. The former behavior can be reproduced
+  with:
+  - !Has_on_unbounded_side_2::operator(Circle_2, Segment_2),
+  - !Has_on_unbounded_side_2::operator(Circle_2, Iso_rectangle_2), or
+  - !Has_on_unbounded_side_3::operator(Sphere_3, Iso_cuboid_3)
+- Added a new concept, CompareProjectionAlongDirection_3, to the Kernel
+  concept to compare the order of point projections onto a line.
+  Corresponding functors in the model,
+  Compare_projection_along_direction_3, and free function,
+  compare_projection_along_direction(), have been added.
+
+Intersecting Sequences of dD Iso-oriented Boxes
+
+- The function CGAL::box_intersection_d() now supports ranges with
+  different box types.
+- Added the box type CGAL::Box_with_info_d<FT, dim, Info>, which stores
+  a variable of type Info accessible via the class member function
+  info().
+
+2D Arrangements
+
+- Introduced a Geometry Traits concept for arrangement on surfaces that
+  enables the provision of the disconnected portions of an approximation
+  of a curve within a given bounding box.
+- The class CGAL::Arr_linear_traits_2 is now a model of the new concept.
+- Added overloads of
+  CGAL::draw(Arrangement_on_surface_2& arr, Bbox& bbox, ...) that enable
+  the drawing of arrangements induced by unbounded curves.
+- Introduced the concept AosTraits::Do_intersect_2. A model of this
+  concept must provide an operator that accepts two x-monotone curves
+  and a boolean flag that indicates whether common endpoints should be
+  considered or ignored. The operator determines whether the curves
+  intersect, and it can be used with an inexact-construction kernel.
+
+2D Intersection of Curves
+
+- The function CGAL::do_curves_intersect(), which assumed open curves,
+  has been deprecated and replaced by the function
+  CGAL::Surface_sweep_2::do_intersect(). Notice: (i) the introduction of
+  the new namespace Surface_sweep_2, and (ii) the addition of the closed
+  parameter, which defaults to true. To match the behavior of the
+  deprecated function, set closed to false.
+
+2D Regularized Boolean Set-Operations
+
+- Optimized do_intersect():
+  - (i) made it robust even with an inexact-predicates kernel, and
+  - (ii) made it quit once an intersection is detected. (In the past,
+         the intersection was computed in one phase and examined in a
+         subsequent phase.) This optimization somehow breaks backward
+         compatibility as follows: the variants of the free function
+         do_intersect() that accept a third optional parameter, namely
+         UsePolylines, which determines whether the boundaries of the
+         input polygons are treated as cyclic sequences of (x-monotone)
+         segments or as a cyclic sequences of (x-monotone) polylines, do
+         not accept this third parameter any longer. (This third
+         optional parameter was introduced a few years ago, and now
+         abandoned only for do_intersect().)
+
+3D Convex hull
+
+- Added the function CGAL::Convex_hull_3::do_intersect(), which can be
+  used to test for intersection between two convex hulls.
+- Added the function CGAL::extreme_point_3(), which returns the farthest
+  point of a convex hull in a given direction.
+- Added the class CGAL::Convex_hull_hierarchy_3, which represents a
+  convex hull, and is optimized for the functions above.
+
+2D Triangulations
+
+- Added the function insert_unique_constraints() to the class
+  CGAL::Constrained_Delaunay_triangulation_2 identical to the function
+  insert_constraints() except that it removes duplicated constraints
+  before inserting them in the triangulation.
+
+2D Conforming Triangulations and Meshes
+
+- The implementation is now more robust to almost degenerate inputs,
+  such as polygons with microscopic edges or almost collinear points.
+- Breaking change: The concept DelaunayMeshTraits_2 now requires the
+  functor Construct_bbox_2.
+
+Tetrahedral Mesh Generation
+
+- Breaking change: Removed the class template
+  CGAL::Implicit_vector_to_labeling_function_wrapper, as well as the
+  constructor of CGAL::Polyhedral_mesh_domain_with_features_3 that takes
+  a filename as parameter, which were deprecated since CGAL-4.5.
+- Breaking change: Added the requirement for a nested type Iso_cuboid_3
+  to the concept BisectionGeometricTraits_3.
+- Protection of sharp edges (also known as “feature line”) is now
+  significantly faster.
+
+dD Triangulations
+
+- Computation of convex hulls in high dimensions is now significantly
+  faster.
+
+Convex Decomposition of Polyhedra
+
+- Added the function CGAL::approximate_convex_decomposition(), which
+  computes a set of convex volumes that cover an input mesh.
+
+Polygon Mesh Processing
+
+- Breaking change: The header CGAL/Polygon_mesh_processing/border.h has
+  been deprecated and its content (CGAL::border_halfedges() and
+  CGAL::extract_boundary_cycles()) have been moved to a new header:
+  CGAL/boost/graph/border.h.
+- Vertex normal computation is now significantly faster for high-degree
+  vertices.
+
+Polygon Mesh Processing (Boolean Operations on Meshes)
+
+- Added the function CGAL::Polygon_mesh_processing::kernel(), which can
+  be used to compute the kernel of a polygon mesh, and is significantly
+  faster than halfspace intersections.
+- Added the function CGAL::Polygon_mesh_processing::has_empty_kernel(),
+  which can be used to determine if the kernel of a polygon mesh is
+  empty.
+- Added the function CGAL::Polygon_mesh_processing::kernel_point(),
+  which can be used to compute a single point inside the kernel of a
+  polygon mesh.
+- Added an optional parameter use_convex_specialization to the functions
+  CGAL::Polygon_mesh_processing::clip() and
+  CGAL::Polygon_mesh_processing::refine_with_plane(), which can be used
+  to specify that a given input is convex, resulting in much faster
+  computation.
+- The function CGAL::Polygon_mesh_processing::surface_intersection(),
+  which can be used to compute the polylines that represent the
+  intersection between two polyhedral surfaces has been renamed to
+  CGAL::Polygon_mesh_processing::intersection_polylines().
+
+Polygon Mesh Processing (Meshing and Remeshing of Polygon Meshes)
+
+- Breaking change: Update the visitor concepts PMPTriangulateFaceVisitor
+  and PMPHolefillingVisitor to request functions accept_face() and
+  accept_triangle(), respectively. These functions can be used to tweak
+  the way faces and holes are triangles by black listing some candidate
+  triangles. User visitors inheriting from the default visitors do not
+  require any update.
+
+Polygon Mesh Processing (Mesh Repair)
+
+- Added the named parameter erase_policy to
+  CGAL::Polygon_mesh_processing::repair_polygon_soup() and
+  CGAL::Polygon_mesh_processing::merge_duplicate_polygons_in_polygon_soup().
+  This parameter offers three policies: (i) erase all duplicates
+  polygons,
+  (ii) keep one of the duplicates (default), and (iii) keep one iff the
+       number of duplicates is odd. The named parameter
+       erase_all_duplicates is now deprecated.
+
+Quadtrees, Octrees, and Orthtrees
+
+- Added the member function intersected_nodes() with an intersection
+  functor and a convenience overload for a ball query to the class
+  CGAL::Orthree.
+
+Linear Cell Complex
+
+- The following import functions have been deprecated and renamed for
+  better naming clarity and consistency:
+  - import_from_plane_graph() → read_plane_graph_in_lcc()
+  - import_from_polyhedron_3() → polyhedron_3_to_lcc()
+  - import_from_triangulation_3() → triangulation_3_to_lcc() The old
+    function names are still available but marked as deprecated for
+    backward compatibility.
+- Two functions have been added to read and write 3D linear cell
+  complexes (dimension 3, ambient dimension 3) using VTK file formats
+  (legacy ASCII):
+  - CGAL::IO::read_VTK<LCC>(), and
+  - CGAL::IO::write_VTK<LCC>() These functions support per-vertex and
+    per-volume scalar fields and handle various VTK cell types.
+
+Shape Detection
+
+- Added the region type
+  CGAL::Shape_detection::Polygon_mesh::Plane_face_region that extends
+  the support plane of the seed face without refitting the plane to the
+  region
+- Added the region type
+  CGAL::Shape_detection::Polygon_mesh::Line_segment_region that extends
+  the support line of the seed segment without refitting the line to the
+  region
+- Added the sorting
+  CGAL::Shape_detection::Polygon_mesh::Face_area_sorting that provides a
+  sorting of faces in descending order of area
+- Added the sorting
+  CGAL::Shape_detection::Polygon_mesh::Segment_length_sorting that
+  provides a sorting of segments in descending order of length
+- Added the optional named parameter face_normal_map to
+  CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region,
+  CGAL::Shape_detection::Polygon_mesh::Plane_face_region; and
+  CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces() to
+  allow the use of face normal property maps instead of calculating the
+  face normals.
+- The CGAL::Shape_detection::Polygon_mesh::Plane_face_region and
+  CGAL::Shape_detection::Polygon_mesh::Face_area_sorting are now used as
+  the default in
+  CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces()
+
+Surface Mesh Simplification
+
+- Added the class
+  CGAL::Surface_mesh_simplification::GarlandHeckbert_plane_and_line_policies,
+  which improves other Garland-Heckbert strategies near sharp features.
+- Breaking change:
+  CGAL::Surface_mesh_simplification::GarlandHeckbert_policies.h is is no
+  longer deprecated and has become an alias for the current best
+  Garland-Heckbert policy, which is currently
+  CGAL::Surface_mesh_simplification::GarlandHeckbert_plane_and_line_policies.
+
+Geometric Object Generators
+
+- Added three new point generators:
+  - CGAL::Random_points_on_segment_3,
+  - CGAL::Random_points_in_triangle_soup_3, and
+  - CGAL::Random_points_on_graph_edges_3
+- Added the function point_and_support() to several generators to get
+  the last point generated point and the support element containing it.
+  Affected generators are:
+  - CGAL::Random_points_in_triangles_2,
+  - CGAL::Random_points_in_triangles_3,
+  - CGAL::Random_points_in_triangle_mesh_3,
+  - CGAL::Random_points_in_tetrahedral_mesh_boundary_3,
+  - CGAL::Random_points_in_tetrahedral_mesh_3,
+  - CGAL::Random_points_in_triangle_soup_3,
+  - and CGAL::Random_points_on_graph_edges_3.
+
+STL Extension
+
+- Added new debugging utility for finding minimal failing test cases:
+  - CGAL::bisect_failures is a template function that uses bisection to
+    isolate minimal failing subsets from complex input data.
+
+Stream Support
+
+- Added new stream formatting capabilities for improved debugging and
+  logging:
+  - CGAL::IO::Basic_indenting_streambuf and
+    CGAL::IO::Basic_indenting_stream_guard for automatic indentation of
+    output streams.
+  - CGAL::IO::Basic_color_streambuf and
+    CGAL::IO::Basic_color_stream_guard for ANSI color support in
+    terminal output.
 
 
 
-The development of CGAL will now focus on the upcoming CGAL-6.1 release,
-planned for late 2025. Bug fixes will continue to be backported to the
-CGAL-5.6.x and CGAL-6.0.x branches.
+See https://www.cgal.org/2026/06/11/cgal62/ for a
+complete list of changes.
 
 
 The CGAL project is a collaborative effort to develop a robust,

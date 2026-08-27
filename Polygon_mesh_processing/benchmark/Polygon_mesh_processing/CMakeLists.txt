@@ -7,6 +7,9 @@ project(Polygon_mesh_processing_Benchmarks)
 # CGAL and its components
 find_package(CGAL REQUIRED)
 
+
+  create_single_source_cgal_program("compute_normals_benchmark.cpp")
+
 find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
 
@@ -29,6 +32,7 @@ if (FAST_ENVELOPE_BUILD_DIR)
       set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
   endif()
 
+
   create_single_source_cgal_program("fastE.cpp")
   target_link_libraries( fastE PRIVATE CGAL::Eigen3_support)
   target_link_libraries( fastE PRIVATE FastEnvelope IndirectPredicates geogram)
@@ -38,3 +42,12 @@ else()
 endif()
 
 create_single_source_cgal_program("fast.cpp")
+
+create_single_source_cgal_program("meshes_intersections_comparison.cpp")
+find_package(TBB QUIET)
+include(CGAL_TBB_support)
+if(TARGET CGAL::TBB_support)
+  target_link_libraries(meshes_intersections_comparison PRIVATE CGAL::TBB_support)
+else()
+  message(STATUS "NOTICE: Intel TBB was not found. Sequential code will be used.")
+endif()

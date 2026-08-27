@@ -258,6 +258,7 @@ namespace internal {
          , typename VertexPointMap
          , typename GeomTraits
          , typename EdgeIsConstrainedMap
+         , typename EdgeIsProtectedMap
          , typename VertexIsConstrainedMap
          , typename FacePatchMap
          , typename FaceIndexMap
@@ -279,6 +280,7 @@ namespace internal {
     typedef Incremental_remesher<PM, VertexPointMap
                                , GeomTraits
                                , EdgeIsConstrainedMap
+                               , EdgeIsProtectedMap
                                , VertexIsConstrainedMap
                                , FacePatchMap
                                , FaceIndexMap
@@ -304,6 +306,7 @@ namespace internal {
                        , const GeomTraits& gt
                        , const bool protect_constraints
                        , EdgeIsConstrainedMap ecmap
+                       , EdgeIsProtectedMap epmap
                        , VertexIsConstrainedMap vcmap
                        , FacePatchMap fpmap
                        , FaceIndexMap fimap
@@ -318,8 +321,10 @@ namespace internal {
       , protect_constraints_(protect_constraints)
       , patch_ids_map_(fpmap)
       , ecmap_(ecmap)
+      , epmap_(epmap)
       , vcmap_(vcmap)
       , fimap_(fimap)
+      , feature_edges_pmap_(ecmap, epmap)
     {
       halfedge_status_pmap_ = get(CGAL::dynamic_halfedge_property_t<Halfedge_status>(),
                                   pmesh);
@@ -338,6 +343,24 @@ namespace internal {
       }
     }
 
+    static constexpr bool has_constrained_edges()
+    {
+      using False_pmap = CGAL::Static_boolean_property_map<edge_descriptor, false>;
+      return !std::is_same_v<EdgeIsProtectedMap,   False_pmap>
+          || !std::is_same_v<EdgeIsConstrainedMap, False_pmap>;
+    }
+    bool has_protected_edges()
+    {
+      using False_pmap = CGAL::Static_boolean_property_map<edge_descriptor, false>;
+      return protect_constraints_
+          || !std::is_same_v<EdgeIsProtectedMap, False_pmap>;
+    }
+
+    auto all_feature_edges_pmap() const
+    {
+      return feature_edges_pmap_;
+    }
+
     template<typename FaceRange>
     void init_remeshing(const FaceRange& face_range)
     {
@@ -345,6 +368,7 @@ namespace internal {
 
       for(face_descriptor f : face_range)
       {
+        CGAL_assertion(is_triangle(halfedge(f, mesh_), mesh_));
         if(is_degenerate_triangle_face(f, mesh_, parameters::vertex_point_map(vpmap_)
                                                             .geom_traits(gt_)))
           continue;
@@ -384,14 +408,13 @@ namespace internal {
     void split_long_edges(const EdgeRange& edge_range,
                           SizingFunction& sizing)
     {
-
 #ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << "Split long edges...";
       std::cout.flush();
 #endif
 
       //collect long edges
-      typedef std::pair<halfedge_descriptor, double> H_and_sql;
+      typedef std::pair<halfedge_descriptor, FT> H_and_sql;
       std::multiset< H_and_sql, std::function<bool(H_and_sql,H_and_sql)> >
         long_edges(
           [](const H_and_sql& p1, const H_and_sql& p2)
@@ -399,8 +422,10 @@ namespace internal {
         );
       for(edge_descriptor e : edge_range)
       {
+        if(!is_split_allowed(e))
+          continue;
         const halfedge_descriptor he = halfedge(e, mesh_);
-        std::optional<double> sqlen = sizing.is_too_long(source(he, mesh_), target(he, mesh_), mesh_);
+        std::optional<FT> sqlen = sizing.is_too_long(source(he, mesh_), target(he, mesh_), mesh_);
         if(sqlen != std::nullopt)
           long_edges.emplace(he, sqlen.value());
       }
@@ -417,7 +442,7 @@ namespace internal {
         long_edges.erase(eit);
 
         //split edge
-        Point refinement_point = this->midpoint(he);
+        Point refinement_point = sizing.split_placement(he, mesh_);
         halfedge_descriptor hnew = CGAL::Euler::split_edge(he, mesh_);
         // propagate the constrained status
         put(ecmap_, edge(hnew, mesh_), get(ecmap_, edge(he, mesh_)));
@@ -437,7 +462,7 @@ namespace internal {
 
         //check sub-edges
         //if it was more than twice the "long" threshold, insert them
-        std::optional<double> sqlen_new = sizing.is_too_long(source(hnew, mesh_), target(hnew, mesh_), mesh_);
+        std::optional<FT> sqlen_new = sizing.is_too_long(source(hnew, mesh_), target(hnew, mesh_), mesh_);
         if(sqlen_new != std::nullopt)
           long_edges.emplace(hnew, sqlen_new.value());
 
@@ -522,7 +547,7 @@ namespace internal {
         std::cout.flush();
 #endif
 
-        if (protect_constraints_ && !is_longest_on_faces(edge(he, mesh_)))
+        if(has_protected_edges() && !is_longest_on_faces(edge(he, mesh_)))
           continue;
 
         //collect patch_ids
@@ -794,6 +819,7 @@ namespace internal {
 
           //perform collapse
           CGAL_assertion(target(halfedge(e, mesh_), mesh_) == vb);
+          CGAL_assertion(!get(epmap_, e));
           vertex_descriptor vkept = CGAL::Euler::collapse_edge(e, mesh_, ecmap_);
           CGAL_assertion(is_valid(mesh_));
           CGAL_assertion(vkept == vb);//is the constrained point still here
@@ -878,7 +904,7 @@ namespace internal {
 
         std::array<halfedge_descriptor, 2> r1 = internal::is_badly_shaped(
             face(he, mesh_),
-            mesh_, vpmap_, vcmap_, ecmap_, gt_,
+            mesh_, vpmap_, vcmap_, feature_edges_pmap_, gt_,
             4, // bound on shortest/longest edge above 4 => needle
             cap_threshold, // bound on the angle: above 160 deg => cap
             0,// collapse length threshold : not needed here
@@ -886,7 +912,7 @@ namespace internal {
 
         std::array<halfedge_descriptor, 2> r2 = internal::is_badly_shaped(
             face(opposite(he, mesh_), mesh_),
-            mesh_, vpmap_, vcmap_, ecmap_, gt_, 4, cap_threshold, 0, 0);
+            mesh_, vpmap_, vcmap_, feature_edges_pmap_, gt_, 4, cap_threshold, 0, 0);
 
         const bool badly_shaped = (r1[0] != boost::graph_traits<PolygonMesh>::null_halfedge()//needle
                                 || r1[1] != boost::graph_traits<PolygonMesh>::null_halfedge()//cap
@@ -912,7 +938,7 @@ namespace internal {
         CGAL_assertion_code(Halfedge_status s1o = status(opposite(he, mesh_)));
 
         CGAL_assertion( is_flip_topologically_allowed(edge(he, mesh_)) );
-        CGAL_assertion( !get(ecmap_, edge(he, mesh_)) );
+        CGAL_assertion(!get(feature_edges_pmap_, edge(he, mesh_)));
         CGAL::Euler::flip_edge(he, mesh_);
 
         if (!badly_shaped)
@@ -1041,7 +1067,7 @@ namespace internal {
       auto constrained_vertices_pmap
         = boost::make_function_property_map<vertex_descriptor>(vertex_constraint);
 
-      if constexpr (std::is_same_v<SizingFunction, Uniform_sizing_field<PM, VertexPointMap>>)
+      if constexpr(std::is_same_v<SizingFunction, Uniform_sizing_field<PM, VertexPointMap>>)
       {
 #ifdef CGAL_PMP_REMESHING_VERBOSE
         std::cout << " using tangential relaxation with weights equal to 1";
@@ -1265,14 +1291,24 @@ private:
       return is_on_border(e) || is_on_patch_border(e);
     }
 
+    bool is_protected(const edge_descriptor& e) const
+    {
+      return get(epmap_, e) || (protect_constraints_ && is_constrained(e));
+    }
+    bool is_protected(const halfedge_descriptor& h) const
+    {
+      return is_protected(edge(h, mesh_));
+    }
+
     bool is_split_allowed(const edge_descriptor& e) const
     {
+      if(is_protected(e))
+        return false;
+
       halfedge_descriptor h = halfedge(e, mesh_);
       halfedge_descriptor hopp = opposite(h, mesh_);
 
-      if (protect_constraints_ && is_constrained(e))
-        return false;
-      else //allow splitting constraints
+      //allow splitting constraints
       {
         if (is_on_mesh(h) && is_on_mesh(hopp))
           return false;
@@ -1299,7 +1335,10 @@ private:
       if (is_an_isolated_constraint(he) || is_an_isolated_constraint(hopp))
         return false;
 
-      if ( (protect_constraints_ || !collapse_constraints) && is_constrained(e))
+      if (!collapse_constraints && is_constrained(e))
+        return false;
+
+      if(is_protected(e))
         return false;
       if (is_on_patch(he)) //hopp is also on patch
       {
@@ -1325,14 +1364,14 @@ private:
         return false;//too many cases to be handled
       if (is_on_patch_border(next(hopp, mesh_)) && is_on_patch_border(prev(hopp, mesh_)))
         return false;//too many cases to be handled
-      else if (is_on_patch_border(next(he, mesh_)))
+      if (is_on_patch_border(next(he, mesh_)))
       {
         //avoid generation of degenerate faces, and self-intersections
         if (source(he, mesh_) ==
           target(next(next_on_patch_border(next(he, mesh_)), mesh_), mesh_))
           return false;
       }
-      else if (is_on_patch_border(prev(hopp, mesh_)))
+      if (is_on_patch_border(prev(hopp, mesh_)))
       {
         //avoid generation of degenerate faces, and self-intersections
         if (target(hopp, mesh_) ==
@@ -1373,6 +1412,9 @@ private:
 
     bool is_flip_allowed(const edge_descriptor& e) const
     {
+      if(is_protected(e))
+        return false;
+
       bool flip_possible = is_flip_allowed(halfedge(e, mesh_))
                         && is_flip_allowed(opposite(halfedge(e, mesh_), mesh_));
 
@@ -1403,6 +1445,8 @@ private:
       {
         if (is_on_patch(h))
           continue;
+        else if(is_protected(h))
+          return false;
         else if (is_on_patch_border(h) && relax_constraints)
           continue;
         else
@@ -1595,12 +1639,11 @@ private:
       }
 
       // update status using constrained edge map
-      if (!std::is_same<EdgeIsConstrainedMap,
-                          Static_boolean_property_map<edge_descriptor, false> >::value)
+      if constexpr (has_constrained_edges())
       {
         for(edge_descriptor e : edges(mesh_))
         {
-          if (get(ecmap_, e))
+          if(get(feature_edges_pmap_, e))
           {
             //deal with h and hopp for borders that are sharp edges to be preserved
             halfedge_descriptor h = halfedge(e, mesh_);
@@ -1763,7 +1806,8 @@ private:
             short_edges.left.erase(hf);
             short_edges.left.erase(hfo);
 
-            CGAL_assertion( !get(ecmap_, edge(hf, mesh_)) );
+            CGAL_assertion_code(edge_descriptor ef = edge(hf, mesh_));
+            CGAL_assertion( !get(ecmap_, ef) && !get(epmap_, ef));
 
             if (!is_flip_topologically_allowed(edge(hf, mesh_)))
               continue;
@@ -1817,6 +1861,7 @@ private:
           halfedges_around_target(he, mesh_))
       {
         if(!is_border(h, mesh_) &&
+           is_triangle(h, mesh_) &&
            is_degenerate_triangle_face(face(h, mesh_), mesh_,
                                        parameters::vertex_point_map(vpmap_)
                                                   .geom_traits(gt_)))
@@ -2063,11 +2108,13 @@ private:
     Triangle_list input_triangles_;
     Patch_id_list input_patch_ids_;
     Halfedge_status_pmap halfedge_status_pmap_;
-    bool protect_constraints_;
+    const bool protect_constraints_;
     FacePatchMap patch_ids_map_;
     EdgeIsConstrainedMap ecmap_;
+    EdgeIsProtectedMap epmap_;
     VertexIsConstrainedMap vcmap_;
     FaceIndexMap fimap_;
+    CGAL::OR_property_map<EdgeIsConstrainedMap, EdgeIsProtectedMap> feature_edges_pmap_;
     CGAL_assertion_code(bool input_mesh_is_valid_;)
 
   };//end class Incremental_remesher
