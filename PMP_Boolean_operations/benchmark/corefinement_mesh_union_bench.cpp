@@ -1,4 +1,7 @@
+#define CGAL_OUTPUT_BUILDER_RUNNING_TIME
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
@@ -9,6 +12,8 @@
 #include <fstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
+// typedef CGAL::Exact_predicates_exact_constructions_kernel   K;
+
 typedef CGAL::Surface_mesh<K::Point_3>                        Mesh;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
@@ -19,36 +24,35 @@ struct Visitor_rep{
     : normalize(normalize)
   {
     t.start();
-    rt.start();
   }
 
   void progress_filtering_intersections(double d)
    {
-    d /= normalize;
-    total += d;
-    if(total > bound){
-      std::cout << std::setprecision(3) << total*100 << " %   in " << std::setprecision(5) << rt.time() << " sec (" << t.time() << "s)." << std::endl;
-      bound += 0.1;
-    }
+    // d /= normalize;
+    // total += d;
+    // if(total > bound){
+    //   // std::cout << std::setprecision(3) << total*100 << " %   in " << std::setprecision(5) << t.time() << " sec." << std::endl;
+    //   bound += 0.1;
+    // }
   }
 
   void start_triangulating_faces(std::size_t tf)
   {
-    tfaces = tf;
-    bound_faces = tf/10;
+    // tfaces = tf;
+    // bound_faces = tf/10;
   }
 
   void face_triangulation(std::size_t i)
   {
-    if(i> bound_faces){
-      std::cout << double(i)/double(tfaces) * 100  << " %" << std::endl;
-      bound_faces += tfaces/10;
-    }
+    // if(i> bound_faces){
+    //   // std::cout << double(i)/double(tfaces) * 100  << " %" << std::endl;
+    //   bound_faces += tfaces/10;
+    // }
   }
 
   void start_coplanar_faces(std::size_t tc)
   {
-    std::cout << "Visitor::start_coplanar_faces() at " << rt.time() << " sec (" << t.time() << "s)."  << std::endl;
+    // std::cout << "Visitor::start_coplanar_faces() at " << t.time() << " sec." << std::endl;
     tcoplanar= tc;
     count_coplanar = 0;
     bound_coplanar = tcoplanar/10;
@@ -58,14 +62,14 @@ struct Visitor_rep{
   {
     ++count_coplanar;
     if(count_coplanar> bound_coplanar){
-      std::cout << "Visitor::coplanar_faces: " << double(count_coplanar)/double(tcoplanar) * 100  << " % " << std::endl;
+      // std::cout << "Visitor::coplanar_faces: " << double(count_coplanar)/double(tcoplanar) * 100  << " % " << std::endl;
       bound_coplanar += tcoplanar/10;
     }
   }
 
   void start_intersection_points(std::size_t ti)
   {
-    std::cout << "Visitor::start_intersection_points() at " << rt.time() << " sec (" << t.time() << "s)."  << std::endl;
+    // std::cout << "Visitor::start_intersection_points() at " << t.time() << " sec." << std::endl;
     tintersection= ti;
     count_intersection = 0;
     bound_intersection = tintersection/10;
@@ -75,7 +79,7 @@ struct Visitor_rep{
   {
     ++count_intersection;
     if(count_intersection> bound_intersection){
-      std::cout << "Visitor::intersection_points: " << double(count_intersection)/double(tintersection) * 100  << " % " << std::endl;
+      // std::cout << "Visitor::intersection_points: " << double(count_intersection)/double(tintersection) * 100  << " % " << std::endl;
       bound_intersection += tintersection/10;
     }
   }
@@ -85,10 +89,7 @@ struct Visitor_rep{
     return t.time();
   }
 
-  double real_time() const
-  {
-    return rt.time();
-  }
+  void reset_timer(){ t.stop(); t.reset(); t.start(); }
 
   double normalize;
   double bound = 0.1;
@@ -105,8 +106,8 @@ struct Visitor_rep{
   std::size_t bound_intersection = 0;
   std::size_t tintersection = 0;
   std::size_t count_intersection = 0;
-  CGAL::Timer t;
-  CGAL::Real_timer rt;
+  CGAL::Real_timer t;
+  CGAL::Real_timer local;
 };
 
 
@@ -127,33 +128,36 @@ struct Visitor :
 
   void start_filtering_intersections() const
   {
-    std::cout << "Visitor::start_filtering_intersections() at " << sptr->real_time() << " sec (" << sptr->time() << "s)." << std::endl;
+    // std::cout << "Visitor::start_filtering_intersections() at " << sptr->time() << " sec." << std::endl;
+    sptr->reset_timer();
   }
   void end_filtering_intersections() const
   {
-    std::cout << "Visitor::end_filtering_intersections() at " << sptr->real_time() << " sec (" << sptr->time() << "s)." << std::endl;
+    std::cout << "Filtering_intersections: " << sptr->time() << std::endl;
   }
 
   void start_triangulating_faces(std::size_t tf) const
   {
-    std::cout << "Visitor::start_triangulation() with " << tf << " faces at " << sptr->real_time() << " sec (" << sptr->time() << "s)." << std::endl;
+    std::cout << "Triangulate " << tf << " faces in ";
     sptr->start_triangulating_faces(tf);
     tf_counter = 0;
+    sptr->reset_timer();
   }
 
   void triangulating_faces_step() const
   {
-    sptr->face_triangulation(tf_counter++);
+    // sptr->face_triangulation(tf_counter++);
   }
 
   void end_triangulating_faces()const
   {
-    std::cout << "Visitor::end_triangulating_faces() at " << sptr->real_time() << " sec (" << sptr->time() << "s)." << std::endl;
+    std::cout << sptr->time() << " sec."  << std::endl;
   }
 
   void start_handling_intersection_of_coplanar_faces(std::size_t i) const
   {
     sptr->start_coplanar_faces(i);
+    sptr->reset_timer();
   }
 
   void intersection_of_coplanar_faces_step() const
@@ -163,12 +167,13 @@ struct Visitor :
 
   void end_handling_intersection_of_coplanar_faces() const
   {
-    std::cout << "Visitor::end_coplanar_faces() at " << sptr->real_time() << " sec (" << sptr->time() << "s)." << std::endl;
+    std::cout << "Handling coplanar in " << sptr->time() << " sec." << std::endl;
   }
 
   void start_handling_edge_face_intersections(std::size_t i) const
   {
     sptr->start_intersection_points(i);
+    sptr->reset_timer();
   }
 
   void edge_face_intersections_step() const
@@ -178,27 +183,25 @@ struct Visitor :
 
   void end_handling_edge_face_intersections() const
   {
-    std::cout << "Visitor::end_intersection_points() at " << sptr->real_time() << " sec (" << sptr->time() << "s)." << std::endl;
+    std::cout << "Compute intersection points in " << sptr->time() << " sec." << std::endl;
   }
 
   void start_building_output() const
   {
-    std::cout << "Visitor::start_building_output() at " << sptr->real_time() << " sec (" << sptr->time() << "s)." << std::endl;
+    sptr->reset_timer();
   }
 
   void end_building_output() const
   {
-    std::cout << "Visitor::end_building_output() at " << sptr->real_time() << " sec (" << sptr->time() << "s)." << std::endl;
+    std::cout << "Build the output in " << sptr->time() << " sec." << std::endl;
   }
 };
 
 
 int main(int argc, char* argv[])
 {
-  // const std::string filename1 = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/blobby.off");
-  // const std::string filename2 = (argc > 2) ? argv[2] : CGAL::data_file_path("meshes/eight.off");
-  const std::string filename1 = (argc > 1) ? argv[1] : "/home/oem/Data/data/iphigenia.off";
-  const std::string filename2 = (argc > 2) ? argv[2] : "/home/oem/Data/data/iphigenia_transformed.off";
+  const std::string filename1 = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/blobby.off");
+  const std::string filename2 = (argc > 2) ? argv[2] : CGAL::data_file_path("meshes/eight.off");
 
   Mesh mesh1, mesh2;
   if(!CGAL::IO::read_polygon_mesh(filename1, mesh1) || !CGAL::IO::read_polygon_mesh(filename2, mesh2))
