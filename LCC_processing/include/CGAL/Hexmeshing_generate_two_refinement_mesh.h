@@ -27,11 +27,10 @@ namespace CGAL
   (const TriangleMesh& tmesh, int cube_cells_per_dim, int nb_levels,
    const NamedParameters& np=parameters::default_values())
   {
-    // 1. Extract named parameters with sensible defaults
     bool trim=parameters::choose_parameter
-      (parameters::get_parameter(np, internal_np::trim_mesh), true);
+      (parameters::get_parameter(np, internal_np::use_triming), true);
     bool smooth=parameters::choose_parameter
-      (parameters::get_parameter(np, internal_np::smooth_mesh), true);
+      (parameters::get_parameter(np, internal_np::use_smoothing), true);
 
     internal::Hexmeshing_for_linear_cell_complex<TriangleMesh> hdata(tmesh, cube_cells_per_dim);
     hdata.two_refinement(nb_levels, trim, smooth);
