@@ -4,6 +4,9 @@
 
 Release date: December 2026
 
+### [Linear Cell Complex](https://doc.cgal.org/6.3/Manual/packages.html#PkgLinearCellComplex)
+- added `tetrahedron_soup_to_lcc()` to import a tetrahedron soup into a linear cell complex.
+
 ### [2D and 3D Fast Intersection and Distance Computation (AABB Tree)](https://doc.cgal.org/6.3/Manual/packages.html#PkgAABBTree)
 - `CGAL::AABB_tree::build()` now accepts an optional `Concurrency_tag` template parameter (`CGAL::Sequential_tag` by default).
    When `CGAL::Parallel_tag` is specified, the tree construction is performed in parallel.
