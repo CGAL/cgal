@@ -439,7 +439,7 @@ public:
   };
 
   /*! \class Trim_2
-   * A functor for triming curves.
+   * A functor for trimming curves.
    */
   class Trim_2 {
   public:
