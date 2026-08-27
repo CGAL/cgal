@@ -17,18 +17,31 @@ Starts to create a regular grid of `cube_cells_per_dim`\f$ ^3\f$ voxels. Then re
 @param np n optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
 
 \cgalNamedParamsBegin
-  \cgalParamNBegin{use_triming}
-    \cgalParamDescription{trims exterior mesh elements, i.e., remove volumes that are entirely outside of `tmesh`}
-    \cgalParamType{`bool`}
-    \cgalParamDefault{`true`}
-  \cgalParamNEnd
+\cgalParamNBegin{use_triming}
+  \cgalParamDescription{trims exterior mesh elements, i.e., remove volumes that are entirely outside of `tmesh`}
+  \cgalParamType{`bool`}
+  \cgalParamDefault{`true`}
+\cgalParamNEnd
 
-  \cgalParamNBegin{use_smoothing}
-   \cgalParamDescription{applies Laplacian smoothing to project boundary vertices onto `tmesh`}
-    \cgalParamType{`bool`}
-    \cgalParamDefault{`true`}
-  \cgalParamNEnd
+\cgalParamNBegin{use_smoothing}
+  \cgalParamDescription{applies Laplacian smoothing to project boundary vertices onto `tmesh`}
+  \cgalParamType{`bool`}
+  \cgalParamDefault{`true`}
+\cgalParamNEnd
 
+\cgalParamNBegin{vertex_point_map}
+  \cgalParamDescription{a property map associating points to the vertices of `tmesh`}
+  \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::vertex_descriptor`
+                 as key type and `GeomTraits::Point_3` as value type, `GeomTraits` being the type of the parameter `geom_traits`}
+  \cgalParamDefault{`get(CGAL::vertex_point, tmesh)`}
+\cgalParamNEnd
+
+\cgalParamNBegin{geom_traits}
+  \cgalParamDescription{an instance of a geometric traits class}
+  \cgalParamType{a class model of `Kernel`}
+  \cgalParamDefault{a CGAL Kernel deduced from the point type using `CGAL::Kernel_traits`}
+  \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+\cgalParamNEnd
  \cgalNamedParamsEnd
 
 @return the resulting linear cell complex representing the hexahedral mesh.
