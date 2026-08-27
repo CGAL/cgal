@@ -9,9 +9,11 @@
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
-////////////////////////////////////////////////////////////////////////////////
-#ifndef LCC_PATTERN_H
-#define LCC_PATTERN_H
+
+#ifndef CGAL_LCC_PATTERN_H
+#define CGAL_LCC_PATTERN_H
+
+#include <CGAL/license/LCC_processing.h>
 
 #include <CGAL/Linear_cell_complex/lcc_barycentric_coord.h>
 #include <CGAL/Linear_cell_complex/query_replace/cmap_signature.h>
@@ -620,4 +622,4 @@ public:
 };
 ////////////////////////////////////////////////////////////////////////////////
 }
-#endif // LCC_PATTERN_H
+#endif // CGAL_LCC_PATTERN_H

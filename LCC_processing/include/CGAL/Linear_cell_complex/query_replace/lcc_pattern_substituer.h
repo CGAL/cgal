@@ -9,9 +9,11 @@
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
-////////////////////////////////////////////////////////////////////////////////
-#ifndef LCC_PATTERN_SUBSTITUER_H
-#define LCC_PATTERN_SUBSTITUER_H
+
+#ifndef CGAL_LCC_PATTERN_SUBSTITUER_H
+#define CGAL_LCC_PATTERN_SUBSTITUER_H
+
+#include <CGAL/license/LCC_processing.h>
 
 #include <filesystem>
 #include <limits>
@@ -829,4 +831,4 @@ public:
 };
 ////////////////////////////////////////////////////////////////////////////////
 }
-#endif // LCC_PATTERN_SUBSTITUER_H
+#endif // CGAL_LCC_PATTERN_SUBSTITUER_H

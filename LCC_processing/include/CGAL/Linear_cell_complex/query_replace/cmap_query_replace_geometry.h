@@ -9,9 +9,11 @@
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
-////////////////////////////////////////////////////////////////////////////////
-#ifndef CMAP_QUERY_REPLACE_GEOMETRY_H
-#define CMAP_QUERY_REPLACE_GEOMETRY_H
+
+#ifndef CGAL_CMAP_QUERY_REPLACE_GEOMETRY_H
+#define CGAL_CMAP_QUERY_REPLACE_GEOMETRY_H
+
+#include <CGAL/license/LCC_processing.h>
 
 #include <tuple>
 #include <unordered_map>
@@ -259,4 +261,4 @@ void transform_geometry_of_vpattern(LCC& lcc, typename LCC::size_type /*amark*/,
 }
 ///////////////////////////////////////////////////////////////////////////////
 }
-#endif // CMAP_QUERY_REPLACE_GEOMETRY_H
+#endif // CGAL_CMAP_QUERY_REPLACE_GEOMETRY_H

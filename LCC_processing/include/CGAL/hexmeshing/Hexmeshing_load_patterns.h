@@ -10,8 +10,11 @@
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 // Contributor(s): Soichiro Yamazaki <soichiro19998@gmail.com>, Théo Bénard <benard320@gmail.com>
 //
+
 #ifndef CGAL_HEXMESHING_LOAD_PATTERNS_H
 #define CGAL_HEXMESHING_LOAD_PATTERNS_H
+
+#include <CGAL/license/LCC_processing.h>
 
 #include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
 #include <CGAL/Linear_cell_complex/query_replace/cmap_query_replace.h>

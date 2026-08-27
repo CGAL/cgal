@@ -9,9 +9,11 @@
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
-////////////////////////////////////////////////////////////////////////////////
-#ifndef CMAP_QUERY_REPLACE_H
-#define CMAP_QUERY_REPLACE_H
+
+#ifndef CGAL_CMAP_QUERY_REPLACE_H
+#define CGAL_CMAP_QUERY_REPLACE_H
+
+#include <CGAL/license/LCC_processing.h>
 
 #include <queue>
 #include <utility>
@@ -371,4 +373,4 @@ void replace_one_surface_from_dart(LCC& lcc,
 }
 ////////////////////////////////////////////////////////////////////////////////
 }
-#endif // CMAP_QUERY_REPLACE_H
+#endif // CGAL_CMAP_QUERY_REPLACE_H

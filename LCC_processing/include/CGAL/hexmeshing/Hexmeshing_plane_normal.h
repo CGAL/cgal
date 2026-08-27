@@ -10,8 +10,11 @@
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 // Contributor(s): Soichiro Yamazaki <soichiro19998@gmail.com>, Théo Bénard <benard320@gmail.com>
 //
+
 #ifndef CGAL_HEXMESHING_PLANE_NORMAL_H
 #define CGAL_HEXMESHING_PLANE_NORMAL_H
+
+#include <CGAL/license/LCC_processing.h>
 
 namespace CGAL::internal::Hexmeshing
 {

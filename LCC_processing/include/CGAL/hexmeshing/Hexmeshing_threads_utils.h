@@ -14,6 +14,8 @@
 #ifndef CGAL_HEXMESHING_THREADS_UTILS_H
 #define CGAL_HEXMESHING_THREADS_UTILS_H
 
+#include <CGAL/license/LCC_processing.h>
+
 #include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
 
 namespace CGAL::internal::Hexmeshing
