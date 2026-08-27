@@ -31,7 +31,7 @@ namespace CGAL
    const NamedParameters& np=parameters::default_values())
   {
     bool trim=parameters::choose_parameter
-      (parameters::get_parameter(np, internal_np::use_triming), true);
+      (parameters::get_parameter(np, internal_np::use_trimming), true);
     bool smooth=parameters::choose_parameter
       (parameters::get_parameter(np, internal_np::use_smoothing), true);
 

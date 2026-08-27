@@ -15,7 +15,7 @@ int main(int argc, char** argv)
   CGAL::Polygon_mesh_processing::triangulate_faces(poly);
 
   auto lcc=CGAL::generate_hexahedral_mesh_using_two_refinement
-    (poly, 18, 2, CGAL::parameters::use_triming(true).use_smoothing(true));
+    (poly, 18, 2, CGAL::parameters::use_trimming(true).use_smoothing(true));
 
   CGAL::draw(lcc);
   CGAL::IO::write_VTK("hexmesh.vtk", lcc);
