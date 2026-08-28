@@ -32,10 +32,10 @@ namespace CGAL {
 namespace IO {
 namespace internal {
 
-template<class PointRange, class CellRange, class SurfacePatchIndex_>
+template<class PointRange, class TetrahedronRange, class SurfacePatchIndex_>
 bool read_MEDIT(std::istream& is,
                 PointRange& points,
-                CellRange& finite_cells,
+                TetrahedronRange& tetrahedra,
                 std::vector<int>& subdomains,
                 boost::unordered_map<std::array<int,3>,SurfacePatchIndex_ >& border_facets,
                 bool read_border_facets,
@@ -217,7 +217,7 @@ bool read_MEDIT(std::istream& is,
         t[2] = offset + n[2] - 1;
         t[3] = offset + n[3] - 1;
 
-        finite_cells.push_back(t);
+        tetrahedra.push_back(t);
         subdomains.push_back(reference);
       }
     }
@@ -227,13 +227,13 @@ bool read_MEDIT(std::istream& is,
   {
     std::cout << points.size() - std::size_t(offset) << " points" << std::endl;
     std::cout << border_facets.size() << " border facets" << std::endl;
-    std::cout << finite_cells.size() << " cells" << std::endl;
+    std::cout << tetrahedra.size() << " cells" << std::endl;
   }
 
-  if(finite_cells.empty())
+  if(tetrahedra.empty())
     return false;
 
-  CGAL_assertion(finite_cells.size() == subdomains.size());
+  CGAL_assertion(tetrahedra.size() == subdomains.size());
 
   return true;
 }
@@ -245,20 +245,20 @@ bool read_MEDIT(std::istream& is,
 /*!
  * \ingroup PkgStreamSupportIoFuncsMEDIT
  *
- * \brief reads the content of `is` into `points` and `finite_cells`.
+ * \brief reads the content of `is` into `points` and `tetrahedra`.
  *
  * See \cgalCite{frey:inria-00069921} for a comprehensive description of the medit (`.mesh`) file format.
  *
- * \attention The cell soup is not cleared, and the data from the stream are appended.
+ * \attention The tetrahedron soup is not cleared, and the data from the stream are appended.
  *
  * \tparam PointRange a model of the concept `BackInsertionSequence` whose value type is the point type
- * \tparam CellRange a model of the concept `BackInsertionSequence` whose `value_type` is `std::array<int,4>`
+ * \tparam TetrahedronRange a model of the concept `BackInsertionSequence` whose `value_type` is `std::array<int,4>`
  *
  * \param is the input stream
  * \param points points of the soup of cells
- * \param finite_cells each element in it describes a cell
+ * \param tetrahedra each element in it describes a tetrahedron
  *        using the indices of the points in `points`
- * \param subdomains each element in it describes the subdomain index of the corresponding cell in `finite_cells`
+ * \param subdomains each element in it describes the subdomain index of the corresponding tetrahedron
  * \param verbose if `true`, prints information about the reading process
  *
  * \returns `true` if the reading was successful, `false` otherwise.
@@ -266,10 +266,10 @@ bool read_MEDIT(std::istream& is,
  *  \see \ref IOStreamMedit
  */
 
-template<class PointRange, class CellRange>
+template<class PointRange, class TetrahedronRange>
 bool read_MEDIT(std::istream& is,
                 PointRange& points,
-                CellRange& finite_cells,
+                TetrahedronRange& tetrahedra,
                 std::vector<int>& subdomains,
                 bool verbose = false)
 
@@ -277,7 +277,7 @@ bool read_MEDIT(std::istream& is,
   boost::unordered_map<std::array<int,3>,int > border_facets;
   constexpr bool read_border_facets = false;
   bool is_CGAL_mesh;
-  return internal::read_MEDIT(is, points, finite_cells, subdomains, border_facets,
+  return internal::read_MEDIT(is, points, tetrahedra, subdomains, border_facets,
                               read_border_facets, verbose, is_CGAL_mesh);
 }
 
@@ -285,31 +285,31 @@ bool read_MEDIT(std::istream& is,
 /*!
  * \ingroup PkgStreamSupportIoFuncsMEDIT
  *
- * \brief writes the `points` and `finite_cells`.
+ * \brief writes the `points` and `tetrahedra`.
  *
  * See \cgalCite{frey:inria-00069921} for a comprehensive description of the medit (`.mesh`) file format.
  *
  *
- * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type
- * \tparam CellRange a model of the concept `RandomAccessContainer`
+ * \tparam PointRange a model of the concept `ConstRange` whose value type is the point type
+ * \tparam TetrahedronRange a model of the concept `ConstRange`
  *                   whose `value_type` is a model of the concept `RandomAccessContainer`
  *                   whose `value_type` is `std::size_t`.
  *
  * \param os the output stream
  * \param points points of the soup of cells
- * \param finite_cells each element in it describes a cell
+ * \param tetrahedra each element in it describes a cell
  *        using the indices of the points in `points`
- * \param subdomains each element in it describes the subdomain index of the corresponding cell in `finite_cells`
+ * \param subdomains each element in it describes the subdomain index of the corresponding tetrahedron
  *
  * \returns `true` if the writing was successful, `false` otherwise.
  *
  *  \see \ref IOStreamMedit
  */
 
-template<class PointRange, class CellRange>
+template<class PointRange, class TetrahedronRange>
 bool write_MEDIT(std::ostream& os,
                  const PointRange& points,
-                 const CellRange& finite_cells,
+                 const TetrahedronRange& tetrahedra,
                  const std::vector<int>& subdomains)
 
 {
@@ -322,12 +322,12 @@ bool write_MEDIT(std::ostream& os,
   for (const Point_3& p : points)
     os << p << " 0\n";
   os << "Triangles\n0\nTetrahedra\n";
-  os << finite_cells.size() << "\n";
-  for (std::size_t k=0; k<finite_cells.size(); ++k)
-    os << finite_cells[k][0]+1 << " "
-       << finite_cells[k][1]+1 << " "
-       << finite_cells[k][2]+1 << " "
-       << finite_cells[k][3]+1 << " " << subdomains[k] << "\n";
+  os << tetrahedra.size() << "\n";
+  for (std::size_t k=0; k<tetrahedra.size(); ++k)
+    os << tetrahedra[k][0]+1 << " "
+       << tetrahedra[k][1]+1 << " "
+       << tetrahedra[k][2]+1 << " "
+       << tetrahedra[k][3]+1 << " " << subdomains[k] << "\n";
   os <<"End\n";
   return true;
 }
