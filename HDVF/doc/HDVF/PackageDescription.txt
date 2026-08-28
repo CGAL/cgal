@@ -1,0 +1,79 @@
+// PRETTY HDVF should equal the project title in Doxyfile.in
+
+/// \defgroup PkgHDVFRef Homological Discrete Vector Fields Reference
+/// \defgroup PkgHDVFConcepts Concepts
+/// \ingroup PkgHDVFRef
+
+/// \defgroup PkgHDVFAlgorithmClasses Sparse Matrices and Vectors
+/// \ingroup PkgHDVFRef
+
+/// \defgroup PkgHDVFTraitsClasses Traits Classes
+/// \ingroup PkgHDVFRef
+
+/// \defgroup PkgHDVFIOClasses IO Classes
+/// \ingroup PkgHDVFRef
+
+
+/*!
+\addtogroup PkgHDVFRef
+\cgalPkgDescriptionBegin{Homological Discrete Vector Fields, PkgHDVF}
+\cgalPkgPicture{HDVF-small.png}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Alexandra Bac}
+\cgalPkgDesc{
+The package provides an implementation of Homological Discrete %Vector Fields, a framework computing homology and cohomology information (Betti numbers, generators, annotation functions...) for discrete objects (including persistent homology, Alexander duality isomorphism and reduced homology).}
+\cgalPkgManuals{Chapter_HDVF,PkgHDVFRef}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{6.2}
+\cgalPkgBib{cgal:b-hdvf}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+
+\cgalPkgShortInfoEnd
+
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Concepts}
+- `AbstractChainComplex`
+- `GeometricChainComplex`
+- `SparseChain`
+- `SparseMatrix`
+- `HDVF`
+- `HDVFTraits`
+- `Filtration`
+
+\cgalCRPSection{Classes}
+- `CGAL::Homological_discrete_vector_field::Abstract_simplicial_chain_complex`
+- `CGAL::Homological_discrete_vector_field::Simplicial_chain_complex`
+- `CGAL::Homological_discrete_vector_field::Simplex`
+- `CGAL::Homological_discrete_vector_field::Cubical_chain_complex`
+- `CGAL::Homological_discrete_vector_field::Hdvf_core`
+- `CGAL::Homological_discrete_vector_field::Hdvf`
+- `CGAL::Homological_discrete_vector_field::Hdvf_persistence`
+- `CGAL::Homological_discrete_vector_field::Hdvf_duality`
+- `CGAL::Homological_discrete_vector_field::Hdvf_traits_2`
+- `CGAL::Homological_discrete_vector_field::Hdvf_traits_3`
+- `CGAL::Homological_discrete_vector_field::Hdvf_traits_d`
+- `CGAL::Homological_discrete_vector_field::Filtration_core`
+- `CGAL::Homological_discrete_vector_field::Filtration_lower_star`
+- `CGAL::Homological_discrete_vector_field::Hdvf_tools`
+- `CGAL::Homological_discrete_vector_field::Geometric_chain_complex_tools`
+- `CGAL::Homological_discrete_vector_field::Mesh_object_io`
+- `CGAL::Homological_discrete_vector_field::Icosphere_object_io`
+- `CGAL::Homological_discrete_vector_field::Surface_mesh_io`
+- `CGAL::Homological_discrete_vector_field::Tet_object_io`
+- `CGAL::Homological_discrete_vector_field::Triangulation_3_io`
+- `CGAL::Homological_discrete_vector_field::Mesh_object_io`
+- `CGAL::Homological_discrete_vector_field::Sub_chain_complex_mask`
+- `CGAL::Homological_discrete_vector_field::Sub_sparse_matrix`
+- `CGAL::OSM::OSM`
+- `CGAL::OSM::Sparse_matrix`
+- `CGAL::OSM::Sparse_chain`
+- `CGAL::OSM::Bitboard`
+- `CGAL::OSM::Full_lu`
+
+*/
