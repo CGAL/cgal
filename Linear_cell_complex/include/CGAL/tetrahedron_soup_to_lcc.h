@@ -14,6 +14,7 @@
 #ifndef CGAL_TETRAHEDRON_SOUP_TO_LCC_H
 #define CGAL_TETRAHEDRON_SOUP_TO_LCC_H
 
+#include <boost/container_hash/hash.hpp>
 #include <vector>
 #include <array>
 #include <unordered_map>
@@ -99,7 +100,7 @@ namespace CGAL
           default: curr = res; break;
         }
 
-        std::array<std::size_t, 3> f = CGAL::make_array<std::size_t>(t[(i+1)%4],t[(i+2)%4],t[(i+3)%4]);
+        std::array<std::size_t, 3> f{t[(i+1)%4],t[(i+2)%4],t[(i+3)%4]};
         std::sort(f.begin(), f.end());
         auto insert_res = face_map.emplace(f, curr);
         if (!insert_res.second)
