@@ -542,7 +542,7 @@ namespace lbfgs
         Eigen::VectorXd g(n);
         Eigen::VectorXd gp(n);
         Eigen::VectorXd d(n);
-        Eigen::VectorXd pf(std::max(1, param.past));
+        Eigen::VectorXd pf(((std::max))(1, param.past));
 
         /* Initialize the limited memory. */
         Eigen::VectorXd lm_alpha = Eigen::VectorXd::Zero(m);
@@ -581,7 +581,7 @@ namespace lbfgs
         gnorm_inf = g.cwiseAbs().maxCoeff();
         xnorm_inf = x.cwiseAbs().maxCoeff();
 
-        if (gnorm_inf / std::max(1.0, xnorm_inf) <= param.g_epsilon)
+        if (gnorm_inf / ((std::max))(1.0, xnorm_inf) <= param.g_epsilon)
         {
             /* The initial guess is already a stationary point. */
             ret = LBFGS_CONVERGENCE;
@@ -642,7 +642,7 @@ namespace lbfgs
                 */
                 gnorm_inf = g.cwiseAbs().maxCoeff();
                 xnorm_inf = x.cwiseAbs().maxCoeff();
-                if (gnorm_inf / std::max(1.0, xnorm_inf) < param.g_epsilon)
+                if (gnorm_inf / (std::max)(1.0, xnorm_inf) < param.g_epsilon)
                 {
                     /* Convergence. */
                     ret = LBFGS_CONVERGENCE;
@@ -660,7 +660,7 @@ namespace lbfgs
                     if (param.past <= k)
                     {
                         /* The stopping criterion. */
-                        rate = std::fabs(pf(k % param.past) - fx) / std::max(1.0, std::fabs(fx));
+                        rate = std::fabs(pf(k % param.past) - fx) / (std::max)(1.0, std::fabs(fx));
 
                         if (rate < param.delta)
                         {
