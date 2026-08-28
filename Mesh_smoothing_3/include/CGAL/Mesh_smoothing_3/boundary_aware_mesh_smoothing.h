@@ -105,7 +105,8 @@ namespace CGAL {
 */
 template<typename C3t3,
          typename CTS,
-         typename NamedParameters = parameters::Default_named_parameters>
+         typename NamedParameters = parameters::Default_named_parameters,
+         typename ConcurrencyTag = Mesh_smoothing_3::Parallel_if_available_tag>
 Mesh_smoothing_3::Smoothing_status boundary_aware_mesh_smoothing  (
     C3t3& c3t3,
     CTS const & cts,
@@ -149,7 +150,7 @@ Mesh_smoothing_3::Smoothing_status boundary_aware_mesh_smoothing  (
     double time_limit = choose_parameter(get_parameter(np, internal_np::maximum_running_time), 0.);
 
     // C3t3_smoother will automatically mark facets and features
-    CGAL::Mesh_smoothing_3::C3t3_smoother smoother(c3t3);
+    CGAL::Mesh_smoothing_3::C3t3_smoother<C3t3, ConcurrencyTag> smoother(c3t3);
 
     // locks through property maps
     for (auto v : c3t3.triangulation().finite_vertex_handles()) {

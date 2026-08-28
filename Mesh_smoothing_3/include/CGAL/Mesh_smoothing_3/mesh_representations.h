@@ -317,7 +317,7 @@ public:
     }
 
     auto face_range() const { return c3t3.facets_in_complex(); }
-    std::size_t nb_face_vertices(Face_descriptor face) const { return 3; }
+    std::size_t nb_face_vertices(Face_descriptor) const { return 3; }
     Surface_patch_index patch_id(Face_descriptor face) const { return {c3t3.surface_patch_index(face), face}; }
     std::vector<Vertex_descriptor> face_vertices(Face_descriptor face) const {
         std::vector<Vertex_descriptor> vertices(3);

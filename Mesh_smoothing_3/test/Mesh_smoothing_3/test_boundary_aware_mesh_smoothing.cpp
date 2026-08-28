@@ -147,10 +147,10 @@ void test_classification_and_structure()
     assert(before_patches[f] == fixture.c3t3.surface_patch_index(f));
   }
   for (auto const& e : before_edges) {
-    assert(before_curves[e] == fixture.c3t3.curve_index(e));
+    assert(before_curves[e] == static_cast<Curve_index>(fixture.c3t3.curve_index(e)));
   }
   for (auto v : before_vertices) {
-    assert(before_corners[v] == fixture.c3t3.corner_index(v));
+    assert(before_corners[v] == static_cast<Corner_index>(fixture.c3t3.corner_index(v)));
   }
 
   expect_only_expected_queries(

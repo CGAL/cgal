@@ -21,6 +21,14 @@ namespace CGAL {
 
 namespace Mesh_smoothing_3 {
 
+// Re-defining the Parallel_if_available_tag specifically for Mesh_smoothing_3 
+// as it can automatically link with OpenMP if available, which is not the case for the rest of CGAL.
+#if defined(CGAL_LINKED_WITH_TBB) || (defined(_OPENMP) && _OPENMP >= 201307)
+using Parallel_if_available_tag = CGAL::Parallel_tag;
+#else
+using Parallel_if_available_tag = CGAL::Sequential_tag;
+#endif
+
 /*!
  * \ingroup pkgMeshSmoothing3Functions
  *
