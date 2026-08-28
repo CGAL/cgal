@@ -33,28 +33,28 @@ namespace CGAL
  *
  * @tparam LCC a model of the `LinearCellComplex` concept.
  * @tparam PointRange a model of `RandomAccessContainer` with `Point_3` as value type, being compatible with the point type of LCC.
- * @tparam TetraRange a model of `ConstRange` where each element is a container of 4 point indices, accessible using `operator[](int)`.
+ * @tparam TetrahedronRange a model of `ConstRange` where each element is a container of 4 point indices, accessible using `operator[](int)`.
  *
  * @param points range of 3D points.
- * @param tetras range of tetrahedra, where each tetrahedron is represented by 4 indices corresponding to entries in `points`.
+ * @param tetrahedra range of tetrahedra, where each tetrahedron is represented by 4 indices corresponding to entries in `points`.
  * @param lcc the target linear cell complex.
  *
  * @return a descriptor to a dart of the created complex, or `LCC::null_descriptor` if the input is empty.
  *
  * @pre `LCC::dimension >= 3` and `LCC::ambient_dimension == 3`.
- * @pre Indices in `tetras` must be valid 0-based indices into `points`.
+ * @pre Indices in `tetrahedra` must be valid 0-based indices into `points`.
  *
  * @sa `CGAL::triangulation_3_to_lcc()`
  */
-  template <class LCC, class PointRange, class TetraRange>
+  template <class LCC, class PointRange, class TetrahedronRange>
   typename LCC::Dart_descriptor
   tetrahedron_soup_to_lcc(const PointRange& points,
-                          const TetraRange& tetras,
+                          const TetrahedronRange& tetrahedra,
                           LCC& lcc)
   {
     static_assert( LCC::dimension>=3 && LCC::ambient_dimension==3 );
 
-    if (points.empty() || tetras.empty())
+    if (points.empty() || tetrahedra.empty())
       return LCC::null_descriptor;
 
     using Dart_descriptor = typename LCC::Dart_descriptor;
@@ -80,7 +80,7 @@ namespace CGAL
     std::unordered_map< std::array<std::size_t, 3>, Dart_descriptor, Array_hasher> face_map;
 
     Dart_descriptor dart = LCC::null_descriptor;
-    for (const auto& t : tetras)
+    for (const auto& t : tetrahedra)
     {
       Dart_descriptor res = lcc.make_tetrahedron(vertices[t[0]],
                                                  vertices[t[1]],
