@@ -50,17 +50,6 @@ namespace Homological_discrete_vector_field {
  Then, `compute_alexander_pairing()` computes Alexander isomorphism (and provides a pairing between homology/cohomology generators in \f$K\f$ and \f$L-K\f$).
 
 
- <img src="HDVF_twirl_view1.png" align="center" width=35%/>
- <img src="HDVF_twirl_view2.png" align="center" width=30%/>
-
- Example of Alexander duality isomorphism. The twirl mesh is a subcomplex `K` of a larger complex `L` depicted in yellow, homeomorphic to the ball of dimension 3 (right - sectional view).
-
- \cgalFigureBegin{Duality_quartet,HDVF_twirl_quartet.png}
- Example of "homological quartet for the twirl model". <B>1:</B> Homology generators of the twirl \f$H_1(K)\f$, <B>2:</B> Cohomology generators of the twirl \f$H^1(K)\f$, <B>3:</B> Homology generators of the complementary of the twirl \f$H_1(L-K)\f$, <B>4:</B> Cohomology generators of the complementary of the twirl \f$H^1(L-K)\f$. Alexander isomorphism is represented through colours (paired generators have similar colours).
- \cgalFigureEnd
-
- Hence, each hole in \f$K\f$ gives rise to four generators (called its "homological quarted": its homology and cohomology generators in \f$K_q\f$ and the homology and cohomology generators paired with them in \f$(L-K)_{q+1}\f$).
-
  In order to compute relative homology, a sub chain complex mask is used to partially screen the complex `L` and thus restrict HDVF computation. This mask is called "current mask" (and can be set over `K` or `L-K`).
 
  \cgalModels{HDVF}
@@ -69,6 +58,17 @@ namespace Homological_discrete_vector_field {
 
  [Gonzalez and al. 2025] Gonzalez-Lorenzo, A., Bac, A. & Gazull, YS. A constructive approach of Alexander duality. J Appl. and Comput. Topology 9, 2 (2025).
  */
+//
+//<img src="HDVF_twirl_view1.png" align="center" width=35%/>
+//<img src="HDVF_twirl_view2.png" align="center" width=30%/>
+//
+//Example of Alexander duality isomorphism. The twirl mesh is a subcomplex `K` of a larger complex `L` depicted in yellow, homeomorphic to the ball of dimension 3 (right - sectional view).
+//
+//\cgalFigureBegin{Duality_quartet,HDVF_twirl_quartet.png}
+//Example of "homological quartet for the twirl model". <B>1:</B> Homology generators of the twirl \f$H_1(K)\f$, <B>2:</B> Cohomology generators of the twirl \f$H^1(K)\f$, <B>3:</B> Homology generators of the complementary of the twirl \f$H_1(L-K)\f$, <B>4:</B> Cohomology generators of the complementary of the twirl \f$H^1(L-K)\f$. Alexander isomorphism is represented through colours (paired generators have similar colours).
+//\cgalFigureEnd
+//
+//Hence, each hole in \f$K\f$ gives rise to four generators (called its "homological quarted": its homology and cohomology generators in \f$K_q\f$ and the homology and cohomology generators paired with them in \f$(L-K)_{q+1}\f$).
 
 template<typename ChainComplex>
 class Hdvf_duality : public Hdvf_core<ChainComplex> {
@@ -142,10 +142,10 @@ public:
      * - \f$\gamma'\f$ has dimension q-1 and \f$(\gamma', \gamma)\f$ is valid for A (ie.\ such that \f$\langle \partial_{q}(\gamma), \gamma' \rangle\f$ invertible).
      *
      * \param q Dimension of the cell `gamma`.
-     * \param found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      * \param gamma Index of a cell to pair.
+     * \param found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      */
-    Cell_pair find_pair_A(int q, bool &found, size_t gamma) const;
+    Cell_pair find_pair_A(int q, size_t gamma, bool &found) const;
 
     /**
      * \brief Finds *all* valid cell pairs of dimension q / q+1 *in the current sub chain complex* for A.
@@ -167,10 +167,10 @@ public:
      * It returns a vector of such pairs.
      *
      * \param q Dimension of the cell `gamma`.
-     * \param found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      * \param gamma Index of a cell to pair.
+     * \param found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      */
-    std::vector<Cell_pair> find_pairs_A(int q, bool &found, size_t gamma) const;
+    std::vector<Cell_pair> find_pairs_A(int q, size_t gamma, bool &found) const;
 
     /** \brief Sets the current sub chain complex masks over `K`.
      *
@@ -662,7 +662,7 @@ Cell_pair Hdvf_duality<ChainComplex>::find_pair_A(int q, bool &found) const
 
 // find a valid Cell_pair containing tau for A in dimension q
 template<typename ChainComplex>
-Cell_pair Hdvf_duality<ChainComplex>::find_pair_A(int q, bool &found, size_t tau) const
+Cell_pair Hdvf_duality<ChainComplex>::find_pair_A(int q, size_t tau, bool &found) const
 {
     found = false;
     Cell_pair p ;
@@ -731,7 +731,7 @@ std::vector<Cell_pair> Hdvf_duality<ChainComplex>::find_pairs_A(int q, bool &fou
 
 // find all the valid Cell_pair containing tau for A in dimension q
 template<typename ChainComplex>
-std::vector<Cell_pair> Hdvf_duality<ChainComplex>::find_pairs_A(int q, bool &found, size_t tau) const
+std::vector<Cell_pair> Hdvf_duality<ChainComplex>::find_pairs_A(int q, size_t tau, bool &found) const
 {
     found = false;
     std::vector<Cell_pair> pairs;

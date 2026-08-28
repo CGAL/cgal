@@ -60,22 +60,11 @@ typedef Sparse_matrix_struct:: template Sparse_matrix_type<Coefficient_ring, CGA
 
     /** \brief Checks if `q` belongs to the range of dimensions of cells in the complex. */
     bool is_valid_cell_dimension(int q);
-    /** \brief Checks if a cell of index `i` and dimension `q` belongs to the range of dimensions of cells in the complex. */
-    bool is_valid_cell(size_t id, int q);
+    /** \brief Checks if the cell of index `i` and dimension `q` belongs to the range of dimensions of cells in the complex. */
+    bool is_valid_cell(size_t i, int q);
 
 /// @}
 
-/// \name Operators
-/// @{
-
-/*!
-Assignment operator.
-
-The operator creates a copy of `complex`.
- */
-    AbstractChainComplex& operator= (const AbstractChainComplex& complex);
-
-    @}
 
 /// \name Access functions
 /// @{

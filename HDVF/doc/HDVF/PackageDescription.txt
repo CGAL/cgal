@@ -39,9 +39,41 @@ The package provides an implementation of Homological Discrete %Vector Fields, a
 
 \cgalCRPSection{Concepts}
 - `AbstractChainComplex`
+- `GeometricChainComplex`
+- `SparseChain`
+- `SparseMatrix`
+- `HDVF`
+- `HDVFTraits`
+- `Filtration`
 
 \cgalCRPSection{Classes}
 - `CGAL::Homological_discrete_vector_field::Abstract_simplicial_chain_complex`
-
+- `CGAL::Homological_discrete_vector_field::Simplicial_chain_complex`
+- `CGAL::Homological_discrete_vector_field::Simplex`
+- `CGAL::Homological_discrete_vector_field::Cubical_chain_complex`
+- `CGAL::Homological_discrete_vector_field::Hdvf_core`
+- `CGAL::Homological_discrete_vector_field::Hdvf`
+- `CGAL::Homological_discrete_vector_field::Hdvf_persistence`
+- `CGAL::Homological_discrete_vector_field::Hdvf_duality`
+- `CGAL::Homological_discrete_vector_field::Hdvf_traits_2`
+- `CGAL::Homological_discrete_vector_field::Hdvf_traits_3`
+- `CGAL::Homological_discrete_vector_field::Hdvf_traits_d`
+- `CGAL::Homological_discrete_vector_field::Filtration_core`
+- `CGAL::Homological_discrete_vector_field::Filtration_lower_star`
+- `CGAL::Homological_discrete_vector_field::Hdvf_tools`
+- `CGAL::Homological_discrete_vector_field::Geometric_chain_complex_tools`
+- `CGAL::Homological_discrete_vector_field::Mesh_object_io`
+- `CGAL::Homological_discrete_vector_field::Icosphere_object_io`
+- `CGAL::Homological_discrete_vector_field::Surface_mesh_io`
+- `CGAL::Homological_discrete_vector_field::Tet_object_io`
+- `CGAL::Homological_discrete_vector_field::Triangulation_3_io`
+- `CGAL::Homological_discrete_vector_field::Mesh_object_io`
+- `CGAL::Homological_discrete_vector_field::Sub_chain_complex_mask`
+- `CGAL::Homological_discrete_vector_field::Sub_sparse_matrix`
+- `CGAL::OSM::OSM`
+- `CGAL::OSM::Sparse_matrix`
+- `CGAL::OSM::Sparse_chain`
+- `CGAL::OSM::Bitboard`
+- `CGAL::OSM::Full_lu`
 
 */

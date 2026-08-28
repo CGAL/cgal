@@ -543,10 +543,10 @@ public:
      * If the dimension is incorrect (negative or larger than the dimension of the underlying complex), `found` is set to `false`. If the cell index is incorrect (larger than the number of cells in the dimension), `found` is set to `false`.
      *
      * \param q Dimension of the cell `gamma`.
-     * \param found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      * \param gamma Index of a cell to pair.
+     * \param found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      */
-    virtual Cell_pair find_pair_A(int q, bool &found, size_t gamma) const;
+    virtual Cell_pair find_pair_A(int q, size_t gamma, bool &found) const;
 
     /**
      * \brief Finds *all* valid Cell_pair of dimension q / q+1 for A.
@@ -572,10 +572,10 @@ public:
      * If the dimension is incorrect (negative or larger than the dimension of the underlying complex), `found` is set to `false`. If the cell index is incorrect (larger than the number of cells in the dimension), `found` is set to `false`. In both cases, the function returns an empty vector.
      *
      * \param q Dimension of the cell `gamma`.
-     * \param found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      * \param gamma Index of a cell to pair.
+     * \param found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      */
-    virtual std::vector<Cell_pair> find_pairs_A(int q, bool &found, size_t gamma) const;
+    virtual std::vector<Cell_pair> find_pairs_A(int q, size_t gamma, bool &found) const;
 
     /**
      * \brief A operation: pairs critical cells.
@@ -589,7 +589,7 @@ public:
     void A(size_t gamma1, size_t gamma2, int q);
 
     /**
-     * \brief A operation: pairs critical cells.
+     * \brief A operation (pairs critical cells).
      *
      * A pair of critical cells \f$(\gamma_1, \gamma_2)\f$ of respective dimension q and q+1 is valid for A if \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ is invertible. After the `A()` operation, \f$\gamma_1\f$ becomes `PRIMARY`, \f$\gamma_2\f$ becomes `SECONDARY`. The A method updates the reduction accordingly (in time \f$\mathcal O(n^2)\f$).
      *
@@ -1255,7 +1255,7 @@ Cell_pair Hdvf_core<ChainComplex>::find_pair_A(int q, bool &found) const {
 
 // find a valid Cell_pair containing tau for A in dimension q
 template<typename ChainComplex>
-Cell_pair Hdvf_core<ChainComplex>::find_pair_A(int q, bool &found, size_t gamma) const {
+Cell_pair Hdvf_core<ChainComplex>::find_pair_A(int q, size_t gamma, bool &found) const {
     found = false;
     Cell_pair p ;
 
@@ -1326,7 +1326,7 @@ std::vector<Cell_pair> Hdvf_core<ChainComplex>::find_pairs_A(int q, bool &found)
 
 // find all the valid Cell_pair containing gamma for A in dimension q
 template<typename ChainComplex>
-std::vector<Cell_pair> Hdvf_core<ChainComplex>::find_pairs_A(int q, bool &found, size_t gamma) const {
+std::vector<Cell_pair> Hdvf_core<ChainComplex>::find_pairs_A(int q, size_t gamma, bool &found) const {
     found = false;
     std::vector<Cell_pair> pairs;
 

@@ -24,15 +24,16 @@ Cells are indexed along each dimension and thus identified by their index togeth
 class Filtration
 {
 public:
-    /*! \brief Type of the underlying complex. */
-    typedef unspecified_type Complex;
+//    /*! \brief Type of the underlying complex. */
+//    typedef unspecified_type Complex;
 
     /*! \brief (Scalar) type of degrees (model of `RealEmbeddable`).
      */
     typedef unspecified_type Degree ;
 
-    /*! \brief Type of coefficients used to compute homology. */
-    typedef Complex::Coefficient_ring Coefficient_ring;
+//    /*! \brief Type of coefficients used to compute homology. */
+//    typedef Complex::Coefficient_ring Coefficient_ring;
+//
 
     /*! \brief Type for indexing uniquely a cell.
      *
@@ -50,27 +51,6 @@ public:
         Cell cell_dim ;
         Degree degree ;
     } Filtration_iter_value ;
-
-protected:
-    /*!
-     Type of column-major sparse matrices.
-     */
-    typedef SparseMatrix<Coefficient_ring,CGAL::OSM::COLUMN> Column_matrix ;
-
-    /*!
-     Type of row-major sparse matrices.
-     */
-    typedef SparseMatrix<Coefficient_ring,CGAL::OSM::ROW> Row_matrix ;
-
-    /*!
-     Type of column-major chains.
-     */
-    typedef SparseChain<Coefficient_ring,CGAL::OSM::COLUMN> Column_chain ;
-
-    /*!
-     Type of row-major chains.
-     */
-    typedef SparseChain<Coefficient_ring,CGAL::OSM::ROW> Row_chain ;
 
 public:
     /**
@@ -145,7 +125,7 @@ public:
 
     /*! \brief Gets the cell (that is cell index and dimension) at the index `i` of the filtration.
      */
-    Cell cell_index_dimension (size_t i) const;
+    Cell cell (size_t i) const;
 
     /*! \brief Gets the degree of the `i`th element of the filtration.
      */

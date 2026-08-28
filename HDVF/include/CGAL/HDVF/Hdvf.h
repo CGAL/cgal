@@ -30,38 +30,6 @@ namespace Homological_discrete_vector_field {
 
  The class `Hdvf` implements homology and cohomology computation via homological discrete vector fields (%HDVF for short). It derives from `Hdvf_core` and shares all its data and methods.
 
- But besides construction operations and methods (using the `A()` operation), the `Hdvf` class implements four other HDVF operations: R, M, W and MW together with appropriate "find_pair()" functions. These operations change the %HDVF (that is change homology / cohomology generators) and thus provide a convenient tool to move inside the "space of homology/cohomology computations".
-
- - `R()` operation is the "dual" of the A pairing operation (it cancels the pairing and turns back a `PRIMARY`/`SECONDARY` pair into a pair of `CRITICAL` cells)
- - `M()` operation exchanges a `PRIMARY` \f$\pi\f$ and a `CRITICAL` cell \f$\gamma\f$ (under conditions) and modifies the homology generator associated to \f$\gamma\f$ (while preserving is associated cohomology generator)
- - `W()` operation exchanges a `SECONDARY` \f$\sigma\f$ and a `CRITICAL` cell \f$\gamma\f$ (under conditions) and modifies the cohomology generator associated to \f$\gamma\f$ (while preserving is associated homology generator)
- - `MW()` operation exchanges a `PRIMARY` \f$\pi\f$ and a `SECONDARY` cell \f$\sigma\f$ (under conditions). See the introduction to HDVF for more details on this operation.
-
- Using appropriate combinations of such operations, one can change a HDVF until corresponding homology or cohomology generators meet a given basis or delineate a hole.
-
- Let us consider the following simple cubical complex and a perfect HDVF (top) together with the three corresponding homology generators (bottom, highlighted in pink):
-
- <img src="HDVF_op1.png" align="center" width=50%/><br>
- <img src="HDVF_op1_g1.png" align="center" width=30%/>
- <img src="HDVF_op1_g2.png" align="center" width=30%/>
- <img src="HDVF_op1_g3.png" align="center" width=30%/>
-
- A W operation between cells of Khalimsky coordinates \f$\sigma = (3,2)\f$ (`CRITICAL`) and \f$\tau=(5,2)\f$ (`SECONDARY`) produces the following HDVF (homology generators did not change; note that cohomology generators are modified):
-
- <img src="HDVF_op2_W7_11.png" align="center" width=50%/>
-
- <img src="HDVF_op2_g1.png" align="center" width=30%/>
- <img src="HDVF_op2_g2.png" align="center" width=30%/>
- <img src="HDVF_op2_g3.png" align="center" width=30%/>
-
- Then, a MW operation between cells of Khalimsky coordinates \f$\sigma' = (4,1)\f$ (`PRIMARY`) and \f$\tau=(3,2)\f$ (`SECONDARY`) produces the following HDVF where homology generators become "minimal":
-
- <img src="HDVF_op3_MW5_7.png" align="center" width=50%/>
-
- <img src="HDVF_op3_g1.png" align="center" width=30%/>
- <img src="HDVF_op3_g2.png" align="center" width=30%/>
- <img src="HDVF_op3_g3.png" align="center" width=30%/>
-
  Perfect HDVFs provide various topological results:
  - Betti numbers: are well known topological descriptors (providing the number of holes in each dimension). For a perfect HDVF, Betti numbers equal the number of critical cells (that can be obtained through `psc_flags()` with the `CRITICAL``PSC_flag` as argument).
  - Homology/cohomology generators are actually algebraic objects, namely chains. Methods `homology_chain()` and `cohomology_chain()` return the homology and cohomology generator chain associated to a given critical cell. VTK export functions output all the cells of such chains with non zero coefficients. Figures here above illustrate such homology and co-homology generators.
@@ -76,10 +44,19 @@ namespace Homological_discrete_vector_field {
  Therefore, `are_same_cycles` will return `true` for \f$\alpha\f$  and \f$g(\sigma)\f$,  but `false` for \f$\beta\f$  and \f$g(\sigma)\f$.
  \cgalFigureEnd
 
+ Besides construction operations and methods (using the `A()` operation), the `Hdvf` class implements four other HDVF operations: R, M, W and MW together with appropriate `find_pair_xxx()` functions (see user documentation for more details).
+
  \cgalModels{HDVF}
 
  \tparam ChainComplex a model of the `AbstractChainComplex` concept, providing the type of abstract chain complex used.
  */
+
+//These operations change the %HDVF (that is change homology / cohomology generators) and thus provide a convenient tool to move inside the "space of homology/cohomology computations".
+//
+//- `R()` operation is the "dual" of the A pairing operation (it cancels the pairing and turns back a `PRIMARY`/`SECONDARY` pair into a pair of `CRITICAL` cells)
+//- `M()` operation exchanges a `PRIMARY` \f$\pi\f$ and a `CRITICAL` cell \f$\gamma\f$ (under conditions) and modifies the homology generator associated to \f$\gamma\f$ (while preserving is associated cohomology generator)
+//- `W()` operation exchanges a `SECONDARY` \f$\sigma\f$ and a `CRITICAL` cell \f$\gamma\f$ (under conditions) and modifies the cohomology generator associated to \f$\gamma\f$ (while preserving is associated homology generator)
+//- `MW()` operation exchanges a `PRIMARY` \f$\pi\f$ and a `SECONDARY` cell \f$\sigma\f$ (under conditions). See the introduction to HDVF for more details on this operation.
 
 template<typename ChainComplex>
 class Hdvf : public Hdvf_core<ChainComplex> {

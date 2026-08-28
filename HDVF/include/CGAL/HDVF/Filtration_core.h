@@ -228,11 +228,11 @@ public:
     // getters
     /*! \brief Gets the filtration size.
      */
-    std::size_t size () const { return _filtration.size();}
+    std::size_t size () const { return _filtration.size(); }
 
     /*! \brief Gets the cell (that is cell index and dimension) at the index `i` of the filtration.
      */
-    Cell cell_index_dimension (std::size_t i) const { return _filtration.at(i); }
+    Cell cell (std::size_t i) const { return _filtration.at(i); }
 
     /*! \brief Gets the degree of the `i`th element of the filtration.
      */

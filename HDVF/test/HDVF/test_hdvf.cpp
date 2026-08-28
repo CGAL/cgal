@@ -144,9 +144,9 @@ int main(int argc, char **argv) {
         std::cerr << "-- Test find_pairs_A(1,foundA): " << test_find_pairs_A << std::endl;
         assert(test_find_pairs_A);
 
-        std::vector<HDVF::Cell_pair> pairsA3(hdvfA.find_pairs_A(2, foundA, 0));
+        std::vector<HDVF::Cell_pair> pairsA3(hdvfA.find_pairs_A(2, 0, foundA));
         bool test_find_pairs_A3(pairsA3 == pairsA2);
-        std::cerr << "-- Test find_pairs_A(2,foundA,0): " << test_find_pairs_A3 << std::endl;
+        std::cerr << "-- Test find_pairs_A(2,0,foundA): " << test_find_pairs_A3 << std::endl;
         assert(test_find_pairs_A3);
 
         HDVF::Cell_pair cell(hdvfA.find_pair_A(1, foundA)), cell2(HDVF::Cell_pair({2,0,1}));
@@ -154,9 +154,9 @@ int main(int argc, char **argv) {
         std::cerr << "-- Test find_pair_A(1,foundA): " << test_find_pairs_A4 << std::endl;
         assert(test_find_pairs_A4);
 
-        HDVF::Cell_pair cell3(hdvfA.find_pair_A(2, foundA,0));
+        HDVF::Cell_pair cell3(hdvfA.find_pair_A(2, 0, foundA));
         bool test_find_pairs_A5(cell3 == cell2);
-        std::cerr << "-- Test find_pair_A(2,foundA,0): " << test_find_pairs_A5 << std::endl;
+        std::cerr << "-- Test find_pair_A(2,0, foundA): " << test_find_pairs_A5 << std::endl;
         assert(test_find_pairs_A5);
 
         HDVF::Cell_pair pairA(pairsA.at(0)); // Pair 2, 0, 1

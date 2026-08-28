@@ -498,7 +498,32 @@ Recent works by Yann-Situ Gazull [YSG1], [YSG2] proved that (when \f$A\f$ is a f
 - homology bases computed by HDVFs and other computational approaches (Smith Normal Form, persistent homology, tripartitions...) can be precisely characterised as **explicit basis** (see [YSG1])
 - any perfect HDVF can be adapted in time \f$\mathscr O(kn^2)\f$ to compute a free set of generators of size \f$k\f$ (e.g. a given basis)
 
-These results will soon be implemented in the HDVF package.
+
+Hence, using appropriate combinations of such operations, one can change a HDVF until corresponding homology or cohomology generators meet a given basis or delineate a hole.
+
+Let us consider the following simple cubical complex and a perfect HDVF (top) together with the three corresponding homology generators (bottom, highlighted in pink):
+
+ <img src="HDVF_op1.png" align="center" width=50%/><br>
+ <img src="HDVF_op1_g1.png" align="center" width=30%/>
+ <img src="HDVF_op1_g2.png" align="center" width=30%/>
+ <img src="HDVF_op1_g3.png" align="center" width=30%/>
+
+A W operation between cells of Khalimsky coordinates \f$\sigma = (3,2)\f$ (`CRITICAL`) and \f$\tau=(5,2)\f$ (`SECONDARY`) produces the following HDVF (homology generators did not change; note that cohomology generators are modified):
+
+ <img src="HDVF_op2_W7_11.png" align="center" width=50%/>
+
+ <img src="HDVF_op2_g1.png" align="center" width=30%/>
+ <img src="HDVF_op2_g2.png" align="center" width=30%/>
+ <img src="HDVF_op2_g3.png" align="center" width=30%/>
+
+Then, a MW operation between cells of Khalimsky coordinates \f$\sigma' = (4,1)\f$ (`PRIMARY`) and \f$\tau=(3,2)\f$ (`SECONDARY`) produces the following HDVF where homology generators become "minimal":
+
+ <img src="HDVF_op3_MW5_7.png" align="center" width=50%/>
+
+ <img src="HDVF_op3_g1.png" align="center" width=30%/>
+ <img src="HDVF_op3_g2.png" align="center" width=30%/>
+ <img src="HDVF_op3_g3.png" align="center" width=30%/>
+
 
 \subsection secHDVFpersistent_homology Persistent homology
 
@@ -661,11 +686,11 @@ bool found;
 // Search for the first valid pair in dimension `q`
 pair = find_pair_A(q, found);
 // Search for the first cell (of dimension `q-1` or `q+1`) forming a valid pair with tau (index `id`, dimension `q`)
-pair = find_pair_A(q, found, id);
+pair = find_pair_A(q, id, found);
 // Search for all valid pairs in dimension `q`
 pairs = find_pairs_A(q, found);
 // Search for all cells (of dimension `q-1` or `q+1`) forming a valid pair with tau (index `id`, dimension `q`)
-pairs = find_pairs_A(q, found, id);
+pairs = find_pairs_A(q, id, found);
 \endcode
 
 \subsection secHDVFoutput Extracting and saving homological/cohomological information
