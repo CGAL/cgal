@@ -34,7 +34,7 @@ using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<Triangulation>;
 int main(int argc, char* argv[])
 {
     std::string filename = (argc > 1) ? std::string(argv[1])
-                                      : "../data/mambo_m3.mesh";
+                                      : "data/mambo_m3.mesh";
 
     C3t3 c3t3;
 

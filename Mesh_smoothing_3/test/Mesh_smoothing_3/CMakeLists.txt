@@ -21,5 +21,12 @@ target_compile_definitions(test_boundary_aware_mesh_smoothing_integration PRIVAT
   MS3_EXAMPLE_MESH_FILE="${CMAKE_CURRENT_SOURCE_DIR}/data/sphere.mesh")
 
 if(OpenMP_CXX_FOUND)
+  if(MSVC)
+      # Override the compile options for the imported OpenMP target
+      set_target_properties(OpenMP::OpenMP_CXX PROPERTIES
+                          INTERFACE_COMPILE_OPTIONS "/openmp:llvm")
+  endif()
   target_link_libraries(test_boundary_aware_mesh_smoothing_integration PRIVATE OpenMP::OpenMP_CXX)
+  target_link_libraries(test_boundary_aware_mesh_smoothing_projectors PRIVATE OpenMP::OpenMP_CXX)
+  target_link_libraries(test_boundary_aware_mesh_smoothing PRIVATE OpenMP::OpenMP_CXX)
 endif()

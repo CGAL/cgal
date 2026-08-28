@@ -18,6 +18,7 @@
 #include <CGAL/Mesh_smoothing_3/internal/utils/math_functions.h>
 #include <CGAL/Mesh_smoothing_3/internal/utils/Function_minimizer.h>
 #include <CGAL/Mesh_smoothing_3/internal/utils/log_time.h>
+#include <CGAL/Mesh_smoothing_3/internal/utils/loops.h>
 
 
 #include <CGAL/IO/Color_ostream.h>
@@ -39,7 +40,7 @@ namespace CGAL {
 
 namespace Mesh_smoothing_3_internal {
 
-template<typename Surface_patch_index, typename Curve_index>
+template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
 class Tetrahedral_mesh_smoother {
 public:
     Tetrahedral_mesh_smoother(
@@ -378,8 +379,8 @@ private:
 //                                           Implementation                                      //
 // ==============================================================================================//
 
-template<typename Surface_patch_index, typename Curve_index>
-inline Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::Tetrahedral_mesh_smoother(
+template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
+inline Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::Tetrahedral_mesh_smoother(
     Eigen::VectorXd &coords,
     std::vector<bool> const &locks,
     std::vector<std::array<unsigned, 4>> const &tetrahedra,
@@ -402,8 +403,8 @@ inline Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::Tetrahedral_
     compute_determinants();
 }
 
-template<typename Surface_patch_index, typename Curve_index>
-inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::set_boundary_without_query(
+template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
+inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::set_boundary_without_query(
     std::vector<std::vector<unsigned>> const &bnd_faces,
     std::vector<std::pair<unsigned, std::vector<std::array<unsigned, 2>>>> const *vert_and_face_corners,
     std::vector<Surface_patch_index> const &ids
@@ -429,8 +430,8 @@ inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::set_bou
 }
 
 
-template<typename Surface_patch_index, typename Curve_index>
-inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::set_boundary_with_singular_query(
+template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
+inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::set_boundary_with_singular_query(
     std::vector<std::vector<unsigned>> const &bnd_faces,
     std::vector<std::pair<unsigned, std::vector<std::array<unsigned, 2>>>> const *vert_and_face_corners,
     Boundary_query boundary_query,
@@ -442,8 +443,8 @@ inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::set_bou
     _boundary_query = boundary_query;
 }
 
-template<typename Surface_patch_index, typename Curve_index>
-inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::set_boundary_with_batch_query(
+template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
+inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::set_boundary_with_batch_query(
     std::vector<std::vector<unsigned>> const &bnd_faces,
     std::vector<std::pair<unsigned, std::vector<std::array<unsigned, 2>>>> const *vert_and_face_corners,
     Boundary_batch_query boundary_query,
@@ -455,8 +456,8 @@ inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::set_bou
     _boundary_batch_query = boundary_query;
 }
 
-template<typename Surface_patch_index, typename Curve_index>
-inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::set_curve_network_with_singular_query(
+template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
+inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::set_curve_network_with_singular_query(
         std::vector<std::array<unsigned, 2>> const &edges,
         std::vector<Curve_index> const &edge_ids,
         Curve_query query
@@ -471,8 +472,8 @@ inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::set_cur
     _curve_query = query;
 }
 
-template<typename Surface_patch_index, typename Curve_index>
-inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::set_curve_network_with_batch_query(
+template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
+inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::set_curve_network_with_batch_query(
         std::vector<std::array<unsigned, 2>> const &edges,
         std::vector<Curve_index> const &edge_ids,
         Curve_batch_query query
@@ -490,8 +491,8 @@ inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::set_cur
     _edge_batch_query_results.resize(edges.size());
 }
 
-template<typename Surface_patch_index, typename Curve_index>
-inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::set_quadratic_target_positions(
+template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
+inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::set_quadratic_target_positions(
         std::vector<std::tuple<unsigned, Eigen::Vector3d, double>> const &targets
 )
 {
@@ -499,13 +500,13 @@ inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::set_qua
     _point_target_position = targets;
 }
 
-template<typename Surface_patch_index, typename Curve_index>
-inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::set_validation_query(Validation_query query) {
+template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
+inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::set_validation_query(Validation_query query) {
     _validation_query = query;
 }
 
-template<typename Surface_patch_index, typename Curve_index>
-inline Eigen::Matrix3d Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::Tet_storage::compute_jacobian(Eigen::VectorXd const &coords) const {
+template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
+inline Eigen::Matrix3d Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::Tet_storage::compute_jacobian(Eigen::VectorXd const &coords) const {
         return    ig[0] * Math_functions::sub_line_vector(coords,verts[0])
                 + ig[1] * Math_functions::sub_line_vector(coords,verts[1])
                 + ig[2] * Math_functions::sub_line_vector(coords,verts[2])
@@ -513,8 +514,8 @@ inline Eigen::Matrix3d Tetrahedral_mesh_smoother<Surface_patch_index, Curve_inde
 }
 
 
-template<typename Surface_patch_index, typename Curve_index>
-inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::compute_determinants()
+template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
+inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::compute_determinants()
 {
     double det_min = (std::numeric_limits<double>::max)();
     unsigned nb_inverted = 0;
@@ -551,8 +552,8 @@ inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::compute
     _collapsed_area_detected = collapsed_area_detected;
 }
 
-template<typename Surface_patch_index, typename Curve_index>
-Eigen::SparseMatrix<double> Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::compute_diffusion_matrix(double w, bool graph) {
+template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
+Eigen::SparseMatrix<double> Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::compute_diffusion_matrix(double w, bool graph) {
     unsigned n = 3 * nb_vertices();
     double l = w / (1+w);
 
@@ -622,11 +623,9 @@ Eigen::SparseMatrix<double> Tetrahedral_mesh_smoother<Surface_patch_index, Curve
 }
 
 
-template<typename Surface_patch_index, typename Curve_index>
-inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::update_local_size() {
-#pragma omp parallel for
-    for (int iter_v = 0; iter_v < static_cast<int>(_vert2tet_corner.size());++iter_v) {
-        unsigned v = static_cast<unsigned>(iter_v);
+template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
+inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::update_local_size() {
+    Mesh_smoothing_3_internal::for_each<ConcurrencyTag>(0, _vert2tet_corner.size(), [&](std::size_t v) {
         // does geometric average on all edge of the vertex
         // pass to log to avoid double overflow with high number of multiplications
         double log_avg = 0.;
@@ -640,11 +639,11 @@ inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::update_
         double nbEdges = static_cast<double>(_vert2tet_corner[v].size()) * 3;
         log_avg /= nbEdges;
         _local_size[v] = std::pow(10., log_avg);
-    }
+    });
+    
     double min_allowed_det = min_valid_edge_size * min_valid_edge_size * min_valid_edge_size;
-#pragma omp parallel for
-    for (int iter_t = 0; iter_t < static_cast<int>(_tet_storage.size()); ++iter_t) {
-        unsigned t = static_cast<unsigned>(iter_t);
+
+    Mesh_smoothing_3_internal::for_each<ConcurrencyTag>(0, _tet_storage.size(), [&](std::size_t t) {
         Tet_storage &tet = _tet_storage[t];
         double avg_edge_size = 1;
         for(unsigned i = 0; i < 4; ++i) {
@@ -653,18 +652,20 @@ inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::update_
         avg_edge_size = std::pow(avg_edge_size, 1./4.);
         tet.local_edge_size = avg_edge_size;
         tet.det_estimation = (std::max)(avg_edge_size * avg_edge_size * avg_edge_size, min_allowed_det);
-    }
+    });
 }
 
-template<typename Surface_patch_index, typename Curve_index>
-unsigned Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::evaluate_exact_predicates(Eigen::VectorXd const *x) {
-    unsigned invalid_tet = 0;
+template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
+unsigned Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::evaluate_exact_predicates(Eigen::VectorXd const *x) {
 
     Eigen::VectorXd const & coords = x == nullptr ? _coords : *x;
+    
+    struct Reduction {
+        unsigned invalid_tet = 0;
+        void join(Reduction const &other) { invalid_tet += other.invalid_tet; }
+    };
 
-    #pragma omp parallel for reduction(+: invalid_tet)
-    for (int iter_t = 0; iter_t < static_cast<int>(_tet_storage.size()); ++iter_t) {
-        unsigned t = static_cast<unsigned>(iter_t);
+    Reduction reduction = Mesh_smoothing_3_internal::reduce<ConcurrencyTag, Reduction>(0, _tet_storage.size(), [&](unsigned t, Reduction &reduction) {
         Tet_storage const &tet = _tet_storage[t];
         bool exact_check = Math_functions::strictly_positive_tetrahedra({
             Math_functions::sub_line_vector(coords,tet.verts[0]),
@@ -672,16 +673,16 @@ unsigned Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::evaluate_e
             Math_functions::sub_line_vector(coords,tet.verts[2]),
             Math_functions::sub_line_vector(coords,tet.verts[3])
         });
-
-        invalid_tet += !exact_check;
         if (x == nullptr) _predicate_is_positive[t] = exact_check;
-    }
-    return invalid_tet;
+        if (!exact_check) ++reduction.invalid_tet;
+    });
+    
+    return reduction.invalid_tet;
 }
 
 
-template<typename Surface_patch_index, typename Curve_index>
-bool Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::run_callback(OPTIMIZATION_TYPE opt_type, unsigned iter, LBFGS_status lbfgs_status, Eigen::VectorXd const *g) {
+template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
+bool Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::run_callback(OPTIMIZATION_TYPE opt_type, unsigned iter, LBFGS_status lbfgs_status, Eigen::VectorXd const *g) {
     if (callback_function == nullptr) return false;
     if (callback_setting == DEBUG_CALLBACK_SETTING::NOTHING) return false;
     if (callback_setting == DEBUG_CALLBACK_SETTING::OUTER_ITER && lbfgs_status.enabled()) return false;
@@ -733,8 +734,8 @@ bool Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::run_callback(O
 }
 
 
-template<typename Surface_patch_index, typename Curve_index>
-void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::gather_energy_gradient(Eigen::VectorXd &g) const {
+template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
+void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::gather_energy_gradient(Eigen::VectorXd &g) const {
 #pragma omp parallel for
     for (int iter_v = 0; iter_v < static_cast<int>(_vert2tet_corner.size());++iter_v) {
         unsigned v = static_cast<unsigned>(iter_v);
@@ -748,8 +749,8 @@ void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::gather_energy_
 }
 
 
-template<typename Surface_patch_index, typename Curve_index>
-inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::update_untangling_eps(double decrease_rate) {
+template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
+inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::update_untangling_eps(double decrease_rate) {
     // mix of foldover and 1999 epsilons.
     if (_det_min > 0) {
         _untangling_eps = _NO_UNTANGLING_EPS;
@@ -781,8 +782,8 @@ inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::update_
 
 }
 
-template<typename Surface_patch_index, typename Curve_index>
-inline double Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::mips_untangling_energy(Eigen::VectorXd const &x, Eigen::VectorXd *grad) {
+template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
+inline double Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::mips_untangling_energy(Eigen::VectorXd const &x, Eigen::VectorXd *grad) {
     double untangling_max_energy = 1.;
     double F = 0;
 
@@ -833,8 +834,8 @@ inline double Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::mips_
 
 
 
-template<typename Surface_patch_index, typename Curve_index>
-inline double Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::power_mips_untangling_energy(Eigen::VectorXd const &x, Eigen::VectorXd *grad) {
+template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
+inline double Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::power_mips_untangling_energy(Eigen::VectorXd const &x, Eigen::VectorXd *grad) {
     double untangling_max_energy = 1.;
     double F = 0;
 
@@ -883,8 +884,8 @@ inline double Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::power
     return F;
 }
 
-template<typename Surface_patch_index, typename Curve_index>
-inline double Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::regularized_untangling_energy(Eigen::VectorXd const &x, Eigen::VectorXd *grad) {
+template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
+inline double Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::regularized_untangling_energy(Eigen::VectorXd const &x, Eigen::VectorXd *grad) {
     double untangling_max_energy = 1.;
     double F = 0;
 
@@ -944,8 +945,8 @@ inline double Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::regul
     return F;
 }
 
-template<typename Surface_patch_index, typename Curve_index>
-inline double Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::sym_dirichlet_untangling_energy(Eigen::VectorXd const &x, Eigen::VectorXd *grad) {
+template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
+inline double Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::sym_dirichlet_untangling_energy(Eigen::VectorXd const &x, Eigen::VectorXd *grad) {
     double untangling_max_energy = 1.;
     double F = 0;
 
@@ -994,8 +995,8 @@ inline double Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::sym_d
     return F;
 }
 
-template<typename Surface_patch_index, typename Curve_index>
-inline double Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::laplacian_energy(Eigen::VectorXd const &x, Eigen::VectorXd *g) {
+template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
+inline double Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::laplacian_energy(Eigen::VectorXd const &x, Eigen::VectorXd *g) {
     double F = 0;
 #pragma omp parallel for reduction(+:F)
     for (int iter_t = 0; iter_t < static_cast<int>(_tet_storage.size()); ++iter_t) {
@@ -1019,15 +1020,15 @@ inline double Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::lapla
     return F;
 }
 
-template<typename Surface_patch_index, typename Curve_index>
-inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::update_qis_tau(double decrease_rate) {
+template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
+inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::update_qis_tau(double decrease_rate) {
     double sigma = (std::max)(1.-decrease_rate, 1e-1);
     _qis_tau = _qis_tau + sigma*(1.-_qis_tau*_conformal_energy_max)/_conformal_energy_max;
 }
 
 
-template<typename Surface_patch_index, typename Curve_index>
-inline double Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::qis_energy(Eigen::VectorXd const &x, Eigen::VectorXd *g) {
+template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
+inline double Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::qis_energy(Eigen::VectorXd const &x, Eigen::VectorXd *g) {
     double F = 0;
     unsigned above_max_qual = 0;
 #pragma omp parallel for reduction(+:F, above_max_qual)
@@ -1074,15 +1075,15 @@ inline double Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::qis_e
 }
 
 
-template<typename Surface_patch_index, typename Curve_index>
-inline bool Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::has_bnd_terms() const {
+template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
+inline bool Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::has_bnd_terms() const {
     bool has_terms = !_bnd_poly.empty();
     bool has_query = _boundary_batch_mode ? (_boundary_batch_query != nullptr) : (_boundary_query != nullptr);
     return has_terms && has_query;
 }
 
-template<typename Surface_patch_index, typename Curve_index>
-inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::update_boundary_info(Eigen::VectorXd const &x, bool reset) {
+template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
+inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::update_boundary_info(Eigen::VectorXd const &x, bool reset) {
     if (!has_bnd_terms()) return;
 
     auto update_poly_coord = [&](unsigned t) {
@@ -1139,8 +1140,8 @@ inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::update_
     }
 }
 
-template<typename Surface_patch_index, typename Curve_index>
-inline double Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::boundary_energy(Eigen::VectorXd const &x, Eigen::VectorXd *g) {
+template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
+inline double Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::boundary_energy(Eigen::VectorXd const &x, Eigen::VectorXd *g) {
     if (!has_bnd_terms()) return 0.;
     double F = 0;
     double drift = boundary_weight/(ACCEPTED_LOCAL_VARIATION_FROM_BOUNDARY*ACCEPTED_LOCAL_VARIATION_FROM_BOUNDARY);
@@ -1175,13 +1176,13 @@ inline double Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::bound
 }
 
 
-template<typename Surface_patch_index, typename Curve_index>
-inline bool Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::has_curves_and_points_terms() const {
+template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
+inline bool Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::has_curves_and_points_terms() const {
     return !_edge_data.empty() || !_point_prev_target_weight.empty();
 }
 
-template<typename Surface_patch_index, typename Curve_index>
-inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::update_curves_and_points_info(Eigen::VectorXd const &x, bool reset) {
+template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
+inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::update_curves_and_points_info(Eigen::VectorXd const &x, bool reset) {
    if (!has_curves_and_points_terms()) return;
 
 
@@ -1229,8 +1230,8 @@ inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::update_
     }
 }
 
-template<typename Surface_patch_index, typename Curve_index>
-inline double Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::curves_and_points_energies(Eigen::VectorXd const &x, Eigen::VectorXd *g) {
+template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
+inline double Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::curves_and_points_energies(Eigen::VectorXd const &x, Eigen::VectorXd *g) {
     if (!has_curves_and_points_terms()) return 0.;
     double F = 0;
     double drift = boundary_weight/(ACCEPTED_LOCAL_VARIATION_FROM_BOUNDARY*ACCEPTED_LOCAL_VARIATION_FROM_BOUNDARY);
@@ -1272,8 +1273,8 @@ inline double Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::curve
     return F;
 }
 
-template<typename Surface_patch_index, typename Curve_index>
-void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::run_laplacian_gradient_descent(unsigned max_number_iter) {
+template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
+void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::run_laplacian_gradient_descent(unsigned max_number_iter) {
     if (verbose) std::cout << "==== Tetrahedral_mesh_smoother  ====" << "\n";
     if (verbose) std::cout << "----   running laplacian smoothing    ----" << "\n";
     if (verbose) std::cout << "Nb of optimization variables (vertices x3): " << _coords.size()  << std::endl;
@@ -1309,8 +1310,8 @@ void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::run_laplacian_
     if (verbose) logging.log_total_time();
 }
 
-template<typename Surface_patch_index, typename Curve_index>
-inline bool Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::run_untangling(unsigned max_number_iter) {
+template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
+inline bool Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::run_untangling(unsigned max_number_iter) {
     if (verbose) std::cout << "==== Tetrahedral_mesh_smoother untangling ====" << "\n";
     if (_coords.size() == 0 || _tet_storage.empty()) {
         if (verbose) std::cout << "No variables to optimize." << std::endl;
@@ -1387,7 +1388,7 @@ inline bool Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::run_unt
         if (!laplacian_precond) return d;
         if (verbose) logging.restart();
         Eigen::VectorXd md = linear_solver.solve(d);
-        for (unsigned i = 0; i < x.size(); ++i) {
+        for (unsigned i = 0; i < static_cast<unsigned>(x.size()); ++i) {
             if (_locks[i]) md[i] = 0;
         }
         double scale_back = 1.;
@@ -1526,8 +1527,8 @@ inline bool Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::run_unt
 
 
 // TODO need update for curve and point targets
-template<typename Surface_patch_index, typename Curve_index>
-inline bool Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>::run_quality_maximization(unsigned max_number_iter) {
+template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
+inline bool Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::run_quality_maximization(unsigned max_number_iter) {
     if (verbose) std::cout << "==== Tetrahedral_mesh_smoother quality maximization ====" << "\n";
     if (_coords.size() == 0 || _tet_storage.empty()) {
         if (verbose) std::cout << "No variables to optimize." << std::endl;

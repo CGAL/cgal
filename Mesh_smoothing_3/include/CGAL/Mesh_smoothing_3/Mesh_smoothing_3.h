@@ -71,8 +71,8 @@ namespace Parameters {
 template<
     typename TetrahedralMesh = default_structures::Empty_mesh,
     typename BoundaryMesh = default_structures::Empty_boundary<typename TetrahedralMesh::Vertex_descriptor>,
-    typename EdgeNetwork = default_structures::Empty_edge_network<typename TetrahedralMesh::Vertex_descriptor>
->
+    typename EdgeNetwork = default_structures::Empty_edge_network<typename TetrahedralMesh::Vertex_descriptor>,
+    typename ConcurrencyTag = Mesh_smoothing_3::Parallel_if_available_tag>
 class Mesh_smoother {
 public:
     /*!
@@ -111,7 +111,7 @@ public:
     template<typename T> using Vertex_descriptor_map = std::unordered_map<Vertex_descriptor, T>; // todo: manage to template that?
     template<typename T> using Cell_descriptor_map = std::unordered_map<Cell_descriptor, T>; // internal usage
 
-    using Tetrahedral_mesh_smoother = Mesh_smoothing_3_internal::Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index>;
+    using Tetrahedral_mesh_smoother = Mesh_smoothing_3_internal::Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>;
 
     /*!
         Constructor of the class, it does not perform any operation
@@ -568,15 +568,16 @@ using cgal_types::C3t3_wrapper;
 *
 */
 template<
-    typename C3t3
+    typename C3t3,
+    typename ConcurrencyTag = Mesh_smoothing_3::Parallel_if_available_tag
 >
-class C3t3_smoother : public Mesh_smoother <C3t3_wrapper<C3t3>, C3t3_wrapper<C3t3>, C3t3_wrapper<C3t3>> {
+class C3t3_smoother : public Mesh_smoother <C3t3_wrapper<C3t3>, C3t3_wrapper<C3t3>, C3t3_wrapper<C3t3>, ConcurrencyTag> {
 private:
     C3t3_wrapper<C3t3> mesh_wrapper;
 
 public:
     C3t3_smoother(C3t3 &c3t3)
-    : Mesh_smoother<C3t3_wrapper<C3t3>, C3t3_wrapper<C3t3>, C3t3_wrapper<C3t3>>(mesh_wrapper, mesh_wrapper, mesh_wrapper)
+    : Mesh_smoother<C3t3_wrapper<C3t3>, C3t3_wrapper<C3t3>, C3t3_wrapper<C3t3>, ConcurrencyTag>(mesh_wrapper, mesh_wrapper, mesh_wrapper)
     , mesh_wrapper(c3t3)
     {}
 

@@ -21,62 +21,62 @@ namespace CGAL {
 
 namespace Mesh_smoothing_3 {
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::Mesh_smoother(TetrahedralMesh &mesh, BoundaryMesh const &boundary, EdgeNetwork const &edge_network)
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::Mesh_smoother(TetrahedralMesh &mesh, BoundaryMesh const &boundary, EdgeNetwork const &edge_network)
 : _mesh(mesh)
 , _boundary(boundary)
 , _edge_network(edge_network)
 {}
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::set_locked_boundary(bool locked) {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::set_locked_boundary(bool locked) {
     _lock_boundary = locked;
 }
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::set_verbose(bool verbose) {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::set_verbose(bool verbose) {
     _verbose = verbose;
 }
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::set_max_number_of_iteration(unsigned number_of_iterations) {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::set_max_number_of_iteration(unsigned number_of_iterations) {
     _max_number_of_iteration = number_of_iterations;
 }
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork> // necessay
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::set_optimization_mode(Parameters::OPTIMIZATION_MODE mode) {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag> // necessay
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::set_optimization_mode(Parameters::OPTIMIZATION_MODE mode) {
     _optimization_mode = mode;
 }
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::set_predicates_mode(Parameters::PREDICATES_MODE mode) {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::set_predicates_mode(Parameters::PREDICATES_MODE mode) {
     _predicates_mode = mode;
 }
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::set_maximum_running_time(double time_limit) {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::set_maximum_running_time(double time_limit) {
     _time_limit = time_limit;
 }
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::set_maximum_number_of_metric_evaluations(unsigned max_nb_metric_evaluations) {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::set_maximum_number_of_metric_evaluations(unsigned max_nb_metric_evaluations) {
     _max_nb_metric_evaluations = max_nb_metric_evaluations;
 }
 
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::set_minimum_valid_edge_size(double val) {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::set_minimum_valid_edge_size(double val) {
     _min_valid_edge_size = val;
 }
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::set_boundary_weight(double val) {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::set_boundary_weight(double val) {
     _boundary_weight = val;
 }
 
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::set_boundary_weight(Parameters::BOUNDARY_WEIGHTING_MODE mode) {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::set_boundary_weight(Parameters::BOUNDARY_WEIGHTING_MODE mode) {
     switch (mode) {
         case Parameters::DEFAULT:
             _boundary_weight = 1;
@@ -90,126 +90,126 @@ void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::set_boundary_wei
     }
 }
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-unsigned Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::get_total_number_of_lbfgs_iterations() const {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+unsigned Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::get_total_number_of_lbfgs_iterations() const {
     return _nb_lbfgs_iterations;
 }
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-unsigned Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::get_number_of_invalid_steps_measured_by_predicates() const {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+unsigned Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::get_number_of_invalid_steps_measured_by_predicates() const {
     return _nb_predicates_invalid_steps;
 }
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::set_vertex_lock(Vertex_descriptor vertex_descriptor, bool locked) {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::set_vertex_lock(Vertex_descriptor vertex_descriptor, bool locked) {
     auto res = _user_locks.emplace(vertex_descriptor, std::array<bool, 3>{false, false, false});
     (*res.first).second = {locked, locked, locked};
 }
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::set_vertex_dim_lock(Vertex_descriptor vertex_descriptor, unsigned dimension, bool locked) {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::set_vertex_dim_lock(Vertex_descriptor vertex_descriptor, unsigned dimension, bool locked) {
     assert(dimension < 3);
     auto res = _user_locks.emplace(vertex_descriptor, std::array<bool, 3>{false, false, false});
     (*res.first).second[dimension] = locked;
 }
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::set_vertices_dim_locks(Vertex_descriptor_map<std::array<bool, 3>> const &vertex_dimension_locks)  {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::set_vertices_dim_locks(Vertex_descriptor_map<std::array<bool, 3>> const &vertex_dimension_locks)  {
     _user_locks = vertex_dimension_locks;
 }
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::clear_locks()  {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::clear_locks()  {
     _user_locks.clear();
 }
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::set_boundary_query(Boundary_point_query boundary_query) {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::set_boundary_query(Boundary_point_query boundary_query) {
     _lock_boundary = false;
     _boundary_query_type = POINT_QUERY;
     _boundary_point_query = boundary_query;
 }
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::set_boundary_query(Boundary_polygon_query boundary_query) {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::set_boundary_query(Boundary_polygon_query boundary_query) {
     _lock_boundary = false;
     _boundary_query_type = ELEMENT_QUERY;
     _boundary_polygon_query = boundary_query;
 }
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::set_boundary_query(Boundary_point_batch_query boundary_query) {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::set_boundary_query(Boundary_point_batch_query boundary_query) {
     _lock_boundary = false;
     _boundary_query_type = BATCH_POINT_QUERY;
     _boundary_point_batch_query = boundary_query;
 }
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::set_boundary_query(Boundary_polygon_batch_query boundary_query) {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::set_boundary_query(Boundary_polygon_batch_query boundary_query) {
     _lock_boundary = false;
     _boundary_query_type = BATCH_ELEMENT_QUERY;
     _boundary_polygon_batch_query = boundary_query;
 }
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::set_curves_query(Curve_point_query curve_query) {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::set_curves_query(Curve_point_query curve_query) {
     _lock_boundary = false;
     _curve_query_type = POINT_QUERY;
     _curve_point_query = curve_query;
 }
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::set_curves_query(Curve_segment_query curve_query) {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::set_curves_query(Curve_segment_query curve_query) {
     _lock_boundary = false;
     _curve_query_type = ELEMENT_QUERY;
     _curve_segment_query = curve_query;
 }
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::set_curves_query(Curve_point_batch_query curve_query) {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::set_curves_query(Curve_point_batch_query curve_query) {
     _lock_boundary = false;
     _curve_query_type = BATCH_POINT_QUERY;
     _curve_point_batch_query = curve_query;
 }
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::set_curves_query(Curve_segment_batch_query curve_query) {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::set_curves_query(Curve_segment_batch_query curve_query) {
     _lock_boundary = false;
     _curve_query_type = BATCH_ELEMENT_QUERY;
     _curve_segment_batch_query = curve_query;
 }
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::set_vertex_target_position(Vertex_descriptor v, Point_3 const &target_position, double weight) {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::set_vertex_target_position(Vertex_descriptor v, Point_3 const &target_position, double weight) {
     _vertex_target_positions.push_back({v, target_position, weight});
 }
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::set_vertex_target_positions(std::vector<std::tuple<Vertex_descriptor, Point_3, double>> const &target_positions) {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::set_vertex_target_positions(std::vector<std::tuple<Vertex_descriptor, Point_3, double>> const &target_positions) {
     _vertex_target_positions = target_positions;
 }
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::clear_vertex_target_positions() {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::clear_vertex_target_positions() {
     _vertex_target_positions.clear();
 }
 
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-bool Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::is_vert_locked(Vertex_descriptor Vertex_descriptor) const {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+bool Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::is_vert_locked(Vertex_descriptor Vertex_descriptor) const {
     auto iter = _user_locks.find(Vertex_descriptor);
     if (iter == _user_locks.end()) return false;
     return (*iter).second[0] && (*iter).second[1] && (*iter).second[2];
 }
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::set_update_validator(Update_validator func) {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::set_update_validator(Update_validator func) {
     _update_validator = func;
 }
 
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::check_refs() {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::check_refs() {
     // when is it that the input tetrahedra is wrong, or is it just tangled?
     // I didn't find a good way to sanitize the inputs because of the variety of input garbage :(
 
@@ -231,8 +231,8 @@ void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::check_refs() {
     // }
 }
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::clear_internal_data() {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::clear_internal_data() {
     _compressed_coords.resize(0);
     _compressed_locks.clear();
     _vertex_original_to_compressed.clear();
@@ -256,8 +256,8 @@ void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::clear_internal_d
     _current_coords_to_check.clear();
 }
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::create_compress_sorted_data() {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::create_compress_sorted_data() {
     clear_internal_data();
     if (_verbose) std::cout << "Mesh_smoother: copying and compressing data " << std::endl;
     std::size_t nb_points = 0;
@@ -390,8 +390,8 @@ void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::create_compress_
     }
 }
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::initialize_boundary() {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::initialize_boundary() {
     std::vector<unsigned> currFace;
     _bnd_faces.reserve(_boundary.nb_faces());
     _face_surface_id.reserve(_boundary.nb_faces());
@@ -422,8 +422,8 @@ void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::initialize_bound
     _vert_and_face_corners.assign(vert2faces.begin(), vert2faces.end());
 }
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::initialize_curve_network() {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::initialize_curve_network() {
     std::vector<unsigned> currFace;
     _curve_edges.reserve(_edge_network.nb_edges());
     _curve_ids.reserve(_edge_network.nb_edges());
@@ -448,8 +448,8 @@ void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::initialize_curve
     _point_targets.reserve(_vertex_target_positions.size());
 }
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::initialise_point_targets() {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::initialise_point_targets() {
     for (auto [v, target, weight] : _vertex_target_positions) {
         auto iterator = _vertex_original_to_compressed.find(static_cast<Vertex_descriptor>(v));
         if (iterator == _vertex_original_to_compressed.end()) continue;
@@ -457,8 +457,8 @@ void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::initialise_point
     }
 }
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::rescale_geometry() {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::rescale_geometry() {
     if (_compressed_coords.size() == 0) return;
     std::size_t nb_vertices = static_cast<std::size_t>(_compressed_coords.size()) / 3;
     Eigen::Vector3d mini(_compressed_coords[0], _compressed_coords[1], _compressed_coords[2]);
@@ -487,8 +487,8 @@ void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::rescale_geometry
     }
 }
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::update_mesh_coordinates() {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::update_mesh_coordinates() {
     for (auto [vertex_descriptor, compressed_id] : _vertex_original_to_compressed) {
         if (_compressed_locks[3*compressed_id] && _compressed_locks[3*compressed_id+1] && _compressed_locks[3*compressed_id+2]) continue;
         Eigen::Vector3d pt = Mesh_smoothing_3_internal::Math_functions::sub_col_vector(_compressed_coords, compressed_id);
@@ -497,14 +497,14 @@ void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::update_mesh_coor
 }
 
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::set_callback_function(Callback_function callback_function, Callback_setting setting) {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::set_callback_function(Callback_function callback_function, Callback_setting setting) {
     _callback_function = callback_function;
     _callback_setting = setting;
 }
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::initialize_callback() {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::initialize_callback() {
     if (_callback_initialized) return;
     _callback_vertex_map_data.reserve(_vertex_original_to_compressed.size());
     _callback_cell_map_data.reserve(_cell_original_to_compressed.size());
@@ -519,8 +519,8 @@ void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::initialize_callb
     _callback_initialized = true;
 }
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-bool Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::run_callback(Iteration_status const &status, std::vector<Vertex_status> const &vertex_status, std::vector<Cell_status> const &cell_status) {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+bool Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::run_callback(Iteration_status const &status, std::vector<Vertex_status> const &vertex_status, std::vector<Cell_status> const &cell_status) {
     initialize_callback();
     update_mesh_coordinates();
     _callback_status = status;
@@ -534,8 +534,8 @@ bool Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::run_callback(Ite
     return _callback_function(_callback_status, _callback_vertex_map_data, _callback_cell_map_data);
 }
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::initialise_boundary_query(Tetrahedral_mesh_smoother &smoother) {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::initialise_boundary_query(Tetrahedral_mesh_smoother &smoother) {
     switch (_boundary_query_type) {
     case NONE:
         smoother.set_boundary_with_singular_query(
@@ -678,8 +678,8 @@ void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::initialise_bound
     }
 }
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::initialise_curve_queries(Tetrahedral_mesh_smoother &smoother) {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::initialise_curve_queries(Tetrahedral_mesh_smoother &smoother) {
     switch (_curve_query_type) {
     case NONE:
         break;
@@ -779,8 +779,8 @@ void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::initialise_curve
     }
 }
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::initialise_smoother(Tetrahedral_mesh_smoother &smoother) {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::initialise_smoother(Tetrahedral_mesh_smoother &smoother) {
     initialise_boundary_query(smoother);
     initialise_curve_queries(smoother);
 
@@ -834,8 +834,8 @@ namespace internal {
     }
 }
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-std::pair<unsigned, unsigned> Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::get_nb_of_inverted_cells(Cell_descriptor_map<std::pair<double, bool>> *cell_determinants) {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+std::pair<unsigned, unsigned> Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::get_nb_of_inverted_cells(Cell_descriptor_map<std::pair<double, bool>> *cell_determinants) {
     check_refs();
     create_compress_sorted_data();
     rescale_geometry();
@@ -853,14 +853,14 @@ std::pair<unsigned, unsigned> Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeN
     return get_nb_inverted_cells(determinants, exact_checks);
 }
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::set_input_smoothing_status(Smoothing_status const &status) {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::set_input_smoothing_status(Smoothing_status const &status) {
     _smoothing_status = status;
 }
 
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork>
-Smoothing_status Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork>::run() {
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+Smoothing_status Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::run() {
     if (!_smoothing_status.in_progress()) _smoothing_status = Smoothing_status();
 
     check_refs();
