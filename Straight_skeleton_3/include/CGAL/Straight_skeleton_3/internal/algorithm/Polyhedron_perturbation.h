@@ -30,12 +30,14 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Modifiable_priority_queue.h>
 #include <CGAL/Polygon_mesh_processing/autorefinement.h>
+#include <CGAL/Polygon_mesh_processing/clip.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 
 #include <CGAL/enum.h>
 #include <CGAL/Random.h>
+#include <CGAL/Real_timer.h>
 
 #ifdef CGAL_SPS3_USE_V4_PERTURBATION
 # include "ortools/sat/cp_model.h"
@@ -1643,7 +1645,7 @@ public:
                                       const Iso_cuboid_3& bbox,
                                       std::vector<Point_3>& points,
                                       std::vector<std::vector<std::size_t> >& triangles,
-                                      std::vector<FacetSPtr>& triangle_to_facet)
+                                      std::vector<FacetSPtr>& polygon_to_facet)
   {
     using Vector_3 = typename GeomTraits::Vector_3;
 
@@ -1659,7 +1661,7 @@ public:
           // Should not happen
           CGAL_SS3_TRANSF_TRACE_V(1, "no intersection between plane and bbox?!");
           CGAL_assertion(false);
-          std::exit(1);
+          std::abort();
         } else if (const Triangle_3* itr = std::get_if<Triangle_3>(&*res)) {
           for (int i=0; i<3; ++i) {
             local_range.push_back((*itr)[i]);
@@ -1671,7 +1673,7 @@ public:
         } else {
           CGAL_SS3_TRANSF_TRACE_V(1, "plane/bbox intersection is not a polygon");
           CGAL_assertion(false);
-          std::exit(1);
+          std::abort();
         }
 
         // Ensure orientation: normal of local_range must match plane's orientation
@@ -1700,7 +1702,7 @@ public:
           for(const auto& tri : polygons) {
             CGAL_assertion(tri.size() == 3);
             triangles.push_back(tri);
-            triangle_to_facet.push_back(facet);
+            polygon_to_facet.push_back(facet);
           }
         }
       }
@@ -1728,7 +1730,7 @@ public:
           // Should not happen, as bbox is constructed to contain all intersections
           CGAL_SS3_TRANSF_TRACE_V(1, "no intersection between plane and bbox");
           CGAL_assertion(false);
-          std::exit(1);
+          std::abort();
         } else if (const Triangle_3* itr = std::get_if<Triangle_3>(&*res)) {
           for (int i=0; i<3; ++i) {
             local_range.push_back((*itr)[i]);
@@ -1740,7 +1742,7 @@ public:
         } else {
           CGAL_SS3_TRANSF_TRACE_V(1, "plane/bbox intersection is not a polygon");
           CGAL_assertion(false);
-          std::exit(1);
+          std::abort();
         }
 
         // Ensure orientation: normal of local_range must match plane's orientation
@@ -1866,6 +1868,7 @@ public:
   static void apply_rand_plane_tilts_V4(const PolyhedronSPtr& polyhedron)
   {
     namespace PMP = CGAL::Polygon_mesh_processing;
+    namespace pred = PMP::Corefinement;
 
     CGAL_SS3_TRANSF_TRACE_V(4, "Random Plane Tilt (v4)");
     CGAL_SS3_DEBUG_SPTR(polyhedron);
@@ -1897,8 +1900,8 @@ public:
 #endif
 
     {
-      std::unordered_map<FacetSPtr, Plane_3> original_planes;
-      std::unordered_map<VertexSPtr, FT> sq_max_displacements;
+      CGAL::unordered_flat_map<FacetSPtr, Plane_3> original_planes;
+      CGAL::unordered_flat_map<VertexSPtr, FT> sq_max_displacements;
 
       for (const FacetSPtr& facet : polyhedron->facets()) {
         original_planes[facet] = facet->get_plane();
@@ -2201,7 +2204,7 @@ public:
 
       // (2)
       std::vector<Vertex_stability_record> unstable_vertices;
-      std::unordered_map<VertexSPtr, std::size_t> unstable_record_indices;
+      CGAL::unordered_flat_map<VertexSPtr, std::size_t> unstable_record_indices;
 
 #ifdef CGAL_SS3_DUMP_FILES
       std::ofstream out_unstable_base("results/base_unstable_vertices.xyz");
@@ -3099,8 +3102,8 @@ public:
         CGAL_assertion(is_stable(v, sq_max_displacements[v]));
       }
 
-      std::unordered_map<FacetSPtr, Plane_3> pre_nudge_planes;
-      std::unordered_map<FacetSPtr, FT> nudge_ranges;
+      CGAL::unordered_flat_map<FacetSPtr, Plane_3> pre_nudge_planes;
+      CGAL::unordered_flat_map<FacetSPtr, FT> nudge_ranges;
 
       for (const FacetSPtr& f : polyhedron->facets()) {
         nudge_ranges[f] = nudge_range;
@@ -3140,7 +3143,7 @@ public:
         // Now, all facets have updated (nudged) planes -> check the stability of anchors
         bool all_stable = true;
 
-        std::unordered_map<FacetSPtr, FT> new_nudge_ranges = nudge_ranges;
+        CGAL::unordered_flat_map<FacetSPtr, FT> new_nudge_ranges = nudge_ranges;
         for (const VertexSPtr& v : polyhedron->vertices()) {
           if (!is_stable(v, sq_max_displacements[v])) {
             CGAL_SS3_TRANSF_TRACE_V(32, "V" << v->id() << " is unstable => reduce incident plane nudges");
@@ -3212,8 +3215,8 @@ public:
 
       // soup to be used in the arrangement
       std::vector<Point_3> points;
-      std::vector<std::vector<std::size_t> > triangles;
-      std::vector<FacetSPtr> triangle_to_facet;
+      std::vector<std::vector<std::size_t> > polygons;
+      std::vector<FacetSPtr> polygon_to_facet;
 
       // Create a sufficiently large bounding box containing all plane intersections
       // @todo obviously !slightly! suboptimal
@@ -3259,11 +3262,158 @@ public:
       CGAL_SS3_TRANSF_TRACE_V(64, "splitting bounding box: " << bbox);
       CGAL_SS3_TRANSF_TRACE_V(64, "x span " << bb.x_span() << ", y span " << bb.y_span() << ", z span " << bb.z_span());
 
+#define CGAL_SS3_COMPUTE_ARRANGEMENT_WITH_SPLIT
+#ifdef CGAL_SS3_COMPUTE_ARRANGEMENT_WITH_SPLIT
+      // In this version, we compute the arrangement using PMP::split() and the supporting planes
+      // of the facets incident to the vertex. This should be much faster.
+      using Mesh = CGAL::Surface_mesh<Point_3>;
+      using vertex_descriptor = typename boost::graph_traits<Mesh>::vertex_descriptor;
+      using halfedge_descriptor = typename boost::graph_traits<Mesh>::halfedge_descriptor;
+      using face_descriptor = typename boost::graph_traits<Mesh>::face_descriptor;
+
+      Mesh mesh;
+      CGAL::make_hexahedron(bb, mesh);
+      auto fpm = mesh.template add_property_map<face_descriptor, FacetSPtr>("f:fsptr").first;
+
+      // Start from the splitting box itself; after all the splits, we convert the mesh back to a soup
+      // while keeping, on each face, the source facet that generated it.
+
+      for (face_descriptor fd : faces(mesh)) {
+        put(fpm, fd, FacetSPtr());
+      }
+
+      Face_property_map_updating_coref_visitor<Mesh, decltype(fpm)> visitor(fpm);
+
+      CGAL::Real_timer timer;
+      timer.start();
+
+      for (const auto& facet_wptr : vertex->facets()) {
+        if (FacetSPtr facet = facet_wptr.lock()) {
+          const Plane_3& plane = facet->get_plane();
+          CGAL::Polygon_mesh_processing::split(mesh, plane, CGAL::parameters::do_not_triangulate_faces(true).visitor(visitor));
+          std::vector<halfedge_descriptor> hedges;
+          CGAL::extract_boundary_cycles(mesh, std::back_inserter(hedges));
+          std::cout << hedges.size() << " boundary edges" << std::endl;
+          for (halfedge_descriptor h : hedges) {
+            CGAL::Euler::fill_hole(h, mesh);
+            const face_descriptor fd = face(h, mesh);
+            put(fpm, fd, facet);
+          }
+        }
+      }
+
+      timer.stop();
+      std::cout << "split time: " << timer.time() << " sec" << std::endl;
+
+#ifdef CGAL_SS3_DUMP_FILES
+      auto nvpm = get(CGAL::dynamic_vertex_property_t<Point_3>{}, mesh);
+      for (vertex_descriptor vd : vertices(mesh)) {
+        put(nvpm, vd, Point_3((mesh.point(vd).x() - bbox.xmin()) / bb.x_span(),
+                              (mesh.point(vd).y() - bbox.ymin()) / bb.y_span(),
+                              (mesh.point(vd).z() - bbox.zmin()) / bb.z_span()));
+      }
+
+      CGAL::IO::write_polygon_mesh("results/arr_split_normalized.off", mesh,
+                                   CGAL::parameters::stream_precision(17).vertex_point_map(nvpm));
+#endif
+
+      // print faces with ptr info:
+      // for (face_descriptor fd : faces(mesh)) {
+      //   std::cout << "face " << fd << " ptr: " << (get(fpm, fd) ? get(fpm, fd)->id() : -1) << std::endl;
+      // }
+
+      CGAL_SS3_TRANSF_TRACE_V(16, "split mesh -> " << vertices(mesh).size() << " points, " << faces(mesh).size() << " faces");
+
+      CGAL_postcondition(is_closed(mesh));
+      CGAL_postcondition(is_valid_polygon_mesh(mesh));
+
+      // Convert the split mesh back to a polygon soup while preserving the facet association.
+      points.clear();
+      polygons.clear();
+      polygons.reserve(num_faces(mesh));
+      PMP::polygon_mesh_to_polygon_soup(mesh, points, polygons);
+
+#ifdef CGAL_SS3_DUMP_FILES
+      std::vector<Point_3> normalized_points;
+      for (const Point_3& p : points) {
+        normalized_points.push_back(Point_3((p.x() - bbox.xmin()) / bb.x_span(),
+                                            (p.y() - bbox.ymin()) / bb.y_span(),
+                                            (p.z() - bbox.zmin()) / bb.z_span()));
+      }
+#endif
+
+      polygon_to_facet.resize(polygons.size(), FacetSPtr());
+
+      std::size_t face_index = 0;
+      for (face_descriptor fd : faces(mesh)) {
+        if (face_index >= polygon_to_facet.size()) {
+          break;
+        }
+        polygon_to_facet[face_index++] = get(fpm, fd);
+      }
+
+      CGAL_assertion(polygons.size() == polygon_to_facet.size());
+
+      CGAL_SS3_TRANSF_TRACE_V(16, "split soup -> " << points.size() << " points, " << polygons.size() << " polygons");
+      for (std::size_t i=0; i<polygon_to_facet.size(); ++i) {
+        CGAL_SS3_TRANSF_TRACE_V(64, "polygon " << i << " ptr: " << (polygon_to_facet[i] ? polygon_to_facet[i]->id() : -1));
+      }
+
+      PMP::merge_duplicate_points_in_polygon_soup(points, polygons);
+
+#ifdef CGAL_SS3_DUMP_FILES
+      normalized_points.clear();
+      for (const Point_3& p : points) {
+        normalized_points.push_back(Point_3((p.x() - bbox.xmin()) / bb.x_span(),
+                                            (p.y() - bbox.ymin()) / bb.y_span(),
+                                            (p.z() - bbox.zmin()) / bb.z_span()));
+      }
+#endif
+
+      Range_updating_repair_PS_visitor<FacetSPtr> repair_ps_visitor(polygon_to_facet);
+      PMP::merge_duplicate_polygons_in_polygon_soup(points, polygons,
+                                                    CGAL::parameters::visitor(repair_ps_visitor)
+                                                                     .erase_all_duplicates(false)
+                                                                     .require_same_orientation(false)
+                                                                     .verbose(true));
+
+      CGAL_SS3_TRANSF_TRACE_V(16, "repaired soup -> " << points.size() << " points, " << polygons.size() << " polygons");
+
+      CGAL_assertion(polygons.size() == polygon_to_facet.size());
+
+      // Check and possibly flip the orientation so that the polygon soup is consistently oriented with respect to the original facets
+      // @todo avoid the orientation tests and somehow detect this at split time
+      for (std::size_t i=0; i<polygons.size(); ++i) {
+        const FacetSPtr& fsptr = polygon_to_facet[i];
+        if (fsptr) {
+          const Plane_3& plane = fsptr->get_plane();
+          const Point_3& p0 = points[polygons[i][0]];
+          const Point_3& p1 = points[polygons[i][1]];
+          const Point_3& p2 = points[polygons[i][2]];
+          Vector_3 v01 = p1 - p0;
+          Vector_3 v02 = p2 - p0;
+          Vector_3 normal = CGAL::cross_product(v01, v02);
+          if (plane.a() * normal.x() + plane.b() * normal.y() + plane.c() * normal.z() < 0) {
+            // The orientation is opposite to the original facet's plane, flip the polygon
+            std::reverse(polygons[i].begin(), polygons[i].end());
+          }
+        }
+      }
+
+#ifdef CGAL_SS3_DUMP_FILES
+      CGAL::IO::write_polygon_soup("results/arr_split_normalized.off", normalized_points, polygons, CGAL::parameters::stream_precision(17));
+#endif
+
+#else // CGAL_SS3_COMPUTE_ARRANGEMENT_WITH_SPLIT
+      // In this version, we compute the arrangement using a polygon soup and the corefinement algorithm.
+      // This is more expensive.
+
       // Get the triangles from the base planes, with tagged faces
-      get_clipped_plane_faces(vertex, bbox, points, triangles, triangle_to_facet);
-      CGAL_SS3_TRANSF_TRACE_V(64, points.size() << " points, " << triangles.size() << " triangles [base]");
+      get_clipped_plane_faces(vertex, bbox, points, polygons, polygon_to_facet);
+      CGAL_SS3_TRANSF_TRACE_V(64, points.size() << " points, " << polygons.size() << " triangles [base]");
 
       // dump the arrangement, with normalized points fitting in a unit cube, for easier visualization
+#ifdef CGAL_SS3_DUMP_FILES
       std::vector<Point_3> normalized_points;
       for (const Point_3& p : points) {
         normalized_points.push_back(Point_3((p.x() - bbox.xmin()) / bb.x_span(),
@@ -3271,14 +3421,13 @@ public:
                                             (p.z() - bbox.zmin()) / bb.z_span()));
       }
 
-#ifdef CGAL_SS3_DUMP_FILES
       // Dump a polygon soup for each set of triangle faces associated to a specific fsptr value
       {
         CGAL::unordered_flat_map<std::size_t, std::vector<std::vector<std::size_t> > > id_to_triangles;
-        for (std::size_t i=0; i<triangles.size(); ++i) {
-          FacetSPtr fsptr = triangle_to_facet[i];
+        for (std::size_t i=0; i<polygons.size(); ++i) {
+          FacetSPtr fsptr = polygon_to_facet[i];
           if (fsptr) {
-            id_to_triangles[fsptr->id()].push_back(triangles[i]);
+            id_to_triangles[fsptr->id()].push_back(polygons[i]);
           }
         }
 
@@ -3303,61 +3452,118 @@ public:
       points.push_back(Point_3(bbox.xmax(), bbox.ymax(), bbox.zmax())); // v6
       points.push_back(Point_3(bbox.xmin(), bbox.ymax(), bbox.zmax())); // v7
 
+#ifdef CGAL_SS3_DUMP_FILES
       normalized_points.clear();
       for (const Point_3& p : points) {
         normalized_points.push_back(Point_3((p.x() - bbox.xmin()) / bb.x_span(),
                                             (p.y() - bbox.ymin()) / bb.y_span(),
                                             (p.z() - bbox.zmin()) / bb.z_span()));
       }
+#endif
 
       // bottom face
-      triangles.push_back({base_idx+0, base_idx+2, base_idx+1});
-      triangles.push_back({base_idx+0, base_idx+3, base_idx+2});
+      polygons.push_back({base_idx+0, base_idx+2, base_idx+1});
+      polygons.push_back({base_idx+0, base_idx+3, base_idx+2});
       // top face
-      triangles.push_back({base_idx+4, base_idx+5, base_idx+6});
-      triangles.push_back({base_idx+4, base_idx+6, base_idx+7});
+      polygons.push_back({base_idx+4, base_idx+5, base_idx+6});
+      polygons.push_back({base_idx+4, base_idx+6, base_idx+7});
       // front face
-      triangles.push_back({base_idx+0, base_idx+1, base_idx+5});
-      triangles.push_back({base_idx+0, base_idx+5, base_idx+4});
+      polygons.push_back({base_idx+0, base_idx+1, base_idx+5});
+      polygons.push_back({base_idx+0, base_idx+5, base_idx+4});
       // back face
-      triangles.push_back({base_idx+2, base_idx+3, base_idx+7});
-      triangles.push_back({base_idx+2, base_idx+7, base_idx+6});
+      polygons.push_back({base_idx+2, base_idx+3, base_idx+7});
+      polygons.push_back({base_idx+2, base_idx+7, base_idx+6});
       // left face
-      triangles.push_back({base_idx+0, base_idx+4, base_idx+7});
-      triangles.push_back({base_idx+0, base_idx+7, base_idx+3});
+      polygons.push_back({base_idx+0, base_idx+4, base_idx+7});
+      polygons.push_back({base_idx+0, base_idx+7, base_idx+3});
       // right face
-      triangles.push_back({base_idx+1, base_idx+2, base_idx+6});
-      triangles.push_back({base_idx+1, base_idx+6, base_idx+5});
+      polygons.push_back({base_idx+1, base_idx+2, base_idx+6});
+      polygons.push_back({base_idx+1, base_idx+6, base_idx+5});
 
-      triangle_to_facet.resize(triangles.size(), nullptr);
+      polygon_to_facet.resize(polygons.size(), nullptr);
 
-      CGAL_SS3_TRANSF_TRACE_V(64, points.size() << " points, " << triangles.size() << " triangles [w/ bbox]");
+      CGAL_SS3_TRANSF_TRACE_V(64, points.size() << " points, " << polygons.size() << " triangles [w/ bbox]");
 
-      for (std::size_t i=0; i<triangle_to_facet.size(); ++i) {
+      for (std::size_t i=0; i<polygon_to_facet.size(); ++i) {
         CGAL_SS3_TRANSF_TRACE_V(64, "triangle " << i << " ptr: "
-                                << (triangle_to_facet[i] ? triangle_to_facet[i]->id() : -1));
+                                << (polygon_to_facet[i] ? polygon_to_facet[i]->id() : -1));
       }
 
-      PMP::merge_duplicate_points_in_polygon_soup(points, triangles);
-
-
+      PMP::merge_duplicate_points_in_polygon_soup(points, polygons);
 
 #ifdef CGAL_SS3_DUMP_FILES
-      CGAL::IO::write_OFF("results/arr_soup_normalized.off", normalized_points, triangles, CGAL::parameters::stream_precision(17));
+      CGAL::IO::write_OFF("results/arr_input_normalized.off", normalized_points, polygons, CGAL::parameters::stream_precision(17));
 #endif
 
-      CGAL_assertion(triangles.size() == triangle_to_facet.size());
+      CGAL_assertion(polygons.size() == polygon_to_facet.size());
 
-      CGAL_SS3_TRANSF_TRACE_V(1, "autorefining with " << triangles.size() << " triangles");
+      CGAL_SS3_TRANSF_TRACE_V(16, "autorefining with " << polygons.size() << " triangles");
 
-      std::vector<FacetSPtr> updated_triangle_to_facet;
-      Range_updating_autoref_visitor<FacetSPtr> autoref_visitor(triangle_to_facet, updated_triangle_to_facet);
+#if 0
+      // homemade OFF writer
+      std::ofstream tmp_out("results/autoref_exact_input.off");
+      tmp_out << "OFF\n" << points.size() << " " << polygons.size() << " 0\n";
+      for (const Point_3& p : points) {
+        tmp_out << exact(p) << std::endl;
+      }
+      for (const auto& tr : polygons) {
+        tmp_out << "3 " << tr[0] << " " << tr[1] << " " << tr[2] << std::endl;
+      }
+      tmp_out.close();
 
-      PMP::autorefine_triangle_soup(points, triangles, CGAL::parameters::visitor(autoref_visitor));
+      {
+        // just for timings without the visitor
+        auto points_cpy = points;
+        auto polygons_cpy = polygons;
 
-      triangle_to_facet = std::move(updated_triangle_to_facet);
-      CGAL_assertion(triangles.size() == triangle_to_facet.size());
+        std::cout << "  start points: " << points_cpy.size() << std::endl;
+        std::cout << "  start triangles: " << polygons_cpy.size() << std::endl;
 
+        CGAL::Real_timer timer;
+        timer.start();
+
+        PMP::autorefine_triangle_soup(points_cpy, polygons_cpy);
+
+        timer.stop();
+        std::cout << "  took " << timer.time() << std::endl;
+        std::cout << "  final points: " << points_cpy.size() << std::endl;
+        std::cout << "  final triangles: " << polygons_cpy.size() << std::endl;
+      }
+
+      {
+        std::cout << "cast to double and start again" << std::endl;
+        using FK = CGAL::Simple_cartesian<double>;
+        using CC = CGAL::Cartesian_converter<GeomTraits, FK>;
+        std::vector<CGAL::Point_3<FK> > points_cpy_double;
+        for (const auto& p : points)
+          points_cpy_double.push_back(CC()(p));
+
+        auto polygons_cpy = polygons;
+
+        std::cout << "  start points: " << points_cpy_double.size() << std::endl;
+        std::cout << "  start triangles: " << polygons_cpy.size() << std::endl;
+
+        CGAL::Real_timer timer;
+        timer.start();
+
+        PMP::autorefine_triangle_soup(points_cpy_double, polygons_cpy);
+
+        timer.stop();
+        std::cout << "  took " << timer.time() << std::endl;
+        std::cout << "  final points: " << points_cpy_double.size() << std::endl;
+        std::cout << "  final triangles: " << polygons_cpy.size() << std::endl;
+      }
+#endif
+
+      std::vector<FacetSPtr> updated_polygon_to_facet;
+      Range_updating_autoref_visitor<FacetSPtr> autoref_visitor(polygon_to_facet, updated_polygon_to_facet);
+
+      PMP::autorefine_triangle_soup(points, polygons, CGAL::parameters::visitor(autoref_visitor));
+
+      polygon_to_facet = std::move(updated_polygon_to_facet);
+      CGAL_assertion(polygons.size() == polygon_to_facet.size());
+
+#ifdef CGAL_SS3_DUMP_FILES
       normalized_points.clear();
       for (const Point_3& p : points) {
         normalized_points.push_back(Point_3((p.x() - bbox.xmin()) / bb.x_span(),
@@ -3365,23 +3571,22 @@ public:
                                             (p.z() - bbox.zmin()) / bb.z_span()));
       }
 
-#ifdef CGAL_SS3_DUMP_FILES
-      CGAL::IO::write_OFF("results/arr_autorefined.off", points, triangles, CGAL::parameters::stream_precision(17));
-      CGAL::IO::write_OFF("results/arr_autorefined_normalized.off", normalized_points, triangles, CGAL::parameters::stream_precision(17));
+      CGAL::IO::write_OFF("results/arr_autorefined.off", points, polygons, CGAL::parameters::stream_precision(17));
+      CGAL::IO::write_OFF("results/arr_autorefined_normalized.off", normalized_points, polygons, CGAL::parameters::stream_precision(17));
 #endif
 
-      for (std::size_t i=0; i<triangles.size(); ++i) {
-        CGAL_SS3_TRANSF_TRACE_V(64, "[4] triangle " << i << " ptr: " << (triangle_to_facet[i] ? triangle_to_facet[i]->id() : -1));
+      for (std::size_t i=0; i<polygons.size(); ++i) {
+        CGAL_SS3_TRANSF_TRACE_V(64, "[4] triangle " << i << " ptr: " << (polygon_to_facet[i] ? polygon_to_facet[i]->id() : -1));
       }
 
 #ifdef CGAL_SS3_DUMP_FILES
       // Dump a polygon soup for each set of triangle faces associated to a specific fsptr value
       {
         CGAL::unordered_flat_map<std::size_t, std::vector<std::vector<std::size_t> > > id_to_triangles;
-        for (std::size_t i=0; i<triangles.size(); ++i) {
-          FacetSPtr fsptr = triangle_to_facet[i];
+        for (std::size_t i=0; i<polygons.size(); ++i) {
+          FacetSPtr fsptr = polygon_to_facet[i];
           if (fsptr) {
-            id_to_triangles[fsptr->id()].push_back(triangles[i]);
+            id_to_triangles[fsptr->id()].push_back(polygons[i]);
           }
         }
 
@@ -3399,242 +3604,404 @@ public:
 #endif
 
       CGAL_SS3_TRANSF_TRACE_V(64, "repairing...");
-      Range_updating_repair_PS_visitor<FacetSPtr> repair_ps_visitor(triangle_to_facet);
-      PMP::merge_duplicate_polygons_in_polygon_soup(points, triangles,
+      Range_updating_repair_PS_visitor<FacetSPtr> repair_ps_visitor(polygon_to_facet);
+      PMP::merge_duplicate_polygons_in_polygon_soup(points, polygons,
                                                     CGAL::parameters::visitor(repair_ps_visitor)
                                                                     .erase_all_duplicates(false) /*keep one*/
                                                                     .require_same_orientation(false)
                                                                     .verbose(true));
 
 #ifdef CGAL_SS3_DUMP_FILES
-      CGAL::IO::write_OFF("results/arr_repaired.off", points, triangles, CGAL::parameters::stream_precision(17));
+      CGAL::IO::write_OFF("results/arr_repaired_normalized.off", normalized_points, polygons, CGAL::parameters::stream_precision(17));
 #endif
+
+#endif // CGAL_SS3_COMPUTE_ARRANGEMENT_WITH_SPLIT
 
 #ifdef CGAL_SS3_DUMP_FILES
       // Dump a polygon soup for each set of triangle faces associated to a specific fsptr value
       {
         CGAL::unordered_flat_map<std::size_t, std::vector<std::vector<std::size_t> > > id_to_triangles;
-        for (std::size_t i=0; i<triangles.size(); ++i) {
-          FacetSPtr fsptr = triangle_to_facet[i];
+        for (std::size_t i=0; i<polygons.size(); ++i) {
+          FacetSPtr fsptr = polygon_to_facet[i];
           if (fsptr) {
-            id_to_triangles[fsptr->id()].push_back(triangles[i]);
+            id_to_triangles[fsptr->id()].push_back(polygons[i]);
           }
         }
 
         for (const auto& kv : id_to_triangles) {
           std::ostringstream oss;
-          oss << "results/arr_repaired_" << kv.first << ".off";
-          CGAL::IO::write_OFF(oss.str(), points, kv.second, CGAL::parameters::stream_precision(17));
+          oss << "results/arr_final_" << kv.first << "_normalized.off";
+          CGAL::IO::write_OFF(oss.str(), normalized_points, kv.second, CGAL::parameters::stream_precision(17));
         }
       }
 #endif
 
-      CGAL_assertion(triangles.size() == triangle_to_facet.size());
+      CGAL_assertion(polygons.size() == polygon_to_facet.size());
 
 #ifdef CGAL_SS3_DUMP_FILES
       // dump only the triangles with a non nullptr
       {
         std::vector<std::vector<std::size_t> > input_triangles;
-        for (std::size_t i=0; i<triangles.size(); ++i) {
-          if (triangle_to_facet[i]) {
-            input_triangles.push_back(triangles[i]);
+        for (std::size_t i=0; i<polygons.size(); ++i) {
+          if (polygon_to_facet[i]) {
+            input_triangles.push_back(polygons[i]);
           }
         }
 
-        CGAL::IO::write_OFF("results/arr_recovered_input.off", points, input_triangles, CGAL::parameters::stream_precision(17));
+        CGAL::IO::write_OFF("results/arr_recovered_input.off", normalized_points, input_triangles, CGAL::parameters::stream_precision(17));
       }
 #endif
 
       using PID = std::size_t;
-      using TID = std::size_t;
+      using FID = std::size_t;
       using VID = std::size_t;
 
-      auto fill_edge_map = [](const std::vector<Point_3>& points,
-                              const std::vector<std::vector<PID> >& triangles,
-                              std::vector<std::unordered_map<PID, std::vector<TID> > >& edge_map)
-      {
-        CGAL_precondition(edge_map.size() == points.size());
+      CGAL_SS3_TRANSF_TRACE_V(16, "fill edge map...");
 
-        // collect duplicated edges
-        for (TID ti=0; ti<triangles.size(); ++ti) {
-          for (std::size_t j=0; j<3; ++j) {
-            std::pair<PID, PID> e_pids = CGAL::make_sorted_pair(triangles[ti][j],
-                                                                triangles[ti][(j+1)%3]);
-            edge_map[e_pids.first][e_pids.second].push_back(ti);
+      std::vector<CGAL::unordered_flat_map<PID, boost::container::small_vector<FID, 4> > > edge_map(points.size());
+
+#define CGAL_SS3_FILL_EDGE_MAP_FROM_POLYGON_MESH
+#ifdef CGAL_SS3_FILL_EDGE_MAP_FROM_POLYGON_MESH
+      // Build edge incidence map directly from the polygon soup (polygons vector).
+      // This collects for each canonical edge (min,max) the list of incident polygon ids.
+      // Afterwards, handle the common 4-face case by interleaving polygons belonging
+      // to two distinct input facets into an a-b-a-b order using `polygon_to_facet`.
+      {
+        // Collect edges from polygons (fast, linear in number of polygon edges)
+        for (FID fid = 0; fid < static_cast<FID>(polygons.size()); ++fid) {
+          const auto& poly = polygons[fid];
+          const std::size_t s = poly.size();
+          for (std::size_t j = 0; j < s; ++j) {
+            PID a = poly[j];
+            PID b = poly[(j+1)%s];
+            if (b < a) std::swap(a, b);
+            auto& m = edge_map[a];
+            auto [it, inserted] = m.try_emplace(b);
+            it->second.push_back(fid);
+            CGAL_assertion(it->second.size() <= 4);
           }
         }
 
-        namespace pred = CGAL::Polygon_mesh_processing::Corefinement;
-
-        for (std::size_t pid0=0; pid0<points.size(); ++pid0) {
+        // Post-process edges: handle size==4 by interleaving polygons from two facets
+        for (PID pid0=0; pid0<static_cast<PID>(edge_map.size()); ++pid0) {
           for (auto& pid1_and_edges : edge_map[pid0]) {
-            std::vector<TID>& inc_triangles = pid1_and_edges.second;
-
-            if (inc_triangles.size() == 2) { // edge is only incident to a single SS3 face
+            const PID pid1 = pid1_and_edges.first;
+            auto& inc_polygons = pid1_and_edges.second;
+            const std::size_t ninc = inc_polygons.size();
+            CGAL_assertion(ninc <= 4);
+            if (ninc <= 2) {
               continue;
             }
 
-            const PID pid1 = pid1_and_edges.first;
-            CGAL_assertion(pid0 != pid1);
-
-            CGAL_SS3_TRANSF_TRACE_V(64, "processing NM edge: " << points[pid0] << " -- " << points[pid1]);
-
-            auto get_third_point_id = [&triangles, pid0, pid1](TID tid) -> PID
+            auto get_third_point_id = [&polygons, pid0, pid1](const FID fid) -> PID
             {
-              std::size_t third;
-
-              // need to be careful that the orientation of the edge might not match the orientation of the triangle
-              if (triangles[tid][0] == pid0 || triangles[tid][0] == pid1) {
-                if (triangles[tid][1] == pid0 || triangles[tid][1] == pid1) {
-                  third = triangles[tid][2];
+              PID third;
+              const auto& poly = polygons[fid];
+              if (poly[0] == pid0 || poly[0] == pid1) {
+                if (poly[1] == pid0 || poly[1] == pid1) {
+                  third = poly[2];
                 } else {
-                  third = triangles[tid][1];
+                  third = poly[1];
                 }
               } else {
-                third = triangles[tid][0];
+                third = poly[0];
               }
 
               CGAL_postcondition(third != pid0 && third != pid1);
               return third;
             };
 
-            const Point_3& ref_pt = points.at(get_third_point_id(inc_triangles[0]));
-            auto less = [&ref_pt, &points, pid0, pid1, get_third_point_id](TID tid1, TID tid2)
+            if (ninc == 3) {
+              // Two of these polygons must be from the bounding box (no associated facet ptr).
+              // The third is a real facet. We need to order them around the edge
+              // sucg that the sequence is H1 A H2 or H2 A H1 (CCW around pid0).
+              FID real_fid = -1;
+              boost::container::small_vector<FID, 2> hfids;
+              for (int k=0; k<3; ++k) {
+                if (polygon_to_facet[inc_polygons[k]]) {
+                  real_fid = inc_polygons[k];
+                } else {
+                  hfids.push_back(inc_polygons[k]);
+                }
+              }
+
+              CGAL_postcondition(real_fid != -1);
+              CGAL_postcondition(hfids.size() == 2);
+              CGAL_postcondition(real_fid != hfids[0] && real_fid != hfids[1]);
+
+              const Point_3& ref_pt = points[get_third_point_id(real_fid)];
+
+              bool h0_before_h1 = pred::sorted_around_edge<GeomTraits>(
+                                    points[pid0], points[pid1],
+                                    ref_pt,
+                                    points[get_third_point_id(hfids[0])],
+                                    points[get_third_point_id(hfids[1])]);
+
+              inc_polygons[0] = (h0_before_h1 ? hfids[1] : hfids[0]);
+              inc_polygons[1] = real_fid;
+              inc_polygons[2] = (h0_before_h1 ? hfids[0] : hfids[1]);
+            } else {
+              // in the case '4', we can apply an A-B-A-B pattern since we know the edge
+              // is incident to 4 faces issued from 2 planes.
+              std::array<FacetSPtr,4> fptrs;
+              for (std::size_t k=0; k<4; ++k) {
+                fptrs[k] = polygon_to_facet[inc_polygons[k]];
+                CGAL_assertion(fptrs[k] != FacetSPtr());
+              }
+
+              // Identify the two distinct facet pointers and group polygon ids by facet
+              FacetSPtr f0 = fptrs[0];
+              FacetSPtr f1 = nullptr;
+              boost::container::small_vector<FID, 2> group0, group1;
+              for (std::size_t k=0; k<4; ++k) {
+                if (fptrs[k] == f0) {
+                  group0.push_back(inc_polygons[k]);
+                } else {
+                  if (!f1) {
+                    f1 = fptrs[k];
+                  }
+                  CGAL_assertion(fptrs[k] == f1);
+                  group1.push_back(inc_polygons[k]);
+                }
+              }
+
+              CGAL_assertion(group0.size() == 2 && group1.size() == 2);
+
+              // Determine ordering around the edge so faces are CCW when looking from pid0.
+              // We pick an arbitrary face from group0 (A1) as reference and decide which
+              // of the two group1 polygons (B candidates) comes next in CCW order.
+              const Point_3& ref_pt = points[get_third_point_id(group0[0])];
+
+              bool b0_before_b1 = pred::sorted_around_edge<GeomTraits>(
+                                    points[pid0], points[pid1],
+                                    ref_pt,
+                                    points[get_third_point_id(group1[0])],
+                                    points[get_third_point_id(group1[1])]);
+
+              inc_polygons[0] = group0[0];
+              inc_polygons[1] = (b0_before_b1 ? group1[0] : group1[1]);
+              inc_polygons[2] = group0[1];
+              inc_polygons[3] = (b0_before_b1 ? group1[1] : group1[0]);
+            }
+          }
+        }
+      }
+#else
+      auto fill_edge_map = [](const std::vector<Point_3>& points,
+                              const std::vector<std::vector<PID> >& polygons,
+                              std::vector<CGAL::unordered_flat_map<PID, boost::container::small_vector<FID, 4> > >& edge_map)
+      {
+        CGAL_precondition(edge_map.size() == points.size());
+
+        // collect duplicated edges in polygons
+        auto add_edge = [&](PID a, PID b, FID fid)
+        {
+          if (b < a)
+            std::swap(a, b);
+
+          CGAL_SS3_TRANSF_TRACE_V(64, "collect edge: " << points[a] << " -- " << points[b] << " from polygon " << fid);
+
+          auto& m = edge_map[a];
+          auto [it, _] = m.try_emplace(b);
+          it->second.push_back(fid);
+        };
+
+        for (FID fid=0; fid<polygons.size(); ++fid) {
+          const auto& poly = polygons[fid];
+          const std::size_t s = poly.size();
+          for (std::size_t j=0; j+1<s; ++j) {
+            add_edge(poly[j], poly[j + 1], fid);
+          }
+          add_edge(poly[s-1], poly[0], fid);
+        }
+
+        for (std::size_t pid0=0; pid0<points.size(); ++pid0) {
+          for (auto& pid1_and_edges : edge_map[pid0]) {
+            const PID pid1 = pid1_and_edges.first;
+            CGAL_SS3_TRANSF_TRACE_V(64, "processing NM edge: " << points[pid0] << " -- " << points[pid1]);
+            CGAL_assertion(pid0 != pid1);
+
+            auto& inc_polygons = pid1_and_edges.second;
+            CGAL_assertion(inc_polygons.size() > 1);
+
+            if (inc_polygons.size() <= 2) { // edge is only incident to a single SS3 face
+              continue;
+            }
+
+            // the orientation of the edge might not match the orientation of the face
+            // note that we know that by construction, we have strictly convex faces
+            auto get_third_point_id = [&polygons, pid0, pid1](const FID fid) -> PID
             {
-              return pred::sorted_around_edge<GeomTraits>(points.at(pid0), points.at(pid1),
-                                                          ref_pt,
-                                                          points.at(get_third_point_id(tid1)),
-                                                          points.at(get_third_point_id(tid2)));
+              PID third;
+              const auto& poly = polygons[fid];
+              if (poly[0] == pid0 || poly[0] == pid1) {
+                if (poly[1] == pid0 || poly[1] == pid1) {
+                  third = poly[2];
+                } else {
+                  third = poly[1];
+                }
+              } else {
+                third = poly[0];
+              }
+
+              CGAL_postcondition(third != pid0 && third != pid1);
+              return third;
             };
 
-            std::sort(inc_triangles.begin()+1, inc_triangles.end(), less);
+            const Point_3& ref_pt = points[get_third_point_id(inc_polygons[0])];
+
+            auto less = [&ref_pt, &points, pid0, pid1, get_third_point_id](const FID fid1, const FID fid2)
+            {
+              return pred::sorted_around_edge<GeomTraits>(points[pid0], points[pid1],
+                                                          ref_pt,
+                                                          points[get_third_point_id(fid1)],
+                                                          points[get_third_point_id(fid2)]);
+            };
+
+            std::sort(inc_polygons.begin()+1, inc_polygons.end(), less);
 
             // std::cout << "Around edge [" << pid0 << " " << pid1 << "], faces are sorted: ";
-            // for(TID tid : inc_triangles)
-            //   std::cout << " " << tid;
+            // for(FID fid : inc_polygons) {
+            //   std::cout << " " << fid;
+            // }
             // std::cout << std::endl;
           }
         }
       }; // lambda 'fill_edge_map'
 
-      std::vector<std::unordered_map<PID, std::vector<TID> > > edge_map(points.size());
-      fill_edge_map(points, triangles, edge_map);
+      fill_edge_map(points, polygons, edge_map);
+#endif
 
-      auto build_volume_CC = [](const TID seed_tid,
+      CGAL_SS3_TRANSF_TRACE_V(16, "edge map size: " << edge_map.size());
+
+      for (PID pid0=0; pid0<static_cast<PID>(edge_map.size()); ++pid0) {
+        for (const auto& pid1_and_edges : edge_map[pid0]) {
+          const auto& inc_polygons = pid1_and_edges.second;
+          std::cout << pid0 << " " << pid1_and_edges.first;
+          for (const auto& fid : inc_polygons)
+            std::cout << " " << fid;
+          std::cout << std::endl;
+        }
+      }
+
+      auto build_volume_CC = [](const FID seed_fid,
                                 const VID CC_ID,
                                 const bool start_from_inverted_face,
                                 const std::vector<Point_3>& points,
-                                const std::vector<std::vector<PID> >& triangles,
+                                const std::vector<std::vector<PID> >& polygons,
                                 const auto& edge_map,
                                 auto& volume_CCs,
                                 auto& face_volume_IDs)
       {
-        CGAL_SS3_TRANSF_TRACE_V(64, "Building volume #" << CC_ID << " from seed face " << seed_tid);
+        CGAL_SS3_TRANSF_TRACE_V(64, "Building volume #" << CC_ID << " from seed face " << seed_fid);
 
         volume_CCs.emplace_back();
 
-        std::stack<std::pair<TID, bool> > to_visit;
-        to_visit.emplace(seed_tid, start_from_inverted_face);
+        std::stack<std::pair<FID, bool> > to_visit;
+        to_visit.emplace(seed_fid, start_from_inverted_face);
 
         while (!to_visit.empty())
         {
-          TID current_tid;
+          FID current_fid;
           bool invert_face;
-          std::tie(current_tid, invert_face) = to_visit.top();
+          std::tie(current_fid, invert_face) = to_visit.top();
           to_visit.pop();
 
-          CGAL_SS3_TRANSF_TRACE_V(64,
-            "At face " << current_tid << " [" << triangles[current_tid][0]
-                                      << ", " << triangles[current_tid][1]
-                                      << ", " << triangles[current_tid][2] << "]");
+          CGAL_SS3_TRANSF_TRACE_V(64, "At face " << current_fid);
           CGAL_SS3_TRANSF_TRACE_V(64, "  invert: " << invert_face);
-          CGAL_SS3_TRANSF_TRACE_V(64, "  VIDS: " << face_volume_IDs[current_tid][0] << " " << face_volume_IDs[current_tid][1]);
+          CGAL_SS3_TRANSF_TRACE_V(64, "  VIDS: " << face_volume_IDs[current_fid][0] << " " << face_volume_IDs[current_fid][1]);
 
           std::size_t pos = invert_face ? 0 : 1;
-          if (face_volume_IDs[current_tid][pos] == CC_ID) {
+          if (face_volume_IDs[current_fid][pos] == CC_ID) {
             // already visited this facet during the flooding of this volume's boundary
             continue;
           }
 
-          CGAL_assertion(face_volume_IDs[current_tid][pos] == VID(-1)); // triangle should only be encountered once
-          CGAL_warning(face_volume_IDs[current_tid][(pos+1)%2] != CC_ID); // Moebius shenanigans should be an instance of a bug
+          CGAL_assertion(face_volume_IDs[current_fid][pos] == VID(-1)); // polygon should only be encountered once
+          CGAL_warning(face_volume_IDs[current_fid][(pos+1)%2] != CC_ID); // Moebius shenanigans should be an instance of a bug
 
-          volume_CCs.back().push_back(current_tid);
+          volume_CCs.back().push_back(current_fid);
 
           // mark face as visited
-          face_volume_IDs[current_tid][pos] = CC_ID;
+          face_volume_IDs[current_fid][pos] = CC_ID;
 
           // flood through the edges
-          for (int j=0; j<3; ++j) {
-            std::pair<PID, PID> e_pids = CGAL::make_sorted_pair(triangles[current_tid][j],
-                                                                triangles[current_tid][(j+1)%3]);
-            const std::vector<TID>& inc_triangles = edge_map.at(e_pids.first).at(e_pids.second);
-            CGAL_assertion(!inc_triangles.empty());
+          const std::size_t s = polygons[current_fid].size();
+          for (std::size_t j=0; j<s; ++j) {
+            PID e_pid0 = polygons[current_fid][j];
+            PID e_pid1 = polygons[current_fid][(j+1)%s];
+            if (e_pid1 < e_pid0)
+              std::swap(e_pid0, e_pid1);
+
+            std::pair<PID, PID> e_pids(e_pid0, e_pid1);
+            const auto& inc_polygons = edge_map.at(e_pids.first).at(e_pids.second);
+            CGAL_assertion(!inc_polygons.empty());
 
             CGAL_SS3_TRANSF_TRACE_V(64, "  ~~ Crossing edge [" << e_pids.first << ", " << e_pids.second << "]");
             CGAL_SS3_TRANSF_TRACE_V(64, "    pos: " << points[e_pids.first] << " " << points[e_pids.second]);
 
             // The faces are ordered CCW while looking from pid0.
             // So the walking while looking from [j] depends on whether [j] is pid0 or not
-            int iter_direction = (e_pids.first == triangles[current_tid][j]) ? 1 : -1;
+            int iter_direction = (e_pids.first == polygons[current_fid][j]) ? 1 : -1;
             CGAL_SS3_TRANSF_TRACE_V(64, "    iter_direction = " << iter_direction);
 
             // and it also depends on whether we are walking above or below the face
             iter_direction *= invert_face ? 1 : -1;
             CGAL_SS3_TRANSF_TRACE_V(64, "    invert_face = " << invert_face);
 
-            TID next_tid = current_tid;
+            FID next_fid = current_fid;
             for (;;) {
-              if (inc_triangles.size() == 1) {
-                CGAL_SS3_TRANSF_TRACE_V(1, "Warning: dangling triangle...");
-                CGAL_SS3_TRANSF_TRACE_V(1, "    over the edge, the triangle is ITSELF " << current_tid << " [" << triangles[next_tid][0] << ", " << triangles[next_tid][1] << ", " << triangles[next_tid][2] << "]");
-                to_visit.emplace(current_tid, !invert_face);
+              if (inc_polygons.size() == 1) {
+                CGAL_SS3_TRANSF_TRACE_V(1, "Warning: dangling polygon...");
+                CGAL_SS3_TRANSF_TRACE_V(1, "    over the edge, the polygon is ITSELF " << current_fid);
+                to_visit.emplace(current_fid, !invert_face);
                 break;
-              } else if (inc_triangles.size() == 2) {
+              } else if (inc_polygons.size() == 2) {
                 // we should only be there once, meaning if we do not ignore orientations,
                 // then the faces MUST be compatible
-                CGAL_assertion(next_tid == current_tid);
+                CGAL_assertion(next_fid == current_fid);
 
-                next_tid = (inc_triangles[0] == current_tid) ? inc_triangles[1] : inc_triangles[0];
-                CGAL_SS3_TRANSF_TRACE_V(64, "    over the edge, the triangle is TRIVIALLY " << next_tid << " [" << triangles[next_tid][0] << ", " << triangles[next_tid][1] << ", " << triangles[next_tid][2] << "]");
-                CGAL_SS3_TRANSF_TRACE_V(64, "  VIDS " << face_volume_IDs[next_tid][0] << " " << face_volume_IDs[next_tid][1]);
-                CGAL_assertion(next_tid != current_tid);
+                next_fid = (inc_polygons[0] == current_fid) ? inc_polygons[1] : inc_polygons[0];
+                CGAL_SS3_TRANSF_TRACE_V(64, "    over the edge, the polygon is TRIVIALLY " << next_fid);
+                CGAL_SS3_TRANSF_TRACE_V(64, "  VIDS " << face_volume_IDs[next_fid][0] << " " << face_volume_IDs[next_fid][1]);
+                CGAL_assertion(next_fid != current_fid);
               } else {
                 // tricky part, now
-                auto tid_it = std::find(std::begin(inc_triangles), std::end(inc_triangles), next_tid /*updates on every iteration*/);
-                CGAL_assertion(tid_it != inc_triangles.end());
+                auto fid_it = std::find(std::begin(inc_polygons), std::end(inc_polygons), next_fid /*updates on every iteration*/);
+                CGAL_assertion(fid_it != inc_polygons.end());
 
                 if (iter_direction == 1) { // CCW
                   CGAL_SS3_TRANSF_TRACE_V(64, "    CCW walk");
-                  auto next_it = std::next(tid_it);
-                  next_tid = (next_it == inc_triangles.end()) ? inc_triangles[0] : *next_it;
+                  auto next_it = std::next(fid_it);
+                  next_fid = (next_it == inc_polygons.end()) ? inc_polygons[0] : *next_it;
                 } else { // CW
                   CGAL_SS3_TRANSF_TRACE_V(64, "    CW walk");
-                  next_tid = (tid_it == inc_triangles.begin()) ? inc_triangles.back() : *(std::prev(tid_it));
+                  next_fid = (fid_it == inc_polygons.begin()) ? inc_polygons.back() : *(std::prev(fid_it));
                 }
 
-                CGAL_SS3_TRANSF_TRACE_V(64, "    over the edge, the triangle is " << next_tid << " [" << triangles[next_tid][0] << ", " << triangles[next_tid][1] << ", " << triangles[next_tid][2] << "]");
-                CGAL_SS3_TRANSF_TRACE_V(64, "  VIDS " << face_volume_IDs[next_tid][0] << " " << face_volume_IDs[next_tid][1]);
-                CGAL_assertion(next_tid != current_tid);
+                CGAL_SS3_TRANSF_TRACE_V(64, "    over the edge, the polygon is " << next_fid);
+                CGAL_SS3_TRANSF_TRACE_V(64, "  VIDS " << face_volume_IDs[next_fid][0] << " " << face_volume_IDs[next_fid][1]);
+                CGAL_assertion(next_fid != current_fid);
               }
 
               // If the edge has the same direction in both faces (aka, the orientation changes),
               // then we have to flip the direction of turning around the edge)
-              const auto j_it = std::find(std::begin(triangles[next_tid]),
-                                          std::end(triangles[next_tid]),
-                                          triangles[current_tid][j]);
-              CGAL_assertion(j_it != std::end(triangles[next_tid]));
-              const std::size_t pos = std::distance(std::begin(triangles[next_tid]), j_it);
-              CGAL_assertion(triangles[next_tid][pos] == triangles[current_tid][j]);
+              const auto j_it = std::find(std::begin(polygons[next_fid]),
+                                          std::end(polygons[next_fid]),
+                                          polygons[current_fid][j]);
+              CGAL_assertion(j_it != std::end(polygons[next_fid]));
+              const std::size_t pos = std::distance(std::begin(polygons[next_fid]), j_it);
+              CGAL_assertion(polygons[next_fid][pos] == polygons[current_fid][j]);
 
-              const bool flip_side = (triangles[next_tid][(pos+1)%3] == triangles[current_tid][(j+1)%3]);
-              CGAL_SS3_TRANSF_TRACE_V(64, "    flipping? " << flip_side << " (N: " << triangles[next_tid][(pos+1)%3] << " C: " << triangles[current_tid][(j+1)%3] << ")");
+              const std::size_t next_s = polygons[next_fid].size();
+              const bool flip_side = (polygons[next_fid][(pos+1)%next_s] == polygons[current_fid][(j+1)%s]);
+              CGAL_SS3_TRANSF_TRACE_V(64, "    flipping? " << flip_side << " (N: " << polygons[next_fid][(pos+1)%next_s] << " C: " << polygons[current_fid][(j+1)%s] << ")");
 
-              CGAL_SS3_TRANSF_TRACE_V(64, "Final TID = " << next_tid);
+              CGAL_SS3_TRANSF_TRACE_V(64, "Final FID = " << next_fid);
               if (flip_side) {
-                to_visit.emplace(next_tid, !invert_face);
+                to_visit.emplace(next_fid, !invert_face);
               } else {
-                to_visit.emplace(next_tid, invert_face);
+                to_visit.emplace(next_fid, invert_face);
               }
 
               break;
@@ -3643,40 +4010,40 @@ public:
         }
       }; // lambda 'build_volume_CC'
 
-      CGAL_SS3_TRANSF_TRACE_V(1, "building volumes...");
+      CGAL_SS3_TRANSF_TRACE_V(16, "building volumes...");
 
       // identify volumes in the arrangement, and tag faces of the volumes
       // that are incident to the base face(s)
-      std::vector<std::vector<TID> > volume_CCs; // range of ranges (volumes) of triangle IDs
-      std::vector<std::array<VID, 2> > face_volume_IDs(triangles.size(),
+      std::vector<std::vector<FID> > volume_CCs; // range of ranges (volumes) of polygon IDs
+      std::vector<std::array<VID, 2> > face_volume_IDs(polygons.size(),
                                                        // [0] is down, [1] is up
                                                        std::array<VID, 2>{VID(-1), VID(-1)});
 
       VID vid = 0;
-      for(std::size_t i=0; i<triangles.size(); ++i) {
+      for(std::size_t i=0; i<polygons.size(); ++i) {
         // do not start from bbox faces: we will visit them anyway
-        if (!triangle_to_facet[i])
+        if (!polygon_to_facet[i])
           continue;
         if (face_volume_IDs[i][0] == VID(-1))
-          build_volume_CC(i, vid++, true, points, triangles, edge_map, volume_CCs, face_volume_IDs);
+          build_volume_CC(i, vid++, true /*up*/, points, polygons, edge_map, volume_CCs, face_volume_IDs);
         if (face_volume_IDs[i][1] == VID(-1))
-          build_volume_CC(i, vid++, false, points, triangles, edge_map, volume_CCs, face_volume_IDs);
+          build_volume_CC(i, vid++, false /*down*/, points, polygons, edge_map, volume_CCs, face_volume_IDs);
       }
 
-      CGAL_SS3_TRANSF_TRACE_V(1, volume_CCs.size() << " volume CCs");
+      CGAL_SS3_TRANSF_TRACE_V(16, volume_CCs.size() << " volume CCs");
 
       for (std::size_t i=0; i<volume_CCs.size(); ++i) {
         // build a mesh from the soup
         std::vector<Point_3> cc_points = points;
-        std::vector<std::vector<PID> > cc_triangles;
-        for (TID tid : volume_CCs[i]) {
-          cc_triangles.push_back(triangles[tid]);
+        std::vector<std::vector<PID> > cc_polygons;
+        for (FID fid : volume_CCs[i]) {
+          cc_polygons.push_back(polygons[fid]);
         }
 
 #ifdef CGAL_SS3_DUMP_FILES
         std::ostringstream oss;
         oss << "results/volume_cc_" << i << ".off";
-        CGAL::IO::write_OFF(oss.str(), cc_points, cc_triangles, CGAL::parameters::stream_precision(17));
+        CGAL::IO::write_OFF(oss.str(), cc_points, cc_polygons, CGAL::parameters::stream_precision(17));
 #endif
       }
 
@@ -3693,8 +4060,8 @@ public:
       // Classify some trivial CCs:
       // - if every non-bbox face points outwards, the CC is necessarily in
       // - if every non-bbox face points inwards, the CC is necessarily out
-      for(std::size_t i=0; i<triangles.size(); ++i) {
-        if (!triangle_to_facet[i])
+      for(std::size_t i=0; i<polygons.size(); ++i) {
+        if (!polygon_to_facet[i])
           continue;
 
         // bottom
@@ -3734,7 +4101,7 @@ public:
           {{CC_in_out_flag::INSIDE, "INSIDE"}, {CC_in_out_flag::OUTSIDE, "OUTSIDE"}};
         for (auto e : dumps) {
           std::vector<Point_3> cc_points = points;
-          std::vector<std::vector<PID> > cc_triangles;
+          std::vector<std::vector<PID> > cc_polygons;
 
           for (std::size_t i=0; i<volume_CCs.size(); ++i) {
             CGAL_assertion(e.first != CC_in_out_flag::TBD);
@@ -3743,15 +4110,15 @@ public:
             if (in_out_flags[i] != e.first)
               continue;
 
-            for (TID tid : volume_CCs[i])
-              cc_triangles.push_back(triangles[tid]);
+            for (FID fid : volume_CCs[i])
+              cc_polygons.push_back(polygons[fid]);
 
             std::ostringstream oss;
             oss << "results/volumes_" << e.second << "_base.off";
-            CGAL::IO::write_OFF(oss.str(), cc_points, cc_triangles, CGAL::parameters::stream_precision(17));
+            CGAL::IO::write_OFF(oss.str(), cc_points, cc_polygons, CGAL::parameters::stream_precision(17));
             std::ostringstream oss_n;
             oss_n << "results/volumes_" << e.second << "_base_normalized.off";
-            CGAL::IO::write_OFF(oss_n.str(), normalized_points, cc_triangles, CGAL::parameters::stream_precision(17));
+            CGAL::IO::write_OFF(oss_n.str(), normalized_points, cc_polygons, CGAL::parameters::stream_precision(17));
           }
         }
       }
@@ -3773,11 +4140,12 @@ public:
       // we know the cell above is OUTSIDE and the cell beneath is INSIDE
 
       // We need to have the border incident edges for any type of boundary point
-      std::unordered_map<PID, std::unordered_map<PID, std::vector<TID> > > symmetrical_border_edge_map;
-      for (TID ti=0; ti<triangles.size(); ++ti) {
-        for (std::size_t j=0; j<3; ++j) {
-          const PID pid0 = triangles[ti][j];
-          const PID pid1 = triangles[ti][(j+1)%3];
+      CGAL::unordered_flat_map<PID, CGAL::unordered_flat_map<PID, std::vector<FID> > > symmetrical_border_edge_map;
+      for (FID fid=0; fid<polygons.size(); ++fid) {
+        const std::size_t s = polygons[fid].size();
+        for (std::size_t j=0; j<s; ++j) {
+          const PID pid0 = polygons[fid][j];
+          const PID pid1 = polygons[fid][(j+1)%s];
           if (!is_boundary_point[pid0] || !is_boundary_point[pid1]) {
             continue;
           }
@@ -3786,8 +4154,8 @@ public:
           if (m.x() == bbox.xmin() || m.x() == bbox.xmax() ||
               m.y() == bbox.ymin() || m.y() == bbox.ymax() ||
               m.z() == bbox.zmin() || m.z() == bbox.zmax()) {
-            symmetrical_border_edge_map[pid0][pid1].push_back(ti);
-            symmetrical_border_edge_map[pid1][pid0].push_back(ti);
+            symmetrical_border_edge_map[pid0][pid1].push_back(fid);
+            symmetrical_border_edge_map[pid1][pid0].push_back(fid);
           }
         }
       }
@@ -3795,20 +4163,24 @@ public:
       // Helper to mark cell directly above and below a facet incident to an edge
       auto mark_cells = [&](const PID ipid0, const PID ipid1, const FacetSPtr& current_facet)
       {
-        const auto [pid0, pid1] = CGAL::make_sorted_pair(ipid0, ipid1);
+        PID pid0 = ipid0;
+        PID pid1 = ipid1;
+        if (pid1 < pid0)
+          std::swap(pid0, pid1);
+
         const auto edge_it = symmetrical_border_edge_map.find(pid0);
         CGAL_assertion(edge_it != symmetrical_border_edge_map.end());
         const auto pid1_it = edge_it->second.find(pid1);
         CGAL_assertion(pid1_it != edge_it->second.end());
 
-        const auto& tids = pid1_it->second;
-        for (TID tid : tids) {
-          if (triangle_to_facet[tid] != current_facet) {
+        const auto& fids = pid1_it->second;
+        for (FID fid : fids) {
+          if (polygon_to_facet[fid] != current_facet) {
             continue;
           }
 
-          in_out_flags[face_volume_IDs[tid][1]] = CC_in_out_flag::OUTSIDE;
-          in_out_flags[face_volume_IDs[tid][0]] = CC_in_out_flag::INSIDE;
+          in_out_flags[face_volume_IDs[fid][1]] = CC_in_out_flag::OUTSIDE;
+          in_out_flags[face_volume_IDs[fid][0]] = CC_in_out_flag::INSIDE;
 
           return;
         }
@@ -3826,12 +4198,12 @@ public:
         auto edge_it = symmetrical_border_edge_map.find(current_pid);
         CGAL_assertion(edge_it != symmetrical_border_edge_map.end());
 
-        for (const auto& [other_pid, tids] : edge_it->second) {
+        for (const auto& [other_pid, fids] : edge_it->second) {
           CGAL_assertion(is_boundary_point[current_pid] && is_boundary_point[other_pid]);
 
           bool on_current_facet = false;
-          for (TID tid : tids) {
-            if (triangle_to_facet[tid] == current_facet) {
+          for (FID fid : fids) {
+            if (polygon_to_facet[fid] == current_facet) {
               on_current_facet = true;
               break;
             }
@@ -3919,9 +4291,9 @@ public:
         CGAL_SS3_TRANSF_TRACE_V(64, "compute start of " << prev_facet->id() << " " << facet->id());
 
         for (PID pid0 = 0; pid0 < points.size(); ++pid0) {
-          for (const auto& [pid1, tids] : edge_map[pid0]) {
+          for (const auto& [pid1, fids] : edge_map[pid0]) {
             // The edge should be incident to only these two planes.
-            if (tids.size() != 4)
+            if (fids.size() != 4)
               continue;
 
             // The edge should have one point on the boundary, one point inside.
@@ -3931,8 +4303,8 @@ public:
             }
 
             std::set<FacetSPtr> incident_faces;
-            for (TID tid : tids)
-              incident_faces.insert(triangle_to_facet[tid]);
+            for (FID fid : fids)
+              incident_faces.insert(polygon_to_facet[fid]);
             CGAL_assertion(incident_faces.size() == 2);
 
             if (!incident_faces.count(prev_facet) || !incident_faces.count(facet)) {
@@ -3944,15 +4316,9 @@ public:
             PID test_spid1 = flip ? pid0 : pid1;
             CGAL_assertion(is_boundary_point[test_spid1]);
 
-            CGAL_SS3_TRANSF_TRACE_V(64, "flip? " << flip);
-            CGAL_SS3_TRANSF_TRACE_V(64, "candidate 0 " << normalized_points[test_spid0]);
-            CGAL_SS3_TRANSF_TRACE_V(64, "candidate 1 " << normalized_points[test_spid1]);
-
             Vector_3 new_v { points[test_spid0], points[test_spid1] };
-            CGAL_SS3_TRANSF_TRACE_V(64, "sp = " << CGAL::scalar_product(orig_v, new_v));
 
             if (CGAL::scalar_product(orig_v, new_v) >= 0) {
-              CGAL_SS3_TRANSF_TRACE_V(64, "start is " << normalized_points[test_spid1]);
               return test_spid1;
             }
           }
@@ -3983,7 +4349,6 @@ public:
 
         PID current_pid = edge_start_pid[edge];
         CGAL_assertion(current_pid != PID(-1));
-        CGAL_SS3_TRANSF_TRACE_V(64, "Start at " << current_pid << " pos: " << normalized_points[current_pid]);
 
         // Now walk the star link on arrangement edges
 
@@ -3999,8 +4364,6 @@ public:
 #ifdef CGAL_SS3_DUMP_FILES
           link_out << "2 " << normalized_points[current_pid] << " " << normalized_points[next_pid] << "\n";
 #endif
-          CGAL_SS3_TRANSF_TRACE_V(64, "now at " << next_pid << " pos: " << normalized_points[next_pid]);
-
           mark_cells(current_pid, next_pid, facet);
 
           prev_pid = current_pid;
@@ -4041,31 +4404,31 @@ public:
           {{CC_in_out_flag::INSIDE, "INSIDE"}, {CC_in_out_flag::OUTSIDE, "OUTSIDE"}};
         for (auto e : dumps) {
           std::vector<Point_3> cc_points = points;
-          std::vector<std::vector<PID> > cc_triangles;
+          std::vector<std::vector<PID> > cc_polygons;
 
           for (std::size_t i=0; i<volume_CCs.size(); ++i) {
             if (in_out_flags[i] != e.first)
               continue;
 
-            for (TID tid : volume_CCs[i])
-              cc_triangles.push_back(triangles[tid]);
+            for (FID fid : volume_CCs[i])
+              cc_polygons.push_back(polygons[fid]);
 
             std::ostringstream oss;
             oss << "results/volumes_" << e.second << "_intermediate.off";
-            CGAL::IO::write_OFF(oss.str(), cc_points, cc_triangles, CGAL::parameters::stream_precision(17));
+            CGAL::IO::write_OFF(oss.str(), cc_points, cc_polygons, CGAL::parameters::stream_precision(17));
 
             std::ostringstream oss_n;
             oss_n << "results/volumes_" << e.second << "_intermediate_normalized.off";
-            CGAL::IO::write_OFF(oss_n.str(), normalized_points, cc_triangles, CGAL::parameters::stream_precision(17));
+            CGAL::IO::write_OFF(oss_n.str(), normalized_points, cc_polygons, CGAL::parameters::stream_precision(17));
           }
         }
 
         // dump boundary facets
         {
-          CGAL::unordered_flat_map<std::size_t, std::vector<std::vector<std::size_t> > > id_to_triangles;
+          CGAL::unordered_flat_map<std::size_t, std::vector<std::vector<std::size_t> > > id_to_polygons;
 
-          for (std::size_t i=0; i<triangles.size(); ++i) {
-            FacetSPtr fsptr = triangle_to_facet[i];
+          for (std::size_t i=0; i<polygons.size(); ++i) {
+            FacetSPtr fsptr = polygon_to_facet[i];
             if (!fsptr)
               continue;
 
@@ -4075,11 +4438,11 @@ public:
 
             if (in_out_flags[top_vid] == CC_in_out_flag::OUTSIDE && in_out_flags[bot_vid] == CC_in_out_flag::INSIDE) {
               CGAL_SS3_TRANSF_TRACE_V(64, "Boundary facet " << i << " with top/bottom volumes " << top_vid << "/" << bot_vid);
-              id_to_triangles[fsptr->id()].push_back(triangles[i]);
+              id_to_polygons[fsptr->id()].push_back(polygons[i]);
             }
           }
 
-          for (const auto& kv : id_to_triangles) {
+          for (const auto& kv : id_to_polygons) {
             std::ostringstream oss;
             oss << "results/intermediate_boundary_facet_" << kv.first << ".off";
             CGAL::IO::write_OFF(oss.str(), points, kv.second, CGAL::parameters::stream_precision(17));
@@ -4088,15 +4451,15 @@ public:
             CGAL::IO::write_OFF(oss_n.str(), normalized_points, kv.second, CGAL::parameters::stream_precision(17));
           }
 
-          CGAL_assertion(id_to_triangles.size() == vertex->degree());
+          CGAL_assertion(id_to_polygons.size() == vertex->degree());
         }
       }
 #endif
 
       // Sanity checks:
       // - a boundary facet cannot have an OUTSIDE volume on its bottom and an INSIDE volume on its top
-      for (std::size_t i=0; i<triangles.size(); ++i) {
-        if (!triangle_to_facet[i])
+      for (std::size_t i=0; i<polygons.size(); ++i) {
+        if (!polygon_to_facet[i])
           continue;
 
         CGAL_assertion(face_volume_IDs[i][0] != VID(-1));
@@ -4154,8 +4517,8 @@ public:
       // on its negative side, and the 'OUTSIDE' marker on its positive side.
       // In model terms, this is:
       //   x[pos] => x[neg]. (if above is true, below is true)
-      for(std::size_t i=0; i<triangles.size(); ++i) {
-        if (!triangle_to_facet[i])
+      for(std::size_t i=0; i<polygons.size(); ++i) {
+        if (!polygon_to_facet[i])
           continue;
 
         CGAL_assertion(face_volume_IDs[i][0] != VID(-1));
@@ -4166,35 +4529,37 @@ public:
       // @speed could use hints using intersection of volumes?
 
       // Variables for the facets
-      std::vector<BoolVar> b(triangles.size());
+      std::vector<BoolVar> b(polygons.size());
       unsigned int b_unknowns = 0;
-      for (std::size_t tid=0; tid<triangles.size(); ++tid) {
-        b[tid] = model.NewBoolVar();
-        const VID bot_vid = face_volume_IDs[tid][0];
-        const VID top_vid = face_volume_IDs[tid][1];
+      for (std::size_t fid=0; fid<polygons.size(); ++fid) {
+        b[fid] = model.NewBoolVar();
+        const VID bot_vid = face_volume_IDs[fid][0];
+        const VID top_vid = face_volume_IDs[fid][1];
 
         if (bot_vid == VID(-1) || top_vid == VID(-1)) {
-          model.FixVariable(b[tid], false);
+          model.FixVariable(b[fid], false);
         } else if (in_out_flags[bot_vid] == CC_in_out_flag::INSIDE && in_out_flags[top_vid] == CC_in_out_flag::OUTSIDE) {
-          model.FixVariable(b[tid], true);
+          model.FixVariable(b[fid], true);
         } else { // @todo we can fix the facet that have incident fixed cells
           // A facet is on the boundary if and only if its two incident volumes are different
-          model.AddNotEqual(x[bot_vid], x[top_vid]).OnlyEnforceIf(b[tid]);
-          model.AddEquality(x[bot_vid], x[top_vid]).OnlyEnforceIf(b[tid].Not());
+          model.AddNotEqual(x[bot_vid], x[top_vid]).OnlyEnforceIf(b[fid]);
+          model.AddEquality(x[bot_vid], x[top_vid]).OnlyEnforceIf(b[fid].Not());
           ++b_unknowns;
         }
       }
 
-      CGAL_SS3_TRANSF_TRACE_V(16, "Face unknowns: " << b_unknowns << " / " << triangles.size());
+      CGAL_SS3_TRANSF_TRACE_V(16, "Face unknowns: " << b_unknowns << " / " << polygons.size());
 
       // =====================================================================
       //  CONSTRAINT — Global Euler characteristic (V_b − E_b + F_b = 1)
       // =====================================================================
 
-      std::unordered_map<PID, std::unordered_set<TID> > vertex_incident_facets;
-      for (TID ti=0; ti<triangles.size(); ++ti) {
-        for (int j=0; j<3; ++j)
-          vertex_incident_facets[triangles[ti][j]].insert(ti);
+      CGAL::unordered_flat_map<PID, std::unordered_set<FID> > vertex_incident_facets;
+      for (FID fid=0; fid<polygons.size(); ++fid) {
+        const std::size_t s = polygons[fid].size();
+        for (int j=0; j<s; ++j) {
+          vertex_incident_facets[polygons[fid][j]].insert(fid);
+        }
       }
 
       // F_b
@@ -4207,12 +4572,12 @@ public:
       for (std::size_t pid0=0; pid0<points.size(); ++pid0) {
         for (auto& pid1_and_edges : edge_map[pid0]) {
           e_b.push_back(model.NewBoolVar());
-          std::vector<TID>& inc_triangles = pid1_and_edges.second;
-          CGAL_assertion(!inc_triangles.empty());
+          auto& inc_polygons = pid1_and_edges.second;
+          CGAL_assertion(!inc_polygons.empty());
           std::vector<IntVar> inc;
-          inc.reserve(inc_triangles.size());
-          for (TID tid : inc_triangles)
-            inc.emplace_back(b[tid]);
+          inc.reserve(inc_polygons.size());
+          for (FID fid : inc_polygons)
+            inc.emplace_back(b[fid]);
           model.AddMaxEquality(e_b.back(), inc);
         }
       }
@@ -4222,12 +4587,12 @@ public:
       std::vector<BoolVar> v_b(points.size());
       for (int v=0; v<points.size(); ++v) {
         v_b[v] = model.NewBoolVar();
-        std::unordered_set<TID>& inc_triangles = vertex_incident_facets[v];
-        CGAL_assertion(!inc_triangles.empty());
+        std::unordered_set<FID>& inc_polygons = vertex_incident_facets[v];
+        CGAL_assertion(!inc_polygons.empty());
         std::vector<IntVar> inc;
-        inc.reserve(inc_triangles.size());
-        for (TID tid : vertex_incident_facets[v])
-          inc.emplace_back(b[tid]);
+        inc.reserve(inc_polygons.size());
+        for (FID fid : vertex_incident_facets[v])
+          inc.emplace_back(b[fid]);
         model.AddMaxEquality(v_b[v], inc);
       }
       LinearExpr V_b = LinearExpr::Sum(v_b);
@@ -4241,9 +4606,9 @@ public:
       for (FacetWPtr wf : vertex->facets()) {
         if (FacetSPtr f = wf.lock()) {
           std::vector<BoolVar> b_c;
-          for (TID tid=0; tid<triangles.size(); ++tid) {
-            if (triangle_to_facet[tid] == f)
-              b_c.push_back(b[tid]);
+          for (FID fid=0; fid<polygons.size(); ++fid) {
+            if (polygon_to_facet[fid] == f)
+              b_c.push_back(b[fid]);
           }
           CGAL_assertion(!b_c.empty());
 
@@ -4255,11 +4620,11 @@ public:
 
           for (std::size_t pid0=0; pid0<points.size(); ++pid0) {
             for (auto& pid1_and_edges : edge_map[pid0]) {
-              std::vector<TID>& inc_triangles = pid1_and_edges.second;
+              auto& inc_polygons = pid1_and_edges.second;
               std::vector<IntVar> inc;
-              for (TID tid : inc_triangles) {
-                if (triangle_to_facet[tid] == f)
-                  inc.emplace_back(b[tid]);
+              for (FID fid : inc_polygons) {
+                if (polygon_to_facet[fid] == f)
+                  inc.emplace_back(b[fid]);
               }
               if (inc.empty())
                 continue;
@@ -4277,10 +4642,10 @@ public:
 
           for (int v=0; v<points.size(); ++v) {
             std::vector<IntVar> inc;
-            std::unordered_set<TID>& inc_triangles = vertex_incident_facets[v];
-            for (TID tid : inc_triangles) {
-              if (triangle_to_facet[tid] == f)
-                inc.emplace_back(b[tid]);
+            std::unordered_set<FID>& inc_polygons = vertex_incident_facets[v];
+            for (FID fid : inc_polygons) {
+              if (polygon_to_facet[fid] == f)
+                inc.emplace_back(b[fid]);
             }
             if (inc.empty())
               continue;
@@ -4302,11 +4667,11 @@ public:
       // @todo we can ignore entirely-boundary edges (pid0/pid1 on boundary **AND** midpoint not on bbox)
 
       for (std::size_t pid0=0; pid0<points.size(); ++pid0) {
-        for (auto& pid1_and_edges : edge_map[pid0]) {
+        for (const auto& pid1_and_edges : edge_map[pid0]) {
           LinearExpr inc_n = 0;
-          std::vector<TID>& inc_triangles = pid1_and_edges.second;
-          for (TID tid : inc_triangles)
-            inc_n += b[tid];
+          const auto& inc_polygons = pid1_and_edges.second;
+          for (FID fid : inc_polygons)
+            inc_n += b[fid];
           model.AddLessOrEqual(inc_n, 2);
         }
       }
@@ -4319,12 +4684,12 @@ public:
       for (FacetWPtr wf : vertex->facets()) {
         if (FacetSPtr f = wf.lock()) {
           for (std::size_t pid0=0; pid0<points.size(); ++pid0) {
-            for (auto& pid1_and_edges : edge_map[pid0]) {
+            for (const auto& pid1_and_edges : edge_map[pid0]) {
               LinearExpr inc_n = 0;
-              std::vector<TID>& inc_triangles = pid1_and_edges.second;
-              for (TID tid : inc_triangles) {
-                if (triangle_to_facet[tid] == f)
-                  inc_n += b[tid];
+              const auto& inc_polygons = pid1_and_edges.second;
+              for (FID fid : inc_polygons) {
+                if (polygon_to_facet[fid] == f)
+                  inc_n += b[fid];
               }
               model.AddLessOrEqual(inc_n, 2);
             }
@@ -4351,37 +4716,37 @@ public:
 # if 0 // Flow-based
       for (FacetWPtr wf : vertex->facets()) {
         if (FacetSPtr f = wf.lock()) {
-          std::vector<TID> tids_of_f;
-          for (TID tid = 0; tid < triangles.size(); ++tid) {
-            if (triangle_to_facet[tid] == f)
-              tids_of_f.push_back(tid);
+          std::vector<FID> fids_of_f;
+          for (FID fid = 0; fid < polygons.size(); ++fid) {
+            if (polygon_to_facet[fid] == f)
+              fids_of_f.push_back(fid);
           }
-          CGAL_assertion(!tids_of_f.empty());
+          CGAL_assertion(!fids_of_f.empty());
 
-          const int max_flow = static_cast<int>(tids_of_f.size());
+          const int max_flow = static_cast<int>(fids_of_f.size());
 
           // set the fixed root
-          TID root_tid = TID(-1);
-          for (TID tid : tids_of_f) {
-            const VID bot = face_volume_IDs[tid][0];
-            const VID top = face_volume_IDs[tid][1];
+          FID root_fid = FID(-1);
+          for (FID fid : fids_of_f) {
+            const VID bot = face_volume_IDs[fid][0];
+            const VID top = face_volume_IDs[fid][1];
             if (in_out_flags[bot] == CC_in_out_flag::INSIDE &&
                 in_out_flags[top] == CC_in_out_flag::OUTSIDE) {
-              root_tid = tid;
+              root_fid = fid;
               break;
             }
           }
-          CGAL_SS3_TRANSF_TRACE_V(32, "Root of F" << f->id() << " is " << root_tid);
-          CGAL_assertion(root_tid != TID(-1));
+          CGAL_SS3_TRANSF_TRACE_V(32, "Root of F" << f->id() << " is " << root_fid);
+          CGAL_assertion(root_fid != FID(-1));
 
-          std::unordered_map<TID, std::vector<TID>> adj;
+          CGAL::unordered_flat_map<FID, std::vector<FID>> adj;
           for (std::size_t pid0 = 0; pid0 < points.size(); ++pid0) {
-            for (auto& pid1_and_edges : edge_map[pid0]) {
-              std::vector<TID>& inc = pid1_and_edges.second;
+            for (const auto& pid1_and_edges : edge_map[pid0]) {
+              const auto& inc = pid1_and_edges.second;
               for (std::size_t i = 0; i < inc.size(); ++i) {
                 for (std::size_t j = i + 1; j < inc.size(); ++j) {
-                  TID t1 = inc[i], t2 = inc[j];
-                  if (triangle_to_facet[t1] == f && triangle_to_facet[t2] == f) {
+                  const FID t1 = inc[i], t2 = inc[j];
+                  if (polygon_to_facet[t1] == f && polygon_to_facet[t2] == f) {
                     adj[t1].push_back(t2);
                     adj[t2].push_back(t1);
                   }
@@ -4391,9 +4756,9 @@ public:
           }
 
           // directed flow variables for each undirected edge
-          std::unordered_map<TID, std::unordered_map<TID, IntVar>> flow;
-          for (TID t1 : tids_of_f) {
-            for (TID t2 : adj[t1]) {
+          CGAL::unordered_flat_map<FID, CGAL::unordered_flat_map<FID, IntVar>> flow;
+          for (FID t1 : fids_of_f) {
+            for (FID t2 : adj[t1]) {
               if (t1 < t2) { // create once per edge
                 IntVar fwd = model.NewIntVar(Domain(0, max_flow));
                 IntVar bwd = model.NewIntVar(Domain(0, max_flow));
@@ -4410,16 +4775,16 @@ public:
 
           // flow conservation
           LinearExpr b_f; // sum of active facets of this color
-          for (TID t : tids_of_f)
+          for (FID t : fids_of_f)
             b_f += b[t];
 
-          for (TID t : tids_of_f) {
+          for (FID t : fids_of_f) {
             LinearExpr inflow, outflow;
-            for (TID t2 : adj[t]) {
+            for (FID t2 : adj[t]) {
               inflow  += flow[t2][t]; // flow coming from t2 into t
               outflow += flow[t][t2]; // flow going from t to t2
             }
-            if (t == root_tid) {
+            if (t == root_fid) {
               // Root supplies (total_active - 1) units
               model.AddEquality(outflow - inflow + 1, b_f);
             } else {
@@ -4432,48 +4797,48 @@ public:
 # else // spanning tree-based
       for (FacetWPtr wf : vertex->facets()) {
         if (FacetSPtr f = wf.lock()) {
-          std::vector<TID> tids_of_f;
-          for (TID tid = 0; tid < triangles.size(); ++tid) {
-            if (triangle_to_facet[tid] == f)
-              tids_of_f.push_back(tid);
+          std::vector<FID> fids_of_f;
+          for (FID fid = 0; fid < polygons.size(); ++fid) {
+            if (polygon_to_facet[fid] == f)
+              fids_of_f.push_back(fid);
           }
-          CGAL_assertion(!tids_of_f.empty());
-          const int N = tids_of_f.size();
+          CGAL_assertion(!fids_of_f.empty());
+          const int N = fids_of_f.size();
 
           // Pick the fixed root
-          TID root_tid = TID(-1);
-          for (TID tid : tids_of_f) {
-            const VID bot = face_volume_IDs[tid][0];
-            const VID top = face_volume_IDs[tid][1];
-            // If both cells are fixed and different => b[tid] is fixed true
+          FID root_fid = FID(-1);
+          for (FID fid : fids_of_f) {
+            const VID bot = face_volume_IDs[fid][0];
+            const VID top = face_volume_IDs[fid][1];
+            // If both cells are fixed and different => b[fid] is fixed true
             const bool bot_fixed = (in_out_flags[bot] == CC_in_out_flag::INSIDE);
             const bool top_fixed = (in_out_flags[top] == CC_in_out_flag::OUTSIDE);
             if (bot_fixed && top_fixed) {
-              root_tid = tid;
+              root_fid = fid;
               break;
             }
           }
-          std::cout << "root of F" << f->id() << " is " << root_tid << std::endl;
-          CGAL_assertion(root_tid != TID(-1));
+          std::cout << "root of F" << f->id() << " is " << root_fid << std::endl;
+          CGAL_assertion(root_fid != FID(-1));
 
-          // Distance variables: d[tid] is the distance from the root.
-          std::unordered_map<TID, IntVar> d;
-          for (TID tid : tids_of_f) {
-            d[tid] = model.NewIntVar({0, N}); // Max distance is the number of triangles
+          // Distance variables: d[fid] is the distance from the root.
+          CGAL::unordered_flat_map<FID, IntVar> d;
+          for (FID fid : fids_of_f) {
+            d[fid] = model.NewIntVar({0, N}); // Max distance is the number of polygons
           }
 
           // The root is strictly at distance 0
-          model.AddEquality(d[root_tid], 0);
+          model.AddEquality(d[root_fid], 0);
 
           // Build local adjacency map for this specific color
-          std::unordered_map<TID, std::vector<TID>> adj;
+          CGAL::unordered_flat_map<FID, std::vector<FID>> adj;
           for (std::size_t pid0 = 0; pid0 < points.size(); ++pid0) {
-            for (auto& pid1_and_edges : edge_map[pid0]) {
-              std::vector<TID>& inc = pid1_and_edges.second;
+            for (const auto& pid1_and_edges : edge_map[pid0]) {
+              const auto& inc = pid1_and_edges.second;
               for (std::size_t i = 0; i < inc.size(); ++i) {
                 for (std::size_t j = i + 1; j < inc.size(); ++j) {
-                  TID t1 = inc[i], t2 = inc[j];
-                  if (triangle_to_facet[t1] == f && triangle_to_facet[t2] == f) {
+                  FID t1 = inc[i], t2 = inc[j];
+                  if (polygon_to_facet[t1] == f && polygon_to_facet[t2] == f) {
                     adj[t1].push_back(t2);
                     adj[t2].push_back(t1);
                   }
@@ -4482,26 +4847,26 @@ public:
             }
           }
 
-          for (TID tid : tids_of_f) {
-            if (tid == root_tid)
+          for (FID fid : fids_of_f) {
+            if (fid == root_fid)
               continue;
 
             std::vector<BoolVar> parent_vars;
 
-            for (TID nbr : adj[tid]) {
+            for (FID nbr : adj[fid]) {
               BoolVar is_parent = model.NewBoolVar();
               parent_vars.push_back(is_parent);
 
               // If 'nbr' is the parent, 'nbr' MUST also be active on the boundary
               model.AddImplication(is_parent, b[nbr]);
               // If 'nbr' is the parent, distance strictly increases by 1
-              model.AddEquality(d[tid], d[nbr] + 1).OnlyEnforceIf(is_parent);
+              model.AddEquality(d[fid], d[nbr] + 1).OnlyEnforceIf(is_parent);
             }
 
             // Connectivity Constraint:
-            // If this facet is on the boundary (b[tid] == 1), it must have EXACTLY 1 parent.
-            // If it is not on the boundary (b[tid] == 0), it has 0 parents.
-            model.AddEquality(LinearExpr::Sum(parent_vars), b[tid]);
+            // If this facet is on the boundary (b[fid] == 1), it must have EXACTLY 1 parent.
+            // If it is not on the boundary (b[fid] == 0), it has 0 parents.
+            model.AddEquality(LinearExpr::Sum(parent_vars), b[fid]);
           }
         }
       }
@@ -4523,7 +4888,7 @@ public:
       params.set_stop_after_first_solution(true);
       params.set_enumerate_all_solutions(false);
 
-      std::vector<bool> current_b_values(triangles.size());
+      std::vector<bool> current_b_values(polygons.size());
 
       bool ok = false;
       const CpSolverResponse response = SolveWithParameters(proto, params);
@@ -4560,7 +4925,7 @@ public:
         params.set_stop_after_first_solution(true);
         params.set_enumerate_all_solutions(false);
 
-        std::vector<bool> current_b_values(triangles.size());
+        std::vector<bool> current_b_values(polygons.size());
 
         bool ok = false;
         const CpSolverResponse response = SolveWithParameters(proto, params);
@@ -4579,7 +4944,6 @@ public:
           CGAL_SS3_TRANSF_TRACE_V(1, "ERROR: failed to find a solution [" << response.status() << "]");
           std::abort();
         }
-
 #ifdef CGAL_SS3_DUMP_FILES
         // Tentative dump
         {
@@ -4600,7 +4964,7 @@ public:
             {{CC_in_out_flag::INSIDE, "INSIDE"}, {CC_in_out_flag::OUTSIDE, "OUTSIDE"}};
           for (auto e : dumps) {
             std::vector<Point_3> cc_points = points;
-            std::vector<std::vector<PID> > cc_triangles;
+            std::vector<std::vector<PID> > cc_polygons;
 
             for (std::size_t i=0; i<volume_CCs.size(); ++i) {
               CGAL_assertion(e.first != CC_in_out_flag::TBD);
@@ -4609,15 +4973,15 @@ public:
               if (solution[i] != e.first)
                 continue;
 
-              for (TID tid : volume_CCs[i])
-                cc_triangles.push_back(triangles[tid]);
+              for (FID fid : volume_CCs[i])
+                cc_polygons.push_back(polygons[fid]);
 
               std::ostringstream oss;
               oss << "results/volumes_" << e.second << "_tentative.off";
-              CGAL::IO::write_OFF(oss.str(), cc_points, cc_triangles, CGAL::parameters::stream_precision(17));
+              CGAL::IO::write_OFF(oss.str(), cc_points, cc_polygons, CGAL::parameters::stream_precision(17));
               std::ostringstream oss_n;
               oss_n << "results/volumes_" << e.second << "_tentative_normalized.off";
-              CGAL::IO::write_OFF(oss_n.str(), normalized_points, cc_triangles, CGAL::parameters::stream_precision(17));
+              CGAL::IO::write_OFF(oss_n.str(), normalized_points, cc_polygons, CGAL::parameters::stream_precision(17));
             }
           }
         }
@@ -4629,21 +4993,21 @@ public:
 
         auto check_CC = [&](std::optional<FacetSPtr> of = std::nullopt) -> bool
         {
-          std::vector<std::vector<PID> > local_triangles;
-          for (std::size_t i=0; i<triangles.size(); ++i) {
-            if (!triangle_to_facet[i])
+          std::vector<std::vector<PID> > local_polygons;
+          for (std::size_t i=0; i<polygons.size(); ++i) {
+            if (!polygon_to_facet[i])
               continue;
 
             if (solution[face_volume_IDs[i][0]] == solution[face_volume_IDs[i][1]])
               continue;
 
-            if (of.has_value() && triangle_to_facet[i] != of.value())
+            if (of.has_value() && polygon_to_facet[i] != of.value())
               continue;
 
-            local_triangles.push_back(triangles[i]);
+            local_polygons.push_back(polygons[i]);
           }
 
-          CGAL_assertion(!local_triangles.empty());
+          CGAL_assertion(!local_polygons.empty());
 
           typedef std::vector<PID>                                            PointRange;
           typedef std::vector<std::vector<PID> >                              PolygonRange;
@@ -4651,10 +5015,10 @@ public:
 
           typename Orienter::Edge_map edges(points.size());
           typename Orienter::Marked_edges marked_edges;
-          Orienter::fill_edge_map(edges, marked_edges, local_triangles);
+          Orienter::fill_edge_map(edges, marked_edges, local_polygons);
           CGAL_assertion(marked_edges.empty()); // no NM edges is part of the constraints
 
-          Orienter::has_singular_vertices(points.size(), local_triangles, edges, marked_edges, nm_vertex_id);
+          Orienter::has_singular_vertices(points.size(), local_polygons, edges, marked_edges, nm_vertex_id);
 
           return (nm_vertex_id == -1);
         };
@@ -4675,13 +5039,13 @@ public:
 
         if (nm_vertex_id != PID(-1)) {
           CGAL_SS3_TRANSF_TRACE_V(1, "Non-manifold vertex " << nm_vertex_id << " found");
-          std::cout << "at position " << normalized_points[nm_vertex_id] << std::endl;
+          std::cout << "at position " << points[nm_vertex_id] << std::endl;
 
-          for (TID tid : vertex_incident_facets[nm_vertex_id]) {
-            if (!triangle_to_facet[tid])
+          for (FID fid : vertex_incident_facets[nm_vertex_id]) {
+            if (!polygon_to_facet[fid])
               continue;
-            VID bot = face_volume_IDs[tid][0], top = face_volume_IDs[tid][1];
-            std::cout << "tid " << tid << " bot_flag=" << (int)in_out_flags[bot]
+            VID bot = face_volume_IDs[fid][0], top = face_volume_IDs[fid][1];
+            std::cout << "fid " << fid << " bot_flag=" << (int)in_out_flags[bot]
                       << " top_flag=" << (int)in_out_flags[top]
                       << " b=" << (solution[bot] != solution[top]) << "\n";
           }
@@ -4689,16 +5053,16 @@ public:
           std::vector<BoolVar> nogood_terms;
           bool some_not_fixed = false;
 
-          for (TID tid : vertex_incident_facets[nm_vertex_id]) {
-            if (!triangle_to_facet[tid])
+          for (FID fid : vertex_incident_facets[nm_vertex_id]) {
+            if (!polygon_to_facet[fid])
               continue;
 
-            if (failed_f.has_value() && triangle_to_facet[tid] != failed_f.value()) {
+            if (failed_f.has_value() && polygon_to_facet[fid] != failed_f.value()) {
               continue;
             }
 
-            VID bot = face_volume_IDs[tid][0];
-            VID top = face_volume_IDs[tid][1];
+            VID bot = face_volume_IDs[fid][0];
+            VID top = face_volume_IDs[fid][1];
             bool bot_fixed = (in_out_flags[bot] == CC_in_out_flag::INSIDE);
             bool top_fixed = (in_out_flags[top] == CC_in_out_flag::OUTSIDE);
             if (!bot_fixed || !top_fixed) {
@@ -4707,7 +5071,7 @@ public:
 
             // Reconstruct whether this facet was on the boundary in the rejected solution
             bool is_boundary = (solution[bot] != solution[top]);
-            nogood_terms.push_back(is_boundary ? b[tid].Not() : b[tid]);
+            nogood_terms.push_back(is_boundary ? b[fid].Not() : b[fid]);
           }
 
           // Safety abort if the input geometry strictly forces a non-manifold pinch
@@ -4750,7 +5114,7 @@ public:
           {{CC_in_out_flag::INSIDE, "INSIDE"}, {CC_in_out_flag::OUTSIDE, "OUTSIDE"}};
         for (auto e : dumps) {
           std::vector<Point_3> cc_points = points;
-          std::vector<std::vector<PID> > cc_triangles;
+          std::vector<std::vector<PID> > cc_polygons;
 
           for (std::size_t i=0; i<volume_CCs.size(); ++i) {
             CGAL_assertion(e.first != CC_in_out_flag::TBD);
@@ -4759,15 +5123,15 @@ public:
             if (solution[i] != e.first)
               continue;
 
-            for (TID tid : volume_CCs[i])
-              cc_triangles.push_back(triangles[tid]);
+            for (FID fid : volume_CCs[i])
+              cc_polygons.push_back(polygons[fid]);
 
             std::ostringstream oss;
             oss << "results/volumes_" << e.second << "_final.off";
-            CGAL::IO::write_OFF(oss.str(), cc_points, cc_triangles, CGAL::parameters::stream_precision(17));
+            CGAL::IO::write_OFF(oss.str(), cc_points, cc_polygons, CGAL::parameters::stream_precision(17));
             std::ostringstream oss_n;
             oss_n << "results/volumes_" << e.second << "_final_normalized.off";
-            CGAL::IO::write_OFF(oss_n.str(), normalized_points, cc_triangles, CGAL::parameters::stream_precision(17));
+            CGAL::IO::write_OFF(oss_n.str(), normalized_points, cc_polygons, CGAL::parameters::stream_precision(17));
           }
         }
       }
@@ -4778,12 +5142,12 @@ public:
       // - C2) boundary is manifold
       // - C3) only 1 "inside" face-connected component & 1 "outside" face-CC
       // - C4) only 1 simply connected component per input face
-      auto is_valid_partition = [&](const std::vector<std::vector<TID> >& volume_CCs,
+      auto is_valid_partition = [&](const std::vector<std::vector<FID> >& volume_CCs,
                                     const std::vector<std::array<VID, 2>>& face_volume_IDs,
                                     const std::vector<CC_in_out_flag>& in_out_flags,
-                                    const std::vector<std::vector<PID> >& triangles,
+                                    const std::vector<std::vector<PID> >& polygons,
                                     const std::vector<Point_3>& points,
-                                    const std::vector<std::unordered_map<PID, std::vector<TID> > >& edge_map) -> bool
+                                    const std::vector<CGAL::unordered_flat_map<PID, boost::container::small_vector<FID, 4> > >& edge_map) -> bool
       {
         namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -4797,34 +5161,34 @@ public:
 
         // C2+C3+C4
         auto check_CC = [&](std::optional<FacetSPtr> of = std::nullopt) -> bool {
-          std::vector<std::vector<PID> > local_triangles;
-          for (std::size_t i=0; i<triangles.size(); ++i) {
-            if (!triangle_to_facet[i])
+          std::vector<std::vector<PID> > local_polygons;
+          for (std::size_t i=0; i<polygons.size(); ++i) {
+            if (!polygon_to_facet[i])
               continue;
 
             if (in_out_flags[face_volume_IDs[i][0]] == in_out_flags[face_volume_IDs[i][1]])
               continue;
 
-            if (of.has_value() && triangle_to_facet[i] != of.value())
+            if (of.has_value() && polygon_to_facet[i] != of.value())
               continue;
 
-            local_triangles.push_back(triangles[i]);
+            local_polygons.push_back(polygons[i]);
           }
 
-          CGAL_assertion(!local_triangles.empty());
+          CGAL_assertion(!local_polygons.empty());
 
-          if (!PMP::is_polygon_soup_a_polygon_mesh(local_triangles)) {
+          if (!PMP::is_polygon_soup_a_polygon_mesh(local_polygons)) {
             CGAL_SS3_TRANSF_TRACE_V(1, "Error: failed C34-PS_PM");
 #ifdef CGAL_SS3_DUMP_FILES
-            CGAL::IO::write_polygon_soup("results/bad_CC_normalized.off", normalized_points, local_triangles, CGAL::parameters::stream_precision(17));
+            CGAL::IO::write_polygon_soup("results/bad_CC_normalized.off", normalized_points, local_polygons, CGAL::parameters::stream_precision(17));
 #endif
             return false;
           }
 
           // @todo avoid using a Surface_mesh
           CGAL::Surface_mesh<Point_3> sm;
-          PMP::polygon_soup_to_polygon_mesh(points, local_triangles, sm);
-          CGAL_assertion(faces(sm).size() == local_triangles.size());
+          PMP::polygon_soup_to_polygon_mesh(points, local_polygons, sm);
+          CGAL_assertion(faces(sm).size() == local_polygons.size());
 
           const unsigned int nb = number_of_borders(sm);
           if (nb != 1) {
@@ -4832,10 +5196,11 @@ public:
             return false;
           }
 
-          if (PMP::does_self_intersect(sm)) {
-            CGAL_SS3_TRANSF_TRACE_V(1, "Error: CC self intersects");
-            return false;
-          }
+          // @tmp
+          // if (PMP::does_self_intersect(sm)) {
+          //   CGAL_SS3_TRANSF_TRACE_V(1, "Error: CC self intersects");
+          //   return false;
+          // }
 
           return true;
         };
@@ -4857,28 +5222,28 @@ public:
         return true;
       };
 
-      CGAL_postcondition(is_valid_partition(volume_CCs, face_volume_IDs, solution, triangles, points, edge_map));
+      CGAL_postcondition(is_valid_partition(volume_CCs, face_volume_IDs, solution, polygons, points, edge_map));
 
       // Now, extract the connectivity from the arrangement and plug it back into the polyhedron itself
-      std::vector<std::vector<PID> > boundary_triangles;
-      std::vector<FacetSPtr> boundary_triangle_to_facet;
-      for (std::size_t i=0; i<triangles.size(); ++i) {
-        if (!triangle_to_facet[i])
+      std::vector<std::vector<PID> > boundary_polygons;
+      std::vector<FacetSPtr> boundary_polygon_to_facet;
+      for (std::size_t i=0; i<polygons.size(); ++i) {
+        if (!polygon_to_facet[i])
           continue;
 
         if (solution[face_volume_IDs[i][0]] == solution[face_volume_IDs[i][1]])
           continue;
 
-        boundary_triangles.push_back(triangles[i]);
-        boundary_triangle_to_facet.push_back(triangle_to_facet[i]);
+        boundary_polygons.push_back(polygons[i]);
+        boundary_polygon_to_facet.push_back(polygon_to_facet[i]);
       }
 
 #ifdef CGAL_SS3_DUMP_FILES
-      CGAL::IO::write_polygon_soup("results/boundary.off", points, boundary_triangles);
+      CGAL::IO::write_polygon_soup("results/boundary.off", points, boundary_polygons);
 #endif
 
-      CGAL_assertion(!boundary_triangles.empty());
-      CGAL_assertion(PMP::is_polygon_soup_a_polygon_mesh(boundary_triangles));
+      CGAL_assertion(!boundary_polygons.empty());
+      CGAL_assertion(PMP::is_polygon_soup_a_polygon_mesh(boundary_polygons));
 
       // @todo avoid using a CGAL::Surface_mesh
       using Mesh = CGAL::Surface_mesh<Point_3>;
@@ -4890,15 +5255,15 @@ public:
       auto ifpm = get(CGAL::dynamic_face_property_t<FacetSPtr>{}, bsm);
 
       auto out = boost::make_function_output_iterator(
-        [ifpm, &boundary_triangle_to_facet](const std::pair<std::size_t, face_descriptor>& pid_f) {
-          // we shouldn't have triangles that are not from a face here
-          CGAL_assertion(boundary_triangle_to_facet[pid_f.first] != FacetSPtr());
-          put(ifpm, pid_f.second, boundary_triangle_to_facet[pid_f.first]);
+        [ifpm, &boundary_polygon_to_facet](const std::pair<std::size_t, face_descriptor>& pid_f) {
+          // we shouldn't have polygons that are not from a face here
+          CGAL_assertion(boundary_polygon_to_facet[pid_f.first] != FacetSPtr());
+          put(ifpm, pid_f.second, boundary_polygon_to_facet[pid_f.first]);
         });
 
-      PMP::polygon_soup_to_polygon_mesh(points, boundary_triangles, bsm,
+      PMP::polygon_soup_to_polygon_mesh(points, boundary_polygons, bsm,
                                         CGAL::parameters::polygon_to_face_output_iterator(out));
-      CGAL_assertion(faces(bsm).size() == boundary_triangles.size());
+      CGAL_assertion(faces(bsm).size() == boundary_polygons.size());
 
       // ordered facets in the polyhedron
       CGAL::unordered_flat_map<FacetSPtr, int> local_facet_indices;
@@ -5032,11 +5397,17 @@ public:
 
     PolyhedronSPtr p_mem = polyhedron->clone();
 
+    CGAL::Real_timer timer;
+    timer.start();
+
 #ifdef CGAL_SPS3_USE_V4_PERTURBATION
     apply_rand_plane_tilts_V4(polyhedron);
 #else
     apply_rand_plane_tilts_V3(polyhedron);
 #endif
+
+    timer.stop();
+    std::cout << "perturbation time: " << timer.time() << std::endl;
 
     ConfigurationSPtr config = Configuration::get_instance();
     const bool safe_mode = config->get_Boolean("Preprocessing", "check_degenerate_configuration");

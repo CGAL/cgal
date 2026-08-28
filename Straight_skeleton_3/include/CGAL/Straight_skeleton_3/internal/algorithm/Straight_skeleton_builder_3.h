@@ -2148,7 +2148,7 @@ public:
                              const std::optional<FT>& time_future_bound,
                              PQ& queue)
   {
-    CGAL_SS3_CORE_TRACE_V(8, ">>> Collect Surface Event [\n  " << edge_1->to_string() << "\n  " << edge_2->to_string() << "]");
+    CGAL_SS3_CORE_TRACE_V(16, ">>> Collect Surface Event [\n  " << edge_1->to_string() << "\n  " << edge_2->to_string() << "]");
 
     CGAL_SS3_DEBUG_SPTR(edge_1);
     CGAL_SS3_DEBUG_SPTR(edge_2);
