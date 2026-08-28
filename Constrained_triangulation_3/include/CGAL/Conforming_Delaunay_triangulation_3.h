@@ -999,8 +999,15 @@ protected:
           }
         }
         case 2: {
-          const auto facet = tr().mirror_facet(static_cast<Facet>(*simplex_it));
+          auto facet = static_cast<Facet>(*simplex_it);
+          if(facet.first->vertex(facet.second) != va) {
+            facet = tr().mirror_facet(facet);
+          }
           const auto [c, facet_index] = facet;
+          if(c->vertex(facet_index) != va && c->has_vertex(va)) {
+            // the segment is coplanar with the facet
+            return false;
+          }
           CGAL_assertion(c->vertex(facet_index) == va);
           if(visitor.is_facet_protected(facet)) {
             if(debug().flips()) {
@@ -1397,6 +1404,12 @@ protected:
     }
 
     const auto vector_of_encroaching_vertices = encroaching_vertices(va, vb);
+    if(vector_of_encroaching_vertices.empty()) {
+      if(debug().Steiner_points_construction()) {
+        std::cerr << "  -> no encroaching vertices, using midpoint\n";
+      }
+      return {exact(midpoint_functor(pa, pb)), va->cell(), va};
+    }
     CGAL_assertion(vector_of_encroaching_vertices.size() > 0);
 
     const auto reference_vertex_it = std::max_element(
