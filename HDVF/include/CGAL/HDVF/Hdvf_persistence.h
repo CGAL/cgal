@@ -36,7 +36,7 @@ namespace Homological_discrete_vector_field {
 
  The class `Hdvf_persistence` computes persistent homology using HDVFs (over a ring of coefficients which should actually be a **field**). Hence, unlike other persistence algorithms, beside standard persistent intervals informations (birth/death indices, degrees, associated cells), `Hdvf_persistence` also provides **homology and cohomology generators for persistent pairs**. Intuitively, holes die when they are "filled" by a cell: associated homology and cohomology generators provide a representation of the hole and of the cells filling the hole.
 
- Given a `Filtration`, the `Hdvf_persistence` class computes persistent homology as a perfect HDVF adapted to the filtration (through the `compute_perfect_hdvf()` method). If the reduction \f$g\f$ map is computed (depending the the computation option), HDVFs also provide persistent homology generators, together with the corresponding "filling" chains (see user manual for more details). 
+ Given a `Filtration`, the `Hdvf_persistence` class computes persistent homology as a perfect HDVF adapted to the filtration (through the `compute_perfect_hdvf()` method). If the reduction \f$g\f$ map is computed (depending the the computation option), HDVFs also provide persistent homology generators, together with the corresponding "filling" chains (see user manual for more details).
 
  \cgalModels{HDVF}
 
