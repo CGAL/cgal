@@ -8,6 +8,7 @@ message(STATUS "CGAL_DIR: ${CGAL_DIR}")
 
 find_package(CGAL REQUIRED)
 find_package(Eigen3 QUIET)
+include(CGAL_Eigen3_support)
 
 if (NOT TARGET CGAL::Eigen3_support)
   message("NOTICE: This project requires the Eigen library, and will not be compiled.")
