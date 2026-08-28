@@ -505,8 +505,8 @@ which can perform some combinatorial repairing to ensure the input data is a 2-m
 
   <tr>
     <th>\ref IOStreamMedit "MEDIT"</th>
-    <td>\link CGAL::IO::read_MEDIT(std::istream&, PointRange&, CellRange&, std::vector<int>&, bool) `CGAL::IO::read_MEDIT()` \endlink</td>
-    <td>\link CGAL::IO::write_MEDIT(std::ostream&, const PointRange&, const CellRange&, const std::vector<int>&) `CGAL::IO::write_MEDIT()` \endlink</td>
+    <td>\link CGAL::IO::read_MEDIT(std::istream&, PointRange&, TetrahedronRange&, std::vector<int>&, bool) `CGAL::IO::read_MEDIT()` \endlink</td>
+    <td>\link CGAL::IO::write_MEDIT(std::ostream&, const PointRange&, const TetrahedronRange&, const std::vector<int>&) `CGAL::IO::write_MEDIT()` \endlink</td>
   </tr>
 </table>
 
