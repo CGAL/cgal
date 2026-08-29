@@ -7,10 +7,10 @@
 /*! \ingroup PkgArrangementOnCurve1ConceptsTraits
  * \cgalConcept
  *
- * The concept `AocTraits_1` defines the minimal set of geometric
- * predicates needed for the construction and maintenance of objects of the
- * class `CGAL::Arrangement_on_curve_1`, as well as performing simple queries (such as
- * point-location queries) on such arrangements.
+ * The concept `AocTraits_1` defines the minimal set of geometric predicates
+ * needed for the construction and maintenance of objects of the class
+ * `CGAL::Arrangement_on_curve_1::Arrangement_on_curve_1`, as well as performing
+ * simple queries (such as point-location queries) on such arrangements.
  *
  * \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
  *
