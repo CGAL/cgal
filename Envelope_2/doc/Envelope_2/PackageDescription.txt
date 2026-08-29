@@ -34,8 +34,6 @@ induce the envelope over each interval is unique.
 
 \cgalCRPSection{Concepts}
 - `EnvelopeDiagram_1`
-- `EnvelopeDiagramVertex`
-- `EnvelopeDiagramEdge`
 
 \cgalCRPSection{Classes}
 - `CGAL::Envelope_diagram_1<Traits> `

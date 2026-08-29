@@ -5,6 +5,7 @@ Alpha_shapes_3 3D Alpha Shapes
 Alpha_wrap_2 2D Alpha Wrapping
 Alpha_wrap_3 3D Alpha Wrapping
 Apollonius_graph_2 2D Apollonius Graphs (Delaunay Graphs of Disks)
+Arrangement_on_curve_1 1D Arrangements
 Arrangement_on_surface_2 2D Arrangements
 Barycentric_coordinates_2 2D Generalized Barycentric Coordinates
 Barycentric_coordinates_3 3D Generalized Barycentric Coordinates
