@@ -1,6 +1,10 @@
 // Regression test for issue #135:
 // Lazy_exact_nt operator<< used to_double(), losing precision and breaking
 // round-trip save/load of exact kernel coordinates.
+//
+// The default operator<< still writes to_double(). CGAL::IO::set_exact_mode(os)
+// switches it to write the exact value, which round-trips losslessly through
+// operator>>. This test sets that mode and checks the round-trip is exact.
 
 #include <CGAL/Lazy_exact_nt.h>
 #include <CGAL/Exact_rational.h>
@@ -18,6 +22,7 @@ int main()
     std::cout << "Test 1: round-trip of 1/3" << std::endl;
     Lazy_nt a(CGAL::Exact_rational(1, 3));
     std::ostringstream oss;
+    CGAL::IO::set_exact_mode(oss);
     oss << a;
     // Should output "1/3", not "0.333333..."
     std::istringstream iss(oss.str());
@@ -33,6 +38,7 @@ int main()
     std::cout << "Test 2: round-trip of 42" << std::endl;
     Lazy_nt a(42);
     std::ostringstream oss;
+    CGAL::IO::set_exact_mode(oss);
     oss << a;
     std::istringstream iss(oss.str());
     Lazy_nt b;
@@ -47,6 +53,7 @@ int main()
     std::cout << "Test 3: round-trip of -5/7" << std::endl;
     Lazy_nt a(CGAL::Exact_rational(-5, 7));
     std::ostringstream oss;
+    CGAL::IO::set_exact_mode(oss);
     oss << a;
     std::istringstream iss(oss.str());
     Lazy_nt b;
@@ -64,6 +71,7 @@ int main()
     Lazy_nt b(CGAL::Exact_rational(1, 7));
     Lazy_nt c = a + b;
     std::ostringstream oss;
+    CGAL::IO::set_exact_mode(oss);
     oss << c;
     std::istringstream iss(oss.str());
     Lazy_nt d;
@@ -82,6 +90,7 @@ int main()
     assert(bigin);
     Lazy_nt a(big);
     std::ostringstream oss;
+    CGAL::IO::set_exact_mode(oss);
     oss << a;
     std::istringstream iss(oss.str());
     Lazy_nt b;
@@ -96,6 +105,7 @@ int main()
     std::cout << "Test 6: round-trip of 0" << std::endl;
     Lazy_nt a(0);
     std::ostringstream oss;
+    CGAL::IO::set_exact_mode(oss);
     oss << a;
     std::istringstream iss(oss.str());
     Lazy_nt b;
@@ -103,6 +113,18 @@ int main()
     assert(iss);
     assert(a == b);
     std::cout << "  OK: wrote \"" << oss.str() << "\"" << std::endl;
+  }
+
+  // Test 7: the default (no set_exact_mode) still writes a double, so existing
+  // behaviour and user code are unchanged. Issue #135 must remain opt-in.
+  {
+    std::cout << "Test 7: default output is still to_double" << std::endl;
+    Lazy_nt a(CGAL::Exact_rational(1, 3));
+    std::ostringstream oss;
+    oss << a; // no set_exact_mode: lossy, historical behaviour
+    const std::string s = oss.str();
+    assert(s.find('/') == std::string::npos); // a double, not "1/3"
+    std::cout << "  OK: default wrote \"" << s << "\" (double, unchanged)" << std::endl;
   }
 
   std::cout << "All tests passed." << std::endl;

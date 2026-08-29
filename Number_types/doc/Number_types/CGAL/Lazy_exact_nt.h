@@ -111,9 +111,11 @@ static double get_relative_precision_of_to_double();
 }; /* end Lazy_exact_nt */
 
 /*!
-writes the exact value `m.exact()` to ostream `out`.
-This enables round-trip save/load of `Lazy_exact_nt` values without
-loss of precision: `operator>>` reconstructs the same exact number.
+writes `m` to ostream `out`. By default a `double` approximation
+(`to_double(m)`) is written, as historically. After calling
+`CGAL::IO::set_exact_mode(out)`, the exact value `m.exact()` is written instead,
+which enables round-trip save/load of `Lazy_exact_nt` values without loss of
+precision: `operator>>` then reconstructs the same exact number.
 \relates Lazy_exact_nt
 */
 std::ostream& operator<<(std::ostream& out, const Lazy_exact_nt<NT>& m);
@@ -124,5 +126,29 @@ reads a `NT` from `in`, then converts it to a `Lazy_exact_nt<NT>`.
 */
 std::istream& operator>>(std::istream& in, Lazy_exact_nt<NT>& m);
 
+namespace IO {
+
+/*!
+makes `operator<<` write `Lazy_exact_nt` values on the stream `s` through their
+exact value, so that `operator>>` reconstructs the same number without loss of
+precision. Returns the previous state. Mirrors `CGAL::IO::set_pretty_mode()`.
+\relates Lazy_exact_nt
+*/
+bool set_exact_mode(std::ios& s);
+
+/*!
+makes `operator<<` write `Lazy_exact_nt` values on the stream `s` through
+`to_double()`, which is the default. Returns the previous state.
+\relates Lazy_exact_nt
+*/
+bool set_lossy_mode(std::ios& s);
+
+/*!
+returns `true` if the stream `s` is in exact-output mode for `Lazy_exact_nt`.
+\relates Lazy_exact_nt
+*/
+bool is_exact_mode(std::ios& s);
+
+} /* end namespace IO */
 
 } /* end namespace CGAL */
