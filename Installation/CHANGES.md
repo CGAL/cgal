@@ -4,6 +4,9 @@
 
 Release date: December 2026
 
+### 1D Arrangements on Curves, new
+- This package is designed to construct, manipulate, and query one-dimensional arrangements embedded along continuous curves.
+
 ### [2D Arrangements](https://doc.cgal.org/6.3/Manual/packages.html#PkgArrangementOnSurface2)
 
 - **Breaking change**: Enhanced the metadata traits-class decorators `Arr_counting_traits_2` and `Arr_tracing_traits_2`. Each is (still) parameterized with another traits class being decorated, but it does not inherit from it. In addition one can get and set a smart pointer to the class being decorated.
