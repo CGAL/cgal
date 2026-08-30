@@ -1304,9 +1304,11 @@ namespace IO {
 
 // Per-stream flag controlling how Lazy_exact_nt is written by operator<<. By
 // default (flag unset) the value is written via to_double(), the historical
-// behaviour. After set_exact_mode(s), operator<< writes the exact() value, so
-// that operator>> reconstructs the same number without precision loss (issue
-// #135). This mirrors set_pretty_mode() / is_pretty().
+// behaviour. After set_exact_mode(s), operator<< writes the exact() value; the
+// round-trip through operator>> is then exact for ET with an exact stream
+// representation such as a rational type, but not for ET whose operator<< writes
+// an approximation such as CORE::Expr (issue #135). This mirrors set_pretty_mode()
+// / is_pretty().
 namespace internal {
 inline int lazy_exact_nt_exact_output_index()
 {
