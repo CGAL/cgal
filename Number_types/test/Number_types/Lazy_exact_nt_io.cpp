@@ -3,15 +3,21 @@
 // round-trip save/load of exact kernel coordinates.
 //
 // The default operator<< still writes to_double(). CGAL::IO::set_exact_mode(os)
-// switches it to write the exact value, which round-trips losslessly through
-// operator>>. This test sets that mode and checks the round-trip is exact.
+// switches it to write the exact value. For a rational backend (Exact_rational)
+// that round-trips losslessly through operator>>; for CORE::Expr, whose operator<<
+// writes a decimal approximation, exact mode is not lossless (see Test 8).
 
 #include <CGAL/Lazy_exact_nt.h>
 #include <CGAL/Exact_rational.h>
 
+#ifdef CGAL_USE_CORE
+#include <CGAL/CORE_Expr.h>
+#endif
+
 #include <cassert>
 #include <iostream>
 #include <sstream>
+#include <string>
 
 typedef CGAL::Lazy_exact_nt<CGAL::Exact_rational> Lazy_nt;
 
@@ -126,6 +132,33 @@ int main()
     assert(s.find('/') == std::string::npos); // a double, not "1/3"
     std::cout << "  OK: default wrote \"" << s << "\" (double, unchanged)" << std::endl;
   }
+
+#ifdef CGAL_USE_CORE
+  // Test 8: CORE::Expr regression. Exact mode is lossless only for backends whose
+  // operator<< writes an exact representation. CORE::Expr::operator<< writes a
+  // decimal approximation, so exact mode is NOT lossless for it. We check the
+  // documented behaviour: the default still writes a double, and exact mode writes
+  // exact()'s (approximate) representation, which parses.
+  {
+    typedef CGAL::Lazy_exact_nt<CORE::Expr> Lazy_core;
+    std::cout << "Test 8: CORE::Expr exact mode is approximate, not lossless" << std::endl;
+    Lazy_core a = Lazy_core(1) / Lazy_core(3); // 1/3
+
+    std::ostringstream def;
+    def << a; // default: a double, unchanged
+    assert(def.str().find('/') == std::string::npos);
+
+    std::ostringstream oss;
+    CGAL::IO::set_exact_mode(oss);
+    oss << a; // exact mode: CORE::Expr's decimal, parses but is not exact
+    std::istringstream iss(oss.str());
+    Lazy_core b;
+    iss >> b;
+    assert(iss);
+    std::cout << "  OK: default \"" << def.str() << "\", exact-mode \""
+              << oss.str() << "\" (approximate for CORE::Expr)" << std::endl;
+  }
+#endif
 
   std::cout << "All tests passed." << std::endl;
   return 0;
