@@ -1,0 +1,23 @@
+results_root: C:/Users/iason.manolas/Documents/learning/gsoc2025-Tetra_remeshing_parallel-imanolas/Tetrahedral_remeshing/build_debug_tetrahedral_remeshing/BenchmarkResults  # Folder containing multiple benchmark run folders
+include_reports: []                # Optional: list of subfolders to include, or leave empty for all
+# metrics:
+  # - metrics.Performance.Total_Time.Value
+  # - metrics.Quality.Edge_Length.Mean
+group_by: []                 # (Unused, now auto-detected)
+significant_change_threshold: 0.0 # Only show metrics with >1% change (set to 0 to show all)
+outlier_threshold: 3.0             # Highlight changes >3x stddev as outliers
+
+# Chart grid configuration
+report_chart_grid_cols: 2          # Number of columns in the chart grid (charts will be scaled accordingly)
+
+charts:
+  - kind: line
+    y: Performance.Total_Time.Value
+    title: "Total Time across versions"
+    save_as: "total_time_timeseries.png"
+    style: "o-"
+  - kind: line
+    y: Performance.Memory.Value
+    title: "Memory across versions"
+    save_as: "memory_timeseries.png"
+    style: "o-"
