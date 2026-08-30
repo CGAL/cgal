@@ -324,6 +324,11 @@ The following table shows which file formats can be read from and written for po
     <td>\link PkgStreamSupportIoFuncsLAS `CGAL::IO::read_LAS()` \endlink</td>
     <td>\link PkgStreamSupportIoFuncsLAS `CGAL::IO::write_LAS()` \endlink</td>
   </tr>
+  <tr>
+    <th>\ref IOStreamVG "VG"</th>
+    <td>\link PkgStreamSupportIoFuncsVG `CGAL::IO::read_VG()` \endlink</td>
+    <td>\link PkgStreamSupportIoFuncsVG `CGAL::IO::write_VG()` \endlink</td>
+  </tr>
 </table>
 
 All of these functions (with the exception of the LAS format) can read

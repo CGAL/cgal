@@ -1,5 +1,6 @@
 #include <CGAL/Point_set_3.h>
 #include <CGAL/Point_set_3/IO.h>
+#include <CGAL/IO/write_vg.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Shape_detection/Region_growing/Point_set.h>
@@ -67,11 +68,14 @@ int main(int argc, char** argv) {
     green = point_set.add_property_map<unsigned char>("green", 0).first,
     blue  = point_set.add_property_map<unsigned char>("blue" , 0).first;
 
+  std::vector<typename Region_growing::Primitive_and_region> regions;
+
   // Run the algorithm.
   std::size_t num_spheres = 0;
   region_growing.detect(
     boost::make_function_output_iterator(
       [&](const std::pair< Region_type::Primitive, typename Region_growing::Region>& region) {
+        regions.push_back(region);
 
         // Assign a random color to each region.
         const unsigned char r = static_cast<unsigned char>(CGAL::get_default_random().get_int(64, 192));
@@ -88,6 +92,8 @@ int main(int argc, char** argv) {
   );
   std::cout << "* number of found spheres: " << num_spheres << std::endl;
   assert(!is_default_input || num_spheres == 10);
+
+  CGAL::IO::write_VG("spheres_point_set_3.vg", point_set, regions, CGAL::parameters::point_map(point_set.point_map()).normal_map(point_set.normal_map()));
 
   // Save regions to a file.
   std::ofstream out("spheres_point_set_3.ply");
