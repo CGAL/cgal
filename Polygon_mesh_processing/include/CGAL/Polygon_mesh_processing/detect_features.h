@@ -247,7 +247,8 @@ void sharp_call(const FT angle_in_deg,
  * \param pmesh the polygon mesh
  * \param angle_in_deg the dihedral angle bound
  * \param edge_is_feature_map the property map that will contain the sharp-or-not status of each edge of `pmesh`
- * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below.
+ *        `GT` stands for the type of the object provided to the named parameter `geom_traits()`.
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_feature_degree_map}
@@ -256,6 +257,15 @@ void sharp_call(const FT angle_in_deg,
  *     \cgalParamDefault{`boost::get(CGAL::vertex_feature_degree_t(), pmesh)`}
  *   \cgalParamNEnd
  *
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `pmesh`.}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with
+ *                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+ *                    as key type and `GT::Point_3` as value type.}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`.}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for
+ *                     `CGAL::vertex_point_t` must be available in `PolygonMesh`.}
+*   \cgalParamNEnd
  *   \cgalParamNBegin{geom_traits}
  *     \cgalParamDescription{an instance of a geometric traits class}
  *     \cgalParamType{a class model of `Kernel`}
@@ -265,6 +275,7 @@ void sharp_call(const FT angle_in_deg,
  * \cgalNamedParamsEnd
  *
  * \see `sharp_edges_segmentation()`
+ * \see `minmax_dihedral_angle()`
  */
 #ifdef DOXYGEN_RUNNING
 template <typename PolygonMesh, typename FT,
