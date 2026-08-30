@@ -5,7 +5,7 @@
 // The default operator<< still writes to_double(). CGAL::IO::set_exact_mode(os)
 // switches it to write the exact value. For a rational backend (Exact_rational)
 // that round-trips losslessly through operator>>; for CORE::Expr, whose operator<<
-// writes a decimal approximation, exact mode is not lossless (see Test 8).
+// writes a decimal approximation, exact mode is not lossless (see Test 9).
 
 #include <CGAL/Lazy_exact_nt.h>
 #include <CGAL/Exact_rational.h>
@@ -133,15 +133,32 @@ int main()
     std::cout << "  OK: default wrote \"" << s << "\" (double, unchanged)" << std::endl;
   }
 
+  // Test 8: set_lossy_mode reverts to the default double output, and the mode
+  // setters report the previous state (like set_pretty_mode).
+  {
+    std::cout << "Test 8: set_lossy_mode reverts, setters report previous state" << std::endl;
+    Lazy_nt a(CGAL::Exact_rational(1, 3));
+    std::ostringstream oss;
+    const bool was_exact_before = CGAL::IO::set_exact_mode(oss); // default is lossy
+    assert(!was_exact_before);
+    assert(CGAL::IO::is_exact_mode(oss));
+    const bool was_exact_after = CGAL::IO::set_lossy_mode(oss);   // back to lossy
+    assert(was_exact_after);
+    assert(!CGAL::IO::is_exact_mode(oss));
+    oss << a; // lossy again: a double, not "1/3"
+    assert(oss.str().find('/') == std::string::npos);
+    std::cout << "  OK: reverted to \"" << oss.str() << "\"" << std::endl;
+  }
+
 #ifdef CGAL_USE_CORE
-  // Test 8: CORE::Expr regression. Exact mode is lossless only for backends whose
+  // Test 9: CORE::Expr regression. Exact mode is lossless only for backends whose
   // operator<< writes an exact representation. CORE::Expr::operator<< writes a
   // decimal approximation, so exact mode is NOT lossless for it. We check the
   // documented behaviour: the default still writes a double, and exact mode writes
   // exact()'s (approximate) representation, which parses.
   {
     typedef CGAL::Lazy_exact_nt<CORE::Expr> Lazy_core;
-    std::cout << "Test 8: CORE::Expr exact mode is approximate, not lossless" << std::endl;
+    std::cout << "Test 9: CORE::Expr exact mode is approximate, not lossless" << std::endl;
     Lazy_core a = Lazy_core(1) / Lazy_core(3); // 1/3
 
     std::ostringstream def;
