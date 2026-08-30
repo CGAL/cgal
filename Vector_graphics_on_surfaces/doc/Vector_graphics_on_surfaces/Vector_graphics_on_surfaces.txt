@@ -1,0 +1,22 @@
+namespace CGAL {
+/*!
+
+\mainpage User Manual
+\anchor Chapter_VGoS
+\cgalAutoToc
+\author Claudio Mancinelli and Sébastien Loriot
+
+This chapter describes the ...
+
+\section vgos_definitions Definitions
+
+Section on definitions here ...
+
+\section vgos_examples Examples
+
+\subsection vgos_examples_first First Example
+
+The following example shows ...
+
+*/
+} /* namespace CGAL */
