@@ -213,7 +213,7 @@ void trivial_segment(Vertex_handle v, IT it) const
     if(se->source()->point() != v->point())
       G.supp_object(v,si._from) = si._o;
     else
-      G.supp_object(v,si._from) = make_object(se->source());
+      G.supp_object(v,si._from) = typename SM_const_decorator::Object_handle(se->source());
   } else if(CGAL::assign(sl, si._o)) {
     G.supp_object(v,si._from) = si._o;
   } else if(CGAL::assign(sv, si._o)) {
@@ -239,7 +239,7 @@ void starting_segment(Vertex_handle v, IT it) const
         return;
       }
     }
-    G.supp_object(v,si._from) = make_object(se->source());
+    G.supp_object(v,si._from) = typename SM_const_decorator::Object_handle(se->source());
     CGAL_NEF_TRACEN("starting_segment " << si._from << ":"<<
                     v->point() << " " << se->source()->point());
   } else if(CGAL::assign(sl, si._o)) {
@@ -262,7 +262,7 @@ void ending_segment(Vertex_handle v, IT it) const
         return;
       }
     }
-    G.supp_object(v,si._from) = make_object(se->source());
+    G.supp_object(v,si._from) = typename SM_const_decorator::Object_handle(se->source());
     CGAL_NEF_TRACEN("ending_segment " << si._from << ":"<<
                     v->point() << ":" <<
                     se->source()->point() << "->" <<
@@ -516,11 +516,11 @@ public:
 
     Seg_info() : _o(), _from(-1) {}
     Seg_info(SVertex_const_handle v, int i)
-    { _o=make_object(v); _from=i; }
+    { _o=Object_handle(v); _from=i; }
     Seg_info(SHalfedge_const_handle e, int i)
-    { _o=make_object(e); _from=i; }
+    { _o=Object_handle(e); _from=i; }
     Seg_info(SHalfloop_const_handle l, int i)
-    { _o=make_object(l); _from=i; }
+    { _o=Object_handle(l); _from=i; }
     Seg_info(const Seg_info& si)
     { _o=si._o; _from=si._from; }
     Seg_info& operator=(const Seg_info& si)
