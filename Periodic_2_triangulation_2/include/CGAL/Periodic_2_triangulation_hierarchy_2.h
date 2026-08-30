@@ -83,7 +83,10 @@ public:
   {
     hierarchy[0] = this;
     for(int i = 1; i < m_maxlevel; ++i)
+    {
       hierarchy[i] = new PTr_Base(domain, traits);
+      hierarchy[i]->disable_auto_convert();
+    }
     insert(first, last);
   }
 
@@ -191,7 +194,10 @@ Periodic_2_triangulation_hierarchy_2(const Iso_rectangle& domain, const Geom_tra
   level_mult_cover = 0;
   hierarchy[0] = this;
   for(int i = 1; i < m_maxlevel; ++i)
+  {
     hierarchy[i] = new PTr_Base(domain, traits);
+    hierarchy[i]->disable_auto_convert();
+  }
 }
 
 
@@ -204,7 +210,10 @@ Periodic_2_triangulation_hierarchy_2(const Periodic_2_triangulation_hierarchy_2<
   // create an empty triangulation to be able to delete it !
   hierarchy[0] = this;
   for(int i = 1; i < m_maxlevel; ++i)
+  {
     hierarchy[i] = new PTr_Base(tr.domain(), tr.geom_traits());
+    hierarchy[i]->disable_auto_convert();
+  }
   copy_triangulation(tr);
 }
 
@@ -619,7 +628,7 @@ Periodic_2_triangulation_hierarchy_2<PTr>::
 random_level()
 {
   if ( level_mult_cover < m_maxlevel
-       && hierarchy[level_mult_cover]->number_of_sheets() == make_array(1, 1) )
+       && hierarchy[0]->number_of_sheets() == make_array(1, 1) )
     ++level_mult_cover;
 
   boost::geometric_distribution<> proba(1.0 / m_ratio);
