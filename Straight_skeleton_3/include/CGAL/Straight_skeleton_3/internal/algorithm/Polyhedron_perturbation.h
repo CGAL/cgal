@@ -3245,41 +3245,12 @@ public:
       std::vector<FacetSPtr> polygon_to_facet;
 
       // Create a sufficiently large bounding box containing all plane intersections
-      // @todo obviously !slightly! suboptimal
-      CGAL::Bbox_3 bb = vertex->point().bbox();
+      CGAL_assertion(is_stable(vertex, sq_max_displacements[vertex]));
 
-#ifdef CGAL_SS3_DUMP_FILES
-      std::ofstream inter_out("results/3-inter.xyz");
-      inter_out.precision(17);
-#endif
-
-      // @todo no need to recompute this bound since we have stable vertices, so we
-      // can just use the sq_displacement_bound of the vertex...
-      FT max_sq_displacement = 0;
-      for (auto it_wf1 = vertex->facets().begin() ; it_wf1 != vertex->facets().end(); ++it_wf1) {
-        if (FacetSPtr f1 = it_wf1->lock()) {
-          for (auto it_wf2 = std::next(it_wf1) ; it_wf2 != vertex->facets().end(); ++it_wf2) {
-            if (FacetSPtr f2 = it_wf2->lock()) {
-              for (auto it_wf3 = std::next(it_wf2) ; it_wf3 != vertex->facets().end(); ++it_wf3) {
-                if (FacetSPtr f3 = it_wf3->lock()) {
-                  std::optional<Point_3> p_new = Kernel_wrapper::intersection(f1->get_plane(), f2->get_plane(), f3->get_plane());
-                  if (p_new.has_value()) {
-                    FT sqd = CGAL::squared_distance(vertex->point(), *p_new);
-                    max_sq_displacement = std::max(max_sq_displacement, sqd);
-
-                    bb += p_new->bbox();
-#ifdef CGAL_SS3_DUMP_FILES
-                    inter_out << *(p_new) << "\n";
-#endif
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-
-      CGAL_SS3_TRANSF_TRACE_V(64, "max_sq_displacement = " << max_sq_displacement);
+      CGAL::Bbox_3 vbb = vertex->point().bbox();
+      const double md = approx(approximate_sqrt(sq_max_displacements[vertex])).sup();
+      CGAL::Bbox_3 bb = { vbb.xmin() - md, vbb.ymin() - md, vbb.zmin() - md,
+                          vbb.xmax() + md, vbb.ymax() + md, vbb.zmax() + md };
 
       bb.scale(1.5);
 
