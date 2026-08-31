@@ -18,9 +18,14 @@ endif()
 create_single_source_cgal_program("c3t3_smooth.cpp")
 target_link_libraries(c3t3_smooth PRIVATE CGAL::Eigen3_support)
 
-find_package(TBB QUIET)
-if(TARGET CGAL::TBB_support)
-  target_link_libraries(c3t3_smooth PRIVATE CGAL::TBB_support)
+option(USE_ONLY_OPENMP_FOR_PARALLELISM OFF "Use OpenMP instead of TBB for parallelism")
+
+if (NOT USE_ONLY_OPENMP_FOR_PARALLELISM)
+    find_package(TBB QUIET)
+    include (CGAL_TBB_support)
+    if(TARGET CGAL::TBB_support)
+    target_link_libraries(c3t3_smooth PRIVATE CGAL::TBB_support)
+    endif()
 endif()
 
 find_package(OpenMP COMPONENTS CXX)

@@ -3,6 +3,7 @@ project(Mesh_smoothing_3_Tests)
 
 find_package(CGAL REQUIRED)
 find_package(TBB QUIET)
+include (CGAL_TBB_support)
 find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
 find_package(OpenMP COMPONENTS CXX)

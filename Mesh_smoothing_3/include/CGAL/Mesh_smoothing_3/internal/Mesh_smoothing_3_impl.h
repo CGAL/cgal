@@ -602,9 +602,7 @@ void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::
                     _boundary_batch_info_radii.resize(coords.size());
                     _boundary_batch_planes.resize(coords.size());
                 }
-#pragma omp parallel for
-                for (int iter_t = 0; iter_t < static_cast<int>(coords.size()); ++iter_t) {
-                    unsigned uiter = static_cast<unsigned>(iter_t);
+                Mesh_smoothing_3_internal::for_each<ConcurrencyTag>(0, coords.size(), [&](std::size_t uiter) {
                     Eigen::Vector3d center = Eigen::Vector3d::Zero();
                     for (auto const &coord : coords[uiter]) {
                         center += coord;
@@ -618,18 +616,17 @@ void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::
                     radius /= _scale;
                     _boundary_batch_info_points[uiter] = convert_to_user(center);
                     _boundary_batch_info_radii[uiter] = radius;
-                }
+                });
 
                 _boundary_point_batch_query(_boundary_batch_info_points, surface_ids, _boundary_batch_info_radii, _boundary_batch_planes);
 
-#pragma omp parallel for
-                for (int iter_t = 0; iter_t < static_cast<int>(coords.size()); ++iter_t) {
-                    auto [user_point, user_normal, weight] =  _boundary_batch_planes[static_cast<unsigned>(iter_t)];
+                Mesh_smoothing_3_internal::for_each<ConcurrencyTag>(0, coords.size(), [&](std::size_t t) {
+                    auto [user_point, user_normal, weight] =  _boundary_batch_planes[t];
                     Eigen::Vector3d proj = convert_to_inner(user_point);
                     Eigen::Vector3d normal = convert_to_eigen(user_normal);
                     normal.normalize();
-                    results[static_cast<unsigned>(iter_t)] = { proj, normal, weight };
-                }
+                    results[t] = { proj, normal, weight };
+                });
             };
             smoother.set_boundary_with_batch_query(
                 _bnd_faces,
@@ -649,23 +646,22 @@ void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::
                     }
                     _boundary_batch_planes.resize(coords.size());
                 }
-#pragma omp parallel for
-                for (int iter_t = 0; iter_t < static_cast<int>(coords.size()); ++iter_t) {
-                    for (unsigned i = 0; i < coords.size(); ++i) {
-                        _boundary_batch_info_polygons[static_cast<unsigned>(iter_t)][i] = convert_to_user(coords[static_cast<unsigned>(iter_t)][i]);
+                Mesh_smoothing_3_internal::for_each<ConcurrencyTag>(0, coords.size(), [&](std::size_t t) {
+                    for (unsigned i = 0; i < coords[t].size(); ++i) {
+                        _boundary_batch_info_polygons[t][i] = convert_to_user(coords[t][i]);
                     }
-                }
+                });
 
                 _boundary_polygon_batch_query(_boundary_batch_info_polygons, surface_ids, _boundary_batch_planes);
 
-#pragma omp parallel for
-                for (int iter_t = 0; iter_t < static_cast<int>(coords.size()); ++iter_t) {
-                    auto [user_point, user_normal, weight] =  _boundary_batch_planes[static_cast<unsigned>(iter_t)];
+                Mesh_smoothing_3_internal::for_each<ConcurrencyTag>(0, coords.size(), [&](std::size_t t) {
+                    auto [user_point, user_normal, weight] =  _boundary_batch_planes[t];
                     Eigen::Vector3d proj = convert_to_inner(user_point);
                     Eigen::Vector3d normal = convert_to_eigen(user_normal);
                     normal.normalize();
-                    results[static_cast<unsigned>(iter_t)] = { proj, normal, weight };
-                }
+                    results[t] = { proj, normal, weight };
+                });
+
             };
             smoother.set_boundary_with_batch_query(
                 _bnd_faces,
