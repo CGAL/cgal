@@ -28,10 +28,6 @@
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
-#include <CGAL/Polygon_mesh_processing/shape_predicates.h>
-#include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
-#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
-#include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
 #include "triangulate_primitive.h"
 
 #include <CGAL/IO/OBJ.h>
@@ -1562,7 +1558,6 @@ Scene_surface_mesh_item::save(std::ostream& out) const
 bool
 Scene_surface_mesh_item::load_obj(std::istream& in)
 {
-  typedef SMesh::Point Point;
   bool failed = !CGAL::IO::read_OBJ(in, *(d->smesh_), CGAL::parameters::verbose(true));
 
   if((!failed) && !isEmpty())
