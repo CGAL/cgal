@@ -542,11 +542,8 @@ namespace lbfgs
         Eigen::VectorXd g(n);
         Eigen::VectorXd gp(n);
         Eigen::VectorXd d(n);
-<<<<<<< HEAD
-        Eigen::VectorXd pf(((std::max))(1, param.past));
-=======
+
         Eigen::VectorXd pf((std::max)(1, param.past));
->>>>>>> 0e39a7e70a9 (Fixing small warnings and moving to tbb capable version)
 
         /* Initialize the limited memory. */
         Eigen::VectorXd lm_alpha = Eigen::VectorXd::Zero(m);
@@ -585,11 +582,8 @@ namespace lbfgs
         gnorm_inf = g.cwiseAbs().maxCoeff();
         xnorm_inf = x.cwiseAbs().maxCoeff();
 
-<<<<<<< HEAD
-        if (gnorm_inf / ((std::max))(1.0, xnorm_inf) <= param.g_epsilon)
-=======
+
         if (gnorm_inf / (std::max)(1.0, xnorm_inf) <= param.g_epsilon)
->>>>>>> 0e39a7e70a9 (Fixing small warnings and moving to tbb capable version)
         {
             /* The initial guess is already a stationary point. */
             ret = LBFGS_CONVERGENCE;

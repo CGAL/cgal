@@ -84,10 +84,17 @@ bool any_vertex_moved(C3t3T const& before, C3t3T const& after)
   return false;
 }
 
-template <typename C3t3T>
+template <
+  typename C3t3T,
+  typename ConcurrencyTag = CGAL::Mesh_smoothing_3::Parallel_if_available_tag
+>
 CGAL::Mesh_smoothing_3::Smoothing_status run_example_smoothing(C3t3T& c3t3, bool verbose)
 {
-  auto status = CGAL::boundary_aware_mesh_smoothing(
+  auto status = CGAL::boundary_aware_mesh_smoothing<
+    C3t3T, 
+    CGAL::Mesh_smoothing_3::C3t3_mesh_projector<C3t3T>, 
+    ConcurrencyTag
+  >(
       c3t3,
       CGAL::Mesh_smoothing_3::C3t3_mesh_projector<C3t3T>(c3t3),
       CGAL::parameters::verbose(verbose).number_of_iterations(max_iterations));
@@ -158,15 +165,12 @@ void test_no_early_stopping()
 
 void test_mono_core_reproducibility()
 {
-  const int previous_threads = Eigen::nbThreads();
-  Eigen::setNbThreads(1);
-  assert(Eigen::nbThreads() == 1);
 
   auto first = load_example_mesh();
   auto second = load_example_mesh();
 
-  auto first_status = run_example_smoothing(first, false);
-  auto second_status = run_example_smoothing(second, false);
+  auto first_status = run_example_smoothing<C3t3, CGAL::Sequential_tag>(first, false);
+  auto second_status = run_example_smoothing<C3t3, CGAL::Sequential_tag>(second, false);
 
   assert_structure_counts_preserved(first, second);
   assert(first_status.return_code == second_status.return_code);
@@ -178,8 +182,6 @@ void test_mono_core_reproducibility()
   assert_time_breakdown_close(first_status);
   assert_time_breakdown_close(second_status);
   assert_same_vertices(first, second);
-
-  Eigen::setNbThreads(previous_threads);
 }
 
 void test_random_inner_untangling_integration()
