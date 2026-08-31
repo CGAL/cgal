@@ -155,7 +155,7 @@ Mesh_smoothing_3::Smoothing_status boundary_aware_mesh_smoothing  (
     > ::type;
 
     // not documented, for benchmarking purposes
-    bool perform_hilbert_sort = !choose_parameter(get_parameter(np, internal_np::preserve_order), true);
+    bool perform_hilbert_sort = !choose_parameter(get_parameter(np, internal_np::preserve_order), false);
 
     unsigned max_nb_metric_evaluations = choose_parameter(get_parameter(np, internal_np::max_number_of_evaluations), 0);
 
