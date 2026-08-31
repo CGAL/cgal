@@ -81,7 +81,7 @@ Reduction reduce(std::size_t first, std::size_t last, Function&& function) {
     static_assert (!std::is_convertible<ConcurrencyTag, Parallel_tag>::value,
                  "Parallel_tag is enabled but neither TBB nor OpenMP is available.");
 
-    return result{};
+    return Reduction{};
 
 #endif
   }
