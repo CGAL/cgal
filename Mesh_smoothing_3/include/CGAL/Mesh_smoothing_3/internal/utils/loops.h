@@ -39,7 +39,7 @@ namespace Mesh_smoothing_3_internal {
  */
 template <typename ConcurrencyTag, typename Reduction, typename Function>
 Reduction reduce(std::size_t first, std::size_t last, Function&& function) {
-  if constexpr(!std::is_convertible_v<ConcurrencyTag, CGAL::Parallel_tag>) {
+  if constexpr(!ConcurrencyTag::is_parallel) {
     Reduction result{};
 
     for(std::size_t i = first; i < last; ++i)
@@ -78,12 +78,10 @@ Reduction reduce(std::size_t first, std::size_t last, Function&& function) {
 
 #else
 
-    Reduction result{};
+    static_assert (!std::is_convertible<ConcurrencyTag, Parallel_tag>::value,
+                 "Parallel_tag is enabled but neither TBB nor OpenMP is available.");
 
-    for(std::size_t i = first; i < last; ++i)
-      function(i, result);
-
-    return result;
+    return result{};
 
 #endif
   }
