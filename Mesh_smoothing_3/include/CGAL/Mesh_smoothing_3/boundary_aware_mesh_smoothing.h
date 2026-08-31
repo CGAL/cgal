@@ -42,8 +42,6 @@ namespace CGAL {
 *
 * @tparam C3t3 model of `MeshComplex_3InTriangulation_3`
 * @tparam CTS model of `ConstructTangentSpace`
-* @tparam ConcurrencyTag enables sequential versus parallel
-*         algorithm. Possible values are `Parallel_if_available_tag`, `Parallel_tag` or `Sequential_tag`.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 *
@@ -78,6 +76,11 @@ namespace CGAL {
 *     \cgalParamDefault{`0`}
 *     \cgalParamExtra{Strongly correlated to running time but will scale linearly with mesh size.}
 *   \cgalParamNEnd
+*   \cgalParamNBegin{concurrency_tag}
+*     \cgalParamDescription{a tag indicating if the task should be done using one or several threads.}
+*     \cgalParamType{Either `CGAL::Sequential_tag`, or `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`}
+*     \cgalParamDefault{`CGAL::Parallel_if_available_tag`}
+*   \cgalParamNEnd
 *   \cgalParamNBegin{vertex_is_constrained_map}
 *     \cgalParamDescription{a property map containing the constrained-or-not status of each vertex of the triangulation in the `c3t3`.}
 *     \cgalParamType{a class model of `ReadablePropertyMap` with `C3t3::Vertex_handle`
@@ -107,7 +110,6 @@ namespace CGAL {
 */
 template<typename C3t3,
          typename CTS,
-         typename ConcurrencyTag = Mesh_smoothing_3::Parallel_if_available_tag,
          typename NamedParameters = parameters::Default_named_parameters>
 Mesh_smoothing_3::Smoothing_status boundary_aware_mesh_smoothing  (
     C3t3& c3t3,
@@ -146,6 +148,11 @@ Mesh_smoothing_3::Smoothing_status boundary_aware_mesh_smoothing  (
     > ::type FCMap;
     FCMap fcmap = choose_parameter<Static_boolean_property_map<typename C3t3::Facet, false>>(get_parameter(np, internal_np::facet_is_constrained));
 
+    using ConcurrencyTag = typename internal_np::Lookup_named_param_def <
+        internal_np::concurrency_tag_t,
+        NamedParameters,
+        Mesh_smoothing_3::Parallel_if_available_tag
+    > ::type;
 
     unsigned max_nb_metric_evaluations = choose_parameter(get_parameter(np, internal_np::max_number_of_evaluations), 0);
 

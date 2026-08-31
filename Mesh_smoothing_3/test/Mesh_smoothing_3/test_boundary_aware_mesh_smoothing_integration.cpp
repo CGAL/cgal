@@ -88,16 +88,15 @@ template <
   typename C3t3T,
   typename ConcurrencyTag = CGAL::Mesh_smoothing_3::Parallel_if_available_tag
 >
-CGAL::Mesh_smoothing_3::Smoothing_status run_example_smoothing(C3t3T& c3t3, bool verbose)
+CGAL::Mesh_smoothing_3::Smoothing_status run_example_smoothing(C3t3T& c3t3, bool verbose, ConcurrencyTag tag = ConcurrencyTag{})
 {
   auto status = CGAL::boundary_aware_mesh_smoothing<
     C3t3T,
-    CGAL::Mesh_smoothing_3::C3t3_mesh_projector<C3t3T>,
-    ConcurrencyTag
+    CGAL::Mesh_smoothing_3::C3t3_mesh_projector<C3t3T>
   >(
       c3t3,
       CGAL::Mesh_smoothing_3::C3t3_mesh_projector<C3t3T>(c3t3),
-      CGAL::parameters::verbose(verbose).number_of_iterations(max_iterations));
+      CGAL::parameters::verbose(verbose).number_of_iterations(max_iterations).concurrency_tag(tag));
   assert_all_finite(c3t3);
   return status;
 }
