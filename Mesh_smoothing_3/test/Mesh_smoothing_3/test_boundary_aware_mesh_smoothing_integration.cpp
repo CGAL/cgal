@@ -91,8 +91,8 @@ template <
 CGAL::Mesh_smoothing_3::Smoothing_status run_example_smoothing(C3t3T& c3t3, bool verbose)
 {
   auto status = CGAL::boundary_aware_mesh_smoothing<
-    C3t3T, 
-    CGAL::Mesh_smoothing_3::C3t3_mesh_projector<C3t3T>, 
+    C3t3T,
+    CGAL::Mesh_smoothing_3::C3t3_mesh_projector<C3t3T>,
     ConcurrencyTag
   >(
       c3t3,

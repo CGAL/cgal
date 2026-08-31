@@ -524,7 +524,7 @@ inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, Concurre
         unsigned nb_inverted = 0;
         double conformal_energy_max = 0;
         bool collapsed_area_detected = false;
-        
+
         void join(Reduction const &other) {
             det_min = (std::min)(det_min, other.det_min);
             nb_inverted += other.nb_inverted;
@@ -647,7 +647,7 @@ inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, Concurre
         log_avg /= nbEdges;
         _local_size[v] = std::pow(10., log_avg);
     });
-    
+
     double min_allowed_det = min_valid_edge_size * min_valid_edge_size * min_valid_edge_size;
 
     Mesh_smoothing_3_internal::for_each<ConcurrencyTag>(0, _tet_storage.size(), [&](std::size_t t) {
@@ -666,7 +666,7 @@ template<typename Surface_patch_index, typename Curve_index, typename Concurrenc
 unsigned Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::evaluate_exact_predicates(Eigen::VectorXd const *x) {
 
     Eigen::VectorXd const & coords = x == nullptr ? _coords : *x;
-    
+
     struct Reduction {
         unsigned invalid_tet = 0;
         void join(Reduction const &other) { invalid_tet += other.invalid_tet; }
@@ -683,7 +683,7 @@ unsigned Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, Concurrency
         if (x == nullptr) _predicate_is_positive[t] = exact_check;
         if (!exact_check) ++reduction.invalid_tet;
     });
-    
+
     return reduction.invalid_tet;
 }
 
@@ -711,7 +711,7 @@ bool Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>
                                       : (opt_type == STIFFENING ? qis_energy(_coords, &_callback_smoothing_gradient)
                                       :                           laplacian_energy(_coords, &_callback_smoothing_gradient));
 
-    _callback_status.boundary_energy = has_bnd_terms() ? boundary_energy(_coords, &_callback_boundary_gradient): 0.; 
+    _callback_status.boundary_energy = has_bnd_terms() ? boundary_energy(_coords, &_callback_boundary_gradient): 0.;
     compute_determinants();
 
     _callback_status.min_det = _det_min;
@@ -732,7 +732,7 @@ bool Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>
         _callback_tet_storage[t].energy_value = _tet_storage[t].fval;
         _callback_tet_storage[t].weight = _tet_storage[t].local_edge_size;
         _callback_tet_storage[t].det = _determinants[t];
-    }); 
+    });
 
     return callback_function(_callback_status, _callback_vert_storage, _callback_tet_storage);
 }
@@ -770,7 +770,7 @@ inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, Concurre
     auto reduction = Mesh_smoothing_3_internal::reduce<ConcurrencyTag, Reduction>(0, _tet_storage.size(), [&](std::size_t t, Reduction &r) {
         r.weighted_det_min = (std::min)(r.weighted_det_min, _determinants[t] / _tet_storage[t].det_estimation);
         return r;
-    }); 
+    });
     double weighted_det_min = reduction.weighted_det_min;
 
     double _1999_eps = std::sqrt(1e-18 + 4*1e-2* weighted_det_min*weighted_det_min);
