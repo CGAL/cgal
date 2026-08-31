@@ -70,7 +70,7 @@ Reduction reduce(std::size_t first, std::size_t last, Function&& function) {
     Reduction result{};
 
     // using a signed type for old openMP versions
-#pragma omp parallel for reduction(cgal_mesh_smoothing_join : result)
+#pragma omp parallel for reduction(cgal_mesh_smoothing_join : result) schedule(guided, 32)
     for (std::ptrdiff_t iter_t = static_cast<std::ptrdiff_t>(first); iter_t < static_cast<std::ptrdiff_t>(last); ++iter_t) {
       function(static_cast<std::size_t>(iter_t), result);
     }
