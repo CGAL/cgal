@@ -10,9 +10,7 @@
 #include <CGAL/Lazy_exact_nt.h>
 #include <CGAL/Exact_rational.h>
 
-#ifdef CGAL_USE_CORE
 #include <CGAL/CORE_Expr.h>
-#endif
 
 #include <cassert>
 #include <iostream>
@@ -150,7 +148,6 @@ int main()
     std::cout << "  OK: reverted to \"" << oss.str() << "\"" << std::endl;
   }
 
-#ifdef CGAL_USE_CORE
   // Test 9: CORE::Expr regression. Exact mode is lossless only for backends whose
   // operator<< writes an exact representation. CORE::Expr::operator<< writes a
   // decimal approximation, so exact mode is NOT lossless for it. We check the
@@ -175,7 +172,6 @@ int main()
     std::cout << "  OK: default \"" << def.str() << "\", exact-mode \""
               << oss.str() << "\" (approximate for CORE::Expr)" << std::endl;
   }
-#endif
 
   std::cout << "All tests passed." << std::endl;
   return 0;
