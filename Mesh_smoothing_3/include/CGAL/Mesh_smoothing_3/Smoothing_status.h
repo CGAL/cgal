@@ -15,6 +15,8 @@
 
 #include <CGAL/license/Mesh_smoothing_3.h>
 
+#include <CGAL/tags.h>
+
 #include <chrono>
 
 namespace CGAL {
