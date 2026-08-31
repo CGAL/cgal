@@ -42,6 +42,8 @@ namespace CGAL {
 *
 * @tparam C3t3 model of `MeshComplex_3InTriangulation_3`
 * @tparam CTS model of `ConstructTangentSpace`
+* @tparam ConcurrencyTag enables sequential versus parallel
+*         algorithm. Possible values are `Parallel_if_available_tag`, `Parallel_tag` or `Sequential_tag`.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 *
@@ -105,8 +107,8 @@ namespace CGAL {
 */
 template<typename C3t3,
          typename CTS,
-         typename NamedParameters = parameters::Default_named_parameters,
-         typename ConcurrencyTag = Mesh_smoothing_3::Parallel_if_available_tag>
+         typename ConcurrencyTag = Mesh_smoothing_3::Parallel_if_available_tag,
+         typename NamedParameters = parameters::Default_named_parameters>
 Mesh_smoothing_3::Smoothing_status boundary_aware_mesh_smoothing  (
     C3t3& c3t3,
     CTS const & cts,

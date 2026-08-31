@@ -871,6 +871,11 @@ Smoothing_status Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, Concu
     auto [nb_det_inverted, nb_exactly_inverted] = internal::get_nb_inverted_cells(smoother.get_determinants(), smoother.get_predicate_is_positive());
     _smoothing_status.nb_initial_invalid_elements = _predicates_mode > Parameters::NO_CHECK ? nb_exactly_inverted : nb_det_inverted;
 
+    if constexpr(!std::is_convertible_v<ConcurrencyTag, CGAL::Parallel_tag>) {
+        Eigen::setNbThreads(1);
+        assert(Eigen::nbThreads() == 1);
+    }
+
     initialise_smoother(smoother);
     _smoothing_status.add_time(true);
     switch (_optimization_mode)
@@ -901,6 +906,9 @@ Smoothing_status Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, Concu
     _smoothing_status.nb_invalid_elements = _predicates_mode > Parameters::NO_CHECK ? nb_exactly_inverted : nb_det_inverted;
     _smoothing_status.add_time(true);
     _smoothing_status.conclude();
+    if constexpr(!std::is_convertible_v<ConcurrencyTag, CGAL::Parallel_tag>) {
+        Eigen::setNbThreads(0);
+    }
     return _smoothing_status;
 }
 

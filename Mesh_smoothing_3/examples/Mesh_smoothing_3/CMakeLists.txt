@@ -18,6 +18,11 @@ endif()
 create_single_source_cgal_program("c3t3_smooth.cpp")
 target_link_libraries(c3t3_smooth PRIVATE CGAL::Eigen3_support)
 
+find_package(TBB QUIET)
+if(TARGET CGAL::TBB_support)
+  target_link_libraries(c3t3_smooth PRIVATE CGAL::TBB_support)
+endif()
+
 find_package(OpenMP COMPONENTS CXX)
 if(OpenMP_CXX_FOUND)
     message(STATUS "OpenMP found")

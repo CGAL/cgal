@@ -517,39 +517,46 @@ inline Eigen::Matrix3d Tetrahedral_mesh_smoother<Surface_patch_index, Curve_inde
 template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
 inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::compute_determinants()
 {
-    double det_min = (std::numeric_limits<double>::max)();
-    unsigned nb_inverted = 0;
-    double conformal_energy_max = 0;
-
-    bool collapsed_area_detected = false;
     double min_trace = min_valid_edge_size * min_valid_edge_size;
 
-    #pragma omp parallel for reduction(min: det_min) reduction(+:nb_inverted) reduction(max: conformal_energy_max) reduction(||:collapsed_area_detected)
-    for (int iter_t = 0; iter_t < static_cast<int>(_tet_storage.size()); ++iter_t) {
-        unsigned t = static_cast<unsigned>(iter_t);
+    struct Reduction {
+        double det_min = (std::numeric_limits<double>::max)();
+        unsigned nb_inverted = 0;
+        double conformal_energy_max = 0;
+        bool collapsed_area_detected = false;
+        
+        void join(Reduction const &other) {
+            det_min = (std::min)(det_min, other.det_min);
+            nb_inverted += other.nb_inverted;
+            conformal_energy_max = (std::max)(conformal_energy_max, other.conformal_energy_max);
+            collapsed_area_detected = collapsed_area_detected || other.collapsed_area_detected;
+        }
+    };
+
+    Reduction reduction = Mesh_smoothing_3_internal::reduce<ConcurrencyTag, Reduction>(0, _tet_storage.size(), [&](std::size_t t, Reduction& r) {
         Tet_storage const &tet = _tet_storage[t];
 
         Eigen::Matrix3d J = tet.compute_jacobian(_coords);
         _determinants[t] = J.determinant();
-        nb_inverted += _determinants[t] <= 0;
-        det_min = (std::min)(_determinants[t], det_min);
+        r.nb_inverted += _determinants[t] <= 0;
+        r.det_min = (std::min)(_determinants[t], r.det_min);
         double trace = J.squaredNorm();
-        collapsed_area_detected = collapsed_area_detected || (trace < min_trace);
+        r.collapsed_area_detected = r.collapsed_area_detected || (trace < min_trace);
 
         if (_determinants[t] <= 0) {
             _conformal_energies[t] = (std::numeric_limits<double>::max)();
-            conformal_energy_max = _conformal_energies[t];
-            continue;
+            r.conformal_energy_max = _conformal_energies[t];
+            return;
         }
         double power_trace = std::pow(trace, 3./2.);
         _conformal_energies[t] = power_trace / _determinants[t];
-        conformal_energy_max = (std::max)(_conformal_energies[t], conformal_energy_max);
+        r.conformal_energy_max = (std::max)(_conformal_energies[t], r.conformal_energy_max);
+    });
 
-    }
-    _det_min = det_min;
-    _nb_inverted = nb_inverted;
-    _conformal_energy_max = conformal_energy_max;
-    _collapsed_area_detected = collapsed_area_detected;
+    _det_min = reduction.det_min;
+    _nb_inverted = reduction.nb_inverted;
+    _conformal_energy_max = reduction.conformal_energy_max;
+    _collapsed_area_detected = reduction.collapsed_area_detected;
 }
 
 template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
@@ -557,15 +564,15 @@ Eigen::SparseMatrix<double> Tetrahedral_mesh_smoother<Surface_patch_index, Curve
     unsigned n = 3 * nb_vertices();
     double l = w / (1+w);
 
-#pragma omp parallel for
-    for (int iter_t = 0; iter_t < static_cast<int>(_tet_storage.size()); ++iter_t) {
-        Tet_storage &tet = _tet_storage[static_cast<unsigned>(iter_t)];
+    Mesh_smoothing_3_internal::for_each<ConcurrencyTag>(0, _tet_storage.size(), [&](std::size_t t) {
+        Tet_storage &tet = _tet_storage[t];
         Eigen::Matrix3d J = tet.compute_jacobian(_coords);
         Eigen::Matrix3d dfdJ = 2*J.transpose();
         for (unsigned v = 0; v < 4; ++v) {
             tet.vert_grad[v] = dfdJ * tet.ig[v];
         }
-    }
+    });
+
     Eigen::SparseMatrix<double> H(n,n);
     std::vector<Eigen::Triplet<double>> triplets;
     triplets.reserve(4*4*3*_tet_storage.size());
@@ -625,7 +632,7 @@ Eigen::SparseMatrix<double> Tetrahedral_mesh_smoother<Surface_patch_index, Curve
 
 template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
 inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::update_local_size() {
-    Mesh_smoothing_3_internal::for_each<ConcurrencyTag>(0, _vert2tet_corner.size(), [&](std::size_t v) {
+    Mesh_smoothing_3_internal::for_each<ConcurrencyTag>(0, nb_vertices(), [&](std::size_t v) {
         // does geometric average on all edge of the vertex
         // pass to log to avoid double overflow with high number of multiplications
         double log_avg = 0.;
@@ -704,16 +711,14 @@ bool Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>
                                       : (opt_type == STIFFENING ? qis_energy(_coords, &_callback_smoothing_gradient)
                                       :                           laplacian_energy(_coords, &_callback_smoothing_gradient));
 
-    _callback_status.boundary_energy = has_bnd_terms() ? boundary_energy(_coords, &_callback_boundary_gradient): 0.;
+    _callback_status.boundary_energy = has_bnd_terms() ? boundary_energy(_coords, &_callback_boundary_gradient): 0.; 
     compute_determinants();
 
     _callback_status.min_det = _det_min;
     _callback_status.nb_inverted = _nb_inverted;
     _callback_status.opt_parameter = opt_type == UNTANGLING ? _untangling_eps : (opt_type == STIFFENING ? _qis_tau : 0.);
 
-#pragma omp parallel for
-    for (int iter_v = 0; iter_v < static_cast<int>(_vert2tet_corner.size());++iter_v) {
-        unsigned v = static_cast<unsigned>(iter_v);
+    Mesh_smoothing_3_internal::for_each<ConcurrencyTag>(0, nb_vertices(), [&](std::size_t v) {
         _callback_vert_storage[v].lock[0] = _locks[3*v+0];
         _callback_vert_storage[v].lock[1] = _locks[3*v+1];
         _callback_vert_storage[v].lock[2] = _locks[3*v+2];
@@ -721,31 +726,29 @@ bool Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>
         _callback_vert_storage[v].smoothing_gradient = Math_functions::sub_line_vector(_callback_smoothing_gradient, v);
         _callback_vert_storage[v].boundary_gradient = Math_functions::sub_line_vector(_callback_boundary_gradient, v);
         if (g != nullptr) _callback_vert_storage[v].lbfgs_gradient = Math_functions::sub_line_vector(*g, v);
-    }
+    });
 
-#pragma omp parallel for
-    for (int iter_t = 0; iter_t < static_cast<int>(_tet_storage.size());++iter_t) {
-        unsigned t = static_cast<unsigned>(iter_t);
+    Mesh_smoothing_3_internal::for_each<ConcurrencyTag>(0, _tet_storage.size(), [&](std::size_t t) {
         _callback_tet_storage[t].energy_value = _tet_storage[t].fval;
         _callback_tet_storage[t].weight = _tet_storage[t].local_edge_size;
         _callback_tet_storage[t].det = _determinants[t];
-    }
+    }); 
+
     return callback_function(_callback_status, _callback_vert_storage, _callback_tet_storage);
 }
 
 
 template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
 void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::gather_energy_gradient(Eigen::VectorXd &g) const {
-#pragma omp parallel for
-    for (int iter_v = 0; iter_v < static_cast<int>(_vert2tet_corner.size());++iter_v) {
-        unsigned v = static_cast<unsigned>(iter_v);
+    Mesh_smoothing_3_internal::for_each<ConcurrencyTag>(0, nb_vertices(), [&](std::size_t v) {
         for (unsigned d = 0; d < 3; ++d) {
             if (_locks[3*v+d]) continue;
             for (unsigned tc : _vert2tet_corner[v]) {
                 g(3*v+d) += _tet_storage[tc/4].vert_grad[tc%4](d);
             }
         }
-    }
+    });
+
 }
 
 
@@ -757,12 +760,18 @@ inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, Concurre
         return;
     }
 
-    double weighted_det_min = (std::numeric_limits<double>::max)();
-    #pragma omp parallel for reduction(min: weighted_det_min)
-    for (int iter_t = 0; iter_t < static_cast<int>(_tet_storage.size()); ++iter_t) {
-        unsigned t = static_cast<unsigned>(iter_t);
-        weighted_det_min = (std::min)(weighted_det_min, _determinants[t] / _tet_storage[t].det_estimation);
-    }
+    struct Reduction {
+        double weighted_det_min = (std::numeric_limits<double>::max)();
+        void join(const Reduction& other) {
+            weighted_det_min = (std::min)(weighted_det_min, other.weighted_det_min);
+        }
+    };
+
+    auto reduction = Mesh_smoothing_3_internal::reduce<ConcurrencyTag, Reduction>(0, _tet_storage.size(), [&](std::size_t t, Reduction &r) {
+        r.weighted_det_min = (std::min)(r.weighted_det_min, _determinants[t] / _tet_storage[t].det_estimation);
+        return r;
+    }); 
+    double weighted_det_min = reduction.weighted_det_min;
 
     double _1999_eps = std::sqrt(1e-18 + 4*1e-2* weighted_det_min*weighted_det_min);
 
@@ -784,14 +793,19 @@ inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, Concurre
 
 template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
 inline double Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::mips_untangling_energy(Eigen::VectorXd const &x, Eigen::VectorXd *grad) {
-    double untangling_max_energy = 1.;
-    double F = 0;
 
-#pragma omp parallel for reduction(+:F) reduction(max: untangling_max_energy)
-    for (int iter_t = 0; iter_t < static_cast<int>(_tet_storage.size()); ++iter_t) {
-        unsigned t = static_cast<unsigned>(iter_t);
+    struct Reduction {
+        double untangling_max_energy = 1.;
+        double F = 0;
+        void join(const Reduction& other) {
+            untangling_max_energy = (std::max)(untangling_max_energy, other.untangling_max_energy);
+            F += other.F;
+        }
+    };
+
+    Reduction reduction = Mesh_smoothing_3_internal::reduce<ConcurrencyTag, Reduction>(0, _tet_storage.size(), [&](std::size_t t, Reduction& r) {
         Tet_storage &tet = _tet_storage[t];
-        if (tet.skip) continue;
+        if (tet.skip) return;
         double scaled_epsilon = tet.det_estimation*_untangling_eps;
         double weight = tet.local_edge_size;
 
@@ -806,11 +820,11 @@ inline double Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, Concur
         double f =  trace * cbrt_c1 * inv_c1; //f / std::pow(c1, 2./3.);
 
         tet.fval = f;
-        untangling_max_energy = (std::max)(untangling_max_energy, tet.fval);
+        r.untangling_max_energy = (std::max)(r.untangling_max_energy, tet.fval);
 
-        F +=  weight * f;
+        r.F +=  weight * f;
 
-        if (grad == nullptr) continue;
+        if (grad == nullptr) return;
 
         double c3 = Math_functions::chi_deriv(scaled_epsilon, det);
 
@@ -823,27 +837,33 @@ inline double Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, Concur
         for (unsigned v = 0; v < 4; ++v) {
             tet.vert_grad[v] = dfdJ * tet.ig[v];
         }
-    }
+    });
+
+
     if (grad != nullptr)
         gather_energy_gradient(*grad);
 
-    _untangling_max_energy = untangling_max_energy;
+    _untangling_max_energy = reduction.untangling_max_energy;
 
-    return F;
+    return reduction.F;
 }
 
 
 
 template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
 inline double Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::power_mips_untangling_energy(Eigen::VectorXd const &x, Eigen::VectorXd *grad) {
-    double untangling_max_energy = 1.;
-    double F = 0;
+    struct Reduction {
+        double untangling_max_energy = 1.;
+        double F = 0;
+        void join(const Reduction& other) {
+            untangling_max_energy = (std::max)(untangling_max_energy, other.untangling_max_energy);
+            F += other.F;
+        }
+    };
 
-#pragma omp parallel for reduction(+:F) reduction(max: untangling_max_energy)
-    for (int iter_t = 0; iter_t < static_cast<int>(_tet_storage.size()); ++iter_t) {
-        unsigned t = static_cast<unsigned>(iter_t);
+    Reduction reduction = Mesh_smoothing_3_internal::reduce<ConcurrencyTag, Reduction>(0, _tet_storage.size(), [&](std::size_t t, Reduction& r) {
         Tet_storage &tet = _tet_storage[t];
-        if (tet.skip) continue;
+        if (tet.skip) return;
         double scaled_epsilon = tet.det_estimation*_untangling_eps;
         double weight = tet.local_edge_size;
 
@@ -858,11 +878,11 @@ inline double Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, Concur
         double f = pow_trace / c1;
 
         tet.fval = f;
-        untangling_max_energy = (std::max)(untangling_max_energy, tet.fval);
+        r.untangling_max_energy = (std::max)(r.untangling_max_energy, tet.fval);
 
-        F +=  weight * f;
+        r.F +=  weight * f;
 
-        if (grad == nullptr) continue;
+        if (grad == nullptr) return;
 
         double c2 = Math_functions::chi_deriv(scaled_epsilon, det);
 
@@ -875,27 +895,32 @@ inline double Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, Concur
         for (unsigned v = 0; v < 4; ++v) {
             tet.vert_grad[v] = dfdJ * tet.ig[v];
         }
-    }
+    });
+
     if (grad != nullptr)
         gather_energy_gradient(*grad);
 
-    _untangling_max_energy = untangling_max_energy;
+    _untangling_max_energy = reduction.untangling_max_energy;
 
-    return F;
+    return reduction.F;
 }
 
 template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
 inline double Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::regularized_untangling_energy(Eigen::VectorXd const &x, Eigen::VectorXd *grad) {
-    double untangling_max_energy = 1.;
-    double F = 0;
-
     double det_regularization_weight = 1e-3;
 
-#pragma omp parallel for reduction(+:F) reduction(max: untangling_max_energy)
-    for (int iter_t = 0; iter_t < static_cast<int>(_tet_storage.size()); ++iter_t) {
-        unsigned t = static_cast<unsigned>(iter_t);
+    struct Reduction {
+        double untangling_max_energy = 1.;
+        double F = 0;
+        void join(const Reduction& other) {
+            untangling_max_energy = (std::max)(untangling_max_energy, other.untangling_max_energy);
+            F += other.F;
+        }
+    };
+
+    Reduction reduction = Mesh_smoothing_3_internal::reduce<ConcurrencyTag, Reduction>(0, _tet_storage.size(), [&](std::size_t t, Reduction& r) {
         Tet_storage &tet = _tet_storage[t];
-        if (tet.skip) continue;
+        if (tet.skip) return;
         double delta = 1./tet.det_estimation;
         double scaled_epsilon = tet.det_estimation*_untangling_eps;
         double weight = tet.local_edge_size;
@@ -911,7 +936,7 @@ inline double Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, Concur
         double f = pow_trace / c1;
 
         tet.fval = f;
-        untangling_max_energy = (std::max)(untangling_max_energy, tet.fval);
+        r.untangling_max_energy = (std::max)(r.untangling_max_energy, tet.fval);
 
         double d_g = delta * det;
         double c1_g = Math_functions::chi(_untangling_eps, d_g);
@@ -919,9 +944,9 @@ inline double Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, Concur
 
         double g = (1+d_g*d_g) / c1_g;
 
-        F +=  weight * (f + det_regularization_weight * g);
+        r.F +=  weight * (f + det_regularization_weight * g);
 
-        if (grad == nullptr) continue;
+        if (grad == nullptr) return;
 
         double c2 = Math_functions::chi_deriv(scaled_epsilon, det);
         double c2_g = Math_functions::chi_deriv(_untangling_eps, d_g);
@@ -936,88 +961,43 @@ inline double Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, Concur
         for (unsigned v = 0; v < 4; ++v) {
             tet.vert_grad[v] = dfdJ * tet.ig[v];
         }
-    }
+    });
     if (grad != nullptr)
         gather_energy_gradient(*grad);
 
-    _untangling_max_energy = untangling_max_energy;
+    _untangling_max_energy = reduction.untangling_max_energy;
 
-    return F;
+    return reduction.F;
 }
 
-template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
-inline double Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::sym_dirichlet_untangling_energy(Eigen::VectorXd const &x, Eigen::VectorXd *grad) {
-    double untangling_max_energy = 1.;
-    double F = 0;
 
-#pragma omp parallel for reduction(+:F) reduction(max: untangling_max_energy)
-    for (int iter_t = 0; iter_t < static_cast<int>(_tet_storage.size()); ++iter_t) {
-        unsigned t = static_cast<unsigned>(iter_t);
-        Tet_storage &tet = _tet_storage[t];
-        if (tet.skip) continue;
-        double scaled_epsilon = tet.det_estimation*_untangling_eps;
-        double weight = tet.local_edge_size;
-
-        Eigen::Matrix3d J = tet.compute_jacobian(x);
-        double det = J.determinant();
-
-        double c1 = Math_functions::chi(scaled_epsilon, det);
-        double inv_c1 = 1./c1;
-        double cbrt_c1 = std::cbrt(c1);
-        double trace = J.squaredNorm();
-
-        double f =  trace * cbrt_c1 * inv_c1; //f / std::pow(c1, 2./3.);
-
-        tet.fval = f;
-        untangling_max_energy = (std::max)(untangling_max_energy, tet.fval);
-
-        F +=  weight * f;
-
-        if (grad == nullptr) continue;
-
-        double c3 = Math_functions::chi_deriv(scaled_epsilon, det);
-
-        Eigen::Matrix3d K = Math_functions::dual_basis(J);
-
-        Eigen::Matrix3d dfdJ = J * (weight * 2. * cbrt_c1 * inv_c1)
-                             - K * (weight * (2./3.) * f * c3 * inv_c1 );
-
-        dfdJ.transposeInPlace();
-        for (unsigned v = 0; v < 4; ++v) {
-            tet.vert_grad[v] = dfdJ * tet.ig[v];
-        }
-    }
-    if (grad != nullptr)
-        gather_energy_gradient(*grad);
-
-    _untangling_max_energy = untangling_max_energy;
-
-    return F;
-}
 
 template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
 inline double Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::laplacian_energy(Eigen::VectorXd const &x, Eigen::VectorXd *g) {
-    double F = 0;
-#pragma omp parallel for reduction(+:F)
-    for (int iter_t = 0; iter_t < static_cast<int>(_tet_storage.size()); ++iter_t) {
-        unsigned t = static_cast<unsigned>(iter_t);
+    struct Reduction {
+        double F = 0;
+        void join(const Reduction& other) {
+            F += other.F;
+        }
+    };
+    Reduction reduction = Mesh_smoothing_3_internal::reduce<ConcurrencyTag, Reduction>(0, _tet_storage.size(), [&](std::size_t t, Reduction& r) {
         Tet_storage &tet = _tet_storage[t];
         Eigen::Matrix3d J = tet.compute_jacobian(x);
         double f = J.squaredNorm();
-        F += f;
+        r.F += f;
         tet.fval = f;
 
-        if (g == nullptr) continue;
+        if (g == nullptr) return;
 
         Eigen::Matrix3d dfdJ = 2*J.transpose();
         for (unsigned v = 0; v < 4; ++v) {
             tet.vert_grad[v] = dfdJ * tet.ig[v];
         }
-    }
+    });
     if (g != nullptr)
         gather_energy_gradient(*g);
 
-    return F;
+    return reduction.F;
 }
 
 template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
@@ -1029,32 +1009,36 @@ inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, Concurre
 
 template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
 inline double Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::qis_energy(Eigen::VectorXd const &x, Eigen::VectorXd *g) {
-    double F = 0;
-    unsigned above_max_qual = 0;
-#pragma omp parallel for reduction(+:F, above_max_qual)
-    for (int iter_t = 0; iter_t < static_cast<int>(_tet_storage.size()); ++iter_t) {
-        unsigned t = static_cast<unsigned>(iter_t);
+    struct Reduction {
+        double F = 0;
+        unsigned above_max_qual = 0;
+        void join(const Reduction& other) {
+            F += other.F;
+            above_max_qual += other.above_max_qual;
+        }
+    };
+    Reduction reduction = Mesh_smoothing_3_internal::reduce<ConcurrencyTag, Reduction>(0, _tet_storage.size(), [&](std::size_t t, Reduction& r) {
         Tet_storage &tet = _tet_storage[t];
 
         Eigen::Matrix3d J = tet.compute_jacobian(x);
         double det = J.determinant();
         if (det <= 0) {
-            ++above_max_qual;
-            continue;
+            ++r.above_max_qual;
+            return;
         }
         double trace = J.squaredNorm();
         double root_trace = std::sqrt(trace);
         double pow_trace = trace*root_trace; //std::pow(trace, 3. / 2.);
 
         double f = pow_trace / det;
-        above_max_qual += _qis_tau * f >= 1.;
-        if (above_max_qual) continue; // break not possible in parallel loop
+        r.above_max_qual += _qis_tau * f >= 1.;
+        if (r.above_max_qual) return;
 
         double denom = (1-_qis_tau*f);
         double qis = f / denom;
         tet.fval = qis;
-        F +=  tet.local_edge_size * qis;
-        if (g == nullptr) continue;
+        r.F +=  tet.local_edge_size * qis;
+        if (g == nullptr) return;
         Eigen::Matrix3d K = Math_functions::dual_basis(J);
         double dqis_dx = 1./(denom*denom);
         Eigen::Matrix3d dqis_dJ = J * (tet.local_edge_size * dqis_dx * 3. * root_trace / det) - K * (tet.local_edge_size * dqis_dx * f / det);
@@ -1062,8 +1046,8 @@ inline double Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, Concur
         for (unsigned v = 0; v < 4; ++v) {
             tet.vert_grad[v] = dqis_dJ * tet.ig[v];
         }
-    }
-    if (above_max_qual > 0 || F > _QIS_INFINITE_ENERGY) {
+    });
+    if (reduction.above_max_qual > 0 || reduction.F > _QIS_INFINITE_ENERGY) {
         if (g != nullptr) g->setZero();
         return _QIS_INFINITE_ENERGY;
     }
@@ -1071,7 +1055,7 @@ inline double Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, Concur
     if (g != nullptr)
         gather_energy_gradient(*g);
 
-    return F;
+    return reduction.F;
 }
 
 
@@ -1094,23 +1078,20 @@ inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, Concurre
     };
 
     if (_boundary_batch_mode) {
-#pragma omp parallel for
-        for (int iter_t = 0; iter_t < static_cast<int>(_bnd_poly.size()); ++iter_t) {
-            update_poly_coord(static_cast<unsigned>(iter_t));
-        }
+        Mesh_smoothing_3_internal::for_each<ConcurrencyTag>(0, _bnd_poly.size(), [&](std::size_t t) {
+            update_poly_coord(t);
+        });
         _boundary_batch_query(_boundary_live_coords, _boundary_batch_ids, _boundary_batch_query_results);
     }
 
-#pragma omp parallel for
-    for (int iter_t = 0; iter_t < static_cast<int>(_bnd_poly.size()); ++iter_t) {
-        unsigned t = static_cast<unsigned>(iter_t);
+    Mesh_smoothing_3_internal::for_each<ConcurrencyTag>(0, _bnd_poly.size(), [&](std::size_t t) {
         Boundary_poly &poly = _bnd_poly[t];
         Eigen::Vector3d center = Eigen::Vector3d::Zero();
         for (unsigned v : poly.verts) {
             center += Math_functions::sub_col_vector(x, v);
         }
         center /= static_cast<double>(poly.verts.size());
-        if (!reset && (center - poly.prev_center).norm()<poly.max_drift) continue;
+        if (!reset && (center - poly.prev_center).norm()<poly.max_drift) return;
 
         poly.prev_center = center;
         poly.avg_edge_size = 0.;
@@ -1136,43 +1117,44 @@ inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, Concurre
             }
             poly.weight = 1./(std::max)(MAXIMUM_RELATIVE_DISTANCE_RE_WEIGHTING,max_poly_relative_dist);
         }
+    });
 
-    }
 }
 
 template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
 inline double Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::boundary_energy(Eigen::VectorXd const &x, Eigen::VectorXd *g) {
     if (!has_bnd_terms()) return 0.;
-    double F = 0;
     double drift = boundary_weight/(ACCEPTED_LOCAL_VARIATION_FROM_BOUNDARY*ACCEPTED_LOCAL_VARIATION_FROM_BOUNDARY);
-#pragma omp parallel for reduction(+:F)
-    for (int iter_t = 0; iter_t < static_cast<int>(_bnd_poly.size()); ++iter_t) {
-        unsigned t = static_cast<unsigned>(iter_t);
+    struct Reduction {
+        double F = 0.;
+        void join(const Reduction& other) {
+            F += other.F;
+        }
+    };
+    Reduction reduction = Mesh_smoothing_3_internal::reduce<ConcurrencyTag, Reduction>(0, _bnd_poly.size(), [&](std::size_t t, Reduction& r) {
         Boundary_poly &poly = _bnd_poly[t];
         for (unsigned tc = 0; tc < poly.verts.size(); ++tc) {
             double regul = poly.weight * drift/_local_size[poly.verts[tc]];
             Eigen::Vector3d pt = Math_functions::sub_col_vector(x, poly.verts[tc]);
             Eigen::Vector3d dn = pt-poly.pt;
             double dist = (dn.transpose() * poly.A * dn);
-            F += regul * dist;
+            r.F += regul * dist;
             if (g == nullptr) continue;
             poly.vert_grad[tc] = regul * (2 * poly.A *dn);
         }
-    }
+    });
     if (g != nullptr) {
-#pragma omp parallel for
-        for (int i = 0; i < static_cast<int>((*_vert_and_face_corners).size());++i) {
-            unsigned v = (*_vert_and_face_corners)[static_cast<unsigned>(i)].first;
+        Mesh_smoothing_3_internal::for_each<ConcurrencyTag>(0, _vert_and_face_corners->size(), [&](std::size_t i) {
+            unsigned v = (*_vert_and_face_corners)[i].first;
             for (unsigned d = 0; d < 3; ++d) {
                 if (_locks[3*v+d]) continue;
-                for (auto [t, tc] : (*_vert_and_face_corners)[static_cast<unsigned>(i)].second) {
+                for (auto [t, tc] : (*_vert_and_face_corners)[i].second) {
                     (*g)(3*v+d) += _bnd_poly[t].vert_grad[tc](d);
                 }
             }
-        }
+        });
     }
-
-    return F;
+    return reduction.F;
 }
 
 
