@@ -1564,22 +1564,6 @@ Scene_surface_mesh_item::load_obj(std::istream& in)
 {
   typedef SMesh::Point Point;
   bool failed = !CGAL::IO::read_OBJ(in, *(d->smesh_), CGAL::parameters::verbose(true));
-  if(failed)
-  {
-    in.clear();
-    in.seekg(0);
-    std::vector<Point> points;
-    std::vector<std::vector<std::size_t> > faces;
-    failed = !CGAL::IO::read_OBJ(in, points, faces);
-    if(!failed)
-    {
-      CGAL::Polygon_mesh_processing::repair_polygon_soup(points, faces);
-      CGAL::Polygon_mesh_processing::orient_polygon_soup(points, faces);
-
-      clear(*(d->smesh_));
-      CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, faces, *(d->smesh_));
-    }
-  }
 
   if((!failed) && !isEmpty())
   {
