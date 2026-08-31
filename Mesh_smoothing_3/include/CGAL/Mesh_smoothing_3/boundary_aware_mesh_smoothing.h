@@ -154,6 +154,9 @@ Mesh_smoothing_3::Smoothing_status boundary_aware_mesh_smoothing  (
         Mesh_smoothing_3::Parallel_if_available_tag
     > ::type;
 
+    // not documented, for benchmarking purposes
+    bool perform_hilbert_sort = !choose_parameter(get_parameter(np, internal_np::preserve_order), true);
+
     unsigned max_nb_metric_evaluations = choose_parameter(get_parameter(np, internal_np::max_number_of_evaluations), 0);
 
     double time_limit = choose_parameter(get_parameter(np, internal_np::maximum_running_time), 0.);
@@ -234,6 +237,7 @@ Mesh_smoothing_3::Smoothing_status boundary_aware_mesh_smoothing  (
     smoother.set_max_number_of_iteration(max_iterations);
     smoother.set_maximum_running_time(time_limit);
     smoother.set_maximum_number_of_metric_evaluations(max_nb_metric_evaluations);
+    smoother.set_perform_hilbert_sort(perform_hilbert_sort);
 
     return_status.add_time(true);
 

@@ -16,6 +16,7 @@
 #include <CGAL/license/Mesh_smoothing_3.h>
 
 #include <CGAL/Mesh_smoothing_3/internal/utils/math_functions.h>
+#include <CGAL/Mesh_smoothing_3/internal/utils/hilbert_sort.h>
 
 namespace CGAL {
 
@@ -67,6 +68,11 @@ void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::
 template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
 void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::set_minimum_valid_edge_size(double val) {
     _min_valid_edge_size = val;
+}
+
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::set_perform_hilbert_sort(bool perform) {
+    _perform_hilbert_sort = perform;
 }
 
 template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
@@ -313,6 +319,40 @@ void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::
 
     _tetrahedra.shrink_to_fit();
     _tetrahedron_refs.shrink_to_fit();
+
+    if (_perform_hilbert_sort) {
+        Mesh_smoothing_3_internal::Mesh_permutation permutation = Mesh_smoothing_3_internal::hilbert_sort_mesh(temp_coordinates_storage, _tetrahedra);
+
+        auto tmp_nb_tet_on_verts = nb_tet_on_verts;
+        auto tmp_compressed_locks = _compressed_locks;
+        for (unsigned v = 0; v < nb_points; ++v) {
+            unsigned old_v = permutation.vertex_new_to_old[v];
+            tmp_nb_tet_on_verts[v] = nb_tet_on_verts[old_v];
+            tmp_compressed_locks[3*v+0] = _compressed_locks[3*old_v+0];
+            tmp_compressed_locks[3*v+1] = _compressed_locks[3*old_v+1];
+            tmp_compressed_locks[3*v+2] = _compressed_locks[3*old_v+2];
+        }
+        nb_tet_on_verts.swap(tmp_nb_tet_on_verts);
+        _compressed_locks.swap(tmp_compressed_locks);
+
+        for (auto &[handle, v] : _vertex_original_to_compressed) {
+            v = permutation.vertex_old_to_new[v];
+        }
+
+        auto tmp_tetrahedra_refs = _tetrahedron_refs;
+        for (unsigned new_i = 0; new_i < _tetrahedra.size(); ++new_i) {
+            tmp_tetrahedra_refs[new_i] = _tetrahedron_refs[permutation.tet_new_to_old[new_i]];
+
+        }
+        _tetrahedron_refs.swap(tmp_tetrahedra_refs);
+
+        for (auto &[handle, c] : _cell_original_to_compressed) {
+            c = permutation.tet_old_to_new[c];
+        }
+
+    }
+
+
 
     // computing vertex -> tet data structure
     std::vector<unsigned> curr_id(nb_points,0);
