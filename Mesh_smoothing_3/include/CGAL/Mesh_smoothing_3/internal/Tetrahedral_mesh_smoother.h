@@ -1324,7 +1324,19 @@ inline bool Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, Concurre
     update_curves_and_points_info(_coords, true);
     if (verbose) std::cout << "Nb of optimization variables (vertices x3): " << _coords.size()  << std::endl;
     if (verbose) std::cout << "Nb of energy terms (tetrahedra): " << _tet_storage.size() << std::endl;
-    if (verbose) std::cout << "Nb of used OpenMP core: " << Eigen::nbThreads( ) << std::endl;
+    if (verbose) std::cout << "Nb of used cores for Eigen: " << Eigen::nbThreads() << std::endl;
+    if constexpr(!std::is_convertible_v<ConcurrencyTag, CGAL::Parallel_tag>) {
+        if (verbose) std::cout << "Sequential mode" << std::endl;
+    }
+    else {
+        if (verbose) std::cout << "Parallel mode: " << std::endl;
+#ifdef CGAL_LINKED_WITH_TBB
+        if (verbose) std::cout << "- TBB enabled." << std::endl;
+#endif
+#ifdef defined(_OPENMP) && _OPENMP >= 201307
+        if (verbose) std::cout << "- OpenMP enabled." << std::endl;
+#endif
+    }
 
     if (exact_predicate_status) {
         unsigned curr_invalid = evaluate_exact_predicates();
