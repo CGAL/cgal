@@ -1270,7 +1270,7 @@ void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>
 #ifdef CGAL_LINKED_WITH_TBB
         if (verbose) std::cout << "- TBB enabled." << std::endl;
 #endif
-#ifdef defined(_OPENMP) && _OPENMP >= 201307
+#if defined(_OPENMP) && _OPENMP >= 201307
         if (verbose) std::cout << "- OpenMP enabled." << std::endl;
 #endif
     }
@@ -1333,7 +1333,7 @@ inline bool Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, Concurre
 #ifdef CGAL_LINKED_WITH_TBB
         if (verbose) std::cout << "- TBB enabled." << std::endl;
 #endif
-#ifdef defined(_OPENMP) && _OPENMP >= 201307
+#if defined(_OPENMP) && _OPENMP >= 201307
         if (verbose) std::cout << "- OpenMP enabled." << std::endl;
 #endif
     }
