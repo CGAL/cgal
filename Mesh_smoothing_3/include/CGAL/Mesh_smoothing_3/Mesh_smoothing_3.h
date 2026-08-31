@@ -388,6 +388,8 @@ public: // for advanced usage. Do not touch if you do not know what you are doin
 
     void set_minimum_valid_edge_size(double edge_size);  // should be a minimum bound on the valid edge size of the mesh, used as a reference for untangling
 
+    void set_perform_hilbert_sort(bool perform);  // enable or disable hilbert sorting for improved cache locality
+
     unsigned get_total_number_of_lbfgs_iterations() const;
 
     // return a negative value if you don't want enforce a sizing on a given vertex.
@@ -456,6 +458,7 @@ private:
     unsigned _max_number_of_iteration = 1000;
     double _min_valid_edge_size = 1e-6;
     double _boundary_weight = 1.;
+    bool _perform_hilbert_sort = true;
 
     bool is_vert_locked(Vertex_descriptor v) const;
 
