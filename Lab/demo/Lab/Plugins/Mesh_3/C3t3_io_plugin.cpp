@@ -138,7 +138,7 @@ CGAL_Lab_c3t3_binary_io_plugin::load(
       item->set_valid(false);
 
       if(CGAL::IO::read_MEDIT(in, item->c3t3(),
-        CGAL::parameters::verbose(true)
+        CGAL::parameters::verbose(false)
         .allow_non_manifold(true)
         .rebind_labels(false)))
       {
