@@ -268,7 +268,7 @@ private:
         the cost of launching new threads. Experimentally, using 10
         times the bucket size as a limit gives the best timings.
     */
-    if (c_low.size() > split.bucket_size() && c.size() > split.bucket_size()
+    if (needs_internal_node(c_low) && needs_internal_node(c)
         && (c_low.size() + c.size() > 10 * split.bucket_size()))
     {
       nh->lower_ch = new_internal_node();

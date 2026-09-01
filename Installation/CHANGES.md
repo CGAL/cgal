@@ -60,6 +60,10 @@ Release date: December 2026
   `is_face_valued` and `face_value` (with `face_value_name` for the legend). As an example, the
   surface mesh drawer exposes the aspect ratio of each face.
 
+### [dD Spatial Searching](https://doc.cgal.org/6.3/Manual/packages.html#PkgSpatialSearchingD)
+
+- Fixed a bug in `CGAL::Kd_tree::build<CGAL::Parallel_tag>()`, which split subtrees whose points all have
+  equal coordinates instead of making them leaves as `CGAL::Kd_tree::build<CGAL::Sequential_tag>()` does.
 
 
 ## [Release 6.2](https://github.com/CGAL/cgal/releases/tag/v6.2)
