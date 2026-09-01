@@ -1,7 +1,7 @@
 #include <CGAL/hexmeshing/Hexmeshing_for_linear_cell_complex_sequential.h>
 #include <CGAL/hexmeshing/Hexmeshing_mesh_data_for_hexmeshing.h>
 #include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
-#include <CGAL/Hexmeshing_generate_two_refinement_mesh.h>
+#include <CGAL/generate_hexahedral_mesh_using_two_refinement.h>
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Simple_cartesian.h>

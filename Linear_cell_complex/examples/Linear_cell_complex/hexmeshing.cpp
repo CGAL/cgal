@@ -1,5 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Hexmeshing_generate_two_refinement_mesh.h>
+#include <CGAL/generate_hexahedral_mesh_using_two_refinement.h>
 #include <CGAL/draw_linear_cell_complex.h>
 #include <CGAL/Linear_cell_complex/IO/VTK.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
