@@ -31,8 +31,11 @@
 
 // Kd_tree.h explains the macro.
 #if defined(CGAL_LINKED_WITH_TBB) && !defined(CGAL_DISABLE_TBB_STRUCTURE_IN_KD_TREE)
+#  include <tbb/parallel_for.h>
 #  include <tbb/parallel_reduce.h>
 #  include <tbb/blocked_range.h>
+#  include <array>
+#  include <random>
 #  define CGAL_TBB_STRUCTURE_IN_KD_TREE
 #endif
 
@@ -41,6 +44,9 @@ namespace CGAL {
 namespace internal {
 
 #ifdef CGAL_TBB_STRUCTURE_IN_KD_TREE
+// The loops of the parallel kernels below run in chunks of about this many elements.
+const std::size_t kd_tree_grain_size = 2048;
+
 // Computes the bounds Kd_tree_rectangle::update_from_points() computes, with
 // that function on each subrange; the bounds of the subranges are joined right
 // into left with strict comparisons, so ties keep the leftmost value.
@@ -83,6 +89,98 @@ struct Tight_box_reduce {
     }
   }
 };
+
+// The elements in[i] for which pred(i) holds, in their order.
+template <class T, class Pred>
+std::vector<T> parallel_filter(const T* in, std::size_t n, const Pred& pred)
+{
+  const std::size_t block = kd_tree_grain_size;
+  const std::size_t nblocks = (n + block - 1) / block;
+
+  std::vector<std::size_t> count(nblocks);
+  tbb::parallel_for(std::size_t(0), nblocks, [&](std::size_t b) {
+    const std::size_t lo = b * block, hi = (std::min)(lo + block, n);
+    std::size_t c = 0;
+    for (std::size_t i = lo; i != hi; ++i)
+      c += pred(i);
+    count[b] = c;
+  });
+  std::size_t k = 0;
+  for (std::size_t b = 0; b != nblocks; ++b) {
+    const std::size_t c = count[b];
+    count[b] = k;
+    k += c;
+  }
+  std::vector<T> out(k);
+  tbb::parallel_for(std::size_t(0), nblocks, [&](std::size_t b) {
+    const std::size_t lo = b * block, hi = (std::min)(lo + block, n);
+    std::size_t t = count[b];
+    for (std::size_t i = lo; i != hi; ++i)
+      if (pred(i)) out[t++] = in[i];
+  });
+  return out;
+}
+
+// The k-th smallest of keys by less; the algorithm of parlay::kth_smallest:
+// bucket the keys by 31 sampled pivots, keep the bucket holding k, repeat.
+// The bucket of each key is stored in ids, one slot per key.
+template <class T, class Less>
+T kth_smallest(const T* keys, std::size_t n, std::size_t k, const Less& less, unsigned char* ids)
+{
+  const std::size_t serial = 1000;
+  std::vector<T> cur;
+  const T* a = keys;
+  std::mt19937 gen(0);
+  while (n > serial) {
+
+    std::vector<T> sample(31 * 8);
+    std::uniform_int_distribution<std::size_t> dis(0, n - 1);
+    for (std::size_t i = 0; i != sample.size(); ++i)
+      sample[i] = a[dis(gen)];
+    std::sort(sample.begin(), sample.end(), less);
+    std::vector<T> pivots(31);
+    for (std::size_t i = 0; i != 31; ++i)
+      pivots[i] = sample[i * 8];
+
+    // the bucket of a key is the number of pivots less than it, found by a
+    // binary search without branches
+    typedef std::array<std::size_t, 32> Hist;
+    Hist hist = tbb::parallel_reduce(
+      tbb::blocked_range<std::size_t>(0, n, kd_tree_grain_size), Hist(),
+      [&](const tbb::blocked_range<std::size_t>& r, Hist h) {
+        for (std::size_t i = r.begin(); i != r.end(); ++i) {
+          std::size_t b = 0;
+          for (std::size_t s = 16; s != 0; s /= 2)
+            b += s * std::size_t(less(pivots[b + s - 1], a[i]));
+          ids[i] = static_cast<unsigned char>(b);
+          ++h[b];
+        }
+        return h;
+      },
+      [](Hist x, const Hist& y) {
+        for (std::size_t j = 0; j != 32; ++j) x[j] += y[j];
+        return x;
+      });
+    std::size_t id = 0, off = 0;
+    while (off + hist[id] <= k) {
+      off += hist[id];
+      ++id;
+    }
+    // the keys of that bucket, without those equal to its pivot
+    std::vector<T> next = parallel_filter(a, n, [&](std::size_t i) {
+      return ids[i] == id && (id == 31 || less(a[i], pivots[id]));
+    });
+    if (k - off >= next.size())
+      return pivots[id];
+    k -= off;
+    cur = std::move(next);
+    a = cur.data();
+    n = cur.size();
+  }
+  std::vector<T> tmp(a, a + n);
+  std::nth_element(tmp.begin(), tmp.begin() + k, tmp.end(), less);
+  return tmp[k];
+}
 #endif
 
 } // namespace internal
