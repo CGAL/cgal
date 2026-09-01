@@ -29,8 +29,10 @@
 #include <CGAL/IO/File_binary_mesh_3.h>
 
 #include <boost/container/flat_set.hpp>
+#include <functional>
 #include <boost/container/small_vector.hpp>
 #include <boost/bimap.hpp>
+#include <boost/functional/hash.hpp>
 #include <boost/iterator/function_output_iterator.hpp>
 
 #include <optional>
@@ -615,6 +617,26 @@ struct Compare_edges
   }
 };
 
+// Same equivalence as `Compare_edges`, for the indices that only need to find
+// an edge again rather than keep the edges in order.
+template<typename Edge>
+struct Hash_edges
+{
+  std::size_t operator()(const Edge& e) const
+  {
+    return boost::hash<decltype(make_vertex_pair(e))>()(make_vertex_pair(e));
+  }
+};
+
+template<typename Edge>
+struct Equal_edges
+{
+  bool operator()(const Edge& e1, const Edge& e2) const
+  {
+    return make_vertex_pair(e1) == make_vertex_pair(e2);
+  }
+};
+
 
 template<typename Vh>
 CGAL::Triple<Vh, Vh, Vh> make_vertex_triple(const Vh vh0, const Vh vh1, const Vh vh2)
@@ -896,11 +918,14 @@ OutputIterator incident_subdomains(const typename C3t3::Vertex_handle v,
                                    OutputIterator oit)
 {
   typedef typename C3t3::Triangulation::Cell_handle Cell_handle;
-  std::vector<Cell_handle> cells;
-  c3t3.triangulation().incident_cells(v, std::back_inserter(cells));
 
-  for (std::size_t i = 0; i < cells.size(); ++i)
-    *oit++ = cells[i]->subdomain_index();
+  // only the subdomain index of each cell of the star is wanted, so the star
+  // is read as it is walked rather than collected first
+  c3t3.triangulation().incident_cells(v,
+    boost::make_function_output_iterator([&](const Cell_handle c)
+    {
+      *oit++ = c->subdomain_index();
+    }));
 
   return oit;
 }
@@ -964,16 +989,90 @@ OutputIterator incident_surface_patches(const typename C3t3::Vertex_handle& v,
   return oit;
 }
 
+// Counting how many distinct indices a simplex touches needs no container of
+// its own : a vertex or an edge sees a handful of them, so the ones already
+// seen are kept inline and scanned.
+template<typename Index>
+struct Distinct_index_counter
+{
+  boost::container::small_vector<Index, 8> seen;
+
+  void operator()(const Index& i)
+  {
+    for (const Index& s : seen)
+      if (s == i)
+        return;
+    seen.push_back(i);
+  }
+};
+
 template<typename C3t3>
 std::size_t nb_incident_subdomains(const typename C3t3::Vertex_handle v,
                                    const C3t3& c3t3)
 {
   typedef typename C3t3::Subdomain_index Subdomain_index;
 
-  std::unordered_set<Subdomain_index> indices;
-  incident_subdomains(v, c3t3, std::inserter(indices, indices.begin()));
+  Distinct_index_counter<Subdomain_index> counter;
+  incident_subdomains(v, c3t3, boost::make_function_output_iterator(std::ref(counter)));
 
-  return indices.size();
+  return counter.seen.size();
+}
+
+// `nb_incident_subdomains(v, c3t3) > 1`, without counting the whole star. The
+// traversal is the one `TDS_3::incident_cells_3()` performs - from v's cell,
+// across the facets that contain v, marking cells as it goes - so it sees the
+// same cells in the same order, and stops as soon as a second index appears.
+// The marks are the TDS's own conflict flags and are cleared before
+// returning, so this must not be called from inside another marking
+// traversal; topology_test, which calls it, is not.
+template<typename C3t3>
+bool has_several_incident_subdomains(const typename C3t3::Vertex_handle v,
+                                     const C3t3& c3t3)
+{
+  typedef typename C3t3::Triangulation::Cell_handle Cell_handle;
+  CGAL_USE(c3t3);
+
+  const Cell_handle start = v->cell();
+  const auto si0 = start->subdomain_index();
+
+  boost::container::small_vector<Cell_handle, 128> marked;
+  boost::container::small_vector<Cell_handle, 128> to_visit;
+
+  start->tds_data().mark_in_conflict();
+  marked.push_back(start);
+  to_visit.push_back(start);
+
+  bool several = false;
+  while (!to_visit.empty())
+  {
+    const Cell_handle c = to_visit.back();
+    to_visit.pop_back();
+
+    if (c->subdomain_index() != si0)
+    {
+      several = true;
+      break;
+    }
+
+    for (int i = 0; i < 4; ++i)
+    {
+      if (c->vertex(i) == v)
+        continue;
+
+      const Cell_handle n = c->neighbor(i);
+      if (!n->tds_data().is_clear())
+        continue;
+
+      n->tds_data().mark_in_conflict();
+      marked.push_back(n);
+      to_visit.push_back(n);
+    }
+  }
+
+  for (const Cell_handle c : marked)
+    c->tds_data().clear();
+
+  return several;
 }
 
 template<typename C3t3>
@@ -982,10 +1081,10 @@ std::size_t nb_incident_subdomains(const typename C3t3::Edge& e,
 {
   typedef typename C3t3::Subdomain_index Subdomain_index;
 
-  std::unordered_set<Subdomain_index> indices;
-  incident_subdomains(e, c3t3, std::inserter(indices, indices.begin()));
+  Distinct_index_counter<Subdomain_index> counter;
+  incident_subdomains(e, c3t3, boost::make_function_output_iterator(std::ref(counter)));
 
-  return indices.size();
+  return counter.seen.size();
 }
 
 template <typename C3t3>
@@ -994,10 +1093,10 @@ std::size_t nb_incident_surface_patches(const typename C3t3::Edge& e,
 {
   typedef typename C3t3::Surface_patch_index Surface_patch_index;
 
-  std::unordered_set<Surface_patch_index, boost::hash<Surface_patch_index>> indices;
-  incident_surface_patches(e, c3t3, std::inserter(indices, indices.begin()));
+  Distinct_index_counter<Surface_patch_index> counter;
+  incident_surface_patches(e, c3t3, boost::make_function_output_iterator(std::ref(counter)));
 
-  return indices.size();
+  return counter.seen.size();
 }
 
 template<typename OutputIterator, typename C3t3>
@@ -1312,10 +1411,15 @@ bool topology_test(const typename C3t3::Edge& edge,
       for (int i = 1; i < 4; i++)
       {
         Vertex_handle vi = f.first->vertex((f.second + i) % 4);
-        if (vi != v0 && vi != v1 && nb_incident_subdomains(vi, c3t3) > 1)
+        if (vi != v0 && vi != v1)
         {
-          if (is_edge_in_complex(v0, vi, c3t3)
-              && is_edge_in_complex(v1, vi, c3t3))
+          //(v0,vi) and (v1,vi) are edges of f, so testing them for the
+          //complex needs no is_edge() star walk, and feature edges are rare
+          //enough that the subdomain star walk is skipped almost always.
+          //The three tests are pure, so the conjunction is unchanged.
+          if (c3t3.is_in_complex(v0, vi)
+              && c3t3.is_in_complex(v1, vi)
+              && has_several_incident_subdomains(vi, c3t3))
             return false;
         }
       }

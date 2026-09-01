@@ -790,29 +790,14 @@ output_to_medit(std::ostream& os,
 
 namespace IO {
 
-/**
- * @ingroup PkgSMDS3IOFunctions
- * @deprecated This function is deprecated. Users should instead use `CGAL::IO::write_MEDIT()`
- * @brief outputs a mesh complex to the medit (`.mesh`) file format.
-        See \cgalCite{frey:inria-00069921} for a comprehensive description of this file format.
- * @param os the output stream
- * @param c3t3 the mesh complex
- * @param renumber_subdomain_indices if `true`, labels of cells are renumbered into `[1..nb_of_labels]`
- * @param show_patches if `true`, patches are labeled with different labels than
- *                     cells. If `false`, each surface facet is written twice,
- *                     using the label of each adjacent cell.
- * \see \ref IOStreamMedit
- */
 template <class C3T3>
 void
 output_to_medit(std::ostream& os,
                 const C3T3& c3t3,
                 bool renumber_subdomain_indices, // = false,
                 bool show_patches // = false
-#ifndef DOXYGEN_RUNNING
               , bool all_vertices // = true
               , bool all_cells    // = false
-#endif
 )
 {
   using namespace CGAL::SMDS_3;
@@ -1016,6 +1001,8 @@ void write_MEDIT(std::ostream& os,
  * data structure (see `TriangulationDataStructure_3 `),
  * positively oriented cells,
  * and cover the geometric convex hull of all points in `t3`.
+ *
+ *  \see \ref IOStreamMedit
  */
 template<typename T3, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_MEDIT(std::istream& in,
@@ -1038,9 +1025,6 @@ bool read_MEDIT(std::istream& in,
 
 } // namespace IO
 
-#ifndef CGAL_NO_DEPRECATED_CODE
-using IO::output_to_medit;
-#endif
 
 } // end namespace CGAL
 
