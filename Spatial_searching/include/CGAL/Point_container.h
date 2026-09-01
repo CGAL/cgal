@@ -90,6 +90,45 @@ struct Tight_box_reduce {
   }
 };
 
+// Stable partition of [begin, end) by pred, moved to the range starting at
+// out: the elements passing pred first, in their order, then the others in
+// theirs. Computed as parlay::filter does, with a count per block, a scan and
+// a scatter.
+template <class Iter, class Pred>
+Iter parallel_stable_partition(Iter begin, Iter end, Iter out, const Pred& pred, unsigned char* flags)
+{
+  const std::size_t n = static_cast<std::size_t>(end - begin);
+  const std::size_t block = kd_tree_grain_size;
+  const std::size_t nblocks = (n + block - 1) / block;
+
+  std::vector<std::size_t> count(nblocks);
+  tbb::parallel_for(std::size_t(0), nblocks, [&](std::size_t b) {
+    const std::size_t lo = b * block, hi = (std::min)(lo + block, n);
+    std::size_t c = 0;
+    for (std::size_t i = lo; i != hi; ++i) {
+      flags[i] = pred(begin[i]);
+      c += flags[i];
+    }
+    count[b] = c;
+  });
+  std::size_t k = 0;
+  for (std::size_t b = 0; b != nblocks; ++b) {
+    const std::size_t c = count[b];
+    count[b] = k;
+    k += c;
+  }
+
+  tbb::parallel_for(std::size_t(0), nblocks, [&](std::size_t b) {
+    const std::size_t lo = b * block, hi = (std::min)(lo + block, n);
+    std::size_t t = count[b], f = k + lo - count[b];
+    for (std::size_t i = lo; i != hi; ++i) {
+      if (flags[i]) out[t++] = std::move(begin[i]);
+      else out[f++] = std::move(begin[i]);
+    }
+  });
+  return out + k;
+}
+
 // The elements in[i] for which pred(i) holds, in their order.
 template <class T, class Pred>
 std::vector<T> parallel_filter(const T* in, std::size_t n, const Pred& pred)
