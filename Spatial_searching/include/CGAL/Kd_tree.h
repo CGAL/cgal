@@ -175,6 +175,14 @@ private:
 #endif
   }
 
+  // A container becomes an internal node when it holds more points than a
+  // bucket and they are not all equal.
+  bool needs_internal_node(const Point_container& c) const
+  {
+    return c.size() > split.bucket_size()
+      && !CGAL::is_zero(c.max_tight_spread());
+  }
+
   // TODO: Similar to the leaf_init function above, a part of the code should be
   //       moved to a the class Kd_tree_node.
   //       It is not proper yet, but the goal was to see if there is
@@ -196,7 +204,7 @@ private:
     if (try_parallel_internal_node_creation (nh, c, c_low, tag))
       return;
 
-    if (c_low.size() > split.bucket_size() && !CGAL::is_zero(c_low.max_tight_spread()))
+    if (needs_internal_node(c_low))
     {
       nh->lower_ch = new_internal_node();
       create_internal_node (nh->lower_ch, c_low, tag);
@@ -204,7 +212,7 @@ private:
     else
       nh->lower_ch = create_leaf_node(c_low);
 
-    if (c.size() > split.bucket_size() && !CGAL::is_zero(c.max_tight_spread()))
+    if (needs_internal_node(c))
     {
       nh->upper_ch = new_internal_node();
       create_internal_node (nh->upper_ch, c, tag);
@@ -345,7 +353,7 @@ public:
 
     Point_container c(dim_, data.begin(), data.end(),traits_);
     bbox = new Kd_tree_rectangle<FT,D>(c.bounding_box());
-    if (c.size() <= split.bucket_size() || CGAL::is_zero(c.max_tight_spread())){
+    if (!needs_internal_node(c)){
       tree_root = create_leaf_node(c);
     }else {
        tree_root = new_internal_node();
