@@ -1648,8 +1648,17 @@ protected:
 
   template <typename Tag = With_point_tag>
   auto display_facet(std::string_view prefix, Facet f, Tag tag = {}) const {
+    std::array<Vertex_handle, 3> vertices = { Vertex_handle{} , Vertex_handle{} , Vertex_handle{} };
+    Vertex_handle v4 = {};
+    if(f.first != Cell_handle{}) {
+      vertices = tr().vertices(f);
+      v4 = f.first->vertex((f.second));
+    }
     return IO::oformat(
-        [prefix, tag, vertices = tr().vertices(f), v4 = f.first->vertex((f.second))](auto& out) -> auto& {
+        [prefix, tag, vertices, v4](auto& out) -> auto& {
+          if(v4 == Vertex_handle{}) {
+            return out << '\n' << prefix << "null facet";
+          }
           return out << cdt_3_format("\n{}{}"
                                      "\n{}{}"
                                      "\n{}{}"
@@ -2136,7 +2145,7 @@ protected:
                                 display_vert(vertex_3d(first_2d_face->vertex(2))));
       std::cerr << cdt_3_format("- front_cell is ({}) with vertices:{}\n",
                                 IO::oformat(front_cell),
-                                display_facet("                             - {}\n", Facet{front_cell, front_index}))
+                                display_facet("                             - ", Facet{front_cell, front_index}))
                 << "\n- back vertex is "<< display_vert(v_back) << '\n';
     }
 
