@@ -35,6 +35,7 @@
 #include <vector>
 #include <unordered_map>
 #include <type_traits>
+#include <variant> //for std::visit
 
 namespace CGAL {
 
@@ -500,7 +501,20 @@ struct Medit_pmap_generator<C3T3, USE_SUBDOMAIN_INDICES, RENUMBER_SURFACE_PATCH_
 // IO functions
 //-------------------------------------------------------
 
+template <class T>
+struct is_variant : std::false_type {};
 
+template <class... Ts>
+struct is_variant<std::variant<Ts...>> : std::true_type {};
+
+template <class T>
+void output_to_os(std::ostream& os, const T& x)
+{
+  if constexpr(is_variant<std::decay_t<T>>::value)
+    std::visit([&](const auto& i) { os << i; }, x);
+  else
+    os << x;
+}
 
 template <class Tr,
           class Vertices_range,
@@ -509,8 +523,8 @@ template <class Tr,
           class Cells_range,
           class Vertex_index_property_map,
           class Facet_index_property_map,
-          class Facet_index_property_map_twice = Null_pmap,
-          class Cell_index_property_map>
+          class Cell_index_property_map,
+          class Facet_index_property_map_twice = Null_pmap>
 void
 output_to_medit(std::ostream& os,
                 const Tr& tr,
@@ -637,7 +651,7 @@ output_to_medit(std::ostream& os,
                    ? vh1->index()
                     : (vh2->in_dimension() == 1 ? vh2->index() : 42 /*todo : magic id*/);
     os << V[vh1] << ' ' << V[vh2] << ' ';
-    std::visit([&](const auto& i) { os << i << '\n'; }, index);
+    output_to_os(os, index);
     os << '\n';
   }
 
@@ -1013,7 +1027,15 @@ void write_MEDIT(std::ostream& os,
   const CGAL::Mesh_complex_3_in_triangulation_3<T3, CornerIndex, CurveIndex>& c3t3,
   const NamedParameters& np = parameters::default_values())
 {
-  return write_MEDIT(os, c3t3.triangulation(), np);
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  bool renumber_subdomain_indices = choose_parameter(get_parameter(np, internal_np::rebind_labels), false);
+  bool show_patches = choose_parameter(get_parameter(np, internal_np::show_patches), true);
+  bool all_c = choose_parameter(get_parameter(np, internal_np::all_cells), true);
+  bool all_v = all_c || choose_parameter(get_parameter(np, internal_np::all_vertices), true);
+
+  output_to_medit(os, c3t3, renumber_subdomain_indices, show_patches, all_v, all_c);
 }
 
 /**
@@ -1104,10 +1126,19 @@ bool read_MEDIT(std::istream& in,
                                              std::is_same<typename T3::Periodic_tag, Tag_true>::value);
   const bool verbose = choose_parameter(get_parameter(np, internal_np::verbose), false);
 
+  struct Cx_edge
+  {
+    typename T3::Vertex_handle v0;
+    typename T3::Vertex_handle v1;
+    Curve_index cid;
+  };
+  std::vector<Cx_edge> cx_edges;
+
   bool built = CGAL::SMDS_3::build_triangulation_from_file(in, c3t3.triangulation(),
                                                            verbose,
                                                            false /*replace_domain_0*/,
-                                                           non_manifold);
+                                                           non_manifold,
+                                                           std::back_inserter(cx_edges));
   if(!built)
   {
     c3t3.triangulation().clear();
@@ -1117,6 +1148,8 @@ bool read_MEDIT(std::istream& in,
   using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<T3, Corner_index, Curve_index>;
   using Cell_handle = typename C3t3::Triangulation::Cell_handle;
   using Facet = typename C3t3::Triangulation::Facet;
+  using Edge = typename C3t3::Triangulation::Edge;
+  using Vertex_handle = typename C3t3::Triangulation::Vertex_handle;
   using Subdomain_index = typename C3t3::Subdomain_index;
 
   c3t3.rescan_after_load_of_triangulation(); // fix counters for facets and cells
@@ -1147,6 +1180,20 @@ bool read_MEDIT(std::istream& in,
         c3t3.add_to_complex(c, fit.second, c->subdomain_index());
       }
     }
+  }
+
+  // feature edges
+  for(const auto& [v0, v1, cid] : cx_edges)
+  {
+    c3t3.add_to_complex(v0, v1, cid);
+  }
+
+  // corner vertices
+  int v_cx_id = 0;
+  for(Vertex_handle v : c3t3.triangulation().finite_vertex_handles())
+  {
+    if(v->in_dimension() == 0)
+      c3t3.add_to_complex(v, ++v_cx_id);
   }
 
   return built;

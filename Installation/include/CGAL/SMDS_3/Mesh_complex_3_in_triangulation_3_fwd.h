@@ -37,12 +37,16 @@ namespace IO {
 
 namespace SMDS_3 {
 
-  template<class Tr>
-  bool build_triangulation_from_file(std::istream& is,
-                                     Tr& tr,
-                                     bool verbose = false,
-                                     bool replace_domain_0 = false,
-                                     bool allow_non_manifold = false);
+template <class Tr,
+          class Curve_index = int,
+          class Corner_index = int,
+          class CxEdgesOutputIterator = CGAL::Emptyset_iterator>
+bool build_triangulation_from_file(std::istream& is,
+                                   Tr& tr,
+                                   const bool verbose,
+                                   const bool replace_domain_0,
+                                   const bool allow_non_manifold,
+                                   CxEdgesOutputIterator cx_edges_oit = CxEdgesOutputIterator());
 
 } // namespace SMDS_3
 } // namespace CGAL

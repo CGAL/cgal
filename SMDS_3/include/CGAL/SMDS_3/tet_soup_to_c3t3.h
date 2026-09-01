@@ -21,6 +21,7 @@
 
 #include <CGAL/assertions.h>
 #include <CGAL/IO/File_medit.h>
+#include <CGAL/Default.h>
 
 #include <boost/unordered_map.hpp>
 
@@ -28,6 +29,7 @@
 #include <map>
 #include <utility>
 #include <vector>
+#include <type_traits>
 
 namespace CGAL {
 namespace SMDS_3 {
@@ -395,13 +397,19 @@ bool assign_neighbors(Tr& tr,
 template<class Tr,
          typename PointRange,
          typename CellRange,
-         typename FacetPatchMap>
+         typename FacetPatchMap,
+         typename EdgesRange,
+         typename CornersRange,
+         typename ComplexEdgesOutputIterator>
 bool build_triangulation_impl(Tr& tr,
                               const PointRange& points,
                               const CellRange& finite_cells,
                               const std::vector<typename Tr::Cell::Subdomain_index>& subdomains,
                               const FacetPatchMap& border_facets,
+                              const EdgesRange& edges,
+                              const CornersRange& corners,
                               std::vector<typename Tr::Vertex_handle>& vertex_handle_vector,
+                              ComplexEdgesOutputIterator cx_edges_out,
                               const bool verbose,// = false,
                               const bool replace_domain_0,// = false,
                               const bool allow_non_manifold) // = false
@@ -416,6 +424,7 @@ bool build_triangulation_impl(Tr& tr,
   // associate to a face the two (at most) incident tets and the id of the face in the cell
   typedef std::pair<Cell_handle, int>                   Incident_cell;
   typedef boost::unordered_map<Facet_vvv, std::vector<Incident_cell> >  Incident_cells_map;
+  typedef typename std::iterator_traits<decltype(cx_edges_out)>::value_type CxEdgeAndId;
 
   CGAL_precondition(!points.empty());
 
@@ -493,6 +502,32 @@ bool build_triangulation_impl(Tr& tr,
       std::cout << "assign neighbors done" << std::endl;
     }
 
+    for (const auto& [vid,_]: corners)
+    {
+      vertex_handle_vector[vid]->set_dimension(0);
+    }
+    if(verbose)
+    {
+      std::cout << "corners done (" << corners.size() << " corners)" << std::endl;
+    }
+
+    for(auto [iv0, iv1, curve_index] : edges)
+    {
+      Vertex_handle vh0 = vertex_handle_vector[iv0];
+      Vertex_handle vh1 = vertex_handle_vector[iv1];
+      if(vh0->in_dimension() != 0)
+        vh0->set_dimension(1);
+      if(vh1->in_dimension() != 0)
+        vh1->set_dimension(1);
+
+      if constexpr(!std::is_same_v<CxEdgeAndId, void>)
+        *cx_edges_out++ = CxEdgeAndId{vh0, vh1, curve_index};
+    }
+
+    if(verbose) {
+      std::cout << "complex edges done (" << edges.size() << " edges)" << std::endl;
+    }
+
     if (verbose)
     {
       std::cout << "built triangulation!" << std::endl;
@@ -509,20 +544,28 @@ bool build_triangulation_impl(Tr& tr,
 template<class Tr,
          typename PointRange,
          typename CellRange,
-         typename FacetPatchMap>
+         typename FacetPatchMap,
+         typename EdgesRange,
+         typename CornersRange,
+         typename CxEdgesOutputIterator>
 bool build_triangulation_one_subdomain(Tr& tr,
                                        const PointRange& points,
                                        const CellRange& finite_cells,
                                        const typename Tr::Cell::Subdomain_index& subdomain,
                                        const FacetPatchMap& border_facets,
+                                       const EdgesRange& edges,
+                                       const CornersRange& corners,
                                        std::vector<typename Tr::Vertex_handle>& vertex_handle_vector,
+                                       CxEdgesOutputIterator cx_edges_out,
                                        const bool verbose,// = false,
                                        const bool replace_domain_0,// = false
                                        const bool allow_non_manifold)// = false
 {
   std::vector<typename Tr::Cell::Subdomain_index> subdomains(finite_cells.size(), subdomain);
   return build_triangulation_impl(tr, points, finite_cells, subdomains,
-                                  border_facets, vertex_handle_vector,
+                                  border_facets, edges, corners,
+                                  vertex_handle_vector,
+                                  cx_edges_out,
                                   verbose, replace_domain_0,
                                   allow_non_manifold);
 }
@@ -530,20 +573,28 @@ bool build_triangulation_one_subdomain(Tr& tr,
 template<class Tr,
          typename PointRange,
          typename CellRange,
-         typename FacetPatchMap>
+         typename FacetPatchMap,
+         typename EdgesRange,
+         typename CornersRange,
+         typename CxEdgesOutputIterator>
 bool build_triangulation_one_subdomain(Tr& tr,
                                        const PointRange& points,
                                        const CellRange& finite_cells,
                                        const typename Tr::Cell::Subdomain_index& subdomain,
                                        const FacetPatchMap& border_facets,
-                                       const bool verbose,// = false,
+                                       const EdgesRange& edges,
+                                       const CornersRange& corners,
+                                       CxEdgesOutputIterator cx_edges_out,
+                                       const bool verbose, // = false,
                                        const bool replace_domain_0,// = false
                                        const bool allow_non_manifold)//= false
 {
   std::vector<typename Tr::Cell::Subdomain_index> subdomains(finite_cells.size(), subdomain);
   std::vector<typename Tr::Vertex_handle> vertex_handle_vector;
   return build_triangulation_impl(tr, points, finite_cells, subdomains,
-                                  border_facets, vertex_handle_vector,
+                                  border_facets,
+                                  edges, corners, cx_edges_out,
+                                  vertex_handle_vector,
                                   verbose, replace_domain_0,
                                   allow_non_manifold);
 }
@@ -552,12 +603,18 @@ template<class Tr,
          typename PointRange,
          typename CellRange,
          typename SubdomainsRange,
-         typename FacetPatchMap>
+         typename FacetPatchMap,
+         typename EdgesRange,
+         typename CornersRange,
+         typename ComplexEdgesOutputIterator>
 bool build_triangulation_with_subdomains_range(Tr& tr,
                                                const PointRange& points,
                                                const CellRange& finite_cells,
                                                const SubdomainsRange& subdomains,
                                                const FacetPatchMap& border_facets,
+                                               const EdgesRange& edges,
+                                               const CornersRange& corners,
+                                               ComplexEdgesOutputIterator cx_edges_oit,
                                                const bool verbose,// = false
                                                const bool replace_domain_0,// = false,
                                                const bool allow_non_manifold)
@@ -566,17 +623,23 @@ bool build_triangulation_with_subdomains_range(Tr& tr,
   std::vector<typename Tr::Cell::Subdomain_index> subdomains_vector(
       subdomains.begin(), subdomains.end());
   return build_triangulation_impl(tr, points, finite_cells, subdomains_vector, border_facets,
+                                  edges, corners,
                                   vertex_handle_vector,
+                                  cx_edges_oit,
                                   verbose, replace_domain_0,
                                   allow_non_manifold);
 }
 
-template<class Tr>
+template<class Tr,
+         class Curve_index,
+         class Corner_index,
+         class CxEdgesOutputIterator>
 bool build_triangulation_from_file(std::istream& is,
                                    Tr& tr,
                                    const bool verbose,
                                    const bool replace_domain_0,
-                                   const bool allow_non_manifold)
+                                   const bool allow_non_manifold,
+                                   CxEdgesOutputIterator cx_edges_oit)
 {
   using Point_3 = typename Tr::Point;
   using Subdomain_index = typename Tr::Cell::Subdomain_index;
@@ -588,13 +651,26 @@ bool build_triangulation_from_file(std::istream& is,
   if(!is)
     return false;
 
+  struct Edge_with_index
+  {
+    int v0, v1;
+    Curve_index curve_index;
+  };
+  struct Corner_with_index
+  {
+    int v;
+    Corner_index corner_index;
+  };
+
   std::vector<Tet_with_ref> finite_cells;
   std::vector<Subdomain_index> subdomains;
   std::vector<Point_3> points;
   boost::unordered_map<Facet, Surface_patch_index> border_facets;
+  std::vector<Corner_with_index> corner_indices;
+  std::vector<Edge_with_index> edge_indices;
 
   int dim;
-  int nv, nf, ntet, ref;
+  int nv, nf, ntet, ref, ncorners, nedges;
   std::string word;
 
   is >> word >> dim; // MeshVersionFormatted 1
@@ -757,13 +833,52 @@ bool build_triangulation_from_file(std::istream& is,
         subdomains.push_back(reference);
       }
     }
+
+    Corner_index corner_index = 0;
+    if(line.find("Corners") != std::string::npos)
+    {
+      is >> ncorners;
+      if(verbose && ncorners == 0)
+        std::cerr << "Warning: Corners section is ignored" << std::endl;
+
+      for(int i = 0; i < ncorners; ++i)
+      {
+        int n;
+        if(!(is >> n)) {
+          if(verbose)
+            std::cerr << "Issue while reading corners" << std::endl;
+          return false;
+        }
+        corner_indices.push_back({n - 1, ++corner_index});
+      }
+    }
+
+    if(line.find("Edges") != std::string::npos)
+    {
+      is >> nedges;
+      if(verbose && nedges == 0)
+        std::cerr << "Warning: Edges section is ignored" << std::endl;
+
+      for(int i = 0; i < nedges; ++i)
+      {
+        int n[2], curve_index;
+        if(!(is >> n[0] >> n[1] >> curve_index)) {
+          if(verbose)
+            std::cerr << "Issue while reading edges" << std::endl;
+          return false;
+        }
+        edge_indices.push_back({n[0] - 1, n[1] - 1, curve_index});
+      }
+    }
   }
 
   if (verbose)
   {
     std::cout << points.size() << " points" << std::endl;
-    std::cout << border_facets.size() << " border facets" << std::endl;
     std::cout << finite_cells.size() << " cells" << std::endl;
+    std::cout << border_facets.size() << " border facets" << std::endl;
+    std::cout << edge_indices.size() << " edges" << std::endl;
+    std::cout << corner_indices.size() << " corners" << std::endl;
   }
 
   if(finite_cells.empty())
@@ -773,6 +888,9 @@ bool build_triangulation_from_file(std::istream& is,
 
   return build_triangulation_with_subdomains_range(tr,
                                                    points, finite_cells, subdomains, border_facets,
+                                                   edge_indices,
+                                                   corner_indices,
+                                                   cx_edges_oit,
                                                    verbose,
                                                    replace_domain_0 && !is_CGAL_mesh,
                                                    allow_non_manifold);
