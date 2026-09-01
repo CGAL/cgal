@@ -62,6 +62,9 @@ Release date: December 2026
 
 ### [dD Spatial Searching](https://doc.cgal.org/6.3/Manual/packages.html#PkgSpatialSearchingD)
 
+- The splitters `CGAL::Median_of_rectangle`, `CGAL::Median_of_max_spread`, `CGAL::Fair` and
+  `CGAL::Sliding_fair` now cut at the median of the coordinates. The second middle coordinate they
+  used was whichever one `std::nth_element` left next to the median, which is unspecified.
 - Fixed a bug in `CGAL::Kd_tree::build<CGAL::Parallel_tag>()`, which split subtrees whose points all have
   equal coordinates instead of making them leaves as `CGAL::Kd_tree::build<CGAL::Sequential_tag>()` does.
 

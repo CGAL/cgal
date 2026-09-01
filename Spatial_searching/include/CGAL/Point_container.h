@@ -442,7 +442,9 @@ public:
     if (mid == end())
       return val1;
 
-    mpit = construct_it((*(*mid)));
+    // nth_element leaves an unspecified element at mid
+    iterator next = std::min_element(mid, end(), comp_coord_val<Traits,int>(split_coord,construct_it));
+    mpit = construct_it((*(*next)));
     FT val2 = *(mpit+split_coord);
     return (val1+val2)/FT(2);
   }
