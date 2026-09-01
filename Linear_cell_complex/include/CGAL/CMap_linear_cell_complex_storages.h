@@ -34,7 +34,7 @@ namespace CGAL {
     struct Container_type;
   }
 
-  // Storage of darts with compact container, beta with handles
+  // Storage of darts with compact container, beta with descriptors
   // Copy of Combinatorial_map_storage_1 and add new types related
   // to geometry (not possible to inherit because we use Self type
   // as template parameter of Dart_wrapper. If we inherit, Self is not
@@ -171,7 +171,7 @@ namespace CGAL {
     { return 0; }
 
    /** Return if this dart is free for adimension.
-     * @param dh a dart handle
+     * @param dh a dart descriptor
      * @param i the dimension.
      * @return true iff dh is linked with null_dart_descriptor for \em adimension.
      */
@@ -249,7 +249,7 @@ namespace CGAL {
       return  ADart->mf[B1];
     }
 
-    // return a handle on the i-attribute
+    // return a descriptor on the i-attribute
     template<unsigned int i>
     typename Attribute_descriptor<i>::type attribute(Dart_descriptor ADart)
     {
@@ -290,7 +290,7 @@ namespace CGAL {
       return ah->is_valid();
     }
 
-    // accessors and modifiers to the attribute ref counting given its handle
+    // accessors and modifiers to the attribute ref counting given its descriptor
     template<unsigned int i>
     std::size_t get_attribute_ref_counting
     (typename Attribute_const_descriptor<i>::type ah) const
@@ -317,7 +317,7 @@ namespace CGAL {
       ah->dec_nb_refs();
     }
 
-    // get the attribute given its handle
+    // get the attribute given its descriptor
     template<unsigned int i>
     typename Attribute_type<i>::type&
     get_attribute(typename Attribute_descriptor<i>::type ah)
@@ -440,7 +440,7 @@ namespace CGAL {
     { return 0; }
 
   protected:
-    // Set the handle on the i th attribute
+    // Set the descriptor on the i th attribute
     template<unsigned int i>
     void basic_set_dart_attribute(Dart_descriptor dh,
                                   typename Attribute_descriptor<i>::type ah)

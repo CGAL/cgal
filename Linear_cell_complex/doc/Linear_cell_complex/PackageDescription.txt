@@ -13,6 +13,7 @@
 
 /*! High-level operations.
 \cgalInclude{CGAL/Linear_cell_complex_operations.h}
+\cgalInclude{CGAL/generate_hexahedral_mesh_using_two_refinement.h}
 */
 /// \defgroup PkgLinearCellComplexOperations Operations for Linear Cell Complex
 /// \ingroup PkgLinearCellComplexRef
@@ -70,13 +71,14 @@
 
 \cgalCRPSection{Global Functions}
 \cgalCRPSubsection{Constructions for Linear Cell Complex}
-- `CGAL::read_plane_graph_in_lcc<LCC>` (formerly `import_from_plane_graph`)
-- `CGAL::triangulation_3_to_lcc<LCC,Triangulation>` (formerly `import_from_triangulation_3`)
-- `CGAL::polyhedron_3_to_lcc<LCC,Polyhedron>` (formerly `import_from_polyhedron_3`)
+- `CGAL::read_plane_graph_in_lcc<LCC>()` (formerly `import_from_plane_graph`)
+- `CGAL::triangulation_3_to_lcc<LCC,Triangulation>()` (formerly `import_from_triangulation_3`)
+- `CGAL::polyhedron_3_to_lcc<LCC,Polyhedron>()` (formerly `import_from_polyhedron_3`)
 
 \cgalCRPSubsection{Operations for Linear Cell Complex}
-- `CGAL::compute_normal_of_cell_0<LCC>`
-- `CGAL::compute_normal_of_cell_2<LCC>`
+- `CGAL::compute_normal_of_cell_0<LCC>()`
+- `CGAL::compute_normal_of_cell_2<LCC>()`
+- `CGAL::generate_hexahedral_mesh_using_two_refinement()`
 
 \cgalCRPSubsection{Draw a Linear Cell Complex}
 - \link PkgDrawLinearCellComplex CGAL::draw<LCC>() \endlink
