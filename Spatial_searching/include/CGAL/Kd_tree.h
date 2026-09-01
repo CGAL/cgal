@@ -57,10 +57,9 @@
   internally. Note that of course, in that case, parallel build will
   be disabled.
  */
-#if defined(CGAL_LINKED_WITH_TBB) && !defined(CGAL_DISABLE_TBB_STRUCTURE_IN_KD_TREE)
+#ifdef CGAL_TBB_STRUCTURE_IN_KD_TREE
 #  include <tbb/parallel_invoke.h>
 #  include <tbb/concurrent_vector.h>
-#  define CGAL_TBB_STRUCTURE_IN_KD_TREE
 #endif
 
 namespace CGAL {

@@ -29,7 +29,63 @@
 
 #include <optional>
 
+// Kd_tree.h explains the macro.
+#if defined(CGAL_LINKED_WITH_TBB) && !defined(CGAL_DISABLE_TBB_STRUCTURE_IN_KD_TREE)
+#  include <tbb/parallel_reduce.h>
+#  include <tbb/blocked_range.h>
+#  define CGAL_TBB_STRUCTURE_IN_KD_TREE
+#endif
+
 namespace CGAL {
+
+namespace internal {
+
+#ifdef CGAL_TBB_STRUCTURE_IN_KD_TREE
+// Computes the bounds Kd_tree_rectangle::update_from_points() computes, with
+// that function on each subrange; the bounds of the subranges are joined right
+// into left with strict comparisons, so ties keep the leftmost value.
+template <class Construct_cartesian_const_iterator_d, class FT, class D>
+struct Tight_box_reduce {
+  Construct_cartesian_const_iterator_d construct_it;
+  Kd_tree_rectangle<FT,D> box;
+  bool seeded;
+
+  Tight_box_reduce(int d, const Construct_cartesian_const_iterator_d& c)
+    : construct_it(c), box(d), seeded(false) {}
+
+  Tight_box_reduce(const Tight_box_reduce& o, tbb::split)
+    : construct_it(o.construct_it), box(o.box.dimension()), seeded(false) {}
+
+  template <class Iter>
+  void operator()(const tbb::blocked_range<Iter>& r)
+  {
+    Kd_tree_rectangle<FT,D> b(box.dimension());
+    b.update_from_points(r.begin(), r.end(), construct_it);
+    join_box(b);
+  }
+
+  void join(const Tight_box_reduce& rhs)
+  {
+    if (rhs.seeded)
+      join_box(rhs.box);
+  }
+
+  void join_box(const Kd_tree_rectangle<FT,D>& b)
+  {
+    if (!seeded) {
+      box = b;
+      seeded = true;
+      return;
+    }
+    for (int i = 0; i < box.dimension(); ++i) {
+      if (b.min_coord(i) < box.min_coord(i)) box.lower()[i] = b.min_coord(i);
+      if (b.max_coord(i) > box.max_coord(i)) box.upper()[i] = b.max_coord(i);
+    }
+  }
+};
+#endif
+
+} // namespace internal
 
 template <class Traits>
 class Point_container {
