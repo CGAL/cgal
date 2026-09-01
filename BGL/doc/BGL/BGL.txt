@@ -661,19 +661,19 @@ of the same concept. See `CGAL/boost/graph/graph_traits_inheritance_macros.h` fo
 For algorithms that operate locally, partitioning is often an easy way to parallelize
 the algorithm at little cost.
 The functions `CGAL::METIS::partition_graph()` and `CGAL::METIS::partition_dual_graph()`
-provide wrappers to the graph partitioning library METIS \cgalCite{karypis1998fast},
-allowing to split triangular meshes that are models of the concept `FaceListGraph`
+provide wrappers to the graph partitioning library thirdpartyMETIS ,
+enabling to split triangular meshes that are models of the concept `FaceListGraph`
 into a given number of subdomains.
 
 The following example shows how to read, partition, and write a mesh using
-`partition_dual_graph()`. The class template `CGAL::Face_filtered_graph`
+`CGAL::METIS::partition_dual_graph()`. The class template `CGAL::Face_filtered_graph`
 and the free function `copy_face_graph()` are used to create an independent mesh from one
 of the subdomains of the partition. Note that the copy is optional as writing
 can be done directly using `Face_filtered_graph`.
 
 \cgalExample{BGL_surface_mesh/surface_mesh_partition.cpp}
 
-Using \ref BGLNamedParameters some of the many options of METIS can be customized,
+Using \ref BGLNamedParameters some of the many options of \metis can be customized,
 as shown in \ref BGL_polyhedron_3/polyhedron_partition.cpp "this example".
 
 \section BGLGraphcut Graph Cut
