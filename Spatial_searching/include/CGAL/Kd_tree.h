@@ -118,6 +118,10 @@ private:
 
   Node_handle tree_root;
 
+  // a node's bounding boxes, partition and median are computed in parallel
+  // only if it holds more than this many points
+  static constexpr std::size_t serial_build_cutoff = 1000;
+
   Kd_tree_rectangle<FT,D>* bbox;
   // partitioned in place by build(); a leaf holds an iterator range of it
   std::vector<Point_d> pts;
@@ -336,12 +340,15 @@ public:
     typename SearchTraits::Construct_cartesian_const_iterator_d ccci=traits_.construct_cartesian_const_iterator_d_object();
     dim_ = static_cast<int>(std::distance(ccci(p), ccci(p,0)));
 
+    internal::Kd_tree_build_context<Point_d, FT> context = { serial_build_cutoff, {}, {}, nullptr, nullptr };
+    bool parallel = std::is_convertible<ConcurrencyTag, Parallel_tag>::value;
+
 #ifndef CGAL_TBB_STRUCTURE_IN_KD_TREE
     static_assert (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
                                "Parallel_tag is enabled but TBB is unavailable.");
 #endif
 
-    Point_container c(dim_, pts.begin(), pts.end(),traits_);
+    Point_container c(dim_, pts.begin(), pts.end(),traits_, parallel ? &context : nullptr);
     bbox = new Kd_tree_rectangle<FT,D>(c.bounding_box());
     if (!needs_internal_node(c)){
       tree_root = create_leaf_node(c);

@@ -43,6 +43,22 @@ namespace CGAL {
 
 namespace internal {
 
+// Set by Kd_tree::build<Parallel_tag>() on the root container and handed
+// down by split(); null on the sequential build.
+template <class Point_d, class FT>
+struct Kd_tree_build_context {
+  // a container is split in parallel only if it holds more than this many points
+  std::size_t cutoff;
+  // the points of the tree and a buffer of as many; the parallel partition
+  // moves the points of a container from one to the other, at the same
+  // offset, and a leaf moves them back to the points
+  typename std::vector<Point_d>::iterator points, buffer;
+  // one scratch slot per point for the parallel kernels; a container uses
+  // the slots at the offset of its points
+  unsigned char* flags;
+  FT* keys;
+};
+
 #ifdef CGAL_TBB_STRUCTURE_IN_KD_TREE
 // The loops of the parallel kernels below run in chunks of about this many elements.
 const std::size_t kd_tree_grain_size = 2048;
@@ -248,6 +264,7 @@ private:
   Kd_tree_rectangle<FT,D> tbox;       // tight bounding box,
   // i.e. minimal enclosing bounding
   // box of points
+  const internal::Kd_tree_build_context<Point_d, FT>* build_context = nullptr;
 
 public:
 
@@ -426,8 +443,10 @@ public:
   }
 
   // building the container from a sequence of points
-  Point_container(const int d, iterator begin, iterator end,const Traits& traits_) :
-    traits(traits_),m_b(begin), m_e(end), bbox(d, begin, end,traits.construct_cartesian_const_iterator_d_object()), tbox(d)
+  Point_container(const int d, iterator begin, iterator end,const Traits& traits_,
+                  const internal::Kd_tree_build_context<Point_d, FT>* context = nullptr) :
+    traits(traits_),m_b(begin), m_e(end), bbox(d, begin, end,traits.construct_cartesian_const_iterator_d_object()), tbox(d),
+    build_context(context)
   {
     tbox = bbox;
     built_coord = max_span_coord();
@@ -533,6 +552,7 @@ public:
     CGAL_assertion(dimension()==c.dimension());
     CGAL_assertion(is_valid());
     c.bbox=bbox;
+    c.build_context=build_context;
 
     const int split_coord = sep.cutting_dimension();
     FT cutting_value = sep.cutting_value();
