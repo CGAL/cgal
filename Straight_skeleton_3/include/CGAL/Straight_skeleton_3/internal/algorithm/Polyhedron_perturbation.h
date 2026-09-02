@@ -42,6 +42,7 @@
 #ifdef CGAL_SPS3_USE_V4_PERTURBATION
 # include "ortools/sat/cp_model.h"
 # include "ortools/sat/sat_parameters.pb.h"
+# include <ceres/ceres.h>
 #endif
 
 #ifdef CGAL_SS3_DUMP_FILES
@@ -57,6 +58,234 @@ namespace CGAL {
 namespace Straight_skeletons_3 {
 namespace internal {
 namespace algorithm {
+
+struct Plane_prior_residual
+{
+  using FK = CGAL::Simple_cartesian<double>;
+  using FK_Plane_3 = FK::Plane_3;
+
+  static FK_Plane_3 normalize_plane(const FK_Plane_3& p)
+  {
+    const double n = std::sqrt(p.a() * p.a() + p.b() * p.b() + p.c() * p.c());
+    return {p.a() / n, p.b() / n, p.c() / n, p.d() / n};
+  }
+
+  Plane_prior_residual(const FK_Plane_3& target,
+                        const double weight)
+    : target_(normalize_plane(target)),
+      sqrt_w_(std::sqrt(weight))
+  {}
+
+  template <typename T>
+  bool operator()(const T* const p, T* residual) const
+  {
+    const T norm = ceres::sqrt(p[0] * p[0] +
+                                p[1] * p[1] +
+                                p[2] * p[2]);
+
+    const T a = p[0] / norm;
+    const T b = p[1] / norm;
+    const T c = p[2] / norm;
+    const T d = p[3] / norm;
+
+    residual[0] = T(sqrt_w_) * (a - T(target_.a()));
+    residual[1] = T(sqrt_w_) * (b - T(target_.b()));
+    residual[2] = T(sqrt_w_) * (c - T(target_.c()));
+    residual[3] = T(sqrt_w_) * (d - T(target_.d()));
+
+    return true;
+  }
+
+  FK_Plane_3 target_;
+  double sqrt_w_;
+};
+
+struct Plane_scale_residual
+{
+  using FK = CGAL::Simple_cartesian<double>;
+  using FK_Plane_3 = FK::Plane_3;
+
+  explicit Plane_scale_residual(const double weight)
+    : sqrt_w_(std::sqrt(weight))
+  {}
+
+  template <typename T>
+  bool operator()(const T* const p, T* residual) const
+  {
+    const T norm = ceres::sqrt(p[0] * p[0] +
+                                p[1] * p[1] +
+                                p[2] * p[2]);
+
+    residual[0] = T(sqrt_w_) * (norm - T(1));
+
+    return true;
+  }
+
+  double sqrt_w_;
+};
+
+// This residual encodes:
+//
+//   intersection(plane1, plane2, plane3) ∈ B(p0, tau) (stability)
+//
+// without dividing by det(n1,n2,n3).
+//
+// Let:
+//   D = det(n1,n2,n3)
+//   Y = -d1(n2×n3) - d2(n3×n1) - d3(n1×n2)
+//
+// If D != 0:
+//   x = Y / D
+//
+// Stability:
+//   ||x - p0||² <= tau²
+//
+// Equivalent:
+//   ||Y - D p0||² <= tau² D²
+//
+// This residual penalizes only violation of that inequality.
+struct Triplet_stability_residual
+{
+  Triplet_stability_residual(const std::array<double, 3>& p0_,
+                             double tau_,
+                             double weight_)
+    : p0(p0_),
+      tau(tau_),
+      sqrt_w(std::sqrt(weight_))
+  {}
+
+  template <typename T>
+  static void normalize_plane_autodiff(const T* const raw,
+                                       T n[3],
+                                       T& d)
+  {
+    const T norm = ceres::sqrt(raw[0] * raw[0] +
+                               raw[1] * raw[1] +
+                               raw[2] * raw[2]);
+
+    n[0] = raw[0] / norm;
+    n[1] = raw[1] / norm;
+    n[2] = raw[2] / norm;
+    d = raw[3] / norm;
+  }
+
+  template <typename T>
+  static void cross_autodiff(const T u[3],
+                             const T v[3],
+                             T out[3])
+  {
+    out[0] = u[1] * v[2] - u[2] * v[1];
+    out[1] = u[2] * v[0] - u[0] * v[2];
+    out[2] = u[0] * v[1] - u[1] * v[0];
+  }
+
+  template <typename T>
+  static T dot_autodiff(const T u[3],
+                        const T v[3])
+  {
+    return u[0] * v[0] + u[1] * v[1] + u[2] * v[2];
+  }
+
+  template <typename T>
+  bool operator()(const T* const p1_raw,
+                  const T* const p2_raw,
+                  const T* const p3_raw,
+                  T* residual) const
+  {
+    T n1[3], n2[3], n3[3];
+    T d1, d2, d3;
+
+    normalize_plane_autodiff(p1_raw, n1, d1);
+    normalize_plane_autodiff(p2_raw, n2, d2);
+    normalize_plane_autodiff(p3_raw, n3, d3);
+
+    T n2xn3[3], n3xn1[3], n1xn2[3];
+
+    cross_autodiff(n2, n3, n2xn3);
+    cross_autodiff(n3, n1, n3xn1);
+    cross_autodiff(n1, n2, n1xn2);
+
+    const T D = dot_autodiff(n1, n2xn3);
+
+    T Y[3];
+
+    for (int i = 0; i < 3; ++i) {
+      Y[i] =
+        -d1 * n2xn3[i]
+        -d2 * n3xn1[i]
+        -d3 * n1xn2[i];
+    }
+
+    T diff[3];
+
+    for (int i = 0; i < 3; ++i) {
+      diff[i] = Y[i] - D * T(p0[i]);
+    }
+
+    const T lhs =
+      diff[0] * diff[0] +
+      diff[1] * diff[1] +
+      diff[2] * diff[2];
+
+    const T rhs = T(tau) * T(tau) * D * D;
+
+    const T violation = lhs - rhs;
+
+    if (violation > T(0)) {
+      // Fixed scale: do not divide by D^2. A separate determinant
+      // residual prevents the optimizer from exploiting D -> 0.
+      residual[0] = T(sqrt_w) * violation / T(tau * tau);
+    } else {
+      residual[0] = T(0);
+    }
+
+    return true;
+  }
+
+  std::array<double, 3> p0;
+  double tau;
+  double sqrt_w;
+};
+
+struct Triplet_determinant_residual
+{
+  Triplet_determinant_residual(double margin, double weight)
+    : margin_sq(margin * margin),
+      sqrt_w(std::sqrt(weight))
+  {}
+
+  template <typename T>
+  bool operator()(const T* const p1,
+                  const T* const p2,
+                  const T* const p3,
+                  T* residual) const
+  {
+    T n1[3], n2[3], n3[3];
+    T d1, d2, d3;
+
+    Triplet_stability_residual::normalize_plane_autodiff(p1, n1, d1);
+    Triplet_stability_residual::normalize_plane_autodiff(p2, n2, d2);
+    Triplet_stability_residual::normalize_plane_autodiff(p3, n3, d3);
+
+    T n2xn3[3];
+    Triplet_stability_residual::cross_autodiff(n2, n3, n2xn3);
+
+    const T D =
+      Triplet_stability_residual::dot_autodiff(n1, n2xn3);
+
+    const T violation = T(margin_sq) - D * D;
+
+    if (violation > T(0))
+      residual[0] = T(sqrt_w) * violation / T(margin_sq);
+    else
+      residual[0] = T(0);
+
+    return true;
+  }
+
+  double margin_sq;
+  double sqrt_w;
+};
 
 template <typename GeomTraits>
 class Polyhedron_perturbation
@@ -462,7 +691,7 @@ public:
       auto is_too_large_displacement = [&](const VertexSPtr& v) {
         const Point_3& p_old = original_points.at(v);
 
-        for (auto it_wf1 = v->facets().begin() ; it_wf1 != v->facets().end(); ++it_wf1) {
+        for (auto it_wf1 = v->facets().begin(); it_wf1 != v->facets().end(); ++it_wf1) {
           if (FacetSPtr f1 = it_wf1->lock()) {
             for (auto it_wf2 = std::next(it_wf1); it_wf2 != v->facets().end(); ++it_wf2) {
               if (FacetSPtr f2 = it_wf2->lock()) {
@@ -531,7 +760,7 @@ public:
       // Prepare for next iteration: only perturb the facets that caused issues.
       active_facets = std::move(next_active_facets);
 
-      for (FacetSPtr f : active_facets)
+      for (const FacetSPtr& f : active_facets)
         amplitudes[f] *= reduction_factor;
     }
 
@@ -685,7 +914,7 @@ public:
       CGAL_postcondition(facet->get_plane().has_on(p1));
     } else if (fixed_points_count == 3) {
       facet->init_plane();
-      Transformation::normalize_plane_coefficients(facet);
+      Transformation::normalize_facet_plane(facet);
     } else {
       CGAL_SS3_TRANSF_TRACE("Error: called fixed point facet perturbation with > 3 fixed points");
     }
@@ -751,7 +980,7 @@ public:
       vertex->set_point(Point_3{px, py, pz});
     }
 
-    for (FacetSPtr facet : polyhedron->facets()) {
+    for (const FacetSPtr& facet : polyhedron->facets()) {
       perturbPlaneCoefficientsHighDegrees(facet, range);
     }
   }
@@ -1359,7 +1588,7 @@ public:
         // for triangles, all vertices are determined, and there is nothing to nudge
         // (note that vertices were themselves nudged, thus the facet is nudged).
         f->init_plane();
-        Transformation::normalize_plane_coefficients(f);
+        Transformation::normalize_facet_plane(f);
 
 #ifdef CGAL_SS3_DUMP_FILES
         dump_facet("results/nudged_face_" + std::to_string(nudged_face_id++) + "_fixed_3.OFF", f);
@@ -1555,7 +1784,7 @@ public:
 
       if (fixing_vertices[f].size() == 3) {
         f->init_plane();
-        Transformation::normalize_plane_coefficients(f);
+        Transformation::normalize_facet_plane(f);
       } else {
         perturbPlaneCoefficientsFixedPoints(f, range, fixing_vertices[f]);
       }
@@ -1899,6 +2128,16 @@ public:
     IO::write_OBJ("results/V4_input.obj", polyhedron, parameters::do_not_triangulate_faces(true));
 #endif
 
+    CGAL::unordered_flat_map<VertexSPtr, Point_3> original_points;
+    for (const VertexSPtr& v : polyhedron->vertices()) {
+      original_points[v] = v->point();
+    }
+
+    CGAL::unordered_flat_map<FacetSPtr, Plane_3> original_planes;
+    for (const FacetSPtr& facet : polyhedron->facets()) {
+      original_planes[facet] = facet->get_plane();
+    }
+
     CGAL::unordered_flat_map<VertexSPtr, FT> sq_max_displacements;
 
     auto is_stable = [&](const VertexSPtr& v,
@@ -1942,12 +2181,6 @@ public:
     };
 
     {
-      CGAL::unordered_flat_map<FacetSPtr, Plane_3> original_planes;
-
-      for (const FacetSPtr& facet : polyhedron->facets()) {
-        original_planes[facet] = facet->get_plane();
-      }
-
       FT global_sq_max = CGAL::square(1e-7); // @tmp hardcoded
       for (const VertexSPtr& v : polyhedron->vertices()) {
         FT local_sq_max = global_sq_max;
@@ -1965,16 +2198,19 @@ public:
         sq_max_displacements[v] = local_sq_max;
       }
 
+      // V1: use unstable vertices as anchors
+      // V2: fix vertices and facets (same as perturb_v3 but unstable vertices instead of high-degree vertices)
+      // V3: optimize with CERES
+#define CGAL_SS3_PERTURB_V4_PART1_V3
 
-
-#define CGAL_SS3_PERTURB_V4_PART1_V1
 #ifdef CGAL_SS3_PERTURB_V4_PART1_V1
       // Part 1 V2
       // =========
 
       // - (1) Perturbations on all faces
       // - (2) Priority queue of unstable vertices by displacement (store vertex+facet+displacement)
-      // - (3) Get most unstable, anchor in incident faces of highest displacement (or anchor in face that appears in the largest number of high displacement vertices)
+      // - (3) Get most unstable anchor in incident faces of highest displacement (or anchor in face
+      //       that appears in the largest number of high displacement vertices)
       // - (4) recompute the facet plane, taking into account the anchors
       // - (5) update the stability cost of the vertices of the just-anchored face
 
@@ -2187,7 +2423,7 @@ public:
           }
 
           f->set_plane(new_pl);
-          Transformation::normalize_plane_coefficients(f); // doesn't pass through the points anymore...
+          Transformation::normalize_facet_plane(f); // doesn't pass through the points anymore...
 
           // this should fail due to inexact normalization?...
           CGAL_postcondition(f->get_plane().has_on(p0));
@@ -2363,13 +2599,9 @@ public:
         }
       }
 
-#ifdef CGAL_SS3_DUMP_FILES
-      IO::write_OBJ("results/V4_part_1.obj", polyhedron, parameters::do_not_triangulate_faces(true));
-#endif
+#endif // CGAL_SS3_PERTURB_V4_PART1_V1
 
-#else // CGAL_SS3_PERTURB_V4_PART1_V1
-      // Part 1 V2: perturb_v3's part 1, but with unstable anchors rather than high-degree pivots
-
+#ifdef CGAL_SS3_PERTURB_V4_PART1_V2
       CGAL_SS3_TRANSF_TRACE_V(16, "Initial plane perturbations");
       for (const FacetSPtr& f : polyhedron->facets()) {
         perturbPlaneCoefficientsFixedPoints(f, nudge_range, std::vector<VertexSPtr>());
@@ -2457,7 +2689,7 @@ public:
           // for triangles, all vertices are determined, and there is nothing to nudge
           // (note that vertices were themselves nudged, thus the facet is nudged).
           f->init_plane();
-          Transformation::normalize_plane_coefficients(f);
+          Transformation::normalize_facet_plane(f);
           // Here we do not need to add the fixed facet to incident determined vertices
           // because all vertices are already fully determined
           return;
@@ -3028,7 +3260,7 @@ public:
 
         if (determining_vertices[f].size() == 3) {
           f->init_plane();
-          Transformation::normalize_plane_coefficients(f);
+          Transformation::normalize_facet_plane(f);
         } else {
           fix_facet_and_check(f);
         }
@@ -3085,13 +3317,338 @@ public:
       CGAL_assertion_code(})
 # endif
 
+#endif // CGAL_SS3_PERTURB_V4_PART1_V2
+
+#ifdef CGAL_SS3_PERTURB_V4_PART1_V3
+      using FK = CGAL::Simple_cartesian<double>;
+      using FK_Plane_3 = FK::Plane_3;
+
+      CGAL::Cartesian_converter<GeomTraits, FK> to_fk;
+      CGAL::Cartesian_converter<FK, GeomTraits> to_ek;
+
+      struct Ceres_options
+      {
+        int max_random_attempts = 50;
+        int max_ceres_iterations = 300;
+
+        double plane_prior_weight = 1.0;
+        double plane_scale_weight = 1.0;
+        double stability_weight = 1000.0;
+        double determinant_weight = 1000.0;
+        double determinant_margin = 1e-4;
+
+        bool check_general_position = false;
+        bool ceres_progress = false;
+      };
+
+      struct Stability_failure
+      {
+        VertexSPtr v;
+        FacetSPtr f0;
+        FacetSPtr f1;
+        FacetSPtr f2;
+        FT sq_distance;
+      };
+
+      struct Ceres_solve_result
+      {
+        bool stable = false;
+        bool general_position = true;
+        std::vector<Stability_failure> stability_failures;
+      };
+
+      auto verify_stability_for_planes = [&](const PolyhedronSPtr& polyhedron,
+                                             std::vector<Stability_failure>* failures = nullptr)
+      {
+        bool ok = true;
+
+        for (const VertexSPtr& v : polyhedron->vertices()) {
+          const Point_3& p0 = original_points[v];
+          const FT& max_sqd = sq_max_displacements[v];
+
+          for (auto it_wf1 = v->facets().begin(); it_wf1 != v->facets().end(); ++it_wf1) {
+            if (FacetSPtr f1 = it_wf1->lock()) {
+              for (auto it_wf2 = std::next(it_wf1); it_wf2 != v->facets().end(); ++it_wf2) {
+                if (FacetSPtr f2 = it_wf2->lock()) {
+                  for (auto it_wf3 = std::next(it_wf2); it_wf3 != v->facets().end(); ++it_wf3) {
+                    if (FacetSPtr f3 = it_wf3->lock()) {
+
+                      const Plane_3& p1 = f1->get_plane();
+                      const Plane_3& p2 = f2->get_plane();
+                      const Plane_3& p3 = f3->get_plane();
+
+                      std::optional<Point_3> ip = Kernel_wrapper::intersection(p1, p2, p3);
+                      if (!ip.has_value()) {
+                        ok = false;
+                        if (failures) {
+                          failures->push_back({v, f1, f2, f3, std::numeric_limits<double>::infinity()});
+                        }
+                        continue;
+                      }
+
+                      const FT sqd = CGAL::squared_distance(p0, ip.value());
+                      if (sqd > max_sqd) {
+                        ok = false;
+                        if (failures) {
+                          failures->push_back({v, f1, f2, f3, sqd});
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        return ok;
+      };
+
+      auto choose_facet_to_triangulate_from_failures = [](const PolyhedronSPtr& polyhedron,
+                                                          const std::vector<Stability_failure>& failures) -> FacetSPtr
+      {
+        CGAL::unordered_flat_map<FacetSPtr, double> score;
+
+        for (const Stability_failure& fail : failures) {
+          if (fail.f0 && !fail.f0->is_triangle()) {
+            score[fail.f0] += 1.0;
+          }
+          if (fail.f1 && !fail.f1->is_triangle()) {
+            score[fail.f1] += 1.0;
+          }
+          if (fail.f2 && !fail.f2->is_triangle()) {
+            score[fail.f2] += 1.0;
+          }
+        }
+
+        FacetSPtr best;
+        double best_score = -1.0;
+
+        for (const auto& kv : score) {
+          if (kv.second > best_score) {
+            best_score = kv.second;
+            best = kv.first;
+          }
+        }
+
+        // If there are no stability failures but we still want to split for some
+        // reason, fall back to the largest non-triangle.
+        if (!best) {
+          std::size_t best_nv = 0;
+
+          for (const FacetSPtr& f : polyhedron->facets()) {
+            if (!f->is_triangle() && f->vertices().size() > best_nv) {
+              best_nv = f->vertices().size();
+              best = f;
+            }
+          }
+        }
+
+        return best;
+      };
+
+      auto perturb_with_ceres = [&](const PolyhedronSPtr& polyhedron,
+                                    const Ceres_options& opts) -> Ceres_solve_result
+      {
+        Ceres_solve_result result;
+
+        const std::size_t nf = polyhedron->facets().size();
+
+        for (int attempt=0; attempt<opts.max_random_attempts; ++attempt) {
+          CGAL_SS3_TRANSF_TRACE_V(16, "Ceres random attempt #" << attempt);
+
+          std::vector<FK_Plane_3> target_planes;
+          target_planes.reserve(nf);
+          std::vector<std::array<double, 4> > params;
+          params.reserve(nf);
+
+          for (const FacetSPtr& facet : polyhedron->facets()) {
+            facet->set_plane(original_planes[facet]);
+            perturbPlaneCoefficientsNudge(facet, nudge_range);
+            target_planes.push_back(to_fk(facet->get_plane()));
+            const FK_Plane_3& fp = target_planes.back();
+            params.push_back({fp.a(), fp.b(), fp.c(), fp.d()});
+          }
+
+          ceres::Problem problem;
+
+          // Plane priors.
+          for (std::size_t i=0; i<nf; ++i) {
+            auto* prior =
+              new ceres::AutoDiffCostFunction<Plane_prior_residual, 4, 4>(
+                new Plane_prior_residual(target_planes[i], opts.plane_prior_weight));
+            problem.AddResidualBlock(prior, nullptr, params[i].data());
+
+            auto* scale =
+              new ceres::AutoDiffCostFunction<Plane_scale_residual, 1, 4>(
+                new Plane_scale_residual(opts.plane_scale_weight));
+            problem.AddResidualBlock(scale, nullptr, params[i].data());
+          }
+
+          // Stability residuals: all vertex/incident-facet-triplets.
+          // This does not assume initial planes are stable, nor that random targets are stable.
+          for (const VertexSPtr& v : polyhedron->vertices()) {
+            const Point_3& p0 = original_points.at(v);
+
+            const std::array<double, 3> p0_d = { CGAL::to_double(p0.x()),
+                                                 CGAL::to_double(p0.y()),
+                                                 CGAL::to_double(p0.z()) };
+
+            const double tau = CGAL::to_double(CGAL::approximate_sqrt(sq_max_displacements[v]));
+
+            for (auto it_wf1 = v->facets().begin(); it_wf1 != v->facets().end(); ++it_wf1) {
+              if (FacetSPtr f1 = it_wf1->lock()) {
+                for (auto it_wf2 = std::next(it_wf1); it_wf2 != v->facets().end(); ++it_wf2) {
+                  if (FacetSPtr f2 = it_wf2->lock()) {
+                    for (auto it_wf3 = std::next(it_wf2); it_wf3 != v->facets().end(); ++it_wf3) {
+                      if (FacetSPtr f3 = it_wf3->lock()) {
+                        const std::size_t i1 = f1->id();
+                        const std::size_t i2 = f2->id();
+                        const std::size_t i3 = f3->id();
+
+                        auto* residual =
+                          new ceres::AutoDiffCostFunction<
+                            Triplet_stability_residual, 1, 4, 4, 4>(
+                              new Triplet_stability_residual(p0_d, tau, opts.stability_weight));
+
+                        problem.AddResidualBlock(residual, nullptr,
+                                                 params[i1].data(), params[i2].data(), params[i3].data());
+
+                        auto* det_residual =
+                          new ceres::AutoDiffCostFunction<
+                            Triplet_determinant_residual, 1, 4, 4, 4>(
+                              new Triplet_determinant_residual(opts.determinant_margin, opts.determinant_weight));
+
+                        problem.AddResidualBlock(det_residual, nullptr,
+                                                 params[i1].data(), params[i2].data(), params[i3].data());
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+          ceres::Solver::Options ceres_opts;
+          ceres_opts.linear_solver_type = ceres::DENSE_QR;
+          ceres_opts.max_num_iterations = opts.max_ceres_iterations;
+          ceres_opts.minimizer_progress_to_stdout = opts.ceres_progress;
+
+          ceres::Solver::Summary summary;
+
+          CGAL_SS3_TRANSF_TRACE_V(16, "  Ceres solve...");
+          ceres::Solve(ceres_opts, &problem, &summary);
+
+          if (!summary.IsSolutionUsable()) {
+            CGAL_SS3_TRANSF_TRACE_V(16, "Ceres solution unusable: " << summary.BriefReport());
+            continue;
+          }
+
+          std::size_t i=0;
+          for (const FacetSPtr& facet : polyhedron->facets()) {
+            const std::array<double, 4>& cpl = params[i++];
+            facet->set_plane(to_ek(FK_Plane_3{cpl[0], cpl[1], cpl[2], cpl[3]}));
+            Transformation::normalize_facet_plane(facet);
+            CGAL_SS3_TRANSF_TRACE_V(32, "  Facet " << facet->id() << " tentative ["
+                                       << facet->get_plane().a() << " "
+                                       << facet->get_plane().b() << " "
+                                       << facet->get_plane().c() << " "
+                                       << facet->get_plane().d() << "]");
+          }
+
+          std::vector<Stability_failure> failures;
+          bool stable = verify_stability_for_planes(polyhedron, &failures);
+
+          bool general_position = true;
+          if (opts.check_general_position) {
+            general_position = are_planes_in_general_position(polyhedron);
+          }
+
+          CGAL_SS3_TRANSF_TRACE_V(16, "stable = " << stable
+                                   << " gp = " << general_position
+                                   << " #failures = " << failures.size());
+
+          result.stable = stable;
+          result.general_position = general_position;
+          result.stability_failures = failures;
+
+          if (stable && general_position) {
+            return result;
+          }
+        }
+
+        return result;
+      };
+
+      Ceres_options opts;
+      opts.max_random_attempts = 10;
+      opts.max_ceres_iterations = 300;
+
+      // If stability is much more important than staying near the random targets,
+      // increase this. If the result ignores the random targets too much, decrease
+      // this or increase plane_prior_weight.
+      opts.plane_prior_weight = 1.0;
+      opts.plane_scale_weight = 1.0;
+      opts.stability_weight = 1000.0;
+      opts.determinant_weight = 1000.0;
+      opts.determinant_margin = 1e-4;
+
+      // If set to 'false', this is equivalent to "I'm feeling lucky". General position is not so
+      // expensive to check (compared to the rest of the algorithm with the O(n²)-ish algorithm),
+      // so it might not make sense to disable it.
+      // In any case, stability is still checked.
+      opts.check_general_position = false;
+
+      for (;;) {
+        Ceres_solve_result res = perturb_with_ceres(polyhedron, opts);
+
+        if (res.stable && res.general_position) {
+          CGAL_SS3_TRANSF_TRACE_V(8, "Ceres plane perturbation succeeded");
+          break;
+        }
+
+        // If stability was fine but general position failed, do not triangulate but try again.
+        // @fixme should the number of attempts be bounded still?
+        if (res.stable && !res.general_position) {
+          CGAL_SS3_TRANSF_TRACE_V(8, "Planes are stable, but not in general position. Try again.");
+          continue;
+        }
+
+        CGAL_assertion(!res.stable);
+
+        // If stability failed, triangulate an offending non-triangular facet.
+        FacetSPtr to_split = choose_facet_to_triangulate_from_failures(polyhedron, res.stability_failures);
+
+        if (!to_split || to_split->is_triangle()) {
+          CGAL_SS3_TRANSF_TRACE_V(8, "Ceres failed stability, but no facet to triangulate...");
+          CGAL_assertion(is_triangle_polyhedron(polyhedron));
+          std::abort();
+        } else {
+          CGAL_SS3_TRANSF_TRACE_V(8, "Triangulating F" << to_split->id() << " after Ceres stability failure");
+
+          auto [_, new_facets] = Transformation::triangulate_facet(to_split, polyhedron);
+          const Plane_3 original_plane = original_planes[to_split];
+          for (const FacetSPtr& nf : new_facets) {
+            original_planes[nf] = original_plane;
+          }
+          original_planes.erase(to_split);
+        }
+      }
+
+#endif // CGAL_SS3_PERTURB_V4_PART1_V3
+
+#ifdef CGAL_SS3_DUMP_FILES
+      IO::write_OBJ("results/perturb_V4_part_1.obj", polyhedron, parameters::do_not_triangulate_faces(true));
+#endif
+
       CGAL_SS3_TRANSF_TRACE_CODE(for (const VertexSPtr& v : polyhedron->vertices()))
       CGAL_SS3_TRANSF_TRACE_V(32, "V" << v->id() << " has length " << Size_shenanigans::length(v->point()));
 
       CGAL_SS3_TRANSF_TRACE_CODE(for (const FacetSPtr& f : polyhedron->facets()) )
       CGAL_SS3_TRANSF_TRACE_V(32, "F" << f->id() << " has length " << Size_shenanigans::length(f->get_plane()));
 
-#endif // CGAL_SS3_PERTURB_V4_PART1_V1
+      CGAL_assertion_code(for (const VertexSPtr& v : polyhedron->vertices()))
+      CGAL_assertion(is_stable(v, sq_max_displacements[v]));
 
       CGAL_SS3_TRANSF_TRACE_V(8, "Shift facets incident to high-degree vertices");
 
@@ -3099,9 +3656,6 @@ public:
       // Since we have stability and general position, we can now split high-degree vertices
       // by slighlty shifting planes, thus creating an arrangement of planes within which
       // we select the new surface.
-
-      CGAL_assertion_code(for (const VertexSPtr& v : polyhedron->vertices()))
-      CGAL_assertion(is_stable(v, sq_max_displacements[v]));
 
       // Only facets incident to a high-degree vertex need this random translation.
       CGAL::unordered_flat_set<FacetSPtr> facets_to_translate;
@@ -3182,7 +3736,7 @@ public:
                 continue;
               }
 
-              CGAL_SS3_TRANSF_TRACE_V(32, "  F" << f->id() << " eligible for nudge reduction");
+              CGAL_SS3_TRANSF_TRACE_V(32, "  F" << f->id() << " selected for nudge reduction");
               next_active_facets.insert(f);
             }
           }
@@ -3191,7 +3745,7 @@ public:
         if (all_stable) {
           CGAL_SS3_TRANSF_TRACE_V(8, "  All vertices stable");
           for (const FacetSPtr& f : facets_to_translate) {
-            Transformation::normalize_plane_coefficients(f); // @fixme is this really needed?...
+            Transformation::normalize_facet_plane(f); // @fixme is this really needed?...
           }
           break;
         }
@@ -3215,8 +3769,7 @@ public:
       CGAL_assertion_code(for (const VertexSPtr& v : polyhedron->vertices()))
       CGAL_assertion(is_stable(v, sq_max_displacements[v]));
 
-      CGAL_postcondition(do_all_plane_pairs_intersect(polyhedron));
-      CGAL_postcondition(do_all_plane_triplets_intersect(polyhedron));
+      CGAL_postcondition(are_planes_in_general_position(polyhedron));
     }
 
     // -- PART 2 --

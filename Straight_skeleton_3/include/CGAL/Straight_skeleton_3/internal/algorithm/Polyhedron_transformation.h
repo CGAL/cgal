@@ -1089,7 +1089,7 @@ public:
 
       Plane_3 plane { v0->point(), v1->point(), v2->point() };
       new_facet->set_plane(plane);
-      normalize_plane_coefficients(new_facet);
+      normalize_facet_plane(new_facet);
 
       SkelFacetDataSPtr new_data = Skeleton_facet_data::create(new_facet);
       new_data->set_speed(parent_speed);
@@ -1131,10 +1131,27 @@ public:
     return (a*a + b*b + c*c - 1) <= 1e-5;
   }
 
+  template <typename Pl>
+  static Pl normalize_plane_coefficient(const Pl& pl)
+  {
+    const FT& a = pl.a();
+    const FT& b = pl.b();
+    const FT& c = pl.c();
+    const FT& d = pl.d();
+
+    // this should be the only place with unavoidable SQRTs
+    const FT n = CGAL::approximate_sqrt(square(a) + square(b) + square(c));
+
+    if (!is_zero(n)) {
+      return {a/n, b/n, c/n, d/n};
+    }
+    return {a, b, c, d};
+  }
+
   /**
     * normalizes the plane coefficients to obtain a canonical plane representation
     */
-  static bool normalize_plane_coefficients(const FacetSPtr& facet)
+  static bool normalize_facet_plane(const FacetSPtr& facet)
   {
     CGAL_SS3_DEBUG_SPTR(facet);
     const FT& a = facet->get_plane().a();
@@ -1162,7 +1179,7 @@ public:
     CGAL_SS3_DEBUG_SPTR(polyhedron);
     bool result = true;
     for (const FacetSPtr& facet : polyhedron->facets()) {
-      result &= normalize_plane_coefficients(facet);
+      result &= normalize_facet_plane(facet);
     }
     return result;
   }
