@@ -225,7 +225,7 @@ public:
   }; /* end of Arr_polycurve_traits_2::Push_front_2 */
 
   /*! \class Trim_2
-   * A functor for triming curves.
+   * A functor for trimming curves.
    */
   class Trim_2 {
   public:

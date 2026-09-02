@@ -46,7 +46,7 @@ bool read_MEDIT(std::istream& is,
   using FT = typename Kernel_traits<Point_3>::Kernel::FT;
   using Surface_patch_index = SurfacePatchIndex_;
   using Facet        = std::array<int, 3>;
-  using Tet_with_ref = std::array<int, 4>;
+  using Tet_with_ref = typename std::iterator_traits<typename CellRange::const_iterator>::value_type;
 
   if(!is)
     return false;
