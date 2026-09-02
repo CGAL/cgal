@@ -1300,51 +1300,6 @@ const Lazy_exact_nt<ET> & y){
   return CGAL::Max<Lazy_exact_nt<ET> > ()(x,y);
 }
 
-namespace IO {
-
-// Per-stream flag controlling how Lazy_exact_nt is written by operator<<. By
-// default (flag unset) the value is written via to_double(), the historical
-// behaviour. After set_exact_mode(s), operator<< writes the exact() value; the
-// round-trip through operator>> is then exact for ET with an exact stream
-// representation such as a rational type, but not for ET whose operator<< writes
-// an approximation such as CORE::Expr (issue #135). This mirrors set_pretty_mode()
-// / is_pretty().
-namespace internal {
-inline int lazy_exact_nt_exact_output_index()
-{
-  static const int index = std::ios_base::xalloc();
-  return index;
-}
-} // namespace internal
-
-// Sets the stream s so that operator<< writes Lazy_exact_nt values through their
-// exact value. operator>> then reconstructs the same number when ET has an exact
-// stream representation (e.g. a rational type); this is not exact for ET whose
-// operator<< writes an approximation (e.g. CORE::Expr). Returns the previous state.
-inline bool set_exact_mode(std::ios& s)
-{
-  const bool old = s.iword(internal::lazy_exact_nt_exact_output_index()) != 0;
-  s.iword(internal::lazy_exact_nt_exact_output_index()) = 1;
-  return old;
-}
-
-// Sets the stream s so that operator<< writes Lazy_exact_nt values through
-// to_double() (the default). Returns the previous state.
-inline bool set_lossy_mode(std::ios& s)
-{
-  const bool old = s.iword(internal::lazy_exact_nt_exact_output_index()) != 0;
-  s.iword(internal::lazy_exact_nt_exact_output_index()) = 0;
-  return old;
-}
-
-// Returns true if s is in exact-output mode for Lazy_exact_nt.
-inline bool is_exact_mode(std::ios& s)
-{
-  return s.iword(internal::lazy_exact_nt_exact_output_index()) != 0;
-}
-
-} // namespace IO
-
 template <typename ET>
 std::ostream &
 operator<< (std::ostream & os, const Lazy_exact_nt<ET> & a)

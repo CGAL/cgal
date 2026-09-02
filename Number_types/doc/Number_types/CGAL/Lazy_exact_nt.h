@@ -130,31 +130,4 @@ reads a `NT` from `in`, then converts it to a `Lazy_exact_nt<NT>`.
 */
 std::istream& operator>>(std::istream& in, Lazy_exact_nt<NT>& m);
 
-namespace IO {
-
-/*!
-makes `operator<<` write `Lazy_exact_nt` values on the stream `s` through their
-exact value (`NT`'s output operator). The round-trip through `operator>>` is exact
-when `NT` has an exact stream representation, such as a rational type; it is not
-exact for `NT` whose output writes an approximation, such as `CORE::Expr`. Returns
-the previous state. Mirrors `CGAL::IO::set_pretty_mode()`.
-\relates Lazy_exact_nt
-*/
-bool set_exact_mode(std::ios& s);
-
-/*!
-makes `operator<<` write `Lazy_exact_nt` values on the stream `s` through
-`to_double()`, which is the default. Returns the previous state.
-\relates Lazy_exact_nt
-*/
-bool set_lossy_mode(std::ios& s);
-
-/*!
-returns `true` if the stream `s` is in exact-output mode for `Lazy_exact_nt`.
-\relates Lazy_exact_nt
-*/
-bool is_exact_mode(std::ios& s);
-
-} /* end namespace IO */
-
 } /* end namespace CGAL */

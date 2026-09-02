@@ -102,10 +102,13 @@ the printing mode.
 - `CGAL::IO::get_mode()`
 - `CGAL::IO::is_ascii()`
 - `CGAL::IO::is_binary()`
+- `CGAL::IO::is_exact_mode()`
 - `CGAL::IO::is_pretty()`
 - `CGAL::IO::set_mode()`
 - `CGAL::IO::set_ascii_mode()`
 - `CGAL::IO::set_binary_mode()`
+- `CGAL::IO::set_exact_mode()`
+- `CGAL::IO::set_lossy_mode()`
 - `CGAL::IO::set_pretty_mode()`
 - \link IOstreamOperators `CGAL::operator>>()` \endlink
 - \link IOstreamOperators `CGAL::operator<<()` \endlink
