@@ -265,6 +265,8 @@ private:
   // i.e. minimal enclosing bounding
   // box of points
   const internal::Kd_tree_build_context<Point_d, FT>* build_context = nullptr;
+  // whether the points are in the buffer of the build context
+  bool in_buffer = false;
 
 public:
 
@@ -445,9 +447,10 @@ public:
   // building the container from a sequence of points
   Point_container(const int d, iterator begin, iterator end,const Traits& traits_,
                   const internal::Kd_tree_build_context<Point_d, FT>* context = nullptr) :
-    traits(traits_),m_b(begin), m_e(end), bbox(d, begin, end,traits.construct_cartesian_const_iterator_d_object()), tbox(d),
+    traits(traits_),m_b(begin), m_e(end), bbox(d), tbox(d),
     build_context(context)
   {
+    update_tight_box(bbox, begin, end, traits.construct_cartesian_const_iterator_d_object());
     tbox = bbox;
     built_coord = max_span_coord();
   }
@@ -519,9 +522,104 @@ public:
   };
 
 
+  // Bounds of [begin, end), in parallel above the context's cutoff.
+  void update_tight_box(Kd_tree_rectangle<FT,D>& box, iterator begin, iterator end,
+                        const typename Traits::Construct_cartesian_const_iterator_d& construct_it) const
+  {
+#ifdef CGAL_TBB_STRUCTURE_IN_KD_TREE
+    if (build_context != nullptr
+        && static_cast<std::size_t>(end - begin) > build_context->cutoff) {
+      internal::Tight_box_reduce<typename Traits::Construct_cartesian_const_iterator_d, FT, D>
+        body(dimension(), construct_it);
+      tbb::parallel_reduce(tbb::blocked_range<iterator>(begin, end, internal::kd_tree_grain_size), body);
+      box = body.box;
+      return;
+    }
+#endif
+    box.template update_from_points<typename Traits::Construct_cartesian_const_iterator_d>(begin, end, construct_it);
+  }
+
+  // Offset of this container's range in the root's, where its scratch slots are.
+  std::size_t scratch_offset() const
+  {
+    return static_cast<std::size_t>(begin() - (in_buffer ? build_context->buffer : build_context->points));
+  }
+
+  // Partition by cmp. Above the context's cutoff, a parallel partition moves
+  // the points to the other array of the context. The parallel partition is
+  // stable, so the order of the points can differ between the two builds, and
+  // so can the point a sliding split moves among points of equal coordinates.
+  iterator partition_points(const Cmp<Traits>& cmp)
+  {
+#ifdef CGAL_TBB_STRUCTURE_IN_KD_TREE
+    if (build_context != nullptr && size() > build_context->cutoff) {
+      const std::size_t offset = scratch_offset();
+      const iterator out = (in_buffer ? build_context->points : build_context->buffer) + offset;
+      const iterator it = internal::parallel_stable_partition(begin(), end(), out, cmp, build_context->flags + offset);
+      set_range(out, out + size());
+      in_buffer = !in_buffer;
+      return it;
+    }
+#endif
+    return std::partition(begin(), end(), cmp);
+  }
+
+  // Moves the points from the buffer of the build context back to its points.
+  void leave_buffer()
+  {
+    if (!in_buffer)
+      return;
+    const iterator out = build_context->points + scratch_offset();
+    set_range(out, std::move(begin(), end(), out));
+    in_buffer = false;
+  }
+
+#ifdef CGAL_TBB_STRUCTURE_IN_KD_TREE
+  // median() with the two middle coordinates selected in parallel; the points
+  // are not reordered.
+  FT parallel_median(const int split_coord,
+                     const typename Traits::Construct_cartesian_const_iterator_d& construct_it) const
+  {
+    const std::size_t n = size(), k = n / 2;
+    FT* keys = build_context->keys + scratch_offset();
+    const_iterator b = begin();
+    tbb::parallel_for(tbb::blocked_range<std::size_t>(0, n, internal::kd_tree_grain_size),
+                      [&](const tbb::blocked_range<std::size_t>& r) {
+      for (std::size_t i = r.begin(); i != r.end(); ++i)
+        keys[i] = *(construct_it(b[i]) + split_coord);
+    });
+    const FT val1 = internal::kth_smallest(keys, n, k, std::less<FT>(), build_context->flags + scratch_offset());
+
+    // how many keys are at most val1, and the smallest key above it
+    struct Above { std::size_t le; bool has; FT gt; };
+    Above none = { 0, false, FT() };
+    Above above = tbb::parallel_reduce(
+      tbb::blocked_range<std::size_t>(0, n, internal::kd_tree_grain_size), none,
+      [&](const tbb::blocked_range<std::size_t>& r, Above a) {
+        for (std::size_t i = r.begin(); i != r.end(); ++i) {
+          if (!(val1 < keys[i])) ++a.le;
+          else if (!a.has || keys[i] < a.gt) { a.gt = keys[i]; a.has = true; }
+        }
+        return a;
+      },
+      [](Above a, const Above& c) {
+        a.le += c.le;
+        if (c.has && (!a.has || c.gt < a.gt)) { a.gt = c.gt; a.has = true; }
+        return a;
+      });
+
+    if (val1 == tbox.min_coord(split_coord))
+      return above.has ? above.gt : val1;
+    if (k + 1 >= n)
+      return val1;
+    const FT val2 = (above.le >= k + 2) ? val1 : above.gt;
+    return (val1 + val2) / FT(2);
+  }
+#endif
+
   void recompute_tight_bounding_box()
   {
-    tbox.template update_from_points<typename Traits::Construct_cartesian_const_iterator_d>(begin(), end(),traits.construct_cartesian_const_iterator_d_object());
+    update_tight_box(tbox, begin(), end(), traits.construct_cartesian_const_iterator_d_object());
   }
 
 
@@ -564,7 +662,7 @@ public:
     typename Traits::Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
 
     Cmp<Traits> cmp(split_coord, cutting_value,construct_it);
-    iterator it = std::partition(begin(), end(), cmp);
+    iterator it = partition_points(cmp);
     // now [begin,it) are lower and [it,end) are upper
     if (sliding) { // avoid empty lists
 
@@ -589,12 +687,13 @@ public:
     }
 
     c.set_range(begin(), it);
+    c.in_buffer = in_buffer;
     set_range(it, end());
     // adjusting boxes
     bbox.set_lower_bound(split_coord, cutting_value);
-    tbox. template update_from_points<typename Traits::Construct_cartesian_const_iterator_d>(begin(),end(),construct_it);
+    update_tight_box(tbox, begin(), end(), construct_it);
     c.bbox.set_upper_bound(split_coord, cutting_value);
-    c.tbox. template update_from_points<typename Traits::Construct_cartesian_const_iterator_d>(c.begin(),c.end(),construct_it);
+    c.update_tight_box(c.tbox, c.begin(), c.end(), construct_it);
     CGAL_assertion(is_valid());
     CGAL_assertion(c.is_valid());
   }
@@ -628,6 +727,10 @@ public:
   median(const int split_coord)
   {
     typename Traits::Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
+#ifdef CGAL_TBB_STRUCTURE_IN_KD_TREE
+    if (build_context != nullptr && size() > build_context->cutoff)
+      return parallel_median(split_coord, construct_it);
+#endif
     iterator mid = begin() + (end() - begin())/2;
     std::nth_element(begin(), mid, end(),comp_coord_val<Traits,int>(split_coord,construct_it));
 

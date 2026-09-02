@@ -123,7 +123,7 @@ private:
   static constexpr std::size_t serial_build_cutoff = 1000;
 
   Kd_tree_rectangle<FT,D>* bbox;
-  // partitioned in place by build(); a leaf holds an iterator range of it
+  // put in tree order by build(); a leaf holds an iterator range of it
   std::vector<Point_d> pts;
 
   // Store a contiguous copy of the point coordinates
@@ -152,6 +152,7 @@ private:
   Node_handle
   create_leaf_node(Point_container& c)
   {
+    c.leave_buffer();
     Leaf_node node(static_cast<unsigned int>(c.size()));
     node.data = c.begin();
 
@@ -342,10 +343,28 @@ public:
 
     internal::Kd_tree_build_context<Point_d, FT> context = { serial_build_cutoff, {}, {}, nullptr, nullptr };
     bool parallel = std::is_convertible<ConcurrencyTag, Parallel_tag>::value;
+    std::vector<Point_d> scratch_points;
+    std::vector<unsigned char> scratch_flags;
+    std::vector<FT> scratch_keys;
+#ifdef CGAL_TBB_STRUCTURE_IN_KD_TREE
+    if (parallel) {
+      scratch_points.resize(pts.size());
+      scratch_flags.resize(pts.size());
+      scratch_keys.resize(pts.size());
+      context.points = pts.begin();
+      context.buffer = scratch_points.begin();
+      context.flags = scratch_flags.data();
+      context.keys = scratch_keys.data();
+    }
+#endif
 
 #ifndef CGAL_TBB_STRUCTURE_IN_KD_TREE
     static_assert (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
                                "Parallel_tag is enabled but TBB is unavailable.");
+#endif
+#ifndef CGAL_HAS_THREADS
+    static_assert (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+                               "Parallel_tag is enabled but CGAL_HAS_THREADS is not defined.");
 #endif
 
     Point_container c(dim_, pts.begin(), pts.end(),traits_, parallel ? &context : nullptr);

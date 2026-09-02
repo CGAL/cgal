@@ -65,6 +65,8 @@ Release date: December 2026
 - **Breaking change**: the construction of `CGAL::Kd_tree` partitions its points in place instead of an array
   of pointers to them, and `CGAL::Point_container::iterator` and `const_iterator` now iterate over the points
   instead of pointers to them.
+- The parallel construction of `CGAL::Kd_tree` now also computes the splits of its large nodes in parallel, and
+  the tree it builds can differ from the one built by the sequential construction.
 - The splitters `CGAL::Median_of_rectangle`, `CGAL::Median_of_max_spread`, `CGAL::Fair` and
   `CGAL::Sliding_fair` now cut at the median of the coordinates. The second middle coordinate they
   used was whichever one `std::nth_element` left next to the median, which is unspecified.
