@@ -168,7 +168,7 @@ public:
     */
   static bool do_all_plane_triplets_intersect(const PolyhedronSPtr& polyhedron)
   {
-    CGAL_SS3_TRANSF_TRACE_V(4, "Check all 3-combinations of planes");
+    CGAL_SS3_TRANSF_TRACE_V(4, "Check all 2-, 3-combinations of planes");
 
     CGAL_SS3_DEBUG_SPTR(polyhedron);
 
@@ -202,6 +202,153 @@ public:
       }
     }
     return result;
+  }
+
+  /**
+    * checks for degeneracies:
+    *  - all pairs of planes should intersect in a non-degenerate line.
+    *  - all triplets of planes should intersect in a point.
+    * avoiding the O(n^3) naive complexity
+    */
+  static bool are_planes_in_general_position(const PolyhedronSPtr& polyhedron)
+  {
+    CGAL_SS3_TRANSF_TRACE_V(4, "Check all 3-combinations of planes");
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
+    CGAL_precondition(polyhedron->facets().size() >= 3);
+
+    // Three planes meet in a single point iff their normals are linearly independent.
+    // With c_ij = n_i x n_j, we have det(n_i, n_j, n_k) = 0 iff c_ij and c_ik are parallel,
+    // and thus c_ij = 0 detects parallel normals directly.
+
+    // Two canonicalized projective normals are the same direction iff proportional with a positive factor
+    struct Projective_normal { FT x, y, z; };
+    using Direction = std::pair<Projective_normal, std::size_t>;
+
+    // canonical := first non-zero coordinate is positive
+    auto canonicalize = [](const Vector_3& c) -> Projective_normal
+    {
+      const FT& cx = c.x();
+      const FT& cy = c.y();
+      const FT& cz = c.z();
+
+      if (cx < 0 || (cx == 0 && cy < 0) || (cx == 0 && cy == 0 && cz < 0)) {
+        return { -cx, -cy, -cz };
+      } else {
+        return { cx, cy, cz };
+      }
+    };
+
+    // Strict weak ordering on sign-canonicalized non-zero triples.
+    //
+    // Precondition (what makes the cross-multiplications below valid): the
+    // first non-zero coordinate of each input is > 0, so every denominator the
+    // ratios are taken over is strictly positive and multiplying by it
+    // preserves order.
+    //
+    // Category = position of the first non-zero coordinate. Categories are
+    // disjoint and projectively separated, so ordering by category first is
+    // consistent; within a category the order is lexicographic on the
+    // coordinate ratios, compared without division.
+    auto projective_compare = [](const Projective_normal& a,
+                                 const Projective_normal& b) -> bool
+    {
+      auto get_category = [](const Projective_normal& v) -> int {
+        if (v.x > 0) return 0;
+        if (v.y > 0) return 1;
+        return 2;
+      };
+
+      const int cat_a = get_category(a);
+      const int cat_b = get_category(b);
+
+      if (cat_a != cat_b) {
+        return cat_a < cat_b;
+      }
+
+      if (cat_a == 0) {
+        // Both x > 0, so compare y_a/x_a with y_b/x_b, then z_a/x_a with z_b/x_b.
+        const FT ya_xb = a.y * b.x;
+        const FT yb_xa = b.y * a.x;
+        if (ya_xb != yb_xa) {
+          return ya_xb < yb_xa;
+        }
+        return a.z * b.x < b.z * a.x;
+      }
+
+      if (cat_a == 1) {
+        // Both x == 0, y > 0, so compare z_a/y_a with z_b/y_b.
+        return a.z * b.y < b.z * a.y;
+      }
+
+      // both are (0, 0, z) with z > 0, hence identical directions.
+      return false;
+    };
+
+    // the comparator refuses both orders <=> same projective direction
+    auto projective_equal = [&projective_compare](const Projective_normal& a,
+                                                  const Projective_normal& b) -> bool
+    {
+      return (!projective_compare(a, b) && !projective_compare(b, a));
+    };
+
+    std::vector<std::pair<FacetSPtr, Vector_3> > normals;
+    const std::size_t nf = polyhedron->facets().size();
+    normals.reserve(nf);
+
+    for (const FacetSPtr& facet : polyhedron->facets()) {
+      const Vector_3 n = facet->get_plane().orthogonal_vector();
+      normals.emplace_back(facet, n);
+    }
+
+    auto report_degenerate = [&normals](std::size_t i, std::size_t j, std::size_t k) -> void
+    {
+      CGAL_SS3_TRANSF_TRACE_V(1, "Degenerate facet triplet:");
+      CGAL_SS3_TRANSF_TRACE_V(1, "  " << normals[i].first->to_string());
+      CGAL_SS3_TRANSF_TRACE_V(1, "  " << normals[j].first->to_string());
+      CGAL_SS3_TRANSF_TRACE_V(1, "  " << normals[k].first->to_string());
+    };
+
+    std::vector<Direction> directions;
+    directions.reserve(nf - 1);
+
+    for (std::size_t i=0; i<nf; ++i) {
+      directions.clear();
+      const Vector_3& n1 = normals[i].second;
+      for (std::size_t j=i+1; j<nf; ++j) {
+        const Vector_3& n2 = normals[j].second;
+        const Vector_3 c_ij = CGAL::cross_product(n1, n2);
+        if (c_ij == CGAL::NULL_VECTOR) { // Parallel normals: *every* triplet containing both facets is degenerate
+          std::size_t k = 0;
+          while (k == i || k == j) {
+            ++k;
+          }
+          report_degenerate(i, j, k);
+          return false;
+        }
+
+        directions.push_back(std::make_pair(canonicalize(c_ij), j));
+      }
+
+      // Duplicate direction <=> c_ij || c_ik <=> det(n_i, n_j, n_k) == 0.
+      std::sort(directions.begin(), directions.end(),
+                [&projective_compare](const Direction& d1, const Direction& d2) -> bool {
+                  return projective_compare(d1.first, d2.first);
+                });
+
+      const auto dup = std::adjacent_find(
+          directions.begin(), directions.end(),
+          [&projective_equal](const Direction& d1, const Direction& d2) -> bool {
+            return projective_equal(d1.first, d2.first);
+          });
+
+      if (dup != directions.end()) {
+        report_degenerate(i, dup->second, (std::next(dup))->second);
+        return false;
+      }
+    }
+
+    CGAL_SS3_TRANSF_TRACE_V(4, "All planes OK");
+    return true;
   }
 
   /**
