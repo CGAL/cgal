@@ -207,9 +207,9 @@ void check_splitters(const std::string& traits_name,
 // ------------------------------------------------------------------- inputs
 
 // Snapping to a coarse grid makes many points coincide, so that subtrees reach
-// zero tight spread and become leaves. The step must be coarse enough that a
-// grid cell holds more than bucket_size points, or no such subtree is ever
-// formed.
+// zero tight spread and become leaves. A grid cell has to hold more than
+// bucket_size points, and a few cells more than the size from which build()
+// forks, or no such subtree is ever formed.
 inline double snap(double v, double step)
 {
   return step * std::floor(v / step);
@@ -217,7 +217,7 @@ inline double snap(double v, double step)
 
 template <class K>
 std::vector<typename K::Point_3>
-points_3(std::size_t n, bool duplicate_heavy, CGAL::Random& rnd)
+points_3(std::size_t n, bool duplicate_heavy, CGAL::Random& rnd, double step)
 {
   typedef typename K::Point_3 Point_3;
   std::vector<Point_3> points;
@@ -229,7 +229,7 @@ points_3(std::size_t n, bool duplicate_heavy, CGAL::Random& rnd)
   for (std::size_t i = 0; i != n; ++i, ++gen) {
     double x = (*gen).x(), y = (*gen).y(), z = (*gen).z();
     if (duplicate_heavy) {
-      x = snap(x, 0.5); y = snap(y, 0.5); z = snap(z, 0.5);
+      x = snap(x, step); y = snap(y, step); z = snap(z, step);
     }
     points.push_back(Point_3(x, y, z));
   }
@@ -306,13 +306,13 @@ int main(int argc, char** argv)
   thread_counts.push_back(1);
   thread_counts.push_back(4);
 
-  const std::size_t n = 3000;
+  const std::size_t n = 2000;
   const int dim = 5;
   CGAL::Random rnd(42);
 
   {
-    const std::vector<Sc::Point_3> uni = points_3<Sc>(n, false, rnd);
-    const std::vector<Sc::Point_3> dup = points_3<Sc>(n, true, rnd);
+    const std::vector<Sc::Point_3> uni = points_3<Sc>(n, false, rnd, 1.0);
+    const std::vector<Sc::Point_3> dup = points_3<Sc>(n, true, rnd, 1.0);
     check_splitters<Traits_sc_3>("Search_traits_3<Simple_cartesian>",
                                  "uniform", uni, thread_counts);
     check_splitters<Traits_sc_3>("Search_traits_3<Simple_cartesian>",
@@ -320,8 +320,8 @@ int main(int argc, char** argv)
                                  WITHOUT_ASPECT_RATIO_SPLITTERS);
   }
   {
-    const std::vector<Epeck::Point_3> uni = points_3<Epeck>(n, false, rnd);
-    const std::vector<Epeck::Point_3> dup = points_3<Epeck>(n, true, rnd);
+    const std::vector<Epeck::Point_3> uni = points_3<Epeck>(n, false, rnd, 1.0);
+    const std::vector<Epeck::Point_3> dup = points_3<Epeck>(n, true, rnd, 1.0);
     check_splitters<Traits_epeck_3>("Search_traits_3<Epeck>",
                                     "uniform", uni, thread_counts);
     check_splitters<Traits_epeck_3>("Search_traits_3<Epeck>",
@@ -338,6 +338,33 @@ int main(int argc, char** argv)
                                     WITHOUT_ASPECT_RATIO_SPLITTERS);
   }
 
+  // build() computes the bounding boxes, the partition and the median of a
+  // node of more than 1000 points in parallel. These cases reach all three,
+  // on one splitter of each kind.
+  {
+    const std::vector<int> many(1, 32);
+    const std::vector<Sc::Point_3> uni = points_3<Sc>(300000, false, rnd, 0.5);
+    const std::vector<Sc::Point_3> dup = points_3<Sc>(300000, true, rnd, 0.5);
+    const std::vector<Sc::Point_3> dup_big = points_3<Sc>(600000, true, rnd, 0.5);
+    check_one<Traits_sc_3, CGAL::Sliding_midpoint<Traits_sc_3> >
+      ("Search_traits_3<Simple_cartesian>", "Sliding_midpoint", "uniform, 300000",
+       uni, many);
+    check_one<Traits_sc_3, CGAL::Sliding_midpoint<Traits_sc_3> >
+      ("Search_traits_3<Simple_cartesian>", "Sliding_midpoint", "duplicate-heavy, 300000",
+       dup, many);
+    check_one<Traits_sc_3, CGAL::Median_of_rectangle<Traits_sc_3> >
+      ("Search_traits_3<Simple_cartesian>", "Median_of_rectangle", "duplicate-heavy, 600000",
+       dup_big, many);
+    const std::vector<Epeck::Point_3> exact = points_3<Epeck>(70000, true, rnd, 0.5);
+    check_one<Traits_epeck_3, CGAL::Median_of_rectangle<Traits_epeck_3> >
+      ("Search_traits_3<Epeck>", "Median_of_rectangle", "duplicate-heavy, 70000",
+       exact, many);
+    const std::vector<Kd::Point_d> dyn = points_d<Kd>(70000, dim, true, rnd, 1.0);
+    check_one<Traits_dynamic, CGAL::Median_of_rectangle<Traits_dynamic> >
+      ("Homogeneous_d", "Median_of_rectangle", "duplicate-heavy, 70000",
+       dyn, many);
+  }
+
   if (failures != 0) {
     std::cerr << failures << " mismatch(es)." << std::endl;
     return 1;
@@ -348,7 +375,7 @@ int main(int argc, char** argv)
     const std::size_t big = static_cast<std::size_t>(std::atol(argv[1]));
     std::cout << "\nBuild times, Search_traits_3<Simple_cartesian>, "
               << "Sliding_midpoint, " << big << " uniform points:" << std::endl;
-    const std::vector<Sc::Point_3> pts = points_3<Sc>(big, false, rnd);
+    const std::vector<Sc::Point_3> pts = points_3<Sc>(big, false, rnd, 1.0);
     report_times<Traits_sc_3, CGAL::Sliding_midpoint<Traits_sc_3> >
       (pts, thread_counts);
   }
