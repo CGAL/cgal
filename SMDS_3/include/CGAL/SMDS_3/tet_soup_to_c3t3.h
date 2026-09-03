@@ -356,6 +356,22 @@ bool is_infinite(const std::array<typename Tr::Vertex_handle, 3>& f,
   return false;
 }
 
+template <typename Iterator>
+struct output_iterator_value
+{
+  using type = void;
+};
+
+template <typename Container>
+struct output_iterator_value<std::back_insert_iterator<Container>>
+{
+  using type = typename Container::value_type;
+};
+
+template <typename Iterator>
+using output_iterator_value_t = typename output_iterator_value<std::decay_t<Iterator>>::type;
+
+
 template<class Tr>
 bool assign_neighbors(Tr& tr,
                       const boost::unordered_map<std::array<typename Tr::Vertex_handle, 3>,
@@ -424,7 +440,7 @@ bool build_triangulation_impl(Tr& tr,
   // associate to a face the two (at most) incident tets and the id of the face in the cell
   typedef std::pair<Cell_handle, int>                   Incident_cell;
   typedef boost::unordered_map<Facet_vvv, std::vector<Incident_cell> >  Incident_cells_map;
-  typedef typename std::iterator_traits<decltype(cx_edges_out)>::value_type CxEdgeAndId;
+  using CxEdgeAndId = output_iterator_value_t<decltype(cx_edges_out)>;
 
   CGAL_precondition(!points.empty());
 
@@ -504,7 +520,8 @@ bool build_triangulation_impl(Tr& tr,
 
     for (const auto& [vid,_]: corners)
     {
-      vertex_handle_vector[vid]->set_dimension(0);
+      Vertex_handle corner = vertex_handle_vector[vid + 1];
+      corner->set_dimension(0);
     }
     if(verbose)
     {
@@ -513,8 +530,8 @@ bool build_triangulation_impl(Tr& tr,
 
     for(auto [iv0, iv1, curve_index] : edges)
     {
-      Vertex_handle vh0 = vertex_handle_vector[iv0];
-      Vertex_handle vh1 = vertex_handle_vector[iv1];
+      Vertex_handle vh0 = vertex_handle_vector[iv0 + 1];
+      Vertex_handle vh1 = vertex_handle_vector[iv1 + 1];
       if(vh0->in_dimension() != 0)
         vh0->set_dimension(1);
       if(vh1->in_dimension() != 0)
@@ -868,6 +885,7 @@ bool build_triangulation_from_file(std::istream& is,
           return false;
         }
         edge_indices.push_back({n[0] - 1, n[1] - 1, curve_index});
+        CGAL_assertion(edge_indices.size() == static_cast<std::size_t>(i + 1) );
       }
     }
   }
