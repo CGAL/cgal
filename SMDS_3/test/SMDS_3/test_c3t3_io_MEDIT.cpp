@@ -107,12 +107,23 @@ int test()
   is2.close();
   assert(tr2.is_valid());
 
+  // non convex
+  std::ofstream os3("elephant_out_not_all_cells.mesh");
+  CGAL::IO::write_MEDIT(os3, tr, CGAL::parameters::all_cells(false));
+  os3.close();
+
+  Tr tr3;
+  std::ifstream is3("elephant_out_not_all_cells.mesh");
+  CGAL::IO::read_MEDIT(is3, tr3);
+  is3.close();
+  assert(tr3.is_valid());
+
   return EXIT_SUCCESS;
 }
 
 int main()
 {
-  if(!test_MEDIT_with_features())
+  if(test_MEDIT_with_features() != EXIT_SUCCESS)
     return EXIT_FAILURE;
 
   return test();
