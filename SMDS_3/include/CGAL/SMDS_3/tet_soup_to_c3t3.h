@@ -410,6 +410,16 @@ bool assign_neighbors(Tr& tr,
   return success;
 }
 
+template <typename Tds>
+int euler_characteristic(const Tds& tds)
+{
+  const int cell_count = static_cast<int>(tds.number_of_cells());
+  const int facet_count = static_cast<int>(tds.number_of_facets());
+  const int edge_count = static_cast<int>(tds.number_of_edges());
+  const int vertex_count = static_cast<int>(tds.number_of_vertices());
+  return (cell_count - facet_count + edge_count - vertex_count);
+}
+
 template<class Tr,
          typename PointRange,
          typename CellRange,
@@ -551,11 +561,16 @@ bool build_triangulation_impl(Tr& tr,
     }
   }
 
+  const int euler_char = euler_characteristic(tr.tds());
+  if(euler_char != 0)
+  {
+    tr.tds().set_initial_Euler_characteristic(euler_char);
+  }
+
   // disabled because the TDS is not valid when cells do not cover the convex hull of vertices
-  // return tr.tds().is_valid();
+  assert(tr.tds().is_valid());
 
   return success;
-
 }
 
 template<class Tr,
