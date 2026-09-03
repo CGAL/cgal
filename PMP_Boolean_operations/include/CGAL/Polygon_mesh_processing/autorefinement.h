@@ -49,9 +49,6 @@
 #endif
 #include <tbb/concurrent_map.h>
 #include <tbb/parallel_for.h>
-#ifdef CGAL_AUTOREF_SET_POINT_IDS_USING_MUTEX
-#include <CGAL/mutex.h>
-#endif
 #endif
 
 // Thingi10K/raw_meshes/101633.stl is getting a huge speed up when switched on
@@ -1487,70 +1484,6 @@ bool autorefine_triangle_soup(PointRange& soup_points,
 #ifdef CGAL_LINKED_WITH_TBB
   if(parallel_execution && new_triangles.size() > 50)
   {
-#ifdef CGAL_AUTOREF_SET_POINT_IDS_USING_MUTEX
-    //option 1 (using a mutex)
-    CGAL_MUTEX point_container_mutex;
-    /// Lambda concurrent_get_point_id()
-    auto concurrent_get_point_id = [&](const EK::Point_3& pt)
-    {
-      auto insert_res = point_id_map.insert(std::make_pair(pt, -1));
-
-      if (insert_res.second)
-      {
-        CGAL_SCOPED_LOCK(point_container_mutex);
-        insert_res.first->second=soup_points.size();
-        soup_points.push_back(to_input(pt));
-#if ! defined(CGAL_NDEBUG) || defined(CGAL_DEBUG_PMP_AUTOREFINE)
-        exact_soup_points.push_back(pt);
-#endif
-      }
-      return insert_res.first;
-    };
-
-    soup_triangles_out.resize(offset + new_triangles.size());
-    //use map iterator triple for triangles to create them concurrently and safely
-    std::vector<std::array<typename Point_id_map::iterator, 3>> triangle_buffer(new_triangles.size());
-    tbb::parallel_for(tbb::blocked_range<size_t>(0, new_triangles.size()),
-      [&](const tbb::blocked_range<size_t>& r) {
-        for (size_t ti = r.begin(); ti != r.end(); ++ti) {
-          const std::array<EK::Point_3, 3>& t = new_triangles[ti].first;
-          triangle_buffer[ti] = CGAL::make_array(concurrent_get_point_id(t[0]), concurrent_get_point_id(t[1]), concurrent_get_point_id(t[2]));
-        }
-      }
-    );
-
-    // The constexpr  was initially inside the lambda, but that did not compile  with VC 2017
-    if constexpr(std::is_same_v<Visitor, Wrap_snap_visitor>){
-      tbb::parallel_for(tbb::blocked_range<size_t>(0, new_triangles.size()),
-        [&](const tbb::blocked_range<size_t>& r) {
-            for (size_t ti = r.begin(); ti != r.end(); ++ti)
-            {
-              soup_triangles_out[offset + ti] =
-                { triangle_buffer[ti][0]->second,
-                  triangle_buffer[ti][1]->second,
-                  triangle_buffer[ti][2]->second };
-              visitor.new_subdivision(soup_triangles_out[offset + ti], soup_triangles[tri_inter_ids_inverse[new_triangles[ti].second]]);
-            }
-          }
-      );
-    }
-    else
-    {
-      tbb::parallel_for(tbb::blocked_range<size_t>(0, new_triangles.size()),
-        [&](const tbb::blocked_range<size_t>& r) {
-            for (size_t ti = r.begin(); ti != r.end(); ++ti)
-            {
-              soup_triangles_out[offset + ti] =
-                { triangle_buffer[ti][0]->second,
-                  triangle_buffer[ti][1]->second,
-                  triangle_buffer[ti][2]->second };
-              visitor.new_subtriangle(offset+ti, tri_inter_ids_inverse[new_triangles[ti].second]);
-            }
-          }
-      );
-    }
-#else
-    //option 2 (without mutex)
     /// Lambda concurrent_get_point_id()
     tbb::concurrent_vector<typename Point_id_map::iterator> iterators;
     auto concurrent_get_point_id = [&](const EK::Point_3& pt)
@@ -1622,7 +1555,6 @@ bool autorefine_triangle_soup(PointRange& soup_points,
           }
       );
     }
-#endif
   }
   else
 #endif
