@@ -22,6 +22,17 @@
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Side_of_triangle_mesh.h>
 
+#include <CGAL/Surface_mesh.h>
+
+namespace CGAL::internal
+{
+template <typename T>
+struct is_surface_mesh : std::false_type {};
+
+template <typename Point>
+struct is_surface_mesh<Surface_mesh<Point>> : std::true_type {};
+}
+
 #include <CGAL/property_map.h>
 #include <CGAL/Default.h>
 
@@ -1077,32 +1088,41 @@ public:
 
     // (1) Assign a patch id to each facet indicating in which connected
     // component limited by intersection edges of the surface they are.
-    // ... for tm1
+    std::vector <std::size_t> tm1_patch_sizes;
+    std::vector <std::size_t> tm2_patch_sizes;
+    std::size_t nb_patches_tm1, nb_patches_tm2;
     std::vector<std::size_t> tm1_patch_ids( num_faces(tm1),NID );
     Border_edge_map<TriangleMesh> is_marked_1(intersection_edges1, tm1);
-    std::size_t nb_patches_tm1 =
+    auto connected_components_1=[&]()
+    {
+    // ... for tm1
+    nb_patches_tm1 =
       connected_components(tm1,
                            make_compose_property_map(fids1,make_property_map(&tm1_patch_ids[0])),
                            parameters::edge_is_constrained_map(is_marked_1)
                                       .face_index_map(fids1));
-
-    std::vector <std::size_t> tm1_patch_sizes(nb_patches_tm1, 0);
+    tm1_patch_sizes.resize(nb_patches_tm1, 0);
     for(std::size_t i : tm1_patch_ids)
       if(i!=NID)
         ++tm1_patch_sizes[i];
-    // ... for tm2
+    };
+
     std::vector<std::size_t> tm2_patch_ids( num_faces(tm2),NID );
     Border_edge_map<TriangleMesh> is_marked_2(intersection_edges2, tm2);
-    std::size_t nb_patches_tm2 =
+    auto connected_components_2=[&]()
+    {
+    // ... for tm2
+    nb_patches_tm2 =
       connected_components(tm2,
                            make_compose_property_map(fids2,make_property_map(&tm2_patch_ids[0])),
                            parameters::edge_is_constrained_map(is_marked_2)
                                       .face_index_map(fids2));
-
-    std::vector <std::size_t> tm2_patch_sizes(nb_patches_tm2, 0);
+    tm2_patch_sizes.resize(nb_patches_tm2, 0);
     for(Node_id i : tm2_patch_ids)
       if(i!=NID)
         ++tm2_patch_sizes[i];
+    };
+    tbb::parallel_invoke(connected_components_1, connected_components_2);
 
 #ifdef CGAL_COREFINEMENT_DEBUG
     std::cout << "nb_patches_tm1 = " << nb_patches_tm1 << "\n";
@@ -2361,24 +2381,68 @@ public:
       );
 
       std::vector<edge_descriptor> shared_edges;
-
-      #define CGAL_COREF_FUNCTION_CALL_DEF(BO_type) \
-        fill_new_triangle_mesh( \
-          output, \
-          patches_of_tm1_used[BO_type], patches_of_tm2_used[BO_type], \
-          patches_of_tm1, patches_of_tm2, \
-          BO_type == TM2_MINUS_TM1, BO_type == TM1_MINUS_TM2, \
-          polylines, \
-          intersection_edges1, intersection_edges2, \
-          vpm1, vpm2, *std::get<BO_type>(output_vpms), \
-          marks_on_input_edges.ecm1, \
-          marks_on_input_edges.ecm2, \
-          std::get<BO_type>(out_edge_mark_maps), \
-          shared_edges, \
-          user_visitor \
-        )
-      CGAL_COREF_FUNCTION_CALL(operation)
-      #undef CGAL_COREF_FUNCTION_CALL_DEF
+      if constexpr(::CGAL::internal::is_surface_mesh<TriangleMesh>::value){
+        #define CGAL_COREF_FUNCTION_CALL_DEF(BO_type) \
+          output.template fill_new_triangle_mesh<BO_type == TM2_MINUS_TM1, BO_type == TM1_MINUS_TM2>( \
+            patches_of_tm1_used[BO_type], patches_of_tm2_used[BO_type], \
+            patches_of_tm1, patches_of_tm2, \
+            polylines, \
+            intersection_edges1, intersection_edges2, \
+            vpm1, vpm2, *std::get<BO_type>(output_vpms), \
+            marks_on_input_edges.ecm1, \
+            marks_on_input_edges.ecm2, \
+            std::get<BO_type>(out_edge_mark_maps), \
+            shared_edges, \
+            user_visitor \
+          )
+        CGAL_COREF_FUNCTION_CALL(operation)
+        #undef CGAL_COREF_FUNCTION_CALL_DEF
+      }
+      else
+      {
+#if 0
+        std::vector< typename VertexPointMap1::value_type > pts;
+        std::vector< boost::container::small_vector<std::size_t, 3> > faces;
+        #define CGAL_COREF_FUNCTION_CALL_DEF(BO_type) \
+          fill_triangle_soup( \
+            pts, \
+            faces, \
+            patches_of_tm1_used[BO_type], patches_of_tm2_used[BO_type], \
+            patches_of_tm1, patches_of_tm2, \
+            BO_type == TM2_MINUS_TM1, BO_type == TM1_MINUS_TM2, \
+            polylines, \
+            intersection_edges1, intersection_edges2, \
+            vpm1, vpm2, \
+            marks_on_input_edges.ecm1, \
+            marks_on_input_edges.ecm2, \
+            user_visitor \
+          )
+        CGAL_COREF_FUNCTION_CALL(operation)
+        #undef CGAL_COREF_FUNCTION_CALL_DEF
+        #define CGAL_COREF_FUNCTION_CALL_DEF(BO_type) \
+          polygon_soup_to_polygon_mesh(pts, faces, output, parameters::default_values(), parameters::vertex_point_map(*std::get<BO_type>(output_vpms)))
+        CGAL_COREF_FUNCTION_CALL(operation)
+        #undef CGAL_COREF_FUNCTION_CALL_DEF
+#else
+        #define CGAL_COREF_FUNCTION_CALL_DEF(BO_type) \
+          fill_new_triangle_mesh( \
+            output, \
+            patches_of_tm1_used[BO_type], patches_of_tm2_used[BO_type], \
+            patches_of_tm1, patches_of_tm2, \
+            BO_type == TM2_MINUS_TM1, BO_type == TM1_MINUS_TM2, \
+            polylines, \
+            intersection_edges1, intersection_edges2, \
+            vpm1, vpm2, *std::get<BO_type>(output_vpms), \
+            marks_on_input_edges.ecm1, \
+            marks_on_input_edges.ecm2, \
+            std::get<BO_type>(out_edge_mark_maps), \
+            shared_edges, \
+            user_visitor \
+          )
+        CGAL_COREF_FUNCTION_CALL(operation)
+        #undef CGAL_COREF_FUNCTION_CALL_DEF
+#endif
+      }
       mark_edges(out_edge_mark_maps, shared_edges, operation);
     }
 
@@ -2568,10 +2632,10 @@ public:
 
               for(halfedge_descriptor h : patches_of_tm1[i].interior_edges)
               {
-                if ( !border_vertices.count( target(h,tm1) ) )
-                  patches_of_tm1[i].interior_vertices.insert( target(h,tm1) );
-                if ( !border_vertices.count( source(h,tm1) ) )
-                  patches_of_tm1[i].interior_vertices.insert( source(h,tm1) );
+                if( halfedge(target(h, tm1),tm1) == h && !border_vertices.count( target(h,tm1) )) // We insert a vertex only once
+                  patches_of_tm1[i].interior_vertices.push_back( target(h,tm1) );
+                if( halfedge(source(h, tm1),tm1) == opposite(h, tm1) && !border_vertices.count( source(h,tm1) )) // We insert a vertex only once
+                  patches_of_tm1[i].interior_vertices.push_back( source(h,tm1) );
               }
             }
           }
@@ -2597,8 +2661,10 @@ public:
             if (all_removed)
               id_p_rm.erase(id_p_rm.begin());
             // remove the vertex from the interior vertices of patches to be removed
-            for(std::size_t pid : id_p_rm)
-              patches_of_tm1[pid].interior_vertices.erase(vd);
+            for(std::size_t pid : id_p_rm){
+              auto &interior_vertices = patches_of_tm1[pid].interior_vertices;
+              interior_vertices.erase(std::find(interior_vertices.begin(), interior_vertices.end(), vd));
+            }
 
             // we now need to update the next/prev relationship induced by the future removal of patches
             // that will not be updated after patch removal

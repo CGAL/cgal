@@ -38,6 +38,10 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace Corefinement{
 
+
+ CGAL_MUTEX vertices_mutex;
+CGAL_MUTEX triangles_mutex;
+
 // TODO option to ignore internal edges for patches of coplanar faces
 
 //binds two edge constrained pmaps
@@ -1256,12 +1260,15 @@ public:
 
         //check if one of the triangle input vertex is also a node
         for (int ik=0;ik<3;++ik)
-          if ( f_indices[ik]<nb_nodes )
+          if ( f_indices[ik]<nb_nodes ){
+            CGAL_SCOPED_LOCK(vertices_mutex);
             face_vertex_nids.push_back(f_indices[ik]);
+          }
 
         // collect nodes on edges (if any)
         if (it_fb != face_boundaries.end())
         {
+          CGAL_SCOPED_LOCK(vertices_mutex);
           Face_boundary& f_boundary=it_fb->second;
           for (int i=0;i<3;++i)
             std::copy(f_boundary.node_ids_array[i].begin(),
@@ -1291,6 +1298,7 @@ public:
                 if (is_face_border)
                 {
                   call_put(marks_on_edges,tm,edge(h,tm),true);
+                  CGAL_SCOPED_LOCK(triangles_mutex);
                   output_builder.set_edge_per_polyline(tm,std::make_pair(id, id_n),h);
                 }
                 else
@@ -1302,6 +1310,7 @@ public:
                   halfedge_descriptor hn=halfedge(vn, tm);
                   while(face(hn, tm) != f)
                     hn=opposite(next(hn, tm), tm);
+                  CGAL_SCOPED_LOCK(triangles_mutex);
                   constraints.emplace_back(make_array(std::make_pair(hi,id),std::make_pair(hn, id_n)));
                 }
               }
@@ -1317,6 +1326,7 @@ public:
         std::vector<face_descriptor> new_faces;
         for (const std::array<std::pair<halfedge_descriptor, Node_id>, 2>& a : constraints)
         {
+          CGAL_SCOPED_LOCK(triangles_mutex);
           halfedge_descriptor nh = Euler::split_face(a[0].first, a[1].first, tm);
           new_faces.push_back(face(opposite(nh, tm), tm));
 
@@ -1327,6 +1337,7 @@ public:
         // now triangulate new faces
         if (!new_faces.empty())
         {
+          CGAL_SCOPED_LOCK(triangles_mutex);
           new_faces.push_back(f);
           for(face_descriptor nf : new_faces)
           {
