@@ -545,6 +545,7 @@ struct Triangle_data
 };
 
 template <class EK,
+          bool parallel_execution,
 #ifdef CGAL_AUTOREF_USE_FIXED_PROJECTION_TRAITS
           int dim,
 #endif
@@ -960,16 +961,27 @@ void generate_subtriangles(std::size_t ti,
   CGAL_AUTOREF_COUNTER_INSTRUCTION(counter.timer3.stop();)
 
 // extract new triangles
-  for (typename CDT::Face_handle fh : cdt.finite_face_handles())
+  std::size_t nbt=cdt.number_of_faces();
+  std::array<int, 2> v12 = orientation_flipped?CGAL::make_array(cdt.cw(0),cdt.ccw(0)):CGAL::make_array(cdt.ccw(0),cdt.cw(0));
+  if constexpr (parallel_execution)
   {
-    if (orientation_flipped)
+    auto out_it=new_triangles.grow_by(nbt);
+    for (typename CDT::Face_handle fh : cdt.finite_face_handles())
+    {
+      *out_it++={ CGAL::make_array(fh->vertex(0)->point(),
+                                   fh->vertex(v12[0])->point(),
+                                   fh->vertex(v12[1])->point()), ti };
+    }
+  }
+  else
+  {
+    new_triangles.reserve(new_triangles.size()+nbt);
+    for (typename CDT::Face_handle fh : cdt.finite_face_handles())
+    {
       new_triangles.push_back( { CGAL::make_array(fh->vertex(0)->point(),
-                                                  fh->vertex(cdt.cw(0))->point(),
-                                                  fh->vertex(cdt.ccw(0))->point()), ti } );
-    else
-      new_triangles.push_back( { CGAL::make_array(fh->vertex(0)->point(),
-                                                  fh->vertex(cdt.ccw(0))->point(),
-                                                  fh->vertex(cdt.cw(0))->point()), ti } );
+                                                  fh->vertex(v12[0])->point(),
+                                                  fh->vertex(v12[1])->point()), ti } );
+    }
   }
 }
 
@@ -1336,16 +1348,16 @@ bool autorefine_triangle_soup(PointRange& soup_points,
       c = CGAL::abs(orth[2]) > CGAL::abs(orth[c]) ? 2 : c;
 
       if (c == 0) {
-        autorefine_impl::generate_subtriangles<EK, 0>(ti, all_triangle_data[ti], intersecting_triangles, coplanar_triangles, triangles, new_triangles);
+        autorefine_impl::generate_subtriangles<EK, parallel_execution, 0>(ti, all_triangle_data[ti], intersecting_triangles, coplanar_triangles, triangles, new_triangles);
       }
       else if (c == 1) {
-        autorefine_impl::generate_subtriangles<EK, 1>(ti, all_triangle_data[ti], intersecting_triangles, coplanar_triangles, triangles, new_triangles);
+        autorefine_impl::generate_subtriangles<EK, parallel_execution, 1>(ti, all_triangle_data[ti], intersecting_triangles, coplanar_triangles, triangles, new_triangles);
       }
       else if (c == 2) {
-        autorefine_impl::generate_subtriangles<EK, 2>(ti, all_triangle_data[ti], intersecting_triangles, coplanar_triangles, triangles, new_triangles);
+        autorefine_impl::generate_subtriangles<EK, parallel_execution, 2>(ti, all_triangle_data[ti], intersecting_triangles, coplanar_triangles, triangles, new_triangles);
       }
 #else
-      autorefine_impl::generate_subtriangles<EK>(ti, all_triangle_data[ti], intersecting_triangles, coplanar_triangles, triangles, new_triangles);
+      autorefine_impl::generate_subtriangles<EK, parallel_execution>(ti, all_triangle_data[ti], intersecting_triangles, coplanar_triangles, triangles, new_triangles);
 #endif
     }
 
