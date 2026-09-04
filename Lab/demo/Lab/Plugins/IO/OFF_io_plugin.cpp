@@ -109,9 +109,9 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
 CGAL::Three::Scene_item*
 CGAL_Lab_off_plugin::load_off(QFileInfo fileinfo) {
   // Open file
-  std::ifstream in(fileinfo.filePath().toUtf8());
+  std::ifstream in(fileinfo.filesystemPath());
   if(!in) {
-    std::cerr << "Error! Cannot open file " << (const char*)fileinfo.filePath().toUtf8() << std::endl;
+    std::cerr << "Error! Cannot open file " << (const char*)fileinfo.filesystemPath() << std::endl;
     return nullptr;
   }
 
@@ -153,12 +153,12 @@ CGAL_Lab_off_plugin::load_off(QFileInfo fileinfo) {
     // Try to read .off in a polygon soup
     Scene_polygon_soup_item* soup_item = new Scene_polygon_soup_item();
     soup_item->setName(fileinfo.completeBaseName());
-    std::ifstream in2(fileinfo.filePath().toUtf8());
+    std::ifstream in2(fileinfo.filesystemPath());
     if(!soup_item->load(in2)) {
       QMessageBox::warning(
             CGAL::Three::Three::mainWindow(),
             "Cannot Open File",
-            QString("Cannot open file %1").arg((const char*)fileinfo.filePath().toUtf8()));
+            QString("Cannot open file %1").arg((const char*)fileinfo.filesystemPath()));
       delete soup_item;
       return nullptr;
     }
@@ -211,9 +211,9 @@ CGAL_Lab_off_plugin::load_off(QFileInfo fileinfo) {
 CGAL::Three::Scene_item*
 CGAL_Lab_off_plugin::load_obj(QFileInfo fileinfo) {
   // Open file
-  std::ifstream in(fileinfo.filePath().toUtf8());
+  std::ifstream in(fileinfo.filesystemPath());
   if(!in) {
-    std::cerr << "Error! Cannot open file " << (const char*)fileinfo.filePath().toUtf8() << std::endl;
+    std::cerr << "Error! Cannot open file " << fileinfo.filesystemPath() << std::endl;
     return nullptr;
   }
 
@@ -289,7 +289,7 @@ save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
   if(!sm_item && !soup_item && !points_item)
     return false;
 
-  std::ofstream out(fileinfo.filePath().toUtf8());
+  std::ofstream out(fileinfo.filesystemPath());
   out.precision (std::numeric_limits<double>::digits10 + 2);
 
   if(fileinfo.suffix().toLower() == "off"){

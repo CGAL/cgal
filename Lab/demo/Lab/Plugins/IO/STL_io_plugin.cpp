@@ -59,9 +59,9 @@ CGAL_Lab_stl_plugin::
 load(QFileInfo fileinfo, bool& ok, bool add_to_scene){
 
   // Open file
-  std::ifstream in(fileinfo.filePath().toUtf8(), std::ios::in | std::ios::binary);
+  std::ifstream in(fileinfo.filesystemPath(), std::ios::in | std::ios::binary);
   if(!in) {
-    std::cerr << "Error! Cannot open file " << (const char*)fileinfo.filePath().toUtf8() << std::endl;
+    std::cerr << "Error! Cannot open file " << fileinfo.filesystemPath() << std::endl;
     ok = false;
     return QList<Scene_item*>();
   }
@@ -78,7 +78,7 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene){
   }
   std::vector<EPICK::Point_3> points;
   std::vector<std::vector<int> > triangles;
-  if (!CGAL::IO::read_polygon_soup(fileinfo.filePath().toUtf8().toStdString(), points, triangles))
+  if (!CGAL::IO::read_polygon_soup(fileinfo.filesystemPath().toStdString(), points, triangles))
   {
     std::cerr << "Error: invalid STL file" << std::endl;
     ok = false;
@@ -145,7 +145,7 @@ save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
   if (!ok)
     return false;
 
-  std::ofstream out(fileinfo.filePath().toUtf8(), std::ios::out | std::ios::binary);
+  std::ofstream out(fileinfo.filesystemPath(), std::ios::out | std::ios::binary);
   if ( choice == tr("Binary") )
     CGAL::IO::set_mode(out, CGAL::IO::BINARY);
   else

@@ -5,7 +5,7 @@
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 
 #include <iostream>
-#include <string>
+#include <filesystem>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
@@ -18,9 +18,13 @@ typedef boost::graph_traits<Mesh>::face_descriptor          face_descriptor;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
+#ifdef _WIN32
+int wmain(int argc, wchar_t* argv[])
+#else
 int main(int argc, char* argv[])
+#endif
 {
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/eight.off");
+  const std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/eight.off");
 
   Mesh mesh;
   if(!PMP::IO::read_polygon_mesh(filename, mesh))

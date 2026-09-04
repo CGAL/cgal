@@ -22,4 +22,5 @@ create_single_source_cgal_program( "off_transform.cpp" )
 create_single_source_cgal_program( "indenting_ostream.cpp" )
 create_single_source_cgal_program( "color_ostream.cpp" )
 create_single_source_cgal_program( "polygon_mesh_io.cpp" )
+create_single_source_cgal_program( "read_UTF-8.cpp" )
 

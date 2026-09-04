@@ -25,6 +25,7 @@
 
 #include <iostream>
 #include <string>
+#include <filesystem>
 
 namespace CGAL {
 
@@ -72,33 +73,33 @@ namespace IO {
  * \return `true` if reading was successful, `false` otherwise.
  */
 template <typename PointRange, typename PolygonRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool read_polygon_soup(const std::string& fname,
+bool read_polygon_soup(const std::filesystem::path& fname,
                        PointRange& points,
                        PolygonRange& polygons,
                        const CGAL_NP_CLASS& np = parameters::default_values())
 {
   const bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false);
 
-  const std::string ext = internal::get_file_extension(fname);
-  if(ext == std::string())
+  if(! fname.has_extension())
   {
     if(verbose)
       std::cerr << "Error: cannot read from file without extension" << std::endl;
     return false;
   }
+  const std::string ext = fname.extension().string();
 
-  if(ext == "obj")
+  if(ext == ".obj")
     return read_OBJ(fname, points, polygons, np);
-  else if(ext == "off")
+  else if(ext == ".off")
     return read_OFF(fname, points, polygons, np);
-  else if(ext == "ply")
+  else if(ext == ".ply")
     return read_PLY(fname, points, polygons, np);
-  else if(ext == "stl")
+  else if(ext == ".stl")
     return read_STL(fname, points, polygons, np);
-  else if(ext == "ts")
+  else if(ext == ".ts")
     return read_GOCAD(fname, points, polygons, np);
 #ifdef CGAL_USE_VTK
-  else if(ext == "vtp")
+  else if(ext == ".vtp")
     return read_VTP(fname, points, polygons, np);
 #endif
 
@@ -158,37 +159,37 @@ bool read_polygon_soup(const std::string& fname,
  * \return `true` if writing was successful, `false` otherwise.
  */
 template <typename PointRange, typename PolygonRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool write_polygon_soup(const std::string& fname,
+bool write_polygon_soup(const std::filesystem::path& fname,
                         const PointRange& points,
                         const PolygonRange& polygons,
                         const CGAL_NP_CLASS& np = parameters::default_values())
 {
   const bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false);
 
-  const std::string ext = internal::get_file_extension(fname);
-  if(ext == std::string())
+  if(! fname.has_extension())
   {
     if(verbose)
       std::cerr << "Error: trying to output to file without extension" << std::endl;
     return false;
   }
+  const std::string ext = fname.extension().string();
 
-  if(ext == "obj")
+  if(ext == ".obj")
     return write_OBJ(fname, points, polygons, np);
-  else if(ext == "off")
+  else if(ext == ".off")
     return write_OFF(fname, points, polygons, np);
-  else if(ext == "ply")
+  else if(ext == ".ply")
     return write_PLY(fname, points, polygons, np);
-  else if(ext == "stl")
+  else if(ext == ".stl")
     return write_STL(fname, points, polygons, np);
-  else if(ext == "ts")
+  else if(ext == ".ts")
     return write_GOCAD(fname, points, polygons, np);
 #ifdef CGAL_USE_VTK
-  else if(ext == "vtp")
+  else if(ext == ".vtp")
     return write_VTP(fname, points, polygons, np);
 #endif
 #ifdef CGAL_LINKED_WITH_3MF
-  else if(ext == "3mf")
+  else if(ext == ".3mf")
     return write_3MF(fname, points, polygons);
 #endif
 

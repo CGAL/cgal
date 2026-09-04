@@ -52,10 +52,10 @@ QList<Scene_item*>
 CGAL_Lab_gocad_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
 
   // Open file
-  std::ifstream in(fileinfo.filePath().toUtf8());
+  std::ifstream in(fileinfo.filesystemPath());
   QList<Scene_item*>  new_item_list;
   if(!in) {
-    std::cerr << "Error! Cannot open file " << (const char*)fileinfo.filePath().toUtf8() << std::endl;
+    std::cerr << "Error! Cannot open file " << fileinfo.filesystemPath() << std::endl;
     ok = false;
     return new_item_list;
   }
@@ -138,7 +138,7 @@ save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
   if(!sm_item)
     return false;
 
-  std::ofstream out(fileinfo.filePath().toUtf8());
+  std::ofstream out(fileinfo.filesystemPath());
   out.precision (std::numeric_limits<double>::digits10 + 2);
   SMesh* poly = const_cast<SMesh*>(sm_item->polyhedron());
   CGAL::IO::write_GOCAD(out, qPrintable(fileinfo.completeBaseName()), *poly);
