@@ -96,6 +96,7 @@ struct Default_surface_intersection_visitor{
   void input_have_coplanar_faces(){}
   template<class T>
   void check_no_duplicates(const T&){}
+  void inputs_are_two_identical_meshes(){}
   template<class T,class VPM1,class VPM2>
   void finalize(T&,
                 const TriangleMesh&, const TriangleMesh&,
@@ -1923,6 +1924,7 @@ public:
             *output++=polyline;
           }
         }
+        visitor.inputs_are_two_identical_meshes();
         visitor.finalize(nodes,tm1,tm2,vpm1,vpm2, identical_patches);
 
         return output;
