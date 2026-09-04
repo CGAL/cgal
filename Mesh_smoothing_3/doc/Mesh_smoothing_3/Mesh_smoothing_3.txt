@@ -1,0 +1,130 @@
+```cpp
+namespace CGAL {
+
+/*!
+
+\mainpage User Manual
+
+\anchor Chapter_3D_Mesh_smoothing
+
+\cgalAutoToc
+
+\author François Protais
+
+\section secMeshSmoothing3 Volume Mesh Smoothing and Geometric Fitting
+
+This package implements an optimization algorithm for improving the quality of
+volumetric meshes and fitting them to geometric targets, based on the method
+described in \cgalCite{cgal:pcl-vvfaf-26}.
+It can be used to improve an already valid mesh, untangle an invalid mesh,
+or deform a mesh so that its boundary follows a prescribed geometry.
+
+The algorithm only modifies vertex coordinates. It does not insert or remove
+vertices, change cell connectivity, or alter the combinatorial structure of the
+input mesh. Consequently, cell indices, material labels, adjacency relations,
+and other data attached to the mesh are preserved throughout the optimization.
+When changes to the mesh connectivity or element sizing are required, the
+\ref PkgTetrahedralRemeshing "Tetrahedral Remeshing" package should be used
+instead.
+
+
+
+\subsection ssecMeshSmoothingAlgorithm Smoothing and Fitting Algorithm
+
+The algorithm optimizes vertex positions according to an element-quality
+energy. It currently uses a conformal energy (MIPS3D) that improves
+the dihedral angles of the cells. Interior vertices are moved
+to improve the volume mesh, while boundary vertices can additionally be
+attracted towards a target geometry.
+
+The energy incorporates a barrier term preventing element inversion.
+For an initially valid mesh, all accepted optimization steps preserve element
+orientation, providing a validity guarantee while the element quality is
+improved. The use of a penalization approach also allows the optimizer to start
+from an invalid mesh and recover a valid configuration by untangling inverted
+elements.
+
+Geometric targets can be specified at several dimensions:
+- surface targets constrain boundary polygons to locally estimated tangent
+  planes;
+- curve targets constrain selected mesh edges to target tangent directions;
+- point targets attract individual vertices to prescribed positions.
+
+Surface patches and curves may be assigned different identifiers, allowing
+different parts of the mesh to use different target geometries. Constraints
+are soft and weighted by default, so geometric fidelity can be balanced
+against element quality. Vertices, or individual coordinate dimensions, can
+also be locked when hard constraints are required. Combining surface, curve,
+and point targets allows smooth regions, sharp curves, corners, and user
+handles to be treated within the same optimization.
+
+By recovering the tangent planes of the target geometry, the smoother
+can recover curvature discontinuities, enabling automatic feature
+recovery and preservation.
+
+\section secMeshSmoothing3API API
+
+The main function of the package is `CGAL::boundary_aware_mesh_smoothing()`,
+which takes a `CGAL::Mesh_complex_3_in_triangulation_3` as input mesh and a `ConstructTangentSpace` for re-projections.
+It then updates its vertex coordinates to improve element quality and fit geometric targets.
+
+`CGAL::Mesh_smoothing_3::C3t3_mesh_projector` provides a model of `ConstructTangentSpace` to re-project the input mesh
+into another mesh represented by a `CGAL::Mesh_complex_3_in_triangulation_3`.
+
+\warning
+The algorithm relocates vertices without updating the connectivity of the
+triangulation. Therefore, if the input triangulation satisfies a Delaunay or
+regular triangulation property, this property is not maintained and must be
+considered lost after smoothing.
+
+\warning
+Untangling an invalid mesh without any boundary constraints or fitting terms will result in a collapsed mesh.
+It is a current limitation of the optimization approach.
+
+\section secMeshSmoothing3Examples Examples
+
+\subsection ssecMeshSmoothingC3t3 Direct Smoothing of a C3t3
+
+The following example demonstrates the direct use of the smoother on a
+`CGAL::Mesh_complex_3_in_triangulation_3`. A `C3t3` is read from a Medit file
+with its surface patches, and `CGAL::boundary_aware_mesh_smoothing()` is then
+called to improve the mesh quality while preserving the input surface patches.
+
+Note that the CGAL reader does not currently read feature edges from Medit
+files, so the current example only preserves input patches.
+
+\cgalFigureAnchor{1}
+<center>
+<img src="c3t3_smooth.png" style="max-width:80%;"/>
+</center>
+\cgalFigureCaptionBegin{1}
+Running the smoother on `mambo_m3.mesh` slightly improves the dihedral angles,
+as the initial mesh is already of good quality for its current geometric target.
+The elements can slide along their respective patches while preserving
+sharpness and key features.
+The `bunny.mesh` file only contains volume elements; consequently, the smoother
+does not attempt to preserve any boundary surface. The resulting boundary is
+therefore less geometrically regular, but the quality of the volume elements
+is significantly improved.
+\cgalFigureEnd
+
+\cgalExample{Mesh_smoothing_3/c3t3_smooth.cpp}
+
+
+\section secMeshSmoothing3History Implementation History
+
+The optimization method implemented in this package was introduced by
+François Protais, Gianmarco Cherchi, and Marco Livesu in
+\cgalCite{cgal:pcl-vvfaf-26}.
+
+The original implementation was developed as part of the
+Mesh_optimization project. The CGAL implementation was subsequently adapted
+to operate directly on `CGAL::Mesh_complex_3_in_triangulation_3` objects and
+to expose the geometric fitting mechanism through the concepts
+`ConstructTangentSpace` and `TangentSpace`.
+
+It was initially published in CGAL-6.3.
+
+*/
+} /* namespace CGAL */
+```

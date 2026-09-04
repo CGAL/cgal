@@ -1,0 +1,206 @@
+// Copyright (c) 2026  INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+//
+// Author(s)     : François Protais
+
+#ifndef CGAL_MESH_SMOOTHING_3_PROJECTORS_H
+#define CGAL_MESH_SMOOTHING_3_PROJECTORS_H
+
+
+#include <CGAL/license/Mesh_smoothing_3.h>
+
+#include <CGAL/Mesh_smoothing_3/internal/type_definitions.h>
+
+#include <CGAL/centroid.h>
+
+#include <map>
+#include <vector>
+#include <tuple>
+#include <iostream>
+
+namespace CGAL {
+
+namespace Mesh_smoothing_3 {
+
+/*!
+ * \ingroup pkgMeshSmoothing3Projection
+ *
+ * \brief Specifies the weight used for projection onto a tangent space.
+ */
+enum class Projection_weight_mode
+{
+    DEFAULT, ///< Standard projection weight (1.).
+    STRONG,  ///< Strong projection constraint (10.).
+    SOFT,    ///< Weak projection constraint (1e-3).
+    NONE,    ///< Disable projection.
+    CUSTOM   ///< Use the weight returned by `TangentSpace::custom_weight()`.
+};
+
+/* not documented but:
+* \cgalModels{TangentSpace}
+*/
+template <typename GeomTraits>
+struct Tangent_space {
+    using Point_3 = typename GeomTraits::Point_3;
+    using Vector_3 = typename GeomTraits::Vector_3;
+
+    Point_3 _origin = Point_3();
+    Vector_3 _vector = Vector_3();
+    Projection_weight_mode _mode = Projection_weight_mode::DEFAULT;
+    double _weight = 1.;
+
+    Point_3 origin() const { return _origin; }
+    Vector_3 vector() const { return _vector; }
+    Projection_weight_mode projection_mode() const { return _mode; }
+    double custom_weight() const { return _weight; }
+
+};
+
+/*!
+* \ingroup pkgMeshSmoothing3Projection
+*
+* \brief provides projection functions to a mesh defined in a `Mesh_complex_3_in_triangulation_3`
+*
+* The class `Mesh_smoother` creates an AABB_tree for each patch and curve on the mesh.
+* It then defines queries re-projecting entities on the mesh depending on their patch/curve index.
+*
+* @tparam C3t3 model of `MeshComplex_3InTriangulation_3`
+*
+* \cgalModels{ConstructTangentSpace}
+*
+\sa `CGAL::boundary_aware_mesh_smoothing`
+\sa `CGAL::Mesh_smoothing_3::C3t3_no_projection`
+*
+*/
+template<typename C3t3>
+class C3t3_mesh_projector {
+public:
+    using Geom_traits = typename C3t3::Triangulation::Geom_traits;
+    using Point_3 = typename Geom_traits::Point_3;
+
+    using Facet = typename C3t3::Facet;
+    using Surface_patch_index = typename C3t3::Surface_patch_index;
+    using Edge = typename C3t3::Edge;
+    using Curve_index = typename C3t3::Curve_index;
+
+    using Patch_face = std::pair<Surface_patch_index, Facet>;
+    using Curve_edge = std::pair<Curve_index, Edge>;
+
+    using Tangent_space = typename Mesh_smoothing_3::Tangent_space<Geom_traits>;
+
+public:
+    Tangent_space patch_face_projection_plane(Patch_face patch_face, std::vector<Point_3> const &face_points) const {
+        Tangent_space projection;
+        Point_3 face_center = CGAL::centroid(face_points.begin(), face_points.end());
+        auto res = _facet_trees.at(patch_face.first).closest_point_and_primitive(face_center);
+        projection._origin = res.first;
+        const auto triangle = _c3t3.triangulation().triangle(res.second);
+        projection._vector = CGAL::unit_normal(triangle.vertex(0), triangle.vertex(1), triangle.vertex(2));
+        return projection;
+    }
+
+    Tangent_space curve_edge_projection_line(Curve_edge curve_edge, std::array<Point_3,2> const &edge_points) const {
+        Tangent_space projection;
+        Point_3 edge_center = CGAL::midpoint(edge_points[0], edge_points[1]);
+        auto res = _edge_trees.at(curve_edge.first).closest_point_and_primitive(edge_center);
+        projection._origin =  res.first;
+        const auto segment = _c3t3.triangulation().segment(res.second);
+        projection._vector = (segment.target() - segment.source());
+        if (projection._vector.squared_length() > 1e-8) {
+            projection._vector /= CGAL::sqrt(projection._vector.squared_length());
+        }
+        return projection;
+    }
+
+
+public:
+
+    /*!
+        Class constructor
+
+        \param c3t3 contains the mesh used for projection. A copy is done at construction.
+
+    */
+    C3t3_mesh_projector(C3t3 const& c3t3)
+    : _c3t3(c3t3)
+    {
+        build_trees();
+    }
+private:
+    C3t3 _c3t3;
+
+    using Facet_tree = typename Mesh_smoothing_3_internal::Facet_tree<C3t3>;
+    using Edge_tree = typename Mesh_smoothing_3_internal::Edge_tree<C3t3>;
+
+    std::map<Surface_patch_index, Facet_tree> _facet_trees;
+    std::map<Curve_index, Edge_tree> _edge_trees;
+
+    void build_trees() {
+        std::map<Surface_patch_index, std::vector<Facet>> facets_by_patch;
+        for (const auto& f : _c3t3.facets_in_complex()) {
+            facets_by_patch[_c3t3.surface_patch_index(f)].push_back(f);
+        }
+
+        std::map<Curve_index, std::vector<Edge>> edges_by_curve;
+        for (const auto& e : _c3t3.edges_in_complex()) {
+            edges_by_curve[_c3t3.curve_index(e)].push_back(e);
+        }
+
+        for (auto& kv : facets_by_patch) {
+            _facet_trees.try_emplace(kv.first, kv.second.begin(), kv.second.end());
+        }
+
+        for (auto& kv : edges_by_curve) {
+            _edge_trees.try_emplace(kv.first, kv.second.begin(), kv.second.end());
+        }
+
+    }
+};
+
+/*!
+* \ingroup pkgMeshSmoothing3Projection
+*
+* \brief provides an empty class to disable projections, meaning free boundaries.
+*
+* @tparam C3t3 model of `MeshComplex_3InTriangulation_3`
+*
+* \cgalModels{ConstructTangentSpace}
+*
+\sa `CGAL::boundary_aware_mesh_smoothing`
+\sa `CGAL::Mesh_smoothing_3::C3t3_mesh_projector`
+*
+*/
+template<typename C3t3>
+class C3t3_no_projection {
+public:
+    using Geom_traits = typename C3t3::Triangulation::Geom_traits;
+    using Point_3 = typename Geom_traits::Point_3;
+    using Patch_face = std::pair<typename C3t3::Surface_patch_index, typename C3t3::Facet>;
+    using Curve_edge = std::pair<typename C3t3::Curve_index, typename C3t3::Edge>;
+
+    using Tangent_space = Mesh_smoothing_3::Tangent_space<Geom_traits>;
+
+public:
+
+    Tangent_space patch_face_projection_plane(Patch_face, std::vector<Point_3> const &) const {
+        return Tangent_space{Point_3(), typename Tangent_space::Vector_3(), Projection_weight_mode::NONE, 0.};
+    }
+
+    Tangent_space curve_edge_projection_line(Curve_edge, std::array<Point_3,2> const &) const {
+        return Tangent_space{Point_3(), typename Tangent_space::Vector_3(), Projection_weight_mode::NONE, 0.};
+    }
+
+};
+
+} // namespace Mesh_smoothing_3
+
+}
+
+#endif // CGAL_MESH_SMOOTHING_3_PROJECTORS_H
