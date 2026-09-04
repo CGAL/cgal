@@ -1503,6 +1503,9 @@ public:
   using Facet = typename T_3::Facet;
   using Cell_handle = typename T_3::Cell_handle;
 
+  using Facet_pair = std::array<Facet, 2>;
+  static Facet_pair null_facet_pair() { return{Facet{}, Facet{}}; };
+
   using Geom_traits = typename T_3::Geom_traits;
   using Point_3 = typename T_3::Point;
   using Segment_3 = typename Geom_traits::Segment_3;
@@ -1657,7 +1660,7 @@ protected:
     return IO::oformat(
         [prefix, tag, vertices, v4](auto& out) -> auto& {
           if(v4 == Vertex_handle{}) {
-            return out << '\n' << prefix << "null facet";
+            return out << "null facet";
           }
           return out << cdt_3_format("\n{}{}"
                                      "\n{}{}"
@@ -1728,12 +1731,13 @@ public:
 
 protected:
   void set_adjacency_between_3d_facets(Facet f1, Facet f2) const {
+    // }
     tr().tds().set_adjacency(f1.first, f1.second, f2.first, f2.second);
     if(dbg().move_Steiner_vertices_level() > 1) {
       std::cerr << cdt_3_format("-> set adjacency between facets ({})=[{}]+{} and ({})=[{}]+{}\n",
-                                with_offset(f1), with_offset(tr().vertices(f1)),
+                                IO::oformat(f1), with_offset(tr().vertices(f1)),
                                 with_offset(f1.first->vertex(f1.second)),
-                                with_offset(f2), with_offset(tr().vertices(f2)),
+                                IO::oformat(f2), with_offset(tr().vertices(f2)),
                                 with_offset(f2.first->vertex(f2.second)));
       CGAL_assertion(opposite_triple(f1, f2));
     }
@@ -2069,7 +2073,7 @@ protected:
   enum Run_mode { NORMAL_RUN, DRY_RUN };
 
   template <typename CDT_2, typename New_CDT_2_face_handles_output_iterator, typename Map_from_hole_edge_to_facet_3d>
-  std::pair<New_CDT_2_face_handles_output_iterator, Facet>
+  std::pair<New_CDT_2_face_handles_output_iterator, Facet_pair>
   fill_cdt_2_hole_with_delaunay(CDT_2& cdt_2,
                                 Face_index face_index,
                                 CDT_3_vertex_type vertex_type,
@@ -2101,41 +2105,69 @@ protected:
           });
         });
 
-    if(hole_boundary.size() <= 2) {              // degenerated hole
-      CGAL_assertion(hole_boundary.size() == 2); // size == 1 is not possible
-      auto [f0, i0] = hole_boundary.front();
-      auto [f1, i1] = hole_boundary.back();
-      cdt_2.tds().set_adjacency(f1, i1, f0, i0);
-      return {new_face_handles_out, {}};
-    }
-
     if(is_outside_the_face == OUTSIDE) {
-      CGAL::fill_hole_delaunay(cdt_2, hole_boundary, boost::make_function_output_iterator([&](CDT_2_face_handle fh) {
-                                 auto& info = fh->info();
-                                 info.is_outside_the_face = OUTSIDE;
-                                 info.missing_subface = false;
-                                 info.is_in_region = 0;
-                                 info.facet_3d = {};
-                               }));
-      return {new_face_handles_out, {}};
+      if(hole_boundary.size() <= 2) {              // degenerated hole
+        CGAL_assertion(hole_boundary.size() == 2); // size == 1 is not possible
+        auto [f0, i0] = hole_boundary.front();
+        auto [f1, i1] = hole_boundary.back();
+
+        cdt_2.tds().set_adjacency(f1, i1, f0, i0);
+      } else {
+        CGAL::fill_hole_delaunay(cdt_2, hole_boundary, boost::make_function_output_iterator([&](CDT_2_face_handle fh) {
+                                   auto& info = fh->info();
+                                   info.is_outside_the_face = OUTSIDE;
+                                   info.missing_subface = false;
+                                   info.is_in_region = 0;
+                                   info.facet_3d = {};
+                                 }));
+      }
+      return {new_face_handles_out, null_facet_pair()};
     }
 
     const CDT_2_face_handle half_hole_neighbor_face = is_a_half_hole ? hole_boundary.back().first : CDT_2_face_handle{};
-    Facet half_hole_front_facet{Cell_handle{}, 0};
-
-    std::for_each(hole_boundary.begin(), hole_boundary.end(),
-                  [](const CDT_2_edge& e) { e.first->info().is_in_region = 0; });
-
     const auto [outside_2d_face, outside_2d_index] = hole_boundary.front();
     const auto first_2d_face = outside_2d_face->neighbor(outside_2d_index);
     const auto v0 = vertex_3d(outside_2d_face->vertex(cdt_2.cw(outside_2d_index)));
     const auto v1 = vertex_3d(outside_2d_face->vertex(cdt_2.ccw(outside_2d_index)));
-    const auto [front_cell, front_index] = first_2d_face->info().facet_3d;
+    const auto front_facet = first_2d_face->info().facet_3d;
+    const auto [front_cell, front_index] = front_facet;
     CGAL_assertion(front_cell != Cell_handle{});
-    const auto [back_cell, back_index] = tr().mirror_facet({front_cell, front_index});
+    const auto back_facet = tr().mirror_facet(front_facet);
+    const auto [back_cell, back_index] = back_facet;
 
-    const Vertex_handle v_front = front_cell->vertex(6 - front_index - front_cell->index(v0) - front_cell->index(v1));
+    const auto index_v_front = 6 - front_index - front_cell->index(v0) - front_cell->index(v1);
+    const Vertex_handle v_front = front_cell->vertex(index_v_front);
     const Vertex_handle v_back = back_cell->vertex(6 - back_index - back_cell->index(v0) - back_cell->index(v1));
+
+    if(hole_boundary.size() <= 2) {              // degenerated hole
+      CGAL_assertion(hole_boundary.size() == 2); // size == 1 is not possible
+      auto [f0, i0] = hole_boundary.front();
+      auto [f1, i1] = hole_boundary.back();
+
+      cdt_2.tds().set_adjacency(f1, i1, f0, i0);
+
+      if(debug) {
+        std::cerr << "Degenerated hole with edges: (f0, " << i0 << ") and (f1, " << i1 << ")\n";
+        std::cerr << "f0 is: "
+                  << display_vert(vertex_3d(f0->vertex(0))) << "\n       "
+                  << display_vert(vertex_3d(f0->vertex(1))) << "\n       "
+                  << display_vert(vertex_3d(f0->vertex(2))) << "\n";
+        std::cerr << "f1 is: "
+                  << display_vert(vertex_3d(f1->vertex(0))) << "\n       "
+                  << display_vert(vertex_3d(f1->vertex(1))) << "\n       "
+                  << display_vert(vertex_3d(f1->vertex(2))) << "\n";
+        std::cerr << "front_facet is " << IO::oformat(front_facet) << display_facet("  - ", front_facet) << "\n";
+        std::cerr << "back_facet is " << IO::oformat(back_facet) << display_facet("  - ", back_facet) << "\n";
+      }
+
+      return {new_face_handles_out, Facet_pair{front_facet, back_facet}};
+    }
+
+    Facet_pair half_hole_facet_pair = null_facet_pair();
+
+    std::for_each(hole_boundary.begin(), hole_boundary.end(),
+                  [](const CDT_2_edge& e) { e.first->info().is_in_region = 0; });
+
     if(debug) {
       std::cerr << cdt_3_format("- first_2d_face has vertices ( {} ,\n"
                                 "                               {} ,\n"
@@ -2182,6 +2214,9 @@ protected:
       set_facet_constrained({new_front_cell, 3}, face_index, fh_2d);
 
       for(int i = 0; i < 3; ++i) {
+        const int back_cell_i = (3 - i) % 3; // the index of the neighbor in `new_back_cell` is deduced from the
+                                             // fact that `new_back_cell` was created with vertices in reversed
+                                             // order compared to `new_front_cell`
         const CDT_2_face_handle neighbor_2d = fh_2d->neighbor(i);
         if(debug) {
           std::cerr << "-- explore neighbor(" << i << ") --\n";
@@ -2195,12 +2230,15 @@ protected:
           continue;
         } else if(neighbor_2d == half_hole_neighbor_face) {
           // this edge of `fh_2d` is dandling to be connected to the other part of the half hole
-          CGAL_assertion(half_hole_front_facet.first == Cell_handle{}); // only one edge of the hole can be a half hole
-          half_hole_front_facet = {new_front_cell, i};
+          CGAL_assertion(half_hole_facet_pair[0].first == Cell_handle{}); // only one edge of the hole can be a half hole
+          half_hole_facet_pair = Facet_pair{Facet{new_front_cell, i}, Facet{new_back_cell, back_cell_i}};
           if(debug) {
             std::cerr << cdt_3_format("- the 3D facet (new_front_cell={}, i={}) is ON THE BORDER of the half hole:{}\n"
                                       , IO::oformat(new_front_cell), i
                                       , display_facet("    ", Facet{new_front_cell, i}));
+            std::cerr << cdt_3_format("- its back facet (new_back_cell={}, i={}) is ON THE BORDER of the half hole:{}\n"
+                                      , IO::oformat(new_back_cell), back_cell_i
+                                      , display_facet("    ", Facet{new_back_cell, back_cell_i}));
             }
           continue;
         }
@@ -2237,9 +2275,6 @@ protected:
 
         set_adjacency_between_3d_facets({new_front_cell, i}, {neighbor_front_cell_3d, fh_index_in_neighbor_2d});
 
-        const int back_cell_i = (3 - i) % 3; // the index of the neighbor in `new_back_cell` is deduced from the
-                                             // fact that `new_back_cell` was created with vertices in reversed
-                                             // order compared to `new_front_cell`
         const int back_cell_fh_index_in_neighbor_2d = neighbor_2d_is_in_the_star
                                                           ? (3 - fh_index_in_neighbor_2d) % 3
                                                           : neighbor_back_cell_3d->index(neighbor_front_cell_3d);
@@ -2270,7 +2305,7 @@ protected:
     default:
       CGAL_unreachable();
     }
-    return {new_face_handles_out, half_hole_front_facet};
+    return {new_face_handles_out, half_hole_facet_pair};
   }
 
   bool maybe_flip_an_incident_edge_in_cdt_2_to_avoid_degeneracy(Vertex_handle v, Face_index face_id) {
@@ -2349,7 +2384,7 @@ protected:
   }
 
   template <typename New_CDT_2_face_handles_output_iterator>
-  std::tuple<New_CDT_2_face_handles_output_iterator, Facet, Facet>
+  std::tuple<New_CDT_2_face_handles_output_iterator, Facet_pair, Facet_pair>
   remove_Steiner_vertex_from_cdt_2(Vertex_handle v,
                                    CDT_3_vertex_type vertex_type,
                                    Face_index face_id,
@@ -2357,8 +2392,9 @@ protected:
                                    Run_mode run_mode = NORMAL_RUN)
   {
     const bool debug = dbg().move_Steiner_vertices_level() > 1 && run_mode == NORMAL_RUN;
-    std::tuple<New_CDT_2_face_handles_output_iterator, Facet, Facet> result{new_face_handles_out, {}, {}};
-    auto& [new_face_handles_out_it, half_hole_front_facet, second_half_hole_front_facet] = result;
+    std::tuple<New_CDT_2_face_handles_output_iterator, Facet_pair, Facet_pair> result{
+        new_face_handles_out, null_facet_pair(), null_facet_pair()};
+    auto& [new_face_handles_out_it, half_hole_facet_pair, second_half_hole_facet_pair] = result;
 
     using CDT_2_base = typename CDT_2::Triangulation;
     auto& original_mutable_cdt_2 = static_cast<CDT_2_base&>(non_const_face_cdt_2(face_id));
@@ -2432,9 +2468,10 @@ protected:
       return map;
     };
 
-    auto bore_hole_and_fill_with_delaunay = [&](CDT_3_vertex_type vertex_type, auto& hole_boundary,
-                                                const auto& faces_to_delete,
-                                                Face_is_outside_the_face is_outside_the_face) {
+    auto carve_hole_and_fill_with_delaunay = [&](CDT_3_vertex_type vertex_type, auto& hole_boundary,
+                                                 const auto& faces_to_delete,
+                                                 Face_is_outside_the_face is_outside_the_face)
+    {
       if(debug) {
         std::cerr << "The star of " << display_vert(v) << " in the CDT_2 of face F#" << face_id << " has a component "
                   << (is_outside_the_face == OUTSIDE ? "OUTSIDE the face " : "") << "with "
@@ -2459,10 +2496,15 @@ protected:
 
       const auto hole_boundary_map =
           map_from_hole_edges_to_incident_3d_facets(hole_boundary.begin(), hole_boundary_end, is_outside_the_face);
+
+      auto result =
+          fill_cdt_2_hole_with_delaunay(mutable_cdt_2, face_id, vertex_type, hole_boundary, hole_boundary_map,
+                                        is_outside_the_face, new_face_handles_out, run_mode);
+
       std::for_each(faces_to_delete.begin(), faces_to_delete.end(),
                     [&mutable_cdt_2](CDT_2_face_handle f) { mutable_cdt_2.delete_face(f); });
-      return fill_cdt_2_hole_with_delaunay(mutable_cdt_2, face_id, vertex_type, hole_boundary, hole_boundary_map,
-                                           is_outside_the_face, new_face_handles_out, run_mode);
+
+      return result;
     };
 
     auto set_constrained = [&](CDT_2_edge e, bool is_constrained) {
@@ -2540,24 +2582,24 @@ protected:
       hole_side_1.push_back(side_2_last_incident_edge);
 
       //   - bore the hole on side 1, and fill it with CDT triangles
-      auto [out_it, facet_side_1] = bore_hole_and_fill_with_delaunay(
+      auto [out_it, facet_pair_side_1] = carve_hole_and_fill_with_delaunay(
           vertex_type, hole_side_1, hole_side_1_faces_to_delete, side_1_hole_is_outside_the_face);
       new_face_handles_out = out_it;
       CGAL_assertion(run_mode == DRY_RUN ||
-                     side_1_hole_is_outside_the_face == OUTSIDE || facet_side_1.first != Cell_handle{});
+                     side_1_hole_is_outside_the_face == OUTSIDE || facet_pair_side_1[0].first != Cell_handle{});
 
       //  - now the edge opposite to `(side_2_last_face, side_2_last_edge_index)` is on the border of the hole
       //    `hole_side_2`, so we can start sewing from there
       const auto side_1_border_edge = cdt_2.mirror_edge(CDT_2_edge{side_2_last_face, side_2_last_edge_index});
       hole_side_2.push_back(side_1_border_edge);
-      auto [out_it_2, facet_side_2] = bore_hole_and_fill_with_delaunay(
+      auto [out_it_2, facet_pair_side_2] = carve_hole_and_fill_with_delaunay(
           vertex_type, hole_side_2, hole_side_2_faces_to_delete, side_2_hole_is_outside_the_face);
       new_face_handles_out = out_it_2;
       CGAL_assertion(run_mode == DRY_RUN ||
-                     side_2_hole_is_outside_the_face == OUTSIDE || facet_side_2.first != Cell_handle{});
+                     side_2_hole_is_outside_the_face == OUTSIDE || facet_pair_side_2[0].first != Cell_handle{});
 
-      half_hole_front_facet = facet_side_1;
-      second_half_hole_front_facet = facet_side_2;
+      half_hole_facet_pair = facet_pair_side_1;
+      second_half_hole_facet_pair = facet_pair_side_2;
 
       //  - then re-mark the edge between the two holes as a constrained edge
       set_constrained(side_1_border_edge, true);
@@ -2584,10 +2626,10 @@ protected:
         return result;
       });
 
-      auto [out_it, facet] =
-          bore_hole_and_fill_with_delaunay(vertex_type, hole_boundary, faces_to_delete, INSIDE);
+      auto [out_it, facet_pair] =
+          carve_hole_and_fill_with_delaunay(vertex_type, hole_boundary, faces_to_delete, INSIDE);
       new_face_handles_out = out_it;
-      CGAL_assertion(facet.first == Cell_handle{});
+      CGAL_assertion(facet_pair[0].first == Cell_handle{});
     }
     mutable_cdt_2.delete_vertex(vh_2d);
     if(debug) {
@@ -2606,6 +2648,7 @@ protected:
 
   bool move_one_Steiner_vertex_to_the_volume(Vertex_handle v) {
     if(dbg().move_Steiner_vertices()) {
+      auto _ = IO::make_color_guards<CGAL::IO::Ansi_color::BrightGreen>(std::cerr);
       std::cerr << "Moving Steiner vertex " << display_vert(v) << " to the volume\n";
     }
     auto indent_guards = CGAL::IO::make_indenting_guards(dbg().move_Steiner_vertices_level() > 1 ? "| " : "", std::cerr);
@@ -2768,18 +2811,6 @@ protected:
       star_component_new_center_vertex->set_cell(begin(component_facets)->cell); // cell of the first facet
     } // loop on each component of the star of `v`
 
-    auto other_side_of_cdt_2 = [&](const Facet& facet, Face_index face_id) -> Facet {
-      const auto [cell, facet_index] = facet;
-      for(int i = 0; i < 3; ++i) {
-        const auto other_facet_index = Tds::vertex_triple_index(facet_index, i);
-        if(face_constraint_index(Facet{cell, other_facet_index}) == face_id) {
-          const auto opposite_vertex = cell->vertex(facet_index);
-          const auto neighbor_cell = cell->neighbor(other_facet_index);
-          return Facet{neighbor_cell, neighbor_cell->index(opposite_vertex)};
-        }
-      }
-      CGAL_error();
-    };
 
     std::size_t nb_of_new_2d_faces = 0;
     CGAL::Counting_output_iterator output_iterator{&nb_of_new_2d_faces};
@@ -2812,38 +2843,43 @@ protected:
           std::cerr << "Now remove the Steiner vertex from the CDT_2 of face with id " << face_id << " (orientation: "
                     << (orientation == CGAL::NEGATIVE ? "negative" : "positive") << ")\n";
         }
-        auto [new_output_iterator, half_hole_front_facet, second_half_hole_front_facet] =
+        auto [new_output_iterator, half_hole_facet_pair, second_half_hole_facet_pair] =
             remove_Steiner_vertex_from_cdt_2(v, v_type, face_id, output_iterator);
         output_iterator = new_output_iterator;
 
-        Facet facet_to_reconnect = half_hole_front_facet;
-        if(facet_to_reconnect.first == Cell_handle{}) {
-          facet_to_reconnect = second_half_hole_front_facet;
+        auto facet_pair_to_reconnect = half_hole_facet_pair;
+        if(facet_pair_to_reconnect[0].first == Cell_handle{}) {
+          facet_pair_to_reconnect = second_half_hole_facet_pair;
         }
-        CGAL_assertion(facet_to_reconnect.first != Cell_handle{});
-        if(true == facet_to_reconnect.first->has_vertex(new_center_vertices[component_index])) {
-          facet_to_reconnect = other_side_of_cdt_2(facet_to_reconnect, face_id);
+        CGAL_assertion(facet_pair_to_reconnect[0].first != Cell_handle{});
+        if(true == facet_pair_to_reconnect[0].first->has_vertex(new_center_vertices[component_index]) &&
+           false == facet_pair_to_reconnect[1].first->has_vertex(new_center_vertices[component_index]))
+        {
+          if(dbg().move_Steiner_vertices_level() > 1) { std::cerr << "SWAPPING facet pair to reconnect\n"; }
+          std::swap(facet_pair_to_reconnect[0], facet_pair_to_reconnect[1]);
         }
         if(dbg().move_Steiner_vertices_level() > 1) {
           std::cerr << cdt_3_format("The facet ({}) to reconnect in the 3D triangulation is:{}\n",
-                                    IO::oformat(facet_to_reconnect), display_facet("  - ", facet_to_reconnect));
-          auto other_facet = other_side_of_cdt_2(facet_to_reconnect, face_id);
+                                    IO::oformat(facet_pair_to_reconnect[0]),
+                                    display_facet("  - ", facet_pair_to_reconnect[0]));
           std::cerr << cdt_3_format("The facet ({}) on the other side of the CDT_2 is:{}\n",
-                                    IO::oformat(other_facet), display_facet("  - ", other_facet));
+                                    IO::oformat(facet_pair_to_reconnect[1]),
+                                    display_facet("  - ", facet_pair_to_reconnect[1]));
         }
 
         if(!last_facet_to_reconnect_to_opt.has_value()) {
-          last_facet_to_reconnect_to_opt = facet_to_reconnect;
+          last_facet_to_reconnect_to_opt = facet_pair_to_reconnect[0];
           CGAL_assertion(previous_facet_to_reconnect_opt.has_value() == false);
         }
-        if(previous_facet_to_reconnect_opt.has_value()) {
-          set_adjacency_between_3d_facets(*previous_facet_to_reconnect_opt, facet_to_reconnect);
+        else if(previous_facet_to_reconnect_opt.has_value()) {
+          set_adjacency_between_3d_facets(previous_facet_to_reconnect_opt.value(), facet_pair_to_reconnect[0]);
         }
-        previous_facet_to_reconnect_opt = other_side_of_cdt_2(facet_to_reconnect, face_id);
+        previous_facet_to_reconnect_opt = facet_pair_to_reconnect[1];
       }
       CGAL_assertion(previous_facet_to_reconnect_opt.has_value());
       CGAL_assertion(last_facet_to_reconnect_to_opt.has_value());
-      set_adjacency_between_3d_facets(*previous_facet_to_reconnect_opt, *last_facet_to_reconnect_to_opt);
+      set_adjacency_between_3d_facets(previous_facet_to_reconnect_opt.value(),
+                                      last_facet_to_reconnect_to_opt.value());
     }
 
     if(dbg().move_Steiner_vertices_level() > 1) {
