@@ -55,7 +55,7 @@ canLoad(QFileInfo) const {
 QList<Scene_item*>
 CGAL_Lab_ply_plugin::
 load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
-  std::ifstream in(fileinfo.filePath().toUtf8(), std::ios_base::binary);
+  std::ifstream in(fileinfo.filesystemPath(), std::ios_base::binary);
 
   if(!in)
     std::cerr << "Error!\n";
@@ -205,7 +205,7 @@ save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
   if (!ok)
     return false;
 
-  std::ofstream out(fileinfo.filePath().toUtf8().data(), std::ios::binary);
+  std::ofstream out(fileinfo.filesystemPath(), std::ios::binary);
   if (choice == tr("Binary"))
     CGAL::IO::set_binary_mode(out);
   else

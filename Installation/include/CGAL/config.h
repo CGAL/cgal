@@ -563,6 +563,8 @@ namespace cpp11{
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <filesystem>
+#include <optional>
 
 namespace CGAL {
 
@@ -570,45 +572,37 @@ namespace CGAL {
 // This directory is either defined in the environment variable CGAL_DATA_DIR,
 // otherwise it is taken from the constant CGAL_DATA_DIR (defined in CMake),
 // otherwise it is empty (and thus returns filename unmodified).
-inline std::string data_file_path(const std::string& filename)
+inline std::filesystem::path data_file_path(const std::filesystem::path& filename)
 {
-  const char* cgal_dir=nullptr;
+  std::optional<std::filesystem::path> cgal_dir;
 
-#ifdef _MSC_VER
-  char* cgal_dir_windows=nullptr;
-  _dupenv_s( &cgal_dir_windows, nullptr, "CGAL_DATA_DIR");
-  if (cgal_dir_windows!=nullptr)
-  { cgal_dir=cgal_dir_windows; }
+#ifdef _WIN32
+  wchar_t* value = nullptr;
+  _wdupenv_s(&value, nullptr, L"CGAL_DATA_DIR");
+
+  if (value != nullptr)
+  {
+    cgal_dir = std::filesystem::path(value);
+    free(value);
+  }
 #else
-  cgal_dir=getenv("CGAL_DATA_DIR");
+  if (const char* value = std::getenv("CGAL_DATA_DIR"))
+    cgal_dir = std::filesystem::path(value);
 #endif
 
 #ifdef CGAL_DATA_DIR
- if (cgal_dir==nullptr)
- { cgal_dir=CGAL_DATA_DIR; }
+ if (! cgal_dir.has_value())
+ { cgal_dir = std::filesystem::path(CGAL_DATA_DIR); }
 #endif
 
- std::string cgal_dir_string;
- if (cgal_dir!=nullptr)
- { cgal_dir_string=std::string(cgal_dir); }
+  std::filesystem::path res = cgal_dir.has_value() ? cgal_dir.value() / filename : filename;
 
- std::string res=cgal_dir_string;
- if (!res.empty() && res.back()!='/')
- { res+=std::string("/"); }
- res+=filename;
-
- // Test if the file exists, write a warning otherwise
- std::ifstream f(res);
- if (!f)
- {
-   std::cerr<<"[WARNING] file "<<res<<" does not exist or cannot be read "
-            <<"(CGAL_DATA_DIR='"<<cgal_dir_string<<"')."<<std::endl;
- }
-
-#ifdef _MSC_VER
- if (cgal_dir_windows!=nullptr)
- { free(cgal_dir_windows); }
-#endif
+  // Test if the file exists, write a warning otherwise
+  if (! std::filesystem::exists(res) )
+  {
+    std::cerr<<"[WARNING] file " << res << " does not exist or cannot be read\n "
+             <<"(CGAL_DATA_DIR='" << cgal_dir.value() <<"')."<<std::endl;
+  }
 
  return res;
 }

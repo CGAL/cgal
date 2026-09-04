@@ -65,9 +65,9 @@ CGAL::Three::Scene_item* Surf_io_plugin::actual_load(QFileInfo fileinfo)
       typename boost::property_map<FaceGraph, boost::vertex_point_t>::type
       >::value_type Point_3;
   // Open file
-  std::ifstream in(fileinfo.filePath().toUtf8());
+  std::ifstream in(fileinfo.filesystemPath());
   if(!in) {
-    std::cerr << "Error! Cannot open file " << (const char*)fileinfo.filePath().toUtf8() << std::endl;
+    std::cerr << "Error! Cannot open file " << (const char*)fileinfo.filesystemPath() << std::endl;
     return nullptr;
   }
 
