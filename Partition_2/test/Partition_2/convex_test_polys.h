@@ -23,6 +23,27 @@ void make_convex_w_collinear_points(Polygon_2& polygon)
 
 }
 
+// Cup-shaped octagon from issue #9322:
+// optimal_convex_partition_2 produced non-simple / non-convex pieces when
+// the polygon was supplied with certain vertices as vertex 0.
+// The three originally failing rotations have vertex 0 at
+// (4,4), (6,6), and (0,6) respectively (rotations 0, 1, 2).
+template <class Polygon_2>
+void make_cup_octagon_issue_9322(Polygon_2& polygon, int rotation = 0)
+{
+   typedef typename Polygon_2::Point_2 Point_2;
+   // CCW cup-shaped octagon (verified by positive shoelace area when
+   // starting at (4,4)).
+   const int n = 8;
+   Point_2 verts[n] = {
+      Point_2(4, 4), Point_2(6, 6), Point_2(0, 6),
+      Point_2(2, 4), Point_2(2, 2), Point_2(0, 0),
+      Point_2(6, 0), Point_2(4, 2)
+   };
+   for (int i = 0; i < n; ++i)
+      polygon.push_back(verts[(i + rotation) % n]);
+}
+
 template <class Polygon_2>
 void make_monotone_convex(Polygon_2& polygon)
 {
