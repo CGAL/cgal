@@ -20,6 +20,7 @@ int main(int argc, char* argv[])
 {
   std::filesystem::path data = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/测试模型.off");
 
+    std::cout << data << std::endl;
   Mesh mesh;
   PMP::IO::read_polygon_mesh(data, mesh);
 

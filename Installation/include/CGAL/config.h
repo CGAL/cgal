@@ -595,7 +595,7 @@ inline std::filesystem::path data_file_path(const std::filesystem::path& filenam
  { cgal_dir = std::filesystem::path(CGAL_DATA_DIR); }
 #endif
 
-  std::filesystem::path res = cgal_dir.has_value() ? cgal_dir.value() / filename : filename;
+  std::filesystem::path res = cgal_dir.has_value() ? cgal_dir.value()/ filename : filename;
 
   // Test if the file exists, write a warning otherwise
   if (! std::filesystem::exists(res) )

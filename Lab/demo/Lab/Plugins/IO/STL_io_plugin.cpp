@@ -61,7 +61,7 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene){
   // Open file
   std::ifstream in(fileinfo.filesystemPath(), std::ios::in | std::ios::binary);
   if(!in) {
-    std::cerr << "Error! Cannot open file " << (const char*)fileinfo.filesystemPath() << std::endl;
+    std::cerr << "Error! Cannot open file " << fileinfo.filesystemPath() << std::endl;
     ok = false;
     return QList<Scene_item*>();
   }

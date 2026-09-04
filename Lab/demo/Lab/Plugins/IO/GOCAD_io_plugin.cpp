@@ -55,7 +55,7 @@ CGAL_Lab_gocad_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
   std::ifstream in(fileinfo.filesystemPath());
   QList<Scene_item*>  new_item_list;
   if(!in) {
-    std::cerr << "Error! Cannot open file " << (const char*)fileinfo.filesystemPath() << std::endl;
+    std::cerr << "Error! Cannot open file " << fileinfo.filesystemPath() << std::endl;
     ok = false;
     return new_item_list;
   }

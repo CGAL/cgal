@@ -213,7 +213,7 @@ CGAL_Lab_off_plugin::load_obj(QFileInfo fileinfo) {
   // Open file
   std::ifstream in(fileinfo.filesystemPath());
   if(!in) {
-    std::cerr << "Error! Cannot open file " << (const char*)fileinfo.filesystemPath() << std::endl;
+    std::cerr << "Error! Cannot open file " << fileinfo.filesystemPath() << std::endl;
     return nullptr;
   }
 
