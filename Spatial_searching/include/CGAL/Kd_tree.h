@@ -59,7 +59,7 @@
  */
 #ifdef CGAL_TBB_STRUCTURE_IN_KD_TREE
 #  include <tbb/parallel_invoke.h>
-#  include <tbb/concurrent_vector.h>
+#  include <CGAL/Concurrent_compact_container.h>
 #endif
 
 namespace CGAL {
@@ -109,8 +109,8 @@ private:
   Splitter split;
 
 #if defined(CGAL_TBB_STRUCTURE_IN_KD_TREE)
-  tbb::concurrent_vector<Internal_node> internal_nodes;
-  tbb::concurrent_vector<Leaf_node> leaf_nodes;
+  Concurrent_compact_container<Internal_node> internal_nodes;
+  Concurrent_compact_container<Leaf_node> leaf_nodes;
 #else
   boost::container::deque<Internal_node> internal_nodes;
   boost::container::deque<Leaf_node> leaf_nodes;
@@ -157,7 +157,7 @@ private:
     node.data = c.begin();
 
 #ifdef CGAL_TBB_STRUCTURE_IN_KD_TREE
-    return &*(leaf_nodes.push_back(node));
+    return &*(leaf_nodes.insert(node));
 #else
     leaf_nodes.emplace_back (node);
     return &(leaf_nodes.back());
@@ -168,7 +168,7 @@ private:
   Node_handle new_internal_node()
   {
 #ifdef CGAL_TBB_STRUCTURE_IN_KD_TREE
-    return &*(internal_nodes.push_back(Internal_node()));
+    return &*(internal_nodes.insert(Internal_node()));
 #else
     internal_nodes.emplace_back ();
     return &(internal_nodes.back());
@@ -324,7 +324,9 @@ public:
     Experimentally, the options giving the best timings is the one
     kept, namely:
 
-    * nodes are stored in `tbb::concurrent_vector` structures
+    * nodes are stored in `Concurrent_compact_container` structures;
+      `tbb::concurrent_vector` ones contend on their shared counter
+      across sockets from 32 threads on
     * the parallel computations are launched using
       `tbb::parallel_invoke`
   */
