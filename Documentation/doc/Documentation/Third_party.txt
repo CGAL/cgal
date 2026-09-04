@@ -86,7 +86,7 @@ from the <a href="https://github.com/CGAL/cgal/releases">assets of a release</a>
 Version supported are <b>GMP Version 5.0.1 or later, MPFR Version 3.0.0 or later</b>.
 
 The \boost library also provides a module for multi precision integers and rational numbers:
-<A HREF="https://www.boost.org/doc/libs/release/libs/multiprecision/doc/html/index.html">\boost multiprecision</A>.
+<A HREF="https://www.boost.org/doc/libs/latest/libs/multiprecision/doc/html/index.html">\boost multiprecision</A>.
 
 The components \cgal, and `CGAL_Qt6` require either \gmp and \mpfr, or \boost multiprecision
 for multi precision numbers. `CGAL_Core` requires \boost multiprecision.
