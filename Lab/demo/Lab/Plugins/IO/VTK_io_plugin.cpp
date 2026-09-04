@@ -445,9 +445,14 @@ public:
         }
       }
 
+      std::vector<std::array<int, 3>> feature_edges;
+      std::vector<std::array<int, 2>> corners;
+
       CGAL::SMDS_3::build_triangulation_with_subdomains_range(
         c3t3_item->c3t3().triangulation(),
         points, finite_cells, subdomains, border_facets,
+        feature_edges, corners,
+        CGAL::Emptyset_iterator(),
         false, false, true);
 
       for( C3t3::Triangulation::Finite_cells_iterator
