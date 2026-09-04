@@ -2010,7 +2010,6 @@ void get_edge_info(const typename C3t3::Edge& edge,
   }
 }
 
-
 template<typename EdgesBimap>
 void remove_from_bimap(const typename EdgesBimap::left_map::key_type& e,
                        EdgesBimap& edges)
