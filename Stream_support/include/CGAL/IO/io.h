@@ -667,6 +667,13 @@ sets the stream `s` so that a number type with a lazy exact representation, such
 `CGAL::Lazy_exact_nt`, is written through its exact value instead of through a
 `double` approximation. Returns the previous state.
 
+This flag is only consulted by number types whose default output is an
+approximation. At present that is `CGAL::Lazy_exact_nt`, which by default writes a
+`double`. Exact number types that are not lazy, such as `CGAL::Gmpq` or
+`CGAL::Exact_rational`, always write their exact representation and ignore this
+flag. The default output is therefore exact for those types and approximate for
+`CGAL::Lazy_exact_nt`.
+
 The round-trip through `operator>>` is exact when the exact type has an exact stream
 representation, such as a rational type. It is not exact for an exact type whose
 output operator writes an approximation, such as `CORE::Expr`.
@@ -687,7 +694,8 @@ inline bool set_exact_mode(std::ios& s)
 
 sets the stream `s` so that a number type with a lazy exact representation, such as
 `CGAL::Lazy_exact_nt`, is written through a `double` approximation. This is the
-default. Returns the previous state.
+default for `CGAL::Lazy_exact_nt`. Number types that always write their exact
+representation, such as `CGAL::Gmpq`, ignore this flag. Returns the previous state.
 
 \sa `CGAL::IO::set_exact_mode()`
 \sa `CGAL::IO::is_exact_mode()`
