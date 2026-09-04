@@ -96,6 +96,18 @@ intersection_polylines(const TriangleMesh& tm1,
   VPM2 vpm2 = parameters::choose_parameter(parameters::get_parameter(np2, internal_np::vertex_point),
                                            get_const_property_map(CGAL::vertex_point, tm2));
 
+  if (&tm1==&tm2)
+  {
+    if (throw_on_self_intersection && does_self_intersect(tm1))
+      throw Corefinement::Self_intersection_exception();
+    for (auto e : edges(tm1))
+    {
+      std::vector s = {get(vpm1, source(e, tm1)), get(vpm1, target(e, tm1))};
+      *polyline_output++=s;
+    }
+    return polyline_output;
+  }
+
   Corefinement::Intersection_of_triangle_meshes<TriangleMesh, VPM1, VPM2>
     functor(tm1, tm2, vpm1, vpm2);
 
