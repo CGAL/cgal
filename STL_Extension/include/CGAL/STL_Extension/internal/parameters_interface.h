@@ -296,6 +296,7 @@ CGAL_add_named_parameter(cell_selector_t, cell_selector, cell_is_selected_map)
 CGAL_add_named_parameter(facet_is_constrained_t, facet_is_constrained, facet_is_constrained_map)
 CGAL_add_named_parameter(smooth_constrained_edges_t, smooth_constrained_edges, smooth_constrained_edges)
 CGAL_add_named_parameter(nb_flip_smooth_iterations_t, nb_flip_smooth_iterations, nb_flip_smooth_iterations)
+CGAL_add_named_parameter(nb_smoothing_iterations_t, nb_smoothing_iterations, nb_smoothing_iterations)
 
 // List of named parameters used in Alpha_wrap_23
 CGAL_add_named_parameter(do_enforce_manifoldness_t, do_enforce_manifoldness, do_enforce_manifoldness)
