@@ -502,14 +502,30 @@ namespace internal {
       }
     }
 
+    struct Edge_with_index
+    {
+      int v0, v1;
+      typename Tr::Triangulation_data_structure::Vertex::Index curve_index;
+    };
+    struct Corner_with_index
+    {
+      int v;
+      typename Tr::Triangulation_data_structure::Vertex::Index corner_index;
+    };
+
     boost::unordered_map<std::array<int, 3>,
       typename Tr::Cell::Surface_patch_index> empty_facets_map;
+    std::vector<Edge_with_index> no_edges;
+    std::vector<Corner_with_index> no_corners;
 
     CGAL::SMDS_3::build_triangulation_with_subdomains_range(tr,
       points,
       tetrahedra,
       labels,
       empty_facets_map,
+      no_edges,
+      no_corners,
+      CGAL::Emptyset_iterator(),
       true,//verbose
       false,//replace subdomain 0
       true);//allow non manifold
