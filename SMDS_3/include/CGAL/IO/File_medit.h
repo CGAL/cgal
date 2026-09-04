@@ -507,11 +507,28 @@ struct is_variant : std::false_type {};
 template <class... Ts>
 struct is_variant<std::variant<Ts...>> : std::true_type {};
 
+template <typename T>
+struct is_pair : std::false_type {};
+
+template <typename U, typename V>
+struct is_pair<std::pair<U, V>> : std::true_type {};
+
 template <class T>
 void output_to_os(std::ostream& os, const T& x)
 {
   if constexpr(is_variant<std::decay_t<T>>::value)
-    std::visit([&](const auto& i) { os << i; }, x);
+  {
+    std::visit(
+        [&](const auto& i) {
+          using X = std::decay_t<decltype(i)>;
+
+          if constexpr(is_pair<X>::value)
+            os << i.first << " " << i.second; // warning: read() will not deal with that
+          else
+            os << i;
+        },
+        x);
+  }
   else
     os << x;
 }

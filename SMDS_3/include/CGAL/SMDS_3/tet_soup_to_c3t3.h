@@ -626,8 +626,9 @@ bool build_triangulation_one_subdomain(Tr& tr,
   std::vector<typename Tr::Vertex_handle> vertex_handle_vector;
   return build_triangulation_impl(tr, points, finite_cells, subdomains,
                                   border_facets,
-                                  edges, corners, cx_edges_out,
+                                  edges, corners,
                                   vertex_handle_vector,
+                                  cx_edges_out,
                                   verbose, replace_domain_0,
                                   allow_non_manifold);
 }
