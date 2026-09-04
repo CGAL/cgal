@@ -33,7 +33,7 @@ easier to explain and understand. The algorithm that has been
 implemented is incremental. The corresponding \cgal class is called
 `Segment_Delaunay_graph_2<SegmentDelaunayGraphTraits_2,SegmentDelaunayGraphStructure_2>`
 and will be discussed in more detail in the sequel. The interested
-reader may want to refer to the paper by Karavelas
+reader may want to refer to the paper by
 \cgalCite{cgal:k-reisv-04} for the general idea as well as the details of
 the algorithm implemented.
 
@@ -342,8 +342,8 @@ that have meaning only in the case of strongly intersecting sites.
 
 The predicates required for the computation of the segment Voronoi
 diagram are rather complicated. It is not the purpose of this document to
-discuss them in detail. The interested reader may refer to Burnikel's
-thesis \cgalCite{b-ecvdl-96}, where it is shown that in the case of weakly
+discuss them in detail. The interested reader may refer to \cgalCite{b-ecvdl-96},
+where it is shown that in the case of weakly
 intersecting sites represented in homogeneous coordinates of bit size
 \f$ b\f$, the maximum bit size of the algebraic expressions involved in the
 predicates is \f$ 40 b+O(1)\f$. Given our site representation given above we
@@ -454,14 +454,14 @@ class is the analog of the `Triangulation_hierarchy_2` or the
 `Apollonius_graph_hierarchy_2` classes, applied to the segment
 Delaunay graph. It consists of a hierarchy of
 segment Delaunay graphs constructed in a manner analogous to the
-Delaunay hierarchy by Devillers \cgalCite{cgal:d-dh-02}. Unlike the
+Delaunay hierarchy by \cgalCite{cgal:d-dh-02}. Unlike the
 triangulation hierarchy or the Apollonius graph hierarchy, the
 situation here is more complicated because of two factors: firstly,
 segments are treated as three objects instead of one (the two
 endpoints and the interior of the segments), and secondly, the
 presence of strongly intersecting sites complicates significantly the
 way the hierarchy is constructed. The interested reader may refer to
-the paper by Karavelas \cgalCite{cgal:k-reisv-04} for the details of the
+the paper by \cgalCite{cgal:k-reisv-04} for the details of the
 construction of the hierarchy.
 Another alternative is to have a hybrid hierarchy that consists of the
 segment Delaunay graph at the bottom-most level and point Voronoi

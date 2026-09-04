@@ -112,7 +112,7 @@ angle_sum(typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
   *
   * computes the discrete Gaussian curvature at a vertex.
   *
-  * We refer to Meyer et al. \cgalCite{cgal:mdsb-ddgot-02} for the definition of <i>discrete Gaussian curvature</i>.
+  * We refer to \cgalCite{cgal:mdsb-ddgot-02} for the definition of <i>discrete Gaussian curvature</i>.
   *
   * @tparam TriangleMesh a model of `FaceGraph`
   * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -225,7 +225,7 @@ discrete_Gaussian_curvature(typename boost::graph_traits<TriangleMesh>::vertex_d
   *
   * computes the discrete Gaussian curvatures at the vertices of a mesh.
   *
-  * We refer to Meyer et al. \cgalCite{cgal:mdsb-ddgot-02} for the definition of <i>discrete Gaussian curvature</i>.
+  * We refer to \cgalCite{cgal:mdsb-ddgot-02} for the definition of <i>discrete Gaussian curvature</i>.
   *
   * @tparam TriangleMesh a model of `FaceGraph` and `VertexListGraph`
   * @tparam VertexCurvatureMap must be a model of `WritablePropertyMap` with key type
@@ -282,7 +282,7 @@ void discrete_Gaussian_curvatures(const TriangleMesh& tmesh,
   *
   * computes the discrete mean curvature at a vertex.
   *
-  * We refer to Meyer et al. \cgalCite{cgal:mdsb-ddgot-02} for the definition of <i>discrete mean curvature</i>.
+  * We refer to \cgalCite{cgal:mdsb-ddgot-02} for the definition of <i>discrete mean curvature</i>.
   *
   * @tparam TriangleMesh a model of `FaceGraph`
   * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -423,7 +423,7 @@ discrete_mean_curvature(typename boost::graph_traits<TriangleMesh>::vertex_descr
   *
   * computes the discrete mean curvatures at the vertices of a mesh.
   *
-  * We refer to Meyer et al. \cgalCite{cgal:mdsb-ddgot-02} for the definition of <i>discrete mean curvature</i>.
+  * We refer to \cgalCite{cgal:mdsb-ddgot-02} for the definition of <i>discrete mean curvature</i>.
   *
   * @tparam TriangleMesh a model of `FaceGraph` and `VertexListGraph`
   * @tparam VertexCurvatureMap must be a model of `WritablePropertyMap` with key type

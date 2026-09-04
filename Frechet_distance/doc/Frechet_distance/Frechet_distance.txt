@@ -66,10 +66,10 @@ For a very detailed analysis in practice, we refer to the journal paper entitled
 
 \section secFrechetDistanceImplementation Implementation
 
-The algorithms in this package are an adaption of the implementation devised by Bringmann et al. (\cgalCite{cgal:bkn-wdfp-19}
+The algorithms in this package are an adaption of the implementation devised by (\cgalCite{cgal:bkn-wdfp-19}
 and \cgalCite{cgal:bkn-wdfp-21}). In particular, the implementation can decide non-difficult cases very
 quickly, while it still has the quadratic running time guarantee of the classical Fréchet distance algorithm
-by Alt and Godau \cgalCite{ag-cfdbt-95} for difficult cases. This is achieved by using fast bounding
+by \cgalCite{ag-cfdbt-95} for difficult cases. This is achieved by using fast bounding
 box filtering methods and a divide-and-conquer algorithm with pruning rules on the free-space diagram.
 
 
