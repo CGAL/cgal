@@ -30,6 +30,9 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace Corefinement {
 
+template<class T>
+struct is_surface_mesh : std::false_type {};
+
 enum Boolean_operation_type {UNION = 0, INTERSECTION,
                              TM1_MINUS_TM2, TM2_MINUS_TM1, NONE };
 
@@ -909,7 +912,7 @@ void import_polyline(
   auto set_output_vertex = [&](vertex_descriptor v, halfedge_descriptor h_out){
     user_visitor.before_vertex_copy(v, pm1, output);
     vertex_descriptor new_v = add_vertex(output);
-    set_halfedge(new_v, opposite(h_out, output),output);
+    set_halfedge(new_v, h_out, output);
     put(vpm_out, new_v, get(vpm1, v));
     user_visitor.after_vertex_copy(v, pm1, new_v, output);
     return new_v;
@@ -917,39 +920,33 @@ void import_polyline(
 
   //make sure the first vertex does not already exist
   vertex_descriptor src = GT::null_vertex();
-  std::pair< typename VertexMap::iterator, bool > insert_res=
-    pm1_to_output_vertices.insert( std::make_pair( source(h1,pm1), src ) );
-
-  if( insert_res.second )
+  if( get(pm1_to_output_vertices, source(h1,pm1)) == GT::null_vertex() )
   {
-    src = set_output_vertex(source(h1, pm1), h_out);
-    insert_res.first->second = src;
-    pm2_to_output_vertices.insert( std::make_pair( source(h2,pm2), src ) );
+    src = set_output_vertex(source(h1, pm1), opposite(h_out, output));
+    put(pm1_to_output_vertices, source(h1,pm1), src);
+    put(pm2_to_output_vertices, source(h2,pm2), src);
   }
   else
-    src = insert_res.first->second;
+    src = get(pm1_to_output_vertices, source(h1,pm1));
 
   //make sure the target vertex does not already exist if it is a polyline endpoint
-  vertex_descriptor tgt=GT::null_vertex();
+  vertex_descriptor tgt = GT::null_vertex();
   if ( nb_segments==1 )
   {
-    insert_res = pm1_to_output_vertices.insert( std::make_pair( target(h1,pm1), tgt ) );
-    if( insert_res.second )
+    if( get(pm1_to_output_vertices, target(h1,pm1)) == GT::null_vertex() )
     {
       tgt = set_output_vertex(target(h1, pm1), h_out);
-      insert_res.first->second = tgt;
-      pm2_to_output_vertices.insert( std::make_pair( target(h2,pm2), tgt ) );
+      put(pm1_to_output_vertices, target(h1,pm1), tgt);
+      put(pm2_to_output_vertices, target(h2,pm2), tgt);
     }
     else
-      tgt = insert_res.first->second;
+      tgt = get(pm1_to_output_vertices, target(h1,pm1));
   }
   else
   {
     tgt = set_output_vertex(target(h1, pm1), h_out);
-    CGAL_assertion( pm1_to_output_vertices.count(target(h1,pm1))==0 );
-    CGAL_assertion( pm2_to_output_vertices.count(target(h2,pm2))==0 );
-    pm1_to_output_vertices.insert( std::make_pair( target(h1,pm1), tgt ) );
-    pm2_to_output_vertices.insert( std::make_pair( target(h2,pm2), tgt ) );
+    put(pm1_to_output_vertices, target(h1,pm1), tgt);
+    put(pm2_to_output_vertices, target(h2,pm2), tgt);
   }
 
   //update source and target vertex of the edge created
@@ -961,8 +958,8 @@ void import_polyline(
   halfedge_descriptor prev2=h2;
 
   //set the correspondence
-  pm1_to_output_edges.insert( std::make_pair(edge(prev1, pm1), edge(prev_out, output)) );
-  pm2_to_output_edges.insert( std::make_pair(edge(prev2, pm2), edge(prev_out, output)) );
+  put(pm1_to_output_edges, edge(prev1, pm1), edge(prev_out, output));
+  put(pm2_to_output_edges, edge(prev2, pm2), edge(prev_out, output));
 
   user_visitor.intersection_edge_copy(prev1, pm1, prev2, pm2, h_out, output);
 
@@ -982,19 +979,18 @@ void import_polyline(
     if (i+1!=nb_segments)
     {
       tgt = set_output_vertex(target(h1, pm1), h_out);
-      pm1_to_output_vertices.insert( std::make_pair( target(h1,pm1), tgt ) );
-      pm2_to_output_vertices.insert( std::make_pair( target(h2,pm2), tgt ) );
+      put( pm1_to_output_vertices, target(h1,pm1), tgt );
+      put( pm2_to_output_vertices, target(h2,pm2), tgt );
     }
     else{
-      std::pair< typename VertexMap::iterator, bool > insert_res =
-        pm1_to_output_vertices.insert(std::make_pair(target(h1,pm1), tgt));
-      if (insert_res.second)
+      if( get(pm1_to_output_vertices, target(h1,pm1)) == GT::null_vertex() )
       {
         tgt = set_output_vertex(target(h1, pm1), h_out);
-        pm2_to_output_vertices.insert( std::make_pair( target(h2,pm2), tgt ) );
+        put( pm1_to_output_vertices, target(h1,pm1), tgt );
+        put( pm2_to_output_vertices, target(h2,pm2), tgt );
       }
       else
-        tgt = insert_res.first->second;
+        tgt = get(pm1_to_output_vertices, target(h1,pm1));
     }
 
     set_target(h_out, tgt, output);
@@ -1005,30 +1001,29 @@ void import_polyline(
     prev2 = h2;
     src = tgt;
 
-    pm1_to_output_edges.insert( std::make_pair(edge(prev1, pm1), edge(prev_out, output)) );
-    pm2_to_output_edges.insert( std::make_pair(edge(prev2, pm2), edge(prev_out, output)) );
+    put(pm1_to_output_edges, edge(prev1, pm1), edge(prev_out, output));
+    put(pm2_to_output_edges, edge(prev2, pm2), edge(prev_out, output));
   }
   CGAL_assertion( pm1_to_output_edges.size() == pm2_to_output_edges.size() );
   CGAL_assertion( pm1_to_output_vertices.size() == pm2_to_output_vertices.size() );
 }
 
-template <class TriangleMesh, bool reverse_patch_orientation>
+template <class TriangleMesh, class EdgeMap, bool reverse_patch_orientation>
 struct Triangle_mesh_extension_helper;
 
-template <class TriangleMesh>
-struct Triangle_mesh_extension_helper<TriangleMesh, true>
+template <class TriangleMesh, class EdgeMap>
+struct Triangle_mesh_extension_helper<TriangleMesh, EdgeMap, true>
 {
   typedef boost::graph_traits<TriangleMesh> GT;
   typedef typename GT::halfedge_descriptor halfedge_descriptor;
   typedef typename GT::edge_descriptor edge_descriptor;
   typedef typename GT::face_descriptor face_descriptor;
 
-  typedef std::unordered_map< edge_descriptor, edge_descriptor> Edge_map;
-  Edge_map& tm_to_output_edges;
+  EdgeMap& tm_to_output_edges;
   const TriangleMesh& tm;
   TriangleMesh& output;
 
-  Triangle_mesh_extension_helper(Edge_map& tm_to_output_edges,
+  Triangle_mesh_extension_helper(EdgeMap& tm_to_output_edges,
                                  const TriangleMesh& tm,
                                  TriangleMesh& output)
     : tm_to_output_edges(tm_to_output_edges)
@@ -1038,12 +1033,12 @@ struct Triangle_mesh_extension_helper<TriangleMesh, true>
 
   halfedge_descriptor get_hedge(halfedge_descriptor h_tm)
   {
-    CGAL_assertion( tm_to_output_edges.count(edge(h_tm, tm))!=0 );
-    const std::pair<edge_descriptor, edge_descriptor>& key_and_value =
-      *tm_to_output_edges.find(edge(h_tm, tm));
-    return halfedge(key_and_value.first,tm) != h_tm
-           ? halfedge(key_and_value.second, output)
-           : opposite(halfedge(key_and_value.second, output), output);
+    edge_descriptor key = edge(h_tm, tm);
+    edge_descriptor value = get(tm_to_output_edges, key);
+    CGAL_assertion( value != GT::null_halfedge() );
+    return halfedge(key, tm) != h_tm
+           ? halfedge(value, output)
+           : opposite(halfedge(value, output), output);
   }
 
   std::array<halfedge_descriptor,3>
@@ -1056,20 +1051,19 @@ struct Triangle_mesh_extension_helper<TriangleMesh, true>
   }
 };
 
-template <class TriangleMesh>
-struct Triangle_mesh_extension_helper<TriangleMesh, false>
+template <class TriangleMesh, class EdgeMap>
+struct Triangle_mesh_extension_helper<TriangleMesh, EdgeMap, false>
 {
   typedef boost::graph_traits<TriangleMesh> GT;
   typedef typename GT::halfedge_descriptor halfedge_descriptor;
   typedef typename GT::edge_descriptor edge_descriptor;
   typedef typename GT::face_descriptor face_descriptor;
 
-  typedef std::unordered_map< edge_descriptor, edge_descriptor> Edge_map;
-  Edge_map& tm_to_output_edges;
+  EdgeMap& tm_to_output_edges;
   const TriangleMesh& tm;
   TriangleMesh& output;
 
-  Triangle_mesh_extension_helper(Edge_map& tm_to_output_edges,
+  Triangle_mesh_extension_helper(EdgeMap& tm_to_output_edges,
                                  const TriangleMesh& tm,
                                  TriangleMesh& output)
     : tm_to_output_edges(tm_to_output_edges)
@@ -1079,12 +1073,12 @@ struct Triangle_mesh_extension_helper<TriangleMesh, false>
 
   halfedge_descriptor get_hedge(halfedge_descriptor h_tm)
   {
-    CGAL_assertion( tm_to_output_edges.count(edge(h_tm, tm))!=0 );
-    const std::pair<edge_descriptor, edge_descriptor>& key_and_value =
-      *tm_to_output_edges.find(edge(h_tm, tm));
-    return halfedge(key_and_value.first,tm) == h_tm
-           ? halfedge(key_and_value.second, output)
-           : opposite(halfedge(key_and_value.second, output), output);
+    edge_descriptor key = edge(h_tm, tm);
+    edge_descriptor value = get(tm_to_output_edges, key);
+    CGAL_assertion( value != GT::null_halfedge() );
+    return halfedge(key, tm) != h_tm
+           ? halfedge(value, output)
+           : opposite(halfedge(value, output), output);
   }
 
   std::array<halfedge_descriptor,3>
@@ -1105,6 +1099,8 @@ template < bool reverse_patch_orientation,
            class VertexPointMapOut,
            class EdgeMarkMapOut,
            class EdgeMarkMapIn ,
+           class EdgetoEdgeMap,
+           class VertextoVertexMap,
            class UserVisitor>
 void append_patches_to_triangle_mesh(
   TriangleMesh& output,
@@ -1114,14 +1110,8 @@ void append_patches_to_triangle_mesh(
   const VertexPointMap& vpm_tm,
   EdgeMarkMapOut& edge_mark_map_out,
   const EdgeMarkMapIn& edge_mark_map_in,
-  std::unordered_map<
-    typename boost::graph_traits<TriangleMesh>::edge_descriptor,
-    typename boost::graph_traits<TriangleMesh>::edge_descriptor
-  >& tm_to_output_edges,
-  std::unordered_map<
-    typename boost::graph_traits<TriangleMesh>::vertex_descriptor,
-    typename boost::graph_traits<TriangleMesh>::vertex_descriptor
-  >& tm_to_output_vertices,
+  EdgetoEdgeMap& tm_to_output_edges,
+  VertextoVertexMap& tm_to_output_vertices,
   UserVisitor& user_visitor)
 {
   typedef boost::graph_traits<TriangleMesh> GT;
@@ -1131,7 +1121,7 @@ void append_patches_to_triangle_mesh(
   typedef typename GT::face_descriptor face_descriptor;
 
   const TriangleMesh& tm = patches.pm;
-  Triangle_mesh_extension_helper<TriangleMesh, reverse_patch_orientation> helper(tm_to_output_edges, tm, output);
+  Triangle_mesh_extension_helper<TriangleMesh, EdgetoEdgeMap, reverse_patch_orientation> helper(tm_to_output_edges, tm, output);
 
   std::vector<std::size_t> ids_of_patches_to_append;
   ids_of_patches_to_append.reserve(patches_to_append.count());
@@ -1142,7 +1132,6 @@ void append_patches_to_triangle_mesh(
     ids_of_patches_to_append.push_back(i);
   }
 
-  std::vector<halfedge_descriptor> interior_vertex_halfedges;
   for (std::size_t i : ids_of_patches_to_append)
   {
     #ifdef CGAL_COREFINEMENT_POLYHEDRA_DEBUG
@@ -1160,8 +1149,7 @@ void append_patches_to_triangle_mesh(
       vertex_descriptor new_v = add_vertex(output);
       set_halfedge(new_v, GT::null_halfedge(), output);
 
-      auto res = tm_to_output_vertices.insert( std::make_pair( v, new_v ) );
-      CGAL_assertion(res.second); // should be inserted, not already present
+      put(tm_to_output_vertices, v, new_v);
       put(vpm_out, new_v, get(vpm_tm, v));
     }
 
@@ -1177,7 +1165,7 @@ void append_patches_to_triangle_mesh(
                                    edge_mark_map_in, edge_mark_map_out);
 
       halfedge_descriptor new_h = halfedge(new_edge, output);
-      tm_to_output_edges[ed] = new_edge;
+      put(tm_to_output_edges, ed, new_edge);
 
       set_face(new_h, GT::null_face(), output);
       set_face(opposite(new_h, output), GT::null_face(), output);
@@ -1190,11 +1178,10 @@ void append_patches_to_triangle_mesh(
         user_visitor.before_vertex_copy(v, tm, output);
         set_halfedge(new_v, new_h, output);
         user_visitor.after_vertex_copy(v, tm, new_v, output);
-        interior_vertex_halfedges.push_back( new_h );
       };
 
       vertex_descriptor tgt = target(h, tm);
-      vertex_descriptor new_tgt = tm_to_output_vertices[tgt];
+      vertex_descriptor new_tgt = get(tm_to_output_vertices, tgt);
       CGAL_assertion( new_tgt != GT::null_vertex() );
       set_target(new_h, new_tgt, output);
       if (  halfedge(tgt,tm)==h &&
@@ -1204,7 +1191,7 @@ void append_patches_to_triangle_mesh(
       }
 
       vertex_descriptor src = source(h, tm);
-      vertex_descriptor new_src = tm_to_output_vertices[src];
+      vertex_descriptor new_src = get(tm_to_output_vertices, src);
       CGAL_assertion( new_src != GT::null_vertex() );
       halfedge_descriptor new_h_opp = opposite(new_h, output);
       set_target(new_h_opp, new_src, output);
@@ -1372,28 +1359,36 @@ void fill_new_triangle_mesh(
                                                             output_shared_edges,
   UserVisitor& user_visitor)
 {
-  typedef boost::graph_traits<TriangleMesh> GT;
-  typedef typename GT::vertex_descriptor vertex_descriptor;
-  typedef typename GT::edge_descriptor edge_descriptor;
+  using GT = boost::graph_traits<TriangleMesh>;
+  using vertex_descriptor = typename GT::vertex_descriptor;
+  using edge_descriptor = typename GT::edge_descriptor;
+
+  using V2V_tag = typename CGAL::dynamic_vertex_property_t<vertex_descriptor>;
+  using Vertex_to_vertex_map = typename boost::property_map<TriangleMesh, V2V_tag>::const_type;
+
+  using E2E_tag = typename CGAL::dynamic_edge_property_t<SM_Edge_index>;
+  using Edge_to_edge_map = typename boost::property_map<TriangleMesh, E2E_tag>::const_type;
+
+  const TriangleMesh& tm1 = patches_of_tm1.pm;
+  const TriangleMesh& tm2 = patches_of_tm2.pm;
+
+  Vertex_to_vertex_map tm1_to_output_vertices = get(V2V_tag(), tm1, GT::null_vertex()),
+                       tm2_to_output_vertices = get(V2V_tag(), tm2, GT::null_vertex());
+  Edge_to_edge_map tm1_to_output_edges = get(E2E_tag(), tm1, edge(GT::null_halfedge(), tm1)),
+                   tm2_to_output_edges = get(E2E_tag(), tm2, edge(GT::null_halfedge(), tm2));
 
   // this is the minimal number of edges that will be marked (intersection edge).
   // We cannot easily have the total number since some patch interior edges might be marked
-  output_shared_edges.reserve(
-                              std::accumulate(polylines.lengths.begin(),polylines.lengths.end(),std::size_t(0)) );
+  output_shared_edges.reserve(std::accumulate(polylines.lengths.begin(),polylines.lengths.end(),std::size_t(0)) );
 
   //add a polyline inside O for each intersection polyline
   std::size_t nb_polylines = polylines.lengths.size();
-  std::unordered_map<vertex_descriptor, vertex_descriptor> tm1_to_output_vertices,
-                                                           tm2_to_output_vertices;
-  std::unordered_map<edge_descriptor, edge_descriptor> tm1_to_output_edges,
-                                                       tm2_to_output_edges;
 
   for (std::size_t i=0; i < nb_polylines; ++i)
     if (!polylines.to_skip.test(i))
       import_polyline(output,
                       polylines.tm1[i], polylines.tm2[i],
-                      patches_of_tm1.pm,
-                      patches_of_tm2.pm,
+                      tm1, tm2,
                       polylines.lengths[i],
                       tm1_to_output_edges, tm2_to_output_edges,
                       tm1_to_output_vertices, tm2_to_output_vertices,
@@ -1454,6 +1449,7 @@ void fill_new_triangle_mesh(
 template <class TriangleMesh,
           class PatchContainer,
           class EdgeMap,
+          class VertexMap,
           class UserVisitor>
 void disconnect_patches(
   TriangleMesh& tm1,
@@ -1461,6 +1457,8 @@ void disconnect_patches(
   PatchContainer& patches_of_tm1,
   const EdgeMap& tm1_edge_to_tm2_edge, //map intersection edges of tm1 to the equivalent in tm2
         EdgeMap& new_tm1_edge_to_tm2_edge, //map the new intersection edges of tm1 to the equivalent in tm2
+        VertexMap& tm1_vertex_to_tm2_vertex, //map intersection vertices of tm1 to the equivalent in tm2
+        VertexMap& new_tm1_vertex_to_tm2_vertex, //map the new intersection vertices
         UserVisitor& user_visitor)
 {
   typedef boost::graph_traits<TriangleMesh> GT;
@@ -1590,14 +1588,23 @@ void disconnect_patches(
       CGAL_assertion( is_border(next(opposite(new_patch_border[k], tm1), tm1), tm1) );
       CGAL_assertion( is_border(prev(opposite(new_patch_border[k], tm1), tm1), tm1) );
 
-      typename EdgeMap::const_iterator it_res =
-        tm1_edge_to_tm2_edge.find( edge(patch.shared_edges[k], tm1) );
-      CGAL_assertion( it_res != tm1_edge_to_tm2_edge.end() );
+      auto e = get(tm1_edge_to_tm2_edge, edge(patch.shared_edges[k], tm1));
+      auto src = get(tm1_vertex_to_tm2_vertex, source(patch.shared_edges[k], tm1));
+      auto tgt = get(tm1_vertex_to_tm2_vertex, target(patch.shared_edges[k], tm1));
+      CGAL_assertion( e != edge(GT::null_halfedge(), tm2) );
+      CGAL_assertion( src != GT::null_vertex() );
+      CGAL_assertion( tgt != GT::null_vertex() );
 
-      new_tm1_edge_to_tm2_edge[
-        patch.shared_edges[k]==halfedge(it_res->first, tm1)
+      /* halfedge(edge(h, g)) == h is a requirement of the concept and so the if is useless, TODO Sebastien can you confirm
+      put(new_tm1_edge_to_tm2_edge,
+        patch.shared_edges[k]==halfedge(edge(patch.shared_edges[k], tm1), tm1)
         ? edge(new_patch_border[k], tm1)
-        : edge(opposite(new_patch_border[k], tm1), tm1) ] = it_res->second;
+        : edge(opposite(new_patch_border[k], tm1), tm1),
+      e);
+      */
+      put(new_tm1_edge_to_tm2_edge, edge(new_patch_border[k], tm1), e);
+      put(new_tm1_vertex_to_tm2_vertex, target(new_patch_border[k], tm1), tgt);
+      put(new_tm1_vertex_to_tm2_vertex, source(new_patch_border[k], tm1), src);
     }
 
     patch.shared_edges.swap(new_patch_border);
@@ -1638,11 +1645,14 @@ void compute_inplace_operation_delay_removal_and_insideout(
   typedef typename GT::vertex_descriptor vertex_descriptor;
   typedef typename GT::edge_descriptor edge_descriptor;
   typedef typename GT::halfedge_descriptor halfedge_descriptor;
-  typedef std::unordered_map<edge_descriptor, edge_descriptor> Edge_map;
-  typedef std::unordered_map<vertex_descriptor, vertex_descriptor> Vertex_map;
 
-  Edge_map tm2_edge_to_tm1_edge, tm1_edge_to_tm2_edge;
-  Vertex_map tm2_vertex_to_tm1_vertex;
+  using V2V_tag = typename CGAL::dynamic_vertex_property_t<vertex_descriptor>;
+  using E2E_tag = typename CGAL::dynamic_edge_property_t<edge_descriptor>;
+
+  EdgeMap tm2_edge_to_tm1_edge = get(E2E_tag(), tm2, edge(GT::null_halfedge(), tm2)),
+          tm1_edge_to_tm2_edge = get(E2E_tag(), tm1, edge(GT::null_halfedge(), tm1));
+  VertexMap tm2_vertex_to_tm1_vertex = get(V2V_tag(), tm2, GT::null_vertex()),
+            tm1_vertex_to_tm2_vertex = get(V2V_tag(), tm1, GT::null_vertex());
   //maps intersection edges from tm2 to tm1
   std::size_t nb_polylines = polylines.lengths.size();
   for(std::size_t i=0; i<nb_polylines; ++i)
@@ -1653,10 +1663,12 @@ void compute_inplace_operation_delay_removal_and_insideout(
 
     for (std::size_t k=0;;)
     {
-      tm2_edge_to_tm1_edge[edge(h2, tm2)]=edge(h1, tm1);
-      tm1_edge_to_tm2_edge[edge(h1, tm1)]=edge(h2, tm2);
-      tm2_vertex_to_tm1_vertex[target(h2, tm2)]=target(h1, tm1);
-      tm2_vertex_to_tm1_vertex[source(h2, tm2)]=source(h1, tm1);
+      put(tm2_edge_to_tm1_edge, edge(h2, tm2), edge(h1, tm1));
+      put(tm1_edge_to_tm2_edge, edge(h1, tm1), edge(h2, tm2));
+      put(tm2_vertex_to_tm1_vertex, target(h2, tm2), target(h1, tm1));
+      put(tm2_vertex_to_tm1_vertex, source(h2, tm2), source(h1, tm1));
+      put(tm1_vertex_to_tm2_vertex, target(h1, tm1), target(h2, tm2));
+      put(tm1_vertex_to_tm2_vertex, source(h1, tm1), source(h2, tm2));
       if (++k==nb_segments) break;
       h2 = next_marked_halfedge_around_target_vertex(h2, tm2,
              patches_of_tm2.is_intersection_edge);
@@ -1675,8 +1687,10 @@ void compute_inplace_operation_delay_removal_and_insideout(
   // Note that disconnected_patches_edge_to_tm2_edge also refers to those halfedges
   //init the map with the previously filled one (needed when reusing patches in two operations)
   disconnected_patches_edge_to_tm2_edge=tm1_edge_to_tm2_edge;
+  disconnected_patches_vertex_to_tm2_vertex=tm1_vertex_to_tm2_vertex;
   disconnect_patches(tm1, ~patches_of_tm1_to_keep, patches_of_tm1,
-                     tm1_edge_to_tm2_edge, disconnected_patches_edge_to_tm2_edge, user_visitor);
+                     tm1_edge_to_tm2_edge, disconnected_patches_edge_to_tm2_edge,
+                     tm1_vertex_to_tm2_vertex, disconnected_patches_vertex_to_tm2_vertex, user_visitor);
 
   //we import patches from tm2
   if (reverse_patch_orientation_tm2)
@@ -1778,10 +1792,12 @@ template <class TriangleMesh,
           class EdgeMarkMapIn1,
           class EdgeMarkMapIn2,
           class EdgeMarkMapOut1,
+          class EdgeToEdgeMap,
+          class VertexToVertexMap,
           class UserVisitor>
 void compute_inplace_operation(
         TriangleMesh& tm1,
-  const TriangleMesh& /*tm2*/,
+  const TriangleMesh& tm2,
   const boost::dynamic_bitset<>& patches_of_tm1_to_keep,
   const boost::dynamic_bitset<>& patches_of_tm2_to_import,
   PatchContainer1& patches_of_tm1,
@@ -1793,22 +1809,11 @@ void compute_inplace_operation(
         EdgeMarkMapIn1& edge_mark_map_in1,
   const EdgeMarkMapIn2& edge_mark_map_in2,
         EdgeMarkMapOut1& edge_mark_map_out1,
-  std::unordered_map<
-    typename boost::graph_traits<TriangleMesh>::edge_descriptor,
-    typename boost::graph_traits<TriangleMesh>::edge_descriptor
-  >& tm2_edge_to_tm1_edge,
-  std::unordered_map<
-    typename boost::graph_traits<TriangleMesh>::vertex_descriptor,
-    typename boost::graph_traits<TriangleMesh>::vertex_descriptor
-  >& tm2_vertex_to_tm1_vertex,
-  UserVisitor& user_visitor)
+        EdgeToEdgeMap& tm2_edge_to_tm1_edge,
+        VertexToVertexMap& tm2_vertex_to_tm1_vertex,
+        UserVisitor& user_visitor)
 {
-  typedef std::unordered_map<
-      typename boost::graph_traits<TriangleMesh>::edge_descriptor,
-      typename boost::graph_traits<TriangleMesh>::edge_descriptor> EdgeMap;
-  typedef std::unordered_map<
-      typename boost::graph_traits<TriangleMesh>::vertex_descriptor,
-      typename boost::graph_traits<TriangleMesh>::vertex_descriptor> VertexMap;
+  using edge_descriptor = typename boost::graph_traits<TriangleMesh>::edge_descriptor;
   //clean up patches not kept
   remove_patches(tm1, ~patches_of_tm1_to_keep, patches_of_tm1, edge_mark_map_in1);
 
@@ -1819,8 +1824,11 @@ void compute_inplace_operation(
     Polygon_mesh_processing::reverse_face_orientations_of_mesh_with_polylines(tm1);
     // here we need to update the mapping to use the correct border
     // halfedges while appending the patches from tm2
-    for(typename EdgeMap::value_type& v : tm2_edge_to_tm1_edge)
-      v.second=edge(opposite(halfedge(v.second, tm1), tm1), tm1);
+    for(edge_descriptor e2: edges(tm2)){
+      edge_descriptor e1 = get(tm2_edge_to_tm1_edge, e2);
+      if (e1 != edge(boost::graph_traits<TriangleMesh>::null_halfedge(), tm1))
+        put(tm2_edge_to_tm1_edge, e2, edge(opposite(halfedge(e1, tm1), tm1), tm1));
+    }
   }
 
   //we import patches from tm2
@@ -1876,9 +1884,9 @@ void compute_border_edge_map(
 
     for (std::size_t k=0;;)
     {
-      tm2_edge_to_tm1_edge[edge(h2, tm2)]=edge(h1, tm1);
-      tm2_vertex_to_tm1_vertex[target(h2, tm2)]=target(h1, tm1);
-      tm2_vertex_to_tm1_vertex[source(h2, tm2)]=source(h1, tm1);
+      put(tm2_edge_to_tm1_edge, edge(h2, tm2), edge(h1, tm1));
+      put(tm2_vertex_to_tm1_vertex, target(h2, tm2), target(h1, tm1));
+      put(tm2_vertex_to_tm1_vertex, source(h2, tm2), source(h1, tm1));
       if (++k==nb_segments) break;
       h2 = next_marked_halfedge_around_target_vertex(
             h2, tm2, patches_of_tm2.is_intersection_edge);
@@ -1920,8 +1928,14 @@ void compute_inplace_operation(
   typedef typename GT::edge_descriptor edge_descriptor;
   typedef typename GT::vertex_descriptor vertex_descriptor;
 
-  std::unordered_map<edge_descriptor, edge_descriptor> tm2_edge_to_tm1_edge;
-  std::unordered_map<vertex_descriptor, vertex_descriptor> tm2_vertex_to_tm1_vertex;
+  using V2V_tag = typename CGAL::dynamic_vertex_property_t<vertex_descriptor>;
+  using Vertex_to_vertex_map = typename boost::property_map<TriangleMesh, V2V_tag>::const_type;
+
+  using E2E_tag = typename CGAL::dynamic_edge_property_t<edge_descriptor>;
+  using Edge_to_edge_map = typename boost::property_map<TriangleMesh, E2E_tag>::const_type;
+
+  Edge_to_edge_map tm2_edge_to_tm1_edge = get(E2E_tag(), tm2);
+  Vertex_to_vertex_map tm2_vertex_to_tm1_vertex = get(V2V_tag(), tm2, GT::null_vertex());
 
   //maps intersection edges from tm2 to the equivalent in tm1
   compute_border_edge_map(tm1, tm2,

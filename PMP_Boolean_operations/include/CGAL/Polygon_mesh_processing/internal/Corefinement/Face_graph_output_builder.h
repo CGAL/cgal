@@ -26,6 +26,7 @@
 #include <CGAL/property_map.h>
 #include <CGAL/Default.h>
 
+#include <boost/property_map/property_map.hpp>
 #include <boost/dynamic_bitset.hpp>
 #include <boost/mpl/has_xxx.hpp>
 
@@ -494,12 +495,12 @@ class Face_graph_output_builder
   static constexpr bool has_soup_visitor = HSV::value;
 
 // graph_traits typedefs
-  typedef TriangleMesh                                              TM;
-  typedef boost::graph_traits<TM>                                   GT;
-  typedef typename GT::edge_descriptor                 edge_descriptor;
-  typedef typename GT::face_descriptor                 face_descriptor;
-  typedef typename GT::halfedge_descriptor         halfedge_descriptor;
-  typedef typename GT::vertex_descriptor             vertex_descriptor;
+  using TM = TriangleMesh;
+  using GT = boost::graph_traits<TM>;
+  using edge_descriptor = typename GT::edge_descriptor;
+  using face_descriptor = typename GT::face_descriptor;
+  using halfedge_descriptor = typename GT::halfedge_descriptor;
+  using vertex_descriptor = typename GT::vertex_descriptor;
 // Internal typedefs
   typedef std::size_t                                          Node_id;
   typedef std::pair<Node_id,Node_id>                      Node_id_pair;
@@ -514,10 +515,7 @@ class Face_graph_output_builder
                                               An_edge_per_polyline_map;
 
   typedef std::unordered_map<vertex_descriptor, Node_id>   Node_id_map;
-  typedef std::unordered_map<edge_descriptor,
-                             edge_descriptor>                 Edge_map;
-  typedef std::unordered_map<vertex_descriptor,
-                             vertex_descriptor>               Vertex_map;
+
 //Data members
   TriangleMesh &tm1, &tm2;
   // property maps of input meshes
@@ -2405,8 +2403,14 @@ public:
       mark_edges(out_edge_mark_maps, shared_edges, operation);
     }
 
-    Edge_map disconnected_patches_edge_to_tm2_edge;
-    Vertex_map disconnected_patches_vertex_to_tm2_vertex;
+    using V2V_tag = typename CGAL::dynamic_vertex_property_t<vertex_descriptor>;
+    using Vertex_to_vertex_map = typename boost::property_map<TriangleMesh, V2V_tag>::type;
+
+    using E2E_tag = typename CGAL::dynamic_edge_property_t<edge_descriptor>;
+    using Edge_to_edge_map = typename boost::property_map<TriangleMesh, E2E_tag>::type;
+
+    Vertex_to_vertex_map disconnected_patches_vertex_to_tm2_vertex = get(V2V_tag(), tm1, GT::null_vertex());
+    Edge_to_edge_map disconnected_patches_edge_to_tm2_edge = get(E2E_tag(), tm1, edge(GT::null_halfedge(), tm2));
 
     /// handle the operations updating tm1 and/or tm2
     if ( inplace_operation_tm1!=NONE )
