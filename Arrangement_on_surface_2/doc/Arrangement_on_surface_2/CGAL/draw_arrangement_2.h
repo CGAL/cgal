@@ -13,6 +13,7 @@
 //
 //
 // Author(s) : Efi Fogel <efifogel@gmail.com>
+//             Utkarsh Khajuria <utkarshkhajuria55@gmail.com>
 
 #ifndef CGAL_DRAW_ARRANGEMENT_2_H
 #define CGAL_DRAW_ARRANGEMENT_2_H
@@ -27,9 +28,9 @@ namespace CGAL {
 
 /*! \ingroup PkgArrangementOnSurface2Draw
 
- * The function opens a new window and draws `arr`, an instance of the
- * `CGAL::Arrangement_on_surface_2` class template. Parameters of the drawing
- * are taken from the optional graphics scene options parameter.
+ * The function opens a new window and draws `arr`, an object the type of which
+ * is an instance of the `Arrangement_on_surface_2` class template. Parameters
+ * of the drawing are taken from the optional graphics scene options parameter.
  *
  * A call to this function blocks the execution of the program until the drawing
  * window is closed. This function requires `CGAL_Qt6`, and is only available if
@@ -63,10 +64,9 @@ void draw(const Arrangement_on_surface_2<GeometryTraits, TopologyTraits>& arr,
 
 /*! \ingroup PkgArrangementOnSurface2Draw
  *
- * A shortcut to `CGAL::draw(arr, bbox, Graphics_scene_options<Aos,
- * Aos::Vertex_const_handle, Aos::Halfedge_const_handle,
- * Aos::Face_const_handle>{})`, where `Aos` is
- * `Arrangement_on_surface_2<GeometryTraits, TopologyTraits>`.
+ * A shortcut to
+ * `draw(arr, bbox, Graphics_scene_options<Aos, Aos::Vertex_const_handle, Aos::Halfedge_const_handle, Aos::Face_const_handle>{})`,
+ * where `Aos` is `Arrangement_on_surface_2<GeometryTraits, TopologyTraits>`.
  */
 
 template <typename GeometryTraits, typename TopologyTraits>
@@ -75,7 +75,7 @@ void draw(const Arrangement_on_surface_2<GeometryTraits, TopologyTraits>& arr,
 
 /*! \ingroup PkgArrangementOnSurface2Draw
  *
- * Similar to `CGAL::draw(arr, bbox, gso)`, where the bounding box `bbox` is
+ * Similar to `draw(arr, bbox, gso)`, where the bounding box `bbox` is
  * computed to bound all points and curves of the arrangement in parameter
  * space.
  */
@@ -86,17 +86,47 @@ void draw(const Arrangement_on_surface_2<GeometryTraits, TopologyTraits>& arr,
 
 /*! \ingroup PkgArrangementOnSurface2Draw
  *
- * A shortcut to `CGAL::draw(arr, Graphics_scene_options<Aos,
- * Aos::Vertex_const_handle, Aos::Halfedge_const_handle,
- * Aos::Face_const_handle>{})`, where `Aos` is
- * `Arrangement_on_surface_2<GeometryTraits, TopologyTraits>`.
+ * A shortcut to
+ * `draw(arr, Graphics_scene_options<Aos, Aos::Vertex_const_handle, Aos::Halfedge_const_handle, Aos::Face_const_handle>{})`,
+ * where `Aos` is `Arrangement_on_surface_2<GeometryTraits, TopologyTraits>`.
  */
 
 template <typename GeometryTraits, typename TopologyTraits>
 void draw(const Arrangement_on_surface_2<GeometryTraits, TopologyTraits>& arr,
           const char* title = "2D Arrangement on Surface");
 
-} /* namespace CGAL */
+/*! \ingroup PkgArrangementOnSurface2Draw
+ *
+ * Adds the vertices, edges, and faces of `arr` to the graphics scene `gs`.
+ * The scene is not cleared before it is filled.
+ *
+ * \tparam GeometryTraits a geometry traits type, a model of a 2D arrangement
+ * geometry traits concept.
+ * \tparam TopologyTraits a topology traits type, a model of the
+ * `AosTopologyTraits` concept.
+ * \tparam GSOptions a model of the `GraphicsSceneOptions` concept.
+ *
+ * \param arr the arrangement to add to the graphics scene.
+ * \param gs the graphics scene to fill.
+ * \param gso the graphics scene options.
+ */
+template <typename GeometryTraits, typename TopologyTraits, typename GSOptions>
+void add_to_graphics_scene(const Arrangement_on_surface_2<GeometryTraits, TopologyTraits>& arr,
+                           Graphics_scene& gs, const GSOptions& gso);
+
+/*! \ingroup PkgArrangementOnSurface2Draw
+ *
+ * A shortcut to
+ * `add_to_graphics_scene(arr, gs, Graphics_scene_options<Aos, Aos::Vertex_const_handle, Aos::Halfedge_const_handle, Aos::Face_const_handle>{})`,
+ * where `Aos` is `Arrangement_on_surface_2<GeometryTraits, TopologyTraits>`.
+ *
+ * \param arr the arrangement to add to the graphics scene.
+ * \param gs the graphics scene to fill.
+ */
+template <typename GeometryTraits, typename TopologyTraits>
+void add_to_graphics_scene(const Arrangement_on_surface_2<GeometryTraits, TopologyTraits>& arr, Graphics_scene& gs);
+
+} // namespace CGAL
 
 #endif
 

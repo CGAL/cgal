@@ -43,9 +43,9 @@ template <class Tr,
           class CxEdgesOutputIterator = CGAL::Emptyset_iterator>
 bool build_triangulation_from_file(std::istream& is,
                                    Tr& tr,
-                                   const bool verbose,
-                                   const bool replace_domain_0,
-                                   const bool allow_non_manifold,
+                                   const bool verbose = false,
+                                   const bool replace_domain_0 = false,
+                                   const bool allow_non_manifold = false,
                                    CxEdgesOutputIterator cx_edges_oit = CxEdgesOutputIterator());
 
 } // namespace SMDS_3

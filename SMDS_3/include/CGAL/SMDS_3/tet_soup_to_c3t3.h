@@ -20,6 +20,7 @@
 #include <CGAL/license/SMDS_3.h>
 
 #include <CGAL/assertions.h>
+#include <CGAL/IO/MEDIT.h>
 #include <CGAL/IO/File_medit.h>
 #include <CGAL/Default.h>
 
@@ -680,35 +681,17 @@ bool build_triangulation_from_file(std::istream& is,
   using Facet        = std::array<int, 3>; // 3 = id
   using Tet_with_ref = std::array<int, 4>; // 4 = id
 
-  if(!is)
-    return false;
-
-  struct Edge_with_index
-  {
-    int v0, v1;
-    Curve_index curve_index;
-  };
-  struct Corner_with_index
-  {
-    int v;
-    Corner_index corner_index;
-  };
+  using Edge_with_index = CGAL::IO::internal::Edge_with_index<Curve_index>;
+  using Corner_with_index = CGAL::IO::internal::Corner_with_index<Corner_index>;
 
   std::vector<Tet_with_ref> finite_cells;
   std::vector<Subdomain_index> subdomains;
   std::vector<Point_3> points;
   boost::unordered_map<Facet, Surface_patch_index> border_facets;
-  std::vector<Corner_with_index> corner_indices;
   std::vector<Edge_with_index> edge_indices;
+  std::vector<Corner_with_index> corner_indices;
 
-  int dim;
-  int nv, nf, ntet, ref, ncorners, nedges;
-  std::string word;
-
-  is >> word >> dim; // MeshVersionFormatted 1
-  is >> word >> dim; // Dimension 3
-
-  CGAL_assertion(dim == 3);
+  bool is_CGAL_mesh = false;
 
   if(verbose)
   {
@@ -717,207 +700,16 @@ bool build_triangulation_from_file(std::istream& is,
     std::cout << "Allow non-manifoldness = " << allow_non_manifold << std::endl;
   }
 
-  bool is_CGAL_mesh = false;
+  bool ok = CGAL::IO::internal::read_MEDIT(is, points, finite_cells, subdomains,
+                                           border_facets, true,
+                                           edge_indices,
+                                           corner_indices,
+                                           verbose,
+                                           is_CGAL_mesh);
 
-  std::string line;
-  while(std::getline(is, line) && line != "End")
-  {
-    // remove trailing whitespace, in particular a possible '\r' from Windows
-    // end-of-line encoding
-    while(!line.empty() && std::isspace(line.back())) {
-      line.pop_back();
-    }
-    if(line.empty())
-      continue;
-
-    // remove whitespaces at the beginning of the line
-    for (std::size_t i=0; i<line.size(); ++i)
-    {
-      if (!std::isspace(line[i]))
-      {
-        if (i!=0)
-          line = line.substr(i);
-        break;
-      }
-    }
-
-    if (line.at(0) == '#' &&
-        line.find("CGAL::Mesh_complex_3_in_triangulation_3") != std::string::npos)
-    {
-      is_CGAL_mesh = true; // with CGAL meshes, domain 0 should be kept
-      continue;
-    }
-
-    // skip non-CGAL comments
-    if (line.at(0)=='#') continue;
-
-    if(line.find("Vertices") != std::string::npos)
-    {
-      is >> nv;
-      if(verbose)
-        std::cerr << "Reading "<< nv << " vertices" << std::endl;
-      for(int i=0; i<nv; ++i)
-      {
-        typename Tr::Geom_traits::FT x,y,z;
-        if(!(is >> x >> y >> z >> ref))
-        {
-          if(verbose)
-            std::cerr << "Issue while reading vertices" << std::endl;
-          return false;
-        }
-        points.emplace_back(x,y,z);
-      }
-    }
-
-    if(line.find("Triangles") != std::string::npos)
-    {
-      bool has_negative_surface_patch_ids = false;
-      Surface_patch_index max_surface_patch_id{0};
-      is >> nf;
-
-      if(verbose)
-        std::cerr << "Reading "<< nf << " triangles" << std::endl;
-
-      for(int i=0; i<nf; ++i)
-      {
-        int n[3];
-        Surface_patch_index surface_patch_id;
-        if(!(is >> n[0] >> n[1] >> n[2] >> surface_patch_id))
-        {
-          if(verbose)
-            std::cerr << "Issue while reading triangles" << std::endl;
-          return false;
-        }
-        has_negative_surface_patch_ids |= (surface_patch_id < 0);
-        max_surface_patch_id = (std::max)(max_surface_patch_id, surface_patch_id);
-        Facet facet;
-        facet[0] = n[0] - 1;
-        facet[1] = n[1] - 1;
-        facet[2] = n[2] - 1;
-
-        if(verbose)
-          std::cout << "Looking at face #" << i << ": " << n[0] << " " << n[1] << " " << n[2] << std::endl;
-
-        CGAL_warning_code(
-        for(int j=0; j<3; ++j)
-          for(int k=0; k<3; ++k)
-            if(j != k)
-              CGAL_warning(n[j] != n[k]);
-        )
-
-        // find the circular permutation that puts the smallest index in the first place.
-        int n0 = (std::min)({facet[0],facet[1], facet[2]});
-        do
-        {
-          std::rotate(std::begin(facet), std::next(std::begin(facet)), std::end(facet));
-        }
-        while(facet[0] != n0);
-
-        border_facets.emplace(facet, surface_patch_id);
-      }
-      if(has_negative_surface_patch_ids)
-      {
-        if(verbose)
-          std::cerr << "Warning: negative surface patch ids" << std::endl;
-        for(auto& facet_and_patch_id  : border_facets) {
-          if(facet_and_patch_id.second < 0)
-            facet_and_patch_id.second = max_surface_patch_id - facet_and_patch_id.second;
-        }
-      }
-    }
-
-    if(line.find("Tetrahedra") != std::string::npos)
-    {
-      is >> ntet;
-
-      if(verbose)
-        std::cerr << "Reading "<< ntet << " tetrahedra" << std::endl;
-
-      for(int i=0; i<ntet; ++i)
-      {
-        int n[4];
-        int reference;
-
-        if(!(is >> n[0] >> n[1] >> n[2] >> n[3] >> reference))
-        {
-          if(verbose)
-            std::cerr << "Issue while reading tetrahedra" << std::endl;
-          return false;
-        }
-
-        if(verbose)
-          std::cout << "Looking at tet #" << i << ": " << n[0] << " " << n[1] << " " << n[2] << " " << n[3] << std::endl;
-
-        CGAL_warning_code(
-        for(int j=0; j<4; ++j)
-          for(int k=0; k<4; ++k)
-            if(j != k)
-              CGAL_warning(n[j] != n[k]);
-        )
-
-        Tet_with_ref t;
-        t[0] = n[0] - 1;
-        t[1] = n[1] - 1;
-        t[2] = n[2] - 1;
-        t[3] = n[3] - 1;
-
-        finite_cells.push_back(t);
-        subdomains.push_back(reference);
-      }
-    }
-
-    Corner_index corner_index = 0;
-    if(line.find("Corners") != std::string::npos)
-    {
-      is >> ncorners;
-      if(verbose && ncorners == 0)
-        std::cerr << "Warning: Corners section is ignored" << std::endl;
-
-      for(int i = 0; i < ncorners; ++i)
-      {
-        int n;
-        if(!(is >> n)) {
-          if(verbose)
-            std::cerr << "Issue while reading corners" << std::endl;
-          return false;
-        }
-        corner_indices.push_back({n - 1, ++corner_index});
-      }
-    }
-
-    if(line.find("Edges") != std::string::npos)
-    {
-      is >> nedges;
-      if(verbose && nedges == 0)
-        std::cerr << "Warning: Edges section is ignored" << std::endl;
-
-      for(int i = 0; i < nedges; ++i)
-      {
-        int n[2], curve_index;
-        if(!(is >> n[0] >> n[1] >> curve_index)) {
-          if(verbose)
-            std::cerr << "Issue while reading edges" << std::endl;
-          return false;
-        }
-        edge_indices.push_back({n[0] - 1, n[1] - 1, curve_index});
-        CGAL_assertion(edge_indices.size() == static_cast<std::size_t>(i + 1) );
-      }
-    }
-  }
-
-  if (verbose)
-  {
-    std::cout << points.size() << " points" << std::endl;
-    std::cout << finite_cells.size() << " cells" << std::endl;
-    std::cout << border_facets.size() << " border facets" << std::endl;
-    std::cout << edge_indices.size() << " edges" << std::endl;
-    std::cout << corner_indices.size() << " corners" << std::endl;
-  }
-
-  if(finite_cells.empty())
+  if(!ok){
     return false;
-
-  CGAL_assertion(finite_cells.size() == subdomains.size());
+  }
 
   return build_triangulation_with_subdomains_range(tr,
                                                    points, finite_cells, subdomains, border_facets,
