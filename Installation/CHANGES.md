@@ -62,6 +62,9 @@ Release date: December 2026
 
 ### [dD Spatial Searching](https://doc.cgal.org/6.3/Manual/packages.html#PkgSpatialSearchingD)
 
+- **Breaking change**: the construction of `CGAL::Kd_tree` partitions its points in place instead of an array
+  of pointers to them, and `CGAL::Point_container::iterator` and `const_iterator` now iterate over the points
+  instead of pointers to them.
 - The splitters `CGAL::Median_of_rectangle`, `CGAL::Median_of_max_spread`, `CGAL::Fair` and
   `CGAL::Sliding_fair` now cut at the median of the coordinates. The second middle coordinate they
   used was whichever one `std::nth_element` left next to the median, which is unspecified.

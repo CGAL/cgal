@@ -1,4 +1,5 @@
 // Copyright (c) 2002,2011,2014 Utrecht University (The Netherlands), Max-Planck-Institute Saarbruecken (Germany).
+// Copyright (c) 2026 Ziyang Men.
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -9,7 +10,8 @@
 //
 // Author(s)     : Hans Tangelder (<hanst@cs.uu.nl>),
 //               : Waqar Khan <wkhan@mpi-inf.mpg.de>,
-//                 Clement Jamin (clement.jamin.pro@gmail.com)
+//                 Clement Jamin (clement.jamin.pro@gmail.com),
+//                 Ziyang Men (ziyang.meme@gmail.com)
 
 #ifndef CGAL_KD_TREE_H
 #define CGAL_KD_TREE_H
@@ -118,17 +120,12 @@ private:
   Node_handle tree_root;
 
   Kd_tree_rectangle<FT,D>* bbox;
+  // partitioned in place by build(); a leaf holds an iterator range of it
   std::vector<Point_d> pts;
 
   // Store a contiguous copy of the point coordinates
   // for faster queries (reduce the number of cache misses)
   std::vector<FT> points_cache;
-
-  // Instead of storing the points in arrays in the Kd_tree_node
-  // we put all the data in a vector in the Kd_tree.
-  // and we only store an iterator range in the Kd_tree_node.
-  //
-  std::vector<const Point_d*> data;
 
   // Dimension of the points
   int dim_;
@@ -153,8 +150,7 @@ private:
   create_leaf_node(Point_container& c)
   {
     Leaf_node node(static_cast<unsigned int>(c.size()));
-    std::ptrdiff_t tmp = c.begin() - data.begin();
-    node.data = pts.begin() + tmp;
+    node.data = c.begin();
 
 #ifdef CGAL_TBB_STRUCTURE_IN_KD_TREE
     return &*(leaf_nodes.push_back(node));
@@ -341,17 +337,12 @@ public:
     typename SearchTraits::Construct_cartesian_const_iterator_d ccci=traits_.construct_cartesian_const_iterator_d_object();
     dim_ = static_cast<int>(std::distance(ccci(p), ccci(p,0)));
 
-    data.reserve(pts.size());
-    for(std::size_t i = 0; i < pts.size(); i++){
-      data.push_back(&pts[i]);
-    }
-
 #ifndef CGAL_TBB_STRUCTURE_IN_KD_TREE
     static_assert (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
                                "Parallel_tag is enabled but TBB is unavailable.");
 #endif
 
-    Point_container c(dim_, data.begin(), data.end(),traits_);
+    Point_container c(dim_, pts.begin(), pts.end(),traits_);
     bbox = new Kd_tree_rectangle<FT,D>(c.bounding_box());
     if (!needs_internal_node(c)){
       tree_root = create_leaf_node(c);
@@ -360,29 +351,14 @@ public:
        create_internal_node (tree_root, c, ConcurrencyTag());
     }
 
-    //Reorder vector for spatial locality
-    std::vector<Point_d> ptstmp;
-    ptstmp.resize(pts.size());
-    for (std::size_t i = 0; i < pts.size(); ++i)
-      ptstmp[i] = *data[i];
-
     // Cache?
     if (Enable_points_cache::value)
     {
       typename SearchTraits::Construct_cartesian_const_iterator_d construct_it = traits_.construct_cartesian_const_iterator_d_object();
       points_cache.reserve(dim_ * pts.size());
       for (std::size_t i = 0; i < pts.size(); ++i)
-        points_cache.insert(points_cache.end(), construct_it(ptstmp[i]), construct_it(ptstmp[i], 0));
+        points_cache.insert(points_cache.end(), construct_it(pts[i]), construct_it(pts[i], 0));
     }
-
-    for(std::size_t i = 0; i < leaf_nodes.size(); ++i){
-      std::ptrdiff_t tmp = leaf_nodes[i].begin() - pts.begin();
-      leaf_nodes[i].data = ptstmp.begin() + tmp;
-    }
-    pts.swap(ptstmp);
-
-    data.clear();
-    data.shrink_to_fit();
 
     built_ = true;
   }
@@ -458,7 +434,6 @@ public:
     if(is_built()){
       internal_nodes.clear();
       leaf_nodes.clear();
-      data.clear();
       delete bbox;
       built_ = false;
     }
