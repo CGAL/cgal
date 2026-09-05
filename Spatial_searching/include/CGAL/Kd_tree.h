@@ -118,8 +118,9 @@ private:
 
   Node_handle tree_root;
 
-  // a node's bounding boxes, partition and median are computed in parallel
-  // only if it holds more than this many points
+  // A node of at most this many points builds its subtree with the sequential
+  // code; above it the children are built in parallel, and so are the node's
+  // bounding boxes, partition and median.
   static constexpr std::size_t serial_build_cutoff = 1000;
 
   Kd_tree_rectangle<FT,D>* bbox;
@@ -204,6 +205,13 @@ private:
     if (try_parallel_internal_node_creation (nh, c, c_low, tag))
       return;
 
+    create_children (nh, c, c_low, tag);
+  }
+
+  template <typename ConcurrencyTag>
+  void
+  create_children(Internal_node_handle nh, Point_container& c, Point_container& c_low, const ConcurrencyTag& tag)
+  {
     if (needs_internal_node(c_low))
     {
       nh->lower_ch = new_internal_node();
@@ -258,18 +266,16 @@ private:
   inline bool try_parallel_internal_node_creation (Internal_node_handle nh, Point_container& c,
                                                    Point_container& c_low, const Parallel_tag& tag)
   {
-    /*
-      The two child branches are computed in parallel if and only if:
-
-      * both branches lead to internal nodes (if at least one branch
-        is a leaf, it's useless)
-
-      * the current number of points is sufficiently high to be worth
-        the cost of launching new threads. Experimentally, using 10
-        times the bucket size as a limit gives the best timings.
-    */
-    if (needs_internal_node(c_low) && needs_internal_node(c)
-        && (c_low.size() + c.size() > 10 * split.bucket_size()))
+    // A subtree of at most serial_build_cutoff points is built by the
+    // sequential code on the current thread. Above that, the two child
+    // branches are computed in parallel if both lead to internal nodes (if
+    // at least one branch is a leaf, it's useless).
+    if (c_low.size() + c.size() <= serial_build_cutoff)
+    {
+      create_children (nh, c, c_low, Sequential_tag());
+      return true;
+    }
+    if (needs_internal_node(c_low) && needs_internal_node(c))
     {
       nh->lower_ch = new_internal_node();
       nh->upper_ch = new_internal_node();
