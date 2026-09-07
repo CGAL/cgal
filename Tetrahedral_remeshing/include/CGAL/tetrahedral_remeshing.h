@@ -13,6 +13,13 @@
 #ifndef CGAL_TETRAHEDRAL_REMESHING_H
 #define CGAL_TETRAHEDRAL_REMESHING_H
 
+#ifdef CGAL_CONCURRENT_TETRAHEDRAL_REMESHING
+#define CGAL_TETRAHEDRAL_REMESHING_USE_REFACTORED_SPLIT
+#define CGAL_TETRAHEDRAL_REMESHING_USE_REFACTORED_COLLAPSE
+#define CGAL_TETRAHEDRAL_REMESHING_USE_REFACTORED_FLIP
+#define CGAL_TETRAHEDRAL_REMESHING_USE_REFACTORED_SMOOTH
+#endif
+
 #include <CGAL/license/Tetrahedral_remeshing.h>
 
 #include <CGAL/Triangulation_3.h>
@@ -234,7 +241,6 @@ void tetrahedral_isotropic_remeshing(
   std::cout << "Init tetrahedral remeshing...";
   std::cout.flush();
 #endif
-
   using Remesher = typename Remesher_types::type;
   Remesher remesher(tr, sizing, protect
                   , vcmap, ecmap, fcmap
