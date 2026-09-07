@@ -113,7 +113,7 @@ bool are_equal_meshes(const Mesh& fg1, const Mesh& fg2)
 }
 
 template<typename Mesh, typename K>
-void test_bgl_OFF(const std::string filename)
+void test_bgl_OFF(const std::filesystem::path& filename)
 {
   // read with OFF
   Mesh fg;
@@ -387,7 +387,7 @@ void test_bgl_OFF(const std::string filename)
 }
 
 template<typename Mesh, typename K>
-void test_bgl_OBJ(const std::string filename)
+void test_bgl_OBJ(const std::filesystem::path& filename)
 {
   std::cout << "Test OBJ; input = " << filename << " kernel = " << typeid(K).name() << std::endl;
 
@@ -396,7 +396,7 @@ void test_bgl_OBJ(const std::string filename)
   std::ifstream is(filename);
   bool ok = CGAL::IO::read_OBJ(is, fg, CGAL::parameters::verbose(true));
   assert(ok);
-  assert(filename != "data/sphere.obj" || (num_vertices(fg) == 272 && num_faces(fg) == 540));
+  assert(filename.string() != "data/sphere.obj" || (num_vertices(fg) == 272 && num_faces(fg) == 540));
 
   // write with OBJ
   {
@@ -465,7 +465,7 @@ void test_bgl_OBJ(const std::string filename)
 }
 
 template<class Mesh>
-void test_bgl_PLY(const std::string filename,
+void test_bgl_PLY(const std::filesystem::path& filename,
                   bool binary = false)
 {
   std::cout << "Test PLY; filename = " << filename << " Mesh = " << typeid(Mesh).name() << " binary = " << binary << std::endl;
@@ -475,7 +475,7 @@ void test_bgl_PLY(const std::string filename,
   bool ok = CGAL::IO::read_PLY(is, fg, CGAL::parameters::use_binary_mode(false));
   is.close();
   assert(ok);
-  assert(filename != CGAL::data_file_path("meshes/colored_tetra.ply").string() || (num_vertices(fg) == 4 && num_faces(fg) == 4));
+  assert(filename.string() != CGAL::data_file_path("meshes/colored_tetra.ply").string() || (num_vertices(fg) == 4 && num_faces(fg) == 4));
    if(!binary)
    {
      CGAL::clear(fg);
@@ -483,7 +483,7 @@ void test_bgl_PLY(const std::string filename,
      bool ok = CGAL::IO::read_PLY(is, fg, CGAL::parameters::use_binary_mode(false));
      is.close();
      assert(ok);
-     assert(filename != CGAL::data_file_path("meshes/colored_tetra.ply").string() || (num_vertices(fg) == 4 && num_faces(fg) == 4));
+     assert(filename.string() != CGAL::data_file_path("meshes/colored_tetra.ply").string() || (num_vertices(fg) == 4 && num_faces(fg) == 4));
    }
 
   // write with PLY
@@ -631,7 +631,7 @@ struct Custom_VPM
 };
 
 template<class Mesh>
-void test_bgl_STL(const std::string filename)
+void test_bgl_STL(const std::filesystem::path filename)
 {
   Mesh fg;
 
@@ -661,8 +661,8 @@ void test_bgl_STL(const std::string filename)
   CGAL::IO::set_mode(is, CGAL::IO::BINARY);
   ok = CGAL::IO::read_STL(is, fg, CGAL::parameters::vertex_point_map(cvpm));
   assert(ok);
-  assert(filename != CGAL::data_file_path("meshes/pig.stl").string() || (num_vertices(fg) == 8642 && num_faces(fg) == 16848));
-  assert(filename != CGAL::data_file_path("meshes/pig.stl").string() || cpoints.size() == 8642);
+  assert(filename.string() != CGAL::data_file_path("meshes/pig.stl").string() || (num_vertices(fg) == 8642 && num_faces(fg) == 16848));
+  assert(filename.string() != CGAL::data_file_path("meshes/pig.stl").string() || cpoints.size() == 8642);
 
   // write with STL
   {
@@ -702,7 +702,7 @@ void test_bgl_STL(const std::string filename)
 }
 
 template<class Mesh>
-void test_bgl_GOCAD(const char* filename)
+void test_bgl_GOCAD(const std::filesystem::path& filename)
 {
   Mesh fg;
   std::ifstream is(filename);
@@ -782,13 +782,13 @@ void test_bgl_GOCAD(const char* filename)
 #ifdef CGAL_USE_VTK
 
 template<typename Mesh, typename K>
-void test_bgl_VTP(const char* filename,
+void test_bgl_VTP(const std::filesystem::path& filename,
                   const bool binary = false)
 {
   Mesh fg;
   bool ok = CGAL::IO::read_VTP(filename, fg);
   assert(ok);
-  assert(std::string(filename) != "data/bones.vtp" ||
+  assert(filename.string() != "data/bones.vtp" ||
          (num_vertices(fg) == 2154 && num_faces(fg) == 4204));
 
   // write with VTP
@@ -955,7 +955,7 @@ int main(int argc, char** argv)
 #endif
 
   // GOCAD
-  const char* gocad_file = (argc > 5) ? argv[5] : "data/2016206_MHT_surface.ts";
+  const std::filesystem::path gocad_file = (argc > 5) ? argv[5] : "data/2016206_MHT_surface.ts";
   test_bgl_GOCAD<Polyhedron>(gocad_file);
   test_bgl_GOCAD<SM>(gocad_file);
  test_bgl_GOCAD<LCC>(gocad_file);
@@ -965,7 +965,7 @@ int main(int argc, char** argv)
 
   // VTP
 #ifdef CGAL_USE_VTK
-  const char* vtp_file = (argc > 6) ? argv[6] : "data/bones.vtp";
+  const std::filesystem::path vtp_file = (argc > 6) ? argv[6] : "data/bones.vtp";
 
   test_bgl_VTP<Polyhedron, Kernel>(vtp_file, false);
   test_bgl_VTP<SM, Kernel>(vtp_file, false);

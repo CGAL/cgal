@@ -109,7 +109,7 @@ bool alpha_wrap_polylines(const std::string& filename,
 }
 
 // Randomized test, similar to point version
-bool alpha_wrap_polylines(const std::string& filename)
+bool alpha_wrap_polylines(const std::filesystem::path& filename)
 {
   bool result = true;
 
@@ -164,7 +164,7 @@ int main(int argc, char** argv)
     {
       for(const auto& entry : std::filesystem::directory_iterator(arg1))
       {
-        const std::string fname = entry.path().string();
+        const auto fname = entry.path();
         std::cout << "\n== " << fname << " ==" << std::endl;
 
         bool local_result;

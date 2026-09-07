@@ -40,7 +40,7 @@ int main(int argc, char** argv)
     {
        std::string fname = std::filesystem::path(filename).filename().stem().string()+"-20-30-0.375.off";
 
-        std::ofstream out(fname.c_str());
+        std::ofstream out(fname);
         out.precision(17);
         out << output_mesh;
         std::cout << "Output written to " << fname << std::endl;

@@ -91,7 +91,7 @@ bool alpha_wrap_triangle_manifoldness(Polylines& input_polylines,
   return true;
 }
 
-bool alpha_wrap_triangle_manifoldness(const std::string& filename,
+bool alpha_wrap_triangle_manifoldness(const std::filesystem::path& filename,
                                       const double alpha_rel,
                                       const double offset_rel)
 {
@@ -156,7 +156,7 @@ int main(int argc, char** argv)
     {
       for(const auto& entry : std::filesystem::directory_iterator(arg1))
       {
-        const std::string fname = entry.path().string();
+        const auto fname = entry.path();
         std::cout << "\n== " << fname << " ==" << std::endl;
 
         bool local_result;
