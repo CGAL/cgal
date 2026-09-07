@@ -766,8 +766,8 @@ public:
         else if (m_color_map!=0 && (m_color_value==1 || m_color_value==2) && !vols.empty())
         {
           // Per cell: draw each volume with one flat value, so a whole cell takes
-          // one color and neighbouring cells do not melt into one. The value is the
-          // centre's distance to the plane, or the cell size.
+          // one color and neighboring cells do not melt into one. The value is the
+          // center's distance to the plane, or the cell size.
           rendering_program_face.setUniformValue("u_ColorPerCell", static_cast<GLint>(1));
           const std::vector<CGAL::Bbox_3> &bb=m_scene.get_volume_bboxes();
           const bool size_mode=(m_color_value==2);
