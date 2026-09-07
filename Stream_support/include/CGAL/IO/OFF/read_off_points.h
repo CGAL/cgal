@@ -160,7 +160,7 @@ bool read_OFF(std::istream& is,
 template <typename OutputIteratorValueType,
           typename PointOutputIterator,
           typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT>
-bool read_OFF(const std::string& fname,
+bool read_OFF(const std::filesystem::path& fname,
               PointOutputIterator output,
               const CGAL_NP_CLASS& np,
               std::enable_if_t<CGAL::is_iterator<PointOutputIterator>::value>*
