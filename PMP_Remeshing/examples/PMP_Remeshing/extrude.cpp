@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
 {
   Mesh in, out;
 
-  std::string filename = (argc > 1) ? std::filesystem::path(argv[1]) : CGAL::data_file_path("meshes/cube-ouvert.off");
+  std::filesystem::path filename = (argc > 1) ? std::filesystem::path(argv[1]) : CGAL::data_file_path("meshes/cube-ouvert.off");
   double vlen = (argc > 2) ? std::stod(argv[2]) : 0.1;
 
   CGAL::IO::read_polygon_mesh(filename, in);
