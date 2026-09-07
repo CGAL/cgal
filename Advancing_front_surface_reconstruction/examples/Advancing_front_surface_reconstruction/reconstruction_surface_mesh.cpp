@@ -53,7 +53,7 @@ struct Construct{
 
 int main(int argc, char* argv[])
 {
-  const std::string std::filesystem::path = (argc > 1) ?
+  const std::filesystem::path filename = (argc > 1) ?
     argv[1] :CGAL::data_file_path("points_3/half.xyz");
   const std::string stem = std::filesystem::path(filename).stem().string();
 

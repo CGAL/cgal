@@ -133,7 +133,7 @@ int main(int argc, char * argv[])
     double average_spacing_ratio = 5;
 
     // decode parameters
-    std::filesystem::path input_filename  = (argc > 1) ? argv[1] : CGAL::data_file_path("points_3/kitten.xyz");
+    std::string input_filename  = (argc > 1) ? argv[1] : CGAL::data_file_path("points_3/kitten.xyz").string();
     std::string output_filename = (argc > 2) ? argv[2] : "kitten_poisson-20-100-0.5.off";
     for (int i=3; i+1<argc ; ++i)
     {
@@ -165,7 +165,7 @@ int main(int argc, char * argv[])
 
     // If OFF file format
     std::cerr << "Open " << input_filename << " for reading..." << std::endl;
-    std::string extension = input_filename.substr(input_filename.string().find_last_of('.'));
+    std::string extension = input_filename.substr(input_filename.find_last_of('.'));
     if (extension == ".off" || extension == ".OFF")
     {
       // Reads the mesh file in a polyhedron

@@ -36,7 +36,7 @@ int main(int argc, char* argv[])
   std::cout.precision(17);
   std::cerr.precision(17);
 
-  std::filesystem::path filename = (argc > 1) ? std::string(argv[1])
+  std::filesystem::path filename = (argc > 1) ? argv[1]
                                               : CGAL::data_file_path("meshes/elephant.mesh");
 
   Triangulation tr;

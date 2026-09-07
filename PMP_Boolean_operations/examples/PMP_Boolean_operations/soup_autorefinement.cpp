@@ -17,8 +17,8 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main(int argc, char** argv)
 {
-  const std::filesystem::path filename = argc == 1 ? CGAL::data_file_path("meshes/elephant.off")
-                                         : std::string(argv[1]);
+  const std::filesystem::path filename =
+    argc == 1 ? CGAL::data_file_path("meshes/elephant.off") : argv[1];
 
   std::vector<Point> input_points;
   std::vector<boost::container::small_vector<std::size_t, 3>> input_triangles;

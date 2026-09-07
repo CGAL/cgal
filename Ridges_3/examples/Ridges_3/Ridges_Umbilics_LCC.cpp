@@ -195,7 +195,7 @@ int main()
    po::options_description desc("Allowed options");
     desc.add_options()
       ("help,h", "produce help message.")
-      ("input-file,f", po::value<std::filesystem::path>(&if_name)->default_value(CGAL::data_file_path("meshes/poly2x^2+y^2-0.062500.off")),
+      ("input-file,f", po::value<std::string>(&if_name)->default_value(CGAL::data_file_path("meshes/poly2x^2+y^2-0.062500.off").string()),
        "name of the input off file")
       ("degree-jet,d", po::value<unsigned int>(&d_fitting)->default_value(3),
        "degree of the jet,  3 <= degre-jet <= 4")
