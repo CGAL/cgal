@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.12...3.31)
 project(Stream_support_Examples)
 
+
+
 find_package(CGAL REQUIRED)
 
 create_single_source_cgal_program( "Point_WKT.cpp" )
@@ -23,4 +25,9 @@ create_single_source_cgal_program( "indenting_ostream.cpp" )
 create_single_source_cgal_program( "color_ostream.cpp" )
 create_single_source_cgal_program( "polygon_mesh_io.cpp" )
 create_single_source_cgal_program( "read_UTF-8.cpp" )
+
+# This option is needed because the file contains UTF-8 characters in string literals.
+if(MSVC)
+  target_compile_options(read_UTF-8 PRIVATE /utf-8)
+endif()
 

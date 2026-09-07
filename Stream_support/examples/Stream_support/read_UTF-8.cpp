@@ -12,15 +12,15 @@ typedef CGAL::Surface_mesh<Point>                           Mesh;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
+// On Windows use wmain() if you want to pass UTF-8 characters in string literals to the program.
+// You must also compile with option /utf-8.
 #ifdef _WIN32
 int wmain(int argc, wchar_t* argv[])
 #else
 int main(int argc, char* argv[])
 #endif
 {
-  std::filesystem::path data = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/测试模型.off");
-
-    std::cout << data << std::endl;
+  std::filesystem::path data = (argc > 1) ? argv[1] : CGAL::data_file_path(L"meshes/测试模型.off");
   Mesh mesh;
   PMP::IO::read_polygon_mesh(data, mesh);
 
