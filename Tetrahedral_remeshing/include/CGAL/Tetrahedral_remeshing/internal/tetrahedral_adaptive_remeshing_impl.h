@@ -68,6 +68,20 @@ struct Remeshing_steps
   std::size_t nb_flip_smooth_iterations = 3;
 };
 
+template<typename NamedParameters>
+Remeshing_steps get_remeshing_steps(const NamedParameters& np)
+{
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  return Remeshing_steps{
+    choose_parameter(get_parameter(np, internal_np::do_split), true),
+    choose_parameter(get_parameter(np, internal_np::do_collapse), true),
+    choose_parameter(get_parameter(np, internal_np::do_flip), true),
+    static_cast<std::size_t>(choose_parameter(get_parameter(np, internal_np::nb_smoothing_iterations), 1)),
+    static_cast<std::size_t>(choose_parameter(get_parameter(np, internal_np::nb_flip_smooth_iterations), 3))};
+}
+
 template<typename Triangulation
          , typename SizingFunction
          , typename VertexIsConstrainedMap
