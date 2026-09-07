@@ -111,7 +111,7 @@ CGAL_Lab_off_plugin::load_off(QFileInfo fileinfo) {
   // Open file
   std::ifstream in(fileinfo.filesystemPath());
   if(!in) {
-    std::cerr << "Error! Cannot open file " << (const char*)fileinfo.filesystemPath() << std::endl;
+    std::cerr << "Error! Cannot open file " << fileinfo.filesystemPath() << std::endl;
     return nullptr;
   }
 
@@ -155,10 +155,14 @@ CGAL_Lab_off_plugin::load_off(QFileInfo fileinfo) {
     soup_item->setName(fileinfo.completeBaseName());
     std::ifstream in2(fileinfo.filesystemPath());
     if(!soup_item->load(in2)) {
+      QString filename;
+      filename.fromStdWString(fileinfo.filesystemPath().wstring());
+      QString msg = QString("Cannot open file: ");
+      msg.append(filename);
       QMessageBox::warning(
             CGAL::Three::Three::mainWindow(),
             "Cannot Open File",
-            QString("Cannot open file %1").arg((const char*)fileinfo.filesystemPath()));
+            msg);
       delete soup_item;
       return nullptr;
     }
