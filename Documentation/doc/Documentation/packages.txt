@@ -126,6 +126,7 @@
 \package_listing{Surface_mesh_shortest_path}
 \package_listing{Surface_mesh_skeletonization}
 \package_listing{Surface_mesh_approximation}
+\package_listing{Vector_graphics_on_surfaces}
 \package_listing{Heat_method_3}
 \package_listing{Surface_mesh_topology}
 
