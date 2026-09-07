@@ -18,6 +18,9 @@
 #include <QtPlugin>
 #include <QMessageBox>
 
+#include <CGAL/Mesh_smoothing_3/boundary_aware_mesh_smoothing.h>
+#include <CGAL/Mesh_smoothing_3/projectors.h>
+
 using namespace CGAL::Three;
 class CGAL_Lab_mesh_smoothing_3_plugin :
   public QObject,
@@ -58,17 +61,23 @@ public Q_SLOTS:
 
     Scene_c3t3_item* c3t3_item =
       qobject_cast<Scene_c3t3_item*>(scene->item(index));
-    const auto& c3t3 = c3t3_item->c3t3();
 
     if (c3t3_item)
     {
+      auto& c3t3 = c3t3_item->c3t3();
+
       // wait cursor
       QApplication::setOverrideCursor(Qt::WaitCursor);
 
       QElapsedTimer time;
       time.start();
 
-      //todo : add smoothing code here
+      auto result = CGAL::boundary_aware_mesh_smoothing(
+        c3t3,
+        CGAL::Mesh_smoothing_3::C3t3_mesh_projector(c3t3),
+        CGAL::parameters::verbose(true).number_of_iterations(100)
+      );
+
 
       std::cout << "Smoothing done (" << time.elapsed() << " ms)" << std::endl;
 
