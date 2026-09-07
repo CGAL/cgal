@@ -1004,15 +1004,10 @@ void import_polyline(
     put(pm1_to_output_edges, edge(prev1, pm1), edge(prev_out, output));
     put(pm2_to_output_edges, edge(prev2, pm2), edge(prev_out, output));
   }
-  CGAL_assertion( pm1_to_output_edges.size() == pm2_to_output_edges.size() );
-  CGAL_assertion( pm1_to_output_vertices.size() == pm2_to_output_vertices.size() );
 }
 
-template <class TriangleMesh, class EdgeMap, bool reverse_patch_orientation>
-struct Triangle_mesh_extension_helper;
-
-template <class TriangleMesh, class EdgeMap>
-struct Triangle_mesh_extension_helper<TriangleMesh, EdgeMap, true>
+template <class TriangleMesh, class EdgeMap, class VertexMap, bool reverse_patch_orientation>
+struct Triangle_mesh_extension_helper
 {
   typedef boost::graph_traits<TriangleMesh> GT;
   typedef typename GT::halfedge_descriptor halfedge_descriptor;
@@ -1020,13 +1015,16 @@ struct Triangle_mesh_extension_helper<TriangleMesh, EdgeMap, true>
   typedef typename GT::face_descriptor face_descriptor;
 
   EdgeMap& tm_to_output_edges;
+  VertexMap& tm_to_output_vertices;
   const TriangleMesh& tm;
   TriangleMesh& output;
 
   Triangle_mesh_extension_helper(EdgeMap& tm_to_output_edges,
+                                 VertexMap& tm_to_output_vertices,
                                  const TriangleMesh& tm,
                                  TriangleMesh& output)
     : tm_to_output_edges(tm_to_output_edges)
+    , tm_to_output_vertices(tm_to_output_vertices)
     , tm(tm)
     , output(output)
   {}
@@ -1035,62 +1033,31 @@ struct Triangle_mesh_extension_helper<TriangleMesh, EdgeMap, true>
   {
     edge_descriptor key = edge(h_tm, tm);
     edge_descriptor value = get(tm_to_output_edges, key);
-    CGAL_assertion( value != GT::null_halfedge() );
-    return halfedge(key, tm) != h_tm
-           ? halfedge(value, output)
-           : opposite(halfedge(value, output), output);
+    CGAL_assertion( value != edge(GT::null_halfedge(), tm) );
+    if constexpr(reverse_patch_orientation)
+      return target(halfedge(value, output), output) == get(tm_to_output_vertices, target(h_tm, tm))
+            ? opposite(halfedge(value, output), output)
+            : halfedge(value, output);
+    else
+      return target(halfedge(value, output), output) == get(tm_to_output_vertices, target(h_tm, tm))
+            ? halfedge(value, output)
+            : opposite(halfedge(value, output), output);
   }
 
   std::array<halfedge_descriptor,3>
   halfedges(face_descriptor f)
   {
      halfedge_descriptor h=halfedge(f,tm);
-     return make_array( get_hedge( h ),
-                        get_hedge( prev(h,tm) ),
-                        get_hedge( next(h,tm) ) );
+     if constexpr(reverse_patch_orientation)
+      return make_array( get_hedge( h ),
+                         get_hedge( prev(h,tm) ),
+                         get_hedge( next(h,tm) ) );
+    else
+      return make_array( get_hedge( h ),
+                         get_hedge( next(h,tm) ),
+                         get_hedge( prev(h,tm) ) );
   }
 };
-
-template <class TriangleMesh, class EdgeMap>
-struct Triangle_mesh_extension_helper<TriangleMesh, EdgeMap, false>
-{
-  typedef boost::graph_traits<TriangleMesh> GT;
-  typedef typename GT::halfedge_descriptor halfedge_descriptor;
-  typedef typename GT::edge_descriptor edge_descriptor;
-  typedef typename GT::face_descriptor face_descriptor;
-
-  EdgeMap& tm_to_output_edges;
-  const TriangleMesh& tm;
-  TriangleMesh& output;
-
-  Triangle_mesh_extension_helper(EdgeMap& tm_to_output_edges,
-                                 const TriangleMesh& tm,
-                                 TriangleMesh& output)
-    : tm_to_output_edges(tm_to_output_edges)
-    , tm(tm)
-    , output(output)
-  {}
-
-  halfedge_descriptor get_hedge(halfedge_descriptor h_tm)
-  {
-    edge_descriptor key = edge(h_tm, tm);
-    edge_descriptor value = get(tm_to_output_edges, key);
-    CGAL_assertion( value != GT::null_halfedge() );
-    return halfedge(key, tm) != h_tm
-           ? halfedge(value, output)
-           : opposite(halfedge(value, output), output);
-  }
-
-  std::array<halfedge_descriptor,3>
-  halfedges(face_descriptor f)
-  {
-     halfedge_descriptor h=halfedge(f,tm);
-     return make_array( get_hedge( h ),
-                        get_hedge( next(h,tm) ),
-                        get_hedge( prev(h,tm) ) );
-  }
-};
-
 
 template < bool reverse_patch_orientation,
            class TriangleMesh,
@@ -1121,7 +1088,7 @@ void append_patches_to_triangle_mesh(
   typedef typename GT::face_descriptor face_descriptor;
 
   const TriangleMesh& tm = patches.pm;
-  Triangle_mesh_extension_helper<TriangleMesh, EdgetoEdgeMap, reverse_patch_orientation> helper(tm_to_output_edges, tm, output);
+  Triangle_mesh_extension_helper<TriangleMesh, EdgetoEdgeMap, VertextoVertexMap, reverse_patch_orientation> helper(tm_to_output_edges, tm_to_output_vertices, tm, output);
 
   std::vector<std::size_t> ids_of_patches_to_append;
   ids_of_patches_to_append.reserve(patches_to_append.count());
@@ -1591,7 +1558,6 @@ void disconnect_patches(
       auto e = get(tm1_edge_to_tm2_edge, edge(patch.shared_edges[k], tm1));
       auto src = get(tm1_vertex_to_tm2_vertex, source(patch.shared_edges[k], tm1));
       auto tgt = get(tm1_vertex_to_tm2_vertex, target(patch.shared_edges[k], tm1));
-      CGAL_assertion( e != edge(GT::null_halfedge(), tm2) );
       CGAL_assertion( src != GT::null_vertex() );
       CGAL_assertion( tgt != GT::null_vertex() );
 

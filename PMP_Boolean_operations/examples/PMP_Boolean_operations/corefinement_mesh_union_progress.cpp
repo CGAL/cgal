@@ -5,6 +5,8 @@
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 #include <CGAL/Real_timer.h>
 
+#include <CGAL/Surface_mesh/internal/boolean_operations_utils.h>
+
 #include <fstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
