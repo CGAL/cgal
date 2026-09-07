@@ -113,8 +113,8 @@ void test_verbose_has_no_impact()
   auto quiet = load_example_mesh();
   auto verbose = quiet;
 
-  auto quiet_status = run_example_smoothing(quiet, false);
-  auto verbose_status = run_example_smoothing(verbose, true);
+  auto quiet_status = run_example_smoothing<C3t3, CGAL::Sequential_tag>(quiet, false);
+  auto verbose_status = run_example_smoothing<C3t3, CGAL::Sequential_tag>(verbose, true);
 
   assert_structure_counts_preserved(quiet, verbose);
   assert(quiet_status.return_code == verbose_status.return_code);
