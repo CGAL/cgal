@@ -44,7 +44,7 @@ public:
   {
     CGAL_precondition(Kernel_wrapper::has_normalized_plane(plane));
 
-    CGAL_SS3_TRAITS_TRACE("Plane offset from: " << *plane);
+    CGAL_SS3_TRAITS_TRACE("Plane offset from: " << plane);
     const FT& a = plane.a();
     const FT& b = plane.b();
     const FT& c = plane.c();
