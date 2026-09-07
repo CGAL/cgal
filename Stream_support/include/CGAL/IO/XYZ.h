@@ -120,7 +120,7 @@ bool read_XYZ(std::istream& is,
 template <typename OutputIteratorValueType,
           typename OutputIterator,
            typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool read_XYZ(const std::string& fname,
+bool read_XYZ(const std::filesystem::path& fname,
               OutputIterator output,
               const CGAL_NP_CLASS& np = parameters::default_values());
 

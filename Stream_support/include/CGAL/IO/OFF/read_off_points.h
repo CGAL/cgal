@@ -182,7 +182,7 @@ bool read_OFF(std::istream& is, OutputIterator output, const CGAL_NP_CLASS& np =
 }
 
 template <typename OutputIterator,typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool read_OFF(const std::string& fname, OutputIterator output, const CGAL_NP_CLASS& np = parameters::default_values(),
+bool read_OFF(const std::filesystem::path& fname, OutputIterator output, const CGAL_NP_CLASS& np = parameters::default_values(),
               std::enable_if_t<CGAL::is_iterator<OutputIterator>::value>* = nullptr)
 {
   std::ifstream is(fname);

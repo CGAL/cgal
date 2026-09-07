@@ -33,7 +33,7 @@ namespace IO {
 
 namespace internal {
 template <typename Graph, typename VPM, typename VFeaturePM, typename EFeaturePM>
-bool read_OM(const std::string& fname, Graph& g, VPM vpm, VFeaturePM vfpm, EFeaturePM efpm)
+bool read_OM(const std::filesystem::path& fname, Graph& g, VPM vpm, VFeaturePM vfpm, EFeaturePM efpm)
 {
   typedef OpenMesh::PolyMesh_ArrayKernelT<OpenMesh::DefaultTraitsDouble> OMesh;
   typedef typename boost::graph_traits<OMesh>::vertex_descriptor om_vertex_descriptor;
@@ -74,7 +74,7 @@ bool read_OM(const std::string& fname, Graph& g, VPM vpm, VFeaturePM vfpm, EFeat
 }
 
 template <typename Graph, typename VPM, typename VFeaturePM, typename EFeaturePM>
-bool write_OM(std::string fname, const Graph& g, VPM vpm, VFeaturePM vfpm, EFeaturePM efpm,
+bool write_OM(const std::filesystem::path& fname, const Graph& g, VPM vpm, VFeaturePM vfpm, EFeaturePM efpm,
               const std::streamsize precision)
 {
   typedef OpenMesh::PolyMesh_ArrayKernelT<OpenMesh::DefaultTraitsDouble> OMesh;
@@ -115,7 +115,7 @@ bool write_OM(std::string fname, const Graph& g, VPM vpm, VFeaturePM vfpm, EFeat
     adjust_border_halfedge(v, omesh);
   }
 
-  return OpenMesh::IO::write_mesh(omesh, fname, OpenMesh::IO::Options::Status, precision);
+  return OpenMesh::IO::write_mesh(omesh, fname.string(), OpenMesh::IO::Options::Status, precision);
 }
 } // end of internal namespace
 
@@ -163,7 +163,7 @@ bool write_OM(std::string fname, const Graph& g, VPM vpm, VFeaturePM vfpm, EFeat
   \returns `true` if reading was successful and the resulting mesh is valid, `false` otherwise.
 */
 template <typename Graph, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool read_OM(const std::string& fname,
+bool read_OM(const std::filesystem::path& fname,
              Graph& g,
              const CGAL_NP_CLASS& np = parameters::default_values())
 {
@@ -178,7 +178,7 @@ bool read_OM(const std::string& fname,
   auto efpm = choose_parameter<Default_efmap>(get_parameter(np, internal_np::edge_is_constrained));
   auto vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                               get_property_map(vertex_point, g));
-  return internal::read_OM(fname, g, vpm, vfpm, efpm);
+  return internal::read_OM(fname.string(), g, vpm, vfpm, efpm);
 }
 
 
@@ -225,7 +225,7 @@ bool read_OM(const std::string& fname,
   \returns `true` if writing was successful, `false` otherwise.
 */
 template <typename Graph, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool write_OM(const std::string& fname,
+bool write_OM(const std::filesystem::path& fname,
               const Graph& g,
               const CGAL_NP_CLASS& np = parameters::default_values())
 {
