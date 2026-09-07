@@ -38,7 +38,7 @@ struct Mesh_permutation
 };
 
 // gpt/copilot produced
-Mesh_permutation hilbert_sort_mesh(
+inline Mesh_permutation hilbert_sort_mesh(
     std::vector<double>& points,
     std::vector<std::array<unsigned, 4>>& tets)
 {
