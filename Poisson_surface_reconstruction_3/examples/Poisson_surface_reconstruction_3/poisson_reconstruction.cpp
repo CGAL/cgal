@@ -165,11 +165,11 @@ int main(int argc, char * argv[])
 
     // If OFF file format
     std::cerr << "Open " << input_filename << " for reading..." << std::endl;
-    std::string extension = input_filename.substr(input_filename.find_last_of('.'));
+    std::string extension = input_filename.substr(input_filename.string().find_last_of('.'));
     if (extension == ".off" || extension == ".OFF")
     {
       // Reads the mesh file in a polyhedron
-      std::ifstream stream(input_filename.c_str());
+      std::ifstream stream(input_filename);
       Polyhedron input_mesh;
       CGAL::scan_OFF(stream, input_mesh, true /* verbose */);
       if(!stream || !input_mesh.is_valid() || input_mesh.empty())
@@ -194,7 +194,7 @@ int main(int argc, char * argv[])
       // Reads the point set file in points[].
       // Note: read_points() requires an iterator over points
       // + property maps to access each point's position and normal.
-      if (!CGAL::IO::read_points(input_filename.c_str(), std::back_inserter(points),
+      if (!CGAL::IO::read_points(input_filename, std::back_inserter(points),
                                   CGAL::parameters::point_map(CGAL::make_first_of_pair_property_map(Point_with_normal()))
                                                     .normal_map(CGAL::make_second_of_pair_property_map(Point_with_normal()))))
       {

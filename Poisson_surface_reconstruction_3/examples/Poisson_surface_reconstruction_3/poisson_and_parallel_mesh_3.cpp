@@ -151,8 +151,8 @@ void poisson_reconstruction(const PointSet& points, const char* output)
 
 int main(int argc, char* argv[])
 {
-  const std::filesystem::path file = (argc > 1) ? std::string(argv[1])
-                                      : CGAL::data_file_path("points_3/kitten.xyz");
+  const std::filesystem::path file = (argc > 1) ? argv[1]
+                                                : CGAL::data_file_path("points_3/kitten.xyz");
 
   // Reads the point set file in points[].
   // Note: read_points() requires an iterator over points

@@ -605,7 +605,7 @@ inline std::filesystem::path data_file_path(const std::filesystem::path& filenam
   // Test if the file exists, write a warning otherwise
   if (! std::filesystem::exists(res) )
   {
-    std::cerr<<"[WARNING] file " << res.u8string() << " does not exist or cannot be read\n "
+    std::cerr<<"[WARNING] file " << res.string() << " does not exist or cannot be read\n "
              <<"(CGAL_DATA_DIR='" << cgal_dir.value() <<"')."<<std::endl;
   }
 

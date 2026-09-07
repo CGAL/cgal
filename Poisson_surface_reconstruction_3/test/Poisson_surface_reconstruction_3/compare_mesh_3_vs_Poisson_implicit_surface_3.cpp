@@ -143,7 +143,7 @@ int main(int argc, char * argv[])
     double frac = 1.;
 
     // decode parameters
-    std::filesystem::path input_filename  = (argc > 1) ? argv[1] : CGAL::data_file_path("points_3/kitten.xyz");
+    std::string input_filename  = (argc > 1) ? argv[1] : CGAL::data_file_path("points_3/kitten.xyz").string();
     std::string output_filename = (argc > 2) ? argv[2] : "kitten_poisson-20-100-0.5.off";
     for (int i=3; i+1<argc ; ++i)
     {

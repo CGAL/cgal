@@ -715,7 +715,7 @@ int main()
   input_files.push_back("elephant_quad_hole.off");
   input_files.push_back(CGAL::data_file_path("meshes/mech-holes-shark.off"));
   // std::cerr.precision(15);
-  for(std::vector<std::string>::iterator it = input_files.begin(); it != input_files.end(); ++it) {
+  for(auto it = input_files.begin(); it != input_files.end(); ++it) {
     test_triangulate_hole(it->c_str(), true);
     test_triangulate_hole(it->c_str(), false);
     test_triangulate_and_refine_hole(it->c_str(), true);

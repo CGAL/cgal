@@ -182,7 +182,7 @@ std::vector<T> t_data()
     vs.push_back(T());
     T& s = vs.back();
     if(!read_a_mesh(s, data[i]))
-      throw std::runtime_error(std::string("Failed to read test data: ") + data[i]);
+      throw std::runtime_error(std::string("Failed to read test data: ") + data[i].string());
   }
 
   return vs;

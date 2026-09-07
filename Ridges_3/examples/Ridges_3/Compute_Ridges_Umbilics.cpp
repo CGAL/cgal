@@ -181,7 +181,8 @@ int main(int argc, char *argv[])
 int main()
 #endif
 {
-  std::filesystem::path if_name, of_name;// of_name same as if_name with '/' -> '_'
+  std::filesystem::path if_name;
+  std::string of_name;// of_name same as if_name with '/' -> '_'
 
   try {
 #if defined(CGAL_USE_BOOST_PROGRAM_OPTIONS) && ! defined(DONT_USE_BOOST_PROGRAM_OPTIONS)
@@ -249,7 +250,7 @@ int main()
 
   //prepare output file names
   assert(!if_name.empty());
-  of_name = if_name;
+  of_name = if_name.string();
   for(unsigned int i=0; i<of_name.size(); i++)
     if (of_name[i] == '/') of_name[i]='_';
   std::ostringstream str_4ogl;

@@ -22,8 +22,8 @@ int main(int argc, char* argv[])
   std::cout << "Random seed = "
     << CGAL::get_default_random().get_seed() << std::endl;
 
-  std::filesystem::path filename = (argc > 1) ? std::string(argv[1])
-    : CGAL::data_file_path("meshes/anchor_dense.off");
+  std::filesystem::path filename
+    = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/anchor_dense.off");
 
   Mesh mesh;
   if (!PMP::IO::read_polygon_mesh(filename, mesh) || !CGAL::is_triangle_mesh(mesh))
