@@ -2901,7 +2901,6 @@ void print_surface_mesh(const Surface_mesh<P>& mesh,
   typedef Surface_mesh<P> Mesh;
   typedef typename Mesh::Vertex_index Vertex_index;
   typedef typename Mesh::Halfedge_index Halfedge_index;
-  typedef typename Mesh::Edge_index Edge_index;
   typedef typename Mesh::Face_index Face_index;
 
   out << "Points:\n";

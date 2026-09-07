@@ -21,9 +21,6 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace Corefinement {
 
-template<class Point>
-struct is_surface_mesh<Surface_mesh<Point>> : std::true_type {};
-
 // Specialization of the function for Surface_mesh to exploit vectors structure of Surface_mesh.
 template < bool reverse_patch_orientation,
            class Point,
@@ -157,7 +154,7 @@ void append_patch(
 
     for (int i=0;i<3;++i)
     {
-      CGAL_assertion(hedges[i] != null_halfedge());
+      CGAL_assertion(hedges[i] != tm.null_halfedge());
       if(reverse_patch_orientation)
         output.set_next(hedges[i], hedges[(i+2)%3]);
       else
@@ -215,10 +212,14 @@ void append_patches_to_triangle_mesh(
     tnf += patches[i].faces.size();
   }
   output.resize(vertices_idx_begin, edges_idx_begin, faces_idx_begin);
+
+  std::vector<std::size_t> ids_of_patches_to_append;
+  ids_of_patches_to_append.reserve(patches_to_append.count());
   for (std::size_t i= patches_to_append.find_first();
                    i < patches_to_append.npos;
                    i = patches_to_append.find_next(i))
   {
+    ids_of_patches_to_append.push_back(i);
     Patch_description<SM>& patch=patches[i];
     append_patch<reverse_patch_orientation>(tm, output, patch,
                                             vpm_out, vpm_tm,
@@ -231,7 +232,11 @@ void append_patches_to_triangle_mesh(
     faces_idx_begin += patch.faces.size();
   }
 
-  // TODO post process borders
+  process_borders_after_appending_patches<reverse_patch_orientation>(output,
+                                                                     ids_of_patches_to_append,
+                                                                     patches,
+                                                                     tm_to_output_edges,
+                                                                     tm_to_output_vertices);
 }
 
 // Specialization of fill_new_triangle_mesh for Surface_mesh to exploit vectors structure of Surface_mesh.
@@ -364,7 +369,11 @@ void fill_new_triangle_mesh(
     nf += patches_of_tm1[i].faces.size();
   }
 
-  // TODO post process borders of patches from tm1
+  process_borders_after_appending_patches<reverse_orientation_of_patches_from_tm1>(output,
+                                                                                   ids_of_patches_to_append_from_tm1,
+                                                                                   patches_of_tm1,
+                                                                                   tm1_to_output_edges,
+                                                                                   tm1_to_output_vertices);
 
   for(std::size_t i : ids_of_patches_to_append_from_tm2){
     if(reverse_orientation_of_patches_from_tm2)
@@ -392,7 +401,11 @@ void fill_new_triangle_mesh(
     nf += patches_of_tm2[i].faces.size();
   }
 
-  // TODO post process borders of patches from tm2
+  process_borders_after_appending_patches<reverse_orientation_of_patches_from_tm2>(output,
+                                                                                   ids_of_patches_to_append_from_tm2,
+                                                                                   patches_of_tm2,
+                                                                                   tm2_to_output_edges,
+                                                                                   tm2_to_output_vertices);
 }
 
 } // namespace Corefinement

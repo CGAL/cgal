@@ -326,8 +326,7 @@ class Intersection_of_triangle_meshes
       tbb::concurrent_vector<std::pair<face_descriptor, face_descriptor>> inter;
       CGAL::AABB_trees::all_pairs_of_intersecting_primitives(tree1, tree2, std::back_inserter(inter), parameters::concurrency_tag(ConcurrencyTag()));
 
-      // tbb::parallel_for(std::size_t(0), inter.size(), [&](std::size_t i){
-      for(std::size_t i=0; i<inter.size(); ++i){
+      tbb::parallel_for(std::size_t(0), inter.size(), [&](std::size_t i){
         const auto& [f_1, f_2] = inter[i];
 
         halfedge_descriptor hf1_0 = halfedge(f_1, tm1);
@@ -351,8 +350,7 @@ class Intersection_of_triangle_meshes
           callback21(hf2_0, hf1_1);
         if (is_border(hf1_2, tm1) || hf1_2 < opposite(hf1_2, tm1))
           callback21(hf2_0, hf1_2);
-      // });
-      }
+      });
     }
     else
 #endif
