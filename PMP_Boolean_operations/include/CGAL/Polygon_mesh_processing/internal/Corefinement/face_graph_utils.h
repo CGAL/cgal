@@ -1087,6 +1087,9 @@ void append_patches_to_triangle_mesh(
   typedef typename GT::vertex_descriptor vertex_descriptor;
   typedef typename GT::face_descriptor face_descriptor;
 
+  CGAL::Real_timer t;
+  t.start();
+
   const TriangleMesh& tm = patches.pm;
   Triangle_mesh_extension_helper<TriangleMesh, EdgetoEdgeMap, VertextoVertexMap, reverse_patch_orientation> helper(tm_to_output_edges, tm_to_output_vertices, tm, output);
 
