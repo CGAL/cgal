@@ -93,7 +93,7 @@ bool write_XYZ(std::ostream& os,
 
 // documented in ../XYZ.h
 template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT>
-bool write_XYZ(const std::string& filename,
+bool write_XYZ(const std::filesystem::path& filename,
                const PointRange& points,
                const CGAL_NP_CLASS& np,
                std::enable_if_t<internal::is_Range<PointRange>::value>*

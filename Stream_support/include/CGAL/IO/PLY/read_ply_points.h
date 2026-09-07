@@ -130,7 +130,7 @@ bool read_PLY(std::istream& is,
 template <typename OutputIteratorValueType,
           typename PointOutputIterator,
           typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT>
-bool read_PLY(const std::string& fname,
+bool read_PLY(const std::filesystem::path& fname,
               PointOutputIterator output,
               const CGAL_NP_CLASS& np,
               std::enable_if_t<CGAL::is_iterator<PointOutputIterator>::value>*
@@ -162,7 +162,7 @@ bool read_PLY(std::istream& is, OutputIterator output, const CGAL_NP_CLASS& np =
 }
 
 template <typename OutputIterator,typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool read_PLY(const std::string& fname, OutputIterator output, const CGAL_NP_CLASS& np = parameters::default_values(),
+bool read_PLY(const std::filesystem::path& fname, OutputIterator output, const CGAL_NP_CLASS& np = parameters::default_values(),
               std::enable_if_t<CGAL::is_iterator<OutputIterator>::value>* = nullptr)
 {
   return read_PLY<typename value_type_traits<OutputIterator>::type>(fname, output, np);
