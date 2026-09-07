@@ -1297,7 +1297,7 @@ bool autorefine_triangle_soup(PointRange& soup_points,
   };
 
 #ifdef CGAL_LINKED_WITH_TBB
-  if (parallel_execution)
+  if constexpr (parallel_execution)
   {
     tbb::parallel_for(tbb::blocked_range<size_t>(0, triangles.size()),
                       [&](const tbb::blocked_range<size_t>& r) {
