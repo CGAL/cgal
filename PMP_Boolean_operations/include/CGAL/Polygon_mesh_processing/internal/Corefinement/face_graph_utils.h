@@ -30,9 +30,6 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace Corefinement {
 
-template<class T>
-struct is_surface_mesh : std::false_type {};
-
 enum Boolean_operation_type {UNION = 0, INTERSECTION,
                              TM1_MINUS_TM2, TM2_MINUS_TM1, NONE };
 
@@ -1087,9 +1084,6 @@ void append_patches_to_triangle_mesh(
   typedef typename GT::vertex_descriptor vertex_descriptor;
   typedef typename GT::face_descriptor face_descriptor;
 
-  CGAL::Real_timer t;
-  t.start();
-
   const TriangleMesh& tm = patches.pm;
   Triangle_mesh_extension_helper<TriangleMesh, EdgetoEdgeMap, VertextoVertexMap, reverse_patch_orientation> helper(tm_to_output_edges, tm_to_output_vertices, tm, output);
 
@@ -1336,7 +1330,7 @@ void fill_new_triangle_mesh(
   using V2V_tag = typename CGAL::dynamic_vertex_property_t<vertex_descriptor>;
   using Vertex_to_vertex_map = typename boost::property_map<TriangleMesh, V2V_tag>::const_type;
 
-  using E2E_tag = typename CGAL::dynamic_edge_property_t<SM_Edge_index>;
+  using E2E_tag = typename CGAL::dynamic_edge_property_t<edge_descriptor>;
   using Edge_to_edge_map = typename boost::property_map<TriangleMesh, E2E_tag>::const_type;
 
   const TriangleMesh& tm1 = patches_of_tm1.pm;

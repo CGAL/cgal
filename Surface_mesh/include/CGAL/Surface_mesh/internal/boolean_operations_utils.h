@@ -267,7 +267,6 @@ void fill_new_triangle_mesh(
   std::vector< typename Surface_mesh<Point>::Edge_index >& output_shared_edges,
   UserVisitor& user_visitor)
 {
-  std::cout << "Specific"<< std::endl << std::endl;
   using SM = Surface_mesh<Point>;
   using vertex_descriptor = typename SM::Vertex_index;
   using edge_descriptor = typename SM::Edge_index;
