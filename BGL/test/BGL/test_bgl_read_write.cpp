@@ -906,7 +906,7 @@ int main(int argc, char** argv)
 {
   // OFF
 
-  const std::string off_file = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/prim.off");
+  const std::filesystem::path off_file = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/prim.off");
 
   test_bgl_OFF<Polyhedron, Kernel>(off_file);
   Polyhedron fg;
@@ -937,16 +937,16 @@ int main(int argc, char** argv)
 #endif
 
   // PLY
-  const std::string ply_file_ascii = (argc > 3) ? argv[3] : CGAL::data_file_path("meshes/colored_tetra.ply");
+  const std::filesystem::path ply_file_ascii = (argc > 3) ? argv[3] : CGAL::data_file_path("meshes/colored_tetra.ply");
   test_bgl_PLY<Polyhedron>(ply_file_ascii, false);
   test_bgl_PLY<SM>(ply_file_ascii, false);
 
-  const std::string ply_file = (argc > 3) ? argv[3] : CGAL::data_file_path("meshes/colored_tetra.ply");
+  const std::filesystem::path ply_file = (argc > 3) ? argv[3] : CGAL::data_file_path("meshes/colored_tetra.ply");
   test_bgl_PLY<Polyhedron>(ply_file, true);
   test_bgl_PLY<SM>(ply_file, true);
 
   // STL
-  const std::string stl_file = (argc > 4) ? argv[4] : CGAL::data_file_path("meshes/pig.stl");
+  const std::filesystem::path stl_file = (argc > 4) ? argv[4] : CGAL::data_file_path("meshes/pig.stl");
   test_bgl_STL<Polyhedron>(stl_file);
   test_bgl_STL<SM>(stl_file);
   test_bgl_STL<LCC>(stl_file);

@@ -166,7 +166,7 @@ void test_parameters_on_pig(std::string filename)
 
 int main(int argc, char** argv)
 {
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/pig.off");
+  const std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/pig.off");
   double eps = (argc > 2) ? atof(argv[2]) : 0.01;
 
   general_test(filename);

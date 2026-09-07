@@ -212,7 +212,7 @@ void keep_nothing(const std::string argv1)
 
 int main(int argc, char* argv[])
 {
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/blobby_3cc.off");
+  const std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/blobby_3cc.off");
   const bool save_output = (argc > 2);
 
   mesh_with_id(filename, save_output);

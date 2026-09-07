@@ -24,7 +24,7 @@ int main(int argc, char** argv )
 {
   OMesh omesh;
 
-  const std::string filename = (argc>1)?argv[1]:CGAL::data_file_path("meshes/cube-subdivided.off");
+  const std::filesystem::path filename = (argc>1)?argv[1]:CGAL::data_file_path("meshes/cube-subdivided.off");
 
   if (!CGAL::IO::read_polygon_mesh(filename, omesh))
   {

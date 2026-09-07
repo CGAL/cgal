@@ -126,7 +126,7 @@ void run_dual_contouring(const Grid& grid,
 
 int main(int argc, char** argv)
 {
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cross.off");
+  const std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cross.off");
   const FT offset_value = (argc > 2) ? std::stod(argv[2]) : 0.2;
 
   if(offset_value < 0)

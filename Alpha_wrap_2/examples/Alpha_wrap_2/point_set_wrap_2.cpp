@@ -29,7 +29,7 @@ int main(int argc, char** argv)
   std::cout.precision(17);
   std::cerr.precision(17);
 
-  const std::string filename = argc > 1 ? argv[1] : CGAL::data_file_path("points_3/circles.ply");
+  const std::filesystem::path filename = argc > 1 ? argv[1] : CGAL::data_file_path("points_3/circles.ply");
 
   // This code reads a _3D_ point file
   Point_set_3 point_set_3;

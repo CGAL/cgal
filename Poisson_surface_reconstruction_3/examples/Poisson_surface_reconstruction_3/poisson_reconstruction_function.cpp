@@ -18,7 +18,7 @@ typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 int main(int argc, char** argv)
 {
   std::vector<Pwn> points;
-  std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("points_3/kitten.xyz");
+  std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("points_3/kitten.xyz");
   if(!CGAL::IO::read_points(filename, std::back_inserter(points),
                             CGAL::parameters::point_map(CGAL::First_of_pair_property_map<Pwn>())
                                              .normal_map(CGAL::Second_of_pair_property_map<Pwn>())))

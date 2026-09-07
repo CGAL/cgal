@@ -14,7 +14,7 @@ using Mesh = CGAL::Surface_mesh<Epeck::Point_3>;
 
 int main(int argc, const char* argv[])
 {
-  const std::string filename = (argc < 2) ? CGAL::data_file_path("meshes/sphere.off") : argv[1];
+  const std::filesystem::path filename = (argc < 2) ? CGAL::data_file_path("meshes/sphere.off") : argv[1];
 
   std::ifstream input(filename);
   Mesh mesh;

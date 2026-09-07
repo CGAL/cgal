@@ -16,7 +16,7 @@ int main()
   using Tr = CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<K>;
 
   // Open file elephant
-  std::string filename = CGAL::data_file_path("meshes/elephant.mesh");
+  std::filesystem::path filename = CGAL::data_file_path("meshes/elephant.mesh");
   std::ifstream in(filename, std::ios_base::in);
   if(!in) {
     std::cerr << "Error! Cannot open file " << filename << std::endl;

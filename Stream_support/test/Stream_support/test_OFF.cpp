@@ -57,7 +57,7 @@ void test_types()
 
 int main(int argc, char** argv)
 {
-  const std::string off_file = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cube.off");
+  const std::filesystem::path off_file = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cube.off");
 
   std::vector<Point> points;
   std::vector<Face> polygons;

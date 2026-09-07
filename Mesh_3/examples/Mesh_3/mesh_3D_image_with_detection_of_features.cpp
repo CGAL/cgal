@@ -39,7 +39,7 @@ namespace params = CGAL::parameters;
 
 int main(int argc, char* argv[])
 {
-  const std::string fname = (argc>1)?argv[1]:CGAL::data_file_path("images/420.inr");
+  const std::filesystem::path fname = (argc>1)?argv[1]:CGAL::data_file_path("images/420.inr");
 
   /// [Loads image]
   CGAL::Image_3 image;

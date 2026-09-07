@@ -17,7 +17,7 @@ int main(int argc, char** argv)
 {
   Mesh mesh;
 
-  const std::string filename = argc == 1 ? CGAL::data_file_path("meshes/elephant.off")
+  const std::filesystem::path filename = argc == 1 ? CGAL::data_file_path("meshes/elephant.off")
                                          : std::string(argv[1]);
   CGAL::IO::read_polygon_mesh(filename, mesh);
 

@@ -155,7 +155,7 @@ Main(int argc, const char* argv[])
   std::cout.precision(17);
 #endif
 
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/joint_refined.off");
+  const std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/joint_refined.off");
 
   Mesh m;
   std::ifstream input(filename);

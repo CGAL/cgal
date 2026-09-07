@@ -155,7 +155,7 @@ void test_no_collision(int k, const std::string &fname,
 int main(int argc, const char** argv)
 {
   int k = (argc>1) ? atoi(argv[1]) : 20;
-  std::string path = (argc>2)?argv[2]: CGAL::data_file_path("meshes/handle.off");
+  std::filesystem::path path = (argc>2)?argv[2]: CGAL::data_file_path("meshes/handle.off");
 
   std::cout<< k<<" steps in "<<path<<std::endl;
   CGAL::Real_timer t;

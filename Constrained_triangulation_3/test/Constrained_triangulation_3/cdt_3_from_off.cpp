@@ -175,7 +175,7 @@ struct CDT_options
   double      segment_vertex_epsilon              = 0.; // 1e-14;
   double      coplanar_polygon_max_angle          = 5.1;
   double      coplanar_polygon_max_distance       = 1e-6;
-  std::string input_filename                      = CGAL::data_file_path("meshes/mpi.off");
+  std::filesystem::path input_filename                      = CGAL::data_file_path("meshes/mpi.off");
   std::string output_filename                     {"dump.off"};
   std::string dump_patches_after_merge_filename   {};
   std::string dump_surface_mesh_after_merge_filename{};

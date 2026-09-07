@@ -19,7 +19,7 @@ typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
 
 int main(int argc, char** argv )
 {
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cactus.off");
+  const std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cactus.off");
 
   Mesh mesh;
   OpenMesh::IO::read_mesh(mesh, filename);
