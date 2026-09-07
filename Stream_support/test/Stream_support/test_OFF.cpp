@@ -14,7 +14,7 @@ typedef Kernel::Point_3                               Point;
 typedef std::vector<std::size_t>                      Face;
 
 template <typename PointType, typename PolygonType>
-void read(const std::string& fname,
+void read(const std::filesystem::path& fname,
           std::size_t v, std::size_t f)
 {
   std::cout << "Reading "<< fname << std::endl;

@@ -181,7 +181,7 @@ int main(int argc, char *argv[])
 int main()
 #endif
 {
-  std::string if_name, of_name;// of_name same as if_name with '/' -> '_'
+  std::filesystem::path if_name, of_name;// of_name same as if_name with '/' -> '_'
 
   try {
 #if defined(CGAL_USE_BOOST_PROGRAM_OPTIONS) && ! defined(DONT_USE_BOOST_PROGRAM_OPTIONS)

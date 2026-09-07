@@ -77,7 +77,7 @@ void test_OBB_data(const PointRange& points,
   assert(failure_count < 2); // 10% failure
 }
 
-void test_OBB_of_mesh(const std::string fname,
+void test_OBB_of_mesh(const std::filesystem::path fname,
                       const double expected_vol)
 {
   std::cout << "Test: " << fname << std::endl;
@@ -97,7 +97,7 @@ void test_OBB_of_mesh(const std::string fname,
   test_OBB_data(points, expected_vol);
 }
 
-void test_OBB_of_point_set(const std::string fname,
+void test_OBB_of_point_set(const std::filesystem::path fname,
                            const double expected_vol)
 {
   std::cout << "Test: " << fname << std::endl;

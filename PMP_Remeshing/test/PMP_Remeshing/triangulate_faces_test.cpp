@@ -331,7 +331,7 @@ int main(int argc, char** argv)
 
   assert(test_triangulate_faces<Epic>());
   assert(test_triangulate_faces_with_named_parameters<Epic>());
-  assert(test_triangulate_face_range<Epic>(CGAL::data_file_path("meshes/cube_quad.off")));
+  assert(test_triangulate_face_range<Epic>(CGAL::data_file_path("meshes/cube_quad.off").string()));
   assert(test_triangulate_face<Epic>());
   assert(test_triangulate_triangle_face<Epic>());
   assert(test_dual_with_various_faces<Epic>());
@@ -339,7 +339,7 @@ int main(int argc, char** argv)
 
   assert(test_triangulate_faces<Epec>());
   assert(test_triangulate_faces_with_named_parameters<Epec>());
-  assert(test_triangulate_face_range<Epec>(CGAL::data_file_path("meshes/cube_quad.off")));
+  assert(test_triangulate_face_range<Epec>(CGAL::data_file_path("meshes/cube_quad.off").string()));
   assert(test_triangulate_face<Epec>());
   assert(test_triangulate_triangle_face<Epec>());
   assert(test_dual_with_various_faces<Epec>());

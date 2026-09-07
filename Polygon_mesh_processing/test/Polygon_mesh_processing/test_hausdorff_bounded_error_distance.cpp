@@ -852,8 +852,8 @@ void test_one_versus_another(const FunctionWrapper1& functor1,
 
 template <typename FunctionWrapper1,
           typename FunctionWrapper2>
-void test_real_meshes(const std::string& filepath1,
-                      const std::string& filepath2,
+void test_real_meshes(const std::filesystem::path& filepath1,
+                      const std::filesystem::path& filepath2,
                       const FunctionWrapper1& functor1,
                       const FunctionWrapper2& functor2,
                       const double error_bound)

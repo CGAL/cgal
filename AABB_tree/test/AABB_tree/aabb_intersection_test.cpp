@@ -13,7 +13,7 @@
 
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 
-void test(const std::string fname1, const std::string fname2, std::size_t nb_inter)
+void test(const std::filesystem::path fname1, const std::string fname2, std::size_t nb_inter)
 {
   typedef CGAL::Surface_mesh<K::Point_3> Surface_mesh;
   typedef CGAL::AABB_face_graph_triangle_primitive<Surface_mesh> Primitive;

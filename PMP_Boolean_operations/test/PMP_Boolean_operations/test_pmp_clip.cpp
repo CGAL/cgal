@@ -1256,7 +1256,7 @@ struct Clip_and_split_visitor
 
 void test_clip_and_split_with_plane_visitor()
 {
-  auto test_clip =[](std::string fname, const K::Plane_3& plane, bool triangulate, bool clip_volume)
+  auto test_clip =[](std::filesystem::path fname, const K::Plane_3& plane, bool triangulate, bool clip_volume)
   {
     std::cout << "   testing with clip " << fname << " vs " << plane << " (" << triangulate << "," << clip_volume << ")\n";
     Surface_mesh sm;
@@ -1268,7 +1268,7 @@ void test_clip_and_split_with_plane_visitor()
     visitor.check();
   };
 
-  auto test_split =[](std::string fname, const K::Plane_3& plane, bool triangulate)
+  auto test_split =[](std::filesystem::path fname, const K::Plane_3& plane, bool triangulate)
   {
     std::cout << "   testing with split" << fname << " vs " << plane << " (" << triangulate << ")\n";
     Surface_mesh sm;
@@ -1279,7 +1279,7 @@ void test_clip_and_split_with_plane_visitor()
     visitor.check();
   };
 
-  auto test = [&](std::string fname, const K::Plane_3& plane)
+  auto test = [&](std::filesystem::path fname, const K::Plane_3& plane)
   {
     test_clip(fname, plane, true, true);
     test_clip(fname, plane, true, false);

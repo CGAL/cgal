@@ -171,7 +171,7 @@ bool read_a_mesh(Polyhedron& p, const std::string& str)
 template <typename T>
 std::vector<T> t_data()
 {
-  static const std::string data[] =
+  static const std::filesystem::path data[] =
     { "data/7_faces_triangle.off", "data/genus3.off", CGAL::data_file_path("meshes/head.off"),
       CGAL::data_file_path("meshes/hedra.off"), CGAL::data_file_path("meshes/hedra_open.off"), CGAL::data_file_path("meshes/open_cube.off"),
       "data/rombus.off", "data/tetrahedron.off", "data/triangle.off",
@@ -181,7 +181,7 @@ std::vector<T> t_data()
   for(unsigned int i = 0; i < sizeof(data) / sizeof(data[0]); ++i) {
     vs.push_back(T());
     T& s = vs.back();
-    if(!read_a_mesh(s, std::string(data[i])))
+    if(!read_a_mesh(s, data[i]))
       throw std::runtime_error(std::string("Failed to read test data: ") + data[i]);
   }
 

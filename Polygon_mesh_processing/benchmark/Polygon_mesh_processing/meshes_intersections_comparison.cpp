@@ -42,7 +42,7 @@ typedef CGAL::Surface_mesh<Point_3> Surface_mesh;
 typedef boost::graph_traits<Surface_mesh>::face_descriptor vertex_descriptor;
 typedef boost::graph_traits<Surface_mesh>::face_descriptor face_descriptor;
 
-void two_meshes_intersection(std::string fname1, std::string fname2){
+void two_meshes_intersection(std::filesystem::path fname1, std::filesystem::path fname2){
 
   Surface_mesh tm1;
   Surface_mesh tm2;

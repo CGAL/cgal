@@ -475,7 +475,7 @@ void test_bgl_PLY(const std::string filename,
   bool ok = CGAL::IO::read_PLY(is, fg, CGAL::parameters::use_binary_mode(false));
   is.close();
   assert(ok);
-  assert(filename != CGAL::data_file_path("meshes/colored_tetra.ply") || (num_vertices(fg) == 4 && num_faces(fg) == 4));
+  assert(filename != CGAL::data_file_path("meshes/colored_tetra.ply").string() || (num_vertices(fg) == 4 && num_faces(fg) == 4));
    if(!binary)
    {
      CGAL::clear(fg);
@@ -483,7 +483,7 @@ void test_bgl_PLY(const std::string filename,
      bool ok = CGAL::IO::read_PLY(is, fg, CGAL::parameters::use_binary_mode(false));
      is.close();
      assert(ok);
-     assert(filename != CGAL::data_file_path("meshes/colored_tetra.ply") || (num_vertices(fg) == 4 && num_faces(fg) == 4));
+     assert(filename != CGAL::data_file_path("meshes/colored_tetra.ply").string() || (num_vertices(fg) == 4 && num_faces(fg) == 4));
    }
 
   // write with PLY
@@ -661,8 +661,8 @@ void test_bgl_STL(const std::string filename)
   CGAL::IO::set_mode(is, CGAL::IO::BINARY);
   ok = CGAL::IO::read_STL(is, fg, CGAL::parameters::vertex_point_map(cvpm));
   assert(ok);
-  assert(filename != CGAL::data_file_path("meshes/pig.stl") || (num_vertices(fg) == 8642 && num_faces(fg) == 16848));
-  assert(filename != CGAL::data_file_path("meshes/pig.stl") || cpoints.size() == 8642);
+  assert(filename != CGAL::data_file_path("meshes/pig.stl").string() || (num_vertices(fg) == 8642 && num_faces(fg) == 16848));
+  assert(filename != CGAL::data_file_path("meshes/pig.stl").string() || cpoints.size() == 8642);
 
   // write with STL
   {

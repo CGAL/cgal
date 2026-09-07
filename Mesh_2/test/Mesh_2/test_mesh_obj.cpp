@@ -47,7 +47,7 @@ struct Obj_data {
   std::vector<std::vector<std::size_t> > polylines;
 };
 
-static auto save_obj(const Obj_data& data, const std::string& filename)
+static auto save_obj(const Obj_data& data, const std::filesystem::path& filename)
 {
   struct Stream_plus_unused {
     std::ofstream out;

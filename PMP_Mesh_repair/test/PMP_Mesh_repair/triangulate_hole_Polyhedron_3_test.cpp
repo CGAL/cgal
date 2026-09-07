@@ -33,7 +33,7 @@ typedef boost::graph_traits<Polyhedron>::halfedge_iterator    Halfedge_iterator;
 typedef CGAL::Halfedge_around_face_circulator<Polyhedron> Halfedge_around_facet_circulator;
 typedef boost::property_map<Polyhedron,CGAL::vertex_point_t>::type Point_property_map;
 
-void read_poly(const std::string file_name, Polyhedron& poly) {
+void read_poly(const std::filesystem::path file_name, Polyhedron& poly) {
   poly.clear();
 
   std::ifstream input(file_name);
@@ -59,7 +59,7 @@ void detect_borders(Polyhedron& poly, std::vector<Halfedge_handle>& border_reps)
   }
 }
 
-void read_poly_with_borders(const std::string file_name, Polyhedron& poly, std::vector<Halfedge_handle>& border_reps)
+void read_poly_with_borders(const std::filesystem::path file_name, Polyhedron& poly, std::vector<Halfedge_handle>& border_reps)
 {
   read_poly(file_name, poly);
   detect_borders(poly, border_reps);
@@ -98,7 +98,7 @@ CGAL::internal::Weight_min_max_dihedral_and_area
 }
 
 
-void test_triangulate_hole_weight(const std::string file_name, bool use_DT, std::size_t nb_remaining_holes) { //don't test with cdt as we are testing the weights and there is no weight in the cdt version
+void test_triangulate_hole_weight(const std::filesystem::path file_name, bool use_DT, std::size_t nb_remaining_holes) { //don't test with cdt as we are testing the weights and there is no weight in the cdt version
   typedef CGAL::internal::Weight_min_max_dihedral_and_area Weight;
 
   std::cout << "test_triangulate_hole_weight + useDT: " << use_DT << std::endl;
@@ -131,7 +131,7 @@ void test_triangulate_hole_weight(const std::string file_name, bool use_DT, std:
 }
 /******************************************************************/
 
-void test_triangulate_hole(const std::string file_name, bool use_cdt) {
+void test_triangulate_hole(const std::filesystem::path file_name, bool use_cdt) {
   std::cout << "test_triangulate_hole:" << std::endl;
   std::cout << "  File: "<< file_name  << std::endl;
   Polyhedron poly;
@@ -158,7 +158,7 @@ void test_triangulate_hole(const std::string file_name, bool use_cdt) {
   std::cout << "  Done!" << std::endl;
 }
 
-void test_triangulate_hole_should_be_no_output(const std::string file_name, bool use_cdt) {
+void test_triangulate_hole_should_be_no_output(const std::filesystem::path file_name, bool use_cdt) {
   std::cout << "test_triangulate_hole_should_be_no_output:" << std::endl;
   std::cout << "  File: "<< file_name  << std::endl;
   Polyhedron poly;
@@ -187,7 +187,7 @@ void test_triangulate_hole_should_be_no_output(const std::string file_name, bool
   std::cout << "  Done!" << std::endl;
 }
 
-void test_triangulate_and_refine_hole(const std::string file_name, bool use_cdt) {
+void test_triangulate_and_refine_hole(const std::filesystem::path file_name, bool use_cdt) {
   std::cout << "test_triangulate_and_refine_hole:" << std::endl;
   std::cout << "  File: "<< file_name  << std::endl;
   Polyhedron poly;
@@ -217,7 +217,7 @@ void test_triangulate_and_refine_hole(const std::string file_name, bool use_cdt)
   std::cout << "  Done!" << std::endl;
 }
 
-void test_triangulate_refine_and_fair_hole(const std::string file_name, bool use_cdt) {
+void test_triangulate_refine_and_fair_hole(const std::filesystem::path file_name, bool use_cdt) {
   std::cout << "test_triangulate_refine_and_fair_hole:" << std::endl;
   std::cout << "  File: "<< file_name  << std::endl;
   Polyhedron poly;
@@ -247,7 +247,7 @@ void test_triangulate_refine_and_fair_hole(const std::string file_name, bool use
   std::cout << "  Done!" << std::endl;
 }
 
-void test_output_iterators_triangulate_hole(const std::string file_name, bool use_cdt) {
+void test_output_iterators_triangulate_hole(const std::filesystem::path file_name, bool use_cdt) {
   std::cout << "test_output_iterators_triangulate_hole:" << std::endl;
   std::cout << "  File: "<< file_name  << std::endl;
 
@@ -279,7 +279,7 @@ void test_output_iterators_triangulate_hole(const std::string file_name, bool us
   std::cout << "  Done!" << std::endl;
 }
 
-void test_output_iterators_triangulate_and_refine_hole(const std::string file_name, bool use_cdt) {
+void test_output_iterators_triangulate_and_refine_hole(const std::filesystem::path file_name, bool use_cdt) {
   std::cout << "test_output_iterators_triangulate_and_refine_hole:" << std::endl;
   std::cout << "  File: "<< file_name  << std::endl;
 
@@ -710,7 +710,7 @@ int main()
   std::cerr.precision(17);
   test_with_forbidden_triangles();
   generate_elephant_with_hole();
-  std::vector<std::string> input_files;
+  std::vector<std::filesystem::path> input_files;
   input_files.push_back("elephant_triangle_hole.off");
   input_files.push_back("elephant_quad_hole.off");
   input_files.push_back(CGAL::data_file_path("meshes/mech-holes-shark.off"));
