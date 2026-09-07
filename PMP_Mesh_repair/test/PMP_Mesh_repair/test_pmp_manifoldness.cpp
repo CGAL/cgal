@@ -20,7 +20,7 @@ typedef CGAL::Polyhedron_3<K>                                     Polyhedron;
 typedef std::vector<std::vector<std::size_t> >                    Vertices_to_merge_container;
 
 template <typename PolygonMesh>
-void read_mesh(const std::filesystem::path fname,
+void read_mesh(const std::filesystem::path& fname,
                PolygonMesh& mesh)
 {
   std::ifstream input(fname);
@@ -210,7 +210,7 @@ void test_nm_cubes()
 }
 
 template <typename PolygonMesh>
-void test_pinched_triangles(const std::filesystem::path filename,
+void test_pinched_triangles(const std::filesystem::path& filename,
                             const std::size_t expected_nb)
 {
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor      vertex_descriptor;

@@ -631,7 +631,7 @@ struct Custom_VPM
 };
 
 template<class Mesh>
-void test_bgl_STL(const std::filesystem::path filename)
+void test_bgl_STL(const std::filesystem::path& filename)
 {
   Mesh fg;
 

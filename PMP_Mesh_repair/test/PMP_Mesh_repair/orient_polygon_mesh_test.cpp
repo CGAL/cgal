@@ -15,7 +15,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic;
 typedef CGAL::Exact_predicates_exact_constructions_kernel Epec;
 
 template <typename K>
-void test_orient(const std::filesystem::path file_name)
+void test_orient(const std::filesystem::path& file_name)
 {
   typedef CGAL::Polyhedron_3<K> Polyhedron;
 

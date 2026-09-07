@@ -133,7 +133,7 @@ void test_pmesh(const Mesh& pmesh)
 }
 
 template <typename Polyhedron, typename K>
-void test_polyhedron(const std::filesystem::path filename)
+void test_polyhedron(const std::filesystem::path& filename)
 {
   std::cout << "Test Polyhedron " << filename
     << " with Kernel " << typeid(K).name() << std::endl;
@@ -154,7 +154,7 @@ void test_polyhedron(const std::filesystem::path filename)
 }
 
 template <typename Surface_mesh, typename K>
-void test_closed_surface_mesh(const std::filesystem::path filename)
+void test_closed_surface_mesh(const std::filesystem::path& filename)
 {
   std::cout << "Test Surface_mesh " << filename
     << " with Kernel " << typeid(K).name() << std::endl;
@@ -179,7 +179,7 @@ void test_closed_surface_mesh(const std::filesystem::path filename)
 
 
 template <typename Surface_mesh, typename K>
-void test_centroid(const std::filesystem::path filename)
+void test_centroid(const std::filesystem::path& filename)
 {
   std::cout << "Test Surface_mesh " << filename
     << " with Kernel " << typeid(K).name() << std::endl;

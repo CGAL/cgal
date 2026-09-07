@@ -16,7 +16,7 @@ typedef K::FT                                                       FT;
 typedef K::Point_3                                                  Point_3;
 typedef CGAL::Surface_mesh<Point_3>                                 Surface_mesh;
 
-void check_edge_degeneracy(const std::filesystem::path fname)
+void check_edge_degeneracy(const std::filesystem::path& fname)
 {
   std::cout << "test edge degeneracy...";
 
@@ -36,7 +36,7 @@ void check_edge_degeneracy(const std::filesystem::path fname)
   std::cout << "done" << std::endl;
 }
 
-void check_triangle_face_degeneracy(const std::filesystem::path fname)
+void check_triangle_face_degeneracy(const std::filesystem::path& fname)
 {
   std::cout << "test face degeneracy...";
 
@@ -58,7 +58,7 @@ void check_triangle_face_degeneracy(const std::filesystem::path fname)
   std::cout << "done" << std::endl;
 }
 
-void test_needles_and_caps(const std::filesystem::path fname)
+void test_needles_and_caps(const std::filesystem::path& fname)
 {
   std::cout << "test needles&caps...";
 

@@ -127,7 +127,7 @@ void test(const Mesh& mesh,
 }
 
 template<typename K>
-void test_SM(const std::filesystem::path file_name)
+void test_SM(const std::filesystem::path& file_name)
 {
   typedef CGAL::Surface_mesh<typename K::Point_3>                         SM;
   typedef typename boost::graph_traits<SM>::vertex_descriptor             vertex_descriptor;
@@ -154,7 +154,7 @@ void test_SM(const std::filesystem::path file_name)
 }
 
 template<typename K>
-void test_Polyhedron(const std::filesystem::path file_name)
+void test_Polyhedron(const std::filesystem::path& file_name)
 {
   typedef CGAL::Polyhedron_3<K>                                           Polyhedron;
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor     vertex_descriptor;

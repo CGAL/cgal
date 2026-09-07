@@ -38,7 +38,7 @@ typedef typename boost::graph_traits<Mesh>::face_descriptor      face_descriptor
 
 
 
-void collect_patch(const std::filesystem::path file,
+void collect_patch(const std::filesystem::path& file,
                    const Mesh& m,
                    std::set<face_descriptor>& patch)
 {

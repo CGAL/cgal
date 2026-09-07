@@ -10,7 +10,7 @@
 #include <CGAL/Timer.h>
 
 template<class Polyhedron>
-void read_to_polyhedron(const std::filesystem::path file_name, Polyhedron& mesh)
+void read_to_polyhedron(const std::filesystem::path& file_name, Polyhedron& mesh)
 {
   std::ifstream input(file_name);
 
