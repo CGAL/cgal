@@ -29,7 +29,7 @@ namespace CGAL {
 
 /*!
 * \ingroup pkgMeshSmoothing3Functions
-* Smooth a tetrahedral mesh while preserving the boundary and curve features.
+* smooths a tetrahedral mesh while preserving the boundary and curve features.
 *
 * This function takes as input a `Mesh_complex_3_in_triangulation_3` and will iteratively
 * move its vertices to improve the quality of the tetrahedra while preserving (softly) the boundary and curve features through projection queries.
@@ -52,7 +52,7 @@ namespace CGAL {
 *
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{number_of_iterations}
-*     \cgalParamDescription{Maximum nb of iterations of the smoothing algorithm .
+*     \cgalParamDescription{Maximum number of iterations of the smoothing algorithm .
 *                           Algorithm will stop before if it reaches convergence.
 *                           Untangling usually requires more iterations (up to thousands) for hard cases. }
 *     \cgalParamType{`unsigned int`}
@@ -68,7 +68,7 @@ namespace CGAL {
 *     \cgalParamDescription{Maximum allowed time for the smoothing process in seconds.}
 *     \cgalParamType{`double`}
 *     \cgalParamDefault{`0.`}
-*     \cgalParamExtra{Pre-processing will not be stopped.}
+*     \cgalParamExtra{Preprocessing will not be stopped.}
 *   \cgalParamNEnd
 *   \cgalParamNBegin{max_number_of_evaluations}
 *     \cgalParamDescription{Maximum number of quality metric evaluations for smoothing.}
