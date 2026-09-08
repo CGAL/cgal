@@ -19,7 +19,11 @@
 #include <CGAL/Mesh_smoothing_3/internal/type_definitions.h>
 
 #include <CGAL/centroid.h>
+#include <CGAL/Kernel/global_functions_3.h>
+#include <CGAL/Kernel_traits.h>
 
+#include <array>
+#include <iterator>
 #include <map>
 #include <vector>
 #include <tuple>
@@ -199,6 +203,174 @@ public:
         return Tangent_space{Point_3(), typename Tangent_space::Vector_3(), Projection_weight_mode::NONE, 0.};
     }
 
+};
+
+
+/*!
+ * \ingroup pkgMeshSmoothing3Projection
+ *
+ * \brief provides projection functions onto the surface of a polyhedral mesh domain.
+ *
+ * This class adapts a polyhedral mesh domain into a model of `ConstructTangentSpace`.
+ * For each surface facet, the tangent plane is constructed from the closest point
+ * and triangle on the polyhedral surface.
+ *
+ * Curve projection is disabled, as a polyhedral mesh domain without features does
+ * not provide geometric information about feature curves.
+ *
+ * @tparam MeshDomain a model of `MeshDomain_3` providing an AABB tree of its
+ * polyhedral boundary, such as `CGAL::Polyhedral_mesh_domain_3`
+ *
+ * \cgalModels{ConstructTangentSpace}
+ *
+ * \sa `CGAL::boundary_aware_mesh_smoothing`
+ * \sa `CGAL::Mesh_smoothing_3::Polyhedral_mesh_domain_with_features_projector`
+ * \sa `CGAL::Mesh_smoothing_3::C3t3_mesh_projector`
+ *
+ */
+template<typename MeshDomain>
+class Polyhedral_mesh_domain_projector
+{
+public:
+    using Point_3 = typename MeshDomain::Point_3;
+    using Geom_traits = typename CGAL::Kernel_traits<Point_3>::Kernel;
+    using Vector_3 = typename Geom_traits::Vector_3;
+    using Tangent_space = Mesh_smoothing_3::Tangent_space<Geom_traits>;
+
+    /*!
+     * Class constructor.
+     *
+     * \param domain the polyhedral mesh domain used for projection.
+     */
+    explicit Polyhedral_mesh_domain_projector(const MeshDomain& domain)
+        : _domain(domain)
+    {}
+
+    template<typename Patch_face>
+    Tangent_space
+    patch_face_projection_plane(const Patch_face&,
+                                const std::vector<Point_3>& face_points) const
+    {
+        const Point_3 face_center =
+            CGAL::centroid(face_points.begin(), face_points.end());
+
+        const auto closest =
+            _domain.aabb_tree().closest_point_and_primitive(face_center);
+
+        using AABB_primitive = typename MeshDomain::AABB_primitive;
+
+        const AABB_primitive primitive(
+            closest.second.first,
+            *closest.second.second);
+
+        const auto triangle = primitive.datum();
+
+        return Tangent_space{
+            closest.first,
+            CGAL::normal(
+                triangle.vertex(0),
+                triangle.vertex(1),
+                triangle.vertex(2))
+        };
+    }
+
+    template<typename Curve_edge>
+    Tangent_space
+    curve_edge_projection_line(const Curve_edge&,
+                               const std::array<Point_3, 2>& edge_points) const
+    {
+        return Tangent_space{
+            CGAL::midpoint(edge_points[0], edge_points[1]),
+            edge_points[1] - edge_points[0],
+            Projection_weight_mode::NONE
+        };
+    }
+
+protected:
+    const MeshDomain& domain() const
+    {
+        return _domain;
+    }
+
+private:
+    const MeshDomain& _domain;
+};
+
+
+/*!
+ * \ingroup pkgMeshSmoothing3Projection
+ *
+ * \brief provides projection functions onto the surface and feature curves of
+ * a polyhedral mesh domain with features.
+ *
+ * This class adapts a polyhedral mesh domain with features into a model of
+ * `ConstructTangentSpace`. Surface tangent planes are constructed from the
+ * polyhedral boundary, as in `Polyhedral_mesh_domain_projector`.
+ *
+ * For feature edges, the tangent line is constructed from the segment of the
+ * corresponding feature polyline that is closest to the edge center.
+ *
+ * @tparam MeshDomain a model of `MeshDomainWithFeatures_3` providing a
+ * polyhedral boundary and feature polylines, such as
+ * `CGAL::Polyhedral_mesh_domain_with_features_3`
+ *
+ * \cgalModels{ConstructTangentSpace}
+ *
+ * \sa `CGAL::boundary_aware_mesh_smoothing`
+ * \sa `CGAL::Mesh_smoothing_3::Polyhedral_mesh_domain_projector`
+ * \sa `CGAL::Mesh_smoothing_3::C3t3_mesh_projector`
+ *
+ */
+template<typename MeshDomain>
+class Polyhedral_mesh_domain_with_features_projector
+    : public Polyhedral_mesh_domain_projector<MeshDomain>
+{
+    using Base = Polyhedral_mesh_domain_projector<MeshDomain>;
+
+public:
+    using Geom_traits = typename Base::Geom_traits;
+    using Point_3 = typename Base::Point_3;
+    using Vector_3 = typename Base::Vector_3;
+    using Tangent_space = typename Base::Tangent_space;
+    using Segment_3 = typename Geom_traits::Segment_3;
+
+    /*!
+     * Class constructor.
+     *
+     * \param domain the polyhedral mesh domain with features used for projection.
+     */
+    explicit Polyhedral_mesh_domain_with_features_projector(
+        const MeshDomain& domain)
+        : Base(domain)
+    {}
+
+    template<typename Curve_edge>
+    Tangent_space
+    curve_edge_projection_line(const Curve_edge& curve_edge,
+                               const std::array<Point_3, 2>& edge_points) const
+    {
+        const Point_3 edge_center =
+            CGAL::midpoint(edge_points[0], edge_points[1]);
+
+        // locate_point() returns the source of the polyline segment
+        // closest to edge_center on the requested curve.
+        const auto segment_source =
+            this->domain().locate_point(curve_edge.first, edge_center);
+
+        const Point_3 source = *segment_source;
+        const Point_3 target = *std::next(segment_source);
+
+        const Segment_3 segment(source, target);
+
+        const Point_3 projected =
+            Geom_traits().construct_projected_point_3_object()(
+                segment, edge_center);
+
+        return Tangent_space{
+            projected,
+            target - source
+        };
+    }
 };
 
 } // namespace Mesh_smoothing_3
