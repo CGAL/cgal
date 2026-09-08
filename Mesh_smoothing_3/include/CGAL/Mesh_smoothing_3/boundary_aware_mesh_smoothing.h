@@ -31,12 +31,12 @@ namespace CGAL {
 * \ingroup pkgMeshSmoothing3Functions
 * smooths a tetrahedral mesh while preserving the boundary and curve features.
 *
-* This function takes as input a `Mesh_complex_3_in_triangulation_3` and will iteratively
+* This function takes as input a tetrahedral mesh and will iteratively
 * move its vertices to improve the quality of the tetrahedra while preserving (softly) the boundary and curve features through projection queries.
 * Vertices will stay close to their original entity (surface patch or curve). Corners are locked on their original position.
 * The algorithm will recover curvature discontinuities (sharp features) in a patch,
 * and is capable of recovering inverted tetrahedra in the mesh.
-* An input mesh with only positively oriented elements is guaranteed to remain so during the smoothing procedure.
+* An input mesh with only positively oriented tetrahedra is guaranteed to remain so during the smoothing procedure.
 *
 * \warning This function updates vertex positions without modifying connectivity, and therefore does not preserve Delaunay properties.
 *
@@ -52,9 +52,9 @@ namespace CGAL {
 *
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{number_of_iterations}
-*     \cgalParamDescription{Maximum number of iterations of the smoothing algorithm .
+*     \cgalParamDescription{Maximum number of iterations of the smoothing algorithm.
 *                           Algorithm will stop before if it reaches convergence.
-*                           Untangling usually requires more iterations (up to thousands) for hard cases. }
+*                           Untangling usually requires more iterations (up to thousands) for hard cases.}
 *     \cgalParamType{`unsigned int`}
 *     \cgalParamDefault{`100`}
 *   \cgalParamNEnd
@@ -67,13 +67,12 @@ namespace CGAL {
 *   \cgalParamNBegin{maximum_running_time}
 *     \cgalParamDescription{Maximum allowed time for the smoothing process in seconds.}
 *     \cgalParamType{`double`}
-*     \cgalParamDefault{`0.`}
-*     \cgalParamExtra{Preprocessing will not be stopped.}
+*     \cgalParamDefault{`0.`, indicating no time limit.}
 *   \cgalParamNEnd
 *   \cgalParamNBegin{max_number_of_evaluations}
 *     \cgalParamDescription{Maximum number of quality metric evaluations for smoothing.}
 *     \cgalParamType{`unsigned int`}
-*     \cgalParamDefault{`0`}
+*     \cgalParamDefault{`0`, indicating no limit.}
 *     \cgalParamExtra{Strongly correlated to running time but will scale linearly with mesh size.}
 *   \cgalParamNEnd
 *   \cgalParamNBegin{concurrency_tag}
