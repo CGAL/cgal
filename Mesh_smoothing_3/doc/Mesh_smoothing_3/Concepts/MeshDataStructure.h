@@ -1,3 +1,4 @@
+#ifndef DOXYGEN_RUNNING
 /*!
 \ingroup pkgMeshSmoothing3Concepts
 \cgalConcept
@@ -78,3 +79,4 @@ unspecified_type cell_reference_shape(Cell_descriptor cell) const;
 
 
 }; /* end MeshDataStructure */
+#endif

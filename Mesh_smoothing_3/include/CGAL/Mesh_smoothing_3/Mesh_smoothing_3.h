@@ -25,6 +25,7 @@
 #include <unordered_map>
 #include <functional>
 
+#ifndef DOXYGEN_RUNNING
 
 namespace CGAL {
 
@@ -588,6 +589,8 @@ public:
 
 
 } } // end of CGAL::Mesh_smoothing_3
+
+#endif // DOXYGEN_RUNNING
 
 #endif //CGAL_MESH_SMOOTHING_3_MESH_SMOOTHING_3
 

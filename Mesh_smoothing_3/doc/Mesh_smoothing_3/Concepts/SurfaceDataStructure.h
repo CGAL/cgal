@@ -1,3 +1,4 @@
+#ifndef DOXYGEN_RUNNING
 /*!
 \ingroup pkgMeshSmoothing3Concepts
 \cgalConcept
@@ -66,3 +67,4 @@ unspecified_type face_vertices(Face_descriptor face) const;
 
 
 }; /* end SurfaceDataStructure */
+#endif
