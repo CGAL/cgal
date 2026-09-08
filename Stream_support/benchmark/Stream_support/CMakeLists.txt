@@ -8,4 +8,4 @@ project(Stream_support)
 find_package(CGAL REQUIRED)
 
 create_single_source_cgal_program("read_doubles.cpp")
-create_single_source_cgal_program("read_points.cpp")
+create_single_source_cgal_program("polygon_mesh_io_benchmark.cpp")
