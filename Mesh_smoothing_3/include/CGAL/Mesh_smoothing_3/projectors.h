@@ -29,6 +29,7 @@ namespace CGAL {
 
 namespace Mesh_smoothing_3 {
 
+/// \cgalAdvancedBegin
 /*!
  * \ingroup pkgMeshSmoothing3Projection
  *
@@ -42,6 +43,8 @@ enum class Projection_weight_mode
     NONE,    ///< Disable projection.
     CUSTOM   ///< Use the weight returned by `TangentSpace::custom_weight()`.
 };
+/// \cgalAdvancedEnd
+
 
 /* not documented but:
 * \cgalModels{TangentSpace}
