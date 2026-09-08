@@ -47,6 +47,8 @@ class SM_decorator_traits {
   typedef typename Refs::SHalfedge_around_sface_circulator
     SHalfedge_around_sface_circulator;
   typedef typename Refs::SFace_cycle_iterator SFace_cycle_iterator;
+
+  typedef typename Refs::Object_handle Object_handle;
 };
 
 template <class Refs_>
@@ -84,6 +86,8 @@ class SM_decorator_const_traits {
   typedef typename Refs::SHalfedge_around_sface_const_circulator
     SHalfedge_around_sface_const_circulator;
   typedef typename Refs::SFace_cycle_const_iterator SFace_cycle_const_iterator;
+
+  typedef typename Refs::Object_handle Object_handle;
 };
 
 } //namespace CGAL
