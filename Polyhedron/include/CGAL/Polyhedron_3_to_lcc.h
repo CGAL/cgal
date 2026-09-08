@@ -36,10 +36,9 @@ namespace CGAL {
   {
     static_assert( LCC::dimension>=2 && LCC::ambient_dimension==3 );
 
-    typedef typename Polyhedron::Halfedge_const_handle  Halfedge_handle;
-    typedef typename Polyhedron::Facet_const_iterator   Facet_iterator;
-    typedef typename Polyhedron::Halfedge_around_facet_const_circulator
-      HF_circulator;
+    typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor  Halfedge_handle;
+    typedef typename boost::graph_traits<Polyhedron>::face_iterator   Facet_iterator;
+    typedef Halfedge_around_face_circulator<Polyhedron> HF_circulator;
 
     typedef std::map < Halfedge_handle, typename LCC::Dart_descriptor>
       Halfedge_handle_map;
@@ -51,47 +50,49 @@ namespace CGAL {
     typename LCC::Dart_descriptor firstFacet = LCC::null_descriptor, firstAll = LCC::null_descriptor;
 
     // First traversal to build the darts and link them.
-    for (Facet_iterator i = apoly.facets_begin(); i != apoly.facets_end(); ++i)
+    for (Facet_iterator i = faces(apoly).begin(); i != faces(apoly).end(); ++i)
     {
-      HF_circulator j = i->facet_begin();
+      HF_circulator j(halfedge(*i,apoly), apoly), done(j);
       prev = LCC::null_descriptor;
       do
       {
         d = alcc.make_half_edge();
-        TC[j] = d;
+        TC[*j] = d;
 
         if (prev != LCC::null_descriptor) alcc.set_next(prev, d);
         else firstFacet = d;
 
-        if (!j->opposite()->is_border())
+        if (!is_border(opposite(*j, apoly), apoly))
         {
-          it = TC.find(j->opposite());
+          it = TC.find(opposite(*j,apoly));
           if (it != TC.end())
             alcc.template set_opposite<2>(d, it->second);
         }
         prev = d;
       }
-      while (++j != i->facet_begin());
+      while (++j != done);
       alcc.set_next(prev, firstFacet);
       if (firstAll == LCC::null_descriptor) firstAll = firstFacet;
     }
 
     // Second traversal to update the geometry.
     // We run one again through the facets of the HDS.
-    for (Facet_iterator i = apoly.facets_begin(); i != apoly.facets_end(); ++i)
+    auto vpm = get(CGAL::vertex_point, apoly);
+    for (Facet_iterator i = faces(apoly).begin(); i != faces(apoly).end(); ++i)
     {
-      HF_circulator j = i->facet_begin();
+      HF_circulator j(halfedge(*i,apoly), apoly), done(j);
       do
       {
-        d = TC[j]; // Get the dart associated to the Halfedge
+        d = TC[*j]; // Get the dart associated to the Halfedge
         if (alcc.vertex_attribute(d)==LCC::null_descriptor)
         {
           alcc.set_vertex_attribute
-            (d, alcc.create_vertex_attribute(j->opposite()->vertex()->point()));
+            (d, alcc.create_vertex_attribute(get(vpm, target(opposite(*j, apoly), apoly))));
         }
       }
-      while (++j != i->facet_begin());
+      while (++j != done);
     }
+
     return firstAll;
   }
 
