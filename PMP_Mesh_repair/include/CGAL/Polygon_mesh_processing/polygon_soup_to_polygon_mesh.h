@@ -30,6 +30,7 @@
 #include <boost/range/value_type.hpp>
 #include <boost/range/reference.hpp>
 #include <boost/container/flat_set.hpp>
+#include <boost/container/small_vector.hpp>
 
 #include <array>
 #include <set>
@@ -136,7 +137,7 @@ public:
       const Polygon& polygon = m_polygons[i];
       const std::size_t size = polygon.size();
 
-      std::vector<vertex_descriptor> vr(size); //vertex range
+      boost::container::small_vector<vertex_descriptor,4> vr(size); //vertex range
       for(std::size_t j = 0; j < size; ++j)
         vr[j] = vertices[polygon[j] ];
 
