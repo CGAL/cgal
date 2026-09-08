@@ -214,7 +214,7 @@ namespace IO {
   \return `true` if the writing was successful, `false` otherwise.
 */
 template <typename Point, typename Vector, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool write_point_set(const std::string& fname,
+bool write_point_set(const std::filesystem::path& fname,
                      CGAL::Point_set_3<Point, Vector>& ps,
                      const CGAL_NP_CLASS& np = parameters::default_values())
 {

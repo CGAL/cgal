@@ -43,7 +43,7 @@ bool read_OM(const std::filesystem::path& fname, Graph& g, VPM vpm, VFeaturePM v
 
   OMesh omesh;
   OpenMesh::IO::Options options = OpenMesh::IO::Options::Status;
-  bool ok = OpenMesh::IO::read_mesh(omesh, fname, options);
+  bool ok = OpenMesh::IO::read_mesh(omesh, fname.string(), options);
   if(! ok){
     return false;
   }
