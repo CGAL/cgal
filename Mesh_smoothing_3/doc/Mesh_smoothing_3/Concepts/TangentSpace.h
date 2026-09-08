@@ -43,7 +43,7 @@ Point_3 origin() const;
 
 
 /*!
-Returns the vector defining the tangent space:
+returns the vector defining the tangent space:
 a normal for a surface and a tangent direction for a curve.
 */
 Vector_3 vector() const;

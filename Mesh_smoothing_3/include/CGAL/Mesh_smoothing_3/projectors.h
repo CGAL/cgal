@@ -32,7 +32,7 @@ namespace Mesh_smoothing_3 {
 /*!
  * \ingroup pkgMeshSmoothing3Projection
  *
- * \brief Specifies the weight used for projection onto a tangent space.
+ * \brief specifies the weight used for projection onto a tangent space.
  */
 enum class Projection_weight_mode
 {
@@ -66,7 +66,7 @@ struct Tangent_space {
 /*!
 * \ingroup pkgMeshSmoothing3Projection
 *
-* \brief provides projection functions to a mesh defined in a `Mesh_complex_3_in_triangulation_3`
+* \brief provides projection functions to a mesh defined in a tetrahedral mesh model of `MeshComplex_3InTriangulation_3`.
 *
 * The class `Mesh_smoother` creates an AABB_tree for each patch and curve on the mesh.
 * It then defines queries re-projecting entities on the mesh depending on their patch/curve index.

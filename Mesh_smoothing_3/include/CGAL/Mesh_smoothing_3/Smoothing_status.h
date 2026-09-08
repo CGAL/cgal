@@ -34,7 +34,7 @@ using Parallel_if_available_tag = CGAL::Sequential_tag;
 /*!
  * \ingroup pkgMeshSmoothing3Functions
  *
- * \brief Return code of the mesh smoothing.
+ * \brief Return codes of the mesh smoothing.
  */
 enum class Smoothing_return_code
 {
@@ -43,7 +43,9 @@ enum class Smoothing_return_code
     MAX_ITERATIONS_REACHED, ///< Maximum number of iterations reached.
     MAX_NUMBER_OF_METRIC_EVALUATIONS_REACHED, ///< Maximum number of metric evaluations reached.
     TIME_LIMIT_REACHED, ///< Time limit reached.
-    USER_ABORT, ///< Smoothing was aborted by the user.
+#ifndef DOXYGEN_RUNNING
+    USER_ABORT ///< Smoothing was aborted by the user.
+#endif
 };
 
 
