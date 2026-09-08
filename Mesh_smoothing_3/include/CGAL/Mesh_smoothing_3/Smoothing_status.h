@@ -40,7 +40,9 @@ enum class Smoothing_return_code
 {
     ALL_VERTICES_FROZEN, ///< All vertices are frozen.
     CONVERGENCE_REACHED, ///< Convergence reached.
-    MAX_ITERATIONS_REACHED, ///< Maximum number of iterations reached.
+#ifndef DOXYGEN_RUNNING
+    MAX_STAGES_REACHED, ///< Maximum number of stages reached.
+#endif
     MAX_NUMBER_OF_METRIC_EVALUATIONS_REACHED, ///< Maximum number of metric evaluations reached.
     TIME_LIMIT_REACHED, ///< Time limit reached.
 #ifndef DOXYGEN_RUNNING
@@ -56,7 +58,7 @@ enum class Smoothing_return_code
  */
 struct Smoothing_status {
     Smoothing_return_code return_code = Smoothing_return_code::ALL_VERTICES_FROZEN; ///< Return code of the smoothing algorithm.
-    unsigned nb_iterations = 0; ///< Number of smoothing/untangling iterations performed.
+    unsigned nb_stages = 0; ///< Number of smoothing/untangling stages performed (advanced usage).
     unsigned nb_vertex_updates = 0; ///< Number of times vertices were updated.
     unsigned nb_metric_evaluations = 0; ///< Number of times the quality metric was evaluated for optimization.
     unsigned nb_initial_invalid_elements = 0; ///< Number of negatively oriented elements in the mesh at the beginning of the smoothing process.

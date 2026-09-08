@@ -131,7 +131,7 @@ void test_classification_and_structure()
   install_default_queries(cts);
 
   auto status = CGAL::boundary_aware_mesh_smoothing(
-      fixture.c3t3, cts, CGAL::parameters::number_of_iterations(1));
+      fixture.c3t3, cts);
 
   assert_all_finite(fixture.c3t3);
   assert(status.valid_mesh() == (status.nb_invalid_elements == 0));
@@ -187,10 +187,10 @@ void test_stopping_limits_and_invalid_counting()
 
     auto status = CGAL::boundary_aware_mesh_smoothing(
         fixture.c3t3, cts,
-        CGAL::parameters::number_of_iterations(1).max_number_of_evaluations(1));
+        CGAL::parameters::max_number_of_evaluations(1));
 
     assert(status.return_code == CGAL::Mesh_smoothing_3::Smoothing_return_code::MAX_NUMBER_OF_METRIC_EVALUATIONS_REACHED);
-    assert(status.nb_iterations > 0);
+    assert(status.nb_stages > 0);
     assert(status.nb_vertex_updates > 0);
     auto after = finite_vertices(fixture.c3t3);
     assert(before.size() == after.size());
@@ -207,10 +207,10 @@ void test_stopping_limits_and_invalid_counting()
 
     auto status = CGAL::boundary_aware_mesh_smoothing(
         fixture.c3t3, cts,
-        CGAL::parameters::number_of_iterations(1).maximum_running_time(1e-9));
+        CGAL::parameters::maximum_running_time(1e-9));
 
     assert(status.return_code == CGAL::Mesh_smoothing_3::Smoothing_return_code::TIME_LIMIT_REACHED);
-    assert(status.nb_iterations > 0);
+    assert(status.nb_stages > 0);
     assert(status.nb_vertex_updates > 0);
     auto after = finite_vertices(fixture.c3t3);
     assert(before.size() == after.size());
@@ -231,7 +231,7 @@ void test_stopping_limits_and_invalid_counting()
     Recording_cts<C3t3> cts;
     install_default_queries(cts);
     auto status = CGAL::boundary_aware_mesh_smoothing(
-        fixture.c3t3, cts, CGAL::parameters::number_of_iterations(0));
+        fixture.c3t3, cts, CGAL::parameters::max_number_of_evaluations(0));
 
     assert(status.nb_initial_invalid_elements == 0);
     assert(status.nb_invalid_elements == 0);
@@ -253,8 +253,7 @@ void test_all_vertices_frozen_status()
   auto before = finite_vertices(fixture.c3t3);
   auto status = CGAL::boundary_aware_mesh_smoothing(
       fixture.c3t3, cts,
-      CGAL::parameters::vertex_is_constrained_map(boost::make_assoc_property_map(vmap))
-          .number_of_iterations(5));
+      CGAL::parameters::vertex_is_constrained_map(boost::make_assoc_property_map(vmap)));
 
   assert(status.return_code == CGAL::Mesh_smoothing_3::Smoothing_return_code::ALL_VERTICES_FROZEN);
   assert(status.nb_vertex_updates == 0);
@@ -278,8 +277,7 @@ void test_hard_constraints_and_frozen_status()
     auto before_d = fixture.v[3]->point();
     auto status = CGAL::boundary_aware_mesh_smoothing(
         fixture.c3t3, cts,
-        CGAL::parameters::vertex_is_constrained_map(boost::make_assoc_property_map(vmap))
-            .number_of_iterations(3));
+        CGAL::parameters::vertex_is_constrained_map(boost::make_assoc_property_map(vmap)));
 
     assert(same_point(before_b, fixture.v[1]->point()));
     assert(status.nb_vertex_updates > 0);
@@ -297,8 +295,7 @@ void test_hard_constraints_and_frozen_status()
     auto before_d = fixture.v[3]->point();
     auto status = CGAL::boundary_aware_mesh_smoothing(
         fixture.c3t3, cts,
-        CGAL::parameters::edge_is_constrained_map(boost::make_assoc_property_map(emap))
-            .number_of_iterations(1));
+        CGAL::parameters::edge_is_constrained_map(boost::make_assoc_property_map(emap)));
 
     (void)status;
     assert(same_point(before_b, fixture.v[1]->point()));
@@ -316,8 +313,7 @@ void test_hard_constraints_and_frozen_status()
     auto before_d = fixture.v[3]->point();
     auto status = CGAL::boundary_aware_mesh_smoothing(
         fixture.c3t3, cts,
-        CGAL::parameters::edge_is_constrained_map(boost::make_assoc_property_map(emap))
-            .number_of_iterations(1));
+        CGAL::parameters::edge_is_constrained_map(boost::make_assoc_property_map(emap)));
 
     (void)status;
     assert(same_point(before_b, fixture.v[1]->point()));
@@ -337,8 +333,7 @@ void test_hard_constraints_and_frozen_status()
 
     auto status = CGAL::boundary_aware_mesh_smoothing(
         fixture.c3t3, cts,
-        CGAL::parameters::facet_is_constrained_map(boost::make_assoc_property_map(fmap))
-            .number_of_iterations(1));
+        CGAL::parameters::facet_is_constrained_map(boost::make_assoc_property_map(fmap)));
 
     assert(status.nb_vertex_updates > 0);
     assert(same_point(before_a, fixture.v[0]->point()));
@@ -363,8 +358,7 @@ void test_hard_constraints_and_frozen_status()
         fixture.c3t3, cts,
         CGAL::parameters::vertex_is_constrained_map(boost::make_assoc_property_map(vmap))
             .edge_is_constrained_map(boost::make_assoc_property_map(emap))
-            .facet_is_constrained_map(boost::make_assoc_property_map(fmap))
-            .number_of_iterations(5));
+            .facet_is_constrained_map(boost::make_assoc_property_map(fmap)));
 
     assert(status.return_code == CGAL::Mesh_smoothing_3::Smoothing_return_code::ALL_VERTICES_FROZEN);
     assert(status.nb_vertex_updates == 0);
@@ -396,8 +390,7 @@ void test_corner_is_fixed()
 
   auto status = CGAL::boundary_aware_mesh_smoothing(
     fixture.c3t3,
-    CGAL::Mesh_smoothing_3::C3t3_no_projection<C3t3>(),
-    CGAL::parameters::number_of_iterations(5));
+    CGAL::Mesh_smoothing_3::C3t3_no_projection<C3t3>());
 
   assert_all_finite(fixture.c3t3);
 
@@ -412,7 +405,6 @@ void test_corner_is_fixed()
 
   assert(another_vertex_moved);
   assert(status.nb_vertex_updates > 0);
-  std::cout << "Number of vertex updates: " << status.nb_vertex_updates << std::endl;
 }
 
 void test_zero_iterations()
@@ -432,9 +424,9 @@ void test_zero_iterations()
     CGAL::parameters::number_of_iterations(0));
 
   assert(status.return_code ==
-         CGAL::Mesh_smoothing_3::Smoothing_return_code::MAX_ITERATIONS_REACHED);
+         CGAL::Mesh_smoothing_3::Smoothing_return_code::MAX_STAGES_REACHED);
 
-  assert(status.nb_iterations == 0);
+  assert(status.nb_stages == 0);
   assert(status.nb_vertex_updates == 0);
   assert(status.nb_metric_evaluations == 0);
 

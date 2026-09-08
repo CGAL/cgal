@@ -1411,7 +1411,7 @@ inline bool Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, Concurre
         return md;
     };
 
-    if (smoother_status) smoother_status->return_code = CGAL::Mesh_smoothing_3::Smoothing_return_code::MAX_ITERATIONS_REACHED; // default if no other stopping criteria is met
+    if (smoother_status) smoother_status->return_code = CGAL::Mesh_smoothing_3::Smoothing_return_code::MAX_STAGES_REACHED; // default if no other stopping criteria is met
     if (smoother_status) smoother_status->add_time(true);
 
     bool prev_res = false;
@@ -1419,7 +1419,7 @@ inline bool Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, Concurre
         if (verbose) std::cout << "Optimization iteration #" << iter << "\n";
         if (verbose) std::cout << "    curr eps: " << _untangling_eps << std::endl;
         ++number_of_outer_iter;
-        if (smoother_status) ++smoother_status->nb_iterations;
+        if (smoother_status) ++smoother_status->nb_stages;
 
         double e_prev = untangling_energy(_coords);
         double b_prev = boundary_energy(_coords);

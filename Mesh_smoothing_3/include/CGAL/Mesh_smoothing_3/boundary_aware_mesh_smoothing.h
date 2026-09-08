@@ -51,13 +51,6 @@ namespace CGAL {
 *          among the ones listed below
 *
 * \cgalNamedParamsBegin
-*   \cgalParamNBegin{number_of_iterations}
-*     \cgalParamDescription{Maximum number of iterations of the smoothing algorithm.
-*                           Algorithm will stop before if it reaches convergence.
-*                           Untangling usually requires more iterations (up to thousands) for hard cases.}
-*     \cgalParamType{`unsigned int`}
-*     \cgalParamDefault{`100`}
-*   \cgalParamNEnd
 *   \cgalParamNBegin{verbose}
 *     \cgalParamDescription{If `true`, the function prints information about the smoothing
 *                           process to the standard output.}
@@ -72,8 +65,10 @@ namespace CGAL {
 *   \cgalParamNBegin{max_number_of_evaluations}
 *     \cgalParamDescription{Maximum number of quality metric evaluations for smoothing.}
 *     \cgalParamType{`unsigned int`}
-*     \cgalParamDefault{`0`, indicating no limit.}
-*     \cgalParamExtra{Strongly correlated to running time but will scale linearly with mesh size.}
+*     \cgalParamDefault{`10000`}
+*     \cgalParamExtra{Metric evaluations will be used to find improved point locations.
+*                     Increase the value if the algorithm has not converged yet.
+*                     It is strongly correlated to running time but will scale linearly with mesh size. }
 *   \cgalParamNEnd
 *   \cgalParamNBegin{concurrency_tag}
 *     \cgalParamDescription{a tag indicating if the task should be done using one or several threads.}
@@ -122,8 +117,8 @@ Mesh_smoothing_3::Smoothing_status boundary_aware_mesh_smoothing  (
 
     const bool verbose =
         choose_parameter(get_parameter(np, internal_np::verbose), false);
-    const std::size_t max_iterations =
-        choose_parameter(get_parameter(np, internal_np::number_of_iterations), 100u);
+    const std::size_t max_iterations = // not documented, limitation used is metric evaluations
+        choose_parameter(get_parameter(np, internal_np::number_of_iterations), 5000u);
 
 
     typedef typename internal_np::Lookup_named_param_def <
@@ -156,7 +151,7 @@ Mesh_smoothing_3::Smoothing_status boundary_aware_mesh_smoothing  (
     // not documented, for benchmarking purposes
     bool perform_hilbert_sort = !choose_parameter(get_parameter(np, internal_np::preserve_order), false);
 
-    unsigned max_nb_metric_evaluations = choose_parameter(get_parameter(np, internal_np::max_number_of_evaluations), 0);
+    unsigned max_nb_metric_evaluations = choose_parameter(get_parameter(np, internal_np::max_number_of_evaluations), 10'000u);
 
     double time_limit = choose_parameter(get_parameter(np, internal_np::maximum_running_time), 0.);
 

@@ -23,8 +23,6 @@ using namespace ms3_test;
 
 namespace {
 
-constexpr unsigned max_iterations = 100u;
-constexpr unsigned untangle_iterations = 100u;
 constexpr double untangle_amplitude = 0.05;
 
 C3t3 load_example_mesh()
@@ -96,7 +94,7 @@ CGAL::Mesh_smoothing_3::Smoothing_status run_example_smoothing(C3t3T& c3t3, bool
   >(
       c3t3,
       CGAL::Mesh_smoothing_3::C3t3_mesh_projector<C3t3T>(c3t3),
-      CGAL::parameters::verbose(verbose).number_of_iterations(max_iterations).concurrency_tag(tag));
+      CGAL::parameters::verbose(verbose).concurrency_tag(tag));
   assert_all_finite(c3t3);
   return status;
 }
@@ -118,7 +116,7 @@ void test_verbose_has_no_impact()
 
   assert_structure_counts_preserved(quiet, verbose);
   assert(quiet_status.return_code == verbose_status.return_code);
-  assert(quiet_status.nb_iterations == verbose_status.nb_iterations);
+  assert(quiet_status.nb_stages == verbose_status.nb_stages);
   assert(quiet_status.nb_vertex_updates == verbose_status.nb_vertex_updates);
   assert(quiet_status.nb_metric_evaluations == verbose_status.nb_metric_evaluations);
   assert(quiet_status.nb_initial_invalid_elements == verbose_status.nb_initial_invalid_elements);
@@ -139,7 +137,7 @@ void test_example_integration()
   assert(status.nb_initial_invalid_elements == 0);
   assert(status.nb_invalid_elements == 0);
   assert(status.valid_mesh());
-  assert(status.nb_iterations > 0);
+  assert(status.nb_metric_evaluations > 0);
   assert(status.nb_vertex_updates > 0);
   assert(status.return_code == CGAL::Mesh_smoothing_3::Smoothing_return_code::CONVERGENCE_REACHED);
   assert_time_breakdown_close(status);
@@ -153,12 +151,12 @@ void test_no_early_stopping()
   auto status = CGAL::boundary_aware_mesh_smoothing(
       c3t3,
       CGAL::Mesh_smoothing_3::C3t3_mesh_projector(c3t3),
-      CGAL::parameters::verbose(false).number_of_iterations(2));
+      CGAL::parameters::verbose(false).max_number_of_evaluations(10000));
 
   assert(status.valid_mesh());
-  assert(status.nb_iterations == 2);
+  assert(status.nb_stages == 2);
   assert(status.nb_vertex_updates > 100);
-  assert(status.return_code == CGAL::Mesh_smoothing_3::Smoothing_return_code::CONVERGENCE_REACHED); // sphere will converge in 2 iterations (to change)
+  assert(status.return_code == CGAL::Mesh_smoothing_3::Smoothing_return_code::CONVERGENCE_REACHED); // sphere will converge in 2 stages
   assert_time_breakdown_close(status);
 }
 
@@ -173,7 +171,7 @@ void test_mono_core_reproducibility()
 
   assert_structure_counts_preserved(first, second);
   assert(first_status.return_code == second_status.return_code);
-  assert(first_status.nb_iterations == second_status.nb_iterations);
+  assert(first_status.nb_stages == second_status.nb_stages);
   assert(first_status.nb_vertex_updates == second_status.nb_vertex_updates);
   assert(first_status.nb_metric_evaluations == second_status.nb_metric_evaluations);
   assert(first_status.nb_initial_invalid_elements == second_status.nb_initial_invalid_elements);
@@ -218,7 +216,7 @@ void test_random_inner_untangling_integration()
   auto status = CGAL::boundary_aware_mesh_smoothing(
       perturbed,
       projector,
-      CGAL::parameters::verbose(false).number_of_iterations(untangle_iterations));
+      CGAL::parameters::verbose(false));
 
 
   assert(status.nb_initial_invalid_elements > 0);
@@ -324,8 +322,7 @@ void test_constraint_maps_integration()
     projector,
     CGAL::parameters::
       edge_is_constrained_map(boost::make_assoc_property_map(emap))
-      .facet_is_constrained_map(boost::make_assoc_property_map(fmap))
-      .number_of_iterations(max_iterations));
+      .facet_is_constrained_map(boost::make_assoc_property_map(fmap)));
 
   assert(status.nb_vertex_updates > 0);
 
