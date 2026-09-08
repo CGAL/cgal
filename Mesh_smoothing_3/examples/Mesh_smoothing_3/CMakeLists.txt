@@ -41,19 +41,3 @@ if(OpenMP_CXX_FOUND)
 else()
     message(STATUS "OpenMP was not found.")
 endif()
-
-
-option(MAKE_LIB_LINKING_EXAMPLES "Build examples of other meshing libs that link against Mesh_smoothing_3" OFF)
-
-if (MAKE_LIB_LINKING_EXAMPLES)
-    create_single_source_cgal_program("alpha_wrap_improvement.cpp")
-    target_link_libraries(alpha_wrap_improvement PRIVATE CGAL::Eigen3_support)
-    if(OpenMP_CXX_FOUND)
-        target_link_libraries(alpha_wrap_improvement PRIVATE OpenMP::OpenMP_CXX)
-    endif()
-
-    include(FetchContent)
-    add_subdirectory(Cinolib)
-    add_subdirectory(libigl)
-    add_subdirectory(geogram)
-endif()
