@@ -128,8 +128,7 @@ public:
     /*!
         Class constructor
 
-        \param c3t3 contains the mesh used for projection. A copy is done at construction.
-
+        \param c3t3 contains the mesh used for projection.
     */
     C3t3_mesh_projector(C3t3 const& c3t3)
     : _c3t3(c3t3)
