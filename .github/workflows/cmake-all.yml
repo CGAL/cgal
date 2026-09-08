@@ -6,28 +6,33 @@ permissions:
   contents: read
 
 jobs:
-  cmake-testsuite:
+  test:
     if: github.repository == 'CGAL/cgal' || github.event_name != 'push'
     runs-on: ubuntu-latest
+    name: test (with_qt=${{ matrix.with_qt }})${{ case(matrix.from_release_tarball, ' (from tarball)', '')}}
+    strategy:
+      matrix:
+        with_qt: [true, false]
+        from_release_tarball: [true, false]
+    defaults:
+      run:
+        shell: bash
     steps:
     - uses: actions/checkout@v4
     - name: install dependencies
       run: sudo apt-get update && sudo apt-get install -y libboost-dev libboost-program-options-dev libmpfr-dev libeigen3-dev
-    - name: configure all
-      run: |
-        set -e
-        mkdir build && cd build && CXX=clang++ cmake -DWITH_examples=ON -DWITH_tests=ON -DWITH_demos=ON -DCGAL_ENABLE_TESTING=ON ..
-        ctest -L Installation -j $(getconf _NPROCESSORS_ONLN)
-
-  cmake-testsuite-with-qt:
-    if: github.repository == 'CGAL/cgal' || github.event_name != 'push'
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - name: install dependencies
+    - name: install all dependencies
+      if: matrix.with_qt == true
       run: sudo bash -e .github/install.sh
-    - name: configure all
+    - name: create release tarball
+      if: matrix.from_release_tarball == true
+      run: |
+        cmake -DCGAL_VERSION=dev -P Scripts/developer_scripts/cgal_create_release_with_cmake.cmake
+        echo "CGAL_SOURCES=/tmp/CGAL-dev" >> "$GITHUB_ENV"
+    - name: configure all CGAL
       run: |
         set -e
-        mkdir build && cd build && CXX=clang++ cmake -DWITH_examples=ON -DWITH_tests=ON -DWITH_demos=ON -DCGAL_ENABLE_TESTING=ON ..
-        ctest -L Installation -j $(getconf _NPROCESSORS_ONLN)
+        CXX=clang++ cmake -S ${CGAL_SOURCES:-.} -B build -DWITH_examples=ON -DWITH_tests=ON -DWITH_demos=ON -DCGAL_ENABLE_TESTING=ON
+    - name: run CGAL CMake testsuite
+      run: |
+        ctest --test-dir build -L Installation -j $(getconf _NPROCESSORS_ONLN) --output-on-failure
