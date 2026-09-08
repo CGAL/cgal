@@ -373,6 +373,136 @@ public:
     }
 };
 
+/*!
+ * \ingroup pkgMeshSmoothing3Projection
+ *
+ * \brief provides projection functions onto a surface represented by a
+ * signed-distance function.
+ *
+ * This class adapts a signed-distance function into a model of
+ * `ConstructTangentSpace`. The function must return both its signed distance
+ * and gradient at a queried point. Negative and positive values represent the
+ * two sides of the surface, and the zero level set represents the target
+ * surface.
+ *
+ * Surface points are obtained by iteratively moving along the gradient toward
+ * the zero level set. For an exact signed-distance function, whose gradient has
+ * unit norm, a single iteration gives the normal projection. Several
+ * iterations are supported to accommodate approximate signed-distance fields,
+ * for example fields interpolated from a regular grid.
+ *
+ * Convergence is determined from the magnitude of the projection displacement,
+ * rather than from the signed-distance value. This ensures that a large first
+ * projection landing exactly on the zero level set is followed by another
+ * evaluation before convergence is reported.
+ *
+ * Curve projection is disabled.
+ *
+ * @tparam GeomTraits a geometric traits class
+ * @tparam Function a callable object taking a `Point_3` and returning
+ * `std::pair<FT, Vector_3>`, containing respectively the signed distance
+ * and its gradient
+ *
+ * \cgalModels{ConstructTangentSpace}
+ *
+ * \sa `CGAL::boundary_aware_mesh_smoothing`
+ * \sa `CGAL::Mesh_smoothing_3::Polyhedral_mesh_domain_projector`
+ * \sa `CGAL::Mesh_smoothing_3::C3t3_mesh_projector`
+ */
+template<typename GeomTraits, typename Function>
+class Signed_distance_function_projector
+{
+public:
+    using FT = typename GeomTraits::FT;
+    using Point_3 = typename GeomTraits::Point_3;
+    using Vector_3 = typename GeomTraits::Vector_3;
+    using Tangent_space = Mesh_smoothing_3::Tangent_space<GeomTraits>;
+
+    /*!
+     * Class constructor.
+     *
+     * \param function the signed-distance function and gradient used for
+     * projection
+     * \param max_projection_iterations maximum number of projection iterations
+     * \param tolerance positional tolerance used to stop the projection,
+     * expressed in the units of the input geometry
+     */
+    explicit Signed_distance_function_projector(
+        Function function,
+        std::size_t max_projection_iterations = 10,
+        FT tolerance = FT(1e-8))
+        : _function(std::move(function))
+        , _max_projection_iterations(max_projection_iterations)
+        , _tolerance(tolerance)
+    {
+        CGAL_precondition(_tolerance >= FT(0));
+    }
+
+    template<typename Patch_face>
+    Tangent_space
+    patch_face_projection_plane(const Patch_face&,
+                                const std::vector<Point_3>& face_points) const
+    {
+        CGAL_precondition(!face_points.empty());
+
+        Point_3 projected =
+            CGAL::centroid(face_points.begin(), face_points.end());
+
+        const FT squared_tolerance = _tolerance * _tolerance;
+
+        for(std::size_t i = 0; i < _max_projection_iterations; ++i)
+        {
+            const auto [distance, gradient] = _function(projected);
+            const FT squared_norm = gradient.squared_length();
+
+            CGAL_precondition(squared_norm != FT(0));
+
+            // For an exact signed-distance function, ||gradient|| = 1 and
+            // this reduces to: displacement = distance * gradient.
+            //
+            // Keeping the normalization makes the projection more robust to
+            // approximate signed-distance fields.
+            const Vector_3 displacement =
+                (distance / squared_norm) * gradient;
+
+            projected = projected - displacement;
+
+            // Use positional convergence instead of |distance|. In
+            // particular, a large first displacement that happens to land
+            // exactly on the zero level set does not immediately terminate
+            // the iteration.
+            if(displacement.squared_length() <= squared_tolerance)
+                break;
+        }
+
+        // Re-evaluate at the projected position so that the returned tangent
+        // plane corresponds to the final surface point.
+        const auto [distance, gradient] = _function(projected);
+        CGAL_USE(distance);
+
+        CGAL_precondition(gradient.squared_length() != FT(0));
+
+        return Tangent_space{projected, gradient};
+    }
+
+    template<typename Curve_edge>
+    Tangent_space
+    curve_edge_projection_line(const Curve_edge&,
+                               const std::array<Point_3, 2>& edge_points) const
+    {
+        return Tangent_space{
+            CGAL::midpoint(edge_points[0], edge_points[1]),
+            edge_points[1] - edge_points[0],
+            Projection_weight_mode::NONE
+        };
+    }
+
+private:
+    std::decay_t<Function> _function;
+    std::size_t _max_projection_iterations;
+    FT _tolerance;
+};
+
 } // namespace Mesh_smoothing_3
 
 }
