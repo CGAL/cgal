@@ -72,7 +72,7 @@ struct Graphics_scene_options<DS, VertexDescriptor, EdgeDescriptor, FaceDescript
   std::function<bool(const DS &, face_descriptor)>  is_face_valued;
 
   /// `std::function` that returns the scalar value of the given face. Called only
-  /// when `is_face_valued()` returns `true`. The viewer normalises the values over their
+  /// when `is_face_valued()` returns `true`. The viewer normalizes the values over their
   /// range and maps them to a color palette.
   std::function<float(const DS &, face_descriptor)> face_value;
 

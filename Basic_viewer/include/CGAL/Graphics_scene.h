@@ -253,7 +253,7 @@ public:
   }
 
   /// sets the scalar value of the face currently being built. The viewer can color
-  /// the faces by these values, normalised over their range and mapped to a palette.
+  /// the faces by these values, normalized over their range and mapped to a palette.
   void set_face_value(float v) { m_current_face_value=v; m_has_face_values=true; }
 
   /// sets the name of the value, shown in the viewer's color legend.

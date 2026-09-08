@@ -77,12 +77,12 @@ uniform mediump float u_RenderingTransparency;
 
 // Color by value: 0 keeps the vertex color, otherwise a palette index. The
 // value shown is the signed distance from the fragment to the clipping plane,
-// normalised to [u_ValueMin, u_ValueMax].
+// normalized to [u_ValueMin, u_ValueMax].
 uniform mediump float u_ColorMapMode;
 uniform mediump float u_ValueMin;
 uniform mediump float u_ValueMax;
-// Per cell: the viewer gives one value for the whole cell (its centre distance or
-// its size), so a whole cell takes one flat color and neighbouring cells do not melt.
+// Per cell: the viewer gives one value for the whole cell (its center distance or
+// its size), so a whole cell takes one flat color and neighboring cells do not melt.
 uniform int           u_ColorPerCell;
 uniform highp   float u_CellValue;
 
