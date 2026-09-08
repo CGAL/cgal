@@ -69,7 +69,7 @@ struct Smoothing_status {
 // internal usage
 
     void add_time(bool pre_processing = false) {
-        _running = true;
+        assert(_running);
         std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
         double time = static_cast<double>(std::chrono::duration_cast<std::chrono::microseconds>(now - previous).count()) * 1e-6;
         if (pre_processing) pre_processing_time += time;
@@ -87,7 +87,7 @@ struct Smoothing_status {
 
 private:
     std::chrono::steady_clock::time_point previous;
-    bool _running = false;
+    bool _running = true;
 };
 
 } } // end of CGAL::Mesh_smoothing_3 namespace

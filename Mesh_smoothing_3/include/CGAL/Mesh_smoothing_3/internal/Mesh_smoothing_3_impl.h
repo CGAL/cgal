@@ -897,7 +897,7 @@ void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::
 
 template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
 Smoothing_status Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::run() {
-    if (!_smoothing_status.in_progress()) _smoothing_status = Smoothing_status();
+    if (!_smoothing_status.in_progress()) _smoothing_status = Smoothing_status(); // if it was defined using the setter
 
     check_refs();
     create_compress_sorted_data();

@@ -1411,15 +1411,15 @@ inline bool Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, Concurre
         return md;
     };
 
-    smoother_status->return_code = CGAL::Mesh_smoothing_3::Smoothing_return_code::MAX_ITERATIONS_REACHED; // default if no other stopping criteria is met
-    smoother_status->add_time(true);
+    if (smoother_status) smoother_status->return_code = CGAL::Mesh_smoothing_3::Smoothing_return_code::MAX_ITERATIONS_REACHED; // default if no other stopping criteria is met
+    if (smoother_status) smoother_status->add_time(true);
 
     bool prev_res = false;
     for (unsigned iter = 0; iter < max_number_iter; ++iter) {
         if (verbose) std::cout << "Optimization iteration #" << iter << "\n";
         if (verbose) std::cout << "    curr eps: " << _untangling_eps << std::endl;
         ++number_of_outer_iter;
-        ++smoother_status->nb_iterations;
+        if (smoother_status) ++smoother_status->nb_iterations;
 
         double e_prev = untangling_energy(_coords);
         double b_prev = boundary_energy(_coords);
@@ -1436,12 +1436,12 @@ inline bool Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, Concurre
         opt._call_back = [&](Eigen::VectorXd const & x, Eigen::VectorXd const & g,double f,double step,unsigned bfgs_iter,unsigned nbEval) {
             bool stop_required = run_callback(UNTANGLING, iter, {bfgs_iter, step, nbEval}, &g);
 
-            smoother_status->add_time();
-            ++smoother_status->nb_vertex_updates;
-            smoother_status->nb_metric_evaluations += nbEval;
+            if (smoother_status) smoother_status->add_time();
+            if (smoother_status) ++smoother_status->nb_vertex_updates;
+            if (smoother_status) smoother_status->nb_metric_evaluations += nbEval;
 
-            if (time_limit > 0 && smoother_status->total_time > time_limit) stop_required = true;
-            if (max_nb_metric_evaluations > 0 && smoother_status->nb_metric_evaluations > static_cast<unsigned>(max_nb_metric_evaluations)) stop_required = true;
+            if (time_limit > 0 && smoother_status && smoother_status->total_time > time_limit) stop_required = true;
+            if (max_nb_metric_evaluations > 0 && smoother_status && smoother_status->nb_metric_evaluations > static_cast<unsigned>(max_nb_metric_evaluations)) stop_required = true;
 
             bool significant_step = false;
             if (exact_predicate_optimization_check) {
@@ -1478,12 +1478,12 @@ inline bool Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, Concurre
         if (verbose && has_curves_and_points_terms()) std::cout << "    Curves&Points: " << e_curve_points_prev << " -> " << e_curve_points << std::endl;;
         if (verbose) std::cout << "    Status: " << opt.get_message() << std::endl;
 
-        if (time_limit > 0 && smoother_status->total_time > time_limit) {
+        if (time_limit > 0 && smoother_status && smoother_status->total_time > time_limit) {
             if (verbose) std::cout << "Time limit reached, stopping." << " ( " << smoother_status->total_time << "s / " << time_limit << "s )" << std::endl;
             smoother_status->return_code = CGAL::Mesh_smoothing_3::Smoothing_return_code::TIME_LIMIT_REACHED;
             break;
         }
-        if (max_nb_metric_evaluations > 0 && smoother_status->nb_metric_evaluations > static_cast<unsigned>(max_nb_metric_evaluations)) {
+        if (max_nb_metric_evaluations > 0 && smoother_status && smoother_status->nb_metric_evaluations > static_cast<unsigned>(max_nb_metric_evaluations)) {
             if (verbose) std::cout << "Max number of metric evaluations reached, stopping." << " ( " << smoother_status->nb_metric_evaluations << " / " << max_nb_metric_evaluations << " )" << std::endl;
             smoother_status->return_code = CGAL::Mesh_smoothing_3::Smoothing_return_code::MAX_NUMBER_OF_METRIC_EVALUATIONS_REACHED;
             break;
@@ -1514,13 +1514,13 @@ inline bool Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, Concurre
         }
 
         if (run_callback(UNTANGLING, iter+1)) {
-            smoother_status->return_code = CGAL::Mesh_smoothing_3::Smoothing_return_code::USER_ABORT;
+            if (smoother_status) smoother_status->return_code = CGAL::Mesh_smoothing_3::Smoothing_return_code::USER_ABORT;
             if (verbose) std::cout << "Callback required stop, breaking." << std::endl;
             break;
         }
 
         if (prev_res && res && opt_res) {
-            smoother_status->return_code = CGAL::Mesh_smoothing_3::Smoothing_return_code::CONVERGENCE_REACHED;
+            if (smoother_status) smoother_status->return_code = CGAL::Mesh_smoothing_3::Smoothing_return_code::CONVERGENCE_REACHED;
             if (verbose) std::cout << "Optimization converged and no tangled elements." << std::endl;
             break;
         };
@@ -1528,7 +1528,7 @@ inline bool Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, Concurre
     }
     if (verbose) logging.log_total_time();
 
-    smoother_status->add_time();
+    if (smoother_status) smoother_status->add_time();
     return res;
 }
 
