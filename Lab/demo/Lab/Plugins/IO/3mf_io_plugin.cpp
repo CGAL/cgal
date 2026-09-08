@@ -78,7 +78,7 @@ class Io_3mf_plugin:
     QList<Scene_item*> result;
     std::vector<std::vector<CGAL::IO::Color> > all_colors;
     int nb_meshes =
-        CGAL::IO::read_3MF(fileinfo.filesystemPath(),
+        CGAL::IO::read_3MF(fileinfo.filesystemFilePath(),
                            all_points, all_polygons, all_colors, names);
     if(nb_meshes <0 )
     {
