@@ -1345,16 +1345,16 @@ bool autorefine_triangle_soup(PointRange& soup_points,
       c = CGAL::abs(orth[2]) > CGAL::abs(orth[c]) ? 2 : c;
 
       if (c == 0) {
-        autorefine_impl::generate_subtriangles<EK, parallel_execution, 0>(ti, all_triangle_data[ti], intersecting_triangles, coplanar_triangles, triangles, new_triangles);
+        autorefine_impl::generate_subtriangles<EK, Concurrency_tag::is_parallel, 0>(ti, all_triangle_data[ti], intersecting_triangles, coplanar_triangles, triangles, new_triangles);
       }
       else if (c == 1) {
-        autorefine_impl::generate_subtriangles<EK, parallel_execution, 1>(ti, all_triangle_data[ti], intersecting_triangles, coplanar_triangles, triangles, new_triangles);
+        autorefine_impl::generate_subtriangles<EK, Concurrency_tag::is_parallel, 1>(ti, all_triangle_data[ti], intersecting_triangles, coplanar_triangles, triangles, new_triangles);
       }
       else if (c == 2) {
-        autorefine_impl::generate_subtriangles<EK, parallel_execution, 2>(ti, all_triangle_data[ti], intersecting_triangles, coplanar_triangles, triangles, new_triangles);
+        autorefine_impl::generate_subtriangles<EK, Concurrency_tag::is_parallel, 2>(ti, all_triangle_data[ti], intersecting_triangles, coplanar_triangles, triangles, new_triangles);
       }
 #else
-      autorefine_impl::generate_subtriangles<EK, parallel_execution>(ti, all_triangle_data[ti], intersecting_triangles, coplanar_triangles, triangles, new_triangles);
+      autorefine_impl::generate_subtriangles<EK, Concurrency_tag::is_parallel>(ti, all_triangle_data[ti], intersecting_triangles, coplanar_triangles, triangles, new_triangles);
 #endif
     }
 
