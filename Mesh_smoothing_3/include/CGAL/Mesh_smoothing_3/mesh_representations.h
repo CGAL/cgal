@@ -300,9 +300,14 @@ public:
     decltype(auto) vertex_coordinates(Vertex_descriptor vertex) const {
         return Mesh_smoothing_3_internal::get_point<C3t3>(vertex); // c3t3 holds weighted points
     }
-    void  set_vertex_coordinates(Vertex_descriptor vertex, const Point_3& coord)
+    void set_vertex_coordinates(Vertex_descriptor vertex, const Point_3& coord)
     {
-      vertex->set_point(Construct_point_3()(coord));
+        const auto old_point = vertex->point();
+        const auto new_point = Construct_point_3()(coord);
+        if constexpr (std::is_same_v<std::decay_t<decltype(old_point)>, Weighted_point_3>)
+            vertex->set_point(Weighted_point_3(new_point, old_point.weight()));
+        else
+            vertex->set_point(new_point);
     }
     auto cell_range() const { return c3t3.cells_in_complex(); }
     std::array<Vertex_descriptor, 4> cell_vertices(Cell_descriptor cell) const {
