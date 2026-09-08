@@ -1133,6 +1133,7 @@ inline double Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, Concur
     };
     Reduction reduction = Mesh_smoothing_3_internal::reduce<ConcurrencyTag, Reduction>(0, _bnd_poly.size(), [&](std::size_t t, Reduction& r) {
         Boundary_poly &poly = _bnd_poly[t];
+        if (poly.weight == 0.) return;
         for (unsigned tc = 0; tc < poly.verts.size(); ++tc) {
             double regul = poly.weight * drift/_local_size[poly.verts[tc]];
             Eigen::Vector3d pt = Math_functions::sub_col_vector(x, poly.verts[tc]);
