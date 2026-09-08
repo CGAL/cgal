@@ -54,11 +54,12 @@ int main(int argc, char* argv[])
     CGAL::boundary_aware_mesh_smoothing(
         c3t3,
         CGAL::Mesh_smoothing_3::C3t3_mesh_projector(c3t3),
-        CGAL::parameters::verbose(true).number_of_iterations(100)
+        CGAL::parameters::verbose(true)
     );
 
     std::cout << "Number of inverted elements: " << result.nb_invalid_elements << std::endl;
     std::cout << "Number of vertex updates: " << result.nb_vertex_updates << std::endl;
+    std::cout << "Number of metric evaluations: " << result.nb_metric_evaluations << std::endl;
     std::cout << "Pre-processing time: " << result.pre_processing_time << std::endl;
     std::cout << "Smoothing time: " << result.optimization_time << std::endl;
 

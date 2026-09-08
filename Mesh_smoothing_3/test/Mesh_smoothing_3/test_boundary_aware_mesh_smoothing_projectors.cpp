@@ -70,8 +70,7 @@ double run_projection_case(CTS const& cts)
 
   auto status = CGAL::boundary_aware_mesh_smoothing(
       fixture.c3t3, cts,
-      CGAL::parameters::vertex_is_constrained_map(boost::make_assoc_property_map(vmap))
-          .number_of_iterations(1));
+      CGAL::parameters::vertex_is_constrained_map(boost::make_assoc_property_map(vmap)));
 
   (void)status;
   double sum = 0.;
