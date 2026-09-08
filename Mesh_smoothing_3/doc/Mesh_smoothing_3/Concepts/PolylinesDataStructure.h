@@ -1,3 +1,4 @@
+#ifndef DOXYGEN_RUNNING
 /*!
 \ingroup pkgMeshSmoothing3Concepts
 \cgalConcept
@@ -61,3 +62,4 @@ Vertex_descriptor edge_vertex(Edge_descriptor edge, unsigned i) const;
 
 
 }; /* end PolylinesDataStructure */
+#endif
