@@ -412,6 +412,7 @@ void test_corner_is_fixed()
 
   assert(another_vertex_moved);
   assert(status.nb_vertex_updates > 0);
+  std::cout << "Number of vertex updates: " << status.nb_vertex_updates << std::endl;
 }
 
 void test_zero_iterations()
