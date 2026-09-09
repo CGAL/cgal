@@ -16,7 +16,9 @@
 #include <CGAL/license/Triangulation_on_hyperbolic_surface_2.h>
 
 #include <CGAL/Triangulation_on_hyperbolic_surface_2.h>
+#ifndef CGAL_DISABLE_GMP
 #include <CGAL/Delaunay_triangulation_on_hyperbolic_surface_2.h>
+#endif
 
 #include <CGAL/assertions.h>
 
@@ -74,6 +76,7 @@ void operator>>(std::istream& s, Triangulation_on_hyperbolic_surface_2<Traits, A
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+#ifndef CGAL_DISABLE_GMP
 template<class Traits>
 std::ostream&
 operator<<(std::ostream& s, const Delaunay_triangulation_on_hyperbolic_surface_2<Traits>& triangulation)
@@ -87,6 +90,7 @@ void operator>>(std::istream& s, Delaunay_triangulation_on_hyperbolic_surface_2<
 {
   triangulation.from_stream(s);
 }
+#endif
 
 } // namespace CGAL
 
