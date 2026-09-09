@@ -235,36 +235,6 @@ namespace Polygon_mesh_processing {
         max_squared_distance).first;
   }
 
-#ifndef CGAL_NO_DEPRECATED_CODE
-  /*!
-  \ingroup PMP_hole_filling_grp
-
-  \deprecated This function is deprecated since \cgal 5.6 and the
-  overload with the named parameter `face_output_iterator` should be
-  used instead.
-
-  \brief triangulates a hole in a polygon mesh.
-
-
-  @tparam PolygonMesh a model of `MutableFaceGraph`
-  @tparam OutputIterator a model of `OutputIterator`
-    holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces.
-  @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
-  */
-  template<typename PolygonMesh,
-           typename OutputIterator,
-           typename CGAL_NP_TEMPLATE_PARAMETERS>
-  CGAL_DEPRECATED
-  OutputIterator
-  triangulate_hole(PolygonMesh& pmesh,
-              typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
-              OutputIterator out,
-              const CGAL_NP_CLASS& np = parameters::default_values())
-  {
-    return triangulate_hole(pmesh, border_halfedge,np.face_output_iterator(out));
-  }
-#endif // CGAL_NO_DEPRECATED_CODE
-
   /*!
   \ingroup PMP_hole_filling_grp
   @brief triangulates and refines a hole in a polygon mesh.
@@ -405,42 +375,6 @@ namespace Polygon_mesh_processing {
     visitor.end_refine_phase();
     return res;
   }
-
-
-#ifndef CGAL_NO_DEPRECATED_CODE
- /*!
-  \ingroup PMP_hole_filling_grp
-
-  \deprecated This function is deprecated since \cgal 5.6 and the
-  overload with the named parameters `face_output_iterator` and
-  `vertex_output_iterator` should be used instead.
-
- @brief triangulates and refines a hole in a polygon mesh.
-
-  @tparam PolygonMesh must be model of `MutableFaceGraph`
-  @tparam FaceOutputIterator model of `OutputIterator`
-     holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces.
-  @tparam VertexOutputIterator model of `OutputIterator`
-     holding `boost::graph_traits<PolygonMesh>::%vertex_descriptor` for patch vertices.
-  @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
- */
-
-  template<typename PolygonMesh,
-           typename FaceOutputIterator,
-           typename VertexOutputIterator,
-           typename CGAL_NP_TEMPLATE_PARAMETERS>
-  CGAL_DEPRECATED
-  std::pair<FaceOutputIterator, VertexOutputIterator>
-    triangulate_and_refine_hole(PolygonMesh& pmesh,
-      typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
-      FaceOutputIterator face_out,
-      VertexOutputIterator vertex_out,
-      const CGAL_NP_CLASS& np = parameters::default_values())
-  {
-    return triangulate_and_refine_hole(pmesh, border_halfedge,
-                                       np.face_output_iterator(face_out).vertex_output_iterator(vertex_out));
-  }
-#endif // CGAL_NO_DEPRECATED_CODE
 
   /*!
   \ingroup PMP_hole_filling_grp
@@ -602,39 +536,6 @@ namespace Polygon_mesh_processing {
     vertex_out = std::copy(patch.begin(), patch.end(), vertex_out);
     return std::make_tuple(fair_success, face_out, vertex_out);
   }
-
-  #ifndef CGAL_NO_DEPRECATED_CODE
-  /*!
-  \ingroup PMP_hole_filling_grp
-
-  \deprecated This function is deprecated since \cgal 5.6 and the
-  overload with the named parameters `face_output_iterator` and
-  `vertex_output_iterator` should be used instead.
-
-  \brief triangulates, refines, and fairs a hole in a polygon mesh.
-
-  @tparam PolygonMesh a model of `MutableFaceGraph`
-  @tparam FaceOutputIterator model of `OutputIterator`
-     holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces.
-  @tparam VertexOutputIterator model of `OutputIterator`
-     holding `boost::graph_traits<PolygonMesh>::%vertex_descriptor` for patch vertices.
-  @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
-  */
-  template<typename PolygonMesh,
-           typename FaceOutputIterator,
-           typename VertexOutputIterator,
-           typename CGAL_NP_TEMPLATE_PARAMETERS>
-  CGAL_DEPRECATED
-  std::tuple<bool, FaceOutputIterator, VertexOutputIterator>
-  triangulate_refine_and_fair_hole(PolygonMesh& pmesh,
-    typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
-    FaceOutputIterator face_out,
-    VertexOutputIterator vertex_out,
-    const CGAL_NP_CLASS& np = parameters::default_values())
-  {
-    return triangulate_refine_and_fair_hole(pmesh, border_halfedge, np.face_output_iterator(face_out).vertex_output_iterator(vertex_out));
-  }
-#endif // CGAL_NO_DEPRECATED_CODE
 
   /*!
   \ingroup PMP_hole_filling_grp
