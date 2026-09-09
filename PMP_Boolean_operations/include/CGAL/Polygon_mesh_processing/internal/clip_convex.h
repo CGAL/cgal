@@ -795,6 +795,7 @@ clip_convex(PolygonMesh& pm,
       set_next(src_split, split_edge, pm);
       set_next(opposite(split_edge, pm), opposite(src_split, pm), pm);
       set_halfedge(*faces(pm).begin(), split_edge, pm);
+      set_halfedge(target(src_split, pm), src_split, pm);
       if(triangulate){
         if constexpr(has_visitor){
           Wrap_visitor_for_triangulation wrap_visitor(pm, visitor);
