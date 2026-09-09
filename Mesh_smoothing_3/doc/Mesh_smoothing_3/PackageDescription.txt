@@ -37,9 +37,12 @@
 - `TangentSpace`
 - `ConstructTangentSpace`
 
-\cgalCRPSection{Projection class}
+\cgalCRPSection{Projection classes}
 - `CGAL::Mesh_smoothing_3::C3t3_mesh_projector`
 - `CGAL::Mesh_smoothing_3::C3t3_no_projection`
+- `CGAL::Mesh_smoothing_3::Polyhedral_mesh_domain_projector`
+- `CGAL::Mesh_smoothing_3::Polyhedral_mesh_domain_with_features_projector`
+- `CGAL::Mesh_smoothing_3::Signed_distance_function_projector`
 
 \cgalCRPSection{Functions}
 - `CGAL::boundary_aware_mesh_smoothing()`

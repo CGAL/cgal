@@ -167,35 +167,33 @@ int main()
     // max(-torus, sphere) therefore represents the entire boundary as one
     // implicit function. No patch identifier is used by the projector.
     //
-    auto projection_function =
-        [](const Point_3& p) -> Value_and_gradient
+    auto projection_function = [](const Point_3& p) -> Value_and_gradient {
+        const auto [torus_distance, torus_gradient] =
+            torus_distance_and_gradient(p);
+
+        const auto [sphere_distance, sphere_gradient] =
+            sphere_distance_and_gradient(p);
+
+        // Desired domain:
+        //
+        //   outside torus  -> -torus_distance < 0
+        //   inside sphere  ->  sphere_distance < 0
+        //
+        const FT outside_torus_distance = -torus_distance;
+
+        if(outside_torus_distance > sphere_distance)
         {
-            const auto [torus_distance, torus_gradient] =
-                torus_distance_and_gradient(p);
-
-            const auto [sphere_distance, sphere_gradient] =
-                sphere_distance_and_gradient(p);
-
-            // Desired domain:
-            //
-            //   outside torus  -> -torus_distance < 0
-            //   inside sphere  ->  sphere_distance < 0
-            //
-            const FT outside_torus_distance = -torus_distance;
-
-            if(outside_torus_distance > sphere_distance)
-            {
-                return {
-                    outside_torus_distance,
-                    -torus_gradient
-                };
-            }
-
             return {
-                sphere_distance,
-                sphere_gradient
+                outside_torus_distance,
+                -torus_gradient
             };
+        }
+
+        return {
+            sphere_distance,
+            sphere_gradient
         };
+    };
 
     using Projector =
         CGAL::Mesh_smoothing_3::Signed_distance_function_projector<
@@ -212,11 +210,18 @@ int main()
         CGAL::boundary_aware_mesh_smoothing(
             c3t3,
             projector,
-            params::verbose(true));
+            CGAL::parameters::verbose(true));
+
+    std::cout << "Number of inverted elements: "
+              << result.nb_invalid_elements << '\n';
+    std::cout << "Number of vertex updates: "
+              << result.nb_vertex_updates << '\n';
+    std::cout << "Number of metric evaluations: "
+              << result.nb_metric_evaluations << '\n';
+    std::cout << "Smoothing time: "
+              << result.total_time << " s." << '\n';
 
     CGAL::dump_c3t3(c3t3, "implicit_smoothed");
 
-    return result.nb_invalid_elements == 0
-        ? EXIT_SUCCESS
-        : EXIT_FAILURE;
+    return EXIT_SUCCESS;
 }

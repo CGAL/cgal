@@ -308,6 +308,8 @@ int main()
               << result.nb_vertex_updates << '\n';
     std::cout << "Number of metric evaluations: "
               << result.nb_metric_evaluations << '\n';
+    std::cout << "Smoothing time: "
+              << result.total_time << " s." << '\n';
 
     dump_c3t3(c3t3, "hybrid_smoothed");
 
