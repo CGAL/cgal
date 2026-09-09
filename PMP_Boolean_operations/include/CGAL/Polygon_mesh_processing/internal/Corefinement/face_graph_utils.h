@@ -715,31 +715,31 @@ void extract_patch_simplices(
     }
   }
 
-  std::set<vertex_descriptor> border_vertices;
+  std::set<vertex_descriptor> shared_vertices;
   for(halfedge_descriptor h : patch.shared_edges){
-    border_vertices.insert( target(h,pm) );
-    // if the model is not closed i.e. patch_border_halfedge is not cycle-only
+    shared_vertices.insert( target(h,pm) );
+    // if the model is not closed i.e. patch_shared_halfedge is not cycle-only
     if(!patch.interior_edges.empty())
-      border_vertices.insert( source(h,pm) );
+      shared_vertices.insert( source(h,pm) );
   }
 
   // a patch is a disk v = 2 + e - f
-  // v_in = v - v_border, e = e_in + e_shared, v_border = e_shared ( +1 if not closed)
+  // v_in = v - v_shared, e = e_in + e_shared, v_shared = e_shared ( +1 if not closed)
   // v_in = 2 + e_in - f (-1 if not closed)
   patch.interior_vertices.reserve(2 + patch.interior_edges.size() - patch.faces.size() );
   for(halfedge_descriptor h : patch.interior_edges){
-    if ( !border_vertices.count( target(h,pm) ) &&
+    if ( !shared_vertices.count( target(h,pm) ) &&
          halfedge(target(h,pm),pm) == h ) // only add the vertex once
       patch.interior_vertices.push_back( target(h,pm) );
-    if ( !border_vertices.count( source(h,pm) ) &&
+    if ( !shared_vertices.count( source(h,pm) ) &&
          halfedge(source(h,pm),pm) == opposite(h,pm) ) // only add the vertex once
       patch.interior_vertices.push_back( source(h,pm) );
   }
 
   for(halfedge_descriptor h : patch.border_edges){
-    if ( border_vertices.count( target(h,pm) ) )
+    if ( shared_vertices.count( target(h,pm) ) )
       patch.border_with_shared_target.emplace(h);
-    if ( border_vertices.count( source(h,pm) ) )
+    if ( shared_vertices.count( source(h,pm) ) )
       patch.border_with_shared_source.emplace(h);
   }
 }
@@ -1115,19 +1115,35 @@ void process_borders_after_appending_patches(
       set_next(h_out, h_out_next, output);
     }
     if(reverse_patch_orientation){
-      border_halfedges_target_to_link.insert(border_halfedges_target_to_link.begin(),
-                                             patch.border_with_shared_source.begin(),
-                                             patch.border_with_shared_source.end());
-      border_halfedges_source_to_link.insert(border_halfedges_target_to_link.begin(),
-                                             patch.border_with_shared_target.begin(),
-                                             patch.border_with_shared_target.end());
+      std::cout << "shared target" << std::endl;
+      for(halfedge_descriptor h : patch.border_with_shared_source){
+        halfedge_descriptor h_out = halfedge(get(tm_to_output_edges, edge(h, tm)), tm);
+        if(!is_border(h_out, output)) h_out = opposite(h_out, output);
+        border_halfedges_target_to_link.push_back(h_out);
+        std::cout << h << " " << h_out << std::endl;
+      }
+      std::cout << "shared source" << std::endl;
+      for(halfedge_descriptor h : patch.border_with_shared_target){
+        halfedge_descriptor h_out = halfedge(get(tm_to_output_edges, edge(h, tm)), tm);
+        if(!is_border(h_out, output)) h_out = opposite(h_out, output);
+        border_halfedges_source_to_link.push_back(h_out);
+        std::cout << h << " " << h_out << std::endl;
+      }
     } else {
-      border_halfedges_target_to_link.insert(border_halfedges_target_to_link.begin(),
-                                             patch.border_with_shared_target.begin(),
-                                             patch.border_with_shared_target.end());
-      border_halfedges_source_to_link.insert(border_halfedges_target_to_link.begin(),
-                                             patch.border_with_shared_source.begin(),
-                                             patch.border_with_shared_source.end());
+      std::cout << "shared target" << std::endl;
+      for(halfedge_descriptor h : patch.border_with_shared_target){
+        halfedge_descriptor h_out = halfedge(get(tm_to_output_edges, edge(h, tm)), tm);
+        if(!is_border(h_out, output)) h_out = opposite(h_out, output);
+        border_halfedges_target_to_link.push_back(h_out);
+        std::cout << h << " " << h_out << std::endl;
+      }
+      std::cout << "shared source" << std::endl;
+      for(halfedge_descriptor h : patch.border_with_shared_source){
+        halfedge_descriptor h_out = halfedge(get(tm_to_output_edges, edge(h, tm)), tm);
+        if(!is_border(h_out, output)) h_out = opposite(h_out, output);
+        border_halfedges_source_to_link.push_back(h_out);
+        std::cout << h << " " << h_out << std::endl;
+      }
     }
   }
 

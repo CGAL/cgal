@@ -130,8 +130,8 @@ void append_patch(
       else
         return h_out;
     }
-    CGAL_assertion( output.target(h_out) == get(tm_to_output_vertices, output.source(h, tm)) );
-    CGAL_assertion( output.source(h_out) == get(tm_to_output_vertices, output.target(h, tm)) );
+    CGAL_assertion( output.target(h_out) == get(tm_to_output_vertices, tm.source(h)) );
+    CGAL_assertion( output.source(h_out) == get(tm_to_output_vertices, tm.target(h)) );
     if constexpr(reverse_patch_orientation)
       return h_out;
     else
@@ -275,8 +275,6 @@ void fill_new_triangle_mesh(
   using SM = Surface_mesh<Point>;
   using vertex_descriptor = typename SM::Vertex_index;
   using edge_descriptor = typename SM::Edge_index;
-  using halfedge_descriptor = typename SM::Halfedge_index;
-  using face_descriptor = typename SM::Face_index;
 
   using V2V_tag = typename CGAL::dynamic_vertex_property_t<vertex_descriptor>;
   using Vertex_to_vertex_map = typename boost::property_map<SM, V2V_tag>::const_type;
@@ -291,10 +289,6 @@ void fill_new_triangle_mesh(
                    tm2_to_output_edges = get(E2E_tag(), tm2, SM::null_edge());
   Vertex_to_vertex_map tm1_to_output_vertices = get(V2V_tag(), tm1, SM::null_vertex()),
                        tm2_to_output_vertices = get(V2V_tag(), tm2, SM::null_vertex());
-
-  std::size_t vertices_idx_begin = output.number_of_vertices();
-  std::size_t edges_idx_begin = output.number_of_edges();
-  std::size_t faces_idx_begin = output.number_of_faces();
 
   output_shared_edges.reserve( std::accumulate(polylines.lengths.begin(), polylines.lengths.end(), std::size_t(0)) );
   std::size_t nb_polylines = polylines.lengths.size();
@@ -369,11 +363,18 @@ void fill_new_triangle_mesh(
     nf += patches_of_tm1[i].faces.size();
   }
 
-  process_borders_after_appending_patches<reverse_orientation_of_patches_from_tm1>(output,
-                                                                                   ids_of_patches_to_append_from_tm1,
-                                                                                   patches_of_tm1,
-                                                                                   tm1_to_output_edges,
-                                                                                   tm1_to_output_vertices);
+  if(reverse_orientation_of_patches_from_tm1)
+    process_borders_after_appending_patches<true>(output,
+                                                  ids_of_patches_to_append_from_tm1,
+                                                  patches_of_tm1,
+                                                  tm1_to_output_edges,
+                                                  tm1_to_output_vertices);
+  else
+    process_borders_after_appending_patches<false>(output,
+                                                   ids_of_patches_to_append_from_tm1,
+                                                   patches_of_tm1,
+                                                   tm1_to_output_edges,
+                                                   tm1_to_output_vertices);
 
   for(std::size_t i : ids_of_patches_to_append_from_tm2){
     if(reverse_orientation_of_patches_from_tm2)
@@ -401,11 +402,18 @@ void fill_new_triangle_mesh(
     nf += patches_of_tm2[i].faces.size();
   }
 
-  process_borders_after_appending_patches<reverse_orientation_of_patches_from_tm2>(output,
-                                                                                   ids_of_patches_to_append_from_tm2,
-                                                                                   patches_of_tm2,
-                                                                                   tm2_to_output_edges,
-                                                                                   tm2_to_output_vertices);
+  if(reverse_orientation_of_patches_from_tm2)
+    process_borders_after_appending_patches<true>(output,
+                                                  ids_of_patches_to_append_from_tm2,
+                                                  patches_of_tm2,
+                                                  tm1_to_output_edges,
+                                                  tm1_to_output_vertices);
+  else
+    process_borders_after_appending_patches<false>(output,
+                                                   ids_of_patches_to_append_from_tm2,
+                                                   patches_of_tm2,
+                                                   tm1_to_output_edges,
+                                                   tm1_to_output_vertices);
 }
 
 } // namespace Corefinement
