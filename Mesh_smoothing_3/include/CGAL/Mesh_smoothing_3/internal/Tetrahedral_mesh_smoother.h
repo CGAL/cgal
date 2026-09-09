@@ -561,7 +561,7 @@ inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, Concurre
 
 template<typename Surface_patch_index, typename Curve_index, typename ConcurrencyTag>
 Eigen::SparseMatrix<double> Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::compute_diffusion_matrix(double w, bool graph) {
-    unsigned n = 3 * nb_vertices();
+    unsigned n = 3 * static_cast<unsigned>(nb_vertices());
     double l = w / (1+w);
 
     Mesh_smoothing_3_internal::for_each<ConcurrencyTag>(0, _tet_storage.size(), [&](std::size_t t) {
@@ -672,7 +672,7 @@ unsigned Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, Concurrency
         void join(Reduction const &other) { invalid_tet += other.invalid_tet; }
     };
 
-    Reduction reduction = Mesh_smoothing_3_internal::reduce<ConcurrencyTag, Reduction>(0, _tet_storage.size(), [&](unsigned t, Reduction &reduction) {
+    Reduction reduction = Mesh_smoothing_3_internal::reduce<ConcurrencyTag, Reduction>(0, _tet_storage.size(), [&](std::size_t t, Reduction &reduction) {
         Tet_storage const &tet = _tet_storage[t];
         bool exact_check = Math_functions::strictly_positive_tetrahedra({
             Math_functions::sub_line_vector(coords,tet.verts[0]),
