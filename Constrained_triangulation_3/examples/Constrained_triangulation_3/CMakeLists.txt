@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.12...3.31)
 project(Constrained_triangulation_3_Examples)
 
-find_package(CGAL REQUIRED )
+find_package(CGAL REQUIRED COMPONENTS Qt6)
 
 find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
