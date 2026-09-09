@@ -54,6 +54,14 @@ struct Ecm_bind{
 
   typedef typename boost::graph_traits<G>::edge_descriptor edge_descriptor;
 
+  void call_put_for_all_edges(bool b)
+  {
+    if constexpr (!std::is_same_v<Ecm1, No_mark<G>>)
+      for (edge_descriptor e : edges(g1)) put(ecm1, e, b);
+    if constexpr (!std::is_same_v<Ecm2, No_mark<G>>)
+      for (edge_descriptor e : edges(g2)) put(ecm2, e, b);
+  }
+
   void call_put(G& g, edge_descriptor e, bool b) const
   {
     if ( &g==&g1 )
@@ -84,6 +92,7 @@ struct Ecm_bind<G, No_mark<G>, No_mark<G> >
   bool call_get(G&, edge_descriptor) const {
     return false;
   }
+  void call_put_for_all_edges(bool) {}
 };
 
 template<class G>
@@ -559,6 +568,15 @@ public:
     , const_mesh_ptr(const_mesh_ptr)
   {}
 
+  void inputs_are_two_identical_meshes()
+  {
+    if constexpr (std::is_same_v<OutputBuilder, No_extra_output_from_corefinement<TriangleMesh>>)
+    {
+      marks_on_edges.call_put_for_all_edges(true);
+    }
+    else
+      marks_on_edges.call_put_for_all_edges(false);
+  }
 
   void start_filtering_intersections() const
   {
