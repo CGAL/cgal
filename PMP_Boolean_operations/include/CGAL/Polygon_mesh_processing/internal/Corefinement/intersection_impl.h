@@ -259,133 +259,145 @@ class Intersection_of_triangle_meshes
     using Tree = typename AABB_tree_helper::Tree;
     AABB_tree_helper helper;
 
-    Tree tree1(faces(tm1).begin(), faces(tm1).end(), tm1);
-    Tree tree2(faces(tm2).begin(), faces(tm2).end(), tm2);
+    std::vector<face_descriptor> tm1_faces_intersecting_bb;
+    std::vector<face_descriptor> tm2_faces_intersecting_bb;
+    tm1_faces_intersecting_bb.reserve(num_faces(tm1));
+    tm2_faces_intersecting_bb.reserve(num_faces(tm2));
 
-    auto wrap_callback = [&](){
-#ifdef DO_NOT_HANDLE_COPLANAR_FACES
-      using Callback = Collect_face_bbox_per_edge_bbox<TriangleMesh, Edge_to_faces>;
-      Callback callback12(tm1, tm2, ltm_edge_to_stm_faces);
-      Callback callback21(tm2, tm1, stm_edge_to_ltm_faces);
-#else
-      using Callback = Collect_face_bbox_per_edge_bbox_with_coplanar_handling<
-                        TriangleMesh, VPM1, VPM2, Edge_to_faces, Coplanar_face_set, Node_visitor>;
-      Callback callback12(tm1, tm2, vpm1, vpm2, ltm_edge_to_stm_faces, coplanar_faces, visitor);
-      Callback callback21(tm2, tm1, vpm2, vpm1, stm_edge_to_ltm_faces, coplanar_faces, visitor);
-#endif
+    for(face_descriptor f: faces(tm1))
+      if( do_overlap(face_bbox(f, tm1), bb) )
+        tm1_faces_intersecting_bb.push_back(f);
+    for(face_descriptor f: faces(tm2))
+      if( do_overlap(face_bbox(f, tm2), bb) )
+        tm2_faces_intersecting_bb.push_back(f);
 
-      // if (throw_on_self_intersection){
-      //   Callback_with_self_intersection_report<TriangleMesh, Callback> callback_si_12(callback12, tm1_faces, tm2_faces);
-      //   Callback_with_self_intersection_report<TriangleMesh, Callback> callback_si_21(callback21, tm2_faces, tm1_faces);
-      //   return std::make_pair(callback_si_12, callback_si_21);
-      // }
-      // else {
-      //   if (const_mesh_ptr==&tm1)
-      //   {
-      //     auto filtered_callback_12 = [&](halfedge_descriptor h1, halfedge_descriptor h2){
-      //       if(!callback12.is_face_degenerated(h1));
-      //         callback12(h1, h2);
-      //     };
-      //     auto filtered_callback_21 = [&](halfedge_descriptor h1, halfedge_descriptor h2){
-      //       if(!callback21.is_face_degenerated(h1))
-      //         callback21(h2, h1);
-      //     };
-      //     return std::make_pair(filtered_callback_12, filtered_callback_21);
-      //   }
-      //   else
-      //   {
-      //     if (const_mesh_ptr==&tm2)
-      //     {
-      //       auto filtered_callback_12 = [&](halfedge_descriptor h1, halfedge_descriptor h2){
-      //         if(!callback12.is_face_degenerated(h2));
-      //           callback12(h1, h2);
-      //       };
-      //       auto filtered_callback_21 = [&](halfedge_descriptor h1, halfedge_descriptor h2){
-      //         if(!callback21.is_face_degenerated(h2))
-      //           callback21(h2, h1);
-      //       };
-      //       return std::make_pair(filtered_callback_12, filtered_callback_21);
-      //     }
-      //     else
-      //     {
-            return std::make_pair(callback12, callback21);
-      //     }
-      //   }
-      // }
+    Tree tree1(tm1_faces_intersecting_bb.begin(), tm1_faces_intersecting_bb.end(), tm1);
+    Tree tree2(tm2_faces_intersecting_bb.begin(), tm2_faces_intersecting_bb.end(), tm2);
+
+    // Wrap the call of AABB intersections given two callback functions
+    auto AABB_call = [&](auto &callback12, auto &callback21){
+      #ifdef CGAL_LINKED_WITH_TBB
+      if constexpr(std::is_same_v<ConcurrencyTag, Parallel_tag>)
+      {
+        oneapi::tbb::task_group tg;
+        tg.run([&]{ helper.template build<ConcurrencyTag>(tree1, tm1, vpm1); });
+        helper.template build<ConcurrencyTag>(tree2, tm2, vpm2);
+        tg.wait();
+
+        tbb::concurrent_vector<std::pair<face_descriptor, face_descriptor>> inter;
+        CGAL::AABB_trees::all_pairs_of_intersecting_primitives(tree1, tree2, std::back_inserter(inter), parameters::concurrency_tag(ConcurrencyTag()));
+
+        tbb::parallel_for(std::size_t(0), inter.size(), [&](std::size_t i){
+          const auto& [f_1, f_2] = inter[i];
+
+          halfedge_descriptor hf1_0 = halfedge(f_1, tm1);
+          halfedge_descriptor hf1_1 = next(hf1_0, tm1);
+          halfedge_descriptor hf1_2 = next(hf1_1, tm1);
+
+          halfedge_descriptor hf2_0 = halfedge(f_2, tm2);
+          halfedge_descriptor hf2_1 = next(hf2_0, tm2);
+          halfedge_descriptor hf2_2 = next(hf2_1, tm2);
+
+          if (is_border(hf2_0, tm2) || hf2_0 < opposite(hf2_0, tm2))
+            callback12(hf1_0, hf2_0);
+          if (is_border(hf2_1, tm2) || hf2_1 < opposite(hf2_1, tm2))
+            callback12(hf1_0, hf2_1);
+          if (is_border(hf2_2, tm2) || hf2_2 < opposite(hf2_2, tm2))
+            callback12(hf1_0, hf2_2);
+
+          if (is_border(hf1_0, tm1) || hf1_0 < opposite(hf1_0, tm1))
+            callback21(hf2_0, hf1_0);
+          if (is_border(hf1_1, tm1) || hf1_1 < opposite(hf1_1, tm1))
+            callback21(hf2_0, hf1_1);
+          if (is_border(hf1_2, tm1) || hf1_2 < opposite(hf1_2, tm1))
+            callback21(hf2_0, hf1_2);
+        });
+      }
+      else
+  #endif
+      {
+        helper.template build<ConcurrencyTag>(tree1, tm1, vpm1);
+        helper.template build<ConcurrencyTag>(tree2, tm2, vpm2);
+
+        std::vector<std::pair<face_descriptor, face_descriptor>> inter;
+        CGAL::AABB_trees::all_pairs_of_intersecting_primitives(tree1, tree2, std::back_inserter(inter));
+
+        for(const auto& [f_1, f_2]: inter){
+          halfedge_descriptor hf1_0 = halfedge(f_1, tm1);
+          halfedge_descriptor hf1_1 = next(hf1_0, tm1);
+          halfedge_descriptor hf1_2 = next(hf1_1, tm1);
+
+          halfedge_descriptor hf2_0 = halfedge(f_2, tm2);
+          halfedge_descriptor hf2_1 = next(hf2_0, tm2);
+          halfedge_descriptor hf2_2 = next(hf2_1, tm2);
+
+          if (is_border(hf2_0, tm2) || hf2_0 < opposite(hf2_0, tm2))
+            callback12(hf1_0, hf2_0);
+          if (is_border(hf2_1, tm2) || hf2_1 < opposite(hf2_1, tm2))
+            callback12(hf1_0, hf2_1);
+          if (is_border(hf2_2, tm2) || hf2_2 < opposite(hf2_2, tm2))
+            callback12(hf1_0, hf2_2);
+
+          if (is_border(hf1_0, tm1) || hf1_0 < opposite(hf1_0, tm1))
+            callback21(hf2_0, hf1_0);
+          if (is_border(hf1_1, tm1) || hf1_1 < opposite(hf1_1, tm1))
+            callback21(hf2_0, hf1_1);
+          if (is_border(hf1_2, tm1) || hf1_2 < opposite(hf1_2, tm1))
+            callback21(hf2_0, hf1_2);
+        }
+      }
     };
-    auto [callback12, callback21] = wrap_callback();
 
-#ifdef CGAL_LINKED_WITH_TBB
-    if constexpr(std::is_same_v<ConcurrencyTag, Parallel_tag>)
-    {
-      oneapi::tbb::task_group tg;
-      tg.run([&]{ helper.template build<ConcurrencyTag>(tree1, tm1, vpm1); });
-      helper.template build<ConcurrencyTag>(tree2, tm2, vpm2);
-      tg.wait();
-
-      tbb::concurrent_vector<std::pair<face_descriptor, face_descriptor>> inter;
-      CGAL::AABB_trees::all_pairs_of_intersecting_primitives(tree1, tree2, std::back_inserter(inter), parameters::concurrency_tag(ConcurrencyTag()));
-
-      tbb::parallel_for(std::size_t(0), inter.size(), [&](std::size_t i){
-        const auto& [f_1, f_2] = inter[i];
-
-        halfedge_descriptor hf1_0 = halfedge(f_1, tm1);
-        halfedge_descriptor hf1_1 = next(hf1_0, tm1);
-        halfedge_descriptor hf1_2 = next(hf1_1, tm1);
-
-        halfedge_descriptor hf2_0 = halfedge(f_2, tm2);
-        halfedge_descriptor hf2_1 = next(hf2_0, tm2);
-        halfedge_descriptor hf2_2 = next(hf2_1, tm2);
-
-        if (is_border(hf2_0, tm2) || hf2_0 < opposite(hf2_0, tm2))
-          callback12(hf1_0, hf2_0);
-        if (is_border(hf2_1, tm2) || hf2_1 < opposite(hf2_1, tm2))
-          callback12(hf1_0, hf2_1);
-        if (is_border(hf2_2, tm2) || hf2_2 < opposite(hf2_2, tm2))
-          callback12(hf1_0, hf2_2);
-
-        if (is_border(hf1_0, tm1) || hf1_0 < opposite(hf1_0, tm1))
-          callback21(hf2_0, hf1_0);
-        if (is_border(hf1_1, tm1) || hf1_1 < opposite(hf1_1, tm1))
-          callback21(hf2_0, hf1_1);
-        if (is_border(hf1_2, tm1) || hf1_2 < opposite(hf1_2, tm1))
-          callback21(hf2_0, hf1_2);
-      });
-    }
-    else
+    // Select the desire callbacks
+#ifdef DO_NOT_HANDLE_COPLANAR_FACES
+    using Callback = Collect_face_bbox_per_edge_bbox<TriangleMesh, Edge_to_faces>;
+    Callback callback12(tm1, tm2, ltm_edge_to_stm_faces);
+    Callback callback21(tm2, tm1, stm_edge_to_ltm_faces);
+#else
+    using Callback = Collect_face_bbox_per_edge_bbox_with_coplanar_handling<
+                      TriangleMesh, VPM1, VPM2, Edge_to_faces, Coplanar_face_set, Node_visitor>;
+    Callback callback12(tm1, tm2, vpm1, vpm2, ltm_edge_to_stm_faces, coplanar_faces, visitor);
+    Callback callback21(tm2, tm1, vpm2, vpm1, stm_edge_to_ltm_faces, coplanar_faces, visitor);
 #endif
-    {
-      helper.template build<ConcurrencyTag>(tree1, tm1, vpm1);
-      helper.template build<ConcurrencyTag>(tree2, tm2, vpm2);
 
-      std::vector<std::pair<face_descriptor, face_descriptor>> inter;
-      CGAL::AABB_trees::all_pairs_of_intersecting_primitives(tree1, tree2, std::back_inserter(inter));
-
-      for(const auto& [f_1, f_2]: inter){
-        halfedge_descriptor hf1_0 = halfedge(f_1, tm1);
-        halfedge_descriptor hf1_1 = next(hf1_0, tm1);
-        halfedge_descriptor hf1_2 = next(hf1_1, tm1);
-
-        halfedge_descriptor hf2_0 = halfedge(f_2, tm2);
-        halfedge_descriptor hf2_1 = next(hf2_0, tm2);
-        halfedge_descriptor hf2_2 = next(hf2_1, tm2);
-
-        if (is_border(hf2_0, tm2) || hf2_0 < opposite(hf2_0, tm2))
-          callback12(hf1_0, hf2_0);
-        if (is_border(hf2_1, tm2) || hf2_1 < opposite(hf2_1, tm2))
-          callback12(hf1_0, hf2_1);
-        if (is_border(hf2_2, tm2) || hf2_2 < opposite(hf2_2, tm2))
-          callback12(hf1_0, hf2_2);
-
-        if (is_border(hf1_0, tm1) || hf1_0 < opposite(hf1_0, tm1))
-          callback21(hf2_0, hf1_0);
-        if (is_border(hf1_1, tm1) || hf1_1 < opposite(hf1_1, tm1))
-          callback21(hf2_0, hf1_1);
-        if (is_border(hf1_2, tm1) || hf1_2 < opposite(hf1_2, tm1))
-          callback21(hf2_0, hf1_2);
-
-        // if (throw_on_self_intersection && callback12.self_intersections_found())
-        //   throw Self_intersection_exception();
+    if (throw_on_self_intersection){
+      Callback_with_self_intersection_report<TriangleMesh, Callback> callback_si_12(callback12, tm1_faces, tm2_faces);
+      Callback_with_self_intersection_report<TriangleMesh, Callback> callback_si_21(callback21, tm2_faces, tm1_faces);
+      AABB_call(callback_si_12, callback_si_21);
+      if (throw_on_self_intersection && (callback_si_21.self_intersections_found() || callback_si_12.self_intersections_found()))
+            throw Self_intersection_exception();
+    }
+    else {
+      if (const_mesh_ptr==&tm1)
+      {
+        auto filtered_callback_12 = [&](halfedge_descriptor h1, halfedge_descriptor h2){
+          if(!callback12.is_face_degenerated(h1));
+            callback12(h1, h2);
+        };
+        auto filtered_callback_21 = [&](halfedge_descriptor h1, halfedge_descriptor h2){
+          if(!callback21.is_face_degenerated(h1))
+            callback21(h2, h1);
+        };
+        AABB_call(filtered_callback_12, filtered_callback_21);
+      }
+      else
+      {
+        if (const_mesh_ptr==&tm2)
+        {
+          auto filtered_callback_12 = [&](halfedge_descriptor h1, halfedge_descriptor h2){
+            if(!callback12.is_face_degenerated(h2));
+              callback12(h1, h2);
+          };
+          auto filtered_callback_21 = [&](halfedge_descriptor h1, halfedge_descriptor h2){
+            if(!callback21.is_face_degenerated(h2))
+              callback21(h2, h1);
+          };
+          AABB_call(filtered_callback_12, filtered_callback_21);
+        }
+        else
+        {
+          AABB_call(callback12, callback21);
+        }
       }
     }
   }
