@@ -99,7 +99,7 @@ void write_MEDIT(std::ostream& os,
   auto plc_patch_map = boost::make_function_property_map<Facet>([&](const Facet& f)
     { return has_plc_face_id ? f.first->ccdt_3_data().face_constraint_index(f.second) + 1 : 1; });
 
-  std::vector<std::pair<Vertex_handle,Vertex_handle>> edges;
+  std::vector<typename Tr_::Edge> edges;
   return SMDS_3::output_to_medit(os,
                                  tr,
                                  tr.finite_vertex_handles(),
