@@ -97,7 +97,7 @@ inline Mesh_permutation hilbert_sort_mesh(
     // Update tetrahedron connectivity.
     for (auto& tet : tets)
         for (unsigned& v : tet)
-            v = permutation.vertex_old_to_new[v];
+            v = static_cast<unsigned>(permutation.vertex_old_to_new[v]);
 
 
     // -------------------------------------------------------------------------

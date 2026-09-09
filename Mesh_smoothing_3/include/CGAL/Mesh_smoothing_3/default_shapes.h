@@ -63,9 +63,9 @@ namespace Shapes {
         std::array<Point3, NbVertices> const * reference_points_ptr = nullptr;
         std::array<std::array<unsigned, 4>, NbTetrahedra> const * inner_tetrahedra_ptr = nullptr;
 
-        unsigned nb_inner_tetrahedra() const override { return inner_tetrahedra_ptr->size(); }
+        unsigned nb_inner_tetrahedra() const override { return static_cast<unsigned>(inner_tetrahedra_ptr->size()); }
 
-        unsigned nb_vertices() const override { return reference_points_ptr->size(); }
+        unsigned nb_vertices() const override { return static_cast<unsigned>(reference_points_ptr->size()); }
 
         unsigned inner_tetrahedra_local_vert(unsigned tet, unsigned tet_vert) const override { return (*inner_tetrahedra_ptr)[tet][tet_vert]; }
 

@@ -326,7 +326,7 @@ void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::
         auto tmp_nb_tet_on_verts = nb_tet_on_verts;
         auto tmp_compressed_locks = _compressed_locks;
         for (unsigned v = 0; v < nb_points; ++v) {
-            unsigned old_v = permutation.vertex_new_to_old[v];
+            unsigned old_v = static_cast<unsigned>(permutation.vertex_new_to_old[v]);
             tmp_nb_tet_on_verts[v] = nb_tet_on_verts[old_v];
             tmp_compressed_locks[3*v+0] = _compressed_locks[3*old_v+0];
             tmp_compressed_locks[3*v+1] = _compressed_locks[3*old_v+1];
@@ -336,7 +336,7 @@ void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::
         _compressed_locks.swap(tmp_compressed_locks);
 
         for (auto &[handle, v] : _vertex_original_to_compressed) {
-            v = permutation.vertex_old_to_new[v];
+            v = static_cast<unsigned>(permutation.vertex_old_to_new[v]);
         }
 
         auto tmp_tetrahedra_refs = _tetrahedron_refs;
@@ -347,7 +347,7 @@ void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::
         _tetrahedron_refs.swap(tmp_tetrahedra_refs);
 
         for (auto &[handle, c] : _cell_original_to_compressed) {
-            c = permutation.tet_old_to_new[c];
+            c = static_cast<unsigned>(permutation.tet_old_to_new[c]);
         }
 
     }
