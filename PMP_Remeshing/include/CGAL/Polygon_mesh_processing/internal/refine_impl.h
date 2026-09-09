@@ -13,7 +13,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_REFINE_POLYHEDRON_3_H
 #define CGAL_POLYGON_MESH_PROCESSING_REFINE_POLYHEDRON_3_H
 
-#include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
+#include <CGAL/license/Polygon_mesh_processing/remeshing.h>
 
 #include <CGAL/assertions.h>
 #ifdef CGAL_PMP_FAIR_DEBUG

@@ -12,7 +12,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_TRIANGULATE_HOLE_H
 #define CGAL_POLYGON_MESH_PROCESSING_TRIANGULATE_HOLE_H
 
-#include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
+#include <CGAL/license/Polygon_mesh_processing/hole_filling.h>
 
 #include <CGAL/disable_warnings.h>
 

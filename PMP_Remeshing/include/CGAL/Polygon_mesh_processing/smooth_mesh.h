@@ -14,7 +14,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_SMOOTH_MESH_H
 #define CGAL_POLYGON_MESH_PROCESSING_SMOOTH_MESH_H
 
-#include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
+#include <CGAL/license/Polygon_mesh_processing/remeshing.h>
 
 #define CGAL_DEPRECATED_HEADER "<CGAL/Polygon_mesh_processing/smooth_mesh.h>"
 #define CGAL_REPLACEMENT_HEADER "<CGAL/Polygon_mesh_processing/angle_and_area_smoothing.h>"
