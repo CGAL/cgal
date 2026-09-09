@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.12...3.31)
 project(Constrained_triangulation_3_Examples)
 
-find_package(CGAL REQUIRED COMPONENTS Qt6)
+find_package(CGAL REQUIRED )
 
 find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
@@ -23,14 +23,13 @@ if(TARGET CGAL::Eigen3_support)
 endif()
 
 if(CGAL_Qt6_FOUND)
-  target_link_libraries(conforming_constrained_Delaunay_triangulation_3 PUBLIC CGAL::CGAL_Basic_viewer)
   target_link_libraries(ccdt_3_from_soup PUBLIC CGAL::CGAL_Basic_viewer)
   target_link_libraries(ccdt_3_from_soup_fimap PUBLIC CGAL::CGAL_Basic_viewer)
   target_link_libraries(ccdt_3_after_autorefinement PUBLIC CGAL::CGAL_Basic_viewer)
   target_link_libraries(ccdt_3_preprocessing PUBLIC CGAL::CGAL_Basic_viewer)
   target_link_libraries(ccdt_3_check_preconditions PUBLIC CGAL::CGAL_Basic_viewer)
 else()
-  message(STATUS "NOTICE: The example 'conforming_constrained_Delaunay_triangulation_3' cannot draw the result without Qt6.")
+  message(STATUS "NOTICE: Some examples cannot draw the result without Qt6.")
 endif()
 
 find_package(TBB QUIET)
