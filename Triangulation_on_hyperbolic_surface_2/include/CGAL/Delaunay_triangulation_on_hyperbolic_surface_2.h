@@ -1121,7 +1121,7 @@ from_stream(std::istream & s)
     int nb_darts = std::stoi(line);
 
     // Load the triangles and the anchors
-    Dart_descriptor darts_by_id[nb_darts];
+    std::vector<Dart_descriptor> darts_by_id(nb_darts);
     for (int k = 0; k < nb_darts / NB_SIDES; ++k) {
         Dart_descriptor triangle_dart = this->combinatorial_map_.make_combinatorial_polygon(3);
         s >> line;
