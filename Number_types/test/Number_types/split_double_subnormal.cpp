@@ -29,8 +29,8 @@
 #include <CGAL/boost_mp.h>
 #endif
 
-// x *= 2^k (k >= 0), using only addition so it works for every integer type
-// (including leda_integer, which does not expose operator<<=).
+// x *= 2^k (k >= 0), using only addition, so that the reference value is not
+// computed with the same operator<<= that the code under test uses.
 template <typename NT>
 void mul_pow2(NT& x, int k)
 {
@@ -62,9 +62,9 @@ void test(const char* name)
     lim::denorm_min(),                 // 2^-1074, the issue #5982 reproducer
     -lim::denorm_min(),
     3.0 * lim::denorm_min(),
-    std::nextafter(lim::min(), 0.0),   // largest subnormal
-    lim::min() / 2.0,                  // a subnormal
-    lim::min(),                        // smallest normal (boundary)
+    std::nextafter((lim::min)(), 0.0), // largest subnormal
+    (lim::min)() / 2.0,                // a subnormal
+    (lim::min)(),                      // smallest normal (boundary)
     0.0, 1.0, -1.0, 0.5, -0.25, 42.0
   };
   for (double d : values)
