@@ -31,6 +31,7 @@
 #include <boost/range/reference.hpp>
 #include <boost/container/flat_set.hpp>
 #include <boost/container/small_vector.hpp>
+#include <boost/unordered_map.hpp>
 
 #include <array>
 #include <set>
@@ -98,6 +99,9 @@ public:
                   const bool insert_isolated_vertices = true)
   {
     typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor    vertex_descriptor;
+    typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor  halfedge_descriptor;
+    typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor      edge_descriptor;
+    typedef typename boost::graph_traits<PolygonMesh>::face_descriptor      face_descriptor;
     typedef typename boost::property_traits<VertexPointMap>::value_type     PM_Point;
 
     typedef typename Polygon_and_Point_id_helper<V2V>::type Point_id;
@@ -131,7 +135,44 @@ public:
       put(vpm, vertices[i], pi);
       *i2v++ = std::make_pair(i, vertices[i]);
     }
+#if 1
+    boost::unordered_map<std::pair<int,int>, halfedge_descriptor> halfedge_map;
+    boost::unordered_map<std::pair<int,int>, halfedge_descriptor>::iterator it;
+    for(Polygon_id pi = 0, end = static_cast<Polygon_id>(m_polygons.size()); pi < end; ++pi)
+    {
+      halfedge_descriptor pred  = boost::graph_traits<PolygonMesh>::null_halfedge();
+      const Polygon& polygon = m_polygons[pi];
+      const std::size_t size = polygon.size();
+      face_descriptor fd = add_face(pmesh);
+      halfedge_descriptor h;
+      for(int i = 0; i < size; ++i)
+      {
+        int j = (i+1)%size;
+        std::pair<int,int> key(polygon[j], polygon[i]);
+        if((it = halfedge_map.find(key)) != halfedge_map.end())
+        {
+          h = it->second;
+          halfedge_map.erase(it);
+        } else {
+          edge_descriptor e = add_edge(pmesh);
+          h = halfedge(e, pmesh);
+          halfedge_map.insert(std::make_pair(std::make_pair(polygon[i], polygon[j]),h));
+          set_target(h, vertices[j], pmesh);
+          set_halfedge(vertices[i], h, pmesh);
+        }
+        set_face(h, fd, pmesh);
+        if(pred != boost::graph_traits<PolygonMesh>::null_halfedge()){
+          set_next(pred, h, pmesh);
+        } else {
+          set_halfedge(fd, h, pmesh);
+        }
+        pred = h;
+      }
+      set_next(halfedge(fd, pmesh), h, pmesh);
+    }
+    CGAL_assertion(halfedge_map.empty());
 
+#else
     for(Polygon_id i = 0, end = static_cast<Polygon_id>(m_polygons.size()); i < end; ++i)
     {
       const Polygon& polygon = m_polygons[i];
@@ -145,6 +186,7 @@ public:
       CGAL_postcondition(is_valid_face_descriptor(fd, pmesh));
       *i2f++ = std::make_pair(i, fd);
     }
+ #endif
   }
 
   template <typename PolygonMesh>

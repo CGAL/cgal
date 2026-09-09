@@ -18,21 +18,16 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main(int argc, char** argv)
 {
+
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/tetrahedron.off");
   std::vector<Point_3> points;
   std::vector<std::array<std::size_t,3>> polygons;
 
-  if (argc!=2)
-  {
-    std::cerr << "Usage: " << argv[0] << " input.XXX \n";
-    std::cerr << "See https://doc.cgal.org/latest/Stream_support/index.html#title11 for the list of supported file formats.\n";
-    return 0;
-  }
-
   CGAL::Timer timer;
   timer.start();
-  if (!CGAL::IO::read_polygon_soup(argv[1], points, polygons))
+  if (!CGAL::IO::read_polygon_soup(filename , points, polygons))
   {
-    std::cerr << "Error reading " << argv[1] << "\n";
+    std::cerr << "Error reading " << filename << "\n";
     return EXIT_FAILURE;
   }
   std::cout << "Read " << points.size() << " points and " << polygons.size() << " polygons in " << timer.time() << " seconds.\n";
