@@ -471,8 +471,6 @@ bool write_PLY(std::ostream& os,
       internal::output_properties(os, &fp, make_ply_point_writer (CGAL::Identity_property_map<Target_point>()));
     }
 
-    std::cout << "using generic writer" << std::endl;
-
     if constexpr (!parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_normal_map_t>::value)
     {
       auto vnm = get_parameter(np, internal_np::vertex_normal_map);

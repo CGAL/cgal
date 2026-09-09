@@ -556,6 +556,8 @@ The following \cgal data structures can be exported into the `.mesh` file format
 - `CGAL::Conforming_constrained_Delaunay_triangulation_3`, using the function
   \link CGAL::IO::write_MEDIT(std::ostream &os, const CGAL::Conforming_constrained_Delaunay_triangulation_3< Traits, Tr > &ccdt, const NamedParameters& np) `CGAL::IO::write_MEDIT()` \endlink.
 
+The following function enables to read into a tetrahedron soup
+- \link CGAL::IO::read_MEDIT(std::istream&, PointRange&, CellRange&, std::vector<int>&,bool) `CGAL::IO::read_MEDIT()` \endlink
 
 \section IOStreamTetgen Tetgen File Format
 

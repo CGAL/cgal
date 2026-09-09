@@ -4,6 +4,43 @@
 
 Release date: December 2026
 
+### [2D and 3D Fast Intersection and Distance Computation (AABB Tree)](https://doc.cgal.org/6.3/Manual/packages.html#PkgAABBTree)
+- `CGAL::AABB_tree::build()` now accepts an optional `Concurrency_tag` template parameter (`CGAL::Sequential_tag` by default).
+   When `CGAL::Parallel_tag` is specified, the tree construction is performed in parallel.
+- Added the functions `CGAL::AABB_trees::do_intersect()` and `CGAL::AABB_trees::all_pairs_of_intersecting_primitives()`.
+  These functions respectively determine whether two AABB trees intersect and compute all pairs of intersecting primitives
+  between two AABB trees.
+
+### [2D Arrangements](https://doc.cgal.org/6.3/Manual/packages.html#PkgArrangementOnSurface2)
+
+- **Breaking change**: Enhanced the metadata traits-class decorators `Arr_counting_traits_2` and `Arr_tracing_traits_2`. Each is (still) parameterized with another traits class being decorated, but it does not inherit from it. In addition one can get and set a smart pointer to the class being decorated.
+
+### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/6.3/Manual/packages.html#PkgKernel23)
+
+- Add operator to functor `Orientation_3` that takes 5 points as argument, with the last two getting tested against the first three points
+
+### [2D Snap Rounding](https://doc.cgal.org/6.3/Manual/packages.html#PkgSnapRounding2) (major changes)
+
+- Added the function `vertical_slab_snap_rounding_2()`, a new snap rounding algorithm that offers better performance and supports a wider range of rounding schemes, including floating-point coordinate representations.
+- Added the traits classes `Double_grid_snap_rounding_traits_2`, `Float_grid_snap_rounding_traits_2`, and `Integer_grid_snap_rounding_traits_2`, enabling `vertical_slab_snap_rounding_2()`
+  to operate on double-precision floating-point, single-precision floating-point, and integer coordinates, respectively.
+- Added the function `hot_pixel_snap_rounding_2()`, a new API exposing the original hot-pixel snap rounding algorithm.
+- Deprecated the existing overload of `snap_rounding_2()`.
+- Added a new overload of `snap_rounding_2()` that automatically dispatch to either `vertical_slab_snap_rounding_2()` or `hot_pixel_snap_rounding_2()`, depending on the provided traits class.
+
+### [Polygon Mesh Processing](https://doc.cgal.org/6.3/Manual/packages.html#PkgPMPRemeshing)
+
+- Added a new parameter `edge_is_protected_map` to
+[`void CGAL::Polygon_mesh_processing::isotropic_remeshing()`](https://doc.cgal.org/6.3/PMP_Remeshing/group__PMP__local__remeshing__grp.html),
+ to distinguish between "constrained" edges that can be resampled while the constrained edges polyline graph remains topologically unchanged,
+ and "protected" edges that may not be modified at all by remeshing.
+
+### [Boolean Operations On Meshes](https://doc.cgal.org/6.3/Manual/packages.html#PkgPMPBooleanOperations)
+
+- The corefinement based operations (including Boolean operations) has been optimized to better
+  handle cases when some identical faces are shared between the input meshes. This leads to a significant speed up
+  in those cases.
+
 
 ## [Release 6.2](https://github.com/CGAL/cgal/releases/tag/v6.2)
 

@@ -89,6 +89,7 @@ struct Ecm_bind<G, No_mark<G>, No_mark<G> >
 template<class G>
 struct No_extra_output_from_corefinement
 {
+  using face_descriptor = typename boost::graph_traits<G>::face_descriptor;
   void start_new_polyline(std::size_t, std::size_t) {}
   void add_node_to_polyline(std::size_t){}
   template<class Node_id_pair, class halfedge_descriptor>
@@ -103,7 +104,8 @@ struct No_extra_output_from_corefinement
     const Node_vector& /*nodes*/,
     bool /*input_have_coplanar_faces*/,
     const boost::dynamic_bitset<>& /* is_node_of_degree_one */,
-    const Mesh_to_map_node& /*mesh_to_node_id_to_vertex*/) const
+    const Mesh_to_map_node& /*mesh_to_node_id_to_vertex*/,
+    const std::vector<std::pair<face_descriptor,face_descriptor>>& /*identical_patches*/) const
   {}
 };
 
@@ -1549,7 +1551,8 @@ public:
                 const TriangleMesh& tm1,
                 const TriangleMesh& tm2,
                 const VertexPointMap1& vpm1,
-                const VertexPointMap2& vpm2)
+                const VertexPointMap2& vpm2,
+                const std::vector<std::pair<face_descriptor, face_descriptor>>& identical_patches = {})
   {
     copy_nodes_ids_for_non_manifold_features();
 
@@ -1687,7 +1690,8 @@ public:
     output_builder(nodes,
                    input_with_coplanar_faces,
                    is_node_of_degree_one,
-                   mesh_to_node_id_to_vertex);
+                   mesh_to_node_id_to_vertex,
+                   identical_patches);
 
     user_visitor.end_building_output();
   }

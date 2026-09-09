@@ -18,13 +18,16 @@
 #include <boost/bimap.hpp>
 #include <boost/bimap/set_of.hpp>
 #include <boost/bimap/multiset_of.hpp>
+#include <boost/bimap/unordered_set_of.hpp>
 #include <boost/container/small_vector.hpp>
+#include <boost/container/flat_set.hpp>
 #include <boost/functional/hash.hpp>
 
 #include <vector>
 #include <algorithm>
 #include <unordered_map>
 #include <unordered_set>
+#include <type_traits>
 #include <utility>
 #include <unordered_set>
 
@@ -50,6 +53,42 @@ enum Result_type   { VALID,
                      ANGLE_PROBLEM,
                      TOPOLOGICAL_PROBLEM, ORIENTATION_PROBLEM, SHARED_NEIGHBOR_PROBLEM };
 
+// A cell `c` incident to the edge being collapsed, with the two cells `n0`/`n1`
+// that will take its place once it is removed, and the index of `c` in each of
+// them. Collapsing the edge amounts to gluing `n0` and `n1` to each other
+// across those indices.
+template<typename Cell_handle>
+struct Collapse_star_cell
+{
+  Cell_handle c;
+  Cell_handle n0, n1;
+  int c_in_n0, c_in_n1;
+
+  // The two cells would end up pointing at the infinite vertex across from one
+  // another, which is not a valid triangulation.
+  template<typename Tr>
+  bool has_infinite_adjacency(const Tr& tr) const
+  {
+    return tr.is_infinite(n0->vertex(c_in_n0))
+        && tr.is_infinite(n1->vertex(c_in_n1));
+  }
+};
+
+// `c` must be a cell incident to the edge (`v0`, `v1`) being collapsed, and
+// this must be called before any neighbor around that edge is rewired:
+// `index()` looks `c` up in the neighbor array of `n0`/`n1`, so it would no
+// longer find it once `set_neighbor()` has run.
+template<typename CellRef, typename Vertex_handle>
+auto make_collapse_star_cell(CellRef c, Vertex_handle v0, Vertex_handle v1)
+{
+  using Cell_handle = std::decay_t<decltype(c->neighbor(0))>;
+
+  const Cell_handle n0 = c->neighbor(c->index(v0));
+  const Cell_handle n1 = c->neighbor(c->index(v1));
+
+  return Collapse_star_cell<Cell_handle>{c, n0, n1, n0->index(c), n1->index(c)};
+}
+
 template<typename C3t3>
 class CollapseTriangulation
 {
@@ -73,42 +112,46 @@ public:
     typedef std::array<int, 3> Facet;
     typedef std::array<int, 4> Tet;
 
-    std::unordered_set<Vertex_handle> vertices_to_insert;
-    for (Cell_handle ch : cells_to_insert)
+    /*vertex of main tr - vertex of collapse tr*/
+    // the star holds around twenty distinct vertices, so a linear scan over
+    // handles compares cheaper than hashing them : hashing a compact-container
+    // iterator goes through Time_stamper, and this runs on every attempt
+    boost::container::small_vector<std::pair<Vertex_handle, int>, 32> v2i;
+    const auto index_of = [&v2i](const Vertex_handle vh) -> int
     {
-      for(int i = 0; i < 4; ++i)
-        vertices_to_insert.insert(ch->vertex(i));
-    }
+      for (const std::pair<Vertex_handle, int>& p : v2i)
+        if (p.first == vh)
+          return p.second;
+      return -1;
+    };
 
-    CGAL_expensive_assertion(vertices_to_insert.end()
-      != std::find(vertices_to_insert.begin(), vertices_to_insert.end(), v1_init));
-    CGAL_expensive_assertion(vertices_to_insert.end()
-      != std::find(vertices_to_insert.begin(), vertices_to_insert.end(), v0_init));
-
-    std::unordered_map<Vertex_handle, int> v2i;/*vertex of main tr - vertex of collapse tr*/
-
-    //To add the vertices only once
     std::vector<Point_3> points;
-    int index = 0;
-    for (Vertex_handle vh : vertices_to_insert)
-    {
-      if (v2i.find(vh) == v2i.end())
-      {
-        points.push_back(vh->point());
-        v2i.insert(std::make_pair(vh, index++));
-      }
-    }
-
     std::vector<Tet> finite_cells;
     std::vector<int> subdomains;
+    finite_cells.reserve(cells_to_insert.size());
+    subdomains.reserve(cells_to_insert.size());
+
     for (Cell_handle ch : cells_to_insert)
     {
-      finite_cells.push_back( { v2i.at(ch->vertex(0)),
-                                v2i.at(ch->vertex(1)),
-                                v2i.at(ch->vertex(2)),
-                                v2i.at(ch->vertex(3)) } );
+      Tet tet;
+      for (int i = 0; i < 4; ++i)
+      {
+        const Vertex_handle vh = ch->vertex(i);
+        int id = index_of(vh);
+        if (id == -1)
+        {
+          id = static_cast<int>(points.size());
+          v2i.emplace_back(vh, id);
+          points.push_back(vh->point());
+        }
+        tet[i] = id;
+      }
+      finite_cells.push_back(tet);
       subdomains.push_back(ch->subdomain_index());
     }
+
+    CGAL_expensive_assertion(index_of(v1_init) != -1);
+    CGAL_expensive_assertion(index_of(v0_init) != -1);
 
     // finished
     std::vector<Vertex_handle> new_vertices;
@@ -123,8 +166,8 @@ public:
       CGAL_assertion(triangulation.infinite_vertex() == new_vertices[0]);
 
       // update()
-      vh0 = new_vertices[v2i.at(v0_init) + 1];
-      vh1 = new_vertices[v2i.at(v1_init) + 1];
+      vh0 = new_vertices[index_of(v0_init) + 1];
+      vh1 = new_vertices[index_of(v1_init) + 1];
 
       Cell_handle ch;
       int i0, i1;
@@ -180,41 +223,33 @@ public:
 
       do
       {
-        int v0_id = circ->index(vh0);
-        int v1_id = circ->index(vh1);
+        const auto sc = make_collapse_star_cell(circ, vh0, vh1);
 
-        Cell_handle n0_ch = circ->neighbor(v0_id);
-        Cell_handle n1_ch = circ->neighbor(v1_id);
-
-        int ch_id_in_n0 = n0_ch->index(circ);
-        int ch_id_in_n1 = n1_ch->index(circ);
-
-        if (n0_ch->has_neighbor(n1_ch))
+        if (sc.n0->has_neighbor(sc.n1))
           return SHARED_NEIGHBOR_PROBLEM;
 
         //Update neighbors before removing cell
-        n0_ch->set_neighbor(ch_id_in_n0, n1_ch);
-        n1_ch->set_neighbor(ch_id_in_n1, n0_ch);
+        sc.n0->set_neighbor(sc.c_in_n0, sc.n1);
+        sc.n1->set_neighbor(sc.c_in_n1, sc.n0);
 
-        Subdomain_index si_n0 = n0_ch->subdomain_index();
-        Subdomain_index si_n1 = n1_ch->subdomain_index();
+        Subdomain_index si_n0 = sc.n0->subdomain_index();
+        Subdomain_index si_n1 = sc.n1->subdomain_index();
         Subdomain_index si = circ->subdomain_index();
 
         if (si_n0 != si && si_n1 != si)
           return TOPOLOGICAL_PROBLEM;
 
-        if ( triangulation.is_infinite(n0_ch->vertex(ch_id_in_n0))
-             && triangulation.is_infinite(n1_ch->vertex(ch_id_in_n1)))
+        if (sc.has_infinite_adjacency(triangulation))
           return TOPOLOGICAL_PROBLEM;
 
-        if ( triangulation.is_infinite(n0_ch)
-             && triangulation.is_infinite(n1_ch)
+        if ( triangulation.is_infinite(sc.n0)
+             && triangulation.is_infinite(sc.n1)
              && !triangulation.is_infinite(circ))
           return TOPOLOGICAL_PROBLEM;
 
-        cells_to_remove.push_back(circ);
+        cells_to_remove.push_back(sc.c);
 
-        invalid_cells.insert(circ);
+        invalid_cells.insert(sc.c);
 
       } while (++circ != done);
 
@@ -425,6 +460,32 @@ bool is_valid_collapse(const typename C3t3::Edge& edge,
   }
   while (++circ != done);
 
+  return true;
+}
+
+// The cells of `star` keep a positive orientation once `v_moved` is at
+// `new_pos`. Cells that also have `v_other` disappear with the collapse.
+template<typename C3t3, typename CellRange>
+bool collapse_keeps_orientations(const CellRange& star,
+                                 const typename C3t3::Vertex_handle v_moved,
+                                 const typename C3t3::Vertex_handle v_other,
+                                 const typename C3t3::Triangulation::Geom_traits::Point_3& new_pos)
+{
+  typedef typename C3t3::Triangulation::Geom_traits::Point_3 Point;
+
+  for (const auto& ch : star)
+  {
+    if (ch->has_vertex(v_other))
+      continue;
+
+    std::array<Point, 4> pts = { point(ch->vertex(0)->point()),
+                                 point(ch->vertex(1)->point()),
+                                 point(ch->vertex(2)->point()),
+                                 point(ch->vertex(3)->point()) };
+    pts[ch->index(v_moved)] = new_pos;
+    if (CGAL::orientation(pts[0], pts[1], pts[2], pts[3]) != CGAL::POSITIVE)
+      return false;
+  }
   return true;
 }
 
@@ -727,7 +788,10 @@ bool are_edge_lengths_valid(const typename C3t3::Edge& edge,
   else
     CGAL_assertion(false);
 
-  std::unordered_map<Vertex_handle, FT> edges_sqlength_after_collapse;
+  boost::container::flat_set<Vertex_handle,
+    std::less<Vertex_handle>,
+    boost::container::small_vector<Vertex_handle, 64> > examined;
+
   for (const Edge& ei : inc_edges)
   {
     if (is_outside(ei, c3t3, cell_selector))
@@ -739,15 +803,12 @@ bool are_edge_lengths_valid(const typename C3t3::Edge& edge,
     if (vh == v0 || vh == v1)
       continue;
 
-    FT sqlen = FT(0);
-    if (edges_sqlength_after_collapse.find(vh) == edges_sqlength_after_collapse.end())
-    {
-      sqlen = CGAL::squared_distance(point(new_pos), point(vh->point()));
-      edges_sqlength_after_collapse[vh] = sqlen;
-    }
-    else
-      sqlen = edges_sqlength_after_collapse[vh];
+    // a vertex adjacent to both extremities is met once per star, and the test
+    // below reads nothing but `vh` : running it again cannot change its outcome
+    if (!examined.insert(vh).second)
+      continue;
 
+    const FT sqlen = CGAL::squared_distance(point(new_pos), point(vh->point()));
     const FT sizing_at_vh = sizing_at_vertex(vh, sizing, c3t3, cell_selector);
     const FT sqhigh
         = CGAL::square(FT(4) / FT(3)) * (std::max)(CGAL::square(sizing_at_vh),
@@ -826,24 +887,36 @@ collapse(const typename C3t3::Cell_handle ch,
   std::vector<Cell_handle> incident_to_vdeleted;
   tr.incident_cells(vdeleted, std::back_inserter(incident_to_vdeleted));
 
-  boost::container::small_vector<Cell_handle, 30> incident_to_edge;
+  // Resolve the whole star first, without modifying anything: rejecting the
+  // collapse once some neighbors have been rewired would leave the
+  // triangulation half-collapsed.
+  boost::container::small_vector<Collapse_star_cell<Cell_handle>, 30> incident_to_edge;
   Cell_circulator circ = tr.incident_cells(ch, to, from);
   Cell_circulator done = circ;
   do
   {
+    const auto sc = make_collapse_star_cell(circ, vkept, vdeleted);
+
+    if (sc.has_infinite_adjacency(tr))
+      return Vertex_handle();
+
+    incident_to_edge.push_back(sc);
+  }
+  while (++circ != done);
+
+  for (const auto& sc : incident_to_edge)
+  {
     for (int i = 0; i < 4; ++i)
     {
-      const Vertex_handle vi = circ->vertex(i);
+      const Vertex_handle vi = sc.c->vertex(i);
       if (vi != vkept && vi != vdeleted)
       {
-        const Facet fi(circ, i);
+        const Facet fi(sc.c, i);
         if (c3t3.is_in_complex(fi))
           c3t3.remove_from_complex(fi);
       }
     }
-    incident_to_edge.push_back(circ);
   }
-  while (++circ != done);
 
   if(c3t3.is_in_complex(ch->vertex(from), ch->vertex(to)))
     c3t3.remove_from_complex(ch->vertex(from), ch->vertex(to));
@@ -851,46 +924,31 @@ collapse(const typename C3t3::Cell_handle ch,
   std::vector<Cell_handle> cells_to_remove;
   std::unordered_set<Cell_handle> invalid_cells;
 
-  for(const Cell_handle& c : incident_to_edge)
+  for(const auto& sc : incident_to_edge)
   {
-    const int v0_id = c->index(vkept);
-    const int v1_id = c->index(vdeleted);
-
-    Cell_handle n0_ch = c->neighbor(v0_id);
-    Cell_handle n1_ch = c->neighbor(v1_id);
-
-    const int ch_id_in_n0 = n0_ch->index(c);
-    const int ch_id_in_n1 = n1_ch->index(c);
-
     //Merge surface patch indices
-    merge_surface_patch_indices(Facet(n0_ch, ch_id_in_n0),
-                                Facet(n1_ch, ch_id_in_n1),
+    merge_surface_patch_indices(Facet(sc.n0, sc.c_in_n0),
+                                Facet(sc.n1, sc.c_in_n1),
                                 c3t3);
 
     //Update neighbors before removing cell
-    n0_ch->set_neighbor(ch_id_in_n0, n1_ch);
-    n1_ch->set_neighbor(ch_id_in_n1, n0_ch);
+    sc.n0->set_neighbor(sc.c_in_n0, sc.n1);
+    sc.n1->set_neighbor(sc.c_in_n1, sc.n0);
 
     //Update vertices cell pointer
     for (int i = 0; i < 3; i++)
     {
-      int vid = Tr::vertex_triple_index(ch_id_in_n0, i);
-      n0_ch->vertex(vid)->set_cell(n0_ch);
+      int vid = Tr::vertex_triple_index(sc.c_in_n0, i);
+      sc.n0->vertex(vid)->set_cell(sc.n0);
     }
     for (int i = 0; i < 3; i++)
     {
-      int vid = Tr::vertex_triple_index(ch_id_in_n1, i);
-      n1_ch->vertex(vid)->set_cell(n1_ch);
+      int vid = Tr::vertex_triple_index(sc.c_in_n1, i);
+      sc.n1->vertex(vid)->set_cell(sc.n1);
     }
 
-    if (tr.is_infinite(n0_ch->vertex(ch_id_in_n0))
-      && tr.is_infinite(n1_ch->vertex(ch_id_in_n1)))
-    {
-      std::cout << "Collapse infinite issue!" << std::endl;
-      return Vertex_handle();
-    }
-    cells_to_remove.push_back(c);
-    invalid_cells.insert(c);
+    cells_to_remove.push_back(sc.c);
+    invalid_cells.insert(sc.c);
   }
 
   const Vertex_handle infinite_vertex = tr.infinite_vertex();
@@ -1004,7 +1062,6 @@ typename C3t3::Vertex_handle collapse(typename C3t3::Edge& edge,
     vh1->set_point(new_position);
 
     vh = collapse(edge.first, edge.second, edge.third, cell_selector, c3t3, short_edges);
-    c3t3.set_dimension(vh, (std::min)(dim_vh0, dim_vh1));
   }
   else //Collapse at vertex
   {
@@ -1012,7 +1069,6 @@ typename C3t3::Vertex_handle collapse(typename C3t3::Edge& edge,
     {
       vh0->set_point(p1);
       vh = collapse(edge.first, edge.third, edge.second, cell_selector, c3t3, short_edges);
-      c3t3.set_dimension(vh, (std::min)(dim_vh0, dim_vh1));
     }
     else //Collapse at v0
     {
@@ -1020,12 +1076,23 @@ typename C3t3::Vertex_handle collapse(typename C3t3::Edge& edge,
       {
         vh1->set_point(p0);
         vh = collapse(edge.first, edge.second, edge.third, cell_selector, c3t3, short_edges);
-        c3t3.set_dimension(vh, (std::min)(dim_vh0, dim_vh1));
       }
       else
         CGAL_assertion(false);
     }
   }
+
+  // collapse() rejects an infinite adjacency before it rewires anything, so
+  // the star is still the one we found. The two points are not : they were
+  // moved above, in the expectation of a collapse that did not happen.
+  if (vh == Vertex_handle())
+  {
+    vh0->set_point(p0);
+    vh1->set_point(p1);
+    return vh;
+  }
+
+  c3t3.set_dimension(vh, (std::min)(dim_vh0, dim_vh1));
   return vh;
 }
 
@@ -1038,36 +1105,33 @@ bool is_cells_set_manifold(const C3t3&,
   typedef std::array<Vh, 3> FV;
   typedef std::pair<Vh, Vh> EV;
 
-  std::unordered_map<FV, int, boost::hash<FV>> facets;
+  // A facet is shared by exactly two cells, so it bounds the set when its
+  // neighbor is outside : the triangulation already answers that, and asking
+  // it costs one lookup of a cell handle where counting the facets of the set
+  // meant hashing a triple of vertex handles for every facet of every cell.
+  std::unordered_map<EV, int, boost::hash<EV>> edges;
+  edges.reserve(4 * cells.size());
+
   for (Cell_handle c : cells)
   {
     for (int i = 0; i < 4; ++i)
     {
+      if (cells.find(c->neighbor(i)) != cells.end())
+        continue; // shared with another cell of the set
+
       const FV fvi = make_vertex_array(c->vertex((i + 1) % 4),
         c->vertex((i + 2) % 4),
         c->vertex((i + 3) % 4));
-      typename std::unordered_map<FV, int, boost::hash<FV>>::iterator fit = facets.find(fvi);
-      if (fit == facets.end())
-        facets.insert(std::make_pair(fvi, 1));
-      else
-        fit->second++;
-    }
-  }
 
-  std::unordered_map<EV, int, boost::hash<EV>> edges;
-  for (const auto& fvv : facets)
-  {
-    if (fvv.second != 1)
-      continue;
-
-    for (int i = 0; i < 3; ++i)
-    {
-      const EV evi = make_vertex_pair(fvv.first[i], fvv.first[(i + 1) % 3]);
-      typename std::unordered_map<EV, int, boost::hash<EV>>::iterator eit = edges.find(evi);
-      if (eit == edges.end())
-        edges.insert(std::make_pair(evi, 1));
-      else
-        eit->second++;
+      for (int k = 0; k < 3; ++k)
+      {
+        const EV evi = make_vertex_pair(fvi[k], fvi[(k + 1) % 3]);
+        typename std::unordered_map<EV, int, boost::hash<EV>>::iterator eit = edges.find(evi);
+        if (eit == edges.end())
+          edges.insert(std::make_pair(evi, 1));
+        else
+          eit->second++;
+      }
     }
   }
 
@@ -1076,6 +1140,83 @@ bool is_cells_set_manifold(const C3t3&,
       return false;
 
   return true;
+}
+
+enum Angle_verdict { ANGLES_REJECTED, ANGLES_ACCEPTED, ANGLES_UNDECIDED };
+
+template<typename C3t3, typename CellRange>
+Angle_verdict collapse_keeps_angles_acceptable(const typename C3t3::Edge& edge,
+                                      const C3t3& c3t3,
+                                      const Collapse_type collapse_type,
+                                      const CellRange& star)
+{
+  using Tr = typename C3t3::Triangulation;
+  using Cell_handle = typename Tr::Cell_handle;
+  using Vertex_handle = typename Tr::Vertex_handle;
+  using Point_3 = typename Tr::Point;
+  using Vector_3 = typename Tr::Geom_traits::Vector_3;
+  using Subdomain_index = typename C3t3::Subdomain_index;
+
+  const Dihedral_angle_cosine acceptable_max_cos{0.995}; // 0.995 cos <=> 5.7 degrees
+
+  const Tr& tr = c3t3.triangulation();
+  const Vertex_handle v0 = edge.first->vertex(edge.second);
+  const Vertex_handle v1 = edge.first->vertex(edge.third);
+
+  Vector_3 new_pos = vec(v0->point());
+  if (collapse_type == TO_MIDPOINT)
+    new_pos = new_pos + 0.5 * Vector_3(point(v0->point()), point(v1->point()));
+  else if (collapse_type == TO_V1)
+    new_pos = vec(point(v1->point()));
+  const auto p_new = point(Point_3(new_pos.x(), new_pos.y(), new_pos.z()));
+
+  boost::container::flat_set<Cell_handle,
+    std::less<Cell_handle>,
+    boost::container::small_vector<Cell_handle, 32> > cells_to_remove;
+
+  typename Tr::Cell_circulator circ = tr.incident_cells(edge);
+  const typename Tr::Cell_circulator done = circ;
+  do { cells_to_remove.insert(circ); } while (++circ != done);
+
+  boost::container::small_vector<Cell_handle, 64> cells_to_update;
+  tr.incident_cells(v1, std::back_inserter(cells_to_update));
+
+  const Dihedral_angle_cosine curr_max_cos
+    = (std::max)(max_cos_dihedral_angle_in_range(tr, cells_to_remove, false),
+                 max_cos_dihedral_angle_in_range(tr, cells_to_update, false));
+
+  const double angle_margin = 1e-9;
+  const double acceptable_sq = acceptable_max_cos.signed_square_value();
+  const double curr_max_sq = curr_max_cos.signed_square_value();
+  bool undecided = false;
+
+  const auto& gt = tr.geom_traits();
+  for (const Cell_handle c : star)
+  {
+    if (cells_to_remove.find(c) != cells_to_remove.end())
+      continue;
+    if (tr.is_infinite(c) || c->subdomain_index() == Subdomain_index())
+      continue;
+
+    auto p_at = [&](const int i)
+    {
+      const Vertex_handle v = c->vertex(i);
+      return (v == v0 || v == v1) ? p_new : point(v->point());
+    };
+    const Dihedral_angle_cosine after
+      = max_cos_dihedral_angle(p_at(0), p_at(1), p_at(2), p_at(3), gt);
+    const double after_sq = after.signed_square_value();
+
+    if (CGAL::abs(after_sq - curr_max_sq) < angle_margin
+     || CGAL::abs(after_sq - acceptable_sq) < angle_margin)
+    {
+      undecided = true;
+      continue;
+    }
+    if (curr_max_cos < after && acceptable_max_cos < after)
+      return ANGLES_REJECTED;
+  }
+  return undecided ? ANGLES_UNDECIDED : ANGLES_ACCEPTED;
 }
 
 template<typename C3t3,
@@ -1122,17 +1263,60 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
     new_pos = Point(CGAL::midpoint(point(v0->point()), point(v1->point())));
   }
 
-  if (!is_valid_collapse(edge, collapse_type, new_pos, c3t3))
+  // The ring test depends on neither the collapse type nor the new position,
+  // so it settles all three attempts below at once - and it is the cheap one:
+  // one cell circulation, against a star walk plus an orientation predicate
+  // per cell of the star.
+  if (!is_valid_collapse(edge, c3t3))
+    return Vertex_handle();
+
+  // Each attempt below walks the star of v0 and/or of v1, and so do the angle
+  // and manifold tests further down. The mesh is not touched in between, so
+  // each star is walked once here and handed to all of them.
+  boost::container::small_vector<Cell_handle, 64> star_v0, star_v1;
+  bool has_star_v0 = false;
+  bool has_star_v1 = false;
+  const auto star_of_v0 = [&]() -> const boost::container::small_vector<Cell_handle, 64>&
+  {
+    if (!has_star_v0)
+    {
+      c3t3.triangulation().finite_incident_cells(v0, std::back_inserter(star_v0));
+      has_star_v0 = true;
+    }
+    return star_v0;
+  };
+  const auto star_of_v1 = [&]() -> const boost::container::small_vector<Cell_handle, 64>&
+  {
+    if (!has_star_v1)
+    {
+      c3t3.triangulation().finite_incident_cells(v1, std::back_inserter(star_v1));
+      has_star_v1 = true;
+    }
+    return star_v1;
+  };
+
+  const auto orientations_ok = [&](const Collapse_type ct, const Point& pos)
+  {
+    if ((ct == TO_V1 || ct == TO_MIDPOINT)
+        && !collapse_keeps_orientations<C3t3>(star_of_v0(), v0, v1, point(pos)))
+      return false;
+    if ((ct == TO_V0 || ct == TO_MIDPOINT)
+        && !collapse_keeps_orientations<C3t3>(star_of_v1(), v1, v0, point(pos)))
+      return false;
+    return true;
+  };
+
+  if (!orientations_ok(collapse_type, new_pos))
   {
     if (collapse_type == TO_MIDPOINT)
     {
       // with TO_MIDPOINT, we are authorized to test TO_V0 and TO_V1
-      if (is_valid_collapse(edge, TO_V0, v0->point(), c3t3))
+      if (orientations_ok(TO_V0, v0->point()))
       {
         collapse_type = TO_V0;
         new_pos = v0->point();
       }
-      else if (is_valid_collapse(edge, TO_V1, v1->point(), c3t3))
+      else if (orientations_ok(TO_V1, v1->point()))
       {
         collapse_type = TO_V1;
         new_pos = v1->point();
@@ -1163,29 +1347,35 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
                        edge.first->vertex(edge.second),
                        edge.first->vertex(edge.third)));
 
-    Vertex_handle v0_init = edge.first->vertex(edge.second);
-    Vertex_handle v1_init = edge.first->vertex(edge.third);
-
     std::unordered_set<Cell_handle> cells_to_insert;
-    c3t3.triangulation().finite_incident_cells(v0_init,
-      std::inserter(cells_to_insert, cells_to_insert.end()));
-    c3t3.triangulation().finite_incident_cells(v1_init,
-      std::inserter(cells_to_insert, cells_to_insert.end()));
+    for (const Cell_handle ch : star_of_v0())
+      cells_to_insert.insert(ch);
+    for (const Cell_handle ch : star_of_v1())
+      cells_to_insert.insert(ch);
+
+    // the angle test is the one that discards most candidates, and the cheaper
+    // of the two : it walks the star once, where is_cells_set_manifold() walks
+    // the star of each of its vertices
+    const Angle_verdict angles
+      = collapse_keeps_angles_acceptable(edge, c3t3, collapse_type, cells_to_insert);
+    if(angles == ANGLES_REJECTED)
+      return Vertex_handle();
 
     if(!is_cells_set_manifold(c3t3, cells_to_insert))
       return Vertex_handle();
 
-    CollapseTriangulation<C3t3> local_tri(edge, cells_to_insert, collapse_type);
-
-    Result_type res = local_tri.collapse();
-    if (res == VALID)
+    if(angles == ANGLES_UNDECIDED)
     {
-#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
-      if (in_cx)
-        nb_valid_collapse++;
-#endif
-      return collapse(edge, collapse_type, cell_selector, c3t3, short_edges);
+      CollapseTriangulation<C3t3> local_tri(edge, cells_to_insert, collapse_type);
+      if(local_tri.collapse() != VALID)
+        return Vertex_handle();
     }
+
+#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
+    if (in_cx)
+      nb_valid_collapse++;
+#endif
+    return collapse(edge, collapse_type, cell_selector, c3t3, short_edges);
   }
 #ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
   else if (in_cx)
@@ -1194,11 +1384,34 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
   return Vertex_handle();
 }
 
+template<typename C3T3>
+using Vertex_patch_cache = std::unordered_map<
+    typename C3T3::Vertex_handle,
+    std::optional<typename C3T3::Surface_patch_index> >;
+
+// surface_patch_index(v) walks v's whole incident-facet star. The initial
+// scan over all finite edges in collapse_short_edges() reaches the same
+// vertex once per incident edge, and the scan does not modify the mesh, so
+// the first answer stays valid for the rest of it.
+template<typename C3T3>
+const std::optional<typename C3T3::Surface_patch_index>&
+cached_surface_patch_index(const typename C3T3::Vertex_handle v,
+                           const C3T3& c3t3,
+                           Vertex_patch_cache<C3T3>& cache)
+{
+  const auto it = cache.find(v);
+  if (it != cache.end())
+    return it->second;
+
+  return cache.emplace(v, surface_patch_index(v, c3t3)).first->second;
+}
+
 template<typename C3T3, typename CellSelector>
 auto can_be_collapsed(const typename C3T3::Edge& e,
                       const C3T3& c3t3,
                       const bool protect_boundaries,
-                      CellSelector cell_selector)
+                      CellSelector cell_selector,
+                      Vertex_patch_cache<C3T3>* patch_cache = nullptr)
 {
   struct Collapsible
   {
@@ -1219,11 +1432,21 @@ auto can_be_collapsed(const typename C3T3::Edge& e,
 
   if(!boundary && !in_cx)
   {
-    auto patch_v0 = surface_patch_index(e.first->vertex(e.second), c3t3);
-    auto patch_v1 = surface_patch_index(e.first->vertex(e.third), c3t3);
+    const auto v0 = e.first->vertex(e.second);
+    const auto v1 = e.first->vertex(e.third);
 
-    if(patch_v0 != std::nullopt && patch_v1 != std::nullopt && patch_v0 != patch_v1)
-      return Collapsible{false, boundary};
+    if(v0->in_dimension() != 3 && v1->in_dimension() != 3)
+    {
+      const auto patch_v0 = patch_cache
+        ? cached_surface_patch_index(v0, c3t3, *patch_cache)
+        : surface_patch_index(v0, c3t3);
+      const auto patch_v1 = patch_cache
+        ? cached_surface_patch_index(v1, c3t3, *patch_cache)
+        : surface_patch_index(v1, c3t3);
+
+      if(patch_v0 != std::nullopt && patch_v1 != std::nullopt && patch_v0 != patch_v1)
+        return Collapsible{false, boundary};
+    }
   }
 
 //   if(!is_internal(e, c3t3, cell_selector))
@@ -1245,8 +1468,12 @@ void collapse_short_edges(C3T3& c3t3,
   typedef typename T3::Vertex_handle         Vertex_handle;
 
   typedef typename T3::Geom_traits::FT FT;
+  // the element side is only ever searched, never walked in order, so it is
+  // hashed : keeping it sorted meant comparing pairs of vertex handles
+  // O(log n) times for every edge the last collapse touched. The priority
+  // side keeps its order, which is what decides what runs next.
   typedef boost::bimap<
-        boost::bimaps::set_of<Edge, Compare_edges<Edge> >,
+        boost::bimaps::unordered_set_of<Edge, Hash_edges<Edge>, Equal_edges<Edge> >,
         boost::bimaps::multiset_of<FT, std::less<FT> > >  Boost_bimap;
   typedef typename Boost_bimap::value_type            short_edge;
 
@@ -1262,9 +1489,11 @@ void collapse_short_edges(C3T3& c3t3,
 
   //collect long edges
   Boost_bimap short_edges;
+  Vertex_patch_cache<C3T3> patch_cache;
   for (const Edge& e : tr.finite_edges())
   {
-    auto [collapsible, boundary] = can_be_collapsed(e, c3t3, protect_boundaries, cell_selector);
+    auto [collapsible, boundary]
+      = can_be_collapsed(e, c3t3, protect_boundaries, cell_selector, &patch_cache);
     if (!collapsible)
       continue;
 

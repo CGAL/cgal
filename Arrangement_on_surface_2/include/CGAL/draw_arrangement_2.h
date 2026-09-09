@@ -175,7 +175,9 @@ public:
   template <typename Approximate>
   void draw_approximate_region(Halfedge_const_handle curr, const Approximate& approx) {
     // std::cout << "draw_approximate_region()\n";
-    std::vector<typename Gt::Approximate_point_2> polyline;
+    using Gt_approximate_2 = typename Gt::Approximate_2;
+    using Approximate_point_2 = typename Gt_approximate_2::Approximate_point_2;
+    std::vector<Approximate_point_2> polyline;
     double error(0.01); // TODO? (this->pixel_ratio());
     bool l2r = curr->direction() == ARR_LEFT_TO_RIGHT;
     approx(curr->curve(), error, std::back_inserter(polyline), l2r);
@@ -252,7 +254,8 @@ public:
   template <typename T, std::enable_if_t<is_or_derived_from_agas_v<T>, int> = 0>
   void draw_point_impl1(const T& traits, const Point& p, bool colored, const CGAL::IO::Color& color) {
     using Traits = T;
-    using Ak = typename Traits::Approximate_kernel;
+    using Traits_approximate_2 = typename Traits::Approximate_2;
+    using Ak = typename Traits_approximate_2::Approximate_kernel;
     using Approx_point_3 = typename Ak::Point_3;
 
     auto approx = traits.approximate_2_object();
@@ -368,7 +371,10 @@ public:
                               bool colored,
                               const CGAL::IO::Color& c) {
     // std::cout << "draw_approximate_curve\n";
-    std::vector<typename Gt::Approximate_point_2> polyline;
+    using Gt_approximate_2 = typename Gt::Approximate_2;
+    using Approximate_point_2 = typename Gt_approximate_2::Approximate_point_2;
+
+    std::vector<Approximate_point_2> polyline;
     double error(0.01); // TODO? (this->pixel_ratio());
     approx(curve, error, std::back_inserter(polyline));
     if (polyline.empty()) return;
@@ -413,8 +419,9 @@ public:
   void draw_curve_impl1(const T& traits, const X_monotone_curve& xcv, bool colored, const CGAL::IO::Color& c) {
     // std::cout << "draw_curve (geodesic)\n";
     using Traits = T;
-    using Ak = typename Traits::Approximate_kernel;
-    using Ap = typename Traits::Approximate_point_2;
+    using Traits_approximate_2 = typename Traits::Approximate_2;
+    using Ak = typename Traits_approximate_2::Approximate_kernel;
+    using Ap = typename Traits_approximate_2::Approximate_point_2;
     using Approx_point_3 = typename Ak::Point_3;
 
     auto approx = traits.approximate_2_object();

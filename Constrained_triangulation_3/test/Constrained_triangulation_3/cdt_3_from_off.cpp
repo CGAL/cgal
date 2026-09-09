@@ -23,7 +23,7 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Surface_mesh/IO/PLY.h>
 #include <CGAL/Surface_mesh/Surface_mesh.h>
-#include <CGAL/tetrahedral_remeshing.h>
+//#include <CGAL/tetrahedral_remeshing.h>
 #include <CGAL/use.h>
 #include <CGAL/utility.h>
 
@@ -815,13 +815,13 @@ int go(Mesh mesh, CDT_options options) {
                     << move_vertices_guard.time_ms() << " ms\n";
       std::cout << cdt.statistics() << "\n";
     }
-    CGAL::tetrahedral_isotropic_remeshing(
-          cdt,
-          3 * bbox_max_span,
-          CGAL::parameters::number_of_iterations(30).nb_flip_smooth_iterations(20u)
-          .remesh_boundaries(false));
+    // CGAL::tetrahedral_isotropic_remeshing(
+    //       cdt,
+    //       3 * bbox_max_span,
+    //       CGAL::parameters::number_of_iterations(30).nb_flip_smooth_iterations(20u)
+    //       .remesh_boundaries(false));
     // CGAL_assertion(cdt.tr().tds().is_valid(true));
-    std::cout << cdt.statistics() << "\n";
+    // std::cout << cdt.statistics() << "\n";
   }
 
   return EXIT_SUCCESS;
