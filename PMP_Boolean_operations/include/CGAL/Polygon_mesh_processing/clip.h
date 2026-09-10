@@ -706,17 +706,14 @@ generic_clip_impl(
     internal_np::edge_is_constrained_t,
     NamedParameters1,
     Corefinement::No_mark<TriangleMesh>//default
-  > ::type User_ecm1;
+  > ::type User_cst_map;
 
   // User and internal edge is-constrained map
-  typedef typename boost::template property_map<TriangleMesh, CGAL::dynamic_edge_property_t<bool> >::type Algo_ecm1;
-  typedef Corefinement::No_mark<TriangleMesh> Ecm2;
-  typedef OR_property_map<Algo_ecm1, User_ecm1> Ecm1;
-  typedef Corefinement::Ecm_bind<TriangleMesh, Ecm1, Ecm2> Ecm_in;
+  typedef typename boost::template property_map<TriangleMesh, CGAL::dynamic_edge_property_t<bool> >::type Edge_mark_map;
+  typedef Corefinement::No_mark<TriangleMesh> NoMap;
+  typedef Corefinement::Edge_properties_for_input<TriangleMesh, User_cst_map, NoMap, Edge_mark_map, NoMap> Edge_properties_in;
 
-  Algo_ecm1 algo_ecm1  = get(CGAL::dynamic_edge_property_t<bool>(), tm1);
-  Ecm1 ecm1 = Ecm1(algo_ecm1, choose_parameter<User_ecm1>(get_parameter(np1, internal_np::edge_is_constrained)));
-  Ecm2 ecm2;
+  Edge_mark_map edge_mark_map  = get(CGAL::dynamic_edge_property_t<bool>(), tm1);
 
   // Face index point maps
   typedef typename CGAL::GetInitializedFaceIndexMap<TriangleMesh, NamedParameters1>::type FaceIndexMap1;
@@ -737,17 +734,19 @@ generic_clip_impl(
   // surface intersection algorithm call
   typedef Corefinement::Generic_clip_output_builder<TriangleMesh,
                                                     Vpm, Vpm2,
-                                                    Algo_ecm1,
+                                                    Edge_mark_map,
                                                     FaceIndexMap1,
                                                     Default> Ob;
 
   typedef Corefinement::Surface_intersection_visitor_for_corefinement<
-    TriangleMesh, Vpm, Vpm2, Ob, Ecm_in, User_visitor> Algo_visitor;
-  Ecm_in ecm_in(tm1,tm2,ecm1,ecm2);
-  Ob ob(tm1, tm2, vpm1, vpm2, algo_ecm1, fid_map1, use_compact_clipper);
+    TriangleMesh, Vpm, Vpm2, Ob, Edge_properties_in, User_visitor> Algo_visitor;
+  Edge_properties_in edge_properties_in(tm1,tm2,
+                                        choose_parameter<NoMap>(get_parameter(np1, internal_np::edge_is_constrained)),
+                                        NoMap(),edge_mark_map, NoMap());
+  Ob ob(tm1, tm2, vpm1, vpm2, edge_mark_map, fid_map1, use_compact_clipper);
 
   Corefinement::Intersection_of_triangle_meshes<TriangleMesh, Vpm, Vpm2, Algo_visitor >
-    functor(tm1, tm2, vpm1, vpm2, Algo_visitor(uv,ob,ecm_in,&tm2), &tm2);
+    functor(tm1, tm2, vpm1, vpm2, Algo_visitor(uv,ob,edge_properties_in,&tm2), &tm2);
   functor(CGAL::Emptyset_iterator(), false, true);
 }
 
