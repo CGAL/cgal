@@ -1,5 +1,6 @@
 #include <CGAL/Point_set_3.h>
 #include <CGAL/Point_set_3/IO.h>
+#include <CGAL/IO/write_vg.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Shape_detection/Region_growing/Point_set.h>
@@ -66,12 +67,15 @@ int main(int argc, char** argv) {
     green = point_set.add_property_map<unsigned char>("green", 0).first,
     blue  = point_set.add_property_map<unsigned char>("blue" , 0).first;
 
+  std::vector<typename Region_growing::Primitive_and_region> regions;
+
   // Run the algorithm.
   CGAL::Random random;
   std::size_t num_cylinders = 0;
   region_growing.detect(
     boost::make_function_output_iterator(
       [&](const std::pair< Region_type::Primitive, std::vector<typename Point_set::Index> >& region) {
+        regions.push_back(region);
 
         // Assign a random color to each region.
         const unsigned char r = static_cast<unsigned char>(random.get_int(64, 192));
@@ -89,6 +93,19 @@ int main(int argc, char** argv) {
   );
   std::cout << "* number of found cylinders: " << num_cylinders << std::endl;
   assert(!is_default_input || num_cylinders == 2);
+
+  auto serialize = [](auto &cyl, unsigned int &type, std::size_t &num_params) {
+    std::stringstream ss;
+    ss << cyl.axis << " " << cyl.radius;
+    type = 1;
+    num_params = 7;
+    return ss.str();
+    };
+
+  CGAL::IO::write_VG("cylinders_point_set_3.vg", point_set, regions,
+    CGAL::parameters::point_map(point_set.point_map()).
+    normal_map(point_set.normal_map()).
+    serializer(serialize));
 
   // Save regions to a file.
   std::ofstream out("cylinders_point_set_3.ply");
