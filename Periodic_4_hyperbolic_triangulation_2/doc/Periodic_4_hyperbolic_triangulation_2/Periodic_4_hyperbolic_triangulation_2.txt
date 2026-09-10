@@ -374,9 +374,7 @@ the number of random points inserted. Results are shown in \cgalFigureRef{P4HDum
 \section P4HT2_Design Design and Implementation History
 
 This package implements the algorithm for the computation of Delaunay triangulation of the Bolza
-surface proposed by Mikhail Bogdanov,  Monique Teillaud, and Gert Vegter
-\cgalCite{cgal:btv-dtosl-16}. The implementation itself is described by Iordan Iordanov and
-Monique Teillaud \cgalCite{cgal:it-idtbs-17}.
+surface proposed by \cgalCite{cgal:btv-dtosl-16}. The implementation itself is described by \cgalCite{cgal:it-idtbs-17}.
 
 In 2016, Iordanov started working on the 2D Periodic Hyperbolic Triangulations package.
 

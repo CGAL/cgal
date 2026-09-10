@@ -27,7 +27,7 @@ A closed curve, either topological or combinatorial, that cannot be continuously
 
 It is important to clarify how we compare the lengths of two combinatorial curves in order to compute the shortest one. "Shortest" can be understood as "having the least amount of edges" or "having the smallest total length of its edges". In the former case, we consider that the mesh is unweighted; in the latter case, we consider that the mesh is weighted, and one must specify how the weight, or length, of each edge is calculated (see concept `WeightFunctor`). When the vertices of the mesh have Euclidean coordinates, the Euclidean distance between two connected vertices defines a natural weight for the corresponding edge. A weight functor \link CGAL::Surface_mesh_topology::Euclidean_length_weight_functor `Euclidean_length_weight_functor`\endlink is provided for this purpose.
 
-The algorithm to find a shortest non-contractible curve through a specified vertex is based on the paper by Cabello et al. \cgalCite{cvl-ew-12}. The time complexity is linear, though in the weighted case it is raised by a logarithmic factor, assuming that the weight computation takes constant time per edge. Computing the edge width takes quadratic time by running the first function on each vertex, and its complexity is also raised by a logarithmic factor when considering a weighted map. Computing the face width consists of constructing the radial graph of the original mesh and computing the edge width of the radial graph. It thus takes quadratic time. Computing face width on weighted maps is currently not supported.
+The algorithm to find a shortest non-contractible curve through a specified vertex is based on the paper by \cgalCite{cvl-ew-12}. The time complexity is linear, though in the weighted case it is raised by a logarithmic factor, assuming that the weight computation takes constant time per edge. Computing the edge width takes quadratic time by running the first function on each vertex, and its complexity is also raised by a logarithmic factor when considering a weighted map. Computing the face width consists of constructing the radial graph of the original mesh and computing the edge width of the radial graph. It thus takes quadratic time. Computing face width on weighted maps is currently not supported.
 
 \subsection SMTopology_homotopy Homotopy Test
 
@@ -44,7 +44,7 @@ The second query asks if the curves are <em>freely homotopic</em> while the thir
  On the upper left surface the green curve is contractible. The red and blue curves share the same (green) endpoint. (Being closed, their two endpoints coincide.) Although these last two curves are not homotopic with fixed endpoints they are freely homotopic as shown by the suggested continuous transformation of the blue curve.
 \cgalFigureEnd
 
-The algorithms used are based on a paper by Erickson and Whittlesey \cgalCite{ew-tcsr-13}, providing a linear time algorithm for the above homotopy tests. This is a simplified version of the linear time algorithm  by Lazarus and Rivaud \cgalCite{lr-hts-12}.
+The algorithms used are based on a paper by \cgalCite{ew-tcsr-13}, providing a linear time algorithm for the above homotopy tests. This is a simplified version of the linear time algorithm  by \cgalCite{lr-hts-12}.
 
 \subsection SMTopology_simplicity Simplicity Test
 
@@ -53,7 +53,7 @@ Given a cycle drawn on a surface one can ask if the cycle can be continuously de
 The algorithm implemented in this package builds a data structure to efficiently answer queries of the following forms:
 - Given a combinatorial surface \f$\cal{M}\f$ and a closed combinatorial curve specified as a sequence of edges of \f$\cal{M}\f$, decide if the curve is homotopic to a simple one on \f$\cal{M}\f$.
 
-The algorithm used is based on a paper by Despré and Lazarus \cgalCite{cgal:dl-cginc-19}, providing a \cgalBigO{n + l\log{l}}-time algorithm where \f$n\f$ is the complexity of \f$\cal{M}\f$ and \f$l\f$ is the length of the path.
+The algorithm used is based on a paper by \cgalCite{cgal:dl-cginc-19}, providing a \cgalBigO{n + l\log{l}}-time algorithm where \f$n\f$ is the complexity of \f$\cal{M}\f$ and \f$l\f$ is the length of the path.
 
 \section SMTopology_HowToUse API Description
 

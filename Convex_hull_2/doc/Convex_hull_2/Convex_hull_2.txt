@@ -52,7 +52,7 @@ class need not be specified and defaults to types and operations defined
 in the kernel in which the input point type is defined.
 
 Given a sequence of \f$ n\f$ input points with \f$ h\f$ extreme points,
-the function `convex_hull_2()` uses either the output-sensitive \cgalBigO{n h} algorithm of Bykat \cgalCite{b-chfsp-78}
+the function `convex_hull_2()` uses either the output-sensitive \cgalBigO{n h} algorithm of \cgalCite{b-chfsp-78}
 (a non-recursive version of the quickhull \cgalCite{bdh-qach-96} algorithm) or the algorithm of Akl and Toussaint, which requires \cgalBigO{n \log n} time
 in the worst case. The algorithm chosen depends on the kind of
 iterator used to specify the input points. These two algorithms are

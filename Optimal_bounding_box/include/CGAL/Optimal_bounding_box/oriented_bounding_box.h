@@ -267,7 +267,7 @@ void construct_oriented_bounding_box(const PointRange& points,
 /// bounding box and some precision loss should therefore be expected if a kernel not providing
 /// exact constructions is used.
 ///
-/// The algorithm is based on a paper by Chang, Gorissen, and Melchior \cgalCite{cgal:cgm-fobbo-11}.
+/// The algorithm is based on a paper by \cgalCite{cgal:cgm-fobbo-11}.
 
 /// \ingroup PkgOptimalBoundingBox_Oriented_bounding_box
 ///

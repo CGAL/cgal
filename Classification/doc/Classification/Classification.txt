@@ -211,7 +211,7 @@ To perform classification based on four classifiers, please refer to \ref Classi
 
 \cgal provides [ETHZ::Random_forest_classifier](@ref CGAL::Classification::ETHZ::Random_forest_classifier),
 a classifier based on the Random Forest Template Library developed by
-Stefan Walk at ETH Zurich \cgalCite{cgal:w-erftl-14} (the library is
+\cgalCite{cgal:w-erftl-14} (the library is
 distributed under the MIT license and is included with the \cgal release,
 the user does not have to install anything more). This classifier uses
 a ground truth training set to construct several decision trees that

@@ -13,8 +13,8 @@ namespace CGAL {
 
 This \cgal component implements two algorithms for shape detection:
 
-- the *Efficient RANSAC (RANdom SAmple Consensus)* method, contributed by Schnabel et al. \cgalCite{schnabel2007efficient};
-- the *Region Growing* method, contributed by Lafarge and Mallet \cgalCite{cgal:lm-clscm-12}.
+- the *Efficient RANSAC (RANdom SAmple Consensus)* method, contributed by \cgalCite{schnabel2007efficient};
+- the *Region Growing* method, contributed by \cgalCite{cgal:lm-clscm-12}.
 
 
 \section Shape_detection_RANSAC Efficient RANSAC

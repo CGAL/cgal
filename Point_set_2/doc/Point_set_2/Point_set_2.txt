@@ -45,7 +45,7 @@ For example, the Delaunay diagram turns out to be a very powerful
 data structure for storing dynamic sets of points under range and nearest
 neighbor queries. A first implementation and computational
 study of using Delaunay diagrams for geometric queries is described by
-Mehlhorn and N&auml;her in \cgalCite{mn-lpcgc-00}.
+\cgalCite{mn-lpcgc-00}.
 
 In this section we present a generic variant of a two dimensional point set
 data type supporting various geometric queries.

@@ -17,7 +17,7 @@
 \cgalPkgPicture{shortestpathspackage-ico.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Stephen Kiazyk, Sébastien Loriot, and Éric Colin de Verdière}
-\cgalPkgDesc{The package provides methods for computing geodesic shortest path on triangulated surface meshes.  The algorithm used is based on a paper by Xin and Wang \cgalCite{XinWang2009improvingchenandhan} .  The input of this package can be any model of the `FaceListGraph` concept. }
+\cgalPkgDesc{The package provides methods for computing geodesic shortest path on triangulated surface meshes.  The algorithm used is based on a paper by \cgalCite{XinWang2009improvingchenandhan} .  The input of this package can be any model of the `FaceListGraph` concept. }
 \cgalPkgManuals{Chapter_Surface_mesh_shortest_path,PkgSurfaceMeshShortestPathRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
