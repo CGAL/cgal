@@ -13,7 +13,7 @@
 #ifndef CGAL_HOLE_FILLING_TRIANGULATE_HOLE_POLYLINE_H
 #define CGAL_HOLE_FILLING_TRIANGULATE_HOLE_POLYLINE_H
 
-#include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
+#include <CGAL/license/Polygon_mesh_processing/hole_filling.h>
 
 #ifdef CGAL_TRIANGULATE_FACES_DO_NOT_USE_CDT2
 # ifndef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
