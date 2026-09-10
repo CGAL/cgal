@@ -11,7 +11,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_smoothing_3/boundary_aware_mesh_smoothing.h>
-#include <CGAL/Mesh_smoothing_3/projectors.h>
+#include <CGAL/Mesh_smoothing_3/Projectors.h>
 #include <CGAL/Mesh_smoothing_3/Smoothing_status.h>
 #include <CGAL/Simplicial_mesh_cell_base_3.h>
 #include <CGAL/Simplicial_mesh_vertex_base_3.h>

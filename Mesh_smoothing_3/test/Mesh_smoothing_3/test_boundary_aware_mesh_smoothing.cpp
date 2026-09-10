@@ -134,7 +134,7 @@ void test_classification_and_structure()
       fixture.c3t3, cts);
 
   assert_all_finite(fixture.c3t3);
-  assert(status.valid_mesh() == (status.nb_invalid_elements == 0));
+  assert(status.mesh_is_valid() == (status.nb_invalid_elements == 0));
 
   assert(before_cells.size() == collect_cells_in_complex(fixture.c3t3).size());
   assert(before_facets.size() == collect_facets_in_complex(fixture.c3t3).size());
@@ -235,7 +235,7 @@ void test_stopping_limits_and_invalid_counting()
 
     assert(status.nb_initial_invalid_elements == 0);
     assert(status.nb_invalid_elements == 0);
-    assert(status.valid_mesh());
+    assert(status.mesh_is_valid());
     assert(finite_vertices(fixture.c3t3).size() == 5);
   }
 }

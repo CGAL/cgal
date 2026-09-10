@@ -136,7 +136,7 @@ void test_example_integration()
   assert_structure_counts_preserved(before, after);
   assert(status.nb_initial_invalid_elements == 0);
   assert(status.nb_invalid_elements == 0);
-  assert(status.valid_mesh());
+  assert(status.mesh_is_valid());
   assert(status.nb_metric_evaluations > 0);
   assert(status.nb_vertex_updates > 0);
   assert(status.return_code == CGAL::Mesh_smoothing_3::Smoothing_return_code::CONVERGENCE_REACHED);
@@ -153,7 +153,7 @@ void test_no_early_stopping()
       CGAL::Mesh_smoothing_3::C3t3_mesh_projector(c3t3),
       CGAL::parameters::verbose(false).max_number_of_evaluations(10000));
 
-  assert(status.valid_mesh());
+  assert(status.mesh_is_valid());
   assert(status.nb_stages == 2);
   assert(status.nb_vertex_updates > 100);
   assert(status.return_code == CGAL::Mesh_smoothing_3::Smoothing_return_code::CONVERGENCE_REACHED); // sphere will converge in 2 stages
@@ -221,7 +221,7 @@ void test_random_inner_untangling_integration()
 
   assert(status.nb_initial_invalid_elements > 0);
   assert(status.nb_invalid_elements == 0);
-  assert(status.valid_mesh());
+  assert(status.mesh_is_valid());
   assert_time_breakdown_close(status);
 }
 

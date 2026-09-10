@@ -19,7 +19,7 @@
 #include <QMessageBox>
 
 #include <CGAL/Mesh_smoothing_3/boundary_aware_mesh_smoothing.h>
-#include <CGAL/Mesh_smoothing_3/projectors.h>
+#include <CGAL/Mesh_smoothing_3/Projectors.h>
 
 using namespace CGAL::Three;
 class CGAL_Lab_mesh_smoothing_3_plugin :

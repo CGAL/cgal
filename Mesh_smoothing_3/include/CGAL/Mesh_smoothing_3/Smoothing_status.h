@@ -67,7 +67,7 @@ struct Smoothing_status {
     double pre_processing_time = 0.; ///< Time spent in the preprocessing step, in seconds.
     double optimization_time = 0.; ///< Time spent in the optimization step, in seconds.
 
-    bool valid_mesh() const { return nb_invalid_elements == 0; } ///< returns true if the mesh is valid (no negatively oriented elements).
+    bool mesh_is_valid() const { return nb_invalid_elements == 0; } ///< returns true if the mesh is valid (no negatively oriented elements).
 
 
 // internal usage

@@ -157,13 +157,10 @@ The optimization method implemented in this package was introduced by
 François Protais, Gianmarco Cherchi, and Marco Livesu in
 \cgalCite{cgal:pcl-vvfaf-26}.
 
-The original implementation was developed as part of the
-Mesh_optimization project. The CGAL implementation was subsequently adapted
+The \cgal implementation was subsequently adapted
 to operate directly on `CGAL::Mesh_complex_3_in_triangulation_3` objects and
 to expose the geometric fitting mechanism through the concepts
 `ConstructTangentSpace` and `TangentSpace`.
-
-It was initially published in CGAL-6.3.
 
 */
 } /* namespace CGAL */
