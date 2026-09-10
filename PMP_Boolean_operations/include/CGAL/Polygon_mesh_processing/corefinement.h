@@ -425,10 +425,10 @@ corefine_and_compute_boolean_operations(
 
 // Edge property maps
   //for input meshes
-  typedef typename Corefinement::Get_Ecm_bind<TriangleMesh, NPIn1, NPIn2>::type Ecm_in;
+  typedef typename Corefinement::Get_Edge_properties_for_input<TriangleMesh, NPIn1, NPIn2>::type Edge_properties_in;
 
   //for output meshes
-  typedef typename Corefinement::Get_Ecm_out_bind<TriangleMesh, std::tuple<NPOut0, NPOut1, NPOut2,NPOut3>>::type Ecm_out;
+  typedef typename Corefinement::Get_edge_properties_for_output<TriangleMesh, std::tuple<NPOut0, NPOut1, NPOut2,NPOut3>>::type Edge_properties_out;
 
   // Face index point maps
   typedef typename CGAL::GetInitializedFaceIndexMap<TriangleMesh, NPIn1>::type FaceIndexMap1;
@@ -454,16 +454,16 @@ corefine_and_compute_boolean_operations(
                                                   FaceIndexMap1,
                                                   FaceIndexMap2,
                                                   Default,
-                                                  Ecm_in,
-                                                  Ecm_out,
+                                                  Edge_properties_in,
+                                                  Edge_properties_out,
                                                   User_visitor> Ob;
 
   typedef Corefinement::Surface_intersection_visitor_for_corefinement<
-            TriangleMesh, VPM1, VPM2, Ob, Ecm_in, User_visitor> Algo_visitor;
+            TriangleMesh, VPM1, VPM2, Ob, Edge_properties_in, User_visitor> Algo_visitor;
 
-  Ecm_in ecm_in(tm1,tm2,np1,np2);
-  Ecm_out ecms_out(nps_out);
-  Ob ob(tm1, tm2, vpm1, vpm2, fid_map1, fid_map2, ecm_in, vpm_out_tuple, ecms_out, uv, output);
+  Edge_properties_in em_in(tm1,tm2,np1,np2);
+  Edge_properties_out em_out(nps_out);
+  Ob ob(tm1, tm2, vpm1, vpm2, fid_map1, fid_map2, em_in, vpm_out_tuple, em_out, uv, output);
 
   // special case used for clipping open meshes
   if (choose_parameter(get_parameter(np1, internal_np::use_bool_op_to_clip_surface), false))
@@ -478,7 +478,7 @@ corefine_and_compute_boolean_operations(
   }
 
   Corefinement::Intersection_of_triangle_meshes<TriangleMesh, VPM1, VPM2, Algo_visitor >
-    functor(tm1, tm2, vpm1, vpm2, Algo_visitor(uv,ob,ecm_in));
+    functor(tm1, tm2, vpm1, vpm2, Algo_visitor(uv,ob,em_in));
   functor(CGAL::Emptyset_iterator(), throw_on_self_intersection, true);
 
 
@@ -806,14 +806,14 @@ corefine(      TriangleMesh& tm1,
                                get_property_map(boost::vertex_point, tm2));
 
 // Edge property maps
-  typedef typename Corefinement::Get_Ecm_bind<TriangleMesh, NamedParameters1, NamedParameters2>::type Ecm;
-  Ecm ecm(tm1,tm2,np1, np2);
+  typedef typename Corefinement::Get_Edge_properties_for_input<TriangleMesh, NamedParameters1, NamedParameters2>::type Edge_properties;
+  Edge_properties em(tm1,tm2,np1, np2);
 
 // TODO: double check that what we get with shared faces PR (actually coref should have them but bool op are unchecking them)
   if (&tm1==&tm2)
   {
-    ecm.set_on_intersection(tm1, edges(tm1));
-    ecm.set_on_intersection(tm2, edges(tm2));
+    em.set_on_intersection(tm1, edges(tm1));
+    em.set_on_intersection(tm2, edges(tm2));
     return;
   }
 
@@ -832,11 +832,11 @@ corefine(      TriangleMesh& tm1,
 // surface intersection algorithm call
   typedef Corefinement::No_extra_output_from_corefinement<TriangleMesh> Ob;
   typedef Corefinement::Surface_intersection_visitor_for_corefinement<
-  TriangleMesh, VPM1, VPM2, Ob, Ecm, User_visitor, false, handle_non_manifold_features> Algo_visitor;
+  TriangleMesh, VPM1, VPM2, Ob, Edge_properties, User_visitor, false, handle_non_manifold_features> Algo_visitor;
 
   Ob ob;
   Corefinement::Intersection_of_triangle_meshes<TriangleMesh, VPM1, VPM2, Algo_visitor>
-    functor(tm1, tm2, vpm1, vpm2, Algo_visitor(uv,ob,ecm,const_mesh_ptr), const_mesh_ptr);
+    functor(tm1, tm2, vpm1, vpm2, Algo_visitor(uv,ob,em,const_mesh_ptr), const_mesh_ptr);
 
   // Fill non-manifold feature maps if provided
   functor.set_non_manifold_feature_map_1(parameters::get_parameter(np1, internal_np::non_manifold_feature_map));
@@ -914,8 +914,8 @@ autorefine(      TriangleMesh& tm,
     internal_np::edge_is_constrained_t,
     NamedParameters,
     Corefinement::No_mark<TriangleMesh>//default
-  > ::type Ecm;
-  Ecm ecm = choose_parameter<Ecm>(get_parameter(np, internal_np::edge_is_constrained));
+  > ::type Edge_properties;
+  Edge_properties em = choose_parameter<Edge_properties>(get_parameter(np, internal_np::edge_is_constrained));
 
 // User visitor
   typedef typename internal_np::Lookup_named_param_def <
@@ -929,11 +929,11 @@ autorefine(      TriangleMesh& tm,
 // surface intersection algorithm call
   typedef Corefinement::No_extra_output_from_corefinement<TriangleMesh> Ob;
   typedef Corefinement::Surface_intersection_visitor_for_corefinement<
-    TriangleMesh, VPM, VPM, Ob, Ecm, User_visitor,true> Algo_visitor;
+    TriangleMesh, VPM, VPM, Ob, Edge_properties, User_visitor,true> Algo_visitor;
   Ob ob;
 
   Corefinement::Intersection_of_triangle_meshes<TriangleMesh, VPM, VPM, Algo_visitor>
-    functor(tm, vpm, Algo_visitor(uv,ob,ecm) );
+    functor(tm, vpm, Algo_visitor(uv,ob,em) );
 
   functor(CGAL::Emptyset_iterator(), true);
 }
@@ -1012,8 +1012,8 @@ autorefine_and_remove_self_intersections(      TriangleMesh& tm,
     internal_np::edge_is_constrained_t,
     NamedParameters,
     Corefinement::No_mark<TriangleMesh>//default
-  > ::type Ecm;
-  Ecm ecm = choose_parameter<Ecm>(get_parameter(np, internal_np::edge_is_constrained));
+  > ::type Edge_properties;
+  Edge_properties em = choose_parameter<Edge_properties>(get_parameter(np, internal_np::edge_is_constrained));
 
 // User visitor
   typedef typename internal_np::Lookup_named_param_def <
@@ -1027,15 +1027,15 @@ autorefine_and_remove_self_intersections(      TriangleMesh& tm,
   typedef Corefinement::Output_builder_for_autorefinement<TriangleMesh,
                                                           VPM,
                                                           Fid_map,
-                                                          Ecm,
+                                                          Edge_properties,
                                                           Default > Ob;
 
   typedef Corefinement::Surface_intersection_visitor_for_corefinement<
-    TriangleMesh, VPM, VPM, Ob, Ecm, User_visitor,true> Algo_visitor;
-  Ob ob(tm, vpm, fid_map, ecm);
+    TriangleMesh, VPM, VPM, Ob, Edge_properties, User_visitor,true> Algo_visitor;
+  Ob ob(tm, vpm, fid_map, em);
 
   Corefinement::Intersection_of_triangle_meshes<TriangleMesh, VPM, VPM, Algo_visitor>
-    functor(tm, vpm, Algo_visitor(uv,ob,ecm) );
+    functor(tm, vpm, Algo_visitor(uv,ob,em) );
 
   functor(CGAL::Emptyset_iterator(), true);
 

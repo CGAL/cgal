@@ -2352,11 +2352,11 @@ public:
           polylines, \
           intersection_edges1, intersection_edges2, \
           vpm1, vpm2, *std::get<BO_type>(output_vpms), \
-          marks_on_input_edges.ecm1, \
-          marks_on_input_edges.ecm2, \
+          marks_on_input_edges.edge_cst_map1, \
+          marks_on_input_edges.edge_cst_map2, \
           marks_on_input_edges.edge_mark_map1, \
           marks_on_input_edges.edge_mark_map2, \
-          std::get<BO_type>(out_edge_mark_maps.ecm_tuple), \
+          std::get<BO_type>(out_edge_mark_maps.edge_cst_tuple), \
           std::get<BO_type>(out_edge_mark_maps.edge_mark_tuple), \
           shared_edges, \
           user_visitor \
@@ -2441,11 +2441,11 @@ public:
             BO_type == TM2_MINUS_TM1, \
           polylines_in_tm1, \
           vpm1, vpm2, \
-          marks_on_input_edges.ecm1, \
-          marks_on_input_edges.ecm2, \
+          marks_on_input_edges.edge_cst_map1, \
+          marks_on_input_edges.edge_cst_map2, \
           marks_on_input_edges.edge_mark_map1, \
           marks_on_input_edges.edge_mark_map2, \
-          std::get<BO_type>(out_edge_mark_maps.ecm_tuple), \
+          std::get<BO_type>(out_edge_mark_maps.edge_cst_tuple), \
           std::get<BO_type>(out_edge_mark_maps.edge_mark_tuple), \
           disconnected_patches_edge_to_tm2_edge, \
           user_visitor)
@@ -2463,11 +2463,11 @@ public:
                                      BO_type==TM2_MINUS_TM1, \
                                      vpm2, \
                                      vpm1, \
-                                     marks_on_input_edges.ecm2, \
-                                     marks_on_input_edges.ecm1, \
+                                     marks_on_input_edges.edge_cst_map2, \
+                                     marks_on_input_edges.edge_cst_map1, \
                                      marks_on_input_edges.edge_mark_map2, \
                                      marks_on_input_edges.edge_mark_map1, \
-                                     std::get<BO_type>(out_edge_mark_maps.ecm_tuple), \
+                                     std::get<BO_type>(out_edge_mark_maps.edge_cst_tuple), \
                                      std::get<BO_type>(out_edge_mark_maps.edge_mark_tuple), \
                                      disconnected_patches_edge_to_tm2_edge, \
                                      user_visitor)
@@ -2483,12 +2483,12 @@ public:
         remove_disconnected_patches(tm1,
                                     patches_of_tm1,
                                     patches_of_tm1_removed,
-                                    marks_on_input_edges.ecm1,
+                                    marks_on_input_edges.edge_cst_map1,
                                     marks_on_input_edges.edge_mark_map1);
 
         // transfer marks of edges of patches kept to the output edge mark property
         #define CGAL_COREF_FUNCTION_CALL_DEF(BO_type) \
-        copy_constraint_status<TriangleMesh>(tm1, marks_on_input_edges.ecm1, std::get<BO_type>(out_edge_mark_maps.ecm_tuple));  \
+        copy_constraint_status<TriangleMesh>(tm1, marks_on_input_edges.edge_cst_map1, std::get<BO_type>(out_edge_mark_maps.edge_cst_tuple));  \
         copy_constraint_status<TriangleMesh>(tm1, marks_on_input_edges.edge_mark_map1, std::get<BO_type>(out_edge_mark_maps.edge_mark_tuple));
         CGAL_COREF_FUNCTION_CALL(inplace_operation_tm1)
         #undef CGAL_COREF_FUNCTION_CALL_DEF
@@ -2657,11 +2657,11 @@ public:
             BO_type == TM1_MINUS_TM2, \
             vpm1, \
             vpm2, \
-            marks_on_input_edges.ecm1, \
-            marks_on_input_edges.ecm2, \
+            marks_on_input_edges.edge_cst_map1, \
+            marks_on_input_edges.edge_cst_map2, \
             marks_on_input_edges.edge_mark_map1, \
             marks_on_input_edges.edge_mark_map2, \
-            std::get<BO_type>(out_edge_mark_maps.ecm_tuple), \
+            std::get<BO_type>(out_edge_mark_maps.edge_cst_tuple), \
             std::get<BO_type>(out_edge_mark_maps.edge_mark_tuple), \
             polylines, \
             user_visitor \
@@ -2704,11 +2704,11 @@ public:
                                      BO_type==TM2_MINUS_TM1, \
                                      vpm2, \
                                      vpm1, \
-                                     marks_on_input_edges.ecm2, \
-                                     marks_on_input_edges.ecm1, \
+                                     marks_on_input_edges.edge_cst_map2, \
+                                     marks_on_input_edges.edge_cst_map1, \
                                      marks_on_input_edges.edge_mark_map2, \
                                      marks_on_input_edges.edge_mark_map1, \
-                                     std::get<BO_type>(out_edge_mark_maps.ecm_tuple), \
+                                     std::get<BO_type>(out_edge_mark_maps.edge_cst_tuple), \
                                      std::get<BO_type>(out_edge_mark_maps.edge_mark_tuple), \
                                      polylines, \
                                      user_visitor);
