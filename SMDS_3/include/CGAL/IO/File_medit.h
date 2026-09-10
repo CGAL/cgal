@@ -1114,7 +1114,6 @@ bool read_MEDIT(std::istream& in,
   using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<T3, Corner_index, Curve_index>;
   using Cell_handle = typename C3t3::Triangulation::Cell_handle;
   using Facet = typename C3t3::Triangulation::Facet;
-  using Edge = typename C3t3::Triangulation::Edge;
   using Vertex_handle = typename C3t3::Triangulation::Vertex_handle;
   using Subdomain_index = typename C3t3::Subdomain_index;
 
