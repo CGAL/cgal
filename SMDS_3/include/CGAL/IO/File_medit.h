@@ -642,44 +642,6 @@ output_to_medit(std::ostream& os,
   }
 
   //-------------------------------------------------------
-  // Corners
-  //-------------------------------------------------------
-  std::vector<typename Tr::Vertex_handle> corners;
-  for(const auto& v : vertices) {
-    if(v->in_dimension() == 0) {
-      corners.push_back(v);
-    }
-  }
-  os << "Corners\n"
-     << size(corners) << '\n';
-  for(const auto& v : corners) {
-    os << V[v] << '\n';
-  }
-
-  //-------------------------------------------------------
-  // Edges
-  //-------------------------------------------------------
-  os << "Edges\n"
-     << size(edges) << '\n';
-  for(const auto& e : edges)
-  {
-    auto [vh1, vh2] = tr.vertices(e);
-    auto index = (vh1->in_dimension() == 1)
-                   ? vh1->index()
-                    : (vh2->in_dimension() == 1 ? vh2->index() : 42 /*todo : magic id*/);
-    os << V[vh1] << ' ' << V[vh2] << ' ';
-    output_to_os(os, index);
-    os << '\n';
-  }
-
-  //-------------------------------------------------------
-  // Ridges (???)
-  //-------------------------------------------------------
-  //"Ridges"
-  //number of ridges
-  //a list of ids (one per line)
-
-  //-------------------------------------------------------
   // End
   //-------------------------------------------------------
   os << "End\n";
