@@ -30,6 +30,7 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
+#include <charconv>
 
 namespace CGAL {
 
@@ -90,12 +91,34 @@ public:
       }
 
       // Read all numbers in the line
-      std::istringstream issline(line);
       entries.clear();
+#if 1
+      const char* p   = line.data();
+      const char* end = p + line.size();
+      auto parse = [&](double& v)
+      {
+        while (p != end &&
+          std::isspace(static_cast<unsigned char>(*p)))
+          ++p;
+
+        auto r = std::from_chars(p, end, v);
+        if (r.ec != std::errc{})
+          return false;
+
+        p = r.ptr;
+        return true;
+      };
+      double d;
+      while (parse(d)){
+        entries.push_back(d);
+      }
+#else
+      std::istringstream issline(line);
       double d;
       while(issline >> IO::iformat(d)){
         entries.push_back(d);
       }
+#endif
 
       if(has_colors()){
         // Compute how many entries are there for the color
