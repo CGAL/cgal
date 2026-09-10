@@ -19,6 +19,7 @@
 #include <CGAL/SMDS_3/Mesh_complex_3_in_triangulation_3_fwd.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/SMDS_3/tet_soup_to_c3t3.h>
+#include <CGAL/IO/MEDIT.h>
 
 #include <CGAL/utility.h>
 #include <CGAL/basic.h>
@@ -1057,9 +1058,12 @@ bool read_MEDIT(std::istream& in,
   // Default non_manifold value is true if the triangulation periodic, false otherwise
   const bool non_manifold = choose_parameter(get_parameter(np, internal_np::allow_non_manifold),
                                              std::is_same<typename T3::Periodic_tag, Tag_true>::value);
+  const bool negative_allowed = choose_parameter(get_parameter(np, internal_np::allow_negative_orientation), false);
   const bool verbose = choose_parameter(get_parameter(np, internal_np::verbose), false);
 
-  bool b = CGAL::SMDS_3::build_triangulation_from_file(in, t3, verbose, false /*replace_domain_0*/, non_manifold);
+  bool b = CGAL::SMDS_3::build_triangulation_from_file(in, t3, verbose, false /*replace_domain_0*/,
+                                                       non_manifold, negative_allowed,
+                                                       CGAL::Emptyset_iterator());
   if(!b)
     t3.clear();
   return b;
@@ -1090,6 +1094,7 @@ bool read_MEDIT(std::istream& in,
   // Default non_manifold value is true if the triangulation periodic, false otherwise
   const bool non_manifold = choose_parameter(get_parameter(np, internal_np::allow_non_manifold),
                                              std::is_same<typename T3::Periodic_tag, Tag_true>::value);
+  const bool negative_allowed = choose_parameter(get_parameter(np, internal_np::allow_negative_orientation), false);
   const bool verbose = choose_parameter(get_parameter(np, internal_np::verbose), false);
 
   struct Cx_edge
@@ -1104,6 +1109,7 @@ bool read_MEDIT(std::istream& in,
                                                            verbose,
                                                            false /*replace_domain_0*/,
                                                            non_manifold,
+                                                           negative_allowed,
                                                            std::back_inserter(cx_edges));
   if(!built)
   {

@@ -576,6 +576,11 @@ protected:
   Tds _tds;
   GT  _gt;
   Vertex_handle infinite; // infinite vertex
+  bool _may_have_badly_oriented_cells{false}; // if the triangulation has at least one badly oriented cell
+
+public:
+  bool may_have_badly_oriented_cells() const { return _may_have_badly_oriented_cells; }
+  void may_have_badly_oriented_cells(bool b) { _may_have_badly_oriented_cells = b; }
 
 public:
   template<typename P> // Point or Point_3
@@ -6391,6 +6396,14 @@ is_valid(bool verbose, int level) const
 
     CGAL_assertion(false);
     return false;
+  }
+
+  if(may_have_badly_oriented_cells())
+  {
+    if(verbose)
+      std::cerr << "Triangulation may have badly oriented cells since its creation,"
+                << " cannot check orientation" << std::endl;
+    return true;
   }
 
   switch(dimension())

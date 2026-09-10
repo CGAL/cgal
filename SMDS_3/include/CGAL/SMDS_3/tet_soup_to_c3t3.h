@@ -124,7 +124,8 @@ bool build_finite_cells(Tr& tr,
                                              std::vector<std::pair<typename Tr::Cell_handle, int> > >& incident_cells_map,
                         const FacetPatchMap& border_facets,
                         const bool verbose,
-                        const bool replace_domain_0)
+                        const bool replace_domain_0,
+                        const bool allow_negative_orientation)
 {
   typedef typename Tr::Vertex_handle                            Vertex_handle;
   typedef typename Tr::Cell_handle                              Cell_handle;
@@ -132,10 +133,8 @@ bool build_finite_cells(Tr& tr,
 
   bool success = true;
 
-  CGAL_assertion_code(
-    typename Tr::Geom_traits::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
-    typename Tr::Geom_traits::Orientation_3 orientation = tr.geom_traits().orientation_3_object();
-  )
+  typename Tr::Geom_traits::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
+  typename Tr::Geom_traits::Orientation_3 orientation = tr.geom_traits().orientation_3_object();
 
   typename SubdomainsRange::value_type max_domain = 0;
   if(replace_domain_0)
@@ -163,8 +162,15 @@ bool build_finite_cells(Tr& tr,
     }
 
     // this assertion also tests for degeneracy
-    CGAL_assertion(orientation(cp(tr.point(vs[0])), cp(tr.point(vs[1])),
-                               cp(tr.point(vs[2])), cp(tr.point(vs[3]))) == POSITIVE);
+    if (allow_negative_orientation && !tr.may_have_badly_oriented_cells())
+    {
+      auto o = orientation(cp(tr.point(vs[0])), cp(tr.point(vs[1])),
+                           cp(tr.point(vs[2])), cp(tr.point(vs[3])));
+      tr.may_have_badly_oriented_cells(o != CGAL::POSITIVE);
+    }
+    else
+      CGAL_assertion(orientation(cp(tr.point(vs[0])), cp(tr.point(vs[1])),
+                                 cp(tr.point(vs[2])), cp(tr.point(vs[3]))) == POSITIVE);
 
     Cell_handle c = tr.tds().create_cell(vs[0], vs[1], vs[2], vs[3]);
     c->set_subdomain_index(subdomains[i]); // the cell's info keeps the reference of the tetrahedron
@@ -439,7 +445,8 @@ bool build_triangulation_impl(Tr& tr,
                               ComplexEdgesOutputIterator cx_edges_out,
                               const bool verbose,// = false,
                               const bool replace_domain_0,// = false,
-                              const bool allow_non_manifold) // = false
+                              const bool allow_non_manifold, // = false
+                              const bool allow_negative_orientation) // = false
 {
   if (verbose)
     std::cout << "build_triangulation_impl()..." << std::endl;
@@ -482,7 +489,8 @@ bool build_triangulation_impl(Tr& tr,
   if (!finite_cells.empty())
   {
     if (!CGAL::SMDS_3::build_finite_cells<Tr>(tr, finite_cells, subdomains, vertex_handle_vector,
-                                              incident_cells_map, border_facets, verbose, replace_domain_0))
+                                              incident_cells_map, border_facets, verbose, replace_domain_0,
+                                              allow_negative_orientation))
     {
       if (verbose)
         std::cerr << "Error: build_finite_cells went wrong!" << std::endl;
@@ -592,7 +600,8 @@ bool build_triangulation_one_subdomain(Tr& tr,
                                        CxEdgesOutputIterator cx_edges_out,
                                        const bool verbose,// = false,
                                        const bool replace_domain_0,// = false
-                                       const bool allow_non_manifold)// = false
+                                       const bool allow_non_manifold,// = false
+                                       const bool allow_negative_orientation)// = false
 {
   std::vector<typename Tr::Cell::Subdomain_index> subdomains(finite_cells.size(), subdomain);
   return build_triangulation_impl(tr, points, finite_cells, subdomains,
@@ -600,7 +609,7 @@ bool build_triangulation_one_subdomain(Tr& tr,
                                   vertex_handle_vector,
                                   cx_edges_out,
                                   verbose, replace_domain_0,
-                                  allow_non_manifold);
+                                  allow_non_manifold, allow_negative_orientation);
 }
 
 template<class Tr,
@@ -620,7 +629,8 @@ bool build_triangulation_one_subdomain(Tr& tr,
                                        CxEdgesOutputIterator cx_edges_out,
                                        const bool verbose, // = false,
                                        const bool replace_domain_0,// = false
-                                       const bool allow_non_manifold)//= false
+                                       const bool allow_non_manifold,// = false
+                                       const bool allow_negative_orientation)// = false
 {
   std::vector<typename Tr::Cell::Subdomain_index> subdomains(finite_cells.size(), subdomain);
   std::vector<typename Tr::Vertex_handle> vertex_handle_vector;
@@ -630,7 +640,7 @@ bool build_triangulation_one_subdomain(Tr& tr,
                                   vertex_handle_vector,
                                   cx_edges_out,
                                   verbose, replace_domain_0,
-                                  allow_non_manifold);
+                                  allow_non_manifold, allow_negative_orientation);
 }
 
 template<class Tr,
@@ -651,7 +661,8 @@ bool build_triangulation_with_subdomains_range(Tr& tr,
                                                ComplexEdgesOutputIterator cx_edges_oit,
                                                const bool verbose,// = false
                                                const bool replace_domain_0,// = false,
-                                               const bool allow_non_manifold)
+                                               const bool allow_non_manifold,// = false
+                                               const bool allow_negative_orientation)// = false
 {
   std::vector<typename Tr::Vertex_handle> vertex_handle_vector;
   std::vector<typename Tr::Cell::Subdomain_index> subdomains_vector(
@@ -661,7 +672,8 @@ bool build_triangulation_with_subdomains_range(Tr& tr,
                                   vertex_handle_vector,
                                   cx_edges_oit,
                                   verbose, replace_domain_0,
-                                  allow_non_manifold);
+                                  allow_non_manifold,
+                                  allow_negative_orientation);
 }
 
 template<class Tr,
@@ -673,6 +685,7 @@ bool build_triangulation_from_file(std::istream& is,
                                    const bool verbose,
                                    const bool replace_domain_0,
                                    const bool allow_non_manifold,
+                                   const bool allow_negative_orientation,
                                    CxEdgesOutputIterator cx_edges_oit)
 {
   using Point_3 = typename Tr::Point;
@@ -719,7 +732,8 @@ bool build_triangulation_from_file(std::istream& is,
                                                    cx_edges_oit,
                                                    verbose,
                                                    replace_domain_0 && !is_CGAL_mesh,
-                                                   allow_non_manifold);
+                                                   allow_non_manifold,
+                                                   allow_negative_orientation);
 }
 
 } // namespace SMDS_3
