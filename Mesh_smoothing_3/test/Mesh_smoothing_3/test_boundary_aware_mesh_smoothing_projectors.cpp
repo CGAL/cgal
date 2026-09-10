@@ -130,7 +130,7 @@ void test_no_projection_smoke()
     if (!same_point(before[i], after[i])) any_moved = true;
   }
   assert(any_moved);
-  assert(status.valid_mesh() == (status.nb_invalid_elements == 0));
+  assert(status.mesh_is_valid() == (status.nb_invalid_elements == 0));
 }
 
 } // namespace

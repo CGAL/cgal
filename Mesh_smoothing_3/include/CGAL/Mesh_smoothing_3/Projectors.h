@@ -73,16 +73,16 @@ struct Tangent_space {
 /*!
 * \ingroup pkgMeshSmoothing3Projection
 *
-* \brief provides projection functions to a mesh defined in a tetrahedral mesh model of `MeshComplex_3InTriangulation_3`.
+* \brief provides projection to a mesh defined in a tetrahedral mesh model of `MeshComplex_3InTriangulation_3`.
 *
-* The class `Mesh_smoother` creates an AABB_tree for each patch and curve on the mesh.
+* The class creates an `AABB_tree` for each patch and curve on the mesh.
 * It then defines queries re-projecting entities on the mesh depending on their patch/curve index.
 *
 * @tparam C3t3 model of `MeshComplex_3InTriangulation_3`
 *
 * \cgalModels{ConstructTangentSpace}
 *
-\sa `CGAL::boundary_aware_mesh_smoothing`
+\sa `CGAL::boundary_aware_mesh_smoothing()`
 \sa `CGAL::Mesh_smoothing_3::C3t3_no_projection`
 *
 */
@@ -130,9 +130,9 @@ public:
 public:
 
     /*!
-        Class constructor
+        CConstructor
 
-        \param c3t3 contains the mesh used for projection.
+        \param c3t3 is the mesh used for projection.
     */
     C3t3_mesh_projector(C3t3 const& c3t3)
     : _c3t3(c3t3)
@@ -179,7 +179,7 @@ private:
 *
 * \cgalModels{ConstructTangentSpace}
 *
-\sa `CGAL::boundary_aware_mesh_smoothing`
+\sa `CGAL::boundary_aware_mesh_smoothing()`
 \sa `CGAL::Mesh_smoothing_3::C3t3_mesh_projector`
 *
 */
@@ -223,7 +223,7 @@ public:
  *
  * \cgalModels{ConstructTangentSpace}
  *
- * \sa `CGAL::boundary_aware_mesh_smoothing`
+ * \sa `CGAL::boundary_aware_mesh_smoothing()`
  * \sa `CGAL::Mesh_smoothing_3::Polyhedral_mesh_domain_with_features_projector`
  * \sa `CGAL::Mesh_smoothing_3::C3t3_mesh_projector`
  *
@@ -238,7 +238,7 @@ public:
     using Tangent_space = Mesh_smoothing_3::Tangent_space<Geom_traits>;
 
     /*!
-     * Class constructor.
+     * Constructor
      *
      * \param domain the polyhedral mesh domain used for projection.
      */
@@ -316,7 +316,7 @@ private:
  *
  * \cgalModels{ConstructTangentSpace}
  *
- * \sa `CGAL::boundary_aware_mesh_smoothing`
+ * \sa `CGAL::boundary_aware_mesh_smoothing()`
  * \sa `CGAL::Mesh_smoothing_3::Polyhedral_mesh_domain_projector`
  * \sa `CGAL::Mesh_smoothing_3::C3t3_mesh_projector`
  *
@@ -335,7 +335,7 @@ public:
     using Segment_3 = typename Geom_traits::Segment_3;
 
     /*!
-     * Class constructor.
+     * Constructor
      *
      * \param domain the polyhedral mesh domain with features used for projection.
      */
@@ -405,7 +405,7 @@ public:
  *
  * \cgalModels{ConstructTangentSpace}
  *
- * \sa `CGAL::boundary_aware_mesh_smoothing`
+ * \sa `CGAL::boundary_aware_mesh_smoothing()`
  * \sa `CGAL::Mesh_smoothing_3::Polyhedral_mesh_domain_projector`
  * \sa `CGAL::Mesh_smoothing_3::C3t3_mesh_projector`
  */
@@ -419,7 +419,7 @@ public:
     using Tangent_space = Mesh_smoothing_3::Tangent_space<GeomTraits>;
 
     /*!
-     * Class constructor.
+     * Constructor
      *
      * \param function the signed-distance function and gradient used for
      * projection

@@ -21,7 +21,7 @@
 #include <CGAL/remove_far_points_in_mesh_3.h>
 
 #include <CGAL/Mesh_smoothing_3/boundary_aware_mesh_smoothing.h>
-#include <CGAL/Mesh_smoothing_3/projectors.h>
+#include <CGAL/Mesh_smoothing_3/Projectors.h>
 
 #include <CGAL/centroid.h>
 #include <CGAL/config.h>
@@ -277,7 +277,7 @@ void test_polyhedral_mesh_domain_projector()
             projector);
 
     assert_all_finite(c3t3);
-    assert(status.valid_mesh());
+    assert(status.mesh_is_valid());
     assert(status.nb_invalid_elements == 0);
 
     // The smoother balances fitting and element quality, so do not require
@@ -386,7 +386,7 @@ void test_polyhedral_mesh_domain_with_features_projector()
             projector);
 
     assert_all_finite(c3t3);
-    assert(status.valid_mesh());
+    assert(status.mesh_is_valid());
     assert(status.nb_invalid_elements == 0);
 
     assert(
@@ -611,7 +611,7 @@ void test_signed_distance_function_projector()
             projector);
 
     assert_all_finite(c3t3);
-    assert(status.valid_mesh());
+    assert(status.mesh_is_valid());
     assert(status.nb_invalid_elements == 0);
 
     // Do not require exact projection: the target term is balanced against
