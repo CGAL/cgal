@@ -19,6 +19,11 @@ if (NOT CGAL_Qt6_FOUND  OR NOT Qt6_FOUND)
   return()
 endif()
 
+if (NOT (GMP_FOUND AND MPFR_FOUND))
+  message(STATUS "NOTICE: This demo requires the GMP and MPFR libraries, and will not be compiled.")
+  return()
+endif()
+
 # Boost and its components
 find_package( Boost REQUIRED )
 
