@@ -30,8 +30,9 @@
 #include <boost/range/value_type.hpp>
 #include <boost/range/reference.hpp>
 #include <boost/container/flat_set.hpp>
+#include <boost/container/flat_map.hpp>
 #include <boost/container/small_vector.hpp>
-#include <boost/unordered_map.hpp>
+#include <unordered_map>
 
 #include <array>
 #include <set>
@@ -135,9 +136,11 @@ public:
       put(vpm, vertices[i], pi);
       *i2v++ = std::make_pair(i, vertices[i]);
     }
-#if 1
-    boost::unordered_map<std::pair<int,int>, halfedge_descriptor> halfedge_map;
-    boost::unordered_map<std::pair<int,int>, halfedge_descriptor>::iterator it;
+#if 0
+    //std::vector<std::unordered_map<std::size_t, halfedge_descriptor>> halfedge_map(m_points.size());
+    boost::container::flat_map<std::size_t, halfedge_descriptor> default_map;
+    default_map.reserve(6);
+    std::vector<decltype(default_map)> halfedge_map(m_points.size(), default_map);
     for(Polygon_id pi = 0, end = static_cast<Polygon_id>(m_polygons.size()); pi < end; ++pi)
     {
       halfedge_descriptor pred  = boost::graph_traits<PolygonMesh>::null_halfedge();
@@ -148,15 +151,15 @@ public:
       for(int i = 0; i < size; ++i)
       {
         int j = (i+1)%size;
-        std::pair<int,int> key(polygon[j], polygon[i]);
-        if((it = halfedge_map.find(key)) != halfedge_map.end())
+        std::pair<std::size_t,std::size_t> key(polygon[j], polygon[i]);
+        auto insert_res = halfedge_map[polygon[j]].emplace(polygon[i], boost::graph_traits<PolygonMesh>::null_halfedge());
+        if(!insert_res.second)
         {
-          h = it->second;
-          halfedge_map.erase(it);
+          h = insert_res.first->second;
         } else {
           edge_descriptor e = add_edge(pmesh);
           h = halfedge(e, pmesh);
-          halfedge_map.insert(std::make_pair(std::make_pair(polygon[i], polygon[j]),h));
+          insert_res.first->second=h;
           set_target(h, vertices[j], pmesh);
           set_halfedge(vertices[i], h, pmesh);
         }
@@ -170,7 +173,7 @@ public:
       }
       set_next(halfedge(fd, pmesh), h, pmesh);
     }
-    CGAL_assertion(halfedge_map.empty());
+
 
 #else
     for(Polygon_id i = 0, end = static_cast<Polygon_id>(m_polygons.size()); i < end; ++i)
