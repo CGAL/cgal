@@ -526,11 +526,11 @@ OutputIterator partition_optimal_convex_2(InputIterator first,
 
    // The algorithm is sensitive to the choice of starting vertex (vertex 0).
    // When vertex 0 is a non-convex or "awkward" vertex the closing boundary
-   // edge (n-1 -> 0) is mis-classified during preprocessing, which can cause
-   // non-simple or non-convex pieces to be returned.  Normalising the polygon
+   // edge (n-1 -> 0) is misclassified during preprocessing, which can cause
+   // non-simple or non-convex pieces to be returned. Normalizing the polygon
    // so that vertex 0 is the lexicographically smallest vertex guarantees it
    // is a convex vertex (true for any simple polygon), satisfying the
-   // algorithm's anchor assumption.  See https://github.com/CGAL/cgal/issues/9322.
+   // algorithm's anchor assumption. See https://github.com/CGAL/cgal/issues/9322.
    //
    // Note: std::rotate is safe here because diagonal lists are not yet
    // populated (that happens in partition_opt_cvx_preprocessing below).
