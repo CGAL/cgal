@@ -709,20 +709,20 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
   typedef typename internal_np::Lookup_named_param_def<internal_np::vertex_is_constrained_t,
                                                        NamedParameters,
                                                        Default_VCM>::type       VCM;
-  VCM vcm_np = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained), Default_VCM());
+  VCM vcm_np = choose_parameter<Default_VCM>(get_parameter(np, internal_np::vertex_is_constrained));
 
   typedef Static_boolean_property_map<edge_descriptor, false>                   Default_ECM;
   typedef typename internal_np::Lookup_named_param_def<internal_np::edge_is_constrained_t,
                                                        NamedParameters,
                                                        Default_ECM>::type       ECM;
-  ECM ecm = choose_parameter(get_parameter(np, internal_np::edge_is_constrained), Default_ECM());
+  ECM ecm = choose_parameter<Default_ECM>(get_parameter(np, internal_np::edge_is_constrained));
 
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VPM;
   VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(vertex_point, tmesh));
 
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type           Traits;
-  Traits gt = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
+  Traits gt = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
 
   typedef typename internal_np::Lookup_named_param_def<
             internal_np::filter_t,
@@ -2036,7 +2036,7 @@ bool remove_degenerate_faces(const FaceRange& face_range,
   VertexPointMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                           get_property_map(vertex_point, tmesh));
   typedef typename GetGeomTraits<TM, NamedParameters>::type                         Traits;
-  Traits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
+  Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
 
   typedef typename boost::property_traits<VertexPointMap>::value_type               Point_3;
   typedef typename boost::property_traits<VertexPointMap>::reference                Point_ref;

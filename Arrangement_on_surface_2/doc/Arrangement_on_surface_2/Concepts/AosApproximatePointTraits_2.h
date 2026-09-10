@@ -22,14 +22,6 @@
  */
 class AosApproximatePointTraits_2 {
 public:
-  /// \name Types
-  /// @{
-
-  //! the number type used to approximate point coordinates, e.g., double.
-  typedef unspecified_type Approximate_number_type;
-
-  /// @}
-
   /// \name Functor Types
   /// @{
 

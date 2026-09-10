@@ -1051,12 +1051,12 @@ public:
  * to Cell_handle
  */
   class Cells_in_complex_iterator :
-    public Filter_iterator<typename Triangulation::Finite_cells_iterator,
+    public Filter_iterator<typename Triangulation::All_cells_iterator,
                            Cell_not_in_complex>
   {
   private:
-    typedef typename Triangulation::Finite_cells_iterator Tr_iterator;
-    typedef Filter_iterator<typename Triangulation::Finite_cells_iterator,
+    typedef typename Triangulation::All_cells_iterator Tr_iterator;
+    typedef Filter_iterator<typename Triangulation::All_cells_iterator,
       Cell_not_in_complex> Base;
     typedef Cells_in_complex_iterator Self;
 
@@ -1085,23 +1085,23 @@ public:
   /// returns a \c Cells_in_complex_iterator to the first cell of the 3D complex
   Cells_in_complex_iterator cells_in_complex_begin() const
   {
-    return CGAL::filter_iterator(tr_.finite_cells_end(),
+    return CGAL::filter_iterator(tr_.all_cells_end(),
                                  Cell_not_in_complex(*this),
-                                 tr_.finite_cells_begin());
+                                 tr_.all_cells_begin());
   }
 
   /// returns a \c Cells_in_complex_iterator to the first cell of the 3D complex
   Cells_in_complex_iterator cells_in_complex_begin(const Subdomain_index& index) const
   {
-    return CGAL::filter_iterator(tr_.finite_cells_end(),
+    return CGAL::filter_iterator(tr_.all_cells_end(),
                                  Cell_not_in_complex(*this, index),
-                                 tr_.finite_cells_begin());
+                                 tr_.all_cells_begin());
   }
 
   /// returns the past-the-end iterator for the cells of the 3D complex
   Cells_in_complex_iterator cells_in_complex_end() const
   {
-    return CGAL::filter_iterator(tr_.finite_cells_end(),
+    return CGAL::filter_iterator(tr_.all_cells_end(),
                                  Cell_not_in_complex(*this));
   }
 

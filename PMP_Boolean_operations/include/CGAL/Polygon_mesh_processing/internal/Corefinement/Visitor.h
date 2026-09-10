@@ -54,6 +54,14 @@ struct Ecm_bind{
 
   typedef typename boost::graph_traits<G>::edge_descriptor edge_descriptor;
 
+  void call_put_for_all_edges(bool b)
+  {
+    if constexpr (!std::is_same_v<Ecm1, No_mark<G>>)
+      for (edge_descriptor e : edges(g1)) put(ecm1, e, b);
+    if constexpr (!std::is_same_v<Ecm2, No_mark<G>>)
+      for (edge_descriptor e : edges(g2)) put(ecm2, e, b);
+  }
+
   void call_put(G& g, edge_descriptor e, bool b) const
   {
     if ( &g==&g1 )
@@ -84,11 +92,13 @@ struct Ecm_bind<G, No_mark<G>, No_mark<G> >
   bool call_get(G&, edge_descriptor) const {
     return false;
   }
+  void call_put_for_all_edges(bool) {}
 };
 
 template<class G>
 struct No_extra_output_from_corefinement
 {
+  using face_descriptor = typename boost::graph_traits<G>::face_descriptor;
   void start_new_polyline(std::size_t, std::size_t) {}
   void add_node_to_polyline(std::size_t){}
   template<class Node_id_pair, class halfedge_descriptor>
@@ -103,7 +113,8 @@ struct No_extra_output_from_corefinement
     const Node_vector& /*nodes*/,
     bool /*input_have_coplanar_faces*/,
     const boost::dynamic_bitset<>& /* is_node_of_degree_one */,
-    const Mesh_to_map_node& /*mesh_to_node_id_to_vertex*/) const
+    const Mesh_to_map_node& /*mesh_to_node_id_to_vertex*/,
+    const std::vector<std::pair<face_descriptor,face_descriptor>>& /*identical_patches*/) const
   {}
 };
 
@@ -557,6 +568,15 @@ public:
     , const_mesh_ptr(const_mesh_ptr)
   {}
 
+  void inputs_are_two_identical_meshes()
+  {
+    if constexpr (std::is_same_v<OutputBuilder, No_extra_output_from_corefinement<TriangleMesh>>)
+    {
+      marks_on_edges.call_put_for_all_edges(true);
+    }
+    else
+      marks_on_edges.call_put_for_all_edges(false);
+  }
 
   void start_filtering_intersections() const
   {
@@ -1549,7 +1569,8 @@ public:
                 const TriangleMesh& tm1,
                 const TriangleMesh& tm2,
                 const VertexPointMap1& vpm1,
-                const VertexPointMap2& vpm2)
+                const VertexPointMap2& vpm2,
+                const std::vector<std::pair<face_descriptor, face_descriptor>>& identical_patches = {})
   {
     copy_nodes_ids_for_non_manifold_features();
 
@@ -1687,7 +1708,8 @@ public:
     output_builder(nodes,
                    input_with_coplanar_faces,
                    is_node_of_degree_one,
-                   mesh_to_node_id_to_vertex);
+                   mesh_to_node_id_to_vertex,
+                   identical_patches);
 
     user_visitor.end_building_output();
   }

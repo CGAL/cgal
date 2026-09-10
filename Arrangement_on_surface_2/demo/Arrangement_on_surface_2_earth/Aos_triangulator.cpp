@@ -39,8 +39,9 @@ namespace {
   // use this traits every time you construct an arrangement!
   static Geom_traits s_traits;
   using Dir3 = Kernel::Direction_3;
-  using Approximate_number_type = Geom_traits::Approximate_number_type;
-  using Approximate_kernel = Geom_traits::Approximate_kernel;
+  using Geom_traits_approximate_2 = Geom_traits::Approximate_2;
+  using Approximate_number_type = Geom_traits_approximate_2::Approximate_number_type;
+  using Approximate_kernel = Geom_traits_approximate_2::Approximate_kernel;
   using Approximate_Vector_3 = CGAL::Vector_3<Approximate_kernel>;
   using Approximate_Direction_3 = Approximate_kernel::Direction_3;
   using Direction_3 = Kernel::Direction_3;
@@ -171,7 +172,8 @@ Aos_triangulator::get_by_country(Aos::Arr_handle arrh, float error,
   using Itag = CGAL::Exact_predicates_tag;
   using CDT = CGAL::Constrained_Delaunay_triangulation_2<K, TDS, Itag>;
   using Face_handle = CDT::Face_handle;
-  using Approximate_point_2 = Geom_traits::Approximate_point_2;
+  using Geom_traits_approximate_2 = Geom_traits::Approximate_2;
+  using Approximate_point_2 = Geom_traits_approximate_2::Approximate_point_2;
   using Aos = Countries_arr;
   using Aos_pnt = Aos::Point_2;
 

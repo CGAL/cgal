@@ -216,7 +216,7 @@ public:
   Default value is 0.005, which is appropriate for most applications. In case
   you need a high dynamic ZBuffer precision, you can increase this value (~0.1).
   A lower value will prevent clipping of very close objects at the expense of a
-  worst Z precision.
+  worse Z precision.
 
   Only meaningful when Camera type is Camera::PERSPECTIVE. */
   qreal zNearCoefficient() const { return zNearCoef_; }
@@ -364,6 +364,7 @@ public:
   This ManipulatedCameraFrame defines its position() and orientation() and can
   translate mouse events into Camera displacement. Set using setFrame(). */
   ManipulatedCameraFrame *frame() const { return frame_; }
+  void stopAllPaths();
 public Q_SLOTS:
   void setFrame(ManipulatedCameraFrame *const mcf);
   //@}

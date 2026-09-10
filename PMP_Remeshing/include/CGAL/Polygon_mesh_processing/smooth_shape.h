@@ -134,8 +134,7 @@ void smooth_shape(const FaceRange& faces,
   GeomTraits gt = choose_parameter<GeomTraits>(get_parameter(np, internal_np::geom_traits));
   VertexPointMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                           get_property_map(CGAL::vertex_point, tmesh));
-  VCMap vcmap = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
-                                 Static_boolean_property_map<vertex_descriptor, false>());
+  VCMap vcmap = choose_parameter<Static_boolean_property_map<vertex_descriptor, false>>(get_parameter(np, internal_np::vertex_is_constrained));
   const unsigned int nb_iterations = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
   const bool scale_after_smoothing = choose_parameter(get_parameter(np, internal_np::do_scale), true);
 

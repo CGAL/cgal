@@ -152,6 +152,11 @@ typedef typename CGAL::Line_2<R>                 Line_2;
     return true;
   }
 
+  bool has_rotation() const
+  {
+    return true;
+  }
+
   FT cartesian(int i, int j) const
   {
     switch (i)

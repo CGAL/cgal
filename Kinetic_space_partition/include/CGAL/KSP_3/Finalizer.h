@@ -98,16 +98,14 @@ private:
   using Parameters = KSP::internal::Parameters_3<FT>;
 
 public:
-  Finalizer(Data_structure& data, const Parameters& parameters) :
-    m_data(data), m_parameters(parameters)
-  { }
+  Finalizer(Data_structure& data, const Parameters& parameters)
+    : m_data(data), m_parameters(parameters)
+  {}
 
   void create_polyhedra() {
-    if (m_parameters.debug) {
-      for (std::size_t sp = 0; sp < m_data.number_of_support_planes(); sp++) {
+    if (m_parameters.debug)
+      for (std::size_t sp = 0; sp < m_data.number_of_support_planes(); sp++)
         dump_2d_surface_mesh(m_data, sp, m_data.prefix() + "after-partition-sp" + std::to_string(sp));
-      }
-    }
 
     std::cout.precision(20);
     CGAL_assertion(m_data.check_bbox());
@@ -116,13 +114,6 @@ public:
     CGAL_assertion(m_data.check_edges());
 
     merge_facets_connected_components();
-
-/*
-    if (m_parameters.debug) {
-      for (std::size_t sp = 0; sp < m_data.number_of_support_planes(); sp++) {
-        dump_2d_surface_mesh(m_data, sp, m_data.prefix() + "after-merge-sp" + std::to_string(sp));
-      }
-    }*/
 
     create_volumes();
 
@@ -253,7 +244,7 @@ private:
       volume.pface_oriented_outwards.resize(volume.pfaces.size());
       for (std::size_t i = 0; i < volume.pfaces.size(); i++) {
         PVertex vtx = *m_data.pvertices_of_pface(volume.pfaces[i]).begin();
-        volume.pface_oriented_outwards[i] = ((m_data.point_3(vtx) - volume.centroid) * m_data.support_plane(volume.pfaces[i]).plane().orthogonal_vector() < 0);
+        volume.pface_oriented_outwards[i] = ((m_data.point_3(vtx) - volume.centroid) * m_data.support_plane(volume.pfaces[i].first).plane().orthogonal_vector() < 0);
       }
     }
 

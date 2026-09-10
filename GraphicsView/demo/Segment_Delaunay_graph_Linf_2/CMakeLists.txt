@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.12...3.31)
 project(Segment_Delaunay_graph_Linf_2_Demo)
 
-find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6 Core)
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
 find_package(Qt6 QUIET COMPONENTS Widgets)
 include_directories(BEFORE ./include)

@@ -49,6 +49,8 @@ typedef Triangle_container Tc;
 typedef Edge_container Ec;
 typedef Point_container Pc;
 
+typedef CGAL::Polygon_mesh_processing::Duplicate_polygon_erase_policy Policy;
+
 struct Scene_polygon_soup_item_priv{
 
   typedef Polygon_soup::Polygons::const_iterator Polygons_iterator;
@@ -409,13 +411,13 @@ void Scene_polygon_soup_item::inside_out()
   invalidateOpenGLBuffers();
 }
 
-void Scene_polygon_soup_item::repair(bool erase_dup, bool req_same_orientation)
+void Scene_polygon_soup_item::repair(Policy erase_policy, bool req_same_orientation)
 {
   QApplication::setOverrideCursor(Qt::BusyCursor);
   CGAL::Polygon_mesh_processing::repair_polygon_soup(
         d->soup->points,
         d->soup->polygons,
-        CGAL::parameters::erase_all_duplicates(erase_dup)
+        CGAL::parameters::erase_policy(erase_policy)
                          .require_same_orientation(req_same_orientation));
   QApplication::restoreOverrideCursor();
   invalidateOpenGLBuffers();

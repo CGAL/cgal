@@ -28,6 +28,7 @@ struct Three_point_cut_plane_traits
   using FT = typename Kernel::FT;
   using Point_3 = typename Kernel::Point_3;
   using Vector_3 = typename Kernel::Vector_3;
+  using Direction_3 = typename Kernel::Direction_3;
 
   struct Plane_3: public std::array<typename Kernel::Point_3, 3>{
     using Base = std::array<typename Kernel::Point_3, 3>;
@@ -80,9 +81,13 @@ struct Three_point_cut_plane_traits
 
   using Compute_scalar_product_3 = typename Kernel::Compute_scalar_product_3;
   using Construct_vector_3 = typename Kernel::Construct_vector_3;
+  using Construct_direction_3 = typename Kernel::Construct_direction_3;
+  using Compare_projection_along_direction_3 = typename Kernel::Compare_projection_along_direction_3;
 
   Compute_scalar_product_3 compute_scalar_product_3_object(){ return Kernel().compute_scalar_product_3_object(); }
   Construct_vector_3 construct_vector_3_object(){ return Kernel().construct_vector_3_object(); }
+  Construct_direction_3 construct_direction_3_object(){ return Kernel().construct_direction_3_object(); }
+  Compare_projection_along_direction_3 compare_projection_along_direction_3_object(){ return Kernel().compare_projection_along_direction_3_object(); }
 
 #ifndef CGAL_PLANE_CLIP_DO_NOT_USE_BOX_INTERSECTION_D
 // for does self-intersect

@@ -13,26 +13,12 @@ operations `intersection`, `union`, `difference`, `complement` and
 under the topological operations `boundary`, `closure`, and
 `interior`.
 
-\cgalHeading{Parameters}
-
-\code
-template< class NefPolyhedronTraits_S2,
-          class NefPolyhedronItems_S2 = CGAL::SM_items,
-          class Nef_polyhedronMarks = bool >
-class Nef_polyhedron_S2;
-\endcode
-
-The first parameter requires one of the following exact kernels:
+\tparam Traits one of the following exact kernels:
 `Homogeneous`, `Simple_homogeneous`
 parametrized with `Gmpz`, `leda_integer` or any other number type
 modeling \f$\mathbb{Z}\f$, or `Cartesian`, `Simple_cartesian` parametrized with
 `Gmpq`, `leda_rational`, `Quotient<Gmpz>` or any other number
 type modeling \f$\mathbb{Q}\f$.
-
-The second parameter and the third parameter are for future considerations.
-Neither `NefPolyhedronItems_S2` nor `Nef_polyhedronMarks` is
-specified, yet. Do not use other than the default types for these two
-template parameters.
 
 \cgalHeading{Exploration - Point location - Ray shooting}
 

@@ -1,4 +1,5 @@
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
+#include <CGAL/Polygon_mesh_processing/intersection_polylines.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -190,6 +191,57 @@ void test_bool_op(Triangle_mesh tm1, Triangle_mesh tm2, bool reverse, const char
   test_bool_op_no_copy(tm1, tm2, outname, reverse);
 }
 
+void test_identical_models(const Triangle_mesh& tm1)
+{
+  std::size_t nedges=num_edges(tm1);
+  // first test with corefine
+  Triangle_mesh m1=tm1, m2=tm1;
+  auto ecm1 = m1.add_property_map<Triangle_mesh::Edge_index, bool>("ecm", false).first;
+  auto ecm2 = m2.add_property_map<Triangle_mesh::Edge_index, bool>("ecm", false).first;
+  PMP::corefine(m1, m2, params::edge_is_constrained_map(ecm1), params::edge_is_constrained_map(ecm2));
+  assert( count_constrained_edges(m1, ecm1)==nedges );
+  assert( count_constrained_edges(m2, ecm2)==nedges );
+  Triangle_mesh m3=tm1;
+  auto ecm3 = m3.add_property_map<Triangle_mesh::Edge_index, bool>("ecm", false).first;
+  PMP::corefine(m3, m3, params::edge_is_constrained_map(ecm3), params::edge_is_constrained_map(ecm3));
+  assert( count_constrained_edges(m3, ecm3)==nedges );
+  m3.clear_without_removing_property_maps();
+
+
+  // then corefine_and_compute_boolean_operations
+  PMP::corefine_and_compute_union(m1, m2, m3, params::edge_is_constrained_map(ecm1), params::edge_is_constrained_map(ecm2), params::edge_is_constrained_map(ecm3));
+  assert( count_constrained_edges(m1, ecm1)==0. ); // they are cleared, even if provided by the user
+  assert( count_constrained_edges(m2, ecm2)==0. ); // they are cleared, even if provided by the user
+  assert( count_constrained_edges(m3, ecm3)==0. );
+
+  m3.clear_without_removing_property_maps();
+  CGAL::Bbox_3 bb = PMP::bbox(m1);
+  bb = CGAL::Bbox_3(bb.xmin()+2*(bb.xmax()-bb.xmin()), bb.ymin()+2*(bb.ymax()-bb.ymin()), bb.zmin()+2*(bb.zmax()-bb.zmin()),
+                    bb.xmax()+2*(bb.xmax()-bb.xmax()), bb.ymax()+2*(bb.ymax()-bb.ymin()), bb.zmax()+2*(bb.zmax()-bb.zmin()));
+  CGAL::make_hexahedron(bb, m1, params::do_not_triangulate_faces(false));
+  PMP::corefine_and_compute_union(m1, m2, m3, params::edge_is_constrained_map(ecm1), params::edge_is_constrained_map(ecm2), params::edge_is_constrained_map(ecm3));
+  assert( count_constrained_edges(m1, ecm1)==0. ); // they are cleared, even if provided by the user
+  assert( count_constrained_edges(m2, ecm2)==0. ); // they are cleared, even if provided by the user
+  assert( count_constrained_edges(m3, ecm3)==0. );
+
+  m3=tm1;
+  ecm3 = m3.add_property_map<Triangle_mesh::Edge_index, bool>("ecm", false).first;
+  PMP::corefine_and_compute_union(m3, m3, m3, params::edge_is_constrained_map(ecm3), params::edge_is_constrained_map(ecm3), params::edge_is_constrained_map(ecm3));
+  assert( count_constrained_edges(m3, ecm3)==0. );
+  assert( vertices(m3).size()==vertices(tm1).size() );
+
+  // finally polyline_intersection
+  std::vector<std::vector<K::Point_3>> polylines;
+  PMP::intersection_polylines(tm1, m1, std::back_inserter(polylines));
+  assert(polylines.size()==edges(tm1).size());
+  polylines.clear();
+  PMP::intersection_polylines(tm1, m2, std::back_inserter(polylines));
+  assert(polylines.size()==edges(tm1).size());
+  polylines.clear();
+  PMP::intersection_polylines(tm1, tm1, std::back_inserter(polylines));
+  assert(polylines.size()==edges(tm1).size());
+}
+
 
 int main()
 {
@@ -228,4 +280,6 @@ int main()
   test_bool_op(tm1, tm2, false, "e:cst_out");
   test_bool_op(tm1, tm2, true, "e:cst");
   test_bool_op(tm1, tm2, false, "e:cst");
+  std::cout << "Testing operations on identical meshes\n";
+  test_identical_models(tm1);
 }

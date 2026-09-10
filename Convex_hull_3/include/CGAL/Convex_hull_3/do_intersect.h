@@ -352,10 +352,7 @@ template <class Convex_1, class Convex_2,
 bool do_intersect(const Convex_1& ch1, const Convex_2& ch2,
                   const NamedParameters_1& np1 = parameters::default_values(),
                   const NamedParameters_2& np2 = parameters::default_values()){
-  using CGAL::parameters::choose_parameter;
-  using CGAL::parameters::get_parameter;
   using GT= typename internal::GetGeomTraitsFromConvex<Convex_1, NamedParameters_1>::type;
-  // GT gt = choose_parameter<GT>(get_parameter(np1, internal_np::geom_traits));
   return Do_intersect_traits<GT>().do_intersect_object()(ch1, ch2, np1, np2);
 }
 

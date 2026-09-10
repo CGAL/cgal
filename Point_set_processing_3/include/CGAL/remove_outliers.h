@@ -191,8 +191,7 @@ remove_outliers(
                                                          typename Kernel::FT(0));
   double threshold_percent = choose_parameter(get_parameter(np, internal_np::threshold_percent), 10.);
   double threshold_distance = choose_parameter(get_parameter(np, internal_np::threshold_distance), 0.);
-  const std::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
-                                                                 std::function<bool(double)>());
+  const std::function<bool(double)>& callback = choose_parameter<std::function<bool(double)>>(get_parameter(np, internal_np::callback));
 
   typedef typename Kernel::FT FT;
 

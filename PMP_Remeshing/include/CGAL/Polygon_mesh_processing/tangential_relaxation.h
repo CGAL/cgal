@@ -18,14 +18,13 @@
 
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/Uniform_sizing_field.h>
-#include <CGAL/property_map.h>
+#include <CGAL/Dynamic_property_map.h>
 
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <tuple>
 #include <type_traits>
-#include <unordered_map>
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -156,16 +155,14 @@ void tangential_relaxation(const VertexRange& vertices,
       CGAL_NP_CLASS,
       Static_boolean_property_map<edge_descriptor, false> // default (no constraint)
     > ::type ECM;
-  ECM ecm = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
-                             Default_ECM());
+  ECM ecm = choose_parameter<Default_ECM>(get_parameter(np, internal_np::edge_is_constrained));
 
   typedef typename internal_np::Lookup_named_param_def <
       internal_np::vertex_is_constrained_t,
       CGAL_NP_CLASS,
       Static_boolean_property_map<vertex_descriptor, false> // default (no constraint)
     > ::type VCM;
-  VCM vcm = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
-                             Static_boolean_property_map<vertex_descriptor, false>());
+  VCM vcm = choose_parameter<Static_boolean_property_map<vertex_descriptor, false>>(get_parameter(np, internal_np::vertex_is_constrained));
 
   typedef typename internal_np::Lookup_named_param_def <
       internal_np::sizing_function_t,
@@ -178,11 +175,16 @@ void tangential_relaxation(const VertexRange& vertices,
   const bool relax_constraints = choose_parameter(get_parameter(np, internal_np::relax_constraints), false);
   const unsigned int nb_iterations = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
 
-  typedef typename GT::Vector_3 Vector_3;
+  typedef typename GT::FT FT;
   typedef typename GT::Point_3 Point_3;
+  typedef typename GT::Vector_3 Vector_3;
+
+  auto face_normals = get(CGAL::dynamic_face_property_t<Vector_3>(), tm);
 
   auto check_normals = [&](vertex_descriptor v)
   {
+    auto angle = gt.angle_3_object();
+
     bool first_run = true;
     Vector_3 prev = NULL_VECTOR, first = NULL_VECTOR;
     halfedge_descriptor first_h = boost::graph_traits<TriangleMesh>::null_halfedge();
@@ -190,7 +192,7 @@ void tangential_relaxation(const VertexRange& vertices,
     {
       if (is_border(hd, tm)) continue;
 
-      Vector_3 n = compute_face_normal(face(hd, tm), tm, np);
+      Vector_3 n = get(face_normals, face(hd, tm));
       if (n == CGAL::NULL_VECTOR) //for degenerate faces
         continue;
 
@@ -203,7 +205,7 @@ void tangential_relaxation(const VertexRange& vertices,
       else
       {
         if (!get(ecm, edge(hd, tm)))
-          if (to_double(n * prev) <= 0)
+          if (angle(n, prev) != CGAL::ACUTE)
             return false;
       }
       prev = n;
@@ -213,7 +215,7 @@ void tangential_relaxation(const VertexRange& vertices,
       return true; //vertex incident only to degenerate faces
 
     if (!get(ecm, edge(first_h, tm)))
-      if (to_double(first * prev) <= 0)
+      if (angle(first, prev) != CGAL::ACUTE)
         return false;
 
     return true;
@@ -224,9 +226,9 @@ void tangential_relaxation(const VertexRange& vertices,
       CGAL_NP_CLASS,
       internal::Allow_all_moves// default
     > ::type Shall_move;
-  Shall_move shall_move = choose_parameter(get_parameter(np, internal_np::allow_move_functor),
-                                           internal::Allow_all_moves());
+  Shall_move shall_move = choose_parameter<internal::Allow_all_moves>(get_parameter(np, internal_np::allow_move_functor));
 
+  auto vnormals = get(CGAL::dynamic_vertex_property_t<Vector_3>(), tm);
   for (unsigned int nit = 0; nit < nb_iterations; ++nit)
   {
 #ifdef CGAL_PMP_TANGENTIAL_RELAXATION_VERBOSE
@@ -234,6 +236,7 @@ void tangential_relaxation(const VertexRange& vertices,
     std::cout << nb_iterations << ") ";
     std::cout.flush();
 #endif
+    compute_face_normals(tm, face_normals);
 
     typedef std::tuple<vertex_descriptor, Vector_3, Point_3> VNP;
     std::vector< VNP > barycenters;
@@ -241,8 +244,7 @@ void tangential_relaxation(const VertexRange& vertices,
     auto gt_project = gt.construct_projected_point_3_object();
 
     // at each vertex, compute vertex normal
-    std::unordered_map<vertex_descriptor, Vector_3> vnormals;
-    compute_vertex_normals(tm, boost::make_assoc_property_map(vnormals), np);
+    compute_vertex_normals(tm, vnormals, np.face_normal_map(face_normals));
 
     // at each vertex, compute barycenter of neighbors
     for(vertex_descriptor v : vertices)
@@ -262,7 +264,7 @@ void tangential_relaxation(const VertexRange& vertices,
 
       if (border_halfedges.empty())
       {
-        const Vector_3& vn = vnormals.at(v);
+        const Vector_3& vn = get(vnormals, v);
         Vector_3 move = CGAL::NULL_VECTOR;
         if constexpr (std::is_same_v<SizingFunction, Uniform_sizing_field<TriangleMesh, VPMap>>)
         {
@@ -273,13 +275,13 @@ void tangential_relaxation(const VertexRange& vertices,
             ++star_size;
           }
           CGAL_assertion(star_size > 0); //isolated vertices have already been discarded
-          move = (1. / static_cast<double>(star_size)) * move;
+          move = (FT(1) / FT(star_size)) * move;
         }
         else
         {
           auto gt_centroid = gt.construct_centroid_3_object();
           auto gt_area = gt.compute_area_3_object();
-          double weight = 0;
+          FT weight = 0;
           for(halfedge_descriptor h :interior_hedges)
           {
             // calculate weight
@@ -287,11 +289,10 @@ void tangential_relaxation(const VertexRange& vertices,
             const vertex_descriptor v1 = target(next(h, tm), tm);
             const vertex_descriptor v2 = source(h, tm);
 
-            const double tri_area = gt_area(get(vpm, v), get(vpm, v1), get(vpm, v2));
-            const double face_weight = tri_area
-                                       / (1. / 3. * (sizing.at(v, tm)
-                                                   + sizing.at(v1, tm)
-                                                   + sizing.at(v2, tm)));
+            const FT tri_area = gt_area(get(vpm, v), get(vpm, v1), get(vpm, v2));
+            const FT face_weight = tri_area / (FT(1) / FT(3) * (sizing.at(v, tm)
+                                                              + sizing.at(v1, tm)
+                                                              + sizing.at(v2, tm)));
             weight += face_weight;
 
             const Point_3 centroid = gt_centroid(get(vpm, v), get(vpm, v1), get(vpm, v2));
@@ -310,8 +311,7 @@ void tangential_relaxation(const VertexRange& vertices,
         {
           vertex_descriptor ph0 = source(border_halfedges[0], tm);
           vertex_descriptor ph1 = source(border_halfedges[1], tm);
-          double dot = to_double(Vector_3(get(vpm, v), get(vpm, ph0))
-                                 * Vector_3(get(vpm, v), get(vpm, ph1)));
+          FT dot = Vector_3(get(vpm, v), get(vpm, ph0)) * Vector_3(get(vpm, v), get(vpm, ph1));
           // \todo shouldn't it be an input parameter?
           //check squared cosine is < 0.25 (~120 degrees)
           if (0.25 < dot*dot / ( squared_distance(get(vpm,ph0), get(vpm, v)) *

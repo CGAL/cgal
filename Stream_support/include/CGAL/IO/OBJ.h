@@ -20,16 +20,16 @@
 #include <CGAL/IO/helpers.h>
 
 #include <CGAL/Container_helper.h>
+#include <CGAL/Named_function_parameters.h>
 
 #include <boost/range/value_type.hpp>
-#include <CGAL/Named_function_parameters.h>
+#include <boost/container/small_vector.hpp>
 
 #include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <vector>
 #include <type_traits>
 
 namespace CGAL {
@@ -97,13 +97,27 @@ bool read_OBJ(std::istream& is,
 
     if(s == "v")
     {
-      if(!(iss >> p))
+      double x, y, z;
+      if(!(iss >> IO::iformat(x) >> IO::iformat(y) >> IO::iformat(z)))
       {
         if(verbose)
           std::cerr << "error while reading OBJ vertex." << std::endl;
         return false;
       }
 
+      // there might be a w coordinate...
+      double w = 1.;
+      if(iss >> IO::iformat(w))
+      {
+        if(w == 0.)
+        {
+          if(verbose)
+            std::cerr << "warning: w coordinate is 0, treating it as 1." << std::endl;
+          w = 1.;
+        }
+      }
+
+      fill_point(x, y, z, w, p);
       points.push_back(p);
     }
     else if(s == "vt")
@@ -116,8 +130,10 @@ bool read_OBJ(std::istream& is,
     }
     else if(s == "f")
     {
+      // Scan all vertex indices of the face into a scratch buffer first
+      boost::container::small_vector<int, 3> face_indices;
+
       int i;
-      polygons.emplace_back();
       while(iss >> i)
       {
         if (i == 0)
@@ -128,30 +144,29 @@ bool read_OBJ(std::istream& is,
         }
         else if(i < 1)
         {
-          const std::size_t n = polygons.back().size();
-          ::CGAL::internal::resize(polygons.back(), n + 1);
-          polygons.back()[n] = static_cast<int>(points.size()) + i; // negative indices are relative references
+          // negative indices are relative references
+          face_indices.push_back(static_cast<int>(points.size()) + i);
           if(i < mini)
             mini = i;
         }
         else
         {
-          const std::size_t n = polygons.back().size();
-          ::CGAL::internal::resize(polygons.back(), n + 1);
-          polygons.back()[n] = i - 1;
-          if(i-1 > maxi)
-            maxi = i-1;
+          face_indices.push_back(i - 1);
+          if(i - 1 > maxi)
+            maxi = i - 1;
         }
 
-        // the format can be "f v1/vt1/vn1 v2/vt2/vn2 v3/vt3/vn3 ..." and we only read vertex ids for now,
-        // so skip to the next vertex, but be tolerant about which whitespace is used
-        if (!std::isspace(iss.peek())) {
+        // the format can be "f v1/vt1/vn1 v2/vt2/vn2 v3/vt3/vn3 ..." and we only read
+        // vertex ids for now, so skip to the next vertex, but be tolerant about which
+        // whitespace is used
+        if(!std::isspace(iss.peek()))
+        {
           std::string ignoreme;
           iss >> ignoreme;
         }
       }
 
-      if(polygons.back().empty())
+      if(face_indices.empty())
       {
         if(verbose)
           std::cerr << "error: empty 'f' line." << std::endl;
@@ -164,6 +179,11 @@ bool read_OBJ(std::istream& is,
           std::cerr << "error while reading OBJ face." << std::endl;
         return false;
       }
+
+      polygons.emplace_back();
+      auto& polygon = polygons.back();
+      ::CGAL::internal::resize(polygon, face_indices.size());
+      std::copy(face_indices.begin(), face_indices.end(), polygon.begin());
     }
     else if(s == "l")
     {
@@ -239,8 +259,7 @@ bool read_OBJ(std::istream& is,
     else
     {
       if(verbose)
-        std::cerr << "Error: unrecognized line: " << s << std::endl;
-      return false;
+        std::cerr << "Warning: unrecognized line: " << s << std::endl;
     }
   }
 
@@ -281,35 +300,35 @@ bool read_OBJ(std::istream& is,
 
 } // namespace internal
 
-/// \ingroup PkgStreamSupportIoFuncsOBJ
-///
-/// \brief reads the content of `is` into `points` and `polygons`, using the \ref IOStreamOBJ.
-///
-/// \attention The polygon soup is not cleared, and the data from the stream are appended.
-///
-/// \tparam PointRange a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
-///                    whose value type is the point type
-/// \tparam PolygonRange a model of the concepts `SequenceContainer` and `BackInsertionSequence`
-///                      whose `value_type` is itself a model of the concepts `SequenceContainer`
-///                      and `BackInsertionSequence` whose `value_type` is an unsigned integer type
-///                      convertible to `std::size_t`
-/// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
-///
-/// \param is the input stream
-/// \param points points of the soup of polygons
-/// \param polygons a range of polygons. Each element in it describes a polygon
-///        using the indices of the points in `points`.
-/// \param np optional \ref bgl_namedparameters "Named Parameters" described below
-///
-/// \cgalNamedParamsBegin
-///   \cgalParamNBegin{verbose}
-///     \cgalParamDescription{indicates whether output warnings and error messages should be printed or not.}
-///     \cgalParamType{Boolean}
-///     \cgalParamDefault{`false`}
-///   \cgalParamNEnd
-/// \cgalNamedParamsEnd
-///
-/// \returns `true` if the reading was successful, `false` otherwise.
+/*!
+ * \ingroup PkgStreamSupportIoFuncsOBJ
+ *
+ * \brief reads the content of `is` into `points` and `polygons`, using the \ref IOStreamOBJ.
+ *
+ * \attention The polygon soup is not cleared, and the data from the stream are appended.
+ *
+ * \tparam PointRange a model of the concept `BackInsertionSequence` whose value type is the point type
+ * \tparam PolygonRange a model of the concept `BackInsertionSequence` whose `value_type` is
+ *                      a model of the concepts `RandomAccessContainer` whose `value_type` is
+ *                      an unsigned integer type convertible to `std::size_t`
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+ *
+ * \param is the input stream
+ * \param points points of the soup of polygons
+ * \param polygons a range of polygons. Each element in it describes a polygon
+ *        using the indices of the points in `points`.
+ * \param np optional \ref bgl_namedparameters "Named Parameters" described below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{verbose}
+ *     \cgalParamDescription{indicates whether output warnings and error messages should be printed or not.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`false`}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
+ *
+ * \returns `true` if the reading was successful, `false` otherwise.
+ */
 template <typename PointRange, typename PolygonRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_OBJ(std::istream& is,
               PointRange& points,
@@ -331,34 +350,35 @@ bool read_OBJ(std::istream& is,
   return (success && !polygons.empty());
 }
 
-/// \ingroup PkgStreamSupportIoFuncsOBJ
-///
-/// \brief reads the content of the file `fname` into `points` and `polygons`, using the \ref IOStreamOBJ.
-///
-/// \attention The polygon soup is not cleared, and the data from the file are appended.
-///
-/// \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
-/// \tparam PolygonRange a model of the concepts `SequenceContainer` and `BackInsertionSequence`
-///                      whose `value_type` is itself a model of the concept `SequenceContainer`
-///                      and `BackInsertionSequence` whose `value_type` is an unsigned integer type
-///                      convertible to `std::size_t`
-/// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
-///
-/// \param fname the path to the input file
-/// \param points points of the soup of polygons
-/// \param polygons a range of polygons. Each element in it describes a polygon
-///        using the indices of the points in `points`.
-/// \param np optional \ref bgl_namedparameters "Named Parameters" described below
-///
-/// \cgalNamedParamsBegin
-///   \cgalParamNBegin{verbose}
-///     \cgalParamDescription{indicates whether output warnings and error messages should be printed or not.}
-///     \cgalParamType{Boolean}
-///     \cgalParamDefault{`false`}
-///   \cgalParamNEnd
-/// \cgalNamedParamsEnd
-///
-/// \returns `true` if the reading was successful, `false` otherwise.
+/*!
+ * \ingroup PkgStreamSupportIoFuncsOBJ
+ *
+ * \brief reads the content of the file `fname` into `points` and `polygons`, using the \ref IOStreamOBJ.
+ *
+ * \attention The polygon soup is not cleared, and the data from the file are appended.
+ *
+ * \tparam PointRange a model of the concept `BackInsertionSequence` whose value type is the point type.
+ * \tparam PolygonRange a model of the concept `BackInsertionSequence` whose `value_type` is
+ *                      a model of the concept `RandomAccessContainer` whose `value_type` is
+ *                      an unsigned integer type convertible to `std::size_t`
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+ *
+ * \param fname the path to the input file
+ * \param points points of the soup of polygons
+ * \param polygons a range of polygons. Each element in it describes a polygon
+ *        using the indices of the points in `points`.
+ * \param np optional \ref bgl_namedparameters "Named Parameters" described below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{verbose}
+ *     \cgalParamDescription{indicates whether output warnings and error messages should be printed or not.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`false`}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
+ *
+ * \returns `true` if the reading was successful, `false` otherwise.
+ */
 template <typename PointRange, typename PolygonRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_OBJ(const std::string& fname,
               PointRange& points,
@@ -402,10 +422,10 @@ bool write_OBJ(std::ostream& os,
  *
  * \brief writes the content of `points` and `polygons` in `os`, using the \ref IOStreamOBJ.
  *
- * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type
- * \tparam PolygonRange a model of the concept `SequenceContainer`
- *                      whose `value_type` is itself a model of the concept `SequenceContainer`
- *                      whose `value_type` is an unsigned integer type convertible to `std::size_t`
+ * \tparam PointRange a model of the concept `Range` whose value type is the point type
+ * \tparam PolygonRange a model of the concept `SequenceContainer` whose `value_type` is itself
+ *                      a model of the concept `SequenceContainer` whose `value_type` is
+ *                      an unsigned integer type convertible to `std::size_t`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param os the output stream
@@ -452,9 +472,9 @@ bool write_OBJ(std::ostream& os,
  * \brief writes the content of `points` and `polygons` in a file named `fname`, using the \ref IOStreamOBJ.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type
- * \tparam PolygonRange a model of the concept `SequenceContainer`
- *                      whose `value_type` is itself a model of the concept `SequenceContainer`
- *                      whose `value_type` is an unsigned integer type convertible to `std::size_t`
+ * \tparam PolygonRange a model of the concept `SequenceContainer` whose `value_type` is itself
+ *                      a model of the concept `SequenceContainer` whose `value_type` is
+ *                      an unsigned integer type convertible to `std::size_t`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param fname the path to the output file

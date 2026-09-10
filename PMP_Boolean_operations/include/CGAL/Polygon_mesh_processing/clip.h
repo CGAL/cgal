@@ -988,7 +988,7 @@ clip(TriangleMesh& tm,
   *   \cgalParamNEnd
   *
   *    \cgalParamNBegin{use_convex_specialization}
-  *      \cgalParamDescription{If set to `true`, a faster implementation specialized for convex meshes is used. The input mesh must be convex to guarantee a correct execution and results.}
+  *      \cgalParamDescription{If set to `true`, a faster implementation specialized for convex meshes is used. The input mesh must be strictly convex to guarantee a correct execution and results.}
   *      \cgalParamType{Boolean}
   *      \cgalParamDefault{`false`}
   *    \cgalParamNEnd

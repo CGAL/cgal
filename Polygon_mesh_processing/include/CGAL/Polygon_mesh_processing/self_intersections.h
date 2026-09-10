@@ -96,6 +96,11 @@ struct Triangle_mesh_and_triangle_soup_wrapper
   {
     return is_triangle_mesh(tm);
   }
+
+  static constexpr bool allow_identical_face()
+  {
+    return false;
+  }
 };
 
 template <class PointRange, class TriangleRange>
@@ -174,6 +179,11 @@ struct Triangle_mesh_and_triangle_soup_wrapper<
         return false;
     return true;
   }
+
+  static constexpr bool allow_identical_face()
+  {
+    return true;
+  }
 };
 
 template<typename Output_iterator>
@@ -227,7 +237,7 @@ bool do_faces_intersect(typename Triangle_mesh_and_triangle_soup_wrapper<TM>::fa
   std::array<vertex_descriptor, 4> verts;
   if (Wrapper::faces_have_a_shared_edge(fh, fg, verts, tmesh))
   {
-    if (verts[2]==verts[3]) return false; // only for a soup of triangles
+    if (Wrapper::allow_identical_face() && verts[2]==verts[3]) return false; // only for a soup of triangles
 
     // there is an intersection if the four points are coplanar and the triangles overlap
     if(CGAL::coplanar(get(vpmap, verts[0]),

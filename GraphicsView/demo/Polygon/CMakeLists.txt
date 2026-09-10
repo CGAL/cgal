@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.12...3.31)
 project(Polygon_Demo)
 
-find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6 Core)
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
 find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)

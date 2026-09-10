@@ -12,8 +12,17 @@ namespace AosTraits {
  */
 class Approximate_2 {
 public:
-  /// \name Operations
   /// A model of this concept must provide:
+
+  /// \name Types
+  /// @{
+
+  //! the approximate point type.
+  typedef unspecified_type Approximate_point_2;
+
+  /// @}
+
+  /// \name Operations
   /// @{
 
   /*! obtains an approximation of `p`.

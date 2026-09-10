@@ -61,8 +61,7 @@ ForwardIterator left_vertex_2(ForwardIterator first,
 /// `[first,last)`. In case of a tie, the point
 /// with the largest `y`-coordinate is taken.
 ///
-/// \tparam Traits is a model of the concept
-///           `PolygonTraits_2`.
+/// \tparam Traits is a model of the concept `PolygonTraits_2`.
 ///           In fact, only the members `Less_xy_2` and
 ///           `less_xy_2_object()` are used.
 /// \tparam ForwardIterator must have`Traits::Point_2` as value type.
@@ -81,8 +80,7 @@ ForwardIterator right_vertex_2(ForwardIterator first,
 /// `[first,last)`. In case of a tie, the point
 /// with the largest `x`-coordinate is taken.
 ///
-/// \tparam Traits is a model of the concept
-///           `PolygonTraits_2`.
+/// \tparam Traits is a model of the concept `PolygonTraits_2`.
 ///           Only the members `Less_yx_2` and
 ///           `less_yx_2_object()` are used.
 /// \tparam ForwardIterator must have `Traits::Point_2` as value type.
@@ -100,8 +98,7 @@ ForwardIterator top_vertex_2(ForwardIterator first,
 /// `[first,last)`. In case of a tie, the point
 /// with the smallest `x`-coordinate is taken.
 ///
-/// \tparam Traits is a model of the concept
-///           `PolygonTraits_2`.
+/// \tparam Traits is a model of the concept `PolygonTraits_2`.
 ///           Only the members `Less_yx_2` and
 ///           `less_yx_2_object()` are used.
 /// \tparam ForwardIterator must have `Traits::Point_2` as value type.
@@ -123,8 +120,7 @@ ForwardIterator bottom_vertex_2(ForwardIterator first,
 /// The functionality is also available by the `polygon_area_2()` function, which
 /// returns the area instead of taking it as a parameter.
 ///
-/// \tparam Traits is a model of the concept
-///           `PolygonTraits_2`.
+/// \tparam Traits is a model of the concept `PolygonTraits_2`.
 ///           Only the following members of this traits class are used:
 ///   - `Compute_area_2` : Computes the signed area of the
 ///             oriented triangle defined by 3 `Point_2` passed as arguments.
@@ -250,8 +246,8 @@ bool is_simple_2(ForwardIterator first,
 // instead of Point, but this is not allowed by g++ 2.7.2.
 ///
 /// Computes on which side of a polygon a point lies.
-/// \tparam Traits is a model of the concept
-///           `PolygonTraits_2`.
+///
+/// \tparam Traits is a model of the concept `PolygonTraits_2`.
 ///           Only the following members of this traits class are used:
 ///   - `Less_xy_2`
 ///   - `Compare_x_2`
@@ -284,8 +280,7 @@ Oriented_side oriented_side_2(ForwardIterator first,
 /// According to the definition points in the bounded region are inside the polygon.
 ///
 ///
-/// \tparam Traits is a model of the concept
-///           `PolygonTraits_2`.
+/// \tparam Traits is a model of the concept `PolygonTraits_2`.
 ///           Only the following members of this traits class are used:
 ///   - `Compare_x_2`
 ///   - `Compare_y_2`
@@ -316,15 +311,12 @@ Bounded_side bounded_side_2(ForwardIterator first,
 /// Computes if a polygon is clockwise or counterclockwise oriented.
 /// \pre \link CGAL::is_simple_2 `is_simple_2`\endlink(`first`, `last`, `traits`)
 ///
-/// \tparam Traits is a model of the concept
-///           `PolygonTraits_2`.
+/// \tparam Traits is a model of the concept `PolygonTraits_2`.
 ///           Only the following members of this traits class are used:
 ///   - `Less_xy_2`
 ///   - `less_xy_2_object()`
 ///   - `orientation_2_object()`
-/// \tparam ForwardIterator must have`Traits::Point_2` as value type.
-///
-///
+/// \tparam ForwardIterator must have `Traits::Point_2` as value type.
 ///
 /// \sa `PolygonTraits_2`
 /// \sa `CGAL::is_simple_2()`

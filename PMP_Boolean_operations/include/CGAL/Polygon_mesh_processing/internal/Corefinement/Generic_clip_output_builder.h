@@ -132,7 +132,8 @@ public:
     const Nodes_vector& nodes,
     bool /* input_have_coplanar_faces */,
     const boost::dynamic_bitset<>& /* is_node_of_degree_one */,
-    const Mesh_to_map_node&)
+    const Mesh_to_map_node&,
+    const std::vector<std::pair<face_descriptor, face_descriptor>>& identical_patches)
   {
     // The property map must be either writable or well-initialized
     if( CGAL::internal::Is_writable_property_map<FaceIdMap1>::value &&
@@ -161,6 +162,22 @@ public:
     boost::dynamic_bitset<> patch_status_not_set_tm1(nb_patches_tm1);
     patch_status_not_set_tm1.set();
 
+    std::vector<std::size_t> cc_to_keep;
+    std::size_t nb_classified=0;
+    for (auto [f1, f2] : identical_patches)
+    {
+      std::size_t pid1 = tm1_patch_ids[ get(fids1, f1) ];
+      if (patch_status_not_set_tm1[pid1])
+      {
+        if (use_compact_clipper)
+        {
+          cc_to_keep.push_back(pid1);
+        }
+        patch_status_not_set_tm1.reset(pid1);
+        ++nb_classified;
+      }
+    }
+
     typedef Side_of_triangle_mesh<TriangleMesh,
                                   Kernel,
                                   VertexPointMap2> Inside_poly_test;
@@ -169,8 +186,6 @@ public:
                               ? ON_UNBOUNDED_SIDE : ON_BOUNDED_SIDE;
 
     Inside_poly_test inside_tm2(tm2, vpm2);
-    std::size_t nb_classified=0;
-    std::vector<std::size_t> cc_to_keep;
     for(face_descriptor f : faces(tm1))
     {
       const std::size_t f_id = get(fids1, f);

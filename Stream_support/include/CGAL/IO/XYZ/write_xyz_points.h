@@ -41,9 +41,6 @@ bool write_XYZ_PSP(std::ostream& os,
                    const PointRange& points,
                    const CGAL_NP_CLASS& np = CGAL::parameters::default_values())
 {
-  using CGAL::parameters::choose_parameter;
-  using CGAL::parameters::get_parameter;
-
   // basic geometric types
   typedef Point_set_processing_3_np_helper<PointRange, CGAL_NP_CLASS> NP_helper;
   typedef typename NP_helper::Const_point_map PointMap;

@@ -174,8 +174,6 @@ bool is_valid_wrap(const MultipolygonWithHoles& wrap,
                    const bool check_manifoldness,
                    const NamedParameters& /*np*/ = parameters::default_values())
 {
-  namespace PMP = CGAL::Polygon_mesh_processing;
-
   if(Alpha_wraps_2::internal::is_empty(wrap))
   {
 #ifdef CGAL_AW2_DEBUG

@@ -150,7 +150,7 @@ not matched.
 
 The user must keep in mind that the Poisson surface reconstruction
 algorithm comprises two phases (computing the implicit function from
-the input point set and contouring an iso-surface of this
+the input point set and contouring an isosurface of this
 function). Both require some care in terms of sampling conditions and
 parameter tuning.
 
@@ -206,7 +206,7 @@ Our implementation of the Poisson surface reconstruction algorithm
 computes an implicit function represented as a piecewise linear
 function over the tetrahedra of a 3D Delaunay triangulation
 constructed from the input points then refined through Delaunay
-refinement. For this reason, any iso-surface is also piecewise linear
+refinement. For this reason, any isosurface is also piecewise linear
 and hence may contain sharp creases. As the contouring algorithm
 `make_mesh_3()` expects a smooth implicit function these
 sharp creases may create spurious clusters of vertices in the final
@@ -218,7 +218,7 @@ One way to avoid these spurious clusters consists of adjusting the
 mesh sizing and surface approximation parameters large enough compared
 to the average sampling density (obtained through
 `compute_average_spacing()`) so that the contouring algorithm
-<i>perceives</i> a smooth iso-surface. We recommend to use the following
+<i>perceives</i> a smooth isosurface. We recommend to use the following
 contouring parameters:
 
 - Max triangle radius: at least 100 times the average spacing.
@@ -299,7 +299,7 @@ A large amount of noise inevitably impacts on the reconstruction (see
 current implementation does not provide any mean to trade data fitting
 for smoothness. Nevertheless if the signal-to-noise ratio is
 sufficiently high and/or the surface approximation and sizing
-parameters set for contouring the iso-surface is large with respect to
+parameters set for contouring the isosurface is large with respect to
 the noise level the output surface mesh will appear smooth (not
 shown). If the user wants to produce a smooth and detailed output
 surface mesh, we recommend to apply smoothing through

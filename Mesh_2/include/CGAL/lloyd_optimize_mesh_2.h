@@ -157,8 +157,8 @@ lloyd_optimize_mesh_2(CDT& cdt, const CGAL_NP_CLASS& np = parameters::default_va
                                       convergence_ratio,
                                       freeze_bound,
                                       time_limit,
-                                      choose_parameter(get_parameter(np, internal_np::i_seed_begin_iterator), CGAL::Emptyset_iterator()),
-                                      choose_parameter(get_parameter(np, internal_np::i_seed_end_iterator), CGAL::Emptyset_iterator()),
+                                      choose_parameter<CGAL::Emptyset_iterator>(get_parameter(np, internal_np::i_seed_begin_iterator)),
+                                      choose_parameter<CGAL::Emptyset_iterator>(get_parameter(np, internal_np::i_seed_end_iterator)),
                                       mark);
   }
 }

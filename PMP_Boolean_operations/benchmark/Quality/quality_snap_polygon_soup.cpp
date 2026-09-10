@@ -40,7 +40,8 @@ int main(int argc, char** argv)
 
   std::vector<Point_3> input_points(points.begin(), points.end());
 
-  PMP::autorefine_triangle_soup(points, triangles, CGAL::parameters::apply_iterative_snap_rounding(true).erase_all_duplicates(erase_duplicate).concurrency_tag(CGAL::Parallel_if_available_tag()).snap_grid_size(grid_size).number_of_iterations(15));
+  using Erase_policy = PMP::Duplicate_polygon_erase_policy;
+  PMP::autorefine_triangle_soup(points, triangles, CGAL::parameters::apply_iterative_snap_rounding(true).erase_policy(Erase_policy::ERASE_ALL).concurrency_tag(CGAL::Parallel_if_available_tag()).snap_grid_size(grid_size).number_of_iterations(15));
 
 
   std::cout << "{" <<

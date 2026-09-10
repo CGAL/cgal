@@ -102,7 +102,8 @@ std::shared_ptr<Target_skeleton> operator()( const Source_skeleton& s) const;
 \sa `CGAL::Straight_skeleton_converter_2<SrcSs,TgtSs,ItemCV>`
 */
 template< typename Source_skeleton_, typename Target_skeleton_, typename NT_converter_ >
-struct Straight_skeleton_items_converter_2 {
+struct Straight_skeleton_items_converter_2
+{
 
 /// \name Creation
 /// @{

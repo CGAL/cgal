@@ -87,9 +87,11 @@ int main(void) {
     octree.intersected_nodes(Point(1, 0.5, 1), 1.0, std::back_inserter(nodes));
 
     // Check the results
-    assert(2 == nodes.size());
-    assert(octree.node(Octree::Traits::RIGHT_BOTTOM_FRONT) == nodes[0]);
-    assert(octree.node(Octree::Traits::RIGHT_TOP_FRONT) == nodes[1]);
+    assert(4 == nodes.size());
+    assert(octree.node(Octree::Traits::RIGHT_TOP_BACK) == nodes[0]);
+    assert(octree.node(Octree::Traits::RIGHT_BOTTOM_FRONT) == nodes[1]);
+    assert(octree.node(Octree::Traits::LEFT_TOP_FRONT) == nodes[2]);
+    assert(octree.node(Octree::Traits::RIGHT_TOP_FRONT) == nodes[3]);
   }
 
   // Intersection with a sphere (does not include the interior)

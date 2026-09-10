@@ -31,6 +31,7 @@
 #include <map>
 
 #include <boost/math/constants/constants.hpp>
+#include <boost/math/special_functions/ellint_2.hpp>
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/tags.h>
@@ -281,8 +282,7 @@ public:
      *         `LARGER` if `y(p) > xcv(x(p))`, i.e. the point is above the arc;
      *         `EQUAL` if `p` lies on the curve.
      */
-    Comparison_result operator()(const Point_2& p,
-                                 const X_monotone_curve_2& xcv) const {
+    Comparison_result operator()(const Point_2& p, const X_monotone_curve_2& xcv) const {
       auto cmp_y = m_traits.m_alg_kernel->compare_y_2_object();
 
       if (xcv.is_vertical()) {
@@ -375,8 +375,7 @@ public:
      * \return The relative position of the arcs to the left of `p`.
      * \pre Both arcs we compare are not vertical segments.
      */
-    Comparison_result compare_to_left(const X_monotone_curve_2& xcv1,
-                                      const X_monotone_curve_2& xcv2,
+    Comparison_result compare_to_left(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
                                       const Point_2& p) const {
       CGAL_precondition(! xcv1.is_vertical() && ! xcv2.is_vertical());
 
@@ -511,8 +510,7 @@ public:
      * \return The relative position of `xcv1` with respect to `xcv2` immdiately
      *         to the right of `p`: `SMALLER`, `LARGER`, or `EQUAL`.
      */
-    Comparison_result operator()(const X_monotone_curve_2& xcv1,
-                                 const X_monotone_curve_2& xcv2,
+    Comparison_result operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
                                  const Point_2& p) const {
       // Make sure that p lies on both curves, and that both are defined to its
       // left (so their left endpoint is lexicographically smaller than p).
@@ -537,8 +535,7 @@ public:
    * \return The relative position of the arcs to the right of `p`.
    * \pre Both arcs we compare are not vertical segments.
    */
-  Comparison_result compare_to_right(const X_monotone_curve_2& xcv1,
-                                     const X_monotone_curve_2& xcv2,
+  Comparison_result compare_to_right(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
                                      const Point_2& p) const {
     CGAL_precondition(! xcv1.is_vertical() && ! xcv2.is_vertical());
 
@@ -666,8 +663,7 @@ public:
      * \param xcv2 The second curve.
      * \return `true` if the two curves are the same; `false` otherwise.
      */
-    bool operator()(const X_monotone_curve_2& xcv1,
-                    const X_monotone_curve_2& xcv2) const {
+    bool operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2) const {
       if (&xcv1 == &xcv2) return true;
       return equals(xcv1, xcv2);
     }
@@ -688,8 +684,7 @@ public:
      * \param xcv2 The second compared arc.
      * \return `true` if the two arcs have the same graph; `false` otherwise.
      */
-    bool equals(const X_monotone_curve_2& xcv1,
-                const X_monotone_curve_2& xcv2) const {
+    bool equals(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2) const {
       // The two arc must have the same supporting conic curves.
       if (! m_traits.has_same_supporting_conic(xcv1, xcv2)) return false;
 
@@ -1041,7 +1036,6 @@ public:
         }
       }
     }
-
   };
 
   /*! obtains a `Split_2` functor object. */
@@ -1071,8 +1065,7 @@ public:
      * \return The past-the-end iterator.
      */
     template <typename OutputIterator>
-    OutputIterator operator()(const X_monotone_curve_2& xcv1,
-                              const X_monotone_curve_2& xcv2,
+    OutputIterator operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
                               OutputIterator oi) const
     { return intersect(xcv1, xcv2, m_traits.m_inter_map, oi); }
 
@@ -1324,10 +1317,8 @@ public:
      * \return The past-the-end iterator.
      */
     template <typename OutputIterator>
-    OutputIterator intersect(const X_monotone_curve_2& xcv1,
-                             const X_monotone_curve_2& xcv2,
-                             Intersection_map& inter_map,
-                             OutputIterator oi) const {
+    OutputIterator intersect(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
+                             Intersection_map& inter_map, OutputIterator oi) const {
       if (m_traits.has_same_supporting_conic(xcv1, xcv2)) {
         // Check for overlaps between the two arcs.
         X_monotone_curve_2 overlap;
@@ -1438,8 +1429,7 @@ public:
      *         supported by the same curve and share a common endpoint);
      *         `false` otherwise.
      */
-    bool operator()(const X_monotone_curve_2& xcv1,
-                    const X_monotone_curve_2& xcv2) const
+    bool operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2) const
     { return can_merge_with(xcv1, xcv2); }
 
   private:
@@ -1449,8 +1439,7 @@ public:
      * \return `true` if it is possible to merge the two arcs;
      *         `false` otherwise.
      */
-    bool can_merge_with(const X_monotone_curve_2& xcv1,
-                        const X_monotone_curve_2& xcv2) const {
+    bool can_merge_with(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2) const {
       // In order to merge the two arcs, they should have the same supporting
       // conic.
       if (! m_traits.has_same_supporting_conic(xcv1, xcv2)) return false;
@@ -1532,10 +1521,6 @@ public:
    * point-location strategy and the drawing function.
    */
   //@{
-  using Approximate_number_type = double;
-  using Approximate_kernel = CGAL::Simple_cartesian<Approximate_number_type>;
-  using Approximate_point_2 = Approximate_kernel::Point_2;
-
   class Approximate_length_2 {
   protected:
     using Traits = Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
@@ -1551,6 +1536,10 @@ public:
     friend class Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
 
   public:
+    using Approximate_number_type = double;
+    using Approximate_kernel = CGAL::Simple_cartesian<Approximate_number_type>;
+    using Approximate_point_2 = Approximate_kernel::Point_2;
+
     /*! obtains an approximation of the length of a curve.
      * \param xcv The curve.
      * \return An approximation of the length of `xcv`.
@@ -1669,6 +1658,10 @@ public:
     friend class Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
 
   public:
+    using Approximate_number_type = double;
+    using Approximate_kernel = CGAL::Simple_cartesian<Approximate_number_type>;
+    using Approximate_point_2 = Approximate_kernel::Point_2;
+
     /*! obtains an approximation of a point coordinate.
      * \param p The exact point.
      * \param i The coordinate index (either 0 or 1).
@@ -1693,13 +1686,10 @@ public:
     template <typename OutputIterator>
     OutputIterator operator()(const X_monotone_curve_2& xcv, double error,
                               OutputIterator oi, bool l2r = true) const {
-      if (xcv.orientation() == COLLINEAR)
-        return approximate_segment(xcv, oi, l2r);
+      if (xcv.orientation() == COLLINEAR) return approximate_segment(xcv, oi, l2r);
       CGAL::Sign sign_conic = CGAL::sign(4*xcv.r()*xcv.s() - xcv.t()*xcv.t());
-      if (sign_conic == POSITIVE)
-        return approximate_ellipse(xcv, error, oi, l2r);
-      if (sign_conic == NEGATIVE)
-        return approximate_hyperbola(xcv, error, oi, l2r);
+      if (sign_conic == POSITIVE) return approximate_ellipse(xcv, error, oi, l2r);
+      if (sign_conic == NEGATIVE) return approximate_hyperbola(xcv, error, oi, l2r);
       return approximate_parabola(xcv, error, oi, l2r);
     }
 
@@ -1707,8 +1697,7 @@ public:
     /*! handles segments.
      */
     template <typename OutputIterator>
-    OutputIterator approximate_segment(const X_monotone_curve_2& xcv,
-                                       OutputIterator oi, bool l2r) const {
+    OutputIterator approximate_segment(const X_monotone_curve_2& xcv, OutputIterator oi, bool l2r) const {
       // std::cout << "SEGMENT\n";
       auto ctr_min_vertex = m_traits.construct_min_vertex_2_object();
       auto ctr_max_vertex = m_traits.construct_max_vertex_2_object();
@@ -1727,10 +1716,8 @@ public:
      * (`xc`,`yc`) by an angle, the sine and cosine of which are `sint` and
      * `cost`, respectively, and translate by (`cx`,`cy`).
      */
-    void transform_point(double xc, double yc,
-                         double cost, double sint,
-                         double cx, double cy,
-                         double& x, double& y) const {
+    void transform_point(double xc, double yc, double cost, double sint,
+                         double cx, double cy, double& x, double& y) const {
       x = xc*cost - yc*sint + cx;
       y = xc*sint + yc*cost + cy;
     }
@@ -1804,8 +1791,7 @@ public:
      *              which approximates the arc.
      */
     template <typename OutputIterator>
-    OutputIterator approximate_ellipse(const X_monotone_curve_2& xcv,
-                                       double error, OutputIterator oi,
+    OutputIterator approximate_ellipse(const X_monotone_curve_2& xcv, double error, OutputIterator oi,
                                        bool l2r = true) const {
       // std::cout << "ELLIPSE\n";
       auto ctr_min_vertex = m_traits.construct_min_vertex_2_object();
@@ -1840,7 +1826,7 @@ public:
       return oi;
     }
 
-    /*! adds either an elliptic or a hyperbilc point.
+    /*! adds either an elliptic or a hyperbolic point.
      * The arc endpoints are (`x1`, `y1`) and (`x2`, `y2`).
      * In our parametric representations for ellipses and hyperbolas the
      * following holds:
@@ -1864,10 +1850,8 @@ public:
      * expression for tm is different.
      */
     template <typename OutputIterator, typename Op, typename Transform>
-    OutputIterator add_points(double x1, double y1, double t1,
-                              double x2, double y2, double t2,
-                              double error, OutputIterator oi,
-                              Op op, Transform transform) const {
+    OutputIterator add_points(double x1, double y1, double t1, double x2, double y2, double t2,
+                              double error, OutputIterator oi, Op op, Transform transform) const {
       auto tm = (t1 + t2)*0.5;
 
       // Compute the canocal point where the error is maximal.
@@ -1894,8 +1878,7 @@ public:
      * data, that is, the center (translation) and the sin and cos of the
      * rotation angle.
      */
-    void elliptic_point(double a, double b, double t,
-                        double& x, double& y) const {
+    void elliptic_point(double a, double b, double t, double& x, double& y) const {
       x = a * std::cos(t);
       y = b * std::sin(t);
     }
@@ -1905,8 +1888,7 @@ public:
      * https://www.vcalc.com/wiki/vCalc/Parabola+-+arc+length
      */
     template <typename OutputIterator>
-    OutputIterator approximate_parabola(const X_monotone_curve_2& xcv,
-                                        double error, OutputIterator oi,
+    OutputIterator approximate_parabola(const X_monotone_curve_2& xcv, double error, OutputIterator oi,
                                         bool l2r = true) const {
       // std::cout << "PARABOLA\n";
       auto ctr_min_vertex = m_traits.construct_min_vertex_2_object();
@@ -1946,7 +1928,7 @@ public:
       return oi;
     }
 
-    /*! adds either an elliptic or a hyperbilc point.
+    /*! adds either an elliptic or a hyperbolic point.
      * The arc endpoints are (`x1`, `y1`) and (`x2`, `y2`).
      * In our parametric representations for ellipses and hyperbolas the
      * following holds:
@@ -1970,10 +1952,8 @@ public:
      * hyperbolas, the expression for tm is different.
      */
     template <typename OutputIterator, typename Op, typename Transform>
-    OutputIterator add_parabolic_points(double x1, double y1, double t1,
-                                        double x2, double y2, double t2,
-                                        double error, OutputIterator oi,
-                                        Op op, Transform transform) const {
+    OutputIterator add_parabolic_points(double x1, double y1, double t1, double x2, double y2, double t2,
+                                        double error, OutputIterator oi, Op op, Transform transform) const {
       auto dx = x2 - x1;
       auto dy = y2 - y1;
       auto tm = (dy == 0) ? 0 : dx / dy;
@@ -2008,8 +1988,7 @@ public:
     /*! handles hyperbolas.
      */
     template <typename OutputIterator>
-    OutputIterator approximate_hyperbola(const X_monotone_curve_2& xcv,
-                                         double error, OutputIterator oi,
+    OutputIterator approximate_hyperbola(const X_monotone_curve_2& xcv, double error, OutputIterator oi,
                                          bool l2r = true) const {
       // std::cout << "HYPERBOLA\n";
       auto ctr_min_vertex = m_traits.construct_min_vertex_2_object();
@@ -2139,8 +2118,7 @@ public:
       if (res == SMALLER) xcv.set_flag(X_monotone_curve_2::IS_DIRECTED_RIGHT);
 
       // Check whether the segment is vertical.
-      if (CGAL::sign(xcv.extra_data()->b) == ZERO)
-        xcv.set_flag(X_monotone_curve_2::IS_VERTICAL_SEGMENT);
+      if (CGAL::sign(xcv.extra_data()->b) == ZERO) xcv.set_flag(X_monotone_curve_2::IS_VERTICAL_SEGMENT);
 
       return xcv;
     }
@@ -2151,8 +2129,7 @@ public:
      * \param source The source point.
      * \param target The target point.
      */
-    X_monotone_curve_2 operator()(const Algebraic& a, const Algebraic& b,
-                                  const Algebraic& c,
+    X_monotone_curve_2 operator()(const Algebraic& a, const Algebraic& b, const Algebraic& c,
                                   const Point_2& source, const Point_2& target)
       const {
       auto cmp_xy = m_traits.m_alg_kernel->compare_xy_2_object();
@@ -2281,8 +2258,7 @@ public:
      * \param p3 The arc target.
      * \pre The three points must not be collinear.
      */
-    Curve_2 operator()(const Rat_point_2& p1, const Rat_point_2& p2,
-                       const Rat_point_2& p3) const {
+    Curve_2 operator()(const Rat_point_2& p1, const Rat_point_2& p2, const Rat_point_2& p3) const {
       Curve_2 arc;
 
       // Set the source and target.
@@ -2838,8 +2814,7 @@ public:
      * \pre src != tgt
      * \pre both points must be interior and must lie on \c cv
      */
-    X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv,
-                                  const Point_2& src, const Point_2& tgt) const {
+    X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv, const Point_2& src, const Point_2& tgt) const {
       // make functor objects
       CGAL_precondition_code(Compare_y_at_x_2 compare_y_at_x_2 =
                              m_traits.compare_y_at_x_2_object());
@@ -2865,11 +2840,9 @@ public:
      * \pre Both ps and pt lies on the arc and must conform with the current
      *      direction of the arc.
     */
-    X_monotone_curve_2 trim(const X_monotone_curve_2& xcv,
-                            const Point_2& ps, const Point_2& pt) const {
+    X_monotone_curve_2 trim(const X_monotone_curve_2& xcv, const Point_2& ps, const Point_2& pt) const {
       // Make sure that both ps and pt lie on the arc.
-      CGAL_precondition(m_traits.contains_point(xcv, ps) &&
-                        m_traits.contains_point(xcv, pt));
+      CGAL_precondition(m_traits.contains_point(xcv, ps) && m_traits.contains_point(xcv, pt));
 
       X_monotone_curve_2 res_xcv = xcv; // make a copy of the current arc
 
@@ -2959,8 +2932,7 @@ public:
           x_max = CGAL::to_double(tan_ps[0].x());
         }
 
-        CGAL_assertion_code
-          (n_tan_ps = m_traits.horizontal_tangency_points(xcv, tan_ps));
+        CGAL_assertion_code(n_tan_ps = m_traits.horizontal_tangency_points(xcv, tan_ps));
         CGAL_assertion(n_tan_ps == 2);
 
         if (CGAL::to_double(tan_ps[0].y()) < CGAL::to_double(tan_ps[1].y())) {
@@ -2976,41 +2948,28 @@ public:
         // Use the source and target to initialize the extreme points.
         bool source_left =
           CGAL::to_double(xcv.source().x()) < CGAL::to_double(xcv.target().x());
-        x_min = (source_left) ?
-          CGAL::to_double(xcv.source().x()) :
-          CGAL::to_double(xcv.target().x());
-        x_max = source_left ?
-          CGAL::to_double(xcv.target().x()) :
-          CGAL::to_double(xcv.source().x());
+        x_min = (source_left) ? CGAL::to_double(xcv.source().x()) : CGAL::to_double(xcv.target().x());
+        x_max = source_left ? CGAL::to_double(xcv.target().x()) : CGAL::to_double(xcv.source().x());
 
-        bool source_down =
-          CGAL::to_double(xcv.source().y()) < CGAL::to_double(xcv.target().y());
-        y_min = source_down ?
-          CGAL::to_double(xcv.source().y()) :
-          CGAL::to_double(xcv.target().y());
-        y_max = source_down ?
-          CGAL::to_double(xcv.target().y()) :
-          CGAL::to_double(xcv.source().y());
+        bool source_down = CGAL::to_double(xcv.source().y()) < CGAL::to_double(xcv.target().y());
+        y_min = source_down ? CGAL::to_double(xcv.source().y()) : CGAL::to_double(xcv.target().y());
+        y_max = source_down ? CGAL::to_double(xcv.target().y()) : CGAL::to_double(xcv.source().y());
 
         // Go over the vertical tangency points and try to update the
         // \f$x\f$-points.
         Alg_point_2 tan_ps[2];
         auto n_tan_ps = m_traits.vertical_tangency_points(xcv, tan_ps);
         for (decltype(n_tan_ps) i = 0; i < n_tan_ps; ++i) {
-          if (CGAL::to_double(tan_ps[i].x()) < x_min)
-            x_min = CGAL::to_double(tan_ps[i].x());
-          if (CGAL::to_double(tan_ps[i].x()) > x_max)
-            x_max = CGAL::to_double(tan_ps[i].x());
+          if (CGAL::to_double(tan_ps[i].x()) < x_min) x_min = CGAL::to_double(tan_ps[i].x());
+          if (CGAL::to_double(tan_ps[i].x()) > x_max) x_max = CGAL::to_double(tan_ps[i].x());
         }
 
         // Go over the horizontal tangency points and try to update the
         // \f$y\f$-points.
         n_tan_ps = m_traits.horizontal_tangency_points(xcv, tan_ps);
         for (decltype(n_tan_ps) i = 0; i < n_tan_ps; ++i) {
-          if (CGAL::to_double(tan_ps[i].y()) < y_min)
-            y_min = CGAL::to_double(tan_ps[i].y());
-          if (CGAL::to_double(tan_ps[i].y()) > y_max)
-            y_max = CGAL::to_double(tan_ps[i].y());
+          if (CGAL::to_double(tan_ps[i].y()) < y_min) y_min = CGAL::to_double(tan_ps[i].y());
+          if (CGAL::to_double(tan_ps[i].y()) > y_max) y_max = CGAL::to_double(tan_ps[i].y());
         }
       }
 
@@ -3020,8 +2979,7 @@ public:
   };
 
   /*! obtains a `Bbox_2` functor object. */
-  Construct_bbox_2 construct_bbox_2_object() const
-  { return Construct_bbox_2(*this); }
+  Construct_bbox_2 construct_bbox_2_object() const { return Construct_bbox_2(*this); }
   //@}
 
   /*! sets the properties of a conic arc (for the usage of the constructors).
@@ -3134,8 +3092,7 @@ public:
    *                   and the free coefficient resp.
    * \param comp_orient Should we compute the orientation of the given curve.
    */
-  void set_full(Curve_2& cv, const Rational* rat_coeffs,
-                const bool& comp_orient) const {
+  void set_full(Curve_2& cv, const Rational* rat_coeffs, const bool& comp_orient) const {
     // Convert the coefficients vector to an equivalent vector of integer
     // coefficients.
     Integer int_coeffs[6];
@@ -3237,8 +3194,7 @@ public:
       if (extra_data->side != ZERO) {
         // In case of a hyperbolic arc, make sure the point is located on the
         // same branch as the arc.
-        if (cv.sign_of_extra_data(p.x(), p.y()) != extra_data->side)
-          return false;
+        if (cv.sign_of_extra_data(p.x(), p.y()) != extra_data->side) return false;
       }
       else {
         // In case we have a segment of a line pair, make sure that p really
@@ -3430,9 +3386,7 @@ public:
    * \param x_plus The root obtained from taking -sqrt(discriminant).
    * \return The number of disticnt solutions to the equation.
    */
-  int solve_quadratic_equation(const Algebraic& A,
-                               const Algebraic& B,
-                               const Algebraic& C,
+  int solve_quadratic_equation(const Algebraic& A, const Algebraic& B, const Algebraic& C,
                                Algebraic& x_minus, Algebraic& x_plus) const {
     // Check if we actually have a linear equation.
     if (CGAL::sign(A) == ZERO) {
@@ -4206,9 +4160,9 @@ public:
     auto a_sqr = numerator / (4*r_m*r_m*s_m);
     auto b_sqr = -numerator / (4*r_m*s_m*s_m);
 
-    /* If the conjugate axis of the canonical hyperbula is the 𝑌-axis, shift
-     * the canonical hyperbula by 90, essentially, converting the canonical
-     * hyperbula to one the conjugate axis of which is the 𝑋-axis, as the
+    /* If the conjugate axis of the canonical hyperbola is the 𝑌-axis, shift
+     * the canonical hyperbola by 90, essentially, converting the canonical
+     * hyperbola to one the conjugate axis of which is the 𝑋-axis, as the
      * remaining code assume that the conjugate axis is the 𝑋-axis.
      * Here,
      * 1. a_sqr = -a_sqr, b_sqr = -b_sqr, and

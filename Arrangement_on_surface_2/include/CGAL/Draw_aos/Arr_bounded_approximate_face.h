@@ -222,26 +222,24 @@ public:
     auto triangulator = Triangulator(m_ctx, fh);
     auto ctx = Context(m_ctx, triangulator);
 
-    if (! Is_on_curved_surface && !fh->has_outer_ccb()) {
+    if (! Is_on_curved_surface && ! fh->has_outer_ccb()) {
       // Skip approximation of the unbounded face in planar arrangements.
       // However, degenerate holes still need to be approximated.
-      for (auto inner_ccb = fh->inner_ccbs_begin(); inner_ccb != fh->inner_ccbs_end(); ++inner_ccb) {
-        auto circ = *inner_ccb;
+      for (auto ccb = fh->inner_ccbs_begin(); ccb != fh->inner_ccbs_end(); ++ccb) {
+        auto circ = *ccb;
         do {
           if (circ->face() != circ->twin()->face()) continue;
           m_bounded_approx_halfedge(circ);
-        } while(++circ != *inner_ccb);
+          approximate_vertex(ctx, circ->target());
+        } while(++circ != *ccb);
       }
       for (auto vh = fh->isolated_vertices_begin(); vh != fh->isolated_vertices_end(); ++vh) m_bounded_approx_vertex(vh);
       return ts;
     }
 
-    for (auto outer_ccb = fh->outer_ccbs_begin(); outer_ccb != fh->outer_ccbs_end(); ++outer_ccb)
-      approximate_ccb(ctx, *outer_ccb);
-    for (auto inner_ccb = fh->inner_ccbs_begin(); inner_ccb != fh->inner_ccbs_end(); ++inner_ccb)
-      approximate_ccb(ctx, *inner_ccb);
-    for (auto iso_vertex = fh->isolated_vertices_begin(); iso_vertex != fh->isolated_vertices_end(); ++iso_vertex)
-      approximate_vertex(ctx, iso_vertex);
+    for (auto ccb = fh->outer_ccbs_begin(); ccb != fh->outer_ccbs_end(); ++ccb) approximate_ccb(ctx, *ccb);
+    for (auto ccb = fh->inner_ccbs_begin(); ccb != fh->inner_ccbs_end(); ++ccb) approximate_ccb(ctx, *ccb);
+    for (auto vh = fh->isolated_vertices_begin(); vh != fh->isolated_vertices_end(); ++vh) approximate_vertex(ctx, vh);
 
     return ts = std::move(triangulator);
   }

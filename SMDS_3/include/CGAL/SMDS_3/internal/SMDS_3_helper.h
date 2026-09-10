@@ -29,6 +29,8 @@ namespace internal {
   {
     typedef typename Triangulation::Vertex_handle        Vertex_handle;
     typedef typename Triangulation::Cell_handle          Cell_handle;
+    CGAL_postcondition(tr.is_valid());
+
     typedef typename Triangulation::Geom_traits::Point_3 Point_3;
     typename Triangulation::Geom_traits::Construct_point_3 cp
       = tr.geom_traits().construct_point_3_object();
@@ -37,6 +39,10 @@ namespace internal {
 
     std::vector<Cell_handle> infcells;
     tr.incident_cells(tr.infinite_vertex(), std::back_inserter(infcells));
+
+    std::vector<Vertex_handle> bvertices;
+    tr.adjacent_vertices(tr.infinite_vertex(), std::back_inserter(bvertices));
+
     for (Cell_handle c : infcells)
     {
       const Cell_handle neigh = c->neighbor(c->index(tr.infinite_vertex()));
@@ -48,7 +54,7 @@ namespace internal {
       const CGAL::Orientation o = orientation(
           pfacet[0], pfacet[1], pfacet[2], cp(neigh->vertex(i)->point()));
 
-      for (Vertex_handle v : tr.finite_vertex_handles())
+      for (Vertex_handle v : bvertices)
       {
         if (c->has_vertex(v))
           continue;

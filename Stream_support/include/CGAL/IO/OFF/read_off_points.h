@@ -50,9 +50,6 @@ bool read_OFF(std::istream& is,
               std::enable_if_t<CGAL::is_iterator<PointOutputIterator>::value>*
               )
 {
-  using parameters::choose_parameter;
-  using parameters::get_parameter;
-
   typedef Point_set_processing_3::Fake_point_range<OutputIteratorValueType> PointRange;
 
   // basic geometric types

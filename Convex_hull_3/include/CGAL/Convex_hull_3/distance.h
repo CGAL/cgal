@@ -413,13 +413,9 @@ typename internal::GetGeomTraitsFromConvex<Convex_1, NamedParameters_1>::type::F
 separation_distance(const Convex_1& c1, const Convex_2& c2,
                     const NamedParameters_1& np1 = parameters::default_values(),
                     const NamedParameters_2& np2 = parameters::default_values()){
-  using CGAL::parameters::choose_parameter;
-  using CGAL::parameters::get_parameter;
-
   //The function need exact computation to works correctly
   using EPECK=Exact_predicates_exact_constructions_kernel;
   using GT= typename internal::GetGeomTraitsFromConvex<Convex_1, NamedParameters_1>::type;
-  // GT gt = choose_parameter<GT>(get_parameter(np1, internal_np::geom_traits));
   return predicates_impl::Separation_distance_functor<GT, EPECK>()(c1, c2, np1, np2);
 }
 

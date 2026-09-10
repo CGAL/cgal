@@ -28,7 +28,7 @@ struct Parameters_3 {
   unsigned int max_octree_depth = 3;
   unsigned int max_octree_node_size = 40;
 
-  FT bbox_dilation_ratio = FT(11) / FT(10); // ratio to enlarge bbox
+  FT bbox_dilation_ratio = FT(101) / FT(100); // ratio to enlarge bbox
 
   bool reorient_bbox = false; // true - optimal bounding box, false - axis aligned
 

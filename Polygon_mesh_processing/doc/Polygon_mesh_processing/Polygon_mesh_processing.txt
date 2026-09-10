@@ -93,7 +93,7 @@ The following example demonstrates self-intersection detection in the `pig.off` 
 
 \cgalFigureAnchor{SelfIntersections}
 <center>
-<img src="selfintersections.jpg" style="max-width:70%;"/>
+<img src="selfintersections.jpg" style="max-width:50%;"/>
 </center>
 \cgalFigureCaptionBegin{SelfIntersections}
 Detection of self-intersections in a triangle mesh. Intersecting triangles are displayed
@@ -127,10 +127,15 @@ Given a distance \f$ \delta =  \epsilon / \sqrt(3)\f$, a <em>prism</em> is assoc
 The <em>polyhedral envelope</em> of a set of triangles with a tolerance \f$ \epsilon \f$ then
 is the union of the prisms of all faces with \f$ \delta = \epsilon / \sqrt(3) \f$.
 
-\cgalFigureBegin{envelopeFig, envelope.png}
+\cgalFigureAnchor{envelopeFig}
+<center>
+<img src="envelope.png" style="max-width:75%;"/>
+</center>
+\cgalFigureCaptionBegin{envelopeFig}
 The prism for a single triangle (left), the polyhedral envelope (middle),
 and the Minkowski sum envelope (right) for a triangle mesh.
-\cgalFigureEnd
+\cgalFigureCaptionEnd
+
 
 The polyhedral envelope is guaranteed to be contained within the Minkowski sum envelope. The containment test is exact for the polyhedral envelope and conservative for the Minkowski sum envelope: if a query is inside the polyhedral envelope, it is also inside the Minkowski sum envelope; if outside, its relation to the Minkowski sum envelope is undetermined.
 
@@ -350,7 +355,7 @@ Curvatures are computed for all vertices using `CGAL::Polygon_mesh_processing::i
 
 \cgalFigureAnchor{icc_measures}
 <center>
-<table border=0>
+<table style="width:50%; border:0;">
 <tr>
 <td><img src="bimba-mean0.040000-0.000000.jpg" style="width:100%;"/></td>
 <td><img src="bimba-gaussian0.040000-0.000000.jpg" style="width:100%;"/></td>
@@ -367,7 +372,7 @@ Mean curvature, Gaussian curvature, minimal principal curvature direction, and m
 
 \cgalFigureAnchor{icc_various_ball_radii}
 <center>
-<table border=0>
+<table style="width:50%; border:0;">
 <tr>
 <td><img src="bimba-mean0.020000-0.000000.jpg" style="width:100%;"/></td>
 <td><img src="bimba-mean0.030000-0.000000.jpg" style="width:100%;"/></td>

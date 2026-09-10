@@ -48,6 +48,10 @@
 /// I/O Functions for the \ref IOStreamXYZ
 /// \ingroup IOstreamFunctions
 
+/// \defgroup PkgStreamSupportIoFuncsMEDIT MEDIT I/O Functions
+/// I/O Functions for the \ref IOStreamMedit
+/// \ingroup IOstreamFunctions
+
 /// \defgroup PkgStreamSupportEnumRef I/O Enums
 /// \ingroup PkgStreamSupportRef
 
@@ -130,5 +134,6 @@ the printing mode.
 - \link PkgStreamSupportIoFuncsLAS I/O for LAS files \endlink
 - \link PkgStreamSupportIoFuncsVG I/O for VG files \endlink
 - \link PkgStreamSupportIoFuncsXYZ I/O for XYZ files \endlink
+- \link PkgStreamSupportIoFuncsMEDIT I/O for MEDIT files \endlink
 
 */

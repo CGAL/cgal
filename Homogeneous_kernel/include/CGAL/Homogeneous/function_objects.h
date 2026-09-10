@@ -17,6 +17,7 @@
 #ifndef CGAL_HOMOGENEOUS_FUNCTION_OBJECTS_H
 #define CGAL_HOMOGENEOUS_FUNCTION_OBJECTS_H
 
+#include <array>
 #include <CGAL/Kernel/function_objects.h>
 #include <CGAL/Cartesian/function_objects.h>
 #include <CGAL/Kernel/Return_base_tag.h>
@@ -4347,6 +4348,14 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Sphere_3       Sphere_3;
 
   public:
+
+    std::array<Orientation,2>
+    operator()( const Point_3& p, const Point_3& q,
+                const Point_3& r, const Point_3& s, const Point_3& t) const
+    {
+      return { (*this)(p, q, r, s), (*this)(p, q, r, t) };
+    }
+
     Orientation
     operator()( const Point_3& p, const Point_3& q,
                 const Point_3& r, const Point_3& s) const
