@@ -26,7 +26,9 @@
 #if 0
 # include <CGAL/Polygon_mesh_processing/region_growing.h>
 #endif
-# include <CGAL/Polygon_mesh_processing/compute_normal.h>
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
+#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/Polygon_mesh_processing/orient_polygon_soup_extension.h>
 #include <CGAL/IO/polygon_mesh_io.h>
 #include <CGAL/unordered_flat_map.h>
 
@@ -312,11 +314,12 @@ public:
                    PolygonMesh& pmesh,
                    const NamedParameters& np = CGAL::parameters::default_values())
   {
+    namespace PMP = CGAL::Polygon_mesh_processing;
+
     using CGAL::parameters::choose_parameter;
     using CGAL::parameters::is_default_parameter;
     using CGAL::parameters::get_parameter;
 
-    using vertex_descriptor = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
     using face_descriptor = typename boost::graph_traits<PolygonMesh>::face_descriptor;
 
     using Itag = CGAL::Exact_intersections_tag;
@@ -330,22 +333,26 @@ public:
     using PCDT_FH = typename PCDT::Face_handle;
 
     using VPM = typename GetVertexPointMap<PolygonMesh, NamedParameters>::type;
-    VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                               get_property_map(vertex_point, pmesh));
+    using Point = typename boost::property_traits<VPM>::value_type;
 
     CGAL_SS3_IO_TRACE_V(8, "Save polyhedron with " << polyhedron->vertices().size() << " vertices and "
                                                    << polyhedron->facets().size() << " facets");
+    CGAL_precondition(polyhedron->is_consistent());
 
     // @todo do not systematically triangulate, but use this NP and if it is false,
     // only triangulate what is not representable otherwise (see code in PMP::remesh_planar_faces)
     bool do_triangulate = !choose_parameter(get_parameter(np, CGAL::internal_np::do_not_triangulate_faces), false);
 
-    // Vertices
-    CGAL::unordered_flat_map<VertexSPtr, vertex_descriptor> v_map;
+    std::vector<Point> points;
+    std::vector<std::vector<std::size_t>> soup_faces;
+    std::vector<FT> face_speeds;
+    std::vector<std::size_t> face_input_ids;
+
+    CGAL::unordered_flat_map<VertexSPtr, std::size_t> v_index_map;
+    std::size_t vidx = 0;
     for (const VertexSPtr& vertex : polyhedron->vertices()) {
-      vertex_descriptor vi = add_vertex(pmesh);
-      put(vpm, vi, vertex->point());
-      v_map[vertex] = vi;
+      points.push_back(vertex->point());
+      v_index_map[vertex] = vidx++;
     }
 
     // Write facets
@@ -426,32 +433,41 @@ public:
         if(!get(in_domain, fh))
           continue;
 
-        auto vr = CGAL::make_array(v_map[fh->vertex(0)->info()],
-                                   v_map[fh->vertex(1)->info()],
-                                   v_map[fh->vertex(2)->info()]);
-        face_descriptor sm_f = CGAL::Euler::add_face(vr, pmesh);
-        if (sm_f == boost::graph_traits<PolygonMesh>::null_face()) {
-          CGAL_SS3_IO_TRACE("Error: failed to add face to surface mesh (2)");
-          CGAL_SS3_IO_TRACE("Face:\n" << fh->vertex(0)->point() << " "
-                                      << fh->vertex(1)->point() << " "
-                                      << fh->vertex(2)->point());
-          CGAL::IO::write_polygon_mesh("results/failed.off", pmesh, CGAL::parameters::stream_precision(17));
-
-          CGAL_assertion_code(bool cannot_add = CGAL::Euler::can_add_face(vr, pmesh, true /*verbose*/);)
-          CGAL_assertion(!cannot_add);
-
-          return false;
-        }
-
-        put(weight_pmap, sm_f, speed);
-        if constexpr (!is_default_parameter<NamedParameters, internal_np::face_to_face_map_t>::value)
-          put(f2i, sm_f, input_face_id);
+        std::vector<std::size_t> tri(3);
+        tri[0] = v_index_map[fh->vertex(0)->info()];
+        tri[1] = v_index_map[fh->vertex(1)->info()];
+        tri[2] = v_index_map[fh->vertex(2)->info()];
+        soup_faces.emplace_back(std::move(tri));
+        face_speeds.emplace_back(speed);
+        face_input_ids.emplace_back(input_face_id);
       }
+    }
+
+    if(!PMP::is_polygon_soup_a_polygon_mesh(soup_faces))
+    {
+      CGAL_SS3_IO_TRACE("Warning: polygon soup does not describe a polygon mesh");
+#ifdef CGAL_SS3_DUMP_FILES
+      CGAL::IO::write_STL("results/nm_soup.stl", points, soup_faces);
+#endif
+      PMP::duplicate_non_manifold_edges_in_polygon_soup(points, soup_faces);
+      CGAL_assertion(PMP::is_polygon_soup_a_polygon_mesh(soup_faces));
+    }
+
+    // Convert polygon soup to polygon mesh
+    PMP::polygon_soup_to_polygon_mesh(points, soup_faces, pmesh, parameters::default_values(), np);
+
+    // Transfer per-face properties in the same order as the soup faces were added
+    std::size_t fi = 0;
+    for (const face_descriptor& f : faces(pmesh)) {
+      if (fi >= face_speeds.size()) break;
+      put(weight_pmap, f, face_speeds[fi]);
+      if constexpr (!is_default_parameter<NamedParameters, internal_np::face_to_face_map_t>::value)
+        put(f2i, f, face_input_ids[fi]);
+      ++fi;
     }
 
     return true;
   }
-
 };
 
 } // namespace IO
