@@ -8,17 +8,11 @@ find_package(CGAL REQUIRED)
 
 find_package(ortools CONFIG REQUIRED)
 
-create_single_source_cgal_program("or_tools_dummy.cpp")
-target_link_libraries(or_tools_dummy PRIVATE ortools::ortools)
-
-create_single_source_cgal_program("or_tools_AI.cpp")
-target_link_libraries(or_tools_AI PRIVATE ortools::ortools)
-
 create_single_source_cgal_program("create_offset_of_non_triangle_polyhedron.cpp")
-target_link_libraries(or_tools_AI PRIVATE ortools::ortools)
+target_link_libraries(create_offset_of_non_triangle_polyhedron PRIVATE ortools::ortools)
 
 create_single_source_cgal_program("create_offset_polyhedra.cpp")
-target_link_libraries(or_tools_AI PRIVATE ortools::ortools)
+target_link_libraries(create_offset_polyhedra PRIVATE ortools::ortools)
 
 create_single_source_cgal_program("create_straight_skeleton_3.cpp")
 target_link_libraries(create_straight_skeleton_3 PRIVATE ortools::ortools)
