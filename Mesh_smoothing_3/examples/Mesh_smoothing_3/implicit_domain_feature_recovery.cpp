@@ -9,7 +9,7 @@
 #include <CGAL/Mesh_3/Dump_c3t3.h>
 
 #include <CGAL/Mesh_smoothing_3/boundary_aware_mesh_smoothing.h>
-#include <CGAL/Mesh_smoothing_3/projectors.h>
+#include <CGAL/Mesh_smoothing_3/Projectors.h>
 
 #include <utility>
 #include <vector>

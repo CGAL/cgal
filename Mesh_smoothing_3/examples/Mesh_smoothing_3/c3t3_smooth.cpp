@@ -12,7 +12,7 @@
 #include <fstream>
 
 #include <CGAL/Mesh_smoothing_3/boundary_aware_mesh_smoothing.h>
-#include <CGAL/Mesh_smoothing_3/projectors.h>
+#include <CGAL/Mesh_smoothing_3/Projectors.h>
 
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 
