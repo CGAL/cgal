@@ -240,7 +240,7 @@ class Intersection_of_triangle_meshes
   CGAL_assertion_code(bool doing_autorefinement;)
 
 // member functions
-  template <class VPM1, class VPM2, class ISM1, class ISM2>
+  template <class VPM1, class VPM2, class ISFM1, class ISFM2, class ISEM1, class ISEM2>
   void filter_intersections(const TriangleMesh& tm1,
                             const TriangleMesh& tm2,
                             const VPM1& vpm1,
@@ -251,8 +251,10 @@ class Intersection_of_triangle_meshes
                             std::set<face_descriptor>& tm1_faces,
                             std::set<face_descriptor>& tm2_faces,
                             Bbox_3 bb,
-                            ISM1 is_shared_map_1,
-                            ISM2 is_shared_map_2)
+                            ISFM1 is_shared_face_map_1,
+                            ISFM2 is_shared_face_map_2,
+                            ISEM1 is_shared_edge_map_1,
+                            ISEM2 is_shared_edge_map_2)
   {
     using GT = typename GetGeomTraits<TriangleMesh, parameters::Default_named_parameters>::type;
     using AABB_tree_helper = internal::AABB_tree_graph_helper<TriangleMesh, GT>;
@@ -265,14 +267,69 @@ class Intersection_of_triangle_meshes
     tm2_faces_intersecting_bb.reserve(num_faces(tm2));
 
     for(face_descriptor f: faces(tm1))
-      if( do_overlap(face_bbox(f, tm1), bb) )
+      if( !get(is_shared_face_map_1, f) && do_overlap(face_bbox(f, tm1), bb) )
         tm1_faces_intersecting_bb.push_back(f);
     for(face_descriptor f: faces(tm2))
-      if( do_overlap(face_bbox(f, tm2), bb) )
+      if( !get(is_shared_face_map_2, f) && do_overlap(face_bbox(f, tm2), bb) )
         tm2_faces_intersecting_bb.push_back(f);
 
     Tree tree1(tm1_faces_intersecting_bb.begin(), tm1_faces_intersecting_bb.end(), tm1);
     Tree tree2(tm2_faces_intersecting_bb.begin(), tm2_faces_intersecting_bb.end(), tm2);
+
+    auto process_candidates_without_non_manifold_map = [&](face_descriptor f_1, face_descriptor f_2, auto &callback12, auto &callback21){
+      std::array<halfedge_descriptor, 3> hf1 = { halfedge(f_1, tm1),
+                                                 next(halfedge(f_1, tm1), tm1),
+                                                 next(next(halfedge(f_1, tm1), tm1), tm1) };
+
+      std::array<halfedge_descriptor, 3> hf2 = { halfedge(f_2, tm2),
+                                                 next(halfedge(f_2, tm2), tm2),
+                                                 next(next(halfedge(f_2, tm2), tm2), tm2) };
+
+      for(halfedge_descriptor h : hf2){
+        edge_descriptor e = edge(h, tm2);
+        if( !get(is_shared_edge_map_2, e) && (is_border(h, tm2) || h < opposite(h, tm2)))
+          callback12(hf1[0], h);
+      }
+      for(halfedge_descriptor h : hf1){
+        edge_descriptor e = edge(h, tm1);
+        if( !get(is_shared_edge_map_1, e) && (is_border(h, tm1) || h < opposite(h, tm1)))
+          callback21(hf2[0], h);
+      }
+    };
+    auto process_candidates_with_non_manifold_map = [&](face_descriptor f_1, face_descriptor f_2, auto &callback12, auto &callback21){
+      std::array<halfedge_descriptor, 3> hf1 = { halfedge(f_1, tm1),
+                                                 next(halfedge(f_1, tm1), tm1),
+                                                 next(next(halfedge(f_1, tm1), tm1), tm1) };
+
+      std::array<halfedge_descriptor, 3> hf2 = { halfedge(f_2, tm2),
+                                                 next(halfedge(f_2, tm2), tm2),
+                                                 next(next(halfedge(f_2, tm2), tm2), tm2) };
+
+      for(halfedge_descriptor h : hf2){
+        edge_descriptor ed = edge(h, tm2);
+        std::size_t eid=get(non_manifold_feature_map_2.e_nm_id, ed);
+        if (eid!=NM_NID){
+          if (non_manifold_feature_map_2.non_manifold_edges[eid].front()!=ed) continue;
+          else
+            // make sure the halfedge used is consistent with stored one
+            h = halfedge(non_manifold_feature_map_2.non_manifold_edges[eid].front(), tm2);
+        }
+        if( !get(is_shared_edge_map_2, ed) && (is_border(h, tm2) || h < opposite(h, tm2)))
+          callback12(hf1[0], h);
+      }
+      for(halfedge_descriptor h : hf1){
+        edge_descriptor ed = edge(h, tm1);
+        std::size_t eid=get(non_manifold_feature_map_1.e_nm_id, ed);
+        if (eid!=NM_NID){
+          if (non_manifold_feature_map_1.non_manifold_edges[eid].front()!=ed) continue;
+          else
+            // make sure the halfedge used is consistent with stored one
+            h = halfedge(non_manifold_feature_map_1.non_manifold_edges[eid].front(), tm2);
+        }
+        if( !get(is_shared_edge_map_1, ed) && (is_border(h, tm1) || h < opposite(h, tm1)))
+          callback21(h, hf2[0]);
+      }
+    };
 
     // Wrap the call of AABB intersections given two callback functions
     auto AABB_call = [&](auto &callback12, auto &callback21){
@@ -287,31 +344,16 @@ class Intersection_of_triangle_meshes
         tbb::concurrent_vector<std::pair<face_descriptor, face_descriptor>> inter;
         CGAL::AABB_trees::all_pairs_of_intersecting_primitives(tree1, tree2, std::back_inserter(inter), parameters::concurrency_tag(ConcurrencyTag()));
 
-        tbb::parallel_for(std::size_t(0), inter.size(), [&](std::size_t i){
-          const auto& [f_1, f_2] = inter[i];
-
-          halfedge_descriptor hf1_0 = halfedge(f_1, tm1);
-          halfedge_descriptor hf1_1 = next(hf1_0, tm1);
-          halfedge_descriptor hf1_2 = next(hf1_1, tm1);
-
-          halfedge_descriptor hf2_0 = halfedge(f_2, tm2);
-          halfedge_descriptor hf2_1 = next(hf2_0, tm2);
-          halfedge_descriptor hf2_2 = next(hf2_1, tm2);
-
-          if (is_border(hf2_0, tm2) || hf2_0 < opposite(hf2_0, tm2))
-            callback12(hf1_0, hf2_0);
-          if (is_border(hf2_1, tm2) || hf2_1 < opposite(hf2_1, tm2))
-            callback12(hf1_0, hf2_1);
-          if (is_border(hf2_2, tm2) || hf2_2 < opposite(hf2_2, tm2))
-            callback12(hf1_0, hf2_2);
-
-          if (is_border(hf1_0, tm1) || hf1_0 < opposite(hf1_0, tm1))
-            callback21(hf2_0, hf1_0);
-          if (is_border(hf1_1, tm1) || hf1_1 < opposite(hf1_1, tm1))
-            callback21(hf2_0, hf1_1);
-          if (is_border(hf1_2, tm1) || hf1_2 < opposite(hf1_2, tm1))
-            callback21(hf2_0, hf1_2);
-        });
+        if(non_manifold_feature_map_1.non_manifold_edges.empty() && non_manifold_feature_map_2.non_manifold_edges.empty())
+          tbb::parallel_for(std::size_t(0), inter.size(), [&](std::size_t i){
+            const auto& [f_1, f_2] = inter[i];
+            process_candidates_without_non_manifold_map(f_1, f_2, callback12, callback21);
+          });
+        else
+          tbb::parallel_for(std::size_t(0), inter.size(), [&](std::size_t i){
+            const auto& [f_1, f_2] = inter[i];
+            process_candidates_with_non_manifold_map(f_1, f_2, callback12, callback21);
+          });
       }
       else
   #endif
@@ -322,29 +364,12 @@ class Intersection_of_triangle_meshes
         std::vector<std::pair<face_descriptor, face_descriptor>> inter;
         CGAL::AABB_trees::all_pairs_of_intersecting_primitives(tree1, tree2, std::back_inserter(inter));
 
-        for(const auto& [f_1, f_2]: inter){
-          halfedge_descriptor hf1_0 = halfedge(f_1, tm1);
-          halfedge_descriptor hf1_1 = next(hf1_0, tm1);
-          halfedge_descriptor hf1_2 = next(hf1_1, tm1);
-
-          halfedge_descriptor hf2_0 = halfedge(f_2, tm2);
-          halfedge_descriptor hf2_1 = next(hf2_0, tm2);
-          halfedge_descriptor hf2_2 = next(hf2_1, tm2);
-
-          if (is_border(hf2_0, tm2) || hf2_0 < opposite(hf2_0, tm2))
-            callback12(hf1_0, hf2_0);
-          if (is_border(hf2_1, tm2) || hf2_1 < opposite(hf2_1, tm2))
-            callback12(hf1_0, hf2_1);
-          if (is_border(hf2_2, tm2) || hf2_2 < opposite(hf2_2, tm2))
-            callback12(hf1_0, hf2_2);
-
-          if (is_border(hf1_0, tm1) || hf1_0 < opposite(hf1_0, tm1))
-            callback21(hf2_0, hf1_0);
-          if (is_border(hf1_1, tm1) || hf1_1 < opposite(hf1_1, tm1))
-            callback21(hf2_0, hf1_1);
-          if (is_border(hf1_2, tm1) || hf1_2 < opposite(hf1_2, tm1))
-            callback21(hf2_0, hf1_2);
-        }
+        if(non_manifold_feature_map_1.non_manifold_edges.empty() && non_manifold_feature_map_2.non_manifold_edges.empty())
+          for(const auto& [f_1, f_2]: inter)
+            process_candidates_without_non_manifold_map(f_1, f_2, callback12, callback21);
+        else
+          for(const auto& [f_1, f_2]: inter)
+            process_candidates_with_non_manifold_map(f_1, f_2, callback12, callback21);
       }
     };
 
@@ -1899,7 +1924,12 @@ public:
       if (!identical_meshes)
       {
         visitor.start_filtering_intersections();
-        filter_intersections(tm1, tm2, vpm1, vpm2, non_manifold_feature_map_1, non_manifold_feature_map_2, throw_on_self_intersection, tm1_faces, tm2_faces, bb12, is_fshared_map1, is_eshared_map2);
+        filter_intersections(tm1, tm2, vpm1, vpm2,
+                             non_manifold_feature_map_1, non_manifold_feature_map_2,
+                             throw_on_self_intersection,
+                             tm1_faces, tm2_faces,
+                             bb12,
+                             is_fshared_map1, is_fshared_map2, is_eshared_map1, is_eshared_map2);
         visitor.end_filtering_intersections();
 
         // dumping shared edges in output
@@ -1942,7 +1972,7 @@ public:
       Static_boolean_property_map<face_descriptor,false> is_fshared_map;
       Static_boolean_property_map<edge_descriptor,false> is_eshared_map;
       visitor.start_filtering_intersections();
-      filter_intersections(tm1, tm2, vpm1, vpm2, non_manifold_feature_map_1, non_manifold_feature_map_2, throw_on_self_intersection, tm1_faces, tm2_faces, bb12, is_fshared_map, is_eshared_map);
+      filter_intersections(tm1, tm2, vpm1, vpm2, non_manifold_feature_map_1, non_manifold_feature_map_2, throw_on_self_intersection, tm1_faces, tm2_faces, bb12, is_fshared_map, is_fshared_map, is_eshared_map, is_eshared_map);
       visitor.end_filtering_intersections();
     }
 
