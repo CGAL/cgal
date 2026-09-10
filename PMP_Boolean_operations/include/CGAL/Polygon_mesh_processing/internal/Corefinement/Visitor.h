@@ -141,7 +141,7 @@ struct Ecm_bind
 template <class G>
 struct Ecm_bind<G, No_mark<G>, No_mark<G>, No_mark<G>, No_mark<G> >
 {
-  No_mark<G> ecm1, ecm2;
+  No_mark<G> ecm1, ecm2, edge_mark_map1, edge_mark_map2;
   template<class NP1, class NP2>
   Ecm_bind(G&, G&, const NP1&, const NP2&){}
   typedef typename boost::graph_traits<G>::edge_descriptor edge_descriptor;
@@ -165,6 +165,51 @@ struct Get_Ecm_bind
   typedef typename internal_np::Lookup_named_param_def<internal_np::edge_is_marked_map_t, NP2, D> ::type Mark_map2;
   typedef Ecm_bind<G, Ecm1, Ecm2, Mark_map1, Mark_map2> type;
 };
+
+
+template <class G,
+          class Ecm_0, class Ecm_1, class Ecm_2, class Ecm_3,
+          class MarkMap_0, class MarkMap_1, class MarkMap_2, class MarkMap_3>
+struct Ecm_out_bind
+{
+  std::tuple<Ecm_0, Ecm_1, Ecm_2, Ecm_3> ecm_tuple;
+  std::tuple<MarkMap_0, MarkMap_1, MarkMap_2, MarkMap_3> edge_mark_tuple;
+
+
+  Ecm_out_bind(Ecm_0 ecm0, Ecm_1 ecm1, Ecm_2 ecm2, Ecm_3 ecm3,
+               MarkMap_0 edge_mark_map0, MarkMap_1 edge_mark_map1, MarkMap_2 edge_mark_map2, MarkMap_3 edge_mark_map3)
+  : ecm_tuple(ecm0,ecm1,ecm2,ecm3)
+  , edge_mark_tuple(edge_mark_map0,edge_mark_map1,edge_mark_map2,edge_mark_map3)
+  {}
+
+  template<class NP_tuple>
+  Ecm_out_bind(const NP_tuple nps)
+    : Ecm_out_bind(parameters::choose_parameter<No_mark<G>>(parameters::get_parameter(std::get<0>(nps), internal_np::edge_is_constrained)),
+                   parameters::choose_parameter<No_mark<G>>(parameters::get_parameter(std::get<1>(nps), internal_np::edge_is_constrained)),
+                   parameters::choose_parameter<No_mark<G>>(parameters::get_parameter(std::get<2>(nps), internal_np::edge_is_constrained)),
+                   parameters::choose_parameter<No_mark<G>>(parameters::get_parameter(std::get<3>(nps), internal_np::edge_is_constrained)),
+                   parameters::choose_parameter<No_mark<G>>(parameters::get_parameter(std::get<0>(nps), internal_np::edge_is_marked_map)),
+                   parameters::choose_parameter<No_mark<G>>(parameters::get_parameter(std::get<1>(nps), internal_np::edge_is_marked_map)),
+                   parameters::choose_parameter<No_mark<G>>(parameters::get_parameter(std::get<2>(nps), internal_np::edge_is_marked_map)),
+                   parameters::choose_parameter<No_mark<G>>(parameters::get_parameter(std::get<3>(nps), internal_np::edge_is_marked_map)))
+  {}
+};
+
+template <class G, class NP_tuple>
+struct Get_Ecm_out_bind
+{
+  typedef No_mark<G> D;
+  typedef typename internal_np::Lookup_named_param_def<internal_np::edge_is_constrained_t, std::tuple_element_t<0, NP_tuple>, D> ::type Ecm0;
+  typedef typename internal_np::Lookup_named_param_def<internal_np::edge_is_constrained_t, std::tuple_element_t<1, NP_tuple>, D> ::type Ecm1;
+  typedef typename internal_np::Lookup_named_param_def<internal_np::edge_is_constrained_t, std::tuple_element_t<2, NP_tuple>, D> ::type Ecm2;
+  typedef typename internal_np::Lookup_named_param_def<internal_np::edge_is_constrained_t, std::tuple_element_t<3, NP_tuple>, D> ::type Ecm3;
+  typedef typename internal_np::Lookup_named_param_def<internal_np::edge_is_marked_map_t, std::tuple_element_t<0, NP_tuple>, D> ::type Mark_map0;
+  typedef typename internal_np::Lookup_named_param_def<internal_np::edge_is_marked_map_t, std::tuple_element_t<1, NP_tuple>, D> ::type Mark_map1;
+  typedef typename internal_np::Lookup_named_param_def<internal_np::edge_is_marked_map_t, std::tuple_element_t<2, NP_tuple>, D> ::type Mark_map2;
+  typedef typename internal_np::Lookup_named_param_def<internal_np::edge_is_marked_map_t, std::tuple_element_t<3, NP_tuple>, D> ::type Mark_map3;
+  typedef Ecm_out_bind<G, Ecm0, Ecm1, Ecm2, Ecm3, Mark_map0, Mark_map1, Mark_map2, Mark_map3> type;
+};
+
 
 template <class G>
 using Default_ecm_bind = Ecm_bind<G,No_mark<G>,No_mark<G>,No_mark<G>,No_mark<G>>;

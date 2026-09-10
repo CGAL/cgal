@@ -141,16 +141,6 @@ enum Boolean_operation_type {UNION = 0, INTERSECTION=1,
 #endif
 }
 
-
-#define CGAL_COREF_SET_OUTPUT_EDGE_MARK_MAP(I) \
-  typedef typename internal_np::Lookup_named_param_def < \
-    internal_np::edge_is_constrained_t, \
-    NPOut##I, \
-    Corefinement::No_mark<TriangleMesh> \
-  > ::type Ecm_out_##I; \
-    Ecm_out_##I ecm_out_##I = \
-      parameters::choose_parameter<Ecm_out_##I>(parameters::get_parameter(std::get<I>(nps_out), internal_np::edge_is_constrained));
-
 /**
   * \ingroup PMP_boolop_grp
   *
@@ -296,7 +286,10 @@ corefine_and_compute_boolean_operations(
                    NPOut1,
                    NPOut2,
                    NPOut3>& nps_out
-                    = std::tuple<NPOut0,NPOut1,NPOut2,NPOut3>())
+                    = std::tuple<NPOut0,NPOut1,NPOut2,NPOut3>(parameters::default_values(),
+                                                              parameters::default_values(),
+                                                              parameters::default_values(),
+                                                              parameters::default_values()))
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -435,14 +428,7 @@ corefine_and_compute_boolean_operations(
   typedef typename Corefinement::Get_Ecm_bind<TriangleMesh, NPIn1, NPIn2>::type Ecm_in;
 
   //for output meshes
-  CGAL_COREF_SET_OUTPUT_EDGE_MARK_MAP(0)
-  CGAL_COREF_SET_OUTPUT_EDGE_MARK_MAP(1)
-  CGAL_COREF_SET_OUTPUT_EDGE_MARK_MAP(2)
-  CGAL_COREF_SET_OUTPUT_EDGE_MARK_MAP(3)
-
-  // In the current version all types must be the same so an array would be fine
-  typedef std::tuple<Ecm_out_0, Ecm_out_1, Ecm_out_2, Ecm_out_3>
-                                                            Edge_mark_map_tuple;
+  typedef typename Corefinement::Get_Ecm_out_bind<TriangleMesh, std::tuple<NPOut0, NPOut1, NPOut2,NPOut3>>::type Ecm_out;
 
   // Face index point maps
   typedef typename CGAL::GetInitializedFaceIndexMap<TriangleMesh, NPIn1>::type FaceIndexMap1;
@@ -469,14 +455,14 @@ corefine_and_compute_boolean_operations(
                                                   FaceIndexMap2,
                                                   Default,
                                                   Ecm_in,
-                                                  Edge_mark_map_tuple,
+                                                  Ecm_out,
                                                   User_visitor> Ob;
 
   typedef Corefinement::Surface_intersection_visitor_for_corefinement<
             TriangleMesh, VPM1, VPM2, Ob, Ecm_in, User_visitor> Algo_visitor;
 
   Ecm_in ecm_in(tm1,tm2,np1,np2);
-  Edge_mark_map_tuple ecms_out(ecm_out_0, ecm_out_1, ecm_out_2, ecm_out_3);
+  Ecm_out ecms_out(nps_out);
   Ob ob(tm1, tm2, vpm1, vpm2, fid_map1, fid_map2, ecm_in, vpm_out_tuple, ecms_out, uv, output);
 
   // special case used for clipping open meshes
