@@ -1115,34 +1115,26 @@ void process_borders_after_appending_patches(
       set_next(h_out, h_out_next, output);
     }
     if(reverse_patch_orientation){
-      std::cout << "shared target" << std::endl;
       for(halfedge_descriptor h : patch.border_with_shared_source){
         halfedge_descriptor h_out = halfedge(get(tm_to_output_edges, edge(h, tm)), tm);
         if(!is_border(h_out, output)) h_out = opposite(h_out, output);
         border_halfedges_target_to_link.push_back(h_out);
-        std::cout << h << " " << h_out << std::endl;
       }
-      std::cout << "shared source" << std::endl;
       for(halfedge_descriptor h : patch.border_with_shared_target){
         halfedge_descriptor h_out = halfedge(get(tm_to_output_edges, edge(h, tm)), tm);
         if(!is_border(h_out, output)) h_out = opposite(h_out, output);
         border_halfedges_source_to_link.push_back(h_out);
-        std::cout << h << " " << h_out << std::endl;
       }
     } else {
-      std::cout << "shared target" << std::endl;
       for(halfedge_descriptor h : patch.border_with_shared_target){
         halfedge_descriptor h_out = halfedge(get(tm_to_output_edges, edge(h, tm)), tm);
         if(!is_border(h_out, output)) h_out = opposite(h_out, output);
         border_halfedges_target_to_link.push_back(h_out);
-        std::cout << h << " " << h_out << std::endl;
       }
-      std::cout << "shared source" << std::endl;
       for(halfedge_descriptor h : patch.border_with_shared_source){
         halfedge_descriptor h_out = halfedge(get(tm_to_output_edges, edge(h, tm)), tm);
         if(!is_border(h_out, output)) h_out = opposite(h_out, output);
         border_halfedges_source_to_link.push_back(h_out);
-        std::cout << h << " " << h_out << std::endl;
       }
     }
   }
@@ -1203,7 +1195,8 @@ void process_borders_after_appending_patches(
   }
 }
 
-template < bool reverse_patch_orientation,
+template < class Concurrency_tag,
+           bool reverse_patch_orientation,
            class TriangleMesh,
            class PatchContainer,
            class VertexPointMap,
@@ -1344,7 +1337,42 @@ void append_patches_to_triangle_mesh(
                                                                      tm_to_output_vertices);
 }
 
-template < class TriangleMesh,
+template < bool reverse_patch_orientation,
+           class TriangleMesh,
+           class PatchContainer,
+           class VertexPointMap,
+           class VertexPointMapOut,
+           class EdgeMarkMapOut,
+           class EdgeMarkMapIn ,
+           class EdgetoEdgeMap,
+           class VertextoVertexMap,
+           class UserVisitor>
+void append_patches_to_triangle_mesh(
+  TriangleMesh& output,
+  const boost::dynamic_bitset<>& patches_to_append,
+  PatchContainer& patches,
+  const VertexPointMapOut& vpm_out,
+  const VertexPointMap& vpm_tm,
+  EdgeMarkMapOut& edge_mark_map_out,
+  const EdgeMarkMapIn& edge_mark_map_in,
+  EdgetoEdgeMap& tm_to_output_edges,
+  VertextoVertexMap& tm_to_output_vertices,
+  UserVisitor& user_visitor)
+{
+  append_patches_to_triangle_mesh<Sequential_tag, true>(output,
+                                                        patches_to_append,
+                                                        patches,
+                                                        vpm_out,
+                                                        vpm_tm,
+                                                        edge_mark_map_out,
+                                                        edge_mark_map_in,
+                                                        tm_to_output_edges,
+                                                        tm_to_output_vertices,
+                                                        user_visitor);
+}
+
+template < class ConcurrencyTag = Sequential_tag,
+           class TriangleMesh,
            class IntersectionEdgeMap,
            class VertexPointMap1,
            class VertexPointMap2,

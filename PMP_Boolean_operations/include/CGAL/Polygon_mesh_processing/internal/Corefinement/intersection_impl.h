@@ -371,7 +371,7 @@ class Intersection_of_triangle_meshes
       if (const_mesh_ptr==&tm1)
       {
         auto filtered_callback_12 = [&](halfedge_descriptor h1, halfedge_descriptor h2){
-          if(!callback12.is_face_degenerated(h1));
+          if(!callback12.is_face_degenerated(h1))
             callback12(h1, h2);
         };
         auto filtered_callback_21 = [&](halfedge_descriptor h1, halfedge_descriptor h2){
@@ -385,7 +385,7 @@ class Intersection_of_triangle_meshes
         if (const_mesh_ptr==&tm2)
         {
           auto filtered_callback_12 = [&](halfedge_descriptor h1, halfedge_descriptor h2){
-            if(!callback12.is_face_degenerated(h2));
+            if(!callback12.is_face_degenerated(h2))
               callback12(h1, h2);
           };
           auto filtered_callback_21 = [&](halfedge_descriptor h1, halfedge_descriptor h2){

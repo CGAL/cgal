@@ -2384,7 +2384,7 @@ public:
       std::vector<edge_descriptor> shared_edges;
 
       #define CGAL_COREF_FUNCTION_CALL_DEF(BO_type) \
-        fill_new_triangle_mesh( \
+        fill_new_triangle_mesh<ConcurrencyTag>( \
           output, \
           patches_of_tm1_used[BO_type], patches_of_tm2_used[BO_type], \
           patches_of_tm1, patches_of_tm2, \

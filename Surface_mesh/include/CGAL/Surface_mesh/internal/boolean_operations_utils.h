@@ -22,7 +22,8 @@ namespace Polygon_mesh_processing {
 namespace Corefinement {
 
 // Specialization of the function for Surface_mesh to exploit vectors structure of Surface_mesh.
-template < bool reverse_patch_orientation,
+template < class ConcurrencyTag,
+           bool reverse_patch_orientation,
            class Point,
            class PatchDescription,
            class VertexPointMap,
@@ -64,7 +65,7 @@ void append_patch(
   };
 
 #ifdef CGAL_LINKED_WITH_TBB
-  if constexpr(true){
+  if constexpr(std::is_same_v<ConcurrencyTag, Parallel_tag>){
     tbb::parallel_for(std::size_t(0), patch.interior_vertices.size(), fill_vertex);
   }
   else
@@ -111,7 +112,7 @@ void append_patch(
     }
   };
 #ifdef CGAL_LINKED_WITH_TBB
-  if constexpr(true){
+  if constexpr(std::is_same_v<ConcurrencyTag, Parallel_tag>){
     tbb::parallel_for(std::size_t(0), patch.interior_edges.size(), fill_edge);
   }
   else
@@ -163,7 +164,7 @@ void append_patch(
     }
   };
 #ifdef CGAL_LINKED_WITH_TBB
-  if constexpr(true){
+  if constexpr(std::is_same_v<ConcurrencyTag, Parallel_tag>){
     tbb::parallel_for(std::size_t(0), patch.faces.size(), fill_face);
   }
   else
@@ -174,7 +175,8 @@ void append_patch(
 }
 
 // Specialization of the function for Surface_mesh to exploit vectors structure of Surface_mesh.
-template < bool reverse_patch_orientation,
+template < class ConcurrencyTag,
+           bool reverse_patch_orientation,
            class Point,
            class PatchContainer,
            class VertexPointMap,
@@ -221,12 +223,12 @@ void append_patches_to_triangle_mesh(
   {
     ids_of_patches_to_append.push_back(i);
     Patch_description<SM>& patch=patches[i];
-    append_patch<reverse_patch_orientation>(tm, output, patch,
-                                            vpm_out, vpm_tm,
-                                            edge_mark_map_out, edge_mark_map_in,
-                                            tm_to_output_edges, tm_to_output_vertices,
-                                            user_visitor,
-                                            vertices_idx_begin, edges_idx_begin, faces_idx_begin);
+    append_patch<ConcurrencyTag, reverse_patch_orientation>(tm, output, patch,
+                                                            vpm_out, vpm_tm,
+                                                            edge_mark_map_out, edge_mark_map_in,
+                                                            tm_to_output_edges, tm_to_output_vertices,
+                                                            user_visitor,
+                                                            vertices_idx_begin, edges_idx_begin, faces_idx_begin);
     vertices_idx_begin += patch.interior_vertices.size();
     edges_idx_begin += patch.interior_edges.size();
     faces_idx_begin += patch.faces.size();
@@ -239,8 +241,43 @@ void append_patches_to_triangle_mesh(
                                                                      tm_to_output_vertices);
 }
 
+template < bool reverse_patch_orientation,
+           class Point,
+           class PatchContainer,
+           class VertexPointMap,
+           class VertexPointMapOut,
+           class EdgeMarkMapOut,
+           class EdgeMarkMapIn ,
+           class EdgetoEdgeMap,
+           class VertextoVertexMap,
+           class UserVisitor>
+void append_patches_to_triangle_mesh(
+  Surface_mesh<Point>& output,
+  const boost::dynamic_bitset<>& patches_to_append,
+  PatchContainer& patches,
+  const VertexPointMapOut& vpm_out,
+  const VertexPointMap& vpm_tm,
+  EdgeMarkMapOut& edge_mark_map_out,
+  const EdgeMarkMapIn& edge_mark_map_in,
+  EdgetoEdgeMap& tm_to_output_edges,
+  VertextoVertexMap& tm_to_output_vertices,
+  UserVisitor& user_visitor)
+{
+  append_patches_to_triangle_mesh<Sequential_tag, true>(output,
+                                                        patches_to_append,
+                                                        patches,
+                                                        vpm_out,
+                                                        vpm_tm,
+                                                        edge_mark_map_out,
+                                                        edge_mark_map_in,
+                                                        tm_to_output_edges,
+                                                        tm_to_output_vertices,
+                                                        user_visitor);
+}
+
 // Specialization of fill_new_triangle_mesh for Surface_mesh to exploit vectors structure of Surface_mesh.
-template < class Point,
+template < class ConcurrencyTag = Sequential_tag,
+           class Point,
            class IntersectionEdgeMap,
            class VertexPointMap1,
            class VertexPointMap2,
@@ -339,25 +376,25 @@ void fill_new_triangle_mesh(
   // Append patches
   for (std::size_t i : ids_of_patches_to_append_from_tm1){
     if(reverse_orientation_of_patches_from_tm1)
-      append_patch<true>(tm1, output,
-                         patches_of_tm1[i],
-                         vpm_out, vpm1,
-                         edge_mark_map_out,
-                         edge_mark_map1,
-                         tm1_to_output_edges,
-                         tm1_to_output_vertices,
-                         user_visitor,
-                         nv, ne, nf);
+      append_patch<ConcurrencyTag, true>(tm1, output,
+                                         patches_of_tm1[i],
+                                         vpm_out, vpm1,
+                                         edge_mark_map_out,
+                                         edge_mark_map1,
+                                         tm1_to_output_edges,
+                                         tm1_to_output_vertices,
+                                         user_visitor,
+                                         nv, ne, nf);
     else
-      append_patch<false>(tm1, output,
-                          patches_of_tm1[i],
-                          vpm_out, vpm1,
-                          edge_mark_map_out,
-                          edge_mark_map1,
-                          tm1_to_output_edges,
-                          tm1_to_output_vertices,
-                          user_visitor,
-                          nv, ne, nf);
+      append_patch<ConcurrencyTag, false>(tm1, output,
+                                          patches_of_tm1[i],
+                                          vpm_out, vpm1,
+                                          edge_mark_map_out,
+                                          edge_mark_map1,
+                                          tm1_to_output_edges,
+                                          tm1_to_output_vertices,
+                                          user_visitor,
+                                          nv, ne, nf);
     nv += patches_of_tm1[i].interior_vertices.size();
     ne += patches_of_tm1[i].interior_edges.size();
     nf += patches_of_tm1[i].faces.size();
@@ -378,25 +415,25 @@ void fill_new_triangle_mesh(
 
   for(std::size_t i : ids_of_patches_to_append_from_tm2){
     if(reverse_orientation_of_patches_from_tm2)
-      append_patch<true>(tm2, output,
-                         patches_of_tm2[i],
-                         vpm_out, vpm2,
-                         edge_mark_map_out,
-                         edge_mark_map2,
-                         tm2_to_output_edges,
-                         tm2_to_output_vertices,
-                         user_visitor,
-                         nv, ne, nf);
+      append_patch<ConcurrencyTag, true>(tm2, output,
+                                         patches_of_tm2[i],
+                                         vpm_out, vpm2,
+                                         edge_mark_map_out,
+                                         edge_mark_map2,
+                                         tm2_to_output_edges,
+                                         tm2_to_output_vertices,
+                                         user_visitor,
+                                         nv, ne, nf);
     else
-      append_patch<false>(tm2, output,
-                          patches_of_tm2[i],
-                          vpm_out, vpm2,
-                          edge_mark_map_out,
-                          edge_mark_map2,
-                          tm2_to_output_edges,
-                          tm2_to_output_vertices,
-                          user_visitor,
-                          nv, ne, nf);
+      append_patch<ConcurrencyTag, false>(tm2, output,
+                                          patches_of_tm2[i],
+                                          vpm_out, vpm2,
+                                          edge_mark_map_out,
+                                          edge_mark_map2,
+                                          tm2_to_output_edges,
+                                          tm2_to_output_vertices,
+                                          user_visitor,
+                                          nv, ne, nf);
     nv += patches_of_tm2[i].interior_vertices.size();
     ne += patches_of_tm2[i].interior_edges.size();
     nf += patches_of_tm2[i].faces.size();
