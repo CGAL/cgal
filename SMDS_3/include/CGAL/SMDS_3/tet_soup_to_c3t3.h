@@ -725,6 +725,9 @@ bool build_triangulation_from_file(std::istream& is,
     return false;
   }
 
+  if(!is_CGAL_mesh)
+    tr.may_have_badly_oriented_cells(true);
+
   return build_triangulation_with_subdomains_range(tr,
                                                    points, finite_cells, subdomains, border_facets,
                                                    edge_indices,
