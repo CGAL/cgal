@@ -453,7 +453,7 @@ public:
         points, finite_cells, subdomains, border_facets,
         feature_edges, corners,
         CGAL::Emptyset_iterator(),
-        false, false, true);
+        false, false, true, true);
 
       for( C3t3::Triangulation::Finite_cells_iterator
            cit = c3t3_item->c3t3().triangulation().finite_cells_begin();
