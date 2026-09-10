@@ -17,7 +17,7 @@
 
 #include <CGAL/Mesh_smoothing_3/Mesh_smoothing_3.h>
 #include <CGAL/Mesh_smoothing_3/Smoothing_status.h>
-#include <CGAL/Mesh_smoothing_3/projectors.h>
+#include <CGAL/Mesh_smoothing_3/Projectors.h>
 
 #include <CGAL/Named_function_parameters.h>
 
