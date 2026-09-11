@@ -41,84 +41,15 @@
 #include <optional>
 #include <variant>
 
-namespace CGAL {
-
-namespace IO {
-
-namespace internal {
 #ifdef CGAL_USE_FASTFLOAT
 #define CGAL_FROM_CHARS_NAMESPACE fast_float
 #else
 #define CGAL_FROM_CHARS_NAMESPACE  std
 #endif
 
+namespace CGAL {
 
-#if defined(CGAL_USE_STD_FROM_CHARS) || defined(CGAL_USE_FASTFLOAT)
-template <typename OutputIterator>
-OutputIterator parse_doubles(const std::string& line, OutputIterator it)
-{
-  const char* p   = line.data();
-  const char* end = p + line.size();
-
-  auto parse = [&](double& v)
-  {
-    while (p != end &&
-          std::isspace(static_cast<unsigned char>(*p)))
-      ++p;
-
-    auto r =  CGAL_FROM_CHARS_NAMESPACE::from_chars(p, end, v);
-
-    if (r.ec != std::errc{})
-      return false;
-
-    p = r.ptr;
-    return true;
-  };
-
-  double d;
-  while (parse(d)){
-        *it++ = d;
-  }
-  return it;
-}
-
-bool parse_double(const std::string& line, double& d)
-{
-  const char* p   = line.data();
-  const char* end = p + line.size();
-
-  while (p != end &&
-         std::isspace(static_cast<unsigned char>(*p)))
-    ++p;
-
-  auto r =  CGAL_FROM_CHARS_NAMESPACE::from_chars(p, end, d);
-
-  if (r.ec != std::errc{})
-    return false;
-
-  return true;
-}
-
-#else
-template <typename OutputIterator>
-OutputIterator parse_doubles(const std::string& line, OutputIterator it)
-{
-  std::istringstream issline(line);
-  double d;
-  while(issline >> CGAL::IO::iformat(d)){
-    *it++ = d;
-  }
-  return it;
-}
-
-bool parse_double(const std::string& line, double& d)
-{
-   d = strtod(line.c_str(),NULL);
-   return true;   // undefined behavior if the string does not contain a double
-}
-
-#endif
-} // namespace internal
+namespace IO {
 
 
 class Static
@@ -850,6 +781,76 @@ serialize(const P& p) {
 }
 
 
+namespace internal {
+
+#if defined(CGAL_USE_STD_FROM_CHARS) || defined(CGAL_USE_FASTFLOAT)
+template <typename OutputIterator>
+OutputIterator parse_doubles(const std::string& line, OutputIterator it)
+{
+  const char* p   = line.data();
+  const char* end = p + line.size();
+
+  auto parse = [&](double& v)
+  {
+    while (p != end &&
+          std::isspace(static_cast<unsigned char>(*p)))
+      ++p;
+
+    auto r =  CGAL_FROM_CHARS_NAMESPACE::from_chars(p, end, v);
+
+    if (r.ec != std::errc{})
+      return false;
+
+    p = r.ptr;
+    return true;
+  };
+
+  double d;
+  while (parse(d)){
+        *it++ = d;
+  }
+  return it;
+}
+
+bool parse_double(const std::string& line, double& d)
+{
+  const char* p   = line.data();
+  const char* end = p + line.size();
+
+  while (p != end &&
+         std::isspace(static_cast<unsigned char>(*p)))
+    ++p;
+
+  auto r =  CGAL_FROM_CHARS_NAMESPACE::from_chars(p, end, d);
+
+  if (r.ec != std::errc{})
+    return false;
+
+  return true;
+}
+
+#else
+template <typename OutputIterator>
+OutputIterator parse_doubles(const std::string& line, OutputIterator it)
+{
+  std::istringstream issline(line);
+  double d;
+  while(issline >> CGAL::IO::iformat(d)){
+    *it++ = d;
+  }
+  return it;
+}
+
+bool parse_double(const std::string& line, double& d)
+{
+   d = strtod(line.c_str(),NULL);
+   return true;   // undefined behavior if the string does not contain a double
+}
+
+#endif
+} // namespace internal
+
+
 
 } // IO namespace
 
@@ -1074,6 +1075,9 @@ inline void read_float_or_quotient(std::istream& is, Rat &z)
 }
 
 } // namespace internal
+
+
+
 
 } // namespace CGAL
 
