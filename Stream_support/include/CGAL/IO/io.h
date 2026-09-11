@@ -29,6 +29,8 @@
 
 #ifdef CGAL_USE_FASTFLOAT
 #include <fast_float/fast_float.h>
+#else
+#include <charconv>
 #endif
 
 #include <cstdio>
@@ -401,58 +403,45 @@ public:
 
   std::istream& operator()( std::istream& is) const
   {
-    typedef std::istream istream;
-    typedef istream::char_type char_type;
-    typedef istream::int_type int_type;
-    typedef istream::traits_type traits_type;
+    using Traits = std::char_traits<char>;
 
-    std::string buffer;
-    buffer.reserve(32);
+    std::streambuf* sb = is.rdbuf();
 
-    char_type c;
-    do
+    auto c = sb->sgetc();
+
+    while (!Traits::eq_int_type(c, Traits::eof()) &&
+           std::isspace(static_cast<unsigned char>(
+             Traits::to_char_type(c))))
     {
-      const int_type i = is.get();
-      if(i == traits_type::eof())
+      c = sb->snextc();
+    }
+
+    if (Traits::eq_int_type(c, Traits::eof())){
+      is.setstate(std::ios_base::failbit);
+      return is;
+    }
+
+    char buffer[64];
+    char* p = buffer;
+    char* const end = buffer + sizeof(buffer);
+
+    while (!Traits::eq_int_type(c, Traits::eof()) &&
+           !std::isspace(static_cast<unsigned char>(
+              Traits::to_char_type(c))))
+    {
+      if (p == end){
+        is.setstate(std::ios_base::failbit);
         return is;
-
-      c = static_cast<char_type>(i);
-    }
-    while (std::isspace(c));
-
-    if(c == '-')
-    {
-      buffer += '-';
-    }
-    else if(c != '+')
-    {
-      is.unget();
-    }
-
-    for(;;)
-    {
-      const int_type i = is.get();
-      if(i == traits_type::eof())
-      {
-        is.clear(is.rdstate() & ~std::ios_base::failbit);
-        break;
       }
 
-      c = static_cast<char_type>(i);
-      if(std::isdigit(c) || (c =='.') || (c =='E') || (c =='e') || (c =='+') || (c =='-'))
-      {
-        buffer += c;
-      }
-      else
-      {
-        is.unget();
-        break;
-      }
+      *p++ = Traits::to_char_type(c);
+      c = sb->snextc();
     }
 
-    if(! IO::internal::parse_double(buffer, t))
-    {
-      // if a 'buffer' does not contain a double, set the fail bit.
+    auto [ptr, ec] = CGAL_FROM_CHARS_NAMESPACE::from_chars(buffer, p, t);
+
+
+    if (ec != std::errc{} || ptr != p){
       is.setstate(std::ios_base::failbit);
     }
 
