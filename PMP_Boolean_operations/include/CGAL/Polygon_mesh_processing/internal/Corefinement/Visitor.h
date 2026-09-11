@@ -677,10 +677,17 @@ private:
   }
 
   template <class CstMap1, class CstMap2, class MarkMap1, class MarkMap2>
-  bool is_constrained(const Edge_properties_for_input<TriangleMesh, CstMap1, CstMap2, MarkMap1, MarkMap2>& em,
+  bool is_constrained(Edge_properties_for_input<TriangleMesh, CstMap1, CstMap2, MarkMap1, MarkMap2>& em,
                 TriangleMesh& tm, edge_descriptor ed)
   {
     return em.is_constrained(tm, ed);
+  }
+
+  template <class Edge_map>
+  bool is_constrained(Edge_map& em,
+                      TriangleMesh&, edge_descriptor ed)
+  {
+    return get(em, ed);
   }
 
 // visitor public functions
