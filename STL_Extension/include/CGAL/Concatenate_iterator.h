@@ -20,6 +20,7 @@
 
 #include <CGAL/basic.h>
 #include <iterator>
+#include <type_traits>
 
 
 #if defined(BOOST_MSVC)
@@ -41,6 +42,7 @@ class Concatenate_iterator
 private:
   typedef Concatenate_iterator<It1,It2>        Self;
   typedef std::iterator_traits<It1>            Traits1;
+  typedef std::iterator_traits<It2>            Traits2;
 
 public:
   typedef It1                                  Iterator1;
@@ -50,7 +52,10 @@ public:
   typedef typename Traits1::pointer            pointer;
   typedef typename Traits1::value_type         value_type;
   typedef typename Traits1::difference_type    difference_type;
-  typedef typename Traits1::iterator_category  iterator_category;
+  typedef std::common_type_t<
+    typename Traits1::iterator_category,
+    typename Traits2::iterator_category
+  > iterator_category;
 
 public:
   Concatenate_iterator() : e1_(), i1_(), b2_(), i2_() {}
@@ -95,31 +100,92 @@ public:
     return tmp;
   }
 
-  Self operator+(std::size_t offset) const
+  Self operator+(difference_type offset) const
   {
-    // todo: make this a O(1) time operation
-    Self res(*this);
-    for(std::size_t i=0;i<offset;++i){
-      ++res;
+    if (offset < 0) {
+      return this->operator-(-offset);
     }
-    return res;
+    if constexpr (std::is_same_v<iterator_category, std::random_access_iterator_tag>) {
+      // O(1) for random access iterators
+      if (i1_ != e1_) {
+        difference_type remaining_in_first = e1_ - i1_;
+        if (offset < remaining_in_first) {
+          return Self(e1_, b2_, i1_ + offset);
+        } else {
+          return Self(e1_, b2_, b2_ + (offset - remaining_in_first), 0);
+        }
+      } else {
+        return Self(e1_, b2_, i2_ + offset, 0);
+      }
+    } else {
+      // O(n) fallback for non-random-access iterators
+      Self res(*this);
+      for (difference_type i = 0; i < offset; ++i) { ++res; }
+      return res;
+    }
   }
 
-  Self& operator+=(std::size_t offset)
+  Self& operator+=(difference_type offset)
   {
-    *this=this->operator+(offset);
+    *this = this->operator+(offset);
     return *this;
   }
 
-  std::size_t operator-(Self other) const
+  Self operator-(difference_type offset) const
   {
-    // todo: make this a O(1) time operation
-    std::size_t res = 0;
-    while(other != *this){
-      ++res;
-      ++other;
+    if (offset < 0) {
+      return this->operator+(-offset);
     }
-    return res;
+    if constexpr (std::is_same_v<iterator_category, std::random_access_iterator_tag>) {
+      // O(1) for random access iterators
+      if (i1_ != e1_) {
+        // Currently in first range, just go back
+        return Self(e1_, b2_, i1_ - offset);
+      } else {
+        difference_type pos_in_second = i2_ - b2_;
+        if (offset <= pos_in_second) {
+          return Self(e1_, b2_, i2_ - offset, 0);
+        } else {
+          // Need to go back into first range
+          return Self(e1_, b2_, e1_ - (offset - pos_in_second));
+        }
+      }
+    } else {
+      // O(n) fallback for non-random-access iterators
+      Self res(*this);
+      for (difference_type i = 0; i < offset; ++i) { --res; }
+      return res;
+    }
+  }
+
+  Self& operator-=(difference_type offset)
+  {
+    *this = this->operator-(offset);
+    return *this;
+  }
+
+  difference_type operator-(const Self& other) const
+  {
+    if constexpr (std::is_same_v<iterator_category, std::random_access_iterator_tag>) {
+      // O(1) for random access iterators
+      bool this_in_first = (i1_ != e1_);
+      bool other_in_first = (other.i1_ != other.e1_);
+
+      if (this_in_first && other_in_first) {
+        return i1_ - other.i1_;
+      } else if (!this_in_first && !other_in_first) {
+        return i2_ - other.i2_;
+      } else if (!this_in_first && other_in_first) {
+        return (e1_ - other.i1_) + (i2_ - b2_);
+      } else {
+        return -((other.e1_ - i1_) + (other.i2_ - other.b2_));
+      }
+    } else {
+      // operator-(iterator) is only valid for random access iterators
+      // Return 0 as a fallback (undefined behavior for non-random-access)
+      CGAL_assertion_msg(false, "operator-(iterator) requires random access iterators");
+      return difference_type(0);
+    }
   }
 
   reference  operator*()  const
