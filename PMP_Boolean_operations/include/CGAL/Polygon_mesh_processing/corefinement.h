@@ -191,14 +191,14 @@ enum Boolean_operation_type {UNION = 0, INTERSECTION=1,
   *
   *   \cgalParamNBegin{edge_is_constrained_map}
   *     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `tm1` (`tm2`)}
-  *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`as key type and `bool` as value type.
-  *                    If an edge marked as constrained in `tm1` (tm2`) is split during corefinement, the resulting sub-edges will be marked as constrained.}
+  *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor` as key type and `bool` as value type.
+  *                    If an edge marked as constrained in `tm1` (`tm2`) is split during corefinement, the resulting sub-edges will be marked as constrained.}
   *     \cgalParamDefault{a constant property map returning `false` for any edge}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{edge_is_marked_map}
   *     \cgalParamDescription{a property map filled by this function with `true` for all intersection edges of faces
-  *                           of `tm1` and `tm1`, and `false` for all other edges.}
+  *                           of `tm1` and `tm2`, and `false` for all other edges.}
   *     \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
   *                    as key type and `bool` as value type}
   *     \cgalParamDefault{unused}
@@ -247,14 +247,14 @@ enum Boolean_operation_type {UNION = 0, INTERSECTION=1,
   *   \cgalParamNBegin{edge_is_constrained_map}
   *     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `tm_out`.
   *                           An edge of `tm_out` is constrained if the edge corresponds to a constrained edge in `tm1` or `tm2`.
-  *                           If an edge marked as constrained in `tm1` (tm2`) is split during corefinement, the resulting sub-edges will be marked as constrained.}
+  *                           If an edge marked as constrained in `tm1` (`tm2`) is split during corefinement, the resulting sub-edges will be marked as constrained.}
   *     \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
   *                    as key type and `bool` as value type}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{edge_is_marked_map}
   *     \cgalParamDescription{a property map filled by this function with `true` for all intersection edges of faces
-  *                           of `tm1` and `tm1`, and `false` for all other edges.}
+  *                           of `tm1` and `tm2`, and `false` for all other edges.}
   *     \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
   *                    as key type and `bool` as value type}
   *     \cgalParamDefault{unused}
@@ -529,14 +529,14 @@ corefine_and_compute_boolean_operations(
   *
   *   \cgalParamNBegin{edge_is_constrained_map}
   *     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `tm1` (`tm2`)}
-  *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`as key type and `bool` as value type
-  *                    If an edge marked as constrained in `tm1` (tm2`) is split during corefinement, the resulting sub-edges will be marked as constrained.
+  *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor` as key type and `bool` as value type
+  *                    If an edge marked as constrained in `tm1` (`tm2`) is split during corefinement, the resulting sub-edges will be marked as constrained.}
   *     \cgalParamDefault{a constant property map returning `false` for any edge}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{edge_is_marked_map}
   *     \cgalParamDescription{a property map filled by this function with `true` for all intersection edges of faces
-  *                           of `tm1` and `tm1`, and `false` for all other edges.}
+  *                           of `tm1` and `tm2`, and `false` for all other edges.}
   *     \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
   *                    as key type and `bool` as value type}
   *     \cgalParamDefault{unused}
@@ -590,7 +590,7 @@ corefine_and_compute_boolean_operations(
   *
   *   \cgalParamNBegin{edge_is_marked_map}
   *     \cgalParamDescription{a property map filled by this function with `true` for all intersection edges of faces
-  *                           of `tm1` and `tm1`, and `false` for all other edges.}
+  *                           of `tm1` and `tm2`, and `false` for all other edges.}
   *     \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
   *                    as key type and `bool` as value type}
   *     \cgalParamDefault{unused}
@@ -730,7 +730,7 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
  *
  *   \cgalParamNBegin{edge_is_marked_map}
  *     \cgalParamDescription{a property map filled by this function with `true` for all intersection edges of faces
- *                           of `tm1` and `tm1`, and `false` for all other edges.}
+ *                           of `tm1` and `tm2`, and `false` for all other edges.}
  *     \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
  *                    as key type and `bool` as value type}
  *     \cgalParamDefault{unused}
