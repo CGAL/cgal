@@ -18,7 +18,6 @@
 
 #include <CGAL/SMDS_3/Mesh_complex_3_in_triangulation_3_fwd.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
-#include <CGAL/Conforming_constrained_Delaunay_triangulation_vertex_data_3.h>
 #include <CGAL/SMDS_3/tet_soup_to_c3t3.h>
 
 #include <CGAL/utility.h>
@@ -533,6 +532,8 @@ struct Has_ccdt_3_data<T, std::void_t<decltype(std::declval<T>().ccdt_3_data())>
 template <typename Tr>
 bool is_corner(const typename Tr::Vertex_handle v, const Tr&)
 {
+  enum class CDT_3_vertex_type { FREE, CORNER, INPUT_VERTEX = CORNER, STEINER_ON_EDGE, STEINER_IN_FACE };
+
   using V = typename Tr::Triangulation_data_structure::Vertex;
 
   if constexpr(Has_in_dimension<V>::value)
@@ -542,21 +543,6 @@ bool is_corner(const typename Tr::Vertex_handle v, const Tr&)
   else
     return false;
 }
-
-//template <typename Tr>
-//bool is_corner(const typename Tr::Vertex_handle v, const Tr&)
-//{
-//  using V = typename Tr::Triangulation_data_structure::Vertex;
-//
-//  if constexpr(has_member_function_in_dimension<V, int>::value)
-//    return v->in_dimension() == 0;
-//  else if constexpr(has_member_function_ccdt_3_data<V,
-//                      CGAL::Conforming_constrained_Delaunay_triangulation_vertex_data_3>::value)
-//    return v->ccdt_3_data().vertex_type() == CDT_3_vertex_type::CORNER;
-//  else
-//    return false;
-//}
-
 
 template <class T>
 void output_to_os(std::ostream& os, const T& x)
