@@ -87,15 +87,16 @@ int test_MEDIT_negative_cells()
   }
 
   Tr tr;
-  CGAL::IO::read_MEDIT(in, tr);
+  CGAL::IO::read_MEDIT(in, tr, CGAL::parameters::allow_negative_orientation(true));
   assert(tr.is_valid());
   std::ofstream os("negative_cells_out.mesh");
-  CGAL::IO::write_MEDIT(os, tr, CGAL::parameters::all_vertices(false).all_cells(true));
+  CGAL::IO::write_MEDIT(os, tr,
+    CGAL::parameters::all_vertices(false).all_cells(true));
   os.close();
 
   Tr tr2;
   std::ifstream is2("negative_cells_out.mesh");
-  CGAL::IO::read_MEDIT(is2, tr2);
+  CGAL::IO::read_MEDIT(is2, tr2, CGAL::parameters::allow_negative_orientation(true));
   is2.close();
   assert(tr2.is_valid());
 
