@@ -532,6 +532,7 @@ struct Has_ccdt_3_data<T, std::void_t<decltype(std::declval<T>().ccdt_3_data())>
 template <typename Tr>
 bool is_corner(const typename Tr::Vertex_handle v, const Tr&)
 {
+  //enum copied from Conforming_constrained_Delaunay_triangulation_vertex_data_3.h
   enum class CDT_3_vertex_type { FREE, CORNER, INPUT_VERTEX = CORNER, STEINER_ON_EDGE, STEINER_IN_FACE };
 
   using V = typename Tr::Triangulation_data_structure::Vertex;
