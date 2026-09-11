@@ -34,10 +34,10 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace internal {
 
-template<class TriangleMesh, class GT>
+template<class TriangleMesh, class GT, class VPM>
 struct AABB_tree_graph_helper
 {
-  using Primitive = AABB_face_graph_triangle_primitive<TriangleMesh>;
+  using Primitive = AABB_face_graph_triangle_primitive<TriangleMesh, VPM>;
   using Traits = AABB_traits_3<GT, Primitive>;
   using Tree = AABB_tree<Traits>;
 

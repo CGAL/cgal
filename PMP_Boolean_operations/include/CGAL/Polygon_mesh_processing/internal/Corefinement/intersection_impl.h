@@ -256,10 +256,14 @@ class Intersection_of_triangle_meshes
                             ISEM1 is_shared_edge_map_1,
                             ISEM2 is_shared_edge_map_2)
   {
-    using GT = typename GetGeomTraits<TriangleMesh, parameters::Default_named_parameters>::type;
-    using AABB_tree_helper = internal::AABB_tree_graph_helper<TriangleMesh, GT>;
-    using Tree = typename AABB_tree_helper::Tree;
-    AABB_tree_helper helper;
+    using Point = typename boost::property_traits<VPM1>::value_type;
+    using GT = typename CGAL::Kernel_traits<Point>::Kernel;
+    using AABB_tree_helper_1 = internal::AABB_tree_graph_helper<TriangleMesh, GT, VPM1>;
+    using AABB_tree_helper_2 = internal::AABB_tree_graph_helper<TriangleMesh, GT, VPM2>;
+    using Tree_1 = typename AABB_tree_helper_1::Tree;
+    using Tree_2 = typename AABB_tree_helper_2::Tree;
+    AABB_tree_helper_1 helper_1;
+    AABB_tree_helper_2 helper_2;
 
     std::vector<face_descriptor> tm1_faces_intersecting_bb;
     std::vector<face_descriptor> tm2_faces_intersecting_bb;
@@ -273,8 +277,8 @@ class Intersection_of_triangle_meshes
       if( !get(is_shared_face_map_2, f) && do_overlap(face_bbox(f, tm2), bb) )
         tm2_faces_intersecting_bb.push_back(f);
 
-    Tree tree1(tm1_faces_intersecting_bb.begin(), tm1_faces_intersecting_bb.end(), tm1);
-    Tree tree2(tm2_faces_intersecting_bb.begin(), tm2_faces_intersecting_bb.end(), tm2);
+    Tree_1 tree1(tm1_faces_intersecting_bb.begin(), tm1_faces_intersecting_bb.end(), tm1, vpm1);
+    Tree_2 tree2(tm2_faces_intersecting_bb.begin(), tm2_faces_intersecting_bb.end(), tm2, vpm2);
 
     auto process_candidates_without_non_manifold_map = [&](face_descriptor f_1, face_descriptor f_2, auto &callback12, auto &callback21){
       std::array<halfedge_descriptor, 3> hf1 = { halfedge(f_1, tm1),
@@ -337,8 +341,8 @@ class Intersection_of_triangle_meshes
       if constexpr(std::is_same_v<ConcurrencyTag, Parallel_tag>)
       {
         oneapi::tbb::task_group tg;
-        tg.run([&]{ helper.template build<ConcurrencyTag>(tree1, tm1, vpm1); });
-        helper.template build<ConcurrencyTag>(tree2, tm2, vpm2);
+        tg.run([&]{ helper_1.template build<ConcurrencyTag>(tree1, tm1, vpm1); });
+        helper_2.template build<ConcurrencyTag>(tree2, tm2, vpm2);
         tg.wait();
 
         tbb::concurrent_vector<std::pair<face_descriptor, face_descriptor>> inter;
@@ -358,8 +362,8 @@ class Intersection_of_triangle_meshes
       else
   #endif
       {
-        helper.template build<ConcurrencyTag>(tree1, tm1, vpm1);
-        helper.template build<ConcurrencyTag>(tree2, tm2, vpm2);
+        helper_1.template build<ConcurrencyTag>(tree1, tm1, vpm1);
+        helper_2.template build<ConcurrencyTag>(tree2, tm2, vpm2);
 
         std::vector<std::pair<face_descriptor, face_descriptor>> inter;
         CGAL::AABB_trees::all_pairs_of_intersecting_primitives(tree1, tree2, std::back_inserter(inter));
@@ -433,11 +437,11 @@ class Intersection_of_triangle_meshes
                             const VPM& vpm)
   {
     using GT = typename GetGeomTraits<TriangleMesh, parameters::Default_named_parameters>::type;
-    using AABB_tree_helper = internal::AABB_tree_graph_helper<TriangleMesh, GT>;
+    using AABB_tree_helper = internal::AABB_tree_graph_helper<TriangleMesh, GT, VPM>;
     using Tree = typename AABB_tree_helper::Tree;
     AABB_tree_helper helper;
 
-    Tree tree(faces(tm).begin(), faces(tm).end(), tm);
+    Tree tree(faces(tm).begin(), faces(tm).end(), tm, vpm);
     helper.template build<ConcurrencyTag>(tree, tm, vpm);
 
     using Callback = Collect_face_bbox_per_edge_bbox_with_coplanar_handling_one_mesh<

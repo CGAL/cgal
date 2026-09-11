@@ -68,7 +68,7 @@ struct Triangle_mesh_and_triangle_soup_wrapper
   using vertex_descriptor   = typename boost::graph_traits<TM>::vertex_descriptor;
   using halfedge_descriptor = typename boost::graph_traits<TM>::halfedge_descriptor; // private
 
-  using Tree_helper = AABB_tree_graph_helper<TM, GT>;
+  using Tree_helper = AABB_tree_graph_helper<TM, GT, VPM>;
   using Tree        = typename Tree_helper::Tree;
 
   template<class ConcurrencyTag = Sequential_tag, class FaceRange>
