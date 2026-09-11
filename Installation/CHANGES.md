@@ -40,6 +40,11 @@ Release date: December 2026
 
 ### [Boolean Operations On Meshes](https://doc.cgal.org/6.3/Manual/packages.html#PkgPMPBooleanOperations)
 
+### Polygon Mesh Processing - Boolean Operations
+- **Breaking change** Added to the corefinement based functions a new named parameter `edge_is_marked_map()` that will specifically collect new intersection edges.
+    Previously, `edge_is_constrained_map()` was storing both input constrained edges (updated when split) as well as new intersection edges.
+    The previous behavior can be reproduced, by passing the property map to both named parameters.
+- Added a new named parameter `edge_is_constrained_map()` to the `clip()` functions in order to preserve constrained edges when clipping a triangle mesh.
 - The corefinement based operations (including Boolean operations) has been optimized to better
   handle cases when some identical faces are shared between the input meshes. This leads to a significant speed up
   in those cases.
@@ -51,6 +56,8 @@ Release date: December 2026
   A drawer can attach a value to each face through the new `Graphics_scene_options` functions
   `is_face_valued` and `face_value` (with `face_value_name` for the legend). As an example, the
   surface mesh drawer exposes the aspect ratio of each face.
+
+
 
 ## [Release 6.2](https://github.com/CGAL/cgal/releases/tag/v6.2)
 

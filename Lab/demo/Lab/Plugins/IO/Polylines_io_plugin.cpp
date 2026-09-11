@@ -62,7 +62,10 @@ public:
 
     }
   QString name() const override{ return "polylines_io_plugin"; }
-  QString nameFilters() const override{ return "Polylines files (*.polylines.txt);; CGAL Polylines files (*.cgal)"; }
+  QString nameFilters() const override
+  {
+    return "Polylines files (*.polylines.txt);; CGAL Polylines files (*.cgal);; Txt polylines files (*.txt)";
+  }
   bool canLoad(QFileInfo fileinfo) const override;
   QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true) override;
 
@@ -135,7 +138,9 @@ bool CGAL_Lab_polylines_io_plugin::canLoad(QFileInfo fileinfo) const{
 
 QList<Scene_item*>
 CGAL_Lab_polylines_io_plugin::
-load(QFileInfo fileinfo, bool& ok, bool add_to_scene){
+load(QFileInfo fileinfo, bool& ok, bool add_to_scene)
+{
+  using Pt = Scene_polylines_item::Point_3;
 
   // Open file
   std::ifstream ifs(fileinfo.filePath().toUtf8());
@@ -158,42 +163,78 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene){
 
   std::list<std::vector<Scene_polylines_item::Point_3> > polylines;
   QStringList polylines_metadata;
-
   int counter = 0;
-  std::size_t n;
-  while(ifs >> n) {
-    ++counter;
-    std::vector<Scene_polylines_item::Point_3> new_polyline;
-    polylines.push_back(new_polyline);
-    std::vector<Scene_polylines_item::Point_3>&polyline = polylines.back();
-    polyline.reserve(n);
-    while(n--){
-      Scene_polylines_item::Point_3 p;
-      ifs >> p;
-      polyline.push_back(p);
-      if(!ifs.good())
+
+  QString extension = fileinfo.completeSuffix();
+  if(extension == "polylines.txt" || extension == "cgal")
+  {
+    std::size_t n;
+    while(ifs >> n) {
+      ++counter;
+      std::vector<Scene_polylines_item::Point_3> new_polyline;
+      polylines.push_back(new_polyline);
+      std::vector<Scene_polylines_item::Point_3>&polyline = polylines.back();
+      polyline.reserve(n);
+      while(n--){
+        Scene_polylines_item::Point_3 p;
+        ifs >> p;
+        polyline.push_back(p);
+        if(!ifs.good())
+        {
+          ok = false;
+          return QList<Scene_item*>();
+        }
+      }
+      std::string line_remainder;
+      std::getline(ifs, line_remainder);
+      QString metadata(line_remainder.c_str());
+      if(!metadata.isEmpty() && metadata[0].isSpace()) {
+        metadata.remove(0, 1);
+      }
+      polylines_metadata << metadata;
+      if(!metadata.isEmpty()) {
+        std::cerr << " (metadata: \"" << qPrintable(metadata) << "\")\n";
+      } else {
+      }
+      if(ifs.bad() || ifs.fail())
       {
         ok = false;
         return QList<Scene_item*>();
       }
     }
-    std::string line_remainder;
-    std::getline(ifs, line_remainder);
-    QString metadata(line_remainder.c_str());
-    if(!metadata.isEmpty() && metadata[0].isSpace()) {
-      metadata.remove(0, 1);
-    }
-    polylines_metadata << metadata;
-    if(!metadata.isEmpty()) {
-      std::cerr << " (metadata: \"" << qPrintable(metadata) << "\")\n";
-    } else {
-    }
-    if(ifs.bad() || ifs.fail())
+  }
+  else if (extension == "txt")
+  {
+    std::string line;
+    while (std::getline(ifs, line))
     {
-      ok = false;
-      return QList<Scene_item*>();
+      ++counter;
+      //each line is : "x1, y1, z1, x2, y2, z2"
+      std::istringstream tokenizer(line);
+
+      std::array<std::string, 3> p_s; //point p as string
+      std::getline(tokenizer, p_s[0], ',');
+      std::getline(tokenizer, p_s[1], ',');
+      std::getline(tokenizer, p_s[2], ',');
+
+      std::array<std::string, 3> q_s; //point q as string
+      std::getline(tokenizer, q_s[0], ',');
+      std::getline(tokenizer, q_s[1], ',');
+      std::getline(tokenizer, q_s[2]);
+      if (tokenizer)
+      {
+        Pt p(std::stod(p_s[0]), std::stod(p_s[1]), std::stod(p_s[2]));
+        Pt q(std::stod(q_s[0]), std::stod(q_s[1]), std::stod(q_s[2]));
+        polylines.push_back({ p, q });
+      }
+      else
+      {
+        std::cerr << "Error reading line " << line << std::endl;
+        // There were fewer colons then expected in the line
+      }
     }
   }
+
   if(counter == 0)
   {
     ok = false;
