@@ -25,7 +25,7 @@
 
 #include <boost/cstdint.hpp>
 
-#ifdef CGAL_USE_FastFloat
+#ifdef CGAL_USE_FASTFLOAT
 #include <fast_float/fast_float.h>
 #endif
 
@@ -116,7 +116,7 @@ public:
       while (parse(d)){
         entries.push_back(d);
       }
-#elif defined(CGAL_USE_FastFloat)
+#elif defined(CGAL_USE_FASTFLOAT)
       const char* p   = line.data();
       const char* end = p + line.size();
       auto parse = [&](double& v)
