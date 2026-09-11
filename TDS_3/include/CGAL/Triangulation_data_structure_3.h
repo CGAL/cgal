@@ -4217,7 +4217,9 @@ copy_tds(const TDS_src& tds,
       F[cit2]->set_neighbor(j, F[cit2->neighbor(j)] );
   }
 
-  CGAL_postcondition( is_valid() );
+  set_initial_Euler_characteristic(tds.initial_Euler_characteristic());
+
+  CGAL_postcondition(is_valid());
 
   return (vert != typename TDS_src::Vertex_handle()) ? V[vert] : Vertex_handle();
 }
