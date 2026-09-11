@@ -26,7 +26,6 @@
 #include <boost/cstdint.hpp>
 
 #ifdef CGAL_USE_FastFloat
-#error
 #include <fast_float/fast_float.h>
 #endif
 
