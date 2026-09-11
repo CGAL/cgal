@@ -62,6 +62,8 @@ using Tangent_space = unspecified_type;
 /*!
 returns a plane tangent to the patch to which its facet should align too.
 The range of points contains the current location of the facet vertices.
+
+\warning the function must be thread safe for Concurrent execution
 */
 Tangent_space patch_face_projection_plane(Patch_face patch_face, std::vector<Point_3> face_points) const;
 

@@ -40,10 +40,10 @@ Value_and_gradient torus_distance_and_gradient(const Point_3& p)
     const FT dr = radial - major_radius;
     const FT tube_distance = CGAL::sqrt(dr * dr + y * y);
 
-    CGAL_precondition(radial != FT(0));
-    CGAL_precondition(tube_distance != FT(0));
-
     const FT value = tube_distance - minor_radius;
+
+    if (radial < FT(1e-8) || tube_distance < FT(1e-8))
+        return {value, Vector_3(FT(1), FT(0), FT(0))};
 
     const Vector_3 gradient(
         dr * x / (tube_distance * radial),
@@ -62,9 +62,10 @@ Value_and_gradient sphere_distance_and_gradient(const Point_3& p)
     const FT distance_to_center =
         CGAL::sqrt(x * x + y * y + z * z);
 
-    CGAL_precondition(distance_to_center != FT(0));
-
     const FT radius = CGAL::sqrt(FT(3));
+
+    if (distance_to_center < FT(1e-8))
+        return {-radius, Vector_3(FT(1), FT(0), FT(0))};
 
     return {
         distance_to_center - radius,
