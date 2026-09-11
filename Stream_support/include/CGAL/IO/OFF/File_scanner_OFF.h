@@ -25,6 +25,11 @@
 
 #include <boost/cstdint.hpp>
 
+#ifdef CGAL_USE_FastFloat
+#error
+#include <fast_float/fast_float.h>
+#endif
+
 #include <vector>
 #include <cstddef>
 #include <iostream>
@@ -92,7 +97,7 @@ public:
 
       // Read all numbers in the line
       entries.clear();
-#if 1
+#if defined(CGAL_USE_STD_FROM_CHARS)
       const char* p   = line.data();
       const char* end = p + line.size();
       auto parse = [&](double& v)
@@ -112,6 +117,27 @@ public:
       while (parse(d)){
         entries.push_back(d);
       }
+#elif defined(CGAL_USE_FastFloat)
+      const char* p   = line.data();
+      const char* end = p + line.size();
+      auto parse = [&](double& v)
+      {
+        while (p != end &&
+          std::isspace(static_cast<unsigned char>(*p)))
+          ++p;
+
+        auto r = fast_float::from_chars(p, end, v);
+        if (r.ec != std::errc{})
+          return false;
+
+        p = r.ptr;
+        return true;
+      };
+      double d;
+      while (parse(d)){
+        entries.push_back(d);
+      }
+
 #else
       std::istringstream issline(line);
       double d;
