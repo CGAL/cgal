@@ -22,6 +22,8 @@ adaptor classes around iterators and circulators. See also circulators in
 Chapter \ref Chapter_Handles_Ranges_and_Circulators "Handles and Circulators".
 A class storing polymorphic objects
 is also provided, as well as a class to manage the uncertainty of some values.
+A C++23 vocabulary type `CGAL::cpp23::expected<T,E>` for returning either a
+result or an error without using exceptions is also included.
 Finally, tags and policy classes to specify complexity trade-offs of data-structures,
 and a class which helps specifying that the default types in template
 parameter lists are desired is also provided.
@@ -164,6 +166,55 @@ but it is important that providers of predicates that are meant to be
 filtered by `Filtered_predicate`, know about it.
 
 It can also be used in other contexts as well, as it is a general tool.
+
+\section stl_expected Expected Value or Error
+
+`CGAL::cpp23::expected<T, E>` is a vocabulary type that holds either an
+expected *value* of type `T` or an unexpected *error* of type `E`.
+It is \cgal's vendored implementation of `std::expected` from the C++23
+standard (ISO/IEC 14882:2024), provided for compilers that do not yet
+offer a complete `<expected>` header.
+
+Include `<CGAL/expected.h>` to use these types.
+
+The design mirrors `std::optional<T>` but makes the error case explicit and
+informative: instead of a "null" state, an erroneous result carries a
+description of what went wrong.
+
+\code{.cpp}
+#include <CGAL/expected.h>
+#include <string>
+
+CGAL::cpp23::expected<double, std::string>
+safe_sqrt(double x)
+{
+  if (x < 0)
+    return CGAL::cpp23::unexpected<std::string>("negative argument");
+  return std::sqrt(x);
+}
+
+void use()
+{
+  auto r = safe_sqrt(-1.0);
+  if (r)
+    std::cout << "sqrt = " << r.value() << "\n";
+  else
+    std::cout << "error: " << r.error() << "\n";
+}
+\endcode
+
+The error type `E` is wrapped in `CGAL::cpp23::unexpected<E>` to avoid
+ambiguity with constructors of `expected<T,E>` itself. The
+`CGAL::cpp23::make_unexpected()` helper constructs an `unexpected` object
+with type deduction:
+
+\code{.cpp}
+return CGAL::cpp23::make_unexpected("negative argument");
+\endcode
+
+When exceptions are enabled, accessing `.value()` on an object in the error
+state throws `CGAL::cpp23::bad_expected_access<E>`. When exceptions are
+disabled, `std::terminate()` is called instead.
 
 \section stl_complexity Complexity Tags and Policies
 
