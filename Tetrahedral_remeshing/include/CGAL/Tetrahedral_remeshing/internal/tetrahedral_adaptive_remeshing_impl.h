@@ -114,7 +114,15 @@ private:
   // Owned by the remesher, and handed to the triangulation for the duration of
   // the remeshing, so that the grid matches this triangulation's bounding box
   // and dies with it. Empty under Sequential_tag.
-  std::optional<typename Tr::Lock_data_structure> m_lock_ds;
+  // Tr::Lock_data_structure is void under Sequential_tag, and std::optional<void>
+  // is ill-formed, so the sequential instantiation holds an empty placeholder
+  // instead. has_value() is then always false and no lock grid is ever built.
+  struct No_lock_data_structure {};
+  using Lock_data_structure_or_empty = std::conditional_t<
+    std::is_convertible_v<Concurrency_tag, CGAL::Parallel_tag>,
+    typename Tr::Lock_data_structure,
+    No_lock_data_structure>;
+  std::optional<Lock_data_structure_or_empty> m_lock_ds;
 #endif
 
   /**
