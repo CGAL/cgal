@@ -401,7 +401,7 @@ public:
  * @tparam GeomTraits a geometric traits class
  * @tparam Function a callable object taking a `Point_3` and returning
  * `std::pair<FT, Vector_3>`, containing respectively the signed distance
- * and its gradient
+ * and its gradient. This gradient must never be strictly zero.
  *
  * \cgalModels{ConstructTangentSpace}
  *
