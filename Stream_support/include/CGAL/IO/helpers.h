@@ -23,10 +23,6 @@
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/range/has_range_iterator.hpp>
 
-#ifdef CGAL_USE_FASTFLOAT
-#include <fast_float/fast_float.h>
-#endif
-
 #include <algorithm>
 #include <string>
 
@@ -109,52 +105,6 @@ struct is_Point_set_or_Range_or_Iterator
 template <class T>
 inline constexpr bool is_Point_set_or_Range_or_Iterator_v = is_Point_set_or_Range_or_Iterator<T>::value;
 
-#ifdef CGAL_USE_FASTFLOAT
-#define CGAL_FROM_CHARS_NAMESPACE fast_float
-#else
-#define CGAL_FROM_CHARS_NAMESPACE  std
-#endif
-
-
-#if defined(CGAL_USE_STD_FROM_CHARS) || defined(CGAL_USE_FASTFLOAT)
-template <typename OutputIterator>
-OutputIterator parse_doubles(const std::string& line, OutputIterator it)
-{
-  const char* p   = line.data();
-  const char* end = p + line.size();
-
-  auto parse = [&](double& v)
-  {
-    while (p != end &&
-          std::isspace(static_cast<unsigned char>(*p)))
-      ++p;
-
-    auto r =  CGAL_FROM_CHARS_NAMESPACE::from_chars(p, end, v);
-
-    if (r.ec != std::errc{})
-      return false;
-
-    p = r.ptr;
-    return true;
-  };
-
-  double d;
-  while (parse(d)){
-        *it++ = d;
-  }
-  return it;
-}
-#else
-template <typename OutputIterator>
-OutputIterator parse_doubles(const std::string& line, OutputIterator it)
-{
-  std::istringstream issline(line);
-  double d;
-  while(issline >> IO::iformat(d)){
-    *it++ = d;
-  }
-}
-#endif
 
 } // end namespace internal
 } // end namespace IO

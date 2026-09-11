@@ -22,7 +22,6 @@
 #include <CGAL/IO/binary_file_io.h>
 #include <CGAL/IO/OFF/File_header_OFF.h>
 #include <CGAL/IO/io.h>
-#include <CGAL/IO/helpers.h>
 
 #include <boost/cstdint.hpp>
 

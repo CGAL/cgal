@@ -20,5 +20,6 @@ create_single_source_cgal_program("polygon_mesh_io_benchmark.cpp")
 
 if(TARGET CGAL::FastFloat_support)
   message(STATUS "Found FastFloat")
+  target_link_libraries(read_doubles PRIVATE CGAL::FastFloat_support)
   target_link_libraries(polygon_mesh_io_benchmark PRIVATE CGAL::FastFloat_support)
 endif()

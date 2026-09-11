@@ -19,13 +19,17 @@
 #define CGAL_IO_H
 
 #include <CGAL/disable_warnings.h>
-
+#include <CGAL/config.h>
 #include <CGAL/IO/io_tags.h>
 #include <CGAL/IO/Color.h>
 
 #include <CGAL/assertions.h>
 #include <CGAL/Fraction_traits.h>
 #include <CGAL/tags.h>
+
+#ifdef CGAL_USE_FASTFLOAT
+#include <fast_float/fast_float.h>
+#endif
 
 #include <cstdio>
 #include <cctype>
@@ -38,6 +42,82 @@
 namespace CGAL {
 
 namespace IO {
+
+namespace internal {
+#ifdef CGAL_USE_FASTFLOAT
+#define CGAL_FROM_CHARS_NAMESPACE fast_float
+#else
+#define CGAL_FROM_CHARS_NAMESPACE  std
+#endif
+
+
+#if defined(CGAL_USE_STD_FROM_CHARS) || defined(CGAL_USE_FASTFLOAT)
+template <typename OutputIterator>
+OutputIterator parse_doubles(const std::string& line, OutputIterator it)
+{
+  const char* p   = line.data();
+  const char* end = p + line.size();
+
+  auto parse = [&](double& v)
+  {
+    while (p != end &&
+          std::isspace(static_cast<unsigned char>(*p)))
+      ++p;
+
+    auto r =  CGAL_FROM_CHARS_NAMESPACE::from_chars(p, end, v);
+
+    if (r.ec != std::errc{})
+      return false;
+
+    p = r.ptr;
+    return true;
+  };
+
+  double d;
+  while (parse(d)){
+        *it++ = d;
+  }
+  return it;
+}
+
+bool parse_double(const std::string& line, double& d)
+{
+  const char* p   = line.data();
+  const char* end = p + line.size();
+
+  while (p != end &&
+         std::isspace(static_cast<unsigned char>(*p)))
+    ++p;
+
+  auto r =  CGAL_FROM_CHARS_NAMESPACE::from_chars(p, end, d);
+
+  if (r.ec != std::errc{})
+    return false;
+
+  return true;
+}
+
+#else
+template <typename OutputIterator>
+OutputIterator parse_doubles(const std::string& line, OutputIterator it)
+{
+  std::istringstream issline(line);
+  double d;
+  while(issline >> IO::iformat(d)){
+    *it++ = d;
+  }
+  return it;
+}
+
+bool parse_double(const std::string& line, double& d)
+{
+   d = strtod(line.c_str(),NULL);
+   return true;   // undefined behavior if the string does not contain a double
+}
+
+#endif
+} // namespace internal
+
 
 class Static
 {
@@ -306,7 +386,7 @@ public:
   }
 };
 
-#if CGAL_FORCE_IFORMAT_DOUBLE || \
+#if defined (CGAL_FORCE_IFORMAT_DOUBLE) || \
   ( ( _MSC_VER > 1600 ) && ( _MSC_VER < 1910 ) && (! defined( CGAL_NO_IFORMAT_DOUBLE )) )
 
 template <>
@@ -370,7 +450,7 @@ public:
       }
     }
 
-    if(sscanf_s(buffer.c_str(), "%lf", &t) != 1)
+    if(! IO::internal::parse_double(buffer, t))
     {
       // if a 'buffer' does not contain a double, set the fail bit.
       is.setstate(std::ios_base::failbit);
