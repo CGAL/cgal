@@ -149,6 +149,7 @@ template <typename OutputIterator>
 OutputIterator parse_doubles(const std::string& line, OutputIterator it)
 {
   std::istringstream issline(line);
+  double d;
   while(issline >> IO::iformat(d)){
     *it++ = d;
   }
