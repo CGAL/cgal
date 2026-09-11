@@ -162,11 +162,14 @@ bool build_finite_cells(Tr& tr,
     }
 
     // this assertion also tests for degeneracy
-    if (allow_negative_orientation && !tr.may_have_badly_oriented_cells())
+    if (allow_negative_orientation)
     {
-      auto o = orientation(cp(tr.point(vs[0])), cp(tr.point(vs[1])),
-                           cp(tr.point(vs[2])), cp(tr.point(vs[3])));
-      tr.may_have_badly_oriented_cells(o != CGAL::POSITIVE);
+      if(!tr.may_have_badly_oriented_cells())
+      {
+        auto o = orientation(cp(tr.point(vs[0])), cp(tr.point(vs[1])),
+                             cp(tr.point(vs[2])), cp(tr.point(vs[3])));
+        tr.may_have_badly_oriented_cells(o != CGAL::POSITIVE);
+      }
     }
     else
       CGAL_assertion(orientation(cp(tr.point(vs[0])), cp(tr.point(vs[1])),
