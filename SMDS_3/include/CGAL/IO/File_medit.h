@@ -18,6 +18,7 @@
 
 #include <CGAL/SMDS_3/Mesh_complex_3_in_triangulation_3_fwd.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
+#include <CGAL/Conforming_constrained_Delaunay_triangulation_vertex_data_3.h>
 #include <CGAL/SMDS_3/tet_soup_to_c3t3.h>
 
 #include <CGAL/utility.h>
@@ -35,6 +36,7 @@
 #include <vector>
 #include <unordered_map>
 #include <type_traits>
+#include <utility>
 #include <variant> //for std::visit
 
 namespace CGAL {
@@ -513,6 +515,49 @@ struct is_pair : std::false_type {};
 template <typename U, typename V>
 struct is_pair<std::pair<U, V>> : std::true_type {};
 
+
+template <typename T, typename = void>
+struct Has_in_dimension : std::false_type {};
+
+template <typename T>
+struct Has_in_dimension<T, std::void_t<decltype(std::declval<T>().in_dimension())>>
+  : std::true_type {};
+
+template <typename T, typename = void>
+struct Has_ccdt_3_data : std::false_type {};
+
+template <typename T>
+struct Has_ccdt_3_data<T, std::void_t<decltype(std::declval<T>().ccdt_3_data())>>
+  : std::true_type {};
+
+template <typename Tr>
+bool is_corner(const typename Tr::Vertex_handle v, const Tr&)
+{
+  using V = typename Tr::Triangulation_data_structure::Vertex;
+
+  if constexpr(Has_in_dimension<V>::value)
+    return v->in_dimension() == 0;
+  else if constexpr(Has_ccdt_3_data<V>::value)
+    return v->ccdt_3_data().vertex_type() == CDT_3_vertex_type::CORNER;
+  else
+    return false;
+}
+
+//template <typename Tr>
+//bool is_corner(const typename Tr::Vertex_handle v, const Tr&)
+//{
+//  using V = typename Tr::Triangulation_data_structure::Vertex;
+//
+//  if constexpr(has_member_function_in_dimension<V, int>::value)
+//    return v->in_dimension() == 0;
+//  else if constexpr(has_member_function_ccdt_3_data<V,
+//                      CGAL::Conforming_constrained_Delaunay_triangulation_vertex_data_3>::value)
+//    return v->ccdt_3_data().vertex_type() == CDT_3_vertex_type::CORNER;
+//  else
+//    return false;
+//}
+
+
 template <class T>
 void output_to_os(std::ostream& os, const T& x)
 {
@@ -640,6 +685,47 @@ output_to_medit(std::ostream& os,
       os << V[v] << ' ';
     os << get(cell_pmap, c) << '\n';
   }
+
+  //-------------------------------------------------------
+  // Corners
+  //-------------------------------------------------------
+  std::vector<typename Tr::Vertex_handle> corners;
+  for(const auto& v : vertices) {
+    if(is_corner(v, tr)) {
+      corners.push_back(v);
+    }
+  }
+  os << "Corners\n"
+     << size(corners) << '\n';
+  for(const auto& v : corners) {
+    os << V[v] << '\n';
+  }
+
+  //-------------------------------------------------------
+  // Edges
+  //-------------------------------------------------------
+  constexpr bool write_edges = Has_in_dimension<typename Tr::Triangulation_data_structure::Vertex>::value;
+  if constexpr(write_edges)
+  {
+    os << "Edges\n"
+       << size(edges) << '\n';
+    for(const auto& e : edges) {
+      auto [vh1, vh2] = tr.vertices(e);
+      auto index = (vh1->in_dimension() == 1)
+                  ? vh1->index()
+                  : (vh2->in_dimension() == 1 ? vh2->index() : 42 /*todo : magic id*/);
+      os << V[vh1] << ' ' << V[vh2] << ' ';
+      output_to_os(os, index);
+      os << '\n';
+    }
+  }
+
+  //-------------------------------------------------------
+  // Ridges (???)
+  //-------------------------------------------------------
+  //"Ridges"
+  //number of ridges
+  //a list of ids (one per line)
 
   //-------------------------------------------------------
   // End
