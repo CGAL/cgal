@@ -41,59 +41,179 @@ namespace Corefinement{
 // TODO option to ignore internal edges for patches of coplanar faces
 
 //binds two edge constrained pmaps
-template <class G, class Ecm1, class Ecm2=Ecm1>
-struct Ecm_bind{
+template <class G, class CstMap1, class CstMap2, class MarkMap1, class MarkMap2>
+struct Edge_properties_for_input
+{
   G& g1;
-  Ecm1& ecm1;
+  CstMap1 edge_cst_map1;
+  MarkMap1 edge_mark_map1;
   G& g2;
-  Ecm2& ecm2;
+  CstMap2 edge_cst_map2;
+  MarkMap2 edge_mark_map2;
 
-  Ecm_bind(G& g1, G& g2, Ecm1& ecm1, Ecm2& ecm2)
-  : g1(g1), ecm1(ecm1), g2(g2), ecm2(ecm2)
+  Edge_properties_for_input(G& g1, G& g2,
+                            CstMap1 edge_cst_map1, CstMap2 edge_cst_map2,
+                            MarkMap1 edge_mark_map1, MarkMap2 edge_mark_map2)
+  : g1(g1), edge_cst_map1(edge_cst_map1), edge_mark_map1(edge_mark_map1)
+  , g2(g2), edge_cst_map2(edge_cst_map2), edge_mark_map2(edge_mark_map2)
+  {}
+
+  template<class NP1, class NP2>
+  Edge_properties_for_input(G& g1, G& g2, const NP1& np1, const NP2& np2)
+    : Edge_properties_for_input(g1, g2,
+                                parameters::choose_parameter<No_mark<G>>(parameters::get_parameter(np1, internal_np::edge_is_constrained)),
+                                parameters::choose_parameter<No_mark<G>>(parameters::get_parameter(np2, internal_np::edge_is_constrained)),
+                                parameters::choose_parameter<No_mark<G>>(parameters::get_parameter(np1, internal_np::edge_is_marked_map)),
+                                parameters::choose_parameter<No_mark<G>>(parameters::get_parameter(np2, internal_np::edge_is_marked_map)))
   {}
 
   typedef typename boost::graph_traits<G>::edge_descriptor edge_descriptor;
 
-  void call_put_for_all_edges(bool b)
+  void update_on_intersection_status_for_all_edges(bool b)
   {
-    if constexpr (!std::is_same_v<Ecm1, No_mark<G>>)
-      for (edge_descriptor e : edges(g1)) put(ecm1, e, b);
-    if constexpr (!std::is_same_v<Ecm2, No_mark<G>>)
-      for (edge_descriptor e : edges(g2)) put(ecm2, e, b);
+    if constexpr (!std::is_same_v<MarkMap1, No_mark<G>>)
+      for (edge_descriptor e : edges(g1)) put(edge_mark_map1, e, b);
+    if constexpr (!std::is_same_v<MarkMap2, No_mark<G>>)
+      for (edge_descriptor e : edges(g2)) put(edge_mark_map2, e, b);
   }
 
-  void call_put(G& g, edge_descriptor e, bool b) const
+  bool is_constrained(G&g, edge_descriptor e) const
   {
+    if constexpr (std::is_same_v<CstMap1, No_mark<G>> && std::is_same_v<CstMap2, No_mark<G>>) return false;
     if ( &g==&g1 )
-      put(ecm1,e,b);
+      return get(edge_cst_map1,e);
+    CGAL_assertion( &g==&g2 );
+    return get(edge_cst_map2,e);
+  }
+  void set_constrained(G&g, edge_descriptor e) const
+  {
+    if constexpr (std::is_same_v<CstMap1, No_mark<G>> && std::is_same_v<CstMap2, No_mark<G>>) return;
+    if ( &g==&g1 )
+      put(edge_cst_map1,e,true);
     else
     {
       CGAL_assertion( &g==&g2 );
-      put(ecm2,e,b);
+      put(edge_cst_map2,e,true);
+    }
+  }
+  void set_on_intersection(G&g, edge_descriptor e) const
+  {
+    if constexpr (std::is_same_v<MarkMap1, No_mark<G>> && std::is_same_v<MarkMap2, No_mark<G>>) return;
+    if ( &g==&g1 )
+      put(edge_mark_map1,e,true);
+    else
+    {
+      CGAL_assertion( &g==&g2 );
+      put(edge_mark_map2,e,true);
+    }
+  }
+  template<class EdgeRange>
+  void set_on_intersection(G&g, const EdgeRange& edge_range) const
+  {
+    if constexpr (std::is_same_v<MarkMap1, No_mark<G>> && std::is_same_v<MarkMap2, No_mark<G>>) return;
+    if ( &g==&g1 )
+      for (edge_descriptor e : edge_range)
+        put(edge_mark_map1,e,true);
+    else
+    {
+      CGAL_assertion( &g==&g2 );
+      for (edge_descriptor e : edge_range)
+        put(edge_mark_map2,e,true);
     }
   }
 
-  bool call_get(G& g, edge_descriptor e) const
+  template<class EdgeRange>
+  void reset_on_intersection(G&g, const EdgeRange& edge_range) const
   {
+    if constexpr (std::is_same_v<MarkMap1, No_mark<G>> && std::is_same_v<MarkMap2, No_mark<G>>) return;
     if ( &g==&g1 )
-      return get(ecm1,e);
-    CGAL_assertion( &g==&g2 );
-    return get(ecm2,e);
+      for (edge_descriptor e : edge_range)
+        put(edge_mark_map1,e,false);
+    else
+    {
+      CGAL_assertion( &g==&g2 );
+      for (edge_descriptor e : edge_range)
+        put(edge_mark_map2,e,false);
+    }
   }
 };
 
 template <class G>
-struct Ecm_bind<G, No_mark<G>, No_mark<G> >
+struct Edge_properties_for_input<G, No_mark<G>, No_mark<G>, No_mark<G>, No_mark<G> >
 {
-  No_mark<G> ecm1, ecm2;
-  Ecm_bind(G&, G&, const No_mark<G>&, const No_mark<G>&){}
+  No_mark<G> edge_cst_map1, edge_cst_map2, edge_mark_map1, edge_mark_map2;
+  template<class NP1, class NP2>
+  Edge_properties_for_input(G&, G&, const NP1&, const NP2&){}
   typedef typename boost::graph_traits<G>::edge_descriptor edge_descriptor;
-  void call_put(G&, edge_descriptor, bool) const {}
-  bool call_get(G&, edge_descriptor) const {
-    return false;
-  }
-  void call_put_for_all_edges(bool) {}
+  constexpr void set_constrained(G&, edge_descriptor) const {}
+  constexpr void set_on_intersection(G&, edge_descriptor) const {}
+  template<class EdgeRange>
+  constexpr void set_on_intersection(G&, const EdgeRange&) const {}
+  template<class EdgeRange>
+  constexpr void reset_on_intersection(G&, const EdgeRange&) const {}
+  constexpr bool is_constrained(G&, edge_descriptor) const { return false;}
+  constexpr void update_on_intersection_status_for_all_edges(bool) {}
 };
+
+template <class G, class NP1, class NP2>
+struct Get_Edge_properties_for_input
+{
+  typedef No_mark<G> D;
+  typedef typename internal_np::Lookup_named_param_def<internal_np::edge_is_constrained_t, NP1, D> ::type Cst_map1;
+  typedef typename internal_np::Lookup_named_param_def<internal_np::edge_is_constrained_t, NP2, D> ::type Cst_map2;
+  typedef typename internal_np::Lookup_named_param_def<internal_np::edge_is_marked_map_t, NP1, D> ::type Mark_map1;
+  typedef typename internal_np::Lookup_named_param_def<internal_np::edge_is_marked_map_t, NP2, D> ::type Mark_map2;
+  typedef Edge_properties_for_input<G, Cst_map1, Cst_map2, Mark_map1, Mark_map2> type;
+};
+
+
+template <class G,
+          class CstMap_0, class CstMap_1, class CstMap_2, class CstMap_3,
+          class MarkMap_0, class MarkMap_1, class MarkMap_2, class MarkMap_3>
+struct Edge_properties_for_output
+{
+  std::tuple<CstMap_0, CstMap_1, CstMap_2, CstMap_3> edge_cst_tuple;
+  std::tuple<MarkMap_0, MarkMap_1, MarkMap_2, MarkMap_3> edge_mark_tuple;
+
+
+  Edge_properties_for_output(CstMap_0 edge_cst_map0, CstMap_1 edge_cst_map1, CstMap_2 edge_cst_map2, CstMap_3 edge_cst_map3,
+                             MarkMap_0 edge_mark_map0, MarkMap_1 edge_mark_map1, MarkMap_2 edge_mark_map2, MarkMap_3 edge_mark_map3)
+  : edge_cst_tuple(edge_cst_map0,edge_cst_map1,edge_cst_map2,edge_cst_map3)
+  , edge_mark_tuple(edge_mark_map0,edge_mark_map1,edge_mark_map2,edge_mark_map3)
+  {}
+
+  template<class NP_tuple>
+  Edge_properties_for_output(const NP_tuple nps)
+    : Edge_properties_for_output(parameters::choose_parameter<No_mark<G>>(parameters::get_parameter(std::get<0>(nps), internal_np::edge_is_constrained)),
+                                 parameters::choose_parameter<No_mark<G>>(parameters::get_parameter(std::get<1>(nps), internal_np::edge_is_constrained)),
+                                 parameters::choose_parameter<No_mark<G>>(parameters::get_parameter(std::get<2>(nps), internal_np::edge_is_constrained)),
+                                 parameters::choose_parameter<No_mark<G>>(parameters::get_parameter(std::get<3>(nps), internal_np::edge_is_constrained)),
+                                 parameters::choose_parameter<No_mark<G>>(parameters::get_parameter(std::get<0>(nps), internal_np::edge_is_marked_map)),
+                                 parameters::choose_parameter<No_mark<G>>(parameters::get_parameter(std::get<1>(nps), internal_np::edge_is_marked_map)),
+                                 parameters::choose_parameter<No_mark<G>>(parameters::get_parameter(std::get<2>(nps), internal_np::edge_is_marked_map)),
+                                 parameters::choose_parameter<No_mark<G>>(parameters::get_parameter(std::get<3>(nps), internal_np::edge_is_marked_map)))
+  {}
+};
+
+template <class G, class NP_tuple>
+struct Get_edge_properties_for_output
+{
+  typedef No_mark<G> D;
+  typedef typename internal_np::Lookup_named_param_def<internal_np::edge_is_constrained_t, std::tuple_element_t<0, NP_tuple>, D> ::type CstMap0;
+  typedef typename internal_np::Lookup_named_param_def<internal_np::edge_is_constrained_t, std::tuple_element_t<1, NP_tuple>, D> ::type CstMap1;
+  typedef typename internal_np::Lookup_named_param_def<internal_np::edge_is_constrained_t, std::tuple_element_t<2, NP_tuple>, D> ::type CstMap2;
+  typedef typename internal_np::Lookup_named_param_def<internal_np::edge_is_constrained_t, std::tuple_element_t<3, NP_tuple>, D> ::type CstMap3;
+  typedef typename internal_np::Lookup_named_param_def<internal_np::edge_is_marked_map_t, std::tuple_element_t<0, NP_tuple>, D> ::type Mark_map0;
+  typedef typename internal_np::Lookup_named_param_def<internal_np::edge_is_marked_map_t, std::tuple_element_t<1, NP_tuple>, D> ::type Mark_map1;
+  typedef typename internal_np::Lookup_named_param_def<internal_np::edge_is_marked_map_t, std::tuple_element_t<2, NP_tuple>, D> ::type Mark_map2;
+  typedef typename internal_np::Lookup_named_param_def<internal_np::edge_is_marked_map_t, std::tuple_element_t<3, NP_tuple>, D> ::type Mark_map3;
+  typedef Edge_properties_for_output<G, CstMap0, CstMap1, CstMap2, CstMap3, Mark_map0, Mark_map1, Mark_map2, Mark_map3> type;
+};
+
+
+template <class G>
+using Default_edge_properties_for_input = Edge_properties_for_input<G,No_mark<G>,No_mark<G>,No_mark<G>,No_mark<G>>;
+
 
 template<class G>
 struct No_extra_output_from_corefinement
@@ -459,8 +579,7 @@ template< class TriangleMesh,
           bool handle_non_manifold_features = false >
 class Surface_intersection_visitor_for_corefinement{
 //default template parameters
-  typedef typename Default::Get<EdgeMarkMapBind_,
-    Ecm_bind<TriangleMesh, No_mark<TriangleMesh> > >::type      EdgeMarkMapBind;
+  typedef typename Default::Get<EdgeMarkMapBind_, Default_edge_properties_for_input<TriangleMesh>>::type      EdgeMarkMapBind;
   typedef typename Default::Get<OutputBuilder_,
     No_extra_output_from_corefinement<TriangleMesh> >::type       OutputBuilder;
   typedef typename Default::Get<
@@ -531,31 +650,46 @@ private:
   bool input_with_coplanar_faces;
   TriangleMesh* const_mesh_ptr;
 
-  template <class Ecm1, class Ecm2>
-  void call_put(Ecm_bind<TriangleMesh, Ecm1, Ecm2>& ecm,
-                TriangleMesh& tm, edge_descriptor ed, bool v)
+  template <class CstMap1, class CstMap2, class MarkMap1, class MarkMap2>
+  void set_constrained(Edge_properties_for_input<TriangleMesh, CstMap1, CstMap2, MarkMap1, MarkMap2>& edge_properties,
+                       TriangleMesh& tm, edge_descriptor ed)
   {
-    ecm.call_put(tm, ed, v);
+    edge_properties.set_constrained(tm, ed);
   }
-  template <class Ecm>
-  void call_put(Ecm& ecm,
-                TriangleMesh&, edge_descriptor ed, bool v)
+  template <class Edge_map>
+  void set_constrained(Edge_map& em,
+                       TriangleMesh&, edge_descriptor ed)
   {
-    put(ecm, ed, v);
+    put(em, ed, true);
   }
 
-  template <class Ecm1, class Ecm2>
-  bool call_get(const Ecm_bind<TriangleMesh, Ecm1, Ecm2>& ecm,
+  template <class CstMap1, class CstMap2, class MarkMap1, class MarkMap2>
+  void set_on_intersection(Edge_properties_for_input<TriangleMesh, CstMap1, CstMap2, MarkMap1, MarkMap2>& em,
+                           TriangleMesh& tm, edge_descriptor ed)
+  {
+    em.set_on_intersection(tm, ed);
+  }
+  template <class Edge_map>
+  void set_on_intersection(Edge_map& em,
+                           TriangleMesh&, edge_descriptor ed)
+  {
+    put(em, ed, true);
+  }
+
+  template <class CstMap1, class CstMap2, class MarkMap1, class MarkMap2>
+  bool is_constrained(Edge_properties_for_input<TriangleMesh, CstMap1, CstMap2, MarkMap1, MarkMap2>& em,
                 TriangleMesh& tm, edge_descriptor ed)
   {
-    return ecm.call_get(tm, ed);
+    return em.is_constrained(tm, ed);
   }
-  template <class Ecm>
-  bool call_get(const Ecm& ecm,
-                TriangleMesh&, edge_descriptor ed)
+
+  template <class Edge_map>
+  bool is_constrained(Edge_map& em,
+                      TriangleMesh&, edge_descriptor ed)
   {
-    return get(ecm, ed);
+    return get(em, ed);
   }
+
 // visitor public functions
 public:
   Surface_intersection_visitor_for_corefinement(
@@ -572,10 +706,10 @@ public:
   {
     if constexpr (std::is_same_v<OutputBuilder, No_extra_output_from_corefinement<TriangleMesh>>)
     {
-      marks_on_edges.call_put_for_all_edges(true);
+      marks_on_edges.update_on_intersection_status_for_all_edges(true);
     }
     else
-      marks_on_edges.call_put_for_all_edges(false);
+      marks_on_edges.update_on_intersection_status_for_all_edges(false);
   }
 
   void start_filtering_intersections() const
@@ -1169,7 +1303,7 @@ public:
       //We need an edge incident to the source vertex of hedge. This is the first opposite edge created.
       bool first=true;
       halfedge_descriptor hedge_incident_to_src=Graph_traits::null_halfedge();
-      bool hedge_is_marked = call_get(marks_on_edges,tm,edge(hedge,tm));
+      bool edge_is_constrained = is_constrained(marks_on_edges,tm,edge(hedge,tm));
       //do split the edges
       CGAL_assertion_code(vertex_descriptor expected_src=source(hedge,tm));
       user_visitor.before_edge_split(hedge, tm);
@@ -1188,8 +1322,8 @@ public:
         }
 
         //update marker tags. If the edge was marked, then the resulting edges in the split must be marked
-        if ( hedge_is_marked )
-          call_put(marks_on_edges,tm,edge(hnew,tm),true);
+        if ( edge_is_constrained )
+          set_constrained(marks_on_edges,tm,edge(hnew,tm));
         user_visitor.new_vertex_added(node_id, target(hnew, tm), tm);
         user_visitor.edge_split(hnew, tm);
 
@@ -1308,7 +1442,7 @@ public:
                 std::tie(h, is_face_border) = halfedge(vi,vn, tm);
                 if (is_face_border)
                 {
-                  call_put(marks_on_edges,tm,edge(h,tm),true);
+                  set_on_intersection(marks_on_edges,tm,edge(h,tm));
                   output_builder.set_edge_per_polyline(tm,std::make_pair(id, id_n),h);
                 }
                 else
@@ -1338,7 +1472,7 @@ public:
           halfedge_descriptor nh = Euler::split_face(a[0].first, a[1].first, tm);
           new_faces.push_back(face(opposite(nh, tm), tm));
 
-          call_put(marks_on_edges,tm,edge(nh,tm),true);
+          set_on_intersection(marks_on_edges,tm,edge(nh,tm));
           output_builder.set_edge_per_polyline(tm,std::make_pair(a[0].second, a[1].second),nh);
         }
 
@@ -1542,7 +1676,7 @@ public:
         //is defined as one of them defines an adjacent face
         //CGAL_assertion(it_poly_hedge!=edge_to_hedge.end());
         if( it_poly_hedge!=edge_to_hedge.end() ){
-          call_put(marks_on_edges,tm,edge(it_poly_hedge->second,tm),true);
+          set_on_intersection(marks_on_edges,tm,edge(it_poly_hedge->second,tm));
           output_builder.set_edge_per_polyline(tm,node_id_pair,it_poly_hedge->second);
         }
         else{
@@ -1552,7 +1686,7 @@ public:
           it_poly_hedge=edge_to_hedge.find(opposite_pair);
           CGAL_assertion( it_poly_hedge!=edge_to_hedge.end() );
 
-          call_put(marks_on_edges,tm,edge(it_poly_hedge->second,tm),true);
+          set_on_intersection(marks_on_edges,tm,edge(it_poly_hedge->second,tm));
           output_builder.set_edge_per_polyline(tm,opposite_pair,it_poly_hedge->second);
         }
       }
@@ -1601,6 +1735,7 @@ public:
     {
       TriangleMesh& tm=*it->first;
       CGAL_assertion(&tm!=const_mesh_ptr);
+      CGAL_assertion(&tm1==&tm || &tm2==&tm);
 
     //   Face_boundaries& face_boundaries=mesh_to_face_boundaries[&tm];
 
@@ -1656,7 +1791,7 @@ public:
               }
               if (did_break) continue;
               std::pair<Node_id,Node_id> edge_pair(node_id,node_id_of_first);
-              call_put(marks_on_edges,tm,edge(hedge,tm),true);
+              set_on_intersection(marks_on_edges,tm,edge(hedge,tm));
               output_builder.set_edge_per_polyline(tm,edge_pair,hedge);
             }
           }
