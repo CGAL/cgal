@@ -59,6 +59,12 @@ int test_MEDIT_with_features()
   std::ifstream is("fandisk_out.mesh");
   C3t3 c3t3_in;
   CGAL::IO::read_MEDIT(is, c3t3_in);
+  is.close();
+
+  std::cout << "Read " << c3t3_in.number_of_facets() << " facets, " << c3t3_in.number_of_edges() << " edges, "
+            << c3t3_in.number_of_corners() << " corners." << std::endl;
+  std::cout << "Expected " << nb_facets << " facets, " << nb_edges << " edges, " << nb_corners << " corners."
+            << std::endl;
 
   assert(nb_facets == c3t3_in.number_of_facets());
   assert(nb_edges == c3t3_in.number_of_edges());
@@ -73,7 +79,7 @@ int test_MEDIT_negative_cells()
   using Tr = CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<K>;
 
   // Open file negative_cells
-  std::string filename = CGAL::data_file_path("meshes/negative_cells.mesh");
+  std::string filename = "data/c3t3_with_negative_cells.mesh";
   std::ifstream in(filename, std::ios_base::in);
   if(!in) {
     std::cerr << "Error! Cannot open file " << filename << std::endl;
@@ -83,7 +89,7 @@ int test_MEDIT_negative_cells()
   Tr tr;
   CGAL::IO::read_MEDIT(in, tr);
   assert(tr.is_valid());
-  std::ofstream os("negative_cells_in.mesh");
+  std::ofstream os("negative_cells_out.mesh");
   CGAL::IO::write_MEDIT(os, tr, CGAL::parameters::all_vertices(false).all_cells(true));
   os.close();
 
