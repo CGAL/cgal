@@ -745,6 +745,7 @@ public:
     : Base(tr.get_lock_data_structure()), _gt(tr._gt)
   {
     infinite = _tds.copy_tds(tr._tds, tr.infinite);
+    may_have_badly_oriented_cells(tr.may_have_badly_oriented_cells());
     CGAL_expensive_postcondition(*this == tr);
   }
 
@@ -792,6 +793,7 @@ public:
     using std::swap;
     swap(tr._gt, _gt);
     swap(tr.infinite, infinite);
+    swap(tr._may_have_badly_oriented_cells, _may_have_badly_oriented_cells);
     _tds.swap(tr._tds);
     Base::swap(tr);
   }
