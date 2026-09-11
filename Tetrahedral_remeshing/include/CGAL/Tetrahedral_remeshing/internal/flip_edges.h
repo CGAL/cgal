@@ -43,6 +43,7 @@ namespace internal
 enum Flip_Criterion{ MIN_ANGLE_BASED, AVERAGE_ANGLE_BASED,
                      VALENCE_BASED, VALENCE_MIN_DH_BASED };
 
+
 //outer_mirror_facets contains the set of facets of the outer hull
 //of the set of cells modified by the flip operation,
 //"seen from" outside
@@ -123,10 +124,10 @@ Sliver_removal_result flip_3_to_2(typename C3t3::Edge& edge,
   }
 
   //Check structural validity
-  Cell_handle c;
-  int i0, i1, i3;
-  if (tr.is_facet(vertices_around_edge[0], vertices_around_edge[1], vertices_around_edge[2],
-                  c, i0, i1, i3))
+  // Only the answer is used here, so the threadsafe walk -- which returns no
+  // cell -- serves this site exactly.
+  if (is_facet_tagged(tr, vertices_around_edge[0], vertices_around_edge[1],
+                      vertices_around_edge[2]))
     return NOT_FLIPPABLE;
 
   //Check topological validity
@@ -429,7 +430,7 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
                                           indices(facet_circulator->second, j));
             if (curr != vh0  && curr != vh1)
             {
-              if (tr.tds().is_edge(curr, vh))
+              if (is_edge_tagged(tr, curr, vh))
                 is_edge = true;
             }
           }
@@ -616,7 +617,7 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
 
     boost::container::small_vector<Cell_handle, 64>& o_inc_vh = inc_cells[vh];
     if (o_inc_vh.empty())
-      tr.incident_cells(vh, std::back_inserter(o_inc_vh));
+      incident_cells_tagged(tr, vh, std::back_inserter(o_inc_vh));
 
     //a chord is an edge joining vh to an apex that is not one of its two
     //neighbors on the ring (positions p-1 and p+1)
@@ -780,7 +781,7 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
 
   boost::container::small_vector<Cell_handle, 64>& o_inc_vh = inc_cells[vh];
   if (o_inc_vh.empty())
-    tr.incident_cells(vh, std::back_inserter(o_inc_vh));
+    incident_cells_tagged(tr, vh, std::back_inserter(o_inc_vh));
 
   do
   {
@@ -1989,6 +1990,56 @@ protected:
       , inc_cells(incident_cells) {}
 };
 
+// ---------------------------------------------------------------------------
+// The minimum viable lock zone of an internal flip (see MVLZ_FLIP.md).
+//
+// The zone taken by default is the union of the two endpoint stars. A flip
+// only ever writes the ring cells -- the cells around the flipped edge,
+// rewritten in full -- and their mirror cells, the cells across the ring's
+// outer facets, which it re-stitches through set_neighbor() and
+// update_c3t3_facets(). Ring and mirrors are a strict subset of the two stars:
+// the ring IS star(v0) n star(v1), and a mirror cell still contains an
+// endpoint, so it is a star cell too.
+//
+// Everything below is used by `Internal_edge_flip_operation::lock_zone()` and
+// by nothing else, and it only ever runs under `Parallel_tag`.
+//
+/**
+* An edge that has already been located: its two endpoints, one cell carrying
+* it, and their indices in that cell.
+*
+* `lock_zone()` and `execute_operation()` both need a cell containing the two
+* endpoints -- the first to circle the ring it is about to lock, the second to
+* build the `Edge` it works on. They run back to back on one thread with
+* nothing in between, so the second reuses what the first found instead of
+* searching the star again. The endpoints are stored alongside and checked by
+* `matches()`, so a value left over from another element is ignored rather
+* than used.
+*/
+template<typename Vertex_handle, typename Cell_handle>
+struct Located_edge
+{
+  Vertex_handle v0, v1;
+  Cell_handle c;
+  int i0 = -1, i1 = -1;
+  bool valid = false;
+
+  void set(Vertex_handle a, Vertex_handle b, Cell_handle ch, int ia, int ib)
+  { v0 = a; v1 = b; c = ch; i0 = ia; i1 = ib; valid = true; }
+
+  void clear() { valid = false; }
+
+  bool matches(Vertex_handle a, Vertex_handle b) const
+  { return valid && v0 == a && v1 == b; }
+};
+
+template<typename Vertex_handle, typename Cell_handle>
+Located_edge<Vertex_handle, Cell_handle>& last_located_edge()
+{
+  static thread_local Located_edge<Vertex_handle, Cell_handle> edge;
+  return edge;
+}
+
 // Flip of internal (non-boundary) edges. Mirrors the former flip_all_edges():
 // reset the cell caches, collect the internal edges, then run find_best_flip
 // on each in turn, sharing the incident-cells cache.
@@ -2034,14 +2085,29 @@ public:
 
   bool execute_operation(const Element_type& vp, C3t3& c3t3) override
   {
-    Cells_vector& o_inc_vh = inc_cells[vp.first];
-    if (o_inc_vh.empty())
-      c3t3.triangulation().incident_cells(vp.first, std::back_inserter(o_inc_vh));
-
     Cell_handle ch;
     int i0, i1;
-    if (!is_edge_uv(vp.first, vp.second, o_inc_vh, ch, i0, i1))
-      return false;
+    if constexpr (is_parallel)
+    {
+      // lock_zone() ran first and located the edge in order to lock its ring.
+      // No match means it found no cell carrying the edge, i.e. this pair is
+      // no longer an edge and there is nothing to flip.
+      const auto& located = last_located_edge<Vertex_handle, Cell_handle>();
+      if (!located.matches(vp.first, vp.second))
+        return false;
+      ch = located.c;
+      i0 = located.i0;
+      i1 = located.i1;
+    }
+    else
+    {
+      Cells_vector& o_inc_vh = inc_cells[vp.first];
+      if (o_inc_vh.empty())
+        c3t3.triangulation().incident_cells(vp.first, std::back_inserter(o_inc_vh));
+
+      if (!is_edge_uv(vp.first, vp.second, o_inc_vh, ch, i0, i1))
+        return false;
+    }
 
     Edge edge(ch, i0, i1);
     const Sliver_removal_result res
@@ -2049,23 +2115,73 @@ public:
     return (res == VALID_FLIP);
   }
 
+  // `lock_zone()` is called by the parallel executor alone; the sequential one
+  // goes straight to `execute_operation()`, which must then locate the edge
+  // itself.
+  static constexpr bool is_parallel
+    = std::is_convertible_v<typename BaseClass::Concurrency_tag, CGAL::Parallel_tag>;
+
   /**
-  * A flip rewrites the cells around the edge, which are exactly the cells
-  * shared by the stars of its two vertices. Locking both stars therefore
-  * covers everything `execute_operation()` writes, including the two cache
-  * entries it fills here while the zone is held. Only used by the parallel
-  * executor.
+  * Locks everything `execute_operation()` may write, and nothing else.
+  *
+  * A flip rewrites the RING -- the cells around the flipped edge -- in full,
+  * and re-stitches the MIRROR cells across the ring's outer facets through
+  * `set_neighbor()` and `update_c3t3_facets()`. Cells created by the flip have
+  * only ring vertices and one ring apex as corners. Nothing else is written:
+  * the rest of the two endpoint stars is read, never modified.
+  *
+  * A cell is protected by holding its four vertices, so the zone is the vertex
+  * union of the ring and its mirrors. That is a strict subset of the two
+  * endpoint stars -- the ring IS star(v0) n star(v1), and a mirror cell still
+  * contains an endpoint -- and it is reached here in O(ring) rather than
+  * O(star): one early-exit search for a cell carrying the edge, then a
+  * `Cell_circulator`, which rotates through neighbour pointers and so needs
+  * neither a visited set nor marks.
+  *
+  * The two endpoints are locked first for two reasons: `v->cell()` is only
+  * dependable once `v` is held, and holding them is what makes the search safe
+  * to read -- every cell it visits contains `v0`, and a thread writing such a
+  * cell would have to hold all four of its vertices, `v0` among them.
+  *
+  * Returning false leaves partial locks behind; the executor releases them all
+  * before retrying.
   */
   bool lock_zone(const Element_type& vp, const C3t3& c3t3) const
   {
+    typedef typename C3t3::Triangulation::Cell_circulator Cell_circulator;
     const typename C3t3::Triangulation& tr = c3t3.triangulation();
-    Cells_vector inc_first, inc_second;
-    if (!tr.try_lock_and_get_incident_cells(vp.first, inc_first)
-     || !tr.try_lock_and_get_incident_cells(vp.second, inc_second))
+
+    last_located_edge<Vertex_handle, Cell_handle>().clear();
+
+    if (!tr.try_lock_vertex(vp.first) || !tr.try_lock_vertex(vp.second))
       return false;
 
-    inc_cells[vp.first] = inc_first;
-    inc_cells[vp.second] = inc_second;
+    Cell_handle edge_cell;
+    const Vertex_handle other = vp.second;
+    if (!tr.find_first_incident_cell_threadsafe(vp.first,
+          [other](const Cell_handle c) { return c->has_vertex(other); },
+          edge_cell))
+      return true; // no longer an edge; execute_operation() will decline it
+
+    const int i0 = edge_cell->index(vp.first);
+    const int i1 = edge_cell->index(vp.second);
+    const Edge edge(edge_cell, i0, i1);
+
+    Cell_circulator circ = tr.incident_cells(edge);
+    const Cell_circulator done = circ;
+    do
+    {
+      const Cell_handle c = circ;
+      // the ring cell, and the two cells across its outer facets
+      if (!tr.try_lock_cell(c)
+       || !tr.try_lock_cell(c->neighbor(c->index(vp.first)))
+       || !tr.try_lock_cell(c->neighbor(c->index(vp.second))))
+        return false;
+    }
+    while (++circ != done);
+
+    last_located_edge<Vertex_handle, Cell_handle>()
+      .set(vp.first, vp.second, edge_cell, i0, i1);
     return true;
   }
 
