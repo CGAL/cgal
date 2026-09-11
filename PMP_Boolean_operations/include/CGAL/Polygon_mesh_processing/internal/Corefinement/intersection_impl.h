@@ -15,16 +15,16 @@
 
 #include <CGAL/license/Polygon_mesh_processing/corefinement.h>
 
-
 #include <boost/graph/graph_traits.hpp>
-#include <CGAL/box_intersection_d.h>
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/intersection_callbacks.h>
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/Intersection_type.h>
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/intersection_of_coplanar_triangles_3.h>
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/intersection_nodes.h>
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/intersect_triangle_and_segment_3.h>
+#include <CGAL/Polygon_mesh_processing/internal/soup_and_face_graph_tree_helper.h>
 #include <CGAL/Polygon_mesh_processing/Non_manifold_feature_map.h>
 #include <CGAL/Polygon_mesh_processing/bbox.h>
+#include <CGAL/AABB_trees/intersection.h>
 #include <CGAL/utility.h>
 
 #include <boost/dynamic_bitset.hpp>
@@ -51,8 +51,7 @@ struct Triple_intersection_exception :
 // The algorithm works as follow:
 // From each triangle mesh, we extract a set of segments from the edges and a
 // set of triangles from the faces.
-// We use Box_intersection_d to filter intersection between the segments from
-// one mesh with the triangles from the other one.
+// We use AABB_trees to filter pairs of candidates intersecting faces and extract the intersection of between an edge and a face.
 // From this filtered set, for each pair (segment,triangle), we look at the
 // intersection type. If not empty, we can have three different cases
 //   1)the segment intersect the interior of the triangle:
@@ -196,7 +195,8 @@ struct Node_id_set {
 
 template< class TriangleMesh,
           class VertexPointMap1, class VertexPointMap2,
-          class Node_visitor=Default_surface_intersection_visitor<TriangleMesh>
+          class Node_visitor=Default_surface_intersection_visitor<TriangleMesh>,
+          class ConcurrencyTag=Sequential_tag
          >
 class Intersection_of_triangle_meshes
 {
@@ -205,9 +205,6 @@ class Intersection_of_triangle_meshes
   typedef typename graph_traits::edge_descriptor edge_descriptor;
   typedef typename graph_traits::halfedge_descriptor halfedge_descriptor;
   typedef typename graph_traits::vertex_descriptor vertex_descriptor;
-
-  typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;
-  typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, halfedge_descriptor, Box_policy> Box;
 
   typedef std::unordered_set<face_descriptor> Face_set;
   typedef std::unordered_map<edge_descriptor, Face_set> Edge_to_faces;
@@ -244,164 +241,193 @@ class Intersection_of_triangle_meshes
   CGAL_assertion_code(bool doing_autorefinement;)
 
 // member functions
-  template <class VPMF, class VPME, class IFSM, class IESM>
-  void filter_intersections(const TriangleMesh& tm_f,
-                            const TriangleMesh& tm_e,
-                            const VPMF& vpm_f,
-                            const VPME& vpm_e,
-                            const Non_manifold_feature_map<TriangleMesh>& non_manifold_feature_map,
+  template <class VPM1, class VPM2, class ISFM1, class ISFM2, class ISEM1, class ISEM2>
+  void filter_intersections(const TriangleMesh& tm1,
+                            const TriangleMesh& tm2,
+                            const VPM1& vpm1,
+                            const VPM2& vpm2,
+                            const Non_manifold_feature_map<TriangleMesh>& non_manifold_feature_map_1,
+                            const Non_manifold_feature_map<TriangleMesh>& non_manifold_feature_map_2,
                             bool throw_on_self_intersection,
-                            std::set<face_descriptor>& tm_f_faces,
-                            std::set<face_descriptor>& tm_e_faces,
-                            Bbox_3 g_bb,
-                            IFSM is_shared_map_f,
-                            IESM is_shared_map_e,
-                            bool run_check)
+                            std::set<face_descriptor>& tm1_faces,
+                            std::set<face_descriptor>& tm2_faces,
+                            Bbox_3 bb,
+                            ISFM1 is_shared_face_map_1,
+                            ISFM2 is_shared_face_map_2,
+                            ISEM1 is_shared_edge_map_1,
+                            ISEM2 is_shared_edge_map_2)
   {
-    std::vector<Box> face_boxes, edge_boxes;
-    std::vector<Box*> face_boxes_ptr, edge_boxes_ptr;
+    using Point = typename boost::property_traits<VPM1>::value_type;
+    using GT = typename CGAL::Kernel_traits<Point>::Kernel;
+    using AABB_tree_helper_1 = internal::AABB_tree_graph_helper<TriangleMesh, GT, VPM1>;
+    using AABB_tree_helper_2 = internal::AABB_tree_graph_helper<TriangleMesh, GT, VPM2>;
+    using Tree_1 = typename AABB_tree_helper_1::Tree;
+    using Tree_2 = typename AABB_tree_helper_2::Tree;
+    AABB_tree_helper_1 helper_1;
+    AABB_tree_helper_2 helper_2;
 
-    face_boxes.reserve(num_faces(tm_f));
-    face_boxes_ptr.reserve(num_faces(tm_f));
-    for(face_descriptor fd : faces(tm_f))
-    {
-      if (get(is_shared_map_f,fd)) continue;
-      halfedge_descriptor h=halfedge(fd,tm_f);
-      Bbox_3 bb = get(vpm_f,source(h,tm_f)).bbox() +
-                  get(vpm_f,target(h,tm_f)).bbox() +
-                  get(vpm_f,target(next(h,tm_f),tm_f)).bbox();
-      if (do_overlap(bb, g_bb))
-      {
-        face_boxes.emplace_back(bb, h);
-        face_boxes_ptr.push_back( &face_boxes.back() );
+    std::vector<face_descriptor> tm1_faces_intersecting_bb;
+    std::vector<face_descriptor> tm2_faces_intersecting_bb;
+    tm1_faces_intersecting_bb.reserve(num_faces(tm1));
+    tm2_faces_intersecting_bb.reserve(num_faces(tm2));
+
+    for(face_descriptor f: faces(tm1))
+      if( !get(is_shared_face_map_1, f) && do_overlap(face_bbox(f, tm1), bb) )
+        tm1_faces_intersecting_bb.push_back(f);
+    for(face_descriptor f: faces(tm2))
+      if( !get(is_shared_face_map_2, f) && do_overlap(face_bbox(f, tm2), bb) )
+        tm2_faces_intersecting_bb.push_back(f);
+
+    Tree_1 tree1(tm1_faces_intersecting_bb.begin(), tm1_faces_intersecting_bb.end(), tm1, vpm1);
+    Tree_2 tree2(tm2_faces_intersecting_bb.begin(), tm2_faces_intersecting_bb.end(), tm2, vpm2);
+
+    auto process_candidates_without_non_manifold_map = [&](face_descriptor f_1, face_descriptor f_2, auto &callback12, auto &callback21){
+      std::array<halfedge_descriptor, 3> hf1 = { halfedge(f_1, tm1),
+                                                 next(halfedge(f_1, tm1), tm1),
+                                                 next(next(halfedge(f_1, tm1), tm1), tm1) };
+
+      std::array<halfedge_descriptor, 3> hf2 = { halfedge(f_2, tm2),
+                                                 next(halfedge(f_2, tm2), tm2),
+                                                 next(next(halfedge(f_2, tm2), tm2), tm2) };
+
+      for(halfedge_descriptor h : hf2){
+        edge_descriptor e = edge(h, tm2);
+        if( !get(is_shared_edge_map_2, e) && (is_border(h, tm2) || h < opposite(h, tm2)))
+          callback12(hf1[0], h);
       }
-    }
-
-    edge_boxes.reserve(num_edges(tm_e));
-    edge_boxes_ptr.reserve(num_edges(tm_e));
-    if (non_manifold_feature_map.non_manifold_edges.empty())
-      // general manifold case
-      for(edge_descriptor ed : edges(tm_e))
-      {
-        if (get(is_shared_map_e,ed)) continue;
-        halfedge_descriptor h=halfedge(ed,tm_e);
-        Bbox_3 bb = get(vpm_e,source(h,tm_e)).bbox() +
-                    get(vpm_e,target(h,tm_e)).bbox();
-
-        if (do_overlap(bb, g_bb))
-        {
-          edge_boxes.emplace_back(bb,h);
-          edge_boxes_ptr.push_back( &edge_boxes.back() );
-        }
+      for(halfedge_descriptor h : hf1){
+        edge_descriptor e = edge(h, tm1);
+        if( !get(is_shared_edge_map_1, e) && (is_border(h, tm1) || h < opposite(h, tm1)))
+          callback21(hf2[0], h);
       }
-    else
-      // non-manifold case
-      for(edge_descriptor ed : edges(tm_e))
-      {
-        std::size_t eid=get(non_manifold_feature_map.e_nm_id, ed);
-        halfedge_descriptor h=halfedge(ed,tm_e);
-        // insert only one copy of a non-manifold edge
-        if (eid!=NM_NID)
-        {
-          if (non_manifold_feature_map.non_manifold_edges[eid].front()!=ed)
-            continue;
+    };
+    auto process_candidates_with_non_manifold_map = [&](face_descriptor f_1, face_descriptor f_2, auto &callback12, auto &callback21){
+      std::array<halfedge_descriptor, 3> hf1 = { halfedge(f_1, tm1),
+                                                 next(halfedge(f_1, tm1), tm1),
+                                                 next(next(halfedge(f_1, tm1), tm1), tm1) };
+
+      std::array<halfedge_descriptor, 3> hf2 = { halfedge(f_2, tm2),
+                                                 next(halfedge(f_2, tm2), tm2),
+                                                 next(next(halfedge(f_2, tm2), tm2), tm2) };
+
+      for(halfedge_descriptor h : hf2){
+        edge_descriptor ed = edge(h, tm2);
+        std::size_t eid=get(non_manifold_feature_map_2.e_nm_id, ed);
+        if (eid!=NM_NID){
+          if (non_manifold_feature_map_2.non_manifold_edges[eid].front()!=ed) continue;
           else
             // make sure the halfedge used is consistent with stored one
-            h = halfedge(non_manifold_feature_map.non_manifold_edges[eid].front(), tm_e);
+            h = halfedge(non_manifold_feature_map_2.non_manifold_edges[eid].front(), tm2);
         }
-        if (get(is_shared_map_e,edge(h,tm_e))) continue;
-        Bbox_3 bb = get(vpm_e,source(h,tm_e)).bbox() +
-                    get(vpm_e,target(h,tm_e)).bbox();
-
-        if (do_overlap(bb, g_bb))
-        {
-          edge_boxes.emplace_back(bb,h);
-          edge_boxes_ptr.push_back( &edge_boxes.back() );
-        }
+        if( !get(is_shared_edge_map_2, ed) && (is_border(h, tm2) || h < opposite(h, tm2)))
+          callback12(hf1[0], h);
       }
+      for(halfedge_descriptor h : hf1){
+        edge_descriptor ed = edge(h, tm1);
+        std::size_t eid=get(non_manifold_feature_map_1.e_nm_id, ed);
+        if (eid!=NM_NID){
+          if (non_manifold_feature_map_1.non_manifold_edges[eid].front()!=ed) continue;
+          else
+            // make sure the halfedge used is consistent with stored one
+            h = halfedge(non_manifold_feature_map_1.non_manifold_edges[eid].front(), tm2);
+        }
+        if( !get(is_shared_edge_map_1, ed) && (is_border(h, tm1) || h < opposite(h, tm1)))
+          callback21(h, hf2[0]);
+      }
+    };
 
-    /// \todo experiments different cutoff values
-    std::ptrdiff_t cutoff = 2 * std::ptrdiff_t(
-        std::sqrt(face_boxes.size()+edge_boxes.size()) );
+    // Wrap the call of AABB intersections given two callback functions
+    auto AABB_call = [&](auto &callback12, auto &callback21){
+      #ifdef CGAL_LINKED_WITH_TBB
+      if constexpr(std::is_same_v<ConcurrencyTag, Parallel_tag>)
+      {
+        oneapi::tbb::task_group tg;
+        tg.run([&]{ helper_1.template build<ConcurrencyTag>(tree1, tm1, vpm1); });
+        helper_2.template build<ConcurrencyTag>(tree2, tm2, vpm2);
+        tg.wait();
 
-    Edge_to_faces& edge_to_faces = &tm_e < &tm_f
-                                 ? stm_edge_to_ltm_faces
-                                 : ltm_edge_to_stm_faces;
+        tbb::concurrent_vector<std::pair<face_descriptor, face_descriptor>> inter;
+        CGAL::AABB_trees::all_pairs_of_intersecting_primitives(tree1, tree2, std::back_inserter(inter), parameters::concurrency_tag(ConcurrencyTag()));
 
-    #ifdef DO_NOT_HANDLE_COPLANAR_FACES
-    typedef Collect_face_bbox_per_edge_bbox<TriangleMesh, Edge_to_faces>
-      Callback;
-    Callback callback(tm_f, tm_e, edge_to_faces);
-    #else
-    typedef Collect_face_bbox_per_edge_bbox_with_coplanar_handling<
-      TriangleMesh, VPMF, VPME, Edge_to_faces, Coplanar_face_set, Node_visitor>
-     Callback;
-    Callback  callback(tm_f, tm_e, vpm_f, vpm_e, edge_to_faces, coplanar_faces, visitor);
-    #endif
-    //using pointers in box_intersection_d is about 10% faster
+        if(non_manifold_feature_map_1.non_manifold_edges.empty() && non_manifold_feature_map_2.non_manifold_edges.empty())
+          tbb::parallel_for(std::size_t(0), inter.size(), [&](std::size_t i){
+            const auto& [f_1, f_2] = inter[i];
+            process_candidates_without_non_manifold_map(f_1, f_2, callback12, callback21);
+          });
+        else
+          tbb::parallel_for(std::size_t(0), inter.size(), [&](std::size_t i){
+            const auto& [f_1, f_2] = inter[i];
+            process_candidates_with_non_manifold_map(f_1, f_2, callback12, callback21);
+          });
+      }
+      else
+  #endif
+      {
+        helper_1.template build<ConcurrencyTag>(tree1, tm1, vpm1);
+        helper_2.template build<ConcurrencyTag>(tree2, tm2, vpm2);
+
+        std::vector<std::pair<face_descriptor, face_descriptor>> inter;
+        CGAL::AABB_trees::all_pairs_of_intersecting_primitives(tree1, tree2, std::back_inserter(inter));
+
+        if(non_manifold_feature_map_1.non_manifold_edges.empty() && non_manifold_feature_map_2.non_manifold_edges.empty())
+          for(const auto& [f_1, f_2]: inter)
+            process_candidates_without_non_manifold_map(f_1, f_2, callback12, callback21);
+        else
+          for(const auto& [f_1, f_2]: inter)
+            process_candidates_with_non_manifold_map(f_1, f_2, callback12, callback21);
+      }
+    };
+
+    // Select the desire callbacks
+#ifdef DO_NOT_HANDLE_COPLANAR_FACES
+    using Callback = Collect_face_bbox_per_edge_bbox<TriangleMesh, Edge_to_faces>;
+    Callback callback12(tm1, tm2, ltm_edge_to_stm_faces);
+    Callback callback21(tm2, tm1, stm_edge_to_ltm_faces);
+#else
+    using Callback = Collect_face_bbox_per_edge_bbox_with_coplanar_handling<
+                      TriangleMesh, VPM1, VPM2, Edge_to_faces, Coplanar_face_set, Node_visitor>;
+    Callback callback12(tm1, tm2, vpm1, vpm2, ltm_edge_to_stm_faces, coplanar_faces, visitor);
+    Callback callback21(tm2, tm1, vpm2, vpm1, stm_edge_to_ltm_faces, coplanar_faces, visitor);
+#endif
+
     if (throw_on_self_intersection){
-        Callback_with_self_intersection_report<TriangleMesh, Callback> callback_si(callback, tm_f_faces, tm_e_faces);
-        CGAL::box_intersection_d(face_boxes_ptr.begin(), face_boxes_ptr.end(),
-                                 edge_boxes_ptr.begin(), edge_boxes_ptr.end(),
-                                 callback_si, cutoff);
-        if (run_check && callback_si.self_intersections_found())
-         throw Self_intersection_exception();
+      Callback_with_self_intersection_report<TriangleMesh, Callback> callback_si_12(callback12, tm1_faces, tm2_faces);
+      Callback_with_self_intersection_report<TriangleMesh, Callback> callback_si_21(callback21, tm2_faces, tm1_faces);
+      AABB_call(callback_si_12, callback_si_21);
+      if (throw_on_self_intersection && (callback_si_21.self_intersections_found() || callback_si_12.self_intersections_found()))
+            throw Self_intersection_exception();
     }
     else {
-      if (const_mesh_ptr==&tm_e)
+      if (const_mesh_ptr==&tm1)
       {
-        // tm_f might feature degenerate faces
-        auto filtered_callback = [&callback](const Box* fb, const Box* eb)
-        {
-          if (!callback.is_face_degenerated(fb->info()))
-            callback(fb, eb);
+        auto filtered_callback_12 = [&](halfedge_descriptor h1, halfedge_descriptor h2){
+          if(!callback12.is_face_degenerated(h1))
+            callback12(h1, h2);
         };
-        CGAL::box_intersection_d( face_boxes_ptr.begin(), face_boxes_ptr.end(),
-                                  edge_boxes_ptr.begin(), edge_boxes_ptr.end(),
-                                  filtered_callback, cutoff );
+        auto filtered_callback_21 = [&](halfedge_descriptor h1, halfedge_descriptor h2){
+          if(!callback21.is_face_degenerated(h1))
+            callback21(h2, h1);
+        };
+        AABB_call(filtered_callback_12, filtered_callback_21);
       }
       else
       {
-        if (const_mesh_ptr==&tm_f)
+        if (const_mesh_ptr==&tm2)
         {
-          // tm_e might feature degenerate edges
-          auto filtered_callback = [&,this](const Box* fb, const Box* eb)
-          {
-            if (get(vpm_e, source(eb->info(), tm_e)) != get(vpm_e, target(eb->info(), tm_e)))
-              callback(fb, eb);
-            else
-            {
-              halfedge_descriptor hf = fb->info();
-              halfedge_descriptor he = eb->info();
-              for (int i=0; i<2; ++i)
-              {
-                if (!is_border(he, tm_e))
-                {
-                  if ( get(vpm_e, target(next(he, tm_e), tm_e))==get(vpm_e, target(he, tm_e)) &&
-                       coplanar(get(vpm_f, source(hf, tm_f)),
-                                get(vpm_f, target(hf, tm_f)),
-                                get(vpm_f, target(next(hf, tm_f), tm_f)),
-                                get(vpm_e, target(he, tm_e))) )
-                  {
-                    coplanar_faces.insert(
-                        &tm_e < &tm_f
-                        ? std::make_pair(face(he, tm_e), face(hf, tm_f))
-                        : std::make_pair(face(hf, tm_f), face(he, tm_e))
-                      );
-                  }
-                }
-                he=opposite(he, tm_e);
-              }
-            }
+          auto filtered_callback_12 = [&](halfedge_descriptor h1, halfedge_descriptor h2){
+            if(!callback12.is_face_degenerated(h2))
+              callback12(h1, h2);
           };
-          CGAL::box_intersection_d( face_boxes_ptr.begin(), face_boxes_ptr.end(),
-                                    edge_boxes_ptr.begin(), edge_boxes_ptr.end(),
-                                    filtered_callback, cutoff );
+          auto filtered_callback_21 = [&](halfedge_descriptor h1, halfedge_descriptor h2){
+            if(!callback21.is_face_degenerated(h2))
+              callback21(h2, h1);
+          };
+          AABB_call(filtered_callback_12, filtered_callback_21);
         }
         else
-          CGAL::box_intersection_d( face_boxes_ptr.begin(), face_boxes_ptr.end(),
-                                    edge_boxes_ptr.begin(), edge_boxes_ptr.end(),
-                                    callback, cutoff );
+        {
+          AABB_call(callback12, callback21);
+        }
       }
     }
   }
@@ -411,49 +437,64 @@ class Intersection_of_triangle_meshes
   void filter_intersections(const TriangleMesh& tm,
                             const VPM& vpm)
   {
-    std::vector<Box> face_boxes, edge_boxes;
-    std::vector<Box*> face_boxes_ptr, edge_boxes_ptr;
+    using GT = typename GetGeomTraits<TriangleMesh, parameters::Default_named_parameters>::type;
+    using AABB_tree_helper = internal::AABB_tree_graph_helper<TriangleMesh, GT, VPM>;
+    using Tree = typename AABB_tree_helper::Tree;
+    AABB_tree_helper helper;
 
-    face_boxes.reserve(num_faces(tm));
-    face_boxes_ptr.reserve(num_faces(tm));
-    for(face_descriptor fd : faces(tm))
+    Tree tree(faces(tm).begin(), faces(tm).end(), tm, vpm);
+    helper.template build<ConcurrencyTag>(tree, tm, vpm);
+
+    using Callback = Collect_face_bbox_per_edge_bbox_with_coplanar_handling_one_mesh<
+                      TriangleMesh, VPM, Edge_to_faces, Coplanar_face_set>;
+    Callback callback(tm, vpm, stm_edge_to_ltm_faces, coplanar_faces);
+
+  #ifdef CGAL_LINKED_WITH_TBB
+    if constexpr(std::is_same_v<ConcurrencyTag, Parallel_tag>)
     {
-      halfedge_descriptor h=halfedge(fd,tm);
-      face_boxes.push_back( Box(
-        get(vpm,source(h,tm)).bbox() +
-        get(vpm,target(h,tm)).bbox() +
-        get(vpm,target(next(h,tm),tm)).bbox(),
-        h ) );
-      face_boxes_ptr.push_back( &face_boxes.back() );
-    }
+      tbb::concurrent_vector<std::pair<face_descriptor, face_descriptor>> inter;
+      CGAL::AABB_trees::all_pairs_of_intersecting_primitives<ConcurrencyTag>(tree, std::back_inserter(inter));
 
-    edge_boxes.reserve(num_edges(tm));
-    edge_boxes_ptr.reserve(num_edges(tm));
-    for(edge_descriptor ed : edges(tm))
+      // tbb::parallel_for(std::size_t(0), inter.size(), [&](std::size_t i){
+      for(std::size_t i=0; i<inter.size(); ++i){
+        const auto& [f_1, f_2] = inter[i];
+
+        halfedge_descriptor h0 = halfedge(f_1, tm);
+        halfedge_descriptor h1 = next(h0, tm);
+        halfedge_descriptor h2 = next(h1, tm);
+
+        halfedge_descriptor h_f2 = halfedge(f_1, tm);
+
+        if (is_border(h0, tm) || h0 < opposite(h0, tm))
+          callback(h0, h_f2);
+        if (is_border(h1, tm) || h1 < opposite(h1, tm))
+          callback(h1, h_f2);
+        if (is_border(h2, tm) || h2 < opposite(h2, tm))
+          callback(h2, h_f2);
+      // });
+      }
+    }
+    else
+#endif
     {
-      halfedge_descriptor h=halfedge(ed,tm);
-      edge_boxes.push_back( Box(
-        get(vpm,source(h,tm)).bbox() +
-        get(vpm,target(h,tm)).bbox(),
-        h ) );
-      edge_boxes_ptr.push_back( &edge_boxes.back() );
+      std::vector<std::pair<face_descriptor, face_descriptor>> inter;
+      CGAL::AABB_trees::all_pairs_of_intersecting_primitives(tree, std::back_inserter(inter));
+
+      for(const auto& [f_1, f_2]: inter){
+        halfedge_descriptor h0 = halfedge(f_1, tm);
+        halfedge_descriptor h1 = next(h0, tm);
+        halfedge_descriptor h2 = next(h1, tm);
+
+        halfedge_descriptor h_f2 = halfedge(f_1, tm);
+
+        if (is_border(h0, tm) || h0 < opposite(h0, tm))
+          callback(h0, h_f2);
+        if (is_border(h1, tm) || h1 < opposite(h1, tm))
+          callback(h1, h_f2);
+        if (is_border(h2, tm) || h2 < opposite(h2, tm))
+          callback(h2, h_f2);
+      }
     }
-
-    /// \todo experiments different cutoff values
-    std::ptrdiff_t cutoff = 2 * std::ptrdiff_t(
-        std::sqrt(face_boxes.size()+edge_boxes.size()) );
-
-    Edge_to_faces& edge_to_faces = stm_edge_to_ltm_faces;
-
-    typedef Collect_face_bbox_per_edge_bbox_with_coplanar_handling_one_mesh<
-      TriangleMesh, VPM, Edge_to_faces, Coplanar_face_set>
-     Callback;
-    Callback  callback(tm, vpm, edge_to_faces, coplanar_faces);
-
-    //using pointers in box_intersection_d is about 10% faster
-    CGAL::box_intersection_d( face_boxes_ptr.begin(), face_boxes_ptr.end(),
-                              edge_boxes_ptr.begin(), edge_boxes_ptr.end(),
-                              callback, cutoff );
   }
 
   template<class Cpl_inter_pt,class Key>
@@ -1888,10 +1929,12 @@ public:
       if (!identical_meshes)
       {
         visitor.start_filtering_intersections();
-        filter_intersections(tm1, tm2, vpm1, vpm2, non_manifold_feature_map_2, throw_on_self_intersection, tm1_faces, tm2_faces, bb12,
-                             is_fshared_map1, is_eshared_map2, false);
-        filter_intersections(tm2, tm1, vpm2, vpm1, non_manifold_feature_map_1, throw_on_self_intersection, tm2_faces, tm1_faces, bb12,
-                             is_fshared_map2, is_eshared_map1, true);
+        filter_intersections(tm1, tm2, vpm1, vpm2,
+                             non_manifold_feature_map_1, non_manifold_feature_map_2,
+                             throw_on_self_intersection,
+                             tm1_faces, tm2_faces,
+                             bb12,
+                             is_fshared_map1, is_fshared_map2, is_eshared_map1, is_eshared_map2);
         visitor.end_filtering_intersections();
 
         // dumping shared edges in output
@@ -1935,10 +1978,7 @@ public:
       Static_boolean_property_map<face_descriptor,false> is_fshared_map;
       Static_boolean_property_map<edge_descriptor,false> is_eshared_map;
       visitor.start_filtering_intersections();
-      filter_intersections(tm1, tm2, vpm1, vpm2, non_manifold_feature_map_2, throw_on_self_intersection, tm1_faces, tm2_faces, bb12,
-                           is_fshared_map, is_eshared_map, false);
-      filter_intersections(tm2, tm1, vpm2, vpm1, non_manifold_feature_map_1, throw_on_self_intersection, tm2_faces, tm1_faces, bb12,
-                           is_fshared_map, is_eshared_map, true);
+      filter_intersections(tm1, tm2, vpm1, vpm2, non_manifold_feature_map_1, non_manifold_feature_map_2, throw_on_self_intersection, tm1_faces, tm2_faces, bb12, is_fshared_map, is_fshared_map, is_eshared_map, is_eshared_map);
       visitor.end_filtering_intersections();
     }
 

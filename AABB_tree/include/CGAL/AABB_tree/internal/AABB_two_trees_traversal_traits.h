@@ -69,6 +69,14 @@ public:
     return node_a.bbox().squared_diagonal_length() > node_b.bbox().squared_diagonal_length();
   }
 
+  void intersection(const Primitive1& primitive1, const Primitive2& primitive2)
+  {
+    using Wrap_iterator = Wrap_output_iterator<true, typename Primitive1::Id, OutputIterator>;
+    Wrap_iterator wrap_out(primitive1.id(), out);
+    Listing_primitive_traits<AABBTraits2, typename AABBTraits1::Primitive::Datum, Wrap_iterator> traits(wrap_out, m_traits2);
+    traits.intersection(internal::Primitive_helper<AABBTraits1>::get_datum(primitive1, m_traits1), primitive2);
+  }
+
   void intersection(const Primitive1& primitive1, const Node2& node2, std::size_t nb_primitives_2)
   {
     using Wrap_iterator = Wrap_output_iterator<true, typename Primitive1::Id, OutputIterator>;
@@ -189,53 +197,6 @@ private:
   AffTransformation m_tr1_inverse;
   AffTransformation m_tr2_inverse;
   bool m_tr1_has_rotation, m_tr2_has_rotation;
-};
-
-template<typename AABBTraits, typename OutputIterator>
-class Listing_self_intersecting_primitives_traits
-{
-  typedef typename AABBTraits::Primitive Primitive;
-  typedef ::CGAL::AABB_node<AABBTraits> Node;
-
-public:
-  Listing_self_intersecting_primitives_traits(const AABBTraits& traits, OutputIterator out_)
-    : m_traits(traits), out(out_)
-  {}
-
-  bool go_further() const {
-    return true;
-  }
-
-  // If true, the next step of traversal continue on A, if false, the next step of traversal is on B
-  template<typename Node_A, typename Node_B>
-  bool prefer_A_for_next_step(const Node_A& node_a, const Node_B& node_b, const std::size_t&, const std::size_t&) const {
-    return node_a.bbox().squared_diagonal_length() > node_b.bbox().squared_diagonal_length();
-  }
-
-  void intersection(const Primitive& primitive1, const Node& node2, std::size_t nb_primitives_2)
-  {
-    using Wrap_iterator = Wrap_output_iterator<true, typename Primitive::Id, OutputIterator>;
-    Wrap_iterator wrap_out(primitive1.id(), out);
-    Listing_distinct_primitive_traits<AABBTraits, Wrap_iterator> traits(wrap_out, m_traits);
-    node2.traversal( primitive1, traits, nb_primitives_2);
-  }
-
-  void intersection(const Node& node1, std::size_t nb_primitives_1, const Primitive& primitive2)
-  {
-    using Wrap_iterator= Wrap_output_iterator<false, typename Primitive::Id, OutputIterator>;
-    Wrap_iterator wrap_out(primitive2.id(), out);
-    Listing_distinct_primitive_traits<AABBTraits, Wrap_iterator> traits(wrap_out, m_traits);
-    node1.traversal( primitive2, traits, nb_primitives_1);
-  }
-
-  bool do_intersect(const Node& node1, const Node& node2) const
-  {
-    return do_overlap(node1.bbox(), node2.bbox());
-  }
-
-private:
-  const AABBTraits& m_traits;
-  OutputIterator out;
 };
 
 template<typename AABBTraits1, typename AABBTraits2>

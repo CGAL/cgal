@@ -34,7 +34,7 @@ void two_trees_traversal(const ::CGAL::AABB_node<AABBTraits_A>& node_A,
                         TwoTreeTraversalTraits& traversal_traits)
 {
 #if CGAL_LINKED_WITH_TBB
-  const std::size_t cutoff_parallel_call = 100000;
+  const std::size_t cutoff_parallel_call = 3000;
 #endif
   auto recursive_call = [](const auto &node_A, const auto &node_B, const std::size_t nb_primitives_A, const std::size_t nb_primitives_B, auto &traversal_traits){
     if(traversal_traits.prefer_A_for_next_step(node_A, node_B, nb_primitives_A, nb_primitives_B))
@@ -117,11 +117,83 @@ template<typename ConcurrencyTag = Sequential_tag,
          typename Tree_B,
          typename TwoTreeTraversalTraits>
 void two_trees_traversal(const Tree_A& tree_A,
-                        const Tree_B& tree_B,
-                        TwoTreeTraversalTraits &traits)
+                         const Tree_B& tree_B,
+                         TwoTreeTraversalTraits &traits)
 {
   CGAL_precondition(tree_A.size() != 0 && tree_B.size() != 0);
   two_trees_traversal<true, ConcurrencyTag>(*tree_A.root_node(), *tree_B.root_node(), tree_A.size(), tree_B.size(), traits);
+}
+
+// An optimization to traverse a tree with itself
+template <typename ConcurrencyTag = Sequential_tag,
+          typename AABBTraits,
+          typename TwoTreeTraversalTraits>
+void one_tree_traversal(const ::CGAL::AABB_node<AABBTraits>& node,
+                        const std::size_t nb_primitives,
+                        TwoTreeTraversalTraits& traversal_traits)
+{
+#if CGAL_LINKED_WITH_TBB
+  const std::size_t cutoff_parallel_call = 3000;
+#endif
+  switch(nb_primitives)
+  {
+  case 2:
+  {
+    traversal_traits.intersection(node.left_data(), node.right_data());
+    break;
+  }
+  case 3:
+  {
+    traversal_traits.intersection(node.left_data(), node.right_child(), 2);
+    one_tree_traversal(node.right_child(), 2, traversal_traits);
+    break;
+  }
+  default:
+  {
+#if CGAL_LINKED_WITH_TBB
+    if constexpr(ConcurrencyTag::is_parallel)
+    {
+      if(nb_primitives > cutoff_parallel_call)
+      {
+        oneapi::tbb::task_group tg;
+        if(traversal_traits.do_intersect(node.left_child(), node.right_child())){
+          tg.run([&]{
+                  two_trees_traversal<true, ConcurrencyTag>(node.left_child(), node.right_child(), nb_primitives/2, nb_primitives - nb_primitives/2, traversal_traits);}
+          );
+        }
+        tg.run([&]{
+                one_tree_traversal<ConcurrencyTag>(node.left_child(), nb_primitives/2, traversal_traits);}
+              );
+        one_tree_traversal<ConcurrencyTag>(node.right_child(), nb_primitives - nb_primitives/2, traversal_traits);
+        tg.wait();
+      }
+      else
+      {
+        if(traversal_traits.do_intersect(node.left_child(), node.right_child()))
+          two_trees_traversal(node.left_child(), node.right_child(), nb_primitives/2, nb_primitives - nb_primitives/2, traversal_traits);
+        one_tree_traversal(node.left_child(), nb_primitives/2, traversal_traits);
+        one_tree_traversal(node.right_child(), nb_primitives - nb_primitives/2, traversal_traits);
+      }
+    }
+    else
+#endif
+    {
+      if(traversal_traits.do_intersect(node.left_child(), node.right_child()))
+        two_trees_traversal(node.left_child(), node.right_child(), nb_primitives/2, nb_primitives - nb_primitives/2, traversal_traits);
+      one_tree_traversal(node.left_child(), nb_primitives/2, traversal_traits);
+      one_tree_traversal(node.right_child(), nb_primitives - nb_primitives/2, traversal_traits);
+    }
+  }} // switch end
+}
+
+template<typename ConcurrencyTag = Sequential_tag,
+         typename Tree,
+         typename TwoTreeTraversalTraits>
+void one_tree_traversal(const Tree& tree,
+                        TwoTreeTraversalTraits &traits)
+{
+  CGAL_precondition(tree.size() != 0);
+  one_tree_traversal<ConcurrencyTag>(*tree.root_node(), tree.size(), traits);
 }
 
 namespace experimental{
@@ -139,7 +211,7 @@ void two_trees_partial_traversal(const ::CGAL::AABB_node<AABBTraits_A>& node_A,
                                 TwoTreeTraversalTraits& traversal_traits)
 {
 #if CGAL_LINKED_WITH_TBB
-  const std::size_t cutoff_parallel_call = 100000;
+  const std::size_t cutoff_parallel_call = 3000;
 #endif
   auto recursive_call = [&](const auto &node_A, const auto &node_B, const std::size_t nb_primitives_A, const std::size_t nb_primitives_B, auto &traversal_traits){
     if(traversal_traits.prefer_A_for_next_step(node_A, node_B, nb_primitives_A, nb_primitives_B))
