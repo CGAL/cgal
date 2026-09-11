@@ -33,6 +33,7 @@
 
 #include <CGAL/SMDS_3/tet_soup_to_c3t3.h>
 #include <CGAL/utility.h>
+#include <CGAL/iterator.h>
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
@@ -155,10 +156,16 @@ public:
 
     // finished
     std::vector<Vertex_handle> new_vertices;
-    std::map<Facet, typename C3t3::Surface_patch_index> border_facets;
+    std::map<Facet, typename C3t3::Surface_patch_index> border_facets;//unused here
+    std::vector<std::array<int, 3>> feature_edges_and_indices;//unused here
+    std::vector<std::array<int, 2>> corners_and_indices;//unused here
     if (CGAL::SMDS_3::build_triangulation_impl(
             triangulation, points, finite_cells, subdomains, border_facets,
-            new_vertices, /*verbose*/ false,
+            feature_edges_and_indices,
+            corners_and_indices,
+            new_vertices,
+            /*complex edges*/CGAL::Emptyset_iterator(),
+            /*verbose*/ false,
             /*replace_domain_0*/ false,
             /*allow_non_manifold*/false))
     {
