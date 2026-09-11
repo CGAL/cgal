@@ -15,6 +15,8 @@
 
 #include <CGAL/license/Tetrahedral_remeshing.h>
 
+#include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_instrumentation.h>
+
 #include <CGAL/tags.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
@@ -45,6 +47,7 @@
 namespace CGAL {
 namespace Tetrahedral_remeshing {
 namespace internal {
+
 
 template <typename C3t3_, typename ElementType, typename ElementRange>
 class Elementary_operation
@@ -220,8 +223,15 @@ private:
   */
   static void apply_one(const Element_type& element, Operation& op, C3t3& c3t3)
   {
+#ifdef CGAL_TR_LOCKCOUNT
+    Lockcount_counters& lc = lockcount_counters();
+    ++lc.ops;
+#endif
     while (!op.lock_zone(element, c3t3))
     {
+#ifdef CGAL_TR_LOCKCOUNT
+      ++lc.retries;
+#endif
       c3t3.triangulation().unlock_all_elements();
       std::this_thread::yield();
     }
