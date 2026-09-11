@@ -128,6 +128,7 @@
 \package_listing{Surface_mesh_approximation}
 \package_listing{Heat_method_3}
 \package_listing{Surface_mesh_topology}
+\package_listing{Feature_graph}
 
 \cgalPackageSection{PartPointSetProcessing,Point Set Processing}
 
