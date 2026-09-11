@@ -713,7 +713,7 @@ generic_clip_impl(
   typedef Corefinement::No_mark<TriangleMesh> NoMap;
   typedef Corefinement::Edge_properties_for_input<TriangleMesh, User_cst_map, NoMap, Edge_mark_map, NoMap> Edge_properties_in;
 
-  Edge_mark_map edge_mark_map  = get(CGAL::dynamic_edge_property_t<bool>(), tm1);
+  Edge_mark_map edge_mark_map  = get(CGAL::dynamic_edge_property_t<bool>(), tm1, false);
 
   // Face index point maps
   typedef typename CGAL::GetInitializedFaceIndexMap<TriangleMesh, NamedParameters1>::type FaceIndexMap1;
@@ -838,6 +838,13 @@ struct Visitor_wrapper_for_triangulate_face
   *                     will be set after refining `tm` with the intersection with `clipper`}
   *   \cgalParamNEnd
   *
+  *   \cgalParamNBegin{edge_is_constrained_map}
+  *     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `tm`}
+  *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor` as key type and `bool` as value type.
+  *                    If an edge marked as constrained in `tm` is split during clipping, the remaining part after the clip will be marked as constrained.}
+  *     \cgalParamDefault{a constant property map returning `false` for any edge}
+  *   \cgalParamNEnd
+  *
   *   \cgalParamNBegin{visitor}
   *     \cgalParamDescription{a visitor used to track the creation of new faces}
   *     \cgalParamType{a class model of `PMPCorefinementVisitor`}
@@ -943,6 +950,13 @@ clip(TriangleMesh& tm,
   *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pm)`}
   *   \cgalParamNEnd
   *
+  *   \cgalParamNBegin{edge_is_constrained_map}
+  *     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `tm`}
+  *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor` as key type and `bool` as value type.
+  *                    If an edge marked as constrained in `tm` is split during clipping, the remaining part after the clip will be marked as constrained.}
+  *     \cgalParamDefault{a constant property map returning `false` for any edge}
+  *   \cgalParamNEnd
+  *
   *   \cgalParamNBegin{visitor}
   *     \cgalParamDescription{a visitor used to track the creation of new faces, edges, and faces.
   *                           Note that as there are no mesh associated with `plane`,
@@ -1032,6 +1046,7 @@ bool clip(PolygonMesh& pm,
     return true;
   }
 
+  using edge_descriptor = typename boost::graph_traits<PolygonMesh>::edge_descriptor;
   using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
 
   using GT = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
@@ -1064,14 +1079,19 @@ bool clip(PolygonMesh& pm,
   bool triangulate = !choose_parameter(get_parameter(np, internal_np::do_not_triangulate_faces), false);
   constexpr bool traits_supports_cdt2 = !internal::Has_member_Does_not_support_CDT2<GT>::value;
   auto vos = get(dynamic_vertex_property_t<Oriented_side>(), pm);
-  auto ecm = get(dynamic_edge_property_t<bool>(), pm, false);
+
+  using Default_ecm = Static_boolean_property_map<edge_descriptor, false>;
+  auto ecm = choose_parameter<Default_ecm>(get_parameter(np, internal_np::edge_is_constrained));
+  auto edge_is_marked_map = get(dynamic_edge_property_t<bool>(), pm, false);
+
   auto construct_orthogonal_vector = traits.construct_orthogonal_vector_3_object();
 
   if (traits_supports_cdt2 && triangulate && !is_triangle_mesh(pm))
     triangulate = false;
 
   refine_with_plane(pm, plane, parameters::vertex_oriented_side_map(vos)
-                                          .edge_is_marked_map(ecm)
+                                          .edge_is_marked_map(edge_is_marked_map)
+                                          .edge_is_constrained_map(ecm)
                                           .vertex_point_map(vpm)
                                           .geom_traits(traits)
                                           .do_not_triangulate_faces(!triangulate)
@@ -1092,7 +1112,7 @@ bool clip(PolygonMesh& pm,
 
   auto fcc = get(dynamic_face_property_t<std::size_t>(), pm);
 
-  std::size_t nbcc = connected_components(pm, fcc, CGAL::parameters::edge_is_constrained_map(ecm));
+  std::size_t nbcc = connected_components(pm, fcc, CGAL::parameters::edge_is_constrained_map(edge_is_marked_map));
 
   std::vector<bool> classified(nbcc, false);
   std::vector<std::size_t> ccs_to_remove;
@@ -1164,6 +1184,13 @@ bool clip(PolygonMesh& pm,
   *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
   *                    as key type and `%Point_3` as value type}
   *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{edge_is_constrained_map}
+  *     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `tm`}
+  *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor` as key type and `bool` as value type.
+  *                    If an edge marked as constrained in `tm` is split during clipping, the remaining part after the clip will be marked as constrained.}
+  *     \cgalParamDefault{a constant property map returning `false` for any edge}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{visitor}
@@ -1239,8 +1266,7 @@ bool clip(TriangleMesh& tm,
 
   make_hexahedron(iso_cuboid[0], iso_cuboid[1], iso_cuboid[2], iso_cuboid[3],
                   iso_cuboid[4], iso_cuboid[5], iso_cuboid[6], iso_cuboid[7],
-                  clipper);
-  triangulate_faces(clipper);
+                  clipper, parameters::do_not_triangulate_faces(false));
 
   const bool do_not_modify = choose_parameter(get_parameter(np, internal_np::allow_self_intersections), false);
   return clip(tm, clipper, np, params::do_not_modify(do_not_modify));
