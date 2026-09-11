@@ -36,6 +36,7 @@ struct Conforming_constrained_Delaunay_triangulation_vertex_data_3 {};
 #else // DOXYGEN_RUNNING
 
 enum class CDT_3_vertex_type { FREE, CORNER, INPUT_VERTEX = CORNER, STEINER_ON_EDGE, STEINER_IN_FACE };
+  //warning : this enum is duplicated in CGAL/IO/File_medit.h. If modified here, change it there too, please
 
 enum class CDT_3_vertex_marker {
   CLEAR = 0,
