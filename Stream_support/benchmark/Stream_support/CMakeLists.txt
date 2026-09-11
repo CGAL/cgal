@@ -10,13 +10,15 @@ find_package(CGAL REQUIRED)
 find_package(FastFloat QUIET)
 include(CGAL_FastFloat_support)
 
-if(TARGET CGAL::FastFloat_support)
-  message(STATUS "Found FastFloat")
-  target_link_libraries(polygon_mesh_io_benchmark PRIVATE CGAL::FastFloat_support)
-endif()
+
 # add_definitions(-DCGAL_USE_STD_FROM_CHARS)
 # add_definitions(-DCGAL_USE_FASTFLOAT)
 # include_directories("c:/local/fast_float/include")
 
 create_single_source_cgal_program("read_doubles.cpp")
 create_single_source_cgal_program("polygon_mesh_io_benchmark.cpp")
+
+if(TARGET CGAL::FastFloat_support)
+  message(STATUS "Found FastFloat")
+  target_link_libraries(polygon_mesh_io_benchmark PRIVATE CGAL::FastFloat_support)
+endif()
