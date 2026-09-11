@@ -19,6 +19,8 @@
 #include <array>
 #include <iterator>
 #include <unordered_set>
+#include <stack>
+#include <type_traits>
 
 #include <CGAL/Point_3.h>
 #include <CGAL/Weighted_point_3.h>
@@ -1016,6 +1018,66 @@ std::size_t nb_incident_subdomains(const typename C3t3::Vertex_handle v,
   incident_subdomains(v, c3t3, boost::make_function_output_iterator(std::ref(counter)));
 
   return counter.seen.size();
+}
+
+// ---------------------------------------------------------------------------
+// One place decides which walk a star traversal uses.
+//
+// Marking is a single-owner trick: the TDS records where a walk has been in
+// each cell's shared `tds_data()` byte, which is free, but is a WRITE to every
+// cell visited. That is fine when one thread owns the region and nothing else
+// -- so it stays the sequential path's walk -- and wrong under Parallel_tag,
+// where a walk routinely reaches cells outside the caller's lock zone. Two
+// such walks do not merely race on the byte: a cell the other thread has
+// already marked is SKIPPED, so the loser silently gets an incomplete star.
+//
+// Call sites use these and do not choose for themselves.
+template<typename Tr>
+constexpr bool is_parallel_triangulation()
+{
+  return std::is_convertible_v<typename Tr::Concurrency_tag, CGAL::Parallel_tag>;
+}
+
+template<typename Tr, typename OutputIterator>
+void incident_cells_tagged(const Tr& tr,
+                           const typename Tr::Vertex_handle v,
+                           OutputIterator out)
+{
+  if constexpr (is_parallel_triangulation<Tr>())
+    tr.incident_cells_threadsafe(v, out);
+  else
+    tr.incident_cells(v, out);
+}
+
+template<typename Tr>
+bool is_edge_tagged(const Tr& tr,
+                    const typename Tr::Vertex_handle u,
+                    const typename Tr::Vertex_handle v)
+{
+  if constexpr (is_parallel_triangulation<Tr>())
+    return tr.is_edge_threadsafe(u, v);
+  else
+  {
+    typename Tr::Cell_handle c;
+    int i, j;
+    return tr.tds().is_edge(u, v, c, i, j);
+  }
+}
+
+template<typename Tr>
+bool is_facet_tagged(const Tr& tr,
+                     const typename Tr::Vertex_handle u,
+                     const typename Tr::Vertex_handle v,
+                     const typename Tr::Vertex_handle w)
+{
+  if constexpr (is_parallel_triangulation<Tr>())
+    return tr.is_facet_threadsafe(u, v, w);
+  else
+  {
+    typename Tr::Cell_handle c;
+    int i, j, k;
+    return tr.is_facet(u, v, w, c, i, j, k);
+  }
 }
 
 // `nb_incident_subdomains(v, c3t3) > 1`, without counting the whole star. The

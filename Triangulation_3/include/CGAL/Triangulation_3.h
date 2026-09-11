@@ -2029,6 +2029,44 @@ public:
     _tds.incident_cells_threadsafe(v, cells, filter);
   }
 
+  /**
+  * The first cell incident to `v` satisfying `pred`, marking nothing.
+  *
+  * PRECONDITION: this thread holds `v`. That is what makes the reads safe --
+  * every cell visited contains `v`, and a thread writing such a cell must hold
+  * all four of its vertices, `v` among them. Callers that are still deciding
+  * which cells to lock rely on exactly that.
+  */
+  /// @{
+  /// Non-marking `is_edge` / `is_facet`; see the TDS for what they do and do
+  /// not report. Same precondition as find_first_incident_cell_threadsafe:
+  /// this thread holds `u`, which is what makes the reads safe.
+  bool is_edge_threadsafe(Vertex_handle u, Vertex_handle v) const
+  {
+    CGAL_precondition(this->get_lock_data_structure() == nullptr
+                   || this->is_point_locked_by_this_thread(u->point()));
+    return _tds.is_edge_threadsafe(u, v);
+  }
+
+  bool is_facet_threadsafe(Vertex_handle u, Vertex_handle v,
+                           Vertex_handle w) const
+  {
+    CGAL_precondition(this->get_lock_data_structure() == nullptr
+                   || this->is_point_locked_by_this_thread(u->point()));
+    return _tds.is_facet_threadsafe(u, v, w);
+  }
+  /// @}
+
+  template <typename Predicate>
+  bool find_first_incident_cell_threadsafe(Vertex_handle v,
+                                           Predicate pred,
+                                           Cell_handle& found) const
+  {
+    CGAL_precondition(this->get_lock_data_structure() == nullptr
+                   || this->is_point_locked_by_this_thread(v->point()));
+    return _tds.find_first_incident_cell_threadsafe(v, pred, found);
+  }
+
   template <typename IncidentCellsContainer>
   bool try_lock_and_get_incident_cells(Vertex_handle v, IncidentCellsContainer& cells) const
   {

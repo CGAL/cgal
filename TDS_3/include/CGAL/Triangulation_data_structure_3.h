@@ -525,6 +525,39 @@ public:
   bool is_facet(Vertex_handle u, Vertex_handle v,
                 Vertex_handle w,
                 Cell_handle & c, int & i, int & j, int & k) const;
+
+  /**
+  * `is_edge()` and `is_facet()` without marking: do the given vertices share a
+  * cell? Defined for dimension 3 only, and they answer the question alone --
+  * the cell and the indices the marking versions also return are not reported.
+  *
+  * The marking versions walk the star of their first argument writing
+  * `tds_data()` on every cell they pass, which is a data race as soon as a
+  * second thread walks an overlapping star. These use
+  * `find_first_incident_cell_threadsafe()`, whose visited set is local to the
+  * call, and like the marking versions they stop at the first hit.
+  *
+  * PRECONDITION (Triangulation_3 checks it): the caller holds `u`.
+  */
+  bool is_edge_threadsafe(Vertex_handle u, Vertex_handle v) const
+  {
+    if(u == v)
+      return false;
+    Cell_handle found;
+    return find_first_incident_cell_threadsafe(u,
+      [v](Cell_handle c) { return c->has_vertex(v); }, found);
+  }
+
+  bool is_facet_threadsafe(Vertex_handle u, Vertex_handle v,
+                           Vertex_handle w) const
+  {
+    if(u == v || u == w || v == w)
+      return false;
+    Cell_handle found;
+    return find_first_incident_cell_threadsafe(u,
+      [v, w](Cell_handle c)
+      { return c->has_vertex(v) && c->has_vertex(w); }, found);
+  }
   bool is_cell(Cell_handle c) const;
   bool is_cell(Vertex_handle u, Vertex_handle v,
                Vertex_handle w, Vertex_handle t,
@@ -1183,6 +1216,50 @@ public:
     {
       (*cit)->tds_data().clear();
     }
+  }
+
+  /**
+  * The first cell incident to `v` satisfying `pred`, or false if there is
+  * none. Like `incident_cells_threadsafe()` it marks nothing -- the visited
+  * set is local to the call -- and like `is_edge()` and `is_facet()` it stops
+  * at the first hit instead of enumerating the whole star.
+  *
+  * The marking walks answer the same questions by writing `tds_data()` on
+  * every cell they visit, which is a data race as soon as a second thread
+  * walks an overlapping star: the loser skips cells the winner has marked and
+  * gets an incomplete star back.
+  */
+  template <class Predicate>
+  bool find_first_incident_cell_threadsafe(Vertex_handle v,
+                                           Predicate pred,
+                                           Cell_handle& found) const
+  {
+    CGAL_precondition(dimension() == 3);
+
+    boost::container::flat_set<Cell_handle, std::less<>,
+      boost::container::small_vector<Cell_handle, 128>> visited;
+    boost::container::small_vector<Cell_handle, 128> cells;
+
+    const Cell_handle d = v->cell();
+    cells.push_back(d);
+    visited.insert(d);
+    if(pred(d)) { found = d; return true; }
+
+    std::size_t head = 0;
+    while(head != cells.size()) {
+      const Cell_handle c = cells[head++];
+
+      for(int i=0; i<4; ++i) {
+        if(c->vertex(i) == v)
+          continue;
+        const Cell_handle next = c->neighbor(i);
+        if(! visited.insert(next).second)
+          continue;
+        cells.push_back(next);
+        if(pred(next)) { found = next; return true; }
+      }
+    }
+    return false;
   }
 
   template <class Filter, class OutputIterator>
