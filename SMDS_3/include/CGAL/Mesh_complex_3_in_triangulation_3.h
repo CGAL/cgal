@@ -41,6 +41,7 @@
 #include <boost/static_assert.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/functional/hash.hpp>
+#include <boost/unordered/concurrent_flat_map.hpp>
 
 #include <iostream>
 #include <fstream>
@@ -128,6 +129,67 @@ namespace CGAL {
           return (c2 < c) ? std::make_pair(c2, c2->index(c)) : std::make_pair(c, i);
         }
       }; // end class template C3t3_helper_class
+
+      // Storage for the 1-D feature complex (edge -> Curve_index), selected by
+      // Concurrency_tag. Sequential: boost::bimap (unchanged behaviour, keeps the
+      // bidirectional projection available to non-parallel users). Parallel:
+      // boost::concurrent_flat_map (flat/cache-friendly, lock-free point ops) so the
+      // hot read path (is_in_complex/curve_index, hammered by the flip phase) does
+      // not serialize on a single mutex/atomic. Key = ordered pair of Vertex_handle.
+      // Uniform interface: curve_index / add / remove / size / clear / swap / visit_all.
+      template <typename Vertex_handle, typename Curve_index, typename CTag, typename = void>
+      struct Complex_edges_storage
+      {
+        typedef boost::bimaps::bimap<
+                  boost::bimaps::multiset_of<Vertex_handle>,
+                  boost::bimaps::multiset_of<Vertex_handle>,
+                  boost::bimaps::set_of_relation<>,
+                  boost::bimaps::with_info<Curve_index> >    Map;
+        typedef typename Map::value_type                     Relation;
+        typedef std::pair<Vertex_handle, Vertex_handle>      Key;
+        Map m_;
+        Curve_index curve_index(const Key& k) const {
+          typename Map::const_iterator it = m_.find(Relation(k.first, k.second));
+          return (it != m_.end()) ? it->info : Curve_index();
+        }
+        void add(const Key& k, const Curve_index& i) {
+          std::pair<typename Map::iterator, bool> r = m_.insert(Relation(k.first, k.second));
+          r.first->info = i;
+        }
+        void remove(const Key& k) { m_.erase(Relation(k.first, k.second)); }
+        std::size_t size() const { return m_.size(); }
+        void clear() { m_.clear(); }
+        void swap(Complex_edges_storage& o) { m_.swap(o.m_); }
+        // f(v_left, v_right, curve_index) over all complex edges (sequential context)
+        template <typename F> void visit_all(F f) const {
+          for (typename Map::const_iterator it = m_.begin(), e = m_.end(); it != e; ++it)
+            f(it->left, it->right, it->info);
+        }
+      };
+#ifdef CGAL_LINKED_WITH_TBB
+      template <typename Vertex_handle, typename Curve_index, typename D>
+      struct Complex_edges_storage<Vertex_handle, Curve_index, CGAL::Parallel_tag, D>
+      {
+        typedef std::pair<Vertex_handle, Vertex_handle>      Key;
+        typedef boost::concurrent_flat_map<Key, Curve_index, boost::hash<Key> >  Map;
+        Map m_;
+        Curve_index curve_index(const Key& k) const {
+          Curve_index r = Curve_index();
+          m_.cvisit(k, [&](const auto& kv){ r = kv.second; });
+          return r;
+        }
+        void add(const Key& k, const Curve_index& i) { m_.insert_or_assign(k, i); }
+        void remove(const Key& k) { m_.erase(k); }
+        std::size_t size() const { return m_.size(); }
+        void clear() { m_.clear(); }
+        void swap(Complex_edges_storage& o) { m_.swap(o.m_); }
+        // Safe here only because full walks never overlap concurrent mutation (see
+        // the phase-structure note in elementary_remesh_impl.h). visit is read-only.
+        template <typename F> void visit_all(F f) const {
+          m_.cvisit_all([&](const auto& kv){ f(kv.first.first, kv.first.second, kv.second); });
+        }
+      };
+#endif // CGAL_LINKED_WITH_TBB
 
     } // end namespace SMDS_3::details
   } //end namespace SMDS_3
@@ -240,13 +302,13 @@ private:
   //  - a set of std::pair<Vertex_handle,Vertex_handle> (ordered at insertion)
   //  - which allows fast lookup from one Vertex_handle
   //  - each element of the set has an associated info (Curve_index) value
-  typedef boost::bimaps::bimap<
-    boost::bimaps::multiset_of<Vertex_handle>,
-    boost::bimaps::multiset_of<Vertex_handle>,
-    boost::bimaps::set_of_relation<>,
-    boost::bimaps::with_info<Curve_index> >           Edge_map;
+  // 1-D feature complex storage, selected by Concurrency_tag
+  //  - Sequential: boost::bimap   - Parallel: boost::concurrent_flat_map
+  typedef SMDS_3::details::Complex_edges_storage<
+            Vertex_handle, Curve_index, Concurrency_tag>  Edges_storage;
 
-  typedef typename Edge_map::value_type               Internal_edge;
+  // An Internal_edge is an ordered pair of Vertex_handle (the storage key)
+  typedef std::pair<Vertex_handle, Vertex_handle>       Internal_edge;
 
   // Type to store the corners
   typedef boost::unordered_map<Vertex_handle,
@@ -1258,12 +1320,11 @@ public:
   {
     CGAL_precondition(!is_in_complex(edge));
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
-    std::cerr << "Add edge ( " << disp_vert(edge.left)
-              << " , " << disp_vert(edge.right) << " ), curve_index=" << index
+    std::cerr << "Add edge ( " << disp_vert(edge.first)
+              << " , " << disp_vert(edge.second) << " ), curve_index=" << index
               << " to c3t3.\n";
 #endif // CGAL_MESH_3_PROTECTION_DEBUG
-    std::pair<typename Edge_map::iterator, bool> it = edges_.insert(edge);
-    it.first->info = index;
+    edges_.add(edge, index);
   }
 
   /**
@@ -1273,7 +1334,7 @@ public:
    */
   void remove_from_complex(const Internal_edge& edge)
   {
-    edges_.erase(edge);
+    edges_.remove(edge);
   }
 
   /**
@@ -1283,9 +1344,7 @@ public:
   */
   Curve_index curve_index(const Internal_edge& edge) const
   {
-    typename Edge_map::const_iterator it = edges_.find(edge);
-    if ( edges_.end() != it ) { return it->info; }
-    return Curve_index();
+    return edges_.curve_index(edge);
   }
 
   /// @cond SKIP_IN_MANUAL
@@ -1737,7 +1796,7 @@ private:
 
   mutable bool manifold_info_initialized_;
 
-  Edge_map edges_;
+  Edges_storage edges_;
   Corner_map corners_;
   Far_vertices_vec far_vertices_;
 };
@@ -1770,21 +1829,18 @@ Mesh_complex_3_in_triangulation_3(const Self& rhs)
   init(number_of_facets_, rhs.number_of_facets_);
   init(number_of_cells_, rhs.number_of_cells_);
 
-  // Copy edges
-  for ( typename Edge_map::const_iterator it = rhs.edges_.begin(),
-       end = rhs.edges_.end() ; it != end ; ++it )
-  {
-    const Vertex_handle& va = it->right;
-    const Vertex_handle& vb = it->left;
+  // Copy edges (sequential context: no concurrent mutation of rhs.edges_)
+  rhs.edges_.visit_all(
+    [&](const Vertex_handle& vleft, const Vertex_handle& vright, const Curve_index& info)
+    {
+      Vertex_handle new_va;
+      this->triangulation().is_vertex(rhs.triangulation().point(vright), new_va);
 
-    Vertex_handle new_va;
-    this->triangulation().is_vertex(rhs.triangulation().point(va), new_va);
+      Vertex_handle new_vb;
+      this->triangulation().is_vertex(rhs.triangulation().point(vleft), new_vb);
 
-    Vertex_handle new_vb;
-    this->triangulation().is_vertex(rhs.triangulation().point(vb), new_vb);
-
-    this->add_to_complex(make_internal_edge(new_va,new_vb), it->info);
-  }
+      this->add_to_complex(make_internal_edge(new_va, new_vb), info);
+    });
 
   // Copy corners
   for ( typename Corner_map::const_iterator it = rhs.corners_.begin(),
@@ -1836,21 +1892,18 @@ adjacent_vertices_in_complex(const Vertex_handle& v, OutputIterator out) const
 {
   CGAL_precondition(v->in_dimension() < 2);
 
-  typedef typename Edge_map::right_const_iterator Rcit;
-  typedef typename Edge_map::left_const_iterator Lcit;
-
-  // Add edges containing v is on the left
-  std::pair<Rcit,Rcit> range_right = edges_.right.equal_range(v);
-  for ( Rcit rit = range_right.first ; rit != range_right.second ; ++rit )
+  // Triangulation-based (works for both the bimap and concurrent_flat_map backends,
+  // i.e. no reliance on a bidirectional vertex->edge index): walk v's incident edges
+  // and keep those that are in the 1-D complex. Sequential use only.
+  std::vector<typename Tr::Edge> inc;
+  tr_.finite_incident_edges(v, std::back_inserter(inc));
+  for (const typename Tr::Edge& e : inc)
   {
-    *out++ = std::make_pair(rit->second, rit->info);
-  }
-
-  // Add edges containing v on the right
-  std::pair<Lcit,Lcit> range_left = edges_.left.equal_range(v);
-  for ( Lcit lit = range_left.first ; lit != range_left.second ; ++lit )
-  {
-    *out++ = std::make_pair(lit->second, lit->info);
+    const Vertex_handle v1 = e.first->vertex(e.second);
+    const Vertex_handle v2 = e.first->vertex(e.third);
+    const Curve_index ci = curve_index(make_internal_edge(v1, v2));
+    if (ci != Curve_index())
+      *out++ = std::make_pair((v1 == v) ? v2 : v1, ci);
   }
 
   return out;
@@ -1868,17 +1921,16 @@ is_valid(bool verbose) const
   Vertex_map vertex_map;
 
   // Fill map counting neighbor number for each vertex of an edge
-  for ( typename Edge_map::const_iterator it = edges_.begin(),
-       end = edges_.end() ; it != end ; ++it )
+  edges_.visit_all([&](const Vertex_handle& vleft, const Vertex_handle& vright, const Curve_index&)
   {
-    const Vertex_handle& v1 = it->right;
+    const Vertex_handle& v1 = vright;
     if ( vertex_map.find(v1) == vertex_map.end() ) { vertex_map[v1] = 1; }
     else { vertex_map[v1] += 1; }
 
-    const Vertex_handle& v2 = it->left;
+    const Vertex_handle& v2 = vleft;
     if ( vertex_map.find(v2) == vertex_map.end() ) { vertex_map[v2] = 1; }
     else { vertex_map[v2] += 1; }
-  }
+  });
 
   // Verify that each vertex has 2 neighbors if it's not a corner
   for ( typename Vertex_map::iterator vit = vertex_map.begin(),
@@ -1896,29 +1948,30 @@ is_valid(bool verbose) const
   }
 
   // Verify that balls of each edge intersect
-  for ( typename Edge_map::const_iterator it = edges_.begin(),
-       end = edges_.end() ; it != end ; ++it )
-  {
-    typename Tr::Geom_traits::Compute_weight_3 cw =
-      this->triangulation().geom_traits().compute_weight_3_object();
-    typename Tr::Geom_traits::Construct_point_3 cp =
-      this->triangulation().geom_traits().construct_point_3_object();
-    typename Tr::Geom_traits::Construct_sphere_3 sphere =
-      this->triangulation().geom_traits().construct_sphere_3_object();
-    typename Tr::Geom_traits::Do_intersect_3 do_intersect =
-      this->triangulation().geom_traits().do_intersect_3_object();
+  typename Tr::Geom_traits::Compute_weight_3 cw =
+    this->triangulation().geom_traits().compute_weight_3_object();
+  typename Tr::Geom_traits::Construct_point_3 cp =
+    this->triangulation().geom_traits().construct_point_3_object();
+  typename Tr::Geom_traits::Construct_sphere_3 sphere =
+    this->triangulation().geom_traits().construct_sphere_3_object();
+  typename Tr::Geom_traits::Do_intersect_3 do_intersect =
+    this->triangulation().geom_traits().do_intersect_3_object();
 
-    const Weighted_point& itrwp = this->triangulation().point(it->right);
-    const Weighted_point& itlwp = this->triangulation().point(it->left);
+  bool edges_ok = true;
+  edges_.visit_all([&](const Vertex_handle& vleft, const Vertex_handle& vright, const Curve_index&)
+  {
+    const Weighted_point& itrwp = this->triangulation().point(vright);
+    const Weighted_point& itlwp = this->triangulation().point(vleft);
 
     if ( ! do_intersect(sphere(cp(itrwp), cw(itrwp)), sphere(cp(itlwp), cw(itlwp))) )
     {
-      std::cerr << "Points p[" << disp_vert(it->right) << "], dim=" << it->right->in_dimension()
-                << " and q[" << disp_vert(it->left) << "], dim=" << it->left->in_dimension()
+      std::cerr << "Points p[" << disp_vert(vright) << "], dim=" << vright->in_dimension()
+                << " and q[" << disp_vert(vleft) << "], dim=" << vleft->in_dimension()
                 << " form an edge but do not intersect !\n";
-      return false;
+      edges_ok = false;
     }
-  }
+  });
+  if (!edges_ok) return false;
 
   return true;
 }
