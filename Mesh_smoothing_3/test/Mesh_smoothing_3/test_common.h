@@ -149,6 +149,7 @@ inline Fixture make_fixture()
   return f;
 }
 
+// NOT THREAD SAFE, SHOULD ONLY USED IN SEQUENTIAL CONTEXTS
 template <typename C3t3T>
 struct Recording_cts
 {

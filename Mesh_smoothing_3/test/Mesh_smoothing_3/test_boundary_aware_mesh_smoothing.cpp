@@ -131,7 +131,7 @@ void test_classification_and_structure()
   install_default_queries(cts);
 
   auto status = CGAL::boundary_aware_mesh_smoothing(
-      fixture.c3t3, cts);
+      fixture.c3t3, cts, CGAL::parameters::concurrency_tag(CGAL::Sequential_tag()));
 
   assert_all_finite(fixture.c3t3);
   assert(status.mesh_is_valid() == (status.nb_invalid_elements == 0));
@@ -187,7 +187,7 @@ void test_stopping_limits_and_invalid_counting()
 
     auto status = CGAL::boundary_aware_mesh_smoothing(
         fixture.c3t3, cts,
-        CGAL::parameters::max_number_of_evaluations(1));
+        CGAL::parameters::max_number_of_evaluations(1).concurrency_tag(CGAL::Sequential_tag()));
 
     assert(status.return_code == CGAL::Mesh_smoothing_3::Smoothing_return_code::MAX_NUMBER_OF_METRIC_EVALUATIONS_REACHED);
     assert(status.nb_stages > 0);
@@ -207,7 +207,7 @@ void test_stopping_limits_and_invalid_counting()
 
     auto status = CGAL::boundary_aware_mesh_smoothing(
         fixture.c3t3, cts,
-        CGAL::parameters::maximum_running_time(1e-9));
+        CGAL::parameters::maximum_running_time(1e-9).concurrency_tag(CGAL::Sequential_tag()));
 
     assert(status.return_code == CGAL::Mesh_smoothing_3::Smoothing_return_code::TIME_LIMIT_REACHED);
     assert(status.nb_stages > 0);
@@ -231,7 +231,7 @@ void test_stopping_limits_and_invalid_counting()
     Recording_cts<C3t3> cts;
     install_default_queries(cts);
     auto status = CGAL::boundary_aware_mesh_smoothing(
-        fixture.c3t3, cts, CGAL::parameters::max_number_of_evaluations(0));
+        fixture.c3t3, cts, CGAL::parameters::max_number_of_evaluations(0).concurrency_tag(CGAL::Sequential_tag()));
 
     assert(status.nb_initial_invalid_elements == 0);
     assert(status.nb_invalid_elements == 0);
@@ -253,7 +253,7 @@ void test_all_vertices_frozen_status()
   auto before = finite_vertices(fixture.c3t3);
   auto status = CGAL::boundary_aware_mesh_smoothing(
       fixture.c3t3, cts,
-      CGAL::parameters::vertex_is_constrained_map(boost::make_assoc_property_map(vmap)));
+      CGAL::parameters::vertex_is_constrained_map(boost::make_assoc_property_map(vmap)).concurrency_tag(CGAL::Sequential_tag()));
 
   assert(status.return_code == CGAL::Mesh_smoothing_3::Smoothing_return_code::ALL_VERTICES_FROZEN);
   assert(status.nb_vertex_updates == 0);
@@ -277,7 +277,7 @@ void test_hard_constraints_and_frozen_status()
     auto before_d = fixture.v[3]->point();
     auto status = CGAL::boundary_aware_mesh_smoothing(
         fixture.c3t3, cts,
-        CGAL::parameters::vertex_is_constrained_map(boost::make_assoc_property_map(vmap)));
+        CGAL::parameters::vertex_is_constrained_map(boost::make_assoc_property_map(vmap)).concurrency_tag(CGAL::Sequential_tag()));
 
     assert(same_point(before_b, fixture.v[1]->point()));
     assert(status.nb_vertex_updates > 0);
@@ -295,7 +295,7 @@ void test_hard_constraints_and_frozen_status()
     auto before_d = fixture.v[3]->point();
     auto status = CGAL::boundary_aware_mesh_smoothing(
         fixture.c3t3, cts,
-        CGAL::parameters::edge_is_constrained_map(boost::make_assoc_property_map(emap)));
+        CGAL::parameters::edge_is_constrained_map(boost::make_assoc_property_map(emap)).concurrency_tag(CGAL::Sequential_tag()));
 
     (void)status;
     assert(same_point(before_b, fixture.v[1]->point()));
@@ -313,7 +313,7 @@ void test_hard_constraints_and_frozen_status()
     auto before_d = fixture.v[3]->point();
     auto status = CGAL::boundary_aware_mesh_smoothing(
         fixture.c3t3, cts,
-        CGAL::parameters::edge_is_constrained_map(boost::make_assoc_property_map(emap)));
+        CGAL::parameters::edge_is_constrained_map(boost::make_assoc_property_map(emap)).concurrency_tag(CGAL::Sequential_tag()));
 
     (void)status;
     assert(same_point(before_b, fixture.v[1]->point()));
@@ -333,7 +333,7 @@ void test_hard_constraints_and_frozen_status()
 
     auto status = CGAL::boundary_aware_mesh_smoothing(
         fixture.c3t3, cts,
-        CGAL::parameters::facet_is_constrained_map(boost::make_assoc_property_map(fmap)));
+        CGAL::parameters::facet_is_constrained_map(boost::make_assoc_property_map(fmap)).concurrency_tag(CGAL::Sequential_tag()));
 
     assert(status.nb_vertex_updates > 0);
     assert(same_point(before_a, fixture.v[0]->point()));
@@ -358,7 +358,8 @@ void test_hard_constraints_and_frozen_status()
         fixture.c3t3, cts,
         CGAL::parameters::vertex_is_constrained_map(boost::make_assoc_property_map(vmap))
             .edge_is_constrained_map(boost::make_assoc_property_map(emap))
-            .facet_is_constrained_map(boost::make_assoc_property_map(fmap)));
+            .facet_is_constrained_map(boost::make_assoc_property_map(fmap))
+            .concurrency_tag(CGAL::Sequential_tag()));
 
     assert(status.return_code == CGAL::Mesh_smoothing_3::Smoothing_return_code::ALL_VERTICES_FROZEN);
     assert(status.nb_vertex_updates == 0);
@@ -399,9 +400,9 @@ void test_corner_is_fixed()
 
   // But smoothing genuinely did something to the surrounding mesh.
   const bool another_vertex_moved =
-    !same_point(movable_before[0], fixture.v[1]->point()) ||
-    !same_point(movable_before[1], fixture.v[2]->point()) ||
-    !same_point(movable_before[2], fixture.v[3]->point());
+    !same_point(movable_before[0], fixture.v[1]->point(), false) ||
+    !same_point(movable_before[1], fixture.v[2]->point(), false) ||
+    !same_point(movable_before[2], fixture.v[3]->point(), false);
 
   assert(another_vertex_moved);
   assert(status.nb_vertex_updates > 0);
@@ -421,7 +422,7 @@ void test_zero_iterations()
   auto status = CGAL::boundary_aware_mesh_smoothing(
     fixture.c3t3,
     cts,
-    CGAL::parameters::number_of_iterations(0));
+    CGAL::parameters::number_of_iterations(0).concurrency_tag(CGAL::Sequential_tag()));
 
   assert(status.return_code ==
          CGAL::Mesh_smoothing_3::Smoothing_return_code::MAX_STAGES_REACHED);
