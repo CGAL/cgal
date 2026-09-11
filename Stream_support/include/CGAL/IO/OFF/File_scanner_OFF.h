@@ -96,6 +96,8 @@ public:
 
       // Read all numbers in the line
       entries.clear();
+      double d;
+
 #if defined(CGAL_USE_STD_FROM_CHARS)
       const char* p   = line.data();
       const char* end = p + line.size();
@@ -112,7 +114,6 @@ public:
         p = r.ptr;
         return true;
       };
-      double d;
       while (parse(d)){
         entries.push_back(d);
       }
@@ -132,14 +133,12 @@ public:
         p = r.ptr;
         return true;
       };
-      double d;
       while (parse(d)){
         entries.push_back(d);
       }
 
 #else
       std::istringstream issline(line);
-      double d;
       while(issline >> IO::iformat(d)){
         entries.push_back(d);
       }
@@ -751,13 +750,56 @@ public:
         line = line.substr(0,pos);
       }
 
-      // Read all numbers in the line
-      std::istringstream issline(line);
       entries.clear();
       double d;
+
+#if defined(CGAL_USE_STD_FROM_CHARS)
+ const char* p   = line.data();
+      const char* end = p + line.size();
+      auto parse = [&](double& v)
+      {
+        while (p != end &&
+          std::isspace(static_cast<unsigned char>(*p)))
+          ++p;
+
+        auto r = std::from_chars(p, end, v);
+        if (r.ec != std::errc{})
+          return false;
+
+        p = r.ptr;
+        return true;
+      };
+      while (parse(d)){
+        entries.push_back(d);
+      }
+
+#elif defined(CGAL_USE_FASTFLOAT)
+      const char* p   = line.data();
+      const char* end = p + line.size();
+      auto parse = [&](double& v)
+      {
+        while (p != end &&
+          std::isspace(static_cast<unsigned char>(*p)))
+          ++p;
+
+        auto r = fast_float::from_chars(p, end, v);
+        if (r.ec != std::errc{})
+          return false;
+
+        p = r.ptr;
+        return true;
+      };
+      while (parse(d)){
+        entries.push_back(d);
+      }
+
+#else
+      // Read all numbers in the line
+      std::istringstream issline(line);
       while(issline >> IO::iformat(d)){
         entries.push_back(d);
       }
+#endif
       if(entries.empty())
       {
         m_in.clear(std::ios::badbit);
