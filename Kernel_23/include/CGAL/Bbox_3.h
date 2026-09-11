@@ -248,9 +248,9 @@ Bbox_3::pad(double offset)
   rep[0] -= offset;
   rep[1] -= offset;
   rep[2] -= offset;
+  rep[3] += offset;
   rep[4] += offset;
   rep[5] += offset;
-  rep[6] += offset;
 
 }
 
