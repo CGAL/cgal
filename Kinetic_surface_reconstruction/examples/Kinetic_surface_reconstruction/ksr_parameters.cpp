@@ -104,7 +104,7 @@ int main(const int argc, const char** argv) {
 
   //If no input data is provided, use input from data directory.
   if (parameters.data.empty())
-    parameters.data = CGAL::data_file_path("points_3/building.ply");
+    parameters.data = CGAL::data_file_path("points_3/building.ply").string();
 
   Point_set point_set;
   std::vector<std::pair<Plane_3, std::vector<typename Point_set::Index>>> regions;

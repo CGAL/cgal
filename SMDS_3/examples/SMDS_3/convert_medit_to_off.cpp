@@ -13,7 +13,7 @@ int main(int argc, char** argv)
     std::cerr << "Usage: " << argv[0] << " input.medit output.off" << std::endl;
     return 1;
   }
-  std::string input_filename = (argc == 3) ? argv[1] : CGAL::data_file_path("meshes/elephant.mesh");
+  std::filesystem::path input_filename = (argc == 3) ? argv[1] : CGAL::data_file_path("meshes/elephant.mesh");
   std::string output_filename = (argc == 3) ? argv[2] : "output.off";
   std::ifstream input(input_filename);
   if(!input)

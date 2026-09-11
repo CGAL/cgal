@@ -89,7 +89,7 @@ std::string getFileNameWithoutExtension(const std::string& filePath)
 int main(int argc, char** argv)
 {
   Surface_mesh mesh;
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cube-subdivided.off");
+  const std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cube-subdivided.off");
   PMP::duplicate_non_manifold_vertices(mesh);
   PMP::autorefine(mesh);
 

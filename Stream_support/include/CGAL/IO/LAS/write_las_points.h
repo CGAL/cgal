@@ -270,7 +270,7 @@ bool write_LAS(std::ostream& os,
 
 // documented in ../LAS.h
 template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT>
-bool write_LAS(const std::string& filename,
+bool write_LAS(const std::filesystem::path& filename,
                const PointRange& points,
                const CGAL_NP_CLASS& np,
                std::enable_if_t<internal::is_Range<PointRange>::value>*

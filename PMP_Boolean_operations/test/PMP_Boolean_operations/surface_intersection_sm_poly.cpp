@@ -52,8 +52,8 @@ void run(const std::string filename1, const std::string filename2, const char* m
 
 int main(int argc, char* argv[])
 {
-  const std::string filename1 = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/blobby.off");
-  const std::string filename2 = (argc > 2) ? argv[2] : CGAL::data_file_path("meshes/eight.off");
+  const std::filesystem::path filename1 = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/blobby.off");
+  const std::filesystem::path filename2 = (argc > 2) ? argv[2] : CGAL::data_file_path("meshes/eight.off");
 
   run<Mesh>(filename1,filename2,"Surface_mesh");
   run<Polyhedron>(filename1,filename2,"Polyhedron_3");

@@ -24,7 +24,7 @@ typedef Skeleton::edge_descriptor                             Skeleton_edge;
 
 int main(int argc, char* argv[])
 {
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/elephant.off");
+  const std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/elephant.off");
 
   Triangle_mesh tmesh;
   OpenMesh::IO::read_mesh(tmesh, filename);

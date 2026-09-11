@@ -47,7 +47,7 @@ struct Obj_data {
   std::vector<std::vector<std::size_t> > polylines;
 };
 
-static auto save_obj(const Obj_data& data, const std::string& filename)
+static auto save_obj(const Obj_data& data, const std::filesystem::path& filename)
 {
   struct Stream_plus_unused {
     std::ofstream out;
@@ -196,7 +196,7 @@ int main(int argc, char*argv[] )
   std::string output_dir = "./";
 
   auto save_fn = [&](const Obj_data& d, const std::string& prefix) {
-    const std::string filename = join_path(output_dir, CGAL::data_file_path("2d_segments/bisect_" + prefix + ".obj"));
+    const std::filesystem::path filename = join_path(output_dir, CGAL::data_file_path("2d_segments/bisect_" + prefix + ".obj"));
     save_obj(d, filename);
   };
 

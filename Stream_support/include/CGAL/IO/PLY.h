@@ -25,6 +25,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <filesystem>
 #include <string>
 #include <tuple>
 #include <type_traits>
@@ -381,7 +382,7 @@ bool read_PLY(std::istream& is,
  * \returns `true` if the reading was successful, `false` otherwise.
  */
 template <typename PointRange, typename PolygonRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool read_PLY(const std::string& fname,
+bool read_PLY(const std::filesystem::path& fname,
               PointRange& points,
               PolygonRange& polygons,
               std::string& comments,
@@ -407,7 +408,7 @@ bool read_PLY(const std::string& fname,
 }
 
 template <typename PointRange, typename PolygonRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool read_PLY(const std::string& fname,
+bool read_PLY(const std::filesystem::path& fname,
               PointRange& points,
               PolygonRange& polygons,
               const CGAL_NP_CLASS& np = parameters::default_values()
@@ -538,7 +539,7 @@ bool write_PLY(std::ostream& out,
  * \return `true` if the writing was successful, `false` otherwise.
  */
 template <class PointRange, class PolygonRange, typename CGAL_NP_TEMPLATE_PARAMETERS >
-bool write_PLY(const std::string& fname,
+bool write_PLY(const std::filesystem::path& fname,
                const PointRange& points,
                const PolygonRange& polygons,
                const CGAL_NP_CLASS& np = parameters::default_values()
@@ -774,7 +775,7 @@ bool read_PLY(std::istream& is,
 template <typename OutputIteratorValueType,
           typename PointOutputIterator,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool read_PLY(const std::string& fname,
+bool read_PLY(const std::filesystem::path& fname,
               PointOutputIterator output,
               const CGAL_NP_CLASS& np = parameters::default_values()
               #ifndef DOXYGEN_RUNNING
@@ -971,7 +972,7 @@ bool write_PLY(std::ostream& os,
    \sa `write_PLY_with_properties()`
 */
 template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool write_PLY(const std::string& filename,
+bool write_PLY(const std::filesystem::path& filename,
                const PointRange& points,
                const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING

@@ -232,7 +232,7 @@ struct Skull_image
     : grid { },
       values { grid }
   {
-    const std::string fname = CGAL::data_file_path("images/skull_2.9.inr");
+    const std::filesystem::path fname = CGAL::data_file_path("images/skull_2.9.inr");
     CGAL::Image_3 image;
     if(!image.read(fname))
       std::cerr << "Error: Cannot read file " << fname << std::endl;

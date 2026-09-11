@@ -54,7 +54,7 @@ void test_curvatures(std::string mesh_path,
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
 
   TriangleMesh tmesh;
-  const std::string filename = CGAL::data_file_path(mesh_path);
+  const std::filesystem::path filename = CGAL::data_file_path(mesh_path);
 
   if(!CGAL::IO::read_polygon_mesh(filename, tmesh) || faces(tmesh).size() == 0)
   {
@@ -93,7 +93,7 @@ void test_angle_sums(const std::string mesh_path,
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
 
   PolygonMesh pmesh;
-  const std::string filename = CGAL::data_file_path(mesh_path);
+  const std::filesystem::path filename = CGAL::data_file_path(mesh_path);
 
   if(!CGAL::IO::read_polygon_mesh(filename, pmesh) || faces(pmesh).size() == 0)
   {

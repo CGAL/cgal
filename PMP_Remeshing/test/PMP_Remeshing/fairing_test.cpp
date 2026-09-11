@@ -63,7 +63,7 @@ void test_polyhedron(const std::string filename, const K&, const bool save_outpu
 
 int main()
 {
-  const std::string filename = CGAL::data_file_path("meshes/elephant.off");
+  const std::filesystem::path filename = CGAL::data_file_path("meshes/elephant.off");
     test_polyhedron(filename, Epic(), false);
     test_polyhedron(filename, Epec(), false);
 

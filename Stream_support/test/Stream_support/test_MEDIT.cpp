@@ -8,7 +8,7 @@ typedef CGAL::Simple_cartesian<double>  Kernel;
 typedef Kernel::Point_3                 Point_3;
 
 int main() {
-  const std::string filename = CGAL::data_file_path("meshes/elephant.mesh");
+  const std::filesystem::path filename = CGAL::data_file_path("meshes/elephant.mesh");
   std::ifstream input(filename);
   std::vector<Point_3> points;
   std::vector<int> subdomains;

@@ -244,7 +244,7 @@ bool read_GOCAD(std::istream& is,
  * \returns `true` if the reading was successful, `false` otherwise.
  */
 template <typename PointRange, typename PolygonRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool read_GOCAD(const std::string& fname,
+bool read_GOCAD(const std::filesystem::path& fname,
                 PointRange& points,
                 PolygonRange& polygons,
                 const CGAL_NP_CLASS& np = parameters::default_values()
@@ -409,7 +409,7 @@ bool write_GOCAD(std::ostream& os,
 template <typename PointRange,
           typename PolygonRange,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool write_GOCAD(const std::string& fname,
+bool write_GOCAD(const std::filesystem::path& fname,
                  const PointRange& points,
                  const PolygonRange& polygons,
                  const CGAL_NP_CLASS& np = parameters::default_values()

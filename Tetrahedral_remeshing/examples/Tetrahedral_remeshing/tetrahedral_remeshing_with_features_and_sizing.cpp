@@ -64,7 +64,7 @@ namespace p = CGAL::parameters;
 
 int main(int argc, char* argv[])
 {
-  const std::string fname = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cube.off");
+  const std::filesystem::path fname = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cube.off");
   std::ifstream input(fname);
   Polyhedron polyhedron;
   input >> polyhedron;

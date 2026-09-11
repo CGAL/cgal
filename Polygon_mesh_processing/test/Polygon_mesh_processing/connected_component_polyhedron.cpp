@@ -13,7 +13,7 @@ typedef Kernel::Point_3                                      Point;
 typedef CGAL::Polyhedron_3<Kernel>                           Mesh;
 typedef CGAL::Polyhedron_3<Kernel,CGAL::Polyhedron_items_with_id_3> Mesh_with_id;
 
-void mesh_with_id(const std::string argv1, const bool save_output)
+void mesh_with_id(const std::filesystem::path& argv1, const bool save_output)
 {
   typedef boost::graph_traits<Mesh_with_id>::vertex_descriptor vertex_descriptor;
   typedef boost::graph_traits<Mesh_with_id>::face_descriptor face_descriptor;
@@ -212,7 +212,7 @@ void keep_nothing(const std::string argv1)
 
 int main(int argc, char* argv[])
 {
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/blobby_3cc.off");
+  const std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/blobby_3cc.off");
   const bool save_output = (argc > 2);
 
   mesh_with_id(filename, save_output);

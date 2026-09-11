@@ -852,8 +852,8 @@ void test_one_versus_another(const FunctionWrapper1& functor1,
 
 template <typename FunctionWrapper1,
           typename FunctionWrapper2>
-void test_real_meshes(const std::string& filepath1,
-                      const std::string& filepath2,
+void test_real_meshes(const std::filesystem::path& filepath1,
+                      const std::filesystem::path& filepath2,
                       const FunctionWrapper1& functor1,
                       const FunctionWrapper2& functor2,
                       const double error_bound)
@@ -1137,7 +1137,7 @@ int main(int argc, char** argv)
   std::cout << std::endl << "* error bound: " << error_bound << std::endl;
   std::cout << std::endl << "* number of samples: " << num_samples << std::endl;
 
-  const std::string filepath = (argc > 1 ? argv[1] : CGAL::data_file_path("meshes/blobby.off"));
+  const std::filesystem::path filepath = (argc > 1 ? argv[1] : CGAL::data_file_path("meshes/blobby.off"));
   run_examples(error_bound, filepath);
 
   // ------------------------------------------------------------------------ //
@@ -1158,7 +1158,7 @@ int main(int argc, char** argv)
   test_one_versus_another(bound_hd, apprx_hd, error_bound);
 
   // --- Compare on real meshes.
-  const std::string filepath1 = (argc > 1 ? argv[1] : CGAL::data_file_path("meshes/blobby.off"));
+  const std::filesystem::path filepath1 = (argc > 1 ? argv[1] : CGAL::data_file_path("meshes/blobby.off"));
   const std::string filepath2 = (argc > 2 ? argv[2] : "data/tetrahedron-remeshed.off");
 
 //  test_real_meshes(filepath1, filepath2, apprx_hd, naive_hd, error_bound);

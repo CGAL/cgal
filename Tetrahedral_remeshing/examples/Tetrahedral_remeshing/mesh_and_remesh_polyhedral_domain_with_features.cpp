@@ -48,7 +48,7 @@ using namespace CGAL::parameters;
 
 int main(int argc, char* argv[])
 {
-  const std::string fname = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/fandisk.off");
+  const std::filesystem::path fname = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/fandisk.off");
   const int nb_iter = (argc > 2) ? atoi(argv[2]) : 5;
 
   std::ifstream input(fname);

@@ -9,5 +9,5 @@ namespace CGAL{
 ///  pointing to the data directory of the \cgal version used.
 /// The function will attempt to open the file at the returned location
 /// and will print a warning message via `std::cerr` if the file could not be opened.
-std::string data_file_path(const std::string& filename);
+std::filesystem::path data_file_path(const std::string& filename);
 }

@@ -84,7 +84,7 @@ test_triangulate_faces_with_named_parameters()
 
 template <typename K>
 bool
-test_triangulate_face_range(const std::string& filename)
+test_triangulate_face_range(const std::filesystem::path& filename)
 {
   std::cout << "\n--- test_triangulate_face_range(" << typeid(K).name() << ") ---" << std::endl;
 

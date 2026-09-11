@@ -56,7 +56,7 @@ int main(int argc, char* argv[])
 
   // Usage: mesh_3D_gray_vtk_image <nii file or dicom directory> iso_level=1  facet_size=1  facet_distance=0.1  cell_size=1 interior_less_than_isolevel=true
 
-  const std::string fname = (argc>1)?argv[1]:CGAL::data_file_path("images/squircle.nii");
+  const std::filesystem::path fname = (argc>1)?argv[1]:CGAL::data_file_path("images/squircle.nii");
 
   vtkSmartPointer<vtkImageData> vtk_image = nullptr;
   Image_word_type iso = (argc>2)? boost::lexical_cast<Image_word_type>(argv[2]): 1;

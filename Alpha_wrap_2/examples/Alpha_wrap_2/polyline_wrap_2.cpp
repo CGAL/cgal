@@ -25,7 +25,7 @@ int main(int argc, char** argv)
   std::cout.precision(17);
   std::cerr.precision(17);
 
-  const std::string filename = argc > 1 ? argv[1] : CGAL::data_file_path("wkt/LetterAbis.wkt");
+  const std::filesystem::path filename = argc > 1 ? argv[1] : CGAL::data_file_path("wkt/LetterAbis.wkt");
 
   // read_multi_linestring() expects an actual MULTILINESTRING entry whereas read_WKT() will read
   // all MULTILINESTRING and LINESTRING into a multi-linestring.

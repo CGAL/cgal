@@ -42,7 +42,7 @@ typename Sorting,
 typename Lambda_region,
 typename Lambda_assertion>
 bool test(
-  int argc, char** argv, const std::string &name, const std::string &inputfile,
+  int argc, char** argv, const std::string &name, const std::filesystem::path& inputfile,
   const Lambda_region& lambda_region,
   const Lambda_assertion& lambda_assertion) {
 

@@ -31,7 +31,7 @@ namespace IS = CGAL::Isosurfacing;
 
 int main(int argc, char** argv)
 {
-  const std::string fname = (argc > 1) ? argv[1] : CGAL::data_file_path("images/skull_2.9.inr");
+  const std::filesystem::path fname = (argc > 1) ? argv[1] : CGAL::data_file_path("images/skull_2.9.inr");
   const FT isovalue = (argc > 2) ? std::stod(argv[2]) : - 2.9;
 
   // load volumetric image from a file
