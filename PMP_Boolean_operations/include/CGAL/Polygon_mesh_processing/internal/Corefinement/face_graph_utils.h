@@ -1359,16 +1359,16 @@ void append_patches_to_triangle_mesh(
   VertextoVertexMap& tm_to_output_vertices,
   UserVisitor& user_visitor)
 {
-  append_patches_to_triangle_mesh<Sequential_tag, true>(output,
-                                                        patches_to_append,
-                                                        patches,
-                                                        vpm_out,
-                                                        vpm_tm,
-                                                        edge_mark_map_out,
-                                                        edge_mark_map_in,
-                                                        tm_to_output_edges,
-                                                        tm_to_output_vertices,
-                                                        user_visitor);
+  append_patches_to_triangle_mesh<Sequential_tag, reverse_patch_orientation>(output,
+                                                                             patches_to_append,
+                                                                             patches,
+                                                                             vpm_out,
+                                                                             vpm_tm,
+                                                                             edge_mark_map_out,
+                                                                             edge_mark_map_in,
+                                                                             tm_to_output_edges,
+                                                                             tm_to_output_vertices,
+                                                                             user_visitor);
 }
 
 template < class ConcurrencyTag = Sequential_tag,

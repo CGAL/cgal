@@ -263,16 +263,16 @@ void append_patches_to_triangle_mesh(
   VertextoVertexMap& tm_to_output_vertices,
   UserVisitor& user_visitor)
 {
-  append_patches_to_triangle_mesh<Sequential_tag, true>(output,
-                                                        patches_to_append,
-                                                        patches,
-                                                        vpm_out,
-                                                        vpm_tm,
-                                                        edge_mark_map_out,
-                                                        edge_mark_map_in,
-                                                        tm_to_output_edges,
-                                                        tm_to_output_vertices,
-                                                        user_visitor);
+  append_patches_to_triangle_mesh<Sequential_tag, reverse_patch_orientation>(output,
+                                                                             patches_to_append,
+                                                                             patches,
+                                                                             vpm_out,
+                                                                             vpm_tm,
+                                                                             edge_mark_map_out,
+                                                                             edge_mark_map_in,
+                                                                             tm_to_output_edges,
+                                                                             tm_to_output_vertices,
+                                                                             user_visitor);
 }
 
 // Specialization of fill_new_triangle_mesh for Surface_mesh to exploit vectors structure of Surface_mesh.
@@ -443,14 +443,14 @@ void fill_new_triangle_mesh(
     process_borders_after_appending_patches<true>(output,
                                                   ids_of_patches_to_append_from_tm2,
                                                   patches_of_tm2,
-                                                  tm1_to_output_edges,
-                                                  tm1_to_output_vertices);
+                                                  tm2_to_output_edges,
+                                                  tm2_to_output_vertices);
   else
     process_borders_after_appending_patches<false>(output,
                                                    ids_of_patches_to_append_from_tm2,
                                                    patches_of_tm2,
-                                                   tm1_to_output_edges,
-                                                   tm1_to_output_vertices);
+                                                   tm2_to_output_edges,
+                                                   tm2_to_output_vertices);
 }
 
 } // namespace Corefinement
