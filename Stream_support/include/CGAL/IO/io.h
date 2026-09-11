@@ -812,7 +812,7 @@ OutputIterator parse_doubles(const std::string& line, OutputIterator it)
   return it;
 }
 
-bool parse_double(const std::string& line, double& d)
+inline bool parse_double(const std::string& line, double& d)
 {
   const char* p   = line.data();
   const char* end = p + line.size();
@@ -841,7 +841,7 @@ OutputIterator parse_doubles(const std::string& line, OutputIterator it)
   return it;
 }
 
-bool parse_double(const std::string& line, double& d)
+inline bool parse_double(const std::string& line, double& d)
 {
    d = strtod(line.c_str(),NULL);
    return true;   // undefined behavior if the string does not contain a double
