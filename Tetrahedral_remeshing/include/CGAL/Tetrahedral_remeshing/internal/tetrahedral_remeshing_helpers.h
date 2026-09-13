@@ -1080,6 +1080,42 @@ bool is_facet_tagged(const Tr& tr,
   }
 }
 
+// ---------------------------------------------------------------------------
+// An edge a lock zone has already located.
+//
+// A parallel `lock_zone()` that locks an edge's RING has to find a cell
+// carrying the edge in order to circle it, and `execute_operation()` then
+// needs the same cell to build the `Edge` it works on. The two run back to
+// back on one thread with nothing in between, so the second reuses what the
+// first found instead of searching the star again. The endpoints are stored
+// alongside and checked by `matches()`, so a value left over from another
+// element is ignored rather than used.
+//
+// Used by the internal flip and by the split; only ever under `Parallel_tag`.
+template<typename Vertex_handle, typename Cell_handle>
+struct Located_edge
+{
+  Vertex_handle v0, v1;
+  Cell_handle c;
+  int i0 = -1, i1 = -1;
+  bool valid = false;
+
+  void set(Vertex_handle a, Vertex_handle b, Cell_handle ch, int ia, int ib)
+  { v0 = a; v1 = b; c = ch; i0 = ia; i1 = ib; valid = true; }
+
+  void clear() { valid = false; }
+
+  bool matches(Vertex_handle a, Vertex_handle b) const
+  { return valid && v0 == a && v1 == b; }
+};
+
+template<typename Vertex_handle, typename Cell_handle>
+Located_edge<Vertex_handle, Cell_handle>& last_located_edge()
+{
+  static thread_local Located_edge<Vertex_handle, Cell_handle> edge;
+  return edge;
+}
+
 // `nb_incident_subdomains(v, c3t3) > 1`, without counting the whole star. The
 // traversal is the one `TDS_3::incident_cells_3()` performs - from v's cell,
 // across the facets that contain v, marking cells as it goes - so it sees the

@@ -1991,7 +1991,7 @@ protected:
 };
 
 // ---------------------------------------------------------------------------
-// The minimum viable lock zone of an internal flip (see MVLZ_FLIP.md).
+// The minimum viable lock zone of an internal flip.
 //
 // The zone taken by default is the union of the two endpoint stars. A flip
 // only ever writes the ring cells -- the cells around the flipped edge,
@@ -2001,44 +2001,9 @@ protected:
 // the ring IS star(v0) n star(v1), and a mirror cell still contains an
 // endpoint, so it is a star cell too.
 //
-// Everything below is used by `Internal_edge_flip_operation::lock_zone()` and
-// by nothing else, and it only ever runs under `Parallel_tag`.
-//
-/**
-* An edge that has already been located: its two endpoints, one cell carrying
-* it, and their indices in that cell.
-*
-* `lock_zone()` and `execute_operation()` both need a cell containing the two
-* endpoints -- the first to circle the ring it is about to lock, the second to
-* build the `Edge` it works on. They run back to back on one thread with
-* nothing in between, so the second reuses what the first found instead of
-* searching the star again. The endpoints are stored alongside and checked by
-* `matches()`, so a value left over from another element is ignored rather
-* than used.
-*/
-template<typename Vertex_handle, typename Cell_handle>
-struct Located_edge
-{
-  Vertex_handle v0, v1;
-  Cell_handle c;
-  int i0 = -1, i1 = -1;
-  bool valid = false;
-
-  void set(Vertex_handle a, Vertex_handle b, Cell_handle ch, int ia, int ib)
-  { v0 = a; v1 = b; c = ch; i0 = ia; i1 = ib; valid = true; }
-
-  void clear() { valid = false; }
-
-  bool matches(Vertex_handle a, Vertex_handle b) const
-  { return valid && v0 == a && v1 == b; }
-};
-
-template<typename Vertex_handle, typename Cell_handle>
-Located_edge<Vertex_handle, Cell_handle>& last_located_edge()
-{
-  static thread_local Located_edge<Vertex_handle, Cell_handle> edge;
-  return edge;
-}
+// `lock_zone()` below runs only under `Parallel_tag`. The `Located_edge`
+// it hands to `execute_operation()` lives in tetrahedral_remeshing_helpers.h,
+// because the split's lock zone does the same thing.
 
 // Flip of internal (non-boundary) edges. Mirrors the former flip_all_edges():
 // reset the cell caches, collect the internal edges, then run find_best_flip
