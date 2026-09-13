@@ -1269,7 +1269,12 @@ typename C3t3::Vertex_handle collapse_edge(const typename C3t3::Edge& edge,
     const bool /* protect_boundaries */,
     CellSelector cell_selector,
     ShortEdgesBimap& short_edges,
-    Visitor& )
+    Visitor& ,
+    // The stars of edge's two vertices, in that order, infinite cells
+    // included, when the caller already has them; nullptr leaves the walk
+    // here. Says nothing about who the caller is or why it has them.
+    const boost::container::small_vector<typename C3t3::Cell_handle, 64>* in_star_v0 = nullptr,
+    const boost::container::small_vector<typename C3t3::Cell_handle, 64>* in_star_v1 = nullptr)
 {
   typedef typename C3t3::Triangulation   Tr;
   typedef typename Tr::Point             Point;
@@ -1322,27 +1327,33 @@ typename C3t3::Vertex_handle collapse_edge(const typename C3t3::Edge& edge,
   // earlier cut of this change execute MORE instructions than the walks it
   // removed: that copy is paid on every candidate, while the walks it saves
   // are in collapse(), which only candidates passing every test below reach.
+  // A caller that has already walked them hands them in and nothing is walked
+  // here at all.
   using Star = boost::container::small_vector<Cell_handle, 64>;
-  Star star_v0, star_v1;
+  Star walked_v0, walked_v1;
   bool has_star_v0 = false;
   bool has_star_v1 = false;
   const auto star_of_v0 = [&]() -> const Star&
   {
+    if (in_star_v0 != nullptr)
+      return *in_star_v0;
     if (!has_star_v0)
     {
-      c3t3.triangulation().incident_cells(v0, std::back_inserter(star_v0));
+      c3t3.triangulation().incident_cells(v0, std::back_inserter(walked_v0));
       has_star_v0 = true;
     }
-    return star_v0;
+    return walked_v0;
   };
   const auto star_of_v1 = [&]() -> const Star&
   {
+    if (in_star_v1 != nullptr)
+      return *in_star_v1;
     if (!has_star_v1)
     {
-      c3t3.triangulation().incident_cells(v1, std::back_inserter(star_v1));
+      c3t3.triangulation().incident_cells(v1, std::back_inserter(walked_v1));
       has_star_v1 = true;
     }
-    return star_v1;
+    return walked_v1;
   };
 
   const auto orientations_ok = [&](const Collapse_type ct, const Point& pos)
@@ -1430,10 +1441,8 @@ typename C3t3::Vertex_handle collapse_edge(const typename C3t3::Edge& edge,
     if (in_cx)
       nb_valid_collapse++;
 #endif
-    // both stars were needed by the tests above, so both are already walked
-    CGAL_assertion(has_star_v0 && has_star_v1);
     return collapse(edge, collapse_type, cell_selector, c3t3, short_edges,
-                    &star_v0, &star_v1);
+                    &star_of_v0(), &star_of_v1());
   }
 #ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
   else if (in_cx)
@@ -1512,6 +1521,42 @@ auto can_be_collapsed(const typename C3T3::Edge& e,
 }
 
 #ifdef CGAL_LINKED_WITH_TBB
+/**
+* The two endpoint stars, as `lock_zone()` walked them in order to lock them.
+*
+* Locking a collapse means holding both endpoint stars, and the only way to
+* reach a star is to walk it -- so the walk has already happened by the time
+* the operation runs, and nothing can have changed it since, because the locks
+* have been held throughout. What is kept here is a plain pair of cell ranges;
+* `collapse_edge()` takes them through a parameter that means "the caller
+* already has these", and never learns that a lock zone exists.
+*
+* Thread-local, because one operation object serves every worker thread, and
+* stamped with the pair it was built for. `valid` is set last, so a zone
+* abandoned part-way through a failed attempt never matches.
+*/
+template<typename VertexHandle, typename CellHandle>
+struct Locked_stars
+{
+  using Star = boost::container::small_vector<CellHandle, 64>;
+
+  VertexHandle v0, v1;
+  Star star0, star1;
+  bool valid = false;
+
+  void clear() { valid = false; star0.clear(); star1.clear(); }
+
+  bool matches(VertexHandle a, VertexHandle b) const
+  { return valid && v0 == a && v1 == b; }
+};
+
+template<typename VertexHandle, typename CellHandle>
+Locked_stars<VertexHandle, CellHandle>& locked_stars()
+{
+  static thread_local Locked_stars<VertexHandle, CellHandle> stars;
+  return stars;
+}
+
 /**
 * The parallel collapse work list. `collapse_edge()` reports the edges it
 * destroys through `remove_from_bimap()`; a collapse running in parallel
@@ -1639,6 +1684,9 @@ public:
   */
   bool lock_zone(const Edge_vv& e, const C3t3& c3t3) const
   {
+    auto& stars = locked_stars<Vertex_handle, Cell_handle>();
+    stars.clear();
+
     if (m_destroyed_edges.contains(e))
       return true; // nothing to lock; execute_operation_vv() will skip it
 
@@ -1667,9 +1715,14 @@ public:
                                           point(e.second->point()))))
       return false;
 
-    std::vector<Cell_handle> inc_cells_0, inc_cells_1;
-    return tr.try_lock_and_get_incident_cells(e.first, inc_cells_0)
-        && tr.try_lock_and_get_incident_cells(e.second, inc_cells_1);
+    if (!tr.try_lock_and_get_incident_cells(e.first, stars.star0)
+     || !tr.try_lock_and_get_incident_cells(e.second, stars.star1))
+      return false;
+
+    stars.v0 = e.first;
+    stars.v1 = e.second;
+    stars.valid = true;
+    return true;
   }
 
   bool execute_operation_vv(const Edge_vv& e, C3t3& c3t3)
@@ -1682,9 +1735,15 @@ public:
     if (!c3t3.triangulation().tds().is_edge(e.first, e.second, cell, i0, i1))
       return false;
 
+    // lock_zone() walked both stars to take the locks and has held them since
+    const auto& stars = locked_stars<Vertex_handle, Cell_handle>();
+    const bool have = stars.matches(e.first, e.second);
+
     const Vertex_handle vh = collapse_edge(Edge(cell, i0, i1), c3t3, m_sizing,
                                            m_protect_boundaries, m_cell_selector,
-                                           m_destroyed_edges, m_visitor);
+                                           m_destroyed_edges, m_visitor,
+                                           have ? &stars.star0 : nullptr,
+                                           have ? &stars.star1 : nullptr);
     return vh != Vertex_handle();
   }
 
