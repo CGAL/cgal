@@ -1651,6 +1651,22 @@ public:
     if (m_destroyed_edges.contains(e))
       return true;
 
+    // A collapse does not only rewrite the two stars: it first MOVES both
+    // endpoints -- to their midpoint, or one onto the other -- and only then
+    // removes one of them. The spatial lock is keyed on where a vertex is
+    // when it is locked, so the moment an endpoint lands in a grid cell this
+    // thread does not hold, another thread asking to lock that same vertex
+    // computes the NEW position, finds the cell free, and takes it -- while
+    // this collapse is still rewiring the cells that name it.
+    //
+    // TO_V0/TO_V1 land on a point already held, so the midpoint is the only
+    // destination left to take. It is taken unconditionally, because which of
+    // the three collapse_edge() settles on is decided inside the zone, after
+    // these locks, and it can fall back from TO_MIDPOINT to either other one.
+    if (!tr.try_lock_point(CGAL::midpoint(point(e.first->point()),
+                                          point(e.second->point()))))
+      return false;
+
     std::vector<Cell_handle> inc_cells_0, inc_cells_1;
     return tr.try_lock_and_get_incident_cells(e.first, inc_cells_0)
         && tr.try_lock_and_get_incident_cells(e.second, inc_cells_1);
