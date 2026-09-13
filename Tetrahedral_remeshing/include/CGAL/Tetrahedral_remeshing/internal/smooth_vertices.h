@@ -514,6 +514,53 @@ public:
 
   void set_context(std::shared_ptr<Context> p_context) { m_context = p_context; }
 
+  /**
+  * The lock zone of all three smooth operations: `star(v)`.
+  *
+  * Smoothing moves `v` and re-checks the orientation of every cell incident to
+  * it, so the star is the whole zone and cannot be made smaller. The three
+  * operations share this one definition: `Elementary_operation` names
+  * `lock_zone()` in its contract but never declares it, so the executor's
+  * `op.lock_zone(element, c3t3)` finds this by ordinary name lookup, and an
+  * operation that needs a different zone simply defines its own. Only used by
+  * the parallel executor.
+  *
+  * The star is NOT walked.
+  *
+  * `try_lock_and_get_incident_cells()` would traverse the star through the
+  * neighbour pointers, marking and unmarking every cell's `tds_data()` on the
+  * way, and then throw the vector away -- `execute_operation()` reads the star
+  * from `Smoothing_context::m_inc_cells` instead. That cache is exactly
+  * `star(v)` for the whole phase: `Remeshing_impl::smooth()` rebuilds it in
+  * `refresh()` on entry, and no smooth operation changes topology, only
+  * `set_point()`. So the walk is pure loss, and the same cells can be locked
+  * straight out of the cache.
+  *
+  * The set of grid cells taken is the same, with one exception in this
+  * function's favour: the cache holds the FINITE star, so the infinite
+  * vertex's meaningless position is not taken. Nothing here reads it either --
+  * `check_inversion_and_move()` iterates the same cache.
+  *
+  * A vertex that is not free has an EMPTY cache (`collect_incident_cells()`
+  * fills only free ones) and all three `execute_operation()` decline it
+  * immediately, so locking `v` alone is sufficient. `get_elements()` hands out
+  * every finite vertex, so this is the common case.
+  */
+  bool lock_zone(const Vertex_handle v, const C3t3& c3t3) const
+  {
+    const Tr& tr = c3t3.triangulation();
+
+    if (!tr.try_lock_vertex(v))
+      return false;
+
+    for (const Cell_handle c : m_context->incident_cells(v))
+    {
+      if (!tr.try_lock_cell(c))
+        return false;
+    }
+    return true;
+  }
+
 protected:
   Point_3 project_on_tangent_plane(const Point_3& gi, const Point_3& pi, const Vector_3& normal)
   {
@@ -706,17 +753,6 @@ public:
 
     const auto& inc_cells = m_context->m_inc_cells[vid];
     return BaseClass::check_inversion_and_move(v, new_pos, inc_cells, tr, m_context->m_total_move);
-  }
-
-  /**
-  * Smoothing moves `v` and re-checks the orientation of the cells incident to
-  * it, so its star is the whole write zone. Only used by the parallel
-  * executor.
-  */
-  bool lock_zone(const Element_type& v, const C3t3& c3t3) const
-  {
-    std::vector<Cell_handle> inc_cells;
-    return c3t3.triangulation().try_lock_and_get_incident_cells(v, inc_cells);
   }
 
   // vertices are independent of one another: shuffling spreads the threads out
@@ -1018,17 +1054,6 @@ public:
     return result;
   }
 
-  /**
-  * Smoothing moves `v` and re-checks the orientation of the cells incident to
-  * it, so its star is the whole write zone. Only used by the parallel
-  * executor.
-  */
-  bool lock_zone(const Element_type& v, const C3t3& c3t3) const
-  {
-    std::vector<Cell_handle> inc_cells;
-    return c3t3.triangulation().try_lock_and_get_incident_cells(v, inc_cells);
-  }
-
   // vertices are independent of one another: shuffling spreads the threads out
   static constexpr bool requires_ordered_processing = false;
 
@@ -1137,17 +1162,6 @@ public:
                                                  m_context->m_total_move);
     }
     return false;
-  }
-
-  /**
-  * Smoothing moves `v` and re-checks the orientation of the cells incident to
-  * it, so its star is the whole write zone. Only used by the parallel
-  * executor.
-  */
-  bool lock_zone(const Element_type& v, const C3t3& c3t3) const
-  {
-    std::vector<Cell_handle> inc_cells;
-    return c3t3.triangulation().try_lock_and_get_incident_cells(v, inc_cells);
   }
 
   // vertices are independent of one another: shuffling spreads the threads out
