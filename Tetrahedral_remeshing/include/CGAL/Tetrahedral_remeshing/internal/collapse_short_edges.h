@@ -475,8 +475,12 @@ bool is_valid_collapse(const typename C3t3::Edge& edge,
 
 // The cells of `star` keep a positive orientation once `v_moved` is at
 // `new_pos`. Cells that also have `v_other` disappear with the collapse.
+// `star` is the whole star of `v_moved`, infinite cells included: an infinite
+// cell has no fourth point to orient, so it is skipped here rather than by
+// handing every caller a filtered copy of a list it already holds.
 template<typename C3t3, typename CellRange>
-bool collapse_keeps_orientations(const CellRange& star,
+bool collapse_keeps_orientations(const typename C3t3::Triangulation& tr,
+                                 const CellRange& star,
                                  const typename C3t3::Vertex_handle v_moved,
                                  const typename C3t3::Vertex_handle v_other,
                                  const typename C3t3::Triangulation::Geom_traits::Point_3& new_pos)
@@ -485,7 +489,7 @@ bool collapse_keeps_orientations(const CellRange& star,
 
   for (const auto& ch : star)
   {
-    if (ch->has_vertex(v_other))
+    if (tr.is_infinite(ch) || ch->has_vertex(v_other))
       continue;
 
     std::array<Point, 4> pts = { point(ch->vertex(0)->point()),
@@ -871,13 +875,24 @@ void merge_surface_patch_indices(const typename C3t3::Facet& f1,
   }
 }
 
-template<typename C3t3, typename CellSelector, typename ShortEdgesBimap>
+/**
+* `stars_of_kept`/`stars_of_deleted` are the two stars, infinite cells
+* included, when the caller has already collected them; `nullptr` when it has
+* not, and they are walked here as before. `collapse_edge()` walks both to
+* decide whether the collapse is valid at all, and nothing is rewired between
+* that decision and this call, so they are the same two sets.
+*/
+template<typename C3t3, typename CellSelector, typename ShortEdgesBimap,
+         typename CellRange = boost::container::small_vector<
+                                typename C3t3::Cell_handle, 64> >
 typename C3t3::Vertex_handle
 collapse(const typename C3t3::Cell_handle ch,
          const int to, const int from,
          CellSelector& cell_selector,
          C3t3& c3t3,
-         ShortEdgesBimap& short_edges)
+         ShortEdgesBimap& short_edges,
+         const CellRange* star_of_kept = nullptr,
+         const CellRange* star_of_deleted = nullptr)
 {
   typedef typename C3t3::Triangulation Tr;
   typedef typename C3t3::Vertex_handle Vertex_handle;
@@ -891,11 +906,16 @@ collapse(const typename C3t3::Cell_handle ch,
   const Vertex_handle vdeleted = ch->vertex(from);
 
   //Update the vertex before removing it
-  std::vector<Cell_handle> incident_to_vkept;
-  tr.incident_cells(vkept, std::back_inserter(incident_to_vkept));
-
-  std::vector<Cell_handle> incident_to_vdeleted;
-  tr.incident_cells(vdeleted, std::back_inserter(incident_to_vdeleted));
+  CellRange walked_vkept, walked_vdeleted;
+  if (star_of_kept == nullptr || star_of_deleted == nullptr)
+  {
+    tr.incident_cells(vkept, std::back_inserter(walked_vkept));
+    tr.incident_cells(vdeleted, std::back_inserter(walked_vdeleted));
+  }
+  const auto& incident_to_vkept
+    = (star_of_kept != nullptr) ? *star_of_kept : walked_vkept;
+  const auto& incident_to_vdeleted
+    = (star_of_deleted != nullptr) ? *star_of_deleted : walked_vdeleted;
 
   // Resolve the whole star first, without modifying anything: rejecting the
   // collapse once some neighbors have been rewired would leave the
@@ -1043,12 +1063,18 @@ collapse(const typename C3t3::Cell_handle ch,
 }
 
 
-template<typename C3t3, typename CellSelector, typename ShortEdgesBimap>
+// `star_v0`/`star_v1` are the stars of `edge`'s two vertices, in that order,
+// infinite cells included; `nullptr` leaves the walk to the callee.
+template<typename C3t3, typename CellSelector, typename ShortEdgesBimap,
+         typename CellRange = boost::container::small_vector<
+                                typename C3t3::Cell_handle, 64> >
 typename C3t3::Vertex_handle collapse(const typename C3t3::Edge& edge,
                                       const Collapse_type& collapse_type,
                                       CellSelector& cell_selector,
                                       C3t3& c3t3,
-                                      ShortEdgesBimap& short_edges)
+                                      ShortEdgesBimap& short_edges,
+                                      const CellRange* star_v0 = nullptr,
+                                      const CellRange* star_v1 = nullptr)
 {
   typedef typename C3t3::Vertex_handle Vertex_handle;
   typedef typename C3t3::Triangulation::Point Point_3;
@@ -1071,21 +1097,24 @@ typename C3t3::Vertex_handle collapse(const typename C3t3::Edge& edge,
     vh0->set_point(new_position);
     vh1->set_point(new_position);
 
-    vh = collapse(edge.first, edge.second, edge.third, cell_selector, c3t3, short_edges);
+    vh = collapse(edge.first, edge.second, edge.third, cell_selector, c3t3,
+                  short_edges, star_v0, star_v1);
   }
   else //Collapse at vertex
   {
     if (collapse_type == TO_V1)
     {
       vh0->set_point(p1);
-      vh = collapse(edge.first, edge.third, edge.second, cell_selector, c3t3, short_edges);
+      vh = collapse(edge.first, edge.third, edge.second, cell_selector, c3t3,
+                    short_edges, star_v1, star_v0); // v1 is the one kept
     }
     else //Collapse at v0
     {
       if (collapse_type == TO_V0)
       {
         vh1->set_point(p0);
-        vh = collapse(edge.first, edge.second, edge.third, cell_selector, c3t3, short_edges);
+        vh = collapse(edge.first, edge.second, edge.third, cell_selector, c3t3,
+                      short_edges, star_v0, star_v1);
       }
       else
         CGAL_assertion(false);
@@ -1282,24 +1311,35 @@ typename C3t3::Vertex_handle collapse_edge(const typename C3t3::Edge& edge,
 
   // Each attempt below walks the star of v0 and/or of v1, and so do the angle
   // and manifold tests further down. The mesh is not touched in between, so
-  // each star is walked once here and handed to all of them.
-  boost::container::small_vector<Cell_handle, 64> star_v0, star_v1;
+  // each star is walked once here and handed to all of them -- and, if the
+  // collapse is accepted, on to collapse(), which used to walk both a second
+  // time.
+  //
+  // One container each, holding the WHOLE star, infinite cells included. The
+  // two consumers that cannot use an infinite cell skip it as they iterate,
+  // which costs the same test finite_incident_cells() would have applied on
+  // output. Materialising a second, filtered copy instead is what made an
+  // earlier cut of this change execute MORE instructions than the walks it
+  // removed: that copy is paid on every candidate, while the walks it saves
+  // are in collapse(), which only candidates passing every test below reach.
+  using Star = boost::container::small_vector<Cell_handle, 64>;
+  Star star_v0, star_v1;
   bool has_star_v0 = false;
   bool has_star_v1 = false;
-  const auto star_of_v0 = [&]() -> const boost::container::small_vector<Cell_handle, 64>&
+  const auto star_of_v0 = [&]() -> const Star&
   {
     if (!has_star_v0)
     {
-      c3t3.triangulation().finite_incident_cells(v0, std::back_inserter(star_v0));
+      c3t3.triangulation().incident_cells(v0, std::back_inserter(star_v0));
       has_star_v0 = true;
     }
     return star_v0;
   };
-  const auto star_of_v1 = [&]() -> const boost::container::small_vector<Cell_handle, 64>&
+  const auto star_of_v1 = [&]() -> const Star&
   {
     if (!has_star_v1)
     {
-      c3t3.triangulation().finite_incident_cells(v1, std::back_inserter(star_v1));
+      c3t3.triangulation().incident_cells(v1, std::back_inserter(star_v1));
       has_star_v1 = true;
     }
     return star_v1;
@@ -1308,10 +1348,12 @@ typename C3t3::Vertex_handle collapse_edge(const typename C3t3::Edge& edge,
   const auto orientations_ok = [&](const Collapse_type ct, const Point& pos)
   {
     if ((ct == TO_V1 || ct == TO_MIDPOINT)
-        && !collapse_keeps_orientations<C3t3>(star_of_v0(), v0, v1, point(pos)))
+        && !collapse_keeps_orientations<C3t3>(c3t3.triangulation(), star_of_v0(),
+                                              v0, v1, point(pos)))
       return false;
     if ((ct == TO_V0 || ct == TO_MIDPOINT)
-        && !collapse_keeps_orientations<C3t3>(star_of_v1(), v1, v0, point(pos)))
+        && !collapse_keeps_orientations<C3t3>(c3t3.triangulation(), star_of_v1(),
+                                              v1, v0, point(pos)))
       return false;
     return true;
   };
@@ -1357,11 +1399,14 @@ typename C3t3::Vertex_handle collapse_edge(const typename C3t3::Edge& edge,
                        edge.first->vertex(edge.second),
                        edge.first->vertex(edge.third)));
 
+    // the angle and manifold tests below want the finite cells only
     std::unordered_set<Cell_handle> cells_to_insert;
     for (const Cell_handle ch : star_of_v0())
-      cells_to_insert.insert(ch);
+      if (!c3t3.triangulation().is_infinite(ch))
+        cells_to_insert.insert(ch);
     for (const Cell_handle ch : star_of_v1())
-      cells_to_insert.insert(ch);
+      if (!c3t3.triangulation().is_infinite(ch))
+        cells_to_insert.insert(ch);
 
     // the angle test is the one that discards most candidates, and the cheaper
     // of the two : it walks the star once, where is_cells_set_manifold() walks
@@ -1385,7 +1430,10 @@ typename C3t3::Vertex_handle collapse_edge(const typename C3t3::Edge& edge,
     if (in_cx)
       nb_valid_collapse++;
 #endif
-    return collapse(edge, collapse_type, cell_selector, c3t3, short_edges);
+    // both stars were needed by the tests above, so both are already walked
+    CGAL_assertion(has_star_v0 && has_star_v1);
+    return collapse(edge, collapse_type, cell_selector, c3t3, short_edges,
+                    &star_v0, &star_v1);
   }
 #ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
   else if (in_cx)
