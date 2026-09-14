@@ -69,6 +69,7 @@
 #include<CGAL/Partition_traits_2.h>
 #include<CGAL/assertions.h>
 #include<CGAL/Partition_2/Vertex_visibility_graph_2.h>
+#include<algorithm>
 #include<utility>
 #include<vector>
 #include<iterator>
@@ -522,6 +523,30 @@ OutputIterator partition_optimal_convex_2(InputIterator first,
    P_Polygon_2 polygon(first, beyond,traits);
    CGAL_precondition(
     orientation_2(polygon.begin(), polygon.end(), traits) == COUNTERCLOCKWISE);
+
+   // The algorithm is sensitive to the choice of starting vertex (vertex 0).
+   // When vertex 0 is a non-convex or "awkward" vertex the closing boundary
+   // edge (n-1 -> 0) is mis-classified during preprocessing, which can cause
+   // non-simple or non-convex pieces to be returned.  Normalising the polygon
+   // so that vertex 0 is the lexicographically smallest vertex guarantees it
+   // is a convex vertex (true for any simple polygon), satisfying the
+   // algorithm's anchor assumption.  See https://github.com/CGAL/cgal/issues/9322.
+   //
+   // Note: std::rotate is safe here because diagonal lists are not yet
+   // populated (that happens in partition_opt_cvx_preprocessing below).
+   {
+      typedef typename Traits::Less_xy_2 Less_xy_2;
+      Less_xy_2 less_xy = traits.less_xy_2_object();
+      typename P_Polygon_2::iterator min_it = polygon.begin();
+      for (typename P_Polygon_2::iterator it = std::next(polygon.begin());
+           it != polygon.end(); ++it)
+      {
+         if (less_xy(static_cast<typename Traits::Point_2>(*it),
+                     static_cast<typename Traits::Point_2>(*min_it)))
+            min_it = it;
+      }
+      std::rotate(polygon.begin(), min_it, polygon.end());
+   }
 
 #ifdef CGAL_PARTITION_OPTIMAL_CONVEX_DEBUG
    std::cout << "The polygon: " << std::endl;
