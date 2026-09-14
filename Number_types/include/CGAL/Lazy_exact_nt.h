@@ -1303,7 +1303,18 @@ const Lazy_exact_nt<ET> & y){
 template <typename ET>
 std::ostream &
 operator<< (std::ostream & os, const Lazy_exact_nt<ET> & a)
-{ return os << CGAL_NTS to_double(a); }
+{
+  // By default output a double, the historical behaviour. After
+  // CGAL::IO::set_exact_mode(os), output the exact value via ET's own operator<<.
+  // The round-trip through operator>> is exact only when ET has an exact stream
+  // representation (e.g. a rational type such as Exact_rational or Gmpq); it is
+  // not exact for ET whose operator<< writes an approximation (e.g. CORE::Expr,
+  // which writes a decimal). Keeping the default keeps this non-breaking. See
+  // issue #135.
+  if (IO::is_exact_mode(os))
+    return os << a.exact();
+  return os << CGAL_NTS to_double(a);
+}
 
 template <typename ET>
 std::istream &
