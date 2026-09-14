@@ -11,6 +11,10 @@
 #ifndef CGAL_GMP_H
 #define CGAL_GMP_H 1
 
+#ifdef CGAL_DISABLE_GMP
+#error GMP is disabled by the CMake option CGAL_DISABLE_GMP
+#endif
+
 #include <CGAL/config.h>
 #include <CGAL/disable_warnings.h>
 #if defined(BOOST_MSVC)
