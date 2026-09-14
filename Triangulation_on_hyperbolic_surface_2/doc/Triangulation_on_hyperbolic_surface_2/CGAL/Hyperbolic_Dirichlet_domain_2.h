@@ -9,6 +9,7 @@ namespace CGAL {
 
   \tparam Traits must be a model of `HyperbolicSurfaceTraits_2`.
 */
+template <typename Traits>
 std::vector<typename Traits::Hyperbolic_Voronoi_point_2> Dirichlet_vertices(Hyperbolic_fundamental_domain_2<Traits> & domain);
 
 } // namespace CGAL

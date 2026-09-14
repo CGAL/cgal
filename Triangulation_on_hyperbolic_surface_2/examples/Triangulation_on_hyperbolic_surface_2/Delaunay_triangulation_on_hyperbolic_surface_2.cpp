@@ -51,9 +51,9 @@ int main() {
   std::cout << "The number of triangles traversed by the walk used for the point location algorithm is " << ld << std::endl;
 
   std::cout << "/////// Epsilon net of a genus 5 surface (this fails with double precision)///////\n";
-  std::ifstream input_file("../FM-genus-5.txt", std::ios::in);
+  std::ifstream input_file("FM-genus-5.txt", std::ios::in);
   if (!input_file.is_open()) {
-    std::cerr << "Could not open input file ./FM-genus-5.txt!\n";
+    std::cerr << "Could not open input file FM-genus-5.txt!\n";
     return EXIT_FAILURE;
   }
   input_file >> domain;

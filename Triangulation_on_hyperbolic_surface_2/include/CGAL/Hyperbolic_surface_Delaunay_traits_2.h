@@ -13,6 +13,8 @@
 #ifndef CGAL_HYPERBOLIC_SURFACE_DELAUNAY_TRAITS_2
 #define CGAL_HYPERBOLIC_SURFACE_DELAUNAY_TRAITS_2
 
+#ifdef CGAL_USE_GMP
+
 #include <CGAL/license/Triangulation_on_hyperbolic_surface_2.h>
 
 #include <CGAL/Complex_number.h>
@@ -69,7 +71,7 @@ namespace CGAL {
 	  Hyperbolic_point_2 c_approx =  Hyperbolic_point_2(x, y);
 	  return c_approx;
 	}
-      else
+  else
 	{
 	  Hyperbolic_point_2 c_approx;
 	  return c_approx(FT(to_double(c.x())), FT(to_double(c.y())));
@@ -184,5 +186,7 @@ class Hyperbolic_surface_Delaunay_traits_2
  };
 
 } // namespace CGAL
+
+#endif //CGAL_USE_GMP
 
 #endif // CGAL_HYPERBOLIC_SURFACE_DELAUNAY_TRAITS_2

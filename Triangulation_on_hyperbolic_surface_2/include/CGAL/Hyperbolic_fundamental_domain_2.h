@@ -36,7 +36,7 @@ class Hyperbolic_fundamental_domain_2
 public:
   typedef typename Traits::Hyperbolic_point_2                    Point;
   typedef typename Traits::FT                          FT;
-  typedef Complex_number<FT>                                          Complex_number;
+  typedef CGAL::Complex_number<FT>                                          Complex_number;
 
   Hyperbolic_fundamental_domain_2() {};
 
