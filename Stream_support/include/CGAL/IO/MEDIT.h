@@ -32,13 +32,33 @@ namespace CGAL {
 namespace IO {
 namespace internal {
 
-template<class PointRange, class CellRange, class SurfacePatchIndex_>
+template<typename CurveIndex>
+struct Edge_with_index
+{
+  int v0, v1;
+  CurveIndex curve_index;
+};
+
+template<typename CornerIndex>
+struct Corner_with_index
+{
+  int v;
+  CornerIndex corner_index;
+};
+
+template<class PointRange,
+         class CellRange,
+         class SurfacePatchIndex_,
+         class CurveIndex_,
+         class CornerIndex_>
 bool read_MEDIT(std::istream& is,
                 PointRange& points,
                 CellRange& finite_cells,
                 std::vector<int>& subdomains,
                 boost::unordered_map<std::array<int,3>,SurfacePatchIndex_ >& border_facets,
                 bool read_border_facets,
+                std::vector<Edge_with_index<CurveIndex_>>& edge_indices,
+                std::vector<Corner_with_index<CornerIndex_>>& corner_indices,
                 bool verbose,
                 bool& is_CGAL_mesh)
 {
@@ -47,12 +67,14 @@ bool read_MEDIT(std::istream& is,
   using Surface_patch_index = SurfacePatchIndex_;
   using Facet        = std::array<int, 3>;
   using Tet_with_ref = typename std::iterator_traits<typename CellRange::const_iterator>::value_type;
+  using Curve_index = CurveIndex_;
+  using Corner_index = CornerIndex_;
 
   if(!is)
     return false;
 
   int dim;
-  int nv, nf, ntet, ref;
+  int nv, nf, ntet, ref, ncorners, nedges;
   int offset = static_cast<int>(points.size());
   std::string word;
 
@@ -221,13 +243,56 @@ bool read_MEDIT(std::istream& is,
         subdomains.push_back(reference);
       }
     }
+
+    Corner_index corner_index = 0;
+    if(line.find("Corners") != std::string::npos)
+    {
+      is >> ncorners;
+      if(verbose && ncorners == 0)
+        std::cerr << "Warning: Corners section is ignored" << std::endl;
+
+      for(int i = 0; i < ncorners; ++i)
+      {
+        int n;
+        if(!(is >> n))
+        {
+          if(verbose)
+            std::cerr << "Issue while reading corners" << std::endl;
+          return false;
+        }
+        corner_indices.push_back({offset + n - 1, ++corner_index});
+      }
+    }
+
+    if(line.find("Edges") != std::string::npos)
+    {
+      is >> nedges;
+      if(verbose && nedges == 0)
+        std::cerr << "Warning: Edges section is ignored" << std::endl;
+
+      for(int i = 0; i < nedges; ++i)
+      {
+        int n[2], curve_index;
+        if(!(is >> n[0] >> n[1] >> curve_index))
+        {
+          if(verbose)
+            std::cerr << "Issue while reading edges" << std::endl;
+          return false;
+        }
+        edge_indices.push_back({offset + n[0] - 1, offset + n[1] - 1, curve_index});
+        CGAL_assertion(edge_indices.size() == static_cast<std::size_t>(i + 1));
+      }
+    }
+
   }
 
   if (verbose)
   {
     std::cout << points.size() - std::size_t(offset) << " points" << std::endl;
-    std::cout << border_facets.size() << " border facets" << std::endl;
     std::cout << finite_cells.size() << " cells" << std::endl;
+    std::cout << border_facets.size() << " border facets" << std::endl;
+    std::cout << edge_indices.size() << " edges" << std::endl;
+    std::cout << corner_indices.size() << " corners" << std::endl;
   }
 
   if(finite_cells.empty())
@@ -276,9 +341,14 @@ bool read_MEDIT(std::istream& is,
 {
   boost::unordered_map<std::array<int,3>,int > border_facets;
   constexpr bool read_border_facets = false;
+  std::vector<internal::Edge_with_index<int>> edge_indices;
+  std::vector<internal::Corner_with_index<int>> corner_indices;
   bool is_CGAL_mesh;
-  return internal::read_MEDIT(is, points, finite_cells, subdomains, border_facets,
-                              read_border_facets, verbose, is_CGAL_mesh);
+
+  return internal::read_MEDIT(is, points, finite_cells, subdomains,
+                              border_facets, read_border_facets,
+                              edge_indices, corner_indices,
+                              verbose, is_CGAL_mesh);
 }
 
 } // namespace IO
