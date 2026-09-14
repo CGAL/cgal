@@ -107,6 +107,22 @@ public:
   */
   std::vector<Edge> m_finite_edges;
 
+  // The complex (1-D feature) edges, and per finite edge whether it is one.
+  // The 1-D complex is constant for the whole smooth phase, and both answers
+  // are wanted: the complex-edge operation walks `m_complex_edges` instead of
+  // `c3t3.edges_in_complex()`, which is a filter over `finite_edges()` and so
+  // pays the re-derivation described above, and the surface operation reads
+  // `m_finite_edge_in_complex` instead of calling `is_in_complex()` -- a map
+  // lookup -- on every finite edge to reject them. `refresh()` classifies each
+  // edge once, as it scans it, for both.
+  //
+  // `m_complex_edges` keeps `finite_edges()` order, which is the order
+  // `edges_in_complex()` emitted: the moves are floating-point sums, so a
+  // different order would round differently. Both are filled only when
+  // `!m_protect_boundaries`, the only case in which either consumer runs.
+  std::vector<Edge> m_complex_edges;
+  std::vector<bool> m_finite_edge_in_complex;
+
   using Vertices_surface_indices_map = std::unordered_map<Vertex_handle, std::vector<Surface_patch_index>>;
   using Vertices_normals_map =
       std::unordered_map<Vertex_handle,
@@ -174,7 +190,7 @@ public:
     reset_vertex_id_map(c3t3.triangulation());
     reset_free_vertices(c3t3.triangulation());
     collect_incident_cells(c3t3.triangulation());
-    collect_finite_edges(c3t3.triangulation());
+    collect_finite_edges(c3t3);
   }
 
   void start_flip_smooth_steps(const C3t3& c3t3)
@@ -288,8 +304,10 @@ private:
 
   // Topology is constant for the whole smooth phase, so this holds until the
   // next refresh(). The vector keeps its capacity between phases.
-  void collect_finite_edges(const Tr& tr)
+  void collect_finite_edges(const C3t3& c3t3)
   {
+    const Tr& tr = c3t3.triangulation();
+
     // `number_of_vertices() + number_of_cells()` is an upper bound on the
     // number of finite edges, and an O(1) one -- both are container sizes.
     // Euler on the triangulated 3-sphere the TDS holds (the infinite vertex
@@ -305,8 +323,30 @@ private:
     // moment it reallocates last. Peak memory is a gated metric here.
     m_finite_edges.clear();
     m_finite_edges.reserve(tr.number_of_vertices() + tr.number_of_cells());
+
+    // `number_of_edges_in_complex()` is the exact count of the complex edges,
+    // and O(1) -- it is the size of the 1-D complex's own container.
+    const bool classify = !m_protect_boundaries;
+    m_complex_edges.clear();
+    m_finite_edge_in_complex.clear();
+    if (classify)
+    {
+      m_complex_edges.reserve(c3t3.number_of_edges_in_complex());
+      m_finite_edge_in_complex.reserve(tr.number_of_vertices() + tr.number_of_cells());
+    }
+
     for (const Edge& e : tr.finite_edges())
+    {
       m_finite_edges.push_back(e);
+
+      if (!classify)
+        continue;
+
+      const bool in_complex = c3t3.is_in_complex(e);
+      m_finite_edge_in_complex.push_back(in_complex);
+      if (in_complex)
+        m_complex_edges.push_back(e);
+    }
   }
 
   void collect_incident_cells(const Tr& tr)
@@ -761,8 +801,9 @@ protected:
   * places, which are the arguments: which edges they walk, which endpoints
   * they consider movable, and whether the edge counts as a boundary edge for
   * the sizing field. `keep_edge` is a predicate rather than a pre-filtered
-  * range because the two ranges -- `edges_in_complex()` and the cached
-  * `m_finite_edges` -- have different types.
+  * range because the cached ranges are shared between operations that keep
+  * different subsets of them. `keep_edge` gets the edge and its index in the
+  * range, so that it can read a per-edge answer `refresh()` already computed.
   */
   template <typename EdgeRange, typename KeepEdge, typename MovesVertex>
   void accumulate_edge_moves(const EdgeRange& edges,
@@ -776,9 +817,10 @@ protected:
     const Move default_move{CGAL::NULL_VECTOR, 0 /*neighbors*/, 0. /*mass*/};
     moves.assign(c3t3.triangulation().number_of_vertices(), default_move);
 
+    std::size_t edge_index = 0;
     for (const Edge& e : edges)
     {
-      if (!keep_edge(e))
+      if (!keep_edge(e, edge_index++))
         continue;
 
       const Vertex_handle vh0 = e.first->vertex(e.second);
@@ -983,8 +1025,8 @@ private:
   void compute_vertex_moves(const C3t3& c3t3) const override
   {
     BaseClass::accumulate_edge_moves(
-        c3t3.edges_in_complex(), c3t3, true /*boundary_edge*/,
-        [](const Edge& e) {
+        m_context->m_complex_edges, c3t3, true /*boundary_edge*/,
+        [](const Edge& e, const std::size_t) {
           CGAL_expensive_assertion(is_on_feature(e.first->vertex(e.second)));
           CGAL_expensive_assertion(is_on_feature(e.first->vertex(e.third)));
           CGAL_USE(e);
@@ -1026,8 +1068,11 @@ private:
   {
     BaseClass::accumulate_edge_moves(
         m_context->m_finite_edges, c3t3, true /*boundary_edge*/,
-        [&c3t3, this](const Edge& e) {
-          return !c3t3.is_in_complex(e) && is_boundary(c3t3, e, m_context->m_cell_selector);
+        [&c3t3, this](const Edge& e, const std::size_t ei) {
+          CGAL_assertion(m_context->m_finite_edge_in_complex.size()
+                         == m_context->m_finite_edges.size());
+          return !m_context->m_finite_edge_in_complex[ei]
+                 && is_boundary(c3t3, e, m_context->m_cell_selector);
         },
         [this](const Vertex_handle vh, const std::size_t vid) {
           return !is_on_feature(vh) && m_context->is_free(vid);
@@ -1231,7 +1276,7 @@ private:
     /*for dim 3 vertices, start counting neighbors directly from 0*/
     BaseClass::accumulate_edge_moves(
         m_context->m_finite_edges, c3t3, false /*boundary_edge*/,
-        [&c3t3, this](const Edge& e) {
+        [&c3t3, this](const Edge& e, const std::size_t) {
           return !is_outside(e, c3t3, m_context->m_cell_selector);
         },
         [&c3t3, this](const Vertex_handle vh, const std::size_t vid) {
