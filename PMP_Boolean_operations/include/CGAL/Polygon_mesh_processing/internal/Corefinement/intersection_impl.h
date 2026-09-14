@@ -349,16 +349,16 @@ class Intersection_of_triangle_meshes
         tbb::concurrent_vector<std::pair<face_descriptor, face_descriptor>> inter;
         CGAL::AABB_trees::all_pairs_of_intersecting_primitives(tree1, tree2, std::back_inserter(inter), parameters::concurrency_tag(ConcurrencyTag()));
 
+        // Callback are not thread safe since Edge_to_faces is not.
+        // Edge_to_faces is an unordered_map<Edge_index, unordered_set<Face_index>>
+        // pass them would be a lot of concurrent write and unefficient, use local vectors then merged and check doublon is probably better
+        // Currently, in explored examples, this step is negligeable in runtime and thus not parallellized
         if(non_manifold_feature_map_1.non_manifold_edges.empty() && non_manifold_feature_map_2.non_manifold_edges.empty())
-          tbb::parallel_for(std::size_t(0), inter.size(), [&](std::size_t i){
-            const auto& [f_1, f_2] = inter[i];
+          for(const auto& [f_1, f_2]: inter)
             process_candidates_without_non_manifold_map(f_1, f_2, callback12, callback21);
-          });
         else
-          tbb::parallel_for(std::size_t(0), inter.size(), [&](std::size_t i){
-            const auto& [f_1, f_2] = inter[i];
+          for(const auto& [f_1, f_2]: inter)
             process_candidates_with_non_manifold_map(f_1, f_2, callback12, callback21);
-          });
       }
       else
   #endif
