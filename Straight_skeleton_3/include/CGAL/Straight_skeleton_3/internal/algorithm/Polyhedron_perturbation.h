@@ -1,4 +1,4 @@
-// Copyright (c) 2024-2025 GeometryFactory (France)
+// Copyright (c) 2024-2026 GeometryFactory (France)
 //
 // This file is part of CGAL (www.cgal.org)
 //
@@ -52,8 +52,6 @@
 #include <limits>
 #include <list>
 #include <random>
-#include <unordered_map>
-#include <unordered_set>
 
 namespace CGAL {
 namespace Straight_skeletons_3 {
@@ -118,6 +116,15 @@ private:
       // returns the maximum number of digits between the a, b, c and d coefficients
       return (std::max)({length(plane.a()), length(plane.b()), length(plane.c()), length(plane.d())});
     }
+  };
+
+  struct Stability_failure
+  {
+    VertexSPtr v;
+    FacetSPtr f0;
+    FacetSPtr f1;
+    FacetSPtr f2;
+    FT sq_distance;
   };
 
 private:
@@ -210,9 +217,10 @@ public:
     *  - all triplets of planes should intersect in a point.
     * avoiding the O(n^3) naive complexity
     */
-  static bool are_planes_in_general_position(const PolyhedronSPtr& polyhedron)
+  static bool are_planes_in_general_position(const PolyhedronSPtr& polyhedron,
+                                             std::vector<Stability_failure>* failures = nullptr)
   {
-    CGAL_SS3_TRANSF_TRACE_V(4, "Check all 3-combinations of planes");
+    CGAL_SS3_TRANSF_TRACE_V(4, "Check if planes are in general position...");
     CGAL_SS3_DEBUG_SPTR(polyhedron);
     CGAL_precondition(polyhedron->facets().size() >= 3);
 
@@ -300,14 +308,6 @@ public:
       normals.emplace_back(facet, n);
     }
 
-    auto report_degenerate = [&normals](std::size_t i, std::size_t j, std::size_t k) -> void
-    {
-      CGAL_SS3_TRANSF_TRACE_V(1, "Degenerate facet triplet:");
-      CGAL_SS3_TRANSF_TRACE_V(1, "  " << normals[i].first->to_string());
-      CGAL_SS3_TRANSF_TRACE_V(1, "  " << normals[j].first->to_string());
-      CGAL_SS3_TRANSF_TRACE_V(1, "  " << normals[k].first->to_string());
-    };
-
     std::vector<Direction> directions;
     directions.reserve(nf - 1);
 
@@ -322,8 +322,13 @@ public:
           while (k == i || k == j) {
             ++k;
           }
-          report_degenerate(i, j, k);
-          return false;
+          CGAL_SS3_TRANSF_TRACE_V(1, "Degenerate facet triplet: " << normals[i].first->id() << " " << normals[j].first->id() << " -1");
+          if (failures) {
+            failures->push_back({VertexSPtr(), normals[i].first, normals[j].first, normals[k].first, FT(-1)});
+            continue;
+          } else {
+            return false;
+          }
         }
 
         directions.push_back(std::make_pair(canonicalize(c_ij), j));
@@ -342,13 +347,23 @@ public:
           });
 
       if (dup != directions.end()) {
-        report_degenerate(i, dup->second, (std::next(dup))->second);
-        return false;
+        const std::size_t jidx = dup->second;
+        const std::size_t kidx = (std::next(dup))->second;
+        CGAL_SS3_TRANSF_TRACE_V(1, "Degenerate facet triplet: " << normals[i].first->id() << " " << normals[jidx].first->id() << " " << normals[kidx].first->id());
+        if (failures) {
+          failures->push_back({VertexSPtr(), normals[i].first, normals[jidx].first, normals[kidx].first, FT(-2)});
+          continue;
+        } else {
+          return false;
+        }
       }
     }
 
-    CGAL_SS3_TRANSF_TRACE_V(4, "All planes OK");
-    return true;
+    if (failures) {
+      return failures->empty();
+    } else {
+      return true;
+    }
   }
 
   /**
@@ -467,7 +482,7 @@ public:
       static std::uniform_real_distribution<> rdist(-range, range);
 
       // Since we are perturbing, we might as well collapse the DAG of 'v'.
-      // the point is also that once 'nv' is a double, its interval will be a singleton,
+      // The point is also that once 'nv' is a double, its interval will be a singleton,
       // and we will have access to static filters
       double step = rdist(gen);
       double nv = CGAL::to_double(v) + step;
@@ -502,191 +517,6 @@ public:
     CGAL_postcondition(Transformation::has_normalized_plane(facet));
   }
 
-  // Note that this is meant to be used as V4 perturbation and thus we do NOT reset points
-  static void perturbPlanesCoefficientsControlled(const PolyhedronSPtr& polyhedron,
-                                                  const double initial_range,
-                                                  const double max_displacement,
-                                                  const int max_iterations = 50,
-                                                  const double reduction_factor = 0.5)
-  {
-    CGAL::unordered_flat_map<FacetSPtr, Plane_3> original_planes;
-    // 'amplitudes' stores the current scale of perturbation for each facet.
-    // It starts at 1.0 and shrinks on failure.
-    CGAL::unordered_flat_map<FacetSPtr, FT> amplitudes;
-
-    for (const FacetSPtr& f : polyhedron->facets()) {
-      original_planes[f] = f->get_plane();
-      amplitudes[f] = FT(1);
-    }
-
-    CGAL::unordered_flat_map<VertexSPtr, Point_3> original_points;
-    CGAL::unordered_flat_map<VertexSPtr, FT> sq_max_displacements;
-
-    // Precompute max displacement per vertex
-    const FT global_sq_max = CGAL::square(FT(max_displacement));
-    for (const VertexSPtr& v : polyhedron->vertices()) {
-      original_points[v] = v->point();
-
-      // Initialize with global max
-      FT local_sq_max = global_sq_max;
-
-      // Check neighbors: min of (10% dist) and current max
-      for (const EdgeWPtr& we : v->edges()) {
-        if (const EdgeSPtr e = we.lock()) {
-          VertexSPtr ov = e->other(v);
-          const FT sq_dist = CGAL::squared_distance(v->point(), ov->point());
-          const FT limit_sq = 0.01 * sq_dist;
-          if (limit_sq < local_sq_max) {
-            local_sq_max = limit_sq;
-          }
-        }
-      }
-      sq_max_displacements[v] = local_sq_max;
-    }
-
-    // Random number generation
-    static std::random_device rd;
-    unsigned int s = 0; // rd();
-    std::mt19937 gen(s);
-    std::uniform_real_distribution<double> rdist(-1.0, 1.0);
-
-    // Set of facets that need perturbation in the current iteration.
-    // Initially, all facets need perturbation.
-    std::unordered_set<FacetSPtr> active_facets;
-    for (const FacetSPtr& f : polyhedron->facets())
-      active_facets.insert(f);
-
-    for (int iter = 0; iter < max_iterations; ++iter)
-    {
-      CGAL_SS3_TRANSF_TRACE_V(16, "controlled perturbation - iteration #" << iter);
-
-      if (active_facets.empty()) {
-         CGAL_SS3_TRANSF_TRACE_V(16, "perturbControlled: converged (no active facets) at iteration #" << iter);
-         return;
-      }
-
-      // Apply perturbations
-      // We only perturb facets that are in the 'active_facets' set.
-      // We generate a NEW random nudge every iteration, scaled by the current amplitude.
-
-      for (const FacetSPtr& f : active_facets)
-      {
-        const Plane_3& orig_pl = original_planes[f];
-        const FT amplitude = amplitudes[f];
-        const FT scale = FT(initial_range) * amplitude;
-
-        // Generate random nudge in arbitrary precision (FT)
-        // We generate in double and convert, which is standard for randoms.
-        FT nudge_a = FT(rdist(gen)) * scale;
-        FT nudge_b = FT(rdist(gen)) * scale;
-        FT nudge_c = FT(rdist(gen)) * scale;
-        FT nudge_d = FT(rdist(gen)) * scale;
-
-        FT na = orig_pl.a() + nudge_a;
-        FT nb = orig_pl.b() + nudge_b;
-        FT nc = orig_pl.c() + nudge_c;
-        FT nd = orig_pl.d() + nudge_d;
-
-        FT sqlen = CGAL::square(na) + CGAL::square(nb) + CGAL::square(nc);
-        FT len = CGAL::approximate_sqrt(sqlen);
-        CGAL_assertion(!is_zero(len));
-
-        CGAL_SS3_TRANSF_TRACE_V(32, "Perturb (Controlled) F" << f->id());
-        CGAL_SS3_TRANSF_TRACE_V(32, "  From coefficients [" << orig_pl.a() << " " << orig_pl.b() << " "
-                                                            << orig_pl.c() << " " << orig_pl.d() << "]");
-
-        f->set_plane(Plane_3(na / len, nb / len, nc / len, nd / len));
-
-        CGAL_SS3_TRANSF_TRACE_V(32, "  To coefficients [" << f->get_plane().a() << " " << f->get_plane().b() << " "
-                                                          << f->get_plane().c() << " " << f->get_plane().d() << "]");
-      }
-
-      // Check displacement of every vertex ----
-      // We check ALL vertices, because a vertex can be affected by a neighbor's perturbation
-      // even if its own incident facets were 'inactive'.
-
-      std::unordered_set<FacetSPtr> next_active_facets;
-
-      // Check displacement of a single vertex
-      auto is_too_large_displacement = [&](const VertexSPtr& v) {
-        const Point_3& p_old = original_points.at(v);
-
-        for (auto it_wf1 = v->facets().begin(); it_wf1 != v->facets().end(); ++it_wf1) {
-          if (FacetSPtr f1 = it_wf1->lock()) {
-            for (auto it_wf2 = std::next(it_wf1); it_wf2 != v->facets().end(); ++it_wf2) {
-              if (FacetSPtr f2 = it_wf2->lock()) {
-                for (auto it_wf3 = std::next(it_wf2); it_wf3 != v->facets().end(); ++it_wf3) {
-                  if (FacetSPtr f3 = it_wf3->lock()) {
-                    std::optional<Point_3> p_new = Kernel_wrapper::intersection(f1->get_plane(), f2->get_plane(), f3->get_plane());
-                    if (!p_new.has_value()) {
-                      CGAL_SS3_TRANSF_TRACE_V(1, "Warning: triplet of planes does not define a point!");
-                      CGAL_SS3_TRANSF_TRACE_V(1, "  faces: " << f1->id() << " " << f2->id() << " " << f3->id());
-                      return true;
-                    }
-
-                    if (CGAL::squared_distance(p_old, p_new.value()) > sq_max_displacements[v]) {
-                      CGAL_SS3_TRANSF_TRACE_V(64, "  Vertex " << v->id() << " moved too far");
-                      CGAL_SS3_TRANSF_TRACE_V(64, "  from " << v->point() << " to " << p_new.value());
-                      CGAL_SS3_TRANSF_TRACE_V(64, "  F1 [" << f1->id() << "] " << f1->get_plane().a() << " " << f1->get_plane().b() << " "
-                                                                               << f1->get_plane().c() << " " << f1->get_plane().d());
-                      CGAL_SS3_TRANSF_TRACE_V(64, "  F2 [" << f2->id() << "] " << f2->get_plane().a() << " " << f2->get_plane().b() << " "
-                                                                               << f2->get_plane().c() << " " << f2->get_plane().d());
-                      CGAL_SS3_TRANSF_TRACE_V(64, "  F3 [" << f3->id() << "] " << f3->get_plane().a() << " " << f3->get_plane().b() << " "
-                                                                               << f3->get_plane().c() << " " << f3->get_plane().d());
-
-                      std::optional<Point_3> p_beg = Kernel_wrapper::intersection(original_planes[f1], original_planes[f2], original_planes[f3]);
-                      if (!p_beg.has_value()) {
-                        CGAL_SS3_TRANSF_TRACE_V(1, "triplet of ORIGINAL planes does not define a point!");
-                      } else {
-                        CGAL_SS3_TRANSF_TRACE_V(1, "original intersection is: " << p_beg.value());
-                      }
-
-                      next_active_facets.insert(f1);
-                      next_active_facets.insert(f2);
-                      next_active_facets.insert(f3);
-                      return true;
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-
-        return false;
-      };
-
-      bool all_ok = true;
-
-      std::unordered_set<FacetSPtr> overly_perturbed_facets;
-
-      for (const VertexSPtr& v : polyhedron->vertices())
-      {
-        if (is_too_large_displacement(v)) {
-          all_ok = false;
-          for (const FacetWPtr& wf : v->facets()) {
-            if (FacetSPtr f = wf.lock()) {
-              overly_perturbed_facets.insert(f);
-            }
-          }
-        }
-      }
-
-      if (all_ok) {
-        CGAL_SS3_TRANSF_TRACE_V(16, "perturbControlled: converged at iteration #" << iter);
-        return;
-      }
-
-      // Prepare for next iteration: only perturb the facets that caused issues.
-      active_facets = std::move(next_active_facets);
-
-      for (const FacetSPtr& f : active_facets)
-        amplitudes[f] *= reduction_factor;
-    }
-
-    CGAL_SS3_TRANSF_TRACE_V(1, "Warning: perturbControlled did not converge in " << max_iterations << " iterations");
-  }
-
   /**
   * nudges the plane coefficients but ensure that the perturbed plane goes through 0, 1, or 2 fixed points.
   * If 0 points: nudge all coefficients independently.
@@ -698,7 +528,7 @@ public:
                                                   const double range,
                                                   const VertexRange& fixed_vertices)
   {
-    CGAL_SS3_TRANSF_TRACE_V(32, "Perturb (Fixed) F" << facet->id() << " [" << facet->vertices().size() << " vertices]");
+    CGAL_SS3_TRANSF_TRACE_V(32, "Perturb (Fixed) F" << facet->id() << " [" << facet->vertices().size() << " vs]");
     CGAL_SS3_TRANSF_TRACE_V(32, "  From coefficients [" << facet->get_plane().a() << " " << facet->get_plane().b() << " "
                                                         << facet->get_plane().c() << " " << facet->get_plane().d() << "]");
     CGAL_SS3_TRANSF_TRACE_V(32, "  with " << fixed_vertices.size() << " fixed vertices");
@@ -706,17 +536,15 @@ public:
       CGAL_SS3_TRANSF_TRACE_V(32, "    fixed V" << fixed_vertex->id() << " at " << fixed_vertex->point());
     }
 
-    std::vector<const Point_3*> fixed_points;
-    fixed_points.reserve(2);
+    CGAL_precondition(Transformation::has_normalized_plane(facet));
 
+    boost::container::small_vector<const Point_3*, 3> fixed_points;
     for (const VertexSPtr& fixed_vertex : fixed_vertices) {
       fixed_points.push_back(&(fixed_vertex->point()));
     }
 
     const std::size_t fixed_points_count = fixed_points.size();
-
-    CGAL_precondition(Transformation::has_normalized_plane(facet));
-    CGAL_precondition(fixed_points_count <= 2);
+    CGAL_assertion(fixed_points_count < 3);
 
     static std::random_device rd;
     unsigned int s = 0; // rd()
@@ -727,53 +555,45 @@ public:
     auto nudge = [&](const FT& v)
     {
       // Since we are perturbing, we might as well collapse the DAG of 'v'.
-      // the point is also that once 'nv' is a double, its interval will be a singleton,
+      // The point is also that once 'nv' is a double, its interval will be a singleton,
       // and we will have access to static filters
       double step = rdist(gen);
       double nv = CGAL::to_double(v) + step;
       return nv;
     };
 
-#ifdef CGAL_SS3_USE_SIMPLEST_RATIONAL_IN_INTERVAL
-    auto nudge_to_simplest_rational_in_interval = [&](const FT& v)
-    {
-      double d1 = nudge(v);
-      double d2 = nudge(v);
-      if (d2 < d1) {
-        std::swap(d1, d2);
-      }
-      FT nv = CGAL::simplest_rational_in_interval<CGAL::K::Exact_kernel::FT>(d1, d2);
-      return nv;
-    };
-#endif
-
-    // 0 fixed points: nudge all coefficients independently
+    // 0 fixed points: nudge (a, b, c), recompute d so the plane passes through the facet centroid
     if (fixed_points_count == 0) {
-#ifdef CGAL_SS3_USE_SIMPLEST_RATIONAL_IN_INTERVAL
-      FT na = nudge_to_simplest_rational_in_interval(facet->get_plane().a());
-      FT nb = nudge_to_simplest_rational_in_interval(facet->get_plane().b());
-      FT nc = nudge_to_simplest_rational_in_interval(facet->get_plane().c());
-      FT nd = nudge_to_simplest_rational_in_interval(facet->get_plane().d());
-#else
-      double na = nudge(facet->get_plane().a());
-      double nb = nudge(facet->get_plane().b());
-      double nc = nudge(facet->get_plane().c());
-      double nd = nudge(facet->get_plane().d());
-#endif
+      double cx = 0.;
+      double cy = 0.;
+      double cz = 0.;
+      unsigned int vertex_count = 0;
+      for (const VertexSPtr& vertex : facet->vertices()) {
+        const Point_3& p = vertex->point();
+        cx += CGAL::to_double(p.x());
+        cy += CGAL::to_double(p.y());
+        cz += CGAL::to_double(p.z());
+        ++vertex_count;
+      }
+      CGAL_assertion(vertex_count > 0);
+      const double x0 = cx / double(vertex_count);
+      const double y0 = cy / double(vertex_count);
+      const double z0 = cz / double(vertex_count);
+
+      const double na = nudge(facet->get_plane().a());
+      const double nb = nudge(facet->get_plane().b());
+      const double nc = nudge(facet->get_plane().c());
+      const double nd = -(na * x0 + nb * y0 + nc * z0);
+
       facet->set_plane(Plane_3{na, nb, nc, nd});
     } else if (fixed_points_count == 1) {
       // 1 fixed point: nudge (a, b, c), recompute d so the plane passes through the point
       const Point_3& p0 = *(fixed_points[0]);
 
-#ifdef CGAL_SS3_USE_SIMPLEST_RATIONAL_IN_INTERVAL
-      FT na = nudge_to_simplest_rational_in_interval(facet->get_plane().a());
-      FT nb = nudge_to_simplest_rational_in_interval(facet->get_plane().b());
-      FT nc = nudge_to_simplest_rational_in_interval(facet->get_plane().c());
-#else
-      double na = nudge(facet->get_plane().a());
-      double nb = nudge(facet->get_plane().b());
-      double nc = nudge(facet->get_plane().c());
-#endif
+      const double na = nudge(facet->get_plane().a());
+      const double nb = nudge(facet->get_plane().b());
+      const double nc = nudge(facet->get_plane().c());
+
       const FT& x0 = p0.x();
       const FT& y0 = p0.y();
       const FT& z0 = p0.z();
@@ -781,6 +601,200 @@ public:
       facet->set_plane(Plane_3{na, nb, nc, d});
       CGAL_postcondition(facet->get_plane().has_on(p0));
     } else if (fixed_points_count == 2) {
+#if 1
+      // The planes containing p0 and p1 form a 2-dimensional linear subspace (a pencil)
+      // of the 4-dimensional coefficient space (a,b,c,d).
+      // We build an exact (division-free) basis {(N1,D1), (N2,D2)} of that pencil, and set
+      //  (a1, b1, c1, d1) = alpha * (N1,D1) + beta * (N2,D2)
+      // giving a constrained, nudged plane close to the current one.
+
+      const Point_3& p0 = *(fixed_points[0]);
+      const Point_3& p1 = *(fixed_points[1]);
+      CGAL_assertion(p0 != p1);
+
+      auto dot3 = [](const double a[3], const double b[3]) -> double {
+        return a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
+      };
+      auto norm3 = [&dot3](const double a[3]) -> double {
+        return std::sqrt(dot3(a, a));
+      };
+
+      const FT ux = p1.x() - p0.x();
+      const FT uy = p1.y() - p0.y();
+      const FT uz = p1.z() - p0.z();
+
+      const double u_d[3] = { CGAL::to_double(ux),
+                              CGAL::to_double(uy),
+                              CGAL::to_double(uz) };
+      const double au[3] = { std::abs(u_d[0]), std::abs(u_d[1]), std::abs(u_d[2]) };
+      const double ul = norm3(u_d);
+      CGAL_assertion(ul > 0.); // means we don't have p0 and p1 absurdly close
+
+      // Pivot on the largest component of u.
+      // Then |N1 x N2| = |u_pivot| * |u|, and the angle between N1 and N2 is >= 60 degrees
+      // Indeed, if a = |u_pivot| is the largest and b, c are the others,
+      // |cos| = bc / (sqrt(b^2+a^2) * sqrt(c^2+a^2)) <= bc / (b*sqrt(2) * c*sqrt(2)) = 1/2).
+      // The 2x2 solve below is therefore well-conditioned.
+      int pivot = 0;
+      if (au[1] >= au[0] && au[1] >= au[2]) {
+        pivot = 1;
+      } else if (au[2] >= au[0] && au[2] >= au[1]) {
+        pivot = 2;
+      }
+
+      // Compute the basis of the pencil
+      // D_i = -(N_i . p0) is written expanded such that every product has magnitude ~|p0|*|u|
+      // (no |p0|^2 terms): this avoids the cancellation of the Pluecker form p0 x p1
+      // and preserves interval-filter margin.
+      FT N1x, N1y, N1z, D1;
+      FT N2x, N2y, N2z, D2;
+
+      switch (pivot) {
+        case 0: // |ux| largest
+          N1x = uy;
+          N1y = - ux;
+          N1z = FT(0);
+          N2x = uz;
+          N2y = FT(0);
+          N2z = - ux;
+          D1 = ux * p0.y() - uy * p0.x();
+          D2 = ux * p0.z() - uz * p0.x();
+          break;
+        case 1: // |uy| largest
+          N1x = - uy;
+          N1y =  ux;
+          N1z = FT(0);
+          N2x = FT(0);
+          N2y =  uz;
+          N2z = - uy;
+          D1 = uy * p0.x() - ux * p0.y();
+          D2 = uy * p0.z() - uz * p0.y();
+          break;
+        default: // |uz| largest
+          N1x = - uz;
+          N1y = FT(0);
+          N1z =  ux;
+          N2x = FT(0);
+          N2y = - uz;
+          N2z =  uy;
+          D1 = uz * p0.x() - ux * p0.z();
+          D2 = uz * p0.y() - uy * p0.z();
+          break;
+      }
+
+      // select a plane in the pencil
+
+      const double n1[3] = { CGAL::to_double(N1x), CGAL::to_double(N1y), CGAL::to_double(N1z) };
+      const double n2[3] = { CGAL::to_double(N2x), CGAL::to_double(N2y), CGAL::to_double(N2z) };
+      const double l1 = norm3(n1);
+      const double l2 = norm3(n2);
+      CGAL_assertion(l1 > 0. && l2 > 0.);
+      const double e1[3] = { n1[0]/l1, n1[1]/l1, n1[2]/l1 };
+      const double e2[3] = { n2[0]/l2, n2[1]/l2, n2[2]/l2 };
+
+      // Target direction: cast to double to drop the DAG of the previous plane
+      double t[3] = { CGAL::to_double(facet->get_plane().a()),
+                      CGAL::to_double(facet->get_plane().b()),
+                      CGAL::to_double(facet->get_plane().c()) };
+      const double tn = norm3(t);
+      CGAL_assertion(tn > 0.);
+      t[0] /= tn;
+      t[1] /= tn;
+      t[2] /= tn;
+
+      // Only directions orthogonal to u are reachable.
+      // |t.uhat| = sin(phi), phi = the angle by which the two anchors force the normal to swing.
+      const double uh[3] = { u_d[0]/ul, u_d[1]/ul, u_d[2]/ul };
+      const double tu = dot3(t, uh);
+      double tp[3] = { t[0] - tu*uh[0], t[1] - tu*uh[1], t[2] - tu*uh[2] };
+      const double tpn = norm3(tp); // == cos(phi)
+      double phi = std::atan2(std::abs(tu), tpn);
+
+      // if the new facet's normal is (nearly) parallel to the anchor edge direction,
+      // then the resulting plane through p0,p1 is not close to the current one.
+      const double threshold = 1e-8;
+      const bool degenerate = (tpn <= threshold);
+      if (degenerate) {
+        // Return a valid plane, and let other mechanisms downstream deal with this bad perturbation...
+        CGAL_SS3_TRANSF_TRACE_V(32, "  Warning: F" << facet->id() << ": normal nearly parallel to the anchor edge (|cos| = " << tpn << ")");
+        tp[0] = e1[0];
+        tp[1] = e1[1];
+        tp[2] = e1[2];
+        phi = 0.5 * CGAL_PI;
+      } else {
+        tp[0] /= tpn;
+        tp[1] /= tpn;
+        tp[2] /= tpn;
+      }
+
+      // Rotate around 'u' by a random angle
+      using rdist_param = std::uniform_real_distribution<>::param_type;
+      const double theta = rdist(gen, rdist_param(-range, range));
+      const double ct = std::cos(theta), st = std::sin(theta);
+
+      const double w[3] = { uh[1]*tp[2] - uh[2]*tp[1],
+                            uh[2]*tp[0] - uh[0]*tp[2],
+                            uh[0]*tp[1] - uh[1]*tp[0] };
+
+      const double tj[3] = { ct*tp[0] + st*w[0],
+                             ct*tp[1] + st*w[1],
+                             ct*tp[2] + st*w[2] };
+
+      // Express 'tj' in the (unit) basis (e1,e2) of u^perp
+      const double g = dot3(e1, e2);
+      const double r1 = dot3(e1, tj);
+      const double r2 = dot3(e2, tj);
+      const double det = 1.0 - g*g;
+      CGAL_assertion(det > 0.5);
+      const double alpha = (r1 - g*r2) / det / l1; // coefficient of N1
+      const double beta  = (r2 - g*r1) / det / l2; // coefficient of N2
+
+      // Round alpha,beta onto a common dyadic exponent: one shared power-of-two
+      // denominator instead of two unrelated ones, both numerators <= 2^52.
+      const double amax = std::max(std::abs(alpha), std::abs(beta));
+      CGAL_assertion(amax > 0.);
+      int aexp = 0;
+      std::frexp(amax, &aexp); // amax in [2^(aexp-1), 2^aexp)
+      const int shift = 52 - aexp;
+      const double scl     = std::ldexp(1.0, shift);
+      const double inv_scl = std::ldexp(1.0, -shift);
+      CGAL_assertion(scl > 0. && std::isfinite(scl) && inv_scl > 0.);
+
+      const double lam_d = std::round(alpha * scl); // integral, |.| <= 2^52
+      const double mu_d  = std::round(beta  * scl);
+      CGAL_assertion(lam_d != 0. || mu_d != 0.);
+
+      const FT inv_scl_ft(inv_scl); // exact power of two
+      const FT alpha_ft = FT(lam_d) * inv_scl_ft;
+      const FT beta_ft  = FT(mu_d)  * inv_scl_ft;
+
+      // Back to the exact world
+      const FT a1 = alpha_ft * N1x + beta_ft * N2x;
+      const FT b1 = alpha_ft * N1y + beta_ft * N2y;
+      const FT c1 = alpha_ft * N1z + beta_ft * N2z;
+      const FT d1 = alpha_ft * D1  + beta_ft * D2;
+
+      facet->set_plane(Plane_3{a1, b1, c1, d1});
+
+      // By construction, for any 'alpha' and 'beta':
+      //   a1*p0 + d1 = alpha*(N1.p0 + D1) + beta*(N2.p0 + D2) = 0
+      //   a1*p1 + d1 = alpha*(N1.u)       + beta*(N2.u)       = 0
+      CGAL_postcondition(facet->get_plane().has_on(p0));
+      CGAL_postcondition(facet->get_plane().has_on(p1));
+
+      // (a1,b1,c1) reproduces the UNIT vector tj, so the plane is already
+      // normalized to ~1 ulp: no rescaling (and no extra 53-bit factor) needed.
+      // The new normal is within theta + phi of the old one.
+      const double nd[3] = { CGAL::to_double(a1),
+                             CGAL::to_double(b1),
+                             CGAL::to_double(c1) };
+      const double ndn = norm3(nd);
+      const double nu[3] = { nd[0]/ndn, nd[1]/ndn, nd[2]/ndn };
+      const double cosang = dot3(nu, t);
+      CGAL_assertion(ndn > 0.);
+      CGAL_assertion(std::abs(ndn - 1.0) < 1e-9);
+      CGAL_assertion(degenerate || cosang >= std::cos(std::abs(theta) + phi) - 1e-9);
+#else
       // 2 fixed points: construct a plane through both points, nudge the normal within the allowed family
       const Point_3& p0 = *(fixed_points[0]);
       const Point_3& p1 = *(fixed_points[1]);
@@ -794,10 +808,10 @@ public:
       const FT& p1z = p1.z();
 
       // Direction vector between points
-      FT ux = p1x - p0x;
-      FT uy = p1y - p0y;
-      FT uz = p1z - p0z;
-      FT uu = ux*ux + uy*uy + uz*uz;
+      const FT ux = p1x - p0x;
+      const FT uy = p1y - p0y;
+      const FT uz = p1z - p0z;
+      const FT uu = ux*ux + uy*uy + uz*uz;
 
       // Original normal
       const FT& a0 = facet->get_plane().a();
@@ -805,38 +819,31 @@ public:
       const FT& c0 = facet->get_plane().c();
 
       // Project original normal onto plane orthogonal to u
-      FT dot = a0*ux + b0*uy + c0*uz;
-      FT ab = a0 - dot * ux / uu;
-      FT bb = b0 - dot * uy / uu;
-      FT cb = c0 - dot * uz / uu;
+      const FT dot = a0*ux + b0*uy + c0*uz;
+      const FT scale = dot / uu;
+      const FT ab = a0 - scale * ux;
+      const FT bb = b0 - scale * uy;
+      const FT cb = c0 - scale * uz;
 
       // Find a direction to nudge (cross product)
-      FT vx = uy * cb - uz * bb;
-      FT vy = uz * ab - ux * cb;
-      FT vz = ux * bb - uy * ab;
+      // v = u x B = u x (N - (dot / uu) u) = u x N - (dot / uu) u x u = u x N
+      // const FT vx = uy * cb - uz * bb;
+      // const FT vy = uz * ab - ux * cb;
+      // const FT vz = ux * bb - uy * ab;
+      const FT vx = uy * c0 - uz * b0;
+      const FT vy = uz * a0 - ux * c0;
+      const FT vz = ux * b0 - uy * a0;
 
       // Nudge the normal
-#ifdef CGAL_SS3_USE_SIMPLEST_RATIONAL_IN_INTERVAL
-      FT epsilon = nudge_to_simplest_rational_in_interval(rdist(gen));
-#else
-      double epsilon = rdist(gen);
-#endif
-
-      FT a1 = ab + epsilon * vx;
-      FT b1 = bb + epsilon * vy;
-      FT c1 = cb + epsilon * vz;
-
-      // Compute 'd' such that the plane passes through 'p0'
-      FT d1 = - (a1 * p0x + b1 * p0y + c1 * p0z);
+      const double epsilon = rdist(gen);
+      const FT a1 = ab + epsilon * vx;
+      const FT b1 = bb + epsilon * vy;
+      const FT c1 = cb + epsilon * vz;
+      const FT d1 = - (a1 * p0x + b1 * p0y + c1 * p0z);
       facet->set_plane(Plane_3{a1, b1, c1, d1});
-
       CGAL_postcondition(facet->get_plane().has_on(p0));
       CGAL_postcondition(facet->get_plane().has_on(p1));
-    } else if (fixed_points_count == 3) {
-      facet->init_plane();
-      Transformation::normalize_facet_plane(facet);
-    } else {
-      CGAL_SS3_TRANSF_TRACE("Error: called fixed point facet perturbation with > 3 fixed points");
+#endif
     }
 
     CGAL_SS3_TRANSF_TRACE_V(32, "  To coefficients [" << facet->get_plane().a() << " " << facet->get_plane().b() << " "
@@ -951,8 +958,8 @@ public:
       using PCDT_VH = typename PCDT::Vertex_handle;
       using PCDT_FH = typename PCDT::Face_handle;
 
-      std::unordered_map<PCDT_FH, bool> in_domain_map;
-      boost::associative_property_map<std::unordered_map<PCDT_FH, bool>> in_domain(in_domain_map);
+      CGAL::unordered_flat_map<PCDT_FH, bool> in_domain_map;
+      boost::associative_property_map<CGAL::unordered_flat_map<PCDT_FH, bool>> in_domain(in_domain_map);
       CGAL::mark_domain_in_triangulation(pcdt, in_domain);
 
       std::map<PCDT_VH, std::size_t> point_to_id;
@@ -2058,10 +2065,27 @@ public:
       original_planes[facet] = facet->get_plane();
     }
 
+    FT global_sq_max = CGAL::square(1e-7); // @tmp hardcoded
     CGAL::unordered_flat_map<VertexSPtr, FT> sq_max_displacements;
 
+    for (const VertexSPtr& v : polyhedron->vertices()) {
+      FT local_sq_max = global_sq_max;
+      // @fixme this local bound ought to be LFS-based rather than incident edge length-based
+      for (const EdgeWPtr& we : v->edges()) {
+        if (const EdgeSPtr e = we.lock()) {
+          VertexSPtr ov = e->other(v);
+          const FT sq_dist = CGAL::squared_distance(v->point(), ov->point());
+          const FT limit_sq = FT(0.01) * sq_dist;
+          if (limit_sq < local_sq_max) {
+            local_sq_max = limit_sq;
+          }
+        }
+      }
+      sq_max_displacements[v] = local_sq_max;
+    }
+
     auto is_stable = [&](const VertexSPtr& v,
-                          const FT& max_sq_displacement) -> bool
+                         const FT& max_sq_displacement) -> bool
     {
       for (auto it_wf1 = v->facets().begin(); it_wf1 != v->facets().end(); ++it_wf1) {
         if (FacetSPtr f1 = it_wf1->lock()) {
@@ -2076,17 +2100,25 @@ public:
                     continue;
                   }
 
-                  const FT sqd = CGAL::squared_distance(v->point(), p_new.value());
+                  CGAL_assertion(f1->get_plane().has_on(*p_new));
+                  CGAL_assertion(f2->get_plane().has_on(*p_new));
+                  CGAL_assertion(f3->get_plane().has_on(*p_new));
+
+                  const FT sqd = CGAL::squared_distance(original_points[v], p_new.value());
+
                   if (sqd > max_sq_displacement) {
-                    CGAL_SS3_TRANSF_TRACE_V(32, "  V" << v->id() << " is too far");
-                    CGAL_SS3_TRANSF_TRACE_V(32, "  from " << v->point() << " to " << p_new.value());
-                    CGAL_SS3_TRANSF_TRACE_V(32, "  dist " << CGAL::approximate_sqrt(sqd) << " > " << CGAL::approximate_sqrt(max_sq_displacement));
-                    CGAL_SS3_TRANSF_TRACE_V(32, "  F1 [" << f1->id() << "] " << f1->get_plane().a() << " " << f1->get_plane().b() << " "
-                                                                              << f1->get_plane().c() << " " << f1->get_plane().d());
-                    CGAL_SS3_TRANSF_TRACE_V(32, "  F2 [" << f2->id() << "] " << f2->get_plane().a() << " " << f2->get_plane().b() << " "
-                                                                              << f2->get_plane().c() << " " << f2->get_plane().d());
-                    CGAL_SS3_TRANSF_TRACE_V(32, "  F3 [" << f3->id() << "] " << f3->get_plane().a() << " " << f3->get_plane().b() << " "
-                                                                              << f3->get_plane().c() << " " << f3->get_plane().d());
+                    CGAL_SS3_TRANSF_TRACE_V(32, "  TOO FAR: " << v->to_string());
+                    CGAL_SS3_TRANSF_TRACE_V(32, "  from " << original_points[v] << " to " << p_new.value());
+                    CGAL_SS3_TRANSF_TRACE_V(32, "  sq dist " << sqd << " VS " << max_sq_displacement);
+                    CGAL_SS3_TRANSF_TRACE_V(32, "  F" << f1->id() << " [" << f1->get_plane().a() << " " << f1->get_plane().b() << " "
+                                                                          << f1->get_plane().c() << " " << f1->get_plane().d() << "] "
+                                                                          << CGAL::squared_distance(f1->get_plane(), original_points[v]));
+                    CGAL_SS3_TRANSF_TRACE_V(32, "  F" << f2->id() << " [" << f2->get_plane().a() << " " << f2->get_plane().b() << " "
+                                                                          << f2->get_plane().c() << " " << f2->get_plane().d() << "] "
+                                                                          << CGAL::squared_distance(f2->get_plane(), original_points[v]));
+                    CGAL_SS3_TRANSF_TRACE_V(32, "  F" << f3->id() << " [" << f3->get_plane().a() << " " << f3->get_plane().b() << " "
+                                                                          << f3->get_plane().c() << " " << f3->get_plane().d() << "] "
+                                                                          << CGAL::squared_distance(f3->get_plane(), original_points[v]));
                     return false;
                   }
                 }
@@ -2096,31 +2128,38 @@ public:
         }
       }
 
-      CGAL_SS3_TRANSF_TRACE_V(32, "  V" << v->id() << " is stable");
+      CGAL_SS3_TRANSF_TRACE_V(64, "  V" << v->id() << " is stable");
       return true;
     };
 
-    {
-      FT global_sq_max = CGAL::square(1e-7); // @tmp hardcoded
-      for (const VertexSPtr& v : polyhedron->vertices()) {
-        FT local_sq_max = global_sq_max;
-        // @fixme this local bound ought to be LFS-based rather than incident edge length-based
-        for (const EdgeWPtr& we : v->edges()) {
-          if (const EdgeSPtr e = we.lock()) {
-            VertexSPtr ov = e->other(v);
-            const FT sq_dist = CGAL::squared_distance(v->point(), ov->point());
-            const FT limit_sq = FT(0.01) * sq_dist;
-            if (limit_sq < local_sq_max) {
-              local_sq_max = limit_sq;
-            }
-          }
-        }
-        sq_max_displacements[v] = local_sq_max;
-      }
+    CGAL_SS3_TRANSF_TRACE_V(8, "BEFORE");
 
+    // @todo if we have general position + stability + no high degree, we could skip perturbation
+    CGAL_SS3_TRANSF_TRACE_CODE(std::vector<Stability_failure> failures;)
+    CGAL_SS3_TRANSF_TRACE_V(32, "Unperturbed is in general position?\n" << are_planes_in_general_position(polyhedron, &failures));
+
+#ifdef CGAL_SS3_DUMP_FILES
+    std::ofstream out_unstable_before("results/unstable_vertices_before.xyz");
+    out_unstable_before.precision(17);
+#endif
+
+    CGAL_SS3_TRANSF_TRACE_CODE(for (const VertexSPtr& v : polyhedron->vertices()))
+    CGAL_SS3_TRANSF_TRACE_CODE(if(!is_stable(v, sq_max_displacements[v])) {);
+#ifdef CGAL_SS3_DUMP_FILES
+    CGAL_SS3_TRANSF_TRACE_CODE(out_unstable_before << v->point() << "\n");
+#endif
+    CGAL_SS3_TRANSF_TRACE_CODE(})
+
+#ifdef CGAL_SS3_DUMP_FILES
+    out_unstable_before.close();
+#endif
+
+    CGAL_SS3_TRANSF_TRACE_V(8, "START");
+
+    {
       // V1: use unstable vertices as anchors
       // V2: fix vertices and facets (same as perturb_v3 but unstable vertices instead of high-degree vertices)
-#define CGAL_SS3_PERTURB_V4_PART1_V1
+#define CGAL_SS3_PERTURB_V4_PART1_V1_QUATER
 
 #ifdef CGAL_SS3_PERTURB_V4_PART1_V1
       // Part 1 V2
@@ -2148,7 +2187,7 @@ public:
         FacetSPtr facet;
         FT max_sq_displacement;
         bool is_active = true;
-        std::size_t vertex_id = 0;
+        std::size_t vertex_id = -1;
       };
 
       struct Vertex_stability_record_less
@@ -2157,8 +2196,7 @@ public:
           : records(records)
         {}
 
-        bool operator()(std::size_t lhs,
-                        std::size_t rhs) const
+        bool operator()(std::size_t lhs, std::size_t rhs) const
         {
           CGAL_precondition(records != nullptr);
           return (*records)[lhs].max_sq_displacement > (*records)[rhs].max_sq_displacement;
@@ -2198,8 +2236,12 @@ public:
                         oss << "[dist = " << CGAL::approximate_sqrt(CGAL::squared_distance(f->get_plane(), v->point())) << "] ";
                         oss << "[#v = " << f->vertices().size() << "] ";
                         oss << "[anchors {";
-                        for (const VertexSPtr& v : anchors[f])
-                          oss << " V" << v->id();
+                        const auto it_a = anchors.find(f);
+                        if (it_a != anchors.end()) {
+                          for (const VertexSPtr& av : it_a->second)
+                            oss << " V" << av->id();
+                        }
+                        oss << " }]";
                         oss << " }]";
                         return oss.str();
                       };
@@ -2223,7 +2265,7 @@ public:
                           bool r_has_v = (rit != anchors.end()) &&
                                         (std::find(rit->second.begin(), rit->second.end(), v) != rit->second.end());
 
-                          // prefer the one that does not already have 'v' as anchor
+                          // prefer the facet that does not already have 'v' as anchor
                           if (l_has_v != r_has_v)
                               return !l_has_v;
 
@@ -2268,62 +2310,17 @@ public:
         CGAL_SS3_TRANSF_TRACE_V(32, "  From coefficients [" << f->get_plane().a() << " " << f->get_plane().b() << " "
                                                             << f->get_plane().c() << " " << f->get_plane().d() << "]");
 
-        const auto& anchor_vertices = anchors[f];
+        static const boost::container::small_vector<VertexSPtr, 3> s_no_anchors;
+        const auto it_a = anchors.find(f);
+        const auto& anchor_vertices = (it_a != anchors.end()) ? it_a->second : s_no_anchors;
+
         for (const VertexSPtr& v : anchor_vertices) {
           CGAL_SS3_TRANSF_TRACE_V(32, "    V" << v->id() << " is an anchor of F" << f->id() << " at " << v->point());
         }
 
-        if (anchor_vertices.size() == 0) {
-          perturbPlaneCoefficientsNudge(f, nudge_range);
-        } else if (anchor_vertices.size() == 1) {
-          const Point_3& p0 = anchor_vertices[0]->point();
-          const Vector_3& n = f->get_plane().orthogonal_vector();
-          const FT a = p0.x() * n.x();
-          const FT b = p0.y() * n.y();
-          const FT c = p0.z() * n.z();
-          const FT d = -(a + b + c);
-          f->set_plane(Plane_3(n.x(), n.y(), n.z(), d));
-          CGAL_postcondition(f->get_plane().has_on(p0));
-
-          CGAL_SS3_TRANSF_TRACE_V(32, "  To coefficients [" << f->get_plane().a() << " " << f->get_plane().b() << " "
-                                                            << f->get_plane().c() << " " << f->get_plane().d() << "] [1 anchor]");
-        } else if (anchor_vertices.size() == 2) {
-          const Point_3& p0 = anchor_vertices[0]->point();
-          const Point_3& p1 = anchor_vertices[1]->point();
-          const FT ux = p1.x() - p0.x();
-          const FT uy = p1.y() - p0.y();
-          const FT uz = p1.z() - p0.z();
-          const FT uu = ux * ux + uy * uy + uz * uz;
-
-          const Vector_3& n = f->get_plane().orthogonal_vector();
-          const FT dot = n.x() * ux + n.y() * uy + n.z() * uz;
-          const FT ab = n.x() - (dot * ux / uu);
-          const FT bb = n.y() - (dot * uy / uu);
-          const FT cb = n.z() - (dot * uz / uu);
-
-          const FT vx = uy * cb - uz * bb;
-          const FT vy = uz * ab - ux * cb;
-          const FT vz = ux * bb - uy * ab;
-
-          static std::random_device rd;
-          unsigned int s = 0; // rd()
-          // CGAL_SS3_TRANSF_TRACE("seed = " << s);
-          static std::mt19937 gen(s);
-          static std::uniform_real_distribution<> rdist(-nudge_range, nudge_range);
-
-          double eps = rdist(gen);
-
-          FT a1 = ab + eps * vx;
-          FT b1 = bb + eps * vy;
-          FT c1 = cb + eps * vz;
-          FT d1 = -(a1 * p0.x() + b1 * p0.y() + c1 * p0.z());
-          f->set_plane(Plane_3(a1, b1, c1, d1));
-          CGAL_postcondition(f->get_plane().has_on(p0));
-          CGAL_postcondition(f->get_plane().has_on(p1));
-
-          CGAL_SS3_TRANSF_TRACE_V(32, "  To coefficients [" << f->get_plane().a() << " " << f->get_plane().b() << " "
-                                                            << f->get_plane().c() << " " << f->get_plane().d() << "] [2 anchors]");
-        } else if (anchor_vertices.size() >= 3) {
+        if (anchor_vertices.size() < 3) {
+          perturbPlaneCoefficientsFixedPoints(f, nudge_range, anchor_vertices);
+        } else { // anchor_vertices.size() >= 3
           const Point_3& p0 = anchor_vertices[0]->point();
           const Point_3& p1 = anchor_vertices[1]->point();
           const Point_3& p2 = anchor_vertices[2]->point();
@@ -2395,8 +2392,6 @@ public:
         pq.push(i);
       }
 
-      std::unordered_set<VertexSPtr> anchored_vertices;
-
       auto update_vertex_record = [&](const VertexSPtr& v)
       {
         CGAL_SS3_TRANSF_TRACE_V(32, "update record of V" << v->id());
@@ -2407,11 +2402,13 @@ public:
           CGAL_SS3_TRANSF_TRACE_V(64, "record exists");
           Vertex_stability_record& record = unstable_vertices[it->second];
           record.vertex = v;
+          record.vertex_id = v->id();
           record.facet = info.worst_facet;
           record.max_sq_displacement = info.max_sq_displacement;
           record.is_active = !info.is_stable;
           CGAL_SS3_TRANSF_TRACE_V(64, "activity: " << record.is_active);
           if (!record.is_active) {
+            CGAL_SS3_TRANSF_TRACE_V(64, "V" << v->id() << " is now stable");
             record.facet = nullptr;
             record.max_sq_displacement = FT(0);
             // it could be purged from the PQ here, but it is simpler to perform it lazily, at pop time
@@ -2517,8 +2514,1553 @@ public:
           }
         }
       }
-
 #endif // CGAL_SS3_PERTURB_V4_PART1_V1
+
+#ifdef CGAL_SS3_PERTURB_V4_PART1_V1_BIS
+      // Some preprocessing: identify edges of the polyhedron whose vertices have more than
+      //  three (or more) common incident facets, i.e. the set intersection of the set
+      // of facets incident to each edge extremity has size > 3.
+      // In such a configuration, we want to identify the facet(s) which are not incident
+      // to the edge, i.e. the facet touches the source 'sv' and target 'tv' vertices, but there is
+      // no edge 'sv-tv'. We split that facet such that 'sv' and 'tv' are on different facets
+      // after the split.
+      // This is to be performed otherwise we cannot guarantee general position if these vertices
+      // were to become anchors.
+      std::list<FacetSPtr> facets_to_preprocess;
+      for (const FacetSPtr& f : polyhedron->facets()) {
+        facets_to_preprocess.push_back(f);
+      }
+
+      for (;;) {
+        bool did_something = false;
+        std::list<FacetSPtr> facets_to_exclude;
+
+        for (const FacetSPtr& f : facets_to_preprocess) {
+          for (const EdgeSPtr& e : f->edges()) {
+            const VertexSPtr& sv = e->src(f);
+            const VertexSPtr& tv = e->tgt(f);
+
+            // If we have not simplified exact coplanarity, we could create such a configuration
+            // with degree 3 vertices...
+            if (sv->degree() <= 3 || tv->degree() <= 3) {
+              continue;
+            }
+
+            std::set<FacetSPtr> sv_facets;
+            std::set<FacetSPtr> tv_facets;
+            std::set<FacetSPtr> common_facets;
+
+            for (FacetWPtr wf : sv->facets()) {
+              if (FacetSPtr fptr = wf.lock()) {
+                sv_facets.insert(fptr);
+              }
+            }
+
+            for (FacetWPtr wf : tv->facets()) {
+              if (FacetSPtr fptr = wf.lock()) {
+                tv_facets.insert(fptr);
+              }
+            }
+
+            std::set_intersection(sv_facets.begin(), sv_facets.end(),
+                                  tv_facets.begin(), tv_facets.end(),
+                                  std::inserter(common_facets, common_facets.begin()));
+
+            for (const FacetSPtr& fprime : common_facets) {
+              if (fprime == f) {
+                continue;
+              }
+
+              if (tv->next(fprime) == sv || sv->next(fprime) == tv) {
+                continue;
+              }
+
+              facets_to_exclude.push_back(fprime);
+              CGAL_SS3_TRANSF_TRACE_V(32, "Facet F" << fprime->id() << " needs triangulating due to missing edge between V" << sv->id() << " and V" << tv->id());
+
+              // @todo Transformation::split() with minimal split to create only two facets?
+              const Plane_3 original_plane = original_planes.at(f);
+              auto [_, new_facets] = Transformation::triangulate_facet(fprime, polyhedron);
+              for (const FacetSPtr& nf : new_facets) {
+                original_planes[nf] = original_plane;
+              }
+              original_planes.erase(f);
+
+              did_something = true;
+              break;
+            }
+
+            if (did_something) {
+              break;
+            }
+          }
+
+          if (did_something) {
+            break;
+          }
+        }
+
+        for (const FacetSPtr& f : facets_to_exclude) {
+          facets_to_preprocess.remove(f);
+        }
+
+        if (!did_something) {
+          break;
+        }
+      }
+
+#ifdef CGAL_SS3_DUMP_FILES
+      IO::write_OBJ("results/v4_preprocessed.obj", polyhedron, parameters::do_not_triangulate_faces(true));
+#endif
+
+      // Nudge all facets randomly
+      for (const FacetSPtr& f : polyhedron->facets()) {
+        perturbPlaneCoefficientsFixedPoints(f, nudge_range, std::vector<VertexSPtr>());
+      }
+
+      // Compute the initial set of unstable vertices
+      CGAL::unordered_flat_set<VertexSPtr> unstable_vertices;
+      for (const VertexSPtr& v : polyhedron->vertices()) {
+        if (!is_stable(v, sq_max_displacements[v])) {
+          unstable_vertices.insert(v);
+        }
+      }
+      CGAL_SS3_TRANSF_TRACE_V(8, "initial unstable vertices = " << unstable_vertices.size());
+
+      auto unstable_vertex_count = [&](const FacetSPtr& f) -> std::size_t
+      {
+        std::size_t count = 0;
+        for (const VertexSPtr& v : f->vertices()) {
+          if (unstable_vertices.count(v) != 0) {
+            ++count;
+          }
+        }
+        return count;
+      };
+
+      auto has_unstable_vertices = [&](const FacetSPtr& f) -> bool
+      {
+        return unstable_vertex_count(f) != 0;
+      };
+
+      CGAL::unordered_flat_set<VertexSPtr> fixed_vertices;
+      CGAL::unordered_flat_set<FacetSPtr> fixed_facets;
+
+      struct Facet_stability_record
+      {
+        FacetSPtr facet;
+        std::size_t unstable_count = 0;
+        bool is_active = true;
+      };
+
+      struct Facet_stability_record_less
+      {
+        explicit Facet_stability_record_less(const std::vector<Facet_stability_record>* records = nullptr)
+          : records(records)
+        {}
+
+        bool operator()(std::size_t lhs, std::size_t rhs) const
+        {
+          CGAL_precondition(records != nullptr);
+          if ((*records)[lhs].unstable_count != (*records)[rhs].unstable_count) {
+            return (*records)[lhs].unstable_count > (*records)[rhs].unstable_count;
+          }
+          return (*records)[lhs].facet->vertices().size() > (*records)[rhs].facet->vertices().size();
+        }
+
+        const std::vector<Facet_stability_record>* records;
+      };
+
+      std::vector<Facet_stability_record> facet_records;
+      CGAL::unordered_flat_map<FacetSPtr, std::size_t> facet_record_indices;
+      using Facet_queue = Modifiable_priority_queue<std::size_t,
+                                                    Facet_stability_record_less,
+                                                    boost::identity_property_map,
+                                                    CGAL_BOOST_PAIRING_HEAP>;
+      Facet_queue active_queue(polyhedron->facets().size(), Facet_stability_record_less(&facet_records));
+
+      // Records & queue for facets deferred for phase 2
+      std::vector<Facet_stability_record> deferred_records;
+      CGAL::unordered_flat_map<FacetSPtr, std::size_t> deferred_record_indices;
+      // @fixme this is terrible and does not guarantee anything
+      const std::size_t facet_queue_capacity = std::max<std::size_t>(polyhedron->facets().size() * 4U, std::size_t(16));
+      Facet_queue deferred_queue(facet_queue_capacity, Facet_stability_record_less(&deferred_records));
+
+      auto is_facet_fixed = [&](const FacetSPtr& f) -> bool
+      {
+        return fixed_facets.find(f) != fixed_facets.end();
+      };
+
+      auto count_fixed_incident_facets = [&](const VertexSPtr& v) -> std::size_t
+      {
+        std::size_t count = 0;
+        for (FacetWPtr wf : v->facets()) {
+          if (FacetSPtr f = wf.lock()) {
+            if (is_facet_fixed(f)) {
+              ++count;
+            }
+          }
+        }
+        return count;
+      };
+
+      auto update_facet_record = [&](const FacetSPtr& f,
+                                     std::vector<Facet_stability_record>& records,
+                                     CGAL::unordered_flat_map<FacetSPtr, std::size_t>& record_indices,
+                                     Modifiable_priority_queue<std::size_t,
+                                                               Facet_stability_record_less,
+                                                               boost::identity_property_map,
+                                                               CGAL_BOOST_PAIRING_HEAP>& queue)
+      {
+        const std::size_t unstable_count = unstable_vertex_count(f);
+        const auto it = record_indices.find(f);
+        if (it != record_indices.end()) {
+          Facet_stability_record& rec = records[it->second];
+          rec.unstable_count = unstable_count;
+          rec.is_active = (unstable_count != 0);
+          if (rec.is_active) {
+            if (queue.contains(it->second)) {
+              queue.update(it->second);
+            } else {
+              queue.push(it->second);
+            }
+          }
+        } else if (unstable_count != 0) {
+          const std::size_t index = records.size();
+          records.push_back({f, unstable_count, true});
+          record_indices[f] = index;
+          queue.push(index);
+        }
+      };
+
+      auto update_vertex_stability = [&](const VertexSPtr& v,
+                                        const bool defer_to_deferred_queue)
+      {
+        const bool was_unstable = (unstable_vertices.count(v) != 0);
+        const bool is_unstable = !is_stable(v, sq_max_displacements[v]);
+        if (is_unstable) {
+          unstable_vertices.insert(v);
+        } else {
+          unstable_vertices.erase(v);
+        }
+
+        if (was_unstable != is_unstable) {
+          CGAL_SS3_TRANSF_TRACE_V(32, "V" << v->id() << " stability changed -> " << (is_unstable ? "unstable" : "stable"));
+        }
+
+        for (FacetWPtr wf : v->facets()) {
+          if (FacetSPtr f = wf.lock()) {
+            if (is_facet_fixed(f)) {
+              continue;
+            }
+
+            if (defer_to_deferred_queue) {
+              update_facet_record(f, deferred_records, deferred_record_indices, deferred_queue);
+            } else {
+              update_facet_record(f, facet_records, facet_record_indices, active_queue);
+            }
+          }
+        }
+      };
+
+      auto fix_vertex = [&](const VertexSPtr& v)
+      {
+        std::vector<const Plane_3*> constraining_planes;
+        for (FacetWPtr wf : v->facets()) {
+          if (FacetSPtr f = wf.lock()) {
+            if (is_facet_fixed(f)) {
+              constraining_planes.push_back(&(f->get_plane()));
+            }
+          }
+        }
+
+        CGAL_assertion(constraining_planes.size() == 3);
+
+        std::optional<Point_3> point = Kernel_wrapper::intersection(*(constraining_planes[0]),
+                                                                    *(constraining_planes[1]),
+                                                                    *(constraining_planes[2]));
+        if (!point) {
+          CGAL_SS3_TRANSF_TRACE_V(1, "Error: triplet of planes does not define a point!");
+          std::abort();
+        }
+
+        v->set_point(*point);
+        fixed_vertices.insert(v);
+      };
+
+      auto is_vertex_partially_stable = [&](const VertexSPtr& v,
+                                            const FacetSPtr& candidate_facet) -> bool
+      {
+        std::vector<FacetSPtr> previous_fixed_incident;
+        previous_fixed_incident.reserve(3);
+        for (FacetWPtr wf : v->facets()) {
+          if (FacetSPtr f = wf.lock()) {
+            if (f != candidate_facet && is_facet_fixed(f)) {
+              previous_fixed_incident.push_back(f);
+            }
+          }
+        }
+
+        CGAL_SS3_TRANSF_TRACE_V(32, "V" << v->id() << " partial stability with " << previous_fixed_incident.size() << " previous fixed facet(s) (" << v->degree() << " facets)");
+        CGAL_SS3_TRANSF_TRACE_CODE(std::stringstream fixed_facets_ss;)
+        CGAL_SS3_TRANSF_TRACE_CODE(for (const FacetSPtr& f : previous_fixed_incident) { fixed_facets_ss << " F" << f->id(); })
+        CGAL_SS3_TRANSF_TRACE_V(32, "  fixed facets:" << fixed_facets_ss.str());
+
+        if (previous_fixed_incident.empty()) {
+          const FT sqd = CGAL::squared_distance(original_points[v], candidate_facet->get_plane());
+          const bool stable = (sqd <= sq_max_displacements[v]);
+          CGAL_SS3_TRANSF_TRACE_V(32, "Stability [0]: " << stable << " (sq distance = " << sqd << ", bound = " << sq_max_displacements[v] << ")");
+          return stable;
+        }
+
+        if (previous_fixed_incident.size() == 1) {
+          const FacetSPtr& g = previous_fixed_incident.front();
+          std::optional<Line_3> line = Kernel_wrapper::intersection(candidate_facet->get_plane(), g->get_plane());
+          if (!line) {
+            CGAL_SS3_TRANSF_TRACE_V(32, "V" << v->id() << " not partially stable [1]: candidate facet and F" << g->id() << " are parallel");
+            return false;
+          }
+          const FT sqd = CGAL::squared_distance(original_points[v], line->projection(original_points[v]));
+          const bool stable = (sqd <= sq_max_displacements[v]);
+          CGAL_SS3_TRANSF_TRACE_V(32, "Stability [1]: " << stable << " (sq distance = " << sqd << ", bound = " << sq_max_displacements[v] << ")");
+          return stable;
+        }
+
+        if (previous_fixed_incident.size() == 2) {
+          const FacetSPtr& g0 = previous_fixed_incident[0];
+          const FacetSPtr& g1 = previous_fixed_incident[1];
+          std::optional<Point_3> p = Kernel_wrapper::intersection(candidate_facet->get_plane(), g0->get_plane(), g1->get_plane());
+          if (!p) {
+            CGAL_SS3_TRANSF_TRACE_V(32, "V" << v->id() << " not partially stable [2]: candidate + F" << g0->id() << " + F" << g1->id() << " do not intersect");
+            return false;
+          }
+          const FT sqd = CGAL::squared_distance(original_points[v], p.value());
+          const bool stable = (sqd <= sq_max_displacements[v]);
+          CGAL_SS3_TRANSF_TRACE_V(32, "Stability [2]: " << stable << " w/ F" << candidate_facet->id() << "(candidate) + F" << g0->id() << " + F" << g1->id() << " (sq distance = " << sqd << ", bound = " << sq_max_displacements[v] << ")");
+          return stable;
+        }
+
+        CGAL_SS3_TRANSF_TRACE_V(32, "V" << v->id() << " has more than 2 fixed neighbors; only candidate-pair intersections are asserted");
+
+        CGAL_assertion(previous_fixed_incident.size() > 2);
+        for (std::size_t i = 0; i < previous_fixed_incident.size(); ++i) {
+          for (std::size_t j = i + 1; j < previous_fixed_incident.size(); ++j) {
+            std::optional<Point_3> p = Kernel_wrapper::intersection(candidate_facet->get_plane(),
+                                                                    previous_fixed_incident[i]->get_plane(),
+                                                                    previous_fixed_incident[j]->get_plane());
+            if (!p) { //@fixme should be an assert? (others as well)
+              CGAL_SS3_TRANSF_TRACE_V(32, "V" << v->id() << " not partially stable·[3]: candidate + F" << previous_fixed_incident[i]->id() << " + F" << previous_fixed_incident[j]->id() << " do not intersect");
+              return false;
+            }
+
+            const FT sqd = CGAL::squared_distance(original_points[v], p.value());
+            const bool stable = (sqd <= sq_max_displacements[v]);
+            CGAL_SS3_TRANSF_TRACE_V(32, "Stability [3]: " << stable << " w/ F" << candidate_facet->id() << "(candidate) + F" << previous_fixed_incident[i]->id() << " + F" << previous_fixed_incident[j]->id() << " (sq distance = " << sqd << ", bound = " << sq_max_displacements[v] << ")");
+            if (!stable) {
+              return stable;
+            }
+          }
+        }
+
+        return true;
+      };
+
+      // check partial stability for all triangle vertices
+      auto all_vertices_partially_stable = [&](const FacetSPtr& f) -> bool {
+        for (const VertexSPtr& v : f->vertices()) {
+          if (!is_vertex_partially_stable(v, f)) {
+            return false;
+          }
+        }
+        return true;
+      };
+
+      auto recompute_facet_plane = [&](const FacetSPtr& f)
+      {
+        CGAL_SS3_TRANSF_TRACE_V(32, "Recompute F" << f->id());
+        CGAL_SS3_TRANSF_TRACE_V(32, "  From coefficients [" << f->get_plane().a() << " " << f->get_plane().b() << " "
+                                                            << f->get_plane().c() << " " << f->get_plane().d() << "]");
+
+        std::vector<VertexSPtr> anchor_vertices;
+        for (const VertexSPtr& v : f->vertices()) {
+          if (fixed_vertices.count(v)) {
+            anchor_vertices.push_back(v);
+          }
+        }
+
+        CGAL_SS3_TRANSF_TRACE_V(32, "try to fix F" << f->id() << " with " << anchor_vertices.size() << " constraints...");
+        for (const VertexSPtr& v : anchor_vertices) {
+          CGAL_SS3_TRANSF_TRACE_V(32, "    V" << v->id() << " is an anchor of F" << f->id() << " at " << v->point());
+        }
+
+        // If there is no anchor, there is no point adjusting the perturbation yet,
+        // since an initial one has already been performed before the first round
+        // of stability evaluations.
+        if (anchor_vertices.size() > 0 && anchor_vertices.size() < 3) {
+          perturbPlaneCoefficientsFixedPoints(f, nudge_range, anchor_vertices);
+        } else if (anchor_vertices.size() >= 3) {
+          const Point_3& p0 = anchor_vertices[0]->point();
+          const Point_3& p1 = anchor_vertices[1]->point();
+          const Point_3& p2 = anchor_vertices[2]->point();
+
+          // @fixme should a large deviation of normal be understood as an unstable facet
+          // that ought to be triangulated? If selected anchors were aligned, a small
+          // nudge is a large normal change.
+          // Maybe it's not needed because if the normal changed a lot, then it's likely
+          // other vertices won't be stable and the facet will be triangulated.
+          Plane_3 new_pl(p0, p1, p2);
+
+          // We don't know about the order of the fixed points, so trust the input normal for orientation
+          // @fixme robustness with thin triangles... the nudge is small so it should be fine...
+          if (new_pl.orthogonal_vector() * original_planes.at(f).orthogonal_vector() < 0) {
+            new_pl = new_pl.opposite();
+          }
+
+          f->set_plane(new_pl);
+          Transformation::normalize_facet_plane(f); // doesn't pass through the points anymore...
+
+          // this should fail due to inexact normalization?...
+          CGAL_postcondition(f->get_plane().has_on(p0));
+          CGAL_postcondition(f->get_plane().has_on(p1));
+          CGAL_postcondition(f->get_plane().has_on(p2));
+
+          CGAL_SS3_TRANSF_TRACE_V(32, "  To coefficients [" << f->get_plane().a() << " " << f->get_plane().b() << " "
+                                                            << f->get_plane().c() << " " << f->get_plane().d() << "] [3 anchors]");
+        }
+      };
+
+      auto try_to_fix_facet = [&](const FacetSPtr& f) -> bool
+      {
+        CGAL_precondition(!is_facet_fixed(f));
+
+        // This isn't good because we constrain a lot here for stability and triangulating
+        // creates more unstable points and cascading. Thus, we get more cascading, not less
+        // when we triangulate (contrary to the V3 perturbation).
+        //
+        // const std::size_t max_length = 100;
+        // std::size_t l = Size_shenanigans::length(f->get_plane());
+        // if (l > max_length) {
+        //   CGAL_SS3_TRANSF_TRACE_V(32, "Facet F" << f->id() << " would be too long");
+        //   CGAL_SS3_TRANSF_TRACE_V(32, CGAL::exact(f->get_plane()) << " (l=" << l << ")");
+        //   CGAL_SS3_TRANSF_TRACE_V(32, "F" << f->id() << " deferred: too large representation");
+        //   return false;
+        // }
+
+        const Plane_3 old_plane = f->get_plane(); // intentional copy
+
+        recompute_facet_plane(f);
+
+        bool good_nudge = true;
+        for (const VertexSPtr& v : f->vertices()) {
+          if (!is_vertex_partially_stable(v, f)) {
+            good_nudge = false;
+            f->set_plane(old_plane);
+            break;
+          }
+        }
+
+        if (!good_nudge) {
+          CGAL_SS3_TRANSF_TRACE_V(32, "F" << f->id() << " deferred: not partially stable");
+          return false;
+        }
+
+        CGAL_SS3_TRANSF_TRACE_V(32, "fix F" << f->id());
+
+        // Found a good nudge with all vertices partially stable, fix the facet
+        fixed_facets.insert(f);
+        return true;
+      };
+
+      // we only put facets with unstable vertices in queue because we start by
+      // nudging all facets, so general position is already acquired and we don't need
+      // to come back to stable facets.
+      for (const FacetSPtr& f : polyhedron->facets()) {
+        if (!has_unstable_vertices(f)) {
+          continue;
+        }
+        if (f->is_triangle()) {
+          update_facet_record(f, deferred_records, deferred_record_indices, deferred_queue);
+        } else {
+          update_facet_record(f, facet_records, facet_record_indices, active_queue);
+        }
+      }
+
+      CGAL_SS3_TRANSF_TRACE_V(32, "Initial active queue: " << active_queue.size());
+      CGAL_SS3_TRANSF_TRACE_V(32, "Initial deferred queue: " << deferred_queue.size());
+
+      while (!active_queue.empty()) {
+        const std::size_t unstable_index = active_queue.top_and_pop();
+        Facet_stability_record record = facet_records[unstable_index];
+        CGAL_SS3_TRANSF_TRACE_V(16, "pop active " << record.facet->to_string() << " (unstable_count = " << record.unstable_count << ")");
+        if (!record.is_active) {
+          continue;
+        }
+
+        CGAL_assertion(record.facet != nullptr);
+        CGAL_assertion(!record.facet->is_triangle());
+
+        if (!try_to_fix_facet(record.facet)) {
+          CGAL_SS3_TRANSF_TRACE_V(32, "defer F" << record.facet->id());
+          update_facet_record(record.facet, deferred_records, deferred_record_indices, deferred_queue);
+          continue;
+        }
+
+        for (const VertexSPtr& v : record.facet->vertices()) {
+          std::size_t fixed_inc = count_fixed_incident_facets(v);
+          if (fixed_inc == 3) {
+            fix_vertex(v);
+          }
+          update_vertex_stability(v, true);
+        }
+      }
+
+      // Phase 2: process deferred facets. For polygonal facets we first try again to fix them;
+      // only if they remain unfixable do we then triangulate and treat the resulting triangles.
+      while (!deferred_queue.empty()) {
+        const std::size_t def_index = deferred_queue.top_and_pop();
+        Facet_stability_record def_record = deferred_records[def_index];
+        if (!def_record.is_active || def_record.facet == nullptr || is_facet_fixed(def_record.facet)) {
+          continue;
+        }
+
+        FacetSPtr f = def_record.facet;
+        CGAL_SS3_TRANSF_TRACE_V(32, "pop deferred F" << f->id());
+
+        if (!f->is_triangle()) {
+          if (try_to_fix_facet(f)) {
+            for (const VertexSPtr& v : f->vertices()) {
+              std::size_t fixed_inc = count_fixed_incident_facets(v);
+              if (fixed_inc == 3) {
+                fix_vertex(v);
+              }
+              update_vertex_stability(v, true);
+            }
+            continue;
+          }
+
+          CGAL_SS3_TRANSF_TRACE_V(32, "Deferred F" << f->id() << " still unfixable, triangulate it");
+          const Plane_3 original_plane = original_planes.at(f);
+
+          auto [local_vertices, new_facets] = Transformation::triangulate_facet(f, polyhedron);
+          for (const FacetSPtr& nf : new_facets) {
+            CGAL_SS3_TRANSF_TRACE_V(32, "new facet: F" << nf->id());
+            original_planes[nf] = original_plane;
+            recompute_facet_plane(nf);
+            update_facet_record(nf, deferred_records, deferred_record_indices, deferred_queue);
+          }
+          original_planes.erase(f);
+
+          for (const VertexSPtr& v : local_vertices) {
+            update_vertex_stability(v, true);
+          }
+
+          continue;
+        }
+
+        // f is a triangle: proceed with triangle handling
+        FacetSPtr tri_f = f;
+        CGAL_assertion(tri_f != FacetSPtr() && tri_f->is_triangle());
+
+        CGAL_SS3_TRANSF_TRACE_V(32, "Process triangle F" << tri_f->id());
+
+        // initial constraints: incident vertices that are already fixed
+        boost::container::small_vector<VertexSPtr, 3> constraints;
+        for (const VertexSPtr& v : tri_f->vertices()) {
+          if (fixed_vertices.count(v)) {
+            constraints.push_back(v);
+          }
+        }
+
+        // try initial nudge with existing fixed vertices
+        recompute_facet_plane(tri_f);
+
+        // otherwise iteratively create up to 3 new anchors (per-triangle) and retry
+        if (all_vertices_partially_stable(tri_f)) {
+          fixed_facets.insert(tri_f);
+          // notify any queues about this change
+          for (const VertexSPtr& v : tri_f->vertices()) {
+            update_vertex_stability(v, true);
+          }
+          continue;
+        }
+
+        auto compute_anchor_pos = [&](const VertexSPtr& v) -> Point_3 {
+          // build list of constraining planes from already-fixed incident facets
+          std::vector<const Plane_3*> constraining_planes;
+          for (FacetWPtr wf : v->facets()) {
+            if (FacetSPtr ff = wf.lock()) {
+              if (fixed_facets.count(ff)) {
+                constraining_planes.push_back(&ff->get_plane());
+              }
+            }
+          }
+
+          CGAL_SS3_TRANSF_TRACE_V(32, "Anchor V" << v->id() << " with " << constraining_planes.size() << " incident fixed facets");
+
+          const Point_3& p = original_points[v];
+          std::array<double, 3> r = rand_vec(-nudge_range/2.0, nudge_range/2.0);
+          const double px_t = CGAL::to_double(p.x()) + r[0];
+          const double py_t = CGAL::to_double(p.y()) + r[1];
+          const double pz_t = CGAL::to_double(p.z()) + r[2];
+
+          if (constraining_planes.empty()) {
+            return Point_3{ FT(px_t), FT(py_t), FT(pz_t) };
+          } else if (constraining_planes.size() == 1) {
+#if 0
+            const Plane_3& plane = *(constraining_planes[0]);
+            Point_3 pp = plane.projection(Point_3{ FT(px_t), FT(py_t), FT(pz_t) });
+            CGAL_assertion(constraining_planes[0]->has_on(pp));
+            return pp;
+#else
+            const Plane_3& plane = *(constraining_planes[0]);
+            const double ad = CGAL::to_double(plane.a());
+            const double bd = CGAL::to_double(plane.b());
+            const double cd = CGAL::to_double(plane.c());
+            const double dd = CGAL::to_double(plane.d());
+
+            const double n2 = ad*ad + bd*bd + cd*cd;
+            CGAL_assertion(n2 > 0.0);
+
+            // project nudged target point onto plane in double precision
+            const double dist = (ad * px_t + bd * py_t + cd * pz_t + dd) / n2;
+            const double proj_x = px_t - dist * ad;
+            const double proj_y = py_t - dist * bd;
+            const double proj_z = pz_t - dist * cd;
+
+            // pivot on largest normal component to guarantee |slope| <= 1.0
+            const double abs_a = std::abs(ad);
+            const double abs_b = std::abs(bd);
+            const double abs_c = std::abs(cd);
+
+            const FT& a = plane.a();
+            const FT& b = plane.b();
+            const FT& c = plane.c();
+            const FT& d = plane.d();
+
+            Point_3 pp;
+            if (abs_c >= abs_a && abs_c >= abs_b) {
+              // Free variables: x and y
+              FT x(proj_x);
+              FT y(proj_y);
+              FT z = -(a * x + b * y + d) / c;
+              pp = Point_3(x, y, z);
+            } else if (abs_b >= abs_a && abs_b >= abs_c) {
+              // Free variables: x and z
+              FT x(proj_x);
+              FT z(proj_z);
+              FT y = -(a * x + c * z + d) / b;
+              pp = Point_3(x, y, z);
+            } else {
+              // Free variables: y and z
+              FT y(proj_y);
+              FT z(proj_z);
+              FT x = -(b * y + c * z + d) / a;
+              pp = Point_3(x, y, z);
+            }
+
+            CGAL_assertion(constraining_planes[0]->has_on(pp));
+            return pp;
+#endif
+          } else if (constraining_planes.size() == 2) {
+#if 0
+            const Plane_3& plane1 = *(constraining_planes[0]);
+            const Plane_3& plane2 = *(constraining_planes[1]);
+            std::optional<Line_3> line = Kernel_wrapper::intersection(plane1, plane2);
+            // std::cout << "  Constraint Line" << std::endl;
+            // std::cout << "    " << line->point(0) << std::endl;
+            // std::cout << "    " << line->point(1) << std::endl;
+            Point_3 pp = line->projection(Point_3{ FT(px_t), FT(py_t), FT(pz_t) });
+            CGAL_assertion(constraining_planes[0]->has_on(pp));
+            CGAL_assertion(constraining_planes[1]->has_on(pp));
+            return pp;
+#else
+            const Plane_3& plane1 = *(constraining_planes[0]);
+            const Plane_3& plane2 = *(constraining_planes[1]);
+
+            const double a1d = CGAL::to_double(plane1.a());
+            const double b1d = CGAL::to_double(plane1.b());
+            const double c1d = CGAL::to_double(plane1.c());
+            const double d1d = CGAL::to_double(plane1.d());
+
+            const double a2d = CGAL::to_double(plane2.a());
+            const double b2d = CGAL::to_double(plane2.b());
+            const double c2d = CGAL::to_double(plane2.c());
+            const double d2d = CGAL::to_double(plane2.d());
+
+            // Line direction in double: u = n1 x n2
+            const double uxd = b1d * c2d - c1d * b2d;
+            const double uyd = c1d * a2d - a1d * c2d;
+            const double uzd = a1d * b2d - b1d * a2d;
+            const double detG = uxd * uxd + uyd * uyd + uzd * uzd;
+            CGAL_assertion(detG > 0.0); // Planes are not parallel
+
+            // Clean 2-plane orthogonal projection in double precision
+            const double dot11 = a1d*a1d + b1d*b1d + c1d*c1d;
+            const double dot22 = a2d*a2d + b2d*b2d + c2d*c2d;
+            const double dot12 = a1d*a2d + b1d*b2d + c1d*c2d;
+
+            const double res1 = a1d * px_t + b1d * py_t + c1d * pz_t + d1d;
+            const double res2 = a2d * px_t + b2d * py_t + c2d * pz_t + d2d;
+
+            const double alpha = (res1 * dot22 - res2 * dot12) / detG;
+            const double beta  = (res2 * dot11 - res1 * dot12) / detG;
+
+            const double proj_x = px_t - alpha * a1d - beta * a2d;
+            const double proj_y = py_t - alpha * b1d - beta * b2d;
+            const double proj_z = pz_t - alpha * c1d - beta * c2d;
+
+            // Pivot on largest line direction component
+            const double abs_ux = std::abs(uxd);
+            const double abs_uy = std::abs(uyd);
+            const double abs_uz = std::abs(uzd);
+
+            const FT& a1 = plane1.a(); const FT& b1 = plane1.b(); const FT& c1 = plane1.c(); const FT& d1 = plane1.d();
+            const FT& a2 = plane2.a(); const FT& b2 = plane2.b(); const FT& c2 = plane2.c(); const FT& d2 = plane2.d();
+
+            const FT ux = b1 * c2 - c1 * b2;
+            const FT uy = c1 * a2 - a1 * c2;
+            const FT uz = a1 * b2 - b1 * a2;
+
+            Point_3 pp;
+            if (abs_uz >= abs_ux && abs_uz >= abs_uy) {
+              // Free variable: z (exact 53-bit dyadic, 1 limb)
+              FT z(proj_z);
+              FT x = (ux * z + (b1 * d2 - d1 * b2)) / uz;
+              FT y = (uy * z + (d1 * a2 - a1 * d2)) / uz;
+              pp = Point_3(x, y, z);
+            } else if (abs_uy >= abs_ux && abs_uy >= abs_uz) {
+              // Free variable: y
+              FT y(proj_y);
+              FT x = (ux * y + (d1 * c2 - c1 * d2)) / uy;
+              FT z = (uz * y + (a1 * d2 - d1 * a2)) / uy;
+              pp = Point_3(x, y, z);
+            } else {
+              // Free variable: x
+              FT x(proj_x);
+              FT y = (uy * x + (c1 * d2 - d1 * c2)) / ux;
+              FT z = (uz * x + (d1 * b2 - b1 * d2)) / ux;
+              pp = Point_3(x, y, z);
+            }
+
+            CGAL_assertion(constraining_planes[0]->has_on(pp));
+            CGAL_assertion(constraining_planes[1]->has_on(pp));
+            return pp;
+#endif
+          } else {
+            std::optional<Point_3> point = Kernel_wrapper::intersection(*constraining_planes[0], *constraining_planes[1], *constraining_planes[2]);
+            CGAL_assertion(point.has_value());
+            return point.value();
+          }
+        };
+
+        // add anchors until the triangle becomes partially stable or until we have exhausted anchors
+        // @todo avoid recomputing partial stability over and over
+        while (constraints.size() < 3 && !all_vertices_partially_stable(tri_f)) {
+          CGAL_SS3_TRANSF_TRACE_V(32, "Must stabilize F" << tri_f->id() << " [" << constraints.size() << " anchors]...");
+
+          // find a vertex that is not partially stable and not yet used as a constraint
+          VertexSPtr target_v;
+          for (const VertexSPtr& v : tri_f->vertices()) {
+            // ignore if already fixed
+            if (std::find(constraints.begin(), constraints.end(), v) != constraints.end()) {
+              continue;
+            }
+            if (!is_vertex_partially_stable(v, tri_f)) {
+              target_v = v;
+              break;
+            }
+          }
+
+          CGAL_assertion (target_v != VertexSPtr());
+
+          const Point_3 anchor = compute_anchor_pos(target_v);
+          CGAL_SS3_TRANSF_TRACE_V(32, "Anchor V" << target_v->id() << " at " << anchor);
+
+          // @fixme
+          // 1. is that guaranteed?
+          // 2. is stability as a whole guaranteed? if not, we could have to do something really nasty
+          // like backtracking (or restarting) and fixing that vertex in all facets from the beginning...
+          CGAL_assertion_code(const FT sqd = CGAL::squared_distance(anchor, original_points[target_v]));
+          CGAL_assertion(sqd < sq_max_displacements[target_v]);
+
+          // set the original vertex to the anchor position and mark it fixed so subsequent triangles use it
+          target_v->set_point(anchor);
+          fixed_vertices.insert(target_v);
+
+          // recompute plane constrained to current anchors (temporary anchors are only for this facet)
+          constraints.push_back(target_v);
+          recompute_facet_plane(tri_f);
+
+          // notify queues that this vertex changed stability
+          update_vertex_stability(target_v, true);
+        }
+
+        if (all_vertices_partially_stable(tri_f)) {
+          fixed_facets.insert(tri_f);
+          for (const VertexSPtr& v : tri_f->vertices()) {
+            update_vertex_stability(v, true);
+          }
+        } else {
+          CGAL_SS3_TRANSF_TRACE_V(1, "Warning: Triangle F" << tri_f->id() << " remains partially unstable after anchoring");
+          std::abort();
+        }
+      }
+#endif // CGAL_SS3_PERTURB_V4_PART1_V1_BIS
+
+#ifdef CGAL_SS3_PERTURB_V4_PART1_V1_QUATER
+      // Some preprocessing: identify edges of the polyhedron whose vertices have more than
+      //  three (or more) common incident facets, i.e. the set intersection of the set
+      // of facets incident to each edge extremity has size > 3.
+      // In such a configuration, we want to identify the facet(s) which are not incident
+      // to the edge, i.e. the facet touches the source 'sv' and target 'tv' vertices, but there is
+      // no edge 'sv-tv'. We split that facet such that 'sv' and 'tv' are on different facets
+      // after the split.
+      // This is to be performed otherwise we cannot guarantee general position if these vertices
+      // were to become anchors.
+      std::list<FacetSPtr> facets_to_preprocess;
+      for (const FacetSPtr& f : polyhedron->facets()) {
+        facets_to_preprocess.push_back(f);
+      }
+
+      for (;;) {
+        bool did_something = false;
+        std::list<FacetSPtr> facets_to_exclude;
+
+        for (const FacetSPtr& f : facets_to_preprocess) {
+          for (const EdgeSPtr& e : f->edges()) {
+            const VertexSPtr& sv = e->src(f);
+            const VertexSPtr& tv = e->tgt(f);
+
+            // If we have not simplified exact coplanarity, we could create such a configuration
+            // with degree 3 vertices...
+            if (sv->degree() <= 3 || tv->degree() <= 3) {
+              continue;
+            }
+
+            std::set<FacetSPtr> sv_facets;
+            std::set<FacetSPtr> tv_facets;
+            std::set<FacetSPtr> common_facets;
+
+            for (FacetWPtr wf : sv->facets()) {
+              if (FacetSPtr fptr = wf.lock()) {
+                sv_facets.insert(fptr);
+              }
+            }
+
+            for (FacetWPtr wf : tv->facets()) {
+              if (FacetSPtr fptr = wf.lock()) {
+                tv_facets.insert(fptr);
+              }
+            }
+
+            std::set_intersection(sv_facets.begin(), sv_facets.end(),
+                                  tv_facets.begin(), tv_facets.end(),
+                                  std::inserter(common_facets, common_facets.begin()));
+
+            for (const FacetSPtr& fprime : common_facets) {
+              if (fprime == f) {
+                continue;
+              }
+
+              if (tv->next(fprime) == sv || sv->next(fprime) == tv) {
+                continue;
+              }
+
+              facets_to_exclude.push_back(fprime);
+              CGAL_SS3_TRANSF_TRACE_V(32, "Facet F" << fprime->id() << " needs triangulating due to missing edge between V" << sv->id() << " and V" << tv->id());
+
+              // @todo Transformation::split() with minimal split to create only two facets?
+              const Plane_3 original_plane = original_planes.at(f);
+              auto [_, new_facets] = Transformation::triangulate_facet(fprime, polyhedron);
+              for (const FacetSPtr& nf : new_facets) {
+                original_planes[nf] = original_plane;
+              }
+              original_planes.erase(f);
+
+              did_something = true;
+              break;
+            }
+
+            if (did_something) {
+              break;
+            }
+          }
+
+          if (did_something) {
+            break;
+          }
+        }
+
+        for (const FacetSPtr& f : facets_to_exclude) {
+          facets_to_preprocess.remove(f);
+        }
+
+        if (!did_something) {
+          break;
+        }
+      }
+
+#ifdef CGAL_SS3_DUMP_FILES
+      IO::write_OBJ("results/v4_preprocessed.obj", polyhedron, parameters::do_not_triangulate_faces(true));
+#endif
+
+      // - (0) Perturbations on all faces
+      // - (A) Freeze large polygons at their perturbed plane, as long as every vertex keeps
+      //       <= 3 frozen incident facets whose partial intersection is within kappa*delta
+      // - (B) Priority queue of unstable vertices by displacement (vertex+facet+displacement)
+      //   (3) pop the most unstable vertex; anchor it in the offending facet that is neither
+      //       frozen nor already anchored at that vertex (triangle > polygon w/ <3 anchors > polygon w/ 3)
+      //   (4) recompute the facet plane, taking into account the anchors
+      //   (5) update the stability cost of the vertices of the just-anchored face
+      //
+      // Anchors are placed ON the frozen structure of the vertex (point / line / plane), so
+      // frozen facets are always concurrent with the anchor and never block progress.
+
+      const double kappa = 0.5; // fraction of delta that the frozen structure may consume
+
+      CGAL::unordered_flat_map<FacetSPtr, boost::container::small_vector<VertexSPtr, 3> > anchors;
+      CGAL::unordered_flat_set<FacetSPtr> frozen;
+      CGAL::unordered_flat_map<VertexSPtr, boost::container::small_vector<FacetSPtr, 3> > frozen_at;
+      std::unordered_set<VertexSPtr> all_anchors;
+
+      // remaining tolerance around v->point() (shrinks once the vertex is anchored)
+      CGAL::unordered_flat_map<VertexSPtr, FT> sq_budget;
+      for (const VertexSPtr& v : polyhedron->vertices()) {
+        sq_budget[v] = sq_max_displacements[v];
+      }
+
+      std::mt19937 gen(0);
+
+      auto is_anchor_of = [&](const VertexSPtr& v, const FacetSPtr& f) -> bool
+      {
+        const auto it = anchors.find(f);
+        return it != anchors.end() && std::find(it->second.begin(), it->second.end(), v) != it->second.end();
+      };
+
+      auto anchor_count = [&](const FacetSPtr& f) -> std::size_t
+      {
+        const auto it = anchors.find(f);
+        return (it != anchors.end()) ? it->second.size() : 0;
+      };
+
+      struct Vertex_stability_info
+      {
+        bool is_stable = true;
+        FT max_sq_displacement = FT(0);
+        FacetSPtr worst_facet;
+      };
+
+      struct Vertex_stability_record
+      {
+        VertexSPtr vertex;
+        FacetSPtr facet;
+        FT max_sq_displacement;
+        bool is_active = true;
+        std::size_t vertex_id = -1;
+      };
+
+      struct Vertex_stability_record_less
+      {
+        explicit Vertex_stability_record_less(const std::vector<Vertex_stability_record>* records = nullptr)
+          : records(records)
+        {}
+
+        bool operator()(std::size_t lhs, std::size_t rhs) const
+        {
+          CGAL_precondition(records != nullptr);
+          const Vertex_stability_record& l = (*records)[lhs];
+          const Vertex_stability_record& r = (*records)[rhs];
+          if (l.max_sq_displacement != r.max_sq_displacement)
+            return l.max_sq_displacement > r.max_sq_displacement;
+          return l.vertex_id < r.vertex_id;
+        }
+
+        const std::vector<Vertex_stability_record>* records;
+      };
+
+      auto evaluate_vertex_stability = [&](const VertexSPtr& v,
+                                           const FT& sq_displacement_bound) -> Vertex_stability_info
+      {
+        CGAL_SS3_TRANSF_TRACE_V(32, "Check stability of V" << v->id() << " (deg: " << v->degree() << ")");
+
+        Vertex_stability_info info;
+        info.max_sq_displacement = sq_displacement_bound;
+
+        for (auto it_wf1 = v->facets().begin(); it_wf1 != v->facets().end(); ++it_wf1) {
+          if (FacetSPtr f1 = it_wf1->lock()) {
+            for (auto it_wf2 = std::next(it_wf1); it_wf2 != v->facets().end(); ++it_wf2) {
+              if (FacetSPtr f2 = it_wf2->lock()) {
+                for (auto it_wf3 = std::next(it_wf2); it_wf3 != v->facets().end(); ++it_wf3) {
+                  if (FacetSPtr f3 = it_wf3->lock()) {
+                    std::optional<Point_3> p_new = Kernel_wrapper::intersection(f1->get_plane(), f2->get_plane(), f3->get_plane());
+                    if (!p_new.has_value()) {
+                      CGAL_SS3_TRANSF_TRACE_V(1, "Warning: triplet of planes does not define a point!");
+                      CGAL_SS3_TRANSF_TRACE_V(1, "  faces: " << f1->id() << " " << f2->id() << " " << f3->id());
+                      continue;
+                    }
+
+                    const FT sqd = CGAL::squared_distance(v->point(), p_new.value());
+                    if (sqd > info.max_sq_displacement) {
+                      auto dump_facet = [&](const FacetSPtr& f)
+                      {
+                        std::stringstream oss;
+                        oss << "F" << f->id() << " " << f->get_plane().a() << " " << f->get_plane().b() << " "
+                                                     << f->get_plane().c() << " " << f->get_plane().d() << " ";
+                        oss << "[dist = " << CGAL::approximate_sqrt(CGAL::squared_distance(f->get_plane(), v->point())) << "] ";
+                        oss << "[#v = " << f->vertices().size() << "] ";
+                        oss << (frozen.count(f) ? "[frozen] " : "");
+                        oss << "[anchors {";
+                        for (const VertexSPtr& av : anchors[f])
+                          oss << " V" << av->id();
+                        oss << " }]";
+                        return oss.str();
+                      };
+
+                      CGAL_SS3_TRANSF_TRACE_V(64, "  V" << v->id() << " is too far");
+                      CGAL_SS3_TRANSF_TRACE_V(64, "  from " << v->point() << " to " << p_new.value());
+                      CGAL_SS3_TRANSF_TRACE_V(64, "  " << dump_facet(f1));
+                      CGAL_SS3_TRANSF_TRACE_V(64, "  " << dump_facet(f2));
+                      CGAL_SS3_TRANSF_TRACE_V(64, "  " << dump_facet(f3));
+
+                      info.max_sq_displacement = sqd;
+
+                      // Candidates: facets of the triplet that are neither frozen nor already anchored at v.
+                      // Progress argument: frozen facets and facets anchored at v all pass through the anchor,
+                      // so a displaced triplet always contains at least one candidate.
+                      boost::container::small_vector<FacetSPtr, 3> cands;
+                      for (const FacetSPtr& g : {f1, f2, f3}) {
+                        if (frozen.count(g) != 0) continue;
+                        if (is_anchor_of(v, g)) continue;
+                        cands.push_back(g);
+                      }
+
+                      if (cands.empty()) {
+                        // Only possible before v is anchored (v->point() == original point) and with a
+                        // fully frozen triplet, which Phase A guarantees to be within kappa*delta.
+                        CGAL_SS3_TRANSF_TRACE_V(1, "Error: unstable triplet with no absorber at V" << v->id());
+                        std::abort();
+                      }
+
+                      info.worst_facet = *std::min_element(cands.begin(), cands.end(),
+                        [&](const FacetSPtr& lf, const FacetSPtr& rf) -> bool {
+                          // free absorber first
+                          if (lf->is_triangle() != rf->is_triangle()) return lf->is_triangle();
+                          // avoid facets that would need a triangulation
+                          const std::size_t la = anchor_count(lf);
+                          const std::size_t ra = anchor_count(rf);
+                          if ((la == 3) != (ra == 3)) return la < ra;
+                          // prioritize small faces
+                          const std::size_t sl = lf->vertices().size();
+                          const std::size_t sr = rf->vertices().size();
+                          if (sl != sr) return sl < sr;
+                          // total order tie-breaker
+                          return lf->id() < rf->id();
+                        });
+
+                      CGAL_SS3_TRANSF_TRACE_V(64, "  worst is F" << info.worst_facet->id());
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        info.is_stable = (info.max_sq_displacement <= sq_displacement_bound);
+
+        if (info.is_stable) {
+          CGAL_SS3_TRANSF_TRACE_V(32, "V" << v->id() << " is stable (max displacement = " << CGAL::approximate_sqrt(info.max_sq_displacement) << ")");
+        } else {
+          CGAL_SS3_TRANSF_TRACE_V(32, "V" << v->id() << " is unstable and would move at max "
+              << CGAL::approximate_sqrt(info.max_sq_displacement) << " (tolerance "
+              << CGAL::approximate_sqrt(sq_displacement_bound) << ")");
+        }
+
+        return info;
+      };
+
+      auto recompute_facet_plane = [&](const FacetSPtr& f)
+      {
+        CGAL_precondition(frozen.count(f) == 0);
+
+        CGAL_SS3_TRANSF_TRACE_V(32, "Recompute F" << f->id());
+        CGAL_SS3_TRANSF_TRACE_V(32, "  From coefficients [" << f->get_plane().a() << " " << f->get_plane().b() << " "
+                                                            << f->get_plane().c() << " " << f->get_plane().d() << "]");
+
+        const auto& anchor_vertices = anchors[f];
+        for (const VertexSPtr& v : anchor_vertices) {
+          CGAL_SS3_TRANSF_TRACE_V(32, "    V" << v->id() << " is an anchor of F" << f->id() << " at " << v->point());
+        }
+
+        if (anchor_vertices.size() < 3) {
+          perturbPlaneCoefficientsFixedPoints(f, nudge_range, anchor_vertices);
+        } else { // anchor_vertices.size() == 3
+          const Point_3& p0 = anchor_vertices[0]->point();
+          const Point_3& p1 = anchor_vertices[1]->point();
+          const Point_3& p2 = anchor_vertices[2]->point();
+
+          Plane_3 new_pl(p0, p1, p2);
+
+          // We don't know about the order of the fixed points, so trust the input normal for orientation
+          if (new_pl.orthogonal_vector() * original_planes.at(f).orthogonal_vector() < 0) {
+            new_pl = new_pl.opposite();
+          }
+
+          f->set_plane(new_pl);
+          Transformation::normalize_facet_plane(f);
+
+          CGAL_postcondition(f->get_plane().has_on(p0));
+          CGAL_postcondition(f->get_plane().has_on(p1));
+          CGAL_postcondition(f->get_plane().has_on(p2));
+
+          CGAL_SS3_TRANSF_TRACE_V(32, "  To coefficients [" << f->get_plane().a() << " " << f->get_plane().b() << " "
+                                                            << f->get_plane().c() << " " << f->get_plane().d() << "] [3 anchors]");
+        }
+      };
+
+      // (0) initial perturbations
+      CGAL_SS3_TRANSF_TRACE_V(16, "Initial plane perturbations");
+      for (const FacetSPtr& f : polyhedron->facets()) {
+        recompute_facet_plane(f);
+      }
+
+      // -----------------------------------------------------------------------
+      // (A) Freeze large polygons
+      // -----------------------------------------------------------------------
+
+      // Is the frozen structure at v (+ candidate) still within kappa*delta of the original point?
+      auto frozen_structure_ok = [&](const VertexSPtr& v, const FacetSPtr& cand) -> bool
+      {
+        boost::container::small_vector<const Plane_3*, 4> pl;
+        for (const FacetSPtr& g : frozen_at[v]) {
+          pl.push_back(&(g->get_plane()));
+        }
+        if (cand) {
+          pl.push_back(&(cand->get_plane()));
+        }
+        if (pl.size() > 3) {
+          return false;
+        }
+
+        const Point_3& p = original_points[v];
+        const FT bound = FT(kappa * kappa) * sq_max_displacements[v];
+
+        if (pl.size() == 1) {
+          return CGAL::squared_distance(p, *pl[0]) <= bound;
+        }
+        if (pl.size() == 2) {
+          std::optional<Line_3> L = Kernel_wrapper::intersection(*pl[0], *pl[1]);
+          return L && CGAL::squared_distance(p, L->projection(p)) <= bound;
+        }
+        if (pl.size() == 3) {
+          std::optional<Point_3> q = Kernel_wrapper::intersection(*pl[0], *pl[1], *pl[2]);
+          return q && CGAL::squared_distance(p, *q) <= bound;
+        }
+        return true;
+      };
+
+      {
+        std::vector<FacetSPtr> order(polyhedron->facets().begin(), polyhedron->facets().end());
+        std::sort(order.begin(), order.end(), [](const FacetSPtr& a, const FacetSPtr& b) {
+          if (a->vertices().size() != b->vertices().size())
+            return a->vertices().size() > b->vertices().size();
+          return a->id() < b->id();
+        });
+
+        for (const FacetSPtr& f : order) {
+          if (f->is_triangle()) {
+            // triangles are the absorbers, never freeze them
+            continue;
+          }
+
+          bool ok = true;
+          for (const VertexSPtr& v : f->vertices()) {
+            if (!frozen_structure_ok(v, f)) {
+              ok = false;
+              break;
+            }
+          }
+          if (!ok) {
+            CGAL_SS3_TRANSF_TRACE_V(32, "cannot freeze F" << f->id());
+            continue;
+          }
+
+          frozen.insert(f);
+          for (const VertexSPtr& v : f->vertices()) frozen_at[v].push_back(f);
+          CGAL_SS3_TRANSF_TRACE_V(16, "freeze F" << f->id() << " (" << f->vertices().size() << " vertices)");
+        }
+
+        CGAL_SS3_TRANSF_TRACE_V(8, "frozen facets: " << frozen.size() << " / " << polyhedron->facets().size());
+      }
+
+      // -----------------------------------------------------------------------
+      // (B) Vertex-driven anchoring on the frozen structure
+      // -----------------------------------------------------------------------
+
+      // Anchor placement: on the intersection of the frozen facets at v (point/line/plane),
+      // random otherwise. Remaining budget is measured from the anchor.
+#if 1
+      // Anchor placement on the frozen structure at v:
+      //   0 frozen: pure double point (all coordinates dyadic)
+      //   1 frozen: 2 free double coordinates, 1 exact dependent (pivot = largest |normal| comp.)
+      //   2 frozen: 1 free double coordinate, 2 exact dependent (pivot = largest |direction| comp.)
+      //   3 frozen: exact intersection (unavoidable)
+      // Only the dependent coordinates carry the frozen planes' coefficients; growth is minimal.
+      auto make_anchor = [&](const VertexSPtr& v, const FacetSPtr& f_hint)
+      {
+        const Point_3& p = original_points[v];
+
+        boost::container::small_vector<FacetSPtr, 3> S(frozen_at[v].begin(), frozen_at[v].end());
+        std::sort(S.begin(), S.end(), [](const FacetSPtr& a, const FacetSPtr& b) { return a->id() < b->id(); });
+
+        const double delta = std::sqrt(CGAL::to_double(sq_max_displacements[v]));
+        const double slide = std::min(nudge_range, 0.25 * (1.0 - kappa) * delta);
+        std::uniform_real_distribution<> sdist(-slide, slide);
+
+        // double target: original point + random slide
+        double tx = CGAL::to_double(p.x()) + sdist(gen);
+        double ty = CGAL::to_double(p.y()) + sdist(gen);
+        double tz = CGAL::to_double(p.z()) + sdist(gen);
+
+        auto coeffs_d = [](const Plane_3& pl, double& a, double& b, double& c, double& d) {
+          a = CGAL::to_double(pl.a()); b = CGAL::to_double(pl.b());
+          c = CGAL::to_double(pl.c()); d = CGAL::to_double(pl.d());
+        };
+
+        Point_3 q;
+
+        if (S.size() == 0) {
+          // stay close to the requesting facet's current plane (limits cascades), in double only
+          double a, b, c, d; coeffs_d(f_hint->get_plane(), a, b, c, d);
+          const double n2 = a*a + b*b + c*c;
+          const double px = CGAL::to_double(p.x()), py = CGAL::to_double(p.y()), pz = CGAL::to_double(p.z());
+          const double dist = (a*px + b*py + c*pz + d) / n2;
+          if (dist * dist * n2 <= kappa * kappa * delta * delta) {
+            tx -= dist * a; ty -= dist * b; tz -= dist * c;
+          }
+          q = Point_3(FT(tx), FT(ty), FT(tz));
+        }
+        else if (S.size() == 1) {
+          const Plane_3& pl = S[0]->get_plane();
+          double ad, bd, cd, dd; coeffs_d(pl, ad, bd, cd, dd);
+          const double n2 = ad*ad + bd*bd + cd*cd;
+          CGAL_assertion(n2 > 0.0);
+
+          // project the double target onto the plane in double
+          const double dist = (ad*tx + bd*ty + cd*tz + dd) / n2;
+          const double px = tx - dist*ad, py = ty - dist*bd, pz = tz - dist*cd;
+
+          const FT& a = pl.a(); const FT& b = pl.b(); const FT& c = pl.c(); const FT& d = pl.d();
+          const double aa = std::abs(ad), ab = std::abs(bd), ac = std::abs(cd);
+
+          if (ac >= aa && ac >= ab) {
+            FT x(px), y(py);
+            q = Point_3(x, y, -(a*x + b*y + d) / c);
+          } else if (ab >= aa && ab >= ac) {
+            FT x(px), z(pz);
+            q = Point_3(x, -(a*x + c*z + d) / b, z);
+          } else {
+            FT y(py), z(pz);
+            q = Point_3(-(b*y + c*z + d) / a, y, z);
+          }
+          CGAL_assertion(pl.has_on(q));
+        }
+        else if (S.size() == 2) {
+          const Plane_3& p1 = S[0]->get_plane();
+          const Plane_3& p2 = S[1]->get_plane();
+          double a1d, b1d, c1d, d1d; coeffs_d(p1, a1d, b1d, c1d, d1d);
+          double a2d, b2d, c2d, d2d; coeffs_d(p2, a2d, b2d, c2d, d2d);
+
+          // line direction u = n1 x n2 (double)
+          const double uxd = b1d*c2d - c1d*b2d;
+          const double uyd = c1d*a2d - a1d*c2d;
+          const double uzd = a1d*b2d - b1d*a2d;
+          const double detG = uxd*uxd + uyd*uyd + uzd*uzd;
+          CGAL_assertion(detG > 0.0);
+
+          // orthogonal projection of the double target onto the line, in double
+          const double g11 = a1d*a1d + b1d*b1d + c1d*c1d;
+          const double g22 = a2d*a2d + b2d*b2d + c2d*c2d;
+          const double g12 = a1d*a2d + b1d*b2d + c1d*c2d;
+          const double r1 = a1d*tx + b1d*ty + c1d*tz + d1d;
+          const double r2 = a2d*tx + b2d*ty + c2d*tz + d2d;
+          const double alpha = (r1*g22 - r2*g12) / detG;
+          const double beta  = (r2*g11 - r1*g12) / detG;
+          const double px = tx - alpha*a1d - beta*a2d;
+          const double py = ty - alpha*b1d - beta*b2d;
+          const double pz = tz - alpha*c1d - beta*c2d;
+
+          const FT& a1 = p1.a(); const FT& b1 = p1.b(); const FT& c1 = p1.c(); const FT& d1 = p1.d();
+          const FT& a2 = p2.a(); const FT& b2 = p2.b(); const FT& c2 = p2.c(); const FT& d2 = p2.d();
+          const FT ux = b1*c2 - c1*b2;
+          const FT uy = c1*a2 - a1*c2;
+          const FT uz = a1*b2 - b1*a2;
+
+          const double aux = std::abs(uxd), auy = std::abs(uyd), auz = std::abs(uzd);
+
+          if (auz >= aux && auz >= auy) {
+            FT z(pz);
+            q = Point_3((ux*z + (b1*d2 - d1*b2)) / uz,
+                        (uy*z + (d1*a2 - a1*d2)) / uz,
+                        z);
+          } else if (auy >= aux && auy >= auz) {
+            FT y(py);
+            q = Point_3((ux*y + (d1*c2 - c1*d2)) / uy,
+                        y,
+                        (uz*y + (a1*d2 - d1*a2)) / uy);
+          } else {
+            FT x(px);
+            q = Point_3(x,
+                        (uy*x + (c1*d2 - d1*c2)) / ux,
+                        (uz*x + (d1*b2 - b1*d2)) / ux);
+          }
+          CGAL_assertion(p1.has_on(q));
+          CGAL_assertion(p2.has_on(q));
+        }
+        else { // S.size() == 3
+          std::optional<Point_3> x = Kernel_wrapper::intersection(S[0]->get_plane(),
+                                                                  S[1]->get_plane(),
+                                                                  S[2]->get_plane());
+          CGAL_assertion(x.has_value());
+          q = *x;
+        }
+
+        const FT sqd = CGAL::squared_distance(q, p);
+        CGAL_assertion(sqd < sq_max_displacements[v]);
+
+        const double used = std::sqrt(CGAL::to_double(sqd));
+        const double rem = 0.999 * (delta - used);
+        CGAL_assertion(rem > 0.0);
+        sq_budget[v] = FT(rem * rem);
+
+        CGAL_SS3_TRANSF_TRACE_V(8, "New anchor V" << v->id() << " at " << q << " [" << S.size() << " frozen]");
+        CGAL_SS3_TRANSF_TRACE_V(8, "  Distance from original: " << used << ", remaining budget: " << rem);
+
+        v->set_point(q);
+      };
+#else
+      auto make_anchor = [&](const VertexSPtr& v, const FacetSPtr& f_hint)
+      {
+        const Point_3& p = original_points[v];
+
+        boost::container::small_vector<FacetSPtr, 3> S(frozen_at[v].begin(), frozen_at[v].end());
+        std::sort(S.begin(), S.end(), [](const FacetSPtr& a, const FacetSPtr& b) { return a->id() < b->id(); });
+
+        const double delta = std::sqrt(CGAL::to_double(sq_max_displacements[v]));
+        // slack left after the frozen structure (kappa*delta); keep the random part well inside
+        const double slide = std::min(nudge_range, 0.25 * (1.0 - kappa) * delta);
+        std::uniform_real_distribution<> sdist(-slide, slide);
+
+        Point_3 q;
+        if (S.size() == 3) {
+          q = *Kernel_wrapper::intersection(S[0]->get_plane(), S[1]->get_plane(), S[2]->get_plane());
+        } else if (S.size() == 2) {
+          Line_3 L = *Kernel_wrapper::intersection(S[0]->get_plane(), S[1]->get_plane());
+          const Vector_3 dir = L.to_vector();
+          const double inv_len = 1.0 / std::sqrt(CGAL::to_double(dir.squared_length()));
+          q = L.projection(p) + FT(sdist(gen) * inv_len) * dir; // exactly on the line
+        } else if (S.size() == 1) {
+          const Plane_3& P = S[0]->get_plane();
+          q = P.projection(p + Vector_3(FT(sdist(gen)), FT(sdist(gen)), FT(sdist(gen)))); // exactly on the plane
+        } else {
+          // No frozen structure: stay close to the current plane of the requesting facet
+          // (limits the cascade), fall back to a random point near p.
+          const Plane_3& P = f_hint->get_plane();
+          const Point_3 proj = P.projection(p);
+          if (CGAL::squared_distance(proj, p) <= FT(kappa * kappa) * sq_max_displacements[v]) {
+            q = proj + Vector_3(FT(sdist(gen)), FT(sdist(gen)), FT(sdist(gen)));
+          } else {
+            q = p + Vector_3(FT(sdist(gen)), FT(sdist(gen)), FT(sdist(gen)));
+          }
+        }
+
+        const FT sqd = CGAL::squared_distance(q, p);
+        CGAL_assertion(sqd < sq_max_displacements[v]);
+
+        // remaining budget from the anchor (conservative, double)
+        const double used = std::sqrt(CGAL::to_double(sqd));
+        const double rem = 0.999 * (delta - used);
+        CGAL_assertion(rem > 0.0);
+        sq_budget[v] = FT(rem * rem);
+
+        CGAL_SS3_TRANSF_TRACE_V(8, "New anchor V" << v->id() << " at " << q << " [" << S.size() << " frozen]");
+        CGAL_SS3_TRANSF_TRACE_V(8, "  Distance from original: " << used << ", remaining budget: " << rem);
+
+        v->set_point(q);
+      };
+#endif
+
+      std::vector<Vertex_stability_record> unstable_vertices;
+      CGAL::unordered_flat_map<VertexSPtr, std::size_t> unstable_record_indices;
+
+#ifdef CGAL_SS3_DUMP_FILES
+      std::ofstream out_unstable_base("results/base_unstable_vertices.xyz");
+      out_unstable_base.precision(17);
+#endif
+
+      CGAL_SS3_TRANSF_TRACE_V(16, "Initial stable/unstable classification");
+      for (const VertexSPtr& v : polyhedron->vertices()) {
+        const Vertex_stability_info info = evaluate_vertex_stability(v, sq_budget[v]);
+        if (!info.is_stable) {
+#ifdef CGAL_SS3_DUMP_FILES
+          out_unstable_base << v->point() << "\n";
+#endif
+          unstable_record_indices[v] = unstable_vertices.size();
+          unstable_vertices.push_back({v, info.worst_facet, info.max_sq_displacement, true, static_cast<std::size_t>(v->id())});
+        }
+      }
+
+#ifdef CGAL_SS3_DUMP_FILES
+      out_unstable_base.close();
+#endif
+
+      using Stability_queue = Modifiable_priority_queue<std::size_t,
+                                                        Vertex_stability_record_less,
+                                                        boost::identity_property_map,
+                                                        CGAL_BOOST_PAIRING_HEAP>;
+      Stability_queue pq(polyhedron->vertices().size(), Vertex_stability_record_less(&unstable_vertices));
+      for (std::size_t i = 0; i < unstable_vertices.size(); ++i) {
+        pq.push(i);
+      }
+
+      auto update_vertex_record = [&](const VertexSPtr& v)
+      {
+        CGAL_SS3_TRANSF_TRACE_V(32, "update record of V" << v->id());
+        const Vertex_stability_info info = evaluate_vertex_stability(v, sq_budget[v]);
+
+        const auto it = unstable_record_indices.find(v);
+        if (it != unstable_record_indices.end()) {
+          Vertex_stability_record& record = unstable_vertices[it->second];
+          record.vertex = v;
+          record.vertex_id = v->id();
+          record.facet = info.worst_facet;
+          record.max_sq_displacement = info.max_sq_displacement;
+          record.is_active = !info.is_stable;
+          if (info.is_stable) {
+            CGAL_SS3_TRANSF_TRACE_V(64, "V" << v->id() << " is now stable");
+            if (pq.contains(it->second)) {
+              pq.erase(it->second);
+            }
+            record.is_active = false;
+            record.facet = nullptr;
+            record.max_sq_displacement = FT(0);
+          } else {
+            record.is_active = true;
+            record.facet = info.worst_facet;
+            record.max_sq_displacement = info.max_sq_displacement;
+            if (pq.contains(it->second)) {
+              pq.update(it->second);
+            } else {
+              pq.push(it->second);
+            }
+          }
+        } else if (!info.is_stable) {
+          const std::size_t index = unstable_vertices.size();
+          CGAL_assertion_code(for (const auto& r : unstable_vertices))
+          CGAL_assertion(r.vertex == v || r.vertex_id != static_cast<std::size_t>(v->id()));
+          unstable_vertices.push_back({v, info.worst_facet, info.max_sq_displacement, true, static_cast<std::size_t>(v->id())});
+          unstable_record_indices[v] = index;
+          CGAL_SS3_TRANSF_TRACE_V(64, "new unstable vertex");
+          pq.push(index);
+        }
+      };
+
+      // main loop
+      while (!pq.empty()) {
+        CGAL_SS3_TRANSF_TRACE_V(16, "stable/unstable: main loop (" << pq.size() << ")");
+
+        const std::size_t unstable_index = pq.top_and_pop();
+        Vertex_stability_record record = unstable_vertices[unstable_index];
+        if (!record.is_active) {
+          continue;
+        }
+
+        const VertexSPtr& v = record.vertex;
+        const FacetSPtr& f = record.facet;
+        CGAL_SS3_TRANSF_TRACE_V(16, "pop V" << v->id() << " / F" << f->id());
+
+        CGAL_assertion(frozen.count(f) == 0);
+        CGAL_assertion(!is_anchor_of(v, f));
+
+        // (3) place the anchor (once per vertex), register it in f
+        if (all_anchors.insert(v).second) {
+          make_anchor(v, f);
+        }
+        auto& facet_anchors = anchors[f];
+        facet_anchors.push_back(v);
+
+        std::vector<FacetSPtr> facets_to_recompute;
+
+        if (facet_anchors.size() > 3) {
+          CGAL_assertion(!f->is_triangle());
+          CGAL_SS3_TRANSF_TRACE_V(8, "  Must triangulate F" << f->id());
+
+          const boost::container::small_vector<VertexSPtr, 3> old_anchors(facet_anchors.begin(), facet_anchors.end());
+          const Plane_3 original_plane = original_planes.at(f);
+
+          auto [_, new_facets] = Transformation::triangulate_facet(f, polyhedron);
+          original_planes.erase(f);
+          anchors.erase(f);
+
+          for (const FacetSPtr& nf : new_facets) {
+            original_planes[nf] = original_plane;
+            // backport anchors: a triangle inherits the anchors among its vertices
+            for (const VertexSPtr& w : nf->vertices()) {
+              if (std::find(old_anchors.begin(), old_anchors.end(), w) != old_anchors.end()) {
+                anchors[nf].push_back(w);
+              }
+            }
+            facets_to_recompute.push_back(nf);
+          }
+        } else {
+          facets_to_recompute.push_back(f);
+        }
+
+        for (const FacetSPtr& nf : facets_to_recompute) {
+          // (4) recompute the facet equation
+          recompute_facet_plane(nf);
+
+          // (5) update the facet's vertices stability in the queue
+          for (const VertexSPtr& w : nf->vertices()) {
+            update_vertex_record(w);
+          }
+        }
+      }
+
+      // -----------------------------------------------------------------------
+      // Exact certification: stability w.r.t. the ORIGINAL points + general position
+      // -----------------------------------------------------------------------
+      for (const VertexSPtr& v : polyhedron->vertices()) {
+        std::vector<FacetSPtr> ifs;
+        for (FacetWPtr wf : v->facets()) {
+          if (FacetSPtr f = wf.lock()) {
+            ifs.push_back(f);
+          }
+        }
+        for (std::size_t i=0; i<ifs.size(); ++i) {
+          for (std::size_t j=i+1; j<ifs.size(); ++j) {
+            if (CGAL::cross_product(ifs[i]->get_plane().orthogonal_vector(),
+                                    ifs[j]->get_plane().orthogonal_vector()) == CGAL::NULL_VECTOR) {
+              CGAL_SS3_TRANSF_TRACE_V(1, "Error: parallel planes at V" << v->id());
+              CGAL_SS3_TRANSF_TRACE_V(1, "Facets: F" << ifs[i]->id() << " and F" << ifs[j]->id());
+              std::abort();
+            }
+            for (std::size_t k=j+1; k<ifs.size(); ++k) {
+              std::optional<Point_3> x = Kernel_wrapper::intersection(ifs[i]->get_plane(), ifs[j]->get_plane(), ifs[k]->get_plane());
+              if (!x) {
+                CGAL_SS3_TRANSF_TRACE_V(1, "Error: singular triplet at V" << v->id());
+                CGAL_SS3_TRANSF_TRACE_V(1, "Facets: F" << ifs[i]->id() << ", F" << ifs[j]->id() << ", and F" << ifs[k]->id());
+                std::abort();
+              }
+              if (CGAL::squared_distance(*x, original_points[v]) > sq_max_displacements[v]) {
+                CGAL_SS3_TRANSF_TRACE_V(1, "Error: stability violated at V" << v->id());
+                std::abort();
+              }
+            }
+          }
+        }
+      }
+#endif
 
 #ifdef CGAL_SS3_PERTURB_V4_PART1_V2
       CGAL_SS3_TRANSF_TRACE_V(16, "Initial plane perturbations");
@@ -2889,10 +4431,6 @@ public:
       // sometimes we could fix as a polygon, but we need triangulate for other reasons
       auto should_triangulate_facet = [&](const FacetSPtr& f) -> bool
       {
-#if 1 // @tmp
-        return false;
-#endif
-
         if (f->is_triangle() || is_facet_fully_determined(f)) {
           return false;
         }
@@ -3215,11 +4753,6 @@ public:
 
       CGAL_SS3_TRANSF_TRACE_V(8, "All facets perturbed");
 
-  #ifdef CGAL_SS3_DUMP_FILES
-      IO::write_OBJ("results/tilt_v4.obj", polyhedron, parameters::do_not_triangulate_faces(true));
-      IO::write_OBJ("results/tilt_v4-triangulated.obj", polyhedron, parameters::do_not_triangulate_faces(false));
-  #endif
-
 # if 0
       CGAL_assertion_code(for (const VertexSPtr& v : polyhedron->vertices()) {)
       CGAL_assertion(is_vertex_fixed(v));
@@ -3238,9 +4771,10 @@ public:
 
 #endif // CGAL_SS3_PERTURB_V4_PART1_V2
 
-#ifdef CGAL_SS3_DUMP_FILES
-      IO::write_OBJ("results/perturb_V4_part_1.obj", polyhedron, parameters::do_not_triangulate_faces(true));
-#endif
+  #ifdef CGAL_SS3_DUMP_FILES
+      IO::write_OBJ("results/V4_general_position.obj", polyhedron, parameters::do_not_triangulate_faces(true));
+      IO::write_OBJ("results/V4_general_position-triangulated.obj", polyhedron, parameters::do_not_triangulate_faces(false));
+  #endif
 
       CGAL_SS3_TRANSF_TRACE_CODE(for (const VertexSPtr& v : polyhedron->vertices()))
       CGAL_SS3_TRANSF_TRACE_V(32, "V" << v->id() << " has length " << Size_shenanigans::length(v->point()));
@@ -3248,8 +4782,9 @@ public:
       CGAL_SS3_TRANSF_TRACE_CODE(for (const FacetSPtr& f : polyhedron->facets()) )
       CGAL_SS3_TRANSF_TRACE_V(32, "F" << f->id() << " has length " << Size_shenanigans::length(f->get_plane()));
 
-      CGAL_assertion_code(for (const VertexSPtr& v : polyhedron->vertices()))
+      CGAL_assertion_code(for (const VertexSPtr& v : polyhedron->vertices()) {)
       CGAL_assertion(is_stable(v, sq_max_displacements[v]));
+      CGAL_assertion_code(})
 
       CGAL_SS3_TRANSF_TRACE_V(8, "Shift facets incident to high-degree vertices");
 
@@ -3259,9 +4794,12 @@ public:
       // we select the new surface.
 
       // Only facets incident to a high-degree vertex need this random translation.
+      CGAL_SS3_TRANSF_TRACE_CODE(std::size_t hdv = 0;)
+
       CGAL::unordered_flat_set<FacetSPtr> facets_to_translate;
       for (const VertexSPtr& v : polyhedron->vertices()) {
         if (v->degree() > 3) {
+          CGAL_SS3_TRANSF_TRACE_CODE(++hdv;)
           for (const FacetWPtr& wf : v->facets()) {
             if (FacetSPtr f = wf.lock()) {
               facets_to_translate.insert(f);
@@ -3269,6 +4807,8 @@ public:
           }
         }
       }
+
+      CGAL_SS3_TRANSF_TRACE_V(8, "Shift " << facets_to_translate.size() << " facets incident to " << hdv << " high-degree vertices");
 
       CGAL::unordered_flat_map<FacetSPtr, Plane_3> pre_nudge_planes;
       CGAL::unordered_flat_map<FacetSPtr, FT> nudge_ranges;
@@ -3364,13 +4904,19 @@ public:
       }
 
 #ifdef CGAL_SS3_DUMP_FILES
-        IO::write_OBJ("results/V4_preprocessed.obj", polyhedron, parameters::do_not_triangulate_faces(true));
+        IO::write_OBJ("results/V4_anchored.obj", polyhedron, parameters::do_not_triangulate_faces(true));
 #endif
+
+      for (const FacetSPtr& f : polyhedron->facets()) {
+        CGAL_SS3_TRANSF_TRACE_V(32, "  Facet #" << f->id() << " ["
+                              << f->get_plane().a() << " " << f->get_plane().b() << " "
+                              << f->get_plane().c() << " " << f->get_plane().d() << "]");
+      }
+
+      CGAL_postcondition(are_planes_in_general_position(polyhedron));
 
       CGAL_assertion_code(for (const VertexSPtr& v : polyhedron->vertices()))
       CGAL_assertion(is_stable(v, sq_max_displacements[v]));
-
-      CGAL_postcondition(are_planes_in_general_position(polyhedron));
     }
 
     // -- PART 2 --
@@ -5149,7 +6695,7 @@ public:
             return false;
           }
 
-          // @tmp
+          // @tmp not triangulated anymore...
           // if (PMP::does_self_intersect(sm)) {
           //   CGAL_SS3_TRANSF_TRACE_V(1, "Error: CC self intersects");
           //   return false;
@@ -5323,7 +6869,7 @@ public:
       Transformation::reset_points(polyhedron);
 
 #ifdef CGAL_SS3_DUMP_FILES
-    IO::write_OBJ("results/perturbed_V4.obj", polyhedron, parameters::do_not_triangulate_faces(true));
+    IO::write_OBJ("results/V4_final.obj", polyhedron, parameters::do_not_triangulate_faces(true));
 #endif
 
     CGAL_postcondition(success);
@@ -5349,11 +6895,7 @@ public:
 #endif
 
     // Generic approach
-    Transformation::normalize_facet_planes(polyhedron); // @todo is this needed?
-
-    // @todo if we have general position + stability + no high degree, we could skip perturbation
-    CGAL_SS3_TRANSF_TRACE_CODE(bool in_general_pos = are_planes_in_general_position(polyhedron);)
-    CGAL_SS3_TRANSF_TRACE_V(8, "Unperturbed is in general position? " << in_general_pos);
+    Transformation::normalize_facet_planes(polyhedron); // @todo hasn't this already been done before?
 
     PolyhedronSPtr p_mem;
     if (safe_mode) {
@@ -5381,10 +6923,8 @@ public:
                       parameters::stream_precision(17).do_not_triangulate_faces(true));
 #endif
 
-        if (check_perturbed_positions_proximity(polyhedron, p_mem) &&
-            do_all_plane_pairs_intersect(polyhedron) &&
-            !Self_intersection::has_self_intersecting_surface(polyhedron) &&
-            do_all_plane_triplets_intersect(polyhedron)) {
+        if (are_planes_in_general_position(polyhedron) &&
+            !Self_intersection::has_self_intersecting_surface(polyhedron)) {
           CGAL_SS3_TRANSF_TRACE_V(8, "Safe mode is enabled, checking validity of the perturbation...");
           break;
         }
