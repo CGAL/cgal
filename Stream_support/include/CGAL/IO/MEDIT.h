@@ -14,6 +14,8 @@
 
 #include <CGAL/assertions.h>
 #include <CGAL/Kernel_traits.h>
+#include <CGAL/IO/io.h>
+
 #include <iostream>
 #include <string>
 #include <tuple>
@@ -21,6 +23,7 @@
 #include <utility>
 #include <vector>
 #include <array>
+
 #include <boost/unordered_map.hpp>
 
 namespace CGAL {
