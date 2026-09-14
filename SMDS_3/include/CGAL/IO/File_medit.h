@@ -502,20 +502,8 @@ struct Medit_pmap_generator<C3T3, USE_SUBDOMAIN_INDICES, RENUMBER_SURFACE_PATCH_
 //-------------------------------------------------------
 // IO functions
 //-------------------------------------------------------
-
-template <class T>
-struct is_variant : std::false_type {};
-
-template <class... Ts>
-struct is_variant<std::variant<Ts...>> : std::true_type {};
-
-template <typename T>
-struct is_pair : std::false_type {};
-
-template <typename U, typename V>
-struct is_pair<std::pair<U, V>> : std::true_type {};
-
-
+namespace SMDS_3_internal
+{
 template <typename T, typename = void>
 struct Has_in_dimension : std::false_type {};
 
@@ -546,13 +534,13 @@ bool is_corner(const typename Tr::Vertex_handle v, const Tr&)
 template <class T>
 void output_to_os(std::ostream& os, const T& x)
 {
-  if constexpr(is_variant<std::decay_t<T>>::value)
+  if constexpr(is_variant_v<std::decay_t<T>>)
   {
     std::visit(
         [&](const auto& i) {
           using X = std::decay_t<decltype(i)>;
 
-          if constexpr(is_pair<X>::value)
+          if constexpr(is_pair_v<X>)
             os << i.first << " " << i.second; // warning: read() will not deal with that
           else
             os << i;
@@ -562,6 +550,8 @@ void output_to_os(std::ostream& os, const T& x)
   else
     os << x;
 }
+
+} // end of SMDS_3_internal
 
 template <class Tr,
           class Vertices_range,
@@ -676,7 +666,7 @@ output_to_medit(std::ostream& os,
   //-------------------------------------------------------
   std::vector<typename Tr::Vertex_handle> corners;
   for(const auto& v : vertices) {
-    if(is_corner(v, tr)) {
+    if(SMDS_3_internal::is_corner(v, tr)) {
       corners.push_back(v);
     }
   }
@@ -689,7 +679,7 @@ output_to_medit(std::ostream& os,
   //-------------------------------------------------------
   // Edges
   //-------------------------------------------------------
-  constexpr bool write_edges = Has_in_dimension<typename Tr::Triangulation_data_structure::Vertex>::value;
+  constexpr bool write_edges = SMDS_3_internal::Has_in_dimension<typename Tr::Triangulation_data_structure::Vertex>::value;
   if constexpr(write_edges)
   {
     os << "Edges\n"
@@ -700,7 +690,7 @@ output_to_medit(std::ostream& os,
                   ? vh1->index()
                   : (vh2->in_dimension() == 1 ? vh2->index() : 42 /*todo : magic id*/);
       os << V[vh1] << ' ' << V[vh2] << ' ';
-      output_to_os(os, index);
+      SMDS_3_internal::output_to_os(os, index);
       os << '\n';
     }
   }
