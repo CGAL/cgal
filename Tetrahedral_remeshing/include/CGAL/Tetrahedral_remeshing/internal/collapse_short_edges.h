@@ -1209,6 +1209,11 @@ auto can_be_collapsed(const typename C3T3::Edge& e,
   const bool boundary = c3t3.is_in_complex(e)
                      || is_boundary(c3t3, e, cell_selector);
 
+#ifdef CGAL_TETRAHEDRAL_REMESHING_PROTECT_SUBDOMAIN_INTERFACES
+  if (is_protected_interface(c3t3.triangulation(), e))
+    return Collapsible{false, boundary};
+#endif
+
   if (protect_boundaries)
   {
     if (boundary)

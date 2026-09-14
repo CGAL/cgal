@@ -224,6 +224,14 @@ private:
         default:
           CGAL_unreachable();
         }
+
+#ifdef CGAL_TETRAHEDRAL_REMESHING_PROTECT_SUBDOMAIN_INTERFACES
+        // Interface vertices carry dimension 2 exactly like model-surface
+        // vertices, but moving them changes the interface geometry and
+        // desynchronises the parts, so pin them whatever protect_boundaries says.
+        if(m_free_vertices[idi] && is_protected_interface_vertex(tr, vi))
+          m_free_vertices[idi] = false;
+#endif
       }
     }
   }
@@ -245,6 +253,13 @@ private:
   void collect_vertices_surface_indices(const C3t3& c3t3) {
     m_vertices_surface_indices.clear();
     for(const Facet& fit : c3t3.facets_in_complex()) {
+#ifdef CGAL_TETRAHEDRAL_REMESHING_PROTECT_SUBDOMAIN_INTERFACES
+      // The partition interface is in the complex but is not a model surface:
+      // it is a jagged internal cut. Its vertices are pinned, so they need no
+      // surface indices or normals, and feeding them to the surface machinery
+      // is what makes the per-patch lookups fail.
+      if(is_protected_interface(c3t3.triangulation(), fit)) continue;
+#endif
       const Surface_patch_index& surface_index = c3t3.surface_patch_index(fit);
 
       for(const Vertex_handle vi : c3t3.triangulation().vertices(fit)) {
@@ -265,6 +280,9 @@ private:
     // collect all facet normals
     std::unordered_map<Facet, Vector_3, boost::hash<Facet>> fnormals;
     for(const Facet& f : tr.finite_facets()) {
+#ifdef CGAL_TETRAHEDRAL_REMESHING_PROTECT_SUBDOMAIN_INTERFACES
+      if(is_protected_interface(tr, f)) continue;
+#endif
       if(is_boundary(c3t3, f, m_cell_selector)) {
         const Facet cf = canonical_facet(f);
         fnormals[cf] = CGAL::NULL_VECTOR;

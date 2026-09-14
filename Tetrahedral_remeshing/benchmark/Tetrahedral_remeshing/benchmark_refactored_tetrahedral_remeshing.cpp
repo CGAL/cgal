@@ -10,6 +10,7 @@
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Tetrahedral_remeshing/Remeshing_cell_base_3.h>
 #include <CGAL/Tetrahedral_remeshing/Remeshing_vertex_base_3.h>
+#include <CGAL/IO/File_medit.h>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -48,9 +49,11 @@ int main(int argc, char** argv) {
   json results_json;
   std::cout << std::setprecision(17);
   std::cerr << std::setprecision(17);
-  if(argc != 7) {
+  if(argc < 7 || argc > 9) {
     fatal_error(std::string("Usage: ") + argv[0] +
-                " <input_mesh> <num_iterations> <remeshing_target_edge_factor> <smooth_constrained_edges> <num_threads> <results_json_path>");
+                " <input_mesh> <num_iterations> <remeshing_target_edge_factor> <smooth_constrained_edges> <num_threads> <results_json_path>"
+                " [protect_boundaries: 0|1 (default 0)]"
+                " [mesh_export_path (default none)]");
   }
   std::string input = argv[1];
   int num_iterations = std::stoi(argv[2]);
@@ -58,6 +61,11 @@ int main(int argc, char** argv) {
   bool smooth_constrained_edges = std::stoi(argv[4]) != 0;
   int num_threads = std::stoi(argv[5]);
   std::string results_json_path = argv[6];
+  // protect_boundaries == remesh_boundaries(false). Exposed so this binary can be
+  // compared like-for-like against the domain-decomposition bucket phase, which
+  // freezes the domain boundary as well as the bucket interfaces.
+  bool protect_boundaries = (argc >= 8) ? (std::stoi(argv[7]) != 0) : false;
+  std::string mesh_export_path = (argc >= 9) ? argv[8] : std::string();
   //std::filesystem::create_directories(std::filesystem::path(results_json_path).parent_path());
   std::filesystem::create_directories(std::filesystem::path(std::filesystem::absolute(results_json_path)).parent_path());
 
@@ -130,9 +138,37 @@ int main(int argc, char** argv) {
   //c3t3.triangulation() = tr;
   // Create and run atomic remesher
   CGAL::tetrahedral_isotropic_remeshing(c3t3, target_edge_length,
-                                        CGAL::parameters::number_of_iterations(num_iterations).smooth_constrained_edges(smooth_constrained_edges));
+                                        CGAL::parameters::number_of_iterations(num_iterations)
+                                          .remesh_boundaries(!protect_boundaries)
+                                          .smooth_constrained_edges(smooth_constrained_edges));
   t_atomic.stop();
   std::cout << "Remeshing took " << t_atomic.time() << std::endl;
+  {
+    const auto& ftr = c3t3.triangulation();
+    std::size_t n_dom = 0;
+    for(auto cit = ftr.finite_cells_begin(); cit != ftr.finite_cells_end(); ++cit)
+      if(cit->subdomain_index() != 0) ++n_dom;
+    std::cout << "[final] " << ftr.number_of_finite_cells() << " finite cells, "
+              << n_dom << " domain cells, " << ftr.number_of_vertices() << " vertices"
+              << "  (protect_boundaries=" << protect_boundaries << ")" << std::endl;
+    std::cout << "[complex] cells=" << c3t3.number_of_cells_in_complex()
+              << " facets=" << c3t3.number_of_facets_in_complex()
+              << " edges=" << c3t3.number_of_edges_in_complex()
+              << std::endl;
+    append_metric_result(results_json, "Performance", "Final_Domain_Cells", "Value",
+                         static_cast<double>(n_dom));
+  }
+
+  // Optional Medit dump, so this run can be compared spatially against the
+  // domain-decomposition pipeline's exported meshes.
+  if(!mesh_export_path.empty())
+  {
+    std::filesystem::create_directories(
+      std::filesystem::path(std::filesystem::absolute(mesh_export_path)).parent_path());
+    std::ofstream os(mesh_export_path);
+    CGAL::IO::write_MEDIT(os, c3t3.triangulation());
+    std::cout << "[export] wrote " << mesh_export_path << std::endl;
+  }
 
   //std::cout << "After remeshing:" << std::endl;
   //for(auto it=tr.finite_vertices_begin(); it!=tr.finite_vertices_end(); ++it) {

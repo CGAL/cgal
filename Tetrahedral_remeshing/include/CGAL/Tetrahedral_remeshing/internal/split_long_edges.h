@@ -282,6 +282,13 @@ auto can_be_split(const typename C3T3::Edge& e,
 
   const bool boundary = c3t3.is_in_complex(e) || is_boundary(c3t3, e, cell_selector);
 
+#ifdef CGAL_TETRAHEDRAL_REMESHING_PROTECT_SUBDOMAIN_INTERFACES
+  // Splitting an interface edge would desynchronise the parts (see
+  // is_protected_interface): refuse regardless of protect_boundaries.
+  if(is_protected_interface(c3t3.triangulation(), e))
+    return Splittable{false, boundary};
+#endif
+
   if(protect_boundaries) {
     if(boundary)
       return Splittable{false, boundary};

@@ -725,6 +725,61 @@ bool is_boundary(const C3T3& c3t3,
   return false;
 }
 
+#ifdef CGAL_TETRAHEDRAL_REMESHING_PROTECT_SUBDOMAIN_INTERFACES
+// ---------------------------------------------------------------------------
+// Domain-decomposition interface protection.
+//
+// `protect_boundaries` cannot express what a domain-decomposition run needs.
+// It is evaluated through is_boundary(), which is true both for the PARTITION
+// INTERFACE and for the MODEL SURFACE, so the flag freezes both or neither.
+// A DD run needs exactly one of each: the interface must come out of every part
+// bit-identical (one part splitting an interface edge that another part did not
+// leaves a T-junction, and the parts can no longer be glued together), while the
+// model surface must stay remeshable or it is never refined at all.
+//
+// The two are separable from the triangulation itself, once the exterior is
+// capped by infinite cells rather than by finite filler:
+//
+//   model surface       -> one incident cell is INFINITE
+//   partition interface -> both incident cells FINITE, disagreeing on subdomain
+//
+// These predicates identify the interface only, and are honoured regardless of
+// protect_boundaries. Guarded by the macro so they cost nothing otherwise.
+// ---------------------------------------------------------------------------
+template<typename Tr>
+bool is_protected_interface(const Tr& tr, const typename Tr::Facet& f)
+{
+  if (tr.is_infinite(f.first)) return false;
+  const typename Tr::Facet mf = tr.mirror_facet(f);
+  if (tr.is_infinite(mf.first)) return false;
+  return f.first->subdomain_index() != mf.first->subdomain_index();
+}
+
+template<typename Tr>
+bool is_protected_interface(const Tr& tr, const typename Tr::Edge& e)
+{
+  typename Tr::Facet_circulator fcirc = tr.incident_facets(e);
+  typename Tr::Facet_circulator fend = fcirc;
+  do
+  {
+    if (is_protected_interface(tr, *fcirc)) return true;
+  }
+  while (++fcirc != fend);
+  return false;
+}
+
+template<typename Tr>
+bool is_protected_interface_vertex(const Tr& tr,
+                                   const typename Tr::Vertex_handle v)
+{
+  std::vector<typename Tr::Facet> facets;
+  tr.incident_facets(v, std::back_inserter(facets));
+  for (const typename Tr::Facet& f : facets)
+    if (is_protected_interface(tr, f)) return true;
+  return false;
+}
+#endif
+
 template<typename C3T3>
 typename C3T3::Edge get_edge(const typename C3T3::Vertex_handle v0,
                              const typename C3T3::Vertex_handle v1,

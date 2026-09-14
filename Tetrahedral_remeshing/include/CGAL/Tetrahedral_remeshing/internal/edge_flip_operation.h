@@ -287,6 +287,12 @@ public:
 
     // Collect boundary edges as vertex pairs to match original behavior
     for(const Edge& e : c3t3.triangulation().finite_edges()) {
+#ifdef CGAL_TETRAHEDRAL_REMESHING_PROTECT_SUBDOMAIN_INTERFACES
+      // Flipping across the partition interface would retriangulate it
+      // differently in each part (see is_protected_interface).
+      if(is_protected_interface(c3t3.triangulation(), e))
+        continue;
+#endif
       if(is_boundary(c3t3, e, m_cell_selector) && !c3t3.is_in_complex(e)) {
         boundary_vertex_pairs.push_back(make_vertex_pair(e));
       }
