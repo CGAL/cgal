@@ -352,7 +352,7 @@ public:
       return is;
     }
 
-    char buffer[64];
+    char buffer[256]; // far too big as doubles have only precision 17, but to be on the safe side
     char* p = buffer;
     char* const end = buffer + sizeof(buffer);
 
