@@ -25,6 +25,7 @@
 
 #include <CGAL/number_utils.h>
 #include <CGAL/Kernel/global_functions.h>
+#include <CGAL/unordered_flat_map.h>
 
 #include <algorithm>
 #include <fstream>
@@ -2775,6 +2776,12 @@ public:
         CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << facet->to_string());
         result = false;
       }
+      // ---
+      CGAL::unordered_flat_set<VertexSPtr> unique_vertices { facet->vertices().begin(), facet->vertices().end() };
+      if (facet->vertices().size() != unique_vertices.size()) {
+        CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << facet->to_string());
+        result = false;
+      }
       typename std::list<VertexSPtr>::const_iterator it_v = facet->vertices().begin();
       while (it_v != facet->vertices().end()) {
         VertexSPtr vertex = *it_v++;
@@ -2788,6 +2795,12 @@ public:
           CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << vertex->to_string());
           result = false;
         }
+      }
+      // ---
+      CGAL::unordered_flat_set<EdgeSPtr> unique_edges { facet->edges().begin(), facet->edges().end() };
+      if (facet->edges().size() != unique_edges.size()) {
+        CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << facet->to_string());
+        result = false;
       }
       typename std::list<EdgeSPtr>::const_iterator it_e = facet->edges().begin();
       while (it_e != facet->edges().end()) {
