@@ -33,7 +33,7 @@ template < class ConcurrencyTag,
            class VertexToVertexMap,
            class UserVisitor>
 void append_patch(
-  const Surface_mesh<Point>& tm,
+  Surface_mesh<Point>& tm,
   Surface_mesh<Point>& output,
   PatchDescription& patch,
   const VertexPointMapOut& vpm_out,
@@ -198,7 +198,7 @@ void append_patches_to_triangle_mesh(
   UserVisitor& user_visitor)
 {
   using SM = Surface_mesh<Point>;
-  const SM& tm = patches.pm;
+  SM& tm = patches.pm;
 
   std::size_t vertices_idx_begin = output.number_of_vertices();
   std::size_t edges_idx_begin = output.number_of_edges();
@@ -314,13 +314,13 @@ void fill_new_triangle_mesh(
   using edge_descriptor = typename SM::Edge_index;
 
   using V2V_tag = typename CGAL::dynamic_vertex_property_t<vertex_descriptor>;
-  using Vertex_to_vertex_map = typename boost::property_map<SM, V2V_tag>::const_type;
+  using Vertex_to_vertex_map = typename boost::property_map<SM, V2V_tag>::type;
 
   using E2E_tag = typename CGAL::dynamic_edge_property_t<edge_descriptor>;
-  using Edge_to_edge_map = typename boost::property_map<SM, E2E_tag>::const_type;
+  using Edge_to_edge_map = typename boost::property_map<SM, E2E_tag>::type;
 
-  const SM &tm1 = patches_of_tm1.pm;
-  const SM &tm2 = patches_of_tm2.pm;
+  SM &tm1 = patches_of_tm1.pm;
+  SM &tm2 = patches_of_tm2.pm;
 
   Edge_to_edge_map tm1_to_output_edges = get(E2E_tag(), tm1, SM::null_edge()),
                    tm2_to_output_edges = get(E2E_tag(), tm2, SM::null_edge());

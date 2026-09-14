@@ -1210,7 +1210,7 @@ void append_patches_to_triangle_mesh(
   using vertex_descriptor = typename GT::vertex_descriptor;
   using face_descriptor = typename GT::face_descriptor;
 
-  const TriangleMesh& tm = patches.pm;
+  TriangleMesh& tm = patches.pm;
   Triangle_mesh_extension_helper<TriangleMesh, EdgetoEdgeMap, VertextoVertexMap, reverse_patch_orientation> helper(tm_to_output_edges, tm_to_output_vertices, tm, output);
 
   std::vector<std::size_t> ids_of_patches_to_append;
@@ -1396,13 +1396,13 @@ void fill_new_triangle_mesh(
   using edge_descriptor = typename GT::edge_descriptor;
 
   using V2V_tag = typename CGAL::dynamic_vertex_property_t<vertex_descriptor>;
-  using Vertex_to_vertex_map = typename boost::property_map<TriangleMesh, V2V_tag>::const_type;
+  using Vertex_to_vertex_map = typename boost::property_map<TriangleMesh, V2V_tag>::type;
 
   using E2E_tag = typename CGAL::dynamic_edge_property_t<edge_descriptor>;
-  using Edge_to_edge_map = typename boost::property_map<TriangleMesh, E2E_tag>::const_type;
+  using Edge_to_edge_map = typename boost::property_map<TriangleMesh, E2E_tag>::type;
 
-  const TriangleMesh& tm1 = patches_of_tm1.pm;
-  const TriangleMesh& tm2 = patches_of_tm2.pm;
+  TriangleMesh& tm1 = patches_of_tm1.pm;
+  TriangleMesh& tm2 = patches_of_tm2.pm;
 
   Vertex_to_vertex_map tm1_to_output_vertices = get(V2V_tag(), tm1, GT::null_vertex()),
                        tm2_to_output_vertices = get(V2V_tag(), tm2, GT::null_vertex());
