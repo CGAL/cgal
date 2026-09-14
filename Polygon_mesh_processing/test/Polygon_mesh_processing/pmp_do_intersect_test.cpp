@@ -390,7 +390,7 @@ int main()
   const std::string filename6 =  "data/polylines_inter.polylines.txt";
   const std::string filename7 =  "data/tetra2.off";
   const std::string filename8 =  "data/tetra4.off";
-  const std::string filename9 =  "data/small_spheres.off";
+  const std::string filename9 =  CGAL::data_file_path("meshes/small_spheres.off");
   const std::string filename10 = "data/hollow_sphere.off";
   const std::string filename11 = CGAL::data_file_path("meshes/sphere.off");
 

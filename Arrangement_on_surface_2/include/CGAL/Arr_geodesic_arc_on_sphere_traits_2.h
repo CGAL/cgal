@@ -7,8 +7,8 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Efi Fogel         <efif@post.tau.ac.il>
-//                 Eric Berberich    <eric.berberich@cgal.org>
+// Author(s) : Efi Fogel         <efif@post.tau.ac.il>
+//             Eric Berberich    <eric.berberich@cgal.org>
 
 #ifndef CGAL_ARR_GEODESIC_ARC_ON_SPHERE_TRAITS_2_H
 #define CGAL_ARR_GEODESIC_ARC_ON_SPHERE_TRAITS_2_H
@@ -220,46 +220,40 @@ protected:
    * \param d the 3D direction.
    * \return the projection onto the \f$xy\f$-plane.
    */
-  inline static Direction_2 project_xy(const Direction_3& d)
-  { return Direction_2(d.dx(), d.dy()); }
+  inline static Direction_2 project_xy(const Direction_3& d) { return Direction_2(d.dx(), d.dy()); }
 
   /*! projects a 3D direction onto the \f$yz\f$-plane.
    * \param d the 3D direction.
    * \return the projection onto the \f$yz\f$-plane.
    */
-  inline static Direction_2 project_yz(const Direction_3& d)
-  { return Direction_2(d.dy(), d.dz()); }
+  inline static Direction_2 project_yz(const Direction_3& d) { return Direction_2(d.dy(), d.dz()); }
 
   /*! projects a 3D direction onto the \f$zx\f$-plane.
    * \param d the 3D direction.
    * \return the projection onto the \f$xz\f$-plane.
    */
-  inline static Direction_2 project_xz(const Direction_3& d)
-  { return Direction_2(d.dx(), d.dz()); }
+  inline static Direction_2 project_xz(const Direction_3& d) { return Direction_2(d.dx(), d.dz()); }
 
   /*! projects a 3D direction onto the \f$yz\f$-plane and reflect the
    * \f$y\f$-coordinate.
    * \param d the 3D direction.
    * \return the projection onto the \f$yz\f$-plane.
    */
-  inline static Direction_2 project_minus_yz(const Direction_3& d)
-  { return Direction_2(-d.dy(), d.dz()); }
+  inline static Direction_2 project_minus_yz(const Direction_3& d) { return Direction_2(-d.dy(), d.dz()); }
 
   /*! projects a 3D direction onto the \f$zx\f$-plane and reflect the
    * \f$x\f$- coordinate.
    * \param d the 3D direction.
    * \return the projection onto the \f$xz\f$-plane.
    */
-  inline static Direction_2 project_minus_xz(const Direction_3& d)
-  { return Direction_2(-d.dx(), d.dz()); }
+  inline static Direction_2 project_minus_xz(const Direction_3& d) { return Direction_2(-d.dx(), d.dz()); }
 
   /*! compares the relative position of a direction and a plane given by its
    * normal.
    * \param normal the direction of the plane.
    * \param dir the direction.
    */
-  inline Oriented_side oriented_side(const Direction_3& normal,
-                                     const Direction_3 dir) const {
+  inline Oriented_side oriented_side(const Direction_3& normal, const Direction_3 dir) const {
     FT dot = normal.vector() * dir.vector();
     return CGAL::sign(dot);
   }
@@ -269,8 +263,7 @@ protected:
    * \param d2 the second direction.
    * \return the relative orientation of `d1` and `d2`.
    */
-  inline Orientation orientation(const Direction_2& d1,
-                                 const Direction_2& d2) const {
+  inline Orientation orientation(const Direction_2& d1, const Direction_2& d2) const {
     const Kernel& kernel(*this);
     return kernel.orientation_2_object()(d1.vector(), d2.vector());
   }
@@ -279,11 +272,9 @@ protected:
    * \param d1 the first direction.
    * \param d2 the second direction.
    */
-  inline Direction_3 construct_normal_3(const Direction_3& d1,
-                                        const Direction_3& d2) const {
+  inline Direction_3 construct_normal_3(const Direction_3& d1, const Direction_3& d2) const {
     const Kernel& kernel(*this);
-    Vector_3 v = kernel.construct_cross_product_vector_3_object()(d1.vector(),
-                                                                  d2.vector());
+    Vector_3 v = kernel.construct_cross_product_vector_3_object()(d1.vector(), d2.vector());
     return v.direction();
   }
 
@@ -307,8 +298,7 @@ public:
    *         EQUAL   - v(d1) = v(d2);
    *         LARGER  - v(d1) > v(d2).
    */
-  inline Comparison_result compare_y(const Direction_3& d1,
-                                     const Direction_3& d2) const {
+  inline Comparison_result compare_y(const Direction_3& d1, const Direction_3& d2) const {
     Vector_3 v1 = d1.vector();
     Vector_3 v2 = d2.vector();
 
@@ -341,13 +331,11 @@ public:
    *         EQUAL   - u(d1) = u(d2);
    *         LARGER  - u(d1) > u(d2).
    */
-  inline Comparison_result compare_x(const Direction_2& d1,
-                                     const Direction_2& d2) const {
+  inline Comparison_result compare_x(const Direction_2& d1, const Direction_2& d2) const {
     const Kernel& kernel = *this;
     if (kernel.equal_2_object()(d1, d2)) return EQUAL;
     const Direction_2& d = identification_xy();
-    return (kernel.counterclockwise_in_between_2_object()(d, d1, d2)) ?
-      LARGER : SMALLER;
+    return (kernel.counterclockwise_in_between_2_object()(d, d1, d2)) ? LARGER : SMALLER;
   }
 
   /*! compares two endpoint directions by u.
@@ -359,8 +347,7 @@ public:
    * \pre `d1` does not coincide with any pole.
    * \pre `d2` does not coincide with any pole.
    */
-  inline Comparison_result compare_x(const Direction_3& d1,
-                                     const Direction_3& d2) const {
+  inline Comparison_result compare_x(const Direction_3& d1, const Direction_3& d2) const {
     // Compare the projections onto the xy plane:
     Direction_2 d1_2 = project_xy(d1);
     Direction_2 d2_2 = project_xy(d2);
@@ -378,8 +365,7 @@ public:
    * \pre `d1` does not lie on the discontinuity arc.
    * \pre `d2` does not lie on the discontinuity arc.
    */
-  inline Comparison_result compare_xy(const Direction_3& d1,
-                                      const Direction_3& d2) const {
+  inline Comparison_result compare_xy(const Direction_3& d1, const Direction_3& d2) const {
     Comparison_result res = compare_x(d1, d2);
     if (res == EQUAL) return compare_y(d1, d2);
     return res;
@@ -392,12 +378,11 @@ public:
    * and  false otherwise.
    * \pre point does not coincide with one of the poles.
    */
-  bool is_in_x_range(const X_monotone_curve_2& xcv,
-                     const Point_2& point) const {
+  bool is_in_x_range(const X_monotone_curve_2& xcv, const Point_2& point) const {
     using Traits = Arr_geodesic_arc_on_sphere_traits_2<Kernel, atan_x, atan_y>;
 
-    CGAL_precondition(!point.is_min_boundary());
-    CGAL_precondition(!point.is_max_boundary());
+    CGAL_precondition(! point.is_min_boundary());
+    CGAL_precondition(! point.is_max_boundary());
 
     Direction_2 p = project_xy(point);
     if (xcv.is_vertical()) {
@@ -421,9 +406,7 @@ public:
   /*! computes the intersection of a curve and the identification curve.
    * \param[in] cv the curve.
    */
-  void intersection_with_identification(const X_monotone_curve_2& xcv,
-                                        Direction_3& dp,
-                                        std::true_type) const {
+  void intersection_with_identification(const X_monotone_curve_2& xcv, Direction_3& dp, std::true_type) const {
     const Direction_3& normal = xcv.normal();
     dp = (CGAL::sign(normal.dz()) == POSITIVE) ?
       Direction_3(-(normal.dz()), 0, normal.dx()) :
@@ -433,41 +416,33 @@ public:
   /*! computes the intersection of a curve and the identification curve.
    * \param[in] cv the curve.
    */
-  void intersection_with_identification(const X_monotone_curve_2& xcv,
-                                        Direction_3& dp,
-                                        std::false_type) const {
+  void intersection_with_identification(const X_monotone_curve_2& xcv, Direction_3& dp, std::false_type) const {
     const Direction_3& normal = xcv.normal();
-    FT z((atan_x * normal.dx() + atan_y * normal.dy()) /
-         -(normal.dz()));
+    FT z((atan_x * normal.dx() + atan_y * normal.dy()) / -(normal.dz()));
     dp = Direction_3(atan_x, atan_y, z);
   }
 
   /*! computes the intersection of a curve and the identification curve.
    * \param[in] cv the curve
    */
-  bool overlap_with_identification(const X_monotone_curve_2& xcv,
-                                   std::true_type) const {
+  bool overlap_with_identification(const X_monotone_curve_2& xcv, std::true_type) const {
     const Direction_3& normal = xcv.normal();
     return ((x_sign(normal) == ZERO) &&
-            (((y_sign(normal) == NEGATIVE) && !xcv.is_directed_right()) ||
+            (((y_sign(normal) == NEGATIVE) && ! xcv.is_directed_right()) ||
              ((y_sign(normal) == POSITIVE) && xcv.is_directed_right())));
   }
 
   /*! computes the intersection of a curve and the identification curve.
    * \param[in] cv the curve.
    */
-  bool overlap_with_identification(const X_monotone_curve_2& xcv,
-                                   std::false_type) const {
+  bool overlap_with_identification(const X_monotone_curve_2& xcv, std::false_type) const {
     const Direction_3& normal = xcv.normal();
     const Direction_3& iden_normal = identification_normal();
     const Direction_2 iden_normal_xy = project_xy(iden_normal);
     Direction_2 normal_xy = project_xy(normal);
     Kernel kernel;
-    if (xcv.is_directed_right()) {
-      return kernel.equal_2_object()(normal_xy, iden_normal_xy);
-    }
-    Direction_2 opposite_normal_xy =
-      kernel.construct_opposite_direction_2_object()(normal_xy);
+    if (xcv.is_directed_right()) return kernel.equal_2_object()(normal_xy, iden_normal_xy);
+    Direction_2 opposite_normal_xy = kernel.construct_opposite_direction_2_object()(normal_xy);
     return kernel.equal_2_object()(opposite_normal_xy, iden_normal_xy);
   }
 
@@ -497,7 +472,7 @@ public:
      * \param[in] y the \f$y\f$-coordinate.
      * \param[in] z the \f$z\f$-coordinate.
      */
-    Point_2 operator()(const FT& x, const FT& y, const FT& z) {
+    Point_2 operator()(const FT& x, const FT& y, const FT& z) const {
       Point_2 p;
       Direction_3& d(p);
       d = Direction_3(x, y, z);
@@ -509,7 +484,7 @@ public:
      * direction.
      * \param other the other direction.
      */
-    Point_2 operator()(const Direction_3& other) {
+    Point_2 operator()(const Direction_3& other) const {
       Point_2 p;
       Direction_3& d(p);
       d = Direction_3(other);
@@ -530,8 +505,7 @@ public:
       typename Point_2::Location_type location =
         (signx == POSITIVE) ? Point_2::NO_BOUNDARY_LOC :
         ((signx == NEGATIVE) ? Point_2::MID_BOUNDARY_LOC :
-         ((z_sign(dir) == NEGATIVE) ?
-          Point_2::MIN_BOUNDARY_LOC : Point_2::MAX_BOUNDARY_LOC));
+         ((z_sign(dir) == NEGATIVE) ? Point_2::MIN_BOUNDARY_LOC : Point_2::MAX_BOUNDARY_LOC));
       p.set_location(location);
     }
 
@@ -559,8 +533,7 @@ public:
 
   /*! obtains a point construction functor.
    */
-  Construct_point_2 construct_point_2_object() const
-  { return Construct_point_2(*this); }
+  Construct_point_2 construct_point_2_object() const { return Construct_point_2(*this); }
 
   /*! A functor that constructs an \f$x\f$-monotone geodesic arc on the sphere.
    */
@@ -594,8 +567,7 @@ public:
      * \pre the source and target must not coincide.
      * \pre the source and target cannot be antipodal.
      */
-    X_monotone_curve_2 operator()(const Point_2& source,
-                                  const Point_2& target) const {
+    X_monotone_curve_2 operator()(const Point_2& source, const Point_2& target) const {
       X_monotone_curve_2 xcv;
 
       xcv.set_source(source);
@@ -605,9 +577,8 @@ public:
       xcv.set_is_empty(false);
 
       CGAL_precondition_code(const Kernel& kernel = m_traits);
-      CGAL_precondition(!kernel.equal_3_object()
-                        (kernel.construct_opposite_direction_3_object()(source),
-                         (const typename Kernel::Direction_3&)(target)));
+      CGAL_precondition(! kernel.equal_3_object()(kernel.construct_opposite_direction_3_object()(source),
+                                                  (const typename Kernel::Direction_3&)(target)));
       Direction_3 normal = m_traits.construct_normal_3(source, target);
       xcv.set_normal(normal);
       init(xcv);
@@ -644,8 +615,7 @@ public:
      * \param[in] target the target-point direction.
      * \pre Both endpoints lie on the given plane.
      */
-    X_monotone_curve_2 operator()(const Point_2& source, const Point_2& target,
-                                  const Direction_3& normal) const
+    X_monotone_curve_2 operator()(const Point_2& source, const Point_2& target, const Direction_3& normal) const
     { return X_monotone_curve_2(source, target, normal); }
 
   private:
@@ -670,8 +640,7 @@ public:
       using Traits = Arr_geodesic_arc_on_sphere_traits_2<Kernel, atan_x, atan_y>;
 
       const Kernel& kernel(m_traits);
-      CGAL_precondition(!kernel.equal_3_object()(Direction_3(source),
-                                                 Direction_3(target)));
+      CGAL_precondition(!kernel.equal_3_object()(Direction_3(source), Direction_3(target)));
 
       // Check whether any one of the endpoint coincide with a pole:
       if (source.is_max_boundary()) {
@@ -742,8 +711,7 @@ public:
       // The arc is not vertical!
       xcv.set_is_vertical(false);
       xcv.set_is_directed_right(orient == LEFT_TURN);
-      xcv.set_is_full(kernel.equal_3_object()(Direction_3(source),
-                                              Direction_3(target)));
+      xcv.set_is_full(kernel.equal_3_object()(Direction_3(source), Direction_3(target)));
     }
   };
 
@@ -782,7 +750,7 @@ public:
      * \pre the source and target cannot be equal.
      * \pre the source and target cannot be the opoosite of each other.
      */
-    Curve_2 operator()(const Point_2& source, const Point_2& target) {
+    Curve_2 operator()(const Point_2& source, const Point_2& target) const {
       Curve_2 cv;
       cv.set_source(source);
       cv.set_target(target);
@@ -834,8 +802,7 @@ public:
           plane_is_positive = xsign == POSITIVE;
         }
         cv.set_is_x_monotone(s_is_positive == t_is_positive);
-        bool ccw = ((plane_is_positive && s_is_positive) ||
-                    (!plane_is_positive && !s_is_positive));
+        bool ccw = ((plane_is_positive && s_is_positive) || (! plane_is_positive && !s_is_positive));
         cv.set_is_directed_right(ccw);
         return cv;
       }
@@ -870,8 +837,7 @@ public:
      * \pre plane contain the origin
      * \pre Both endpoints lie on the given plane.
      */
-    Curve_2 operator()(const Point_2& source, const Point_2& target,
-                       const Direction_3& normal) {
+    Curve_2 operator()(const Point_2& source, const Point_2& target, const Direction_3& normal) const {
       Curve_2 cv;
 
       cv.set_source(source);
@@ -924,26 +890,22 @@ public:
         // Process degenerate cases:
         if (source.is_min_boundary()) {
           cv.set_is_directed_right(true);
-          cv.set_is_x_monotone((plane_is_positive && t_is_positive) ||
-                               (!plane_is_positive && !t_is_positive));
+          cv.set_is_x_monotone((plane_is_positive && t_is_positive) || (! plane_is_positive && !t_is_positive));
           return cv;
         }
         if (source.is_max_boundary()) {
           cv.set_is_directed_right(false);
-          cv.set_is_x_monotone((plane_is_positive && !t_is_positive) ||
-                               (!plane_is_positive && t_is_positive));
+          cv.set_is_x_monotone((plane_is_positive && ! t_is_positive) || (! plane_is_positive && t_is_positive));
           return cv;
         }
         if (target.is_min_boundary()) {
           cv.set_is_directed_right(false);
-          cv.set_is_x_monotone((plane_is_positive && !s_is_positive) ||
-                               (!plane_is_positive && s_is_positive));
+          cv.set_is_x_monotone((plane_is_positive && ! s_is_positive) || (! plane_is_positive && s_is_positive));
           return cv;
         }
         if (target.is_max_boundary()) {
           cv.set_is_directed_right(true);
-          cv.set_is_x_monotone((plane_is_positive && s_is_positive) ||
-                               (!plane_is_positive && !s_is_positive));
+          cv.set_is_x_monotone((plane_is_positive && s_is_positive) || (! plane_is_positive && ! s_is_positive));
           return cv;
         }
         if (s_is_positive != t_is_positive) {
@@ -964,11 +926,9 @@ public:
         Direction_2 t = project(target);
         const Direction_2& ny = Traits::neg_y_2();
         auto ccib = kernel.counterclockwise_in_between_2_object();
-        cv.set_is_x_monotone((plane_is_positive && !ccib(ny, s, t)) ||
-                             (!plane_is_positive && !ccib(ny, t, s)));
+        cv.set_is_x_monotone((plane_is_positive && ! ccib(ny, s, t)) || (! plane_is_positive && ! ccib(ny, t, s)));
 
-        bool ccw = ((plane_is_positive && s_is_positive) ||
-                    (!plane_is_positive && !s_is_positive));
+        bool ccw = ((plane_is_positive && s_is_positive) || (! plane_is_positive && ! s_is_positive));
         cv.set_is_directed_right(ccw);
         return cv;
       }
@@ -981,8 +941,7 @@ public:
       Direction_2 t = Traits::project_xy(target);
       auto ccib = kernel.counterclockwise_in_between_2_object();
       bool plane_is_positive = (z_sign(normal) == POSITIVE);
-      cv.set_is_x_monotone((plane_is_positive && !ccib(d, s, t)) ||
-                           (!plane_is_positive && !ccib(d, t, s)));
+      cv.set_is_x_monotone((plane_is_positive && !ccib(d, s, t)) || (! plane_is_positive && !ccib(d, t, s)));
       return cv;
     }
 
@@ -1004,8 +963,7 @@ public:
 
   /*! obtains a geodesic arc construction functor.
    */
-  Construct_curve_2 construct_curve_2_object() const
-  { return Construct_curve_2(*this); }
+  Construct_curve_2 construct_curve_2_object() const { return Construct_curve_2(*this); }
 
   /*! A functor that compares the \f$x\f$-coordinates of two directional points
    */
@@ -1109,13 +1067,11 @@ public:
      * \param xc the arc.
      * \return the left endpoint.
      */
-    const Point_2& operator()(const X_monotone_curve_2& xc) const
-    { return xc.left(); }
+    const Point_2& operator()(const X_monotone_curve_2& xc) const { return xc.left(); }
   };
 
   /*! obtains a `Construct_min_vertex_2` function object. */
-  Construct_min_vertex_2 construct_min_vertex_2_object() const
-  { return Construct_min_vertex_2(); }
+  Construct_min_vertex_2 construct_min_vertex_2_object() const { return Construct_min_vertex_2(); }
 
   /*! A functor that obtain the right endpoint of an \f$x\f$-monotone arc */
   class Construct_max_vertex_2 {
@@ -1124,13 +1080,11 @@ public:
      * \param xc the arc.
      * \return the right endpoint.
      */
-    const Point_2& operator()(const X_monotone_curve_2& xc) const
-    { return xc.right(); }
+    const Point_2& operator()(const X_monotone_curve_2& xc) const { return xc.right(); }
   };
 
   /*! obtains a `Construct_max_vertex_2` function object. */
-  Construct_max_vertex_2 construct_max_vertex_2_object() const
-  { return Construct_max_vertex_2(); }
+  Construct_max_vertex_2 construct_max_vertex_2_object() const { return Construct_max_vertex_2(); }
 
   /*! A functor that checks whether an \f$x\f$-monotone arc is a vertical */
   class Is_vertical_2 {
@@ -1176,8 +1130,7 @@ public:
      * \pre p is not a contraction point.
      * \pre p is in the \f$x\f$-range of `xc`.
      */
-    Comparison_result operator()(const Point_2& p,
-                                 const X_monotone_curve_2& xc) const {
+    Comparison_result operator()(const Point_2& p, const X_monotone_curve_2& xc) const {
       CGAL_precondition(!p.is_min_boundary() && !p.is_max_boundary());
       CGAL_precondition(m_traits.is_in_x_range(xc, p));
 
@@ -1205,8 +1158,7 @@ public:
   };
 
   /*! obtains a `Compare_y_at_x_2` function object. */
-  Compare_y_at_x_2 compare_y_at_x_2_object() const
-  { return Compare_y_at_x_2(*this); }
+  Compare_y_at_x_2 compare_y_at_x_2_object() const { return Compare_y_at_x_2(*this); }
 
   /*! A functor that compares the \f$y\f$-coordinates of two \f$x\f$-monotone
    * arcs immediately to the left of their intersection directional point.
@@ -1237,9 +1189,7 @@ public:
      *      defined (lexicographically) to its left.
      * \pre the arcs are not degenerate
      */
-    Comparison_result operator()(const X_monotone_curve_2& xc1,
-                                 const X_monotone_curve_2& xc2,
-                                 const Point_2& p) const {
+    Comparison_result operator()(const X_monotone_curve_2& xc1, const X_monotone_curve_2& xc2, const Point_2& p) const {
       CGAL_precondition(! xc1.is_degenerate());
       CGAL_precondition(! xc2.is_degenerate());
       CGAL_precondition(p == xc1.right());
@@ -1285,8 +1235,7 @@ public:
         if (! xc2.is_directed_right()) n2 = opposite_2(n2);
         if (kernel.equal_2_object()(n1, n2)) return EQUAL;
         const Direction_2 d(1, 0);
-        return (kernel.counterclockwise_in_between_2_object()(n1, d, n2)) ?
-          LARGER: SMALLER;
+        return (kernel.counterclockwise_in_between_2_object()(n1, d, n2)) ? LARGER : SMALLER;
       }
 
       if (! l2.is_no_boundary()) {
@@ -1321,8 +1270,7 @@ public:
   };
 
   /*! obtains a `Compare_y_at_x_left_2` function object. */
-  Compare_y_at_x_left_2 compare_y_at_x_left_2_object() const
-  { return Compare_y_at_x_left_2(*this); }
+  Compare_y_at_x_left_2 compare_y_at_x_left_2_object() const { return Compare_y_at_x_left_2(*this); }
 
   /*! A functor that compares the \f$y\f$-coordinates of two \f$x\f$-monotone
    * arcs immediately to the right of their intersection directional point.
@@ -1353,9 +1301,7 @@ public:
      *      defined to its right (lexicographically).
      * \pre the arcs are not degenerate
      */
-    Comparison_result operator()(const X_monotone_curve_2& xc1,
-                                 const X_monotone_curve_2& xc2,
-                                 const Point_2& p) const {
+    Comparison_result operator()(const X_monotone_curve_2& xc1, const X_monotone_curve_2& xc2, const Point_2& p) const {
       CGAL_precondition(! xc1.is_degenerate());
       CGAL_precondition(! xc2.is_degenerate());
 
@@ -1391,8 +1337,7 @@ public:
         if (! xc2.is_directed_right()) n2 = opposite_2(n2);
         if (kernel.equal_2_object()(n1, n2)) return EQUAL;
         const Direction_2 d(1, 0);
-        return (kernel.counterclockwise_in_between_2_object()(n1, d, n2)) ?
-          SMALLER : LARGER;
+        return (kernel.counterclockwise_in_between_2_object()(n1, d, n2)) ? SMALLER : LARGER;
       }
 
       // Compare the \f$y\f$-coord. at the \f$x\f$-coordinate of the most left
@@ -1436,8 +1381,7 @@ public:
   };
 
   /*! obtains a `Compare_y_at_x_right_2` function object. */
-  Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
-  { return Compare_y_at_x_right_2(*this); }
+  Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const { return Compare_y_at_x_right_2(*this); }
 
   /*! A functor that checks whether two directional points and two
    * \f$x\f$-monotone arcs are identical.
@@ -1463,20 +1407,17 @@ public:
      * \param xc2 the second curve.
      * \return true if the two curves are the same; false otherwise.
      */
-    bool operator()(const X_monotone_curve_2& xc1,
-                    const X_monotone_curve_2& xc2) const {
+    bool operator()(const X_monotone_curve_2& xc1, const X_monotone_curve_2& xc2) const {
       const Kernel& kernel = m_traits;
       auto equal_3 = kernel.equal_3_object();
       if (xc1.is_full() || xc2.is_full()) {
         if (!xc1.is_full() || !xc2.is_full()) return false;
         auto opposite_3 = kernel.construct_opposite_direction_3_object();
-        return (equal_3(xc1.normal(), xc2.normal()) ||
-                equal_3(opposite_3(xc1.normal()), xc2.normal()));
+        return (equal_3(xc1.normal(), xc2.normal()) || equal_3(opposite_3(xc1.normal()), xc2.normal()));
       }
 
       if (xc1.is_meridian() || xc2.is_meridian()) {
-        return (xc1.is_meridian() && xc2.is_meridian() &&
-                equal_3(xc1.normal(), xc2.normal()));
+        return (xc1.is_meridian() && xc2.is_meridian() && equal_3(xc1.normal(), xc2.normal()));
       }
 
       return (equal_3(Direction_3(xc1.left()),  Direction_3(xc2.left())) &&
@@ -1508,8 +1449,7 @@ public:
      * \return true iff point pierces xc.
      * \pre point lies in the underlying plane of xc.
      */
-    bool is_in_between(const Point_2& point,
-                       const X_monotone_curve_2& xc) const {
+    bool is_in_between(const Point_2& point, const X_monotone_curve_2& xc) const {
       const Kernel& kernel = m_traits;
       CGAL_precondition(m_traits.has_on(xc.normal(), point));
 
@@ -1528,23 +1468,20 @@ public:
         if (xsign == ZERO) {
           plane_is_positive = Traits::y_sign(normal) == NEGATIVE;
           p_is_positive = Traits::x_sign(point) == POSITIVE;
-        } else {
+        }
+        else {
           plane_is_positive = xsign == POSITIVE;
           p_is_positive = Traits::y_sign(point) == POSITIVE;
         }
 
-        bool xc_is_positive = ((plane_is_positive && xc.is_directed_right()) ||
-                               (!plane_is_positive && !xc.is_directed_right()));
+        bool xc_is_positive =
+          ((plane_is_positive && xc.is_directed_right()) || (! plane_is_positive && !xc.is_directed_right()));
 
-        if ((xc_is_positive && !p_is_positive) ||
-            (!xc_is_positive && p_is_positive))
-          return false;
+        if ((xc_is_positive && !p_is_positive) || (! xc_is_positive && p_is_positive)) return false;
 
         // Compare the \f$y\f$-coordinates:
-        return (((left.is_min_boundary()) ||
-                 (m_traits.compare_y(point, left) != SMALLER)) &&
-                ((right.is_max_boundary()) ||
-                 (m_traits.compare_y(point, right) != LARGER)));
+        return (((left.is_min_boundary()) || (m_traits.compare_y(point, left) != SMALLER)) &&
+                ((right.is_max_boundary()) || (m_traits.compare_y(point, right) != LARGER)));
       }
 
       // The arc is not vertical. Compare the projections onto the
@@ -1741,8 +1678,7 @@ public:
   };
 
   /*! obtains a Parameter_space_in_x_2 function object. */
-  Parameter_space_in_x_2 parameter_space_in_x_2_object() const
-  { return Parameter_space_in_x_2(*this); }
+  Parameter_space_in_x_2 parameter_space_in_x_2_object() const { return Parameter_space_in_x_2(*this); }
 
   /*! A function object that obtains the parameter space of a geometric
    * entity along the \f$y\f$-axis.
@@ -1766,8 +1702,7 @@ public:
      *   ARR_TOP_BOUNDARY     - the arc approaches the north pole at the arc
      *                          maximal end.
      */
-    Arr_parameter_space operator()(const X_monotone_curve_2& xcv,
-                                   Arr_curve_end ce) const {
+    Arr_parameter_space operator()(const X_monotone_curve_2& xcv, Arr_curve_end ce) const {
       return (ce == ARR_MIN_END) ?
         ((xcv.left().is_min_boundary()) ?  ARR_BOTTOM_BOUNDARY: ARR_INTERIOR) :
         ((xcv.right().is_max_boundary()) ? ARR_TOP_BOUNDARY : ARR_INTERIOR);
@@ -1780,16 +1715,12 @@ public:
      * \param p the point.
      * \return the parameter space at p.
      */
-    Arr_parameter_space operator()(const Point_2& p) const {
-      return
-        (p.is_min_boundary()) ? ARR_BOTTOM_BOUNDARY :
-        (p.is_max_boundary()) ? ARR_TOP_BOUNDARY : ARR_INTERIOR;
-    }
+    Arr_parameter_space operator()(const Point_2& p) const
+    { return (p.is_min_boundary()) ? ARR_BOTTOM_BOUNDARY : (p.is_max_boundary()) ? ARR_TOP_BOUNDARY : ARR_INTERIOR; }
   };
 
   /*! obtains a `Parameter_space_in_y_2` function object. */
-  Parameter_space_in_y_2 parameter_space_in_y_2_object() const
-  { return Parameter_space_in_y_2(); }
+  Parameter_space_in_y_2 parameter_space_in_y_2_object() const { return Parameter_space_in_y_2(); }
 
 
   /*! A functor that compares the \f$x\f$-coordinate of arc ends and points on
@@ -1826,10 +1757,8 @@ public:
      * vertical).
      * \pre `xcv` does not coincide with the vertical identification curve.
      */
-    Comparison_result operator()(const Point_2& point,
-                                 const X_monotone_curve_2& xcv,
-                                 Arr_curve_end CGAL_precondition_code(ce))
-      const {
+    Comparison_result operator()(const Point_2& point, const X_monotone_curve_2& xcv,
+                                 Arr_curve_end CGAL_precondition_code(ce)) const {
       CGAL_precondition(point.is_no_boundary());
       CGAL_precondition_code
         (const Point_2& p2 = (ce == ARR_MIN_END) ? xcv.left() : xcv.right(););
@@ -1843,8 +1772,7 @@ public:
       // also on the \f$xy\f$-plane:
       Direction_3 normal = xcv.normal();
       Direction_2 q = (xcv.is_directed_right()) ?
-        Direction_2(-(normal.dy()), normal.dx()) :
-        Direction_2(normal.dy(), -(normal.dx()));
+        Direction_2(-(normal.dy()), normal.dx()) : Direction_2(normal.dy(), -(normal.dx()));
       Direction_2 p = Traits::project_xy(point);
       return m_traits.compare_x(p, q);
     }
@@ -1871,35 +1799,28 @@ public:
      * \pre the ce2 end of the arc xcv2 lies on a pole (implying ce2 is
      *      vertical).
      */
-    Comparison_result operator()(const X_monotone_curve_2& xcv1,
-                                 Arr_curve_end CGAL_precondition_code(ce1),
-                                 const X_monotone_curve_2& xcv2,
-                                 Arr_curve_end CGAL_precondition_code(ce2))
-      const {
-      CGAL_precondition_code
-        (const Point_2& p1 = (ce1 == ARR_MIN_END) ? xcv1.left() : xcv1.right(););
-      CGAL_precondition(!p1.is_no_boundary());
-      CGAL_precondition_code
-        (const Point_2& p2 = (ce2 == ARR_MIN_END) ? xcv2.left() : xcv2.right(););
-      CGAL_precondition(!p2.is_no_boundary());
+    Comparison_result operator()(const X_monotone_curve_2& xcv1, Arr_curve_end CGAL_precondition_code(ce1),
+                                 const X_monotone_curve_2& xcv2, Arr_curve_end CGAL_precondition_code(ce2)) const {
+      CGAL_precondition_code(const Point_2& p1 = (ce1 == ARR_MIN_END) ? xcv1.left() : xcv1.right(););
+      CGAL_precondition(! p1.is_no_boundary());
+      CGAL_precondition_code(const Point_2& p2 = (ce2 == ARR_MIN_END) ? xcv2.left() : xcv2.right(););
+      CGAL_precondition(! p2.is_no_boundary());
 
       CGAL_precondition(xcv1.is_vertical());
       CGAL_precondition(xcv2.is_vertical());
 
-      CGAL_precondition(!m_traits.is_on_y_identification_2_object()(xcv1));
-      CGAL_precondition(!m_traits.is_on_y_identification_2_object()(xcv2));
+      CGAL_precondition(! m_traits.is_on_y_identification_2_object()(xcv1));
+      CGAL_precondition(! m_traits.is_on_y_identification_2_object()(xcv2));
 
       // Non of the arcs coincide with the identification arc:
       // Obtain the directions contained in the underlying planes, which are
       // also on the \f$xy\f$-plane:
       Direction_3 normal1 = xcv1.normal();
       Direction_2 p = (xcv1.is_directed_right()) ?
-        Direction_2(-(normal1.dy()), normal1.dx()) :
-        Direction_2(normal1.dy(), -(normal1.dx()));
+        Direction_2(-(normal1.dy()), normal1.dx()) : Direction_2(normal1.dy(), -(normal1.dx()));
       Direction_3 normal2 = xcv2.normal();
       Direction_2 q = (xcv2.is_directed_right()) ?
-        Direction_2(-(normal2.dy()), normal2.dx()) :
-        Direction_2(normal2.dy(), -(normal2.dx()));
+        Direction_2(-(normal2.dy()), normal2.dx()) : Direction_2(normal2.dy(), -(normal2.dx()));
       return m_traits.compare_x(p, q);
     }
 
@@ -1908,15 +1829,12 @@ public:
      * Once we do a better dispatching of the functors (LR-ident + TB-contraction),
      * an implementation of this signature becomes obsolete.
      */
-    Comparison_result operator()(const Point_2& /* p1 */,
-                                 const Point_2& /* p2 */) const
-    { CGAL_error(); return EQUAL; }
+    Comparison_result operator()(const Point_2& /* p1 */, const Point_2& /* p2 */) const { CGAL_error(); return EQUAL; }
   };
 
   /*! obtains a `Compare_x_on_boundary_2` function object.
    */
-  Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const
-  { return Compare_x_on_boundary_2(*this); }
+  Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const { return Compare_x_on_boundary_2(*this); }
 
   /*! A functor that compares the \f$x\f$-coordinates of arc ends near the
    * boundary of the parameter space.
@@ -1954,18 +1872,13 @@ public:
      * \pre xcv1 does not coincide with the vertical identification curve.
      * \pre xcv2 does not coincide with the vertical identification curve.
      */
-    Comparison_result operator()(const X_monotone_curve_2&
-                                 CGAL_precondition_code(xcv1),
-                                 const X_monotone_curve_2&
-                                 CGAL_precondition_code(xcv2),
-                                 Arr_curve_end CGAL_precondition_code(ce))
-      const {
-      CGAL_precondition_code
-        (const Point_2& p1 = (ce == ARR_MIN_END) ? xcv1.left() : xcv1.right(););
-      CGAL_precondition(!p1.is_no_boundary());
-      CGAL_precondition_code
-        (const Point_2& p2 = (ce == ARR_MIN_END) ? xcv2.left() : xcv2.right(););
-      CGAL_precondition(!p2.is_no_boundary());
+    Comparison_result operator()(const X_monotone_curve_2& CGAL_precondition_code(xcv1),
+                                 const X_monotone_curve_2& CGAL_precondition_code(xcv2),
+                                 Arr_curve_end CGAL_precondition_code(ce)) const {
+      CGAL_precondition_code(const Point_2& p1 = (ce == ARR_MIN_END) ? xcv1.left() : xcv1.right(););
+      CGAL_precondition(! p1.is_no_boundary());
+      CGAL_precondition_code(const Point_2& p2 = (ce == ARR_MIN_END) ? xcv2.left() : xcv2.right(););
+      CGAL_precondition(! p2.is_no_boundary());
 
       CGAL_precondition(xcv1.is_vertical());
       CGAL_precondition(xcv2.is_vertical());
@@ -1977,8 +1890,7 @@ public:
   };
 
   /*! obtains a `Compare_x_near_boundary_2` function object. */
-  Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const
-  { return Compare_x_near_boundary_2(*this); }
+  Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const { return Compare_x_near_boundary_2(*this); }
 
 
   /*! A functor that compares the \f$y\f$-coordinates of arc ends near the
@@ -2010,18 +1922,13 @@ public:
      * \pre the curves cannot reach a pole.
      * There is no horizontal identification curve!
      */
-    Comparison_result operator()(const X_monotone_curve_2& xcv1,
-                                 const X_monotone_curve_2& xcv2,
+    Comparison_result operator()(const X_monotone_curve_2& xcv1, const X_monotone_curve_2& xcv2,
                                  Arr_curve_end ce) const {
       CGAL_precondition(! xcv1.is_degenerate());
       CGAL_precondition(! xcv2.is_degenerate());
 
-      CGAL_precondition((ce != ARR_MIN_END) ||
-                        (xcv1.left().is_mid_boundary() &&
-                         xcv2.left().is_mid_boundary()));
-      CGAL_precondition((ce != ARR_MAX_END) ||
-                        (xcv1.right().is_mid_boundary() &&
-                         xcv2.right().is_mid_boundary()));
+      CGAL_precondition((ce != ARR_MIN_END) || (xcv1.left().is_mid_boundary() && xcv2.left().is_mid_boundary()));
+      CGAL_precondition((ce != ARR_MAX_END) || (xcv1.right().is_mid_boundary() && xcv2.right().is_mid_boundary()));
 
       // If the curves lie on the same plane return EQUAL.
       const Kernel& kernel = m_traits;
@@ -2065,17 +1972,13 @@ public:
         // std::cout << "x sign: " << xsign << std::endl;
 
         if (CGAL::sign(n1.dz()) == POSITIVE) {
-          if (CGAL::sign(n2.dz()) == POSITIVE) {
-            // pos pos
-            return (xsign == POSITIVE) ? LARGER : SMALLER;
-          }
+          // pos pos
+          if (CGAL::sign(n2.dz()) == POSITIVE) return (xsign == POSITIVE) ? LARGER : SMALLER;
           // pos neg
           return (xsign == POSITIVE) ? SMALLER : LARGER;
         }
-        if (CGAL::sign(n2.dz()) == POSITIVE) {
-          // neg pos
-          return (xsign == POSITIVE) ? SMALLER : LARGER;
-        }
+        // neg pos
+        if (CGAL::sign(n2.dz()) == POSITIVE) return (xsign == POSITIVE) ? SMALLER : LARGER;
         // neg neg
         return (xsign == POSITIVE) ? LARGER : SMALLER;
       }
@@ -2104,25 +2007,20 @@ public:
       // std::cout << "x sign: " << xsign << std::endl;
 
       if (CGAL::sign(n1.dz()) == POSITIVE) {
-        if (CGAL::sign(n2.dz()) == POSITIVE) {
-          // pos pos
-          return (xsign == POSITIVE) ? SMALLER : LARGER;
-        }
+        // pos pos
+        if (CGAL::sign(n2.dz()) == POSITIVE) return (xsign == POSITIVE) ? SMALLER : LARGER;
         // pos neg
         return (xsign == POSITIVE) ? LARGER: SMALLER;
       }
-      if (CGAL::sign(n2.dz()) == POSITIVE) {
-        // neg pos
-        return (xsign == POSITIVE) ? LARGER : SMALLER;
-      }
+      // neg pos
+      if (CGAL::sign(n2.dz()) == POSITIVE) return (xsign == POSITIVE) ? LARGER : SMALLER;
       // neg neg
       return (xsign == POSITIVE) ? SMALLER : LARGER;
     }
   };
 
   /*! obtains a `Compare_y_near_boundary_2` function object. */
-  Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const
-  { return Compare_y_near_boundary_2(*this); }
+  Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const { return Compare_y_near_boundary_2(*this); }
 
   /*! A functor that indicates whether a geometric object lies on the
    * vertical identification arc.
@@ -2161,9 +2059,7 @@ public:
        */
       const Point_2& source = xcv.source();
       const Point_2& target = xcv.target();
-      if (source.is_no_boundary() || target.is_no_boundary() ||
-          !xcv.is_vertical())
-        return false;
+      if (source.is_no_boundary() || target.is_no_boundary() || ! xcv.is_vertical()) return false;
 
       /*! The curve is vertical. If at least one endpoint lies on the open
        * identification arc, it entirely lies on it.
@@ -2179,8 +2075,7 @@ public:
   };
 
   /*! obtains an `Is_on_y_identification_2` function object. */
-  Is_on_y_identification_2 is_on_y_identification_2_object() const
-  { return Is_on_y_identification_2(*this); }
+  Is_on_y_identification_2 is_on_y_identification_2_object() const { return Is_on_y_identification_2(*this); }
 
   /*! A functor that compares the \f$y\f$-coordinate of two given points
    * that lie on the vertical identification arc.
@@ -2235,8 +2130,7 @@ public:
   };
 
   /*! obtains a `Compare_y_on_boundary_2` function object. */
-  Compare_y_on_boundary_2 compare_y_on_boundary_2_object() const
-  { return Compare_y_on_boundary_2(*this); }
+  Compare_y_on_boundary_2 compare_y_on_boundary_2_object() const { return Compare_y_on_boundary_2(*this); }
   //@}
 
   /// \name Functor definitions for supporting intersections.
@@ -2357,13 +2251,13 @@ public:
           s_is_positive = Traits::x_sign(source) == POSITIVE;
           t_is_positive = Traits::x_sign(target) == POSITIVE;
           plane_is_positive = Traits::y_sign(normal) == NEGATIVE;
-        } else {
+        }
+        else {
           s_is_positive = Traits::y_sign(source) == POSITIVE;
           t_is_positive = Traits::y_sign(target) == POSITIVE;
           plane_is_positive = xsign == POSITIVE;
         }
-        bool ccw = ((plane_is_positive && s_is_positive) ||
-                    (!plane_is_positive && !s_is_positive));
+        bool ccw = ((plane_is_positive && s_is_positive) || (! plane_is_positive && !s_is_positive));
         const Point_2& pole1 = (ccw) ? pp : np;
         X_monotone_curve_2 xc1(source, pole1, normal, true, ccw);
         *oi++ = Make_x_monotone_result(xc1);
@@ -2402,8 +2296,7 @@ public:
   };
 
   /*! obtains a `Make_x_monotone_2` function object. */
-  Make_x_monotone_2 make_x_monotone_2_object() const
-  { return Make_x_monotone_2(*this); }
+  Make_x_monotone_2 make_x_monotone_2_object() const { return Make_x_monotone_2(*this); }
 
   /*! A functor that splits an \f$x\f$-monotone arc at a directional point. */
   class Split_2 {
@@ -2489,16 +2382,14 @@ public:
     friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel, atan_x, atan_y>;
 
   public:
-    bool operator()(const Direction_2& d,
-                    const Direction_2& d1, const Direction_2& d2) const {
+    bool operator()(const Direction_2& d, const Direction_2& d1, const Direction_2& d2) const {
       const Kernel& kernel = m_traits;
       return kernel.counterclockwise_in_between_2_object()(d, d2, d1);
     }
   };
 
   /*! obtains a `Clockwise_in_between_2` function object. */
-  Clockwise_in_between_2 clockwise_in_between_2_object() const
-  { return Clockwise_in_between_2(*this); }
+  Clockwise_in_between_2 clockwise_in_between_2_object() const { return Clockwise_in_between_2(*this); }
 
   /*! A functor that computes intersections between \f$x\f$-monotone arcs. */
   class Intersect_2 {
@@ -2677,8 +2568,7 @@ public:
      * \return true iff point pierces xc.
      * \pre point lies in the underlying plane of xc.
      */
-    bool is_in_between(const Point_2& point,
-                       const X_monotone_curve_2& xc) const {
+    bool is_in_between(const Point_2& point, const X_monotone_curve_2& xc) const {
       const Kernel& kernel = m_traits;
       CGAL_precondition(m_traits.has_on(xc.normal(), point));
 
@@ -2697,23 +2587,20 @@ public:
         if (xsign == ZERO) {
           plane_is_positive = Traits::y_sign(normal) == NEGATIVE;
           p_is_positive = Traits::x_sign(point) == POSITIVE;
-        } else {
+        }
+        else {
           plane_is_positive = xsign == POSITIVE;
           p_is_positive = Traits::y_sign(point) == POSITIVE;
         }
 
-        bool xc_is_positive = ((plane_is_positive && xc.is_directed_right()) ||
-                               (!plane_is_positive && !xc.is_directed_right()));
+        bool xc_is_positive =
+          ((plane_is_positive && xc.is_directed_right()) || (! plane_is_positive && !xc.is_directed_right()));
 
-        if ((xc_is_positive && !p_is_positive) ||
-            (!xc_is_positive && p_is_positive))
-          return false;
+        if ((xc_is_positive && !p_is_positive) || (! xc_is_positive && p_is_positive)) return false;
 
         // Compare the \f$y\f$-coordinates:
-        return (((left.is_min_boundary()) ||
-                 (m_traits.compare_y(point, left) != SMALLER)) &&
-                ((right.is_max_boundary()) ||
-                 (m_traits.compare_y(point, right) != LARGER)));
+        return (((left.is_min_boundary()) || (m_traits.compare_y(point, left) != SMALLER)) &&
+                ((right.is_max_boundary()) || (m_traits.compare_y(point, right) != LARGER)));
       }
 
       // The arc is not vertical. Compare the projections onto the
@@ -2751,9 +2638,7 @@ public:
      * \pre xc1 and xc2 are not degenerate
      */
     template<typename OutputIterator>
-    OutputIterator operator()(const X_monotone_curve_2& xc1,
-                              const X_monotone_curve_2& xc2,
-                              OutputIterator oi) const {
+    OutputIterator operator()(const X_monotone_curve_2& xc1, const X_monotone_curve_2& xc2, OutputIterator oi) const {
       // std::cout << "xc1: " << xc1 << std::endl
       //           << "xc2: " << xc2 << std::endl;
       CGAL_precondition(!xc1.is_degenerate());
@@ -2767,8 +2652,7 @@ public:
       const Direction_3& normal1 = xc1.normal();
       const Direction_3& normal2 = xc2.normal();
 
-      Direction_3 opposite_normal1 =
-        kernel.construct_opposite_direction_3_object()(normal1);
+      Direction_3 opposite_normal1 = kernel.construct_opposite_direction_3_object()(normal1);
 
       if (equal_3(normal1, normal2) || equal_3(opposite_normal1, normal2)) {
         // The underlying planes are the same
@@ -2779,8 +2663,7 @@ public:
           // Both arcs are vertical
           bool res = kernel.equal_3_object()(normal1, normal2);
           if ((!res && (xc1.is_directed_right() == xc2.is_directed_right())) ||
-              (res && (xc1.is_directed_right() != xc2.is_directed_right())))
-          {
+              (res && (xc1.is_directed_right() != xc2.is_directed_right()))) {
             if (xc1.left().is_min_boundary() && xc2.left().is_min_boundary())
               *oi++ = Intersection_point(xc1.left(), 1);
             if (xc1.right().is_max_boundary() && xc2.right().is_max_boundary())
@@ -2803,16 +2686,13 @@ public:
            * it onto the xy plane. If the projection coincide with the negative
            * x, project onto the zx plane. Otherwise project onto the yz plane.
            */
-          const Point_2& point =
-            xc1.left().is_min_boundary() ? xc1.right() : xc1.left();
+          const Point_2& point = xc1.left().is_min_boundary() ? xc1.right() : xc1.left();
 
           CGAL::Sign xsign = Traits::x_sign(normal1);
           bool xz_plane = xsign == ZERO;
-          Project project =
-            (xz_plane) ? Traits::project_xz : Traits::project_yz;
+          Project project = (xz_plane) ? Traits::project_xz : Traits::project_yz;
 
-          Direction_3 normal = (xc1.is_directed_right()) ?
-            normal1 : opposite_normal1;
+          Direction_3 normal = (xc1.is_directed_right()) ? normal1 : opposite_normal1;
 
           bool p_x_is_positive = Traits::x_sign(point) == POSITIVE;
           bool p_y_is_positive = Traits::y_sign(point) == POSITIVE;
@@ -2831,8 +2711,7 @@ public:
 
         // The arcs are not vertical:
         bool plane_is_positive = (Traits::z_sign(normal1) == POSITIVE);
-        Direction_3 normal =
-          (plane_is_positive) ? normal1 : opposite_normal1;
+        Direction_3 normal = (plane_is_positive) ? normal1 : opposite_normal1;
         return compute_intersection(xc1.left(), xc1.right(),
                                     xc2.left(), xc2.right(),
                                     normal, false, ccib, Traits::project_xy, oi);
@@ -2881,11 +2760,9 @@ public:
      * 1. they are supported by the same plane, and
      * 2. share a common endpoint that is not on the identification arc
      */
-    bool operator()(const X_monotone_curve_2& xc1,
-                    const X_monotone_curve_2& xc2) const {
+    bool operator()(const X_monotone_curve_2& xc1, const X_monotone_curve_2& xc2) const {
       if (xc1.is_empty() || xc2.is_empty()) return true;
-      if ((xc1.is_full() || xc1.is_meridian()) &&
-          (xc2.is_full() || xc2.is_meridian())) return false;
+      if ((xc1.is_full() || xc1.is_meridian()) && (xc2.is_full() || xc2.is_meridian())) return false;
 
       const Kernel& kernel = m_traits;
       auto equal = kernel.equal_3_object();
@@ -2904,10 +2781,8 @@ public:
 
       const Direction_3& normal1 = xc1.normal();
       const Direction_3& normal2 = xc2.normal();
-      Direction_3 opposite_normal1 =
-        kernel.construct_opposite_direction_3_object()(normal1);
-      if (!equal(normal1, normal2) && !equal(opposite_normal1, normal2))
-        return false;
+      Direction_3 opposite_normal1 = kernel.construct_opposite_direction_3_object()(normal1);
+      if (!equal(normal1, normal2) && !equal(opposite_normal1, normal2)) return false;
 
       bool eq1 = equal(xc1_right, xc2_left);
       bool eq2 = equal(xc1_left, xc2_right);
@@ -2925,8 +2800,7 @@ public:
   };
 
   /*! obtains an `Are_mergeable_2` function object. */
-  Are_mergeable_2 are_mergeable_2_object() const
-  { return Are_mergeable_2(*this); }
+  Are_mergeable_2 are_mergeable_2_object() const { return Are_mergeable_2(*this); }
 
   /*! A functor that merges two \f$x\f$-monotone arcs into one */
   class Merge_2 {
@@ -2984,8 +2858,7 @@ public:
       const Direction_3& xc2_right = xc2.right();
       bool eq2 = equal(xc1_left, xc2_right);
       if (eq1 && eq2) {
-        const Point_2& p =
-          xc1.source().is_mid_boundary() ? xc1.source() : xc1.target();
+        const Point_2& p = xc1.source().is_mid_boundary() ? xc1.source() : xc1.target();
         xc.set_source(p);
         xc.set_target(p);
         xc.set_normal(xc1.normal());
@@ -3032,14 +2905,14 @@ public:
 
   /// \name Functor definitions for the landmarks point-location strategy.
   //@{
-  using Approximate_number_type = double;
-  using Approximate_kernel = CGAL::Simple_cartesian<Approximate_number_type>;
-  using Approximate_point_2 = Arr_extended_direction_3<Approximate_kernel>;
-  using Approximate_kernel_vector_3 = Approximate_kernel::Vector_3;
-  using Approximate_kernel_direction_3 = Approximate_kernel::Direction_3;
-
   class Approximate_2 {
   public:
+    using Approximate_number_type = double;
+    using Approximate_kernel = CGAL::Simple_cartesian<Approximate_number_type>;
+    using Approximate_point_2 = Arr_extended_direction_3<Approximate_kernel>;
+    using Approximate_kernel_vector_3 = Approximate_kernel::Vector_3;
+    using Approximate_kernel_direction_3 = Approximate_kernel::Direction_3;
+
     /*! returns an approximation of a point coordinate.
      * \param p the exact point.
      * \param i the coordinate index (either 0 or 1).
@@ -3056,8 +2929,7 @@ public:
     /*! obtains an approximation of a point.
      */
     Approximate_point_2 operator()(const Point_2& p) const {
-      Approximate_kernel::Direction_3 dir(operator()(p, 0), operator()(p, 1),
-                                          operator()(p, 2));
+      Approximate_kernel::Direction_3 dir(operator()(p, 0), operator()(p, 1), operator()(p, 2));
       auto loc = static_cast<Approximate_point_2::Location_type>(p.location());
       return Approximate_point_2(dir, loc);
     }
@@ -3065,8 +2937,7 @@ public:
     /*! obtains an approximation of an \f$x\f$-monotone curve.
      */
     template <typename OutputIterator>
-    OutputIterator operator()(const X_monotone_curve_2& xcv,
-                              Approximate_number_type error,
+    OutputIterator operator()(const X_monotone_curve_2& xcv, Approximate_number_type error,
                               OutputIterator oi, bool l2r = true) const {
       const auto& s = xcv.source();
       const auto& t = xcv.target();
@@ -3119,8 +2990,7 @@ public:
         auto ltx = CGAL::scalar_product(axis_x, vt);
         auto lty = CGAL::scalar_product(axis_y, vt);
         theta = std::atan2(lty, ltx);
-        if (theta < 0)
-          theta += 2.0 * CGAL_PI;
+        if (theta < 0) theta += 2.0 * CGAL_PI;
       }
 
       // compute the number of divisions given the requested error
@@ -3149,14 +3019,11 @@ public:
 
     Approximate_kernel_vector_3
     approximate_vector_3(const Direction_3& d) const {
-      return Approximate_kernel_vector_3(CGAL::to_double(d.dx()),
-                                         CGAL::to_double(d.dy()),
-                                         CGAL::to_double(d.dz()));
+      return Approximate_kernel_vector_3(CGAL::to_double(d.dx()), CGAL::to_double(d.dy()), CGAL::to_double(d.dz()));
     };
 
     Approximate_point_2
-    approximate_point_2(const Approximate_kernel_vector_3& v,
-                        const Approximate_point_2::Location_type loc) const {
+    approximate_point_2(const Approximate_kernel_vector_3& v, const Approximate_point_2::Location_type loc) const {
       Approximate_kernel_direction_3  d(v.x(), v.y(), v.z());
       return Approximate_point_2(d, loc);
     }
@@ -3178,13 +3045,12 @@ public:
      * \return SMALLER if the curve is directed right;
      *         LARGER if the curve is directed left.
      */
-    Comparison_result operator()(const X_monotone_curve_2& xc)
+    Comparison_result operator()(const X_monotone_curve_2& xc) const
     { return (xc.is_directed_right()) ? SMALLER : LARGER; }
   };
 
   /*! obtains a `Compare_endpoints_xy_2` function object. */
-  Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const
-  { return Compare_endpoints_xy_2(); }
+  Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const { return Compare_endpoints_xy_2(); }
 
   class Construct_opposite_2 {
   public:
@@ -3192,13 +3058,11 @@ public:
      * \param xc the curve.
      * \return the opposite curve.
      */
-    X_monotone_curve_2 operator()(const X_monotone_curve_2& xc)
-    { return xc.opposite(); }
+    X_monotone_curve_2 operator()(const X_monotone_curve_2& xc) const { return xc.opposite(); }
   };
 
   /*! obtains a `Construct_opposite_2` function object. */
-  Construct_opposite_2 construct_opposite_2_object() const
-  { return Construct_opposite_2(); }
+  Construct_opposite_2 construct_opposite_2_object() const { return Construct_opposite_2(); }
   //@}
 
 #if 0
@@ -3214,8 +3078,7 @@ public:
 
   /*! inserters a spherical_arc used by the traits-class */
   template <typename OutputStream>
-  friend OutputStream& operator<<(OutputStream& os,
-                                  const X_monotone_curve_2& xc) {
+  friend OutputStream& operator<<(OutputStream& os, const X_monotone_curve_2& xc) {
     os << "(" << xc.left() << "), (" << xc.right() << ")";
     return os;
   }
@@ -3476,8 +3339,7 @@ public:
    * \pre the point lies on the plane
    * \pre the point lies on the open discontinuity arc
    */
-  Arr_x_monotone_geodesic_arc_on_sphere_3(const Arr_extended_direction_3& point,
-                                          const Direction_3& normal) :
+  Arr_x_monotone_geodesic_arc_on_sphere_3(const Arr_extended_direction_3& point, const Direction_3& normal) :
     m_source(point),
     m_target(point),
     m_normal(normal),
@@ -3547,8 +3409,7 @@ public:
         s_is_positive = y_sign(source) == POSITIVE;
         plane_is_positive = xsign == POSITIVE;
       }
-      bool ccw = ((plane_is_positive && s_is_positive) ||
-                  (!plane_is_positive && !s_is_positive));
+      bool ccw = ((plane_is_positive && s_is_positive) || (! plane_is_positive && !s_is_positive));
       set_is_directed_right(ccw);
       return;
     }
@@ -3589,19 +3450,15 @@ public:
   const Direction_3& normal() const { return m_normal; }
 
   /*! obtains the (lexicographically) left endpoint direction */
-  const Arr_extended_direction_3& left() const
-  { return (m_is_directed_right ? m_source : m_target); }
+  const Arr_extended_direction_3& left() const { return (m_is_directed_right ? m_source : m_target); }
 
   /*! obtains the (lexicographically) right endpoint */
-  const Arr_extended_direction_3& right() const
-  { return (m_is_directed_right ? m_target : m_source); }
+  const Arr_extended_direction_3& right() const { return (m_is_directed_right ? m_target : m_source); }
 
   /*! determines whether the curve is vertical */
   bool is_vertical() const { return m_is_vertical; }
 
-  /*! determines whether the curve is directed lexicographically from left to
-   * right
-   */
+  /*! determines whether the curve is directed lexicographically from left to right */
   bool is_directed_right() const { return m_is_directed_right; }
 
   /*! determines whether the curve is a full circle */
@@ -3614,8 +3471,7 @@ public:
   bool is_empty() const { return m_is_empty; }
 
   /*! determines whether the curve is a meridian */
-  bool is_meridian() const
-  { return left().is_min_boundary() && right().is_max_boundary(); }
+  bool is_meridian() const { return left().is_min_boundary() && right().is_max_boundary(); }
 
 #if 0
   /*! creates a bounding box for the spherical_arc */
@@ -3694,8 +3550,8 @@ public:
    * \param other the other arc
    */
 #ifdef DOXYGEN_RUNNING
-  Arr_geodesic_arc_on_sphere_3
-  (const Arr_geodesic_arc_on_sphere_3& other) : Base(other)
+  Arr_geodesic_arc_on_sphere_3(const Arr_geodesic_arc_on_sphere_3& other) :
+    Base(other)
   { m_is_x_monotone = other.m_is_x_monotone; }
 #endif
 
@@ -3720,10 +3576,8 @@ public:
                                bool is_full = false,
                                bool is_degenerate = false,
                                bool is_empty = false) :
-    Base(src, trg, normal, is_vertical, is_directed_right,
-         is_full, is_degenerate, is_empty),
-    m_is_x_monotone(is_x_monotone)
-  {
+    Base(src, trg, normal, is_vertical, is_directed_right, is_full, is_degenerate, is_empty),
+    m_is_x_monotone(is_x_monotone) {
     CGAL_precondition(this->has_on(src));
     CGAL_precondition(this->has_on(trg));
   }
@@ -3737,8 +3591,7 @@ public:
    * \pre plane contain the origin
    * \pre Both endpoints lie on the given plane.
    */
-  Arr_geodesic_arc_on_sphere_3(const Arr_extended_direction_3& source,
-                               const Arr_extended_direction_3& target,
+  Arr_geodesic_arc_on_sphere_3(const Arr_extended_direction_3& source, const Arr_extended_direction_3& target,
                                const Direction_3& normal) {
     Kernel kernel;
 
@@ -3789,26 +3642,22 @@ public:
       // Process degenerate cases:
       if (source.is_min_boundary()) {
         this->set_is_directed_right(true);
-        set_is_x_monotone((plane_is_positive && t_is_positive) ||
-                          (!plane_is_positive && !t_is_positive));
+        set_is_x_monotone((plane_is_positive && t_is_positive) || (! plane_is_positive && !t_is_positive));
         return;
       }
       if (source.is_max_boundary()) {
         this->set_is_directed_right(false);
-        set_is_x_monotone((plane_is_positive && !t_is_positive) ||
-                          (!plane_is_positive && t_is_positive));
+        set_is_x_monotone((plane_is_positive && !t_is_positive) || (! plane_is_positive && t_is_positive));
         return;
       }
       if (target.is_min_boundary()) {
         this->set_is_directed_right(false);
-        set_is_x_monotone((plane_is_positive && !s_is_positive) ||
-                          (!plane_is_positive && s_is_positive));
+        set_is_x_monotone((plane_is_positive && !s_is_positive) || (! plane_is_positive && s_is_positive));
         return;
       }
       if (target.is_max_boundary()) {
         this->set_is_directed_right(true);
-        set_is_x_monotone((plane_is_positive && s_is_positive) ||
-                          (!plane_is_positive && !s_is_positive));
+        set_is_x_monotone((plane_is_positive && s_is_positive) || (! plane_is_positive && !s_is_positive));
         return;
       }
       if (s_is_positive != t_is_positive) {
@@ -3823,17 +3672,14 @@ public:
        * on the arc in order to determine \f$x\f$-monotonicity
        */
 
-      typename Traits::Project project =
-        (xz_plane) ? Traits::project_xz : Traits::project_yz;
+      typename Traits::Project project = (xz_plane) ? Traits::project_xz : Traits::project_yz;
       Direction_2 s = project(source);
       Direction_2 t = project(target);
       const Direction_2& ny = Traits::neg_y_2();
       auto ccib = kernel.counterclockwise_in_between_2_object();
-      set_is_x_monotone((plane_is_positive && !ccib(ny, s, t)) ||
-                        (!plane_is_positive && !ccib(ny, t, s)));
+      set_is_x_monotone((plane_is_positive && !ccib(ny, s, t)) || (! plane_is_positive && !ccib(ny, t, s)));
 
-      bool ccw = ((plane_is_positive && s_is_positive) ||
-                  (!plane_is_positive && !s_is_positive));
+      bool ccw = ((plane_is_positive && s_is_positive) || (! plane_is_positive && !s_is_positive));
       this->set_is_directed_right(ccw);
       return;
     }
@@ -3846,8 +3692,7 @@ public:
     Direction_2 t = Traits::project_xy(target);
     auto ccib = kernel.counterclockwise_in_between_2_object();
     bool plane_is_positive = (z_sign(normal) == POSITIVE);
-    set_is_x_monotone((plane_is_positive && !ccib(d, s, t)) ||
-                      (!plane_is_positive && !ccib(d, t, s)));
+    set_is_x_monotone((plane_is_positive && !ccib(d, s, t)) || (! plane_is_positive && !ccib(d, t, s)));
   }
 
   /*! constructs a full spherical_arc from a normal to a plane.

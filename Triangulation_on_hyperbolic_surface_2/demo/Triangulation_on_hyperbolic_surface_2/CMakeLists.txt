@@ -10,7 +10,7 @@ include_directories(${CMAKE_BINARY_DIR})
 set(CMAKE_AUTOMOC ON)
 
 # CGAL and its components
-find_package(CGAL REQUIRED COMPONENTS Core Qt6)
+find_package(CGAL REQUIRED COMPONENTS Qt6)
 find_package(Qt6 QUIET COMPONENTS Widgets)
 find_package(Qt6 QUIET COMPONENTS Svg)
 
