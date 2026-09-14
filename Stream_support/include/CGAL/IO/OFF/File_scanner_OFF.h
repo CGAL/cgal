@@ -90,12 +90,8 @@ public:
       }
 
       // Read all numbers in the line
-      std::istringstream issline(line);
       entries.clear();
-      double d;
-      while(issline >> IO::iformat(d)){
-        entries.push_back(d);
-      }
+      IO::internal::parse_doubles(line, std::back_inserter(entries));
 
       if(has_colors()){
         // Compute how many entries are there for the color
@@ -703,13 +699,10 @@ public:
         line = line.substr(0,pos);
       }
 
-      // Read all numbers in the line
-      std::istringstream issline(line);
       entries.clear();
-      double d;
-      while(issline >> IO::iformat(d)){
-        entries.push_back(d);
-      }
+
+      IO::internal::parse_doubles(line, std::back_inserter(entries));
+
       if(entries.empty())
       {
         m_in.clear(std::ios::badbit);
