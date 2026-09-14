@@ -22,7 +22,7 @@ on polygon meshes; clipping, splitting, and slicing with planes, boxes, or other
 
 \section PMPIntroduction Introduction
 
-This package provides a comprehensive set of methods and classes for polygon mesh processing, ranging from basic operations on mesh elements to advanced geometry processing algorithms. The implementation is primarily based on the algorithms and references presented in Botsch et al.'s book on polygon mesh processing \cgalCite{botsch2010PMP}.
+This package provides a comprehensive set of methods and classes for polygon mesh processing, ranging from basic operations on mesh elements to advanced geometry processing algorithms. The implementation is primarily based on the algorithms and references presented in \cgalCite{botsch2010PMP}.
 
 \subsection PMPDef Polygon Mesh
 A \a polygon \a mesh is a consistent and orientable surface mesh, that can have one or more boundaries.
@@ -139,7 +139,7 @@ and the Minkowski sum envelope (right) for a triangle mesh.
 
 The polyhedral envelope is guaranteed to be contained within the Minkowski sum envelope. The containment test is exact for the polyhedral envelope and conservative for the Minkowski sum envelope: if a query is inside the polyhedral envelope, it is also inside the Minkowski sum envelope; if outside, its relation to the Minkowski sum envelope is undetermined.
 
-The algorithm of Wang et al. \cgalCite{cgal:Wwshap-eepec-20} for polyhedral envelope containment proceeds as follows:
+The algorithm of \cgalCite{cgal:Wwshap-eepec-20} for polyhedral envelope containment proceeds as follows:
 
 The prisms of the faces of the input triangles are stored in an AABB tree, which is used to quickly
 identify the prisms whose bounding box overlaps with the query.
@@ -534,7 +534,7 @@ The following example demonstrates computation of curvatures at a specific verte
 \subsection DCurvartures Discrete Curvatures
 
 The package also provides methods to compute the standard, non-interpolated discrete mean and Gaussian
-curvatures on triangle meshes, based on the work of Meyer et al. \cgalCite{cgal:mdsb-ddgot-02}.
+curvatures on triangle meshes, based on the work of \cgalCite{cgal:mdsb-ddgot-02}.
 These curvatures are computed at each vertex of the mesh, and are based on the angles of the incident
 triangles. The functions are:
 - `CGAL::Polygon_mesh_processing::discrete_mean_curvature()`

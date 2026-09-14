@@ -75,7 +75,7 @@ partitioning \cgalCite{g-dpcp-83}.
 This algorithm requires \cgalBigO{n^4} time and \cgalBigO{n^3} space in the worst case.
 
 The function `approx_convex_partition_2()` implements the simple approximation
-algorithm of Hertel and Mehlhorn \cgalCite{hm-ftsp-83} that
+algorithm of \cgalCite{hm-ftsp-83} that
 produces a convex partitioning of a polygon from a triangulation by
 throwing out unnecessary triangulation edges.
 The triangulation used in this function is one produced by the
