@@ -119,5 +119,13 @@
 - `CGAL::parameters::Default_named_parameters`
 - `CGAL::parameters::default_values()`
 
+\cgalCRPSection{Expected Value or Error (C++23)}
+- `CGAL::cpp23::expected<T,E>`
+- `CGAL::cpp23::unexpected<E>`
+- `CGAL::cpp23::bad_expected_access<E>`
+- `CGAL::cpp23::unexpect_t`
+- `CGAL::cpp23::unexpect`
+- `CGAL::cpp23::make_unexpected()`
+
 */
 
