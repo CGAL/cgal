@@ -13,7 +13,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_REMESH_H
 #define CGAL_POLYGON_MESH_PROCESSING_REMESH_H
 
-#include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
+#include <CGAL/license/Polygon_mesh_processing/remeshing.h>
 
 #include <CGAL/disable_warnings.h>
 

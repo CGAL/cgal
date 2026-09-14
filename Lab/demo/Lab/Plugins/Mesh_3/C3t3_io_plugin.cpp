@@ -137,11 +137,11 @@ CGAL_Lab_c3t3_binary_io_plugin::load(
       item->setName(fileinfo.completeBaseName());
       item->set_valid(false);
 
-      if(CGAL::SMDS_3::build_triangulation_from_file(in, item->c3t3().triangulation(),
-         /*verbose = */false, /*replace_subdomain_0 = */false, /*allow_non_manifold = */true))
+      if(CGAL::IO::read_MEDIT(in, item->c3t3(),
+        CGAL::parameters::verbose(false)
+        .allow_non_manifold(true)
+        .rebind_labels(false)))
       {
-        update_c3t3(item->c3t3());
-
         item->resetCutPlane();
         item->c3t3_changed();
         if(add_to_scene)
