@@ -25,12 +25,12 @@ namespace CGAL {
 namespace Mesh_smoothing_3_internal {
 
 namespace Math_functions {
-    inline Eigen::Matrix<double,1,3> sub_line_vector(Eigen::VectorXd const &x, unsigned i) {
+    inline Eigen::Matrix<double,1,3> sub_line_vector(Eigen::VectorXd const &x, std::size_t i) {
         i *= 3;
         return {x(i), x(i+1), x(i+2)};
     }
 
-    inline Eigen::Matrix<double,3,1> sub_col_vector(Eigen::VectorXd const &x, unsigned i) {
+    inline Eigen::Matrix<double,3,1> sub_col_vector(Eigen::VectorXd const &x, std::size_t i) {
         i *= 3;
         return {x(i), x(i+1), x(i+2)};
     }
