@@ -74,6 +74,15 @@ void translate(Triangle_mesh& tm,
 //  }
 // }
 
+// void dump_as_polyline(const Triangle_mesh& tm, std::string prop, std::string out)
+// {
+//   auto ecm = tm.property_map<Triangle_mesh::Edge_index,bool>(prop).value();
+//   std::ofstream oout(out);
+//   for(auto e : edges(tm))
+//     if (get(ecm, e))
+//       oout << "2 " << tm.point(source(e, tm)) << " " <<  tm.point(target(e, tm)) << "\n";
+// }
+
 std::size_t
 count_constrained_edges(const Triangle_mesh& tm, const Constrained_edge_map& ecm)
 {
@@ -95,13 +104,23 @@ void test_corefine(Triangle_mesh tm1, Triangle_mesh tm2)
   assert( count_constrained_edges(tm1, ecm1)==307 );
   assert( count_constrained_edges(tm2, ecm2)==307 );
 
+  auto mark_map1=tm1.add_property_map<Triangle_mesh::Edge_index,bool>("e:mark").first;
+  auto mark_map2=tm2.add_property_map<Triangle_mesh::Edge_index,bool>("e:mark").first;
+
   PMP::corefine(tm1,
                 tm2,
-                params::edge_is_constrained_map(ecm1),
-                params::edge_is_constrained_map(ecm2) );
+                params::edge_is_constrained_map(ecm1).edge_is_marked_map(mark_map1),
+                params::edge_is_constrained_map(ecm2).edge_is_marked_map(mark_map2)
+  );
 
-  assert( count_constrained_edges(tm1, ecm1)==658 );
-  assert( count_constrained_edges(tm2, ecm2)==655 );
+  assert( count_constrained_edges(tm1, ecm1)+count_constrained_edges(tm1, mark_map1)==658 );
+  assert( count_constrained_edges(tm2, ecm2)+count_constrained_edges(tm1, mark_map2)==655 );
+
+  assert( count_constrained_edges(tm1, ecm1)==323 );
+  assert( count_constrained_edges(tm2, ecm2)==320 );
+
+  assert( count_constrained_edges(tm1, mark_map1)==335 );
+  assert( count_constrained_edges(tm2, mark_map2)==335 );
 }
 
 void test_union_no_copy(
@@ -114,6 +133,7 @@ void test_union_no_copy(
     tm2.property_map<Triangle_mesh::Edge_index,bool>("e:cst").value();
   Constrained_edge_map ecm_out =
     tm_out.property_map<Triangle_mesh::Edge_index,bool>(outname).value();
+  auto mark_map_out=tm_out.add_property_map<Triangle_mesh::Edge_index,bool>("e:mark").first;
 
   assert( count_constrained_edges(tm1, ecm1)==307 );
   assert( count_constrained_edges(tm2, ecm2)==307 );
@@ -123,11 +143,12 @@ void test_union_no_copy(
                                   tm_out,
                                   params::edge_is_constrained_map(ecm1),
                                   params::edge_is_constrained_map(ecm2),
-                                  params::edge_is_constrained_map(ecm_out) );
+                                  params::edge_is_constrained_map(ecm_out).edge_is_marked_map(mark_map_out) );
 
-  assert( skip_test_1 || count_constrained_edges(tm1, ecm1)==658 );
-  assert( skip_test_2 || count_constrained_edges(tm2, ecm2)==655 );
-  assert( count_constrained_edges(tm_out, ecm_out)==838 );
+  assert( skip_test_1 || count_constrained_edges(tm1, ecm1)==323 );
+  assert( skip_test_2 || count_constrained_edges(tm2, ecm2)==320 );
+  assert( count_constrained_edges(tm_out, ecm_out)==503 );
+  assert( count_constrained_edges(tm_out, mark_map_out)==335 );
 }
 
 void test_union(Triangle_mesh tm1, Triangle_mesh tm2, Triangle_mesh tm_out,
@@ -174,10 +195,10 @@ void test_bool_op_no_copy(
                                                output,
                                                params::edge_is_constrained_map(ecm1),
                                                params::edge_is_constrained_map(ecm2),
-                                               std::make_tuple(params::edge_is_constrained_map(ecm_out_union),
-                                                                       params::edge_is_constrained_map(ecm_out_inter),
-                                                                       params::default_values(),
-                                                                       params::default_values()));
+                                               std::make_tuple(params::edge_is_constrained_map(ecm_out_union).edge_is_marked_map(ecm_out_union),
+                                                               params::edge_is_constrained_map(ecm_out_inter).edge_is_marked_map(ecm_out_inter),
+                                                               params::default_values(),
+                                                               params::default_values()));
 
   // dump_constrained_edges(*(*output[0]), ecm_out_union, "out_cst_union.cgal");
   // dump_constrained_edges(*(*output[1]), ecm_out_inter, "out_cst_inter.cgal");
@@ -198,18 +219,18 @@ void test_identical_models(const Triangle_mesh& tm1)
   Triangle_mesh m1=tm1, m2=tm1;
   auto ecm1 = m1.add_property_map<Triangle_mesh::Edge_index, bool>("ecm", false).first;
   auto ecm2 = m2.add_property_map<Triangle_mesh::Edge_index, bool>("ecm", false).first;
-  PMP::corefine(m1, m2, params::edge_is_constrained_map(ecm1), params::edge_is_constrained_map(ecm2));
+  PMP::corefine(m1, m2, params::edge_is_marked_map(ecm1), params::edge_is_marked_map(ecm2));
   assert( count_constrained_edges(m1, ecm1)==nedges );
   assert( count_constrained_edges(m2, ecm2)==nedges );
   Triangle_mesh m3=tm1;
   auto ecm3 = m3.add_property_map<Triangle_mesh::Edge_index, bool>("ecm", false).first;
-  PMP::corefine(m3, m3, params::edge_is_constrained_map(ecm3), params::edge_is_constrained_map(ecm3));
+  PMP::corefine(m3, m3, params::edge_is_marked_map(ecm3), params::edge_is_marked_map(ecm3));
   assert( count_constrained_edges(m3, ecm3)==nedges );
   m3.clear_without_removing_property_maps();
 
 
   // then corefine_and_compute_boolean_operations
-  PMP::corefine_and_compute_union(m1, m2, m3, params::edge_is_constrained_map(ecm1), params::edge_is_constrained_map(ecm2), params::edge_is_constrained_map(ecm3));
+  PMP::corefine_and_compute_union(m1, m2, m3, params::edge_is_marked_map(ecm1), params::edge_is_marked_map(ecm2), params::edge_is_marked_map(ecm3));
   assert( count_constrained_edges(m1, ecm1)==0. ); // they are cleared, even if provided by the user
   assert( count_constrained_edges(m2, ecm2)==0. ); // they are cleared, even if provided by the user
   assert( count_constrained_edges(m3, ecm3)==0. );
@@ -219,14 +240,14 @@ void test_identical_models(const Triangle_mesh& tm1)
   bb = CGAL::Bbox_3(bb.xmin()+2*(bb.xmax()-bb.xmin()), bb.ymin()+2*(bb.ymax()-bb.ymin()), bb.zmin()+2*(bb.zmax()-bb.zmin()),
                     bb.xmax()+2*(bb.xmax()-bb.xmax()), bb.ymax()+2*(bb.ymax()-bb.ymin()), bb.zmax()+2*(bb.zmax()-bb.zmin()));
   CGAL::make_hexahedron(bb, m1, params::do_not_triangulate_faces(false));
-  PMP::corefine_and_compute_union(m1, m2, m3, params::edge_is_constrained_map(ecm1), params::edge_is_constrained_map(ecm2), params::edge_is_constrained_map(ecm3));
+  PMP::corefine_and_compute_union(m1, m2, m3, params::edge_is_marked_map(ecm1), params::edge_is_marked_map(ecm2), params::edge_is_marked_map(ecm3));
   assert( count_constrained_edges(m1, ecm1)==0. ); // they are cleared, even if provided by the user
   assert( count_constrained_edges(m2, ecm2)==0. ); // they are cleared, even if provided by the user
   assert( count_constrained_edges(m3, ecm3)==0. );
 
   m3=tm1;
   ecm3 = m3.add_property_map<Triangle_mesh::Edge_index, bool>("ecm", false).first;
-  PMP::corefine_and_compute_union(m3, m3, m3, params::edge_is_constrained_map(ecm3), params::edge_is_constrained_map(ecm3), params::edge_is_constrained_map(ecm3));
+  PMP::corefine_and_compute_union(m3, m3, m3, params::edge_is_marked_map(ecm3), params::edge_is_marked_map(ecm3), params::edge_is_marked_map(ecm3));
   assert( count_constrained_edges(m3, ecm3)==0. );
   assert( vertices(m3).size()==vertices(tm1).size() );
 
@@ -242,6 +263,21 @@ void test_identical_models(const Triangle_mesh& tm1)
   assert(polylines.size()==edges(tm1).size());
 }
 
+void test_mark_cst()
+{
+  Triangle_mesh tm1, tm2;
+  read_input(tm1);
+  read_input(tm2);
+  translate(tm2);
+
+  Triangle_mesh tm_out;
+  auto ecm = tm_out.add_property_map<Triangle_mesh::Edge_index, bool>("ecm").first;
+  auto emm = tm_out.add_property_map<Triangle_mesh::Edge_index, bool>("emm").first;
+  PMP::corefine_and_compute_union(tm1, tm2, tm_out, params::default_values(), params::default_values(), params::edge_is_constrained_map(ecm).edge_is_marked_map(emm));
+
+  assert( count_constrained_edges(tm_out, ecm)==0 );
+  assert( count_constrained_edges(tm_out, emm)==335 );
+}
 
 int main()
 {
@@ -282,4 +318,6 @@ int main()
   test_bool_op(tm1, tm2, false, "e:cst");
   std::cout << "Testing operations on identical meshes\n";
   test_identical_models(tm1);
+  std::cout << "Extra tests\n";
+  test_mark_cst();
 }
