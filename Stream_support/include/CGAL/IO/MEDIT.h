@@ -14,6 +14,7 @@
 
 #include <CGAL/assertions.h>
 #include <CGAL/Kernel_traits.h>
+#include <CGAL/IO/io.h>
 #include <iostream>
 #include <string>
 #include <tuple>
