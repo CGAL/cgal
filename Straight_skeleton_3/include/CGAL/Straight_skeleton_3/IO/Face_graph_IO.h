@@ -212,17 +212,19 @@ public:
     IO::write_OBJ("results/loaded.obj", polyhedron, parameters::do_not_triangulate_faces(true));
 #endif
 
-#if 1
+#define CGAL_SS3_DETECT_COPLANARITIES_WITH_NORMAL_CHANGE
+#ifdef CGAL_SS3_DETECT_COPLANARITIES_WITH_NORMAL_CHANGE
 
 #if 0
     // this actually makes things worse because we want to merge almost coplanar facets afterwards,
     // and truncating precision will increase the variance of the normals of facets almost living
     // on the same non-cardinal plane, resulting in fewer merges.
+    // @todo but do it after merging?
     Transformation::truncate_precision(polyhedron);
 #endif
 
     Transformation::merge_coplanar_facets(polyhedron);
-#else
+#else // CGAL_SS3_DETECT_COPLANARITIES_WITH_NORMAL_CHANGE
     namespace PMP = CGAL::Polygon_mesh_processing;
 
     CGAL::Bbox_3 bbox = PMP::bbox(tmesh);
@@ -296,7 +298,7 @@ public:
     polyhedron->initialize_all_IDs();
 
     sanitize(polyhedron);
-#endif
+#endif // CGAL_SS3_DETECT_COPLANARITIES_WITH_NORMAL_CHANGE
 
     CGAL_SS3_TRANSF_TRACE("Converted, " << polyhedron->facets().size() << " facets");
 
@@ -369,7 +371,7 @@ public:
 
       FT speed = Hds_utils::get_speed(facet);
       std::size_t input_face_id = Hds_utils::get_input_face_id(facet);
-      CGAL_SS3_IO_TRACE_V(16, "Saving facet " << facet->id() << " with speed " << speed << " and input face id " << input_face_id);
+      CGAL_SS3_IO_TRACE_V(32, "Saving facet " << facet->id() << " with speed " << speed << " and input face id " << input_face_id);
 
       Vector_3 n = facet->get_plane().orthogonal_vector();
       CGAL_assertion(n != CGAL::NULL_VECTOR);

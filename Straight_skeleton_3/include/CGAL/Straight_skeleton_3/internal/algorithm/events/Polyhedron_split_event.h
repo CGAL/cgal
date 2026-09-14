@@ -133,16 +133,16 @@ public:
     sstr << "\t(time=" << IO::String_factory::fromDouble(CGAL::to_double(Base::time())) << ")\n";
     sstr << "\t(point=<" + IO::String_factory::fromDouble(CGAL::to_double(point_.x())) + " "
                          + IO::String_factory::fromDouble(CGAL::to_double(point_.y())) + " "
-                         + IO::String_factory::fromDouble(CGAL::to_double(point_.z())) + ">)";
-    sstr << "\t(edgeA=" << edge1->to_string() << ")"
-         << "; edgeB=" << edge2->to_string() << ")";
+                         + IO::String_factory::fromDouble(CGAL::to_double(point_.z())) + ">)\n";
+    sstr << "\t(edgeA=" << edge1->to_string() << ")\n"
+         << "\t(edgeB=" << edge2->to_string() << ")";
     return sstr.str();
   }
 
   bool operator==(const Polyhedron_split_event& other) const
   {
     return (Base::time() == other.time()) &&
-            (!point_ || !other.point_ || point_ == other.point_) &&
+            (point_ == other.point_) &&
             ((edge1_.lock() == other.edge1_.lock() &&
               edge2_.lock() == other.edge2_.lock()) ||
             (edge1_.lock() == other.edge2_.lock() &&

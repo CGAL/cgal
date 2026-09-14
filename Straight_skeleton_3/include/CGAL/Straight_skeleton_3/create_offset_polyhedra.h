@@ -79,7 +79,7 @@ struct Output_processor
                                       CGAL::parameters::do_not_triangulate_faces(do_triangulate)
                                                        .face_to_face_map(of2fi_pm));
     if (!success) {
-      CGAL_SS3_TRACE_V(1, "Error: failed to convert back to Surface_mesh");
+      CGAL_SS3_TRACE_V(1, "Error: failed to convert back to Facegraph");
       return false;
     }
 
@@ -101,7 +101,7 @@ struct Output_processor
     CGAL_postcondition(!CGAL::Polygon_mesh_processing::has_degenerate_faces(result_t));
     CGAL_postcondition(!CGAL::Polygon_mesh_processing::does_self_intersect(result_t));
 
-    CGAL_SS3_TRACE("At time: " << save_time << ", Surface_mesh with " << num_vertices(result_t)
+    CGAL_SS3_TRACE("At time: " << save_time << ", Facegraph with " << num_vertices(result_t)
                       << " vertices and " << num_faces(result_t) << " faces");
 
     if (outwards) {

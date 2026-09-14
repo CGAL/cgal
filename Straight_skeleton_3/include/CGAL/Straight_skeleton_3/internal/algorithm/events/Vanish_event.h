@@ -106,17 +106,19 @@ public:
     sstr << "\t(time=" << IO::String_factory::fromDouble(CGAL::to_double(Base::time())) << ")\n";
     sstr << "\t(point=<" + IO::String_factory::fromDouble(CGAL::to_double(point_.x())) + " "
                          + IO::String_factory::fromDouble(CGAL::to_double(point_.y())) + " "
-                         + IO::String_factory::fromDouble(CGAL::to_double(point_.z())) + ">)";
-    sstr << "\t(edgeA=" << edge->id() << "\n\t\t[" << edge->source()->to_string() << "\n\t\t "
-                                                       << edge->target()->to_string() << "])";
+                         + IO::String_factory::fromDouble(CGAL::to_double(point_.z())) + ">)\n";
+    sstr << "\t(edge=" << edge->id() << "\n\t\t[" << edge->source()->to_string() << "\n\t\t "
+                                                  << edge->target()->to_string() << "])";
     return sstr.str();
   }
 
   bool operator==(const Vanish_event& other) const
   {
-    return (Base::time() == other.time()) &&
-            // && (edge_.lock() == other.edge_.lock()) // because of multiple reps...
-            (point() == other.point());
+    return (Base::time() == other.time() &&
+            // since there is no canonical representation of a vanish event at the moment
+            // we could have the same event be represented by different edges
+            // && (edge_.lock() == other.edge_.lock())
+            point() == other.point());
   }
 
 protected:

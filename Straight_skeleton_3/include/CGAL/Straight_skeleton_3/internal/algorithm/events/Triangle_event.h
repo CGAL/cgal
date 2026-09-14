@@ -145,7 +145,7 @@ public:
     sstr << "\t(time=" << IO::String_factory::fromDouble(CGAL::to_double(Base::time())) << ")\n";
     sstr << "\t(point=<" + IO::String_factory::fromDouble(CGAL::to_double(point_.x())) + " "
                          + IO::String_factory::fromDouble(CGAL::to_double(point_.y())) + " "
-                         + IO::String_factory::fromDouble(CGAL::to_double(point_.z())) + ">)";
+                         + IO::String_factory::fromDouble(CGAL::to_double(point_.z())) + ">)\n";
     sstr << "\t(facet=" << facet->id() << ")";
     return sstr.str();
   }
@@ -153,7 +153,7 @@ public:
   bool operator==(const Triangle_event& other) const
   {
     return (Base::time() == other.time()) &&
-            (!point_ || !other.point_ || point_ == other.point_) &&
+            (point_ == other.point_) &&
             (facet_.lock() == other.facet_.lock()) &&
             (edge_begin_.lock() == other.edge_begin_.lock());
   }

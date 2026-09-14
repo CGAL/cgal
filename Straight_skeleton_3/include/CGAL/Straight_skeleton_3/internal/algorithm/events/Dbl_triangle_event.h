@@ -134,7 +134,7 @@ public:
     sstr << "\t(time=" << IO::String_factory::fromDouble(CGAL::to_double(Base::time())) << ")\n";
     sstr << "\t(point=<" + IO::String_factory::fromDouble(CGAL::to_double(point_.x())) + " "
                          + IO::String_factory::fromDouble(CGAL::to_double(point_.y())) + " "
-                         + IO::String_factory::fromDouble(CGAL::to_double(point_.z())) + ">)";
+                         + IO::String_factory::fromDouble(CGAL::to_double(point_.z())) + ">)\n";
     sstr << "\t(edge=" << edge->id() << "\n\t\t[" << edge->source()->to_string() << "\n\t\t "
                                                       << edge->target()->to_string() << "])";
     return sstr.str();
@@ -142,7 +142,7 @@ public:
 
   bool operator==(const Dbl_triangle_event& other) const {
     return (Base::time() == other.time()) &&
-            (!point_ || !other.point_ || point_ == other.point_) &&
+            (point_ == other.point_) &&
             (edge_.lock() == other.edge_.lock());
   }
 

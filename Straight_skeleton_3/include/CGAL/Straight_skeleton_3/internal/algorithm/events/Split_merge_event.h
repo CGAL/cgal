@@ -162,7 +162,7 @@ public:
     sstr << "\t(time=" << IO::String_factory::fromDouble(CGAL::to_double(Base::time())) << ")\n";
     sstr << "\t(point=<" + IO::String_factory::fromDouble(CGAL::to_double(point_.x())) + " "
                          + IO::String_factory::fromDouble(CGAL::to_double(point_.y())) + " "
-                         + IO::String_factory::fromDouble(CGAL::to_double(point_.z())) + ">)";
+                         + IO::String_factory::fromDouble(CGAL::to_double(point_.z())) + ">)\n";
     sstr << "\t(vertex1=" << vertex_1->to_string() << ")\n";
     sstr << "\t(vertex2=" << vertex_2->to_string() << ")\n";
     sstr << "\t(facet1=" << facet_1->id() << ")\n";
@@ -173,7 +173,7 @@ public:
   bool operator==(const Split_merge_event& other) const
   {
     return (Base::time() == other.time()) &&
-            (!point_ || !other.point_ || point_ == other.point_) &&
+            (point_ == other.point_) &&
             ((facet_1_.lock() == other.facet_1_.lock() &&
               facet_2_.lock() == other.facet_2_.lock()) ||
             (facet_1_.lock() == other.facet_2_.lock() &&

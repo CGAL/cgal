@@ -193,10 +193,10 @@ public:
       while (it_e2 != facet->edges().end()) {
         EdgeSPtr edge2 = *it_e2++;
         if (do_facet_edges_intersect(facet, edge1, edge2, true, traits)) {
-          CGAL_SS3_ALGO_TRACE_V(32, "edges intersect within the facet:");
-          CGAL_SS3_ALGO_TRACE_V(32, facet->to_string());
-          CGAL_SS3_ALGO_TRACE_V(32, edge1->to_string());
-          CGAL_SS3_ALGO_TRACE_V(32, edge2->to_string());
+          CGAL_SS3_ALGO_TRACE_V(64, "edges intersect within the facet:");
+          CGAL_SS3_ALGO_TRACE_V(64, facet->to_string());
+          CGAL_SS3_ALGO_TRACE_V(64, edge1->to_string());
+          CGAL_SS3_ALGO_TRACE_V(64, edge2->to_string());
 #ifdef CGAL_SS3_EXIT_ASAP
           return true;
 #else
@@ -589,9 +589,9 @@ public:
     CGAL_SS3_DEBUG_SPTR(facet);
     CGAL_SS3_DEBUG_SPTR(edge);
 
-    CGAL_SS3_ALGO_TRACE_V(32, "\n> is edge inside facet");
-    CGAL_SS3_ALGO_TRACE_V(32, "  " << facet->to_string());
-    CGAL_SS3_ALGO_TRACE_V(32, "  " << edge->to_string());
+    CGAL_SS3_ALGO_TRACE_V(64, "\n> is edge inside facet");
+    CGAL_SS3_ALGO_TRACE_V(64, "  " << facet->to_string());
+    CGAL_SS3_ALGO_TRACE_V(64, "  " << edge->to_string());
 
     VertexSPtr e_src = edge->source();
     VertexSPtr e_tgt = edge->target();
@@ -635,8 +635,7 @@ public:
           } else if constexpr (std::is_same_v<decltype(o), Ray_3>) {
             do_tolerate = (*ipoint == o.source());
           } else {
-            CGAL_assertion(false);
-            std::exit(1);
+            std::abort();
           }
 
           if (!do_tolerate) {

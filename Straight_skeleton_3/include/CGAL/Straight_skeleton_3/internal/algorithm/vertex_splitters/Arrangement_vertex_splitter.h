@@ -81,12 +81,12 @@ struct Face_property_map_updating_coref_visitor
     : fpm_(fpm)
   { }
 
-  void before_subface_creations(face_descriptor f_split, const Mesh& g)
+  void before_subface_creations(face_descriptor f_split, const Mesh&)
   {
     value_ = get(fpm_, f_split);
   }
 
-  void after_subface_created(face_descriptor f_new, const Mesh& m) const
+  void after_subface_created(face_descriptor f_new, const Mesh&) const
   {
     put(fpm_, f_new, value_);
   }
@@ -434,8 +434,7 @@ public:
         if (!res) {
           // Should not happen, as bbox is constructed to contain all intersections
           std::cerr << "no intersection between plane and bbox" << std::endl;
-          CGAL_assertion(false);
-          std::exit(1);
+          std::abort();
         } else if (const Triangle_3* itr = std::get_if<Triangle_3>(&*res)) {
           for (int i=0; i<3; ++i) {
             local_range.push_back((*itr)[i]);
@@ -446,8 +445,7 @@ public:
           }
         } else {
           std::cerr << "plane/bbox intersection is not a polygon" << std::endl;
-          CGAL_assertion(false);
-          std::exit(1);
+          std::abort();
         }
 
         // Ensure orientation: normal of local_range must match plane's orientation
@@ -585,8 +583,7 @@ public:
         if (!res) {
           // that should not happen since we have every 3-plane intersection in the bbox
           std::cerr << "no inter plane/bbox" << std::endl;
-          CGAL_assertion(false);
-          std::exit(1);
+          std::abort();
         } else if (const Triangle_3* itr = std::get_if<Triangle_3>(&*res)) {
           std::cout << "triangle inter" << std::endl;
           for (int i=0; i<3; ++i) {
@@ -599,8 +596,7 @@ public:
           }
         } else {
           std::cerr << "plane/bbox inter shouldn't be a point or a segment" << std::endl;
-          CGAL_assertion(false);
-          std::exit(1);
+          std::abort();
         }
 
         // Check orientation: normal of local_range must match plane's orientation
@@ -880,7 +876,7 @@ public:
     // Apply the split
     // apply(poly_split, vertex);
 
-    std::exit(1);
+    std::abort();
 
     return true;
   }

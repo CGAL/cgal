@@ -135,10 +135,10 @@ public:
     sstr << "\t(time=" << IO::String_factory::fromDouble(CGAL::to_double(Base::time())) << ")\n";
     sstr << "\t(point=<" + IO::String_factory::fromDouble(CGAL::to_double(point_.x())) + " "
                          + IO::String_factory::fromDouble(CGAL::to_double(point_.y())) + " "
-                         + IO::String_factory::fromDouble(CGAL::to_double(point_.z())) + ">)";
+                         + IO::String_factory::fromDouble(CGAL::to_double(point_.z())) + ">)\n";
     sstr << "\t(edgeA=" << edge1->id() << "\n\t\t[" << edge1->source()->to_string() << "\n\t\t "
-                                                        << edge1->target()->to_string() << "]\n"
-         << "\t edgeB=" << edge2->id() << "\n\t\t[" << edge2->source()->to_string() << "\n\t\t "
+                                                        << edge1->target()->to_string() << "])\n"
+         << "\t(edgeB=" << edge2->id() << "\n\t\t[" << edge2->source()->to_string() << "\n\t\t "
                                                         << edge2->target()->to_string() << "])";
 
     return sstr.str();
@@ -147,7 +147,7 @@ public:
 bool operator==(const Surface_event& other) const
 {
     return (Base::time() == other.time()) &&
-           (!point_ || !other.point_ || point_ == other.point_) &&
+           (point_ == other.point_) &&
            ((edge1_.lock() == other.edge1_.lock() &&
              edge2_.lock() == other.edge2_.lock()) ||
             (edge1_.lock() == other.edge2_.lock() &&

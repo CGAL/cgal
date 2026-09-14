@@ -637,7 +637,7 @@ public:
       return { };
     }
 
-    CGAL_SS3_TRANSF_TRACE_V(16, "  New point = " << *point);
+    CGAL_SS3_TRANSF_TRACE_V(32, "  New point = " << *point);
     return *point;
   }
 
@@ -677,7 +677,7 @@ public:
     }
 
     vertex->set_point(*point);
-    CGAL_SS3_TRANSF_TRACE_V(16, "  New point = " << *point);
+    CGAL_SS3_TRANSF_TRACE_V(32, "  New point = " << *point);
 
     CGAL_postcondition_code(for (FacetWPtr facet_wptr : vertex->facets()) {)
     CGAL_postcondition_code(    if (FacetSPtr facet = facet_wptr.lock()) {)
@@ -703,7 +703,7 @@ public:
       FacetWPtr facet_wptr = *it_f++;
       if (FacetSPtr facet = facet_wptr.lock()) {
         planes[i++] = &(facet->get_plane());
-        CGAL_SS3_TRANSF_TRACE_V(16, "  Facet " << facet->id() << " [" << facet->get_plane() << "]");
+        CGAL_SS3_TRANSF_TRACE_V(64, "  Facet " << facet->id() << " [" << facet->get_plane() << "]");
       }
     }
     CGAL_postcondition(i == 3);
@@ -993,13 +993,13 @@ public:
     using PCDT = CGAL::Constrained_Delaunay_triangulation_2<PK, PTDS, Itag>;
     using PCDT_VH = typename PCDT::Vertex_handle;
 
-    Vector_3 n = facet->get_plane().orthogonal_vector();
+    const Vector_3 n = facet->get_plane().orthogonal_vector();
     CGAL_precondition(n != CGAL::NULL_VECTOR);
 
     PK projection_traits(n);
     PCDT pcdt(projection_traits);
 
-    std::map<VertexSPtr, PCDT_VH> face_vhs; // might have multiple vertices at the same position
+    CGAL::unordered_flat_map<VertexSPtr, PCDT_VH> face_vhs; // might have multiple vertices at the same position
 
     typename std::list<VertexSPtr>::iterator it_v = facet->vertices().begin();
     while (it_v != facet->vertices().end()) {
@@ -1015,13 +1015,13 @@ public:
 
     typename std::list<EdgeSPtr>::iterator it_e = facet->edges().begin();
     while (it_e != facet->edges().end()) {
-      EdgeSPtr edge = *it_e++;
-      VertexSPtr v0 = edge->src(facet);
-      VertexSPtr v1 = edge->tgt(facet);
+      const EdgeSPtr& edge = *it_e++;
+      const VertexSPtr& v0 = edge->src(facet);
+      const VertexSPtr& v1 = edge->tgt(facet);
       CGAL_assertion(v0->point() != v1->point());
 
-      PCDT_VH vh0 = face_vhs.at(v0);
-      PCDT_VH vh1 = face_vhs.at(v1);
+      const PCDT_VH vh0 = face_vhs.at(v0);
+      const PCDT_VH vh1 = face_vhs.at(v1);
 
       try {
         pcdt.insert_constraint(vh0, vh1);
@@ -1029,7 +1029,7 @@ public:
         CGAL_SS3_TRANSF_TRACE_V(1, "Error: Intersection of constraint w/ " << vh0->point() << " " << vh1->point());
         CGAL_SS3_TRANSF_TRACE_V(1, facet->to_string());
         CGAL_assertion_msg(false, "Intersections in CDT2 are not allowed");
-        return PCDT(projection_traits);
+        return PCDT{projection_traits};
       }
     }
 
@@ -1081,10 +1081,10 @@ public:
         continue;
       }
 
-      VertexSPtr v0 = fh->vertex(0)->info();
-      VertexSPtr v1 = fh->vertex(1)->info();
-      VertexSPtr v2 = fh->vertex(2)->info();
-      std::vector<VertexSPtr> verts = {v0, v1, v2};
+      const VertexSPtr& v0 = fh->vertex(0)->info();
+      const VertexSPtr& v1 = fh->vertex(1)->info();
+      const VertexSPtr& v2 = fh->vertex(2)->info();
+      const std::vector<VertexSPtr> verts { v0, v1, v2 };
       FacetSPtr new_facet = Facet::create(verts);
 
       Plane_3 plane { v0->point(), v1->point(), v2->point() };
@@ -1128,7 +1128,7 @@ public:
     const FT& a = facet->get_plane().a();
     const FT& b = facet->get_plane().b();
     const FT& c = facet->get_plane().c();
-    return (a*a + b*b + c*c - 1) <= 1e-5;
+    return (a*a + b*b + c*c - 1) <= 1e-5; // @fixme hardcoded bound
   }
 
   template <typename Pl>

@@ -159,6 +159,9 @@ public:
     sstr << "Flip_vertex_event\n";
     sstr << "\t(ID=" << Base::id() << ")\n";
     sstr << "\t(time=" << IO::String_factory::fromDouble(CGAL::to_double(Base::time())) << ")\n";
+    sstr << "\t(point=<" + IO::String_factory::fromDouble(CGAL::to_double(point_.x())) + " "
+                         + IO::String_factory::fromDouble(CGAL::to_double(point_.y())) + " "
+                         + IO::String_factory::fromDouble(CGAL::to_double(point_.z())) + ">)\n";
     sstr << "\t(vertex A=" << vertex_1->to_string() << "; vertex B=" << vertex_2->to_string() << ")\n";
     sstr << "\t(facet A=" << facet_1->id() << "; facet B=" << facet_2->id() << ")";
     return sstr.str();
@@ -167,7 +170,7 @@ public:
   bool operator==(const Flip_vertex_event& other) const
   {
     return (Base::time() == other.time()) &&
-            (!point_ || !other.point_ || point_ == other.point_) &&
+            (point_ == other.point_) &&
             ((facet_1_.lock() == other.facet_1_.lock() &&
               facet_2_.lock() == other.facet_2_.lock()) ||
             (facet_1_.lock() == other.facet_2_.lock() &&

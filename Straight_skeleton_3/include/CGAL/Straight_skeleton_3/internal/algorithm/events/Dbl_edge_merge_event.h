@@ -201,7 +201,7 @@ public:
     sstr << "\t(time=" << IO::String_factory::fromDouble(CGAL::to_double(Base::time())) << ")\n";
     sstr << "\t(point=<" + IO::String_factory::fromDouble(CGAL::to_double(point_.x())) + " "
                          + IO::String_factory::fromDouble(CGAL::to_double(point_.y())) + " "
-                         + IO::String_factory::fromDouble(CGAL::to_double(point_.z())) + ">)";
+                         + IO::String_factory::fromDouble(CGAL::to_double(point_.z())) + ">)\n";
     for (unsigned int i = 0; i < 4; ++i) {
       sstr << "\n\t(" << vertices[i]->to_string() << ")";
     }
@@ -215,7 +215,7 @@ public:
   bool operator==(const Dbl_edge_merge_event& other) const
   {
     return (Base::time() == other.time()) &&
-            (!point_ || !other.point_ || point_ == other.point_) &&
+            (point_ == other.point_) &&
             ((facet_1_.lock() == other.facet_1_.lock() &&
               edge_11_.lock() == other.edge_11_.lock() &&
               edge_12_.lock() == other.edge_12_.lock() &&
