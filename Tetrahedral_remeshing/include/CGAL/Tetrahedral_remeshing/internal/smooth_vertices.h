@@ -34,7 +34,6 @@
 #include <unordered_map>
 #include <vector>
 #include <cmath>
-#include <list>
 
 namespace CGAL
 {
@@ -484,7 +483,22 @@ private:
 
 template <typename C3t3, typename SizingFunction, typename CellSelector>
 class Vertex_smooth_operation_base
+    : public Elementary_operation<C3t3,
+                                  typename C3t3::Triangulation::Vertex_handle,
+                                  typename C3t3::Triangulation::Finite_vertex_handles>
 {
+protected:
+  using Base_operation = Elementary_operation<C3t3,
+                                              typename C3t3::Triangulation::Vertex_handle,
+                                              typename C3t3::Triangulation::Finite_vertex_handles>;
+
+public:
+  // the executors read these off the concrete operation
+  using Element_type = typename Base_operation::Element_type;
+  using Element_range = typename Base_operation::Element_range;
+  static_assert(std::is_same_v<Element_type, typename C3t3::Triangulation::Vertex_handle>,
+                "Element_type should be Vertex_handle");
+
 protected:
   typedef typename C3t3::Triangulation Tr;
   typedef typename C3t3::Surface_patch_index Surface_patch_index;
@@ -506,38 +520,90 @@ protected:
 
   using Context = Vertex_smoothing_context<C3t3, SizingFunction, CellSelector>;
 
-public:
   std::shared_ptr<Context> m_context{nullptr};
 
+public:
   Vertex_smooth_operation_base(std::shared_ptr<Context> context)
       : m_context(context) {}
 
-  void set_context(std::shared_ptr<Context> p_context) { m_context = p_context; }
+protected:
+  /**
+  * The position this operation would move `v` to, or nothing if it declines
+  * `v`. The only geometry that differs between the three smooth operations;
+  * everything around it is shared and lives in this class.
+  */
+  virtual std::optional<Point_3> compute_target_position(const Vertex_handle v, const C3t3& c3t3) = 0;
 
   /**
-  * The lock zone of all three smooth operations: `star(v)`.
+  * Fills `Vertex_smoothing_context::m_moves` for every vertex this operation can
+  * move. One serial pass, run from `get_elements()` before the candidates are
+  * handed out.
+  */
+  virtual void compute_vertex_moves(const C3t3& c3t3) const = 0;
+
+public:
+  /**
+  * Every finite vertex. All three operations decline the ones they do not
+  * own, in `compute_target_position()`.
+  */
+  Element_range get_elements(const C3t3& c3t3) const override
+  {
+    compute_vertex_moves(c3t3);
+    return c3t3.triangulation().finite_vertex_handles();
+  }
+
+  /**
+  * Move `v` to the position this operation wants, unless that inverts a cell
+  * of its star -- `check_inversion_and_move()` backtracks along the move and
+  * restores `v` if it cannot find a valid fraction.
+  *
+  * Under `Parallel_tag` the position was already computed by `lock_zone()`,
+  * which had to know it to lock the grid cell `v` lands in; recomputing it
+  * here would mean a second AABB-tree projection for two of the three
+  * operations. The handoff is accepted only for the vertex it was built for,
+  * so the sequential executor -- which never calls `lock_zone()` -- computes
+  * it here instead and is unaffected.
+  */
+  bool execute_operation(const Element_type& v, C3t3& c3t3) override
+  {
+    const Smooth_destination& handoff = destination_handoff();
+    const std::optional<Point_3> target = (handoff.valid && handoff.v == v)
+                                        ? handoff.position
+                                        : compute_target_position(v, c3t3);
+    if (target == std::nullopt)
+      return false;
+
+    return check_inversion_and_move(v, target.value(), m_context->incident_cells(v),
+                                    c3t3.triangulation(), m_context->m_total_move);
+  }
+
+  // vertices are independent of one another: shuffling spreads the threads out
+  static constexpr bool requires_ordered_processing = false;
+
+  /**
+  * The lock zone of all three smooth operations: `star(v)`, plus every
+  * position `v` may be written to.
   *
   * Smoothing moves `v` and re-checks the orientation of every cell incident to
   * it, so the star is the whole zone and cannot be made smaller. The three
   * operations share this one definition: `Elementary_operation` names
   * `lock_zone()` in its contract but never declares it, so the executor's
   * `op.lock_zone(element, c3t3)` finds this by ordinary name lookup, and an
-  * operation that needs a different zone simply defines its own. Only used by
-  * the parallel executor.
+  * operation that needs a different zone defines its own.
   *
   * The star is NOT walked.
   *
   * `try_lock_and_get_incident_cells()` would traverse the star through the
   * neighbour pointers, marking and unmarking every cell's `tds_data()` on the
   * way, and then throw the vector away -- `execute_operation()` reads the star
-  * from `Smoothing_context::m_inc_cells` instead. That cache is exactly
-  * `star(v)` for the whole phase: `Remeshing_impl::smooth()` rebuilds it in
+  * from `Vertex_smoothing_context::m_inc_cells` instead. That cache is exactly
+  * `star(v)` for the whole phase: `Adaptive_remesher::smooth()` rebuilds it in
   * `refresh()` on entry, and no smooth operation changes topology, only
   * `set_point()`. So the walk is pure loss, and the same cells can be locked
   * straight out of the cache.
   *
-  * The set of grid cells taken is the same, with one exception in this
-  * function's favour: the cache holds the FINITE star, so the infinite
+  * The set of grid cells taken for the star is the same, with one exception in
+  * this function's favour: the cache holds the FINITE star, so the infinite
   * vertex's meaningless position is not taken. Nothing here reads it either --
   * `check_inversion_and_move()` iterates the same cache.
   *
@@ -546,8 +612,11 @@ public:
   * immediately, so locking `v` alone is sufficient. `get_elements()` hands out
   * every finite vertex, so this is the common case.
   */
-  bool lock_zone(const Vertex_handle v, const C3t3& c3t3) const
+  bool lock_zone(const Vertex_handle v, const C3t3& c3t3)
   {
+    Smooth_destination& handoff = destination_handoff();
+    handoff.valid = false;
+
     const Tr& tr = c3t3.triangulation();
 
     if (!tr.try_lock_vertex(v))
@@ -556,6 +625,70 @@ public:
     for (const Cell_handle c : m_context->incident_cells(v))
     {
       if (!tr.try_lock_cell(c))
+        return false;
+    }
+
+    const std::optional<Point_3> target = compute_target_position(v, c3t3);
+    if (target != std::nullopt && !lock_move_destinations(v, target.value(), tr))
+      return false;
+
+    handoff.v = v;
+    handoff.position = target;
+    handoff.valid = true;
+    return true;
+  }
+
+private:
+  /**
+  * Where `lock_zone()` leaves the position it computed, for
+  * `execute_operation()` to consume.
+  *
+  * The destination has to be known INSIDE the zone, because the lock is keyed
+  * on position and the grid cell `v` lands in must be held before `v` moves.
+  * For the surface and complex-edge operations that position is an AABB-tree
+  * projection, and computing it twice would cost more than the lock it makes
+  * safe -- so it is computed once, here, and handed down. Same pattern as
+  * `Located_edge` (flip, split) and `Locked_stars` (collapse).
+  *
+  * Thread-local, and `valid` is set LAST, so a zone abandoned part-way through
+  * a failed lock attempt never matches. `execute_operation()` accepts the
+  * handoff only for the vertex it was built for; anything else -- the
+  * sequential executor, which never calls `lock_zone()` -- computes the
+  * position itself, so the sequential path is unchanged by construction.
+  */
+  struct Smooth_destination
+  {
+    Vertex_handle v{};
+    std::optional<Point_3> position{};
+    bool valid{false};
+  };
+
+  static Smooth_destination& destination_handoff()
+  {
+    static thread_local Smooth_destination d;
+    return d;
+  }
+
+  /**
+  * Every position `check_inversion_and_move()` may write to `v`.
+  *
+  * It tries `pv + frac * move` and halves `frac` on a failed orientation or a
+  * worsened angle, while `frac > 0.1`. So `frac` takes 1, 1/2, 1/4 and 1/8 and
+  * then stops -- 1/16 fails the guard -- and those four points, all on one
+  * segment, are the whole destination set. The restore to `pv` needs no lock
+  * of its own: it is `v`'s own position, already held.
+  *
+  * Taking a point twice is cheap, the grid cell is already this thread's, and
+  * on a grid coarser than the move they are one cell.
+  */
+  bool lock_move_destinations(const Vertex_handle v, const Point_3& final_pos, const Tr& tr) const
+  {
+    const Point_3 pv = point(v->point());
+    const Vector_3 move(pv, final_pos);
+
+    for (double frac = 1.0; frac > 0.1; frac = 0.5 * frac)
+    {
+      if (!tr.try_lock_point(pv + frac * move))
         return false;
     }
     return true;
@@ -576,6 +709,65 @@ protected:
   }
 
   bool is_selected(const Cell_handle c) const { return get(m_context->m_cell_selector, c); }
+
+  /**
+  * The Laplacian-style move each movable endpoint of `edges` gets pulled by,
+  * accumulated into `Vertex_smoothing_context::m_moves`.
+  *
+  * All three smooth operations do exactly this and differ only in three
+  * places, which are the arguments: which edges they walk, which endpoints
+  * they consider movable, and whether the edge counts as a boundary edge for
+  * the sizing field. `keep_edge` is a predicate rather than a pre-filtered
+  * range because the two ranges -- `edges_in_complex()` and `finite_edges()`
+  * -- have different types.
+  */
+  template <typename EdgeRange, typename KeepEdge, typename MovesVertex>
+  void accumulate_edge_moves(const EdgeRange& edges,
+                             const C3t3& c3t3,
+                             const bool boundary_edge,
+                             KeepEdge keep_edge,
+                             MovesVertex moves_vertex) const
+  {
+    auto& moves = m_context->m_moves;
+    using Move = typename Context::Move;
+    const Move default_move{CGAL::NULL_VECTOR, 0 /*neighbors*/, 0. /*mass*/};
+    moves.assign(c3t3.triangulation().number_of_vertices(), default_move);
+
+    for (const Edge& e : edges)
+    {
+      if (!keep_edge(e))
+        continue;
+
+      const Vertex_handle vh0 = e.first->vertex(e.second);
+      const Vertex_handle vh1 = e.first->vertex(e.third);
+
+      const std::size_t i0 = m_context->vertex_id(vh0);
+      const std::size_t i1 = m_context->vertex_id(vh1);
+
+      const bool vh0_moving = moves_vertex(vh0, i0);
+      const bool vh1_moving = moves_vertex(vh1, i1);
+
+      if (!vh0_moving && !vh1_moving)
+        continue;
+
+      const Point_3& p0 = point(vh0->point());
+      const Point_3& p1 = point(vh1->point());
+      const FT density = density_along_segment(e, c3t3, boundary_edge);
+
+      if (vh0_moving)
+      {
+        moves[i0].move += density * Vector_3(p0, p1);
+        moves[i0].mass += density;
+        ++moves[i0].neighbors;
+      }
+      if (vh1_moving)
+      {
+        moves[i1].move += density * Vector_3(p1, p0);
+        moves[i1].mass += density;
+        ++moves[i1].neighbors;
+      }
+    }
+  }
 
   template <typename CellRange>
   Dihedral_angle_cosine max_cosine(const Tr& tr, const CellRange& cells) const
@@ -675,23 +867,17 @@ protected:
 
 template <typename C3t3, typename SizingFunction, typename CellSelector>
 class Complex_edge_vertex_smooth_operation
-    : public Vertex_smooth_operation_base<C3t3, SizingFunction, CellSelector>,
-      public Elementary_operation<C3t3,
-                                 typename C3t3::Triangulation::Vertex_handle,
-                                 typename C3t3::Triangulation::Finite_vertex_handles>
+    : public Vertex_smooth_operation_base<C3t3, SizingFunction, CellSelector>
 {
 public:
   using BaseClass = Vertex_smooth_operation_base<C3t3, SizingFunction, CellSelector>;
-  using Vertex_handle = typename C3t3::Triangulation::Vertex_handle;
   using Surface_patch_index = typename C3t3::Surface_patch_index;
 
-  using Base_operation = Elementary_operation<C3t3,
-                                   Vertex_handle,
-                                   typename C3t3::Triangulation::Finite_vertex_handles>;
-  using Element_type = typename Base_operation::Element_type;
-  static_assert(std::is_same_v<Element_type, Vertex_handle>, "Element_type should be Vertex_handle");
-  using Element_range = typename Base_operation::Element_range;
+  using typename BaseClass::Element_type;
+  using typename BaseClass::Element_range;
 
+protected:
+  using typename BaseClass::Vertex_handle;
   using BaseClass::m_context;
 
   using typename BaseClass::Cell_handle;
@@ -705,25 +891,20 @@ public:
   Complex_edge_vertex_smooth_operation(std::shared_ptr<typename BaseClass::Context> context)
       : BaseClass(context) {}
 
-  Element_range get_elements(const C3t3& c3t3) const override
+private:
+  std::optional<Point_3> compute_target_position(const Vertex_handle v, const C3t3& c3t3) override
   {
-    perform_global_preprocessing(c3t3);
-    return c3t3.triangulation().finite_vertex_handles();
-  }
-
-  bool execute_operation(const Element_type& v, C3t3& c3t3) override
-  {
-    auto& tr = c3t3.triangulation();
+    CGAL_USE(c3t3);
     const std::size_t vid = m_context->vertex_id(v);
     if (!m_context->is_free(vid) || !is_on_feature(v))
-      return false;
+      return std::nullopt;
 
     const Point_3 current_pos = point(v->point());
     const auto& moves = m_context->m_moves;
 
     const std::size_t nb_neighbors = moves[vid].neighbors;
     if (nb_neighbors == 0)
-      return false;
+      return std::nullopt;
 
     CGAL_assertion(moves[vid].mass > 0);
     const Vector_3 move = (nb_neighbors > 0)
@@ -746,85 +927,43 @@ public:
     }
 #endif
 
-    const Point_3 new_pos = current_pos + sum_projections;
+    return current_pos + sum_projections;
 #else
-    const Point_3 new_pos = m_context->m_segments_aabb_tree.closest_point(smoothed_position);
+    return m_context->m_segments_aabb_tree.closest_point(smoothed_position);
 #endif
-
-    const auto& inc_cells = m_context->m_inc_cells[vid];
-    return BaseClass::check_inversion_and_move(v, new_pos, inc_cells, tr, m_context->m_total_move);
   }
 
-  // vertices are independent of one another: shuffling spreads the threads out
-  static constexpr bool requires_ordered_processing = false;
-
+public:
   std::string operation_name() const override { return "Vertex Smooth (Complex Edge Vertices)"; }
 
-  void perform_global_preprocessing(const C3t3& c3t3) const
+private:
+  void compute_vertex_moves(const C3t3& c3t3) const override
   {
-    auto& tr = c3t3.triangulation();
-    auto& moves = m_context->m_moves;
-
-    const std::size_t nbv = tr.number_of_vertices();
-    using Move = typename BaseClass::Context::Move;
-    const Move default_move{CGAL::NULL_VECTOR, 0 /*neighbors*/, 0. /*mass*/};
-    moves.assign(nbv, default_move);
-
-    //collect neighbors
-    for (const Edge& e : c3t3.edges_in_complex())
-    {
-      const Vertex_handle vh0 = e.first->vertex(e.second);
-      const Vertex_handle vh1 = e.first->vertex(e.third);
-
-      CGAL_expensive_assertion(is_on_feature(vh0));
-      CGAL_expensive_assertion(is_on_feature(vh1));
-
-      const std::size_t& i0 = m_context->vertex_id(vh0);
-      const std::size_t& i1 = m_context->vertex_id(vh1);
-
-      const bool vh0_moving = m_context->is_free(i0);
-      const bool vh1_moving = m_context->is_free(i1);
-
-      if (!vh0_moving && !vh1_moving)
-        continue;
-
-      const Point_3& p0 = point(vh0->point());
-      const Point_3& p1 = point(vh1->point());
-      const FT density = BaseClass::density_along_segment(e, c3t3, true);
-
-      if (vh0_moving)
-      {
-        moves[i0].move += density * Vector_3(p0, p1);
-        moves[i0].mass += density;
-        ++moves[i0].neighbors;
-      }
-      if (vh1_moving)
-      {
-        moves[i1].move += density * Vector_3(p1, p0);
-        moves[i1].mass += density;
-        ++moves[i1].neighbors;
-      }
-    }
+    BaseClass::accumulate_edge_moves(
+        c3t3.edges_in_complex(), c3t3, true /*boundary_edge*/,
+        [](const Edge& e) {
+          CGAL_expensive_assertion(is_on_feature(e.first->vertex(e.second)));
+          CGAL_expensive_assertion(is_on_feature(e.first->vertex(e.third)));
+          CGAL_USE(e);
+          return true;
+        },
+        [this](const Vertex_handle, const std::size_t vid) {
+          return m_context->is_free(vid);
+        });
   }
 };
 
 template <typename C3t3, typename SizingFunction, typename CellSelector>
 class Surface_vertex_smooth_operation
-    : public Vertex_smooth_operation_base<C3t3, SizingFunction, CellSelector>,
-      public Elementary_operation<C3t3,
-                                 typename C3t3::Triangulation::Vertex_handle,
-                                 typename C3t3::Triangulation::Finite_vertex_handles>
+    : public Vertex_smooth_operation_base<C3t3, SizingFunction, CellSelector>
 {
 public:
   using BaseClass = Vertex_smooth_operation_base<C3t3, SizingFunction, CellSelector>;
-  using Base_operation = Elementary_operation<C3t3,
-                                   typename C3t3::Triangulation::Vertex_handle,
-                                   typename C3t3::Triangulation::Finite_vertex_handles>;
-  using Element_type = typename Base_operation::Element_type;
-  static_assert(std::is_same_v<Element_type, typename C3t3::Triangulation::Vertex_handle>,
-                               "Element_type should be Vertex_handle");
-  using Element_range = typename Base_operation::Element_range;
 
+  using typename BaseClass::Element_type;
+  using typename BaseClass::Element_range;
+
+protected:
   using BaseClass::m_context;
 
   using typename BaseClass::AABB_triangle_tree;
@@ -839,49 +978,17 @@ public:
   using typename BaseClass::Vertex_handle;
 
 private:
-  void perform_global_preprocessing(const C3t3& c3t3) const
+private:
+  void compute_vertex_moves(const C3t3& c3t3) const override
   {
-    auto& tr = c3t3.triangulation();
-    auto& moves = m_context->m_moves;
-    using Move = typename BaseClass::Context::Move;
-    const std::size_t nbv = tr.number_of_vertices();
-    const Move default_move{CGAL::NULL_VECTOR, 0/*neighbors*/, 0./*mass*/};
-    moves.assign(nbv, default_move);
-
-    for (const Edge& e : tr.finite_edges())
-    {
-      if (!c3t3.is_in_complex(e) && is_boundary(c3t3, e, m_context->m_cell_selector))
-      {
-        const Vertex_handle vh0 = e.first->vertex(e.second);
-        const Vertex_handle vh1 = e.first->vertex(e.third);
-
-        const std::size_t& i0 = m_context->vertex_id(vh0);
-        const std::size_t& i1 = m_context->vertex_id(vh1);
-
-        const bool vh0_moving = !is_on_feature(vh0) && m_context->is_free(i0);
-        const bool vh1_moving = !is_on_feature(vh1) && m_context->is_free(i1);
-
-        if (!vh0_moving && !vh1_moving)
-          continue;
-
-        const Point_3& p0 = point(vh0->point());
-        const Point_3& p1 = point(vh1->point());
-        const FT density = BaseClass::density_along_segment(e, c3t3, true);
-
-        if (vh0_moving)
-        {
-          moves[i0].move += density * Vector_3(p0, p1);
-          moves[i0].mass += density;
-          ++moves[i0].neighbors;
-        }
-        if (vh1_moving)
-        {
-          moves[i1].move += density * Vector_3(p1, p0);
-          moves[i1].mass += density;
-          ++moves[i1].neighbors;
-        }
-      }
-    }
+    BaseClass::accumulate_edge_moves(
+        c3t3.triangulation().finite_edges(), c3t3, true /*boundary_edge*/,
+        [&c3t3, this](const Edge& e) {
+          return !c3t3.is_in_complex(e) && is_boundary(c3t3, e, m_context->m_cell_selector);
+        },
+        [this](const Vertex_handle vh, const std::size_t vid) {
+          return !is_on_feature(vh) && m_context->is_free(vid);
+        });
   }
 
   std::optional<Point_3> project(const Surface_patch_index& si, const Point_3& gi)
@@ -922,19 +1029,14 @@ public:
   Surface_vertex_smooth_operation(std::shared_ptr<typename BaseClass::Context> context)
       : BaseClass(context) {}
 
-  Element_range get_elements(const C3t3& c3t3) const override
-  {
-    perform_global_preprocessing(c3t3);
-    return c3t3.triangulation().finite_vertex_handles();
-  }
-
-  bool execute_operation(const Element_type& v, C3t3& c3t3) override
+private:
+  std::optional<Point_3> compute_target_position(const Vertex_handle v, const C3t3& c3t3) override
   {
     auto& tr = c3t3.triangulation();
     auto& moves = m_context->m_moves;
     const std::size_t vid = m_context->vertex_id(v);
     if (!m_context->is_free(vid) || v->in_dimension() != 2)
-      return false;
+      return std::nullopt;
 
     const std::size_t nb_neighbors = moves[vid].neighbors;
     const Point_3 current_pos = point(v->point());
@@ -943,7 +1045,7 @@ public:
     const auto& incident_surface_patches = m_context->m_vertices_surface_indices.at(v);
 
     if (incident_surface_patches.size() > 1)
-      return false;
+      return std::nullopt;
 
     const Surface_patch_index si = incident_surface_patches[0];
     CGAL_assertion(si != Surface_patch_index());
@@ -951,7 +1053,6 @@ public:
     CGAL_expensive_assertion(si == siv);
 
     Point_3 new_pos;
-    bool result = false;
 
     if (nb_neighbors > 1)
     {
@@ -1032,51 +1133,41 @@ public:
       }
 #endif //CGAL_TET_REMESHING_SMOOTHING_WITH_MLS
 
-      const auto& inc_cells = m_context->m_inc_cells[vid];
-      result = BaseClass::check_inversion_and_move(v, new_pos, inc_cells, tr, m_context->m_total_move);
+      return new_pos;
     }
     else if (nb_neighbors > 0)
     {
 #ifdef CGAL_TET_REMESHING_SMOOTHING_WITH_MLS
       std::optional<Point_3> mls_proj = project(si, current_pos);
       if(mls_proj == std::nullopt)
-        return false;
+        return std::nullopt;
 
       new_pos = *mls_proj;
 #else // AABB_tree projection
       new_pos = m_context->m_segments_aabb_tree.closest_point(current_pos);
 #endif //CGAL_TET_REMESHING_SMOOTHING_WITH_MLS
 
-      const auto& inc_cells = m_context->m_inc_cells[vid];
-      result = BaseClass::check_inversion_and_move(v, new_pos, inc_cells, tr, m_context->m_total_move);
+      return new_pos;
     }
 
-    return result;
+    return std::nullopt;
   }
 
-  // vertices are independent of one another: shuffling spreads the threads out
-  static constexpr bool requires_ordered_processing = false;
-
+public:
   std::string operation_name() const override { return "Vertex Smooth (Surface Vertices)"; }
 };
 
 template <typename C3t3, typename SizingFunction, typename CellSelector>
 class Internal_vertex_smooth_operation
-    : public Vertex_smooth_operation_base<C3t3, SizingFunction, CellSelector>,
-      public Elementary_operation<C3t3,
-                                 typename C3t3::Triangulation::Vertex_handle,
-                                 typename C3t3::Triangulation::Finite_vertex_handles>
+    : public Vertex_smooth_operation_base<C3t3, SizingFunction, CellSelector>
 {
 public:
   using BaseClass = Vertex_smooth_operation_base<C3t3, SizingFunction, CellSelector>;
-  using Base_operation = Elementary_operation<C3t3,
-                                   typename C3t3::Triangulation::Vertex_handle,
-                                   typename C3t3::Triangulation::Finite_vertex_handles>;
-  using Element_type = typename Base_operation::Element_type;
-  static_assert(std::is_same_v<Element_type, typename C3t3::Triangulation::Vertex_handle>,
-                               "Element_type should be Vertex_handle");
-  using Element_range = typename Base_operation::Element_range;
 
+  using typename BaseClass::Element_type;
+  using typename BaseClass::Element_range;
+
+protected:
   using BaseClass::m_context;
 
   using typename BaseClass::Cell_handle;
@@ -1091,82 +1182,38 @@ public:
   Internal_vertex_smooth_operation(std::shared_ptr<typename BaseClass::Context> context)
       : BaseClass(context) {}
 
-  void perform_global_preprocessing(const C3t3& c3t3) const
+private:
+  void compute_vertex_moves(const C3t3& c3t3) const override
   {
-    auto& tr = c3t3.triangulation();
-    auto& moves = m_context->m_moves;
-
-    using Move = typename BaseClass::Context::Move;
-    const std::size_t nbv = tr.number_of_vertices();
-    const Move default_move{CGAL::NULL_VECTOR, 0 /*neighbors*/, 0. /*mass*/};
-    moves.assign(nbv, default_move);
     /*for dim 3 vertices, start counting neighbors directly from 0*/
-
-    for (const Edge& e : tr.finite_edges())
-    {
-      if (is_outside(e, c3t3, m_context->m_cell_selector))
-        continue;
-      else
-      {
-        const auto [vh0, vh1] = make_vertex_pair(e);
-
-        const std::size_t& i0 = m_context->vertex_id(vh0);
-        const std::size_t& i1 = m_context->vertex_id(vh1);
-
-        const bool vh0_moving = (c3t3.in_dimension(vh0) == 3 && m_context->is_free(i0));
-        const bool vh1_moving = (c3t3.in_dimension(vh1) == 3 && m_context->is_free(i1));
-
-        if (!vh0_moving && !vh1_moving)
-          continue;
-
-        const Point_3& p0 = point(vh0->point());
-        const Point_3& p1 = point(vh1->point());
-        const FT density = BaseClass::density_along_segment(e, c3t3);
-
-        if (vh0_moving)
-        {
-          moves[i0].move += density * Vector_3(p0, p1);
-          moves[i0].mass += density;
-          ++moves[i0].neighbors;
-        }
-        if (vh1_moving)
-        {
-          moves[i1].move += density * Vector_3(p1, p0);
-          moves[i1].mass += density;
-          ++moves[i1].neighbors;
-        }
-      }
-    }
+    BaseClass::accumulate_edge_moves(
+        c3t3.triangulation().finite_edges(), c3t3, false /*boundary_edge*/,
+        [&c3t3, this](const Edge& e) {
+          return !is_outside(e, c3t3, m_context->m_cell_selector);
+        },
+        [&c3t3, this](const Vertex_handle vh, const std::size_t vid) {
+          return c3t3.in_dimension(vh) == 3 && m_context->is_free(vid);
+        });
   }
 
-  Element_range get_elements(const C3t3& c3t3) const override
+private:
+  std::optional<Point_3> compute_target_position(const Vertex_handle v, const C3t3& c3t3) override
   {
-    perform_global_preprocessing(c3t3);
-    return c3t3.triangulation().finite_vertex_handles();
-  }
-
-  bool execute_operation(const Element_type& v, C3t3& c3t3) override
-  {
-    auto& tr = c3t3.triangulation();
     auto& moves = m_context->m_moves;
 
     const std::size_t vid = m_context->vertex_id(v);
     if (!m_context->is_free(vid))
-      return false;
+      return std::nullopt;
 
     if (c3t3.in_dimension(v) == 3 && moves[vid].neighbors > 1)
     {
       const Vector_3 move = moves[vid].move / moves[vid].mass;
-      const Point_3 new_pos = point(v->point()) + move;
-      return BaseClass::check_inversion_and_move(v, new_pos, m_context->incident_cells(vid), tr,
-                                                 m_context->m_total_move);
+      return point(v->point()) + move;
     }
-    return false;
+    return std::nullopt;
   }
 
-  // vertices are independent of one another: shuffling spreads the threads out
-  static constexpr bool requires_ordered_processing = false;
-
+public:
   std::string operation_name() const override { return "Vertex Smooth (Internal Vertices)"; }
 };
 
