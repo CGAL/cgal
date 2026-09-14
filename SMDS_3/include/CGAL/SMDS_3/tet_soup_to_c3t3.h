@@ -366,22 +366,6 @@ bool is_infinite(const std::array<typename Tr::Vertex_handle, 3>& f,
   return false;
 }
 
-template <typename Iterator>
-struct output_iterator_value
-{
-  using type = void;
-};
-
-template <typename Container>
-struct output_iterator_value<std::back_insert_iterator<Container>>
-{
-  using type = typename Container::value_type;
-};
-
-template <typename Iterator>
-using output_iterator_value_t = typename output_iterator_value<std::decay_t<Iterator>>::type;
-
-
 template<class Tr>
 bool assign_neighbors(Tr& tr,
                       const boost::unordered_map<std::array<typename Tr::Vertex_handle, 3>,
@@ -461,7 +445,7 @@ bool build_triangulation_impl(Tr& tr,
   // associate to a face the two (at most) incident tets and the id of the face in the cell
   typedef std::pair<Cell_handle, int>                   Incident_cell;
   typedef boost::unordered_map<Facet_vvv, std::vector<Incident_cell> >  Incident_cells_map;
-  using CxEdgeAndId = output_iterator_value_t<decltype(cx_edges_out)>;
+  using CxEdgeAndId = value_type_traits_t<decltype(cx_edges_out)>;
 
   CGAL_precondition(!points.empty());
 
