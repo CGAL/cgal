@@ -122,15 +122,16 @@ void test_no_projection_smoke()
       CGAL::parameters::number_of_iterations(1));
 
   assert_all_finite(fixture.c3t3);
-  assert(status.nb_vertex_updates > 0);
+  std::cout << "Number of vertex updates: " << status.nb_vertex_updates << std::endl;
   auto after = finite_vertices(fixture.c3t3);
   assert(before.size() == after.size());
   bool any_moved = false;
   for (std::size_t i = 0; i < before.size(); ++i) {
-    if (!same_point(before[i], after[i])) any_moved = true;
+    if (!same_point(before[i], after[i], false)) any_moved = true;
   }
   assert(any_moved);
   assert(status.mesh_is_valid() == (status.nb_invalid_elements == 0));
+  assert(status.nb_vertex_updates > 0);
 }
 
 } // namespace
