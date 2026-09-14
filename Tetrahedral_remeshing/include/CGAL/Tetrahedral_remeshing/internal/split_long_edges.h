@@ -26,6 +26,7 @@
 #include <utility>
 #include <optional>
 #include <array>
+#include <type_traits>
 
 namespace CGAL
 {
@@ -435,15 +436,36 @@ public:
     std::vector<Long_edge_with_length> long_edges_with_lengths;
     const Tr& tr = c3t3.triangulation();
 
-    for (Edge e : tr.finite_edges())
+    // The test applied to one edge, named once and used by both the serial
+    // walk and the parallel cell scan, so the two collect the same set by
+    // construction rather than by inspection.
+    const auto should_split = [&](const Edge& e, std::vector<Long_edge_with_length>& out)
     {
       auto [splittable, boundary] = can_be_split(e, c3t3, m_protect_boundaries, m_cell_selector);
       if (!splittable)
-        continue;
+        return;
 
       const std::optional<FT> sqlen = is_too_long(e, boundary, m_sizing, c3t3, m_cell_selector);
       if (sqlen != std::nullopt)
-        long_edges_with_lengths.push_back(Long_edge_with_length{e, sqlen.value()});
+        out.push_back(Long_edge_with_length{e, sqlen.value()});
+    };
+
+#ifdef CGAL_LINKED_WITH_TBB
+    if constexpr (std::is_convertible_v<typename Tr::Concurrency_tag, CGAL::Parallel_tag>)
+    {
+      // Walking finite_edges() is O(E) on one thread in front of a phase that
+      // then runs on all of them. The helper runs the same enumeration the
+      // edge iterator runs, split across the threads -- see the note on its
+      // definition for why the range itself cannot be iterated in parallel.
+      // An empty result is a result, so there is no fallback and the
+      // collection never happens twice.
+      long_edges_with_lengths = parallel_collect_from_finite_edges<Long_edge_with_length>(tr, should_split);
+    }
+    else
+#endif
+    {
+      for (Edge e : tr.finite_edges())
+        should_split(e, long_edges_with_lengths);
     }
 
     // longest first; stable to match the original bimap's ordering
