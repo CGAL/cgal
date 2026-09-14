@@ -18,7 +18,7 @@ of the geometry processing toolkit, with numerous applications in CAD and
 computer graphics. As an example, it constitutes the essential operation of Constructive Solid Geometry (CSG).
 
 This \cgal package offers functions to compute the union, intersection, and difference
-of volumes bounded by triangle meshes. The core of the method is the <em>corefinement</em> technique,
+of volumes bounded by triangle meshes and triangle soups. The core of the method is the <em>corefinement</em> technique,
 which refines two meshes such that they become conformal.
 This technique is re-used to also propose functions that enable trimming a mesh ("clipping")
 and bisecting a mesh ("splitting") with a plane, a box, or another mesh.
@@ -145,7 +145,7 @@ possible, the input mesh will still be corefined.
 
 If the input meshes contain triangles that are coplanar, it is guaranteed that the triangulations of those triangles
 in the two corefined meshes will be identical. Also all edges of those refined triangles will be reported as intersection
-edges (both in the function `CGAL::Polygon_mesh_processing::surface_intersection()` and in the named parameter
+edges (both in the function `CGAL::Polygon_mesh_processing::intersection_polylines()` and in the named parameter
 `edge_is_constrained_map()` of corefine prefixed functions).
 
 \subsubsection coref_bolop_input_autorefsub Autorefinement
@@ -153,6 +153,22 @@ edges (both in the function `CGAL::Polygon_mesh_processing::surface_intersection
 There is no restriction on the input for the function `CGAL::Polygon_mesh_processing::autorefine_triangle_soup()`.
 Degenerate triangles will be eliminated, duplicated points will be merged. If several triangles are coplanar,
 the output will contain as many copies of the triangulation of those refined triangles.
+
+\subsection tsoup_bolop_subsec Computing Boolean Operations on Triangle Soups
+The Boolean operation functions based on corefine operate on triangle meshes. This data structure is not meant to
+handle non-manifold edges. As it is sometime desirable to handle such cases, we also provide operations that are
+taking as input triangle soups, representing possibly non-manifold volumes, and providing the result of a Boolean
+operation as a triangle soup. In the following example, we use the function `CGAL::Polygon_mesh_processing::compute_difference()`
+to iteratively subtract pieces of a puzzle.
+
+\cgalFigureAnchor{nm_no_fig}
+<center>
+<img src="i_nm_bo.png" style="max-width:70%;"/>
+</center>
+\cgalFigureCaptionBegin{nm_no_fig}
+Iterative subtraction of the pieces of a puzzle from David's torso. The result of the second operation is non-manifold and
+so are all subsequent operations, until the last one.
+\cgalFigureCaptionEnd
 
 
 \subsection coref_valid_subsec Kernel Choice and Output Validity
@@ -322,6 +338,8 @@ and Léo Vaque \cgalCite{valquelazard2025}, and implemented by Léo Valque in 20
 The kernel functions and the specialization of clipping and plane refinement to convex
 inputs were implemented in 2025 by Léo Valque, inspired by the work of Sorgente et al.
 \cgalCite{sorgente2022polyhedron}.
+
+The illustrations of the package pays homage to French sculptor and painter Sacha Sosno.
 
 */
 } /* namespace CGAL */
