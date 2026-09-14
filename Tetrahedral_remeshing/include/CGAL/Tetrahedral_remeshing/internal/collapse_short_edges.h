@@ -167,7 +167,8 @@ public:
             /*complex edges*/CGAL::Emptyset_iterator(),
             /*verbose*/ false,
             /*replace_domain_0*/ false,
-            /*allow_non_manifold*/false))
+            /*allow_non_manifold*/false,
+            /*allow_negative_volumes*/true))
     {
       CGAL_expensive_assertion(triangulation.tds().is_valid());
       CGAL_assertion(triangulation.infinite_vertex() == new_vertices[0]);

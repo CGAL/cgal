@@ -4,11 +4,11 @@
 #include <CGAL/IO/File_medit.h>
 #include <CGAL/Iso_cuboid_3.h>
 
+#include <CGAL/Mesh_polyhedron_3.h>
+#include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/Mesh_triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
-
-#include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/make_mesh_3.h>
 
 #include <CGAL/tags.h>
@@ -59,10 +59,46 @@ int test_MEDIT_with_features()
   std::ifstream is("fandisk_out.mesh");
   C3t3 c3t3_in;
   CGAL::IO::read_MEDIT(is, c3t3_in);
+  is.close();
+
+  std::cout << "Read " << c3t3_in.number_of_facets() << " facets, " << c3t3_in.number_of_edges() << " edges, "
+            << c3t3_in.number_of_corners() << " corners." << std::endl;
+  std::cout << "Expected " << nb_facets << " facets, " << nb_edges << " edges, " << nb_corners << " corners."
+            << std::endl;
 
   assert(nb_facets == c3t3_in.number_of_facets());
   assert(nb_edges == c3t3_in.number_of_edges());
   assert(nb_corners == c3t3_in.number_of_corners());
+
+  return EXIT_SUCCESS;
+}
+
+int test_MEDIT_negative_cells()
+{
+  using K = CGAL::Exact_predicates_inexact_constructions_kernel;
+  using Tr = CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<K>;
+
+  // Open file negative_cells
+  std::string filename = "data/c3t3_with_negative_cells.mesh";
+  std::ifstream in(filename, std::ios_base::in);
+  if(!in) {
+    std::cerr << "Error! Cannot open file " << filename << std::endl;
+    return 1;
+  }
+
+  Tr tr;
+  CGAL::IO::read_MEDIT(in, tr, CGAL::parameters::allow_negative_orientation(true));
+  assert(tr.is_valid());
+  std::ofstream os("negative_cells_out.mesh");
+  CGAL::IO::write_MEDIT(os, tr,
+    CGAL::parameters::all_vertices(false).all_cells(true));
+  os.close();
+
+  Tr tr2;
+  std::ifstream is2("negative_cells_out.mesh");
+  CGAL::IO::read_MEDIT(is2, tr2, CGAL::parameters::allow_negative_orientation(true));
+  is2.close();
+  assert(tr2.is_valid());
 
   return EXIT_SUCCESS;
 }
@@ -124,6 +160,9 @@ int test()
 int main()
 {
   if(test_MEDIT_with_features() != EXIT_SUCCESS)
+    return EXIT_FAILURE;
+
+  if(test_MEDIT_negative_cells() != EXIT_SUCCESS)
     return EXIT_FAILURE;
 
   return test();

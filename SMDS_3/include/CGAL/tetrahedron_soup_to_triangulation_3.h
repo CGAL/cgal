@@ -377,7 +377,10 @@ namespace CGAL {
       border_facets,
       edge_indices, corner_indices,
       CGAL::Emptyset_iterator(),
-      /*verbose = */false, /*replace_domain_0 = */false, /*allow_non_manifold =*/false);
+      /*verbose = */false,
+      /*replace_domain_0 = */false,
+      /*allow_non_manifold =*/false,
+      /*allow_negative_orientation = */false);
 
     CGAL_assertion(CGAL::SMDS_3::internal::is_convex(tr));
 
@@ -491,6 +494,9 @@ namespace CGAL {
     const bool allow_non_manifold = choose_parameter(
           get_parameter(np, internal_np::allow_non_manifold),
           false);
+    const bool allow_negative_orientation = choose_parameter(
+          get_parameter(np, internal_np::allow_negative_orientation),
+          false);
     const bool verbose = choose_parameter(get_parameter(np, internal_np::verbose), false);
 
     CGAL_precondition_code(if (!allow_non_manifold))
@@ -500,7 +506,8 @@ namespace CGAL {
     std::vector<std::array<int, 2>> corner_indices;
     SMDS_3::build_triangulation_with_subdomains_range(tr, points, tets, subdomains, facets,
       edge_indices, corner_indices, CGAL::Emptyset_iterator(),
-      verbose, /*replace_domain_0 = */false, allow_non_manifold);
+      verbose, /*replace_domain_0 = */false, allow_non_manifold,
+      allow_negative_orientation);
 
     CGAL_postcondition_code(if (!allow_non_manifold))
     CGAL_postcondition(CGAL::SMDS_3::internal::is_convex(tr));

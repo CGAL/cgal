@@ -528,7 +528,8 @@ namespace internal {
       CGAL::Emptyset_iterator(),
       true,//verbose
       false,//replace subdomain 0
-      true);//allow non manifold
+      true,//allow non manifold
+      true);//allow negative volumes
 
     return true;
   }
