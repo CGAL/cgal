@@ -55,7 +55,7 @@
 \package_listing{Nef_3}
 \package_listing{Convex_decomposition_3}
 \package_listing{Minkowski_sum_3}
-
+\package_listing{Straight_skeleton_3}
 
 \cgalPackageSection{PartArrangements,Arrangements}
 
