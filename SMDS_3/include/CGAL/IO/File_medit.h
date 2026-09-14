@@ -1136,9 +1136,51 @@ bool read_MEDIT(std::istream& in,
  * @tparam T3 can be instantiated with any 3D triangulation of \cgal provided that its
  *  vertex and cell base class are models of the concepts `MeshVertexBase_3` and `MeshCellBase_3`,
  *  respectively.
+ * @tparam CornerIndex is the type of the indices for corners in the mesh complex
+ * @tparam CurveIndex is the type of the indices for curves in the mesh complex
  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
- * @todo write documentation
+ * @brief reads a mesh complex written in the medit (`.mesh`) file format.
+ *   See \cgalCite{frey:inria-00069921} for a comprehensive description of this file format.
+ * @tparam T3 can be instantiated with any 3D triangulation of \cgal provided that its
+ *  vertex and cell base class are models of the concepts `MeshVertexBase_3` and `MeshCellBase_3`,
+ *  respectively.
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+ *
+ * @param in the input stream
+ * @param c3t3 the mesh complex (to be built from the data read from `in`)
+ * @param np optional \ref bgl_namedparameters "Named Parameters" described below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{verbose}
+ *     \cgalParamDescription{indicates whether output warnings and error messages should be printed or not.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`false`}
+ *   \cgalParamNEnd
+ *   \cgalParamNBegin{allow_non_manifold}
+ *     \cgalParamDescription{allows the construction of a triangulation with non-manifold edges
+ *       and non manifold vertices. The triangulation is invalid if this situation is met,
+ *       so it should be used only in advanced cases, and the triangulation will be hardly usable.}
+ *     \cgalParamType{bool}
+ *     \cgalParamDefault{false}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
+ *
+ * @returns `true` if the connectivity of the triangulation could be built consistently
+ * from \p in,
+ * and `false` if the triangulation is empty, or if the connectivity
+ * of \p c3t3 could not be built.
+ * If `false` is returned, \p c3t3 is empty when the function returns.
+ *
+ * This function reads the data about vertices, surface facets, and
+ * triangulation cells from `in`, and builds a valid `T3` from it.
+ *
+ * Note that a valid 3D triangulation of \cgal must have a valid
+ * data structure (see `TriangulationDataStructure_3 `),
+ * positively oriented cells,
+ * and cover the geometric convex hull of all points in `t3`.
+ *
+ \see \ref IOStreamMedit
  */
 template <typename T3,
           typename Corner_index,
