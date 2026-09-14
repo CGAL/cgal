@@ -322,6 +322,68 @@ public:
 #if defined (CGAL_FORCE_IFORMAT_DOUBLE) || \
   ( ( _MSC_VER > 1600 ) && ( _MSC_VER < 1910 ) && (! defined( CGAL_NO_IFORMAT_DOUBLE )) )
 
+
+  template <>
+class Input_rep<int>
+  : public IO_rep_is_specialized
+{
+  int& t;
+
+public:
+  //! initialize with a reference to \a t.
+  Input_rep( int& tt) : t(tt) {}
+
+  std::istream& operator()( std::istream& is) const
+  {
+    using Traits = std::char_traits<char>;
+
+    std::streambuf* sb = is.rdbuf();
+
+    auto c = sb->sgetc();
+
+    while (!Traits::eq_int_type(c, Traits::eof()) &&
+           std::isspace(static_cast<unsigned char>(
+             Traits::to_char_type(c))))
+    {
+      c = sb->snextc();
+    }
+
+    if (Traits::eq_int_type(c, Traits::eof())){
+      is.setstate(std::ios_base::failbit);
+      return is;
+    }
+
+    char buffer[256]; // far too big as doubles have only precision 17, but to be on the safe side
+    char* p = buffer;
+    char* const end = buffer + sizeof(buffer);
+
+    while (!Traits::eq_int_type(c, Traits::eof()) &&
+           !std::isspace(static_cast<unsigned char>(
+              Traits::to_char_type(c))))
+    {
+      if (p == end){
+        is.setstate(std::ios_base::failbit);
+        return is;
+      }
+
+      *p++ = Traits::to_char_type(c);
+      c = sb->snextc();
+    }
+
+    auto [ptr, ec] = CGAL_FROM_CHARS_NAMESPACE::from_chars(buffer, p, t);
+
+
+    if (ec != std::errc{} || ptr != p){
+      is.setstate(std::ios_base::failbit);
+    }
+
+    return is;
+  }
+};
+
+
+
+
 template <>
 class Input_rep<double>
   : public IO_rep_is_specialized

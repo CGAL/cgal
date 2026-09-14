@@ -101,7 +101,7 @@ bool read_MEDIT(std::istream& is,
       for(int i=0; i<nv; ++i)
       {
         FT x,y,z;
-        if(!(is >> x >> y >> z >> ref))
+        if(!(is >> iformat(x) >> iformat(y) >> iformat(z) >> iformat(ref)))
         {
           if(verbose)
             std::cerr << "Issue while reading vertices" << std::endl;
@@ -116,7 +116,7 @@ bool read_MEDIT(std::istream& is,
       if(read_border_facets){
         bool has_negative_surface_patch_ids = false;
         Surface_patch_index max_surface_patch_id{0};
-        is >> nf;
+        is >> iformat(nf);
 
         if(verbose)
           std::cerr << "Reading "<< nf << " triangles" << std::endl;
@@ -125,7 +125,7 @@ bool read_MEDIT(std::istream& is,
         {
           int n[3];
           Surface_patch_index surface_patch_id;
-          if(!(is >> n[0] >> n[1] >> n[2] >> surface_patch_id))
+          if(!(is >> iformat(n[0]) >> iformat(n[1]) >> iformat(n[2]) >> surface_patch_id))
           {
             if(verbose)
               std::cerr << "Issue while reading triangles" << std::endl;
@@ -173,7 +173,7 @@ bool read_MEDIT(std::istream& is,
         {
           int n[3];
           int surface_patch_id;
-          if(!(is >> n[0] >> n[1] >> n[2] >> surface_patch_id))
+          if(!(is >> iformat(n[0]) >> iformat(n[1]) >> iformat(n[2]) >> iformat(surface_patch_id)))
           {
             if(verbose)
               std::cerr << "Issue while reading triangles" << std::endl;
@@ -194,7 +194,7 @@ bool read_MEDIT(std::istream& is,
         int n[4];
         int reference;
 
-        if(!(is >> n[0] >> n[1] >> n[2] >> n[3] >> reference))
+        if(!(is >> iformat(n[0]) >> iformat(n[1]) >> iformat(n[2]) >> iformat(n[3]) >> reference))
         {
           if(verbose)
             std::cerr << "Issue while reading tetrahedra" << std::endl;
