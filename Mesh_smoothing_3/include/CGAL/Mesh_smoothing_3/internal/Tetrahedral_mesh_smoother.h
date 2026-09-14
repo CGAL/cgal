@@ -1070,9 +1070,9 @@ template<typename Surface_patch_index, typename Curve_index, typename Concurrenc
 inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, ConcurrencyTag>::update_boundary_info(Eigen::VectorXd const &x, bool reset) {
     if (!has_bnd_terms()) return;
 
-    auto update_poly_coord = [&](unsigned t) {
+    auto update_poly_coord = [&](std::size_t t) {
         Boundary_poly const &poly = _bnd_poly[t];
-        for (unsigned i=0; i<poly.verts.size(); ++i) {
+        for (std::size_t i=0; i<poly.verts.size(); ++i) {
             _boundary_live_coords[t][i] = Math_functions::sub_col_vector(x, poly.verts[i]);
         }
     };
