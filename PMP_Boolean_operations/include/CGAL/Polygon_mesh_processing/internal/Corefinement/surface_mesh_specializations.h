@@ -14,8 +14,7 @@
 
 #include <CGAL/license/Surface_mesh.h>
 
-#include <CGAL/Surface_mesh.h>
-#include <CGAL/Polygon_mesh_processing/internal/Corefinement/face_graph_utils.h>
+#include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -149,7 +148,7 @@ void append_patch(
     std::array<halfedge_descriptor, 3> hedges = { get_halfedge(h_in_1), get_halfedge(h_in_2), get_halfedge(h_in_3) };
 
     user_visitor.before_face_copy(f, tm, output);
-    SM_Face_index new_f(faces_idx_begin + i);
+    face_descriptor new_f(faces_idx_begin + i);
     user_visitor.after_face_copy(f, tm, new_f, output);
     output.set_halfedge(new_f, hedges[0]);
 

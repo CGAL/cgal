@@ -2149,4 +2149,8 @@ void remove_disconnected_patches(
 
 } } } // CGAL::Polygon_mesh_processing::Corefinement
 
+#ifndef CGAL_DO_NOT_USE_SURFACE_MESH_SPECIALIZATIONS
+#include <CGAL/Polygon_mesh_processing/internal/Corefinement/surface_mesh_specializations.h>
+#endif
+
 #endif // CGAL_POLYGON_MESH_PROCESSING_INTERNAL_FACE_GRAPH_UTILS_H
