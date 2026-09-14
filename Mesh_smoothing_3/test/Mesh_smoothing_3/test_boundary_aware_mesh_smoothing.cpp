@@ -381,7 +381,7 @@ void test_corner_is_fixed()
   // Deliberately deteriorate the tetrahedron around the corner.
   fixture.v[1]->set_point(Point_3(0.30, 0.02, 0.00));
   fixture.v[2]->set_point(Point_3(0.03, 0.30, 0.00));
-  fixture.v[3]->set_point(Point_3(0.03, 0.03, 0.12));
+  fixture.v[3]->set_point(Point_3(0.03, 0.03, 0.16));
 
   std::array<Point_3, 3> movable_before = {
     fixture.v[1]->point(),
@@ -403,6 +403,12 @@ void test_corner_is_fixed()
     !same_point(movable_before[0], fixture.v[1]->point(), false) ||
     !same_point(movable_before[1], fixture.v[2]->point(), false) ||
     !same_point(movable_before[2], fixture.v[3]->point(), false);
+
+
+  std::cout << "pt: " << movable_before[0] << " -> " << fixture.v[1]->point() << std::endl;
+  std::cout << "pt: " << movable_before[1] << " -> " << fixture.v[2]->point() << std::endl;
+  std::cout << "pt: " << movable_before[2] << " -> " << fixture.v[3]->point() << std::endl;
+  std::cout << "Number of vertex updates: " << status.nb_vertex_updates << std::endl;
 
   assert(another_vertex_moved);
   assert(status.nb_vertex_updates > 0);
