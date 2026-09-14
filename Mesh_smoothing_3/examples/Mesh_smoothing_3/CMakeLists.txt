@@ -1,9 +1,6 @@
 cmake_minimum_required(VERSION 3.12...3.31)
 project(Mesh_smoothing_3_Examples)
 
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 message(STATUS "CGAL_DIR: ${CGAL_DIR}")
 
 find_package(CGAL REQUIRED)
