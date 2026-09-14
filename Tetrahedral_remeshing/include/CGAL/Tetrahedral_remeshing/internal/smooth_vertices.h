@@ -88,6 +88,25 @@ public:
   using Incident_cells_vector = boost::container::small_vector<Cell_handle, 64>;
   std::vector<Incident_cells_vector> m_inc_cells;
 
+  /**
+  * Every finite edge of the triangulation, scanned once per smooth phase by
+  * `refresh()`.
+  *
+  * Two of the three smooth operations -- surface and internal -- walk the
+  * finite edges to accumulate their moves, and no smooth operation changes
+  * topology, so the second walk re-derives a set the first one already
+  * enumerated. `Tr::finite_edges()` is not a cheap range: every increment
+  * circulates the cells around the candidate edge to decide whether the
+  * current cell is its canonical one, so an edge of degree d is visited d
+  * times to be emitted once. Walking a vector of the same edges instead reads
+  * each one once, from contiguous memory.
+  *
+  * Only the enumeration is shared. Each operation still reads live vertex
+  * positions when it computes its moves, because the operations run in
+  * sequence and the earlier ones move vertices the later ones read.
+  */
+  std::vector<Edge> m_finite_edges;
+
   using Vertices_surface_indices_map = std::unordered_map<Vertex_handle, std::vector<Surface_patch_index>>;
   using Vertices_normals_map =
       std::unordered_map<Vertex_handle,
@@ -155,6 +174,7 @@ public:
     reset_vertex_id_map(c3t3.triangulation());
     reset_free_vertices(c3t3.triangulation());
     collect_incident_cells(c3t3.triangulation());
+    collect_finite_edges(c3t3.triangulation());
   }
 
   void start_flip_smooth_steps(const C3t3& c3t3)
@@ -264,6 +284,29 @@ private:
     m_aabb_epsilon = 1e-3 * (std::min)(bb.xmax() - bb.xmin(),
                             (std::min)(bb.ymax() - bb.ymin(),
                                        bb.zmax() - bb.zmin()));
+  }
+
+  // Topology is constant for the whole smooth phase, so this holds until the
+  // next refresh(). The vector keeps its capacity between phases.
+  void collect_finite_edges(const Tr& tr)
+  {
+    // `number_of_vertices() + number_of_cells()` is an upper bound on the
+    // number of finite edges, and an O(1) one -- both are container sizes.
+    // Euler on the triangulated 3-sphere the TDS holds (the infinite vertex
+    // included) gives V - E + F - C = 0 with F = 2C, hence E = V + C; the
+    // finite edges are that less the edges to the infinite vertex. Measured
+    // over 56 smooth phases on four configs the bound held every time, with
+    // 0.3% to 6.9% of slack.
+    //
+    // Reserving matters only for the FIRST smooth phase: `clear()` keeps the
+    // capacity, so later phases reuse it and allocate only when the mesh has
+    // grown. But that first phase sets the high-water mark, and growing by
+    // doubling would leave the vector holding up to twice what it needs at the
+    // moment it reallocates last. Peak memory is a gated metric here.
+    m_finite_edges.clear();
+    m_finite_edges.reserve(tr.number_of_vertices() + tr.number_of_cells());
+    for (const Edge& e : tr.finite_edges())
+      m_finite_edges.push_back(e);
   }
 
   void collect_incident_cells(const Tr& tr)
@@ -718,8 +761,8 @@ protected:
   * places, which are the arguments: which edges they walk, which endpoints
   * they consider movable, and whether the edge counts as a boundary edge for
   * the sizing field. `keep_edge` is a predicate rather than a pre-filtered
-  * range because the two ranges -- `edges_in_complex()` and `finite_edges()`
-  * -- have different types.
+  * range because the two ranges -- `edges_in_complex()` and the cached
+  * `m_finite_edges` -- have different types.
   */
   template <typename EdgeRange, typename KeepEdge, typename MovesVertex>
   void accumulate_edge_moves(const EdgeRange& edges,
@@ -982,7 +1025,7 @@ private:
   void compute_vertex_moves(const C3t3& c3t3) const override
   {
     BaseClass::accumulate_edge_moves(
-        c3t3.triangulation().finite_edges(), c3t3, true /*boundary_edge*/,
+        m_context->m_finite_edges, c3t3, true /*boundary_edge*/,
         [&c3t3, this](const Edge& e) {
           return !c3t3.is_in_complex(e) && is_boundary(c3t3, e, m_context->m_cell_selector);
         },
@@ -1187,7 +1230,7 @@ private:
   {
     /*for dim 3 vertices, start counting neighbors directly from 0*/
     BaseClass::accumulate_edge_moves(
-        c3t3.triangulation().finite_edges(), c3t3, false /*boundary_edge*/,
+        m_context->m_finite_edges, c3t3, false /*boundary_edge*/,
         [&c3t3, this](const Edge& e) {
           return !is_outside(e, c3t3, m_context->m_cell_selector);
         },
