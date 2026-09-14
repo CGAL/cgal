@@ -246,7 +246,7 @@ public:
   }; /* end Arr_Bezier_curve_traits_2::X_monotone_curve_2 */
 
   /*! \class Trim_2
-   * A functor for triming curves.
+   * A functor for trimming curves.
    */
   class Trim_2 {
   public:

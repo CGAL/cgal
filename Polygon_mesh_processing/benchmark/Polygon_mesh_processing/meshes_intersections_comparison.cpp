@@ -65,7 +65,7 @@ void two_meshes_intersection(std::string fname1, std::string fname2){
   out.clear();
   PMP::experimental::AABB_two_trees_meshes_intersections(tm1, tm2, std::back_inserter(out), CGAL::parameters::concurrency_tag(CGAL::Parallel_tag()));
   std::cout << "number intersections: " << out.size() << std::endl;
-  std::cout << "Two tree AABB intersecton time: " << rt.time() << "sec (" << t.time() << "s all cpu)." << std::endl;
+  std::cout << "Two tree AABB intersection time: " << rt.time() << "sec (" << t.time() << "s all cpu)." << std::endl;
 
   t.stop(); rt.stop();
   t.reset(); rt.reset();
@@ -74,7 +74,7 @@ void two_meshes_intersection(std::string fname1, std::string fname2){
   out.clear();
   PMP::experimental::AABB_two_trees_meshes_intersections(tm1, tm2, std::back_inserter(out));
   std::cout << "number intersections: " << out.size() << std::endl;
-  std::cout << "Two tree AABB intersecton time (Sequential): " << rt.time() << "sec (" << t.time() << "s all cpu)." << std::endl;
+  std::cout << "Two tree AABB intersection time (Sequential): " << rt.time() << "sec (" << t.time() << "s all cpu)." << std::endl;
 
   t.stop(); rt.stop();
   t.reset(); rt.reset();
@@ -83,7 +83,7 @@ void two_meshes_intersection(std::string fname1, std::string fname2){
   out.clear();
   PMP::experimental::mixed_meshes_intersections(tm1, tm2, std::back_inserter(out), CGAL::parameters::concurrency_tag(CGAL::Parallel_tag()));
   std::cout << "number intersections: " << out.size() << std::endl;
-  std::cout << "Mixed intersecton time: " << rt.time() << "sec (" << t.time() << "s all cpu)." << std::endl;
+  std::cout << "Mixed intersection time: " << rt.time() << "sec (" << t.time() << "s all cpu)." << std::endl;
 
   t.stop(); rt.stop();
   t.reset(); rt.reset();
@@ -92,7 +92,7 @@ void two_meshes_intersection(std::string fname1, std::string fname2){
   out.clear();
   PMP::experimental::mixed_meshes_intersections(tm1, tm2, std::back_inserter(out));
   std::cout << "number intersections: " << out.size() << std::endl;
-  std::cout << "Mixed intersecton time (Sequential): " << rt.time() << "sec (" << t.time() << "s all cpu)." << std::endl;
+  std::cout << "Mixed intersection time (Sequential): " << rt.time() << "sec (" << t.time() << "s all cpu)." << std::endl;
 
   t.stop(); rt.stop();
   t.reset(); rt.reset();
@@ -101,7 +101,7 @@ void two_meshes_intersection(std::string fname1, std::string fname2){
   out.clear();
   PMP::AABB_meshes_intersections(tm1, tm2, std::back_inserter(out), CGAL::parameters::concurrency_tag(CGAL::Parallel_tag()));
   std::cout << "number intersections: " << out.size() << std::endl;
-  std::cout << "AABB intersecton time: " << rt.time() << "sec (" << t.time() << "s all cpu)." << std::endl;
+  std::cout << "AABB intersection time: " << rt.time() << "sec (" << t.time() << "s all cpu)." << std::endl;
   std::sort(out.begin(), out.end(), [](const auto &a, const auto &b){ return a.first<b.first || (a.first == b.first && a.second<b.second); });
 
   t.stop(); rt.stop();
@@ -111,7 +111,7 @@ void two_meshes_intersection(std::string fname1, std::string fname2){
   out.clear();
   PMP::AABB_meshes_intersections(tm1, tm2, std::back_inserter(out));
   std::cout << "number intersections: " << out.size() << std::endl;
-  std::cout << "AABB intersecton time (Sequential): " << rt.time() << "sec (" << t.time() << "s all cpu)." << std::endl;
+  std::cout << "AABB intersection time (Sequential): " << rt.time() << "sec (" << t.time() << "s all cpu)." << std::endl;
 
 
   t.stop(); rt.stop();
@@ -121,7 +121,7 @@ void two_meshes_intersection(std::string fname1, std::string fname2){
   out.clear();
   PMP::experimental::box_meshes_intersections(tm1, tm2, std::back_inserter(out), CGAL::parameters::concurrency_tag(CGAL::Parallel_tag()));
   std::cout << "number intersections: " << out.size() << std::endl;
-  std::cout << "Box intersecton time: " << rt.time() << "sec (" << t.time() << "s all cpu)." << std::endl;
+  std::cout << "Box intersection time: " << rt.time() << "sec (" << t.time() << "s all cpu)." << std::endl;
   std::sort(out.begin(), out.end(), [](const auto &a, const auto &b){ return a.first<b.first || (a.first == b.first && a.second<b.second); });
 
   t.stop(); rt.stop();
@@ -131,7 +131,7 @@ void two_meshes_intersection(std::string fname1, std::string fname2){
   out.clear();
   PMP::experimental::box_meshes_intersections(tm1, tm2, std::back_inserter(out));
   std::cout << "number intersections: " << out.size() << std::endl;
-  std::cout << "Box intersecton time (Sequential): " << rt.time() << "sec (" << t.time() << "s all cpu)." << std::endl;
+  std::cout << "Box intersection time (Sequential): " << rt.time() << "sec (" << t.time() << "s all cpu)." << std::endl;
 
   t.stop(); rt.stop();
   t.reset(); rt.reset();

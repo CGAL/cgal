@@ -4,6 +4,9 @@
 
 Release date: December 2026
 
+### [Linear Cell Complex](https://doc.cgal.org/6.3/Manual/packages.html#PkgLinearCellComplex)
+- added `tetrahedron_soup_to_lcc()` to import a tetrahedron soup into a linear cell complex.
+
 ### [2D and 3D Fast Intersection and Distance Computation (AABB Tree)](https://doc.cgal.org/6.3/Manual/packages.html#PkgAABBTree)
 - `CGAL::AABB_tree::build()` now accepts an optional `Concurrency_tag` template parameter (`CGAL::Sequential_tag` by default).
    When `CGAL::Parallel_tag` is specified, the tree construction is performed in parallel.
@@ -41,6 +44,13 @@ Release date: December 2026
   handle cases when some identical faces are shared between the input meshes. This leads to a significant speed up
   in those cases.
 
+### [Basic Viewer](https://doc.cgal.org/6.3/Manual/packages.html#PkgBasicViewer)
+
+- Added the possibility to color the faces by a value mapped to a color palette: the
+  distance to the clipping plane, the cell size, or a scalar value provided by the drawer.
+  A drawer can attach a value to each face through the new `Graphics_scene_options` functions
+  `is_face_valued` and `face_value` (with `face_value_name` for the legend). As an example, the
+  surface mesh drawer exposes the aspect ratio of each face.
 
 ## [Release 6.2](https://github.com/CGAL/cgal/releases/tag/v6.2)
 

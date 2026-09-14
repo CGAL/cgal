@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
   const int tubular_segments = argc > 7 ? std::atoi(argv[7]) : 120;
   const int radial_segments  = argc > 8 ? std::atoi(argv[8]) : 60;
 
-  const double exc = argc > 9 ? std::atof(argv[9]) : 1; // excentricity
+  const double exc = argc > 9 ? std::atof(argv[9]) : 1; // eccentricity
 
   std::vector<Point> vertices;
   std::vector<Triangle> faces;
