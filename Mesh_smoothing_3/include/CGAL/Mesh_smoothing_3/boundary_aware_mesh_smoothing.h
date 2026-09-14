@@ -117,7 +117,7 @@ Mesh_smoothing_3::Smoothing_status boundary_aware_mesh_smoothing  (
 
     const bool verbose =
         choose_parameter(get_parameter(np, internal_np::verbose), false);
-    const std::size_t max_iterations = // not documented, limitation used is metric evaluations
+    const unsigned int max_iterations = // not documented, limitation used is metric evaluations
         choose_parameter(get_parameter(np, internal_np::number_of_iterations), 5000u);
 
 

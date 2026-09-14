@@ -312,7 +312,7 @@ void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::
             compressed_index[i] = get_compressed_point_id(vertex_indices[i]);
             ++nb_tet_on_verts[compressed_index[i]];
         }
-        _cell_original_to_compressed.emplace(cell, _tetrahedra.size());
+        _cell_original_to_compressed.emplace(cell, static_cast<unsigned>(_tetrahedra.size()));
         _tetrahedra.push_back(compressed_index);
         _tetrahedron_refs.push_back(Mesh_smoothing_3_internal::Math_functions::transform_coordinates_to_gradient_base(cell_ref_eigen));
     }
