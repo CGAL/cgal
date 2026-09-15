@@ -60,7 +60,7 @@ namespace CGAL::internal::Hexmeshing
 
       other_face = lcc.beta(other_face, 3, 2);
       other_face_handle = lcc.attribute<2>(other_face);
-      auto other_vol_handle = lcc.attribute<3>(other_face);
+      // auto other_vol_handle = lcc.attribute<3>(other_face);
 
       // Exit if we fall back on the same face or outside of the domain
       if (this_face_handle == other_face_handle)

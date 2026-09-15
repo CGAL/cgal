@@ -325,6 +325,7 @@ namespace CGAL::internal::Hexmeshing
     }
 
     // Check if all found faces are unique, if they are not, this means that the LCC was not properly refined
+    CGAL_assertion_code(
     auto assertion = [&](){
       std::unordered_set<DartInfo::FaceAttrValue*> faces_set;
       for (Dart_descriptor face : arr){
@@ -334,7 +335,7 @@ namespace CGAL::internal::Hexmeshing
         CGAL_assertion(faces_set.count(&f->info()) == 0);
         faces_set.insert(&f->info());
       }
-    };
+    };)
 
     CGAL_postcondition_code(assertion());
 

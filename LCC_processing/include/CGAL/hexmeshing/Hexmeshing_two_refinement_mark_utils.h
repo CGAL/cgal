@@ -130,7 +130,7 @@ namespace CGAL::internal::Hexmeshing
   inline
   void __expand_0_cell_marking(LCC &lcc, RefinementData &rdata, std::queue<Dart_descriptor>& faces_to_check, Dart_descriptor &edge) {
     auto faces = plane_faces_around_node(lcc, rdata, edge);
-    int s = faces.size();
+    // int s = faces.size();
 
     for (Dart_descriptor face : faces){
       CGAL_assertion( lcc.attribute<2>(face) != nullptr);

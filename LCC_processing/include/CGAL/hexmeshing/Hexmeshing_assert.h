@@ -33,25 +33,24 @@ namespace CGAL::internal::Hexmeshing
    * @param lcc The Linear Cell Complex
    * @param array Variadic parameter containing arrays of dart descriptors to check
    */
-  template <uint i, typename... DartArray>
-  void assert_dart_attr_are_unique(LCC& lcc, DartArray... array)
+  template <uint i, typename DartArray>
+  void assert_dart_attr_are_unique(LCC& lcc, DartArray array)
   {
-    auto assertion = [&](){
-      std::unordered_map<void*, int> attributes;
-      ([&]{
-        int index = 0;
-        for (auto dart : array){
-          auto attr = lcc.attribute<i>(dart);
-          CGAL_assertion_msg(attr != nullptr, "assert_dart_attr_are_unique, nullptr found in arrays ");
-          auto ptr = &attr->info();
-          CGAL_assertion_msg(attributes.count(ptr) == 0, "assert_dart_attr_are_unique, duplicate attribute found in arrays");
-          attributes[ptr] = index;
-          index++;
-        }
-      }(),...);
-    };
-
-    CGAL_assertion_code(assertion());
+#ifndef CGAL_NDEBUG
+    std::unordered_map<void*, int> attributes;
+    int index = 0;
+    for (auto dart : array){
+      auto attr = lcc.attribute<i>(dart);
+      CGAL_assertion_msg(attr != nullptr, "assert_dart_attr_are_unique, nullptr found in arrays ");
+      auto ptr = &attr->info();
+      CGAL_assertion_msg(attributes.count(ptr) == 0, "assert_dart_attr_are_unique, duplicate attribute found in arrays");
+      attributes[ptr] = index;
+      index++;
+    }
+#else
+    CGAL_USE(lcc);
+    CGAL_USE(array);
+#endif
   }
 
   /**
@@ -69,12 +68,13 @@ namespace CGAL::internal::Hexmeshing
   template <typename HexData>
   void assert_faces_of_plane_valid(HexData& hdata, RefinementData& rdata)
   {
+#ifndef CGAL_NDEBUG
     LCC& lcc = hdata.lcc;
     assert_dart_attr_are_unique<2>(hdata.lcc, rdata.faces_of_plane);
 
     auto assertion = [&](){
       for (Dart_descriptor face : rdata.faces_of_plane){
-        auto& attr = lcc.attribute<2>(face)->info();
+        CGAL_assertion_code(auto& attr = lcc.attribute<2>(face)->info();)
         auto nodes = lcc.darts_of_cell<2, 0>(face);
         int marked = 0;
         for (auto it = nodes.begin(), end = nodes.end(); it != end; it++){
@@ -85,6 +85,10 @@ namespace CGAL::internal::Hexmeshing
     };
 
     CGAL_assertion_code(assertion());
+#else
+    CGAL_USE(hdata);
+    CGAL_USE(rdata);
+#endif
   }
 
   /**
@@ -101,15 +105,15 @@ namespace CGAL::internal::Hexmeshing
   inline
   void assert_all_faces_are_quadrilateral(LCC &lcc)
   {
-    auto assertion = [&](){
-      auto iterator = lcc.one_dart_per_cell<2>();
-      for (auto it = iterator.begin(); it != iterator.end(); it++){
-        auto edges = lcc.darts_of_cell<2, 0>(it);
-        CGAL_assertion_msg(edges.size() == 4, "assert_all_faces_are_quadrilateral: Found a non quadrilateral face");
-      }
-    };
-
-    CGAL_assertion_code(assertion());
+#ifndef CGAL_NDEBUG
+    auto iterator = lcc.one_dart_per_cell<2>();
+    for (auto it = iterator.begin(); it != iterator.end(); it++){
+      auto edges = lcc.darts_of_cell<2, 0>(it);
+      CGAL_assertion_msg(edges.size() == 4, "assert_all_faces_are_quadrilateral: Found a non quadrilateral face");
+    }
+#else
+    CGAL_USE(lcc);
+#endif
   }
 
   /**
@@ -126,15 +130,15 @@ namespace CGAL::internal::Hexmeshing
   inline
   void assert_all_volumes_are_hexes(LCC &lcc)
   {
-    auto assertion = [&](){
-      auto iterator = lcc.one_dart_per_cell<3>();
-      for (auto it = iterator.begin(); it != iterator.end(); it++){
-        auto edges = lcc.darts_of_cell<3, 0>(it);
-        CGAL_assertion_msg(edges.size() == (4 * 6), "assert_all_volumes_are_hexes: Found a non hexahedral volume");
-      }
-    };
-
-    CGAL_assertion_code(assertion());
+#ifndef CGAL_NDEBUG
+    auto iterator = lcc.one_dart_per_cell<3>();
+    for (auto it = iterator.begin(); it != iterator.end(); it++){
+      auto edges = lcc.darts_of_cell<3, 0>(it);
+      CGAL_assertion_msg(edges.size() == (4 * 6), "assert_all_volumes_are_hexes: Found a non hexahedral volume");
+    }
+#else
+    CGAL_USE(lcc);
+#endif
   }
 }
 

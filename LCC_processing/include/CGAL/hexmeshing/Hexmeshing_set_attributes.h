@@ -162,7 +162,7 @@ namespace CGAL::internal::Hexmeshing
       }
     }
 
-    auto grad_frac = mat.ldlt().solve(vec);
+    Eigen::Vector3d grad_frac = mat.ldlt().solve(vec);
     lcc.attribute<3>(dart)->info().gradient = Vector(grad_frac[0], grad_frac[1], grad_frac[2]);
   }
 }

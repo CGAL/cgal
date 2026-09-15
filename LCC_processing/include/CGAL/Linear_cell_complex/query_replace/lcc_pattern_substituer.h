@@ -370,7 +370,7 @@ public:
   }
   ////////////////////////////////////////////////////////////////////////////////
   bool replace_one_volume_from_signature(LCC& lcc,
-                                         Dart_descriptor dh1,
+                                         Dart_descriptor /* dh1 */,
                                          Signature& signature,
                                          Dart_descriptor dh2)
   {
@@ -437,7 +437,7 @@ public:
   }
   ////////////////////////////////////////////////////////////////////////////////
   bool replace_one_face_from_signature(LCC& lcc,
-      Dart_descriptor dh1,
+      Dart_descriptor /* dh1 */,
       Signature& signature,
       Dart_descriptor dh2)
   {

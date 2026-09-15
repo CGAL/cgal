@@ -118,7 +118,7 @@ public:
         PlaneCC& plane_cc = plane_set[plane_id];
         CCIdToFace non_valid_face;
 
-        for (int cc_id = 0; cc_id < plane_cc.size(); cc_id++){
+        for (std::size_t cc_id = 0; cc_id < plane_cc.size(); cc_id++){
           Dart_descriptor& dart = plane_cc[cc_id];
 
           if (!valid_face(dart, p, cc_id)){
@@ -200,7 +200,7 @@ public:
         nvf_plane_set.erase(plane_it);
       }
     }
-
+#ifndef CGAL_NDEBUG
     auto all_valid = [&](){
       for (int p = 0; p < 3; p++){
         for (auto& non_valid : plane_non_valid_faces[p]){
@@ -210,17 +210,17 @@ public:
 
       for (int p = 0; p < 3; p++){
         auto& plane_set = first_face_of_planes[p];
-        for (int plane_id = 0; plane_id < plane_set.size(); plane_id++){
+        for (std::size_t plane_id = 0; plane_id < plane_set.size(); plane_id++){
           auto& plane_cc = plane_set[plane_id];
-          for (int cc_id = 0; cc_id < plane_cc.size(); cc_id++){
+          for (std::size_t cc_id = 0; cc_id < plane_cc.size(); cc_id++){
             auto& face = plane_cc[cc_id];
-            auto face_attr = lcc.attribute<2>(face);
+            // auto face_attr = lcc.attribute<2>(face);
             CGAL_assertion_msg(valid_face(face, p, cc_id), "Hexmeshing_for_linear_cell_complex::fix_planes_sets, face was not valid after fix");
           }
         }
       }
     };
-
+#endif
     CGAL_assertion_code(all_valid());
   }
 

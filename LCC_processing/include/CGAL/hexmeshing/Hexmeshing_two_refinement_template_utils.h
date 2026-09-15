@@ -116,7 +116,6 @@ namespace CGAL::internal::Hexmeshing
       //Utile uniquement si les faces marqués ne sont pas 100% templatés
       auto edges_range = lcc.darts_of_cell<2, 1>(dart);
       int propagation = 0, beta3_propagation = 0;
-      bool has_beta3 = !lcc.is_free<3>(dart);
 
       std::vector<Dart_descriptor> edges_vec;
       for (auto it = edges_range.begin(), end = edges_range.end(); it != end; it++){
@@ -125,7 +124,7 @@ namespace CGAL::internal::Hexmeshing
         if (lcc.is_marked(lcc.beta<3>(it), hdata.propagation_face_mark)) beta3_propagation++;
       }
 
-      auto& substituer = hdata.ext->regular_templates;
+      // auto& substituer = hdata.ext->regular_templates;
       Signature signature;
       Dart_descriptor f_signature_start = fsignature_of_face(lcc, dart, hdata.template_mark, signature);
 
