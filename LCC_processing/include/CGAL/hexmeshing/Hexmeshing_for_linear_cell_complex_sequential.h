@@ -44,11 +44,10 @@ namespace CGAL::internal
  * including the Linear Cell Complex (LCC), grid configuration, and various
  * markers used during mesh generation and refinement.
  */
-template<typename TriangleMesh, typename VPM>
+template<typename Kernel, typename TriangleMesh, typename VPM>
 class Hexmeshing_for_linear_cell_complex
 {
 public:
-  using Kernel = Hexmeshing::Kernel;
   using LCC = Hexmeshing::LCC;
   using Dart_descriptor = Hexmeshing::Dart_descriptor;
   using DartInfo = Hexmeshing::DartInfo;
@@ -68,8 +67,8 @@ public:
     Pattern_substituer<LCC> partial_templates;   ///< Pattern substituter for partial hexahedral templates
   };
 
-  Mesh_data_for_hexmeshing<TriangleMesh, VPM> mesh;
-  using Tree=typename Mesh_data_for_hexmeshing<TriangleMesh, VPM>::Tree;
+  Mesh_data_for_hexmeshing<Kernel, TriangleMesh, VPM> mesh;
+  using Tree=typename Mesh_data_for_hexmeshing<Kernel, TriangleMesh, VPM>::Tree;
 
   // Required initialization
   Hexmeshing::Grid grid;                  ///< Grid configuration defining the mesh structure
