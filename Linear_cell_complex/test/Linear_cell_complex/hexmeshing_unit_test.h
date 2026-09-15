@@ -1,4 +1,4 @@
-#include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
+#include <CGAL/Hexmeshing/LCC_items.h>
 #include <iostream>
 
 class TestFramework {

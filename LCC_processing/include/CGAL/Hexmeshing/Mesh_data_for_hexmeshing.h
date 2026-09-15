@@ -19,7 +19,7 @@
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_tree.h>
-#include <CGAL/hexmeshing/Hexmeshing_grid.h>
+#include <CGAL/Hexmeshing/grid.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Side_of_triangle_mesh.h>
 #include <cstdlib>

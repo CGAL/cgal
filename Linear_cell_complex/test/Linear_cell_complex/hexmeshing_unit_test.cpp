@@ -1,7 +1,7 @@
-#include <CGAL/hexmeshing/Hexmeshing_set_attributes.h>
-#include <CGAL/hexmeshing/Hexmeshing_laplacian_smoothing.h>
-#include <CGAL/hexmeshing/Hexmeshing_move_points_onto_mesh.h>
-#include <CGAL/hexmeshing/Hexmeshing_resolve_non_manifold_case.h>
+#include <CGAL/Hexmeshing/set_attributes.h>
+#include <CGAL/Hexmeshing/laplacian_smoothing.h>
+#include <CGAL/Hexmeshing/move_points_onto_mesh.h>
+#include <CGAL/Hexmeshing/resolve_non_manifold_case.h>
 
 #include "lcc_jacobian.h"
 #include "hexmeshing_unit_test.h"

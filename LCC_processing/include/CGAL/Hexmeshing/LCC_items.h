@@ -19,7 +19,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Linear_cell_complex_traits.h>
-#include <CGAL/hexmeshing/Hexmeshing_generic_point.h>
+#include <CGAL/Hexmeshing/generic_point.h>
 
 namespace CGAL::internal::Hexmeshing
 {

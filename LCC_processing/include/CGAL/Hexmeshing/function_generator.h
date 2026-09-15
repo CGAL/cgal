@@ -16,10 +16,10 @@
 
 #include <CGAL/license/LCC_processing.h>
 
-#include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
-#include <CGAL/hexmeshing/Hexmeshing_AABBTree_tools.h>
-#include <CGAL/hexmeshing/Hexmeshing_set_attributes.h>
-#include <CGAL/hexmeshing/Hexmeshing_function_alias.h>
+#include <CGAL/Hexmeshing/LCC_items.h>
+#include <CGAL/Hexmeshing/AABBTree_tools.h>
+#include <CGAL/Hexmeshing/set_attributes.h>
+#include <CGAL/Hexmeshing/function_alias.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <functional>
 
