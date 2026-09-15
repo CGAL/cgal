@@ -63,7 +63,7 @@ namespace CGAL::internal::Hexmeshing
    * @pre HexData is HexMeshingData or ProcessData
    */
   template <typename HexData>
-  void two_refinement_algorithm(HexData& hdata, MarkingFunction& cellIdentifier, int nb_levels, int thread_id = 0){
+  void two_refinement_algorithm(HexData& hdata, MarkingFunction& cellIdentifier, int nb_levels, int /* thread_id */ = 0){
     // static_CGAL_assertion(std::is_same_v<HexData, HexMeshingData> or std::is_same_v<HexData, ProcessData>);
     // static_CGAL_assertion(std::is_base_of_v<HexMeshingData, HexData>);
 
@@ -98,7 +98,8 @@ namespace CGAL::internal::Hexmeshing
 
         get_cells_to_refine(hdata, rdata, (PlaneNormal)p);
 
-        assert_dart_attr_are_unique<3>(lcc, rdata.volumes_to_refine, rdata.partial_templates_to_refine);
+        assert_dart_attr_are_unique<3>(lcc, rdata.volumes_to_refine);
+        assert_dart_attr_are_unique<3>(lcc, rdata.partial_templates_to_refine);
 
         // Refinement stage
         int total_sub = 0;

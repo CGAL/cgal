@@ -106,7 +106,7 @@ bool test_set_gradient_at_dual_node<1>() {
       }
     }
 
-    std::array<double, 3> answer;
+    std::array<double, 3> answer = {0., 0., 0.};
     if(ch == std::array<int, 3>({0, 0, 0})) {
       answer = {0., 0., 0.};
     }
@@ -438,9 +438,6 @@ bool test_move_points_onto_mesh<2>() {
     if((p.x() < xy_size and p.y() < xy_size) and (q.x() < xy_size and q.y() < xy_size)) {
       return false;
     }
-
-    Vector p_vec = p-CGAL::ORIGIN;
-    Vector q_vec = q-CGAL::ORIGIN;
 
     if(abs(p.x()-q.x()) > 0.5) {
       face_attr.intersection = {xy_size, p.y(), p.z()};
@@ -950,7 +947,7 @@ bool test_move_points_onto_mesh_with_volume_fraction<1>() {
   set_plane(lcc, xyz_sum, 100., no_mark);
 
   auto volumes = lcc.one_dart_per_cell<3>();
-  double frac1, frac2;
+  double frac1=-1, frac2=-1;
   for(auto volume = volumes.begin(); volume != volumes.end(); volume++) {
     auto &vol_attr = lcc.attribute<3>(volume)->info();
     if(is_approximately_equal_Point(vol_attr.centroid, {1.5, 2.5, 0.5})) {
@@ -962,10 +959,13 @@ bool test_move_points_onto_mesh_with_volume_fraction<1>() {
   }
 
   move_points_onto_mesh_with_volume_fraction(lcc, move_mark, inner_mark);
+/*
   for(auto volume = volumes.begin(); volume != volumes.end(); volume++) {
     auto &vol_attr = lcc.attribute<3>(volume)->info();
   }
+*/
 
+  assert(frac2!=-1 && frac1!=-1);
   auto vertices = lcc.one_dart_per_cell<0>();
   int count = 0;
   double coord_sum = int(xyz_sum) - 0.5 + (0.5-frac1)/(frac2-frac1);

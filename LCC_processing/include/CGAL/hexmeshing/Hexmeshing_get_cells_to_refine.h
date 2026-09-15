@@ -457,7 +457,7 @@ namespace CGAL::internal::Hexmeshing
     LCC& lcc = hdata.lcc;
 
     // No additionnal volumes should be found on the first iteration
-    CGAL_assertion(rdata.iteration != 0 || rdata.iteration == 0 && rdata.additionnal_volumes_found.size() == 0);
+    CGAL_assertion(rdata.iteration != 0 || (rdata.iteration == 0 && rdata.additionnal_volumes_found.size() == 0));
 
     for (Dart_descriptor initial_edge : rdata.additionnal_volumes_found)
     {
@@ -532,7 +532,7 @@ namespace CGAL::internal::Hexmeshing
     PlaneSet& plane_set = hdata.first_face_of_planes[iterationPlane];
 
     // Explore all even planes
-    for (int i = 1; i < plane_set.size(); i += 2)
+    for (std::size_t i = 1; i < plane_set.size(); i += 2)
     {
       std::queue<Dart_descriptor> to_explore;
 

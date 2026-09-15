@@ -21,20 +21,20 @@
 namespace CGAL::internal::Hexmeshing
 {
   template <typename HexData>
-  void thread_number_vertex_in_edge(HexData& hdata,
-    Dart_descriptor node, Dart_descriptor extremity0, Dart_descriptor extremity1){}
+  void thread_number_vertex_in_edge(HexData& /* hdata */,
+    Dart_descriptor /* node */, Dart_descriptor /* extremity0 */, Dart_descriptor /* extremity1 */){}
 
   template <typename HexData>
-  void thread_number_vertex_in_1t_face(HexData& hdata, Dart_descriptor node) {}
+  void thread_number_vertex_in_1t_face(HexData& /* hdata */, Dart_descriptor /* node */) {}
 
   template <typename HexData>
-  void thread_number_vertex_in_1t_vol(HexData& hdata, Dart_descriptor v_signature_start) {}
+  void thread_number_vertex_in_1t_vol(HexData& /* hdata */, Dart_descriptor /* v_signature_start */) {}
 
   template <typename HexData>
-  void thread_join_3_template_vertex__pair(HexData& hdata, Dart_descriptor edge) {}
+  void thread_join_3_template_vertex__pair(HexData& /* hdata */, Dart_descriptor /* edge */) {}
 
   template <typename HexData>
-  void thread_join_3_template_vertex__pairpair(HexData& hdata, Dart_descriptor edge) {}
+  void thread_join_3_template_vertex__pairpair(HexData& /* hdata */, Dart_descriptor /* edge */) {}
 
   template <typename HexData>
   void thread_communicate_marked_nodes(HexData&, RefinementData&, size_type) {}
@@ -43,7 +43,7 @@ namespace CGAL::internal::Hexmeshing
   void thread_communicate_cells_id_and_3t(HexData&, RefinementData&){}
 
   template <typename HexData>
-  void thread_remove_ghosts(HexData& hdata) {}
+  void thread_remove_ghosts(HexData& /* hdata */) {}
 }
 
 #endif

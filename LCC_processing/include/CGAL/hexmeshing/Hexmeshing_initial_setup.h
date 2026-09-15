@@ -56,7 +56,8 @@ namespace CGAL::internal::Hexmeshing
   {
     LCC& lcc = hdata.lcc;
 
-    auto __first_plane = [](LCC& lcc, PlaneNormal plane){
+    auto __first_plane = [](LCC& lcc, PlaneNormal plane)
+    {
       switch (plane){
         case X: return lcc.beta(lcc.first_dart(), 0, 2);
         case Y: return lcc.beta(lcc.first_dart(), 2, 1);
@@ -68,7 +69,7 @@ namespace CGAL::internal::Hexmeshing
       return lcc.null_dart_descriptor;
     };
 
-    auto __next_plane = [](LCC& lcc, Dart_descriptor start_plane, PlaneNormal plane){
+    auto __next_plane = [](LCC& lcc, Dart_descriptor start_plane, PlaneNormal /* plane */){
       return lcc.beta(start_plane, 1, 2, 3, 2, 1);
     };
 
@@ -95,9 +96,9 @@ namespace CGAL::internal::Hexmeshing
     // To be able to iterate properly at later stages
     for (int p = 0; p < 3; p++){
       auto& plane_set = hdata.first_face_of_planes[p];
-      for (int i = 0; i < plane_set.size(); i++) {
+      for (std::size_t i = 0; i < plane_set.size(); i++) {
         plane_for_each_face(lcc, plane_set[i],
-          [&](Dart_descriptor face, auto& edges){
+          [&](Dart_descriptor face, auto& /* edges */){
             auto& face_attr = get_or_create_attr<2>(lcc, face)->info();
             face_attr.plane[p] = true;
             face_attr.plane_id = i;

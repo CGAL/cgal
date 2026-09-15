@@ -82,7 +82,6 @@ namespace CGAL::internal::Hexmeshing
     std::array<std::vector<int>, 256> resolve_templates = {};
     for(int i = 0; i < 7; i++) {
       const std::vector<int> &templates = seven_templates[i];
-      int template_size = templates.size();
       for(auto temp: templates) {
         for(int signal_num = 1; signal_num <= 8; signal_num++) {
           for(int signal = (1<<signal_num)-1; signal < (1<<8);) {

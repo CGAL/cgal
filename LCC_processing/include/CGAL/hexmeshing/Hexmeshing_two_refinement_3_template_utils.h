@@ -36,14 +36,14 @@ namespace CGAL::internal::Hexmeshing
   inline
   Dart_descriptor find_3_template_origin(LCC& lcc, Dart_descriptor marked_face, size_type template_mark) {
 
-    auto _edges_count = lcc.darts_of_cell<2,1>(marked_face).size();
+    CGAL_assertion_code(auto _edges_count = (lcc.darts_of_cell<2,1>(marked_face).size());)
     CGAL_assertion(_edges_count == 6);
 
     Dart_descriptor dart = marked_face;
 
     // Get the origin dart : Find the two unmarked node on the face
     // since the 3 template is created by adjacent two 2-templates
-    bool found = false;
+    CGAL_assertion_code(bool found = false;)
     for (int i = 0; i < 6; i++)
     {
       if (!lcc.is_marked(dart, template_mark)
@@ -54,7 +54,7 @@ namespace CGAL::internal::Hexmeshing
         CGAL_assertion(lcc.is_marked(lcc.beta(dart, 1, 1, 1, 1), template_mark));
         CGAL_assertion(lcc.is_marked(lcc.beta(dart, 1, 1, 1, 1, 1), template_mark));
         CGAL_assertion(lcc.beta(dart, 1, 1, 1, 1, 1, 1) == dart);
-        found = true;
+        CGAL_assertion_code(found = true;)
         break;
       }
 
@@ -90,9 +90,6 @@ namespace CGAL::internal::Hexmeshing
   {
     // Transform nearby 3 templates into two 4 templates
     // if they both share the unmarked node
-
-    auto &face_attr = lcc.attribute<2>(face)->info();
-
     auto edges = lcc.darts_of_cell<2, 1>(face);
 
     // find the unmarked edge;
@@ -237,7 +234,8 @@ namespace CGAL::internal::Hexmeshing
     for (auto origin_dart : rdata.partial_templates_to_refine){
       LCC& lcc = hdata.lcc;
 
-      int nb_edges = lcc.darts_of_cell<2,1>(origin_dart).size();
+      CGAL_assertion_code(int nb_edges =)
+      lcc.darts_of_cell<2,1>(origin_dart).size();
       CGAL_assertion(nb_edges == 3);
 
       Dart_descriptor vol2_origin_dart = lcc.beta(origin_dart, 3);
@@ -312,13 +310,15 @@ namespace CGAL::internal::Hexmeshing
       Dart_descriptor upper_d2 = lcc.beta(origin_dart, 1, 1);
 
       // Create the missing edge to perform the query_replace
-      Dart_descriptor upper_edge = lcc.insert_cell_1_in_cell_2(upper_d1, upper_d2);
+      /* Dart_descriptor upper_edge =  */lcc.insert_cell_1_in_cell_2(upper_d1, upper_d2);
 
-      size_type p = hdata.ext->partial_templates.query_replace_one_volume(lcc, marked_face, hdata.template_mark);
+      CGAL_assertion_code(size_type p =)
+      hdata.ext->partial_templates.query_replace_one_volume(lcc, marked_face, hdata.template_mark);
       CGAL_assertion(p == 0);
 
       // Also replace the other connected volume that is 3 template
-      p = hdata.ext->partial_templates.query_replace_one_volume(lcc, lcc.beta(marked_face, 3), hdata.template_mark);
+      CGAL_assertion_code(p = )
+      hdata.ext->partial_templates.query_replace_one_volume(lcc, lcc.beta(marked_face, 3), hdata.template_mark);
       CGAL_assertion(p == 0);
     }
   }

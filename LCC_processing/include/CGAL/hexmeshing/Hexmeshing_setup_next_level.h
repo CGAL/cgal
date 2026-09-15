@@ -93,8 +93,8 @@ namespace CGAL::internal::Hexmeshing
         current_info.type = VolumeType::IDENTIFIED;
     }
 
-    size_type size_face_before = lcc.attributes<2>().size();
-    size_type size_vol_before = lcc.attributes<3>().size();
+    CGAL_assertion_code(size_type size_face_before = lcc.attributes<2>().size();)
+    CGAL_assertion_code(size_type size_vol_before = lcc.attributes<3>().size();)
 
     for (auto attr_desc : faces_to_delete){
       CGAL_assertion(lcc.is_attribute_used<2>(attr_desc));
@@ -168,7 +168,7 @@ namespace CGAL::internal::Hexmeshing
                             Union_find<Dart_descriptor>& even_union_find,
                             Dart_descriptor face,
                             PlaneNormal planeIteration,
-                            size_t plane_id,
+                            size_t /* plane_id */,
                             int edge_mark, int face_mark){
     LCC& lcc = hdata.lcc;
     auto vol_handle = lcc.attribute<3>(face);
@@ -244,7 +244,7 @@ namespace CGAL::internal::Hexmeshing
 
     if (identified or beta3_identified){
       auto face_attr = lcc.attribute<2>(face);
-      auto& face_info = face_attr->info();
+      // auto& face_info = face_attr->info();
       auto cc_id = odd_cc_id != nullptr ? odd_cc_id : odd_union_find.make_set(face);
       odd_face_to_handle[face_attr] = cc_id;
     }
@@ -260,7 +260,7 @@ namespace CGAL::internal::Hexmeshing
       CGAL_assertion(!lcc.is_free<3>(back_face));
 
       auto back_face_attr = get_or_create_attr<2>(lcc, back_face);
-      auto& back_face_info = back_face_attr->info();
+      // auto& back_face_info = back_face_attr->info();
       auto cc_id = even_cc_id != nullptr ? even_cc_id : even_union_find.make_set(back_face);
       even_face_to_handle[back_face_attr] = cc_id;
     }
@@ -322,6 +322,7 @@ namespace CGAL::internal::Hexmeshing
     size_type edge_mark = lcc.get_new_mark();
     size_type face_mark = lcc.get_new_mark();
 
+/*
     const auto find_next_plane_id = [&](Dart_descriptor face, char axis) -> std::optional<size_t>{
       if (face == lcc.null_dart_descriptor) return {};
       face = lcc.beta(face, 2, 1, 1, 2);
@@ -347,14 +348,14 @@ namespace CGAL::internal::Hexmeshing
 
       return {};
     };
-
+*/
     const auto create_plane = [&](char plane_normal, size_t plane_id, const UF_Partition& partition,
         const Union_find& uf, const FaceToHandle& face_to_handle) -> std::vector<Dart_descriptor>
     {
       std::vector<Dart_descriptor> plane_cc;
       std::unordered_map<Union_find::pointer, size_t> ptr_to_id;
 
-      for (int i = 0; i < partition.size(); i++){
+      for (std::size_t i = 0; i < partition.size(); i++){
         ptr_to_id[partition[i].ptr()] = i;
       }
 
@@ -382,7 +383,7 @@ namespace CGAL::internal::Hexmeshing
       PlaneSet& old_plane_set = hdata.first_face_of_planes[p];
       PlaneSet new_plane_set;
 
-      for (int pid = 0; pid < old_plane_set.size(); pid++)
+      for (std::size_t pid = 0; pid < old_plane_set.size(); pid++)
       {
         std::queue<Dart_descriptor> to_explore;
         Union_find odd_union_find, even_union_find;
