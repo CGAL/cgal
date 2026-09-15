@@ -9,6 +9,7 @@
 #include <iostream>
 #include <cassert>
 
+using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
 
 // A modifier creating a icosahedron with the incremental builder.
 template <class HDS>
@@ -149,7 +150,8 @@ LCC create_refined_test_mesh(int level = 1) {
 
   Polyhedron poly = create_polyhedron<FACE>();
 
-  CGAL::internal::Hexmeshing_for_linear_cell_complex hdata(poly, get_const_property_map(CGAL::vertex_point, poly), grid);
+  using VPM  = boost::property_map<Polyhedron, CGAL::vertex_point_t>::const_type;
+  CGAL::internal::Hexmeshing_for_linear_cell_complex<Kernel, Polyhedron, VPM> hdata(poly, get_const_property_map(CGAL::vertex_point, poly), grid);
 
   hdata.two_refinement(
     level,
@@ -219,7 +221,7 @@ void render_meshes_at_each_phase() {
   } else {
     Polyhedron poly = create_polyhedron<FACE>();
     using VPM  = boost::property_map<Polyhedron, CGAL::vertex_point_t>::const_type;
-    using MDFHM=CGAL::internal::Mesh_data_for_hexmeshing<Polyhedron, VPM>;
+    using MDFHM=CGAL::internal::Mesh_data_for_hexmeshing<Kernel, Polyhedron, VPM>;
     MDFHM mesh(poly, get_const_property_map(CGAL::vertex_point, poly), 10);
     auto cellIdentifier = is_volume_intersecting_poly(*mesh.get_tree_pointer());
     auto decideFunc = is_inner_point<Polyhedron, VPM, typename MDFHM::Tree>(*mesh.get_tree_pointer());

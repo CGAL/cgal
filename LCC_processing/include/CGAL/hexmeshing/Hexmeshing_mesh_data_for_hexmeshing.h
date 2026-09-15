@@ -26,12 +26,11 @@
 
 namespace CGAL::internal
 {
-  template<typename TriangleMesh, typename VPM>
+  template<typename Kernel, typename TriangleMesh, typename VPM>
   class Mesh_data_for_hexmeshing
   {
   public:
     using Point=typename TriangleMesh::Point;
-    using Kernel=typename CGAL::Kernel_traits<Point>::Kernel;
     using FT=typename Kernel::FT;
     using Vector=typename Kernel::Vector_3;
     using Triangle=typename Kernel::Triangle_3;
