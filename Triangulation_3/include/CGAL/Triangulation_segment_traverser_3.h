@@ -133,17 +133,12 @@ public:
     template < class Tr2, class Inc2 >
     struct Rebind { typedef Triangulation_segment_cell_iterator_3<Tr2,Inc2>  Other; };
 
-#if CGAL_DEBUG_TRIANGULATION_SEGMENT_TRAVERSER_3
     static auto display_vert(Vertex_handle v)
     {
-      std::stringstream os;
-      os.precision(17);
-      if(v->time_stamp() == 0) {
-        os << "inf";
-      } else {
-        os << '#' << v->time_stamp() << "=(" << v->point() << ")";
-      }
-      return os.str();
+      return IO::oformat([v](std::ostream& out) -> auto&
+      {
+        return out << with_point(v);
+      }, IO_manip_tag{});
     };
 
     static auto display_lt(Locate_type lt) {
@@ -180,7 +175,6 @@ public:
       os << "  prev: " << debug_simplex(_prev) << "\n  cur: " << debug_simplex(_cur);
       return os.str();
     }
-#endif // CGAL_DEBUG_TRIANGULATION_SEGMENT_TRAVERSER_3
 
 private:
     typedef Segment_cell_iterator                       SCI;
@@ -491,6 +485,13 @@ private:
         CGAL_precondition( j>=0 && j<=3 );
         CGAL_precondition( i != j );
         return ( i==0 || j==0 ) ? i+j-1 : i+j;
+    }
+
+    inline std::pair<int, int> edgeVertices( int index ) const {
+        CGAL_precondition( index>=0 && index<6 );
+        return index < 3
+          ? std::make_pair( 0, index+1 )
+          : std::make_pair( index-2, index-1 );
     }
 
     bool have_same_entry(const Simplex& s1, const Simplex& s2) const;

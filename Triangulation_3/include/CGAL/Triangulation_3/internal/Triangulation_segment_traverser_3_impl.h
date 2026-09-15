@@ -14,7 +14,23 @@
 
 #include <CGAL/license/Triangulation_3.h>
 
+#include <CGAL/config.h>
+
 #include <CGAL/assertions.h>
+#include <CGAL/enum.h>
+#include <CGAL/Triangulation_segment_traverser_3.h>
+#include <CGAL/use.h>
+#include <CGAL/utility.h>
+
+#include <array>
+#include <cstddef>
+#include <utility>
+
+#if CGAL_DEBUG_TRIANGULATION_SEGMENT_TRAVERSER_3
+#  include <ios>
+#  include <iostream>
+#  include <CGAL/Intersections_3/Bbox_3_Ray_3.h>
+#endif
 
 namespace CGAL {
 
@@ -257,8 +273,33 @@ walk_to_next() {
                 walk_to_next_3_inf( inf );
             else
             {
+#if CGAL_DEBUG_TRIANGULATION_SEGMENT_TRAVERSER_3
+              std::cerr << "Starting walk_to_next_3 loop with backup: " << debug_simplex(_cur) << '\n';
+              std::cerr << "source: " << with_point(_s_vertex) << '\n';
+              if(_s_vertex == Vertex_handle())
+                std::cerr << "  _source is " << _source << '\n';
+              std::cerr << "target: " << with_point(_t_vertex) << '\n';
+              if(_t_vertex == Vertex_handle())
+                std::cerr << "  _target is " << _target << '\n';
+              std::size_t counter = 0;
+#endif
               const Simplex backup = _cur;
               do {
+#if CGAL_DEBUG_TRIANGULATION_SEGMENT_TRAVERSER_3
+                ++counter;
+                std::cerr << debug_iterator() << '\n';
+                if(counter >= _tr->number_of_cells())
+                {
+                  std::cerr << "Exceeded maximum number of cells in walk_to_next_3 loop.\n";
+                  std::cerr << "_s_vertex:\n" << _tr->point(_s_vertex) << '\n';
+                  std::cerr << "_t_vertex:\n" << _tr->point(_t_vertex) << '\n';
+                  std::ofstream dump("dump.binary.cgal", std::ios::binary);
+                  IO::set_binary_mode(dump);
+                  dump << *_tr;
+                  dump.close();
+                }
+                CGAL_assertion(counter < _tr->number_of_cells());
+#endif
                 std::pair<Simplex, Simplex> p = walk_to_next_3(_prev, _cur);
                 _prev = p.first;
                 _cur = p.second;
@@ -335,6 +376,13 @@ std::pair<typename Triangulation_segment_cell_iterator_3<Tr, Inc>::Simplex,
 Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& prev,
                                                               const Simplex& cur) const
 {
+  auto returned = [](std::pair<Simplex, Simplex> p) {
+#if CGAL_DEBUG_TRIANGULATION_SEGMENT_TRAVERSER_3
+    std::cerr << "walk_to_next_3 returns the pair:\n  " << debug_simplex(p.first)
+              << "\n  " << debug_simplex(p.second) << '\n';
+#endif
+    return p;
+  };
   const auto cur_cell = cur.cell;
   std::array<const Point*, 4> vert = {&(cur_cell->vertex(0)->point()), &(cur_cell->vertex(1)->point()),
                                       &(cur_cell->vertex(2)->point()), &(cur_cell->vertex(3)->point())};
@@ -463,7 +511,7 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& pre
     }
 
     if(!degenerate) {
-        return {prev_after_walk, cur_after_walk};
+        return returned({prev_after_walk, cur_after_walk});
     }
   }
 
@@ -475,6 +523,15 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& pre
   int pos = 0;
   // We keep track of which orientations are calculated.
   bool calc[6] = {false, false, false, false, false, false};
+#if CGAL_DEBUG_TRIANGULATION_SEGMENT_TRAVERSER_3
+  for(int li = 0; li < 4; ++li)
+  {
+    auto vertices = _tr->vertices(Facet{cur_cell, li});
+    std::cerr << "o[" << li
+              << "] = " << _tr->orientation(vertices[0]->point(), vertices[1]->point(), vertices[2]->point(), _target)
+              << '\n';
+  }
+#endif
 
   if(cur.lt == Tr::VERTEX) {
     // The three planes through the vertex are set to coplanar.
@@ -504,7 +561,13 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& pre
         pos += li;
         continue;
     }
+#if CGAL_DEBUG_TRIANGULATION_SEGMENT_TRAVERSER_3
+    std::cerr << "Test facet " << li
+              << ":\n  " <<IO::oformat(_tr->vertices(Facet{cur_cell, li}), With_point_tag{}) << '\n';
+#endif
     const Point* const backup_vert_li = std::exchange(vert[li], &_target);
+    auto exit_guard = CGAL::make_scope_exit([&](){ vert[li] = backup_vert_li; });
+
     bool op_li_is_null = false;
     if(_t_vertex != Vertex_handle()) {
       for(int i = 0; i < 4; ++i) {
@@ -514,10 +577,12 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& pre
     }
     // Check if the target is on the opposite side of the supporting plane.
     op[li] = op_li_is_null ? ZERO : _tr->orientation(*vert[0], *vert[1], *vert[2], *vert[3]);
+#if CGAL_DEBUG_TRIANGULATION_SEGMENT_TRAVERSER_3
+    std::cerr << "  Orientation: " << op[li] << '\n';
+#endif
     if(op[li] == POSITIVE)
         pos += li;
     if(op[li] != NEGATIVE) {
-        vert[li] = backup_vert_li;
         continue;
     }
     CGAL_assertion_code(incell = false;)
@@ -534,6 +599,16 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& pre
       if(!calc[oij]) {
         const Point* const backup_vert_lj = std::exchange(vert[lj], &_source);
         o[oij] = _tr->orientation(*vert[0], *vert[1], *vert[2], *vert[3]);
+#if CGAL_DEBUG_TRIANGULATION_SEGMENT_TRAVERSER_3
+        std::cerr << "  edge orientation(";
+        for(int i = 0; i < 4; ++i) {
+          if(i == li) std::cerr << "_target";
+          else if(i == lj) std::cerr << "_source";
+          else std::cerr << with_point(cur_cell->vertex(i));
+          if(i < 3) std::cerr << ", ";
+        }
+        std::cerr << ") = " << o[oij] << '\n';
+#endif
         vert[lj] = backup_vert_lj;
         calc[oij] = true;
       }
@@ -552,11 +627,18 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& pre
       } else
         Or -= o[oij];
     }
+#if CGAL_DEBUG_TRIANGULATION_SEGMENT_TRAVERSER_3
+    std::cerr << "  Or: " << Or << '\n';
+    for(int i = 0; i < 6; ++i) {
+      auto [v1i, v2i] = edgeVertices(i);
+      std::cerr << "  o[" << v1i << "," << v2i << "]: "
+                << (calc[i] ? o[i] : -999) << '\n';
+    }
+#endif
 
     if(Or == 0) {
       // Either the target is not inside the pyramid,
       // or the pyramid is degenerate.
-      vert[li] = backup_vert_li;
       continue;
     }
 
@@ -567,7 +649,11 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& pre
         CGAL_assertion(li == outside);
         CGAL_assertion(!inside);
       }
-      return {{cur_cell, Tr::FACET, li}, {next, Tr::FACET, next->index(cur_cell)}};
+#if CGAL_DEBUG_TRIANGULATION_SEGMENT_TRAVERSER_3
+      using Segment_3 = typename Tr::Geom_traits::Segment_3;
+      CGAL_assertion(do_intersect(Segment_3(_source, _target), _tr->triangle({cur_cell, li})));
+#endif
+      return returned({{cur_cell, Tr::FACET, li}, {next, Tr::FACET, next->index(cur_cell)}});
     }
     case 2: {
       if(regular_case)
@@ -575,9 +661,9 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& pre
       for(int j = 0; j < 4; ++j) {
         if(li != j && o[5 - edgeIndex(li, j)] == COPLANAR) {
           Edge opp = opposite_edge(prev.cell, li, j);
-          return {
+          return returned({
               {cur_cell, Tr::EDGE, opp.second, opp.third},
-              {next, Tr::EDGE, next->index(cur_cell->vertex(opp.second)), next->index(cur_cell->vertex(opp.third))}};
+              {next, Tr::EDGE, next->index(cur_cell->vertex(opp.second)), next->index(cur_cell->vertex(opp.third))}});
         }
       }
       CGAL_unreachable();
@@ -588,7 +674,7 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& pre
         CGAL_assertion(degenerate);
       for(int j = 0; j < 4; ++j) {
         if(li != j && o[5 - edgeIndex(li, j)] == NEGATIVE) {
-          return {{cur_cell, Tr::VERTEX, j}, {next, Tr::VERTEX, next->index(cur_cell->vertex(j))}};
+          return returned({{cur_cell, Tr::VERTEX, j}, {next, Tr::VERTEX, next->index(cur_cell->vertex(j))}});
         }
       }
       CGAL_unreachable();
@@ -601,8 +687,19 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& pre
   }
 
   // The target lies inside this cell.
+#if CGAL_DEBUG_TRIANGULATION_SEGMENT_TRAVERSER_3
+  CGAL_assertion(false == _tr->tetrahedron(cur_cell).has_on_unbounded_side(_target));
+  if(!incell) {
+    std::cerr << "_source:\n" << _source << '\n';
+    std::cerr << "_target:\n" << _target << '\n';
+    std::ofstream dump("dump.binary.cgal", std::ios::binary);
+    IO::set_binary_mode(dump);
+    dump << *_tr;
+    dump.close();
+  }
+#endif
   CGAL_assertion( incell );
-  return {
+  return returned({
     std::invoke([&]() -> Simplex {
       switch( op[0] + op[1] + op[2] + op[3] ) {
       case 4:
@@ -633,7 +730,7 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& pre
       }
     }),
     { Cell_handle() }
-  };
+  });
 }
 
 template < class Tr, class Inc >
