@@ -149,7 +149,7 @@ LCC create_refined_test_mesh(int level = 1) {
 
   Polyhedron poly = create_polyhedron<FACE>();
 
-  CGAL::internal::Hexmeshing_for_linear_cell_complex hdata(poly, grid);
+  CGAL::internal::Hexmeshing_for_linear_cell_complex hdata(poly, get_const_property_map(CGAL::vertex_point, poly), grid);
 
   hdata.two_refinement(
     level,
@@ -218,10 +218,11 @@ void render_meshes_at_each_phase() {
     lcc = create_refined_test_mesh_with_volume_fraction<FACE>();
   } else {
     Polyhedron poly = create_polyhedron<FACE>();
-    using MDFHM=CGAL::internal::Mesh_data_for_hexmeshing<Polyhedron>;
-    MDFHM mesh(poly, 10);
+    using VPM  = boost::property_map<Polyhedron, CGAL::vertex_point_t>::const_type;
+    using MDFHM=CGAL::internal::Mesh_data_for_hexmeshing<Polyhedron, VPM>;
+    MDFHM mesh(poly, get_const_property_map(CGAL::vertex_point, poly), 10);
     auto cellIdentifier = is_volume_intersecting_poly(*mesh.get_tree_pointer());
-    auto decideFunc = is_inner_point<Polyhedron, typename MDFHM::Tree>(*mesh.get_tree_pointer());
+    auto decideFunc = is_inner_point<Polyhedron, VPM, typename MDFHM::Tree>(*mesh.get_tree_pointer());
     const int refinement_level = 1;
     lcc = create_refined_test_mesh<FACE>(refinement_level);
     set_fraction(lcc, 1./(1<<refinement_level), cellIdentifier, decideFunc);

@@ -111,23 +111,16 @@ namespace CGAL::internal::Hexmeshing
     };
   }
 
-  template<typename Mesh, typename Tree>
-  auto is_inner_centroid(Tree& tree)
-  {
-    return [&](LCC& lcc, Dart_descriptor dart) -> bool {
-      // if(is_intersect(lcc, dart, tree)) return false;
-      // return !is_outside_knowing_no_intersect(lcc.point(dart), tree);
-      __set_centroid(lcc, dart);
-      return !is_outside_knowing_no_intersect<Mesh, Tree>
-        (lcc.attribute<3>(dart)->info().centroid, tree);
-    };
-  }
-
-  template<typename Mesh, typename Tree>
+  template<typename Mesh, typename VPM, typename Tree>
   auto is_inner_point(Tree& tree)
   {
+    ///////////////////////////////////////////////////////////////////////////////
+    /// Test if a particular point is outside of the object (Tree), knowing there is
+    /// no intersection between its voxel and the tree.
     return [&](internal::Hexmeshing::Point p) -> bool {
-      return !is_outside_knowing_no_intersect<Mesh, Tree>(p, tree);
+      CGAL::Side_of_triangle_mesh<Mesh, typename Kernel_traits
+                                <internal::Hexmeshing::Point>::Kernel, VPM> s(tree);
+      return s(p) != CGAL::ON_BOUNDED_SIDE;
     };
   }
 }
