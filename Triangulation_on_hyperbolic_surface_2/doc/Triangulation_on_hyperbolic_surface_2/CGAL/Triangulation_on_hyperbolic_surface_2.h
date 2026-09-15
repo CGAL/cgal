@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
   \ingroup PkgHyperbolicSurfaceTriangulation2MainClasses
 
-  This item defines attributes of edges that are of type `Complex_number` reprensenting cross-ratios.
+  This item defines attributes of edges that are of type `Complex_number` representing cross-ratios.
 
   \tparam Traits must be a model of `HyperbolicSurfaceTraits_2`.
 
@@ -15,8 +15,8 @@ struct Combinatorial_map_with_cross_ratios_item
   template <class CMap>
   struct Dart_wrapper
   {
-    typedef Cell_attribute<CMap, Complex_number<typename Traits::FT> > Edge_attrib;
-    typedef std::tuple<void, Edge_attrib, void> Attributes;
+    typedef Cell_attribute<CMap, Complex_number<typename Traits::FT> > Edge_attribute;
+    typedef std::tuple<void, Edge_attribute, void> Attributes;
   };
 };
 
@@ -126,16 +126,6 @@ public:
 
   /// @}
 
-  /// \name Assignment
-  /// @{
-
-  /*!
-    \pre <code> other.is_valid() </code>
-  */
-  Triangulation_on_hyperbolic_surface_2& operator=(Triangulation_on_hyperbolic_surface_2 other);
-
-  /// @}
-
   /// \name Access Functions
   /// @{
 
@@ -218,7 +208,7 @@ Vertex_range vertices_range();
   bool is_Delaunay() const;
 
   /*!
-    applies the Delaunay flip algorithm: flips Delaunay-flippable edges until there is no such edge anymore.
+    applies the Delaunay flip algorithm: flips Delaunay-flippable edges until there is no such edge anymore. Returns the number of flips performed by the algorithm.
     \pre <code> is_valid() </code>
   */
   int make_Delaunay();
@@ -233,7 +223,18 @@ Vertex_range vertices_range();
 
     Returns, for every triangle \f$ t \f$ of the triangulation, one of the darts of \f$ t \f$ in the combinatorial map of the triangulation, together with a triple \f$ p,q,r \f$ of points in the hyperbolic plane.
     The points \f$ p,q,r \f$ are the vertices of a lift of \f$ t \f$ in the hyperbolic plane.
-    If the center parameter is set to true, then one of the vertices of the anchor is translated to the origin \f$ 0 \f$.
+    If the center parameter is set to `true`, then the first vertex of the given anchor is translated to the origin \f$ 0 \f$.
+
+    \pre <code> is_valid() </code>
+  */
+  std::vector<std::tuple<Dart_const_descriptor, Point, Point, Point> > lift(Anchor const & anchor, bool center=true) const;
+
+  /*!
+    lifts the triangulation in the hyperbolic plane.
+
+    Returns, for every triangle \f$ t \f$ of the triangulation, one of the darts of \f$ t \f$ in the combinatorial map of the triangulation, together with a triple \f$ p,q,r \f$ of points in the hyperbolic plane.
+    The points \f$ p,q,r \f$ are the vertices of a lift of \f$ t \f$ in the hyperbolic plane.
+    If the center parameter is set to `true`, then the first vertex of the anchor is translated to the origin \f$ 0 \f$.
 
     \pre <code> is_valid() && has_anchor() </code>
   */
