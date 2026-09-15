@@ -502,20 +502,8 @@ struct Medit_pmap_generator<C3T3, USE_SUBDOMAIN_INDICES, RENUMBER_SURFACE_PATCH_
 //-------------------------------------------------------
 // IO functions
 //-------------------------------------------------------
-
-template <class T>
-struct is_variant : std::false_type {};
-
-template <class... Ts>
-struct is_variant<std::variant<Ts...>> : std::true_type {};
-
-template <typename T>
-struct is_pair : std::false_type {};
-
-template <typename U, typename V>
-struct is_pair<std::pair<U, V>> : std::true_type {};
-
-
+namespace SMDS_3_internal
+{
 template <typename T, typename = void>
 struct Has_in_dimension : std::false_type {};
 
@@ -543,25 +531,7 @@ bool is_corner(const typename Tr::Vertex_handle v, const Tr&)
     return false;
 }
 
-template <class T>
-void output_to_os(std::ostream& os, const T& x)
-{
-  if constexpr(is_variant<std::decay_t<T>>::value)
-  {
-    std::visit(
-        [&](const auto& i) {
-          using X = std::decay_t<decltype(i)>;
-
-          if constexpr(is_pair<X>::value)
-            os << i.first << " " << i.second; // warning: read() will not deal with that
-          else
-            os << i;
-        },
-        x);
-  }
-  else
-    os << x;
-}
+} // end of SMDS_3_internal
 
 template <class Tr,
           class Vertices_range,
@@ -676,7 +646,7 @@ output_to_medit(std::ostream& os,
   //-------------------------------------------------------
   std::vector<typename Tr::Vertex_handle> corners;
   for(const auto& v : vertices) {
-    if(is_corner(v, tr)) {
+    if(SMDS_3_internal::is_corner(v, tr)) {
       corners.push_back(v);
     }
   }
@@ -689,7 +659,7 @@ output_to_medit(std::ostream& os,
   //-------------------------------------------------------
   // Edges
   //-------------------------------------------------------
-  constexpr bool write_edges = Has_in_dimension<typename Tr::Triangulation_data_structure::Vertex>::value;
+  constexpr bool write_edges = SMDS_3_internal::Has_in_dimension<typename Tr::Triangulation_data_structure::Vertex>::value;
   if constexpr(write_edges)
   {
     os << "Edges\n"
@@ -700,7 +670,7 @@ output_to_medit(std::ostream& os,
                   ? vh1->index()
                   : (vh2->in_dimension() == 1 ? vh2->index() : 42 /*todo : magic id*/);
       os << V[vh1] << ' ' << V[vh2] << ' ';
-      output_to_os(os, index);
+      os << IO::oformat(index);
       os << '\n';
     }
   }
@@ -1146,9 +1116,51 @@ bool read_MEDIT(std::istream& in,
  * @tparam T3 can be instantiated with any 3D triangulation of \cgal provided that its
  *  vertex and cell base class are models of the concepts `MeshVertexBase_3` and `MeshCellBase_3`,
  *  respectively.
+ * @tparam CornerIndex is the type of the indices for corners in the mesh complex
+ * @tparam CurveIndex is the type of the indices for curves in the mesh complex
  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
- * @todo write documentation
+ * @brief reads a mesh complex written in the medit (`.mesh`) file format.
+ *   See \cgalCite{frey:inria-00069921} for a comprehensive description of this file format.
+ * @tparam T3 can be instantiated with any 3D triangulation of \cgal provided that its
+ *  vertex and cell base class are models of the concepts `MeshVertexBase_3` and `MeshCellBase_3`,
+ *  respectively.
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+ *
+ * @param in the input stream
+ * @param c3t3 the mesh complex (to be built from the data read from `in`)
+ * @param np optional \ref bgl_namedparameters "Named Parameters" described below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{verbose}
+ *     \cgalParamDescription{indicates whether output warnings and error messages should be printed or not.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`false`}
+ *   \cgalParamNEnd
+ *   \cgalParamNBegin{allow_non_manifold}
+ *     \cgalParamDescription{allows the construction of a triangulation with non-manifold edges
+ *       and non manifold vertices. The triangulation is invalid if this situation is met,
+ *       so it should be used only in advanced cases, and the triangulation will be hardly usable.}
+ *     \cgalParamType{bool}
+ *     \cgalParamDefault{false}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
+ *
+ * @returns `true` if the connectivity of the triangulation could be built consistently
+ * from \p in,
+ * and `false` if the triangulation is empty, or if the connectivity
+ * of \p c3t3 could not be built.
+ * If `false` is returned, \p c3t3 is empty when the function returns.
+ *
+ * This function reads the data about vertices, surface facets, and
+ * triangulation cells from `in`, and builds a valid `T3` from it.
+ *
+ * Note that a valid 3D triangulation of \cgal must have a valid
+ * data structure (see `TriangulationDataStructure_3 `),
+ * positively oriented cells,
+ * and cover the geometric convex hull of all points in `t3`.
+ *
+ * \see \ref IOStreamMedit
  */
 template <typename T3,
           typename Corner_index,
