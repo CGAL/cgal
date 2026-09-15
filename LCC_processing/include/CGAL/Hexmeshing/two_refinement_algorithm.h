@@ -16,16 +16,16 @@
 
 #include <CGAL/license/LCC_processing.h>
 
-#include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
-#include <CGAL/hexmeshing/Hexmeshing_assert.h>
-#include <CGAL/hexmeshing/Hexmeshing_create_vertices_for_templates.h>
-#include <CGAL/hexmeshing/Hexmeshing_expand_identified_cells.h>
-#include <CGAL/hexmeshing/Hexmeshing_get_cells_to_refine.h>
-#include <CGAL/hexmeshing/Hexmeshing_initial_setup.h>
-#include <CGAL/hexmeshing/Hexmeshing_setup_next_level.h>
-#include <CGAL/hexmeshing/Hexmeshing_two_refinement_3_template_utils.h>
-#include <CGAL/hexmeshing/Hexmeshing_two_refinement_template_utils.h>
-#include <CGAL/hexmeshing/Hexmeshing_function_alias.h>
+#include <CGAL/Hexmeshing/LCC_items.h>
+#include <CGAL/Hexmeshing/assert.h>
+#include <CGAL/Hexmeshing/create_vertices_for_templates.h>
+#include <CGAL/Hexmeshing/expand_identified_cells.h>
+#include <CGAL/Hexmeshing/get_cells_to_refine.h>
+#include <CGAL/Hexmeshing/initial_setup.h>
+#include <CGAL/Hexmeshing/setup_next_level.h>
+#include <CGAL/Hexmeshing/two_refinement_3_template_utils.h>
+#include <CGAL/Hexmeshing/two_refinement_template_utils.h>
+#include <CGAL/Hexmeshing/function_alias.h>
 
 
 namespace CGAL::internal::Hexmeshing

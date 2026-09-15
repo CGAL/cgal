@@ -16,7 +16,7 @@
 
 #include <CGAL/license/LCC_processing.h>
 
-#include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
+#include <CGAL/Hexmeshing/LCC_items.h>
 #include <deque>
 
 namespace CGAL::internal::Hexmeshing

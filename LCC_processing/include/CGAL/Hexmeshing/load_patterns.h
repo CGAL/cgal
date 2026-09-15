@@ -16,7 +16,7 @@
 
 #include <CGAL/license/LCC_processing.h>
 
-#include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
+#include <CGAL/Hexmeshing/LCC_items.h>
 #include <CGAL/Linear_cell_complex/query_replace/cmap_query_replace.h>
 #include <CGAL/Linear_cell_complex/query_replace/lcc_pattern_substituer.h>
 

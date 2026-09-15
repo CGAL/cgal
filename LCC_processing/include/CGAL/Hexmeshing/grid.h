@@ -16,8 +16,8 @@
 
 #include <CGAL/license/LCC_processing.h>
 
-#include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
-#include <CGAL/hexmeshing/Hexmeshing_generic_point.h>
+#include <CGAL/Hexmeshing/LCC_items.h>
+#include <CGAL/Hexmeshing/generic_point.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Point_3.h>

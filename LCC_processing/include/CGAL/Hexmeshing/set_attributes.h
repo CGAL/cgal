@@ -18,9 +18,9 @@
 
 #include <CGAL/Eigen_matrix.h>
 #include <CGAL/Eigen_vector.h>
-#include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
-#include <CGAL/hexmeshing/Hexmeshing_two_refinement_utils.h>
-#include <CGAL/hexmeshing/Hexmeshing_function_alias.h>
+#include <CGAL/Hexmeshing/LCC_items.h>
+#include <CGAL/Hexmeshing/two_refinement_utils.h>
+#include <CGAL/Hexmeshing/function_alias.h>
 #include <CGAL/point_generators_3.h>
 
 namespace CGAL::internal::Hexmeshing

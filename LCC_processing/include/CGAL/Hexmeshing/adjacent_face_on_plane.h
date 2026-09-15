@@ -16,8 +16,8 @@
 
 #include <CGAL/license/LCC_processing.h>
 
-#include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
-#include <CGAL/hexmeshing/Hexmeshing_grid.h>
+#include <CGAL/Hexmeshing/LCC_items.h>
+#include <CGAL/Hexmeshing/grid.h>
 #include <boost/container/static_vector.hpp>
 
 namespace CGAL::internal::Hexmeshing

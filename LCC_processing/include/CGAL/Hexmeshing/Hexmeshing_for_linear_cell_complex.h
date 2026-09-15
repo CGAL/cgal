@@ -16,15 +16,15 @@
 
 #include <CGAL/license/LCC_processing.h>
 
-#include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
-#include <CGAL/hexmeshing/Hexmeshing_prod_cons.h>
-#include <CGAL/hexmeshing/Hexmeshing_grid.h>
-#include <CGAL/hexmeshing/Hexmeshing_function_alias.h>
-#include <CGAL/hexmeshing/Hexmeshing_function_generator.h>
-#include <CGAL/hexmeshing/Hexmeshing_load_patterns.h>
-#include <CGAL/hexmeshing/Hexmeshing_two_refinement_algorithm.h>
-#include <CGAL/hexmeshing/Hexmeshing_post_processing.h>
-#include <CGAL/hexmeshing/Hexmeshing_mesh_data_for_hexmeshing.h>
+#include <CGAL/Hexmeshing/LCC_items.h>
+#include <CGAL/Hexmeshing/prod_cons.h>
+#include <CGAL/Hexmeshing/grid.h>
+#include <CGAL/Hexmeshing/function_alias.h>
+#include <CGAL/Hexmeshing/function_generator.h>
+#include <CGAL/Hexmeshing/load_patterns.h>
+#include <CGAL/Hexmeshing/two_refinement_algorithm.h>
+#include <CGAL/Hexmeshing/post_processing.h>
+#include <CGAL/Hexmeshing/Mesh_data_for_hexmeshing.h>
 #include <CGAL/Linear_cell_complex/query_replace/cmap_query_replace.h>
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Linear_cell_complex_traits.h>

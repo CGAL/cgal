@@ -1,6 +1,6 @@
-#include <CGAL/hexmeshing/Hexmeshing_for_linear_cell_complex_sequential.h>
-#include <CGAL/hexmeshing/Hexmeshing_mesh_data_for_hexmeshing.h>
-#include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
+#include <CGAL/Hexmeshing/for_linear_cell_complex_sequential.h>
+#include <CGAL/Hexmeshing/mesh_data_for_hexmeshing.h>
+#include <CGAL/Hexmeshing/LCC_items.h>
 #include <CGAL/generate_hexahedral_mesh_using_two_refinement.h>
 
 #include <CGAL/Polyhedron_3.h>
