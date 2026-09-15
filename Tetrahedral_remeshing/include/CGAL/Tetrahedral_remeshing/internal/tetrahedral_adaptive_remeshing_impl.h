@@ -108,6 +108,9 @@ private:
 
   C3t3* m_c3t3_pbackup;
   std::vector<Vertex_handle> m_far_points;
+  // Counts split() passes, so the post-split rebuild can run every Nth pass
+  // instead of every pass. See split().
+  std::size_t m_split_passes = 0;
   Triangulation* m_tr_pbackup; //backup to re-swap triangulations when done
 
 #ifdef CGAL_LINKED_WITH_TBB
@@ -164,6 +167,19 @@ public:
   {
     m_c3t3.triangulation().swap(tr);
 
+    // Put the containers in spatial order before anything indexes into them:
+    // container order is what every later phase chases pointers through, and
+    // nothing else in the pipeline ever establishes it. See
+    // spatial_sort_c3t3() for why the O(n) rebuild pays for itself, and
+    // CGAL_TETRAHEDRAL_REMESHING_ALLOW_REORDERING for why it is guarded: it
+    // changes the output mesh, so under Sequential_tag it is opt-in. Under
+    // Parallel_tag the enumeration order is a scheduling artefact and there is
+    // no output to preserve, so it always runs.
+#ifndef CGAL_TETRAHEDRAL_REMESHING_ALLOW_REORDERING
+    if constexpr (std::is_convertible_v<Concurrency_tag, CGAL::Parallel_tag>)
+#endif
+      Tetrahedral_remeshing::internal::spatial_sort_c3t3(m_c3t3);
+
     init_c3t3(vcmap, ecmap, fcmap);
     init_lock_data_structure();
     m_smoothing_context = std::make_shared<SmoothingContext>(
@@ -196,6 +212,19 @@ public:
   {
     m_c3t3.swap(c3t3);
 
+    // Put the containers in spatial order before anything indexes into them:
+    // container order is what every later phase chases pointers through, and
+    // nothing else in the pipeline ever establishes it. See
+    // spatial_sort_c3t3() for why the O(n) rebuild pays for itself, and
+    // CGAL_TETRAHEDRAL_REMESHING_ALLOW_REORDERING for why it is guarded: it
+    // changes the output mesh, so under Sequential_tag it is opt-in. Under
+    // Parallel_tag the enumeration order is a scheduling artefact and there is
+    // no output to preserve, so it always runs.
+#ifndef CGAL_TETRAHEDRAL_REMESHING_ALLOW_REORDERING
+    if constexpr (std::is_convertible_v<Concurrency_tag, CGAL::Parallel_tag>)
+#endif
+      Tetrahedral_remeshing::internal::spatial_sort_c3t3(m_c3t3);
+
     init_c3t3(vcmap, ecmap, fcmap);
     init_lock_data_structure();
     m_smoothing_context = std::make_shared<SmoothingContext>(
@@ -220,6 +249,47 @@ public:
     EdgeSplitOp split_op(m_sizing, m_cell_selector, m_protect_boundaries, m_visitor);
     Executor<EdgeSplitOp> executor;
     executor.execute(split_op, m_c3t3);
+
+    // Split allocates the cells it creates in edge-length order, which is
+    // spatially random, so it undoes the setup sort on any mesh the run grows.
+    // Re-sorting restores the layout; it costs an O(n) serial rebuild, so it
+    // runs every Nth pass (CGAL_TETRAHEDRAL_REMESHING_SPATIAL_SORT_EVERY).
+    //
+    // This is the expensive half of the trade in both directions. Measured
+    // against the setup sort alone, over 24 configs at 4 threads, re-sorting
+    // here is -7.5% wall (-13.9% time-weighted) for +3.0% median peak memory
+    // -- roughly three quarters of the whole optimization's win AND three
+    // quarters of its memory cost. The reason both land here is that this
+    // rebuild runs on the mesh at its LARGEST, after split has grown it,
+    // whereas the setup sort rebuilds the input: same transient second TDS,
+    // several times the size. Raising N trades layout for serial time but does
+    // NOT lower the peak, because the peak is one rebuild, not their number.
+    ++m_split_passes;
+#ifndef CGAL_TETRAHEDRAL_REMESHING_ALLOW_REORDERING
+    if constexpr (std::is_convertible_v<Concurrency_tag, CGAL::Parallel_tag>)
+#endif
+    {
+      if (m_split_passes % CGAL_TETRAHEDRAL_REMESHING_SPATIAL_SORT_EVERY == 0)
+      {
+        // Everything the smoothing context caches is keyed by vertex handle
+        // and is rebuilt by refresh() on entry to every smooth(); collapse and
+        // flip never read it. split() only ever runs before the flip/smooth
+        // steps, where the vertex ids are frozen instead -- assert it, because
+        // a rebuild there would renumber what start_flip_smooth_steps() froze.
+        CGAL_assertion(!m_smoothing_context->in_flip_smooth_steps());
+
+        Tetrahedral_remeshing::internal::Spatial_sort_vertex_map<Vertex_handle> V;
+        if (Tetrahedral_remeshing::internal::spatial_sort_c3t3(m_c3t3, V))
+        {
+          // The far points are read once, at the very end of remeshing, to
+          // reset their dimension. They are the only vertex handles the
+          // remesher itself holds across a phase, so they are the only thing
+          // here that a rebuild would leave dangling.
+          for (Vertex_handle& v : m_far_points)
+            v = V[v];
+        }
+      }
+    }
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     CGAL_assertion(tr().tds().is_valid(true));

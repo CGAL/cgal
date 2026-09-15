@@ -205,6 +205,8 @@ public:
     m_flip_smooth_steps = true;
   }
 
+  bool in_flip_smooth_steps() const { return m_flip_smooth_steps; }
+
   std::size_t vertex_id(const Vertex_handle v) const
   {
     CGAL_expensive_assertion(m_vertex_id.find(v) != m_vertex_id.end());
