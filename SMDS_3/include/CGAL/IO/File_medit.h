@@ -531,26 +531,6 @@ bool is_corner(const typename Tr::Vertex_handle v, const Tr&)
     return false;
 }
 
-template <class T>
-void output_to_os(std::ostream& os, const T& x)
-{
-  if constexpr(is_variant_v<std::decay_t<T>>)
-  {
-    std::visit(
-        [&](const auto& i) {
-          using X = std::decay_t<decltype(i)>;
-
-          if constexpr(is_pair_v<X>)
-            os << i.first << " " << i.second; // warning: read() will not deal with that
-          else
-            os << i;
-        },
-        x);
-  }
-  else
-    os << x;
-}
-
 } // end of SMDS_3_internal
 
 template <class Tr,
@@ -690,7 +670,7 @@ output_to_medit(std::ostream& os,
                   ? vh1->index()
                   : (vh2->in_dimension() == 1 ? vh2->index() : 42 /*todo : magic id*/);
       os << V[vh1] << ' ' << V[vh2] << ' ';
-      SMDS_3_internal::output_to_os(os, index);
+      os << IO::oformat(index);
       os << '\n';
     }
   }
