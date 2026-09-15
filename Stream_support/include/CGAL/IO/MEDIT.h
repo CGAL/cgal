@@ -14,6 +14,7 @@
 
 #include <CGAL/assertions.h>
 #include <CGAL/Kernel_traits.h>
+#include <CGAL/Named_function_parameters.h>
 #include <iostream>
 #include <string>
 #include <tuple>
@@ -49,16 +50,16 @@ struct Corner_with_index
 template<class PointRange,
          class TetrahedronRange,
          class SurfacePatchIndex_,
-         class CurveIndex_,
-         class CornerIndex_>
+         class Edge_with_index_, // either Edge_with_index or a tuple
+         class Corner_with_index_> // either Corner_with_index or a tuple/pair
 bool read_MEDIT(std::istream& is,
                 PointRange& points,
                 TetrahedronRange& tetrahedra,
                 std::vector<int>& subdomains,
                 boost::unordered_map<std::array<int,3>,SurfacePatchIndex_ >& border_facets,
                 bool read_border_facets,
-                std::vector<Edge_with_index<CurveIndex_>>& edge_indices,
-                std::vector<Corner_with_index<CornerIndex_>>& corner_indices,
+                std::vector<Edge_with_index_>& edge_indices,
+                std::vector<Corner_with_index_>& corner_indices,
                 bool verbose,
                 bool& is_CGAL_mesh)
 {
@@ -67,7 +68,6 @@ bool read_MEDIT(std::istream& is,
   using Surface_patch_index = SurfacePatchIndex_;
   using Facet        = std::array<int, 3>;
   using Tet_with_ref = typename std::iterator_traits<typename TetrahedronRange::const_iterator>::value_type;
-  using Corner_index = CornerIndex_;
 
   if(!is)
     return false;
@@ -243,7 +243,7 @@ bool read_MEDIT(std::istream& is,
       }
     }
 
-    Corner_index corner_index = 0;
+    int corner_index = 0;
     if(line.find("Corners") != std::string::npos)
     {
       is >> ncorners;
@@ -323,21 +323,48 @@ bool read_MEDIT(std::istream& is,
  * \param tetrahedra each element in it describes a tetrahedron
  *        using the indices of the points in `points`
  * \param subdomains each element in it describes the subdomain index of the corresponding tetrahedron
- * \param verbose if `true`, prints information about the reading process
+ *
+ * \param np optional \ref bgl_namedparameters "Named Parameters" described below
+ *
+ * \cgalNamedParamsBegin
+ *
+ *   \cgalParamNBegin{subdomains}
+ *     \cgalParamDescription{a non-const reference wrapper to a container of integer that will be filled by this function.
+ *                           Each element in the container indicates the subdomain index of the corresponding tetrahedron at the same position.}
+ *     \cgalParamType{a `std::reference_wrapper` to a model of `BackInsertionSequence` able to store `int`.}
+ *     \cgalParamDefault{subdomains are ignored}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{verbose}
+ *     \cgalParamDescription{if true, prints information about the reading process.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`false`}
+ *   \cgalParamNEnd
+ *
+ * \cgalNamedParamsEnd
  *
  * \returns `true` if the reading was successful, `false` otherwise.
  *
  *  \see \ref IOStreamMedit
  */
 
-template<class PointRange, class TetrahedronRange>
+template<class PointRange, class TetrahedronRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_MEDIT(std::istream& is,
                 PointRange& points,
                 TetrahedronRange& tetrahedra,
-                std::vector<int>& subdomains,
-                bool verbose = false)
-
+                const CGAL_NP_CLASS& np = parameters::default_values())
 {
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+  using parameters::get_parameter_reference;
+
+  const bool verbose = choose_parameter(get_parameter(np, internal_np::verbose), false);
+
+  // subdomains
+  std::vector<int> default_subdomains;
+  using Subdomains = typename internal_np::Lookup_named_param_def<internal_np::subdomains_t, CGAL_NP_CLASS, std::vector<int>>::reference;
+  Subdomains subdomains = choose_parameter(get_parameter_reference(np, internal_np::subdomains), default_subdomains);
+
   boost::unordered_map<std::array<int,3>,int > border_facets;
   constexpr bool read_border_facets = false;
   std::vector<internal::Edge_with_index<int>> edge_indices;
@@ -368,24 +395,47 @@ bool read_MEDIT(std::istream& is,
  * \param points points of the soup of cells
  * \param tetrahedra each element in it describes a cell
  *        using the indices of the points in `points`
- * \param subdomains each element in it describes the subdomain index of the corresponding tetrahedron
+ *
+ * \param np optional \ref bgl_namedparameters "Named Parameters" described below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{subdomains}
+ *     \cgalParamDescription{a reference wrapper to a container of integer of the same size as `tetrahedra`.
+ *                           Each element in the container indicates the subdomain index of the corresponding tetrahedron at the same position.}
+ *     \cgalParamType{a `std::reference_wrapper` to a model of the concept `RandomAccessContainer` of integer.}
+ *     \cgalParamDefault{all tetrahedra will have the subdomain id `1`.}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
  *
  * \returns `true` if the writing was successful, `false` otherwise.
  *
  *  \see \ref IOStreamMedit
  */
-
-template<class PointRange, class TetrahedronRange>
+template<class PointRange, class TetrahedronRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_MEDIT(std::ostream& os,
                  const PointRange& points,
                  const TetrahedronRange& tetrahedra,
-                 const std::vector<int>& subdomains)
+                 const CGAL_NP_CLASS& np = parameters::default_values())
 
 {
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+  using parameters::get_parameter_reference;
+  using parameters::is_default_parameter;
+
   using Point_3 = typename PointRange::value_type;
 
   if(!os)
     return false;
+
+  // subdomains
+  std::vector<int> default_subdomains;
+  using Subdomains = typename internal_np::Lookup_named_param_def<internal_np::subdomains_t, CGAL_NP_CLASS, std::vector<int>>::reference;
+  Subdomains subdomains = choose_parameter(get_parameter_reference(np, internal_np::subdomains), default_subdomains);
+
+  if constexpr (is_default_parameter<CGAL_NP_CLASS, internal_np::subdomains_t>::value)
+    default_subdomains.resize(tetrahedra.size(), 1);
+
   os << "MeshVersionFormatted 1\nDimension 3\nVertices\n";
   os << points.size() << "\n";
   for (const Point_3& p : points)

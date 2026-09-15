@@ -68,6 +68,8 @@ CGAL_add_named_parameter(output_color_t, output_color, output_color)
 CGAL_add_named_parameter(stream_precision_t, stream_precision, stream_precision)
 CGAL_add_named_parameter(read_only_one_object_t, read_only_one_object, read_only_one_object)
 
+CGAL_add_named_parameter(subdomains_t, subdomains, subdomains)
+
 // List of named parameters that we use in the package 'Mesh_3'
 CGAL_add_named_parameter(vertex_feature_degree_t, vertex_feature_degree, vertex_feature_degree_map)
 
@@ -434,7 +436,7 @@ CGAL_add_named_parameter_with_compatibility(cell_min_size_param_t, cell_min_size
 CGAL_add_named_parameter_with_compatibility(function_param_t, function_param, function)
 CGAL_add_named_parameter_with_compatibility(bounding_object_param_t, bounding_object_param, bounding_object)
 
-// List of named parameters used in the package ' 3D Surface Subdivision Methods'
+// List of named parameters used in the package '3D Surface Subdivision Methods'
 CGAL_add_named_parameter(do_not_modify_geometry_t, do_not_modify_geometry, do_not_modify_geometry)
 
 //List of named parameters used in Straight_skeleton_2

@@ -15,17 +15,17 @@ int main() {
   std::vector<int> subdomains;
   std::vector<std::array<int,4>> cells;
   bool verbose = false;
-  bool success = CGAL::IO::read_MEDIT(input, points, cells, subdomains, verbose);
+  bool success = CGAL::IO::read_MEDIT(input, points, cells, CGAL::parameters::subdomains(std::ref(subdomains)).verbose(verbose));
   assert(success);
 
   std::ostringstream output;
   output.precision(17);
-  CGAL::IO::write_MEDIT(output, points, cells, subdomains);
+  CGAL::IO::write_MEDIT(output, points, cells, CGAL::parameters::subdomains(std::cref(subdomains)));
   std::istringstream input2(output.str());
   std::vector<Point_3> points2;
   std::vector<std::array<int,4>> cells2;
   std::vector<int> subdomains2;
-  success = CGAL::IO::read_MEDIT(input2, points2, cells2, subdomains2, verbose);
+  success = CGAL::IO::read_MEDIT(input2, points2, cells2, CGAL::parameters::subdomains(std::ref(subdomains2)).verbose(verbose));
   assert(points == points2);
   assert(cells == cells2);
   assert(subdomains == subdomains2);
