@@ -119,7 +119,7 @@ public:
         CGAL::read(is, i);
       }
       if(!is) return is;
-      c->ccdt_3_data().set_face_constraint_index(li, i);
+      c.ccdt_3_data().set_face_constraint_index(li, i);
     }
     return is;
   }
