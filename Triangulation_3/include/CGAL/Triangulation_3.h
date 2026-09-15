@@ -53,6 +53,8 @@
 #include <boost/unordered_map.hpp>
 #include <boost/utility/result_of.hpp>
 #include <boost/container/small_vector.hpp>
+#include <cstring>
+#include <cstdint>
 
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/STL_Extension/internal/info_check.h>
@@ -2067,6 +2069,76 @@ public:
     return _tds.find_first_incident_cell_threadsafe(v, pred, found);
   }
 
+  /**
+  * The vertices this star walk has already locked.
+  *
+  * Locking a cell means locking its four vertices, and a star walk visits
+  * ~24 cells sharing ~25 distinct vertices -- three of every cell's four are
+  * shared with the cell it was reached from. The unmemoised walk therefore
+  * asks `try_lock_vertex()` about 96 times for those ~25 vertices, and each
+  * ask is a thread-local-grid lookup (`pthread_getspecific`) plus a
+  * `grid_index()` computation -- three multiplies and three clamps -- before
+  * the load that answers it.
+  *
+  * WHY SKIPPING IS EXACT. A vertex this thread has ALREADY LOCKED in this
+  * same walk has `tls_grid[grid_index(v)] == true`, so `try_lock()` on it is
+  * guaranteed to return true without touching the shared grid. Skipping the
+  * call returns the same answer and leaves the same locks held. Only vertices
+  * locked BY THIS WALK are skipped, so no lock is ever assumed that was not
+  * taken. Nothing shared is read or written differently and the table is a
+  * stack local, so this holds at any number of threads.
+  *
+  * Open-addressed, 8-bit indices into `seen` (0 = empty, k = seen[k-1]), 256
+  * bytes to clear. A star with more distinct vertices than the 8-bit index can
+  * address falls back to reporting "not seen", which costs a redundant lock
+  * call and is never wrong.
+  */
+  struct Zone_vertex_dedup
+  {
+    static constexpr unsigned    TSIZE  = 256;   // power of two
+    static constexpr std::size_t MAXIDX = 192;   // keeps the table's load <= 0.75
+    unsigned char table[TSIZE];
+    boost::container::small_vector<const void*, 64> seen;
+
+    Zone_vertex_dedup() { std::memset(table, 0, sizeof(table)); }
+
+    // True when this vertex was already locked earlier in this same walk.
+    bool seen_or_record(const void* p)
+    {
+      if(seen.size() > MAXIDX)
+        return false;
+      unsigned s = unsigned((reinterpret_cast<std::uintptr_t>(p)
+                             * 0x9E3779B97F4A7C15ull) >> 56) & (TSIZE - 1);
+      for(;;)
+      {
+        const unsigned char k = table[s];
+        if(k == 0)
+        {
+          seen.push_back(p);
+          table[s] = static_cast<unsigned char>(seen.size());
+          return false;
+        }
+        if(seen[k - 1] == p)
+          return true;
+        s = (s + 1) & (TSIZE - 1);
+      }
+    }
+  };
+
+  // `try_lock_cell()` with the redundant per-vertex asks removed.
+  bool try_lock_cell_dedup(const Cell_handle& c, Zone_vertex_dedup& dd) const
+  {
+    for(int k = 0; k < 4; ++k)
+    {
+      const Vertex_handle vk = c->vertex(k);
+      if(dd.seen_or_record(&*vk))
+        continue;                       // already held by this walk
+      if(!this->try_lock_vertex(vk))
+        return false;
+    }
+    return true;
+  }
+
   template <typename IncidentCellsContainer>
   bool try_lock_and_get_incident_cells(Vertex_handle v, IncidentCellsContainer& cells) const
   {
@@ -2076,8 +2148,14 @@ public:
     if(!this->try_lock_vertex(v))
       return false;
 
+    Zone_vertex_dedup dd;
+    const bool dedup = this->is_parallel();
+    if(dedup)
+      dd.seen_or_record(&*v);           // v was just locked above
+
     Cell_handle d = v->cell();
-    if(!this->try_lock_cell(d)) // LOCK
+    if(!(dedup ? this->try_lock_cell_dedup(d, dd)
+               : this->try_lock_cell(d))) // LOCK
       return false;
 
     cells.push_back(d);
@@ -2094,7 +2172,8 @@ public:
           continue;
 
         Cell_handle next = c->neighbor(i);
-        if(!this->try_lock_cell(next)) // LOCK
+        if(!(dedup ? this->try_lock_cell_dedup(next, dd)
+                   : this->try_lock_cell(next))) // LOCK
         {
           for(Cell_handle ch : cells)
           {
