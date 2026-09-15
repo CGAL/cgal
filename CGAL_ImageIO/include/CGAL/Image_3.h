@@ -179,7 +179,7 @@ public:
     return read(file.c_str());
   }
 
-  bool read(const std::filesystem.path& file)
+  bool read(const std::filesystem::path& file)
   {
     return read(file.string().c_str());
   }
