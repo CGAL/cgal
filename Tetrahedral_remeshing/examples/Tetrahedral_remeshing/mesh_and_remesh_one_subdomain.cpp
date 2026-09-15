@@ -77,7 +77,7 @@ int main(int argc, char* argv[])
 
   /// [Loads image]
   CGAL::Image_3 image;
-  if(!image.read(fname)){
+  if(!image.read(fname.string())){
     std::cerr << "Error: Cannot read file " <<  fname << std::endl;
     return EXIT_FAILURE;
   }

@@ -66,7 +66,7 @@ int main(int argc, char** argv)
   std::cout << "Took " << t.time() << " s." << std::endl;
 
   // Save the result
-  std::string input_name = std::string(filename);
+  std::string input_name = std::string(filename.string());
   input_name = input_name.substr(input_name.find_last_of("/") + 1, input_name.length() - 1);
   input_name = input_name.substr(0, input_name.find_last_of("."));
   std::string output_name = input_name + "_cavity_" + std::to_string(static_cast<int>(relative_alpha))

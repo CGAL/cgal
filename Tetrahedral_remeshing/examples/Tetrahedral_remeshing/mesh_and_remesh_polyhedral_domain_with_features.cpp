@@ -54,7 +54,6 @@ int main(int argc, char* argv[])
   std::ifstream input(fname);
   Surface_mesh mesh;
 
-  std::string filename(fname);
   input >> mesh;
   if (input.fail()) {
     std::cerr << "Error: Cannot read file " << fname << std::endl;

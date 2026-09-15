@@ -19,7 +19,7 @@ typedef L21_approx::Error_metric L21_metric;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
-bool load_mesh(const std::string file_name, Mesh &mesh)
+bool load_mesh(const std::filesystem::path file_name, Mesh &mesh)
 {
   std::ifstream input(file_name);
   if (!input || !(input >> mesh) || !CGAL::is_triangle_mesh(mesh)) {

@@ -8,7 +8,7 @@
 #include <fstream>
 
 template <typename Kernel>
-void create_triangulation(const std::string& filename)
+void create_triangulation(const std::filesystem::path& filename)
 {
   typedef typename Kernel::FT                                          FT;
 

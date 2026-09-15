@@ -30,6 +30,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <filesystem>
 
 namespace CGAL {
 

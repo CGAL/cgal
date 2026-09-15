@@ -70,8 +70,8 @@ int main(int argc, char* argv[])
 
   Mesh mesh1, mesh2;
 
-  OpenMesh::IO::read_mesh(mesh1, filename1);
-  OpenMesh::IO::read_mesh(mesh2, filename2);
+  OpenMesh::IO::read_mesh(mesh1, filename1.string());
+  OpenMesh::IO::read_mesh(mesh2, filename2.string());
 
   Mesh out;
 

@@ -269,7 +269,7 @@ template <typename PointRange,
           typename PolygonRange,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_GOCAD(std::ostream& os,
-                 const char* fname,
+                 const std::string& fname,
                  const PointRange& points,
                  const PolygonRange& polygons,
                  const CGAL_NP_CLASS& np)
@@ -420,7 +420,7 @@ bool write_GOCAD(const std::filesystem::path& fname,
 {
   std::ofstream os(fname);
   CGAL::IO::set_mode(os, CGAL::IO::ASCII);
-  return internal::write_GOCAD(os, fname.c_str(), points, polygons, np);
+  return internal::write_GOCAD(os, fname.string(), points, polygons, np);
 }
 
 } // namespace IO

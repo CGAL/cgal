@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
   const char* outfilename = (argc > 2) ? argv[2] : "cube_tri.off";
 
   Mesh mesh;
-  OpenMesh::IO::read_mesh(mesh, filename);
+  OpenMesh::IO::read_mesh(mesh, filename.string());
 
   CGAL::Polygon_mesh_processing::triangulate_faces(mesh,
                                                    CGAL::parameters::vertex_point_map(get(CGAL::vertex_point, mesh))

@@ -153,13 +153,9 @@ static int run_mesh(const Obj_data& data)
   return EXIT_SUCCESS;
 }
 
-static std::string join_path(const std::string& dir, const std::string& name)
+static std::filesystem::path join_path(const std::filesystem::path& dir, const std::filesystem::path& name)
 {
-  if(dir.empty())
-    return name;
-  if(dir.back() == '/')
-    return dir + name;
-  return dir + "/" + name;
+  return dir / name;
 }
 
 int main(int argc, char*argv[] )

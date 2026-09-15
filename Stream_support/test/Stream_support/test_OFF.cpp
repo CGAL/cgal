@@ -71,8 +71,7 @@ int main(int argc, char** argv)
 
   points.clear();
   polygons.clear();
-  std::string off_string(off_file);
-  ok = CGAL::IO::read_OFF(off_string, points, polygons);
+  ok = CGAL::IO::read_OFF(off_file, points, polygons);
   assert(ok);
 
   points.clear();

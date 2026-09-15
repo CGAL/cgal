@@ -111,13 +111,13 @@ int main(int argc, char** argv)
   t.stop();
   std::cout << "Took " << t.time() << std::endl;
 
-  std::string ts_name = std::string(ts_filename);
+  std::string ts_name = std::string(ts_filename.string());
   ts_name = ts_name.substr(ts_name.find_last_of("/") + 1, ts_name.length() - 1);
   ts_name = ts_name.substr(0, ts_name.find_last_of("."));
-  std::string ss_name = std::string(ss_filename);
+  std::string ss_name = std::string(ss_filename.string());
   ss_name = ss_name.substr(ss_name.find_last_of("/") + 1, ss_name.length() - 1);
   ss_name = ss_name.substr(0, ss_name.find_last_of("."));
-  std::string ps_name = std::string(ps_filename);
+  std::string ps_name = std::string(ps_filename.string());
   ps_name = ps_name.substr(ps_name.find_last_of("/") + 1, ps_name.length() - 1);
   ps_name = ps_name.substr(0, ps_name.find_last_of("."));
   std::string output_name = ts_name + "_" + ss_name + "_"  + ps_name + "_"

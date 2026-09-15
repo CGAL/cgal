@@ -114,7 +114,7 @@ bool alpha_wrap_triangle_manifoldness(const std::filesystem::path& filename,
   return alpha_wrap_triangle_manifoldness(input_polylines, alpha, offset);
 }
 
-bool alpha_wrap_triangle_manifoldness(const std::string& filename)
+bool alpha_wrap_triangle_manifoldness(const std::filesystem::path& filename)
 {
   std::cout << "\n===================================================" << std::endl;
   std::cout << "FILE: " << filename << std::endl;

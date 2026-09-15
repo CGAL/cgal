@@ -69,7 +69,7 @@ int main(int argc, char** argv)
   std::cout << "Took " << t.time() << " s." << std::endl;
 
   // Save the result
-  const std::string output_name = generate_output_name(filename, relative_alpha, relative_offset);
+  const std::string output_name = generate_output_name(filename.string(), relative_alpha, relative_offset);
   std::cout << "Writing to " << output_name << std::endl;
 
   std::ofstream out(output_name);

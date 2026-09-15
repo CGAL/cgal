@@ -87,7 +87,7 @@ bool alpha_wrap_polylines(Polylines& input_polylines,
 }
 
 // Compute alpha/offset and wrap polylines
-bool alpha_wrap_polylines(const std::string& filename,
+bool alpha_wrap_polylines(const std::filesystem::path& filename,
                           const double alpha_rel, const double offset_rel)
 {
   std::cout << "\n===================================================" << std::endl;

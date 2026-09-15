@@ -69,8 +69,7 @@ int main(int argc, char** argv)
 
   points.clear();
   polygons.clear();
-  std::string ply_string(ply_file);
-  ok = CGAL::IO::read_PLY(ply_string, points, polygons);
+  ok = CGAL::IO::read_PLY(ply_file, points, polygons);
   assert(ok);
 
   points.clear();

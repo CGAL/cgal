@@ -34,7 +34,7 @@ int main(int argc, char** argv)
 {
   // read the input surface mesh
   Triangle_mesh tmesh;
-  OpenMesh::IO::read_mesh(tmesh, (argc>1)?argv[1]:CGAL::data_file_path("meshes/elephant.off"));
+  OpenMesh::IO::read_mesh(tmesh, (argc>1)?argv[1]:CGAL::data_file_path("meshes/elephant.off").string);
 
   if(!CGAL::is_triangle_mesh(tmesh))
   {
