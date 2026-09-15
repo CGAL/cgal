@@ -312,7 +312,9 @@ class Intersection_of_triangle_meshes
 
       for(halfedge_descriptor h : hf2){
         edge_descriptor ed = edge(h, tm2);
-        std::size_t eid=get(non_manifold_feature_map_2.e_nm_id, ed);
+        std::size_t eid = non_manifold_feature_map_2.non_manifold_edges.empty()
+                          ? NM_NID
+                          : get(non_manifold_feature_map_2.e_nm_id, ed);
         if (eid!=NM_NID){
           if (non_manifold_feature_map_2.non_manifold_edges[eid].front()!=ed) continue;
           else
@@ -324,7 +326,9 @@ class Intersection_of_triangle_meshes
       }
       for(halfedge_descriptor h : hf1){
         edge_descriptor ed = edge(h, tm1);
-        std::size_t eid=get(non_manifold_feature_map_1.e_nm_id, ed);
+        std::size_t eid = non_manifold_feature_map_1.non_manifold_edges.empty()
+                          ? NM_NID
+                          : get(non_manifold_feature_map_1.e_nm_id, ed);
         if (eid!=NM_NID){
           if (non_manifold_feature_map_1.non_manifold_edges[eid].front()!=ed) continue;
           else
@@ -332,7 +336,7 @@ class Intersection_of_triangle_meshes
             h = halfedge(non_manifold_feature_map_1.non_manifold_edges[eid].front(), tm2);
         }
         if( !get(is_shared_edge_map_1, ed) && (is_border(h, tm1) || h < opposite(h, tm1)))
-          callback21(h, hf2[0]);
+          callback21(hf2[0], h);
       }
     };
 
