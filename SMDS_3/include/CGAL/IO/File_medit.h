@@ -1160,7 +1160,7 @@ bool read_MEDIT(std::istream& in,
  * positively oriented cells,
  * and cover the geometric convex hull of all points in `t3`.
  *
- \see \ref IOStreamMedit
+ * \see \ref IOStreamMedit
  */
 template <typename T3,
           typename Corner_index,
