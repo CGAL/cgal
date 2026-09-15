@@ -3157,14 +3157,14 @@ public:
     const auto inner_map = tr().create_triangulation_inner_map(
         cavity_triangulation, map_cavity_vertices_to_ambient_vertices, the_infinite_vertex_is_in_the_cavity);
 
-    this->copy_triangulation_into_hole(map_cavity_vertices_to_ambient_vertices,
-                                       std::move(outer_map),
-                                       inner_map,
-                                       this->new_cells_output_iterator());
+    tr().copy_triangulation_into_hole(map_cavity_vertices_to_ambient_vertices,
+                                      std::move(outer_map),
+                                      inner_map,
+                                      this->new_cells_output_iterator());
 
     for(auto outside_facet : facets_of_cavity) {
       const auto [outside_cell, outside_face_index] = outside_facet;
-      const auto mirror_facet = this->mirror_facet(outside_facet);
+      const auto mirror_facet = tr().mirror_facet(outside_facet);
       if(outside_cell->ccdt_3_data().is_facet_constrained(outside_face_index)) {
         const auto polygon_id = outside_cell->ccdt_3_data().face_constraint_index(outside_face_index);
         const CDT_2& cdt_2 = face_cdt_2(polygon_id);
@@ -3179,7 +3179,7 @@ public:
 
     this->new_vertex(p_vh);
 
-    CGAL_assume(!this->debug().validity() || this->is_valid(true));
+    CGAL_assertion(!this->debug().validity() || tr().tds().is_valid(true));
 
     return p_vh;
   }
@@ -5170,7 +5170,7 @@ private:
         out.close();
       }
 #endif // CGAL_CDT_3_CAN_USE_CXX20_FORMAT
-      this->copy_triangulation_into_hole(map_lower_cavity_vertices_to_ambient_vertices, std::move(outer_map),
+      tr().copy_triangulation_into_hole(map_lower_cavity_vertices_to_ambient_vertices, std::move(outer_map),
                                          lower_inner_map, this->new_cells_output_iterator());
     }
     std::set<Cell_handle> cells_to_remove{cells_of_lower_cavity.begin(), cells_of_lower_cavity.end()};
@@ -5207,7 +5207,7 @@ private:
     }
 
     // CGAL_assertion(has_all_constrained_edges());
-    CGAL_assume(!this->debug().validity() || this->is_valid(true));
+    CGAL_assertion(!this->debug().validity() || tr().tds().is_valid(true));
     return result;
   }
 
@@ -5281,7 +5281,7 @@ private:
 
       Facet facet{c, facet_index};
       if(orient == CGAL::NEGATIVE) {
-        facet = this->mirror_facet(facet);
+        facet = tr().mirror_facet(facet);
       }
       CGAL_assertion(same_triple(facet, fh_2d));
       return std::make_pair(facet, CGAL::EQUAL);
@@ -5465,7 +5465,7 @@ private:
         }
         for(int i = 0; i < 3; ++i) {
           Facet other_f{cell, this->vertex_triple_index(facet_index, i)};
-          Facet mirror_f = this->mirror_facet(other_f);
+          Facet mirror_f = tr().mirror_facet(other_f);
           if(cells_of_cavity.count(mirror_f.first) == 0) {
             facets_of_cavity_border.insert(mirror_f);
           }
