@@ -73,18 +73,6 @@ namespace CGAL::internal::Hexmeshing
     return is_intersect(bbox.xmin(), bbox.ymin(), bbox.zmin(),
                         bbox.xmax(), bbox.ymax(), bbox.zmax(), t);
   }
-
-  ///////////////////////////////////////////////////////////////////////////////
-  /// Test if a particular point is outside of the object (Tree), knowing there is
-  /// no intersection between its voxel and the tree.
-  template<typename Mesh, typename Tree>
-  bool is_outside_knowing_no_intersect(const internal::Hexmeshing::Point& p, const Tree& t)
-  {
-    CGAL::Side_of_triangle_mesh<Mesh, typename Kernel_traits
-                                <internal::Hexmeshing::Point>::Kernel> s(t);
-    CGAL::Bounded_side res=s(p);
-    return res!=CGAL::ON_BOUNDED_SIDE; // && !=CGAL::ON_BOUNDARY ?
-  }
 }
 
 #endif

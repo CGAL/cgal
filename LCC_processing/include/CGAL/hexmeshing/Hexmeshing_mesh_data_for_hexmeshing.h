@@ -26,7 +26,7 @@
 
 namespace CGAL::internal
 {
-  template<typename TriangleMesh>
+  template<typename TriangleMesh, typename VPM>
   class Mesh_data_for_hexmeshing
   {
   public:
@@ -37,20 +37,20 @@ namespace CGAL::internal
     using Triangle=typename Kernel::Triangle_3;
     using Segment=typename Kernel::Segment_3;
 
-    using Primitive=CGAL::AABB_face_graph_triangle_primitive<TriangleMesh>;
+    using Primitive=CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, VPM>;
     using AABB_Traits=CGAL::AABB_traits_3<Kernel, Primitive>;
     using Tree=CGAL::AABB_tree<AABB_Traits>;
     using Primitive_id=typename Tree::Primitive_id;
     using Side_of_mesh=CGAL::Side_of_triangle_mesh<TriangleMesh, Kernel>;
 
-    Mesh_data_for_hexmeshing(const TriangleMesh& poly_out, int cube_cells_per_dim) :
-        poly(poly_out)
+    Mesh_data_for_hexmeshing(const TriangleMesh& poly_out, const VPM& vpm, int cube_cells_per_dim) :
+        poly(poly_out), vpm(vpm)
     {
       construct_tree_from_poly();
       cubic_grid_from_aabb(cube_cells_per_dim);
     }
-    Mesh_data_for_hexmeshing(TriangleMesh poly_out, Hexmeshing::Grid grid_out) :
-        poly(poly_out), grid(grid_out)
+    Mesh_data_for_hexmeshing(const TriangleMesh& poly_out, const VPM& vpm, Hexmeshing::Grid grid_out) :
+        poly(poly_out), vpm(vpm), grid(grid_out)
     {
       construct_tree_from_poly();
     }
@@ -66,9 +66,9 @@ namespace CGAL::internal
     void construct_tree_from_poly()
     {
       // Compute AABB tree
-      tree.insert(faces(poly).first, faces(poly).second, poly);
+      tree.insert(faces(poly).first, faces(poly).second, poly, vpm);
       tree.accelerate_distance_queries();
-      tree.bbox();
+      tree.build();
     }
 
     void cubic_grid_from_aabb(int cube_cells_per_dim)
@@ -85,7 +85,8 @@ namespace CGAL::internal
           (center, max_size / (cube_cells_per_dim-2), cube_cells_per_dim);
     }
 
-    TriangleMesh poly;
+    const TriangleMesh& poly;
+    VPM vpm;
     Tree tree;
     Hexmeshing::Grid grid;
   };

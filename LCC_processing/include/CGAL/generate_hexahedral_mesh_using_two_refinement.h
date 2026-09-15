@@ -30,12 +30,20 @@ namespace CGAL
   (const TriangleMesh& tmesh, int cube_cells_per_dim, int nb_levels,
    const NamedParameters& np=parameters::default_values())
   {
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+
     bool trim=parameters::choose_parameter
       (parameters::get_parameter(np, internal_np::use_trimming), true);
     bool smooth=parameters::choose_parameter
       (parameters::get_parameter(np, internal_np::use_smoothing), true);
 
-    internal::Hexmeshing_for_linear_cell_complex<TriangleMesh> hdata(tmesh, cube_cells_per_dim);
+    // using GT = typename GetGeomTraits<TriangleMesh, NamedParameters>::type;
+    using VPM = typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type;
+    VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                               get_const_property_map(CGAL::vertex_point, tmesh));
+
+    internal::Hexmeshing_for_linear_cell_complex<TriangleMesh, VPM> hdata(tmesh, vpm, cube_cells_per_dim);
     hdata.two_refinement(nb_levels, trim, smooth);
     if constexpr (std::is_same_v<LCC, Default>)
     { return hdata.lcc; }

@@ -44,7 +44,7 @@ namespace CGAL::internal
  * including the Linear Cell Complex (LCC), grid configuration, and various
  * markers used during mesh generation and refinement.
  */
-template<typename TriangleMesh>
+template<typename TriangleMesh, typename VPM>
 class Hexmeshing_for_linear_cell_complex
 {
 public:
@@ -68,8 +68,8 @@ public:
     Pattern_substituer<LCC> partial_templates;   ///< Pattern substituter for partial hexahedral templates
   };
 
-  Mesh_data_for_hexmeshing<TriangleMesh> mesh;
-  using Tree=typename Mesh_data_for_hexmeshing<TriangleMesh>::Tree;
+  Mesh_data_for_hexmeshing<TriangleMesh, VPM> mesh;
+  using Tree=typename Mesh_data_for_hexmeshing<TriangleMesh, VPM>::Tree;
 
   // Required initialization
   Hexmeshing::Grid grid;                  ///< Grid configuration defining the mesh structure
@@ -86,10 +86,10 @@ public:
   int level = 0;             ///< Current refinement level
   std::array<PlaneSet, 3> first_face_of_planes;  ///< First faces of each plane set (X, Y, Z)
 
-  Hexmeshing_for_linear_cell_complex(const TriangleMesh& poly_out, int cube_cells_per_dim) :
-    mesh(poly_out, cube_cells_per_dim) {}
-  Hexmeshing_for_linear_cell_complex(TriangleMesh poly_out, Hexmeshing::Grid grid_out) :
-    mesh(poly_out, grid_out) {}
+  Hexmeshing_for_linear_cell_complex(const TriangleMesh& poly_out, const VPM& vpm, int cube_cells_per_dim) :
+    mesh(poly_out, vpm, cube_cells_per_dim) {}
+  Hexmeshing_for_linear_cell_complex(const TriangleMesh& poly_out, const VPM& vpm, Hexmeshing::Grid grid_out) :
+    mesh(poly_out, vpm, grid_out) {}
 
   /**
    * @brief Fixes invalid dart descriptors after refinement
@@ -287,7 +287,7 @@ public:
 
     Tree* tree = mesh.get_tree_pointer();
     MarkingFunction cellIdentifier = is_volume_intersecting_poly(*tree);
-    DecideInsideFunction decideFunc = is_inner_point<TriangleMesh, Tree>(*tree);
+    DecideInsideFunction decideFunc = is_inner_point<TriangleMesh, VPM>(*tree);
 
     ExternalRessources res;
 
