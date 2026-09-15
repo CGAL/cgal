@@ -272,10 +272,12 @@ class Intersection_of_triangle_meshes
     tm2_faces_intersecting_bb.reserve(num_faces(tm2));
 
     for(face_descriptor f: faces(tm1))
-      if( !get(is_shared_face_map_1, f) && do_overlap(face_bbox(f, tm1), bb) )
+      if( !get(is_shared_face_map_1, f) &&
+           do_overlap(face_bbox(f, tm1, parameters::vertex_point_map(vpm1)), bb))
         tm1_faces_intersecting_bb.push_back(f);
     for(face_descriptor f: faces(tm2))
-      if( !get(is_shared_face_map_2, f) && do_overlap(face_bbox(f, tm2), bb) )
+      if( !get(is_shared_face_map_2, f) &&
+           do_overlap(face_bbox(f, tm2, parameters::vertex_point_map(vpm2)), bb))
         tm2_faces_intersecting_bb.push_back(f);
 
     Tree_1 tree1(tm1_faces_intersecting_bb.begin(), tm1_faces_intersecting_bb.end(), tm1, vpm1);
@@ -333,7 +335,7 @@ class Intersection_of_triangle_meshes
           if (non_manifold_feature_map_1.non_manifold_edges[eid].front()!=ed) continue;
           else
             // make sure the halfedge used is consistent with stored one
-            h = halfedge(non_manifold_feature_map_1.non_manifold_edges[eid].front(), tm2);
+            h = halfedge(non_manifold_feature_map_1.non_manifold_edges[eid].front(), tm1);
         }
         if( !get(is_shared_edge_map_1, ed) && (is_border(h, tm1) || h < opposite(h, tm1)))
           callback21(hf2[0], h);
@@ -351,7 +353,7 @@ class Intersection_of_triangle_meshes
         tg.wait();
 
         tbb::concurrent_vector<std::pair<face_descriptor, face_descriptor>> inter;
-        CGAL::AABB_trees::all_pairs_of_intersecting_primitives(tree1, tree2, std::back_inserter(inter), parameters::concurrency_tag(ConcurrencyTag()));
+        CGAL::AABB_trees::all_pairs_of_primitives_with_overlapping_bbox(tree1, tree2, std::back_inserter(inter), parameters::concurrency_tag(ConcurrencyTag()));
 
         // Callback are not thread safe since Edge_to_faces is not.
         // Edge_to_faces is an unordered_map<Edge_index, unordered_set<Face_index>>
@@ -371,7 +373,7 @@ class Intersection_of_triangle_meshes
         helper_2.template build<ConcurrencyTag>(tree2, tm2, vpm2);
 
         std::vector<std::pair<face_descriptor, face_descriptor>> inter;
-        CGAL::AABB_trees::all_pairs_of_intersecting_primitives(tree1, tree2, std::back_inserter(inter));
+        CGAL::AABB_trees::all_pairs_of_primitives_with_overlapping_bbox(tree1, tree2, std::back_inserter(inter));
 
         if(non_manifold_feature_map_1.non_manifold_edges.empty() && non_manifold_feature_map_2.non_manifold_edges.empty())
           for(const auto& [f_1, f_2]: inter)
@@ -467,7 +469,7 @@ class Intersection_of_triangle_meshes
         halfedge_descriptor h1 = next(h0, tm);
         halfedge_descriptor h2 = next(h1, tm);
 
-        halfedge_descriptor h_f2 = halfedge(f_1, tm);
+        halfedge_descriptor h_f2 = halfedge(f_2, tm);
 
         if (is_border(h0, tm) || h0 < opposite(h0, tm))
           callback(h0, h_f2);
@@ -489,7 +491,7 @@ class Intersection_of_triangle_meshes
         halfedge_descriptor h1 = next(h0, tm);
         halfedge_descriptor h2 = next(h1, tm);
 
-        halfedge_descriptor h_f2 = halfedge(f_1, tm);
+        halfedge_descriptor h_f2 = halfedge(f_2, tm);
 
         if (is_border(h0, tm) || h0 < opposite(h0, tm))
           callback(h0, h_f2);

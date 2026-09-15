@@ -199,6 +199,64 @@ private:
   bool m_tr1_has_rotation, m_tr2_has_rotation;
 };
 
+template<typename AABBTraits1, typename AABBTraits2, typename OutputIterator>
+class Two_trees_listing_primitives_with_overlapping_bbox_traits
+{
+  typedef typename AABBTraits1::Primitive Primitive1;
+  typedef typename AABBTraits2::Primitive Primitive2;
+  typedef ::CGAL::AABB_node<AABBTraits1> Node1;
+  typedef ::CGAL::AABB_node<AABBTraits2> Node2;
+
+public:
+  Two_trees_listing_primitives_with_overlapping_bbox_traits(const AABBTraits1& traits1, const AABBTraits2& traits2, OutputIterator out_)
+    : m_traits1(traits1), m_traits2(traits2), out(out_)
+  {}
+
+  bool go_further() const {
+    return true;
+  }
+
+  // If true, the next step of traversal continue on A, if false, the next step of traversal is on B
+  template<typename Node_A, typename Node_B>
+  bool prefer_A_for_next_step(const Node_A& node_a, const Node_B& node_b, const std::size_t&, const std::size_t&) const {
+    return node_a.bbox().squared_diagonal_length() > node_b.bbox().squared_diagonal_length();
+  }
+
+  void intersection(const Primitive1& primitive1, const Primitive2& primitive2)
+  {
+    using Wrap_iterator = Wrap_output_iterator<true, typename Primitive1::Id, OutputIterator>;
+    Wrap_iterator wrap_out(primitive1.id(), out);
+    Listing_bbox_primitive_traits<AABBTraits2, typename AABBTraits1::Primitive::Datum, Wrap_iterator> traits(wrap_out, m_traits2);
+    traits.intersection(internal::Primitive_helper<AABBTraits1>::get_datum(primitive1, m_traits1), primitive2);
+  }
+
+  void intersection(const Primitive1& primitive1, const Node2& node2, std::size_t nb_primitives_2)
+  {
+    using Wrap_iterator = Wrap_output_iterator<true, typename Primitive1::Id, OutputIterator>;
+    Wrap_iterator wrap_out(primitive1.id(), out);
+    Listing_bbox_primitive_traits<AABBTraits2, typename AABBTraits1::Primitive::Datum, Wrap_iterator> traits(wrap_out, m_traits2);
+    node2.traversal( internal::Primitive_helper<AABBTraits1>::get_datum(primitive1, m_traits1), traits, nb_primitives_2);
+  }
+
+  void intersection(const Node1& node1, std::size_t nb_primitives_1, const Primitive2& primitive2)
+  {
+    using Wrap_iterator= Wrap_output_iterator<false, typename Primitive2::Id, OutputIterator>;
+    Wrap_iterator wrap_out(primitive2.id(), out);
+    Listing_bbox_primitive_traits<AABBTraits1, typename AABBTraits2::Primitive::Datum, Wrap_iterator> traits(wrap_out, m_traits1);
+    node1.traversal( internal::Primitive_helper<AABBTraits2>::get_datum(primitive2, m_traits2), traits, nb_primitives_1);
+  }
+
+  bool do_intersect(const Node1& node1, const Node2& node2) const
+  {
+    return do_overlap(node1.bbox(), node2.bbox());
+  }
+
+private:
+  const AABBTraits1& m_traits1;
+  const AABBTraits2& m_traits2;
+  OutputIterator out;
+};
+
 template<typename AABBTraits1, typename AABBTraits2>
 class Two_trees_do_intersect_traits
 {
