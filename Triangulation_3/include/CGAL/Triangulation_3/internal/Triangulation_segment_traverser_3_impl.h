@@ -552,8 +552,18 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& pre
   // For the remembering stochastic walk, we start trying with a random facet.
   CGAL_assertion_code(bool incell = true;)
 
-  for(int li = 0; li < 4; ++li)
+  int start = 0;
+  int end = 4;
+  if(cur.lt == Tr::VERTEX) {
+    // Then start to look at the facet opposite to the current vertex.
+    // For the three other facets, the exit type will be `VERTEX` anyway.
+    start = cur.li;
+    end = cur.li + 4;
+  }
+
+  for(int li_ = start; li_ < end; ++li_)
   {
+    const int li = li_ % 4;
     // Skip the previous cell.
     Cell_handle next = cur_cell->neighbor(li);
     if(next == prev.cell) {
