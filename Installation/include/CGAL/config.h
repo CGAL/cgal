@@ -568,6 +568,16 @@ namespace cpp11{
 
 namespace CGAL {
 
+inline std::string path_to_utf8(const std::filesystem::path& p)
+{
+#if defined(__cpp_lib_char8_t)
+    const std::u8string s = p.u8string();
+    return std::string(reinterpret_cast<const char*>(s.data()), s.size());
+#else
+    return p.u8string();
+#endif
+}
+
 // Returns filename prefixed by the directory of CGAL containing data.
 // This directory is either defined in the environment variable CGAL_DATA_DIR,
 // otherwise it is taken from the constant CGAL_DATA_DIR (defined in CMake),
@@ -605,7 +615,7 @@ inline std::filesystem::path data_file_path(const std::filesystem::path& filenam
   // Test if the file exists, write a warning otherwise
   if (! std::filesystem::exists(res) )
   {
-    std::cerr<<"[WARNING] file " << res.string() << " does not exist or cannot be read\n "
+    std::cerr<<"[WARNING] file " << path_to_utf8(res) << " does not exist or cannot be read\n "
              <<"(CGAL_DATA_DIR='" << cgal_dir.value() <<"')."<<std::endl;
   }
 
