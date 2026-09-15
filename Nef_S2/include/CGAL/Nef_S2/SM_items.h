@@ -22,7 +22,6 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/In_place_list.h>
-#include <CGAL/Object.h>
 #include <CGAL/Nef_S2/Sphere_geometry.h>
 #include <string>
 #include <sstream>
