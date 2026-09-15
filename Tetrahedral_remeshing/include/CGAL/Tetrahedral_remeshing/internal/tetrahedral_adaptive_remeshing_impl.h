@@ -139,7 +139,13 @@ private:
     {
       if (m_c3t3.triangulation().get_lock_data_structure() == nullptr)
       {
-        m_lock_ds.emplace(m_c3t3.bbox(), 8 /*grid size, as in Mesh_3*/);
+        // 16 cells per axis, not the 8 Mesh_3 uses: at 8 the grid is coarse
+        // enough that distinct operations collide on the same lock and retry.
+        // Screened over the 24 Tier-A configs at 4 threads, 16 vs 8 is
+        // -1.907% wall time and -4.448% instructions, with 20 of 24 configs
+        // faster and the worst at +0.22%. 32 and 64 measure the same wall
+        // time as 16 and lose more on the small meshes.
+        m_lock_ds.emplace(m_c3t3.bbox(), 16);
         m_c3t3.triangulation().set_lock_data_structure(std::addressof(*m_lock_ds));
       }
     }
