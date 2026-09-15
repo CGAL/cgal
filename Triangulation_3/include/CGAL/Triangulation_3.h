@@ -2099,8 +2099,15 @@ public:
     static constexpr std::size_t MAXIDX = 192;   // keeps the table's load <= 0.75
     unsigned char table[TSIZE];
     boost::container::small_vector<const void*, 64> seen;
+    // False under Sequential_tag, where try_lock_vertex() is already a no-op
+    // and there is nothing to skip.
+    bool active;
 
-    Zone_vertex_dedup() { std::memset(table, 0, sizeof(table)); }
+    explicit Zone_vertex_dedup(bool is_active = true) : active(is_active)
+    {
+      if(active)
+        std::memset(table, 0, sizeof(table));
+    }
 
     // True when this vertex was already locked earlier in this same walk.
     bool seen_or_record(const void* p)
@@ -2125,37 +2132,50 @@ public:
     }
   };
 
-  // `try_lock_cell()` with the redundant per-vertex asks removed.
+  /// @{
+  /// `try_lock_vertex()` / `try_lock_cell()` with the asks this zone has
+  /// already made removed. `dd` is the zone's table, so a vertex shared by two
+  /// stars of the SAME zone -- the two endpoints of a collapsed or flipped
+  /// edge share their whole ring -- is asked for once, not twice.
+  bool try_lock_vertex_dedup(const Vertex_handle& vh, Zone_vertex_dedup& dd) const
+  {
+    if(dd.active && dd.seen_or_record(&*vh))
+      return true;                      // already held by this zone
+    return this->try_lock_vertex(vh);
+  }
+
   bool try_lock_cell_dedup(const Cell_handle& c, Zone_vertex_dedup& dd) const
   {
     for(int k = 0; k < 4; ++k)
     {
-      const Vertex_handle vk = c->vertex(k);
-      if(dd.seen_or_record(&*vk))
-        continue;                       // already held by this walk
-      if(!this->try_lock_vertex(vk))
+      if(!this->try_lock_vertex_dedup(c->vertex(k), dd))
         return false;
     }
     return true;
   }
+  /// @}
 
   template <typename IncidentCellsContainer>
   bool try_lock_and_get_incident_cells(Vertex_handle v, IncidentCellsContainer& cells) const
   {
+    Zone_vertex_dedup dd(this->is_parallel());
+    return this->try_lock_and_get_incident_cells(v, cells, dd);
+  }
+
+  // The overload a caller uses to share one table across the several stars of
+  // one zone.
+  template <typename IncidentCellsContainer>
+  bool try_lock_and_get_incident_cells(Vertex_handle v, IncidentCellsContainer& cells,
+                                       Zone_vertex_dedup& dd) const
+  {
     static_assert(std::is_same_v<typename IncidentCellsContainer::value_type, Cell_handle>,
                   "the output container must hold Cell_handle");
     // We need to lock v individually first, to be sure v->cell() is valid
-    if(!this->try_lock_vertex(v))
+    if(!this->try_lock_vertex_dedup(v, dd))
       return false;
 
-    Zone_vertex_dedup dd;
-    const bool dedup = this->is_parallel();
-    if(dedup)
-      dd.seen_or_record(&*v);           // v was just locked above
-
     Cell_handle d = v->cell();
-    if(!(dedup ? this->try_lock_cell_dedup(d, dd)
-               : this->try_lock_cell(d))) // LOCK
+    if(!this->try_lock_cell_dedup(d, dd)) // LOCK
       return false;
 
     cells.push_back(d);
@@ -2172,8 +2192,7 @@ public:
           continue;
 
         Cell_handle next = c->neighbor(i);
-        if(!(dedup ? this->try_lock_cell_dedup(next, dd)
-                   : this->try_lock_cell(next))) // LOCK
+        if(!this->try_lock_cell_dedup(next, dd)) // LOCK
         {
           for(Cell_handle ch : cells)
           {

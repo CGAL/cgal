@@ -1691,7 +1691,12 @@ public:
       return true; // nothing to lock; execute_operation_vv() will skip it
 
     const Tr& tr = c3t3.triangulation();
-    if (!tr.try_lock_vertex(e.first) || !tr.try_lock_vertex(e.second))
+    // One table for the whole zone: the two endpoints of a collapsed edge
+    // share their entire ring, so the second star walk re-asks for vertices
+    // the first already locked.
+    typename Tr::Zone_vertex_dedup dd(tr.is_parallel());
+    if (!tr.try_lock_vertex_dedup(e.first, dd)
+     || !tr.try_lock_vertex_dedup(e.second, dd))
       return false;
 
     // Re-checked now that both vertices are held: another thread may have
@@ -1715,8 +1720,8 @@ public:
                                           point(e.second->point()))))
       return false;
 
-    if (!tr.try_lock_and_get_incident_cells(e.first, stars.star0)
-     || !tr.try_lock_and_get_incident_cells(e.second, stars.star1))
+    if (!tr.try_lock_and_get_incident_cells(e.first, stars.star0, dd)
+     || !tr.try_lock_and_get_incident_cells(e.second, stars.star1, dd))
       return false;
 
     stars.v0 = e.first;
