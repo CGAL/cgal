@@ -2186,12 +2186,6 @@ namespace internal
 * the parallel loop. Either way the enumeration itself stays serial and only
 * the per-edge work is spread out.
 *
-* That is the wrong half to keep serial. Timed inside the split phase, with
-* the enumeration measured AFTER the collection and so cache-warm (a low
-* read), the bare walk of `finite_edges()` with no predicate at all was 60.5%
-* of the whole serial collection on `124534_cdt_0.5` and 71.0% on
-* `124534_cdt_1.5`. Materialise-then-parallel_for would leave that behind.
-*
 * The scan below is not extra work invented to dodge the iterator: it is the
 * same algorithm the iterator runs. `Triangulation_ds_edge_iterator_3`
 * advances through the cells and their six edge slots, and for each slot
