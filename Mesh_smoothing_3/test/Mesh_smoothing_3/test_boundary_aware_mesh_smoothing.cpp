@@ -391,7 +391,9 @@ void test_corner_is_fixed()
 
   auto status = CGAL::boundary_aware_mesh_smoothing(
     fixture.c3t3,
-    CGAL::Mesh_smoothing_3::C3t3_no_projection<C3t3>());
+    CGAL::Mesh_smoothing_3::C3t3_no_projection<C3t3>(),
+    CGAL::parameters::verbose(true)
+  );
 
   assert_all_finite(fixture.c3t3);
 
