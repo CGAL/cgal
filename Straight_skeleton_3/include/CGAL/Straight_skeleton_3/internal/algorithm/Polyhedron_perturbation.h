@@ -5735,6 +5735,9 @@ public:
         // can't trust the edge is_reflex() function at that point, because the facets
         // have been perturbed and the convexity might have changed
         auto is_reflex = [&](const EdgeSPtr& e) -> bool {
+          CGAL_SS3_TRANSF_TRACE_V(64, "is_reflex = " << e->source()->point() << " " << e->target()->point());
+          CGAL_assertion(e->source()->point() != e->target()->point());
+
           bool result = false;
           const FacetSPtr facet_l = e->get_facet_L();
           const FacetSPtr facet_r = e->get_facet_R();
@@ -5742,15 +5745,18 @@ public:
           CGAL_SS3_DEBUG_SPTR(facet_r);
           const Plane_3& plane_l = facet_l->get_plane();
           const Plane_3& plane_r = facet_r->get_plane();
+          CGAL_SS3_TRANSF_TRACE_V(64, "planes = " << plane_l << " " << plane_r);
           std::optional<Line_3> oline = Kernel_wrapper::intersection(plane_l, plane_r);
           CGAL_assertion(bool(oline));
           Vector_3 dir = oline->to_vector();
+          CGAL_SS3_TRANSF_TRACE_V(64, "dir = " << dir);
           CGAL_assertion(dir != CGAL::NULL_VECTOR);
           // possibly reorient 'dir' to align with the direction of the edge
           // note that the edge is stable since its vertices are stable
           if (dir * Vector_3(e->source()->point(), e->target()->point()) < 0) {
             dir = -dir;
           }
+          CGAL_SS3_TRANSF_TRACE_V(64, "canonical dir = " << dir);
           const Point_3 p_src = oline->point();
           const Vector_3 normal_l = plane_l.orthogonal_vector();
           CGAL_assertion(normal_l != CGAL::NULL_VECTOR);
@@ -5758,11 +5764,21 @@ public:
           if (plane_r.oriented_side(p) == CGAL::ON_POSITIVE_SIDE) {
             result = true;
           }
+          CGAL_SS3_TRANSF_TRACE_V(64, "result = " << result);
           return result;
         };
 
+        // find the correct common edge
+        EdgeSPtr common_edge;
+        for (const EdgeSPtr& e : common_edges) {
+          if (e->source() == vertex || e->target() == vertex) {
+            common_edge = e;
+            break;
+          }
+        }
+        CGAL_SS3_DEBUG_SPTR(common_edge);
 
-        bool is_convex = !(is_reflex(common_edges.front()));
+        bool is_convex = !(is_reflex(common_edge));
         CGAL_SS3_TRANSF_TRACE_V(64, "is_convex = " << is_convex);
 
         // now, if the edge is convex in the input polyhedron, we must turn "right", meaning,
@@ -5819,6 +5835,8 @@ public:
             Vector_3 new_v { points[test_spid0], points[test_spid1] };
 
             if (CGAL::scalar_product(orig_v, new_v) >= 0) {
+              CGAL_SS3_TRANSF_TRACE_V(64, "start is " << points[test_spid1]);
+              CGAL_SS3_TRANSF_TRACE_V(64, "start is " << normalized_points[test_spid1] << " (normalized)");
               return test_spid1;
             }
           }
@@ -5855,6 +5873,9 @@ public:
         PID prev_pid (-1);
         for(;;) {
           CGAL_assertion(facet->get_plane().has_on(points[current_pid]));
+
+          CGAL_SS3_TRANSF_TRACE_V(64, "at " << points[current_pid]);
+          CGAL_SS3_TRANSF_TRACE_V(64, "at " << normalized_points[current_pid] << " (normalized)");
 
           // find the next point on 'facet' in the direction of 'next_facet'
           auto [next_pid, valid] = find_next_boundary_point(prev_pid, current_pid, prev_facet, facet, next_facet);
@@ -6538,16 +6559,16 @@ public:
         }
 
         if (nm_vertex_id != PID(-1)) {
-          CGAL_SS3_TRANSF_TRACE_V(1, "Non-manifold vertex " << nm_vertex_id << " found");
-          std::cout << "at position " << points[nm_vertex_id] << std::endl;
+          CGAL_SS3_TRANSF_TRACE_V(32, "Non-manifold vertex " << nm_vertex_id << " found");
+          CGAL_SS3_TRANSF_TRACE_V(32, "  at position " << points[nm_vertex_id]);
 
           for (FID fid : vertex_incident_facets[nm_vertex_id]) {
             if (!polygon_to_facet[fid])
               continue;
             VID bot = face_volume_IDs[fid][0], top = face_volume_IDs[fid][1];
-            std::cout << "fid " << fid << " bot_flag=" << (int)in_out_flags[bot]
-                      << " top_flag=" << (int)in_out_flags[top]
-                      << " b=" << (solution[bot] != solution[top]) << "\n";
+            CGAL_SS3_TRANSF_TRACE_V(64, "fid " << fid << " bot_flag=" << (int)in_out_flags[bot]
+                                          << " top_flag=" << (int)in_out_flags[top]
+                                          << " b=" << (solution[bot] != solution[top]));
           }
 
           std::vector<BoolVar> nogood_terms;
