@@ -426,6 +426,24 @@ using behavior modifiers such as `Surface_mesh_simplification::Bounded_normal_ch
 
 Note that these policies depend on the third party \ref thirdpartyEigen library.
 
+
+\subsection Surface_mesh_simplificationExampleParallel Example Using Parallelism
+
+When using a local stop criterium like only collapsing small edges, a trivial parallelization is possible.
+First the mesh must be partitioned with the help of the \thirdpartyMETIS library.
+Then copies of the patches are generated, simplified independently, the result reassembled,
+and a final pass done sequentially as the boundaries of the patches where not collapsed.
+
+A more elaborate version would also enable the usage of constrained property maps.
+Instead of making copies of patches one might collapse in the input graph.
+This needs taking care of possible race conditons. As the halfedge associated
+to a vertex on the border of two neighboring patches might be modifed at the same time
+by two threads, one would need a mutex or put constraints on all faces incident
+to boundary vertices.
+
+\cgalExample{Surface_mesh_simplification/collapse_small_edges_in_parallel.cpp}
+
+
 \section SimplificationDesign Design and Implementation History
 
 The core of the package, as well as most of the simplification strategies, are the work of Fernando Cacciola,
