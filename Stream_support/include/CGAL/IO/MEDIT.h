@@ -50,16 +50,16 @@ struct Corner_with_index
 template<class PointRange,
          class TetrahedronRange,
          class SurfacePatchIndex_,
-         class Edge_with_index_, // either Edge_with_index or a tuple
-         class Corner_with_index_> // either Corner_with_index or a tuple/pair
+         class EdgeWithIndex_, // either Edge_with_index or a tuple
+         class CornerWithIndex_> // either Corner_with_index or a tuple/pair
 bool read_MEDIT(std::istream& is,
                 PointRange& points,
                 TetrahedronRange& tetrahedra,
                 std::vector<int>& subdomains,
                 boost::unordered_map<std::array<int,3>,SurfacePatchIndex_ >& border_facets,
                 bool read_border_facets,
-                std::vector<Edge_with_index_>& edge_indices,
-                std::vector<Corner_with_index_>& corner_indices,
+                std::vector<EdgeWithIndex_>& edge_indices,
+                std::vector<CornerWithIndex_>& corner_indices,
                 bool verbose,
                 bool& is_CGAL_mesh)
 {
@@ -329,14 +329,14 @@ bool read_MEDIT(std::istream& is,
  * \cgalNamedParamsBegin
  *
  *   \cgalParamNBegin{subdomains}
- *     \cgalParamDescription{a non-const reference wrapper to a container of integer that will be filled by this function.
+ *     \cgalParamDescription{a non-const reference wrapper to a container of integers that will be filled by this function.
  *                           Each element in the container indicates the subdomain index of the corresponding tetrahedron at the same position.}
  *     \cgalParamType{a `std::reference_wrapper` to a model of `BackInsertionSequence` able to store `int`.}
  *     \cgalParamDefault{subdomains are ignored}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{verbose}
- *     \cgalParamDescription{if true, prints information about the reading process.}
+ *     \cgalParamDescription{if `true`, prints information about the reading process.}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`false`}
  *   \cgalParamNEnd
@@ -400,7 +400,7 @@ bool read_MEDIT(std::istream& is,
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{subdomains}
- *     \cgalParamDescription{a reference wrapper to a container of integer of the same size as `tetrahedra`.
+ *     \cgalParamDescription{a reference wrapper to a container of integers of the same size as `tetrahedra`.
  *                           Each element in the container indicates the subdomain index of the corresponding tetrahedron at the same position.}
  *     \cgalParamType{a `std::reference_wrapper` to a model of the concept `RandomAccessContainer` of integer.}
  *     \cgalParamDefault{all tetrahedra will have the subdomain id `1`.}
