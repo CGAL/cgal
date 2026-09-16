@@ -5029,12 +5029,9 @@ private:
       throw Next_region{"missing facet in polygon", fh_region[0]};
     }
 
-    {
-      std::vector<Cell_handle> all_cells_in_conflict(cells_of_upper_cavity.size() + cells_of_lower_cavity.size());
-      auto it = std::copy(cells_of_upper_cavity.begin(), cells_of_upper_cavity.end(), all_cells_in_conflict.begin());
-      std::copy(cells_of_lower_cavity.begin(), cells_of_lower_cavity.end(), it);
-      insert_in_conflict_visitor.process_cells_in_conflict(all_cells_in_conflict.begin(), all_cells_in_conflict.end());
-    }
+    std::set<Cell_handle> cells_to_remove{cells_of_lower_cavity.begin(), cells_of_lower_cavity.end()};
+    cells_to_remove.insert(cells_of_upper_cavity.begin(), cells_of_upper_cavity.end());
+    insert_in_conflict_visitor.process_cells_in_conflict(cells_to_remove.begin(), cells_to_remove.end());
 
     if(this->debug().copy_triangulation_into_hole()) {
       std::cerr << "# glu the upper triangulation of the cavity\n";
@@ -5053,7 +5050,9 @@ private:
 
     typename T_3::Vertex_triple_Facet_map outer_map;
     auto add_to_outer_map = [&](typename T_3::Vertex_triple vt, Facet f,
-                                [[maybe_unused]] std::string_view extra = {}) {
+                                [[maybe_unused]] std::string_view extra = {})
+    {
+      if(cells_to_remove.count(f.first) != 0) return false; // the cell of the facet cannot be in the cavity
       outer_map[vt] = f;
       CGAL_USE(this);
 #if CGAL_CDT_3_CAN_USE_CXX20_FORMAT
@@ -5065,6 +5064,29 @@ private:
                                   with_point(vt[0]),
                                   with_point(vt[1]),
                                   with_point(vt[2]));
+      }
+#endif // CGAL_CDT_3_CAN_USE_CXX20_FORMAT
+      return true;
+    };
+    auto fill_outer_map_of_cavity = [&](const auto&, const auto& facets) {
+      std::vector<Facet> facets_to_add_to_pseudo_cells;
+      for(auto f : facets) {
+        auto vt = T_3::make_canonical_oriented_triple(f);
+        if(!add_to_outer_map(vt, f)) {
+          facets_to_add_to_pseudo_cells.push_back(f);
+        }
+      }
+      return facets_to_add_to_pseudo_cells;
+    };
+
+    auto extra_pseudo_facets = fill_outer_map_of_cavity(upper_cavity_triangulation, facets_of_upper_cavity);
+#if CGAL_CDT_3_CAN_USE_CXX20_FORMAT
+     if(this->debug().copy_triangulation_into_hole()) {
+        std::cerr << "outer_map:\n";
+        for(auto [vt, _] : outer_map) {
+          std::cerr << cdt_3_format("  {:.6}, {:.6}, {:.6})\n",
+                                    with_point(vt[0]), with_point(vt[1]), with_point(vt[2]));
+        }
         std::stringstream filename;
         filename << "dump_upper_outer_map_region_" << face_index << "_" << region_index << ".off";
         std::ofstream out(filename.str());
@@ -5073,15 +5095,6 @@ private:
         out.close();
       }
 #endif // CGAL_CDT_3_CAN_USE_CXX20_FORMAT
-    };
-    auto fill_outer_map_of_cavity = [&](const auto&, const auto& facets) {
-      for(auto f : facets) {
-        auto vt = T_3::make_canonical_oriented_triple(f);
-        add_to_outer_map(vt, f);
-      }
-    };
-
-    fill_outer_map_of_cavity(upper_cavity_triangulation, facets_of_upper_cavity);
 
     auto add_pseudo_cells_to_outer_map = [&](const auto& tr, const auto& map_cavity_vertices_to_ambient_vertices,
                                              bool is_upper_cavity) { // @TODO: comment this piece of code
@@ -5119,6 +5132,14 @@ private:
     const auto pseudo_cells =
         add_pseudo_cells_to_outer_map(upper_cavity_triangulation, map_upper_cavity_vertices_to_ambient_vertices, true);
 
+    for(auto& facet: extra_pseudo_facets) {
+      auto verts = tr().vertices(facet);
+      auto new_cell = this->tds().create_cell(verts[0], verts[1], verts[2], this->infinite_vertex());
+      facet = Facet{new_cell, 3};
+      T_3::make_canonical_oriented_triple(verts);
+      add_to_outer_map(verts, facet, "extra");
+    }
+
     {
       const auto upper_inner_map = tr().create_triangulation_inner_map(
           upper_cavity_triangulation, map_upper_cavity_vertices_to_ambient_vertices, false);
@@ -5144,12 +5165,18 @@ private:
     new_constrained_facets.reserve(pseudo_cells.size());
     for(const auto& [c, fh_2d] : pseudo_cells) {
       const Facet f{c, 3};
-      const Facet opposite_f = this->mirror_facet(f);
+      const Facet opposite_f = tr().mirror_facet(f);
       new_constrained_facets.emplace_back(opposite_f, fh_2d);
       CGAL_assertion(static_cast<bool>(facet_is_facet_of_cdt_2(*this, opposite_f, cdt_2)));
       auto vt = T_3::make_canonical_oriented_triple(opposite_f);
       add_to_outer_map(vt, opposite_f, "pseudo ");
       this->tds().delete_cell(c);
+    }
+    for(const auto& facet: extra_pseudo_facets) {
+      auto opposite_f = tr().mirror_facet(facet);
+      auto vt = T_3::make_canonical_oriented_triple(opposite_f);
+      add_to_outer_map(vt, opposite_f, "pseudo ");
+      this->tds().delete_cell(facet.first);
     }
     fill_outer_map_of_cavity(lower_cavity_triangulation, facets_of_lower_cavity);
     {
@@ -5159,6 +5186,11 @@ private:
      if(this->debug().copy_triangulation_into_hole()) {
         std::cerr << "outer_map:\n";
         for(auto [vt, _] : outer_map) {
+          std::cerr << cdt_3_format("  {:.6}, {:.6}, {:.6})\n",
+                                    with_point(vt[0]), with_point(vt[1]), with_point(vt[2]));
+        }
+        std::cerr << "lower_inner_map:\n";
+        for(auto [vt, _] : lower_inner_map) {
           std::cerr << cdt_3_format("  {:.6}, {:.6}, {:.6})\n",
                                     with_point(vt[0]), with_point(vt[1]), with_point(vt[2]));
         }
@@ -5173,8 +5205,6 @@ private:
       tr().copy_triangulation_into_hole(map_lower_cavity_vertices_to_ambient_vertices, std::move(outer_map),
                                          lower_inner_map, this->new_cells_output_iterator());
     }
-    std::set<Cell_handle> cells_to_remove{cells_of_lower_cavity.begin(), cells_of_lower_cavity.end()};
-    cells_to_remove.insert(cells_of_upper_cavity.begin(), cells_of_upper_cavity.end());
     for(auto c : cells_to_remove) {
       if(this->debug().copy_triangulation_into_hole()) {
         std::cerr << "delete cell " << IO::oformat(c) << "\n";
@@ -5184,7 +5214,7 @@ private:
 
     auto restore_markers = [&](Facet outside_facet) {
       const auto [outside_cell, outside_face_index] = outside_facet;
-      const auto mirror_facet = this->mirror_facet(outside_facet);
+      const auto mirror_facet = tr().mirror_facet(outside_facet);
       if(outside_cell->ccdt_3_data().is_facet_constrained(outside_face_index)) {
         const auto polygon_id = outside_cell->ccdt_3_data().face_constraint_index(outside_face_index);
         const CDT_2& cdt_2 = face_cdt_2(polygon_id);

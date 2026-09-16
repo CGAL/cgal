@@ -53,6 +53,7 @@
 #include <CGAL/Spatial_lock_grid_3.h>
 
 #include <boost/container/small_vector.hpp>
+#include <boost/container_hash/hash.hpp>
 #include <boost/property_map/function_property_map.hpp>
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>
@@ -5135,7 +5136,7 @@ copy_triangulation_into_hole(const Vertex_handle_unique_hash_map& vmap,
 
     *cit++ = new_ch;
 
-    // For the other faces check, if they can also be glued
+    // For the other faces, check if they can also be glued
     for(unsigned int index = 0; index < 4; index++)
     {
       if(index != i_i)
