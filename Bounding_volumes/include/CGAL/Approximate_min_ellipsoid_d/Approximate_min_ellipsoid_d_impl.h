@@ -47,7 +47,7 @@ namespace CGAL {
     //
     //    E* = { y | (y - c)^T M'/alpha (y - c) + mu <= 0 }.
     //
-    // Expanding the later and comparing with the original form we
+    // Expanding the latter and comparing with the original form we
     // obtain
     //
     //    c = - M'^{-1} m

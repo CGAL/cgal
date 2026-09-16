@@ -135,7 +135,7 @@ public:
   bool add_radius()
   {
     bool out = false;
-    boost::tie (m_radius, out) = this->template add_property_map<double> ("radius", 0.);
+    std::tie (m_radius, out) = this->template add_property_map<double> ("radius", 0.);
     return out;
   }
   double& radius (const Index& index) { return m_radius[index]; }
@@ -409,21 +409,15 @@ public:
       {
         if (other.template has_property_map<unsigned char>("red"))
           {
-            boost::tie (m_red, boost::tuples::ignore)
-              = this->template add_property_map<unsigned char>("red", 0);
-            boost::tie (m_green, boost::tuples::ignore)
-              = this->template add_property_map<unsigned char>("green", 0);
-            boost::tie (m_blue, boost::tuples::ignore)
-              = this->template add_property_map<unsigned char>("blue", 0);
+            m_red = this->template add_property_map<unsigned char>("red", 0).first;
+            m_green = this->template add_property_map<unsigned char>("green", 0).first;
+            m_blue = this->template add_property_map<unsigned char>("blue", 0).first;
           }
         else
           {
-            boost::tie (m_red, boost::tuples::ignore)
-              = this->template add_property_map<unsigned char>("r", 0);
-            boost::tie (m_green, boost::tuples::ignore)
-              = this->template add_property_map<unsigned char>("g", 0);
-            boost::tie (m_blue, boost::tuples::ignore)
-              = this->template add_property_map<unsigned char>("b", 0);
+            m_red = this->template add_property_map<unsigned char>("r", 0).first;
+            m_green = this->template add_property_map<unsigned char>("g", 0).first;
+            m_blue = this->template add_property_map<unsigned char>("b", 0).first;
           }
       }
 

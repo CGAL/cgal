@@ -29,22 +29,8 @@
 namespace CGAL {
 
 template < class K >
-typename K::Boolean
-operator==(const Point_2<K> &p, const Origin& o)
-{
-  return p == Point_2<K>(o);
-}
-
-template < class K >
-typename K::Boolean
-operator!=(const Point_2<K> &p, const Origin& o)
-{
-  return p != Point_2<K>(o);
-}
-
-template < class K >
 inline
-Angle
+typename K::Angle
 angle(const Vector_2<K> &u,
       const Vector_2<K> &v)
 {
@@ -53,7 +39,7 @@ angle(const Vector_2<K> &u,
 
 template < class K >
 inline
-Angle
+typename K::Angle
 angle(const Point_2<K> &p,
       const Point_2<K> &q,
       const Point_2<K> &r)
@@ -63,7 +49,7 @@ angle(const Point_2<K> &p,
 
 template < class K >
 inline
-Angle
+typename K::Angle
 angle(const Point_2<K> &p,
       const Point_2<K> &q,
       const Point_2<K> &r,
@@ -764,7 +750,9 @@ midpoint(const Point_2<K> &p, const Point_2<K> &q)
 }
 
 template < class K >
-inline typename K::Point_2 midpoint(const Segment_2<K> &s)
+inline
+typename K::Point_2
+midpoint(const Segment_2<K> &s)
 {
   return internal::midpoint(s, K());
 }
@@ -787,6 +775,264 @@ min_vertex(const Iso_rectangle_2<K> &ir)
 
 // FIXME TODO : What do we do with the operators ?
 // They have no counter part with the kernel argument...
+template < class K >
+inline
+typename K::Boolean
+operator==(const Point_2<K>& p, const Point_2<K>& q)
+{ return K().equal_2_object()(p, q); }
+
+template < class K >
+inline
+typename K::Boolean
+operator!=(const Point_2<K>& p, const Point_2<K>& q)
+{ return ! (p == q); }
+
+template < class K >
+typename K::Boolean
+operator==(const Point_2<K> &p, const Origin& o)
+{
+  return p == Point_2<K>(o);
+}
+
+template < class K >
+typename K::Boolean
+operator==(const Origin& o, const Point_2<K> &p)
+{
+  return (p == o);
+}
+
+template < class K >
+typename K::Boolean
+operator!=(const Point_2<K> &p, const Origin& o)
+{
+  return ! (p == o);
+}
+
+template < class K >
+typename K::Boolean
+operator!=(const Origin& o, const Point_2<K> &p)
+{
+  return ! (p == o);
+}
+
+template < class K >
+inline
+typename K::Boolean
+operator==(const Origin& o, const Weighted_point_2<K>& p)
+{ return p == o; }
+
+template < class K >
+inline
+typename K::Boolean
+operator!=(const Origin& o, const Weighted_point_2<K>& p)
+{ return p != o; }
+
+
+template < class K >
+inline
+typename K::Boolean
+operator==(const Point_2<K>& bp, const Weighted_point_2<K>& p)
+{ return bp == p.point(); }
+
+template < class K >
+inline
+typename K::Boolean
+operator!=(const Point_2<K>& bp, const Weighted_point_2<K>& p)
+{ return bp != p.point(); }
+
+template < class K >
+inline
+typename K::Boolean
+operator==(const Weighted_point_2<K>& p, const Point_2<K>& bp)
+{ return bp == p.point(); }
+
+template < class K >
+inline
+typename K::Boolean
+operator!=(const Weighted_point_2<K>& p, const Point_2<K>& bp)
+{ return bp != p.point(); }
+
+template < class K >
+inline
+typename K::Boolean
+operator==(const Weighted_point_2<K>& p, const Weighted_point_2<K>& p2)
+{ return p.point() == p2.point(); }
+
+template < class K >
+inline
+typename K::Boolean
+operator!=(const Weighted_point_2<K>& p, const Weighted_point_2<K>& p2)
+{ return p.point() != p2.point(); }
+
+template < class K >
+inline
+typename K::Boolean
+operator==(const Vector_2<K>& v, const Vector_2<K>& w)
+{ return K().equal_2_object()(v, w); }
+
+template < class K >
+inline
+typename K::Boolean
+operator!=(const Vector_2<K>& v, const Vector_2<K>& w)
+{ return ! (v == w); }
+
+template < class K >
+inline
+typename K::Boolean
+operator==(const Vector_2<K>& v, const Null_vector& n)
+{
+  return K().equal_2_object()(v, n);
+}
+
+template < class K >
+inline
+typename K::Boolean
+operator==(const Null_vector& n, const Vector_2<K>& v)
+{
+  return v == n;
+}
+
+template < class K >
+inline
+typename K::Boolean
+operator!=(const Vector_2<K>& v, const Null_vector& n)
+{
+  return ! (v == n);
+}
+
+template < class K >
+inline
+typename K::Boolean
+operator!=(const Null_vector& n, const Vector_2<K>& v)
+{
+  return ! (v == n);
+}
+
+template < class K >
+inline
+typename K::Boolean
+operator==(const Circle_2<K>& p, const Circle_2<K>& q)
+{
+  return K().equal_2_object()(p, q);
+}
+
+template < class K >
+inline
+typename K::Boolean
+operator!=(const Circle_2<K>& p, const Circle_2<K>& q)
+{
+  return ! (p == q);
+}
+
+template < class K >
+inline
+typename K::Boolean
+operator==(const Direction_2<K>& p, const Direction_2<K>& q)
+{
+  return K().equal_2_object()(p, q);
+}
+
+template < class K >
+inline
+typename K::Boolean
+operator!=(const Direction_2<K>& p, const Direction_2<K>& q)
+{
+  return ! (p == q);
+}
+
+template < class K >
+inline
+typename K::Boolean
+operator==(const Iso_rectangle_2<K>& p, const Iso_rectangle_2<K>& q)
+{
+  return K().equal_2_object()(p, q);
+}
+
+template < class K >
+inline
+typename K::Boolean
+operator!=(const Iso_rectangle_2<K>& p, const Iso_rectangle_2<K>& q)
+{
+  return ! (p == q);
+}
+
+template < class K >
+inline
+typename K::Boolean
+operator==(const Line_2<K>& p, const Line_2<K>& q)
+{
+  return K().equal_2_object()(p, q);
+}
+
+template < class K >
+inline
+typename K::Boolean
+operator!=(const Line_2<K>& p, const Line_2<K>& q)
+{
+  return ! (p == q);
+}
+
+template < class K >
+inline
+typename K::Boolean
+operator==(const Ray_2<K>& p, const Ray_2<K>& q)
+{
+  return K().equal_2_object()(p, q);
+}
+
+template < class K >
+inline
+typename K::Boolean
+operator!=(const Ray_2<K>& p, const Ray_2<K>& q)
+{
+  return ! (p == q);
+}
+
+template < class K >
+inline
+typename K::Boolean
+operator==(const Segment_2<K>& p, const Segment_2<K>& q)
+{
+  return K().equal_2_object()(p, q);
+}
+
+template < class K >
+inline
+typename K::Boolean
+operator!=(const Segment_2<K>& p, const Segment_2<K>& q)
+{
+  return ! (p == q);
+}
+
+template < class K >
+inline
+typename K::Boolean
+operator==(const Triangle_2<K>& p, const Triangle_2<K>& q)
+{
+  return K().equal_2_object()(p, q);
+}
+
+template < class K >
+inline
+typename K::Boolean
+operator!=(const Triangle_2<K>& p, const Triangle_2<K>& q)
+{
+  return ! (p == q);
+}
+
+
+template < class K >
+inline
+typename K::Boolean
+operator<(const Point_2<K>& p, const Point_2<K>& q)
+{ return K().less_xy_2_object()(p, q); }
+
+template < class K >
+inline
+typename K::Boolean
+operator<(const Weighted_point_2<K>& p, const Weighted_point_2<K>& q)
+{ return p.point() < q.point(); }
+
 template < class K >
 inline
 typename K::Boolean
@@ -814,24 +1060,6 @@ operator<=(const Direction_2<K>& d1, const Direction_2<K>& d2)
 template < class K >
 inline
 typename K::Boolean
-operator==(const Point_2<K>& p, const Point_2<K>& q)
-{ return K().equal_2_object()(p, q); }
-
-template < class K >
-inline
-typename K::Boolean
-operator!=(const Point_2<K>& p, const Point_2<K>& q)
-{ return ! (p == q); }
-
-template < class K >
-inline
-typename K::Boolean
-operator<(const Point_2<K>& p, const Point_2<K>& q)
-{ return K().less_xy_2_object()(p, q); }
-
-template < class K >
-inline
-typename K::Boolean
 operator>(const Point_2<K>& p, const Point_2<K>& q)
 { return K().less_xy_2_object()(q, p); }
 
@@ -846,18 +1074,6 @@ inline
 typename K::Boolean
 operator>=(const Point_2<K>& p, const Point_2<K>& q)
 { return ! K().less_xy_2_object()(p, q); }
-
-template < class K >
-inline
-typename K::Boolean
-operator==(const Vector_2<K>& v, const Vector_2<K>& w)
-{ return K().equal_2_object()(v, w); }
-
-template < class K >
-inline
-typename K::Boolean
-operator!=(const Vector_2<K>& v, const Vector_2<K>& w)
-{ return ! (v == w); }
 
 template < class K >
 inline

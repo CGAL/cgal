@@ -29,7 +29,9 @@ which contains four popular subdivision methods and their refinement
 functions. These include Catmull-Clark, Loop, Doo-Sabin and
 \f$ \sqrt{3}\f$ subdivisions. Variations of these methods can be easily
 extended by substituting the geometry computation of the refinement
-host.
+host. In particular, the edge case where one wishes to subdivide
+a mesh while keeping its geometry fixed is offered, setting an optional parameter
+in Catmull-Clark subdivision and Loop subdivision.
 
 \section secSubAlgo Subdivision Method
 
@@ -132,7 +134,7 @@ Subdivision_method_3::CatmullClark_subdivision(pmesh, params::number_of_iteratio
 \endcode
 
 `Subdivision_method_3` specifies the namespace of the
-subdivision functions. `CatmullClark_subdivision(P, params::number_of_iterations(d))` computes the
+subdivision functions. `CatmullClark_subdivision(pmesh, params::number_of_iterations(d))` computes the
 Catmull-Clark subdivision surface of the polygon mesh `pmesh` after
 `d` iterations of the refinements. The polygon mesh  `pmesh` is
 passed by reference, and is modified (i.e.\ subdivided) by the
@@ -141,14 +143,7 @@ subdivision function.
 This example shows how to subdivide a `Surface_mesh`
 with `Subdivision_method_3`.
 An application-defined polygon mesh might use a specialized kernel and/or
-a specialized internal container. There is one major restriction on the
-application-defined polygon mesh to work with
-`Subdivision_method_3`:
-The primitives (such as vertices, halfedges and faces)
-in the internal container are sequentially ordered (e.g.
-`std::vector` and `std::list`).
-This implies that the iterators traverse the primitives in
-the order of their creations/insertions.
+a specialized internal container.
 
 Section \ref secRefHost gives detailed explanations on this
 two restrictions.
@@ -357,14 +352,6 @@ The order of the connectivity operations plays a key role when maintaining
 stencils. By matching the order of the source submeshes to the refined
 vertices, no flag in the primitives is required to register the stencils.
 It avoids the data dependency of the refinement host on the polygon mesh class.
-To make the ordering trick work, the polygon mesh class must
-have a sequential container, such as a vector or a linked-list, as
-the internal storage.
-A sequential container guarantees that the iterators of the
-polygon mesh always traverse the primitives in the order of their
-insertions. Non-sequential structures such as
-trees or maps do not provide the required ordering, and hence
-cannot be used with `Subdivision_method_3`.
 
 Although `Subdivision_method_3` does not require flags
 to support the refinements and the stencils, it
@@ -372,7 +359,6 @@ still needs to know how to compute and store the geometry
 data (i.e.\ the points). The classes of `Subdivision_method_3`
 have as optional template argument a vertex property map
 that provides a mapping between vertices and points.
-
 
 Refinement hosts `PQQ` and `DQQ` work on a general
 polygon mesh, and `PTQ` and `Sqrt3` work on a triangulated
@@ -552,8 +538,8 @@ namespace Subdivision_method_3 {
 
 \section Subdivision_method_3Other Example: Customizing a Subdivision Method
 
-`Subdivision_method_3` supports four practical subdivision methods on a
-`Polyhedron_3` with points with %Cartesian coordinates. More subdivision methods can be supported
+`Subdivision_method_3` supports four practical subdivision methods on a polygon mesh
+with points with %Cartesian coordinates. More subdivision methods can be supported
 through the specialization of refinement hosts with custom geometry masks.
 The following example develops a subdivision method
 generating an improved Loop subdivision surface.

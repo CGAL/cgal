@@ -1,4 +1,4 @@
-/// \defgroup PkgSTLExtensionRef STL Extensions for CGAL Reference
+/// \defgroup PkgSTLExtensionRef Reference Manual
 
 /// \defgroup PkgSTLExtensionConcepts Concepts
 /// \ingroup PkgSTLExtensionRef

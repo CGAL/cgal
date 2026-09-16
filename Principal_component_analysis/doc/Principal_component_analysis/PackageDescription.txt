@@ -1,4 +1,4 @@
-/// \defgroup PkgPrincipalComponentAnalysisDRef Principal Component Analysis Reference
+/// \defgroup PkgPrincipalComponentAnalysisDRef Reference Manual
 
 /// \defgroup PkgPrincipalComponentAnalysisDBary CGAL::barycenter()
 /// \ingroup PkgPrincipalComponentAnalysisDRef
@@ -17,7 +17,6 @@
 
 /*!
 \addtogroup PkgPrincipalComponentAnalysisDRef
-\todo check generated documentation
 \cgalPkgDescriptionBegin{Principal Component Analysis,PkgPrincipalComponentAnalysisD}
 \cgalPkgPicture{teaserLeastSquaresFitting.png}
 \cgalPkgSummaryBegin

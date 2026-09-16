@@ -1,7 +1,6 @@
 //! \file examples/Arrangement_on_surface_2/dcel_extension.cpp
 // Extending all DCEL records (vertices, edges and faces).
 
-#include <CGAL/basic.h>
 #include <CGAL/Arr_extended_dcel.h>
 
 #include "arr_exact_construction_segments.h"

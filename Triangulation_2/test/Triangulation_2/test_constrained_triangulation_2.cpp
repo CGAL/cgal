@@ -26,9 +26,10 @@
 #define CGAL_NO_CDT_2_WARNING
 
 #include <CGAL/_test_types.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Constrained_triangulation_2.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+
 #include <CGAL/_test_cls_constrained_triangulation_2.h>
 
 static_assert(!CGAL::internal::can_construct_almost_exact_intersection_v<EK>,

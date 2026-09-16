@@ -163,7 +163,7 @@ namespace KSR {
       const char** parameters,
       Input_parameters& input_parameters) {
 
-      assert(num_parameters > 0);
+      CGAL_assertion(num_parameters > 0);
       for (int i = 1; i < num_parameters; ++i) {
 
         std::string str   = static_cast<std::string>(parameters[i]);
@@ -232,7 +232,7 @@ namespace KSR {
     bool does_parameter_have_default_value(
       const std::string parameter_name,
       const Input_parameters& input_parameters) {
-      assert(does_parameter_exist(parameter_name, input_parameters));
+      CGAL_assertion(does_parameter_exist(parameter_name, input_parameters));
       return input_parameters.at(parameter_name) == "default";
     }
 

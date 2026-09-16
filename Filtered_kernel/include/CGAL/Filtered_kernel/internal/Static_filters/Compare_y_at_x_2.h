@@ -22,13 +22,14 @@ template < typename K_base, typename Kernel >
 class Compare_y_at_x_2
   : public K_base::Compare_y_at_x_2
 {
-  typedef typename K_base::Point_2          Point_2;
-  typedef typename K_base::Segment_2        Segment_2;
-  typedef typename K_base::FT               FT;
-  typedef typename K_base::Compare_y_at_x_2 Base;
+  typedef typename K_base::Comparison_result  Comparison_result;
+  typedef typename K_base::Point_2            Point_2;
+  typedef typename K_base::Segment_2          Segment_2;
+  typedef typename K_base::FT                 FT;
+
+  typedef typename K_base::Compare_y_at_x_2   Base;
 
 public:
-
   using Base::operator();
 
   Comparison_result

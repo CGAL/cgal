@@ -159,7 +159,9 @@ int main(int argc, char** argv)
   // edge length of regular tetrahedron with circumradius alpha
   const double l = 1.6329931618554521 * alpha; // sqrt(8/3)
 
-  CGAL::tetrahedral_isotropic_remeshing(tr, l, CGAL::parameters::remesh_boundaries(false));
+  CGAL::tetrahedral_isotropic_remeshing(tr, l,
+                                        CGAL::parameters::remesh_boundaries(false)
+                                                         .number_of_iterations(5));
 
   std::cout << "AFTER: " << tr.number_of_vertices() << " vertices, " << tr.number_of_cells() << " cells" << std::endl;
 

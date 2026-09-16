@@ -20,6 +20,7 @@
 
 #include <memory>
 
+#include <type_traits>
 #include <unordered_map>
 
 namespace CGAL {
@@ -154,108 +155,134 @@ struct Dynamic_with_index
 
 } // namespace internal
 
+struct dynamic_property_t {};
+
 template <typename T>
-struct dynamic_vertex_property_t
+struct dynamic_vertex_property_t : public dynamic_property_t
 {
   dynamic_vertex_property_t()
   {}
+
+  using value_type = T;
+
+  template <typename G>
+  struct property_map {
+    using descriptor = typename boost::graph_traits<G>::vertex_descriptor;
+    using vertex_descriptor = descriptor;
+  };
 };
 
 
 template <typename T>
-struct dynamic_halfedge_property_t
+struct dynamic_halfedge_property_t : public dynamic_property_t
 {
   dynamic_halfedge_property_t()
   {}
+
+  using value_type = T;
+
+  template <typename G>
+  struct property_map {
+    using descriptor = typename boost::graph_traits<G>::halfedge_descriptor;
+    using halfedge_descriptor = descriptor;
+  };
 };
 
 template <typename T>
-struct dynamic_edge_property_t
+struct dynamic_edge_property_t : public dynamic_property_t
 {
   dynamic_edge_property_t()
   {}
+
+  using value_type = T;
+
+  template <typename G>
+  struct property_map {
+    using descriptor = typename boost::graph_traits<G>::edge_descriptor;
+    using edge_descriptor = descriptor;
+  };
 };
 
 
 template <typename T>
-struct dynamic_face_property_t
+struct dynamic_face_property_t : public dynamic_property_t
 {
   dynamic_face_property_t()
   {}
+
+  using value_type = T;
+
+  template <typename G>
+  struct property_map
+  {
+    using descriptor = typename boost::graph_traits<G>::face_descriptor;
+    using face_descriptor = descriptor;
+  };
+};
+
+template <typename T>
+constexpr bool is_dynamic_property_tag()
+{
+  return std::is_base_of_v<CGAL::dynamic_property_t, T>;
+}
+
+template <typename Graph, typename Dynamic_property_tag>
+struct property_map_of_dynamic_property_map : Dynamic_property_tag::template property_map<Graph>
+{
+  using descriptor = typename Dynamic_property_tag::template property_map<Graph>::descriptor;
+  using type = CGAL::internal::Dynamic_property_map<descriptor, typename Dynamic_property_tag::value_type>;
+  using const_type = const type;
 };
 
 } // namespace CGAL
 
 namespace boost {
 
-
 template <typename G, typename T>
 struct property_map<G, CGAL::dynamic_vertex_property_t<T> >
+  : public CGAL::property_map_of_dynamic_property_map<G, CGAL::dynamic_vertex_property_t<T>>
 {
-  typedef typename boost::graph_traits<G>::vertex_descriptor vertex_descriptor;
-  typedef CGAL::internal::Dynamic_property_map<vertex_descriptor,T> type;
-  typedef type const_type;
+  using vertex_descriptor = typename boost::graph_traits<G>::vertex_descriptor;
 };
 
 template <typename G, typename T>
 struct property_map<G, CGAL::dynamic_halfedge_property_t<T> >
+  : public CGAL::property_map_of_dynamic_property_map<G, CGAL::dynamic_halfedge_property_t<T>>
 {
-  typedef typename boost::graph_traits<G>::halfedge_descriptor halfedge_descriptor;
-  typedef CGAL::internal::Dynamic_property_map<halfedge_descriptor,T> type;
-  typedef type const_type;
+  using halfedge_descriptor = typename boost::graph_traits<G>::halfedge_descriptor;
 };
 
 
 template <typename G, typename T>
 struct property_map<G, CGAL::dynamic_edge_property_t<T> >
+  : public CGAL::property_map_of_dynamic_property_map<G, CGAL::dynamic_edge_property_t<T>>
 {
-  typedef typename boost::graph_traits<G>::edge_descriptor edge_descriptor;
-  typedef CGAL::internal::Dynamic_property_map<edge_descriptor,T> type;
-  typedef type const_type;
+  using edge_descriptor = typename boost::graph_traits<G>::edge_descriptor;
 };
 
 template <typename G, typename T>
 struct property_map<G, CGAL::dynamic_face_property_t<T> >
+  : public CGAL::property_map_of_dynamic_property_map<G, CGAL::dynamic_face_property_t<T>>
 {
-  typedef typename boost::graph_traits<G>::face_descriptor face_descriptor;
-  typedef CGAL::internal::Dynamic_property_map<face_descriptor,T> type;
-  typedef type const_type;
+  using face_descriptor = typename boost::graph_traits<G>::face_descriptor;
 };
 
 } // namespace boost
 
 namespace CGAL {
 
-template <typename T, typename G>
-typename boost::property_map<G, dynamic_vertex_property_t<T> >::const_type
-get(const CGAL::dynamic_vertex_property_t<T>&, const G&, const T& default_value = T())
-{
-  typedef typename boost::graph_traits<G>::vertex_descriptor vertex_descriptor;
-  return internal::Dynamic_property_map<vertex_descriptor,T>(default_value);
-}
+template <typename Dynamic_property_tag,
+          typename G,
+          typename = std::enable_if_t<is_dynamic_property_tag<Dynamic_property_tag>()>,
+          typename ...Default_value_args>
 
-template <typename T, typename G>
-typename boost::property_map<G, dynamic_halfedge_property_t<T> >::const_type
-get(const CGAL::dynamic_halfedge_property_t<T>&, const G&, const T& default_value = T())
+auto get(const Dynamic_property_tag&, const G&, Default_value_args&&... default_value_args)
 {
-  typedef typename boost::graph_traits<G>::halfedge_descriptor halfedge_descriptor;
-  return internal::Dynamic_property_map<halfedge_descriptor,T>(default_value);
-}
-
-template <typename T, typename G>
-typename boost::property_map<G, dynamic_edge_property_t<T> >::const_type
-get(const CGAL::dynamic_edge_property_t<T>&, const G&, const T& default_value = T())
-{
-  typedef typename boost::graph_traits<G>::edge_descriptor edge_descriptor;
-  return internal::Dynamic_property_map<edge_descriptor,T>(default_value);
-}
-
-template <typename T, typename G>
-typename boost::property_map<G, dynamic_face_property_t<T> >::const_type
-get(const CGAL::dynamic_face_property_t<T>&, const G&, const T& default_value = T())
-{
-  typedef typename boost::graph_traits<G>::face_descriptor face_descriptor;
-  return internal::Dynamic_property_map<face_descriptor,T>(default_value);
+  using pmap_traits = typename Dynamic_property_tag::template property_map<G>;
+  using descriptor = typename pmap_traits::descriptor;
+  using value_type = typename Dynamic_property_tag::value_type;
+  using Property_map = internal::Dynamic_property_map<descriptor, value_type>;
+  return Property_map(std::forward<Default_value_args>(default_value_args)...);
 }
 
 template<typename G, typename Descriptor, typename T>

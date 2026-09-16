@@ -348,7 +348,7 @@ public:
 
 #ifdef CGAL_AW3_TIMER
       t.stop();
-      std::cout << "Manifoldness post-processing took: " << t.time() << " s." << std::endl;
+      std::cout << "Manifoldness postprocessing took: " << t.time() << " s." << std::endl;
       t.reset();
       t.start();
 #endif

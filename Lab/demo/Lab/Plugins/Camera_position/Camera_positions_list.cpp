@@ -93,18 +93,20 @@ bool Camera_positions_list::save(QString filename) {
   if(m_model->rowCount() <1)
     return false;
   QFile file(filename);
-  file.open(QIODevice::WriteOnly);
-  QTextStream out(&file);
-  for(int i = 0; i < m_model->rowCount(); ++i)
-  {
-    QStandardItem* item = m_model->item(i);
-    out << item->data(Qt::DisplayRole).toString()
-        << "\n"
-        << item->data(Qt::UserRole).toString()
-        << "\n";
+  if(file.open(QIODevice::WriteOnly)){
+    QTextStream out(&file);
+    for(int i = 0; i < m_model->rowCount(); ++i)
+    {
+      QStandardItem* item = m_model->item(i);
+      out << item->data(Qt::DisplayRole).toString()
+          << "\n"
+          << item->data(Qt::UserRole).toString()
+          << "\n";
+    }
+    file.close();
+    return true;
   }
-  file.close();
-  return true;
+  return false;
 }
 
 void Camera_positions_list::on_saveButton_pressed()
@@ -129,19 +131,24 @@ void Camera_positions_list::on_openButton_pressed()
 
 void Camera_positions_list::load(QString filename) {
   QFile file(filename);
-  std::clog << "Loading camera positions " << qPrintable(filename) << std::endl;
-  file.open(QIODevice::ReadOnly);
-  QTextStream input(&file);
-  while(!input.atEnd()) {
-    QString text = input.readLine(1000);
-    QString coord = input.readLine(1000);
-    if(text.isNull() || coord.isNull()) return;
-    CGAL::qglviewer::Frame frame;
-    if(Three::activeViewer()->readFrame(coord, frame))
-    {
-      addItem(text,
-              Three::activeViewer()->dumpFrame(frame));
+
+  if(file.open(QIODevice::ReadOnly)){
+    std::clog << "Loading camera positions " << qPrintable(filename) << std::endl;
+
+    QTextStream input(&file);
+    while(!input.atEnd()) {
+      QString text = input.readLine(1000);
+      QString coord = input.readLine(1000);
+      if(text.isNull() || coord.isNull()) return;
+      CGAL::qglviewer::Frame frame;
+      if(Three::activeViewer()->readFrame(coord, frame))
+      {
+        addItem(text,
+                Three::activeViewer()->dumpFrame(frame));
+      }
     }
+  }else {
+    std::clog << "Loading camera positions " << qPrintable(filename) << " failed" << std::endl;
   }
 }
 

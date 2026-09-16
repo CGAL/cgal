@@ -3,6 +3,7 @@
 #include "Scene_polygon_soup_item.h"
 #include "Scene_surface_mesh_item.h"
 #include <CGAL/Three/Scene_group_item.h>
+#include <CGAL/Three/Three.h>
 
 #include <CGAL/Three/CGAL_Lab_plugin_helper.h>
 #include <CGAL/Three/CGAL_Lab_plugin_interface.h>
@@ -277,7 +278,7 @@ private:
     Point_set::Property_map<int> shape_id;
     if (dialog.add_property()) {
       bool added = false;
-      boost::tie(shape_id, added) = points->template add_property_map<int> ("shape", -1);
+      std::tie(shape_id, added) = points->template add_property_map<int> ("shape", -1);
       if (!added) {
         for (auto it = points->begin(); it != points->end(); ++ it)
           shape_id[*it] = -1;
@@ -532,8 +533,8 @@ private:
     Ransac::Parameters op;
     op.probability = dialog.search_probability();       // probability to miss the largest primitive on each iteration.
     op.min_points = dialog.min_points();          // Only extract shapes with a minimum number of points.
-    op.epsilon = dialog.epsilon();          // maximum euclidean distance between point and shape.
-    op.cluster_epsilon = dialog.cluster_epsilon();    // maximum euclidean distance between points to be clustered.
+    op.epsilon = dialog.epsilon();          // maximum Euclidean distance between point and shape.
+    op.cluster_epsilon = dialog.cluster_epsilon();    // maximum Euclidean distance between points to be clustered.
     op.normal_threshold = std::cos(CGAL_PI * dialog.normal_tolerance() / 180.);   // normal_threshold < dot(surface_normal, point_normal);
 
     CGAL::Random rand(static_cast<unsigned int>(time(nullptr)));
@@ -563,7 +564,7 @@ private:
     if (dialog.add_property())
     {
       bool added = false;
-      boost::tie (shape_id, added) = points->template add_property_map<int> ("shape", -1);
+      std::tie (shape_id, added) = points->template add_property_map<int> ("shape", -1);
       if (!added)
       {
         for (Point_set::iterator it = points->begin(); it != points->end(); ++ it)
@@ -1076,7 +1077,7 @@ void CGAL_Lab_point_set_shape_detection_plugin::on_actionEstimateParameters_trig
 
       if (points->nb_selected_points() == 0)
         {
-          QMessageBox::information(nullptr,
+          QMessageBox::information(CGAL::Three::Three::mainWindow(),
                                    tr("Warning"),
                                    tr("Selection is empty.\nTo estimate parameters, please select a planar section."));
           return;
@@ -1137,7 +1138,7 @@ void CGAL_Lab_point_set_shape_detection_plugin::on_actionEstimateParameters_trig
       QApplication::restoreOverrideCursor();
 
 
-      QMessageBox::information(nullptr,
+      QMessageBox::information(CGAL::Three::Three::mainWindow(),
                                tr("Estimated Parameters"),
                                tr("Epsilon = [%1 ; %2 ; %3 ; %4 ; %5]\nNormal Tolerance = [%6 ; %7 ; %8 ; %9 ; %10]\nMinimum Number of Points = %11\nConnectivity Epsilon = [%12 ; %13 ; %14 ; %15 ; %16]")
                                .arg(std::sqrt(epsilon.front()))

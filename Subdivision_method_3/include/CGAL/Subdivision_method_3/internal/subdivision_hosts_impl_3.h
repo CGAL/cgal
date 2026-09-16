@@ -398,7 +398,7 @@ void DQQ_1step(Poly& p, VertexPointMap vpm, Mask mask) {
 template <class Poly, class VertexPointMap, class Mask>
 void Sqrt3_1step(Poly& p, VertexPointMap vpm, Mask mask,
                  const bool refine_border = false) {
-  // `refine_border` is a boolean that is meant to be true only every SECOND step
+  // `refine_border` is a Boolean that is meant to be true only every SECOND step
   // of the subdivision. In particular, this function makes uses of the fact
   // that there is at most a single border edge in a face, which is true if
   // the mesh is obtained from a sqrt3 subdivision before, but might otherwise

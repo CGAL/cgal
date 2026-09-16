@@ -1,7 +1,6 @@
 //! \file examples/Arrangement_on_surface_2/spherical_overlay.cpp
 // Overlay of two arrangements embedded on the sphere.
 
-#include <CGAL/basic.h>
 #include <CGAL/Arr_overlay_2.h>
 #include <CGAL/Arr_default_overlay_traits.h>
 

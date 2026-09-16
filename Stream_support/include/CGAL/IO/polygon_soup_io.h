@@ -23,10 +23,8 @@
 #include <CGAL/IO/VTK.h>
 #include <CGAL/IO/GOCAD.h>
 
-#include <algorithm>
 #include <iostream>
 #include <string>
-#include <vector>
 
 namespace CGAL {
 

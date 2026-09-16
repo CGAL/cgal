@@ -136,11 +136,11 @@ Any model of the `EnvelopeDiagram_1` concept must define a geometric
 traits class, which in turn defines the `Point_2` and
 `X_monotone_curve_2` types defined with the diagram features.
 The geometric traits class must be a model of the
-`ArrangementXMonotoneTraits_2` concept in case we construct
+`AosXMonotoneTraits_2` concept in case we construct
 envelopes of \f$ x\f$-monotone curves. If we are interested in handling
 arbitrary (not necessarily \f$ x\f$-monotone) curves, the traits class
-must be a model of the `ArrangementTraits_2` concept. This
-concepts refined the `ArrangementXMonotoneTraits_2` concept;
+must be a model of the `AosTraits_2` concept. This
+concepts refined the `AosXMonotoneTraits_2` concept;
 a traits class that models this concepts must also defines a
 `Curve_2` type, representing an arbitrary planar curve, and
 provide a functor for subdividing such curves into \f$ x\f$-monotone
@@ -199,4 +199,3 @@ that compute envelopes of arbitrary curves.
 
 */
 } /* namespace CGAL */
-

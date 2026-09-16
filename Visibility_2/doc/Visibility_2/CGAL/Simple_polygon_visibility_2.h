@@ -67,7 +67,7 @@ public:
 /*!
 Attaches the given arrangement to the visibility object.
 
-This operation takes \cgalBigO{1} as the class does no pre-processing.
+This operation takes \cgalBigO{1} as the class does no preprocessing.
 
 In case the object is already attached to another arrangement,
 the visibility object gets detached before being attached to `arr`.

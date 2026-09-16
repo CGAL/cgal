@@ -36,6 +36,8 @@
 #endif
 #define ORIGINAL_FOV 0.94853805396568136
 
+class QWidget;
+
 class Viewer_impl {
 public:
   CGAL::Three::Scene_draw_interface* scene;
@@ -138,7 +140,11 @@ class LightingDialog :
   Q_OBJECT
 public:
   QColor ambient, diffuse, specular;
-  LightingDialog(Viewer_impl* d)
+  LightingDialog(QWidget* parent, Viewer_impl* d)
+      : QDialog(parent)
+      , diffuse_dial(this)
+      , ambient_dial(this)
+      , spec_dial(this)
   {
     setupUi(this);
     position_lineEdit->setText(QString("%1,%2,%3")
@@ -172,33 +178,23 @@ public:
     connect(&diffuse_dial, &QColorDialog::currentColorChanged, this, &LightingDialog::diffuse_changed );
     connect(&spec_dial, &QColorDialog::currentColorChanged, this,    &LightingDialog::specular_changed);
 
+    auto apply_color_change = [](QColor* color, QColorDialog* dialog, QPushButton* button) {
+      return [=] {
+        dialog->setCurrentColor(*color);
+        dialog->exec();
+        *color = dialog->selectedColor();
+        QPalette palette;
+        palette.setColor(QPalette::Button, *color);
+        button->setPalette(palette);
+      };
+    };
+
     connect(ambientButton, &QPushButton::clicked,
-            [this](){
-      ambient_dial.setCurrentColor(ambient);
-      ambient_dial.exec();
-      ambient = ambient_dial.selectedColor();
-      QPalette palette;
-      palette.setColor(QPalette::Button, ambient);
-      ambientButton->setPalette(palette);
-    });
+                apply_color_change(&ambient, &ambient_dial, ambientButton));
     connect(diffuseButton, &QPushButton::clicked,
-            [this](){
-      diffuse_dial.setCurrentColor(diffuse);
-      diffuse_dial.exec();
-      diffuse = diffuse_dial.selectedColor();
-      QPalette palette;
-      palette.setColor(QPalette::Button, diffuse);
-      diffuseButton->setPalette(palette);
-    });
+                apply_color_change(&diffuse, &diffuse_dial, diffuseButton));
     connect(specularButton, &QPushButton::clicked,
-            [this](){
-      spec_dial.setCurrentColor(specular);
-      spec_dial.exec();
-      specular = spec_dial.selectedColor();
-      QPalette palette;
-      palette.setColor(QPalette::Button, specular);
-      specularButton->setPalette(palette);
-    });
+                apply_color_change(&specular, &spec_dial, specularButton));
 
     //D e f a u l t - S e t t i n g s
     connect(buttonBox->button(QDialogButtonBox::StandardButton::RestoreDefaults), &QPushButton::clicked,
@@ -1821,7 +1817,7 @@ void Viewer::setLighting()
   QVector4D prev_diffuse = d->diffuse;
   QVector4D prev_spec_color = d->specular;
   //open dialog
-  LightingDialog* dialog = new LightingDialog(d);
+  LightingDialog* dialog = new LightingDialog(this->parentWidget(), d);
   //set specular
   connect(dialog->spec_powrSlider, &QSlider::valueChanged,
           [this, dialog]()
@@ -1838,7 +1834,7 @@ void Viewer::setLighting()
     if (list.size()!=3){
       QMessageBox *msgBox = new QMessageBox;
       msgBox->setWindowTitle("Error");
-      msgBox->setText("ERROR : Input should consists of 3 floats.");
+      msgBox->setText("ERROR : Input should consist of 3 floats.");
       msgBox->exec();
       return;
     }

@@ -156,18 +156,6 @@ public:
     return this->vector();
   }
 
-  typename R::Boolean
-  operator==(const Direction_2& d) const
-  {
-    return R().equal_2_object()(*this, d);
-  }
-
-  typename R::Boolean
-  operator!=(const Direction_2& d) const
-  {
-    return !(*this == d);
-  }
-
   Direction_2 transform(const Aff_transformation_2 &t) const
   {
     return t.transform(*this);

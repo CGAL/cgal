@@ -38,7 +38,7 @@ public:
     typedef Random_points_in_sphere_3<P,Creator> This;
     Random_points_in_sphere_3( double r = 1, Random& rnd = CGAL::get_default_random())
         // g is an input iterator creating points of type `P' uniformly
-        // distributed in the open sphere with radius r, i.e. |`*g'| < r .
+        // distributed in the open sphere with radius r, i.e., |`*g'| < r .
         // Three random numbers are needed from `rnd' for each point
     : Random_generator_base<P>( r, rnd) { generate_point(); }
     This& operator++()    {

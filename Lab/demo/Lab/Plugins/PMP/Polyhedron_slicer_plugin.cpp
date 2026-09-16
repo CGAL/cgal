@@ -187,7 +187,7 @@ bool CGAL_Lab_polyhedron_slicer_plugin::on_Update_plane_button_clicked() {
   { print_message("Error: center coordinates not convertible to double."); return false; }
 
   // set center
-  bool oldState = mf->blockSignals(true); // dont let it signal, it will invoke plane_manipulated_frame_modified otherwise
+  bool oldState = mf->blockSignals(true); // don't let it signal, it will invoke plane_manipulated_frame_modified otherwise
   mf->setPosition(center_x, center_y, center_z);
   mf->blockSignals(oldState);
 
@@ -206,7 +206,7 @@ bool CGAL_Lab_polyhedron_slicer_plugin::on_Update_plane_button_clicked() {
   CGAL::qglviewer::Quaternion orientation_from_bases;
   orientation_from_bases.setFromRotatedBasis(base_1, base_2, other);
 
-  oldState = mf->blockSignals(true); // dont let it signal, it will invoke plane_manipulated_frame_modified otherwise
+  oldState = mf->blockSignals(true); // don't let it signal, it will invoke plane_manipulated_frame_modified otherwise
   mf->setOrientation(orientation_from_bases);
   mf->blockSignals(oldState);
 

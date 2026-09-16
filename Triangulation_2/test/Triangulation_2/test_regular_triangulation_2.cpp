@@ -24,10 +24,10 @@
 #include <CGAL/_test_types.h>
 
 #include <CGAL/Regular_triangulation_2.h>
-#include <CGAL/_test_cls_regular_triangulation_2.h>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
+#include <CGAL/_test_cls_regular_triangulation_2.h>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel  RGt;
 

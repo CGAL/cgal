@@ -1,4 +1,4 @@
-/// \defgroup PkgOptimalTransportationReconstruction2Ref Optimal Transportation Curve Reconstruction Reference
+/// \defgroup PkgOptimalTransportationReconstruction2Ref Reference Manual
 
 /// \defgroup PkgOptimalTransportationReconstruction2Concepts Concepts
 /// \ingroup PkgOptimalTransportationReconstruction2Ref

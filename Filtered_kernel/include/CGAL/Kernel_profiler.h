@@ -25,8 +25,6 @@ template < typename P >
 struct Primitive_profiler
   : public P
 {
-    typedef typename P::result_type  result_type;
-
 // #define CGAL_KERNEL_PROFILER CGAL_PROFILER(CGAL_PRETTY_FUNCTION);
 #define CGAL_KERNEL_PROFILER \
         CGAL_PROFILER(typeid(static_cast<const P&>(*this)).name())
@@ -35,7 +33,7 @@ struct Primitive_profiler
       : P(p) {}
 
     template <class ... A>
-    result_type
+    decltype(auto)
     operator()(A&& ... a) const
     {
         CGAL_KERNEL_PROFILER;

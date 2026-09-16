@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.12...3.29)
+cmake_minimum_required(VERSION 3.12...3.31)
 project(Orthtree_Examples)
 
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Core)
@@ -23,5 +23,5 @@ include(CGAL_Eigen3_support)
 
 if (TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("orthtree_build.cpp")
-  target_link_libraries(orthtree_build PUBLIC CGAL::Eigen3_support)
+  target_link_libraries(orthtree_build PRIVATE CGAL::Eigen3_support)
 endif()

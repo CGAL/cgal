@@ -1,4 +1,4 @@
-/// \defgroup PkgStraightSkeleton2Ref 2D Straight Skeleton and Polygon Offsetting Reference
+/// \defgroup PkgStraightSkeleton2Ref Reference Manual
 /// \defgroup PkgStraightSkeleton2Concepts Concepts
 /// \ingroup PkgStraightSkeleton2Ref
 

@@ -105,7 +105,7 @@ public:
   /// \name Deprecated Constructions.
   //@{
 
-  /*!Construct a conic arc which is the full conic:
+  /*! constructs a conic arc which is the full conic:
    *   C: r*x^2 + s*y^2 + t*xy + u*x + v*y + w = 0
    * \pre The conic C must be an ellipse (so 4rs - t^2 > 0).
    */
@@ -129,7 +129,7 @@ public:
     _set_full(rat_coeffs, true);
   }
 
-  /*! Construct a conic arc which lies on the conic:
+  /*! constructs a conic arc which lies on the conic:
    *   C: r*x^2 + s*y^2 + t*xy + u*x + v*y + w = 0
    * \param orient The orientation of the arc (clockwise or counterclockwise).
    * \param source The source point.
@@ -156,7 +156,7 @@ public:
     _set(rat_coeffs);
   }
 
-  /*! Construct a segment conic arc from two endpoints.
+  /*! constructs a segment conic arc from two endpoints.
    * \param source the source point with rational coordinates.
    */
   CGAL_DEPRECATED Conic_arc_2(const Point_2& source, const Point_2& target) :
@@ -186,7 +186,7 @@ public:
     m_extra_data->side = ZERO;
   }
 
-  /*! Construct a conic arc from the given line segment.
+  /*! constructs a conic arc from the given line segment.
    * \param seg The line segment with rational endpoints.
    */
   CGAL_DEPRECATED Conic_arc_2 (const Rat_segment_2& seg) :
@@ -241,7 +241,7 @@ public:
     _set(rat_coeffs);
   }
 
-  /*! Set a circular arc that corresponds to a full circle.
+  /*! sets a circular arc that corresponds to a full circle.
    * \param circ The circle (with rational center and rational squared radius).
    */
   CGAL_DEPRECATED Conic_arc_2(const Rat_circle_2& circ) :
@@ -277,7 +277,7 @@ public:
     _set_full(rat_coeffs, false);
   }
 
-  /*! Set a circular arc that lies on the given circle:
+  /*! sets a circular arc that lies on the given circle:
    *   C: (x - x0)^2 + (y - y0)^2 = R^2
    * \param orient The orientation of the circle.
    * \param source The source point.
@@ -342,7 +342,7 @@ public:
     _set(rat_coeffs);
   }
 
-  /*! Construct a circular arc from the given three points.
+  /*! constructs a circular arc from the given three points.
    * \param p1 The arc source.
    * \param p2 A point in the interior of the arc.
    * \param p3 The arc target.
@@ -424,7 +424,7 @@ public:
     _set(rat_coeffs);
   }
 
-  /*! Construct a conic arc from the given five points, specified by the
+  /*! constructs a conic arc from the given five points, specified by the
    * points p1, p2, p3, p4 and p5.
    * \param p1 The source point of the given arc.
    * \param p2,p3,p4 Points lying on the conic arc, between p1 and p5.
@@ -515,7 +515,7 @@ public:
     }
   }
 
-  /*! Construct a conic arc which lies on the conic:
+  /*! constructs a conic arc which lies on the conic:
    *   C: r*x^2 + s*y^2 + t*xy + u*x + v*y + w = 0
    * The source and the target are specified by the intersection of the
    * conic with:
@@ -572,7 +572,7 @@ public:
     int k;
 
     for (k = 1; k <= 2; ++k) {
-      // Get the integer coefficients of the k'th auxiliary conic curve.
+      // Get the integer coefficients of the k-th auxiliary conic curve.
       aux_rat_coeffs[0] = (k == 1) ? r_1 : r_2;
       aux_rat_coeffs[1] = (k == 1) ? s_1 : s_2;
       aux_rat_coeffs[2] = (k == 1) ? t_1 : t_2;
@@ -593,7 +593,7 @@ public:
       }
 
       // Compute the x- and y-coordinates of intersection points of the base
-      // conic and the k'th auxiliary conic.
+      // conic and the k-th auxiliary conic.
       n_xs = compute_resultant_roots(nt_traits,
                                      base_coeffs[0], base_coeffs[1],
                                      base_coeffs[2],
@@ -684,7 +684,7 @@ public:
     _set(rat_coeffs);
   }
 
-  /*! Get a bounding box for the conic arc.
+  /*! obtains a bounding box for the conic arc.
    * \return The bounding box.
    */
   CGAL_DEPRECATED Bbox_2 bbox() const {
@@ -769,7 +769,7 @@ public:
   //@}
 
 protected:
-  /*! Calculate the vertical tangency points of the arc.
+  /*! calculates the vertical tangency points of the arc.
    * \param vpts The vertical tangency points.
    * \pre The vpts vector should be allocated at the size of 2.
    * \return The number of vertical tangency points.
@@ -797,7 +797,7 @@ protected:
     return m;
   }
 
-  /*! Calculate the horizontal tangency points of the arc.
+  /*! calculates the horizontal tangency points of the arc.
    * \param hpts The horizontal tangency points.
    * \pre The hpts vector should be allocated at the size of 2.
    * \return The number of horizontal tangency points.
@@ -825,7 +825,7 @@ protected:
     return m;
   }
 
-  /*! Check whether the given point is strictly between the source and the
+  /*! checks whether the given point is strictly between the source and the
    * target (but not any of them).
    * The point is assumed to be on the conic's boundary.
    * \param p The query point.
@@ -892,7 +892,7 @@ protected:
     }
   }
 
-  /*! Find the vertical tangency points of the underlying conic.
+  /*! finds the vertical tangency points of the underlying conic.
    * \param ps The output points of vertical tangency.
    *           This area must be allocated at the size of 2.
    * \return The number of vertical tangency points.
@@ -970,7 +970,7 @@ protected:
     return n;
   }
 
-  /*! Find the horizontal tangency points of the underlying conic.
+  /*! finds the horizontal tangency points of the underlying conic.
    * \param ps The output points of horizontal tangency.
    *           This area must be allocated at the size of 2.
    * \return The number of horizontal tangency points.
@@ -1020,7 +1020,7 @@ protected:
     return n;
   }
 
-  /*! Set the properties of a conic arc that is really a full curve
+  /*! sets the properties of a conic arc that is really a full curve
    * (that is, an ellipse).
    * \param rat_coeffs A vector of size 6, storing the rational coefficients
    *                   of x^2, y^2, xy, x, y and the free coefficient resp.
@@ -1074,7 +1074,7 @@ protected:
     else reset_flags();         // invalid arc
   }
 
-  /*! Check whether the given point lies on the supporting conic of the arc.
+  /*! checks whether the given point lies on the supporting conic of the arc.
    * \param p The query point.
    * \return (true) if p lies on the supporting conic; (false) otherwise.
    */
@@ -1093,7 +1093,7 @@ protected:
     return (CGAL::sign(val) == ZERO);
   }
 
-  /*! Build the data for hyperbolic arc, containing the characterization of the
+  /*! builds the data for hyperbolic arc, containing the characterization of the
    * hyperbolic branch the arc is placed on.
    */
   CGAL_DEPRECATED void _build_hyperbolic_arc_data() {
@@ -1189,7 +1189,7 @@ protected:
                    sign_of_extra_data(m_target.x(), m_target.y()));
   }
 
-  /*! Check whether the given point is between the source and the target.
+  /*! checks whether the given point is between the source and the target.
    * The point is assumed to be on the conic's boundary.
    * \param p The query point.
    * \return (true) if the point is between the two endpoints,
@@ -1206,7 +1206,7 @@ protected:
     else return _is_strictly_between_endpoints(p);
   }
 
-  /*! Find the y coordinates of the underlying conic at a given x coordinate.
+  /*! finds the y coordinates of the underlying conic at a given x coordinate.
    * \param x The x coordinate.
    * \param ys The output y coordinates.
    * \pre The vector ys must be allocated at the size of 2.
@@ -1224,7 +1224,7 @@ protected:
     return (_solve_quadratic_equation(A, B, C, ys[0], ys[1]));
   }
 
-  /*! Find all points on the arc with a given x-coordinate.
+  /*! finds all points on the arc with a given x-coordinate.
    * \param p A placeholder for the x-coordinate.
    * \param ps The point on the arc at x(p).
    * \pre The vector ps should be allocated at the size of 2.
@@ -1248,7 +1248,7 @@ protected:
     return m;
   }
 
-  /*! Solve the given quadratic equation: Ax^2 + B*x + C = 0.
+  /*! solves the given quadratic equation: Ax^2 + B*x + C = 0.
    * \param x_minus The root obtained from taking -sqrt(discriminant).
    * \param x_plus The root obtained from taking -sqrt(discriminant).
    * \return The number of disticnt solutions to the equation.
@@ -1289,7 +1289,7 @@ protected:
     return 2;
   }
 
-  /*! Find the x coordinates of the underlying conic at a given y coordinate.
+  /*! finds the x coordinates of the underlying conic at a given y coordinate.
    * \param y The y coordinate.
    * \param xs The output x coordinates.
    * \pre The vector xs must be allocated at the size of 2.
@@ -1308,7 +1308,7 @@ protected:
     return (_solve_quadratic_equation(A, B, C, xs[0], xs[1]));
   }
 
-  /*! Find all points on the arc with a given y-coordinate.
+  /*! finds all points on the arc with a given y-coordinate.
    * \param p A placeholder for the y-coordinate.
    * \param ps The point on the arc at x(p).
    * \pre The vector ps should be allocated at the size of 2.
@@ -1332,7 +1332,7 @@ protected:
     return m;
   }
 
-  /*! Set the properties of a conic arc (for the usage of the constructors).
+  /*! sets the properties of a conic arc (for the usage of the constructors).
    * \param rat_coeffs A vector of size 6, storing the rational coefficients
    *                   of x^2, y^2, xy, x, y and the free coefficient resp.
    */
@@ -1454,7 +1454,7 @@ public:
   /// \name Construction and destruction functions.
   //@{
 
-  /*! Default constructor.
+  /*! constructs default.
    */
   Conic_arc_2() :
     m_r(0), m_s(0), m_t(0), m_u(0), m_v(0), m_w(0),
@@ -1463,7 +1463,7 @@ public:
     m_extra_data(nullptr)
   {}
 
-  /*! Copy constructor.
+  /*! constructs copy.
    * \param arc The copied arc.
    */
   Conic_arc_2(const Self& arc) :
@@ -1478,11 +1478,11 @@ public:
       new Extra_data(*(arc.m_extra_data)) : nullptr;
   }
 
-  /*! Destructor.
+  /*! destructs.
    */
   virtual ~Conic_arc_2() { if (m_extra_data != nullptr) delete m_extra_data; }
 
-  /*! Assignment operator.
+  /*! assigns.
    * \param arc The copied arc.
    */
   const Self& operator=(const Self& arc) {
@@ -1515,15 +1515,15 @@ public:
   /// \name Get the arc properties.
   //@{
 
-  /*! Determine whether the arc is valid.
+  /*! determines whether the arc is valid.
    */
   bool is_valid() const { return test_flag(IS_VALID); }
 
-  /*! Determine whether the arc represents a full conic curve.
+  /*! determines whether the arc represents a full conic curve.
    */
   bool is_full_conic() const { return test_flag(IS_FULL_CONIC); }
 
-  /*! Obtain the coefficients of the underlying conic.
+  /*! obtains the coefficients of the underlying conic.
    */
   const Integer& r() const { return (m_r); }
   const Integer& s() const { return (m_s); }
@@ -1532,7 +1532,7 @@ public:
   const Integer& v() const { return (m_v); }
   const Integer& w() const { return (m_w); }
 
-  /*! Obtain the arc's source.
+  /*! obtains the arc's source.
    * \return The source point.
    * \pre The arc does not represent a full conic curve.
    */
@@ -1541,14 +1541,14 @@ public:
     return m_source;
   }
 
-  /*! Obtain the non const reference to the curve source point.
+  /*! obtains the non const reference to the curve source point.
    */
   Point_2& source() {
     CGAL_precondition(! is_full_conic());
     return (this->m_source);
   }
 
-  /*! Obtain the arc's target.
+  /*! obtains the arc's target.
    * \return The target point.
    * \pre The arc does not represent a full conic curve.
    */
@@ -1557,19 +1557,19 @@ public:
     return m_target;
   }
 
-  /*! Obtain the non const reference to the curve source point.
+  /*! obtains the non const reference to the curve source point.
    */
   Point_2& target() {
     CGAL_precondition(! is_full_conic());
     return this->m_target;
   }
 
-  /*! Obtain the orientation of the arc.
+  /*! obtains the orientation of the arc.
    * \return The orientation.
    */
   Orientation orientation() const { return m_orient; }
 
-  /*! Obtain the extra data.
+  /*! obtains the extra data.
    */
   const Extra_data* extra_data() const { return m_extra_data; }
   //@}
@@ -1603,17 +1603,17 @@ public:
   // only friends have the privilege to use.
   //@{
 
-  /*! Set the source point of the conic arc.
+  /*! sets the source point of the conic arc.
    * \param ps The new source point.
    */
   void set_source(const Point_2& ps) { m_source = ps; }
 
-  /*! Set the target point of the conic arc.
+  /*! sets the target point of the conic arc.
    * \param pt The new source point.
    */
   void set_target(const Point_2& pt) { m_target = pt; }
 
-  /*! Set the coefficients.
+  /*! sets the coefficients.
    */
   void set_coefficients(Integer r, Integer s, Integer t,
                         Integer u, Integer v, Integer w) {
@@ -1625,22 +1625,22 @@ public:
     m_w = w;
   }
 
-  /*! Set the orientation.
+  /*! sets the orientation.
    */
   void set_orientation(Orientation orient) { m_orient = orient; }
 
-  /*! Set the endpoints.
+  /*! sets the endpoints.
    */
   void set_endpoints(const Point_2& source, const Point_2& target) {
     m_source = source;
     m_target = target;
   }
 
-  /*! Set the extra data field.
+  /*! sets the extra data field.
    */
   void set_extra_data(Extra_data* extra_data) { m_extra_data = extra_data; }
 
-  /*! Set the extra data field.
+  /*! sets the extra data field.
    */
   void set_extra_data(const Algebraic& a, const Algebraic& b,
                       const Algebraic& c, Sign side)
@@ -1652,7 +1652,7 @@ public:
     m_extra_data->side = side;
   }
 
-  /*! Update the extra data field.
+  /*! updates the extra data field.
    */
   void update_extra_data() {
     const Algebraic x1 = source().x();
@@ -1675,7 +1675,7 @@ public:
   /// \name Auxiliary functions.
   //@{
 
-  /*! Evaluate the sign of (a*x + b*y + c) stored with the extra data field
+  /*! evaluates the sign of (a*x + b*y + c) stored with the extra data field
    * at a given point.
    * \param px The x-coordinate of query point.
    * \param py The y-coordinate of query point.
@@ -1691,7 +1691,7 @@ public:
   //@}
 };
 
-/*! Exporter for conic arcs.
+/*! exports a conic arc.
  */
 template <typename Rat_kernel, typename Alg_kernel, typename Nt_traits>
 std::ostream&
@@ -1721,6 +1721,6 @@ operator<< (std::ostream& os,
   return os;
 }
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

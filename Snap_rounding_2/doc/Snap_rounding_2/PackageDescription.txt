@@ -1,9 +1,8 @@
-/// \defgroup PkgSnapRounding2Ref 2D Snap Rounding Reference
+/// \defgroup PkgSnapRounding2Ref Reference Manual
 /// \defgroup PkgSnapRounding2Concepts Concepts
 /// \ingroup PkgSnapRounding2Ref
 /*!
 \addtogroup PkgSnapRounding2Ref
-\todo check generated documentation
 \cgalPkgDescriptionBegin{2D Snap Rounding,PkgSnapRounding2}
 \cgalPkgPicture{snap-detail.png}
 \cgalPkgSummaryBegin

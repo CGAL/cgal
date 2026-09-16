@@ -283,6 +283,11 @@ public:
     return this->BaseBase::construct_initial_points_object();
   }
 
+  void set_borders_detected()
+  {
+    borders_detected_=true;
+  }
+
   void detect_features(FT angle_in_degree,
                        std::vector<Polyhedron_type>& p,
                        const bool dont_protect);//if true, features will not be protected

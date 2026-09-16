@@ -1,9 +1,8 @@
-/// \defgroup PkgEnvelope2Ref 2D Envelopes Reference
+/// \defgroup PkgEnvelope2Ref Reference Manual
 /// \defgroup PkgEnvelope2Concepts Concepts
 /// \ingroup PkgEnvelope2Ref
 /*!
 \addtogroup PkgEnvelope2Ref
-\todo check generated documentation
 \cgalPkgDescriptionBegin{2D Envelopes,PkgEnvelope2}
 \cgalPkgPicture{Envelope_2/fig/Envelope_2.png}
 \cgalPkgSummaryBegin

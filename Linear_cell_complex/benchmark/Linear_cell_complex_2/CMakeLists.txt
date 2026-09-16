@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12...3.29)
+cmake_minimum_required(VERSION 3.12...3.31)
 project(LCC_performance_2)
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/)
@@ -13,10 +13,10 @@ link_directories(${CMAKE_CURRENT_SOURCE_DIR}/cgogn/lib/Release)
 include_directories(BEFORE "/usr/include/libxml2/")
 
 # For profilling with gprof
-#add_definitions("-pg")
+#add_compile_definitions("-pg")
 #SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
-# add_definitions("-g")
-
+# add_compile_definitions("-g")
+return()
 # OpenMesh
 find_package(OpenMesh REQUIRED)
 include(CGAL_OpenMesh_support)
@@ -35,7 +35,7 @@ target_link_libraries(lcc_performance_2 CGAL::CGAL)
 add_executable(
   surface_mesh_performance performance_2.h surface_mesh_performance.h
                            surface_mesh_performance.cpp)
-target_link_libraries(surface_mesh_performance surface_mesh)
+target_link_libraries(surface_mesh_performance lcc_surface_mesh_lib)
 
 # Open_mesh
 add_executable(openmesh_performance performance_2.h openmesh_performance.h
@@ -47,7 +47,7 @@ find_package(Qt REQUIRED)
 set(QT_USE_QTSVG TRUE)
 set(QT_USE_QTXML TRUE)
 include(${QT_USE_FILE})
-add_definitions(${QT_DEFINITIONS})
+add_compile_definitions(${QT_DEFINITIONS})
 set(CGoGN_EXT_INCLUDES ${CGoGN_EXT_INCLUDES} ${QT_INCLUDE_DIR})
 set(CGoGN_EXT_LIBS ${CGoGN_EXT_LIBS} ${QT_LIBRARIES})
 
@@ -79,7 +79,7 @@ add_executable(
 target_link_libraries(
   performance_2
   CGAL::CGAL
-  surface_mesh
+  lcc_surface_mesh_lib
   algo
   assimp
   container

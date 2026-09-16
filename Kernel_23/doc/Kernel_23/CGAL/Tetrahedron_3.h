@@ -54,7 +54,7 @@ Test for inequality.
 bool operator!=(const Tetrahedron_3<Kernel> &t2) const;
 
 /*!
-returns the i'th vertex modulo 4 of `t`.
+returns the i-th vertex modulo 4 of `t`.
 \cgalEpicExact
 */
 Point_3<Kernel> vertex(int i) const;

@@ -3,7 +3,7 @@
 
 project(Shape_regularization_Benchmarks)
 
-cmake_minimum_required(VERSION 3.12...3.29)
+cmake_minimum_required(VERSION 3.12...3.31)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
 
@@ -17,7 +17,7 @@ if(TARGET CGAL::OSQP_support)
   foreach(osqp_target ${osqp_targets})
     create_single_source_cgal_program("${osqp_target}.cpp")
     if(TARGET ${osqp_target})
-      target_link_libraries(${osqp_target} PUBLIC CGAL::OSQP_support)
+      target_link_libraries(${osqp_target} PRIVATE CGAL::OSQP_support)
     endif()
   endforeach()
 else()

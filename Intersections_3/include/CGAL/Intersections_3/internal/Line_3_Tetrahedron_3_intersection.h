@@ -26,7 +26,6 @@ struct Tetrahedron_Line_intersection_3
   : public Tetrahedron_lines_intersection_3_base<K, typename K::Line_3, Tetrahedron_Line_intersection_3<K> >
 {
   typedef Tetrahedron_lines_intersection_3_base<K, typename K::Line_3, Tetrahedron_Line_intersection_3<K> > Base;
-  typedef typename Base::Result_type Result_type;
 
   Tetrahedron_Line_intersection_3(const typename K::Tetrahedron_3& tet,
                                   const typename K::Line_3& l)

@@ -177,7 +177,7 @@ class Interval_for_container : public Interval_
 
 
     // remove markers for Interval I starting at left, the left endpoint
-    // of I, and and stopping at the right endpoint of I.
+    // of I, and stopping at the right endpoint of I.
     Interval_handle removeMarkers(IntervalSLnode<Interval>* left,
                                   const Interval& I);
 
@@ -1111,7 +1111,7 @@ template <class Interval>
   Interval_skip_list<Interval>::removeMarkers(IntervalSLnode<Interval>* left,
                                             const Interval& I)
   {
-    // Remove markers for interval I, which has left as it's left
+    // Remove markers for interval I, which has left as its left
     // endpoint,  following a staircase pattern.
 
     //    Interval_handle res=0, tmp=0; // af: assignment not possible with std::list

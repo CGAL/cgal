@@ -19,10 +19,10 @@
 #include <CGAL/assertions.h>
 #include <CGAL/basic.h>
 #include <CGAL/Has_timestamp.h>
+#include <CGAL/SMDS_3/io_signature.h>
 #include <CGAL/tags.h>
 #include <CGAL/TDS_3/internal/Dummy_tds_3.h>
-
-#include <CGAL/SMDS_3/io_signature.h>
+#include <CGAL/Time_stamper.h>
 
 namespace CGAL {
 
@@ -47,20 +47,7 @@ public:
 
 public:
   // Constructors
-  Compact_simplicial_mesh_cell_3()
-    : time_stamp_(std::size_t(-1))
-  {}
-
-  Compact_simplicial_mesh_cell_3(const Compact_simplicial_mesh_cell_3& rhs)
-    : N(rhs.N)
-    , V(rhs.V)
-    , time_stamp_(rhs.time_stamp_)
-    , subdomain_index_(rhs.subdomain_index_)
-  {
-    for(int i=0; i <4; i++){
-      surface_index_table_[i] = rhs.surface_index_table_[i];
-    }
-  }
+  Compact_simplicial_mesh_cell_3() = default;
 
   Compact_simplicial_mesh_cell_3(Vertex_handle v0,
                                  Vertex_handle v1,
@@ -279,7 +266,7 @@ private:
   std::array<Cell_handle, 4> N;
   std::array<Vertex_handle, 4> V;
 
-  std::size_t time_stamp_;
+  std::size_t time_stamp_ =  Time_stamper<void>::invalid_time_stamp;
 
   // The index of the cell of the input complex that contains me
   Subdomain_index subdomain_index_ = {};

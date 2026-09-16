@@ -33,7 +33,7 @@
                 <path d="M161.875,262.5L141.875,321L188.625,296L161.875,262.5Z" style="fill:none;fill-rule:nonzero;stroke:rgb(255,0,0);stroke-width:1px;"/>
             </g>
             <g id="Graphic_12">
-                <path d="M263.125,234.1L224.625,264.1L257.625,322.1L263.125,234.1Z" style="fill:rgb(255,255,0);fill-rule:nonzero;"/>
+                <path d="M263.125,234.1L224.625,264.1L257.625,322.1L263.125,234.1Z" style="fill:rgb(0,200,255);fill-rule:nonzero;"/>
                 <path d="M263.125,234.1L224.625,264.1L257.625,322.1L263.125,234.1Z" style="fill:none;fill-rule:nonzero;stroke:black;stroke-width:1px;"/>
             </g>
             <g id="Graphic_13">
@@ -45,7 +45,7 @@
                 <path d="M371.625,262.5L351.625,321L410.575,261.3L371.625,262.5Z" style="fill:none;fill-rule:nonzero;stroke:rgb(255,0,0);stroke-width:1px;"/>
             </g>
             <g id="Graphic_15">
-                <path d="M475.875,234.1L410.525,261.4L470.375,322.1L475.875,234.1Z" style="fill:rgb(255,255,0);fill-rule:nonzero;"/>
+                <path d="M475.875,234.1L410.525,261.4L470.375,322.1L475.875,234.1Z" style="fill:rgb(0,200,250);fill-rule:nonzero;"/>
                 <path d="M475.875,234.1L410.525,261.4L470.375,322.1L475.875,234.1Z" style="fill:none;fill-rule:nonzero;stroke:black;stroke-width:1px;"/>
             </g>
             <g transform="matrix(1,0,0,1,283.292,177)">

@@ -62,30 +62,30 @@ private:
 public:
   using Point = typename Base::Point;
 
-  /*! Constructor */
+  /*! constructs */
   Arr_polyhedral_sgm_polyhedron_3_vertex() :
     Base(), m_processed(false), m_marked(false) {}
 
-  /*! Constructor */
+  /*! constructs */
   Arr_polyhedral_sgm_polyhedron_3_vertex(const Point & p) :
     Base(p), m_processed(false), m_marked(false) {}
 
-  /*! Obtain the mutable (geometrical) point. Delegate */
+  /*! obtains the mutable (geometrical) point. Delegate */
   Point& point() { return Base::point(); }
 
-  /*! Obtain the constant (geometrical) point. Delegate */
+  /*! obtains the constant (geometrical) point. Delegate */
   const Point& point () const { return Base::point(); }
 
   /*! Set the flag */
   void set_processed(bool processed) { m_processed = processed; }
 
-  /*! Obtain the flag */
+  /*! obtains the flag */
   bool processed() const { return m_processed; }
 
   /*! Set the "marked" flag */
   void set_marked(bool marked) { m_marked = marked; }
 
-  /*! Obtain the "marked" flag */
+  /*! obtains the "marked" flag */
   bool marked() const { return m_marked; }
 };
 
@@ -101,20 +101,20 @@ private:
   bool m_marked;
 
 public:
-  /*! Constructor */
+  /*! constructs */
   Arr_polyhedral_sgm_polyhedron_3_halfedge() :
     m_processed(false), m_marked(false) {}
 
-  /*! Set the flag */
+  /*! sets the flag */
   void set_processed(bool processed) { m_processed = processed; }
 
-  /*! Obtain the flag */
+  /*! obtains the flag */
   bool processed() const { return m_processed; }
 
-  /*! Set the "marked" flag */
+  /*! sets the "marked" flag */
   void set_marked(bool marked) { m_marked = marked; }
 
-  /*! Obtain the "marked" flag */
+  /*! obtains the "marked" flag */
   bool marked() const { return m_marked; }
 };
 
@@ -136,25 +136,25 @@ private:
 public:
   using Plane = typename Base::Plane;
 
-  /*! Constructor */
+  /*! constructs */
   Arr_polyhedral_sgm_polyhedron_3_face() : m_vertex(nullptr), m_marked(false) {}
 
-  /*! Obtain the mutable plane. Delegate */
+  /*! obtains the mutable plane. Delegate */
   Plane& plane() { return Base::plane(); }
 
-  /*! Obtain the constant plane. Delegate */
+  /*! obtains the constant plane. Delegate */
   const Plane& plane() const { return Base::plane(); }
 
-  /*! Obtain the vertex */
+  /*! obtains the vertex */
   Arr_vertex_handle vertex() { return m_vertex; }
 
-  /*! Set the vertex */
+  /*! sets the vertex */
   void set_vertex(Arr_vertex_handle vertex) { m_vertex = vertex; }
 
-  /*! Set the "marked" flag */
+  /*! sets the "marked" flag */
   void set_marked(bool marked) { m_marked = marked; }
 
-  /*! Obtain the "marked" flag */
+  /*! obtains the "marked" flag */
   bool marked() const { return m_marked; }
 };
 
@@ -200,11 +200,11 @@ struct Arr_polyhedral_sgm_polyhedron_items : public Polyhedron_items_3 {
 template <class Sgm, class Traits>
 struct Arr_polyhedral_sgm_polyhedron_3 :
   public Polyhedron_3<Traits, Arr_polyhedral_sgm_polyhedron_items<Sgm>> {
-  /*! Constructor */
+  /*! constructs */
   Arr_polyhedral_sgm_polyhedron_3() {}
 };
 
-} //namespace CGAL
+} // namespace CGAL
 
 //! Make the polyhedron a model of FaceGraph
 #define CGAL_GRAPH_TRAITS_INHERITANCE_TEMPLATE_PARAMS \

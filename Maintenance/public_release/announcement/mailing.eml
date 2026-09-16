@@ -1,177 +1,71 @@
-Subject: CGAL 5.6 Released, Computational Geometry Algorithms Library
+Subject: CGAL 5.5.5, 5.6.2, 6.0, and 6.0.1 Released, Computational Geometry Algorithms Library
 Content-Type: text/plain; charset="utf-8"
 Body:
 
-The CGAL Open Source Project is pleased to announce the release 5.6 of
-CGAL, the Computational Geometry Algorithms Library.
+The CGAL Open Source Project is pleased to announce the recent releases
+of CGAL versions 5.5.5, 5.6.2, 6.0, and 6.0.1.
+
+## CGAL version 6.0
+
+CGAL version 6.0 was released on September 27, 2024. Following the
+discovery of early issues, version 6.0.1 was subsequently released on
+October 22, 2024.
+
+This version is a major release, with many new features and
+improvements.
+
+General changes
+
+-   C++17 Requirement: CGAL 6.0 requires a C++17 compatible compiler.
+-   GMP/MPFR Optional: GMP/MPFR are no longer mandatory;
+    Boost.Multiprecision can be used.
+-   Qt6 Demos: All demos are now based on Qt6.
+-   Polyhedral Surface: The demo has been renamed to “CGAL Lab” and
+    moved to its own directory in demo/Lab/.
+
+New Packages
+
+-   Kinetic Space Partition: Partition of the space from planar input
+    shapes.
+-   Kinetic Surface Reconstruction: Reconstructs surfaces from point
+    clouds.
+-   Basic Viewer: Interactive visualization for various CGAL packages.
+-   Polygon Repair: Algorithms to repair 2D polygons and multipolygons.
+
+Breaking Changes
+
+-   CMake Changes: UseCGAL.cmake removed; use CGAL::CGAL target instead.
+-   Kernel: Replaced boost::variant with std::variant and
+    boost::optional with std::optional in the intersection functions.
+
+Enhancements
+
+-   AABB Tree: Now supports 2D and 3D primitives.
+
+See the announcement of CGAL version 6.0.1 for more details:
+
+  https://www.cgal.org/2024/10/22/cgal601/
 
 
-Besides fixes and general enhancement to existing packages, the
-following has changed since CGAL 5.5:
 
-General Changes
+## Bug-fix releases
 
--   Breaking change: Package-specific assertions, preconditions, and
-    postconditions (such as CGAL_triangulation_assertion) have been
-    removed. Corresponding CGAL-wide versions (such as CGAL_assertion)
-    should be used instead.
+-   CGAL version 5.5.5 has been published. This is the last bug-fix
+    release for CGAL-5.5.
+-   CGAL version 5.6.2 has been published. This is the second bug-fix
+    release for CGAL-5.6.
 
-Shape Detection (major changes)
+These releases include various bug fixes and enhancements. For more details,
+please visit:
 
--   Breaking change: The region growing part of the package have been
-    reworked to fix design issues introduced with the handling of
-    FaceGraph models. In particular, the notion of Item has been
-    introduced to reference an element in the input range of elements.
-    Region maps now operates on Item and no longer on the value type of
-    the input range.
--   Breaking change: The method update() in the concept RegionType now
-    returns a Boolean instead of void, that is used inside the class
-    Region_growing for detecting if the input conditions for the new
-    region are satisfied. This change affects only user-defined types of
-    regions.
--   Breaking change: The constructors of all models used together with
-    the region growing algorithm now enable users to provide parameters
-    through the named parameters mechanism.
--   All fitting classes in the region growing framework are now using
-    better versions of the region conditions, more precise and faster,
-    including the correct normal orientations.
--   Added new models of the concept RegionType for getting linear
-    regions in a set of 2D and 3D segments and on 2D and 3D polylines.
--   Added the class Polyline_graph for extracting a set of polylines
-    from a face graph, which splits this graph into a set of
-    user-defined regions.
--   Added new shapes to the Region Growing algorithm on a point set:
-    circles in 2D, spheres in 3D, and cylinders in 3D.
-
-2D Straight Skeleton and Polygon Offsetting (major changes)
-
--   Added weighted straight skeletons: weighted straight skeletons are a
-    generalization of straight skeletons. Contour edges are assigned a
-    positive weight, which can be understood as assigning a speed to the
-    wavefront spawned from the contour edge.
--   Added straight skeleton extrusion: this CGAL package now implements
-    the extrusion of weighted straight skeletons of polygons with holes.
-    The output is a closed, combinatorially 2-manifold surface triangle
-    mesh. See also the news entry.
-
-Combinatorial Maps, Generalized Maps, and Linear Cell Complex
-
--   Added a version that uses indices instead of handles as dart and
-    attribute descriptors. As the indices are integers convertible from
-    and to std::size_t, they can be used as index into vectors which
-    store properties. To use the index version, Use_index must be
-    defined and be equal to CGAL::Tag_true in the item class.
-
-2D Arrangements
-
--   Introduced an overload function template, namely draw(arr), that
-    renders arrangements based on the Basic_viewer_qt class template. As
-    of now, only 2D arrangements on the plane induced by (i)
-    segments, (ii) conics, and (iii) circular arcs or (linear) segments
-    are supported.
--   Improved the traits class template that handles conics, namely
-    Arr_conic_traits_2. This includes the following: 1. Fixed a couple
-    of bugs and slightly optimized some functions. 2. Introduced
-    functionality that approximates conics with polylines. (This is used
-    to draw conic curves.) 3. Breaking change: Changed the interface to
-    generate conic curves. In the past, curves where generated directly
-    using the constructors of the conic and x-monotone conic constructs.
-    Now, they are constructed via function objects provided by the
-    traits. This eliminates the constructions of temporary kernels. The
-    old functionality is obsolete, but still supported for a limited
-    number of versions. It depends on a static member function of the
-    traits. In a future version this function will no longer be static,
-    implying that the old functionality will no longer be supported.
--   Introduced functionality that approximates circular segments with
-    polylines. (This is used to draw conic curves.)
-
-Polygon Mesh Processing
-
--   Added functions
-    CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces()
-    and CGAL::Polygon_mesh_processing::detect_corners_of_regions(),
-    which enable partitioning a mesh into planar regions using the
-    region growing algorithm from the Shape Detection package.
-
--   Added the functions
-    CGAL::Polygon_mesh_processing::remesh_planar_patches() and
-    CGAL::Polygon_mesh_processing::remesh_almost_planar_patches(), which
-    can be used to remesh patches of coplanar faces in a mesh.
-
--   Added the function
-    CGAL::Polygon_mesh_processing::surface_Delaunay_remeshing(), which
-    can be used to remesh a surface triangle mesh using the Delaunay
-    refinement algorithm from the 3D Mesh Generation package.
-
--   Added the function
-    CGAL::Polygon_mesh_processing::remove_almost_degenerate_faces(),
-    which can be used to remove badly shaped triangles faces in a mesh.
-
--   Added the functions
-    CGAL::Polygon_mesh_processing::does_triangle_soup_self_intersect()
-    and
-    CGAL::Polygon_mesh_processing::triangle_soup_self_intersections() to
-    identify and report self-intersections in a triangle soup, similarly
-    to existing functions on triangle meshes.
-
--   Added the function
-    CGAL::Polygon_mesh_processing::triangulate_polygons(), which allows
-    users to triangulate polygon soups.
-
--   Added a named parameter to
-    CGAL::Polygon_mesh_processing::smooth_shape() to disable the
-    scaling, which otherwise aims to compensate volume loss during
-    smoothing.
-
--   Deprecated the overloads of functions
-    CGAL::Polygon_mesh_processing::triangulate_hole(),
-    CGAL::Polygon_mesh_processing::triangulate_and_refine_hole(), and
-    CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole()
-    which have output iterators for vertices and faces as parameter.
-    They are replaced by overloads with two additional named parameters.
+  https://www.cgal.org/2024/10/22/cgal555/
+  https://www.cgal.org/2024/10/22/cgal562/
 
 
-Tetrahedral Remeshing
 
--   Breaking change: The template parameters of
-    CGAL::Tetrahedral_remeshing::Remeshing_vertex_base_3 and
-    CGAL::Tetrahedral_remeshing::Remeshing_cell_base_3 have been
-    modified.
-
-
-3D Mesh Generation
-
--   Added two new named parameters to the named constructor
-    CGAL::create_labeled_image_mesh_domain() for automatic detection and
-    protection of 1D-curves that lie at the intersection of three or
-    more subdomains extracted from labeled images.
--   Added CGAL::Sizing_field_with_aabb_tree, a geometry-aware sizing
-    field for feature edges in polyhedral domains.
--   Added new meshing criterion edge_min_size to avoid subdividing sharp
-    edges that are shorter than a prescribed size bound.
--   Added new meshing criteria facet_min_size and cell_min_size to
-    prevent Delaunay refinement from creating simplices smaller than a
-    prescribed bound.
--   Deprecated usage of boost parameters in favor of function named
-    parameters.
-
-
-Known Bug
-
--   MSVC 2015 is still supported by this version of CGAL, but the
-    feature Segment Cell Iterator of the class CGAL::Triangulation_3
-    does not compile with MSVC 2015.
-
-
-See https://www.cgal.org/2023/07/28/cgal56/ for a complete list of changes.
-
-
-The development of CGAL will then now on the future CGAL-6.0 (planned
-for December 2023), with bug-fixes regularly backported to the branches
-for CGAL-5.5.x and CGAL-5.6.x.
-
-CGAL-6.0 will be the first release of CGAL requiring C++17 or later. It
-will also support Qt6.
+The development of CGAL will now focus on the upcoming CGAL-6.1 release,
+planned for late 2025. Bug fixes will continue to be backported to the
+CGAL-5.6.x and CGAL-6.0.x branches.
 
 
 The CGAL project is a collaborative effort to develop a robust,

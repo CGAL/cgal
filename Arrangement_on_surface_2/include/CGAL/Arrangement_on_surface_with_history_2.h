@@ -188,29 +188,29 @@ public:
     Halfedges_set m_halfedges;
 
   public:
-    /*! Default constructor. */
+    /*! constructs default. */
     Curve_halfedges() {}
 
-    /*! Constructor from a given curve. */
+    /*! constructs from a given curve. */
     Curve_halfedges(const Curve_2& curve) : Curve_2(curve) {}
 
     using iterator = typename Halfedges_set::iterator;
     using const_iterator = typename Halfedges_set::const_iterator;
 
   private:
-    /*! Get the number of edges induced by the curve. */
+    /*! obtains the number of edges induced by the curve. */
     Size size() const { return m_halfedges.size(); }
 
-    /*! Get an iterator for the first edge in the set (const version). */
+    /*! obtains an iterator for the first edge in the set (const version). */
     const_iterator begin() const { return m_halfedges.begin(); }
 
-    /*! Get an iterator for the first edge in the set (non-const version). */
+    /*! obtains an iterator for the first edge in the set (non-const version). */
     iterator begin() { return m_halfedges.begin(); }
 
-    /*! Get a past-the-end iterator for the set edges (const version). */
+    /*! obtains a past-the-end iterator for the set edges (const version). */
     const_iterator end() const { return m_halfedges.end(); }
 
-    /*! Get a past-the-end iterator for the set edges (non-const version). */
+    /*! obtains a past-the-end iterator for the set edges (non-const version). */
     iterator end() { return m_halfedges.end(); }
 
     /*! Insert an edge to the set. */
@@ -220,17 +220,17 @@ public:
       return res.first;
     }
 
-    /*! Erase an edge, given by its position, from the set. */
+    /*! erases an edge, given by its position, from the set. */
     void erase(iterator pos) { m_halfedges.erase(pos); }
 
-    /*! Erase an edge from the set. */
+    /*! erases an edge from the set. */
     void _erase(Halfedge_handle he) {
       size_t res = m_halfedges.erase(he);
       if (res == 0) res = m_halfedges.erase(he->twin());
       CGAL_assertion(res != 0);
     }
 
-    /*! Cleat the edges set. */
+    /*! cleats the edges set. */
     void clear() { m_halfedges.clear(); }
   };
 
@@ -257,8 +257,7 @@ protected:
     virtual void after_create_edge(Halfedge_handle e) override
     { _register_edge(e); }
 
-    /*!
-     * Notification before the modification of an existing edge.
+    /*! Notification before the modification of an existing edge.
      * \param e A handle to one of the twin halfedges to be updated.
      * \param c The x-monotone curve to be associated with the edge.
      */
@@ -318,7 +317,7 @@ protected:
 
   private:
 
-    /*! Register the given halfedge in the set(s) associated with its curve.
+    /*! registers the given halfedge in the set(s) associated with its curve.
      */
     void _register_edge(Halfedge_handle e) {
       for (auto di = e->curve().data().begin(); di != e->curve().data().end();
@@ -328,8 +327,7 @@ protected:
       }
     }
 
-    /*!
-     * Unregister the given halfedge from the set(s) associated with its curve.
+    /*! unregisters the given halfedge from the set(s) associated with its curve.
      */
     void _unregister_edge(Halfedge_handle e) {
       for (auto di = e->curve().data().begin(); di != e->curve().data().end();
@@ -356,49 +354,49 @@ public:
   /// \name Constructors.
   //@{
 
-  /*! Default constructor. */
+  /*! constructs default. */
   Arrangement_on_surface_with_history_2 ();
 
-  /*! Copy constructor. */
+  /*! constructs copy. */
   Arrangement_on_surface_with_history_2 (const Self& arr);
 
-  /*! Constructor given a traits object. */
+  /*! constructs from a traits object. */
   Arrangement_on_surface_with_history_2 (const Geometry_traits_2 *tr);
   //@}
 
   /// \name Assignment functions.
   //@{
 
-  /*! Assignment operator. */
+  /*! assigns. */
   Self& operator= (const Self& arr);
 
-  /*! Assign an arrangement with history. */
+  /*! assigns an arrangement with history. */
   void assign (const Self& arr);
   //@}
 
   /// \name Destruction functions.
   //@{
 
-  /*! Destructor. */
+  /*! destructs. */
   virtual ~Arrangement_on_surface_with_history_2 ();
 
-  /*! Clear the arrangement. */
+  /*! clears the arrangement. */
   virtual void clear ();
   //@}
 
-  /*! Access the geometry-traits object (const version). */
+  /*! accesses the geometry-traits object (const version). */
   inline const Geometry_traits_2 * geometry_traits () const
   {
     return (this->m_geom_traits);
   }
 
-  /*! Access the topology-traits object (non-const version). */
+  /*! accesses the topology-traits object (non-const version). */
   inline Topology_traits * topology_traits ()
   {
     return (&(this->m_topol_traits));
   }
 
-  /*! Access the topology-traits object (const version). */
+  /*! accesses the topology-traits object (const version). */
   inline const Topology_traits* topology_traits () const
   {
     return (&(this->m_topol_traits));
@@ -488,8 +486,7 @@ public:
   /// \name Manipulating edges.
   //@{
 
-  /*!
-   * Split a given edge into two at the given split point.
+  /*! splits a given edge into two at the given split point.
    * \param e The edge to split (one of the pair of twin halfedges).
    * \param p The split point.
    * \pre p lies in the interior of the curve associated with e.
@@ -498,8 +495,7 @@ public:
    */
   Halfedge_handle split_edge (Halfedge_handle e, const Point_2& p);
 
-  /*!
-   * Merge two edges to form a single edge.
+  /*! merges two edges to form a single edge.
    * \param e1 The first edge to merge (one of the pair of twin halfedges).
    * \param e2 The second edge to merge (one of the pair of twin halfedges).
    * \pre e1 and e2 must have a common end-vertex of degree 2 and must
@@ -508,8 +504,7 @@ public:
    */
   Halfedge_handle merge_edge (Halfedge_handle e1, Halfedge_handle e2);
 
-  /*!
-   * Check if two edges can be merged to a single edge.
+  /*! checks if two edges can be merged to a single edge.
    * \param e1 The first edge (one of the pair of twin halfedges).
    * \param e2 The second edge (one of the pair of twin halfedges).
    * \return true iff e1 and e2 are mergeable.
@@ -521,8 +516,7 @@ protected:
   /// \name Curve insertion and deletion.
   //@{
 
-  /*!
-   * Insert a curve into the arrangement.
+  /*! inserts a curve into the arrangement.
    * \param cv The curve to be inserted.
    * \param pl a point-location object.
    * \return A handle to the inserted curve.
@@ -550,8 +544,7 @@ protected:
     return (--ch);
   }
 
-  /*!
-   * Insert a curve into the arrangement, using the default point-location
+  /*! inserts a curve into the arrangement, using the default point-location
    * strategy.
    * \param cv The curve to be inserted.
    * \return A handle to the inserted curve.
@@ -579,8 +572,7 @@ protected:
     return (--ch);
   }
 
-  /*!
-   * Insert a range of curves into the arrangement.
+  /*! inserts a range of curves into the arrangement.
    * \param begin An iterator pointing to the first curve in the range.
    * \param end A past-the-end iterator for the last curve in the range.
    */
@@ -606,8 +598,7 @@ protected:
     CGAL::insert (base_arr, data_curves.begin(), data_curves.end());
   }
 
-  /*!
-   * Remove a curve from the arrangement (remove all the edges it induces).
+  /*! removes a curve from the arrangement (remove all the edges it induces).
    * \param ch A handle to the curve to be removed.
    * \return The number of removed edges.
    */
@@ -650,8 +641,7 @@ protected:
 
 public:
 
-  /*!
-   * Set our arrangement to be the overlay the two given arrangements.
+  /*! sets our arrangement to be the overlay the two given arrangements.
    * \param arr1 The first arrangement.
    * \param arr2 The second arrangement.
    * \param overlay_tr An overlay-traits class.
@@ -770,8 +760,7 @@ public:
 // Global insertion, removal and overlay functions.
 //-----------------------------------------------------------------------------
 
-/*!
- * Insert a curve into the arrangement (incremental insertion).
+/*! inserts a curve into the arrangement (incremental insertion).
  * The inserted curve may not necessarily be x-monotone and may intersect the
  * existing arrangement.
  * \param arr The arrangement-with-history object.
@@ -793,8 +782,7 @@ insert (Arrangement_on_surface_with_history_2<GeomTraits,TopTraits>& arr,
   return (arr_access.insert_curve (c, pl));
 }
 
-/*!
- * Insert a curve into the arrangement (incremental insertion).
+/*! inserts a curve into the arrangement (incremental insertion).
  * The inserted curve may not necessarily be x-monotone and may intersect the
  * existing arrangement. The default "walk" point-location strategy is used
  * for inserting the curve.
@@ -816,8 +804,7 @@ insert (Arrangement_on_surface_with_history_2<GeomTraits,TopTraits>& arr,
 }
 
 
-/*!
- * Insert a range of curves into the arrangement (aggregated insertion).
+/*! inserts a range of curves into the arrangement (aggregated insertion).
  * The inserted curves may intersect one another and may also intersect the
  * existing arrangement.
  * \param arr The arrangement-with-history object.
@@ -836,8 +823,7 @@ void insert (Arrangement_on_surface_with_history_2<GeomTraits, TopTraits>& arr,
   arr_access.insert_curves (begin, end);
 }
 
-/*!
- * Remove a curve from the arrangement (remove all the edges it induces).
+/*! removes a curve from the arrangement (remove all the edges it induces).
  * \param ch A handle to the curve to be removed.
  * \return The number of removed edges.
  */
@@ -855,8 +841,7 @@ remove_curve(Arrangement_on_surface_with_history_2<GeomTraits, TopTraits>& arr,
   return (arr_access.remove_curve (ch));
 }
 
-/*!
- * Compute the overlay of two input arrangement.
+/*! computes the overlay of two input arrangement.
  * \param arr1 The first arrangement.
  * \param arr2 The second arrangement.
  * \param res Output: The resulting arrangement.
@@ -880,8 +865,7 @@ overlay (const Arrangement_on_surface_with_history_2<GeomTraits, TopTraits1>&
   res._overlay (arr1, arr2, ovl_traits);
 }
 
-/*!
- * Compute the overlay of two input arrangement.
+/*! computes the overlay of two input arrangement.
  * \param arr1 The first arrangement.
  * \param arr2 The second arrangement.
  * \param res Output: The resulting arrangement.

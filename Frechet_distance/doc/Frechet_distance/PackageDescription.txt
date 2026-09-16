@@ -1,0 +1,45 @@
+/// \defgroup PkgFrechetDistanceRef Reference Manual
+/// \defgroup PkgFrechetDistanceConcepts Concepts
+/// \ingroup PkgFrechetDistanceRef
+/// \defgroup PkgFrechetDistanceFunctions Functions
+/// \ingroup PkgFrechetDistanceRef
+
+/// \defgroup PkgFrechetDistanceTraits Traits Classes
+/// \ingroup PkgFrechetDistanceRef
+/*!
+\addtogroup PkgFrechetDistanceRef
+
+\cgalPkgDescriptionBegin{dD Fréchet Distance,PkgFrechetDistance}
+\cgalPkgPicture{pdist-pkg-small.png}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{André Nusser, Marvin Künnemann, and Karl Bringmann}
+\cgalPkgDesc{This package provides functions for computing an approximation of the Fréchet distance of two polylines in any dimension under the Euclidean metric.}
+\cgalPkgManuals{Chapter_dD_Frechet_distance,PkgFrechetDistanceRef}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{6.1}
+\cgalPkgBib{cgal:nkb-fd}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgShortInfoEnd
+
+\cgalPkgDescriptionEnd
+
+This package provides functions for computing an approximation of the Fréchet distance of two polylines in any dimension under the Euclidean metric.
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Concepts}
+- `FrechetDistanceTraits`
+
+\cgalCRPSection{Classes}
+- `CGAL::Frechet_distance::Neighbor_search`
+- `CGAL::Frechet_distance_traits_2`
+- `CGAL::Frechet_distance_traits_3`
+- `CGAL::Frechet_distance_traits_d`
+
+\cgalCRPSection{Functions}
+- `CGAL::bounded_error_Frechet_distance()`
+- `CGAL::is_Frechet_distance_larger()`
+*/

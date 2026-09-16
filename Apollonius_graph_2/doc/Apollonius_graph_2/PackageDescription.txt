@@ -1,9 +1,8 @@
-/// \defgroup PkgApolloniusGraph2Ref 2D Apollonius Graphs (Delaunay Graphs of Disks) Reference
+/// \defgroup PkgApolloniusGraph2Ref Reference Manual
 /// \defgroup PkgApolloniusGraph2Concepts Concepts
 /// \ingroup PkgApolloniusGraph2Ref
 /*!
 \addtogroup PkgApolloniusGraph2Ref
-\todo check generated documentation
 \cgalPkgDescriptionBegin{2D Apollonius Graphs (Delaunay Graphs of Disks),PkgApolloniusGraph2}
 \cgalPkgPicture{CircleVoronoi.png}
 \cgalPkgSummaryBegin

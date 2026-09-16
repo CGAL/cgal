@@ -173,7 +173,7 @@ protected:
   X_monotone_curve_2 m_sub_cv2;         // Auxiliary variable (for curve split).
 
 public:
-  /*! Constructor.
+  /*! constructs.
    * \param _arr The arrangement for which we compute the zone.
    * \param _visitor A pointer to a zone-visitor object.
    */
@@ -191,7 +191,7 @@ public:
     visitor->init(&arr);
   }
 
-  /*! Initialize the zone-computation process with a given curve.
+  /*! initializes the zone-computation process with a given curve.
    * \param _cv The query curve.
    * \param pl A point-location object associated with the arrangement.
    */
@@ -242,7 +242,7 @@ public:
     }
   }
 
-  /*! Initialize the zone-computation process with a given curve and an object
+  /*! initializes the zone-computation process with a given curve and an object
    * that wraps the location of the curve's left end.
    * \param cv The query curve.
    * \param obj An object that represents the location of the left end of the
@@ -250,13 +250,13 @@ public:
    */
   void init_with_hint(const X_monotone_curve_2& cv, Pl_result_type obj);
 
-  /*! Compute the zone of the given curve and issue the appropriate
+  /*! computes the zone of the given curve and issue the appropriate
    * notifications for the visitor.
    */
   void compute_zone();
 
 private:
-  /*! Check whether two curves with a common endpoint overlap.
+  /*! checks whether two curves with a common endpoint overlap.
    * \pre p == min_point(cv1)
    * \pre p == min_point(cv2)
    * \todo move this function to a more accessible place so that it can be reused
@@ -265,7 +265,7 @@ private:
                   const Point_2& p) const
   { return do_overlap_impl(cv1, cv2, p, Are_all_sides_oblivious_category()); }
 
-  /*! Check whether two curves with a common min endpoint overlap.
+  /*! checks whether two curves with a common min endpoint overlap.
    */
   bool do_overlap_impl(const X_monotone_curve_2& cv1,
                        const X_monotone_curve_2& cv2,
@@ -273,13 +273,13 @@ private:
     return m_geom_traits->compare_y_at_x_right_2_object()(cv1, cv2, p) == EQUAL;
   }
 
-  /*! Check whether two curves with a common min endpoint overlap.
+  /*! checks whether two curves with a common min endpoint overlap.
    */
   bool do_overlap_impl(const X_monotone_curve_2& cv1,
                        const X_monotone_curve_2& cv2,
                        const Point_2& p, Arr_not_all_sides_oblivious_tag) const;
 
-  /*! Find a face containing the query curve m_cv around the given vertex.
+  /*! finds a face containing the query curve m_cv around the given vertex.
    * In case an overlap occurs, sets m_intersect_he to be the overlapping edge.
    * \param v The query vertex.
    * \param he Output: The predecessor of m_cv around the vertex.
@@ -288,7 +288,7 @@ private:
    */
   bool _find_prev_around_vertex(Vertex_handle v, Halfedge_handle& he);
 
-  /*! Direct the halfedge for the location of the given subcurve around a split
+  /*! directs the halfedge for the location of the given subcurve around a split
    * point that occurs in the interior of a given edge, when the subcurve lies
    * to the right of the split point.
    * In case of overlaps, it sets also m_found_overlap and m_intersect_he.
@@ -306,7 +306,7 @@ private:
                                      const Point_2& cv_left_pt,
                                      Halfedge_handle query_he);
 
-  /*! Direct the halfedge for the location of the given subcurve around a split
+  /*! directs the halfedge for the location of the given subcurve around a split
    * point that occurs in the interior of a given edge, when the subcurve lies
    * to the left of the split point.
    * \param cv_ins The curve to be inserted, whose right endpoint coincides
@@ -321,7 +321,7 @@ private:
   _direct_intersecting_edge_to_left(const X_monotone_curve_2& cv_ins,
                                     Halfedge_handle query_he);
 
-  /*! Get the next intersection of m_cv with the given halfedge.
+  /*! obtains the next intersection of m_cv with the given halfedge.
    * \param he A handle to the halfedge.
    * \param skip_first_point Should we skip the first intersection point.
    * \param intersect_on_right_boundary Output: If an intersetion point is
@@ -339,14 +339,14 @@ private:
                              bool skip_first_point,
                              Arr_parameter_space& intersection_location);
 
-  /*! Remove the next intersection of m_cv with the given halfedge from the map.
+  /*! removes the next intersection of m_cv with the given halfedge from the map.
    * \param he A handle to the halfedge.
    * \pre The list of intersections with the curve of he has already been
    *      computed, and it is not empty.
    */
   void _remove_next_intersection(Halfedge_handle he);
 
-  /*! Check whether the given point lies completely to the left of the given
+  /*! checks whether the given point lies completely to the left of the given
    * edge.
    * \param p The point.
    * \param he The halfedge.
@@ -370,7 +370,7 @@ private:
   bool _is_to_left_impl(const Point_2& p, Halfedge_handle he,
                         Arr_not_all_sides_oblivious_tag) const;
 
-  /*! Check whether the given point lies completely to the right of the given
+  /*! checks whether the given point lies completely to the right of the given
    * edge.
    * \param p The point.
    * \param he The halfedge.
@@ -394,7 +394,7 @@ private:
   bool _is_to_right_impl(const Point_2& p, Halfedge_handle he,
                          Arr_not_all_sides_oblivious_tag) const;
 
-  /*! Check whether an intersection point is valid. A valid intersection point
+  /*! checks whether an intersection point is valid. A valid intersection point
    * must be to the left of the left end of the curve involved.
    */
   bool is_intersection_valid(const Point_2& ip,
@@ -415,14 +415,14 @@ private:
                                   Arr_parameter_space& intersection_location,
                                   Arr_boundary_cond_tag) const;
 
-  /*! Compute the (lexicographically) leftmost intersection of the query
+  /*! computes the (lexicographically) leftmost intersection of the query
    * curve with a given halfedge on the boundary of a face in the arrangement.
    */
   void
   _leftmost_intersection(Ccb_halfedge_circulator he_curr, bool on_boundary,
                          Arr_parameter_space& leftmost_location);
 
-  /*! Compute the (lexicographically) leftmost intersection of the query
+  /*! computes the (lexicographically) leftmost intersection of the query
    * curve with the boundary of a given face in the arrangement.
    * The function computes sets m_intersect_p, m_intersect_he (or alternatively
    * m_overlap_cv and m_intersect_he) and set the flags m_found_intersect and
@@ -434,7 +434,7 @@ private:
   void _leftmost_intersection_with_face_boundary(Face_handle face,
                                                  bool on_boundary);
 
-  /*! Compute the zone of an x-monotone curve in a given arrangement face.
+  /*! computes the zone of an x-monotone curve in a given arrangement face.
    * The left endpoint of the curve either lies in the face interior or on
    * the boundary of the face.
    * This function updates m_cv and its left endpoint and also sets m_left_v
@@ -451,7 +451,7 @@ private:
    */
   bool _zone_in_face(Face_handle face, bool on_boundary);
 
-  /*! Compute the zone of an overlapping subcurve m_overlap_cv of m_cv and the
+  /*! computes the zone of an overlapping subcurve m_overlap_cv of m_cv and the
    * curve currently associated with m_intersect_he.
    * This function updates m_cv and its left endpoint and also sets m_left_v
    * and m_left_he for the remaining portion of the curve.
@@ -462,7 +462,7 @@ private:
   bool _zone_in_overlap();
 };
 
-} //namespace CGAL
+} // namespace CGAL
 
 // The function definitions can be found under:
 #include <CGAL/Arrangement_2/Arrangement_zone_2_impl.h>

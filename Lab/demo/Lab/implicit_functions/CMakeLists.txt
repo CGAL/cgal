@@ -1,6 +1,6 @@
 # This is the CMake script for compiling the CGAL Mesh_3 demo implicit functions.
 
-cmake_minimum_required(VERSION 3.12...3.29)
+cmake_minimum_required(VERSION 3.12...3.31)
 
 include(CGALlab_macros)
 

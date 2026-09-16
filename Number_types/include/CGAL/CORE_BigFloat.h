@@ -179,7 +179,7 @@ public:
             // shift such that err.m()+err.err() fits into long
             int digits_long = std::numeric_limits<long>::digits;
             if(::CORE::bitLength(err.m()+err.err()) >= static_cast<std::size_t>(digits_long)){
-                assert(std::size_t((std::numeric_limits<long>::max)()) > ::CORE::bitLength(err.m()));
+                CGAL_assertion(std::size_t((std::numeric_limits<long>::max)()) > ::CORE::bitLength(err.m()));
                 long shift = static_cast<long>(::CORE::bitLength(err.m())) - digits_long + 1;
                 //std::cout << "shift " << shift<< std::endl;
                 CORE::BigInt bi = (err.m() + err.err());
@@ -276,7 +276,7 @@ round(const CORE::BigFloat& x, long rel_prec = CORE::get_static_defRelPrec().toL
 
     long shift ;
     if (err == 0) {
-        assert(std::size_t((std::numeric_limits<long>::max)()) > ::CORE::bitLength(m));
+        CGAL_assertion(std::size_t((std::numeric_limits<long>::max)()) > ::CORE::bitLength(m));
         shift = static_cast<long>(::CORE::bitLength(m)) - rel_prec - 3;
     }else
       shift = CGAL::relative_precision(x) - rel_prec -1;

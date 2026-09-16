@@ -415,7 +415,7 @@ public:
       fg_vertex_descriptor t = all_vertices[id2];
       fg_halfedge_descriptor hd;
       bool exists;
-      boost::tie(hd,exists) = halfedge(s,t,*polyhedron());
+      std::tie(hd,exists) = halfedge(s,t,*polyhedron());
       if(! exists) { return false; }
       selected_edges.insert(edge(hd,*polyhedron()));
     }
@@ -917,6 +917,7 @@ public Q_SLOTS:
 
   void updateTick();
   void moveVertex();
+  void moveVertex(const Point_3&);
 protected:
   bool eventFilter(QObject* /*target*/, QEvent * gen_event)
   {

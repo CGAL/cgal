@@ -160,13 +160,13 @@ Kernel::FT z() const;
 /// @{
 
 /*!
-returns the i'th homogeneous coordinate of `p`.
+returns the i-th homogeneous coordinate of `p`.
 \pre `0 <= i <= 3`.
 */
 Kernel::RT homogeneous(int i) const;
 
 /*!
-returns the i'th %Cartesian coordinate of `p`.
+returns the i-th %Cartesian coordinate of `p`.
 \pre `0 <= i <= 2`.
 
 \cgalEpicExact

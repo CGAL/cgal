@@ -1,5 +1,4 @@
 // 154 515 565
-#include <CGAL/config.h>
 #include "test_dependencies.h"
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #if CGAL_USE_CORE || CGAL_USE_LEDA

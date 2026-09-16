@@ -29,21 +29,22 @@ namespace CGAL {
 
 The class `Polygon_with_holes_2` models the concept `GeneralPolygonWithHoles_2`.
 It represents a linear polygon with holes. It is parameterized with two
-types (`Kernel` and `Container`) that are used to instantiate
-the type `Polygon_2<Kernel,Container>`. This poygon type is used to
+types (`Kernel` and `Container_`) that are used to instantiate
+the type `Polygon_2<Kernel,Container_>`. This polygon type is used to
 represent the outer boundary and the boundary of the holes (if any exist).
 
 \cgalModels{GeneralPolygonWithHoles_2}
 
 */
 template <class Kernel,
-          class Containter = std::vector<typename Kernel::Point_2> >
+          class Container_ = std::vector<typename Kernel::Point_2> >
 class Polygon_with_holes_2 :
-  public General_polygon_with_holes_2<CGAL::Polygon_2<Kernel, Containter> >
+  public General_polygon_with_holes_2<CGAL::Polygon_2<Kernel, Container_> >
 {
 public:
-
-  typedef CGAL::Polygon_2<Kernel, Containter>        Polygon_2;
+  typedef Kernel                                     Traits;
+  typedef Container_                                 Container;
+  typedef CGAL::Polygon_2<Kernel, Container>         Polygon_2;
   typedef General_polygon_with_holes_2<Polygon_2>    Base;
   typedef typename Base::Hole_const_iterator         Hole_const_iterator;
   typedef typename Base::Size                        Size;
@@ -90,11 +91,11 @@ public:
 
 };
 
-  template <class Transformation, class Kernel, class Container>
-  Polygon_with_holes_2<Kernel,Container> transform(const Transformation& t,
-                                                   const Polygon_with_holes_2<Kernel,Container>& pwh)
+  template <class Transformation, class Kernel, class Container_>
+  Polygon_with_holes_2<Kernel,Container_> transform(const Transformation& t,
+                                                   const Polygon_with_holes_2<Kernel,Container_>& pwh)
   {
-    Polygon_with_holes_2<Kernel,Container> result(transform(t, pwh.outer_boundary()));
+    Polygon_with_holes_2<Kernel,Container_> result(transform(t, pwh.outer_boundary()));
     for(const auto& hole : pwh.holes()){
       result.add_hole(transform(t, hole));
     }
@@ -110,8 +111,8 @@ public:
 This operator exports a polygon with holes to the output stream `os`.
 
 An \ascii and a binary format exist. The format can be selected with
-the \cgal modifiers for streams, `set_ascii_mode()` and `set_binary_mode()`,
-respectively. The modifier `set_pretty_mode()` can be used to allow for (a
+the \cgal modifiers for streams, `CGAL::IO::set_ascii_mode()` and `CGAL::IO::set_binary_mode()`,
+respectively. The modifier `CGAL::IO::set_pretty_mode()` can be used to allow for (a
 few) structuring comments in the output. Otherwise, the output would
 be free of comments. The default for writing is \ascii without comments.
 

@@ -25,7 +25,7 @@
 #include <cstdlib>
 #include <random>
 
-#include <CGAL/Qt/Basic_viewer.h>
+#include <CGAL/Basic_viewer.h>
 #include <CGAL/Graphics_scene.h>
 #include <CGAL/Graphics_scene_options.h>
 #include <CGAL/Random.h>
@@ -587,8 +587,6 @@ void add_to_graphics_scene(const CGAL_ARR_TYPE& aos,
   add_to_graphics_scene(aos, graphics_scene, gso);
 }
 
-#ifdef CGAL_USE_BASIC_VIEWER
-
 /// Draw an arrangement on surface.
 template <typename GeometryTraits_2, typename TopologyTraits, class GSOptions>
 void draw(const CGAL_ARR_TYPE& aos, const GSOptions& gso,
@@ -608,8 +606,6 @@ void draw(const CGAL_ARR_TYPE& aos,
   add_to_graphics_scene(aos, graphics_scene);
   draw_graphics_scene(graphics_scene, title);
 }
-
-#endif // CGAL_USE_BASIC_VIEWER
 
 #undef CGAL_ARR_TYPE
 

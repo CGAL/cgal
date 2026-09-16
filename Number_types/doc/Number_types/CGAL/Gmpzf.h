@@ -9,7 +9,8 @@ numbers of the form \f$ m*2^e\f$, where \f$ m\f$ is an arbitrary precision integ
 based on the \gmp library, and \f$ e\f$
 is of type `long`. This type can be considered exact, even if the
 exponent is not a multiple-precision number. This number type offers
-functionality very similar to `MP_Float` but is generally faster.
+functionality very similar to `MP_Float` but is generally faster. `Mpzf` also
+provides similar functionality and is generally faster than `Gmpzf`.
 
 \cgalModels{EuclideanRing,RealEmbeddable}
 

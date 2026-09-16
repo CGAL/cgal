@@ -151,7 +151,7 @@ private:
  * \tparam MC either a model of the concept `MeshCriteria_3` or a model
  *            of `MeshCriteriaWithFeatures_3` if the domain has exposed features.
  *
- * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param c3t3 the mesh to be refined that is modified by the refinement process.
  *             As the refinement process only adds points to the triangulation, all
@@ -193,7 +193,7 @@ private:
  *                           Two named parameters control this behavior:
  *                           <UL>
  *                             <LI> `parameters::no_lloyd()`
- *                             <LI> `parameters::lloyd_optimize_mesh_3()`
+ *                             <LI> `parameters::lloyd()`
  *                           </UL>}
  *     \cgalParamDefault{`parameters::no_lloyd()`}
  *   \cgalParamSectionEnd
@@ -272,6 +272,7 @@ void refine_mesh_3(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria& cri
     bool reset = choose_parameter(get_parameter(np, internal_np::do_reset_c3t3), false);
     parameters::internal::Mesh_3_options mesh_options_param = choose_parameter(get_parameter(np, internal_np::mesh_param), parameters::internal::Mesh_3_options());
     parameters::internal::Manifold_options manifold_options_param = choose_parameter(get_parameter(np, internal_np::manifold_param), parameters::internal::Manifold_options());
+    parameters::internal::Surface_options surface_only_param = choose_parameter(get_parameter(np, internal_np::surface_only_param), parameters::internal::Surface_options());
 
     return refine_mesh_3_impl(c3t3,
                               domain,
@@ -282,7 +283,8 @@ void refine_mesh_3(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria& cri
                               lloyd_param,
                               reset,
                               mesh_options_param,
-                              manifold_options_param);
+                              manifold_options_param,
+                              surface_only_param);
 }
 
 #ifndef DOXYGEN_RUNNING
@@ -327,7 +329,9 @@ void refine_mesh_3_impl(C3T3& c3t3,
                         const parameters::internal::Mesh_3_options&
                           mesh_options = parameters::internal::Mesh_3_options(),
                         const parameters::internal::Manifold_options&
-                          manifold_options = parameters::internal::Manifold_options())
+                          manifold_options = parameters::internal::Manifold_options(),
+                        const parameters::internal::Surface_options&
+                          surface_options = parameters::internal::Surface_options())
 {
   // Note: this function is almost entirely copied in refine_periodic_3_mesh.h
   // and any change to this function should likely be ported to the periodic version.
@@ -355,7 +359,8 @@ void refine_mesh_3_impl(C3T3& c3t3,
                  , mesh_options.pointer_to_stop_atomic_boolean
 #endif
                  );
-  double refine_time = mesher.refine_mesh(mesh_options.dump_after_refine_surface_prefix);
+  double refine_time = mesher.refine_mesh(mesh_options.dump_after_refine_surface_prefix,
+                                          surface_options.surface_only());
   c3t3.clear_manifold_info();
 
   dump_c3t3(c3t3, mesh_options.dump_after_refine_prefix);
@@ -387,7 +392,7 @@ void refine_mesh_3_impl(C3T3& c3t3,
   }
 
   // Perturbation
-  if ( perturb )
+  if ( perturb && !surface_options.surface_only() )
   {
     double perturb_time_limit = refine_time;
 
@@ -403,7 +408,7 @@ void refine_mesh_3_impl(C3T3& c3t3,
   }
 
   // Exudation
-  if ( exude )
+  if ( exude  && !surface_options.surface_only() )
   {
     double exude_time_limit = refine_time;
 

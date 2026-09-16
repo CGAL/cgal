@@ -30,7 +30,7 @@ specialization of the algorithm for the case when the center
 coordinates and radii of the input spheres are floating-point numbers.
 This specialized algorithm uses floating-point arithmetic only, is
 very fast and especially tuned for stability and robustness. Still,
-it's output may be incorrect in some (rare) cases; termination is
+its output may be incorrect in some (rare) cases; termination is
 guaranteed.
 
 When default constructed, an instance of type

@@ -24,7 +24,7 @@ for which we refer the user to the \ref chapterkernel23 "2D and 3D Linear Kernel
 \section sectionSKobjects Spherical Kernel Objects
 
 New main geometric objects are introduced by `Spherical_kernel_3`:
-circular arcs ((model of `SphericalKernel::CircularArc_3`), points
+circular arcs (model of `SphericalKernel::CircularArc_3`), points
 of circular arcs (model of `SphericalKernel::CircularArcPoint_3`),
 and line segments (model of `SphericalKernel::LineArc_3`) whose
 endpoints are points of this new type.

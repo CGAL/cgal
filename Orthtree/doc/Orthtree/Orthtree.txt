@@ -193,7 +193,7 @@ The following example shows how to define a custom traversal that only traverses
 
 \subsection Section_Orthtree_Cmp_Trav Comparison of Traversals
 
-Figure \cgalFigureRef{Orthtree_traversal_fig} shows in which order
+\cgalFigureRef{Orthtree_traversal_fig} shows in which order
 nodes are visited depending on the traversal method used.
 
 \cgalFigureBegin{Orthtree_traversal_fig, quadtree_traversal.png}

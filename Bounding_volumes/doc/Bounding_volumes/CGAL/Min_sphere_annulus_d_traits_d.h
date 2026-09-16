@@ -17,7 +17,6 @@ optimization algorithms using the \f$ d\f$-dimensional \cgal kernel.
 \sa `CGAL::Polytope_distance_d<Traits>`
 \sa `CGAL::Min_sphere_annulus_d_traits_2<K,ET,NT>`
 \sa `CGAL::Min_sphere_annulus_d_traits_3<K,ET,NT>`
-\sa `MinSphereAnnulusDTraits`
 
 */
 template< typename K, typename ET, typename NT >

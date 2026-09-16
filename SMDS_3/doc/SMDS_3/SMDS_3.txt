@@ -34,7 +34,7 @@ of the support 3D triangulation, per dimension from 0 to 3:
 - corner vertices (0D),
 - feature edges (1D),
 - surface facets (2D),
-- domain cells (3D). See Figure \cgalFigureRef{figure_c3t3_cells}.
+- domain cells (3D). See \cgalFigureRef{figure_c3t3_cells}.
 
 The concept `MeshComplex_3InTriangulation_3` is a data structure devised to
 represent these three-dimensional complexes embedded in a `Triangulation_3`.

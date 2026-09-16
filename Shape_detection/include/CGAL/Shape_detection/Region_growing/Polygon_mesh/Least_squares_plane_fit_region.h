@@ -178,8 +178,8 @@ namespace Polygon_mesh {
       CGAL_precondition(vertices.size() >= 3);
 
       auto vertex = vertices.begin();
-      const Point_3& p1 = get(m_vertex_to_point_map, *vertex); ++vertex;
-      const Point_3& p2 = get(m_vertex_to_point_map, *vertex); ++vertex;
+      Point_3 p1 = get(m_vertex_to_point_map, *vertex); ++vertex;
+      Point_3 p2 = get(m_vertex_to_point_map, *vertex); ++vertex;
       Point_3 p3 = get(m_vertex_to_point_map, *vertex);
       while(collinear(p1, p2, p3))
       {

@@ -24,8 +24,6 @@
 #include <CGAL/basic.h>
 
 #include <utility>
-#include <map>
-#include <set>
 #include <vector>
 #include <stack>
 #include <limits>
@@ -1736,7 +1734,7 @@ create_star_3(Vertex_handle v, Cell_handle c, int li, int prev_ind2)
       Cell_handle nnn = n->neighbor(next_around_edge(jj2, jj1));
       int zzz = nnn->index(vvv);
       if (nnn == cur) {
-        // Neighbor relation is reciprocal, ie
+        // Neighbor relation is reciprocal, i.e.
         // the cell we are looking for is not yet created.
         nnn = create_star_3(v, nnn, zz, zzz);
       }
@@ -1794,7 +1792,7 @@ recursive_create_star_3(Vertex_handle v, Cell_handle c, int li,
       Cell_handle nnn = n->neighbor(next_around_edge(jj2, jj1));
       int zzz = nnn->index(vvv);
       if (nnn == cur) {
-        // Neighbor relation is reciprocal, ie
+        // Neighbor relation is reciprocal, i.e.
         // the cell we are looking for is not yet created.
         nnn = recursive_create_star_3(v, nnn, zz, zzz,depth+1);
       }
@@ -1855,7 +1853,7 @@ non_recursive_create_star_3(Vertex_handle v, Cell_handle c, int li, int prev_ind
         Cell_handle nnn = n->neighbor(next_around_edge(jj2, jj1));
         int zzz = nnn->index(vvv);
         if (nnn == cur) {
-          // Neighbor relation is reciprocal, ie
+          // Neighbor relation is reciprocal, i.e.
           // the cell we are looking for is not yet created.
           //re-run the loop
           adjacency_info_stack.push( iAdjacency_info(zzz,cnew,ii,c,li,prev_ind2) );
@@ -2344,7 +2342,7 @@ flip( Cell_handle c, int i )
   int in = n->index(c);
 
   // checks that the facet is flippable,
-  // ie the future edge does not already exist
+  // i.e. the future edge does not already exist
   if (is_edge(c->vertex(i), n->vertex(in)))
       return false;
 
@@ -2367,7 +2365,7 @@ flip_flippable(Cell_handle c, int i )
   int in = n->index(c);
 
   // checks that the facet is flippable,
-  // ie the future edge does not already exist
+  // i.e. the future edge does not already exist
   CGAL_expensive_precondition( !is_edge(c->vertex(i),
                                                       n->vertex(in)));
   flip_really(c,i,n,in);
@@ -2429,7 +2427,7 @@ flip( Cell_handle c, int i, int j )
                                    && (number_of_vertices() >= 6) );
   CGAL_expensive_precondition( is_cell(c) );
 
-  // checks that the edge is flippable ie degree 3
+  // checks that the edge is flippable, i.e. degree 3
   int degree = 0;
   Cell_circulator ccir = incident_cells(c,i,j);
   Cell_circulator cdone = ccir;
@@ -2479,7 +2477,7 @@ flip_flippable( Cell_handle c, int i, int j )
                                    && (number_of_vertices() >= 6) );
   CGAL_expensive_precondition( is_cell(c) );
 
-  // checks that the edge is flippable ie degree 3
+  // checks that the edge is flippable, i.e. degree 3
   CGAL_precondition_code( int degree = 0; );
   CGAL_precondition_code
     ( Cell_circulator ccir = incident_cells(c,i,j); );

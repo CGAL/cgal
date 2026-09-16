@@ -1,39 +1,15 @@
-cmake_minimum_required(VERSION 3.12...3.29)
-project(CGAL_EXAMPLES)
+cmake_minimum_required(VERSION 3.12...3.31)
+project(CGAL_Examples)
 
-if(CGAL_BRANCH_BUILD)
-
-  foreach(package ${CGAL_CONFIGURED_PACKAGES})
-    #message (STATUS "Current package: ${package}")
-    file(GLOB listtmp "${package}/examples/*")
-    list(APPEND list ${listtmp})
-  endforeach()
-
-else()
-
-  file(GLOB list "*")
-
-endif()
-
-list(SORT list)
-
-find_package(CGAL REQUIRED)
-include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
+file(GLOB pkgs RELATIVE ${CMAKE_SOURCE_DIR} "*")
+list(SORT pkgs)
 
 message("== Generating build files for examples ==")
-foreach(entry ${list})
-
-  if(NOT ${entry} MATCHES ".*\\.svn\$" AND IS_DIRECTORY ${entry})
-
-    file(GLOB files "${entry}/*.cpp")
-
-    # If there is no .cpp files, ignore the sub-directory
-    if(files)
-      process_cgal_subdirectory("${entry}" examples example)
-      # Note: process_CGAL_subdirectory is defined in cmake/modules/CGAL_Macros.cmake
-    endif()
-
+foreach(pkg ${pkgs})
+  set(pkg_dir ${CMAKE_SOURCE_DIR}/${pkg})
+  if(IS_DIRECTORY "${pkg_dir}" AND EXISTS "${pkg_dir}/CMakeLists.txt")
+    message("\n-- Configuring ${pkg}")
+    add_subdirectory(${pkg_dir} "${CMAKE_BINARY_DIR}/${pkg}")
   endif()
-
 endforeach()
-message("== Generating build files for examples (DONE) ==\n")
+message("== Generating build files for done (DONE) ==")
