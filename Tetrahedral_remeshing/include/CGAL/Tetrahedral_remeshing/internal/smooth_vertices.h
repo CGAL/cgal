@@ -290,6 +290,37 @@ private:
     }
   }
 
+  // The segments of the 1D complex, for the AABB tree above.
+  //
+  // `c3t3.edges_in_complex()` is a filter over `finite_edges()`: walking it
+  // enumerates every finite edge of the triangulation to find the complex
+  // ones. The complex's own storage answers the same question in O(complex
+  // edges) -- but in ITS order, and the order here is not free: it is the
+  // order the primitives enter the AABB tree, which decides the tree's
+  // structure and so which of two equidistant primitives a query returns.
+  // Under `Parallel_tag` that is already a scheduling artefact and there is no
+  // output to preserve; under `Sequential_tag` the mesh must not move, so the
+  // filtered walk stays.
+  void collect_complex_segments(const C3t3& c3t3)
+  {
+    const Tr& tr = c3t3.triangulation();
+#ifdef CGAL_LINKED_WITH_TBB
+    if constexpr (is_parallel)
+    {
+      Tetrahedral_remeshing::internal::for_each_edge_in_complex(c3t3,
+        [this, &tr](const Vertex_handle& v1, const Vertex_handle& v2,
+                    const auto&)
+        {
+          m_aabb_segments.push_back(
+            tr.construct_segment(v1->point(), v2->point()));
+        });
+      return;
+    }
+#endif
+    for (const Edge& e : c3t3.edges_in_complex())
+      m_aabb_segments.push_back(tr.segment(e));
+  }
+
   void build_aabb_trees(const C3t3& c3t3)
   {
     // build AABB tree of facets in complex
@@ -301,10 +332,7 @@ private:
     m_triangles_aabb_tree.accelerate_distance_queries();
 
     // build AABB tree of edges in complex
-    for (const Edge& e : c3t3.edges_in_complex())
-    {
-      m_aabb_segments.push_back(c3t3.triangulation().segment(e));
-    }
+    collect_complex_segments(c3t3);
     m_segments_aabb_tree.rebuild(m_aabb_segments.begin(), m_aabb_segments.end());
     m_segments_aabb_tree.accelerate_distance_queries();
 
