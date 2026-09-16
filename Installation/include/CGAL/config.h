@@ -618,8 +618,8 @@ inline std::filesystem::path data_file_path(const std::filesystem::path& filenam
     std::cerr<<"[WARNING] file " << path_to_utf8(res) << " does not exist or cannot be read\n "
              <<"(CGAL_DATA_DIR='" << cgal_dir.value() <<"')."<<std::endl;
   }
-
- return res;
+ res.make_preferred();
+ return res.lexically_normal();
 }
 
 } // end namespace CGAL
