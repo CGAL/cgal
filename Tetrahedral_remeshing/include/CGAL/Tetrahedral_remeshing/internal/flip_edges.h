@@ -26,6 +26,9 @@
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/concurrent_unordered_map.h>
+#include <tbb/enumerable_thread_specific.h>
+#include <tbb/parallel_for.h>
+#include <tbb/blocked_range.h>
 #endif
 
 #include <unordered_map>
@@ -1256,6 +1259,81 @@ void collect_subdomains_on_boundary(const C3t3& c3t3,
   }
 }
 
+#ifdef CGAL_LINKED_WITH_TBB
+/**
+* The two whole-mesh scans the boundary flip's preprocessing opens with: the
+* boundary edges, and the subdomain indices incident to each boundary vertex.
+* Both are read-only walks of the same container in front of a phase that then
+* runs on every thread, so on the parallel path they run over ONE shared cell
+* snapshot -- walked once here where the serial arm walks it twice, once for
+* the edge iterator and once for `all_cell_handles()`.
+*
+* The valence reduction that follows them stays serial; it is a per-boundary-edge
+* loop, not a whole-mesh one.
+*/
+template<typename C3T3, typename CellSelector>
+void collect_boundary_edges_and_subdomains_parallel(
+  const C3T3& c3t3,
+  const CellSelector& cell_selector,
+  std::vector<typename C3T3::Edge>& boundary_edges,
+  boost::unordered_map<typename C3T3::Vertex_handle,
+    std::unordered_set<typename C3T3::Subdomain_index> >& vertices_subdomain_indices)
+{
+  using Edge = typename C3T3::Edge;
+  const typename C3T3::Triangulation& tr = c3t3.triangulation();
+
+  using Cell_handle = typename C3T3::Cell_handle;
+  using Vertex_handle = typename C3T3::Vertex_handle;
+  using Subdomain_index = typename C3T3::Subdomain_index;
+  using Vertex_subdomains_map
+    = boost::unordered_map<Vertex_handle, std::unordered_set<Subdomain_index> >;
+
+  const std::vector<Cell_handle> cells = gather_all_cells(tr);
+
+  // Each thread unions into its own map and the maps are unioned afterwards:
+  // the result is a SET per vertex, so it does not depend on the order the
+  // cells were visited in, and only its size is ever read.
+  tbb::enumerable_thread_specific<Vertex_subdomains_map> tl_vsi;
+  tbb::parallel_for(tbb::blocked_range<std::size_t>(0, cells.size()),
+    [&](const tbb::blocked_range<std::size_t>& range)
+    {
+      Vertex_subdomains_map& local = tl_vsi.local();
+      for (std::size_t ci = range.begin(); ci != range.end(); ++ci)
+      {
+        const Cell_handle c = cells[ci];
+        for (auto v : tr.vertices(c))
+        {
+          const int dim = v->in_dimension();
+          if (dim >= 0 && dim < 3)
+            local[v].insert(c->subdomain_index());
+        }
+      }
+    });
+
+  for (const Vertex_subdomains_map& local : tl_vsi)
+  {
+    for (const auto& vsi : local)
+    {
+      std::unordered_set<Subdomain_index>& s = vertices_subdomain_indices[vsi.first];
+      s.insert(vsi.second.begin(), vsi.second.end());
+    }
+  }
+
+  // Same per-edge test and the same edge set as the serial walk; the scan
+  // applies the smallest-incident-cell ownership rule the finite edge
+  // iterator applies, in the same cell and slot order, so `boundary_edges`
+  // comes back in the order the serial walk fills it -- and the valence loop
+  // and the candidate list below it are built from that order.
+  boundary_edges = parallel_collect_from_finite_edges<Edge>(tr, cells,
+    [&](const Edge& e, std::vector<Edge>& out)
+    {
+      if (is_boundary(c3t3, e, cell_selector))
+        out.push_back(e);
+    });
+}
+
+#endif // CGAL_LINKED_WITH_TBB
+
 template<typename C3T3, typename CellSelector, typename BoundaryValencesMap>
 void collectBoundaryEdgesAndComputeVerticesValences(
   const C3T3& c3t3,
@@ -1275,19 +1353,30 @@ void collectBoundaryEdgesAndComputeVerticesValences(
   boundary_edges.clear();
   boundary_vertices_valences.clear();
 
-  for (const Edge& e : tr.finite_edges())
+#ifdef CGAL_LINKED_WITH_TBB
+  if constexpr (is_parallel_triangulation<typename C3T3::Triangulation>())
   {
-    if (is_boundary(c3t3, e, cell_selector))
-      boundary_edges.push_back(e);
+    collect_boundary_edges_and_subdomains_parallel(c3t3, cell_selector,
+                                                   boundary_edges,
+                                                   vertices_subdomain_indices);
+  }
+  else
+#endif
+  {
+    for (const Edge& e : tr.finite_edges())
+    {
+      if (is_boundary(c3t3, e, cell_selector))
+        boundary_edges.push_back(e);
+    }
+
+    // collect incident subdomain indices at vertices
+    collect_subdomains_on_boundary(c3t3, vertices_subdomain_indices);
   }
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
   CGAL::Tetrahedral_remeshing::debug::dump_edges(boundary_edges,
                                                  "boundary_edges.polylines.txt");
 #endif
-
-  // collect incident subdomain indices at vertices
-  collect_subdomains_on_boundary(c3t3, vertices_subdomain_indices);
 
   for (const Edge& e : boundary_edges)
   {
