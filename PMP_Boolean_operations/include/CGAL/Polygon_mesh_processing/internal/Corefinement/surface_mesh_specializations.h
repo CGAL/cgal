@@ -200,9 +200,9 @@ void append_patches_to_triangle_mesh(
   using SM = Surface_mesh<Point>;
   SM& tm = patches.pm;
 
-  std::size_t vertices_idx_begin = output.number_of_vertices();
-  std::size_t edges_idx_begin = output.number_of_edges();
-  std::size_t faces_idx_begin = output.number_of_faces();
+  std::size_t vertices_idx_begin = output.num_vertices();
+  std::size_t edges_idx_begin = output.num_edges();
+  std::size_t faces_idx_begin = output.num_faces();
   std::size_t tnv = vertices_idx_begin, tne = edges_idx_begin, tnf = faces_idx_begin;
   for (std::size_t i= patches_to_append.find_first();
                    i < patches_to_append.npos;
@@ -212,7 +212,7 @@ void append_patches_to_triangle_mesh(
     tne += patches[i].interior_edges.size();
     tnf += patches[i].faces.size();
   }
-  output.resize(vertices_idx_begin, edges_idx_begin, faces_idx_begin);
+  output.resize(tnv, tne, tnf);
 
   std::vector<std::size_t> ids_of_patches_to_append;
   ids_of_patches_to_append.reserve(patches_to_append.count());
