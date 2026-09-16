@@ -191,7 +191,7 @@ void test_Polyhedron(const std::filesystem::path& file_name)
   test<K>(mesh, vnormals, fnormals);
 }
 
-void test(const std::string filename)
+void test(const std::filesystem::path& filename)
 {
   std::cout << "test " << filename << "..." << std::endl;
 

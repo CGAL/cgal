@@ -16,7 +16,7 @@ typedef CGAL::Exact_predicates_exact_constructions_kernel       Epec;
 
 template <typename K>
 int
-test_self_intersections(const std::string filename, const bool expected)
+test_self_intersections(const std::filesystem::path& filename, const bool expected)
 {
   typedef CGAL::Polyhedron_3<K>                                      Polyhedron;
   typedef typename boost::graph_traits<Polyhedron>::face_descriptor  face_descriptor;

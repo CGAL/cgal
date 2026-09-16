@@ -61,8 +61,8 @@ int load_polylines(std::ifstream& input,
 
 template <typename K>
 int
-test_faces_intersections(const std::string filename1,
-                         const std::string filename2,
+test_faces_intersections(const std::filesystem::path& filename1,
+                         const std::filesystem::path& filename2,
                          const bool expected)
 {
   typedef CGAL::Surface_mesh<typename K::Point_3>                Mesh;
@@ -115,8 +115,8 @@ test_faces_intersections(const std::string filename1,
 
 template <typename K>
 int
-test_faces_polyline_intersections(const std::string filename1,
-                                  const std::string filename2,
+test_faces_polyline_intersections(const std::filesystem::path filename1,
+                                  const std::filesystem::path filename2,
                                   const bool expected)
 {
   typedef typename K::Point_3                                    Point;
@@ -172,8 +172,8 @@ test_faces_polyline_intersections(const std::string filename1,
 
 template <typename K>
 int
-test_faces_polylines_intersections(const std::string filename1,
-                                  const std::string filename2,
+test_faces_polylines_intersections(const std::filesystem::path& filename1,
+                                  const std::filesystem::path& filename2,
                                   const bool expected)
 {
   typedef typename K::Point_3                                    Point;
@@ -233,8 +233,8 @@ test_faces_polylines_intersections(const std::string filename1,
 
 template <typename K>
 int
-test_polylines_polylines_intersections(const std::string filename1,
-                                  const std::string filename2,
+test_polylines_polylines_intersections(const std::filesystem::path filename1,
+                                  const std::filesystem::path& filename2,
                                   const bool expected)
 {
   typedef typename K::Point_3                                    Point;
@@ -297,8 +297,8 @@ test_polylines_polylines_intersections(const std::string filename1,
 
 template <typename K>
 int
-test_polylines_intersections(const std::string filename1,
-                                  const std::string filename2,
+test_polylines_intersections(const std::filesystem::path& filename1,
+                                  const std::filesystem::path& filename2,
                                   const bool expected)
 {
   typedef typename K::Point_3                                    Point;
@@ -357,7 +357,7 @@ test_polylines_intersections(const std::string filename1,
 }
 
 template <typename K>
-int test_inter_in_range(const std::vector<std::string>& filenames, std::size_t expected, bool volume)
+int test_inter_in_range(const std::vector<std::filesystem::path>& filenames, std::size_t expected, bool volume)
 {
   typedef typename K::Point_3                                    Point;
   typedef typename CGAL::Surface_mesh<Point>                     Mesh;
@@ -384,14 +384,14 @@ int main()
   bool expected = true;
   const std::filesystem::path filename1 =  CGAL::data_file_path("meshes/tetrahedron_flat.off");
   const std::filesystem::path filename2 =  CGAL::data_file_path("meshes/reference_tetrahedron.off");
-  const std::string filename3 =  "data/triangle.polylines.txt";
-  const std::string filename4 =  "data/planar.polylines.txt";
-  const std::string filename5 =  "data/tetra3_inter.polylines.txt";
-  const std::string filename6 =  "data/polylines_inter.polylines.txt";
-  const std::string filename7 =  "data/tetra2.off";
-  const std::string filename8 =  "data/tetra4.off";
+  const std::filesystem::path filename3 =  "data/triangle.polylines.txt";
+  const std::filesystem::path filename4 =  "data/planar.polylines.txt";
+  const std::filesystem::path filename5 =  "data/tetra3_inter.polylines.txt";
+  const std::filesystem::path filename6 =  "data/polylines_inter.polylines.txt";
+  const std::filesystem::path filename7 =  "data/tetra2.off";
+  const std::filesystem::path filename8 =  "data/tetra4.off";
   const std::filesystem::path filename9 =  CGAL::data_file_path("meshes/small_spheres.off");
-  const std::string filename10 = "data/hollow_sphere.off";
+  const std::filesystem::path filename10 = "data/hollow_sphere.off";
   const std::filesystem::path filename11 = CGAL::data_file_path("meshes/sphere.off");
 
 
@@ -409,7 +409,7 @@ int main()
   std::cout << "Sixth test (Polyline Ranges):" << std::endl;
   r += test_polylines_polylines_intersections<Epic>(filename5, filename6, expected);
   std::cout << "Seventh test (number of intersecting meshes (surface) ):" << std::endl;
-  std::vector<std::string> names;
+  std::vector<std::filesystem::path> names;
   names.push_back(filename1);
   names.push_back(filename2);
   names.push_back(filename7);

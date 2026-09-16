@@ -96,7 +96,7 @@ void mesh_with_id(const std::filesystem::path& argv1, const bool save_output)
   ofile.close();
 }
 
-void mesh_no_id(const std::string argv1, const bool save_output)
+void mesh_no_id(const std::filesystem::path& argv1, const bool save_output)
 {
   typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
 
@@ -185,7 +185,7 @@ void test_border_cases()
   assert(num_vertices(copy)==0);
 }
 
-void keep_nothing(const std::string argv1)
+void keep_nothing(const std::filesystem::path& argv1)
 {
   typedef boost::graph_traits<Mesh_with_id>::vertex_descriptor vertex_descriptor;
   typedef boost::graph_traits<Mesh_with_id>::face_descriptor face_descriptor;

@@ -14,7 +14,7 @@ typedef CGAL::Exact_predicates_exact_constructions_kernel Epec;
 
 
 template <class K>
-int test_surface_mesh(const std::string filename)
+int test_surface_mesh(const std::filesystem::path& filename)
 {
   typedef typename K::Point_3 Point;
   typedef CGAL::Surface_mesh<Point> Mesh;
