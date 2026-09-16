@@ -51,7 +51,7 @@ void test_vertex_property(Mesh& mesh)
     if(v != first)
       assert(get(pm, v) == default_value);
 
-  auto pm_without_default = get(tag(), mesh);
+  pmap pm_without_default = get(tag(), mesh);
   int i=0;
   for(vd v: vertices(mesh))
     put(pm, v, ++i);
@@ -82,7 +82,7 @@ void test_vertex_const_property(const Mesh& mesh)
     if(v != first)
       assert(get(pm, v) == default_value);
 
-  auto pm_without_default = get(tag(), mesh);
+  pmap pm_without_default = get(tag(), mesh);
   int i=0;
   for(vd v: vertices(mesh))
     put(pm, v, ++i);
@@ -120,7 +120,7 @@ void test_halfedge_property(Mesh& mesh)
     if(h != first)
       assert(get(pm, h) == default_value);
 
-  auto pm_without_default = get(tag(), mesh);
+  pmap pm_without_default = get(tag(), mesh);
   int i = 0;
   for(hd h : halfedges(mesh))
     put(pm_without_default, h, std::to_string(++i));
@@ -151,7 +151,7 @@ void test_halfedge_const_property(const Mesh& mesh)
     if(h != first)
       assert(get(pm, h) == default_value);
 
-  auto pm_without_default = get(tag(), mesh);
+  pmap pm_without_default = get(tag(), mesh);
   int i = 0;
   for(hd h : halfedges(mesh))
     put(pm_without_default, h, std::to_string(++i));
@@ -187,7 +187,7 @@ void test_edge_property(Mesh& mesh)
     if(e != first)
       assert(get(pm, e) == default_value);
 
-  auto pm_without_default = get(tag(), mesh);
+  pmap pm_without_default = get(tag(), mesh);
   int i = 0;
   for(ed e : edges(mesh))
     put(pm_without_default, e, static_cast<double>(++i));
@@ -218,7 +218,7 @@ void test_edge_const_property(const Mesh& mesh)
     if(e != first)
       assert(get(pm, e) == default_value);
 
-  auto pm_without_default = get(tag(), mesh);
+  pmap pm_without_default = get(tag(), mesh);
   int i = 0;
   for(ed e : edges(mesh))
     put(pm_without_default, e, static_cast<double>(++i));
@@ -254,7 +254,7 @@ void test_face_property(Mesh& mesh)
     if(f != first)
       assert(get(pm, f) == default_value);
 
-  auto pm_without_default = get(tag(), mesh);
+  pmap pm_without_default = get(tag(), mesh);
   std::size_t i = 0;
   for(fd f : faces(mesh))
     put(pm_without_default, f, ++i);
@@ -285,7 +285,7 @@ void test_face_const_property(const Mesh& mesh)
     if(f != first)
       assert(get(pm, f) == default_value);
 
-  auto pm_without_default = get(tag(), mesh);
+  pmap pm_without_default = get(tag(), mesh);
   std::size_t i = 0;
   for(fd f : faces(mesh))
     put(pm_without_default, f, ++i);
