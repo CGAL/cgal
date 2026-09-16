@@ -1546,7 +1546,15 @@ struct Locked_stars
   Star star0, star1;
   bool valid = false;
 
-  void clear() { valid = false; star0.clear(); star1.clear(); }
+  // The cell carrying the edge, found while walking star0 to lock it.
+  // `execute_operation_vv()` needs one to build its `Tr::Edge`, and searching
+  // for it again with `tds().is_edge()` would repeat that walk -- and
+  // `is_edge()` MARKS every cell it visits, past this zone. `ec_i0 < 0` means
+  // the walk found no such cell: the pair is no longer an edge.
+  CellHandle ec;
+  int ec_i0 = -1, ec_i1 = -1;
+
+  void clear() { valid = false; ec_i0 = ec_i1 = -1; star0.clear(); star1.clear(); }
 
   bool matches(VertexHandle a, VertexHandle b) const
   { return valid && v0 == a && v1 == b; }
@@ -1809,6 +1817,19 @@ public:
      || !tr.try_lock_and_get_incident_cells(e.second, stars.star1, dd))
       return false;
 
+    // Locate the edge in the star that is already gathered and in cache,
+    // rather than walking for it again in execute_operation_vv().
+    for (const Cell_handle c : stars.star0)
+    {
+      if (c->has_vertex(e.second))
+      {
+        stars.ec = c;
+        stars.ec_i0 = c->index(e.first);
+        stars.ec_i1 = c->index(e.second);
+        break;
+      }
+    }
+
     stars.v0 = e.first;
     stars.v1 = e.second;
     stars.valid = true;
@@ -1817,23 +1838,21 @@ public:
 
   bool execute_operation_vv(const Edge_vv& e, C3t3& c3t3)
   {
-    if (m_destroyed_edges.contains(e))
-      return false;
-
-    Cell_handle cell;
-    int i0, i1;
-    if (!c3t3.triangulation().tds().is_edge(e.first, e.second, cell, i0, i1))
-      return false;
-
-    // lock_zone() walked both stars to take the locks and has held them since
+    // lock_zone() ran first, on this thread, and has held the zone since. It
+    // walked both stars to take the locks and located the edge's cell on the
+    // way. No match means it declined the pair as already destroyed; a match
+    // with no cell means the pair is no longer an edge. Either way there is
+    // nothing to collapse, and the `m_destroyed_edges` lookup that used to
+    // ask the same question here is answered by lock_zone()'s own two.
     const auto& stars = locked_stars<Vertex_handle, Cell_handle>();
-    const bool have = stars.matches(e.first, e.second);
+    if (!stars.matches(e.first, e.second) || stars.ec_i0 < 0)
+      return false;
 
-    const Vertex_handle vh = collapse_edge(Edge(cell, i0, i1), c3t3, m_sizing,
+    const Vertex_handle vh = collapse_edge(Edge(stars.ec, stars.ec_i0, stars.ec_i1),
+                                           c3t3, m_sizing,
                                            m_protect_boundaries, m_cell_selector,
                                            m_destroyed_edges, m_visitor,
-                                           have ? &stars.star0 : nullptr,
-                                           have ? &stars.star1 : nullptr);
+                                           &stars.star0, &stars.star1);
     return vh != Vertex_handle();
   }
 
