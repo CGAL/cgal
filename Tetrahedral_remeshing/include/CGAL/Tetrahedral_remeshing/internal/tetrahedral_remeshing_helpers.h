@@ -841,6 +841,27 @@ bool is_boundary_vertex(const typename C3t3::Vertex_handle& v,
   return false;
 }
 
+// See the note further down, at `incident_cells_tagged()`: one place decides
+// which walk a star traversal uses, marking under Sequential_tag and
+// non-marking under Parallel_tag. These two are here rather than there only
+// because `surface_patch_index()` below is the first call site.
+template<typename Tr>
+constexpr bool is_parallel_triangulation()
+{
+  return std::is_convertible_v<typename Tr::Concurrency_tag, CGAL::Parallel_tag>;
+}
+
+template<typename Tr, typename OutputIterator>
+void incident_facets_tagged(const Tr& tr,
+                            const typename Tr::Vertex_handle v,
+                            OutputIterator out)
+{
+  if constexpr (is_parallel_triangulation<Tr>())
+    tr.incident_facets_threadsafe(v, out);
+  else
+    tr.incident_facets(v, out);
+}
+
 template<typename C3t3>
 std::optional<typename C3t3::Surface_patch_index>
 surface_patch_index(const typename C3t3::Vertex_handle v,
@@ -851,7 +872,16 @@ surface_patch_index(const typename C3t3::Vertex_handle v,
 
   // the star is examined through an output iterator rather than collected :
   // only the first facet of the complex is of interest
-  c3t3.triangulation().incident_facets(v,
+  // The walk must not MARK here: under Parallel_tag this runs on every thread
+  // while the collapse candidates are collected, and two marking walks that
+  // meet do not merely race on the tds_data() byte -- the loser skips the
+  // cells the winner marked and sees an incomplete star. The two walks visit
+  // the same cells in a different order (the marking one is a stack, the
+  // thread-safe one a queue), and this function keeps the FIRST facet of the
+  // complex it meets, so for a vertex on more than one patch the two can name
+  // different patches. `can_be_collapsed()` only compares two of these for
+  // equality, and either answer is a patch the vertex is genuinely on.
+  incident_facets_tagged(c3t3.triangulation(), v,
     boost::make_function_output_iterator([&](const Facet& f)
     {
       if (patch == std::nullopt && c3t3.is_in_complex(f))
@@ -1043,12 +1073,8 @@ std::size_t nb_incident_subdomains(const typename C3t3::Vertex_handle v,
 // already marked is SKIPPED, so the loser silently gets an incomplete star.
 //
 // Call sites use these and do not choose for themselves.
-template<typename Tr>
-constexpr bool is_parallel_triangulation()
-{
-  return std::is_convertible_v<typename Tr::Concurrency_tag, CGAL::Parallel_tag>;
-}
-
+// `is_parallel_triangulation()` and `incident_facets_tagged()` are defined
+// above, next to the first call site that needs them.
 template<typename Tr, typename OutputIterator>
 void incident_cells_tagged(const Tr& tr,
                            const typename Tr::Vertex_handle v,

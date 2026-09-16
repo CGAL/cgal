@@ -42,6 +42,7 @@
 #include <tbb/concurrent_queue.h>
 #include <tbb/parallel_for.h>
 #include <tbb/task_arena.h>
+#include <tbb/enumerable_thread_specific.h>
 #include <thread>
 #endif
 
@@ -1646,8 +1647,69 @@ public:
   Element_range get_elements(const C3t3& c3t3) const override
   {
     Short_edges short_edges;
+    const Tr& tr = c3t3.triangulation();
+
+#ifdef CGAL_LINKED_WITH_TBB
+    if constexpr (is_parallel_triangulation<Tr>())
+    {
+      struct Short_edge_with_length
+      {
+        Edge edge;
+        FT sqlength;
+      };
+
+      // Only the classification is spread out. The bimap cannot be filled
+      // from several threads -- its priority side is an ordered multiset --
+      // so the edges that pass are collected first and inserted afterwards,
+      // in the order the helper returns them, which is the order
+      // finite_edges() emits: the same cells in the same order, the same six
+      // edge slots per cell, the same smallest-handle owner per slot. The
+      // insertion order is what decides the order of equal-length edges in
+      // the priority side, and so what the phase runs first, so it has to be
+      // the serial one.
+      //
+      // One patch cache per thread rather than none. surface_patch_index(v)
+      // walks v's incident-facet star and the scan reaches every vertex once
+      // per incident edge; dropping the cache to make the scan stateless
+      // would put those walks back. The mesh does not change during the
+      // collection, so an answer cached by any thread is the answer every
+      // thread would compute.
+      tbb::enumerable_thread_specific<Vertex_patch_cache<C3t3> > patch_caches;
+
+      // The per-edge test below is the serial walk's, written out again
+      // rather than shared with it. Routing the serial loop through a common
+      // predicate changed its codegen -- byte-identical output, +0.04% to
+      // +0.055% sequential instructions over four configs -- and this is a
+      // parallel-scope change: the Sequential_tag binary has to rebuild
+      // byte-identical, which it does. The two copies are the two arms of
+      // one if/else and must be kept in step.
+      const auto collected
+        = parallel_collect_from_finite_edges<Short_edge_with_length>(tr,
+            [&](const Edge& e, std::vector<Short_edge_with_length>& out)
+            {
+              auto [collapsible, boundary]
+                = can_be_collapsed(e, c3t3, m_protect_boundaries, m_cell_selector,
+                                   &patch_caches.local());
+              if (!collapsible)
+                return;
+
+              const auto sqlen = is_too_short(e, boundary, m_sizing, c3t3, m_cell_selector);
+              if (sqlen != std::nullopt)
+                out.push_back(Short_edge_with_length{e, sqlen.value()});
+            });
+
+      for (const Short_edge_with_length& se : collected)
+        short_edges.insert(typename Short_edges::value_type(se.edge, se.sqlength));
+
+      // Early return rather than an `else` around the serial loop: an `else`
+      // here moves GCC's inliner across the whole translation unit and the
+      // Sequential_tag binary stops rebuilding byte-identical.
+      return short_edges;
+    }
+#endif
+
     Vertex_patch_cache<C3t3> patch_cache;
-    for (const Edge& e : c3t3.triangulation().finite_edges())
+    for (const Edge& e : tr.finite_edges())
     {
       auto [collapsible, boundary]
         = can_be_collapsed(e, c3t3, m_protect_boundaries, m_cell_selector, &patch_cache);
