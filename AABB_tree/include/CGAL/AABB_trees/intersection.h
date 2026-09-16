@@ -244,8 +244,8 @@ namespace AABB_trees {
   void all_pairs_of_primitives_with_overlapping_bbox(const AABBTree1 &tree1,
                                                      const AABBTree2 &tree2,
                                                      OutputIterator out,
-                                                     const NamedParameters1& np1 = parameters::default_values(),
-                                                     const NamedParameters2& np2 = parameters::default_values())
+                                                     const NamedParameters1& /*np1*/ = parameters::default_values(),
+                                                     const NamedParameters2& /*np2*/ = parameters::default_values())
   {
     using parameters::get_parameter;
     using parameters::choose_parameter;
