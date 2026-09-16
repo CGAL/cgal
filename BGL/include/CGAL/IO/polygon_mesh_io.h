@@ -251,7 +251,7 @@ bool write_polygon_mesh(const std::filesystem::path& fname,
   else if(ext == ".ts")
     return write_GOCAD(fname, g, np);
 #ifdef CGAL_USE_VTK
-  else if(ext == "vtp")
+  else if(ext == ".vtp")
     return write_VTP(fname, g, np);
 #endif
 
