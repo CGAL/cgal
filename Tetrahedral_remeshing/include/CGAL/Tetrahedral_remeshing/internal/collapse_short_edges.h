@@ -43,6 +43,7 @@
 #include <tbb/parallel_for.h>
 #include <tbb/task_arena.h>
 #include <tbb/enumerable_thread_specific.h>
+#include <tbb/parallel_sort.h>
 #include <thread>
 #endif
 
@@ -1644,69 +1645,91 @@ public:
       , m_protect_boundaries(protect_boundaries)
       , m_visitor(visitor) {}
 
+#ifdef CGAL_LINKED_WITH_TBB
+  /**
+  * The parallel path's work list: the candidates, shortest first, as vertex
+  * pairs. The bimap is not built at all here. Its element side is only ever
+  * searched by `execute_operation()`, which the parallel executor never calls
+  * -- `execute_operation_vv()` skips destroyed edges through
+  * `m_destroyed_edges` instead -- and its priority side exists only to be
+  * walked once, in order, into this snapshot. So the ordering is done by a
+  * `parallel_sort` of the collected vector and the ordered multiset, whose
+  * inserts are serial and O(n log n) in front of the phase, is gone.
+  *
+  * The sort reproduces the bimap's order exactly, EQUAL LENGTHS INCLUDED: an
+  * insert into `multiset_of` lands at the upper bound of its key, so equal
+  * lengths come out in insertion order, which was the collection order. The
+  * sort is not stable, so the collection index is carried and used as the
+  * tie-break, which is the same thing. Equal lengths are not rare here --
+  * the sizing field gives whole regions one target length.
+  */
+  std::vector<Edge_vv> get_parallel_candidates(const C3t3& c3t3) const
+  {
+    const Tr& tr = c3t3.triangulation();
+
+    struct Short_edge_with_length
+    {
+      Edge edge;
+      FT sqlength;
+      std::size_t rank; // position in the collection order; the tie-break
+    };
+
+    // One patch cache per thread rather than none. surface_patch_index(v)
+    // walks v's incident-facet star and the scan reaches every vertex once
+    // per incident edge; dropping the cache to make the scan stateless
+    // would put those walks back. The mesh does not change during the
+    // collection, so an answer cached by any thread is the answer every
+    // thread would compute.
+    tbb::enumerable_thread_specific<Vertex_patch_cache<C3t3> > patch_caches;
+
+    // The per-edge test below is the serial walk's, written out again
+    // rather than shared with it. Routing the serial loop through a common
+    // predicate changed its codegen -- byte-identical output, +0.04% to
+    // +0.055% sequential instructions over four configs -- and this is a
+    // parallel-scope change: the Sequential_tag binary has to rebuild
+    // byte-identical, which it does. The two copies are the two arms of
+    // one if/else and must be kept in step.
+    auto collected
+      = parallel_collect_from_finite_edges<Short_edge_with_length>(tr,
+          [&](const Edge& e, std::vector<Short_edge_with_length>& out)
+          {
+            auto [collapsible, boundary]
+              = can_be_collapsed(e, c3t3, m_protect_boundaries, m_cell_selector,
+                                 &patch_caches.local());
+            if (!collapsible)
+              return;
+
+            const auto sqlen = is_too_short(e, boundary, m_sizing, c3t3, m_cell_selector);
+            if (sqlen != std::nullopt)
+              out.push_back(Short_edge_with_length{e, sqlen.value(), 0});
+          });
+
+    // The helper concatenates its per-chunk vectors in chunk order, so the
+    // vector is already in collection order and the rank is just the index.
+    for (std::size_t i = 0; i < collected.size(); ++i)
+      collected[i].rank = i;
+
+    tbb::parallel_sort(collected.begin(), collected.end(),
+                       [](const Short_edge_with_length& a,
+                          const Short_edge_with_length& b)
+                       {
+                         if (a.sqlength != b.sqlength)
+                           return a.sqlength < b.sqlength;
+                         return a.rank < b.rank;
+                       });
+
+    std::vector<Edge_vv> candidates;
+    candidates.reserve(collected.size());
+    for (const Short_edge_with_length& se : collected)
+      candidates.push_back(make_vertex_pair(se.edge));
+    return candidates;
+  }
+#endif // CGAL_LINKED_WITH_TBB
+
   Element_range get_elements(const C3t3& c3t3) const override
   {
     Short_edges short_edges;
     const Tr& tr = c3t3.triangulation();
-
-#ifdef CGAL_LINKED_WITH_TBB
-    if constexpr (is_parallel_triangulation<Tr>())
-    {
-      struct Short_edge_with_length
-      {
-        Edge edge;
-        FT sqlength;
-      };
-
-      // Only the classification is spread out. The bimap cannot be filled
-      // from several threads -- its priority side is an ordered multiset --
-      // so the edges that pass are collected first and inserted afterwards,
-      // in the order the helper returns them, which is the order
-      // finite_edges() emits: the same cells in the same order, the same six
-      // edge slots per cell, the same smallest-handle owner per slot. The
-      // insertion order is what decides the order of equal-length edges in
-      // the priority side, and so what the phase runs first, so it has to be
-      // the serial one.
-      //
-      // One patch cache per thread rather than none. surface_patch_index(v)
-      // walks v's incident-facet star and the scan reaches every vertex once
-      // per incident edge; dropping the cache to make the scan stateless
-      // would put those walks back. The mesh does not change during the
-      // collection, so an answer cached by any thread is the answer every
-      // thread would compute.
-      tbb::enumerable_thread_specific<Vertex_patch_cache<C3t3> > patch_caches;
-
-      // The per-edge test below is the serial walk's, written out again
-      // rather than shared with it. Routing the serial loop through a common
-      // predicate changed its codegen -- byte-identical output, +0.04% to
-      // +0.055% sequential instructions over four configs -- and this is a
-      // parallel-scope change: the Sequential_tag binary has to rebuild
-      // byte-identical, which it does. The two copies are the two arms of
-      // one if/else and must be kept in step.
-      const auto collected
-        = parallel_collect_from_finite_edges<Short_edge_with_length>(tr,
-            [&](const Edge& e, std::vector<Short_edge_with_length>& out)
-            {
-              auto [collapsible, boundary]
-                = can_be_collapsed(e, c3t3, m_protect_boundaries, m_cell_selector,
-                                   &patch_caches.local());
-              if (!collapsible)
-                return;
-
-              const auto sqlen = is_too_short(e, boundary, m_sizing, c3t3, m_cell_selector);
-              if (sqlen != std::nullopt)
-                out.push_back(Short_edge_with_length{e, sqlen.value()});
-            });
-
-      for (const Short_edge_with_length& se : collected)
-        short_edges.insert(typename Short_edges::value_type(se.edge, se.sqlength));
-
-      // Early return rather than an `else` around the serial loop: an `else`
-      // here moves GCC's inliner across the whole translation unit and the
-      // Sequential_tag binary stops rebuilding byte-identical.
-      return short_edges;
-    }
-#endif
 
     Vertex_patch_cache<C3t3> patch_cache;
     for (const Edge& e : tr.finite_edges())
@@ -1907,11 +1930,10 @@ public:
 
 #ifdef CGAL_LINKED_WITH_TBB
 /**
-* The parallel counterpart. The bimap work list cannot be shared between
-* threads, so the candidates are snapshotted from it once, shortest first, and
-* drained from a concurrent queue in that order. What the sequential path does
-* by re-queueing, this one does by recording the destroyed edges in the
-* operation and skipping them.
+* The parallel counterpart. The candidates are collected and sorted shortest
+* first in parallel, then drained from a concurrent queue in that order. What
+* the sequential path does by re-queueing, this one does by recording the
+* destroyed edges in the operation and skipping them.
 */
 template<typename C3t3,
          typename SizingFunction,
@@ -1921,21 +1943,17 @@ class Elementary_operation_execution_parallel<
         Edge_collapse_operation<C3t3, SizingFunction, CellSelector, Visitor> >
 {
   using Operation = Edge_collapse_operation<C3t3, SizingFunction, CellSelector, Visitor>;
-  using Short_edges = typename Operation::Short_edges;
   using Edge_vv = typename Operation::Edge_vv;
 
 public:
   bool execute(Operation& op, C3t3& c3t3) const
   {
-    const Short_edges short_edges = op.get_elements(c3t3);
-    if (short_edges.empty())
+    // Already shortest first, and built without the bimap -- see
+    // get_parallel_candidates(). This executor is the only reader of the
+    // ordering, and it only reads it once.
+    const std::vector<Edge_vv> candidates = op.get_parallel_candidates(c3t3);
+    if (candidates.empty())
       return false;
-
-    // the right view is ordered by length, so this snapshot is shortest first
-    std::vector<Edge_vv> candidates;
-    candidates.reserve(short_edges.size());
-    for (auto it = short_edges.right.begin(); it != short_edges.right.end(); ++it)
-      candidates.push_back(make_vertex_pair(it->second));
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
     CGAL::Real_timer timer;
