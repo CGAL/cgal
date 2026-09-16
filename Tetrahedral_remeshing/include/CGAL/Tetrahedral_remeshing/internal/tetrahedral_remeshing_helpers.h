@@ -2680,11 +2680,20 @@ bool spatial_sort_c3t3(C3t3& c3t3,
   Tr& tr = c3t3.triangulation();
   if (tr.dimension() != 3 || tr.number_of_vertices() == 0) return false;
 
+  // Read the complex's own storage, NOT `c3t3.edges_in_complex()`: that range
+  // is a filter over `finite_edges()`, so snapshotting the 1D complex through
+  // it walks every finite edge of the mesh and tests each one. Measured on
+  // 1146193_cdt_0.5 at 4 threads, it was 1.317 s of the 1.854 s this whole
+  // routine costs across a run -- 71% of it, and four times the Morton rebuild
+  // below. The snapshot only has to round-trip through `remove_from_complex` /
+  // `add_to_complex`, which are keyed lookups, so the order it comes back in
+  // does not matter.
   std::vector<std::tuple<Vertex_handle, Vertex_handle, Curve_index>> edges;
   edges.reserve(c3t3.number_of_edges_in_complex());
-  for (const auto& e : c3t3.edges_in_complex())
-    edges.emplace_back(e.first->vertex(e.second), e.first->vertex(e.third),
-                       c3t3.curve_index(e));
+  for_each_edge_in_complex(c3t3,
+    [&edges](const Vertex_handle& v1, const Vertex_handle& v2,
+             const Curve_index& index)
+    { edges.emplace_back(v1, v2, index); });
 
   std::vector<std::pair<Vertex_handle, Corner_index>> corners;
   corners.reserve(c3t3.number_of_corners());
