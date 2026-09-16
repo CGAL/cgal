@@ -19,6 +19,8 @@
 
 namespace CGAL {
 
+class Filtered_rational;
+
 template < typename ET >
 class Lazy_exact_nt;
 
@@ -233,6 +235,7 @@ inline bool fit_in_double(const int& i, double& r) { r = i; return true; }
 template < typename ET >
 inline bool fit_in_double(const Lazy_exact_nt<ET>&, double&);
 
+inline bool fit_in_double(const Filtered_rational&, double&);
 
 // Auxiliary functor, to get the approximation of a kernel object:
 //   - for a Point_3 of the Lazy_kernel<...>, one needs to call approx(),
