@@ -5,7 +5,8 @@ cmake_minimum_required(VERSION 3.12...3.31)
 project(Linear_cell_complex_Tests)
 
 find_package(CGAL REQUIRED)
-find_package(Eigen3 3.3 REQUIRED NO_MODULE)
+find_package(Eigen3 QUIET)
+include(CGAL_Eigen3_support)
 
 set(hfiles Linear_cell_complex_2_test.h
   Linear_cell_complex_3_test.h Linear_cell_complex_3_test.h)
@@ -18,13 +19,16 @@ create_single_source_cgal_program(Linear_cell_complex_copy_test.cpp ${hfiles})
 create_single_source_cgal_program(LCC_3_incremental_builder_test.cpp ${hfiles})
 create_single_source_cgal_program(Linear_cell_complex_vtk_io_test.cpp ${hfiles})
 
-create_single_source_cgal_program(hexmeshing_unit_test.cpp)
-target_link_libraries(hexmeshing_unit_test PRIVATE Eigen3::Eigen)
-create_single_source_cgal_program(hexmeshing_polyhedron_test.cpp)
-target_link_libraries(hexmeshing_polyhedron_test PRIVATE Eigen3::Eigen)
-create_single_source_cgal_program(hexmeshing_real_mesh_test.cpp)
-target_link_libraries(hexmeshing_real_mesh_test PRIVATE Eigen3::Eigen)
-
+if(TARGET CGAL::Eigen3_support)
+  create_single_source_cgal_program(hexmeshing_unit_test.cpp)
+  target_link_libraries(hexmeshing_unit_test PRIVATE CGAL::Eigen3_support)
+  create_single_source_cgal_program(hexmeshing_polyhedron_test.cpp)
+  target_link_libraries(hexmeshing_polyhedron_test PRIVATE CGAL::Eigen3_support)
+  create_single_source_cgal_program(hexmeshing_real_mesh_test.cpp)
+  target_link_libraries(hexmeshing_real_mesh_test PRIVATE CGAL::Eigen3_support)
+else()
+  message(STATUS "NOTICE: Hexmeshing tests that use Eigen will not be compiled.")
+endif()
 
 # Same targets, defining USE_COMPACT_CONTAINER_WITH_INDEX to test index version
 add_executable(Linear_cell_complex_2_test_index Linear_cell_complex_2_test.cpp ${hfiles})
