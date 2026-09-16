@@ -33,6 +33,13 @@ namespace CGAL {
 namespace IO {
 namespace internal {
 
+template<typename SurfacePatchIndex>
+struct Facet_with_index
+{
+  int v0, v1, v2;
+  SurfacePatchIndex surface_patch_index;
+};
+
 template<typename CurveIndex>
 struct Edge_with_index
 {
@@ -47,25 +54,25 @@ struct Corner_with_index
   CornerIndex corner_index;
 };
 
+
 template<class PointRange,
          class TetrahedronRange,
-         class SurfacePatchIndex_,
-         class EdgeWithIndex_, // either Edge_with_index or a tuple
-         class CornerWithIndex_> // either Corner_with_index or a tuple/pair
+         class FacetWithIndex, // either Facet_with_index or a tuple/array
+         class EdgeWithIndex, // either Edge_with_index or a tuple/array
+         class CornerWithIndex> // either Corner_with_index or a tuple/pair/array
 bool read_MEDIT(std::istream& is,
                 PointRange& points,
                 TetrahedronRange& tetrahedra,
                 std::vector<int>& subdomains,
-                boost::unordered_map<std::array<int,3>,SurfacePatchIndex_ >& border_facets,
-                bool read_border_facets,
-                std::vector<EdgeWithIndex_>& edge_indices,
-                std::vector<CornerWithIndex_>& corner_indices,
+                std::vector<FacetWithIndex>& facets_and_indices,
+                bool read_facets_and_indices,
+                std::vector<EdgeWithIndex>& edges_and_indices,
+                std::vector<CornerWithIndex>& corners_and_indices,
                 bool verbose,
                 bool& is_CGAL_mesh)
 {
   using Point_3 = typename PointRange::value_type;
   using FT = typename Kernel_traits<Point_3>::Kernel::FT;
-  using Surface_patch_index = SurfacePatchIndex_;
   using Facet        = std::array<int, 3>;
   using Tet_with_ref = typename std::iterator_traits<typename TetrahedronRange::const_iterator>::value_type;
 
@@ -134,10 +141,9 @@ bool read_MEDIT(std::istream& is,
 
     if(line.find("Triangles") != std::string::npos)
     {
-      if(read_border_facets){
-        bool has_negative_surface_patch_ids = false;
-        Surface_patch_index max_surface_patch_id{0};
+      if(read_facets_and_indices){
         is >> nf;
+        facets_and_indices.reserve(nf);
 
         if(verbose)
           std::cerr << "Reading "<< nf << " triangles" << std::endl;
@@ -145,15 +151,13 @@ bool read_MEDIT(std::istream& is,
         for(int i=0; i<nf; ++i)
         {
           int n[3];
-          Surface_patch_index surface_patch_id;
+          int surface_patch_id;
           if(!(is >> n[0] >> n[1] >> n[2] >> surface_patch_id))
           {
             if(verbose)
               std::cerr << "Issue while reading triangles" << std::endl;
             return false;
           }
-          has_negative_surface_patch_ids |= (surface_patch_id < 0);
-          max_surface_patch_id = (std::max)(max_surface_patch_id, surface_patch_id);
           Facet facet;
           facet[0] = offset + n[0] - 1;
           facet[1] = offset + n[1] - 1;
@@ -171,36 +175,17 @@ bool read_MEDIT(std::istream& is,
 
           // find the circular permutation that puts the smallest index in the first place.
           int n0 = (std::min)({facet[0],facet[1], facet[2]});
-          do
+          while(facet[0] != n0)
           {
             std::rotate(std::begin(facet), std::next(std::begin(facet)), std::end(facet));
           }
-          while(facet[0] != n0);
-
-          border_facets.emplace(facet, surface_patch_id);
-        }
-        if(has_negative_surface_patch_ids)
-        {
-          if(verbose)
-            std::cerr << "Warning: negative surface patch ids" << std::endl;
-          for(auto& facet_and_patch_id  : border_facets) {
-            if(facet_and_patch_id.second < 0)
-              facet_and_patch_id.second = max_surface_patch_id - facet_and_patch_id.second;
-          }
+          facets_and_indices.push_back({facet[0], facet[1], facet[2], surface_patch_id});
         }
       }else{
         is >> nf;
+        std::string buffer;
         for(int i=0; i<nf; ++i)
-        {
-          int n[3];
-          int surface_patch_id;
-          if(!(is >> n[0] >> n[1] >> n[2] >> surface_patch_id))
-          {
-            if(verbose)
-              std::cerr << "Issue while reading triangles" << std::endl;
-            return false;
-          }
-        }
+          std::getline(is, buffer);
       }
     }
     if(line.find("Tetrahedra") != std::string::npos)
@@ -259,7 +244,7 @@ bool read_MEDIT(std::istream& is,
             std::cerr << "Issue while reading corners" << std::endl;
           return false;
         }
-        corner_indices.push_back({offset + n - 1, ++corner_index});
+        corners_and_indices.push_back({offset + n - 1, ++corner_index});
       }
     }
 
@@ -278,8 +263,8 @@ bool read_MEDIT(std::istream& is,
             std::cerr << "Issue while reading edges" << std::endl;
           return false;
         }
-        edge_indices.push_back({offset + n[0] - 1, offset + n[1] - 1, curve_index});
-        CGAL_assertion(edge_indices.size() == static_cast<std::size_t>(i + 1));
+        edges_and_indices.push_back({offset + n[0] - 1, offset + n[1] - 1, curve_index});
+        CGAL_assertion(edges_and_indices.size() == static_cast<std::size_t>(i + 1));
       }
     }
 
@@ -289,9 +274,9 @@ bool read_MEDIT(std::istream& is,
   {
     std::cout << points.size() - std::size_t(offset) << " points" << std::endl;
     std::cout << tetrahedra.size() << " cells" << std::endl;
-    std::cout << border_facets.size() << " border facets" << std::endl;
-    std::cout << edge_indices.size() << " edges" << std::endl;
-    std::cout << corner_indices.size() << " corners" << std::endl;
+    std::cout << facets_and_indices.size() << " border facets" << std::endl;
+    std::cout << edges_and_indices.size() << " edges" << std::endl;
+    std::cout << corners_and_indices.size() << " corners" << std::endl;
   }
 
   if(tetrahedra.empty())
@@ -365,15 +350,15 @@ bool read_MEDIT(std::istream& is,
   using Subdomains = typename internal_np::Lookup_named_param_def<internal_np::subdomains_t, CGAL_NP_CLASS, std::vector<int>>::reference;
   Subdomains subdomains = choose_parameter(get_parameter_reference(np, internal_np::subdomains), default_subdomains);
 
-  boost::unordered_map<std::array<int,3>,int > border_facets;
-  constexpr bool read_border_facets = false;
-  std::vector<internal::Edge_with_index<int>> edge_indices;
-  std::vector<internal::Corner_with_index<int>> corner_indices;
+  constexpr bool read_facets_and_indices = false;
+  std::vector<std::array<int, 4>> facets_and_indices;
+  std::vector<std::array<int, 3>> edges_and_indices;
+  std::vector<std::array<int, 2>> corners_and_indices;
   bool is_CGAL_mesh;
 
   return internal::read_MEDIT(is, points, tetrahedra, subdomains,
-                              border_facets, read_border_facets,
-                              edge_indices, corner_indices,
+                              facets_and_indices, read_facets_and_indices,
+                              edges_and_indices, corners_and_indices,
                               verbose, is_CGAL_mesh);
 }
 
@@ -415,7 +400,11 @@ template<class PointRange, class TetrahedronRange, typename CGAL_NP_TEMPLATE_PAR
 bool write_MEDIT(std::ostream& os,
                  const PointRange& points,
                  const TetrahedronRange& tetrahedra,
-                 const CGAL_NP_CLASS& np = parameters::default_values())
+                 const CGAL_NP_CLASS& np = parameters::default_values()
+#ifndef DOXYGEN_RUNNING
+                 , std::enable_if_t<!is_named_function_parameter<TetrahedronRange>>* = nullptr
+#endif
+                 )
 
 {
   using parameters::choose_parameter;
