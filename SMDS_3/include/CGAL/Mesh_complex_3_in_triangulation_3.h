@@ -1256,6 +1256,19 @@ public:
     return Edges_in_complex(edges_in_complex_begin(),
                             edges_in_complex_end());
   }
+  /// @cond internal
+  /// calls `f(v1, v2, curve_index)` for every edge of the 1D complex, reading
+  /// the complex's own storage rather than the filtered `edges_in_complex()`
+  /// range above. Callers go through
+  /// `Tetrahedral_remeshing::internal::for_each_edge_in_complex()`, which is
+  /// where the rationale and the ordering caveat are written down; this hook
+  /// exists only because `edges_` is private.
+  template <typename Fct>
+  void visit_edges_in_complex(Fct f) const
+  {
+    edges_.visit_all(f);
+  }
+  /// @endcond
   /*!
     returns a range of iterators over the facets of the 2D complex,
     starting at an arbitrary facet.

@@ -2455,6 +2455,34 @@ inline std::uint32_t morton_quantize(double v, double lo, double inv_span)
   return static_cast<std::uint32_t>(c * 2097151.0);
 }
 
+/**
+* Calls `f(v1, v2, curve_index)` for every edge of the 1D complex.
+*
+* WHY THIS EXISTS, rather than `for (auto e : c3t3.edges_in_complex())`. That
+* range is a `filter_iterator` over `finite_edges()`
+* (`Mesh_complex_3_in_triangulation_3.h`), so walking it enumerates EVERY
+* finite edge of the triangulation and tests each one -- O(edges in the
+* triangulation), however small the 1D complex is. The c3t3 already stores the
+* complex edges; this reads that storage and is O(edges in the complex).
+* Measured on 1146193_cdt_0.5 at 4 threads, one such walk cost 0.22 s, and the
+* spatial sort alone did six of them.
+*
+* THE ORDER IS THE STORAGE'S, not the triangulation's: under `Parallel_tag`
+* that is a hash map's order. Use this only where the order does not matter --
+* a maximum, a keyed `put`, a snapshot that round-trips through
+* `remove_from_complex` / `add_to_complex`. Where it DOES matter, because the
+* consumer sums floating-point values or builds a structure whose shape
+* depends on insertion order, keep the filtered walk (see
+* `smooth_vertices.h`).
+*
+* The complex must not be modified during the call.
+*/
+template<typename C3t3, typename Fct>
+void for_each_edge_in_complex(const C3t3& c3t3, Fct f)
+{
+  c3t3.visit_edges_in_complex(f);
+}
+
 // Returns the old-handle -> new-handle vertex map; callers holding vertex
 // handles (the c3t3's complex edges and corners) must remap through it.
 //

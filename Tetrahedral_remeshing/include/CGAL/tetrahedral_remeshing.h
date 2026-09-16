@@ -369,11 +369,14 @@ convert_to_triangulation_3(
   if (!std::is_same_v<ECMap, Default_edge_pmap>)
   {
     ECMap ecmap = choose_parameter<Default_edge_pmap>(get_parameter(np, internal_np::edge_is_constrained));
-    for (auto e : c3t3.edges_in_complex())
-    {
-      const auto evv = CGAL::Tetrahedral_remeshing::make_vertex_pair(e);//ordered pair
-      put(ecmap, evv, true);
-    }
+    // The complex's own storage rather than `edges_in_complex()`, which is a
+    // filter over `finite_edges()` and walks the whole triangulation. Each
+    // edge is `put` under its own key, so the order is immaterial.
+    CGAL::Tetrahedral_remeshing::internal::for_each_edge_in_complex(c3t3,
+      [&ecmap](const auto& v1, const auto& v2, const auto&)
+      {
+        put(ecmap, CGAL::Tetrahedral_remeshing::make_vertex_pair(v1, v2), true);
+      });
   }
 
   using Default_vertex_pmap = typename Remesher_types::Default_VCMap;

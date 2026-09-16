@@ -736,13 +736,19 @@ private:
 
   Curve_index max_curve_index() const
   {
+    // Read the complex's own storage, not `edges_in_complex()`: that range is
+    // a filter over `finite_edges()`, so it walks every finite edge of the
+    // mesh and tests each one, and it then costs a keyed `curve_index()`
+    // lookup per complex edge on top. A maximum does not depend on the order
+    // the values arrive in.
     Curve_index max_index = (std::numeric_limits<Curve_index>::min)();
-    for (const Edge& e : m_c3t3.edges_in_complex())
-    {
-      const Curve_index cid = m_c3t3.curve_index(e);
-      if (cid > max_index)
-        max_index = cid;
-    }
+    Tetrahedral_remeshing::internal::for_each_edge_in_complex(m_c3t3,
+      [&max_index](const Vertex_handle&, const Vertex_handle&,
+                   const Curve_index& cid)
+      {
+        if (cid > max_index)
+          max_index = cid;
+      });
     if (max_index == (std::numeric_limits<Curve_index>::min)())
       return 0;
     else
