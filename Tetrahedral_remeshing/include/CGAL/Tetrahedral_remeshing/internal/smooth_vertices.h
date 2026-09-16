@@ -52,6 +52,17 @@ public:
   using Edge                = typename Tr::Edge;
   using Facet               = typename Tr::Facet;
 
+  static constexpr bool is_parallel
+    = std::is_convertible_v<typename Tr::Concurrency_tag, CGAL::Parallel_tag>;
+
+  // One finite edge and whether it is in the 1-D complex, so that the parallel
+  // collection answers both questions in a single scan.
+  struct Classified_edge
+  {
+    Edge e;
+    bool in_complex;
+  };
+
   using Gt       = typename Tr::Geom_traits;
   using Vector_3 = typename Gt::Vector_3;
   using Point_3  = typename Gt::Point_3;
@@ -309,6 +320,55 @@ private:
   void collect_finite_edges(const C3t3& c3t3)
   {
     const Tr& tr = c3t3.triangulation();
+
+#ifdef CGAL_LINKED_WITH_TBB
+    if constexpr (is_parallel)
+    {
+      // This walk is one of the serial sections in front of a phase that then
+      // runs on every thread. `parallel_collect_from_finite_edges()` is the
+      // same cells x 6-slots scan with the same smallest-incident-cell
+      // ownership rule that `Finite_edges_iterator::operator++` performs, made
+      // splittable -- so the edges come out in `finite_edges()` order, which
+      // `m_complex_edges` and the index into `m_finite_edge_in_complex` both
+      // depend on. The `is_in_complex()` lookup rides along in the same pass
+      // (the 1-D complex is not written during collection, and the parallel
+      // storage is a `boost::concurrent_flat_map`), so the classification is
+      // parallel too rather than a second serial walk over the result.
+      //
+      // The fan-out below is serial but is a copy over contiguous memory, with
+      // no circulation and no lookup.
+      const bool classify_par = !m_protect_boundaries;
+      if (!classify_par)
+      {
+        m_complex_edges.clear();
+        m_finite_edge_in_complex.clear();
+        m_finite_edges = parallel_collect_from_finite_edges<Edge>(tr,
+          [](const Edge& e, std::vector<Edge>& out) { out.push_back(e); });
+        return;
+      }
+
+      const std::vector<Classified_edge> classified
+        = parallel_collect_from_finite_edges<Classified_edge>(tr,
+            [&c3t3](const Edge& e, std::vector<Classified_edge>& out)
+            { out.push_back(Classified_edge{e, c3t3.is_in_complex(e)}); });
+
+      m_finite_edges.clear();
+      m_finite_edges.reserve(classified.size());
+      m_finite_edge_in_complex.clear();
+      m_finite_edge_in_complex.reserve(classified.size());
+      m_complex_edges.clear();
+      m_complex_edges.reserve(c3t3.number_of_edges_in_complex());
+
+      for (const Classified_edge& ce : classified)
+      {
+        m_finite_edges.push_back(ce.e);
+        m_finite_edge_in_complex.push_back(ce.in_complex);
+        if (ce.in_complex)
+          m_complex_edges.push_back(ce.e);
+      }
+      return;
+    }
+#endif
 
     // `number_of_vertices() + number_of_cells()` is an upper bound on the
     // number of finite edges, and an O(1) one -- both are container sizes.
