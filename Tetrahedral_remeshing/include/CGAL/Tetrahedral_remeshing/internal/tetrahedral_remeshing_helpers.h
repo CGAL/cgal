@@ -2209,17 +2209,36 @@ namespace internal
 * The triangulation must not be modified during the call: this runs while
 * candidates are collected, before the parallel phase begins.
 */
+/**
+* The serial prologue the scan needs: a random-access snapshot of the cell
+* handles, because a `Concurrent_compact_container` is a linked walk and
+* `tbb::blocked_range` needs indices. It is exposed on its own so a caller that
+* wants a parallel pass over the CELLS as well as a parallel collection over
+* the EDGES pays this walk once instead of twice.
+*/
+template<typename Tr>
+std::vector<typename Tr::Cell_handle> gather_all_cells(const Tr& tr)
+{
+  std::vector<typename Tr::Cell_handle> cells;
+  cells.reserve(tr.number_of_cells());
+  for (auto cit = tr.all_cells_begin(); cit != tr.all_cells_end(); ++cit)
+    cells.push_back(cit);
+  return cells;
+}
+
+/**
+* Overload taking a snapshot the caller already holds. Same ownership rule,
+* same chunking, same output order as the gathering version below.
+*/
 template<typename T, typename Tr, typename Fn>
-std::vector<T> parallel_collect_from_finite_edges(const Tr& tr, Fn fn)
+std::vector<T> parallel_collect_from_finite_edges(
+  const Tr& tr,
+  const std::vector<typename Tr::Cell_handle>& cells,
+  Fn fn)
 {
   using Cell_handle = typename Tr::Cell_handle;
   using Edge = typename Tr::Edge;
   using Cell_circulator = typename Tr::Cell_circulator;
-
-  std::vector<Cell_handle> cells;
-  cells.reserve(tr.number_of_cells());
-  for (auto cit = tr.all_cells_begin(); cit != tr.all_cells_end(); ++cit)
-    cells.push_back(cit);
 
   static constexpr int edge_slots[6][2] = { {0,1},{0,2},{0,3},{1,2},{1,3},{2,3} };
   static constexpr std::size_t chunk = 256;
@@ -2265,6 +2284,12 @@ std::vector<T> parallel_collect_from_finite_edges(const Tr& tr, Fn fn)
   for (const std::vector<T>& v : per_chunk)
     out.insert(out.end(), v.begin(), v.end());
   return out;
+}
+
+template<typename T, typename Tr, typename Fn>
+std::vector<T> parallel_collect_from_finite_edges(const Tr& tr, Fn fn)
+{
+  return parallel_collect_from_finite_edges<T>(tr, gather_all_cells(tr), fn);
 }
 #endif // CGAL_LINKED_WITH_TBB
 

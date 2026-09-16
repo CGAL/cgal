@@ -2039,6 +2039,44 @@ public:
 
   Element_range get_elements(const C3t3& c3t3) const override
   {
+#ifdef CGAL_LINKED_WITH_TBB
+    if constexpr (is_parallel)
+    {
+      // Both halves of this function -- the cache reset over the complex cells
+      // and the edge collection -- run on one thread in front of a phase that
+      // then runs on all of them, and together they are the largest serial
+      // section left in the parallel run. They share ONE cell snapshot, so the
+      // compact container is walked once here where the serial arm walks it
+      // twice: once for `cells_in_complex()` and once for the edge iterator.
+      const typename C3t3::Triangulation& tr = c3t3.triangulation();
+      const std::vector<Cell_handle> cells = gather_all_cells(tr);
+
+      tbb::parallel_for(tbb::blocked_range<std::size_t>(0, cells.size()),
+        [&](const tbb::blocked_range<std::size_t>& range)
+        {
+          for (std::size_t ci = range.begin(); ci != range.end(); ++ci)
+          {
+            if (c3t3.is_in_complex(cells[ci]))
+              cells[ci]->reset_cache_validity();//we will use sliver_value
+                                                //to store the cos_dihedral_angle
+          }
+        });
+
+      // Same per-edge test and the same edge set as get_internal_edges(); only
+      // the traversal reaching each edge exactly once differs, and it applies
+      // the smallest-incident-cell ownership rule the serial edge iterator
+      // applies, in the same cell and slot order -- so the candidate order is
+      // unchanged too. The per-edge test below is spelled exactly as
+      // get_internal_edges() spells it.
+      return parallel_collect_from_finite_edges<Edge_vv>(tr, cells,
+        [&](const Edge& e, std::vector<Edge_vv>& out)
+        {
+          if (is_internal(e, c3t3, m_cell_selector))
+            out.push_back(make_vertex_pair(e));
+        });
+    }
+#endif
+
     for (auto c : c3t3.cells_in_complex())
       c->reset_cache_validity();//we will use sliver_value
                                 //to store the cos_dihedral_angle
