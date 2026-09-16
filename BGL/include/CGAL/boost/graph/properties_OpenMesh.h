@@ -525,7 +525,6 @@ get(CGAL::dynamic_edge_property_t<V>, OPEN_MESH_CLASS& om, const V& default_valu
   typedef OPEN_MESH_CLASS OM;
   typedef typename boost::property_map<OM, CGAL::dynamic_edge_property_t<V> >::SMPM SMPM;
   typedef typename boost::property_map<OM, CGAL::dynamic_edge_property_t<V> >::type DPM;
-  typedef typename boost::graph_traits<OM>::edge_descriptor edge_descriptor;
   DPM dpm(om, new SMPM(om));
   V v = default_value;
   if(v != V())

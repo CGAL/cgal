@@ -108,7 +108,7 @@ void test_halfedge_property(Mesh& mesh)
   const std::string default_value = "default-halfedge";
   const std::string assigned_value = "assigned-halfedge";
 
-  auto pm = get(tag(), mesh, default_value);
+  pmap pm = get(tag(), mesh, default_value);
   for(hd h : halfedges(mesh))
     assert(get(pm, h) == default_value);
 
@@ -139,7 +139,7 @@ void test_halfedge_const_property(const Mesh& mesh)
   const std::string default_value = "default-halfedge";
   const std::string assigned_value = "assigned-halfedge";
 
-  auto pm = get(tag(), mesh, default_value);
+  pmap pm = get(tag(), mesh, default_value);
   for(hd h : halfedges(mesh))
     assert(get(pm, h) == default_value);
 
@@ -175,7 +175,7 @@ void test_edge_property(Mesh& mesh)
   constexpr double default_value = 3.141592653589793;
   constexpr double assigned_value = 123.456;
 
-  auto pm = get(tag(), mesh, default_value);
+  pmap pm = get(tag(), mesh, default_value);
   for(ed e : edges(mesh))
     assert(get(pm, e) == default_value);
 
@@ -201,12 +201,12 @@ void test_edge_const_property(const Mesh& mesh)
 {
   using tag = CGAL::dynamic_edge_property_t<double>;
   using ed = typename boost::graph_traits<Mesh>::edge_descriptor;
-  using pmap = typename boost::property_map<Mesh, tag>::type;
+  using pmap = typename boost::property_map<Mesh, tag>::const_type;
 
   constexpr double default_value = 3.141592653589793;
   constexpr double assigned_value = 123.456;
 
-  auto pm = get(tag(), mesh, default_value);
+  pmap pm = get(tag(), mesh, default_value);
   for(ed e : edges(mesh))
     assert(get(pm, e) == default_value);
 
@@ -242,7 +242,7 @@ void test_face_property(Mesh& mesh)
   constexpr std::size_t default_value = 17;
   constexpr std::size_t assigned_value = 999;
 
-  auto pm = get(tag(), mesh, default_value);
+  pmap pm = get(tag(), mesh, default_value);
   for(fd f : faces(mesh))
     assert(get(pm, f) == default_value);
 
@@ -273,7 +273,7 @@ void test_face_const_property(const Mesh& mesh)
   constexpr std::size_t default_value = 17;
   constexpr std::size_t assigned_value = 999;
 
-  auto pm = get(tag(), mesh, default_value);
+  pmap pm = get(tag(), mesh, default_value);
   for(fd f : faces(mesh))
     assert(get(pm, f) == default_value);
 
