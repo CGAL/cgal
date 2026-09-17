@@ -63,7 +63,7 @@ template<class PointRange,
          class TetrahedronRange,
          class FacetWithIndex, // either Facet_with_index or a tuple/array
          class EdgeWithIndex, // either Edge_with_index or a tuple/array
-         class CornerWithIndex> // either Corner_with_index or a tuple/pair/array
+         class CornerWithIndexRange> // either Corner_with_index or a tuple/pair/array
 bool read_MEDIT(std::istream& is,
                 PointRange& points,
                 TetrahedronRange& tetrahedra,
@@ -71,7 +71,7 @@ bool read_MEDIT(std::istream& is,
                 std::vector<FacetWithIndex>& facets_with_indices,
                 bool read_facets_with_indices,
                 std::vector<EdgeWithIndex>& edges_with_indices,
-                std::vector<CornerWithIndex>& corners_with_indices,
+                CornerWithIndexRange& corners_with_indices,
                 bool verbose,
                 bool& is_CGAL_mesh)
 {
@@ -247,7 +247,8 @@ bool read_MEDIT(std::istream& is,
             std::cerr << "Issue while reading corners" << std::endl;
           return false;
         }
-        corners_with_indices.push_back({offset + n});
+        // typename CornerWithIndex::value_type cwi = {offset + n};
+        corners_with_indices.push_back( {offset + n} );
       }
     }
 

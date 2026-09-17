@@ -4,6 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <deque>
 
 typedef CGAL::Simple_cartesian<double>  Kernel;
 typedef Kernel::Point_3                 Point_3;
@@ -15,7 +16,7 @@ int main() {
   std::vector<Point_3> points;
   std::vector<std::array<int,4>> cells;
   std::vector<int> subdomains;
-  std::vector<CGAL::IO::internal::Corner_with_index<int>> corners;
+  std::deque<CGAL::IO::internal::Corner_with_index<int>> corners;
   bool verbose = false;
   bool success = CGAL::IO::read_MEDIT(input, points, cells, CGAL::parameters::subdomains(std::ref(subdomains)).corners_with_indices(std::ref(corners)).verbose(verbose));
   assert(success);
@@ -30,7 +31,7 @@ int main() {
   std::vector<Point_3> points2;
   std::vector<std::array<int,4>> cells2;
   std::vector<int> subdomains2;
-  std::vector<CGAL::IO::internal::Corner_with_index<int>> corners2;
+  std::deque<CGAL::IO::internal::Corner_with_index<int>> corners2;
   success = CGAL::IO::read_MEDIT(input2, points2, cells2, CGAL::parameters::subdomains(std::ref(subdomains2)).corners_with_indices(std::ref(corners2)).verbose(verbose));
 
   for(auto c : corners2)
