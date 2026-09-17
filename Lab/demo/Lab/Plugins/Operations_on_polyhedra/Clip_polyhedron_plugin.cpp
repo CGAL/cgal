@@ -283,13 +283,22 @@ public Q_SLOTS:
               }
               else
               {
-                CGAL::Polygon_mesh_processing::clip(*(sm_item->face_graph()),
+                bool success = CGAL::Polygon_mesh_processing::clip(*(sm_item->face_graph()),
                   plane->plane(),
                   CGAL::parameters::clip_volume(ui_widget.close_checkBox->isChecked())
                   .throw_on_self_intersection(true)
                   .use_compact_clipper(!ui_widget.coplanarCheckBox->isChecked())
                   .edge_is_constrained_map(selection->constrained_edges_pmap())
                   .allow_self_intersections(ui_widget.do_not_modify_CheckBox->isChecked()));
+
+                if(!success)
+                  CGAL::Three::Three::warning(tr("clip() did not fully succeed"));
+
+                selection->setKeepSelectionValid(Scene_polyhedron_selection_item::Edge);
+                selection->polyhedron_item()->invalidateOpenGLBuffers();
+                Q_EMIT selection->polyhedron_item()->itemChanged();
+                selection->invalidateOpenGLBuffers();
+                selection->setKeepSelectionValid(Scene_polyhedron_selection_item::None);
               }
             }
           }
