@@ -119,10 +119,9 @@ void test_no_projection_smoke()
   auto status = CGAL::boundary_aware_mesh_smoothing(
       fixture.c3t3,
       CGAL::Mesh_smoothing_3::C3t3_no_projection<C3t3>{},
-      CGAL::parameters::verbose(true).number_of_iterations(1));
+      CGAL::parameters::number_of_iterations(1));
 
   assert_all_finite(fixture.c3t3);
-  std::cout << "Number of vertex updates: " << status.nb_vertex_updates << std::endl;
   auto after = finite_vertices(fixture.c3t3);
   assert(before.size() == after.size());
   bool any_moved = false;

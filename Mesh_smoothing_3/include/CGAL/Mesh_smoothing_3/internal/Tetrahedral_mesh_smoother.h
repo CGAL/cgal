@@ -309,6 +309,7 @@ private:
         // input
         std::vector<unsigned> verts;
         Surface_patch_index surface_id;
+        bool active = true;
 
         Eigen::Matrix3d A = Eigen::Matrix3d::Zero();
         Eigen::Vector3d pt = Eigen::Vector3d::Zero();
@@ -349,6 +350,7 @@ private:
         {}
         std::array<unsigned, 2> verts;
         Curve_index curve_id;
+        bool active = true;
 
         Eigen::Matrix3d A = Eigen::Matrix3d::Zero();
         Eigen::Vector3d pt = Eigen::Vector3d::Zero();
@@ -1103,6 +1105,10 @@ inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, Concurre
 
         if (!_boundary_batch_mode) update_poly_coord(t);
         auto [pt, n, weight] = _boundary_batch_mode ? _boundary_batch_query_results[t] : _boundary_query(_boundary_live_coords[t], poly.surface_id);
+        if (weight == 0.) {
+            poly.active = false;
+            return;
+        }
 
         poly.max_drift = MAX_DRIFT_BEFORE_UPDATE*poly.avg_edge_size;
         poly.A = weight* n * n.transpose();
@@ -1133,7 +1139,7 @@ inline double Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, Concur
     };
     Reduction reduction = Mesh_smoothing_3_internal::reduce<ConcurrencyTag, Reduction>(0, _bnd_poly.size(), [&](std::size_t t, Reduction& r) {
         Boundary_poly &poly = _bnd_poly[t];
-        if (poly.weight == 0.) return;
+        if (!poly.active) return;
         for (unsigned tc = 0; tc < poly.verts.size(); ++tc) {
             double regul = poly.weight * drift/_local_size[poly.verts[tc]];
             Eigen::Vector3d pt = Math_functions::sub_col_vector(x, poly.verts[tc]);
@@ -1190,6 +1196,11 @@ inline void Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, Concurre
 
         auto [pt, n, weight] = _curve_batch_mode ? _edge_batch_query_results[e] : _curve_query({pt0, pt1}, edge.curve_id);
 
+        if (weight == 0.) {
+            edge.active = false;
+            continue;
+        }
+
         edge.max_drift = MAX_DRIFT_BEFORE_UPDATE*avg_edge_size;
         edge.A = weight * (Eigen::Matrix3d::Identity() - n * n.transpose());
         edge.pt = pt;
@@ -1220,6 +1231,7 @@ inline double Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, Concur
     double drift = boundary_weight/(ACCEPTED_LOCAL_VARIATION_FROM_BOUNDARY*ACCEPTED_LOCAL_VARIATION_FROM_BOUNDARY);
     for (unsigned e = 0; e < _edge_data.size(); ++e) {
         Edge_data &edge = _edge_data[e];
+        if (!edge.active) continue;
         for (unsigned ev = 0; ev < 2; ++ev) {
             unsigned v = edge.verts[ev];
             double regul = edge.weight * drift/_local_size[v];
