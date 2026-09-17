@@ -384,16 +384,22 @@ class Intersection_of_triangle_meshes
       }
     };
 
+    Edge_to_faces& tm1_edge_to_tm2_faces = &tm1 < &tm2
+                                         ? stm_edge_to_ltm_faces
+                                         : ltm_edge_to_stm_faces;
+    Edge_to_faces& tm2_edge_to_tm1_faces = &tm2 < &tm1
+                                         ? stm_edge_to_ltm_faces
+                                         : ltm_edge_to_stm_faces;
     // Select the desire callbacks
 #ifdef DO_NOT_HANDLE_COPLANAR_FACES
     using Callback = Collect_face_bbox_per_edge_bbox<TriangleMesh, Edge_to_faces>;
-    Callback callback12(tm1, tm2, ltm_edge_to_stm_faces);
-    Callback callback21(tm2, tm1, stm_edge_to_ltm_faces);
+    Callback callback12(tm1, tm2, tm2_edge_to_tm1_faces);
+    Callback callback21(tm2, tm1, tm1_edge_to_tm2_faces);
 #else
     using Callback = Collect_face_bbox_per_edge_bbox_with_coplanar_handling<
                       TriangleMesh, VPM1, VPM2, Edge_to_faces, Coplanar_face_set, Node_visitor>;
-    Callback callback12(tm1, tm2, vpm1, vpm2, ltm_edge_to_stm_faces, coplanar_faces, visitor);
-    Callback callback21(tm2, tm1, vpm2, vpm1, stm_edge_to_ltm_faces, coplanar_faces, visitor);
+    Callback callback12(tm1, tm2, vpm1, vpm2, tm2_edge_to_tm1_faces, coplanar_faces, visitor);
+    Callback callback21(tm2, tm1, vpm2, vpm1, tm1_edge_to_tm2_faces, coplanar_faces, visitor);
 #endif
 
     if (throw_on_self_intersection){
@@ -468,7 +474,7 @@ class Intersection_of_triangle_meshes
               }
             }
           };
-          auto filtered_callback_21 = [&](halfedge_descriptor h1, halfedge_descriptor h2){
+          auto filtered_callback_21 = [&](halfedge_descriptor h2, halfedge_descriptor h1){
             if(!callback21.is_face_degenerated(h2))
               callback21(h2, h1);
           };
