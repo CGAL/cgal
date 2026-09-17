@@ -458,6 +458,7 @@ bool write_MEDIT(std::ostream& os,
   std::vector<int> default_subdomains;
   std::vector<internal::Corner_with_index<int>> default_corners;
   std::vector<std::array<int,3>> default_edges;
+  std::vector<std::array<int,4>> default_facets;
 
   using Subdomains = typename internal_np::Lookup_named_param_def<internal_np::subdomains_t, CGAL_NP_CLASS, std::vector<int>>::reference;
   Subdomains subdomains = choose_parameter(get_parameter_reference(np, internal_np::subdomains), default_subdomains);
@@ -468,6 +469,8 @@ bool write_MEDIT(std::ostream& os,
   using Edges_with_indices = typename internal_np::Lookup_named_param_def<internal_np::edges_with_indices_t, CGAL_NP_CLASS, std::vector<std::array<int,3>>>::reference;
   Edges_with_indices edges = choose_parameter(get_parameter_reference(np, internal_np::edges_with_indices), default_edges);
 
+  using Facets_with_indices = typename internal_np::Lookup_named_param_def<internal_np::facets_with_indices_t, CGAL_NP_CLASS, std::vector<std::array<int,4>>>::reference;
+  Facets_with_indices facets = choose_parameter(get_parameter_reference(np, internal_np::facets_with_indices), default_facets);
 
   if constexpr (is_default_parameter<CGAL_NP_CLASS, internal_np::subdomains_t>::value)
     default_subdomains.resize(tetrahedra.size(), 1);
@@ -487,13 +490,19 @@ bool write_MEDIT(std::ostream& os,
   if(!corners.empty()){
     os << "Corners\n" << corners.size() << "\n";
     for(const auto& c : corners)
-      os << c.v + 1 << "\n";
+      os << c + 1 << "\n";
   }
 
   if(!edges.empty()){
     os << "Edges\n" << edges.size() << "\n";
     for(const auto& e : edges)
       os << std::get<0>(e) +1 << " " << std::get<1>(e) + 1 << " " << std::get<2>(e)  << "\n";
+  }
+
+  if(!facets.empty()){
+    os << "Triangles\n" << facets.size() << "\n";
+    for(const auto& f : facets)
+      os << std::get<0>(f) +1 << " " << std::get<1>(f) + 1 << " " << std::get<2>(f) + 1 << " " <<  std::get<3>(f)  << "\n";
   }
   os <<"End\n";
   return true;
