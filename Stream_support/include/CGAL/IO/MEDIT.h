@@ -473,7 +473,7 @@ bool read_MEDIT(std::istream& is,
  *   \cgalParamNBegin{facets_with_indices}
  *     \cgalParamDescription{a const reference wrapper to a container of quadruples of integers that will be written by this function.
  *                           Each element corresponds to a facet with vertices corresponding to the three first integers, and the last integer being the surface patch index of the facet.}
- *     \cgalParamType{a `std::reference_wrapper` to a model of `SequenceContainer` with a value type where the elements of the quadruples can be accessed with `std::get<int>()}
+ *     \cgalParamType{a `std::reference_wrapper` to a model of `SequenceContainer` with a value type where the elements of the quadruples can be accessed with `std::get<int>()`}
  *     \cgalParamDefault{facets are ignored}
  *   \cgalParamNEnd
  *
@@ -488,7 +488,7 @@ bool read_MEDIT(std::istream& is,
  *     \cgalParamDescription{a const reference wrapper to a container of pair of integers that will be written by this function.
  *                           Each element corresponds to a corner at the vertex corresponding to the first integer, the second integer being the corner index.
  *                           As \medit has no notion of corner indices it is not written.}
- *     \cgalParamType{a `std::reference_wrapper` to a model of `SequenceContainer` with a value type where the elements of the pairs can be accessed with `std::get<int>()}
+ *     \cgalParamType{a `std::reference_wrapper` to a model of `SequenceContainer` with a value type where the elements of the pairs can be accessed with `std::get<int>()`}
  *     \cgalParamDefault{corners are ignored}
  *   \cgalParamNEnd
  *
