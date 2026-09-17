@@ -24,6 +24,7 @@
 
 #include <algorithm>
 #include <array>
+#include <cstdint>
 #include <limits>
 #include <vector>
 
@@ -52,10 +53,58 @@ private:
     return local_grid;
   }
 
+  // Per-thread cache of the two TLS lookups below. enumerable_thread_specific::local()
+  // is a pthread_getspecific plus a hash-table walk, and the lock protocol pays it on
+  // every cell test, lock and unlock. The cache is validated against the grid's instance
+  // id, so a grid that is destroyed and re-created at the same address (one remeshing
+  // pass per iteration, with the TBB workers outliving it) cannot be read through a
+  // stale pointer.
+  struct Tls_cache
+  {
+    std::uint64_t instance_id = 0;
+    bool* grid = nullptr;
+    std::vector<int>* locked_cells = nullptr;
+  };
+
+  static Tls_cache& tls_cache()
+  {
+    static thread_local Tls_cache cache;
+    return cache;
+  }
+
+  static std::uint64_t next_instance_id()
+  {
+    static std::atomic<std::uint64_t> counter{0};
+    return ++counter;
+  }
+
+protected:
+  Tls_cache& thread_local_cache()
+  {
+    Tls_cache& cache = tls_cache();
+    if (cache.instance_id != m_instance_id)
+    {
+      cache.grid = m_tls_grids.local();
+      cache.locked_cells = &m_tls_locked_cells.local();
+      cache.instance_id = m_instance_id;
+    }
+    return cache;
+  }
+
+  std::vector<int>& tls_locked_cells()
+  {
+    return *thread_local_cache().locked_cells;
+  }
+
+  std::uint64_t instance_id() const
+  {
+    return m_instance_id;
+  }
+
 public:
   bool *get_thread_local_grid()
   {
-    return m_tls_grids.local();
+    return thread_local_cache().grid;
   }
 
   void set_bbox(const Bbox_3 &bbox)
@@ -199,7 +248,7 @@ public:
 
   void unlock_all_points_locked_by_this_thread()
   {
-    std::vector<int> &tls_locked_cells = m_tls_locked_cells.local();
+    std::vector<int> &tls_locked_cells = this->tls_locked_cells();
     for(int cell_index : tls_locked_cells)
     {
       // If we still own the lock
@@ -211,7 +260,7 @@ public:
 
   void unlock_all_tls_locked_cells_but_one(int cell_index_to_keep_locked)
   {
-    std::vector<int> &tls_locked_cells = m_tls_locked_cells.local();
+    std::vector<int> &tls_locked_cells = this->tls_locked_cells();
     bool cell_to_keep_found = false;
     for(int cell_index : tls_locked_cells)
     {
@@ -261,7 +310,8 @@ protected:
   Spatial_lock_grid_base_3(const Bbox_3 &bbox,
                                           int num_grid_cells_per_axis)
     : m_num_grid_cells_per_axis(num_grid_cells_per_axis),
-      m_tls_grids([num_grid_cells_per_axis](){ return init_TLS_grid(num_grid_cells_per_axis); })
+      m_tls_grids([num_grid_cells_per_axis](){ return init_TLS_grid(num_grid_cells_per_axis); }),
+      m_instance_id(next_instance_id())
   {
     set_bbox(bbox);
   }
@@ -338,6 +388,7 @@ protected:
 
   TLS_grid                                        m_tls_grids;
   TLS_locked_cells                                m_tls_locked_cells;
+  std::uint64_t                                   m_instance_id;
 };
 
 
@@ -390,7 +441,7 @@ public:
     if(m_grid[cell_index].compare_exchange_strong(v2,v1))
     {
       get_thread_local_grid()[cell_index] = true;
-      m_tls_locked_cells.local().push_back(cell_index);
+      tls_locked_cells().push_back(cell_index);
       return true;
     }
     return false;
@@ -446,7 +497,7 @@ public:
   template <bool no_spin>
   bool try_lock_cell_impl(int cell_index)
   {
-    const priority_t this_thread_priority = m_tls_thread_priorities.local();
+    const priority_t this_thread_priority = cached_thread_priority();
 
     // NO SPIN
     if (no_spin)
@@ -455,7 +506,7 @@ public:
       if(m_grid[cell_index].compare_exchange_strong(old_value, this_thread_priority))
       {
         get_thread_local_grid()[cell_index] = true;
-        m_tls_locked_cells.local().push_back(cell_index);
+        tls_locked_cells().push_back(cell_index);
         return true;
       }
     }
@@ -468,7 +519,7 @@ public:
         if(m_grid[cell_index].compare_exchange_weak(old_value, this_thread_priority))
         {
           get_thread_local_grid()[cell_index] = true;
-          m_tls_locked_cells.local().push_back(cell_index);
+          tls_locked_cells().push_back(cell_index);
           return true;
         }
         else if (old_value > this_thread_priority)
@@ -492,6 +543,23 @@ public:
   }
 
 private:
+  // Same cache as the base's, for the third per-lock TLS lookup.
+  priority_t cached_thread_priority()
+  {
+    struct Priority_cache
+    {
+      std::uint64_t instance_id = 0;
+      priority_t priority = 0;
+    };
+    static thread_local Priority_cache cache;
+    if (cache.instance_id != this->instance_id())
+    {
+      cache.priority = m_tls_thread_priorities.local();
+      cache.instance_id = this->instance_id();
+    }
+    return cache.priority;
+  }
+
   static priority_t init_TLS_thread_priorities()
   {
     static std::atomic<priority_t> last_id;
