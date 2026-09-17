@@ -2310,12 +2310,7 @@ protected:
 
   bool maybe_flip_an_incident_edge_in_cdt_2_to_avoid_degeneracy(Vertex_handle v, Face_index face_id) {
     auto& mutable_cdt_2 = non_const_face_cdt_2(face_id);
-    typename CDT_2::Locate_type lt;
-    int i;
-    const auto fh_2d = mutable_cdt_2.locate(v->point(), lt, i);
-    CGAL_assertion(lt == CDT_2::VERTEX);
-
-    const auto vh_2d = fh_2d->vertex(i);
+    const auto vh_2d = vertex_of_cdt_2_functor(mutable_cdt_2)(v);
     CGAL_assertion(vertex_3d(vh_2d) == v);
     auto face_circ = mutable_cdt_2.incident_faces(vh_2d);
     const auto done = face_circ;
@@ -2377,6 +2372,7 @@ protected:
         }
         set_facet_constrained(facet_c, face_id, next);
         set_facet_constrained(facet_d, face_id, current);
+        CGAL_assertion(dbg().move_Steiner_vertices_level() < 2 || mutable_cdt_2.tds().is_valid(true));
         return true;
       }
     } while(face_circ != done);
@@ -2388,6 +2384,7 @@ protected:
   remove_Steiner_vertex_from_cdt_2(Vertex_handle v,
                                    CDT_3_vertex_type vertex_type,
                                    Face_index face_id,
+                                   CDT_2_vertex_handle vh_2d,
                                    New_CDT_2_face_handles_output_iterator new_face_handles_out,
                                    Run_mode run_mode = NORMAL_RUN)
   {
@@ -2401,16 +2398,12 @@ protected:
     std::unique_ptr<CDT_2_base> cdt_2_copy_ptr{};
     if(run_mode == DRY_RUN) {
       cdt_2_copy_ptr.reset(new CDT_2_base(original_mutable_cdt_2));
+      auto vh_2d_index = std::distance(original_mutable_cdt_2.all_vertices_begin(), vh_2d);
+      vh_2d = std::next(cdt_2_copy_ptr->all_vertices_begin(), vh_2d_index);
     }
     auto& mutable_cdt_2 = (run_mode == DRY_RUN) ? *cdt_2_copy_ptr : original_mutable_cdt_2;
     const auto & cdt_2 = mutable_cdt_2;
 
-    typename CDT_2::Locate_type lt;
-    int i;
-    const auto fh_2d = cdt_2.locate(v->point(), lt, i);
-    CGAL_assertion(lt == CDT_2::VERTEX);
-
-    const auto vh_2d = fh_2d->vertex(i);
     CGAL_assertion(vertex_3d(vh_2d) == v);
 
     if(debug) {
@@ -2429,7 +2422,7 @@ protected:
       dump_face(face_id);
       std::cerr << " -> remove Steiner vertex " << display_vert(v) << " from CDT_2 of face F#" << face_id
                 << " (nb of incident faces: " << nb_of_incident_faces << ")\n";
-      if(!cdt_2.CT_2::is_valid(true, 3)) {
+      if(!cdt_2.tds().is_valid(true, 3)) {
         std::cerr << "ERROR: CDT_2 is not valid BEFORE removing Steiner vertex " << display_vert(v)
                   << " from face F#" << face_id << '\n';
         CGAL_error_msg("Aborting due to invalid CDT_2");
@@ -2636,7 +2629,7 @@ protected:
       dump_face(face_id, std::string("dump_face_") + std::to_string(face_id) + "_after_removing_Steiner_vertex_" +
                              std::to_string(vh_2d->time_stamp()) + ".off");
 
-      if(!cdt_2.CT_2::is_valid(true, 3)) {
+      if(!cdt_2.tds().is_valid(true, 3)) {
         std::cerr << "ERROR: CDT_2 is not valid after removing Steiner vertex " << with_point_and_info(v)
                   << " from face F#" << face_id << '\n';
         CGAL_error_msg("Aborting due to invalid CDT_2");
@@ -2653,9 +2646,12 @@ protected:
     }
     auto indent_guards = CGAL::IO::make_indenting_guards(dbg().move_Steiner_vertices_level() > 1 ? "| " : "", std::cerr);
 
+    CGAL::unordered_flat_map<Face_index, CDT_2_vertex_handle> face_to_cdt_2_vertex_for_v;
     const auto v_type = vertex_type(v);
     if(v_type == CDT_3_vertex_type::STEINER_IN_FACE) {
       const auto incident_face_id = v->ccdt_3_data().face_index();
+      face_to_cdt_2_vertex_for_v.emplace(incident_face_id,
+                                         vertex_of_cdt_2_functor(non_const_face_cdt_2(incident_face_id))(v));
       while(maybe_flip_an_incident_edge_in_cdt_2_to_avoid_degeneracy(v, incident_face_id)) {}
     } else {
       CGAL_assertion(v_type == CDT_3_vertex_type::STEINER_ON_EDGE);
@@ -2663,6 +2659,8 @@ protected:
       for(const auto& [_, incident_face_id] :
           CGAL::make_range(this->incident_faces_to_polyline.equal_range(incident_polyline_constraint_id)))
       {
+        face_to_cdt_2_vertex_for_v.emplace(incident_face_id,
+                                           vertex_of_cdt_2_functor(non_const_face_cdt_2(incident_face_id))(v));
         while(maybe_flip_an_incident_edge_in_cdt_2_to_avoid_degeneracy(v, incident_face_id)) {}
       }
     }
@@ -2712,7 +2710,8 @@ protected:
     if(v_type == CDT_3_vertex_type::STEINER_IN_FACE) {
       CGAL_assertion(star_components.component_incident_constraint_face_ids.size() == 2);
       [[maybe_unused]] const auto& [face_id, _] = star_components.face_ids_between_consecutive_components.front();
-      remove_Steiner_vertex_from_cdt_2(v, v_type, face_id, dry_run_output_iterator(face_id), DRY_RUN);
+      remove_Steiner_vertex_from_cdt_2(v, v_type, face_id, face_to_cdt_2_vertex_for_v[face_id],
+                                       dry_run_output_iterator(face_id), DRY_RUN);
     } else {
       CGAL_assertion(v_type == CDT_3_vertex_type::STEINER_ON_EDGE);
         for(std::size_t component_index = 0, end = star_components.face_ids_between_consecutive_components.size();
@@ -2720,7 +2719,8 @@ protected:
         {
           const auto& [face_id, _] = star_components.face_ids_between_consecutive_components[component_index];
 
-          remove_Steiner_vertex_from_cdt_2(v, v_type, face_id, dry_run_output_iterator(face_id), DRY_RUN);
+          remove_Steiner_vertex_from_cdt_2(v, v_type, face_id, face_to_cdt_2_vertex_for_v[face_id],
+                                           dry_run_output_iterator(face_id), DRY_RUN);
         }
     }
 
@@ -2819,7 +2819,7 @@ protected:
       CGAL_assertion(star_components.component_incident_constraint_face_ids.size() == 2);
       const auto& [face_id, orientation] = star_components.face_ids_between_consecutive_components.front();
       auto [new_output_iterator, half_hole_front_facet, second_half_hole_front_facet] =
-          remove_Steiner_vertex_from_cdt_2(v, v_type, face_id, output_iterator);
+          remove_Steiner_vertex_from_cdt_2(v, v_type, face_id, face_to_cdt_2_vertex_for_v[face_id], output_iterator);
       output_iterator = new_output_iterator;
     } else {
       CGAL_assertion(v_type == CDT_3_vertex_type::STEINER_ON_EDGE);
@@ -2844,7 +2844,7 @@ protected:
                     << (orientation == CGAL::NEGATIVE ? "negative" : "positive") << ")\n";
         }
         auto [new_output_iterator, half_hole_facet_pair, second_half_hole_facet_pair] =
-            remove_Steiner_vertex_from_cdt_2(v, v_type, face_id, output_iterator);
+            remove_Steiner_vertex_from_cdt_2(v, v_type, face_id, face_to_cdt_2_vertex_for_v[face_id], output_iterator);
         output_iterator = new_output_iterator;
 
         auto facet_pair_to_reconnect = half_hole_facet_pair;
@@ -5250,31 +5250,38 @@ private:
     bool reversed_orientation = false;
   };
 
-  static auto vertex_of_cdt_2_functor(const CDT_2& cdt_2) {
-    return [&, hint = CDT_2_face_handle{}](const auto& p) mutable {
+  auto vertex_of_cdt_2_functor(const CDT_2& cdt_2) const {
+    return [&, hint = CDT_2_face_handle{}](const auto vh_3d) mutable {
+      const auto& p = tr().point(vh_3d);
       int i;
       typename CDT_2::Locate_type lt;
       const auto fh = cdt_2.locate(p, lt, i, hint);
-      if(lt != CDT_2::VERTEX) {
-         exception_ostream() << cdt_3_format("vertex_of_cdt_2_functor: point {}  lt = {}\n", IO::oformat(p), int(lt));
-      }
-      CGAL_assume(lt == CDT_2::VERTEX);
       hint = fh;
-      return fh->vertex(i);
+      if(lt == CDT_2::VERTEX) {
+        return fh->vertex(i);
+      }
+      else {
+        // the CDT_2 might have been invalidated by flips (valid TDS_2 but invalid CDT_2)
+        auto it = std::find_if(cdt_2.finite_vertex_handles().begin(),
+                               cdt_2.finite_vertex_handles().end(),
+                               [&](const auto& vh) { return vertex_3d(vh) == vh_3d; });
+        CGAL_assertion(it != cdt_2.finite_vertex_handles().end());
+        return *it;
+      }
     };
   }
 
   template <typename Tr>
-  static auto facet_is_facet_of_cdt_2(const Tr& tr, typename Tr::Facet f, const CDT_2& cdt_2)
+  auto facet_is_facet_of_cdt_2(const Tr& tr, typename Tr::Facet f, const CDT_2& cdt_2) const
       -> std::optional<Oriented_face_of_cdt_2>
   {
     const auto [v0, v1, v2] = tr.vertices(f);
     auto v = vertex_of_cdt_2_functor(cdt_2);
 
     try {
-      const auto cdt_2_v0 = v(tr.point(v0));
-      const auto cdt_2_v1 = v(tr.point(v1));
-      const auto cdt_2_v2 = v(tr.point(v2));
+      const auto cdt_2_v0 = v(v0);
+      const auto cdt_2_v1 = v(v1);
+      const auto cdt_2_v2 = v(v2);
 
       CDT_2_face_handle fh;
       const bool is_face = cdt_2.is_face(cdt_2_v0, cdt_2_v1, cdt_2_v2, fh);
@@ -5365,8 +5372,8 @@ private:
   {
     auto v = vertex_of_cdt_2_functor(cdt_2);
 
-    const auto cdt_2_v0 = v(this->point(va));
-    const auto cdt_2_v1 = v(this->point(vb));
+    const auto cdt_2_v0 = v(va);
+    const auto cdt_2_v1 = v(vb);
     CDT_2_face_handle fh;
     int edge_index;
     const bool is_edge = cdt_2.is_edge(cdt_2_v0, cdt_2_v1, fh, edge_index);
