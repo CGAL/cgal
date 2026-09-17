@@ -14,16 +14,20 @@
 #include <type_traits>
 #include <vector>
 
-// OpenMesh is optional in CGAL.
-#include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
-#include <CGAL/boost/graph/graph_traits_PolyMesh_ArrayKernelT.h>
 
 using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Point = Kernel::Point_3;
 
 using Surface_mesh = CGAL::Surface_mesh<Point>;
 using Polyhedron = CGAL::Polyhedron_3<Kernel>;
-using OpenMesh_ = OpenMesh::PolyMesh_ArrayKernelT< >;
+
+// OpenMesh is optional in CGAL.
+#ifdef CGAL_USE_OPENMESH
+#include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
+#include <CGAL/boost/graph/graph_traits_PolyMesh_ArrayKernelT.h>
+
+using OpenMeshT = OpenMesh::PolyMesh_ArrayKernelT< >;
+#endif
 
 // ---------------------------------------------------------------------------
 // Vertex
@@ -332,7 +336,8 @@ int main()
 {
   test_mesh<Surface_mesh>("Surface_mesh");
   test_mesh<Polyhedron>("Polyhedron_3");
-  test_mesh<OpenMesh_>("OpenMesh");
-
+#ifdef CGAL_USE_OPENMESH
+  test_mesh<OpenMeshT>("OpenMesh");
+#endif
   return EXIT_SUCCESS;
 }
