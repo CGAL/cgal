@@ -340,9 +340,8 @@ bool read_MEDIT(std::istream& is,
 /*!
  * \ingroup PkgStreamSupportIoFuncsMEDIT
  *
- * \brief reads the content of `is` into `points` and `tetrahedra`.
+ * \brief reads the content of `is` into `points` and `tetrahedra`  using the \ref IOStreamMedit
  *
- * See \cgalCite{frey:inria-00069921} for a comprehensive description of the medit (`.mesh`) file format.
  *
  * \attention The tetrahedron soup is not cleared, and the data from the stream are appended.
  *
@@ -445,10 +444,7 @@ bool read_MEDIT(std::istream& is,
 /*!
  * \ingroup PkgStreamSupportIoFuncsMEDIT
  *
- * \brief writes the `points` and `tetrahedra`.
- *
- * See \cgalCite{frey:inria-00069921} for a comprehensive description of the medit (`.mesh`) file format.
- *
+ * \brief writes the `points` and `tetrahedra` using the \ref IOStreamMedit
  *
  * \tparam PointRange a model of the concept `ConstRange` whose value type is the point type
  * \tparam TetrahedronRange a model of the concept `ConstRange`

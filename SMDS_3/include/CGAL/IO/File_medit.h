@@ -928,8 +928,8 @@ output_to_medit(std::ostream& os,
 
 /**
  * @ingroup PkgSMDS3IOFunctions
- * @brief outputs a mesh complex to the medit (`.mesh`) file format.
- *      See \cgalCite{frey:inria-00069921} for a comprehensive description of this file format.
+ * @brief outputs a mesh complex to the using the \ref IOStreamMedit (`.mesh`).
+ *
  * @tparam T3 can be instantiated with any 3D triangulation of \cgal provided that its
  *  vertex and cell base class are models of the concepts `SimplicialMeshVertexBase_3`
  * and `SimplicialMeshCellBase_3`, respectively.
@@ -1075,9 +1075,9 @@ void write_MEDIT(std::ostream& os,
 
 /**
  * @ingroup PkgSMDS3IOFunctions
- * @brief reads a mesh complex written in the medit (`.mesh`) file format.
- *   See \cgalCite{frey:inria-00069921} for a comprehensive description of this file format.
- * @tparam T3 can be instantiated with any 3D triangulation of \cgal provided that its
+ * @brief reads a mesh complex written in the \ref IOStreamMedit (`.mesh`).
+
+* * @tparam T3 can be instantiated with any 3D triangulation of \cgal provided that its
  *  vertex and cell base class are models of the concepts `MeshVertexBase_3` and `MeshCellBase_3`,
  *  respectively.
  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
