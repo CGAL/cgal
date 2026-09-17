@@ -391,8 +391,7 @@ void test_corner_is_fixed()
 
   auto status = CGAL::boundary_aware_mesh_smoothing(
     fixture.c3t3,
-    CGAL::Mesh_smoothing_3::C3t3_no_projection<C3t3>(),
-    CGAL::parameters::verbose(true)
+    CGAL::Mesh_smoothing_3::C3t3_no_projection<C3t3>()
   );
 
   assert_all_finite(fixture.c3t3);
@@ -406,11 +405,6 @@ void test_corner_is_fixed()
     !same_point(movable_before[1], fixture.v[2]->point(), false) ||
     !same_point(movable_before[2], fixture.v[3]->point(), false);
 
-
-  std::cout << "pt: " << movable_before[0] << " -> " << fixture.v[1]->point() << std::endl;
-  std::cout << "pt: " << movable_before[1] << " -> " << fixture.v[2]->point() << std::endl;
-  std::cout << "pt: " << movable_before[2] << " -> " << fixture.v[3]->point() << std::endl;
-  std::cout << "Number of vertex updates: " << status.nb_vertex_updates << std::endl;
 
   assert(another_vertex_moved);
   assert(status.nb_vertex_updates > 0);
