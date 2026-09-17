@@ -44,7 +44,7 @@ int main(int argc, char* argv[]) {
   app.setApplicationVersion("0.1");
   try {
 #ifndef QT_NO_OPENGL
-    Main_widget widget(QString(file_name.string().c_str()));
+    Main_widget widget(file_name..c_str());
     widget.show();
 #else
     QLabel note("OpenGL Support required");
