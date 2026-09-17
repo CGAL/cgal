@@ -62,7 +62,7 @@ struct Corner_with_index
 template<class PointRange,
          class TetrahedronRange,
          class FacetWithIndex, // either Facet_with_index or a tuple/array
-         class EdgeWithIndex, // either Edge_with_index or a tuple/array
+         class EdgeWithIndexRange, // either Edge_with_index or a tuple/array
          class CornerWithIndexRange> // either Corner_with_index or a tuple/pair/array
 bool read_MEDIT(std::istream& is,
                 PointRange& points,
@@ -70,7 +70,7 @@ bool read_MEDIT(std::istream& is,
                 std::vector<int>& subdomains,
                 std::vector<FacetWithIndex>& facets_with_indices,
                 bool read_facets_with_indices,
-                std::vector<EdgeWithIndex>& edges_with_indices,
+                EdgeWithIndexRange& edges_with_indices,
                 CornerWithIndexRange& corners_with_indices,
                 bool verbose,
                 bool& is_CGAL_mesh)
@@ -248,7 +248,7 @@ bool read_MEDIT(std::istream& is,
           return false;
         }
         // typename CornerWithIndex::value_type cwi = {offset + n};
-        corners_with_indices.push_back( {offset + n} );
+        corners_with_indices.push_back( {offset + n - 1 } );
       }
     }
 
@@ -457,12 +457,17 @@ bool write_MEDIT(std::ostream& os,
   // subdomains
   std::vector<int> default_subdomains;
   std::vector<internal::Corner_with_index<int>> default_corners;
+  std::vector<std::array<int,3>> default_edges;
 
   using Subdomains = typename internal_np::Lookup_named_param_def<internal_np::subdomains_t, CGAL_NP_CLASS, std::vector<int>>::reference;
   Subdomains subdomains = choose_parameter(get_parameter_reference(np, internal_np::subdomains), default_subdomains);
 
   using Corners_with_indices = typename internal_np::Lookup_named_param_def<internal_np::corners_with_indices_t, CGAL_NP_CLASS, std::vector<internal::Corner_with_index<int>>>::reference;
   Corners_with_indices corners = choose_parameter(get_parameter_reference(np, internal_np::corners_with_indices), default_corners);
+
+  using Edges_with_indices = typename internal_np::Lookup_named_param_def<internal_np::edges_with_indices_t, CGAL_NP_CLASS, std::vector<std::array<int,3>>>::reference;
+  Edges_with_indices edges = choose_parameter(get_parameter_reference(np, internal_np::edges_with_indices), default_edges);
+
 
   if constexpr (is_default_parameter<CGAL_NP_CLASS, internal_np::subdomains_t>::value)
     default_subdomains.resize(tetrahedra.size(), 1);
@@ -482,7 +487,13 @@ bool write_MEDIT(std::ostream& os,
   if(!corners.empty()){
     os << "Corners\n" << corners.size() << "\n";
     for(const auto& c : corners)
-      os << c.v << "\n";
+      os << c.v + 1 << "\n";
+  }
+
+  if(!corners.empty()){
+    os << "Edges\n" << edges.size() << "\n";
+    for(const auto& e : edges)
+      os << std::get<0>(e) +1 << " " << std::get<1>(e) + 1 << " " << std::get<2>(e)  << "\n";
   }
   os <<"End\n";
   return true;
