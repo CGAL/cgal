@@ -2317,6 +2317,90 @@ std::vector<T> parallel_collect_from_finite_edges(const Tr& tr, Fn fn)
 {
   return parallel_collect_from_finite_edges<T>(tr, gather_all_cells(tr), fn);
 }
+/**
+* The facet counterpart of `parallel_collect_from_finite_edges()`, and for the
+* same reason: `Tr::finite_facets()` is a `Filter_iterator` over
+* `Triangulation_ds_facet_iterator_3`, which is bidirectional and therefore
+* unsplittable.
+*
+* This is the facet iterator's own algorithm, written as an indexed pass. That
+* iterator walks the cells and their four slots and reports `(c, i)` only when
+* `c->neighbor(i) < c` is false -- the cell with the smaller handle owns the
+* shared facet -- which is the rule repeated below. `is_infinite()` is the
+* filter `finite_facets()` wraps it in.
+*
+* Chunks come back indexed, and walking them in index order is
+* `finite_facets()` order whatever order they finish in. That matters
+* beyond reproducibility here: the caller accumulates floating-point sums in
+* this order, so a scheduler-dependent order would move the mesh.
+*
+* The triangulation must not be modified during the call.
+*/
+template<typename T, typename Tr, typename Fn>
+std::vector<std::vector<T> > parallel_collect_chunks_from_finite_facets(
+  const Tr& tr,
+  const std::vector<typename Tr::Cell_handle>& cells,
+  Fn fn)
+{
+  using Cell_handle = typename Tr::Cell_handle;
+  using Facet = typename Tr::Facet;
+
+  static constexpr std::size_t chunk = 256;
+
+  const std::size_t nb_chunks = (cells.size() + chunk - 1) / chunk;
+  std::vector<std::vector<T> > per_chunk(nb_chunks);
+
+  tbb::parallel_for(tbb::blocked_range<std::size_t>(0, nb_chunks, 1),
+    [&](const tbb::blocked_range<std::size_t>& range)
+    {
+      for (std::size_t k = range.begin(); k != range.end(); ++k)
+      {
+        std::vector<T>& local = per_chunk[k];
+        const std::size_t last = (std::min)(cells.size(), (k + 1) * chunk);
+        for (std::size_t ci = k * chunk; ci != last; ++ci)
+        {
+          const Cell_handle c = cells[ci];
+          for (int i = 0; i < 4; ++i)
+          {
+            if (c->neighbor(i) < c)
+              continue; // the neighbour owns this facet
+            const Facet f(c, i);
+            if (tr.is_infinite(f))
+              continue;
+            fn(f, local);
+          }
+        }
+      }
+    });
+
+  return per_chunk;
+}
+
+/**
+* The flattened form, for a caller that wants one vector in
+* `finite_facets()` order. A caller that only walks the result once should
+* take the chunks instead and walk them in index order -- same order, without
+* the copy.
+*/
+template<typename T, typename Tr, typename Fn>
+std::vector<T> parallel_collect_from_finite_facets(
+  const Tr& tr,
+  const std::vector<typename Tr::Cell_handle>& cells,
+  Fn fn)
+{
+  const std::vector<std::vector<T> > per_chunk
+    = parallel_collect_chunks_from_finite_facets<T>(tr, cells, fn);
+
+  std::size_t nb = 0;
+  for (const std::vector<T>& v : per_chunk)
+    nb += v.size();
+
+  std::vector<T> out;
+  out.reserve(nb);
+  for (const std::vector<T>& v : per_chunk)
+    out.insert(out.end(), v.begin(), v.end());
+  return out;
+}
 #endif // CGAL_LINKED_WITH_TBB
 
   template<typename C3t3, typename CellSelector>

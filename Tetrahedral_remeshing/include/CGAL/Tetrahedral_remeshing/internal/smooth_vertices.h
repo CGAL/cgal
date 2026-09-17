@@ -619,9 +619,62 @@ private:
 #endif
   }
 
+#ifdef CGAL_LINKED_WITH_TBB
+  /**
+  * The parallel form of the incident-patch cache below.
+  *
+  * `c3t3.facets_in_complex()` is a filter over `finite_facets()`, so reaching
+  * the complex facets enumerates every facet of the mesh; that scan, and the
+  * `is_in_complex()` test it applies, is what the threads take. The patch
+  * index is read in the same pass, where the facet is already in hand.
+  *
+  * The fan-out stays serial -- it writes per-vertex vectors that adjacent
+  * facets share. Its order does not matter: the only consumer outside the MLS
+  * build reads `size()`, and element 0 when the size is 1, so a vertex's
+  * patches are a set and nothing downstream depends on how they are arranged.
+  */
+  void collect_vertices_surface_indices_parallel(const C3t3& c3t3)
+  {
+    const Tr& tr = c3t3.triangulation();
+
+    using Patch_facet = std::pair<Facet, Surface_patch_index>;
+    const std::vector<std::vector<Patch_facet> > per_chunk
+      = Tetrahedral_remeshing::internal::parallel_collect_chunks_from_finite_facets<Patch_facet>(
+          tr,
+          Tetrahedral_remeshing::internal::gather_all_cells(tr),
+          [&c3t3](const Facet& f, std::vector<Patch_facet>& out)
+          {
+            if (c3t3.is_in_complex(f))
+              out.emplace_back(f, c3t3.surface_patch_index(f));
+          });
+
+    for (const std::vector<Patch_facet>& chunk : per_chunk)
+    {
+      for (const Patch_facet& pf : chunk)
+      {
+        for (const Vertex_handle vi : tr.vertices(pf.first))
+        {
+          std::vector<Surface_patch_index>& v_surface_indices
+            = m_vertices_surface_indices[vi];
+          if (std::find(v_surface_indices.begin(), v_surface_indices.end(), pf.second)
+              == v_surface_indices.end())
+            v_surface_indices.push_back(pf.second);
+        }
+      }
+    }
+  }
+#endif
+
   void collect_vertices_surface_indices(const C3t3& c3t3)
   {
     m_vertices_surface_indices.clear();
+#ifdef CGAL_LINKED_WITH_TBB
+    if constexpr (is_parallel)
+    {
+      collect_vertices_surface_indices_parallel(c3t3);
+      return;
+    }
+#endif
     for (Facet fit : c3t3.facets_in_complex())
     {
       const Surface_patch_index& surface_index = c3t3.surface_patch_index(fit);
