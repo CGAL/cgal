@@ -21,7 +21,7 @@ Release date: December 2026
 ### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/6.3/Manual/packages.html#PkgKernel23)
 
 - Added operator to functor `Orientation_3` that takes 5 points as argument, with the last two getting tested against the first three points
-- Added the function `pad(double offset)` to the classes `Bbox_2` and `BBox_3`
+- Added the function `pad(double offset)` to the classes `Bbox_2` and `Bbox_3`
 
 ### [dD Kernel](https://doc.cgal.org/6.3/Manual/packages.html#PkgKernelD)
 
