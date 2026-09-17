@@ -529,29 +529,34 @@ bool is_valid_collapse(const typename C3t3::Edge& edge,
     c3t3.triangulation().finite_incident_cells(v0,
         std::back_inserter(cells_to_check));
 
-    for (const Cell_handle& ch : cells_to_check)
+    const bool valid_orientation_before = are_well_oriented(c3t3.triangulation(), cells_to_check);
+    if(valid_orientation_before)
     {
-      if (!ch->has_vertex(v1))
+      for(const Cell_handle& ch : cells_to_check)
       {
-        //check orientation
-        std::array<Point, 4> pts = { ch->vertex(0)->point(),
+        if(!ch->has_vertex(v1))
+        {
+          // check orientation
+          std::array<Point, 4> pts = { ch->vertex(0)->point(),
                                        ch->vertex(1)->point(),
                                        ch->vertex(2)->point(),
                                        ch->vertex(3)->point()};
-        pts[ch->index(v0)] = new_pos;
-        if (CGAL::orientation(point(pts[0]), point(pts[1]), point(pts[2]), point(pts[3]))
-            != CGAL::POSITIVE)
-        {
-#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
-          if (in_cx)
+          pts[ch->index(v0)] = new_pos;
+          const auto orientation_after = orientation(pts);
+
+          if(orientation_after != CGAL::POSITIVE)
           {
-            if (collapse_type == TO_MIDPOINT)
-              nb_orientation_midpoint++;
-            else
-              nb_orientation_v1++;
-          }
+#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
+            if (in_cx)
+            {
+              if (collapse_type == TO_MIDPOINT)
+                nb_orientation_midpoint++;
+              else
+                nb_orientation_v1++;
+            }
 #endif
-          return false;
+            return false;
+          }
         }
       }
     }
@@ -562,29 +567,34 @@ bool is_valid_collapse(const typename C3t3::Edge& edge,
     c3t3.triangulation().finite_incident_cells(v1,
         std::back_inserter(cells_to_check));
 
-    for (const Cell_handle& ch : cells_to_check)
+    const bool valid_orientation_before = are_well_oriented(c3t3.triangulation(), cells_to_check);
+    if(valid_orientation_before)
     {
-      if (!ch->has_vertex(v0))
+      for (const Cell_handle& ch : cells_to_check)
       {
-        //check orientation
-        std::array<Point, 4> pts = { ch->vertex(0)->point(),
+        if (!ch->has_vertex(v0))
+        {
+          //check orientation
+          std::array<Point, 4> pts = { ch->vertex(0)->point(),
                                        ch->vertex(1)->point(),
                                        ch->vertex(2)->point(),
                                        ch->vertex(3)->point() };
-        pts[ch->index(v1)] = new_pos;
-        if (CGAL::orientation(point(pts[0]), point(pts[1]), point(pts[2]), point(pts[3]))
-            != CGAL::POSITIVE)
-        {
-#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
-          if (in_cx)
+          pts[ch->index(v1)] = new_pos;
+
+          const auto orientation_after = orientation(pts);
+          if(orientation_after != CGAL::POSITIVE)
           {
-            if (collapse_type == TO_MIDPOINT)
-              nb_orientation_midpoint++;
-            else
-              nb_orientation_v0++;
-          }
+#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
+            if (in_cx)
+            {
+              if (collapse_type == TO_MIDPOINT)
+                nb_orientation_midpoint++;
+              else
+                nb_orientation_v0++;
+            }
 #endif
-          return false;
+            return false;
+          }
         }
       }
     }
