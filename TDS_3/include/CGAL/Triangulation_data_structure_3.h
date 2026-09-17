@@ -1284,24 +1284,58 @@ public:
   {
     CGAL_precondition(dimension() == 3);
 
-    boost::container::flat_set<Cell_handle, std::less<>,
-      boost::container::small_vector<Cell_handle, 128>> visited;
+    // Same open-addressed table of 8-bit indices as
+    // `incident_cells_3_threadsafe()`, for the same reason: the `flat_set`
+    // this replaces paid a lower_bound plus a memmove of up to 128 handles on
+    // every one of the ~3n asks per walk. Kept as its own copy rather than a
+    // shared utility -- the two sites differ in their overflow policy and
+    // sharing them measured slower.
+    constexpr unsigned    TSIZE  = 256;   // power of two
+    constexpr std::size_t MAXIDX = 192;   // keeps the table's load <= 0.75
+    unsigned char table[TSIZE];
+    std::memset(table, 0, sizeof(table));
+
     boost::container::small_vector<Cell_handle, 128> cells;
 
+    // Past the 8-bit index the probe falls back to a linear scan of `cells`,
+    // which is exact because that scan sees every cell found so far, whether
+    // or not it was also recorded in the table.
+    auto seen_or_record = [&](Cell_handle ch, std::size_t idx) -> bool
+    {
+      if (idx > MAXIDX)
+        return std::find(cells.begin(), cells.end(), ch) == cells.end();
+      const std::uintptr_t p = reinterpret_cast<std::uintptr_t>(&*ch);
+      unsigned s = unsigned((p * 0x9E3779B97F4A7C15ull) >> 56) & (TSIZE - 1);
+      for (;;) {
+        const unsigned char k = table[s];
+        if (k == 0) { table[s] = static_cast<unsigned char>(idx + 1); return true; }
+        if (cells[k - 1] == ch) return false;
+        s = (s + 1) & (TSIZE - 1);
+      }
+    };
+
     const Cell_handle d = v->cell();
+    seen_or_record(d, 0);
     cells.push_back(d);
-    visited.insert(d);
     if(pred(d)) { found = d; return true; }
 
     std::size_t head = 0;
     while(head != cells.size()) {
       const Cell_handle c = cells[head++];
 
+      // The dedup probe needs &*next, so issue the four neighbour addresses up
+      // front and let their cache misses overlap.
+      Cell_handle nb_[4];
+      for(int i_=0; i_<4; ++i_) {
+        nb_[i_] = c->neighbor(i_);
+        __builtin_prefetch(&*nb_[i_]);
+      }
+
       for(int i=0; i<4; ++i) {
         if(c->vertex(i) == v)
           continue;
-        const Cell_handle next = c->neighbor(i);
-        if(! visited.insert(next).second)
+        const Cell_handle next = nb_[i];
+        if(! seen_or_record(next, cells.size()))
           continue;
         cells.push_back(next);
         if(pred(next)) { found = next; return true; }
