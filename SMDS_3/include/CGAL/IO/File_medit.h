@@ -1111,7 +1111,7 @@ void write_MEDIT(std::ostream& os,
  * triangulation cells from `in`, and builds a valid `T3` from it.
  *
  * Note that a valid 3D triangulation of \cgal must have a valid
- * data structure (see `TriangulationDataStructure_3 `),
+ * data structure (see `TriangulationDataStructure_3`),
  * positively oriented cells,
  * and cover the geometric convex hull of all points in `t3`.
  *
