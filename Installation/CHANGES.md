@@ -25,7 +25,7 @@ Release date: December 2026
 
 ### [dD Kernel](https://doc.cgal.org/6.3/Manual/packages.html#PkgKernelD)
 
-- Added the function `pad(double offset)` to the classes `Bbox_d`
+- Added the function `pad(double offset)` to the class `Bbox_d`
 
 
 ### [2D Snap Rounding](https://doc.cgal.org/6.3/Manual/packages.html#PkgSnapRounding2) (major changes)
