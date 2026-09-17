@@ -19,7 +19,7 @@ int main() {
   std::vector<int> subdomains;
   std::vector<std::array<int,3>> edges;
   std::vector<std::tuple<int,int,int,int>> facets;
-  std::deque<int> corners;
+  std::deque<CGAL::IO::internal::Corner_with_index<int>> corners;
   bool verbose = false;
   bool success = CGAL::IO::read_MEDIT(input, points, cells, CGAL::parameters::subdomains(std::ref(subdomains))
                                                                              .facets_with_indices(std::ref(facets))
@@ -40,7 +40,7 @@ int main() {
   std::vector<int> subdomains2;
   std::vector<std::array<int,3>> edges2;
   std::vector<std::tuple<int,int,int,int>> facets2;
-  std::deque<int> corners2;
+  std::deque<CGAL::IO::internal::Corner_with_index<int>> corners2;
   success = CGAL::IO::read_MEDIT(input2, points2, cells2, CGAL::parameters::subdomains(std::ref(subdomains2))
                                                                            .facets_with_indices(std::ref(facets2))
                                                                            .edges_with_indices(std::ref(edges2))

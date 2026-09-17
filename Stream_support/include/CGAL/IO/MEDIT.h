@@ -51,19 +51,61 @@ template<typename CornerIndex>
 struct Corner_with_index
 {
   int v;
+  CornerIndex corner_index;
 
   bool operator==(const Corner_with_index& rhs) const
   {
-    return (v  == rhs.v);
+    return (v == rhs.v) && (corner_index == rhs.corner_index);
   }
 };
 
+template <typename T>
+int get_zero(const T& t)
+{
+  return std::get<0>(t);
+}
+
+template <typename T>
+int get_one(const T& t)
+{
+  return std::get<1>(t);
+}
+
+template <typename T>
+int get_two(const T& t)
+{
+  return std::get<2>(t);
+}
+
+template<typename CornerIndex>
+int get_zero(const Corner_with_index<CornerIndex>& t)
+{
+  return t.v;
+}
+
+template<typename CurveIndex>
+int get_zero(const Edge_with_index<CurveIndex>& t)
+{
+  return t.v0;
+}
+
+template<typename CurveIndex>
+int get_one(const Edge_with_index<CurveIndex>& t)
+{
+  return t.v1;
+}
+
+template<typename CurveIndex>
+CurveIndex get_two(const Edge_with_index<CurveIndex>& t)
+{
+  return t.curve_index;
+}
 
 template<class PointRange,
          class TetrahedronRange,
          class FacetWithIndexRange, // either Facet_with_index or a tuple/array
          class EdgeWithIndexRange, // either Edge_with_index or a tuple/array
-         class CornerWithIndexRange> // either Corner_with_index or a tuple/pair/array
+        class CornerWithIndexRange> // either Corner_with_index or a tuple/pair/array
 bool read_MEDIT(std::istream& is,
                 PointRange& points,
                 TetrahedronRange& tetrahedra,
@@ -490,13 +532,13 @@ bool write_MEDIT(std::ostream& os,
   if(!corners.empty()){
     os << "Corners\n" << corners.size() << "\n";
     for(const auto& c : corners)
-      os << c + 1 << "\n";
+      os << internal::get_zero(c) + 1 << "\n";
   }
 
   if(!edges.empty()){
     os << "Edges\n" << edges.size() << "\n";
     for(const auto& e : edges)
-      os << std::get<0>(e) +1 << " " << std::get<1>(e) + 1 << " " << std::get<2>(e)  << "\n";
+      os << internal::get_zero(e) +1 << " " << internal::get_one(e) + 1 << " " << internal::get_two(e)  << "\n";
   }
 
   if(!facets.empty()){
