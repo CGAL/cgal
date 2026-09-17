@@ -1332,6 +1332,147 @@ void collect_boundary_edges_and_subdomains_parallel(
     });
 }
 
+/**
+* The per-boundary-edge valence reduction, split in two so that the parallel
+* half needs no per-thread map and no reduction afterwards.
+*
+* The cost of the serial loop below is the facet circulator and the
+* `is_in_complex()` test it runs per incident facet; the map increments
+* themselves are two hash lookups per qualifying facet. `bflip_valence_parallel`
+* (rejected 2026-09-16) reduced per-thread maps and paid for the merge with
+* instructions the serial loop never spends -- +0.7 to +2.4% on the small
+* configs. Here the parallel pass only walks the circulators, writing the
+* patches it would have counted into a slot it owns, and the map is then filled
+* by a serial pass that does exactly the increments the serial loop does, in
+* the same order. Nothing is merged, and nothing is allocated per thread.
+*
+* Counting is commutative, so edge order never mattered for the result; it is
+* kept anyway because the serial pass walks `boundary_edges` as it is.
+*/
+template<typename C3T3, typename PatchOutput>
+void for_each_boundary_valence_patch(
+  const C3T3& c3t3,
+  const typename C3T3::Edge& e,
+  const boost::unordered_map<typename C3T3::Vertex_handle,
+    std::unordered_set<typename C3T3::Subdomain_index> >& vertices_subdomain_indices,
+  PatchOutput out)
+{
+  using Surface_patch_index = typename C3T3::Surface_patch_index;
+  using Facet_circulator = typename C3T3::Triangulation::Facet_circulator;
+
+  const typename C3T3::Triangulation& tr = c3t3.triangulation();
+  const auto v0 = e.first->vertex(e.second);
+  const auto v1 = e.first->vertex(e.third);
+
+  // `find()` where the serial loop uses `operator[]`: the entry it would
+  // insert is empty, so a missing vertex has size 0 either way, and reading
+  // through `find()` leaves the map untouched by a parallel pass.
+  const auto it0 = vertices_subdomain_indices.find(v0);
+  const auto it1 = vertices_subdomain_indices.find(v1);
+  const std::size_t n0 = (it0 == vertices_subdomain_indices.end()) ? 0 : it0->second.size();
+  const std::size_t n1 = (it1 == vertices_subdomain_indices.end()) ? 0 : it1->second.size();
+
+  Facet_circulator facet_circulator = tr.incident_facets(e);
+  Facet_circulator done(facet_circulator);
+
+  //In case of feature edge
+  if (n0 > 2 && n1 > 2)
+  {
+    do
+    {
+      if (c3t3.is_in_complex(*facet_circulator))
+        out(c3t3.surface_patch_index(*facet_circulator));
+    } while (++facet_circulator != done);
+  }
+  //Normal surface edge, or non-manifold edge on dangling facet
+  else
+  {
+    Surface_patch_index first_patch = Surface_patch_index();
+    do
+    {
+      if (c3t3.is_in_complex(*facet_circulator))
+      {
+        const Surface_patch_index surfi = c3t3.surface_patch_index(*facet_circulator);
+        if (first_patch == Surface_patch_index())
+          first_patch = surfi;
+        else if (first_patch == surfi)
+          continue;
+
+        out(surfi);
+      }
+    } while (++facet_circulator != done);
+  }
+}
+
+template<typename C3T3, typename BoundaryValencesMap>
+void compute_boundary_vertices_valences_parallel(
+  const C3T3& c3t3,
+  const std::vector<typename C3T3::Edge>& boundary_edges,
+  BoundaryValencesMap& boundary_vertices_valences,
+  const boost::unordered_map<typename C3T3::Vertex_handle,
+    std::unordered_set<typename C3T3::Subdomain_index> >& vertices_subdomain_indices)
+{
+  using Surface_patch_index = typename C3T3::Surface_patch_index;
+
+  // One slot per edge, written by the one thread that owns that edge. Four
+  // patches cover a manifold surface edge (two facets) with room to spare; an
+  // edge that needs more sets `overflow` and is walked again by the serial
+  // pass, so the buffer's size is a performance choice and never a
+  // correctness one.
+  static constexpr unsigned int inline_patches = 4;
+  struct Edge_patches
+  {
+    std::array<Surface_patch_index, inline_patches> patches;
+    unsigned char n = 0;
+    bool overflow = false;
+  };
+
+  std::vector<Edge_patches> per_edge(boundary_edges.size());
+
+  tbb::parallel_for(tbb::blocked_range<std::size_t>(0, boundary_edges.size()),
+    [&](const tbb::blocked_range<std::size_t>& range)
+    {
+      for (std::size_t ei = range.begin(); ei != range.end(); ++ei)
+      {
+        Edge_patches& slot = per_edge[ei];
+        for_each_boundary_valence_patch(c3t3, boundary_edges[ei],
+          vertices_subdomain_indices,
+          [&slot](const Surface_patch_index& surfi)
+          {
+            if (slot.n < inline_patches)
+              slot.patches[slot.n++] = surfi;
+            else
+              slot.overflow = true;
+          });
+      }
+    });
+
+  for (std::size_t ei = 0; ei < boundary_edges.size(); ++ei)
+  {
+    const typename C3T3::Edge& e = boundary_edges[ei];
+    const auto v0 = e.first->vertex(e.second);
+    const auto v1 = e.first->vertex(e.third);
+    const Edge_patches& slot = per_edge[ei];
+
+    if (slot.overflow)
+    {
+      for_each_boundary_valence_patch(c3t3, e, vertices_subdomain_indices,
+        [&](const Surface_patch_index& surfi)
+        {
+          boundary_vertices_valences[v0][surfi]++;
+          boundary_vertices_valences[v1][surfi]++;
+        });
+      continue;
+    }
+
+    for (unsigned char k = 0; k < slot.n; ++k)
+    {
+      boundary_vertices_valences[v0][slot.patches[k]]++;
+      boundary_vertices_valences[v1][slot.patches[k]]++;
+    }
+  }
+}
+
 #endif // CGAL_LINKED_WITH_TBB
 
 template<typename C3T3, typename CellSelector, typename BoundaryValencesMap>
@@ -1376,6 +1517,16 @@ void collectBoundaryEdgesAndComputeVerticesValences(
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
   CGAL::Tetrahedral_remeshing::debug::dump_edges(boundary_edges,
                                                  "boundary_edges.polylines.txt");
+#endif
+
+#ifdef CGAL_LINKED_WITH_TBB
+  if constexpr (is_parallel_triangulation<typename C3T3::Triangulation>())
+  {
+    compute_boundary_vertices_valences_parallel(c3t3, boundary_edges,
+                                                boundary_vertices_valences,
+                                                vertices_subdomain_indices);
+    return;
+  }
 #endif
 
   for (const Edge& e : boundary_edges)
