@@ -8,27 +8,38 @@
 typedef CGAL::Simple_cartesian<double>  Kernel;
 typedef Kernel::Point_3                 Point_3;
 
+
 int main() {
-  const std::string filename = CGAL::data_file_path("meshes/elephant.mesh");
+  const std::string filename = "./data/polyhedral_complex.mesh";
   std::ifstream input(filename);
   std::vector<Point_3> points;
-  std::vector<int> subdomains;
   std::vector<std::array<int,4>> cells;
+  std::vector<int> subdomains;
+  std::vector<CGAL::IO::internal::Corner_with_index<int>> corners;
   bool verbose = false;
-  bool success = CGAL::IO::read_MEDIT(input, points, cells, CGAL::parameters::subdomains(std::ref(subdomains)).verbose(verbose));
+  bool success = CGAL::IO::read_MEDIT(input, points, cells, CGAL::parameters::subdomains(std::ref(subdomains)).corners_with_indices(std::ref(corners)).verbose(verbose));
   assert(success);
+
+  for(auto c : corners)
+    std ::cout << c.v << std::endl;
 
   std::ostringstream output;
   output.precision(17);
-  CGAL::IO::write_MEDIT(output, points, cells, CGAL::parameters::subdomains(std::cref(subdomains)));
+  CGAL::IO::write_MEDIT(output, points, cells, CGAL::parameters::subdomains(std::cref(subdomains)).corners_with_indices(std::cref(corners)));
   std::istringstream input2(output.str());
   std::vector<Point_3> points2;
   std::vector<std::array<int,4>> cells2;
   std::vector<int> subdomains2;
-  success = CGAL::IO::read_MEDIT(input2, points2, cells2, CGAL::parameters::subdomains(std::ref(subdomains2)).verbose(verbose));
+  std::vector<CGAL::IO::internal::Corner_with_index<int>> corners2;
+  success = CGAL::IO::read_MEDIT(input2, points2, cells2, CGAL::parameters::subdomains(std::ref(subdomains2)).corners_with_indices(std::ref(corners2)).verbose(verbose));
+
+  for(auto c : corners2)
+    std ::cout << c.v << std::endl;
+
   assert(points == points2);
   assert(cells == cells2);
   assert(subdomains == subdomains2);
+  assert(corners == corners2);
   assert(success);
   return 0;
 }

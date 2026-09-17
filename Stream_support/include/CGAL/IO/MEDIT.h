@@ -51,7 +51,11 @@ template<typename CornerIndex>
 struct Corner_with_index
 {
   int v;
-  CornerIndex corner_index;
+
+  bool operator==(const Corner_with_index& rhs) const
+  {
+    return (v  == rhs.v);
+  }
 };
 
 
@@ -228,7 +232,6 @@ bool read_MEDIT(std::istream& is,
       }
     }
 
-    int corner_index = 0;
     if(line.find("Corners") != std::string::npos)
     {
       is >> ncorners;
@@ -244,7 +247,7 @@ bool read_MEDIT(std::istream& is,
             std::cerr << "Issue while reading corners" << std::endl;
           return false;
         }
-        corners_with_indices.push_back({offset + n - 1, ++corner_index});
+        corners_with_indices.push_back({offset + n});
       }
     }
 
@@ -452,8 +455,13 @@ bool write_MEDIT(std::ostream& os,
 
   // subdomains
   std::vector<int> default_subdomains;
+  std::vector<internal::Corner_with_index<int>> default_corners;
+
   using Subdomains = typename internal_np::Lookup_named_param_def<internal_np::subdomains_t, CGAL_NP_CLASS, std::vector<int>>::reference;
   Subdomains subdomains = choose_parameter(get_parameter_reference(np, internal_np::subdomains), default_subdomains);
+
+  using Corners_with_indices = typename internal_np::Lookup_named_param_def<internal_np::corners_with_indices_t, CGAL_NP_CLASS, std::vector<internal::Corner_with_index<int>>>::reference;
+  Corners_with_indices corners = choose_parameter(get_parameter_reference(np, internal_np::corners_with_indices), default_corners);
 
   if constexpr (is_default_parameter<CGAL_NP_CLASS, internal_np::subdomains_t>::value)
     default_subdomains.resize(tetrahedra.size(), 1);
@@ -469,6 +477,12 @@ bool write_MEDIT(std::ostream& os,
        << tetrahedra[k][1]+1 << " "
        << tetrahedra[k][2]+1 << " "
        << tetrahedra[k][3]+1 << " " << subdomains[k] << "\n";
+
+  if(!corners.empty()){
+    os << "Corners\n" << corners.size() << "\n";
+    for(const auto& c : corners)
+      os << c.v << "\n";
+  }
   os <<"End\n";
   return true;
 }
