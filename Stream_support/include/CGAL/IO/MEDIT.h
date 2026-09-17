@@ -490,7 +490,7 @@ bool write_MEDIT(std::ostream& os,
       os << c.v + 1 << "\n";
   }
 
-  if(!corners.empty()){
+  if(!edges.empty()){
     os << "Edges\n" << edges.size() << "\n";
     for(const auto& e : edges)
       os << std::get<0>(e) +1 << " " << std::get<1>(e) + 1 << " " << std::get<2>(e)  << "\n";
