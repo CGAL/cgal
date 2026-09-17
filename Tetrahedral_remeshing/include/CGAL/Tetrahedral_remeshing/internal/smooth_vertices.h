@@ -936,6 +936,90 @@ protected:
 
   bool is_selected(const Cell_handle c) const { return get(m_context->m_cell_selector, c); }
 
+#ifdef CGAL_LINKED_WITH_TBB
+  /**
+  * The parallel form of `accumulate_edge_moves()` below: the same pass, with
+  * `keep_edge` answered on every thread and the accumulation left serial.
+  *
+  * The split is what makes this safe. `keep_edge` is read-only -- the surface
+  * operation's is a lookup in `m_finite_edge_in_complex` and an `is_boundary()`
+  * facet circulation, the internal one an `is_outside()` test -- and the
+  * triangulation is not written anywhere in `get_elements()`, so the predicate
+  * can run on all the edges at once. The four `moves[i] += ...` cannot: two
+  * edges sharing an endpoint write the same entry, and the sum is in floating
+  * point, so a reduce would change the result. Pass 2 therefore keeps the
+  * original loop, in the original edge order, and reads the answers pass 1
+  * stored. Same additions, same order, bit for bit.
+  *
+  * The filter is where the time is. On `1146193_cdt_0.5` at 4 threads the
+  * surface operation scans 8.06 M edges to keep 1.41 M, and its loop costs
+  * 0.88 s against the internal operation's 0.44 s over the same edges for 4.5x
+  * as many kept -- the `is_boundary()` circulation, not the accumulation.
+  */
+  template <typename EdgeRange, typename KeepEdge, typename MovesVertex>
+  void accumulate_edge_moves_parallel_filter(const EdgeRange& edges,
+                                             const C3t3& c3t3,
+                                             const bool boundary_edge,
+                                             KeepEdge keep_edge,
+                                             MovesVertex moves_vertex) const
+  {
+    auto& moves = m_context->m_moves;
+    using Move = typename Context::Move;
+    const Move default_move{CGAL::NULL_VECTOR, 0 /*neighbors*/, 0. /*mass*/};
+    moves.assign(c3t3.triangulation().number_of_vertices(), default_move);
+
+    // One byte per edge rather than the kept edges themselves: the flags are
+    // written by index, so no chunk has to be concatenated to put the kept
+    // edges back into range order, and pass 2 walks `edges` exactly as the
+    // serial loop does.
+    const std::size_t nb_edges = edges.size();
+    std::vector<char> kept(nb_edges, 0);
+
+    tbb::parallel_for(tbb::blocked_range<std::size_t>(0, nb_edges),
+      [&](const tbb::blocked_range<std::size_t>& range)
+      {
+        for (std::size_t ei = range.begin(); ei != range.end(); ++ei)
+          kept[ei] = keep_edge(edges[ei], ei) ? 1 : 0;
+      });
+
+    std::size_t edge_index = 0;
+    for (const Edge& e : edges)
+    {
+      if (!kept[edge_index++])
+        continue;
+
+      const Vertex_handle vh0 = e.first->vertex(e.second);
+      const Vertex_handle vh1 = e.first->vertex(e.third);
+
+      const std::size_t i0 = m_context->vertex_id(vh0);
+      const std::size_t i1 = m_context->vertex_id(vh1);
+
+      const bool vh0_moving = moves_vertex(vh0, i0);
+      const bool vh1_moving = moves_vertex(vh1, i1);
+
+      if (!vh0_moving && !vh1_moving)
+        continue;
+
+      const Point_3& p0 = point(vh0->point());
+      const Point_3& p1 = point(vh1->point());
+      const FT density = density_along_segment(e, c3t3, boundary_edge);
+
+      if (vh0_moving)
+      {
+        moves[i0].move += density * Vector_3(p0, p1);
+        moves[i0].mass += density;
+        ++moves[i0].neighbors;
+      }
+      if (vh1_moving)
+      {
+        moves[i1].move += density * Vector_3(p1, p0);
+        moves[i1].mass += density;
+        ++moves[i1].neighbors;
+      }
+    }
+  }
+#endif // CGAL_LINKED_WITH_TBB
+
   /**
   * The Laplacian-style move each movable endpoint of `edges` gets pulled by,
   * accumulated into `Vertex_smoothing_context::m_moves`.
@@ -955,6 +1039,15 @@ protected:
                              KeepEdge keep_edge,
                              MovesVertex moves_vertex) const
   {
+#ifdef CGAL_LINKED_WITH_TBB
+    if constexpr (Context::is_parallel)
+    {
+      accumulate_edge_moves_parallel_filter(edges, c3t3, boundary_edge,
+                                            keep_edge, moves_vertex);
+      return;
+    }
+#endif
+
     auto& moves = m_context->m_moves;
     using Move = typename Context::Move;
     const Move default_move{CGAL::NULL_VECTOR, 0 /*neighbors*/, 0. /*mass*/};
