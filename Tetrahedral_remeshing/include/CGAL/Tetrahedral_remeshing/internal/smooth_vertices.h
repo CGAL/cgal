@@ -140,7 +140,28 @@ public:
                          std::unordered_map<Surface_patch_index, Vector_3, boost::hash<Surface_patch_index>>>;
 
   Vertices_surface_indices_map m_vertices_surface_indices;
-  Vertices_normals_map m_vertices_normals;
+
+  // The per-vertex, per-patch normals, indexed by `vertex_id()` rather than
+  // stored in a `Vertices_normals_map`. A vertex carries as many normals as it
+  // has incident surface patches -- one, almost always, and three at a corner
+  // -- so the patch is found by a linear scan of that short vector, which is a
+  // contiguous read, and never by hashing a `Surface_patch_index`.
+  //
+  // The nested map it replaces cost two lookups per level per accumulation and
+  // allocated one inner map per surface vertex, which `clear()` then freed,
+  // every time `refresh()` ran. Here the outer vector and each inner vector
+  // keep their capacity between calls: after the first `refresh()` the fill
+  // allocates nothing.
+  using Vertex_patch_normals = std::vector<std::pair<Surface_patch_index, Vector_3>>;
+  std::vector<Vertex_patch_normals> m_vertices_normals;
+
+  // The vertices `compute_vertices_normals()` actually wrote, in the order it
+  // first touched them. Only surface vertices carry a normal -- 102 k of the
+  // 774 k facets of `1146193_cdt_0.5` are boundary facets -- so emptying and
+  // normalizing through this list keeps both passes proportional to the
+  // SURFACE, where walking `m_vertices_normals` end to end would make them
+  // proportional to the whole mesh, once per `refresh()`.
+  std::vector<std::pair<std::size_t, Vertex_handle>> m_vertices_with_normals;
 
   const CellSelector& m_cell_selector;
   const bool m_protect_boundaries;
@@ -183,7 +204,7 @@ public:
     }
     createMLSSurfaces(subdomain_FMLS,
                       subdomain_FMLS_indices,
-                      m_vertices_normals,
+                      vertices_normals_map(c3t3.triangulation()),
                       m_vertices_surface_indices,
                       c3t3);
 #else
@@ -193,12 +214,15 @@ public:
 
   void refresh(C3t3& c3t3)
   {
+    // The id map comes first: `compute_vertices_normals()` stores its result by
+    // `vertex_id()`. The steps are independent of one another, so which one
+    // runs first is free to choose.
+    reset_vertex_id_map(c3t3.triangulation());
     if (!m_protect_boundaries)
     {
       collect_vertices_surface_indices(c3t3);
       compute_vertices_normals(c3t3);
     }
-    reset_vertex_id_map(c3t3.triangulation());
     reset_free_vertices(c3t3.triangulation());
     collect_incident_cells(c3t3.triangulation());
     collect_finite_edges(c3t3);
@@ -226,6 +250,24 @@ public:
 
   bool is_free(const Vertex_handle v) const  { return m_free_vertices[vertex_id(v)]; }
   bool is_free(const std::size_t& vid) const { return m_free_vertices[vid]; }
+
+  // The normal of `v` on patch `si`, as `compute_vertices_normals()` left it.
+  // Reading a normal a vertex does not carry is a precondition violation, as it
+  // was when this was a map and the read was `.at(v).at(si)`.
+  const Vector_3& vertex_normal(const std::size_t vid,
+                                const Surface_patch_index& si) const
+  {
+    for (const auto& [patch, n] : m_vertices_normals[vid])
+      if (patch == si)
+        return n;
+    CGAL_error_msg("no normal stored for this (vertex, surface patch)");
+    return m_vertices_normals[vid].front().second;
+  }
+  const Vector_3& vertex_normal(const Vertex_handle v,
+                                const Surface_patch_index& si) const
+  {
+    return vertex_normal(vertex_id(v), si);
+  }
 
   const Incident_cells_vector& incident_cells(const Vertex_handle v) const
   {
@@ -521,7 +563,19 @@ private:
 
   void compute_vertices_normals(const C3t3& c3t3)
   {
-    m_vertices_normals.clear();
+
+    // Emptied without giving the storage back: `resize()` only ever grows the
+    // outer vector, and clearing an inner vector keeps its capacity. Only the
+    // entries the last call filled need emptying, so the reset costs the
+    // surface, not the mesh.
+    for (const auto& [vid, v] : m_vertices_with_normals)
+    {
+      CGAL_USE(v);
+      m_vertices_normals[vid].clear();
+    }
+    m_vertices_with_normals.clear();
+    m_vertices_normals.resize(c3t3.triangulation().number_of_vertices());
+
     typename Tr::Geom_traits gt = c3t3.triangulation().geom_traits();
     typename Tr::Geom_traits::Construct_opposite_vector_3
       opp = gt.construct_opposite_vector_3_object();
@@ -561,17 +615,25 @@ private:
 
       for (const Vertex_handle vi : tr.vertices(f))
       {
-        typename Vertices_normals_map::iterator patch_vector_it = m_vertices_normals.find(vi);
+        // Same additions, in the same order -- `fnormals` is still walked in
+        // its own iteration order and a patch still gets its first normal
+        // assigned and the rest added -- so the sums round exactly as before.
+        const std::size_t vid = vertex_id(vi);
+        Vertex_patch_normals& vpn = m_vertices_normals[vid];
 
-        if (patch_vector_it == m_vertices_normals.end()
-            || patch_vector_it->second.find(surf_i) == patch_vector_it->second.end())
+        if (vpn.empty())
         {
-          m_vertices_normals[vi][surf_i] = n;
+          m_vertices_with_normals.emplace_back(vid, vi);
+          vpn.emplace_back(surf_i, n);
+          continue;
         }
+
+        auto patch_it = std::find_if(vpn.begin(), vpn.end(),
+                                     [&surf_i](const auto& pn) { return pn.first == surf_i; });
+        if (patch_it == vpn.end())
+          vpn.emplace_back(surf_i, n);
         else
-        {
-          m_vertices_normals[vi][surf_i] += n;
-        }
+          patch_it->second += n;
       }
     }
 
@@ -583,10 +645,13 @@ private:
 #endif
 
     //normalize the computed normals
-    for (auto& [v, patch_normals] : m_vertices_normals)
+    // Only the vertices that got one, and each is normalized in place, so the
+    // order this list happens to be in cannot change the result.
+    for (const auto& [vid, v] : m_vertices_with_normals)
     {
-      //value type is map<Surface_patch_index, Vector_3>
-      for (auto& [surf_i, n] : patch_normals)
+      CGAL_USE(v);
+      //value type is vector<pair<Surface_patch_index, Vector_3>>
+      for (auto& [surf_i, n] : m_vertices_normals[vid])
       {
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
         auto p = point(v->point());
@@ -686,6 +751,21 @@ private:
           v_surface_indices.push_back(surface_index);
       }
     }
+  }
+
+  // `createMLSSurfaces()` reads the normals as `.at(v).at(si)`. It runs once,
+  // at construction, so it is given a map built from the dense storage rather
+  // than the dense storage being shaped around it.
+  Vertices_normals_map vertices_normals_map(const Tr& tr) const
+  {
+    CGAL_USE(tr);
+    Vertices_normals_map map;
+    for (const auto& [vid, v] : m_vertices_with_normals)
+    {
+      for (const auto& [surf_i, n] : m_vertices_normals[vid])
+        map[v][surf_i] = n;
+    }
+    return map;
   }
 
   void reset_vertex_id_map(const Tr& tr)
@@ -1242,7 +1322,7 @@ private:
     for (const Surface_patch_index& si : v_surface_indices)
     {
       Point_3 normal_projection = BaseClass::project_on_tangent_plane(smoothed_position, current_pos,
-                                                                      m_context->m_vertices_normals.at(v).at(si));
+                                                                      m_context->vertex_normal(v, si));
       sum_projections += Vector_3(tmp_pos, normal_projection);
       tmp_pos = normal_projection;
     }
@@ -1385,7 +1465,7 @@ private:
 
 #ifdef CGAL_TET_REMESHING_SMOOTHING_WITH_MLS
       Point_3 normal_projection = BaseClass::project_on_tangent_plane(smoothed_position, current_pos,
-                                                                      m_context->m_vertices_normals.at(v).at(si));
+                                                                      m_context->vertex_normal(v, si));
       std::optional<Point_3> mls_projection = project(si, normal_projection);
       new_pos = (mls_projection != std::nullopt) ? *mls_projection : smoothed_position;
 #else
@@ -1415,7 +1495,7 @@ private:
           return std::nullopt;
         };
 
-        const auto n = m_context->m_vertices_normals.at(v).at(si);
+        const auto n = m_context->vertex_normal(v, si);
         const Ray ray = tr.geom_traits().construct_ray_3_object()(current_pos, n);
         const Projection proj = m_context->m_triangles_aabb_tree.first_intersection(ray);
         const Projection proj_opp = m_context->m_triangles_aabb_tree.first_intersection(
