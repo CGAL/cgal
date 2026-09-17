@@ -61,14 +61,14 @@ struct Corner_with_index
 
 template<class PointRange,
          class TetrahedronRange,
-         class FacetWithIndex, // either Facet_with_index or a tuple/array
+         class FacetWithIndexRange, // either Facet_with_index or a tuple/array
          class EdgeWithIndexRange, // either Edge_with_index or a tuple/array
          class CornerWithIndexRange> // either Corner_with_index or a tuple/pair/array
 bool read_MEDIT(std::istream& is,
                 PointRange& points,
                 TetrahedronRange& tetrahedra,
                 std::vector<int>& subdomains,
-                std::vector<FacetWithIndex>& facets_with_indices,
+                FacetWithIndexRange& facets_with_indices,
                 bool read_facets_with_indices,
                 EdgeWithIndexRange& edges_with_indices,
                 CornerWithIndexRange& corners_with_indices,
@@ -479,7 +479,7 @@ bool write_MEDIT(std::ostream& os,
   os << points.size() << "\n";
   for (const Point_3& p : points)
     os << p << " 0\n";
-  os << "Triangles\n0\nTetrahedra\n";
+  os << "Tetrahedra\n";
   os << tetrahedra.size() << "\n";
   for (std::size_t k=0; k<tetrahedra.size(); ++k)
     os << tetrahedra[k][0]+1 << " "
