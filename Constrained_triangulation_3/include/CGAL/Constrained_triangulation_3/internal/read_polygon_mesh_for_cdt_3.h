@@ -36,7 +36,7 @@ namespace CGAL {
 
   template <typename PolygonMesh>
   struct CDT_3_read_polygon_mesh_output {
-    cpp23::expected<PolygonMesh, std::filesystem::path> polygon_mesh;
+    cpp23::expected<PolygonMesh, std::string> polygon_mesh;
 
     std::size_t nb_of_duplicated_points = 0;
     std::size_t nb_of_simplified_polygons = 0;
