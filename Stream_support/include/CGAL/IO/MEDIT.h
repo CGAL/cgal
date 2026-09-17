@@ -321,21 +321,21 @@ bool read_MEDIT(std::istream& is,
  *
  *   \cgalParamNBegin{facets_with_indices}
  *     \cgalParamDescription{a non-const reference wrapper to a container of quadruple of integers that will be filled by this function.
- *                           Each element corresponds to a facet with vertex being the three first integer, the last one being the surface patch index of the facet.}
+ *                           Each element corresponds to a facet with vertices corresponding to the three first integers, and the last integer being the surface patch index of the facet.}
  *     \cgalParamType{a `std::reference_wrapper` to a model of `BackInsertionSequence` able to store  quadruple of `int`.}
  *     \cgalParamDefault{facets are ignored}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{edges_with_indices}
  *     \cgalParamDescription{a non-const reference wrapper to a container of triple of integers that will be filled by this function.
- *                           Each element corresponds to an edge with vertex being the two first integer, the last one being the curve index of the edge.}
+ *                           Each element corresponds to an edge with vertices corresponding  to the two first integers, and the last integer being the curve index of the edge.}
  *     \cgalParamType{a `std::reference_wrapper` to a model of `BackInsertionSequence` able to store  triple of `int`.}
  *     \cgalParamDefault{edges are ignored}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{corners_with_indices}
  *     \cgalParamDescription{a non-const reference wrapper to a container of pair of integers that will be filled by this function.
- *                           Each element corresponds to a corner at vertex corresponding to the first integer, the last one being the corner index.}
+ *                           Each element corresponds to a corner at the vertex corresponding to the first integer, the last one being the corner index.}
  *     \cgalParamType{a `std::reference_wrapper` to a model of `BackInsertionSequence` able to store  pair of `int`.}
  *     \cgalParamDefault{corners are ignored}
  *   \cgalParamNEnd
