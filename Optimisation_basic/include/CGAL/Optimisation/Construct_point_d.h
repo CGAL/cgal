@@ -17,10 +17,6 @@
 #ifndef CGAL_OPTIMISATION_CONSTRUCT_POINT_D_H
 #define CGAL_OPTIMISATION_CONSTRUCT_POINT_D_H
 
-// includes
-#  include <CGAL/Kernel_d/Interface_classes.h>
-#  include <CGAL/Kernel_d/Point_d.h>
-
 namespace CGAL {
 
 // Class declaration

@@ -6,7 +6,7 @@
 cmake_minimum_required(VERSION 3.12...3.31)
 project(Number_types_Tests)
 
-find_package(CGAL REQUIRED COMPONENTS Core)
+find_package(CGAL REQUIRED)
 
 include_directories(BEFORE include)
 
@@ -57,6 +57,7 @@ create_single_source_cgal_program("Sqrt_extension_true.cpp")
 create_single_source_cgal_program("_test_valid_finite_double.cpp")
 create_single_source_cgal_program("_test_valid_finite_float.cpp")
 create_single_source_cgal_program("to_interval_test.cpp")
+create_single_source_cgal_program("to_interval_cpp_int_large.cpp")
 create_single_source_cgal_program("unsigned.cpp")
 create_single_source_cgal_program("utilities.cpp")
 create_single_source_cgal_program("Exact_rational.cpp")
@@ -64,17 +65,16 @@ create_single_source_cgal_program("Mpzf_new.cpp")
 create_single_source_cgal_program("check_exact_backend.cpp")
 create_single_source_cgal_program("wrapping_type.cpp" CXX_FEATURES cxx_std_20)
 
-if( CGAL_Core_FOUND )
-  create_single_source_cgal_program( "CORE_Expr_ticket_4296.cpp" )
-  create_single_source_cgal_program("CORE_BigFloat.cpp")
-  create_single_source_cgal_program("CORE_BigInt.cpp")
-  create_single_source_cgal_program("CORE_BigRat.cpp")
-  create_single_source_cgal_program("CORE_Expr.cpp")
-  find_package(MPFI QUIET)
-  if( MPFI_FOUND )
-    include( ${MPFI_USE_FILE} )
-  endif() #MPFI_FOUND
-endif() #CGAL_Core_FOUND
+create_single_source_cgal_program( "CORE_Expr_ticket_4296.cpp" )
+create_single_source_cgal_program("CORE_BigFloat.cpp")
+create_single_source_cgal_program("CORE_BigInt.cpp")
+create_single_source_cgal_program("CORE_BigRat.cpp")
+create_single_source_cgal_program("CORE_Expr.cpp")
+find_package(MPFI QUIET)
+if( MPFI_FOUND )
+  include( ${MPFI_USE_FILE} )
+endif() #MPFI_FOUND
+
 
 if(NOT CGAL_DISABLE_GMP)
   create_single_source_cgal_program( "Gmpfi.cpp" )
@@ -88,7 +88,7 @@ if(NOT CGAL_DISABLE_GMP)
     target_link_libraries(test_eigen PRIVATE CGAL::Eigen3_support)
   endif()
 else()#NOT CGAL_DISABLE_GMP
-  message(STATUS "NOTICE: Some tests require the CGAL_Core library, and will not be compiled.")
+  message(STATUS "NOTICE: Some tests require the GMP library, and will not be compiled.")
 endif()#NOT CGAL_DISABLE_GMP
 
 # all the programs below will be linked against MPFI in case it is present

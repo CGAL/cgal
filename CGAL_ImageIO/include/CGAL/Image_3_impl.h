@@ -27,7 +27,7 @@ bool Image_3::private_read(_image* im, Own own)
   {
     if(image() != 0)
     {
-      ::_freeImage(image());
+      _freeImage(image());
     }
     image_ptr = Image_shared_ptr(im, Image_deleter(own == OWN_THE_DATA));
 

@@ -19,8 +19,10 @@
 #include <boost/iterator/function_output_iterator.hpp>
 
 #include <iterator>
-#include <optional>
 #include <type_traits>
+#ifndef CGAL_NO_ATOMIC
+#  include <atomic>
+#endif
 
 namespace CGAL {
 
@@ -142,7 +144,6 @@ struct Mesh_3_options {
     , dump_after_exude_prefix()
     , number_of_initial_points(-1)
     , nonlinear_growth_of_balls(nonlinear)
-    , surface_only(false)
     , maximal_number_of_vertices(0)
     , pointer_to_error_code(0)
 #ifndef CGAL_NO_ATOMIC
@@ -158,7 +159,6 @@ struct Mesh_3_options {
   std::string dump_after_exude_prefix;
   int number_of_initial_points;
   bool nonlinear_growth_of_balls;
-  bool surface_only;
   std::size_t maximal_number_of_vertices;
   Mesh_error_code* pointer_to_error_code;
 #ifndef CGAL_NO_ATOMIC
@@ -172,6 +172,16 @@ struct Features_options
 {
   Features_options(bool b) : b_(b) {}
   bool features() const { return b_; }
+private:
+  bool b_;
+};
+
+// Surface only
+struct Surface_options
+{
+  Surface_options(bool b = false)
+      : b_(b) {}
+  bool surface_only() const { return b_; }
 private:
   bool b_;
 };
@@ -262,8 +272,12 @@ struct Initialization_options
               >
     Generator_ref(Generator&& generator)
       : generator_(std::addressof(generator))
-      , call_( [](void* g, Point_output_function_iterator oit, const int n) {
+      , call_( [](void* g, auto oit, const int n) {
+                 // `oit` is `auto` so that MSVC 2017 sees that the lambda is name-dependent,
+                 // otherwise it would check both part of the `if constexpr`. With `auto`, the lambda
+                 // expression is a class template and MSVC 2017 cannot miscompile it.
                  using Real_generator = CGAL::cpp20::remove_cvref_t<Generator>;
+                 using Point_output_function_iterator = CGAL::cpp20::remove_cvref_t<decltype(oit)>;
                  auto* real_g = static_cast<Real_generator*>(g);
                  if constexpr (std::is_invocable_v<Real_generator, Point_output_function_iterator>) {
                    if( n < 0 )

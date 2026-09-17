@@ -15,6 +15,11 @@
 
 #include <CGAL/license/Three.h>
 
+#if defined(__GNUC__) && !defined(__clang__) && __GNUC__ >= 16
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wsfinae-incomplete"
+#endif
+
 #include <QMap>
 #include <CGAL/Qt/qglviewer.h>
 #include <QWidget>
@@ -293,4 +298,9 @@ public:
 }; // end class Viewer_interface
 }
 }
+
+#if defined(__GNUC__) && !defined(__clang__) && __GNUC__ >= 16
+#  pragma GCC diagnostic pop
+#endif
+
 #endif // VIEWER_INTERFACE_H

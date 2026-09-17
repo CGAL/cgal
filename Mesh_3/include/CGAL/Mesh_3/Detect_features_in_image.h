@@ -31,7 +31,7 @@
 #include <CGAL/Mesh_3/features_detection/cube_isometries.h>
 #include <CGAL/Mesh_3/features_detection/features_detection_helpers.h>
 
-#include <CGAL/Mesh_3/polylines_to_protect.h>
+#include <CGAL/Mesh_3/polylines_to_protect_in_image.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Mesh_3/features_detection/postprocess_weights.h>
 

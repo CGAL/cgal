@@ -12,7 +12,10 @@
 #ifndef CGAL_INTERNAL_PROJECTION_TRAITS_3_H
 #define CGAL_INTERNAL_PROJECTION_TRAITS_3_H
 
+#include <CGAL/Bbox_2.h>
+#include <CGAL/Bbox_3.h>
 #include <CGAL/assertions.h>
+#include <CGAL/enum.h>
 #include <CGAL/tags.h>
 #include <CGAL/Point_3.h>
 #include <CGAL/Segment_3.h>
@@ -21,6 +24,11 @@
 #include <CGAL/Kernel/global_functions_2.h>
 #include <CGAL/Kernel_23/internal/Has_boolean_tags.h>
 #include <CGAL/Triangulation_structural_filtering_traits.h>
+
+#include <array>
+#include <limits>
+#include <optional>
+#include <variant>
 
 namespace CGAL {
 
@@ -90,11 +98,10 @@ struct Projector<R,2>
 template <class R,int dim>
 class Construct_bbox_projected_2 {
 public:
-  typedef typename R::Point_3     Point;
-
-  Bbox_2 operator()(const Point& p) const {
+  template <typename T>
+  Bbox_2 operator()(const T& obj) const {
     typename R::Construct_bbox_3 bb;
-    return Projector<R, dim>::bbox(bb(p));
+    return Projector<R, dim>::bbox(bb(obj));
   }
 };
 
@@ -407,6 +414,24 @@ public:
     const Vector_2 v2(project(v));
     const Vector_2 w2(project(w));
     return CGAL::determinant(v2, w2);
+  }
+};
+
+template <class R,int dim>
+struct Do_intersect_projected_3
+{
+  template <typename T> bool operator()(const Bbox_2& bbox, const T& obj) const {
+    static constexpr double infinity = std::numeric_limits<double>::infinity();
+    std::array<double, 3> bbox_min = {-infinity, -infinity, -infinity};
+    std::array<double, 3> bbox_max = {infinity, infinity, infinity};
+
+    using Proj = Projector<R, dim>;
+    bbox_min[Proj::x_index] = bbox.xmin();
+    bbox_min[Proj::y_index] = bbox.ymin();
+    bbox_max[Proj::x_index] = bbox.xmax();
+    bbox_max[Proj::y_index] = bbox.ymax();
+    Bbox_3 bbox3(bbox_min[0], bbox_min[1], bbox_min[2], bbox_max[0], bbox_max[1], bbox_max[2]);
+    return do_intersect(bbox3, obj);
   }
 };
 
@@ -952,6 +977,7 @@ public:
   typedef Collinear_are_ordered_along_line_projected_3<Rp,dim> Collinear_are_ordered_along_line_2;
   typedef Squared_distance_projected_3<Rp,dim>                Compute_squared_distance_2;
   typedef Intersect_projected_3<Rp,dim>                       Intersect_2;
+  typedef Do_intersect_projected_3<Rp,dim>                    Do_intersect_2;
   typedef Compute_squared_radius_projected<Rp,dim>            Compute_squared_radius_2;
   typedef Compute_scalar_product_projected_3<Rp,dim>          Compute_scalar_product_2;
   typedef Compute_squared_length_projected_3<Rp,dim>          Compute_squared_length_2;
@@ -1150,6 +1176,12 @@ public:
   intersect_2_object () const
   {
     return Intersect_2();
+  }
+
+  Do_intersect_2
+  do_intersect_2_object() const
+  {
+    return Do_intersect_2();
   }
 
   Construct_point_2 construct_point_2_object() const

@@ -1,0 +1,36 @@
+The initial arrangement:
+8 vertices:
+(1 3) - degree 3
+(5 3) - degree 3
+(1 4) - degree 3
+(5 4) - degree 3
+(1 1) - degree 1
+(1 6) - degree 1
+(5 1) - degree 1
+(5 6) - degree 1
+8 edges:
+[1 3 5 3]
+[1 4 5 4]
+[1 1 1 3]
+[1 3 1 4]
+[1 4 1 6]
+[5 1 5 3]
+[5 3 5 4]
+[5 4 5 6]
+2 faces:
+Unbounded face.
+    Hole #1: (5 4)   [5 3 5 4]   (5 3)   [5 1 5 3]   (5 1)   [5 1 5 3]   (5 3)   [1 3 5 3]   (1 3)   [1 1 1 3]   (1 1)   [1 1 1 3]   (1 3)   [1 3 1 4]   (1 4)   [1 4 1 6]   (1 6)   [1 4 1 6]   (1 4)   [1 4 5 4]   (5 4)   [5 4 5 6]   (5 6)   [5 4 5 6]   (5 4)
+Outer boundary: (5 3)   [5 3 5 4]   (5 4)   [1 4 5 4]   (1 4)   [1 3 1 4]   (1 3)   [1 3 5 3]   (5 3)
+The final arrangement:
+4 vertices:
+(1 1) - degree 1
+(1 6) - degree 1
+(5 1) - degree 1
+(5 6) - degree 1
+2 edges:
+[1 1 1 6]
+[5 1 5 6]
+1 faces:
+Unbounded face.
+    Hole #1: (1 6)   [1 1 1 6]   (1 1)   [1 1 1 6]   (1 6)
+    Hole #2: (5 1)   [5 1 5 6]   (5 6)   [5 1 5 6]   (5 1)

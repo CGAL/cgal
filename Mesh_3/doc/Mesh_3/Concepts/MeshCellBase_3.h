@@ -22,7 +22,7 @@ used in some operations to mark for instance
 the facets that have been visited.
 
 This concept also provides storage for the centers of Delaunay surface balls.
-Each surface facet has a Delaunay surface ball, i. e.
+Each surface facet has a Delaunay surface ball, i.e.,
 a circumscribing ball, centered
 on an input complex surface patch,
 and empty of triangulation vertices.
@@ -34,7 +34,7 @@ called 'intrusive'.
 
 For parallel algorithms, the functions related to facet
 access/modification must be concurrency-safe when several calls are
-made in parallel on different facets of the cell (e.g. calling
+made in parallel on different facets of the cell (e.g., calling
 `set_facet_visited(0, true)`, `set_facet_visited(2, true)`
 and `is_facet_visited(1)` in parallel must be safe)
 

@@ -15,7 +15,6 @@
 
 #include <CGAL/license/Nef_S2.h>
 
-
 #include <CGAL/basic.h>
 #include <CGAL/Origin.h>
 

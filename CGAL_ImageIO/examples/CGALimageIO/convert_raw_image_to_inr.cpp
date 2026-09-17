@@ -27,7 +27,7 @@ int main(int argc, char** argv)
       return 1;
     }
 
-    _image* image = ::_readImage_raw(argv[1],
+    CGAL::_image* image = CGAL::_readImage_raw(argv[1],
                                      xdim, ydim, zdim);
     if(image)
     {
@@ -42,7 +42,7 @@ int main(int argc, char** argv)
 #else
                       << ".inr";
 #endif
-      return ::_writeImage(image, output_filename.str().c_str());
+      return CGAL::_writeImage(image, output_filename.str().c_str());
     }
   }
   else

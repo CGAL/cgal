@@ -26,7 +26,7 @@
 
 /// \defgroup PkgMesh3Functions Mesh Generation Functions
 /// \ingroup PkgMesh3Ref
-/// The two main functions to generate a mesh are `make_mesh_3()` and `refine_mesh_3()`.
+/// The two main functions to generate a mesh are `CGAL::make_mesh_3()` and `CGAL::refine_mesh_3()`.
 /// The other functions enable to optimize an existing mesh.
 
 /// \defgroup PkgMesh3Initializers Mesh Initialization Functors
@@ -48,7 +48,7 @@
 \cgalPkgPicture{Mesh_3/fig/multilabel_mesher_small.jpg}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Pierre Alliez, Clément Jamin, Laurent Rineau, Stéphane Tayeb, Jane Tournois, and Mariette Yvinec}
-\cgalPkgDesc{This package is devoted to the generation of isotropic simplicial meshes discretizing 3D domains. The domain to be meshed is a region of 3D space that has to be bounded. The region may be connected or composed of multiple components and/or subdivided in several subdomains. The domain is input as an oracle able to answer queries, of a few different types, on the domain. Boundary and subdivision surfaces are either smooth or piecewise smooth surfaces, formed with planar or curved surface patches. Surfaces may exhibit 1-dimensional features (e.g. crease edges) and 0-dimensional features (e.g. singular points as corners tips, cusps or darts), that have to be fairly approximated in the mesh. Optionally, the algorithms support multi-core shared-memory architectures to take advantage of available parallelism.}
+\cgalPkgDesc{This package is devoted to the generation of isotropic simplicial meshes discretizing 3D domains. The domain to be meshed is a region of 3D space that has to be bounded. The region may be connected or composed of multiple components and/or subdivided in several subdomains. The domain is input as an oracle able to answer queries, of a few different types, on the domain. Boundary and subdivision surfaces are either smooth or piecewise smooth surfaces, formed with planar or curved surface patches. Surfaces may exhibit 1-dimensional features (e.g., crease edges) and 0-dimensional features (e.g., singular points as corners tips, cusps or darts), that have to be fairly approximated in the mesh. Optionally, the algorithms support multi-core shared-memory architectures to take advantage of available parallelism.}
 \cgalPkgManuals{Chapter_3D_Mesh_Generation,PkgMesh3Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
@@ -101,13 +101,14 @@ related to the template parameters of some models of the main concepts:
 The following classes are models of domain concepts
 and their associated classes:
 
-- `CGAL::Labeled_mesh_domain_3<LabelingFunction,BGT>`
+- `CGAL::Labeled_mesh_domain_3<BGT,SubdomainIndex,SurfacePatchIndex>`
 - `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT>`
 - `CGAL::Polyhedral_mesh_domain_with_features_3<IGT>`
 - `CGAL::Polyhedral_complex_mesh_domain_3<IGT>`
 - `CGAL::Mesh_domain_with_polyline_features_3<MD>`
 - `CGAL::Mesh_polyhedron_3<IGT>`
-- `CGAL::Implicit_multi_domain_to_labeling_function_wrapper<ImplicitFunction>`
+- `CGAL::Implicit_multi_domain_to_labeling_function_wrapper<Function>`
+- `CGAL::Image_3`
 
 The following functors are available for feature detection:
 

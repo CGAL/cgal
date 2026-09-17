@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
+#include <filesystem>
+#include <string>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Advancing_front_surface_reconstruction.h>
 #include <CGAL/tuple.h>
@@ -58,7 +60,11 @@ struct Perimeter {
 
 int main(int argc, char* argv[])
 {
-  std::ifstream in((argc>1)?argv[1]:CGAL::data_file_path("points_3/half.xyz"));
+  const std::string filename = (argc > 1) ?
+    argv[1] :CGAL::data_file_path("points_3/half.xyz");
+  const std::string stem = std::filesystem::path(filename).stem().string();
+
+  std::ifstream in(filename);
   double per = (argc>2)?boost::lexical_cast<double>(argv[2]):0;
   double radius_ratio_bound = (argc>3)?boost::lexical_cast<double>(argv[3]):5.0;
 
@@ -68,6 +74,7 @@ int main(int argc, char* argv[])
   std::copy(std::istream_iterator<Point_3>(in),
             std::istream_iterator<Point_3>(),
             std::back_inserter(points));
+  std::cout << "Read " << points.size() << " points" << std::endl;
 
   Perimeter perimeter(per);
   CGAL::advancing_front_surface_reconstruction(points.begin(),
@@ -76,13 +83,15 @@ int main(int argc, char* argv[])
                                                perimeter,
                                                radius_ratio_bound);
 
-  std::cout << "OFF\n" << points.size() << " " << facets.size() << " 0\n";
+  std::ofstream out(stem + ".off");
+  out.precision(17);
+  out << "OFF\n" << points.size() << " " << facets.size() << " 0\n";
   std::copy(points.begin(),
             points.end(),
-            std::ostream_iterator<Point_3>(std::cout, "\n"));
+            std::ostream_iterator<Point_3>(out, "\n"));
   std::copy(facets.begin(),
             facets.end(),
-            std::ostream_iterator<Facet>(std::cout, "\n"));
+            std::ostream_iterator<Facet>(out, "\n"));
 
   return 0;
 }

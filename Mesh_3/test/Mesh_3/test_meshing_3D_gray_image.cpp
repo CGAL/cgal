@@ -90,7 +90,7 @@ public:
 
     // Verify
     this->verify_c3t3_volume(c3t3, 1236086 * 0.95, 1236086 * 1.05);
-    this->verify(c3t3, domain, criteria, Bissection_tag());
+    this->verify(c3t3, domain, criteria, Bisection_tag());
   }
 };
 

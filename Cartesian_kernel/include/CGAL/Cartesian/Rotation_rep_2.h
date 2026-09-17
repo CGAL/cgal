@@ -150,6 +150,11 @@ public:
     return true;
   }
 
+  bool has_rotation() const override
+  {
+    return true;
+  }
+
   FT cartesian(int i, int j) const override
   {
     switch (i)

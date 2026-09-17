@@ -147,7 +147,7 @@ typedef typename CGAL::Line_2<R>                 Line_2;
     return true;
   }
 
- bool is_reflection() const override
+  bool has_rotation() const override
   {
     return true;
   }

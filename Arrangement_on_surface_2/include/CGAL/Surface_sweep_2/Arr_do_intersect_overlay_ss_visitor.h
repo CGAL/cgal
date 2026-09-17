@@ -97,12 +97,12 @@ public:
 
   bool after_handle_event(Event* e, Status_line_iterator iter, bool flag) {
     auto res = Base::after_handle_event(e, iter, flag);
-    if (m_found_x) this->surface_sweep()->stop_sweep();
+    if (m_found_x) this->stop_sweep();
     return res;
   }
 
   /*! Getter */
-  bool found_intersection() { return m_found_x; }
+  bool do_intersect() { return m_found_x; }
 };
 
 } // namespace CGAL

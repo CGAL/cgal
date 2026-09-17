@@ -121,13 +121,13 @@ typedef TriangulationDataStructure_::Face Face;
 /// @{
 
 /*!
-handle to a a vertex
+handle to a vertex
 */
 typedef TriangulationDataStructure_::Vertex_handle
 Vertex_handle;
 
 /*!
-const handle to a a vertex
+const handle to a vertex
 */
 typedef TriangulationDataStructure_::Vertex_const_handle
 Vertex_const_handle;
@@ -357,7 +357,7 @@ Full_cell_handle full_cell(const Facet & f) const;
 
 /*!
 Returns the index of the vertex of the full cell
-`c=tr.full_cell(f)` which does not belong to `c`.
+`c=tr.full_cell(f)` which does not belong to `f`.
 */
 int index_of_covertex(const Facet & f) const;
 
@@ -611,7 +611,7 @@ c);
 
 /*!
 Inserts point `p` in the triangulation.
-\pre `p` must lie outside the convex hull of `tr`. The half-space
+\pre `p` must lie outside the convex hull of `tr`. The halfspace
 defined by the infinite full cell `c` must contain `p`.
 */
 Vertex_handle insert_outside_convex_hull(const Point &,

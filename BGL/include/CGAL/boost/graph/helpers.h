@@ -945,7 +945,7 @@ void collect_garbage(Graph&)
 /**
  * \ingroup PkgBGLHelperFct
  *
- * removes all vertices, faces and halfedges from a graph. Calls
+ * removes all vertices, edges, and faces from a graph. Calls
  * \link MutableHalfedgeGraph `remove_vertex()`\endlink,
  * \link MutableHalfedgeGraph `remove_edge()`\endlink, and
  * \link MutableFaceGraph `remove_face()`\endlink, for each vertex, edge, and face.
@@ -1000,7 +1000,7 @@ clear_impl(FaceGraph& g)
 /**
  * \ingroup PkgBGLHelperFct
  *
- * removes all vertices, faces and halfedges from a graph. Calls
+ * removes all vertices, edges, and faces from a graph. Calls
  * \link MutableHalfedgeGraph `remove_vertex()`\endlink,
  * \link MutableHalfedgeGraph `remove_edge()`\endlink, and
  * \link MutableFaceGraph `remove_face()`\endlink, for each vertex, edge, and face.

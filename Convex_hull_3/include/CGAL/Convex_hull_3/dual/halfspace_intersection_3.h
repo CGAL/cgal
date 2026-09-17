@@ -258,7 +258,7 @@ namespace CGAL
         CGAL_assertion_code(for(PlaneIterator pit=begin;pit!=end;++pit))
           CGAL_assertion(pit->has_on_negative_side(*origin));
 
-        // compute the intersection of the half-space using the dual formulation
+        // compute the intersection of the halfspace using the dual formulation
         Hull_traits_dual_3 dual_traits(*origin);
         Polyhedron_dual_3 dual_convex_hull;
         CGAL::convex_hull_3(begin, end, dual_convex_hull, dual_traits);

@@ -15,7 +15,7 @@ Compared to the "classic" plane strategy, this strategy improves the speed and t
 \note Both the cost and the placement policies must be used together as they internally use
 and share information associating quadrics to vertices.
 Note however, that they may still be wrapped with behavior-modifying classes
-such as `Constrained_placement` or `Bounded_normal_change_placement`.
+such as `Constrained_placement` or `Bounded_normal_change_filter`.
 
 \tparam TriangleMesh is the type of surface mesh being simplified, and must be a model
                      of the `MutableFaceGraph` and `HalfedgeListGraph` concepts.

@@ -329,7 +329,7 @@ void CGAL_Lab_repair_cgal_lab_plugin::on_actionSnapBorders_triggered()
 
       // post processing
       std::vector<halfedge_descriptor> remaining_cycles;
-      CGAL::Polygon_mesh_processing::extract_boundary_cycles(tm, std::back_inserter(remaining_cycles));
+      CGAL::extract_boundary_cycles(tm, std::back_inserter(remaining_cycles));
 
       for (halfedge_descriptor hc : remaining_cycles)
       {

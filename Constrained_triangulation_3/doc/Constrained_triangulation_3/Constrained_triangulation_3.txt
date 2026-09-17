@@ -229,7 +229,7 @@ triangulation.
 The following example demonstrates how to detect planar surface patches and remesh them as coarsely
 as possible using
 \link CGAL::Polygon_mesh_processing::remesh_planar_patches(const TriangleMeshIn&,PolygonMeshOut&,const NamedParametersIn&,const NamedParametersOut&) `CGAL::Polygon_mesh_processing::remesh_planar_patches()` \endlink
-from the \ref PkgPolygonMeshProcessing package.
+from the \ref PkgPMPRemeshing package.
 The resulting patches and segmentation are then used to build a conforming constrained Delaunay triangulation.
 
 When the named parameter `plc_face_id` is specified, each constrained facet in the 3D triangulation
@@ -270,7 +270,7 @@ is used to associate each facet of the triangulation with the corresponding inpu
 Given a PLC, the algorithms in this package can construct a conforming constrained Delaunay triangulation, provided
 the input surface can be represented as a valid surface mesh or a collection of surface meshes,
 and does not contain self-intersections.
-Several preprocessing functions are available in the \ref PkgPolygonMeshProcessing package to help ensure these
+Several preprocessing functions are available in the \ref PkgPMPMeshRepair package to help ensure these
 preconditions are met.
 
 The following example demonstrates how to construct a conforming constrained Delaunay triangulation from
@@ -284,7 +284,7 @@ The function
 is used to detect self-intersections,
 but it requires the input mesh to be triangulated. Therefore, the input mesh must first be triangulated
 using
-\link CGAL::Polygon_mesh_processing::triangulate_faces(FaceRange,PolygonMesh&,const NamedParameters&) `CGAL::Polygon_mesh_processing::triangulate_faces()`\endlink
+\link CGAL::Polygon_mesh_processing::triangulate_faces(const FaceRange&,PolygonMesh&,const NamedParameters&) `CGAL::Polygon_mesh_processing::triangulate_faces()`\endlink
 before performing the self-intersection check.
 
 If self-intersections are found, the triangulated mesh is converted into a triangle soup, which is then

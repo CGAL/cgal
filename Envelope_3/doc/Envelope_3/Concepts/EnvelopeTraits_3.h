@@ -69,7 +69,7 @@ public:
    * case, the object represents an isolated point of the projected boundary. In
    * the latter, more general, case the object represents an \f$ x\f$-monotone
    * boundary curve along with an enumeration value which is either
-   * `ON_NEGATIVE_SIDE` or `ON_POSITIVE_SIDE`, indicating whether whether the
+   * `ON_NEGATIVE_SIDE` or `ON_POSITIVE_SIDE`, indicating whether the
    * projection of the surface onto the \f$ xy\f$-plane lies below or above this
    * \f$ x\f$-monotone curve, respectively. In degenerate case, namely when the
    * surface itself is vertical, and its projection onto the plane is

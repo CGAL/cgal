@@ -53,7 +53,7 @@ read_vtk_image_data(vtkImageData* vtk_image, Image_3::Own owning = Image_3::OWN_
   if(!vtk_image)
     return Image_3();
 
-  _image* image = ::_initImage();
+  _image* image = _initImage();
   const int* dims = vtk_image->GetDimensions();
   const double* spacing = vtk_image->GetSpacing();
   const double* offset = vtk_image->GetOrigin();
@@ -68,7 +68,7 @@ read_vtk_image_data(vtkImageData* vtk_image, Image_3::Own owning = Image_3::OWN_
   image->tx = static_cast<float>(offset[0]);
   image->ty = static_cast<float>(offset[1]);
   image->tz = static_cast<float>(offset[2]);
-  image->endianness = ::_getEndianness();
+  image->endianness = _getEndianness();
 
   int vtk_type = vtk_image->GetScalarType();
   if(vtk_type == VTK_SIGNED_CHAR) vtk_type = VTK_CHAR;
@@ -81,7 +81,7 @@ read_vtk_image_data(vtkImageData* vtk_image, Image_3::Own owning = Image_3::OWN_
   const int cn = vtk_image->GetNumberOfScalarComponents();
 
   if (!vtk_image->GetPointData() || !vtk_image->GetPointData()->GetScalars()) {
-    ::_freeImage(image);
+    _freeImage(image);
     return Image_3();
   }
 
@@ -92,7 +92,7 @@ read_vtk_image_data(vtkImageData* vtk_image, Image_3::Own owning = Image_3::OWN_
 
   if(owning == Image_3::OWN_THE_DATA) {
     std::size_t dims_n = image->xdim*image->ydim*image->zdim;
-    image->data = ::ImageIO_alloc(dims_n * image->wdim);
+    image->data = ImageIO_alloc(dims_n * image->wdim);
 
     // std::cerr << "GetNumberOfTuples() = " << vtk_image->GetPointData()->GetScalars()->GetNumberOfTuples() << "\n"
     //           << "components = " << cn << "\n"

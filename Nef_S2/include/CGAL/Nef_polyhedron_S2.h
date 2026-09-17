@@ -87,7 +87,7 @@ public:
 
 /*{\Mdefinition An instance of data type |\Mname| is a subset of $S_2$
 that is the result of forming complements and intersections starting
-from a finite set |H| of half-spaces. |\Mtype| is closed under all
+from a finite set |H| of halfspaces. |\Mtype| is closed under all
 binary set operations |intersection|, |union|, |difference|,
 |complement| and under the topological operations |boundary|,
 |closure|, and |interior|.
@@ -122,7 +122,7 @@ public:
   /*{\Mtypemember segments in the sphere surface.}*/
 
   typedef typename Sphere_kernel::Sphere_circle  Sphere_circle;
-  /*{\Mtypemember oriented great circles modeling spherical half-spaces}*/
+  /*{\Mtypemember oriented great circles modeling spherical halfspaces}*/
 
   typedef typename Sphere_kernel::Sphere_direction Sphere_direction;
 
@@ -546,7 +546,7 @@ public:
 
   /*{\Mtext \headerline{Exploration - Point location - Ray shooting}
   As Nef polyhedra are the result of forming complements
-  and intersections starting from a set |H| of half-spaces that are
+  and intersections starting from a set |H| of halfspaces that are
   defined by oriented lines in the plane, they can be represented by
   an attributed plane map $M = (V,E,F)$. For topological queries
   within |M| the following types and operations allow exploration

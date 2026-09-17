@@ -1,0 +1,13 @@
+The arrangement vertices:
+(4 1) - RED
+(7 6) - RED
+(1 6) - RED
+(2.8 3) - WHITE
+(1 3) - RED
+(5.2 3) - WHITE
+(7 3) - RED
+(1.9 4.5) - WHITE
+(2.8 6) - WHITE
+(4 8) - RED
+(5.2 6) - WHITE
+(6.1 4.5) - WHITE

@@ -28,8 +28,8 @@
 #  pragma warning(disable:4267)
 #endif
 
-#ifndef OPEN_MESH_CLASS
-  #error OPEN_MESH_CLASS is not defined
+#ifndef CGAL_OPEN_MESH_CLASS
+  #error CGAL_OPEN_MESH_CLASS is not defined
 #endif
 
 // note only the classes in CGAL::internal below are protected by the macro,
@@ -72,10 +72,10 @@ struct Construct_omesh_edge_opposite
 namespace boost {
 
 template <class K>
-struct graph_traits< OPEN_MESH_CLASS >
+struct graph_traits< CGAL_OPEN_MESH_CLASS >
 {
 private:
-  typedef OPEN_MESH_CLASS SM;
+  typedef CGAL_OPEN_MESH_CLASS SM;
 
   struct SM_graph_traversal_category : public virtual boost::bidirectional_graph_tag,
                                        public virtual boost::vertex_list_graph_tag,
@@ -132,8 +132,8 @@ public:
 };
 
 template<typename K>
-struct graph_traits< const OPEN_MESH_CLASS >
-  : public graph_traits< OPEN_MESH_CLASS >
+struct graph_traits< const CGAL_OPEN_MESH_CLASS >
+  : public graph_traits< CGAL_OPEN_MESH_CLASS >
 { };
 
 } // namespace boost
@@ -141,103 +141,103 @@ struct graph_traits< const OPEN_MESH_CLASS >
 namespace OpenMesh {
 
 template <typename K>
-typename boost::graph_traits<OPEN_MESH_CLASS >::vertices_size_type
-num_vertices(const OPEN_MESH_CLASS& sm)
+typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::vertices_size_type
+num_vertices(const CGAL_OPEN_MESH_CLASS& sm)
 {
   return sm.n_vertices();
 }
 
 
 template <typename K>
-typename boost::graph_traits<OPEN_MESH_CLASS >::edges_size_type
-num_edges(const OPEN_MESH_CLASS& sm)
+typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::edges_size_type
+num_edges(const CGAL_OPEN_MESH_CLASS& sm)
 {
   return sm.n_edges();
 }
 
 
 template <typename K>
-typename boost::graph_traits<OPEN_MESH_CLASS >::degree_size_type
-degree(typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_descriptor v,
-       const OPEN_MESH_CLASS& sm)
+typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::degree_size_type
+degree(typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::vertex_descriptor v,
+       const CGAL_OPEN_MESH_CLASS& sm)
 {
   return sm.valence(v);
 }
 
 
 template <typename K>
-typename boost::graph_traits<OPEN_MESH_CLASS >::degree_size_type
-degree(typename boost::graph_traits<OPEN_MESH_CLASS >::face_descriptor f,
-       const OPEN_MESH_CLASS& sm)
+typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::degree_size_type
+degree(typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::face_descriptor f,
+       const CGAL_OPEN_MESH_CLASS& sm)
 {
   return sm.valence(f);
 }
 
 
 template <typename K>
-typename boost::graph_traits<OPEN_MESH_CLASS >::degree_size_type
-out_degree(typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_descriptor v,
-           const OPEN_MESH_CLASS& sm)
+typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::degree_size_type
+out_degree(typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::vertex_descriptor v,
+           const CGAL_OPEN_MESH_CLASS& sm)
 {
   return sm.valence(v);
 }
 
 
 template <typename K>
-typename boost::graph_traits<OPEN_MESH_CLASS >::degree_size_type
-in_degree(typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_descriptor v,
-          const OPEN_MESH_CLASS& sm)
+typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::degree_size_type
+in_degree(typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::vertex_descriptor v,
+          const CGAL_OPEN_MESH_CLASS& sm)
 {
   return sm.valence(v);
 }
 
 
 template <typename K>
-typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_descriptor
-source(typename boost::graph_traits<OPEN_MESH_CLASS >::edge_descriptor e,
-       const OPEN_MESH_CLASS& sm)
+typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::vertex_descriptor
+source(typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::edge_descriptor e,
+       const CGAL_OPEN_MESH_CLASS& sm)
 {
   return sm.from_vertex_handle(e.halfedge());
 }
 
 template <typename K>
-typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_descriptor
-source(typename boost::graph_traits<OPEN_MESH_CLASS >::halfedge_descriptor h,
-       const OPEN_MESH_CLASS& sm)
+typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::vertex_descriptor
+source(typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::halfedge_descriptor h,
+       const CGAL_OPEN_MESH_CLASS& sm)
 {
   return sm.from_vertex_handle(h);
 }
 
 
 template <typename K>
-typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_descriptor
-target(typename boost::graph_traits<OPEN_MESH_CLASS >::edge_descriptor e,
-       const OPEN_MESH_CLASS& sm)
+typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::vertex_descriptor
+target(typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::edge_descriptor e,
+       const CGAL_OPEN_MESH_CLASS& sm)
 {
   return sm.to_vertex_handle(e.halfedge());
 }
 
 template <typename K>
-typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_descriptor
-target(typename boost::graph_traits<OPEN_MESH_CLASS >::halfedge_descriptor h,
-       const OPEN_MESH_CLASS& sm)
+typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::vertex_descriptor
+target(typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::halfedge_descriptor h,
+       const CGAL_OPEN_MESH_CLASS& sm)
 {
   return sm.to_vertex_handle(h);
 }
 
 template <typename K>
-CGAL::Iterator_range<typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_iterator>
-vertices(const OPEN_MESH_CLASS& sm)
+CGAL::Iterator_range<typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::vertex_iterator>
+vertices(const CGAL_OPEN_MESH_CLASS& sm)
 {
   return CGAL::make_range(sm.vertices_sbegin(), sm.vertices_end());
 }
 
 
 template <typename K>
-CGAL::Iterator_range<typename boost::graph_traits<OPEN_MESH_CLASS >::edge_iterator>
-edges(const OPEN_MESH_CLASS& sm)
+CGAL::Iterator_range<typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::edge_iterator>
+edges(const CGAL_OPEN_MESH_CLASS& sm)
 {
-  typedef typename boost::graph_traits<OPEN_MESH_CLASS >::edge_iterator iterator;
+  typedef typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::edge_iterator iterator;
   iterator beg(sm.edges_sbegin());
   iterator end(sm.edges_end());
   return CGAL::make_range(beg,end);
@@ -245,30 +245,30 @@ edges(const OPEN_MESH_CLASS& sm)
 
 
 template <typename K>
-CGAL::Iterator_range<typename boost::graph_traits<OPEN_MESH_CLASS >::in_edge_iterator>
-in_edges(typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_descriptor v,
-         const OPEN_MESH_CLASS& sm)
+CGAL::Iterator_range<typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::in_edge_iterator>
+in_edges(typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::vertex_descriptor v,
+         const CGAL_OPEN_MESH_CLASS& sm)
 {
-  typedef typename boost::graph_traits<OPEN_MESH_CLASS >::in_edge_iterator Iter;
+  typedef typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::in_edge_iterator Iter;
 
   return CGAL::make_range(Iter(halfedge(v,sm),sm), Iter(halfedge(v,sm),sm,1));
 }
 
 
 template <typename K>
-CGAL::Iterator_range<typename boost::graph_traits<OPEN_MESH_CLASS >::out_edge_iterator>
-out_edges(typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_descriptor v,
-          const OPEN_MESH_CLASS& sm)
+CGAL::Iterator_range<typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::out_edge_iterator>
+out_edges(typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::vertex_descriptor v,
+          const CGAL_OPEN_MESH_CLASS& sm)
 {
-  typedef typename boost::graph_traits<OPEN_MESH_CLASS >::out_edge_iterator Iter;
+  typedef typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::out_edge_iterator Iter;
   return CGAL::make_range(Iter(halfedge(v,sm),sm), Iter(halfedge(v,sm),sm,1));
 }
 
 
 template <typename K>
-CGAL::Iterator_range<typename boost::graph_traits<OPEN_MESH_CLASS >::adjacency_iterator>
-adjacent_vertices(typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_descriptor v,
-                 const OPEN_MESH_CLASS& sm)
+CGAL::Iterator_range<typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::adjacency_iterator>
+adjacent_vertices(typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::vertex_descriptor v,
+                 const CGAL_OPEN_MESH_CLASS& sm)
 {
   return CGAL::vertices_around_target(v,sm);
 }
@@ -277,12 +277,12 @@ adjacent_vertices(typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_descrip
 
 
 template<typename K>
-std::pair<typename boost::graph_traits<OPEN_MESH_CLASS >::edge_descriptor,
+std::pair<typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::edge_descriptor,
           bool>
-edge(typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_descriptor u,
-     typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_descriptor v,
-     const OPEN_MESH_CLASS& sm) {
-  typename boost::graph_traits<OPEN_MESH_CLASS >::edge_descriptor
+edge(typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::vertex_descriptor u,
+     typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::vertex_descriptor v,
+     const CGAL_OPEN_MESH_CLASS& sm) {
+  typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::edge_descriptor
     he(sm.find_halfedge(u, v));
   return std::make_pair(he, he.is_valid());
 }
@@ -292,52 +292,52 @@ edge(typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_descriptor u,
 // HalfedgeGraph
 //
 template <typename K>
-typename boost::graph_traits<OPEN_MESH_CLASS >::halfedge_descriptor
-next(typename boost::graph_traits<OPEN_MESH_CLASS >::halfedge_descriptor h,
-     const OPEN_MESH_CLASS& sm)
+typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::halfedge_descriptor
+next(typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::halfedge_descriptor h,
+     const CGAL_OPEN_MESH_CLASS& sm)
 {
   return sm.next_halfedge_handle(h);
 }
 
 template <typename K>
-typename boost::graph_traits<OPEN_MESH_CLASS >::halfedge_descriptor
-prev(typename boost::graph_traits<OPEN_MESH_CLASS >::halfedge_descriptor h,
-     const OPEN_MESH_CLASS& sm)
+typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::halfedge_descriptor
+prev(typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::halfedge_descriptor h,
+     const CGAL_OPEN_MESH_CLASS& sm)
 {
   return sm.prev_halfedge_handle(h);
 }
 
 template <typename K>
-typename boost::graph_traits<OPEN_MESH_CLASS >::halfedge_descriptor
-opposite(typename boost::graph_traits<OPEN_MESH_CLASS >::halfedge_descriptor h,
-         const OPEN_MESH_CLASS& sm)
+typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::halfedge_descriptor
+opposite(typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::halfedge_descriptor h,
+         const CGAL_OPEN_MESH_CLASS& sm)
 {
   return sm.opposite_halfedge_handle(h);
 }
 
 template <typename K>
-typename boost::graph_traits<OPEN_MESH_CLASS >::edge_descriptor
-edge(typename boost::graph_traits<OPEN_MESH_CLASS >::halfedge_descriptor h,
-     const OPEN_MESH_CLASS& /*sm*/)
+typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::edge_descriptor
+edge(typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::halfedge_descriptor h,
+     const CGAL_OPEN_MESH_CLASS& /*sm*/)
 {
-  return typename boost::graph_traits<OPEN_MESH_CLASS >::edge_descriptor(h);
+  return typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::edge_descriptor(h);
 }
 
 template <typename K>
-typename boost::graph_traits<OPEN_MESH_CLASS >::halfedge_descriptor
-halfedge(typename boost::graph_traits<OPEN_MESH_CLASS >::edge_descriptor e,
-         const OPEN_MESH_CLASS&)
+typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::halfedge_descriptor
+halfedge(typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::edge_descriptor e,
+         const CGAL_OPEN_MESH_CLASS&)
 {
   return e.halfedge();
 }
 
 template <typename K>
-typename boost::graph_traits<OPEN_MESH_CLASS >::halfedge_descriptor
-halfedge(typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_descriptor v,
-         const OPEN_MESH_CLASS& sm)
+typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::halfedge_descriptor
+halfedge(typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::vertex_descriptor v,
+         const CGAL_OPEN_MESH_CLASS& sm)
 {
-  if(sm.halfedge_handle(v) == boost::graph_traits<OPEN_MESH_CLASS >::null_halfedge()){
-    return boost::graph_traits<OPEN_MESH_CLASS >::null_halfedge();
+  if(sm.halfedge_handle(v) == boost::graph_traits<CGAL_OPEN_MESH_CLASS >::null_halfedge()){
+    return boost::graph_traits<CGAL_OPEN_MESH_CLASS >::null_halfedge();
   }
   // prev because OpenMesh stores out-going halfedges
   // return sm.prev_halfedge_handle(sm.halfedge_handle(v));
@@ -347,14 +347,14 @@ halfedge(typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_descriptor v,
 
 template <typename K>
 std::pair<
-  typename boost::graph_traits<OPEN_MESH_CLASS >::halfedge_descriptor,
+  typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::halfedge_descriptor,
   bool
 >
-halfedge(typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_descriptor u,
-         typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_descriptor v,
-         const OPEN_MESH_CLASS& sm)
+halfedge(typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::vertex_descriptor u,
+         typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::vertex_descriptor v,
+         const CGAL_OPEN_MESH_CLASS& sm)
 {
-  typename boost::graph_traits<OPEN_MESH_CLASS >::halfedge_descriptor h = sm.find_halfedge(u, v);
+  typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::halfedge_descriptor h = sm.find_halfedge(u, v);
   return std::make_pair(h, h.is_valid());
 }
 
@@ -364,15 +364,15 @@ halfedge(typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_descriptor u,
 // HalfedgeListGraph
 //
 template <typename K>
-CGAL::Iterator_range<typename boost::graph_traits<OPEN_MESH_CLASS >::halfedge_iterator>
-halfedges(const OPEN_MESH_CLASS& sm)
+CGAL::Iterator_range<typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::halfedge_iterator>
+halfedges(const CGAL_OPEN_MESH_CLASS& sm)
 {
   return CGAL::make_range(sm.halfedges_sbegin(), sm.halfedges_end());
 }
 
 template <typename K>
-typename boost::graph_traits<OPEN_MESH_CLASS >::halfedges_size_type
-num_halfedges(const OPEN_MESH_CLASS& sm)
+typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::halfedges_size_type
+num_halfedges(const CGAL_OPEN_MESH_CLASS& sm)
 {
   return sm.n_halfedges();
 }
@@ -384,9 +384,9 @@ num_halfedges(const OPEN_MESH_CLASS& sm)
 //
 template<typename K>
 void
-set_next(typename boost::graph_traits<OPEN_MESH_CLASS >::halfedge_descriptor h1,
-         typename boost::graph_traits<OPEN_MESH_CLASS >::halfedge_descriptor h2,
-         OPEN_MESH_CLASS& sm)
+set_next(typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::halfedge_descriptor h1,
+         typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::halfedge_descriptor h2,
+         CGAL_OPEN_MESH_CLASS& sm)
 {
   sm.set_next_halfedge_handle(h1, h2);
 }
@@ -395,9 +395,9 @@ set_next(typename boost::graph_traits<OPEN_MESH_CLASS >::halfedge_descriptor h1,
 
 template<typename K>
 void
-set_target(typename boost::graph_traits<OPEN_MESH_CLASS >::halfedge_descriptor h,
-           typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_descriptor v,
-           OPEN_MESH_CLASS& sm)
+set_target(typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::halfedge_descriptor h,
+           typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::vertex_descriptor v,
+           CGAL_OPEN_MESH_CLASS& sm)
 {
   sm.set_vertex_handle(h, v);
 }
@@ -405,9 +405,9 @@ set_target(typename boost::graph_traits<OPEN_MESH_CLASS >::halfedge_descriptor h
 
 template<typename K>
 void
-set_halfedge(typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_descriptor v,
-             typename boost::graph_traits<OPEN_MESH_CLASS >::halfedge_descriptor h,
-             OPEN_MESH_CLASS& sm)
+set_halfedge(typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::vertex_descriptor v,
+             typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::halfedge_descriptor h,
+             CGAL_OPEN_MESH_CLASS& sm)
 {
   sm.set_halfedge_handle(v, sm.opposite_halfedge_handle(h));
 }
@@ -415,25 +415,25 @@ set_halfedge(typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_descriptor v
 
 template<typename K>
 void
-adjust_border_halfedge(typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_descriptor v,
-                       OPEN_MESH_CLASS& sm)
+adjust_border_halfedge(typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::vertex_descriptor v,
+                       CGAL_OPEN_MESH_CLASS& sm)
 {
   sm.adjust_outgoing_halfedge(v);
 }
 
 template<typename K>
 void
-garbage_collection(OPEN_MESH_CLASS& sm)
+garbage_collection(CGAL_OPEN_MESH_CLASS& sm)
 {
   sm.garbage_collection();
 }
 
 template<typename K>
-typename boost::graph_traits<OPEN_MESH_CLASS >::edge_descriptor
-add_edge(OPEN_MESH_CLASS& sm)
+typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::edge_descriptor
+add_edge(CGAL_OPEN_MESH_CLASS& sm)
 {
-  return edge(sm.new_edge(boost::graph_traits<OPEN_MESH_CLASS >::null_vertex(),
-                          boost::graph_traits<OPEN_MESH_CLASS >::null_vertex() ), sm);
+  return edge(sm.new_edge(boost::graph_traits<CGAL_OPEN_MESH_CLASS >::null_vertex(),
+                          boost::graph_traits<CGAL_OPEN_MESH_CLASS >::null_vertex() ), sm);
 }
 
 
@@ -441,17 +441,17 @@ add_edge(OPEN_MESH_CLASS& sm)
 // FaceGraph
 //
 template<typename K>
-typename boost::graph_traits<OPEN_MESH_CLASS >::halfedge_descriptor
-halfedge(typename boost::graph_traits<OPEN_MESH_CLASS >::face_descriptor f,
-     const OPEN_MESH_CLASS& sm)
+typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::halfedge_descriptor
+halfedge(typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::face_descriptor f,
+     const CGAL_OPEN_MESH_CLASS& sm)
 {
   return sm.halfedge_handle(f);
 }
 
 template<typename K>
-typename boost::graph_traits<OPEN_MESH_CLASS >::face_descriptor
-face(typename boost::graph_traits<OPEN_MESH_CLASS >::halfedge_descriptor h,
-     const OPEN_MESH_CLASS& sm)
+typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::face_descriptor
+face(typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::halfedge_descriptor h,
+     const CGAL_OPEN_MESH_CLASS& sm)
 {
   return sm.face_handle(h);
 }
@@ -463,9 +463,9 @@ face(typename boost::graph_traits<OPEN_MESH_CLASS >::halfedge_descriptor h,
 //
 template<typename K>
 void
-set_face(typename boost::graph_traits<OPEN_MESH_CLASS >::halfedge_descriptor h,
-         typename boost::graph_traits<OPEN_MESH_CLASS >::face_descriptor f,
-         OPEN_MESH_CLASS& sm)
+set_face(typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::halfedge_descriptor h,
+         typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::face_descriptor f,
+         CGAL_OPEN_MESH_CLASS& sm)
 {
   sm.set_face_handle(h, f);
 }
@@ -473,19 +473,19 @@ set_face(typename boost::graph_traits<OPEN_MESH_CLASS >::halfedge_descriptor h,
 
 template<typename K>
 void
-set_halfedge(typename boost::graph_traits<OPEN_MESH_CLASS >::face_descriptor f,
-             typename boost::graph_traits<OPEN_MESH_CLASS >::halfedge_descriptor h,
-             OPEN_MESH_CLASS& sm)
+set_halfedge(typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::face_descriptor f,
+             typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::halfedge_descriptor h,
+             CGAL_OPEN_MESH_CLASS& sm)
 {
   sm.set_halfedge_handle(f, h);
 }
 
 template<typename K>
 void
-reserve(OPEN_MESH_CLASS& tm,
-        typename boost::graph_traits< OPEN_MESH_CLASS >::vertices_size_type nv,
-        typename boost::graph_traits< OPEN_MESH_CLASS >::edges_size_type ne,
-        typename boost::graph_traits< OPEN_MESH_CLASS >::faces_size_type nf)
+reserve(CGAL_OPEN_MESH_CLASS& tm,
+        typename boost::graph_traits< CGAL_OPEN_MESH_CLASS >::vertices_size_type nv,
+        typename boost::graph_traits< CGAL_OPEN_MESH_CLASS >::edges_size_type ne,
+        typename boost::graph_traits< CGAL_OPEN_MESH_CLASS >::faces_size_type nf)
 {
   tm.reserve(nv, ne, nf);
 }
@@ -494,23 +494,23 @@ reserve(OPEN_MESH_CLASS& tm,
 // FaceListGraph
 //
 template <typename K>
-typename boost::graph_traits<OPEN_MESH_CLASS >::faces_size_type
-num_faces(const OPEN_MESH_CLASS& sm)
+typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::faces_size_type
+num_faces(const CGAL_OPEN_MESH_CLASS& sm)
 {
   return sm.n_faces();
 }
 
 template <typename K>
-CGAL::Iterator_range<typename boost::graph_traits<OPEN_MESH_CLASS >::face_iterator>
-faces(const OPEN_MESH_CLASS& sm)
+CGAL::Iterator_range<typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::face_iterator>
+faces(const CGAL_OPEN_MESH_CLASS& sm)
 {
   return CGAL::make_range(sm.faces_sbegin(), sm.faces_end());
 }
 
 
 template <typename K>
-typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_descriptor
-add_vertex(OPEN_MESH_CLASS& sm) {
+typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::vertex_descriptor
+add_vertex(CGAL_OPEN_MESH_CLASS& sm) {
   return sm.new_vertex();
 }
 
@@ -519,21 +519,21 @@ add_vertex(OPEN_MESH_CLASS& sm) {
 // MutableGraph
 // add a vertex with a default constructed property
 template <typename K>
-typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_descriptor
-add_vertex(OPEN_MESH_CLASS& sm) {
-  return sm.add_vertex(typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_property_type());
+typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::vertex_descriptor
+add_vertex(CGAL_OPEN_MESH_CLASS& sm) {
+  return sm.add_vertex(typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::vertex_property_type());
 }
 
 template <typename K>
-typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_descriptor
-add_vertex(const typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_property_type& p, OPEN_MESH_CLASS& sm) {
+typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::vertex_descriptor
+add_vertex(const typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::vertex_property_type& p, CGAL_OPEN_MESH_CLASS& sm) {
   return sm.add_vertex(p);
 }
 
 template <typename K>
 void
-clear_vertex(typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_descriptor,
-             OPEN_MESH_CLASS&) {
+clear_vertex(typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::vertex_descriptor,
+             CGAL_OPEN_MESH_CLASS&) {
   CGAL_assert(false);
 }
 
@@ -541,38 +541,38 @@ clear_vertex(typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_descriptor,
 
 template <typename K>
 void
-remove_vertex(typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_descriptor v,
-              OPEN_MESH_CLASS& sm) {
+remove_vertex(typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::vertex_descriptor v,
+              CGAL_OPEN_MESH_CLASS& sm) {
 
   sm.request_face_status();
   sm.request_vertex_status();
   sm.request_halfedge_status();
-  sm.set_halfedge_handle(v, typename boost::graph_traits<OPEN_MESH_CLASS >::halfedge_descriptor());
+  sm.set_halfedge_handle(v, typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::halfedge_descriptor());
   sm.status(v).set_deleted(true);
 }
 
 
 template <typename K>
 void
-remove_edge(typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_descriptor u,
-            typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_descriptor v,
-            OPEN_MESH_CLASS& sm)
+remove_edge(typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::vertex_descriptor u,
+            typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::vertex_descriptor v,
+            CGAL_OPEN_MESH_CLASS& sm)
 {
-  typename boost::graph_traits<OPEN_MESH_CLASS >::edge_descriptor e = edge(u, v, sm);
+  typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::edge_descriptor e = edge(u, v, sm);
   remove_edge(e,sm);
 }
 
 template <typename K>
 void
-remove_edge(typename boost::graph_traits<OPEN_MESH_CLASS >::edge_descriptor e,
-            OPEN_MESH_CLASS& sm)
+remove_edge(typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::edge_descriptor e,
+            CGAL_OPEN_MESH_CLASS& sm)
 {
   sm.request_face_status();
   sm.request_vertex_status();
   sm.request_halfedge_status();
   sm.request_edge_status();
 
-  typedef typename boost::graph_traits<OPEN_MESH_CLASS >::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::halfedge_descriptor halfedge_descriptor;
 
   halfedge_descriptor h1 = halfedge(e,sm);
   halfedge_descriptor h2 = opposite(halfedge(e,sm),sm);
@@ -585,41 +585,41 @@ remove_edge(typename boost::graph_traits<OPEN_MESH_CLASS >::edge_descriptor e,
 
 template <typename K>
 void
-remove_edge(typename boost::graph_traits<OPEN_MESH_CLASS >::edge_iterator eiter,
-            OPEN_MESH_CLASS& sm)
+remove_edge(typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::edge_iterator eiter,
+            CGAL_OPEN_MESH_CLASS& sm)
 {
   remove_edge(*eiter, sm);
 }
 
 template<typename K>
 void
-remove_face(typename boost::graph_traits<OPEN_MESH_CLASS >::face_descriptor f,
-            OPEN_MESH_CLASS& sm)
+remove_face(typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::face_descriptor f,
+            CGAL_OPEN_MESH_CLASS& sm)
 {
 
   sm.request_face_status();
   sm.request_vertex_status();
   sm.request_halfedge_status();
 
-  set_halfedge(f, typename boost::graph_traits<OPEN_MESH_CLASS >::halfedge_descriptor(), sm);
+  set_halfedge(f, typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::halfedge_descriptor(), sm);
   sm.status(f).set_deleted(true);
 }
 
 #if 0 // conflicts with function in Euler_operations.h
 template<typename K>
-std::pair<typename boost::graph_traits<OPEN_MESH_CLASS >::edge_descriptor,
+std::pair<typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::edge_descriptor,
           bool>
-add_edge(typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_descriptor v1,
-         typename boost::graph_traits<OPEN_MESH_CLASS >::vertex_descriptor v2,
-         OPEN_MESH_CLASS& sm) {
+add_edge(typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::vertex_descriptor v1,
+         typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::vertex_descriptor v2,
+         CGAL_OPEN_MESH_CLASS& sm) {
 
   return sm.new_edge(v1, v2);
 }
 #endif
 
 template<typename K>
-typename boost::graph_traits<OPEN_MESH_CLASS >::face_descriptor
-add_face(OPEN_MESH_CLASS& sm)
+typename boost::graph_traits<CGAL_OPEN_MESH_CLASS >::face_descriptor
+add_face(CGAL_OPEN_MESH_CLASS& sm)
 {
   return sm.new_face();
 }
@@ -634,7 +634,7 @@ namespace CGAL {
 // numbers it is necessary to first collect garbage. We add an
 // overlaod to get consistent behavior.
 template<typename K>
-void clear(OPEN_MESH_CLASS& sm)
+void clear(CGAL_OPEN_MESH_CLASS& sm)
 {
   sm.clear();
   sm.garbage_collection(true, true, true);
@@ -645,14 +645,14 @@ void clear(OPEN_MESH_CLASS& sm)
 
 //doesn't seem to work. Use BGL default IO functions instead.
 //template<typename K>
-//bool read_OFF(std::istream& is, OPEN_MESH_CLASS& sm)
+//bool read_OFF(std::istream& is, CGAL_OPEN_MESH_CLASS& sm)
 //{
 //  OpenMesh::IO::Options ropt;
 //  return OpenMesh::IO::read_mesh(sm, is, ".OFF", ropt, false);
 //}
 
 //template<typename K>
-//bool write_OFF(std::ostream& os, OPEN_MESH_CLASS& sm)
+//bool write_OFF(std::ostream& os, CGAL_OPEN_MESH_CLASS& sm)
 //{
 //  return OpenMesh::IO::write_mesh(sm, os, ".OFF");
 //}
@@ -678,4 +678,4 @@ namespace boost {
 #  pragma warning(pop)
 #endif
 
-#undef OPEN_MESH_CLASS
+#undef CGAL_OPEN_MESH_CLASS

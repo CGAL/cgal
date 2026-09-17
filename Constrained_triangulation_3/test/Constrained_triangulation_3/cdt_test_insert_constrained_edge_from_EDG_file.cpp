@@ -49,7 +49,7 @@ int main()
     assert(cdt.is_cell(vertices[1], vertices[2], vertices[3], vertices[4], c));
 
     Delaunay::Cell_handle ch;
-    int li, lj;
+    [[maybe_unused]] int li, lj;
     assert(!cdt.is_edge(vertices[0], vertices[1], ch, li, lj));
     cdt.insert_constrained_edge(vertices[0], vertices[1]);
     cdt.insert_constrained_edge(vertices[5], vertices[1]);

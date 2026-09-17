@@ -166,7 +166,7 @@ namespace CGAL {
   of the `MeshDomainWithFeatures_3` concept when used for mesh generation.
 
   Those two last template parameters default to `int`, so that they can be ignored
-  if the domain used for mesh generation does not include 0 and 1-dimensionnal features (i.e
+  if the domain used for mesh generation does not include 0 and 1-dimensional features (i.e
   is only a model of the concept `MeshDomain_3`).
 
   \cgalModels{MeshComplexWithFeatures_3InTriangulation_3}
@@ -801,7 +801,7 @@ public:
   }
 
   /**
-   * returns true if \p v is a 0-dimensionnal feature in the complex
+   * returns true if \p v is a 0-dimensional feature in the complex
    */
   bool is_in_complex(const Vertex_handle& v) const
   {
@@ -1051,12 +1051,12 @@ public:
  * to Cell_handle
  */
   class Cells_in_complex_iterator :
-    public Filter_iterator<typename Triangulation::Finite_cells_iterator,
+    public Filter_iterator<typename Triangulation::All_cells_iterator,
                            Cell_not_in_complex>
   {
   private:
-    typedef typename Triangulation::Finite_cells_iterator Tr_iterator;
-    typedef Filter_iterator<typename Triangulation::Finite_cells_iterator,
+    typedef typename Triangulation::All_cells_iterator Tr_iterator;
+    typedef Filter_iterator<typename Triangulation::All_cells_iterator,
       Cell_not_in_complex> Base;
     typedef Cells_in_complex_iterator Self;
 
@@ -1085,23 +1085,23 @@ public:
   /// returns a \c Cells_in_complex_iterator to the first cell of the 3D complex
   Cells_in_complex_iterator cells_in_complex_begin() const
   {
-    return CGAL::filter_iterator(tr_.finite_cells_end(),
+    return CGAL::filter_iterator(tr_.all_cells_end(),
                                  Cell_not_in_complex(*this),
-                                 tr_.finite_cells_begin());
+                                 tr_.all_cells_begin());
   }
 
   /// returns a \c Cells_in_complex_iterator to the first cell of the 3D complex
   Cells_in_complex_iterator cells_in_complex_begin(const Subdomain_index& index) const
   {
-    return CGAL::filter_iterator(tr_.finite_cells_end(),
+    return CGAL::filter_iterator(tr_.all_cells_end(),
                                  Cell_not_in_complex(*this, index),
-                                 tr_.finite_cells_begin());
+                                 tr_.all_cells_begin());
   }
 
   /// returns the past-the-end iterator for the cells of the 3D complex
   Cells_in_complex_iterator cells_in_complex_end() const
   {
-    return CGAL::filter_iterator(tr_.finite_cells_end(),
+    return CGAL::filter_iterator(tr_.all_cells_end(),
                                  Cell_not_in_complex(*this));
   }
 
@@ -1554,7 +1554,7 @@ private:
 private:
   void init_manifold_info() const
   {
-    for (typename Tr::All_vertices_iterator
+    for (typename Tr::Finite_vertices_iterator
       vit = triangulation().finite_vertices_begin(),
       end = triangulation().finite_vertices_end();
       vit != end; ++vit)

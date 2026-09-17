@@ -97,6 +97,12 @@ enum Box_parameter_space_2
         EXTERIOR
      };
 
+enum class API_version {
+  any = 0,
+  v1 = 1,
+  v2 = 2,
+};
+
 template < typename T, typename U >
 inline
 T enum_cast(const U& u)

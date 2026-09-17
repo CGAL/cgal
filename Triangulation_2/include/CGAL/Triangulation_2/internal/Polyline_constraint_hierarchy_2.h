@@ -1205,7 +1205,7 @@ insert_constraint(T va, T vb){
 #ifdef CGAL_DEBUG_POLYLINE_CONSTRAINT_HIERARCHY_2
   using CGAL::IO::oformat;
   std::cerr << CGAL::internal::cdt_2_indent_level
-            << "C_hierachy.insert_constraint( "
+            << "C_hierarchy.insert_constraint( "
             << IO::oformat(va) << ", " << IO::oformat(vb) << ")\n";
 #endif // CGAL_DEBUG_POLYLINE_CONSTRAINT_HIERARCHY_2
   Constraint_id cid = create_new_constraint();
@@ -1239,7 +1239,7 @@ append_constraint(Constraint_id cid, T va, T vb){
 #ifdef CGAL_DEBUG_POLYLINE_CONSTRAINT_HIERARCHY_2
   using CGAL::IO::oformat;
   std::cerr << CGAL::internal::cdt_2_indent_level
-            << "C_hierachy.append_constraint( ..., "
+            << "C_hierarchy.append_constraint( ..., "
             << IO::oformat(va) << ", " << IO::oformat(vb) << ")\n";
 #endif // CGAL_DEBUG_POLYLINE_CONSTRAINT_HIERARCHY_2
   auto& context_list_ptr = contexts_of(va, vb);
@@ -1291,7 +1291,7 @@ add_Steiner(const T va, const T vb, const T vc){
 #ifdef CGAL_DEBUG_POLYLINE_CONSTRAINT_HIERARCHY_2
   using CGAL::IO::oformat;
   std::cerr << CGAL::internal::cdt_2_indent_level
-            << "C_hierachy.add_Steinter( "
+            << "C_hierarchy.add_Steiner( "
             << IO::oformat(va) << ", " << IO::oformat(vb) << ", " << IO::oformat(vc)
             << ")\n";
 #endif // CGAL_DEBUG_POLYLINE_CONSTRAINT_HIERARCHY_2

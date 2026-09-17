@@ -124,7 +124,7 @@ protected :
     _im->sign = SGN_SIGNED;
     _im->imageFormat = nullptr;
 
-    ::_openReadImage(_im, dataFilename.c_str());
+    _openReadImage(_im, dataFilename.c_str());
     if(!_im->fd) return false;
 
     // Compute number of element

@@ -19,13 +19,6 @@
 
 namespace CGAL {
 
-// Class declaration
-// =================
-template < class R_ >
-class Access_dimension_d;
-
-// Class interface
-// ===============
 template < class R_ >
 class Access_dimension_d {
   public:

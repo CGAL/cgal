@@ -1668,7 +1668,7 @@ void Trapezoidal_decomposition_2<Td_traits>::remove(Halfedge_const_handle he)
   In_face_iterator mid_it(follow_curve(p1_node,he,EQUAL));
   In_face_iterator top_it(follow_curve(p1_node,he,LARGER));
 
-  bool inc_btm = true; //true if btm_it should be be incremented (not top_it)
+  bool inc_btm = true; //true if btm_it should be incremented (not top_it)
   bool prev_inc_btm = false; //holds the inc_btm from previous iteration
   bool end_reached = false; //true if this is the last iteration
 

@@ -21,6 +21,8 @@ Kernel_d
 Mesh_3
 Modular_arithmetic
 Number_types
+PMP_Mesh_repair
+PMP_Remeshing
 Polygon
 Polygon_mesh_processing
 Principal_component_analysis_LGPL

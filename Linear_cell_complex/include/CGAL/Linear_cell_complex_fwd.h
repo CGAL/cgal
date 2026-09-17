@@ -9,8 +9,8 @@
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
-#ifndef LINEAR_CELL_COMPLEX_FWD_H
-#define LINEAR_CELL_COMPLEX_FWD_H 1
+#ifndef CGAL_LINEAR_CELL_COMPLEX_FWD_H
+#define CGAL_LINEAR_CELL_COMPLEX_FWD_H 1
 
 #include <CGAL/Combinatorial_map_fwd.h>
 #include <CGAL/Generalized_map_fwd.h>
@@ -152,4 +152,4 @@ class Linear_cell_complex_for_generalized_map;
 
 } // CGAL
 
-#endif // LINEAR_CELL_COMPLEX_FWD_H
+#endif // CGAL_LINEAR_CELL_COMPLEX_FWD_H

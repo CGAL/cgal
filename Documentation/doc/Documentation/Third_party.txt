@@ -11,12 +11,12 @@ supporting C++17 or later.
 
 | Operating System | Compiler |
 | :----------      | :--------------- |
-| Linux            | \gnu `g++` 12.2.0 or later\cgalFootnote{<A HREF="https://gcc.gnu.org/">\cgalFootnoteCode{https://gcc.gnu.org/}</A>} |
-|                  | `Clang` \cgalFootnote{<A HREF="https://clang.llvm.org/">\cgalFootnoteCode{https://clang.llvm.org/}</A>} compiler version 20.1.6 or later |
-| \ms Windows      | \gnu `g++` 12.2.0 or later\cgalFootnote{<A HREF="https://gcc.gnu.org/">\cgalFootnoteCode{https://gcc.gnu.org/}</A>} |
-|                  | \ms Visual `C++` 15.9, 16.10, 17.14 (\visualstudio 2017, 2019, and 2022)\cgalFootnote{<A HREF="https://visualstudio.microsoft.com/">\cgalFootnoteCode{https://visualstudio.microsoft.com/}</A>} |
-| macOS            | \gnu `g++` 12.2.0 or later\cgalFootnote{<A HREF="https://gcc.gnu.org/">\cgalFootnoteCode{https://gcc.gnu.org/}</A>} |
-|                  | Apple `Clang` compiler versions 12.0.5, 14.0.0, and 15.0.0 |
+| Linux            | \gnu `g++` 13.3.0 or later\cgalFootnote{<A HREF="https://gcc.gnu.org/">\cgalFootnoteCode{https://gcc.gnu.org/}</A>} |
+|                  | `Clang` \cgalFootnote{<A HREF="https://clang.llvm.org/">\cgalFootnoteCode{https://clang.llvm.org/}</A>} compiler version 22.0.0 or later |
+| \ms Windows      | \gnu `g++` 13.3.0 or later\cgalFootnote{<A HREF="https://gcc.gnu.org/">\cgalFootnoteCode{https://gcc.gnu.org/}</A>} |
+|                  | \ms Visual `C++` 15.9, 16.10, 17.14, 18.0 (\visualstudio 2017, 2019, 2022, and 2026) or later \cgalFootnote{<A HREF="https://visualstudio.microsoft.com/">\cgalFootnoteCode{https://visualstudio.microsoft.com/}</A>} |
+| macOS            | \gnu `g++` 13.3.0 or later\cgalFootnote{<A HREF="https://gcc.gnu.org/">\cgalFootnoteCode{https://gcc.gnu.org/}</A>} |
+|                  | Apple `Clang` compiler versions 14.0.0 or later |
 
 <!-- Windows supported version are also listed on windows.html (must change both) -->
 
@@ -179,17 +179,6 @@ optional: it is used by some models of the
 
 \mpfi can be downloaded from <A HREF="https://gitlab.inria.fr/mpfi/mpfi">`https://gitlab.inria.fr/mpfi/mpfi`</A>.
 
-
-\subsection thirdpartyNTL NTL
-<b>Version 5.1 or later</b>
-
-\ntl provides data structures and algorithms for signed, arbitrary
-length integers, and for vectors, matrices, and polynomials over the
-integers and over finite fields. The optional library \ntl is used by \cgal
-to speed up operations of the Polynomial package, such as GCDs. It is recommended to install \ntl with support from \gmp.
-
-\ntl can be downloaded from <A HREF="https://libntl.org">`https://libntl.org`</A>.
-
 \subsection thirdpartyESBTL ESBTL
 
 The \esbtl (Easy Structural Biology Template Library) is a library that allows
@@ -245,7 +234,7 @@ The \opencv web site is <A HREF="https://opencv.org/">`https://opencv.org/`</A>.
 
 \suitesparse is a set of sparse-matrix-related packages written or co-authored by Tim Davis, available at <A HREF="https://github.com/DrTimothyAldenDavis/SuiteSparse">https://github.com/DrTimothyAldenDavis/SuiteSparse</A>.
 
-\suitesparse is used by the Orbifold Tutte Embedding and ARAP parametrization, i.e., in the surface parametrization package.
+\suitesparse is used by the Orbifold Tutte Embedding and ARAP parameterization, i.e., in the \ref PkgSurfaceMeshParameterization package.
 
 \note SuiteSparse on Windows can easily be installed by \code
 vcpkg install suitesparse
@@ -269,7 +258,7 @@ at <A HREF="https://github.com/KarypisLab/METIS">`https://github.com/KarypisLab/
 
 \zlib is a data compression library, and is essential for the component libCGAL_ImageIO.
 
-In \cgal, this library is used in the examples of the \ref PkgSurfaceMesher3 package.
+In \cgal, this library is used in the examples of the \ref PkgMesh3 package.
 
 If it is not already on your system,
 for instance, on Windows, you can download it from <A HREF="https://www.zlib.net/">`https://www.zlib.net/`</A>.
@@ -278,7 +267,7 @@ for instance, on Windows, you can download it from <A HREF="https://www.zlib.net
 
 \ceres is an open source C++ library for modeling and solving large, complicated optimization problems.
 
-In \cgal, \ceres is used by the \ref PkgPolygonMeshProcessing package for mesh smoothing, which
+In \cgal, \ceres is used by the \ref PkgPMPRemeshing package for mesh smoothing, which
 requires solving complex non-linear least squares problems.
 
 Visit the official website of the library at <A HREF="http://ceres-solver.org/index.html">`ceres-solver.org`</A>
@@ -319,4 +308,16 @@ In order to use \osqp in \cgal programs, the executables should be linked with t
 
 The \osqp web site is <A HREF="https://osqp.org">`https://osqp.org`</A>.
 
+
+\subsection thirdpartyVTK VTK
+
+\vtk is the Visualization Toolkit.
+In \cgal, this library is used in some examples of the \ref PkgMesh3 package.
+The \vtk web site is <A HREF="https://vtk.org/">`https://vtk.org`</A>.
+
+\subsection thirdpartyITK ITK
+
+\itk is the Insight Toolkit.
+In \cgal, this library is used in some examples of the \ref PkgMesh3 package.
+The \itk web site is <A HREF="https://itk.org/">`https://itk.org`</A>.
 */

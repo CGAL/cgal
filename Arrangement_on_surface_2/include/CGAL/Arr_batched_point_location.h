@@ -39,7 +39,7 @@ namespace Ss2 = Surface_sweep_2;
  * \param points_end A past-the-end iterator for the range of query points.
  * \param oi Output: An output iterator for the query results.
  * \pre The value-type of PointsIterator is Arrangement::Point_2,
- *      and the value-type of OutputIterator is is pair<Point_2, Result>,
+ *      and the value-type of OutputIterator is pair<Point_2, Result>,
  *      where Result is std::optional<std::variant<Vertex_const_handle,
  *                                      Halfedge_const_handle,
  *                                      Face_const_handle> >.

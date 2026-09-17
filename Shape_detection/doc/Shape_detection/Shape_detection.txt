@@ -495,7 +495,7 @@ A surface mesh depicted with one color per detected plane.
 The quality of region growing on a polygon mesh can be improved by slightly increasing the running time. To achieve
 this, one can sort the input faces with respect to some quality criteria. These quality criteria
 can be included in region growing through the seed range (see \ref Shape_detection_RegionGrowingFramework for more details).
-We provide two sortings:
+We provide two sorting options:
 
 - `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting` - the input faces are sorted with respect
 to the quality of the least squares plane fit applied to the neighbors of each face.

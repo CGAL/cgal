@@ -6,7 +6,7 @@ namespace CGAL {
 
 \brief The class `Protect_FPU_rounding` allows to reduce the number of rounding mode changes when evaluating sequences of interval arithmetic operations.
 
-\anchor protect_fpu_rouding
+\anchor protect_fpu_rounding
 
 Floating-point arithmetic, as specified by the IEEE-754 standard, allows to use
 so-called directed rounding for the following arithmetic operations: addition,

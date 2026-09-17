@@ -169,6 +169,7 @@ public:
   bool is_scaling() const { return this->Ptr()->is_scaling(); }
   bool is_reflection() const { return this->Ptr()->is_reflection(); }
   bool is_rotation() const { return this->Ptr()->is_rotation(); }
+  bool has_rotation() const { return this->Ptr()->has_rotation(); }
 
   FT cartesian(int i, int j) const { return this->Ptr()->cartesian(i,j); }
   FT homogeneous(int i, int j) const { return cartesian(i,j); }

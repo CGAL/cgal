@@ -211,20 +211,20 @@ int main()
 
   test(CGAL::data_file_path("meshes/elephant.off"));
   test("data/folded_star.off");
-  test("data/joint_refined.off");
+  test(CGAL::data_file_path("meshes/joint_refined.off"));
   test(CGAL::data_file_path("meshes/mannequin-devil.off"));
-  test("data/U.off");
+  test(CGAL::data_file_path("meshes/U_sheet.off"));
 
-  test("data_degeneracies/deg_on_border.off");
-  test("data_degeneracies/degtri_edge.off");
-  test("data_degeneracies/degtri_three.off");
-  test("data_degeneracies/degtri_four.off");
-  test("data_degeneracies/degtri_nullface.off");
-  test("data_degeneracies/degtri_single.off");
-  test("data_degeneracies/existing_flip.off");
-  test("data_degeneracies/fused_vertices.off");
-  test("data_degeneracies/small_ccs.off");
-  test("data_degeneracies/trihole.off");
+  test(CGAL::data_file_path("meshes/degeneracies/deg_on_border.off"));
+  test(CGAL::data_file_path("meshes/degeneracies/degtri_edge.off"));
+  test(CGAL::data_file_path("meshes/degeneracies/degtri_three.off"));
+  test(CGAL::data_file_path("meshes/degeneracies/degtri_four.off"));
+  test(CGAL::data_file_path("meshes/degeneracies/degtri_nullface.off"));
+  test(CGAL::data_file_path("meshes/degeneracies/degtri_single.off"));
+  test(CGAL::data_file_path("meshes/degeneracies/existing_flip.off"));
+  test(CGAL::data_file_path("meshes/degeneracies/fused_vertices.off"));
+  test(CGAL::data_file_path("meshes/degeneracies/small_ccs.off"));
+  test(CGAL::data_file_path("meshes/degeneracies/trihole.off"));
 
   std::cerr << "All done." << std::endl;
   return EXIT_SUCCESS;

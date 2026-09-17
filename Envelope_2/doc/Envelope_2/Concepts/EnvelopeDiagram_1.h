@@ -21,7 +21,7 @@ induce the envelope over this portion of the \f$ x\f$-axis. An edge may be bound
 by two vertices, one to its left and the other to its right. However, the
 diagram contains two unbounded edges, its <I>leftmost</I> edge, representing
 the interval \f$ (-\infty, x_l)\f$, and its <I>rightmost</I> edge, representing the
-interval \f$ (x_r, \infty)\f$, where \f$ x_l\f$ and \f$ x_r\f$ are the \f$ x\f$-coodinates of
+interval \f$ (x_r, \infty)\f$, where \f$ x_l\f$ and \f$ x_r\f$ are the \f$ x\f$-coordinates of
 the leftmost and the rightmost vertices in the diagram, respectively.
 Note that a diagram may contain no vertices at all, in which case it
 comprises a single edge.

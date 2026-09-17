@@ -867,7 +867,7 @@ public:
     int current_opposite_vertex = opposite_vertex;
     do {
       CGAL_assertion(current_face->label() == face_adjacent_to_boundary->label());
-      current_face->processed() = true;
+      current_face->set_processed(current_opposite_vertex);
       Vertex_handle pivot_vertex = current_face->vertex(current_face->cw(current_opposite_vertex));
       // std::cout << "\tAdding point " << pivot_vertex->point() << std::endl;
       ring.push_back(pivot_vertex->point());
@@ -899,15 +899,11 @@ public:
     polygons.resize(number_of_polygons);
     holes.resize(number_of_polygons);
 
-    for (auto const face: t.all_face_handles()) {
-      face->processed() = false;
-    }
     for (auto const &face: t.finite_face_handles()) {
       if (face->label() < 1) continue; // exterior triangle
-      if (face->processed()) continue; // already reconstructed
       for (int opposite_vertex = 0; opposite_vertex < 3; ++opposite_vertex) {
         if (face->label() == face->neighbor(opposite_vertex)->label()) continue; // not adjacent to boundary
-
+        if(face->processed(opposite_vertex)) continue; // already reconstructed by other side of boundary
         // Reconstruct ring
         std::list<Point_2> ring;
         reconstruct_ring(ring, face, opposite_vertex);

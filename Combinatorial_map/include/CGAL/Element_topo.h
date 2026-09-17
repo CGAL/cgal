@@ -84,8 +84,9 @@ template<typename CMap, unsigned int dimcell,
          unsigned int cmapdim=CMap::dimension>
 struct Get_cell_topo
 {
-  static cell_topo run(CMap&, typename CMap::Dart_descriptor dh,
-                       typename CMap::Dart_descriptor& starting_dart)
+  static cell_topo run(const CMap&,
+                       typename CMap::Dart_const_descriptor dh,
+                       typename CMap::Dart_const_descriptor& starting_dart)
   {
     starting_dart=dh;
     return NO_TYPE;
@@ -98,8 +99,9 @@ struct Get_cell_topo
 template<typename CMap, unsigned int cmapdim>
 struct Get_cell_topo<CMap, 1, cmapdim>
 {
-  static cell_topo run(CMap&, typename CMap::Dart_descriptor it,
-                       typename CMap::Dart_descriptor& starting_dart)
+  static cell_topo run(const CMap&,
+                       typename CMap::Dart_const_descriptor it,
+                       typename CMap::Dart_const_descriptor& starting_dart)
   {
     starting_dart=it;
     return EDGE;
@@ -112,8 +114,9 @@ struct Get_cell_topo<CMap, 1, cmapdim>
 template<typename CMap, unsigned int cmapdim>
 struct Get_cell_topo<CMap, 2, cmapdim>
 {
-  static cell_topo run(CMap& cmap, typename CMap::Dart_descriptor it,
-                       typename CMap::Dart_descriptor& starting_dart)
+  static cell_topo run(const CMap& cmap,
+                       typename CMap::Dart_const_descriptor it,
+                       typename CMap::Dart_const_descriptor& starting_dart)
   {
     starting_dart=it;
 
@@ -133,8 +136,9 @@ struct Get_cell_topo<CMap, 2, cmapdim>
 template<typename CMap>
 struct Get_cell_topo<CMap, 3, 3>
 {
-  static cell_topo run(CMap& cmap, typename CMap::Dart_descriptor it,
-                       typename CMap::Dart_descriptor& starting_dart)
+  static cell_topo run(const CMap& cmap,
+                       typename CMap::Dart_const_descriptor it,
+                       typename CMap::Dart_const_descriptor& starting_dart)
   {
     starting_dart=it;
 
@@ -171,36 +175,40 @@ struct Get_cell_topo<CMap, 3, 3>
   }
 };
 
+/// get_cell_topo: two const versions
 template<unsigned int dimcell, typename CMap>
-cell_topo get_cell_topo(CMap& cmap, typename CMap::Dart_descriptor it,
-                        typename CMap::Dart_descriptor& starting_dart)
+cell_topo get_cell_topo(const CMap& cmap,
+                        typename CMap::Dart_const_descriptor it,
+                        typename CMap::Dart_const_descriptor& starting_dart)
 { return Get_cell_topo<CMap, dimcell>::run(cmap, it, starting_dart); }
 
 template<unsigned int dimcell, typename CMap>
-cell_topo get_cell_topo(CMap& cmap, typename CMap::Dart_descriptor it)
+cell_topo get_cell_topo(const CMap& cmap,
+                        typename CMap::Dart_const_descriptor it)
 {
-  typename CMap::Dart_descriptor dummy;
-  return get_cell_topo<dimcell, CMap>(cmap, it, dummy);
+  typename CMap::Dart_const_descriptor dummy;
+  return get_cell_topo<dimcell>(cmap, it, dummy);
 }
 
+/// get_cell_topo: two non-const versions
 template<unsigned int dimcell, typename CMap>
-cell_topo get_cell_topo(const CMap& cmap, typename CMap::Dart_const_descriptor it,
-    typename CMap::Dart_const_descriptor& starting_dart)
+cell_topo get_cell_topo(CMap& cmap,
+                        typename CMap::Dart_descriptor it,
+                        typename CMap::Dart_descriptor& starting_dart)
 {
-  typename CMap::Dart_descriptor it2=const_cast<CMap&>(cmap).dart_descriptor
-                                       (cmap.darts().index(it));
-  typename CMap::Dart_descriptor sd2;
-  cell_topo res=Get_cell_topo<CMap, dimcell>::run(const_cast<CMap&>(cmap),
-                                                    it2, sd2);
-  starting_dart=sd2;
+  typename CMap::Dart_const_descriptor itc=it;
+  typename CMap::Dart_const_descriptor starting_dartc;
+
+  cell_topo res=Get_cell_topo<CMap, dimcell>::run(cmap, itc, starting_dartc);
+  starting_dart=cmap.dart_descriptor(cmap.darts().index(it));
   return res;
 }
 
 template<unsigned int dimcell, typename CMap>
-cell_topo get_cell_topo(const CMap& cmap, typename CMap::Dart_const_descriptor it)
+cell_topo get_cell_topo(CMap& cmap, typename CMap::Dart_descriptor it)
 {
-  typename CMap::Dart_descriptor it2=it;
-  return Get_cell_topo<CMap, dimcell>::run(const_cast<CMap&>(cmap), it2);
+  typename CMap::Dart_const_descriptor dummy;
+  return get_cell_topo<dimcell, CMap>(cmap, it, dummy);
 }
 
 } } } // namespace CGAL::CMap::Element_topo

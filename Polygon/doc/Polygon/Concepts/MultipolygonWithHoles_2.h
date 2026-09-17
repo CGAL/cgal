@@ -52,7 +52,7 @@ MultipolygonWithHoles_2(InputIterator begin, InputIterator end);
 
 /*! returns the number of polygons with holes.
  */
-Size number_of_polygons_wih_holes();
+Size number_of_polygons_with_holes();
 
 /// @}
 

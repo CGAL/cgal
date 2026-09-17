@@ -40,6 +40,17 @@ namespace cpp98 {
 
 } // namespace cpp98
 
+namespace cpp20 {
+
+/// Replacement for `std::identity` that is added in C++20.
+struct identity
+{
+  template <typename T>
+  constexpr T&& operator()(T&& t) const noexcept { return static_cast<T&&>(t); }
+};
+
+} // namespace cpp20
+
 } // namespace CGAL
 
 #endif // CGAL_FUNCTIONAL_H

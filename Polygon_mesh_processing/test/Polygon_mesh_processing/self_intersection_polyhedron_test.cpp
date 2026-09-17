@@ -65,7 +65,7 @@ int main(int argc, char** argv)
   // If file(s) are provided, the associated expected result must also be provided.
   // Note that this expected value is a Boolean that is passed in command line
   // with either 'true' or 'false' (but not integers), that is for example:
-  // > self_intersection_polyhedron_test data/U.off false
+  // > self_intersection_polyhedron_test data/U_sheet.off false
 
   // First test ----------------------------------------------------------------
   bool expected = false;

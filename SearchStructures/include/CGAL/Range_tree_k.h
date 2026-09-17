@@ -56,6 +56,8 @@ public:
                             key_1, low_1, high_1, compare_1> I1;
 
   typedef Tree_anchor<Key, Interval> Tree_anchor_type;
+
+  inline static const Tree_anchor_type the_anchor = Tree_anchor_type();
   Tree_anchor_type *anchor;
 
   typedef Range_tree_d<Key, Interval, I1> Range_tree_1_type;
@@ -63,15 +65,15 @@ public:
 
 
   Range_tree_1()
+   : anchor(&const_cast<Tree_anchor_type&>(the_anchor))
   {
-    anchor = new Tree_anchor_type;
     range_tree_1 = new Range_tree_1_type(*anchor);
   }
 
   template <class T>
   Range_tree_1(const T& first,
                const T& last)
-    : anchor(new Tree_anchor_type), range_tree_1(new Range_tree_1_type(*anchor))
+    : anchor(&const_cast<Tree_anchor_type&>(the_anchor)), range_tree_1(new Range_tree_1_type(*anchor))
   {
    range_tree_1->make_tree(first,last);
   }
@@ -81,8 +83,6 @@ public:
                  const T& last)
   {
     delete range_tree_1;
-    delete anchor;
-    anchor = new Tree_anchor_type;
     range_tree_1 = new Range_tree_1_type(*anchor);
     return range_tree_1->make_tree(first,last);
   }
@@ -98,8 +98,6 @@ public:
   {
     if (range_tree_1!=0)
       delete range_tree_1;
-    if (anchor!=0)
-      delete anchor;
   }
 
 };
@@ -137,6 +135,8 @@ public:
 
 
   typedef Tree_anchor<Key, Interval> Tree_anchor_type;
+
+  inline static const Tree_anchor_type the_anchor = Tree_anchor_type();
   Tree_anchor_type *anchor;
 
   typedef Range_tree_d<Key, Interval, I2> Range_tree_1_type;
@@ -147,7 +147,7 @@ public:
 
 
   Range_tree_2()
-    : anchor(new Tree_anchor_type),
+    : anchor(&const_cast<Tree_anchor_type&>(the_anchor)),
       range_tree_1(new Range_tree_1_type(*anchor)),
       range_tree_2(new Range_tree_2_type(*range_tree_1))
   {}
@@ -155,7 +155,7 @@ public:
   template <class T>
   Range_tree_2(const T& first,
                const T& last)
-    : anchor(new Tree_anchor_type),
+    : anchor(&const_cast<Tree_anchor_type&>(the_anchor)),
       range_tree_1(new Range_tree_1_type(*anchor)),
       range_tree_2(new Range_tree_2_type(*range_tree_1))
   {
@@ -168,8 +168,6 @@ public:
   {
     delete range_tree_2;
     delete range_tree_1;
-    delete anchor;
-    anchor = new Tree_anchor_type;
     range_tree_1 = new Range_tree_1_type(*anchor);
     range_tree_2 = new Range_tree_2_type(*range_tree_1);
     return range_tree_2->make_tree(first,last);
@@ -188,8 +186,6 @@ public:
       delete range_tree_2;
     if (range_tree_1!=0)
       delete range_tree_1;
-    if (anchor!=0)
-      delete anchor;
   }
 };
 
@@ -229,6 +225,8 @@ public:
                             key_3, low_3, high_3, compare_3> I3;
 
   typedef Tree_anchor<Key, Interval> Tree_anchor_type;
+
+  inline static const Tree_anchor_type the_anchor = Tree_anchor_type();
   Tree_anchor_type *anchor;
 
   typedef Range_tree_d<Key, Interval, I3> Range_tree_1_type;
@@ -241,7 +239,7 @@ public:
   Range_tree_3_type *range_tree_3;
 
   Range_tree_3()
-    : anchor(new Tree_anchor_type),
+    : anchor(&const_cast<Tree_anchor_type&>(the_anchor)),
       range_tree_1(new Range_tree_1_type(*anchor)),
       range_tree_2(new Range_tree_2_type(*range_tree_1)),
       range_tree_3(new Range_tree_3_type(*range_tree_2))
@@ -250,7 +248,7 @@ public:
   template <class T>
   Range_tree_3(const T& first,
                const T& last)
-    : anchor(new Tree_anchor_type),
+    : anchor(&const_cast<Tree_anchor_type&>(the_anchor)),
       range_tree_1(new Range_tree_1_type(*anchor)),
       range_tree_2(new Range_tree_2_type(*range_tree_1)),
       range_tree_3(new Range_tree_3_type(*range_tree_2))
@@ -265,8 +263,6 @@ public:
     delete range_tree_3;
     delete range_tree_2;
     delete range_tree_1;
-    delete anchor;
-    anchor = new Tree_anchor_type;
     range_tree_1 = new Range_tree_1_type(*anchor);
     range_tree_2 = new Range_tree_2_type(*range_tree_1);
     range_tree_3 = new Range_tree_3_type(*range_tree_2);
@@ -288,14 +284,12 @@ public:
       delete range_tree_2;
     if (range_tree_1!=0)
       delete range_tree_1;
-    if (anchor!=0)
-      delete anchor;
   }
 };
 
 
 //-------------------------------------------------------------------
-// A three dimensional Range Tree is defined in this class.
+// A four dimensional Range Tree is defined in this class.
 // Ti is the type of each dimension of the tree.
 
 template <class C_Traits_4>
@@ -339,6 +333,8 @@ public:
                             key_4, low_4, high_4, compare_4> I4;
 
   typedef Tree_anchor<Key, Interval> Tree_anchor_type;
+
+  inline static const Tree_anchor_type the_anchor = Tree_anchor_type();
   Tree_anchor_type *anchor;
 
   typedef Range_tree_d<Key, Interval, I4> Range_tree_1_type;
@@ -354,7 +350,7 @@ public:
   Range_tree_4_type *range_tree_4;
 
   Range_tree_4()
-    : anchor(new Tree_anchor_type),
+    : anchor(&const_cast<Tree_anchor_type&>(the_anchor)),
       range_tree_1(new Range_tree_1_type(*anchor)),
       range_tree_2(new Range_tree_2_type(*range_tree_1)),
       range_tree_3(new Range_tree_3_type(*range_tree_2)),
@@ -364,7 +360,7 @@ public:
   template <class T>
   Range_tree_4(const T& first,
                const T& last)
-    : anchor(new Tree_anchor_type),
+    : anchor(&const_cast<Tree_anchor_type&>(the_anchor)),
       range_tree_1(new Range_tree_1_type(*anchor)),
       range_tree_2(new Range_tree_2_type(*range_tree_1)),
       range_tree_3(new Range_tree_3_type(*range_tree_2)),
@@ -381,8 +377,6 @@ public:
     delete range_tree_3;
     delete range_tree_2;
     delete range_tree_1;
-    delete anchor;
-    anchor = new Tree_anchor_type;
     range_tree_1 = new Range_tree_1_type(*anchor);
     range_tree_2 = new Range_tree_2_type(*range_tree_1);
     range_tree_3 = new Range_tree_3_type(*range_tree_2);
@@ -407,8 +401,6 @@ public:
       delete range_tree_2;
     if (range_tree_1!=0)
       delete range_tree_1;
-    if (anchor!=0)
-      delete anchor;
   }
 };
 

@@ -51,7 +51,7 @@ public:
 
   //! after_scan postprocessing after bfs scan.
   /*! The function fixes some of the curves, to be in the same direction as the
-   * half-edges.
+   * halfedges.
    *
    * \param arr The given arrangement.
    */

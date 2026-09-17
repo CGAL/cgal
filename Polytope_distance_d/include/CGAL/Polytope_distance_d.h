@@ -758,15 +758,13 @@ bool
 Polytope_distance_d<Traits_>::
 is_valid( bool verbose, int level) const
 {
-  using namespace std;
-
   CGAL::Verbose_ostream verr( verbose);
-  verr << "CGAL::Polytope_distance_d<Traits>::" << endl;
-  verr << "is_valid( true, " << level << "):" << endl;
+  verr << "CGAL::Polytope_distance_d<Traits>::" << std::endl;
+  verr << "is_valid( true, " << level << "):" << std::endl;
   verr << "  |P+Q| = " << number_of_points_p()
        <<          '+' << number_of_points_q()
        <<   ", |S| = " << number_of_support_points_p()
-       <<          '+' << number_of_support_points_q() << endl;
+       <<          '+' << number_of_support_points_q() << std::endl;
 
   if ( is_finite()) {
 
@@ -779,7 +777,7 @@ is_valid( bool verbose, int level) const
     for ( j = 0; j < d; ++j) normal[ j] = p_coords[ j] - q_coords[ j];
 
     // check correctness of computed squared distance
-    verr << "  checking squared_distance..." << flush;
+    verr << "  checking squared_distance..." << std::flush;
     ET sqr_dist_num (0);
     for ( j = 0; j < d; ++j)
       sqr_dist_num += normal[ j] * normal[ j];
@@ -793,7 +791,7 @@ is_valid( bool verbose, int level) const
 
     // check P
     // -------
-    verr << "  checking P..." << flush;
+    verr << "  checking P..." << std::flush;
 
     // check point set
     for ( i = 0; i < number_of_points_p(); ++i) {
@@ -809,11 +807,11 @@ is_valid( bool verbose, int level) const
           ( verr, "polytope P is not separated by its hyperplane");
     }
 
-    verr << "passed." << endl;
+    verr << "passed." << std::endl;
 
     // check Q
     // -------
-    verr << "  checking Q..." << flush;
+    verr << "  checking Q..." << std::flush;
 
     // check point set
     for ( i = 0; i < number_of_points_q(); ++i) {
@@ -829,10 +827,10 @@ is_valid( bool verbose, int level) const
           ( verr, "polytope Q is not separated by its hyperplane");
     }
 
-    verr << "passed." << endl;
+    verr << "passed." << std::endl;
   }
 
-  verr << "  object is valid!" << endl;
+  verr << "  object is valid!" << std::endl;
   return( true);
 }
 
@@ -842,12 +840,10 @@ std::ostream&
 operator << ( std::ostream& os,
               const Polytope_distance_d<Traits_>& poly_dist)
 {
-  using namespace std;
-
   typedef  typename Polytope_distance_d<Traits_>::Point  Point;
-  typedef  ostream_iterator<Point>       Os_it;
+  typedef  std::ostream_iterator<Point>       Os_it;
   typedef  typename Traits_::ET          ET;
-  typedef  ostream_iterator<ET>          Et_it;
+  typedef  std::ostream_iterator<ET>          Et_it;
 
   switch ( CGAL::IO::get_mode( os)) {
 
@@ -856,62 +852,62 @@ operator << ( std::ostream& os,
        << poly_dist.number_of_points_p() << '+'
        << poly_dist.number_of_points_q() << ", |S| = "
        << poly_dist.number_of_support_points_p() << '+'
-       << poly_dist.number_of_support_points_q() << endl;
-    os << "  P = {" << endl;
+       << poly_dist.number_of_support_points_q() << std::endl;
+    os << "  P = {" << std::endl;
     os << "    ";
-    copy( poly_dist.points_p_begin(), poly_dist.points_p_end(),
+    std::copy( poly_dist.points_p_begin(), poly_dist.points_p_end(),
           Os_it( os, ",\n    "));
-    os << "}" << endl;
-    os << "  Q = {" << endl;
+    os << "}" << std::endl;
+    os << "  Q = {" << std::endl;
     os << "    ";
-    copy( poly_dist.points_q_begin(), poly_dist.points_q_end(),
+    std::copy( poly_dist.points_q_begin(), poly_dist.points_q_end(),
           Os_it( os, ",\n    "));
-    os << "}" << endl;
-    os << "  S_P = {" << endl;
+    os << "}" << std::endl;
+    os << "  S_P = {" << std::endl;
     os << "    ";
-    copy( poly_dist.support_points_p_begin(),
+    std::copy( poly_dist.support_points_p_begin(),
           poly_dist.support_points_p_end(),
           Os_it( os, ",\n    "));
-    os << "}" << endl;
-    os << "  S_Q = {" << endl;
+    os << "}" << std::endl;
+    os << "  S_Q = {" << std::endl;
     os << "    ";
-    copy( poly_dist.support_points_q_begin(),
+    std::copy( poly_dist.support_points_q_begin(),
           poly_dist.support_points_q_end(),
           Os_it( os, ",\n    "));
-    os << "}" << endl;
+    os << "}" << std::endl;
     os << "  p = ( ";
-    copy( poly_dist.realizing_point_p_coordinates_begin(),
+    std::copy( poly_dist.realizing_point_p_coordinates_begin(),
           poly_dist.realizing_point_p_coordinates_end(),
           Et_it( os, " "));
-    os << ")" << endl;
+    os << ")" << std::endl;
     os << "  q = ( ";
-    copy( poly_dist.realizing_point_q_coordinates_begin(),
+    std::copy( poly_dist.realizing_point_q_coordinates_begin(),
           poly_dist.realizing_point_q_coordinates_end(),
           Et_it( os, " "));
-    os << ")" << endl;
+    os << ")" << std::endl;
     os << "  squared distance = "
        << poly_dist.squared_distance_numerator() << " / "
-       << poly_dist.squared_distance_denominator() << endl;
+       << poly_dist.squared_distance_denominator() << std::endl;
     break;
 
   case CGAL::IO::ASCII:
-    os << poly_dist.number_of_points_p() << endl;
-    copy( poly_dist.points_p_begin(),
+    os << poly_dist.number_of_points_p() << std::endl;
+    std::copy( poly_dist.points_p_begin(),
           poly_dist.points_p_end(),
           Os_it( os, "\n"));
-    os << poly_dist.number_of_points_q() << endl;
-    copy( poly_dist.points_q_begin(),
+    os << poly_dist.number_of_points_q() << std::endl;
+    std::copy( poly_dist.points_q_begin(),
           poly_dist.points_q_end(),
           Os_it( os, "\n"));
     break;
 
   case CGAL::IO::BINARY:
-    os << poly_dist.number_of_points_p() << endl;
-    copy( poly_dist.points_p_begin(),
+    os << poly_dist.number_of_points_p() << std::endl;
+    std::copy( poly_dist.points_p_begin(),
           poly_dist.points_p_end(),
           Os_it( os));
-    os << poly_dist.number_of_points_q() << endl;
-    copy( poly_dist.points_q_begin(),
+    os << poly_dist.number_of_points_q() << std::endl;
+    std::copy( poly_dist.points_q_begin(),
           poly_dist.points_q_end(),
           Os_it( os));
     break;

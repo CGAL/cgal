@@ -420,7 +420,7 @@ both the cost and the placement policies, which must be used together as they sh
 The state-of-the-art strategy of combining plane and line-based quadric error metrics is implemented with the class
 `Surface_mesh_simplification::GarlandHeckbert_policies`.
 Although both policies must be used together, it is still possible to wrap either policy
-using behavior modifiers such as `Surface_mesh_simplification::Bounded_normal_change_placement`.
+using behavior modifiers such as `Surface_mesh_simplification::Bounded_normal_change_filter`.
 
 \cgalExample{Surface_mesh_simplification/edge_collapse_garland_heckbert.cpp}
 

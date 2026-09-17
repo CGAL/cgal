@@ -83,7 +83,7 @@ typedef unspecified_type ET;
 
 /*!
 
-non-mutable model of the \stl concept <I>RandomAccessIterator</I>
+non-mutable model of the \stl concept `RandomAccessIterator`
 with value type `Point`. Used to access the points
 of the two polytopes.
 */
@@ -91,14 +91,14 @@ typedef unspecified_type Point_iterator;
 
 /*!
 
-non-mutable model of the \stl concept <I>RandomAccessIterator</I>
+non-mutable model of the \stl concept `RandomAccessIterator`
 with value type `Point`. Used to access the support points.
 */
 typedef unspecified_type Support_point_iterator;
 
 /*!
 
-non-mutable model of the \stl concept <I>RandomAccessIterator</I>
+non-mutable model of the \stl concept `RandomAccessIterator`
 with value type `int`. Used to access the indices of the
 support points in the provided input order (starting from 0
 in both point sets).
@@ -107,7 +107,7 @@ typedef unspecified_type Support_point_index_iterator;
 
 /*!
 
-non-mutable model of the \stl concept <I>RandomAccessIterator</I>
+non-mutable model of the \stl concept `RandomAccessIterator`
 with value type `ET`. Used to access the coordinates of
 the realizing points.
 */

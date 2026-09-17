@@ -522,7 +522,7 @@ int main()
 This example illustrates the use of the predefined segment tree
 on 3-dimensional interval data (with no value associated). After
 the definition of the traits type and tree type, some intervals
-are constructed and the tree is build according to the
+are constructed and the tree is built according to the
 intervals. Then, a window query is performed and the query
 elements are given out.
 

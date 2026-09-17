@@ -126,7 +126,7 @@ It is then recommended to use the parameter `parameters::surface_only()` to spee
 the meshing process.
 
 \tparam Polyhedron stands for the type of the input polyhedral surface(s),
-model of `FaceListGraph`.
+model of `FaceListGraph`.  It must be a triangle mesh.
 
 \tparam IGT stands for a geometric traits class
 providing the types and functors required to implement
@@ -183,8 +183,13 @@ public:
 
   // Type of indexes to characterize the lowest dimensional face of the input
   // complex on which a vertex lie
+#ifndef DOXYGEN_RUNNING
   typedef typename Mesh_3::internal::Index_generator<
     Subdomain_index, Surface_patch_index>::type           Index;
+#else
+  /// @brief Type of indexes to characterize the lowest dimensional face of the input
+  typedef unspecified_type Index;
+#endif
 
   typedef std::tuple<Point_3,Index,int> Intersection;
 
@@ -375,7 +380,7 @@ public:
   /**
    * constructs a set of `n` points on the surface, and output them to
    *  the output iterator `pts` whose value type is required to be
-   *  `std::pair<Points_3, Index>`.
+   *  `std::pair<Point_3, %Index>`.
    */
   struct Construct_initial_points
   {

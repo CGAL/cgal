@@ -189,8 +189,8 @@ try_to_compute_inexact_z0_from_z1_z2_z3(Complex_number<float>& z0,
   float b = (u*(conj(z3-z1))).imag();
   float c = u.imag();
 
-  const float COMPUTATION_TRESHOLD = 0.00001f;
-  if (a+b+c> 0 - COMPUTATION_TRESHOLD) {
+  const float COMPUTATION_THRESHOLD = 0.00001f;
+  if (a+b+c> 0 - COMPUTATION_THRESHOLD) {
     return false;
   }
 

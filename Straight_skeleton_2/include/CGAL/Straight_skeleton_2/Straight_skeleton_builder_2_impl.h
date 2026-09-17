@@ -469,7 +469,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandleSimultaneousEdgeEvent( Vertex_h
 
   // The code above corrects the links for vertices aA/aB to the erased halfedges lOA and lIA.
   // However, any of these vertices (aA/aB) may be one of the twin vertices of a split event.
-  // If that's the case, the erased halfedge may be be linked to a 'couple' of those vertices.
+  // If that's the case, the erased halfedge may be linked to a 'couple' of those vertices.
   // This situation is corrected below:
 
   if ( !lOAV->has_infinite_time() && lOAV != aA && lOAV != aB )

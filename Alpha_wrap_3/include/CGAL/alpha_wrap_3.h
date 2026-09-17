@@ -355,7 +355,7 @@ void alpha_wrap_3(const PointRange& points,
   Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(in_np, internal_np::geom_traits));
 
   Oracle oracle(gt);
-  oracle.add_point_set(points, in_np);
+  oracle.add_points(points, in_np);
   AW3 alpha_wrap_builder(oracle);
   alpha_wrap_builder(alpha, offset, alpha_wrap, in_np, out_np);
 }

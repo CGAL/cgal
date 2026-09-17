@@ -263,8 +263,8 @@ the locked cells are not unlocked by the function, leaving this choice to the us
 This function will try to remove `v` only if the removal does not
 decrease the dimension.
 The return value is only meaningful if `*could_lock_zone` is true:
-  - returns true if the vertex was removed
-  - returns false if the vertex wasn't removed since it would decrease
+  - returns `true` if the vertex was removed
+  - returns `false` if the vertex wasn't removed since it would decrease
     the dimension.
 
 \pre `v` is a finite vertex of the triangulation.

@@ -11,7 +11,7 @@ of Delaunay triangulations.
 \tparam Traits is the geometric traits class and must be a model of `DelaunayTriangulationTraits_3`.
 
 \tparam Cb must be a model of `TriangulationCellBase_3`.
-By default, this parameter is instantiated by
+By default, this parameter is instantiated with
 `Triangulation_cell_base_3<Traits>`.
 
 \cgalModels{DelaunayTriangulationCellBase_3}

@@ -1,7 +1,7 @@
 // Copyright (c) 2005-2008 ASCLEPIOS Project, INRIA Sophia-Antipolis (France)
 // All rights reserved.
 //
-// This file is part of the ImageIO Library, and as been adapted for CGAL (www.cgal.org).
+// This file is part of the ImageIO Library, and has been adapted for CGAL (www.cgal.org).
 //
 // $URL$
 // $Id$
@@ -46,7 +46,8 @@
 #define CGAL_analyze_impl_DT_RGB           128 /* */
 #define CGAL_analyze_impl_DT_ALL           255 /* */
 
-#include <cstring>
+
+namespace CGAL {
 
 struct header_key                       /*      header_key       */
     {                                           /* off + size*/
@@ -858,3 +859,5 @@ int printAnalyzeHeader( const char* name )
 
 
 }
+
+} // namespace CGAL

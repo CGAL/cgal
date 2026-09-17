@@ -15,136 +15,18 @@
 
 #include <CGAL/license/Polygon_mesh_processing/core.h>
 
-#include <CGAL/algorithm.h>
-#include <CGAL/boost/graph/iterator.h>
-#include <CGAL/boost/graph/helpers.h>
-#include <CGAL/Named_function_parameters.h>
-#include <CGAL/boost/graph/named_params_helper.h>
+#define CGAL_DEPRECATED_HEADER "<CGAL/Polygon_mesh_processing/border.h>"
+#define CGAL_REPLACEMENT_HEADER "<CGAL/boost/graph/border.h>"
+#include <CGAL/Installation/internal/deprecation_warning.h>
 
-#include <boost/graph/graph_traits.hpp>
+#include <CGAL/boost/graph/border.h>
 
-#include <unordered_set>
-#include <set>
-#include <type_traits>
-
-namespace CGAL{
+namespace CGAL {
 namespace Polygon_mesh_processing {
-namespace internal {
-
-template<typename PolygonMesh>
-std::size_t border_size(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
-                        const PolygonMesh& pmesh)
-{
-  // if you want to use it on a non-border halfedge, just use `degree(face, mesh)`
-  CGAL_precondition(is_border(h, pmesh));
-
-  std::size_t res = 0;
-  typename boost::graph_traits<PolygonMesh>::halfedge_descriptor done = h;
-  do
-  {
-    ++res;
-    h = next(h, pmesh);
-  }
-  while(h != done);
-
-  return res;
-}
-
-    template<typename PM
-           , typename FaceRange
-           , typename HalfedgeOutputIterator>
-    HalfedgeOutputIterator border_halfedges_impl(const FaceRange& face_range
-                                               , HalfedgeOutputIterator out
-                                               , const PM& pmesh)
-    {
-      typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
-      typedef typename boost::graph_traits<PM>::face_descriptor     face_descriptor;
-
-      //collect halfedges that appear only once
-      // the bool is true if the halfedge stored is the one of the face,
-      // false if it is its opposite
-      std::map<halfedge_descriptor, bool> border;
-      for(face_descriptor f : face_range)
-      {
-        for(halfedge_descriptor h :
-          halfedges_around_face(halfedge(f, pmesh), pmesh))
-        {
-          //halfedge_descriptor is model of `LessThanComparable`
-          bool from_face = (h < opposite(h, pmesh));
-          halfedge_descriptor he = from_face ? h : opposite(h, pmesh);
-          if (border.find(he) != border.end())
-            border.erase(he); //even number of appearances
-          else
-            border.insert(std::make_pair(he, from_face));//odd number of appearances
-        }
-      }
-      //copy them in out
-      typedef typename std::map<halfedge_descriptor, bool>::value_type HD_bool;
-      for(const HD_bool& hd : border)
-      {
-        if (!hd.second) // to get the border halfedge (which is not on the face)
-          *out++ = hd.first;
-        else
-          *out++ = opposite(hd.first, pmesh);
-      }
-      return out;
-    }
-
-    template<typename PM
-           , typename FaceRange
-           , typename HalfedgeOutputIterator
-           , typename NamedParameters>
-    HalfedgeOutputIterator border_halfedges_impl(const FaceRange& face_range
-                                               , typename boost::cgal_no_property::type
-                                               , HalfedgeOutputIterator out
-                                               , const PM& pmesh
-                                               , const NamedParameters& /* np */)
-    {
-      return border_halfedges_impl(face_range, out, pmesh);
-    }
-
-    template<typename PM
-           , typename FaceRange
-           , typename FaceIndexMap
-           , typename HalfedgeOutputIterator
-           , typename NamedParameters>
-    HalfedgeOutputIterator border_halfedges_impl(const FaceRange& face_range
-                                               , const FaceIndexMap& fmap
-                                               , HalfedgeOutputIterator out
-                                               , const PM& pmesh
-                                               , const NamedParameters& /* np */)
-    {
-      typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
-      typedef typename boost::graph_traits<PM>::face_descriptor     face_descriptor;
-
-      CGAL_assertion(BGL::internal::is_index_map_valid(fmap, num_faces(pmesh), faces(pmesh)));
-
-      std::vector<bool> present(num_faces(pmesh), false);
-      for(face_descriptor fd : face_range)
-        present[get(fmap, fd)] = true;
-
-      for(face_descriptor fd : face_range)
-        for(halfedge_descriptor hd :
-                      halfedges_around_face(halfedge(fd, pmesh), pmesh))
-       {
-         halfedge_descriptor opp=opposite(hd, pmesh);
-         if (is_border(opp, pmesh) || !present[get(fmap,face(opp,pmesh))])
-           *out++ = opp;
-       }
-
-      return out;
-    }
-
-    struct Dummy_PM
-    {
-    public:
-      typedef bool vertex_property_type;
-    };
-
-  }//end namespace internal
 
   /*!
-  * \ingroup PkgPolygonMeshProcessingRef
+  * \ingroup PMPDeprecated
+  * \deprecated This function is deprecated since \cgal 6.2. Users should use instead  `CGAL::border_halfedges()`.
   *
   * \brief collects the border halfedges of a surface patch defined as a face range.
   *
@@ -182,61 +64,37 @@ std::size_t border_size(typename boost::graph_traits<PolygonMesh>::halfedge_desc
          , typename FaceRange
          , typename HalfedgeOutputIterator
          , typename NamedParameters = parameters::Default_named_parameters>
-  HalfedgeOutputIterator border_halfedges(const FaceRange& face_range
-                                  , const PolygonMesh& pmesh
-                                  , HalfedgeOutputIterator out
-                                  , const NamedParameters& np = parameters::default_values())
+  CGAL_DEPRECATED HalfedgeOutputIterator border_halfedges(const FaceRange& face_range,
+                                                          const PolygonMesh& pmesh,
+                                                          HalfedgeOutputIterator out,
+                                                          const NamedParameters& np = parameters::default_values())
   {
-    if (face_range.empty())
-      return out;
-
-    typedef typename CGAL::GetInitializedFaceIndexMap<PolygonMesh, NamedParameters>::const_type FIMap;
-    FIMap fim = CGAL::get_initialized_face_index_map(pmesh, np);
-
-    return internal::border_halfedges_impl(face_range, fim, out, pmesh, np);
+    return CGAL::border_halfedges(face_range, pmesh, out, np);
   }
 
   template<typename PolygonMesh
          , typename HalfedgeOutputIterator>
-  HalfedgeOutputIterator border_halfedges(const PolygonMesh& pmesh
-                                        , HalfedgeOutputIterator out)
+  CGAL_DEPRECATED HalfedgeOutputIterator border_halfedges(const PolygonMesh& pmesh,
+                                                          HalfedgeOutputIterator out)
   {
-    typedef PolygonMesh PM;
-    typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
-    for(halfedge_descriptor hd : halfedges(pmesh))
-      if (is_border(hd, pmesh))
-        *out++ = hd;
-    return out;
+    return CGAL::border_halfedges(pmesh, out);
   }
 
   // counts the number of connected components of the boundary of the mesh.
+  // This function is deprecated since \cgal 6.2. Users should use instead  `CGAL::number_of_borders()`.
   //
   // @tparam PolygonMesh model of `HalfedgeGraph`.
   //
   // @param pmesh the polygon mesh to which `face_range` belong
   //
   template<typename PolygonMesh>
-  unsigned int number_of_borders(const PolygonMesh& pmesh)
+  CGAL_DEPRECATED unsigned int number_of_borders(const PolygonMesh& pmesh)
   {
-    typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
-
-    unsigned int border_counter = 0;
-    std::unordered_set<halfedge_descriptor> visited;
-    for(halfedge_descriptor h : halfedges(pmesh)){
-      if(visited.find(h)== visited.end()){
-        if(is_border(h,pmesh)){
-          ++border_counter;
-          for(halfedge_descriptor haf : halfedges_around_face(h, pmesh)){
-            visited.insert(haf);
-          }
-        }
-      }
-    }
-
-    return border_counter;
+    return CGAL::number_of_borders(pmesh);
   }
 
-  /// @ingroup PkgPolygonMeshProcessingRef
+  /// @ingroup PMPDeprecated
+  /// \deprecated This function is deprecated since \cgal 6.2. Users should use instead  `CGAL::extract_boundary_cycles()`.
   ///
   /// extracts boundary cycles as a list of halfedges, with one halfedge per border.
   ///
@@ -248,26 +106,11 @@ std::size_t border_size(typename boost::graph_traits<PolygonMesh>::halfedge_desc
   /// @param out an output iterator where the border halfedges will be put
   ///
   /// @see `border_halfedges()`
-  ///
-  /// @todo It could make sense to also return the length of each cycle.
-  /// @todo It should probably go into BGL package (like the rest of this file).
   template <typename PolygonMesh, typename OutputIterator>
-  OutputIterator extract_boundary_cycles(const PolygonMesh& pm,
-                                         OutputIterator out)
+  CGAL_DEPRECATED OutputIterator extract_boundary_cycles(const PolygonMesh& pm,
+                                                         OutputIterator out)
   {
-    typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
-
-    std::unordered_set<halfedge_descriptor> hedge_handled;
-    for(halfedge_descriptor h : halfedges(pm))
-    {
-      if(is_border(h, pm) && hedge_handled.insert(h).second)
-      {
-        *out++ = h;
-        for(halfedge_descriptor h2 : halfedges_around_face(h, pm))
-          hedge_handled.insert(h2);
-      }
-    }
-    return out;
+    return CGAL::extract_boundary_cycles(pm, out);
   }
 
 } // end of namespace Polygon_mesh_processing

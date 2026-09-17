@@ -15,8 +15,20 @@
 //******************************************************************************
 
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
+#include <CGAL/Mesh_3/internal/Polyline.h>
+#include <CGAL/enum.h>
+#include <CGAL/global_functions_distance_3.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/tags.h>
 #include "test_utilities.h"
 
+#include <cassert>
+#include <cstdlib>
+#include <iostream>
+#include <iterator>
+#include <ostream>
+#include <tuple>
+#include <type_traits>
 #include <vector>
 #include <list>
 #include <utility>
@@ -32,15 +44,18 @@ struct Dummy_domain
   typedef unsigned short Subdomain_index;
 };
 
+constexpr CGAL::API_version api_version = CGAL::API_version::v1;
+
 typedef Dummy_domain<K_e_i> Smooth_domain;
-typedef CGAL::Mesh_domain_with_polyline_features_3<Smooth_domain> Mesh_domain;
+typedef CGAL::Mesh_domain_with_polyline_features_3<Smooth_domain, api_version> Mesh_domain;
 typedef Mesh_domain::Point_3 Point;
 typedef Mesh_domain::FT FT;
 
 
 class Domain_with_polyline_tester
 {
-  typedef std::vector<Point>  Polyline;
+  typedef CGAL::Mesh_3::internal::Polyline<K_e_i>  Mesh_polyline;
+  typedef std::vector<Point>                       Polyline;
   typedef std::list<Polyline> Polylines;
 
   typedef Mesh_domain::Corner_index         Ci;
@@ -49,9 +64,17 @@ class Domain_with_polyline_tester
   typedef Mesh_domain::Index                Index;
 
   typedef std::vector<std::pair<Ci, Point> >        Corners_vector;
+  typedef Mesh_polyline::const_iterator             Polyline_iterator;
   typedef std::pair<Point, Index>                   P_and_i;
-  typedef std::tuple<Csi,P_and_i,P_and_i>   Curve_tuple;
-  typedef std::vector<Curve_tuple>                  Curves_vector;
+
+  using Curve_tuple_v1 = std::tuple<Csi,P_and_i,P_and_i>;
+  using Curve_tuple_v2 = std::tuple<Csi,Polyline_iterator,P_and_i,P_and_i>;
+
+  using Curve_tuple = std::conditional_t<api_version == CGAL::API_version::v1,
+                                         Curve_tuple_v1,
+                                         Curve_tuple_v2>;
+
+  using Curves_vector = std::vector<Curve_tuple>;
 
 public:
   Domain_with_polyline_tester()
@@ -230,6 +253,7 @@ int main()
 {
   std::cout << "Test corners" << std::endl;
   Domain_with_polyline_tester domain_corner_tester;
+
   domain_corner_tester.build_corners();
   domain_corner_tester.test_corners();
 

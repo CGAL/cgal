@@ -35,13 +35,13 @@ public:
   Generic_writer(Stream& os) : m_os(os) { }
   Generic_writer(Stream& os, FileWriter writer) : m_os(os), m_writer(writer) { }
 
-  template <typename PointRange, typename PolygonRange, typename NamedParameters>
+  template <typename PointRange, typename PolygonRange, typename PolylineRange,
+            typename NamedParameters>
   bool operator()(const PointRange& points,
                   const PolygonRange& polygons,
+                  const PolylineRange& polylines,
                   const NamedParameters& np = parameters::default_values())
   {
-    typedef typename boost::range_value<PolygonRange>::type                   Poly;
-
     using parameters::choose_parameter;
     using parameters::get_parameter;
 
@@ -57,26 +57,46 @@ public:
     typedef Simple_cartesian<double> SC;
     Cartesian_converter<K,SC> conv;
     m_writer.write_header(m_os, points.size(), 0, polygons.size());
-    for(std::size_t i=0, end=points.size(); i<end; ++i)
+    for(const auto& p : points)
     {
-      decltype(auto) p = conv(get(point_map, points[i]));
-      m_writer.write_vertex(p.x(), p.y(), p.z());
+      decltype(auto) cp = conv(get(point_map, p));
+      m_writer.write_vertex(cp.x(), cp.y(), cp.z());
     }
 
     m_writer.write_facet_header();
-    for(std::size_t i=0, end=polygons.size(); i<end; ++i)
+    for(const auto& polygon : polygons)
     {
-      const Poly& polygon = polygons[i];
       const std::size_t size = polygon.size();
 
       m_writer.write_facet_begin(size);
-      for(std::size_t j=0; j<size; ++j)
-        m_writer.write_facet_vertex_index(polygon[j]);
+      for(const auto& index : polygon)
+        m_writer.write_facet_vertex_index(index);
       m_writer.write_facet_end();
     }
+
+    m_writer.write_polyline_header(polylines.size());
+    for (const auto& polyline : polylines)
+    {
+      const std::size_t size = polyline.size();
+
+      m_writer.write_polyline_begin(size);
+      for(std::size_t j=0; j<size; ++j)
+        m_writer.write_polyline_vertex_index(polyline[j]);
+      m_writer.write_polyline_end();
+    }
+
     m_writer.write_footer();
 
     return m_os.good();
+  }
+
+  template <typename PointRange, typename PolygonRange, typename NamedParameters>
+  bool operator()(const PointRange& points,
+                  const PolygonRange& polygons,
+                  const NamedParameters& np = parameters::default_values())
+  {
+    std::vector<std::vector<std::size_t> > unused_polylines;
+    return this->operator()(points, polygons, unused_polylines, np);
   }
 
 protected:

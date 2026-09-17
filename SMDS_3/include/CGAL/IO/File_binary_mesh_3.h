@@ -27,7 +27,7 @@ namespace IO {
 
   /**
    * @ingroup PkgSMDS3IOFunctions
-   * @brief outputs a mesh complex to the CGAL binary file format (`.binary.cgal`).
+   * @brief outputs a mesh complex to the \cgal binary file format (`.binary.cgal`).
    *
    * @tparam C3T3 Type of mesh complex, model of `MeshComplex_3InTriangulation_3`
    *
@@ -60,7 +60,7 @@ save_binary_file(std::ostream& os,
 
 /**
  * @ingroup PkgSMDS3IOFunctions
- * @brief loads a mesh complex from a file written in CGAL binary file format (`.binary.cgal`).
+ * @brief loads a mesh complex from a file written in \cgal binary file format (`.binary.cgal`).
  *
  * @tparam C3T3 Type of mesh complex, model of `MeshComplex_3InTriangulation_3`
  *

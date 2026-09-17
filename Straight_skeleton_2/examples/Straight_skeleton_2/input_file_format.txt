@@ -7,7 +7,7 @@ outer_boundary_x1 outer_boundary_y1
 outer_boundary_x2 outer_boundary_y2
 ...
 outer_boundary_xN outer_boundary_yN
-numer_of_holes
+number_of_holes
 hole_1_number_of_vertices
 hole_1_x1 hole_1_y1
 hole_1_x2 hole_1_y2

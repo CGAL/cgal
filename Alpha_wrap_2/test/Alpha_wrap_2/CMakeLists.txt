@@ -1,0 +1,19 @@
+# Created by the script cgal_create_cmake_script
+# This is the CMake script for compiling a CGAL application.
+
+cmake_minimum_required(VERSION 3.12...3.31)
+project(Alpha_wrap_2_Tests)
+
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
+
+# create a target per cppfile
+create_single_source_cgal_program("test_alpha_wrap_2_points.cpp")
+create_single_source_cgal_program("test_alpha_wrap_2_polylines.cpp")
+create_single_source_cgal_program("test_alpha_wrap_2_API.cpp")
+create_single_source_cgal_program("test_alpha_wrap_2_manifoldness.cpp")
+
+if(CGAL_Qt6_FOUND)
+  target_link_libraries(test_alpha_wrap_2_points PRIVATE CGAL::CGAL_Basic_viewer)
+  target_link_libraries(test_alpha_wrap_2_polylines PRIVATE CGAL::CGAL_Basic_viewer)
+  target_link_libraries(test_alpha_wrap_2_manifoldness PRIVATE CGAL::CGAL_Basic_viewer)
+endif()

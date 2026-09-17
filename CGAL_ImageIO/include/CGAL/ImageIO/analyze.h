@@ -1,7 +1,7 @@
 // Copyright (c) 2005-2008 ASCLEPIOS Project, INRIA Sophia-Antipolis (France)
 // All rights reserved.
 //
-// This file is part of the ImageIO Library, and as been adapted for CGAL (www.cgal.org).
+// This file is part of the ImageIO Library, and has been adapted for CGAL (www.cgal.org).
 //
 // $URL$
 // $Id$
@@ -10,8 +10,8 @@
 //
 // Author(s)     :  ASCLEPIOS Project (INRIA Sophia-Antipolis), Laurent Rineau
 
-#ifndef ANALYZE_H
-#define ANALYZE_H
+#ifndef CGAL_ANALYZE_H
+#define CGAL_ANALYZE_H
 
 #ifdef _MSC_VER
 #pragma warning ( disable : 4068 4786 4081 4267 )
@@ -20,6 +20,8 @@
 
 
 #include <CGAL/ImageIO.h>
+
+namespace CGAL {
 
 /* read analyze format header
 
@@ -57,6 +59,8 @@ int writeAnalyzeHeader( const _image* im ) ;
     1: success
  */
 int writeAnalyzeData( const _image* im ) ;
+
+} // end namespace CGAL
 
 #ifdef CGAL_HEADER_ONLY
 #include <CGAL/ImageIO/analyze_impl.h>

@@ -139,7 +139,7 @@ public:
    * \param degree The degree of the input polynomial.
    * \param poly Output: The resulting polynomial with integer coefficients.
    * \param poly_denom Output: The denominator for the polynomial.
-   * \return Whether this polynomial is non-zero (false if the polynomial is
+   * \return Whether this polynomial is non-zero (`false` if the polynomial is
    *         zero).
    */
   bool construct_polynomial(const Rational *coeffs,

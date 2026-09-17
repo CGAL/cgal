@@ -83,7 +83,7 @@ Traits> s(Tree_base<Data, Window> sublayer_tree);
 The tree is constructed according to the data items in the
 sequence between the element pointed by iterator `first` and
 iterator `last`.
-\pre This function can only be called once. If it is the first call the tree is build and `true` is returned. Otherwise, nothing is done but a `CGAL warning` is given and `false` returned.
+\pre This function can only be called once. If it is the first call the tree is built and `true` is returned. Otherwise, nothing is done but a `CGAL warning` is given and `false` returned.
 */
 bool make_tree(In_it first, In_it last);
 

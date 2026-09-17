@@ -18,9 +18,9 @@ public:
 /// `GeneralPolygonSetTraits_2`. It enables Boolean set-operations on
 /// (linear) polygons. It defines the exposed type `Polygon_2` to be
 /// `CGAL::Polygon_2<Kernel,Container>`. By default, the template
-/// parameter `Container` is instantiated by
+/// parameter `Container` is instantiated with
 /// `std::vector<Kernel::Point_2>` and the template parameter
-/// `ArrSegmentTraits` is instantiated by
+/// `ArrSegmentTraits` is instantiated with
 /// `CGAL::Arr_segment_traits_2<Kernel>`.
 /// @{
 

@@ -81,9 +81,12 @@ typedef const Point_3* pointer;
 */
 typedef const Point_3& reference;
 
+/// @}
+/// \name Function
+/// @{
 
 /*!
-Creates an input iterator `g` generating points of type `Point_3` uniformly
+creates an input iterator `g` generating points of type `Point_3` uniformly
 distributed in the half-open cube with side length \f$ 2 a\f$, centered
 at the origin, i.e.\ \f$ \forall p = *g: -a \le p.x(),p.y(),p.z() < a\f$ .
 Three random numbers are needed from `rnd` for each point.
@@ -145,6 +148,9 @@ typedef const Point_3* pointer;
 */
 typedef const Point_3& reference;
 
+/// @}
+/// \name Function
+/// @{
 
 /*!
 creates an input iterator `g` generating points of type `Point_3` uniformly
@@ -208,10 +214,12 @@ typedef const Point_3* pointer;
 */
 typedef const Point_3& reference;
 
-
+/// @}
+/// \name Function
+/// @{
 
 /*!
-Creates  an input iterator `g` generating points of type `Point_3` uniformly
+creates an input iterator `g` generating points of type `Point_3` uniformly
 distributed inside the 3D triangle with vertices \f$ p, q \f$ and \f$ r \f$, i.e., \f$*g = \alpha p + \beta q + \gamma r \f$, for some
 \f$ \alpha, \beta, \gamma \in [0, 1] \f$ and \f$ \alpha + \beta + \gamma = 1 \f$.
 Two random numbers are needed from `rnd` for each point.
@@ -221,7 +229,7 @@ Random_points_in_triangle_3(Point_3& p, Point_3& q, Point_3& r, Random& rnd =
 get_default_random());
 
 /*!
-Creates  an input iterator `g` generating points of type `Point_3` uniformly
+creates an input iterator `g` generating points of type `Point_3` uniformly
 distributed inside a 3D triangle \f$t\f$ with vertices \f$ p, q \f$ and \f$ r \f$, i.e., \f$*g = \alpha p + \beta q + \gamma r \f$, for some
 \f$ \alpha, \beta, \gamma \in [0, 1] \f$ and \f$ \alpha + \beta + \gamma = 1 \f$.
 Two random numbers are needed from `rnd` for each point.
@@ -234,6 +242,73 @@ get_default_random());
 
 }; /* end Random_points_in_triangle_3 */
 } /* end namespace CGAL */
+
+namespace CGAL {
+
+/*!
+
+The class `Random_points_on_segment_3` is an input iterator creating points uniformly
+distributed on a segment. The default for `Creator` is
+`Creator_uniform_3<Kernel_traits<Point_3>::Kernel::RT,Point_3>`.
+
+\cgalModels{InputIterator,PointGenerator}
+
+\sa `CGAL::Random_points_in_disc_2<Point_2, Creator>`
+\sa `CGAL::Random_points_in_cube_3<Point_3, Creator>`
+\sa `CGAL::Random_points_in_tetrahedron_3<Point_3, Creator>`
+\sa `CGAL::Random_points_on_sphere_3<Point_3, Creator>`
+\sa `CGAL::Random_points_in_triangle_3<Point_3, Creator>`
+*/
+template< typename Point_3, typename Creator >
+class Random_points_on_segment_3 {
+public:
+
+/// \name Types
+/// @{
+
+/*!
+
+*/
+typedef std::input_iterator_tag iterator_category;
+
+/*!
+
+*/
+typedef Point_3 value_type;
+
+/*!
+
+*/
+typedef std::ptrdiff_t difference_type;
+
+/*!
+
+*/
+typedef const Point_3* pointer;
+
+/*!
+
+*/
+typedef const Point_3& reference;
+
+/// @}
+/// \name Function
+/// @{
+
+/*!
+creates an input iterator `g` generating points of type `Point_3` uniformly
+distributed on the segment from `p` to `q` (excluding `q`).
+A single random number is needed from `rnd` for each point.
+The expressions `to_double(p.x())` and `to_double(p.y())` must result in the respective `double` representation of the coordinates of \f$ p\f$, and similarly for \f$ q\f$.
+*/
+Random_points_on_segment_3( const Point_3& p, const Point_3& q,
+Random& rnd = get_default_random());
+
+/// @}
+
+}; /* end Random_points_on_segment_3 */
+} /* end namespace CGAL */
+
 
 namespace CGAL{
 /*!
@@ -281,6 +356,9 @@ typedef const Point_3* pointer;
 */
 typedef const Point_3& reference;
 
+/// @}
+/// \name Function
+/// @{
 
 /*!
 creates an input iterator `g` generating points of type `Point_3` uniformly
@@ -346,10 +424,12 @@ typedef const Point_3* pointer;
 */
 typedef const Point_3& reference;
 
-
+/// @}
+/// \name Function
+/// @{
 
 /*!
-Creates  an input iterator `g` generating points of type `Point_3` uniformly
+creates an input iterator `g` generating points of type `Point_3` uniformly
 distributed inside the tetrahedron with vertices \f$ p, q, r \f$ and \f$ s \f$, i.e., \f$*g = \alpha p + \beta q + \gamma r + \delta s \f$, for some
 \f$ \alpha, \beta, \gamma, \delta \in [0, 1] \f$ and \f$ \alpha + \beta + \gamma + \delta = 1 \f$.
 Three random numbers are needed from `rnd` for each point.
@@ -359,7 +439,7 @@ Random_points_in_tetrahedron_3(Point_3& p, Point_3& q, Point_3& r, Point_3& s, R
 get_default_random());
 
 /*!
-Creates  an input iterator `g` generating points of type `Point_3` uniformly
+creates an input iterator `g` generating points of type `Point_3` uniformly
 distributed inside a tetrahedron \f$t\f$ with vertices \f$ p, q, r \f$ and \f$ s \f$, i.e., \f$*g = \alpha p + \beta q + \gamma r + \delta s \f$, for some
 \f$ \alpha, \beta, \gamma, \delta \in [0, 1] \f$ and \f$ \alpha + \beta + \gamma + \delta = 1 \f$.
 Three random numbers are needed from `rnd` for each point.
@@ -379,7 +459,7 @@ namespace CGAL {
 /*!
 
 The class `Random_points_in_triangles_3` is an input iterator creating points uniformly distributed inside a range of `Triangle_3`.
-The triangle range must be valid and unchanged while the iterator is used.
+The triangle range must be valid and unchanged while the generator is used.
 
 
 \cgalModels{InputIterator,PointGenerator}
@@ -426,14 +506,24 @@ typedef const Point_3* pointer;
 */
 typedef const Point_3& reference;
 
-/*!
-Creates  an input iterator `g` generating points of type `Point_3` uniformly
-distributed between the triangles of the range. Each triangle has a probability to be chosen to hold the point depending on its area.
+/// @}
 
+/// \name Functions
+/// @{
+
+/*!
+creates an input iterator `g` generating points of type `Point_3` uniformly
+distributed between the triangles of the range. Each triangle has a probability to be chosen to hold the point depending on its area.
 */
 template<typename TriangleRange>
-Random_points_in_triangles_3(TriangleRange triangulation, Random& rnd =
+Random_points_in_triangles_3(const TriangleRange& triangulation, Random& rnd =
 get_default_random() );
+
+/*!
+returns the last point generated and a pointer to the input triangle used to generate that point.
+*/
+std::pair<Point_3, const Triangle_3*>
+point_and_support() const;
 
 /// @}
 
@@ -446,7 +536,7 @@ namespace CGAL {
 
 The class `Random_points_in_triangle_mesh_3` is an input iterator creating points uniformly
 distributed inside the faces of a triangle mesh model of `FaceListGraph`.
-The triangle mesh must be valid and unchanged while the iterator is used.
+The triangle mesh must be valid and unchanged while the generator is used.
 
 \cgalModels{InputIterator,PointGenerator}
 
@@ -498,18 +588,22 @@ typedef const Point_3* pointer;
 */
 typedef const Point_3& reference;
 
+/// @}
 
-
-/*!
-Creates  an input iterator `g` generating points of type `Point_3` uniformly
-distributed in the mesh faces based on `vpm`. Each triangle has a probability to be chosen to hold the point depending on its area.
-*/
-Random_points_in_triangle_mesh_3(const TriangleMesh& mesh, VertexPointMap vpm, Random& rnd = get_default_random() );
+/// \name Functions
+/// @{
 
 /*!
-Similar to the previous constructor using `get(vertex_point, mesh)` as vertex point map.
+creates an input iterator `g` generating points of type `Point_3` uniformly
+distributed in the faces of `mesh`. Each triangle has a probability to be chosen to hold the point depending on its area.
 */
-Random_points_in_triangle_mesh_3(const TriangleMesh& mesh, Random& rnd = get_default_random() );
+Random_points_in_triangle_mesh_3(const TriangleMesh& mesh, VertexPointMap vpm = get(vertex_point, mesh), Random& rnd = get_default_random() );
+
+/*!
+returns the last point generated and a descriptor of the face used to generate that point.
+*/
+std::pair<Point_3, typename boost::graph_traits<TriangleMesh>::face_descriptor>
+point_and_support() const;
 
 /// @}
 
@@ -523,7 +617,7 @@ namespace CGAL {
 
 The class `Random_points_in_tetrahedral_mesh_boundary_3` is an input iterator creating points uniformly
 distributed on the boundary of a tetrahedral mesh of type `Mesh_complex_3_in_triangulation_3`.
-The tetrahedral mesh must be valid and unchanged while the iterator is used.
+The tetrahedral mesh must be valid and unchanged while the generator is used.
 
 \tparam C3T3 must be a model of `Mesh_complex_3_in_triangulation_3`
 
@@ -575,16 +669,26 @@ typedef const value_type* pointer;
 */
 typedef const value_type& reference;
 
+/// @}
 
+/// \name Functions
+/// @{
 
 /*!
-Creates  an input iterator `g` generating points of type `Weighted_point_3` uniformly
+creates an input iterator `g` generating points of type `Weighted_point_3` uniformly
 distributed on the mesh. Each triangle has a probability to be chosen to hold the point depending on its area.
 
 */
 Random_points_in_tetrahedral_mesh_boundary_3( const C3T3& c3t3,Random& rnd = get_default_random() );
 
+/*!
+returns the last point generated and the facet used to generate that point.
+*/
+std::pair<Point_3, typename C3t3::Triangulation::Facet>
+point_and_support() const;
+
 /// @}
+
 
 }; /* end Random_points_in_tetrahedral_mesh_boundary_3 */
 
@@ -596,7 +700,7 @@ namespace CGAL {
 
 The class `Random_points_in_tetrahedral_mesh_3` is an input iterator creating points uniformly
 distributed inside a tetrahedral mesh of type `Mesh_complex_3_in_triangulation_3`.
-The tetrahedral mesh must be valid and unchanged while the iterator is used.
+The tetrahedral mesh must be valid and unchanged while the generator is used.
 
 \tparam C3T3 must be a model of `Mesh_complex_3_in_triangulation_3`
 
@@ -647,14 +751,24 @@ typedef const value_type* pointer;
 */
 typedef const value_type& reference;
 
+/// @}
 
+/// \name Functions
+/// @{
 
 /*!
-Creates  an input iterator `g` generating points of type `Weighted_point_3` uniformly
+creates an input iterator `g` generating points of type `Weighted_point_3` uniformly
 distributed inside the tetrahedra of the mesh. Each tetrahedron has a probability to be chosen to hold the point depending on its volume.
 
 */
 Random_points_in_tetrahedral_mesh_3( const C3T3& c3t3,Random& rnd = get_default_random() );
+
+
+/*!
+returns the last point generated and a handle to the cell used to generate that point.
+*/
+std::pair<Point_3, typename C3t3::Triangulation::Cell_handle>
+point_and_support() const;
 
 /// @}
 
@@ -680,8 +794,7 @@ rounding errors.
 \sa `CGAL::Random_points_in_sphere_3<Point_3, Creator>`
 */
 template< typename Point_3, typename Creator >
-class Random_points_on_sphere_3 {
-public:
+struct Random_points_on_sphere_3 {
 
 /// \name Types
 /// @{
@@ -711,6 +824,9 @@ typedef const Point_3* pointer;
 */
 typedef const Point_3& reference;
 
+/// @}
+/// \name Function
+/// @{
 
 /*!
 creates an input iterator `g` generating points of type `Point_3` uniformly
@@ -725,4 +841,165 @@ get_default_random());
 /// @}
 
 }; /* end Random_points_on_sphere_3 */
+} /* end namespace CGAL */
+
+
+namespace CGAL {
+
+/*!
+
+The class `Random_points_in_triangle_soup_3` is an input iterator creating points uniformly distributed inside a soup of triangles.
+The triangle range must be valid and unchanged while the generator is used. Triangles are triplets of indices referring to position of points
+in the input point range.
+
+\tparam PointRange a model of the concepts `RandomAccessContainer` with value type begin a point from a \cgal kernel
+\tparam TriangleRange a model of the concept `RandomAccessContainer`, with `value_type` being a model of `RandomAccessContainer` with `std::size_t` as `value_type`.
+
+\cgalModels{InputIterator,PointGenerator}
+
+\sa `CGAL::Random_points_in_cube_3<Point_3, Creator>`
+\sa `CGAL::Random_points_in_triangle_3<Point_3, Creator>`
+\sa `CGAL::Random_points_in_tetrahedron_3<Point_3, Creator>`
+\sa `CGAL::Random_points_in_triangle_mesh_3<Point_3, TriangleMesh>`
+\sa `CGAL::Random_points_in_tetrahedral_mesh_boundary_3<C3T3>`
+\sa `CGAL::Random_points_in_tetrahedral_mesh_3<C3T3>`
+\sa `CGAL::Random_points_in_triangles_2<Point_2>`
+*/
+template <class PointRange,
+          class TriangleRange,
+          typename Creator = Creator_uniform_3<
+                            typename Kernel_traits< typename PointRange::value_type >::Kernel::RT,
+                            typename PointRange::value_type> >
+struct Random_points_in_triangle_soup_3 {
+
+/// \name Types
+/// @{
+
+/*!
+
+*/
+typedef std::input_iterator_tag iterator_category;
+
+/*!
+
+*/
+typedef Point_3 value_type;
+
+/*!
+
+*/
+typedef std::ptrdiff_t difference_type;
+
+/*!
+
+*/
+typedef const Point_3* pointer;
+
+/*!
+
+*/
+typedef const Point_3& reference;
+
+/// @}
+
+/// \name Functions
+/// @{
+
+/*!
+creates an input iterator `g` generating points of type `Point_3` uniformly
+distributed between the triangles of the range. Each triangle has a probability to be chosen to hold the point depending on its area.
+*/
+Random_points_in_triangle_soup_3(const PointRange& points, const TriangleRange& triangles, Random& rnd = get_default_random() );
+
+/*!
+returns the last point generated and the id in the input range of the triangle used to generate that point.
+*/
+std::pair<Point_3, std::size_t>
+point_and_support() const;
+
+/// @}
+
+}; /* end Random_points_in_triangle_soup_3 */
+} /* end namespace CGAL */
+
+namespace CGAL {
+
+/*!
+
+The class `Random_points_on_graph_edges_3` is an input iterator creating points uniformly
+distributed on the edges of a graph model of `EdgeListGraph`.
+The graph must be valid and unchanged while the generator is used.
+
+\cgalModels{InputIterator,PointGenerator}
+
+\sa `CGAL::Random_points_in_disc_2<Point_2, Creator>`
+\sa `CGAL::Random_points_in_cube_3<Point_3, Creator>`
+\sa `CGAL::Random_points_in_triangle_3<Point_3, Creator>`
+\sa `CGAL::Random_points_on_sphere_3<Point_3, Creator>`
+\sa `CGAL::Random_points_in_triangle_mesh_2<Point_2, Triangulation>`
+\sa `CGAL::Random_points_in_tetrahedral_mesh_boundary_3<C3T3>`
+\sa `CGAL::Random_points_in_tetrahedral_mesh_3<C3T3>`
+\sa `CGAL::Random_points_in_triangles_2<Point_2>`
+\sa `CGAL::Random_points_in_triangles_3<Point_3>`
+
+*/
+template < class EdgeListGraph,
+           class VertexPointMap = typename boost::property_map<EdgeListGraph,
+                                                               CGAL::vertex_point_t>::type,
+           class Creator = Creator_uniform_3<
+                            typename Kernel_traits< typename boost::property_traits<VertexPointMap>::value_type >::Kernel::RT,
+                            typename boost::property_traits<VertexPointMap>::value_type > >
+struct Random_points_on_graph_edges_3 {
+
+/// \name Types
+/// @{
+
+/*!
+
+*/
+typedef std::input_iterator_tag iterator_category;
+typedef typename boost::property_traits<VertexPointMap>::value_type  Point_3;
+
+/*!
+
+*/
+typedef Point_3 value_type;
+
+/*!
+
+*/
+typedef std::ptrdiff_t difference_type;
+
+/*!
+
+*/
+typedef const Point_3* pointer;
+
+/*!
+
+*/
+typedef const Point_3& reference;
+
+/// @}
+
+/// \name Functions
+/// @{
+
+/*!
+creates an input iterator `g` generating points of type `Point_3` uniformly
+distributed on the edges of the graph. Each edge has a probability to be chosen to hold the point depending on its length.
+*/
+Random_points_on_graph_edges_3(const EdgeListGraph& mesh, VertexPointMap vpm = get(vertex_point, mesh), Random& rnd = get_default_random() );
+
+
+/*!
+returns the last point generated and a descriptor of the edge used to generate that point.
+*/
+std::pair<Point_3, typename boost::graph_traits<EdgeListGraph>::edge_descriptor>
+point_and_support() const;
+
+/// @}
+
+}; /* end Random_points_on_graph_edges_3 */
+
 } /* end namespace CGAL */

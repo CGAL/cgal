@@ -1463,7 +1463,7 @@ public:
     it1=merge_modified_flats_when_possible(modified_flats);
   }
 
-  /// Right push the path, if all all l-shape are pushed, otherwise only one.
+  /// Right push the path, if all l-shape are pushed, otherwise only one.
   /// @return true iff the path was pushed
   bool right_push(bool all=true)
   {

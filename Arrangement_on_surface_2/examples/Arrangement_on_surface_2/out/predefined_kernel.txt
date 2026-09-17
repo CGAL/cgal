@@ -1,0 +1,4 @@
+Performing aggregated insertion of 104 segments.
+The arrangement size:
+   |V| = 1504,  |E| = 2704,  |F| = 1202
+Construction took 0.0558758 seconds.

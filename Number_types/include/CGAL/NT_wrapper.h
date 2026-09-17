@@ -29,7 +29,7 @@
 namespace CGAL {
 
 /*
- * This class template `NT_wapper<NT>` is currently undocumented, on purpose.
+ * This class template `NT_wrapper<NT>` is currently undocumented, on purpose.
  *
  * This class template provides a wrapper for number types. It calls a function
  * `f` when a constructor, destructor, or assignment operator is called. This

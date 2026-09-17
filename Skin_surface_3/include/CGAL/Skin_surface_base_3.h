@@ -298,7 +298,7 @@ sign(TMC_Vertex_handle vit) const
   CGAL_assertion(!_tmc.is_infinite(ch));
 
   // don't use sign, since the point is constructed:
-  CGAL_BRANCH_PROFILER(std::string(" NGHK: failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+  CGAL_BRANCH_PROFILER(std::string("NGHK: failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
   {
     // Protection is outside the try block as VC8 has the CGAL_CFG_FPU_ROUNDING_MODE_UNWINDING_VC_BUG
     Protect_FPU_rounding<true> P;
@@ -341,7 +341,7 @@ Sign
 Skin_surface_base_3<MixedComplexTraits_3>::
 sign(const Bare_point &p, const Cell_info &info) const
 {
-  CGAL_BRANCH_PROFILER(std::string(" NGHK: failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+  CGAL_BRANCH_PROFILER(std::string("NGHK: failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
   {
     Protect_FPU_rounding<true> P;
     try
@@ -616,7 +616,7 @@ Skin_surface_base_3<MixedComplexTraits_3>::
 compare(Cell_info &info1, const Bare_point &p1,
         Cell_info &info2, const Bare_point &p2) const
 {
-  CGAL_BRANCH_PROFILER(std::string(" NGHK: failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+  CGAL_BRANCH_PROFILER(std::string("NGHK: failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
   {
     Protect_FPU_rounding<true> P;
     try

@@ -215,7 +215,7 @@ struct Init_id;
   };
 
   /** Definition of cell attribute.
-   * Cell_attribute defines what is a a cell. This is an object allowing to
+   * Cell_attribute defines what is a cell. This is an object allowing to
    * link to a dart of the cell (when T is true).
    * The refs class must provide the type of Combinatorial_map used.
    */

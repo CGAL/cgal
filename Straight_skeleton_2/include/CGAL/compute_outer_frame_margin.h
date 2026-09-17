@@ -110,11 +110,10 @@ std::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPointIt
 
 // `Traits` first is to help overload resolution in the 3-argument version (see below)
 template<class Traits, class ForwardPointIterator>
-std::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPointIterator aBegin
-                                                                  , ForwardPointIterator aEnd
-                                                                  , typename Traits::FT  aOffset
-                                                                  , Traits const&        aTraits
-                                                                  )
+std::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPointIterator aBegin,
+                                                                  ForwardPointIterator aEnd,
+                                                                  const typename Traits::FT& aOffset,
+                                                                  const Traits& aTraits)
 {
   typedef typename Traits::FT FT ;
   std::vector<FT> aUWeights(std::distance(aBegin,aEnd), FT(1)) ;
@@ -123,10 +122,10 @@ std::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPointIt
 
 template<class ForwardPointIterator, class WeightIterator, class FT>
 std::optional<FT> compute_outer_frame_margin(ForwardPointIterator aBegin,
-                                               ForwardPointIterator aEnd,
-                                               WeightIterator aWBegin,
-                                               WeightIterator aWEnd,
-                                               const FT aOffset)
+                                             ForwardPointIterator aEnd,
+                                             WeightIterator aWBegin,
+                                             WeightIterator aWEnd,
+                                             const FT& aOffset)
 {
   typedef typename std::iterator_traits<ForwardPointIterator>::value_type Point_2 ;
 
@@ -139,8 +138,8 @@ std::optional<FT> compute_outer_frame_margin(ForwardPointIterator aBegin,
 
 template<class FT, class ForwardPointIterator>
 std::optional<FT> compute_outer_frame_margin(ForwardPointIterator aBegin,
-                                               ForwardPointIterator aEnd,
-                                               const FT aOffset)
+                                             ForwardPointIterator aEnd,
+                                             const FT& aOffset)
 {
   typedef typename std::iterator_traits<ForwardPointIterator>::value_type Point_2 ;
 

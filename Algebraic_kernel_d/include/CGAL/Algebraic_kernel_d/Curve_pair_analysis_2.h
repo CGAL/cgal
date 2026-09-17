@@ -463,7 +463,7 @@ public:
      * transformation is performed, and the sheared curve pair is used
      * to handle degenerate situations. Finally, if set to
      * CGAL::SHEAR_ONLY_AT_IRRATIONAL_STRATEGY, degeneracies at rational
-     * x-ccordinates are handled directly, and a shear is only applied
+     * x-coordinates are handled directly, and a shear is only applied
      * in other situations. The default argument for \c strategy is
      * \c CGAL::SHEAR_ONLY_AT_IRRATIONAL_STRATEGY.
      */
@@ -2472,7 +2472,7 @@ update_intersection_info(Intersection_info_container&
     intersection_info.index=index;
     intersection_info.mult=slice.multiplicity_of_intersection(j);
     // Find the right position to insert the object
-    // first the "x-coordiante"
+    // first the "x-coordinate"
     size_type left_index = -1,
         right_index = static_cast<size_type>(stripe_values().size()-1);
     Algebraic_real_1 xv = ev.x();
