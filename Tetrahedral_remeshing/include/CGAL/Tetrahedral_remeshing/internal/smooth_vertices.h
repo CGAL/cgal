@@ -31,6 +31,8 @@
 #include <boost/container/small_vector.hpp>
 #include <boost/functional/hash.hpp>
 
+#include <array>
+#include <cstdint>
 #include <unordered_map>
 #include <vector>
 #include <cmath>
@@ -162,6 +164,17 @@ public:
   // SURFACE, where walking `m_vertices_normals` end to end would make them
   // proportional to the whole mesh, once per `refresh()`.
   std::vector<std::pair<std::size_t, Vertex_handle>> m_vertices_with_normals;
+
+  // Scratch for the parallel normals fan-out (`compute_vertices_normals()`).
+  // All three keep their capacity between calls and are indexed so that every
+  // pass costs the SURFACE, not the mesh: `m_nrm_facet_count` and
+  // `m_nrm_vertex_slot` are indexed by vertex id but are only ever written for
+  // a vertex that carries a normal, and `m_nrm_facet_count` is zeroed through
+  // `m_vertices_with_normals`, so it is all zeros on entry to every call.
+  std::vector<std::uint32_t> m_nrm_facet_count;   // per vertex id
+  std::vector<std::uint32_t> m_nrm_vertex_slot;   // vertex id -> position in m_vertices_with_normals
+  std::vector<std::uint32_t> m_nrm_csr_offset;    // per slot, into m_nrm_csr
+  std::vector<std::uint32_t> m_nrm_csr;           // facet indices, grouped by vertex
 
   const CellSelector& m_cell_selector;
   const bool m_protect_boundaries;
@@ -561,8 +574,168 @@ private:
     return str;
   }
 
+#ifdef CGAL_LINKED_WITH_TBB
+  /**
+  * The parallel form of `compute_vertices_normals()` below. Both halves of the
+  * routine run on all threads, and neither hash map survives.
+  *
+  * Pass 1 collects every boundary facet's area-weighted normal, with the ids
+  * and handles of its three vertices, on all threads. The serial form puts
+  * these in an `unordered_map<Facet, Vector_3>` and then walks that map --
+  * 102 k random-access reads on `1146193_cdt_0.5` -- for no reason other than
+  * that it is where the first loop happened to leave them. Here they stay in
+  * the flat vector the collector returns.
+  *
+  * Passes 2 and 3 group the facets by vertex: a count per vertex, a prefix sum
+  * over the vertices that have one, and a fill. Both are linear passes over
+  * ~3 x 102 k entries of `std::uint32_t` and stay serial -- they are ~1% of the
+  * routine, and a parallel fill would need atomics to do the same work.
+  *
+  * Pass 4 is the one that costs. Each vertex is summed and normalized by ONE
+  * thread, so no accumulator is shared and there is nothing to reduce: a
+  * `parallel_for` over vertices is the whole of it.
+  *
+  * WHAT MOVES. The per-vertex sums are floating point and a vertex's facets
+  * are now added in facet order rather than in the order an `unordered_map`
+  * happened to iterate, so the normals differ from the serial path's in the
+  * last bits, and the mesh follows. That is inside what this path already
+  * does: at more than one thread the remeshing is nondeterministic by
+  * construction -- which operations succeed depends on the order locks are
+  * taken -- so the output is not reproducible run to run whatever this routine
+  * does. The `Sequential_tag` build does not execute any of this code and its
+  * output is unchanged, which is the gate that matters (POLICY 5.5).
+  */
+  void compute_vertices_normals_parallel(const C3t3& c3t3)
+  {
+    const Tr& tr = c3t3.triangulation();
+    const typename Tr::Geom_traits& gt = tr.geom_traits();
+    typename Tr::Geom_traits::Construct_opposite_vector_3
+      opp = gt.construct_opposite_vector_3_object();
+
+    struct Facet_normal
+    {
+      std::array<std::size_t, 3> vids;
+      std::array<Vertex_handle, 3> vhs;
+      Surface_patch_index patch;
+      Vector_3 n;
+    };
+
+    // ---- pass 1: the facet normals, on all threads -------------------------
+    const std::vector<Facet_normal> fnormals
+      = Tetrahedral_remeshing::internal::parallel_collect_from_finite_facets<Facet_normal>(
+          tr,
+          Tetrahedral_remeshing::internal::gather_all_cells(tr),
+          [this, &c3t3, &tr, &gt, &opp](const Facet& trf, std::vector<Facet_normal>& out)
+          {
+            if (!is_boundary(c3t3, trf, m_cell_selector))
+              return;
+
+            const Facet f = canonical_facet(trf);
+            const Cell_handle c = f.first;
+            const Cell_handle neigh = f.first->neighbor(f.second);
+
+            Vector_3 n = CGAL::Tetrahedral_remeshing::normal(f, gt);
+            if (tr.is_infinite(neigh)
+             || c3t3.subdomain_index(neigh) < c3t3.subdomain_index(c))
+              n = opp(n);
+
+            Facet_normal fn;
+            fn.patch = c3t3.surface_patch_index(f);
+            fn.n = n;
+            int i = 0;
+            for (const Vertex_handle vi : tr.vertices(f))
+            {
+              fn.vhs[i] = vi;
+              fn.vids[i] = vertex_id(vi);
+              ++i;
+            }
+            out.push_back(fn);
+          });
+
+    // ---- reset, through the list the last call left ------------------------
+    for (const auto& [vid, v] : m_vertices_with_normals)
+    {
+      CGAL_USE(v);
+      m_vertices_normals[vid].clear();
+      m_nrm_facet_count[vid] = 0;
+    }
+    m_vertices_with_normals.clear();
+
+    const std::size_t nbv = tr.number_of_vertices();
+    m_vertices_normals.resize(nbv);
+    m_nrm_facet_count.resize(nbv, 0);
+    m_nrm_vertex_slot.resize(nbv);
+
+    // ---- pass 2: count, and name the vertices that carry a normal ----------
+    for (const Facet_normal& fn : fnormals)
+    {
+      for (int i = 0; i < 3; ++i)
+      {
+        const std::size_t vid = fn.vids[i];
+        if (m_nrm_facet_count[vid]++ == 0)
+        {
+          m_nrm_vertex_slot[vid] = static_cast<std::uint32_t>(m_vertices_with_normals.size());
+          m_vertices_with_normals.emplace_back(vid, fn.vhs[i]);
+        }
+      }
+    }
+
+    // ---- pass 3: prefix sum and fill ---------------------------------------
+    const std::size_t nb_slots = m_vertices_with_normals.size();
+    m_nrm_csr_offset.assign(nb_slots + 1, 0);
+    for (std::size_t k = 0; k < nb_slots; ++k)
+      m_nrm_csr_offset[k + 1] = m_nrm_csr_offset[k]
+                              + m_nrm_facet_count[m_vertices_with_normals[k].first];
+
+    m_nrm_csr.resize(m_nrm_csr_offset[nb_slots]);
+    std::vector<std::uint32_t> cursor(m_nrm_csr_offset.begin(), m_nrm_csr_offset.end() - 1);
+    for (std::size_t fi = 0; fi < fnormals.size(); ++fi)
+    {
+      for (int i = 0; i < 3; ++i)
+      {
+        const std::uint32_t k = m_nrm_vertex_slot[fnormals[fi].vids[i]];
+        m_nrm_csr[cursor[k]++] = static_cast<std::uint32_t>(fi);
+      }
+    }
+
+    // ---- pass 4: one vertex, one thread ------------------------------------
+    tbb::parallel_for(tbb::blocked_range<std::size_t>(0, nb_slots),
+      [&](const tbb::blocked_range<std::size_t>& range)
+      {
+        for (std::size_t k = range.begin(); k != range.end(); ++k)
+        {
+          Vertex_patch_normals& vpn = m_vertices_normals[m_vertices_with_normals[k].first];
+
+          for (std::uint32_t j = m_nrm_csr_offset[k]; j != m_nrm_csr_offset[k + 1]; ++j)
+          {
+            const Facet_normal& fn = fnormals[m_nrm_csr[j]];
+            auto patch_it = std::find_if(vpn.begin(), vpn.end(),
+                                         [&fn](const auto& pn) { return pn.first == fn.patch; });
+            if (patch_it == vpn.end())
+              vpn.emplace_back(fn.patch, fn.n);
+            else
+              patch_it->second += fn.n;
+          }
+
+          for (auto& [surf_i, n] : vpn)
+          {
+            CGAL_USE(surf_i);
+            CGAL::Tetrahedral_remeshing::normalize(n, gt);
+          }
+        }
+      });
+  }
+#endif // CGAL_LINKED_WITH_TBB
+
   void compute_vertices_normals(const C3t3& c3t3)
   {
+#ifdef CGAL_LINKED_WITH_TBB
+    if constexpr (is_parallel)
+    {
+      compute_vertices_normals_parallel(c3t3);
+      return;
+    }
+#endif
 
     // Emptied without giving the storage back: `resize()` only ever grows the
     // outer vector, and clearing an inner vector keeps its capacity. Only the
