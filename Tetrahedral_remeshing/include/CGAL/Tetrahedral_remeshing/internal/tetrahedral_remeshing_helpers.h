@@ -698,6 +698,17 @@ bool is_well_oriented(const Tr& tr, const typename Tr::Cell_handle ch)
                         ch->vertex(3));
 }
 
+template<typename Tr, typename CellRange>
+bool are_well_oriented(const Tr& tr, const CellRange& cells)
+{
+  for(const auto& cell : cells)
+  {
+    if(!is_well_oriented(tr, cell))
+      return false;
+  }
+  return true;
+}
+
 template<typename C3T3, typename CellSelector>
 bool is_boundary(const C3T3& c3t3,
                  const typename C3T3::Facet& f,
@@ -2231,6 +2242,11 @@ void count_far_points(const C3t3& c3t3)
 template<typename Tr>
 bool are_cell_orientations_valid(const Tr& tr)
 {
+  // skip the test if we know
+  // that the input triangulation already has inverted cells
+  if(tr.may_have_badly_oriented_cells())
+    return true;
+
   typedef typename Tr::Geom_traits::Point_3 Point_3;
   typedef typename Tr::Facet                Facet;
 
