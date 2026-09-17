@@ -120,7 +120,7 @@ namespace CGAL::internal::Hexmeshing
     return [&](internal::Hexmeshing::Point p) -> bool {
       CGAL::Side_of_triangle_mesh<Mesh, typename Kernel_traits
                                 <internal::Hexmeshing::Point>::Kernel, VPM> s(tree);
-      return s(p) != CGAL::ON_BOUNDED_SIDE;
+      return s(p) == CGAL::ON_BOUNDED_SIDE;
     };
   }
 }
