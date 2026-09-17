@@ -413,23 +413,19 @@ class Intersection_of_triangle_meshes
       if (const_mesh_ptr==&tm1)
       {
         auto filtered_callback_12 = [&](halfedge_descriptor h1, halfedge_descriptor h2){
-          if(!callback12.is_face_degenerated(h1))
+          if (get(vpm2, source(h2, tm2)) != get(vpm2, target(h2, tm2)))
             callback12(h1, h2);
-        };
-        auto filtered_callback_21 = [&](halfedge_descriptor h2, halfedge_descriptor h1){
-          if (get(vpm1, source(h1, tm1)) != get(vpm1, target(h1, tm1)))
-            callback21(h2, h1);
           else
           {
             for (int i=0; i<2; ++i)
             {
-              if (!is_border(h1, tm1))
+              if (!is_border(h2, tm2))
               {
-                if ( get(vpm1, target(next(h1, tm1), tm1))==get(vpm1, target(h1, tm1)) &&
-                      coplanar(get(vpm2, source(h2, tm2)),
-                               get(vpm2, target(h2, tm2)),
-                               get(vpm2, target(next(h2, tm2), tm2)),
-                               get(vpm1, target(h1, tm1))) )
+                if ( get(vpm2, target(next(h2, tm2), tm2))==get(vpm2, target(h2, tm2)) &&
+                      coplanar(get(vpm1, source(h1, tm1)),
+                                get(vpm1, target(h1, tm1)),
+                                get(vpm1, target(next(h1, tm1), tm1)),
+                                get(vpm2, target(h2, tm2))) )
                 {
                   coplanar_faces.insert(
                       &tm1 < &tm2
@@ -438,9 +434,13 @@ class Intersection_of_triangle_meshes
                     );
                 }
               }
-              h1=opposite(h1, tm1);
+              h2=opposite(h2, tm2);
             }
           }
+        };
+        auto filtered_callback_21 = [&](halfedge_descriptor h2, halfedge_descriptor h1){
+          if(!callback21.is_face_degenerated(h2))
+            callback21(h2, h1);
         };
         AABB_call(filtered_callback_12, filtered_callback_21);
       }
@@ -448,20 +448,25 @@ class Intersection_of_triangle_meshes
       {
         if (const_mesh_ptr==&tm2)
         {
+          // tm2 might feature
           auto filtered_callback_12 = [&](halfedge_descriptor h1, halfedge_descriptor h2){
-            if (get(vpm2, source(h2, tm2)) != get(vpm2, target(h2, tm2)))
+            if(!callback12.is_face_degenerated(h1))
               callback12(h1, h2);
+          };
+          auto filtered_callback_21 = [&](halfedge_descriptor h2, halfedge_descriptor h1){
+            if (get(vpm1, source(h1, tm1)) != get(vpm1, target(h1, tm1)))
+              callback21(h2, h1);
             else
             {
               for (int i=0; i<2; ++i)
               {
-                if (!is_border(h2, tm2))
+                if (!is_border(h1, tm1))
                 {
-                  if ( get(vpm2, target(next(h2, tm2), tm2))==get(vpm2, target(h2, tm2)) &&
-                        coplanar(get(vpm1, source(h1, tm1)),
-                                 get(vpm1, target(h1, tm1)),
-                                 get(vpm1, target(next(h1, tm1), tm1)),
-                                 get(vpm2, target(h2, tm2))) )
+                  if ( get(vpm1, target(next(h1, tm1), tm1))==get(vpm1, target(h1, tm1)) &&
+                        coplanar(get(vpm2, source(h2, tm2)),
+                                get(vpm2, target(h2, tm2)),
+                                get(vpm2, target(next(h2, tm2), tm2)),
+                                get(vpm1, target(h1, tm1))) )
                   {
                     coplanar_faces.insert(
                         &tm1 < &tm2
@@ -470,13 +475,9 @@ class Intersection_of_triangle_meshes
                       );
                   }
                 }
-                h2=opposite(h2, tm2);
+                h1=opposite(h1, tm1);
               }
             }
-          };
-          auto filtered_callback_21 = [&](halfedge_descriptor h2, halfedge_descriptor h1){
-            if(!callback21.is_face_degenerated(h2))
-              callback21(h2, h1);
           };
           AABB_call(filtered_callback_12, filtered_callback_21);
         }
