@@ -20,7 +20,7 @@ namespace CGAL {
  *
  * It models all the concepts that the original traits models.
  */
-template <typename BaseTraits>
+template <typename DecoratedTraits_2>
 class Arr_tracing_traits_2 {
 public:
   enum Operation_id {
@@ -59,6 +59,17 @@ public:
   };
 
 public:
+  /// \name Types
+  /// @{
+
+  //! The traits being traced.
+  using Decorated_traits_2 = DecoratedTraits_2;
+
+  //! A convenient type.
+  using Shared_decorated_traits_2 = std::shared_ptr<Decorated_traits_2>;
+
+  /// @}
+
   /// \name Creation
   /// @{
 
@@ -70,7 +81,7 @@ public:
   /*! constructs from a shared pointer.
    * \param[in] traits the taits being traced.
    */
-  Arr_tracing_traits_2(std::shared_ptr<BaseTraits> traits);
+  Arr_tracing_traits_2(Shared_decorated_traits_2 traits);
 
   /*! disables copy constructor.
    */
@@ -98,35 +109,35 @@ public:
 
   /*! obtains a const reference to the traits being traced.
    */
-  const Base& traits() const { return *m_base_traits; }
+  const Decorated_traits_2& traits() const { return *m_decorated_traits; }
 
   /*! obtains a reference to the traits being traced.
    */
-  Base& traits() { return *m_base_traits; }
+  Decorated_traits_2& traits() { return *m_decorated_traits; }
 
   /*! obtains the smart pointer to the traits being traced.
    */
-  std::shared_ptr<BaseTraits> shared_traits() const { return m_base_traits; }
+  Shared_decorated_traits_2 shared_traits() const { return m_decorated_traits; }
 
-  /// \name Types coming from BaseTraits
+  /// \name Types coming from DecoratedTraits_2
   /// @{
 
-  using Has_left_category = typename Base::Has_left_category;
-  using Has_merge_category = typename Base::Has_merge_category;
+  using Has_left_category = typename Decorated_traits_2::Has_left_category;
+  using Has_merge_category = typename Decorated_traits_2::Has_merge_category;
 
-  using Left_side_category = typename internal::Arr_complete_left_side_category<Base>::Category;
-  using Bottom_side_category = typename internal::Arr_complete_bottom_side_category<Base>::Category;
-  using Top_side_category = typename internal::Arr_complete_top_side_category<Base>::Category;
-  using Right_side_category = typename internal::Arr_complete_right_side_category<Base>::Category;
+  using Left_side_category = typename internal::Arr_complete_left_side_category<Decorated_traits_2>::Category;
+  using Bottom_side_category = typename internal::Arr_complete_bottom_side_category<Decorated_traits_2>::Category;
+  using Top_side_category = typename internal::Arr_complete_top_side_category<Decorated_traits_2>::Category;
+  using Right_side_category = typename internal::Arr_complete_right_side_category<Decorated_traits_2>::Category;
 
-  using Point_2 = typename Base::Point_2;
-  using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
+  using Point_2 = typename Decorated_traits_2::Point_2;
+  using X_monotone_curve_2 = typename Decorated_traits_2::X_monotone_curve_2;
 
   //! Defined only if the traits being traced models the concept `AosTraits_2`.
-  using Curve_2 = typename Base::Curve_2;
+  using Curve_2 = typename Decorated_traits_2::Curve_2;
 
   //! Defined only if the traits being traced models the concept `AosXMonotoneTraits_2`.
-  using Multiplicity = typename Base::Multiplicity;
+  using Multiplicity = typename Decorated_traits_2::Multiplicity;
 
   /// @}
 

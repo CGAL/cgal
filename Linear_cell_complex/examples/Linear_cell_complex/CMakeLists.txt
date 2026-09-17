@@ -31,12 +31,14 @@ create_single_source_cgal_program("read_plane_graph_in_lcc_2.cpp")
 create_single_source_cgal_program("voronoi_2.cpp")
 create_single_source_cgal_program("voronoi_3.cpp")
 create_single_source_cgal_program("linear_cell_complex_3_vtk_io.cpp")
+create_single_source_cgal_program("tetsoup_to_lcc.cpp")
 
 
 if(CGAL_Qt6_FOUND)
   target_link_libraries(draw_linear_cell_complex PRIVATE CGAL::CGAL_Basic_viewer)
   target_link_libraries(linear_cell_complex_3_incremental_builder PRIVATE CGAL::CGAL_Basic_viewer)
   target_link_libraries(linear_cell_complex_3_insert PRIVATE CGAL::CGAL_Basic_viewer)
+  target_link_libraries(tetsoup_to_lcc PRIVATE CGAL::CGAL_Basic_viewer)
 endif()
 
 if(TARGET CGAL::Eigen3_support)

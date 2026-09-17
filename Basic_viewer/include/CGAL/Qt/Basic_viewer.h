@@ -34,6 +34,7 @@
 
 #include <QApplication>
 #include <QKeyEvent>
+#include <QPainter>
 
 #include <CGAL/Qt/qglviewer.h>
 #include <CGAL/Qt/manipulatedFrame.h>
@@ -115,6 +116,7 @@ public:
     // Add custom key description (see keyPressEvent).
     setKeyDescription(::Qt::Key_C, "Switch clipping plane display mode");
     setKeyDescription(::Qt::AltModifier, ::Qt::Key_C, "Toggle clipping plane rendering on/off");
+    setKeyDescription(::Qt::ShiftModifier, ::Qt::Key_C, "Switch how edges/vertices are clipped (all/partial)");
     setKeyDescription(::Qt::Key_E, "Toggles edges display");
     setKeyDescription(::Qt::Key_M, "Toggles mono color");
     setKeyDescription(::Qt::Key_N, "Inverse direction of normals");
@@ -123,6 +125,8 @@ public:
     setKeyDescription(::Qt::Key_U, "Move camera direction upside down");
     setKeyDescription(::Qt::Key_V, "Toggles vertices display");
     setKeyDescription(::Qt::Key_W, "Toggles faces display");
+    setKeyDescription(::Qt::Key_D, "Cycle coloring faces by value (distance to the plane)");
+    setKeyDescription(::Qt::ShiftModifier, ::Qt::Key_D, "Color by value: distance smooth, distance per cell, size per cell");
     setKeyDescription(::Qt::Key_Plus, "Increase size of edges");
     setKeyDescription(::Qt::Key_Minus, "Decrease size of edges");
     setKeyDescription(::Qt::ControlModifier, ::Qt::Key_Plus, "Increase size of vertices");
@@ -321,6 +325,24 @@ public:
     if(!m_are_buffers_initialized)
     { initialize_buffers(); }
 
+    // Whole-volume clipping: decide which volumes are kept, so the face pass and
+    // the whole-volume edge filter share the same result. The kept set depends
+    // only on the plane, so recompute it only when the plane moves (or the scene
+    // changed), not every frame.
+    if (m_use_clipping_plane == CLIPPING_PLANE_VOLUMES)
+    {
+      const std::size_t nv=m_scene.get_volume_faces().size();
+      if (clipPlane!=m_last_vol_clip_plane || plane_point!=m_last_vol_plane_point ||
+          m_volumes_kept.size()!=nv)
+      {
+        m_volumes_kept.assign(nv, 0);
+        for (std::size_t v=0; v<nv; ++v)
+        { if (volume_kept(v, clipPlane, plane_point)) { m_volumes_kept[v]=1; } }
+        m_last_vol_clip_plane=clipPlane;
+        m_last_vol_plane_point=plane_point;
+      }
+    }
+
     QVector3D color;
     attrib_buffers(this);
 
@@ -352,23 +374,10 @@ public:
           rendering_program_sphere.setUniformValue("u_RenderingMode", rendering_mode);
 
           vao[VAO_POINTS].bind();
-          glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(m_scene.number_of_elements(GS::POS_POINTS)));
+          draw_points_for_vertices();
         };
 
-        enum {
-          DRAW_ALL = -1, // draw all
-          DRAW_INSIDE_ONLY, // draw only the part inside the clipping plane
-          DRAW_OUTSIDE_ONLY // draw only the part outside the clipping plane
-        };
-
-        if (m_use_clipping_plane == CLIPPING_PLANE_SOLID_HALF_ONLY)
-        {
-          renderer(DRAW_INSIDE_ONLY);
-        }
-        else
-        {
-          renderer(DRAW_ALL);
-        }
+        renderer(vertex_clip_render_mode());
 
         rendering_program_sphere.release();
       }
@@ -399,23 +408,10 @@ public:
           rendering_program_p_l.setUniformValue("u_RenderingMode", rendering_mode);
 
           vao[VAO_POINTS].bind();
-          glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(m_scene.number_of_elements(GS::POS_POINTS)));
+          draw_points_for_vertices();
         };
 
-        enum {
-          DRAW_ALL = -1, // draw all
-          DRAW_INSIDE_ONLY, // draw only the part inside the clipping plane
-          DRAW_OUTSIDE_ONLY // draw only the part outside the clipping plane
-        };
-
-        if (m_use_clipping_plane == CLIPPING_PLANE_SOLID_HALF_ONLY)
-        {
-          renderer(DRAW_INSIDE_ONLY);
-        }
-        else
-        {
-          renderer(DRAW_ALL);
-        }
+        renderer(vertex_clip_render_mode());
 
         rendering_program_p_l.release();
       }
@@ -463,7 +459,7 @@ public:
           rendering_program_cylinder.setUniformValue("u_RenderingMode", rendering_mode);
 
           vao[VAO_SEGMENTS].bind();
-          glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(m_scene.number_of_elements(GS::POS_SEGMENTS)));
+          draw_segments_for_edges();
           rendering_program_cylinder.release();
 
           // 2. A sphere at each edge endpoint, in the edge color and at the tube
@@ -491,24 +487,11 @@ public:
           rendering_program_join_sphere.setUniformValue("u_RenderingMode", rendering_mode);
 
           vao[VAO_SEGMENTS].bind();
-          glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(m_scene.number_of_elements(GS::POS_SEGMENTS)));
+          draw_segments_for_edges();
           rendering_program_join_sphere.release();
         };
 
-        enum {
-          DRAW_ALL = -1, // draw all
-          DRAW_INSIDE_ONLY, // draw only the part inside the clipping plane
-          DRAW_OUTSIDE_ONLY // draw only the part outside the clipping plane
-        };
-
-        if (m_use_clipping_plane == CLIPPING_PLANE_SOLID_HALF_ONLY)
-        {
-          renderer(DRAW_INSIDE_ONLY);
-        }
-        else
-        {
-          renderer(DRAW_ALL);
-        }
+        renderer(edge_clip_render_mode());
 
         rendering_program_cylinder.release();
       }
@@ -553,7 +536,7 @@ public:
           // The opaque edges are drawn solid; the framebuffer multisampling does
           // the anti-aliasing, so no blending is needed here.
           vao[VAO_SEGMENTS].bind();
-          glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(m_scene.number_of_elements(GS::POS_SEGMENTS)));
+          draw_segments_for_edges();
 
           // Fill the square-cap corners where flat edges meet with a disk at each
           // edge endpoint, in the edge color and at the edge width. Drawn from the
@@ -579,24 +562,11 @@ public:
           rendering_program_edge_disk.setUniformValue("u_PointPlane", plane_point);
           rendering_program_edge_disk.setUniformValue("u_RenderingMode", rendering_mode);
           vao[VAO_SEGMENTS].bind();
-          glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(m_scene.number_of_elements(GS::POS_SEGMENTS)));
+          draw_segments_for_edges();
           rendering_program_edge_disk.release();
         };
 
-        enum {
-          DRAW_ALL = -1, // draw all
-          DRAW_INSIDE_ONLY, // draw only the part inside the clipping plane
-          DRAW_OUTSIDE_ONLY // draw only the part outside the clipping plane
-        };
-
-        if (m_use_clipping_plane == CLIPPING_PLANE_SOLID_HALF_ONLY)
-        {
-          renderer(DRAW_INSIDE_ONLY);
-        }
-        else
-        {
-          renderer(DRAW_ALL);
-        }
+        renderer(edge_clip_render_mode());
 
         rendering_program_line.release();
       }
@@ -625,23 +595,10 @@ public:
           rendering_program_p_l.setUniformValue("u_RenderingMode", rendering_mode);
 
           vao[VAO_SEGMENTS].bind();
-          glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(m_scene.number_of_elements(GS::POS_SEGMENTS)));
+          draw_segments_for_edges();
         };
 
-        enum {
-          DRAW_ALL = -1,
-          DRAW_INSIDE_ONLY,
-          DRAW_OUTSIDE_ONLY
-        };
-
-        if (m_use_clipping_plane == CLIPPING_PLANE_SOLID_HALF_ONLY)
-        {
-          renderer(DRAW_INSIDE_ONLY);
-        }
-        else
-        {
-          renderer(DRAW_ALL);
-        }
+        renderer(edge_clip_render_mode());
 
         rendering_program_p_l.release();
       }
@@ -779,9 +736,75 @@ public:
         rendering_program_face.setUniformValue("u_RenderingTransparency", clipping_plane_rendering_transparency);
         rendering_program_face.setUniformValue("u_ClipPlane", clipPlane);
         rendering_program_face.setUniformValue("u_PointPlane", plane_point);
+        // Color by value: the value is the distance to the clipping plane, over a scale
+        // anchored at the plane (0) and growing into the kept half, so moving the plane
+        // sweeps the colors instead of leaving them unchanged.
+        rendering_program_face.setUniformValue("u_ColorMapMode", static_cast<GLfloat>(m_color_map));
+        { double dvmin, dvmax; distance_value_range(clipPlane, plane_point, dvmin, dvmax);
+          rendering_program_face.setUniformValue("u_ValueMin", static_cast<GLfloat>(dvmin));
+          rendering_program_face.setUniformValue("u_ValueMax", static_cast<GLfloat>(dvmax)); }
 
         vao[VAO_FACES].bind();
-        glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(m_scene.number_of_elements(GS::POS_FACES)));
+        const std::vector<std::vector<unsigned int>> &vols=m_scene.get_volume_faces();
+        if (m_color_map!=0 && m_color_value==3 && m_scene.has_face_values())
+        {
+          // User value: one flat value per face, provided by the drawer (for example
+          // the aspect ratio of the face), mapped to the palette.
+          rendering_program_face.setUniformValue("u_ColorPerCell", static_cast<GLint>(1));
+          rendering_program_face.setUniformValue("u_ValueMin", static_cast<GLfloat>(m_scene.face_value_min()));
+          rendering_program_face.setUniformValue("u_ValueMax", static_cast<GLfloat>(m_scene.face_value_max()));
+          const std::vector<float> &fvals=m_scene.get_face_values();
+          const unsigned int nf=m_scene.number_of_faces();
+          for (unsigned int f=0; f<nf && f<fvals.size(); ++f)
+          {
+            rendering_program_face.setUniformValue("u_CellValue", static_cast<GLfloat>(fvals[f]));
+            const std::pair<unsigned int, unsigned int> &r=m_scene.face_range(f);
+            glDrawArrays(GL_TRIANGLES, static_cast<GLint>(r.first),
+                         static_cast<GLsizei>(r.second));
+          }
+        }
+        else if (m_color_map!=0 && (m_color_value==1 || m_color_value==2) && !vols.empty())
+        {
+          // Per cell: draw each volume with one flat value, so a whole cell takes
+          // one color and neighboring cells do not melt into one. The value is the
+          // center's distance to the plane, or the cell size.
+          rendering_program_face.setUniformValue("u_ColorPerCell", static_cast<GLint>(1));
+          const std::vector<CGAL::Bbox_3> &bb=m_scene.get_volume_bboxes();
+          const bool size_mode=(m_color_value==2);
+          if (size_mode)
+          {
+            if (!m_cell_sizes_valid) { compute_cell_sizes(); }
+            rendering_program_face.setUniformValue("u_ValueMin", static_cast<GLfloat>(m_cell_size_min));
+            rendering_program_face.setUniformValue("u_ValueMax", static_cast<GLfloat>(m_cell_size_max));
+          }
+          const QVector3D n=QVector3D(clipPlane).normalized();
+          const QVector3D pt=plane_point.toVector3D();
+          for (std::size_t v=0; v<vols.size(); ++v)
+          {
+            float value;
+            if (size_mode) { value=m_cell_sizes[v]; }
+            else
+            {
+              const CGAL::Bbox_3 &b=bb[v];
+              const QVector3D c(float((b.xmin()+b.xmax())*0.5),
+                                float((b.ymin()+b.ymax())*0.5),
+                                float((b.zmin()+b.zmax())*0.5));
+              value=QVector3D::dotProduct(c-pt, n);
+            }
+            rendering_program_face.setUniformValue("u_CellValue", static_cast<GLfloat>(value));
+            for (unsigned int fi : vols[v])
+            {
+              const std::pair<unsigned int, unsigned int> &r=m_scene.face_range(fi);
+              glDrawArrays(GL_TRIANGLES, static_cast<GLint>(r.first),
+                           static_cast<GLsizei>(r.second));
+            }
+          }
+        }
+        else
+        {
+          rendering_program_face.setUniformValue("u_ColorPerCell", static_cast<GLint>(0));
+          glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(m_scene.number_of_elements(GS::POS_FACES)));
+        }
         glDisable(GL_POLYGON_OFFSET_FILL);
       };
 
@@ -831,8 +854,7 @@ public:
         // 4. render clipping plane here
         renderer_clipping_plane(clipping_plane_rendering);
       }
-      else if (m_use_clipping_plane == CLIPPING_PLANE_SOLID_HALF_WIRE_HALF ||
-               m_use_clipping_plane == CLIPPING_PLANE_SOLID_HALF_ONLY)
+      else if (m_use_clipping_plane == CLIPPING_PLANE_SOLID_HALF_ONLY)
       {
         // 1. draw solid HALF
         renderer(DRAW_SOLID_HALF);
@@ -889,6 +911,12 @@ public:
             QVector4D capcol;
             if (num_volumes == 0)
             { capcol = QVector4D(0.6f, 0.6f, 0.6f, 1.0f); }
+            else if (m_color_map!=0)
+            { // Color by value: cap follows the palette, like the volume's faces.
+              const QColor cc=volume_value_color(v, clipPlane, plane_point);
+              capcol = QVector4D(float(cc.redF()), float(cc.greenF()),
+                                 float(cc.blueF()), 1.0f);
+            }
             else
             {
               const CGAL::IO::Color &c = vcolors[v];
@@ -955,6 +983,112 @@ public:
         }
 
         // 2. render clipping plane here
+        renderer_clipping_plane(clipping_plane_rendering);
+      }
+      else if (m_use_clipping_plane == CLIPPING_PLANE_VOLUMES)
+      {
+        // Whole-volume clipping: draw each volume that is not entirely clipped
+        // away as a whole (no cut, no cap). Straddling volumes are kept.
+        const std::vector<std::vector<unsigned int>> &volumes =
+          m_scene.get_volume_faces();
+        const std::size_t num_volumes = volumes.size();
+
+        glEnable(GL_POLYGON_OFFSET_FILL);
+        glPolygonOffset(2.0, 2.0);
+        glDepthFunc(GL_LESS);
+
+        rendering_program_face.bind();
+        if (m_use_default_color)
+        {
+          auto fc = m_scene.get_default_color_face();
+          rendering_program_face.setUniformValue("u_DefaultColor",
+            QVector3D((double)fc.red()/255.0, (double)fc.green()/255.0,
+                      (double)fc.blue()/255.0));
+          rendering_program_face.setUniformValue("u_UseDefaultColor", static_cast<GLint>(1));
+        }
+        else
+        { rendering_program_face.setUniformValue("u_UseDefaultColor", static_cast<GLint>(0)); }
+        rendering_program_face.setUniformValue("u_RenderingMode",
+          static_cast<float>(DRAW_SOLID_ALL));
+        rendering_program_face.setUniformValue("u_RenderingTransparency",
+          clipping_plane_rendering_transparency);
+        rendering_program_face.setUniformValue("u_ClipPlane", clipPlane);
+        rendering_program_face.setUniformValue("u_PointPlane", plane_point);
+        // Color by value: the kept volumes follow the same color map as the other
+        // face modes, per fragment or one flat value per cell.
+        rendering_program_face.setUniformValue("u_ColorMapMode", static_cast<GLfloat>(m_color_map));
+        { double dvmin, dvmax; distance_value_range(clipPlane, plane_point, dvmin, dvmax);
+          rendering_program_face.setUniformValue("u_ValueMin", static_cast<GLfloat>(dvmin));
+          rendering_program_face.setUniformValue("u_ValueMax", static_cast<GLfloat>(dvmax)); }
+        const bool per_cell=(m_color_map!=0 && m_color_value!=0 && num_volumes!=0);
+        const bool size_mode=(m_color_value==2);
+        if (per_cell && size_mode)
+        {
+          if (!m_cell_sizes_valid) { compute_cell_sizes(); }
+          rendering_program_face.setUniformValue("u_ValueMin", static_cast<GLfloat>(m_cell_size_min));
+          rendering_program_face.setUniformValue("u_ValueMax", static_cast<GLfloat>(m_cell_size_max));
+        }
+        rendering_program_face.setUniformValue("u_ColorPerCell", static_cast<GLint>(per_cell?1:0));
+        const QVector3D n=QVector3D(clipPlane).normalized();
+        const QVector3D pt=plane_point.toVector3D();
+
+        vao[VAO_FACES].bind();
+        if (num_volumes == 0)
+        {
+          // No volumes (a surface mesh, for example): there is nothing to clip whole,
+          // so color all faces by value, including the drawer's per-face value.
+          if (m_color_map!=0 && m_color_value==3 && m_scene.has_face_values())
+          {
+            rendering_program_face.setUniformValue("u_ColorPerCell", static_cast<GLint>(1));
+            rendering_program_face.setUniformValue("u_ValueMin", static_cast<GLfloat>(m_scene.face_value_min()));
+            rendering_program_face.setUniformValue("u_ValueMax", static_cast<GLfloat>(m_scene.face_value_max()));
+            const std::vector<float> &fvals=m_scene.get_face_values();
+            const unsigned int nf=m_scene.number_of_faces();
+            for (unsigned int f=0; f<nf && f<fvals.size(); ++f)
+            {
+              rendering_program_face.setUniformValue("u_CellValue", static_cast<GLfloat>(fvals[f]));
+              const std::pair<unsigned int, unsigned int> &r=m_scene.face_range(f);
+              glDrawArrays(GL_TRIANGLES, static_cast<GLint>(r.first),
+                           static_cast<GLsizei>(r.second));
+            }
+          }
+          else
+          {
+            glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(
+              m_scene.number_of_elements(GS::POS_FACES)));
+          }
+        }
+        else
+        {
+          const std::vector<CGAL::Bbox_3> &bb = m_scene.get_volume_bboxes();
+          for (std::size_t v = 0; v < num_volumes; ++v)
+          {
+            if (!m_volumes_kept[v]) { continue; }
+            if (per_cell)
+            {
+              float value;
+              if (size_mode) { value=m_cell_sizes[v]; }
+              else
+              {
+                const CGAL::Bbox_3 &b=bb[v];
+                const QVector3D c(float((b.xmin()+b.xmax())*0.5),
+                                  float((b.ymin()+b.ymax())*0.5),
+                                  float((b.zmin()+b.zmax())*0.5));
+                value=QVector3D::dotProduct(c-pt, n);
+              }
+              rendering_program_face.setUniformValue("u_CellValue", static_cast<GLfloat>(value));
+            }
+            for (unsigned int fi : volumes[v])
+            {
+              const std::pair<unsigned int, unsigned int> &r = m_scene.face_range(fi);
+              glDrawArrays(GL_TRIANGLES, static_cast<GLint>(r.first),
+                           static_cast<GLsizei>(r.second));
+            }
+          }
+        }
+        vao[VAO_FACES].release();
+        glDisable(GL_POLYGON_OFFSET_FILL);
+
         renderer_clipping_plane(clipping_plane_rendering);
       }
       else
@@ -1071,6 +1205,10 @@ public:
       }
       glEnable(GL_LIGHTING);
     }
+
+    // Color by value: show the palette and the value range as a small legend.
+    if (m_color_map!=0)
+    { draw_color_legend(clipPlane, plane_point); }
 
     // Multiply matrix to get in the frame coordinate system.
     // glMultMatrixd(manipulatedFrame()->matrix()); // Linker error
@@ -1458,6 +1596,163 @@ protected:
     return (lo-d)<=0.0 && (hi-d)>=0.0;
   }
 
+  // Whole-volume clipping: true if volume v has a vertex on the kept side of the
+  // plane (dot(p-point, normal)>=0). A straddling volume is kept, so it is hidden
+  // only when every vertex is clipped away. Bbox fast-path first, then an exact
+  // vertex scan when the box straddles (its corners are not real vertices).
+  bool volume_kept(std::size_t v,
+                   const QVector4D &normal, const QVector4D &point) const
+  {
+    const CGAL::Bbox_3 &b=m_scene.get_volume_bboxes()[v];
+    const double nx=normal.x(), ny=normal.y(), nz=normal.z();
+    const double d=nx*point.x()+ny*point.y()+nz*point.z();
+    double lo=0.0, hi=0.0;
+    if (nx>=0){ lo+=nx*b.xmin(); hi+=nx*b.xmax(); } else { lo+=nx*b.xmax(); hi+=nx*b.xmin(); }
+    if (ny>=0){ lo+=ny*b.ymin(); hi+=ny*b.ymax(); } else { lo+=ny*b.ymax(); hi+=ny*b.ymin(); }
+    if (nz>=0){ lo+=nz*b.zmin(); hi+=nz*b.zmax(); } else { lo+=nz*b.zmax(); hi+=nz*b.zmin(); }
+    if (hi-d<0.0) { return false; } // whole box clipped away
+    if (lo-d>=0.0) { return true; } // whole box on the kept side
+    const std::vector<BufferType> &pos=m_scene.get_array_of_index(GS::POS_FACES);
+    for (unsigned int fi : m_scene.get_volume_faces()[v])
+    {
+      const std::pair<unsigned int, unsigned int> &r=m_scene.face_range(fi);
+      for (unsigned int k=0; k<r.second; ++k)
+      {
+        const std::size_t i=3*(std::size_t(r.first)+k);
+        if (nx*pos[i]+ny*pos[i+1]+nz*pos[i+2]-d>=0.0) { return true; }
+      }
+    }
+    return false;
+  }
+
+  // Rendering mode (u_RenderingMode) for edges under Shift+C: 0 is the shader's
+  // kept-side cut, -1 draws all with no shader clip. Only "partial" over the
+  // solid-only face mode asks the shader to cut; the whole-volume case draws all
+  // (no cut) and filters whole edges by volume in draw_segments_for_edges.
+  float edge_clip_render_mode() const
+  {
+    if (m_clip_edges_vertices==CLIP_EV_PARTIAL &&
+        m_use_clipping_plane==CLIPPING_PLANE_SOLID_HALF_ONLY)
+    { return 0.0f; }
+    return -1.0f;
+  }
+
+  // Rendering mode for vertices: "partial" over the solid-only face mode keeps
+  // only the kept side (0, the shader clip); the whole-volume case draws all
+  // (-1) and filters vertices by volume in draw_points_for_vertices, like the
+  // edges. All / off / transparent draw them all (-1).
+  float vertex_clip_render_mode() const
+  {
+    if (m_clip_edges_vertices==CLIP_EV_PARTIAL &&
+        m_use_clipping_plane==CLIPPING_PLANE_SOLID_HALF_ONLY)
+    { return 0.0f; }
+    return -1.0f;
+  }
+
+  // Whole-volume clipping: for each edge (POS_SEGMENTS) and each vertex
+  // (POS_POINTS), the volumes it belongs to, found by matching positions to the
+  // volume face vertices. Cached, recomputed lazily. Empty when no volumes.
+  void compute_clip_owners()
+  {
+    m_edge_owners.clear();
+    m_point_owners.clear();
+    const std::vector<std::vector<unsigned int>> &volumes=m_scene.get_volume_faces();
+    const std::size_t num_volumes=volumes.size();
+    if (num_volumes==0) { return; }
+
+    const std::vector<BufferType> &fpos=m_scene.get_array_of_index(GS::POS_FACES);
+
+    // Each vertex position maps to the volumes whose faces use it (ascending).
+    std::map<std::tuple<float, float, float>, std::vector<unsigned int>> pos_to_vol;
+    for (std::size_t v=0; v<num_volumes; ++v)
+    {
+      for (unsigned int fi : volumes[v])
+      {
+        const std::pair<unsigned int, unsigned int> &r=m_scene.face_range(fi);
+        for (unsigned int k=0; k<r.second; ++k)
+        {
+          const std::size_t i=3*(std::size_t(r.first)+k);
+          std::vector<unsigned int> &lst=
+            pos_to_vol[std::make_tuple(fpos[i], fpos[i+1], fpos[i+2])];
+          if (lst.empty() || lst.back()!=v) { lst.push_back((unsigned int)v); }
+        }
+      }
+    }
+
+    // An edge is owned by the volumes that contain both of its endpoints.
+    const std::vector<BufferType> &lpos=m_scene.get_array_of_index(GS::POS_SEGMENTS);
+    const unsigned int num_edges=m_scene.number_of_elements(GS::POS_SEGMENTS)/2;
+    m_edge_owners.resize(num_edges);
+    for (unsigned int e=0; e<num_edges; ++e)
+    {
+      const std::size_t a=3*std::size_t(2*e), b=3*std::size_t(2*e+1);
+      auto ia=pos_to_vol.find(std::make_tuple(lpos[a], lpos[a+1], lpos[a+2]));
+      auto ib=pos_to_vol.find(std::make_tuple(lpos[b], lpos[b+1], lpos[b+2]));
+      if (ia==pos_to_vol.end() || ib==pos_to_vol.end()) { continue; }
+      const std::vector<unsigned int> &A=ia->second, &B=ib->second;
+      std::size_t x=0, y=0;
+      while (x<A.size() && y<B.size())
+      {
+        if (A[x]<B[y]) { ++x; }
+        else if (B[y]<A[x]) { ++y; }
+        else { m_edge_owners[e].push_back(A[x]); ++x; ++y; }
+      }
+    }
+
+    // A vertex is owned by the volumes that contain its position.
+    const std::vector<BufferType> &ppos=m_scene.get_array_of_index(GS::POS_POINTS);
+    const unsigned int num_points=m_scene.number_of_elements(GS::POS_POINTS);
+    m_point_owners.resize(num_points);
+    for (unsigned int p=0; p<num_points; ++p)
+    {
+      const std::size_t i=3*std::size_t(p);
+      auto it=pos_to_vol.find(std::make_tuple(ppos[i], ppos[i+1], ppos[i+2]));
+      if (it!=pos_to_vol.end()) { m_point_owners[p]=it->second; }
+    }
+  }
+
+  // Draw the segment buffer for the current edge clip state. In "partial" over the
+  // whole-volume face mode, draw only the edges of the kept volumes, so a kept
+  // volume shows all of its edges. Otherwise draw the whole buffer (the shader
+  // does the solid-only cut). Reuses the bound program and VAO.
+  void draw_segments_for_edges()
+  {
+    const GLsizei n=static_cast<GLsizei>(m_scene.number_of_elements(GS::POS_SEGMENTS));
+    if (!(m_clip_edges_vertices==CLIP_EV_PARTIAL &&
+          m_use_clipping_plane==CLIPPING_PLANE_VOLUMES) ||
+        m_scene.get_volume_faces().empty())
+    { glDrawArrays(GL_LINES, 0, n); return; }
+
+    if (!m_clip_owners_valid) { compute_clip_owners(); m_clip_owners_valid=true; }
+    for (std::size_t e=0; e<m_edge_owners.size(); ++e)
+    {
+      bool draw=false;
+      for (unsigned int v : m_edge_owners[e]) { if (m_volumes_kept[v]) { draw=true; break; } }
+      if (draw) { glDrawArrays(GL_LINES, static_cast<GLint>(2*e), 2); }
+    }
+  }
+
+  // Draw the point buffer for the current vertex clip state. In "partial" over the
+  // whole-volume face mode, draw only the vertices of the kept volumes, like the
+  // edges. Otherwise draw the whole buffer (the shader does the solid-only clip).
+  // Reuses the bound program and VAO.
+  void draw_points_for_vertices()
+  {
+    const GLsizei n=static_cast<GLsizei>(m_scene.number_of_elements(GS::POS_POINTS));
+    if (!(m_clip_edges_vertices==CLIP_EV_PARTIAL &&
+          m_use_clipping_plane==CLIPPING_PLANE_VOLUMES) ||
+        m_scene.get_volume_faces().empty())
+    { glDrawArrays(GL_POINTS, 0, n); return; }
+
+    if (!m_clip_owners_valid) { compute_clip_owners(); m_clip_owners_valid=true; }
+    for (std::size_t p=0; p<m_point_owners.size(); ++p)
+    {
+      bool draw=false;
+      for (unsigned int v : m_point_owners[p]) { if (m_volumes_kept[v]) { draw=true; break; } }
+      if (draw) { glDrawArrays(GL_POINTS, static_cast<GLint>(p), 1); }
+    }
+  }
+
   // Clip-plane cap: framebuffer-pixel rectangle of a world box under mvp/viewport.
   // Returns false if a corner is behind the camera (caller clears the full screen).
   static bool bbox_scissor(const CGAL::Bbox_3 &b, const QMatrix4x4 &mvp,
@@ -1550,9 +1845,161 @@ protected:
     }
   }
 
+  // Color by value (size): one size per cell, the bounding-box volume, with the
+  // range over all cells so the palette spans from the smallest to the largest.
+  void compute_cell_sizes()
+  {
+    const std::vector<CGAL::Bbox_3> &bb=m_scene.get_volume_bboxes();
+    m_cell_sizes.resize(bb.size());
+    m_cell_size_min=(std::numeric_limits<float>::max)();
+    m_cell_size_max=0.f;
+    for (std::size_t v=0; v<bb.size(); ++v)
+    {
+      const CGAL::Bbox_3 &b=bb[v];
+      const float s=float((b.xmax()-b.xmin())*(b.ymax()-b.ymin())*(b.zmax()-b.zmin()));
+      m_cell_sizes[v]=s;
+      if (s<m_cell_size_min) { m_cell_size_min=s; }
+      if (s>m_cell_size_max) { m_cell_size_max=s; }
+    }
+    if (bb.empty()) { m_cell_size_min=0.f; m_cell_size_max=1.f; }
+    m_cell_sizes_valid=true;
+  }
+
+  // Color by value: the palette as a QColor, matching color_palette() in the
+  // shader, so the legend bar shows the same colors as the faces.
+  QColor legend_palette_color(float t) const
+  {
+    auto cl=[](float x){ return x<0.f ? 0.f : (x>1.f ? 1.f : x); };
+    float r, g, b;
+    if (m_color_map<2) { r=cl(t*3.f); g=cl(t*3.f-1.f); b=cl(t*3.f-2.f); } // heat
+    else if (m_color_map<3) { r=cl(1.5f-std::abs(4.f*t-3.f)); // jet
+                              g=cl(1.5f-std::abs(4.f*t-2.f));
+                              b=cl(1.5f-std::abs(4.f*t-1.f)); }
+    else if (m_color_map<4) { r=g=b=cl(t); } // grey ramp
+    else
+    { // viridis, the same coefficients as color_palette() in Basic_shaders.h
+      static const float C[7][3]={
+        { 0.277727f,  0.005407f,  0.334100f},
+        { 0.105093f,  1.404614f,  1.384590f},
+        {-0.330862f,  0.214848f,  0.095095f},
+        {-4.634230f, -5.799101f, -19.332441f},
+        { 6.228270f, 14.179933f,  56.690553f},
+        { 4.776385f,-13.745145f, -65.353033f},
+        {-5.435456f,  4.645853f,  26.312435f}};
+      float rgb[3];
+      for (int k=0; k<3; ++k)
+      { float v=C[6][k];
+        for (int j=5; j>=0; --j) { v=C[j][k]+t*v; }
+        rgb[k]=cl(v); }
+      r=rgb[0]; g=rgb[1]; b=rgb[2];
+    }
+    return QColor(int(r*255.f), int(g*255.f), int(b*255.f));
+  }
+
+  // Color by value (distance): the actual signed-distance range the geometry spans
+  // along the plane normal, from the scene bounding-box corners, so the palette and
+  // the legend cover the values really present rather than the whole scene radius
+  // (which left the colors bunched in the middle of the ramp).
+  void distance_value_range(const QVector4D &clipPlane, const QVector4D &plane_point,
+                            double &vmin, double &vmax)
+  {
+    // Color by distance to the clipping plane, anchored at the plane: 0 at the plane
+    // (one end of the palette), growing into the kept (solid) half up to its farthest
+    // point. The kept half is dot(pos-pt, n) > 0 (see onPlane in the shader). We do not
+    // use the symmetric bounding-box span, which would (a) shift with the plane so both
+    // range ends moved with the distances and the colors never changed when the plane
+    // was only translated (they did on rotation), and (b) advertise in the legend the
+    // colors of the clipped-away half, which no visible face shows. Anchored at the
+    // plane the colors sweep as the plane is moved (the farthest distance changes), and
+    // the legend matches the visible faces.
+    const CGAL::Bbox_3 b=m_scene.bounding_box();
+    const QVector3D n=QVector3D(clipPlane).normalized();
+    const QVector3D pt=plane_point.toVector3D();
+    double dmax=0.0;
+    for (int c=0; c<8; ++c)
+    {
+      const QVector3D corner(float((c&1) ? b.xmax() : b.xmin()),
+                             float((c&2) ? b.ymax() : b.ymin()),
+                             float((c&4) ? b.zmax() : b.zmin()));
+      const double d=QVector3D::dotProduct(corner-pt, n);
+      if (d>dmax) { dmax=d; }
+    }
+    vmin=0.0;
+    vmax=dmax;
+  }
+
+  // Color by value: the palette color for a volume's clip-plane cap. The cap faces
+  // carry no value of their own, so the cap takes the value the volume shows: its
+  // size, its centre distance, or the mean of its per-face values.
+  QColor volume_value_color(std::size_t v, const QVector4D &clipPlane,
+                            const QVector4D &plane_point)
+  {
+    const std::vector<std::vector<unsigned int>> &vols=m_scene.get_volume_faces();
+    double vmin, vmax, value;
+    if (m_color_value==3 && m_scene.has_face_values())
+    { vmin=m_scene.face_value_min(); vmax=m_scene.face_value_max();
+      const std::vector<float> &fv=m_scene.get_face_values();
+      double sum=0.0; std::size_t n=0;
+      for (unsigned int fi : vols[v]) { if (fi<fv.size()) { sum+=fv[fi]; ++n; } }
+      value=(n>0) ? sum/double(n) : vmin; }
+    else if (m_color_value==2)
+    { if (!m_cell_sizes_valid) { compute_cell_sizes(); }
+      vmin=m_cell_size_min; vmax=m_cell_size_max; value=m_cell_sizes[v]; }
+    else
+    { distance_value_range(clipPlane, plane_point, vmin, vmax);
+      const CGAL::Bbox_3 &b=m_scene.get_volume_bboxes()[v];
+      const QVector3D c(float((b.xmin()+b.xmax())*0.5), float((b.ymin()+b.ymax())*0.5),
+                        float((b.zmin()+b.zmax())*0.5));
+      value=QVector3D::dotProduct(c-plane_point.toVector3D(),
+                                  QVector3D(clipPlane).normalized()); }
+    double t=(vmax-vmin>1e-12) ? (value-vmin)/(vmax-vmin) : 0.0;
+    t=(t<0.0) ? 0.0 : (t>1.0 ? 1.0 : t);
+    return legend_palette_color(float(t));
+  }
+
+  // Color by value: draw a small legend, a gradient bar with the value range, so
+  // the colors read as numbers. The range and label match the current value.
+  void draw_color_legend(const QVector4D &clipPlane, const QVector4D &plane_point)
+  {
+    double vmin, vmax;
+    QString label;
+    if (m_color_value==3 && m_scene.has_face_values())
+    { vmin=m_scene.face_value_min(); vmax=m_scene.face_value_max();
+      label=QString(m_scene.value_name().c_str()); }
+    else if (m_color_value==2 && !m_scene.get_volume_faces().empty())
+    { if (!m_cell_sizes_valid) { compute_cell_sizes(); }
+      vmin=m_cell_size_min; vmax=m_cell_size_max; label=QString("size"); }
+    else
+    { distance_value_range(clipPlane, plane_point, vmin, vmax); label=QString("distance to clipping plane"); }
+
+    // No range to map (a uniform value, e.g. a flat mesh with a parallel plane):
+    // skip the legend rather than show a misleading full gradient. The threshold is
+    // relative to the value magnitude, so it holds at any scale.
+    if (vmax-vmin<=1e-6*(std::fabs(vmin)+std::fabs(vmax))) { return; }
+
+    const int barW=16, barH=150;
+    const int x=width()-barW-70, y=height()-barH-30;
+    QPainter painter(this);
+    for (int i=0; i<barH; ++i)
+    {
+      const float t=1.f-float(i)/float(barH-1); // top of the bar is the max value
+      painter.fillRect(x, y+i, barW, 1, legend_palette_color(t));
+    }
+    painter.setPen(::Qt::black);
+    painter.drawRect(x, y, barW, barH);
+    // Right-align the label so a long name grows to the left, into empty space,
+    // instead of running off the right edge.
+    painter.drawText(QRect(0, y-22, x+barW+40, 16),
+                     ::Qt::AlignRight | ::Qt::AlignVCenter, label);
+    painter.drawText(x+barW+5, y+11, QString::number(vmax, 'g', 3));
+    painter.drawText(x+barW+5, y+barH, QString::number(vmin, 'g', 3));
+    painter.end();
+  }
+
   void initialize_buffers()
   {
     set_camera_mode();
+    m_cell_sizes_valid=false; // color by value: the scene may have changed
     rendering_program_p_l.bind();
 
     unsigned int bufn = 0;
@@ -1688,6 +2135,8 @@ protected:
     }
 
     m_cap_closed_valid = false; // clip-plane cap: recompute closedness lazily
+    m_clip_owners_valid = false; // whole-volume clip: recompute edge/vertex owners lazily
+    m_volumes_kept.clear(); // whole-volume clip: force the kept set to recompute
     m_are_buffers_initialized = true;
   }
 
@@ -2024,8 +2473,8 @@ protected:
           {
           case CLIPPING_PLANE_OFF: displayMessage(QString("Draw clipping = false")); break;
           case CLIPPING_PLANE_SOLID_HALF_TRANSPARENT_HALF: clipping_plane_rendering=true; displayMessage(QString("Draw clipping = solid half & transparent half")); break;
-          case CLIPPING_PLANE_SOLID_HALF_WIRE_HALF: displayMessage(QString("Draw clipping = solid half & wireframe half")); break;
           case CLIPPING_PLANE_SOLID_HALF_ONLY: displayMessage(QString("Draw clipping = solid half only")); break;
+          case CLIPPING_PLANE_VOLUMES: displayMessage(QString("Draw clipping = whole volumes")); break;
           default: break;
           }
           update();
@@ -2041,6 +2490,20 @@ protected:
           displayMessage(QString("Draw clipping plane=%1.").arg(clipping_plane_rendering?"true":"false"));
           update();
         }
+      }
+      else if ((e->key()==::Qt::Key_C) && (modifiers==::Qt::ShiftModifier))
+      {
+        // Cycle how edges and vertices react to the clipping plane: all, or
+        // partial (clipped to match the current face mode on C).
+        if (!isOpenGL_3_2()) return;
+        m_clip_edges_vertices=(m_clip_edges_vertices+1)%CLIP_EV_END_INDEX;
+        switch(m_clip_edges_vertices)
+        {
+        case CLIP_EV_ALL: displayMessage(QString("Clip edges/vertices = all")); break;
+        case CLIP_EV_PARTIAL: displayMessage(QString("Clip edges/vertices = partial")); break;
+        default: break;
+        }
+        update();
       }
       else if ((e->key()==::Qt::Key_E) && (modifiers==::Qt::NoButton))
       {
@@ -2109,6 +2572,46 @@ protected:
       {
         m_draw_faces=!m_draw_faces;
         displayMessage(QString("Draw faces=%1.").arg(m_draw_faces?"true":"false"));
+        update();
+      }
+      else if ((e->key()==::Qt::Key_D) && (modifiers==::Qt::NoButton))
+      {
+        // Color the faces by a value (here the distance to the clipping plane):
+        // off, then the heat, jet and grey palettes.
+        m_color_map=(m_color_map+1)%5;
+        switch(m_color_map)
+        {
+        case 0: displayMessage(QString("Color by value = off")); break;
+        case 1: displayMessage(QString("Color by value = heat")); break;
+        case 2: displayMessage(QString("Color by value = jet")); break;
+        case 3: displayMessage(QString("Color by value = grey")); break;
+        case 4: displayMessage(QString("Color by value = viridis")); break;
+        default: break;
+        }
+        update();
+      }
+      else if ((e->key()==::Qt::Key_D) && (modifiers==::Qt::ShiftModifier))
+      {
+        // Color by value: pick the value and how it is shown. Skip the modes that
+        // do not apply to the current scene: the per-cell and size modes need
+        // volumes, and the user value needs values set by the drawer. This keeps the
+        // message, the faces and the legend in agreement.
+        const bool has_vols=!m_scene.get_volume_faces().empty();
+        const bool has_vals=m_scene.has_face_values();
+        for (int step=1; step<=4; ++step)
+        {
+          const int m=(m_color_value+step)%4;
+          if (m==0 || ((m==1 || m==2) && has_vols) || (m==3 && has_vals))
+          { m_color_value=m; break; }
+        }
+        switch(m_color_value)
+        {
+        case 0: displayMessage(QString("Color by value = distance (smooth)")); break;
+        case 1: displayMessage(QString("Color by value = distance (per cell)")); break;
+        case 2: displayMessage(QString("Color by value = size (per cell)")); break;
+        case 3: displayMessage(QString("Color by value = %1 (per face)").arg(m_scene.value_name().c_str())); break;
+        default: break;
+        }
         update();
       }
       else if ((e->key()==::Qt::Key_Plus) && (!modifiers.testFlag(::Qt::ControlModifier))) // No ctrl
@@ -2345,12 +2848,34 @@ protected:
   enum {
     CLIPPING_PLANE_OFF = 0,
     CLIPPING_PLANE_SOLID_HALF_TRANSPARENT_HALF,
-    CLIPPING_PLANE_SOLID_HALF_WIRE_HALF,
     CLIPPING_PLANE_SOLID_HALF_ONLY,
+    CLIPPING_PLANE_VOLUMES, // draw whole volumes on the kept side, no cut
     CLIPPING_PLANE_END_INDEX
   };
 
+  // How edges and vertices react to the clipping plane, cycled by Shift+C and
+  // independent of the face mode above (only used when a clipping plane is on).
+  enum {
+    CLIP_EV_ALL = 0, // draw every edge and vertex
+    CLIP_EV_PARTIAL, // clip edges/vertices to match the face mode (see the helpers)
+    CLIP_EV_END_INDEX
+  };
+
   int m_use_clipping_plane=CLIPPING_PLANE_OFF;
+  int m_clip_edges_vertices=CLIP_EV_ALL; // Shift+C: how edges/vertices are clipped
+  std::vector<char> m_volumes_kept; // whole-volume clip: per volume, 1 if kept
+  QVector4D m_last_vol_clip_plane; // whole-volume clip: plane m_volumes_kept was computed for
+  QVector4D m_last_vol_plane_point;
+  std::vector<std::vector<unsigned int>> m_edge_owners; // whole-volume clip: per edge, owning volumes
+  std::vector<std::vector<unsigned int>> m_point_owners; // whole-volume clip: per vertex, owning volumes
+  bool m_clip_owners_valid = false; // whole-volume clip: are the owner lists up to date
+  int m_color_map=0; // color by value: 0 off, 1 heat, 2 jet, 3 grey ramp
+  int m_color_value=0; // color by value source (Shift+D): 0 distance smooth,
+                       // 1 distance per cell, 2 size per cell
+  std::vector<float> m_cell_sizes; // color by value: per-cell size (bbox volume)
+  float m_cell_size_min=0.f; // color by value: size range for the palette
+  float m_cell_size_max=1.f;
+  bool m_cell_sizes_valid=false; // color by value: recompute the sizes on scene change
   CGAL::qglviewer::ManipulatedFrame* m_frame_plane=nullptr;
 
   // Buffer for clipping plane is not stored in the scene because it is not
