@@ -34,7 +34,7 @@ create_cmake_script()
 cmake_minimum_required(VERSION 3.12...3.31)
 project( ${PROJECT}${TYPE} )
 
-find_package(CGAL REQUIRED QUIET OPTIONAL_COMPONENTS Core )
+find_package(CGAL REQUIRED)
 
 EOF
     if [ -d "${SOURCE_DIR}" ] ; then
@@ -118,7 +118,7 @@ while [ $1 ]; do
                 usage; exit 1;
             fi
         ;;
-        *) 
+        *)
             echo "Unknown option: $1"
             usage; exit 1
         ;;

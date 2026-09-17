@@ -39,33 +39,34 @@ namespace internal {
 /// `Parameter_space_in_x_2`
 //@{
 
-//! Fallback selected `Parameter_space_in_x_2` is not defined in the base traits.
+//! Fallback selected `Parameter_space_in_x_2` is not defined in the decorated traits.
 template <typename, typename, typename = void> class Counting_parameter_space_in_x_2 {};
 
-//! Partial specialization selected if `BaseTraits::`Parameter_space_in_x_2 is defined.
-template <typename BaseTraits, typename Derived>
-class Counting_parameter_space_in_x_2<BaseTraits, Derived,
-                                      std::enable_if_t<has_parameter_space_in_x_2<BaseTraits>::value>> {
-  using Base = BaseTraits;
+//! Partial specialization selected if `DecoratedTraits_2::`Parameter_space_in_x_2 is defined.
+template <typename DecoratedTraits_2, typename Derived>
+class Counting_parameter_space_in_x_2<DecoratedTraits_2, Derived,
+                                      std::enable_if_t<has_parameter_space_in_x_2<DecoratedTraits_2>::value>> {
+  using Decorated_traits_2 = DecoratedTraits_2;
 
 public:
   /*! A functor that determines whether an endpoint of an \f$x\f$-monotone curve
   * lies on a boundary of the parameter space along the \f$x\f$-axis.
   */
   class Parameter_space_in_x_2 {
-    using Point_2 = typename Base::Point_2;
-    using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
+    using Point_2 = typename Decorated_traits_2::Point_2;
+    using X_monotone_curve_2 = typename Decorated_traits_2::X_monotone_curve_2;
 
   private:
-    typename Base::Parameter_space_in_x_2 m_object;
+    typename Decorated_traits_2::Parameter_space_in_x_2 m_object;
     std::size_t& m_counter1;
     std::size_t& m_counter2;
 
   public:
     /*! constructs
      */
-    Parameter_space_in_x_2(const Base& base, std::size_t& counter1, std::size_t& counter2) :
-      m_object(base.parameter_space_in_x_2_object()), m_counter1(counter1), m_counter2(counter2) {}
+    Parameter_space_in_x_2(const Decorated_traits_2& decorated_traits, std::size_t& counter1, std::size_t& counter2) :
+      m_object(decorated_traits.parameter_space_in_x_2_object()), m_counter1(counter1), m_counter2(counter2)
+    {}
 
     /*! operates
      */
@@ -97,33 +98,34 @@ public:
 /// `Parameter_space_in_y_2`
 //@{
 
-//! Fallback selected `Parameter_space_in_y_2` is not defined in the base traits.
+//! Fallback selected `Parameter_space_in_y_2` is not defined in the decorated traits.
 template <typename, typename, typename = void> class Counting_parameter_space_in_y_2 {};
 
-//! Partial specialization selected if `BaseTraits::Parameter_space_in_y_2` is defined.
-template <typename BaseTraits, typename Derived>
-class Counting_parameter_space_in_y_2<BaseTraits, Derived,
-                                      std::enable_if_t<has_parameter_space_in_y_2<BaseTraits>::value>> {
-  using Base = BaseTraits;
+//! Partial specialization selected if `DecoratedTraits_2::Parameter_space_in_y_2` is defined.
+template <typename DecoratedTraits_2, typename Derived>
+class Counting_parameter_space_in_y_2<DecoratedTraits_2, Derived,
+                                      std::enable_if_t<has_parameter_space_in_y_2<DecoratedTraits_2>::value>> {
+  using Decorated_traits_2 = DecoratedTraits_2;
 
 public:
   /*! A functor that determines whether an endpoint of an \f$x\f$-monotone arc
    * lies on a boundary of the parameter space along the \f$y\f$-axis.
    */
   class Parameter_space_in_y_2 {
-    using Point_2 = typename Base::Point_2;
-    using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
+    using Point_2 = typename Decorated_traits_2::Point_2;
+    using X_monotone_curve_2 = typename Decorated_traits_2::X_monotone_curve_2;
 
   private:
-    typename Base::Parameter_space_in_y_2 m_object;
+    typename Decorated_traits_2::Parameter_space_in_y_2 m_object;
     std::size_t& m_counter1;
     std::size_t& m_counter2;
 
   public:
     /*! constructs
      */
-    Parameter_space_in_y_2(const Base& base, std::size_t& counter1, std::size_t& counter2) :
-      m_object(base.parameter_space_in_y_2_object()), m_counter1(counter1), m_counter2(counter2) {}
+    Parameter_space_in_y_2(const Decorated_traits_2& decorated_traits, std::size_t& counter1, std::size_t& counter2) :
+      m_object(decorated_traits.parameter_space_in_y_2_object()), m_counter1(counter1), m_counter2(counter2)
+    {}
 
     /*! operates
      */
@@ -155,30 +157,32 @@ public:
 /// `Make_x_monotone_2`
 //@{
 
-//! Fallback selected `Make_x_monotone_2` is not defined in the base traits.
+//! Fallback selected `Make_x_monotone_2` is not defined in the decorated traits.
 template <typename, typename, typename = void> class Counting_make_x_monotone_2 {};
 
-//! Partial specialization selected if `BaseTraits::Make_x_monotone_2` is defined.
-template <typename BaseTraits, typename Derived>
-class Counting_make_x_monotone_2<BaseTraits, Derived, std::enable_if_t<has_make_x_monotone_2<BaseTraits>::value>> {
-  using Base = BaseTraits;
+//! Partial specialization selected if `DecoratedTraits_2::Make_x_monotone_2` is defined.
+template <typename DecoratedTraits_2, typename Derived>
+class Counting_make_x_monotone_2<DecoratedTraits_2, Derived,
+                                 std::enable_if_t<has_make_x_monotone_2<DecoratedTraits_2>::value>> {
+  using Decorated_traits_2 = DecoratedTraits_2;
 
 public:
-  using Curve_2 = typename Base::Curve_2;
+  using Curve_2 = typename Decorated_traits_2::Curve_2;
 
   //! A functor that subdivides a curve into \f$x\f$-monotone curves.
   class Make_x_monotone_2 {
-    using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
+    using X_monotone_curve_2 = typename Decorated_traits_2::X_monotone_curve_2;
 
   private:
-    typename Base::Make_x_monotone_2 m_object;
+    typename Decorated_traits_2::Make_x_monotone_2 m_object;
     std::size_t& m_counter;
 
   public:
     /*! constructs
      */
-    Make_x_monotone_2(const Base& base, std::size_t& counter) :
-      m_object(base.make_x_monotone_2_object()), m_counter(counter) {}
+    Make_x_monotone_2(const Decorated_traits_2& decorated_traits, std::size_t& counter) :
+      m_object(decorated_traits.make_x_monotone_2_object()), m_counter(counter)
+    {}
 
     /*! subdivides a given curve into \f$x\f$-monotone subcurves and insert them into a given output iterator.
      * \param cv the curve.
@@ -206,28 +210,30 @@ public:
 /// `Split_2`
 //@{
 
-//! Fallback selected `Split_2` is not defined in the base traits.
+//! Fallback selected `Split_2` is not defined in the decorated traits.
 template <typename, typename, typename = void> class Counting_split_2 {};
 
-//! Partial specialization selected if `BaseTraits::Split_2` is defined.
-template <typename BaseTraits, typename Derived>
-class Counting_split_2<BaseTraits, Derived, std::enable_if_t<has_split_2<BaseTraits>::value>> {
-  using Base = BaseTraits;
+//! Partial specialization selected if `DecoratedTraits_2::Split_2` is defined.
+template <typename DecoratedTraits_2, typename Derived>
+class Counting_split_2<DecoratedTraits_2, Derived, std::enable_if_t<has_split_2<DecoratedTraits_2>::value>> {
+  using Decorated_traits_2 = DecoratedTraits_2;
 
 public:
   //! A functor that splits an \f$x\f$-monotone curve at a point.
   class Split_2 {
-    using Point_2 = typename Base::Point_2;
-    using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
+    using Point_2 = typename Decorated_traits_2::Point_2;
+    using X_monotone_curve_2 = typename Decorated_traits_2::X_monotone_curve_2;
 
   private:
-    typename Base::Split_2 m_object;
+    typename Decorated_traits_2::Split_2 m_object;
     std::size_t& m_counter;
 
   public:
     /*! constructs
      */
-    Split_2(const Base& base, std::size_t& counter) : m_object(base.split_2_object()), m_counter(counter) {}
+    Split_2(const Decorated_traits_2& decorated_traits, std::size_t& counter) :
+      m_object(decorated_traits.split_2_object()), m_counter(counter)
+    {}
 
     /*! operates
      */
@@ -251,29 +257,31 @@ public:
 /// `Do_intersect_2`
 //@{
 
-//! Fallback selected `Do_intersect_2` is not defined in the base traits.
+//! Fallback selected `Do_intersect_2` is not defined in the decorated traits.
 template <typename, typename, typename = void> class Counting_do_intersect_2 {};
 
-//! Partial specialization selected if `BaseTraits::Do_intersect_2` is defined.
-template <typename BaseTraits, typename Derived>
-class Counting_do_intersect_2<BaseTraits, Derived, std::enable_if_t<has_do_intersect_2<BaseTraits>::value>> {
-  using Base = BaseTraits;
+//! Partial specialization selected if `DecoratedTraits_2::Do_intersect_2` is defined.
+template <typename DecoratedTraits_2, typename Derived>
+class Counting_do_intersect_2<DecoratedTraits_2, Derived,
+                              std::enable_if_t<has_do_intersect_2<DecoratedTraits_2>::value>> {
+  using Decorated_traits_2 = DecoratedTraits_2;
 
 public:
   //! A functor that determines whether two \f$x\f$-monotone curves intersect.
   class Do_intersect_2 {
-    using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
-    using Point_2 = typename Base::Point_2;
+    using X_monotone_curve_2 = typename Decorated_traits_2::X_monotone_curve_2;
+    using Point_2 = typename Decorated_traits_2::Point_2;
 
   private:
-    typename Base::Do_intersect_2 m_object;
+    typename Decorated_traits_2::Do_intersect_2 m_object;
     std::size_t& m_counter;
 
   public:
     /*! constructs
      */
-    Do_intersect_2(const Base& base, std::size_t& counter) :
-      m_object(base.do_intersect_2_object()), m_counter(counter) {}
+    Do_intersect_2(const Decorated_traits_2& decorated_traits, std::size_t& counter) :
+      m_object(decorated_traits.do_intersect_2_object()), m_counter(counter)
+    {}
 
     /*! determines whether two given curves intersect.
      * \param xcv1 the first curve.
@@ -303,30 +311,32 @@ public:
 /// `Intersect_2`
 //@{
 
-//! Fallback selected `Intersect_2` is not defined in the base traits.
+//! Fallback selected `Intersect_2` is not defined in the decorated traits.
 template <typename, typename, typename = void> class Counting_intersect_2 {};
 
-//! Partial specialization selected if `BaseTraits::Intersect_2` is defined.
-template <typename BaseTraits, typename Derived>
-class Counting_intersect_2<BaseTraits, Derived, std::enable_if_t<has_intersect_2<BaseTraits>::value>> {
-  using Base = BaseTraits;
+//! Partial specialization selected if `DecoratedTraits_2::Intersect_2` is defined.
+template <typename DecoratedTraits_2, typename Derived>
+class Counting_intersect_2<DecoratedTraits_2, Derived, std::enable_if_t<has_intersect_2<DecoratedTraits_2>::value>> {
+  using Decorated_traits_2 = DecoratedTraits_2;
 
 public:
-  using Multiplicity = typename Base::Multiplicity;
+  using Multiplicity = typename Decorated_traits_2::Multiplicity;
 
   //! A functor that computes intersections between \f$x\f$-monotone curves.
   class Intersect_2 {
-    using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
-    using Point_2 = typename Base::Point_2;
+    using X_monotone_curve_2 = typename Decorated_traits_2::X_monotone_curve_2;
+    using Point_2 = typename Decorated_traits_2::Point_2;
 
   private:
-    typename Base::Intersect_2 m_object;
+    typename Decorated_traits_2::Intersect_2 m_object;
     std::size_t& m_counter;
 
   public:
     /*! constructs
      */
-    Intersect_2(const Base& base, std::size_t& counter) : m_object(base.intersect_2_object()), m_counter(counter) {}
+    Intersect_2(const Decorated_traits_2& decorated_traits, std::size_t& counter) :
+      m_object(decorated_traits.intersect_2_object()), m_counter(counter)
+    {}
 
     /*! operates
      */
@@ -350,28 +360,30 @@ public:
 /// `Are_mergeable_2`
 //@{
 
-//! Fallback selected `Are_mergeable_2` is not defined in the base traits.
+//! Fallback selected `Are_mergeable_2` is not defined in the decorated traits.
 template <typename, typename, typename = void> class Counting_are_mergeable_2 {};
 
-//! Partial specialization selected if `BaseTraits::Are_mergeable_2` is defined.
-template <typename BaseTraits, typename Derived>
-class Counting_are_mergeable_2<BaseTraits, Derived, std::enable_if_t<has_are_mergeable_2<BaseTraits>::value>> {
-  using Base = BaseTraits;
+//! Partial specialization selected if `DecoratedTraits_2::Are_mergeable_2` is defined.
+template <typename DecoratedTraits_2, typename Derived>
+class Counting_are_mergeable_2<DecoratedTraits_2, Derived,
+                               std::enable_if_t<has_are_mergeable_2<DecoratedTraits_2>::value>> {
+  using Decorated_traits_2 = DecoratedTraits_2;
 
 public:
   //! A functor that tests whether two \f$x\f$-monotone curves can be merged.
   class Are_mergeable_2 {
-    using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
+    using X_monotone_curve_2 = typename Decorated_traits_2::X_monotone_curve_2;
 
   private:
-    typename Base::Are_mergeable_2 m_object;
+    typename Decorated_traits_2::Are_mergeable_2 m_object;
     std::size_t& m_counter;
 
   public:
     /*! constructs
      */
-    Are_mergeable_2(const Base& base, std::size_t& counter) :
-      m_object(base.are_mergeable_2_object()), m_counter(counter) {}
+    Are_mergeable_2(const Decorated_traits_2& decorated_traits, std::size_t& counter) :
+      m_object(decorated_traits.are_mergeable_2_object()), m_counter(counter)
+    {}
 
     /*! determines whether two \f$x\f$-monotone curves can be merged.
      * \param xcv1 the first curve.
@@ -398,27 +410,29 @@ public:
 /// `Merge_2`
 //@{
 
-//! Fallback selected `Merge_2` is not defined in the base traits.
+//! Fallback selected `Merge_2` is not defined in the decorated traits.
 template <typename, typename, typename = void> class Counting_merge_2 {};
 
-//! Partial specialization selected if `BaseTraits::Merge_2` is defined.
-template <typename BaseTraits, typename Derived>
-class Counting_merge_2<BaseTraits, Derived, std::enable_if_t<has_merge_2<BaseTraits>::value>> {
-  using Base = BaseTraits;
+//! Partial specialization selected if `DecoratedTraits_2::Merge_2` is defined.
+template <typename DecoratedTraits_2, typename Derived>
+class Counting_merge_2<DecoratedTraits_2, Derived, std::enable_if_t<has_merge_2<DecoratedTraits_2>::value>> {
+  using Decorated_traits_2 = DecoratedTraits_2;
 
 public:
   //! A functor that merges two \f$x\f$-monotone curves into one.
   class Merge_2 {
-    using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
+    using X_monotone_curve_2 = typename Decorated_traits_2::X_monotone_curve_2;
 
   private:
-    typename Base::Merge_2 m_object;
+    typename Decorated_traits_2::Merge_2 m_object;
     std::size_t& m_counter;
 
   public:
     /*! constructs
      */
-    Merge_2(const Base& base, std::size_t& counter) : m_object(base.merge_2_object()), m_counter(counter) {}
+    Merge_2(const Decorated_traits_2& decorated_traits, std::size_t& counter) :
+      m_object(decorated_traits.merge_2_object()), m_counter(counter)
+    {}
 
     /*! merges two \f$x\f$-monotone curves into one.
      * \param xcv1 the first curve.
@@ -444,29 +458,30 @@ public:
 /// `Construct_opposite_2`
 //@{
 
-//! Fallback selected if `Construct_opposite_2` is not defined in the base traits.
+//! Fallback selected if `Construct_opposite_2` is not defined in the decorated traits.
 template <typename, typename, typename = void> class Counting_construct_opposite_2 {};
 
-//! Partial specialization selected if `BaseTraits::Construct_opposite_2` is defined.
-template <typename BaseTraits, typename Derived>
-class Counting_construct_opposite_2<BaseTraits, Derived,
-                                    std::enable_if_t<has_construct_opposite_2<BaseTraits>::value>> {
-  using Base = BaseTraits;
+//! Partial specialization selected if `DecoratedTraits_2::Construct_opposite_2` is defined.
+template <typename DecoratedTraits_2, typename Derived>
+class Counting_construct_opposite_2<DecoratedTraits_2, Derived,
+                                    std::enable_if_t<has_construct_opposite_2<DecoratedTraits_2>::value>> {
+  using Decorated_traits_2 = DecoratedTraits_2;
 
 public:
   //! A functor that constructs an opposite \f$x\f$-monotone curve.
   class Construct_opposite_2 {
-    using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
+    using X_monotone_curve_2 = typename Decorated_traits_2::X_monotone_curve_2;
 
   private:
-    typename Base::Construct_opposite_2 m_object;
+    typename Decorated_traits_2::Construct_opposite_2 m_object;
     std::size_t& m_counter;
 
   public:
     /*! constructs
      */
-    Construct_opposite_2(const Base& base, std::size_t& counter) :
-      m_object(base.construct_opposite_2_object()), m_counter(counter) {}
+    Construct_opposite_2(const Decorated_traits_2& decorated_traits, std::size_t& counter) :
+      m_object(decorated_traits.construct_opposite_2_object()), m_counter(counter)
+    {}
 
     /*! constructs an opposite \f$x\f$-monotone curve.
      * \param xcv the curve.
@@ -491,8 +506,8 @@ public:
 /// `Construct_point_2`
 //@{
 
-/*! Fallback selected if the functor `BaseTraits::Construct_point_2` does not define an operator that accepts two
- * parameters of type `const FT&`.
+/*! Fallback selected if the functor `DecoratedTraits_2::Construct_point_2` does
+ * not define an operator that accepts two parameters of type `const FT&`.
  */
 template <typename, typename, typename = void>
 class Counting_construct_point_2_xy {
@@ -504,19 +519,20 @@ protected:
   };
 };
 
-/*! Partial specialization selected if the functor `BaseTraits::Construct_point_2` defines an operator that accepts two
+/*! Partial specialization selected if the functor
+ * `DecoratedTraits_2::Construct_point_2` defines an operator that accepts two
  * parameters of type `const FT&`.
  */
-template <typename BaseTraits, typename Derived>
-class Counting_construct_point_2_xy<BaseTraits, Derived,
-                                    std::enable_if_t<has_construct_point_2_xy<BaseTraits>::value>> {
-  using Base = BaseTraits;
+template <typename DecoratedTraits_2, typename Derived>
+class Counting_construct_point_2_xy<DecoratedTraits_2, Derived,
+                                    std::enable_if_t<has_construct_point_2_xy<DecoratedTraits_2>::value>> {
+  using Decorated_traits_2 = DecoratedTraits_2;
 
 protected:
   //! A functor that constructs a point.
   template <typename T>
   class Construct_point_2 {
-    using Point_2 = typename Base::Point_2;
+    using Point_2 = typename Decorated_traits_2::Point_2;
 
   public:
     /*! constructs a point given two coordinates.
@@ -530,29 +546,30 @@ protected:
   };
 };
 
-//! Fallback selected `Construct_point_2` is not defined in the base traits.
+//! Fallback selected `Construct_point_2` is not defined in the decorated traits.
 template <typename, typename, typename = void> class Counting_construct_point_2 {};
 
-//! Partial specialization selected if `BaseTraits::Construct_point_2` is defined.
-template <typename BaseTraits, typename Derived>
-class Counting_construct_point_2<BaseTraits, Derived, std::enable_if_t<has_construct_point_2<BaseTraits>::value>> :
-    public Counting_construct_point_2_xy<BaseTraits, Derived> {
-  using Base = BaseTraits;
+//! Partial specialization selected if `DecoratedTraits_2::Construct_point_2` is defined.
+template <typename DecoratedTraits_2, typename Derived>
+class Counting_construct_point_2<DecoratedTraits_2, Derived,
+                                 std::enable_if_t<has_construct_point_2<DecoratedTraits_2>::value>> :
+    public Counting_construct_point_2_xy<DecoratedTraits_2, Derived> {
+  using Decorated_traits_2 = DecoratedTraits_2;
 
 public:
   class Construct_point_2; // forward declaration
 
 private:
   using Counting_construct_point_2_xy =
-    typename Counting_construct_point_2_xy<Base, Derived>::template Construct_point_2<Construct_point_2>;
+    typename Counting_construct_point_2_xy<Decorated_traits_2, Derived>::template Construct_point_2<Construct_point_2>;
 
 public:
   //! A functor that constructs a point.
   class Construct_point_2 : public Counting_construct_point_2_xy {
-    using Point_2 = typename Base::Point_2;
+    using Point_2 = typename Decorated_traits_2::Point_2;
 
   private:
-    typename Base::Construct_point_2 m_object;
+    typename Decorated_traits_2::Construct_point_2 m_object;
     std::size_t& m_counter1;
     std::size_t& m_counter2;
 
@@ -563,8 +580,9 @@ public:
 
     /*! constructs
      */
-    Construct_point_2(const Base& base, std::size_t& counter1, std::size_t& counter2) :
-      m_object(base.construct_point_2_object()), m_counter1(counter1), m_counter2(counter2) {}
+    Construct_point_2(const Decorated_traits_2& decorated_traits, std::size_t& counter1, std::size_t& counter2) :
+      m_object(decorated_traits.construct_point_2_object()), m_counter1(counter1), m_counter2(counter2)
+    {}
 
     /*! constructs a point.
      * \return the constructed point.
@@ -591,29 +609,31 @@ public:
 /// `Construct_x_monotone_curve_2`
 //@{
 
-//! Fallback selected if `Construct_x_monotone_curve_2` is not defined in the base traits.
+//! Fallback selected if `Construct_x_monotone_curve_2` is not defined in the decorated traits.
 template <typename, typename, typename = void> class Counting_construct_x_monotone_curve_2 {};
 
-//! Partial specialization selected if `BaseTraits::Construct_x_monotone_curve_2` is defined.
-template <typename BaseTraits, typename Derived>
-class Counting_construct_x_monotone_curve_2<BaseTraits, Derived,
-                                            std::enable_if_t<has_construct_x_monotone_curve_2<BaseTraits>::value>> {
-  using Base = BaseTraits;
+//! Partial specialization selected if `DecoratedTraits_2::Construct_x_monotone_curve_2` is defined.
+template <typename DecoratedTraits_2, typename Derived>
+class Counting_construct_x_monotone_curve_2<DecoratedTraits_2, Derived,
+                                            std::enable_if_t<has_construct_x_monotone_curve_2<DecoratedTraits_2>::
+                                                             value>> {
+  using Decorated_traits_2 = DecoratedTraits_2;
 
 public:
   //! A functor that constructs an \f$x\f$-monotone curve.
   class Construct_x_monotone_curve_2 {
-    using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
+    using X_monotone_curve_2 = typename Decorated_traits_2::X_monotone_curve_2;
 
   private:
-    typename Base::Construct_x_monotone_curve_2 m_object;
+    typename Decorated_traits_2::Construct_x_monotone_curve_2 m_object;
     std::size_t& m_counter;
 
   public:
     /*! constructs
      */
-    Construct_x_monotone_curve_2(const Base& base, std::size_t& counter) :
-      m_object(base.construct_x_monotone_curve_2_object()), m_counter(counter) {}
+    Construct_x_monotone_curve_2(const Decorated_traits_2& decorated_traits, std::size_t& counter) :
+      m_object(decorated_traits.construct_x_monotone_curve_2_object()), m_counter(counter)
+    {}
 
     /*! constructs an \f$x\f$-monotone curve.
      * \return the constructed \f$x\f$.monotone curve
@@ -639,38 +659,40 @@ public:
 /// `Construct_curve_2`
 //@{
 
-//! Fallback selected if `Construct_curve_2` is not defined in the base traits.
+//! Fallback selected if `Construct_curve_2` is not defined in the decorated traits.
 template <typename, typename, typename = void> class Counting_construct_curve_2 {};
 
-//! Partial specialization selected if `BaseTraits::Construct_curve_2` is defined
-template <typename BaseTraits, typename Derived>
-class Counting_construct_curve_2<BaseTraits, Derived, std::enable_if_t<has_construct_curve_2<BaseTraits>::value>> {
-  using Base = BaseTraits;
+//! Partial specialization selected if `DecoratedTraits_2::Construct_curve_2` is defined
+template <typename DecoratedTraits_2, typename Derived>
+class Counting_construct_curve_2<DecoratedTraits_2, Derived,
+                                 std::enable_if_t<has_construct_curve_2<DecoratedTraits_2>::value>> {
+  using Decorated_traits_2 = DecoratedTraits_2;
 
 public:
   //! A functor that constructs a curve.
   class Construct_curve_2 {
     /* Defining `Curve_2` in the outer class `Counting_construct_curve_2` would
      * cause an ambiguous definition because it is already defined in the
-     * (outer) class `Counting_make_x_monotone_2`. Thus, we only define it in the
-     * inner class `Construct_curve_2`. If the base traits class does not
-     * support `Make_x_monotone_2`, `Curve_2` will end up being
-     * undefined. However, the scenario where the base traits class supports
-     * `Construct_curve_2` but does not support `Make_x_monotone_2` is
+     * (outer) class `Counting_make_x_monotone_2`. Thus, we only define it in
+     * the inner class `Construct_curve_2`. If the decorated traits class does
+     * not support `Make_x_monotone_2`, `Curve_2` will end up being
+     * undefined. However, the scenario where the decorated traits class
+     * supports `Construct_curve_2` but does not support `Make_x_monotone_2` is
      * unlikely. If this scenario is encountered after all, a different solution
      * must be devised.
      */
-    using Curve_2 = typename Base::Curve_2;
+    using Curve_2 = typename Decorated_traits_2::Curve_2;
 
   private:
-    typename Base::Construct_curve_2 m_object;
+    typename Decorated_traits_2::Construct_curve_2 m_object;
     std::size_t& m_counter;
 
   public:
     /*! constructs
      */
-    Construct_curve_2(const Base& base, std::size_t& counter) :
-      m_object(base.construct_curve_2_object()), m_counter(counter) {}
+    Construct_curve_2(const Decorated_traits_2& decorated_traits, std::size_t& counter) :
+      m_object(decorated_traits.construct_curve_2_object()), m_counter(counter)
+    {}
 
     /*! constructs a curve.
      * \return the constructed curve.
@@ -695,29 +717,30 @@ public:
 /// `Compare_endpoints_xy_2`
 //@{
 
-//! Fallback selected if Compare_endpoints_xy_2` is not defined in the base traits.
+//! Fallback selected if Compare_endpoints_xy_2` is not defined in the decorated traits.
 template <typename, typename, typename = void> class Counting_compare_endpoints_xy_2 {};
 
-//! Partial specialization selected if `BaseTraits::Compare_endpoints_xy_2` is defined.
-template <typename BaseTraits, typename Derived>
-class Counting_compare_endpoints_xy_2<BaseTraits, Derived,
-                                      std::enable_if_t<has_compare_endpoints_xy_2<BaseTraits>::value>> {
-  using Base = BaseTraits;
+//! Partial specialization selected if `DecoratedTraits_2::Compare_endpoints_xy_2` is defined.
+template <typename DecoratedTraits_2, typename Derived>
+class Counting_compare_endpoints_xy_2<DecoratedTraits_2, Derived,
+                                      std::enable_if_t<has_compare_endpoints_xy_2<DecoratedTraits_2>::value>> {
+  using Decorated_traits_2 = DecoratedTraits_2;
 
 public:
   //! A functor that compares the two endpoints of an \f$x\f$-monotone curve lexigoraphically.
   class Compare_endpoints_xy_2 {
-    using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
+    using X_monotone_curve_2 = typename Decorated_traits_2::X_monotone_curve_2;
 
   private:
-    typename Base::Compare_endpoints_xy_2 m_object;
+    typename Decorated_traits_2::Compare_endpoints_xy_2 m_object;
     std::size_t& m_counter;
 
   public:
     /*! constructs
      */
-    Compare_endpoints_xy_2(const Base& base, std::size_t& counter) :
-      m_object(base.compare_endpoints_xy_2_object()), m_counter(counter) {}
+    Compare_endpoints_xy_2(const Decorated_traits_2& decorated_traits, std::size_t& counter) :
+      m_object(decorated_traits.compare_endpoints_xy_2_object()), m_counter(counter)
+    {}
 
     /*! compares the two endpoints of an \f$x\f$-monotone curve lexigoraphically.
      * \param xcv the curve.
@@ -742,8 +765,9 @@ public:
 /// \name `Approximate_2`
 //@{
 
-/*! Fallback selected if the functor `Approximate_2`, nested in the base traits,
- * does not define an operator that accepts a parameter of type `const Point_2&`.
+/*! Fallback selected if the functor `Approximate_2`, nested in the decorated
+ * traits, does not define an operator that accepts a parameter of type `const
+ * Point_2&`.
  */
 template <typename, typename, typename = void>
 class Counting_approximate_2_point {
@@ -755,23 +779,25 @@ protected:
   };
 };
 
-/*! Partial specialization selected if the functor `BaseTraits::Approximate_2` defines an operator that accepts a
+/*! Partial specialization selected if the functor
+ * `DecoratedTraits_2::Approximate_2` defines an operator that accepts a
  * parameter of type `const Point_2&`.
  */
-template <typename BaseTraits, typename Derived>
-class Counting_approximate_2_point<BaseTraits, Derived, std::enable_if_t<has_approximate_2_point<BaseTraits>::value>> {
-  using Base = BaseTraits;
+template <typename DecoratedTraits_2, typename Derived>
+class Counting_approximate_2_point<DecoratedTraits_2, Derived,
+                                   std::enable_if_t<has_approximate_2_point<DecoratedTraits_2>::value>> {
+  using Decorated_traits_2 = DecoratedTraits_2;
 
 protected:
   //! A functor that approximates coordinates, points, and \f$x\f$-monotone curves.
   template <typename T>
   class Approximate_2 {
-    using Point_2 = typename Base::Point_2;
-    using Base_approximate_2 = typename Base::Approximate_2;
+    using Point_2 = typename Decorated_traits_2::Point_2;
+    using Decorated_traits_approximate_2 = typename Decorated_traits_2::Approximate_2;
 
   public:
-    using Approximate_kernel = typename Base_approximate_2::Approximate_kernel;
-    using Approximate_point_2 = typename Base_approximate_2::Approximate_point_2;
+    using Approximate_kernel = typename Decorated_traits_approximate_2::Approximate_kernel;
+    using Approximate_point_2 = typename Decorated_traits_approximate_2::Approximate_point_2;
 
     /*! obtains an approximation of a point.
      */
@@ -783,10 +809,10 @@ protected:
   };
 };
 
-/*! Fallback selected if the functor `Approximate_2`, nested in the base traits,
- * does not define an operator that accepts three parameters of the types `const
- * X_monotone_curve_2&`, `double`, `OutputIterator`, and one optional parameter
- * of type `bool`.
+/*! Fallback selected if the functor `Approximate_2`, nested in the decorated
+ * traits, does not define an operator that accepts three parameters of the
+ * types `const X_monotone_curve_2&`, `double`, `OutputIterator`, and one
+ * optional parameter of type `bool`.
  */
 template <typename, typename, typename = void>
 class Counting_approximate_2_xcv {
@@ -798,20 +824,21 @@ protected:
   };
 };
 
-/*! Partial specialization selected if the functor `BaseTraits::Approximate_2`
- * defines an operator that accepts three parameters of type `const
- * X_monotone_curve_2&`, `double`, `OutputIterator`, and one optional parameter
- * of type `bool`.
+/*! Partial specialization selected if the functor
+ * `DecoratedTraits_2::Approximate_2` defines an operator that accepts three
+ * parameters of type `const X_monotone_curve_2&`, `double`, `OutputIterator`,
+ * and one optional parameter of type `bool`.
  */
-template <typename BaseTraits, typename Derived>
-class Counting_approximate_2_xcv<BaseTraits, Derived, std::enable_if_t<has_approximate_2_xcv<BaseTraits>::value>> {
-  using Base = BaseTraits;
+template <typename DecoratedTraits_2, typename Derived>
+class Counting_approximate_2_xcv<DecoratedTraits_2, Derived,
+                                 std::enable_if_t<has_approximate_2_xcv<DecoratedTraits_2>::value>> {
+  using Decorated_traits_2 = DecoratedTraits_2;
 
 protected:
   //! A functor that approximates \f$x\f$-monotone curves.
   template <typename T>
   class Approximate_2 {
-    using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
+    using X_monotone_curve_2 = typename Decorated_traits_2::X_monotone_curve_2;
 
   public:
     /*! obtains an approximation of an \f$x\f$-monotone curve. */
@@ -824,10 +851,10 @@ protected:
   };
 };
 
-/*! Fallback selected if the functor `Approximate_2`, nested in the base traits,
- * does not define an operator that accepts four parameters of type `const
- * X_monotone_curve_2&`, `double`, `OutputIterator`, and `const Bbox_2&`, and
- * one optional parameter of type `bool`.
+/*! Fallback selected if the functor `Approximate_2`, nested in the decorated
+ * traits, does not define an operator that accepts four parameters of type
+ * `const X_monotone_curve_2&`, `double`, `OutputIterator`, and `const Bbox_2&`,
+ * and one optional parameter of type `bool`.
  */
 template <typename, typename, typename = void>
 class Counting_approximate_2_xcv_within_bounds {
@@ -839,21 +866,22 @@ protected:
   };
 };
 
-/*! Partial specialization selected if the functor `BaseTraits::Approximate_2`
+/*! Partial specialization selected if the functor `DecoratedTraits_2::Approximate_2`
  * defines an operator that accepts four parameters of type `const
  * X_monotone_curve_2&`, `double`, `OutputIterator`, and `const Bbox_2&`, and
  * one optional parameter of type `bool`.
  */
-template <typename BaseTraits, typename Derived>
-class Counting_approximate_2_xcv_within_bounds<BaseTraits, Derived,
-                                               std::enable_if_t<has_approximate_2_xcv_bounds<BaseTraits>::value>> {
-  using Base = BaseTraits;
+template <typename DecoratedTraits_2, typename Derived>
+class Counting_approximate_2_xcv_within_bounds<DecoratedTraits_2, Derived,
+                                               std::enable_if_t<has_approximate_2_xcv_bounds<DecoratedTraits_2>::
+                                                                value>> {
+  using Decorated_traits_2 = DecoratedTraits_2;
 
 protected:
   //! A functor that approximates \f$x\f$-monotone curves within bounds.
   template <typename T>
   class Approximate_2 {
-    using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
+    using X_monotone_curve_2 = typename Decorated_traits_2::X_monotone_curve_2;
 
   public:
     /*! obtains an approximation of an \f$x\f$-monotone curve within bounds.
@@ -868,35 +896,35 @@ protected:
   };
 };
 
-//! Fallback selected if `Approximate_2` is not defined in the base traits.
+//! Fallback selected if `Approximate_2` is not defined in the decorated traits.
 template <typename, typename, typename = void> class Counting_approximate_2 {};
 
-//! Partial specialization selected if `BaseTraits::Approximate_2` is defined.
-template <typename BaseTraits, typename Derived>
-class Counting_approximate_2<BaseTraits, Derived, std::enable_if_t<has_approximate_2<BaseTraits>::value>> :
-    public Counting_approximate_2_point<BaseTraits, Derived>,
-    public Counting_approximate_2_xcv<BaseTraits, Derived>,
-    public Counting_approximate_2_xcv_within_bounds<BaseTraits, Derived> {
-  using Base = BaseTraits;
+//! Partial specialization selected if `DecoratedTraits_2::Approximate_2` is defined.
+template <typename DecoratedTraits_2, typename Derived>
+class Counting_approximate_2<DecoratedTraits_2, Derived, std::enable_if_t<has_approximate_2<DecoratedTraits_2>::value>> :
+    public Counting_approximate_2_point<DecoratedTraits_2, Derived>,
+    public Counting_approximate_2_xcv<DecoratedTraits_2, Derived>,
+    public Counting_approximate_2_xcv_within_bounds<DecoratedTraits_2, Derived> {
+  using Decorated_traits_2 = DecoratedTraits_2;
 
 public:
   class Approximate_2; // forward declaration
 
 private:
   using Counting_approx_point =
-    typename Counting_approximate_2_point<Base, Derived>::template Approximate_2<Approximate_2>;
+    typename Counting_approximate_2_point<Decorated_traits_2, Derived>::template Approximate_2<Approximate_2>;
   using Counting_approx_xcv =
-    typename Counting_approximate_2_xcv<Base, Derived>::template Approximate_2<Approximate_2>;
+    typename Counting_approximate_2_xcv<Decorated_traits_2, Derived>::template Approximate_2<Approximate_2>;
   using Counting_approx_xcv_within_bounds =
-    typename Counting_approximate_2_xcv_within_bounds<Base, Derived>::template Approximate_2<Approximate_2>;
+    typename Counting_approximate_2_xcv_within_bounds<Decorated_traits_2, Derived>::template Approximate_2<Approximate_2>;
 
 public:
   //! A functor that approximates a coordinates, a point, or an \f$x\f$-monotone curve.
   class Approximate_2 : public Counting_approx_point,
                         public Counting_approx_xcv,
                         public Counting_approx_xcv_within_bounds {
-    using Point_2 = typename Base::Point_2;
-    using Base_approximate_2 = typename Base::Approximate_2;
+    using Point_2 = typename Decorated_traits_2::Point_2;
+    using Decorated_traits_approximate_2 = typename Decorated_traits_2::Approximate_2;
 
   public:
     friend Counting_approx_point;
@@ -907,13 +935,13 @@ public:
     using Counting_approx_xcv::operator();
     using Counting_approx_xcv_within_bounds::operator();
 
-    using Approximate_number_type = typename Base_approximate_2::Approximate_number_type;
+    using Approximate_number_type = typename Decorated_traits_approximate_2::Approximate_number_type;
 
     /*! constructs
      */
-    Approximate_2(const Base& base, std::size_t& counter1, std::size_t& counter2,
+    Approximate_2(const Decorated_traits_2& decorated_traits, std::size_t& counter1, std::size_t& counter2,
                   std::size_t& counter3, std::size_t& counter4) :
-      m_object(base.approximate_2_object()),
+      m_object(decorated_traits.approximate_2_object()),
       m_counter1(counter1),
       m_counter2(counter2),
       m_counter3(counter3),
@@ -933,7 +961,7 @@ public:
     }
 
   private:
-    Base_approximate_2 m_object;
+    Decorated_traits_approximate_2 m_object;
     std::size_t& m_counter1;
     std::size_t& m_counter2;
     std::size_t& m_counter3;
@@ -957,31 +985,32 @@ public:
 /// `Is_on_x_identification_2`
 //@{
 
-//! Fallback selected if `Is_on_x_identification_2` is not defined in the base traits.
+//! Fallback selected if `Is_on_x_identification_2` is not defined in the decorated traits.
 template <typename, typename, typename = void> class Counting_is_on_x_identification_2 {};
 
-//! Partial specialization selected if `BaseTraits::Is_on_x_identification_2` is defined.
-template <typename BaseTraits, typename Derived>
-class Counting_is_on_x_identification_2<BaseTraits, Derived,
-                                        std::enable_if_t<has_is_on_x_identification_2<BaseTraits>::value>> {
-  using Base = BaseTraits;
+//! Partial specialization selected if `DecoratedTraits_2::Is_on_x_identification_2` is defined.
+template <typename DecoratedTraits_2, typename Derived>
+class Counting_is_on_x_identification_2<DecoratedTraits_2, Derived,
+                                        std::enable_if_t<has_is_on_x_identification_2<DecoratedTraits_2>::value>> {
+  using Decorated_traits_2 = DecoratedTraits_2;
 
 public:
   //! A functor that determines whether a point or a curve lies on \f$x\f$-identification curve.
   class Is_on_x_identification_2 {
-    using Point_2 = typename Base::Point_2;
-    using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
+    using Point_2 = typename Decorated_traits_2::Point_2;
+    using X_monotone_curve_2 = typename Decorated_traits_2::X_monotone_curve_2;
 
   private:
-    typename Base::Is_on_x_identification_2 m_object;
+    typename Decorated_traits_2::Is_on_x_identification_2 m_object;
     std::size_t& m_counter1;
     std::size_t& m_counter2;
 
   public:
     /*! constructs
      */
-    Is_on_x_identification_2(const Base& base, std::size_t& counter1, std::size_t& counter2) :
-      m_object(base.is_on_x_identification_2_object()), m_counter1(counter1), m_counter2(counter2) {}
+    Is_on_x_identification_2(const Decorated_traits_2& decorated_traits, std::size_t& counter1, std::size_t& counter2) :
+      m_object(decorated_traits.is_on_x_identification_2_object()), m_counter1(counter1), m_counter2(counter2)
+    {}
 
     /*! determines whether a point is on the \f$x\f$-identification curve.
      * \param p the point.
@@ -1015,31 +1044,32 @@ public:
 /// `is_on_y_identification_2`
 //@{
 
-//! Fallback selected if `Is_on_y_identification_2` is not defined in the base traits.
+//! Fallback selected if `Is_on_y_identification_2` is not defined in the decorated traits.
 template <typename, typename, typename = void> class Counting_is_on_y_identification_2 {};
 
-//! Partial specialization selected if `BaseTraits::Is_on_y_identification_2` is defined.
-template <typename BaseTraits, typename Derived>
-class Counting_is_on_y_identification_2<BaseTraits, Derived,
-                                        std::enable_if_t<has_is_on_y_identification_2<BaseTraits>::value>> {
-  using Base = BaseTraits;
+//! Partial specialization selected if `DecoratedTraits_2::Is_on_y_identification_2` is defined.
+template <typename DecoratedTraits_2, typename Derived>
+class Counting_is_on_y_identification_2<DecoratedTraits_2, Derived,
+                                        std::enable_if_t<has_is_on_y_identification_2<DecoratedTraits_2>::value>> {
+  using Decorated_traits_2 = DecoratedTraits_2;
 
 public:
   //! A functor that determines whether a point or a curve lies on the \f$y\f$-identification curve.
   class Is_on_y_identification_2 {
-    using Point_2 = typename Base::Point_2;
-    using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
+    using Point_2 = typename Decorated_traits_2::Point_2;
+    using X_monotone_curve_2 = typename Decorated_traits_2::X_monotone_curve_2;
 
   private:
-    typename Base::Is_on_y_identification_2 m_object;
+    typename Decorated_traits_2::Is_on_y_identification_2 m_object;
     std::size_t& m_counter1;
     std::size_t& m_counter2;
 
   public:
     /*! constructs
      */
-    Is_on_y_identification_2(const Base& base, std::size_t& counter1, std::size_t& counter2) :
-      m_object(base.is_on_y_identification_2_object()), m_counter1(counter1),  m_counter2(counter2) {}
+    Is_on_y_identification_2(const Decorated_traits_2& decorated_traits, std::size_t& counter1, std::size_t& counter2) :
+      m_object(decorated_traits.is_on_y_identification_2_object()), m_counter1(counter1),  m_counter2(counter2)
+    {}
 
     /*! determines whether a point is on the \f$y\f$-identification curve.
      * \param p the point.
@@ -1073,24 +1103,25 @@ public:
 /// `Compare_x_on_boundary_2`
 //@{
 
-//! Fallback selected if `Compare_x_on_boundary_2` is not defined in the base traits.
+//! Fallback selected if `Compare_x_on_boundary_2` is not defined in the decorated traits.
 template <typename, typename, typename = void> class Counting_x_on_boundary_2 {};
 
-//! Partial specialization selected if `BaseTraits::Compare_x_on_boundary_2` is defined.
-template <typename BaseTraits, typename Derived>
-class Counting_x_on_boundary_2<BaseTraits, Derived, std::enable_if_t<has_compare_x_on_boundary_2<BaseTraits>::value>> {
-  using Base = BaseTraits;
+//! Partial specialization selected if `DecoratedTraits_2::Compare_x_on_boundary_2` is defined.
+template <typename DecoratedTraits_2, typename Derived>
+class Counting_x_on_boundary_2<DecoratedTraits_2, Derived,
+                               std::enable_if_t<has_compare_x_on_boundary_2<DecoratedTraits_2>::value>> {
+  using Decorated_traits_2 = DecoratedTraits_2;
 
 public:
   /*! A functor that compares the \f$x\f$-coordinate of two given points or
    * curve ends that lie on horizontal boundaries.
    */
   class Compare_x_on_boundary_2 {
-    using Point_2 = typename Base::Point_2;
-    using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
+    using Point_2 = typename Decorated_traits_2::Point_2;
+    using X_monotone_curve_2 = typename Decorated_traits_2::X_monotone_curve_2;
 
   private:
-    typename Base::Compare_x_on_boundary_2 m_object;
+    typename Decorated_traits_2::Compare_x_on_boundary_2 m_object;
     std::size_t& m_counter1;
     std::size_t& m_counter2;
     std::size_t& m_counter3;
@@ -1098,8 +1129,9 @@ public:
   public:
     /*! constructs
      */
-    Compare_x_on_boundary_2(const Base& base,  std::size_t& counter1, std::size_t& counter2, std::size_t& counter3) :
-      m_object(base.compare_x_on_boundary_2_object()),
+    Compare_x_on_boundary_2(const Decorated_traits_2& decorated_traits,  std::size_t& counter1, std::size_t& counter2,
+                            std::size_t& counter3) :
+      m_object(decorated_traits.compare_x_on_boundary_2_object()),
       m_counter1(counter1),
       m_counter2(counter2),
       m_counter3(counter3)
@@ -1153,29 +1185,30 @@ public:
 /// `Compare_y_on_boundary_2`
 //@{
 
-//! Fallback selected if `Compare_y_on_boundary_2` is not defined in the base traits.
+//! Fallback selected if `Compare_y_on_boundary_2` is not defined in the decorated traits.
 template <typename, typename, typename = void> class Counting_compare_y_on_boundary_2 {};
 
-//! Partial specialization selected if `BaseTraits::Compare_y_on_boundary_2` is defined.
-template <typename BaseTraits, typename Derived>
-class Counting_compare_y_on_boundary_2<BaseTraits, Derived,
-                                       std::enable_if_t<has_compare_y_on_boundary_2<BaseTraits>::value>> {
-  using Base = BaseTraits;
+//! Partial specialization selected if `DecoratedTraits_2::Compare_y_on_boundary_2` is defined.
+template <typename DecoratedTraits_2, typename Derived>
+class Counting_compare_y_on_boundary_2<DecoratedTraits_2, Derived,
+                                       std::enable_if_t<has_compare_y_on_boundary_2<DecoratedTraits_2>::value>> {
+  using Decorated_traits_2 = DecoratedTraits_2;
 
 public:
   //! A functor that compares the \f$y\f$-coordinate of two given points that lie on vertical boundaries.
   class Compare_y_on_boundary_2 {
-    using Point_2 = typename Base::Point_2;
+    using Point_2 = typename Decorated_traits_2::Point_2;
 
   private:
-    typename Base::Compare_y_on_boundary_2 m_object;
+    typename Decorated_traits_2::Compare_y_on_boundary_2 m_object;
     std::size_t& m_counter;
 
   public:
     /*! constructs
      */
-    Compare_y_on_boundary_2(const Base& base, std::size_t& counter) :
-      m_object(base.compare_y_on_boundary_2_object()), m_counter(counter) {}
+    Compare_y_on_boundary_2(const Decorated_traits_2& decorated_traits, std::size_t& counter) :
+      m_object(decorated_traits.compare_y_on_boundary_2_object()), m_counter(counter)
+    {}
 
     /*! compares the \f$y\f$-coordinate of two given points that lie on vertical boundaries.
      * \param p1 the first point.
@@ -1200,29 +1233,30 @@ public:
 /// `Compare_x_near_boundary_2`
 //@{
 
-//! Fallback selected if `Compare_x_near_boundary_2` is not defined in the base traits.
+//! Fallback selected if `Compare_x_near_boundary_2` is not defined in the decorated traits.
 template <typename, typename, typename = void> class Counting_compare_x_near_boundary_2 {};
 
-//! Partial specialization selected if `BaseTraits::Compare_x_near_boundary_2` is defined.
-template <typename BaseTraits, typename Derived>
-class Counting_compare_x_near_boundary_2<BaseTraits, Derived,
-                                         std::enable_if_t<has_compare_x_near_boundary_2<BaseTraits>::value>> {
-  using Base = BaseTraits;
+//! Partial specialization selected if `DecoratedTraits_2::Compare_x_near_boundary_2` is defined.
+template <typename DecoratedTraits_2, typename Derived>
+class Counting_compare_x_near_boundary_2<DecoratedTraits_2, Derived,
+                                         std::enable_if_t<has_compare_x_near_boundary_2<DecoratedTraits_2>::value>> {
+  using Decorated_traits_2 = DecoratedTraits_2;
 
 public:
   //! A functor that compares the \f$x\f$-coordinates of curve ends near the boundary of the parameter space.
   class Compare_x_near_boundary_2 {
-    using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
+    using X_monotone_curve_2 = typename Decorated_traits_2::X_monotone_curve_2;
 
   private:
-    typename Base::Compare_x_near_boundary_2 m_object;
+    typename Decorated_traits_2::Compare_x_near_boundary_2 m_object;
     std::size_t& m_counter;
 
   public:
     /*! constructs
      */
-    Compare_x_near_boundary_2(const Base& base, std::size_t& counter) :
-      m_object(base.compare_x_near_boundary_2_object()), m_counter(counter) {}
+    Compare_x_near_boundary_2(const Decorated_traits_2& decorated_traits, std::size_t& counter) :
+      m_object(decorated_traits.compare_x_near_boundary_2_object()), m_counter(counter)
+    {}
 
     /*! compares the \f$x\f$-coordinates of curve ends near the boundary of the parameter space.
      * \param xcv1 the first curve the end of which is to be compared.
@@ -1251,29 +1285,30 @@ public:
 /// `Compare_y_near_boundary_2`
 //@{
 
-//! Fallback selected if `Compare_y_near_boundary_2` is not defined in the base traits.
+//! Fallback selected if `Compare_y_near_boundary_2` is not defined in the decorated traits.
 template <typename, typename, typename = void> class Counting_compare_y_near_boundary_2 {};
 
-//! Partial specialization selected if `BaseTraits::Compare_y_near_boundary_2` is defined.
-template <typename BaseTraits, typename Derived>
-class Counting_compare_y_near_boundary_2<BaseTraits, Derived,
-                                         std::enable_if_t<has_compare_y_near_boundary_2<BaseTraits>::value>> {
-  using Base = BaseTraits;
+//! Partial specialization selected if `DecoratedTraits_2::Compare_y_near_boundary_2` is defined.
+template <typename DecoratedTraits_2, typename Derived>
+class Counting_compare_y_near_boundary_2<DecoratedTraits_2, Derived,
+                                         std::enable_if_t<has_compare_y_near_boundary_2<DecoratedTraits_2>::value>> {
+  using Decorated_traits_2 = DecoratedTraits_2;
 
 public:
   //! A functor that compares the \f$y\f$-coordinates of curve ends near the boundary of the parameter space.
   class Compare_y_near_boundary_2 {
-    using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
+    using X_monotone_curve_2 = typename Decorated_traits_2::X_monotone_curve_2;
 
   private:
-    typename Base::Compare_y_near_boundary_2 m_object;
+    typename Decorated_traits_2::Compare_y_near_boundary_2 m_object;
     std::size_t& m_counter;
 
   public:
     /*! constructs
      */
-    Compare_y_near_boundary_2(const Base& base, std::size_t& counter) :
-      m_object(base.compare_y_near_boundary_2_object()), m_counter(counter) {}
+    Compare_y_near_boundary_2(const Decorated_traits_2& decorated_traits, std::size_t& counter) :
+      m_object(decorated_traits.compare_y_near_boundary_2_object()), m_counter(counter)
+    {}
 
     /*! compares the \f$y\f$-coordinates of curve ends near the boundary of the parameter space.
      * \param xcv1 the first curve the end point of which is tested.
@@ -1309,71 +1344,73 @@ public:
  *
  * It models all the concepts that the original traits models.
  */
-template <typename BaseTraits>
+template <typename DecoratedTraits_2>
 class Arr_counting_traits_2 :
-    public aos2::internal::Counting_parameter_space_in_x_2<BaseTraits, Arr_counting_traits_2<BaseTraits>>,
-    public aos2::internal::Counting_parameter_space_in_y_2<BaseTraits, Arr_counting_traits_2<BaseTraits>>,
-    public aos2::internal::Counting_make_x_monotone_2<BaseTraits, Arr_counting_traits_2<BaseTraits>>,
-    public aos2::internal::Counting_split_2<BaseTraits, Arr_counting_traits_2<BaseTraits>>,
-    public aos2::internal::Counting_do_intersect_2<BaseTraits, Arr_counting_traits_2<BaseTraits>>,
-    public aos2::internal::Counting_intersect_2<BaseTraits, Arr_counting_traits_2<BaseTraits>>,
-    public aos2::internal::Counting_are_mergeable_2<BaseTraits, Arr_counting_traits_2<BaseTraits>>,
-    public aos2::internal::Counting_merge_2<BaseTraits, Arr_counting_traits_2<BaseTraits>>,
-    public aos2::internal::Counting_construct_opposite_2<BaseTraits, Arr_counting_traits_2<BaseTraits>>,
-    public aos2::internal::Counting_construct_point_2<BaseTraits, Arr_counting_traits_2<BaseTraits>>,
-    public aos2::internal::Counting_construct_x_monotone_curve_2<BaseTraits, Arr_counting_traits_2<BaseTraits>>,
-    public aos2::internal::Counting_construct_curve_2<BaseTraits, Arr_counting_traits_2<BaseTraits>>,
-    public aos2::internal::Counting_compare_endpoints_xy_2<BaseTraits, Arr_counting_traits_2<BaseTraits>>,
-    public aos2::internal::Counting_approximate_2<BaseTraits, Arr_counting_traits_2<BaseTraits>>,
-    public aos2::internal::Counting_is_on_x_identification_2<BaseTraits, Arr_counting_traits_2<BaseTraits>>,
-    public aos2::internal::Counting_is_on_y_identification_2<BaseTraits, Arr_counting_traits_2<BaseTraits>>,
-    public aos2::internal::Counting_compare_y_on_boundary_2<BaseTraits, Arr_counting_traits_2<BaseTraits>>,
-    public aos2::internal::Counting_compare_y_near_boundary_2<BaseTraits, Arr_counting_traits_2<BaseTraits>>,
-    public aos2::internal::Counting_x_on_boundary_2<BaseTraits, Arr_counting_traits_2<BaseTraits>>,
-    public aos2::internal::Counting_compare_x_near_boundary_2<BaseTraits, Arr_counting_traits_2<BaseTraits>> {
+    public aos2::internal::Counting_parameter_space_in_x_2<DecoratedTraits_2, Arr_counting_traits_2<DecoratedTraits_2>>,
+    public aos2::internal::Counting_parameter_space_in_y_2<DecoratedTraits_2, Arr_counting_traits_2<DecoratedTraits_2>>,
+    public aos2::internal::Counting_make_x_monotone_2<DecoratedTraits_2, Arr_counting_traits_2<DecoratedTraits_2>>,
+    public aos2::internal::Counting_split_2<DecoratedTraits_2, Arr_counting_traits_2<DecoratedTraits_2>>,
+    public aos2::internal::Counting_do_intersect_2<DecoratedTraits_2, Arr_counting_traits_2<DecoratedTraits_2>>,
+    public aos2::internal::Counting_intersect_2<DecoratedTraits_2, Arr_counting_traits_2<DecoratedTraits_2>>,
+    public aos2::internal::Counting_are_mergeable_2<DecoratedTraits_2, Arr_counting_traits_2<DecoratedTraits_2>>,
+    public aos2::internal::Counting_merge_2<DecoratedTraits_2, Arr_counting_traits_2<DecoratedTraits_2>>,
+    public aos2::internal::Counting_construct_opposite_2<DecoratedTraits_2, Arr_counting_traits_2<DecoratedTraits_2>>,
+    public aos2::internal::Counting_construct_point_2<DecoratedTraits_2, Arr_counting_traits_2<DecoratedTraits_2>>,
+    public aos2::internal::Counting_construct_x_monotone_curve_2<DecoratedTraits_2, Arr_counting_traits_2<DecoratedTraits_2>>,
+    public aos2::internal::Counting_construct_curve_2<DecoratedTraits_2, Arr_counting_traits_2<DecoratedTraits_2>>,
+    public aos2::internal::Counting_compare_endpoints_xy_2<DecoratedTraits_2, Arr_counting_traits_2<DecoratedTraits_2>>,
+    public aos2::internal::Counting_approximate_2<DecoratedTraits_2, Arr_counting_traits_2<DecoratedTraits_2>>,
+    public aos2::internal::Counting_is_on_x_identification_2<DecoratedTraits_2, Arr_counting_traits_2<DecoratedTraits_2>>,
+    public aos2::internal::Counting_is_on_y_identification_2<DecoratedTraits_2, Arr_counting_traits_2<DecoratedTraits_2>>,
+    public aos2::internal::Counting_compare_y_on_boundary_2<DecoratedTraits_2, Arr_counting_traits_2<DecoratedTraits_2>>,
+    public aos2::internal::Counting_compare_y_near_boundary_2<DecoratedTraits_2, Arr_counting_traits_2<DecoratedTraits_2>>,
+    public aos2::internal::Counting_x_on_boundary_2<DecoratedTraits_2, Arr_counting_traits_2<DecoratedTraits_2>>,
+    public aos2::internal::Counting_compare_x_near_boundary_2<DecoratedTraits_2, Arr_counting_traits_2<DecoratedTraits_2>> {
+public:
+  using Decorated_traits_2 = DecoratedTraits_2;
+  using Shared_decorated_traits_2 = std::shared_ptr<Decorated_traits_2>;
 
-  using Base = BaseTraits;
-
+private:
   using Counting_parameter_space_in_x_2 =
-    aos2::internal::Counting_parameter_space_in_x_2<Base, Arr_counting_traits_2<Base>>;
+    aos2::internal::Counting_parameter_space_in_x_2<Decorated_traits_2, Arr_counting_traits_2<Decorated_traits_2>>;
   using Counting_parameter_space_in_y_2 =
-    aos2::internal::Counting_parameter_space_in_y_2<Base, Arr_counting_traits_2<Base>>;
+    aos2::internal::Counting_parameter_space_in_y_2<Decorated_traits_2, Arr_counting_traits_2<Decorated_traits_2>>;
   using Counting_make_x_monotone_2 =
-    aos2::internal::Counting_make_x_monotone_2<Base, Arr_counting_traits_2<Base>>;
+    aos2::internal::Counting_make_x_monotone_2<Decorated_traits_2, Arr_counting_traits_2<Decorated_traits_2>>;
   using Counting_split_2 =
-    aos2::internal::Counting_split_2<Base, Arr_counting_traits_2<Base>>;
+    aos2::internal::Counting_split_2<Decorated_traits_2, Arr_counting_traits_2<Decorated_traits_2>>;
   using Counting_do_intersect_2 =
-    aos2::internal::Counting_do_intersect_2<Base, Arr_counting_traits_2<Base>>;
+    aos2::internal::Counting_do_intersect_2<Decorated_traits_2, Arr_counting_traits_2<Decorated_traits_2>>;
   using Counting_intersect_2 =
-    aos2::internal::Counting_intersect_2<Base, Arr_counting_traits_2<Base>>;
+    aos2::internal::Counting_intersect_2<Decorated_traits_2, Arr_counting_traits_2<Decorated_traits_2>>;
   using Counting_are_mergeable_2 =
-    aos2::internal::Counting_are_mergeable_2<Base, Arr_counting_traits_2<Base>>;
+    aos2::internal::Counting_are_mergeable_2<Decorated_traits_2, Arr_counting_traits_2<Decorated_traits_2>>;
   using Counting_merge_2 =
-    aos2::internal::Counting_merge_2<Base, Arr_counting_traits_2<Base>>;
+    aos2::internal::Counting_merge_2<Decorated_traits_2, Arr_counting_traits_2<Decorated_traits_2>>;
   using Counting_construct_opposite_2 =
-    aos2::internal::Counting_construct_opposite_2<Base, Arr_counting_traits_2<Base>>;
+    aos2::internal::Counting_construct_opposite_2<Decorated_traits_2, Arr_counting_traits_2<Decorated_traits_2>>;
   using Counting_construct_point_2 =
-    aos2::internal::Counting_construct_point_2<Base, Arr_counting_traits_2<Base>>;
+    aos2::internal::Counting_construct_point_2<Decorated_traits_2, Arr_counting_traits_2<Decorated_traits_2>>;
   using Counting_construct_x_monotone_curve_2 =
-    aos2::internal::Counting_construct_x_monotone_curve_2<Base, Arr_counting_traits_2<Base>>;
+    aos2::internal::Counting_construct_x_monotone_curve_2<Decorated_traits_2, Arr_counting_traits_2<Decorated_traits_2>>;
   using Counting_construct_curve_2 =
-    aos2::internal::Counting_construct_curve_2<Base, Arr_counting_traits_2<Base>>;
+    aos2::internal::Counting_construct_curve_2<Decorated_traits_2, Arr_counting_traits_2<Decorated_traits_2>>;
   using Counting_compare_endpoints_xy_2 =
-    aos2::internal::Counting_compare_endpoints_xy_2<Base, Arr_counting_traits_2<Base>>;
+    aos2::internal::Counting_compare_endpoints_xy_2<Decorated_traits_2, Arr_counting_traits_2<Decorated_traits_2>>;
   using Counting_approximate_2 =
-    aos2::internal::Counting_approximate_2<Base, Arr_counting_traits_2<Base>>;
+    aos2::internal::Counting_approximate_2<Decorated_traits_2, Arr_counting_traits_2<Decorated_traits_2>>;
   using Counting_is_on_x_identification_2 =
-    aos2::internal::Counting_is_on_x_identification_2<Base, Arr_counting_traits_2<Base>>;
+    aos2::internal::Counting_is_on_x_identification_2<Decorated_traits_2, Arr_counting_traits_2<Decorated_traits_2>>;
   using Counting_is_on_y_identification_2 =
-    aos2::internal::Counting_is_on_y_identification_2<Base, Arr_counting_traits_2<Base>>;
+    aos2::internal::Counting_is_on_y_identification_2<Decorated_traits_2, Arr_counting_traits_2<Decorated_traits_2>>;
   using Counting_compare_y_on_boundary_2 =
-    aos2::internal::Counting_compare_y_on_boundary_2<Base, Arr_counting_traits_2<Base>>;
+    aos2::internal::Counting_compare_y_on_boundary_2<Decorated_traits_2, Arr_counting_traits_2<Decorated_traits_2>>;
   using Counting_compare_y_near_boundary_2 =
-    aos2::internal::Counting_compare_y_near_boundary_2<Base, Arr_counting_traits_2<Base>>;
+    aos2::internal::Counting_compare_y_near_boundary_2<Decorated_traits_2, Arr_counting_traits_2<Decorated_traits_2>>;
   using Counting_x_on_boundary_2 =
-    aos2::internal::Counting_x_on_boundary_2<Base, Arr_counting_traits_2<Base>>;
+    aos2::internal::Counting_x_on_boundary_2<Decorated_traits_2, Arr_counting_traits_2<Decorated_traits_2>>;
   using Counting_compare_x_near_boundary_2 =
-    aos2::internal::Counting_compare_x_near_boundary_2<Base, Arr_counting_traits_2<Base>>;
+    aos2::internal::Counting_compare_x_near_boundary_2<Decorated_traits_2, Arr_counting_traits_2<Decorated_traits_2>>;
 
   friend Counting_parameter_space_in_x_2;
   friend Counting_parameter_space_in_y_2;
@@ -1444,12 +1481,11 @@ public:
     NUMBER_OF_OPERATIONS,
   };
 
-  using Shared_base = std::shared_ptr<Base>;
-
   /*! constructs default.
    */
   template <typename ... Args>
-  Arr_counting_traits_2(Args ... args) : m_base_traits(std::make_shared<Base>(std::forward<Args>(args)...)) {
+  Arr_counting_traits_2(Args ... args) :
+    m_decorated_traits(std::make_shared<Decorated_traits_2>(std::forward<Args>(args)...)) {
     clear_counters();
     increment();
   }
@@ -1460,7 +1496,7 @@ public:
    * shared_ptr simply transfers the internal pointer without touching the
    * atomic reference counter. This is faster than a copy.
    */
-  Arr_counting_traits_2(Shared_base traits) : m_base_traits(std::move(traits)) {
+  Arr_counting_traits_2(Shared_decorated_traits_2 traits) : m_decorated_traits(std::move(traits)) {
     clear_counters();
     increment();
   }
@@ -1482,31 +1518,33 @@ public:
     return os;
   }
 
-  /// \name Types and functors inherited from `BaseTraits`
+  /// \name Types and functors inherited from `DecoratedTraits_2`
   //@{
 
   // Traits types:
-  using Has_left_category = typename Base::Has_left_category;
-  using Has_merge_category = typename Base::Has_merge_category;
+  using Has_left_category = typename Decorated_traits_2::Has_left_category;
+  using Has_merge_category = typename Decorated_traits_2::Has_merge_category;
 
-  using Left_side_category = typename internal::Arr_complete_left_side_category<Base>::Category;
-  using Bottom_side_category = typename internal::Arr_complete_bottom_side_category<Base>::Category;
-  using Top_side_category = typename internal::Arr_complete_top_side_category<Base>::Category;
-  using Right_side_category = typename internal::Arr_complete_right_side_category<Base>::Category;
+  using Left_side_category = typename internal::Arr_complete_left_side_category<Decorated_traits_2>::Category;
+  using Bottom_side_category = typename internal::Arr_complete_bottom_side_category<Decorated_traits_2>::Category;
+  using Top_side_category = typename internal::Arr_complete_top_side_category<Decorated_traits_2>::Category;
+  using Right_side_category = typename internal::Arr_complete_right_side_category<Decorated_traits_2>::Category;
 
-  using Point_2 = typename Base::Point_2;
-  using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
+  using Point_2 = typename Decorated_traits_2::Point_2;
+  using X_monotone_curve_2 = typename Decorated_traits_2::X_monotone_curve_2;
 
   /*! A functor that compares the \f$x\f$-coordinates of two points */
   class Compare_x_2 {
   private:
-    typename Base::Compare_x_2 m_object;
+    typename Decorated_traits_2::Compare_x_2 m_object;
     std::size_t& m_counter;
 
   public:
     /*! constructs
      */
-    Compare_x_2(const Base& base, std::size_t& counter) : m_object(base.compare_x_2_object()), m_counter(counter) {}
+    Compare_x_2(const Decorated_traits_2& decorated_traits, std::size_t& counter) :
+      m_object(decorated_traits.compare_x_2_object()), m_counter(counter)
+    {}
 
     /*! operates
      */
@@ -1519,13 +1557,15 @@ public:
   //! A functor that compares two points lexigoraphically: by \f$x\f$, then by \f$y\f$.
   class Compare_xy_2 {
   private:
-    typename Base::Compare_xy_2 m_object;
+    typename Decorated_traits_2::Compare_xy_2 m_object;
     std::size_t& m_counter;
 
   public:
     /*! constructs
      */
-    Compare_xy_2(const Base& base, std::size_t& counter) : m_object(base.compare_xy_2_object()), m_counter(counter) {}
+    Compare_xy_2(const Decorated_traits_2& decorated_traits, std::size_t& counter) :
+      m_object(decorated_traits.compare_xy_2_object()), m_counter(counter)
+    {}
 
     /*! operates
      */
@@ -1538,16 +1578,17 @@ public:
   //! A functor that obtains the left endpoint of an \f$x\f$-monotone curve.
   class Construct_min_vertex_2 {
   private:
-    typename Base::Construct_min_vertex_2 m_object;
+    typename Decorated_traits_2::Construct_min_vertex_2 m_object;
     std::size_t& m_counter;
 
   public:
     /*! constructs
      */
-    Construct_min_vertex_2(const Base& base, std::size_t& counter) :
-      m_object(base.construct_min_vertex_2_object()), m_counter(counter) {}
+    Construct_min_vertex_2(const Decorated_traits_2& decorated_traits, std::size_t& counter) :
+      m_object(decorated_traits.construct_min_vertex_2_object()), m_counter(counter)
+    {}
 
-    using Subcurve_ctr_minv = typename Base::Construct_min_vertex_2;
+    using Subcurve_ctr_minv = typename Decorated_traits_2::Construct_min_vertex_2;
 
     /*! operates
      */
@@ -1561,16 +1602,17 @@ public:
   /*! A functor that obtains the right endpoint of an \f$x\f$-monotone curve. */
   class Construct_max_vertex_2 {
   private:
-    typename Base::Construct_max_vertex_2 m_object;
+    typename Decorated_traits_2::Construct_max_vertex_2 m_object;
     std::size_t& m_counter;
 
   public:
     /*! constructs
      */
-    Construct_max_vertex_2(const Base& base, std::size_t& counter) :
-      m_object(base.construct_max_vertex_2_object()), m_counter(counter) {}
+    Construct_max_vertex_2(const Decorated_traits_2& decorated_traits, std::size_t& counter) :
+      m_object(decorated_traits.construct_max_vertex_2_object()), m_counter(counter)
+    {}
 
-    using Subcurve_ctr_maxv = typename Base::Construct_max_vertex_2;
+    using Subcurve_ctr_maxv = typename Decorated_traits_2::Construct_max_vertex_2;
 
     /*! operates
      */
@@ -1585,13 +1627,15 @@ public:
    */
   class Is_vertical_2 {
   private:
-    typename Base::Is_vertical_2 m_object;
+    typename Decorated_traits_2::Is_vertical_2 m_object;
     std::size_t& m_counter;
 
   public:
     /*! constructs
      */
-    Is_vertical_2(const Base& base, std::size_t& counter) : m_object(base.is_vertical_2_object()), m_counter(counter) {}
+    Is_vertical_2(const Decorated_traits_2& decorated_traits, std::size_t& counter) :
+      m_object(decorated_traits.is_vertical_2_object()), m_counter(counter)
+    {}
 
     /*! operates
      */
@@ -1606,14 +1650,15 @@ public:
    */
   class Compare_y_at_x_2 {
   private:
-    typename Base::Compare_y_at_x_2 m_object;
+    typename Decorated_traits_2::Compare_y_at_x_2 m_object;
     std::size_t& m_counter;
 
   public:
     /*! constructs
      */
-    Compare_y_at_x_2(const Base& base, std::size_t& counter) :
-      m_object(base.compare_y_at_x_2_object()), m_counter(counter) {}
+    Compare_y_at_x_2(const Decorated_traits_2& decorated_traits, std::size_t& counter) :
+      m_object(decorated_traits.compare_y_at_x_2_object()), m_counter(counter)
+    {}
 
     /*! operates
      */
@@ -1628,14 +1673,15 @@ public:
    */
   class Equal_2 {
   private:
-    typename Base::Equal_2 m_object;
+    typename Decorated_traits_2::Equal_2 m_object;
     std::size_t& m_counter1;
     std::size_t& m_counter2;
 
   public:
     /*! constructs */
-    Equal_2(const Base& base, std::size_t& counter1, std::size_t& counter2) :
-      m_object(base.equal_2_object()), m_counter1(counter1), m_counter2(counter2) {}
+    Equal_2(const Decorated_traits_2& decorated_traits, std::size_t& counter1, std::size_t& counter2) :
+      m_object(decorated_traits.equal_2_object()), m_counter1(counter1), m_counter2(counter2)
+    {}
 
     /*! operates
      */
@@ -1658,14 +1704,15 @@ public:
    */
   class Compare_y_at_x_left_2 {
   private:
-    typename Base::Compare_y_at_x_left_2 m_object;
+    typename Decorated_traits_2::Compare_y_at_x_left_2 m_object;
     std::size_t& m_counter;
 
   public:
     /*! constructs
      */
-    Compare_y_at_x_left_2(const Base& base, std::size_t& counter) :
-      m_object(base.compare_y_at_x_left_2_object()), m_counter(counter) {}
+    Compare_y_at_x_left_2(const Decorated_traits_2& decorated_traits, std::size_t& counter) :
+      m_object(decorated_traits.compare_y_at_x_left_2_object()), m_counter(counter)
+    {}
 
     /*! operates
      */
@@ -1682,14 +1729,15 @@ public:
    */
   class Compare_y_at_x_right_2 {
   private:
-    typename Base::Compare_y_at_x_right_2 m_object;
+    typename Decorated_traits_2::Compare_y_at_x_right_2 m_object;
     std::size_t& m_counter;
 
   public:
     /*! constructs
      */
-    Compare_y_at_x_right_2(const Base& base, std::size_t& counter) :
-      m_object(base.compare_y_at_x_right_2_object()), m_counter(counter) {}
+    Compare_y_at_x_right_2(const Decorated_traits_2& decorated_traits, std::size_t& counter) :
+      m_object(decorated_traits.compare_y_at_x_right_2_object()), m_counter(counter)
+    {}
 
     /*! operates
      */
@@ -1747,15 +1795,15 @@ public:
 
   /*! obtains a const reference to the traits being counted.
    */
-  const Base& traits() const { return *m_base_traits; }
+  const Decorated_traits_2& traits() const { return *m_decorated_traits; }
 
   /*! obtains a reference to the traits being counted.
    */
-  Base& traits() { return *m_base_traits; }
+  Decorated_traits_2& traits() { return *m_decorated_traits; }
 
   /*! obtains the smart pointer to the traits being counted.
    */
-  Shared_base shared_traits() const { return m_base_traits; }
+  Shared_decorated_traits_2 shared_traits() const { return m_decorated_traits; }
 
 private:
   //! The operation counters
@@ -1806,55 +1854,55 @@ private:
   };
 
   const std::array<bool, NUMBER_OF_OPERATIONS> m_exist = {
-    has_compare_x_2<Base>::value,
-    has_compare_xy_2<Base>::value,
-    has_construct_min_vertex_2<Base>::value,
-    has_construct_max_vertex_2<Base>::value,
-    has_is_vertical_2<Base>::value,
-    has_compare_y_at_x_2<Base>::value,
-    has_equal_2<Base>::value, // points
-    has_equal_2<Base>::value, // curves
-    has_compare_y_at_x_left_2<Base>::value,
-    has_compare_y_at_x_right_2<Base>::value,
-    has_make_x_monotone_2<Base>::value,
-    has_split_2<Base>::value,
-    has_do_intersect_2<Base>::value,
-    has_intersect_2<Base>::value,
-    has_are_mergeable_2<Base>::value,
-    has_merge_2<Base>::value,
-    has_construct_opposite_2<Base>::value,
-    has_construct_point_2<Base>::value,
-    has_construct_point_2_xy<Base>::value,
-    has_construct_x_monotone_curve_2<Base>::value,
-    has_construct_curve_2<Base>::value,
-    has_compare_endpoints_xy_2<Base>::value,
-    has_approximate_2<Base>::value, // coordinate
-    has_approximate_2_point<Base>::value, // point
-    has_approximate_2_xcv<Base>::value, // curve
-    has_approximate_2_xcv_bounds<Base>::value, // bounded curve
-    has_parameter_space_in_x_2<Base>::value, // curve end
-    has_parameter_space_in_x_2<Base>::value, // point
-    has_is_on_x_identification_2<Base>::value, // point
-    has_is_on_x_identification_2<Base>::value, // curve
-    has_compare_y_on_boundary_2<Base>::value,
-    has_compare_y_near_boundary_2<Base>::value,
-    has_parameter_space_in_y_2<Base>::value, // curve end
-    has_parameter_space_in_y_2<Base>::value, // point
-    has_is_on_y_identification_2<Base>::value, // point
-    has_is_on_y_identification_2<Base>::value, // curve
-    has_compare_x_on_boundary_2<Base>::value, // points
-    has_compare_x_on_boundary_2<Base>::value, // point, curve end
-    has_compare_x_on_boundary_2<Base>::value, // curve ends
-    has_compare_x_near_boundary_2<Base>::value
+    has_compare_x_2<Decorated_traits_2>::value,
+    has_compare_xy_2<Decorated_traits_2>::value,
+    has_construct_min_vertex_2<Decorated_traits_2>::value,
+    has_construct_max_vertex_2<Decorated_traits_2>::value,
+    has_is_vertical_2<Decorated_traits_2>::value,
+    has_compare_y_at_x_2<Decorated_traits_2>::value,
+    has_equal_2<Decorated_traits_2>::value, // points
+    has_equal_2<Decorated_traits_2>::value, // curves
+    has_compare_y_at_x_left_2<Decorated_traits_2>::value,
+    has_compare_y_at_x_right_2<Decorated_traits_2>::value,
+    has_make_x_monotone_2<Decorated_traits_2>::value,
+    has_split_2<Decorated_traits_2>::value,
+    has_do_intersect_2<Decorated_traits_2>::value,
+    has_intersect_2<Decorated_traits_2>::value,
+    has_are_mergeable_2<Decorated_traits_2>::value,
+    has_merge_2<Decorated_traits_2>::value,
+    has_construct_opposite_2<Decorated_traits_2>::value,
+    has_construct_point_2<Decorated_traits_2>::value,
+    has_construct_point_2_xy<Decorated_traits_2>::value,
+    has_construct_x_monotone_curve_2<Decorated_traits_2>::value,
+    has_construct_curve_2<Decorated_traits_2>::value,
+    has_compare_endpoints_xy_2<Decorated_traits_2>::value,
+    has_approximate_2<Decorated_traits_2>::value, // coordinate
+    has_approximate_2_point<Decorated_traits_2>::value, // point
+    has_approximate_2_xcv<Decorated_traits_2>::value, // curve
+    has_approximate_2_xcv_bounds<Decorated_traits_2>::value, // bounded curve
+    has_parameter_space_in_x_2<Decorated_traits_2>::value, // curve end
+    has_parameter_space_in_x_2<Decorated_traits_2>::value, // point
+    has_is_on_x_identification_2<Decorated_traits_2>::value, // point
+    has_is_on_x_identification_2<Decorated_traits_2>::value, // curve
+    has_compare_y_on_boundary_2<Decorated_traits_2>::value,
+    has_compare_y_near_boundary_2<Decorated_traits_2>::value,
+    has_parameter_space_in_y_2<Decorated_traits_2>::value, // curve end
+    has_parameter_space_in_y_2<Decorated_traits_2>::value, // point
+    has_is_on_y_identification_2<Decorated_traits_2>::value, // point
+    has_is_on_y_identification_2<Decorated_traits_2>::value, // curve
+    has_compare_x_on_boundary_2<Decorated_traits_2>::value, // points
+    has_compare_x_on_boundary_2<Decorated_traits_2>::value, // point, curve end
+    has_compare_x_on_boundary_2<Decorated_traits_2>::value, // curve ends
+    has_compare_x_near_boundary_2<Decorated_traits_2>::value
   };
 
   //! The traitse being counted
-  Shared_base m_base_traits;
+  Shared_decorated_traits_2 m_decorated_traits;
 };
 
-template <typename OutStream, class BaseTraits>
-inline OutStream& operator<<(OutStream& os, const Arr_counting_traits_2<BaseTraits>& traits) {
-  using Traits = Arr_counting_traits_2<BaseTraits>;
+template <typename OutStream, class DecoratedTraits_2>
+inline OutStream& operator<<(OutStream& os, const Arr_counting_traits_2<DecoratedTraits_2>& traits) {
+  using Traits = Arr_counting_traits_2<DecoratedTraits_2>;
   std::size_t sum = 0;
   for (auto i = 0; i < Traits::NUMBER_OF_OPERATIONS; ++i) {
     sum += traits.count(static_cast<typename Traits::Operation_id>(i));

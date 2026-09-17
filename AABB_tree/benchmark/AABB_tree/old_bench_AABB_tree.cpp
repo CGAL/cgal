@@ -8,6 +8,7 @@
 #include <CGAL/Polygon_mesh_processing/transform.h>
 #include <CGAL/Rigid_triangle_mesh_collision_detection.h>
 #include <CGAL/Side_of_triangle_mesh.h>
+#include <CGAL/Real_timer.h>
 
 #include <fstream>
 #include <sstream>
@@ -157,17 +158,16 @@ int main(int argc, const char** argv)
   std::string path = (argc>2)?argv[2]: CGAL::data_file_path("meshes/handle.off");
 
   std::cout<< k<<" steps in "<<path<<std::endl;
+  CGAL::Real_timer t;
   int nb_inter(0), nb_no_inter(0), nb_include(0),
       naive_inter(0), naive_no_inter(0), naive_include(0);
-  auto start = std::chrono::steady_clock::now();
-  naive_test(k, path, naive_inter, naive_no_inter, naive_include);
-  auto end = std::chrono::steady_clock::now();
+  t.start();
+      naive_test(k, path, naive_inter, naive_no_inter, naive_include);
   std::cout<<"Naive test           : "<<naive_inter<<" collisions, "<<naive_include<<" inclusions, "<<naive_no_inter<<" no collision, calculated in "
-          <<std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << " ms." << std::endl;
-  start = std::chrono::steady_clock::now();
+          << t.time() << " ms." << std::endl;
+  t.stop(); t.reset(); t.start();
   test_no_collision(k, path,nb_inter, nb_no_inter, nb_include);
-  end = std::chrono::steady_clock::now();
   std::cout<<"With transform_traits: "<<nb_inter<<" collisions, "<<nb_include<<" inclusions, "<<nb_no_inter<<" no collision, calculated in "
-          <<std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << " ms." << std::endl;
+          << t.time() << " ms." << std::endl;
     return 0;
 }

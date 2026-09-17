@@ -1184,7 +1184,7 @@ public:
                             Intersection_edge_map> Patches;
     Patches patches(tm, patch_ids, fids, intersection_edges, nb_patches);
     //remove the extra patch
-    remove_patches(tm, ~patches_to_keep,patches, ecm);
+    remove_patches(tm, ~patches_to_keep,patches, ecm, ecm); // WARNING there should be edge_mark_map but this file will disappear soon
 
     stitch_borders(tm, hedge_pairs_to_stitch, parameters::vertex_point_map(vpm));
   }

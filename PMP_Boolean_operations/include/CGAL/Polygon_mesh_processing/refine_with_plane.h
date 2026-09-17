@@ -211,7 +211,7 @@ struct Orthogonal_cut_plane_traits
  *    \cgalParamNEnd
  *
  *    \cgalParamNBegin{use_convex_specialization}
- *      \cgalParamDescription{If set to `true`, a faster implementation specialized for convex meshes is used. The input mesh must be convex to guarantee a correct execution and results.}
+ *      \cgalParamDescription{If set to `true`, a faster implementation specialized for convex meshes is used. The input mesh must be convex and have no flat vertices to guarantee a correct execution and results.}
  *      \cgalParamType{Boolean}
  *      \cgalParamDefault{`false`}
  *      \cgalParamExtra{convex specialization is only used if `edge_is_constrained_map`, `edge_is_marked_map` and `vertex_oriented_side_map` are unused.}
