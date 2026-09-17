@@ -4,9 +4,10 @@
 #include <cstddef>
 #include <vector>
 #include <fstream>
+#include <filesystem>
 
 template <typename Point_3>
-bool read_polylines(const std::string fname,
+bool read_polylines(const std::filesystem::path& fname,
                     std::vector<std::vector<Point_3> >& polylines)
 {
   std::ifstream ifs(fname);

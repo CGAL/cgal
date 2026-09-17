@@ -394,12 +394,12 @@ typedef CGAL::Surface_mesh<typename Kernel::Point_3> Polyhedron;
 #endif
   generate_elephant_with_hole<Polyhedron>();
 
-  std::vector<std::string> input_files;
+  std::vector<std::filesystem::path> input_files;
   input_files.push_back("elephant_triangle_hole_no_DT3.off");
   input_files.push_back("elephant_quad_hole_no_DT3.off");
   input_files.push_back(CGAL::data_file_path("meshes/mech-holes-shark.off"));
   // std::cerr.precision(15);
-  for(std::vector<std::string>::iterator it = input_files.begin(); it != input_files.end(); ++it) {
+  for(std::vector<std::filesystem::path>::iterator it = input_files.begin(); it != input_files.end(); ++it) {
     test_triangulate_hole<Polyhedron>(it->c_str());
     test_triangulate_and_refine_hole<Polyhedron>(it->c_str());
     test_triangulate_refine_and_fair_hole<Polyhedron>(it->c_str());

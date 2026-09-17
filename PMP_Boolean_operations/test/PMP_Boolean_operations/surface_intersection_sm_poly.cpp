@@ -15,6 +15,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <string>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -28,7 +29,7 @@ typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map_helper
          <2, 3, MyTraits>::type LCC;
 
 template <class TriangleMesh>
-void run(const std::string filename1, const std::string filename2, const char* msg)
+void run(const std::filesystem::path& filename1, const std::filesystem::path& filename2, const std::string& msg)
 {
   TriangleMesh mesh1;
   if ( !PMP::IO::read_polygon_mesh(filename1, mesh1) ) {

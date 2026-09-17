@@ -33,7 +33,7 @@ using Faces = std::vector<Face>;
 
 typedef CGAL::Point_set_3<Point_3> Point_set;
 
-void test_mesh_API(const std::string& tm_filename,
+void test_mesh_API(const std::filesystem::path& tm_filename,
                    const double alpha_rel = 10,
                    const double offset_rel = 300)
 {
@@ -91,7 +91,7 @@ void test_mesh_API(const std::string& tm_filename,
                      CGAL::parameters::vertex_point_map(out_vpm));
 }
 
-void test_triangles_API(const std::string& ts_filename,
+void test_triangles_API(const std::filesystem::path& ts_filename,
                         const double alpha_rel = 10,
                         const double offset_rel = 300)
 {
@@ -231,7 +231,7 @@ void test_segments_API(const std::string& ss_filename,
 }
 #endif
 
-void test_points_API(const std::string& ps_filename,
+void test_points_API(const std::filesystem::path& ps_filename,
                      const double alpha_rel = 10,
                      const double offset_rel = 300)
 {

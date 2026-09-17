@@ -54,7 +54,7 @@ int main(int argc, char** argv)
   Constrained_edge_map constraints_map(surface_mesh);
 
   const std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cube-subdivided.off");
-  OpenMesh::IO::read_mesh(surface_mesh, filename);
+  OpenMesh::IO::read_mesh(surface_mesh, filename.string());
 
   if(!CGAL::is_triangle_mesh(surface_mesh)){
     std::cerr << "Input geometry is not triangulated." << std::endl;

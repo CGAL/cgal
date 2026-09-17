@@ -26,7 +26,7 @@ int test_MEDIT_with_features()
   using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<Tr, Mesh_domain::Corner_index, Mesh_domain::Curve_index>;
   using Mesh_criteria = CGAL::Mesh_criteria_3<Tr>;
 
-  const std::string fname = CGAL::data_file_path("meshes/fandisk.off");
+  std::filesystem::path fname = CGAL::data_file_path("meshes/fandisk.off");
   std::ifstream input(fname);
   Polyhedron polyhedron;
   input >> polyhedron;
@@ -79,7 +79,7 @@ int test_MEDIT_negative_cells()
   using Tr = CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<K>;
 
   // Open file negative_cells
-  std::string filename = "data/c3t3_with_negative_cells.mesh";
+  std::filesystem::path filename = "data/c3t3_with_negative_cells.mesh";
   std::ifstream in(filename, std::ios_base::in);
   if(!in) {
     std::cerr << "Error! Cannot open file " << filename << std::endl;
