@@ -165,7 +165,9 @@ namespace CGAL::internal::Hexmeshing
       // I recommend ridge_ratio to be 1/200 so that lambda becomes 1/100 of the main values
       lam *= ridge_ratio;
       for(int i = 0; i < 5; i++) mat.matrix()(i, i) += lam;
-      auto a_k = mat.ldlt().solve(vec);
+
+      Eigen::LDLT<Eigen::MatrixXd> ldlt(mat);
+      auto a_k = ldlt.solve(vec);
       auto Q_k = [&](double x, double y) -> double {
         return a_k[0]*x + a_k[1]*y + a_k[2]*x*x + a_k[3]*x*y + a_k[4]*y*y;
       };
