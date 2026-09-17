@@ -366,23 +366,23 @@ bool read_MEDIT(std::istream& is,
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{facets_with_indices}
- *     \cgalParamDescription{a non-const reference wrapper to a container of quadruple of integers that will be filled by this function.
- *                           Each element corresponds to a facet with vertices corresponding to the three first integers, and the last integer being the surface patch index of the facet.}
- *     \cgalParamType{a `std::reference_wrapper` to a model of `BackInsertionSequence` able to store  quadruple of `int`.}
+ *     \cgalParamDescription{a non-const reference wrapper to a container of quadruples of integers that will be filled by this function.
+ *                           Each element represents a facet with vertices corresponding to the three first integers, and the last integer being the surface patch index of the facet.}
+ *     \cgalParamType{a `std::reference_wrapper` to a model of `BackInsertionSequence` with a value type constructible using a braced initializer list of four integers.}
  *     \cgalParamDefault{facets are ignored}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{edges_with_indices}
- *     \cgalParamDescription{a non-const reference wrapper to a container of triple of integers that will be filled by this function.
- *                           Each element corresponds to an edge with vertices corresponding  to the two first integers, and the last integer being the curve index of the edge.}
- *     \cgalParamType{a `std::reference_wrapper` to a model of `BackInsertionSequence` able to store  triple of `int`.}
+ *     \cgalParamDescription{a non-const reference wrapper to a container of triples of integers that will be filled by this function.
+ *                           Each element represents an edge with vertices corresponding  to the two first integers, and the last integer being the curve index of the edge.}
+ *     \cgalParamType{a `std::reference_wrapper` to a model of `BackInsertionSequence`  with a value type constructible using a braced initializer list of three integers.}
  *     \cgalParamDefault{edges are ignored}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{corners_with_indices}
  *     \cgalParamDescription{a non-const reference wrapper to a container of pair of integers that will be filled by this function.
- *                           Each element corresponds to a corner at the vertex corresponding to the first integer, the last one being the corner index.}
- *     \cgalParamType{a `std::reference_wrapper` to a model of `BackInsertionSequence` able to store  pair of `int`.}
+ *                           Each element represents a corner at the vertex corresponding to the first integer, and the last integer being the corner index.}
+ *     \cgalParamType{a `std::reference_wrapper` to a model of `BackInsertionSequence`  with a value type constructible using a braced initializer list of two integers.}
  *     \cgalParamDefault{corners are ignored}
  *   \cgalParamNEnd
  *
@@ -466,9 +466,32 @@ bool read_MEDIT(std::istream& is,
  *   \cgalParamNBegin{subdomains}
  *     \cgalParamDescription{a reference wrapper to a container of integers of the same size as `tetrahedra`.
  *                           Each element in the container indicates the subdomain index of the corresponding tetrahedron at the same position.}
- *     \cgalParamType{a `std::reference_wrapper` to a model of the concept `RandomAccessContainer` of integer.}
+ *     \cgalParamType{a `std::reference_wrapper` to a model of the concept `SequenceContainer` of integer.}
  *     \cgalParamDefault{all tetrahedra will have the subdomain id `1`.}
  *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{facets_with_indices}
+ *     \cgalParamDescription{a const reference wrapper to a container of quadruples of integers that will be written by this function.
+ *                           Each element corresponds to a facet with vertices corresponding to the three first integers, and the last integer being the surface patch index of the facet.}
+ *     \cgalParamType{a `std::reference_wrapper` to a model of `SequenceContainer` with a value type where the elements of the quadruples can be accessed with `std::get<int>()}
+ *     \cgalParamDefault{facets are ignored}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{edges_with_indices}
+ *     \cgalParamDescription{a const reference wrapper to a container of triples of integers that will be written by this function.
+ *                           Each element corresponds to an edge with vertices corresponding  to the two first integers, and the last integer being the curve index of the edge.}
+ *     \cgalParamType{a `std::reference_wrapper` to a model of `SequenceContainer` with a value type where the elements of the triples can be accessed with `std::get<int>()`}
+ *     \cgalParamDefault{edges are ignored}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{corners_with_indices}
+ *     \cgalParamDescription{a const reference wrapper to a container of pair of integers that will be written by this function.
+ *                           Each element corresponds to a corner at the vertex corresponding to the first integer, the second integer being the corner index.
+ *                           As \medit has no notion of corner indices it is not written.}
+ *     \cgalParamType{a `std::reference_wrapper` to a model of `SequenceContainer` with a value type where the elements of the pairs can be accessed with `std::get<int>()}
+ *     \cgalParamDefault{corners are ignored}
+ *   \cgalParamNEnd
+ *
  * \cgalNamedParamsEnd
  *
  * \returns `true` if the writing was successful, `false` otherwise.
