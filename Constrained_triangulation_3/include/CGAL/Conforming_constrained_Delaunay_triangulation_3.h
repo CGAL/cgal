@@ -5214,6 +5214,9 @@ private:
 
     auto restore_markers = [&](Facet outside_facet) {
       const auto [outside_cell, outside_face_index] = outside_facet;
+      if(cells_to_remove.count(outside_cell) > 0) {
+        return;
+      }
       const auto mirror_facet = tr().mirror_facet(outside_facet);
       if(outside_cell->ccdt_3_data().is_facet_constrained(outside_face_index)) {
         const auto polygon_id = outside_cell->ccdt_3_data().face_constraint_index(outside_face_index);
