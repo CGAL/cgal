@@ -283,8 +283,8 @@ namespace CGAL::internal::Hexmeshing
     LCC& lcc = hdata.lcc;
 
     bool skip_propagation = rdata.iteration == 0;
-    int propagated_count = 0;
-    int marked_for_prop_count = 0;
+    // int propagated_count = 0;
+    // int marked_for_prop_count = 0;
 
     if (!skip_propagation) for (Dart_descriptor face : rdata.faces_of_plane){
       auto& face_attr = lcc.attribute<2>(face)->info();
@@ -292,13 +292,13 @@ namespace CGAL::internal::Hexmeshing
       if (face_attr.template_id == 4){
         if (is_half_face_marked(lcc, face, hdata.propagation_face_mark)){
           propagate_face(hdata, rdata, face, explored_face_mark);
-          propagated_count++;
+          // propagated_count++;
         }
 
         Dart_descriptor other_face = lcc.beta(face, 3);
         if (!lcc.is_free<3>(face) && is_half_face_marked(lcc, other_face, hdata.propagation_face_mark)) {
           propagate_face(hdata, rdata, other_face, explored_face_mark);
-          propagated_count++;
+          // propagated_count++;
         }
       }
     }
@@ -310,11 +310,11 @@ namespace CGAL::internal::Hexmeshing
       if (face_attr.template_id < 1 or face_attr.template_id > 2) continue;
 
       mark_template_for_propagation(hdata, face, face_attr);
-      marked_for_prop_count++;
+      // marked_for_prop_count++;
 
       if (!lcc.is_free<3>(face)){
         mark_template_for_propagation(hdata, lcc.beta(face, 3), face_attr);
-        marked_for_prop_count++;
+        // marked_for_prop_count++;
       }
     }
 

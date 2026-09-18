@@ -74,5 +74,8 @@ int main()
     res=false;
   }
 
+  if(!res)
+  {  return EXIT_FAILURE; }
+
   return EXIT_SUCCESS;
 }
