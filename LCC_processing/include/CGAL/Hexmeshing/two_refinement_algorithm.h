@@ -102,13 +102,13 @@ namespace CGAL::internal::Hexmeshing
         assert_dart_attr_are_unique<3>(lcc, rdata.partial_templates_to_refine);
 
         // Refinement stage
-        int total_sub = 0;
+        // int total_sub = 0;
         create_vertices_for_templates(hdata, rdata);
         refine_marked_faces(hdata, rdata);
-        total_sub += refine_regular_templates(hdata, rdata);
+        /* total_sub +=*/ refine_regular_templates(hdata, rdata);
         refine_partial_templates(hdata, rdata);
-        total_sub += refine_3_template(hdata, rdata);
-        std::cout << total_sub << " volumic substitution was made" << std::endl;
+        /*total_sub +=*/ refine_3_template(hdata, rdata);
+        // std::cout << total_sub << " volumic substitution was made" << std::endl;
 
         assert_all_faces_are_quadrilateral(lcc);
         assert_all_volumes_are_hexes(lcc);

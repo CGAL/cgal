@@ -82,8 +82,8 @@ namespace CGAL::internal::Hexmeshing
         fix_3_count++;
     }
 
-    std::cout << "Diagonal 2 templates fixed: " << fix_c_count << std::endl;
-    std::cout << "Neighboring 3 templates repaired: " << fix_3_count << std::endl;
+    // std::cout << "Diagonal 2 templates fixed: " << fix_c_count << std::endl;
+    // std::cout << "Neighboring 3 templates repaired: " << fix_3_count << std::endl;
 
     return fix_c_count + fix_3_count;
   }
@@ -110,7 +110,7 @@ namespace CGAL::internal::Hexmeshing
   template <typename HexData>
   void refine_marked_faces(HexData& hdata, RefinementData& rdata){
     LCC& lcc = hdata.lcc;
-    int nbsub = 0;
+    // int nbsub = 0;
     for (Dart_descriptor& dart : boost::join(rdata.faces_of_plane, rdata.faces_to_refine))
     {
       //Utile uniquement si les faces marqués ne sont pas 100% templatés
@@ -132,7 +132,7 @@ namespace CGAL::internal::Hexmeshing
         (lcc, dart, signature, f_signature_start);
 
       CGAL_assertion(temp_id < CONST_SIZE_T_MAX);
-      nbsub++;
+      // nbsub++;
 
       if (temp_id == 0) {
         // lcc.mark_cell<1>(lcc.beta(f_signature_start, 1, 1), l_debug_mark_2);
@@ -158,7 +158,7 @@ namespace CGAL::internal::Hexmeshing
     // Cannot easily assert if all faces has been correctly treated, because some faces don't have attr
     // and we don't refine 3/4 template faces.
 
-    std::cout << nbsub << " face substitution was made" << std::endl;
+    // std::cout << nbsub << " face substitution was made" << std::endl;
   }
 
   /**
