@@ -2127,7 +2127,18 @@ bool flip_surface_edge(C3t3& c3t3,
 
     CGAL_expensive_assertion(debug::check_facets(vh0, vh1, vh2, vh3, c3t3));
 
-    if (!tr.tds().is_edge(vh2, vh3)) // most-likely to happen early exit
+    // Not tds().is_edge(): that walk MARKS tds_data() on every cell it
+    // visits, and it visits the stars of vh2 and vh3, which no lock zone
+    // covers -- the same reason the split and the collapse keep it off the
+    // parallel path. Both vertices are corners of cells of the zone, so the
+    // non-marking walk reads a star this thread holds the apex of.
+    bool vh2_vh3_share_an_edge;
+    if constexpr (is_parallel_triangulation<typename C3t3::Triangulation>())
+      vh2_vh3_share_an_edge = tr.is_edge_threadsafe(vh2, vh3);
+    else
+      vh2_vh3_share_an_edge = tr.tds().is_edge(vh2, vh3);
+
+    if (!vh2_vh3_share_an_edge) // most-likely to happen early exit
     {
       const Surface_patch_index surfi = c3t3.surface_patch_index(boundary_facets[0]);
 
@@ -2562,20 +2573,42 @@ public:
     return candidate_edges_for_flip;
   }
 
+  // `lock_zone()` is called by the parallel executor alone; the sequential one
+  // goes straight to `execute_operation()`, which must then locate the edge
+  // itself.
+  static constexpr bool is_parallel
+    = std::is_convertible_v<typename BaseClass::Concurrency_tag, CGAL::Parallel_tag>;
+
   bool execute_operation(const Element_type& vp, C3t3& c3t3) override
   {
     const Vertex_handle vh0 = vp.first;
     const Vertex_handle vh1 = vp.second;
     typename C3t3::Triangulation& tr = c3t3.triangulation();
 
-    Cells_vector& inc_vh0 = inc_cells[vh0];
-    if (inc_vh0.empty())
-      tr.incident_cells(vh0, std::back_inserter(inc_vh0));
-
     Cell_handle c;
     int i, j;
-    if (!is_edge_uv(vh0, vh1, inc_vh0, c, i, j))
-      return false;
+    if constexpr (is_parallel)
+    {
+      // lock_zone() ran first and located the edge in order to lock its ring.
+      // No match means it found no cell carrying the edge, i.e. this pair is
+      // no longer an edge and there is nothing to flip.
+      const auto& located = last_located_edge<Vertex_handle, Cell_handle>();
+      if (!located.matches(vh0, vh1))
+        return false;
+      c = located.c;
+      i = located.i0;
+      j = located.i1;
+      CGAL_USE(tr);
+    }
+    else
+    {
+      Cells_vector& inc_vh0 = inc_cells[vh0];
+      if (inc_vh0.empty())
+        tr.incident_cells(vh0, std::back_inserter(inc_vh0));
+
+      if (!is_edge_uv(vh0, vh1, inc_vh0, c, i, j))
+        return false;
+    }
 
     Edge edge(c, i, j);
     std::vector<Facet> boundary_facets;
@@ -2592,19 +2625,69 @@ public:
                               m_visitor);
   }
 
-  // Same zone as the internal flip: the two vertex stars. See the comment there.
+  /**
+  * The same minimal zone as the internal flip -- the ring and the cells across
+  * its outer facets -- located the same way. See the comment there for why a
+  * ring cell is protected by holding its four vertices, and why the endpoints
+  * have to be held before the search may be read.
+  *
+  * A surface flip writes no more than an internal one does: the 4-4 case
+  * rewrites the four ring cells and re-stitches the four cells across their
+  * outer facets, `flip_n_to_m_on_surface()` does the same for a longer ring,
+  * and `set_cell()` is called only on vertices of ring cells, which the ring's
+  * own locks cover. The valences of the four vertices are updated in place,
+  * and all four are corners of ring cells. The two reads that leave the ring
+  * -- whether `vh2` and `vh3` already share an edge, and `is_boundary_edge()`
+  * -- either stay on the ring and its mirrors or walk a star whose apex this
+  * zone holds, which is why the first of them had to stop marking.
+  *
+  * The two whole endpoint stars this used to take were never the write set.
+  * They were what `execute_operation()` searched for the edge, and it now
+  * takes the located edge instead. Taking them cost O(star) per candidate, on
+  * a mesh where one star reaches 8004 cells, plus a copy of each into
+  * `inc_cells`.
+  */
   bool lock_zone(const Element_type& vp, const C3t3& c3t3) const
   {
+    typedef typename C3t3::Triangulation::Cell_circulator Cell_circulator;
     const typename C3t3::Triangulation& tr = c3t3.triangulation();
-    Cells_vector inc_first, inc_second;
-    // One table for both stars: they share the flipped edge's whole ring.
+
+    last_located_edge<Vertex_handle, Cell_handle>().clear();
+
+    // One table for the ring: each ring cell and the two cells across its
+    // outer facets are locked in turn, and consecutive ring cells share three
+    // of their four vertices.
     typename C3t3::Triangulation::Zone_vertex_dedup dd(tr.is_parallel());
-    if (!tr.try_lock_and_get_incident_cells(vp.first, inc_first, dd)
-     || !tr.try_lock_and_get_incident_cells(vp.second, inc_second, dd))
+    if (!tr.try_lock_vertex_dedup(vp.first, dd)
+     || !tr.try_lock_vertex_dedup(vp.second, dd))
       return false;
 
-    inc_cells[vp.first] = inc_first;
-    inc_cells[vp.second] = inc_second;
+    Cell_handle edge_cell;
+    const Vertex_handle other = vp.second;
+    if (!tr.find_first_incident_cell_threadsafe(vp.first,
+          [other](const Cell_handle c) { return c->has_vertex(other); },
+          edge_cell))
+      return true; // no longer an edge; execute_operation() will decline it
+
+    const int i0 = edge_cell->index(vp.first);
+    const int i1 = edge_cell->index(vp.second);
+    const Edge edge(edge_cell, i0, i1);
+
+    Cell_circulator circ = tr.incident_cells(edge);
+    const Cell_circulator done = circ;
+    do
+    {
+      const Cell_handle c = circ;
+      // the ring cell, and the two cells across its outer facets
+      if (!tr.try_lock_cell_dedup(c, dd)
+       || !tr.try_lock_cell_dedup(c->neighbor(c->index(vp.first)), dd)
+       || !tr.try_lock_cell_dedup(c->neighbor(c->index(vp.second)), dd))
+        return false;
+    }
+    while (++circ != done);
+
+    last_located_edge<Vertex_handle, Cell_handle>()
+      .set(vp.first, vp.second, edge_cell, i0, i1);
     return true;
   }
 
