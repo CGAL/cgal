@@ -711,6 +711,27 @@ bool is_well_oriented(const Tr& tr, const typename Tr::Cell_handle ch)
                         ch->vertex(3));
 }
 
+// The report `is_boundary()` prints when asked to be verbose. It lives here,
+// out of that function, because a function containing a chain of `std::cout <<`
+// is far too large for the inliner to accept -- and `is_boundary()` is asked
+// once per facet around an edge, from the flip, the split, the collapse, the
+// smoothing and `resolution_reached()`. Left inside, it kept a three-line
+// predicate out of line at every one of those call sites.
+template<typename C3T3, typename CellSelector>
+void report_is_boundary(const C3T3& c3t3,
+                        const typename C3T3::Facet& f,
+                        const CellSelector& cell_selector)
+{
+  const auto& mf = c3t3.triangulation().mirror_facet(f);
+  std::cout << "is_boundary(f) :"
+    << "\n\t in_complex        = " << c3t3.is_in_complex(f)
+    << "\n\t selector(f.first) = " << get(cell_selector, f.first)
+    << "\n\t selector(mirror ) = " << get(cell_selector, mf.first)
+    << "\n\t subdomain(f.first)= " << f.first->subdomain_index()
+    << "\n\t subdomain(mirror) = " << mf.first->subdomain_index()
+    << std::endl;
+}
+
 template<typename C3T3, typename CellSelector>
 bool is_boundary(const C3T3& c3t3,
                  const typename C3T3::Facet& f,
@@ -725,15 +746,7 @@ bool is_boundary(const C3T3& c3t3,
     || get(cell_selector, f.first) != get(cell_selector, mf.first);
 
   if (verbose && res)
-  {
-    std::cout << "is_boundary(f) :"
-      << "\n\t in_complex        = " << c3t3.is_in_complex(f)
-      << "\n\t selector(f.first) = " << get(cell_selector, f.first)
-      << "\n\t selector(mirror ) = " << get(cell_selector, mf.first)
-      << "\n\t subdomain(f.first)= " << f.first->subdomain_index()
-      << "\n\t subdomain(mirror) = " << mf.first->subdomain_index()
-      << std::endl;
-  }
+    report_is_boundary(c3t3, f, cell_selector);
 
   return res;
 }
