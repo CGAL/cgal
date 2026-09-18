@@ -71,7 +71,7 @@ int main(int argc, char*argv[])
   std::cout.precision(17);
   std::cerr.precision(17);
   std::clog.precision(17);
-  const std::string input_file_name = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/fandisk.off");
+  const std::filesystem::path input_file_name = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/fandisk.off");
   const std::string output_file_name = (argc > 2) ? argv[2] : "out-tetmesh.vtu";
   Surface_mesh surface_mesh;
   if(!CGAL::Polygon_mesh_processing::IO::read_polygon_mesh(input_file_name, surface_mesh)) {

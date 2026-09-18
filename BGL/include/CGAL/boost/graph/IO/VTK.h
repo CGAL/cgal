@@ -141,7 +141,7 @@ bool vtkPointSet_to_polygon_mesh(vtkPointSet* poly_data,
 */
 template<typename Graph,
          typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool read_VTP(const std::string& fname,
+bool read_VTP(const std::filesystem::path& fname,
               Graph& g,
               const CGAL_NP_CLASS& np = parameters::default_values())
 {
@@ -512,7 +512,7 @@ bool write_VTP(std::ostream& os,
  * \returns `true` if writing was successful, `false` otherwise.
  */
 template<typename Graph, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool write_VTP(const std::string& fname, const Graph& g, const CGAL_NP_CLASS& np = parameters::default_values())
+bool write_VTP(const std::filesystem::path& fname, const Graph& g, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   const bool binary = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::use_binary_mode), true);
   std::ofstream os;

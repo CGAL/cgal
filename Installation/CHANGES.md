@@ -8,7 +8,7 @@ Release date: December 2026
 - added `tetrahedron_soup_to_lcc()` to import a tetrahedron soup into a linear cell complex.
 
 ### [2D and 3D Fast Intersection and Distance Computation (AABB Tree)](https://doc.cgal.org/6.3/Manual/packages.html#PkgAABBTree)
-- `CGAL::AABB_tree::build()` now accepts an optional `Concurrency_tag` template parameter (`CGAL::Sequential_tag` by default).
+- `CGAL::AABB_tree::build()` now accepts an optional `ConcurrencyTag` template parameter (`CGAL::Sequential_tag` by default).
    When `CGAL::Parallel_tag` is specified, the tree construction is performed in parallel.
 - Added the functions `CGAL::AABB_trees::do_intersect()` and `CGAL::AABB_trees::all_pairs_of_intersecting_primitives()`.
   These functions respectively determine whether two AABB trees intersect and compute all pairs of intersecting primitives
@@ -52,6 +52,10 @@ Release date: December 2026
   handle cases when some identical faces are shared between the input meshes. This leads to a significant speed up
   in those cases.
 
+### [Stream Support](https://doc.cgal.org/6.3/Manual/packages.html#PkgStreamSupport)
+
+- The type of the parameter for the file name passed to IO functions is changed from `std::string`  to `std::filesystem::path`,
+   which enables to use non latin languages like Chinese for directory and file names.
 ### [Basic Viewer](https://doc.cgal.org/6.3/Manual/packages.html#PkgBasicViewer)
 
 - Added the possibility to color the faces by a value mapped to a color palette: the
@@ -3143,7 +3147,7 @@ Release date: April 2016
 
 ### Point Set Processing
 
-- **Breaking change:** new template parameter `Concurrency_tag` for
+- **Breaking change:** new template parameter `ConcurrencyTag` for
     the functions `compute_average_spacing()`,
     `edge_aware_upsample_point_set()`, `jet_estimate_normals()`,
     `jet_smooth_point_set()`, and `pca_estimate_normals()`. To update

@@ -337,11 +337,11 @@ bool read_OFF(std::istream& is,
 
 template <typename Point,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool read_OFF(const std::string& fname,
+bool read_OFF(const std::filesystem::path& fname,
               Surface_mesh<Point>& sm,
               const CGAL_NP_CLASS& np = parameters::default_values())
 {
-  std::ifstream in(fname.c_str());
+  std::ifstream in(fname);
   return read_OFF(in, sm, np);
 }
 

@@ -125,7 +125,7 @@ public:
                   const std::size_t min_facets_expected = 0,
                   const std::size_t max_facets_expected = STD_SIZE_T_MAX)
   {
-    const std::string fname = CGAL::data_file_path("meshes/dragknob.off");
+    const std::filesystem::path fname = CGAL::data_file_path("meshes/dragknob.off");
 
     std::ifstream input(fname);
     using namespace CGAL::parameters;
@@ -205,7 +205,7 @@ public:
                   const std::size_t min_facets_expected = 0,
                   const std::size_t max_facets_expected = STD_SIZE_T_MAX)
   {
-    const std::string fname = CGAL::data_file_path("images/quadDomainCube.inr");
+    const std::filesystem::path fname = CGAL::data_file_path("images/quadDomainCube.inr");
 
     using namespace CGAL::parameters;
 

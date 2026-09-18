@@ -147,8 +147,8 @@ void test_constrained_vertices(const std::string filename)
 
 int main(int /*argc*/, char** /*argv*/)
 {
-  const std::string filename_elephant = CGAL::data_file_path("meshes/elephant.off");
-  const std::string filename_mannequin = CGAL::data_file_path("meshes/mannequin-devil.off");
+  const std::filesystem::path filename_elephant = CGAL::data_file_path("meshes/elephant.off");
+  const std::filesystem::path filename_mannequin = CGAL::data_file_path("meshes/mannequin-devil.off");
 
   std::cout << "Test files: " << filename_elephant << " " << filename_mannequin << std::endl;
 

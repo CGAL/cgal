@@ -23,7 +23,7 @@ int main(int argc, char* argv[]) {
     qDebug() << "Usage: earth [<arragement-file.json>]";
     return(-1);
   }
-  std::string file_name = (argc > 1) ? argv[1] :
+  std::filesystem::path file_name = (argc > 1) ? argv[1] :
     CGAL::data_file_path("geometry_on_sphere/ne_110m_admin_0_countries.json");
 
   if (!std::ifstream(file_name).good()) {

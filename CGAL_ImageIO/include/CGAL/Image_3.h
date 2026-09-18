@@ -28,6 +28,7 @@
 #include <set>
 #include <cstdlib>
 #include <string>
+#include <filesystem>
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
@@ -176,6 +177,11 @@ public:
   bool read(const std::string& file)
   {
     return read(file.c_str());
+  }
+
+  bool read(const std::filesystem::path& file)
+  {
+    return read(file.string().c_str());
   }
 
   bool read_raw(const char* file,

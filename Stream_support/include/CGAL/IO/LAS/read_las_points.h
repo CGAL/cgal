@@ -313,7 +313,7 @@ bool read_LAS(std::istream& is, OutputIterator output, const CGAL_NP_CLASS& np =
 template <typename OutputIteratorValueType,
           typename PointOutputIterator,
           typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT>
-bool read_LAS(const std::string& filename,
+bool read_LAS(const std::filesystem::path& filename,
               PointOutputIterator output,
               const CGAL_NP_CLASS& np)
 {
@@ -325,7 +325,7 @@ bool read_LAS(const std::string& filename,
 /// \cond SKIP_IN_MANUAL
 
 template <typename OutputIterator,typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool read_LAS(const std::string& fname, OutputIterator output, const CGAL_NP_CLASS& np = parameters::default_values())
+bool read_LAS(const std::filesystem::path& fname, OutputIterator output, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   std::ifstream is(fname, std::ios::binary);
   CGAL::IO::set_mode(is, CGAL::IO::BINARY);

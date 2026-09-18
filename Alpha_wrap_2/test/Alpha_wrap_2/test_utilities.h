@@ -21,7 +21,7 @@ namespace internal {
 
 // Reads polylines from .wkt or .obj
 template <typename PolylineRange>
-bool read_polylines(const std::string& filename,
+bool read_polylines(const std::filesystem::path& filename,
                     PolylineRange& polylines)
 {
   using Point_2 = typename std::decay<decltype(polylines.front().front())>::type;
@@ -35,15 +35,15 @@ bool read_polylines(const std::string& filename,
   if(!in)
     return false;
 
-  const std::string ext = CGAL::IO::internal::get_file_extension(filename);
-  if(ext == "wkt")
+  const std::filesystem::path ext = filename.extension();
+  if(ext == ".wkt")
   {
     // read_WKT() reads ALL multi-linestrings whereas read_multilinestring() reads only the first one
     Points pts;
     Multipolygon mp;
     return CGAL::IO::read_WKT(in, pts, polylines, mp);
   }
-  else if (ext == "stl")
+  else if (ext == ".stl")
   {
     std::vector<Point_3> points;
     std::vector<std::array<std::size_t, 3> > faces;
@@ -60,7 +60,7 @@ bool read_polylines(const std::string& filename,
 
     return !polylines.empty();
   }
-  else if (ext == "obj")
+  else if (ext == ".obj")
   {
     std::vector<Point_2> points;
     std::vector<std::vector<std::size_t> > id_polylines;
@@ -83,7 +83,7 @@ bool read_polylines(const std::string& filename,
 }
 
 template <typename Kernel>
-void read_translate_and_write(const std::string& filename)
+void read_translate_and_write(const std::filesystem::path& filename)
 {
   std::ifstream in(filename);
   if (!in) {
@@ -105,7 +105,7 @@ void read_translate_and_write(const std::string& filename)
 
   std::cout << "Read " << polylines.size() << " polylines" << std::endl;
 
-  std::string out_filename = filename;
+  std::string out_filename = filename.string();
   std::size_t dot_pos = out_filename.find_last_of('.');
   if (dot_pos != std::string::npos) {
     out_filename = out_filename.substr(0, dot_pos) + "_translated.wkt";

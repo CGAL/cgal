@@ -122,36 +122,36 @@ bool read_polygon_mesh(std::istream& is,
  * \sa \link PMP_IO_grp `CGAL::Polygon_mesh_processing::IO::read_polygon_mesh()`\endlink if the data is not 2-manifold
 */
 template <class Graph, typename NamedParameters = parameters::Default_named_parameters>
-bool read_polygon_mesh(const std::string& fname,
+bool read_polygon_mesh(const std::filesystem::path& fname,
                        Graph& g,
                        const NamedParameters& np = parameters::default_values())
 {
   const bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false);
 
-  const std::string ext = internal::get_file_extension(fname);
-  if(ext == std::string())
+  if(! fname.has_extension())
   {
     if(verbose)
-      std::cerr << "Error: cannot read from file without extension" << std::endl;
+      std::cerr << "Error: trying to output to file without extension" << std::endl;
     return false;
   }
+  const std::string ext = fname.extension().string();
 
-  if(ext == "obj")
+  if(ext == ".obj")
     return read_OBJ(fname, g, np);
-  else if(ext == "off")
+  else if(ext == ".off")
     return read_OFF(fname, g, np);
 #ifdef CGAL_USE_OPENMESH
-  else if(ext == "om")
+  else if(ext == ".om")
     return read_OM(fname, g, np);
 #endif
-  else if(ext == "ply")
+  else if(ext == ".ply")
     return read_PLY(fname, g, np);
-  else if(ext == "stl")
+  else if(ext == ".stl")
     return read_STL(fname, g, np);
-  else if(ext == "ts")
+  else if(ext == ".ts")
     return read_GOCAD(fname, g, np);
 #ifdef CGAL_USE_VTK
-  else if(ext == "vtp")
+  else if(ext == ".vtp")
     return read_VTP(fname, g, np);
 #endif
 
@@ -226,32 +226,32 @@ bool read_polygon_mesh(const std::string& fname,
  * \return `true` if writing was successful, `false` otherwise.
  */
 template <class Graph, typename NamedParameters = parameters::Default_named_parameters>
-bool write_polygon_mesh(const std::string& fname,
+bool write_polygon_mesh(const std::filesystem::path& fname,
                         Graph& g,
                         const NamedParameters& np = parameters::default_values())
 {
   const bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false);
 
-  const std::string ext = internal::get_file_extension(fname);
-  if(ext == std::string())
+
+  if(! fname.has_extension())
   {
     if(verbose)
       std::cerr << "Error: trying to output to file without extension" << std::endl;
     return false;
   }
-
-  if(ext == "obj")
+  const std::string ext = fname.extension().string();
+  if(ext == ".obj")
     return write_OBJ(fname, g, np);
-  else if(ext == "off")
+  else if(ext == ".off")
     return write_OFF(fname, g, np);
-  else if(ext == "ply")
+  else if(ext == ".ply")
     return write_PLY(fname, g, np);
-  else if(ext == "stl")
+  else if(ext == ".stl")
     return write_STL(fname, g, np);
-  else if(ext == "ts")
+  else if(ext == ".ts")
     return write_GOCAD(fname, g, np);
 #ifdef CGAL_USE_VTK
-  else if(ext == "vtp")
+  else if(ext == ".vtp")
     return write_VTP(fname, g, np);
 #endif
 
