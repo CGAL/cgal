@@ -94,10 +94,6 @@
 
 \cgalCRPSection{Utilities}
 - `CGAL::bisect_failures()`
-- `CGAL::Twotuple<T>`
-- `CGAL::Threetuple<T>`
-- `CGAL::Fourtuple<T>`
-- `CGAL::Sixtuple<T>`
 - `CGAL::Triple<T1, T2, T3>`
 - `CGAL::Quadruple<T1, T2, T3, T4>`
 - `CGAL::Boolean_tag<B>`

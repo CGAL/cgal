@@ -60,7 +60,9 @@ Release date: December 2026
   `is_face_valued` and `face_value` (with `face_value_name` for the legend). As an example, the
   surface mesh drawer exposes the aspect ratio of each face.
 
+### [STL Extension](https://doc.cgal.org/6.3/Manual/packages.html#PkgSTLExtension)
 
+- **Breaking change**:  Removed the class templates `Twotuple`,`Threetuple`, `Fourtuple`, `Sixtuple`
 
 ## [Release 6.2](https://github.com/CGAL/cgal/releases/tag/v6.2)
 
