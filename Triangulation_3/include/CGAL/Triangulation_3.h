@@ -2070,112 +2070,45 @@ public:
   }
 
   /**
-  * The vertices this star walk has already locked.
+  * There is no table of "vertices this zone has already locked", and there
+  * must not be one keyed by vertex.
   *
-  * Locking a cell means locking its four vertices, and a star walk visits
-  * ~24 cells sharing ~25 distinct vertices -- three of every cell's four are
-  * shared with the cell it was reached from. The unmemoised walk therefore
-  * asks `try_lock_vertex()` about 96 times for those ~25 vertices, and each
-  * ask is a thread-local-grid lookup (`pthread_getspecific`) plus a
-  * `grid_index()` computation -- three multiplies and three clamps -- before
-  * the load that answers it.
+  * A star walk visits ~24 cells sharing ~25 distinct vertices, so locking each
+  * cell's four vertices asks about 96 times for those ~25. A table that
+  * remembered the vertices already asked for, and skipped the call on a
+  * repeat, used to answer those repeats. It was unsound, and measurably so.
   *
-  * WHY SKIPPING IS EXACT. A vertex this thread has ALREADY LOCKED in this
-  * same walk has `tls_grid[grid_index(v)] == true`, so `try_lock()` on it is
-  * guaranteed to return true without touching the shared grid. Skipping the
-  * call returns the same answer and leaves the same locks held. Only vertices
-  * locked BY THIS WALK are skipped, so no lock is ever assumed that was not
-  * taken. Nothing shared is read or written differently and the table is a
-  * stack local, so this holds at any number of threads.
+  * The lock is keyed by POSITION -- `try_lock_vertex()` locks the grid cell of
+  * `vh->point()` -- while such a table is keyed by the vertex's ADDRESS. The
+  * two agree only while the vertex stays in the same grid cell. When it does
+  * not, the zone skips a lock it never held and believes it holds it, and a
+  * cell can then be written without being owned.
   *
-  * Open-addressed, 8-bit indices into `seen` (0 = empty, k = seen[k-1]), 256
-  * bytes to clear. A star with more distinct vertices than the 8-bit index can
-  * address falls back to reporting "not seen", which costs a redundant lock
-  * call and is never wrong.
+  * Counted with a probe that tested, before each cell was locked, whether the
+  * three vertices of the facet the walk had just crossed were held by this
+  * thread: on `360073_mesh3_1.5` at 4 threads, 56-410 of ~8.5 M asks per run
+  * failed WITH the table and 0 of ~26 M over three runs failed without it; at
+  * 1 thread it is 0 either way. See
+  * `docs/ZONE_DEDUP_IS_UNSOUND_2026-09-18.md`.
+  *
+  * Nothing is lost but the arithmetic. `try_lock()` already skips the repeats
+  * itself, and skips them SOUNDLY, because its thread-local grid is indexed by
+  * the same grid cell the lock is: a cell this thread already holds answers
+  * true from one array read. What the table saved over that was `grid_index()`
+  * -- three multiplies and three clamps -- and a call.
   */
-  struct Zone_vertex_dedup
-  {
-    static constexpr unsigned    TSIZE  = 256;   // power of two
-    static constexpr std::size_t MAXIDX = 192;   // keeps the table's load <= 0.75
-    unsigned char table[TSIZE];
-    boost::container::small_vector<const void*, 64> seen;
-    // False under Sequential_tag, where try_lock_vertex() is already a no-op
-    // and there is nothing to skip.
-    bool active;
-
-    explicit Zone_vertex_dedup(bool is_active = true) : active(is_active)
-    {
-      if(active)
-        std::memset(table, 0, sizeof(table));
-    }
-
-    // True when this vertex was already locked earlier in this same walk.
-    bool seen_or_record(const void* p)
-    {
-      if(seen.size() > MAXIDX)
-        return false;
-      unsigned s = unsigned((reinterpret_cast<std::uintptr_t>(p)
-                             * 0x9E3779B97F4A7C15ull) >> 56) & (TSIZE - 1);
-      for(;;)
-      {
-        const unsigned char k = table[s];
-        if(k == 0)
-        {
-          seen.push_back(p);
-          table[s] = static_cast<unsigned char>(seen.size());
-          return false;
-        }
-        if(seen[k - 1] == p)
-          return true;
-        s = (s + 1) & (TSIZE - 1);
-      }
-    }
-  };
-
-  /// @{
-  /// `try_lock_vertex()` / `try_lock_cell()` with the asks this zone has
-  /// already made removed. `dd` is the zone's table, so a vertex shared by two
-  /// stars of the SAME zone -- the two endpoints of a collapsed or flipped
-  /// edge share their whole ring -- is asked for once, not twice.
-  bool try_lock_vertex_dedup(const Vertex_handle& vh, Zone_vertex_dedup& dd) const
-  {
-    if(dd.active && dd.seen_or_record(&*vh))
-      return true;                      // already held by this zone
-    return this->try_lock_vertex(vh);
-  }
-
-  bool try_lock_cell_dedup(const Cell_handle& c, Zone_vertex_dedup& dd) const
-  {
-    for(int k = 0; k < 4; ++k)
-    {
-      if(!this->try_lock_vertex_dedup(c->vertex(k), dd))
-        return false;
-    }
-    return true;
-  }
-  /// @}
 
   template <typename IncidentCellsContainer>
   bool try_lock_and_get_incident_cells(Vertex_handle v, IncidentCellsContainer& cells) const
   {
-    Zone_vertex_dedup dd(this->is_parallel());
-    return this->try_lock_and_get_incident_cells(v, cells, dd);
-  }
-
-  // The overload a caller uses to share one table across the several stars of
-  // one zone.
-  template <typename IncidentCellsContainer>
-  bool try_lock_and_get_incident_cells(Vertex_handle v, IncidentCellsContainer& cells,
-                                       Zone_vertex_dedup& dd) const
-  {
     static_assert(std::is_same_v<typename IncidentCellsContainer::value_type, Cell_handle>,
                   "the output container must hold Cell_handle");
     // We need to lock v individually first, to be sure v->cell() is valid
-    if(!this->try_lock_vertex_dedup(v, dd))
+    if(!this->try_lock_vertex(v))
       return false;
 
     Cell_handle d = v->cell();
-    if(!this->try_lock_cell_dedup(d, dd)) // LOCK
+    if(!this->try_lock_cell(d)) // LOCK
       return false;
 
     cells.push_back(d);
@@ -2192,7 +2125,7 @@ public:
           continue;
 
         Cell_handle next = c->neighbor(i);
-        if(!this->try_lock_cell_dedup(next, dd)) // LOCK
+        if(!this->try_lock_cell(next)) // LOCK
         {
           for(Cell_handle ch : cells)
           {

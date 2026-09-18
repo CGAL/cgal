@@ -2427,12 +2427,8 @@ public:
 
     last_located_edge<Vertex_handle, Cell_handle>().clear();
 
-    // One table for the ring: each ring cell and the two cells across its
-    // outer facets are locked in turn, and consecutive ring cells share three
-    // of their four vertices.
-    typename C3t3::Triangulation::Zone_vertex_dedup dd(tr.is_parallel());
-    if (!tr.try_lock_vertex_dedup(vp.first, dd)
-     || !tr.try_lock_vertex_dedup(vp.second, dd))
+    if (!tr.try_lock_vertex(vp.first)
+     || !tr.try_lock_vertex(vp.second))
       return false;
 
     Cell_handle edge_cell;
@@ -2452,9 +2448,9 @@ public:
     {
       const Cell_handle c = circ;
       // the ring cell, and the two cells across its outer facets
-      if (!tr.try_lock_cell_dedup(c, dd)
-       || !tr.try_lock_cell_dedup(c->neighbor(c->index(vp.first)), dd)
-       || !tr.try_lock_cell_dedup(c->neighbor(c->index(vp.second)), dd))
+      if (!tr.try_lock_cell(c)
+       || !tr.try_lock_cell(c->neighbor(c->index(vp.first)))
+       || !tr.try_lock_cell(c->neighbor(c->index(vp.second))))
         return false;
     }
     while (++circ != done);
@@ -2654,12 +2650,8 @@ public:
 
     last_located_edge<Vertex_handle, Cell_handle>().clear();
 
-    // One table for the ring: each ring cell and the two cells across its
-    // outer facets are locked in turn, and consecutive ring cells share three
-    // of their four vertices.
-    typename C3t3::Triangulation::Zone_vertex_dedup dd(tr.is_parallel());
-    if (!tr.try_lock_vertex_dedup(vp.first, dd)
-     || !tr.try_lock_vertex_dedup(vp.second, dd))
+    if (!tr.try_lock_vertex(vp.first)
+     || !tr.try_lock_vertex(vp.second))
       return false;
 
     Cell_handle edge_cell;
@@ -2679,9 +2671,9 @@ public:
     {
       const Cell_handle c = circ;
       // the ring cell, and the two cells across its outer facets
-      if (!tr.try_lock_cell_dedup(c, dd)
-       || !tr.try_lock_cell_dedup(c->neighbor(c->index(vp.first)), dd)
-       || !tr.try_lock_cell_dedup(c->neighbor(c->index(vp.second)), dd))
+      if (!tr.try_lock_cell(c)
+       || !tr.try_lock_cell(c->neighbor(c->index(vp.first)))
+       || !tr.try_lock_cell(c->neighbor(c->index(vp.second))))
         return false;
     }
     while (++circ != done);
