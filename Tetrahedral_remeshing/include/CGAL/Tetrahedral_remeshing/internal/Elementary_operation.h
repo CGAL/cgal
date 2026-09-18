@@ -24,6 +24,7 @@
 #include <tbb/concurrent_queue.h>
 #include <tbb/concurrent_unordered_map.h>
 #include <tbb/concurrent_unordered_set.h>
+#include <tbb/enumerable_thread_specific.h>
 #include <tbb/parallel_for.h>
 #include <tbb/parallel_for_each.h>
 #include <tbb/task_arena.h>
@@ -252,6 +253,77 @@ private:
                       });
   }
 
+  /**
+  * One attempt at `element`. Unlike `apply_one()` it does not wait: a zone it
+  * cannot take is given back and the element reported undone, for the caller
+  * to come back to.
+  */
+  static bool try_apply_one(const Element_type& element, Operation& op, C3t3& c3t3)
+  {
+#ifdef CGAL_TR_LOCKCOUNT
+    Lockcount_counters& lc = lockcount_counters();
+    ++lc.ops;
+#endif
+    if(!op.lock_zone(element, c3t3))
+    {
+#ifdef CGAL_TR_LOCKCOUNT
+      ++lc.retries;
+#endif
+      c3t3.triangulation().unlock_all_elements();
+      return false;
+    }
+    op.execute_operation(element, c3t3);
+    c3t3.triangulation().unlock_all_elements();
+    return true;
+  }
+
+  static std::vector<Element_type>
+  gather(tbb::enumerable_thread_specific<std::vector<Element_type>>& per_thread)
+  {
+    std::vector<Element_type> all;
+    std::size_t n = 0;
+    for(const auto& v : per_thread) n += v.size();
+    all.reserve(n);
+    for(const auto& v : per_thread) all.insert(all.end(), v.begin(), v.end());
+    return all;
+  }
+
+  /**
+  * Replays the elements a pass could not take, in parallel rounds.
+  *
+  * The deferred elements are exactly the ones that CONFLICTED, so they tend to
+  * conflict with each other, and replaying them in parallel can replay the
+  * same fight: an unconditional round-based replay was measured doing four
+  * times the operations on one configuration. The round therefore has to earn
+  * the next one -- as soon as a round hands back more than half of what it was
+  * given, the rest is done serially, where a zone cannot fail for want of
+  * another thread and every element is taken exactly once.
+  */
+  static void run_deferred(std::vector<Element_type> todo,
+                           Operation& op, C3t3& c3t3)
+  {
+    while(!todo.empty())
+    {
+      tbb::enumerable_thread_specific<std::vector<Element_type>> again;
+      tbb::parallel_for_each(todo,
+                             [&](const Element_type& element)
+                             {
+                               if(!try_apply_one(element, op, c3t3))
+                                 again.local().push_back(element);
+                             });
+      std::vector<Element_type> next = gather(again);
+      if(next.empty())
+        return;
+      if(2 * next.size() > todo.size())   // the round cleared less than half
+      {
+        for(const Element_type& element : next)
+          apply_one(element, op, c3t3);
+        return;
+      }
+      todo.swap(next);
+    }
+  }
+
   static void run_unordered(std::vector<Element_type>& candidates,
                             Operation& op, C3t3& c3t3)
   {
@@ -269,11 +341,31 @@ private:
     // and the instruction null +0.827% -> -0.043%. One thread becomes
     // deterministic, which is what made an operation-level change measurable
     // at all.
+    //
+    // A worker that cannot take an element's zone does NOT wait for it. It
+    // sets the element aside and takes the next one; what is set aside is
+    // replayed once the pass has joined. Waiting was measured as the larger
+    // half of the parallel path's cost -- 62-74% of the extra instructions a
+    // 4-thread run executes over a 1-thread run are kernel instructions, and
+    // they are `sched_yield()` in the retry loop, which almost never finds
+    // another runnable task to switch to.
+    //
+    // Only the UNORDERED operations may do this. An ordered one takes its
+    // candidate order from get_elements() for a reason, and deferring there
+    // changes the trajectory: deferring every operation was measured running
+    // 6.6 M operations against 4.55 M at one thread.
+    //
+    // At one thread nothing is ever deferred -- `lock_zone()` cannot fail when
+    // no other thread holds anything -- so the single-threaded result is
+    // exactly what it was.
+    tbb::enumerable_thread_specific<std::vector<Element_type>> deferred;
     tbb::parallel_for_each(candidates,
                            [&](const Element_type& element)
                            {
-                             apply_one(element, op, c3t3);
+                             if(!try_apply_one(element, op, c3t3))
+                               deferred.local().push_back(element);
                            });
+    run_deferred(gather(deferred), op, c3t3);
   }
 };
 #endif // CGAL_LINKED_WITH_TBB
