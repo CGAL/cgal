@@ -9,7 +9,7 @@
 int main(int argc, char** argv)
 {
   std::string filename=(argc<2?CGAL::data_file_path("meshes/bunny00.off"):argv[1]);
-  int cube_cells_per_dim=(argc<3?18:std::atoi(argv[2]));
+  int cube_cells_per_dim=(argc<3?10:std::atoi(argv[2]));
   int nb_levels=(argc<4?2:std::atoi(argv[3]));
   bool trim=true;
   bool smooth=true;
