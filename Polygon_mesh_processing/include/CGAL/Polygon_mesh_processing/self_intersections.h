@@ -511,6 +511,10 @@ self_intersections_impl(const FaceRange& face_range,
     }
   }
 
+  // If no faces to test, no intersection
+  if(faces_not_degenerated.empty())
+    return out;
+
   // In case we are throwing, like in `does_self_intersect()`, we keep the geometric test to throw ASAP.
   // This is obviously not optimal if there are no or few self-intersections: it would be a greater speed-up
   // to do the same as for `self_intersections()`. However, doing like `self_intersections()` would

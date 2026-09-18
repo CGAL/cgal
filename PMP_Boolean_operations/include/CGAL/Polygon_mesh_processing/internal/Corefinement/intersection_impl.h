@@ -280,6 +280,10 @@ class Intersection_of_triangle_meshes
            do_overlap(face_bbox(f, tm2, parameters::vertex_point_map(vpm2)), bb))
         tm2_faces_intersecting_bb.push_back(f);
 
+    // If one set is empty, no intersection
+    if(tm1_faces_intersecting_bb.empty() || tm2_faces_intersecting_bb.empty())
+      return;
+
     Tree_1 tree1(tm1_faces_intersecting_bb.begin(), tm1_faces_intersecting_bb.end(), tm1, vpm1);
     Tree_2 tree2(tm2_faces_intersecting_bb.begin(), tm2_faces_intersecting_bb.end(), tm2, vpm2);
 
