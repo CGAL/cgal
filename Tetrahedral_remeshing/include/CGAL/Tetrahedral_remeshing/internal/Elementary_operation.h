@@ -240,6 +240,21 @@ private:
     c3t3.triangulation().unlock_all_elements();
   }
 
+  /**
+  * How many elements a worker of an ORDERED operation may hold back before it
+  * stops taking new ones.
+  *
+  * An ordered operation cannot defer to the end of the pass: its candidate
+  * order carries meaning -- shortest edge first for the collapse, longest for
+  * the split -- and postponing an element until everything else is done
+  * changes the trajectory rather than the schedule. What it can do is stop
+  * WAITING: a worker that cannot take a zone sets the element aside, takes the
+  * next candidate, and comes back to the set-aside ones as soon as a few have
+  * accumulated, so nothing travels more than a few places from where its
+  * priority put it.
+  */
+  static constexpr std::size_t max_postponed = 8;
+
   static void run_ordered(std::vector<Element_type>& candidates,
                           Operation& op, C3t3& c3t3)
   {
@@ -248,9 +263,35 @@ private:
                       [&](int)
                       {
                         Element_type element;
+                        std::vector<Element_type> postponed;
                         while (queue.try_pop(element))
-                          apply_one(element, op, c3t3);
+                        {
+                          if (!try_apply_one(element, op, c3t3))
+                            postponed.push_back(element);
+
+                          if (postponed.size() >= max_postponed)
+                            retry_postponed(postponed, op, c3t3);
+                        }
+                        // Whatever is still held back is taken with the
+                        // waiting form: the pass is over for this worker, so
+                        // there is nothing else for it to do meanwhile.
+                        for (const Element_type& e : postponed)
+                          apply_one(e, op, c3t3);
                       });
+  }
+
+  // One attempt at each held-back element, in the order they were held back;
+  // what still fails stays held back.
+  static void retry_postponed(std::vector<Element_type>& postponed,
+                              Operation& op, C3t3& c3t3)
+  {
+    std::size_t kept = 0;
+    for (std::size_t i = 0; i < postponed.size(); ++i)
+    {
+      if (!try_apply_one(postponed[i], op, c3t3))
+        postponed[kept++] = postponed[i];
+    }
+    postponed.resize(kept);
   }
 
   /**

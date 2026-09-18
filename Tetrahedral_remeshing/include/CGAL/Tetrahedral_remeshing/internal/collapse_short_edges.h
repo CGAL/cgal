@@ -1975,19 +1975,53 @@ public:
     timer.start();
 #endif
 
+    // Same bounded hold-back as the shared ordered executor, and for the same
+    // reason: the shortest-first order is the point of this pass, so a
+    // conflicted edge may travel a few places but not to the end. A worker
+    // that cannot take a zone sets the edge aside and takes the next one,
+    // comes back to the set-aside edges once a few have accumulated, and
+    // waits only for what is left when the queue is empty.
+    constexpr std::size_t max_postponed = 8;
+    auto try_one = [&op, &c3t3](const Edge_vv& e)
+    {
+      if (!op.lock_zone(e, c3t3))
+      {
+        c3t3.triangulation().unlock_all_elements();
+        return false;
+      }
+      op.execute_operation_vv(e, c3t3);
+      c3t3.triangulation().unlock_all_elements();
+      return true;
+    };
+
     tbb::concurrent_queue<Edge_vv> queue(candidates.begin(), candidates.end());
     tbb::parallel_for(0, tbb::this_task_arena::max_concurrency(),
                       [&](int)
                       {
                         Edge_vv e;
+                        std::vector<Edge_vv> postponed;
                         while (queue.try_pop(e))
                         {
-                          while (!op.lock_zone(e, c3t3))
+                          if (!try_one(e))
+                            postponed.push_back(e);
+
+                          if (postponed.size() >= max_postponed)
+                          {
+                            std::size_t kept = 0;
+                            for (std::size_t i = 0; i < postponed.size(); ++i)
+                              if (!try_one(postponed[i]))
+                                postponed[kept++] = postponed[i];
+                            postponed.resize(kept);
+                          }
+                        }
+                        for (const Edge_vv& pe : postponed)
+                        {
+                          while (!op.lock_zone(pe, c3t3))
                           {
                             c3t3.triangulation().unlock_all_elements();
                             std::this_thread::yield();
                           }
-                          op.execute_operation_vv(e, c3t3);
+                          op.execute_operation_vv(pe, c3t3);
                           c3t3.triangulation().unlock_all_elements();
                         }
                       });
