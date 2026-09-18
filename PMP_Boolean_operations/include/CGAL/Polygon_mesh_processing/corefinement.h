@@ -180,6 +180,12 @@ enum Boolean_operation_type {UNION = 0, INTERSECTION=1,
   * @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
+  *   \cgalParamNBegin{concurrency_tag}
+  *     \cgalParamDescription{a tag indicating if the task should be done using one or several threads.}
+  *     \cgalParamType{Either `CGAL::Sequential_tag`, or `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`}
+  *     \cgalParamDefault{`CGAL::Sequential_tag`}
+  *   \cgalParamNEnd
+  *
   *   \cgalParamNBegin{vertex_point_map}
   *     \cgalParamDescription{a property map associating points to the vertices of `tm1` (`tm2`)}
   *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
@@ -293,6 +299,12 @@ corefine_and_compute_boolean_operations(
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
+
+  using ConcurrencyTag = typename internal_np::Lookup_named_param_def <
+                                          internal_np::concurrency_tag_t,
+                                          NPIn1,
+                                          Sequential_tag
+                                        > ::type;
 
   const bool throw_on_self_intersection =
     choose_parameter(get_parameter(np1, internal_np::throw_on_self_intersection), false);
@@ -456,7 +468,8 @@ corefine_and_compute_boolean_operations(
                                                   Default,
                                                   Edge_properties_in,
                                                   Edge_properties_out,
-                                                  User_visitor> Ob;
+                                                  User_visitor,
+                                                  ConcurrencyTag> Ob;
 
   typedef Corefinement::Surface_intersection_visitor_for_corefinement<
             TriangleMesh, VPM1, VPM2, Ob, Edge_properties_in, User_visitor> Algo_visitor;
@@ -477,7 +490,7 @@ corefine_and_compute_boolean_operations(
     ob.setup_for_clipping_a_surface(use_compact_clipper);
   }
 
-  Corefinement::Intersection_of_triangle_meshes<TriangleMesh, VPM1, VPM2, Algo_visitor >
+  Corefinement::Intersection_of_triangle_meshes<TriangleMesh, VPM1, VPM2, Algo_visitor, ConcurrencyTag >
     functor(tm1, tm2, vpm1, vpm2, Algo_visitor(uv,ob,em_in));
   functor(CGAL::Emptyset_iterator(), throw_on_self_intersection, true);
 
@@ -518,6 +531,12 @@ corefine_and_compute_boolean_operations(
   * @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
+  *   \cgalParamNBegin{concurrency_tag}
+  *     \cgalParamDescription{a tag indicating if the task should be done using one or several threads.}
+  *     \cgalParamType{Either `CGAL::Sequential_tag`, or `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`}
+  *     \cgalParamDefault{`CGAL::Sequential_tag`}
+  *   \cgalParamNEnd
+  *
   *   \cgalParamNBegin{vertex_point_map}
   *     \cgalParamDescription{a property map associating points to the vertices of `tm1` (`tm2`)}
   *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
@@ -774,6 +793,12 @@ corefine(      TriangleMesh& tm1,
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
+  using ConcurrencyTag = typename internal_np::Lookup_named_param_def <
+                                          internal_np::concurrency_tag_t,
+                                          NamedParameters1,
+                                          Sequential_tag
+                                        > ::type;
+
   TriangleMesh* const_mesh_ptr=nullptr;
   if (choose_parameter(get_parameter(np1, internal_np::do_not_modify), false))
   {
@@ -833,7 +858,7 @@ corefine(      TriangleMesh& tm1,
   TriangleMesh, VPM1, VPM2, Ob, Edge_properties, User_visitor, false, handle_non_manifold_features> Algo_visitor;
 
   Ob ob;
-  Corefinement::Intersection_of_triangle_meshes<TriangleMesh, VPM1, VPM2, Algo_visitor>
+  Corefinement::Intersection_of_triangle_meshes<TriangleMesh, VPM1, VPM2, Algo_visitor, ConcurrencyTag>
     functor(tm1, tm2, vpm1, vpm2, Algo_visitor(uv,ob,em,const_mesh_ptr), const_mesh_ptr);
 
   // Fill non-manifold feature maps if provided
@@ -901,6 +926,12 @@ autorefine(      TriangleMesh& tm,
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
+  using ConcurrencyTag = typename internal_np::Lookup_named_param_def <
+                                          internal_np::concurrency_tag_t,
+                                          NamedParameters,
+                                          Sequential_tag
+                                        > ::type;
+
 // Vertex point maps
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type VPM;
 
@@ -930,7 +961,7 @@ autorefine(      TriangleMesh& tm,
     TriangleMesh, VPM, VPM, Ob, Edge_properties, User_visitor,true> Algo_visitor;
   Ob ob;
 
-  Corefinement::Intersection_of_triangle_meshes<TriangleMesh, VPM, VPM, Algo_visitor>
+  Corefinement::Intersection_of_triangle_meshes<TriangleMesh, VPM, VPM, Algo_visitor, ConcurrencyTag>
     functor(tm, vpm, Algo_visitor(uv,ob,em) );
 
   functor(CGAL::Emptyset_iterator(), true);
@@ -995,6 +1026,12 @@ autorefine_and_remove_self_intersections(      TriangleMesh& tm,
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
+  using ConcurrencyTag = typename internal_np::Lookup_named_param_def <
+                                          internal_np::concurrency_tag_t,
+                                          NamedParameters,
+                                          Sequential_tag
+                                        > ::type;
+
 // Vertex point maps
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type VPM;
   VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
@@ -1032,7 +1069,7 @@ autorefine_and_remove_self_intersections(      TriangleMesh& tm,
     TriangleMesh, VPM, VPM, Ob, Edge_properties, User_visitor,true> Algo_visitor;
   Ob ob(tm, vpm, fid_map, em);
 
-  Corefinement::Intersection_of_triangle_meshes<TriangleMesh, VPM, VPM, Algo_visitor>
+  Corefinement::Intersection_of_triangle_meshes<TriangleMesh, VPM, VPM, Algo_visitor, ConcurrencyTag>
     functor(tm, vpm, Algo_visitor(uv,ob,em) );
 
   functor(CGAL::Emptyset_iterator(), true);
