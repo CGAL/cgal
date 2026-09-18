@@ -529,8 +529,7 @@ bool is_valid_collapse(const typename C3t3::Edge& edge,
     c3t3.triangulation().finite_incident_cells(v0,
         std::back_inserter(cells_to_check));
 
-    const bool valid_orientation_before = are_well_oriented(c3t3.triangulation(), cells_to_check);
-    if(valid_orientation_before)
+    if(need_to_check_orientation_after_change(c3t3.triangulation(), cells_to_check))
     {
       for(const Cell_handle& ch : cells_to_check)
       {
@@ -567,8 +566,7 @@ bool is_valid_collapse(const typename C3t3::Edge& edge,
     c3t3.triangulation().finite_incident_cells(v1,
         std::back_inserter(cells_to_check));
 
-    const bool valid_orientation_before = are_well_oriented(c3t3.triangulation(), cells_to_check);
-    if(valid_orientation_before)
+    if(need_to_check_orientation_after_change(c3t3.triangulation(), cells_to_check))
     {
       for (const Cell_handle& ch : cells_to_check)
       {

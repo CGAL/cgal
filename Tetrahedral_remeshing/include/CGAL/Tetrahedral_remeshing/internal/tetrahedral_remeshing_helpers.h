@@ -699,13 +699,24 @@ bool is_well_oriented(const Tr& tr, const typename Tr::Cell_handle ch)
 }
 
 template<typename Tr, typename CellRange>
-bool are_well_oriented(const Tr& tr, const CellRange& cells)
+bool need_to_check_orientation_after_change(const Tr& tr, const CellRange& cells)
 {
-  for(const auto& cell : cells)
+  for (const auto& cell : cells)
   {
-    if(!is_well_oriented(tr, cell))
-      return false;
+    if (!is_well_oriented(tr, cell))
+    {
+      // if a cell is badly oriented, but the triangulation is known
+      // to have badly oriented cells, then no need to re-check orientation
+      // after change. It will remain bad
+      if(tr.may_have_badly_oriented_cells())
+        return false;
+      else
+        CGAL_assertion(false);//this function is called before the change,
+                              //so this point should not be reached
+    }
   }
+
+  // all cells are positively oriented
   return true;
 }
 
