@@ -648,67 +648,79 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
   //    i.e. all the facets opposite to vh0 will be set to vh:
   //    facet.first->set_vertex( facet.second, vh )
 
-  Cell_circulator cell_circulator = tr.incident_cells(edge);
-  Cell_circulator done = cell_circulator;
-
-  boost::container::small_vector<Facet, 60> facets;
+  // The facets an apex is judged on are produced and judged in ONE pass.
+  //
+  // They used to be collected into a `small_vector<Facet, 60>` by a full turn
+  // of the ring, and only then evaluated -- and the evaluation abandons the
+  // apex on its FIRST facet most of the time, because the three tests below
+  // (inverted cell, a worst angle of one, an angle no better than the edge
+  // already has) are the common case, not the exception. Every facet the turn
+  // collected past that point was collected for nothing.
+  //
+  // Same facets, in the same order -- the ring is circulated from the same
+  // cell for every apex, and a cell still yields the facet opposite `vh1`
+  // before the one opposite `vh0` -- and the same three exits, so `keep` and
+  // `max_flip_cos_dh` are what they were. `max_flip_cos_dh` is a max over the
+  // facets, and it is only READ when no exit was taken, i.e. when the fold ran
+  // over the whole ring either way.
   for (Vertex_handle vh : opposite_vertices)
   {
     bool keep = true;
+    Dihedral_angle_cosine max_flip_cos_dh(CGAL::NEGATIVE, 1., 1.);
+
+    Cell_circulator cell_circulator = tr.incident_cells(edge);
+    Cell_circulator done = cell_circulator;
     do
     {
-      //Store it if it do not have vh
+      //Cells that do not have vh are the ones the flip rewrites
       if (!cell_circulator->has_vertex(vh))
       {
-        //Facets opposite to vh0
-        Facet facet_vh0(cell_circulator, cell_circulator->index(vh0));
+        //Facets opposite to vh1, then opposite to vh0
+        const Facet ring_facets[2]
+          = { Facet(cell_circulator, cell_circulator->index(vh1)),
+              Facet(cell_circulator, cell_circulator->index(vh0)) };
 
-        //Facets opposite to vh1
-        Facet facet_vh1(cell_circulator, cell_circulator->index(vh1));
+        for (const Facet& fi : ring_facets)
+        {
+          if (tr.is_infinite(fi.first))
+            continue;
 
-        facets.push_back(facet_vh1);
-        facets.push_back(facet_vh0);
+          if (is_well_oriented(tr, vh, fi.first->vertex(indices(fi.second, 0)),
+                               fi.first->vertex(indices(fi.second, 1)),
+                               fi.first->vertex(indices(fi.second, 2))))
+          {
+            max_flip_cos_dh = (std::max)(max_flip_cos_dh,
+              max_cos_dihedral_angle(tr, vh, fi.first->vertex(indices(fi.second, 0)),
+                                             fi.first->vertex(indices(fi.second, 1)),
+                                             fi.first->vertex(indices(fi.second, 2))));
+          }
+          else
+          {
+            keep = false;
+            break;
+          }
+
+          if (max_flip_cos_dh.is_one())//it will not get worse than 1.
+          {
+            keep = false;
+            break;
+          }
+
+          // the worst angle of the flip only ever grows from here, so once it has
+          // reached the one the edge already has, this vertex cannot be kept -
+          // unless the cells are inverted, where it is kept whatever it measures
+          if (is_sliver_well_oriented && !(max_flip_cos_dh < curr_max_cosdh))
+          {
+            keep = false;
+            break;
+          }
+        }
+
+        if (!keep)
+          break;
       }
     }
     while (++cell_circulator != done);
-
-    Dihedral_angle_cosine max_flip_cos_dh(CGAL::NEGATIVE, 1., 1.);
-    for (const Facet& fi : facets)
-    {
-      if (!tr.is_infinite(fi.first))
-      {
-        if (is_well_oriented(tr, vh, fi.first->vertex(indices(fi.second, 0)),
-                             fi.first->vertex(indices(fi.second, 1)),
-                             fi.first->vertex(indices(fi.second, 2))))
-        {
-          max_flip_cos_dh = (std::max)(max_flip_cos_dh,
-            max_cos_dihedral_angle(tr, vh, fi.first->vertex(indices(fi.second, 0)),
-                                           fi.first->vertex(indices(fi.second, 1)),
-                                           fi.first->vertex(indices(fi.second, 2))));
-        }
-        else
-        {
-          keep = false;
-          break;
-        }
-
-        if (max_flip_cos_dh.is_one())//it will not get worse than 1.
-        {
-          keep = false;
-          break;
-        }
-
-        // the worst angle of the flip only ever grows from here, so once it has
-        // reached the one the edge already has, this vertex cannot be kept -
-        // unless the cells are inverted, where it is kept whatever it measures
-        if (is_sliver_well_oriented && !(max_flip_cos_dh < curr_max_cosdh))
-        {
-          keep = false;
-          break;
-        }
-      }
-    }
-    facets.clear();
 
     if (keep && (max_flip_cos_dh < curr_max_cosdh || !is_sliver_well_oriented))
     {
