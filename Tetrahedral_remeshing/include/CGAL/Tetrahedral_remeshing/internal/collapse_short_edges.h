@@ -477,7 +477,8 @@ template<typename C3t3, typename CellRange>
 bool collapse_keeps_orientations(const CellRange& star,
                                  const typename C3t3::Vertex_handle v_moved,
                                  const typename C3t3::Vertex_handle v_other,
-                                 const typename C3t3::Triangulation::Geom_traits::Point_3& new_pos)
+                                 const typename C3t3::Triangulation::Geom_traits::Point_3& new_pos,
+                                 const C3t3& c3t3)
 {
   typedef typename C3t3::Triangulation::Geom_traits::Point_3 Point;
 
@@ -490,6 +491,11 @@ bool collapse_keeps_orientations(const CellRange& star,
                                  point(ch->vertex(1)->point()),
                                  point(ch->vertex(2)->point()),
                                  point(ch->vertex(3)->point()) };
+
+    if(c3t3.triangulation().may_have_badly_oriented_cells() &&
+       CGAL::orientation(pts[0], pts[1], pts[2], pts[3]) != CGAL::POSITIVE)
+      return true; //in this case we don't care about orientation change, locally
+
     pts[ch->index(v_moved)] = new_pos;
     if (CGAL::orientation(pts[0], pts[1], pts[2], pts[3]) != CGAL::POSITIVE)
       return false;
@@ -1314,10 +1320,10 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
   const auto orientations_ok = [&](const Collapse_type ct, const Point& pos)
   {
     if ((ct == TO_V1 || ct == TO_MIDPOINT)
-        && !collapse_keeps_orientations<C3t3>(star_of_v0(), v0, v1, point(pos)))
+        && !collapse_keeps_orientations(star_of_v0(), v0, v1, point(pos), c3t3))
       return false;
     if ((ct == TO_V0 || ct == TO_MIDPOINT)
-        && !collapse_keeps_orientations<C3t3>(star_of_v1(), v1, v0, point(pos)))
+        && !collapse_keeps_orientations(star_of_v1(), v1, v0, point(pos), c3t3))
       return false;
     return true;
   };
