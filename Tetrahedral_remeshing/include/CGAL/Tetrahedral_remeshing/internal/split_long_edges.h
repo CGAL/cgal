@@ -626,16 +626,35 @@ public:
     const int i1 = edge_cell->index(element.second);
     const Edge edge(edge_cell, i0, i1);
 
+    // One vertex per cell, not four. Both endpoints are already held, and a
+    // ring cell shares three of its four vertices with the ring cell before
+    // it -- consecutive cells of the circulator are neighbours -- so only the
+    // fourth can still be unheld. A cell across an outer facet shares that
+    // facet's three vertices with the ring cell, which is held in full by the
+    // time it is reached, so the same is true of it. The first ring cell has
+    // no predecessor and is locked in full.
     Cell_circulator circ = tr.incident_cells(edge);
     const Cell_circulator done = circ;
+    Cell_handle previous_ring_cell;
     do
     {
       const Cell_handle c = circ;
-      // the ring cell, and the two cells across its outer facets
-      if (!tr.try_lock_cell(c)
-       || !tr.try_lock_cell(c->neighbor(c->index(element.first)))
-       || !tr.try_lock_cell(c->neighbor(c->index(element.second))))
+      if (previous_ring_cell == Cell_handle())
+      {
+        if (!tr.try_lock_cell(c))
+          return false;
+      }
+      else if (!tr.try_lock_vertex(c->vertex(c->index(previous_ring_cell))))
         return false;
+
+      // the two cells across the ring cell's outer facets
+      const Cell_handle m0 = c->neighbor(c->index(element.first));
+      const Cell_handle m1 = c->neighbor(c->index(element.second));
+      if (!tr.try_lock_vertex(m0->vertex(m0->index(c)))
+       || !tr.try_lock_vertex(m1->vertex(m1->index(c))))
+        return false;
+
+      previous_ring_cell = c;
     }
     while (++circ != done);
 
