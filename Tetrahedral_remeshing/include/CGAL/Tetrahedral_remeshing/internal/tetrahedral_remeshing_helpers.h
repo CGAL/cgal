@@ -287,8 +287,7 @@ Dihedral_angle_cosine cos_dihedral_angle(const typename Gt::Point_3& i,
                                          const typename Gt::Point_3& l,
                                          const Gt& gt)
 {
-  CGAL_expensive_assertion(CGAL::orientation(i, j, k, l) != CGAL::NEGATIVE);
-
+  //valid however orientation(i,j,k,l) is positive or negative
   typename Gt::Construct_cross_product_vector_3 cross_product =
     gt.construct_cross_product_vector_3_object();
   typename Gt::Compute_scalar_product_3 scalar_product =
@@ -365,7 +364,8 @@ Dihedral_angle_cosine max_cos_dihedral_angle(const Point& p,
   const Vector_3 ps = vector(p, s);
   const Vector_3 pr = vector(p, r);
 
-  //compute normals pointing outside tetrahedron
+  // compute normals pointing outside tetrahedron if orientation(p,q,r,s) is POSITIVE
+  // and inside tetrahedron otherwise
   const Vector_3 n_pqr = cross(qp, qr);
   if (CGAL::NULL_VECTOR == n_pqr)
     return Dihedral_angle_cosine(CGAL::POSITIVE, 1., 1.);
