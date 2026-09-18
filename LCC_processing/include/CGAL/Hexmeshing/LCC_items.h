@@ -16,10 +16,15 @@
 
 #include <CGAL/license/LCC_processing.h>
 
+#include <CGAL/Cell_attribute.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Linear_cell_complex_traits.h>
 #include <CGAL/Hexmeshing/generic_point.h>
+
+#include <bitset>
+#include <limits>
+#include <tuple>
 
 namespace CGAL::internal::Hexmeshing
 {
@@ -67,9 +72,9 @@ public:
      * Each vertex can be identified by a unique ID, which can be a simple number
      * or a composite of up to three numbers.
      */
-    struct VertexAttr : public Cell_attribute_with_point<Storage>
+    struct VertexAttr : public CGAL::Cell_attribute_with_point<Storage>
     {
-      using Base = Cell_attribute_with_point<Storage>;
+      using Base = CGAL::Cell_attribute_with_point<Storage>;
       VertexAttr():
         Base(),
         id(max_id)
@@ -82,8 +87,8 @@ public:
       // The id can be a simple number, or a pair up to three numbers
       // Pair identifiers are placeholders until they can be identified with a single size_t number
 
-      static constexpr size_t max_id = std::numeric_limits<size_t>::max();
-      size_t id = max_id;
+      static constexpr std::size_t max_id=(std::numeric_limits<std::size_t>::max)();
+      std::size_t id=max_id;
 
       Vector normal;
     };
@@ -96,14 +101,14 @@ public:
      */
     struct VolumeAttrValue
     {
-      static constexpr uint max_cc_id = std::numeric_limits<uint>::max();
+      static constexpr uint max_cc_id=(std::numeric_limits<uint>::max)();
 
       char iteration = -1;
       VolumeType type = VolumeType::NONE;
 
       AreaId area_id = {0,0,0}; // Used for ghost cells;
       bool owned = true; // Disable this when creating others constraint area
-      size_t cc_id = max_cc_id;
+      std::size_t cc_id = max_cc_id;
 
       Point centroid;
       double fraction;
@@ -118,21 +123,21 @@ public:
      */
     struct FaceAttrValue
     {
-      static constexpr uint max_plane_id = std::numeric_limits<uint>::max();
-      static constexpr uint max_cc_id = std::numeric_limits<uint>::max();
+      static constexpr uint max_plane_id=(std::numeric_limits<uint>::max)();
+      static constexpr uint max_cc_id=(std::numeric_limits<uint>::max)();
 
       char template_id = 0;
       std::bitset<3> plane;
-      size_t plane_id = max_plane_id;
-      size_t cc_id = max_cc_id;
+      std::size_t plane_id = max_plane_id;
+      std::size_t cc_id = max_cc_id;
 
       Segment dual_edge;
       Point intersection;
       Vector normal;
     };
 
-    typedef Cell_attribute<Storage, FaceAttrValue> FaceAttr;
-    typedef Cell_attribute<Storage, VolumeAttrValue> VolumeAttr;
+    typedef CGAL::Cell_attribute<Storage, FaceAttrValue> FaceAttr;
+    typedef CGAL::Cell_attribute<Storage, VolumeAttrValue> VolumeAttr;
     typedef std::tuple<VertexAttr, void, FaceAttr, VolumeAttr> Attributes;
   };
 };
