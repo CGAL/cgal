@@ -52,6 +52,7 @@
 #include <CGAL/assertions.h>
 #include <CGAL/config.h>
 #include <CGAL/Handle_hash_function.h>
+#include <CGAL/unordered_flat_map.h>
 #include <CGAL/IO/io.h>
 #include <CGAL/Iterator_range.h>
 #include <CGAL/iterator.h>
@@ -959,6 +960,45 @@ private:
   // Star gather that never writes to the cells it visits, so overlapping
   // stars can be walked concurrently.
   //
+  /**
+  * The answer for a star too large for the open-addressed table of 8-bit
+  * indices the two threadsafe walks below use.
+  *
+  * Past `MAXIDX` that table can no longer address its entries, and the walk
+  * used to answer "have I already visited this cell?" with a LINEAR SCAN of
+  * the cells found so far, which makes the walk quadratic exactly where the
+  * star is biggest. Counted on `409635_cdt_0.5` (1 thread, whole run): 0.98%
+  * of the 223.6 M asks took that branch and they compared 5.54 BILLION cell
+  * handles between them -- a mean of 2534 comparisons per ask, on a star
+  * reaching 8004 cells. That one branch was the largest single symbol in the
+  * profile, at 15% of the run's instructions.
+  *
+  * The set is thread-local and keeps its capacity between walks, so its
+  * allocation is paid once per thread rather than once per star -- which is
+  * what makes a library container affordable here and not at the small table,
+  * where a set constructed and destroyed per walk screened +6.953% wall. It
+  * is filled the first time a walk passes `MAXIDX`, from the cells found so
+  * far, and answers every later ask of that walk in constant time. A walk
+  * that never passes `MAXIDX` never touches it.
+  *
+  * Returns what the linear scan it replaces returned: TRUE when `ch` has NOT
+  * been seen, i.e. when the caller should record and push it.
+  */
+  template <typename CellsContainer, typename CH>
+  static bool wide_not_seen(const CellsContainer& cells, CH ch, bool& active)
+  {
+    using Wide_set = CGAL::unordered_flat_set<CH,
+                                              CGAL::Hash_handles_with_or_without_timestamps>;
+    static thread_local Wide_set wide;
+    if(!active)
+    {
+      wide.clear();
+      wide.insert(cells.begin(), cells.end());
+      active = true;
+    }
+    return wide.insert(ch).second;
+  }
+
   // The visited set used to be
   //     boost::container::flat_set<Cell_handle, std::less<>,
   //                                small_vector<Cell_handle, 128>>
@@ -988,11 +1028,12 @@ private:
     constexpr std::size_t MAXIDX = 192;   // keeps the table's load <= 0.75
     unsigned char table[TSIZE];
     std::memset(table, 0, sizeof(table));
+    bool wide_active = false;
 
     auto seen_or_record = [&](Cell_handle ch, std::size_t idx) -> bool
     {
       if (idx > MAXIDX)
-        return std::find(cells.begin(), cells.end(), ch) == cells.end();
+        return wide_not_seen(cells, ch, wide_active);
       const std::uintptr_t p = reinterpret_cast<std::uintptr_t>(&*ch);
       unsigned s = unsigned((p * 0x9E3779B97F4A7C15ull) >> 56) & (TSIZE - 1);
       for (;;) {
@@ -1296,14 +1337,16 @@ public:
     std::memset(table, 0, sizeof(table));
 
     boost::container::small_vector<Cell_handle, 128> cells;
+    bool wide_active = false;
 
-    // Past the 8-bit index the probe falls back to a linear scan of `cells`,
-    // which is exact because that scan sees every cell found so far, whether
-    // or not it was also recorded in the table.
+    // Past the 8-bit index the probe moves to the thread-local wide set above,
+    // which is exact for the same reason the scan it replaces was: it holds
+    // every cell found so far, whether or not it was also recorded in the
+    // table.
     auto seen_or_record = [&](Cell_handle ch, std::size_t idx) -> bool
     {
       if (idx > MAXIDX)
-        return std::find(cells.begin(), cells.end(), ch) == cells.end();
+        return wide_not_seen(cells, ch, wide_active);
       const std::uintptr_t p = reinterpret_cast<std::uintptr_t>(&*ch);
       unsigned s = unsigned((p * 0x9E3779B97F4A7C15ull) >> 56) & (TSIZE - 1);
       for (;;) {
