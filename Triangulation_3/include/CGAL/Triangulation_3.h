@@ -2125,7 +2125,14 @@ public:
           continue;
 
         Cell_handle next = c->neighbor(i);
-        if(!this->try_lock_cell(next)) // LOCK
+        // Only ONE of next's four vertices can still be unheld. The walk
+        // reaches next across the facet (c, i), whose three vertices are
+        // vertices of c, and c was locked in full before it was pushed, so
+        // those three are held by this thread and asking for them again --
+        // which is what locking the cell does -- can only answer true. The
+        // fourth is the one opposite that facet, next's vertex at the index c
+        // occupies among next's neighbours.
+        if(!this->try_lock_vertex(next->vertex(next->index(c)))) // LOCK
         {
           for(Cell_handle ch : cells)
           {
