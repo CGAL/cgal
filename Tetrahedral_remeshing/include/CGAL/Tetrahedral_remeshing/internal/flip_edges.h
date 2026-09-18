@@ -1477,10 +1477,18 @@ void compute_boundary_vertices_valences_parallel(
       continue;
     }
 
-    for (unsigned char k = 0; k < slot.n; ++k)
+    // One outer lookup per endpoint, not one per patch. This map is the
+    // concurrent one -- the routine runs only on the parallel path -- and its
+    // references stay valid across insertions.
+    if (slot.n != 0)
     {
-      boundary_vertices_valences[v0][slot.patches[k]]++;
-      boundary_vertices_valences[v1][slot.patches[k]]++;
+      auto& m0 = boundary_vertices_valences[v0];
+      auto& m1 = boundary_vertices_valences[v1];
+      for (unsigned char k = 0; k < slot.n; ++k)
+      {
+        m0[slot.patches[k]]++;
+        m1[slot.patches[k]]++;
+      }
     }
   }
 }
@@ -2473,7 +2481,35 @@ class Boundary_edge_flip_operation
 
   using Subdomain_index = typename C3t3::Subdomain_index;
   using Surface_patch_index = typename C3t3::Surface_patch_index;
-  using Spi_map = boost::unordered_map<Surface_patch_index, unsigned int>;
+  /**
+  * The per-patch valences of ONE boundary vertex.
+  *
+  * A boundary vertex lies on a single surface patch almost everywhere and on a
+  * handful at worst, so a `boost::unordered_map` here pays a hash and a node
+  * allocation to hold, typically, one pair -- and it is asked ~4 times per
+  * boundary edge while the valences are built, which is the serial half of the
+  * boundary flip's preprocessing (0.608 s of a 41 s run on `fine_0.35`, at
+  * 0.91x). A linear scan over an inline array answers the same three
+  * questions: `operator[]` to read or bump a patch's valence, and `size() > 1`
+  * to ask whether the vertex is on more than one patch.
+  *
+  * Same values, same insertion-on-miss semantics. The container is never
+  * iterated, so no order is observable.
+  */
+  struct Spi_map
+  {
+    boost::container::small_vector<std::pair<Surface_patch_index, unsigned int>, 2> m_v;
+
+    unsigned int& operator[](const Surface_patch_index& si)
+    {
+      for (auto& p : m_v)
+        if (p.first == si)
+          return p.second;
+      m_v.emplace_back(si, 0u);
+      return m_v.back().second;
+    }
+    std::size_t size() const { return m_v.size(); }
+  };
 
   // Filled once by get_elements() for every boundary vertex. A flip then
   // decrements two valences and increments two others; all four vertices lie
