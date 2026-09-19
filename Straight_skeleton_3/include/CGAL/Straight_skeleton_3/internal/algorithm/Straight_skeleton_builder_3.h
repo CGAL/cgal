@@ -2120,6 +2120,13 @@ public:
         if (num_equal_facets != 2) {
           continue;
         }
+#ifdef CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
+        if (use_canonical_event_reps) {
+          if (facet_1->id() > facet_2->id()) {
+            continue;
+          }
+        }
+#endif
         if (facet_1->next(v1) != facet_2) {
           FacetSPtr facet_tmp = facet_1;
           facet_1 = facet_2;
