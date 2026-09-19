@@ -34,6 +34,8 @@
 #include <atomic>
 #include <iterator>
 #include <random>
+#include <array>
+#include <map>
 #include <string>
 #include <thread>
 #include <type_traits>
@@ -167,6 +169,36 @@ using Concurrency_selected_container_t =
 * triangulation and keep lock conflicts down.
 */
 #ifdef CGAL_LINKED_WITH_TBB
+#ifdef CGAL_TR_PHASE_WALL
+// Diagnostic only: for every operation, the wall and CPU time of collecting
+// its candidates and of running them, keyed by the operation's own name.
+struct Op_stage_wall
+{
+  std::map<std::string, std::array<double,4>> by_op;   // collect w/c, run w/c
+  ~Op_stage_wall()
+  {
+    for (const auto& [name, v] : by_op)
+      std::cout << "OPSTAGE \"" << name << "\" collect=" << v[0] << "/" << v[1]
+                << " run=" << v[2] << "/" << v[3] << std::endl;
+  }
+};
+inline Op_stage_wall& op_stage_wall() { static Op_stage_wall w; return w; }
+inline double op_cpu_seconds()
+{
+  struct timespec ts;
+  clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &ts);
+  return double(ts.tv_sec) + 1e-9 * double(ts.tv_nsec);
+}
+struct Op_stage_scope
+{
+  std::array<double,4>& slot; int base; CGAL::Real_timer t; double c0;
+  Op_stage_scope(std::array<double,4>& s, int b)
+    : slot(s), base(b), c0(op_cpu_seconds()) { t.start(); }
+  ~Op_stage_scope()
+  { t.stop(); slot[base] += t.time(); slot[base+1] += op_cpu_seconds() - c0; }
+};
+#endif
+
 template <typename Operation>
 class Elementary_operation_execution_parallel
 {
@@ -177,7 +209,16 @@ public:
 
   bool execute(Operation& op, C3t3& c3t3) const
   {
-    std::vector<Element_type> candidates = collect(op, c3t3);
+#ifdef CGAL_TR_PHASE_WALL
+    auto& slot_ = op_stage_wall().by_op[op.operation_name()];
+#endif
+    std::vector<Element_type> candidates;
+    {
+#ifdef CGAL_TR_PHASE_WALL
+      Op_stage_scope scope_(slot_, 0);
+#endif
+      candidates = collect(op, c3t3);
+    }
     if (candidates.empty())
       return false;
 
@@ -187,10 +228,15 @@ public:
     const std::size_t nb_candidates = candidates.size();
 #endif
 
-    if constexpr (Operation::requires_ordered_processing)
-      run_ordered(candidates, op, c3t3);
-    else
-      run_unordered(candidates, op, c3t3);
+    {
+#ifdef CGAL_TR_PHASE_WALL
+      Op_stage_scope scope_(slot_, 2);
+#endif
+      if constexpr (Operation::requires_ordered_processing)
+        run_ordered(candidates, op, c3t3);
+      else
+        run_unordered(candidates, op, c3t3);
+    }
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
     timer.stop();

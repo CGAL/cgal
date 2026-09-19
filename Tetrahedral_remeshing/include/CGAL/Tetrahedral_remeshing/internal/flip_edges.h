@@ -1255,10 +1255,46 @@ std::size_t flip_all_edges(const std::vector<VertexPair>& edges,
   return count;
 }
 
+/**
+* Per boundary vertex, the distinct subdomain indices of the cells around it.
+*
+* ONLY THE COUNT is ever read -- `for_each_boundary_valence_patch()` asks
+* whether a vertex touches more than one subdomain -- so the per-vertex set is
+* a short inline array scanned linearly, not a hash set. A boundary vertex
+* touches one or two subdomains almost everywhere, and a `std::unordered_set`
+* per vertex paid a node allocation to hold that.
+*
+* The container is concurrent under `Parallel_tag` because the parallel build
+* fills it one vertex per thread.
+*/
+template<typename C3T3>
+using Vertex_subdomains_map_t = Concurrency_selected_container_t<
+  typename C3T3::Triangulation::Concurrency_tag,
+  boost::unordered_map<typename C3T3::Vertex_handle,
+                       boost::container::small_vector<typename C3T3::Subdomain_index, 4> >,
+#ifdef CGAL_LINKED_WITH_TBB
+  tbb::concurrent_unordered_map<typename C3T3::Vertex_handle,
+                                boost::container::small_vector<typename C3T3::Subdomain_index, 4>,
+                                boost::hash<typename C3T3::Vertex_handle> >
+#else
+  boost::unordered_map<typename C3T3::Vertex_handle,
+                       boost::container::small_vector<typename C3T3::Subdomain_index, 4> >
+#endif
+  >;
+
+// Records `si` for `v` if it is not there already.
+template<typename Subdomains, typename Subdomain_index>
+void record_subdomain(Subdomains& subdomains, const Subdomain_index& si)
+{
+  for (const Subdomain_index& s : subdomains)
+    if (s == si)
+      return;
+  subdomains.push_back(si);
+}
+
 template<typename C3t3>
 void collect_subdomains_on_boundary(const C3t3& c3t3,
-  boost::unordered_map<typename C3t3::Vertex_handle,
-    std::unordered_set<typename C3t3::Subdomain_index> >& vertices_subdomain_indices)
+  Vertex_subdomains_map_t<C3t3>& vertices_subdomain_indices)
 {
   for (auto c : c3t3.triangulation().all_cell_handles())
   {
@@ -1266,7 +1302,7 @@ void collect_subdomains_on_boundary(const C3t3& c3t3,
     {
       const int dim = v->in_dimension();
       if(dim >= 0 && dim < 3)
-        vertices_subdomain_indices[v].insert(c->subdomain_index());
+        record_subdomain(vertices_subdomain_indices[v], c->subdomain_index());
     }
   }
 }
@@ -1288,8 +1324,7 @@ void collect_boundary_edges_and_subdomains_parallel(
   const C3T3& c3t3,
   const CellSelector& cell_selector,
   std::vector<typename C3T3::Edge>& boundary_edges,
-  boost::unordered_map<typename C3T3::Vertex_handle,
-    std::unordered_set<typename C3T3::Subdomain_index> >& vertices_subdomain_indices)
+  Vertex_subdomains_map_t<C3T3>& vertices_subdomain_indices)
 {
   using Edge = typename C3T3::Edge;
   const typename C3T3::Triangulation& tr = c3t3.triangulation();
@@ -1297,14 +1332,21 @@ void collect_boundary_edges_and_subdomains_parallel(
   using Cell_handle = typename C3T3::Cell_handle;
   using Vertex_handle = typename C3T3::Vertex_handle;
   using Subdomain_index = typename C3T3::Subdomain_index;
-  using Vertex_subdomains_map
-    = boost::unordered_map<Vertex_handle, std::unordered_set<Subdomain_index> >;
 
   const std::vector<Cell_handle> cells = gather_all_cells(tr);
 
   // Each thread unions into its own map and the maps are unioned afterwards:
   // the result is a SET per vertex, so it does not depend on the order the
   // cells were visited in, and only its size is ever read.
+  //
+  // Building it BY VERTEX instead -- one owner per vertex, no merge at all --
+  // was tried and is slower: it trades this cell scan for a star walk per
+  // boundary vertex, and the pointer chasing costs more than the merge it
+  // removes (-1.116% instructions but +2.82% wall on 1146193_cdt_0.5). See
+  // `rejected/bsubmap_pervertex`.
+  using Vertex_subdomains_map
+    = boost::unordered_map<Vertex_handle,
+                           boost::container::small_vector<Subdomain_index, 4> >;
   tbb::enumerable_thread_specific<Vertex_subdomains_map> tl_vsi;
   tbb::parallel_for(tbb::blocked_range<std::size_t>(0, cells.size()),
     [&](const tbb::blocked_range<std::size_t>& range)
@@ -1317,19 +1359,18 @@ void collect_boundary_edges_and_subdomains_parallel(
         {
           const int dim = v->in_dimension();
           if (dim >= 0 && dim < 3)
-            local[v].insert(c->subdomain_index());
+            record_subdomain(local[v], c->subdomain_index());
         }
       }
     });
 
   for (const Vertex_subdomains_map& local : tl_vsi)
-  {
     for (const auto& vsi : local)
     {
-      std::unordered_set<Subdomain_index>& s = vertices_subdomain_indices[vsi.first];
-      s.insert(vsi.second.begin(), vsi.second.end());
+      auto& s = vertices_subdomain_indices[vsi.first];
+      for (const Subdomain_index& si : vsi.second)
+        record_subdomain(s, si);
     }
-  }
 
   // Same per-edge test and the same edge set as the serial walk; the scan
   // applies the smallest-incident-cell ownership rule the finite edge
@@ -1365,8 +1406,7 @@ template<typename C3T3, typename PatchOutput>
 void for_each_boundary_valence_patch(
   const C3T3& c3t3,
   const typename C3T3::Edge& e,
-  const boost::unordered_map<typename C3T3::Vertex_handle,
-    std::unordered_set<typename C3T3::Subdomain_index> >& vertices_subdomain_indices,
+  const Vertex_subdomains_map_t<C3T3>& vertices_subdomain_indices,
   PatchOutput out)
 {
   using Surface_patch_index = typename C3T3::Surface_patch_index;
@@ -1421,8 +1461,7 @@ void compute_boundary_vertices_valences_parallel(
   const C3T3& c3t3,
   const std::vector<typename C3T3::Edge>& boundary_edges,
   BoundaryValencesMap& boundary_vertices_valences,
-  const boost::unordered_map<typename C3T3::Vertex_handle,
-    std::unordered_set<typename C3T3::Subdomain_index> >& vertices_subdomain_indices)
+  const Vertex_subdomains_map_t<C3T3>& vertices_subdomain_indices)
 {
   using Surface_patch_index = typename C3T3::Surface_patch_index;
 
@@ -1501,8 +1540,7 @@ void collectBoundaryEdgesAndComputeVerticesValences(
   const CellSelector& cell_selector,
   std::vector<typename C3T3::Edge>& boundary_edges,
   BoundaryValencesMap& boundary_vertices_valences,
-  boost::unordered_map<typename C3T3::Vertex_handle, std::unordered_set<typename C3T3::Subdomain_index> >&
-      vertices_subdomain_indices)
+  Vertex_subdomains_map_t<C3T3>& vertices_subdomain_indices)
 {
   typedef typename C3T3::Surface_patch_index Surface_patch_index;
   typedef typename C3T3::Vertex_handle       Vertex_handle;
@@ -2566,7 +2604,7 @@ public:
   Element_range get_elements(const C3t3& c3t3) const override
   {
     std::vector<Edge> boundary_edges;
-    boost::unordered_map<Vertex_handle, std::unordered_set<Subdomain_index>> vertices_subdomain_indices;
+    Vertex_subdomains_map_t<C3t3> vertices_subdomain_indices;
     m_boundary_vertices_valences.clear();
     collectBoundaryEdgesAndComputeVerticesValences(c3t3,
                                                    m_cell_selector,
