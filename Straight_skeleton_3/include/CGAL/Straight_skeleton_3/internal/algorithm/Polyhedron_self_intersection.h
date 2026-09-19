@@ -20,6 +20,9 @@
 #include <CGAL/license/Straight_skeleton_3.h>
 
 #include <CGAL/Straight_skeleton_3/internal/HDS/Polyhedron.h>
+#include <CGAL/Straight_skeleton_3/IO/Face_graph_IO.h>
+
+#include <CGAL/Polygon_mesh_processing/self_intersections.h>
 
 #include <CGAL/enum.h>
 #include <CGAL/point_generators_3.h>
@@ -53,6 +56,9 @@ private:
   using VertexSPtr = typename Polyhedron::VertexSPtr;
   using EdgeSPtr = typename Polyhedron::EdgeSPtr;
   using FacetSPtr = typename Polyhedron::FacetSPtr;
+
+private:
+  using FaceGraphIO = typename CGAL::Straight_skeletons_3::IO::FaceGraphIO<GeomTraits>;
 
 public:
   // check if edges share at least one vertex
@@ -823,6 +829,22 @@ public:
     }
 
     return false;
+  }
+
+  template <typename FaceGraph>
+  static bool has_self_intersecting_triangulated_surface(const PolyhedronSPtr& polyhedron)
+  {
+    namespace PMP = CGAL::Polygon_mesh_processing;
+
+    FaceGraph g;
+    bool convert = FaceGraphIO::save(polyhedron, g, CGAL::parameters::do_not_triangulate_faces(false));
+
+    if (!convert) {
+      CGAL_SS3_ALGO_TRACE_V(16, "\nFailed to convert during SI check");
+      return false;
+    }
+
+    return PMP::does_self_intersect(g);
   }
 };
 
