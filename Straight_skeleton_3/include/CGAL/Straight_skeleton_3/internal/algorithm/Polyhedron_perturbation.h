@@ -2899,36 +2899,25 @@ public:
 
       enum class CC_in_out_flag
       {
-        UNINITIALIZED = 0,
+        UNINITIALIZED,
         TBD,
         INSIDE,
         OUTSIDE
       };
 
-      std::vector<CC_in_out_flag> in_out_flags(volume_CCs.size(), CC_in_out_flag::UNINITIALIZED);
+      std::vector<CC_in_out_flag> in_out_flags(volume_CCs.size(), CC_in_out_flag::TBD);
 
-      // Classify some trivial CCs:
-      // - if every non-bbox face points outwards, the CC is necessarily in
-      // - if every non-bbox face points inwards, the CC is necessarily out
-      for(std::size_t i=0; i<polygons.size(); ++i) {
+      // Sanity checks: a boundary facet cannot have an OUTSIDE volume on its bottom
+      // and an INSIDE volume on its top
+      for (std::size_t i=0; i<polygons.size(); ++i) {
         if (!polygon_to_facet[i])
           continue;
 
-        // bottom
+        CGAL_assertion(face_volume_IDs[i][0] != VID(-1));
+        CGAL_assertion(face_volume_IDs[i][1] != VID(-1));
         VID bot_vid = face_volume_IDs[i][0];
-        CGAL_assertion(bot_vid != VID(-1));
-        if (in_out_flags[bot_vid] == CC_in_out_flag::UNINITIALIZED)
-          in_out_flags[bot_vid] = CC_in_out_flag::INSIDE; // [0], bottom, face points outwards
-        else if (in_out_flags[bot_vid] == CC_in_out_flag::OUTSIDE)
-          in_out_flags[bot_vid] = CC_in_out_flag::TBD;
-
-        // top
         VID top_vid = face_volume_IDs[i][1];
-        CGAL_assertion(top_vid != VID(-1));
-        if (in_out_flags[top_vid] == CC_in_out_flag::UNINITIALIZED)
-          in_out_flags[top_vid] = CC_in_out_flag::OUTSIDE; // [1], top, face points inwards
-        else if (in_out_flags[top_vid] == CC_in_out_flag::INSIDE)
-          in_out_flags[top_vid] = CC_in_out_flag::TBD;
+        CGAL_assertion(!(in_out_flags[top_vid] == CC_in_out_flag::INSIDE && in_out_flags[bot_vid] == CC_in_out_flag::OUTSIDE));
       }
 
 #ifdef CGAL_SS3_DUMP_FILES
@@ -3340,7 +3329,27 @@ public:
         CGAL_assertion(!(in_out_flags[top_vid] == CC_in_out_flag::INSIDE && in_out_flags[bot_vid] == CC_in_out_flag::OUTSIDE));
       }
 
+      // - for all facets incident to the vertex, there should be at least one polygon
+      // that has an INSIDE volume on its bottom and an OUTSIDE volume on its top
+      CGAL::unordered_flat_set<FacetSPtr> found_facets;
+      for (std::size_t i=0; i<polygons.size(); ++i) {
+        if (!polygon_to_facet[i])
+          continue;
+
+        CGAL_assertion(face_volume_IDs[i][0] != VID(-1));
+        CGAL_assertion(face_volume_IDs[i][1] != VID(-1));
+        VID bot_vid = face_volume_IDs[i][0];
+        VID top_vid = face_volume_IDs[i][1];
+        CGAL_assertion(in_out_flags[bot_vid] != CC_in_out_flag::UNINITIALIZED);
+        CGAL_assertion(in_out_flags[top_vid] != CC_in_out_flag::UNINITIALIZED);
+        if (in_out_flags[bot_vid] == CC_in_out_flag::INSIDE && in_out_flags[top_vid] == CC_in_out_flag::OUTSIDE) {
+          found_facets.insert(polygon_to_facet[i]);
+        }
+      }
+      CGAL_assertion(found_facets.size() == vertex->degree());
+
       // Now, we want to deal with the tentative cells
+      bool tentative_cell_n = 0;
 
       using operations_research::Domain;
       using operations_research::sat::BoolVar;
