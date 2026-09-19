@@ -1092,6 +1092,9 @@ public:
 
     using CDT2_Tag = CGAL::No_constraint_intersection_tag;
     auto pcdt = construct_facet_triangulation<CDT2_Tag>(facet);
+    if (pcdt.number_of_vertices() == 0) {
+      return { };
+    }
 
     using PCDT = decltype(pcdt);
     using PCDT_FH = typename PCDT::Face_handle;
@@ -1135,8 +1138,7 @@ public:
     return { facet_vertices , created_facets };
   }
 
-  static void
-  triangulate_facets(const PolyhedronSPtr& polyhedron)
+  static bool triangulate_facets(const PolyhedronSPtr& polyhedron)
   {
     CGAL_SS3_TRANSF_TRACE("Triangulate facets of polyhedron " << polyhedron->id());
     CGAL_SS3_DEBUG_SPTR(polyhedron);
@@ -1149,8 +1151,13 @@ public:
     }
 
     for (const FacetSPtr& facet : facets_to_triangulate) {
-      triangulate_facet(facet, polyhedron);
+      auto [vs, fs] = triangulate_facet(facet, polyhedron);
+      if (vs.empty() || fs.empty()) {
+        return false;
+      }
     }
+
+    return true;
   }
 
   /**
