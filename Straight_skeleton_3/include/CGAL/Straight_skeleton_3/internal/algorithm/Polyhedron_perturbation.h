@@ -3361,6 +3361,7 @@ public:
       using operations_research::sat::SatParameters;
       using operations_research::sat::SolutionBooleanValue;
       using operations_research::sat::SolveWithParameters;
+      using operations_research::sat::ValidateCpModel;
 
       CpModelBuilder model;
 
@@ -3578,11 +3579,14 @@ public:
       }
 #endif
 
+#define CGAL_SLS3_USE_LAZY_NON_MANIFOLD_VERTEX_CONSTRAINTS
+#ifndef CGAL_SLS3_USE_LAZY_NON_MANIFOLD_VERTEX_CONSTRAINTS
+
       // =====================================================================
       //  CONSTRAINT — Global vertex manifoldness
       // =====================================================================
 
-      // @todo
+      // @todo if no using non manifold vertex constraints
 
       // =====================================================================
       //  CONSTRAINT — Local vertex manifoldness (per facet color)
@@ -3590,9 +3594,6 @@ public:
 
       // @fixme the non lazy constraints are more expensive and are probably wrong:
       // we could still pinch within the same CC even with a single root
-#define CGAL_SLS3_USE_LAZY_NON_MANIFOLD_VERTEX_CONSTRAINTS
-
-#ifndef CGAL_SLS3_USE_LAZY_NON_MANIFOLD_VERTEX_CONSTRAINTS
 # ifdef CGAL_SLS3_USE_FLOW_BASED_NON_MANIFOLD_VERTEX_CONSTRAINTS
       for (FacetWPtr wf : vertex->facets()) {
         if (FacetSPtr f = wf.lock()) {
@@ -3751,7 +3752,7 @@ public:
         }
       }
 # endif // CGAL_SLS3_USE_FLOW_BASED_NON_MANIFOLD_VERTEX_CONSTRAINTS
-#endif
+#endif // CGAL_SLS3_USE_LAZY_NON_MANIFOLD_VERTEX_CONSTRAINTS
 
       // =====================================================================
       //  SOLVE
@@ -3761,14 +3762,12 @@ public:
 
 #ifndef CGAL_SLS3_USE_LAZY_NON_MANIFOLD_VERTEX_CONSTRAINTS
       const auto& proto = model.Build();
-      CGAL_SS3_TRANSF_TRACE_V(16, "Variables: " << proto.variables_size());
-      CGAL_SS3_TRANSF_TRACE_V(16, "Constraints: " << proto.constraints_size());
+      CGAL_SS3_TRANSF_TRACE_V(32, "Variables: " << proto.variables_size());
+      CGAL_SS3_TRANSF_TRACE_V(32, "Constraints: " << proto.constraints_size());
 
       SatParameters params;
       params.set_stop_after_first_solution(true);
       params.set_enumerate_all_solutions(false);
-
-      std::vector<bool> current_b_values(polygons.size());
 
       bool ok = false;
       const CpSolverResponse response = SolveWithParameters(proto, params);
@@ -3795,20 +3794,46 @@ public:
 
       while (iteration < max_iterations) {
         ++iteration;
-        CGAL_SS3_TRANSF_TRACE_V(32, "--- Starting solver iteration " << iteration << " ---");
+        CGAL_SS3_TRANSF_TRACE_V(8, "--- Starting solver iteration " << iteration << " ---");
 
         const auto& proto = model.Build();
-        CGAL_SS3_TRANSF_TRACE_V(16, "Variables: " << proto.variables_size());
-        CGAL_SS3_TRANSF_TRACE_V(16, "Constraints: " << proto.constraints_size());
+        CGAL_SS3_TRANSF_TRACE_V(32, "Variables: " << proto.variables_size());
+        CGAL_SS3_TRANSF_TRACE_V(32, "Constraints: " << proto.constraints_size());
+
+        CGAL_SS3_TRANSF_TRACE_V(32, "Model:\n" << CpModelStats(proto));
+
+#ifndef NDEBUG
+        const std::string validation_error = ValidateCpModel(proto);
+        if (!validation_error.empty()) {
+          CGAL_SS3_TRANSF_TRACE_V(1, "Error: invalid model (" << validation_error << ")");
+          std::abort();
+        } else {
+          CGAL_SS3_TRANSF_TRACE_V(8, "Model validated successfully");
+        }
+#endif
 
         SatParameters params;
         params.set_stop_after_first_solution(true);
         params.set_enumerate_all_solutions(false);
 
-        std::vector<bool> current_b_values(polygons.size());
+        params.set_random_seed(0);
+
+        // workaround some deadlock issues within absl, and determinism
+        params.set_num_workers(1);
+
+        // debug
+        // params.set_cp_model_presolve(false);
+        // params.set_symmetry_level(0);
+        // params.set_max_time_in_seconds(60.0);
+        // params.set_log_search_progress(true);
+        // params.set_log_to_stdout(true);
 
         bool ok = false;
         const CpSolverResponse response = SolveWithParameters(proto, params);
+        CGAL_SS3_TRANSF_TRACE_V(32, "status = " << CpSolverStatus_Name(response.status()));
+        CGAL_SS3_TRANSF_TRACE_V(32, "info   = " << response.solution_info());
+        CGAL_SS3_TRANSF_TRACE_V(32, CpSolverResponseStats(response));
+
         if (response.status() == CpSolverStatus::OPTIMAL ||
             response.status() == CpSolverStatus::FEASIBLE) {
           ok = true;
@@ -3822,6 +3847,11 @@ public:
         CGAL_SS3_TRANSF_TRACE_V(32, "OK is " << ok);
         if (!ok) {
           CGAL_SS3_TRANSF_TRACE_V(1, "ERROR: failed to find a solution [" << response.status() << "]");
+#ifdef CGAL_SS3_DUMP_FILES
+          std::ofstream out("result/failing_model.pb.txt");
+          out.precision(17);
+          out << proto.DebugString();
+#endif
           std::abort();
         }
 #ifdef CGAL_SS3_DUMP_FILES
