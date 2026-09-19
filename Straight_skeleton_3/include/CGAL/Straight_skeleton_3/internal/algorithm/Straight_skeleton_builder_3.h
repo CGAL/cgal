@@ -1374,7 +1374,7 @@ public:
 
     bool conv_split_event = false;
     FacetSPtr facet_1b = facet_2->next(vertex_1);
-    FacetSPtr facet_2b = facet_2->next(vertex_2); // @fixme typo? 2>1?
+    FacetSPtr facet_2b = facet_1->next(vertex_2);
     EdgeSPtr edge_cur = edge_11->next(facet_1b);
     while (edge_cur != edge_11) {
       if ((edge_cur->get_facet_L() == facet_1b && edge_cur->get_facet_R() == facet_2b) ||
