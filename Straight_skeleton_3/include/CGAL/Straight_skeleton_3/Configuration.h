@@ -23,10 +23,11 @@
 #include <CGAL/Straight_skeleton_3/IO/StringFuncs.h>
 
 #include <CGAL/assertions.h>
+#include <CGAL/unordered_flat_map.h>
 #include <CGAL/tss.h>
 
+#include <charconv>
 #include <fstream>
-#include <map>
 #include <memory>
 #include <sstream>
 #include <string>
@@ -175,6 +176,7 @@ public:
     properties_["Preprocessing.coplanarity_epsilon"] = "1e-7";
     properties_["Preprocessing.perturbation_epsilon"] = "1e-12";
     properties_["Preprocessing.check_degenerate_configuration"] = "FALSE";
+    properties_["Preprocessing.seed"] = "0";
 
     properties_["Algorithm.vertex_splitter"] = "Combi_vertex_splitter";
     properties_["Algorithm.selected_combinatorial_split"] = "0";
@@ -222,6 +224,21 @@ public:
     return result;
   }
 
+  unsigned long long get_ull(const std::string& section, const std::string& key)
+  {
+    CGAL_precondition(is_loaded());
+    unsigned long long result = 0;
+    std::string value = get_string(section, key);
+    if (value.length() != 0) {
+      const auto [ptr, ec] = std::from_chars(value.data(), value.data() + value.size(), result);
+      if (ec != std::errc() || ptr != value.data() + value.size()) {
+        CGAL_warning(false);
+        return 0;
+      }
+    }
+    return result;
+  }
+
   double get_double(const std::string& section, const std::string& key)
   {
     CGAL_precondition(is_loaded());
@@ -264,7 +281,7 @@ public:
     return result;
   }
 
-  std::map<std::string, std::string> properties_;
+  CGAL::unordered_flat_map<std::string, std::string> properties_;
 #endif /* DOXYGEN_RUNNING */
 };
 
