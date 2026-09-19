@@ -130,8 +130,18 @@ bool preprocess_input(const std::filesystem::path& mesh_filename,
     return false;
   }
 
-  if(CGAL::is_empty(sm) || !is_valid_face_graph(sm)) {
-    std::cerr << "Error: invalid input " << mesh_filename << std::endl;
+  if (CGAL::is_empty(sm)) {
+    std::cerr << "Error: empty input " << mesh_filename << std::endl;
+    return false;
+  }
+
+  if (!CGAL::is_closed(sm)) {
+    std::cerr << "Error: open input " << mesh_filename << std::endl;
+    return false;
+  }
+
+  if (!is_valid_face_graph(sm)) {
+    std::cerr << "Error: broken input " << mesh_filename << std::endl;
     return false;
   }
 

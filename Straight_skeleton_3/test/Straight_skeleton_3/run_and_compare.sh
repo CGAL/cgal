@@ -168,6 +168,9 @@ function process_file_single_function {
     if grep -q -e "Error: Config file not found" \
                -e "Error: failed to read input" \
                -e "Error: invalid input" \
+               -e "Error: empty input" \
+               -e "Error: open input" \
+               -e "Error: broken input" \
                -e "Error: failed to read weights" \
                -e "Error: negative weights" \
                -e "Error: all weights are zero" \
