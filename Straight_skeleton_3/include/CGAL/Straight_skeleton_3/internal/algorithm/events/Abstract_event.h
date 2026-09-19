@@ -82,46 +82,49 @@ public:
   static const int CONST_TIME_EVENT = 1;
 
   /** generic vanish event */
-  static const int VANISH_EVENT = -1; // @tmp give it a proper ID
+  static const int VANISH_EVENT = 2;
 
   /** 1 edge vanish event */
-  static const int EDGE_EVENT = 2;
+  static const int EDGE_EVENT = 3;
 
   /** 2 edge vanish event */
-  static const int EDGE_MERGE_EVENT = 3;
+  static const int EDGE_MERGE_EVENT = 4;
 
   /** 3 edge vanish event */
-  static const int TRIANGLE_EVENT = 4;
+  static const int TRIANGLE_EVENT = 5;
 
   /** 4 edge vanish event */
-  static const int DBL_EDGE_MERGE_EVENT = 5;
+  static const int DBL_EDGE_MERGE_EVENT = 6;
 
   /** 5 edge vanish event */
-  static const int DBL_TRIANGLE_EVENT = 6;
+  static const int DBL_TRIANGLE_EVENT = 7;
 
   /** 6 edge vanish event */
-  static const int TETRAHEDRON_EVENT = 7;
+  static const int TETRAHEDRON_EVENT = 8;
+
+  /** generic vertex event */
+  static const int GENERIC_VERTEX_EVENT = 9;
 
   /** vertex-vertex contact event I */
-  static const int VERTEX_EVENT = 8;
+  static const int VERTEX_EVENT = 10;
 
   /** vertex-vertex contact event II */
-  static const int FLIP_VERTEX_EVENT = 9;
+  static const int FLIP_VERTEX_EVENT = 11;
 
   /** vertex-edge contact event */
-  static const int SURFACE_EVENT = 10;
+  static const int SURFACE_EVENT = 12;
 
   /** vertex-vertex-edge contact event I */
-  static const int POLYHEDRON_SPLIT_EVENT = 11;
+  static const int POLYHEDRON_SPLIT_EVENT = 13;
 
   /** vertex-vertex-edge contact event II */
-  static const int SPLIT_MERGE_EVENT = 12;
+  static const int SPLIT_MERGE_EVENT = 14;
 
   /** edge-edge contact event */
-  static const int EDGE_SPLIT_EVENT = 13;
+  static const int EDGE_SPLIT_EVENT = 15;
 
   /** vertex-facet contact event */
-  static const int PIERCE_EVENT = 14;
+  static const int PIERCE_EVENT = 16;
 
   int getType() const {
     return this->type_;
@@ -146,6 +149,9 @@ public:
         break;
       case SAVE_EVENT:
         sstr << "Save_event";
+        break;
+      case GENERIC_VERTEX_EVENT:
+        sstr << "Generic_vanish_event";
         break;
       case VANISH_EVENT:
         sstr << "Vanish_event";

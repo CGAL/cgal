@@ -99,6 +99,10 @@
 
 // ----
 
+#define CGAL_SS3_USE_GENERIC_VERTEX_EVENT
+
+// ----
+
 #include <CGAL/Straight_skeleton_3/internal/debug.h>
 #include <CGAL/Straight_skeleton_3/internal/kernel/Kernel_wrapper.h>
 #include <CGAL/Straight_skeleton_3/internal/HDS/Polyhedron.h>
@@ -254,6 +258,8 @@ private:
   using Tetrahedron_event = algorithm::Tetrahedron_event<GeomTraits>;
   using Tetrahedron_event_sptr = std::shared_ptr<Tetrahedron_event>;
 
+  using Generic_vertex_event = algorithm::Generic_vertex_event<GeomTraits>;
+  using Generic_vertex_event_sptr = std::shared_ptr<Generic_vertex_event>;
   using Vertex_event = algorithm::Vertex_event<GeomTraits>;
   using Vertex_event_sptr = std::shared_ptr<Vertex_event>;
   using Flip_vertex_event = algorithm::Flip_vertex_event<GeomTraits>;
@@ -1181,6 +1187,76 @@ public:
     return event->is_obsolete();
   }
 
+  /**
+    * identifies the edges incident to 'vertex' (which must be incident to both 'facet_1' and
+    * 'facet_2') into the edge shared by the two facets, the other edge on 'facet_1', and the
+    * other edge on 'facet_2'.
+    */
+  static void identify_incident_edges(const VertexSPtr& vertex,
+                                      const FacetSPtr& facet_1,
+                                      const FacetSPtr& facet_2,
+                                      EdgeSPtr& edge_merge,
+                                      EdgeSPtr& edge_on_facet_1,
+                                      EdgeSPtr& edge_on_facet_2)
+  {
+    edge_merge = edge_on_facet_1 = edge_on_facet_2 = EdgeSPtr();
+
+    for (EdgeWPtr edge_wptr : vertex->edges()) {
+      if (EdgeSPtr edge = edge_wptr.lock()) {
+        const FacetSPtr facet_l = edge->get_facet_L();
+        const FacetSPtr facet_r = edge->get_facet_R();
+        if ((facet_l == facet_1 && facet_r == facet_2) ||
+            (facet_l == facet_2 && facet_r == facet_1)) {
+          edge_merge = edge;
+        } else if (facet_l == facet_1 || facet_r == facet_1) {
+          edge_on_facet_1 = edge;
+        } else if (facet_l == facet_2 || facet_r == facet_2) {
+          edge_on_facet_2 = edge;
+        }
+      }
+    }
+
+    CGAL_postcondition(edge_merge && edge_on_facet_1 && edge_on_facet_2);
+  }
+
+  static bool is_actual_generic_vertex_event(const Generic_vertex_event_sptr& event)
+  {
+    CGAL_SS3_CORE_TRACE_V(8, "########################################");
+    CGAL_SS3_CORE_TRACE_V(8, "###  Tentative Generic Vertex Event  ###");
+    CGAL_SS3_CORE_TRACE_V(8, "########################################");
+
+    CGAL_SS3_DEBUG_SPTR(event);
+
+    const FT& event_time = event->time();
+    const VertexSPtr& vertex_1 = event->get_vertex_1();
+    const VertexSPtr& vertex_2 = event->get_vertex_2();
+    const FacetSPtr& facet_1 = event->get_facet_1();
+    const FacetSPtr& facet_2 = event->get_facet_2();
+    CGAL_precondition(facet_1->next(vertex_1) == facet_2);
+
+    EdgeSPtr edge_merge_1, edge_11, edge_12;
+    EdgeSPtr edge_merge_2, edge_21, edge_22;
+    identify_incident_edges(vertex_1, facet_1, facet_2, edge_merge_1, edge_11, edge_12);
+    identify_incident_edges(vertex_2, facet_1, facet_2, edge_merge_2, edge_21, edge_22);
+
+    // Bisector check
+    Point_3 point = intersection_point_offset_planes(edge_11->get_facet_L(),
+                                                     edge_11->get_facet_R(),
+                                                     edge_22->get_facet_L(),
+                                                     edge_22->get_facet_R());
+
+    if (!check_bisectors(edge_11, point, event_time) ||
+        !check_bisectors(edge_22, point, event_time)) {
+      CGAL_SS3_CORE_TRACE_V(8, "Generic vertex event: bisector check failure");
+      return false;
+    }
+
+    event->set_point(point);
+
+    CGAL_SS3_CORE_TRACE_V(8, "Generic vertex event: accepted");
+    return true;
+  }
+
   // @todo avoid all this duplication between vertex event types...
   static bool is_actual_vertex_event(const Vertex_event_sptr& event)
   {
@@ -1497,7 +1573,7 @@ public:
     }
 
     if (!conv_split_event) {
-      CGAL_SS3_CORE_TRACE_V(8, "Split merge event: Convex split event detected");
+      CGAL_SS3_CORE_TRACE_V(8, "Split merge event: non-convex split event detected");
       return false;
     }
 
@@ -1694,7 +1770,9 @@ public:
 
     bool result = true;
 
-    if (event->getType() == Abstract_event::VERTEX_EVENT) {
+    if (event->getType() == Abstract_event::GENERIC_VERTEX_EVENT) {
+      result = is_actual_generic_vertex_event(std::dynamic_pointer_cast<Generic_vertex_event>(event));
+    } else if (event->getType() == Abstract_event::VERTEX_EVENT) {
       result = is_actual_vertex_event(std::dynamic_pointer_cast<Vertex_event>(event));
     } else if (event->getType() == Abstract_event::FLIP_VERTEX_EVENT) {
       result = is_actual_flip_vertex_event(std::dynamic_pointer_cast<Flip_vertex_event>(event));
@@ -1766,6 +1844,177 @@ public:
                              PQ& queue)
   {
     return collect_vanish_events(polyhedron->edges(), polyhedron, current_time, time_future_bound, queue);
+  }
+
+  /**
+    * Two vertices crash into each other (vertex / flip vertex / split merge event).
+    */
+  void collect_generic_vertex_events(const std::list<VertexSPtr>& vertices,
+                                     const PolyhedronSPtr& /*polyhedron*/,
+                                     const bool use_canonical_event_reps,
+                                     const FT& current_time,
+                                     const std::optional<FT>& time_future_bound,
+                                     PQ& queue)
+  {
+    CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Generic Vertex Events [" << current_time << "]");
+
+#ifndef CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
+    CGAL_USE(use_canonical_event_reps);
+#endif
+
+#ifdef CGAL_SS3_RUN_TIMERS
+    CGAL::Real_timer timer;
+    timer.start();
+#endif
+
+    for (const VertexSPtr& vertex_1 : vertices) {
+      CGAL_SS3_DEBUG_SPTR(vertex_1);
+
+      if (Hds_utils::is_convex(vertex_1)) {
+        continue;
+      }
+
+      std::set<VertexSPtr> vertices_2;
+      for (FacetWPtr facet_wptr : vertex_1->facets()) {
+        if (FacetSPtr facet = facet_wptr.lock()) {
+          vertices_2.insert(facet->vertices().begin(), facet->vertices().end());
+        }
+      }
+
+      for (const VertexSPtr& vertex_2 : vertices_2) {
+        CGAL_SS3_DEBUG_SPTR(vertex_2);
+        if (vertex_1 == vertex_2) {
+          continue;
+        }
+#ifdef CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
+        if (use_canonical_event_reps) {
+          CGAL_assertion(vertex_1->id() != -1 && vertex_2->id() != -1);
+          if (vertex_1->id() > vertex_2->id()) {
+            continue;
+          }
+        }
+#endif
+        if (vertex_1->point() == vertex_2->point()) {
+          continue;
+        }
+        if (vertex_1->find_edge(vertex_2)) {
+          // edge event
+          continue;
+        }
+        if (Hds_utils::is_convex(vertex_2)) {
+          continue;
+        }
+
+        // Subtlety here: this event is not symmetrical because the two chosen edges
+        // incident to vertex_1 and vertex_2 depend on the respective order of the vertices.
+        // Afterwards, we will check the validity of a potential intersection point
+        // with respect to these edges, but not the other potential pair.
+        // However, one pair could be valid while the other one is not.
+        // Thus, whether we look at vertex_1-vertex_2 or vertex_2-vertex_1, we could
+        // get told that the event exists, or that it does not.
+        // But, this is not a real inconsistency: if the event exists for the current order
+        // but does not for the other one, it's because there is another event (e.g. a simple
+        // edge event) that prevents this event from actually existing.
+        // As such, it does not really matter that we do not see that the event does not in fact
+        // exist, because even if it gets put in the queue, it will be invalidated
+        // by the nearer events.
+        //
+        // The point of the swap() below is to ensure consistency whether we are filling
+        // a global queue or a local queue, because otherwise we can get an error due to the
+        // asymmetry: for example, the event does not exist in the local queue (as "vertex_2 &
+        // vertex_1"), but exists in the global queue (as "vertex_1 & vertex_2").
+        // It is a false positive in the consistency check, but still, might as well ensure
+        // consistency.
+        VertexSPtr v1 = vertex_1;
+        VertexSPtr v2 = vertex_2;
+        if (v1->id() > v2->id()) {
+          std::swap(v1, v2);
+        }
+
+        // The two facets shared by v1 and v2
+        FacetSPtr facet_1;
+        FacetSPtr facet_2;
+        int num_equal_facets = 0;
+        for (FacetWPtr facet_1_wptr : v1->facets()) {
+          if (FacetSPtr f1 = facet_1_wptr.lock()) {
+            for (FacetWPtr facet_2_wptr : v2->facets()) {
+              if (FacetSPtr f2 = facet_2_wptr.lock()) {
+                if (f1 == f2) {
+                  if (num_equal_facets == 0) {
+                    facet_1 = f1;
+                  } else {
+                    facet_2 = f2;
+                  }
+                  ++num_equal_facets;
+                }
+              }
+            }
+          }
+        }
+        if (num_equal_facets != 2) {
+          continue;
+        }
+
+        // Canonical representation of the facet pair: since v1 and v2 share exactly two facets,
+        // the (unordered) pair is unique, and the rotational order around v1 canonically orders
+        // it. Note that all the specialized handlers rely on this normalization.
+        if (facet_1->next(v1) != facet_2) {
+          std::swap(facet_1, facet_2);
+        }
+        CGAL_assertion(facet_1->next(v1) == facet_2);
+
+        if (v1->next(facet_1)->next(facet_1) == v2 ||
+            v1->next(facet_2)->next(facet_2) == v2 ||
+            v1->prev(facet_1)->prev(facet_1) == v2 ||
+            v1->prev(facet_2)->prev(facet_2) == v2) {
+          // edge merge event
+          continue;
+        }
+
+        // The two edges whose crash defines the time of the event: the edge at v1 that is on
+        // facet_1 (but not on facet_2), and the edge at v2 that is on facet_2 (but not facet_1).
+        EdgeSPtr edge_merge_1, edge_11, edge_12;
+        EdgeSPtr edge_merge_2, edge_21, edge_22;
+        identify_incident_edges(v1, facet_1, facet_2, edge_merge_1, edge_11, edge_12);
+        identify_incident_edges(v2, facet_1, facet_2, edge_merge_2, edge_21, edge_22);
+        if (!edge_11 || !edge_22) {
+          continue;
+        }
+
+        // Whether this is a vertex, a flip vertex, or a split merge event is determined
+        // at pop time; see is_actual_generic_vertex_event() and handle_generic_vertex_event().
+
+        std::optional<FT> event_time = crash_time(edge_11, edge_22, current_time, time_future_bound);
+        if (!event_time) {
+          continue;
+        }
+
+        CGAL_assertion(*event_time < current_time);
+        CGAL_assertion(!time_future_bound.has_value() || *event_time >= *time_future_bound);
+
+        Generic_vertex_event_sptr event = Generic_vertex_event::create();
+        event->set_time(*event_time);
+        event->set_vertex_1(v1);
+        event->set_vertex_2(v2);
+        event->set_facet_1(facet_1);
+        event->set_facet_2(facet_2);
+        queue.push(event);
+      }
+    }
+
+#ifdef CGAL_SS3_RUN_TIMERS
+    timer.stop();
+    CGAL_SS3_CORE_TRACE_V(4, "  Sought Generic Vertex Events in: " << timer.time());
+#endif
+  }
+
+  void collect_generic_vertex_events(const PolyhedronSPtr& polyhedron,
+                                     const FT& current_time,
+                                     const std::optional<FT>& time_future_bound,
+                                     PQ& queue)
+  {
+    return collect_generic_vertex_events(polyhedron->vertices(), polyhedron, true /*use canonical reps*/,
+                                         current_time, time_future_bound, queue);
   }
 
   /**
@@ -3262,12 +3511,17 @@ public:
       const bool use_canonical_reps = true;
 #endif
 
+#ifdef CGAL_SS3_USE_GENERIC_VERTEX_EVENT
+      collect_generic_vertex_events(local_vertices_VV, polyhedron, use_canonical_reps,
+                                    current_time, time_future_bound, queue);
+#else
       collect_vertex_events(local_vertices_VV, polyhedron, use_canonical_reps,
                             current_time, time_future_bound, queue);
       collect_flip_vertex_events(local_vertices_VV, polyhedron, use_canonical_reps,
-                                 current_time, time_future_bound, queue);
+                                current_time, time_future_bound, queue);
       collect_split_merge_events(local_vertices_VV, polyhedron, use_canonical_reps,
-                                 current_time, time_future_bound, queue);
+                                current_time, time_future_bound, queue);
+#endif
     }
 
     // == POLYHEDRON SPLIT EVENTS ==
@@ -3480,10 +3734,14 @@ public:
     CGAL_assertion_code(Hds_utils::get_vanish_time(edge);)
 
     // --- Contact Event
+#ifdef CGAL_SS3_USE_GENERIC_VERTEX_EVENT
+    collect_generic_vertex_events(polyhedron, current_time, time_future_bound, queue);
+#else
     collect_vertex_events(polyhedron, current_time, time_future_bound, queue);
     collect_flip_vertex_events(polyhedron, current_time, time_future_bound, queue);
-    collect_polyhedron_split_events(polyhedron, current_time, time_future_bound, queue);
     collect_split_merge_events(polyhedron, current_time, time_future_bound, queue);
+#endif
+    collect_polyhedron_split_events(polyhedron, current_time, time_future_bound, queue);
 
     // the next event types are particularly slow, so reduce the bound by doing them last
     // so other events lower the bound
@@ -3631,6 +3889,11 @@ public:
           auto tetrahedron_event_1 = std::dynamic_pointer_cast<Tetrahedron_event>(event_1);
           auto tetrahedron_event_2 = std::dynamic_pointer_cast<Tetrahedron_event>(event_2);
           return *tetrahedron_event_1 == *tetrahedron_event_2;
+        }
+        case Abstract_event::GENERIC_VERTEX_EVENT: {
+          auto generic_vertex_event_1 = std::dynamic_pointer_cast<Vertex_event>(event_1);
+          auto generic_vertex_event_2 = std::dynamic_pointer_cast<Vertex_event>(event_2);
+          return *generic_vertex_event_1 == *generic_vertex_event_2;
         }
         case Abstract_event::VERTEX_EVENT: {
           auto vertex_event_1 = std::dynamic_pointer_cast<Vertex_event>(event_1);
@@ -5241,6 +5504,137 @@ public:
     return Event_status::EVENT_HANDLED;
   }
 
+  template <typename VertexEvent>
+  static bool is_event_point_on_edge(const VertexEvent& event,
+                                     const EdgeSPtr& edge)
+  {
+    // check if the crash point is on the edge
+    const Point_3& p = event->point();
+    const FT& event_time = event->time();
+    const Point_3 s = Transformation::offset_point_from_base(edge->source(), event_time);
+    const Point_3 t = Transformation::offset_point_from_base(edge->target(), event_time);
+    CGAL_assertion(CGAL::collinear(s, p, t));
+    return CGAL::collinear_are_strictly_ordered_along_line(s, p, t);
+  };
+
+  Event_status handle_generic_vertex_event(const Generic_vertex_event_sptr& event,
+                                           const FT& current_time,
+                                           const std::optional<FT>& time_future_bound,
+                                           const PolyhedronSPtr& polyhedron)
+  {
+    CGAL_SS3_CORE_TRACE_V(4, "########################################");
+    CGAL_SS3_CORE_TRACE_V(4, "####  Handle Generic Vertex Event  #####");
+    CGAL_SS3_CORE_TRACE_V(4, "########################################");
+
+    CGAL_SS3_DEBUG_SPTR(event);
+
+    CGAL_SS3_CORE_TRACE_V(4, event->to_string());
+
+    const VertexSPtr& vertex_1 = event->get_vertex_1();
+    const VertexSPtr& vertex_2 = event->get_vertex_2();
+    const FacetSPtr& facet_1 = event->get_facet_1();
+    const FacetSPtr& facet_2 = event->get_facet_2();
+    CGAL_SS3_DEBUG_SPTR(vertex_1);
+    CGAL_SS3_DEBUG_SPTR(vertex_2);
+    CGAL_precondition(vertex_1 != vertex_2 && facet_1 != facet_2);
+
+    EdgeSPtr edge_merge_1, edge_11, edge_12;
+    EdgeSPtr edge_merge_2, edge_21, edge_22;
+    identify_incident_edges(vertex_1, facet_1, facet_2, edge_merge_1, edge_11, edge_12);
+    identify_incident_edges(vertex_2, facet_1, facet_2, edge_merge_2, edge_21, edge_22);
+
+    auto other_facet = [](const EdgeSPtr& edge, const FacetSPtr& f1, const FacetSPtr& f2)
+    {
+      FacetSPtr facet = edge->get_facet_L();
+      if (facet == f1 || facet == f2) {
+        facet = edge->get_facet_R();
+      }
+      CGAL_postcondition(facet != f1 && facet != f2);
+      return facet;
+    };
+
+    // The third facet at each vertex
+    const FacetSPtr facet_1b = other_facet(edge_11, facet_1, facet_2);
+    const FacetSPtr facet_2b = other_facet(edge_21, facet_1, facet_2);
+    CGAL_assertion(facet_1b == other_facet(edge_12, facet_1, facet_2));
+    CGAL_assertion(facet_2b == other_facet(edge_22, facet_1, facet_2));
+    // vertex_1 and vertex_2 share exactly two facets
+    CGAL_assertion(facet_1b != facet_2b);
+
+    // determines which specialized event the generic vertex event supported by (vertex_1,
+    // vertex_2, facet_1, facet_2) resolves into.
+
+    // do we actually need to check all edges?...
+    bool is_split_merge_event = false;
+    EdgeSPtr edge_cur = edge_11->next(facet_1b);
+    while (edge_cur != edge_11) {
+      // check if facet_1b and facet_2b share an edge
+      if ((edge_cur->get_facet_L() == facet_1b && edge_cur->get_facet_R() == facet_2b) ||
+          (edge_cur->get_facet_R() == facet_1b && edge_cur->get_facet_L() == facet_2b)) {
+        if (is_event_point_on_edge(event, edge_cur)) {
+          CGAL_SS3_CORE_TRACE_V(16, "Generic vertex event is a split-merge event");
+          is_split_merge_event = true;
+          break;
+        }
+      }
+      edge_cur = edge_cur->next(facet_1b);
+    }
+
+    auto initialize_specialized_event = [](const Generic_vertex_event_sptr& event,
+                                           auto& specialized_event)
+    {
+      specialized_event->set_time(event->time());
+      specialized_event->set_point(event->point());
+      specialized_event->set_vertex_1(event->get_vertex_1());
+      specialized_event->set_vertex_2(event->get_vertex_2());
+      specialized_event->set_facet_1(event->get_facet_1());
+      specialized_event->set_facet_2(event->get_facet_2());
+    };
+
+    if (is_split_merge_event) {
+      // facet_1b and facet_2b are adjacent and the event point is interior to the edge they share,
+      // which must be split while edge_merge_1 and edge_merge_2 merge.
+      Split_merge_event_sptr split_merge_event = Split_merge_event::create();
+      initialize_specialized_event(event, split_merge_event);
+      return handle_split_merge_event(split_merge_event, current_time, time_future_bound, polyhedron);
+    } else {
+      // probably could:
+      // - simplify both tests to just checking if
+      //     edge_11->next(vertex_1) == edge_12 and edge_21->next(vertex_2) == edge_22
+      // - early exit on is_vertex_event == true
+      // but those tests are very cheap and it's clearer that way.
+
+      const bool is_vertex_event =
+        ((edge_11->next(vertex_1) == edge_12 && edge_22->next(vertex_2) == edge_21) ||
+        (edge_12->next(vertex_1) == edge_11 && edge_21->next(vertex_2) == edge_22));
+
+      const bool is_flip_vertex_event =
+        (edge_12->next(vertex_1) == edge_11 && edge_22->next(vertex_2) == edge_21);
+
+      CGAL_SS3_CORE_TRACE_V(3, "is_vertex_event: " << is_vertex_event);
+      CGAL_SS3_CORE_TRACE_V(3, "is_flip_vertex_event: " << is_flip_vertex_event);
+
+      CGAL_assertion(int(is_vertex_event) + int(is_flip_vertex_event) == 1);
+
+      if (is_vertex_event) {
+        // facet_1b and facet_2b are not adjacent, and the edges rotate in opposite senses
+        // around vertex_1 and vertex_2: the two vertices merge.
+        Vertex_event_sptr vertex_event = Vertex_event::create();
+        initialize_specialized_event(event, vertex_event);
+        return handle_vertex_event(vertex_event, current_time, time_future_bound, polyhedron);
+      } else {
+        // facet_1b and facet_2b are not adjacent, and the edges rotate in the same sense
+        // around vertex_1 and vertex_2: the two vertices flip.
+        Flip_vertex_event_sptr flip_vertex_event = Flip_vertex_event::create();
+        initialize_specialized_event(event, flip_vertex_event);
+        return handle_flip_vertex_event(flip_vertex_event, current_time, time_future_bound, polyhedron);
+      }
+    }
+
+    CGAL_unreachable();
+    std::abort();
+  }
+
   Event_status handle_vertex_event(const Vertex_event_sptr& event,
                                    const FT& current_time,
                                    const std::optional<FT>& time_future_bound,
@@ -5966,14 +6360,17 @@ public:
     if (facet_2b == facet_1 || facet_2b == facet_2) {
       facet_2b = edge_21->get_facet_R();
     }
+
     EdgeSPtr edge_tosplit = EdgeSPtr();
     // edge_tosplit = facet_1b->find_edge(facet_2b);
     EdgeSPtr edge_cur = edge_11->next(facet_1b);
     while (edge_cur != edge_11) {
       if ((edge_cur->get_facet_L() == facet_1b && edge_cur->get_facet_R() == facet_2b) ||
           (edge_cur->get_facet_R() == facet_1b && edge_cur->get_facet_L() == facet_2b)) {
-        edge_tosplit = edge_cur;
-        break;
+        if (is_event_point_on_edge(event, edge_cur)) {
+          edge_tosplit = edge_cur;
+          break;
+        }
       }
       edge_cur = edge_cur->next(facet_1b);
     }
@@ -6419,6 +6816,9 @@ public:
     } else if (event->getType() == Abstract_event::CONST_TIME_EVENT) {
       result = handle_const_time_event(std::dynamic_pointer_cast<Const_time_event>(event),
                                        current_time, polyhedron);
+    } else if (event->getType() == Abstract_event::GENERIC_VERTEX_EVENT) {
+      result = handle_generic_vertex_event(std::dynamic_pointer_cast<Generic_vertex_event>(event),
+                                           current_time, time_future_bound, polyhedron);
     } else if (event->getType() == Abstract_event::VANISH_EVENT) {
       result = handle_vanish_event(std::dynamic_pointer_cast<Vanish_event>(event),
                                    current_time, time_future_bound, polyhedron);
@@ -6503,7 +6903,7 @@ public:
     sstr << "    ConstTimeEvents:       " << count_events(Abstract_event::CONST_TIME_EVENT) << std::endl;
     sstr << "    SaveEvents:            " << count_events(Abstract_event::SAVE_EVENT) << std::endl;
     sstr << "  VanishEvents:" << std::endl;
-    sstr << "    Generic VanishEvents:  " << count_events(Abstract_event::VANISH_EVENT) << std::endl;
+    sstr << "    GenericVanishEvents:   " << count_events(Abstract_event::VANISH_EVENT) << std::endl;
     sstr << "    EdgeEvents:            " << count_events(Abstract_event::EDGE_EVENT) << std::endl;
     sstr << "    EdgeMergeEvents:       " << count_events(Abstract_event::EDGE_MERGE_EVENT) << std::endl;
     sstr << "    TriangleEvents:        " << count_events(Abstract_event::TRIANGLE_EVENT) << std::endl;
@@ -6511,6 +6911,7 @@ public:
     sstr << "    DblTriangleEvents:     " << count_events(Abstract_event::DBL_TRIANGLE_EVENT) << std::endl;
     sstr << "    TetrahedronEvents:     " << count_events(Abstract_event::TETRAHEDRON_EVENT) << std::endl;
     sstr << "  ContactEvents:" << std::endl;
+    sstr << "    GenericVertexEvents:   " << count_events(Abstract_event::GENERIC_VERTEX_EVENT) << std::endl;
     sstr << "    VertexEvents:          " << count_events(Abstract_event::VERTEX_EVENT) << std::endl;
     sstr << "    FlipVertexEvents:      " << count_events(Abstract_event::FLIP_VERTEX_EVENT) << std::endl;
     sstr << "    SurfaceEvents:         " << count_events(Abstract_event::SURFACE_EVENT) << std::endl;
