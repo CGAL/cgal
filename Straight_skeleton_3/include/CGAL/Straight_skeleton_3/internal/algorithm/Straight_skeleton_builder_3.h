@@ -411,9 +411,6 @@ public:
 
     CGAL_SS3_CORE_TRACE_V(1, polyhedron_->vertices().size() << " NV " << polyhedron_->facets().size() << " NF");
 
-    CGAL_assertion(Perturbation::are_planes_in_general_position(polyhedron_));
-    CGAL_assertion(!Self_intersection::has_self_intersecting_surface(polyhedron_));
-
     skeleton_->set_polyhedron(polyhedron_); // skeleton's polyhedron is fixed
 
 // @tmp some hardcoded weights for specific inputs
@@ -1267,10 +1264,10 @@ public:
     CGAL_SS3_DEBUG_SPTR(event);
 
     const FT& event_time = event->time();
-    VertexSPtr vertex_1 = event->get_vertex_1();
-    VertexSPtr vertex_2 = event->get_vertex_2();
-    FacetSPtr facet_1 = event->get_facet_1();
-    FacetSPtr facet_2 = event->get_facet_2();
+    const VertexSPtr& vertex_1 = event->get_vertex_1();
+    const VertexSPtr& vertex_2 = event->get_vertex_2();
+    const FacetSPtr& facet_1 = event->get_facet_1();
+    const FacetSPtr& facet_2 = event->get_facet_2();
 
     // convex split checks
     EdgeSPtr edge_11 = EdgeSPtr();
@@ -1342,10 +1339,10 @@ public:
     CGAL_SS3_DEBUG_SPTR(event);
 
     const FT& event_time = event->time();
-    VertexSPtr vertex_1 = event->get_vertex_1();
-    VertexSPtr vertex_2 = event->get_vertex_2();
-    FacetSPtr facet_1 = event->get_facet_1();
-    FacetSPtr facet_2 = event->get_facet_2();
+    const VertexSPtr& vertex_1 = event->get_vertex_1();
+    const VertexSPtr& vertex_2 = event->get_vertex_2();
+    const FacetSPtr& facet_1 = event->get_facet_1();
+    const FacetSPtr& facet_2 = event->get_facet_2();
 
     // convex split event checks
     EdgeSPtr edge_11 = EdgeSPtr();
@@ -1525,10 +1522,10 @@ public:
     CGAL_SS3_DEBUG_SPTR(event);
 
     const FT& event_time = event->time();
-    VertexSPtr vertex_1 = event->get_vertex_1();
-    VertexSPtr vertex_2 = event->get_vertex_2();
-    FacetSPtr facet_1 = event->get_facet_1();
-    FacetSPtr facet_2 = event->get_facet_2();
+    const VertexSPtr& vertex_1 = event->get_vertex_1();
+    const VertexSPtr& vertex_2 = event->get_vertex_2();
+    const FacetSPtr& facet_1 = event->get_facet_1();
+    const FacetSPtr& facet_2 = event->get_facet_2();
 
     // convex split checks
     EdgeSPtr edge_11 = EdgeSPtr();
@@ -1829,6 +1826,7 @@ public:
       event->set_time(*event_time);
       event->set_point(vanish_point(edge));
       event->set_edge(edge);
+
       queue.push(event);
     }
 
@@ -3490,9 +3488,9 @@ public:
     {
       std::list<EdgeSPtr> local_edges(post_op_edges_.begin(), post_op_edges_.end());
 
-      CGAL_SS3_CORE_TRACE_V(8, "Local Edges for Vanish Events (" << local_edges.size() << ")");
+      CGAL_SS3_CORE_TRACE_V(16, "Local Edges for Vanish Events (" << local_edges.size() << ")");
       CGAL_SS3_CORE_TRACE_CODE(for (const EdgeSPtr& e : local_edges))
-      CGAL_SS3_CORE_TRACE_V(8, "\t" << e->to_string());
+      CGAL_SS3_CORE_TRACE_V(16, "\t" << e->to_string());
 
       collect_vanish_events(local_edges, polyhedron, current_time, time_future_bound, queue);
     }
@@ -3506,11 +3504,11 @@ public:
       std::list<VertexSPtr> local_vertices_VV(post_op_vertices_VV_.begin(),
                                               post_op_vertices_VV_.end());
 
-      CGAL_SS3_CORE_TRACE_V(8, "Local Vertices for Vertex-Vertex Events (" << local_vertices_VV.size() << "):")
+      CGAL_SS3_CORE_TRACE_V(16, "Local Vertices for Vertex-Vertex Events (" << local_vertices_VV.size() << "):")
       CGAL_SS3_CORE_TRACE_CODE(std::stringstream ss;)
       CGAL_SS3_CORE_TRACE_CODE(for (const VertexSPtr& v : local_vertices_VV))
       CGAL_SS3_CORE_TRACE_CODE(ss << " " << v->id();)
-      CGAL_SS3_CORE_TRACE_V(8, ss.str());
+      CGAL_SS3_CORE_TRACE_V(16, ss.str());
 
       const bool use_canonical_reps = false;
 #else
@@ -3540,9 +3538,9 @@ public:
 
       std::list<EdgeSPtr> local_edges_EE(post_op_edges_.begin(), post_op_edges_.end());
 
-      CGAL_SS3_CORE_TRACE_V(8, "Local Edges for Polyhedron Events (" << local_edges_EE.size() << ")");
+      CGAL_SS3_CORE_TRACE_V(16, "Local Edges for Polyhedron Events (" << local_edges_EE.size() << ")");
       CGAL_SS3_CORE_TRACE_CODE(for (const EdgeSPtr& e : local_edges_EE))
-      CGAL_SS3_CORE_TRACE_V(8, "\t" << e->to_string());
+      CGAL_SS3_CORE_TRACE_V(16, "\t" << e->to_string());
 
       // this is the modified edges as 'edge_1'
       collect_polyhedron_split_events(local_edges_EE, polyhedron,
@@ -3600,11 +3598,11 @@ public:
       // something like extra_combinations_for_pierce_events...
       std::list<VertexSPtr> local_vertices_VF(post_op_vertices_pierce_.begin(), post_op_vertices_pierce_.end());
 
-      CGAL_SS3_CORE_TRACE_V(8, "Local Vertices for Pierce Events (" << local_vertices_VF.size() << "):");
+      CGAL_SS3_CORE_TRACE_V(16, "Local Vertices for Pierce Events (" << local_vertices_VF.size() << "):");
       CGAL_SS3_CORE_TRACE_CODE(std::stringstream ss;)
       CGAL_SS3_CORE_TRACE_CODE(for (const VertexSPtr& v : local_vertices_VF))
       CGAL_SS3_CORE_TRACE_CODE(ss << " " << v->id());
-      CGAL_SS3_CORE_TRACE_V(8, ss.str());
+      CGAL_SS3_CORE_TRACE_V(16, ss.str());
 #else
       std::list<VertexSPtr> local_vertices_VF = polyhedron->vertices();
 #endif
@@ -3622,9 +3620,9 @@ public:
 #if 1
       std::list<EdgeSPtr> local_edges_EE(post_op_edges_.begin(), post_op_edges_.end());
 
-      CGAL_SS3_CORE_TRACE_V(8, "Local Edges for Surface Events (" << local_edges_EE.size() << ")");
+      CGAL_SS3_CORE_TRACE_V(16, "Local Edges for Surface Events (" << local_edges_EE.size() << ")");
       CGAL_SS3_CORE_TRACE_CODE(for (const EdgeSPtr& e : local_edges_EE))
-      CGAL_SS3_CORE_TRACE_V(8, "\t" << e->to_string());
+      CGAL_SS3_CORE_TRACE_V(16, "\t" << e->to_string());
 
       // this is the modified edges as 'edge_1'
       collect_surface_events(local_edges_EE, polyhedron,
@@ -3674,9 +3672,9 @@ public:
       // do not create new facets, they only create new edge cycles within the same facet.
       std::list<EdgeSPtr> local_edges_EE(post_op_edges_.begin(), post_op_edges_.end());
 
-      CGAL_SS3_CORE_TRACE_V(8, "Local Edges for Edge Split Events (" << local_edges_EE.size() << ")");
+      CGAL_SS3_CORE_TRACE_V(16, "Local Edges for Edge Split Events (" << local_edges_EE.size() << ")");
       CGAL_SS3_CORE_TRACE_CODE(for (const EdgeSPtr& e : local_edges_EE))
-      CGAL_SS3_CORE_TRACE_V(8, "\t" << e->to_string());
+      CGAL_SS3_CORE_TRACE_V(16, "\t" << e->to_string());
 
       const bool use_canonical_reps = false;
 #else
@@ -5655,10 +5653,10 @@ public:
 
     shit_to_event_time(polyhedron, event_time);
 
-    VertexSPtr vertex_1 = event->get_vertex_1();
-    VertexSPtr vertex_2 = event->get_vertex_2();
-    FacetSPtr facet_1 = event->get_facet_1();
-    FacetSPtr facet_2 = event->get_facet_2();
+    const VertexSPtr& vertex_1 = event->get_vertex_1();
+    const VertexSPtr& vertex_2 = event->get_vertex_2();
+    const FacetSPtr& facet_1 = event->get_facet_1();
+    const FacetSPtr& facet_2 = event->get_facet_2();
 
     EdgeSPtr edge_tomerge_1 = EdgeSPtr();
     EdgeSPtr edge_11 = EdgeSPtr();
@@ -5828,10 +5826,10 @@ public:
 
     shit_to_event_time(polyhedron, event_time);
 
-    VertexSPtr vertex_1 = event->get_vertex_1();
-    VertexSPtr vertex_2 = event->get_vertex_2();
-    FacetSPtr facet_1 = event->get_facet_1();
-    FacetSPtr facet_2 = event->get_facet_2();
+    const VertexSPtr& vertex_1 = event->get_vertex_1();
+    const VertexSPtr& vertex_2 = event->get_vertex_2();
+    const FacetSPtr& facet_1 = event->get_facet_1();
+    const FacetSPtr& facet_2 = event->get_facet_2();
 
 #ifndef CGAL_SS3_NO_SKELETON_DS
     NodeSPtr node = Node::create();
@@ -6314,10 +6312,10 @@ public:
 
     shit_to_event_time(polyhedron, event_time);
 
-    VertexSPtr vertex_1 = event->get_vertex_1();
-    VertexSPtr vertex_2 = event->get_vertex_2();
-    FacetSPtr facet_1 = event->get_facet_1();
-    FacetSPtr facet_2 = event->get_facet_2();
+    const VertexSPtr& vertex_1 = event->get_vertex_1();
+    const VertexSPtr& vertex_2 = event->get_vertex_2();
+    const FacetSPtr& facet_1 = event->get_facet_1();
+    const FacetSPtr& facet_2 = event->get_facet_2();
 
     EdgeSPtr edge_tomerge_1 = EdgeSPtr();
     EdgeSPtr edge_11 = EdgeSPtr();
@@ -6943,12 +6941,12 @@ private:
 
   int step_id_;
 
-  std::set<VertexSPtr> post_op_vertices_;
-  std::set<EdgeSPtr> post_op_edges_;
-  std::set<FacetSPtr> post_op_facets_;
-  std::set<VertexSPtr> post_op_vertices_VV_;
-  std::set<VertexSPtr> post_op_vertices_pierce_;
-  std::set<EdgeSPtr> post_op_edges_edgesplit_;
+  CGAL::unordered_flat_set<VertexSPtr> post_op_vertices_;
+  CGAL::unordered_flat_set<EdgeSPtr> post_op_edges_;
+  CGAL::unordered_flat_set<FacetSPtr> post_op_facets_;
+  CGAL::unordered_flat_set<VertexSPtr> post_op_vertices_VV_;
+  CGAL::unordered_flat_set<VertexSPtr> post_op_vertices_pierce_;
+  CGAL::unordered_flat_set<EdgeSPtr> post_op_edges_edgesplit_;
 };
 
 } // namespace algorithm

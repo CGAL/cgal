@@ -26,7 +26,7 @@ namespace Straight_skeletons_3 {
 namespace utils {
 
 // This is an helper function that computes the weight associated to a face
-// using its normal and the provided weights in the x, y and z directions.
+// based on the face's normal and the user-provided weights in the canonical x, y and z directions.
 // Weights are written in the property map `fwm`.
 //
 // \tparam PolygonMesh must be a model of `FaceListGraph`

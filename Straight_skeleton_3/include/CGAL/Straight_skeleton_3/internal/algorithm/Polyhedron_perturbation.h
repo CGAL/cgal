@@ -223,7 +223,7 @@ public:
   static bool are_planes_in_general_position(const PolyhedronSPtr& polyhedron,
                                              std::vector<Stability_failure>* failures = nullptr)
   {
-    CGAL_SS3_TRANSF_TRACE_V(4, "Check if planes are in general position...");
+    CGAL_SS3_TRANSF_TRACE_V(16, "Check if planes are in general position...");
     CGAL_SS3_DEBUG_SPTR(polyhedron);
     CGAL_precondition(polyhedron->facets().size() >= 3);
 
@@ -325,7 +325,7 @@ public:
           while (k == i || k == j) {
             ++k;
           }
-          CGAL_SS3_TRANSF_TRACE_V(1, "Degenerate facet triplet: " << normals[i].first->id() << " " << normals[j].first->id() << " -1");
+          CGAL_SS3_TRANSF_TRACE_V(1, "Degenerate facet pair: " << normals[i].first->id() << " " << normals[j].first->id() << " -1");
           if (failures) {
             failures->push_back({VertexSPtr(), normals[i].first, normals[j].first, normals[k].first, FT(-1)});
             continue;
@@ -369,53 +369,6 @@ public:
     }
   }
 
-  /**
-   * Checks that the positions of the vertices in two polyhedra are close.
-   * Preconditions:
-   *   - Both polyhedra are non-null and have the same number of vertices.
-   *   - Vertices are assumed to be in the same order.
-   * Returns true if all corresponding vertices are within a given epsilon.
-   */
-  static bool check_perturbed_positions_proximity(const PolyhedronSPtr& poly1,
-                                                  const PolyhedronSPtr& poly2,
-                                                  double epsilon = 1e-4) // @fixme hardcoded...
-  {
-    CGAL_SS3_TRANSF_TRACE_V(4, "Check vertex promixity");
-
-    CGAL_precondition(poly1 && poly2);
-    CGAL_precondition(poly1->vertices().size() == poly2->vertices().size());
-
-    auto it1 = poly1->vertices().begin();
-    auto it2 = poly2->vertices().begin();
-    for (; it1 != poly1->vertices().end() && it2 != poly2->vertices().end(); ++it1, ++it2) {
-      const Point_3& p1 = (*it1)->point();
-      const Point_3& p2 = (*it2)->point();
-      double dx = CGAL::to_double(p1.x()) - CGAL::to_double(p2.x());
-      double dy = CGAL::to_double(p1.y()) - CGAL::to_double(p2.y());
-      double dz = CGAL::to_double(p1.z()) - CGAL::to_double(p2.z());
-      double dist2 = dx*dx + dy*dy + dz*dz;
-      if (dist2 > epsilon * epsilon) {
-        CGAL_SS3_TRANSF_TRACE_V(2, "Vertex positions too far: " << (*it1)->id() << " d2=" << dist2 << " epsilon=" << CGAL::square(epsilon));
-        return false;
-      }
-    }
-    return true;
-  }
-
-  static bool are_all_vertices_degree_3(const PolyhedronSPtr& polyhedron)
-  {
-    CGAL_SS3_DEBUG_SPTR(polyhedron);
-    bool result = true;
-    for (const VertexSPtr& vertex : polyhedron->vertices()) {
-      if (vertex->degree() != 3) {
-        CGAL_SS3_TRANSF_TRACE_V(32, "High-degree vertex: " << vertex->to_string());
-        result = false;
-        break;
-      }
-    }
-    return result;
-  }
-
   static bool is_triangle_polyhedron(const PolyhedronSPtr& polyhedron)
   {
     for (const FacetSPtr& facet : polyhedron->facets()) {
@@ -426,7 +379,7 @@ public:
     return true;
   }
 
-  // @fixme this whole approach does not yield a solid perturbed state as the planes
+  // @fixme this approach does not even yield a valid input as the planes
   // go through the points, but the **normalized** planes do not...
   static void rand_move_points(const PolyhedronSPtr& polyhedron)
   {
@@ -465,62 +418,6 @@ public:
   }
 
   /**
-  * nudges the plane coefficients by a random value in the range [low, high].
-  */
-  static void perturbPlaneCoefficientsNudge(const FacetSPtr& facet,
-                                            const double range)
-  {
-    CGAL_precondition(Transformation::has_normalized_plane(facet));
-
-    CGAL_SS3_TRANSF_TRACE_V(32, "Perturb (Nudge) Facet " << facet->id());
-    CGAL_SS3_TRANSF_TRACE_V(32, "  From coefficients [" << facet->get_plane().a() << " " << facet->get_plane().b() << " "
-                                                        << facet->get_plane().c() << " " << facet->get_plane().d() << "]");
-
-    auto nudge = [&](const FT& v)
-    {
-      static std::random_device rd;
-      unsigned int s = 0; // rd();
-      // CGAL_SS3_TRANSF_TRACE("seed = " << s);
-      static std::mt19937 gen(s);
-      static std::uniform_real_distribution<> rdist(-range, range);
-
-      // Since we are perturbing, we might as well collapse the DAG of 'v'.
-      // The point is also that once 'nv' is a double, its interval will be a singleton,
-      // and we will have access to static filters
-      double step = rdist(gen);
-      double nv = CGAL::to_double(v) + step;
-      return nv;
-    };
-
-    double na = nudge(facet->get_plane().a());
-    double nb = nudge(facet->get_plane().b());
-    double nc = nudge(facet->get_plane().c());
-    double nd = nudge(facet->get_plane().d()); // @todo do not nudge 'd'? (mind the 'to_double()')
-
-    double n = CGAL::approximate_sqrt(square(na) + square(nb) + square(nc));
-    CGAL_assertion(n != 0); // should not happen since we have normalized and the shift is tiny
-
-    // below doesn't seem to matter? Probably need specific static filters...
-#if 0
-    facet->set_plane(Plane_3{na/n, nb/n, nc/n, nd/n});
-#else
-    // cast to_double() *after* the normalization to have double coordinates in the planes
-    // the downside is that we won't have a^2 + b^2 + c^2 == 1,
-    // but then again, who does...
-    const double a = CGAL::to_double(na/n);
-    const double b = CGAL::to_double(nb/n);
-    const double c = CGAL::to_double(nc/n);
-    const double d = CGAL::to_double(nd/n);
-    facet->set_plane(Plane_3{a, b, c, d});
-#endif
-
-    CGAL_SS3_TRANSF_TRACE_V(32, "  To coefficients [" << facet->get_plane().a() << " " << facet->get_plane().b() << " "
-                                                      << facet->get_plane().c() << " " << facet->get_plane().d() << "]");
-
-    CGAL_postcondition(Transformation::has_normalized_plane(facet));
-  }
-
-  /**
   * nudges the plane coefficients but ensure that the perturbed plane goes through 0, 1, or 2 fixed points.
   * If 0 points: nudge all coefficients independently.
   * If 1 point: nudge (a, b, c), recompute d so the plane passes through the point.
@@ -531,7 +428,7 @@ public:
                                                   const double range,
                                                   const VertexRange& fixed_vertices)
   {
-    CGAL_SS3_TRANSF_TRACE_V(32, "Perturb (Fixed) F" << facet->id() << " [" << facet->vertices().size() << " vs]");
+    CGAL_SS3_TRANSF_TRACE_V(32, "Perturb (Fixed) F" << facet->id() << " [size: " << facet->vertices().size() << "]");
     CGAL_SS3_TRANSF_TRACE_V(32, "  From coefficients [" << facet->get_plane().a() << " " << facet->get_plane().b() << " "
                                                         << facet->get_plane().c() << " " << facet->get_plane().d() << "]");
     CGAL_SS3_TRANSF_TRACE_V(32, "  with " << fixed_vertices.size() << " fixed vertices");
@@ -2860,7 +2757,7 @@ public:
         }
       }; // lambda 'build_volume_CC'
 
-      CGAL_SS3_TRANSF_TRACE_V(16, "building volumes...");
+      CGAL_SS3_TRANSF_TRACE_V(32, "building volumes...");
 
       // identify volumes in the arrangement, and tag faces of the volumes
       // that are incident to the base face(s)
@@ -2880,7 +2777,7 @@ public:
           build_volume_CC(i, vid++, false /*down*/, points, polygons, edge_map, volume_CCs, face_volume_IDs);
       }
 
-      CGAL_SS3_TRANSF_TRACE_V(16, volume_CCs.size() << " volume CCs");
+      CGAL_SS3_TRANSF_TRACE_V(32, volume_CCs.size() << " volume CCs");
 
       for (std::size_t i=0; i<volume_CCs.size(); ++i) {
         // build a mesh from the soup
@@ -3388,7 +3285,7 @@ public:
         }
       }
 
-      CGAL_SS3_TRANSF_TRACE_V(16, "Cell unknowns: " << x_unknowns << " / " << C);
+      CGAL_SS3_TRANSF_TRACE_V(32, "Cell unknowns: " << x_unknowns << " / " << C);
 
       // =====================================================================
       //  CONSTRAINT — Boundary facets point outside
@@ -3429,7 +3326,7 @@ public:
         }
       }
 
-      CGAL_SS3_TRANSF_TRACE_V(16, "Face unknowns: " << b_unknowns << " / " << polygons.size());
+      CGAL_SS3_TRANSF_TRACE_V(32, "Face unknowns: " << b_unknowns << " / " << polygons.size());
 
       // =====================================================================
       //  CONSTRAINT — Global Euler characteristic (V_b − E_b + F_b = 1)
@@ -3872,7 +3769,7 @@ public:
 
           std::vector<std::pair<CC_in_out_flag, std::string> > dumps =
             {{CC_in_out_flag::INSIDE, "INSIDE"}, {CC_in_out_flag::OUTSIDE, "OUTSIDE"}};
-          for (auto e : dumps) {
+          for (const auto& e : dumps) {
             std::vector<Point_3> cc_points = points;
             std::vector<std::vector<PID> > cc_polygons;
 
@@ -3883,8 +3780,9 @@ public:
               if (solution[i] != e.first)
                 continue;
 
-              for (FID fid : volume_CCs[i])
+              for (FID fid : volume_CCs[i]) {
                 cc_polygons.push_back(polygons[fid]);
+              }
 
               std::ostringstream oss;
               oss << "results/volumes_" << e.second << "_tentative.off";
@@ -3919,9 +3817,9 @@ public:
 
           CGAL_assertion(!local_polygons.empty());
 
-          typedef std::vector<PID>                                            PointRange;
-          typedef std::vector<std::vector<PID> >                              PolygonRange;
-          typedef Polygon_mesh_processing::internal::Polygon_soup_orienter<PointRange, PolygonRange>   Orienter;
+          using PointRange = std::vector<PID>;
+          using PolygonRange = std::vector<std::vector<PID> >;
+          using Orienter = PMP::internal::Polygon_soup_orienter<PointRange, PolygonRange>;
 
           typename Orienter::Edge_map edges(points.size());
           typename Orienter::Marked_edges marked_edges;
@@ -3934,12 +3832,12 @@ public:
         };
 
         if (!check_CC()) {
-          CGAL_SS3_TRANSF_TRACE_V(1, "Warning: issue with global boundary");
+          CGAL_SS3_TRANSF_TRACE_V(32, "Issue with global boundary");
         } else {
           for (FacetWPtr wf : vertex->facets()) {
             if (FacetSPtr f = wf.lock()) {
               if (!check_CC(f)) {
-                CGAL_SS3_TRANSF_TRACE_V(1, "Warning: issue with CC of F" << f->id());
+                CGAL_SS3_TRANSF_TRACE_V(32, "Issue with CC of F" << f->id());
                 failed_f = f;
                 break; // nm_vertex_id is populated, and we know exactly which color caused it
               }
@@ -3976,7 +3874,7 @@ public:
             bool bot_fixed = (in_out_flags[bot] == CC_in_out_flag::INSIDE);
             bool top_fixed = (in_out_flags[top] == CC_in_out_flag::OUTSIDE);
             if (!bot_fixed || !top_fixed) {
-              some_not_fixed = true; // At least one cell can be flipped!
+              some_not_fixed = true; // at least one cell can be flipped
             }
 
             // Reconstruct whether this facet was on the boundary in the rejected solution
@@ -3995,14 +3893,13 @@ public:
             model.AddBoolOr(nogood_terms);
           }
         } else {
-          CGAL_SS3_TRANSF_TRACE_V(1, "Valid solution found");
+          CGAL_SS3_TRANSF_TRACE_V(32, "Valid solution found");
           break;
         }
       }
 
       CGAL_assertion(iteration < max_iterations);
 #endif // CGAL_SLS3_USE_LAZY_NON_MANIFOLD_VERTEX_CONSTRAINTS
-
 
 #ifdef CGAL_SS3_DUMP_FILES
       // Final dump
@@ -4030,11 +3927,13 @@ public:
             CGAL_assertion(e.first != CC_in_out_flag::TBD);
             CGAL_assertion(e.first != CC_in_out_flag::UNINITIALIZED);
 
-            if (solution[i] != e.first)
+            if (solution[i] != e.first) {
               continue;
+            }
 
-            for (FID fid : volume_CCs[i])
+            for (FID fid : volume_CCs[i]) {
               cc_polygons.push_back(polygons[fid]);
+            }
 
             std::ostringstream oss;
             oss << "results/volumes_" << e.second << "_final.off";
@@ -4058,8 +3957,6 @@ public:
                                     const std::vector<std::vector<PID> >& polygons,
                                     const std::vector<Point_3>& points) -> bool
       {
-        namespace PMP = CGAL::Polygon_mesh_processing;
-
         // C1
         for(const auto& flag : in_out_flags) {
           if(flag == CC_in_out_flag::UNINITIALIZED || flag == CC_in_out_flag::TBD) {
@@ -4189,8 +4086,10 @@ public:
       using vec2i = boost::shared_array<int>;
       using combi = std::vector<vec2i>;
 
-      auto reconstruct_combi = [&]() -> combi {
-        auto create_split = [](int begin, int end) -> vec2i {
+      auto reconstruct_combi = [&]() -> combi
+      {
+        auto create_split = [](int begin, int end) -> vec2i
+        {
           vec2i result(new int[2]);
           result[0] = begin;
           result[1] = end;
@@ -4198,10 +4097,10 @@ public:
         };
 
         std::set<std::pair<int, int> > unique_splits;
-        for (edge_descriptor e : edges(bsm))
-        {
-          if (is_border(e, bsm))
+        for (edge_descriptor e : edges(bsm)) {
+          if (is_border(e, bsm)) {
             continue;
+          }
 
           halfedge_descriptor h = halfedge(e, bsm);
           face_descriptor f1 = face(h, bsm);
@@ -4213,19 +4112,21 @@ public:
           FacetSPtr input_facet_2 = get(ifpm, f2);
           CGAL_assertion(input_facet_1 != FacetSPtr() && input_facet_2 != FacetSPtr());
 
-          if (input_facet_1 == input_facet_2)
+          if (input_facet_1 == input_facet_2) {
             continue;
+          }
 
           // if the facets are neighbors, it's not a split edge
           EdgeSPtr common_e = input_facet_1->find_edge(input_facet_2);
-          if (common_e != EdgeSPtr())
+          if (common_e != EdgeSPtr()) {
             continue;
+          }
 
           // map original facets -> fan positions
           int a = local_facet_indices.at(input_facet_1);
           int b = local_facet_indices.at(input_facet_2);
 
-          // canonicalize so begin < end (matches create_single_split_combinations)
+          // canonicalize so begin < end (matches create_single_split_combinations())
           int begin = (std::min)(a, b);
           int end = (std::max)(a, b);
 
@@ -4239,7 +4140,7 @@ public:
           result.push_back(create_split(s.first, s.second));
 
         // sort into the canonical order used by the generator
-        // compare_splits returns +1 when split1 < split2 lexicographically.
+        // compare_splits returns +1 when split1 < split2, lexicographically
         auto sorter = [](const vec2i& s1, const vec2i& s2)
         {
           auto compare_splits = [](const vec2i& split1, const vec2i& split2) -> int {
@@ -4264,7 +4165,7 @@ public:
         return result;
       };
 
-      // @todo just split_vertex(vertex, split_combi)...?
+      // @todo use split_vertex(vertex, split_combi) directly...?
       using Combi_vertex_splitter = algorithm::Combi_vertex_splitter<GeomTraits>;
 
       combi split_combi = reconstruct_combi();

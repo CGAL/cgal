@@ -363,7 +363,7 @@ public:
       facet = edge->other(facet);
     }
 
-    std::list<EdgeSPtr> edges_toremove;
+    std::list<EdgeSPtr> edges_to_remove;
     for (unsigned int i = 0; i < combination.size(); ++i) {
       vec2i split = combination[i];
       FacetSPtr facet_right = facets[split[0]];
@@ -378,7 +378,7 @@ public:
           VertexSPtr vertex2 = vertex->split(facet_left, facet_right);
           if (facet_left->get_plane() == facet_right->get_plane()) {
             EdgeSPtr edge = vertex->find_edge(vertex2);
-            edges_toremove.push_back(edge);
+            edges_to_remove.push_back(edge);
           }
           if (vertex->has_data()) {
             SkelVertexDataSPtr data = std::dynamic_pointer_cast<Skeleton_vertex_data>(vertex->get_data());
@@ -396,8 +396,8 @@ public:
       }
     }
 
-    typename std::list<EdgeSPtr>::iterator it_e = edges_toremove.begin();
-    while (it_e != edges_toremove.end()) {
+    typename std::list<EdgeSPtr>::iterator it_e = edges_to_remove.begin();
+    while (it_e != edges_to_remove.end()) {
       EdgeSPtr edge = *it_e++;
       VertexSPtr vertex_src = edge->source();
       VertexSPtr vertex_tgt = edge->target();

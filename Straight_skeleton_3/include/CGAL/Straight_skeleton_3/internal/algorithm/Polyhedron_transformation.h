@@ -37,9 +37,6 @@
 #include <CGAL/Triangulation_data_structure_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/mark_domain_in_triangulation.h>
-#include <CGAL/simplest_rational_in_interval.h>
-#include <CGAL/Polygon_mesh_processing/autorefinement.h> // only for double_ceil
-#include <CGAL/Polygon_mesh_processing/internal/triangle_soup_snap_rounding.h>
 #include <CGAL/IO/polygon_soup_io.h>
 #include <CGAL/unordered_flat_map.h>
 
@@ -50,12 +47,8 @@
 #include <ctime>
 #include <limits>
 #include <list>
-#include <map>
-#include <queue>
 #include <random>
-#include <set>
 #include <sstream>
-#include <stack>
 #include <unordered_map>
 #include <vector>
 
@@ -341,14 +334,15 @@ public:
     CGAL_SS3_TRANSF_TRACE_V(4, "\nMerging coplanar faces with epsilon = " << epsilon);
     CGAL_SS3_TRANSF_TRACE_V(4, "  initial facet count: " << polyhedron->facets().size());
 
-    CGAL_SS3_DEBUG_SPTR(polyhedron);
-
 #ifdef CGAL_SS3_DUMP_FILES
     IO::write_OBJ("results/coplanar_merge_before.obj", polyhedron, parameters::do_not_triangulate_faces(true));
 #endif
 
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
+
     int result = 0;
-    std::list<EdgeWPtr> edges_toremove;
+
+    std::vector<EdgeWPtr> edges_to_remove;
     for (const EdgeSPtr& edge : polyhedron->edges()) {
       // the issue with below is that in some pipelines, we compute
       // weights based e.g. on the normal so we shouldn't do an exact
@@ -363,16 +357,16 @@ public:
 #endif
 
       if (has_coplanar_facets(edge, epsilon)) {
-        edges_toremove.push_back(edge);
+        edges_to_remove.push_back(edge);
       }
     }
 
-    CGAL_SS3_TRANSF_TRACE(edges_toremove.size() << " edges to remove");
+    CGAL_SS3_TRANSF_TRACE(edges_to_remove.size() << " edges to remove");
 
-    CGAL_SS3_TRANSF_TRACE_CODE(if (edges_toremove.size() > 0))
+    CGAL_SS3_TRANSF_TRACE_CODE(if (edges_to_remove.size() > 0))
     CGAL_SS3_TRANSF_TRACE_V(16, "Adjacent facets of the following edges are detected to be coplanar and will be merged.");
 
-    for (EdgeWPtr edge_w : edges_toremove) {
+    for (EdgeWPtr edge_w : edges_to_remove) {
       if (EdgeSPtr edge = edge_w.lock()) {
         merge_facets(edge, polyhedron);
         ++result;
@@ -389,7 +383,7 @@ public:
 
     polyhedron->initialize_all_IDs();
 
-    CGAL_SS3_TRANSF_TRACE_V(4, "  final facet count: " << polyhedron->facets().size());
+    CGAL_SS3_TRANSF_TRACE_V(4, "  Simplified facet count: " << polyhedron->facets().size());
 
 #ifdef CGAL_SS3_DUMP_FILES
     IO::write_OBJ("results/coplanar_merge_after.obj", polyhedron, parameters::do_not_triangulate_faces(true));
@@ -637,7 +631,7 @@ public:
       return { };
     }
 
-    CGAL_SS3_TRANSF_TRACE_V(32, "  New point = " << *point);
+    CGAL_SS3_TRANSF_TRACE_V(64, "  offset point = " << *point);
     return *point;
   }
 
@@ -677,7 +671,7 @@ public:
     }
 
     vertex->set_point(*point);
-    CGAL_SS3_TRANSF_TRACE_V(32, "  New point = " << *point);
+    CGAL_SS3_TRANSF_TRACE_V(64, "  New position = " << *point);
 
     CGAL_postcondition_code(for (FacetWPtr facet_wptr : vertex->facets()) {)
     CGAL_postcondition_code(    if (FacetSPtr facet = facet_wptr.lock()) {)
@@ -783,7 +777,7 @@ public:
       return { };
     }
 
-    CGAL_SS3_TRANSF_TRACE_V(32, "  New point = " << *point);
+    CGAL_SS3_TRANSF_TRACE_V(64, "  shifted position = " << *point);
 
     CGAL_assertion_code(for (const Plane_3& pi : planes))
     CGAL_assertion(pi.has_on(*point));
@@ -849,13 +843,12 @@ public:
   /**
     * Offsets the polyhedron `polyhedron`
     * Negative offset points to the interior of the polyhedron.
-    * This function is for the main shift in the event loop.
     */
   static void shift_facets(const PolyhedronSPtr& polyhedron,
                            const FT& time,
                            const bool recompute_positions = true)
   {
-    CGAL_SS3_TRANSF_TRACE_V(32, "~~~~ Shift polyhedron by " << time << " [in place]");
+    CGAL_SS3_TRANSF_TRACE_V(32, "~~~~ Shift polyhedron facets by " << time << " [in place]");
     CGAL_SS3_DEBUG_SPTR(polyhedron);
 
     typename std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
