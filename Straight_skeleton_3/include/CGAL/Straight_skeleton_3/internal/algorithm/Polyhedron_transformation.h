@@ -881,6 +881,40 @@ public:
   }
 
   /**
+    * Offsets the polyhedron `polyhedron`
+    * Negative offset points to the interior of the polyhedron.
+    * The shift time is applied on the base planes (t=0)
+    */
+  static void shift_facets_from_base(const PolyhedronSPtr& polyhedron,
+                                     const FT& time,
+                                     const bool recompute_positions = true)
+  {
+    CGAL_SS3_TRANSF_TRACE_V(32, "~~~~ Shift polyhedron facets by " << time << " [in place] [from base]");
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
+
+    typename std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
+    while (it_f != polyhedron->facets().end()) {
+      FacetSPtr facet = *it_f++;
+      Plane_3 offset_plane = offset_plane_from_base(facet, time);
+      facet->set_plane(offset_plane);
+    }
+
+    typename std::list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
+    while (it_v != polyhedron->vertices().end()) {
+      VertexSPtr vertex = *it_v++;
+
+      // See comment at the top of the function
+      CGAL_assertion(vertex->degree() == 3);
+
+      if (time != 0 || recompute_positions) {
+        CGAL_assertion_code(bool ok =)
+          reset_point(vertex);
+        CGAL_postcondition(ok);
+      }
+    }
+  }
+
+  /**
   * Offsets the polyhedron `polyhedron`, which may have degree 1 vertices.
   * Negative offset points to the interior of the polyhedron.
   */
