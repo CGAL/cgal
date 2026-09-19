@@ -4136,15 +4136,11 @@ public:
   }
 
   void shit_to_event_time(const PolyhedronSPtr& polyhedron,
-                          const FT& current_time,
-                          const FT& target_time)
+                          const FT& event_time)
   {
     CGAL_SS3_DEBUG_SPTR(polyhedron);
 
-    const FT shift = target_time - current_time;
-    CGAL_precondition(!is_zero(shift));
-
-    Transformation::shift_facets(polyhedron, shift);
+    Transformation::shift_facets_from_base(polyhedron, event_time);
 
 #if 0//def CGAL_SS3_DUMP_FILES
     // below will have degeneracies since we have not yet treated the event
@@ -4199,7 +4195,7 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, event->to_string());
 
     const FT& event_time = event->time();
-    shit_to_event_time(polyhedron, current_time, event_time);
+    shit_to_event_time(polyhedron, event_time);
 
     bool res = true;
 
@@ -4230,7 +4226,7 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, event->to_string());
 
     const FT& event_time = event->time();
-    shit_to_event_time(polyhedron, current_time, event_time);
+    shit_to_event_time(polyhedron, event_time);
 
     add_event(event);
 
@@ -4648,7 +4644,7 @@ public:
 
     const FT& event_time = event->time();
 
-    shit_to_event_time(polyhedron, current_time, event_time);
+    shit_to_event_time(polyhedron, event_time);
 
     EdgeSPtr edge = event->get_edge();
     VertexSPtr vertex_src = edge->source();
@@ -4950,7 +4946,7 @@ public:
 
     const FT& event_time = event->time();
 
-    shit_to_event_time(polyhedron, current_time, event_time);
+    shit_to_event_time(polyhedron, event_time);
 
     FacetSPtr facet = event->get_facet();
     EdgeSPtr edge_1 = event->get_edge_1();
@@ -5091,7 +5087,7 @@ public:
     const FT& event_time = event->time();
     const Point_3& point = event->point();
 
-    shit_to_event_time(polyhedron, current_time, event_time);
+    shit_to_event_time(polyhedron, event_time);
 
     std::array<VertexSPtr, 3> vertices = event->get_vertices();
     FacetSPtr facet = event->get_facet();
@@ -5214,7 +5210,7 @@ public:
 
     const FT& event_time = event->time();
 
-    shit_to_event_time(polyhedron, current_time, event_time);
+    shit_to_event_time(polyhedron, event_time);
 
     EdgeSPtr edge_11 = event->get_edge_11();
     EdgeSPtr edge_12 = event->get_edge_12();
@@ -5333,7 +5329,7 @@ public:
 
     const FT& event_time = event->time();
 
-    shit_to_event_time(polyhedron, current_time, event_time);
+    shit_to_event_time(polyhedron, event_time);
 
     EdgeSPtr edge = event->get_edge();
 
@@ -5449,7 +5445,7 @@ public:
 
     const FT& event_time = event->time();
 
-    shit_to_event_time(polyhedron, current_time, event_time);
+    shit_to_event_time(polyhedron, event_time);
 
     std::array<VertexSPtr, 4> vertices = event->get_vertices();
     std::array<EdgeSPtr, 6> edges = event->get_edges();
@@ -5657,7 +5653,7 @@ public:
 
     const FT& event_time = event->time();
 
-    shit_to_event_time(polyhedron, current_time, event_time);
+    shit_to_event_time(polyhedron, event_time);
 
     VertexSPtr vertex_1 = event->get_vertex_1();
     VertexSPtr vertex_2 = event->get_vertex_2();
@@ -5830,7 +5826,7 @@ public:
 
     const FT& event_time = event->time();
 
-    shit_to_event_time(polyhedron, current_time, event_time);
+    shit_to_event_time(polyhedron, event_time);
 
     VertexSPtr vertex_1 = event->get_vertex_1();
     VertexSPtr vertex_2 = event->get_vertex_2();
@@ -5949,7 +5945,7 @@ public:
     const FT& event_time = event->time();
     const Point_3& point = event->point();
 
-    shit_to_event_time(polyhedron, current_time, event_time);
+    shit_to_event_time(polyhedron, event_time);
 
     EdgeSPtr edge_1 = event->get_edge_1();
     EdgeSPtr edge_2 = event->get_edge_2();
@@ -6135,7 +6131,7 @@ public:
 
     const FT& event_time = event->time();
 
-    shit_to_event_time(polyhedron, current_time, event_time);
+    shit_to_event_time(polyhedron, event_time);
 
     EdgeSPtr edge_1 = event->get_edge_1();
     EdgeSPtr edge_2 = event->get_edge_2();
@@ -6316,7 +6312,7 @@ public:
 
     const FT& event_time = event->time();
 
-    shit_to_event_time(polyhedron, current_time, event_time);
+    shit_to_event_time(polyhedron, event_time);
 
     VertexSPtr vertex_1 = event->get_vertex_1();
     VertexSPtr vertex_2 = event->get_vertex_2();
@@ -6515,7 +6511,7 @@ public:
     const FT& event_time = event->time();
     const Point_3& point = event->point();
 
-    shit_to_event_time(polyhedron, current_time, event_time);
+    shit_to_event_time(polyhedron, event_time);
 
     EdgeSPtr edge_1 = event->get_edge_1();
     EdgeSPtr edge_2 = event->get_edge_2();
@@ -6667,7 +6663,7 @@ public:
     const FT& event_time = event->time();
     const Point_3& point = event->point();
 
-    shit_to_event_time(polyhedron, current_time, event_time);
+    shit_to_event_time(polyhedron, event_time);
 
     VertexSPtr vertex = event->get_vertex();
     FacetSPtr facet = event->get_facet();
