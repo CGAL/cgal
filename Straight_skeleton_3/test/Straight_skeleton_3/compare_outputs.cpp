@@ -126,8 +126,8 @@ int main(int argc, char** argv)
   std::cout << "Reading with Kernel: " << typeid(IK).name() << std::endl;
   std::cout << "Testing with Kernel: " << typeid(K).name() << std::endl;
 
-  const char* ours_filename = argv[1];
-  const char* theirs_filename = argv[2];
+  const std::filesystem::path ours_filename = argv[1];
+  const std::filesystem::path theirs_filename = argv[2];
 
   CGAL::Surface_mesh<IK::Point_3> in_ours;
   if(!CGAL::IO::read_polygon_mesh(ours_filename, in_ours)) {

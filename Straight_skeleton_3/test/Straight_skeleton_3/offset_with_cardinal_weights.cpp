@@ -30,8 +30,8 @@ int main(int argc, char** argv)
   std::cerr.precision(17);
 
   // Argument parsing
-  char* mesh_filename;
-  char* weights_filename;
+  std::filesystem::path mesh_filename;
+  std::filesystem::path weights_filename;
   std::filesystem::path save_path = std::filesystem::current_path();
   std::vector<FT> save_times;
 
@@ -56,7 +56,7 @@ int main(int argc, char** argv)
   auto fwm = res.first;
 
   if (!SS3::utils::assign_cardinal_weights(weights_filename, sm, fwm)) {
-    std::cerr << "Error: failed to assign weights " << (weights_filename ? weights_filename : "(default)") << std::endl;
+    std::cerr << "Error: failed to assign weights" << std::endl;
     return EXIT_FAILURE;
   }
 

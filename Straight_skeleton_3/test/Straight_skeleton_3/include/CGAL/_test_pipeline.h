@@ -25,8 +25,8 @@ namespace utils {
 
 template <typename FT>
 bool parse_args(int argc, char** argv,
-                char*& mesh_filename,
-                char*& weights_filename,
+                std::filesystem::path& mesh_filename,
+                std::filesystem::path& weights_filename,
                 std::filesystem::path& save_path,
                 std::vector<FT>& save_times)
 {
@@ -40,8 +40,10 @@ bool parse_args(int argc, char** argv,
   }
 
   mesh_filename = argv[1];
-  if (!mesh_filename) {
-    std::cerr << "Error: null mesh filename" << std::endl;
+  if (mesh_filename.empty() ||
+      !std::filesystem::exists(mesh_filename) ||
+      !std::filesystem::is_regular_file(mesh_filename)) {
+    std::cerr << "Error: invalid filename: " << mesh_filename << std::endl;
     return false;
   }
 
@@ -118,7 +120,7 @@ bool parse_args(int argc, char** argv,
 }
 
 template <typename Mesh>
-bool preprocess_input(const char* mesh_filename,
+bool preprocess_input(const std::filesystem::path& mesh_filename,
                       Mesh& sm)
 {
   namespace PMP = CGAL::Polygon_mesh_processing;

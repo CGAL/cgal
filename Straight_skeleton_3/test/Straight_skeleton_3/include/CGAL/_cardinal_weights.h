@@ -16,6 +16,7 @@
 
 #include <boost/graph/graph_traits.hpp>
 
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -33,14 +34,18 @@ namespace utils {
 //
 // \param weights_filename the name of the file containing the weights
 //                         in the format:
-//                         x1: <value> x2: <value> y1: <value> y2: <value>
-//                         [bottom: <value> top: <value>]
+//                           x1: <value>
+//                           x2: <value>
+//                           y1: <value>
+//                           y2: <value>
+//                           bottom: <value> (optional)
+//                           top: <value> (optional)
 // \param pmesh the polygon mesh to assign weights to
 // \param fwm the face weight map to write the weights to
 //
 // \return `true` if all weights could be read, are valid, and were successfully assigned; `false` otherwise.
 template <typename PolygonMesh, typename FaceWeightMap>
-bool assign_cardinal_weights(const char* weights_filename,
+bool assign_cardinal_weights(const std::filesystem::path& weights_filename,
                              const PolygonMesh& pmesh,
                              FaceWeightMap fwm)
 {
@@ -53,10 +58,11 @@ bool assign_cardinal_weights(const char* weights_filename,
 
   std::ifstream weights_in(weights_filename);
 
-  if (!weights_filename || !weights_in) {
+  if (!weights_in) {
     CGAL_SS3_TRACE_V(1, "Warning: no input weights provided; all weights are set to '1'.");
-    for (face_descriptor f : faces(pmesh))
+    for (face_descriptor f : faces(pmesh)) {
       put(fwm, f, 1);
+    }
 
     return true;
   }

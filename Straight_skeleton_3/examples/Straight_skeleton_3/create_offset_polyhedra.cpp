@@ -27,7 +27,7 @@ int main(int argc, char** argv)
     return EXIT_FAILURE;
   }
 
-  const char* mesh_filename = argv[1];
+  const std::filesystem::path mesh_filename = argv[1];
 
   Mesh sm;
   if(!CGAL::IO::read_polygon_mesh(mesh_filename, sm) || CGAL::is_empty(sm) || !is_valid_face_graph(sm)) {
