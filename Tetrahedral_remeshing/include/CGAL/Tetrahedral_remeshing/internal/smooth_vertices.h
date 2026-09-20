@@ -1122,6 +1122,10 @@ public:
 
     const Tr& tr = c3t3.triangulation();
 
+#ifdef CGAL_TR_THREADTIME
+    Tr_thread_time* zz_ = tr_tt();
+    const double z0_ = zz_ ? tr_tt_now() : 0.0;
+#endif
     if (!tr.try_lock_vertex(v))
       return false;
 
@@ -1130,10 +1134,21 @@ public:
       if (!tr.try_lock_cell(c))
         return false;
     }
+#ifdef CGAL_TR_THREADTIME
+    const double z1_ = zz_ ? tr_tt_now() : 0.0;
+#endif
 
     const std::optional<Point_3> target = compute_target_position(v, c3t3);
+#ifdef CGAL_TR_THREADTIME
+    const double z2_ = zz_ ? tr_tt_now() : 0.0;
+    if (zz_) { zz_->z_locks += z1_ - z0_; zz_->z_compute += z2_ - z1_;
+               ++zz_->n_zone; if (target != std::nullopt) ++zz_->n_target; }
+#endif
     if (target != std::nullopt && !lock_move_destinations(v, target.value(), tr))
       return false;
+#ifdef CGAL_TR_THREADTIME
+    if (zz_) zz_->z_dest += tr_tt_now() - z2_;
+#endif
 
     handoff.v = v;
     handoff.position = target;

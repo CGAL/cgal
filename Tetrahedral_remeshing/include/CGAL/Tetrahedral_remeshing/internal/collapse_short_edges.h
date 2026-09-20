@@ -1814,6 +1814,10 @@ public:
       return true; // nothing to lock; execute_operation_vv() will skip it
 
     const Tr& tr = c3t3.triangulation();
+#ifdef CGAL_TR_THREADTIME
+    Tr_thread_time* zz_ = tr_tt();
+    const double z0_ = zz_ ? tr_tt_now() : 0.0;
+#endif
     if (!tr.try_lock_vertex(e.first)
      || !tr.try_lock_vertex(e.second))
       return false;
@@ -1839,9 +1843,16 @@ public:
                                           point(e.second->point()))))
       return false;
 
+#ifdef CGAL_TR_THREADTIME
+    const double z1_ = zz_ ? tr_tt_now() : 0.0;
+    if (zz_) zz_->z_locks += z1_ - z0_;
+#endif
     if (!tr.try_lock_and_get_incident_cells(e.first, stars.star0)
      || !tr.try_lock_and_get_incident_cells(e.second, stars.star1))
       return false;
+#ifdef CGAL_TR_THREADTIME
+    if (zz_) zz_->z_walk += tr_tt_now() - z1_;
+#endif
 
     // Locate the edge in the star that is already gathered and in cache,
     // rather than walking for it again in execute_operation_vv().
@@ -2212,6 +2223,9 @@ public:
       Vertex_handle kept;
       if (op.execute_operation_vv(e, c3t3, &kept))
       {
+#ifdef CGAL_TR_THREADTIME
+        if (tt_) ++tt_->n_did;
+#endif
         kept_ets.local().push_back(kept);
         gone_ets.local().push_back(kept == e.first ? e.second : e.first);
       }

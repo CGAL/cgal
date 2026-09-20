@@ -216,7 +216,19 @@ struct Op_stage_scope
 struct Tr_thread_time
 {
   double lock_ok = 0, apply = 0, unlock = 0, lock_fail = 0, wait = 0, worker = 0;
-  unsigned long long n_ok = 0, n_fail = 0, n_wait = 0;
+  unsigned long long n_ok = 0, n_fail = 0, n_wait = 0, n_did = 0;
+
+  // `lock_zone()` split, filled in by the operations that bother to: a zone
+  // is not all bookkeeping, and the interesting question is how much of it
+  // is work the operation goes on to use. `z_walk` is a star gather the
+  // operation consumes; `z_compute` is the operation's own computation,
+  // which the smoothing has to do inside the zone because its lock is keyed
+  // on the destination.
+  double z_locks = 0, z_walk = 0, z_compute = 0, z_dest = 0;
+  // How many zones an operation locked, against how many it turned out to
+  // want. A pass that offers every vertex and decides afterwards pays the
+  // whole difference.
+  unsigned long long n_zone = 0, n_target = 0;
 };
 inline double tr_tt_now()
 {
@@ -245,6 +257,9 @@ struct Tr_tt_report
       a.lock_ok += t.lock_ok; a.apply += t.apply; a.unlock += t.unlock;
       a.lock_fail += t.lock_fail; a.wait += t.wait; a.worker += t.worker;
       a.n_ok += t.n_ok; a.n_fail += t.n_fail; a.n_wait += t.n_wait;
+      a.n_did += t.n_did; a.n_zone += t.n_zone; a.n_target += t.n_target;
+      a.z_locks += t.z_locks; a.z_walk += t.z_walk;
+      a.z_compute += t.z_compute; a.z_dest += t.z_dest;
       w += wall; n = nt;
     }
     std::fprintf(stderr,
@@ -264,6 +279,19 @@ struct Tr_tt_report
         "", 100*t.apply/cap, 100*t.lock_ok/cap, 100*t.unlock/cap,
         100*t.lock_fail/cap, 100*t.wait/cap, 100*(cap-acc)/cap,
         t.n_ok, t.n_fail, t.n_wait, wall, nt);
+      if (t.z_locks + t.z_walk + t.z_compute + t.z_dest > 0)
+        std::fprintf(stderr,
+          "THREADTIME %-19s   in lock_zone: spatial_locks=%.2f star_walk=%.2f compute=%.2f destination=%.2f\n",
+          "", t.z_locks, t.z_walk, t.z_compute, t.z_dest);
+      if (t.n_ok)
+        std::fprintf(stderr,
+          "THREADTIME %-19s   locked=%llu changed_something=%llu (%.1f%%)%s\n",
+          "", t.n_ok, t.n_did, 100.0 * t.n_did / t.n_ok,
+          t.n_zone ? "" : "");
+      if (t.n_zone)
+        std::fprintf(stderr,
+          "THREADTIME %-19s   zones locked=%llu, wanted by the operation=%llu (%.1f%%)\n",
+          "", t.n_zone, t.n_target, 100.0 * t.n_target / t.n_zone);
     }
   }
 };
@@ -486,14 +514,19 @@ private:
 #ifdef CGAL_TR_THREADTIME
     const double b_ = tt_ ? tr_tt_now() : 0.0;
 #endif
+#ifdef CGAL_TR_THREADTIME
+    const bool did_ = op.execute_operation(element, c3t3);
+#else
     op.execute_operation(element, c3t3);
+#endif
 #ifdef CGAL_TR_THREADTIME
     const double c_ = tt_ ? tr_tt_now() : 0.0;
 #endif
     c3t3.triangulation().unlock_all_elements();
 #ifdef CGAL_TR_THREADTIME
     if (tt_) { tt_->lock_ok += b_ - a_; tt_->apply += c_ - b_;
-               tt_->unlock += tr_tt_now() - c_; ++tt_->n_ok; }
+               tt_->unlock += tr_tt_now() - c_; ++tt_->n_ok;
+               if (did_) ++tt_->n_did; }
 #endif
     return true;
   }
