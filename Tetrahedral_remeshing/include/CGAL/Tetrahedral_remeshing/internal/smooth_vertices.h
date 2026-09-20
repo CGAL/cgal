@@ -27,10 +27,6 @@
 #include <CGAL/AABB_segment_primitive_3.h>
 #include <CGAL/use.h>
 
-#ifdef CGAL_LINKED_WITH_TBB
-#include <tbb/task_group.h>
-#endif
-
 #include <optional>
 #include <boost/container/small_vector.hpp>
 #include <boost/functional/hash.hpp>
@@ -229,53 +225,12 @@ public:
 #endif
   }
 
-  /**
-  * Rebuilds everything the smoothing reads, once per smoothing phase.
-  *
-  * The id map comes first: `compute_vertices_normals()` stores its result by
-  * `vertex_id()`, and both cell scans index by it.
-  *
-  * Then the surface work and the cell scans run AT THE SAME TIME. They need
-  * nothing from each other -- the first reads facets and writes the per-vertex
-  * surface indices and normals, the second reads cells and writes the free
-  * flags and the stars -- and both only read the triangulation.
-  *
-  * The reason is that the cell scans do not use the threads.
-  * `reset_free_vertices()` and `collect_incident_cells()` measure 0.98x and
-  * 0.95x, and `refresh()` as a whole runs at 2.17 of 4 cores: the largest idle
-  * stage in the remesher, 3.80 idle core-seconds on 1146193_cdt_0.5. Five
-  * attempts to spread those two scans over the threads all cost more than they
-  * saved, because what they are bound by is scattered memory access rather
-  * than work. So they are put beside work that DOES use the threads, and the
-  * pass costs the larger of the two instead of their sum.
-  *
-  * IT COSTS PEAK MEMORY, about 6.6%, and the commit message says why that was
-  * accepted and what was tried to avoid it. Anything that changes the
-  * allocator's behaviour here -- or removes one of the two passes -- should
-  * revisit it.
-  */
   void refresh(C3t3& c3t3)
   {
+    // The id map comes first: `compute_vertices_normals()` stores its result by
+    // `vertex_id()`. The steps are independent of one another, so which one
+    // runs first is free to choose.
     reset_vertex_id_map(c3t3.triangulation());
-#ifdef CGAL_LINKED_WITH_TBB
-    if constexpr (is_parallel)
-    {
-      tbb::task_group surface;
-      if (!m_protect_boundaries)
-        surface.run([this, &c3t3]
-                    {
-                      this->collect_vertices_surface_indices(c3t3);
-                      this->compute_vertices_normals(c3t3);
-                    });
-
-      reset_free_vertices(c3t3.triangulation());
-      collect_incident_cells(c3t3.triangulation());
-
-      surface.wait();
-      collect_finite_edges(c3t3);
-      return;
-    }
-#endif
     if (!m_protect_boundaries)
     {
       collect_vertices_surface_indices(c3t3);
