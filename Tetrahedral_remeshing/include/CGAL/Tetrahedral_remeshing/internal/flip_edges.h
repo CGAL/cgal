@@ -401,8 +401,9 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
   Facet_circulator curr_fcirc = tr.incident_facets(edge);
   Facet_circulator curr_fdone = curr_fcirc;
 
-  //Only keep the possible flips
-  std::vector<Vertex_handle> opposite_vertices;
+  //Only keep the possible flips. The ring around an edge holds a handful of
+  //apices, so this never needs the heap.
+  boost::container::small_vector<Vertex_handle, 32> opposite_vertices;
   int nb_cells_around_edge = 0;
   do
   {
@@ -607,8 +608,9 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
   }
   while (++curr_fcirc != curr_fdone);
 
-  //Only keep the possible flips
-  std::vector<Vertex_handle> opposite_vertices;
+  //Only keep the possible flips. The ring around an edge holds a handful of
+  //apices, so this never needs the heap.
+  boost::container::small_vector<Vertex_handle, 32> opposite_vertices;
   int nb_cells_around_edge = 0;
   const int n_apices = static_cast<int>(ring_apices.size());
 
