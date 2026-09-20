@@ -114,8 +114,9 @@ class CollapseTriangulation
   typedef typename C3t3::Triangulation::Geom_traits::Vector_3 Vector_3;
 
 public:
+  template<typename CellRange>
   CollapseTriangulation(const Edge& e,
-                        const std::unordered_set<Cell_handle>& cells_to_insert,
+                        const CellRange& cells_to_insert,
                         Collapse_type _collapse_type)
     : collapse_type(_collapse_type)
     , v0_init(e.first->vertex(e.second))
@@ -1137,9 +1138,14 @@ typename C3t3::Vertex_handle collapse(const typename C3t3::Edge& edge,
   return vh;
 }
 
-template<typename C3t3>
-bool is_cells_set_manifold(const C3t3&,
-    std::unordered_set<typename C3t3::Cell_handle>& cells)
+// The cells of the set are exactly the finite cells that have `v0` or `v1`, so
+// asking whether a neighbour belongs to it is a property of the neighbour and
+// needs no container to be searched.
+template<typename C3t3, typename CellRange>
+bool is_cells_set_manifold(const C3t3& c3t3,
+    const CellRange& cells,
+    const typename C3t3::Vertex_handle v0,
+    const typename C3t3::Vertex_handle v1)
 {
   typedef typename C3t3::Cell_handle Cell_handle;
   typedef typename C3t3::Vertex_handle Vh;
@@ -1157,7 +1163,9 @@ bool is_cells_set_manifold(const C3t3&,
   {
     for (int i = 0; i < 4; ++i)
     {
-      if (cells.find(c->neighbor(i)) != cells.end())
+      const Cell_handle ni = c->neighbor(i);
+      if (!c3t3.triangulation().is_infinite(ni)
+          && (ni->has_vertex(v0) || ni->has_vertex(v1)))
         continue; // shared with another cell of the set
 
       const FV fvi = make_vertex_array(c->vertex((i + 1) % 4),
@@ -1412,14 +1420,20 @@ typename C3t3::Vertex_handle collapse_edge(const typename C3t3::Edge& edge,
                        edge.first->vertex(edge.second),
                        edge.first->vertex(edge.third)));
 
-    // the angle and manifold tests below want the finite cells only
-    std::unordered_set<Cell_handle> cells_to_insert;
+    // The angle and manifold tests below want the FINITE cells only, and
+    // neither depends on the order the set comes out in. The two stars
+    // overlap exactly in the cells that have both extremities, so the second
+    // is appended only where it does not repeat the first, and a hash set
+    // that was allocating one node per cell -- a few dozen per candidate --
+    // is not needed to hold it.
+    boost::container::small_vector<Cell_handle, 64> cells_to_insert;
+    cells_to_insert.reserve(star_of_v0().size() + star_of_v1().size());
     for (const Cell_handle ch : star_of_v0())
       if (!c3t3.triangulation().is_infinite(ch))
-        cells_to_insert.insert(ch);
+        cells_to_insert.push_back(ch);
     for (const Cell_handle ch : star_of_v1())
-      if (!c3t3.triangulation().is_infinite(ch))
-        cells_to_insert.insert(ch);
+      if (!c3t3.triangulation().is_infinite(ch) && !ch->has_vertex(v0))
+        cells_to_insert.push_back(ch);
 
     // the angle test is the one that discards most candidates, and the cheaper
     // of the two : it walks the star once, where is_cells_set_manifold() walks
@@ -1429,12 +1443,25 @@ typename C3t3::Vertex_handle collapse_edge(const typename C3t3::Edge& edge,
     if(angles == ANGLES_REJECTED)
       return Vertex_handle();
 
-    if(!is_cells_set_manifold(c3t3, cells_to_insert))
+    if(!is_cells_set_manifold(c3t3, cells_to_insert, v0, v1))
       return Vertex_handle();
 
     if(angles == ANGLES_UNDECIDED)
     {
-      CollapseTriangulation<C3t3> local_tri(edge, cells_to_insert, collapse_type);
+      // The simulation numbers the vertices of its copy in the order the
+      // cells arrive, so it is handed the set built the way it always was --
+      // a hash set, and finite cells only, which is what this branch fed it
+      // before. It is the only consumer that can tell the difference, and a
+      // small minority of candidates reach it.
+      std::unordered_set<Cell_handle> simulated_cells;
+      for (const Cell_handle ch : star_of_v0())
+        if (!c3t3.triangulation().is_infinite(ch))
+          simulated_cells.insert(ch);
+      for (const Cell_handle ch : star_of_v1())
+        if (!c3t3.triangulation().is_infinite(ch))
+          simulated_cells.insert(ch);
+
+      CollapseTriangulation<C3t3> local_tri(edge, simulated_cells, collapse_type);
       if(local_tri.collapse() != VALID)
         return Vertex_handle();
     }
