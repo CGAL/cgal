@@ -1584,6 +1584,9 @@ class Destroyed_edges
 public:
   void insert(const Edge_vv& e) { m_edges.insert(e); }
   bool contains(const Edge_vv& e) const { return m_edges.find(e) != m_edges.end(); }
+  // Between two rounds of the same phase every pair in here names a vertex
+  // the previous round merged away, so it must not be carried forward.
+  void clear() { m_edges.clear(); }
 };
 
 // `collapse_edge()` reports a destroyed edge as a live Tr::Edge; it is stored
@@ -1832,7 +1835,158 @@ public:
     return true;
   }
 
-  bool execute_operation_vv(const Edge_vv& e, C3t3& c3t3)
+  void clear_destroyed_edges() { m_destroyed_edges.clear(); }
+
+  /**
+  * Re-collect the short edges around the vertices the previous round kept.
+  *
+  * This is the parallel stand-in for the work list the sequential executor
+  * keeps: `execute_operation()` re-evaluates the edges around the vertex it
+  * just kept and puts the newly short ones back, so they are collapsed
+  * within the same phase. The snapshot this executor runs from cannot be
+  * added to while it is being consumed, so the arrears are gathered here,
+  * between rounds, instead.
+  *
+  * The restricted set is COMPLETE, not a sample. Nothing changes an edge's
+  * length during a collapse round except a collapse, a collapse only moves
+  * the vertex it keeps, and the sizing field is constant through the phase --
+  * so the edges whose length changed are exactly the edges incident to a
+  * vertex some collapse kept.
+  *
+  * `gone` is subtracted because a vertex one collapse kept can be merged away
+  * by a later collapse in the same round. Reading a merged-away vertex would
+  * be a use-after-free, and the subtraction is exact HERE, unlike anywhere
+  * else in this file, because a collapse round only ever destroys vertices
+  * and cells and never creates one: no handle is recycled inside a round, so
+  * a handle in `gone` cannot also name some other live vertex.
+  *
+  * It runs between rounds, with no worker mutating the mesh, because
+  * `can_be_collapsed()` reads `surface_patch_index()` of both endpoints and
+  * that walks the far endpoint's star, which lies outside the lock zone a
+  * collapse holds.
+  */
+  std::vector<Edge_vv> recollect_around(std::vector<Vertex_handle>& kept,
+                                        const std::vector<Vertex_handle>& gone,
+                                        const C3t3& c3t3) const
+  {
+    const Tr& tr = c3t3.triangulation();
+
+    std::unordered_set<Vertex_handle, boost::hash<Vertex_handle> >
+      dead(gone.begin(), gone.end());
+
+    std::sort(kept.begin(), kept.end());
+    kept.erase(std::unique(kept.begin(), kept.end()), kept.end());
+    std::vector<Vertex_handle> live;
+    live.reserve(kept.size());
+    for (const Vertex_handle v : kept)
+      if (dead.find(v) == dead.end())
+        live.push_back(v);
+    if (live.empty())
+      return std::vector<Edge_vv>();
+
+    struct Short_edge_with_length { Edge_vv e; FT sqlength; };
+
+    // An edge with both ends in `live` is reached from each of them. It is
+    // dropped from one of the two HERE, before the predicates run, rather
+    // than deduplicated afterwards: `can_be_collapsed()` circulates the cells
+    // around the edge and walks both endpoints' facet stars, so testing it
+    // twice and discarding one answer is the expensive way to do it. The
+    // owner is the smaller of the two handles, which is a total order, so
+    // exactly one end emits.
+    std::unordered_set<Vertex_handle, boost::hash<Vertex_handle> >
+      live_set(live.begin(), live.end());
+
+    tbb::enumerable_thread_specific<std::vector<Short_edge_with_length> > found;
+    tbb::enumerable_thread_specific<Vertex_patch_cache<C3t3> > patch_caches;
+    tbb::parallel_for(tbb::blocked_range<std::size_t>(0, live.size()),
+      [&](const tbb::blocked_range<std::size_t>& r)
+      {
+        std::vector<Short_edge_with_length>& out = found.local();
+        Vertex_patch_cache<C3t3>& pc = patch_caches.local();
+        boost::container::small_vector<Edge, 64> incident;
+        for (std::size_t i = r.begin(); i != r.end(); ++i)
+        {
+          const Vertex_handle u = live[i];
+          incident.clear();
+          tr.finite_incident_edges(u, std::back_inserter(incident));
+          for (const Edge& e : incident)
+          {
+            const Edge_vv vv = make_vertex_pair(e);
+            const Vertex_handle w = (vv.first == u) ? vv.second : vv.first;
+            if (w < u && live_set.find(w) != live_set.end())
+              continue; // w owns this edge and will emit it
+
+            // `can_be_collapsed()`'s tests, with the length asked in the
+            // middle of them instead of after.
+            //
+            // Most edges around a kept vertex are not short -- that is what
+            // makes this round cheap -- and the length is two point reads
+            // against the sizing field, while the patch test at the end of
+            // `can_be_collapsed()` walks BOTH endpoints' facet stars. Asking
+            // in the collection order would pay the star walks for every
+            // edge and then throw nearly all of them away.
+            //
+            // Same verdict, because the tests are independent of one another
+            // and none of them writes. The order here is the only thing that
+            // differs from `can_be_collapsed()`, whose body this repeats --
+            // the two must be kept in step, as must the two copies of the
+            // collection predicate above them.
+            const bool in_cx = c3t3.is_in_complex(e);
+            if (in_cx && m_protect_boundaries)
+              continue;
+            const bool boundary = is_boundary(c3t3, e, m_cell_selector);
+            if (boundary && m_protect_boundaries)
+              continue;
+
+            const auto sqlen = is_too_short(e, boundary, m_sizing, c3t3, m_cell_selector);
+            if (sqlen == std::nullopt)
+              continue;
+
+            if (!is_selected(e, tr, m_cell_selector))
+              continue;
+            if (!boundary && !in_cx)
+            {
+              const Vertex_handle v0 = e.first->vertex(e.second);
+              const Vertex_handle v1 = e.first->vertex(e.third);
+              if (v0->in_dimension() != 3 && v1->in_dimension() != 3)
+              {
+                const auto patch_v0 = cached_surface_patch_index(v0, c3t3, pc);
+                const auto patch_v1 = cached_surface_patch_index(v1, c3t3, pc);
+                if (patch_v0 != std::nullopt && patch_v1 != std::nullopt
+                    && patch_v0 != patch_v1)
+                  continue;
+              }
+            }
+            out.push_back(Short_edge_with_length{vv, sqlen.value()});
+          }
+        }
+      });
+
+    std::vector<Short_edge_with_length> collected;
+    for (const auto& part : found)
+      collected.insert(collected.end(), part.begin(), part.end());
+    if (collected.empty())
+      return std::vector<Edge_vv>();
+
+    // Shortest first is the point of the ordering, exactly as in the first
+    // round; the vertex pair is the tie-break, so the order is settled by the
+    // contents and not by which thread found what.
+    std::sort(collected.begin(), collected.end(),
+              [](const Short_edge_with_length& a, const Short_edge_with_length& b)
+              {
+                if (a.sqlength != b.sqlength) return a.sqlength < b.sqlength;
+                return a.e < b.e;
+              });
+
+    std::vector<Edge_vv> next;
+    next.reserve(collected.size());
+    for (const Short_edge_with_length& se : collected)
+      next.push_back(se.e);
+    return next;
+  }
+
+  bool execute_operation_vv(const Edge_vv& e, C3t3& c3t3,
+                            Vertex_handle* kept = nullptr)
   {
     // lock_zone() ran first, on this thread, and has held the zone since. It
     // walked both stars to take the locks and located the edge's cell on the
@@ -1849,6 +2003,8 @@ public:
                                            m_protect_boundaries, m_cell_selector,
                                            m_destroyed_edges, m_visitor,
                                            &stars.star0, &stars.star1);
+    if (kept != nullptr)
+      *kept = vh;
     return vh != Vertex_handle();
   }
 
@@ -1961,14 +2117,35 @@ class Elementary_operation_execution_parallel<
   using Edge_vv = typename Operation::Edge_vv;
 
 public:
+  // The phase runs in rounds. Round one is the whole mesh's short edges, as
+  // before; each later round is only the arrears the previous round created,
+  // gathered by `recollect_around()`.
+  //
+  // The sequential executor has no rounds because it does not need them: it
+  // re-queues into a live work list and the phase ends when that list is
+  // empty. This is the same convergence, reached in steps.
+  //
+  // The cap is a backstop, not the expected exit. `collapse2x` -- one extra
+  // round, delivered by re-collecting the WHOLE mesh -- cost 11.79% of wall
+  // on the big inputs because it paid for the mesh's size rather than for
+  // the work it found (`rejected/collapse2x/REJECTED.md`).
+  static constexpr std::size_t max_rounds = 8;
+
   bool execute(Operation& op, C3t3& c3t3) const
   {
+    using Vertex_handle = typename C3t3::Vertex_handle;
+
     // Already shortest first, and built without the bimap -- see
     // get_parallel_candidates(). This executor is the only reader of the
     // ordering, and it only reads it once.
-    const std::vector<Edge_vv> candidates = op.get_parallel_candidates(c3t3);
+    std::vector<Edge_vv> candidates = op.get_parallel_candidates(c3t3);
     if (candidates.empty())
       return false;
+
+    for (std::size_t round = 0; round < max_rounds && !candidates.empty(); ++round)
+    {
+    if (round > 0)
+      op.clear_destroyed_edges();
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
     CGAL::Real_timer timer;
@@ -1982,14 +2159,25 @@ public:
     // comes back to the set-aside edges once a few have accumulated, and
     // waits only for what is left when the queue is empty.
     constexpr std::size_t max_postponed = 8;
-    auto try_one = [&op, &c3t3](const Edge_vv& e)
+
+    // What each round hands to the next: the vertex every collapse kept, and
+    // the vertex it merged away. See `recollect_around()` for why the second
+    // list is needed and why subtracting it is exact.
+    tbb::enumerable_thread_specific<std::vector<Vertex_handle> > kept_ets, gone_ets;
+
+    auto try_one = [&op, &c3t3, &kept_ets, &gone_ets](const Edge_vv& e)
     {
       if (!op.lock_zone(e, c3t3))
       {
         c3t3.triangulation().unlock_all_elements();
         return false;
       }
-      op.execute_operation_vv(e, c3t3);
+      Vertex_handle kept;
+      if (op.execute_operation_vv(e, c3t3, &kept))
+      {
+        kept_ets.local().push_back(kept);
+        gone_ets.local().push_back(kept == e.first ? e.second : e.first);
+      }
       c3t3.triangulation().unlock_all_elements();
       return true;
     };
@@ -2021,7 +2209,13 @@ public:
                             c3t3.triangulation().unlock_all_elements();
                             std::this_thread::yield();
                           }
-                          op.execute_operation_vv(pe, c3t3);
+                          Vertex_handle kept;
+                          if (op.execute_operation_vv(pe, c3t3, &kept))
+                          {
+                            kept_ets.local().push_back(kept);
+                            gone_ets.local().push_back(kept == pe.first ? pe.second
+                                                                        : pe.first);
+                          }
                           c3t3.triangulation().unlock_all_elements();
                         }
                       });
@@ -2029,8 +2223,15 @@ public:
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
     timer.stop();
     std::cout << op.operation_name() << ": " << candidates.size()
-              << " candidates (" << timer.time() << " sec, parallel)." << std::endl;
+              << " candidates (" << timer.time() << " sec, parallel, round "
+              << (round + 1) << ")." << std::endl;
 #endif
+
+    std::vector<Vertex_handle> kept, gone;
+    for (const auto& part : kept_ets) kept.insert(kept.end(), part.begin(), part.end());
+    for (const auto& part : gone_ets) gone.insert(gone.end(), part.begin(), part.end());
+    candidates = op.recollect_around(kept, gone, c3t3);
+    }
     return true;
   }
 };
