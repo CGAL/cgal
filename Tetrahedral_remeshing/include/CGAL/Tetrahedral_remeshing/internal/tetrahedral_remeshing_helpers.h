@@ -43,6 +43,7 @@
 #include <boost/iterator/function_output_iterator.hpp>
 #include <boost/unordered/unordered_flat_map.hpp>
 
+#include <variant>
 #include <optional>
 
 #ifdef CGAL_LINKED_WITH_TBB
@@ -2699,43 +2700,76 @@ bool spatial_sort_triangulation(Tr& tr, VMap& V, Tr& old_holder)
   dst.clear();
   dst.set_dimension(dim);
 
+  // The wiring loop below asks, four times per cell, which new vertex
+  // replaces an old one, and four more times which new cell replaces an old
+  // neighbour. Asked of a hash map keyed on handles that is nine lookups per
+  // cell, and it was 45% of this routine -- more than the keying and the two
+  // sorts put together.
+  //
+  // They are answered from two plain vectors instead, indexed by the old
+  // element's position in `vs` / `cs`. That position is parked ON the old
+  // element, in a field the copy above has already taken and that nothing
+  // reads again: this triangulation is the one `old_holder` destroys a few
+  // lines down, so from here its vertex indices and cell subdomain indices
+  // are scratch. `V` is still built, because the CALLER looks a handful of
+  // handles up in it after the rebuild -- the far points, and the complex
+  // edges and corners of the c3t3 overload -- but nothing in this loop
+  // touches it.
+  std::vector<Vertex_handle> newv(nv);
+  std::vector<Cell_handle> newc(nc);
+
   V.clear();
   V.reserve(nv);
   for (std::size_t i = 0; i < nv; ++i)
   {
-    const Vertex_handle v = vs[vorder[i]];
-    V[v] = dst.create_vertex(*v);
+    const std::size_t oi = vorder[i];
+    const Vertex_handle v = vs[oi];
+    const Vertex_handle nv_ = dst.create_vertex(*v);
+    V[v] = nv_;
+    newv[oi] = nv_;
   }
 
   std::vector<std::size_t>().swap(vorder);
 
-  boost::unordered_flat_map<Cell_handle, Cell_handle, boost::hash<Cell_handle>> C;
-  C.reserve(nc);
   for (std::size_t i = 0; i < nc; ++i)
   {
-    const Cell_handle c = cs[corder[i]];
-    C[c] = dst.create_cell(*c);
+    const std::size_t oi = corder[i];
+    newc[oi] = dst.create_cell(*cs[oi]);
   }
   std::vector<std::size_t>().swap(corder);
   std::vector<std::uint64_t>().swap(ckey);
+
+  // every copy has been taken, so the originals can carry their own
+  // position. A vertex's index is a variant, so it is read back through
+  // `vertex_slot()` rather than used as a subscript directly.
+  auto vertex_slot = [](const Vertex_handle v)
+  { return static_cast<std::size_t>(std::get<int>(v->index())); };
+  for (std::size_t i = 0; i < nv; ++i)
+    vs[i]->set_index(static_cast<int>(i));
+  for (std::size_t i = 0; i < nc; ++i)
+    cs[i]->set_subdomain_index(static_cast<int>(i));
+
   for (std::size_t i = 0; i < nc; ++i)
   {
     const Cell_handle c = cs[i];
-    const Cell_handle n = C[c];
+    const Cell_handle n = newc[i];
     for (int j = 0; j < 4; ++j)
     {
-      n->set_vertex(j, V[c->vertex(j)]);
-      n->set_neighbor(j, C[c->neighbor(j)]);
+      n->set_vertex(j, newv[vertex_slot(c->vertex(j))]);
+      n->set_neighbor(j, newc[c->neighbor(j)->subdomain_index()]);
     }
   }
   for (std::size_t i = 0; i < nv; ++i)
-    V[vs[i]]->set_cell(C[vs[i]->cell()]);
+    newv[i]->set_cell(newc[vs[i]->cell()->subdomain_index()]);
+
+  const Vertex_handle inf_new = newv[vertex_slot(tr.infinite_vertex())];
 
   std::vector<Cell_handle>().swap(cs);
   std::vector<Vertex_handle>().swap(vs);
-  C.clear();
+  std::vector<Vertex_handle>().swap(newv);
+  std::vector<Cell_handle>().swap(newc);
 
-  out.set_infinite_vertex(V[tr.infinite_vertex()]);
+  out.set_infinite_vertex(inf_new);
   tr.swap(out);
   old_holder.swap(out);
   tr.set_lock_data_structure(lock_ds);
