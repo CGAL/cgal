@@ -611,6 +611,12 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
   std::vector<Vertex_handle> opposite_vertices;
   int nb_cells_around_edge = 0;
   const int n_apices = static_cast<int>(ring_apices.size());
+
+  //Gather the star of every finite apex first. An infinite apex has no star
+  //and is never a candidate, but it can still be the far end of a chord, so
+  //it keeps its place on the ring and is marked by a null star here.
+  using Star = boost::container::small_vector<Cell_handle, 64>;
+  boost::container::small_vector<Star*, 32> apex_star(n_apices, nullptr);
   for (int p = 0; p < n_apices; ++p)
   {
     const Vertex_handle vh = ring_apices[p];
@@ -618,27 +624,57 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
     if(tr.is_infinite(vh))
       continue;
 
-    boost::container::small_vector<Cell_handle, 64>& o_inc_vh = inc_cells[vh];
+    Star& o_inc_vh = inc_cells[vh];
     if (o_inc_vh.empty())
       incident_cells_tagged(tr, vh, std::back_inserter(o_inc_vh));
 
-    //a chord is an edge joining vh to an apex that is not one of its two
-    //neighbors on the ring (positions p-1 and p+1)
-    bool is_edge = false;
-    for (int j = p + 2; j <= p + n_apices - 2; ++j)
-    {
-      if (is_edge_uv(vh, ring_apices[j % n_apices], o_inc_vh))
-      {
-        is_edge = true;
-        break;
-      }
-    }
-
-    if (!is_edge)
-      opposite_vertices.push_back(vh);
-
+    apex_star[p] = &o_inc_vh;
     nb_cells_around_edge++;
   }
+
+  //a chord is an edge joining two apices that are not neighbors on the ring
+  //(positions p-1 and p+1).
+  //
+  //Each unordered pair is settled ONCE here. The test used to sit inside the
+  //loop above, running j from p+2 to p+n_apices-2 for every apex in turn, so
+  //every pair was asked about twice -- once from each of its two ends -- and
+  //each ask walks one apex's whole star looking for a cell that holds the
+  //other. A chord is found for only 3.6% of the pairs, so the second ask
+  //almost always repeats the first ask's full walk.
+  //
+  //The relation is symmetric and so is the exclusion it causes: a chord
+  //between p and j disqualifies both of them. Asking once from p and marking
+  //both ends therefore leaves `opposite_vertices` exactly as it was, with the
+  //same members in the same ascending order of p. A pair whose finite ends
+  //are both already disqualified is skipped, which is what the old `break`
+  //bought, and the old `break` never suppressed a pair the other end still
+  //needed: that end asked about it in its own turn.
+  boost::container::small_vector<char, 32> chorded(n_apices, 0);
+  for (int p = 0; p < n_apices; ++p)
+  {
+    for (int j = p + 2; j < n_apices && j <= p + n_apices - 2; ++j)
+    {
+      const bool ask_from_p = (apex_star[p] != nullptr) && !chorded[p];
+      const bool ask_from_j = (apex_star[j] != nullptr) && !chorded[j];
+      if (!ask_from_p && !ask_from_j)
+        continue;
+
+      const int u = ask_from_p ? p : j;
+      const int w = ask_from_p ? j : p;
+      if (is_edge_uv(ring_apices[u], ring_apices[w], *apex_star[u]))
+      {
+        if (apex_star[p] != nullptr) chorded[p] = 1;
+        if (apex_star[j] != nullptr) chorded[j] = 1;
+      }
+    }
+  }
+
+  for (int p = 0; p < n_apices; ++p)
+  {
+    if (apex_star[p] != nullptr && !chorded[p])
+      opposite_vertices.push_back(ring_apices[p]);
+  }
+
   if (nb_cells_around_edge < 4)
     return;
 
