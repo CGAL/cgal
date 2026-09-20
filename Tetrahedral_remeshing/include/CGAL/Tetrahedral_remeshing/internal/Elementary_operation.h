@@ -40,6 +40,12 @@
 #include <thread>
 #include <type_traits>
 #include <vector>
+#include <mutex>
+#include <map>
+#include <tuple>
+#include <atomic>
+#include <cstdio>
+#include <ctime>
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
 #include <CGAL/Real_timer.h>
@@ -199,6 +205,71 @@ struct Op_stage_scope
 };
 #endif
 
+
+#ifdef CGAL_TR_THREADTIME
+// Where a worker thread's elapsed time goes, inside one parallel phase.
+//
+// Answers "is the busy time truly busy, or is it retrying and waiting?"
+// directly, rather than through a CPU counter that cannot tell a spin from
+// work. Elapsed time, not CPU time, so a thread descheduled inside a yield
+// is charged for it.
+struct Tr_thread_time
+{
+  double lock_ok = 0, apply = 0, unlock = 0, lock_fail = 0, wait = 0, worker = 0;
+  unsigned long long n_ok = 0, n_fail = 0, n_wait = 0;
+};
+inline double tr_tt_now()
+{
+  struct timespec ts; clock_gettime(CLOCK_MONOTONIC, &ts);
+  return double(ts.tv_sec) + 1e-9 * double(ts.tv_nsec);
+}
+using Tr_tt_ets = tbb::enumerable_thread_specific<Tr_thread_time>;
+inline Tr_tt_ets*& tr_tt_slot() { static thread_local Tr_tt_ets* p = nullptr; return p; }
+inline std::atomic<Tr_tt_ets*>& tr_tt_shared()
+{ static std::atomic<Tr_tt_ets*> p{nullptr}; return p; }
+inline Tr_thread_time* tr_tt()
+{
+  Tr_tt_ets* e = tr_tt_shared().load(std::memory_order_relaxed);
+  return e ? &e->local() : nullptr;
+}
+struct Tr_tt_report
+{
+  std::mutex m;
+  std::vector<std::tuple<std::string, Tr_thread_time, double, int>> rows;
+  ~Tr_tt_report()
+  {
+    std::map<std::string, std::tuple<Tr_thread_time, double, int>> agg;
+    for (const auto& [name, t, wall, nt] : rows)
+    {
+      auto& [a, w, n] = agg[name];
+      a.lock_ok += t.lock_ok; a.apply += t.apply; a.unlock += t.unlock;
+      a.lock_fail += t.lock_fail; a.wait += t.wait; a.worker += t.worker;
+      a.n_ok += t.n_ok; a.n_fail += t.n_fail; a.n_wait += t.n_wait;
+      w += wall; n = nt;
+    }
+    std::fprintf(stderr,
+      "%-30s %8s %8s %8s %8s %8s %8s %8s\n", "THREADTIME operation",
+      "capacity", "APPLY", "lock_ok", "unlock", "LOCKFAIL", "WAIT", "unacc");
+    for (const auto& [name, v] : agg)
+    {
+      const auto& [t, wall, nt] = v;
+      const double cap = wall * nt;
+      const double acc = t.apply + t.lock_ok + t.unlock + t.lock_fail + t.wait;
+      std::fprintf(stderr,
+        "THREADTIME %-19s %8.2f %8.2f %8.2f %8.2f %8.2f %8.2f %8.2f\n",
+        name.substr(0, 19).c_str(), cap, t.apply, t.lock_ok, t.unlock,
+        t.lock_fail, t.wait, cap - acc);
+      std::fprintf(stderr,
+        "THREADTIME %-19s   %7.1f%% %7.1f%% %7.1f%% %7.1f%% %7.1f%% %7.1f%%   ok=%llu fail=%llu waits=%llu wall=%.2f nt=%d\n",
+        "", 100*t.apply/cap, 100*t.lock_ok/cap, 100*t.unlock/cap,
+        100*t.lock_fail/cap, 100*t.wait/cap, 100*(cap-acc)/cap,
+        t.n_ok, t.n_fail, t.n_wait, wall, nt);
+    }
+  }
+};
+inline Tr_tt_report& tr_tt_report() { static Tr_tt_report r; return r; }
+#endif
+
 template <typename Operation>
 class Elementary_operation_execution_parallel
 {
@@ -232,10 +303,32 @@ public:
 #ifdef CGAL_TR_PHASE_WALL
       Op_stage_scope scope_(slot_, 2);
 #endif
+#ifdef CGAL_TR_THREADTIME
+      Tr_tt_ets tt_ets_;
+      tr_tt_shared().store(&tt_ets_, std::memory_order_relaxed);
+      const double pw0_ = tr_tt_now();
+#endif
       if constexpr (Operation::requires_ordered_processing)
         run_ordered(candidates, op, c3t3);
       else
         run_unordered(candidates, op, c3t3);
+#ifdef CGAL_TR_THREADTIME
+      const double pwall_ = tr_tt_now() - pw0_;
+      tr_tt_shared().store(nullptr, std::memory_order_relaxed);
+      // The worker count comes from the threads that actually showed up, NOT
+      // from tbb::this_task_arena::max_concurrency(): the enclosing arena
+      // still reports the machine's width when the run was asked for fewer
+      // threads, which made the capacity column -- and every percentage
+      // derived from it -- four times too large on a 1-thread run.
+      const int nworkers_ = static_cast<int>(tt_ets_.size());
+      {
+        auto& rep_ = tr_tt_report();
+        std::lock_guard<std::mutex> g_(rep_.m);
+        for (const Tr_thread_time& t : tt_ets_)
+          rep_.rows.emplace_back(op.operation_name(), t, 0.0, 0);
+        rep_.rows.emplace_back(op.operation_name(), Tr_thread_time{}, pwall_, nworkers_);
+      }
+#endif
     }
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
@@ -274,6 +367,10 @@ private:
     Lockcount_counters& lc = lockcount_counters();
     ++lc.ops;
 #endif
+#ifdef CGAL_TR_THREADTIME
+    Tr_thread_time* tt_ = tr_tt();
+    const double a_ = tt_ ? tr_tt_now() : 0.0;
+#endif
     while (!op.lock_zone(element, c3t3))
     {
 #ifdef CGAL_TR_LOCKCOUNT
@@ -281,9 +378,22 @@ private:
 #endif
       c3t3.triangulation().unlock_all_elements();
       std::this_thread::yield();
+#ifdef CGAL_TR_THREADTIME
+      if (tt_) ++tt_->n_wait;
+#endif
     }
+#ifdef CGAL_TR_THREADTIME
+    const double b_ = tt_ ? tr_tt_now() : 0.0;
+#endif
     op.execute_operation(element, c3t3);
+#ifdef CGAL_TR_THREADTIME
+    const double c_ = tt_ ? tr_tt_now() : 0.0;
+#endif
     c3t3.triangulation().unlock_all_elements();
+#ifdef CGAL_TR_THREADTIME
+    if (tt_) { tt_->wait += b_ - a_; tt_->apply += c_ - b_;
+               tt_->unlock += tr_tt_now() - c_; }
+#endif
   }
 
   /**
@@ -308,6 +418,10 @@ private:
     tbb::parallel_for(0, tbb::this_task_arena::max_concurrency(),
                       [&](int)
                       {
+#ifdef CGAL_TR_THREADTIME
+                        Tr_thread_time* tw_ = tr_tt();
+                        const double w0_ = tw_ ? tr_tt_now() : 0.0;
+#endif
                         Element_type element;
                         std::vector<Element_type> postponed;
                         while (queue.try_pop(element))
@@ -323,6 +437,9 @@ private:
                         // there is nothing else for it to do meanwhile.
                         for (const Element_type& e : postponed)
                           apply_one(e, op, c3t3);
+#ifdef CGAL_TR_THREADTIME
+                        if (tw_) tw_->worker += tr_tt_now() - w0_;
+#endif
                       });
   }
 
@@ -351,16 +468,33 @@ private:
     Lockcount_counters& lc = lockcount_counters();
     ++lc.ops;
 #endif
+#ifdef CGAL_TR_THREADTIME
+    Tr_thread_time* tt_ = tr_tt();
+    const double a_ = tt_ ? tr_tt_now() : 0.0;
+#endif
     if(!op.lock_zone(element, c3t3))
     {
 #ifdef CGAL_TR_LOCKCOUNT
       ++lc.retries;
 #endif
       c3t3.triangulation().unlock_all_elements();
+#ifdef CGAL_TR_THREADTIME
+      if (tt_) { tt_->lock_fail += tr_tt_now() - a_; ++tt_->n_fail; }
+#endif
       return false;
     }
+#ifdef CGAL_TR_THREADTIME
+    const double b_ = tt_ ? tr_tt_now() : 0.0;
+#endif
     op.execute_operation(element, c3t3);
+#ifdef CGAL_TR_THREADTIME
+    const double c_ = tt_ ? tr_tt_now() : 0.0;
+#endif
     c3t3.triangulation().unlock_all_elements();
+#ifdef CGAL_TR_THREADTIME
+    if (tt_) { tt_->lock_ok += b_ - a_; tt_->apply += c_ - b_;
+               tt_->unlock += tr_tt_now() - c_; ++tt_->n_ok; }
+#endif
     return true;
   }
 

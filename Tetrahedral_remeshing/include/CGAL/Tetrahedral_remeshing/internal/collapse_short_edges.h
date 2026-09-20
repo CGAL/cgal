@@ -2194,25 +2194,51 @@ public:
 
     auto try_one = [&op, &c3t3, &kept_ets, &gone_ets](const Edge_vv& e)
     {
+#ifdef CGAL_TR_THREADTIME
+      Tr_thread_time* tt_ = tr_tt();
+      const double a_ = tt_ ? tr_tt_now() : 0.0;
+#endif
       if (!op.lock_zone(e, c3t3))
       {
         c3t3.triangulation().unlock_all_elements();
+#ifdef CGAL_TR_THREADTIME
+        if (tt_) { tt_->lock_fail += tr_tt_now() - a_; ++tt_->n_fail; }
+#endif
         return false;
       }
+#ifdef CGAL_TR_THREADTIME
+      const double b_ = tt_ ? tr_tt_now() : 0.0;
+#endif
       Vertex_handle kept;
       if (op.execute_operation_vv(e, c3t3, &kept))
       {
         kept_ets.local().push_back(kept);
         gone_ets.local().push_back(kept == e.first ? e.second : e.first);
       }
+#ifdef CGAL_TR_THREADTIME
+      const double c_ = tt_ ? tr_tt_now() : 0.0;
+#endif
       c3t3.triangulation().unlock_all_elements();
+#ifdef CGAL_TR_THREADTIME
+      if (tt_) { tt_->lock_ok += b_ - a_; tt_->apply += c_ - b_;
+                 tt_->unlock += tr_tt_now() - c_; ++tt_->n_ok; }
+#endif
       return true;
     };
 
+#ifdef CGAL_TR_THREADTIME
+    Tr_tt_ets tt_ets_;
+    tr_tt_shared().store(&tt_ets_, std::memory_order_relaxed);
+    const double pw0_ = tr_tt_now();
+#endif
     tbb::concurrent_queue<Edge_vv> queue(candidates.begin(), candidates.end());
     tbb::parallel_for(0, tbb::this_task_arena::max_concurrency(),
                       [&](int)
                       {
+#ifdef CGAL_TR_THREADTIME
+                        Tr_thread_time* tw_ = tr_tt();
+                        const double w0_ = tw_ ? tr_tt_now() : 0.0;
+#endif
                         Edge_vv e;
                         std::vector<Edge_vv> postponed;
                         while (queue.try_pop(e))
@@ -2231,11 +2257,20 @@ public:
                         }
                         for (const Edge_vv& pe : postponed)
                         {
+#ifdef CGAL_TR_THREADTIME
+                          const double wa_ = tw_ ? tr_tt_now() : 0.0;
+#endif
                           while (!op.lock_zone(pe, c3t3))
                           {
                             c3t3.triangulation().unlock_all_elements();
                             std::this_thread::yield();
+#ifdef CGAL_TR_THREADTIME
+                            if (tw_) ++tw_->n_wait;
+#endif
                           }
+#ifdef CGAL_TR_THREADTIME
+                          if (tw_) tw_->wait += tr_tt_now() - wa_;
+#endif
                           Vertex_handle kept;
                           if (op.execute_operation_vv(pe, c3t3, &kept))
                           {
@@ -2245,6 +2280,9 @@ public:
                           }
                           c3t3.triangulation().unlock_all_elements();
                         }
+#ifdef CGAL_TR_THREADTIME
+                        if (tw_) tw_->worker += tr_tt_now() - w0_;
+#endif
                       });
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
@@ -2254,6 +2292,18 @@ public:
               << (round + 1) << ")." << std::endl;
 #endif
 
+#ifdef CGAL_TR_THREADTIME
+    {
+      const double pwall_ = tr_tt_now() - pw0_;
+      tr_tt_shared().store(nullptr, std::memory_order_relaxed);
+      const int nworkers_ = static_cast<int>(tt_ets_.size());
+      auto& rep_ = tr_tt_report();
+      std::lock_guard<std::mutex> g_(rep_.m);
+      for (const Tr_thread_time& t : tt_ets_)
+        rep_.rows.emplace_back(op.operation_name(), t, 0.0, 0);
+      rep_.rows.emplace_back(op.operation_name(), Tr_thread_time{}, pwall_, nworkers_);
+    }
+#endif
     std::vector<Vertex_handle> kept, gone;
     for (const auto& part : kept_ets) kept.insert(kept.end(), part.begin(), part.end());
     for (const auto& part : gone_ets) gone.insert(gone.end(), part.begin(), part.end());
