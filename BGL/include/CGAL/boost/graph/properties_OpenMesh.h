@@ -485,7 +485,7 @@ struct property_map<OPEN_MESH_CLASS, CGAL::dynamic_face_property_t<V> >
 } // namespace boost
 
 
-namespace CGAL {
+namespace OpenMesh {
 
 // get function for dynamic properties of mutable graph
 template <typename K, typename V, typename ...Default_value_args>
