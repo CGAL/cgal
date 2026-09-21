@@ -210,9 +210,13 @@ The concept `ComplexNumber` describes a complex number type modeled by `CGAL::Co
 <span style="color:red">Most classes of the package are templated by the concepts `HyperbolicSurfaceTraits_2` or `HyperbolicSurfaceDelaunayTraits_2`. The concept `HyperbolicSurfaceTraits_2` is a refinement of `HyperbolicDelaunayTriangulationTraits_2` and is modeled by `CGAL::Hyperbolic_surface_traits_2`. It defines the geometric objects (points, segments...) forming the lifted triangulation in the Poincaré disk and adds the computation of the cosine of the hyperbolic distance between two points. The concept `HyperbolicSurfaceDelaunayTraits_2` is a refinement of `HyperbolicSurfaceTraits_2` and adds the tools to handle approximate computations, in particular it adds the computation of an approximate circumcenter that is a critical tool in the epsilon net algorithm.</span>
 
 The package offers <span style="color:red">four</span> main classes:
-- `CGAL::Triangulation_on_hyperbolic_surface_2` represents a triangulation of a hyperbolic surface. It offers functions for the  generation of the triangulation from a convex fundamental domain, the Delaunay flip algorithm and the construction of a portion of the lift of the triangulation in the Poincaré disk.
+- `CGAL::Triangulation_on_hyperbolic_surface_2` represents a triangulation of a hyperbolic surface.
+It offers functions for the  generation of the triangulation from a convex fundamental domain, the Delaunay flip algorithm and the construction of a portion of the lift of the triangulation in the Poincaré disk.
 
-- <span style="color:red">`CGAL::Delaunay_triangulation_on_hyperbolic_surface_2` represents a Delaunay triangulation of a hyperbolic surface. It offers functions for the generation of the Delaunay triangulation from a convex fundamental domain, the insertion of a point into the Delaunay triangulation, two point location algorithms and the \f$ \varepsilon \f$-net algorithm.</span>
+- <span style="color:red">`CGAL::Delaunay_triangulation_on_hyperbolic_surface_2` represents a
+Delaunay triangulation of a hyperbolic surface. It offers functions for the generation of the
+Delaunay triangulation from a convex fundamental domain, the insertion of a point into the
+Delaunay triangulation, two point location algorithms and the \f$ \varepsilon \f$-net algorithm.</span>
 
 - `CGAL::Hyperbolic_fundamental_domain_2` represents a convex fundamental domain of a hyperbolic surface.
 
@@ -270,7 +274,8 @@ triangulation.
 This example generates a convex fundamental domain of a surface of genus two,
 construct its Delaunay triangulation using the class
 `CGAL::Delaunay_triangulation_on_hyperbolic_surface_2`, computes an \f$
-\varepsilon \f$-net, locates a query point in the triangulation. <span style="color:red">Then a surface of genus 5 is generated showing that a higher approximation precision for the circumcenters is mandatory for the epsilon net algorithm to output correct results.</span>
+\varepsilon \f$-net, locates a query point in the triangulation. <span style="color:red">Then a surface of genus five is generated showing that a higher approximation precision for the circumcenters is mandatory for the epsilon net algorithm to output correct results.</span>
+
 \cgalExample{Triangulation_on_hyperbolic_surface_2/Delaunay_triangulation_on_hyperbolic_surface_2.cpp}
 
 
