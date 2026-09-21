@@ -47,30 +47,30 @@ public:
     scalefactor_(scalefactor)
   {}
 
-  ~Scaling_repC2()
+  ~Scaling_repC2() override
   {}
 
-  Point_2      transform(const Point_2 &p) const
+  Point_2      transform(const Point_2 &p) const override
   {
     return Point_2(scalefactor_ * p.x(), scalefactor_ * p.y());
   }
 
-  Vector_2      transform(const Vector_2 &p) const
+  Vector_2      transform(const Vector_2 &p) const override
   {
     return Vector_2(scalefactor_ * p.x(), scalefactor_ * p.y());
   }
 
-  Direction_2  transform(const Direction_2 &d) const
+  Direction_2  transform(const Direction_2 &d) const override
   {
     return d;
   }
 
-  Aff_transformation_2 operator*(const Aff_t_base &t) const
+  Aff_transformation_2 operator*(const Aff_t_base &t) const override
   {
    return t.compose(*this);
   }
 
-  Aff_transformation_2 compose(const Translation &t) const
+  Aff_transformation_2 compose(const Translation &t) const override
   {
     FT ft0(0);
     return Aff_transformation_2(scalefactor_,
@@ -81,7 +81,7 @@ public:
                                 t.translationvector_.y());
   }
 
-  Aff_transformation_2 compose(const Rotation &t) const
+  Aff_transformation_2 compose(const Rotation &t) const override
   {
     return Aff_transformation_2(scalefactor_ * t.cosinus_,
                                 scalefactor_ * -t.sinus_,
@@ -89,18 +89,18 @@ public:
                                 scalefactor_ * t.cosinus_);
   }
 
-  Aff_transformation_2 compose(const Reflection &r) const
+  Aff_transformation_2 compose(const Reflection &r) const override
   {
     return Aff_transformation_2(scalefactor_*r.cosinus_, scalefactor_*r.sinus_,-r.cosinus_*r.t.x()-r.sinus_*r.t.y()+r.t.x(),
                                 scalefactor_*r.sinus_, -scalefactor_*r.cosinus_, -r.sinus_*r.t.x()+r.cosinus_*r.t.y()-r.t.y());
   }
 
-  Aff_transformation_2 compose(const Scaling &t) const
+  Aff_transformation_2 compose(const Scaling &t) const override
   {
     return Aff_transformation_2(SCALING, scalefactor_*t.scalefactor_);
   }
 
-  Aff_transformation_2 compose(const Transformation &t) const
+  Aff_transformation_2 compose(const Transformation &t) const override
   {
     return Aff_transformation_2(scalefactor_ * t.t11,
                                 scalefactor_ * t.t12,
@@ -110,28 +110,28 @@ public:
                                 t.t23);
   }
 
-  Aff_transformation_2  inverse() const
+  Aff_transformation_2  inverse() const override
   {
     return Aff_transformation_2(SCALING, FT(1)/scalefactor_);
   }
 
-  bool is_even() const
+  bool is_even() const override
   {
     return true;
   }
 
-  bool is_scaling() const
+  bool is_scaling() const override
   {
     return true;
   }
 
-  FT cartesian(int i, int j) const
+  FT cartesian(int i, int j) const override
   {
     if (i!=j) return FT(0);
     return (i==2) ? FT(1) : scalefactor_;
   }
 
-  std::ostream &print(std::ostream &os) const
+  std::ostream &print(std::ostream &os) const override
   {
     os << "Aff_transformationC2(" << scalefactor_ <<  ")";
     return os;
