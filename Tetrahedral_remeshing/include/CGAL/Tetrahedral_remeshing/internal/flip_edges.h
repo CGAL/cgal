@@ -654,23 +654,45 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
 
   const int n_apices = static_cast<int>(ring_apices.size());
 
-  //Gather the star of every finite apex first. An infinite apex has no star
-  //and is never a candidate, but it keeps its place on the ring because it can
-  //still be the far end of a chord, and is marked by a null star here.
+  //An infinite apex has no star and is never a candidate, but it keeps its
+  //place on the ring because it can still be the far end of a chord.
   //
-  //The stars are gathered for ALL of them, not only for the apices the chord
-  //test below now asks about, and that is deliberate. `inc_cells` is a cache
-  //the whole flip phase shares: a vertex whose star is in it has that star
-  //maintained incrementally as cells are created and destroyed, while a vertex
-  //whose star is absent has it walked fresh when someone next needs it. The
-  //two give the same star in a DIFFERENT ORDER, and the order is observable --
-  //`execute_operation()` takes the first cell of the cached star that carries
-  //the edge, and that cell is where the ring circulation starts. Gathering
-  //fewer stars therefore changes which flips are chosen. Measured: dropping
-  //the gathers made the remeshed mesh differ on two of the four sequential
-  //gate configurations.
+  //Whether the star of EVERY finite apex is gathered here, or only the star of
+  //an apex the chord test below actually asks about, is an ORDER decision, not
+  //a caching one. `inc_cells` is a cache the whole flip phase shares: a vertex
+  //whose star is in it has that star maintained incrementally as cells are
+  //created and destroyed, while a vertex whose star is absent has it walked
+  //fresh when someone next needs it. The two hold the same cells in a
+  //DIFFERENT ORDER, and that order is observable -- `execute_operation()`
+  //takes the first cell of the cached star that carries the edge, and that
+  //cell is where the ring circulation starts. So which vertices happen to be
+  //cached selects which flips are performed: skipping the gathers made the
+  //remeshed mesh differ on two of the four sequential gate configurations.
+  //
+  //It is therefore guarded exactly as the spatial sort is, and for the same
+  //reason -- see CGAL_TETRAHEDRAL_REMESHING_ALLOW_REORDERING in
+  //tetrahedral_remeshing_helpers.h. Under Parallel_tag the enumeration order
+  //is a scheduling artefact and there is no output to preserve, so the
+  //gathers are skipped and only the survivors' stars are walked. Under
+  //Sequential_tag they are kept unless the macro says otherwise, and the
+  //default sequential build emits, element for element, the mesh it emitted
+  //before.
+#ifdef CGAL_TETRAHEDRAL_REMESHING_ALLOW_REORDERING
+  constexpr bool preserve_enumeration_order = false;
+#else
+  constexpr bool preserve_enumeration_order = !is_parallel_triangulation<Tr>();
+#endif
+
   using Star = boost::container::small_vector<Cell_handle, 64>;
   boost::container::small_vector<Star*, 32> apex_star(n_apices, nullptr);
+
+  // Where the stars are gathered up front, a non-null star IS the record that
+  // the apex is finite, and no second array is needed; where they are not,
+  // one byte per apex carries it. Only one of the two exists in any build.
+  boost::container::small_vector<char, 32> finite_apex;
+  if constexpr (!preserve_enumeration_order)
+    finite_apex.resize(n_apices, 0);
+
   int nb_cells_around_edge = 0;
   for (int p = 0; p < n_apices; ++p)
   {
@@ -679,12 +701,18 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
     if(tr.is_infinite(vh))
       continue;
 
-    Star& o_inc_vh = inc_cells[vh];
-    if (o_inc_vh.empty())
-      incident_cells_tagged(tr, vh, std::back_inserter(o_inc_vh));
-
-    apex_star[p] = &o_inc_vh;
     nb_cells_around_edge++;
+
+    if constexpr (preserve_enumeration_order)
+    {
+      Star& o_inc_vh = inc_cells[vh];
+      if (o_inc_vh.empty())
+        incident_cells_tagged(tr, vh, std::back_inserter(o_inc_vh));
+
+      apex_star[p] = &o_inc_vh;
+    }
+    else
+      finite_apex[p] = 1;
   }
 
   if (nb_cells_around_edge < 4)
@@ -740,7 +768,12 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
   // over the whole ring either way.
   for (int p = 0; p < n_apices; ++p)
   {
-    if (apex_star[p] == nullptr)
+    if constexpr (preserve_enumeration_order)
+    {
+      if (apex_star[p] == nullptr)
+        continue;
+    }
+    else if (!finite_apex[p])
       continue;
 
     const Vertex_handle vh = ring_apices[p];
@@ -811,6 +844,14 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
     //old loop got asking from whichever end it had not yet disqualified:
     //128 154 pairs were asked from both ends under `CGAL_TR_CHORDSYM` and the
     //two ends never disagreed.
+    if (apex_star[p] == nullptr)
+    {
+      Star& o_inc_vh = inc_cells[vh];
+      if (o_inc_vh.empty())
+        incident_cells_tagged(tr, vh, std::back_inserter(o_inc_vh));
+
+      apex_star[p] = &o_inc_vh;
+    }
     const Star& o_inc_vh = *apex_star[p];
 
     bool chorded = false;
