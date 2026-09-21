@@ -23,6 +23,7 @@
 #include <CGAL/IO/MEDIT.h>
 #include <CGAL/IO/File_medit.h>
 #include <CGAL/Default.h>
+#include <CGAL/utility.h>
 
 #include <boost/unordered_map.hpp>
 
@@ -33,6 +34,41 @@
 #include <type_traits>
 
 namespace CGAL {
+
+namespace SMDS_3_internal {
+template <typename T, typename = void>
+struct Has_in_dimension : std::false_type
+{};
+
+template <typename T>
+struct Has_in_dimension<T, std::void_t<decltype(std::declval<T>().in_dimension())>>
+  : std::true_type
+{};
+
+template <typename T, typename = void>
+struct Has_is_corner : std::false_type
+{};
+
+template <typename T>
+struct Has_is_corner<T, std::void_t<decltype(std::declval<T>().is_corner())>>
+  : std::true_type
+{};
+
+template <typename Tr>
+bool is_corner(const typename Tr::Vertex_handle v, const Tr&)
+{
+  using V = typename Tr::Triangulation_data_structure::Vertex;
+
+  if constexpr(Has_in_dimension<V>::value)
+    return v->in_dimension() == 0;
+  else if constexpr(Has_is_corner<V>::value)
+    return v->ccdt_3_data().is_corner();
+  else
+    return false;
+}
+
+} // namespace SMDS_3_internal
+
 namespace SMDS_3 {
 
 template<typename Vh>
@@ -538,9 +574,9 @@ bool build_triangulation_impl(Tr& tr,
     {
       Vertex_handle vh0 = vertex_handle_vector[iv0 + 1];
       Vertex_handle vh1 = vertex_handle_vector[iv1 + 1];
-      if(vh0->in_dimension() != 0)
+      if(!CGAL::SMDS_3_internal::is_corner(vh0, tr))
         vh0->set_dimension(1);
-      if(vh1->in_dimension() != 0)
+      if(!CGAL::SMDS_3_internal::is_corner(vh1, tr))
         vh1->set_dimension(1);
 
       if constexpr(!std::is_same_v<CxEdgeAndId, void>)

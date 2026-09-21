@@ -502,36 +502,6 @@ struct Medit_pmap_generator<C3T3, USE_SUBDOMAIN_INDICES, RENUMBER_SURFACE_PATCH_
 //-------------------------------------------------------
 // IO functions
 //-------------------------------------------------------
-namespace SMDS_3_internal
-{
-template <typename T, typename = void>
-struct Has_in_dimension : std::false_type {};
-
-template <typename T>
-struct Has_in_dimension<T, std::void_t<decltype(std::declval<T>().in_dimension())>>
-  : std::true_type {};
-
-template <typename T, typename = void>
-struct Has_is_corner : std::false_type {};
-
-template <typename T>
-struct Has_is_corner<T, std::void_t<decltype(std::declval<T>().is_corner())>>
-  : std::true_type {};
-
-template <typename Tr>
-bool is_corner(const typename Tr::Vertex_handle v, const Tr&)
-{
-  using V = typename Tr::Triangulation_data_structure::Vertex;
-
-  if constexpr(Has_in_dimension<V>::value)
-    return v->in_dimension() == 0;
-  else if constexpr(Has_is_corner<V>::value)
-    return v->ccdt_3_data().is_corner();
-  else
-    return false;
-}
-
-} // end of SMDS_3_internal
 
 template <class Tr,
           class Vertices_range,
