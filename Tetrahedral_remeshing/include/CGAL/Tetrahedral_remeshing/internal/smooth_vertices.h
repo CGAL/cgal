@@ -157,6 +157,18 @@ public:
   using Vertex_patch_normals = std::vector<std::pair<Surface_patch_index, Vector_3>>;
   std::vector<Vertex_patch_normals> m_vertices_normals;
 
+  // The surface patches each vertex lies on, by `vertex_id()`. Under
+  // Parallel_tag this is what `surface_indices()` reads and
+  // `m_vertices_surface_indices` is never filled: the patches are taken off
+  // the normals pass, which visits a SUPERSET of the facets that carry them
+  // -- `is_boundary(f)` is `is_in_complex(f)` or a cell-selector mismatch, so
+  // every in-complex facet is one of the facets the normals already group by
+  // vertex. A whole second scan of the mesh's facets, and a
+  // `unordered_map<Vertex_handle, ...>` filled three lookups per in-complex
+  // facet, are what that removes. Like the normals, the outer vector and each
+  // inner vector keep their capacity between calls.
+  std::vector<std::vector<Surface_patch_index>> m_vertices_surface_indices_by_id;
+
   // The vertices `compute_vertices_normals()` actually wrote, in the order it
   // first touched them. Only surface vertices carry a normal -- 102 k of the
   // 774 k facets of `1146193_cdt_0.5` are boundary facets -- so emptying and
@@ -233,7 +245,11 @@ public:
     reset_vertex_id_map(c3t3.triangulation());
     if (!m_protect_boundaries)
     {
-      collect_vertices_surface_indices(c3t3);
+      // Under Parallel_tag `compute_vertices_normals()` fills the surface
+      // indices as it goes, off the same facets, so this scan is not run at
+      // all. See `m_vertices_surface_indices_by_id`.
+      if constexpr (!is_parallel)
+        collect_vertices_surface_indices(c3t3);
       compute_vertices_normals(c3t3);
     }
     reset_free_vertices(c3t3.triangulation());
@@ -280,6 +296,20 @@ public:
                                 const Surface_patch_index& si) const
   {
     return vertex_normal(vertex_id(v), si);
+  }
+
+  // The surface patches `v` lies on. Two storages, one meaning: a dense vector
+  // by vertex id where the normals pass fills it, the map where
+  // `collect_vertices_surface_indices()` does.
+  const std::vector<Surface_patch_index>&
+  surface_indices(const std::size_t vid, const Vertex_handle v) const
+  {
+    CGAL_USE(vid);
+    CGAL_USE(v);
+    if constexpr (is_parallel)
+      return m_vertices_surface_indices_by_id[vid];
+    else
+      return m_vertices_surface_indices.at(v);
   }
 
   const Incident_cells_vector& incident_cells(const Vertex_handle v) const
@@ -618,6 +648,11 @@ private:
       std::array<Vertex_handle, 3> vhs;
       Surface_patch_index patch;
       Vector_3 n;
+      // `is_boundary()` above accepts a facet whose two cells differ only in
+      // the cell selector; such a facet carries a normal but is not one of
+      // the patches a vertex LIES on, so the two are distinguished here
+      // rather than by scanning the mesh again.
+      bool in_complex;
     };
 
     // ---- pass 1: the facet normals, on all threads -------------------------
@@ -642,6 +677,7 @@ private:
             Facet_normal fn;
             fn.patch = c3t3.surface_patch_index(f);
             fn.n = n;
+            fn.in_complex = c3t3.is_in_complex(f);
             int i = 0;
             for (const Vertex_handle vi : tr.vertices(f))
             {
@@ -657,12 +693,14 @@ private:
     {
       CGAL_USE(v);
       m_vertices_normals[vid].clear();
+      m_vertices_surface_indices_by_id[vid].clear();
       m_nrm_facet_count[vid] = 0;
     }
     m_vertices_with_normals.clear();
 
     const std::size_t nbv = tr.number_of_vertices();
     m_vertices_normals.resize(nbv);
+    m_vertices_surface_indices_by_id.resize(nbv);
     m_nrm_facet_count.resize(nbv, 0);
     m_nrm_vertex_slot.resize(nbv);
 
@@ -704,7 +742,9 @@ private:
       {
         for (std::size_t k = range.begin(); k != range.end(); ++k)
         {
-          Vertex_patch_normals& vpn = m_vertices_normals[m_vertices_with_normals[k].first];
+          const std::size_t vid = m_vertices_with_normals[k].first;
+          Vertex_patch_normals& vpn = m_vertices_normals[vid];
+          std::vector<Surface_patch_index>& vsi = m_vertices_surface_indices_by_id[vid];
 
           for (std::uint32_t j = m_nrm_csr_offset[k]; j != m_nrm_csr_offset[k + 1]; ++j)
           {
@@ -715,6 +755,11 @@ private:
               vpn.emplace_back(fn.patch, fn.n);
             else
               patch_it->second += fn.n;
+
+            // One vertex is one thread's here, exactly as the normal is.
+            if (fn.in_complex
+                && std::find(vsi.begin(), vsi.end(), fn.patch) == vsi.end())
+              vsi.push_back(fn.patch);
           }
 
           for (auto& [surf_i, n] : vpn)
@@ -1536,7 +1581,8 @@ private:
     Point_3 tmp_pos = current_pos;
 
 #ifndef CGAL_TET_REMESHING_EDGE_SMOOTHING_DISABLE_PROJECTION
-    const std::vector<Surface_patch_index>& v_surface_indices = m_context->m_vertices_surface_indices.at(v);
+    const std::vector<Surface_patch_index>& v_surface_indices
+      = m_context->surface_indices(vid, v);
     for (const Surface_patch_index& si : v_surface_indices)
     {
       Point_3 normal_projection = BaseClass::project_on_tangent_plane(smoothed_position, current_pos,
@@ -1669,10 +1715,12 @@ private:
     const std::size_t nb_neighbors = moves[vid].neighbors;
     const Point_3 current_pos = point(v->point());
 
-    CGAL_assertion(m_context->m_vertices_surface_indices.find(v) != m_context->m_vertices_surface_indices.end());
-    const auto& incident_surface_patches = m_context->m_vertices_surface_indices.at(v);
+    const auto& incident_surface_patches = m_context->surface_indices(vid, v);
 
-    if (incident_surface_patches.size() > 1)
+    // `!= 1` rather than `> 1`: the map threw on a vertex it had no entry for,
+    // the dense vector hands back an empty one, and a vertex that lies on no
+    // patch has no surface position to compute either way.
+    if (incident_surface_patches.size() != 1)
       return std::nullopt;
 
     const Surface_patch_index si = incident_surface_patches[0];
