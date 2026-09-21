@@ -21,6 +21,7 @@
 #include <CGAL/Hexmeshing/adjacent_face_on_plane.h>
 #include <CGAL/Hexmeshing/function_alias.h>
 #include <CGAL/Union_find.h>
+#include <unordered_set>
 #include <queue>
 #include <array>
 
