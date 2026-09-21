@@ -31,6 +31,8 @@ class Convex_hull_face_base_2
   int _info = 0;
 
 public:
+  std::array<bool, 3> edge_is_coplanar = { false, false, false };
+
   typedef typename Fb::Vertex_handle                   Vertex_handle;
   typedef typename Fb::Face_handle                     Face_handle;
 
@@ -61,6 +63,12 @@ public:
 
   const int& info() const { return _info; }
   int&       info()       { return _info; }
+
+  void reset_info()
+  {
+    _info=0;
+   edge_is_coplanar = { false, false, false };
+  }
 
   static int ccw(int i) {return Triangulation_cw_ccw_2::ccw(i);}
   static int  cw(int i) {return Triangulation_cw_ccw_2::cw(i);}
