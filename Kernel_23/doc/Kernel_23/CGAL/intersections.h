@@ -366,11 +366,11 @@ The result type can be specified through the placeholder type specifier `auto`,
 but you must anyway know that the result type is a `std::optional<std::variant<..> >`,
 in order to unpack the point or segment.
 
-<A HREF="https://www.boost.org/libs/optional/">`std::optional`</A> comes in
-as there might be no intersection. <A HREF="https://www.boost.org/libs/variant/">`std::variant`</A> comes in
+`std::optional` comes in
+as there might be no intersection. `std::variant` comes in
 as, if there is an intersection, it is either a point or a segment.
 
-As explained in the boost manual pages for <A HREF="https://www.boost.org/libs/variant/">`std::variant`</A>, there are two ways to access the variants. The first examples uses `boost::get`.
+There are two ways to access the variants. The first examples uses `std::get_if`.
 
 \cgalExample{Kernel_23/intersection_get.cpp}
 
