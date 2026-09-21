@@ -13,21 +13,21 @@ generate a plausible surface that approximates well the input
 points. This problem is ill-posed as many surfaces can be generated. A
 wide range of approaches have been proposed to tackle this
 problem. Among them are variational methods
-\cgalCite{s-lsm-96}\cgalCite{zomk-insru-00}, tensor voting
+\cgalCite{s-lsm-96}, \cgalCite{zomk-insru-00}, tensor voting
 \cgalCite{cgal:ml-cfsg-00}, implicit surface
-\cgalCite{hddhjmss-pssr-94}\cgalCite{bc-ssrnn-00}, and Delaunay
+\cgalCite{hddhjmss-pssr-94}, \cgalCite{bc-ssrnn-00}, and Delaunay
 triangulations.
 
 For Delaunay based algorithms the output surface is commonly generated
 as the union of some triangles selected in the 3D Delaunay
 triangulation of the input points. Such algorithms are either
 volume-based by generating as output the boundary of selected
-tetrahedra \cgalCite{abe-cbscc-97}\cgalCite{ack-pcubm-01},
+tetrahedra \cgalCite{abe-cbscc-97}, \cgalCite{ack-pcubm-01},
 or surface-based by selecting a set of triangles.
 
 
 In most surface based Delaunay algorithms the triangles are
-selected independently, that is in parallel \cgalCite{agj-lcsr-00}\cgalCite{ab-srvf-98}.
+selected independently, that is in parallel \cgalCite{agj-lcsr-00}, \cgalCite{ab-srvf-98}.
 
 This chapter presents a surface-based Delaunay surface
 reconstruction algorithm that sequentially selects the triangles, that
@@ -37,7 +37,7 @@ triangle is selected, and such that the triangles selected
 generates an orientable manifold triangulated surface.
 
 Two other examples of this greedy approach are the ball pivoting
-algorithm and Boyer-Petitjean's algorithm \cgalCite{bmrst-bpasr-99}\cgalCite{pb-rnrps-01}. In both algorithms
+algorithm and Boyer-Petitjean's algorithm \cgalCite{bmrst-bpasr-99}, \cgalCite{pb-rnrps-01}. In both algorithms
 a triangulated surface is incrementally grown starting from a seed
 triangle. Ball pivoting is fast, but the quality of the reconstruction
 depends on user defined parameters corresponding to the sampling

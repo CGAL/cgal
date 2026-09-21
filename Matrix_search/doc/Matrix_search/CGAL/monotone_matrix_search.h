@@ -51,9 +51,8 @@ binary function: `Matrix::Value` \f$ \times\f$
 
 \cgalHeading{Implementation}
 
-The implementation uses an algorithm by Aggarwal
-et al.\cgalCite{akmsw-gamsa-87}. The runtime is linear in the number
-of rows and columns of the matrix.
+The implementation uses an algorithm by \cgalCite{akmsw-gamsa-87}.
+The runtime is linear in the number of rows and columns of the matrix.
 
 */
 template < class Matrix, class RandomAccessIC,

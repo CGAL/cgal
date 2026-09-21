@@ -170,7 +170,7 @@ since all of these intersections need to be calculated in the overlay.
 
 \section SectionPolygonRepair_History History
 
-The polygon repair method as originally developed is described by Ledoux et al.
+The polygon repair method as originally developed is described by
 \cgalCite{ledoux2014triangulation} and implemented in the
 <a href="https://github.com/tudelft3d/prepair/"><em>prepair</em></a> software.
 This package is a reimplementation of the method with a new approach to label
