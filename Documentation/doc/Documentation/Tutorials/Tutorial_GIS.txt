@@ -214,7 +214,7 @@ cross a face, and to extract it then:
 
 From these functions, we can create a graph of segments to process
 later into a set of polylines. To do so, we use the
-[boost::adjacency_list](https://www.boost.org/doc/libs/1_72_0/libs/graph/doc/adjacency_list.html)
+[boost::adjacency_list](https://www.boost.org/doc/libs/latest/libs/graph/doc/html/graph/graph_classes/adjacency_list.html)
 structure and keep track of a mapping from the positions of
 the end points to the vertices of the graph.
 
