@@ -1,0 +1,5 @@
+The Feature_graph package provides sharp feature detection methods.
+From an input surface, a feature graph is constructed,
+that represent the sharp lines in 3D space.
+These lines are placed following a sharpness measure as an oracle,
+and are then optimized to better fit the surface features.
