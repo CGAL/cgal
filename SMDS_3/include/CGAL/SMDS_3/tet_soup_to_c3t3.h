@@ -20,8 +20,6 @@
 #include <CGAL/license/SMDS_3.h>
 
 #include <CGAL/assertions.h>
-#include <CGAL/IO/MEDIT.h>
-#include <CGAL/IO/File_medit.h>
 #include <CGAL/Default.h>
 #include <CGAL/utility.h>
 
@@ -699,68 +697,6 @@ bool build_triangulation_with_subdomains_range(Tr& tr,
                                   allow_negative_orientation);
 }
 
-template<class Tr,
-         class Curve_index,
-         class Corner_index,
-         class CxEdgesOutputIterator>
-bool build_triangulation_from_file(std::istream& is,
-                                   Tr& tr,
-                                   const bool verbose,
-                                   const bool replace_domain_0,
-                                   const bool allow_non_manifold,
-                                   const bool allow_negative_orientation,
-                                   CxEdgesOutputIterator cx_edges_oit)
-{
-  using Point_3 = typename Tr::Point;
-  using Subdomain_index = typename Tr::Cell::Subdomain_index;
-  using Surface_patch_index = typename Tr::Cell::Surface_patch_index;
-
-  using Facet        = std::array<int, 3>; // 3 = id
-  using Tet_with_ref = std::array<int, 4>; // 4 = id
-
-  using Edge_with_index = CGAL::IO::internal::Edge_with_index<Curve_index>;
-  using Corner_with_index = CGAL::IO::internal::Corner_with_index<Corner_index>;
-
-  std::vector<Tet_with_ref> finite_cells;
-  std::vector<Subdomain_index> subdomains;
-  std::vector<Point_3> points;
-  boost::unordered_map<Facet, Surface_patch_index> border_facets;
-  std::vector<Edge_with_index> edge_indices;
-  std::vector<Corner_with_index> corner_indices;
-
-  bool is_CGAL_mesh = false;
-
-  if(verbose)
-  {
-    std::cout << "Reading .mesh file..." << std::endl;
-    std::cout << "Replace domain #0 = " << replace_domain_0 << std::endl;
-    std::cout << "Allow non-manifoldness = " << allow_non_manifold << std::endl;
-  }
-
-  bool ok = CGAL::IO::internal::read_MEDIT(is, points, finite_cells, subdomains,
-                                           border_facets, true,
-                                           edge_indices,
-                                           corner_indices,
-                                           verbose,
-                                           is_CGAL_mesh);
-
-  if(!ok){
-    return false;
-  }
-
-  if(!is_CGAL_mesh)
-    tr.may_have_badly_oriented_cells(true);
-
-  return build_triangulation_with_subdomains_range(tr,
-                                                   points, finite_cells, subdomains, border_facets,
-                                                   edge_indices,
-                                                   corner_indices,
-                                                   cx_edges_oit,
-                                                   verbose,
-                                                   replace_domain_0 && !is_CGAL_mesh,
-                                                   allow_non_manifold,
-                                                   allow_negative_orientation);
-}
 
 } // namespace SMDS_3
 } // namespace CGAL
