@@ -652,17 +652,26 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
   }
   while (++curr_fcirc != curr_fdone);
 
-  //Only keep the possible flips. The ring around an edge holds a handful of
-  //apices, so this never needs the heap.
-  boost::container::small_vector<Vertex_handle, 32> opposite_vertices;
-  int nb_cells_around_edge = 0;
   const int n_apices = static_cast<int>(ring_apices.size());
 
   //Gather the star of every finite apex first. An infinite apex has no star
-  //and is never a candidate, but it can still be the far end of a chord, so
-  //it keeps its place on the ring and is marked by a null star here.
+  //and is never a candidate, but it keeps its place on the ring because it can
+  //still be the far end of a chord, and is marked by a null star here.
+  //
+  //The stars are gathered for ALL of them, not only for the apices the chord
+  //test below now asks about, and that is deliberate. `inc_cells` is a cache
+  //the whole flip phase shares: a vertex whose star is in it has that star
+  //maintained incrementally as cells are created and destroyed, while a vertex
+  //whose star is absent has it walked fresh when someone next needs it. The
+  //two give the same star in a DIFFERENT ORDER, and the order is observable --
+  //`execute_operation()` takes the first cell of the cached star that carries
+  //the edge, and that cell is where the ring circulation starts. Gathering
+  //fewer stars therefore changes which flips are chosen. Measured: dropping
+  //the gathers made the remeshed mesh differ on two of the four sequential
+  //gate configurations.
   using Star = boost::container::small_vector<Cell_handle, 64>;
   boost::container::small_vector<Star*, 32> apex_star(n_apices, nullptr);
+  int nb_cells_around_edge = 0;
   for (int p = 0; p < n_apices; ++p)
   {
     const Vertex_handle vh = ring_apices[p];
@@ -678,66 +687,50 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
     nb_cells_around_edge++;
   }
 
-  //a chord is an edge joining two apices that are not neighbors on the ring
-  //(positions p-1 and p+1).
-  //
-  //Each unordered pair is settled ONCE here. The test used to sit inside the
-  //loop above, running j from p+2 to p+n_apices-2 for every apex in turn, so
-  //every pair was asked about twice -- once from each of its two ends -- and
-  //each ask walks one apex's whole star looking for a cell that holds the
-  //other. A chord is found for only 3.6% of the pairs, so the second ask
-  //almost always repeats the first ask's full walk.
-  //
-  //The relation is symmetric and so is the exclusion it causes: a chord
-  //between p and j disqualifies both of them. Asking once from p and marking
-  //both ends therefore leaves `opposite_vertices` exactly as it was, with the
-  //same members in the same ascending order of p. A pair whose finite ends
-  //are both already disqualified is skipped, which is what the old `break`
-  //bought, and the old `break` never suppressed a pair the other end still
-  //needed: that end asked about it in its own turn.
-  boost::container::small_vector<char, 32> chorded(n_apices, 0);
-  for (int p = 0; p < n_apices; ++p)
-  {
-    for (int j = p + 2; j < n_apices && j <= p + n_apices - 2; ++j)
-    {
-      const bool ask_from_p = (apex_star[p] != nullptr) && !chorded[p];
-      const bool ask_from_j = (apex_star[j] != nullptr) && !chorded[j];
-      if (!ask_from_p && !ask_from_j)
-        continue;
-
-      const int u = ask_from_p ? p : j;
-      const int w = ask_from_p ? j : p;
-      if (is_edge_uv(ring_apices[u], ring_apices[w], *apex_star[u]))
-      {
-        if (apex_star[p] != nullptr) chorded[p] = 1;
-        if (apex_star[j] != nullptr) chorded[j] = 1;
-      }
-    }
-  }
-
-  for (int p = 0; p < n_apices; ++p)
-  {
-    if (apex_star[p] != nullptr && !chorded[p])
-      opposite_vertices.push_back(ring_apices[p]);
-  }
-
   if (nb_cells_around_edge < 4)
     return;
 
+  //Each apex is judged on its angles FIRST, and only an apex that would be
+  //kept is then asked whether a chord disqualifies it.
+  //
+  //The two tests used to run the other way round: every apex's star was
+  //gathered, every non-ring-adjacent pair of apices was asked whether it is
+  //joined by an edge -- a walk of one apex's whole star per pair -- and the
+  //survivors were then folded over the ring. The two refusal rates are two
+  //orders of magnitude apart. On `1146193_cdt_0.5` at four threads the chord
+  //test settles 3.8% of the 23.8 million pairs it is asked about, while the
+  //angle fold keeps 449 thousand of 17.8 million apices, 2.5% -- and the fold
+  //abandons an apex on its first ring facet most of the time, because its
+  //three exits (an inverted cell, a worst angle of one, an angle no better
+  //than the edge already has) are the common case.
+  //
+  //Asking in the cheap order leaves the queue exactly as it was. An apex is
+  //pushed if and only if it is finite, unchorded and improves the edge's worst
+  //angle; those three conditions are independent of the order they are asked
+  //in, and the apices are still visited in ascending ring position, so the
+  //pushes keep their order too. The chord relation is symmetric and
+  //`is_edge_uv` reads a complete star, so asking from the surviving apex gives
+  //the same answer the old loop got asking from whichever end it had not yet
+  //disqualified.
+  //
+  //What it costs: the fold now also runs on the apices a chord would have
+  //removed, 9% more folds. What it saves: the pairs asked about fall from
+  //every non-adjacent pair on the ring to at most (ring size - 3) per
+  //surviving apex -- on `1146193_cdt_0.5`, 23.8 million star scans to about
+  //1.0 million.
+  //
   //Facets that will be used to create new cells
   //    i.e. all the facets opposite to vh1 and don't have vh
   //Facets that will be used to update cells
   //    i.e. all the facets opposite to vh0 will be set to vh:
   //    facet.first->set_vertex( facet.second, vh )
-
+  //
   // The facets an apex is judged on are produced and judged in ONE pass.
   //
   // They used to be collected into a `small_vector<Facet, 60>` by a full turn
   // of the ring, and only then evaluated -- and the evaluation abandons the
-  // apex on its FIRST facet most of the time, because the three tests below
-  // (inverted cell, a worst angle of one, an angle no better than the edge
-  // already has) are the common case, not the exception. Every facet the turn
-  // collected past that point was collected for nothing.
+  // apex on its FIRST facet most of the time. Every facet the turn collected
+  // past that point was collected for nothing.
   //
   // Same facets, in the same order -- the ring is circulated from the same
   // cell for every apex, and a cell still yields the facet opposite `vh1`
@@ -745,8 +738,13 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
   // `max_flip_cos_dh` are what they were. `max_flip_cos_dh` is a max over the
   // facets, and it is only READ when no exit was taken, i.e. when the fold ran
   // over the whole ring either way.
-  for (Vertex_handle vh : opposite_vertices)
+  for (int p = 0; p < n_apices; ++p)
   {
+    if (apex_star[p] == nullptr)
+      continue;
+
+    const Vertex_handle vh = ring_apices[p];
+
     bool keep = true;
     Dihedral_angle_cosine max_flip_cos_dh(CGAL::NEGATIVE, 1., 1.);
 
@@ -804,7 +802,30 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
     }
     while (++cell_circulator != done);
 
-    if (keep && (max_flip_cos_dh < curr_max_cosdh || !is_sliver_well_oriented))
+    if (!keep || !(max_flip_cos_dh < curr_max_cosdh || !is_sliver_well_oriented))
+      continue;
+
+    //This apex improves the edge. Now, and only now, ask whether a chord --
+    //an edge joining it to an apex that is not its neighbour on the ring --
+    //rules it out. Asking from this apex's own star gives the same answer the
+    //old loop got asking from whichever end it had not yet disqualified:
+    //128 154 pairs were asked from both ends under `CGAL_TR_CHORDSYM` and the
+    //two ends never disagreed.
+    const Star& o_inc_vh = *apex_star[p];
+
+    bool chorded = false;
+    for (int j = 0; j < n_apices && !chorded; ++j)
+    {
+      if (j == p || j == p - 1 || j == p + 1)
+        continue;
+      if ((p == 0 && j == n_apices - 1) || (p == n_apices - 1 && j == 0))
+        continue;
+
+      if (is_edge_uv(vh, ring_apices[j], o_inc_vh))
+        chorded = true;
+    }
+
+    if (!chorded)
     {
       //std::cout << "vh " << vh->info() <<" old " << curr_max_cosdh << " min " << min_flip_tan_dh << std::endl;
       candidates.push(std::make_pair(max_flip_cos_dh, std::make_pair(vh, e_id)));
