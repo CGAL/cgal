@@ -1827,6 +1827,25 @@ public:
     if (m_destroyed_edges.contains(e))
       return true;
 
+    // A pair whose two endpoints both lie below dimension 2 -- on a feature
+    // curve or at a corner -- and which is not itself an edge of the complex
+    // can never be collapsed: `get_edge_info()` reaches its
+    // "an endpoint below dimension 2" branch, finds the pair outside the
+    // complex, and can set neither update flag, because neither endpoint is
+    // of dimension 2. `get_collapse_type()` therefore answers IMPOSSIBLE and
+    // `collapse_edge()` declines.
+    //
+    // The same verdict is reached here from the two dimensions and one
+    // complex-edge lookup, before the two stars are walked to lock them --
+    // 41.6% of the candidates offered on 1146193_cdt_0.5, every one of them
+    // refused. Both endpoints are held, so their dimensions are safe to
+    // read; the complex-edge lookup is the same one `topology_test()`
+    // already makes from inside this zone.
+    if (c3t3.in_dimension(e.first) < 2
+     && c3t3.in_dimension(e.second) < 2
+     && !c3t3.is_in_complex(e.first, e.second))
+      return true; // the zone stays invalid; execute_operation_vv() declines
+
     // A collapse does not only rewrite the two stars: it first MOVES both
     // endpoints -- to their midpoint, or one onto the other -- and only then
     // removes one of them. The spatial lock is keyed on where a vertex is
