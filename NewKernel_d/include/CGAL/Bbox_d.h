@@ -125,6 +125,18 @@ public:
       }
     }
 
+    void pad(double offset)
+    {
+      CGAL_precondition(offset >= 0.);
+
+      if (offset == 0.)
+        return;
+      int d = dimension();
+      for(int i=0; i<d; ++i){
+        min_values[i] -= offset;
+        max_values[i] += offset;
+      }
+    }
 
 
     bool operator==(const Bbox& bbox) const {

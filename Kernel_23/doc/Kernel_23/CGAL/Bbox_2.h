@@ -108,6 +108,12 @@ scales the bounding box by `factor`, while keeping its center fixed.
 */
 void scale(double factor);
 
+/*!
+pads the bounding box by `offset`.
+\pre `offset >= 0`
+*/
+void pad(double offset);
+
 /// @}
 
 }; /* end Bbox_2 */

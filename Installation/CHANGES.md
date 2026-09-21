@@ -5,7 +5,7 @@
 Release date: December 2026
 
 ### [Linear Cell Complex](https://doc.cgal.org/6.3/Manual/packages.html#PkgLinearCellComplex)
-- added `tetrahedron_soup_to_lcc()` to import a tetrahedron soup into a linear cell complex.
+- Added `tetrahedron_soup_to_lcc()` to import a tetrahedron soup into a linear cell complex.
 
 ### [2D and 3D Fast Intersection and Distance Computation (AABB Tree)](https://doc.cgal.org/6.3/Manual/packages.html#PkgAABBTree)
 - `CGAL::AABB_tree::build()` now accepts an optional `Concurrency_tag` template parameter (`CGAL::Sequential_tag` by default).
@@ -20,7 +20,13 @@ Release date: December 2026
 
 ### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/6.3/Manual/packages.html#PkgKernel23)
 
-- Add operator to functor `Orientation_3` that takes 5 points as argument, with the last two getting tested against the first three points
+- Added operator to functor `Orientation_3` that takes 5 points as argument, with the last two getting tested against the first three points
+- Added the function `pad(double offset)` to the classes `Bbox_2` and `Bbox_3`
+
+### [dD Kernel](https://doc.cgal.org/6.3/Manual/packages.html#PkgKernelD)
+
+- Added the function `pad(double offset)` to the class `Bbox_d`
+
 
 ### [2D Snap Rounding](https://doc.cgal.org/6.3/Manual/packages.html#PkgSnapRounding2) (major changes)
 
