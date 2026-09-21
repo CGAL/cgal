@@ -436,7 +436,7 @@ put(boost::vertex_point_t p, OPEN_MESH_CLASS& g,
 }
 
 
-} // namespace OpenMesh
+} // namespace CGAL
 
 
 // dynamic properties
@@ -488,80 +488,116 @@ struct property_map<OPEN_MESH_CLASS, CGAL::dynamic_face_property_t<V> >
 namespace OpenMesh {
 
 // get function for dynamic properties of mutable graph
-template <typename K, typename V>
+template <typename K, typename V, typename ...Default_value_args>
 typename boost::property_map<OPEN_MESH_CLASS, CGAL::dynamic_vertex_property_t<V> >::type
-get(CGAL::dynamic_vertex_property_t<V>, OPEN_MESH_CLASS& om)
+get(const CGAL::dynamic_vertex_property_t<V>&, OPEN_MESH_CLASS& om, Default_value_args&&... default_value_args)
 {
   typedef OPEN_MESH_CLASS OM;
   typedef typename boost::property_map<OM, CGAL::dynamic_vertex_property_t<V> >::SMPM SMPM;
   typedef typename boost::property_map<OM, CGAL::dynamic_vertex_property_t<V> >::type DPM;
-  return DPM(om, new SMPM(om));
+  DPM dpm(om, new SMPM(om));
+  if constexpr(sizeof...(Default_value_args) > 0) {
+    const V v = V(std::forward<Default_value_args>(default_value_args)...);
+    if(v != V())
+      for(auto vd: om.vertices())
+        put(dpm, vd, v);
+  }
+  return dpm;
 }
 
-template <typename K, typename V>
+template <typename K, typename V, typename ...Default_value_args>
 typename boost::property_map<OPEN_MESH_CLASS, CGAL::dynamic_halfedge_property_t<V> >::type
-get(CGAL::dynamic_halfedge_property_t<V>, OPEN_MESH_CLASS& om)
+get(const CGAL::dynamic_halfedge_property_t<V>&, OPEN_MESH_CLASS& om, Default_value_args&&... default_value_args)
 {
   typedef OPEN_MESH_CLASS OM;
   typedef typename boost::property_map<OM, CGAL::dynamic_halfedge_property_t<V> >::SMPM SMPM;
   typedef typename boost::property_map<OM, CGAL::dynamic_halfedge_property_t<V> >::type DPM;
-  return DPM(om, new SMPM(om));
+  DPM dpm(om, new SMPM(om));
+  if constexpr(sizeof...(Default_value_args) > 0) {
+    const V v = V(std::forward<Default_value_args>(default_value_args)...);
+    if(v != V())
+      for(auto hd: om.halfedges())
+        put(dpm, hd, v);
+  }
+  return dpm;
 }
 
-template <typename K, typename V>
+template <typename K, typename V, typename ...Default_value_args>
 typename boost::property_map<OPEN_MESH_CLASS, CGAL::dynamic_edge_property_t<V> >::type
-get(CGAL::dynamic_edge_property_t<V>, OPEN_MESH_CLASS& om)
+get(const CGAL::dynamic_edge_property_t<V>&, OPEN_MESH_CLASS& om, Default_value_args&&... default_value_args)
 {
   typedef OPEN_MESH_CLASS OM;
   typedef typename boost::property_map<OM, CGAL::dynamic_edge_property_t<V> >::SMPM SMPM;
   typedef typename boost::property_map<OM, CGAL::dynamic_edge_property_t<V> >::type DPM;
-  return DPM(om, new SMPM(om));
+  DPM dpm(om, new SMPM(om));
+  if constexpr(sizeof...(Default_value_args) > 0) {
+    const V v = V(std::forward<Default_value_args>(default_value_args)...);
+    if(v != V())
+      for(auto ed: edges(om))
+        put(dpm, ed, v);
+  }
+  return dpm;
 }
 
-template <typename K, typename V>
+template <typename K, typename V, typename ...Default_value_args>
 typename boost::property_map<OPEN_MESH_CLASS, CGAL::dynamic_face_property_t<V> >::type
-get(CGAL::dynamic_face_property_t<V>, OPEN_MESH_CLASS& om)
+get(const CGAL::dynamic_face_property_t<V>&, OPEN_MESH_CLASS& om, Default_value_args&&... default_value_args)
 {
   typedef OPEN_MESH_CLASS OM;
   typedef typename boost::property_map<OM, CGAL::dynamic_face_property_t<V> >::SMPM SMPM;
   typedef typename boost::property_map<OM, CGAL::dynamic_face_property_t<V> >::type DPM;
-  return DPM(om, new SMPM(om));
+  DPM dpm(om, new SMPM(om));
+  if constexpr(sizeof...(Default_value_args) > 0) {
+    const V v = V(std::forward<Default_value_args>(default_value_args)...);
+    if(v != V())
+      for(auto fd: om.faces())
+        put(dpm, fd, v);
+  }
+  return dpm;
 }
 
 // get function for dynamic properties of const graph
-template <typename K, typename V>
+template <typename K, typename V, typename ...Default_value_args>
 typename boost::property_map<OPEN_MESH_CLASS, CGAL::dynamic_vertex_property_t<V> >::const_type
-get(CGAL::dynamic_vertex_property_t<V>, const OPEN_MESH_CLASS& om)
+get(CGAL::dynamic_vertex_property_t<V>, const OPEN_MESH_CLASS& om, Default_value_args&&... default_value_args)
 {
   typedef OPEN_MESH_CLASS OM;
   typedef typename boost::property_map<OM, CGAL::dynamic_vertex_property_t<V> >::const_type DPM;
+  if constexpr(sizeof...(Default_value_args) > 0)
+    return DPM(num_vertices(om), V(std::forward<Default_value_args>(default_value_args)...));
   return DPM(num_vertices(om));
 }
 
-template <typename K, typename V>
+template <typename K, typename V, typename ...Default_value_args>
 typename boost::property_map<OPEN_MESH_CLASS, CGAL::dynamic_halfedge_property_t<V> >::const_type
-get(CGAL::dynamic_halfedge_property_t<V>, const OPEN_MESH_CLASS& om)
+get(CGAL::dynamic_halfedge_property_t<V>, const OPEN_MESH_CLASS& om, Default_value_args&&... default_value_args)
 {
   typedef OPEN_MESH_CLASS OM;
   typedef typename boost::property_map<OM, CGAL::dynamic_halfedge_property_t<V> >::const_type DPM;
+  if constexpr(sizeof...(Default_value_args) > 0)
+    return DPM(num_halfedges(om), V(std::forward<Default_value_args>(default_value_args)...));
   return DPM(num_halfedges(om));
 }
 
-template <typename K, typename V>
+template <typename K, typename V, typename ...Default_value_args>
 typename boost::property_map<OPEN_MESH_CLASS, CGAL::dynamic_edge_property_t<V> >::const_type
-get(CGAL::dynamic_edge_property_t<V>, const OPEN_MESH_CLASS& om)
+get(CGAL::dynamic_edge_property_t<V>, const OPEN_MESH_CLASS& om, Default_value_args&&... default_value_args)
 {
   typedef OPEN_MESH_CLASS OM;
   typedef typename boost::property_map<OM, CGAL::dynamic_edge_property_t<V> >::const_type DPM;
+  if constexpr(sizeof...(Default_value_args) > 0)
+    return DPM(num_edges(om), V(std::forward<Default_value_args>(default_value_args)...));
   return DPM(num_edges(om));
 }
 
-template <typename K, typename V>
+template <typename K, typename V, typename ...Default_value_args>
 typename boost::property_map<OPEN_MESH_CLASS, CGAL::dynamic_face_property_t<V> >::const_type
-get(CGAL::dynamic_face_property_t<V>, const OPEN_MESH_CLASS& om)
+get(CGAL::dynamic_face_property_t<V>, const OPEN_MESH_CLASS& om, Default_value_args&&... default_value_args)
 {
   typedef OPEN_MESH_CLASS OM;
   typedef typename boost::property_map<OM, CGAL::dynamic_face_property_t<V> >::const_type DPM;
+  if constexpr(sizeof...(Default_value_args) > 0)
+    return DPM(num_faces(om), V(std::forward<Default_value_args>(default_value_args)...));
   return DPM(num_faces(om));
 }
 
@@ -572,6 +608,6 @@ void remove_property(Pmap pm, OPEN_MESH_CLASS& om)
   om.remove_property(pm.handle());
 }
 
-} // namespace OpenMesh
+} // namespace CGAL
 
 #undef OPEN_MESH_CLASS
