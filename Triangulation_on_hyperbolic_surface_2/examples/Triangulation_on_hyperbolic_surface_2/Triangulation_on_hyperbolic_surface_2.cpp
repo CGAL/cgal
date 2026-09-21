@@ -17,7 +17,7 @@ int main() {
 
   // Generates the domain:
   Factory factory = Factory();
-  Domain domain = factory.make_hyperbolic_fundamental_domain_g2(time(NULL)); // get a random
+  Domain domain = factory.make_hyperbolic_fundamental_domain_g2(0); // get a random
 
   // Triangulates the domain:
   Triangulation triangulation = Triangulation(domain);

@@ -21,7 +21,7 @@ using Delaunay_triangulation = CGAL::Delaunay_triangulation_on_hyperbolic_surfac
 int main() {
   // Generate the domain
   Factory factory = Factory();
-  Domain domain = factory.make_hyperbolic_fundamental_domain_g2(time(NULL)); // get a random seed
+  Domain domain = factory.make_hyperbolic_fundamental_domain_g2(0); // get a random seed
   Traits gt = Traits();
   unsigned p;
   double eps;
