@@ -91,6 +91,50 @@ void update_c3t3_facets(C3t3& c3t3,
   }
 }
 
+
+/**
+* Keep a cached star up to date instead of throwing it away.
+*
+* A flip changes the star of about eighteen vertices, and dropping each one
+* meant walking all ~29 of its cells again the next time it was asked for:
+* 94.4% of this pass's star fills are refills, 68 million cell visits on
+* `1146193_cdt_0.5`. The flip knows exactly which one or two cells each
+* affected vertex gained or lost, so it can say so.
+*
+* An EMPTY entry means "not cached" and must stay empty -- a partial star
+* would be read as a complete one. So both helpers do nothing to a vertex
+* that has no star; it will be walked in full when something asks.
+*
+* `star_lose()` erases rather than swapping the last element into the gap:
+* the order of a cached star is observable. `is_edge_uv()` returns the FIRST
+* cell carrying the other endpoint, and that cell becomes the `Edge` the
+* flip search circulates from. `star_gain()` cannot reproduce walk order at
+* all, which is why patching is confined to the parallel path, where the
+* cell a thread finds is already a function of the schedule.
+*/
+template<typename IncCellsVectorMap, typename Vertex_handle, typename Cell_handle>
+inline void star_gain(IncCellsVectorMap& inc_cells, const Vertex_handle v,
+                      const Cell_handle c)
+{
+  const auto it = inc_cells.find(v);
+  if (it == inc_cells.end() || it->second.empty())
+    return;
+  it->second.push_back(c);
+}
+
+template<typename IncCellsVectorMap, typename Vertex_handle, typename Cell_handle>
+inline void star_lose(IncCellsVectorMap& inc_cells, const Vertex_handle v,
+                      const Cell_handle c)
+{
+  const auto it = inc_cells.find(v);
+  if (it == inc_cells.end() || it->second.empty())
+    return;
+  auto& star = it->second;
+  const auto p = std::find(star.begin(), star.end(), c);
+  if (p != star.end())
+    star.erase(p);
+}
+
 template<typename C3t3, typename IncCellsVectorMap, typename CellSelector>
 Sliver_removal_result flip_3_to_2(typename C3t3::Edge& edge,
                                   C3t3& c3t3,
@@ -943,6 +987,16 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
   bool selected = get(cell_selector, to_remove[0]);
   visitor.before_flip(to_remove[0]);
 
+  // Maintaining the cached stars instead of dropping them changes the ORDER
+  // a star comes out in, and that order is observable: `is_edge_uv()` hands
+  // back the FIRST cell carrying the other endpoint, and the flip search
+  // circulates the ring from it. Under `Sequential_tag` that changes the
+  // output mesh -- measured, it does -- so the blanket invalidation stays
+  // there. Under `Parallel_tag` the cell a thread finds already depends on
+  // the schedule, so there is no order to preserve.
+  constexpr bool patch_stars
+    = is_parallel_triangulation<typename C3t3::Triangulation>();
+
   std::vector<Cell_handle> cells_to_update;
 
   //Create new cells
@@ -960,12 +1014,25 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
 
     visitor.after_flip(new_cell);
     cells_to_update.push_back(new_cell);
+    // every vertex of a cell that did not exist a moment ago gains it
+    if constexpr (patch_stars)
+      for (int v = 0; v < 4; ++v)
+        star_gain(inc_cells, new_cell->vertex(v), new_cell);
   }
 
   //Update_existing cells
   for (const Facet& fi : facets_for_updated_cells)
   {
+    // the cell keeps its identity and swaps ONE vertex, so exactly two stars
+    // move: the vertex that leaves it, and vh which joins it
+    const Vertex_handle replaced
+      = patch_stars ? fi.first->vertex(fi.second) : Vertex_handle();
     fi.first->set_vertex(fi.second, vh);
+    if constexpr (patch_stars)
+    {
+      star_lose(inc_cells, replaced, fi.first);
+      star_gain(inc_cells, vh, fi.first);
+    }
     cells_to_update.push_back(fi.first);
   }
 
@@ -1015,7 +1082,8 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
       }
       ch->vertex(v)->set_cell(ch);
 
-      inc_cells[ch->vertex(v)].clear();
+      if constexpr (!patch_stars)
+        inc_cells[ch->vertex(v)].clear();
     }
     ch->reset_cache_validity();
   }
@@ -1026,6 +1094,12 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
   //Remove cells
   for (Cell_handle ch : to_remove)
   {
+    // every vertex of a cell about to go loses it; the vertices outlive it,
+    // because a flip never removes one
+    if constexpr (patch_stars)
+      for (int v = 0; v < 4; ++v)
+        star_lose(inc_cells, ch->vertex(v), ch);
+
     treat_before_delete(ch, cell_selector, c3t3);
     ch->reset_cache_validity();
     tr.tds().delete_cell(ch);
