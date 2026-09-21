@@ -69,8 +69,9 @@ public:
   typedef typename Base::Isolated_vertex_const_iterator Isolated_vertex_const_iterator;
   typedef typename Base::Point_const_iterator Point_const_iterator;
   typedef typename Base::Mark Mark;
-typedef typename Base::Point Point;
-typedef typename Base::GenPtr GenPtr;
+  typedef typename Base::Point Point;
+  typedef typename Base::GenPtr GenPtr;
+  typedef typename Base::Object_handle Object_handle;
 
 /*{\Mtext Local types are handles, iterators and circulators of the following
 kind: |Vertex_handle|, |Vertex_iterator|, |Halfedge_handle|,
