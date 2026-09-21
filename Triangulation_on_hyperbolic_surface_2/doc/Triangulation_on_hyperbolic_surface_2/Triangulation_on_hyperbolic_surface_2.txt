@@ -227,7 +227,7 @@ The secondary class `CGAL::Hyperbolic_isometry_2` defines isometries in the Poin
 
 \section Visualization Visualization
 
-<div style="color:red">This package contains several demos (found in the folder demo/riangulation_on_hyperbolic_surface_2), which display lifts of triangulations and Dirichlet domains.</div>
+<div style="color:red">This package contains several demos (found in the folder demo/Triangulation_on_hyperbolic_surface_2), which display lifts of triangulations and Dirichlet domains.</div>
 
 The function `CGAL::Triangulation_on_hyperbolic_surface_2::lift()` computes a lift of each triangle in the hyperbolic plane, enabling its visualization (see \cgalFigureRef{THS2-demo-output}).
 
