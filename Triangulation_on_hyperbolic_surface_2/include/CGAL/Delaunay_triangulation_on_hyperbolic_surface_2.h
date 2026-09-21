@@ -850,29 +850,29 @@ construct_epsilon_net(const double epsilon)
         Anchor & current_anchor = anchor(current_dart);
         triangles.pop_front();
         if(this->combinatorial_map_.is_marked(current_dart, triangles_list_mark)){
-	  this->combinatorial_map_.unmark(current_dart, triangles_list_mark);
-	  Voronoi_point c = circumcenter(current_anchor);
-	  if (gt_.template cosh_of_hyperbolic_distance<Algebraic_number,Voronoi_point>(c, current_anchor.vertices[0]) > BOUND) {
-	    // Point approx_c = approx_circumcenter_from_c(c); TO BE REMOVED
-	    Point approx_c = approx_circumcenter_from_anchor(current_anchor);
-	    if(norm(Complex_number(approx_c.x(), approx_c.y())) >= Number(1)) {
-	      break;  // avoid undefined behavior in case of bad approx outside of Poincaré
-	    }
-	    std::vector<Dart_descriptor> darts_of_new_anchors = split_insert(approx_c, current_anchor, VISIBILITY);
-	    std::list<Dart_descriptor> darts_to_flip;
-	    for (const Dart_descriptor& dart : darts_of_new_anchors) {
-	      push_triangle(dart, triangles, triangles_list_mark);
-	      push_flippable_edge(dart, darts_to_flip);
-	      push_flippable_edge(Base::ccw(dart), darts_to_flip);
-	    }
+          this->combinatorial_map_.unmark(current_dart, triangles_list_mark);
+          Voronoi_point c = circumcenter(current_anchor);
+          if (gt_.template cosh_of_hyperbolic_distance<Algebraic_number,Voronoi_point>(c, current_anchor.vertices[0]) > BOUND) {
+            // Point approx_c = approx_circumcenter_from_c(c); TO BE REMOVED
+            Point approx_c = approx_circumcenter_from_anchor(current_anchor);
+            if(norm(Complex_number(approx_c.x(), approx_c.y())) >= Number(1)) {
+              break;  // avoid undefined behavior in case of bad approx outside of Poincaré
+            }
+            std::vector<Dart_descriptor> darts_of_new_anchors = split_insert(approx_c, current_anchor, VISIBILITY);
+            std::list<Dart_descriptor> darts_to_flip;
+            for (const Dart_descriptor& dart : darts_of_new_anchors) {
+              push_triangle(dart, triangles, triangles_list_mark);
+              push_flippable_edge(dart, darts_to_flip);
+              push_flippable_edge(Base::ccw(dart), darts_to_flip);
+            }
 
-	    std::vector<Dart_descriptor> flipped_darts;
-	    restore_Delaunay(darts_to_flip, flipped_darts);
-	    for (const Dart_descriptor& dart : flipped_darts) {
-	      push_triangle(dart, triangles, triangles_list_mark);
-	      push_triangle(Base::opposite(dart), triangles, triangles_list_mark);
-	    }
-	  }
+            std::vector<Dart_descriptor> flipped_darts;
+            restore_Delaunay(darts_to_flip, flipped_darts);
+            for (const Dart_descriptor& dart : flipped_darts) {
+              push_triangle(dart, triangles, triangles_list_mark);
+              push_triangle(Base::opposite(dart), triangles, triangles_list_mark);
+            }
+          }
         }
     }
     this->combinatorial_map_.free_mark(triangles_list_mark);
@@ -927,26 +927,26 @@ shortest_loop_edge() const
       Dart_const_descriptor next = Base::const_ccw(it);
       auto doc = this->combinatorial_map_.template darts_of_cell<0>(it);
       for (auto dart = doc.begin(); dart != doc.end(); ++dart)
-	{
-	  if (next == dart) { // the edge is a loop
-	    Number length = dart_cosh_length(it);
-	    if (shortest_loop_dart == nullptr) {min_length = length;}
-	    if (length < min_length) {
-	      min_length = min(min_length,length);
-	      shortest_loop_dart = it;
-	      /*
-	      	//TEST alternative loop test? May not be valid for a Cmap without vertices explicitly defined?
-	Dart_const_descriptor d =  it;
-	// Next dart in the face
-	Dart_const_descriptor d2 = this->combinatorial_map_.beta(d, 1);
-	// Check whether both darts belong to the same vertex
-	bool is_loop2 =
-	  this->combinatorial_map_.template belong_to_same_cell<0>(d, d2);
-	std::cout<< "loop2 value, loop " <<is_loop2  << std::endl;
-	      */
-	    }
-	  }
-	}
+        {
+          if (next == dart) { // the edge is a loop
+            Number length = dart_cosh_length(it);
+            if (shortest_loop_dart == nullptr) {min_length = length;}
+            if (length < min_length) {
+              min_length = min(min_length,length);
+              shortest_loop_dart = it;
+              /*
+                //TEST alternative loop test? May not be valid for a Cmap without vertices explicitly defined?
+        Dart_const_descriptor d =  it;
+        // Next dart in the face
+        Dart_const_descriptor d2 = this->combinatorial_map_.beta(d, 1);
+        // Check whether both darts belong to the same vertex
+        bool is_loop2 =
+          this->combinatorial_map_.template belong_to_same_cell<0>(d, d2);
+        std::cout<< "loop2 value, loop " <<is_loop2  << std::endl;
+              */
+            }
+          }
+        }
     }
   return shortest_loop_dart;
 }
@@ -983,11 +983,11 @@ covering_value() const
       mpfr_set_q (a0, max_radius.a0().mpq(), MPFR_RNDU);
       mpfr_set_q (a1, max_radius.a1().mpq(), MPFR_RNDU);
       if (max_radius.a1() > 0) {
-	mpfr_set_q (root, max_radius.root().mpq(), MPFR_RNDU);
-	mpfr_sqrt(root_sqrt, root, MPFR_RNDU);
+        mpfr_set_q (root, max_radius.root().mpq(), MPFR_RNDU);
+        mpfr_sqrt(root_sqrt, root, MPFR_RNDU);
       } else {
-	mpfr_set_q (root, max_radius.root().mpq(), MPFR_RNDD);
-	mpfr_sqrt(root_sqrt, root, MPFR_RNDD);
+        mpfr_set_q (root, max_radius.root().mpq(), MPFR_RNDD);
+        mpfr_sqrt(root_sqrt, root, MPFR_RNDD);
       }
       mpfr_mul(res, a1, root_sqrt, MPFR_RNDU);
       mpfr_add(res, a0, res, MPFR_RNDU);
@@ -1026,7 +1026,7 @@ packing_value() const
     auto doc = this->combinatorial_map_.template darts_of_cell<0>(it);
     for (auto dart = doc.begin(); dart != doc.end(); ++dart) {
       if (next == dart) {
-	is_loop = true;
+        is_loop = true;
       }
     }
     if(!is_loop) {
