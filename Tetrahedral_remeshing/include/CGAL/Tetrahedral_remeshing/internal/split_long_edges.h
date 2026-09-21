@@ -40,10 +40,10 @@ namespace internal
 {
 
 template<typename C3t3>
-bool positive_orientation_after_edge_split(const typename C3t3::Edge& e,
+bool valid_orientation_after_edge_split(const typename C3t3::Edge& e,
                                            const typename C3t3::Cell_handle circ,
                                            const typename C3t3::Triangulation::Geom_traits::Point_3& steiner,
-                                           const C3t3&)
+                                           const C3t3& c3t3)
 {
   using Point = typename C3t3::Triangulation::Geom_traits::Point_3;
 
@@ -54,6 +54,13 @@ bool positive_orientation_after_edge_split(const typename C3t3::Edge& e,
                               point(circ->vertex(1)->point()),
                               point(circ->vertex(2)->point()),
                               point(circ->vertex(3)->point())};
+
+  // if the orientation is already bad before split, do not bother checking
+  // orientation after split, and return true straight away
+  if(c3t3.triangulation().may_have_badly_oriented_cells()
+    && CGAL::orientation(pts[0], pts[1], pts[2], pts[3]) != CGAL::POSITIVE)
+    return true;
+
   // 1st half-cell
   const int i1 = circ->index(v1);
   const Point p1 = pts[i1];
@@ -103,7 +110,7 @@ construct_steiner_point(const typename C3t3::Edge& e,
     do
     {
       Cell_handle c = circ;
-      if(!positive_orientation_after_edge_split(e, c, steiner, c3t3))
+      if(!valid_orientation_after_edge_split(e, c, steiner, c3t3))
       {
         steiner_successful = false;
         break;
@@ -184,7 +191,7 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
     }
 
     const Cell_handle c = circ;
-    if(!positive_orientation_after_edge_split(e, c, m, c3t3))
+    if(!valid_orientation_after_edge_split(e, c, m, c3t3))
     {
       const std::optional<Point> steiner = construct_steiner_point(e, c3t3);
       if (steiner != std::nullopt)
