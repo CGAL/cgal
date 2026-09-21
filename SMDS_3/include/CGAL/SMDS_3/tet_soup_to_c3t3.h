@@ -22,6 +22,7 @@
 #include <CGAL/assertions.h>
 #include <CGAL/Default.h>
 #include <CGAL/utility.h>
+#include <CGAL/value_type_traits.h>
 
 #include <boost/unordered_map.hpp>
 
