@@ -258,6 +258,21 @@ private:
   mutable edges_size_type number_of_seams;
   mutable vertices_size_type number_of_vertices;
 
+  template <bool ComputeVertices>
+  void initialize_seams()
+  {
+    for(TM_edge_descriptor ed : CGAL::edges(tm)) {
+      if(get(sem, ed)) {
+        if constexpr(ComputeVertices) {
+          const TM_halfedge_descriptor hd = CGAL::halfedge(ed, tm);
+          put(svm, CGAL::source(hd, tm), true);
+          put(svm, CGAL::target(hd, tm), true);
+        }
+        ++number_of_seams;
+      }
+    }
+  }
+
 public:
   /// returns the underlying mesh.
   const TM& mesh() const
@@ -1141,7 +1156,7 @@ public:
     : tm(tm),
       sem(sem), svm(svm),
       number_of_seams(0), number_of_vertices(static_cast<vertices_size_type>(-1))
-  { }
+  { initialize_seams<false>(); }
 };
 
 } // namespace CGAL
