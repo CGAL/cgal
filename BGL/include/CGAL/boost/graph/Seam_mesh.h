@@ -1137,7 +1137,7 @@ public:
   /// \param svm the vertex property map with value `true` for seam vertices
   ///
   /// @note the vertices must be exactly the vertices on the seam edges.
-  Seam_mesh(const TM& tm, const SEM& sem, const SVM svm)
+  Seam_mesh(const TM& tm, const SEM& sem, const SVM& svm)
     : tm(tm),
       sem(sem), svm(svm),
       number_of_seams(0), number_of_vertices(static_cast<vertices_size_type>(-1))
