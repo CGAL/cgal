@@ -22,12 +22,14 @@
 #include <CGAL/assertions.h>
 
 #include <boost/iterator/iterator_facade.hpp>
+#include <boost/property_map/property_map.hpp>
 
 #include <unordered_set>
 #include <fstream>
 #include <functional>
 #include <iostream>
 #include <iterator>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
@@ -175,6 +177,35 @@ public:
 
 #endif // DOXYGEN_RUNNING
 
+namespace internal {
+
+template <class TM>
+class Seam_mesh_vertex_map
+{
+public:
+  typedef typename boost::graph_traits<TM>::vertex_descriptor key_type;
+  typedef bool value_type;
+  typedef bool reference;
+  typedef boost::read_write_property_map_tag category;
+
+  Seam_mesh_vertex_map() : values(false) { }
+
+  friend bool get(const Seam_mesh_vertex_map& map, const key_type& key)
+  {
+    return map.values[key];
+  }
+
+  friend void put(Seam_mesh_vertex_map& map, const key_type& key, bool value)
+  {
+    map.values[key] = value;
+  }
+
+private:
+  CGAL::Unique_hash_map<key_type, bool> values;
+};
+
+} // namespace internal
+
 /// \ingroup PkgBGLAdaptors
 ///
 /// This class is a data structure that takes a triangle mesh, further referred
@@ -188,12 +219,12 @@ public:
 /// \cgalModels{FaceGraph or `FaceListGraph` depending on the underlying mesh `TM`.}
 ///
 /// \tparam TM a model of `FaceGraph` or `FaceListGraph`
-/// \tparam SEM a model of `ReadablePropertyMap` with `boost::graph_traits<TM>::%edge_descriptor` as key type and `bool` as value type.
-/// \tparam SVM a model of `ReadablePropertyMap` with `boost::graph_traits<TM>::%vertex_descriptor` as key type and `bool` as value type.
+/// \tparam SEM a model of `ReadWritePropertyMap` with `boost::graph_traits<TM>::%edge_descriptor` as key type and `bool` as value type.
+/// \tparam SVM a model of `ReadWritePropertyMap` with `boost::graph_traits<TM>::%vertex_descriptor` as key type and `bool` as value type. By default, an internal vertex map is used.
 ///
 /// \sa \link BGLSeam_meshGT `boost::graph_traits<Seam_mesh<TM> >` \endlink
 ///
-template <class TM, class SEM, class SVM>
+template <class TM, class SEM, class SVM = internal::Seam_mesh_vertex_map<TM> >
 class Seam_mesh
 {
   typedef Seam_mesh<TM, SEM, SVM>                                 Self;
@@ -257,6 +288,21 @@ private:
   // combinatorics
   mutable edges_size_type number_of_seams;
   mutable vertices_size_type number_of_vertices;
+
+  template <bool ComputeVertices>
+  void initialize_seams()
+  {
+    for(TM_edge_descriptor ed : CGAL::edges(tm)) {
+      if(get(sem, ed)) {
+        if constexpr(ComputeVertices) {
+          const TM_halfedge_descriptor hd = CGAL::halfedge(ed, tm);
+          put(svm, CGAL::source(hd, tm), true);
+          put(svm, CGAL::target(hd, tm), true);
+        }
+        ++number_of_seams;
+      }
+    }
+  }
 
 public:
   /// returns the underlying mesh.
@@ -1137,11 +1183,27 @@ public:
   /// \param svm the vertex property map with value `true` for seam vertices
   ///
   /// @note the vertices must be exactly the vertices on the seam edges.
-  Seam_mesh(const TM& tm, const SEM& sem, const SVM svm)
+  Seam_mesh(const TM& tm, const SEM& sem, const SVM& svm)
     : tm(tm),
       sem(sem), svm(svm),
       number_of_seams(0), number_of_vertices(static_cast<vertices_size_type>(-1))
-  { }
+  { initialize_seams<false>(); }
+
+  /// constructs a seam mesh for a triangle mesh and an edge property map
+  ///
+  /// \param tm the underlying mesh
+  /// \param sem the edge property map with value `true` for seam edges
+  ///
+  /// @note the vertex property map is stored in this mesh and computed from
+  /// the edge property map.
+  template <class Map = SVM,
+            std::enable_if_t<std::is_same<Map, SVM>::value &&
+                             std::is_same<Map, internal::Seam_mesh_vertex_map<TM> >::value, int> = 0>
+  Seam_mesh(const TM& tm, const SEM& sem)
+    : tm(tm),
+      sem(sem), svm(),
+      number_of_seams(0), number_of_vertices(static_cast<vertices_size_type>(-1))
+  { initialize_seams<true>(); }
 };
 
 } // namespace CGAL
