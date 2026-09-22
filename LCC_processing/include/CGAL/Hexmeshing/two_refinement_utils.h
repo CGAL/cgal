@@ -190,7 +190,7 @@ namespace CGAL::internal::Hexmeshing
    * @param dart A dart descriptor representing the cell
    * @return The attribute descriptor for the cell
    */
-  template <uint i>
+  template <unsigned int i>
   typename LCC::Attribute_descriptor<i>::type get_or_create_attr(LCC& lcc, Dart_descriptor dart){
     auto attr = lcc.attribute<i>(dart);
 

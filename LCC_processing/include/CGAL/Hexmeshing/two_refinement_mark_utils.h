@@ -34,7 +34,7 @@ namespace CGAL::internal::Hexmeshing
    * @param dart A dart descriptor representing the i-cell
    * @param mark The mark to apply to the k-cells
    */
-  template <uint i, uint k>
+  template <unsigned int i, unsigned int k>
   void mark_k_cells_of_i_cell(LCC& lcc, Dart_descriptor dart, size_type mark){
     auto iterator = lcc.darts_of_cell<i, 0>(dart);
     for (auto dit = iterator.begin(), dend = iterator.end(); dit != dend; dit++){

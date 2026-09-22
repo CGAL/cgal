@@ -33,7 +33,7 @@ namespace CGAL::internal::Hexmeshing
    * @param lcc The Linear Cell Complex
    * @param array Variadic parameter containing arrays of dart descriptors to check
    */
-  template <uint i, typename DartArray>
+  template <unsigned int i, typename DartArray>
   void assert_dart_attr_are_unique(LCC& lcc, DartArray array)
   {
 #ifndef CGAL_NDEBUG

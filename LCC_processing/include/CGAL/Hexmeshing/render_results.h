@@ -22,6 +22,7 @@
 #include <CGAL/Graphics_scene_options.h>
 #include <CGAL/Graphics_scene.h>
 #include <CGAL/IO/Color.h>
+#include <cstdint>
 
 
 namespace CGAL {
