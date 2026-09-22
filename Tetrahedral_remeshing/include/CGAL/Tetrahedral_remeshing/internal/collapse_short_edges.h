@@ -878,6 +878,16 @@ void merge_surface_patch_indices(const typename C3t3::Facet& f1,
   }
 }
 
+// The sequential path's work list has nothing to note here: it takes the edges
+// it can no longer collapse out of the bimap itself, one by one, as it walks
+// the deleted vertex's cells. Only the parallel path keeps a set of the
+// vertices that have been merged away -- see `Merged_away_vertices`, whose own
+// overload is found by argument-dependent lookup.
+template<typename VertexHandle, typename EdgesBimap,
+         typename = typename EdgesBimap::left_map::key_type>
+void note_merged_away(const VertexHandle&, EdgesBimap&)
+{}
+
 /**
 * `stars_of_kept`/`stars_of_deleted` are the two stars, infinite cells
 * included, when the caller has already collected them; `nullptr` when it has
@@ -999,6 +1009,10 @@ collapse(const typename C3t3::Cell_handle ch,
       //}
     }
   }
+
+  // Before the vertex goes, and while both stars are still held: a thread
+  // that reaches a candidate naming `vdeleted` after this must skip it.
+  note_merged_away(vdeleted, short_edges);
 
   // update complex edges
   for (const Cell_handle& c : incident_to_vdeleted)
@@ -1595,33 +1609,57 @@ Locked_stars<VertexHandle, CellHandle>& locked_stars()
 }
 
 /**
-* The parallel collapse work list. `collapse_edge()` reports the edges it
-* destroys through `remove_from_bimap()`; a collapse running in parallel
-* records them here instead, so that a thread reaching one of those candidates
-* later skips it rather than following a cell handle that has been recycled.
-* Edges are keyed by their vertex pair, not by the cell handle they were
-* found through.
+* The vertices the collapses of this phase have merged away.
+*
+* A candidate is a vertex pair, and the reason a thread may not simply take
+* one is that a collapse on another thread may have merged one of its two
+* vertices away: the pair would then name storage that has been given back.
+* That question is asked of ONE vertex at a time, so this records the vertex a
+* collapse deletes rather than the edges around it.
+*
+* The phase creates no vertices -- only `split()` does, in another phase, and
+* this set is a member of the operation, which lives for one phase -- so a
+* deleted vertex's address is not handed out again while the set is alive and
+* an address in here names that vertex and no other.
+*
+* What it replaces: `collapse()` used to report every edge of every cell
+* incident to the deleted vertex, through the same `remove_from_bimap()` the
+* sequential path uses to keep its work list current. Two thirds of those
+* edges are not incident to the deleted vertex at all and outlive the
+* collapse, so the set held 29 pairs per collapse (3.2 million on
+* `1146193_cdt_0.5`) where 1 vertex per collapse answers the question -- and
+* a candidate on one of the surviving edges was skipped for the rest of the
+* round for no reason.
 */
 template<typename VertexHandle>
-class Destroyed_edges
+class Merged_away_vertices
 {
   using Edge_vv = std::pair<VertexHandle, VertexHandle>;
-  tbb::concurrent_unordered_set<Edge_vv, boost::hash<Edge_vv> > m_edges;
+  tbb::concurrent_unordered_set<VertexHandle, boost::hash<VertexHandle> > m_vertices;
 
 public:
-  void insert(const Edge_vv& e) { m_edges.insert(e); }
-  bool contains(const Edge_vv& e) const { return m_edges.find(e) != m_edges.end(); }
-  // Between two rounds of the same phase every pair in here names a vertex
-  // the previous round merged away, so it must not be carried forward.
-  void clear() { m_edges.clear(); }
+  void insert(const VertexHandle& v) { m_vertices.insert(v); }
+  bool contains(const Edge_vv& e) const
+  {
+    return m_vertices.find(e.first) != m_vertices.end()
+        || m_vertices.find(e.second) != m_vertices.end();
+  }
+  // Between two rounds of the same phase every vertex in here has been merged
+  // away, so it must not be carried forward: the round that follows works
+  // from candidates re-collected around what the previous one kept.
+  void clear() { m_vertices.clear(); }
 };
 
-// `collapse_edge()` reports a destroyed edge as a live Tr::Edge; it is stored
-// by its vertex pair, which is what the candidates were snapshotted as.
+// The parallel path keeps no work list to remove an edge from; what it needs
+// is recorded once per collapse, by `note_merged_away()` below.
 template<typename Edge, typename VertexHandle>
-void remove_from_bimap(const Edge& e, Destroyed_edges<VertexHandle>& destroyed)
+void remove_from_bimap(const Edge&, Merged_away_vertices<VertexHandle>&)
+{}
+
+template<typename VertexHandle>
+void note_merged_away(const VertexHandle& v, Merged_away_vertices<VertexHandle>& gone)
 {
-  destroyed.insert(make_vertex_pair(e));
+  gone.insert(v);
 }
 #endif // CGAL_LINKED_WITH_TBB
 
@@ -1670,7 +1708,7 @@ private:
   Visitor& m_visitor;
 
 #ifdef CGAL_LINKED_WITH_TBB
-  Destroyed_edges<Vertex_handle> m_destroyed_edges; // parallel path only
+  Merged_away_vertices<Vertex_handle> m_merged_away; // parallel path only
 #endif
 
 public:
@@ -1688,9 +1726,9 @@ public:
   * The parallel path's work list: the candidates, shortest first, as vertex
   * pairs. The bimap is not built at all here. Its element side is only ever
   * searched by `execute_operation()`, which the parallel executor never calls
-  * -- `execute_operation_vv()` skips destroyed edges through
-  * `m_destroyed_edges` instead -- and its priority side exists only to be
-  * walked once, in order, into this snapshot. So the ordering is done by a
+  * -- `execute_operation_vv()` skips a pair whose vertex has been merged away,
+  * through `m_merged_away`, instead -- and its priority side exists only to
+  * be walked once, in order, into this snapshot. So the ordering is done by a
   * `parallel_sort` of the collected vector and the ordered multiset, whose
   * inserts are serial and O(n log n) in front of the phase, is gone.
   *
@@ -1801,16 +1839,16 @@ public:
   * `Tr::Edge`s. An `Edge` names its edge through a cell handle, and a collapse
   * running on another thread may already have destroyed that cell, so
   * resolving one would follow recycled storage. Vertices survive until a
-  * collapse merges them away, and every edge a collapse destroys is recorded
-  * in `m_destroyed_edges` before the vertex goes -- so a pair that is not in
-  * that set still names two live vertices.
+  * collapse merges them away, and every vertex a collapse merges away is
+  * recorded in `m_merged_away` before it goes -- so a pair with neither
+  * vertex in that set still names two live vertices.
   */
   bool lock_zone(const Edge_vv& e, const C3t3& c3t3) const
   {
     auto& stars = locked_stars<Vertex_handle, Cell_handle>();
     stars.clear();
 
-    if (m_destroyed_edges.contains(e))
+    if (m_merged_away.contains(e))
       return true; // nothing to lock; execute_operation_vv() will skip it
 
     const Tr& tr = c3t3.triangulation();
@@ -1824,7 +1862,7 @@ public:
 
     // Re-checked now that both vertices are held: another thread may have
     // destroyed the edge between the test above and the locks.
-    if (m_destroyed_edges.contains(e))
+    if (m_merged_away.contains(e))
       return true;
 
     // A pair whose two endpoints both lie below dimension 2 -- on a feature
@@ -1892,7 +1930,7 @@ public:
     return true;
   }
 
-  void clear_destroyed_edges() { m_destroyed_edges.clear(); }
+  void clear_merged_away() { m_merged_away.clear(); }
 
   /**
   * Re-collect the short edges around the vertices the previous round kept.
@@ -2049,16 +2087,32 @@ public:
     // walked both stars to take the locks and located the edge's cell on the
     // way. No match means it declined the pair as already destroyed; a match
     // with no cell means the pair is no longer an edge. Either way there is
-    // nothing to collapse, and the `m_destroyed_edges` lookup that used to
-    // ask the same question here is answered by lock_zone()'s own two.
+    // nothing to collapse, and the `m_merged_away` lookup that used to ask
+    // the same question here is answered by lock_zone()'s own two.
     const auto& stars = locked_stars<Vertex_handle, Cell_handle>();
     if (!stars.matches(e.first, e.second) || stars.ec_i0 < 0)
       return false;
 
-    const Vertex_handle vh = collapse_edge(Edge(stars.ec, stars.ec_i0, stars.ec_i1),
+    const Edge located(stars.ec, stars.ec_i0, stars.ec_i1);
+
+    // The candidate list was collected before the round began, and the
+    // collapses that have run since have moved this edge's neighbourhood. The
+    // sequential path re-evaluates an edge every time it takes one off its
+    // work list; here the same two questions are asked again inside the zone,
+    // where the answer cannot change under us, so that a pair is collapsed on
+    // what it measures now and not on what it measured at collection.
+    const auto [collapsible, boundary]
+      = can_be_collapsed(located, c3t3, m_protect_boundaries, m_cell_selector);
+    if (!collapsible)
+      return false;
+    if (is_too_short(located, boundary, m_sizing, c3t3, m_cell_selector)
+          == std::nullopt)
+      return false;
+
+    const Vertex_handle vh = collapse_edge(located,
                                            c3t3, m_sizing,
                                            m_protect_boundaries, m_cell_selector,
-                                           m_destroyed_edges, m_visitor,
+                                           m_merged_away, m_visitor,
                                            &stars.star0, &stars.star1);
     if (kept != nullptr)
       *kept = vh;
@@ -2202,7 +2256,7 @@ public:
     for (std::size_t round = 0; round < max_rounds && !candidates.empty(); ++round)
     {
     if (round > 0)
-      op.clear_destroyed_edges();
+      op.clear_merged_away();
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
     CGAL::Real_timer timer;
