@@ -24,3 +24,5 @@ STL_Extension
 Spatial_searching
 Stream_support
 Spatial_sorting
+Linear_cell_complex
+Polygon
