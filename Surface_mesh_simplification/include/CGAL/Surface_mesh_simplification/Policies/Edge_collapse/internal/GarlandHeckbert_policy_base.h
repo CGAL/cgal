@@ -70,7 +70,7 @@ public:
                                    const Quadric_calculator& quadric_calculator)
     : m_quadric_calculator(quadric_calculator)
   {
-    m_cost_matrices = get(Cost_property(), tmesh);
+    m_cost_matrices = get(Cost_property(), tmesh, Cost_matrix::Zero());
   }
 
   Quadric_calculator quadric_calculator() const{
