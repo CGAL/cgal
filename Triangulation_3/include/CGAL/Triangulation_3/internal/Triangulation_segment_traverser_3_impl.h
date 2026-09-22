@@ -22,6 +22,8 @@
 #include <CGAL/use.h>
 #include <CGAL/utility.h>
 
+#include <boost/container/small_vector.hpp>
+
 #include <array>
 #include <cstddef>
 #include <utility>
@@ -274,6 +276,7 @@ walk_to_next() {
             else
             {
 #if CGAL_DEBUG_TRIANGULATION_SEGMENT_TRAVERSER_3
+              CGAL_assertion_code(std::size_t counter = 0);
               std::cerr << "Starting walk_to_next_3 loop with backup: " << debug_simplex(_cur) << '\n';
               std::cerr << "source: " << with_point(_s_vertex) << '\n';
               if(_s_vertex == Vertex_handle())
@@ -281,12 +284,18 @@ walk_to_next() {
               std::cerr << "target: " << with_point(_t_vertex) << '\n';
               if(_t_vertex == Vertex_handle())
                 std::cerr << "  _target is " << _target << '\n';
-              std::size_t counter = 0;
 #endif
               const Simplex backup = _cur;
+              boost::container::small_vector<Cell_handle, 64> visited_cells;
+              if(cell() != Cell_handle{})
+              {
+                visited_cells.push_back(cell());
+                cell()->tds_data().mark_processed();
+              }
+              auto _ = make_scope_exit([&](){ for(auto c : visited_cells) c->tds_data().clear(); });
               do {
 #if CGAL_DEBUG_TRIANGULATION_SEGMENT_TRAVERSER_3
-                ++counter;
+                CGAL_assertion_code(++counter);
                 std::cerr << debug_iterator() << '\n';
                 if(counter >= _tr->number_of_cells())
                 {
@@ -303,6 +312,11 @@ walk_to_next() {
                 std::pair<Simplex, Simplex> p = walk_to_next_3(_prev, _cur);
                 _prev = p.first;
                 _cur = p.second;
+                if(cell() != Cell_handle{})
+                {
+                  cell()->tds_data().mark_processed();
+                  visited_cells.push_back(cell());
+                }
 
               } while (cell() != Cell_handle()//end
                     && !cell()->has_vertex(_tr->infinite_vertex(), inf)
@@ -552,6 +566,8 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& pre
   // For the remembering stochastic walk, we start trying with a random facet.
   CGAL_assertion_code(bool incell = true;)
 
+  int pass_number = 0;
+  const int number_of_pass = cur.lt == Tr::VERTEX ? 2 : 1;
   int start = 0;
   int end = 4;
   if(cur.lt == Tr::VERTEX) {
@@ -561,7 +577,7 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& pre
     end = cur.li + 4;
   }
 
-  for(int li_ = start; li_ < end; ++li_)
+  for(int li_ = start; li_ < end || ++pass_number < number_of_pass; ++li_)
   {
     const int li = li_ % 4;
     // Skip the previous cell.
@@ -574,7 +590,13 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& pre
 #if CGAL_DEBUG_TRIANGULATION_SEGMENT_TRAVERSER_3
     std::cerr << "Test facet " << li
               << ":\n  " <<IO::oformat(_tr->vertices(Facet{cur_cell, li}), With_point_tag{}) << '\n';
+    if(next->tds_data().processed()) {
+      std::cerr << "  Next cell already processed.\n";
+    }
 #endif
+    if(next->tds_data().processed()) {
+        continue;
+    }
     const Point* const backup_vert_li = std::exchange(vert[li], &_target);
     auto exit_guard = CGAL::make_scope_exit([&](){ vert[li] = backup_vert_li; });
 
@@ -593,7 +615,8 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& pre
     if(op[li] == POSITIVE)
         pos += li;
     if(op[li] != NEGATIVE) {
-        continue;
+        if(pass_number < 1)
+            continue;
     }
     CGAL_assertion_code(incell = false;)
 
