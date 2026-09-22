@@ -16,20 +16,25 @@ create_single_source_cgal_program("test_boundary_aware_mesh_smoothing.cpp")
 create_single_source_cgal_program("test_boundary_aware_mesh_smoothing_projectors.cpp")
 create_single_source_cgal_program("test_boundary_aware_mesh_smoothing_integration.cpp")
 create_single_source_cgal_program("test_boundary_aware_mesh_smoothing_domain_projectors.cpp")
+create_single_source_cgal_program("test_lcc_smoothing.cpp")
 
 target_link_libraries(test_boundary_aware_mesh_smoothing PRIVATE CGAL::Eigen3_support)
 target_link_libraries(test_boundary_aware_mesh_smoothing_projectors PRIVATE CGAL::Eigen3_support)
 target_link_libraries(test_boundary_aware_mesh_smoothing_domain_projectors PRIVATE CGAL::Eigen3_support)
 target_link_libraries(test_boundary_aware_mesh_smoothing_integration PRIVATE CGAL::Eigen3_support)
+target_link_libraries(test_lcc_smoothing PRIVATE CGAL::Eigen3_support)
+
 target_compile_definitions(test_boundary_aware_mesh_smoothing_integration PRIVATE
   MS3_EXAMPLE_MESH_FILE="${CMAKE_CURRENT_SOURCE_DIR}/data/sphere.mesh")
-
+target_compile_definitions(test_lcc_smoothing PRIVATE
+  MS3_EXAMPLE_MESH_DIRECTORY="${CMAKE_CURRENT_SOURCE_DIR}/data/")
 
 if(TARGET CGAL::TBB_support)
   target_link_libraries(test_boundary_aware_mesh_smoothing PRIVATE CGAL::TBB_support)
   target_link_libraries(test_boundary_aware_mesh_smoothing_projectors PRIVATE CGAL::TBB_support)
   target_link_libraries(test_boundary_aware_mesh_smoothing_integration PRIVATE CGAL::TBB_support)
   target_link_libraries(test_boundary_aware_mesh_smoothing_domain_projectors PRIVATE CGAL::TBB_support)
+  target_link_libraries(test_lcc_smoothing PRIVATE CGAL::TBB_support)
 endif()
 
 if(OpenMP_CXX_FOUND)
@@ -42,4 +47,5 @@ if(OpenMP_CXX_FOUND)
   target_link_libraries(test_boundary_aware_mesh_smoothing_projectors PRIVATE OpenMP::OpenMP_CXX)
   target_link_libraries(test_boundary_aware_mesh_smoothing PRIVATE OpenMP::OpenMP_CXX)
   target_link_libraries(test_boundary_aware_mesh_smoothing_domain_projectors PRIVATE OpenMP::OpenMP_CXX)
+  target_link_libraries(test_lcc_smoothing PRIVATE OpenMP::OpenMP_CXX)
 endif()

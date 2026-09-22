@@ -584,7 +584,6 @@ public:
     : Mesh_smoother<C3t3_wrapper<C3t3>, C3t3_wrapper<C3t3>, C3t3_wrapper<C3t3>, ConcurrencyTag>(mesh_wrapper, mesh_wrapper, mesh_wrapper)
     , mesh_wrapper(c3t3)
     {}
-
 };
 
 
