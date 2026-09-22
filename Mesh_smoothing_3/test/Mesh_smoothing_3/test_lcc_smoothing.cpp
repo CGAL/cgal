@@ -75,7 +75,7 @@ namespace {
 
   using Curve_network = CGAL::Mesh_smoothing_3::default_structures::Empty_edge_network<Mixed_mesh::Vertex_descriptor>;
 
-  CGAL::Mesh_smoothing_3::Mesh_smoother<Mixed_mesh, Lcc_surface, Curve_network, ConcurrencyTag> 
+  CGAL::Mesh_smoothing_3::Mesh_smoother<Mixed_mesh, Lcc_surface, Curve_network, ConcurrencyTag>
   smoother(mixed_mesh, surface);
 
   smoother.set_predicates_mode(CGAL::Mesh_smoothing_3::Parameters::STRONG_ENFORCEMENT);
@@ -106,7 +106,7 @@ namespace {
 int main()
 {
   // not run because the input mesh is too large
-  // This test is used as a compilation checks for code that should be 
+  // This test is used as a compilation checks for code that should be
   // developed in later releases
   // test_lcc_mixed_element_smooth();
   return EXIT_SUCCESS;
