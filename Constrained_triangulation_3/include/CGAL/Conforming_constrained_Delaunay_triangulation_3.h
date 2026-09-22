@@ -3013,6 +3013,16 @@ protected:
 
         fh_2d->set_constraint(edge_index, false);
         mirror_fh_2d->set_constraint(mirror_edge_index, false);
+        std::vector<CDT_2_face_handle> faces_in_conflict;
+        non_const_cdt_2.get_conflicts(point, std::back_inserter(faces_in_conflict), fh_2d);
+        for(auto fh : faces_in_conflict) {
+          if(fh->info().is_outside_the_face != OUTSIDE) {
+            auto facet_3d = fh->info().facet_3d;
+            if(facet_3d.first != Cell_handle{}) {
+              self->set_facet_as_not_constrained(facet_3d);
+            }
+          }
+        }
         const auto v_Steiner_2d = non_const_cdt_2.insert(point, fh_2d);
         vertex_3d(v_Steiner_2d) = v_Steiner;
         non_const_cdt_2.insert_constraint(va_2d, v_Steiner_2d);
