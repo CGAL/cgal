@@ -679,7 +679,7 @@ Polygon construct_canonical_polygon(const PointRange& points,
   if(polygon.size() < 2)
   {
     reversed = false;
-    return polygon;
+    return polygon.empty() ? Polygon{} : Polygon{ polygon[0] };
   }
 
 
