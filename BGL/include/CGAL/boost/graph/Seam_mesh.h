@@ -188,8 +188,8 @@ public:
 /// \cgalModels{FaceGraph or `FaceListGraph` depending on the underlying mesh `TM`.}
 ///
 /// \tparam TM a model of `FaceGraph` or `FaceListGraph`
-/// \tparam SEM a model of `ReadablePropertyMap` with `boost::graph_traits<TM>::%edge_descriptor` as key type and `bool` as value type.
-/// \tparam SVM a model of `ReadablePropertyMap` with `boost::graph_traits<TM>::%vertex_descriptor` as key type and `bool` as value type.
+/// \tparam SEM a model of `ReadWritePropertyMap` with `boost::graph_traits<TM>::%edge_descriptor` as key type and `bool` as value type.
+/// \tparam SVM a model of `ReadWritePropertyMap` with `boost::graph_traits<TM>::%vertex_descriptor` as key type and `bool` as value type. By default, an internal vertex map is used.
 ///
 /// \sa \link BGLSeam_meshGT `boost::graph_traits<Seam_mesh<TM> >` \endlink
 ///
