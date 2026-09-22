@@ -540,7 +540,7 @@ template <class Traits_, class TopTraits_, class ValidationPolicy>
 }
 
 //insert non-sipmle poloygons with holes (non incident edges may have
-// common vertex,  but they dont intersect at their interior
+// common vertex,  but they don't intersect at their interior
 template <class Traits_, class TopTraits_, class ValidationPolicy>
   void Gps_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::
   _insert(const Polygon_with_holes_2 & pgn, Arrangement_on_surface_2 & arr)

@@ -29,7 +29,7 @@ A class interface is also provided for advanced users, in which a series of plia
 
 \section sma_overview Overview
 
-The package contains 3 main components: approximation algorithm, pliant operators and meshing as shown in Figure \cgalFigureRef{workflow}.
+The package contains 3 main components: approximation algorithm, pliant operators and meshing as shown in \cgalFigureRef{workflow}.
 
 \cgalFigureBegin{workflow, workflow.svg}
 From left to right are 3 components of the approximation package: approximation algorithm (left), optional pliant operations (middle) and meshing (right).
@@ -37,11 +37,11 @@ From left to right are 3 components of the approximation package: approximation 
 
 \subsection sma_approximation Approximation
 
-The left part of Figure \cgalFigureRef{workflow} depicts the workflow of the approximation algorithm.
+The left part of \cgalFigureRef{workflow} depicts the workflow of the approximation algorithm.
 
 \subsubsection sma_clustering Clustering Iteration
 
-Figure \cgalFigureRef{iterations} depicts several Lloyd \cgalCite{cgal:l-lsqp-82} clustering iterations on the plane-sphere model with planar proxies and the \f$ \mathcal{L}^{2,1} \f$ metric. We plot the fitting error against each iteration. After 8 iterations, the error barely changes. Based on this observation, we consider that the clustering converges if the error change between the current and previous iteration is lower than a user-specified threshold (indicated by two green dash lines).
+\cgalFigureRef{iterations} depicts several Lloyd \cgalCite{cgal:l-lsqp-82} clustering iterations on the plane-sphere model with planar proxies and the \f$ \mathcal{L}^{2,1} \f$ metric. We plot the fitting error against each iteration. After 8 iterations, the error barely changes. Based on this observation, we consider that the clustering converges if the error change between the current and previous iteration is lower than a user-specified threshold (indicated by two green dash lines).
 
 \cgalFigureBegin{iterations, iterations.jpg}
 Discrete Lloyd iterations on the plane-sphere model with planar proxies and the \f$ \mathcal{L}^{2,1} \f$ metric: (left) random seeding of 6 proxies; (center) after one iteration; (right) after 8 iterations, the regions settle. The red lines depict the proxy normals drawn at the seed faces.
@@ -66,7 +66,7 @@ and the remaining error is added to the next proxy error in order to keep the to
 \f[ E'_{k+1} = (E_k - N_k * E_{avg}) + E_{k+1}. \f]
 
 
-Figure \cgalFigureRef{seeding_method} depicts different seeding methods. Random initialization randomly selects a set of input triangle faces as proxy seeds. While it is very fast, the subsequent clustering process can be entrapped in a bad local minimum, especially on shapes with regions surrounded by sharp creases (left closeup). Incremental initialization adds the proxies one by one at the most distorted region. It can thus be slow due to the large number of interleaved relaxation iterations. Hierarchical initialization (selected by default) repeatedly doubles the number of proxies in a hierarchical refinement sequence, so as to generate clustering regions with evenly distributed fitting errors. Time consumption is typically in-between the former two. Statistics and comparisons are available in Section \ref sma_perf.
+\cgalFigureRef{seeding_method} depicts different seeding methods. Random initialization randomly selects a set of input triangle faces as proxy seeds. While it is very fast, the subsequent clustering process can be entrapped in a bad local minimum, especially on shapes with regions surrounded by sharp creases (left closeup). Incremental initialization adds the proxies one by one at the most distorted region. It can thus be slow due to the large number of interleaved relaxation iterations. Hierarchical initialization (selected by default) repeatedly doubles the number of proxies in a hierarchical refinement sequence, so as to generate clustering regions with evenly distributed fitting errors. Time consumption is typically in-between the former two. Statistics and comparisons are available in Section \ref sma_perf.
 
 \cgalFigureBegin{seeding_method, seeding_method.jpg}
 Different seeding methods on the sphere-cube model. From left to right: initial partition (\f$ \mathcal{L}^{2,1} \f$ metrics and 20 proxies), add 5 proxy seeds (red faces) with random, incremental and hierarchical methods respectively.
@@ -78,7 +78,7 @@ Different seeding methods on the sphere-cube model. From left to right: initial 
 To determine when to stop adding more proxies, we can specify either the maximum number of proxies required to approximate the geometry or the minimum error drop percentage with respect to the very first partition. More specifically, we can decide:
 - <b>Maximum number of proxies</b>. Adding proxies until the specified number is met.
 - <b>Minimum error drop</b>. Starting from the very first partition (with one proxy per connected component) with fitting error \f$ \hat E \f$, the algorithm adds proxies until the approximation error drops below the specified percentage \f$ target\_drop * \hat E \f$.
-As depicted by Figure \cgalFigureRef{nb_proxies}, specifying a minimum error drop of 10% (yellow dash lines) as stopping criterion, yields 12 proxies on the plane-sphere model. When both criteria are provided, the first criterion met stops the seeding. Different seeding examples are depicted by Figure \cgalFigureRef{meshing}.
+As depicted by \cgalFigureRef{nb_proxies}, specifying a minimum error drop of 10% (yellow dash lines) as stopping criterion, yields 12 proxies on the plane-sphere model. When both criteria are provided, the first criterion met stops the seeding. Different seeding examples are depicted by \cgalFigureRef{meshing}.
 To balance between performance and speed, we recommend using hierarchical seeding and specifying both stopping criteria.
 
 
@@ -92,14 +92,14 @@ Using different number of proxies to approximate the plane-sphere model. From le
 For interactive use, the approach can yield better approximations of the geometry via adding/removing proxies and tunneling out of local minima via additional operations:
 - <b>Merging</b>. Merging two adjacent regions.
 - <b>Splitting</b>. Splitting one specified region into smaller ones to reduce the error. By default bisection is performed but N-section is also possible. We first select the request number of face seeds from the specified region, then perform the refitting process confined to the region.
-- <b>Adding</b>. Adding one or more proxies to further reduce the approximation error. As for the seeding process, addition can be performed incrementally or hierarchically, as shown in Figure \cgalFigureRef{seeding_method}.
+- <b>Adding</b>. Adding one or more proxies to further reduce the approximation error. As for the seeding process, addition can be performed incrementally or hierarchically, as shown in \cgalFigureRef{seeding_method}.
 - <b>Teleporting</b>. A teleportation operator is a combination of merging and adding proxies: merging the pair of adjacent regions and adding a proxy seed to the worst region. More specifically, the pair of regions whose merging realizes the smallest error after merging and local re-fitting, is selected for merging. In practice, the teleport operation can temporarily either decrease or increase the total approximation error. We provide an optional heuristic to evaluate if the teleportation is worth it by verifying whether the error increase induced by a (simulated) deletion is smaller than half of the error of the worst region. If this test fails, no teleportation is judged necessary.
 
 \cgalFigureBegin{operations, operations.jpg}
 Operations on the sphere-cube union model. Upper row: merging (9 proxies) and the reverse bisection splitting (10 partitions) on the confined region. Lower row: one teleportation operation of merging and adding a face seed, the sphere is approximated with one more proxy.
 \cgalFigureEnd
 
-As depicted in Figure \cgalFigureRef{operations}, teleportation provides a means to relocate a local minimum region entrapped in the planar part (left) to the most needed regions on the sphere (right). In \ref sma_example3, the class interface is used to control the approximation process through the aforementioned operations.
+As depicted in \cgalFigureRef{operations}, teleportation provides a means to relocate a local minimum region entrapped in the planar part (left) to the most needed regions on the sphere (right). In \ref sma_example3, the class interface is used to control the approximation process through the aforementioned operations.
 
 \subsection sma_meshing Meshing
 
@@ -115,9 +115,9 @@ A vertex is selected as a basic anchor if it is:
 
 \subsubsection sma_anchors_subdivision Subdivision Anchors
 
-Walking along the boundary of a proxy region  (counterclockwise), a <em>chord</em> is a sequence of halfedges connecting two anchors. One cluster boundary cycle may consist of several chords. A connected region with holes may yield several boundary cycles (Figure \cgalFigureRef{operations}, planar part before teleportation).
+Walking along the boundary of a proxy region  (counterclockwise), a <em>chord</em> is a sequence of halfedges connecting two anchors. One cluster boundary cycle may consist of several chords. A connected region with holes may yield several boundary cycles (\cgalFigureRef{operations}, planar part before teleportation).
 
-In order to approximate complex boundaries well, more anchors are generated by recursive chord subdivision (Figure \cgalFigureRef{chord}). An anchor \f$ \mathbf{c} \f$ is added at the furthest vertex of a chord \f$ (\mathbf{a}, \mathbf{b}) \f$, split it into \f$ (\mathbf{a}, \mathbf{c}) \f$ and \f$ (\mathbf{c}, \mathbf{b}) \f$, if the distance \f$ d = \Vert \mathbf{c} , (\mathbf{a}, \mathbf{b}) \Vert \f$ is beyond certain threshold. To make \f$ d \f$ independent to the scale of the input:
+In order to approximate complex boundaries well, more anchors are generated by recursive chord subdivision (\cgalFigureRef{chord}). An anchor \f$ \mathbf{c} \f$ is added at the furthest vertex of a chord \f$ (\mathbf{a}, \mathbf{b}) \f$, split it into \f$ (\mathbf{a}, \mathbf{c}) \f$ and \f$ (\mathbf{c}, \mathbf{b}) \f$, if the distance \f$ d = \Vert \mathbf{c} , (\mathbf{a}, \mathbf{b}) \Vert \f$ is beyond certain threshold. To make \f$ d \f$ independent to the scale of the input:
 \f[ d = d / input\_mesh\_average\_edge\_length. \f]
 Optionally, \f$ d \f$ can be measured as the ratio of the chord length:
 \f[ d = d / \Vert(\mathbf{a}, \mathbf{b})\Vert. \f]
@@ -129,7 +129,7 @@ Varying the chord error. From left to right: clustering partition, and meshing w
 
 \subsubsection sma_anchors_additional Additional Anchors
 
-For a boundary cycle without any anchor such as the hole depicted Figure \cgalFigureRef{operations}, we first add a starting anchor to the boundary. We then subdivide this circular chord to ensure that every boundary cycle has at least 2 anchors (i.e., every chord is connecting 2 different anchors, Figure \cgalFigureRef{anchors}). Finally, we add additional anchors to ensure that at least three anchor vertices are generated on every boundary cycle.
+For a boundary cycle without any anchor such as the hole depicted \cgalFigureRef{operations}, we first add a starting anchor to the boundary. We then subdivide this circular chord to ensure that every boundary cycle has at least 2 anchors (i.e., every chord is connecting 2 different anchors, \cgalFigureRef{anchors}). Finally, we add additional anchors to ensure that at least three anchor vertices are generated on every boundary cycle.
 
 \cgalFigureBegin{anchors, anchors.jpg}
 Adding anchors. From left to right: starting from a partition (grey) with a hole (white) and two encircled regions (green and blue), we add a starting anchor (orange disk) to the boundary cycle (red dash line) without any anchor (2nd), subdivide the circular chord (3rd, the number indicates the level of recursion) and add anchors to the boundary cycle with less than 2 anchors (4th, red dash lines).
@@ -139,7 +139,7 @@ Adding anchors. From left to right: starting from a partition (grey) with a hole
 
 With the anchors defined, their chord connection graph forms a general polygon mesh. Because of non-flat, concave polygon or polygons with holes, we need to triangulate this initial polygon mesh. The triangulation is generated by computing a discrete variant of a constrained 2D Delaunay triangulation, where distances are measured on the input triangle mesh.
 
-The first image of Figure \cgalFigureRef{triangulation} depicts how the Delaunay triangulation of set of points (colored disks) is deduced from its dual Voronoi diagram (colored regions separated by blue lines) by connecting the points indicated by the vertices (red circles) where 3 Voronoi cells meet. In an analogous manner, we construct discrete Voronoi cells from which the triangulation is extracted.
+The first image of \cgalFigureRef{triangulation} depicts how the Delaunay triangulation of set of points (colored disks) is deduced from its dual Voronoi diagram (colored regions separated by blue lines) by connecting the points indicated by the vertices (red circles) where 3 Voronoi cells meet. In an analogous manner, we construct discrete Voronoi cells from which the triangulation is extracted.
 
 
 In a first step, we start a flooding of the interior of the region, coloring the vertices according to their closest anchor vertex. We then only flood the boundary of a region so that every vertex on it is colored depending on the closest anchor vertex. This enforces the constrained edges by forcing the boundary to be in it.
@@ -169,7 +169,7 @@ Free function with \ref bgl_namedparameters options.
 - `CGAL::Surface_mesh_approximation::approximate_triangle_mesh()`: given a triangle mesh, approximate the geometry with default \f$ \mathcal{L}^{2,1} \f$ metric.
 
 Class interface:
-- `CGAL::Variational_shape_approximation`: allowing more customization of the proxy, metric and approximation process. As shown in Figure \cgalFigureRef{workflow}, typical calling order of the approximation and meshing process is:
+- `CGAL::Variational_shape_approximation`: allowing more customization of the proxy, metric and approximation process. As shown in \cgalFigureRef{workflow}, typical calling order of the approximation and meshing process is:
   - \link CGAL::Variational_shape_approximation::initialize_seeds initialize seeds \endlink
   - \link CGAL::Variational_shape_approximation::run run clustering iterations \endlink
   - \link CGAL::Variational_shape_approximation::extract_mesh extract mesh \endlink
@@ -209,7 +209,7 @@ The class interface `CGAL::Variational_shape_approximation` offers a flexible me
 Comparison of different error metrics on the bear model, with 200 proxies and hierarchical seeding. From left to right: \f$ \mathcal{L}^{2,1} \f$ metric, \f$ \mathcal{L}^2 \f$ metric and custom compact metric.
 \cgalFigureEnd
 
-The following example defines a point-wise proxy to yield an isotropic approximation. The output mesh is depicted in Figure \cgalFigureRef{vsa_metric_comparison}.
+The following example defines a point-wise proxy to yield an isotropic approximation. The output mesh is depicted in \cgalFigureRef{vsa_metric_comparison}.
 
 \cgalExample{Surface_mesh_approximation/vsa_isotropic_metric_example.cpp}
 

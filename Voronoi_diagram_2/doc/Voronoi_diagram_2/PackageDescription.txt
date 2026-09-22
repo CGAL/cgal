@@ -1,4 +1,4 @@
-/// \defgroup PkgVoronoiDiagram2Ref 2D Voronoi Diagram Adaptor Reference
+/// \defgroup PkgVoronoiDiagram2Ref Reference Manual
 /// \defgroup PkgVoronoiDiagram2Concepts Concepts
 /// \ingroup PkgVoronoiDiagram2Ref
 
@@ -20,7 +20,6 @@
 
 /*!
 \addtogroup PkgVoronoiDiagram2Ref
-\todo check generated documentation
 \cgalPkgDescriptionBegin{2D Voronoi Diagram Adaptor,PkgVoronoiDiagram2}
 \cgalPkgPicture{voronoi.png}
 \cgalPkgSummaryBegin

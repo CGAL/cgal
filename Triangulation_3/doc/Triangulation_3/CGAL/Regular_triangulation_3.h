@@ -38,7 +38,7 @@ respectively.
 
 \tparam SLDS is an optional parameter to specify the type of the spatial lock data structure.
         It must be a model of the `SurjectiveLockDataStructure` concept,
-        with `Object` being a `Point`.
+        with `object` being a `Point`.
         It is only used if the triangulation data structure used is concurrency-safe (i.e.\ when
         `TDS::Concurrency_tag` is `Parallel_tag`).
         The default value is `Spatial_lock_grid_3<Tag_priority_blocking>` if

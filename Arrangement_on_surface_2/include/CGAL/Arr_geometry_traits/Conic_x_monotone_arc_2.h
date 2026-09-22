@@ -88,7 +88,7 @@ public:
   /// \name Deprecated Constructions.
   //@{
 
-  // /*! Construct an x-monotone arc from a conic arc.
+  // /*! constructs an x-monotone arc from a conic arc.
   //  * \param arc The given (base) arc.
   //  * \param id The ID of the base arc.
   //  */
@@ -100,7 +100,7 @@ public:
   //   _set();
   // }
 
-  /*! Construct an x-monotone sub-arc from a conic arc.
+  /*! constructs an x-monotone sub-arc from a conic arc.
    * \param arc The given (base) arc.
    * \param source The source point.
    * \param target The target point.
@@ -118,7 +118,7 @@ public:
     _set();
   }
 
-  /*! Construct a special segment connecting to given endpoints (for the usage
+  /*! constructs a special segment connecting to given endpoints (for the usage
    * of the landmarks point-location strategy).
    * \param source The source point.
    * \param target The target point.
@@ -141,7 +141,7 @@ public:
     set_flag(IS_SPECIAL_SEGMENT);
   }
 
-  /*! Construct a special segment of a given line connecting to given
+  /*! constructs a special segment of a given line connecting to given
    * endpoints.
    * \param a, b, c The coefficients of the supporting line (ax + by + c = 0).
    * \param source The source point.
@@ -200,7 +200,7 @@ public:
   //@}
 
 private:
-  /*! Set the properties of the x-monotone conic arc (for the usage of the
+  /*! sets the properties of the x-monotone conic arc (for the usage of the
    * constructors).
    */
   CGAL_DEPRECATED void _set() {
@@ -304,11 +304,11 @@ public:
   /// \name Public constructors, assignment operators, and destructors.
   //@{
 
-  /*! Default constructor.
+  /*! constructs default.
    */
   Conic_x_monotone_arc_2() : Base(), m_id() {}
 
-  /*! Copy constructor.
+  /*! constructs copy.
    * \param arc The copied arc.
    */
   Conic_x_monotone_arc_2(const Self& arc) :
@@ -322,7 +322,7 @@ public:
     m_id(arc.m_id)
   {}
 
-  /*! Assignment operator.
+  /*! assigns.
    * \param arc The copied arc.
    */
   const Self& operator=(const Self& arc) {
@@ -353,13 +353,13 @@ private:
   /// \name private constructors to be used only by the traits class template.
   //@{
 
-  /*! Construct an x-monotone arc from a conic arc.
+  /*! constructs an x-monotone arc from a conic arc.
    * \param arc The given (base) arc.
    * \pre The given arc is x-monotone.
    */
   Conic_x_monotone_arc_2(const Base& arc) : Base(arc), m_id() {}
 
-  /*! Construct an x-monotone arc from a conic arc.
+  /*! constructs an x-monotone arc from a conic arc.
    * \param arc The given (base) arc.
    * \param id The ID of the base arc.
    */
@@ -373,15 +373,15 @@ public:
   /// \name Accessing the arc properties.
   //@{
 
-  /*! Obtain the facing mask.
+  /*! obtains the facing mask.
    */
   size_t facing_mask() const { return this->m_info & FACING_MASK; }
 
-  /*! Obtain the degree mask.
+  /*! obtains the degree mask.
    */
   size_t degree_mask() const { return this->m_info & DEGREE_MASK; }
 
-  /*! Obtain the coefficients of the underlying conic.
+  /*! obtains the coefficients of the underlying conic.
    */
   const Integer& r() const { return ( this->m_r); }
   const Integer& s() const { return ( this->m_s); }
@@ -390,50 +390,50 @@ public:
   const Integer& v() const { return ( this->m_v); }
   const Integer& w() const { return ( this->m_w); }
 
-  /*! Obtain the left endpoint of the arc.
+  /*! obtains the left endpoint of the arc.
    */
   const Point_2& left() const {
     if (this->test_flag(IS_DIRECTED_RIGHT)) return this->source();
     else return this->target();
   }
 
-  /*! Obtain the right endpoint of the arc.
+  /*! obtains the right endpoint of the arc.
    */
   const Point_2& right() const {
     if (this->test_flag(IS_DIRECTED_RIGHT)) return this->target();
     else return this->source();
   }
 
-  /*! Determine whether the conic arc is directed iexicographically right.
+  /*! determines whether the conic arc is directed iexicographically right.
    */
   bool is_directed_right() const { return this->test_flag(IS_DIRECTED_RIGHT); }
 
-  /*! Determine whether the conic arc is a vertical segment.
+  /*! determines whether the conic arc is a vertical segment.
    */
   bool is_vertical() const { return this->test_flag(IS_VERTICAL_SEGMENT); }
 
-  /*! Determine whether the conic arc is a facing up.
+  /*! determines whether the conic arc is a facing up.
    */
   bool is_upper() const { return this->test_flag(FACING_UP); }
 
-  /*! Determine whether the conic arc is a facing down.
+  /*! determines whether the conic arc is a facing down.
    */
   bool is_lower() const { return this->test_flag(FACING_DOWN); }
 
-  /*! Check whether the arc is a special segment connecting two algebraic
+  /*! checks whether the arc is a special segment connecting two algebraic
    * endpoints (and has no underlying integer conic coefficients).
    */
   bool is_special_segment() const { return this->test_flag(IS_SPECIAL_SEGMENT); }
 
-  /*! Obtain the mask of the DEGREE_1 flag.
+  /*! obtains the mask of the DEGREE_1 flag.
    */
   static constexpr size_t degree_1_mask() { return flag_mask(DEGREE_1); }
 
-  /*! Obtain the mask of the DEGREE_1 flag.
+  /*! obtains the mask of the DEGREE_1 flag.
    */
   static constexpr size_t degree_2_mask() { return flag_mask(DEGREE_2); }
 
-  /*! Obtain the algebraic coefficients.
+  /*! obtains the algebraic coefficients.
    */
   Algebraic alg_r() const { return m_alg_r; }
   Algebraic alg_s() const { return m_alg_s; }
@@ -442,11 +442,11 @@ public:
   Algebraic alg_v() const { return m_alg_v; }
   Algebraic alg_w() const { return m_alg_w; }
 
-  /*! Obtain the conic id.
+  /*! obtains the conic id.
    */
   Conic_id id() const { return m_id; }
 
-  /*! Check whether the given point lies on the arc.
+  /*! checks whether the given point lies on the arc.
    * \param p The query point.
    * \param (true) if p lies on the arc; (false) otherwise.
    */
@@ -474,7 +474,7 @@ public:
     return _is_between_endpoints(p);
   }
 
-  /*! Obtain a bounding box for the conic arc.
+  /*! obtains a bounding box for the conic arc.
    * \return The bounding box.
    */
   CGAL_DEPRECATED Bbox_2 bbox() const { return Base::bbox(); }
@@ -483,7 +483,7 @@ public:
   // Setters
   //@{
 
-  /*! Set the algebraic coefficients.
+  /*! sets the algebraic coefficients.
    */
   void set_alg_coefficients(const Algebraic& alg_r, const Algebraic& alg_s,
                             const Algebraic& alg_t, const Algebraic& alg_u,
@@ -497,7 +497,7 @@ public:
     m_alg_w = alg_w;
   }
 
-  /*! Add a generating conic ID.
+  /*! adds a generating conic ID.
    */
   void set_generating_conic(const Conic_id& id) {
     this->m_source.set_generating_conic(id);
@@ -505,7 +505,7 @@ public:
   }
   //@}
 
-  /*! Compute a point on an arc with the same \f$x\f$-coordiante as the given
+  /*! computes a point on an arc with the same \f$x\f$-coordiante as the given
    * point.
    * \param p The given point.
    * \pre The arc is not vertical and `p` is in the \f$x\f$-range of the arc.
@@ -590,7 +590,7 @@ public:
   /// \name Constructing points on the arc.
   //@{
 
-  /*! Obtain a polyline approximating the conic arc.
+  /*! obtains a polyline approximating the conic arc.
    * \param n The maximal number of sample points.
    * \param oi An output iterator, whose value-type is pair<double,double>
    *           (representing an approximated point).
@@ -659,7 +659,7 @@ public:
   /// \name Constructing x-monotone arcs.
   //@{
 
-  /*! Flip the arc.
+  /*! flips the arc.
    * \return An arc with swapped source and target and a reverse orientation.
    */
   Self flip() const {
@@ -680,7 +680,7 @@ public:
     return arc;
   }
 
-  /*! Trim the arc given its new endpoints.
+  /*! trims the arc given its new endpoints.
    * \param ps The new source point.
    * \param pt The new target point.
    * \return The new trimmed arc.
@@ -730,7 +730,7 @@ public:
 
   //@}
 
-  /*! Compare two arcs immediately to the leftt of their intersection point.
+  /*! compares two arcs immediately to the leftt of their intersection point.
    * \param xcv1 The first compared arc.
    * \param xcv2 The second compared arc.
    * \param p The reference intersection point.
@@ -855,7 +855,7 @@ public:
     return slope_res;
   }
 
-  /*! Compare two arcs immediately to the right of their intersection point.
+  /*! compares two arcs immediately to the right of their intersection point.
    * \param xcv1 The first compared arc.
    * \param xcv2 The second compared arc.
    * \param p The reference intersection point.
@@ -972,7 +972,7 @@ public:
     return slope_res;                                   // both are facing down
   }
 
-  /*! Check whether two arcs are equal (have the same graph).
+  /*! checks whether two arcs are equal (have the same graph).
    * \param xcv1 The first compared arc.
    * \param xcv2 The second compared arc.
    * \return `true` if the two arcs have the same graph; `false` otherwise.
@@ -1007,7 +1007,7 @@ public:
             eq(xcv1.target(), xcv2.source()));
   }
 
-  /*! Check whether it is possible to merge the arc with the given arc.
+  /*! checks whether it is possible to merge the arc with the given arc.
    * \param xcv1 The first arc.
    * \param xcv2 The second arc.
    * \return `true` if it is possible to merge the two arcs;
@@ -1028,7 +1028,7 @@ public:
     return (eq(xcv1.right(), xcv2.left()) || eq(xcv1.left(), xcv2.right()));
   }
 
-  /*! Merge the current arc with the given arc.
+  /*! merges the current arc with the given arc.
    * \param xcv1 The first arc to merge with.
    * \param xcv2 The second arc to merge with.
    * \pre The two arcs are mergeable.
@@ -1060,7 +1060,7 @@ private:
   /// \name Auxiliary (private) functions.
   //@{
 
-  /*! Check whether the given point lies on the supporting conic of the arc.
+  /*! checks whether the given point lies on the supporting conic of the arc.
    * \param px The x-coordinate of query point.
    * \param py The y-coordinate of query point.
    * \return (true) if p lies on the supporting conic; (false) otherwise.
@@ -1078,7 +1078,7 @@ private:
   }
 
 public:
-  /*! Obtain the i'th order derivative by x of the conic at the point p=(x,y).
+  /*! obtains the i-th order derivative by x of the conic at the point p=(x,y).
    * \param p The point where we derive.
    * \param i The order of the derivatives (either 1, 2 or 3).
    * \param slope_numer The numerator of the slope.
@@ -1187,7 +1187,7 @@ public:
     CGAL_error();
   }
 
-  /*! Obtain the i'th order derivative by y of the conic at the point p=(x,y).
+  /*! obtains the i-th order derivative by y of the conic at the point p=(x,y).
    * \param p The point where we derive.
    * \param i The order of the derivatives (either 1, 2 or 3).
    * \param slope_numer The numerator of the slope.
@@ -1297,7 +1297,7 @@ public:
   }
 
 private:
-  /*! Compute the multiplicity of an intersection point.
+  /*! computes the multiplicity of an intersection point.
    * \param arc The arc to intersect with.
    * \param p The intersection point.
    * \return The multiplicity of the intersection point.
@@ -1348,7 +1348,7 @@ private:
 
 };
 
-/*! Exporter for x-monotone conic arcs.
+/*! exports an x-monotone conic arc.
  */
 template <typename Conic_arc_2>
 std::ostream& operator<<(std::ostream& os,

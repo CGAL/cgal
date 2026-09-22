@@ -78,7 +78,7 @@ void test_needles_and_caps(const std::string fname)
   const FT eps = std::numeric_limits<FT>::epsilon();
 
   face_iterator fit, fend;
-  boost::tie(fit, fend) = faces(mesh);
+  std::tie(fit, fend) = faces(mesh);
 
   // (0 0 0) -- (1 0 0) -- (1 1 0) (90° cap angle)
   face_descriptor f = *fit;

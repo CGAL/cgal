@@ -1,7 +1,7 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.12...3.29)
+cmake_minimum_required(VERSION 3.12...3.31)
 project(Spatial_searching_Examples)
 
 # CGAL and its components
@@ -31,10 +31,10 @@ include(CGAL_Eigen3_support)
 
 if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("fuzzy_range_query.cpp")
-  target_link_libraries(fuzzy_range_query PUBLIC CGAL::Eigen3_support)
+  target_link_libraries(fuzzy_range_query PRIVATE CGAL::Eigen3_support)
 
   create_single_source_cgal_program("general_neighbor_searching.cpp")
-  target_link_libraries(general_neighbor_searching PUBLIC CGAL::Eigen3_support)
+  target_link_libraries(general_neighbor_searching PRIVATE CGAL::Eigen3_support)
 else()
   message(STATUS "NOTICE: The examples 'fuzzy_range_query' and 'general_neighbor_searching'")
   message(STATUS "will not be compiled as they use CGAL::Epick_d, which requires the Eigen library.")
@@ -46,7 +46,7 @@ if(TARGET CGAL::TBB_support)
   message(STATUS "Found TBB")
 
   create_single_source_cgal_program("parallel_kdtree.cpp")
-  target_link_libraries(parallel_kdtree PUBLIC CGAL::TBB_support)
+  target_link_libraries(parallel_kdtree PRIVATE CGAL::TBB_support)
 else()
   message(STATUS "NOTICE: The example 'parallel_kdtree' requires TBB, and will not be compiled")
 endif()

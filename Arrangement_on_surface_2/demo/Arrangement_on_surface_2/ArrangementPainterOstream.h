@@ -232,7 +232,7 @@ protected: // methods
   // Assumes that clippingRect is valid.
   std::vector< X_monotone_curve_2 > visibleParts( X_monotone_curve_2 curve );
 
-  // keep only the intersection points ie. throw out overlapping curve segments
+  // keep only the intersection points i.e. throw out overlapping curve segments
   void filterIntersectionPoints( std::vector< CGAL::Object >& res );
 
 protected: // members

@@ -91,7 +91,7 @@ else
   bash -$- ./compare_testsuites.sh $PWD/build_doc/doc_output $PWD/doc_ref 1> /dev/null
 fi
 echo "done."
-#add post-processing
+#add postprocessing
 cd ./build_doc
 echo "Adding postprocessing..."
 make -j$NB_CORES doc_with_postprocessing  &>> ./build_logs

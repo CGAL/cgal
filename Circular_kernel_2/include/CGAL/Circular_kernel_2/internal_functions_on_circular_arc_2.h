@@ -1565,7 +1565,7 @@ advanced_make_xy_monotone( const typename CK::Circular_arc_2 &a,
       double ymax = (is_on_upper) ?
         to_interval
         ( CircularFunctors::y_extremal_point<CK>(a.supporting_circle(),false).y() ).second :
-        CGAL::max(left_bb.ymax(),right_bb.ymax());
+        (CGAL::max)(left_bb.ymax(),right_bb.ymax());
       */
       return Bbox_2(left_bb.xmin(),ymin,right_bb.xmax(),ymax);
     }

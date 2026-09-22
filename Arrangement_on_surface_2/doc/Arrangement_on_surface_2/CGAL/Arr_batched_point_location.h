@@ -30,9 +30,8 @@ namespace CGAL {
  */
 template <typename Traits, typename Dcel,
 typename InputIterator, typename OutputIterator>
-OutputIterator locate (const Arrangement_2<Traits, Dcel>& arr,
-                       InputIterator begin,
-                       InputIterator end,
-                       OutputIterator oi);
+OutputIterator locate(const Arrangement_2<Traits, Dcel>& arr,
+                      InputIterator begin, InputIterator end,
+                      OutputIterator oi);
 
 } /* namespace CGAL */

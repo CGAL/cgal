@@ -344,7 +344,6 @@ public:
     return cotangent_weight_calculator(he);
   }
 
-private:
   FT voronoi(const vertex_descriptor v0) const
   {
     auto squared_length_3 = m_traits.compute_squared_length_3_object();
@@ -354,10 +353,11 @@ private:
     for (const halfedge_descriptor he : halfedges_around_target(halfedge(v0, m_pmesh), m_pmesh))
     {
       CGAL_assertion(v0 == target(he, m_pmesh));
-      CGAL_assertion(CGAL::is_triangle(he, m_pmesh));
 
       if (is_border(he, m_pmesh))
         continue;
+
+      CGAL_assertion(CGAL::is_triangle(he, m_pmesh));
 
       const vertex_descriptor v1 = source(he, m_pmesh);
       const vertex_descriptor v2 = target(next(he, m_pmesh), m_pmesh);

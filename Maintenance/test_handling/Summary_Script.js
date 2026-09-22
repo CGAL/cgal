@@ -5,7 +5,18 @@ let release = "";
 let packages = [];
 
 function getAllTestDirectories(data) {
-    return data.platforms.flatMap(platform => platform.test_directories.map(directory => directory.test_directory));
+    if (!data || !data.platforms) return [];
+    return data.platforms
+        .filter(platform => platform && platform.test_directories)
+        .flatMap(platform => {
+            try {
+                return platform.test_directories.map(directory => directory?.test_directory || '')
+                    .filter(dir => dir);
+            } catch (e) {
+                console.warn(`Error processing test directories for platform: `, platform);
+                return [];
+            }
+        });
 }
 
 function clearPackagesOptions() {
@@ -147,7 +158,7 @@ function packageContainer(platforms) {
 
                 if (content.length > 0) {
                     const $toggleButton = $('<button>', {
-                        class: 'toggle-button',
+                        class: 'content-toggle-button',
                         text: 'Show More',
                         click: function() {
                             if ($contentSpan.is(':hidden')) {
@@ -171,10 +182,10 @@ function platformContainer(platforms) {
     platforms.forEach(platform => {
         const $container = $('<div>', { class: 'platform ' + platform.name }).appendTo($platformContainer);
         $container.html(`<h2>Results of ${platform.name}</h2>`);
-        const tplArray = platform.tpl;
+        const tplArray = platform.third_party_libs || [];
         const $toggleButton = $('<button>', {
             text: 'Third Party Libraries',
-            class: 'tpl-toggle-button toggle-button',
+            class: 'tpl-toggle-button',
             click: function() {
                 $tplTable.toggle();
             }
@@ -192,22 +203,26 @@ function platformContainer(platforms) {
         $('<th>', { text: 'Library' }).appendTo($headerRow);
         $('<th>', { text: 'Version' }).appendTo($headerRow);
         $headerRow.appendTo($thead);
-        tplArray.forEach(tpl => {
+        tplArray.forEach(third_party_libs => {
             const $row = $('<tr>').append(
-                $('<td>').text(tpl.name),
-                $('<td>').text(tpl.version || 'N/A'),
+                $('<td>').text(third_party_libs.name),
+                $('<td>').text(third_party_libs.version || 'N/A'),
             ).appendTo($tbody);
             $row.addClass('tpl-row');
             $row.click(function() {
-                showVersionsForTPL(tpl.name);
+                showVersionsForTPL(third_party_libs.name);
             });
         });
         const letters = ['n', 'w', 'o', 'r'];
         letters.forEach(letter => {
             const $letterContainer = $('<div>', { class: 'letter_container ' + letter }).appendTo($container);
             $('<h3>').text(letter).appendTo($letterContainer);
+            if (!platform.test_directories){
+                platform.test_directories = [];
+            }
             const testDirectoriesForLetter = platform.test_directories.filter(directory => directory.letters === letter);
             testDirectoriesForLetter.forEach(directory => {
+                if (!directory) return;
                 const $directoryContainer = $('<div>', { class: 'directory_container' }).appendTo($letterContainer);
                 const $directoryName = $('<a>', {
                     href: `${release}/${directory.test_directory}/TestReport_${platform.name}.gz`,
@@ -220,7 +235,7 @@ function platformContainer(platforms) {
                 }).appendTo($letterContainer);
                 if (directory.content.length > 0) {
                     const $toggleButton = $('<button>', {
-                        class: 'toggle-button',
+                        class: 'content-toggle-button',
                         text: 'Show More',
                         click: function() {
                             if ($contentSpan.is(':hidden')) {
@@ -244,12 +259,12 @@ function platformContainer(platforms) {
 
 function openAll() {
     $('.summary-content').show().css('background-color', '#D0D0E0');
-    $('.toggle-button').text('Show Less');
+    $('.content-toggle-button').text('Show Less');
 }
 
 function closeAll() {
     $('.summary-content').hide().css('background-color', 'transparent');
-    $('.toggle-button').text('Show More');
+    $('.content-toggle-button').text('Show More');
 }
 
 function showVersionsForTPL(tplName) {
@@ -261,7 +276,7 @@ function showVersionsForTPL(tplName) {
     $modalTitle.text(`Versions of ${tplName} across platforms`);
     let tplFound = false;
     window.data.platforms.forEach(platform => {
-        const matchingTPL = platform.tpl.find(tpl => tpl.name === tplName);
+        const matchingTPL = platform.third_party_libs.find(third_party_libs => third_party_libs.name === tplName);
         if (matchingTPL) {
             tplFound = true;
             $modalBody.append(`

@@ -80,12 +80,12 @@ public:
     const Self * m_traits;
 
   public:
-    /*! Constructor
+    /*! constructs
      * \param traits the traits (in case it has state)
      */
     Less_xy_2(const Self * traits) : m_traits(traits) {}
 
-    /*! Compare two points lexigoraphically: by x, then by y.
+    /*! compares two points lexigoraphically: by x, then by y.
      *  We actually reversing the order, so x <--> y.
      * \param p1 the first endpoint directional point.
      * \param p2 the second endpoint directional point.
@@ -120,14 +120,12 @@ public:
     const Self * m_traits;
 
   public:
-
-    /*! Constructor
+    /*! constructs
      * \param traits the traits (in case it has state)
      */
     Less_yx_2(const Self * traits) : m_traits(traits) {}
 
-
-    /*! Compare two points lexigoraphically: by y, then by x.
+    /*! compares two points lexigoraphically: by y, then by x.
      *  We actually reversing the order, so x <--> y.
      * \param p1 the first endpoint directional point.
      * \param p2 the second endpoint directional point.
@@ -160,12 +158,12 @@ public:
 
   public:
 
-    /*! Constructor
+    /*! constructs
      * \param traits the traits (in case it has state)
      */
     Orientation_2 (const Self * traits) : m_traits(traits) {}
 
-    /*! Checks the orientation between three points.
+    /*! checks the orientation between three points.
      *  We actually reversing the order, so x <--> y.
      * \param p
      * \param q
@@ -231,7 +229,6 @@ public:
 
   Compare_y_2 compare_y_2_object() const {return Base::compare_x_2_object(); }
 
-
   /*! A functor that compares two points by x coordinate.
    */
   class Compare_x_2
@@ -241,14 +238,12 @@ public:
     const Self * m_traits;
 
   public:
-
-    /*! Constructor
+    /*! constructs
      * \param traits the traits (in case it has state)
      */
     Compare_x_2(const Self * traits) : m_traits(traits) {}
 
-
-    /*! Compare two points by y coordinate.
+    /*! compares two points by y coordinate.
      *  We actually reversing the order, so x <--> y.
      * \param p1 the first endpoint directional point.
      * \param p2 the second endpoint directional point.
@@ -388,7 +383,7 @@ public:
 
   public:
 
-    /*! Constructor
+    /*! constructs
      * \param traits the traits (in case it has state)
      */
     Less_xy_2(const Self * traits) : m_traits(traits) {}
@@ -429,7 +424,7 @@ public:
 
   public:
 
-    /*! Constructor
+    /*! constructs
      * \param traits the traits (in case it has state)
      */
     Less_yx_2(const Self * traits) : m_traits(traits) {}
@@ -467,7 +462,7 @@ public:
 
   public:
 
-    /*! Constructor
+    /*! constructs
      * \param traits the traits (in case it has state)
      */
     Orientation_2 (const Self * traits) : m_traits(traits) {}
@@ -549,7 +544,7 @@ public:
 
   public:
 
-    /*! Constructor
+    /*! constructs
      * \param traits the traits (in case it has state)
      */
     Compare_x_2(const Self * traits) : m_traits(traits) {}

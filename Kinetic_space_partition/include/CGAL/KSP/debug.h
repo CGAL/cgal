@@ -546,7 +546,7 @@ public:
     const std::vector<Point_3>& vertices,
     const std::vector<std::size_t>& tris,
     const std::string file_name) const {
-    assert((tris.size() % 3) == 0);
+    CGAL_assertion((tris.size() % 3) == 0);
 
     std::stringstream stream;
     initialize(stream);
@@ -924,14 +924,6 @@ template<typename K>
 void dump_polygon(const std::vector<typename K::Point_3>& pts, const std::string& filename) {
   Saver<K> saver;
   std::vector<std::vector<typename K::Point_3> > pts2;
-  pts2.push_back(pts);
-
-  saver.export_polygon_soup_3(pts2, filename);
-}
-
-inline void dump_polygon(const std::vector<CGAL::Epick::Point_3>& pts, const std::string& filename) {
-  Saver<CGAL::Epick> saver;
-  std::vector<std::vector<CGAL::Epick::Point_3> > pts2;
   pts2.push_back(pts);
 
   saver.export_polygon_soup_3(pts2, filename);

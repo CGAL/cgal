@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12...3.29)
+cmake_minimum_required(VERSION 3.12...3.31)
 if(Boost_IOSTREAMS_FOUND AND NOT TARGET CGAL::Boost_iostreams_support)
 
   if( WIN32 )

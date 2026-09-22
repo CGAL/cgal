@@ -143,7 +143,12 @@ moveToGroup(CGAL::Three::Scene_group_item* group) {
 
 void CGAL::Three::Scene_item::invalidateOpenGLBuffers() {}
 
-void CGAL::Three::Scene_item::selection_changed(bool) {}
+void CGAL::Three::Scene_item::selection_changed(bool p_is_selected) {
+  if (p_is_selected != is_selected)
+  {
+    is_selected = p_is_selected;
+  }
+}
 void CGAL::Three::Scene_item::setVisible(bool b)
 {
   visible_ = b;

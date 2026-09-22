@@ -1852,7 +1852,7 @@ public:
             if (coplanar_patches_of_tm1.test(patch_id))
             {
               // Two "identical" coplanar patches that are entire connected components
-              //we have the correspondance between cpln patches thanks to faces in tm1_coplanar_faces and tm2_coplanar_faces
+              // we have the correspondence between cpln patches thanks to faces in tm1_coplanar_faces and tm2_coplanar_faces
               CGAL_assertion(tm1_coplanar_faces.size()==tm2_coplanar_faces.size());
               if (coplanar_tm1_to_coplanar_tm2.empty()) // fill container only once
               {
@@ -2130,6 +2130,34 @@ public:
     //store the patch description in a container to avoid recomputing it several times
     Patches1 patches_of_tm1(tm1, tm1_patch_ids, fids1, intersection_edges1, nb_patches_tm1);
     Patches2 patches_of_tm2(tm2, tm2_patch_ids, fids2, intersection_edges2, nb_patches_tm2);
+
+    // report input coplanar faces
+    if (coplanar_patches_of_tm1.any())
+    {
+      for (std::size_t i = coplanar_patches_of_tm1.find_first();
+                 i < coplanar_patches_of_tm1.npos;
+                 i = coplanar_patches_of_tm1.find_next(i))
+      {
+
+        for (face_descriptor f : patches_of_tm1[i].faces)
+        {
+          user_visitor.subface_of_coplanar_faces_intersection(f, tm1);
+        }
+      }
+    }
+    if (coplanar_patches_of_tm2.any())
+    {
+      for (std::size_t i = coplanar_patches_of_tm2.find_first();
+                 i < coplanar_patches_of_tm2.npos;
+                 i = coplanar_patches_of_tm2.find_next(i))
+      {
+
+        for (face_descriptor f : patches_of_tm2[i].faces)
+        {
+          user_visitor.subface_of_coplanar_faces_intersection(f, tm2);
+        }
+      }
+    }
 
     // for each boolean operation, define two bitsets of patches contributing
     // to the result
@@ -2515,7 +2543,7 @@ public:
               typedef std::pair<halfedge_descriptor, halfedge_descriptor> Hedge_pair;
               std::vector< Hedge_pair> hedges_to_link;
               typename CGAL::Halfedge_around_target_iterator<TriangleMesh> hit, end;
-              boost::tie(hit,end) = halfedges_around_target(vd, tm1);
+              std::tie(hit,end) = halfedges_around_target(vd, tm1);
               for(; hit!=end; ++hit)
               {
                 // look for a border halfedge incident to the non-manifold vertex that will not be

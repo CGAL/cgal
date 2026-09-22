@@ -38,8 +38,6 @@
 #include <CGAL/Arr_tags.h>
 #include <CGAL/global_functions_circular_kernel_2.h>
 
-
-
 namespace CGAL {
 
 // Traits class for CGAL::Arrangement_2 (and similar) based on a

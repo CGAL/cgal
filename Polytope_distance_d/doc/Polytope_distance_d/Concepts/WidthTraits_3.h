@@ -4,7 +4,7 @@
 \cgalConcept
 
 This concept defines the requirements for traits classes of
-`Width_3<Traits>`.
+`CGAL::Width_3<Traits>`.
 
 \cgalHeading{Operations}
 

@@ -382,7 +382,7 @@ namespace CGAL {
     int _facet_number;
 
     //---------------------------------------------------------------------
-    // For post-processing
+    // For postprocessing
     mutable int _postprocessing_counter;
     int _size_before_postprocessing;
 
@@ -2432,7 +2432,7 @@ namespace CGAL {
 
       std::size_t itmp, L_v_size_mem;
       L_v_size_mem = L_v.size();
-      if ((vh_on_border_inserted != 0)&& // to post-process only the borders
+      if ((vh_on_border_inserted != 0)&& // to postprocess only the borders
           (L_v.size() < .1 * _size_before_postprocessing))
         {
           {

@@ -253,24 +253,23 @@ void output_to_medit(std::ostream& os,
       for(int k=0; k<Ox_rn; ++k)
       {
         const Offset off(k, j, i);
-        for(auto cit = c3t3.cells_in_complex_begin();
-                 cit !=c3t3.cells_in_complex_end(); ++cit)
+        for(auto ch : c3t3.cells_in_complex())
         {
           for(int l=0; l<4; ++l)
           {
-            const Offset combined_off = tr.combine_offsets(off, tr.int_to_off(cit->offset(l)));
+            const Offset combined_off = tr.combine_offsets(off, tr.int_to_off(ch->offset(l)));
             const int vector_offset = combined_off.x() +
                                       combined_off.y() * (Ox_rn + 1) +
                                       combined_off.z() * (Ox_rn + 1) * (Oy_rn + 1);
 
-            const int id = vector_offset * number_of_vertices + V[cit->vertex(l)];
+            const int id = vector_offset * number_of_vertices + V[ch->vertex(l)];
             CGAL_assertion(1 <= id && id <= medit_number_of_vertices);
             os << id << " ";
           }
 
           // For multiple copies, color to distinguish copies rather than to distinguish subdomains
           if(!distinguish_copies || occ_mult == 1)
-            os << get(cell_pmap, cit) << '\n';
+            os << get(cell_pmap, ch) << '\n';
           else
             os << 1 + k + 3*j + 9*i << '\n';
         }
@@ -281,7 +280,7 @@ void output_to_medit(std::ostream& os,
   os << "End" << std::endl;
 }
 
-template <class C3T3, bool rebind>
+template <class C3T3, bool do_rebind>
 void output_to_medit(std::ostream& os,
                      const C3T3& c3t3,
                      const int occurrence_count,
@@ -295,7 +294,9 @@ void output_to_medit(std::ostream& os,
 
   // periodic meshes always print facets twice because the facet in complex
   // might be on the boundary of the domain
-  typedef CGAL::SMDS_3::Medit_pmap_generator<C3T3, rebind, true>      Generator;
+  typedef CGAL::SMDS_3::
+    Medit_pmap_generator<C3T3, CGAL::SMDS_3::Renumber_subdomain_indices(do_rebind),
+                               CGAL::SMDS_3::Facet_indices(true)>     Generator;
   typedef typename Generator::Cell_pmap                               Cell_pmap;
   typedef typename Generator::Facet_pmap                              Facet_pmap;
   typedef typename Generator::Facet_pmap_twice                        Facet_pmap_twice;

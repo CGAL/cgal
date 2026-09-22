@@ -346,6 +346,7 @@ namespace internal {
 
       for(face_descriptor f : face_range)
       {
+        CGAL_assertion(is_triangle(halfedge(f, mesh_), mesh_));
         if(is_degenerate_triangle_face(f, mesh_, parameters::vertex_point_map(vpmap_)
                                                             .geom_traits(gt_)))
           continue;
@@ -1326,14 +1327,14 @@ private:
         return false;//too many cases to be handled
       if (is_on_patch_border(next(hopp, mesh_)) && is_on_patch_border(prev(hopp, mesh_)))
         return false;//too many cases to be handled
-      else if (is_on_patch_border(next(he, mesh_)))
+      if (is_on_patch_border(next(he, mesh_)))
       {
         //avoid generation of degenerate faces, and self-intersections
         if (source(he, mesh_) ==
           target(next(next_on_patch_border(next(he, mesh_)), mesh_), mesh_))
           return false;
       }
-      else if (is_on_patch_border(prev(hopp, mesh_)))
+      if (is_on_patch_border(prev(hopp, mesh_)))
       {
         //avoid generation of degenerate faces, and self-intersections
         if (target(hopp, mesh_) ==
@@ -1718,6 +1719,7 @@ private:
           halfedges_around_target(halfedge(v, mesh_), mesh_))
       {
         if(!is_border(h, mesh_) &&
+           is_triangle(h, mesh_) &&
            is_degenerate_triangle_face(face(h, mesh_), mesh_,
                                        parameters::vertex_point_map(vpmap_)
                                                    .geom_traits(gt_)))
@@ -1817,6 +1819,7 @@ private:
           halfedges_around_target(he, mesh_))
       {
         if(!is_border(h, mesh_) &&
+           is_triangle(h, mesh_) &&
            is_degenerate_triangle_face(face(h, mesh_), mesh_,
                                        parameters::vertex_point_map(vpmap_)
                                                   .geom_traits(gt_)))

@@ -14,7 +14,7 @@
 #define CGAL_DRAW_T3_H
 
 #include <CGAL/license/Triangulation_3.h>
-#include <CGAL/Qt/Basic_viewer.h>
+#include <CGAL/Basic_viewer.h>
 #include <CGAL/Graphics_scene.h>
 #include <CGAL/Graphics_scene_options.h>
 #include <CGAL/Random.h>
@@ -154,8 +154,6 @@ void add_to_graphics_scene(const CGAL_T3_TYPE& at3,
   add_to_graphics_scene(at3, graphics_scene, gs_options);
 }
 
-#ifdef CGAL_USE_BASIC_VIEWER
-
 // Specialization of draw function.
 template<class Gt, class Tds, class Lock_data_structure, class GSOptions>
 void draw(const CGAL_T3_TYPE &at3, const GSOptions &gs_options,
@@ -173,8 +171,6 @@ void draw(const CGAL_T3_TYPE &at3, const char *title="T3 Basic Viewer")
   add_to_graphics_scene(at3, buffer);
   draw_graphics_scene(buffer, title);
 }
-
-#endif // CGAL_USE_BASIC_VIEWER
 
 #undef CGAL_T3_TYPE
 

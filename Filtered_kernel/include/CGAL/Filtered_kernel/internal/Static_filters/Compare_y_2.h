@@ -31,17 +31,16 @@ template < typename K_base >
 class Compare_y_2
   : public K_base::Compare_y_2
 {
-  typedef typename K_base::Point_2   Point_2;
-  typedef typename K_base::Line_2    Line_2;
-  typedef typename K_base::Compare_y_2   Base;
+  typedef typename K_base::Comparison_result  Comparison_result;
+  typedef typename K_base::Point_2            Point_2;
+  typedef typename K_base::Line_2             Line_2;
+
+  typedef typename K_base::Compare_y_2        Base;
 
 public:
-
-  typedef typename Base::result_type  result_type;
-
   using Base::operator();
 
-  result_type operator()(const Point_2 &p, const Point_2& q) const
+  Comparison_result operator()(const Point_2 &p, const Point_2& q) const
   {
     CGAL_BRANCH_PROFILER(std::string("semi-static attempts/calls to   : ") +
                          std::string(CGAL_PRETTY_FUNCTION), tmp);

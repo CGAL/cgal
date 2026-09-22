@@ -1,7 +1,6 @@
 //! \file examples/Arrangement_on_surface_2/ex_vertical_ray_shooting.cpp
 // Answering vertical ray-shooting queries.
 
-#include <CGAL/basic.h>
 #include <CGAL/Arr_walk_along_line_point_location.h>
 #include <CGAL/Arr_trapezoid_ric_point_location.h>
 

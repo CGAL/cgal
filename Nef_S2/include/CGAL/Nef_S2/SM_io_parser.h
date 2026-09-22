@@ -203,7 +203,7 @@ bool SM_io_parser<Decorator_>::read_vertex(SVertex_handle v)
        !(in >> p) ||
        !check_sep("}") ) return false;
 
-  if(f<0 || (iso && f > fn) || (!iso && f > en))
+  if(f<0 || (iso && static_cast<unsigned>(f) >= fn) || (!iso && static_cast<unsigned>(f) >= en))
   {
     in.setstate(std::ios_base::badbit);
     return false;
@@ -241,9 +241,8 @@ bool SM_io_parser<Decorator_>::read_edge(SHalfedge_handle e)
        !(in >> m) || !check_sep(",") ||
        !(in >> k) || !check_sep("}") )
     return false;
-  if (!
-     (eo >= 0 && eo < en && epr >= 0 && epr < en && ene >= 0 && ene < en &&
-      v >= 0 && v < vn && f >= 0 && f < fn ))
+  if (! (eo >= 0 && eo < en && epr >= 0 && epr < en && ene >= 0 && ene < en &&
+         v >= 0 && v < vn && f >= 0 && f < fn ))
   {
     std::cerr<<"wrong index in read_edge"<<std::endl;
     in.setstate(std::ios_base::badbit);

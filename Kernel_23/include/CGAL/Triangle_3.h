@@ -29,6 +29,7 @@ namespace CGAL {
 template <class R_>
 class Triangle_3 : public R_::Kernel_base::Triangle_3
 {
+  typedef typename R_::Boolean               Boolean;
   typedef typename R_::RT                    RT;
   typedef typename R_::FT                    FT;
   typedef typename R_::Point_3               Point_3;
@@ -77,11 +78,10 @@ public:
     return R().construct_supporting_plane_3_object()(*this);
   }
 
-  bool has_on(const Point_3 &p) const
+  Boolean has_on(const Point_3 &p) const
   {
     return R().has_on_3_object()(*this, p);
   }
-
 
   decltype(auto)
   vertex(int i) const
@@ -95,7 +95,7 @@ public:
     return vertex(i);
   }
 
-  bool is_degenerate() const
+  Boolean is_degenerate() const
   {
     return R().is_degenerate_3_object()(*this);
   }

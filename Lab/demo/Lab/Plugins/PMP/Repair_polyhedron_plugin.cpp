@@ -59,9 +59,9 @@ public:
     actionAutorefine = new QAction(tr("Autorefine Mesh (Deprecated)"), mw);
     actionNewAutorefine = new QAction(tr("Autorefine"), mw);
     actionAutorefineAndRMSelfIntersections = new QAction(tr("Autorefine and Remove Self-Intersections (Deprecated)"), mw);
-    actionRemoveNeedlesAndCaps = new QAction(tr("Remove Needles And Caps"));
-    actionSnapBorders = new QAction(tr("Snap Boundaries"));
-    actionAddBbox = new QAction(tr("Add Bounding Box"));
+    actionRemoveNeedlesAndCaps = new QAction(tr("Remove Needles And Caps"), mw);
+    actionSnapBorders = new QAction(tr("Snap Boundaries"), mw);
+    actionAddBbox = new QAction(tr("Add Bounding Box"), mw);
 
     actionRemoveIsolatedVertices->setObjectName("actionRemoveIsolatedVertices");
     actionRemoveDegenerateFaces->setObjectName("actionRemoveDegenerateFaces");
@@ -87,6 +87,7 @@ public:
     actionAutorefine->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
     actionNewAutorefine->setProperty("subMenuName", "Polygon Mesh Processing/Repair");
     actionAutorefineAndRMSelfIntersections->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
+    actionRemoveNeedlesAndCaps->setProperty("subMenuName", "Polygon Mesh Processing/Repair");
     actionSnapBorders->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
     actionAddBbox->setProperty("subMenuName", "Polygon Mesh Processing");
 

@@ -61,7 +61,14 @@ class Mesh_global_optimizer_2
   typedef typename Gt::Vector_2         Vector_2;
 
   typedef typename std::vector<Face_handle>                 Face_vector;
-  typedef typename std::set<Vertex_handle>                  Vertex_set;
+  typedef std::pair<std::size_t,Vertex_handle> IndexVertexPair;
+  struct IVP_less {
+    bool operator()(const IndexVertexPair& ivp1, const IndexVertexPair& ivp2) const
+    {
+      return ivp1.first < ivp2.first;
+    }
+  };
+  typedef typename std::set<IndexVertexPair,IVP_less>       Vertex_set;
   typedef typename std::list<FT>                            FT_list;
   typedef typename std::pair<Vertex_handle,Point_2>         Move;
 
@@ -114,13 +121,14 @@ public:
 
     // Fill set containing moving vertices
     Vertex_set moving_vertices;
+    std::size_t ind = 0;
     for(typename Tr::Finite_vertices_iterator
       vit = cdt_.finite_vertices_begin();
       vit != cdt_.finite_vertices_end();
       ++vit )
     {
       if(!cdt_.are_there_incident_constraints(vit))
-        moving_vertices.insert(vit);
+        moving_vertices.insert(std::make_pair(ind++, vit));
     }
 
   double initial_vertices_nb = static_cast<double>(moving_vertices.size());
@@ -236,11 +244,12 @@ private:
     std::fill(big_moves_.begin(), big_moves_.end(), FT(0));
 
     // Get move for each moving vertex
-    for ( typename Vertex_set::const_iterator vit = moving_vertices.begin() ;
-      vit != moving_vertices.end() ; )
+    for ( typename Vertex_set::iterator vit = moving_vertices.begin() ;
+      vit != moving_vertices.end() ;)
     {
-      Vertex_handle oldv = *vit;
+      Vertex_handle oldv = vit->second;
       Vector_2 move = compute_move(oldv);
+      typename Vertex_set::iterator old_vit = vit;
       ++vit;
 
       if ( CGAL::NULL_VECTOR != move )
@@ -249,7 +258,7 @@ private:
         moves.push_back(std::make_pair(oldv, new_position));
       }
       else if(sq_freeze_ratio_ > 0.) //freezing ON
-        moving_vertices.erase(oldv);
+        moving_vertices.erase(old_vit);
 
       // Stop if time_limit_ is reached
       if ( is_time_limit_reached() )

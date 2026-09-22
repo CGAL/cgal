@@ -1,4 +1,4 @@
-/// \defgroup PkgPartition2Ref 2D Polygon Partitioning Reference
+/// \defgroup PkgPartition2Ref Reference Manual
 /// \defgroup PkgPartition2Concepts Concepts
 /// \ingroup PkgPartition2Ref
 /// \defgroup PkgPartition2FunctionObjectConcepts Function Object Concepts
@@ -7,7 +7,6 @@
 /// \ingroup PkgPartition2Ref
 /*!
 \addtogroup PkgPartition2Ref
-\todo check generated documentation
 \cgalPkgDescriptionBegin{2D Polygon Partitioning,PkgPartition2}
 \cgalPkgPicture{Partition_2/fig/Partition_2-teaser-small.png}
 \cgalPkgSummaryBegin

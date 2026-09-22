@@ -184,7 +184,7 @@ compute(OutputIterator umbilics_it, FT size)
 
   //MAIN loop on P vertices
   Vertex_const_iterator itb, ite;
-  boost::tie(itb,ite) = vertices(P);
+  std::tie(itb,ite) = vertices(P);
   for (;itb != ite; itb++) {
     vertex_descriptor vh = *itb;
     umbilicEstimatorVertex = cgal_abs(get(k1,vh)-get(k2,vh));

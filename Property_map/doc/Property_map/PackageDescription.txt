@@ -1,4 +1,4 @@
-/// \defgroup PkgPropertyMapRef CGAL and Boost Property Maps Reference
+/// \defgroup PkgPropertyMapRef Reference Manual
 
 /*!
 \addtogroup PkgPropertyMapRef

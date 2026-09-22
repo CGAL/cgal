@@ -29,9 +29,9 @@ void test_halfedge_around_vertex_iterator(const Graph& g)
 
   Adapter fg(g, 0, boost::make_assoc_property_map(map));
   typename boost::graph_traits<Adapter >::vertex_iterator vit, vend;
-  for(boost::tie(vit, vend) = vertices(fg); vit != vend; ++vit) {
+  for(std::tie(vit, vend) = vertices(fg); vit != vend; ++vit) {
     halfedge_around_target_iterator havit, havend;
-    for(boost::tie(havit, havend) = CGAL::halfedges_around_target(halfedge(*vit, fg), fg);
+    for(std::tie(havit, havend) = CGAL::halfedges_around_target(halfedge(*vit, fg), fg);
         havit != havend; ++havit) {
       assert(target(*havit, fg) == *vit);
 
@@ -56,11 +56,11 @@ void test_halfedge_around_face_iterator(const Graph& g)
   Adapter fg(g, 0, boost::make_assoc_property_map(map));
 
   face_iterator fit, fend;
-  for(boost::tie(fit, fend) = faces(fg); fit != fend; ++fit) {
+  for(std::tie(fit, fend) = faces(fg); fit != fend; ++fit) {
     halfedge_around_face_iterator hafit, hafend;
-    boost::tie(hafit, hafend) = CGAL::halfedges_around_face(halfedge(*fit, fg), fg);
+    std::tie(hafit, hafend) = CGAL::halfedges_around_face(halfedge(*fit, fg), fg);
     assert(std::distance(hafit, hafend) != 0);
-    for(boost::tie(hafit, hafend) = CGAL::halfedges_around_face(halfedge(*fit, fg), fg); hafit != hafend; ++hafit) {
+    for(std::tie(hafit, hafend) = CGAL::halfedges_around_face(halfedge(*fit, fg), fg); hafit != hafend; ++hafit) {
       assert(face(*hafit, fg) == *fit);
     }
   }
@@ -78,11 +78,11 @@ void test_edge_iterators(const Graph& g)
 
   // do we iterate as many as that?
   edge_iterator eb, ee;
-  boost::tie(eb, ee) = edges(fg);
+  std::tie(eb, ee) = edges(fg);
   assert(static_cast<edges_size_type>(std::distance(eb, ee)) == num_edges(g));
   id_map ids;
   unsigned int count = 0;
-  for(boost::tie(eb, ee) = edges(fg); eb != ee; ++eb) {
+  for(std::tie(eb, ee) = edges(fg); eb != ee; ++eb) {
     edge_descriptor e = *eb;
     std::pair<id_map::iterator, bool> r = ids.insert(get(boost::edge_index, g, e));
     // unique?
@@ -103,7 +103,7 @@ void test_vertex_iterators(Graph& g)
   Adapter fg(g, 0, boost::make_assoc_property_map(map));
   vertex_iterator vb, ve;
   std::size_t count = 0;
-  for(boost::tie(vb, ve) = vertices(fg); vb != ve; ++vb){
+  for(std::tie(vb, ve) = vertices(fg); vb != ve; ++vb){
     ++count;
   }
 
@@ -113,7 +113,7 @@ void test_vertex_iterators(Graph& g)
   id_map ids;
 
   count = 0;
-  for(boost::tie(vb, ve) = vertices(fg); vb != ve; ++vb) {
+  for(std::tie(vb, ve) = vertices(fg); vb != ve; ++vb) {
     std::pair<id_map::iterator, bool> r = ids.insert(get(boost::vertex_index, g, *vb));
     assert(r.second);
     ++count;
@@ -133,12 +133,12 @@ void test_out_edges(const Graph& g)
   Adapter fg(g, 0, boost::make_assoc_property_map(map));
 
   vertex_iterator vb, ve;
-  for(boost::tie(vb, ve) = vertices(fg); vb != ve; ++vb) {
+  for(std::tie(vb, ve) = vertices(fg); vb != ve; ++vb) {
     id_map v_ids;
 
     vertex_descriptor around = *vb;
     out_edge_iterator oeb, oee;
-    for(boost::tie(oeb, oee) = out_edges(*vb, fg); oeb != oee; ++oeb) {
+    for(std::tie(oeb, oee) = out_edges(*vb, fg); oeb != oee; ++oeb) {
       vertex_descriptor t = target(*oeb, fg);
       vertex_descriptor s = source(*oeb, fg);
       assert(s != t);
@@ -162,11 +162,11 @@ void test_in_edges(const Graph& g)
   Adapter fg(g, 0, boost::make_assoc_property_map(map));
 
   vertex_iterator vb, ve;
-  for(boost::tie(vb, ve) = vertices(fg); vb != ve; ++vb) {
+  for(std::tie(vb, ve) = vertices(fg); vb != ve; ++vb) {
     id_map v_ids;
     vertex_descriptor around = *vb;
     in_edge_iterator ieb, iee;
-    for(boost::tie(ieb, iee) = in_edges(*vb, fg); ieb != iee; ++ieb) {
+    for(std::tie(ieb, iee) = in_edges(*vb, fg); ieb != iee; ++ieb) {
       vertex_descriptor t = target(*ieb, fg);
       vertex_descriptor s = source(*ieb, fg);
       assert(t == around);
@@ -190,18 +190,18 @@ void test_in_out_edges(const Graph& g)
 
   // check that the sets of in out edges are the same
   vertex_iterator vb, ve;
-  for(boost::tie(vb, ve) = vertices(fg); vb != ve; ++vb) {
+  for(std::tie(vb, ve) = vertices(fg); vb != ve; ++vb) {
     id_map v_ids;
     std::vector<vertex_descriptor> in, out;
     in_edge_iterator ieb, iee;
-    for(boost::tie(ieb, iee) = in_edges(*vb, fg); ieb != iee; ++ieb) {
+    for(std::tie(ieb, iee) = in_edges(*vb, fg); ieb != iee; ++ieb) {
       std::pair<id_map::iterator, bool> r =
           v_ids.insert(get(boost::vertex_index, g, source(*ieb, fg)));
       assert(r.second);
       in.push_back(source(*ieb, fg));
     }
     out_edge_iterator oeb, oee;
-    for(boost::tie(oeb, oee) = out_edges(*vb, fg); oeb != oee; ++oeb) {
+    for(std::tie(oeb, oee) = out_edges(*vb, fg); oeb != oee; ++oeb) {
       std::pair<id_map::iterator, bool> r =
           v_ids.insert(get(boost::vertex_index, g, target(*oeb, fg)));
       // insertion must fail
@@ -232,7 +232,7 @@ void test_edge_find(const Graph& g)
   typedef std::pair<edge_descriptor, bool>   ret;
 
   edge_iterator eb, ee;
-  for(boost::tie(eb, ee) = edges(fg); eb != ee; ++eb) {
+  for(std::tie(eb, ee) = edges(fg); eb != ee; ++eb) {
     vertex_descriptor s = source(*eb, fg);
     vertex_descriptor t = target(*eb, fg);
     ret found = edge(s, t, fg);
@@ -256,14 +256,14 @@ void test_faces(const Graph& g)
 
   unsigned int count = 0;
   face_iterator fb, fe;
-  for(boost::tie(fb, fe) = faces(fg); fb != fe; ++fb) {
+  for(std::tie(fb, fe) = faces(fg); fb != fe; ++fb) {
     ++count;
     // reverse look-up
     halfedge_descriptor assoc = halfedge(*fb, fg);
     assert(face(assoc, fg) == *fb);
     // check the enclosure
     halfedge_around_face_iterator encb, ence;
-    for(boost::tie(encb, ence) = CGAL::halfedges_around_face(halfedge(*fb, fg), fg); encb != ence; ++encb) {
+    for(std::tie(encb, ence) = CGAL::halfedges_around_face(halfedge(*fb, fg), fg); encb != ence; ++encb) {
       assert(face(*encb, fg) == *fb);
     }
   }

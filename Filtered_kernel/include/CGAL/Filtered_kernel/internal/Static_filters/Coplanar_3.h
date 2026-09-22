@@ -25,17 +25,14 @@ template < typename K_base, typename SFK >
 class Coplanar_3
   : public K_base::Coplanar_3
 {
-  typedef typename K_base::Point_3 Point_3;
+  typedef typename K_base::Boolean    Boolean;
+  typedef typename K_base::Point_3    Point_3;
+
   typedef typename K_base::Coplanar_3 Base;
   typedef typename SFK::Orientation_3 Orientation_3;
 
 public:
-
-  typedef typename Base::result_type  result_type;
-
-
-
-  result_type
+  Boolean
   operator()(const Point_3& p,const Point_3& q, const Point_3& r, const Point_3& s) const
   {
     return Orientation_3()(p,q,r,s) == COPLANAR;

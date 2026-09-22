@@ -106,5 +106,5 @@ void test()
 int main()
 {
   test<Surface_mesh>();
-//  test<Polyhedron>();
+  test<Polyhedron>();
 }

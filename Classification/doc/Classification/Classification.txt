@@ -10,7 +10,7 @@ This component implements the algorithm described in \cgalCite{cgal:lm-clscm-12}
 
 \section Classification_Organization Package Organization
 
-%Classification of data sets is achieved as follows (see Figure \cgalFigureRef{Classification_organization_fig}):
+%Classification of data sets is achieved as follows (see \cgalFigureRef{Classification_organization_fig}):
 
 - some analysis is performed on the input data set;
 - features are computed based on this analysis;
@@ -314,7 +314,7 @@ Though it is possible to set them up one by one, \cgal also provides a method [t
 
 - the same mechanism is repeated until all features' ranges have been tested. Weights are only changed one by one, the other ones are kept to the values that gave the latest best score.
 
-This usually converges to a satisfying solution (see Figure \cgalFigureRef{Classification_trainer_fig}). The number of trials is user defined, set to 300 by default. Using at least 10 times the number of features is advised (for example, at least 300 iterations if 30 features are used). If the solution is not satisfying, more inliers can be selected, for example, in a region that the user identifies as misclassified with the current configuration. The training algorithm keeps, as initialization, the best weights found at the previous round and carries on trying new weights by taking new inliers into account.
+This usually converges to a satisfying solution (see \cgalFigureRef{Classification_trainer_fig}). The number of trials is user defined, set to 300 by default. Using at least 10 times the number of features is advised (for example, at least 300 iterations if 30 features are used). If the solution is not satisfying, more inliers can be selected, for example, in a region that the user identifies as misclassified with the current configuration. The training algorithm keeps, as initialization, the best weights found at the previous round and carries on trying new weights by taking new inliers into account.
 
 \cgalFigureBegin{Classification_trainer_fig,classif_training.png}
 Example of evolution of the mean intersection-over-union. The purple curve is the score computed at the current iteration, green curve is the best score found so far.
@@ -322,7 +322,7 @@ Example of evolution of the mean intersection-over-union. The purple curve is th
 
 \subsubsection Classification_sowf_result Result
 
-Figure \cgalFigureRef{Classification_sowf_result_fig} shows an example of output on a defect-laden point set. The accuracy on this example is 0.97 with a mean intersection-over-union of 0.85 (see section \ref Classification_evaluation).
+\cgalFigureRef{Classification_sowf_result_fig} shows an example of output on a defect-laden point set. The accuracy on this example is 0.97 with a mean intersection-over-union of 0.85 (see section \ref Classification_evaluation).
 
 \cgalFigureBegin{Classification_sowf_result_fig,noise_outliers.png}
 Example of classification on a point set with medium noise and outliers (left: input, right: output). _Ground_ is orange, _roofs_ are pink, _vegetation_ is green. Outliers are classified with an additional label _outlier_ in black.
@@ -398,7 +398,7 @@ smoothing by providing a model of `CGAL::Classification::NeighborQuery`.
 
 - `CGAL::Classification::classify_with_graphcut()`: this method
 offers the best quality but requires longer computation time (see
-Figure \cgalFigureRef{Classification_image}, bottom-right). The
+\cgalFigureRef{Classification_image}, bottom-right). The
 total energy that is minimized is the sum of the partial data term
 \f$E_{di}(x_i)\f$ and of a pairwise interaction energy defined by the
 standard Potts model \cgalCite{cgal:l-mrfmi-09} :

@@ -4,12 +4,6 @@
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Shape_detection/Region_growing/Point_set.h>
 
-#ifdef CGAL_TEST_RANSAC_PROTOTYPE
-#include <RansacShapeDetector.h>
-#include <CylinderPrimitiveShapeConstructor.h>
-#include <PlanePrimitiveShapeConstructor.h>
-#include <CylinderPrimitiveShape.h>
-#endif
 
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/IO/write_ply_points.h>
@@ -178,79 +172,6 @@ void test_copied_point_cloud (const Point_set& original_points, std::size_t nb)
 
   // RANSAC should detect at least 75% of shapes.
   assert (detected_ransac[detected_ransac.size() / 2] > std::size_t(0.75 * ground_truth));
-
-#ifdef CGAL_TEST_RANSAC_PROTOTYPE
-  {
-    CGAL::Real_timer timer;
-    double timeout = 120.; // 2 minutes timeout
-    timer.start();
-    std::size_t nb_runs = 500;
-    std::vector<std::size_t> detected_ransac;
-    std::vector<double> times_ransac;
-    for (std::size_t run = 0; run < nb_runs; ++ run)
-    {
-      PointCloud proto_points;
-      proto_points.reserve (points.size());
-
-      Point Pt;
-      for (std::size_t i = 0; i < points.size(); ++i)
-      {
-        Pt.pos[0] = static_cast<float>(points[i].first.x());
-        Pt.pos[1] = static_cast<float>(points[i].first.y());
-        Pt.pos[2] = static_cast<float>(points[i].first.z());
-        Pt.normal[0] = static_cast<float>(points[i].second.x());
-        Pt.normal[1] = static_cast<float>(points[i].second.y());
-        Pt.normal[2] = static_cast<float>(points[i].second.z());
-#ifdef POINTSWITHINDEX
-        Pt.index = i;
-#endif
-        proto_points.push_back(Pt);
-      }
-
-      // Manually set bounding box!
-      Vec3f cbbMin, cbbMax;
-      cbbMin[0] = static_cast<float>(bbox.xmin());
-      cbbMin[1] = static_cast<float>(bbox.ymin());
-      cbbMin[2] = static_cast<float>(bbox.zmin());
-      cbbMax[0] = static_cast<float>(bbox.xmax());
-      cbbMax[1] = static_cast<float>(bbox.ymax());
-      cbbMax[2] = static_cast<float>(bbox.zmax());
-      proto_points.setBBox(cbbMin, cbbMax);
-
-      // Sets parameters for shape detection.
-      RansacShapeDetector::Options options;
-      options.m_epsilon = parameters.epsilon;
-      options.m_bitmapEpsilon = parameters.cluster_epsilon;
-      options.m_normalThresh = parameters.normal_threshold;
-      options.m_probability = parameters.probability;
-      options.m_minSupport = parameters.min_points;
-
-      CGAL::Real_timer t;
-      t.start();
-      RansacShapeDetector ransac (options); // the detector object
-      ransac.Add (new PlanePrimitiveShapeConstructor());
-      MiscLib::Vector<std::pair<MiscLib::RefCountPtr<PrimitiveShape>, std::size_t> > shapes; // stores the detected shapes
-      ransac.Detect (proto_points, 0, proto_points.size(), &shapes);
-      t.stop();
-
-      detected_ransac.emplace_back (shapes.size());
-      times_ransac.emplace_back (t.time() * 1000);
-      if (timer.time() > timeout)
-      {
-        nb_runs = run + 1;
-        break;
-      }
-    }
-
-    std::sort (detected_ransac.begin(), detected_ransac.end());
-    std::sort (times_ransac.begin(), times_ransac.end());
-    std::cerr << "RANSAC (proto) = " << detected_ransac[detected_ransac.size() / 2]
-              << " planes (" << times_ransac[times_ransac.size() / 2] << "ms)     (on "
-              << nb_runs << " runs, planes["
-              << detected_ransac.front() << ";" << detected_ransac.back() << "], time["
-              << times_ransac.front() << ";" << times_ransac.back() << "])" << std::endl;
-  }
-#endif
 
   std::cerr << std::endl;
 }

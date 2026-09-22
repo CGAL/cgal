@@ -1,8 +1,5 @@
-namespace CGAL {
-namespace Barycentric_coordinates {
-
 /*!
-\defgroup PkgBarycentricCoordinates2Ref 2D Generalized Barycentric Coordinates Reference
+\defgroup PkgBarycentricCoordinates2Ref Reference Manual
 
 \defgroup PkgBarycentricCoordinates2RefConcepts Concepts
 \ingroup PkgBarycentricCoordinates2Ref
@@ -77,6 +74,3 @@ coordinates from the Package \ref PkgInterpolation2.}
 - `discrete_harmonic_coordinates_2()`
 - `boundary_coordinates_2()`
 */
-
-} /* namespace Barycentric_coordinates */
-} /* namespace CGAL */

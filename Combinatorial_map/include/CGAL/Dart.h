@@ -141,7 +141,7 @@ namespace CGAL {
 
     Dart_descriptor get_f(unsigned int i) const
     {
-      assert(i<=dimension);
+      CGAL_assertion(i<=dimension);
       return mf[i];
     }
 

@@ -24,7 +24,7 @@ namespace CGAL {
 
 template < class R>
 CGAL_KERNEL_MEDIUM_INLINE
-bool
+typename R::Boolean
 has_larger_distance_to_point(const PointH2<R>& p,
                               const PointH2<R>& q,
                               const PointH2<R>& r)
@@ -74,7 +74,7 @@ has_larger_distance_to_point(const PointH2<R>& p,
 
 template < class R>
 CGAL_KERNEL_INLINE
-Comparison_result
+typename R::Comparison_result
 compare_signed_distance_to_line(const LineH2<R>&  l,
                                 const PointH2<R>& p,
                                 const PointH2<R>& q)
@@ -111,7 +111,7 @@ compare_signed_distance_to_line(const LineH2<R>&  l,
 
 template < class R>
 CGAL_KERNEL_INLINE
-bool
+typename R::Boolean
 has_larger_signed_distance_to_line(const LineH2<R>&  l,
                                     const PointH2<R>& p,
                                     const PointH2<R>& q)
@@ -140,7 +140,7 @@ has_larger_signed_distance_to_line(const LineH2<R>&  l,
 
 template < class R>
 CGAL_KERNEL_INLINE
-bool
+typename R::Boolean
 has_smaller_signed_distance_to_line(const LineH2<R>&  l,
                                     const PointH2<R>& p,
                                     const PointH2<R>& q)
@@ -167,7 +167,7 @@ has_smaller_signed_distance_to_line(const LineH2<R>&  l,
 
 template < class R>
 CGAL_KERNEL_MEDIUM_INLINE
-Comparison_result
+typename R::Comparison_result
 compare_signed_distance_to_line(const PointH2<R>& p,
                                 const PointH2<R>& q,
                                 const PointH2<R>& r,
@@ -208,7 +208,7 @@ compare_signed_distance_to_line(const PointH2<R>& p,
 
 template < class R>
 CGAL_KERNEL_MEDIUM_INLINE
-bool
+typename R::Boolean
 has_smaller_signed_distance_to_line(const PointH2<R>& p,
                                     const PointH2<R>& q,
                                     const PointH2<R>& r,
@@ -241,7 +241,7 @@ has_smaller_signed_distance_to_line(const PointH2<R>& p,
 
 template < class R>
 CGAL_KERNEL_MEDIUM_INLINE
-bool
+typename R::Boolean
 has_larger_signed_distance_to_line(const PointH2<R>& p,
                                     const PointH2<R>& q,
                                     const PointH2<R>& r,

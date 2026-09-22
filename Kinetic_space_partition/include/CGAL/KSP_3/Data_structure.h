@@ -159,7 +159,6 @@ public:
     }
   };
 
-  // ToDo:: check all kind of iterators/circulators
   using PEdge_around_pvertex_iterator = boost::transform_iterator<Halfedge_to_pedge, CGAL::Halfedge_around_target_iterator<Mesh> >;
   using PEdges_around_pvertex = CGAL::Iterator_range<PEdge_around_pvertex_iterator>;
 
@@ -364,11 +363,6 @@ public:
     if (m_intersection_graph.iedge_is_on_bbox(edge))
       return 0;
 
-    // Count faces
-    std::size_t numfaces = 0;
-    for (std::size_t i = 0; i < m_support_planes.size(); i++)
-      numfaces += m_support_planes[i].data().mesh.number_of_faces();
-
     Support_plane& sp = m_support_planes[sp_idx];
 
     To_exact to_exact;
@@ -551,11 +545,6 @@ public:
 
   template<typename Queue>
   void fill_event_queue(Queue& queue) {
-    // Count faces
-    std::size_t faces = 0;
-    for (std::size_t i = 0; i < m_support_planes.size(); i++)
-      faces += m_support_planes[i].data().mesh.number_of_faces();
-
     for (std::size_t sp_idx = 6; sp_idx < m_support_planes.size(); sp_idx++) {
       std::vector<IEdge> border;
       m_support_planes[sp_idx].get_border(m_intersection_graph, border);
@@ -1390,16 +1379,19 @@ public:
     return support_plane(support_plane_idx).to_2d(segment_3);
   }
 
-/*
-  IkSegment_2 to_2d(const std::size_t support_plane_idx, const IkSegment_3& segment_3) const {
+  template <class IK = Intersection_kernel>
+  auto to_2d(const std::size_t support_plane_idx, const IkSegment_3& segment_3) const
+      -> std::enable_if_t<!std::is_same_v<Kernel, IK>, IkSegment_2> {
     return support_plane(support_plane_idx).to_2d(segment_3);
-  }*/
+  }
 
   Point_2 to_2d(const std::size_t support_plane_idx, const Point_3& point_3) const {
     return support_plane(support_plane_idx).to_2d(point_3);
   }
 
-  IkPoint_2 to_2d(const std::size_t support_plane_idx, const IkPoint_3& point_3) const {
+  template <class IK = Intersection_kernel>
+  auto to_2d(const std::size_t support_plane_idx, const IkPoint_3& point_3) const
+      -> std::enable_if_t<!std::is_same_v<Kernel, IK>, IkPoint_2> {
     return support_plane(support_plane_idx).to_2d(point_3);
   }
 

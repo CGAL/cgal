@@ -948,7 +948,10 @@ power_distance_to_power_sphereC3(const FT &px, const FT &py, const FT &pz, const
                                         sx, sy, sz, sw,
                                         tx, ty, tz, FT(1));
 
-  return -ff0/(ff1 - ff0);
+  if(is_zero(ff0))
+    return FT(0);
+  else
+    return -ff0/(ff1 - ff0);
 }
 
  // I will use this to test if the radial axis of three spheres

@@ -1,7 +1,7 @@
 # Created by the script cgal_create_CMakeLists.
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.12...3.29)
+cmake_minimum_required(VERSION 3.12...3.31)
 
 project(Kinetic_surface_reconstruction_Examples)
 
@@ -18,7 +18,7 @@ if(TARGET CGAL::Eigen3_support)
 
   foreach(target ${targets})
     create_single_source_cgal_program("${target}.cpp")
-    target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
+    target_link_libraries(${target} PRIVATE CGAL::Eigen3_support)
   endforeach()
 else()
   message(ERROR "This program requires the Eigen library, and will not be compiled.")

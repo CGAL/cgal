@@ -1055,7 +1055,7 @@ one can easily obtain the input constraints that induce `e`.
 \subsection Subsection_Edges_and_Constraints Edges, Constrained Edges, Constraints, and Subconstraints
 
 All triangulation classes define the type `Edge` as  `typedef std::pair<Face_handle, int> Edge`.
-For a pair `(fh,i)` it is the edge of the face `*fh`, which is opposite to the `i`'th vertex.
+For a pair `(fh,i)` it is the edge of the face `*fh`, which is opposite to the `i`-th vertex.
 
 A <em>constrained edge</em> `e` is an edge of a constrained triangulation `ct`, for which `ct.is_constrained(e)` returns `true`.
 
@@ -1345,14 +1345,14 @@ the `insert()` function of the triangulation with a range of such pairs.
 \subsection Triangulation_2UsingtheBoostZipIterator Using the Boost Zip Iterator
 
 Information and points are in separate containers. We use
-<A HREF="https://www.boost.org/libs/iterator/doc/index.html#specialized-adaptors">`boost::zip_iterator`</A> to provide an iterator gathering them.
+<A HREF="https://www.boost.org/doc/libs/latest/libs/iterator/doc/zip_iterator.html">`boost::zip_iterator`</A> to provide an iterator gathering them.
 
 \cgalExample{Triangulation_2/info_insert_with_zip_iterator_2.cpp}
 
 \subsection Triangulation_2UsingtheBoostTransformIterator Using the Boost Transform Iterator
 
 We define a functor `Auto_count` used together with
-<A HREF="https://www.boost.org/libs/iterator/doc/index.html#specialized-adaptors">`boost::transform_iterator`</A> to set the order of each point
+<A HREF="https://www.boost.org/doc/libs/latest/libs/iterator/doc/transform_iterator.html">`boost::transform_iterator`</A> to set the order of each point
 in the range. Note that this is correct because the iterator
 is dereferenced only once per point during the insertion.
 \cgalExample{Triangulation_2/info_insert_with_transform_iterator_2.cpp}

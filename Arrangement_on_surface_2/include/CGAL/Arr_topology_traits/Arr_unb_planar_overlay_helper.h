@@ -81,7 +81,7 @@ protected:
   Vertex_handle_blue v_blue_tl;         // Blue top-left fictitious vertex.
 
 public:
-  /*! Constructor, given the input red and blue arrangements. */
+  /*! constructs, given the input red and blue arrangements. */
   Arr_unb_planar_overlay_helper(const Ar2* red_arr, const Ab2* blue_arr) :
     m_red_top_traits(red_arr->topology_traits()),
     m_blue_top_traits(blue_arr->topology_traits())
@@ -99,10 +99,10 @@ public:
   void before_handle_event(Event* e);
   //@}
 
-  /*! Get the current red top face. */
+  /*! obtains the current red top face. */
   Face_handle_red red_top_face() const { return (m_red_th->face()); }
 
-  /*! Get the current blue top face. */
+  /*! obtains the current blue top face. */
   Face_handle_blue blue_top_face() const { return (m_blue_th->face()); }
 };
 

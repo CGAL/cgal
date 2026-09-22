@@ -687,7 +687,7 @@ private:
     for (std::size_t i = 0; i < m_faces_lcc.size(); i++) {
       auto n = m_lcc.template one_dart_per_incident_cell<3, 2>(m_faces_lcc[i]);
 
-      assert(n.size() == 1 || n.size() == 2);
+      CGAL_assertion(n.size() == 1 || n.size() == 2);
       auto it = n.begin();
 
 //      auto& finf = m_lcc.template info<2>(m_faces_lcc[i]);
@@ -1546,7 +1546,7 @@ private:
       n = m_lcc.beta(n, 1);
     } while (n != dh);
 
-    KSP_3::internal::dump_polygon(face, fn);
+    KSP_3::internal::dump_polygon<Kernel>(face, fn);
   }
 
   void write_edge(typename LCC::Dart_descriptor dh, const std::string& fn) {
@@ -1620,7 +1620,7 @@ private:
         other_faces.push_back(dh); // Contains faces originating from the octree decomposition as well as bbox faces
     }
 
-    assert(m_kinetic_partition.input_planes().size() == m_regions.size());
+    CGAL_assertion(m_kinetic_partition.input_planes().size() == m_regions.size());
 
     for (std::size_t i = 0; i < m_kinetic_partition.input_planes().size(); i++) {
 
@@ -1705,7 +1705,7 @@ private:
     m_face_area_lcc.resize(m_faces_lcc.size(), 0);
 
     for (std::size_t i = 0; i < m_faces_lcc.size(); i++)
-      m_face_area_lcc[i] = m_face_area_lcc[i] * 2.0 * m_total_inliers / total_area;
+      m_face_area_lcc[i] = m_face_area_lcc[i] * FT(2.0) * FT(m_total_inliers) / total_area;
   }
 
   FT area(typename LCC::Dart_descriptor face_dart, Plane_3 &pl, std::vector<typename Kernel::Triangle_3> *tris = nullptr) {
@@ -1990,7 +1990,7 @@ private:
 
   void map_points_to_faces(const std::size_t polygon_index, const std::vector<Point_3>& pts, std::vector<std::pair<typename LCC::Dart_descriptor, std::vector<std::size_t> > >& face_to_points) {
     if (polygon_index >= m_kinetic_partition.input_planes().size())
-      assert(false);
+      CGAL_assertion(false);
 
     From_exact from_exact;
 

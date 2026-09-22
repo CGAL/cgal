@@ -7,9 +7,8 @@ permissions:
 
 jobs:
   cmake-testsuite:
-
+    if: github.repository == 'CGAL/cgal' || github.event_name != 'push'
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v4
     - name: install dependencies
@@ -21,9 +20,8 @@ jobs:
         ctest -L Installation -j $(getconf _NPROCESSORS_ONLN)
 
   cmake-testsuite-with-qt:
-
+    if: github.repository == 'CGAL/cgal' || github.event_name != 'push'
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v4
     - name: install dependencies

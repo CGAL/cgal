@@ -67,8 +67,8 @@ public:
     const RT & c() const;
     const RT & d() const;
 
-    bool       operator==( const PlaneH3<R>& ) const;
-    bool       operator!=( const PlaneH3<R>& ) const;
+    typename R::Boolean operator==( const PlaneH3<R>& ) const;
+    typename R::Boolean operator!=( const PlaneH3<R>& ) const;
 
     Line_3  perpendicular_line(const Point_3& ) const;
     Plane_3 opposite() const;  // plane with opposite orientation
@@ -78,13 +78,13 @@ public:
     Direction_3    orthogonal_direction() const;
     Vector_3       orthogonal_vector() const;
 
-    Oriented_side  oriented_side(const Point_3 &p) const;
-    bool           has_on(const Point_3 &p) const;
-    bool           has_on(const Line_3 &p) const;
-    bool           has_on_positive_side(const Point_3&l) const;
-    bool           has_on_negative_side(const Point_3&l) const;
+    typename R::Oriented_side oriented_side(const Point_3& p) const;
+    typename R::Boolean has_on(const Point_3& p) const;
+    typename R::Boolean has_on(const Line_3& p) const;
+    typename R::Boolean has_on_positive_side(const Point_3& l) const;
+    typename R::Boolean has_on_negative_side(const Point_3& l) const;
 
-    bool           is_degenerate() const;
+    typename R::Boolean is_degenerate() const;
 
     Aff_transformation_3 transform_to_2d() const;
     Point_2   to_2d(const Point_3& )  const;
@@ -163,7 +163,7 @@ PlaneH3<R>::new_rep(const RT &a, const RT &b, const RT &c, const RT &d)
 
 template < class R >
 inline
-bool
+typename R::Boolean
 PlaneH3<R>::operator!=(const PlaneH3<R>& l) const
 {
  return !(*this == l);
@@ -397,7 +397,7 @@ PlaneH3<R>::orthogonal_vector() const
 { return Vector_3(a(), b(), c() ); }
 
 template < class R >
-bool
+typename R::Boolean
 PlaneH3<R>::is_degenerate() const
 {
  const RT RT0(0);
@@ -405,14 +405,14 @@ PlaneH3<R>::is_degenerate() const
 }
 
 template < class R >
-bool
+typename R::Boolean
 PlaneH3<R>::has_on_positive_side( const typename PlaneH3<R>::Point_3& p) const
 {
  return (a()*p.hx() + b()*p.hy() + c()*p.hz() + d()*p.hw() > RT(0) );
 }
 
 template < class R >
-bool
+typename R::Boolean
 PlaneH3<R>::has_on_negative_side( const typename PlaneH3<R>::Point_3& p) const
 {
  return (a()*p.hx() + b()*p.hy() + c()*p.hz() + d()*p.hw() < RT(0) );
@@ -420,14 +420,14 @@ PlaneH3<R>::has_on_negative_side( const typename PlaneH3<R>::Point_3& p) const
 
 
 template < class R >
-bool
+typename R::Boolean
 PlaneH3<R>::has_on( const typename PlaneH3<R>::Point_3& p) const
 {
  return (a()*p.hx() + b()*p.hy() + c()*p.hz() + d()*p.hw() == RT(0) );
 }
 
 template < class R >
-bool
+typename R::Boolean
 PlaneH3<R>::has_on( const typename PlaneH3<R>::Line_3& l) const
 {
  Point_3   p   = l.point();
@@ -439,7 +439,7 @@ PlaneH3<R>::has_on( const typename PlaneH3<R>::Line_3& l) const
 }
 
 template < class R >
-Oriented_side
+typename R::Oriented_side
 PlaneH3<R>::oriented_side( const typename PlaneH3<R>::Point_3& p) const
 {
  return CGAL_NTS sign( a()*p.hx() + b()*p.hy() + c()*p.hz() + d()*p.hw() );
@@ -447,7 +447,7 @@ PlaneH3<R>::oriented_side( const typename PlaneH3<R>::Point_3& p) const
 
 
 template < class R >
-bool
+typename R::Boolean
 PlaneH3<R>::operator==(const PlaneH3<R>& l) const
 {
  if (  (a() * l.d() != l.a() * d() )

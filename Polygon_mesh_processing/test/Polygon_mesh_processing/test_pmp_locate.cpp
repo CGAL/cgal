@@ -378,7 +378,7 @@ void test_predicates(const G& g, CGAL::Random& rnd)
   // ---------------------------------------------------------------------------
   int max = 1000, counter = 0;
   typename boost::graph_traits<G>::halfedge_iterator hit, hend;
-  boost::tie(hit, hend) = halfedges(g);
+  std::tie(hit, hend) = halfedges(g);
   for(; hit!=hend; ++hit)
   {
     const halfedge_descriptor h = *hit;

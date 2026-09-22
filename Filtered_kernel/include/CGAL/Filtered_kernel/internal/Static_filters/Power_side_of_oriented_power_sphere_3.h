@@ -26,12 +26,12 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
   class Power_side_of_oriented_power_sphere_3:
     public K_base::Power_side_of_oriented_power_sphere_3
   {
+    typedef typename K_base::Oriented_side    Oriented_side;
     typedef typename K_base::Weighted_point_3 Weighted_point_3;
     typedef typename K_base::FT FT;
     typedef typename K_base::Power_side_of_oriented_power_sphere_3 Base;
-  public:
-    typedef typename Base::result_type result_type;
 
+  public:
     using Base::operator();
 
     void
@@ -107,11 +107,11 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
     }
 
 
-    result_type operator() ( const Weighted_point_3 & p,
-                             const Weighted_point_3 & q,
-                             const Weighted_point_3 & r,
-                             const Weighted_point_3 & s,
-                             const Weighted_point_3 & t) const
+    Oriented_side operator() (const Weighted_point_3& p,
+                              const Weighted_point_3& q,
+                              const Weighted_point_3& r,
+                              const Weighted_point_3& s,
+                              const Weighted_point_3& t) const
     {
       CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Power_side_of_power_sphere_3 with 4+1 wpoints", tmp);
 
@@ -225,7 +225,7 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
               return Base::operator()(p,q,r,s,t);
             }
 
-            result_type int_tmp_result;
+            Oriented_side int_tmp_result;
 
             double eps = (1.67106803095990471147e-13 * (((max2 * max3) * max4) * (CGAL::max) ( max5, (max1 * max1) )));
 
@@ -253,10 +253,10 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
         return Base::operator()(p,q,r,s,t);
     }
 
-    result_type operator() ( const Weighted_point_3 & p,
-                             const Weighted_point_3 & q,
-                             const Weighted_point_3 & r,
-                             const Weighted_point_3 & t) const
+    Oriented_side operator() (const Weighted_point_3& p,
+                              const Weighted_point_3& q,
+                              const Weighted_point_3& r,
+                              const Weighted_point_3& t) const
     {
 
       CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Power_side_of_oriented_power_sphere_3 with 3+1 wpoints", tmp);
@@ -408,15 +408,15 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
                   }
               }
           }
-        return static_cast<result_type>(cmp * int_tmp_result_FFWKCAA);
+        return static_cast<Oriented_side>(cmp * int_tmp_result_FFWKCAA);
       }
       else
         return Base::operator()(p,q,r,t);
     }
 
-    result_type operator() ( const Weighted_point_3 & p,
-                             const Weighted_point_3 & q,
-                             const Weighted_point_3 & t) const
+    Oriented_side operator() (const Weighted_point_3& p,
+                              const Weighted_point_3& q,
+                              const Weighted_point_3& t) const
     {
 
       CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Power_side_of_oriented_power_sphere_3 with 2+1 wpoints", tmp);
@@ -506,7 +506,7 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
                     }
                 }
             }
-            return static_cast<result_type>(cmp * int_tmp_result);
+            return static_cast<Oriented_side>(cmp * int_tmp_result);
         }
         cmp = ((py > qy) ? 1 : ((py < qy) ? -1 : 0));
         if( (cmp != 0) )
@@ -549,7 +549,7 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
                   }
               }
           }
-          return static_cast<result_type>(cmp * int_tmp_result_FFWKCAA);
+          return static_cast<Oriented_side>(cmp * int_tmp_result_FFWKCAA);
         }
         cmp = ((pz > qz) ? 1 : ((pz < qz) ? -1 : 0));
         int int_tmp_result_3SPBwDj;
@@ -592,7 +592,7 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
                 }
             }
         }
-        return static_cast<result_type>(cmp * int_tmp_result_3SPBwDj);
+        return static_cast<Oriented_side>(cmp * int_tmp_result_3SPBwDj);
       }
       else
         return Base::operator()(p,q,t);

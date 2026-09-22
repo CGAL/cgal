@@ -1,4 +1,4 @@
-/// \defgroup PkgNefS2Ref 2D Boolean Operations on Nef Polygons Embedded on the Sphere Reference
+/// \defgroup PkgNefS2Ref Reference Manual
 /*!
 \addtogroup PkgNefS2Ref
 

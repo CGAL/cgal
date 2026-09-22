@@ -5,6 +5,9 @@
 #include <list>
 #include <vector>
 #include <type_traits>
+
+#include <boost/iterator/filter_iterator.hpp>
+
 #include <CGAL/Compact_container.h>
 #include <CGAL/Random.h>
 
@@ -18,7 +21,6 @@ template <typename Has_timestamp_ = CGAL::Tag_true>
 struct Node_1
 : public CGAL::Compact_container_base
 {
-  Node_1() {} // // it is important `time_stamp_` is not initialized
   bool operator==(const Node_1 &) const { return true; }
   bool operator!=(const Node_1 &) const { return false; }
   bool operator< (const Node_1 &) const { return false; }
@@ -49,7 +51,7 @@ struct Node_1
   }
   ///@}
   int m_erase_counter;
-  std::size_t time_stamp_;
+  std::size_t time_stamp_ = std::size_t(-2);
 };
 
 class Node_2
@@ -58,9 +60,10 @@ class Node_2
     Node_2 * p;
     void * p_cc;
   };
-  int      rnd;
 
 public:
+
+  int      rnd;
 
   Node_2()
   : p(nullptr), rnd(CGAL::get_default_random().get_int(0, 100)) {}
@@ -294,6 +297,51 @@ void test_time_stamps() {
   }
 }
 
+class Zero_predicate
+{
+public:
+  template < class T >
+  bool operator()(const T & t) const
+  {
+    return t.rnd != 0;
+  }
+};
+
+
+template < class Cont >
+void test_filter(Cont &c1) {
+  for (std::size_t i = 0 ; i < 10 ; ++i)
+    c1.emplace();
+  std::cout << "Before filter" << std::endl;
+  for(auto it = c1.begin(); it != c1.end(); ++it) {
+    std::cout << (*it).rnd << std::endl;
+  }
+  std::cout << "set second entry to 0" << std::endl;
+  std::cout << "erase third entry" << std::endl;
+  typename Cont::iterator it = c1.begin();
+  ++it;
+  (*it).rnd = 0;
+  for(int i = 0; i < 8; ++i) {
+    ++it;
+  }
+
+  c1.erase(it);
+
+  for(auto it = c1.begin(); it != c1.end(); ++it) {
+    std::cout << (*it).rnd << std::endl;
+  }
+
+
+  typedef boost::filter_iterator<Zero_predicate, typename Cont::iterator> Zero_iterator;
+
+  Zero_iterator zit(Zero_predicate(), c1.begin(), c1.end());
+  Zero_iterator end(Zero_predicate(), c1.end(), c1.end());
+  std::cout << "Skip entries which are 0" << std::endl;
+  for (; zit != end; ++zit) {
+    std::cout << (*zit).rnd << std::endl;
+  }
+}
+
 struct Incomplete_struct;
 
 int main()
@@ -352,6 +400,8 @@ int main()
 
   test_index(C5);
   test_index(C6);
+
+  test_filter(C5);
   return 0;
 }
 // EOF //

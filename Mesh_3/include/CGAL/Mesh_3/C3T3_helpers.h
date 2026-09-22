@@ -41,6 +41,10 @@
 #include <CGAL/Time_stamper.h>
 #include <CGAL/tuple.h>
 #include <CGAL/use.h>
+#include <CGAL/unordered_flat_map.h>
+#include <CGAL/iterator.h>
+#include <CGAL/Handle_hash_function.h>
+
 #ifdef CGAL_MESH_3_PROFILING
   #include <CGAL/Mesh_3/Profiling_tools.h>
 #endif
@@ -3059,7 +3063,9 @@ move_point(const Vertex_handle& old_vertex,
 
     Vertex_handle new_vertex = move_point_topo_change(old_vertex, new_position, outdated_cells_set);
 
-    moving_vertices.insert(new_vertex);
+    if(new_vertex != Vertex_handle{}) {
+      moving_vertices.insert(new_vertex);
+    }
     return new_vertex;
   }
 }
@@ -3145,7 +3151,9 @@ move_point(const Vertex_handle& old_vertex,
 
     lock_moving_vertices();
     moving_vertices.erase(old_vertex);
-    moving_vertices.insert(new_vertex);
+    if(new_vertex != Vertex_handle{}) {
+      moving_vertices.insert(new_vertex);
+    }
     unlock_moving_vertices();
 
     // Don't "unlock_all_elements" here, the caller may need it to do it himself
@@ -3195,6 +3203,23 @@ move_point_topo_change(const Vertex_handle& old_vertex,
   {
     nv = {};
     return nv;
+  }
+
+  CGAL::unordered_flat_set<Vertex_handle> insertion_conflict_vertices;
+  std::for_each(insertion_conflict_cells.begin(), insertion_conflict_cells.end(),
+                [&](const Cell_handle& c) {
+                  for(auto v: tr_.vertices(c)) {
+                    insertion_conflict_vertices.insert(v);
+                  }
+                });
+  std::for_each(insertion_conflict_boundary.begin(), insertion_conflict_boundary.end(),
+                [&](const Facet& f) {
+                  for(auto v: tr_.vertices(f)) {
+                    insertion_conflict_vertices.erase(v);
+                  }
+                });
+  if(!insertion_conflict_vertices.empty()) {
+    return Vertex_handle{};
   }
 
   lock_outdated_cells();
@@ -3844,7 +3869,7 @@ fill_modified_vertices(InputIterator cells_begin,
                        OutputIterator out) const
 {
   Vertex_set already_inserted_vertices;
-  // Dont insert vertex in out
+  // Don't insert vertex in out
   already_inserted_vertices.insert(vertex);
 
   for ( InputIterator it = cells_begin ; it != cells_end ; ++it )

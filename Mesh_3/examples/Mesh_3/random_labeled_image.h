@@ -2,10 +2,9 @@
 #include <CGAL/Random.h>
 #include <algorithm>
 
-CGAL::Image_3 random_labeled_image()
+CGAL::Image_3 random_labeled_image(const int number_of_spheres = 50)
 {
   const int dim = 400;
-  const unsigned char number_of_spheres = 50;
   const int max_radius_of_spheres = 10;
   const int radius_of_big_sphere = 80;
   _image* image = _createImage(dim, dim, dim, 1,
@@ -16,7 +15,7 @@ CGAL::Image_3 random_labeled_image()
 
   std::ptrdiff_t center = dim / 2;
   CGAL::Random rand(0);
-  for(unsigned char n = number_of_spheres; n > 0 ; --n) {
+  for(auto n = number_of_spheres; n > 0 ; --n) {
     std::size_t i, j, k;
     do {
       i = rand.uniform_smallint(1 + max_radius_of_spheres,

@@ -47,7 +47,7 @@ struct PointCloud
                 return d0*d0+d1*d1+d2*d2;
         }
 
-        // Returns the dim'th component of the idx'th point in the class:
+        // Returns the dim-th component of the idx-th point in the class:
         // Since this is inlined and the "dim" argument is typically an immediate value, the
         //  "if/else's" are actually solved at compile time.
         inline T kdtree_get_pt(const size_t idx, int dim) const

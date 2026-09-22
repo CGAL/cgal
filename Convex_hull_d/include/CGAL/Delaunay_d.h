@@ -203,7 +203,7 @@ public:
     Simplex_iterator(Delaunay* x,  Base_iterator y,
       Delaunay_voronoi_kind z = NEAREST) : Base_iterator(y), DT(x)
     /* if the facet is not nil we set the current marker to
-       the facet and insert all it's neighbors into the
+       the facet and insert all its neighbors into the
        candidates stack */
     { CGAL_assertion(base() != Base_iterator());
       tf = (z == NEAREST ? lower_hull : upper_hull);
@@ -262,7 +262,7 @@ public:
     Simplex_const_iterator(const Delaunay* x,  Base_iterator y,
       Delaunay_voronoi_kind z = NEAREST) : Base_iterator(y), DT(x)
     /* if the facet is not nil we set the current marker to
-       the facet and insert all it's neighbors into the
+       the facet and insert all its neighbors into the
        candidates stack */
     { CGAL_assertion(base() != Base_iterator());
       tf = (z == NEAREST ? lower_hull : upper_hull);

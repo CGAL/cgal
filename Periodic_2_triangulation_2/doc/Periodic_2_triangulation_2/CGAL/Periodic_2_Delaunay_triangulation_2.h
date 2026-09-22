@@ -212,7 +212,7 @@ public:
   contains `p`. It outputs in the container pointed to by
   `eit` the boundary of the zone in conflict with `p`.
   The boundary edges of the conflict zone are output in
-  counter-clockwise order and each edge is described through its
+  counterclockwise order and each edge is described through its
   incident face which is not in conflict with `p`. The function
   returns in a std::pair the resulting output
   iterators. \pre `start` is in conflict with `p` and `p` lies in the original domain `domain`.

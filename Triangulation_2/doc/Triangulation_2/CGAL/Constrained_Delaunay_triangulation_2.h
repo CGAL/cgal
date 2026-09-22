@@ -305,7 +305,7 @@ outputs the boundary edges of the conflict zone of point `p` into an output iter
 
 This functions outputs in the container pointed to by `eit`,
 the boundary of the zone in conflict with `p`. The boundary edges
-of the conflict zone are output in counter-clockwise order
+of the conflict zone are output in counterclockwise order
 and each edge is described through the incident face
 which is not in conflict with `p`.
 The function returns the resulting output iterator.

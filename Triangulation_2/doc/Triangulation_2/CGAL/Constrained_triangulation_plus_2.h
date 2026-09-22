@@ -77,16 +77,17 @@ A default constructed `Constraint_id` is a singular value that can not be the ID
   typedef unspecified_type Constraint_id;
 
 /*!
-An iterator to visit
+A bidirectional iterator to visit
 all the input constraints. The order of visit is undefined.
 The value type of this iterator is `Constraint_id`.
 */
 typedef unspecified_type Constraint_iterator;
 
 /*!
-A range type for iterating over all constraints.
+A range type for iterating over all constraints. The iterator type of
+the range is `Constraint_iterator`.
 */
-typedef Iterator_range<Constraint_iterator> Constraints;
+typedef unspecified_type Constraints;
 
 
 /*!
@@ -95,22 +96,33 @@ A subconstraint is a pair of vertices that correspond to an `Edge`.
 typedef std::pair<Vertex_handle, Vertex_handle> Subconstraint;
 
 /*!
-An iterator
-to visit all the subconstraints of the triangulation.
+A bidirectional iterator to visit all the subconstraints of the triangulation.
 The order of visit is undefined.
-The value type of this iterator is `std::pair<Subconstraint,std::list<Context>*>`
-corresponding to the vertices of the
-subconstraint.
+The value type of this iterator is `Subconstraint`.
 */
 typedef unspecified_type Subconstraint_iterator;
 
 /*!
-A range type for iterating over all subconstraints.
+A range type for iterating over all subconstraints. The iterator type of
+the range is `Subconstraint_iterator`.
 */
-typedef Iterator_range<Subconstraint_iterator> Subconstraints;
+typedef unspecified_type Subconstraints;
 
 /*!
-An iterator on the
+A bidirectional iterator to visit all the subconstraints of the triangulation and the
+contexts of their enclosing constraints. The order of visit is undefined.
+The value type of this iterator is `const std::pair<const Subconstraint, std::list<Context>*>`.
+*/
+typedef unspecified_type Subconstraint_and_contexts_iterator;
+
+/*!
+A range type for iterating over all subconstraints. The iterator type of
+the range is `Subconstraint_and_contexts_iterator`.
+*/
+typedef unspecified_type Subconstraints_and_contexts;
+
+/*!
+A bidirectional iterator on the
 vertices of the chain of subconstraints representing a
 constraint. The value type of this iterator is `Vertex_handle`.
 */
@@ -152,10 +164,8 @@ through a subconstraint.
   };
 
 /*!
-An iterator on
-constraints enclosing a given subconstraint. The value type of this
-iterator
-is `Context`.
+A bidirectional iterator on constraints enclosing a given subconstraint.
+The value type of this iterator is `Context`.
 */
 typedef unspecified_type Context_iterator;
 
@@ -348,6 +358,11 @@ void remove_constraint(Constraint_id cid);
 
 /// \name Access
 /// @{
+///
+/// \note
+/// Since CGAL-6.1, the value type of the range returned by `subconstraints()` has changed from
+/// `const std::pair<const Subconstraint, std::list<Context>*>` to `Subconstraint`.
+/// The old range type is now returned by the function `subconstraints_and_contexts()`.
 
 /*!
 returns a `Constraint_iterator` that points at the first
@@ -380,6 +395,22 @@ Subconstraint_iterator subconstraints_end() const;
 returns a range of subconstraints.
 */
 Subconstraints subconstraints() const;
+
+/*!
+returns a `Subconstraint_and_contexts_iterator` pointing at the first
+subconstraint of the triangulation.
+*/
+Subconstraint_and_contexts_iterator subconstraints_and_contexts_begin() const;
+
+/*!
+returns the past-the-end iterator of the subconstraints of the triangulation.
+*/
+Subconstraint_and_contexts_iterator subconstraints_and_contexts_end() const;
+
+/*!
+returns a range of subconstraints with the contexts of their enclosing constraints.
+*/
+Subconstraints_and_contexts subconstraints_and_contexts() const;
 
 /*!
 returns the number of constraints enclosing the subconstraint

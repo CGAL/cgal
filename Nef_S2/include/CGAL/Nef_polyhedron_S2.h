@@ -479,7 +479,7 @@ public:
 
   Self symmetric_difference(
     const Self& N1) const
-  /*{\Mop returns the symmectric difference |\Mvar - T| $\cup$
+  /*{\Mop returns the symmetric difference |\Mvar - T| $\cup$
           |T - \Mvar|. }*/
   { Self res(sphere_map(),false); // empty
     Overlayer D(&res.sphere_map());
