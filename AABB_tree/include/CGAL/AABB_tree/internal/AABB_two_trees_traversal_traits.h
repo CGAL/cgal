@@ -25,15 +25,15 @@ namespace CGAL {
 
 namespace internal { namespace AABB_tree {
 
-template<bool in_order, typename Value, typename OutputIterator>
+template<bool in_order, typename Value1, typename Value2, typename OutputIterator>
 class Wrap_output_iterator
 {
-  Value first;
+  Value1 first;
   OutputIterator out;
 public:
-  Wrap_output_iterator(Value first_, OutputIterator out_): first(first_), out(out_){}
+  Wrap_output_iterator(Value1 first_, OutputIterator out_): first(first_), out(out_){}
 
-  Wrap_output_iterator& operator=(Value second){
+  Wrap_output_iterator& operator=(Value2 second){
     if constexpr(in_order)
       *out = std::make_pair(first, second);
     else
@@ -71,7 +71,7 @@ public:
 
   void intersection(const Primitive1& primitive1, const Primitive2& primitive2)
   {
-    using Wrap_iterator = Wrap_output_iterator<true, typename Primitive1::Id, OutputIterator>;
+    using Wrap_iterator = Wrap_output_iterator<true, typename Primitive1::Id, typename Primitive2::Id, OutputIterator>;
     Wrap_iterator wrap_out(primitive1.id(), out);
     Listing_primitive_traits<AABBTraits2, typename AABBTraits1::Primitive::Datum, Wrap_iterator> traits(wrap_out, m_traits2);
     traits.intersection(internal::Primitive_helper<AABBTraits1>::get_datum(primitive1, m_traits1), primitive2);
@@ -79,7 +79,7 @@ public:
 
   void intersection(const Primitive1& primitive1, const Node2& node2, std::size_t nb_primitives_2)
   {
-    using Wrap_iterator = Wrap_output_iterator<true, typename Primitive1::Id, OutputIterator>;
+    using Wrap_iterator = Wrap_output_iterator<true, typename Primitive1::Id, typename Primitive2::Id, OutputIterator>;
     Wrap_iterator wrap_out(primitive1.id(), out);
     Listing_primitive_traits<AABBTraits2, typename AABBTraits1::Primitive::Datum, Wrap_iterator> traits(wrap_out, m_traits2);
     node2.traversal( internal::Primitive_helper<AABBTraits1>::get_datum(primitive1, m_traits1), traits, nb_primitives_2);
@@ -87,7 +87,7 @@ public:
 
   void intersection(const Node1& node1, std::size_t nb_primitives_1, const Primitive2& primitive2)
   {
-    using Wrap_iterator= Wrap_output_iterator<false, typename Primitive2::Id, OutputIterator>;
+    using Wrap_iterator= Wrap_output_iterator<false, typename Primitive2::Id, typename Primitive1::Id, OutputIterator>;
     Wrap_iterator wrap_out(primitive2.id(), out);
     Listing_primitive_traits<AABBTraits1, typename AABBTraits2::Primitive::Datum, Wrap_iterator> traits(wrap_out, m_traits1);
     node1.traversal( internal::Primitive_helper<AABBTraits2>::get_datum(primitive2, m_traits2), traits, nb_primitives_1);
@@ -143,7 +143,7 @@ public:
     // Use inverse transformation is faster but less numerically stable.
     if constexpr(Use_inverse_transformation::value)
     {
-      using Wrap_iterator = Wrap_output_iterator<true, typename Primitive1::Id, OutputIterator>;
+      using Wrap_iterator = Wrap_output_iterator<true, typename Primitive1::Id, typename Primitive2::Id, OutputIterator>;
       Wrap_iterator wrap_out(primitive1.id(), out);
       Listing_primitive_traits<AABBTraits2, typename AABBTraits1::Primitive::Datum, Wrap_iterator> traits(wrap_out, m_traits2);
       auto datum = (internal::Primitive_helper<AABBTraits1>::get_datum(primitive1, m_traits1).transform(m_tr1)).transform(m_tr2_inverse);
@@ -151,7 +151,7 @@ public:
     }
     else
     {
-      using Wrap_iterator = Wrap_output_iterator<true, typename Primitive1::Id, OutputIterator>;
+      using Wrap_iterator = Wrap_output_iterator<true, typename Primitive1::Id, typename Primitive2::Id, OutputIterator>;
       Wrap_iterator wrap_out(primitive1.id(), out);
       Listing_primitive_traits_with_transformation<AABBTraits2, typename AABBTraits1::Primitive::Datum, Wrap_iterator, AffTransformation> traits(wrap_out, m_traits2, m_tr2);
       auto datum = (internal::Primitive_helper<AABBTraits1>::get_datum(primitive1, m_traits1).transform(m_tr1));
@@ -164,7 +164,7 @@ public:
     // Use inverse transformation is faster but less numerically stable.
     if constexpr(Use_inverse_transformation::value)
     {
-      using Wrap_iterator = Wrap_output_iterator<true, typename Primitive2::Id, OutputIterator>;
+      using Wrap_iterator = Wrap_output_iterator<false, typename Primitive2::Id, typename Primitive1::Id, OutputIterator>;
       Wrap_iterator wrap_out(primitive2.id(), out);
       Listing_primitive_traits<AABBTraits1, typename AABBTraits2::Primitive::Datum, Wrap_iterator> traits(wrap_out, m_traits1);
       auto datum = (internal::Primitive_helper<AABBTraits2>::get_datum(primitive2, m_traits2).transform(m_tr2)).transform(m_tr1_inverse);
@@ -172,7 +172,7 @@ public:
     }
     else
     {
-      using Wrap_iterator = Wrap_output_iterator<true, typename Primitive2::Id, OutputIterator>;
+      using Wrap_iterator = Wrap_output_iterator<false, typename Primitive2::Id, typename Primitive1::Id, OutputIterator>;
       Wrap_iterator wrap_out(primitive2.id(), out);
       Listing_primitive_traits_with_transformation<AABBTraits1, typename AABBTraits2::Primitive::Datum, Wrap_iterator, AffTransformation> traits(wrap_out, m_traits1, m_tr1);
       auto datum = (internal::Primitive_helper<AABBTraits2>::get_datum(primitive2, m_traits2).transform(m_tr2));
@@ -224,7 +224,7 @@ public:
 
   void intersection(const Primitive1& primitive1, const Primitive2& primitive2)
   {
-    using Wrap_iterator = Wrap_output_iterator<true, typename Primitive1::Id, OutputIterator>;
+    using Wrap_iterator = Wrap_output_iterator<true, typename Primitive1::Id, typename Primitive2::Id, OutputIterator>;
     Wrap_iterator wrap_out(primitive1.id(), out);
     Listing_bbox_primitive_traits<AABBTraits2, typename AABBTraits1::Primitive::Datum, Wrap_iterator> traits(wrap_out, m_traits2);
     traits.intersection(internal::Primitive_helper<AABBTraits1>::get_datum(primitive1, m_traits1), primitive2);
@@ -232,7 +232,7 @@ public:
 
   void intersection(const Primitive1& primitive1, const Node2& node2, std::size_t nb_primitives_2)
   {
-    using Wrap_iterator = Wrap_output_iterator<true, typename Primitive1::Id, OutputIterator>;
+    using Wrap_iterator = Wrap_output_iterator<true, typename Primitive1::Id, typename Primitive2::Id, OutputIterator>;
     Wrap_iterator wrap_out(primitive1.id(), out);
     Listing_bbox_primitive_traits<AABBTraits2, typename AABBTraits1::Primitive::Datum, Wrap_iterator> traits(wrap_out, m_traits2);
     node2.traversal( internal::Primitive_helper<AABBTraits1>::get_datum(primitive1, m_traits1), traits, nb_primitives_2);
@@ -240,7 +240,7 @@ public:
 
   void intersection(const Node1& node1, std::size_t nb_primitives_1, const Primitive2& primitive2)
   {
-    using Wrap_iterator= Wrap_output_iterator<false, typename Primitive2::Id, OutputIterator>;
+    using Wrap_iterator= Wrap_output_iterator<false, typename Primitive2::Id, typename Primitive1::Id, OutputIterator>;
     Wrap_iterator wrap_out(primitive2.id(), out);
     Listing_bbox_primitive_traits<AABBTraits1, typename AABBTraits2::Primitive::Datum, Wrap_iterator> traits(wrap_out, m_traits1);
     node1.traversal( internal::Primitive_helper<AABBTraits2>::get_datum(primitive2, m_traits2), traits, nb_primitives_1);

@@ -17,9 +17,9 @@
 
 #include <CGAL/disable_warnings.h>
 
-#include <CGAL/AABB_face_graph_triangle_primitive.h>
-#include <CGAL/AABB_traits_3.h>
-#include <CGAL/AABB_tree.h>
+#include <CGAL/Polygon_mesh_processing/internal/soup_and_face_graph_tree_helper.h>
+#include <CGAL/AABB_segment_primitive_3.h>
+
 #include <CGAL/boost/iterator/counting_iterator.hpp>
 #include <CGAL/box_intersection_d.h>
 #include <CGAL/boost/graph/named_params_helper.h>
@@ -398,71 +398,62 @@ compute_face_face_intersection(const FaceRange& face_range1,
   CGAL_precondition(CGAL::is_triangle_mesh(tm1));
   CGAL_precondition(CGAL::is_triangle_mesh(tm2));
 
-  typedef TriangleMesh TM;
-  typedef typename boost::graph_traits<TM>::face_descriptor face_descriptor;
+  using Concurrency_tag = typename internal_np::Lookup_named_param_def <
+                                          internal_np::concurrency_tag_t,
+                                          NamedParameters1,
+                                          Sequential_tag
+                                        > ::type;
 
-  typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;
-  typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, face_descriptor, Box_policy> Box;
+  using GT = typename GetGeomTraits<TriangleMesh, NamedParameters1>::type;
 
+  using VPM1 = typename GetVertexPointMap<TriangleMesh, NamedParameters1>::const_type;
+  using VPM2 = typename GetVertexPointMap<TriangleMesh, NamedParameters2>::const_type;
+
+  using face_descriptor = typename boost::graph_traits<TriangleMesh>::face_descriptor;
+
+  using AABB_tree_helper_1 = internal::AABB_tree_graph_helper<TriangleMesh, GT, VPM1>;
+  using AABB_tree_helper_2 = internal::AABB_tree_graph_helper<TriangleMesh, GT, VPM2>;
+  using Tree_1 = typename AABB_tree_helper_1::Tree;
+  using Tree_2 = typename AABB_tree_helper_2::Tree;
+  AABB_tree_helper_1 helper_1;
+  AABB_tree_helper_2 helper_2;
+
+  // compute intersections filtered out by boxes
   CGAL::Bbox_3 b1 = CGAL::Polygon_mesh_processing::bbox(tm1, np1),
                b2 = CGAL::Polygon_mesh_processing::bbox(tm2, np2);
 
   if(!CGAL::do_overlap(b1, b2))
-  {
     return out;
-  }
+  Bbox_3 bb((std::max)(b1.xmin(),b2.xmin()), (std::max)(b1.ymin(),b2.ymin()), (std::max)(b1.zmin(),b2.zmin()),
+            (std::min)(b1.xmax(),b2.xmax()), (std::min)(b1.ymax(),b2.ymax()), (std::min)(b1.zmax(),b2.zmax()));
 
-  // make one box per facet
-  std::vector<Box> boxes1;
-  std::vector<Box> boxes2;
-  boxes1.reserve(std::distance(std::begin(face_range1), std::end(face_range1)));
-  boxes2.reserve(std::distance(std::begin(face_range2), std::end(face_range2)));
-
-  typedef typename GetVertexPointMap<TM, NamedParameters1>::const_type VertexPointMap1;
-  typedef typename GetVertexPointMap<TM, NamedParameters2>::const_type VertexPointMap2;
-
-  VertexPointMap1 vpmap1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),
-                                        get_const_property_map(boost::vertex_point, tm1));
-  VertexPointMap2 vpmap2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
-                                        get_const_property_map(boost::vertex_point, tm2));
+  VPM1 vpm1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),
+                               get_const_property_map(boost::vertex_point, tm1));
+  VPM2 vpm2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
+                               get_const_property_map(boost::vertex_point, tm2));
   static_assert(
       (std::is_same<
-       typename boost::property_traits<VertexPointMap1>::value_type,
-       typename boost::property_traits<VertexPointMap2>::value_type
+       typename boost::property_traits<VPM1>::value_type,
+       typename boost::property_traits<VPM2>::value_type
        >::value) );
 
+  std::vector<face_descriptor> face_to_test1;
+  std::vector<face_descriptor> face_to_test2;
+
   for(face_descriptor f : face_range1)
-  {
-    boxes1.push_back(Box(Polygon_mesh_processing::face_bbox(f, tm1), f));
-  }
-
+    if(do_overlap(Polygon_mesh_processing::face_bbox(f, tm1), bb))
+      face_to_test1.emplace_back(f);
   for(face_descriptor f : face_range2)
-  {
-    boxes2.push_back(Box(Polygon_mesh_processing::face_bbox(f, tm2), f));
-  }
+    if(do_overlap(Polygon_mesh_processing::face_bbox(f, tm2), bb))
+      face_to_test2.emplace_back(f);
 
-  // generate box pointers
-  std::vector<const Box*> box1_ptr(boost::make_counting_iterator<const Box*>(&boxes1[0]),
-                                   boost::make_counting_iterator<const Box*>(&boxes1[0]+boxes1.size()));
-  std::vector<const Box*> box2_ptr(boost::make_counting_iterator<const Box*>(&boxes2[0]),
-                                   boost::make_counting_iterator<const Box*>(&boxes2[0]+boxes2.size()));
+  Tree_1 tree1;
+  Tree_2 tree2;
+  helper_1.template build<Concurrency_tag>(tree1, tm1, vpm1);
+  helper_2.template build<Concurrency_tag>(tree2, tm2, vpm2);
 
-  // compute intersections filtered out by boxes
-  typedef typename GetGeomTraits<TM, NamedParameters1>::type GeomTraits;
-  GeomTraits gt = choose_parameter<GeomTraits>(get_parameter(np1, internal_np::geom_traits));
-
-  internal::Intersect_faces<TM,
-                            GeomTraits,
-                            Box,
-                            OutputIterator,
-                            VertexPointMap1,
-                            VertexPointMap2> Intersect_faces(tm1, tm2, out, vpmap1, vpmap2, gt);
-
-  std::ptrdiff_t cutoff = 2000;
-  CGAL::box_intersection_d(box1_ptr.begin(), box1_ptr.end(),
-                           box2_ptr.begin(), box2_ptr.end(),
-                           Intersect_faces,cutoff);
-  return Intersect_faces.m_iterator;
+  CGAL::AABB_trees::all_pairs_of_intersecting_primitives(tree1, tree2, out, parameters::concurrency_tag(Concurrency_tag()));
+  return out;
 }
 
 // Note this is not officially documented
@@ -527,75 +518,68 @@ compute_face_polyline_intersection(const FaceRange& face_range,
                                    OutputIterator out,
                                    const NamedParameters& np)
 {
-  using parameters::choose_parameter;
   using parameters::get_parameter;
+  using parameters::choose_parameter;
 
   CGAL_precondition(CGAL::is_triangle_mesh(tm));
 
-  CGAL::Bbox_3 b1 = CGAL::Polygon_mesh_processing::bbox(tm, np),
-               b2 = CGAL::bbox_3(polyline.begin(), polyline.end());
+  using Concurrency_tag = typename internal_np::Lookup_named_param_def <
+                                          internal_np::concurrency_tag_t,
+                                          NamedParameters,
+                                          Sequential_tag
+                                        >::type;
 
-  if(!CGAL::do_overlap(b1,b2))
+  using GT = typename GetGeomTraits<TriangleMesh, NamedParameters>::type;
+
+  using VPM = typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type;
+  using face_descriptor = typename boost::graph_traits<TriangleMesh>::face_descriptor;
+  using Segment_3 = typename GT::Segment_3;
+
+  using AABB_tree_helper = internal::AABB_tree_graph_helper<TriangleMesh, GT, VPM>;
+  using Face_tree = typename AABB_tree_helper::Tree;
+
+  using Segment_primitive = CGAL::AABB_segment_primitive_3<GT, typename std::vector<Segment_3>::const_iterator>;
+  using Segment_traits = CGAL::AABB_traits_3<GT, Segment_primitive>;
+  using Segment_tree = CGAL::AABB_tree<Segment_traits>;
+
+  VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                             get_const_property_map(boost::vertex_point, tm));
+
+  Bbox_3 b1 = Polygon_mesh_processing::bbox(tm, np),
+         b2 = bbox_3(polyline.begin(), polyline.end());
+
+  if(!CGAL::do_overlap(b1, b2))
     return out;
-  typedef TriangleMesh TM;
-  typedef typename boost::graph_traits<TM>::face_descriptor face_descriptor;
-  typedef typename GetVertexPointMap<TM, NamedParameters>::const_type VertexPointMap;
+  Bbox_3 bb((std::max)(b1.xmin(),b2.xmin()), (std::max)(b1.ymin(),b2.ymin()), (std::max)(b1.zmin(),b2.zmin()),
+            (std::min)(b1.xmax(),b2.xmax()), (std::min)(b1.ymax(),b2.ymax()), (std::min)(b1.zmax(),b2.zmax()));
 
-  VertexPointMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                                          get_const_property_map(boost::vertex_point, tm));
-  typedef typename boost::property_traits<VertexPointMap>::value_type Point;
-  static_assert(
-        (std::is_same<Point,
-        typename boost::range_value<Polyline>::type>::value));
+  std::vector<Segment_3> segments;
+  if(polyline.size() < 2)
+    return out;
 
-  std::vector<face_descriptor> faces;
-  faces.reserve(std::distance(std::begin(face_range), std::end(face_range)));
+  auto pit = std::begin(polyline);
+  auto prev = pit++;
+  for(; pit != std::end(polyline); ++pit, ++prev)
+    segments.emplace_back(*prev, *pit);
 
-  typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;
-  typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, std::size_t, Box_policy> Box;
-
-  // make one box per facet
-  std::vector<Box> boxes1;
-  std::vector<Box> boxes2;
-  boxes1.reserve(std::distance(std::begin(face_range), std::end(face_range)));
-  boxes2.reserve(std::distance(std::begin(polyline), std::end(polyline)) - 1);
-
+  std::vector<face_descriptor> face_to_test;
   for(face_descriptor f : face_range)
-  {
-    faces.push_back(f);
-    boxes1.push_back(Box(Polygon_mesh_processing::face_bbox(f, tm), faces.size()-1));
-  }
+    if(do_overlap(Polygon_mesh_processing::face_bbox(f, tm), bb))
+      face_to_test.emplace_back(f);
 
-  for(std::size_t i =0; i< polyline.size()-1; ++i)
-  {
-    Point p1 = polyline[i];
-    Point p2 = polyline[i+1];
-    boxes2.push_back(Box(p1.bbox() + p2.bbox(), i));
-  }
+  AABB_tree_helper helper;
+  Face_tree face_tree;
 
-  // generate box pointers
-  std::vector<const Box*> box1_ptr(boost::make_counting_iterator<const Box*>(&boxes1[0]),
-                                   boost::make_counting_iterator<const Box*>(&boxes1[0]+boxes1.size()));
-  std::vector<const Box*> box2_ptr(boost::make_counting_iterator<const Box*>(&boxes2[0]),
-                                   boost::make_counting_iterator<const Box*>(&boxes2[0]+boxes2.size()));
+  helper.template build<Concurrency_tag>(face_tree, tm, vpm);
+  Segment_tree segment_tree(segments.begin(), segments.end());
 
-  // compute intersections filtered out by boxes
-  typedef typename GetGeomTraits<TM, NamedParameters>::type GeomTraits;
-  GeomTraits gt = choose_parameter<GeomTraits>(get_parameter(np, internal_np::geom_traits));
-
-  internal::Intersect_face_polyline<TM,
-                                    GeomTraits,
-                                    Box,
-                                    OutputIterator,
-                                    Polyline,
-                                    VertexPointMap>
-                                    Intersect_face_polyline(tm, faces, polyline, out, vpmap, gt);
-
-  std::ptrdiff_t cutoff = 2000;
-  CGAL::box_intersection_d(box1_ptr.begin(), box1_ptr.end(),
-                           box2_ptr.begin(), box2_ptr.end(),
-                           Intersect_face_polyline, cutoff);
-  return Intersect_face_polyline.m_iterator;
+  auto out_converter = boost::make_function_output_iterator(
+    [&](const auto& pair)    {
+      *out++ = std::make_pair(pair.first,
+                    static_cast<std::size_t>(pair.second - segments.begin()));
+  });
+  CGAL::AABB_trees::all_pairs_of_intersecting_primitives(face_tree, segment_tree, out_converter, parameters::concurrency_tag(Concurrency_tag()));
+  return out;
 }
 
 // Note this is not officially documented
@@ -659,93 +643,198 @@ compute_face_polylines_intersection(const FaceRange& face_range,
                                     OutputIterator out,
                                     const NamedParameters& np)
 {
-  using parameters::choose_parameter;
   using parameters::get_parameter;
+  using parameters::choose_parameter;
 
   CGAL_precondition(CGAL::is_triangle_mesh(tm));
 
-  CGAL::Bbox_3 b1,b2;
-  b1 = CGAL::Polygon_mesh_processing::bbox(tm, np);
-  for(std::size_t i =0; i< polyline_range.size(); ++i)
+  using Concurrency_tag = typename internal_np::Lookup_named_param_def <
+                                          internal_np::concurrency_tag_t,
+                                          NamedParameters,
+                                          Sequential_tag
+                                        >::type;
+
+  using GT = typename GetGeomTraits<TriangleMesh, NamedParameters>::type;
+
+  using VPM = typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type;
+  using face_descriptor = typename boost::graph_traits<TriangleMesh>::face_descriptor;
+
+  using Point_3 = typename GT::Point_3;
+  using Segment_3 = typename GT::Segment_3;
+
+  using AABB_tree_helper = internal::AABB_tree_graph_helper<TriangleMesh, GT, VPM>;
+  using Face_tree = typename AABB_tree_helper::Tree;
+
+  using Segment_primitive = CGAL::AABB_segment_primitive_3<GT, typename std::vector<Segment_3>::const_iterator>;
+  using Segment_traits = CGAL::AABB_traits_3<GT, Segment_primitive>;
+  using Segment_tree = CGAL::AABB_tree<Segment_traits>;
+
+  VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                             get_const_property_map(boost::vertex_point, tm));
+
+  Bbox_3 b1 = Polygon_mesh_processing::bbox(tm, np);
+  auto polyline_it = polyline_range.begin();
+  Bbox_3 b2 = bbox_3(polyline_it->begin(), polyline_it->end());
+  for(++polyline_it; polyline_it != polyline_range.end(); ++polyline_it)
+    b2 += bbox_3(polyline_it->begin(), polyline_it->end());
+
+  if(!CGAL::do_overlap(b1, b2))
+    return out;
+  Bbox_3 bb((std::max)(b1.xmin(),b2.xmin()), (std::max)(b1.ymin(),b2.ymin()), (std::max)(b1.zmin(),b2.zmin()),
+            (std::min)(b1.xmax(),b2.xmax()), (std::min)(b1.ymax(),b2.ymax()), (std::min)(b1.zmax(),b2.zmax()));
+
+  // We store all polylines in one range and we store the offset of the beginning of each polyline
+  std::vector<Segment_3> segments;
+  std::vector<std::size_t> polyline_begin;
+  for(std::size_t pi = 0; pi < polyline_range.size(); ++pi)
   {
-    b2 += CGAL::bbox_3(polyline_range[i].begin(),
-                       polyline_range[i].end());
+    const auto& polyline = polyline_range[pi];
+
+    if(polyline.size() < 2)
+      continue;
+
+    polyline_begin.push_back(segments.size());
+
+    auto pit = std::begin(polyline);
+    auto prev = pit++;
+    for(; pit != std::end(polyline); ++pit, ++prev)
+      segments.emplace_back(*prev, *pit);
   }
 
-  if(!CGAL::do_overlap(b1,b2))
+  std::vector<face_descriptor> face_to_test;
+  for(face_descriptor f : face_range)
+    if(do_overlap(Polygon_mesh_processing::face_bbox(f, tm), bb))
+      face_to_test.emplace_back(f);
+
+  AABB_tree_helper helper;
+  Face_tree face_tree;
+
+  helper.template build<Concurrency_tag>(face_tree, tm, vpm);
+  Segment_tree segment_tree(segments.begin(), segments.end());
+
+  auto out_converter =
+  boost::make_function_output_iterator(
+    [&](const auto& pair)
+    {
+      std::size_t index = pair.second - segments.begin();
+
+      // Find the polyline containing this segment.
+      auto it = std::upper_bound(polyline_begin.begin(),
+                                 polyline_begin.end(),
+                                 index);
+
+      std::size_t polyline_index = static_cast<std::size_t>(it - polyline_begin.begin() - 1);
+      std::size_t segment_index = index - polyline_begin[polyline_index];
+
+      *out++ = std::make_pair(pair.first,
+                    std::make_pair(polyline_index, segment_index));
+  });
+  CGAL::AABB_trees::all_pairs_of_intersecting_primitives(face_tree, segment_tree, out_converter, parameters::concurrency_tag(Concurrency_tag()));
+  return out;
+}
+
+// Note this is not officially documented
+/* \ingroup PMP_intersection_grp
+ *
+ * detects and records intersections between two ranges of polylines.
+ *
+ * This function depends on the package \ref PkgBoxIntersectionD.
+ *
+ * \attention If a polyline vertex intersects another polyline, the intersection will
+ * be reported twice (even more if it is on a vertex).
+ *
+ * \tparam PolylineRange a `RandomAccessRange` of `RandomAccessRange` of points.
+ * \tparam OutputIterator a model of `OutputIterator` holding objects of type
+ *   `std::pair<std::pair<std::size_t, std::size_t>, std::pair<std::size_t, std::size_t> >`.
+ * Each pair holds the index of the face and a pair containing the index of the polyline in the range and the index of
+ * the first point of the segment in the polyline.
+ * \tparam Kernel a model of `Kernel`
+ *
+ * \param polylines1 the first range of polylines to check for intersections.
+ * \param polylines2 the second range of polylines to check for intersections.
+ * \param out output iterator to be filled with all pairs of segments that intersect
+ * \param K an instance of `Kernel`
+ *
+ * \return `out`
+ */
+template < class PolylineRange,
+           class OutputIterator,
+           class Kernel>
+OutputIterator
+compute_polylines_polylines_intersection(const PolylineRange& polylines1,
+                                         const PolylineRange& polylines2,
+                                         OutputIterator out,
+                                         const Kernel& /*K*/)
+{
+  using parameters::get_parameter;
+
+  using GT = Kernel;
+  using Segment_3 = typename GT::Segment_3;
+
+  using Segment_primitive = CGAL::AABB_segment_primitive_3<GT, typename std::vector<Segment_3>::const_iterator>;
+  using Segment_traits = CGAL::AABB_traits_3<GT, Segment_primitive>;
+  using Segment_tree = CGAL::AABB_tree<Segment_traits>;
+
+  std::vector<Segment_3> segments1, segments2;
+  std::vector<std::size_t> polyline_begin1, polyline_begin2;
+
+  for(std::size_t pi = 0; pi < polylines1.size(); ++pi)
+  {
+    const auto& polyline = polylines1[pi];
+    polyline_begin1.push_back(segments1.size());
+
+    auto pit = std::begin(polyline);
+    auto prev = pit++;
+    for(; pit != std::end(polyline); ++pit, ++prev)
+      segments1.emplace_back(*prev, *pit);
+  }
+
+  for(std::size_t pi = 0; pi < polylines2.size(); ++pi)
+  {
+    const auto& polyline = polylines2[pi];
+    polyline_begin2.push_back(segments2.size());
+
+    auto pit = std::begin(polyline);
+    auto prev = pit++;
+    for(; pit != std::end(polyline); ++pit, ++prev)
+      segments2.emplace_back(*prev, *pit);
+  }
+
+  if(segments1.empty() || segments2.empty())
     return out;
 
-  typedef TriangleMesh TM;
-  typedef typename boost::graph_traits<TM>::face_descriptor face_descriptor;
-  typedef typename GetVertexPointMap<TM, NamedParameters>::const_type VertexPointMap;
+  Segment_tree tree1(segments1.begin(), segments1.end());
+  Segment_tree tree2(segments2.begin(), segments2.end());
 
-  VertexPointMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                                          get_const_property_map(boost::vertex_point, tm));
-  typedef typename boost::property_traits<VertexPointMap>::value_type Point;
-  typedef typename boost::range_value<PolylineRange>::type Polyline;
-  static_assert(std::is_same<Point, typename boost::range_value<Polyline>::type>::value);
+  auto convert_out =
+    boost::make_function_output_iterator(
+      [&](const auto& pair)
+      {
+        const std::size_t offset1 = static_cast<std::size_t>(pair.first - segments1.cbegin());
+        const std::size_t offset2 = static_cast<std::size_t>(pair.second - segments2.cbegin());
 
-  std::vector<face_descriptor> faces;
-  faces.reserve(std::distance( std::begin(face_range), std::end(face_range) ));
+        const auto it1 = std::upper_bound(polyline_begin1.begin(),
+                           polyline_begin1.end(),
+                           offset1);
 
-  typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;
-  typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, std::pair<std::size_t, std::size_t>, Box_policy> Box;
+        const auto it2 = std::upper_bound(polyline_begin2.begin(),
+                           polyline_begin2.end(),
+                           offset2);
 
-  // make one box per facet
-  std::vector<Box> boxes1;
-  std::vector<Box> boxes2;
-  boxes1.reserve(std::distance(std::begin(face_range), std::end(face_range)));
+        const std::size_t pi1 = static_cast<std::size_t>(it1 - polyline_begin1.begin() - 1);
+        const std::size_t pi2 = static_cast<std::size_t>(it2 - polyline_begin2.begin() - 1);
 
-  std::size_t polylines_size = 0;
-  for(Polyline poly : polyline_range)
-  {
-    polylines_size += std::distance( std::begin(poly), std::end(poly) ) -1;
-  }
-  boxes2.reserve(polylines_size);
+        *out++ = std::make_pair(
+          std::make_pair(pi1, offset1 - polyline_begin1[pi1]),
+          std::make_pair(pi2, offset2 - polyline_begin2[pi2]));
+      });
 
-  for(face_descriptor f : face_range)
-  {
-    faces.push_back(f);
-    boxes1.push_back(Box(Polygon_mesh_processing::face_bbox(f, tm), std::make_pair(0, faces.size()-1)));
-  }
+  CGAL::AABB_trees::all_pairs_of_intersecting_primitives(
+    tree1,
+    tree2,
+    convert_out);
 
-  std::size_t range_size = std::distance( std::begin(polyline_range), std::end(polyline_range) );
-  for(std::size_t j = 0; j < range_size; ++j)
-  {
-    Polyline poly = polyline_range[j];
-    std::size_t size = std::distance( std::begin(poly), std::end(poly) );
-    for(std::size_t i =0; i< size - 1; ++i)
-    {
-      Point p1 = poly[i];
-      Point p2 = poly[i+1];
-      boxes2.push_back(Box(p1.bbox() + p2.bbox(), std::make_pair(j, i)));
-    }
-  }
-
-  // generate box pointers
-
-  std::vector<const Box*> box1_ptr(boost::make_counting_iterator<const Box*>(&boxes1[0]),
-                                   boost::make_counting_iterator<const Box*>(&boxes1[0]+boxes1.size()));
-  std::vector<const Box*> box2_ptr(boost::make_counting_iterator<const Box*>(&boxes2[0]),
-                                   boost::make_counting_iterator<const Box*>(&boxes2[0]+boxes2.size()));
-
-  // compute intersections filtered out by boxes
-  typedef typename GetGeomTraits<TM, NamedParameters>::type GeomTraits;
-  GeomTraits gt = choose_parameter<GeomTraits>(get_parameter(np, internal_np::geom_traits));
-
-  internal::Intersect_face_polylines<TM,
-                                     GeomTraits,
-                                     Box,
-                                     PolylineRange,
-                                     OutputIterator,
-                                     VertexPointMap>
-                                     Intersect_face_polyline(tm, faces, polyline_range, out, vpmap, gt);
-
-  std::ptrdiff_t cutoff = 2000;
-  CGAL::box_intersection_d(box1_ptr.begin(), box1_ptr.end(),
-                           box2_ptr.begin(), box2_ptr.end(),
-                           Intersect_face_polyline, cutoff);
-  return Intersect_face_polyline.m_iterator;
+  return out;
 }
 
 // Note this is not officially documented
@@ -781,160 +870,19 @@ compute_polyline_polyline_intersection(const Polyline& polyline1,
                                        OutputIterator out,
                                        const Kernel& K)
 {
-  typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;
-  typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, std::size_t, Box_policy> Box;
+  std::array<Polyline, 1> polylines1{{polyline1}};
+  std::array<Polyline, 1> polylines2{{polyline2}};
 
-  typedef typename Kernel::Point_3 Point;
-  // make one box per facet
-  std::vector<Box> boxes1;
-  std::vector<Box> boxes2;
-  boxes1.reserve(std::distance(std::begin(polyline1), std::end(polyline1)) - 1);
-  boxes2.reserve(std::distance(std::begin(polyline2), std::end(polyline2)) - 1);
+  auto polyline_out =
+    boost::make_function_output_iterator(
+      [&](const auto& pair)
+      {
+        *out++ = std::make_pair(pair.first.second,
+                                pair.second.second);
+      });
 
-  for(std::size_t i =0; i< polyline1.size()-1; ++i)
-  {
-    const Point& p1 = polyline1[i];
-    const Point& p2 = polyline1[i+1];
-    boxes1.push_back(Box(p1.bbox() + p2.bbox(), i));
-  }
-
-  for(std::size_t i =0; i< polyline2.size()-1; ++i)
-  {
-    const Point& p1 = polyline2[i];
-    const Point& p2 = polyline2[i+1];
-    boxes2.push_back(Box(p1.bbox() + p2.bbox(), i));
-  }
-
-  // generate box pointers
-  std::vector<const Box*> box1_ptr(boost::make_counting_iterator<const Box*>(&boxes1[0]),
-                                   boost::make_counting_iterator<const Box*>(&boxes1[0]+boxes1.size()));
-  std::vector<const Box*> box2_ptr(boost::make_counting_iterator<const Box*>(&boxes2[0]),
-                                   boost::make_counting_iterator<const Box*>(&boxes2[0]+boxes2.size()));
-
-
-  // compute intersections filtered out by boxes
-
-  internal::Intersect_polylines<Polyline,
-                                Kernel,
-                                Box,
-                                OutputIterator>
-                                intersect_polylines(polyline1, polyline2, out, K);
-
-  std::ptrdiff_t cutoff = 2000;
-  CGAL::box_intersection_d(box1_ptr.begin(), box1_ptr.end(),
-                           box2_ptr.begin(), box2_ptr.end(),
-                           intersect_polylines, cutoff);
-  return intersect_polylines.m_iterator;
-}
-
-// Note this is not officially documented
-/* \ingroup PMP_intersection_grp
- *
- * detects and records intersections between two ranges of polylines.
- *
- * This function depends on the package \ref PkgBoxIntersectionD.
- *
- * \attention If a polyline vertex intersects another polyline, the intersection will
- * be reported twice (even more if it is on a vertex).
- *
- * \tparam PolylineRange a `RandomAccessRange` of `RandomAccessRange` of points.
- * \tparam OutputIterator a model of `OutputIterator` holding objects of type
- *   `std::pair<std::pair<std::size_t, std::size_t>, std::pair<std::size_t, std::size_t> >`.
- * Each pair holds the index of the face and a pair containing the index of the polyline in the range and the index of
- * the first point of the segment in the polyline.
- * \tparam Kernel a model of `Kernel`
- *
- * \param polylines1 the first range of polylines to check for intersections.
- * \param polylines2 the second range of polylines to check for intersections.
- * \param out output iterator to be filled with all pairs of segments that intersect
- * \param K an instance of `Kernel`
- *
- * \return `out`
- */
-template < class PolylineRange,
-           class OutputIterator,
-           class Kernel>
-OutputIterator
-compute_polylines_polylines_intersection(const PolylineRange& polylines1,
-                                         const PolylineRange& polylines2,
-                                         OutputIterator out,
-                                         const Kernel& K)
-{
-  //info.first is the index of the polyline in the range, info.second is the index of the point in the polyline
-  typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;
-  typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, std::pair<std::size_t, std::size_t>, Box_policy> Box;
-
-  typedef typename Kernel::Point_3 Point;
-  typedef typename boost::range_value<PolylineRange>::type Polyline;
-
-  // make one box per facet
-  std::vector<Box> boxes1;
-  std::vector<Box> boxes2;
-  std::size_t polylines_size = 0;
-  CGAL::Bbox_3 b1, b2;
-  for(Polyline poly : polylines1)
-  {
-    polylines_size += std::distance( std::begin(poly), std::end(poly) ) -1;
-    b1 += CGAL::bbox_3(poly.begin(), poly.end());
-  }
-  boxes1.reserve( polylines_size );
-
-  polylines_size = 0;
-  for(Polyline poly : polylines2)
-  {
-    polylines_size += std::distance( std::begin(poly), std::end(poly) ) -1;
-    b2 += CGAL::bbox_3(poly.begin(), poly.end());
-  }
-  boxes2.reserve(polylines_size);
-
-  if(!CGAL::do_overlap(b1,b2))
-    return out;
-
-  std::size_t range_size = std::distance( std::begin(polylines1), std::end(polylines1) );
-  for(std::size_t j = 0; j < range_size; ++j)
-  {
-    Polyline poly = polylines1[j];
-    std::size_t size = std::distance( std::begin(poly), std::end(poly) );
-    for(std::size_t i =0; i< size - 1; ++i)
-    {
-      const Point& p1 = poly[i];
-      const Point& p2 = poly[i+1];
-      boxes1.push_back(Box(p1.bbox() + p2.bbox(), std::make_pair(j, i)));
-    }
-  }
-
-  range_size = std::distance( std::begin(polylines2), std::end(polylines2) );
-  for(std::size_t j = 0; j < range_size; ++j)
-  {
-    Polyline poly = polylines2[j];
-    std::size_t size = std::distance( std::begin(poly), std::end(poly) );
-    for(std::size_t i =0; i< size - 1; ++i)
-    {
-      const Point& p1 = poly[i];
-      const Point& p2 = poly[i+1];
-      boxes2.push_back(Box(p1.bbox() + p2.bbox(), std::make_pair(j, i)));
-    }
-  }
-
-  // generate box pointers
-  std::vector<const Box*> box1_ptr(boost::make_counting_iterator<const Box*>(&boxes1[0]),
-                                   boost::make_counting_iterator<const Box*>(&boxes1[0]+boxes1.size()));
-  std::vector<const Box*> box2_ptr(boost::make_counting_iterator<const Box*>(&boxes2[0]),
-                                   boost::make_counting_iterator<const Box*>(&boxes2[0]+boxes2.size()));
-
-
-  // compute intersections filtered out by boxes
-  internal::Intersect_polyline_ranges<PolylineRange,
-                                      Kernel,
-                                      Box,
-                                      OutputIterator>
-                                      intersect_polylines(polylines1, polylines2, out, K);
-
-  std::ptrdiff_t cutoff = 2000;
-  CGAL::box_intersection_d(box1_ptr.begin(), box1_ptr.end(),
-                           box2_ptr.begin(), box2_ptr.end(),
-                           intersect_polylines, cutoff);
-  return intersect_polylines.m_iterator;
+  compute_polylines_polylines_intersection(polylines1, polylines2, polyline_out, K);
+  return out;
 }
 
 // Note this is not officially documented
