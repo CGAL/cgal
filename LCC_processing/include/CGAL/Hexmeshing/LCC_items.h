@@ -101,7 +101,7 @@ public:
      */
     struct VolumeAttrValue
     {
-      static constexpr uint max_cc_id=(std::numeric_limits<uint>::max)();
+      static constexpr unsigned int max_cc_id=(std::numeric_limits<unsigned int>::max)();
 
       char iteration = -1;
       VolumeType type = VolumeType::NONE;
@@ -123,8 +123,8 @@ public:
      */
     struct FaceAttrValue
     {
-      static constexpr uint max_plane_id=(std::numeric_limits<uint>::max)();
-      static constexpr uint max_cc_id=(std::numeric_limits<uint>::max)();
+      static constexpr unsigned int max_plane_id=(std::numeric_limits<unsigned int>::max)();
+      static constexpr unsigned int max_cc_id=(std::numeric_limits<unsigned int>::max)();
 
       char template_id = 0;
       std::bitset<3> plane;
