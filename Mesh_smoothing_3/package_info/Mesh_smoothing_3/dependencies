@@ -3,6 +3,7 @@ Algebraic_foundations
 Arithmetic_kernel
 CGAL_Core
 Cartesian_kernel
+Combinatorial_map
 Circulator
 Distance_2
 Distance_3
@@ -24,5 +25,3 @@ STL_Extension
 Spatial_searching
 Stream_support
 Spatial_sorting
-Linear_cell_complex
-Polygon
