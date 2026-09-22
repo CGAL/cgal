@@ -48,7 +48,7 @@ compute_deterministic_color_map(QColor base_color,
   qreal hue = base_color.hueF();
   qreal saturation = base_color.saturationF();
   qreal value = base_color.valueF();
-  const qreal hue_step = (hue == -1) ? 0 : (static_cast<qreal>(1)) / nb_of_colors;
+  const qreal hue_step = (hue == -1) ? 0 : ((static_cast<qreal>(1)) / nb_of_colors + 0.2);
 
   if (hue == -1)
     hue = 0;
