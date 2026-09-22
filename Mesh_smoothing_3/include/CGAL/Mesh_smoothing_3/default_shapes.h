@@ -22,9 +22,7 @@
 
 
 namespace CGAL {
-
 namespace Mesh_smoothing_3 {
-
 namespace Shapes {
 
     template <

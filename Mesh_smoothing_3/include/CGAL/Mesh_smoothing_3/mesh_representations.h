@@ -18,6 +18,8 @@
 #include <CGAL/Mesh_smoothing_3/default_shapes.h>
 #include <CGAL/Mesh_smoothing_3/internal/type_definitions.h>
 
+#include <CGAL/Element_topo.h>
+
 #include <Eigen/Eigen>
 
 #include <vector>
@@ -152,125 +154,142 @@ namespace basic_structures {
 
 namespace helper_structures {
 
-    // Templated structure for representing mixed-element meshes
-    template<
-        typename InputCellDescriptor,
-        typename VertexDescriptor,
-        typename Point3,
-        typename InputCellRangeType
-    >
-    class Mixed_element_mesh {
-    public:
-        // you redefine these in your derived class and then you need to call assemble() before using the structure
-        using Shape = Mesh_smoothing_3::Shapes::Base_element_shape_reference<Point3>;
+// concept without being a concept
+struct Example_mixed_mesh {
+    using Cell_descriptor = std::size_t;
+    using Vertex_descriptor = std::size_t;
+    using Point_3 = Eigen::Vector3d;
+    using Input_cell_descriptor = std::size_t;
+    using Element_shape_type = unsigned;
 
-        virtual std::size_t nb_vertices() const = 0;
+    using Shape = Mesh_smoothing_3::Shapes::Base_element_shape_reference<Point_3>;
 
-        virtual Point3 vertex_coordinates(VertexDescriptor vertex) const = 0;
-        virtual void  set_vertex_coordinates(VertexDescriptor vertex, Point3 coord) = 0;
+    std::size_t nb_vertices() const { return 0; }
+    std::size_t nb_input_cells() const { return 0; }
 
-        virtual InputCellRangeType input_cell_range() const = 0;
-        virtual Shape const * get_element_shape(InputCellDescriptor cell) const = 0; // you can return nullptr if you want to ignore the cell
-        virtual VertexDescriptor get_cell_vertex(InputCellDescriptor cell, unsigned local_Vertex_descriptor) const = 0;
+    Point_3 vertex_coordinates(Vertex_descriptor /*vertex*/) const { return Point_3(); }
+    void  set_vertex_coordinates(Vertex_descriptor /*vertex*/, Point_3 /*coord*/) {}
 
-        bool has_reference_mesh = false;
-        virtual Point3 get_ref_vertex_coordinates(VertexDescriptor) const { return Point3(); } // redefine if has_reference_mesh == true
+    std::vector<Input_cell_descriptor> input_cell_range() const { return {}; }
 
+    // pointers are for multi-typing of shapes
+    Shape const * get_shape(Element_shape_type /*index*/) const { return nullptr; } // you can return nullptr if you want to ignore the cell
+    Element_shape_type get_element_shape_id(Input_cell_descriptor /*cell*/) const { return 0; }
+    Vertex_descriptor get_cell_vertex(Input_cell_descriptor /*cell*/, unsigned /*local_vertex_index*/) const { return 0; }
 
-    public:
-        using Cell_descriptor = std::size_t;
-        using Vertex_descriptor = VertexDescriptor;
-        using Point_3 = Point3;
+    bool has_reference_mesh = false;
+    Point_3 get_ref_vertex_coordinates(Vertex_descriptor) const { return Point_3(); } // redefine if has_reference_mesh == true
+};
 
-        std::size_t nb_cells() const { return optimization_tet_2_input_element.size(); };
-
-        utils::Contiguous_unsigned_range cell_range() const { return utils::Contiguous_unsigned_range{0, nb_cells()}; }
-        std::array<Vertex_descriptor, 4> cell_vertices(Cell_descriptor cell) const {
-            std::array<Vertex_descriptor, 4> sub_decomposition;
-            auto input_element = optimization_tet_2_input_element[cell].first;
-            std::size_t tet_number = optimization_tet_2_input_element[cell].second;
-            for (std::size_t i = 0; i < 4; ++i) {
-                sub_decomposition[i] = get_cell_vertex(input_element, get_element_local_vert(input_element, tet_number, i));
+template<typename MixedMesh>
+class Mixed_mesh_wrapper {
+public:
+    Mixed_mesh_wrapper(MixedMesh &mesh)
+    : _mesh(mesh)
+    {
+        optimization_tet_2_input_element.reserve(mesh.nb_input_cells());
+        optimization_tet_2_input_element.clear();
+        for (Input_cell_descriptor const &cell_descriptor : _mesh.input_cell_range()) {
+            for (unsigned i = 0; i < get_nb_inner_tetrahedra(cell_descriptor); ++i) {
+                optimization_tet_2_input_element.push_back({cell_descriptor, i});
             }
-            return sub_decomposition;
         }
-        std::array<Point_3, 4> cell_reference_shape(Cell_descriptor cell) const {
-            return get_element_ref_shape(optimization_tet_2_input_element[cell].first, optimization_tet_2_input_element[cell].second);
+    }
+
+    using Cell_descriptor = typename MixedMesh::Cell_descriptor;
+    using Vertex_descriptor = typename MixedMesh::Vertex_descriptor;
+    using Point_3 = typename MixedMesh::Point_3;
+
+    using Input_cell_descriptor = typename MixedMesh::Input_cell_descriptor;
+    using Element_shape_type = typename MixedMesh::Element_shape_type;
+    using Shape = typename MixedMesh::Shape;
+
+    std::size_t nb_cells() const { return optimization_tet_2_input_element.size(); };
+    std::size_t nb_vertices() const { return _mesh.nb_vertices(); }
+
+    Point_3 vertex_coordinates(Vertex_descriptor vertex) const { return _mesh.vertex_coordinates(vertex); }
+    void  set_vertex_coordinates(Vertex_descriptor vertex, Point_3 coord) { _mesh.set_vertex_coordinates(vertex, coord); }   // only non const
+
+
+    utils::Contiguous_unsigned_range cell_range() const { return utils::Contiguous_unsigned_range{0, nb_cells()}; }
+    std::array<Vertex_descriptor, 4> cell_vertices(Cell_descriptor cell) const {
+        std::array<Vertex_descriptor, 4> sub_decomposition;
+        auto input_element = optimization_tet_2_input_element[cell].first;
+        std::size_t tet_number = optimization_tet_2_input_element[cell].second;
+        for (std::size_t i = 0; i < 4; ++i) {
+            sub_decomposition[i] = _mesh.get_cell_vertex(input_element, get_element_local_vert(input_element, tet_number, i));
         }
+        return sub_decomposition;
+    }
+    std::array<Point_3, 4> cell_reference_shape(Cell_descriptor cell) const {
+        return get_element_ref_shape(optimization_tet_2_input_element[cell].first, optimization_tet_2_input_element[cell].second);
+    }
 
-    public:
-        unsigned get_nb_inner_tetrahedra(InputCellDescriptor cell) const {
-            if (_element_shape.at(cell) == nullptr) return 0;
-            return _element_shape.at(cell)->nb_inner_tetrahedra();
-        };
+private:
 
-        unsigned get_element_local_vert(InputCellDescriptor cell, unsigned tet, unsigned tet_vert) const {
-            if (_element_shape.at(cell) == nullptr) return 0;
-            return _element_shape.at(cell)->inner_tetrahedra_local_vert(tet, tet_vert);
-        };
+    unsigned get_nb_inner_tetrahedra(Input_cell_descriptor cell) const {
+        Shape const * shape = _mesh.get_shape(_mesh.get_element_shape_id(cell));
+        if (shape == nullptr) return 0;
+        return shape->nb_inner_tetrahedra();
+    };
 
-        std::array<Point_3, 4> get_element_ref_shape(InputCellDescriptor cell, unsigned tet) const {
-            if (_element_shape.at(cell) == nullptr) return {Point_3(), Point_3(), Point_3(), Point_3()};
-            if (!has_reference_mesh) {
-                return _element_shape.at(cell)->inner_tetrahedra_reference_shape(tet);
-            }
-            else {
-                return {
-                    get_ref_vertex_coordinates(get_cell_vertex(cell, get_element_local_vert(cell, tet, 0))),
-                    get_ref_vertex_coordinates(get_cell_vertex(cell, get_element_local_vert(cell, tet, 1))),
-                    get_ref_vertex_coordinates(get_cell_vertex(cell, get_element_local_vert(cell, tet, 2))),
-                    get_ref_vertex_coordinates(get_cell_vertex(cell, get_element_local_vert(cell, tet, 3)))
-                };
-            }
-        };
+    unsigned get_element_local_vert(Input_cell_descriptor cell, unsigned tet, unsigned tet_vert) const {
+        Shape const * shape = _mesh.get_shape(_mesh.get_element_shape_id(cell));
+        assert(shape != nullptr);
+        return shape->inner_tetrahedra_local_vert(tet, tet_vert);
+    };
 
-        std::vector<std::pair<InputCellDescriptor, unsigned>> optimization_tet_2_input_element;
-        std::unordered_map<InputCellDescriptor, Shape const *> _element_shape;
-
-        void assemble() {
-            for (auto c : input_cell_range()) {
-                _element_shape.emplace(c, get_element_shape(c));
-            }
-            optimization_tet_2_input_element.clear();
-            for (auto cell_descriptor : input_cell_range()) {
-                for (unsigned i = 0; i < get_nb_inner_tetrahedra(cell_descriptor); ++i) {
-                    optimization_tet_2_input_element.push_back({cell_descriptor, i});
-                }
-            }
+    std::array<Point_3, 4> get_element_ref_shape(Input_cell_descriptor cell, unsigned tet) const {
+        Shape const * shape = _mesh.get_shape(_mesh.get_element_shape_id(cell));
+        assert(shape != nullptr);
+        if (!_mesh.has_reference_mesh) {
+            return shape->inner_tetrahedra_reference_shape(tet);
+        }
+        else {
+            return {
+                _mesh.get_ref_vertex_coordinates(_mesh.get_cell_vertex(cell, get_element_local_vert(cell, tet, 0))),
+                _mesh.get_ref_vertex_coordinates(_mesh.get_cell_vertex(cell, get_element_local_vert(cell, tet, 1))),
+                _mesh.get_ref_vertex_coordinates(_mesh.get_cell_vertex(cell, get_element_local_vert(cell, tet, 2))),
+                _mesh.get_ref_vertex_coordinates(_mesh.get_cell_vertex(cell, get_element_local_vert(cell, tet, 3)))
+            };
         }
     };
 
-    // Templated structure for polygonal boundary representation
-    template<
-        typename VertexDescriptor = std::size_t,
-        typename FaceDescriptor = std::size_t,
-        typename NormalType = Eigen::Vector3d
-    >
-    class Polygonal_boundary {
-    public:
-        using Face_descriptor = FaceDescriptor;
-        using Normal_3 = NormalType;
-        using Vertex_descriptor = VertexDescriptor;
-        using Surface_patch_index = unsigned;
-        std::size_t nb_faces() const { return _face_vertices.size(); }
-        utils::Contiguous_unsigned_range face_range() const { return utils::Contiguous_unsigned_range{0, nb_faces()}; }
-        std::size_t nb_face_vertices(Face_descriptor face) const { return _face_vertices[face].size(); }
-        Surface_patch_index patch_id(Face_descriptor face) const { return _id[face]; }
-        auto face_vertices(Face_descriptor face) const { return _face_vertices[face]; }
+    MixedMesh &_mesh;
+    std::vector<std::pair<Input_cell_descriptor, unsigned>> optimization_tet_2_input_element;
 
-    public:
-        void add_polygon(std::vector<Vertex_descriptor> const &polygon, unsigned id = 0) {
-            _face_vertices.push_back(polygon);
-            _id.push_back(id);
-        }
-        std::vector<std::vector<Vertex_descriptor>> _face_vertices;
-        std::vector<unsigned> _id;
-    };
+};
+
+// Templated structure for polygonal boundary representation
+template<
+    typename VertexDescriptor = std::size_t,
+    typename FaceDescriptor = std::size_t,
+    typename NormalType = Eigen::Vector3d
+>
+class Polygonal_boundary {
+public:
+    using Face_descriptor = FaceDescriptor;
+    using Normal_3 = NormalType;
+    using Vertex_descriptor = VertexDescriptor;
+    using Surface_patch_index = unsigned;
+    std::size_t nb_faces() const { return _face_vertices.size(); }
+    utils::Contiguous_unsigned_range face_range() const { return utils::Contiguous_unsigned_range{0, nb_faces()}; }
+    std::size_t nb_face_vertices(Face_descriptor face) const { return _face_vertices[face].size(); }
+    Surface_patch_index patch_id(Face_descriptor face) const { return _id[face]; }
+    auto face_vertices(Face_descriptor face) const { return _face_vertices[face]; }
+
+public:
+    void add_polygon(std::vector<Vertex_descriptor> const &polygon, unsigned id = 0) {
+        _face_vertices.push_back(polygon);
+        _id.push_back(id);
+    }
+    std::vector<std::vector<Vertex_descriptor>> _face_vertices;
+    std::vector<unsigned> _id;
+};
 
 }
 
 
-// WORK IN PROGRESS
 namespace cgal_types {
 
 
@@ -340,6 +359,213 @@ public:
     }
 
     C3t3 &c3t3;
+};
+
+
+template <typename LCC>
+class LCC_mixed_mesh {
+public:
+    using Cell_descriptor = std::size_t;
+    using Vertex_descriptor = typename LCC::Vertex_attribute_descriptor;
+    using Point_3 = typename LCC::Point;
+    using Input_cell_descriptor = typename LCC::Dart_descriptor;
+    using Element_shape_type = typename CGAL::CMap::Element_topo::cell_topo;
+
+    using Shape = Mesh_smoothing_3::Shapes::Base_element_shape_reference<Point_3>;
+
+    using Input_cell_range = std::vector<Input_cell_descriptor>;
+
+    std::size_t nb_vertices() const { return lcc.number_of_vertex_attributes(); }
+    std::size_t nb_input_cells() const { return input_cells.size(); }
+
+    Point_3 vertex_coordinates(Vertex_descriptor vertex) const { return vertex->point(); }
+    void  set_vertex_coordinates(Vertex_descriptor vertex, Point_3 coord) { vertex->point() = coord; }
+
+    std::vector<Input_cell_descriptor> input_cell_range() const { return input_cells; }
+
+    Shape const * get_shape(Element_shape_type type) const {
+        using namespace CGAL::CMap::Element_topo;
+        switch(type)
+        {
+        case TETRAHEDRON:
+            return &tet_ref;
+        case HEXAHEDRON:
+            return &hex_ref;
+        case PYRAMID:
+            return &pyr_ref;
+        case PRISM:
+            return &wedge_ref;
+        default:
+            // Unsupported LCC volume.
+            return nullptr;
+        }
+    }
+    Element_shape_type get_element_shape_id(Input_cell_descriptor cell) const {
+        Input_cell_descriptor d;
+        return CGAL::CMap::Element_topo::get_cell_topo<3>(lcc, cell, d);
+    }
+
+    Vertex_descriptor get_cell_vertex(Input_cell_descriptor cell, unsigned local_vertex) const {
+        std::vector<Vertex_descriptor> const vertices = vtk_cell_vertices(cell);
+        CGAL_assertion(local_vertex < vertices.size());
+        return vertices[local_vertex];
+     }
+
+
+
+    bool has_reference_mesh = false;
+    Point_3 get_ref_vertex_coordinates(Vertex_descriptor) const { return Point_3(); } // redefine if has_reference_mesh == true
+
+public:
+    LCC_mixed_mesh(LCC &lcc)
+      :lcc(lcc)
+    {
+        static_assert(LCC::dimension == 3);
+        static_assert(LCC::ambient_dimension == 3);
+
+        wedge_ref.inverse = true;
+
+        // Important: the iterator itself is the Dart_descriptor.
+        auto cells = lcc.template one_dart_per_cell<3>();
+        input_cells.reserve(std::distance(cells.begin(), cells.end()));
+        for(auto cell = cells.begin(); cell != cells.end(); ++cell) input_cells.push_back(cell);
+    }
+private:
+    LCC &lcc;
+    std::vector<Input_cell_descriptor> input_cells;
+
+    Shapes::VTK_TETRAHEDRON<Point_3> tet_ref;
+    Shapes::VTK_HEXAHEDRON<Point_3> hex_ref;
+    Shapes::VTK_PYRAMID<Point_3> pyr_ref;
+    Shapes::VTK_WEDGE<Point_3> wedge_ref;
+
+private:
+
+    // Recover the local vertices using exactly the same convention as CGAL::IO::write_VTK().
+    std::vector<Vertex_descriptor>
+    vtk_cell_vertices(Input_cell_descriptor cell) const {
+        using namespace CGAL::CMap::Element_topo;
+        Input_cell_descriptor sd;
+        Element_shape_type type = get_cell_topo<3>(lcc, cell, sd);
+
+        std::vector<Vertex_descriptor> vertices;
+        switch(type)
+        {
+        case TETRAHEDRON:
+            vertices = {
+                lcc.vertex_attribute(sd),
+                lcc.vertex_attribute(lcc.template beta<1>(sd)),
+                lcc.vertex_attribute(lcc.template beta<0>(sd)),
+                lcc.vertex_attribute(lcc.template beta<2, 0>(sd))
+            };
+            break;
+
+        case PYRAMID:
+            vertices = {
+                lcc.vertex_attribute(sd),
+                lcc.vertex_attribute(lcc.template beta<1>(sd)),
+                lcc.vertex_attribute(lcc.template beta<1, 1>(sd)),
+                lcc.vertex_attribute(lcc.template beta<0>(sd)),
+                lcc.vertex_attribute(lcc.template beta<2, 0>(sd))
+            };
+            break;
+
+        case PRISM:
+        {
+            vertices = {
+                lcc.vertex_attribute(sd),
+                lcc.vertex_attribute(lcc.template beta<1>(sd)),
+                lcc.vertex_attribute(lcc.template beta<0>(sd))
+            };
+
+            const auto sd2 = lcc.template beta<2, 1, 1, 2>(sd);
+            vertices.push_back(lcc.vertex_attribute(lcc.template beta<1>(sd2)));
+            vertices.push_back(lcc.vertex_attribute(sd2));
+            vertices.push_back(lcc.vertex_attribute(lcc.template beta<0>(sd2)));
+            break;
+        }
+        case HEXAHEDRON:
+        {
+            auto current = sd;
+            // VTK vertices 0..3.
+            for(unsigned i = 0; i < 4; ++i) {
+                vertices.push_back(lcc.vertex_attribute(current));
+                current = lcc.template beta<1>(current);
+            }
+
+            // VTK vertices 4..7.
+            auto opposite = lcc.template beta<2, 1, 1, 2, 1>(current);
+            for(unsigned i = 0; i < 4; ++i) {
+                vertices.push_back(lcc.vertex_attribute(opposite));
+                opposite = lcc.template beta<0>(opposite);
+            }
+            break;
+        }
+        default:
+            break;
+        }
+
+        return vertices;
+    }
+};
+
+template <typename LCC>
+class LCC_surface_mesh {
+public:
+    using Vertex_descriptor = typename LCC::Vertex_attribute_descriptor;
+    using Normal_3 = typename LCC::Vector;
+    using Face_descriptor = std::size_t;
+    using Surface_patch_index = unsigned;
+
+
+    std::size_t nb_faces() const {
+        return boundary_faces.size();
+    }
+
+    utils::Contiguous_unsigned_range face_range() const {
+        return {0, nb_faces()};
+    }
+
+    std::size_t nb_face_vertices(Face_descriptor face) const {
+        const auto first = boundary_faces[face];
+        auto dart = first;
+        std::size_t n = 0;
+        do {
+            ++n;
+            dart = lcc.template beta<1>(dart);
+        } while(dart != first);
+        return n;
+    }
+
+    Surface_patch_index patch_id(Face_descriptor face) const {
+        // For now, each boundary polygon is its own patch.
+        return face;
+    }
+
+    std::vector<Vertex_descriptor>
+    face_vertices(Face_descriptor face) const {
+        std::vector<Vertex_descriptor> vertices;
+        const auto first = boundary_faces[face];
+        auto dart = first;
+        do {
+            vertices.push_back(lcc.vertex_attribute(dart));
+            dart = lcc.template beta<1>(dart);
+        } while(dart != first);
+        return vertices;
+    }
+
+    LCC_surface_mesh(LCC &lcc): lcc(lcc) {
+        auto faces = lcc.template one_dart_per_cell<2>();
+
+        for(auto face = faces.begin(); face != faces.end(); ++face) {
+            if(lcc.template is_free<3>(face))
+                boundary_faces.push_back(face);
+        }
+    }
+
+private:
+    LCC &lcc;
+    std::vector<typename LCC::Dart_descriptor> boundary_faces;
 };
 
 } } } // end of CGAL::Mesh_smoothing_3::default_structures namespace

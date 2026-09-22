@@ -251,17 +251,13 @@ public:
     patch_face_projection_plane(const Patch_face&,
                                 const std::vector<Point_3>& face_points) const
     {
-        const Point_3 face_center =
-            CGAL::centroid(face_points.begin(), face_points.end());
+        const Point_3 face_center = CGAL::centroid(face_points.begin(), face_points.end());
 
-        const auto closest =
-            _domain.aabb_tree().closest_point_and_primitive(face_center);
+        const auto closest = _domain.aabb_tree().closest_point_and_primitive(face_center);
 
         using AABB_primitive = typename MeshDomain::AABB_primitive;
 
-        const AABB_primitive primitive(
-            closest.second.first,
-            *closest.second.second);
+        const AABB_primitive primitive(closest.second.first, *closest.second.second);
 
         const auto triangle = primitive.datum();
 
@@ -349,27 +345,20 @@ public:
     curve_edge_projection_line(const Curve_edge& curve_edge,
                                const std::array<Point_3, 2>& edge_points) const
     {
-        const Point_3 edge_center =
-            CGAL::midpoint(edge_points[0], edge_points[1]);
+        const Point_3 edge_center = CGAL::midpoint(edge_points[0], edge_points[1]);
 
         // locate_point() returns the source of the polyline segment
         // closest to edge_center on the requested curve.
-        const auto segment_source =
-            this->domain().locate_point(curve_edge.first, edge_center);
+        const auto segment_source = this->domain().locate_point(curve_edge.first, edge_center);
 
         const Point_3 source = *segment_source;
         const Point_3 target = *std::next(segment_source);
 
         const Segment_3 segment(source, target);
 
-        const Point_3 projected =
-            Geom_traits().construct_projected_point_3_object()(
-                segment, edge_center);
+        const Point_3 projected = Geom_traits().construct_projected_point_3_object()(segment, edge_center);
 
-        return Tangent_space{
-            projected,
-            target - source
-        };
+        return Tangent_space{projected, target - source};
     }
 };
 
@@ -462,8 +451,7 @@ public:
             //
             // Keeping the normalization makes the projection more robust to
             // approximate signed-distance fields.
-            const Vector_3 displacement =
-                (distance / squared_norm) * gradient;
+            const Vector_3 displacement = (distance / squared_norm) * gradient;
 
             projected = projected - displacement;
 
