@@ -35,9 +35,9 @@ public:
 
   Wrap_output_iterator& operator=(Value second){
     if constexpr(in_order)
-      out = std::make_pair(first, second);
+      *out = std::make_pair(first, second);
     else
-      out = std::make_pair(second, first);
+      *out = std::make_pair(second, first);
     return *this;
   }
   Wrap_output_iterator& operator*(){ return *this; }
