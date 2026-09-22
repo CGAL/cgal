@@ -14,6 +14,7 @@
 
 #include <CGAL/assertions.h>
 #include <CGAL/Kernel_traits.h>
+#include <CGAL/Container_helper.h>
 #include <CGAL/Named_function_parameters.h>
 #include <iostream>
 #include <string>
@@ -113,7 +114,9 @@ bool read_MEDIT(std::istream& is,
                 FacetWithIndexRange& facets_with_indices,
                 bool read_facets_with_indices,
                 EdgeWithIndexRange& edges_with_indices,
+                bool read_edges_with_indices,
                 CornerWithIndexRange& corners_with_indices,
+                bool read_corners_with_indices,
                 bool verbose,
                 bool& is_CGAL_mesh)
 {
@@ -189,7 +192,7 @@ bool read_MEDIT(std::istream& is,
     {
       if(read_facets_with_indices){
         is >> nf;
-        facets_with_indices.reserve(nf);
+        CGAL::internal::reserve(facets_with_indices, nf);
 
         if(verbose)
           std::cerr << "Reading "<< nf << " triangles" << std::endl;
@@ -276,9 +279,15 @@ bool read_MEDIT(std::istream& is,
 
     if(line.find("Corners") != std::string::npos)
     {
-      is >> ncorners;
+      if(read_corners_with_indices){
+        is >> ncorners;
+        CGAL::internal::reserve(corners_with_indices, ncorners);
+
+        if(verbose)
+          std::cerr << "Reading "<< ncorners << " corners" << std::endl;
+
       if(verbose && ncorners == 0)
-        std::cerr << "Warning: Corners section is ignored" << std::endl;
+        std::cerr << "Warning: Corners section is empty" << std::endl;
 
       for(int i = 0; i < ncorners; ++i)
       {
@@ -292,13 +301,25 @@ bool read_MEDIT(std::istream& is,
         // typename CornerWithIndex::value_type cwi = {offset + n};
         corners_with_indices.push_back( {offset + n - 1 } );
       }
+    }else{
+        is >> ncorners;
+        std::string buffer;
+        for(int i=0; i<ncorners; ++i)
+          std::getline(is, buffer);
     }
+  }
 
     if(line.find("Edges") != std::string::npos)
     {
-      is >> nedges;
+      if(read_edges_with_indices){
+        is >> nedges;
+        CGAL::internal::reserve(edges_with_indices, nedges);
+
+        if(verbose)
+          std::cerr << "Reading "<< nedges << " edges" << std::endl;
+
       if(verbose && nedges == 0)
-        std::cerr << "Warning: Edges section is ignored" << std::endl;
+        std::cerr << "Warning: Edges section is empty" << std::endl;
 
       for(int i = 0; i < nedges; ++i)
       {
@@ -312,7 +333,13 @@ bool read_MEDIT(std::istream& is,
         edges_with_indices.push_back({offset + n[0] - 1, offset + n[1] - 1, curve_index});
         CGAL_assertion(edges_with_indices.size() == static_cast<std::size_t>(i + 1));
       }
+    }else{
+        is >> nedges;
+        std::string buffer;
+        for(int i=0; i<nedges; ++i)
+          std::getline(is, buffer);
     }
+  }
 
   }
 
@@ -430,13 +457,19 @@ bool read_MEDIT(std::istream& is,
   using Corners_with_indices = typename internal_np::Lookup_named_param_def<internal_np::corners_with_indices_t, CGAL_NP_CLASS, std::vector<std::array<int,2>>>::reference;
   Corners_with_indices corners_with_indices = choose_parameter(get_parameter_reference(np, internal_np::corners_with_indices), default_corners_with_indices);
 
-  constexpr bool read_facets_with_indices = false;
+
+  constexpr bool is_facets_with_indices_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::facets_with_indices_t>::value;
+
+  constexpr bool is_edges_with_indices_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::edges_with_indices_t>::value;
+
+  constexpr bool is_corners_with_indices_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::corners_with_indices_t>::value;
 
   bool is_CGAL_mesh;
 
   return internal::read_MEDIT(is, points, tetrahedra, subdomains,
-                              facets_with_indices, read_facets_with_indices,
-                              edges_with_indices, corners_with_indices,
+                              facets_with_indices, is_facets_with_indices_map,
+                              edges_with_indices, is_facets_with_indices_map,
+                              corners_with_indices, is_corners_with_indices_map,
                               verbose, is_CGAL_mesh);
 }
 
