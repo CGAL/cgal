@@ -825,7 +825,10 @@ int maximal_dimension() const;
 
 /*!
 Returns an iterator to the first `Vertex_handle` stored in the
-full cell.
+full cell. If the current dimension of the triangulation is smaller than the maximal
+dimension, only the first `current_dimension()+1` vertices of a full cell
+are geometrically valid. Iterating up to `vertices_end()` may therefore
+access vertices that do not belong to the geometric simplex.
 */
 Vertex_handle_iterator vertices_begin() const;
 
