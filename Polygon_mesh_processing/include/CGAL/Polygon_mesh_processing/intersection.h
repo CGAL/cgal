@@ -1648,18 +1648,6 @@ intersecting_meshes(const TriangleMeshRange& range,
 
   // // AABB_traits expects a bbox map associating the primitive ID
   // // with its bounding box.
-  // struct Bbox_map
-  // {
-  //   using key_type = std::size_t;
-  //   using value_type = Bbox_3;
-  //   using reference = const Bbox_3&;
-  //   using category = boost::readable_property_map_tag;
-
-  //   const std::vector<Indexed_bbox>* bboxes;
-
-  //   reference operator[](key_type i) const { return (*bboxes)[i].bbox; }
-  //   static reference get(const Bbox_map& map, key_type i) { return map[i]; }
-  // };
   using Bbox_map = boost::vector_property_map<Bbox_3>;
 
   // The primitive ID is the index of the mesh.

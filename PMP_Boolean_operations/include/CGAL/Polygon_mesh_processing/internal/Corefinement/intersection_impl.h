@@ -298,12 +298,12 @@ class Intersection_of_triangle_meshes
 
       for(halfedge_descriptor h : hf2){
         edge_descriptor e = edge(h, tm2);
-        if( !get(is_shared_edge_map_2, e) && (is_border(h, tm2) || h < opposite(h, tm2)))
+        if( is_border(h, tm2) || h < opposite(h, tm2))
           callback12(hf1[0], h);
       }
       for(halfedge_descriptor h : hf1){
         edge_descriptor e = edge(h, tm1);
-        if( !get(is_shared_edge_map_1, e) && (is_border(h, tm1) || h < opposite(h, tm1)))
+        if( is_border(h, tm1) || h < opposite(h, tm1))
           callback21(hf2[0], h);
       }
     };
@@ -348,7 +348,7 @@ class Intersection_of_triangle_meshes
 
     // Wrap the call of AABB intersections given two callback functions
     auto AABB_call = [&](auto &callback12, auto &callback21){
-      #ifdef CGAL_LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
       if constexpr(std::is_same_v<ConcurrencyTag, Parallel_tag>)
       {
         oneapi::tbb::task_group tg;
@@ -371,7 +371,7 @@ class Intersection_of_triangle_meshes
             process_candidates_with_non_manifold_map(f_1, f_2, callback12, callback21);
       }
       else
-  #endif
+#endif
       {
         helper_1.template build<ConcurrencyTag>(tree1, tm1, vpm1);
         helper_2.template build<ConcurrencyTag>(tree2, tm2, vpm2);
@@ -395,16 +395,10 @@ class Intersection_of_triangle_meshes
                                          ? stm_edge_to_ltm_faces
                                          : ltm_edge_to_stm_faces;
     // Select the desire callbacks
-#ifdef DO_NOT_HANDLE_COPLANAR_FACES
-    using Callback = Collect_face_bbox_per_edge_bbox<TriangleMesh, Edge_to_faces>;
-    Callback callback12(tm1, tm2, tm2_edge_to_tm1_faces);
-    Callback callback21(tm2, tm1, tm1_edge_to_tm2_faces);
-#else
     using Callback = Collect_face_bbox_per_edge_bbox_with_coplanar_handling<
                       TriangleMesh, VPM1, VPM2, Edge_to_faces, Coplanar_face_set, Node_visitor>;
     Callback callback12(tm1, tm2, vpm1, vpm2, tm2_edge_to_tm1_faces, coplanar_faces, visitor);
     Callback callback21(tm2, tm1, vpm2, vpm1, tm1_edge_to_tm2_faces, coplanar_faces, visitor);
-#endif
 
     if (throw_on_self_intersection){
       Callback_with_self_intersection_report<TriangleMesh, Callback> callback_si_12(callback12, tm1_faces, tm2_faces);
@@ -1174,11 +1168,7 @@ class Intersection_of_triangle_meshes
         typename std::vector<halfedge_descriptor>::iterator it_edge=all_edges.begin();
         switch(type){
           case COPLANAR_TRIANGLES:
-            #ifndef DO_NOT_HANDLE_COPLANAR_FACES
-            CGAL_error_msg("COPLANAR_TRIANGLES : this point should never be reached!");
-            #else
             //nothing needs to be done, cf. comments at the beginning of the file
-            #endif
           break;
           case EMPTY:
             fset.erase(fset.begin());
@@ -2046,7 +2036,6 @@ public:
     Node_id current_node((std::numeric_limits<Node_id>::max)());
     CGAL_assertion(current_node+1==0);
 // TODO: handle non-manifold edges in coplanar
-    #ifndef DO_NOT_HANDLE_COPLANAR_FACES
     //first handle coplanar triangles
     if (&tm1<&tm2)
       compute_intersection_of_coplanar_faces(current_node, tm1, tm2, vpm1, vpm2, non_manifold_feature_map_1, non_manifold_feature_map_2);
@@ -2056,7 +2045,6 @@ public:
     visitor.set_number_of_intersection_points_from_coplanar_faces(current_node+1);
     if (!coplanar_faces.empty())
       visitor.input_have_coplanar_faces();
-    #endif // not DO_NOT_HANDLE_COPLANAR_FACES
 
     //compute intersection points of segments and triangles.
     //build the nodes of the graph and connectivity infos
