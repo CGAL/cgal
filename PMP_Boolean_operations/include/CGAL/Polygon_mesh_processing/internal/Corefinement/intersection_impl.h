@@ -521,18 +521,18 @@ class Intersection_of_triangle_meshes
         halfedge_descriptor h2_f2 = next(h1_f2, tm);
 
         if (is_border(h0_f1, tm) || h0_f1 < opposite(h0_f1, tm))
-          callback(h0_f1, h0_f2);
+          callback(h0_f2, h0_f1);
         if (is_border(h1_f1, tm) || h1_f1 < opposite(h1_f1, tm))
-          callback(h1_f1, h0_f2);
+          callback(h0_f2, h1_f1);
         if (is_border(h2_f1, tm) || h2_f1 < opposite(h2_f1, tm))
-          callback(h2_f1, h0_f2);
+          callback(h0_f2, h2_f1);
 
         if (is_border(h0_f2, tm) || h0_f2 < opposite(h0_f2, tm))
-          callback(h0_f2, h0_f1);
+          callback(h0_f1, h0_f2);
         if (is_border(h1_f2, tm) || h1_f2 < opposite(h1_f2, tm))
-          callback(h1_f2, h0_f1);
+          callback(h0_f1, h1_f2);
         if (is_border(h2_f2, tm) || h2_f2 < opposite(h2_f2, tm))
-          callback(h2_f2, h0_f1);
+          callback(h0_f1, h2_f2);
       // });
       }
     }
@@ -552,18 +552,18 @@ class Intersection_of_triangle_meshes
         halfedge_descriptor h2_f2 = next(h1_f2, tm);
 
         if (is_border(h0_f1, tm) || h0_f1 < opposite(h0_f1, tm))
-          callback(h0_f1, h0_f2);
+          callback(h0_f2, h0_f1);
         if (is_border(h1_f1, tm) || h1_f1 < opposite(h1_f1, tm))
-          callback(h1_f1, h0_f2);
+          callback(h0_f2, h1_f1);
         if (is_border(h2_f1, tm) || h2_f1 < opposite(h2_f1, tm))
-          callback(h2_f1, h0_f2);
+          callback(h0_f2, h2_f1);
 
         if (is_border(h0_f2, tm) || h0_f2 < opposite(h0_f2, tm))
-          callback(h0_f2, h0_f1);
+          callback(h0_f1, h0_f2);
         if (is_border(h1_f2, tm) || h1_f2 < opposite(h1_f2, tm))
-          callback(h1_f2, h0_f1);
+          callback(h0_f1, h1_f2);
         if (is_border(h2_f2, tm) || h2_f2 < opposite(h2_f2, tm))
-          callback(h2_f2, h0_f1);
+          callback(h0_f1, h2_f2);
       }
     }
   }
