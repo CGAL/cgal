@@ -52,6 +52,10 @@ Release date: December 2026
   handle cases when some identical faces are shared between the input meshes. This leads to a significant speed up
   in those cases.
 
+### [Stream Support](https://doc.cgal.org/6.3/Manual/packages.html#PkgStreamSupport)
+
+- Added overloaded versions of the functions `CGAL::IO::read_MEDIT()` and `CGAL::IO::write_MEDIT()`, for indexed tetrahedron soups.
+
 ### [Basic Viewer](https://doc.cgal.org/6.3/Manual/packages.html#PkgBasicViewer)
 
 - Added the possibility to color the faces by a value mapped to a color palette: the

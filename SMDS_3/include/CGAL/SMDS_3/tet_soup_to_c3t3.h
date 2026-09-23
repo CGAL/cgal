@@ -698,13 +698,16 @@ bool build_triangulation_from_file(std::istream& is,
   using Facet        = std::array<int, 3>; // 3 = id
   using Tet_with_ref = std::array<int, 4>; // 4 = id
 
+  using Facet_with_index = CGAL::IO::internal::Facet_with_index<Surface_patch_index>;
   using Edge_with_index = CGAL::IO::internal::Edge_with_index<Curve_index>;
   using Corner_with_index = CGAL::IO::internal::Corner_with_index<Corner_index>;
 
   std::vector<Tet_with_ref> finite_cells;
   std::vector<Subdomain_index> subdomains;
   std::vector<Point_3> points;
-  boost::unordered_map<Facet, Surface_patch_index> border_facets;
+
+
+  std::vector<Facet_with_index> facet_indices;
   std::vector<Edge_with_index> edge_indices;
   std::vector<Corner_with_index> corner_indices;
 
@@ -718,14 +721,39 @@ bool build_triangulation_from_file(std::istream& is,
   }
 
   bool ok = CGAL::IO::internal::read_MEDIT(is, points, finite_cells, subdomains,
-                                           border_facets, true,
-                                           edge_indices,
-                                           corner_indices,
+                                           facet_indices, true,
+                                           edge_indices, true,
+                                           corner_indices, true,
                                            verbose,
                                            is_CGAL_mesh);
 
+
   if(!ok){
     return false;
+  }
+
+  boost::unordered_map<Facet, Surface_patch_index> border_facets;
+  border_facets.reserve(facet_indices.size());
+
+  bool has_negative_surface_patch_ids = false;
+  Surface_patch_index max_surface_patch_id{0};
+
+  for (const Facet_with_index& fi : facet_indices)
+  {
+    if (fi.surface_patch_index<0)
+      has_negative_surface_patch_ids=true;
+    max_surface_patch_id=(std::max)(max_surface_patch_id, fi.surface_patch_index);
+    border_facets.emplace(CGAL::make_array(fi.v0, fi.v1, fi.v2), fi.surface_patch_index);
+  }
+
+  if(has_negative_surface_patch_ids)
+  {
+    if(verbose)
+      std::cerr << "Warning: negative surface patch ids" << std::endl;
+    for(auto& facet_and_patch_id  : border_facets) {
+      if(facet_and_patch_id.second < 0)
+        facet_and_patch_id.second = max_surface_patch_id - facet_and_patch_id.second;
+    }
   }
 
   if(!is_CGAL_mesh)
