@@ -62,6 +62,7 @@ private:
   using EdgeWPtr = typename Polyhedron::EdgeWPtr;
   using EdgeSPtr = typename Polyhedron::EdgeSPtr;
   using Facet = typename Polyhedron::Facet;
+  using FacetWPtr = typename Polyhedron::FacetWPtr;
   using FacetSPtr = typename Polyhedron::FacetSPtr;
 
   using Skeleton_facet_data = typename Polyhedron::Skeleton_facet_data;
@@ -75,7 +76,8 @@ public:
   template <typename TriangleMesh,
             typename NamedParameters = CGAL::parameters::Default_named_parameters>
   static PolyhedronSPtr load(const TriangleMesh& tmesh,
-                             std::map<typename boost::graph_traits<TriangleMesh>::edge_descriptor, EdgeWPtr>& e2e,
+                             CGAL::unordered_flat_map<typename boost::graph_traits<TriangleMesh>::edge_descriptor, EdgeWPtr>& e2e,
+                             CGAL::unordered_flat_map<typename boost::graph_traits<TriangleMesh>::face_descriptor, FacetWPtr>& f2f,
                              const NamedParameters& np = CGAL::parameters::default_values())
   {
     using CGAL::parameters::choose_parameter;
@@ -97,9 +99,9 @@ public:
 
     unsigned int vertex_id_new = 0;
 
-    for (vertex_descriptor vi : vertices(tmesh)) {
+    for (vertex_descriptor vd : vertices(tmesh)) {
       ++vertex_id_new;
-      decltype(auto) point = get(vpm, vi);
+      decltype(auto) point = get(vpm, vd);
       VertexSPtr vertex = Vertex::create(point);
       vertex->set_id(vertex_id_new);
       result->add_vertex(vertex);
@@ -111,10 +113,10 @@ public:
                                         CGAL::Constant_property_map<std::size_t, FT>(1));
 
     int facet_id_new = -1;
-    for (face_descriptor fi : faces(tmesh)) {
+    for (face_descriptor fd : faces(tmesh)) {
       ++facet_id_new;
 
-      unsigned int num_vertices = degree(fi, tmesh);
+      unsigned int num_vertices = degree(fd, tmesh);
       CGAL_SS3_IO_TRACE_V(16, "new: F" << facet_id_new << " with " << num_vertices << " vertices");
       CGAL_assertion(num_vertices > 2);
 
@@ -124,7 +126,7 @@ public:
       }
 
       unsigned int pos = 0;
-      for (halfedge_descriptor h : halfedges_around_face(halfedge(fi, tmesh), tmesh)) {
+      for (halfedge_descriptor h : halfedges_around_face(halfedge(fd, tmesh), tmesh)) {
         unsigned int vertex_id = source(h, tmesh);
         if (vertex_id < vertices.size()) {
           poly_vertices[pos++] = vertices[vertex_id];
@@ -142,18 +144,29 @@ public:
 
       FacetSPtr facet = Facet::create(poly_vertices);
       facet->set_id(facet_id_new);
+      f2f[fd] = facet;
 
-      // Correspondence between the edges of the input mesh and the new edges
-      // in the polyhedron
-      // poly_vertices is filled, starting at source() of the first edge
-      // Facet::create() creates the i-th edge between vertices[i] and vertices[i+1]
-      halfedge_descriptor h = halfedge(fi, tmesh);
-      for (EdgeSPtr e : facet->edges()) {
-        e2e[edge(h, tmesh)] = e;
-        h = next(h, tmesh);
+      // let's not assume anything on the edge order...
+      std::map<std::pair<Point_3, Point_3>, EdgeWPtr> p2e;
+      for (const EdgeSPtr& e : facet->edges()) {
+        const Point_3& p0 = e->source()->point();
+        const Point_3& p1 = e->target()->point();
+        p2e.emplace((p0 < p1 ? std::make_pair(p0, p1) : std::make_pair(p1, p0)), e);
       }
 
-      Vector_3 n = Polygon_mesh_processing::compute_face_normal(fi, tmesh);
+      // Correspondence between the edges of the input mesh and the new edges in the polyhedron.
+      // 'poly_vertices' is filled, starting at source() of the first edge, and
+      // Facet::create() creates the i-th edge between vertices[i] and vertices[i+1]
+      halfedge_descriptor h = halfedge(fd, tmesh), start_h = halfedge(fd, tmesh);
+      do {
+        const Point_3& p0 = get(CGAL::vertex_point, tmesh, source(h, tmesh));
+        const Point_3& p1 = get(CGAL::vertex_point, tmesh, target(h, tmesh));
+        EdgeWPtr ew = p2e.at((p0 < p1 ? std::make_pair(p0, p1) : std::make_pair(p1, p0)));
+        e2e[edge(h, tmesh)] = ew;
+        h = next(h, tmesh);
+      } while (h != start_h);
+
+      Vector_3 n = Polygon_mesh_processing::compute_face_normal(fd, tmesh);
       if (outward_offsetting)
         n = -n;
 
@@ -190,8 +203,10 @@ public:
                              const NamedParameters& np = CGAL::parameters::default_values())
   {
     using edge_descriptor = typename boost::graph_traits<TriangleMesh>::edge_descriptor;
-    std::map<edge_descriptor, EdgeWPtr> unused_e2e;
-    return load(tmesh, unused_e2e, np);
+    using face_descriptor = typename boost::graph_traits<TriangleMesh>::face_descriptor;
+    CGAL::unordered_flat_map<edge_descriptor, EdgeWPtr> unused_e2e;
+    CGAL::unordered_flat_map<face_descriptor, FacetWPtr> unused_f2f;
+    return load(tmesh, unused_e2e, unused_f2f, np);
   }
 
   template <typename TriangleMesh,
@@ -199,12 +214,24 @@ public:
   static PolyhedronSPtr convert(const TriangleMesh& tmesh,
                                 const NamedParameters& np = CGAL::parameters::default_values())
   {
-    CGAL_SS3_TRANSF_TRACE("Converting mesh...");
+    using CGAL::parameters::choose_parameter;
+    using CGAL::parameters::get_parameter;
+
+    CGAL_SS3_IO_TRACE_V(4, "Converting mesh...");
+
+    using edge_descriptor = typename boost::graph_traits<TriangleMesh>::edge_descriptor;
+    using face_descriptor = typename boost::graph_traits<TriangleMesh>::face_descriptor;
+
+    const bool outward_offsetting = choose_parameter(get_parameter(np, internal_np::outward_offsetting), false);
 
     ConfigurationSPtr config = Configuration::get_instance();
-    bool merge_faces = config->get_Boolean("Preprocessing", "merge_coplanar_faces");
+    const bool merge_faces = config->get_Boolean("Preprocessing", "merge_coplanar_faces");
+    const double epsilon = config->get_double("Preprocessing", "coplanarity_epsilon");
 
-    PolyhedronSPtr polyhedron = IO::FaceGraphIO<GeomTraits>::load(tmesh, np);
+    CGAL::unordered_flat_map<edge_descriptor, EdgeWPtr> e2e;
+    CGAL::unordered_flat_map<face_descriptor, FacetWPtr> f2f;
+
+    PolyhedronSPtr polyhedron = load(tmesh, e2e, f2f, np);
     if (!merge_faces)
       return polyhedron;
 
