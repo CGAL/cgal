@@ -579,10 +579,10 @@ bool write_MEDIT(std::ostream& os,
        << tetrahedra[k][1]+1 << " "
        << tetrahedra[k][2]+1 << " "
        << tetrahedra[k][3]+1 << " ";
-    if constexpr (is_default_parameter<CGAL_NP_CLASS, internal_np::subdomains_t>::value)       
+    if constexpr (is_default_parameter<CGAL_NP_CLASS, internal_np::subdomains_t>::value)
       os << 1 << "\n";
     else
-      os << subdomains[k] << "\n";    
+      os << subdomains[k] << "\n";
   }
 
   if(!corners.empty()){
