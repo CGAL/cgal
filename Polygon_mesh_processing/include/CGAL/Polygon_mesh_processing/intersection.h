@@ -448,8 +448,8 @@ compute_face_face_intersection(const FaceRange& face_range1,
 
   Tree_1 tree1;
   Tree_2 tree2;
-  helper_1.template build<Concurrency_tag>(tree1, tm1, vpm1);
-  helper_2.template build<Concurrency_tag>(tree2, tm2, vpm2);
+  helper_1.template build<Concurrency_tag>(face_to_test1, tree1, tm1, vpm1);
+  helper_2.template build<Concurrency_tag>(face_to_test2, tree2, tm2, vpm2);
 
   CGAL::AABB_trees::all_pairs_of_intersecting_primitives(tree1, tree2, out, parameters::concurrency_tag(Concurrency_tag()));
   return out;

@@ -284,8 +284,8 @@ class Intersection_of_triangle_meshes
     if(tm1_faces_intersecting_bb.empty() || tm2_faces_intersecting_bb.empty())
       return;
 
-    Tree_1 tree1(tm1_faces_intersecting_bb.begin(), tm1_faces_intersecting_bb.end(), tm1, vpm1);
-    Tree_2 tree2(tm2_faces_intersecting_bb.begin(), tm2_faces_intersecting_bb.end(), tm2, vpm2);
+    Tree_1 tree1;
+    Tree_2 tree2;
 
     auto process_candidates_without_non_manifold_map = [&](face_descriptor f_1, face_descriptor f_2, auto &callback12, auto &callback21){
       std::array<halfedge_descriptor, 3> hf1 = { halfedge(f_1, tm1),
@@ -297,12 +297,10 @@ class Intersection_of_triangle_meshes
                                                  next(next(halfedge(f_2, tm2), tm2), tm2) };
 
       for(halfedge_descriptor h : hf2){
-        edge_descriptor e = edge(h, tm2);
         if( is_border(h, tm2) || h < opposite(h, tm2))
           callback12(hf1[0], h);
       }
       for(halfedge_descriptor h : hf1){
-        edge_descriptor e = edge(h, tm1);
         if( is_border(h, tm1) || h < opposite(h, tm1))
           callback21(hf2[0], h);
       }
@@ -352,8 +350,8 @@ class Intersection_of_triangle_meshes
       if constexpr(std::is_same_v<ConcurrencyTag, Parallel_tag>)
       {
         oneapi::tbb::task_group tg;
-        tg.run([&]{ helper_1.template build<ConcurrencyTag>(tree1, tm1, vpm1); });
-        helper_2.template build<ConcurrencyTag>(tree2, tm2, vpm2);
+        tg.run([&]{ helper_1.template build<ConcurrencyTag>(tm1_faces_intersecting_bb, tree1, tm1, vpm1); });
+        helper_2.template build<ConcurrencyTag>(tm2_faces_intersecting_bb, tree2, tm2, vpm2);
         tg.wait();
 
         tbb::concurrent_vector<std::pair<face_descriptor, face_descriptor>> inter;
@@ -497,8 +495,8 @@ class Intersection_of_triangle_meshes
     using Tree = typename AABB_tree_helper::Tree;
     AABB_tree_helper helper;
 
-    Tree tree(faces(tm).begin(), faces(tm).end(), tm, vpm);
-    helper.template build<ConcurrencyTag>(tree, tm, vpm);
+    Tree tree;
+    helper.template build<ConcurrencyTag>(faces(tm), tree, tm, vpm);
 
     using Callback = Collect_face_bbox_per_edge_bbox_with_coplanar_handling_one_mesh<
                       TriangleMesh, VPM, Edge_to_faces, Coplanar_face_set>;
@@ -541,6 +539,8 @@ class Intersection_of_triangle_meshes
         halfedge_descriptor h2 = next(h1, tm);
 
         halfedge_descriptor h_f2 = halfedge(f_2, tm);
+        halfedge_descriptor h1_f2 = next(h_f2, tm);
+        halfedge_descriptor h2_f2 = next(h1_f2, tm);
 
         if (is_border(h0, tm) || h0 < opposite(h0, tm))
           callback(h0, h_f2);
@@ -548,6 +548,13 @@ class Intersection_of_triangle_meshes
           callback(h1, h_f2);
         if (is_border(h2, tm) || h2 < opposite(h2, tm))
           callback(h2, h_f2);
+
+        if (is_border(h_f2, tm) || h_f2 < opposite(h_f2, tm))
+          callback(h_f2, h0);
+        if (is_border(h1_f2, tm) || h1_f2 < opposite(h1_f2, tm))
+          callback(h1_f2, h0);
+        if (is_border(h2_f2, tm) || h2_f2 < opposite(h2_f2, tm))
+          callback(h2_f2, h0);
       }
     }
   }
