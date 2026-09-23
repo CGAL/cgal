@@ -183,7 +183,7 @@ struct Output_rep< Some_type, F > {
 You can also specialize for a formatting tag `F`.
 
 The constant `is_specialized` can be tested by meta-programming tools to
-verify that a given type can be used with `oformat()`. Its value has to be
+verify that a given type can be used with `IO::oformat()`. Its value has to be
 `true` in a specialization of `Output_rep`. When there is no specialization
 for a type, the class template `Output_rep` defines `is_specialized` to the
 default value `false`.
@@ -249,7 +249,7 @@ public:
   \cgal defines output operators for classes that are derived from the class `std::ostream`.
   This enables to write to output streams as `std::cout` or `std::cerr`, as well as to `std::ostringstream`
   and `std::ofstream`.
-  The output operator is defined for all classes in the \cgal `Kernel` and for the class `Color` as well.
+  The output operator is defined for all classes in the \cgal `Kernel` and for the class `IO::Color` as well.
 */
 template <class T, class F>
 std::ostream& operator<<( std::ostream& os, Output_rep<T,F> rep) { return rep(os); }
