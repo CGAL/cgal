@@ -2,3 +2,5 @@
 
 PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Linear Cell Complex"
 INPUT+=${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/import_face_graph_to_lcc.h
+INPUT += ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/tetrahedron_soup_to_lcc.h
+

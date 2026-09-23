@@ -4,11 +4,26 @@
 
 Release date: December 2026
 
+### [Linear Cell Complex](https://doc.cgal.org/6.3/Manual/packages.html#PkgLinearCellComplex)
+- added `tetrahedron_soup_to_lcc()` to import a tetrahedron soup into a linear cell complex.
+- The following function have been deprecated and renamed for better naming clarity and consistency:
+  - `(polyhedron_3_to_lcc())` → [`import_face_graph_in_lcc()`](https://doc.cgal.org/6.3/Linear_cell_complex/group__PkgLinearCellComplexConstructions.html#gaf2fa5a468b97eb3358d25b2f147c2a72)
+### [2D and 3D Fast Intersection and Distance Computation (AABB Tree)](https://doc.cgal.org/6.3/Manual/packages.html#PkgAABBTree)
+- `CGAL::AABB_tree::build()` now accepts an optional `Concurrency_tag` template parameter (`CGAL::Sequential_tag` by default).
+   When `CGAL::Parallel_tag` is specified, the tree construction is performed in parallel.
+- Added the functions `CGAL::AABB_trees::do_intersect()` and `CGAL::AABB_trees::all_pairs_of_intersecting_primitives()`.
+  These functions respectively determine whether two AABB trees intersect and compute all pairs of intersecting primitives
+  between two AABB trees.
+
 ### [2D Arrangements](https://doc.cgal.org/6.3/Manual/packages.html#PkgArrangementOnSurface2)
 
 - **Breaking change**: Enhanced the metadata traits-class decorators `Arr_counting_traits_2` and `Arr_tracing_traits_2`. Each is (still) parameterized with another traits class being decorated, but it does not inherit from it. In addition one can get and set a smart pointer to the class being decorated.
 
-### [2D Snap Rounding](https://doc.cgal.org/6.2/Manual/packages.html#PkgSnapRounding2) (major changes)
+### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/6.3/Manual/packages.html#PkgKernel23)
+
+- Add operator to functor `Orientation_3` that takes 5 points as argument, with the last two getting tested against the first three points
+
+### [2D Snap Rounding](https://doc.cgal.org/6.3/Manual/packages.html#PkgSnapRounding2) (major changes)
 
 - Added the function `vertical_slab_snap_rounding_2()`, a new snap rounding algorithm that offers better performance and supports a wider range of rounding schemes, including floating-point coordinate representations.
 - Added the traits classes `Double_grid_snap_rounding_traits_2`, `Float_grid_snap_rounding_traits_2`, and `Integer_grid_snap_rounding_traits_2`, enabling `vertical_slab_snap_rounding_2()`
@@ -17,10 +32,34 @@ Release date: December 2026
 - Deprecated the existing overload of `snap_rounding_2()`.
 - Added a new overload of `snap_rounding_2()` that automatically dispatch to either `vertical_slab_snap_rounding_2()` or `hot_pixel_snap_rounding_2()`, depending on the provided traits class.
 
-### [Linear Cell Complex](https://doc.cgal.org/6.3/Manual/packages.html#PkgLinearCellComplex)
+### [Polygon Mesh Processing - Mesh Repair](https://doc.cgal.org/6.3/Manual/packages.html#PkgPMPMeshRepair)
+- **Breaking change**: Removed the function `CGAL::Polygon_mesh_processing::smooth_mesh()` which was deprecated since CGAL-5.5.
+- **Breaking change**: Removed the overload of the functions `CGAL::Polygon_mesh_processing::triangulate_hole()`, `CGAL::Polygon_mesh_processing::triangulate_and_refine_hole()`, and `CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole()` having output iterators for vertices and faces as parameter, which were deprecated since CGAL-6.0.
 
-- The following import functions have been deprecated and renamed for better naming clarity and consistency:
-  - `(polyhedron_3_to_lcc())` → [`import_face_graph_in_lcc()`](https://doc.cgal.org/6.3/Linear_cell_complex/group__PkgLinearCellComplexConstructions.html#gaf2fa5a468b97eb3358d25b2f147c2a72)
+### [Polygon Mesh Processing - Remeshing](https://doc.cgal.org/6.3/Manual/packages.html#PkgPMPRemeshing)
+- Added a new parameter `edge_is_protected_map` to
+[`void CGAL::Polygon_mesh_processing::isotropic_remeshing()`](https://doc.cgal.org/6.3/PMP_Remeshing/group__PMP__local__remeshing__grp.html),
+ to distinguish between "constrained" edges that can be resampled while the constrained edges polyline graph remains topologically unchanged,
+ and "protected" edges that may not be modified at all by remeshing.
+
+### [Boolean Operations On Meshes](https://doc.cgal.org/6.3/Manual/packages.html#PkgPMPBooleanOperations)
+
+### Polygon Mesh Processing - Boolean Operations
+- **Breaking change** Added to the corefinement based functions a new named parameter `edge_is_marked_map()` that will specifically collect new intersection edges.
+    Previously, `edge_is_constrained_map()` was storing both input constrained edges (updated when split) as well as new intersection edges.
+    The previous behavior can be reproduced, by passing the property map to both named parameters.
+- Added a new named parameter `edge_is_constrained_map()` to the `clip()` functions in order to preserve constrained edges when clipping a triangle mesh.
+- The corefinement based operations (including Boolean operations) has been optimized to better
+  handle cases when some identical faces are shared between the input meshes. This leads to a significant speed up
+  in those cases.
+
+### [Basic Viewer](https://doc.cgal.org/6.3/Manual/packages.html#PkgBasicViewer)
+
+- Added the possibility to color the faces by a value mapped to a color palette: the
+  distance to the clipping plane, the cell size, or a scalar value provided by the drawer.
+  A drawer can attach a value to each face through the new `Graphics_scene_options` functions
+  `is_face_valued` and `face_value` (with `face_value_name` for the legend). As an example, the
+  surface mesh drawer exposes the aspect ratio of each face.
 
 ## [Release 6.2](https://github.com/CGAL/cgal/releases/tag/v6.2)
 

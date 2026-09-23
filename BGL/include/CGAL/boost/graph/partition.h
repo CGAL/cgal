@@ -45,7 +45,8 @@ namespace internal {
 // \param filename_base Partitions will be output in `.off` files named
 //                      `{filename_base}_[0...nparts].off`
 //
-// \tparam TriangleMesh must be a model of a `FaceListGraph`, `HalfedgeListGraph`, and \bgllink{VertexListGraph}.
+// \tparam TriangleMesh must be a model of a `FaceListGraph`, `HalfedgeListGraph`,
+// and <A href="https://www.boost.org/doc/libs/latest/libs/graph/doc/html/graph/concepts/VertexListGraph.htmlVertexListGraph">`VertexListGraph`</A>.
 // \tparam FacePartitionIDPmap is a model of `ReadablePropertyMap`
 //           with `boost::graph_traits<TriangleMesh>::%face_descriptor`
 //           as key type and `boost::graph_traits<Graph>::%faces_size_type` as value type.

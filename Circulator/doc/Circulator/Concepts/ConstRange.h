@@ -9,7 +9,7 @@ A constant iterator range. Refer to the `Range` concept for more details.
 
 \cgalHasModelsBegin
 \cgalHasModelsBare{STL containers}
-\cgalHasModelsBare{<A HREF="https://www.boost.org/libs/range/doc/html/range/reference/utilities/iterator_range.html">`boost::iterator_range`</A>}
+\cgalHasModelsBare{<A HREF="https://www.boost.org/doc/libs/latest/libs/range/doc/html/range/reference/utilities/iterator_range.html">`boost::iterator_range`</A>}
 \cgalHasModelsEnd
 
 \sa `Range`

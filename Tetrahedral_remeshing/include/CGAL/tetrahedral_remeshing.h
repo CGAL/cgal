@@ -221,9 +221,8 @@ void tetrahedral_isotropic_remeshing(
   // Advanced and non documented parameters
   auto visitor = choose_parameter<typename Remesher_types::Default_Visitor>(get_parameter(np, internal_np::visitor));
 
-  auto nb_extra_iterations
-    = choose_parameter(get_parameter(np, internal_np::nb_flip_smooth_iterations),
-        std::size_t{3});
+  Tetrahedral_remeshing::internal::Remeshing_steps steps
+    = Tetrahedral_remeshing::internal::get_remeshing_steps(np);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
   std::cout << "Tetrahedral remeshing ("
@@ -255,7 +254,7 @@ void tetrahedral_isotropic_remeshing(
   nb_extra_iterations = 0;
 #endif
 
-  remesher.remesh(max_it, nb_extra_iterations);
+  remesher.remesh(max_it, steps);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
   const double angle_bound = 5.0;
@@ -475,9 +474,8 @@ void tetrahedral_isotropic_remeshing(
   auto visitor
     = choose_parameter<typename Remesher_types::Default_Visitor>(get_parameter(np, internal_np::visitor));
 
-  auto nb_extra_iterations
-    = choose_parameter(get_parameter(np, internal_np::nb_flip_smooth_iterations),
-        std::size_t{3});
+  Tetrahedral_remeshing::internal::Remeshing_steps steps
+    = Tetrahedral_remeshing::internal::get_remeshing_steps(np);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
   std::cout << "Tetrahedral remeshing ("
@@ -508,7 +506,7 @@ void tetrahedral_isotropic_remeshing(
   nb_extra_iterations = 0;
 #endif
 
-  remesher.remesh(max_it, nb_extra_iterations);
+  remesher.remesh(max_it, steps);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
   const double angle_bound = 5.0;

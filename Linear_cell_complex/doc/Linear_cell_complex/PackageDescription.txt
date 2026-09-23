@@ -71,8 +71,9 @@
 \cgalCRPSection{Global Functions}
 \cgalCRPSubsection{Constructions for Linear Cell Complex}
 - `CGAL::read_plane_graph_in_lcc<LCC>` (formerly `import_from_plane_graph`)
-- `CGAL::triangulation_3_to_lcc<LCC,Triangulation>` (formerly `CGAL::import_from_triangulation_3()`)
+- `CGAL::triangulation_3_to_lcc<LCC,Triangulation>` (formerly `import_from_triangulation_3`)
 - `CGAL::import_face_graph_to_lcc<PolygonMesh, LCC>` (formerly `CGAL::import_from_polyhedron_3()`)
+- `CGAL::tetrahedron_soup_to_lcc()`
 
 \cgalCRPSubsection{Operations for Linear Cell Complex}
 - `CGAL::compute_normal_of_cell_0<LCC>`
