@@ -55,7 +55,7 @@ namespace IO {
  * \sa `read_3MF()`
  */
 template<typename GraphRange>
-bool write_3MF(const std::string& filename,
+bool write_3MF(const std::filesystem::path& filename,
                const GraphRange& gs,
                const std::vector<std::string>& names
 #ifndef DOXYGEN_RUNNING

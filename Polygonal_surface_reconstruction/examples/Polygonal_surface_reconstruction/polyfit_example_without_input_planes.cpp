@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
   Point_vector points;
 
   // Loads point set from a file.
-  const std::string input_file = (argc > 1) ? argv[1] : CGAL::data_file_path("points_3/cube.pwn");
+  const std::filesystem::path input_file = (argc > 1) ? argv[1] : CGAL::data_file_path("points_3/cube.pwn");
   std::ifstream input_stream(input_file.c_str());
   if (input_stream.fail()) {
     std::cerr << "failed open file \'" <<input_file << "\'" << std::endl;

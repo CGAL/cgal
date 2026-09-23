@@ -241,7 +241,7 @@ void test_image()
   using Point_range = std::vector<Point>;
   using Polygon_range = std::vector<std::vector<std::size_t> >;
 
-  const std::string fname = CGAL::data_file_path("images/skull_2.9.inr");
+  const std::filesystem::path fname = CGAL::data_file_path("images/skull_2.9.inr");
   const FT isovalue = 2.9;
 
   std::cout << "\n ---- " << std::endl;

@@ -14,7 +14,7 @@ typedef Kernel::Point_3                               Point;
 typedef std::vector<std::size_t>                      Face;
 
 template <typename PointType, typename PolygonType>
-void read(const std::string& fname,
+void read(const std::filesystem::path& fname,
           std::size_t v, std::size_t f)
 {
   std::cout << "Reading "<< fname << std::endl;
@@ -57,7 +57,7 @@ void test_types()
 
 int main(int argc, char** argv)
 {
-  const std::string off_file = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cube.off");
+  const std::filesystem::path off_file = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cube.off");
 
   std::vector<Point> points;
   std::vector<Face> polygons;
@@ -71,8 +71,7 @@ int main(int argc, char** argv)
 
   points.clear();
   polygons.clear();
-  std::string off_string(off_file);
-  ok = CGAL::IO::read_OFF(off_string, points, polygons);
+  ok = CGAL::IO::read_OFF(off_file, points, polygons);
   assert(ok);
 
   points.clear();

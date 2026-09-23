@@ -30,6 +30,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <filesystem>
 #include <type_traits>
 
 namespace CGAL {
@@ -380,7 +381,7 @@ bool read_OBJ(std::istream& is,
  * \returns `true` if the reading was successful, `false` otherwise.
  */
 template <typename PointRange, typename PolygonRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool read_OBJ(const std::string& fname,
+bool read_OBJ(const std::filesystem::path& fname,
               PointRange& points,
               PolygonRange& polygons,
               const CGAL_NP_CLASS& np = parameters::default_values()
@@ -502,7 +503,7 @@ bool write_OBJ(std::ostream& os,
 template <typename PointRange,
           typename PolygonRange,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool write_OBJ(const std::string& fname,
+bool write_OBJ(const std::filesystem::path& fname,
                const PointRange& points,
                const PolygonRange& polygons,
                const CGAL_NP_CLASS& np = parameters::default_values()

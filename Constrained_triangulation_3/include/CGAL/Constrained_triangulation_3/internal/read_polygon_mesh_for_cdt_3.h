@@ -30,6 +30,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <filesystem>
 
 namespace CGAL {
 
@@ -103,7 +104,7 @@ namespace CGAL {
 
   template <typename PolygonMesh, typename NamedParameters = parameters::Default_named_parameters>
   CDT_3_read_polygon_mesh_output<PolygonMesh>
-  read_polygon_mesh_for_cdt_3(const std::string &fname,
+  read_polygon_mesh_for_cdt_3(const std::filesystem::path& fname,
                               const NamedParameters &np = parameters::default_values())
   {
     CDT_3_read_polygon_mesh_output<PolygonMesh> result;

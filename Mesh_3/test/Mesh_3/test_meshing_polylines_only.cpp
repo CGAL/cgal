@@ -57,7 +57,7 @@ int main(int argc, char** argv)
   std::cerr.precision(17);
   std::cout.precision(17);
 
-  std::string input_path = (argc > 1) ? argv[1] : CGAL::data_file_path("polylines_3/couplingdown-polylines.txt");
+  std::filesystem::path input_path = (argc > 1) ? argv[1] : CGAL::data_file_path("polylines_3/couplingdown-polylines.txt");
   std::string output_path = (argc > 2) ? argv[2] : "";
 
   typedef K::Point_3 Point;

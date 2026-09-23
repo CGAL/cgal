@@ -62,7 +62,7 @@ int main()
 
   enum Dim { DIM_2D, DIM_3D };
 
-  auto test2 = [](std::string filename, Dim dim = DIM_3D) {
+  auto test2 = [](std::filesystem::path filename, Dim dim = DIM_3D) {
 #ifndef CGAL_TEST_CDT_3_USE_CDT
     CGAL::Conforming_Delaunay_triangulation_3<Delaunay> cdt;
 #else

@@ -38,7 +38,7 @@ namespace params = CGAL::parameters;
 
 int main(int argc, char* argv[])
 {
-  const std::string fname = (argc>1)?argv[1]:CGAL::data_file_path("images/420.inr");
+  const std::filesystem::path fname = (argc>1)?argv[1]:CGAL::data_file_path("images/420.inr");
   // Loads image
   CGAL::Image_3 image;
   if(!image.read(fname)){
@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
   }
 
   /// Declare 1D-features
-  const std::string lines_fname = (argc>2)?argv[2]:CGAL::data_file_path("images/420.polylines.txt");
+  const std::filesystem::path lines_fname = (argc>2)?argv[2]:CGAL::data_file_path("images/420.polylines.txt");
   using Point_3 = K::Point_3;
   std::vector<std::vector<Point_3> > features_inside;
   if (!read_polylines(lines_fname, features_inside)) // see file "read_polylines.h"

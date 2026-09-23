@@ -57,7 +57,7 @@ int main()
     typedef OpenMesh::PolyMesh_ArrayKernelT</* MyTraits*/> OM;
 
     OM om;
-    OpenMesh::IO::read_mesh(om, CGAL::data_file_path("meshes/elephant.off"));
+    OpenMesh::IO::read_mesh(om, CGAL::data_file_path("meshes/elephant.off").string());
     om.request_face_status();
     om.request_edge_status();
     om.request_vertex_status();
@@ -73,7 +73,7 @@ int main()
     typedef OpenMesh::TriMesh_ArrayKernelT</* MyTraits*/> OM;
 
     OM om;
-    OpenMesh::IO::read_mesh(om, CGAL::data_file_path("meshes/elephant.off"));
+    OpenMesh::IO::read_mesh(om, CGAL::data_file_path("meshes/elephant.off").string());
     om.request_face_status();
     om.request_edge_status();
     om.request_vertex_status();

@@ -161,7 +161,7 @@ bool read_OBJ(std::istream& is,
 */
 template <typename Graph,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool read_OBJ(const std::string& fname,
+bool read_OBJ(const std::filesystem::path& fname,
               Graph& g,
               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
@@ -259,7 +259,7 @@ bool write_OBJ(std::ostream& os,
 */
 template <typename Graph,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool write_OBJ(const std::string& fname,
+bool write_OBJ(const std::filesystem::path& fname,
                const Graph& g,
                const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING

@@ -27,7 +27,7 @@ using Mesh = CGAL::Surface_mesh<Point>;
 
 
 int main(int argc, char* argv[]) {
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/non_manifold.off");
+  const std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/non_manifold.off");
 
   Mesh mesh_a;
   if(!CGAL::IO::read_polygon_mesh(filename, mesh_a)) {
@@ -38,7 +38,7 @@ int main(int argc, char* argv[]) {
   std::cout << "Loaded mesh with " << mesh_a.number_of_vertices() << " vertices and "
             << mesh_a.number_of_faces() << " faces" << std::endl;
 
-  const std::string clip_name = (argc > 2) ? argv[2] : CGAL::data_file_path("meshes/cube.off");
+  const std::filesystem::path clip_name = (argc > 2) ? argv[2] : CGAL::data_file_path("meshes/cube.off");
   Mesh mesh_b;
   if(!CGAL::IO::read_polygon_mesh(clip_name, mesh_b)) {
     std::cerr << "Error: cannot read file " << clip_name << std::endl;

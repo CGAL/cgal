@@ -25,7 +25,7 @@ int main(int argc, char** argv)
   std::cout.precision(17);
   std::cerr.precision(17);
 
-  const std::string filename = argc > 1 ? argv[1] : CGAL::data_file_path("wkt/issue.wkt");
+  const std::filesystem::path filename = argc > 1 ? argv[1] : CGAL::data_file_path("wkt/issue.wkt");
   std::ifstream in(filename);
   Multipolygon mp_in;
   if(!in || !CGAL::IO::read_multi_polygon_WKT(in, mp_in))
@@ -69,7 +69,7 @@ int main(int argc, char** argv)
   std::cout << "Took " << t.time() << " s." << std::endl;
 
   // Save the result
-  const std::string output_name = generate_output_name(filename, relative_alpha, relative_offset);
+  const std::string output_name = generate_output_name(filename.string(), relative_alpha, relative_offset);
   std::cout << "Writing to " << output_name << std::endl;
 
   std::ofstream out(output_name);

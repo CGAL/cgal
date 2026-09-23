@@ -14,10 +14,10 @@ typedef OpenMesh::PolyMesh_ArrayKernelT< > Mesh;
 
 int main(int argc, char* argv[])
 {
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/quads_to_stitch.off");
+  const std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/quads_to_stitch.off");
 
   Mesh mesh;
-  OpenMesh::IO::read_mesh(mesh, filename);
+  OpenMesh::IO::read_mesh(mesh, filename.string());
 
   std::cout << "Before stitching : " << std::endl;
   std::cout << "\t Number of vertices  :\t" << num_vertices(mesh) << std::endl;

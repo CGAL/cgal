@@ -203,7 +203,7 @@ bool read_LAS(std::istream& is,
 template <typename OutputIteratorValueType,
           typename PointOutputIterator,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool read_LAS(const std::string& filename,
+bool read_LAS(const std::filesystem::path& filename,
               PointOutputIterator output,
               const CGAL_NP_CLASS& np = parameters::default_values());
 
@@ -337,7 +337,7 @@ bool write_LAS(std::ostream& os,
    \sa `write_LAS_with_properties()`
 */
 template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool write_LAS(const std::string& filename,
+bool write_LAS(const std::filesystem::path& filename,
                const PointRange& points,
                const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING

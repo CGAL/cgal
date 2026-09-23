@@ -119,20 +119,20 @@ namespace IO {
   \return `true` if the reading was successful, `false` otherwise.
  */
 template <typename Point, typename Vector, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool read_point_set(const std::string& fname,
+bool read_point_set(const std::filesystem::path& fname,
                     CGAL::Point_set_3<Point, Vector>& ps,
                     const CGAL_NP_CLASS& np = parameters::default_values())
 {
-  const std::string ext = internal::get_file_extension(fname);
+  const std::string ext = fname.extension().string();
 
-  if(ext == "xyz" || ext == "pwn")
+  if(ext == ".xyz" || ext == ".pwn")
     return read_XYZ(fname, ps);
-  else if(ext == "off")
+  else if(ext == ".off")
     return read_OFF(fname, ps);
-  else if(ext =="ply")
+  else if(ext ==".ply")
     return read_PLY(fname, ps, np);
 #ifdef CGAL_LINKED_WITH_LASLIB
-  else if(ext == "las")
+  else if(ext == ".las")
     return read_LAS(fname, ps);
 #endif
 
@@ -214,20 +214,20 @@ namespace IO {
   \return `true` if the writing was successful, `false` otherwise.
 */
 template <typename Point, typename Vector, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool write_point_set(const std::string& fname,
+bool write_point_set(const std::filesystem::path& fname,
                      CGAL::Point_set_3<Point, Vector>& ps,
                      const CGAL_NP_CLASS& np = parameters::default_values())
 {
-  const std::string ext = internal::get_file_extension(fname);
+  const std::string ext = fname.extension().string();
 
-  if(ext == "xyz")
+  if(ext == ".xyz")
     return write_XYZ(fname, ps, np);
-  else if(ext == "off")
+  else if(ext == ".off")
     return write_OFF(fname, ps, np);
-  else if(ext == "ply")
+  else if(ext == ".ply")
     return write_PLY(fname, ps, np);
 #ifdef CGAL_LINKED_WITH_LASLIB
-  else if(ext == "las")
+  else if(ext == ".las")
     return write_LAS(fname, ps);
 #endif
 

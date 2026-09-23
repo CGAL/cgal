@@ -3,6 +3,7 @@
 #include <CGAL/tetrahedron_soup_to_lcc.h>
 #include <CGAL/draw_linear_cell_complex.h>
 #include <array>
+#include <filesystem>
 
 #include <CGAL/IO/MEDIT.h>
 
@@ -11,7 +12,7 @@ using Point_3 = CGAL::Exact_predicates_inexact_constructions_kernel::Point_3;
 
 int main(int argc, char** argv)
 {
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/elephant.mesh");
+  const std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/elephant.mesh");
 
   std::vector<Point_3> points;
   std::vector<std::array<std::size_t,4>> tetras;
