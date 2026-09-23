@@ -142,7 +142,6 @@ public:
       for (unsigned int i = 0; i < 3; ++i) {
         if (!(p_box_min[i] <= p[i] && p[i] <= p_box_max[i])) {
           result = false;
-          // CGAL_SS3_TRANSF_TRACE(*p << " is not in the box " << *p_box_min << " " << *p_box_max);
           break;
         }
       }
@@ -298,17 +297,15 @@ public:
                            const PolyhedronSPtr& polyhedron)
   {
     CGAL_SS3_DEBUG_SPTR(edge);
+    CGAL_SS3_IO_TRACE_V(16, "Merging " << edge->to_string());
+
     CGAL_SS3_DEBUG_SPTR(facet_into);
     CGAL_SS3_DEBUG_SPTR(facet_from);
+    CGAL_SS3_IO_TRACE_V(16, "From F" << facet_from->id() << " into F" << facet_into->id());
+
     CGAL_precondition(facet_into != facet_from);
     CGAL_precondition(edge->get_facet_L() == facet_from || edge->get_facet_R() == facet_from);
     CGAL_precondition(edge->get_facet_L() == facet_into || edge->get_facet_R() == facet_into);
-
-    CGAL_SS3_TRANSF_TRACE_V(16, "Merging F" << facet_from->id() << " into F" << facet_into->id() <<
-                                " Common edge E" << edge->id() << " [V" << edge->source()->id()
-                                                               << " - V" << edge->target()->id() << "]");
-    CGAL_SS3_TRANSF_TRACE_V(16, "  FROM normal: " << facet_from->get_plane().orthogonal_vector());
-    CGAL_SS3_TRANSF_TRACE_V(16, "  INTO normal: " << facet_into->get_plane().orthogonal_vector());
 
     // First remove the facet incidence info from the edge such that the facets are not deleted
     // when Polyhedron::remove_edge() is called
@@ -402,10 +399,10 @@ public:
 
   static int remove_vertices_deg_lt3(const PolyhedronSPtr& polyhedron)
   {
-    CGAL_SS3_TRANSF_TRACE("Remove vertices with degree < 3");
+    CGAL_SS3_TRANSF_TRACE_V(4, "Remove vertices with degree < 3");
 
     CGAL_SS3_DEBUG_SPTR(polyhedron);
-    CGAL_SS3_TRANSF_TRACE("  initial vertex count: " << polyhedron->vertices().size());
+    CGAL_SS3_TRANSF_TRACE_V(8, "  initial vertex count: " << polyhedron->vertices().size());
 
     int result = 0;
     std::list<VertexSPtr> vertices_toremove;
@@ -414,17 +411,17 @@ public:
       VertexSPtr vertex = *it_v++;
       if (vertex->degree() < 3) {
         vertices_toremove.push_back(vertex);
-        CGAL_SS3_TRANSF_TRACE("Enlist " << vertex->to_string());
+        CGAL_SS3_TRANSF_TRACE_V(16, "Enlist " << vertex->to_string());
         for (FacetWPtr wf : vertex->facets()) {
           FacetSPtr facet = wf.lock();
-          CGAL_SS3_TRANSF_TRACE("  Incident facet with: " << facet->vertices().size() << " vertices");
+          CGAL_SS3_TRANSF_TRACE_V(32, "  Incident facet with: " << facet->vertices().size() << " vertices");
         }
       }
     }
     it_v = vertices_toremove.begin();
     while (it_v != vertices_toremove.end()) {
       VertexSPtr vertex = *it_v++;
-      CGAL_SS3_TRANSF_TRACE("Removing " << vertex->to_string());
+      CGAL_SS3_TRANSF_TRACE_V(16, "Removing " << vertex->to_string());
 
       if (vertex->degree() == 0) {
         // degree 0 so there are no incident edges, but it might still be a vertex incident to a face...
@@ -469,7 +466,7 @@ public:
         CGAL_assertion(fL != fR);
 
         if (fL->vertices().size() == 3) {
-          CGAL_SS3_TRANSF_TRACE("Deg 2 vertex is the apex of a triangle facet (fL=" << fL->id() << ")");
+          CGAL_SS3_TRANSF_TRACE_V(16, "Deg 2 vertex is the apex of a triangle facet (fL=" << fL->id() << ")");
           EdgeSPtr third_edge;
           for (const EdgeSPtr& edge : fL->edges()) {
             if (edge != edge_src && edge != edge_tgt) {
@@ -482,7 +479,7 @@ public:
         }
 
         if (fR->vertices().size() == 3) {
-          CGAL_SS3_TRANSF_TRACE("Deg 2 vertex is the apex of a triangle facet (fR=" << fR->id() << ")");
+          CGAL_SS3_TRANSF_TRACE_V(16, "Deg 2 vertex is the apex of a triangle facet (fR=" << fR->id() << ")");
           EdgeSPtr third_edge;
           for (const EdgeSPtr& edge : fR->edges()) {
             if (edge != edge_src && edge != edge_tgt) {
@@ -520,7 +517,7 @@ public:
       ++result;
     }
 
-    CGAL_SS3_TRANSF_TRACE("  final vertex count: " << polyhedron->vertices().size());
+    CGAL_SS3_TRANSF_TRACE_V(8, "  final vertex count: " << polyhedron->vertices().size());
     CGAL_postcondition(polyhedron->is_consistent());
 
     return result;
@@ -528,18 +525,20 @@ public:
 
   static int remove_facets_deg_lt3(const PolyhedronSPtr& polyhedron)
   {
-    CGAL_SS3_TRANSF_TRACE("Remove facets with size < 3");
+    CGAL_SS3_TRANSF_TRACE_V(4, "Remove facets with size < 3");
 
     CGAL_SS3_DEBUG_SPTR(polyhedron);
-    CGAL_SS3_TRANSF_TRACE("  initial facet count: " << polyhedron->facets().size());
+    CGAL_SS3_TRANSF_TRACE_V(8, "  initial facet count: " << polyhedron->facets().size());
 
     int result = 0;
+
     std::list<FacetSPtr> facets_tomerge;
     for (const FacetSPtr& facet : polyhedron->facets()) {
       if (facet->vertices().size() < 3) {
         facets_tomerge.push_back(facet);
       }
     }
+
     for (const FacetSPtr& facet : facets_tomerge) {
       // Facet could have grown from another merge, so check again
       if (facet->vertices().size() >= 3) {
@@ -577,7 +576,7 @@ public:
       ++result;
     }
 
-    CGAL_SS3_TRANSF_TRACE("  final vertex count: " << polyhedron->vertices().size());
+    CGAL_SS3_TRANSF_TRACE_V(8, "  final vertex count: " << polyhedron->vertices().size());
     CGAL_postcondition(polyhedron->is_consistent());
 
     return result;
@@ -593,7 +592,10 @@ public:
     // - remove_facets_deg_lt3 removes facets with fewer than 3 vertices
     // so loop till nothing is done anymore
     int result = 0;
+
+    CGAL_SS3_TRANSF_TRACE_CODE(unsigned int iter = 0;)
     for (;;) {
+      CGAL_SS3_TRANSF_TRACE_V(8, "  Sanitization iteration #" << iter++);
       std::size_t vlt3 = remove_vertices_deg_lt3(polyhedron);
       std::size_t flt3 = remove_facets_deg_lt3(polyhedron);
       int partial = vlt3 + flt3;
@@ -666,7 +668,6 @@ public:
     std::optional<Point_3> point = Kernel_wrapper::intersection(*(planes[0]), *(planes[1]), *(planes[2]));
     if (!point) {
       CGAL_SS3_TRANSF_TRACE_V(1, "Error: triplet of planes does not define a point!");
-      std::abort();
       return false;
     }
 
@@ -711,7 +712,7 @@ public:
     */
   static bool reset_points(const PolyhedronSPtr& polyhedron)
   {
-    CGAL_SS3_TRANSF_TRACE("Reset point positions");
+    CGAL_SS3_TRANSF_TRACE_V(4, "Reset point positions");
     CGAL_SS3_DEBUG_SPTR(polyhedron);
     for (VertexSPtr vertex : polyhedron->vertices()) {
       if (!reset_point(vertex)) {
@@ -1022,6 +1023,9 @@ public:
 
     const Vector_3 n = facet->get_plane().orthogonal_vector();
     CGAL_precondition(n != CGAL::NULL_VECTOR);
+    CGAL_SS3_TRANSF_TRACE_V(16, "Construct triangulation of F" << facet->id());
+    CGAL_SS3_TRANSF_TRACE_V(16, "F plane: " << facet->get_plane());
+    CGAL_SS3_TRANSF_TRACE_V(16, "CDT normal: " << n);
 
     PK projection_traits(n);
     PCDT pcdt(projection_traits);
@@ -1133,7 +1137,7 @@ public:
 
   static bool triangulate_facets(const PolyhedronSPtr& polyhedron)
   {
-    CGAL_SS3_TRANSF_TRACE("Triangulate facets of polyhedron " << polyhedron->id());
+    CGAL_SS3_TRANSF_TRACE_V(4, "Triangulate facets of polyhedron " << polyhedron->id());
     CGAL_SS3_DEBUG_SPTR(polyhedron);
 
     std::list<FacetSPtr> facets_to_triangulate;

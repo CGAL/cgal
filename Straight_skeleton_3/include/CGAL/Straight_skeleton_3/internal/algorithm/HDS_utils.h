@@ -208,7 +208,6 @@ public:
                                                                 *(final_planes[2]));
     if (!point) {
       CGAL_SS3_TRANSF_TRACE_V(1,"Error: triplet of planes does not define a point!");
-      std::abort();
       return false;
     }
 

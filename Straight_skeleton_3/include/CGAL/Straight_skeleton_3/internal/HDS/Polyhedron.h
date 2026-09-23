@@ -1489,7 +1489,7 @@ public:
 
       const FT& get_speed() const
       {
-        CGAL_assertion(speed_ >= 0);
+        CGAL_assertion(speed_ > 0);
         return speed_;
       }
 
@@ -1685,7 +1685,7 @@ private:
         edge->set_facet_R(this->shared_from_this());
         edge->setFacetRListIt(it);
       } else {
-        CGAL_SS3_HDS_TRACE(edge->to_string());
+        CGAL_SS3_HDS_TRACE_V(1, edge->to_string());
         throw std::runtime_error("The given edge already has a left and a right facet.");
       }
       VertexSPtr vertex_src = edge->src(this->shared_from_this());
@@ -2147,8 +2147,8 @@ private:
         sort_vertices();
       }
       if (!result) {
-        CGAL_SS3_HDS_TRACE("Warning: Unable to make first 3 vertices convex.");
-        CGAL_SS3_HDS_TRACE(to_string());
+        CGAL_SS3_HDS_TRACE_V(1, "Warning: Unable to make first 3 vertices convex.");
+        CGAL_SS3_HDS_TRACE_V(1, to_string());
       }
 
       return result;
@@ -2411,7 +2411,7 @@ public:
     return (it_f != facets_.end());
   }
 
-  int maxVertexDegree() const
+  int max_vertex_degree() const
   {
     unsigned int max_degree = 0;
     typename std::list<VertexSPtr>::const_iterator it_v = vertices_.begin();
@@ -2618,7 +2618,7 @@ public:
     while (it_v != vertices_.end()) {
       VertexSPtr vertex = *it_v++;
       if (vertex->get_polyhedron() != this->shared_from_this()) {
-        CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << vertex->to_string());
+        CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << vertex->to_string());
         result = false;
       }
       typename std::list<EdgeWPtr>::const_iterator it_e = vertex->edges().begin();
@@ -2626,20 +2626,21 @@ public:
         EdgeWPtr edge_wptr = *it_e++;
         if (EdgeSPtr edge = edge_wptr.lock()) {
           if (!has_edge(edge)) {
-            CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
+            CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
             result = false;
           }
           if (vertex != edge->source() && vertex != edge->target()) {
-            CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << vertex->to_string());
-            CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
+            CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << vertex->to_string());
+            CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
             result = false;
           }
           if (edge->source() == edge->target()) {
-            CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->source());
+            CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << edge->source());
             result = false;
           }
         } else {
-          CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << vertex->to_string());
+          CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << vertex->to_string());
+          result = false;
         }
       }
 
@@ -2648,16 +2649,17 @@ public:
         FacetWPtr facet_wptr = *it_f++;
         if (FacetSPtr facet = facet_wptr.lock()) {
           if (!has_facet(facet)) {
-            CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << facet->to_string());
+            CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << facet->to_string());
             result = false;
           }
           if (!facet->contains_vertex(vertex)) {
-            CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << vertex->to_string());
-            CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << facet->to_string());
+            CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << vertex->to_string());
+            CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << facet->to_string());
             result = false;
           }
         } else {
-          CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << vertex->to_string());
+          CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << vertex->to_string());
+          result = false;
         }
       }
     }
@@ -2666,104 +2668,106 @@ public:
     while (it_e != edges_.end()) {
       EdgeSPtr edge = *it_e++;
       if (edge->get_polyhedron() != this->shared_from_this()) {
-        CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
+        CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
         result = false;
       }
       if (!has_vertex(edge->source())) {
-        CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
+        CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
         result = false;
       }
       if (!has_vertex(edge->target())) {
-        CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
+        CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
         result = false;
       }
       if (!edge->source()->has_incident_edge(edge)) {
-        CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
-        CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->source()->to_string());
+        CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
+        CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << edge->source()->to_string());
         result = false;
       }
       if (!edge->target()->has_incident_edge(edge)) {
-        CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
-        CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->target()->to_string());
+        CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
+        CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << edge->target()->to_string());
         result = false;
       }
       EdgeWPtr edge_wptr;
       edge_wptr = *(edge->getVertexSrcListIt());
       if (edge_wptr.lock() != edge) {
-        CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
+        CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
       }
       edge_wptr = *(edge->getVertexTgtListIt());
       if (edge_wptr.lock() != edge) {
-        CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
+        CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
+        result = false;
       }
       if (edge->get_facet_L()) {
         if (!has_facet(edge->get_facet_L())) {
-          CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
+          CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
           result = false;
         }
         if (!edge->get_facet_L()->has_incident_edge(edge)) {
-          CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
-          CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->get_facet_L()->to_string());
+          CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
+          CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << edge->get_facet_L()->to_string());
           result = false;
         }
         edge_wptr = *(edge->getFacetLListIt());
         if (edge_wptr.lock() != edge) {
-          CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
+          CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
           result = false;
         }
       } else {
-        CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
+        CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
         result = false;
       }
       if (edge->get_facet_R()) {
         if (!has_facet(edge->get_facet_R())) {
-          CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
+          CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
           result = false;
         }
         if (!edge->get_facet_R()->has_incident_edge(edge)) {
-          CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
-          CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->get_facet_R()->to_string());
+          CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
+          CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << edge->get_facet_R()->to_string());
           result = false;
         }
         edge_wptr = *(edge->getFacetRListIt());
         if (edge_wptr.lock() != edge) {
-          CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
+          CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
+          result = false;
         }
       } else {
-        CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
+        CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
         result = false;
       }
       if (edge->source()->degree() == 3) {
         if (edge->get_facet_src()) {
           if (!has_facet(edge->get_facet_src())) {
-            CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
+            CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
             result = false;
           }
           if (!(edge->get_facet_src()->has_vertex(edge->source()) ||
                 edge->get_facet_src()->has_vertex(edge->target()))) {
-            CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
-            CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->get_facet_src()->to_string());
+            CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
+            CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << edge->get_facet_src()->to_string());
             result = false;
           }
         } else {
-          CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
+          CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
           result = false;
         }
       }
       if (edge->target()->degree() == 3) {
         if (edge->get_facet_tgt()) {
           if (!has_facet(edge->get_facet_tgt())) {
-            CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
+            CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
             result = false;
           }
           if (!(edge->get_facet_tgt()->has_vertex(edge->source()) ||
                 edge->get_facet_tgt()->has_vertex(edge->target()))) {
-            CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
-            CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->get_facet_tgt()->to_string());
+            CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
+            CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << edge->get_facet_tgt()->to_string());
             result = false;
           }
         } else {
-          CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
+          CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
           result = false;
         }
       }
@@ -2773,13 +2777,13 @@ public:
     while (it_f != facets_.end()) {
       FacetSPtr facet = *it_f++;
       if (facet->get_polyhedron() != this->shared_from_this()) {
-        CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << facet->to_string());
+        CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << facet->to_string());
         result = false;
       }
       // ---
       CGAL::unordered_flat_set<VertexSPtr> unique_vertices { facet->vertices().begin(), facet->vertices().end() };
       if (facet->vertices().size() != unique_vertices.size()) {
-        CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << facet->to_string());
+        CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << facet->to_string());
         result = false;
       }
       typename std::list<VertexSPtr>::const_iterator it_v = facet->vertices().begin();
@@ -2799,25 +2803,25 @@ public:
       // ---
       CGAL::unordered_flat_set<EdgeSPtr> unique_edges { facet->edges().begin(), facet->edges().end() };
       if (facet->edges().size() != unique_edges.size()) {
-        CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << facet->to_string());
+        CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << facet->to_string());
         result = false;
       }
       typename std::list<EdgeSPtr>::const_iterator it_e = facet->edges().begin();
       while (it_e != facet->edges().end()) {
         EdgeSPtr edge = *it_e++;
         if (edge->get_facet_L() != facet && edge->get_facet_R() != facet) {
-          CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << facet->to_string());
-          CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
+          CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << facet->to_string());
+          CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
           result = false;
         }
         if (!facet->contains_vertex(edge->source())) {
-          CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << facet->to_string());
-          CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
+          CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << facet->to_string());
+          CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
           result = false;
         }
         if (!facet->contains_vertex(edge->target())) {
-          CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << facet->to_string());
-          CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
+          CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << facet->to_string());
+          CGAL_SS3_HDS_TRACE_V(1, "Inconsistency @ L" << __LINE__ << "\n" << edge->to_string());
           result = false;
         }
         if (!has_edge(edge)) {

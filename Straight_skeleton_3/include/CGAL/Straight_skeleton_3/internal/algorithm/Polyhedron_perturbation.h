@@ -2927,7 +2927,7 @@ public:
                                           const PID current_pid,
                                           const FacetSPtr& prev_facet,
                                           const FacetSPtr& current_facet,
-                                          const FacetSPtr& next_facet) -> std::pair<PID, bool>
+                                          const FacetSPtr& /*next_facet*/) -> std::pair<PID, bool>
       {
         std::set<PID> incident_boundary_points;
 
@@ -2979,6 +2979,7 @@ public:
           const FacetSPtr facet_r = e->get_facet_R();
           CGAL_SS3_DEBUG_SPTR(facet_l);
           CGAL_SS3_DEBUG_SPTR(facet_r);
+          CGAL_SS3_TRANSF_TRACE_V(64, "LF/RF = " << facet_l->id() << " " << facet_r->id());
           const Plane_3& plane_l = facet_l->get_plane();
           const Plane_3& plane_r = facet_r->get_plane();
           CGAL_SS3_TRANSF_TRACE_V(64, "planes = " << plane_l << " " << plane_r);
@@ -3099,7 +3100,7 @@ public:
         EdgeSPtr next_edge = edge->next(vertex);
         FacetSPtr next_facet = next_edge->left(vertex);
 
-        CGAL_SS3_TRANSF_TRACE_V(64, "walking on " << facet->id() << " (prev: " << prev_facet->id() << ")");
+        CGAL_SS3_TRANSF_TRACE_V(64, "-- walking on " << facet->id() << " (prev: " << prev_facet->id() << ")");
 
         PID current_pid = edge_start_pid[edge];
         CGAL_assertion(current_pid != PID(-1));
@@ -3119,7 +3120,7 @@ public:
           CGAL_assertion(is_boundary_point[current_pid] && is_boundary_point[next_pid]);
 
 #ifdef CGAL_SS3_DUMP_FILES
-          link_out << "2 " << normalized_points[current_pid] << " " << normalized_points[next_pid] << "\n";
+          link_out << "2 " << normalized_points[current_pid] << " " << normalized_points[next_pid] << std::endl;
 #endif
           mark_cells(current_pid, next_pid, facet);
 
@@ -3135,11 +3136,7 @@ public:
       }
       while (edge != start_edge);
 
-#ifdef CGAL_SS3_DUMP_FILES
-      link_out.close();
-#endif
-
-      CGAL_SS3_TRANSF_TRACE_V(64, "Known cells marked from star link walk");
+      CGAL_SS3_TRANSF_TRACE_V(32, "Known cells marked from star link walk");
 
 #ifdef CGAL_SS3_DUMP_FILES
       // intermediate info dump
@@ -3213,7 +3210,8 @@ public:
       }
 #endif
 
-      // Sanity checks:
+#ifndef NDEBUG
+      // Sanity checks
       // - a boundary facet cannot have an OUTSIDE volume on its bottom and an INSIDE volume on its top
       for (std::size_t i=0; i<polygons.size(); ++i) {
         if (!polygon_to_facet[i])
@@ -3244,9 +3242,11 @@ public:
         }
       }
       CGAL_assertion(found_facets.size() == vertex->degree());
+#endif
 
       // Now, we want to deal with the tentative cells
-      bool tentative_cell_n = 0;
+
+      CGAL_SS3_TRANSF_TRACE_V(32, "Building model...");
 
       using operations_research::Domain;
       using operations_research::sat::BoolVar;
@@ -3354,8 +3354,9 @@ public:
           CGAL_assertion(!inc_polygons.empty());
           std::vector<IntVar> inc;
           inc.reserve(inc_polygons.size());
-          for (FID fid : inc_polygons)
+          for (const FID fid : inc_polygons) {
             inc.emplace_back(b[fid]);
+          }
           model.AddMaxEquality(e_b.back(), inc);
         }
       }
@@ -3369,8 +3370,9 @@ public:
         CGAL_assertion(!inc_polygons.empty());
         std::vector<IntVar> inc;
         inc.reserve(inc_polygons.size());
-        for (FID fid : vertex_incident_facets[v])
+        for (const FID fid : vertex_incident_facets[v]) {
           inc.emplace_back(b[fid]);
+        }
         model.AddMaxEquality(v_b[v], inc);
       }
       LinearExpr V_b = LinearExpr::Sum(v_b);
@@ -3385,8 +3387,9 @@ public:
         if (FacetSPtr f = wf.lock()) {
           std::vector<BoolVar> b_c;
           for (FID fid=0; fid<polygons.size(); ++fid) {
-            if (polygon_to_facet[fid] == f)
+            if (polygon_to_facet[fid] == f) {
               b_c.push_back(b[fid]);
+            }
           }
           CGAL_assertion(!b_c.empty());
 
@@ -3400,12 +3403,14 @@ public:
             for (auto& pid1_and_edges : edge_map[pid0]) {
               auto& inc_polygons = pid1_and_edges.second;
               std::vector<IntVar> inc;
-              for (FID fid : inc_polygons) {
-                if (polygon_to_facet[fid] == f)
+              for (const FID fid : inc_polygons) {
+                if (polygon_to_facet[fid] == f) {
                   inc.emplace_back(b[fid]);
+                }
               }
-              if (inc.empty())
+              if (inc.empty()) {
                 continue;
+              }
               e_c.push_back(model.NewBoolVar());
               model.AddMaxEquality(e_c.back(), inc);
             }
@@ -3421,12 +3426,14 @@ public:
           for (int v=0; v<points.size(); ++v) {
             std::vector<IntVar> inc;
             std::unordered_set<FID>& inc_polygons = vertex_incident_facets[v];
-            for (FID fid : inc_polygons) {
-              if (polygon_to_facet[fid] == f)
+            for (const FID fid : inc_polygons) {
+              if (polygon_to_facet[fid] == f) {
                 inc.emplace_back(b[fid]);
+              }
             }
-            if (inc.empty())
+            if (inc.empty()) {
               continue;
+            }
             v_c.push_back(model.NewBoolVar());
             model.AddMaxEquality(v_c.back(), inc);
           }
@@ -3448,8 +3455,9 @@ public:
         for (const auto& pid1_and_edges : edge_map[pid0]) {
           LinearExpr inc_n = 0;
           const auto& inc_polygons = pid1_and_edges.second;
-          for (FID fid : inc_polygons)
+          for (const FID fid : inc_polygons) {
             inc_n += b[fid];
+          }
           model.AddLessOrEqual(inc_n, 2);
         }
       }
@@ -3465,9 +3473,10 @@ public:
             for (const auto& pid1_and_edges : edge_map[pid0]) {
               LinearExpr inc_n = 0;
               const auto& inc_polygons = pid1_and_edges.second;
-              for (FID fid : inc_polygons) {
-                if (polygon_to_facet[fid] == f)
+              for (const FID fid : inc_polygons) {
+                if (polygon_to_facet[fid] == f) {
                   inc_n += b[fid];
+                }
               }
               model.AddLessOrEqual(inc_n, 2);
             }
@@ -3687,7 +3696,7 @@ public:
       // Since vertex manifoldness is difficult to express with constraints, and we know a solution exists
       // try and try till we succeed
       int iteration = -1;
-      const int max_iterations = 1000; // @fixme could probably calculate that with Catalan numbers
+      const int max_iterations = 1000; // @todo calculate a better upper bound
 
       while (iteration < max_iterations) {
         ++iteration;
@@ -3777,8 +3786,9 @@ public:
               CGAL_assertion(e.first != CC_in_out_flag::TBD);
               CGAL_assertion(e.first != CC_in_out_flag::UNINITIALIZED);
 
-              if (solution[i] != e.first)
+              if (solution[i] != e.first) {
                 continue;
+              }
 
               for (FID fid : volume_CCs[i]) {
                 cc_polygons.push_back(polygons[fid]);
@@ -3948,10 +3958,10 @@ public:
 
       // a valid partition has:
       // - C1) all cells are either inside or outside
-      // - C2) boundary is manifold
+      // - C2) manifold boundary
       // - C3) only 1 "inside" face-connected component & 1 "outside" face-CC
       // - C4) only 1 simply connected component per input face
-      auto is_valid_partition = [&](const std::vector<std::vector<FID> >& volume_CCs,
+      auto is_valid_partition = [&](const std::vector<std::vector<FID> >& /*volume_CCs*/,
                                     const std::vector<std::array<VID, 2>>& face_volume_IDs,
                                     const std::vector<CC_in_out_flag>& in_out_flags,
                                     const std::vector<std::vector<PID> >& polygons,

@@ -174,8 +174,8 @@ public:
       facet->set_plane(pl);
       result->add_facet(facet);
 
-      const FT weight = get(weight_pmap, fi);
-      CGAL_assertion(weight >= 0);
+      const FT weight = get(weight_pmap, fd);
+      CGAL_assertion(weight > 0);
 
       SkelFacetDataSPtr data = Skeleton_facet_data::create(facet);
       data->set_speed(weight);
@@ -184,7 +184,7 @@ public:
 
     for (const EdgeSPtr& edge : result->edges()) {
       if (!(edge->get_facet_L() && edge->get_facet_R())) {
-        CGAL_SS3_IO_TRACE_V(1, "Warning: Polyhedron has no closed boundary.");
+        CGAL_SS3_IO_TRACE_V(1, "Warning: polyhedron has no closed boundary.");
         CGAL_SS3_IO_TRACE_V(1, edge->to_string());
       }
     }
@@ -236,7 +236,7 @@ public:
       return polyhedron;
 
 #ifdef CGAL_SS3_DUMP_FILES
-    IO::write_OBJ("results/loaded.obj", polyhedron, parameters::do_not_triangulate_faces(true));
+    IO::write_OBJ("results/coplanar_merge_before.obj", polyhedron, parameters::do_not_triangulate_faces(true));
 #endif
 
 #define CGAL_SS3_DETECT_COPLANARITIES_WITH_NORMAL_CHANGE
@@ -294,8 +294,8 @@ public:
                                                        .maximum_distance(max_distance)
                                                        .edge_is_constrained_map(CGAL::make_random_access_property_map(ecm)));
 
-    CGAL_SS3_TRANSF_TRACE_CODE(for (face_descriptor f : faces(tmesh)))
-    CGAL_SS3_TRANSF_TRACE("facet " << f << " is in region " << region_ids[f]);
+    CGAL_SS3_IO_TRACE_CODE(for (face_descriptor f : faces(tmesh)))
+    CGAL_SS3_IO_TRACE_V(16, "facet " << f << " is in region " << region_ids[f]);
 
     // the almost-coplanar merge is performed after the conversion to the Polyhedron
     // data structure because we want to be able to create faces that have holes,
@@ -330,7 +330,7 @@ public:
     CGAL_SS3_TRANSF_TRACE("Converted, " << polyhedron->facets().size() << " facets");
 
 #ifdef CGAL_SS3_DUMP_FILES
-    IO::write_OBJ("results/converted.obj", polyhedron, parameters::do_not_triangulate_faces(false));
+    IO::write_OBJ("results/converted.obj", polyhedron, parameters::do_not_triangulate_faces(true));
 #endif
 
     return polyhedron;
@@ -370,7 +370,7 @@ public:
 
     // @todo do not systematically triangulate, but use this NP and if it is false,
     // only triangulate what is not representable otherwise (see code in PMP::remesh_planar_faces)
-    bool do_triangulate = !choose_parameter(get_parameter(np, CGAL::internal_np::do_not_triangulate_faces), false);
+    // bool do_triangulate = !choose_parameter(get_parameter(np, CGAL::internal_np::do_not_triangulate_faces), false);
 
     std::vector<Point> points;
     std::vector<std::vector<std::size_t>> soup_faces;
@@ -424,7 +424,7 @@ public:
 
         if(v0->point() == v1->point())
         {
-          CGAL_SS3_IO_TRACE("Warning: degenerate edge at " << v0->point());
+          CGAL_SS3_IO_TRACE_V(1, "Warning: degenerate edge at " << v0->point());
           break;
         }
         else
@@ -438,9 +438,9 @@ public:
           }
           catch(const typename PCDT::Intersection_of_constraints_exception&)
           {
-            CGAL_SS3_IO_TRACE("Error: Intersection of constraints");
-            CGAL_SS3_IO_TRACE("While inserting " << v0->point() << " || " << v1->point());
-            CGAL_SS3_IO_TRACE(facet->to_string());
+            CGAL_SS3_IO_TRACE_V(1, "Error: Intersection of constraints");
+            CGAL_SS3_IO_TRACE_V(1, "While inserting " << v0->point() << " || " << v1->point());
+            CGAL_SS3_IO_TRACE_V(1, facet->to_string());
             CGAL_assertion_msg(false, "Intersections in CDT2 are not allowed");
             return false;
           }
@@ -450,7 +450,7 @@ public:
 
       if(ne < 3) // degenerate facet
       {
-        CGAL_SS3_IO_TRACE("Warning: skipping degenerate facet");
+        CGAL_SS3_IO_TRACE_V(1, "Warning: skipping degenerate facet");
         continue;
       }
 

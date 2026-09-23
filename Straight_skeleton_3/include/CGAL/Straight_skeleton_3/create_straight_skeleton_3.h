@@ -62,13 +62,13 @@ construct_skeleton(const TriangleMesh& tmesh,
 
   if constexpr (!parameters::is_default_parameter<NamedParameters, internal_np::config_file_path_t>::value) {
     std::string str_conf_file = parameters::get_parameter(np, internal_np::config_file_path);
-    CGAL_SS3_IO_TRACE("Loading configuration from file: " << str_conf_file);
+    CGAL_SS3_IO_TRACE_V(1, "Loading configuration from file: " << str_conf_file);
     if (!config->load(str_conf_file)) {
-      CGAL_SS3_IO_TRACE("Error: Failed to load configuration file: " << str_conf_file);
+      CGAL_SS3_IO_TRACE_V(1, "Error: Failed to load configuration file: " << str_conf_file);
       return { };
     }
   } else {
-    CGAL_SS3_IO_TRACE("Using default configuration values (no config file path provided)");
+    CGAL_SS3_IO_TRACE_V(1, "Using default configuration values (no config file path provided)");
   }
 
   const std::filesystem::path save_path = choose_parameter(get_parameter(np, internal_np::io_path),
@@ -105,10 +105,10 @@ construct_skeleton(const TriangleMesh& tmesh,
   // borders and disconnected facet connected components
   PolyhedronSPtr p = FaceGraphIO::convert(tmesh, np.outward_offsetting(outwards));
   CGAL_SS3_DEBUG_SPTR(p);
-  CGAL_SS3_TRACE("Post conversion: " << p->vertices().size() << " NV " << p->facets().size() << " NF");
+  CGAL_SS3_TRACE_V(2, "Post conversion: " << p->vertices().size() << " NV " << p->facets().size() << " NF");
 
   Perturbation::apply_rand_perturbation(p);
-  CGAL_SS3_TRACE("Post perturbation: " << p->vertices().size() << " NV " << p->facets().size() << " NF");
+  CGAL_SS3_TRACE_V(2, "Post perturbation: " << p->vertices().size() << " NV " << p->facets().size() << " NF");
 
   using Default_visitor = SS3i::algorithm::Default_mesh_offset_visitor<Geom_traits>;
   using Visitor = typename internal_np::Lookup_named_param_def<internal_np::visitor_t,

@@ -52,18 +52,18 @@ public:
   {
     auto res = CGAL::intersection(plane1, plane2, plane3);
     if (!res) {
-      CGAL_SS3_TRAITS_TRACE("Intersection of 3 planes is... not?");
+      CGAL_SS3_TRAITS_TRACE_V(1, "Intersection of 3 planes is... not?");
     } else if (const Point_3* ipoint = std::get_if<Point_3>(&*res)) {
       return *ipoint;
     } else {
       CGAL_SS3_TRAITS_TRACE_CODE(if (const Line_3* iline = std::get_if<Line_3>(&*res)) {)
       CGAL_SS3_TRAITS_TRACE_CODE(CGAL_USE(iline);)
-      CGAL_SS3_TRAITS_TRACE("Intersection of 3 planes is a line");
+      CGAL_SS3_TRAITS_TRACE_V(1, "Intersection of 3 planes is a line");
       CGAL_SS3_TRAITS_TRACE_CODE(} else if(const Plane_3* iplane = std::get_if<Plane_3>(&*res)) {)
       CGAL_SS3_TRAITS_TRACE_CODE(CGAL_USE(iplane);)
-      CGAL_SS3_TRAITS_TRACE("Intersection of 3 planes is a plane");
+      CGAL_SS3_TRAITS_TRACE_V(1, "Intersection of 3 planes is a plane");
       CGAL_SS3_TRAITS_TRACE_CODE(} else {)
-      CGAL_SS3_TRAITS_TRACE("Intersection of 3 planes is... something else?");
+      CGAL_SS3_TRAITS_TRACE_V(1, "Intersection of 3 planes is... something else?");
       CGAL_SS3_TRAITS_TRACE_CODE(})
     }
     return std::nullopt;
@@ -74,15 +74,15 @@ public:
   {
     auto res = CGAL::intersection(plane1, plane2);
     if (!res) {
-      CGAL_SS3_TRAITS_TRACE("Intersection of 2 planes is... not?");
+      CGAL_SS3_TRAITS_TRACE_V(1, "Intersection of 2 planes is... not?");
     } else if (const Line_3 *iline = std::get_if<Line_3>(&*res)) {
       return *iline;
     } else {
       CGAL_SS3_TRAITS_TRACE_CODE(if (const Plane_3* iplane = std::get_if<Plane_3>(&*res)) {)
       CGAL_SS3_TRAITS_TRACE_CODE(CGAL_USE(iplane);)
-      CGAL_SS3_TRAITS_TRACE("Intersection of 2 planes is a plane");
+      CGAL_SS3_TRAITS_TRACE_V(1, "Intersection of 2 planes is a plane");
       CGAL_SS3_TRAITS_TRACE_CODE(} else {)
-      CGAL_SS3_TRAITS_TRACE("Intersection of plane and line is... something else?");
+      CGAL_SS3_TRAITS_TRACE_V(1, "Intersection of plane and line is... something else?");
       CGAL_SS3_TRAITS_TRACE_CODE(})
     }
     return std::nullopt;
@@ -93,15 +93,15 @@ public:
   {
     auto res = CGAL::intersection(plane, line);
     if (!res) {
-      CGAL_SS3_TRAITS_TRACE("Intersection of plane and line is... not?");
+      CGAL_SS3_TRAITS_TRACE_V(1, "Intersection of plane and line is... not?");
     } else if (const Point_3 *ipoint = std::get_if<Point_3>(&*res)) {
       return *ipoint;
     } else {
       CGAL_SS3_TRAITS_TRACE_CODE(if (const Line_3 *iline = std::get_if<Line_3>(&*res)) {)
       CGAL_SS3_TRAITS_TRACE_CODE(CGAL_USE(iline);)
-      CGAL_SS3_TRAITS_TRACE("Intersection of plane and line is the line itself");
+      CGAL_SS3_TRAITS_TRACE_V(1, "Intersection of plane and line is the line itself");
       CGAL_SS3_TRAITS_TRACE_CODE(} else {)
-      CGAL_SS3_TRAITS_TRACE("Intersection of plane and line is... something else?");
+      CGAL_SS3_TRAITS_TRACE_V(1, "Intersection of plane and line is... something else?");
       CGAL_SS3_TRAITS_TRACE_CODE(})
 
       CGAL_warning_msg(false, "intersection of plane and line failed to produce a point");

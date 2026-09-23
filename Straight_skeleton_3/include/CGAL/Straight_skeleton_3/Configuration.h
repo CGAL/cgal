@@ -153,7 +153,6 @@ public:
 
   bool load(const std::string& filename)
   {
-    CGAL_SS3_IO_TRACE(filename);
     bool result = false;
     std::ifstream input(filename.c_str());
     if (input.is_open()) {
@@ -161,7 +160,7 @@ public:
       result = true;
       input.close();
     } else {
-      CGAL_SS3_IO_TRACE("Error: Configuration file not found.");
+      CGAL_SS3_IO_TRACE_V(1, "Error: Configuration file not found.");
     }
     return result;
   }
@@ -206,7 +205,7 @@ public:
     std::string mapkey = section + "." + key;
     if (properties_.find(mapkey) == properties_.end()) {
       // map does not contain this key
-      CGAL_SS3_IO_TRACE("Error: key=" << mapkey << " not found.");
+      CGAL_SS3_IO_TRACE_V(1, "Error: key=" << mapkey << " not found.");
     } else {
       result = properties_[mapkey];
     }

@@ -66,12 +66,12 @@ struct Output_processor
     std::unordered_map<face_descriptor_out, std::size_t> of2fi;
     auto of2fi_pm = boost::make_assoc_property_map(of2fi);
 
-    CGAL_SS3_TRACE("Post processing of result @ time: " << save_time)
+    CGAL_SS3_TRACE_V(2, "Post processing of result @ time: " << save_time)
 
     PolyhedronSPtr result_p = results_p[result_index];
     CGAL_assertion(result_p && result_p->is_consistent());
 
-    CGAL_SS3_TRACE("At time: " << save_time << ", Polyhedron with " << result_p->vertices().size()
+    CGAL_SS3_TRACE_V(2, "At time: " << save_time << ", Polyhedron with " << result_p->vertices().size()
                       << " vertices and " << result_p->facets().size() << " faces");
 
     PolygonMeshOut result_t;
@@ -101,11 +101,11 @@ struct Output_processor
     CGAL_postcondition(!CGAL::Polygon_mesh_processing::has_degenerate_faces(result_t));
     CGAL_postcondition(!CGAL::Polygon_mesh_processing::does_self_intersect(result_t));
 
-    CGAL_SS3_TRACE("At time: " << save_time << ", Facegraph with " << num_vertices(result_t)
+    CGAL_SS3_TRACE_V(2, "At time: " << save_time << ", Facegraph with " << num_vertices(result_t)
                       << " vertices and " << num_faces(result_t) << " faces");
 
     if (outwards) {
-      CGAL_SS3_TRACE("Reversing face orientations...");
+      CGAL_SS3_TRACE_V(2, "Reversing face orientations...");
       CGAL::Polygon_mesh_processing::reverse_face_orientations(result_t);
     }
 

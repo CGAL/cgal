@@ -76,16 +76,16 @@ bool write_OBJ(const std::string& filename,
 
   bool do_triangulate = !choose_parameter(get_parameter(np, CGAL::internal_np::do_not_triangulate_faces), false);
 
-  CGAL_SS3_IO_TRACE("-- OBJ::Save(Polyhedron) to " << filename << " --");
-  CGAL_SS3_IO_TRACE("   do_triangulate: " << std::boolalpha << do_triangulate);
-  CGAL_SS3_IO_TRACE(polyhedron->vertices().size() << " NV, " << polyhedron->facets().size() << " NF");
+  CGAL_SS3_IO_TRACE_V(8, "-- OBJ::Save(Polyhedron) to " << filename << " --");
+  CGAL_SS3_IO_TRACE_V(8, "   do_triangulate: " << std::boolalpha << do_triangulate);
+  // CGAL_SS3_IO_TRACE_V(8, "Saving to OBJ:\n" << polyhedron->to_string());
+  CGAL_SS3_IO_TRACE_V(8, polyhedron->vertices().size() << " NV, " << polyhedron->facets().size() << " NF");
 
-  // CGAL_SS3_IO_TRACE("Saving to OBJ:\n" << polyhedron->to_string());
-
-  // we can tolerate intersections for OBJ::save because it is only used for debugging
-  // CGAL::Exact_intersections_tag
-  // CGAL::No_constraint_intersection_requiring_constructions_tag
+  // If we want to tolerate intersections for OBJ::save() during debugging
+  // using Itag = CGAL::Exact_intersections_tag;
+  // using Itag = CGAL::No_constraint_intersection_requiring_constructions_tag;
   using Itag = CGAL::No_constraint_intersection_requiring_constructions_tag;
+
   using PK = CGAL::Projection_traits_3<GeomTraits>;
   using PVbb = CGAL::Triangulation_vertex_base_with_info_2<VertexSPtr, PK>;
   using PVb = CGAL::Triangulation_vertex_base_2<PK, PVbb>;
@@ -145,7 +145,7 @@ bool write_OBJ(const std::string& filename,
         VertexSPtr v1 = edge->tgt(facet);
 
         if (v0->point() == v1->point()) {
-          CGAL_SS3_IO_TRACE("Degenerate edge @ " << v0->point());
+          CGAL_SS3_IO_TRACE_V(64, "Warning: degenerate edge @ " << v0->point());
 
           CGAL_assertion(v0->degree() != 1); // @todo handle that...
           VertexSPtr vm1 = edge->prev(facet)->src(facet);
@@ -166,9 +166,9 @@ bool write_OBJ(const std::string& filename,
           }
           catch(const typename PCDT::Intersection_of_constraints_exception&)
           {
-            CGAL_SS3_IO_TRACE("Warning: Intersection of constraints");
-            CGAL_SS3_IO_TRACE("While inserting " << v0->point() << " || " << v1->point());
-            CGAL_SS3_IO_TRACE(facet->to_string());
+            CGAL_SS3_IO_TRACE_V(1, "Warning: Intersection of constraints");
+            CGAL_SS3_IO_TRACE_V(1, "While inserting " << v0->point() << " || " << v1->point());
+            CGAL_SS3_IO_TRACE_V(1, facet->to_string());
             CGAL_warning_msg(false, "Intersections in CDT2 are not allowed");
             return false;
           }
@@ -188,7 +188,7 @@ bool write_OBJ(const std::string& filename,
       }
 
       if (ne < 3) { // degenerate facet
-        CGAL_SS3_IO_TRACE("Warning: skipping degenerate facet");
+        CGAL_SS3_IO_TRACE_V(1, "Warning: skipping degenerate facet");
         continue;
       }
 
@@ -265,12 +265,12 @@ bool write_OBJ(const std::string& filename,
     set_stream_precision_from_NP(oss, np);
     ofs << oss.str();
   } else {
-    CGAL_SS3_IO_TRACE("Error: failed to open file");
+    CGAL_SS3_IO_TRACE_V(1, "Error: failed to open file: " << filename.c_str());
     CGAL_assertion(false);
     return false;
   }
 
-  CGAL_SS3_IO_TRACE("-- Write OBJ end --");
+  CGAL_SS3_IO_TRACE_V(8, "-- Write OBJ end --");
   return true;
 }
 
@@ -323,8 +323,8 @@ bool write_OBJ(const std::string& filename,
   using PCDT_VH = typename PCDT::Vertex_handle;
   using PCDT_FH = typename PCDT::Face_handle;
 
-  CGAL_SS3_IO_TRACE("-- OBJ::Save(Skeleton) to " << filename << " --");
-  CGAL_SS3_IO_TRACE(skeleton->nodes().size() << " NN, " << skeleton->sheets().size() << " NS");
+  CGAL_SS3_IO_TRACE_V(8, "-- OBJ::Save(Skeleton) to " << filename << " --");
+  CGAL_SS3_IO_TRACE_V(8, skeleton->nodes().size() << " NN, " << skeleton->sheets().size() << " NS");
 
   std::stringstream oss;
   set_stream_precision_from_NP(oss, np);
@@ -353,11 +353,11 @@ bool write_OBJ(const std::string& filename,
   for (const SheetSPtr& sheet : skeleton->sheets()) {
     const auto& nodes = sheet->nodes();
 
-    CGAL_SS3_IO_TRACE("  Sheet #nodes " << nodes.size());
-    CGAL_SS3_IO_TRACE("  Sheet #arcs " << sheet->arcs().size());
+    CGAL_SS3_IO_TRACE_V(16, "  Sheet #nodes " << nodes.size());
+    CGAL_SS3_IO_TRACE_V(16, "  Sheet #arcs " << sheet->arcs().size());
 
     if (nodes.size() < 3) {
-      CGAL_SS3_IO_TRACE("Sheet with fewer than 3 nodes found. Skipping.");
+      CGAL_SS3_IO_TRACE_V(16, "Sheet with fewer than 3 nodes found. Skipping.");
       continue;
     }
 
@@ -390,7 +390,7 @@ bool write_OBJ(const std::string& filename,
 
       std::map<NodeSPtr, PCDT_VH> face_vhs;
       for (const NodeSPtr& node : nodes) {
-        CGAL_SS3_IO_TRACE(" CDT add node " << node->id());
+        CGAL_SS3_IO_TRACE_V(64, " CDT add node " << node->id());
         auto res = face_vhs.emplace(node, PCDT_VH());
         CGAL_warning_msg(res.second, "Node should not be found twice in the sheet's nodes");
         if (res.second) {
@@ -412,7 +412,7 @@ bool write_OBJ(const std::string& filename,
         try {
           pcdt.insert_constraint(vh0, vh1);
         } catch(const typename PCDT::Intersection_of_constraints_exception&) {
-          CGAL_SS3_IO_TRACE("Warning: Intersection of constraints in sheet triangulation");
+          CGAL_SS3_IO_TRACE_V(1, "Warning: Intersection of constraints in sheet triangulation");
           CGAL_warning_msg(false, "Intersections in CDT2 are not allowed");
           return false;
         }
@@ -456,7 +456,7 @@ bool write_OBJ(const std::string& filename,
     return false;
   }
 
-  CGAL_SS3_IO_TRACE("-- Write OBJ end --");
+  CGAL_SS3_IO_TRACE_V(8, "-- Write OBJ end --");
   return true;
 }
 

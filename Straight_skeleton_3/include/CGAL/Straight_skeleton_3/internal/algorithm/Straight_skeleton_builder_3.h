@@ -231,7 +231,6 @@ private:
   using Abstract_vertex_splitter_sptr = std::shared_ptr<Abstract_vertex_splitter>;
   using Combi_vertex_splitter = algorithm::Combi_vertex_splitter<GeomTraits>;
   using Convex_vertex_splitter = algorithm::Convex_vertex_splitter<GeomTraits>;
-  using Arr_vertex_splitter = algorithm::Arr_vertex_splitter<GeomTraits>;
 
 private:
   // Events
@@ -288,7 +287,6 @@ private:
   using Transformation = algorithm::Polyhedron_transformation<GeomTraits>;
   using Perturbation = algorithm::Polyhedron_perturbation<GeomTraits>;
   using Self_intersection = algorithm::Self_intersection<GeomTraits>;
-  using FaceGraphIO = IO::FaceGraphIO<GeomTraits>;
 
 private:
   using PQ = std::priority_queue<Abstract_event_sptr,
@@ -367,11 +365,9 @@ public:
       vertex_splitter_ = Combi_vertex_splitter::create();
     } else if (s_vertex_splitter.compare("Convex_vertex_splitter") == 0) {
       vertex_splitter_ = Convex_vertex_splitter::create();
-    } else if (s_vertex_splitter.compare("Arr_vertex_splitter") == 0) {
-      vertex_splitter_ = Arr_vertex_splitter::create();
     } else {
-      CGAL_SS3_SPLITTER_TRACE("Warning: option '" << s_vertex_splitter << "' not found.");
-      CGAL_SS3_SPLITTER_TRACE("Using 'Combi_vertex_splitter'.");
+      CGAL_SS3_SPLITTER_TRACE_V(1, "Warning: option '" << s_vertex_splitter << "' not found.");
+      CGAL_SS3_SPLITTER_TRACE_V(1, "Using 'Combi_vertex_splitter'.");
       vertex_splitter_ = Combi_vertex_splitter::create();
     }
   }
@@ -386,8 +382,8 @@ public:
     } else if (s_edge_event.compare("flip") == 0) {
       edge_event_ = 2;
     } else {
-      CGAL_SS3_CORE_TRACE("Warning: option '" << s_edge_event << "' not found.");
-      CGAL_SS3_CORE_TRACE("Using option 'convex'.");
+      CGAL_SS3_CORE_TRACE_V(1, "Warning: option '" << s_edge_event << "' not found.");
+      CGAL_SS3_CORE_TRACE_V(1, "Using option 'convex'.");
       edge_event_ = 0;
     }
   }
@@ -840,7 +836,7 @@ public:
   {
     CGAL_SS3_DEBUG_SPTR(polyhedron);
 
-    CGAL_SS3_CORE_TRACE("Input: " << polyhedron->vertices().size() << " NV " << polyhedron->facets().size() << " NF");
+    CGAL_SS3_CORE_TRACE_V(2, "Input: " << polyhedron->vertices().size() << " NV " << polyhedron->facets().size() << " NF");
 
     for (const VertexSPtr& vertex : polyhedron->vertices()) {
       CGAL_precondition(vertex->degree() >= 3);
@@ -1476,17 +1472,12 @@ public:
     CGAL_SS3_CORE_TRACE_V(8, "########################################");
 
     CGAL_SS3_DEBUG_SPTR(event);
-    CGAL_SS3_CORE_TRACE(event->to_string());
 
     const FT& event_time = event->time();
 
     // Bisector check
     EdgeSPtr edge_1 = event->get_edge_1();
     EdgeSPtr edge_2 = event->get_edge_2();
-    CGAL_SS3_CORE_TRACE(edge_1->get_facet_L()->id());
-    CGAL_SS3_CORE_TRACE(edge_1->get_facet_R()->id());
-    CGAL_SS3_CORE_TRACE(edge_2->get_facet_L()->id());
-    CGAL_SS3_CORE_TRACE(edge_2->get_facet_R()->id());
 
     Point_3 point = intersection_point_offset_planes(edge_1->get_facet_L(),
                                                      edge_1->get_facet_R(),
@@ -5631,9 +5622,6 @@ public:
         return handle_flip_vertex_event(flip_vertex_event, current_time, time_future_bound, polyhedron);
       }
     }
-
-    CGAL_unreachable();
-    std::abort();
   }
 
   Event_status handle_vertex_event(const Vertex_event_sptr& event,
@@ -6874,7 +6862,7 @@ public:
   StraightSkeletonSPtr get_skeleton() const
   {
 #ifndef CGAL_SS3_NO_SKELETON_DS
-    CGAL_SS3_CORE_TRACE("Warning: no skeleton to return as it was not built");
+    CGAL_SS3_CORE_TRACE_V(1, "Warning: no skeleton to return as it was not built");
 #endif
     return this->skeleton_;
   }
