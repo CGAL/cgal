@@ -29,7 +29,7 @@
 template <typename K>
 struct Polyhedron_tester : public Tester<K>
 {
-  void polyhedron(const std::string& filename) const
+  void polyhedron(const std::filesystem::path& filename) const
   {
     using GT = K;
     using Polyhedron = CGAL::Polyhedron_3<GT>;

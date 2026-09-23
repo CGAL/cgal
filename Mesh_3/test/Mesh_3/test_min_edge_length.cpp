@@ -13,21 +13,21 @@
 
 template <typename K,
           typename Polyhedron,
-          typename Concurrency_tag>
+          typename ConcurrencyTag>
 struct Tester
 {
   // Domain
   typedef CGAL::Polyhedral_mesh_domain_with_features_3<K, Polyhedron> Mesh_domain;
 
   // Triangulation
-  typedef typename CGAL::Mesh_triangulation_3<Mesh_domain, K, Concurrency_tag>::type Tr;
+  typedef typename CGAL::Mesh_triangulation_3<Mesh_domain, K, ConcurrencyTag>::type Tr;
 
   typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 
   // Criteria
   typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
-  void operator()(const std::string fname, const std::string out_fname)
+  void operator()(const std::filesystem::path& fname, const std::filesystem::path& out_fname)
   {
     std::ifstream input(fname);
     using namespace CGAL::parameters;

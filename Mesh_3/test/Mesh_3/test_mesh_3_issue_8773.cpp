@@ -27,7 +27,7 @@ using Mesh_criteria = CGAL::Mesh_criteria_3<Tr>;
 namespace params = CGAL::parameters;
 
 void check_stream(const std::ios& stream,
-                  const std::string& filename,
+                  const std::filesystem::path& filename,
                   const std::string& operation,
                   bool ok = true) {
   if(!stream || !ok) {

@@ -27,7 +27,7 @@
 #include <fstream>
 
 template <typename Point_3>
-bool read_polylines(const std::string fname,
+bool read_polylines(const std::filesystem::path& fname,
                     std::vector<std::vector<Point_3> >& polylines)
 {
   std::ifstream ifs(fname);
@@ -47,7 +47,7 @@ bool read_polylines(const std::string fname,
   else return ifs.eof();
 }
 
-template <typename Concurrency_tag = CGAL::Sequential_tag>
+template <typename ConcurrencyTag = CGAL::Sequential_tag>
 struct Image_tester : public Tester<K_e_i>
 {
   typedef CGAL::Image_3 Image;
@@ -57,7 +57,7 @@ struct Image_tester : public Tester<K_e_i>
   typedef typename CGAL::Mesh_triangulation_3<
     Mesh_domain,
     CGAL::Kernel_traits<Mesh_domain>::Kernel,
-    Concurrency_tag>::type Tr;
+    ConcurrencyTag>::type Tr;
   typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 
   typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;

@@ -73,7 +73,7 @@ int main(int argc, char* argv[])
       fs::path stem = path.stem();
       if ((path.extension() == ".nii") || (stem.has_extension() && (stem.extension() == ".nii") && (path.extension() == ".gz"))) {
         auto reader = vtkSmartPointer<vtkNIFTIImageReader>::New();
-        reader->SetFileName(fname.c_str());
+        reader->SetFileName(fname.string().c_str());
         reader->Update();
         vtk_image = reader->GetOutput();
         vtk_image->Print(std::cerr);
