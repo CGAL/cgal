@@ -25,7 +25,7 @@ public:
      circumcenter.
         */
   typedef unspecified_type     Construct_approximate_hyperbolic_circumcenter_2;
-	/// @}
+        /// @}
 
 /// \name Operations
   /// @{

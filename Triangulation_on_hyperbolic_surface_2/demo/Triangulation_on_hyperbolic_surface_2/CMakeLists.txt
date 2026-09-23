@@ -10,12 +10,17 @@ include_directories(${CMAKE_BINARY_DIR})
 set(CMAKE_AUTOMOC ON)
 
 # CGAL and its components
-find_package(CGAL REQUIRED COMPONENTS Core Qt6)
+find_package(CGAL REQUIRED COMPONENTS Qt6)
 find_package(Qt6 QUIET COMPONENTS Widgets)
 find_package(Qt6 QUIET COMPONENTS Svg)
 
 if (NOT CGAL_Qt6_FOUND  OR NOT Qt6_FOUND)
   message(STATUS "This project requires the Qt6 library, and will not be compiled.")
+  return()
+endif()
+
+if (NOT (GMP_FOUND AND MPFR_FOUND))
+  message(STATUS "NOTICE: This demo requires the GMP and MPFR libraries, and will not be compiled.")
   return()
 endif()
 

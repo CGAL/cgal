@@ -45,37 +45,37 @@ namespace CGAL {
     //  Construct_approximate_hyperbolic_circumcenter_2_f(const Traits gt = Traits()): _gt(gt) {}
   Construct_approximate_hyperbolic_circumcenter_2_f(Traits gt = Traits()): _gt(gt) {}
     Hyperbolic_point_2 operator()(const Hyperbolic_point_2& p,
-				  const Hyperbolic_point_2& q,
-				  const Hyperbolic_point_2& r) const
+                                  const Hyperbolic_point_2& q,
+                                  const Hyperbolic_point_2& r) const
     {
       typename Traits::Construct_hyperbolic_circumcenter_2 chc = _gt.construct_hyperbolic_circumcenter_2_object();
       auto c = chc(p,q,r);
 
 
   if constexpr(std::is_same_v<FT, Gmpq>) {
-	  std::cout << " OBJECT STYLE Hyperbolic_surface_Delaunay_traits_2:: Construct_approximate_hyperbolic_circumcenter_2 in approximation_precision() = " << _gt.approximation_precision()<< std::endl;
-	  FT x;
-	  FT y;
-	  unsigned p;
-	  p = _gt.approximation_precision() * _gt.DOUBLE_PREC;
-	  Gmpfr a_0 = Gmpfr( c.x().a0().numerator(), p) / Gmpfr( c.x().a0().denominator(), p);
-	  Gmpfr a_1 = Gmpfr( c.x().a1().numerator(), p) / Gmpfr( c.x().a1().denominator(), p);
-	  Gmpfr r = Gmpfr( c.x().root().numerator(), p) / Gmpfr( c.x().root().denominator(), p);
-	  x = a_0 + a_1 * sqrt(r);
-	  a_0 = Gmpfr( c.y().a0().numerator(), p) / Gmpfr( c.y().a0().denominator(), p);
-	  a_1 = Gmpfr( c.y().a1().numerator(), p) / Gmpfr( c.y().a1().denominator(), p);
-	  r = Gmpfr( c.y().root().numerator(), p) / Gmpfr( c.y().root().denominator(), p);
-	  y = a_0 + a_1 * sqrt(r);
-	  //  CGAL_assertion(norm(Complex(x, y)) < FT(1));
-	  if (!(norm(Complex(x, y)) < FT(1))) {std::cout<< "WARNING: THE CONSTRUCTION OF THE CIRCUMCENTER FAILED, THE APPROXIMATION PRECISION SHOULD BE INCREASED\n";}
-	  Hyperbolic_point_2 c_approx =  Hyperbolic_point_2(x, y);
-	  return c_approx;
-	}
+          std::cout << " OBJECT STYLE Hyperbolic_surface_Delaunay_traits_2:: Construct_approximate_hyperbolic_circumcenter_2 in approximation_precision() = " << _gt.approximation_precision()<< std::endl;
+          FT x;
+          FT y;
+          unsigned p;
+          p = _gt.approximation_precision() * _gt.DOUBLE_PREC;
+          Gmpfr a_0 = Gmpfr( c.x().a0().numerator(), p) / Gmpfr( c.x().a0().denominator(), p);
+          Gmpfr a_1 = Gmpfr( c.x().a1().numerator(), p) / Gmpfr( c.x().a1().denominator(), p);
+          Gmpfr r = Gmpfr( c.x().root().numerator(), p) / Gmpfr( c.x().root().denominator(), p);
+          x = a_0 + a_1 * sqrt(r);
+          a_0 = Gmpfr( c.y().a0().numerator(), p) / Gmpfr( c.y().a0().denominator(), p);
+          a_1 = Gmpfr( c.y().a1().numerator(), p) / Gmpfr( c.y().a1().denominator(), p);
+          r = Gmpfr( c.y().root().numerator(), p) / Gmpfr( c.y().root().denominator(), p);
+          y = a_0 + a_1 * sqrt(r);
+          //  CGAL_assertion(norm(Complex(x, y)) < FT(1));
+          if (!(norm(Complex(x, y)) < FT(1))) {std::cout<< "WARNING: THE CONSTRUCTION OF THE CIRCUMCENTER FAILED, THE APPROXIMATION PRECISION SHOULD BE INCREASED\n";}
+          Hyperbolic_point_2 c_approx =  Hyperbolic_point_2(x, y);
+          return c_approx;
+        }
   else
-	{
-	  Hyperbolic_point_2 c_approx;
-	  return c_approx(FT(to_double(c.x())), FT(to_double(c.y())));
-	}
+        {
+          Hyperbolic_point_2 c_approx;
+          return c_approx(FT(to_double(c.x())), FT(to_double(c.y())));
+        }
     }
   private:
     // Alternative?
@@ -98,29 +98,29 @@ namespace CGAL {
     Hyperbolic_point_2 operator()(Hyperbolic_Voronoi_point_2 c) const
     {
       if constexpr(std::is_same_v<FT, Gmpq>) {
-	  std::cout << " OBJECT STYLE Hyperbolic_surface_Delaunay_traits_2:: Construct_approximate_hyperbolic_circumcenter_2 in approximation_precision() = " << _gt.approximation_precision()<< std::endl;
-	  FT x;
-	  FT y;
-	  unsigned p;
-	  p = _gt.approximation_precision() * _gt.DOUBLE_PREC;
-	  Gmpfr a_0 = Gmpfr( c.x().a0().numerator(), p) / Gmpfr( c.x().a0().denominator(), p);
-	  Gmpfr a_1 = Gmpfr( c.x().a1().numerator(), p) / Gmpfr( c.x().a1().denominator(), p);
-	  Gmpfr r = Gmpfr( c.x().root().numerator(), p) / Gmpfr( c.x().root().denominator(), p);
-	  x = a_0 + a_1 * sqrt(r);
-	  a_0 = Gmpfr( c.y().a0().numerator(), p) / Gmpfr( c.y().a0().denominator(), p);
-	  a_1 = Gmpfr( c.y().a1().numerator(), p) / Gmpfr( c.y().a1().denominator(), p);
-	  r = Gmpfr( c.y().root().numerator(), p) / Gmpfr( c.y().root().denominator(), p);
-	  y = a_0 + a_1 * sqrt(r);
-	  //  CGAL_assertion(norm(Complex(x, y)) < FT(1));
-	  if (!(norm(Complex(x, y)) < FT(1))) {std::cout<< "WARNING: THE CONSTRUCTION OF THE CIRCUMCENTER FAILED, THE APPROXIMATION PRECISION SHOULD BE INCREASED\n";}
-	  Hyperbolic_point_2 c_approx =  Hyperbolic_point_2(x, y);
-	  return c_approx;
-	}
+          std::cout << " OBJECT STYLE Hyperbolic_surface_Delaunay_traits_2:: Construct_approximate_hyperbolic_circumcenter_2 in approximation_precision() = " << _gt.approximation_precision()<< std::endl;
+          FT x;
+          FT y;
+          unsigned p;
+          p = _gt.approximation_precision() * _gt.DOUBLE_PREC;
+          Gmpfr a_0 = Gmpfr( c.x().a0().numerator(), p) / Gmpfr( c.x().a0().denominator(), p);
+          Gmpfr a_1 = Gmpfr( c.x().a1().numerator(), p) / Gmpfr( c.x().a1().denominator(), p);
+          Gmpfr r = Gmpfr( c.x().root().numerator(), p) / Gmpfr( c.x().root().denominator(), p);
+          x = a_0 + a_1 * sqrt(r);
+          a_0 = Gmpfr( c.y().a0().numerator(), p) / Gmpfr( c.y().a0().denominator(), p);
+          a_1 = Gmpfr( c.y().a1().numerator(), p) / Gmpfr( c.y().a1().denominator(), p);
+          r = Gmpfr( c.y().root().numerator(), p) / Gmpfr( c.y().root().denominator(), p);
+          y = a_0 + a_1 * sqrt(r);
+          //  CGAL_assertion(norm(Complex(x, y)) < FT(1));
+          if (!(norm(Complex(x, y)) < FT(1))) {std::cout<< "WARNING: THE CONSTRUCTION OF THE CIRCUMCENTER FAILED, THE APPROXIMATION PRECISION SHOULD BE INCREASED\n";}
+          Hyperbolic_point_2 c_approx =  Hyperbolic_point_2(x, y);
+          return c_approx;
+        }
       else
-	{
-	  Hyperbolic_point_2 c_approx;
-	  return c_approx(FT(to_double(c.x())), FT(to_double(c.y())));
-	}
+        {
+          Hyperbolic_point_2 c_approx;
+          return c_approx(FT(to_double(c.x())), FT(to_double(c.y())));
+        }
     }
   private:
     Traits& _gt;
@@ -158,7 +158,7 @@ class Hyperbolic_surface_Delaunay_traits_2
   {
     Hyperbolic_point_2 c_approx;
     if constexpr(std::is_same_v<FT, Gmpq>) {
-	 	std::cout << " Hyperbolic_surface_Delaunay_traits_2:: Construct_approximate_hyperbolic_circumcenter_2 in approximation_precision() = " << approximation_precision()<< std::endl;
+                std::cout << " Hyperbolic_surface_Delaunay_traits_2:: Construct_approximate_hyperbolic_circumcenter_2 in approximation_precision() = " << approximation_precision()<< std::endl;
       FT x;
       FT y;
       unsigned p = DOUBLE_PREC * approximation_precision();

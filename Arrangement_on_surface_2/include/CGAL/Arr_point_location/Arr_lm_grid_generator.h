@@ -28,43 +28,35 @@ namespace CGAL {
  * A generator for the landmarks point-locatoion class, which uses a
  * set of points on a grid as its set of landmarks.
 */
-template <typename Arrangement_,
-          typename Nearest_neighbor_ =
-            Arr_landmarks_nearest_neighbor<Arrangement_> >
+template <typename Arrangement_, typename Nearest_neighbor_ = Arr_landmarks_nearest_neighbor<Arrangement_>>
 class Arr_grid_landmarks_generator :
-    public Arr_landmarks_generator_base<Arrangement_, Nearest_neighbor_>
-{
+    public Arr_landmarks_generator_base<Arrangement_, Nearest_neighbor_> {
 public:
-  typedef Arrangement_                                  Arrangement_2;
-  typedef Nearest_neighbor_                             Nearest_neighbor;
+  using Arrangement_2 = Arrangement_;
+  using Nearest_neighbor = Nearest_neighbor_;
 
-  typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
-  typedef typename Arrangement_2::Vertex_const_iterator Vertex_const_iterator;
-  typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
-  typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
-  typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
-  typedef typename Arrangement_2::Vertex_handle         Vertex_handle;
-  typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;
-  typedef typename Arrangement_2::Face_handle           Face_handle;
-  typedef typename Arrangement_2::Ccb_halfedge_circulator
-                                                        Ccb_halfedge_circulator;
-
-  typedef typename Geometry_traits_2::Approximate_number_type
-                                                        ANT;
-
-  typedef typename Arrangement_2::Point_2               Point_2;
+  using Geometry_traits_2 = typename Arrangement_2::Geometry_traits_2;
+  using Vertex_const_iterator = typename Arrangement_2::Vertex_const_iterator;
+  using Vertex_const_handle = typename Arrangement_2::Vertex_const_handle;
+  using Halfedge_const_handle = typename Arrangement_2::Halfedge_const_handle;
+  using Face_const_handle = typename Arrangement_2::Face_const_handle;
+  using Vertex_handle = typename Arrangement_2::Vertex_handle;
+  using Halfedge_handle = typename Arrangement_2::Halfedge_handle;
+  using Face_handle = typename Arrangement_2::Face_handle;
+  using Ccb_halfedge_circulator = typename Arrangement_2::Ccb_halfedge_circulator;
+  using Geometry_traits_approximate_2 = typename Geometry_traits_2::Approximate_2;
+  using ANT = typename Geometry_traits_approximate_2::Approximate_number_type;
+  using Point_2 = typename Arrangement_2::Point_2;
 
 private:
-  typedef Arr_landmarks_generator_base<Arrangement_2, Nearest_neighbor>
-                                                        Base;
-  typedef Arr_grid_landmarks_generator<Arrangement_2, Nearest_neighbor>
-                                                        Self;
+  using Base = Arr_landmarks_generator_base<Arrangement_2, Nearest_neighbor>;
+  using Self = Arr_grid_landmarks_generator<Arrangement_2, Nearest_neighbor>;
 
 protected:
-  typedef typename Base::Points_set                     Points_set;
-  typedef typename Base::PL_result_type                 PL_result_type;
-  typedef std::pair<Point_2, PL_result_type>            PL_pair;
-  typedef std::vector<PL_pair>                          Pairs_set;
+  using Points_set = typename Base::Points_set;
+  using PL_result_type = typename Base::PL_result_type;
+  using PL_pair = std::pair<Point_2, PL_result_type>;
+  using Pairs_set = std::vector<PL_pair>;
 
   typedef Arr_traits_basic_adaptor_2<Geometry_traits_2> Traits_adaptor_2;
 
@@ -98,24 +90,22 @@ public:
     num_landmarks(0),
     fixed_number_of_lm(false)
   {
-    build_landmark_set();//this->
+    build_landmark_set(); //this->
   }
 
-  Arr_grid_landmarks_generator(const Arrangement_2& arr,
-                               unsigned int n_landmarks) :
+  Arr_grid_landmarks_generator(const Arrangement_2& arr, unsigned int n_landmarks) :
     Base(arr),
     m_traits(static_cast<const Traits_adaptor_2*>(arr.geometry_traits())),
     num_landmarks(n_landmarks),
     fixed_number_of_lm(true)
   {
-    build_landmark_set();//this->
+    build_landmark_set(); //this->
   }
 
   /*! creates the landmarks set (choosing the landmarks),
    * and store them in the nearest neighbor search structure.
    */
-  virtual void build_landmark_set()
-  {
+  virtual void build_landmark_set() {
     // Create a set of points on a grid.
     Points_set points;
     _create_points_set(points);
@@ -123,15 +113,13 @@ public:
     // global function. Note that the resulting pairs are returned sorted by
     // their lexicographic xy-order.
     lm_pairs.clear();
-    locate(*(this->arrangement()), points.begin(), points.end(),
-           std::back_inserter(lm_pairs));
+    locate(*(this->arrangement()), points.begin(), points.end(), std::back_inserter(lm_pairs));
     this->updated = true;
   }
 
   /*! clears the set of landmarks.
    */
-  virtual void clear_landmark_set()
-  {
+  virtual void clear_landmark_set() {
     lm_pairs.clear();
     this->updated = false;
   }
@@ -142,13 +130,11 @@ public:
    *                  arrangement (a vertex, halfedge, or face handle).
    * \return The nearest landmark point.
    */
-  virtual Point_2 closest_landmark(const Point_2& q, PL_result_type& obj)
-  {
+  virtual Point_2 closest_landmark(const Point_2& q, PL_result_type& obj) {
     CGAL_assertion(this->updated);
 
     // Calculate the index of the nearest grid point to point q.
-    typename Geometry_traits_2::Approximate_2 approximate =
-      m_traits->approximate_2_object();
+    typename Geometry_traits_2::Approximate_2 approximate = m_traits->approximate_2_object();
     const ANT qx = approximate(q, 0);
     const ANT qy = approximate(q, 1);
     unsigned int i = (CGAL::compare(qx, x_min) == SMALLER) ? 0 :
@@ -167,12 +153,10 @@ public:
 protected:
   /*! creates a set of landmark points on a grid.
    */
-  virtual void _create_points_set(Points_set& points)
-  {
+  virtual void _create_points_set(Points_set& points) {
     Arrangement_2* arr = this->arrangement();
 
-    if (arr->is_empty())
-      return;
+    if (arr->is_empty()) return;
 
     // Locate the arrangement vertices with minimal and maximal x and
     // y-coordinates.
@@ -242,14 +226,12 @@ protected:
     step_y = delta_y / (sqrt_n - 1);
 
     // Create the points on the grid.
-    const double  x_min =
-      CGAL::to_double(m_traits->approximate_2_object()(left->point(), 0));
-    const double  y_min =
-      CGAL::to_double(m_traits->approximate_2_object()(bottom->point(), 1));
-    const double  sx = CGAL::to_double(step_x);
-    const double  sy = CGAL::to_double(step_y);
-    double        px, py;
-    unsigned int  i, j;
+    const double x_min = CGAL::to_double(m_traits->approximate_2_object()(left->point(), 0));
+    const double y_min = CGAL::to_double(m_traits->approximate_2_object()(bottom->point(), 1));
+    const double sx = CGAL::to_double(step_x);
+    const double sy = CGAL::to_double(step_y);
+    double px, py;
+    unsigned int i, j;
 
     for (i = 0; i< sqrt_n; i++) {
       px = x_min + i*sx;

@@ -14,7 +14,7 @@ class Hyperbolic_surface_Delaunay_traits_2 : public HyperbolicTraits {};
   /// @{
   /*!
     This model of traits for the constrution of approximate hyperbolic circumcenter requires \gmp and \mpfr.
-    The approximation precision is chosen via the function `approximation_precision()`. The integer `p` given to the function `set_circumcenter_approximation_precision()` means that computations are done with `p` times the double precision. More precisely each coordinate of an exact circumcenter is rounded to a fixed precision floating-point number of type CGAL::Gmpfr before being converted to a CGAL::Gmpq. The precision of the `CGAL::Gmpfr` numbers involved is `p` times 53 bits, where 53 bits is the precision of a `double`.
+    The approximation precision is chosen via the function `approximation_precision()`. The integer `p` given to the function `set_circumcenter_approximation_precision()` means that computations are done with `p` times the double precision. More precisely each coordinate of an exact circumcenter is rounded to a fixed precision floating-point number of type ` CGAL::Gmpfr` before being converted to a CGAL::Gmpq. The precision of the `CGAL::Gmpfr` numbers involved is `p` times 53 bits, where 53 bits is the precision of a `double`.
    */
    Construct_approximate_hyperbolic_circumcenter_2
      construct_approximate_hyperbolic_circumcenter_2_object() const;
