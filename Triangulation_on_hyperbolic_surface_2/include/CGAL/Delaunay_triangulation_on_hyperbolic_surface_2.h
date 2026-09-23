@@ -147,7 +147,7 @@ public:
     //---------- eps-net methods
     Voronoi_point circumcenter(const Anchor& anch) const;
     Point approx_circumcenter_from_anchor(const Anchor& anch) const;
-    //  Point approx_circumcenter_from_c(Voronoi_point const & c) const;
+    //  Point approx_circumcenter_from_c(const Voronoi_point & c) const;
     void push_triangle(const Dart_descriptor dart, std::list<Dart_descriptor> & triangles, size_t & triangles_list_mark);
 };
 
@@ -387,7 +387,7 @@ Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
   relative_locate(const Point& query, Locate_type& lt, unsigned & li, const Anchor& anch) const {
     lt = FACE;
     li = NULL_INDEX;
-    //Traits gt;//MARC?? TO BE REMOVED
+    //Traits gt;//MARC?? TO BE REMOVDE
     typename Traits::Hyperbolic_orientation_2 ho2 = gt_.hyperbolic_orientation_2();
     for (unsigned i = 0; i < NB_SIDES; ++i) {
         Orientation ori_query = ho2(anch.vertices[i], anch.vertices[ccw(i)], query);
@@ -807,7 +807,7 @@ approx_circumcenter_from_anchor(const Anchor& anch) const
 template<class Traits>
 typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Point
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-approx_circumcenter_from_c(Voronoi_point const & c) const
+approx_circumcenter_from_c(const Voronoi_point & c) const
 {
   //TEST
   typename Traits::Construct_approximate_hyperbolic_circumcenter_2_fct_style obj_approx_cc = gt_.construct_approximate_hyperbolic_circumcenter_2_object();

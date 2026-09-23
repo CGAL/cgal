@@ -168,7 +168,8 @@ Let \f$ (X, d) \f$ be a metric space and \f$ \varepsilon > 0 \f$. A subset \f$ P
 - an \f$ \varepsilon \f$-<em>net</em> if it is both an \f$ \varepsilon \f$-covering and an \f$ \varepsilon \f$-packing.
 
 The class `CGAL::Delaunay_triangulation_on_hyperbolic_surface_2` contains the
-method `CGAL::Delaunay_triangulation_on_hyperbolic_surface_2::construct_epsilon_net()` that tries to compute an \f$ \varepsilon \f$-net of a hyperbolic surface, starting from an \f$ \varepsilon \f$-packing (usually, a Delaunay triangulation with a single vertex). The construction might not result in an \f$ \varepsilon \f$-net (see next section TODO ADD REF to 4.3), but the method returns a Boolean indicating whether the result is an \f$ \varepsilon \f$-net.
+method `CGAL::Delaunay_triangulation_on_hyperbolic_surface_2::construct_epsilon_net()` that tries to compute an \f$ \varepsilon \f$-net of a hyperbolic surface, starting from an \f$ \varepsilon \f$-packing (usually, a Delaunay triangulation with a single vertex). The construction might not result in an \f$ \varepsilon \f$-net
+(see Section \ref Subsection_Hyperbolic_Surface_Triangulations_Epsilon_Net_Numbers "Number Type and Approximation Precision"), but the method returns a Boolean indicating whether the result is an \f$ \varepsilon \f$-net.
 If the result is not an \f$ \varepsilon \f$-net, the methods
 `CGAL::Delaunay_triangulation_on_hyperbolic_surface_2::is_epsilon_covering()`
 and `CGAL::Delaunay_triangulation_on_hyperbolic_surface_2::is_epsilon_packing()`

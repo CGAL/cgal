@@ -108,7 +108,7 @@ public:
   /// triangulation and sets an #Anchor for each face.
   /// @{
   Delaunay_triangulation_on_hyperbolic_surface_2(Traits & gt) {};
-  Delaunay_triangulation_on_hyperbolic_surface_2(Traits & gt, Hyperbolic_fundamental_domain_2<Traits> const & domain);
+  Delaunay_triangulation_on_hyperbolic_surface_2(Traits & gt, const Hyperbolic_fundamental_domain_2<Traits> & domain);
   Delaunay_triangulation_on_hyperbolic_surface_2(Traits & gt, Base & triangulation);
   /// @}
 
@@ -121,7 +121,7 @@ public:
   /*!
     \return the anchor associated with the given dart.
   */
-  Anchor const & anchor(Dart_const_descriptor const dart) const;
+  const Anchor & anchor(Dart_const_descriptor const dart) const;
   /*!
     \return an anchor of the triangulation.
   */
@@ -129,7 +129,7 @@ public:
   /*!
     \return an anchor of the triangulation.
   */
-  Anchor const & anchor() const;
+  const Anchor & anchor() const;
   /*!
     \return the index of the given dart in its face. The index is `0` if `dart` is the dart of its associated anchor.
   */
@@ -137,7 +137,7 @@ public:
   /*!
     \return the `i`-th dart of the face associated with `anch`, where `anch.dart` is the `0`-th dart of the face.
   */
-  Dart_descriptor ith_dart(unsigned i, Anchor const & anch);
+  Dart_descriptor ith_dart(unsigned i, const Anchor & anch);
   /// @}
 
   /// \name Validity
@@ -157,7 +157,7 @@ public:
 
     If `query` lies outside the triangle, `li` is set to the index of the first edge such that `query` and the third point of the triangle lie on different sides.
   */
-  void relative_locate(Point const & query, Locate_type & lt, unsigned & li, Anchor const & anch) const;
+  void relative_locate(const Point & query, Locate_type & lt, unsigned & li, const Anchor & anch) const;
 
   /*!
     \return the anchor representing the lift of the triangle in which `query` lies.
@@ -171,7 +171,7 @@ public:
 
     \sa relative_locate()
   */
-  Anchor locate(Point const & query, Locate_type & lt, unsigned & li, unsigned & ld, Anchor const & hint, Locate_walk walk = STRAIGHT); // const ?
+  Anchor locate(const Point & query, Locate_type & lt, unsigned & li, unsigned & ld, const Anchor & hint, Locate_walk walk = STRAIGHT); // const ?
 
   /*!
     \return the anchor representing the lift of the triangle in which `query` lies.
@@ -180,19 +180,19 @@ public:
 
     The enumeration `walk` indicates which walk algorithm is used when locating a point in the lifted triangulation.
   */
-  Anchor locate(Point const & query, Locate_walk walk = STRAIGHT); // const ?
+  Anchor locate(const Point & query, Locate_walk walk = STRAIGHT); // const ?
 
   /*!
     Inserts `p` in the Delaunay triangulation after having located it, starting from `hint`.
 
     \pre <code>is_valid()</code> and <code>norm(Complex_number(p.x(), p.y())) < Number(1)</code>
   */
-  void insert(Point const & p, Anchor & hint);
+  void insert(const Point & p, Anchor & hint);
 
   /*!
     Inserts `p` in the Delaunay triangulation.
   */
-  void insert(Point const & p);
+  void insert(const Point & p);
   /// @}
 
   /// \name epsilon-net
@@ -212,7 +212,7 @@ public:
 
     \pre <code>is_epsilon_packing(epsilon)</code>
   */
-  bool construct_epsilon_net(double const epsilon);
+  bool construct_epsilon_net(const double epsilon);
   /*!
     \return a Boolean that indicates whether the vertices of the Delaunay triangulation form a certified `epsilon`-covering of the surface.
   */

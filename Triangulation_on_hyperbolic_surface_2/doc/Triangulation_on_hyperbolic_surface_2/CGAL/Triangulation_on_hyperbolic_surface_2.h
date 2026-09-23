@@ -227,7 +227,7 @@ Vertex_range vertices_range();
 
     \pre <code> is_valid() </code>
   */
-  std::vector<std::tuple<Dart_const_descriptor, Point, Point, Point> > lift(Anchor const & anchor, bool center=true) const;
+  std::vector<std::tuple<Dart_const_descriptor, Point, Point, Point> > lift(const Anchor & anchor, bool center=true) const;
 
   /*!
     lifts the triangulation in the hyperbolic plane.
