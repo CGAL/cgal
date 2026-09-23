@@ -1811,7 +1811,7 @@ remove_patches(TriangleMesh& tm,
       // look for the halfedge belonging to shared_edges
       // having the prev pointer not correctly set
       halfedge_descriptor nxt=next(h, tm);
-      while(!is_border(nxt, tm))
+      while(!is_border(nxt, tm) || patch.border_with_shared_source.count(nxt))
         nxt=next(opposite(nxt, tm), tm);
       CGAL_assertion( is_border(nxt, tm) );//we marked it above!
       // now update the prev pointer
