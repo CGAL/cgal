@@ -722,8 +722,8 @@ bool build_triangulation_from_file(std::istream& is,
 
   bool ok = CGAL::IO::internal::read_MEDIT(is, points, finite_cells, subdomains,
                                            facet_indices, true,
-                                           edge_indices,
-                                           corner_indices,
+                                           edge_indices, true,
+                                           corner_indices, true,
                                            verbose,
                                            is_CGAL_mesh);
 
