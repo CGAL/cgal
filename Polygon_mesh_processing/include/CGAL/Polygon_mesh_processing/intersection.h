@@ -657,8 +657,6 @@ compute_face_polylines_intersection(const FaceRange& face_range,
 
   using VPM = typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type;
   using face_descriptor = typename boost::graph_traits<TriangleMesh>::face_descriptor;
-
-  using Point_3 = typename GT::Point_3;
   using Segment_3 = typename GT::Segment_3;
 
   using AABB_tree_helper = internal::AABB_tree_graph_helper<TriangleMesh, GT, VPM>;
@@ -1526,6 +1524,34 @@ struct Mesh_callback
 };
 }//end internal
 
+namespace internal {
+  template <class Iterator>
+  struct AABB_indexed_bbox_primitive
+  {
+    using Id = std::size_t;
+    using Datum = CGAL::Bbox_3;
+
+    AABB_indexed_bbox_primitive() = default;
+
+    AABB_indexed_bbox_primitive(Iterator it)
+      : m_it(it)
+    {}
+
+    Id id() const
+    {
+      return m_it->index;
+    }
+
+    const Datum& datum() const
+    {
+      return m_it->bbox;
+    }
+
+  private:
+    Iterator m_it;
+  };
+}
+
 /*!
  * \ingroup PMP_intersection_grp
  *
@@ -1552,6 +1578,12 @@ struct Mesh_callback
  *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`,
  *                       where `Point` is the value type of the vertex point map of the meshes}
  *   \cgalParamNEnd
+ *     \cgalParamNBegin{concurrency_tag}
+ *       \cgalParamDescription{a tag indicating if the task should be done using one or several threads.}
+ *       \cgalParamType{Either `CGAL::Sequential_tag`, or `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`}
+ *       \cgalParamDefault{`CGAL::Sequential_tag`}
+ *       \cgalParamExtra{`np1` only}
+ *    \cgalParamNEnd
  *
  *   \cgalParamNBegin{do_overlap_test_of_bounded_sides}
  *     \cgalParamDescription{If `true`, reports also overlap of bounded sides of meshes.
@@ -1581,42 +1613,99 @@ template <class TriangleMeshRange,
           class OutputIterator,
           class NamedParameters,
           class NamedParametersRange>
-OutputIterator intersecting_meshes(const TriangleMeshRange& range,
-                                         OutputIterator out,
-                                   const NamedParameters& np,
-                                   const NamedParametersRange& nps)
+OutputIterator
+intersecting_meshes(const TriangleMeshRange& range,
+                    OutputIterator out,
+                    const NamedParameters& /*np*/,
+                    const NamedParametersRange& nps)
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  typedef typename TriangleMeshRange::const_iterator TriangleMeshIterator;
+  using Concurrency_tag = typename internal_np::Lookup_named_param_def <
+                                          internal_np::concurrency_tag_t,
+                                          NamedParameters,
+                                          Sequential_tag
+                                        > ::type;
 
-  bool report_overlap =  choose_parameter(get_parameter(np, internal_np::overlap_test),false);
+  using TriangleMeshIterator = typename TriangleMeshRange::const_iterator;
+  using TriangleMesh = typename std::iterator_traits<TriangleMeshIterator>::value_type;
+  using GT = typename GetGeomTraits<TriangleMesh, NamedParameters>::type;
 
-  typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;
-  typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, TriangleMeshIterator, Box_policy> Mesh_box;
-
-  std::vector<Mesh_box> boxes;
-  boxes.reserve(std::distance(range.begin(), range.end()));
-
-  for(TriangleMeshIterator it = range.begin(); it != range.end(); ++it)
+  struct Indexed_bbox
   {
-    boxes.push_back( Mesh_box(Polygon_mesh_processing::bbox(*it), it) );
+    Bbox_3 bbox;
+    std::size_t index;
+  };
+
+  std::vector<Indexed_bbox> indexed_bboxes;
+  indexed_bboxes.reserve(range.size());
+  for(std::size_t i = 0; i < range.size(); ++i)
+    indexed_bboxes.push_back({ Polygon_mesh_processing::bbox(range[i], nps[i]), i });
+
+  if(indexed_bboxes.empty())
+    return out;
+
+  // // AABB_traits expects a bbox map associating the primitive ID
+  // // with its bounding box.
+  // struct Bbox_map
+  // {
+  //   using key_type = std::size_t;
+  //   using value_type = Bbox_3;
+  //   using reference = const Bbox_3&;
+  //   using category = boost::readable_property_map_tag;
+
+  //   const std::vector<Indexed_bbox>* bboxes;
+
+  //   reference operator[](key_type i) const { return (*bboxes)[i].bbox; }
+  //   static reference get(const Bbox_map& map, key_type i) { return map[i]; }
+  // };
+  using Bbox_map = boost::vector_property_map<Bbox_3>;
+
+  // The primitive ID is the index of the mesh.
+  struct AABB_indexed_bbox_primitive
+  {
+    using Id = std::size_t;
+    using Datum = Bbox_3;
+    using Point = typename GT::Point_3;
+
+    AABB_indexed_bbox_primitive() = default;
+    AABB_indexed_bbox_primitive(typename std::vector<Indexed_bbox>::const_iterator it, const Bbox_map&)
+      : m_it(it)
+    {}
+
+    Id id() const { return m_it->index; }
+    const Datum& datum() const { return m_it->bbox; }
+    Point reference_point() const {
+      const Bbox_3& b = m_it->bbox;
+      return Point(b.xmin(), b.ymin(), b.zmin());
+    }
+
+  private:
+    typename std::vector<Indexed_bbox>::const_iterator m_it;
+  };
+
+  using Primitive = AABB_indexed_bbox_primitive;
+  using Traits = CGAL::AABB_traits_3<GT, Primitive, Bbox_map>;
+  using Tree = CGAL::AABB_tree<Traits>;
+
+  boost::vector_property_map<Bbox_3> bbox_map(indexed_bboxes.size());
+  for(const auto& ib : indexed_bboxes)
+    put(bbox_map, ib.index, ib.bbox);
+  Tree tree(indexed_bboxes.begin(), indexed_bboxes.end(), bbox_map);
+
+  std::vector<std::pair<std::size_t, std::size_t>> candidates;
+  CGAL::AABB_trees::all_pairs_of_intersecting_primitives<Concurrency_tag>(tree, std::back_inserter(candidates));
+
+  for(const auto& p : candidates)
+  {
+    const TriangleMesh &mesh1 = range[p.first];
+    const TriangleMesh &mesh2 = range[p.second];
+
+    if(CGAL::Polygon_mesh_processing::do_intersect(mesh1, mesh2, nps[p.first], nps[p.second]))
+      *out++ = p;
   }
-
-  std::vector<Mesh_box*> boxes_ptr(boost::make_counting_iterator(&boxes[0]),
-                                   boost::make_counting_iterator(&boxes[0]+boxes.size()));
-
-  typedef typename boost::range_value<NamedParametersRange>::type NP_rng;
-  typedef typename boost::range_value<TriangleMeshRange>::type TriangleMesh;
-  typedef typename GetGeomTraits<TriangleMesh, NamedParameters, NP_rng>::type GT;
-  GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
-
-  //get all the pairs of meshes intersecting (no strict inclusion test)
-  std::ptrdiff_t cutoff = 2000;
-  internal::Mesh_callback<TriangleMeshRange, GT, OutputIterator, NamedParametersRange> callback(range, out, report_overlap, gt, nps);
-  CGAL::box_self_intersection_d(boxes_ptr.begin(), boxes_ptr.end(), callback, cutoff);
-  return callback.m_iterator;
+  return out;
 }
 
 template <class TriangleMeshRange, class NamedParameters, class OutputIterator>
