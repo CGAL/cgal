@@ -1,7 +1,7 @@
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/Polyhedron_3_to_lcc.h>
+#include <CGAL/import_face_graph_to_lcc.h>
 #include <CGAL/boost/graph/generators.h>
 
 
@@ -20,8 +20,8 @@ int main()
 
 
   LCC lccp, lccs;
-  CGAL::polyhedron_3_to_lcc(lccp, polyhedron);
-  CGAL::polyhedron_3_to_lcc(lccs, surface_mesh);
+  CGAL::import_face_graph_to_lcc(polyhedron, lccs);
+  CGAL::import_face_graph_to_lcc(surface_mesh, lccs);
 
   std::cout << lccp << std::endl;
   std::cout << lccs << std::endl;

@@ -13,7 +13,8 @@
 //
 #include "MainWindow.h"
 #include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/Polyhedron_3_to_lcc.h>
+#include <CGAL/import_face_graph_to_lcc.h>
+#include <CGAL/Polyhedron_3.h>
 #include <CGAL/Triangulation_3_to_lcc.h>
 #include <QSettings>
 #include <QHeaderView>
@@ -375,7 +376,12 @@ void MainWindow::load_off (const QString & fileName, bool clear)
 
   std::ifstream ifs (qPrintable (fileName));
 
-  CGAL::polyhedron_3_flux_to_lcc < LCC > (*scene.lcc, ifs);
+  if (ifs.good())
+  {
+    CGAL::Polyhedron_3<LCC::Traits> P;
+    ifs >> P;
+    CGAL::import_face_graph_to_lcc(P, *scene.lcc);
+  }
 
 #ifdef CGAL_PROFILE_LCC_DEMO
   timer.stop();

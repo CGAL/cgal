@@ -17,11 +17,17 @@ Release date: December 2026
 - Deprecated the existing overload of `snap_rounding_2()`.
 - Added a new overload of `snap_rounding_2()` that automatically dispatch to either `vertical_slab_snap_rounding_2()` or `hot_pixel_snap_rounding_2()`, depending on the provided traits class.
 
+### [Linear Cell Complex](https://doc.cgal.org/6.3/Manual/packages.html#PkgLinearCellComplex)
+
+- The following import functions have been deprecated and renamed for better naming clarity and consistency:
+  - `(polyhedron_3_to_lcc())` → [`import_face_graph_in_lcc()`](https://doc.cgal.org/6.3/Linear_cell_complex/group__PkgLinearCellComplexConstructions.html#gaf2fa5a468b97eb3358d25b2f147c2a72)
+
 ## [Release 6.2](https://github.com/CGAL/cgal/releases/tag/v6.2)
 
 Release date: June 2026
 
 ### General Changes
+
 
 - The new list of supported compilers is:
   - Visual C++ 15.9, 16.10, 17.14, 18.0 (from Visual Studio 2017, 2019, 2022, and 2026) or later

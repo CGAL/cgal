@@ -25,7 +25,7 @@ Here a small example:
 <B>Right</B>: the 2D linear cell complex reconstructed if generalized maps are the combinatorial data-structure.
 
 \sa `CGAL::triangulation_3_to_lcc<LCC,Triangulation>`
-\sa `CGAL::polyhedron_3_to_lcc<LCC,Polyhedron>`
+\sa `CGAL::import_face_graph_to_lcc<PolygonMesh, LCC>`
 */
 template<class LCC>
 typename LCC::Dart_descriptor read_plane_graph_in_lcc(LCC& lcc,

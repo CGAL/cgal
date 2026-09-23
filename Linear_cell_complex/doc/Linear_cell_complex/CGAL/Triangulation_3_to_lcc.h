@@ -9,7 +9,7 @@ Objects are added in `lcc`, existing darts are not modified. Returns a dart crea
       \link LinearCellComplex::ambient_dimension `LCC::ambient_dimension`\endlink==3.
 
 \sa `CGAL::read_plane_graph_in_lcc<LCC>`
-\sa `CGAL::polyhedron_3_to_lcc<LCC,Polyhedron>`
+\sa `CGAL::import_face_graph_to_lcc<PolygonMesh, LCC>`
 */
 
 template <class LCC,class Triangulation_>

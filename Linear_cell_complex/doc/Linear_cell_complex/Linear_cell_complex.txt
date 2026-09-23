@@ -107,7 +107,7 @@ There are two functions allowing to build a linear cell complex from two other \
 <UL>
 
 <LI>\link CGAL::triangulation_3_to_lcc `triangulation_3_to_lcc(lcc,atr)`\endlink: adds in `lcc` all the tetrahedra present in `atr`, a \link CGAL::Triangulation_3 `Triangulation_3`\endlink;
-<LI>\link CGAL::polyhedron_3_to_lcc `polyhedron_3_to_lcc(lcc,ap)`\endlink: adds in `lcc` all the cells present in `ap`, a `Polyhedron_3`.
+<LI>\link CGAL::import_face_graph_to_lcc `import_face_graph_to_lcc(ap,lcc)`\endlink: adds in `lcc` all the cells present in `ap`, a face graph such as `Polyhedron_3` or `Surface_mesh`.
 </UL>
 
 Lastly, the function \link CGAL::read_plane_graph_in_lcc `read_plane_graph_in_lcc(lcc,ais)`\endlink adds in `lcc` all the cells reconstructed from the planar graph read in `ais`, a `std::istream` (see the \link CGAL::read_plane_graph_in_lcc `reference manual`\endlink for the file format).
