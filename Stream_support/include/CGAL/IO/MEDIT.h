@@ -566,8 +566,6 @@ bool write_MEDIT(std::ostream& os,
   using Facets_with_indices = typename internal_np::Lookup_named_param_def<internal_np::facets_with_indices_t, CGAL_NP_CLASS, std::vector<std::array<int,4>>>::reference;
   Facets_with_indices facets = choose_parameter(get_parameter_reference(np, internal_np::facets_with_indices), default_facets);
 
-  if constexpr (is_default_parameter<CGAL_NP_CLASS, internal_np::subdomains_t>::value)
-    default_subdomains.resize(tetrahedra.size(), 1);
 
   os << "MeshVersionFormatted 1\nDimension 3\nVertices\n";
   os << points.size() << "\n";
