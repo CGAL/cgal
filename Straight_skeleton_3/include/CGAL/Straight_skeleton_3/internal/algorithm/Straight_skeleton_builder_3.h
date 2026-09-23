@@ -567,7 +567,7 @@ public:
       CGAL_assertion_code(Point_3 p_box_max = Transformation::bounding_box_max(polyhedron);)
 
       // Event treatment
-      Event_status es = handle_event(event, current_time, time_future_bound, polyhedron);
+      Event_status es = handle_event(event, time_future_bound, polyhedron);
       CGAL_assertion(es != Event_status::EVENT_NOT_HANDLED);
       if (es == Event_status::NON_EVENT) {
         continue;
@@ -1464,8 +1464,7 @@ public:
     return true;
   }
 
-  static bool is_actual_polyhedron_split_event(const Polyhedron_split_event_sptr& event,
-                                               const FT& current_time)
+  static bool is_actual_polyhedron_split_event(const Polyhedron_split_event_sptr& event)
   {
     CGAL_SS3_CORE_TRACE_V(8, "########################################");
     CGAL_SS3_CORE_TRACE_V(8, "##  Tentative Polyhedron Split Event  ##");
@@ -1493,8 +1492,7 @@ public:
     event->set_point(point);
 
     // @speed is_degenerate(4 planes)? But it would be a sure filter failure, so, costly...
-    FT shift = event_time - current_time;
-    Segment_3 e1o = Transformation::shift_edge(event->get_edge_1(), shift);
+    Segment_3 e1o = Transformation::offset_edge_from_base(event->get_edge_1(), event_time);
     if (!e1o.is_degenerate()) {
       CGAL_SS3_CORE_TRACE_V(8, "Polyhedron split event: bisector check failure");
       return false;
@@ -1614,7 +1612,6 @@ public:
   }
 
   static bool is_actual_pierce_event(const Pierce_event_sptr& event,
-                                     const FT& current_time,
                                      const std::optional<FT>& time_future_bound)
   {
     CGAL_SS3_CORE_TRACE_V(8, "########################################");
@@ -1691,11 +1688,10 @@ public:
     // Filter if the event point is on an edge (and a fortiori on a vertex)
     // as it will be a different kind of event
     const Point_3& point = event->point();
-    FacetSPtr facet_clone = pf->clone();
+    const FT& event_time = event->time();
+    const Plane_3 offset_plane = Transformation::offset_plane_from_base(pf, event_time);
 
-    const FT shift = event->time() - current_time;
-    const FT& speed = Hds_utils::get_speed(pf);
-    const Plane_3 offset_plane = Geom_utils::offset_plane(pf->get_plane(), shift*speed);
+    FacetSPtr facet_clone = pf->clone();
     facet_clone->set_plane(offset_plane);
 
     // abusing the fact that vertices will have the same order in both facets
@@ -1704,7 +1700,7 @@ public:
     while (it_v != pf->vertices().end()) {
       VertexSPtr vertex = *it_v++;
       VertexSPtr offset_vertex = *it_v_offset++;
-      Point_3 point_offset = Transformation::shift_point(vertex, shift);
+      Point_3 point_offset = Transformation::offset_point_from_base(vertex, event_time);
       offset_vertex->set_point(point_offset);
     }
 
@@ -1750,7 +1746,6 @@ public:
     * it gets popped.
     */
   static bool is_actual_event(const Abstract_event_sptr& event,
-                              const FT& current_time,
                               const std::optional<FT>& time_future_bound)
   {
     CGAL_SS3_DEBUG_SPTR(event);
@@ -1767,13 +1762,13 @@ public:
     } else if (event->getType() == Abstract_event::SURFACE_EVENT) {
       result = is_actual_surface_event(std::dynamic_pointer_cast<Surface_event>(event));
     } else if (event->getType() == Abstract_event::POLYHEDRON_SPLIT_EVENT) {
-      result = is_actual_polyhedron_split_event(std::dynamic_pointer_cast<Polyhedron_split_event>(event), current_time);
+      result = is_actual_polyhedron_split_event(std::dynamic_pointer_cast<Polyhedron_split_event>(event));
     } else if (event->getType() == Abstract_event::SPLIT_MERGE_EVENT) {
       result = is_actual_split_merge_event(std::dynamic_pointer_cast<Split_merge_event>(event));
     } else if (event->getType() == Abstract_event::EDGE_SPLIT_EVENT) {
       result = is_actual_edge_split_event(std::dynamic_pointer_cast<Edge_split_event>(event));
     } else if (event->getType() == Abstract_event::PIERCE_EVENT) {
-      result = is_actual_pierce_event(std::dynamic_pointer_cast<Pierce_event>(event), current_time, time_future_bound);
+      result = is_actual_pierce_event(std::dynamic_pointer_cast<Pierce_event>(event), time_future_bound);
     }
 
     return result;
@@ -2735,8 +2730,8 @@ public:
       CGAL_SS3_DEBUG_SPTR(facet_1_src);
       for (const EdgeSPtr& edge_2 : facet_1_src->edges()) {
         collect_polyhedron_split_event(edge_1, edge_2, polyhedron,
-                                    current_time, time_future_bound,
-                                    queue);
+                                       current_time, time_future_bound,
+                                       queue);
       }
     }
 
@@ -4172,7 +4167,6 @@ public:
   }
 
   Event_status handle_save_event(const Save_event_sptr& event,
-                                 const FT& current_time,
                                  const PolyhedronSPtr& polyhedron)
   {
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
@@ -4203,7 +4197,6 @@ public:
   // This 'handle' is in fact more akin to a collect, but the interesting point
   // is that it happens after pop time
   Event_status handle_const_time_event(Const_time_event_sptr event,
-                                       const FT& current_time,
                                        const PolyhedronSPtr& polyhedron)
   {
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
@@ -4229,7 +4222,6 @@ public:
   // This function might not do anything, for example if the vanish event is in fact
   // escalated as a contact event.
   Event_status handle_vanish_event(const Vanish_event_sptr& event,
-                                   const FT& current_time,
                                    const std::optional<FT>& time_future_bound,
                                    const PolyhedronSPtr& polyhedron)
   {
@@ -4348,7 +4340,7 @@ public:
       edge_event->set_point(point);
       edge_event->set_edge(edge);
 
-      return handle_edge_event(edge_event, current_time, time_future_bound, polyhedron);
+      return handle_edge_event(edge_event, time_future_bound, polyhedron);
     }
 
     // Edge_merge_event
@@ -4441,7 +4433,7 @@ public:
       edge_merge_event->set_edge_1(edge_1);
       edge_merge_event->set_edge_2(edge_2);
 
-      return handle_edge_merge_event(edge_merge_event, current_time, time_future_bound, polyhedron);
+      return handle_edge_merge_event(edge_merge_event, time_future_bound, polyhedron);
     }
 
     // Triangle_event
@@ -4489,7 +4481,7 @@ public:
       triangle_event->set_facet(facet);
       triangle_event->set_edge_begin(edge);
 
-      return handle_triangle_event(triangle_event, current_time, time_future_bound, polyhedron);
+      return handle_triangle_event(triangle_event, time_future_bound, polyhedron);
     }
 
     // Dbl_edge_merge_event
@@ -4568,7 +4560,7 @@ public:
       dbl_edge_merge_event->set_edge_21(edge_21);
       dbl_edge_merge_event->set_edge_22(edge_22);
 
-      return handle_dbl_edge_merge_event(dbl_edge_merge_event, current_time, time_future_bound, polyhedron);
+      return handle_dbl_edge_merge_event(dbl_edge_merge_event, time_future_bound, polyhedron);
     }
 
     // Dbl_triangle_event
@@ -4595,7 +4587,7 @@ public:
       dbl_triangle_event->set_point(point);
       dbl_triangle_event->set_edge(edge);
 
-      return handle_dbl_triangle_event(dbl_triangle_event, current_time, time_future_bound, polyhedron);
+      return handle_dbl_triangle_event(dbl_triangle_event, time_future_bound, polyhedron);
     }
 
     // Tetrahedron_event
@@ -4612,14 +4604,13 @@ public:
       tetrahedron_event->set_point(point);
       tetrahedron_event->set_edge_begin(edge);
 
-      return handle_tetrahedron_event(tetrahedron_event, current_time, time_future_bound, polyhedron);
+      return handle_tetrahedron_event(tetrahedron_event, time_future_bound, polyhedron);
     }
 
     return Event_status::NON_EVENT;
   }
 
   Event_status handle_edge_event(const Edge_event_sptr& event,
-                                 const FT& current_time,
                                  const std::optional<FT>& time_future_bound,
                                  const PolyhedronSPtr& polyhedron)
   {
@@ -4921,7 +4912,6 @@ public:
   }
 
   Event_status handle_edge_merge_event(const Edge_merge_event_sptr& event,
-                                       const FT& current_time,
                                        const std::optional<FT>& time_future_bound,
                                        const PolyhedronSPtr& polyhedron)
   {
@@ -5061,7 +5051,6 @@ public:
   }
 
   Event_status handle_triangle_event(const Triangle_event_sptr& event,
-                                     const FT& current_time,
                                      const std::optional<FT>& time_future_bound,
                                      const PolyhedronSPtr& polyhedron)
   {
@@ -5185,7 +5174,6 @@ public:
   }
 
   Event_status handle_dbl_edge_merge_event(const Dbl_edge_merge_event_sptr& event,
-                                           const FT& current_time,
                                            const std::optional<FT>& /*time_future_bound*/,
                                            const PolyhedronSPtr& polyhedron)
   {
@@ -5305,7 +5293,6 @@ public:
   }
 
   Event_status handle_dbl_triangle_event(const Dbl_triangle_event_sptr& event,
-                                         const FT& current_time,
                                          const std::optional<FT>& /*time_future_bound*/,
                                          const PolyhedronSPtr& polyhedron) {
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
@@ -5420,7 +5407,6 @@ public:
   }
 
   Event_status handle_tetrahedron_event(const Tetrahedron_event_sptr& event,
-                                        const FT& current_time,
                                         const std::optional<FT>& /*time_future_bound*/,
                                         const PolyhedronSPtr& polyhedron)
   {
@@ -5510,7 +5496,6 @@ public:
   };
 
   Event_status handle_generic_vertex_event(const Generic_vertex_event_sptr& event,
-                                           const FT& current_time,
                                            const std::optional<FT>& time_future_bound,
                                            const PolyhedronSPtr& polyhedron)
   {
@@ -5588,7 +5573,7 @@ public:
       // which must be split while edge_merge_1 and edge_merge_2 merge.
       Split_merge_event_sptr split_merge_event = Split_merge_event::create();
       initialize_specialized_event(event, split_merge_event);
-      return handle_split_merge_event(split_merge_event, current_time, time_future_bound, polyhedron);
+      return handle_split_merge_event(split_merge_event, time_future_bound, polyhedron);
     } else {
       // probably could:
       // - simplify both tests to just checking if
@@ -5613,19 +5598,18 @@ public:
         // around vertex_1 and vertex_2: the two vertices merge.
         Vertex_event_sptr vertex_event = Vertex_event::create();
         initialize_specialized_event(event, vertex_event);
-        return handle_vertex_event(vertex_event, current_time, time_future_bound, polyhedron);
+        return handle_vertex_event(vertex_event, time_future_bound, polyhedron);
       } else {
         // facet_1b and facet_2b are not adjacent, and the edges rotate in the same sense
         // around vertex_1 and vertex_2: the two vertices flip.
         Flip_vertex_event_sptr flip_vertex_event = Flip_vertex_event::create();
         initialize_specialized_event(event, flip_vertex_event);
-        return handle_flip_vertex_event(flip_vertex_event, current_time, time_future_bound, polyhedron);
+        return handle_flip_vertex_event(flip_vertex_event, time_future_bound, polyhedron);
       }
     }
   }
 
   Event_status handle_vertex_event(const Vertex_event_sptr& event,
-                                   const FT& current_time,
                                    const std::optional<FT>& time_future_bound,
                                    const PolyhedronSPtr& polyhedron)
   {
@@ -5798,7 +5782,6 @@ public:
   }
 
   Event_status handle_flip_vertex_event(const Flip_vertex_event_sptr& event,
-                                        const FT& current_time,
                                         const std::optional<FT>& time_future_bound,
                                         const PolyhedronSPtr& polyhedron)
   {
@@ -5916,7 +5899,6 @@ public:
   }
 
   Event_status handle_surface_event(const Surface_event_sptr& event,
-                                    const FT& current_time,
                                     const std::optional<FT>& time_future_bound,
                                     const PolyhedronSPtr& polyhedron)
 {
@@ -6103,7 +6085,6 @@ public:
   }
 
   Event_status handle_polyhedron_split_event(const Polyhedron_split_event_sptr& event,
-                                             const FT& current_time,
                                              const std::optional<FT>& time_future_bound,
                                              const PolyhedronSPtr& polyhedron)
   {
@@ -6284,7 +6265,6 @@ public:
   }
 
   Event_status handle_split_merge_event(const Split_merge_event_sptr& event,
-                                        const FT& current_time,
                                         const std::optional<FT>& time_future_bound,
                                         const PolyhedronSPtr& polyhedron)
   {
@@ -6476,7 +6456,6 @@ public:
   }
 
   Event_status handle_edge_split_event(const Edge_split_event_sptr& event,
-                                       const FT& current_time,
                                        const std::optional<FT>& time_future_bound,
                                        const PolyhedronSPtr& polyhedron)
   {
@@ -6634,7 +6613,6 @@ public:
   }
 
   Event_status handle_pierce_event(const Pierce_event_sptr& event,
-                                   const FT& current_time,
                                    const std::optional<FT>& time_future_bound,
                                    const PolyhedronSPtr& polyhedron)
   {
@@ -6778,7 +6756,6 @@ public:
   }
 
   Event_status handle_event(const Abstract_event_sptr& event,
-                            const FT& current_time,
                             const std::optional<FT>& time_future_bound,
                             const PolyhedronSPtr& polyhedron)
   {
@@ -6795,43 +6772,41 @@ public:
     //   time can be a significant waste of time. Taking the same pierce event type, we need
     //   to check if the movement of the vertex would actually touch the polygon facet.
     //   Thus, it's cheaper to delay the check, even if that means computing the event time.
-    if (!is_actual_event(event, current_time, time_future_bound)) {
+    if (!is_actual_event(event, time_future_bound)) {
       return result;
     }
 
     if (event->getType() == Abstract_event::SAVE_EVENT) {
-      result = handle_save_event(std::dynamic_pointer_cast<Save_event>(event),
-                                 current_time, polyhedron);
+      result = handle_save_event(std::dynamic_pointer_cast<Save_event>(event), polyhedron);
     } else if (event->getType() == Abstract_event::CONST_TIME_EVENT) {
-      result = handle_const_time_event(std::dynamic_pointer_cast<Const_time_event>(event),
-                                       current_time, polyhedron);
+      result = handle_const_time_event(std::dynamic_pointer_cast<Const_time_event>(event), polyhedron);
     } else if (event->getType() == Abstract_event::GENERIC_VERTEX_EVENT) {
       result = handle_generic_vertex_event(std::dynamic_pointer_cast<Generic_vertex_event>(event),
-                                           current_time, time_future_bound, polyhedron);
+                                           time_future_bound, polyhedron);
     } else if (event->getType() == Abstract_event::VANISH_EVENT) {
       result = handle_vanish_event(std::dynamic_pointer_cast<Vanish_event>(event),
-                                   current_time, time_future_bound, polyhedron);
+                                   time_future_bound, polyhedron);
     } else if (event->getType() == Abstract_event::VERTEX_EVENT) {
       result = handle_vertex_event(std::dynamic_pointer_cast<Vertex_event>(event),
-                                   current_time, time_future_bound, polyhedron);
+                                   time_future_bound, polyhedron);
     } else if (event->getType() == Abstract_event::FLIP_VERTEX_EVENT) {
       result = handle_flip_vertex_event(std::dynamic_pointer_cast<Flip_vertex_event>(event),
-                                        current_time, time_future_bound, polyhedron);
+                                        time_future_bound, polyhedron);
     } else if (event->getType() == Abstract_event::SURFACE_EVENT) {
       result = handle_surface_event(std::dynamic_pointer_cast<Surface_event>(event),
-                                    current_time, time_future_bound, polyhedron);
+                                    time_future_bound, polyhedron);
     } else if (event->getType() == Abstract_event::POLYHEDRON_SPLIT_EVENT) {
       result = handle_polyhedron_split_event(std::dynamic_pointer_cast<Polyhedron_split_event>(event),
-                                             current_time, time_future_bound, polyhedron);
+                                             time_future_bound, polyhedron);
     } else if (event->getType() == Abstract_event::SPLIT_MERGE_EVENT) {
       result = handle_split_merge_event(std::dynamic_pointer_cast<Split_merge_event>(event),
-                                        current_time, time_future_bound, polyhedron);
+                                        time_future_bound, polyhedron);
     } else if (event->getType() == Abstract_event::EDGE_SPLIT_EVENT) {
       result = handle_edge_split_event(std::dynamic_pointer_cast<Edge_split_event>(event),
-                                       current_time, time_future_bound, polyhedron);
+                                       time_future_bound, polyhedron);
     } else if (event->getType() == Abstract_event::PIERCE_EVENT) {
       result = handle_pierce_event(std::dynamic_pointer_cast<Pierce_event>(event),
-                                   current_time, time_future_bound, polyhedron);
+                                   time_future_bound, polyhedron);
     } else {
       CGAL_SS3_CORE_TRACE_V(1, "Error: Cannot handle event of type " << event->getType());
       CGAL_assertion(false);
