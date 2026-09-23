@@ -1,7 +1,10 @@
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/import_face_graph_to_lcc.h>
+#ifndef CGAL_NO_DEPRECATED_CODE
 #include <CGAL/Polyhedron_3_to_lcc.h>
+#endif
 #include <sstream>
 #include <cassert>
 #include <cstdlib>
@@ -18,7 +21,10 @@ int main()
   Polyhedron P;
   ss >> P;
 
-  LCC lcc1, lcc2;
+  LCC lcc0, lcc1, lcc2;
+
+  auto d0 = CGAL::import_face_graph_to_lcc(P, lcc0);
+  assert(d0 == LCC::null_descriptor);
 
   auto d1 = CGAL::polyhedron_3_to_lcc(lcc1, P);
   assert(d1 == LCC::null_descriptor);

@@ -6,7 +6,8 @@ Release date: December 2026
 
 ### [Linear Cell Complex](https://doc.cgal.org/6.3/Manual/packages.html#PkgLinearCellComplex)
 - added `tetrahedron_soup_to_lcc()` to import a tetrahedron soup into a linear cell complex.
-
+- The following function have been deprecated and renamed for better naming clarity and consistency:
+  - `(polyhedron_3_to_lcc())` → [`import_face_graph_in_lcc()`](https://doc.cgal.org/6.3/Linear_cell_complex/group__PkgLinearCellComplexConstructions.html#gaf2fa5a468b97eb3358d25b2f147c2a72)
 ### [2D and 3D Fast Intersection and Distance Computation (AABB Tree)](https://doc.cgal.org/6.3/Manual/packages.html#PkgAABBTree)
 - `CGAL::AABB_tree::build()` now accepts an optional `Concurrency_tag` template parameter (`CGAL::Sequential_tag` by default).
    When `CGAL::Parallel_tag` is specified, the tree construction is performed in parallel.
@@ -60,13 +61,12 @@ Release date: December 2026
   `is_face_valued` and `face_value` (with `face_value_name` for the legend). As an example, the
   surface mesh drawer exposes the aspect ratio of each face.
 
-
-
 ## [Release 6.2](https://github.com/CGAL/cgal/releases/tag/v6.2)
 
 Release date: June 2026
 
 ### General Changes
+
 
 - The new list of supported compilers is:
   - Visual C++ 15.9, 16.10, 17.14, 18.0 (from Visual Studio 2017, 2019, 2022, and 2026) or later

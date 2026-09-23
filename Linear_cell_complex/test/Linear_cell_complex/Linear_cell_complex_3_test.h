@@ -15,7 +15,7 @@
 #include <CGAL/Combinatorial_map_operations.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/Polyhedron_3_to_lcc.h>
+#include <CGAL/import_face_graph_to_lcc.h>
 #include <CGAL/Triangulation_3_to_lcc.h>
 #include "Linear_cell_complex_2_test.h"
 #include <fstream>
@@ -997,7 +997,7 @@ bool test_LCC_3()
     }
     in >> P;
 
-    CGAL::polyhedron_3_to_lcc<LCC>(lcc,P);
+    CGAL::import_face_graph_to_lcc(P, lcc);
     if ( !check_number_of_cells_3(lcc, 1539, 4434, 2894, 2, 2) )
       return false;
 

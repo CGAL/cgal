@@ -1,8 +1,9 @@
 #include <CGAL/Three/Three.h>
 #include <CGAL/Three/CGAL_Lab_io_plugin_interface.h>
 #include <CGAL/Combinatorial_map_save_load.h>
-#include <CGAL/Polyhedron_3_to_lcc.h>
+#include <CGAL/import_face_graph_to_lcc.h>
 
+#include "Scene_surface_mesh_item.h"
 #include "Scene_lcc_item.h"
 
 #include <iostream>
@@ -47,7 +48,11 @@ public:
     QString ext = fileinfo.suffix();
     bool res = true;
     if(ext == "off")
-      CGAL::polyhedron_3_flux_to_lcc < Scene_lcc_item::LCC > (lcc, ifs);
+    {
+      SMesh sm;
+      ifs >> sm;
+      CGAL::import_face_graph_to_lcc (sm, lcc);
+    }
     else
     {
       res = CGAL::load_combinatorial_map(ifs, lcc);
