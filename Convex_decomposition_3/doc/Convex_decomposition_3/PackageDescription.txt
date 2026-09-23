@@ -21,8 +21,8 @@ A second method approximates the input mesh with convex volumes. While these con
 \cgalClassifedRefPages
 
 \cgalCRPSection{Functions}
-- `CGAL::approximate_convex_decomposition(FaceGraph)`
-- `CGAL::convex_decomposition_3(NefPolyhedron_3)`
+- \link CGAL::approximate_convex_decomposition() `CGAL::approximate_convex_decomposition(FaceGraph)` \endlink
+- \link CGAL::convex_decomposition_3() `CGAL::convex_decomposition_3(NefPolyhedron_3)`  \endlink
 
 */
 

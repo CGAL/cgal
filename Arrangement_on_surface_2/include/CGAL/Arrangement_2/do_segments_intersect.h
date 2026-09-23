@@ -129,12 +129,12 @@ bool do_segment_intersect(const Segment& seg1, const Segment& seg2, bool closed,
   switch (make_certain(compare_xy(r1, l2))) {
    case SMALLER: return false;
    case EQUAL: return closed;
-   default: break; // LERGER
+   default: break; // LARGER
   }
   switch (make_certain(compare_xy(r2, l1))) {
    case SMALLER: return false;
    case EQUAL: return closed;
-   default: break; // LERGER
+   default: break; // LARGER
   }
 
   return (closed) ?

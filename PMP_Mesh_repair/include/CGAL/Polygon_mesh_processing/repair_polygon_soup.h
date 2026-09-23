@@ -46,6 +46,15 @@ namespace CGAL {
 
 namespace Polygon_mesh_processing {
 
+ /*!
+ * \ingroup PMP_combinatorial_repair_grp
+ *
+ * \brief Policies controlling how duplicate polygons are handled in polygon soup repair functions.
+ */
+enum class Duplicate_polygon_erase_policy {
+  ERASE_ALL, KEEP_ONE, KEEP_ONE_IF_ODD
+};
+
 namespace internal {
 
 template <typename Stream, typename Polygon>
@@ -900,12 +909,13 @@ DuplicateOutputIterator collect_duplicate_polygons(const PointRange& points,
 ///     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
 ///   \cgalParamNEnd
 ///
-///   \cgalParamNBegin{erase_all_duplicates}
-///     \cgalParamDescription{Parameter to indicate, when multiple polygons are duplicates,
-///                           whether all the duplicate polygons should be removed
-///                           or if one (arbitrarily chosen) face should be kept.}
-///     \cgalParamType{Boolean}
-///     \cgalParamDefault{`false`}
+///   \cgalParamNBegin{erase_policy}
+///     \cgalParamDescription{specifies the policy applied when multiple polygons are duplicates:
+///                           `CGAL::Polygon_mesh_processing::Duplicate_polygon_erase_policy::ERASE_ALL` removes all duplicates.
+///                           `CGAL::Polygon_mesh_processing::Duplicate_polygon_erase_policy::KEEP_ONE` keeps one arbitrarily chosen polygon.
+///                           `CGAL::Polygon_mesh_processing::Duplicate_polygon_erase_policy::KEEP_ONE_IF_ODD` keeps one polygon if the number of duplicate polygons is odd, and removes all of them otherwise.}
+///     \cgalParamType{`CGAL::Polygon_mesh_processing::Duplicate_polygon_erase_policy`}
+///     \cgalParamDefault{`CGAL::Polygon_mesh_processing::Duplicate_polygon_erase_policy::KEEP_ONE`}
 ///   \cgalParamNEnd
 ///
 ///   \cgalParamNBegin{require_same_orientation}
@@ -927,15 +937,31 @@ std::size_t merge_duplicate_polygons_in_polygon_soup(const PointRange& points,
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;
+  using parameters::is_default_parameter;
+
+  using Policy = Duplicate_polygon_erase_policy;
 
   typedef typename CGAL::internal::Polygon_types<PointRange, PolygonRange>::P_ID                         P_ID;
 
-  const bool erase_all_duplicates = choose_parameter(get_parameter(np, internal_np::erase_all_duplicates), false);
+  Policy erase_policy = choose_parameter(get_parameter(np, internal_np::erase_policy), Policy::KEEP_ONE);
+#ifndef CGAL_NO_DEPRECATED_CODE
+  if constexpr(parameters::is_default_parameter<NamedParameters, internal_np::erase_policy_t>::value)
+    if(choose_parameter(get_parameter(np, internal_np::erase_all_duplicates), false)){
+      // CGAL_warning_msg(false, "The named parameter 'erase_all_duplicates' is deprecated. Use 'erase_policy' instead.");
+      erase_policy = Policy::ERASE_ALL;
+    }
+#endif // CGAL_NO_DEPRECATED_CODE
+
   const bool same_orientation = choose_parameter(get_parameter(np, internal_np::require_same_orientation), false);
 
 #ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE_PP
   std::cout << "Only polygons with the same orientation are duplicates: " << std::boolalpha << same_orientation << std::endl;
-  std::cout << "Erase all duplicate polygons: " << std::boolalpha << erase_all_duplicates << std::endl;
+  if(erase_policy == Policy::ERASE_ALL)
+    std::cout << "Erase policy: ERASE_ALL" << std::endl;
+  else if(erase_policy == Policy::KEEP_ONE)
+    std::cout << "Erase policy: KEEP_ONE" << std::endl;
+  else if(erase_policy == Policy::KEEP_ONE_IF_ODD)
+    std::cout << "Erase policy: KEEP_ONE_IF_ODD" << std::endl;
 #endif
 
   typedef typename GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type Traits;
@@ -972,7 +998,9 @@ std::size_t merge_duplicate_polygons_in_polygon_soup(const PointRange& points,
     const std::vector<P_ID>& duplicate_polygons = all_duplicate_polygons.back();
     CGAL_assertion(duplicate_polygons.size() >= 2);
 
-    std::size_t i = erase_all_duplicates ? 0 : 1;
+    std::size_t i = (erase_policy == Policy::ERASE_ALL) ? 0 :
+                    (erase_policy == Policy::KEEP_ONE) ? 1 :
+                 /* (erase_policy == Policy::KEEP_ONE_IF_ODD) ?*/ duplicate_polygons.size() % 2;
     for(; i<duplicate_polygons.size(); ++i)
     {
       const P_ID polygon_to_remove_id = duplicate_polygons[i];
@@ -1122,12 +1150,13 @@ struct Polygon_soup_fixer<PointRange, PolygonRange, std::array<PID, N> >
 ///     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
 ///   \cgalParamNEnd
 ///
-///   \cgalParamNBegin{erase_all_duplicates}
-///     \cgalParamDescription{Parameter to indicate, when multiple polygons are duplicates,
-///                           whether all the duplicate polygons should be removed
-///                           or if one (arbitrarily chosen) face should be kept.}
-///     \cgalParamType{Boolean}
-///     \cgalParamDefault{`false`}
+///   \cgalParamNBegin{erase_policy}
+///     \cgalParamDescription{specifies the policy applied when multiple polygons are duplicates:
+///                           `CGAL::Polygon_mesh_processing::Duplicate_polygon_erase_policy::ERASE_ALL` removes all duplicates.
+///                           `CGAL::Polygon_mesh_processing::Duplicate_polygon_erase_policy::KEEP_ONE` keeps one arbitrarily chosen polygon.
+///                           `CGAL::Polygon_mesh_processing::Duplicate_polygon_erase_policy::KEEP_ONE_IF_ODD` keeps one polygon if the number of duplicate polygons is odd, and removes all of them otherwise.}
+///     \cgalParamType{`CGAL::Polygon_mesh_processing::Duplicate_polygon_erase_policy`}
+///     \cgalParamDefault{`CGAL::Polygon_mesh_processing::Duplicate_polygon_erase_policy::KEEP_ONE`}
 ///   \cgalParamNEnd
 ///
 ///   \cgalParamNBegin{require_same_orientation}

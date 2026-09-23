@@ -185,7 +185,7 @@ CGAL_Lab_off_plugin::load_off(QFileInfo fileinfo) {
     item->setNbIsolatedvertices(isolated_v);
     //needs two restore, it's not a typo
     QApplication::restoreOverrideCursor();
-    QMessageBox::warning((QWidget*)nullptr,
+    QMessageBox::warning(CGAL::Three::Three::mainWindow(),
                          tr("Isolated vertices"),
                          tr("%1 isolated vertices found")
                          .arg(item->getNbIsolatedvertices()));
@@ -198,7 +198,7 @@ CGAL_Lab_off_plugin::load_off(QFileInfo fileinfo) {
   {
 
     QApplication::restoreOverrideCursor();
-    QMessageBox::warning((QWidget*)nullptr,
+    QMessageBox::warning(CGAL::Three::Three::mainWindow(),
                          tr("Non Manifold Vertices"),
                          tr("Non-manifold vertices have been found"));
   }

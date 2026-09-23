@@ -8,7 +8,7 @@ find_package(CGAL REQUIRED)
 
 include(CGAL_CreateSingleSourceCGALProgram)
 
-create_single_source_cgal_program("tetrahedron_coordinates.cpp")
+create_single_source_cgal_program("tetrahedron_coordinates_3.cpp")
 create_single_source_cgal_program("shape_deformation_3.cpp")
 create_single_source_cgal_program("wachspress_coordinates_3.cpp")
 create_single_source_cgal_program("discrete_harmonic_coordinates_3.cpp")

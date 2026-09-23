@@ -28,6 +28,7 @@
 \cgalPkgDependsOn{\ref PkgTriangulation2 and \ref PkgPolygonRepair}
 \cgalPkgBib{cgal:achpr-aw2}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{2D Alpha wrap demo,alpha_wrap_2.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 

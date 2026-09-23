@@ -92,7 +92,7 @@ void refine_mesh_at_isolevel(PolygonMesh& pm,
   VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_property_map(vertex_point, pm));
 
-  ECM ecm = choose_parameter(get_parameter(np, internal_np::edge_is_constrained), Default_ECM());
+  ECM ecm = choose_parameter<Default_ECM>(get_parameter(np, internal_np::edge_is_constrained));
 
   std::unordered_map<face_descriptor, std::vector<halfedge_descriptor> > faces_to_split;
   std::vector<edge_descriptor> to_split;

@@ -21,6 +21,7 @@
 #include <CGAL/algorithm.h>
 #include <list>
 #include <vector>
+#include <array>
 #include <algorithm>
 #include <iostream>
 
@@ -37,11 +38,11 @@ template < class Traits_ >
 class Min_ellipse_2 {
   public:
     // types
-    typedef           Traits_                           Traits;
-    typedef typename  Traits_::Point                    Point;
-    typedef typename  Traits_::Ellipse                  Ellipse;
-    typedef typename  std::list<Point>::const_iterator  Point_iterator;
-    typedef           const Point *                     Support_point_iterator;
+    typedef           Traits_                             Traits;
+    typedef typename  Traits_::Point                      Point;
+    typedef typename  Traits_::Ellipse                    Ellipse;
+    typedef typename  std::list<Point>::const_iterator    Point_iterator;
+    typedef typename  std::array<Point,5>::const_iterator Support_point_iterator;
 
     /**************************************************************************
     WORKAROUND: Some compilers are unable to match member functions defined
@@ -121,10 +122,10 @@ class Min_ellipse_2 {
 
   private:
     // private data members
-    Traits       tco;                           // traits class object
-    std::list<Point>  points;                   // doubly linked list of points
-    int          n_support_points;              // number of support points
-    Point*       support_points;                // array of support points
+    Traits             tco;                      // traits class object
+    std::list<Point>   points;                   // doubly linked list of points
+    int                n_support_points;         // number of support points
+    std::array<Point,5> support_points;           // array of support points
 
 
     // copying and assignment not allowed!
@@ -188,14 +189,14 @@ class Min_ellipse_2 {
     Support_point_iterator
     support_points_begin( ) const
     {
-        return( support_points);
+        return( support_points.cbegin());
     }
 
     inline
     Support_point_iterator
     support_points_end( ) const
     {
-        return( support_points+n_support_points);
+        return( support_points.cbegin() + n_support_points);
     }
 
     // random access for support points
@@ -328,9 +329,6 @@ class Min_ellipse_2 {
                        const Traits& traits    = Traits())
             : tco( traits)
         {
-            // allocate support points' array
-            support_points = new Point[ 5];
-
             // range of points not empty?
             if ( first != last) {
 
@@ -354,9 +352,6 @@ class Min_ellipse_2 {
     Min_ellipse_2()
         : n_support_points( 0)
     {
-        // allocate support points' array
-        support_points = new Point[ 5];
-
         // initialize ellipse
         tco.ellipse.set();
 
@@ -367,9 +362,6 @@ class Min_ellipse_2 {
     Min_ellipse_2( const Traits& traits )
         : tco( traits), n_support_points( 0)
     {
-        // allocate support points' array
-        support_points = new Point[ 5];
-
         // initialize ellipse
         tco.ellipse.set();
 
@@ -381,9 +373,6 @@ class Min_ellipse_2 {
     Min_ellipse_2( const Point& p, const Traits& traits = Traits())
         : tco( traits), points( 1, p), n_support_points( 1)
     {
-        // allocate support points' array
-        support_points = new Point[ 5];
-
         // initialize ellipse
         support_points[ 0] = p;
         tco.ellipse.set( p);
@@ -399,9 +388,6 @@ class Min_ellipse_2 {
                    const Traits& traits = Traits())
         : tco( traits)
     {
-        // allocate support points' array
-        support_points = new Point[ 5];
-
         // store points
         points.push_back( p1);
         points.push_back( p2);
@@ -418,9 +404,6 @@ class Min_ellipse_2 {
                    const Traits& traits = Traits())
         : tco( traits)
     {
-        // allocate support points' array
-        support_points = new Point[ 5];
-
         // store points
         points.push_back( p1);
         points.push_back( p2);
@@ -437,9 +420,6 @@ class Min_ellipse_2 {
                    const Traits& traits = Traits())
         : tco( traits)
     {
-        // allocate support points' array
-        support_points = new Point[ 5];
-
         // store points
         points.push_back( p1);
         points.push_back( p2);
@@ -457,9 +437,6 @@ class Min_ellipse_2 {
                    const Traits& traits = Traits())
         : tco( traits)
     {
-        // allocate support points' array
-        support_points = new Point[ 5];
-
         // store points
         points.push_back( p1);
         points.push_back( p2);
@@ -472,14 +449,6 @@ class Min_ellipse_2 {
     }
 
 
-    // Destructor
-    // ----------
-    inline
-    ~Min_ellipse_2( )
-    {
-        // free support points' array
-        delete[] support_points;
-    }
 
     // Modifiers
     // ---------

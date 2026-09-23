@@ -220,7 +220,7 @@ std::shared_ptr<Straight_skeleton_2<K> >
 inline
 create_exterior_weighted_straight_skeleton_2(const FT& max_offset,
                                              const Polygon& aPoly,
-                                             Weights& weights,
+                                             const Weights& weights,
                                              const K& k = K())
 {
   return create_exterior_weighted_straight_skeleton_2(max_offset,

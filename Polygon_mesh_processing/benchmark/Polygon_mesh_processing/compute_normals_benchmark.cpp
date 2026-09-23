@@ -1,0 +1,44 @@
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Surface_mesh.h>
+
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
+#include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
+#include <CGAL/Timer.h>
+
+#include <iostream>
+#include <string>
+
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+
+typedef K::Point_3                                          Point;
+typedef K::Vector_3                                         Vector;
+
+typedef CGAL::Surface_mesh<Point>                           Mesh;
+typedef boost::graph_traits<Mesh>::vertex_descriptor        vertex_descriptor;
+typedef boost::graph_traits<Mesh>::face_descriptor          face_descriptor;
+
+namespace PMP = CGAL::Polygon_mesh_processing;
+
+int main(int argc, char* argv[])
+{
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/eight.off");
+
+  Mesh mesh;
+  if(!PMP::IO::read_polygon_mesh(filename, mesh))
+  {
+    std::cerr << "Invalid input." << std::endl;
+    return 1;
+  }
+
+  auto vnormals = mesh.add_property_map<vertex_descriptor, Vector>("v:normal", CGAL::NULL_VECTOR).first;
+  auto fnormals = mesh.add_property_map<face_descriptor, Vector>("f:normal", CGAL::NULL_VECTOR).first;
+
+  CGAL::Timer timer;
+  timer.start();
+  PMP::compute_normals(mesh, vnormals, fnormals);
+  timer.stop();
+  std::cout << "Time: " << timer.time() << " seconds" << std::endl;
+
+
+  return 0;
+}

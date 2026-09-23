@@ -14,7 +14,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_ANGLE_AND_AREA_SMOOTHING_H
 #define CGAL_POLYGON_MESH_PROCESSING_ANGLE_AND_AREA_SMOOTHING_H
 
-#include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
+#include <CGAL/license/Polygon_mesh_processing/remeshing.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/mesh_smoothing_impl.h>
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/smoothing_evaluation.h>
@@ -211,8 +211,7 @@ void angle_and_area_smoothing(const FaceRange& faces,
   const bool use_safety_constraints = choose_parameter(get_parameter(np, internal_np::use_safety_constraints), true);
   const bool use_Delaunay_flips = choose_parameter(get_parameter(np, internal_np::use_Delaunay_flips), true);
 
-  VCMap vcmap = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
-                                 get(Vertex_property_tag(), tmesh, false));
+  VCMap vcmap = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained), Vertex_property_tag(), tmesh, false);
 
   ECMap ecmap = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
                                  Static_boolean_property_map<edge_descriptor, false>());

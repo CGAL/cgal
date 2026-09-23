@@ -110,21 +110,6 @@ public:
           return true;
         }
       }
-      else
-      {
-        double scx_bxmin = scx - bxmin;
-        double bxmax_scx = bxmax - scx;
-        max1 = (std::min)(scx_bxmin, bxmax_scx);
-
-        distance = square(max1);
-        double_tmp_result = (distance - ssr);
-
-        if ((max1 < 3.33558365626356687717e-147) || (max1 > 1.67597599124282407923e+153)) {
-          CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
-          return Base::operator()(s, b);
-        }
-      }
-
 
       if (scy < bymin)
       {
@@ -136,6 +121,13 @@ public:
         center_inside = false;
 
         distance += square(bymin_scy);
+
+        if ((max1 < 3.33558365626356687717e-147) || (max1 > 1.67597599124282407923e+153)) {
+          CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+          return Base::operator()(s, b);
+        }
+
+        eps = 1.99986535548615598560e-15 * (std::max)(ssr, square(max1));
       }
       else if (scy > bymax)
       {
@@ -147,31 +139,20 @@ public:
         center_inside = false;
 
         distance += square(scy_bymax);
-      }
-      else {
-        double scy_bymin = scy - bymin;
-        double bymax_scy = bymax - scy;
-        double d = (std::min)(scy_bymin, bymax_scy);
-        if (max1 < d) {
-          max1 = d;
+
+        if ((max1 < 3.33558365626356687717e-147) || (max1 > 1.67597599124282407923e+153)) {
+          CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+          return Base::operator()(s, b);
         }
 
-        distance += square(d);
+        eps = 1.99986535548615598560e-15 * (std::max)(ssr, square(max1));
       }
 
       double_tmp_result = (distance - ssr);
 
-      if ((max1 < 3.33558365626356687717e-147) || (max1 > 1.67597599124282407923e+153)) {
-        CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
-        return Base::operator()(s, b);
-      }
-
-      eps = 1.99986535548615598560e-15 * (std::max)(ssr, square(max1));
-
       if (!center_inside && double_tmp_result > eps) {
         return true;
       }
-
 
       if (scz < bzmin)
       {
@@ -194,18 +175,6 @@ public:
         center_inside = false;
 
         distance += square(scz_bzmax);
-      }
-      else
-      {
-        double scz_bzmin = scz - bzmin;
-        double bzmax_scz = bzmax - scz;
-        double d = (std::min)(scz_bzmin, bzmax_scz);
-
-        if (max1 < d) {
-          max1 = d;
-        }
-
-        distance += square(d);
       }
 
       if (center_inside)

@@ -3823,7 +3823,6 @@ namespace CommonKernelFunctors {
     operator()(const Circle_2& c, const Iso_rectangle_2& r) const
     {
       typedef typename K::FT FT;
-      FT d = FT(0);
       FT distance = FT(0);
 
       const Point_2& center = c.center();
@@ -3833,20 +3832,19 @@ namespace CommonKernelFunctors {
         return false;
 
       // x
-      d = (std::min)(square(center.x() - r.xmin()), square(center.x() - r.xmax()));
+      if (center.x() < r.xmin())
+        distance = square(r.xmin() - center.x());
+      else if (center.x() > r.xmax())
+        distance = square(center.x() - r.xmax());
 
-      if (certainly(d > c.squared_radius()))
+      if (certainly(distance > c.squared_radius()))
         return true;
-
-      distance = d;
 
       // y
-      d = (std::min)(square(center.y() - r.ymin()), square(center.y() - r.ymax()));
-
-      if (certainly(d > c.squared_radius()))
-        return true;
-
-      distance += d;
+      if (center.y() < r.ymin())
+        distance += square(r.ymin() - center.y());
+      else if (center.y() > r.ymax())
+        distance += square(center.y() - r.ymax());
 
       return (distance > c.squared_radius());
     }
@@ -3882,7 +3880,6 @@ namespace CommonKernelFunctors {
     operator()(const Sphere_3& s, const Iso_cuboid_3& c) const
     {
       typedef typename K::FT FT;
-      FT d = FT(0);
       FT distance = FT(0);
 
       const Point_3& center = s.center();
@@ -3893,28 +3890,31 @@ namespace CommonKernelFunctors {
         return false;
 
       // x
-      d = (std::min)(square(center.x() - c.xmin()), square(center.x() - c.xmax()));
+      if (center.x() < c.xmin())
+        distance = square(c.xmin() - center.x());
+      else if (center.x() > c.xmax())
+        distance = square(center.x() - c.xmax());
 
-      if (certainly(d > s.squared_radius()))
+      if (certainly(distance > s.squared_radius()))
         return true;
-
-      distance = d;
 
       // y
-      d = (std::min)(square(center.y() - c.ymin()), square(center.y() - c.ymax()));
+      if (center.y() < c.ymin())
+        distance += square(c.ymin() - center.y());
+      else if (center.y() > c.ymax())
+        distance += square(center.y() - c.ymax());
 
-      if (certainly(d > s.squared_radius()))
+      if (certainly(distance > s.squared_radius()))
         return true;
-
-      distance += d;
 
       // z
-      d = (std::min)(square(center.z() - c.zmin()), square(center.z() - c.zmax()));
+      if (center.z() < c.zmin())
+        distance += square(c.zmin() - center.z());
+      else if (center.z() > c.zmax())
+        distance += square(center.z() - c.zmax());
 
-      if (certainly(d > s.squared_radius()))
+      if (certainly(distance > s.squared_radius()))
         return true;
-
-      distance += d;
 
       return (distance > s.squared_radius());
     }

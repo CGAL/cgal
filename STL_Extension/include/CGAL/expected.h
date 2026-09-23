@@ -1001,7 +1001,7 @@ struct expected_copy_base<T, E, false, true> : expected_operations_base<T, E> {
 
 // This class manages conditionally having a trivial move constructor
 // Unfortunately there's no way to achieve this in GCC < 5 AFAIK, since it
-// doesn't implement an analogue to std::is_trivially_move_constructible. We
+// doesn't implement an analog to std::is_trivially_move_constructible. We
 // have to make do with a non-trivial move constructor even if T is trivially
 // move constructible
 #ifndef CGAL_TL_EXPECTED_GCC49
@@ -1069,7 +1069,7 @@ struct expected_copy_assign_base<T, E, false, true> : expected_move_base<T, E> {
 
 // This class manages conditionally having a trivial move assignment operator
 // Unfortunately there's no way to achieve this in GCC < 5 AFAIK, since it
-// doesn't implement an analogue to std::is_trivially_move_assignable. We have
+// doesn't implement an analog to std::is_trivially_move_assignable. We have
 // to make do with a non-trivial move assignment operator even if T is trivially
 // move assignable
 #ifndef CGAL_TL_EXPECTED_GCC49

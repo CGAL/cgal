@@ -7,7 +7,7 @@ The function `arrange_offset_polygons_2()` arranges the sequence of 2D polygons 
 by `create_offset_polygons_2()` into 2D polygons with holes by determining geometric parent-hole
 relationships using a simple algorithm based on the particular characteristics of offset polygons.
 
-The function determines parent-hole relationships among the polygons given by `[begin,end]` creating
+The function determines parent-hole relationships among the polygons given by `[begin,end)` creating
 `std::shared_ptr< GeneralPolygonWithHoles_2 >` objects added to the output sequence given `out`.
 A `CLOCKWISE` oriented polygon `H` is a hole of a `COUNTERCLOCKWISE` polygon `P`, iff at least one vertex of `H` is `ON_BOUNDED_SIDE` of `P`.
 

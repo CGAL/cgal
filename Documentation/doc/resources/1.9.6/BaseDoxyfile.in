@@ -93,7 +93,6 @@ ALIASES                = "cgal=%CGAL" \
                          "libpointmatcher=libpointmatcher" \
                          "core=Core" \
                          "mpfi=MPFI" \
-                         "ntl=NTL" \
                          "pdb=PDB" \
                          "esbtl=ESBTL" \
                          "tbb=TBB" \

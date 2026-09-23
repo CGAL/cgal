@@ -77,7 +77,7 @@ void test_intersections(Index index, const char* type)
 {
   std::cout << "test_intersections<"<<type<<">()" << std::endl;
   TriangleMesh tm1, tm2, tm3;
-  std::ifstream input("data/small_spheres.off");
+  std::ifstream input(CGAL::data_file_path("meshes/small_spheres.off"));
   assert(input);
   input >> tm1;
   input.close();
@@ -85,7 +85,7 @@ void test_intersections(Index index, const char* type)
   assert(input);
   input >> tm2;
   input.close();
-  input.open("data/large_cube_coplanar.off");
+  input.open(CGAL::data_file_path("meshes/large_cube_coplanar.off"));
   assert(input);
   input >> tm3;
   input.close();

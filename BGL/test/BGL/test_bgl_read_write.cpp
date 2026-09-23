@@ -710,7 +710,9 @@ void test_bgl_GOCAD(const char* filename)
   assert(ok);
   assert(num_vertices(fg) != 0 && num_faces(fg) != 0);
 
-  is.seekg(0);
+  is.close();
+  is.open(filename);
+
   CGAL::clear(fg);
   std::pair<std::string, std::string> name_and_color;
   ok = CGAL::IO::read_GOCAD(is, name_and_color, fg);

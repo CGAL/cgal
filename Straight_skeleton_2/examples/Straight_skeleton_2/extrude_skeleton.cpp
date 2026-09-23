@@ -163,7 +163,6 @@ int main(int argc, char** argv)
   std::cout << "Reading input(s) took " << timer.time() << " s." << std::endl;
 
   // End of I/O, do some slope preprocessing and check the validity of the input(s)
-  // -----------------------------------------------------------------------------------------------
 
   timer.reset();
   timer.start();

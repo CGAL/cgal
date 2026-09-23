@@ -1,5 +1,7 @@
 #include <CGAL/Polygon_mesh_processing/clip.h>
 #include <CGAL/Polygon_mesh_processing/transform.h>
+#include <CGAL/Polygon_mesh_processing/detect_features.h>
+#include <CGAL/boost/graph/generators.h>
 
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
@@ -1294,6 +1296,102 @@ void test_clip_and_split_with_plane_visitor()
 
 }
 
+
+
+
+template <class ECM>
+std::size_t
+count_constrained_edges(const Surface_mesh& tm, ECM ecm)
+{
+  std::size_t n=0;
+  for(auto e : tm.edges())
+  {
+    if ( ecm[e] ) ++n;
+  }
+  return n;
+}
+
+/*
+template <class ECM>
+void dump_constrained_edges(const Surface_mesh& tm, ECM ecm, std::string fname)
+{
+  std::ofstream output(fname);
+  for(auto e : tm.edges())
+  {
+    if ( get(ecm, e) )
+      output << "2 " << tm.point( tm.vertex(e, 0) )
+             <<  " " << tm.point( tm.vertex(e, 1) ) << "\n";
+  }
+}
+*/
+
+void test_edge_is_contrained()
+{
+  {
+  Surface_mesh tm;
+  std::ifstream(CGAL::data_file_path("meshes/joint_refined.off")) >> tm;
+
+  auto ecm = tm.add_property_map<Surface_mesh::Edge_index, bool>("ecm", false).first;
+  PMP::detect_sharp_edges(tm, 60, ecm);
+
+  CGAL::Bbox_3 bb(-0.61222702264785767, -0.31298750638961792, -0.16560758650302887,
+                  0.54861283302307129, 0.62676382064819336, 0.68821543455123901);
+
+  Surface_mesh clipper;
+  CGAL::make_hexahedron(K::Iso_cuboid_3(bb), clipper, params::do_not_triangulate_faces(false));
+
+  PMP::clip(tm, clipper, params::edge_is_constrained_map(ecm));
+
+  assert( count_constrained_edges(tm, ecm)==132 );
+  }
+
+  {
+  Surface_mesh tm;
+  std::ifstream(CGAL::data_file_path("meshes/joint_refined.off")) >> tm;
+
+  auto ecm = tm.add_property_map<Surface_mesh::Edge_index, bool>("ecm", false).first;
+  PMP::detect_sharp_edges(tm, 60, ecm);
+
+  CGAL::Bbox_3 bb(-0.61222702264785767, -0.31298750638961792, -0.16560758650302887,
+                  0.54861283302307129, 0.62676382064819336, 0.68821543455123901);
+
+  Surface_mesh clipper;
+  CGAL::make_hexahedron(K::Iso_cuboid_3(bb), clipper, params::do_not_triangulate_faces(false));
+
+  PMP::clip(tm, clipper, params::edge_is_constrained_map(ecm).clip_volume(true));
+
+  assert( count_constrained_edges(tm, ecm)==132 );
+  }
+
+  {
+  Surface_mesh tm;
+  std::ifstream(CGAL::data_file_path("meshes/joint_refined.off")) >> tm;
+
+  auto ecm = tm.add_property_map<Surface_mesh::Edge_index, bool>("ecm", false).first;
+  PMP::detect_sharp_edges(tm, 60, ecm);
+
+  K::Plane_3 plane(-1.63242e-16, -1, -2.22045e-16, -0.242727);
+
+  PMP::clip(tm, plane, params::edge_is_constrained_map(ecm));
+
+  assert( count_constrained_edges(tm, ecm)==146 );
+  }
+
+  {
+  Surface_mesh tm;
+  std::ifstream(CGAL::data_file_path("meshes/joint_refined.off")) >> tm;
+
+  auto ecm = tm.add_property_map<Surface_mesh::Edge_index, bool>("ecm", false).first;
+  PMP::detect_sharp_edges(tm, 60, ecm);
+
+  K::Plane_3 plane(-1.63242e-16, -1, -2.22045e-16, -0.242727);
+
+  PMP::clip(tm, plane, params::edge_is_constrained_map(ecm).clip_volume(true));
+
+  assert( count_constrained_edges(tm, ecm)==146 );
+  }
+}
+
 int main()
 {
   std::cout << "Surface Mesh" << std::endl;
@@ -1324,6 +1422,9 @@ int main()
   std::cout << "Done!" << std::endl;
   std::cout << "running test_clip_and_split_with_plane_visitor\n";
   test_clip_and_split_with_plane_visitor();
+  std::cout << "running test_edge_is_contrained\n";
+  test_edge_is_contrained();
   std::cout << "Done!" << std::endl;
+
   return EXIT_SUCCESS;
 }

@@ -17,7 +17,7 @@
 #ifndef CGAL_AABB_FILTERED_PROJECTION_TRAITS_H
 #define CGAL_AABB_FILTERED_PROJECTION_TRAITS_H
 
-#include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
+#include <CGAL/license/Polygon_mesh_processing/remeshing.h>
 
 
 #include <CGAL/property_map.h>

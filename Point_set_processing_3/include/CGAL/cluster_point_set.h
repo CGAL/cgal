@@ -155,8 +155,7 @@ std::size_t cluster_point_set (PointRange& points,
   typename Kernel::FT factor = choose_parameter(get_parameter(np, internal_np::attraction_factor),
                                                 typename Kernel::FT(2));
 
-  const std::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
-                                                               std::function<bool(double)>());
+  const std::function<bool(double)>& callback = choose_parameter<std::function<bool(double)>>(get_parameter(np, internal_np::callback));
 
   double callback_factor = 1.;
   if (!std::is_same<Adjacencies,

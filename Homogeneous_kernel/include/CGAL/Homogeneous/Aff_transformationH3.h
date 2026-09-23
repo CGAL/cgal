@@ -447,12 +447,13 @@ public:
   //  Scaling
   Aff_transformationH3(const Scaling&, const RT& num, const RT& den);
 
-  //  General form
+  //  General form with translation
   Aff_transformationH3(
                   const RT& m00, const RT& m01, const RT& m02, const RT& m03,
                   const RT& m10, const RT& m11, const RT& m12, const RT& m13,
                   const RT& m20, const RT& m21, const RT& m22, const RT& m23,
                                                                const RT& m33);
+  //  General form without translation
   Aff_transformationH3(
                   const RT& m00, const RT& m01, const RT& m02,
                   const RT& m10, const RT& m11, const RT& m12,

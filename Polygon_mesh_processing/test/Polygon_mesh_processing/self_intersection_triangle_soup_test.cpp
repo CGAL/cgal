@@ -230,6 +230,13 @@ int main(int argc, char** argv)
     std::vector< std::array<std::size_t, 3> > triangles={{0,1,2},{0,1,3},{0,1,4},{0,1,5}};
     assert(PMP::does_triangle_soup_self_intersect(points, triangles));
   }
+  {
+    // 4 identical triangles: no self-intersection
+    typedef EPICK::Point_3 Point_3;
+    std::vector<EPICK::Point_3> points = {Point_3(0,0,0), Point_3(1,0,0), Point_3(0,1,0)};
+    std::vector< std::array<std::size_t, 3> > triangles={{0,1,2},{0,2,1},{0,1,2},{0,2,1}};
+    assert(!PMP::does_triangle_soup_self_intersect(points, triangles));
+  }
 
   return r;
 }
