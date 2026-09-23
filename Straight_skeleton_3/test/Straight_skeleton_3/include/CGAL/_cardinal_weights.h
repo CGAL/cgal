@@ -5,9 +5,8 @@
 #ifndef CGAL_STRAIGHT_SKELETON_3_TEST_CARDINAL_WEIGHTS_H
 #define CGAL_STRAIGHT_SKELETON_3_TEST_CARDINAL_WEIGHTS_H
 
-#include "CGAL/_color_input.h"
-
 #include <CGAL/Straight_skeleton_3/internal/debug.h>
+#include <CGAL/Straight_skeleton_3/IO/Face_graph_IO.h>
 
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/IO/Color.h>
@@ -199,7 +198,7 @@ bool assign_cardinal_weights(const std::filesystem::path& weights_filename,
 
   CGAL_SS3_TRACE_V(8, "E-W-S-N weights: " << x1_val << " " << x2_val << " " << y1_val << " " << y2_val);
 
-  utils::save_colored_mesh(pmesh, fwm, "results/weighted.ply");
+  IO::utils::save_colored_mesh(pmesh, fwm, "results/weighted.ply");
 
   return true;
 }

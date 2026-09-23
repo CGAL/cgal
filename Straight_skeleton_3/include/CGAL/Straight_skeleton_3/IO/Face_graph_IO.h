@@ -11,6 +11,8 @@
 #ifndef CGAL_STRAIGHT_SKELETON_3_IO_SURFACE_MESH_IO_H
 #define CGAL_STRAIGHT_SKELETON_3_IO_SURFACE_MESH_IO_H
 
+// #define CGAL_SS3_DETECT_COPLANARITIES_WITH_NORMAL_CHANGE
+
 #include <CGAL/license/Straight_skeleton_3.h>
 
 #include <CGAL/Straight_skeleton_3/Configuration.h>
@@ -23,12 +25,13 @@
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/mark_domain_in_triangulation.h>
 #include <CGAL/property_map.h>
-#if 0
-# include <CGAL/Polygon_mesh_processing/region_growing.h>
-#endif
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup_extension.h>
+#ifndef CGAL_SS3_DETECT_COPLANARITIES_WITH_NORMAL_CHANGE
+# include <CGAL/Polygon_mesh_processing/bbox.h>
+# include <CGAL/Polygon_mesh_processing/region_growing.h>
+#endif
 #include <CGAL/IO/polygon_mesh_io.h>
 #include <CGAL/unordered_flat_map.h>
 
@@ -36,14 +39,68 @@
 #include <cmath>
 #include <exception>
 #include <iostream>
+#include <filesystem>
 #include <fstream>
 #include <map>
+#include <random>
 #include <vector>
 #include <unordered_map>
 
 namespace CGAL {
 namespace Straight_skeletons_3 {
 namespace IO {
+namespace utils {
+
+// Simple helper function to draw a mesh whose faces are colored according to the weights (speeds).
+template<typename PolygonMesh, typename Values>
+void save_colored_mesh(const PolygonMesh& pmesh,
+                       const Values& values,
+                       const std::filesystem::path& fullpath)
+{
+  using Color = CGAL::IO::Color;
+
+  using face_descriptor = typename boost::graph_traits<PolygonMesh>::face_descriptor;
+
+  using value_type = typename CGAL::cpp20::remove_cvref<decltype(values[face_descriptor()])>::type;
+
+  std::cout << "Saving colored mesh to " << fullpath << std::endl;
+
+  // get a unique vector of values
+  std::vector<value_type> unique_values;
+  for (auto f : faces(pmesh)) {
+    unique_values.push_back(values[f]);
+  }
+
+  std::sort(unique_values.begin(), unique_values.end());
+  unique_values.erase(std::unique(unique_values.begin(), unique_values.end()), unique_values.end());
+
+  std::cout << "Number of unique values: " << unique_values.size() << std::endl;
+
+  std::mt19937_64 gen(0);
+  std::uniform_int_distribution<> dist(0, 255);
+
+  std::map<value_type, CGAL::Color> colors;
+  for (const auto& value : unique_values) {
+    colors[value] = Color(static_cast<unsigned char>(dist(gen)),
+                          static_cast<unsigned char>(dist(gen)),
+                          static_cast<unsigned char>(dist(gen)));
+    std::cout << " value " << value << " has color " << colors[value] << std::endl;
+  }
+
+  auto& nc_pmesh = const_cast<PolygonMesh&>(pmesh);
+  auto face_color = nc_pmesh.template add_property_map<face_descriptor, Color>("f:color").first;
+
+  for (auto f : faces(pmesh)) {
+    // std::cout << "facet " << f << " with value " << values[f] << " gets color " << colors[values[f]] << std::endl;
+    put(face_color, f, colors[values[f]]);
+  }
+
+  std::ofstream out(fullpath);
+  out.precision(17);
+  CGAL::IO::write_PLY(out, pmesh, CGAL::parameters::face_color_map(face_color));
+}
+
+} // namepace utils
 
 template <typename GeomTraits>
 class FaceGraphIO
@@ -239,22 +296,15 @@ public:
     IO::write_OBJ("results/coplanar_merge_before.obj", polyhedron, parameters::do_not_triangulate_faces(true));
 #endif
 
-#define CGAL_SS3_DETECT_COPLANARITIES_WITH_NORMAL_CHANGE
 #ifdef CGAL_SS3_DETECT_COPLANARITIES_WITH_NORMAL_CHANGE
-
-#if 0
-    // this actually makes things worse because we want to merge almost coplanar facets afterwards,
-    // and truncating precision will increase the variance of the normals of facets almost living
-    // on the same non-cardinal plane, resulting in fewer merges.
-    // @todo but do it after merging?
-    Transformation::truncate_precision(polyhedron);
-#endif
-
     Transformation::merge_coplanar_facets(polyhedron);
 #else // CGAL_SS3_DETECT_COPLANARITIES_WITH_NORMAL_CHANGE
     namespace PMP = CGAL::Polygon_mesh_processing;
 
-    CGAL::Bbox_3 bbox = PMP::bbox(tmesh);
+    using halfedge_descriptor = typename boost::graph_traits<TriangleMesh>::halfedge_descriptor;
+    using face_descriptor = typename boost::graph_traits<TriangleMesh>::face_descriptor;
+
+    const CGAL::Bbox_3 bbox = PMP::bbox(tmesh);
     const FT diag_length = CGAL::approximate_sqrt(square(bbox.xmax() - bbox.xmin()) +
                                                   square(bbox.ymax() - bbox.ymin()) +
                                                   square(bbox.zmax() - bbox.zmin()));
@@ -263,71 +313,70 @@ public:
     std::vector<std::size_t> region_ids(num_faces(tmesh));
     boost::vector_property_map<Plane_3> plane_map; // supporting planes of the regions detected
 
-    const FT cos_of_max_angle = 0.98;
-    const FT max_distance = 0.0001 * diag_length;
+    const FT max_distance = epsilon * diag_length;
+    CGAL_SS3_IO_TRACE_V(8, "Region growing::max_distance = " << max_distance);
 
-    // detect planar regions in the mesh
-    // @todo growing should:
-    // - use the .ini value of 'coplanarity_epsilon'
-    // - stop if it merges faces with different weights
-    // - give an error for adjacent coplanar faces that have different weights
-    std::size_t nb_regions =
-        PMP::region_growing_of_planes_on_faces(tmesh,
-                                               CGAL::make_random_access_property_map(region_ids),
-                                               CGAL::parameters::cosine_of_maximum_angle(cos_of_max_angle)
-                                                                .region_primitive_map(plane_map)
-                                                                .maximum_distance(max_distance));
+    // Detect planar regions in the mesh
+    //
+    // The cosine to '-1' is to ignore the angle change in consecutive faces and edges: elements
+    // are part of the same region as long as they live within the same slab.
+    // The reason behind this is that some input data (and results of this skeleton/offsetting
+    // algorithm) can have nasty folds.
 
-    static int region_dump_id = -1;
-    utils::save_colored_mesh(tmesh, region_ids, "results/regions_" + std::to_string(++region_dump_id) + ".ply");
-
-    // detect corner vertices on the boundary of planar regions
-    std::vector<std::size_t> corner_ids(num_vertices(tmesh), -1); // corner status of vertices
-    std::vector<bool> ecm(num_edges(tmesh), false); // mark edges at the boundary of regions
-
-    std::size_t nb_corners =
-        PMP::detect_corners_of_regions(tmesh,
-                                      CGAL::make_random_access_property_map(region_ids),
-                                      nb_regions,
-                                      CGAL::make_random_access_property_map(corner_ids),
-                                      CGAL::parameters::cosine_of_maximum_angle(cos_of_max_angle)
-                                                       .maximum_distance(max_distance)
-                                                       .edge_is_constrained_map(CGAL::make_random_access_property_map(ecm)));
+    PMP::region_growing_of_planes_on_faces(tmesh,
+                                           CGAL::make_random_access_property_map(region_ids),
+                                           CGAL::parameters::region_primitive_map(plane_map)
+                                                            .maximum_distance(max_distance)
+                                                            .cosine_of_maximum_angle(-1.));
 
     CGAL_SS3_IO_TRACE_CODE(for (face_descriptor f : faces(tmesh)))
     CGAL_SS3_IO_TRACE_V(16, "facet " << f << " is in region " << region_ids[f]);
 
-    // the almost-coplanar merge is performed after the conversion to the Polyhedron
-    // data structure because we want to be able to create faces that have holes,
-    // which the CGAL::Surface_mesh class does not support
-    std::map<edge_descriptor, EdgeWPtr> e2e;
-    PolyhedronSPtr polyhedron = db::_3d::FaceGraphIO::load(sm, e2e, np);
+#ifdef CGAL_SS3_DUMP_FILES
+    static int region_dump_id = -1;
+    utils::save_colored_mesh(tmesh, region_ids, "results/regions_" + std::to_string(++region_dump_id) + ".ply");
+#endif // CGAL_SS3_DUMP_FILES
 
     // merge the facets incident to an unconstrained edge (i.e., the edge is interior to a region)
-    for (edge_descriptor e: edges(tmesh)) {
-        if (ecm[e]) {
-          continue;
-        }
-
-        EdgeSPtr edge = e2e[e].lock();
-        if (!edge) {
-          continue;
-        }
-
-        CGAL_SS3_TRANSF_TRACE("Merging facets " << edge->get_facet_L()->id() << " and " << edge->get_facet_R()->id());
-        CGAL_assertion(sm.point(source(e, sm)) == edge->source()->point());
-        CGAL_assertion(sm.point(target(e, sm)) == edge->target()->point());
-
-        // @fixme it seems like intermediate states are somewhat unsound during edge merging
-        merge_facets(edge, polyhedron);
+    std::vector<EdgeWPtr> edges_to_remove;
+    for (edge_descriptor ed : edges(tmesh)) {
+      halfedge_descriptor hd = halfedge(ed, tmesh);
+      if (region_ids[face(hd, tmesh)] == region_ids[face(opposite(hd, tmesh), tmesh)]) {
+        edges_to_remove.push_back(e2e.at(ed));
+      }
     }
+
+    Transformation::merge_facet_pairs(edges_to_remove, polyhedron);
+
+    // merge facet pairs arbitrarily keeps one of the two facets, so we need the correct plane
+    for (FacetSPtr f : polyhedron->facets()) {
+      // abusing the fact that polyhedron and input mesh facets are in the same order...
+      const Plane_3& pl = get(plane_map, region_ids[f->id()]);
+      f->set_plane(outward_offsetting ? pl.opposite() : pl);
+    }
+
+    Transformation::sanitize(polyhedron); // remove degenerate vertices and facets
+    CGAL_postcondition(polyhedron->is_consistent());
 
     polyhedron->initialize_all_IDs();
 
-    sanitize(polyhedron);
+    // all vertices should be within the max distance of the chosen supporting plane
+    for (const FacetSPtr& f : polyhedron->facets()) {
+      for (const VertexSPtr& v : f->vertices()) {
+        CGAL_postcondition(CGAL::squared_distance(f->get_plane(), v->point()) < CGAL::square(max_distance));
+      }
+    }
+
 #endif // CGAL_SS3_DETECT_COPLANARITIES_WITH_NORMAL_CHANGE
 
-    CGAL_SS3_TRANSF_TRACE("Converted, " << polyhedron->facets().size() << " facets");
+#ifdef CGAL_SS3_DUMP_FILES
+    IO::write_OBJ("results/coplanar_merge_after.obj", polyhedron, parameters::do_not_triangulate_faces(true));
+#endif
+
+#if 0
+    // @todo test this again
+    Transformation::truncate_precision(polyhedron);
+#endif
 
 #ifdef CGAL_SS3_DUMP_FILES
     IO::write_OBJ("results/converted.obj", polyhedron, parameters::do_not_triangulate_faces(true));

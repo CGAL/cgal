@@ -325,19 +325,327 @@ public:
     return merge_facets(edge, edge->get_facet_L(), edge->get_facet_R(), polyhedron);
   }
 
-  static int merge_coplanar_facets(const PolyhedronSPtr& polyhedron,
-                                   const double epsilon)
+  /**
+    * removes as many edges of 'edges' as possible, merging incident facets, while keeping
+    * every resulting facet representable: no vertex may be visited twice by its boundary.
+    * Facets with holes are allowed, so several boundary cycles are fine.
+    */
+  template <typename EdgeWPtrRange>
+  static int merge_facet_pairs(const EdgeWPtrRange& edges,
+                               const PolyhedronSPtr& polyhedron)
+  {
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
+
+    // for determinism
+    auto by_id = [](const auto& a, const auto& b) { return a->id() < b->id(); };
+
+    CGAL::unordered_flat_set<EdgeSPtr> candidate_edges;
+    for (EdgeWPtr ew : edges) {
+      if (EdgeSPtr e = ew.lock()) {
+        candidate_edges.insert(e);
+      }
+    }
+
+    std::vector<std::vector<FacetSPtr> > ccs;
+    CGAL::unordered_flat_map<FacetSPtr, std::size_t> cc;
+
+    // split a facet range into connected components of facets (where two facets are part of the
+    // same CC iff there is a to-be-removed edge shared by the two facets)
+    auto partition = [&](const auto& facets,
+                         std::vector<std::size_t>& out)
+    {
+      out.clear();
+
+      CGAL::unordered_flat_set<FacetSPtr> pool(facets.begin(), facets.end());
+
+      std::vector<FacetSPtr> seeds(facets.begin(), facets.end());
+      std::sort(seeds.begin(), seeds.end(), by_id);
+
+      for (const FacetSPtr& seed : seeds) {
+        if (pool.erase(seed) == 0) {
+          continue;
+        }
+
+        const std::size_t cid = ccs.size();
+        ccs.emplace_back();
+        out.push_back(cid);
+
+        std::vector<FacetSPtr> stack = { seed };
+        while (!stack.empty()) {
+          const FacetSPtr f = stack.back();
+          stack.pop_back();
+
+          cc[f] = cid;
+          ccs[cid].push_back(f);
+
+          for (const EdgeSPtr& e : f->edges()) {
+            CGAL_SS3_DEBUG_SPTR(e);
+            if (candidate_edges.count(e) == 0) {
+              continue;
+            }
+            const FacetSPtr o = e->other(f);
+            if (pool.erase(o) != 0) {
+              stack.push_back(o);
+            }
+          }
+        }
+
+        std::sort(ccs[cid].begin(), ccs[cid].end(), by_id);
+      }
+    };
+
+    std::vector<std::size_t> work;
+    partition(polyhedron->facets(), work);
+    const std::size_t n_maximal = work.size();
+
+    // ---
+    // If an edge is not marked for removal but both facets have the same connected component, then
+    // force that edge to be removed
+
+    std::size_t n_forced = 0;
+    for (const EdgeSPtr& e : polyhedron->edges()) {
+      CGAL_SS3_DEBUG_SPTR(e);
+      if (candidate_edges.count(e) != 0) {
+        continue;
+      }
+      const std::size_t c = cc.at(e->get_facet_L());
+      if (c != cc.at(e->get_facet_R())) {
+        continue;
+      }
+
+      CGAL_SS3_TRANSF_TRACE_V(32, "  E" << e->id() << " must also be removed (component: " << c << ")");
+      candidate_edges.insert(e);
+      ++n_forced;
+    }
+
+    // ---
+    // compute the sectors of a star of a vertex
+    //
+    // Two facets of the component at 'v' are in the same sector when they share an edge at 'v'.
+    // By the invariant above, both sides being in the component implies that edge is dissolved,
+    // so no rotational order is needed.
+    // Leaves 'sectors' empty when 'v' is untouched by the component, or interior to it.
+
+    auto sectors_at = [&](const std::size_t c, const VertexSPtr& v,
+                          std::vector<std::vector<FacetSPtr> >& sectors)
+    {
+      sectors.clear();
+
+      boost::container::small_vector<FacetSPtr, 8> in;
+      bool all_in = true;
+      for (const FacetWPtr& wf : v->facets()) {
+        if (FacetSPtr f = wf.lock()) {
+          if (cc.at(f) == c) {
+            in.push_back(f);
+          } else {
+            all_in = false;
+          }
+        }
+      }
+
+      if (in.empty() || all_in) {
+        return;
+      }
+
+      auto slot = [&](const FacetSPtr& f) -> std::size_t {
+        const auto it = std::find(in.begin(), in.end(), f);
+        CGAL_assertion(it != in.end());
+        return std::size_t(it - in.begin());
+      };
+
+      boost::container::small_vector<std::size_t, 8> uf(in.size());
+      std::iota(uf.begin(), uf.end(), std::size_t(0));
+      auto find = [&](std::size_t a) {
+        while (uf[a] != a) { uf[a] = uf[uf[a]]; a = uf[a]; }
+        return a;
+      };
+
+      for (const EdgeWPtr& we : v->edges()) {
+        if (EdgeSPtr e = we.lock()) {
+          const FacetSPtr fl = e->get_facet_L();
+          const FacetSPtr fr = e->get_facet_R();
+          if (cc.at(fl) != c || cc.at(fr) != c) {
+            continue;
+          }
+          CGAL_assertion(candidate_edges.count(e) != 0); // no slit, see step 2
+          const std::size_t ra = find(slot(fl)), rb = find(slot(fr));
+          if (ra != rb) {
+            uf[ra] = rb;
+          }
+        }
+      }
+
+      std::unordered_map<std::size_t, std::size_t> root_to_sector;
+      for (std::size_t k = 0; k < in.size(); ++k) {
+        const std::size_t r = find(k);
+        auto it = root_to_sector.find(r);
+        if (it == root_to_sector.end()) {
+          it = root_to_sector.emplace(r, sectors.size()).first;
+          sectors.emplace_back();
+        }
+        sectors[it->second].push_back(in[k]);
+      }
+    };
+
+    // ---
+    // detect and treat pinches
+
+    auto find_peels = [&](const std::size_t c,
+                          std::vector<std::vector<FacetSPtr> >& peels) -> bool
+    {
+      peels.clear();
+
+      CGAL::unordered_flat_set<VertexSPtr> visited;
+      for (const FacetSPtr& f : ccs[c]) {
+        for (const VertexSPtr& v : f->vertices()) {
+          visited.insert(v);
+        }
+      }
+      std::vector<VertexSPtr> ordered(visited.begin(), visited.end());
+      std::sort(ordered.begin(), ordered.end(), by_id);
+
+      std::vector<std::vector<FacetSPtr> > sectors;
+      for (const VertexSPtr& v : ordered) {
+        sectors_at(c, v, sectors);
+        if (sectors.size() < 2) {
+          continue;
+        }
+
+        CGAL_SS3_TRANSF_TRACE_V(32, "  C" << c << ": pinch at V" << v->id() << " (" << sectors.size() << " sectors)");
+
+        // Keep the largest sector, peel the others
+        const std::size_t keep = std::size_t(
+          std::max_element(sectors.begin(), sectors.end(),
+                           [](const std::vector<FacetSPtr>& a,
+                              const std::vector<FacetSPtr>& b) { return a.size() < b.size(); })
+          - sectors.begin());
+
+        for (std::size_t k = 0; k < sectors.size(); ++k) {
+          if (k != keep) {
+            peels.push_back(sectors[k]);
+          }
+        }
+        return true;
+      }
+
+      return false;
+    };
+
+    // ------------------------------------------------------------------
+    // 5. Peel until every component is representable
+    // ------------------------------------------------------------------
+
+    std::size_t n_peels = 0;
+    std::vector<std::vector<FacetSPtr> > peels;
+    std::vector<FacetSPtr> rest;
+    std::vector<std::size_t> fresh;
+
+    while (!work.empty()) {
+      const std::size_t c = work.back();
+      work.pop_back();
+      if (ccs[c].empty()) {
+        continue; // already superseded by a peel
+      }
+
+      if (!find_peels(c, peels)) {
+        continue;
+      }
+      ++n_peels;
+
+      CGAL::unordered_flat_set<FacetSPtr> peeled;
+      for (const std::vector<FacetSPtr>& p : peels) {
+        peeled.insert(p.begin(), p.end());
+      }
+
+      rest.clear();
+      for (const FacetSPtr& f : ccs[c]) {
+        if (peeled.count(f) == 0) {
+          rest.push_back(f);
+        }
+      }
+      CGAL_assertion(!rest.empty() && rest.size() < ccs[c].size()); // strict progress
+      ccs[c].clear();
+
+      // A peeled sector is dual-connected and valid on its own (see the header), so it is
+      // registered but not requeued.
+      for (const std::vector<FacetSPtr>& p : peels) {
+        partition(p, fresh);
+        CGAL_assertion(fresh.size() == 1);
+      }
+      partition(rest, fresh);
+      work.insert(work.end(), fresh.begin(), fresh.end());
+    }
+
+    // ------------------------------------------------------------------
+    // 6. Apply
+    // ------------------------------------------------------------------
+
+    std::vector<EdgeSPtr> edges_to_remove;
+    for (const EdgeSPtr& e : candidate_edges) {
+      if (cc.at(e->get_facet_L()) == cc.at(e->get_facet_R())) {
+        edges_to_remove.push_back(e);
+      } else {
+        CGAL_SS3_TRANSF_TRACE_V(32, e->to_string() << " is no longer marked for removal");
+      }
+    }
+
+    // for determinism
+    std::sort(edges_to_remove.begin(), edges_to_remove.end(), by_id);
+
+    CGAL_SS3_TRANSF_TRACE_V(8, "merge_facet_pairs: " << polyhedron->facets().size() << " facets, "
+                                << candidate_edges.size() << " candidate edges (" << n_forced
+                                << " forced), " << n_maximal << " maximal components, "
+                                << n_peels << " peel(s), dissolving " << edges_to_remove.size()
+                                << " edges");
+
+    candidate_edges.clear();
+    ccs.clear();
+    cc.clear();
+
+    CGAL::unordered_flat_set<EdgeSPtr> removed_edges;
+
+    for (const EdgeSPtr& e : edges_to_remove) {
+      CGAL_SS3_DEBUG_SPTR(e);
+
+      if (removed_edges.count(e)) {
+        CGAL_SS3_TRANSF_TRACE_V(32, "  E" << e->id() << " was already removed by an earlier merge");
+        continue;
+      }
+
+      const FacetSPtr facet_l = e->get_facet_L();
+      const FacetSPtr facet_r = e->get_facet_R();
+      CGAL_SS3_DEBUG_SPTR(facet_l);
+      CGAL_SS3_DEBUG_SPTR(facet_r);
+
+      std::list<EdgeSPtr> common_edges = facet_l->find_edges(facet_r);
+      for (EdgeSPtr ce : common_edges) {
+        CGAL_assertion(std::find(edges_to_remove.begin(), edges_to_remove.end(), ce) != edges_to_remove.end());
+        removed_edges.insert(ce);
+      }
+      merge_facets(e, polyhedron);
+    }
+
+    for (const FacetSPtr& f : polyhedron->facets()) {
+      CGAL::unordered_flat_map<VertexSPtr, int> deg;
+      CGAL_postcondition_code(  for (const EdgeSPtr& e : f->edges()) {)
+      CGAL_postcondition_code(    ++deg[e->source()];)
+      CGAL_postcondition_code(    ++deg[e->target()];)
+      CGAL_postcondition_code(  })
+      CGAL_postcondition_code(  for (const auto& v_and_d : deg) {)
+      CGAL_postcondition(         v_and_d.second == 2); // == 4 if pinched
+      CGAL_postcondition_code(  })
+    }
+
+    return removed_edges.size();
+  }
+
+  static std::size_t merge_coplanar_facets(const PolyhedronSPtr& polyhedron,
+                                           const double epsilon)
   {
     CGAL_SS3_TRANSF_TRACE_V(4, "\nMerging coplanar faces with epsilon = " << epsilon);
     CGAL_SS3_TRANSF_TRACE_V(4, "  initial facet count: " << polyhedron->facets().size());
 
-#ifdef CGAL_SS3_DUMP_FILES
-    IO::write_OBJ("results/coplanar_merge_before.obj", polyhedron, parameters::do_not_triangulate_faces(true));
-#endif
-
     CGAL_SS3_DEBUG_SPTR(polyhedron);
-
-    int result = 0;
 
     std::vector<EdgeWPtr> edges_to_remove;
     for (const EdgeSPtr& edge : polyhedron->edges()) {
@@ -358,17 +666,12 @@ public:
       }
     }
 
-    CGAL_SS3_TRANSF_TRACE(edges_to_remove.size() << " edges to remove");
+    CGAL_SS3_TRANSF_TRACE_V(8, edges_to_remove.size() << " edges to remove");
 
     CGAL_SS3_TRANSF_TRACE_CODE(if (edges_to_remove.size() > 0))
     CGAL_SS3_TRANSF_TRACE_V(16, "Adjacent facets of the following edges are detected to be coplanar and will be merged.");
 
-    for (EdgeWPtr edge_w : edges_to_remove) {
-      if (EdgeSPtr edge = edge_w.lock()) {
-        merge_facets(edge, polyhedron);
-        ++result;
-      }
-    }
+    std::size_t result = merge_facet_pairs(edges_to_remove, polyhedron);
 
     // There can be multiple defects after merging, for example:
     // - when we merge two facets sharing multiple edges, this can leave dangling vertices
@@ -376,20 +679,13 @@ public:
     // - ...
 
     sanitize(polyhedron); // remove degenerate vertices and facets
-    CGAL_postcondition(polyhedron->is_consistent());
 
-    polyhedron->initialize_all_IDs();
-
-    CGAL_SS3_TRANSF_TRACE_V(4, "  Simplified facet count: " << polyhedron->facets().size());
-
-#ifdef CGAL_SS3_DUMP_FILES
-    IO::write_OBJ("results/coplanar_merge_after.obj", polyhedron, parameters::do_not_triangulate_faces(true));
-#endif
+    CGAL_SS3_TRANSF_TRACE_V(4, "  Final facet count: " << polyhedron->facets().size());
 
     return result;
   }
 
-  static int merge_coplanar_facets(const PolyhedronSPtr& polyhedron)
+  static std::size_t merge_coplanar_facets(const PolyhedronSPtr& polyhedron)
   {
     CGAL_SS3_DEBUG_SPTR(polyhedron);
     ConfigurationSPtr config = Configuration::get_instance();
@@ -604,6 +900,10 @@ public:
       }
       result += vlt3 + flt3;
     }
+
+    polyhedron->initialize_all_IDs();
+
+    CGAL_postcondition(polyhedron->is_consistent());
     return result;
   }
 
