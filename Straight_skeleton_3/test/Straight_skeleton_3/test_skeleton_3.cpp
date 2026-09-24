@@ -48,6 +48,13 @@ void test(const std::string& mesh_filename,
     std::cout << mesh_filename << " is a valid input" << std::endl;
   }
 
+#if 0
+  if (num_faces(sm) > 500) {
+    std::cerr << mesh_filename << " is too large" << std::endl;
+    return;
+  }
+#endif
+
   std::ofstream log;
 
   if (redict_stdout) {
