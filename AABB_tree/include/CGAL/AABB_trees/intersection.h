@@ -266,6 +266,27 @@ namespace AABB_trees {
     CGAL::internal::AABB_tree::two_trees_traversal<Concurrency_tag>(tree1, tree2, traversal_traits);
   }
 
+  /// \ingroup PkgAABBTreeRef
+  ///
+  /// \brief computes all pairs of primitives from a single AABB tree that are intersecting.
+  ///
+  /// \note Two primitives do intersect if their datum do intersect according to the traits of the tree. Thus, with all documented traits in CGAL, two triangles sharing
+  /// a vertex are considered to intersect, and similarly for other primitives types and types of intersection.
+  ///
+  /// Intersections of a primitive with itself are not reported, and each intersecting
+  /// pair of distinct primitives is reported only once.
+  template< typename Concurrency_tag = Sequential_tag,
+            typename AABBTree,
+            typename OutputIterator>
+  void all_pairs_of_primitives_with_overlapping_bbox(const AABBTree &tree,
+                                                     OutputIterator out)
+  {
+    if(tree.empty())
+      return;
+    CGAL::internal::AABB_tree::Two_trees_listing_primitives_with_overlapping_bbox_traits traversal_traits(tree.traits(), tree.traits(), out);
+    CGAL::internal::AABB_tree::one_tree_traversal<Concurrency_tag>(tree, traversal_traits);
+  }
+
 }} // end namespace CGAL::AABB_trees
 
 #endif
