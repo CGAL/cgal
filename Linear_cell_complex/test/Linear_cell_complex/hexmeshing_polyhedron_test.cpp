@@ -181,8 +181,8 @@ LCC create_refined_test_mesh_with_volume_fraction() {
     std::array<double, 3> xyz = {c.x(), c.y(), c.z()};
     if constexpr(FACE == 6) {
       for(auto x:xyz) {
-        if(3 < x and x < 10) f *= 1.;
-        else if(x < 2 or 11 < x) f *= 0.;
+        if(3 < x && x < 10) f *= 1.;
+        else if(x < 2 || 11 < x) f *= 0.;
         else f *= l0;
       }
     }
@@ -235,7 +235,7 @@ void render_meshes_at_each_phase() {
   set_centroids(lcc);
   auto volumes = lcc.one_dart_per_cell<3>();
   for(auto volume = volumes.begin(); volume != volumes.end(); volume++) {
-    // if(0.1 < lcc.attribute<3>(volume)->info().fraction and lcc.attribute<3>(volume)->info().fraction < 0.9) {
+    // if(0.1 < lcc.attribute<3>(volume)->info().fraction && lcc.attribute<3>(volume)->info().fraction < 0.9) {
     //   std::cout << lcc.attribute<3>(volume)->info().fraction << ' ' << lcc.attribute<3>(volume)->info().centroid << std::endl;
     // }
     if(lcc.attribute<3>(volume)->info().centroid.z() < (z_start + z_end)*0.5)

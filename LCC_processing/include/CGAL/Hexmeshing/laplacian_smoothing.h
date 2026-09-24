@@ -52,7 +52,7 @@ namespace CGAL::internal::Hexmeshing
 
     for(auto vertex = vertices.begin(); vertex != vertices.end(); vertex++)
     {
-      if(lcc.is_marked(vertex, surface_mark) or
+      if(lcc.is_marked(vertex, surface_mark) ||
           lcc.is_marked(vertex, side_mark)) continue;
 
       int id = lcc.attribute<0>(vertex)->id;
@@ -86,7 +86,7 @@ namespace CGAL::internal::Hexmeshing
       bool outside = !inside;
       Dart_descriptor e = lcc.beta(edge, 3, 2);
 
-      while(e != nullptr and e != edge and lcc.attribute<3>(e) != nullptr) {
+      while(e != nullptr && e != edge&& lcc.attribute<3>(e) != nullptr) {
         if(lcc.is_marked(e, inner_mark)) {
           inside = true;
         }
@@ -95,17 +95,17 @@ namespace CGAL::internal::Hexmeshing
         }
         e = lcc.beta(e, 3, 2);
       }
-      if(e == nullptr or lcc.attribute<3>(e) == nullptr) {
+      if(e == nullptr || lcc.attribute<3>(e) == nullptr) {
         outside = true;
         e = lcc.beta(edge, 2);
-        while(e != nullptr and lcc.attribute<3>(e) != nullptr) {
+        while(e != nullptr && lcc.attribute<3>(e) != nullptr) {
           if(lcc.is_marked(e, inner_mark)) {
             inside = true;
           }
           e = lcc.beta(e, 3, 2);
         }
       }
-      if(inside and outside and lcc.is_whole_cell_marked<1>(edge, surface_mark)) {
+      if(inside && outside && lcc.is_whole_cell_marked<1>(edge, surface_mark)) {
         int id1 = lcc.attribute<0>(edge)->id;
         int id2 = lcc.attribute<0>(lcc.beta<1>(edge))->id;
         neighbors_list[id1].emplace_back(lcc.beta<1>(edge));

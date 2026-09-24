@@ -145,7 +145,7 @@ namespace CGAL::internal::Hexmeshing
    * refinement level to maintain proper plane connectivity for the next refinement iteration.
    *
    * @tparam HexData Type of the hexahedral meshing data structure
-   * @param hdata Hexahedral meshing data containing the Linear Cell Complex
+   * @param hdata Hexahedral meshing data containing the linear cell complex
    * @param odd_face_to_handle Map from face attributes to odd plane union-find handles
    * @param even_face_to_handle Map from face attributes to even plane union-find handles
    * @param to_explore Queue of faces to be explored in breadth-first traversal
@@ -242,7 +242,7 @@ namespace CGAL::internal::Hexmeshing
       }
     }
 
-    if (identified or beta3_identified){
+    if (identified || beta3_identified){
       auto face_attr = lcc.attribute<2>(face);
       // auto& face_info = face_attr->info();
       auto cc_id = odd_cc_id != nullptr ? odd_cc_id : odd_union_find.make_set(face);
@@ -305,7 +305,7 @@ namespace CGAL::internal::Hexmeshing
    * for the next refinement iteration.
    *
    * @tparam HexData Type of the hexahedral meshing data structure
-   * @param hdata Hexahedral meshing data containing the Linear Cell Complex and plane information
+   * @param hdata Hexahedral meshing data containing the linear cell complex and plane information
    */
   template <typename HexData>
   void setup_next_level_plane(HexData& hdata){
@@ -497,7 +497,7 @@ namespace CGAL::internal::Hexmeshing
    * follow in the current level.
    *
    * @tparam HexData Type of the hexahedral meshing data structure
-   * @param hdata Hexahedral meshing data containing the Linear Cell Complex and plane information
+   * @param hdata Hexahedral meshing data containing the linear cell complex and plane information
    * @param cellIdentifier Function that determines whether a cell should be identified
    *                       for refinement based on its position and properties
    */

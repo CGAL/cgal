@@ -307,7 +307,7 @@ namespace CGAL::internal::Hexmeshing
 
     for (Dart_descriptor face : rdata.faces_of_plane){
       auto& face_attr = lcc.attribute<2>(face)->info();
-      if (face_attr.template_id < 1 or face_attr.template_id > 2) continue;
+      if (face_attr.template_id < 1 || face_attr.template_id > 2) continue;
 
       mark_template_for_propagation(hdata, face, face_attr);
       // marked_for_prop_count++;

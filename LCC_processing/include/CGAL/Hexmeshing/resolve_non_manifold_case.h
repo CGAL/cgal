@@ -33,7 +33,7 @@ namespace CGAL::internal::Hexmeshing
     int inner_signal = 0;
     for(int i = 0; i < 8; i++) {
       auto it = volumes[i];
-      if(it == nullptr or lcc.attribute<3>(it) == nullptr) {
+      if((it == nullptr) || (lcc . template attribute<3>(it) == nullptr)) {
         return -1;
       }
       inner_signal <<= 1;
