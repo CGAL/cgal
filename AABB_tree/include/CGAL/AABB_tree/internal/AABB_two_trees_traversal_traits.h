@@ -280,6 +280,14 @@ public:
     return node_a.bbox().squared_diagonal_length() > node_b.bbox().squared_diagonal_length();
   }
 
+  void intersection(const Primitive1& primitive1, const Primitive2& primitive2)
+  {
+    Do_intersect_traits<AABBTraits2, typename AABBTraits1::Primitive::Datum> traits(m_traits2);
+    traits.intersection(internal::Primitive_helper<AABBTraits1>::get_datum(primitive1, m_traits1), primitive2);
+    if(traits.is_intersection_found())
+      m_is_found = true;
+  }
+
   void intersection(const Primitive1& primitive1, const Node2& node2, std::size_t nb_primitives_2)
   {
     Do_intersect_traits<AABBTraits2, typename AABBTraits1::Primitive::Datum> traits(m_traits2);
@@ -339,6 +347,28 @@ public:
   template<typename Node_A, typename Node_B>
   bool prefer_A_for_next_step(const Node_A& node_a, const Node_B& node_b, const std::size_t&, const std::size_t&) const {
     return node_a.bbox().squared_diagonal_length() > node_b.bbox().squared_diagonal_length();
+  }
+
+  void intersection(const Primitive1& primitive1, const Primitive2& primitive2)
+  {
+    Do_intersect_traits<AABBTraits2, typename AABBTraits1::Primitive::Datum> traits(m_traits2);
+    traits.intersection(internal::Primitive_helper<AABBTraits1>::get_datum(primitive1, m_traits1), primitive2);
+    if constexpr(Use_inverse_transformation::value)
+    {
+      Do_intersect_traits<AABBTraits2, typename AABBTraits1::Primitive::Datum> traits(m_traits2);
+      auto datum = (internal::Primitive_helper<AABBTraits1>::get_datum(primitive1, m_traits1).transform(m_tr1)).transform(m_tr2_inverse);
+      traits.intersection(datum, primitive2);
+      if(traits.is_intersection_found())
+        m_is_found = true;
+    }
+    else
+    {
+      Do_intersect_traits_with_transformation<AABBTraits2, typename AABBTraits1::Primitive::Datum, AffTransformation> traits(m_traits2, m_tr2);
+      auto datum = (internal::Primitive_helper<AABBTraits1>::get_datum(primitive1, m_traits1).transform(m_tr1));
+      traits.intersection(datum, primitive2);
+      if(traits.is_intersection_found())
+        m_is_found = true;
+    }
   }
 
   void intersection(const Primitive1& primitive1, const Node2& node2, std::size_t nb_primitives_2)
