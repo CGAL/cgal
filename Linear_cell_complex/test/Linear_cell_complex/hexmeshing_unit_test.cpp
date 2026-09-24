@@ -13,7 +13,16 @@
 
 #include <fstream>
 
-
+// In C++20, use std::popcount from <bit>:
+unsigned int popcount(unsigned int n)
+{
+    unsigned int count = 0;
+    while (n) {
+        n &= n - 1;  // clears the lowest set bit
+        ++count;
+    }
+    return count;
+}
 
 template<int SKBT>
 bool test_set_dual_edges();
@@ -42,7 +51,7 @@ bool test_set_dual_edges<1>() {
     for(auto seg: result) {
       Point s_ = seg.source();
       Point t_ = seg.target();
-      if(is_approximately_equal_Point(s, s_) and is_approximately_equal_Point(t, t_)) {
+      if(is_approximately_equal_Point(s, s_) && is_approximately_equal_Point(t, t_)) {
         exist = true;
         break;
       }
@@ -101,7 +110,7 @@ bool test_set_gradient_at_dual_node<1>() {
         ch[i] = 1;
         flip[i] = 1;
       }
-      else if(3. < cent[i] and cent[i] < 8.) {
+      else if(3. < cent[i] && cent[i] < 8.) {
         ch[i] = 0;
       }
     }
@@ -188,7 +197,7 @@ bool test_set_gradient_at_dual_node<1>() {
     else if(ch == std::array<int, 3>({2, 2, 2})) {
       answer = {2.89/18., 2.89/18., 2.89/18.};
     }
-    else if(ch[0] == 3 or ch[1] == 3 or ch[2] == 3) {
+    else if(ch[0] == 3 || ch[1] == 3 || ch[2] == 3) {
       continue;
     }
     else {
@@ -259,7 +268,7 @@ std::vector<Point> test_laplacian_smoothing_for_unmarked_cells<2>() {
   for(auto vertex = vertices.begin(); vertex != vertices.end(); vertex++) {
     Point p = lcc.point(vertex);
     int x = p.x()+0.1, y = p.y()+0.1, z = p.z()+0.1;
-    if(x == 2 and y == 2) {
+    if(x == 2 && y == 2) {
       if(z == 1) {
         lcc.point(vertex) = {2, 2, 3};
       }
@@ -267,7 +276,7 @@ std::vector<Point> test_laplacian_smoothing_for_unmarked_cells<2>() {
         lcc.point(vertex) = {2, 2, 1};
       }
     }
-    else if(x == 2 and z == 2) {
+    else if(x == 2 && z == 2) {
       if(y == 1) {
         lcc.point(vertex) = {2, 3, 2};
       }
@@ -275,7 +284,7 @@ std::vector<Point> test_laplacian_smoothing_for_unmarked_cells<2>() {
         lcc.point(vertex) = {2, 1, 2};
       }
     }
-    else if(y == 2 and z == 2) {
+    else if(y == 2 && z == 2) {
       if(x == 1) {
         lcc.point(vertex) = {3, 2, 2};
       }
@@ -305,11 +314,11 @@ std::vector<Point> answer_laplacian_smoothing_for_unmarked_cells<2>() {
   answer.reserve(125);
 
   for(int i = 0; i < 5; i++) for(int j = 0; j < 5; j++) for(int k = 0; k < 5; k++) {
-    if(i == 0 or i == 4 or j == 0 or j == 4 or k == 0 or k == 4) {
+    if(i == 0 || i == 4 || j == 0 || j == 4 || k == 0 || k == 4) {
       answer.emplace_back(i, j, k);
     }
-    else if(((i^j^k)&1) or (i == 2 and j == 2 and k == 2) or k > 2) {
-      if(i == 2 and j == 2 and k == 3) continue;
+    else if(((i^j^k)&1) || (i == 2 && j == 2 && k == 2) || k > 2) {
+      if(i == 2 && j == 2 && k == 3) continue;
       answer.emplace_back(i, j, k);
     }
   }
@@ -332,7 +341,7 @@ bool test2_laplacian_smoothing_for_unmarked_cells<1>() {
     Point& p = lcc.point(vertex);
     for(int i = 1; i < 5; i++) for(int j = 1; j < 5; j++) for(int k = 1; k < 5; k++) {
       if(!is_approximately_equal_Point(p, {i, j, k})) continue;
-      if(i == 1 or i == 4 or j == 1 or j == 4 or k == 1 or k == 4) {
+      if(i == 1 || i == 4 || j == 1 || j == 4 || k == 1 || k == 4) {
         p = C + 0.3*(p-C);
       }
       else {
@@ -380,7 +389,7 @@ bool test_move_points_onto_mesh<1>() {
     Point q = face_attr.dual_edge.target();
     double p_sum = p.x()+p.y()+p.z();
     double q_sum = q.x()+q.y()+q.z();
-    if((p_sum < xyz_sum and q_sum < xyz_sum) or (p_sum > xyz_sum and q_sum > xyz_sum)) {
+    if((p_sum < xyz_sum && q_sum < xyz_sum) || (p_sum > xyz_sum && q_sum > xyz_sum)) {
       return false;
     }
 
@@ -408,7 +417,7 @@ bool test_move_points_onto_mesh<1>() {
         return false;
       }
       double dx = x-int(x+100)-100, dy = y-int(y+100)-100, dz = z-int(z+100)-100;
-      if(!is_approximately_equal_double(dx, dy) or !is_approximately_equal_double(dy, dz) or !is_approximately_equal_double(dx, dz)) {
+      if(!is_approximately_equal_double(dx, dy) || !is_approximately_equal_double(dy, dz) || !is_approximately_equal_double(dx, dz)) {
         return false;
       }
     }
@@ -422,7 +431,7 @@ bool test_move_points_onto_mesh<1>() {
   return true;
 }
 
-// moving points onto plane x=1.3 (y < 1.3) and y=1.3 (x < 1.3)
+// moving points onto plane x=1.3 (y < 1.3) && y=1.3 (x < 1.3)
 template<>
 bool test_move_points_onto_mesh<2>() {
   LCC lcc = create_grid_mesh(4, 4, 4);
@@ -432,10 +441,10 @@ bool test_move_points_onto_mesh<2>() {
     auto &face_attr = lcc.attribute<2>(dart)->info();
     Point p = face_attr.dual_edge.source();
     Point q = face_attr.dual_edge.target();
-    if((p.x() > xy_size or p.y() > xy_size) and (q.x() > xy_size or q.y() > xy_size)) {
+    if((p.x() > xy_size || p.y() > xy_size) && (q.x() > xy_size || q.y() > xy_size)) {
       return false;
     }
-    if((p.x() < xy_size and p.y() < xy_size) and (q.x() < xy_size and q.y() < xy_size)) {
+    if((p.x() < xy_size && p.y() < xy_size) && (q.x() < xy_size && q.y() < xy_size)) {
       return false;
     }
 
@@ -462,7 +471,7 @@ bool test_move_points_onto_mesh<2>() {
         return false;
       }
 
-      if(!is_approximately_equal_Point(p, {(1.+xy_size)*0.5, (1.+xy_size)*0.5, p.z()}) and !is_approximately_equal_Point(p, {0., xy_size, p.z()}) and !is_approximately_equal_Point(p, {xy_size, 0., p.z()})) {
+      if(!is_approximately_equal_Point(p, {(1.+xy_size)*0.5, (1.+xy_size)*0.5, p.z()}) && !is_approximately_equal_Point(p, {0., xy_size, p.z()}) && !is_approximately_equal_Point(p, {xy_size, 0., p.z()})) {
         return false;
       }
     }
@@ -535,7 +544,7 @@ bool test_get_signal<1>() {
     auto now_volumes = volumes_around_node(lcc, vertex);
     bool is_invalid = false;
     for(auto volume: now_volumes) {
-      if(volume == nullptr or lcc.attribute<3>(volume) == nullptr)
+      if(volume == nullptr || lcc.attribute<3>(volume) == nullptr)
         is_invalid = true;
     }
 
@@ -654,7 +663,7 @@ bool test_get_solution_to_non_manifold_templates_list<1>() {
     // check if the solutions are ordered in bit-popcount
     int pp_counter = 0;
     for(int sol: resolve_templates[i]) {
-      int now = __builtin_popcount(sol);
+      int now = popcount(sol);
       if(pp_counter > now) {
         return false;
       }
@@ -728,7 +737,7 @@ bool test_resolve_non_manifold_case<1>() {
   for(auto volume = volumes.begin(); volume != volumes.end(); volume++) {
     double frac = lcc.attribute<3>(volume)->info().fraction;
     after_fracs.emplace_back(lcc.attribute<3>(volume)->info().fraction);
-    if((frac <= 0.5 and lcc.is_marked(volume, inner_mark)) or (frac > 0.5 and !lcc.is_marked(volume, inner_mark))) {
+    if((frac <= 0.5 && lcc.is_marked(volume, inner_mark)) || (frac > 0.5 && !lcc.is_marked(volume, inner_mark))) {
       return false;
     }
   }
@@ -744,7 +753,7 @@ bool test_resolve_non_manifold_case<1>() {
   return true;
 }
 
-// x+y+z < 4.8 and x+y+z > 7.2
+// x+y+z < 4.8 && x+y+z > 7.2
 template<>
 bool test_resolve_non_manifold_case<2>() {
   LCC lcc = create_grid_mesh(4, 4, 4);
@@ -772,10 +781,10 @@ bool test_resolve_non_manifold_case<2>() {
 
   for(auto volume = volumes.begin(); volume != volumes.end(); volume++) {
     auto &vol_attr = lcc.attribute<3>(volume)->info();
-    if(vol_attr.fraction < 0.-1e-10 or vol_attr.fraction > 1.+1e-10) {
+    if(vol_attr.fraction < 0.-1e-10 || vol_attr.fraction > 1.+1e-10) {
       return false;
     }
-    if((vol_attr.fraction <= 0.5 and lcc.is_marked(volume, inner_mark)) or (vol_attr.fraction > 0.5 and !lcc.is_marked(volume, inner_mark))) {
+    if((vol_attr.fraction <= 0.5 && lcc.is_marked(volume, inner_mark)) || (vol_attr.fraction > 0.5 && !lcc.is_marked(volume, inner_mark))) {
       return false;
     }
   }
@@ -785,7 +794,7 @@ bool test_resolve_non_manifold_case<2>() {
   return true;
 }
 
-// x+y+z < 5.4 and x+y+z > 6.6
+// x+y+z < 5.4 && x+y+z > 6.6
 template<>
 bool test_resolve_non_manifold_case<3>() {
   LCC lcc = create_grid_mesh(4, 4, 4);
@@ -813,10 +822,10 @@ bool test_resolve_non_manifold_case<3>() {
 
   for(auto volume = volumes.begin(); volume != volumes.end(); volume++) {
     auto &vol_attr = lcc.attribute<3>(volume)->info();
-    if(vol_attr.fraction < 0.-1e-10 or vol_attr.fraction > 1.+1e-10) {
+    if(vol_attr.fraction < 0.-1e-10 || vol_attr.fraction > 1.+1e-10) {
       return false;
     }
-    if((vol_attr.fraction <= 0.5 and lcc.is_marked(volume, inner_mark)) or (vol_attr.fraction > 0.5 and !lcc.is_marked(volume, inner_mark))) {
+    if((vol_attr.fraction <= 0.5 && lcc.is_marked(volume, inner_mark)) || (vol_attr.fraction > 0.5 && !lcc.is_marked(volume, inner_mark))) {
       return false;
     }
   }
@@ -826,7 +835,7 @@ bool test_resolve_non_manifold_case<3>() {
   return true;
 }
 
-// x+y+z < 5.4 and x+y+z > 6.6 and a little bit change
+// x+y+z < 5.4 && x+y+z > 6.6 && a little bit change
 // this will fail because it violate the prerequisite of resolve_non_manifold_case
 template<>
 bool test_resolve_non_manifold_case<4>() {
@@ -842,7 +851,7 @@ bool test_resolve_non_manifold_case<4>() {
   set_plane(lcc, c_xyz, d_xyz, inner_mark);
   for(auto volume = volumes.begin(); volume != volumes.end(); volume++) {
     auto &vol_attr = lcc.attribute<3>(volume)->info();
-    if(vol_attr.centroid.x()+vol_attr.centroid.y()+vol_attr.centroid.z() > 6. and vol_attr.fraction < 0.5-1e-10) {
+    if(vol_attr.centroid.x()+vol_attr.centroid.y()+vol_attr.centroid.z() > 6. && vol_attr.fraction < 0.5-1e-10) {
       vol_attr.fraction = 0.1;
     }
   }
@@ -861,10 +870,10 @@ bool test_resolve_non_manifold_case<4>() {
 
   for(auto volume = volumes.begin(); volume != volumes.end(); volume++) {
     auto &vol_attr = lcc.attribute<3>(volume)->info();
-    if(vol_attr.fraction < 0.-1e-10 or vol_attr.fraction > 1.+1e-10) {
+    if(vol_attr.fraction < 0.-1e-10 || vol_attr.fraction > 1.+1e-10) {
       return false;
     }
-    if((vol_attr.fraction <= 0.5 and lcc.is_marked(volume, inner_mark)) or (vol_attr.fraction > 0.5 and !lcc.is_marked(volume, inner_mark))) {
+    if((vol_attr.fraction <= 0.5 && lcc.is_marked(volume, inner_mark)) || (vol_attr.fraction > 0.5 && !lcc.is_marked(volume, inner_mark))) {
       return false;
     }
   }
@@ -911,7 +920,7 @@ bool test_detect_intersection_with_volume_fraction<1>() {
       if(!is_approximately_equal_Point(inter, p + ((0.5-frac1)/(frac2-frac1))*(q-p))) {
         return false;
       }
-      if(1<px and 1<py and 1<pz and px<3 and py<3 and pz<3 and 1<qx and 1<qy and 1<qz and qx<3 and qy<3 and qz<3) {
+      if(1<px && 1<py && 1<pz && px<3 && py<3 && pz<3 && 1<qx && 1<qy && 1<qz && qx<3 && qy<3 && qz<3) {
         if(!is_approximately_equal_Vector(norm, {-1./sqrt(3.), -1./sqrt(3.), -1./sqrt(3.)})) {
           return false;
         }
@@ -922,7 +931,7 @@ bool test_detect_intersection_with_volume_fraction<1>() {
     //   std::cout << "normal: " << norm << std::endl;
     }
     else {
-      if(!lcc.is_free<3>(face) and (int(lcc.is_marked(face, inner_mark)) ^ int(lcc.is_marked(lcc.beta<3>(face), inner_mark)))) {
+      if(!lcc.is_free<3>(face) && (int(lcc.is_marked(face, inner_mark)) ^ int(lcc.is_marked(lcc.beta<3>(face), inner_mark)))) {
         return false;
       }
     }
@@ -998,10 +1007,10 @@ template<>
 bool test_get_orthogonal_vectors<1>() {
   auto check = [](Vector original)->bool {
     auto [out1, out2] = get_orthogonal_vectors(original);
-    if(!is_approximately_equal_double(out1*out1, 1.) or !is_approximately_equal_double(out2*out2, 1.)) {
+    if(!is_approximately_equal_double(out1*out1, 1.) || !is_approximately_equal_double(out2*out2, 1.)) {
       return false;
     }
-    if(!is_approximately_equal_double(original*out1, 0.) or !is_approximately_equal_double(original*out2, 0.)) {
+    if(!is_approximately_equal_double(original*out1, 0.) || !is_approximately_equal_double(original*out2, 0.)) {
       return false;
     }
     if(!is_approximately_equal_double(out1*out2, 0.)) {
@@ -1093,7 +1102,7 @@ bool test_get_neighbors_list_for_smoothing<2>() {
   for(auto volume = volumes.begin(); volume != volumes.end(); volume++) {
     Point p = lcc.attribute<3>(volume)->info().centroid;
     double x = p.x(), y = p.y(), z = p.z();
-    if(x < 1. or y < 1. or (x < 3. and y < 3. and 1. < z and z < 2.)) {
+    if(x < 1. || y < 1. || (x < 3. && y < 3. && 1. < z && z < 2.)) {
       lcc.attribute<3>(volume)->info().fraction = 0.8;
       lcc.mark_cell<3>(volume, no_mark);
     }
@@ -1164,7 +1173,7 @@ bool test_surface_smoothing<1>() {
   for(auto vertex = vertices.begin(); vertex != vertices.end(); vertex++) {
     Point p = lcc.point(vertex);
     double x = p.x(), y = p.y(), z = p.z();
-    if(z < 1.5 or 2.5 < z) continue;
+    if(z < 1.5 || 2.5 < z) continue;
     for(int i = 0; i < 5; i++) for(int j = 0; j < 5; j++) {
       if(is_approximately_equal_Point(p, {i, j, 2.})) {
         darts[i][j] = vertex;
@@ -1225,7 +1234,7 @@ bool test_surface_smoothing<2>() {
   for(auto vertex = vertices.begin(); vertex != vertices.end(); vertex++) {
     Point p = lcc.point(vertex);
     double x = p.x(), y = p.y(), z = p.z();
-    if(z < 1.5 or 2.5 < z) continue;
+    if(z < 1.5 || 2.5 < z) continue;
     for(int i = 0; i < 5; i++) for(int j = 0; j < 5; j++) {
       if(is_approximately_equal_Point(p, {i, j, 2.})) {
         darts[i][j] = vertex;

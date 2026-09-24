@@ -66,19 +66,19 @@ namespace CGAL::internal::Hexmeshing
         __set_gradient_at_dual_node(lcc, dart);
         lcc.mark_cell<3>(dart, set_gradient_mark);
       }
-      if(!lcc.is_free<3>(dart) and !lcc.is_marked(dart3, set_gradient_mark)) {
+      if(!(lcc. template is_free<3>(dart)) && (!lcc.is_marked(dart3, set_gradient_mark))) {
         __set_gradient_at_dual_node(lcc, dart3);
         lcc.mark_cell<3>(dart3, set_gradient_mark);
       }
 
-      Vector N_1 = lcc.attribute<3>(dart)->info().gradient, N_2;
+      Vector N_1 = lcc. template attribute<3>(dart)->info().gradient, N_2;
       if(lcc.is_free<3>(dart)) {
-        double frac = lcc.attribute<3>(dart)->info().fraction;
+        double frac = lcc. template attribute<3>(dart)->info().fraction;
         Vector v = p2 - p1;
         N_2 = -(frac/(v*v)) * v;
       }
       else {
-        N_2 = lcc.attribute<3>(dart3)->info().gradient;
+        N_2 = lcc. template attribute<3>(dart3)->info().gradient;
       }
       Vector N = N_1 + ((s - frac1)/(frac2 - frac1))*(N_2 - N_1);
       face_attr.normal = (1. / std::sqrt(N*N)) * N;

@@ -139,7 +139,7 @@ public:
     const auto get_plane_normal = [&](DartInfo::FaceAttrValue& face) -> std::optional<char>{
       std::bitset<3>& plane = face.plane;
       char sum = plane[0] + plane[1] + plane[2];
-      if (sum > 1 or sum == 0) return {};
+      if (sum > 1 || sum == 0) return {};
 
       for (char i = 0; i < 3; i++){
         if (plane[i]) return i;

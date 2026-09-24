@@ -107,8 +107,8 @@ bool is_approximately_equal_Points(std::vector<Point> a, std::vector<Point> b, c
 bool is_approximately_equal_Segment(const Segment a, const Segment b, const double tolerance = 1e-10) {
   Point a1 = a.source(), a2 = a.target();
   Point b1 = b.source(), b2 = b.target();
-  return (is_approximately_equal_Point(a1, b1, tolerance) and is_approximately_equal_Point(a2, b2, tolerance))
-          or (is_approximately_equal_Point(a1, b2, tolerance) and is_approximately_equal_Point(a2, b1, tolerance));
+  return (is_approximately_equal_Point(a1, b1, tolerance) && is_approximately_equal_Point(a2, b2, tolerance))
+          || (is_approximately_equal_Point(a1, b2, tolerance) && is_approximately_equal_Point(a2, b1, tolerance));
 }
 
 LCC create_grid_mesh(int nx, int ny, int nz) {
@@ -133,8 +133,8 @@ LCC create_grid_mesh_with_volume_fraction() {
     std::array<double, 3> xyz = {c.x(), c.y(), c.z()};
     if constexpr(FACE == 6) {
       for(auto x:xyz) {
-        if(2 < x and x < 9) f *= 1.;
-        else if(x < 1 or 10 < x) f *= 0.;
+        if(2 < x && x < 9) f *= 1.;
+        else if(x < 1 || 10 < x) f *= 0.;
         else f *= 0.7;
       }
     }
@@ -163,7 +163,7 @@ LCC create_grid_mesh_with_volume_fraction() {
   return lcc;
 }
 
-// set x+y+z < c_xyz and x+y+z > d_xyz by fraction
+// set x+y+z < c_xyz && x+y+z > d_xyz by fraction
 void set_plane(LCC &lcc, double c_xyz, double d_xyz, size_type inner_mark) {
   set_centroids(lcc);
 
