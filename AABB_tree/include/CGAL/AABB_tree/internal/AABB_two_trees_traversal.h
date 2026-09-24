@@ -18,6 +18,10 @@
 #include <CGAL/AABB_tree/internal/AABB_node.h>
 #include <CGAL/AABB_tree/internal/AABB_traversal_traits.h>
 
+#if CGAL_LINKED_WITH_TBB
+#include <tbb/task_group.h>
+#endif
+
 namespace CGAL {
 
 namespace internal { namespace AABB_tree {

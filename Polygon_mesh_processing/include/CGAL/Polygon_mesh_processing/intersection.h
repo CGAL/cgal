@@ -1616,7 +1616,11 @@ template <class TriangleMeshRange,
 OutputIterator
 intersecting_meshes(const TriangleMeshRange& range,
                     OutputIterator out,
+#ifdef DOXYGEN_RUNNING
+                    const NamedParameters& np,
+#else
                     const NamedParameters& /*np*/,
+#endif
                     const NamedParametersRange& nps)
 {
   using parameters::choose_parameter;

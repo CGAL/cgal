@@ -1185,6 +1185,7 @@ public:
     Patches patches(tm, patch_ids, fids, intersection_edges, nb_patches);
     //remove the extra patch
     remove_patches(tm, ~patches_to_keep,patches, ecm, ecm); // WARNING there should be edge_mark_map but this file will disappear soon
+    CGAL_assertion(is_valid_polygon_mesh(tm));
 
     stitch_borders(tm, hedge_pairs_to_stitch, parameters::vertex_point_map(vpm));
   }
