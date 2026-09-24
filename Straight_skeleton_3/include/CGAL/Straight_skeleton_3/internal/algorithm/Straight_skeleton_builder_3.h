@@ -586,15 +586,18 @@ public:
         visitor_->on_save_event(polyhedron, current_time);
       }
 
-      CGAL_SS3_CORE_TRACE_V(2, skeleton_->to_string());
+#ifndef CGAL_SS3_NO_SKELETON_DS
+      CGAL_SS3_CORE_TRACE_V(2, "Final skeleton:\n" << skeleton_->to_string());
 
-#ifdef CGAL_SS3_DUMP_FILES
+# ifdef CGAL_SS3_DUMP_FILES
       skeleton_->dump_nodes("last_nodes.xyz");
       skeleton_->dump_arcs("last_arcs.polylines.txt", current_time);
+# endif
+
+      CGAL_postcondition(skeleton_->is_consistent());
 #endif
 
       CGAL_postcondition(polyhedron->is_consistent());
-      CGAL_postcondition(skeleton_->is_consistent());
 
       if (visitor_) {
         visitor_->after_event(polyhedron, current_time);
@@ -637,7 +640,10 @@ public:
     CGAL_SS3_CORE_TRACE_V(2, events_summary());
 
     CGAL_warning(!is_emptiness_expected || polyhedron->empty());
+
+#ifndef CGAL_SS3_NO_SKELETON_DS
     CGAL_assertion(skeleton_->is_consistent(is_emptiness_expected));
+#endif
 
     return true;
   }
