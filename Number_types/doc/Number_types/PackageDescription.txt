@@ -58,6 +58,7 @@
 - \link float.h `float` \endlink
 - \link double.h `double` \endlink
 - \link long_double.h `long double` \endlink
+- `ComplexNumber` describes a complex number type.
 
 \cgalCRPSubsection{%CORE}
 
@@ -100,6 +101,7 @@
 - `CGAL::Number_type_checker<NT1,NT2,Comparator>`
 - `CGAL::Exact_integer`
 - `CGAL::Exact_rational`
+- `CGAL::Complex_number`
 
 \cgalCRPSection{Relates Rational}
 

@@ -44,13 +44,12 @@ namespace internal {
     typedef typename Traits::Circular_arc_point_2           Circular_arc_point_2;
 
   public:
-    Construct_hyperbolic_circumcenter_CK_2(const Traits gt = Traits()): _gt(gt) {}
+  Construct_hyperbolic_circumcenter_CK_2(const Traits gt = Traits()): _gt(gt) {}
 
     Hyperbolic_Voronoi_point_2 operator()(const Hyperbolic_point_2& p,
                                           const Hyperbolic_point_2& q,
                                           const Hyperbolic_point_2& r) const
     {
-
       Construct_circle_or_line_supporting_bisector<Traits> cclsb(_gt);
 
       Hyperbolic_point_2 po(CGAL::ORIGIN);
@@ -76,6 +75,7 @@ namespace internal {
           typedef typename CK2_Intersection_traits<Traits, Circle_2, Circle_2>::type Intersection_result;
           std::vector< Intersection_result > inters;
           intersection(*c_pq, *c_qr, std::back_inserter(inters));
+          CGAL_assertion(inters.size() != 0);
 
           CGAL_assertion_code(bool ok=)
           assign(pair, inters[0]);
@@ -107,6 +107,7 @@ namespace internal {
       typedef typename CK2_Intersection_traits<Traits, Euclidean_line_2, Circle_2>::type Intersection_result;
       std::vector< Intersection_result > inters;
       intersection(*l, *c, std::back_inserter(inters));
+      CGAL_assertion(inters.size() != 0);
 
       CGAL_assertion_code(bool ok=)
       assign(pair,inters[0]);
@@ -125,7 +126,7 @@ namespace internal {
     }
 
   private:
-    const Traits& _gt;
+    Traits _gt;
   }; // end Construct_hyperbolic_circumcenter_2
 
 
@@ -299,7 +300,7 @@ namespace internal {
     }
 
   private:
-    const Traits& _gt;
+    Traits _gt;
   }; // end Construct_hyperbolic_bisector_2
 
 
@@ -366,6 +367,7 @@ public:
   typedef typename internal::Construct_circle_or_line_supporting_bisector<Self> Construct_circle_or_line_supporting_bisector;
   typedef internal::Construct_hyperbolic_segment_2<Self>        Construct_hyperbolic_segment_2;
   typedef typename Base::Construct_segment_2                    Construct_segment_2;
+  typedef typename internal::Hyperbolic_orientation_2<Self>     Hyperbolic_orientation_2;
 
 public:
   Hyperbolic_Delaunay_triangulation_CK_traits_2(const Base& kernel = Base()) : Base(kernel) {}
@@ -410,6 +412,10 @@ public:
   Compute_squared_Euclidean_distance_2
   compute_squared_Euclidean_distance_2_object() const
   { return this->Base::compute_squared_distance_2_object(); }
+
+  Hyperbolic_orientation_2
+  hyperbolic_orientation_2() const
+  { return Hyperbolic_orientation_2(*this); }
 
 };
 
