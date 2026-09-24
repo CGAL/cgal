@@ -319,7 +319,7 @@ public:
   }
 };
 
-#if defined (CGAL_FORCE_IFORMAT_DOUBLE)
+#ifndef (CGAL_DISABLE_FASTFLOAT)
 
   template <>
 class Input_rep<int>
