@@ -60,6 +60,18 @@ Release date: December 2026
   `is_face_valued` and `face_value` (with `face_value_name` for the legend). As an example, the
   surface mesh drawer exposes the aspect ratio of each face.
 
+### [dD Spatial Searching](https://doc.cgal.org/6.3/Manual/packages.html#PkgSpatialSearchingD)
+
+- **Breaking change**: the construction of `CGAL::Kd_tree` partitions its points in place instead of an array
+  of pointers to them, and `CGAL::Point_container::iterator` and `const_iterator` now iterate over the points
+  instead of pointers to them.
+- The parallel construction of `CGAL::Kd_tree` now also computes the splits of its large nodes in parallel, and
+  the tree it builds can differ from the one built by the sequential construction.
+- The splitters `CGAL::Median_of_rectangle`, `CGAL::Median_of_max_spread`, `CGAL::Fair` and
+  `CGAL::Sliding_fair` now cut at the median of the coordinates. The second middle coordinate they
+  used was whichever one `std::nth_element` left next to the median, which is unspecified.
+- Fixed a bug in `CGAL::Kd_tree::build<CGAL::Parallel_tag>()`, which split subtrees whose points all have
+  equal coordinates instead of making them leaves as `CGAL::Kd_tree::build<CGAL::Sequential_tag>()` does.
 
 
 ## [Release 6.2](https://github.com/CGAL/cgal/releases/tag/v6.2)

@@ -26,21 +26,21 @@
 namespace CGAL {
 
   template <class Construct_cartesian_const_iterator_d, class P, class T>
-  struct set_bounds_from_pointer : public CGAL::cpp98::unary_function<P, void> {
+  struct set_bounds_from_point : public CGAL::cpp98::unary_function<P, void> {
     int dim;
     T *lower;
     T *upper;
     Construct_cartesian_const_iterator_d construct_it;
 
-    set_bounds_from_pointer(int d, T *l, T *u,Construct_cartesian_const_iterator_d construct_it_)
+    set_bounds_from_point(int d, T *l, T *u,Construct_cartesian_const_iterator_d construct_it_)
       : dim(d), lower(l), upper(u), construct_it(construct_it_)
     {}
 
     void
-    operator()(P p)
+    operator()(const P& p)
     {
       T h;
-      auto pit = construct_it(*p);
+      auto pit = construct_it(p);
       for (int i = 0; i < dim; ++i, ++pit) {
         h=(*pit);
         if (h < lower[i]) lower[i] = h;
@@ -113,31 +113,31 @@ namespace CGAL {
     Kd_tree_rectangle(const Kd_tree_rectangle& r)
     : lower_(r.lower_), upper_(r.upper_), max_span_coord_(r.max_span_coord_) {}
 
-    template <class Construct_cartesian_const_iterator_d,class PointPointerIter>
-    void update_from_point_pointers(PointPointerIter begin,
-                                    PointPointerIter end,
+    template <class Construct_cartesian_const_iterator_d,class PointIter>
+    void update_from_points(PointIter begin,
+                                    PointIter end,
                                     const Construct_cartesian_const_iterator_d& construct_it
     )
     {
       if (begin ==end)
         return;
       // initialize with values of first point
-      auto bit = construct_it(**begin);
+      auto bit = construct_it(*begin);
 
       for (int i=0; i < D::value; ++i, ++bit) {
         lower_[i]= *bit; upper_[i]=lower_[i];
       }
       begin++;
-      typedef typename std::iterator_traits<PointPointerIter>::value_type P;
-      std::for_each(begin, end,set_bounds_from_pointer<Construct_cartesian_const_iterator_d,P,T>(D::value, &(lower_[0]), &(upper_[0]), construct_it));
+      typedef typename std::iterator_traits<PointIter>::value_type P;
+      std::for_each(begin, end,set_bounds_from_point<Construct_cartesian_const_iterator_d,P,T>(D::value, &(lower_[0]), &(upper_[0]), construct_it));
       set_max_span();
     }
 
-    template <class Construct_cartesian_const_iterator_d,class PointPointerIter> // was PointIter
-    Kd_tree_rectangle(int,  PointPointerIter begin,  PointPointerIter end,const Construct_cartesian_const_iterator_d& construct_it)
+    template <class Construct_cartesian_const_iterator_d,class PointIter>
+    Kd_tree_rectangle(int,  PointIter begin,  PointIter end,const Construct_cartesian_const_iterator_d& construct_it)
       : max_span_coord_(-1)
     {
-      update_from_point_pointers<Construct_cartesian_const_iterator_d>(begin,end,construct_it);
+      update_from_points<Construct_cartesian_const_iterator_d>(begin,end,construct_it);
     }
 
     inline int
@@ -293,31 +293,31 @@ namespace CGAL {
       std::copy(r.coords_, r.coords_+2*dim, lower());
     }
 
-    template <class Construct_cartesian_const_iterator_d,class PointPointerIter>
-    void update_from_point_pointers(PointPointerIter begin,
-                                    PointPointerIter end,
+    template <class Construct_cartesian_const_iterator_d,class PointIter>
+    void update_from_points(PointIter begin,
+                                    PointIter end,
                                     const Construct_cartesian_const_iterator_d& construct_it
     )
     {
       if (begin ==end)
         return;
       // initialize with values of first point
-      typename Construct_cartesian_const_iterator_d::result_type bit = construct_it(**begin);
+      typename Construct_cartesian_const_iterator_d::result_type bit = construct_it(*begin);
 
       for (int i=0; i < dim; ++i, ++bit) {
         lower()[i]= *bit; upper()[i]=lower()[i];
       }
       begin++;
-      typedef typename std::iterator_traits<PointPointerIter>::value_type P;
-      std::for_each(begin, end,set_bounds_from_pointer<Construct_cartesian_const_iterator_d,P,T>(dim, lower(), upper(),construct_it));
+      typedef typename std::iterator_traits<PointIter>::value_type P;
+      std::for_each(begin, end,set_bounds_from_point<Construct_cartesian_const_iterator_d,P,T>(dim, lower(), upper(),construct_it));
       set_max_span();
     }
 
-    template <class Construct_cartesian_const_iterator_d,class PointPointerIter> // was PointIter
-    Kd_tree_rectangle(int d,  PointPointerIter begin,  PointPointerIter end,const Construct_cartesian_const_iterator_d& construct_it)
+    template <class Construct_cartesian_const_iterator_d,class PointIter>
+    Kd_tree_rectangle(int d,  PointIter begin,  PointIter end,const Construct_cartesian_const_iterator_d& construct_it)
       : coords_(new FT[2*d]), dim(d), max_span_coord_(-1)
     {
-      update_from_point_pointers<Construct_cartesian_const_iterator_d>(begin,end,construct_it);
+      update_from_points<Construct_cartesian_const_iterator_d>(begin,end,construct_it);
     }
 
     inline int
