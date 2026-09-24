@@ -26,7 +26,7 @@
 #include <array>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/property_map.h>
-#include <CGAL/Barycentric_coordinates_3/tetrahedron_coordinates.h>
+#include <CGAL/Barycentric_coordinates_3/tetrahedron_coordinates_3.h>
 #include <CGAL/Barycentric_coordinates_3/boundary_coordinates_3.h>
 #include <CGAL/Barycentric_coordinates_3/Wachspress_coordinates_3.h>
 #include <CGAL/Barycentric_coordinates_3/Discrete_harmonic_coordinates_3.h>
@@ -73,7 +73,7 @@ namespace Barycentric_coordinates {
   \pre `vertices(tmesh).size()` == `coords.size()`
 */
 template<typename TriangleMesh, typename CoordinateRange, typename VertexPointMap, typename GeomTraits = typename CGAL::Kernel_traits<typename boost::property_traits<VertexPointMap>::value_type>::type>
-typename boost::property_traits<VertexPointMap>::value_type apply_barycentric_coordinates(const TriangleMesh& tmesh, const CoordinateRange& coordinates, VertexPointMap vpm, GeomTraits geom_traits = GeomTraits()) {
+typename boost::property_traits<VertexPointMap>::value_type apply_barycentric_coordinates_3(const TriangleMesh& tmesh, const CoordinateRange& coordinates, VertexPointMap vpm, GeomTraits geom_traits = GeomTraits()) {
   CGAL_precondition(vertices(tmesh).size() == coordinates.size());
   using Point = typename boost::property_traits<VertexPointMap>::value_type;
   static_assert(std::is_same_v<GeomTraits, typename Kernel_traits<Point>::Kernel>);
@@ -133,7 +133,7 @@ typename boost::property_traits<VertexPointMap>::value_type apply_barycentric_co
   \pre `pts.size()` == `coords.size()`
 */
 template<typename PointRange, typename CoordinateRange, typename GeomTraits = typename Kernel_traits<typename boost::range_value<PointRange>::type>::Kernel>
-typename boost::range_value<PointRange>::type apply_barycentric_coordinates(const PointRange& points, const CoordinateRange& coordinates, GeomTraits geom_traits = GeomTraits()) {
+typename boost::range_value<PointRange>::type apply_barycentric_coordinates_3(const PointRange& points, const CoordinateRange& coordinates, GeomTraits geom_traits = GeomTraits()) {
   CGAL_precondition(std::distance(std::begin(points), std::end(points)) == std::distance(std::begin(coordinates), std::end(coordinates)));
   using Point = typename boost::range_value<PointRange>::type;
   static_assert(std::is_same_v<GeomTraits, typename Kernel_traits<Point>::Kernel>);
@@ -145,14 +145,15 @@ typename boost::range_value<PointRange>::type apply_barycentric_coordinates(cons
   Construct_cartesian_const_iterator construct_cci = geom_traits.construct_cartesian_const_iterator_3_object();
 
   std::array<FT, 3> p = { FT(0), FT(0), FT(0) };
+  auto it = coordinates.begin();
   for (const Point& pv : points) {
     Cartesian_const_iterator cci = construct_cci(pv);
-    p[0] += *cci * (*(std::begin(coordinates)));
+    p[0] += *cci * (*it);
     ++cci;
-    p[1] += *cci * (*(std::begin(coordinates) + 1));
+    p[1] += *cci * (*it);
     ++cci;
-    p[2] += *cci * (*(std::begin(coordinates) + 2));
-    ++cci;
+    p[2] += *cci * (*it);
+    ++it;
   }
 
   Construct_point_3 construct_point_3 = geom_traits.construct_point_3_object();

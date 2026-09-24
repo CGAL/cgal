@@ -30,6 +30,7 @@ namespace CGAL {
 
 /**
  * \ingroup PMP_predicates_grp
+ *
  * This class provides an efficient point location functionality with respect to a domain bounded
  * by one or several disjoint closed triangle meshes.
  *
@@ -61,7 +62,7 @@ namespace CGAL {
  * having the query point as source. The do-intersect predicate used to detect if a triangle
  * is intersected is able to detect if a triangle is intersected in its
  * interior or on its boundary. In case it is intersected on its boundary, another ray is picked.
- * In order to speed queries, the first ray used is an axis aligned one that depends on the extents of the
+ * In order to speed queries, the first ray used is an axis-aligned one that depends on the extents of the
  * bbox of the input mesh. In case other rays are needed to conclude, the rays are generated
  * from a random uniform sampling of a sphere.
  */

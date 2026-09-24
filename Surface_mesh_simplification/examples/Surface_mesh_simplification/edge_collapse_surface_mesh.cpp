@@ -17,7 +17,7 @@ namespace SMS = CGAL::Surface_mesh_simplification;
 int main(int argc, char** argv)
 {
   Surface_mesh surface_mesh;
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cube-meshed.off");
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cube-subdivided.off");
   if(!CGAL::IO::read_polygon_mesh(filename, surface_mesh))
   {
     std::cerr << "Failed to read input mesh: " << filename << std::endl;

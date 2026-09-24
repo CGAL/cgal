@@ -8,6 +8,7 @@ project(Point_set_3_Examples)
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
 create_single_source_cgal_program("point_set.cpp")
+create_single_source_cgal_program("point_set_normals.cpp")
 create_single_source_cgal_program("point_set_property.cpp")
 create_single_source_cgal_program("point_set_read_xyz.cpp")
 create_single_source_cgal_program("point_set_advanced.cpp")

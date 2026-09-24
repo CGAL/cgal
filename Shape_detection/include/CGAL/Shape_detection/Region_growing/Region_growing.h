@@ -242,10 +242,10 @@ namespace internal {
       an instance of `RegionType` that is used internally to
       control if items form a valid region type
 
-      \param item_map
-        an instance of the property map to retrieve items from input values
-
       \param rm external property map that will be filled when calling `detect()`
+
+      \param item_map
+      an instance of the property map to retrieve items from input values
 
       \pre `input_range.size() > 0`
     */

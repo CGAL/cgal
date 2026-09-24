@@ -19,6 +19,7 @@
 #define CGAL_CIRCULAR_KERNEL_VARIANT_TRAITS_2_H
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
+#include <list>
 
 #include <CGAL/disable_warnings.h>
 
@@ -41,6 +42,10 @@
 #include <CGAL/Arr_tags.h>
 
 namespace CGAL {
+
+// Forward declarations
+template <typename CircularKernel>
+class Arr_circular_line_arc_traits_2;
 
 namespace VariantFunctors {
 
@@ -230,25 +235,94 @@ public:
 //
 template <typename CircularKernel, typename Arc1, typename Arc2>
 class Do_intersect_2 {
+protected:
+  using Traits = Arr_circular_line_arc_traits_2<CircularKernel>;
+
+  /*! The traits (in case it has state) */
+  const Traits& m_traits;
+
+  /*! constructs
+   * \param traits the traits (in case it has state)
+   */
+  Do_intersect_2(const Traits& traits) : m_traits(traits) {}
+
+  friend class Arr_circular_line_arc_traits_2<CircularKernel>;
+
 public:
   using Circular_arc_point_2 = typename CircularKernel::Circular_arc_point_2;
 
-  bool operator()(const std::variant< Arc1, Arc2>& c1,
-                  const std::variant< Arc1, Arc2>& c2) const {
-    if (const Arc1* arc1 = std::get_if<Arc1>(&c1)) {
-      if (const Arc1* arc2 = std::get_if<Arc1>(&c2)) {
+  /*! determines whether two given \f$x\f$-monotone curves intersect.
+   * \param xcv1 the first curve.
+   * \param xcv2 the second curve.
+   * \param consider_common_endpoints indicates whether common endpoints should be counted as intersections.
+   * \return `true` if `consider_common_endpoints` is true and `cv1` and `cv2` intersect or if
+   *  `consider_common_endpoints` is `false and at least one of the interiors of `xcv1` and `xcv2` intersect,
+   *   and `false` otherwise.
+   */
+  bool operator()(const std::variant< Arc1, Arc2>& xcv1, const std::variant< Arc1, Arc2>& xcv2,
+                  bool consider_common_endpoints = true) const {
+    if (consider_common_endpoints) {
+      if (const Arc1* arc1 = std::get_if<Arc1>(&xcv1)) {
+        if (const Arc1* arc2 = std::get_if<Arc1>(&xcv2)) {
+          return CircularKernel().do_intersect_2_object()(*arc1, *arc2);
+        }
+        const Arc2* arc2 = std::get_if<Arc2>(&xcv2);
         return CircularKernel().do_intersect_2_object()(*arc1, *arc2);
       }
-      const Arc2* arc2 = std::get_if<Arc2>(&c2);
-      return CircularKernel().do_intersect_2_object()(*arc1, *arc2);
-    }
 
-    const Arc2* arc1e = std::get_if<Arc2>(&c1);
-    if (const Arc1* arc2 = std::get_if<Arc1>(&c2)) {
+      const Arc2* arc1e = std::get_if<Arc2>(&xcv1);
+      if (const Arc1* arc2 = std::get_if<Arc1>(&xcv2)) {
+        return CircularKernel().do_intersect_2_object()(*arc1e, *arc2);
+      }
+      const Arc2* arc2 = std::get_if<Arc2>(&xcv2);
       return CircularKernel().do_intersect_2_object()(*arc1e, *arc2);
     }
-    const Arc2* arc2 = std::get_if<Arc2>(&c2);
-    return CircularKernel().do_intersect_2_object()(*arc1e, *arc2);
+
+    // Ignoring common endpoints
+    using Multiplicity = typename Traits::Multiplicity;
+    using Point_2 = typename Traits::Point_2;
+    using X_monotone_curve_2 = typename Traits::X_monotone_curve_2;
+    using Intersection_point = std::pair<Point_2, Multiplicity>;
+    using Intersection_result = std::variant<Intersection_point, X_monotone_curve_2>;
+    std::list<Intersection_result> intersections;
+    m_traits.intersect_2_object()(xcv1, xcv2, std::back_inserter(intersections));
+    if (consider_common_endpoints) return ! intersections.empty();
+
+    // Check whether the open curves intersect
+
+    // If the curves do not intersect at all, endpoints do not matter
+    if (intersections.empty()) return false;
+
+    // If there are more than 2 intersections, return true
+    if (intersections.size() > 2) return true;
+
+    // If the intersection is an overlap, return true
+    auto cmp_xy = m_traits.compare_xy_2_object();
+    const Intersection_point* p_first_p = std::get_if<Intersection_point>(&(intersections.front()));
+    if (! p_first_p) return true;
+
+    auto ctr_min_vertex = m_traits.construct_min_vertex_2_object();
+    auto ctr_max_vertex = m_traits.construct_max_vertex_2_object();
+
+    // If the first intersection point of the curves is not an endpoint of the first curve, return true
+    const auto& min_p1 = ctr_min_vertex(xcv1);
+    const auto& max_p1 = ctr_max_vertex(xcv1);
+    if ((cmp_xy(min_p1, p_first_p->first) != EQUAL) && (cmp_xy(max_p1, p_first_p->first) != EQUAL)) return true;
+
+    // If the first intersection point of the curves is not an endpoint of the second curve, return true
+    const auto& min_p2 = ctr_min_vertex(xcv2);
+    const auto& max_p2 = ctr_max_vertex(xcv2);
+    if ((cmp_xy(min_p2, p_first_p->first) != EQUAL) && (cmp_xy(max_p2, p_first_p->first) != EQUAL)) return true;
+
+    // If there is only one intersection, it is an endpoint; return false
+    if (intersections.size() == 1) return false;
+
+    // repeat the above for the last point
+    const Intersection_point* p_last_p = std::get_if<Intersection_point>(&(intersections.back()));
+    if (! p_last_p) return true;
+    if ((cmp_xy(min_p1, p_last_p->first) != EQUAL) && (cmp_xy(max_p1, p_last_p->first) != EQUAL)) return true;
+    if ((cmp_xy(min_p2, p_last_p->first) != EQUAL) && (cmp_xy(max_p2, p_last_p->first) != EQUAL)) return true;
+    return false;
   }
 };
 
@@ -440,7 +514,7 @@ public:
 
   Intersect_2 intersect_2_object() const { return Intersect_2(); }
 
-  Do_intersect_2 do_intersect_2_object() const { return Do_intersect_2(); }
+  Do_intersect_2 do_intersect_2_object() const { return Do_intersect_2(*this); }
 
   Construct_min_vertex_2 construct_min_vertex_2_object() const { return Construct_min_vertex_2(); }
 

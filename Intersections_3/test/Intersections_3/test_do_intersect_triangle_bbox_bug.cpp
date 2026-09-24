@@ -16,7 +16,7 @@
 //
 //    if (tr1.vertex(0).x() < segment_bbox.xmin()) return false;
 //
-// That means a comparision `FT < double`. If the number type `FT` has a
+// That means a comparison `FT < double`. If the number type `FT` has a
 // comparison `FT < int` but not `FT < double`, then the comparison might be
 // done by converting the `double` to `int`, which losses a lot of precision!
 // The exact ring type`CGAL::Gmpzf` had that issue before, and the test was

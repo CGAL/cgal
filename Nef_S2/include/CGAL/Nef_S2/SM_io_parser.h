@@ -203,7 +203,7 @@ bool SM_io_parser<Decorator_>::read_vertex(SVertex_handle v)
        !(in >> p) ||
        !check_sep("}") ) return false;
 
-  if(f<0 || (iso && f > fn) || (!iso && f > en))
+  if(f<0 || (iso && static_cast<unsigned>(f) >= fn) || (!iso && static_cast<unsigned>(f) >= en))
   {
     in.setstate(std::ios_base::badbit);
     return false;

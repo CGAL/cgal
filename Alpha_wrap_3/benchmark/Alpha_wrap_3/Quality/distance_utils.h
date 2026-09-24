@@ -90,9 +90,6 @@ inline double approximate_distance(const TriangleMesh& tm1,
   using AABB_traits = CGAL::AABB_traits_3<GT, Primitive>;
   using AABB_tree = CGAL::AABB_tree<AABB_traits>;
 
-  using CGAL::parameters::choose_parameter;
-  using CGAL::parameters::get_parameter;
-
   std::vector<Point_3> original_sample_points;
   CGAL::Polygon_mesh_processing::sample_triangle_mesh(tm1, std::back_inserter(original_sample_points),
                                                       CGAL::parameters::all_default());

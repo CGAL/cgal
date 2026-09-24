@@ -7,6 +7,7 @@ Stream_support
 Convex_hull_2
 Convex_hull_d
 Triangulation_3
+Property_map
 Polyhedron
 Surface_mesh
 BGL

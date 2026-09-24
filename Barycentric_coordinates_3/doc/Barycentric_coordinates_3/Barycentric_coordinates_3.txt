@@ -58,7 +58,7 @@ We compute coordinates for the tetrahedron defined by the points (0,0,0), (1,0,0
 (0,1,0), and (0,0,1). We use points inside, outside and
 at the boundary of the tetrahedron.
 
-\cgalExample{Barycentric_coordinates_3/tetrahedron_coordinates.cpp}
+\cgalExample{Barycentric_coordinates_3/tetrahedron_coordinates_3.cpp}
 
 \subsection wp_3_example Wachspress Coordinates
 

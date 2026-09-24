@@ -11,12 +11,12 @@ supporting C++17 or later.
 
 | Operating System | Compiler |
 | :----------      | :--------------- |
-| Linux            | \gnu `g++` 12.2.0 or later\cgalFootnote{<A HREF="https://gcc.gnu.org/">\cgalFootnoteCode{https://gcc.gnu.org/}</A>} |
-|                  | `Clang` \cgalFootnote{<A HREF="https://clang.llvm.org/">\cgalFootnoteCode{https://clang.llvm.org/}</A>} compiler version 20.1.6 or later |
-| \ms Windows      | \gnu `g++` 12.2.0 or later\cgalFootnote{<A HREF="https://gcc.gnu.org/">\cgalFootnoteCode{https://gcc.gnu.org/}</A>} |
-|                  | \ms Visual `C++` 15.9, 16.10, 17.14 (\visualstudio 2017, 2019, and 2022)\cgalFootnote{<A HREF="https://visualstudio.microsoft.com/">\cgalFootnoteCode{https://visualstudio.microsoft.com/}</A>} |
-| macOS            | \gnu `g++` 12.2.0 or later\cgalFootnote{<A HREF="https://gcc.gnu.org/">\cgalFootnoteCode{https://gcc.gnu.org/}</A>} |
-|                  | Apple `Clang` compiler versions 12.0.5, 14.0.0, and 15.0.0 |
+| Linux            | \gnu `g++` 13.3.0 or later\cgalFootnote{<A HREF="https://gcc.gnu.org/">\cgalFootnoteCode{https://gcc.gnu.org/}</A>} |
+|                  | `Clang` \cgalFootnote{<A HREF="https://clang.llvm.org/">\cgalFootnoteCode{https://clang.llvm.org/}</A>} compiler version 22.0.0 or later |
+| \ms Windows      | \gnu `g++` 13.3.0 or later\cgalFootnote{<A HREF="https://gcc.gnu.org/">\cgalFootnoteCode{https://gcc.gnu.org/}</A>} |
+|                  | \ms Visual `C++` 15.9, 16.10, 17.14, 18.0 (\visualstudio 2017, 2019, 2022, and 2026) or later \cgalFootnote{<A HREF="https://visualstudio.microsoft.com/">\cgalFootnoteCode{https://visualstudio.microsoft.com/}</A>} |
+| macOS            | \gnu `g++` 13.3.0 or later\cgalFootnote{<A HREF="https://gcc.gnu.org/">\cgalFootnoteCode{https://gcc.gnu.org/}</A>} |
+|                  | Apple `Clang` compiler versions 14.0.0 or later |
 
 <!-- Windows supported version are also listed on windows.html (must change both) -->
 
@@ -86,7 +86,7 @@ from the <a href="https://github.com/CGAL/cgal/releases">assets of a release</a>
 Version supported are <b>GMP Version 5.0.1 or later, MPFR Version 3.0.0 or later</b>.
 
 The \boost library also provides a module for multi precision integers and rational numbers:
-<A HREF="https://www.boost.org/doc/libs/release/libs/multiprecision/doc/html/index.html">\boost multiprecision</A>.
+<A HREF="https://www.boost.org/doc/libs/latest/libs/multiprecision/doc/html/index.html">\boost multiprecision</A>.
 
 The components \cgal, and `CGAL_Qt6` require either \gmp and \mpfr, or \boost multiprecision
 for multi precision numbers. `CGAL_Core` requires \boost multiprecision.
@@ -179,17 +179,6 @@ optional: it is used by some models of the
 
 \mpfi can be downloaded from <A HREF="https://gitlab.inria.fr/mpfi/mpfi">`https://gitlab.inria.fr/mpfi/mpfi`</A>.
 
-
-\subsection thirdpartyNTL NTL
-<b>Version 5.1 or later</b>
-
-\ntl provides data structures and algorithms for signed, arbitrary
-length integers, and for vectors, matrices, and polynomials over the
-integers and over finite fields. The optional library \ntl is used by \cgal
-to speed up operations of the Polynomial package, such as GCDs. It is recommended to install \ntl with support from \gmp.
-
-\ntl can be downloaded from <A HREF="https://libntl.org">`https://libntl.org`</A>.
-
 \subsection thirdpartyESBTL ESBTL
 
 The \esbtl (Easy Structural Biology Template Library) is a library that allows
@@ -259,7 +248,7 @@ and designed to partition graphs and produce fill-reducing matrix orderings.
 
 \cgal offers wrappers around some of the methods of the \metis library
 to allow the partitioning of graphs that are models of the concepts of the
-<A HREF="https://www.boost.org/libs/graph/doc/index.html">Boost Graph Library</A>,
+<A HREF="https://www.boost.org/doc/libs/latest/libs/graph/doc/html/graph/index.html">Boost Graph Library</A>,
 and, by extension, of surface meshes (see Section \ref BGLPartitioning of the package \ref PkgBGL).
 
 More information is available on the METIS library
@@ -278,7 +267,7 @@ for instance, on Windows, you can download it from <A HREF="https://www.zlib.net
 
 \ceres is an open source C++ library for modeling and solving large, complicated optimization problems.
 
-In \cgal, \ceres is used by the \ref PkgPolygonMeshProcessing package for mesh smoothing, which
+In \cgal, \ceres is used by the \ref PkgPMPRemeshing package for mesh smoothing, which
 requires solving complex non-linear least squares problems.
 
 Visit the official website of the library at <A HREF="http://ceres-solver.org/index.html">`ceres-solver.org`</A>

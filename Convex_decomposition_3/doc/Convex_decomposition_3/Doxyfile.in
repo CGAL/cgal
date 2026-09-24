@@ -3,3 +3,5 @@
 PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Convex Decomposition of Polyhedra"
 EXTRACT_ALL                =  false
 HIDE_UNDOC_CLASSES         =  true
+
+INPUT += ${CGAL_Surface_mesh_decomposition_INCLUDE_DIR}/CGAL/approximate_convex_decomposition.h

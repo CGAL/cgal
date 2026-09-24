@@ -64,7 +64,7 @@ namespace CGAL {
     auto traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
     auto verbose = choose_parameter(get_parameter(np, internal_np::verbose), false);
     bool do_repair = choose_parameter(get_parameter(np, internal_np::repair_polygon_soup), true);
-    const auto& return_error = parameters::get_parameter_reference(np, internal_np::callback);
+    auto return_error = parameters::get_parameter_reference(np, internal_np::callback);
 
     namespace PMP = CGAL::Polygon_mesh_processing;
     namespace PMP_internal = PMP::internal;

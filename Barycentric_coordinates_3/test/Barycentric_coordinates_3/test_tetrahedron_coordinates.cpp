@@ -3,7 +3,7 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/Barycentric_coordinates_3/tetrahedron_coordinates.h>
+#include <CGAL/Barycentric_coordinates_3/tetrahedron_coordinates_3.h>
 
 #include "include/utils.h"
 
@@ -42,11 +42,11 @@ void test_overloads(){
 
     const FT x = point.x(), y = point.y(), z = point.z();
     const Point_3 query(x, y, z);
-    CGAL::Barycentric_coordinates::tetrahedron_coordinates(vertices[0], vertices[1],
+    CGAL::Barycentric_coordinates::tetrahedron_coordinates_3(vertices[0], vertices[1],
       vertices[2], vertices[3], query, tetra_coords.begin());
 
     const std::array<FT, 4> tetra_coords_array =
-    CGAL::Barycentric_coordinates::tetrahedron_coordinates(vertices[0], vertices[1],
+    CGAL::Barycentric_coordinates::tetrahedron_coordinates_3(vertices[0], vertices[1],
       vertices[2], vertices[3], query);
 
     assert(CGAL::abs(1-x-y-z - tetra_coords[0]) == FT(0) &&

@@ -266,10 +266,10 @@ private:
       bool colored_edge = m_gso.colored_edge(m_arr, he);
       auto color = colored_edge ? m_gso.edge_color(m_arr, he) : CGAL::IO::Color();
       // skip first two if starts with a sep point.
-      int start_idx = Approx_traits::is_null(polyline.front()) ? 2 : 0;
+      std::size_t start_idx = Approx_traits::is_null(polyline.front()) ? 2 : 0;
       // skip last two if ends with a sep point.
-      int end_idx = Approx_traits::is_null(polyline.back()) ? polyline.size() - 2 : polyline.size();
-      for (int i = start_idx; i < end_idx - 1; ++i) {
+      std::size_t end_idx = Approx_traits::is_null(polyline.back()) ? polyline.size() - 2 : polyline.size();
+      for (std::size_t i = start_idx; i < end_idx - 1; ++i) {
         const auto& src = polyline[i];
         const auto& tgt = polyline[i + 1];
         if (Approx_traits::is_null(src) || Approx_traits::is_null(tgt)) continue;

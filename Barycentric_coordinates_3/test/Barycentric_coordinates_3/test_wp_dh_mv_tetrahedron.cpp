@@ -4,7 +4,7 @@
 #include <CGAL/Barycentric_coordinates_3/Wachspress_coordinates_3.h>
 #include <CGAL/Barycentric_coordinates_3/Discrete_harmonic_coordinates_3.h>
 #include <CGAL/Barycentric_coordinates_3/Mean_value_coordinates_3.h>
-#include <CGAL/Barycentric_coordinates_3/tetrahedron_coordinates.h>
+#include <CGAL/Barycentric_coordinates_3/tetrahedron_coordinates_3.h>
 
 #include "include/utils.h"
 
@@ -49,7 +49,7 @@ void test_overload(){
         bar_coordinates.clear();
         tetra_coordinates.clear();
         bar(query, std::back_inserter(bar_coordinates));
-        CGAL::Barycentric_coordinates::tetrahedron_coordinates(vertices[0], vertices[1],
+        CGAL::Barycentric_coordinates::tetrahedron_coordinates_3(vertices[0], vertices[1],
          vertices[2], vertices[3], query, std::back_inserter(tetra_coordinates));
 
         tests::test_positivity<Kernel>(bar_coordinates);

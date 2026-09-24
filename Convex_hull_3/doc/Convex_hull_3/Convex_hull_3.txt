@@ -6,7 +6,7 @@ namespace CGAL {
 \anchor Chapter_3D_Convex_Hulls
 \anchor chapconvexhull3
 \cgalAutoToc
-\authors Susan Hert and Stefan Schirra
+\authors Samuel Hornus, Susan Hert, Stefan Schirra, and Leo Valque
 
 \cgalFigureBegin{figchbimba,chull_bimba.png}
 The convex hull of a model made of 192135 points.
@@ -37,7 +37,7 @@ The function
 implementation of the quickhull algorithm \cgalCite{bdh-qach-96}.
 There are two versions of this
 function available, one that can be used when it is known that the output
-will be a polyhedron (<I>i.e.</I>, there are more than three points and
+will be a polyhedron (i.e., there are more than three points and
 they are not all collinear) and one that handles all degenerate cases
 and returns an `Object`, which may be a point, a segment, a
 triangle, or a polyhedron. Both versions accept a range of input
@@ -84,7 +84,7 @@ Note that the latter may also be planar polygon with a border.
 
 \cgalExample{Convex_hull_3/quickhull_any_dim_3.cpp}
 
-\subsection Convex_hull_3ExtremePoints Extreme points
+\subsection Convex_hull_3ExtremePoints Extreme Points
 In addition to the `convex_hull_3()` function, the function `extreme_points_3()` is also
 provided in case only the points on the convex hull are required (without the connectivity
 information). In addition the traits class adapter `CGAL::Extreme_points_traits_adapter_3`
@@ -133,7 +133,7 @@ point set or not. This function is used in postcondition testing for
 
 Fully dynamic maintenance of a convex hull can be achieved by using the
 class `Delaunay_triangulation_3`. This class supports insertion
-and removal of points (<I>i.e.</I>, vertices of the triangulation) and the
+and removal of points (i.e., vertices of the triangulation) and the
 convex hull edges are simply the finite edges of infinite faces.
 The following example illustrates the dynamic construction of a convex hull.
 First, random points from a sphere of a certain radius are generated and are
@@ -154,6 +154,18 @@ that is model of the concept `MutableFaceGraph`, e.g. `Polyhedron_3` and `Surfac
 
 \cgalExample{Convex_hull_3/dynamic_hull_3.cpp}
 
+\section Convex_hull_3Do_intersect Intersection Test of Convex Hulls
+
+`CGAL::Convex_hull_3::do_intersect(ch1, ch2)` determines whether two convex hulls intersect or not.
+
+Input hulls can be provided as a range of points or as a graph, and may be of different types.
+Furthermore, when many intersection queries use the same object, one should wrap that input in the class `CGAL::Convex_hull_hierarchy_3` as to construct an optimized view of the convex hull and accelerate intersection tests.
+This is especially true when the convex hull is made of a large number of vertices (see `CGAL::Convex_hull_hierarchy_3` for more details).
+
+\subsection Do_intersectExample Example
+The following program reads points from two input files, computes their convex hulls with `Convex_hull_hierarchy_3` and prints if they intersect or not.
+\cgalExample{Convex_hull_3/do_intersect_ch3.cpp}
+
 \section Convex_hull_3Performance Performance
 
 In the following, we compare the running times of the two approaches to compute 3D convex hulls.
@@ -168,6 +180,13 @@ the static approach needed 0.18s, while the dynamic approach needed 1.90s.
 
 The measurements have been performed using \cgal 3.9, using the \gnu \cpp compiler version 4.3.5, under Linux (Debian distribution),
 with the compilation options <TT>-O3 -DCGAL_NDEBUG</TT>. The computer used was equipped with a 64bit Intel Xeon 2.27GHz processor and 12GB of RAM.
+
+
+\section Convex_hull_3History Implementation History
+
+The initial version of this package was implemented by Susan Hert and Stefan Schirra, and released in 2011.
+The functions `do_intersect()`, `extreme_point_3()`, and the class `Convex_hull_hierarchy_3` were implemented in 2026 by Samuel Hornus and Leo Valque, under the supervision of Sébastien Loriot.
+
 
 */
 } /* namespace CGAL */

@@ -37,8 +37,8 @@ int main () {
   size_t k = 0;
   for (const auto& seg : segs) {
     bool do_inter_0 = do_intersect(arr, seg);
-    bool do_inter_1 = do_intersect(arr, seg, def_pl, std::true_type());
-    bool do_inter_2 = do_intersect(arr, seg, def_pl, std::false_type());
+    bool do_inter_1 = do_intersect_xcv(arr, seg, def_pl);
+    bool do_inter_2 = do_intersect_cv(arr, seg, def_pl);
 
     std::cout << "Segment: " << segs[k] << std::endl;
     std::cout << "  Expected: " << expected_intersect[k] << std::endl;
