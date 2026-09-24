@@ -207,7 +207,7 @@ namespace AABB_trees {
   void all_pairs_of_intersecting_primitives(const AABBTree &tree,
                                             OutputIterator out)
   {
-    if(tree.empty())
+    if(tree.size() <= 1)
       return;
     CGAL::internal::AABB_tree::Two_trees_listing_intersecting_primitives_traits traversal_traits(tree.traits(), tree.traits(), out);
     CGAL::internal::AABB_tree::one_tree_traversal<Concurrency_tag>(tree, traversal_traits);
@@ -281,7 +281,7 @@ namespace AABB_trees {
   void all_pairs_of_primitives_with_overlapping_bbox(const AABBTree &tree,
                                                      OutputIterator out)
   {
-    if(tree.empty())
+    if(tree.size() <= 1)
       return;
     CGAL::internal::AABB_tree::Two_trees_listing_primitives_with_overlapping_bbox_traits traversal_traits(tree.traits(), tree.traits(), out);
     CGAL::internal::AABB_tree::one_tree_traversal<Concurrency_tag>(tree, traversal_traits);
