@@ -178,7 +178,7 @@ int main()
 
 To ensure that non-\cgal types are formatted correctly (i.e., respecting \link PkgStreamSupportEnumRef `IO::Mode` \endlink),
 `CGAL::IO::oformat()` can be used.
-For types with a `Output_rep` specialization, the respective output routine of `Output_rep`
+For types with a specialization of  `Output_rep` , the respective output routine of `Output_rep`
 will be called by `CGAL::IO::oformat()`. Otherwise, the stream output operator will be called.
 
 \code{.cpp}
@@ -247,9 +247,21 @@ public:
 };
 \endcode
 
+
+\subsubsection IOstreamCustomizingInputFormatting Customizing Input Formatting
+
+For types with a specialization of  `Input_rep` , the respective input routine of `Input_rep`
+will be called by `CGAL::IO::iformat()`. Otherwise, the stream input operator will be called.
+
+Most of the functions reading from various file formats use `CGAL::IO::iformat()` for reading
+built-in floating point numbers of coordinates as well as integers for indices. By default
+this uses  `std::from_chars()` or `fast_float::from_chars()`  in case the \fast_float library is installed.
+The usage of these parsing functions can be disables with `#define CGAL_DISABLE_FAST_FLOAT`.
+
+
 \subsection IOstreamColors Colors
 
-An object of the class `Color` is a color available
+An object of the class `IO::Color` is a color available
 for drawing operations in many \cgal output streams.
 
 Each color is defined by a triple of integers `(r,g,b)` with

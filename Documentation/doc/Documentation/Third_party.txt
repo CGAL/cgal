@@ -140,6 +140,13 @@ executables should be linked with the CMake imported target
 
 The \eigen web site is <A HREF="https://libeigen.gitlab.io/">`https://libeigen.gitlab.io/`</A>.
 
+
+
+The \fast_float library provides fast header-only implementations for the \cpp `from_chars()` functions for `float` and `double` types as well as integer types.
+
+The \fast_float web site is <A HREF="https://github.com/fastfloat/fast_float">`https://github.com/fastfloat/fast_float`</A>.
+
+
 \subsection thirdpartyOpenGR OpenGR
 
 \opengr is a set C++ libraries for 3D Global Registration released under the terms of the APACHE V2 license.
