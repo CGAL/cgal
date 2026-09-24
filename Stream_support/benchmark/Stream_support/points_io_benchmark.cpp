@@ -1,6 +1,3 @@
-
-//#define CGAL_FORCE_IFORMAT_DOUBLE
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Point_set_3.h>
