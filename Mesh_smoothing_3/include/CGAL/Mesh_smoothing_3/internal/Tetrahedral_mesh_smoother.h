@@ -676,6 +676,7 @@ unsigned Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, Concurrency
 
     Reduction reduction = Mesh_smoothing_3_internal::reduce<ConcurrencyTag, Reduction>(0, _tet_storage.size(), [&](std::size_t t, Reduction &reduction) {
         Tet_storage const &tet = _tet_storage[t];
+        // todo: it does not account for reference shape, so with different orientation, it will give a false negative.
         bool exact_check = Math_functions::strictly_positive_tetrahedra({
             Math_functions::sub_line_vector(coords,tet.verts[0]),
             Math_functions::sub_line_vector(coords,tet.verts[1]),
