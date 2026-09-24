@@ -78,8 +78,8 @@ _standard_error_handler(
         int         line,
         const char* msg )
 {
-#if defined(__GNUG__) && !defined(__llvm__)
-    // After g++ 3.4, std::terminate defaults to printing to std::cerr itself.
+#if defined(__GLIBCXX__)
+    // std::terminate from libstdc++ defaults to printing to std::cerr itself.
     if (get_static_error_behaviour() == THROW_EXCEPTION)
         return;
 #endif
@@ -103,8 +103,8 @@ _standard_warning_handler( const char *,
                           int         line,
                           const char* msg )
 {
-#if defined(__GNUG__) && !defined(__llvm__)
-    // After g++ 3.4, std::terminate defaults to printing to std::cerr itself.
+#if defined(__GLIBCXX__)
+    // std::terminate from libstdc++ defaults to printing to std::cerr itself.
     if (get_static_warning_behaviour() == THROW_EXCEPTION)
         return;
 #endif

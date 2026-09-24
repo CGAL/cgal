@@ -37,10 +37,10 @@ done
 
 cmake -DCGAL_ENABLE_CHECK_HEADERS=TRUE -DDOXYGEN_EXECUTABLE="$DOX_PATH" -DCGAL_COPY_DEPENDENCIES=TRUE -DCMAKE_CXX_FLAGS="-std=c++1y" ..
 if [ -n "$DO_CHECK_HEADERS" ]; then
-    make -j"$(nproc --all)" -k check_headers
-    make -j"$(nproc --all)" -k check_headers_linked_twice
+    cmake --build . -j"$(nproc --all)" --target check_headers -v -- -k
+    cmake --build . -j"$(nproc --all)" --target check_headers_linked_twice -v -- -k
 fi
-make -j"$(nproc --all)" -k packages_dependencies
+cmake --build . -j"$(nproc --all)" --target packages_dependencies -v -- -k
 echo " Checks finished"
 for pkg_path in "$CGAL_ROOT"/*
 do
@@ -65,7 +65,8 @@ rm -r dep_check_build
 if [ -n "$TOTAL_RES" ]; then
   # shellcheck disable=SC2059
   printf "$TOTAL_RES"
-  echo " You can run cmake with options CGAL_ENABLE_CHECK_HEADERS and CGAL_COPY_DEPENDENCIES ON, make the target packages_dependencies and commit the new dependencies files,"
+  echo " You can run cmake with options \`CGAL_ENABLE_CHECK_HEADERS\` and \`CGAL_COPY_DEPENDENCIES\` set to \`ON\`"
+  echo " then build the target \`packages_dependencies\` and commit the new dependencies files,"
   echo " or simply manually edit the problematic files."
   exit 1
 else

@@ -40,6 +40,7 @@
 #include <CGAL/IO/output_to_vtu.h>
 #include <CGAL/boost/graph/IO/VTK.h>
 #include <CGAL/IO/VTK.h>
+#include <CGAL/iterator.h>
 
 #include <vtkSmartPointer.h>
 #include <vtkDataSetReader.h>
@@ -225,7 +226,7 @@ public:
       {
         if(!CGAL::is_triangle_mesh(*poly_item->polyhedron()))
         {
-          QMessageBox::warning(0, "Error",
+          QMessageBox::warning(CGAL::Three::Three::mainWindow(), "Error",
                                "Cannot save a mesh in vtu format if "
                                "it is not pure triangle.");
           return false;
@@ -445,10 +446,17 @@ public:
         }
       }
 
+      std::vector<std::array<int, 3>> feature_edges;
+      std::vector<std::array<int, 2>> corners;
+      std::vector<Tr::Vertex_handle> vertex_handle_vector;
+
       CGAL::SMDS_3::build_mesh_complex_with_subdomains_range(
         c3t3_item->c3t3(),
         points, finite_cells, subdomains, border_facets,
-        false, false, true);
+        feature_edges, corners,
+        vertex_handle_vector,
+        CGAL::Emptyset_iterator{},
+        false, false, true, true);
 
       for( C3t3::Triangulation::Finite_cells_iterator
            cit = c3t3_item->c3t3().triangulation().finite_cells_begin();

@@ -72,7 +72,7 @@ if(TARGET ITT::ITT)
   target_compile_definitions(mesh_implicit_domains PRIVATE CGAL_MESH_3_USE_INTEL_ITT)
 endif()
 
-create_single_source_cgal_program( "mesh_polyhedral_domain.cpp" )
+create_single_source_cgal_program("mesh_polyhedral_domain.cpp")
 target_link_libraries(mesh_polyhedral_domain PRIVATE CGAL::Eigen3_support)
 
 create_single_source_cgal_program("mesh_polyhedral_domain_sm.cpp")
@@ -97,7 +97,7 @@ create_single_source_cgal_program("mesh_polyhedral_domain_with_features_sizing.c
 target_link_libraries(mesh_polyhedral_domain_with_features_sizing
                       PRIVATE CGAL::Eigen3_support)
 
-                    create_single_source_cgal_program("mesh_polyhedral_domain_with_edge_distance.cpp")
+create_single_source_cgal_program("mesh_polyhedral_domain_with_edge_distance.cpp")
 target_link_libraries(mesh_polyhedral_domain_with_edge_distance
                       PRIVATE CGAL::Eigen3_support)
 
@@ -105,8 +105,7 @@ create_single_source_cgal_program("mesh_polyhedral_domain_with_features_sm.cpp")
 target_link_libraries(mesh_polyhedral_domain_with_features_sm
                       PRIVATE CGAL::Eigen3_support)
 
-                      create_single_source_cgal_program(
-  "mesh_polyhedral_domain_with_lipschitz_sizing.cpp")
+create_single_source_cgal_program("mesh_polyhedral_domain_with_lipschitz_sizing.cpp")
 target_link_libraries(mesh_polyhedral_domain_with_lipschitz_sizing
                       PRIVATE CGAL::Eigen3_support)
 

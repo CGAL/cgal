@@ -15,6 +15,7 @@
 #include <CGAL/license/Polygon_repair.h>
 
 #include <CGAL/Triangulation_face_base_2.h>
+#include <bitset>
 
 namespace CGAL {
 namespace Polygon_repair {
@@ -24,6 +25,7 @@ template <typename Kernel, typename FaceBase = Triangulation_face_base_2<Kernel>
 class Triangulation_face_base_with_repair_info_2 : public FaceBase {
   int _label;
   bool _processed;
+  std::bitset<3> _edge;
 public:
   using Vertex_handle = typename FaceBase::Vertex_handle;
   using Face_handle = typename FaceBase::Face_handle;
@@ -47,6 +49,8 @@ public:
   bool& processed() { return _processed; }
   const int& label() const { return _label; }
   int& label() { return _label; }
+  bool processed(int i) const { return _edge[i]; }
+  void set_processed(int i)  { _edge[i] = true; }
 };
 
 } // namespace internal

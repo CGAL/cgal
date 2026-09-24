@@ -65,7 +65,7 @@ void collapse_gh(Surface_mesh& mesh,
 int main(int argc, char** argv)
 {
   Surface_mesh mesh;
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cube-meshed.off");
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cube-subdivided.off");
 
   if(!CGAL::IO::read_polygon_mesh(filename, mesh))
   {

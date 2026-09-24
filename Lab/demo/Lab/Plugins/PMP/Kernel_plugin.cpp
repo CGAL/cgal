@@ -68,7 +68,7 @@ void CGAL_Lab_mesh_kernel_plugin::on_actionKernel_triggered()
     SMesh* sMesh = sm_item->polyhedron();
     SMesh* kernel = new SMesh;
 
-    CGAL::Polygon_mesh_processing::kernel(*sMesh, *kernel);
+    CGAL::Polygon_mesh_processing::kernel(*sMesh, *kernel, CGAL::parameters::allow_open_input(true));
 
     if(is_empty(*kernel)){
       QApplication::restoreOverrideCursor();

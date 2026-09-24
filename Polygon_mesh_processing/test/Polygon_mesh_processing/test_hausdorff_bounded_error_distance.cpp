@@ -1165,7 +1165,7 @@ int main(int argc, char** argv)
 //  test_real_meshes(filepath1, filepath2, naive_hd, bound_hd, error_bound);
   test_real_meshes(filepath1, filepath2, bound_hd, apprx_hd, error_bound);
 //  test_real_meshes("data/elephant_concave_hole.off", CGAL::data_file_path("meshes/mech-holes-shark.off"), bound_hd, apprx_hd, error_bound); // commenting because approx hausdorff is annoyingly rough
-  test_real_meshes("data/small_spheres.off", "data/overlapping_triangles.off", bound_hd, apprx_hd, error_bound);
+  test_real_meshes(CGAL::data_file_path("meshes/small_spheres.off"), "data/overlapping_triangles.off", bound_hd, apprx_hd, error_bound);
 
   // --- Test realizing triangles.
   test_realizing_triangles(error_bound);

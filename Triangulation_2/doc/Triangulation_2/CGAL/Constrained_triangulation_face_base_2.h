@@ -10,7 +10,6 @@ of constrained triangulations.
 
 \cgalModels{ConstrainedTriangulationFaceBase_2}
 
-
 \tparam Traits must be a geometric traits.
 
 \tparam Fb must be a model

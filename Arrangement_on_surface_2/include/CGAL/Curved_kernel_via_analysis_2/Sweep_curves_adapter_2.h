@@ -660,7 +660,7 @@ public:
 
         typedef std::vector<Point_2> Point_container;
         Point_container tmp;
-        cv1.intersect(cv2, back_inserter(tmp));
+        cv1.intersect(cv2, std::back_inserter(tmp));
 
         for(typename Point_container::const_iterator it =  tmp.begin();
                 it != tmp.end(); it++) {

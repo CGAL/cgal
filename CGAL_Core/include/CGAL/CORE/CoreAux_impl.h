@@ -53,7 +53,7 @@ CGAL_INLINE_FUNCTION
 int flrLg(long x) {
   if (x == LONG_MIN) {
     // special treatment as -LONG_MIN would be not representable as "long"
-    return LONG_BIT - 1;
+    return CORE_LONG_BIT - 1;
   } else {
     //  1 <= |x| <= LONG_MAX
     if (x < 0)
@@ -89,11 +89,11 @@ int flrLg(unsigned long x) {
 CGAL_INLINE_FUNCTION
 int clLg(long x) {
   if (x == LONG_MIN)
-    return LONG_BIT - 1;
+    return CORE_LONG_BIT - 1;
   if (x < 0)
     x = -x;                 // use absolute value
   if (x > (LONG_MAX >> 1))         // the leading data bit is 1
-    return (LONG_BIT - 1);        // exclude the sign bit
+    return (CORE_LONG_BIT - 1);        // exclude the sign bit
   if (x >= 2)
     return flrLg((unsigned long)((x << 1) - 1));
   // SINCE ceilLog_2(x) = floorLog_2(2x-1) for x>=2
@@ -109,7 +109,7 @@ int clLg(long x) {
 CGAL_INLINE_FUNCTION
 int clLg(unsigned long x) {
   if (x > (ULONG_MAX >> 1))        // the leading bit is 1
-    return LONG_BIT;
+    return CORE_LONG_BIT;
   if (x >= 2)
     return flrLg((x << 1) - 1);
   // SINCE ceilLog_2(x) = floorLog_2(2x-1) for x>=2.

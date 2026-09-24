@@ -1,0 +1,11 @@
+Vertex (0 3) :  feature below: NONE   feature above: NONE
+Vertex (1 1) :  feature below: NONE   feature above: [ S 0 3 6 4]
+Vertex (2 2) :  feature below: [ S 1 1 3 0]   feature above: (2 3)
+Vertex (2 3) :  feature below: (2 2)   feature above: [ S 0 3 6 4]
+Vertex (3 0) :  feature below: NONE   feature above: [ S 2 2 5 0]
+Vertex (3 2) :  feature below: [ S 2 2 5 0]   feature above: (3 3)
+Vertex (3 3) :  feature below: (3 2)   feature above: [ S 0 3 6 4]
+Vertex (4 4) :  feature below: [ S 0 3 6 4]   feature above: EMPTY
+Vertex (4 5) :  feature below: EMPTY   feature above: NONE
+Vertex (5 0) :  feature below: NONE   feature above: [ S 0 3 6 4]
+Vertex (6 4) :  feature below: NONE   feature above: NONE

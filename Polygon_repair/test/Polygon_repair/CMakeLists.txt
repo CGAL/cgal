@@ -15,6 +15,7 @@ find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 #  create_single_source_cgal_program("${cppfile}")
 #endforeach()
 
+create_single_source_cgal_program( "issue9325.cpp" )
 create_single_source_cgal_program( "draw_test_polygons.cpp" )
 create_single_source_cgal_program( "exact_test.cpp")
 create_single_source_cgal_program( "repair_polygon_2_test.cpp" )

@@ -21,9 +21,9 @@ Mesh_3
 Mesher_level
 Modular_arithmetic
 Number_types
+PMP_Mesh_repair
 Periodic_3_mesh_3
 Periodic_3_triangulation_3
-Polygon_mesh_processing
 Principal_component_analysis
 Principal_component_analysis_LGPL
 Profiling_tools

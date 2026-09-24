@@ -315,9 +315,6 @@ using std::max;
 #ifndef __has_cpp_attribute
   #define __has_cpp_attribute(x) 0  // Compatibility with non-supporting compilers.
 #endif
-#ifndef __has_warning
-  #define __has_warning(x) 0  // Compatibility with non-clang compilers.
-#endif
 
 #if __has_include(<version>)
 #  include <version>

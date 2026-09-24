@@ -18,7 +18,7 @@ The geometric traits is actually not used by the class.
 
 \tparam Fb has to be a model of the concept `TriangulationDSFaceBase_2`
 and will serve as a base class for `Triangulation_on_sphere_face_base_2`.
-By default this parameter is instantiated by `Triangulation_ds_face_base_2<>`.
+By default this parameter is instantiated with `Triangulation_ds_face_base_2<>`.
 
 \sa `CGAL::Triangulation_ds_face_base_2<Tds>`
 \sa `CGAL::Triangulation_face_base_with_info_2<Traits,Tds>`

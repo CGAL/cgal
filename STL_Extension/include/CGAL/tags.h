@@ -44,7 +44,7 @@ struct Null_functor {
 
 // For concurrency
 struct Sequential_tag { static constexpr bool is_parallel = false; };
-struct Parallel_tag : public Sequential_tag { static constexpr bool is_parallel = true; };
+struct Parallel_tag : public Sequential_tag { static constexpr bool is_parallel = true; }; /// @todo: document `is_parallel`?
 
 #ifdef CGAL_LINKED_WITH_TBB
 typedef CGAL::Parallel_tag Parallel_if_available_tag;

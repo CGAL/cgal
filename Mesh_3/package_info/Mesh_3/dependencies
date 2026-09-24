@@ -25,6 +25,7 @@ Mesher_level
 Modifier
 Modular_arithmetic
 Number_types
+PMP_Mesh_repair
 Polygon_mesh_processing
 Polyhedron
 Principal_component_analysis

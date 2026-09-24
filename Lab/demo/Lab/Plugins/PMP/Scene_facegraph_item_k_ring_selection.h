@@ -15,9 +15,9 @@
 #include <map>
 #include <queue>
 
+#include <CGAL/boost/graph/border.h>
 #include <CGAL/boost/graph/selection.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
-#include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/iterator.h>
 
 #include <CGAL/Polygon_2.h>
@@ -263,7 +263,7 @@ public Q_SLOTS:
     }
     //get border edges of the selected patches
     std::vector<fg_halfedge_descriptor> boundary_edges;
-    CGAL::Polygon_mesh_processing::border_halfedges(face_sel, poly, std::back_inserter(boundary_edges));
+    CGAL::border_halfedges(face_sel, poly, std::back_inserter(boundary_edges));
     std::vector<bool> mark(edges(poly).size(), false);
     boost::property_map<FaceGraph, boost::edge_index_t>::type edge_index
       = get(boost::edge_index, poly);

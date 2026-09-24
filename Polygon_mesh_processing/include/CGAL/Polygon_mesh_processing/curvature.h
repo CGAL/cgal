@@ -227,7 +227,7 @@ discrete_Gaussian_curvature(typename boost::graph_traits<TriangleMesh>::vertex_d
   *
   * We refer to Meyer et al. \cgalCite{cgal:mdsb-ddgot-02} for the definition of <i>discrete Gaussian curvature</i>.
   *
-  * @tparam TriangleMesh a model of `FaceGraph`
+  * @tparam TriangleMesh a model of `FaceGraph` and `VertexListGraph`
   * @tparam VertexCurvatureMap must be a model of `WritablePropertyMap` with key type
   *                            `boost::graph_traits<TriangleMesh>::%vertex_descriptor` and value type `FT`,
   *                            which is either `geom_traits::FT` if this named parameter is provided,
@@ -425,7 +425,7 @@ discrete_mean_curvature(typename boost::graph_traits<TriangleMesh>::vertex_descr
   *
   * We refer to Meyer et al. \cgalCite{cgal:mdsb-ddgot-02} for the definition of <i>discrete mean curvature</i>.
   *
-  * @tparam TriangleMesh a model of `FaceGraph`
+  * @tparam TriangleMesh a model of `FaceGraph` and `VertexListGraph`
   * @tparam VertexCurvatureMap must be a model of `WritablePropertyMap` with key type
   *                            `boost::graph_traits<TriangleMesh>::%vertex_descriptor` and value type `FT`,
   *                            which is either `geom_traits::FT` if this named parameter is provided,

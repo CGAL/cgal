@@ -2,6 +2,7 @@ AABB_tree 3D Fast Intersection and Distance Computation
 Advancing_front_surface_reconstruction Advancing Front Surface Reconstruction
 Alpha_shapes_2 2D Alpha Shapes
 Alpha_shapes_3 3D Alpha Shapes
+Alpha_wrap_2 2D Alpha Wrapping
 Alpha_wrap_3 3D Alpha Wrapping
 Apollonius_graph_2 2D Apollonius Graphs (Delaunay Graphs of Disks)
 Arrangement_on_surface_2 2D Arrangements
@@ -61,7 +62,8 @@ Polygon_mesh_processing/distance Polygon Mesh Processing - Distance
 Polygon_mesh_processing/interpolated_corrected_curvatures Polygon Mesh Processing - Interpolated Corrected Curvatures
 Polygon_mesh_processing/locate Polygon Mesh Processing - Locate
 Polygon_mesh_processing/measure Polygon Mesh Processing - Geometric Measure
-Polygon_mesh_processing/meshing_hole_filling Polygon Mesh Processing - Meshing and Hole Filling
+Polygon_mesh_processing/hole_filling Polygon Mesh Processing - Hole Filling
+Polygon_mesh_processing/remeshing Polygon Mesh Processing - Remeshing
 Polygon_mesh_processing/orientation Polygon Mesh Processing - Orientation
 Polygon_mesh_processing/Polyhedral_envelope Polygon Mesh Processing - Polyhedral Envelope
 Polygon_mesh_processing/predicate Polygon Mesh Processing - Predicate
@@ -94,6 +96,7 @@ Straight_skeleton_extrusion_2 2D Straight Skeleton Extrusion
 Stream_lines_2 2D Placement of Streamlines
 Surface_mesh_approximation Triangulated Surface Mesh Approximation
 Surface_mesh_deformation Triangulated Surface Mesh Deformation
+Surface_mesh_decomposition Triangulated Surface Mesh Decomposition
 Surface_mesher 3D Surface Mesh Generation
 Surface_mesh Surface Mesh
 Surface_mesh_parameterization Triangulated Surface Mesh Parameterization

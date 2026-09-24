@@ -16,10 +16,12 @@
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
-namespace CGAL{
-namespace Polygon_mesh_processing{
+namespace CGAL {
+namespace Polygon_mesh_processing {
+
 /**
- * \ingroup PkgPolygonMeshProcessingRef
+ * \ingroup PMP_misc_grp
+ *
  * applies a transformation to every vertex of a `PolygonMesh`.
  *
  * @tparam Transformation a functor that has an `operator()(Point_3)`, with `Point_3`

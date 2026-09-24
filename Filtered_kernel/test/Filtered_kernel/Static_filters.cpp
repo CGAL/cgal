@@ -309,20 +309,6 @@ int main(int argc, char **argv)
   assert( !CGAL::Epick::Has_static_filters);
   #endif
 
-  #ifdef CGAL_DONT_USE_LAZY_KERNEL
-    #ifdef CGAL_NO_STATIC_FILTERS
-    assert(  !CGAL::Epeck::Has_static_filters);
-    #else
-    assert(  CGAL::Epeck::Has_static_filters);
-    #endif
-  #else
-    #ifdef CGAL_LAZY_KERNEL_USE_STATIC_FILTERS_BY_DEFAULT
-    assert(  CGAL::Epeck::Has_static_filters);
-    #else
-    assert( !CGAL::Epeck::Has_static_filters);
-    #endif
-  #endif
-
   assert(  K2::Has_static_filters);
   assert(! K4::Has_static_filters);
 

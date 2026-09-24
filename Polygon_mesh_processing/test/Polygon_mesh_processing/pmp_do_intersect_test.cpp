@@ -382,7 +382,7 @@ int main()
 {
 
   bool expected = true;
-  const std::string filename1 =  "data/tetra1.off";
+  const std::string filename1 =  CGAL::data_file_path("meshes/tetrahedron_flat.off");
   const std::string filename2 =  CGAL::data_file_path("meshes/reference_tetrahedron.off");
   const std::string filename3 =  "data/triangle.polylines.txt";
   const std::string filename4 =  "data/planar.polylines.txt";
@@ -390,7 +390,7 @@ int main()
   const std::string filename6 =  "data/polylines_inter.polylines.txt";
   const std::string filename7 =  "data/tetra2.off";
   const std::string filename8 =  "data/tetra4.off";
-  const std::string filename9 =  "data/small_spheres.off";
+  const std::string filename9 =  CGAL::data_file_path("meshes/small_spheres.off");
   const std::string filename10 = "data/hollow_sphere.off";
   const std::string filename11 = CGAL::data_file_path("meshes/sphere.off");
 

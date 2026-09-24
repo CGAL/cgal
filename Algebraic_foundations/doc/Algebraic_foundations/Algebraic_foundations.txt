@@ -24,7 +24,7 @@ allows an explicit handling of mixed operations.
 \section Algebraic_foundationsAlgebraic Algebraic Structures
 
 The algebraic structure concepts introduced within this section are
-motivated by their well known counterparts in traditional algebra,
+motivated by their well-known counterparts in traditional algebra,
 but we also had to pay tribute to existing types and their restrictions.
 To keep the interface minimal,
 it was not desirable to cover all known algebraic structures,
@@ -69,7 +69,7 @@ their existence, the usual arithmetic and comparison operators are required
 to be realized via \cpp operator overloading.
 The division operator is reserved for division in fields.
 All other unary (e.g., sqrt) and binary functions
-(e.g., gcd, div) must be models of the well known \stl-concepts
+(e.g., gcd, div) must be models of the well-known \stl-concepts
 `AdaptableUnaryFunction` or `AdaptableBinaryFunction`
 concept and local to the traits class
 (e.g., \link AlgebraicStructureTraits::Sqrt `Algebraic_structure_traits<AS>::Sqrt()(x)` \endlink).

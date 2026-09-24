@@ -502,17 +502,36 @@ namespace internal {
       }
     }
 
+    struct Edge_with_index
+    {
+      int v0, v1;
+      typename C3T3::Index curve_index;
+    };
+    struct Corner_with_index
+    {
+      int v;
+      typename C3T3::Index corner_index;
+    };
+
     boost::unordered_map<std::array<int, 3>,
-      typename C3T3::Surface_patch_index> empty_facets_map;
+    typename C3T3::Surface_patch_index> empty_facets_map;
+    std::vector<Edge_with_index> no_edges;
+    std::vector<Corner_with_index> no_corners;
+    std::vector<typename C3T3::Triangulation::Vertex_handle> no_vertices;
 
     CGAL::SMDS_3::build_mesh_complex_with_subdomains_range(c3t3,
       points,
       tetrahedra,
       labels,
       empty_facets_map,
+      no_edges,
+      no_corners,
+      no_vertices,
+      CGAL::Emptyset_iterator(),
       true,//verbose
       false,//replace subdomain 0
-      true);//allow non manifold
+      true,//allow non manifold
+      true);//allow negative volumes
 
     return true;
   }

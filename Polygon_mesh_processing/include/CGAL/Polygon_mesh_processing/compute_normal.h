@@ -26,6 +26,8 @@
 
 #include <boost/graph/graph_traits.hpp>
 
+#include <boost/container/small_vector.hpp>
+
 #include <iostream>
 #include <limits>
 #include <utility>
@@ -200,8 +202,8 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
 *
 * computes the outward unit vector normal for all faces of the polygon mesh.
 *
-* @tparam PolygonMesh a model of `FaceGraph`
-* @tparam Face_normal_map a model of `WritablePropertyMap` with
+* @tparam PolygonMesh a model of `FaceListGraph`
+* @tparam FaceNormalMap a model of `WritablePropertyMap` with
     `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
     a model of `Kernel::Vector_3` as value type.
 *
@@ -233,9 +235,9 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
 *
 * @see `compute_face_normal()`
 */
-template <typename PolygonMesh, typename Face_normal_map, typename NamedParameters = parameters::Default_named_parameters>
+template <typename PolygonMesh, typename FaceNormalMap, typename NamedParameters = parameters::Default_named_parameters>
 void compute_face_normals(const PolygonMesh& pmesh,
-                          Face_normal_map face_normals,
+                          FaceNormalMap face_normals,
                           const NamedParameters& np = parameters::default_values())
 {
   typedef typename GetGeomTraits<PolygonMesh,NamedParameters>::type Kernel;
@@ -274,12 +276,12 @@ bool almost_equal(const typename GT::Vector_3& v1, const typename GT::Vector_3& 
   return traits.compute_scalar_product_3_object()(v1, v2) >= cos_theta;
 }
 
-template <typename PolygonMesh, typename FaceNormalVector, typename K>
+template <typename PolygonMesh, typename Incident_faces, typename FaceNormalVector, typename K>
 bool does_enclose_other_normals(const std::size_t i, const std::size_t j, const std::size_t k,
                                 const typename K::Vector_3& nb,
                                 const typename K::FT sp_bi,
                                 typename boost::graph_traits<PolygonMesh>::face_descriptor &not_enclose_normal,
-                                const std::vector<typename boost::graph_traits<PolygonMesh>::face_descriptor>& incident_faces,
+                                const Incident_faces& incident_faces,
                                 const FaceNormalVector& face_normals,
                                 const K& traits)
 {
@@ -410,8 +412,7 @@ compute_vertex_normal_most_visible_min_circle(typename boost::graph_traits<Polyg
   typename GT::Compute_scalar_product_3 sp_3 = traits.compute_scalar_product_3_object();
   typename GT::Construct_cross_product_vector_3 cp_3 = traits.construct_cross_product_vector_3_object();
 
-  std::vector<face_descriptor> incident_faces;
-  incident_faces.reserve(8);
+  boost::container::small_vector<face_descriptor,8> incident_faces;
   for(face_descriptor f : CGAL::faces_around_target(halfedge(v, pmesh), pmesh))
   {
     // Remove degenerate and redundant faces
@@ -700,16 +701,9 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type VPMap;
   VPMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                  get_const_property_map(vertex_point, pmesh));
+  typedef CGAL::dynamic_face_property_t<Vector_3>                             Face_normal_tag;
 
-  typedef std::unordered_map<face_descriptor, Vector_3>                       Face_vector_map;
-  typedef boost::associative_property_map<Face_vector_map>                    Default_map;
-
-  typedef typename internal_np::Lookup_named_param_def<internal_np::face_normal_t,
-                                                       NamedParameters,
-                                                       Default_map>::type     Face_normal_map;
-  Face_vector_map default_fvmap;
-  Face_normal_map face_normals = choose_parameter(get_parameter(np, internal_np::face_normal),
-                                                  Default_map(default_fvmap));
+  auto face_normals = choose_parameter(get_parameter(np, internal_np::face_normal), Face_normal_tag(), pmesh);
   const bool must_compute_face_normals = is_default_parameter<NamedParameters, internal_np::face_normal_t>::value;
 
 #ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
@@ -763,7 +757,7 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
 *
 * computes the outward unit vector normal for all vertices of the polygon mesh.
 *
-* @tparam PolygonMesh a model of `FaceListGraph`
+* @tparam PolygonMesh a model of `VertexListGraph` and `FaceListGraph`
 * @tparam VertexNormalMap a model of `WritablePropertyMap` with
 *                         `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
 *                         the return type of `compute_vertex_normal()` as value type.
@@ -825,8 +819,7 @@ void compute_vertex_normals(const PolygonMesh& pmesh,
   typedef typename internal_np::Lookup_named_param_def<internal_np::face_normal_t,
                                                        NamedParameters,
                                                        Face_normal_dmap>::type   Face_normal_map;
-  Face_normal_map face_normals = choose_parameter(get_parameter(np, internal_np::face_normal),
-                                                  get(Face_normal_tag(), pmesh));
+  Face_normal_map face_normals = choose_parameter(get_parameter(np, internal_np::face_normal), Face_normal_tag(), pmesh);
   const bool must_compute_face_normals = is_default_parameter<NamedParameters, internal_np::face_normal_t>::value;
 
   if(must_compute_face_normals)
@@ -857,7 +850,7 @@ void compute_vertex_normals(const PolygonMesh& pmesh,
 *
 * computes the outward unit vector normal for all vertices and faces of the polygon mesh.
 *
-* @tparam PolygonMesh a model of `FaceListGraph`
+* @tparam PolygonMesh a model of `VertexListGraph` and `FaceListGraph`
 * @tparam VertexNormalMap a model of `WritablePropertyMap` with
 *    `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
 *    a model of `Kernel::Vector_3` as value type.

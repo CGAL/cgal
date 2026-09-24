@@ -84,11 +84,7 @@ public:
 #ifdef CGAL_NO_STATIC_FILTERS_FOR_LAZY_KERNEL
   enum { Has_static_filters = false };
 #else
-  // @fixme, this should be 'true' but it's broken because EPIC_predicate_if_convertible
-  // assumes the static filtered predicate and the (non-static) filtered predicate
-  // have the same signature, which is not always the case, for example in
-  //   Do_intersect_3(Sphere_3, Bbox_3, *bool*)
-  enum { Has_static_filters = false };
+  enum { Has_static_filters = true };
 #endif
 
   // Types
