@@ -69,6 +69,11 @@ Release date: December 2026
 
 - **Breaking change**:  Removed the class templates `Twotuple`,`Threetuple`, `Fourtuple`, `Sixtuple` which were deprecated since CGAL-3.4
 
+
+### [Stream Support](https://doc.cgal.org/6.3/Manual/packages.html#PkgStreamSupport)
+
+- **Breaking change**:  `CGAL::IO::Color`  is no longer imported into `namespace CGAL`.
+
 ## [Release 6.2](https://github.com/CGAL/cgal/releases/tag/v6.2)
 
 Release date: June 2026
