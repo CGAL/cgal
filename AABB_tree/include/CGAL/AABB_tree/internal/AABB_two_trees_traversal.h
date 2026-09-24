@@ -132,7 +132,7 @@ void two_trees_traversal(const Tree_A& tree_A,
       traits.intersection(tree_A.singleton_data(), *tree_B.root_node(), tree_B.size());
   }
   else if(tree_B.size() == 1)
-    traits.intersection(*tree_A.root_node(), tree_A.size(), tree_A.singleton_data());
+    traits.intersection(*tree_A.root_node(), tree_A.size(), tree_B.singleton_data());
   else
     two_trees_traversal<true, ConcurrencyTag>(*tree_A.root_node(), *tree_B.root_node(), tree_A.size(), tree_B.size(), traits);
 }
