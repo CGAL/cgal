@@ -299,6 +299,23 @@ public:
 #ifdef CGAL_SS3_DETECT_COPLANARITIES_WITH_NORMAL_CHANGE
     Transformation::merge_coplanar_facets(polyhedron);
 #else // CGAL_SS3_DETECT_COPLANARITIES_WITH_NORMAL_CHANGE
+    // Important note: coplanar region growing is an improvement from naive normal-based
+    // coplanar region detection because it can absorb zigzaging faces within the same
+    // region but it's not bullet-proof either, and can fail to absord some mesh defects,
+    // which may still create issues in the perturbation algorithm downstream.
+    // Notably, this does not solve any LFS-related issue (one vertex epsilon close)
+    // to a non-incident facet.
+    //
+    // The greedy nature of region growing (regions grow as much as they can regardless
+    // of a smaller region offering a possibly better fit) can for example fail to partition some
+    // near degenerate inputs in the correct way, for example Thingi #215991.
+    //
+    // One could tweak the region growing to first perform normal-based growing, followed by
+    // a non-normal, slab-based growth, but a stronger hammer is to call
+    // PMP::remove_almost_degenerate_faces() on the input. This will not be integrated in this package.
+    //
+    // Independently, the perturbation mechanisms must correctly handle epsilon-sized local feature sizes.
+
     namespace PMP = CGAL::Polygon_mesh_processing;
 
     using halfedge_descriptor = typename boost::graph_traits<TriangleMesh>::halfedge_descriptor;
@@ -374,7 +391,7 @@ public:
 #endif
 
 #if 0
-    // @todo test this again
+    // @todo test again the usefulness of this
     Transformation::truncate_precision(polyhedron);
 #endif
 
@@ -418,7 +435,7 @@ public:
     CGAL_precondition(polyhedron->is_consistent());
 
     // @todo do not systematically triangulate, but use this NP and if it is false,
-    // only triangulate what is not representable otherwise (see code in PMP::remesh_planar_faces)
+    // only triangulate what is not representable otherwise (factorize with code from PMP::remesh_planar_faces())
     // bool do_triangulate = !choose_parameter(get_parameter(np, CGAL::internal_np::do_not_triangulate_faces), false);
 
     std::vector<Point> points;
@@ -521,18 +538,20 @@ public:
       }
     }
 
-    if(!PMP::is_polygon_soup_a_polygon_mesh(soup_faces))
-    {
-      CGAL_SS3_IO_TRACE("Warning: polygon soup does not describe a polygon mesh");
+    CGAL_SS3_IO_TRACE_V(8, "Soup with " << points.size() << " points, " << soup_faces.size() << " polygons");
+    if (!PMP::is_polygon_soup_a_polygon_mesh(soup_faces)) {
+      CGAL_SS3_IO_TRACE_V(1, "Warning: polygon soup does not describe a polygon mesh");
 #ifdef CGAL_SS3_DUMP_FILES
       CGAL::IO::write_STL("results/nm_soup.stl", points, soup_faces);
 #endif
       PMP::duplicate_non_manifold_edges_in_polygon_soup(points, soup_faces);
-      CGAL_assertion(PMP::is_polygon_soup_a_polygon_mesh(soup_faces));
+      CGAL_SS3_IO_TRACE_V(8, "Manifold soup with " << points.size() << " points, " << soup_faces.size() << " polygons");
     }
 
     // Convert polygon soup to polygon mesh
     PMP::polygon_soup_to_polygon_mesh(points, soup_faces, pmesh, parameters::default_values(), np);
+
+    CGAL_SS3_IO_TRACE_V(8, "Saved mesh with " << num_vertices(pmesh) << " vertices, " << num_faces(pmesh) << " faces");
 
     // Transfer per-face properties in the same order as the soup faces were added
     std::size_t fi = 0;

@@ -19,17 +19,23 @@
 
 #include <CGAL/license/Straight_skeleton_3.h>
 
-// @fixme:
-// - test save time at an event time
+// @next:
+// - fix polyhedron_ / polyhedron
+// - change CGAL_SS3_NO_SKELETON_DS into a NP + const member boolean
+
+// @fixme now:
 
 // @fixme later:
-// - more combinatorial checks should happen at pop time (?)
+// - test save time at an event time
 // - re-using items in event handlers goes against detecting obsolete events with expired pointers,
 //   erase counter would be better.
 
 // @fixme latest:
 // - Fix simultaneous events still happening sometimes (likely the same event multiple times
 //   since we don't check the queue before pushing)
+// - Similar to above, event order matters whereas it shouldn't really. This means we don't filter
+//   some contact events that should be detected as vanish events, but since events are processed
+//   first in the queue for similar time, it falls back on its feet.
 // - EPECK -> EPICK embedding could create self-intersections
 
 // @speed
@@ -60,10 +66,10 @@
 // - Do not triangulate outputs, use the code from remesh_planar_faces() for not simply connected faces
 
 // @todo later:
+// - Perform facet merging using CGAL's region growing and remesh_planar_faces()
+// - Open inputs
 // - Do not duplicate time/point for both events and nodes? (node keeps only a shared ptr to the event?)
-// - Perform facet merging using CGAL's region growing and remesh_planar_faces() ?
 // - Check for overly shared objects, redundant function calls (plane normalization, for example)
-// - Implement random_perturb_v4 with no initial perturbation
 // - Get rid of all the shared ptr stuff, we only need to zombie the elements and use IDs
 // - Move polyhedron_ if the skeleton is not being built
 // - Re-enable the option to translate and scale
@@ -115,6 +121,7 @@
 #include <CGAL/Straight_skeleton_3/internal/algorithm/Polyhedron_perturbation.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/Polyhedron_self_intersection.h>
 #include <CGAL/Straight_skeleton_3/IO/OBJ.h>
+#include <CGAL/Straight_skeleton_3/IO/Face_graph_IO.h>
 
 #include <CGAL/assertions.h>
 #ifdef CGAL_SS3_DETECT_EDGE_SPLIT_EVENTS_WITH_BOX_D
@@ -6842,7 +6849,7 @@ public:
 
   StraightSkeletonSPtr get_skeleton() const
   {
-#ifndef CGAL_SS3_NO_SKELETON_DS
+#ifdef CGAL_SS3_NO_SKELETON_DS
     CGAL_SS3_CORE_TRACE_V(1, "Warning: no skeleton to return as it was not built");
 #endif
     return this->skeleton_;
