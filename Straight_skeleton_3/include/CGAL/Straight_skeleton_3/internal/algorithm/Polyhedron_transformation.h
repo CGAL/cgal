@@ -1432,6 +1432,8 @@ public:
       created_facets.push_back(new_facet);
     }
 
+    CGAL_precondition(polyhedron->is_consistent());
+
     return { facet_vertices , created_facets };
   }
 

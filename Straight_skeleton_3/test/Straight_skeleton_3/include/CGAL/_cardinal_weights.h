@@ -193,7 +193,7 @@ bool assign_cardinal_weights(const std::filesystem::path& weights_filename,
     // and introduce inexactness anyway, so we might as well convert to double to avoid
     // expensive exact arithmetic operations in the skeleton algorithm and further tests.
     put(fwm, f, CGAL::to_double(weight));
-    CGAL_postcondition(get(fwm, f) >= 0);
+    CGAL_postcondition(get(fwm, f) > 0);
   }
 
   CGAL_SS3_TRACE_V(8, "E-W-S-N weights: " << x1_val << " " << x2_val << " " << y1_val << " " << y2_val);

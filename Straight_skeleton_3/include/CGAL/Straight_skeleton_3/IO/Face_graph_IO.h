@@ -437,7 +437,7 @@ public:
     auto weight_pmap = choose_parameter(get_parameter(np, CGAL::internal_np::face_weight),
                                         CGAL::Constant_property_map<std::size_t, FT>(1));
 
-    std::map<face_descriptor, std::size_t> default_f2i;
+    CGAL::unordered_flat_map<face_descriptor, std::size_t> default_f2i;
     auto f2i = choose_parameter(get_parameter(np, internal_np::face_to_face_map),
                                 boost::make_assoc_property_map(default_f2i));
 
@@ -455,7 +455,7 @@ public:
       PK traits(n);
       PCDT pcdt(traits);
 
-      std::map<VertexSPtr, PCDT_VH> face_vhs;
+      CGAL::unordered_flat_map<VertexSPtr, PCDT_VH> face_vhs;
 
       for (const VertexSPtr& vertex : facet->vertices()) {
         auto res = face_vhs.emplace(vertex, PCDT_VH());

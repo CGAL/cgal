@@ -60,12 +60,12 @@ for POLYHEDRON in $POLYHEDRONS; do
   # echo "$OUTPUT_FILE"
 
   # Ignore files above 1 MB
-  FILE_SIZE=$(stat -c%s "$POLYHEDRON")
-  if [ "$FILE_SIZE" -gt 1048576 ]; then
-    echo "Skipping $POLYHEDRON (size: $FILE_SIZE bytes)"
-    IGNORED+=("$CMD")
-    continue
-  fi
+  # FILE_SIZE=$(stat -c%s "$POLYHEDRON")
+  # if [ "$FILE_SIZE" -gt 1048576 ]; then
+  #   echo "Skipping $POLYHEDRON (size: $FILE_SIZE bytes)"
+  #   IGNORED+=("$CMD")
+  #   continue
+  # fi
 
   BASE_NAME=$(basename "$POLYHEDRON" | sed 's/\.[^.]*$//')
   OUTPUT_FILE=$OUTPUT_DIRECTORY/${BASE_NAME}.log
