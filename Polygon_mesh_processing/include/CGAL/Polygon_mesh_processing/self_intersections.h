@@ -223,14 +223,16 @@ struct Throw_at_count_reached_output_iterator
 {
   using Self = Throw_at_count_reached_output_iterator<OutputIterator>;
   std::atomic<unsigned int> &counter;
+  std::atomic<bool> &stop;
   const unsigned int &maxval;
   OutputIterator out;
 
   using iterator_category = std::output_iterator_tag;
   Throw_at_count_reached_output_iterator(std::atomic<unsigned int> &counter,
+                                         std::atomic<bool> &stop,
                                          const unsigned int &maxval,
                                          OutputIterator out)
-    : counter(counter), maxval(maxval), out(out)
+    : counter(counter), stop(stop), maxval(maxval), out(out)
   {}
 
   template<class T>
@@ -238,8 +240,8 @@ struct Throw_at_count_reached_output_iterator
   {
     *out++ = t;
     ++counter;
-    if(counter >= maxval)
-      throw CGAL::internal::Throw_at_output_exception();
+    if(counter >= maxval && !stop.exchange(true, std::memory_order_relaxed))
+        throw CGAL::internal::Throw_at_output_exception();
     return *this;
   }
 
@@ -519,7 +521,11 @@ self_intersections_impl(const FaceRange& face_range,
   // This is obviously not optimal if there are no or few self-intersections: it would be a greater speed-up
   // to do the same as for `self_intersections()`. However, doing like `self_intersections()` would
   // be a major slow-down over sequential code if there are a lot of self-intersections...
+#if !defined(CGAL_LINKED_WITH_TBB)
   using Throwing_output_iterator = boost::function_output_iterator<CGAL::internal::Throw_at_output>;
+#else
+  using Throwing_output_iterator = boost::function_output_iterator<CGAL::internal::Concurrent_throw_at_output>;
+#endif
   Throwing_output_iterator throwing_filter;
 
   AABB_tree tree;
@@ -550,7 +556,8 @@ self_intersections_impl(const FaceRange& face_range,
       try
       {
         std::atomic<unsigned int> atomic_counter(counter);
-        Throw_iterator throwing_count(atomic_counter, maximum_number, std::back_inserter(face_pairs));
+        std::atomic<bool> atomic_flag(false);
+        Throw_iterator throwing_count(atomic_counter, atomic_flag, maximum_number, std::back_inserter(face_pairs));
         Throw_at_count_reached_output_iterator count_filter(throwing_count);
         all_pairs_of_intersecting_faces(tree, count_filter);
       }
