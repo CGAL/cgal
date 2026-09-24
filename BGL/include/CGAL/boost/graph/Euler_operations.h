@@ -313,6 +313,34 @@ split_face(typename boost::graph_traits<Graph>::halfedge_descriptor h1,
   return hnew;
 }
 
+/**
+ * splits the halfedge `h` and afterwards:
+ * - calls `split_face()` with `prev(h, g)` and `next(h, g)`, if `h` is not a border halfedge
+ * - calls `split_face()` with `opposite(h, g)` and `next(next(h, g), g)`, if `opposite(h, g)`
+ *   is not a border halfedge
+ *
+ * \tparam Graph must be a `MutableFaceGraph`
+ *
+ * \returns the halfedge `hnew` pointing to the inserted vertex in the edge split.
+ */
+template <typename Graph>
+typename boost::graph_traits<Graph>::halfedge_descriptor
+split_edge_and_incident_faces(typename boost::graph_traits<Graph>::halfedge_descriptor h,
+                              Graph& g)
+{
+  typedef typename boost::graph_traits<Graph>::halfedge_descriptor             halfedge_descriptor;
+
+  halfedge_descriptor res = Euler::split_edge(h, g);
+
+  if(!is_border(res, g))
+    Euler::split_face(res, next(h, g), g);
+
+  halfedge_descriptor opp_h = opposite(h, g);
+  if(!is_border(opp_h, g))
+    Euler::split_face(opp_h, next(next(opp_h, g), g), g);
+
+  return res;
+}
 
 /**
  * glues the cycle of halfedges of `h1` and `h2` together.
@@ -607,14 +635,14 @@ bool can_add_face(const VertexRange& vrange,
 
   if((N > 0) && (it != f2.end())){
     if (verbose){
-      std::cerr << "Cannot add face: face contains duplicate vertices." << std::endl;
+      std::cerr << "Error: could not add face because the face contains duplicate vertices." << std::endl;
     }
     return false;
   }
 
   if(N < 3){
     if (verbose){
-      std::cerr << "Cannot add face: face must contain at least 3 vertices." << std::endl;
+      std::cerr << "Error: could not add face because the face must contain at least 3 vertices." << std::endl;
     }
     return false;
   }
@@ -627,7 +655,7 @@ bool can_add_face(const VertexRange& vrange,
     std::tie(hd,found) = halfedge(face[i],face[i+1],sm);
     if(found && (! is_border(hd,sm))){
       if (verbose){
-        std::cerr << "Cannot add face: face contains an edge that is not a border halfedge." << std::endl;
+        std::cerr << "Error: could not add face because the face contains an edge that is not a border halfedge." << std::endl;
       }
       return false;
     }
@@ -640,7 +668,7 @@ bool can_add_face(const VertexRange& vrange,
 
     if(! is_border(face[i],sm)){
       if (verbose){
-        std::cerr << "Cannot add face: face contains a vertex that is not a border vertex." << std::endl;
+        std::cerr << "Error: could not add face because the face contains a vertex that is not a border vertex." << std::endl;
       }
       return false;
     }
@@ -712,7 +740,7 @@ bool can_add_face(const VertexRange& vrange,
       while (halfedge_around_vertex != prev_hd);
       if (halfedge_around_vertex == prev_hd) {
         if (verbose){
-          std::cerr << "Cannot add face: halfedge_around_vertex == prev_hd" << std::endl;
+          std::cerr << "Error: could not add face because halfedge_around_vertex == prev_hd" << std::endl;
         }
         return false;
       }
