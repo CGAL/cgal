@@ -261,7 +261,7 @@ The usage of these parsing functions can be disables with `#define CGAL_DISABLE_
 
 \subsection IOstreamColors Colors
 
-An object of the class `Color` is a color available
+An object of the class `IO::Color` is a color available
 for drawing operations in many \cgal output streams.
 
 Each color is defined by a triple of integers `(r,g,b)` with
