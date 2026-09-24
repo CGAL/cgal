@@ -256,7 +256,7 @@ will be called by `CGAL::IO::iformat()`. Otherwise, the stream input operator wi
 Most of the functions reading from various file formats use `CGAL::IO::iformat()` for reading
 built-in floating point numbers of coordinates as well as integers for indices. By default
 this uses  `std::from_chars()` or `fast_float::from_chars()`  in case the \fast_float library is installed.
-The usage of these parsing functions can be disables with `#define CGAL_DISABLE_FAST_FLOAT".
+The usage of these parsing functions can be disables with `#define CGAL_DISABLE_FAST_FLOAT`.
 
 
 \subsection IOstreamColors Colors
