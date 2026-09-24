@@ -31,6 +31,11 @@ Release date: December 2026
 - Deprecated the existing overload of `snap_rounding_2()`.
 - Added a new overload of `snap_rounding_2()` that automatically dispatch to either `vertical_slab_snap_rounding_2()` or `hot_pixel_snap_rounding_2()`, depending on the provided traits class.
 
+### [3D Triangulations](https://doc.cgal.org/6.3/Manual/packages.html#PkgTriangulation3)
+- **Breaking change** Removed the class template `Regular_triangulation_euclidean_traits_3` which was deprecated  since CGAL-4.10
+- **Breaking change** Removed the member function `vertices_in_conflict()` of the Delaunay and the regular triangulation  which were deprecated  since CGAL-3.8
+- Removed the concept `WeightedPoint`
+
 ### [Polygon Mesh Processing - Mesh Repair](https://doc.cgal.org/6.3/Manual/packages.html#PkgPMPMeshRepair)
 - **Breaking change**: Removed the function `CGAL::Polygon_mesh_processing::smooth_mesh()` which was deprecated since CGAL-5.5.
 - **Breaking change**: Removed the overload of the functions `CGAL::Polygon_mesh_processing::triangulate_hole()`, `CGAL::Polygon_mesh_processing::triangulate_and_refine_hole()`, and `CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole()` having output iterators for vertices and faces as parameter, which were deprecated since CGAL-6.0.
@@ -60,7 +65,14 @@ Release date: December 2026
   `is_face_valued` and `face_value` (with `face_value_name` for the legend). As an example, the
   surface mesh drawer exposes the aspect ratio of each face.
 
+### [STL Extension](https://doc.cgal.org/6.3/Manual/packages.html#PkgSTLExtension)
 
+- **Breaking change**:  Removed the class templates `Twotuple`,`Threetuple`, `Fourtuple`, `Sixtuple` which were deprecated since CGAL-3.4
+
+
+### [Stream Support](https://doc.cgal.org/6.3/Manual/packages.html#PkgStreamSupport)
+
+- **Breaking change**:  `CGAL::IO::Color`  is no longer imported into `namespace CGAL`.
 
 ## [Release 6.2](https://github.com/CGAL/cgal/releases/tag/v6.2)
 
