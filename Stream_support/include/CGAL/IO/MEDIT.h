@@ -67,7 +67,6 @@ bool read_MEDIT(std::istream& is,
   using Surface_patch_index = SurfacePatchIndex_;
   using Facet        = std::array<int, 3>;
   using Tet_with_ref = typename std::iterator_traits<typename CellRange::const_iterator>::value_type;
-  using Curve_index = CurveIndex_;
   using Corner_index = CornerIndex_;
 
   if(!is)

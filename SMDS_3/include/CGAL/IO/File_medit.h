@@ -21,10 +21,11 @@
 #include <CGAL/SMDS_3/tet_soup_to_c3t3.h>
 #include <CGAL/IO/MEDIT.h>
 
-#include <CGAL/utility.h>
 #include <CGAL/basic.h>
-#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/Has_member.h>
+#include <CGAL/Named_function_parameters.h>
+#include <CGAL/utility.h>
 
 #include <boost/unordered_map.hpp>
 
@@ -563,6 +564,8 @@ void output_to_os(std::ostream& os, const T& x)
     os << x;
 }
 
+CGAL_GENERATE_MEMBER_DETECTOR(meshing_info); // check if the vertex is a model of MeshVertexBase_3
+
 template <class Tr,
           class Vertices_range,
           class Edges_range,
@@ -605,15 +608,22 @@ output_to_medit(std::ostream& os,
   // Vertices
   //-------------------------------------------------------
 
+  constexpr bool use_meshing_info =
+    has_meshing_info<typename std::remove_reference<decltype(*std::declval<Vertex_handle>())>::type>::value;
+
   std::unordered_map<Vertex_handle, int> V;
   int inum = 1;
 
   std::ostringstream oss;
   oss.precision(os.precision());
-  for(auto v: vertices) {
-    auto& v_num = V[v];
-    if(v_num != 0) return;
-    v_num = inum++;
+  // Assign unique ids to all vertices in the range, just like the map
+  for(auto v : vertices) {
+    if constexpr (use_meshing_info) {
+      v->set_meshing_info(inum++);
+    } else {
+      V[v] = inum++;
+    }
+
     const auto& p = tr.point(v);
     oss << CGAL::to_double(p.x()) << ' '
         << CGAL::to_double(p.y()) << ' '
@@ -621,7 +631,13 @@ output_to_medit(std::ostream& os,
         << get(vertex_pmap, v)
         << '\n';
   }
-  os << "Vertices\n" << V.size() << "\n";
+  auto vertex_index = [&](const Vertex_handle& v) {
+    if constexpr (use_meshing_info)
+      return v->meshing_info();
+    else
+      return V.at(v);
+  };
+  os << "Vertices\n" << inum - 1 << "\n";
   os << oss.str();
 
   //-------------------------------------------------------
@@ -639,23 +655,22 @@ output_to_medit(std::ostream& os,
     auto [c, index] = f;
     // Apply priority among subdomains, to get consistent facet orientation per subdomain-pair interface.
     if (print_each_facet_twice) {
-      auto mirror_facet = tr.mirror_facet(f);
-      [[maybe_unused]] auto [c2, _] = mirror_facet;
+      auto n = c->neighbor(index);
       // NOTE: We mirror a facet when needed to make it consistent with Use_cell_indices_pmap.
-      if (get(cell_pmap, c) > get(cell_pmap, c2)) {
-        f = mirror_facet;
+      if (get(cell_pmap, c) > get(cell_pmap, n)) {
+        f = {n, n->index(c)};
       }
     }
 
     // Get facet vertices in CCW order.
     auto [vh1, vh2, vh3] = tr.vertices(f);
 
-    os << V[vh1] << ' ' << V[vh2] << ' ' << V[vh3] << ' ';
+    os << vertex_index(vh1) << ' ' << vertex_index(vh2) << ' ' << vertex_index(vh3) << ' ';
     os << get(facet_pmap, f) << '\n';
 
     // Print triangle again if needed, with opposite orientation
     if (print_each_facet_twice) {
-      os << V[vh3] << ' ' << V[vh2] << ' ' << V[vh1] << ' ';
+      os << vertex_index(vh3) << ' ' << vertex_index(vh2) << ' ' << vertex_index(vh1) << ' ';
       os << get(facet_twice_pmap, f) << '\n';
     }
   }
@@ -666,8 +681,9 @@ output_to_medit(std::ostream& os,
   os << "Tetrahedra\n"
      << size(cells) << '\n';
   for (const auto& c : cells) {
-    for (auto v : tr.vertices(c))
-      os << V[v] << ' ';
+    for (auto v : tr.vertices(c)) {
+      os << vertex_index(v) << ' ';
+    }
     os << get(cell_pmap, c) << '\n';
   }
 
@@ -683,7 +699,7 @@ output_to_medit(std::ostream& os,
   os << "Corners\n"
      << size(corners) << '\n';
   for(const auto& v : corners) {
-    os << V[v] << '\n';
+    os << vertex_index(v) << '\n';
   }
 
   //-------------------------------------------------------
@@ -699,7 +715,7 @@ output_to_medit(std::ostream& os,
       auto index = (vh1->in_dimension() == 1)
                   ? vh1->index()
                   : (vh2->in_dimension() == 1 ? vh2->index() : 42 /*todo : magic id*/);
-      os << V[vh1] << ' ' << V[vh2] << ' ';
+      os << vertex_index(vh1) << ' ' << vertex_index(vh2) << ' ';
       output_to_os(os, index);
       os << '\n';
     }
@@ -718,7 +734,6 @@ output_to_medit(std::ostream& os,
   os << "End\n";
 
 } // end output_to_medit(...)
-
 
 template <class Tr,
           class Vertices_range,
@@ -751,15 +766,23 @@ output_T3_to_medit(std::ostream& os,
   // Vertices
   //-------------------------------------------------------
 
+  constexpr bool use_meshing_info =
+    has_meshing_info<typename std::remove_reference<decltype(*std::declval<Vertex_handle>())>::type>::value;
+
   std::unordered_map<Vertex_handle, int> V;
   int inum = 1;
 
   std::ostringstream oss;
   oss.precision(os.precision());
-  for(auto v: vertices) {
-    auto& v_num = V[v];
-    if(v_num != 0) return;
-    v_num = inum++;
+
+  // Assign unique ids to all vertices in the range, just like the map
+  for(auto v : vertices) {
+    if constexpr (use_meshing_info) {
+      v->set_meshing_info(inum++);
+    } else {
+      V[v] = inum++;
+    }
+
     const auto& p = tr.point(v);
     oss << CGAL::to_double(p.x()) << ' '
         << CGAL::to_double(p.y()) << ' '
@@ -767,7 +790,7 @@ output_T3_to_medit(std::ostream& os,
         << 0
         << '\n';
   }
-  os << "Vertices\n" << V.size() << "\n";
+  os << "Vertices\n" << inum - 1 << "\n";
   os << oss.str();
 
 
@@ -989,7 +1012,7 @@ void write_MEDIT(std::ostream& os,
   using parameters::get_parameter;
   using parameters::choose_parameter;
 
-  bool renumber_subdomain_indices = choose_parameter(get_parameter(np, internal_np::rebind_labels), false);;
+  bool renumber_subdomain_indices = choose_parameter(get_parameter(np, internal_np::rebind_labels), false);
   bool show_patches = choose_parameter(get_parameter(np, internal_np::show_patches), true);
   bool all_c = choose_parameter(get_parameter(np, internal_np::all_cells), true);
   bool all_v = all_c || choose_parameter(get_parameter(np, internal_np::all_vertices), true);
@@ -1059,13 +1082,13 @@ template<typename T3,
          typename CurveIndex,
          typename NamedParameters = parameters::Default_named_parameters>
 void write_MEDIT(std::ostream& os,
-  const CGAL::Mesh_complex_3_in_triangulation_3<T3, CornerIndex, CurveIndex>& c3t3,
-  const NamedParameters& np = parameters::default_values())
+                 const CGAL::Mesh_complex_3_in_triangulation_3<T3, CornerIndex, CurveIndex>& c3t3,
+                 const NamedParameters& np = parameters::default_values())
 {
-  using parameters::choose_parameter;
   using parameters::get_parameter;
+  using parameters::choose_parameter;
 
-  bool renumber_subdomain_indices = choose_parameter(get_parameter(np, internal_np::rebind_labels), false);
+  bool renumber_subdomain_indices = choose_parameter(get_parameter(np, internal_np::rebind_labels), false);;
   bool show_patches = choose_parameter(get_parameter(np, internal_np::show_patches), true);
   bool all_c = choose_parameter(get_parameter(np, internal_np::all_cells), true);
   bool all_v = all_c || choose_parameter(get_parameter(np, internal_np::all_vertices), true);
@@ -1175,12 +1198,12 @@ bool read_MEDIT(std::istream& in,
   };
   std::vector<Cx_edge> cx_edges;
 
-  bool built = CGAL::SMDS_3::build_triangulation_from_file(in, c3t3.triangulation(),
-                                                           verbose,
-                                                           false /*replace_domain_0*/,
-                                                           non_manifold,
-                                                           negative_allowed,
-                                                           std::back_inserter(cx_edges));
+  bool built = CGAL::SMDS_3::build_mesh_complex_from_file(in, c3t3,
+                                                          verbose,
+                                                          false /*replace_domain_0*/,
+                                                          non_manifold,
+                                                          negative_allowed,
+                                                          std::back_inserter(cx_edges));
   if(!built)
   {
     c3t3.triangulation().clear();

@@ -51,20 +51,20 @@ int main (int argc, char** argv){
     return 1;
   }
   C3t3 c3t3;
-  if(CGAL::SMDS_3::build_triangulation_from_file(in, c3t3.triangulation()))
+  if(CGAL::SMDS_3::build_mesh_complex_from_file(in, c3t3))
   {
     for( C3t3::Triangulation::Finite_cells_iterator
          cit = c3t3.triangulation().finite_cells_begin();
          cit != c3t3.triangulation().finite_cells_end();
          ++cit)
     {
-      assert(cit->subdomain_index() >= 0);
-      c3t3.add_to_complex(cit, cit->subdomain_index());
+      assert(c3t3.subdomain_index(cit) >= 0);
+      c3t3.add_to_complex(cit, c3t3.subdomain_index(cit));
       for(int i=0; i < 4; ++i)
       {
-        if(cit->surface_patch_index(i)>0)
+        if(c3t3.surface_patch_index(cit, i) > 0)
         {
-          c3t3.add_to_complex(cit, i, cit->surface_patch_index(i));
+          c3t3.add_to_complex(cit, i, c3t3.surface_patch_index(cit, i));
         }
       }
     }
@@ -106,7 +106,7 @@ int main (int argc, char** argv){
   Polyhedral_mesh_domain domain(polyhedron);
   namespace p = CGAL::parameters;
   // Mesh criteria (no cell_size set)
-  CGAL::Mesh_criteria_3<Tr> criteria(p::facet_angle=25);
+  CGAL::Mesh_criteria_3<C3t3> criteria(p::facet_angle=25);
   // Mesh generation
 
   c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria);

@@ -27,20 +27,20 @@
 namespace CGAL {
 namespace Mesh_3 {
 
-template <typename Tr>
+template <typename C3T3>
 class Facet_criterion_visitor_with_balls
-  : public Mesh_3::Criterion_visitor<Tr, typename Tr::Facet>
+  : public Mesh_3::Criterion_visitor<C3T3, typename C3T3::Facet>
 {
-  typedef Mesh_3::Criterion_visitor<Tr, typename Tr::Facet> Base;
-  typedef Facet_criterion_visitor_with_balls<Tr> Self;
+  typedef Mesh_3::Criterion_visitor<C3T3, typename C3T3::Facet> Base;
+  typedef Facet_criterion_visitor_with_balls<C3T3> Self;
 
 public:
-  typedef Mesh_3::Abstract_criterion<Tr, Self> Criterion;
-  typedef Mesh_3::Curvature_size_criterion<Tr, Self> Curvature_size_criterion;
-  typedef Mesh_3::Aspect_ratio_criterion<Tr, Self> Aspect_ratio_criterion;
-  typedef Mesh_3::Facet_on_surface_criterion<Tr, Self> Facet_on_surface_criterion;
-  typedef Mesh_3::Uniform_size_criterion<Tr, Self> Uniform_size_criterion;
-  typedef Mesh_3::Facet_on_same_surface_criterion<Tr, Self> Facet_on_same_surface_criterion;
+  typedef Mesh_3::Abstract_criterion<C3T3, Self> Criterion;
+  typedef Mesh_3::Curvature_size_criterion<C3T3, Self> Curvature_size_criterion;
+  typedef Mesh_3::Aspect_ratio_criterion<C3T3, Self> Aspect_ratio_criterion;
+  typedef Mesh_3::Facet_on_surface_criterion<C3T3, Self> Facet_on_surface_criterion;
+  typedef Mesh_3::Uniform_size_criterion<C3T3, Self> Uniform_size_criterion;
+  typedef Mesh_3::Facet_on_same_surface_criterion<C3T3, Self> Facet_on_same_surface_criterion;
 
 
   typedef typename Base::Quality Facet_quality;
@@ -48,6 +48,7 @@ public:
   typedef typename Base::Handle  Handle;
   typedef Handle Facet;
 
+  typedef typename C3T3::Triangulation Tr;
   typedef typename Tr::Bare_point      Bare_point;
   typedef typename Tr::Weighted_point  Weighted_point;
   typedef typename Tr::Geom_traits     GT;
@@ -62,24 +63,24 @@ public:
 
 
   // Constructor
-  Facet_criterion_visitor_with_balls(const Tr& tr, const Facet& fh)
-    : Base(tr, fh)
+  Facet_criterion_visitor_with_balls(const C3T3& c3t3, const Facet& fh)
+    : Base(c3t3, fh)
     , wp_nb_(0)
     , radius_ortho_shpere(0.)
     , ratio(0.)
   {
     typename GT::Compare_weighted_squared_radius_3 compare_sq_radius =
-      tr.geom_traits().compare_weighted_squared_radius_3_object();
+      c3t3.triangulation().geom_traits().compare_weighted_squared_radius_3_object();
     typename GT::Compute_weight_3 cw =
-      tr.geom_traits().compute_weight_3_object();
+      c3t3.triangulation().geom_traits().compute_weight_3_object();
     typename GT::Construct_point_3 cp =
-      tr.geom_traits().construct_point_3_object();
+      c3t3.triangulation().geom_traits().construct_point_3_object();
     typename GT::Squared_radius_orthogonal_sphere sq_radius_ortho_sphere =
-      tr.geom_traits().compute_squared_radius_smallest_orthogonal_sphere_3_object();
+      c3t3.triangulation().geom_traits().compute_squared_radius_smallest_orthogonal_sphere_3_object();
 
-    Weighted_point wp1 = tr.point(fh.first, (fh.second+1)&3);
-    Weighted_point wp2 = tr.point(fh.first, (fh.second+2)&3);
-    Weighted_point wp3 = tr.point(fh.first, (fh.second+3)&3);
+    Weighted_point wp1 = c3t3.triangulation().point(fh.first, (fh.second+1)&3);
+    Weighted_point wp2 = c3t3.triangulation().point(fh.first, (fh.second+2)&3);
+    Weighted_point wp3 = c3t3.triangulation().point(fh.first, (fh.second+3)&3);
 
     if(compare_sq_radius(wp1, FT(0)) == CGAL::SMALLER) { ++wp_nb_; }
     if(compare_sq_radius(wp2, FT(0)) == CGAL::SMALLER) { ++wp_nb_; }

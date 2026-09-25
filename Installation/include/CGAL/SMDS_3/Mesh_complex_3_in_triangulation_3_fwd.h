@@ -51,6 +51,16 @@ bool build_triangulation_from_file(std::istream& is,
                                    const bool allow_negative_orientation = false,
                                    CxEdgesOutputIterator cx_edges_oit = CxEdgesOutputIterator());
 
+template <class C3T3,
+          class CxEdgesOutputIterator = CGAL::Emptyset_iterator>
+bool build_mesh_complex_from_file(std::istream& is,
+                                   C3T3& c3t3,
+                                   const bool verbose = false,
+                                   const bool replace_domain_0 = false,
+                                   const bool allow_non_manifold = false,
+                                   const bool allow_negative_orientation = false,
+                                   CxEdgesOutputIterator cx_edges_oit = CxEdgesOutputIterator());
+
 } // namespace SMDS_3
 } // namespace CGAL
 #endif

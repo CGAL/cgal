@@ -119,7 +119,7 @@ edge_sq_length(const typename Tr::Edge& e,
   typedef typename Tr::Bare_point      Bare_point;
   typedef typename Tr::Weighted_point  Weighted_point;
 
-  // There is no need to use tr.min_squared_distance() here because we are computing
+  // There is no need to use Th::min_squared_distance() here because we are computing
   // distances between vertices within a common cell, which means that even
   // if we are using a periodic triangulation, the distance is correctly computed.
   typename GT::Compute_squared_distance_3 sq_distance =
@@ -982,7 +982,7 @@ private:
     CGAL_assertion(cell->has_vertex(v));
     const typename C3T3::Triangulation& tr = c3t3.triangulation();
 
-    // There is no need to use tr.min_squared_distance() here because we are computing
+    // There is no need to use Th::min_squared_distance() here because we are computing
     // distances between vertices within a common cell, which means that even
     // if we are using a periodic triangulation, the distance is correctly computed.
     typename GT::Compute_squared_distance_3 sq_distance =
@@ -1383,14 +1383,7 @@ private:
 
         mod_vertices.insert(tmp_mod_vertices.begin(), tmp_mod_vertices.end());
 
-        std::size_t nois;
-#ifdef CGAL_NEW_INCIDENT_SLIVERS
-        nois  = helper.number_of_incident_slivers(moving_vertex, criterion, sliver_bound);
-#else
-        std::vector<Cell_handle> new_slivers =
-          helper.incident_slivers(moving_vertex, criterion, sliver_bound);
-        nois = new_slivers.size();
-#endif
+        std::size_t nois = helper.number_of_incident_slivers(moving_vertex, criterion, sliver_bound);
 
         // If sliver number has decreased, we won
         if(nois < slivers.size() )

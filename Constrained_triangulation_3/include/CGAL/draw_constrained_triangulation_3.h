@@ -15,6 +15,7 @@
 #include <CGAL/license/Constrained_triangulation_3.h>
 #include <CGAL/draw_triangulation_3.h>
 #include <CGAL/Conforming_constrained_Delaunay_triangulation_3_fwd.h>
+#include <CGAL/Constrained_triangulation_3_types.h>
 #include <CGAL/type_traits.h>
 #include <algorithm>
 
@@ -38,31 +39,30 @@ void draw(const Conforming_constrained_Delaunay_triangulation_3<Traits, Tr>& ccd
   using Edge_descriptor = typename Tr_::Finite_edges_iterator;
   using Facet_descriptor = typename Tr_::Finite_facets_iterator;
 
-  using Face_index = CGAL::cpp20::remove_cvref_t<
-      decltype(std::declval<Cell_handle>()->ccdt_3_data().face_constraint_index(0))>;
+  using Face_index = CDT_3_signed_index;
 
   Face_index nb_colors = 0;
   std::for_each(
       ccdt.constrained_facets_begin(), ccdt.constrained_facets_end(),
       [&](const auto& f) {
         auto [c, index] = f;
-        nb_colors = (std::max)(nb_colors, c->ccdt_3_data().face_constraint_index(index) + 1);
+        nb_colors = (std::max)(nb_colors, ccdt.face_constraint_index(c, index) + 1);
       });
   std::vector<CGAL::IO::Color> colors(nb_colors);
   std::generate(colors.begin(), colors.end(), []() {
     return CGAL::get_random_color(CGAL::get_default_random());
   });
   CGAL::Graphics_scene_options<Tr_, Vertex_handle, Edge_descriptor, Facet_descriptor> options;
-  options.draw_face = [](const Tr_&, Facet_descriptor f) {
+  options.draw_face = [&](const Tr_&, Facet_descriptor f) {
     auto [c, index] = *f;
-    return c->ccdt_3_data().is_facet_constrained(index);
+    return ccdt.is_facet_constrained(c, index);
   };
   options.colored_face = [](const Tr_&, Facet_descriptor) {
     return true;
   };
   options.face_color = [&](const Tr_&, Facet_descriptor f) {
     auto [c, index] = *f;
-    return colors[c->ccdt_3_data().face_constraint_index(index)];
+    return colors[ccdt.face_constraint_index(c, index)];
   };
   draw(ccdt.triangulation(), options, title);
 }

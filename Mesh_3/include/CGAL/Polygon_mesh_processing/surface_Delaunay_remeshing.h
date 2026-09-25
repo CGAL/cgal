@@ -193,7 +193,7 @@ surface_Delaunay_remeshing(const TriangleMesh& tmesh,
   using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<Tr,
                          typename Mesh_domain::Corner_index,
                          typename Mesh_domain::Curve_index>;
-  using Mesh_criteria = CGAL::Mesh_criteria_3<Tr>;
+  using Mesh_criteria = CGAL::Mesh_criteria_3<C3t3>;
   using FT = typename GT::FT;
   using Point_3 = typename GT::Point_3;
 

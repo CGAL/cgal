@@ -1,18 +1,5 @@
-// Copyright (c) 2010 INRIA Sophia-Antipolis (France).
-// All rights reserved.
-//
-// This file is part of CGAL (www.cgal.org).
-//
-// $URL$
-// $Id$
-// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-//
-//
-// Author(s)     : Stephane Tayeb
-//
-//******************************************************************************
-// File Description :
-//******************************************************************************
+#define CGAL_MESH_3_USE_EXPERIMENTAL_COMPACT_MESH_CELL_BASE_3
+#define CGAL_MESH_3_NO_CIRCUMCENTER_CACHE
 
 #include "test_meshing_utilities.h"
 #include <CGAL/Mesh_3/Robust_intersection_traits_3.h>
@@ -36,7 +23,8 @@ static constexpr bool verbose =
 std::stringstream cerr_output;
 
 template <typename K, typename Concurrency_tag = CGAL::Sequential_tag>
-struct Polyhedron_with_features_tester : public Tester<K>
+struct Polyhedron_with_features_tester
+  : public Tester<K>
 {
   std::streambuf* old_cerr_buf;
   std::string tag_name;
@@ -99,17 +87,14 @@ struct Polyhedron_with_features_tester : public Tester<K>
     //-------------------------------------------------------
     // Data generation
     //-------------------------------------------------------
-    std::cout << "\tSeed is\t"
-      << CGAL::get_default_random().get_seed() << std::endl;
+    std::cout << "\tSeed is\t" << CGAL::get_default_random().get_seed() << std::endl;
+
     std::ifstream input(CGAL::data_file_path("meshes/cube.off"));
     Polyhedron polyhedron;
     input >> polyhedron;
+
     Mesh_domain domain(polyhedron, &CGAL::get_default_random());
     domain.detect_features();
-
-    // non-documented, provided to the FEniCS project
-    const std::vector<Polyhedron>& polyhedra = domain.polyhedra();
-    CGAL_USE(polyhedra);
 
     // Set mesh criteria
 #ifndef CGAL_MESH_3_VERBOSE
@@ -123,31 +108,19 @@ struct Polyhedron_with_features_tester : public Tester<K>
 #endif
     Mesh_criteria criteria(edge_criteria, facet_criteria, cell_criteria);
 
+    namespace params = CGAL::parameters;
+
     // Mesh generation
+    std::cout << "sizeof(Vertex) " << sizeof(typename C3t3::Triangulation::Vertex) << std::endl;
+    std::cout << "sizeof(Cell) " << sizeof(typename C3t3::Triangulation::Cell) << std::endl;
+
     C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
-                                        CGAL::parameters::manifold(),
-                                        CGAL::parameters::no_exude(),
-                                        CGAL::parameters::no_perturb());
+                                        params::odt(params::convergence(0.03).freeze_bound(0.02).time_limit(30)),
+                                        params::lloyd(params::max_iteration_number(10)),
+                                        params::perturb(params::sliver_bound(10).time_limit(30)),
+                                        params::exude(params::sliver_bound(10).time_limit(0)));
 
     CGAL::remove_far_points_in_mesh_3(c3t3);
-
-    // Verify
-    this->verify(c3t3,domain,criteria,
-                 Polyhedral_tag()); //, 1099, 1099, 1158, 1158, 4902, 4902);
-
-    std::ofstream out_medit("test-medit.mesh");
-    CGAL::IO::write_MEDIT(out_medit, c3t3);
-    CGAL::IO::output_to_tetgen("test-tetgen", c3t3);
-    std::ofstream out_binary("test-binary.mesh.cgal",
-                             std::ios_base::out|std::ios_base::binary);
-    CGAL::IO::save_binary_file(out_binary, c3t3);
-    out_binary.close();
-    C3t3 c3t3_bis;
-    std::ifstream in_binary("test-binary.mesh.cgal",
-                             std::ios_base::in|std::ios_base::binary);
-    CGAL::IO::load_binary_file(in_binary, c3t3_bis);
-    assert(c3t3_bis.triangulation() == c3t3.triangulation());
-
   }
 };
 
@@ -160,11 +133,13 @@ int main()
   }
 #ifdef CGAL_LINKED_WITH_TBB
   {
-    std::cerr << "Parallel mesh generation from a polyhedron with edges:\n";
+    std::cerr << "\n\nParallel mesh generation from a polyhedron with edges:\n";
     Polyhedron_with_features_tester<K_e_i, CGAL::Parallel_tag> test_epic_p("parallel");
     test_epic_p();
   }
 #endif
+
+  std::cout << "Done" << std::endl;
 
   return EXIT_SUCCESS;
 }

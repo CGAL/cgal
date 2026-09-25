@@ -32,6 +32,7 @@ void test()
   unsigned int nb_odt   = 2;
   double perturb_bound  = 10.;
   double exude_bound    = 15.;
+  std::size_t nb_operations = 5;
 
   // Domain
   typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -44,7 +45,7 @@ void test()
     Tr,Mesh_domain::Corner_index,Mesh_domain::Curve_index> C3t3;
 
   // Mesh Criteria
-  typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
+  typedef CGAL::Mesh_criteria_3<C3t3> Mesh_criteria;
 
   // Domain
   std::cout << "\tSeed is\t 0" << std::endl;
@@ -70,85 +71,109 @@ void test()
   std::vector<std::string> output_c3t3;
   std::vector<std::string> output_surfaces;
 
-  const std::size_t nb_operations = 5;
-
   output_c3t3.reserve(nb_operations * nb_runs);
   for(std::size_t i = 0; i < nb_runs; ++i)
   {
     std::cout << "------- Iteration " << (i+1) << " -------" << std::endl;
-    C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
-                                        no_perturb(),
-                                        no_exude());
-    std::ostringstream oss;
-    CGAL::IO::write_MEDIT(oss, c3t3);
-    output_c3t3.push_back(oss.str()); //[5*i]
-    oss.clear();
-    Polyhedron out_poly;
-    CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, out_poly);
-    oss << out_poly;
-    output_surfaces.push_back(oss.str());//[5*i]
-    out_poly.clear();
-    oss.clear();
 
-    //LLOYD (1)
-    CGAL::lloyd_optimize_mesh_3(c3t3, domain, max_iteration_number = nb_lloyd);
-    CGAL::IO::write_MEDIT(oss, c3t3);
-    output_c3t3.push_back(oss.str());//[i*5+1]
-    oss.clear();
-    CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, out_poly);
-    oss << out_poly;
-    output_surfaces.push_back(oss.str());//[i*5+1]
-    out_poly.clear();
-    oss.clear();
+    C3t3 c3t3;
 
-    //ODT (2)
-    CGAL::odt_optimize_mesh_3(c3t3, domain, max_iteration_number = nb_odt);
-    CGAL::IO::write_MEDIT(oss, c3t3);
-    output_c3t3.push_back(oss.str());//[i*5+2]
-    oss.clear();
-    CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, out_poly);
-    oss << out_poly;
-    output_surfaces.push_back(oss.str());//[i*5+2]
-    out_poly.clear();
-    oss.clear();
+    if (nb_operations >= 1) {
+      std::cout << "  #1 Meshing..." << std::endl;
+      c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
+                                     no_perturb(),
+                                     no_exude());
 
-    //PERTURB (3)
-    CGAL::perturb_mesh_3(c3t3, domain, sliver_bound=perturb_bound);
-    CGAL::IO::write_MEDIT(oss, c3t3);
-    output_c3t3.push_back(oss.str());//[i*5+3]
-    oss.clear();
-    CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, out_poly);
-    oss << out_poly;
-    output_surfaces.push_back(oss.str());//[i*5+3]
-    out_poly.clear();
-    oss.clear();
+      std::stringstream oss;
+      CGAL::IO::write_MEDIT(oss, c3t3);
+      output_c3t3.push_back(oss.str()); //[5*i]
 
-    //EXUDE (4)
-    CGAL::exude_mesh_3(c3t3, sliver_bound=exude_bound);
-    CGAL::IO::write_MEDIT(oss, c3t3);
-    output_c3t3.push_back(oss.str());//[i*5+4]
-    oss.clear();
-    CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, out_poly);
-    oss << out_poly;
-    output_surfaces.push_back(oss.str());//[i*5+4]
-    out_poly.clear();
-    oss.clear();
+      std::stringstream oss_p;
+      Polyhedron out_poly;
+      CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, out_poly);
+      oss_p << out_poly;
+      output_surfaces.push_back(oss_p.str());//[5*i]
+    }
+
+    // LLOYD (1)
+    if (nb_operations >= 2) {
+      std::cout << "  #2 Lloyd..." << std::endl;
+      CGAL::lloyd_optimize_mesh_3(c3t3, domain, max_iteration_number = nb_lloyd);
+
+      std::stringstream oss;
+      CGAL::IO::write_MEDIT(oss, c3t3);
+      output_c3t3.push_back(oss.str());//[i*5+1]
+
+      std::stringstream oss_p;
+      Polyhedron out_poly;
+      CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, out_poly);
+      oss_p << out_poly;
+      output_surfaces.push_back(oss_p.str());//[i*5+1]
+    }
+
+    // ODT (2)
+    if (nb_operations >= 3) {
+      std::cout << "  #3 ODT..." << std::endl;
+      CGAL::odt_optimize_mesh_3(c3t3, domain, max_iteration_number = nb_odt);
+
+      std::stringstream oss;
+      CGAL::IO::write_MEDIT(oss, c3t3);
+      output_c3t3.push_back(oss.str());//[i*5+2]
+
+      std::stringstream oss_p;
+      Polyhedron out_poly;
+      CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, out_poly);
+      oss_p << out_poly;
+      output_surfaces.push_back(oss_p.str());//[i*5+2]
+    }
+
+    // PERTURB (3)
+    if (nb_operations >= 4) {
+      std::cout << "  #4 Pertub..." << std::endl;
+      CGAL::perturb_mesh_3(c3t3, domain, sliver_bound=perturb_bound);
+
+      std::stringstream oss;
+      CGAL::IO::write_MEDIT(oss, c3t3);
+      output_c3t3.push_back(oss.str());//[i*5+3]
+
+      std::stringstream oss_p;
+      Polyhedron out_poly;
+      CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, out_poly);
+      oss_p << out_poly;
+      output_surfaces.push_back(oss_p.str());//[i*5+3]
+    }
+
+    // EXUDE (4)
+    if (nb_operations >= 5) {
+      std::cout << "  #5 Exude..." << std::endl;
+      CGAL::exude_mesh_3(c3t3, sliver_bound=exude_bound);
+
+      std::stringstream oss;
+      CGAL::IO::write_MEDIT(oss, c3t3);
+      output_c3t3.push_back(oss.str());//[i*5+4]
+
+      std::stringstream oss_p;
+      Polyhedron out_poly;
+      CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, out_poly);
+      oss_p << out_poly;
+      output_surfaces.push_back(oss_p.str());//[i*5+4]
+    }
 
     if(i == 0)
       continue;
     //else check
-    for(std::size_t j = 0; j < nb_operations; ++j)
+    for(std::size_t j=1; j<=nb_operations; ++j)
     {
-      std::size_t id1 = nb_operations * (i - 1) + j;
-      std::size_t id2 = nb_operations * i + j;
+      std::size_t id1 = nb_operations * (i - 1) + (j-1);
+      std::size_t id2 = nb_operations * i + (j-1);
       if(0 != output_c3t3[id1].compare(output_c3t3[id2]))
       {
-        std::cerr << "Meshing operation " << j << " is not deterministic.\n";
+        std::cerr << "Meshing operation #" << j << " is not deterministic.\n";
         assert(false);
       }
       if (0 != output_surfaces[id1].compare(output_surfaces[id2]))
       {
-        std::cerr << "Output surface after operation " << j << " is not deterministic.\n";
+        std::cerr << "Output surface after operation #" << j << " is not deterministic.\n";
         assert(false);
       }
     }

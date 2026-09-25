@@ -272,8 +272,7 @@ SMesh* cgal_off_meshing(QWidget*,
 
   using Mesh_domain_base = CGAL::Labeled_mesh_domain_3<GT, int, int>;
   using Mesh_domain = CGAL::Mesh_domain_with_polyline_features_3<Mesh_domain_base>;
-  using Tr = C3t3::Triangulation;
-  using Mesh_criteria = CGAL::Mesh_criteria_3<Tr>;
+  using Mesh_criteria = CGAL::Mesh_criteria_3<C3t3>;
 
   const CGAL::Bbox_3 bbox = source_item->bbox();
 

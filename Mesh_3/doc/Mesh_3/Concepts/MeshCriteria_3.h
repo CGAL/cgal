@@ -13,7 +13,7 @@ are described by the concept `MeshFacetCriteria_3`.
 The concept `MeshCriteria_3` encapsulates these concepts.
 
 \cgalHasModelsBegin
-\cgalHasModels{CGAL::Mesh_criteria_3<Tr>}
+\cgalHasModels{CGAL::Mesh_criteria_3}
 \cgalHasModelsEnd
 
 \sa `MeshEdgeCriteria_3`

@@ -92,7 +92,7 @@ related to the template parameters of some models of the main concepts:
 - `CGAL::Mesh_vertex_base_3<GT,MD,Vb>`
 - `CGAL::Compact_mesh_cell_base_3<GT,MD,Tds>`
 - `CGAL::Mesh_cell_base_3<GT,MD,Cb>`
-- `CGAL::Mesh_criteria_3<Tr>`
+- `CGAL::Mesh_criteria_3<C3T3>`
 - `CGAL::Mesh_cell_criteria_3<Tr>`
 - `CGAL::Mesh_facet_criteria_3<Tr>`
 - `CGAL::Mesh_edge_criteria_3<Tr>`

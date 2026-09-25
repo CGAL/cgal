@@ -42,7 +42,7 @@ typedef CGAL::Mesh_complex_3_in_triangulation_3<
           Tr, Periodic_mesh_domain::Corner_index, Periodic_mesh_domain::Curve_index>  C3t3;
 
 // Criteria
-typedef CGAL::Mesh_criteria_3<Tr>                                   Periodic_mesh_criteria;
+typedef CGAL::Mesh_criteria_3<C3t3>                                   Periodic_mesh_criteria;
 
 // To avoid verbose function and named parameters call
 namespace params = CGAL::parameters;

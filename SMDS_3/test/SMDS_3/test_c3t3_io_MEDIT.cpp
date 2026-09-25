@@ -24,7 +24,7 @@ int test_MEDIT_with_features()
   using Mesh_domain = CGAL::Polyhedral_mesh_domain_with_features_3<K>;
   using Tr = CGAL::Mesh_triangulation_3<Mesh_domain>::type;
   using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<Tr, Mesh_domain::Corner_index, Mesh_domain::Curve_index>;
-  using Mesh_criteria = CGAL::Mesh_criteria_3<Tr>;
+  using Mesh_criteria = CGAL::Mesh_criteria_3<C3t3>;
 
   const std::string fname = CGAL::data_file_path("meshes/fandisk.off");
   std::ifstream input(fname);
