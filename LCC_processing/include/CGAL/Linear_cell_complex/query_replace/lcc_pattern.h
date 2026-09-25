@@ -594,7 +594,7 @@ protected:
 enum Pattern_type
 {
   APPLY,
-  DELETE,
+  REMOVE,
   EXTEND,
   REPLACE
 };
