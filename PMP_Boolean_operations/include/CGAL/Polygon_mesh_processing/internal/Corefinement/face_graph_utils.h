@@ -26,9 +26,24 @@
 #include <set>
 #include <type_traits>
 
+
 namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace Corefinement {
+
+// Generic C++17 Detection SFINAE helper
+template <typename T, typename = std::void_t<>>
+struct has_clear_without_removing_property_maps : std::false_type {};
+
+// Specialization matches if the expression is valid
+template <typename T>
+struct has_clear_without_removing_property_maps<T, std::void_t<
+  decltype(std::declval<T>().clear_without_removing_property_maps())
+  >> : std::true_type {};
+
+// Inline helper variable (C++17)
+template <typename T>
+inline constexpr bool has_clear_without_removing_property_maps_v = has_clear_without_removing_property_maps<T>::value;
 
 enum Boolean_operation_type {UNION = 0, INTERSECTION,
                              TM1_MINUS_TM2, TM2_MINUS_TM1, NONE };
@@ -1370,7 +1385,7 @@ template < class ConcurrencyTag = Sequential_tag,
            class PatchContainer1,
            class PatchContainer2,
            class UserVisitor>
-void fill_new_triangle_mesh(
+auto fill_new_triangle_mesh(
   TriangleMesh& output,
   const boost::dynamic_bitset<>& patches_of_tm1_to_import,
   const boost::dynamic_bitset<>& patches_of_tm2_to_import,
@@ -1389,7 +1404,7 @@ void fill_new_triangle_mesh(
         EdgeCstMapOut& edge_cst_map_out, EdgeMarkMapOut& edge_mark_map_out,
   std::vector< typename boost::graph_traits<TriangleMesh>::edge_descriptor>&
                                                             output_shared_edges,
-  UserVisitor& user_visitor)
+  UserVisitor& user_visitor) -> std::enable_if_t<!has_clear_without_removing_property_maps_v<TriangleMesh>, void>
 {
   using GT = boost::graph_traits<TriangleMesh>;
   using vertex_descriptor = typename GT::vertex_descriptor;
