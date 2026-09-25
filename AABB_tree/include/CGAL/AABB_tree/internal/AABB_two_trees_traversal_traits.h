@@ -138,6 +138,15 @@ public:
     return node_a.bbox().squared_diagonal_length() > node_b.bbox().squared_diagonal_length();
   }
 
+  void intersection(const Primitive1& primitive1, const Primitive2& primitive2)
+  {
+    using Wrap_iterator = Wrap_output_iterator<true, typename Primitive1::Id, typename Primitive2::Id, OutputIterator>;
+    Wrap_iterator wrap_out(primitive1.id(), out);
+    Listing_primitive_traits_with_transformation<AABBTraits2, typename AABBTraits1::Primitive::Datum, Wrap_iterator, AffTransformation> traits(wrap_out, m_traits2, m_tr2);
+    auto datum1 = (internal::Primitive_helper<AABBTraits1>::get_datum(primitive1, m_traits1).transform(m_tr1));
+    traits.intersection( datum1, primitive2);
+  }
+
   void intersection(const Primitive1& primitive1, const Node2& node2, std::size_t nb_primitives_2)
   {
     // Use inverse transformation is faster but less numerically stable.
