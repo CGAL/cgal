@@ -1238,6 +1238,10 @@ public:
   void write_facets(std::ostream& out, const CDT& cdt, FacetRange&& facets) const {
     cdt_impl.write_facets(out, cdt, std::forward<FacetRange>(facets));
   }
+
+  friend std::ostream& operator<<(std::ostream& out, const Conforming_constrained_Delaunay_triangulation_3& ccdt) {
+    return out << ccdt.cdt_impl;
+  }
 };
 
 #ifndef DOXYGEN_RUNNING
@@ -2474,7 +2478,8 @@ private:
 
   bool
   search_for_missing_subfaces(CDT_3_signed_index polygon_constraint_id,
-                              Search_for_missing_subfaces_option option = Search_for_missing_subfaces_option::DEFAULT) {
+                              Search_for_missing_subfaces_option option = Search_for_missing_subfaces_option::DEFAULT)
+  {
     bool something_has_changed = false;
     const CDT_2& cdt_2 = face_cdt_2(polygon_constraint_id);
 
@@ -2508,7 +2513,9 @@ private:
                       << this->display_vert(v2) << '\n';
           }
         }
-        set_facet_constrained({c, facet_index}, polygon_constraint_id, fh);
+        if(option != Search_for_missing_subfaces_option::SEARCH_FOR_UNCONSTRAINED_FACETS) {
+          set_facet_constrained({c, facet_index}, polygon_constraint_id, fh);
+        }
       }
     }
     if(option == Search_for_missing_subfaces_option::SEARCH_FOR_UNCONSTRAINED_FACETS && something_has_changed) {
@@ -4852,9 +4859,29 @@ public:
     write_3d_triangulation_to_OFF(dump, tr);
   }
 
-  void dump_triangulation() const {
-    std::ofstream dump("dump.binary.cgal", std::ios::binary);
-    CGAL::IO::save_binary_file(dump, *this);
+  friend std::ostream& operator<<(std::ostream& out, const Conforming_constrained_Delaunay_triangulation_3_impl& ccdt_impl) {
+    out << ccdt_impl.tr();
+    if(IO::is_ascii(out)) {
+      for(auto ch : ccdt_impl.tr().all_cell_handles()) {
+        for(int li = 0; li < 4; ++li) {
+          if(li > 0) out << " ";
+          out << ccdt_impl.face_constraint_index(ch, li);
+        }
+        out << '\n';
+      }
+    } else {
+      for(auto ch : ccdt_impl.tr().all_cell_handles()) {
+        for(int li = 0; li < 4; ++li) {
+          CGAL::write(out, ccdt_impl.face_constraint_index(ch, li));
+        }
+      }
+    }
+    return out;
+  }
+
+  void dump_triangulation(std::string_view file_name = "dump.binary.cgal", IO::Mode mode = IO::BINARY) const {
+    std::ofstream dump(file_name.data(), mode == IO::BINARY ? std::ios::binary : std::ios::out);
+    CGAL::IO::save_binary_file(dump, *this, mode == IO::BINARY);
   }
 
   void dump_triangulation_to_off() const {
