@@ -2891,6 +2891,45 @@ namespace boost {
 
 } // namespace boost
 
+namespace CGAL {
+
+/// Print all mesh elements and their connectivity to an output stream.
+template <typename P>
+void print_surface_mesh(const Surface_mesh<P>& mesh,
+                        std::ostream& out = std::cout)
+{
+  typedef Surface_mesh<P> Mesh;
+  typedef typename Mesh::Vertex_index Vertex_index;
+  typedef typename Mesh::Halfedge_index Halfedge_index;
+  typedef typename Mesh::Face_index Face_index;
+
+  out << "Points:\n";
+  for (Vertex_index v : mesh.vertices())
+    out << "  " << v << ": point=" << mesh.point(v) << '\n';
+
+  out << "Vertices:\n";
+  for (Vertex_index v : mesh.vertices())
+    out << "  " << v << ": halfedge=" << mesh.halfedge(v) << '\n';
+
+  out << "Halfedges:\n";
+  for (Halfedge_index h : mesh.halfedges())
+  {
+    out << "  " << h << ": target=" << mesh.target(h)
+        << " face=" << mesh.face(h)
+        << " next=" << mesh.next(h) << '\n';
+  }
+
+  out << "Faces:\n";
+  for (Face_index f : mesh.faces())
+  {
+    out << "  " << f << ": halfedge=" << mesh.halfedge(f) << '\n';
+  }
+}
+
+} // namespace CGAL
+
+
+
 #endif // DOXYGEN_RUNNING
 
 #include <CGAL/enable_warnings.h>

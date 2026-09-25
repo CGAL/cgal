@@ -17,6 +17,7 @@
 #include <exception>
 #include <stdexcept>
 #include <string>
+#include <memory>
 
 
 namespace CGAL {
@@ -182,6 +183,19 @@ struct Throw_at_output
   template<class T>
   void operator()(const T& /* t */) const { throw Throw_at_output_exception(); }
 };
+
+struct Concurrent_throw_at_output
+{
+  std::shared_ptr<std::atomic<bool>> called = std::make_shared<std::atomic<bool>>(false);
+
+  template<class T>
+  void operator()(const T& /* t */) const
+  {
+    if(!called->exchange(true, std::memory_order_relaxed))
+      throw Throw_at_output_exception();
+  }
+};
+
 
 } // namespace internal
 } //namespace CGAL
