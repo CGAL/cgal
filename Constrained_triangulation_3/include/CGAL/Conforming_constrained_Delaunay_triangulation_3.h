@@ -4416,7 +4416,11 @@ public:
     CGAL_assertion_msg(
         recheck_for_missing_subfaces() &&
             face_constraint_misses_subfaces_find_first() == face_constraint_misses_subfaces_npos,
-        "All faces have been restored, but the triangulation is still not a CDT. This should not happen.");
+        std::invoke([&] {
+          dump_triangulation_to_off();
+          dump_triangulation();
+          return "All faces have been restored, but the triangulation is still not a CDT. This should not happen.";
+        }));
   }
 
   void add_bbox_points_if_not_dimension_3() {
