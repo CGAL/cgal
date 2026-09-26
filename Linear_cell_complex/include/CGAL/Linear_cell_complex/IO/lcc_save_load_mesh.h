@@ -733,7 +733,7 @@ bool read_object_3D_gmsh(const std::string& filename, LCC& lcc)
       break;
     default:
       std::cout<<"Element type "<<i2<<" not considered."<<std::endl;
-      fi.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+      fi.ignore((std::numeric_limits<std::streamsize>::max)(), '\n');
     }
   }
 

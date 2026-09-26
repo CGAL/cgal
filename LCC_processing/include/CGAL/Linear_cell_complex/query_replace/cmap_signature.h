@@ -318,7 +318,7 @@ bool compute_vword_from_dart(CMAP& cmap,
         to_treat.push(other);
         cmap.mark(other, amark);
         to_unmark.push_back(other);
-        CGAL_assertion(nb!=std::numeric_limits<MyInt>::max());
+        CGAL_assertion(nb!=(std::numeric_limits<MyInt>::max)());
         indices[other]=nb++;
       }
       CGAL_assertion(indices.count(other)==1);

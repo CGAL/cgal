@@ -76,7 +76,7 @@ double scale_jacobian_of_hexa(LCC& lcc,
       lcc.point_of_vertex_attribute(vertices[2]));
   v2=Vector(lcc.point_of_vertex_attribute(vertices[3]),
       lcc.point_of_vertex_attribute(vertices[4]));
-  res=std::min(res, scale_jacobian(v0, v1, v2));
+  res=(std::min)(res, scale_jacobian(v0, v1, v2));
 
   v0=Vector(lcc.point_of_vertex_attribute(vertices[2]),
       lcc.point_of_vertex_attribute(vertices[3]));
@@ -84,7 +84,7 @@ double scale_jacobian_of_hexa(LCC& lcc,
       lcc.point_of_vertex_attribute(vertices[1]));
   v2=Vector(lcc.point_of_vertex_attribute(vertices[2]),
       lcc.point_of_vertex_attribute(vertices[7]));
-  res=std::min(res, scale_jacobian(v0, v1, v2));
+  res=(std::min)(res, scale_jacobian(v0, v1, v2));
 
   v0=Vector(lcc.point_of_vertex_attribute(vertices[1]),
       lcc.point_of_vertex_attribute(vertices[2]));
@@ -92,7 +92,7 @@ double scale_jacobian_of_hexa(LCC& lcc,
       lcc.point_of_vertex_attribute(vertices[0]));
   v2=Vector(lcc.point_of_vertex_attribute(vertices[1]),
       lcc.point_of_vertex_attribute(vertices[6]));
-  res=std::min(res, scale_jacobian(v0, v1, v2));
+  res=(std::min)(res, scale_jacobian(v0, v1, v2));
 
   v0=Vector(lcc.point_of_vertex_attribute(vertices[4]),
       lcc.point_of_vertex_attribute(vertices[7]));
@@ -100,7 +100,7 @@ double scale_jacobian_of_hexa(LCC& lcc,
       lcc.point_of_vertex_attribute(vertices[5]));
   v2=Vector(lcc.point_of_vertex_attribute(vertices[4]),
       lcc.point_of_vertex_attribute(vertices[3]));
-  res=std::min(res, scale_jacobian(v0, v1, v2));
+  res=(std::min)(res, scale_jacobian(v0, v1, v2));
 
   v0=Vector(lcc.point_of_vertex_attribute(vertices[5]),
       lcc.point_of_vertex_attribute(vertices[4]));
@@ -108,7 +108,7 @@ double scale_jacobian_of_hexa(LCC& lcc,
       lcc.point_of_vertex_attribute(vertices[6]));
   v2=Vector(lcc.point_of_vertex_attribute(vertices[5]),
       lcc.point_of_vertex_attribute(vertices[0]));
-  res=std::min(res, scale_jacobian(v0, v1, v2));
+  res=(std::min)(res, scale_jacobian(v0, v1, v2));
 
   v0=Vector(lcc.point_of_vertex_attribute(vertices[6]),
       lcc.point_of_vertex_attribute(vertices[5]));
@@ -116,7 +116,7 @@ double scale_jacobian_of_hexa(LCC& lcc,
       lcc.point_of_vertex_attribute(vertices[7]));
   v2=Vector(lcc.point_of_vertex_attribute(vertices[6]),
       lcc.point_of_vertex_attribute(vertices[1]));
-  res=std::min(res, scale_jacobian(v0, v1, v2));
+  res=(std::min)(res, scale_jacobian(v0, v1, v2));
 
   v0=Vector(lcc.point_of_vertex_attribute(vertices[7]),
       lcc.point_of_vertex_attribute(vertices[6]));
@@ -124,7 +124,7 @@ double scale_jacobian_of_hexa(LCC& lcc,
       lcc.point_of_vertex_attribute(vertices[4]));
   v2=Vector(lcc.point_of_vertex_attribute(vertices[7]),
       lcc.point_of_vertex_attribute(vertices[2]));
-  res=std::min(res, scale_jacobian(v0, v1, v2));
+  res=(std::min)(res, scale_jacobian(v0, v1, v2));
 
  /* for(int i=0; i<8; ++i)
   { std::cout<<lcc.point_of_vertex_attribute(vertices[i])<<"  "; }
@@ -228,7 +228,7 @@ double jacobian_tri_hex_for_dart_v2(LCC& lcc, typename LCC::Dart_descriptor d)
 template<typename LCC>
 double jacobian_of_triangulated_hexahedron(LCC& lcc, typename LCC::Dart_descriptor d)
 {
-  return std::max({jacobian_tri_hex_for_dart_v1(lcc, d),
+  return (std::max)({jacobian_tri_hex_for_dart_v1(lcc, d),
                    jacobian_tri_hex_for_dart_v1(lcc, lcc.beta(d, 1)),
                    jacobian_tri_hex_for_dart_v1(lcc, lcc.beta(d, 0)),
                    jacobian_tri_hex_for_dart_v2(lcc, d),

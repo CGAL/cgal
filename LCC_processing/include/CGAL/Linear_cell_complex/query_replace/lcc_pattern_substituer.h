@@ -355,7 +355,7 @@ public:
                                                  Dart_descriptor dh,
                                                  size_type marktopreserve)
   {
-    std::size_t replaced=std::numeric_limits<std::size_t>::max();
+    std::size_t replaced=(std::numeric_limits<std::size_t>::max)();
     Signature word_signature;
     Dart_descriptor
       dh2=vsignature_of_volume_for_dart(lcc, dh, marktopreserve, word_signature); //, true);
@@ -375,7 +375,7 @@ public:
                                          Dart_descriptor dh2)
   {
     //std::cout<<"Source: "; print_signature(signature);
-    std::size_t replaced=std::numeric_limits<std::size_t>::max();
+    std::size_t replaced=(std::numeric_limits<std::size_t>::max)();
     auto res=m_vsignatures.find(signature);
     if(res!=m_vsignatures.end())
     {
@@ -431,7 +431,7 @@ public:
     if(res!=lcc.null_descriptor)
     { replace_one_volume_from_dart(lcc, sd, m_vpatterns[i], res); }
     else
-    { i=std::numeric_limits<std::size_t>::max(); }
+    { i=(std::numeric_limits<std::size_t>::max)(); }
     // std::cout<<"NOT found"<<std::endl;
     return i;
   }
@@ -442,7 +442,7 @@ public:
       Dart_descriptor dh2)
   {
     //std::cout<<"Source: "; print_signature(signature);
-    std::size_t replaced=std::numeric_limits<std::size_t>::max();
+    std::size_t replaced=(std::numeric_limits<std::size_t>::max)();
     auto res=m_fsignatures.find(signature);
     if(res!=m_fsignatures.end())
     {
@@ -498,7 +498,7 @@ std::size_t query_replace_one_face_without_signature(LCC& lcc,
   if(res!=lcc.null_descriptor)
   { replace_one_face_from_dart(lcc, sd, m_fpatterns[i], res); }
   else
-  { i=std::numeric_limits<std::size_t>::max(); }
+  { i=(std::numeric_limits<std::size_t>::max)(); }
   // std::cout<<"NOT found"<<std::endl;
   return i;
 }
@@ -515,7 +515,7 @@ std::size_t query_replace_one_surface(LCC& lcc,
       dh2=ssignature_of_surface(lcc, dh, marktopreserve, signature); //, true);
   typename LCC::Vector v1, v2;
   // std::cout<<"Source: "; print_signature(signature);
-  std::size_t replaced=std::numeric_limits<std::size_t>::max();
+  std::size_t replaced=(std::numeric_limits<std::size_t>::max)();
   auto res=m_ssignatures.find(signature);
   if(res!=m_ssignatures.end())
   {
@@ -561,7 +561,7 @@ std::size_t query_replace_one_surface_without_signature(LCC& lcc,
   if(res!=lcc.null_descriptor)
   { replace_one_surface_from_dart(lcc, sd, m_spatterns[i], res); }
   else
-  { i=std::numeric_limits<std::size_t>::max(); }
+  { i=(std::numeric_limits<std::size_t>::max)(); }
   // std::cout<<"NOT found"<<std::endl;
   return i;
 }
@@ -588,7 +588,7 @@ std::size_t replace_vpatterns(LCC& lcc,
           (nosignature?query_replace_one_volume_without_signature
                        (lcc, it, marktopreserve):
            query_replace_one_volume(lcc, it, marktopreserve));
-      if(replaced!=std::numeric_limits<std::size_t>::max())
+      if(replaced!=(std::numeric_limits<std::size_t>::max)())
       {
         ++res;
         if(!all)
@@ -629,7 +629,7 @@ std::size_t replace_spatterns(LCC& lcc,
           (nosignature?query_replace_one_surface_without_signature
                        (lcc, it, marktopreserve):
            query_replace_one_surface(lcc, it, marktopreserve));
-      if(replaced!=std::numeric_limits<std::size_t>::max())
+      if(replaced!=(std::numeric_limits<std::size_t>::max)())
       {
         ++res;
         if(!all)
@@ -670,7 +670,7 @@ std::size_t replace_fpatterns(LCC& lcc,
           (nosignature?query_replace_one_face_without_signature
                        (lcc, it, marktopreserve):
            query_replace_one_face(lcc, it, marktopreserve));
-      if(replaced!=std::numeric_limits<std::size_t>::max())
+      if(replaced!=(std::numeric_limits<std::size_t>::max)())
       {
         ++res;
         if(!all)
@@ -752,7 +752,7 @@ void generate_all_surface_replacement(LCC& lcc,
     current->swap(totreat.front());
     totreat.pop_front();
 
-    std::size_t replaced=std::numeric_limits<std::size_t>::max();
+    std::size_t replaced=(std::numeric_limits<std::size_t>::max)();
     for(auto it=current.darts().begin(), itend=current.darts().end();
         it!=itend; ++it)
     {
@@ -771,7 +771,7 @@ void generate_all_surface_replacement(LCC& lcc,
         replaced=res->second.second;
       }
     }
-    if(replaced==std::numeric_limits<std::size_t>::max())
+    if(replaced==(std::numeric_limits<std::size_t>::max)())
     {
       reslccs.push_back(LCC());
       current->swap(reslccs.back());
@@ -792,7 +792,7 @@ void generate_all_volume_replacement(LCC& lcc,
     current->swap(totreat.front());
     totreat.pop_front();
 
-    std::size_t replaced=std::numeric_limits<std::size_t>::max();
+    std::size_t replaced=(std::numeric_limits<std::size_t>::max)();
     for(auto it=current.darts().begin(), itend=current.darts().end();
         it!=itend; ++it)
     {
@@ -811,7 +811,7 @@ void generate_all_volume_replacement(LCC& lcc,
         replaced=res->second.second;
       }
     }
-    if(replaced==std::numeric_limits<std::size_t>::max())
+    if(replaced==(std::numeric_limits<std::size_t>::max)())
     {
       reslccs.push_back(LCC());
       current->swap(reslccs.back());
