@@ -26,7 +26,7 @@
 
 namespace CGAL::internal::Hexmeshing
 {
-  const size_t CONST_SIZE_T_MAX = std::numeric_limits<size_t>::max();
+  const size_t CONST_SIZE_T_MAX = (std::numeric_limits<size_t>::max)();
 
   /**
    * @brief Fixes impossible template cases by resolving conflicts in 2-templates and 3-templates

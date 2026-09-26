@@ -73,7 +73,7 @@ std::size_t partial_copy(
     }
   }
 
-  unsigned int min_dim = std::min(amap1.dimension, amap2.dimension);
+  unsigned int min_dim = (std::min)(amap1.dimension, amap2.dimension);
 
   typename std::unordered_map<
       typename CMap1::Dart_const_descriptor,
@@ -315,7 +315,7 @@ std::size_t copy_cells(CMap1& amap1,
   }
 
   /// 2) Link the different new darts between them
-  unsigned int min_dim=std::min({amap1.dimension, amap2.dimension, dim});
+  unsigned int min_dim=(std::min)({amap1.dimension, amap2.dimension, dim});
   typename std::unordered_map<typename CMap1::Dart_descriptor,
                               typename CMap2::Dart_descriptor>::iterator
       dartmap_iter, dartmap_iter_end=origin_to_copy->end();
