@@ -79,7 +79,7 @@ namespace CGAL::internal
                       bbox.ymin() + (bbox.y_span()/2),
                       bbox.zmin() + (bbox.z_span()/2)};
 
-      double max_size=std::max(std::max(bbox.x_span(), bbox.y_span()), bbox.z_span());
+      double max_size=(std::max)((std::max)(bbox.x_span(), bbox.y_span()), bbox.z_span());
       grid = Hexmeshing::Grid::make_centered_cube
           (center, max_size / (cube_cells_per_dim-2), cube_cells_per_dim);
     }
