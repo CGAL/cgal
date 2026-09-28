@@ -18,6 +18,7 @@
 #include <CGAL/AABB_trees/intersection.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits_3.h>
+#include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
 
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/property_map.h>
@@ -30,20 +31,6 @@
 namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace Corefinement {
-
-// Generic C++17 Detection SFINAE helper
-template <typename T, typename = std::void_t<>>
-struct has_clear_without_removing_property_maps : std::false_type {};
-
-// Specialization matches if the expression is valid
-template <typename T>
-struct has_clear_without_removing_property_maps<T, std::void_t<
-  decltype(std::declval<T>().clear_without_removing_property_maps())
-  >> : std::true_type {};
-
-// Inline helper variable (C++17)
-template <typename T>
-inline constexpr bool has_clear_without_removing_property_maps_v = has_clear_without_removing_property_maps<T>::value;
 
 enum Boolean_operation_type {UNION = 0, INTERSECTION,
                              TM1_MINUS_TM2, TM2_MINUS_TM1, NONE };
@@ -1404,7 +1391,7 @@ auto fill_new_triangle_mesh(
         EdgeCstMapOut& edge_cst_map_out, EdgeMarkMapOut& edge_mark_map_out,
   std::vector< typename boost::graph_traits<TriangleMesh>::edge_descriptor>&
                                                             output_shared_edges,
-  UserVisitor& user_visitor) -> std::enable_if_t<!has_clear_without_removing_property_maps_v<TriangleMesh>, void>
+  UserVisitor& user_visitor) -> std::enable_if_t<!is_derived_from_Surface_mesh<TriangleMesh>::value>
 {
   using GT = boost::graph_traits<TriangleMesh>;
   using vertex_descriptor = typename GT::vertex_descriptor;

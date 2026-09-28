@@ -20,6 +20,12 @@ namespace CGAL {
 template<typename P>
 class Surface_mesh;
 
+template<typename T>
+struct is_derived_from_Surface_mesh : std::false_type {};
+
+template<typename U>
+struct is_derived_from_Surface_mesh<CGAL::Surface_mesh<U>> : std::true_type {};
+
 } // CGAL
 #endif
 
