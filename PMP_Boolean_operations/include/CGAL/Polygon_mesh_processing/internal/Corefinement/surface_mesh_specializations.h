@@ -23,7 +23,7 @@ namespace Corefinement {
 // Specialization of the function for Surface_mesh to exploit vectors structure of Surface_mesh.
 template < class ConcurrencyTag,
            bool reverse_patch_orientation,
-           class Point,
+           class SurfaceMesh,
            class PatchDescription,
            class VertexPointMap,
            class VertexPointMapOut,
@@ -33,8 +33,8 @@ template < class ConcurrencyTag,
            class VertexToVertexMap,
            class UserVisitor>
 void append_patch(
-  Surface_mesh<Point>& tm,
-  Surface_mesh<Point>& output,
+  SurfaceMesh& tm,
+  SurfaceMesh& output,
   PatchDescription& patch,
   const VertexPointMapOut& vpm_out,
   const VertexPointMap& vpm_tm,
@@ -47,7 +47,7 @@ void append_patch(
   std::size_t edges_idx_begin,
   std::size_t faces_idx_begin)
 {
-  using SM = Surface_mesh<Point>;
+  using SM = SurfaceMesh;
   using vertex_descriptor = typename SM::Vertex_index;
   using edge_descriptor = typename SM::Edge_index;
   using halfedge_descriptor = typename SM::Halfedge_index;
@@ -176,7 +176,7 @@ void append_patch(
 // Specialization of the function for Surface_mesh to exploit vectors structure of Surface_mesh.
 template < class ConcurrencyTag,
            bool reverse_patch_orientation,
-           class Point,
+           class SurfaceMesh,
            class PatchContainer,
            class VertexPointMap,
            class VertexPointMapOut,
@@ -185,8 +185,8 @@ template < class ConcurrencyTag,
            class EdgeToEdgeMap,
            class VertexToVertexMap,
            class UserVisitor>
-void append_patches_to_triangle_mesh(
-  Surface_mesh<Point>& output,
+auto append_patches_to_triangle_mesh(
+  SurfaceMesh& output,
   const boost::dynamic_bitset<>& patches_to_append,
   PatchContainer& patches,
   const VertexPointMapOut& vpm_out,
@@ -195,9 +195,9 @@ void append_patches_to_triangle_mesh(
   const EdgeCstMapIn& edge_cst_map_in, const EdgeMarkMapIn& edge_mark_map_in,
   EdgeToEdgeMap& tm_to_output_edges,
   VertexToVertexMap& tm_to_output_vertices,
-  UserVisitor& user_visitor)
+  UserVisitor& user_visitor) -> std::enable_if_t<is_surface_mesh<SurfaceMesh>::value>
 {
-  using SM = Surface_mesh<Point>;
+  using SM = SurfaceMesh;
   SM& tm = patches.pm;
 
   std::size_t vertices_idx_begin = output.num_vertices();
@@ -242,7 +242,7 @@ void append_patches_to_triangle_mesh(
 }
 
 template < bool reverse_patch_orientation,
-           class Point,
+           class SurfaceMesh,
            class PatchContainer,
            class VertexPointMap,
            class VertexPointMapOut,
@@ -251,8 +251,8 @@ template < bool reverse_patch_orientation,
            class EdgetoEdgeMap,
            class VertextoVertexMap,
            class UserVisitor>
-void append_patches_to_triangle_mesh(
-  Surface_mesh<Point>& output,
+auto append_patches_to_triangle_mesh(
+  SurfaceMesh& output,
   const boost::dynamic_bitset<>& patches_to_append,
   PatchContainer& patches,
   const VertexPointMapOut& vpm_out,
@@ -261,7 +261,7 @@ void append_patches_to_triangle_mesh(
   const EdgeCstMapIn& edge_cst_map_in, const EdgeMarkMapIn& edge_mark_map_in,
   EdgetoEdgeMap& tm_to_output_edges,
   VertextoVertexMap& tm_to_output_vertices,
-  UserVisitor& user_visitor)
+  UserVisitor& user_visitor) -> std::enable_if_t<is_surface_mesh<SurfaceMesh>::value>
 {
   append_patches_to_triangle_mesh<Sequential_tag, reverse_patch_orientation>(output,
                                                                              patches_to_append,
@@ -277,7 +277,7 @@ void append_patches_to_triangle_mesh(
 
 // Specialization of fill_new_triangle_mesh for Surface_mesh to exploit vectors structure of Surface_mesh.
 template < class ConcurrencyTag = Sequential_tag,
-           class Point,
+           class SurfaceMesh,
            class IntersectionEdgeMap,
            class VertexPointMap1,
            class VertexPointMap2,
@@ -289,8 +289,8 @@ template < class ConcurrencyTag = Sequential_tag,
            class PatchContainer1,
            class PatchContainer2,
            class UserVisitor>
-void fill_new_triangle_mesh(
-  Surface_mesh<Point>& output,
+auto fill_new_triangle_mesh(
+  SurfaceMesh& output,
   const boost::dynamic_bitset<>& patches_of_tm1_to_import,
   const boost::dynamic_bitset<>& patches_of_tm2_to_import,
   PatchContainer1& patches_of_tm1,
@@ -306,10 +306,10 @@ void fill_new_triangle_mesh(
   const EdgeCstMap1& edge_cst_map1, const EdgeCstMap2& edge_cst_map2,
   const EdgeMarkMap1& edge_mark_map1, const EdgeMarkMap2& edge_mark_map2,
         EdgeCstMapOut& edge_cst_map_out, EdgeMarkMapOut& edge_mark_map_out,
-  std::vector< typename Surface_mesh<Point>::Edge_index >& output_shared_edges,
-  UserVisitor& user_visitor)
+  std::vector< typename SurfaceMesh::Edge_index >& output_shared_edges,
+  UserVisitor& user_visitor) -> std::enable_if_t<is_surface_mesh<SurfaceMesh>::value>
 {
-  using SM = Surface_mesh<Point>;
+  using SM = SurfaceMesh;
   using vertex_descriptor = typename SM::Vertex_index;
   using edge_descriptor = typename SM::Edge_index;
 
