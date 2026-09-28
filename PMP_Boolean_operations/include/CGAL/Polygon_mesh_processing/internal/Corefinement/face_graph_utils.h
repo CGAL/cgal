@@ -32,6 +32,12 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace Corefinement {
 
+template<typename T>
+struct is_Surface_mesh : std::false_type {};
+
+template<typename U>
+struct is_Surface_mesh<CGAL::Surface_mesh<U>> : std::true_type {};
+
 enum Boolean_operation_type {UNION = 0, INTERSECTION,
                              TM1_MINUS_TM2, TM2_MINUS_TM1, NONE };
 
@@ -1391,7 +1397,7 @@ auto fill_new_triangle_mesh(
         EdgeCstMapOut& edge_cst_map_out, EdgeMarkMapOut& edge_mark_map_out,
   std::vector< typename boost::graph_traits<TriangleMesh>::edge_descriptor>&
                                                             output_shared_edges,
-  UserVisitor& user_visitor) -> std::enable_if_t<!is_derived_from_Surface_mesh<TriangleMesh>::value>
+  UserVisitor& user_visitor) -> std::enable_if_t<!is_Surface_mesh<TriangleMesh>::value>
 {
   using GT = boost::graph_traits<TriangleMesh>;
   using vertex_descriptor = typename GT::vertex_descriptor;
