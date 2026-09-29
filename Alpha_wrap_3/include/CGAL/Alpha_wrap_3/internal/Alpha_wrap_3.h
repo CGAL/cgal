@@ -423,7 +423,7 @@ public:
     // Scale a bit to create the initial points not too close to the input
     double scaling = 1.2;
     bbox.scale(scaling);
-    bbox.pad(offset);
+    bbox.pad(std::sqrt(3.) * offset);
 
     return {bbox};
   }
