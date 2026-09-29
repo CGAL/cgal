@@ -61,6 +61,7 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct Array_vector {
                                         //TODO: optimize for forward iterators
                                         Vector a;
                                         CGAL_assume(f!=e);
+                                        CGAL_assume(std::distance(f,e)==std::distance(a.begin(),a.end()));
                                         std::copy(f,e,a.begin());
                                         return a;
                                 }
