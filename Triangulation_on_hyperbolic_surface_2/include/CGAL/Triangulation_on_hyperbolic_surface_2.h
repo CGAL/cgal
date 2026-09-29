@@ -428,7 +428,7 @@ std::vector<std::tuple<typename Triangulation_on_hyperbolic_surface_2<Traits, At
                        typename Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::Point,
                        typename Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::Point> >
 Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::
-const lift(typename Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::Anchor & anchor, bool center) const
+lift(const Anchor & anchor, bool center) const
 {
   CGAL_precondition(is_valid());
 
