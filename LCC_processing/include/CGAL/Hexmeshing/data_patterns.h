@@ -1,5 +1,19 @@
+// Copyright (c) 2025 CNRS and LIRIS' Establishments (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org)
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
+//
+
 #ifndef CGAL_DATA_PATTERNS_H
 #define CGAL_DATA_PATTERNS_H
+
+#include <CGAL/license/LCC_processing.h>
 
 namespace CGAL
 {
