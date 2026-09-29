@@ -53,7 +53,7 @@ namespace CGAL {
 
 
   if constexpr(std::is_same_v<FT, Gmpq>) {
-          std::cout << " OBJECT STYLE Hyperbolic_surface_Delaunay_traits_2:: Construct_approximate_hyperbolic_circumcenter_2 in approximation_precision() = " << _gt.approximation_precision()<< std::endl;
+      //std::cout << " OBJECT STYLE Hyperbolic_surface_Delaunay_traits_2:: Construct_approximate_hyperbolic_circumcenter_2 in approximation_precision() = " << _gt.approximation_precision()<< std::endl;
           FT x;
           FT y;
           unsigned p;
