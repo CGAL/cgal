@@ -160,7 +160,7 @@ protected:
     patterns.push_back(Pattern<LCC,type>());
     if(!IO::read_MOKA(patterns[id].lcc(), stream))
     { return {false, -1}; }
-    
+
     return {true, id};
   }
 
