@@ -1,4 +1,5 @@
 #include <CGAL/generate_hexahedral_mesh_using_two_refinement.h>
+#include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/config.h>
 #include <string>
