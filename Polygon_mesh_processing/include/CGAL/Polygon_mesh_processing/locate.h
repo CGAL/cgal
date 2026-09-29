@@ -175,7 +175,7 @@ snap_coordinates_to_border(Barycentric_coordinates<FT>& coords,
                            const FT tolerance = std::numeric_limits<FT>::epsilon())
 {
 #ifdef CGAL_PMP_LOCATE_DEBUG
-  std::cout << "Pre-snapping: " << coords[0] << " " << coords[1] << " " << coords[2] << std::endl;
+  std::cout << "--\nPre-snapping: " << coords[0] << " " << coords[1] << " " << coords[2] << std::endl;
   std::cout << "Sum: " << coords[0] + coords[1] + coords[2] << std::endl;
   std::cout << "tolerance: " << tolerance << std::endl;
 #endif
