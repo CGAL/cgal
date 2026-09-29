@@ -42,28 +42,19 @@ struct GDart
 };
 
 template<typename LCC>
-bool read_MOKA(LCC& lcc, const char* filename)
+bool read_MOKA(LCC& lcc, std::istream& ifile)
 {
-  typedef typename LCC::Point Point;
-
-  std::ifstream ifile(filename);
-  if (!ifile)
-  {
-    std::cout<<"Error opening file "<<filename<<"."<<std::endl;
-    return false;
-  }
-
   std::string line;
   std::getline(ifile, line);
 
   if ( line == "Moka file [binary]" )
   {
-    std::cout<<"Binary file not (yet) considered.\n";
+    std::cout<<"[read_MOKA] error: binary file not (yet) considered.\n";
     return false;
   }
   else if ( line != "Moka file [ascii]" )
   {
-    std::cout<<"File "<<filename<<" is not a moka file.\n";
+    std::cout<<"[read_MOKA] error: not a moka file.\n";
     std::cout<< line;
     return false;
   }
@@ -71,6 +62,7 @@ bool read_MOKA(LCC& lcc, const char* filename)
   // To skip the masks mark (TODO read the marks ?)
   std::getline(ifile, line);
 
+  typedef typename LCC::Point Point;
   std::vector<GDart<LCC>> gdarts;
   unsigned int nbLoaded = 0;
   unsigned int number;
@@ -101,7 +93,6 @@ bool read_MOKA(LCC& lcc, const char* filename)
       ++nbLoaded;
     }
   }
-  ifile.close();
 
   // Second orient the gmap, and create oriented darts.
   std::stack<unsigned int> totreat;
@@ -190,15 +181,25 @@ bool read_MOKA(LCC& lcc, const char* filename)
 }
 
 template<typename LCC>
-bool write_MOKA(LCC& lcc, const char* filename)
+bool read_MOKA(LCC& lcc, const char* filename)
 {
-  std::ofstream os(filename);
-  if (!os)
+  std::ifstream ifile(filename);
+  if (!ifile)
   {
     std::cout<<"Error opening file "<<filename<<"."<<std::endl;
     return false;
   }
 
+  return read_MOKA(lcc, ifile);
+}
+
+template<typename LCC>
+bool read_MOKA(LCC& lcc, const std::string& filename)
+{ return read_MOKA(lcc, filename.c_str()); }
+
+template<typename LCC>
+bool write_MOKA(LCC& lcc, std::ostream& os)
+{
   os<<"Moka file [ascii]"<<std::endl;
   os<<"0 0 0 0 0 0 0 0"<<std::endl; // For now, marks are not saved
 
@@ -239,9 +240,25 @@ bool write_MOKA(LCC& lcc, const char* filename)
     os<<"0"<<std::endl; // No point
   }
 
-  os.close();
   return true;
 }
+
+template<typename LCC>
+bool write_MOKA(LCC& lcc, const char* filename)
+{
+  std::ofstream os(filename);
+  if (!os)
+  {
+    std::cout<<"Error opening file "<<filename<<"."<<std::endl;
+    return false;
+  }
+
+  return write_MOKA(lcc, os);
+}
+
+template<typename LCC>
+bool write_MOKA(LCC& lcc, const std::string& filename)
+{ return write_MOKA(lcc, filename.c_str()); }
 
 }
 
