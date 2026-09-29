@@ -17,6 +17,7 @@
 
 #include <filesystem>
 #include <limits>
+#include <sstream>
 #include <unordered_map>
 #include <utility>
 #include <vector>
@@ -24,7 +25,7 @@
 #include <CGAL/Combinatorial_map/internal/cmap_isomorphisms.h>
 #include <CGAL/Linear_cell_complex/query_replace/cmap_signature.h>
 #include <CGAL/Linear_cell_complex/query_replace/lcc_pattern.h>
-#include <CGAL/Linear_cell_complex/IO/lcc_read_write_depending_extension.h>
+#include <CGAL/Linear_cell_complex/IO/MOKA.h>
 
 namespace CGAL::internal
 {
@@ -77,63 +78,13 @@ public:
   typename Signature_mapping::const_iterator vpattern_end() const
   { return m_vsignatures.end(); }
 
-  void load_fpatterns(const std::string& directory_name,
-                      std::function<void(LCC&, size_type)> init_topreserve=nullptr)
+  void load_additional_fpattern(const char* data,
+                                std::function<void(LCC&, size_type)> init_topreserve=nullptr)
   {
-    load_all_patterns<1>(directory_name, m_fpatterns);
-    Signature signature;
-    Dart_descriptor dh;
-    size_type mark_to_preserve=LCC::INVALID_MARK;
-    std::size_t nb=0;
-    m_fsignatures.clear();
-    for(auto& pattern: m_fpatterns)
+    std::istringstream is(data);
+    auto [success, id] = load_one_additional_pattern<1>(is, m_fpatterns);
+    if (!success)
     {
-      if(init_topreserve!=nullptr) // true iff the std::function is not empty
-      {
-        mark_to_preserve=pattern.reserve_mark_to_preserve();
-        init_topreserve(pattern.lcc(), mark_to_preserve);
-      }
-      dh=fsignature_of_pattern(pattern.lcc(), mark_to_preserve, signature, false);
-      auto res=m_fsignatures.find(signature);
-      if(res==m_fsignatures.end())
-      {
-        pattern.compute_barycentric_coord();
-        m_fsignatures[signature]=std::make_pair(dh, nb);
-      }
-      else
-      {
-        std::cout<<"[ERROR] load_fpatterns: two patterns have same signature "
-                 <<nb<<" and "<<res->second.second<<std::endl;
-      }
-      ++nb;
-      // std::cout<<"[Pattern] Signature "<<nb<<": "; print_signature(signature);
-    }
-  }
-
-  void load_fpattern(const std::string& filename,
-                      std::function<void(LCC&, size_type)> init_topreserve=nullptr)
-  {
-    load_pattern<1>(filename, m_fpatterns);
-    Signature signature;
-    Dart_descriptor dh;
-    size_type mark_to_preserve=LCC::INVALID_MARK;
-    m_fsignatures.clear();
-    auto& pattern = m_fpatterns[0];
-    if(init_topreserve!=nullptr) // true iff the std::function is not empty
-    {
-      mark_to_preserve=pattern.reserve_mark_to_preserve();
-      init_topreserve(pattern.lcc(), mark_to_preserve);
-    }
-    dh=fsignature_of_pattern(pattern.lcc(), mark_to_preserve, signature, false);
-    pattern.compute_barycentric_coord();
-    m_fsignatures[signature]=std::make_pair(dh, 0);
-  }
-
-  void load_additional_fpattern(const std::string& file_name,
-                      std::function<void(LCC&, size_type)> init_topreserve=nullptr)
-  {
-    auto [success, id] = load_one_additional_pattern<1>(file_name, m_fpatterns);
-    if (!success) {
       std::cerr << "load_additional_fpattern: file not found or format not readable" << std::endl;
       return;
     };
@@ -163,99 +114,13 @@ public:
     }
   }
 
-  void load_spatterns(const std::string& directory_name,
-                      std::function<void(LCC&, size_type)> init_faceborder,
-                      std::function<void(LCC&, size_type)> init_topreserve=nullptr)
+  void load_additional_vpattern(const char* data,
+                                std::function<void(LCC&, size_type)> init_topreserve=nullptr)
   {
-    load_all_patterns<2>(directory_name, m_spatterns);
-    Signature signature;
-    Dart_descriptor dh;
-    size_type mark_to_preserve=LCC::INVALID_MARK;
-    std::size_t nb=0;
-    m_ssignatures.clear();
-    for(auto& pattern: m_spatterns)
+    std::istringstream is(data);
+    auto [success, id]=load_one_additional_pattern<3>(is, m_vpatterns);
+    if (!success)
     {
-      init_faceborder(pattern.lcc(), pattern.m_mark_faceborder);
-      if(init_topreserve!=nullptr) // true iff the std::function is not empty
-      {
-        mark_to_preserve=pattern.reserve_mark_to_preserve();
-        init_topreserve(pattern.lcc(), mark_to_preserve);
-      }
-      dh=ssignature_of_pattern(pattern.lcc(), pattern.m_mark_faceborder,
-                               mark_to_preserve, signature, false);
-      auto res=m_ssignatures.find(signature);
-      if(res==m_ssignatures.end())
-      {
-        pattern.compute_barycentric_coord();
-        CGAL_assertion(pattern.lcc().is_marked(dh, pattern.m_mark_faceborder));
-        m_ssignatures[signature]=std::make_pair(dh, nb);
-      }
-      else
-      {
-        std::cout<<"[ERROR] load_spatterns: two patterns have same signature "
-                 <<nb<<" and "<<res->second.second<<std::endl;
-      }
-      ++nb;
-      // std::cout<<"[Pattern] Signature "<<nb<<": "; print_signature(signature);
-    }
-  }
-  void load_vpatterns(const std::string& directory_name,
-                      std::function<void(LCC&, size_type)> init_topreserve=nullptr)
-  {
-    load_all_patterns<3>(directory_name, m_vpatterns);
-    Signature signature;
-    Dart_descriptor dh;
-    size_type mark_to_preserve=LCC::INVALID_MARK;
-    std::size_t nb=0;
-    m_vsignatures.clear();
-    for(auto& pattern: m_vpatterns)
-    {
-      if(init_topreserve!=nullptr) // true iff the std::function is not empty
-      {
-        mark_to_preserve=pattern.reserve_mark_to_preserve();
-        init_topreserve(pattern.lcc(), mark_to_preserve);
-      }
-      dh=vsignature_of_pattern(pattern.lcc(), mark_to_preserve, signature, false);
-      auto res=m_vsignatures.find(signature);
-      if(res==m_vsignatures.end())
-      {
-        pattern.compute_barycentric_coord();
-        m_vsignatures[signature]=std::make_pair(dh, nb);
-      }
-      else
-      {
-        std::cout<<"[ERROR] load_vpatterns: two patterns have same signature "
-                 <<nb<<" and "<<res->second.second<<std::endl;
-      }
-      ++nb;
-      // std::cout<<"[Pattern] Signature "<<nb<<": "; print_signature(signature);
-    }
-  }
-
-  void load_vpattern(const std::string& filename,
-                      std::function<void(LCC&, size_type)> init_topreserve=nullptr)
-  {
-    load_pattern<3>(filename, m_vpatterns);
-    Signature signature;
-    Dart_descriptor dh;
-    size_type mark_to_preserve=LCC::INVALID_MARK;
-    m_vsignatures.clear();
-    auto& pattern = m_vpatterns[0];
-    if(init_topreserve!=nullptr) // true iff the std::function is not empty
-    {
-      mark_to_preserve=pattern.reserve_mark_to_preserve();
-      init_topreserve(pattern.lcc(), mark_to_preserve);
-    }
-    dh=vsignature_of_pattern(pattern.lcc(), mark_to_preserve, signature, false);
-    pattern.compute_barycentric_coord();
-    m_vsignatures[signature]=std::make_pair(dh, 0);
-  }
-
-  void load_additional_vpattern(const std::string& directory_name,
-                      std::function<void(LCC&, size_type)> init_topreserve=nullptr)
-  {
-    auto [success, id] = load_one_additional_pattern<3>(directory_name, m_vpatterns);
-    if (!success) {
       std::cerr << "load_additional_vpattern: file not found or format not readable" << std::endl;
       return;
     };
@@ -264,7 +129,6 @@ public:
     Dart_descriptor dh;
     size_type mark_to_preserve=LCC::INVALID_MARK;
     auto& pattern = m_vpatterns[id];
-
 
     if(init_topreserve!=nullptr) // true iff the std::function is not empty
     {
@@ -286,66 +150,18 @@ public:
   }
 
 protected:
-  template<unsigned int type>
-  void load_all_patterns(const std::string& directory_name,
-                         Pattern_set<type>& patterns)
-  {
-    patterns.clear();
-    std::size_t nb=0;
-    const std::filesystem::path dir(directory_name);
-    if(!std::filesystem::exists(dir) || !std::filesystem::is_directory(dir))
-    { return; }
-
-    for(auto const& dir_entry: std::filesystem::directory_iterator{dir})
-    {
-      if(dir_entry.is_regular_file() &&
-         IO::is_an_lcc_known_extension(dir_entry.path().string()))
-      { ++nb; }
-    }
-
-    patterns.resize(nb);
-    nb=0;
-    // std::cout<<"##############################"<<std::endl;
-    for(auto const& dir_entry: std::filesystem::directory_iterator{dir})
-    {
-      if(dir_entry.is_regular_file() &&
-         IO::is_an_lcc_known_extension(dir_entry.path().string()))
-      {
-        // std::cout<<"pattern "<<nb<<": "<<dir_entry.path().string()<<std::endl;
-        read_depending_extension(dir_entry.path().string(),
-                                 patterns[nb].lcc());
-        ++nb;
-      }
-    }
-  }
 
   // Returns the id of the loaded pattern, -1 if it couldn't be loaded
   template<unsigned int type>
-  std::pair<bool, std::size_t> load_one_additional_pattern(const std::string& file_name,
+  std::pair<bool, std::size_t> load_one_additional_pattern(std::istream& stream,
                                                            Pattern_set<type>& patterns)
   {
-    const std::filesystem::path file(file_name);
-    if (!std::filesystem::exists(file)
-      || !std::filesystem::is_regular_file(file)
-      || !IO::is_an_lcc_known_extension(file.string()))
-    { return {false, 0}; }
-
     std::size_t id = patterns.size();
     patterns.push_back(Pattern<LCC,type>());
-
-    IO::read_depending_extension(file.string(), patterns[id].lcc());
-
+    if(!IO::read_MOKA(patterns[id].lcc(), stream))
+    { return {false, -1}; }
+    
     return {true, id};
-  }
-
-  template<unsigned int type>
-  void load_pattern(const std::string& filename,
-                    Pattern_set<type>& patterns)
-  {
-    patterns.clear();
-
-    patterns.resize(1);
-    IO::read_depending_extension(filename, patterns[0].lcc());
   }
 
 public:
