@@ -1,5 +1,7 @@
 ﻿#define CGAL_PMP_LOCATE_DEBUG
 
+#include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
+
 #include <CGAL/Polygon_mesh_processing/locate.h>
 
 // Graphs
@@ -213,16 +215,19 @@ void test_constructions(const G& g,
   const face_descriptor* fd = std::get_if<face_descriptor>(&dv);
   assert(fd);
   assert(PMP::is_in_face(loc.second));
+  assert(PMP::is_in_face(loc, g));
 
   loc = std::make_pair(f, CGAL::make_array(FT(0.5), FT(0.5), FT(0)));
   dv = PMP::get_descriptor_from_location(loc, g);
   const halfedge_descriptor* hd = std::get_if<halfedge_descriptor>(&dv);
   assert(hd);
   assert(PMP::is_on_halfedge(loc.second));
+  assert(PMP::is_on_halfedge(loc, g));
 
   loc = std::make_pair(f, CGAL::make_array(FT(1), FT(0), FT(0)));
   assert(PMP::is_on_vertex(loc, source(halfedge(f, g), g), g));
   assert(PMP::is_on_vertex(loc.second));
+  assert(PMP::is_on_vertex(loc, g));
 
   dv = PMP::get_descriptor_from_location(loc, g);
   if(const vertex_descriptor* v = std::get_if<vertex_descriptor>(&dv)) { } else { assert(false); }
@@ -687,6 +692,9 @@ struct Locate_with_AABB_tree_Tester<K, VPM, 3> // 3D
     if (std::is_same<K, EPECK>()) {
       assert(is_equal(CGAL::squared_distance(PMP::construct_point(loc, g), p3_a), FT(0)));
       assert(PMP::is_in_face(loc, g));
+#ifndef CGAL_NO_DEPRECATED_CODE
+      assert(PMP::is_in_face(loc.second, g));
+#endif
     }
 
     if (std::is_same<typename boost::property_traits<VPM>::value_type, Point_3>::value) {

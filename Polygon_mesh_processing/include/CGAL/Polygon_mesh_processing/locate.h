@@ -701,18 +701,18 @@ is_on_halfedge(const Face_location<TriangleMesh, FT>& loc,
   return false;
 }
 
-/// \ingroup PMP_locate_grp
-///
-/// \brief Given a set of barycentric coordinates, returns whether they correspond
-///        to a vertex of a face.
-///
-/// \details If `bar` is the triplet of barycentric coordinates `(w0, w1, w2)`,
-///          the point is on a vertex when one of the coefficients is equal to `1`.
-///
-/// \tparam FT must be a model of `FieldNumberType`
-///
-/// \param bar an array of barycentric coordinates
-///
+// \ingroup PMP_locate_grp
+//
+// \brief Given a set of barycentric coordinates, returns whether they correspond
+//        to a vertex of a face.
+//
+// \details If `bar` is the triplet of barycentric coordinates `(w0, w1, w2)`,
+//          the point is on a vertex when one of the coefficients is equal to `1`.
+//
+// \tparam FT must be a model of `FieldNumberType`
+//
+// \param bar an array of barycentric coordinates
+//
 template <typename FT>
 bool
 is_on_vertex(const Barycentric_coordinates<FT>& bar)
@@ -726,16 +726,43 @@ is_on_vertex(const Barycentric_coordinates<FT>& bar)
 
 /// \ingroup PMP_locate_grp
 ///
-/// \brief Given a set of barycentric coordinates, returns whether they correspond
-///        to a point on an edge of a face.
+/// \brief Given a location, returns whether the location is on a vertex of the face or not.
 ///
-/// \details If `bar` is the triplet of barycentric coordinates `(w0, w1, w2)`,
-///          the point is on a halfedge when one of the coefficients is equal to `0`.
+/// \details If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
+///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondence
+///          between the coordinates in `bc` and the vertices of the face `f` is the following:
+///          - `w0` corresponds to `source(halfedge(f, tm), tm)`
+///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
+///          - `w2` corresponds to `target(next(halfedge(f, tm), tm), tm)`
 ///
 /// \tparam FT must be a model of `FieldNumberType`
+/// \tparam TriangleMesh must be a model of `FaceGraph`
 ///
-/// \param bar an array of barycentric coordinates
+/// \param loc a location with `loc.first` a face of `tm`
+/// \param tm a triangulated surface mesh
 ///
+/// \pre `loc.first` is a face descriptor corresponding to a face of `tm`.
+///
+template <typename FT, typename TriangleMesh>
+bool
+is_on_vertex(const Face_location<TriangleMesh, FT>& loc,
+             const TriangleMesh& tm)
+{
+  return is_on_vertex(loc.second);
+}
+
+// \ingroup PMP_locate_grp
+//
+// \brief Given a set of barycentric coordinates, returns whether they correspond
+//        to a point on an edge of a face.
+//
+// \details If `bar` is the triplet of barycentric coordinates `(w0, w1, w2)`,
+//          the point is on a halfedge when one of the coefficients is equal to `0`.
+//
+// \tparam FT must be a model of `FieldNumberType`
+//
+// \param bar an array of barycentric coordinates
+//
 template <typename FT>
 bool
 is_on_halfedge(const Barycentric_coordinates<FT>& bar)
@@ -749,18 +776,45 @@ is_on_halfedge(const Barycentric_coordinates<FT>& bar)
 
 /// \ingroup PMP_locate_grp
 ///
-/// \brief Given a set of barycentric coordinates, returns whether those barycentric
-///        coordinates correspond to a point within the face (boundary included),
-///        that is, if all the barycentric coordinates are non-negative.
+/// \brief Given a location, returns whether the location is on a halfedge of the face or not.
 ///
-/// \details If `bar` is the triplet of barycentric coordinates `(w0, w1, w2)`,
-///          the correspondence between the coordinates in `bar` and the vertices of the
-///          face is the same as for `Face_location`.
+/// \details If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
+///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondence
+///          between the coordinates in `bc` and the vertices of the face `f` is the following:
+///          - `w0` corresponds to `source(halfedge(f, tm), tm)`
+///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
+///          - `w2` corresponds to `target(next(halfedge(f, tm), tm), tm)`
 ///
 /// \tparam FT must be a model of `FieldNumberType`
+/// \tparam TriangleMesh must be a model of `FaceGraph`
 ///
-/// \param bar an array of barycentric coordinates
+/// \param loc a location with `loc.first` a face of `tm`
+/// \param tm a triangulated surface mesh
 ///
+/// \pre `loc.first` is a face descriptor corresponding to a face of `tm`.
+///
+template <typename FT, typename TriangleMesh>
+bool
+is_on_halfedge(const Face_location<TriangleMesh, FT>& loc,
+               const TriangleMesh& tm)
+{
+  return is_on_halfedge(loc.second);
+}
+
+// \ingroup PMP_locate_grp
+//
+// \brief Given a set of barycentric coordinates, returns whether those barycentric
+//        coordinates correspond to a point within the face (boundary included),
+//        that is, if all the barycentric coordinates are non-negative.
+//
+// \details If `bar` is the triplet of barycentric coordinates `(w0, w1, w2)`,
+//          the correspondence between the coordinates in `bar` and the vertices of the
+//          face is the same as for `Face_location`.
+//
+// \tparam FT must be a model of `FieldNumberType`
+//
+// \param bar an array of barycentric coordinates
+//
 template <typename FT>
 bool
 is_in_face(const Barycentric_coordinates<FT>& bar)
@@ -775,6 +829,8 @@ is_in_face(const Barycentric_coordinates<FT>& bar)
 
   return true;
 }
+
+#ifndef CGAL_NO_DEPRECATED_CODE
 
 /// \ingroup PMP_locate_grp
 ///
@@ -801,6 +857,8 @@ is_in_face(const Barycentric_coordinates<FT>& bar,
 
   return is_in_face(bar);
 }
+
+#endif // CGAL_NO_DEPRECATED_CODE
 
 /// \ingroup PMP_locate_grp
 ///
