@@ -703,16 +703,86 @@ is_on_halfedge(const Face_location<TriangleMesh, FT>& loc,
 
 /// \ingroup PMP_locate_grp
 ///
+/// \brief Given a set of barycentric coordinates, returns whether they correspond
+///        to a vertex of a face.
+///
+/// \details If `bar` is the triplet of barycentric coordinates `(w0, w1, w2)`,
+///          the point is on a vertex when one of the coefficients is equal to `1`.
+///
+/// \tparam FT must be a model of `FieldNumberType`
+///
+/// \param bar an array of barycentric coordinates
+///
+template <typename FT>
+bool
+is_on_vertex(const Barycentric_coordinates<FT>& bar)
+{
+  for(int i=0; i<3; ++i)
+    if(bar[i] == FT(1))
+      return true;
+
+  return false;
+}
+
+/// \ingroup PMP_locate_grp
+///
+/// \brief Given a set of barycentric coordinates, returns whether they correspond
+///        to a point on an edge of a face.
+///
+/// \details If `bar` is the triplet of barycentric coordinates `(w0, w1, w2)`,
+///          the point is on a halfedge when one of the coefficients is equal to `0`.
+///
+/// \tparam FT must be a model of `FieldNumberType`
+///
+/// \param bar an array of barycentric coordinates
+///
+template <typename FT>
+bool
+is_on_halfedge(const Barycentric_coordinates<FT>& bar)
+{
+  for(int i=0; i<3; ++i)
+    if(bar[i] == FT(0))
+      return true;
+
+  return false;
+}
+
+/// \ingroup PMP_locate_grp
+///
 /// \brief Given a set of barycentric coordinates, returns whether those barycentric
 ///        coordinates correspond to a point within the face (boundary included),
-///        that is, if all the barycentric coordinates are positive.
+///        that is, if all the barycentric coordinates are non-negative.
 ///
-/// \details If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
-///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondence
-///          between the coordinates in `bc` and the vertices of the face `f` is the following:
-///          - `w0` corresponds to `source(halfedge(f, tm), tm)`
-///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
-///          - `w2` corresponds to `target(next(halfedge(f, tm), tm), tm)`
+/// \details If `bar` is the triplet of barycentric coordinates `(w0, w1, w2)`,
+///          the correspondence between the coordinates in `bar` and the vertices of the
+///          face is the same as for `Face_location`.
+///
+/// \tparam FT must be a model of `FieldNumberType`
+///
+/// \param bar an array of barycentric coordinates
+///
+template <typename FT>
+bool
+is_in_face(const Barycentric_coordinates<FT>& bar)
+{
+  for(int i=0; i<3; ++i)
+  {
+    // "|| bar[i] > 1." is not needed because if everything is non-negative and the sum is '1',
+    // then each coefficient is below '1'.
+    if(bar[i] < FT(0))
+      return false;
+  }
+
+  return true;
+}
+
+/// \ingroup PMP_locate_grp
+///
+/// \brief Given a set of barycentric coordinates, returns whether those barycentric
+///        coordinates correspond to a point within the face (boundary included),
+///        that is, if all the barycentric coordinates are non-negative.
+///
+/// \details This function is deprecated. Use `is_in_face()` instead.
 ///
 /// \tparam FT must be a model of `FieldNumberType`
 /// \tparam TriangleMesh must be a model of `FaceGraph`
@@ -721,6 +791,7 @@ is_on_halfedge(const Face_location<TriangleMesh, FT>& loc,
 /// \param tm a triangulated surface mesh
 ///
 template <typename FT, typename TriangleMesh>
+CGAL_DEPRECATED_MSG("This function is deprecated. Use is_in_face() instead.")
 bool
 is_in_face(const Barycentric_coordinates<FT>& bar,
            const TriangleMesh& tm)
@@ -728,15 +799,7 @@ is_in_face(const Barycentric_coordinates<FT>& bar,
   CGAL_USE(tm);
   CGAL_precondition(CGAL::is_triangle_mesh(tm));
 
-  for(int i=0; i<3; ++i)
-  {
-    // "|| bar[i] > 1." is not needed because if everything is positive and the sum is '1',
-    // then each coefficient is below '1'.
-    if(bar[i] < FT(0))
-      return false;
-  }
-
-  return true;
+  return is_in_face(bar);
 }
 
 /// \ingroup PMP_locate_grp
@@ -763,7 +826,7 @@ bool
 is_in_face(const Face_location<TriangleMesh, FT>& loc,
            const TriangleMesh& tm)
 {
-  return is_in_face(loc.second, tm);
+  return is_in_face(loc.second);
 }
 
 /// \ingroup PMP_locate_grp
@@ -832,7 +895,7 @@ is_on_mesh_border(const Face_location<TriangleMesh, FT>& loc,
   const face_descriptor fd = loc.first;
   const Barycentric_coordinates<FT>& bar = loc.second;
 
-  if(!is_in_face(bar, tm))
+  if(!is_in_face(bar))
     return false;
 
   // the first barycentric coordinate corresponds to source(halfedge(fd, tm), tm)
@@ -1103,10 +1166,12 @@ locate_in_face(const typename internal::Location_traits<TriangleMesh, NamedParam
 
   Barycentric_coordinates<FT> coords = barycentric_coordinates<Geom_traits, Point>(p0, p1, p2, query, gt);
 
-  if(snap_tolerance != FT(0) && !is_in_face(coords, tm))
+  if(snap_tolerance != FT(0))
   {
+#ifdef CGAL_PMP_LOCATE_DEBUG
     std::cerr << "Warning: point " << query << " is not in the input face" << std::endl;
     std::cerr << "Coordinates: " << coords[0] << " " << coords[1] << " " << coords[2] << std::endl;
+#endif
 
     // Try to snap the coordinates, hoping the problem is just a -1e-17ish epsilon
     // pushing the coordinates over the edge
