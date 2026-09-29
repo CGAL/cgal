@@ -19,7 +19,7 @@ namespace CGAL
 {
 
 // fpattern: file pattern1_face.moka
-const char* hexmeshing_pattern1_face=
+const char* const hexmeshing_pattern1_face=
 R"(Moka file [ascii]
 144 7 0 0 0 0 0 0
 1 8 2 0 144 0 0 0 0
@@ -49,7 +49,7 @@ R"(Moka file [ascii]
 )";
 
 // fpattern: file pattern2-face.moka
-const char* hexmeshing_pattern2_face=
+const char* const hexmeshing_pattern2_face=
 R"(Moka file [ascii]
 112 7 1 0 0 0 0 0
 1 7 0 0 112 1 0 0 1 -1 -1 -1
@@ -72,7 +72,7 @@ R"(Moka file [ascii]
 )";
 
 // vpattern: file pattern1.moka
-const char* hexmeshing_pattern1_volume=
+const char* const hexmeshing_pattern1_volume=
 R"(Moka file [ascii]
 161 7 0 0 0 0 0 0
 14 2 19 1 161 0 0 0 0
@@ -270,7 +270,7 @@ R"(Moka file [ascii]
 )";
 
 // vpattern: file pattern2.moka
-const char* hexmeshing_pattern2_volume=
+const char* const hexmeshing_pattern2_volume=
 R"(Moka file [ascii]
 97 7 1 0 0 0 0 0
 14 2 19 1 97 1 0 0 0
@@ -420,7 +420,7 @@ R"(Moka file [ascii]
 )";
 
 // vpattern: file pattern3.moka
-const char* hexmeshing_pattern3_volume=
+const char* const hexmeshing_pattern3_volume=
 R"(Moka file [ascii]
 200 7 1 0 0 0 0 0
 18 2 27 1 200 1 0 0 0
@@ -578,7 +578,7 @@ R"(Moka file [ascii]
 )";
 
 // vpattern: file pattern4.moka
-const char* hexmeshing_pattern4_volume=
+const char* const hexmeshing_pattern4_volume=
 R"(Moka file [ascii]
 240 7 1 0 0 0 0 0
 1 7 42 0 240 1 0 0 0
