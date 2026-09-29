@@ -16,6 +16,7 @@
 #include <CGAL/Handle_hash_function.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Combinatorial_map/internal/Combinatorial_map_internal_functors.h>
+#include <CGAL/Combinatorial_map/internal/cmap_isomorphisms.h>
 
 #include <deque>
 #include <functional>
