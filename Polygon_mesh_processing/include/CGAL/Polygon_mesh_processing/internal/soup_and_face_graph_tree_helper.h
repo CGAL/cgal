@@ -95,8 +95,8 @@ struct AABB_tree_graph_helper
 #ifdef CGAL_LINKED_WITH_TBB
     if constexpr(std::is_same_v<Concurrency_tag, Parallel_tag>)
     {
-      tbb::parallel_for(std::size_t(0), faces(tm).size(), [&](std::size_t i){
-        face_descriptor f(i);
+      tbb::parallel_for(std::size_t(0), face_range.size(), [&](std::size_t i){
+        face_descriptor f = face_range[i];
         put(bb_map, f, face_bbox(f, tm));
         put(rp_map, f, to_input(get(vpm, target(halfedge(f, tm), tm))) );
       });
@@ -104,7 +104,7 @@ struct AABB_tree_graph_helper
     else
 #endif
     {
-      for(face_descriptor f : faces(tm)){
+      for(face_descriptor f : face_range){
         put(bb_map, f, face_bbox(f, tm));
         put(rp_map, f, to_input(get(vpm, target(halfedge(f, tm), tm))) );
       }
