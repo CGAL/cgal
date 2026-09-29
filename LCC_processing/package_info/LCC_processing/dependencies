@@ -5,7 +5,6 @@ BGL
 Barycentric_coordinates_2
 Barycentric_coordinates_3
 Basic_viewer
-Box_intersection_d
 CGAL_Core
 Cartesian_kernel
 Circulator
@@ -28,7 +27,6 @@ LCC_processing
 Linear_cell_complex
 Modular_arithmetic
 Number_types
-PMP_Mesh_repair
 Polygon
 Polygon_mesh_processing
 Profiling_tools
@@ -39,7 +37,6 @@ Solver_interface
 Spatial_searching
 Spatial_sorting
 Stream_support
-Surface_mesh
 TDS_2
 Triangulation_2
 Union_find
