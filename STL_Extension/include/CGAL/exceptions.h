@@ -18,6 +18,7 @@
 #include <stdexcept>
 #include <string>
 #include <memory>
+#include <atomic>
 
 
 namespace CGAL {
