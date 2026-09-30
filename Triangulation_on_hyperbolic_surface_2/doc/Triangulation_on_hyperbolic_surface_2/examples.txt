@@ -1,3 +1,5 @@
 /*!
 \example Triangulation_on_hyperbolic_surface_2/Triangulation_on_hyperbolic_surface_2.cpp
+
+\example Triangulation_on_hyperbolic_surface_2/Delaunay_triangulation_on_hyperbolic_surface_2.cpp
 */
