@@ -8,7 +8,7 @@
 
 int main(int argc, char** argv)
 {
-  std::string filename=(argc<2?CGAL::data_file_path("meshes/bunny00.off"):argv[1]);
+  auto filename=(argc<2?CGAL::data_file_path("meshes/bunny00.off"):argv[1]);
 
   CGAL::Surface_mesh<CGAL::Exact_predicates_inexact_constructions_kernel::Point_3> poly;
   CGAL::IO::read_polygon_mesh(filename, poly);
