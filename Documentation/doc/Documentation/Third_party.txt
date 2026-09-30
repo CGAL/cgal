@@ -140,7 +140,7 @@ executables should be linked with the CMake imported target
 
 The \eigen web site is <A HREF="https://libeigen.gitlab.io/">`https://libeigen.gitlab.io/`</A>.
 
-
+\subsection thirdpartyFastFloat FastFloat
 
 The \fast_float library provides fast header-only implementations for the \cpp `from_chars()` functions for `float` and `double` types as well as integer types.
 
