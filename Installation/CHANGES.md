@@ -4,6 +4,12 @@
 
 Release date: December 2026
 
+### 3D Mesh smoothing (new package)
+- This package implements a tetrahedral mesh smoother. It improves the quality of a tetrahedral mesh without changing it connectivity.
+  At the core of this package is a nonlinear optimization of the mesh vertex positions. Element quality is measured using a conformal distortion energy,
+  designed to favor well-shaped tetrahedra and improve their dihedral angles. The API is compatible with the `Mesh_complex_3_in_triangulation_3` data structure
+  and can be applied on the output of the 3D Mesh Generation Package.
+
 ### [2D Arrangements](https://doc.cgal.org/6.3/Manual/packages.html#PkgArrangementOnSurface2)
 
 - **Breaking change**: Enhanced the metadata traits-class decorators `Arr_counting_traits_2` and `Arr_tracing_traits_2`. Each is (still) parameterized with another traits class being decorated, but it does not inherit from it. In addition one can get and set a smart pointer to the class being decorated.
