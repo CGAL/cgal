@@ -1008,10 +1008,10 @@ scan_triangulation_impl()
 
     // First loop on cells to initialize the possible circumcenter caches
     tbb::parallel_for_each(
-      this->r_tr_.finite_cells_begin(), this->r_tr_.finite_cells_end(),
-      [&] (auto& cell)
+      this->r_tr_.finite_cell_handles().begin(), this->r_tr_.finite_cell_handles().end(),
+      [&] (Cell_handle ch)
       {
-        static_cast<void>(cell.weighted_circumcenter());
+        static_cast<void>(this->r_tr_.dual(ch));
       }
     );
 
