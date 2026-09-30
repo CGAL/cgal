@@ -136,46 +136,7 @@ public:
       put(vpm, vertices[i], pi);
       *i2v++ = std::make_pair(i, vertices[i]);
     }
-#if 0
-    //std::vector<std::unordered_map<std::size_t, halfedge_descriptor>> halfedge_map(m_points.size());
-    boost::container::flat_map<std::size_t, halfedge_descriptor> default_map;
-    default_map.reserve(6);
-    std::vector<decltype(default_map)> halfedge_map(m_points.size(), default_map);
-    for(Polygon_id pi = 0, end = static_cast<Polygon_id>(m_polygons.size()); pi < end; ++pi)
-    {
-      halfedge_descriptor pred  = boost::graph_traits<PolygonMesh>::null_halfedge();
-      const Polygon& polygon = m_polygons[pi];
-      const std::size_t size = polygon.size();
-      face_descriptor fd = add_face(pmesh);
-      halfedge_descriptor h;
-      for(int i = 0; i < size; ++i)
-      {
-        int j = (i+1)%size;
-        std::pair<std::size_t,std::size_t> key(polygon[j], polygon[i]);
-        auto insert_res = halfedge_map[polygon[j]].emplace(polygon[i], boost::graph_traits<PolygonMesh>::null_halfedge());
-        if(!insert_res.second)
-        {
-          h = insert_res.first->second;
-        } else {
-          edge_descriptor e = add_edge(pmesh);
-          h = halfedge(e, pmesh);
-          insert_res.first->second=h;
-          set_target(h, vertices[j], pmesh);
-          set_halfedge(vertices[i], h, pmesh);
-        }
-        set_face(h, fd, pmesh);
-        if(pred != boost::graph_traits<PolygonMesh>::null_halfedge()){
-          set_next(pred, h, pmesh);
-        } else {
-          set_halfedge(fd, h, pmesh);
-        }
-        pred = h;
-      }
-      set_next(halfedge(fd, pmesh), h, pmesh);
-    }
 
-
-#else
     for(Polygon_id i = 0, end = static_cast<Polygon_id>(m_polygons.size()); i < end; ++i)
     {
       const Polygon& polygon = m_polygons[i];
@@ -189,7 +150,6 @@ public:
       CGAL_postcondition(is_valid_face_descriptor(fd, pmesh));
       *i2f++ = std::make_pair(i, fd);
     }
- #endif
   }
 
   template <typename PolygonMesh>
