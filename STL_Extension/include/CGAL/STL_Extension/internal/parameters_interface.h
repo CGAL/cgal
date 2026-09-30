@@ -69,9 +69,9 @@ CGAL_add_named_parameter(stream_precision_t, stream_precision, stream_precision)
 CGAL_add_named_parameter(read_only_one_object_t, read_only_one_object, read_only_one_object)
 
 CGAL_add_named_parameter(subdomains_t, subdomains, subdomains)
-CGAL_add_named_parameter(facets_with_indices_t, facets_with_indices, facets_with_indices)
-CGAL_add_named_parameter(edges_with_indices_t, edges_with_indices, edges_with_indices)
-CGAL_add_named_parameter(corners_with_indices_t, corners_with_indices, corners_with_indices)
+CGAL_add_named_parameter(facets_with_index_t, facets_with_index, facets_with_index)
+CGAL_add_named_parameter(edges_with_index_t, edges_with_index, edges_with_index)
+CGAL_add_named_parameter(corners_with_index_t, corners_with_index, corners_with_index)
 
 
 // List of named parameters that we use in the package 'Mesh_3'
