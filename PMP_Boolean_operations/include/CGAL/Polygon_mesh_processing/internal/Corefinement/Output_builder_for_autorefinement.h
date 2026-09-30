@@ -209,7 +209,8 @@ public:
     const Nodes_vector& nodes,
     bool input_have_coplanar_faces,
     const boost::dynamic_bitset<>& is_node_of_degree_one,
-    const Mesh_to_map_node&)
+    const Mesh_to_map_node&,
+    const std::vector<std::pair<face_descriptor, face_descriptor>>&)
   {
     // first build an unordered_map mapping a vertex to its node id + a set
     // of all intersection edges
@@ -1183,7 +1184,7 @@ public:
                             Intersection_edge_map> Patches;
     Patches patches(tm, patch_ids, fids, intersection_edges, nb_patches);
     //remove the extra patch
-    remove_patches(tm, ~patches_to_keep,patches, ecm);
+    remove_patches(tm, ~patches_to_keep,patches, ecm, ecm); // WARNING there should be edge_mark_map but this file will disappear soon
 
     stitch_borders(tm, hedge_pairs_to_stitch, parameters::vertex_point_map(vpm));
   }

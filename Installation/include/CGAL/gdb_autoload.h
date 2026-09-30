@@ -25,7 +25,7 @@
 
 // Use inline assembly to embed the .debug_gdb_scripts section
 __asm__(
-    ".pushsection \".debug_gdb_scripts\", \"MS\",@progbits,1\n"
+    ".pushsection \".debug_gdb_scripts\", \"MS\",%progbits,1\n"
     ".byte 4\n"
     ".ascii \"gdb.inlined-script.CGAL\\n\"\n"
     ".ascii \"import gdb\\n\"\n"

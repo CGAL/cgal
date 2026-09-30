@@ -88,6 +88,7 @@ public:
 
     const bool verbose = choose_parameter(get_parameter(np, internal_np::verbose), false);
     const bool binary = choose_parameter(get_parameter(np, internal_np::use_binary_mode), true);
+    const bool read_only_one_object = choose_parameter(get_parameter(np, internal_np::read_only_one_object), false);
 
     bool ok =
         static_cast<Derived*>(this)->read(m_is, m_points, m_faces,
@@ -96,7 +97,8 @@ public:
                                                      .vertex_texture_output_iterator(std::back_inserter(vertex_textures))
                                                      .face_color_output_iterator(std::back_inserter(face_colors))
                                                      .verbose(verbose)
-                                                     .use_binary_mode(binary));
+                                                     .use_binary_mode(binary)
+                                                     .read_only_one_object(read_only_one_object));
     if(!ok)
       return false;
 

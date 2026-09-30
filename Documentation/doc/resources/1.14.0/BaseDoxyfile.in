@@ -846,7 +846,7 @@ INTERACTIVE_SVG        = YES
 
 GENERATE_LEGEND        = NO
 
-# Flag available on in https://github.com/CGAL/doxygen/tree/release_1_9_6_patched
+# Flag available on in https://github.com/CGAL/doxygen/tree/release_1_17_0_patched
 # When the EXTRACT_ALL tag is set to YES and a member or class has no
 # documentation, no detailed section will be produced if the
 # NO_ADDITIONAL_DETAILS tag is set to YES. This tag has no effect if

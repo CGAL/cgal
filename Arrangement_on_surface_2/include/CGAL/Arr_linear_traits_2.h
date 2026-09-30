@@ -270,8 +270,7 @@ public:
       CGAL_precondition_code(Kernel kernel);
       CGAL_precondition
         (Segment_assertions::_assert_is_point_on(p, l, Has_exact_division()) &&
-         (! check_validity || ! has_right() ||
-          kernel.compare_xy_2_object()(p, right()) == SMALLER));
+         (! check_validity || ! has_right() || kernel.compare_xy_2_object()(p, right()) == SMALLER));
 
       if (is_right) {
         ps = p;
@@ -318,8 +317,7 @@ public:
           (has_source ? ARR_INTERIOR : ARR_TOP_BOUNDARY);
       }
 
-      if ((is_right && has_target) || (! is_right && has_source))
-          return ARR_INTERIOR;
+      if ((is_right && has_target) || (! is_right && has_source)) return ARR_INTERIOR;
 
       return (has_pos_slope ? ARR_TOP_BOUNDARY : ARR_BOTTOM_BOUNDARY);
     }
@@ -346,8 +344,7 @@ public:
       CGAL_precondition_code(Kernel kernel);
       CGAL_precondition
         (Segment_assertions::_assert_is_point_on(p, l, Has_exact_division()) &&
-         (! check_validity || ! has_left() ||
-          kernel.compare_xy_2_object()(p, left()) == LARGER));
+         (! check_validity || ! has_left() || kernel.compare_xy_2_object()(p, left()) == LARGER));
 
       if (is_right) {
         pt = p;
@@ -468,8 +465,7 @@ public:
 
       // Construct a horizontal line and compare its slope the that of l.
       Kernel kernel;
-      Line_2 l_horiz =
-        kernel.construct_line_2_object()(Point_2(0, 0), Point_2(1, 0));
+      Line_2 l_horiz = kernel.construct_line_2_object()(Point_2(0, 0), Point_2(1, 0));
       return (kernel.compare_slope_2_object()(l, l_horiz) == LARGER);
     }
   };
@@ -561,9 +557,7 @@ public:
     friend class Arr_linear_traits_2<Kernel>;
 
   public:
-    X_monotone_curve_2 operator()(const X_monotone_curve_2 xcv,
-                                  const Point_2 src,
-                                  const Point_2 tgt) {
+    X_monotone_curve_2 operator()(const X_monotone_curve_2 xcv, const Point_2 src, const Point_2 tgt) {
       /* "Line_segment, line, and ray" will become line segments
        * when trimmed.
        */
@@ -579,10 +573,8 @@ public:
       //create trimmed line_segment
       X_monotone_curve_2 trimmed_segment;
 
-      if (xcv.is_directed_right() && (tgt.x() < src.x()))
-        trimmed_segment = Segment_2(tgt, src);
-      else if (! xcv.is_directed_right() && (tgt.x() > src.x()))
-        trimmed_segment = Segment_2(tgt, src);
+      if (xcv.is_directed_right() && (tgt.x() < src.x())) trimmed_segment = Segment_2(tgt, src);
+      else if (! xcv.is_directed_right() && (tgt.x() > src.x())) trimmed_segment = Segment_2(tgt, src);
       else trimmed_segment = Segment_2(src, tgt);
 
       return trimmed_segment;
@@ -614,22 +606,20 @@ public:
     X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv) const {
       CGAL_precondition(! xcv.is_degenerate());
 
-      X_monotone_curve_2 opp_xcv;
-
-      if (xcv.is_segment()) opp_xcv = Segment_2(xcv.target(), xcv.source());
-      if (xcv.is_line()) opp_xcv = Line_2(xcv.get_pt(), xcv.get_ps());
-      if (xcv.is_ray()) {
-        Point_2 opp_tgt = Point_2( -(xcv.get_pt().x()), -(xcv.get_pt().y()));
-        opp_xcv = Ray_2( xcv.source(),  opp_tgt);
-      }
-
+      X_monotone_curve_2 opp_xcv =
+        (xcv.is_segment()) ? xcv.segment().opposite() :
+        (xcv.is_line()) ? xcv.line().opposite() :
+        (xcv.is_ray()) ? xcv.ray().opposite() :
+        ([]() {
+          CGAL_error_msg("xcv is not a segment, line, or ray.");
+          return X_monotone_curve_2(); // Return default object after error
+        })();
       return opp_xcv;
     }
   };
 
   /*! obtains a Construct_opposite_2 functor object. */
-  Construct_opposite_2 construct_opposite_2_object() const
-  { return Construct_opposite_2(*this); }
+  Construct_opposite_2 construct_opposite_2_object() const { return Construct_opposite_2(*this); }
 
   /*! A functor that compares the \f$x\f$-coordinates of two points */
   class Compare_xy_2 {
@@ -687,8 +677,7 @@ public:
   };
 
   /*! obtains a `Construct_max_vertex_2` functor object. */
-  Construct_max_vertex_2 construct_max_vertex_2_object() const
-  { return Construct_max_vertex_2(); }
+  Construct_max_vertex_2 construct_max_vertex_2_object() const { return Construct_max_vertex_2(); }
 
   /*! A functor that checks whether a given linear curve is vertical. */
   class Is_vertical_2 {
@@ -736,30 +725,26 @@ public:
      *         LARGER if y(p) > cv(x(p)), i.e. the point is above the curve;
      *         EQUAL if p lies on the curve.
      */
-    Comparison_result operator()(const Point_2& p,
-                                 const X_monotone_curve_2& cv) const {
+    Comparison_result operator()(const Point_2& p, const X_monotone_curve_2& cv) const {
       CGAL_precondition(! cv.is_degenerate());
       CGAL_precondition(cv.is_in_x_range(p));
 
       const Kernel& kernel = m_traits;
-      if (! cv.is_vertical())
-        // Compare p with the segment's supporting line.
-        return (kernel.compare_y_at_x_2_object()(p, cv.supp_line()));
+
+      // Compare p with the segment's supporting line.
+      if (! cv.is_vertical()) return (kernel.compare_y_at_x_2_object()(p, cv.supp_line()));
 
       // Compare with the vertical segment's end-points.
       typename Kernel::Compare_y_2 compare_y = kernel.compare_y_2_object();
-      const Comparison_result res1 =
-        cv.has_left() ? compare_y(p, cv.left()) : LARGER;
-      const Comparison_result res2 =
-        cv.has_right() ? compare_y(p, cv.right()) : SMALLER;
+      const Comparison_result res1 = cv.has_left() ? compare_y(p, cv.left()) : LARGER;
+      const Comparison_result res2 = cv.has_right() ? compare_y(p, cv.right()) : SMALLER;
 
       return (res1 == res2) ? res1 : EQUAL;
     }
   };
 
   /*! obtains a `Compare_y_at_x_2` functor object. */
-  Compare_y_at_x_2 compare_y_at_x_2_object() const
-  { return Compare_y_at_x_2(*this); }
+  Compare_y_at_x_2 compare_y_at_x_2_object() const { return Compare_y_at_x_2(*this); }
 
   /*! A functor that compares the \f$y\f$-coordinates of two linear
    * curves immediately to the left of their intersection point.
@@ -776,8 +761,7 @@ public:
      * \return The relative position of `cv1` with respect to `cv2` immdiately to
      *         the left of `p`: `SMALLER`, `LARGER`, or `EQUAL`.
      */
-    Comparison_result operator()(const X_monotone_curve_2& cv1,
-                                 const X_monotone_curve_2& cv2,
+    Comparison_result operator()(const X_monotone_curve_2& cv1, const X_monotone_curve_2& cv2,
                                  const Point_2& CGAL_precondition_code(p)) const {
       CGAL_precondition(! cv1.is_degenerate());
       CGAL_precondition(! cv2.is_degenerate());
@@ -789,28 +773,23 @@ public:
       CGAL_precondition_code(auto compare_xy = kernel.compare_xy_2_object());
 
       CGAL_precondition
-        (Segment_assertions::_assert_is_point_on(p, cv1,
-                                                 Has_exact_division()) &&
+        (Segment_assertions::_assert_is_point_on(p, cv1, Has_exact_division()) &&
          Segment_assertions::_assert_is_point_on(p, cv2, Has_exact_division()));
 
-      CGAL_precondition((! cv1.has_left() ||
-                         compare_xy(cv1.left(), p) == SMALLER) &&
-                        (! cv2.has_left() ||
-                         compare_xy(cv2.left(), p) == SMALLER));
+      CGAL_precondition((! cv1.has_left() || compare_xy(cv1.left(), p) == SMALLER) &&
+                        (! cv2.has_left() || compare_xy(cv2.left(), p) == SMALLER));
 
       // Compare the slopes of the two segments to determine thir relative
       // position immediately to the left of q.
       // Notice we use the supporting lines in order to compare the slopes,
       // and that we swap the order of the curves in order to obtain the
       // correct result to the left of p.
-      return (kernel.compare_slope_2_object()(cv2.supp_line(),
-                                              cv1.supp_line()));
+      return (kernel.compare_slope_2_object()(cv2.supp_line(), cv1.supp_line()));
     }
   };
 
   /*! obtains a Compare_y_at_x_left_2 functor object. */
-  Compare_y_at_x_left_2 compare_y_at_x_left_2_object() const
-  { return Compare_y_at_x_left_2(); }
+  Compare_y_at_x_left_2 compare_y_at_x_left_2_object() const { return Compare_y_at_x_left_2(); }
 
   /*! A functor that compares the \f$y\f$-coordinates of two linear
    * curves immediately to the right of their intersection point.
@@ -827,8 +806,7 @@ public:
      * \return The relative position of `cv1` with respect to `cv2` immdiately
      *         to the right of `p`: `SMALLER`, `LARGER`, or `EQUAL`.
      */
-    Comparison_result operator()(const X_monotone_curve_2& cv1,
-                                 const X_monotone_curve_2& cv2,
+    Comparison_result operator()(const X_monotone_curve_2& cv1, const X_monotone_curve_2& cv2,
                                  const Point_2& CGAL_precondition_code(p)) const {
       CGAL_precondition(! cv1.is_degenerate());
       CGAL_precondition(! cv2.is_degenerate());
@@ -844,22 +822,18 @@ public:
                                                  Has_exact_division()) &&
          Segment_assertions::_assert_is_point_on(p, cv2, Has_exact_division()));
 
-      CGAL_precondition((! cv1.has_right() ||
-                         compare_xy(cv1.right(), p) == LARGER) &&
-                        (! cv2.has_right() ||
-                         compare_xy(cv2.right(), p) == LARGER));
+      CGAL_precondition((! cv1.has_right() || compare_xy(cv1.right(), p) == LARGER) &&
+                        (! cv2.has_right() || compare_xy(cv2.right(), p) == LARGER));
 
       // Compare the slopes of the two segments to determine thir relative
       // position immediately to the left of q.
       // Notice we use the supporting lines in order to compare the slopes.
-      return (kernel.compare_slope_2_object()(cv1.supp_line(),
-                                              cv2.supp_line()));
+      return (kernel.compare_slope_2_object()(cv1.supp_line(), cv2.supp_line()));
     }
   };
 
   /*! obtains a `Compare_y_at_x_right_2` functor object. */
-  Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
-  { return Compare_y_at_x_right_2(); }
+  Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const { return Compare_y_at_x_right_2(); }
 
   /*! A functor that checks whether two points and two linear curves are
    * identical.
@@ -872,8 +846,7 @@ public:
      * \param cv2 The second curve.
      * \return (true) if the two curves are the same; (false) otherwise.
      */
-    bool operator()(const X_monotone_curve_2& cv1,
-                    const X_monotone_curve_2& cv2) const {
+    bool operator()(const X_monotone_curve_2& cv1, const X_monotone_curve_2& cv2) const {
       CGAL_precondition(! cv1.is_degenerate());
       CGAL_precondition(! cv2.is_degenerate());
 
@@ -882,20 +855,16 @@ public:
 
       // Check that the two supporting lines are the same.
       if (! equal(cv1.supp_line(), cv2.supp_line()) &&
-          ! equal(cv1.supp_line(),
-                  kernel.construct_opposite_line_2_object()(cv2.supp_line())))
+          ! equal(cv1.supp_line(), kernel.construct_opposite_line_2_object()(cv2.supp_line())))
         return false;
 
       // Check that either the two left endpoints are at infinity, or they
       // are bounded and equal.
-      if ((cv1.has_left() != cv2.has_left()) ||
-          (cv1.has_left() && ! equal(cv1.left(), cv2.left())))
-        return false;
+      if ((cv1.has_left() != cv2.has_left()) || (cv1.has_left() && ! equal(cv1.left(), cv2.left()))) return false;
 
       // Check that either the two right endpoints are at infinity, or they
       // are bounded and equal.
-      return ((cv1.has_right() == cv2.has_right()) &&
-              (! cv1.has_right() || equal (cv1.right(), cv2.right())));
+      return ((cv1.has_right() == cv2.has_right()) && (! cv1.has_right() || equal (cv1.right(), cv2.right())));
     }
 
     /*! checks whether the two points are the same.
@@ -1111,13 +1080,11 @@ public:
      * \param p the point.
      * \return the parameter space at `p`.
      */
-    Arr_parameter_space operator()(const Point_2 /* p */) const
-    { return ARR_INTERIOR; }
+    Arr_parameter_space operator()(const Point_2 /* p */) const { return ARR_INTERIOR; }
   };
 
   /*! obtains a `Parameter_space_in_x_2` function object. */
-  Parameter_space_in_x_2 parameter_space_in_x_2_object() const
-  { return Parameter_space_in_x_2(); }
+  Parameter_space_in_x_2 parameter_space_in_x_2_object() const { return Parameter_space_in_x_2(); }
 
   /*! A function object that obtains the parameter space of a geometric
    * entity along the \f$y\f$-axis
@@ -1141,25 +1108,21 @@ public:
      *   ARR_TOP_BOUNDARY     - the line approaches the north pole at the line
      *                          right end.
      */
-    Arr_parameter_space operator()(const X_monotone_curve_2 & xcv,
-                                   Arr_curve_end ce) const {
+    Arr_parameter_space operator()(const X_monotone_curve_2 & xcv, Arr_curve_end ce) const {
       CGAL_precondition(! xcv.is_degenerate());
 
-      return (ce == ARR_MIN_END) ?
-        xcv.left_infinite_in_y() : xcv.right_infinite_in_y();
+      return (ce == ARR_MIN_END) ? xcv.left_infinite_in_y() : xcv.right_infinite_in_y();
     }
 
     /*! obtains the parameter space at a point along the \f$y\f$-axis.
      * \param p the point.
      * \return the parameter space at `p`.
      */
-    Arr_parameter_space operator()(const Point_2 /* p */) const
-    { return ARR_INTERIOR; }
+    Arr_parameter_space operator()(const Point_2 /* p */) const { return ARR_INTERIOR; }
   };
 
   /*! obtains a `Parameter_space_in_y_2` function object. */
-  Parameter_space_in_y_2 parameter_space_in_y_2_object() const
-  { return Parameter_space_in_y_2(); }
+  Parameter_space_in_y_2 parameter_space_in_y_2_object() const { return Parameter_space_in_y_2(); }
 
   /*! A function object that compares the \f$x\f$-limits of line ends on the
    * boundary of the parameter space
@@ -1198,9 +1161,7 @@ public:
      * \pre the ce end of the line xcv lies on a boundary, implying the
      *      `xcv1` is vertical.
      */
-    Comparison_result operator()(const Point_2 & p,
-                                 const X_monotone_curve_2 & xcv,
-                                 Arr_curve_end ) const {
+    Comparison_result operator()(const Point_2 & p, const X_monotone_curve_2 & xcv, Arr_curve_end) const {
       CGAL_precondition(! xcv.is_degenerate());
       CGAL_precondition(xcv.is_vertical());
 
@@ -1227,10 +1188,8 @@ public:
      * \pre the `ce2` end of the line `xcv2` lies on a boundary, implying
      *      that `xcv2` is vertical.
      */
-    Comparison_result operator()(const X_monotone_curve_2 & xcv1,
-                                 Arr_curve_end /* ce1 */,
-                                 const X_monotone_curve_2 & xcv2,
-                                 Arr_curve_end /* ce2 */) const {
+    Comparison_result operator()(const X_monotone_curve_2 & xcv1, Arr_curve_end /* ce1 */,
+                                 const X_monotone_curve_2 & xcv2, Arr_curve_end /* ce2 */) const {
       CGAL_precondition(! xcv1.is_degenerate());
       CGAL_precondition(! xcv2.is_degenerate());
       CGAL_precondition(xcv1.is_vertical());
@@ -1238,14 +1197,12 @@ public:
 
       const Kernel& kernel = m_traits;
       const Point_2 p = kernel.construct_point_2_object()(ORIGIN);
-      return (kernel.compare_x_at_y_2_object()(p, xcv1.supp_line(),
-                                               xcv2.supp_line()));
+      return (kernel.compare_x_at_y_2_object()(p, xcv1.supp_line(), xcv2.supp_line()));
     }
   };
 
   /*! obtains a `Compare_x_on_boundary_2` function object. */
-  Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const
-  { return Compare_x_on_boundary_2(*this); }
+  Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const { return Compare_x_on_boundary_2(*this); }
 
   /*! A function object that compares the \f$x\f$-coordinates of arc ends near
    * the boundary of the parameter space
@@ -1286,8 +1243,7 @@ public:
   };
 
   /*! obtains a `Compare_x_near_boundary_2` function object. */
-  Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const
-  { return Compare_x_near_boundary_2(); }
+  Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const { return Compare_x_near_boundary_2(); }
 
   /*! A function object that compares the \f$y\f$-limits of arc ends on the
    * boundary of the parameter space.
@@ -1320,8 +1276,7 @@ public:
      * \pre the `ce` ends of the lines `xcv1` and `xcv2` lie either on the left
      * boundary or on the right boundary of the parameter space.
      */
-    Comparison_result operator()(const X_monotone_curve_2 & xcv1,
-                                 const X_monotone_curve_2 & xcv2,
+    Comparison_result operator()(const X_monotone_curve_2 & xcv1, const X_monotone_curve_2 & xcv2,
                                  Arr_curve_end ce) const {
       // Make sure both curves are defined at \f$x = -\infty\f$ (or at
       // \f$x = +\infty\f$).
@@ -1344,8 +1299,7 @@ public:
         // relative position at \f$x = 0\f$, which is the same as their position
         // at infinity.
         const Point_2 p = kernel.construct_point_2_object()(ORIGIN);
-        return (kernel.compare_y_at_x_2_object()(p, xcv1.supp_line(),
-                                                 xcv2.supp_line()));
+        return (kernel.compare_y_at_x_2_object()(p, xcv1.supp_line(), xcv2.supp_line()));
       }
 
       // Flip the slope result if we compare at \f$x = -\infty\f$:
@@ -1354,8 +1308,7 @@ public:
   };
 
   /*! obtains a `Compare_y_near_boundary_2` function object. */
-  Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const
-  { return Compare_y_near_boundary_2(*this); }
+  Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const { return Compare_y_near_boundary_2(*this); }
 
   //@}
 
@@ -1383,8 +1336,7 @@ public:
   };
 
   /*! obtains a `Make_x_monotone_2` functor object. */
-  Make_x_monotone_2 make_x_monotone_2_object() const
-  { return Make_x_monotone_2(); }
+  Make_x_monotone_2 make_x_monotone_2_object() const { return Make_x_monotone_2(); }
 
   class Split_2 {
   public:
@@ -1447,9 +1399,7 @@ public:
      * \return The past-the-end iterator.
      */
     template <typename OutputIterator>
-    OutputIterator operator()(const X_monotone_curve_2& cv1,
-                              const X_monotone_curve_2& cv2,
-                              OutputIterator oi) const {
+    OutputIterator operator()(const X_monotone_curve_2& cv1, const X_monotone_curve_2& cv2, OutputIterator oi) const {
       using Intersection_point = std::pair<Point_2, Multiplicity>;
 
       CGAL_precondition(! cv1.is_degenerate());
@@ -1496,8 +1446,7 @@ public:
           ovlp.set_left (cv2.left(), false);
         }
         else {
-          if (compare_xy(cv1.left(), cv2.left()) == SMALLER)
-            ovlp.set_left(cv2.left(), false);
+          if (compare_xy(cv1.left(), cv2.left()) == SMALLER) ovlp.set_left(cv2.left(), false);
         }
       }
 
@@ -1508,8 +1457,7 @@ public:
           ovlp.set_right(cv2.right(), false);
         }
         else {
-          if (compare_xy(cv1.right(), cv2.right()) == LARGER)
-            ovlp.set_right(cv2.right(), false);
+          if (compare_xy(cv1.right(), cv2.right()) == LARGER) ovlp.set_right(cv2.right(), false);
         }
       }
 
@@ -1556,16 +1504,13 @@ public:
 
       // Check whether the two curves have the same supporting line.
       if (! equal(cv1.supp_line(), cv2.supp_line()) &&
-          ! equal(cv1.supp_line(),
-                  kernel.construct_opposite_line_2_object()(cv2.supp_line())))
+          ! equal(cv1.supp_line(), kernel.construct_opposite_line_2_object()(cv2.supp_line())))
         return false;
 
       // Check whether the left endpoint of one curve is the right endpoint of
       // the other.
-      return ((cv1.has_right() && cv2.has_left() &&
-               equal(cv1.right(), cv2.left())) ||
-              (cv2.has_right() && cv1.has_left() &&
-               equal(cv2.right(), cv1.left())));
+      return ((cv1.has_right() && cv2.has_left() && equal(cv1.right(), cv2.left())) ||
+              (cv2.has_right() && cv1.has_left() && equal(cv2.right(), cv1.left())));
     }
   };
 
@@ -1616,8 +1561,7 @@ public:
         else c.set_right();      // Unbounded endpoint.
       }
       else {
-        CGAL_precondition(cv2.has_right() && cv1.has_left() &&
-                          equal(cv2.right(), cv1.left()));
+        CGAL_precondition(cv2.has_right() && cv1.has_left() && equal(cv2.right(), cv1.left()));
 
         // cv1 extends cv2 to the right.
         c = cv2;
@@ -1634,10 +1578,6 @@ public:
 
   /// \name Functor definitions for the landmarks point-location strategy.
   //@{
-  using Approximate_number_type = double;
-  using Approximate_kernel = CGAL::Simple_cartesian<Approximate_number_type>;
-  using Approximate_point_2 = Approximate_kernel::Point_2;
-
   class Approximate_2 {
   protected:
     using Traits = Arr_linear_traits_2<Kernel>;
@@ -1653,6 +1593,10 @@ public:
     friend class Arr_linear_traits_2<Kernel>;
 
   public:
+    using Approximate_number_type = double;
+    using Approximate_kernel = CGAL::Simple_cartesian<Approximate_number_type>;
+    using Approximate_point_2 = Approximate_kernel::Point_2;
+
     /*! obtains an approximation of a point coordinate.
      * \param p The exact point.
      * \param i The coordinate index (either 0 or 1).
@@ -1688,8 +1632,7 @@ public:
     /*! obtains an approximation of an \f$x\f$-monotone curve.
      */
     template <typename OutputIterator>
-    OutputIterator operator()(const X_monotone_curve_2& xcv, double /* error */,
-                              OutputIterator oi, const Bbox_2& bbox,
+    OutputIterator operator()(const X_monotone_curve_2& xcv, double /* error */, OutputIterator oi, const Bbox_2& bbox,
                               bool l2r = true) const {
       using Approx_pnt = Approximate_point_2;
       using Approx_seg = Approximate_kernel::Segment_2;
@@ -1775,8 +1718,7 @@ public:
   };
 
   /*! obtains a `Construct_x_monotone_curve_2` functor object. */
-  Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object() const
-  { return Construct_x_monotone_curve_2(); }
+  Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object() const { return Construct_x_monotone_curve_2(); }
   //@}
 
   /// \name Functor definitions for polylines.
@@ -1786,8 +1728,7 @@ public:
   using Construct_curve_2 = Construct_x_monotone_curve_2;
 
   /*! obtains a `Construct_curve_2` functor object. */
-  Construct_curve_2 construct_curve_2_object() const
-  { return Construct_x_monotone_curve_2(*this); }
+  Construct_curve_2 construct_curve_2_object() const { return Construct_x_monotone_curve_2(*this); }
   //@}
 };
 
@@ -1795,8 +1736,7 @@ public:
  * traits-class.
  */
 template <typename Kernel_>
-class Arr_linear_object_2 :
-    public Arr_linear_traits_2<Kernel_>::_Linear_object_cached_2 {
+class Arr_linear_object_2 : public Arr_linear_traits_2<Kernel_>::_Linear_object_cached_2 {
   using Base = typename Arr_linear_traits_2<Kernel_>::_Linear_object_cached_2;
 
 public:
@@ -1855,8 +1795,7 @@ public:
 
   /*! checks whether the object is actually a ray.
    */
-  bool is_ray() const
-  { return (! this->is_degen && (this->has_source != this->has_target)); }
+  bool is_ray() const { return (! this->is_degen && (this->has_source != this->has_target)); }
 
   /*! casts to a ray.
    * \pre The linear object is really a ray.
@@ -1867,15 +1806,13 @@ public:
     Kernel kernel;
     Ray_2 ray = (this->has_source) ?
       kernel.construct_ray_2_object()(this->ps, this->l) :
-      kernel.construct_ray_2_object()
-        (this->pt, kernel.construct_opposite_line_2_object()(this->l));
+      kernel.construct_ray_2_object()(this->pt, kernel.construct_opposite_line_2_object()(this->l));
     return ray;
   }
 
   /*! checks whether the object is actually a line.
    */
-  bool is_line() const
-  { return (! this->is_degen && ! this->has_source && ! this->has_target); }
+  bool is_line() const { return (! this->is_degen && ! this->has_source && ! this->has_target); }
 
   /*! casts to a line.
    * \pre The linear object is really a line.

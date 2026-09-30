@@ -141,16 +141,6 @@ enum Boolean_operation_type {UNION = 0, INTERSECTION=1,
 #endif
 }
 
-
-#define CGAL_COREF_SET_OUTPUT_EDGE_MARK_MAP(I) \
-  typedef typename internal_np::Lookup_named_param_def < \
-    internal_np::edge_is_constrained_t, \
-    NPOut##I, \
-    Corefinement::No_mark<TriangleMesh> \
-  > ::type Ecm_out_##I; \
-    Ecm_out_##I ecm_out_##I = \
-      parameters::choose_parameter<Ecm_out_##I>(parameters::get_parameter(std::get<I>(nps_out), internal_np::edge_is_constrained));
-
 /**
   * \ingroup PMP_boolop_grp
   *
@@ -201,9 +191,17 @@ enum Boolean_operation_type {UNION = 0, INTERSECTION=1,
   *
   *   \cgalParamNBegin{edge_is_constrained_map}
   *     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `tm1` (`tm2`)}
-  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
-  *                    as key type and `bool` as value type}
+  *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor` as key type and `bool` as value type.
+  *                    If an edge marked as constrained in `tm1` (`tm2`) is split during corefinement, the resulting sub-edges will be marked as constrained.}
   *     \cgalParamDefault{a constant property map returning `false` for any edge}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{edge_is_marked_map}
+  *     \cgalParamDescription{a property map filled by this function with `true` for all intersection edges of faces
+  *                           of `tm1` and `tm2`, and `false` for all other edges.}
+  *     \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
+  *                    as key type and `bool` as value type}
+  *     \cgalParamDefault{unused}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{face_index_map}
@@ -248,11 +246,20 @@ enum Boolean_operation_type {UNION = 0, INTERSECTION=1,
   *
   *   \cgalParamNBegin{edge_is_constrained_map}
   *     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `tm_out`.
-  *                           An edge of `tm_out` is constrained if it is on the intersection of `tm1` and `tm2`,
-  *                           or if the edge corresponds to a constrained edge in `tm1` or `tm2`.}
+  *                           An edge of `tm_out` is constrained if the edge corresponds to a constrained edge in `tm1` or `tm2`.
+  *                           If an edge marked as constrained in `tm1` (`tm2`) is split during corefinement, the resulting sub-edges will be marked as constrained.}
   *     \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
   *                    as key type and `bool` as value type}
   *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{edge_is_marked_map}
+  *     \cgalParamDescription{a property map filled by this function with `true` for all intersection edges of faces
+  *                           of `tm1` and `tm2`, and `false` for all other edges.}
+  *     \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
+  *                    as key type and `bool` as value type}
+  *     \cgalParamDefault{unused}
+  *   \cgalParamNEnd
+  *
   * \cgalNamedParamsEnd
   *
   * @return an array filled as follows: for each operation computed, the position in the array
@@ -279,7 +286,10 @@ corefine_and_compute_boolean_operations(
                    NPOut1,
                    NPOut2,
                    NPOut3>& nps_out
-                    = std::tuple<NPOut0,NPOut1,NPOut2,NPOut3>())
+                    = std::tuple<NPOut0,NPOut1,NPOut2,NPOut3>(parameters::default_values(),
+                                                              parameters::default_values(),
+                                                              parameters::default_values(),
+                                                              parameters::default_values()))
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -413,34 +423,12 @@ corefine_and_compute_boolean_operations(
       return CGAL::make_array(true, true, true, true);
     }
 
-// Edge is-constrained maps
+// Edge property maps
   //for input meshes
-  typedef typename internal_np::Lookup_named_param_def <
-    internal_np::edge_is_constrained_t,
-    NPIn1,
-    Corefinement::No_mark<TriangleMesh>//default
-  > ::type Ecm1;
-
-  typedef typename internal_np::Lookup_named_param_def <
-    internal_np::edge_is_constrained_t,
-    NPIn2,
-    Corefinement::No_mark<TriangleMesh>//default
-  > ::type Ecm2;
-
-  Ecm1 ecm1 = choose_parameter<Ecm1>(get_parameter(np1, internal_np::edge_is_constrained));
-  Ecm2 ecm2 = choose_parameter<Ecm2>(get_parameter(np2, internal_np::edge_is_constrained));
-
-  typedef Corefinement::Ecm_bind<TriangleMesh, Ecm1, Ecm2> Ecm_in;
+  typedef typename Corefinement::Get_Edge_properties_for_input<TriangleMesh, NPIn1, NPIn2>::type Edge_properties_in;
 
   //for output meshes
-  CGAL_COREF_SET_OUTPUT_EDGE_MARK_MAP(0)
-  CGAL_COREF_SET_OUTPUT_EDGE_MARK_MAP(1)
-  CGAL_COREF_SET_OUTPUT_EDGE_MARK_MAP(2)
-  CGAL_COREF_SET_OUTPUT_EDGE_MARK_MAP(3)
-
-  // In the current version all types must be the same so an array would be fine
-  typedef std::tuple<Ecm_out_0, Ecm_out_1, Ecm_out_2, Ecm_out_3>
-                                                            Edge_mark_map_tuple;
+  typedef typename Corefinement::Get_edge_properties_for_output<TriangleMesh, std::tuple<NPOut0, NPOut1, NPOut2,NPOut3>>::type Edge_properties_out;
 
   // Face index point maps
   typedef typename CGAL::GetInitializedFaceIndexMap<TriangleMesh, NPIn1>::type FaceIndexMap1;
@@ -466,16 +454,16 @@ corefine_and_compute_boolean_operations(
                                                   FaceIndexMap1,
                                                   FaceIndexMap2,
                                                   Default,
-                                                  Ecm_in,
-                                                  Edge_mark_map_tuple,
+                                                  Edge_properties_in,
+                                                  Edge_properties_out,
                                                   User_visitor> Ob;
 
   typedef Corefinement::Surface_intersection_visitor_for_corefinement<
-            TriangleMesh, VPM1, VPM2, Ob, Ecm_in, User_visitor> Algo_visitor;
+            TriangleMesh, VPM1, VPM2, Ob, Edge_properties_in, User_visitor> Algo_visitor;
 
-  Ecm_in ecm_in(tm1,tm2,ecm1,ecm2);
-  Edge_mark_map_tuple ecms_out(ecm_out_0, ecm_out_1, ecm_out_2, ecm_out_3);
-  Ob ob(tm1, tm2, vpm1, vpm2, fid_map1, fid_map2, ecm_in, vpm_out_tuple, ecms_out, uv, output);
+  Edge_properties_in em_in(tm1,tm2,np1,np2);
+  Edge_properties_out em_out(nps_out);
+  Ob ob(tm1, tm2, vpm1, vpm2, fid_map1, fid_map2, em_in, vpm_out_tuple, em_out, uv, output);
 
   // special case used for clipping open meshes
   if (choose_parameter(get_parameter(np1, internal_np::use_bool_op_to_clip_surface), false))
@@ -490,7 +478,7 @@ corefine_and_compute_boolean_operations(
   }
 
   Corefinement::Intersection_of_triangle_meshes<TriangleMesh, VPM1, VPM2, Algo_visitor >
-    functor(tm1, tm2, vpm1, vpm2, Algo_visitor(uv,ob,ecm_in));
+    functor(tm1, tm2, vpm1, vpm2, Algo_visitor(uv,ob,em_in));
   functor(CGAL::Emptyset_iterator(), throw_on_self_intersection, true);
 
 
@@ -541,9 +529,17 @@ corefine_and_compute_boolean_operations(
   *
   *   \cgalParamNBegin{edge_is_constrained_map}
   *     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `tm1` (`tm2`)}
-  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
-  *                    as key type and `bool` as value type}
+  *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor` as key type and `bool` as value type
+  *                    If an edge marked as constrained in `tm1` (`tm2`) is split during corefinement, the resulting sub-edges will be marked as constrained.}
   *     \cgalParamDefault{a constant property map returning `false` for any edge}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{edge_is_marked_map}
+  *     \cgalParamDescription{a property map filled by this function with `true` for all intersection edges of faces
+  *                           of `tm1` and `tm2`, and `false` for all other edges.}
+  *     \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
+  *                    as key type and `bool` as value type}
+  *     \cgalParamDefault{unused}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{face_index_map}
@@ -587,11 +583,19 @@ corefine_and_compute_boolean_operations(
   *
   *   \cgalParamNBegin{edge_is_constrained_map}
   *     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `tm_out`.
-  *                           An edge of `tm_out` is constrained if it is on the intersection of `tm1` and `tm2`,
-  *                           or if the edge corresponds to a constrained edge in `tm1` or `tm2`.}
+  *                           An edge of `tm_out` is constrained if the edge corresponds to a (part of a) constrained edge in `tm1` or `tm2`.}
   *     \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
   *                    as key type and `bool` as value type}
   *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{edge_is_marked_map}
+  *     \cgalParamDescription{a property map filled by this function with `true` for all intersection edges of faces
+  *                           of `tm1` and `tm2`, and `false` for all other edges.}
+  *     \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
+  *                    as key type and `bool` as value type}
+  *     \cgalParamDefault{unused}
+  *   \cgalParamNEnd
+  *
   * \cgalNamedParamsEnd
   *
   * @return `true` if the output surface mesh is manifold and is put into `tm_out`.
@@ -719,9 +723,17 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
  *
  *   \cgalParamNBegin{edge_is_constrained_map}
  *     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `tm1` (`tm2`)}
- *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
- *                    as key type and `bool` as value type}
+ *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor` as key type and `bool` as value type.
+ *                    If an edge marked as constrained in is split during corefinement, the resulting sub-edges will be marked as constrained.}
  *     \cgalParamDefault{a constant property map returning `false` for any edge}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{edge_is_marked_map}
+ *     \cgalParamDescription{a property map filled by this function with `true` for all intersection edges of faces
+ *                           of `tm1` and `tm2`, and `false` for all other edges.}
+ *     \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
+ *                    as key type and `bool` as value type}
+ *     \cgalParamDefault{unused}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{visitor}
@@ -791,28 +803,15 @@ corefine(      TriangleMesh& tm1,
   VPM2 vpm2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
                                get_property_map(boost::vertex_point, tm2));
 
-// Edge is-constrained maps
-  typedef typename internal_np::Lookup_named_param_def <
-    internal_np::edge_is_constrained_t,
-    NamedParameters1,
-    Corefinement::No_mark<TriangleMesh>//default
-  > ::type Ecm1;
+// Edge property maps
+  typedef typename Corefinement::Get_Edge_properties_for_input<TriangleMesh, NamedParameters1, NamedParameters2>::type Edge_properties;
+  Edge_properties em(tm1,tm2,np1, np2);
 
-  typedef typename internal_np::Lookup_named_param_def <
-    internal_np::edge_is_constrained_t,
-    NamedParameters2,
-    Corefinement::No_mark<TriangleMesh>//default
-  > ::type Ecm2;
-
-  Ecm1 ecm1 = choose_parameter<Ecm1>(get_parameter(np1, internal_np::edge_is_constrained));
-  Ecm2 ecm2 = choose_parameter<Ecm2>(get_parameter(np2, internal_np::edge_is_constrained));
-
-  typedef Corefinement::Ecm_bind<TriangleMesh, Ecm1, Ecm2> Ecm;
-
+// TODO: double check that what we get with shared faces PR (actually coref should have them but bool op are unchecking them)
   if (&tm1==&tm2)
   {
-    Corefinement::mark_all_edges(tm1, ecm1);
-    Corefinement::mark_all_edges(tm2, ecm2);
+    em.set_on_intersection(tm1, edges(tm1));
+    em.set_on_intersection(tm2, edges(tm2));
     return;
   }
 
@@ -831,12 +830,11 @@ corefine(      TriangleMesh& tm1,
 // surface intersection algorithm call
   typedef Corefinement::No_extra_output_from_corefinement<TriangleMesh> Ob;
   typedef Corefinement::Surface_intersection_visitor_for_corefinement<
-  TriangleMesh, VPM1, VPM2, Ob, Ecm, User_visitor, false, handle_non_manifold_features> Algo_visitor;
+  TriangleMesh, VPM1, VPM2, Ob, Edge_properties, User_visitor, false, handle_non_manifold_features> Algo_visitor;
 
   Ob ob;
-  Ecm ecm(tm1,tm2,ecm1,ecm2);
   Corefinement::Intersection_of_triangle_meshes<TriangleMesh, VPM1, VPM2, Algo_visitor>
-    functor(tm1, tm2, vpm1, vpm2, Algo_visitor(uv,ob,ecm,const_mesh_ptr), const_mesh_ptr);
+    functor(tm1, tm2, vpm1, vpm2, Algo_visitor(uv,ob,em,const_mesh_ptr), const_mesh_ptr);
 
   // Fill non-manifold feature maps if provided
   functor.set_non_manifold_feature_map_1(parameters::get_parameter(np1, internal_np::non_manifold_feature_map));
@@ -914,8 +912,8 @@ autorefine(      TriangleMesh& tm,
     internal_np::edge_is_constrained_t,
     NamedParameters,
     Corefinement::No_mark<TriangleMesh>//default
-  > ::type Ecm;
-  Ecm ecm = choose_parameter<Ecm>(get_parameter(np, internal_np::edge_is_constrained));
+  > ::type Edge_properties;
+  Edge_properties em = choose_parameter<Edge_properties>(get_parameter(np, internal_np::edge_is_constrained));
 
 // User visitor
   typedef typename internal_np::Lookup_named_param_def <
@@ -929,11 +927,11 @@ autorefine(      TriangleMesh& tm,
 // surface intersection algorithm call
   typedef Corefinement::No_extra_output_from_corefinement<TriangleMesh> Ob;
   typedef Corefinement::Surface_intersection_visitor_for_corefinement<
-    TriangleMesh, VPM, VPM, Ob, Ecm, User_visitor,true> Algo_visitor;
+    TriangleMesh, VPM, VPM, Ob, Edge_properties, User_visitor,true> Algo_visitor;
   Ob ob;
 
   Corefinement::Intersection_of_triangle_meshes<TriangleMesh, VPM, VPM, Algo_visitor>
-    functor(tm, vpm, Algo_visitor(uv,ob,ecm) );
+    functor(tm, vpm, Algo_visitor(uv,ob,em) );
 
   functor(CGAL::Emptyset_iterator(), true);
 }
@@ -1012,8 +1010,8 @@ autorefine_and_remove_self_intersections(      TriangleMesh& tm,
     internal_np::edge_is_constrained_t,
     NamedParameters,
     Corefinement::No_mark<TriangleMesh>//default
-  > ::type Ecm;
-  Ecm ecm = choose_parameter<Ecm>(get_parameter(np, internal_np::edge_is_constrained));
+  > ::type Edge_properties;
+  Edge_properties em = choose_parameter<Edge_properties>(get_parameter(np, internal_np::edge_is_constrained));
 
 // User visitor
   typedef typename internal_np::Lookup_named_param_def <
@@ -1027,15 +1025,15 @@ autorefine_and_remove_self_intersections(      TriangleMesh& tm,
   typedef Corefinement::Output_builder_for_autorefinement<TriangleMesh,
                                                           VPM,
                                                           Fid_map,
-                                                          Ecm,
+                                                          Edge_properties,
                                                           Default > Ob;
 
   typedef Corefinement::Surface_intersection_visitor_for_corefinement<
-    TriangleMesh, VPM, VPM, Ob, Ecm, User_visitor,true> Algo_visitor;
-  Ob ob(tm, vpm, fid_map, ecm);
+    TriangleMesh, VPM, VPM, Ob, Edge_properties, User_visitor,true> Algo_visitor;
+  Ob ob(tm, vpm, fid_map, em);
 
   Corefinement::Intersection_of_triangle_meshes<TriangleMesh, VPM, VPM, Algo_visitor>
-    functor(tm, vpm, Algo_visitor(uv,ob,ecm) );
+    functor(tm, vpm, Algo_visitor(uv,ob,em) );
 
   functor(CGAL::Emptyset_iterator(), true);
 
