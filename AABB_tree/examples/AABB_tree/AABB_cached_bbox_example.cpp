@@ -20,7 +20,7 @@ typedef CGAL::Timer Timer;
 
 
 template <typename TriangleMesh>
-void triangle_mesh(std::filesystem::path fname)
+void triangle_mesh(const std::filesystem::path& fname)
 {
   typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh> Primitive;
   typedef CGAL::AABB_traits_3<K, Primitive> Traits;
