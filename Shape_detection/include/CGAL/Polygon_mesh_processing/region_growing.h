@@ -494,7 +494,7 @@ detect_corners_of_regions(
   if (!segment_range.empty())
   {
     Line_sorting line_sorting(
-      segment_range, pgraph, CGAL::parameters::segment_map(pgraph.segment_map()));
+      segment_range, CGAL::parameters::segment_map(pgraph.segment_map()));
     line_sorting.sort();
 
     RG_lines rg_lines(

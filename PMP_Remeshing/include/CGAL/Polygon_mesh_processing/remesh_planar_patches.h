@@ -700,8 +700,8 @@ bool decimate_impl(const TriangleMesh& tm,
         if (csts.size() > 3 && do_not_triangulate_faces)
         {
           // TODO this is not optimal at all since we already have the set of constraints,
-          //      we could work on the graph on constraint and recover only the orientation
-          //      of the edge. To be done if someone find it too slow.
+          //      we could work on the graph of constraints and recover only the orientation
+          //      of the edge. To be done if someone finds it too slow.
           std::vector<halfedge_descriptor> hborders;
           CGAL::Face_filtered_graph<TriangleMesh> ffg(tm, static_cast<PID>(cc_id), face_cc_ids);
           extract_boundary_cycles(ffg, std::back_inserter(hborders));

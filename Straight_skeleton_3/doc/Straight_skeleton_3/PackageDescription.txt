@@ -1,0 +1,54 @@
+/// \defgroup PkgStraightSkeleton3Ref Reference Manual
+
+/// \defgroup PkgStraightSkeleton3SkeletonFunctions Straight Skeleton Construction Functions
+/// \ingroup PkgStraightSkeleton3Ref
+///
+/// The following functions are used to construct the inward or outward straight skeleton of a polyhedron.
+
+/// \defgroup PkgStraightSkeleton3OffsettingFunctions Offset Polyhedra Construction Functions
+/// \ingroup PkgStraightSkeleton3Ref
+///
+/// The following functions are used to construct the face offsets of a polyhedron.
+
+/// \defgroup PkgStraightSkeleton3Classes Classes
+/// \ingroup PkgStraightSkeleton3Ref
+///
+/// The following classes are the main classes of this package.
+
+/// \defgroup PkgStraightSkeleton3IO I/O Functions
+/// \ingroup PkgStraightSkeleton3Ref
+
+/*!
+\addtogroup PkgStraightSkeleton3Ref
+\cgalPkgDescriptionBegin{3D Straight Skeleton and Polyhedron Offsetting,PkgStraightSkeleton3}
+\cgalPkgPicture{Straight_skeleton_3/fig/StraightSkeleton3Teaser.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Mael Rouxel-Labbé}
+\cgalPkgDesc{This package implements an algorithm to construct the weighted straight skeleton
+             in the interior and exterior of a 3D polyhedron, and an algorithm to construct inward
+             and outward offset polyhedra at any offset distance.}
+\cgalPkgManuals{Chapter_3D_Straight_Skeleton_and_Polyhedron_Offsetting,PkgStraightSkeleton3Ref}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{6.2}
+\cgalPkgDependsOn{ }
+\cgalPkgBib{cgal:c-sspo3}
+\cgalPkgLicense{\ref licensesGPL  "GPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Straight Skeleton Construction}
+- `CGAL::create_straight_skeleton_3()`
+
+\cgalCRPSection{Polyhedron Offsetting}
+- `CGAL::create_straight_skeleton_and_offset_polyhedra_3()`
+
+\cgalCRPSection{Classes}
+- `CGAL::Straight_skeleton_3`
+
+\cgalCRPSection{I/O Functions}
+- \link PkgStraightSkeleton3IO `CGAL::Straight_skeletons_3::IO::write_OBJ()`\endlink
+
+*/

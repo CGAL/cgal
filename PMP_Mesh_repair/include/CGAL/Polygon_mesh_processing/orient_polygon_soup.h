@@ -428,7 +428,8 @@ struct Polygon_soup_orienter
     std::size_t nb_points,
     const Polygons& polygons,
     Edge_map& edges,
-    Marked_edges& marked_edges)
+    Marked_edges& marked_edges,
+    V_ID& nm_vertex_id)
   {
     // for each vertex, indicates the list of polygon containing it
     std::vector< std::vector<P_ID> > incident_polygons_per_vertex(nb_points);
@@ -447,8 +448,10 @@ struct Polygon_soup_orienter
       {
         if ( !visited_polygons.insert(p_id).second ) continue; // already visited
 
-        if (!first_pass)
-          return false; //there will be duplicate vertices
+        if (!first_pass){
+          nm_vertex_id = v_id;
+          return false; // there will be duplicate vertices
+        }
 
         const std::array<V_ID,3>& neighbors = get_neighbor_vertices(v_id,p_id,polygons);
 
@@ -477,6 +480,16 @@ struct Polygon_soup_orienter
       }
     }
     return true;
+  }
+
+  static bool has_singular_vertices(
+    std::size_t nb_points,
+    const Polygons& polygons,
+    Edge_map& edges,
+    Marked_edges& marked_edges)
+  {
+    V_ID unused_nm_vertex_id;
+    return has_singular_vertices(nb_points, polygons, edges, marked_edges, unused_nm_vertex_id);
   }
 };
 } // namespace internal
