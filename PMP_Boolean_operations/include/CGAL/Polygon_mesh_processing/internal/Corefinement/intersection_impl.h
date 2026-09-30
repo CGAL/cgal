@@ -259,8 +259,8 @@ class Intersection_of_triangle_meshes
   {
     using Point = typename boost::property_traits<VPM1>::value_type;
     using GT = typename CGAL::Kernel_traits<Point>::Kernel;
-    using AABB_tree_helper_1 = internal::AABB_tree_graph_helper<TriangleMesh, GT, VPM1>;
-    using AABB_tree_helper_2 = internal::AABB_tree_graph_helper<TriangleMesh, GT, VPM2>;
+    using AABB_tree_helper_1 = CGAL::Polygon_mesh_processing::internal::AABB_tree_graph_helper<TriangleMesh, GT, VPM1>;
+    using AABB_tree_helper_2 = CGAL::Polygon_mesh_processing::internal::AABB_tree_graph_helper<TriangleMesh, GT, VPM2>;
     using Tree_1 = typename AABB_tree_helper_1::Tree;
     using Tree_2 = typename AABB_tree_helper_2::Tree;
     AABB_tree_helper_1 helper_1;
@@ -491,7 +491,7 @@ class Intersection_of_triangle_meshes
                             const VPM& vpm)
   {
     using GT = typename GetGeomTraits<TriangleMesh, parameters::Default_named_parameters>::type;
-    using AABB_tree_helper = internal::AABB_tree_graph_helper<TriangleMesh, GT, VPM>;
+    using AABB_tree_helper = CGAL::Polygon_mesh_processing::internal::AABB_tree_graph_helper<TriangleMesh, GT, VPM>;
     using Tree = typename AABB_tree_helper::Tree;
     AABB_tree_helper helper;
 
