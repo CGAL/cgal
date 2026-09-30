@@ -131,7 +131,7 @@ bool read_polygon_mesh(const std::filesystem::path& fname,
   if(! fname.has_extension())
   {
     if(verbose)
-      std::cerr << "Error: trying to output to file without extension" << std::endl;
+      std::cerr << "Error: cannot read from file without extension" << std::endl;
     return false;
   }
   const std::string ext = fname.extension().string();
