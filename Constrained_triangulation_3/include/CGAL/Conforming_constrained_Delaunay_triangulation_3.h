@@ -1436,7 +1436,7 @@ protected:
     const auto face_id = static_cast<std::size_t>(face_constraint_index(cell, facet_index));
     this->face_constraint_misses_subfaces_set(face_id);
     auto fh_2 = face_2(this->face_cdt_2(face_id), cell, facet_index);
-    fh_2->info().facet_3d = {};
+    fh_2->info().facet_3d = Facet{};
     fh_2->info().missing_subface = true;
     this->set_facet_unconstrained({cell, facet_index});
   }

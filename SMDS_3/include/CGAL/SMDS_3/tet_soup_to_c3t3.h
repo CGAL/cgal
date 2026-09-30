@@ -20,10 +20,10 @@
 #include <CGAL/license/SMDS_3.h>
 
 #include <CGAL/assertions.h>
-#include <CGAL/IO/MEDIT.h>
-#include <CGAL/IO/File_medit.h>
 #include <CGAL/Default.h>
 #include <CGAL/iterator.h>
+#include <CGAL/utility.h>
+#include <CGAL/value_type_traits.h>
 
 #include <boost/unordered_map.hpp>
 
@@ -34,6 +34,41 @@
 #include <type_traits>
 
 namespace CGAL {
+
+namespace SMDS_3_internal {
+template <typename T, typename = void>
+struct Has_in_dimension : std::false_type
+{};
+
+template <typename T>
+struct Has_in_dimension<T, std::void_t<decltype(std::declval<T>().in_dimension())>>
+  : std::true_type
+{};
+
+template <typename T, typename = void>
+struct Has_is_corner : std::false_type
+{};
+
+template <typename T>
+struct Has_is_corner<T, std::void_t<decltype(std::declval<T>().is_corner())>>
+  : std::true_type
+{};
+
+template <typename Tr>
+bool is_corner(const typename Tr::Vertex_handle v, const Tr&)
+{
+  using V = typename Tr::Triangulation_data_structure::Vertex;
+
+  if constexpr(Has_in_dimension<V>::value)
+    return v->in_dimension() == 0;
+  else if constexpr(Has_is_corner<V>::value)
+    return v->ccdt_3_data().is_corner();
+  else
+    return false;
+}
+
+} // namespace SMDS_3_internal
+
 namespace SMDS_3 {
 
 template<typename Vh>
@@ -378,22 +413,6 @@ bool is_infinite(const std::array<typename Tr::Vertex_handle, 3>& f,
   return false;
 }
 
-template <typename Iterator>
-struct output_iterator_value
-{
-  using type = void;
-};
-
-template <typename Container>
-struct output_iterator_value<std::back_insert_iterator<Container>>
-{
-  using type = typename Container::value_type;
-};
-
-template <typename Iterator>
-using output_iterator_value_t = typename output_iterator_value<std::decay_t<Iterator>>::type;
-
-
 template<class Tr>
 bool assign_neighbors(Tr& tr,
                       const boost::unordered_map<std::array<typename Tr::Vertex_handle, 3>,
@@ -474,7 +493,7 @@ bool build_mesh_complex_impl(C3T3& c3t3,
   // associate to a face the two (at most) incident tets and the id of the face in the cell
   typedef std::pair<Cell_handle, int>                   Incident_cell;
   typedef boost::unordered_map<Facet_vvv, std::vector<Incident_cell> >  Incident_cells_map;
-  using CxEdgeAndId = output_iterator_value_t<decltype(cx_edges_out)>;
+  using CxEdgeAndId = value_type_traits_t<decltype(cx_edges_out)>;
 
   CGAL_precondition(!points.empty());
 
@@ -570,9 +589,9 @@ bool build_mesh_complex_impl(C3T3& c3t3,
     {
       Vertex_handle vh0 = vertex_handle_vector[iv0 + 1];
       Vertex_handle vh1 = vertex_handle_vector[iv1 + 1];
-      if(vh0->in_dimension() != 0)
+      if(!CGAL::SMDS_3_internal::is_corner(vh0, tr))
         vh0->set_dimension(1);
-      if(vh1->in_dimension() != 0)
+      if(!CGAL::SMDS_3_internal::is_corner(vh1, tr))
         vh1->set_dimension(1);
 
       if constexpr(!std::is_same_v<CxEdgeAndId, void>)
