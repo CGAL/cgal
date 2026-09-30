@@ -27,9 +27,14 @@
 #include <CGAL/SMDS_3/io_signature.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Has_member.h>
+#include <CGAL/IO/io.h>
+#include <CGAL/Iterator_range.h>
 #include <CGAL/iterator.h>
+#include <CGAL/tags.h>
 #include <CGAL/Time_stamper.h>
+#include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/Union_find.h>
+#include <CGAL/Unique_hash_map.h>
 #include <CGAL/unordered_flat_map.h>
 
 #include <CGAL/IO/File_medit.h>
@@ -38,14 +43,23 @@
 #include <boost/bimap/bimap.hpp>
 #include <boost/bimap/multiset_of.hpp>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
+#include <boost/bimap/set_of.hpp>
+#include <boost/container_hash/hash.hpp>
+#include <boost/core/use_default.hpp>
 #include <boost/iterator/iterator_adaptor.hpp>
+#include <boost/iterator/transform_iterator.hpp>
+#include <boost/unordered/unordered_map_fwd.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/functional/hash.hpp>
 
+#include <cstddef>
 #include <iostream>
-#include <fstream>
+#include <oneapi/tbb/concurrent_hash_map.h>
+#include <string>
+#include <utility>
+#include <vector>
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/concurrent_hash_map.h>
@@ -2468,7 +2482,87 @@ operator<< (std::ostream& os,
             const Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_> &c3t3)
 {
   // TODO: implement edge saving
-  return os << c3t3.triangulation();
+  if constexpr(c3t3.store_surface_patch_info_in_cell) {
+    return os << c3t3.triangulation();
+  } else {
+    auto& tr = c3t3.triangulation();
+    auto n = tr.number_of_vertices();
+    if(IO::is_ascii(os)) {
+      os << tr.dimension() << std::endl << n << std::endl;
+    } else {
+      write(os, tr.dimension());
+      write(os, n);
+    }
+
+    if(n == 0)
+      return os;
+
+    using Vertex_handle = typename Tr::Vertex_handle;
+    std::vector<Vertex_handle> TV(n + 1);
+    auto i = 0u;
+
+    // write the vertices
+    for(auto it = tr.vertices_begin(), end = tr.vertices_end(); it != end; ++it)
+      TV[i++] = it;
+
+    CGAL_assertion(i == n + 1);
+    CGAL_assertion(tr.is_infinite(TV[0]));
+
+    Unique_hash_map<Vertex_handle, std::size_t> V;
+    V[tr.infinite_vertex()] = 0;
+    for(i = 1; i <= n; i++) {
+      os << *TV[i];
+      V[TV[i]] = i;
+      if(IO::is_ascii(os))
+        os << std::endl;
+    }
+
+    // Asks the tds for the combinatorial information
+    tr.tds().print_cells(os, V);
+
+    auto insert_cell = [&](std::ostream& os, typename Tr::Cell_handle ch) -> auto& {
+      if(IO::is_ascii(os))
+        os << c3t3.subdomain_index(ch);
+      else
+        write(os, c3t3.subdomain_index(ch));
+
+      for(int i = 0; i < 4; ++i) {
+        if(IO::is_ascii(os))
+          os << ' ' << IO::oformat(c3t3.surface_patch_index(ch, i));
+        else
+          write(os, c3t3.surface_patch_index(ch, i));
+      }
+      return os;
+    };
+
+    switch(tr.dimension()) {
+    case 3: {
+      for(auto it = tr.cells_begin(), end = tr.cells_end(); it != end; ++it) {
+        insert_cell(os, it); // other information
+        if(IO::is_ascii(os))
+          os << std::endl;
+      }
+      break;
+    }
+    case 2: {
+      for(auto it = tr.facets_begin(), end = tr.facets_end(); it != end; ++it) {
+        insert_cell(os, (*it).first); // other information
+        if(IO::is_ascii(os))
+          os << std::endl;
+      }
+      break;
+    }
+    case 1: {
+      for(auto it = tr.edges_begin(), end = tr.edges_end(); it != end; ++it) {
+        insert_cell(os, (*it).first); // other information
+        if(IO::is_ascii(os))
+          os << std::endl;
+      }
+      break;
+    }
+    }
+    return os;
+  }
 }
 
 
@@ -2479,7 +2573,78 @@ operator>> (std::istream& is,
 {
   // TODO: implement edge loading
   c3t3.clear();
-  is >> c3t3.triangulation();
+  if constexpr(c3t3.store_surface_patch_info_in_cell) {
+    is >> c3t3.triangulation();
+  } else {
+    auto& tr = c3t3.triangulation();
+    using Vertex_handle = typename Tr::Vertex_handle;
+    using Cell_handle = typename Tr::Cell_handle;
+    using C3t3 = Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_>;
+
+
+    tr.tds().clear(); // infinite vertex deleted
+    tr.set_infinite_vertex(tr.tds().create_vertex());
+    std::size_t n;
+    int d;
+    if(IO::is_ascii(is)) {
+      is >> d >> n;
+    } else {
+      read(is, d);
+      read(is, n);
+    }
+    if(!is)
+      return is;
+
+    std::vector<Vertex_handle> V;
+    if(d > 3 || d < -2 || (n + 1) > V.max_size()) {
+      is.setstate(std::ios_base::failbit);
+      return is;
+    }
+    tr.tds().set_dimension(d);
+    V.resize(n + 1);
+    V[0] = tr.infinite_vertex(); // the infinite vertex is numbered 0
+
+    for(std::size_t i = 1; i <= n; i++) {
+      V[i] = tr.tds().create_vertex();
+      if(!(is >> *V[i]))
+        return is;
+    }
+
+    std::vector<Cell_handle> C;
+
+    std::size_t m;
+    tr.tds().read_cells(is, V, m, C);
+
+    auto extract_cell = [&](std::istream& is, Cell_handle ch) -> auto& {
+      typename C3t3::Subdomain_index index;
+      if(IO::is_ascii(is))
+        is >> index;
+      else
+        read(is, index);
+      if(is) {
+        c3t3.set_subdomain_index(ch, index);
+        for(int i = 0; i < 4; ++i)
+        {
+          typename C3t3::Surface_patch_index i2;
+          if(IO::is_ascii(is))
+            is >> IO::iformat(i2);
+          else
+            {
+              read(is, i2);
+            }
+          c3t3.set_surface_patch_index(ch, i, i2);
+        }
+      }
+
+      return is;
+    };
+
+    for(std::size_t j = 0; j < m; j++)
+    {
+      if(!extract_cell(is, C[j]))
+        return is;
+    }
+  }
 
   if (!is) {
     c3t3.clear();
