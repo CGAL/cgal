@@ -1,3 +1,4 @@
+#include <CGAL/config.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/facets_in_complex_3_to_triangle_mesh.h>
@@ -44,10 +45,10 @@ int main (int argc, char** argv){
 
 
   // Open file
-  std::ifstream in (argc > 1 ? argv[1] : "data/elephant.mesh",
-                    std::ios_base::in);
+  std::string input_file = (argc > 1 ? argv[1] : CGAL::data_file_path("meshes/elephant.mesh"));
+  std::ifstream in (input_file, std::ios_base::in);
   if(!in) {
-    std::cerr << "Error! Cannot open file " << argv[1] << std::endl;
+    std::cerr << "Error! Cannot open file " << input_file << std::endl;
     return 1;
   }
   C3t3 c3t3;
@@ -58,8 +59,10 @@ int main (int argc, char** argv){
          cit != c3t3.triangulation().finite_cells_end();
          ++cit)
     {
-      assert(c3t3.subdomain_index(cit) >= 0);
-      c3t3.add_to_complex(cit, c3t3.subdomain_index(cit));
+      auto subdomain_index = c3t3.subdomain_index(cit);
+      assert(subdomain_index >= 0);
+      if(subdomain_index > 0)
+      c3t3.add_to_complex(cit, subdomain_index);
       for(int i=0; i < 4; ++i)
       {
         if(c3t3.surface_patch_index(cit, i) > 0)

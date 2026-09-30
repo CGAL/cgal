@@ -1006,7 +1006,16 @@ scan_triangulation_impl()
 # endif
     add_to_TLS_lists(true);
 
-    // PARALLEL FOR_EACH
+    // First loop on cells to initialize the possible circumcenter caches
+    tbb::parallel_for_each(
+      this->r_tr_.finite_cells_begin(), this->r_tr_.finite_cells_end(),
+      [&] (auto& cell)
+      {
+        static_cast<void>(cell.weighted_circumcenter());
+      }
+    );
+
+    // then loop on facets.
     tbb::parallel_for_each(
       this->r_tr_.finite_facets_begin(), this->r_tr_.finite_facets_end(),
       typename Rf_base::template Scan_facet<Self>(*this)
