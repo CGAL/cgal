@@ -109,7 +109,7 @@ static int run_mesh(const Obj_data& data)
     }
   }
 
-  auto [file_stream, points_ids_offsets] = save_obj(data, CGAL::data_file_path("2d_segments/initial_cdt.obj"));
+  auto [file_stream, points_ids_offsets] = save_obj(data, "initial_cdt.obj");
 
   if(cdt.dimension() == 2) {
     CDT::Face_circulator fc = cdt.incident_faces(cdt.infinite_vertex()), done = fc;
