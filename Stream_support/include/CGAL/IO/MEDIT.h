@@ -376,9 +376,9 @@ bool read_MEDIT(std::istream& is,
  * \tparam TetrahedronRange a model of the concept `BackInsertionSequence` whose `value_type` is `std::array<int,4>`
  *
  * \param is the input stream
- * \param points points of the soup of cells
+ * \param points points of the soup of tetrahedra
  * \param tetrahedra each element in it describes a tetrahedron
- *        using the indices of the points in `points`
+ * \param tetrahedra a range where each element is a tetrahedron described by indices into `points`
  *
  * \param np optional \ref bgl_namedparameters "Named Parameters" described below
  *
@@ -477,7 +477,7 @@ bool read_MEDIT(std::istream& is,
 /*!
  * \ingroup PkgStreamSupportIoFuncsMEDIT
  *
- * \brief writes the `points` and `tetrahedra` using the \ref IOStreamMedit
+ * \brief writes a soup of indexed tetrahedra using the \ref IOStreamMedit
  *
  * \tparam PointRange a model of the concept `ConstRange` whose value type is the point type
  * \tparam TetrahedronRange a model of the concept `ConstRange`
@@ -485,9 +485,8 @@ bool read_MEDIT(std::istream& is,
  *                   whose `value_type` is `std::size_t`.
  *
  * \param os the output stream
- * \param points points of the soup of cells
- * \param tetrahedra each element in it describes a cell
- *        using the indices of the points in `points`
+ * \param points points of the soup of tetrahedra
+ * \param tetrahedra a range where each element is a tetrahedron described by indices into `points`
  *
  * \param np optional \ref bgl_namedparameters "Named Parameters" described below
  *
@@ -496,7 +495,7 @@ bool read_MEDIT(std::istream& is,
  *     \cgalParamDescription{a const reference wrapper of a container of integers of the same size as `tetrahedra`.
  *                           Each element in the container indicates the subdomain index of the corresponding tetrahedron at the same position.}
  *     \cgalParamType{a `std::reference_wrapper` to a model of the concept `SequenceContainer` of integer.}
- *     \cgalParamDefault{all tetrahedra will have the subdomain id `1`.}
+ *     \cgalParamDefault{all tetrahedra will be given the subdomain index `1`.}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{facets_with_indices}
