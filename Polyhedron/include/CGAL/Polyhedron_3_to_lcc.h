@@ -38,7 +38,7 @@ CGAL_DEPRECATED
 typename LCC::Dart_descriptor
 import_from_polyhedron_3(LCC& alcc, const Polyhedron &apoly)
 {
-  return import_face_graph_to_lcc(apoly, alcc);
+  return import_face_graph_to_lcc(alcc, apoly);
 }
 
 
@@ -50,7 +50,7 @@ CGAL_DEPRECATED
 typename LCC::Dart_descriptor
 polyhedron_3_to_lcc(LCC& alcc, const Polyhedron &apoly)
 {
-  return import_face_graph_to_lcc(apoly, alcc);
+  return import_face_graph_to_lcc(alcc, apoly);
 }
 
 

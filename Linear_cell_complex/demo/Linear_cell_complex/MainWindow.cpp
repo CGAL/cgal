@@ -380,7 +380,7 @@ void MainWindow::load_off (const QString & fileName, bool clear)
   {
     CGAL::Polyhedron_3<LCC::Traits> P;
     ifs >> P;
-    CGAL::import_face_graph_to_lcc(P, *scene.lcc);
+    CGAL::import_face_graph_to_lcc(*scene.lcc, P);
   }
 
 #ifdef CGAL_PROFILE_LCC_DEMO

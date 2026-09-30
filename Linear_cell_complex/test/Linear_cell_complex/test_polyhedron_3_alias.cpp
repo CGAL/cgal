@@ -23,7 +23,7 @@ int main()
 
   LCC lcc0, lcc1, lcc2;
 
-  auto d0 = CGAL::import_face_graph_to_lcc(P, lcc0);
+  auto d0 = CGAL::import_face_graph_to_lcc(lcc0, P);
   assert(d0 == LCC::null_descriptor);
 
   auto d1 = CGAL::polyhedron_3_to_lcc(lcc1, P);

@@ -33,9 +33,8 @@ imports `pmesh` into `lcc`. The polygon mesh is added in `lcc`, existing darts a
 \sa `CGAL::read_plane_graph_in_lcc<LCC>`
 \sa `CGAL::triangulation_3_to_lcc<LCC,Triangulation>`
 */
-template<class PolygonMesh, class LCC>
-typename LCC::Dart_descriptor import_face_graph_to_lcc(const PolygonMesh &pmesh,
-                                                       LCC& lcc)
+template<class LCC, class PolygonMesh>
+typename LCC::Dart_descriptor import_face_graph_to_lcc(LCC& lcc, const PolygonMesh &pmesh)
 {
   static_assert( LCC::dimension>=2 && LCC::ambient_dimension==3 );
 

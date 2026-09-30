@@ -51,7 +51,7 @@ public:
     {
       SMesh sm;
       ifs >> sm;
-      CGAL::import_face_graph_to_lcc (sm, lcc);
+      CGAL::import_face_graph_to_lcc (lcc, sm);
     }
     else
     {

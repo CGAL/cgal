@@ -20,8 +20,8 @@ int main()
 
 
   LCC lccp, lccs;
-  CGAL::import_face_graph_to_lcc(polyhedron, lccs);
-  CGAL::import_face_graph_to_lcc(surface_mesh, lccs);
+  CGAL::import_face_graph_to_lcc(lccs, polyhedron);
+  CGAL::import_face_graph_to_lcc(lccs, surface_mesh);
 
   std::cout << lccp << std::endl;
   std::cout << lccs << std::endl;
