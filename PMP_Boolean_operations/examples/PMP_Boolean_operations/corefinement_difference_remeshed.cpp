@@ -49,8 +49,8 @@ int main(int argc, char* argv[])
   }
 
   // create a property on edges to indicate whether they are constrained
-  Mesh::Property_map<edge_descriptor,bool> is_constrained_map =
-    mesh1.add_property_map<edge_descriptor,bool>("e:is_constrained", false).first;
+  Mesh::Property_map<edge_descriptor,bool> is_marked_map =
+    mesh1.add_property_map<edge_descriptor,bool>("e:is_marked", false).first;
 
   // update mesh1 to contain the mesh bounding the difference
   // of the two input volumes.
@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
                                          mesh1,
                                          params::default_values(), // default parameters for mesh1
                                          params::default_values(), // default parameters for mesh2
-                                         params::edge_is_constrained_map(is_constrained_map));
+                                         params::edge_is_marked_map(is_marked_map));
 
   if (valid_difference)
   {
@@ -77,7 +77,7 @@ int main(int argc, char* argv[])
   std::vector<face_descriptor> selected_faces;
   std::vector<bool> is_selected(num_faces(mesh1), false);
   for (edge_descriptor e : edges(mesh1))
-    if (is_constrained_map[e])
+    if (is_marked_map[e])
     {
       // insert all faces incident to the target vertex
       for (halfedge_descriptor h : halfedges_around_target(halfedge(e,mesh1),mesh1))
@@ -103,7 +103,7 @@ int main(int argc, char* argv[])
 
   // remesh the region around the intersection polylines
   PMP::isotropic_remeshing(selected_faces, 0.02, mesh1,
-                           params::edge_is_constrained_map(is_constrained_map));
+                           params::edge_is_constrained_map(is_marked_map));
 
   CGAL::IO::write_polygon_mesh("difference_remeshed.off", mesh1, CGAL::parameters::stream_precision(17));
 

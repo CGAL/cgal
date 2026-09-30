@@ -144,6 +144,26 @@ struct Graphics_scene_options_surface_mesh
     }
     else
     { this->colored_face=[](const SM &, face_descriptor)->bool { return false; }; }
+
+    // Color by value: expose the aspect ratio (longest edge / shortest edge) of
+    // each face, so the viewer can color the mesh by it (Shift+D).
+    this->face_value_name="aspect ratio";
+    this->is_face_valued=[](const SM &, face_descriptor)->bool { return true; };
+    this->face_value=[](const SM &sm, face_descriptor f)->float
+    {
+      double l2min=(std::numeric_limits<double>::max)(), l2max=0.0;
+      auto h=halfedge(f, sm); const auto first=h;
+      do
+      {
+        const auto vec=sm.point(target(h, sm))-sm.point(source(h, sm));
+        const double l2=CGAL::to_double(vec.squared_length());
+        if (l2<l2min) { l2min=l2; }
+        if (l2>l2max) { l2max=l2; }
+        h=next(h, sm);
+      }
+      while (h!=first);
+      return (l2min>0.0) ? static_cast<float>(std::sqrt(l2max/l2min)) : 1.f;
+    };
   }
 
 private:

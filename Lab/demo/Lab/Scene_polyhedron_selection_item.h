@@ -610,16 +610,17 @@ public:
       : m_set_ptr(set_)
     {}
 
-    friend value_type get(const Is_constrained_map& map, const key_type& k)
+    friend value_type get(Is_constrained_map map, const key_type& k)
     {
       CGAL_assertion(map.m_set_ptr != nullptr);
       return map.m_set_ptr->count(k);
     }
-    friend void put(Is_constrained_map& map, const key_type& k, const value_type b)
+    friend void put(Is_constrained_map map, const key_type& k, const value_type b)
     {
       CGAL_assertion(map.m_set_ptr != NULL);
       if (b)  map.m_set_ptr->insert(k);
-      else    map.m_set_ptr->erase(k);
+      else
+        map.m_set_ptr->erase(k);
     }
   };
 

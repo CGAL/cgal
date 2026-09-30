@@ -332,8 +332,8 @@ public:
     output is a valid configuration for CGAL 5.2 and later.
 
     \note This function depends on the Boost libraries
-    [Serialization](https://www.boost.org/libs/serialization) and
-    [IO Streams](https://www.boost.org/libs/iostreams) (compiled with the GZIP dependency).
+    [Serialization](https://www.boost.org/doc/libs/latest/libs/serialization/doc/index.html) and
+    [IO Streams](https://www.boost.org/doc/libs/latest/libs/iostreams/doc/index.html) (compiled with the GZIP dependency).
   */
 #if defined(DOXYGEN_RUNNING) || \
   (defined(CGAL_LINKED_WITH_BOOST_IOSTREAMS) && \

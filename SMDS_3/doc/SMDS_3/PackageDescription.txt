@@ -74,6 +74,5 @@
 - `CGAL::IO::output_to_tetgen()`
 - `CGAL::IO::save_binary_file()`
 - `CGAL::IO::load_binary_file()`
-- `CGAL::IO::output_to_medit()` (deprecated)
 */
 
