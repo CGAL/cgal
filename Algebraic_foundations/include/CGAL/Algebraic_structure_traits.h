@@ -77,6 +77,7 @@ class Algebraic_structure_traits  {
     typedef Null_functor Square;
     typedef Null_functor Is_zero;
     typedef Null_functor Is_one;
+    typedef Null_functor Is_invertible;
     typedef Null_functor Sqrt;
     typedef Null_functor Kth_root;
     typedef Null_functor Root_of;
@@ -462,6 +463,16 @@ class Algebraic_structure_traits_base< Type_, Field_tag >
         }
       CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )
     };
+
+  class Is_invertible
+    : public CGAL::cpp98::unary_function< Type, bool > {
+    public:
+      bool operator()( const Type& t) const {
+        typedef Algebraic_structure_traits<Type> AST;
+        typename AST::Is_zero is_zero;
+        return ! is_zero(t);
+      }
+  };
 
   // maps to \c 1/x by default.
   class Inverse

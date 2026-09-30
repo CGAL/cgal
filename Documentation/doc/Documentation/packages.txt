@@ -127,7 +127,6 @@
 \package_listing{Surface_mesh_skeletonization}
 \package_listing{Surface_mesh_approximation}
 \package_listing{Heat_method_3}
-\package_listing{Surface_mesh_topology}
 
 \cgalPackageSection{PartPointSetProcessing,Point Set Processing}
 
@@ -139,6 +138,11 @@
 \package_listing{Shape_regularization}
 \package_listing{Stream_lines_2}
 \package_listing{Classification}
+
+\cgalPackageSection{PartTopology,Topology}
+
+\package_listing{Surface_mesh_topology}
+\package_listing{HDVF}
 
 \cgalPackageSection{PartSearchStructures,Spatial Searching and Sorting}
 
