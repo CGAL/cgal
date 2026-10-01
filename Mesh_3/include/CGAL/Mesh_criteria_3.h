@@ -26,11 +26,28 @@
 #include <CGAL/Mesh_3/config.h>
 #include <CGAL/Mesh_edge_criteria_3.h>
 #include <CGAL/Mesh_facet_criteria_3.h>
+#include <CGAL/Mesh_facet_topology.h>
 #include <CGAL/Mesh_cell_criteria_3.h>
+#include <CGAL/SMDS_3/Mesh_complex_3_in_triangulation_3_fwd.h>
+
 #include <cfloat> // for the macro DBL_MAX
+#include <type_traits> // for std::void_t and std::is_base_of
 
 namespace CGAL {
 namespace internal {
+
+template <typename Tr, typename Enable = void>
+struct Get_c3t3 {
+  using type = CGAL::Mesh_complex_3_in_triangulation_3<Tr>;
+};
+
+template <typename C3t3>
+struct Get_c3t3<C3t3, std::void_t<decltype(std::declval<C3t3>().number_of_cells_in_complex())>> {
+  using type = C3t3;
+};
+
+template <typename C3T3_or_T>
+using get_c3t3_t = typename Get_c3t3<C3T3_or_T>::type;
 
 // Class Mesh_criteria_3_impl
 template < typename C3T3,
@@ -172,18 +189,19 @@ Mesh_criteria_3<C3t3> criteria (parameters::cell_radius_edge_ratio(2).
 
 */
 template <typename C3T3,
-          typename EdgeCriteria = Mesh_edge_criteria_3<C3T3>,
-          typename FacetCriteria = Mesh_facet_criteria_3<C3T3>,
-          typename CellCriteria = Mesh_cell_criteria_3<C3T3> >
+          typename EdgeCriteria = Mesh_edge_criteria_3<internal::get_c3t3_t<C3T3>>,
+          typename FacetCriteria = Mesh_facet_criteria_3<internal::get_c3t3_t<C3T3>>,
+          typename CellCriteria = Mesh_cell_criteria_3<internal::get_c3t3_t<C3T3>> >
 class Mesh_criteria_3
 #ifndef DOXYGEN_RUNNING
-  : public internal::Mesh_criteria_3_impl< C3T3,
+  : public internal::Mesh_criteria_3_impl< internal::get_c3t3_t<C3T3>,
                                            EdgeCriteria,
                                            FacetCriteria,
                                            CellCriteria >
 #endif
 {
-  typedef internal::Mesh_criteria_3_impl< C3T3,
+  typedef internal::get_c3t3_t<C3T3> C3t3;
+  typedef internal::Mesh_criteria_3_impl< C3t3,
                                           EdgeCriteria,
                                           FacetCriteria,
                                           CellCriteria>   Base;
@@ -196,18 +214,18 @@ public:
 /*!
 The criteria for edges.
 */
-typedef Mesh_edge_criteria_3<C3T3> Edge_criteria;
+typedef Mesh_edge_criteria_3<C3t3> Edge_criteria;
 
 /*!
 The criteria for facets.
 */
-typedef Mesh_facet_criteria_3<C3T3> Facet_criteria;
+typedef Mesh_facet_criteria_3<C3t3> Facet_criteria;
 
 /*!
 The
 criteria for cells.
 */
-typedef Mesh_cell_criteria_3<C3T3> Cell_criteria;
+typedef Mesh_cell_criteria_3<C3t3> Cell_criteria;
 
 /// @}
 #else

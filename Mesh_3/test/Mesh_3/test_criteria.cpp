@@ -38,7 +38,8 @@ struct Tester
   typedef typename CGAL::Mesh_triangulation_3<Mesh_traits>::type Tr;
   typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 
-  typedef CGAL::Mesh_criteria_3<C3t3> Mesh_criteria;
+  typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria; // the template parameter is `Tr` on purpose,
+                                                   // to test the backward compatibility
   typedef typename Mesh_criteria::Facet_criteria Facet_criteria;
   typedef typename Mesh_criteria::Cell_criteria Cell_criteria;
 
