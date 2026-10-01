@@ -277,7 +277,7 @@ void run(char* P_fname, char* Q_fname, int k,
 int main(int argc,char** argv)
 {
   // Check if DerivedMesh is correctly identified
-  assert( CGAL::is_surface_mesh<Surface_mesh>::value );
+  static_assert( CGAL::is_surface_mesh<Surface_mesh>::value );
 
   if (argc<3){
     std::cerr << "Usage "<< argv[0] << " file1.off file2.off [scenario_id/ALL] [0/1 0/1 0/1 0/1 (expected valid operations U I P-Q Q-P)]\n";

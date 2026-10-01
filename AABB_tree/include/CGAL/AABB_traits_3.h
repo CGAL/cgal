@@ -757,10 +757,7 @@ private:
 
   Bounding_box compute_bbox(const Primitive& pr, const Default&)const
   {
-    if constexpr(std::is_same_v<typename Primitive::Datum, Bbox_3>)
-      return internal::Primitive_helper<AT>::get_datum(pr,*this);
-    else
-      return internal::Primitive_helper<AT>::get_datum(pr,*this).bbox();
+    return internal::Primitive_helper<AT>::get_datum(pr,*this).bbox();
   }
 
   /// Comparison functions
