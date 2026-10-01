@@ -314,7 +314,8 @@ struct Read_write_index<Indices_types, std::variant<Args...>> {
     return variants[dimension < 0 ? 0 : 3-dimension];
   }
 
-  void operator()(std::ostream& os, int, Index index) const {
+  void operator()(std::ostream& os, [[maybe_unused]]int dimension, Index index) const {
+    CGAL_assertion(index.index() == get_index(dimension, index_seq{}).index());
     Variant_write_visitor visitor{os};
     std::visit(visitor, index);
   }
