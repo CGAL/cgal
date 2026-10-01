@@ -310,7 +310,7 @@ bool read_MEDIT(std::istream& is,
       for(int i = 0; i < nedges; ++i)
       {
         int n[2];
-        Curve_index curve_index = 0;
+        /* AF: was Curve_index*/ int  curve_index = 0;
         if(!(is >> n[0] >> n[1] >> curve_index))
         {
           if(verbose)

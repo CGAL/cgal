@@ -503,7 +503,10 @@ struct Medit_pmap_generator<C3T3, USE_SUBDOMAIN_INDICES, RENUMBER_SURFACE_PATCH_
 // IO functions
 //-------------------------------------------------------
 
-template <class Tr, class Curve_index, class Corner_index, class CxEdgesOutputIterator>
+template<class Tr,
+         class Curve_index,
+         class Corner_index,
+         class CxEdgesOutputIterator>
 bool build_triangulation_from_file(std::istream& is,
                                    Tr& tr,
                                    const bool verbose,
@@ -516,45 +519,75 @@ bool build_triangulation_from_file(std::istream& is,
   using Subdomain_index = typename Tr::Cell::Subdomain_index;
   using Surface_patch_index = typename Tr::Cell::Surface_patch_index;
 
-  using Facet = std::array<int, 3>;        // 3 = id
+  using Facet        = std::array<int, 3>; // 3 = id
   using Tet_with_ref = std::array<int, 4>; // 4 = id
 
-  using Edge_with_index = CGAL::IO::internal::Edge_with_index<Curve_index>;
-  using Corner_with_index = CGAL::IO::internal::Corner_with_index<Corner_index>;
+  using Facet_with_index = CGAL::IO::internal::Facet_with_patch_index<Surface_patch_index>;
+  using Edge_with_index = CGAL::IO::internal::Edge_with_curve_index<Curve_index>;
+  using Corner_with_index = CGAL::IO::internal::Vertex_with_corner_index<Corner_index>;
 
   std::vector<Tet_with_ref> finite_cells;
   std::vector<Subdomain_index> subdomains;
   std::vector<Point_3> points;
-  boost::unordered_map<Facet, Surface_patch_index> border_facets;
+
+  std::vector<Facet_with_index> facet_indices;
   std::vector<Edge_with_index> edge_indices;
   std::vector<Corner_with_index> corner_indices;
 
   bool is_CGAL_mesh = false;
-  if(verbose) {
+
+  if(verbose){
     std::cout << "Reading .mesh file..." << std::endl;
     std::cout << "Replace domain #0 = " << replace_domain_0 << std::endl;
     std::cout << "Allow non-manifoldness = " << allow_non_manifold << std::endl;
   }
 
   bool ok = CGAL::IO::internal::read_MEDIT(is, points, finite_cells, subdomains,
-                                           border_facets, true,
-                                           edge_indices, corner_indices,
-                                           verbose, is_CGAL_mesh);
-  if(!ok) {
+                                           facet_indices, true,
+                                           edge_indices, true,
+                                           corner_indices, true,
+                                           verbose,
+                                           is_CGAL_mesh);
+  if(!ok){
     return false;
+  }
+
+  boost::unordered_map<Facet, Surface_patch_index> border_facets;
+  border_facets.reserve(facet_indices.size());
+
+  bool has_negative_surface_patch_ids = false;
+  Surface_patch_index max_surface_patch_id{0};
+
+  for (const Facet_with_index& fi : facet_indices)
+  {
+    if (fi.surface_patch_index<0)
+      has_negative_surface_patch_ids=true;
+    max_surface_patch_id=(std::max)(max_surface_patch_id, fi.surface_patch_index);
+    border_facets.emplace(CGAL::make_array(fi.v0, fi.v1, fi.v2), fi.surface_patch_index);
+  }
+
+  if(has_negative_surface_patch_ids)
+  {
+    if(verbose)
+      std::cerr << "Warning: negative surface patch ids" << std::endl;
+    for(auto& facet_and_patch_id  : border_facets) {
+      if(facet_and_patch_id.second < 0)
+        facet_and_patch_id.second = max_surface_patch_id - facet_and_patch_id.second;
+    }
   }
 
   if(!is_CGAL_mesh)
     tr.may_have_badly_oriented_cells(true);
 
-  return CGAL::SMDS_3::build_triangulation_with_subdomains_range(
-      tr, points, finite_cells,
-      subdomains, border_facets, edge_indices, corner_indices,
-      cx_edges_oit,
-      verbose,
-      replace_domain_0 && !is_CGAL_mesh,
-      allow_non_manifold,
-      allow_negative_orientation);
+  return build_triangulation_with_subdomains_range(tr,
+                                                   points, finite_cells, subdomains, border_facets,
+                                                   edge_indices,
+                                                   corner_indices,
+                                                   cx_edges_oit,
+                                                   verbose,
+                                                   replace_domain_0 && !is_CGAL_mesh,
+                                                   allow_non_manifold,
+                                                   allow_negative_orientation);
 }
 
 template <class Tr,
