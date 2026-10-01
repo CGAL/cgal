@@ -17,28 +17,31 @@
 #include <CGAL/license/SMDS_3.h>
 
 #include <CGAL/SMDS_3/Mesh_complex_3_in_triangulation_3_fwd.h>
-#include <CGAL/Mesh_complex_3_in_triangulation_3.h>
+#include <CGAL/SMDS_3/utilities.h>
 #include <CGAL/IO/MEDIT.h>
 #include <CGAL/SMDS_3/tet_soup_to_c3t3.h>
 
 #include <CGAL/basic.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Has_member.h>
+#include <CGAL/iterator.h>
 #include <CGAL/Named_function_parameters.h>
+#include <CGAL/tags.h>
 #include <CGAL/utility.h>
 
 #include <boost/unordered_map.hpp>
 
+#include <algorithm>
 #include <iomanip>
 #include <iostream>
 #include <map>
 #include <set>
+#include <sstream>
 #include <string>
 #include <vector>
 #include <unordered_map>
 #include <type_traits>
 #include <utility>
-#include <variant> //for std::visit
 
 namespace CGAL {
 

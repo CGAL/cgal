@@ -24,9 +24,9 @@
 #include <CGAL/enum.h>
 #include <CGAL/IO/MEDIT.h>
 #include <CGAL/iterator.h>
-#include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/utility.h>
 #include <CGAL/value_type_traits.h>
+#include <CGAL/SMDS_3/utilities.h>
 
 #include <boost/unordered/unordered_map_fwd.hpp>
 #include <boost/unordered_map.hpp>
@@ -45,40 +45,6 @@
 #include <type_traits>
 
 namespace CGAL {
-
-namespace SMDS_3_internal {
-template <typename T, typename = void>
-struct Has_in_dimension : std::false_type
-{};
-
-template <typename T>
-struct Has_in_dimension<T, std::void_t<decltype(std::declval<T>().in_dimension())>>
-  : std::true_type
-{};
-
-template <typename T, typename = void>
-struct Has_is_corner : std::false_type
-{};
-
-template <typename T>
-struct Has_is_corner<T, std::void_t<decltype(std::declval<T>().is_corner())>>
-  : std::true_type
-{};
-
-template <typename Tr>
-bool is_corner(const typename Tr::Vertex_handle v, const Tr&)
-{
-  using V = typename Tr::Triangulation_data_structure::Vertex;
-
-  if constexpr(Has_in_dimension<V>::value)
-    return v->in_dimension() == 0;
-  else if constexpr(Has_is_corner<V>::value)
-    return v->ccdt_3_data().is_corner();
-  else
-    return false;
-}
-
-} // namespace SMDS_3_internal
 
 namespace SMDS_3 {
 
