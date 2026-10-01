@@ -22,6 +22,7 @@
 #include <CGAL/AABB_tree.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/iterator.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Default.h>
 #include <CGAL/enum.h>
 #include <CGAL/number_utils.h>
@@ -2909,6 +2910,42 @@ public:
   /// \name Nearest Face Location Queries
   /// @{
 
+  static bool snap_coordinates_to_border(Barycentric_coordinates& coords,
+                                         const FT tolerance = std::numeric_limits<FT>::epsilon())
+  {
+    // To still keep a sum roughly equals to 1, keep in memory the small changes
+    FT residue(0);
+    bool snapped = false;
+
+    for(int i=0; i<3; ++i)
+    {
+      if(CGAL::abs(coords[i]) <= tolerance)
+      {
+        snapped = true;
+        residue += coords[i];
+        coords[i] = FT(0);
+      }
+      else if(CGAL::abs(FT(1) - coords[i]) <= tolerance)
+      {
+        snapped = true;
+        residue -= FT(1) - coords[i];
+        coords[i] = FT(1);
+      }
+    }
+
+    // Dump the residue into one of the barycentric values that is neither 0 nor 1
+    for(int i=0; i<3; ++i)
+    {
+      if(coords[i] != FT(0) && coords[i] != FT(1))
+      {
+        coords[i] += residue;
+        break;
+      }
+    }
+
+    return snapped;
+  }
+
   /*!
   \brief returns the nearest face location to the given point.
     Note that this will (re-)build an `AABB_tree` on each call. If you need
@@ -2916,30 +2953,60 @@ public:
     copy of the `AABB_tree`, and use the overloads of this function
     that accept a reference to an `AABB_tree` as input.
 
-  \details The following static overload is also available:
-    - `static Face_location locate(const %Point_3& p, const Triangle_mesh& tm, Vertex_point_map vertexPointMap, const Traits& traits = Traits())`
-
   \tparam AABBTraits a model of `AABBTraits`, used to define a \cgal `AABB_tree`
+  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   \param p a point to locate on the input face graph
+  \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+
+  \cgalNamedParamsBegin
+    \cgalParamNBegin{snapping_tolerance}
+      \cgalParamDescription{a tolerance value used to snap barycentric coordinates}
+      \cgalParamType{double}
+      \cgalParamDefault{`0`}
+      \cgalParamExtra{Depending on the geometric traits used, the computation of the barycentric coordinates
+                      might be an inexact construction, thus leading to sometimes surprising values
+                      (e.g. a triplet `[0.5, 0.5, -1-e17]` for a point at the middle of an edge).
+                      The coordinates will be snapped towards `0` and `1` if the difference is smaller
+                      than the tolerance value, while still ensuring that the total sum of the coordinates is `1`.}
+    \cgalParamNEnd
+  \cgalNamedParamsEnd
   */
-  template <class AABBTraits>
-  Face_location locate(const Point_3& p) const
+  template <class AABBTraits, class NamedParameters = parameters::Default_named_parameters>
+  Face_location locate(const Point_3& p,
+                      const NamedParameters& np = parameters::default_values()) const
   {
-    return locate<AABBTraits>(p, m_graph, m_vertexPointMap, m_traits);
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+
+    const FT snap_tolerance = choose_parameter(get_parameter(np, internal_np::snapping_tolerance), FT(0));
+
+    return locate<AABBTraits>(p, m_graph,
+                              parameters::vertex_point_map(m_vertexPointMap)
+                                         .geom_traits(m_traits)
+                                         .snapping_tolerance(snap_tolerance));
   }
 
   /// \cond
 
-  template <class AABBTraits>
+  template <class AABBTraits, class NamedParameters = parameters::Default_named_parameters>
   static Face_location locate(const Point_3& p,
                               const Triangle_mesh& tm,
-                              Vertex_point_map vertexPointMap,
-                              const Traits& traits = Traits())
+                              const NamedParameters& np = parameters::default_values())
   {
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+
+    Vertex_point_map vpm = choose_parameter(get_parameter(np, internal_np::vertex_point), get(CGAL::vertex_point, tm));
+    Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
+    const FT snap_tolerance = choose_parameter(get_parameter(np, internal_np::snapping_tolerance), FT(0));
+
     AABB_tree<AABBTraits> tree;
-    build_aabb_tree(tm, tree, vertexPointMap);
-    return locate(p, tree, tm, vertexPointMap, traits);
+    build_aabb_tree(tm, tree, vpm);
+    return locate<AABBTraits>(p, tree, tm,
+                              parameters::vertex_point_map(vpm)
+                                         .geom_traits(traits)
+                                         .snapping_tolerance(snap_tolerance));
   }
 
   /// \endcond
@@ -2947,37 +3014,69 @@ public:
   /*!
   \brief returns the face location nearest to the given point.
 
-  \details The following static overload is also available:
-    - static Face_location locate(const %Point_3& p, const AABB_tree<AABBTraits>& tree, const Triangle_mesh& tm, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
-
   \tparam AABBTraits A model of `AABBTraits`, used to define a \cgal `AABB_tree`
+  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   \param p a point to locate on the input face graph
   \param tree an `AABB_tree` containing the triangular faces of the input surface mesh to perform the point location with
+  \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+
+  \cgalNamedParamsBegin
+    \cgalParamNBegin{snapping_tolerance}
+      \cgalParamDescription{a tolerance value used to snap barycentric coordinates}
+      \cgalParamType{double}
+      \cgalParamDefault{`0`}
+      \cgalParamExtra{Depending on the geometric traits used, the computation of the barycentric coordinates
+                      might be an inexact construction, thus leading to sometimes surprising values
+                      (e.g. a triplet `[0.5, 0.5, -1-e17]` for a point at the middle of an edge).
+                      The coordinates will be snapped towards `0` and `1` if the difference is smaller
+                      than the tolerance value, while still ensuring that the total sum of the coordinates is `1`.}
+    \cgalParamNEnd
+  \cgalNamedParamsEnd
   */
-  template <class AABBTraits>
+  template <class AABBTraits, class NamedParameters = parameters::Default_named_parameters>
   Face_location locate(const Point_3& p,
-                       const AABB_tree<AABBTraits>& tree) const
+                       const AABB_tree<AABBTraits>& tree,
+                       const NamedParameters& np = parameters::default_values()) const
   {
-    return locate(p, tree, m_graph, m_vertexPointMap, m_traits);
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+
+    const FT snap_tolerance = choose_parameter(get_parameter(np, internal_np::snapping_tolerance), FT(0));
+
+    return locate<AABBTraits>(p, tree, m_graph,
+                              parameters::vertex_point_map(m_vertexPointMap)
+                                         .geom_traits(m_traits)
+                                         .snapping_tolerance(snap_tolerance));
   }
 
   /// \cond
 
-  template <class AABBTraits>
+  template <class AABBTraits, class NamedParameters = parameters::Default_named_parameters>
   static Face_location locate(const Point_3& p,
                               const AABB_tree<AABBTraits>& tree,
                               const Triangle_mesh& tm,
-                              Vertex_point_map vertexPointMap,
-                              const Traits& traits = Traits())
+                              const NamedParameters& np = parameters::default_values())
   {
-    typename Traits::Construct_barycentric_coordinates_in_triangle_3 cbcit3(traits.construct_barycentric_coordinates_in_triangle_3_object());
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+
+    Vertex_point_map vpm = choose_parameter(get_parameter(np, internal_np::vertex_point), get(CGAL::vertex_point, tm));
+    Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
+    const FT snap_tolerance = choose_parameter(get_parameter(np, internal_np::snapping_tolerance), FT(0));
+
+    typename Traits::Construct_barycentric_coordinates_in_triangle_3 cbcit3(
+      traits.construct_barycentric_coordinates_in_triangle_3_object());
     typename AABB_tree<AABBTraits>::Point_and_primitive_id result = tree.closest_point_and_primitive(p);
 
     std::cout << "cp = " << result.first << std::endl;
 
     face_descriptor f = result.second;
-    Barycentric_coordinates b = cbcit3(triangle_from_face(f, tm, vertexPointMap), result.first);
+    Barycentric_coordinates b = cbcit3(triangle_from_face(f, tm, vpm), result.first);
+
+    if (snap_tolerance != FT(0))
+      snap_coordinates_to_border(b, snap_tolerance);
+
     return Face_location(f, b);
   }
 
@@ -2990,30 +3089,60 @@ public:
     copy of the `AABB_tree`, and use the overloads of this function
     that accept a reference to an `AABB_tree` as input.
 
-  \details The following static overload is also available:
-    - `static Face_location locate(const %Ray_3& ray, const Triangle_mesh& tm, Vertex_point_map vertexPointMap, const Traits& traits = Traits())`
-
   \tparam AABBTraits a model of `AABBTraits`, used to define an `AABB_tree`.
+  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   \param ray a ray to intersect with the input face graph
+  \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+
+  \cgalNamedParamsBegin
+    \cgalParamNBegin{snapping_tolerance}
+      \cgalParamDescription{a tolerance value used to snap barycentric coordinates}
+      \cgalParamType{double}
+      \cgalParamDefault{`0`}
+      \cgalParamExtra{Depending on the geometric traits used, the computation of the barycentric coordinates
+                      might be an inexact construction, thus leading to sometimes surprising values
+                      (e.g. a triplet `[0.5, 0.5, -1-e17]` for a point at the middle of an edge).
+                      The coordinates will be snapped towards `0` and `1` if the difference is smaller
+                      than the tolerance value, while still ensuring that the total sum of the coordinates is `1`.}
+    \cgalParamNEnd
+  \cgalNamedParamsEnd
   */
-  template <class AABBTraits>
-  Face_location locate(const Ray_3& ray) const
+  template <class AABBTraits, class NamedParameters = parameters::Default_named_parameters>
+  Face_location locate(const Ray_3& ray,
+                       const NamedParameters& np = parameters::default_values()) const
   {
-    return locate<AABBTraits>(ray, m_graph, m_vertexPointMap, m_traits);
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+
+    const FT snap_tolerance = choose_parameter(get_parameter(np, internal_np::snapping_tolerance), FT(0));
+
+    return locate<AABBTraits>(ray, m_graph,
+                              parameters::vertex_point_map(m_vertexPointMap)
+                                         .geom_traits(m_traits)
+                                         .snapping_tolerance(snap_tolerance));
   }
 
   /// \cond
 
-  template <class AABBTraits>
+  template <class AABBTraits, class NamedParameters = parameters::Default_named_parameters>
   static Face_location locate(const Ray_3& ray,
                               const Triangle_mesh& tm,
-                              Vertex_point_map vertexPointMap,
-                              const Traits& traits = Traits())
+                              const NamedParameters& np = parameters::default_values())
   {
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+
+    Vertex_point_map vertexPointMap = choose_parameter(get_parameter(np, internal_np::vertex_point), get(CGAL::vertex_point, tm));
+    Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
+    const FT snap_tolerance = choose_parameter(get_parameter(np, internal_np::snapping_tolerance), FT(0));
+
     AABB_tree<AABBTraits> tree;
     build_aabb_tree(tm, tree, vertexPointMap);
-    return locate(ray, tree, tm, vertexPointMap, traits);
+    return locate<AABBTraits>(ray, tree, tm,
+                              parameters::vertex_point_map(vertexPointMap)
+                                         .geom_traits(traits)
+                                         .snapping_tolerance(snap_tolerance));
   }
 
   /// \endcond
@@ -3021,34 +3150,64 @@ public:
   /*!
   \brief returns the face location along `ray` nearest to its source point.
 
-  \details The following static overload is also available:
-    - static Face_location locate(const %Ray_3& ray, const AABB_tree<AABBTraits>& tree, const Triangle_mesh& tm, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
-
   \tparam AABBTraits a model of `AABBTraits`, used to define a \cgal `AABB_tree`
+  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   \param ray a ray to intersect with the input face graph
   \param tree a `AABB_tree` containing the triangular faces of the input surface mesh to perform the point location with
+  \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+
+  \cgalNamedParamsBegin
+    \cgalParamNBegin{snapping_tolerance}
+      \cgalParamDescription{a tolerance value used to snap barycentric coordinates}
+      \cgalParamType{double}
+      \cgalParamDefault{`0`}
+      \cgalParamExtra{Depending on the geometric traits used, the computation of the barycentric coordinates
+                      might be an inexact construction, thus leading to sometimes surprising values
+                      (e.g. a triplet `[0.5, 0.5, -1-e17]` for a point at the middle of an edge).
+                      The coordinates will be snapped towards `0` and `1` if the difference is smaller
+                      than the tolerance value, while still ensuring that the total sum of the coordinates is `1`.}
+    \cgalParamNEnd
+  \cgalNamedParamsEnd
   */
-  template <class AABBTraits>
+  template <class AABBTraits, class NamedParameters = parameters::Default_named_parameters>
   Face_location locate(const Ray_3& ray,
-                       const AABB_tree<AABBTraits>& tree) const
+                       const AABB_tree<AABBTraits>& tree,
+                       const NamedParameters& np = parameters::default_values()) const
   {
-    return locate(ray, tree, m_graph, m_vertexPointMap, m_traits);
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+
+    const FT snap_tolerance = choose_parameter(get_parameter(np, internal_np::snapping_tolerance), FT(0));
+
+    return locate(ray, tree, m_graph,
+                  parameters::vertex_point_map(m_vertexPointMap)
+                             .geom_traits(m_traits)
+                             .snapping_tolerance(snap_tolerance));
   }
 
   /// \cond
 
-  template <class AABBTraits>
+  template <class AABBTraits, class NamedParameters = parameters::Default_named_parameters>
   static Face_location locate(const Ray_3& ray,
                               const AABB_tree<AABBTraits>& tree,
                               const Triangle_mesh& tm,
-                              Vertex_point_map vertexPointMap,
-                              const Traits& traits = Traits())
+                              const NamedParameters& np = parameters::default_values())
   {
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+
+    Vertex_point_map vertexPointMap = choose_parameter(get_parameter(np, internal_np::vertex_point), get(CGAL::vertex_point, tm));
+    Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
+    const FT snap_tolerance = choose_parameter(get_parameter(np, internal_np::snapping_tolerance), FT(0));
+
     typedef AABB_tree<AABBTraits> AABB_face_graph_tree;
-    typename Traits::Construct_barycentric_coordinates_in_triangle_3 cbcit3(traits.construct_barycentric_coordinates_in_triangle_3_object());
-    typename Traits::Construct_barycentric_coordinates cbc(traits.construct_barycentric_coordinates_object());
-    typename Traits::Compute_squared_distance_3 csd3(traits.compute_squared_distance_3_object());
+    typename Traits::Construct_barycentric_coordinates_in_triangle_3 cbcit3(
+      traits.construct_barycentric_coordinates_in_triangle_3_object());
+    typename Traits::Construct_barycentric_coordinates cbc(
+      traits.construct_barycentric_coordinates_object());
+    typename Traits::Compute_squared_distance_3 csd3(
+      traits.compute_squared_distance_3_object());
     typedef typename AABB_face_graph_tree::template Intersection_and_primitive_id<Ray_3>::Type Intersection_type;
     typedef std::optional<Intersection_type> Ray_intersection;
 
@@ -3085,6 +3244,8 @@ public:
     if (foundOne)
     {
       Barycentric_coordinates b = cbcit3(triangle_from_face(nearestFace, tm, vertexPointMap), nearestPoint);
+      if (snap_tolerance != FT(0))
+        snap_coordinates_to_border(b, snap_tolerance);
       return Face_location(nearestFace, b);
     }
     else
