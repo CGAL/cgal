@@ -49,7 +49,6 @@ struct My_visitor : SMS::Edge_collapse_visitor_base<Surface>
   void OnCollected(const Profile&, const std::optional<double>&)
   {
     ++(stats->collected);
-    std::cerr << "\rEdges collected: " << stats->collected << std::endl;
   }
 
   // Called during the processing phase for each edge selected.

@@ -3,10 +3,9 @@
 
 #include <CGAL/Surface_mesh.h>
 
-#define CGAL_CHECK_EXPENSIVE
-
-#define CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE 5
-#define CGAL_SURFACE_SIMPLIFICATION_ENABLE_LT_TRACE 4
+// #define CGAL_CHECK_EXPENSIVE
+// #define CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE 5
+// #define CGAL_SURFACE_SIMPLIFICATION_ENABLE_LT_TRACE 4
 
 void Surface_simplification_external_trace(const std::string& s)
 {
