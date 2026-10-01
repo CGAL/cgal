@@ -164,6 +164,7 @@ bool build_finite_cells(Tr& tr,
 {
   typedef typename Tr::Vertex_handle                            Vertex_handle;
   typedef typename Tr::Cell_handle                              Cell_handle;
+  typedef typename FacetPatchMap::value_type                    Surface_patch_index;
 
   bool success = true;
 
@@ -242,21 +243,21 @@ bool build_finite_cells(Tr& tr,
         }
         while(facet[0] != n0);
 
-//        typename FacetPatchMap::const_iterator it = border_facets.find(facet);
-//        if(it != border_facets.end())
-//        {
-//          c->set_surface_patch_index(j, it->second);
-//        }
-//        else
-//        {
-//          std::swap(facet[1], facet[2]); // facet[0] is still the smallest, no need to rotate again
-//
-//          it = border_facets.find(facet);
-//          if(it != border_facets.end())
-//            c->set_surface_patch_index(j, it->second);
+        typename FacetPatchMap::const_iterator it = border_facets.find(facet);
+        if(it != border_facets.end())
+        {
+          c->set_surface_patch_index(j, it->second);
+        }
+        else
+        {
+          std::swap(facet[1], facet[2]); // facet[0] is still the smallest, no need to rotate again
+
+          it = border_facets.find(facet);
+          if(it != border_facets.end())
+            c->set_surface_patch_index(j, it->second);
 //          else
 //            c->set_surface_patch_index(j, Surface_patch_index());
-//        }
+        }
       }
     }
   }

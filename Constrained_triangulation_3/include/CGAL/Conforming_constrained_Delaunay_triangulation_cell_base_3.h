@@ -71,7 +71,9 @@ public:
 
   ///////// for C3T3 : dummy implementation for compilation purposes
   using Subdomain_index = int;
-  Subdomain_index subdomain_index() const { return 1; } // dummy value, not used in the implementation of CCDT
+  Subdomain_index subdomain_{};
+  Subdomain_index subdomain_index() const { return subdomain_; }
+  // dummy value, not used in the implementation of CCDT
   // todo : remove this function and the corresponding typedef, as they are not used in the implementation of CCDT, and
   // are only here to satisfy the requirements of the concept `SimplicialMeshCellBase_3`
   // for tetrahedral remeshing
@@ -81,6 +83,14 @@ public:
   bool is_cache_valid() const { return false;}
   void set_sliver_value(double) {}
   double sliver_value() const { return 0.; }
+
+  ///////// valid implementation
+  template<typename Surface_patch_index>
+  void set_surface_patch_index(const int i, const Surface_patch_index& patch)
+  {
+    this->ccdt_3_data().set_face_constraint_index(i, patch);
+  }
+
   ///////// end of for C3T3
 
   static std::string io_signature() {
