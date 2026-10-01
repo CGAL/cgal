@@ -2234,9 +2234,6 @@ void count_far_points(const C3t3& c3t3)
 template<typename Tr>
 bool are_cell_orientations_valid([[maybe_unused]] const Tr& tr)
 {
-#ifdef CGAL_T3_ALLOW_NEGATIVE_VOLUME
-  return true;
-#else
   typedef typename Tr::Geom_traits::Point_3 Point_3;
   typedef typename Tr::Facet                Facet;
 
@@ -2264,7 +2261,6 @@ bool are_cell_orientations_valid([[maybe_unused]] const Tr& tr)
     dump_facets(facets, "cells_with_negative_volume.polylines.txt");
   }
   return facets.empty();
-#endif
 }
 
 template<typename Tr>

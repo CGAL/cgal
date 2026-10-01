@@ -1090,7 +1090,9 @@ public:
 #endif
       );
     }
-    CGAL_expensive_assertion(CGAL::Tetrahedral_remeshing::debug::are_cell_orientations_valid(tr));
+    CGAL_expensive_assertion(
+      !tr.may_have_badly_oriented_cells() ||
+      CGAL::Tetrahedral_remeshing::debug::are_cell_orientations_valid(tr));
     ////   end if(!protect_boundaries)
 
     ////////////// INTERNAL VERTICES ///////////////////////
@@ -1104,7 +1106,9 @@ public:
 #endif
     );
 
-    CGAL_expensive_assertion(CGAL::Tetrahedral_remeshing::debug::are_cell_orientations_valid(tr));
+    CGAL_expensive_assertion(
+      !tr.may_have_badly_oriented_cells() ||
+      CGAL::Tetrahedral_remeshing::debug::are_cell_orientations_valid(tr));
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
     timer.stop();
