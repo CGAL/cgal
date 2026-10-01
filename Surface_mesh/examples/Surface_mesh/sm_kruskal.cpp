@@ -24,7 +24,7 @@ void kruskal(const Mesh& sm)
   boost::kruskal_minimum_spanning_tree(sm,
                                        std::back_inserter(mst));
 
-  std::ofstream out(" kruskal.wrl");
+  std::ofstream out("kruskal.wrl");
   out << "#VRML V2.0 utf8\n"
     "Shape {\n"
     "  appearance Appearance {\n"
