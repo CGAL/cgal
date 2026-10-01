@@ -374,7 +374,9 @@ private:
         const Subdomain_index new_index = (Subdomain_index() != index)
           ? index
           : default_subdomain;
-        m_c3t3.add_to_complex(cit, new_index);
+
+        if(Subdomain_index() != new_index)
+          m_c3t3.add_to_complex(cit, new_index);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
         ++nbc;
@@ -581,6 +583,9 @@ private:
       if (cid > max_index && cid != Subdomain_index())
         max_index = cid;
     }
+    if(max_index == (std::numeric_limits<Subdomain_index>::min)())
+      max_index = Subdomain_index();
+
     return max_index;
   }
 
