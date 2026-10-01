@@ -8,6 +8,7 @@
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/property_map.h>
 
+#include <CGAL/to_triangulation_3_complex.h>
 #include <CGAL/tetrahedral_remeshing.h>
 
 #include <CGAL/IO/File_medit.h>
@@ -72,7 +73,7 @@ int main(int argc, char* argv[])
     cell_radius_edge_ratio = 3, cell_size = 0.05);
 
   // Mesh generation
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria);
+  C3t3 c3t3_mesh_3 = CGAL::make_mesh_3<C3t3>(domain, criteria);
 
   // Property map of constraints
   Constraints_set constraints;
@@ -81,7 +82,7 @@ int main(int argc, char* argv[])
   Corners_set corners;
   Corners_pmap corners_pmap(corners);
 
-  Triangulation_3 tr = CGAL::convert_to_triangulation_3(std::move(c3t3),
+  auto c3t3 = CGAL::to_triangulation_3_complex(std::move(c3t3_mesh_3),
                       edge_is_constrained_map(constraints_pmap).
                       vertex_is_constrained_map(corners_pmap));
 
@@ -93,13 +94,13 @@ int main(int argc, char* argv[])
   //  Then the triangulation is copied and duplicated, and c3t3 remains as is.
 
   const double target_edge_length = 0.1;//coarsen the mesh
-  CGAL::tetrahedral_isotropic_remeshing(tr, target_edge_length,
+  CGAL::tetrahedral_isotropic_remeshing(c3t3, target_edge_length,
    number_of_iterations(5)
    .smooth_constrained_edges(true)
    .edge_is_constrained_map(constraints_pmap));
 
   std::ofstream out("out_remeshed.mesh");
-  CGAL::IO::write_MEDIT(out, tr);
+  CGAL::IO::write_MEDIT(out, c3t3);
   out.close();
 
   return EXIT_SUCCESS;
