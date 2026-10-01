@@ -16,6 +16,14 @@
 
 #include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
 
+#ifdef CGAL_LINKED_WITH_TBB
+#include <tbb/task_group.h>
+#endif
+
+#ifdef CGAL_BENCH_BOOL_OP_OUTPUT_CONSTRUCTION
+#include <CGAL/Real_timer.h>
+#endif
+
 namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace Corefinement {
@@ -327,6 +335,12 @@ auto fill_new_triangle_mesh(
   Vertex_to_vertex_map tm1_to_output_vertices = get(V2V_tag(), tm1, SM::null_vertex()),
                        tm2_to_output_vertices = get(V2V_tag(), tm2, SM::null_vertex());
 
+#ifdef CGAL_BENCH_BOOL_OP_OUTPUT_CONSTRUCTION
+  CGAL::Real_timer t, tt;
+  t.start(); tt.start();
+  std::cout << "Progress fill new triangle mesh" << std::endl;
+#endif
+
   output_shared_edges.reserve( std::accumulate(polylines.lengths.begin(), polylines.lengths.end(), std::size_t(0)) );
   std::size_t nb_polylines = polylines.lengths.size();
   for (std::size_t i=0; i < nb_polylines; ++i)
@@ -341,6 +355,11 @@ auto fill_new_triangle_mesh(
                       vpm1, vpm2, vpm_out,
                       output_shared_edges,
                       user_visitor);
+
+#ifdef CGAL_BENCH_BOOL_OP_OUTPUT_CONSTRUCTION
+  std::cout << "Import polylines: " << tt.time() << "s (" << t.time() << "s total)" << std::endl;
+  tt.reset();
+#endif
 
   // Get ids of patch to append
   std::vector<std::size_t> ids_of_patches_to_append_from_tm1;
@@ -358,9 +377,33 @@ auto fill_new_triangle_mesh(
     ids_of_patches_to_append_from_tm2.push_back(i);
   }
 
+#ifdef CGAL_LINKED_WITH_TBB
+  if constexpr(ConcurrencyTag::is_parallel){
+    tbb::task_group tasks;
+    tasks.run([&]{
+      tbb::parallel_for(std::size_t(0), ids_of_patches_to_append_from_tm1.size(), [&](std::size_t j){ patches_of_tm1.extract_patch(ids_of_patches_to_append_from_tm1[j]); });
+    });
+    tbb::parallel_for(std::size_t(0), ids_of_patches_to_append_from_tm2.size(), [&](std::size_t j){ patches_of_tm2.extract_patch(ids_of_patches_to_append_from_tm2[j]); });
+    tasks.wait();
+  }
+  else
+#endif
+  {
+    for (std::size_t i : ids_of_patches_to_append_from_tm1)
+      patches_of_tm1.extract_patch(i);
+    for (std::size_t i : ids_of_patches_to_append_from_tm2)
+      patches_of_tm2.extract_patch(i);
+  }
+
+#ifdef CGAL_BENCH_BOOL_OP_OUTPUT_CONSTRUCTION
+  std::cout << "Extract patches: " << tt.time() << "s (" << t.time() << "s total)" << std::endl;
+  tt.reset();
+#endif
+
   // Compute final sizes
   std::size_t nv = output.number_of_vertices(), ne = output.number_of_edges(), nf = output.number_of_faces();
   std::size_t tnv = output.number_of_vertices(), tne = output.number_of_edges(), tnf = output.number_of_faces();
+
   for (std::size_t i : ids_of_patches_to_append_from_tm1){
     tnv += patches_of_tm1[i].interior_vertices.size();
     tne += patches_of_tm1[i].interior_edges.size();
@@ -403,6 +446,10 @@ auto fill_new_triangle_mesh(
     ne += patches_of_tm1[i].interior_edges.size();
     nf += patches_of_tm1[i].faces.size();
   }
+#ifdef CGAL_BENCH_BOOL_OP_OUTPUT_CONSTRUCTION
+  std::cout << "Append patch of first mesh: " << tt.time() << "s (" << t.time() << "s total)" << std::endl;
+  tt.reset();
+#endif
 
   if(reverse_orientation_of_patches_from_tm1)
     process_borders_after_appending_patches<true>(output,
@@ -416,6 +463,10 @@ auto fill_new_triangle_mesh(
                                                    patches_of_tm1,
                                                    tm1_to_output_edges,
                                                    tm1_to_output_vertices);
+#ifdef CGAL_BENCH_BOOL_OP_OUTPUT_CONSTRUCTION
+    std::cout << "Process borders of first mesh: " << tt.time() << "s (" << t.time() << "s total)" << std::endl;
+    tt.reset();
+#endif
 
   for(std::size_t i : ids_of_patches_to_append_from_tm2){
     if(reverse_orientation_of_patches_from_tm2)
@@ -446,6 +497,10 @@ auto fill_new_triangle_mesh(
     ne += patches_of_tm2[i].interior_edges.size();
     nf += patches_of_tm2[i].faces.size();
   }
+#ifdef CGAL_BENCH_BOOL_OP_OUTPUT_CONSTRUCTION
+  std::cout << "Append patch of second mesh: " << tt.time() << "s (" << t.time() << "s total)" << std::endl;
+  tt.reset();
+#endif
 
   if(reverse_orientation_of_patches_from_tm2)
     process_borders_after_appending_patches<true>(output,
@@ -459,6 +514,10 @@ auto fill_new_triangle_mesh(
                                                    patches_of_tm2,
                                                    tm2_to_output_edges,
                                                    tm2_to_output_vertices);
+#ifdef CGAL_BENCH_BOOL_OP_OUTPUT_CONSTRUCTION
+    std::cout << "Process borders of second mesh: " << tt.time() << "s (" << t.time() << "s total)" << std::endl;
+    tt.reset();
+#endif
 }
 
 } // namespace Corefinement

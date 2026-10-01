@@ -761,12 +761,15 @@ struct Patch_container{
       patches[patch_ids[ get(fids, f) ]].faces.push_back( f );
   }
 
-  Patch_description<PolygonMesh>& operator[](std::size_t i) {
-    if ( !patches[i].is_initialized )
-    {
+  void extract_patch(std::size_t i) {
+    if ( !patches[i].is_initialized ) {
       extract_patch_simplices(pm, patches[i], is_intersection_edge);
       patches[i].is_initialized=true;
     }
+  }
+
+  Patch_description<PolygonMesh>& operator[](std::size_t i) {
+    extract_patch(i);
     return patches[i];
   }
 
