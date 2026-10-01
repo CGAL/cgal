@@ -39,17 +39,33 @@ do
   fi
 done
 
+start_group()
+{
+    local title=$1
+    if [ "$GITHUB_ACTIONS" = "true" ]; then
+        echo "::group::$title"
+    else
+        printf '\n## %s\n\n' "$title"
+    fi
+}
+
+end_group()
+{
+    if [ "$GITHUB_ACTIONS" = "true" ]; then
+        echo "::endgroup::"
+    fi
+}
+
+# Runs a command inside a collapsible group. If the command fails while
+# running in GitHub Actions, compiler/linker diagnostics from its output
+# are also appended to $GITHUB_STEP_SUMMARY.
 group()
 {
     local title=$1
     shift
     local status=0
     local log_file
-    if [ "$GITHUB_ACTIONS" = "true" ]; then
-        echo "::group::$title"
-    else
-        printf '\n## %s\n\n' "$title"
-    fi
+    start_group "$title"
     if [ "$GITHUB_ACTIONS" = "true" ] && [ -n "$GITHUB_STEP_SUMMARY" ]; then
         log_file=$(mktemp) || return $?
         if (set -o pipefail; "$@" 2>&1 | tee "$log_file"); then
@@ -74,9 +90,7 @@ group()
     else
         "$@" || status=$?
     fi
-    if [ "$GITHUB_ACTIONS" = "true" ]; then
-        echo "::endgroup::"
-    fi
+    end_group
     return "$status"
 }
 
@@ -87,6 +101,7 @@ if [ -n "$DO_CHECK_HEADERS" ]; then
 fi
 group "Collect package dependencies" cmake --build . -j"$(nproc --all)" --target packages_dependencies ${CMAKE_DEBUG_OPT:+"$CMAKE_DEBUG_OPT"} -- -k
 echo " Checks finished"
+start_group "Compare dependencies"
 for pkg_path in "$CGAL_ROOT"/*
 do
   pkg=$(basename "$pkg_path")
@@ -97,6 +112,7 @@ do
       TOTAL_RES="Differences in $pkg:\n$PKG_DIFF\n$TOTAL_RES"
     elif [ "$DIFF_STATUS" -ne 0 ]; then
       echo "Failed to compare dependencies for $pkg" >&2
+      end_group
       exit "$DIFF_STATUS"
     fi
     if [ -f "$pkg_path/package_info/$pkg/dependencies.old" ]; then
@@ -113,8 +129,24 @@ if [ -n "$TOTAL_RES" ]; then
   echo " You can run cmake with options \`CGAL_ENABLE_CHECK_HEADERS\` and \`CGAL_COPY_DEPENDENCIES\` set to \`ON\`"
   echo " then build the target \`packages_dependencies\` and commit the new dependencies files,"
   echo " or simply manually edit the problematic files."
+  if [ -n "$GITHUB_STEP_SUMMARY" ]; then
+    {
+      printf 'Dependency check failed\n\n```diff\n'
+      # shellcheck disable=SC2059
+      printf "$TOTAL_RES"
+      printf '```\n\n'
+      echo "You can run cmake with options \`CGAL_ENABLE_CHECK_HEADERS\` and \`CGAL_COPY_DEPENDENCIES\` set to \`ON\`,"
+      echo "then build the target \`packages_dependencies\` and commit the new dependencies files,"
+      echo "or simply manually edit the problematic files."
+    } >> "$GITHUB_STEP_SUMMARY"
+  fi
+  end_group
   exit 1
 else
   echo "The dependencies are up to date."
+  if [ -n "$GITHUB_STEP_SUMMARY" ]; then
+    echo "✅ The dependencies are up to date." >> "$GITHUB_STEP_SUMMARY"
+  fi
+  end_group
   exit 0
 fi
