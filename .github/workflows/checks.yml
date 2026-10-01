@@ -26,6 +26,6 @@ jobs:
 
     - name: Run checks
       run: |
-        zsh ${RUNNER_DEBUG:+-x} Scripts/developer_scripts/test_merge_of_branch HEAD >> $GITHUB_STEP_SUMMARY
+        bash ${RUNNER_DEBUG:+-x} Scripts/developer_scripts/test_merge_of_branch HEAD >> $GITHUB_STEP_SUMMARY
         #test dependencies
         bash ${RUNNER_DEBUG:+-x} Scripts/developer_scripts/cgal_check_dependencies.sh --check_headers /usr/bin/doxygen
