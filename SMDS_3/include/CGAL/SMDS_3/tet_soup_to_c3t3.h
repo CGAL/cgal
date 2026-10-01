@@ -24,9 +24,10 @@
 #include <CGAL/enum.h>
 #include <CGAL/IO/MEDIT.h>
 #include <CGAL/iterator.h>
+#include <CGAL/Mesh_complex_3_in_triangulation_3.h>
+#include <CGAL/SMDS_3/utilities.h>
 #include <CGAL/utility.h>
 #include <CGAL/value_type_traits.h>
-#include <CGAL/SMDS_3/utilities.h>
 
 #include <boost/unordered/unordered_map_fwd.hpp>
 #include <boost/unordered_map.hpp>
