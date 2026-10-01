@@ -23,6 +23,7 @@
 #include <utility>
 #include <vector>
 #include <array>
+#include <map>
 #include <boost/unordered_map.hpp>
 
 namespace CGAL {
@@ -35,26 +36,26 @@ namespace IO {
 namespace internal {
 
 template<typename SurfacePatchIndex>
-struct Facet_with_index
+struct Facet_with_patch_index
 {
   int v0, v1, v2;
   SurfacePatchIndex surface_patch_index;
 };
 
 template<typename CurveIndex>
-struct Edge_with_index
+struct Edge_with_curve_index
 {
   int v0, v1;
   CurveIndex curve_index;
 };
 
 template<typename CornerIndex>
-struct Corner_with_index
+struct Vertex_with_corner_index
 {
   int v;
   CornerIndex corner_index;
 
-  bool operator==(const Corner_with_index& rhs) const
+  bool operator==(const Vertex_with_corner_index& rhs) const
   {
     return (v == rhs.v) && (corner_index == rhs.corner_index);
   }
@@ -79,57 +80,63 @@ int get_two(const T& t)
 }
 
 template<typename CornerIndex>
-int get_zero(const Corner_with_index<CornerIndex>& t)
+int get_zero(const Vertex_with_corner_index<CornerIndex>& t)
 {
   return t.v;
 }
 
+template<typename CornerIndex>
+CornerIndex get_one(const Vertex_with_corner_index<CornerIndex>& t)
+{
+  return t.corner_index;
+}
+
 template<typename CurveIndex>
-int get_zero(const Edge_with_index<CurveIndex>& t)
+int get_zero(const Edge_with_curve_index<CurveIndex>& t)
 {
   return t.v0;
 }
 
 template<typename CurveIndex>
-int get_one(const Edge_with_index<CurveIndex>& t)
+int get_one(const Edge_with_curve_index<CurveIndex>& t)
 {
   return t.v1;
 }
 
 template<typename CurveIndex>
-CurveIndex get_two(const Edge_with_index<CurveIndex>& t)
+CurveIndex get_two(const Edge_with_curve_index<CurveIndex>& t)
 {
   return t.curve_index;
 }
 
 template<class PointRange,
-         class TetrahedronRange,
-         class FacetWithIndexRange, // either Facet_with_index or a tuple/array
-         class EdgeWithIndexRange, // either Edge_with_index or a tuple/array
-        class CornerWithIndexRange> // either Corner_with_index or a tuple/pair/array
+         class CellRange,
+         class FacetWithIndexRange, // either Facet_with_patch_index or a tuple/array
+         class EdgeWithIndexRange, // either Edge_with_curve_index or a tuple/array
+        class CornerWithIndexRange> // either Vertex_with_corner_index or a tuple/pair/array
 bool read_MEDIT(std::istream& is,
                 PointRange& points,
-                TetrahedronRange& tetrahedra,
-                std::vector<int>& subdomains,
-                FacetWithIndexRange& facets_with_index,
-                bool read_facets_with_index,
-                EdgeWithIndexRange& edges_with_index,
-                bool read_edges_with_index,
-                CornerWithIndexRange& corners_with_index,
-                bool read_corners_with_index,
+                CellRange& cells,
+                std::vector<int>& subdomain_indices,
+                FacetWithIndexRange& facets_with_patch_index,
+                bool read_facets_with_patch_index,
+                EdgeWithIndexRange& edges_with_curve_index,
+                bool read_edges_with_curve_index,
+                CornerWithIndexRange& vertices_with_corner_index,
+                bool read_vertices_with_corner_index,
                 bool verbose,
                 bool& is_CGAL_mesh)
 {
   using Point_3 = typename PointRange::value_type;
   using FT = typename Kernel_traits<Point_3>::Kernel::FT;
   using Facet        = std::array<int, 3>;
-  using Tet_with_ref = typename std::iterator_traits<typename TetrahedronRange::const_iterator>::value_type;
+  using Cell_with_ref = typename std::iterator_traits<typename CellRange::const_iterator>::value_type;
 
   if(!is)
     return false;
 
   int dim;
-  int nv, nf, ntet, ref, ncorners, nedges;
+  int nv, nf, ntet, ref, nvertices, nedges, nridges;
   int offset = static_cast<int>(points.size());
   std::string word;
 
@@ -185,14 +192,17 @@ bool read_MEDIT(std::istream& is,
           return false;
         }
         points.emplace_back(x,y,z);
+        if(ref != 0){
+           vertices_with_corner_index.push_back({offset + i, ref});
+        }
       }
     }
 
     if(line.find("Triangles") != std::string::npos)
     {
-      if(read_facets_with_index){
+      if(read_facets_with_patch_index){
         is >> nf;
-        CGAL::internal::reserve(facets_with_index, nf);
+        CGAL::internal::reserve(facets_with_patch_index, nf);
 
         if(verbose)
           std::cerr << "Reading "<< nf << " triangles" << std::endl;
@@ -228,7 +238,7 @@ bool read_MEDIT(std::istream& is,
           {
             std::rotate(std::begin(facet), std::next(std::begin(facet)), std::end(facet));
           }
-          facets_with_index.push_back({facet[0], facet[1], facet[2], surface_patch_id});
+          facets_with_patch_index.push_back({facet[0], facet[1], facet[2], surface_patch_id});
         }
       }else{
         is >> nf;
@@ -242,7 +252,7 @@ bool read_MEDIT(std::istream& is,
       is >> ntet;
 
       if(verbose)
-        std::cerr << "Reading "<< ntet << " tetrahedra" << std::endl;
+        std::cerr << "Reading "<< ntet << " cells" << std::endl;
 
       for(int i=0; i<ntet; ++i)
       {
@@ -252,7 +262,7 @@ bool read_MEDIT(std::istream& is,
         if(!(is >> n[0] >> n[1] >> n[2] >> n[3] >> reference))
         {
           if(verbose)
-            std::cerr << "Issue while reading tetrahedra" << std::endl;
+            std::cerr << "Issue while reading cells" << std::endl;
           return false;
         }
 
@@ -266,54 +276,30 @@ bool read_MEDIT(std::istream& is,
               CGAL_warning(n[j] != n[k]);
         )
 
-        Tet_with_ref t;
+        Cell_with_ref t;
         t[0] = offset + n[0] - 1;
         t[1] = offset + n[1] - 1;
         t[2] = offset + n[2] - 1;
         t[3] = offset + n[3] - 1;
 
-        tetrahedra.push_back(t);
-        subdomains.push_back(reference);
+        cells.push_back(t);
+        subdomain_indices.push_back(reference);
       }
     }
 
     if(line.find("Corners") != std::string::npos)
     {
-      if(read_corners_with_index){
-        is >> ncorners;
-        CGAL::internal::reserve(corners_with_index, ncorners);
-
-        if(verbose)
-          std::cerr << "Reading "<< ncorners << " corners" << std::endl;
-
-      if(verbose && ncorners == 0)
-        std::cerr << "Warning: Corners section is empty" << std::endl;
-
-      for(int i = 0; i < ncorners; ++i)
-      {
-        int n;
-        if(!(is >> n))
-        {
-          if(verbose)
-            std::cerr << "Issue while reading corners" << std::endl;
-          return false;
-        }
-        // typename CornerWithIndex::value_type cwi = {offset + n};
-        corners_with_index.push_back( {offset + n - 1 } );
-      }
-    }else{
-        is >> ncorners;
+        is >> nvertices;
         std::string buffer;
-        for(int i=0; i<ncorners; ++i)
+        for(int i=0; i<nvertices; ++i)
           std::getline(is, buffer);
     }
-  }
 
     if(line.find("Edges") != std::string::npos)
     {
-      if(read_edges_with_index){
+      if(read_edges_with_curve_index){
         is >> nedges;
-        CGAL::internal::reserve(edges_with_index, nedges);
+        CGAL::internal::reserve(edges_with_curve_index, nedges);
 
         if(verbose)
           std::cerr << "Reading "<< nedges << " edges" << std::endl;
@@ -330,11 +316,19 @@ bool read_MEDIT(std::istream& is,
             std::cerr << "Issue while reading edges" << std::endl;
           return false;
         }
-        edges_with_index.push_back({offset + n[0] - 1, offset + n[1] - 1, curve_index});
-        CGAL_assertion(edges_with_index.size() == static_cast<std::size_t>(i + 1));
+        edges_with_curve_index.push_back({offset + n[0] - 1, offset + n[1] - 1, curve_index});
+        CGAL_assertion(edges_with_curve_index.size() == static_cast<std::size_t>(i + 1));
       }
     }else{
         is >> nedges;
+        std::string buffer;
+        for(int i=0; i<nedges; ++i)
+          std::getline(is, buffer);
+    }
+
+    if(line.find("Ridges") != std::string::npos)
+    {
+        is >> nridges;
         std::string buffer;
         for(int i=0; i<nedges; ++i)
           std::getline(is, buffer);
@@ -346,16 +340,16 @@ bool read_MEDIT(std::istream& is,
   if (verbose)
   {
     std::cout << points.size() - std::size_t(offset) << " points" << std::endl;
-    std::cout << tetrahedra.size() << " cells" << std::endl;
-    std::cout << facets_with_index.size() << " border facets" << std::endl;
-    std::cout << edges_with_index.size() << " edges" << std::endl;
-    std::cout << corners_with_index.size() << " corners" << std::endl;
+    std::cout << cells.size() << " cells" << std::endl;
+    std::cout << facets_with_patch_index.size() << " border facets" << std::endl;
+    std::cout << edges_with_curve_index.size() << " edges" << std::endl;
+    std::cout << vertices_with_corner_index.size() << " vertices" << std::endl;
   }
 
-  if(tetrahedra.empty())
+  if(cells.empty())
     return false;
 
-  CGAL_assertion(tetrahedra.size() == subdomains.size());
+  CGAL_assertion(cells.size() == subdomain_indices.size());
 
   return true;
 }
@@ -367,49 +361,48 @@ bool read_MEDIT(std::istream& is,
 /*!
  * \ingroup PkgStreamSupportIoFuncsMEDIT
  *
- * \brief reads the content of `is` into `points` and `tetrahedra`  using the \ref IOStreamMedit
+ * \brief reads the content of `is` into `points` and `cells`  using the \ref IOStreamMedit
  *
  *
- * \attention The tetrahedron soup is not cleared, and the data from the stream are appended.
+ * \attention The cell soup is not cleared, and the data from the stream are appended.
  *
  * \tparam PointRange a model of the concept `BackInsertionSequence` whose value type is the point type
- * \tparam TetrahedronRange a model of the concept `BackInsertionSequence` whose `value_type` is `std::array<int,4>`
+ * \tparam CellRange a model of the concept `BackInsertionSequence` whose `value_type` is `std::array<int,4>`
  *
  * \param is the input stream
- * \param points points of the soup of tetrahedra
- * \param tetrahedra each element in it describes a tetrahedron
- * \param tetrahedra a range where each element is a tetrahedron described by indices into `points`
+ * \param points points of the soup of cells
+ * \param cells a range where each element is a cell described by indices into `points`
  *
  * \param np optional \ref bgl_namedparameters "Named Parameters" described below
  *
  * \cgalNamedParamsBegin
  *
- *   \cgalParamNBegin{subdomains}
+ *   \cgalParamNBegin{subdomain_indices}
  *     \cgalParamDescription{a non-const reference wrapper of a container of integers that will be filled by this function.
- *                           Each element in the container indicates the subdomain index of the corresponding tetrahedron at the same position.}
+ *                           Each element in the container indicates the subdomain index of the corresponding cell at the same position.}
  *     \cgalParamType{a `std::reference_wrapper` to a model of `BackInsertionSequence` able to store `int`.}
- *     \cgalParamDefault{subdomains are ignored}
+ *     \cgalParamDefault{subdomain_indices are ignored}
  *   \cgalParamNEnd
  *
- *   \cgalParamNBegin{facets_with_index}
+ *   \cgalParamNBegin{facets_with_patch_index}
  *     \cgalParamDescription{a non-const reference wrapper of a container of quadruples of integers that will be filled by this function.
  *                           Each element represents a facet with vertices corresponding to the three first integers, and the last integer being the surface patch index of the facet.}
  *     \cgalParamType{a `std::reference_wrapper` to a model of `BackInsertionSequence` with a value type constructible using a braced initializer list of four integers.}
  *     \cgalParamDefault{facets are ignored}
  *   \cgalParamNEnd
  *
- *   \cgalParamNBegin{edges_with_index}
+ *   \cgalParamNBegin{edges_with_curve_index}
  *     \cgalParamDescription{a non-const reference wrapper of a container of triples of integers that will be filled by this function.
  *                           Each element represents an edge with vertices corresponding  to the two first integers, and the last integer being the curve index of the edge.}
  *     \cgalParamType{a `std::reference_wrapper` to a model of `BackInsertionSequence`  with a value type constructible using a braced initializer list of three integers.}
  *     \cgalParamDefault{edges are ignored}
  *   \cgalParamNEnd
  *
- *   \cgalParamNBegin{corners_with_index}
+ *   \cgalParamNBegin{vertices_with_corner_index}
  *     \cgalParamDescription{a non-const reference wrapper of a container of pair of integers that will be filled by this function.
  *                           Each element represents a corner at the vertex corresponding to the first integer, and the last integer being the corner index.}
  *     \cgalParamType{a `std::reference_wrapper` to a model of `BackInsertionSequence`  with a value type constructible using a braced initializer list of two integers.}
- *     \cgalParamDefault{corners are ignored}
+ *     \cgalParamDefault{vertices are ignored}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{verbose}
@@ -425,10 +418,10 @@ bool read_MEDIT(std::istream& is,
  *  \see \ref IOStreamMedit
  */
 
-template<class PointRange, class TetrahedronRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
+template<class PointRange, class CellRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_MEDIT(std::istream& is,
                 PointRange& points,
-                TetrahedronRange& tetrahedra,
+                CellRange& cells,
                 const CGAL_NP_CLASS& np = parameters::default_values())
 {
   using parameters::choose_parameter;
@@ -437,39 +430,39 @@ bool read_MEDIT(std::istream& is,
 
   const bool verbose = choose_parameter(get_parameter(np, internal_np::verbose), false);
 
-  // subdomains
-  std::vector<int> default_subdomains;
-  using Subdomains = typename internal_np::Lookup_named_param_def<internal_np::subdomains_t, CGAL_NP_CLASS, std::vector<int>>::reference;
-  Subdomains subdomains = choose_parameter(get_parameter_reference(np, internal_np::subdomains), default_subdomains);
+  // subdomain_indices
+  std::vector<int> default_subdomain_indices;
+  using Subdomains = typename internal_np::Lookup_named_param_def<internal_np::subdomain_indices_t, CGAL_NP_CLASS, std::vector<int>>::reference;
+  Subdomains subdomain_indices = choose_parameter(get_parameter_reference(np, internal_np::subdomain_indices), default_subdomain_indices);
 
   // facets
-  std::vector<std::array<int, 4>> default_facets_with_index;
-  using Facets_with_index = typename internal_np::Lookup_named_param_def<internal_np::facets_with_index_t, CGAL_NP_CLASS, std::vector<std::array<int,4>>>::reference;
-  Facets_with_index facets_with_index = choose_parameter(get_parameter_reference(np, internal_np::facets_with_index), default_facets_with_index);
+  std::vector<std::array<int, 4>> default_facets_with_patch_index;
+  using Facets_with_patch_index = typename internal_np::Lookup_named_param_def<internal_np::facets_with_patch_index_t, CGAL_NP_CLASS, std::vector<std::array<int,4>>>::reference;
+  Facets_with_patch_index facets_with_patch_index = choose_parameter(get_parameter_reference(np, internal_np::facets_with_patch_index), default_facets_with_patch_index);
 
   // edges
-  std::vector<std::array<int, 3>> default_edges_with_index;
-  using Edges_with_index = typename internal_np::Lookup_named_param_def<internal_np::edges_with_index_t, CGAL_NP_CLASS, std::vector<std::array<int,3>>>::reference;
-  Edges_with_index edges_with_index = choose_parameter(get_parameter_reference(np, internal_np::edges_with_index), default_edges_with_index);
+  std::vector<std::array<int, 3>> default_edges_with_curve_index;
+  using Edges_with_curve_index = typename internal_np::Lookup_named_param_def<internal_np::edges_with_curve_index_t, CGAL_NP_CLASS, std::vector<std::array<int,3>>>::reference;
+  Edges_with_curve_index edges_with_curve_index = choose_parameter(get_parameter_reference(np, internal_np::edges_with_curve_index), default_edges_with_curve_index);
 
-  // corners
-  std::vector<std::array<int, 2>> default_corners_with_index;
-  using Corners_with_index = typename internal_np::Lookup_named_param_def<internal_np::corners_with_index_t, CGAL_NP_CLASS, std::vector<std::array<int,2>>>::reference;
-  Corners_with_index corners_with_index = choose_parameter(get_parameter_reference(np, internal_np::corners_with_index), default_corners_with_index);
+  // vertices
+  std::vector<std::array<int, 2>> default_vertices_with_corner_index;
+  using Vertices_with_corner_index = typename internal_np::Lookup_named_param_def<internal_np::vertices_with_corner_index_t, CGAL_NP_CLASS, std::vector<std::array<int,2>>>::reference;
+  Vertices_with_corner_index vertices_with_corner_index = choose_parameter(get_parameter_reference(np, internal_np::vertices_with_corner_index), default_vertices_with_corner_index);
 
 
-  constexpr bool is_facets_with_index_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::facets_with_index_t>::value;
+  constexpr bool is_facets_with_patch_index_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::facets_with_patch_index_t>::value;
 
-  constexpr bool is_edges_with_index_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::edges_with_index_t>::value;
+  constexpr bool is_edges_with_curve_index_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::edges_with_curve_index_t>::value;
 
-  constexpr bool is_corners_with_index_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::corners_with_index_t>::value;
+  constexpr bool is_vertices_with_corner_index_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::vertices_with_corner_index_t>::value;
 
   bool is_CGAL_mesh;
 
-  return internal::read_MEDIT(is, points, tetrahedra, subdomains,
-                              facets_with_index, is_facets_with_index_map,
-                              edges_with_index, is_facets_with_index_map,
-                              corners_with_index, is_corners_with_index_map,
+  return internal::read_MEDIT(is, points, cells, subdomain_indices,
+                              facets_with_patch_index, is_facets_with_patch_index_map,
+                              edges_with_curve_index, is_facets_with_patch_index_map,
+                              vertices_with_corner_index, is_vertices_with_corner_index_map,
                               verbose, is_CGAL_mesh);
 }
 
@@ -477,47 +470,47 @@ bool read_MEDIT(std::istream& is,
 /*!
  * \ingroup PkgStreamSupportIoFuncsMEDIT
  *
- * \brief writes a soup of indexed tetrahedra using the \ref IOStreamMedit
+ * \brief writes a soup of indexed cells using the \ref IOStreamMedit
  *
  * \tparam PointRange a model of the concept `ConstRange` whose value type is the point type
- * \tparam TetrahedronRange a model of the concept `ConstRange`
+ * \tparam CellRange a model of the concept `ConstRange`
  *                   whose `value_type` is a model of the concept `RandomAccessContainer`
  *                   whose `value_type` is `std::size_t`.
  *
  * \param os the output stream
- * \param points points of the soup of tetrahedra
- * \param tetrahedra a range where each element is a tetrahedron described by indices into `points`
+ * \param points points of the soup of cells
+ * \param cells a range where each element is a cell described by indices into `points`
  *
  * \param np optional \ref bgl_namedparameters "Named Parameters" described below
  *
  * \cgalNamedParamsBegin
- *   \cgalParamNBegin{subdomains}
- *     \cgalParamDescription{a const reference wrapper of a container of integers of the same size as `tetrahedra`.
- *                           Each element in the container indicates the subdomain index of the corresponding tetrahedron at the same position.}
+ *   \cgalParamNBegin{subdomain_indices}
+ *     \cgalParamDescription{a const reference wrapper of a container of integers of the same size as `cells`.
+ *                           Each element in the container indicates the subdomain index of the corresponding cell at the same position.}
  *     \cgalParamType{a `std::reference_wrapper` to a model of the concept `SequenceContainer` of integer.}
- *     \cgalParamDefault{all tetrahedra will be given the subdomain index `1`.}
+ *     \cgalParamDefault{all cells will be given the subdomain index `1`.}
  *   \cgalParamNEnd
  *
- *   \cgalParamNBegin{facets_with_index}
+ *   \cgalParamNBegin{facets_with_patch_index}
  *     \cgalParamDescription{a const reference wrapper of a container of quadruples of integers that will be written by this function.
  *                           Each element corresponds to a facet with vertices corresponding to the three first integers, and the last integer being the surface patch index of the facet.}
  *     \cgalParamType{a `std::reference_wrapper` to a model of `SequenceContainer` with a value type where the elements of the quadruples can be accessed with `std::get<int>()`}
  *     \cgalParamDefault{facets are not written}
  *   \cgalParamNEnd
  *
- *   \cgalParamNBegin{edges_with_index}
+ *   \cgalParamNBegin{edges_with_curve_index}
  *     \cgalParamDescription{a const reference wrapper of a container of triples of integers that will be written by this function.
  *                           Each element corresponds to an edge with vertices corresponding  to the two first integers, and the last integer being the curve index of the edge.}
  *     \cgalParamType{a `std::reference_wrapper` to a model of `SequenceContainer` with a value type where the elements of the triples can be accessed with `std::get<int>()`}
  *     \cgalParamDefault{edges are not written}
  *   \cgalParamNEnd
  *
- *   \cgalParamNBegin{corners_with_index}
+ *   \cgalParamNBegin{vertices_with_corner_index}
  *     \cgalParamDescription{a const reference wrapper of a container of pair of integers that will be written by this function.
  *                           Each element corresponds to a corner at the vertex corresponding to the first integer, the second integer being the corner index.
  *                           As Medit has no notion of corner indices it is not written.}
  *     \cgalParamType{a `std::reference_wrapper` to a model of `SequenceContainer` with a value type where the elements of the pairs can be accessed with `std::get<int>()`}
- *     \cgalParamDefault{corners are not written}
+ *     \cgalParamDefault{vertices are not written}
  *   \cgalParamNEnd
  *
  * \cgalNamedParamsEnd
@@ -526,13 +519,13 @@ bool read_MEDIT(std::istream& is,
  *
  *  \see \ref IOStreamMedit
  */
-template<class PointRange, class TetrahedronRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
+template<class PointRange, class CellRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_MEDIT(std::ostream& os,
                  const PointRange& points,
-                 const TetrahedronRange& tetrahedra,
+                 const CellRange& cells,
                  const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-                 , std::enable_if_t<!is_named_function_parameter<TetrahedronRange>>* = nullptr
+                 , std::enable_if_t<!is_named_function_parameter<CellRange>>* = nullptr
 #endif
                  )
 
@@ -547,46 +540,57 @@ bool write_MEDIT(std::ostream& os,
   if(!os)
     return false;
 
-  // subdomains
-  std::vector<int> default_subdomains;
-  std::vector<internal::Corner_with_index<int>> default_corners;
+  // subdomain_indices
+  std::vector<int> default_subdomain_indices;
+  std::vector<internal::Vertex_with_corner_index<int>> default_vertices;
   std::vector<std::array<int,3>> default_edges;
   std::vector<std::array<int,4>> default_facets;
 
-  using Subdomains = typename internal_np::Lookup_named_param_def<internal_np::subdomains_t, CGAL_NP_CLASS, std::vector<int>>::reference;
-  Subdomains subdomains = choose_parameter(get_parameter_reference(np, internal_np::subdomains), default_subdomains);
+  using Subdomains = typename internal_np::Lookup_named_param_def<internal_np::subdomain_indices_t, CGAL_NP_CLASS, std::vector<int>>::reference;
+  Subdomains subdomain_indices = choose_parameter(get_parameter_reference(np, internal_np::subdomain_indices), default_subdomain_indices);
 
-  using Corners_with_index = typename internal_np::Lookup_named_param_def<internal_np::corners_with_index_t, CGAL_NP_CLASS, std::vector<internal::Corner_with_index<int>>>::reference;
-  Corners_with_index corners = choose_parameter(get_parameter_reference(np, internal_np::corners_with_index), default_corners);
+  using Vertices_with_corner_index = typename internal_np::Lookup_named_param_def<internal_np::vertices_with_corner_index_t, CGAL_NP_CLASS, std::vector<internal::Vertex_with_corner_index<int>>>::reference;
+  Vertices_with_corner_index vertices = choose_parameter(get_parameter_reference(np, internal_np::vertices_with_corner_index), default_vertices);
 
-  using Edges_with_index = typename internal_np::Lookup_named_param_def<internal_np::edges_with_index_t, CGAL_NP_CLASS, std::vector<std::array<int,3>>>::reference;
-  Edges_with_index edges = choose_parameter(get_parameter_reference(np, internal_np::edges_with_index), default_edges);
+  using Edges_with_curve_index = typename internal_np::Lookup_named_param_def<internal_np::edges_with_curve_index_t, CGAL_NP_CLASS, std::vector<std::array<int,3>>>::reference;
+  Edges_with_curve_index edges = choose_parameter(get_parameter_reference(np, internal_np::edges_with_curve_index), default_edges);
 
-  using Facets_with_index = typename internal_np::Lookup_named_param_def<internal_np::facets_with_index_t, CGAL_NP_CLASS, std::vector<std::array<int,4>>>::reference;
-  Facets_with_index facets = choose_parameter(get_parameter_reference(np, internal_np::facets_with_index), default_facets);
+  using Facets_with_patch_index = typename internal_np::Lookup_named_param_def<internal_np::facets_with_patch_index_t, CGAL_NP_CLASS, std::vector<std::array<int,4>>>::reference;
+  Facets_with_patch_index facets = choose_parameter(get_parameter_reference(np, internal_np::facets_with_patch_index), default_facets);
 
-
-  os << "MeshVersionFormatted 1\nDimension 3\nVertices\n";
-  os << points.size() << "\n";
-  for (const Point_3& p : points)
-    os << p << " 0\n";
-  os << "Tetrahedra\n";
-  os << tetrahedra.size() << "\n";
-  for (std::size_t k=0; k<tetrahedra.size(); ++k)
-  {
-    os << tetrahedra[k][0]+1 << " "
-       << tetrahedra[k][1]+1 << " "
-       << tetrahedra[k][2]+1 << " "
-       << tetrahedra[k][3]+1 << " ";
-    if constexpr (is_default_parameter<CGAL_NP_CLASS, internal_np::subdomains_t>::value)
-      os << 1 << "\n";
-    else
-      os << subdomains[k] << "\n";
+  std::map<int,int> vertex_corner_index_map;
+  for(const auto& c : vertices){
+      vertex_corner_index_map[internal::get_zero(c) + 1] = internal::get_one(c);
   }
 
-  if(!corners.empty()){
-    os << "Corners\n" << corners.size() << "\n";
-    for(const auto& c : corners)
+  os << "MeshVersionFormatted 1\nDimension 3\n";
+
+  os << "Vertices\n";
+  os << points.size() << "\n";
+  for (int i = 0; i < static_cast<int>(points.size()); ++i){
+    const Point_3& p = points[i];
+    std::map<int,int>::iterator it = vertex_corner_index_map.find(i + 1);
+    int corner_index = (it != vertex_corner_index_map.end()) ? it->second : 0;
+    os << p << " " << corner_index << "\n";
+  }
+
+  os << "Tetrahedra\n";
+  os << cells.size() << "\n";
+  for (std::size_t k=0; k<cells.size(); ++k)
+  {
+    os << cells[k][0]+1 << " "
+       << cells[k][1]+1 << " "
+       << cells[k][2]+1 << " "
+       << cells[k][3]+1 << " ";
+    if constexpr (is_default_parameter<CGAL_NP_CLASS, internal_np::subdomain_indices_t>::value)
+      os << 1 << "\n";
+    else
+      os << subdomain_indices[k] << "\n";
+  }
+
+  if(!vertices.empty()){
+    os << "Corners\n" << vertices.size() << "\n";
+    for(const auto& c : vertices)
       os << internal::get_zero(c) + 1 << "\n";
   }
 
@@ -594,6 +598,10 @@ bool write_MEDIT(std::ostream& os,
     os << "Edges\n" << edges.size() << "\n";
     for(const auto& e : edges)
       os << internal::get_zero(e) +1 << " " << internal::get_one(e) + 1 << " " << internal::get_two(e)  << "\n";
+
+    os << "Ridges\n" << edges.size() << "\n";
+    for(std::size_t i = 1; i <= edges.size(); ++i)
+      os << i << "\n";
   }
 
   if(!facets.empty()){
