@@ -95,8 +95,8 @@ void test(const PointRange& points,
   {
     std::cout << offset_polygon_ptr->size() << " vertices in offset polygon" << std::endl;
     std::cout << "Offset polygon is " << (offset_polygon_ptr->is_simple() ? "simple" : "not simple") << std::endl;
-    for(const auto& p : *offset_polygon_ptr)
-      std::cout << p << std::endl;
+    // for(const auto& p : *offset_polygon_ptr)
+    //   std::cout << p << std::endl;
 
     // CGAL::draw(*offset_polygon_ptr);
 
