@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
 
   boost::prim_minimum_spanning_tree(sm, predecessor, boost::root_vertex(*vertices(sm).first));
 
-  std::ofstream out(" prim.wrl");
+  std::ofstream out("prim.wrl");
   out << "#VRML V2.0 utf8\n"
     "DirectionalLight {\n"
     "direction 0 -1 0\n"
