@@ -96,9 +96,6 @@ rightmost point are equal) the extreme point is reported.
 \pre The source range [`first`,`beyond`) does not contain
 `result`.
 
-The default traits class `Default_traits` is the kernel in which the
-value type of `InputIterator` is defined.
-
 The different treatment by `upper_hull_points_2()` of the case that
 all points are equal ensures that concatenation of lower and upper hull
 points gives the sequence of extreme points.
@@ -130,13 +127,26 @@ This function uses Andrew's variant of Graham's scan algorithm
 \cgalCite{a-aeach-79}, \cgalCite{m-mdscg-84}. The algorithm has worst-case running time
 of \cgalBigO{n \log n} for \f$ n\f$ input points.
 
+*/
+template <class InputIterator, class OutputIterator, class Traits>
+OutputIterator
+lower_hull_points_2(InputIterator first, InputIterator beyond,
+                    OutputIterator result,
+                    const Traits& ch_traits);
 
+/*!
+\ingroup PkgConvexHull2Subsequence
+
+generates the counterclockwise sequence of extreme points on the
+lower hull of a given set of input points, using as traits class
+the kernel in which the point type is defined.
+
+The kernel is deduced using `std::iterator_traits` and `CGAL::Kernel_traits`.
 */
 template <class InputIterator, class OutputIterator>
 OutputIterator
 lower_hull_points_2(InputIterator first, InputIterator beyond,
-                    OutputIterator result,
-                    const Traits& ch_traits = Default_traits );
+                    OutputIterator result);
 
 } /* namespace CGAL */
 
@@ -159,9 +169,6 @@ If there is only one extreme point (<I>i.e.</I>, the leftmost and
 rightmost point are equal), the extreme point is not reported.
 \pre The source range [`first`,`beyond`) does not contain
 `result`.
-
-The default traits class `Default_traits` is the kernel in which the
-value type of `InputIterator` is defined.
 
 The different treatment by `lower_hull_points_2()` of the case that
 all points are equal ensures that concatenation of lower and upper hull
@@ -195,9 +202,23 @@ variant of Graham's scan algorithm \cgalCite{a-aeach-79}, \cgalCite{m-mdscg-84}.
 has worst-case running time of \cgalBigO{n \log n} for \f$ n\f$ input points.
 
 */
-template <class InputIterator, class OutputIterator>
+template <class InputIterator, class OutputIterator, class Traits>
 OutputIterator
 upper_hull_points_2(InputIterator first, InputIterator beyond,
                     OutputIterator result,
-                    const Traits& ch_traits = Default_traits);
+                    const Traits& ch_traits);
+
+/*!
+\ingroup PkgConvexHull2Subsequence
+
+generates the counterclockwise sequence of extreme points on the
+upper hull of a given set of input points, using as traits class
+the kernel in which the point type is defined.
+
+The kernel is deduced using `std::iterator_traits` and `CGAL::Kernel_traits`.
+*/
+template <class InputIterator, class OutputIterator>
+OutputIterator
+upper_hull_points_2(InputIterator first, InputIterator beyond,
+                    OutputIterator result);
 } /* namespace CGAL */
