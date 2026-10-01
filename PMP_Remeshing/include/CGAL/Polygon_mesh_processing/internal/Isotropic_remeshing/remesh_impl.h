@@ -1790,7 +1790,7 @@ private:
 
           if(is_border(hfo, mesh_))
           {
-            remove_border_face(h);
+            remove_border_face(hf);
             break;
           }
           vertex_descriptor vc = target(hf, mesh_);

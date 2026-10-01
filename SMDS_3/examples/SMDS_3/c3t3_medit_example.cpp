@@ -50,12 +50,12 @@ int main(int argc, char* argv[])
 
   // [call a remeshing algorithm]
 
-  std::ofstream os("after_remeshing.mesh");
+  std::ofstream os("mesh_after_remeshing.mesh");
   CGAL::IO::write_MEDIT(os, c3t3);
   os.close();
 
   Triangulation tr2;
-  std::ifstream is2("after_remeshing.mesh");
+  std::ifstream is2("mesh_after_remeshing.mesh");
   if(!CGAL::IO::read_MEDIT(is2, c3t3))
   {
     std::cerr << "Failed to read (#2)" << std::endl;

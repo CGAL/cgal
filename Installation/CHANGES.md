@@ -4,6 +4,12 @@
 
 Release date: December 2026
 
+### 3D Mesh smoothing (new package)
+- This package implements a tetrahedral mesh smoother. It improves the quality of a tetrahedral mesh without changing it connectivity.
+  At the core of this package is a nonlinear optimization of the mesh vertex positions. Element quality is measured using a conformal distortion energy,
+  designed to favor well-shaped tetrahedra and improve their dihedral angles. The API is compatible with the `Mesh_complex_3_in_triangulation_3` data structure
+  and can be applied on the output of the 3D Mesh Generation Package.
+
 ### [Linear Cell Complex](https://doc.cgal.org/6.3/Manual/packages.html#PkgLinearCellComplex)
 - added `tetrahedron_soup_to_lcc()` to import a tetrahedron soup into a linear cell complex.
 

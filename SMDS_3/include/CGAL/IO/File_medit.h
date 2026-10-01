@@ -18,8 +18,8 @@
 
 #include <CGAL/SMDS_3/Mesh_complex_3_in_triangulation_3_fwd.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
-#include <CGAL/SMDS_3/tet_soup_to_c3t3.h>
 #include <CGAL/IO/MEDIT.h>
+#include <CGAL/SMDS_3/tet_soup_to_c3t3.h>
 
 #include <CGAL/utility.h>
 #include <CGAL/basic.h>
@@ -503,64 +503,58 @@ struct Medit_pmap_generator<C3T3, USE_SUBDOMAIN_INDICES, RENUMBER_SURFACE_PATCH_
 // IO functions
 //-------------------------------------------------------
 
-template <class T>
-struct is_variant : std::false_type {};
-
-template <class... Ts>
-struct is_variant<std::variant<Ts...>> : std::true_type {};
-
-template <typename T>
-struct is_pair : std::false_type {};
-
-template <typename U, typename V>
-struct is_pair<std::pair<U, V>> : std::true_type {};
-
-
-template <typename T, typename = void>
-struct Has_in_dimension : std::false_type {};
-
-template <typename T>
-struct Has_in_dimension<T, std::void_t<decltype(std::declval<T>().in_dimension())>>
-  : std::true_type {};
-
-template <typename T, typename = void>
-struct Has_is_corner : std::false_type {};
-
-template <typename T>
-struct Has_is_corner<T, std::void_t<decltype(std::declval<T>().is_corner())>>
-  : std::true_type {};
-
-template <typename Tr>
-bool is_corner(const typename Tr::Vertex_handle v, const Tr&)
+template <class Tr, class Curve_index, class Corner_index, class CxEdgesOutputIterator>
+bool build_triangulation_from_file(std::istream& is,
+                                   Tr& tr,
+                                   const bool verbose,
+                                   const bool replace_domain_0,
+                                   const bool allow_non_manifold,
+                                   const bool allow_negative_orientation,
+                                   CxEdgesOutputIterator cx_edges_oit)
 {
-  using V = typename Tr::Triangulation_data_structure::Vertex;
+  using Point_3 = typename Tr::Point;
+  using Subdomain_index = typename Tr::Cell::Subdomain_index;
+  using Surface_patch_index = typename Tr::Cell::Surface_patch_index;
 
-  if constexpr(Has_in_dimension<V>::value)
-    return v->in_dimension() == 0;
-  else if constexpr(Has_is_corner<V>::value)
-    return v->ccdt_3_data().is_corner();
-  else
-    return false;
-}
+  using Facet = std::array<int, 3>;        // 3 = id
+  using Tet_with_ref = std::array<int, 4>; // 4 = id
 
-template <class T>
-void output_to_os(std::ostream& os, const T& x)
-{
-  if constexpr(is_variant<std::decay_t<T>>::value)
-  {
-    std::visit(
-        [&](const auto& i) {
-          using X = std::decay_t<decltype(i)>;
+  using Edge_with_index = CGAL::IO::internal::Edge_with_index<Curve_index>;
+  using Corner_with_index = CGAL::IO::internal::Corner_with_index<Corner_index>;
 
-          if constexpr(is_pair<X>::value)
-            os << i.first << " " << i.second; // warning: read() will not deal with that
-          else
-            os << i;
-        },
-        x);
+  std::vector<Tet_with_ref> finite_cells;
+  std::vector<Subdomain_index> subdomains;
+  std::vector<Point_3> points;
+  boost::unordered_map<Facet, Surface_patch_index> border_facets;
+  std::vector<Edge_with_index> edge_indices;
+  std::vector<Corner_with_index> corner_indices;
+
+  bool is_CGAL_mesh = false;
+  if(verbose) {
+    std::cout << "Reading .mesh file..." << std::endl;
+    std::cout << "Replace domain #0 = " << replace_domain_0 << std::endl;
+    std::cout << "Allow non-manifoldness = " << allow_non_manifold << std::endl;
   }
-  else
-    os << x;
+
+  bool ok = CGAL::IO::internal::read_MEDIT(is, points, finite_cells, subdomains,
+                                           border_facets, true,
+                                           edge_indices, corner_indices,
+                                           verbose, is_CGAL_mesh);
+  if(!ok) {
+    return false;
+  }
+
+  if(!is_CGAL_mesh)
+    tr.may_have_badly_oriented_cells(true);
+
+  return CGAL::SMDS_3::build_triangulation_with_subdomains_range(
+      tr, points, finite_cells,
+      subdomains, border_facets, edge_indices, corner_indices,
+      cx_edges_oit,
+      verbose,
+      replace_domain_0 && !is_CGAL_mesh,
+      allow_non_manifold,
+      allow_negative_orientation);
 }
 
 template <class Tr,
@@ -676,7 +670,7 @@ output_to_medit(std::ostream& os,
   //-------------------------------------------------------
   std::vector<typename Tr::Vertex_handle> corners;
   for(const auto& v : vertices) {
-    if(is_corner(v, tr)) {
+    if(SMDS_3_internal::is_corner(v, tr)) {
       corners.push_back(v);
     }
   }
@@ -689,7 +683,7 @@ output_to_medit(std::ostream& os,
   //-------------------------------------------------------
   // Edges
   //-------------------------------------------------------
-  constexpr bool write_edges = Has_in_dimension<typename Tr::Triangulation_data_structure::Vertex>::value;
+  constexpr bool write_edges = SMDS_3_internal::Has_in_dimension<typename Tr::Triangulation_data_structure::Vertex>::value;
   if constexpr(write_edges)
   {
     os << "Edges\n"
@@ -700,7 +694,7 @@ output_to_medit(std::ostream& os,
                   ? vh1->index()
                   : (vh2->in_dimension() == 1 ? vh2->index() : 42 /*todo : magic id*/);
       os << V[vh1] << ' ' << V[vh2] << ' ';
-      output_to_os(os, index);
+      os << IO::oformat(index);
       os << '\n';
     }
   }
@@ -1146,9 +1140,51 @@ bool read_MEDIT(std::istream& in,
  * @tparam T3 can be instantiated with any 3D triangulation of \cgal provided that its
  *  vertex and cell base class are models of the concepts `MeshVertexBase_3` and `MeshCellBase_3`,
  *  respectively.
+ * @tparam CornerIndex is the type of the indices for corners in the mesh complex
+ * @tparam CurveIndex is the type of the indices for curves in the mesh complex
  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
- * @todo write documentation
+ * @brief reads a mesh complex written in the medit (`.mesh`) file format.
+ *   See \cgalCite{frey:inria-00069921} for a comprehensive description of this file format.
+ * @tparam T3 can be instantiated with any 3D triangulation of \cgal provided that its
+ *  vertex and cell base class are models of the concepts `MeshVertexBase_3` and `MeshCellBase_3`,
+ *  respectively.
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+ *
+ * @param in the input stream
+ * @param c3t3 the mesh complex (to be built from the data read from `in`)
+ * @param np optional \ref bgl_namedparameters "Named Parameters" described below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{verbose}
+ *     \cgalParamDescription{indicates whether output warnings and error messages should be printed or not.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`false`}
+ *   \cgalParamNEnd
+ *   \cgalParamNBegin{allow_non_manifold}
+ *     \cgalParamDescription{allows the construction of a triangulation with non-manifold edges
+ *       and non manifold vertices. The triangulation is invalid if this situation is met,
+ *       so it should be used only in advanced cases, and the triangulation will be hardly usable.}
+ *     \cgalParamType{bool}
+ *     \cgalParamDefault{false}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
+ *
+ * @returns `true` if the connectivity of the triangulation could be built consistently
+ * from \p in,
+ * and `false` if the triangulation is empty, or if the connectivity
+ * of \p c3t3 could not be built.
+ * If `false` is returned, \p c3t3 is empty when the function returns.
+ *
+ * This function reads the data about vertices, surface facets, and
+ * triangulation cells from `in`, and builds a valid `T3` from it.
+ *
+ * Note that a valid 3D triangulation of \cgal must have a valid
+ * data structure (see `TriangulationDataStructure_3 `),
+ * positively oriented cells,
+ * and cover the geometric convex hull of all points in `t3`.
+ *
+ * \see \ref IOStreamMedit
  */
 template <typename T3,
           typename Corner_index,
@@ -1241,7 +1277,6 @@ bool read_MEDIT(std::istream& in,
 }
 
 } // namespace IO
-
 
 } // end namespace CGAL
 
