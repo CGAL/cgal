@@ -3873,6 +3873,12 @@ public:
   /// @{
 
   /*!
+    returns `b`.
+  */
+  CGAL::Bbox_2 operator()(const Kernel::Bbox_2
+                          &b);
+
+  /*!
     returns a bounding box of `p`.
   */
   CGAL::Bbox_2 operator()(const Kernel::Point_2
@@ -3919,6 +3925,12 @@ public:
   /// \name Operations
   /// A model of this concept must provide:
   /// @{
+
+  /*!
+    returns `b`.
+  */
+  CGAL::Bbox_3 operator()(const Kernel::Bbox_3
+                          &b);
 
   /*!
     returns a bounding box of `c`.
