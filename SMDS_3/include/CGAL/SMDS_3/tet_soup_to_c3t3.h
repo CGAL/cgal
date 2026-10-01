@@ -21,14 +21,25 @@
 
 #include <CGAL/assertions.h>
 #include <CGAL/Default.h>
+#include <CGAL/enum.h>
+#include <CGAL/IO/MEDIT.h>
 #include <CGAL/iterator.h>
+#include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/utility.h>
 #include <CGAL/value_type_traits.h>
 
+#include <boost/unordered/unordered_map_fwd.hpp>
 #include <boost/unordered_map.hpp>
 
+#include <algorithm>
 #include <array>
+#include <cassert>
+#include <cstddef>
+#include <iostream>
+#include <istream>
+#include <iterator>
 #include <map>
+#include <ostream>
 #include <utility>
 #include <vector>
 #include <type_traits>
