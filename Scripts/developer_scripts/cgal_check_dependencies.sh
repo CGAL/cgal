@@ -43,13 +43,37 @@ group()
 {
     local title=$1
     shift
+    local status=0
+    local log_file
     if [ "$GITHUB_ACTIONS" = "true" ]; then
         echo "::group::$title"
     else
         printf '\n## %s\n\n' "$title"
     fi
-    local status=0
-    "$@" || status=$?
+    if [ "$GITHUB_ACTIONS" = "true" ] && [ -n "$GITHUB_STEP_SUMMARY" ]; then
+        log_file=$(mktemp) || return $?
+        if (set -o pipefail; "$@" 2>&1 | tee "$log_file"); then
+            status=0
+        else
+            status=$?
+        fi
+        if [ "$status" -ne 0 ]; then
+            local diagnostics
+            diagnostics=$(grep -E '(^|[[:space:]])(fatal )?error:|undefined reference|collect2: error:|ld: error:' "$log_file" | tail -n 100 || true)
+            {
+                printf '## %s failed\n\n' "$title"
+                if [ -n "$diagnostics" ]; then
+                    # shellcheck disable=SC2016
+                    printf '```text\n%s\n```\n\n' "$diagnostics"
+                else
+                    printf 'No compiler or linker diagnostics were found in the command output. See the job log for details.\n\n'
+                fi
+            } >> "$GITHUB_STEP_SUMMARY"
+        fi
+        rm -f "$log_file"
+    else
+        "$@" || status=$?
+    fi
     if [ "$GITHUB_ACTIONS" = "true" ]; then
         echo "::endgroup::"
     fi
