@@ -2932,14 +2932,14 @@ public:
   /// \cond
 
   template <class AABBTraits>
-  static Face_location locate(const Point_3& location,
+  static Face_location locate(const Point_3& p,
                               const Triangle_mesh& tm,
                               Vertex_point_map vertexPointMap,
                               const Traits& traits = Traits())
   {
     AABB_tree<AABBTraits> tree;
     build_aabb_tree(tm, tree, vertexPointMap);
-    return locate(location, tree, tm, vertexPointMap, traits);
+    return locate(p, tree, tm, vertexPointMap, traits);
   }
 
   /// \endcond
@@ -2965,14 +2965,14 @@ public:
   /// \cond
 
   template <class AABBTraits>
-  static Face_location locate(const Point_3& location,
+  static Face_location locate(const Point_3& p,
                               const AABB_tree<AABBTraits>& tree,
                               const Triangle_mesh& tm,
                               Vertex_point_map vertexPointMap,
                               const Traits& traits = Traits())
   {
     typename Traits::Construct_barycentric_coordinates_in_triangle_3 cbcit3(traits.construct_barycentric_coordinates_in_triangle_3_object());
-    typename AABB_tree<AABBTraits>::Point_and_primitive_id result = tree.closest_point_and_primitive(location);
+    typename AABB_tree<AABBTraits>::Point_and_primitive_id result = tree.closest_point_and_primitive(p);
 
     std::cout << "cp = " << result.first << std::endl;
 
