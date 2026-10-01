@@ -729,6 +729,9 @@ private:
               a = f.first->vertex( f.second );
               cl = _shape->classify( SFacet(n, ni) );
 
+              CGAL_assertion(ni != f.second);
+              CGAL_assume(ni != f.second);
+
               int n0 = 0;
               while (n0 == ni || n0 == f.second)
                 ++n0;
