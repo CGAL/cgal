@@ -152,6 +152,7 @@ public:
   bool is_Steiner_vertex_on_edge() const { return m_vertex_type == CDT_3_vertex_type::STEINER_ON_EDGE; }
   bool is_Steiner_vertex_in_face() const { return m_vertex_type == CDT_3_vertex_type::STEINER_IN_FACE; }
   bool is_Steiner_vertex_in_volume() const { return m_vertex_type == CDT_3_vertex_type::STEINER_IN_VOLUME; }
+  bool is_corner() const { return m_vertex_type == CDT_3_vertex_type::INPUT_VERTEX; }
 };
 
 #endif // DOXYGEN_RUNNING

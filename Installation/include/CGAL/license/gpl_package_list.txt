@@ -35,6 +35,7 @@ Kinetic_surface_reconstruction Kinetic Surface Reconstruction
 Matrix_search Monotone and Sorted Matrix Search
 Mesh_2 2D Conforming Triangulations and Meshes
 Mesh_3 3D Mesh Generation
+Mesh_smoothing_3 3D Mesh Smoothing
 Minkowski_sum_2 2D Minkowski Sums
 Minkowski_sum_3 3D Minkowski Sum of Polyhedra
 Nef_2 2D Boolean Operations on Nef Polygons
@@ -62,7 +63,8 @@ Polygon_mesh_processing/distance Polygon Mesh Processing - Distance
 Polygon_mesh_processing/interpolated_corrected_curvatures Polygon Mesh Processing - Interpolated Corrected Curvatures
 Polygon_mesh_processing/locate Polygon Mesh Processing - Locate
 Polygon_mesh_processing/measure Polygon Mesh Processing - Geometric Measure
-Polygon_mesh_processing/meshing_hole_filling Polygon Mesh Processing - Meshing and Hole Filling
+Polygon_mesh_processing/hole_filling Polygon Mesh Processing - Hole Filling
+Polygon_mesh_processing/remeshing Polygon Mesh Processing - Remeshing
 Polygon_mesh_processing/orientation Polygon Mesh Processing - Orientation
 Polygon_mesh_processing/Polyhedral_envelope Polygon Mesh Processing - Polyhedral Envelope
 Polygon_mesh_processing/predicate Polygon Mesh Processing - Predicate

@@ -4,6 +4,15 @@
 
 Release date: December 2026
 
+### 3D Mesh smoothing (new package)
+- This package implements a tetrahedral mesh smoother. It improves the quality of a tetrahedral mesh without changing it connectivity.
+  At the core of this package is a nonlinear optimization of the mesh vertex positions. Element quality is measured using a conformal distortion energy,
+  designed to favor well-shaped tetrahedra and improve their dihedral angles. The API is compatible with the `Mesh_complex_3_in_triangulation_3` data structure
+  and can be applied on the output of the 3D Mesh Generation Package.
+
+### [Linear Cell Complex](https://doc.cgal.org/6.3/Manual/packages.html#PkgLinearCellComplex)
+- added `tetrahedron_soup_to_lcc()` to import a tetrahedron soup into a linear cell complex.
+
 ### [2D and 3D Fast Intersection and Distance Computation (AABB Tree)](https://doc.cgal.org/6.3/Manual/packages.html#PkgAABBTree)
 - `CGAL::AABB_tree::build()` now accepts an optional `Concurrency_tag` template parameter (`CGAL::Sequential_tag` by default).
    When `CGAL::Parallel_tag` is specified, the tree construction is performed in parallel.
@@ -28,8 +37,11 @@ Release date: December 2026
 - Deprecated the existing overload of `snap_rounding_2()`.
 - Added a new overload of `snap_rounding_2()` that automatically dispatch to either `vertical_slab_snap_rounding_2()` or `hot_pixel_snap_rounding_2()`, depending on the provided traits class.
 
-### [Polygon Mesh Processing](https://doc.cgal.org/6.3/Manual/packages.html#PkgPMPRemeshing)
+### [Polygon Mesh Processing - Mesh Repair](https://doc.cgal.org/6.3/Manual/packages.html#PkgPMPMeshRepair)
+- **Breaking change**: Removed the function `CGAL::Polygon_mesh_processing::smooth_mesh()` which was deprecated since CGAL-5.5.
+- **Breaking change**: Removed the overload of the functions `CGAL::Polygon_mesh_processing::triangulate_hole()`, `CGAL::Polygon_mesh_processing::triangulate_and_refine_hole()`, and `CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole()` having output iterators for vertices and faces as parameter, which were deprecated since CGAL-6.0.
 
+### [Polygon Mesh Processing - Remeshing](https://doc.cgal.org/6.3/Manual/packages.html#PkgPMPRemeshing)
 - Added a new parameter `edge_is_protected_map` to
 [`void CGAL::Polygon_mesh_processing::isotropic_remeshing()`](https://doc.cgal.org/6.3/PMP_Remeshing/group__PMP__local__remeshing__grp.html),
  to distinguish between "constrained" edges that can be resampled while the constrained edges polyline graph remains topologically unchanged,
@@ -37,9 +49,23 @@ Release date: December 2026
 
 ### [Boolean Operations On Meshes](https://doc.cgal.org/6.3/Manual/packages.html#PkgPMPBooleanOperations)
 
+### Polygon Mesh Processing - Boolean Operations
+- **Breaking change** Added to the corefinement based functions a new named parameter `edge_is_marked_map()` that will specifically collect new intersection edges.
+    Previously, `edge_is_constrained_map()` was storing both input constrained edges (updated when split) as well as new intersection edges.
+    The previous behavior can be reproduced, by passing the property map to both named parameters.
+- Added a new named parameter `edge_is_constrained_map()` to the `clip()` functions in order to preserve constrained edges when clipping a triangle mesh.
 - The corefinement based operations (including Boolean operations) has been optimized to better
   handle cases when some identical faces are shared between the input meshes. This leads to a significant speed up
   in those cases.
+
+### [Basic Viewer](https://doc.cgal.org/6.3/Manual/packages.html#PkgBasicViewer)
+
+- Added the possibility to color the faces by a value mapped to a color palette: the
+  distance to the clipping plane, the cell size, or a scalar value provided by the drawer.
+  A drawer can attach a value to each face through the new `Graphics_scene_options` functions
+  `is_face_valued` and `face_value` (with `face_value_name` for the legend). As an example, the
+  surface mesh drawer exposes the aspect ratio of each face.
+
 
 
 ## [Release 6.2](https://github.com/CGAL/cgal/releases/tag/v6.2)

@@ -442,16 +442,11 @@ if(CGAL_DISABLE_GMP)
   unset(WITH_CGAL_Core CACHE)
   unset(CGAL_USE_GMP)
   unset(CGAL_USE_GMP CACHE)
-  # Nasty trick to make sure <gmp.h> is not used when CGAL_DISABLE_GMP is TRUE
-  file(WRITE "${CGAL_BINARY_DIR}/include/gmp.h"
-       "#error GMP is disabled by the CMake option CGAL_DISABLE_GMP")
 else()
   list(APPEND CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES GMP MPFR)
 
   # When CMake is run several times, to avoid duplicates
   list(REMOVE_DUPLICATES CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES)
-
-  file(REMOVE "${CGAL_BINARY_DIR}/include/gmp.h")
 endif()
 hide_variable(CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES)
 
