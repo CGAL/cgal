@@ -148,18 +148,21 @@ public:
     void set_vertex(const int i, Vertex_handle v) /* Concept */
     {
         CGAL_precondition(0<=i && i<=maximal_dimension());
+        CGAL_assume(0<=i && i<=maximal_dimension());
         vertices()[i] = v;
     }
 
     void set_neighbor(const int i, Full_cell_handle s) /* Concept */
     {
         CGAL_precondition(0<=i && i<=maximal_dimension());
+        CGAL_assume(0<=i && i<=maximal_dimension());
         neighbors()[i] = s;
     }
 
     void set_mirror_index(const int i, const int index) /* Concept */
     {
         CGAL_precondition(0<=i && i<=maximal_dimension());
+        CGAL_assume(0<=i && i<=maximal_dimension());
         combinatorics_.set_mirror_index(i, index);
     }
 
