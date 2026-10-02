@@ -148,6 +148,122 @@ public:
       return Base::operator()(p, q, r, s, t);
   }
 
+
+
+  Oriented_side
+  operator()(const Point_3 &p, const Point_3 &q, const Point_3 &r,
+             const Point_3 &s, const Point_3 &t, const std::array<double,4>& subdet) const
+  {
+      CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Side_of_oriented_sphere_3", tmp);
+      double px, py, pz, qx, qy, qz, rx, ry, rz, sx, sy, sz, tx, ty, tz;
+
+      if (fit_in_double(p.x(), px) && fit_in_double(p.y(), py) &&
+          fit_in_double(p.z(), pz) &&
+          fit_in_double(q.x(), qx) && fit_in_double(q.y(), qy) &&
+          fit_in_double(q.z(), qz) &&
+          fit_in_double(r.x(), rx) && fit_in_double(r.y(), ry) &&
+          fit_in_double(r.z(), rz) &&
+          fit_in_double(s.x(), sx) && fit_in_double(s.y(), sy) &&
+          fit_in_double(s.z(), sz) &&
+          fit_in_double(t.x(), tx) && fit_in_double(t.y(), ty) &&
+          fit_in_double(t.z(), tz))
+      {
+          CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
+
+          double ptx = px - tx;
+          double pty = py - ty;
+          double ptz = pz - tz;
+          double pt2 = CGAL_NTS square(ptx) + CGAL_NTS square(pty)
+                     + CGAL_NTS square(ptz);
+          double qtx = qx - tx;
+          double qty = qy - ty;
+          double qtz = qz - tz;
+
+          double rtx = rx - tx;
+          double rty = ry - ty;
+          double rtz = rz - tz;
+
+          double stx = sx - tx;
+          double sty = sy - ty;
+          double stz = sz - tz;
+
+          // Compute the semi-static bound.
+          double maxx = CGAL::abs(ptx);
+          double maxy = CGAL::abs(pty);
+          double maxz = CGAL::abs(ptz);
+
+          double aqtx = CGAL::abs(qtx);
+          double artx = CGAL::abs(rtx);
+          double astx = CGAL::abs(stx);
+
+          double aqty = CGAL::abs(qty);
+          double arty = CGAL::abs(rty);
+          double asty = CGAL::abs(sty);
+
+          double aqtz = CGAL::abs(qtz);
+          double artz = CGAL::abs(rtz);
+          double astz = CGAL::abs(stz);
+
+#ifdef CGAL_USE_SSE2_MAX
+          CGAL::Max<double> mmax;
+          maxx = mmax(maxx, aqtx, artx, astx);
+          maxy = mmax(maxy, aqty, arty, asty);
+          maxz = mmax(maxz, aqtz, artz, astz);
+#else
+          if (maxx < aqtx) maxx = aqtx;
+          if (maxx < artx) maxx = artx;
+          if (maxx < astx) maxx = astx;
+
+          if (maxy < aqty) maxy = aqty;
+          if (maxy < arty) maxy = arty;
+          if (maxy < asty) maxy = asty;
+
+          if (maxz < aqtz) maxz = aqtz;
+          if (maxz < artz) maxz = artz;
+          if (maxz < astz) maxz = astz;
+#endif
+
+          double eps = 1.2466136531027298e-13 * maxx * maxy * maxz;
+
+#ifdef CGAL_USE_SSE2_MAX
+          /*
+          CGAL::Min<double> mmin;
+          double tmp = mmin(maxx, maxy, maxz);
+          maxz = mmax(maxx, maxy, maxz);
+          maxx = tmp;
+          */
+          sse2minmax(maxx,maxy,maxz);
+          // maxy can contain ANY element
+
+#else
+          // Sort maxx < maxy < maxz.
+          if (maxx > maxz)
+              std::swap(maxx, maxz);
+          if (maxy > maxz)
+              std::swap(maxy, maxz);
+          else if (maxy < maxx)
+              std::swap(maxx, maxy);
+#endif
+          double det =  - ptx * subdet[0] + pty * subdet[1] - ptz * subdet[2] -pt2 * subdet[3];
+
+          // Protect against underflow in the computation of eps.
+          if (maxx < 1e-58) /* sqrt^5(min_double/eps) */ {
+            if (maxx == 0)
+              return ON_ORIENTED_BOUNDARY;
+          }
+          // Protect against overflow in the computation of det.
+          else if (maxz < 1e61) /* sqrt^5(max_double/4 [hadamard]) */ {
+            eps *= (maxz * maxz);
+            if (det > eps)  return ON_POSITIVE_SIDE;
+            if (det < -eps) return ON_NEGATIVE_SIDE;
+          }
+
+          CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+      }
+      return Base::operator()(p, q, r, s, t);
+  }
+
+
   // Computes the epsilon for Side_of_oriented_sphere_3.
   static double compute_epsilon()
   {
