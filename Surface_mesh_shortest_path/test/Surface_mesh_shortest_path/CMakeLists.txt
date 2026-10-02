@@ -5,6 +5,7 @@ find_package(CGAL REQUIRED)
 
 include_directories(BEFORE "include")
 
+create_single_source_cgal_program("issue_9646.cpp")
 create_single_source_cgal_program("Surface_mesh_shortest_path_test_1.cpp")
 create_single_source_cgal_program("Surface_mesh_shortest_path_test_2.cpp")
 create_single_source_cgal_program("Surface_mesh_shortest_path_test_3.cpp")
