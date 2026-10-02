@@ -122,12 +122,6 @@ void test_conflicts(T& T3_13, const P *q)
       std::vector<Vertex_handle> V;
 
       T3_13.vertices_on_conflict_zone_boundary(q[i], c, std::back_inserter(V));
-#ifndef CGAL_NO_DEPRECATED_CODE
-      // test deprecated vertices_in_conflict
-      std::vector<Vertex_handle> V2;
-      T3_13.vertices_in_conflict(q[i], c, std::back_inserter(V2));
-      assert(V2.size() == V.size());
-#endif
 
       T3_13.find_conflicts(q[i], c, std::back_inserter(F),
                            std::back_inserter(C));

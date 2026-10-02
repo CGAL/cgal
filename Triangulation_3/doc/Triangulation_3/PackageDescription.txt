@@ -90,7 +90,6 @@ is opposite to the vertex with the same index. See
 - `RegularTriangulationCellBase_3`
 - `RegularTriangulationCellBaseWithWeightedCircumcenter_3`
 - `TriangulationDataStructure_3`
-- `WeightedPoint`
 
 \cgalCRPSection{Classes}
 
@@ -112,7 +111,6 @@ is opposite to the vertex with the same index. See
 
 \cgalCRPSubsection{Traits Classes}
 
-- `CGAL::Regular_triangulation_euclidean_traits_3<K,Weight>` (deprecated)
 - `CGAL::Robust_circumcenter_filtered_traits_3<K>`
 - `CGAL::Robust_weighted_circumcenter_filtered_traits_3<K>`
 
@@ -124,7 +122,7 @@ is opposite to the vertex with the same index. See
 
 - `CGAL::link_to_face_graph()`
 
-\cgalCRPSection{Draw a Triangulation 3}
+\cgalCRPSection{Draw a 3D Triangulation}
 
 - \link PkgDrawTriangulation3 CGAL::draw<T3>() \endlink
 
