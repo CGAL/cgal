@@ -26,6 +26,8 @@
 
 #include <boost/range.hpp>
 
+#include <filesystem>
+
 #ifdef CGAL_USE_VTK
 #include <vtkSmartPointer.h>
 #include <vtkCommand.h>
@@ -100,7 +102,7 @@ bool vtkPointSet_to_polygon_soup(vtkPointSet* poly_data,
 // Read
 
 template <typename PointRange, typename PolygonRange, typename NamedParameters>
-bool read_VTP(const std::string& fname,
+bool read_VTP(const std::filesystem::path& fname,
               PointRange& points,
               PolygonRange& polygons,
               const NamedParameters& np)
@@ -145,14 +147,14 @@ bool read_VTP(const std::string& fname,
  * \returns `true` if the reading was successful, `false` otherwise.
  */
 template <typename PointRange, typename PolygonRange>
-bool read_VTP(const std::string& fname, PointRange& points, PolygonRange& polygons)
+bool read_VTP(const std::filesystem::path& fname, PointRange& points, PolygonRange& polygons)
 {
   return read_VTP(fname, points, polygons, parameters::default_values());
 }
 
 
 template <typename PointRange, typename PolygonRange, typename NamedParameters>
-bool read_VTK(const std::string& fname,
+bool read_VTK(const std::filesystem::path& fname,
               PointRange& points,
               PolygonRange& polygons,
               const NamedParameters& np)
@@ -201,7 +203,7 @@ bool read_VTK(const std::string& fname,
  * \returns `true` if the reading was successful, `false` otherwise.
  */
 template <typename PointRange, typename PolygonRange>
-bool read_VTK(const std::string& fname, PointRange& points, PolygonRange& polygons)
+bool read_VTK(const std::filesystem::path& fname, PointRange& points, PolygonRange& polygons)
 {
   return read_VTK(fname, points, polygons, parameters::default_values());
 }
@@ -545,7 +547,7 @@ bool write_VTP(std::ostream& os,
  * \return `true` if the writing was successful, `false` otherwise.
  */
 template <typename PointRange, typename PolygonRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool write_VTP(const std::string& fname,
+bool write_VTP(const std::filesystem::path& fname,
                const PointRange& points,
                const PolygonRange& polygons,
                const CGAL_NP_CLASS& np = parameters::default_values())

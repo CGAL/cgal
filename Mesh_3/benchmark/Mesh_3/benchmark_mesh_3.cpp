@@ -511,7 +511,7 @@ Exit_code run(const std::string& input,
     else // not a known implicit function
     {
       // Assume it's a CGAL data file...
-      std::string full_path = CGAL::data_file_path(input);
+      std::filesystem::path full_path = CGAL::data_file_path(input);
 
       // ...and if it is not, then take it as it is
       if(!std::ifstream(full_path).good())

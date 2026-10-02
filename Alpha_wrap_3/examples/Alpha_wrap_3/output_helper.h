@@ -2,6 +2,7 @@
 #define CGAL_ALPHA_WRAP_3_EXAMPLES_OUTPUT_HELPER_H
 
 #include <string>
+#include <filesystem>
 
 std::string generate_output_name(std::string input_name,
                                  const double alpha,
@@ -14,6 +15,13 @@ std::string generate_output_name(std::string input_name,
                             + "_" + std::to_string(static_cast<int>(offset)) + ".off";
 
   return output_name;
+}
+
+std::string generate_output_name(std::filesystem::path input_name,
+                                 const double alpha,
+                                 const double offset)
+{
+  return generate_output_name(input_name.string(), alpha, offset);
 }
 
 #endif // CGAL_ALPHA_WRAP_3_EXAMPLES_OUTPUT_HELPER_H

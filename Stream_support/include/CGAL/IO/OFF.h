@@ -30,6 +30,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <filesystem>
 #include <type_traits>
 #include <vector>
 
@@ -232,7 +233,7 @@ bool read_OFF(std::istream& is,
  * \returns `true` if the reading was successful, `false` otherwise.
  */
 template <typename PointRange, typename PolygonRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool read_OFF(const std::string& fname,
+bool read_OFF(const std::filesystem::path& fname,
               PointRange& points,
               PolygonRange& polygons,
               const CGAL_NP_CLASS& np = parameters::default_values()
@@ -330,7 +331,7 @@ bool write_OFF(std::ostream& os,
  * \return `true` if the writing was successful, `false` otherwise.
  */
 template <typename PointRange, typename PolygonRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool write_OFF(const std::string& fname,
+bool write_OFF(const std::filesystem::path& fname,
                const PointRange& points,
                const PolygonRange& polygons,
                const CGAL_NP_CLASS& np = parameters::default_values()
@@ -438,7 +439,7 @@ bool read_OFF(std::istream& is,
 template <typename OutputIteratorValueType,
           typename PointOutputIterator,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool read_OFF(const std::string& fname,
+bool read_OFF(const std::filesystem::path& fname,
               PointOutputIterator output,
               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
@@ -543,7 +544,7 @@ bool write_OFF(std::ostream& os,
 */
 template <typename PointRange,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool write_OFF(const std::string& filename,
+bool write_OFF(const std::filesystem::path& filename,
                const PointRange& points,
                const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING

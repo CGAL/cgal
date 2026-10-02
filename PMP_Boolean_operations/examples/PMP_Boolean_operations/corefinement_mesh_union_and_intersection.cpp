@@ -17,8 +17,8 @@ namespace params = CGAL::parameters;
 
 int main(int argc, char* argv[])
 {
-  const std::string filename1 = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/blobby.off");
-  const std::string filename2 = (argc > 2) ? argv[2] : CGAL::data_file_path("meshes/eight.off");
+  const std::filesystem::path filename1 = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/blobby.off");
+  const std::filesystem::path filename2 = (argc > 2) ? argv[2] : CGAL::data_file_path("meshes/eight.off");
 
   Mesh mesh1, mesh2;
   if(!PMP::IO::read_polygon_mesh(filename1, mesh1) || !PMP::IO::read_polygon_mesh(filename2, mesh2))

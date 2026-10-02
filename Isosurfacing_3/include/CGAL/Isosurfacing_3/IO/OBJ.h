@@ -84,7 +84,7 @@ bool write_OBJ(std::ostream& out,
 
 template <typename GeomTraits, typename MemoryPolicy,
           typename NamedParameters = parameters::Default_named_parameters>
-bool write_OBJ(const std::string& fname,
+bool write_OBJ(const std::filesystem::path& fname,
                const Cartesian_grid_3<GeomTraits, MemoryPolicy>& grid,
                const NamedParameters& np = parameters::default_values())
 {

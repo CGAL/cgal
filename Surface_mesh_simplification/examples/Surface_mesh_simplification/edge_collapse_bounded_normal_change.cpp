@@ -36,7 +36,7 @@ struct Dummy_placement {
 int main(int argc, char** argv)
 {
   Surface_mesh surface_mesh;
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/fold.off");
+  const std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/fold.off");
 
   if(!CGAL::IO::read_polygon_mesh(filename, surface_mesh))
   {

@@ -78,7 +78,7 @@ struct Put_true
 
 int main(int argc, char* argv[])
 {
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/blobby_3cc.off");
+  const std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/blobby_3cc.off");
 
   Mesh mesh;
   if(!PMP::IO::read_polygon_mesh(filename, mesh))

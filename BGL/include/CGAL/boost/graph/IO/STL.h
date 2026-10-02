@@ -156,7 +156,7 @@ bool read_STL(std::istream& is,
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
 */
 template <typename Graph, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool read_STL(const std::string& fname,
+bool read_STL(const std::filesystem::path& fname,
               Graph& g, const
               CGAL_NP_CLASS& np = parameters::default_values())
 {
@@ -355,7 +355,7 @@ bool write_STL(std::ostream& os,
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
 */
 template <typename Graph, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool write_STL(const std::string& fname, const Graph& g, const CGAL_NP_CLASS& np = parameters::default_values())
+bool write_STL(const std::filesystem::path& fname, const Graph& g, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   const bool binary = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::use_binary_mode), true);
   if(binary)

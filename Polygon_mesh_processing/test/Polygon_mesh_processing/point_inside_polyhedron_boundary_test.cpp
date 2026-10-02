@@ -10,7 +10,7 @@ typedef CGAL::Polyhedron_3<K> Polyhedron;
 
 int main(int argc, char** argv)
 {
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/elephant.off");
+  const std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/elephant.off");
   std::ifstream input(filename);
   Polyhedron poly;
 

@@ -23,7 +23,7 @@ typedef CGAL::Exact_predicates_exact_constructions_kernel Epec;
 
 
 template <typename K>
-void test_polygon_soup(std::string fname, bool expected)
+void test_polygon_soup(std::filesystem::path fname, bool expected)
 {
   typedef typename K::Point_3                                                 Point;
 

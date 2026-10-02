@@ -28,7 +28,7 @@
 
 #include <algorithm>
 #include <iostream>
-#include <string>
+#include <filesystem>
 #include <vector>
 
 namespace CGAL {
@@ -89,7 +89,7 @@ namespace IO {
  * \sa \link PkgBGLIOFct `CGAL::IO::read_polygon_mesh()` \endlink
  */
 template <typename PolygonMesh, typename NamedParameters = parameters::Default_named_parameters>
-bool read_polygon_mesh(const std::string& fname,
+bool read_polygon_mesh(const std::filesystem::path& fname,
                        PolygonMesh& g,
                        const NamedParameters& np = parameters::default_values())
 {

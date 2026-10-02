@@ -325,7 +325,7 @@ import_from_plane_graph(LCC& alcc, const char* filename)
   }
 
   template < class LCC >
-  bool load_off(LCC& alcc, const char* filename)
+  bool load_off(LCC& alcc, const std::filesystem::path& filename)
   {
     std::ifstream input(filename);
     if (!input.is_open())

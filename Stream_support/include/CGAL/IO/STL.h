@@ -31,6 +31,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <filesystem>
 
 namespace CGAL {
 
@@ -190,7 +191,7 @@ bool read_STL(std::istream& is,
  * \returns `true` if the reading was successful, `false` otherwise.
  */
 template <typename PointRange, typename TriangleRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool read_STL(const std::string& fname,
+bool read_STL(const std::filesystem::path& fname,
               PointRange& points,
               TriangleRange& facets,
               const CGAL_NP_CLASS& np = parameters::default_values()
@@ -401,7 +402,7 @@ bool write_STL(std::ostream& os,
  * \return `true` if the writing was successful, `false` otherwise.
  */
 template <typename PointRange, typename TriangleRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool write_STL(const std::string& fname,
+bool write_STL(const std::filesystem::path& fname,
                const PointRange& points,
                const TriangleRange& facets,
                const CGAL_NP_CLASS& np = parameters::default_values()

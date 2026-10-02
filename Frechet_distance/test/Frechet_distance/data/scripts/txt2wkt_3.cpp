@@ -16,14 +16,14 @@ int main(int , char* argv[])
     if(path.stem() == std::filesystem::path("dataset")){
       continue;
     }
-    std::ifstream in(path.string());
+    std::ifstream in(path);
     Point p;
     Curve curve;
     while(in >> p){
       curve.push_back(p);
     }
     path.replace_extension(".wkt");
-    std::ofstream out(path.string());
+    std::ofstream out(path);
     out.precision(17);
     CGAL::IO::write_linestring_WKT(out, curve);
     out << std::endl;

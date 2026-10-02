@@ -193,7 +193,7 @@ bool read_GOCAD(std::istream& is, Graph& g, const CGAL_NP_CLASS& np = parameters
 ///
 template <typename Graph,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool read_GOCAD(const std::string& fname,
+bool read_GOCAD(const std::filesystem::path& fname,
                 std::pair<std::string, std::string>& name_and_color,
                 Graph& g,
                 const CGAL_NP_CLASS& np = parameters::default_values()
@@ -210,7 +210,7 @@ bool read_GOCAD(const std::string& fname,
 /// \cond SKIP_IN_MANUAL
 
 template <typename Graph, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool read_GOCAD(const std::string& fname, Graph& g, const CGAL_NP_CLASS& np = parameters::default_values(),
+bool read_GOCAD(const std::filesystem::path& fname, Graph& g, const CGAL_NP_CLASS& np = parameters::default_values(),
                 std::enable_if_t<!internal::is_Point_set_or_Range_or_Iterator<Graph>::value>* = nullptr)
 {
   std::pair<std::string, std::string> dummy;
@@ -398,7 +398,7 @@ bool write_GOCAD(std::ostream& os,
 ///
 template <typename Graph,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool write_GOCAD(const std::string& fname,
+bool write_GOCAD(const std::filesystem::path& fname,
                  const Graph& g,
                  const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
@@ -409,7 +409,7 @@ bool write_GOCAD(const std::string& fname,
   std::ofstream os(fname);
   CGAL::IO::set_mode(os, CGAL::IO::ASCII);
 
-  return write_GOCAD(os, fname.c_str(), g, np);
+  return write_GOCAD(os, fname.string().c_str(), g, np);
 }
 
 }} // namespace CGAL::IO

@@ -33,7 +33,7 @@ using Faces = std::vector<Face>;
 
 typedef CGAL::Point_set_3<Point_3> Point_set;
 
-void test_mesh_API(const std::string& tm_filename,
+void test_mesh_API(const std::filesystem::path& tm_filename,
                    const double alpha_rel = 10,
                    const double offset_rel = 300)
 {
@@ -91,7 +91,7 @@ void test_mesh_API(const std::string& tm_filename,
                      CGAL::parameters::vertex_point_map(out_vpm));
 }
 
-void test_triangles_API(const std::string& ts_filename,
+void test_triangles_API(const std::filesystem::path& ts_filename,
                         const double alpha_rel = 10,
                         const double offset_rel = 300)
 {
@@ -231,7 +231,7 @@ void test_segments_API(const std::string& ss_filename,
 }
 #endif
 
-void test_points_API(const std::string& ps_filename,
+void test_points_API(const std::filesystem::path& ps_filename,
                      const double alpha_rel = 10,
                      const double offset_rel = 300)
 {
@@ -303,10 +303,10 @@ void test_points_API(const std::string& ps_filename,
 
 int main(int argc, char** argv)
 {
-  const std::string tm_filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/building.off"); // mesh
-  const std::string ts_filename = (argc > 2) ? argv[2] : CGAL::data_file_path("meshes/oblong-shuffled.off"); // triangle soup
-  const std::string ss_filename = (argc > 3) ? argv[3] : CGAL::data_file_path("images/420.polylines.txt"); // segment soup
-  const std::string ps_filename = (argc > 4) ? argv[4] : CGAL::data_file_path("points_3/b9_training.ply"); // point set
+  const std::filesystem::path tm_filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/building.off"); // mesh
+  const std::filesystem::path ts_filename = (argc > 2) ? argv[2] : CGAL::data_file_path("meshes/oblong-shuffled.off"); // triangle soup
+  const std::filesystem::path ss_filename = (argc > 3) ? argv[3] : CGAL::data_file_path("images/420.polylines.txt"); // segment soup
+  const std::filesystem::path ps_filename = (argc > 4) ? argv[4] : CGAL::data_file_path("points_3/b9_training.ply"); // point set
 
   test_mesh_API(tm_filename);
   test_triangles_API(ts_filename);

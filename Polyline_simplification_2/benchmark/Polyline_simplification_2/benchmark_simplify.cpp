@@ -82,7 +82,7 @@ static void BM_Simplify(benchmark::State& state, std::string filename) {
 }
 
 int main(int argc, char** argv) {
-  std::string filename = CGAL::data_file_path("wkt/norway-MP.wkt");
+  std::filesystem::path filename = CGAL::data_file_path("wkt/norway-MP.wkt");
   if(argc > 1) {
     std::string_view arg1{argv[1]};
     if(arg1.size() < 2 || arg1[0] != '-' || arg1[1] != '-') {

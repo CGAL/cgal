@@ -49,7 +49,7 @@ namespace IO {
  * \returns `true` if reading was successful, `false` otherwise.
  */
 template<typename Point>
-bool read_3MF(const std::string& filename,
+bool read_3MF(const std::filesystem::path& filename,
               std::vector<CGAL::Surface_mesh<Point> >& output)
 {
   typedef std::vector<Point>                                  PointRange;

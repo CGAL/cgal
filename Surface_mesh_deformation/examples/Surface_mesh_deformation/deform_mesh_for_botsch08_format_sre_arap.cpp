@@ -16,7 +16,7 @@ typedef CGAL::Surface_mesh_deformation<Polyhedron,CGAL::Default, CGAL::Default, 
 
 int main(int argc,char** argv)
 {
-  std::string off_name=CGAL::data_file_path("meshes/cactus.off"),
+  std::filesystem::path off_name=CGAL::data_file_path("meshes/cactus.off"),
               sel_name="data/cactus.sel",
               def_name="data/cactus.def";
   if  ( argc!=4){

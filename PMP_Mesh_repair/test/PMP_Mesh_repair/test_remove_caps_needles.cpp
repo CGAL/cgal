@@ -23,7 +23,7 @@ namespace params = CGAL::parameters;
 
 typedef CGAL::Polyhedral_envelope<K> Envelope;
 
-void general_test(std::string filename)
+void general_test(std::filesystem::path filename)
 {
   std::cout << "Removing caps/needles no extra parameters\n";
   std::ifstream input(filename);
@@ -51,7 +51,7 @@ void general_test(std::string filename)
     std::cout << "  Output mesh has self-intersections\n";
 }
 
-void test_with_envelope(std::string filename, double eps)
+void test_with_envelope(std::filesystem::path filename, double eps)
 {
   std::cout << "Removing caps/needles with envelope, epsilon = " << eps << "\n";
   std::ifstream input(filename);
@@ -128,7 +128,7 @@ bool same_meshes(const Mesh& m1, const Mesh& m2)
                          , CGAL::Counting_output_iterator(&m2_only));
   return m1_only==0 && m2_only==0;
 }
-void test_parameters_on_pig(std::string filename)
+void test_parameters_on_pig(std::filesystem::path filename)
 {
   std::ifstream input(filename);
 
@@ -166,7 +166,7 @@ void test_parameters_on_pig(std::string filename)
 
 int main(int argc, char** argv)
 {
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/pig.off");
+  const std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/pig.off");
   double eps = (argc > 2) ? atof(argv[2]) : 0.01;
 
   general_test(filename);

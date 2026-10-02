@@ -73,7 +73,7 @@ struct Visitor
 
 int main(int argc, char* argv[])
 {
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/P.off");
+  const std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/P.off");
   std::ifstream input(filename);
 
   Mesh mesh;

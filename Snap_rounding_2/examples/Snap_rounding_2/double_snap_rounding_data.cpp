@@ -43,7 +43,7 @@ int main(int argc, char*argv[] )
   std::cerr.precision(17);
   std::cout.precision(17);
   std::clog.precision(17);
-  std::string path = argc > 1 ? argv[1] : CGAL::data_file_path("2d_segments/mini.obj");
+  std::filesystem::path path = argc > 1 ? argv[1] : CGAL::data_file_path("2d_segments/mini.obj");
   std::ifstream in(path);
   if(!in){
     std::cout << "File not found: " << path << std::endl;
