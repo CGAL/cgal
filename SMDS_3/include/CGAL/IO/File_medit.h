@@ -359,6 +359,10 @@ public:
   {
     switch ( r_c3t3_.in_dimension(vh) )
     {
+    case 0:
+      {
+        return r_c3t3_.corner_index(vh);
+      }
     case 2:
       {
         // Check if each incident surface facet of vh has the same surface index
@@ -493,7 +497,7 @@ struct Medit_pmap_generator<C3T3, USE_SUBDOMAIN_INDICES, RENUMBER_SURFACE_PATCH_
   typedef Use_subdomain_indices<C3T3>                       Cell_pmap;
   typedef Renumber_surface_patches_pmap<C3T3, Cell_pmap>    Facet_pmap;
   typedef Null_pmap                                         Facet_pmap_twice;
-  typedef Null_pmap                                         Vertex_pmap;
+  typedef Default_vertex_pmap<C3T3, Cell_pmap, Facet_pmap>  Vertex_pmap;
 
   bool print_twice() { return false; }
 };
