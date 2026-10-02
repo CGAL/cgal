@@ -80,6 +80,25 @@ int main() {
     CGAL_TEST(get(H5_pmap, -1) == 1);
     CGAL_TEST(H5_pmap[0] == -1);
 
+    typedef CGAL::Unique_hash_map<Iterator, int> H6_map;
+    H6_map H6(0);
+
+    Iterator it_first = L.begin();
+    Iterator it_second = std::next(it_first);
+    Iterator it_third = std::next(it_second);
+
+    CGAL_TEST(H6[it_first] == 0);
+
+    H6[it_first] = 100;
+    H6[it_second] = 200;
+    H6[it_third] = 300;
+
+    CGAL_TEST(H6.erase(it_first) == 1);
+    CGAL_TEST(H6.erase(it_second) == 1);
+    CGAL_TEST(H6.erase(it_third) == 1);
+
+    CGAL_TEST(H6[it_third] == 0);
+
     std::cerr << "done" << std::endl;
     CGAL_TEST_END;
 }
