@@ -113,7 +113,7 @@ template<class PointRange,
          class CellRange,
          class FacetWithIndexRange, // either Facet_with_patch_index or a tuple/array
          class EdgeWithIndexRange, // either Edge_with_curve_index or a tuple/array
-        class CornerWithIndexRange> // either Vertex_with_corner_index or a tuple/pair/array
+         class CornerWithIndexRange> // either Vertex_with_corner_index or a tuple/pair/array
 bool read_MEDIT(std::istream& is,
                 PointRange& points,
                 CellRange& cells,
@@ -362,7 +362,7 @@ bool read_MEDIT(std::istream& is,
 /*!
  * \ingroup PkgStreamSupportIoFuncsMEDIT
  *
- * \brief reads the content of `is` into `points` and `cells`  using the \ref IOStreamMedit
+ * \brief reads the content of `is` into `points` and `cells`  using the \ref IOStreamMedit.
  *
  *
  * \attention The cell soup is not cleared, and the data from the stream are appended.
@@ -471,7 +471,7 @@ bool read_MEDIT(std::istream& is,
 /*!
  * \ingroup PkgStreamSupportIoFuncsMEDIT
  *
- * \brief writes a soup of indexed cells using the \ref IOStreamMedit
+ * \brief writes a soup of indexed cells using the \ref IOStreamMedit.
  *
  * \tparam PointRange a model of the concept `ConstRange` whose value type is the point type
  * \tparam CellRange a model of the concept `ConstRange`
@@ -561,7 +561,7 @@ bool write_MEDIT(std::ostream& os,
 
   std::map<int,int> vertex_corner_index_map;
   for(const auto& c : vertices){
-      vertex_corner_index_map[internal::get_zero(c) + 1] = internal::get_one(c);
+    vertex_corner_index_map[internal::get_zero(c) + 1] = internal::get_one(c);
   }
 
   os << "MeshVersionFormatted 1\nDimension 3\n";
