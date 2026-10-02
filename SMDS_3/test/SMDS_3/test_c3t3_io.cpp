@@ -245,13 +245,8 @@ struct Test_c3t3_io {
           end1 = t1.finite_vertices_end();
         vit1 != end1; ++vit1, ++vit2)
     {
-      if(!( vit1->in_dimension() == vit2->in_dimension() &&
-            vit1->index() == vit2->index()) )
+      if(!compare_vertices(vit1, vit2))
       {
-        std::cerr << "Error: vertices are different:\n";
-        std::cerr << *vit1 << "\n"
-                  << *vit2 << std::endl;
-        assert(false);
         return false;
       }
     }
@@ -292,29 +287,81 @@ struct Test_c3t3_io {
           end1 = t1.finite_cells_end();
         cit1 != end1; ++cit1, ++cit2)
     {
-      if(cit1->subdomain_index() != cit2->subdomain_index() )
+      if (!compare_cells(cit1, cit2))
+        return false;
+    }
+    return true;
+  }
+
+  static bool compare_vertices(const Vertex_handle& vit1, const Vertex_handle& vit2) {
+    if(!( vit1->in_dimension() == vit2->in_dimension() &&
+          vit1->index() == vit2->index()) )
+    {
+      std::cerr << "Error: vertices are different:\n";
+      std::cerr << *vit1 << "\n"
+                << *vit2 << std::endl;
+      assert(false);
+      return false;
+    }
+    return true;
+  }
+
+  static bool compare_cells(const Cell_handle& cit1, const Cell_handle& cit2) {
+    if(cit1->subdomain_index() != cit2->subdomain_index() )
+    {
+      std::cerr << "Error: cells are different:\n";
+      std::cerr << *cit1 << "\n"
+                << *cit2 << std::endl;
+      assert(false);
+      return false;
+    }
+    for(int i = 0; i < 4; ++i) {
+      if( cit1->surface_patch_index(i) !=
+          cit2->surface_patch_index(i) )
       {
         std::cerr << "Error: cells are different:\n";
         std::cerr << *cit1 << "\n"
-                  << *cit2 << std::endl;
+                  << *cit2 << "\n"
+                  << "surface_patch_index(" << i << "):\n"
+                  << cit1->surface_patch_index(i) << "\n"
+                  << cit2->surface_patch_index(i) << "\n";
         assert(false);
         return false;
       }
-      for(int i = 0; i < 4; ++i) {
-        if( cit1->surface_patch_index(i) !=
-            cit2->surface_patch_index(i) )
-        {
-          std::cerr << "Error: cells are different:\n";
-          std::cerr << *cit1 << "\n"
-                    << *cit2 << "\n"
-                    << "surface_patch_index(" << i << "):\n"
-                    << cit1->surface_patch_index(i) << "\n"
-                    << cit2->surface_patch_index(i) << "\n";
-          assert(false);
-          return false;
-        }
-      }
     }
+    return true;
+  }
+
+  static bool check_features(const C3t3& c1, const C3t3& c2) {
+    typedef typename C3t3::Edges_in_complex_iterator Edges_in_complex_iterator;
+
+    if (c1.number_of_edges_in_complex() != c2.number_of_edges_in_complex())
+    {
+      assert(false);
+      return false;
+    }
+#if 0
+    // Not sure if the C3t3 edges in complex iterator order changes after a reload...
+    for (Edges_in_complex_iterator
+        eit1 = c1.edges_in_complex_begin(),
+        eit2 = c2.edges_in_complex_begin(),
+        end1 = c1.edges_in_complex_end();
+        eit1 != end1; ++eit1, ++eit2)
+    {
+      Cell_handle cell1 = eit1->first;
+      Cell_handle cell2 = eit2->first;
+      if (!compare_cells(cell1, cell2))
+        return false;
+      Vertex_handle vertex1_1 = cell1->vertex(eit1->second);
+      Vertex_handle vertex1_2 = cell2->vertex(eit2->second);
+      if (!compare_vertices(vertex1_1, vertex1_2))
+        return false;
+      Vertex_handle vertex2_1 = cell1->vertex(eit1->third);
+      Vertex_handle vertex2_2 = cell2->vertex(eit2->third);
+      if (!compare_vertices(vertex2_1, vertex2_2))
+        return false;
+    }
+#endif
     return true;
   }
 
@@ -358,7 +405,7 @@ struct Test_c3t3_io {
       assert(ss_c3t3);
       assert(ss_c3t3_bis);
       assert(ss_c3t3.str() == ss_c3t3_bis.str());
-      if(!check_equality(c3t3, c3t3_bis)) return false;
+      if(!check_equality(c3t3, c3t3_bis) || !check_features(c3t3, c3t3_bis)) return false;
     }
 
     c3t3_bis.clear();
@@ -372,7 +419,7 @@ struct Test_c3t3_io {
       CGAL::IO::load_binary_file(ss, c3t3_bis);
       assert(ss);
     }
-    if(!check_equality(c3t3, c3t3_bis)) return false;
+    if(!check_equality(c3t3, c3t3_bis) || !check_features(c3t3, c3t3_bis)) return false;
 
 #ifndef CGAL_LITTLE_ENDIAN
     // skip binary I/O with the existing file for big endian
@@ -404,6 +451,7 @@ struct Test_c3t3_io {
       CGAL::IO::load_binary_file(input, c3t3_bis);
       assert(input);
     }
+    // reading from a feature-less c3t3 file, do not check feature
     if(!check_equality(c3t3, c3t3_bis)) return false;
 
     return true;
