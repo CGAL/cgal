@@ -320,19 +320,21 @@ bool read_MEDIT(std::istream& is,
         edges_with_curve_index.push_back({offset + n[0] - 1, offset + n[1] - 1, curve_index});
         CGAL_assertion(edges_with_curve_index.size() == static_cast<std::size_t>(i + 1));
       }
-    }else{
-        is >> nedges;
-        std::string buffer;
-        for(int i=0; i<nedges; ++i)
-          std::getline(is, buffer);
+    }
+    else
+    {
+      is >> nedges;
+      std::string buffer;
+      for(int i=0; i<nedges; ++i)
+        std::getline(is, buffer);
     }
 
     if(line.find("Ridges") != std::string::npos)
     {
-        is >> nridges;
-        std::string buffer;
-        for(int i=0; i<nedges; ++i)
-          std::getline(is, buffer);
+      is >> nridges;
+      std::string buffer;
+      for(int i=0; i<nedges; ++i)
+        std::getline(is, buffer);
     }
   }
 
