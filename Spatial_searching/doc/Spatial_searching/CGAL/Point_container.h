@@ -36,12 +36,12 @@ Point type.
 typedef Traits::Point_d Point_d;
 
 /*!
-An iterator with value type `Point_d*`.
+An iterator with value type `Point_d`.
 */
 typedef unspecified_type iterator;
 
 /*!
-A const iterator with value type `const Point_d*`.
+A const iterator with value type `Point_d`.
 */
 typedef unspecified_type const_iterator;
 
@@ -90,7 +90,7 @@ void recompute_tight_bounding_box();
 
 /*!
 
-Returns an iterator to a pointer to the first point.
+Returns an iterator to the first point.
 
 */
 iterator begin();
@@ -104,7 +104,7 @@ iterator end();
 
 /*!
 
-Returns a const iterator to a pointer to the first point.
+Returns a const iterator to the first point.
 
 */
 const_iterator begin() const;
@@ -125,7 +125,7 @@ int dimension() const;
 
 /*!
 
-Returns coordinate for which the pointer list is built.
+Returns the coordinate for which the point list is built.
 
 */
 int built_coordinate() const;
