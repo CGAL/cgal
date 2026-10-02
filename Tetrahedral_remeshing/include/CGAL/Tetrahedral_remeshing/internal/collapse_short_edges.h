@@ -1443,7 +1443,7 @@ auto can_be_collapsed(const typename C3T3::Edge& e,
     const auto v0 = e.first->vertex(e.second);
     const auto v1 = e.first->vertex(e.third);
 
-    if(v0->in_dimension() != 3 && v1->in_dimension() != 3)
+    if(c3t3.in_dimension(v0) != 3 && c3t3.in_dimension(v1) != 3)
     {
       const auto patch_v0 = patch_cache
         ? cached_surface_patch_index(v0, c3t3, *patch_cache)
