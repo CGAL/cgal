@@ -49,27 +49,27 @@ public:
     : translationvector_(tv)
   {}
 
-  Point_2     transform(const Point_2 &p) const
+  Point_2     transform(const Point_2 &p) const override
   {
     typename R::Construct_translated_point_2 translated_point;
     return translated_point(p, translationvector_);
   }
 
-  Vector_2    transform(const Vector_2 &v) const { return v; }
-  Direction_2 transform(const Direction_2 &d) const { return d; }
+  Vector_2    transform(const Vector_2 &v) const override { return v; }
+  Direction_2 transform(const Direction_2 &d) const override { return d; }
 
-  Aff_transformation_2 operator*(const Aff_t_base &t) const
+  Aff_transformation_2 operator*(const Aff_t_base &t) const override
   {
     return t.compose(*this);
   }
 
-  Aff_transformation_2 compose(const Translation &t) const
+  Aff_transformation_2 compose(const Translation &t) const override
   {
     return Aff_transformation_2(TRANSLATION,
                                 translationvector_ + t.translationvector_);
   }
 
-  Aff_transformation_2 compose(const Rotation &t) const
+  Aff_transformation_2 compose(const Rotation &t) const override
   {
     return Aff_transformation_2(t.cosinus_,
                                 -t.sinus_,
@@ -82,7 +82,7 @@ public:
                                 t.cosinus_*translationvector_.y());
   }
 
-  Aff_transformation_2 compose(const Scaling &t) const
+  Aff_transformation_2 compose(const Scaling &t) const override
   {
     return Aff_transformation_2(t.scalefactor_,
                                 FT(0),
@@ -93,7 +93,7 @@ public:
                                 t.scalefactor_*translationvector_.y());
   }
 
-  Aff_transformation_2 compose(const Transformation &t) const
+  Aff_transformation_2 compose(const Transformation &t) const override
   {
     return Aff_transformation_2(t.t11,
                                 t.t12,
@@ -108,7 +108,7 @@ public:
                                 + t.t23);
   }
 
-  Aff_transformation_2 compose(const Reflection &r) const
+  Aff_transformation_2 compose(const Reflection &r) const override
   {
     return Aff_transformation_2(r.cosinus_, r.sinus_,
                                 r.cosinus_*(translationvector_.x()-r.t.x())+r.sinus_*(translationvector_.y() - r.t.y()) +r.t.x(),
@@ -116,29 +116,29 @@ public:
                                 r.sinus_*(translationvector_.x()-r.t.x())-r.cosinus_*(translationvector_.y() - r.t.y())+r.t.y());
   }
 
-  Aff_transformation_2 inverse() const
+  Aff_transformation_2 inverse() const override
   {
     return Aff_transformation_2(TRANSLATION, - translationvector_);
   }
 
-  bool is_even() const
+  bool is_even() const override
   {
     return true;
   }
 
-  virtual bool is_translation() const
+  bool is_translation() const override
   {
     return true;
   }
 
-  FT cartesian(int i, int j) const
+  FT cartesian(int i, int j) const override
   {
     if (j==i) return FT(1);
     if (j==2) return translationvector_[i];
     return FT(0);
   }
 
-  std::ostream &print(std::ostream &os) const
+  std::ostream &print(std::ostream &os) const override
   {
     os << "Aff_transformationC2(VectorC2(" << translationvector_.x() << ", "
        << translationvector_.y()  <<  "))";
