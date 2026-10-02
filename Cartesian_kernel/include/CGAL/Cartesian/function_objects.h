@@ -1887,6 +1887,18 @@ public:
     typedef typename K::Circle_2         Circle_2;
 
   public:
+    const Bbox_2&
+    operator()(const Bbox_2& b) const
+    {
+      return b;
+    }
+
+    Bbox_2&
+    operator()(Bbox_2& b) const
+    {
+      return b;
+    }
+
     Bbox_2
     operator()(const Point_2& p) const
     {
@@ -1959,6 +1971,18 @@ public:
     typedef typename K::Circle_3         Circle_3;
 
   public:
+    const Bbox_3&
+    operator()(const Bbox_3& b) const
+    {
+      return b;
+    }
+
+    Bbox_3&
+    operator()(Bbox_3& b) const
+    {
+      return b;
+    }
+
     Bbox_3
     operator()(const Point_3& p) const
     {

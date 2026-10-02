@@ -691,11 +691,12 @@ public:
       return std::addressof(m_nodes[0]);
     }
 
-  private:
+    /// @private
     const Primitive& singleton_data() const {
       CGAL_assertion(size() == 1);
       return *m_primitives.begin();
     }
+  private:
 
     // search KD-tree
     mutable std::unique_ptr<const Search_tree> m_p_search_tree;

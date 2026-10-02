@@ -1,8 +1,8 @@
+AABB_tree
 Algebraic_foundations
 Arithmetic_kernel
 BGL
 Basic_viewer
-Box_intersection_d
 CGAL_Core
 Cartesian_kernel
 Circulator
@@ -33,6 +33,7 @@ SMDS_3
 STL_Extension
 Solver_interface
 Spatial_sorting
+Spatial_searching
 Stream_support
 Surface_mesh
 TDS_2
