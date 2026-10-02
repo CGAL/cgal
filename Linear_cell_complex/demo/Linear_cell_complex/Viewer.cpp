@@ -17,6 +17,7 @@
 
 Viewer::Viewer(QWidget *parent)
   : Base(parent, m_graphic_buffer, ""),
+    scene(nullptr),
     m_previous_scene_empty(true)
 {
   m_gs_options.face_color=[](const LCC & alcc,
