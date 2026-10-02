@@ -216,7 +216,7 @@ check_cmake_minimum_required()
 
   # shellcheck disable=SC2016
   heading 'Checking if all CMakeLists.txt starts with `cmake_minimum_required`'
-  cmr=$(for i in !(build*)/@(test|examples|demo|benchmark*)/*/CMakeLists.txt; do res=$(grep -Ev "^[[:space:]]*(#|$)" "$i" | head -n 1 | grep -v cmake_minimum_required); if [ -n "${res}" ]; then echo "$i"; fi; done)
+  cmr=$(for i in !(build*)/@(test|examples|demo|benchmark*)/*/CMakeLists.txt; do res=$(grep -m 1 -Ev "^[[:space:]]*(#|$)" "$i" | grep -v cmake_minimum_required); if [ -n "${res}" ]; then echo "$i"; fi; done)
   report_error_with_list_of_files 'CMakeLists with issues:' "${cmr}"
 }
 
