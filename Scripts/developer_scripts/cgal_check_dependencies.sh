@@ -102,6 +102,7 @@ fi
 group "Collect package dependencies" cmake --build . -j"$(nproc --all)" --target packages_dependencies ${CMAKE_DEBUG_OPT:+"$CMAKE_DEBUG_OPT"} -- -k
 echo " Checks finished"
 start_group "Compare dependencies"
+[ -n "$GITHUB_STEP_SUMMARY" ] && printf '## Dependency check\n' >> "$GITHUB_STEP_SUMMARY"
 for pkg_path in "$CGAL_ROOT"/*
 do
   pkg=$(basename "$pkg_path")
@@ -131,7 +132,7 @@ if [ -n "$TOTAL_RES" ]; then
   echo " or simply manually edit the problematic files."
   if [ -n "$GITHUB_STEP_SUMMARY" ]; then
     {
-      printf 'Dependency check failed\n\n```diff\n'
+      printf '❌ Dependency check failed\n\n```diff\n'
       # shellcheck disable=SC2059
       printf "$TOTAL_RES"
       printf '```\n\n'
