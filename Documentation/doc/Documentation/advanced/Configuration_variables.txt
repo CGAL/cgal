@@ -210,39 +210,6 @@ and library files must be specified by using environment variables.
 
 
 
-\subsection installation_rs RS and RS3 Library
-
-As said before, only the \cgal univariate algebraic kernel depends on the
-library Rs. As the algebraic kernel is not compiled as a part of the \cgal
-library, this library is not detected nor configured at installation time.
-
-CMake will try to find Rs in the standard header and library
-directories. When it is not automatically detected, the locations of the
-headers and library files must be specified using environment variables.
-
-Rs needs \gmp 4.2 or later and \mpfi 1.3.4 or later. The variables
-related to the latter library may also need to be defined.
-
-
-| Variable             | Description           | Type        |
-| :-                   | :-                    | :-             |
-| `RS_DIR` | Directory of \rs default installation | Environment |
-| `RS_INCLUDE_DIR` | Directory containing the `rs_exports.h` file | CMake |
-| `RS_INC_DIR` | Idem | Environment |
-| `RS_LIBRARIES_DIR`  | Directory containing the compiled \rs library | CMake |
-| `RS_LIB_DIR` | Idem | Environment |
-| `RS_LIBRARIES` | Full pathname of the compiled \rs library | CMake |
-
-Similar variables exist for \rs3.
-
-| Variable             | Description           | Type        |
-| :-                   | :-                    | :-
-| `RS3_DIR` | Directory of \rs3 default installation | Environment |
-| `RS3_INCLUDE_DIR` | Directory containing the file `rs3_fncts.h` file | CMake |
-| `RS3_INC_DIR` | Idem | Environment |
-| `RS3_LIBRARIES_DIR` | Directory containing the compiled \rs3 library | CMake |
-| `RS3_LIB_DIR` | Idem | Environment |
-| `RS3_LIBRARIES` | Full pathname of the compiled \rs3 library | CMake |
 
 \subsection installation_eigen Eigen Library
 
@@ -317,7 +284,7 @@ Alternatively, the user can instead source the `setvars` script that can be foun
 `C:/dev/OneAPI/setvars.bat` on Windows. It will setup the PATH and all Intel internal variables to be able to easily use
 any library of the OneAPI.
 
-\subsection installation_laslib LASlib library
+\subsection installation_laslib LASlib Library
 
 If LASLIB is not automatically found, the following variables must be set:
 
@@ -327,17 +294,17 @@ If LASLIB is not automatically found, the following variables must be set:
 | `LASZIP_INCLUDE_DIR` | Directory containing the file `mydefs.hpp` | CMake |
 | `LASLIB_LIBRARIES` | Full pathname of the compiled LASLIB library | CMake |
 
-\subsection installation_OpenCV OpenCV library
+\subsection installation_OpenCV OpenCV Library
 
 The environment variable `OPENCV_DIR` should be set to the directory
 containing the file `OpenCVConfig.cmake` provided by OpenCV.
 
-\subsection installation_SCIP SCIP library
+\subsection installation_SCIP SCIP Library
 
 The environment variable `SCIP_DIR` should be set to the directory
 containing the file `scip-config.cmake` provided by SCIP.
 
-\subsection installation_GLPK GLPK library
+\subsection installation_GLPK GLPK Library
 
 If GLPK is not automatically found, the following variables must be set:
 

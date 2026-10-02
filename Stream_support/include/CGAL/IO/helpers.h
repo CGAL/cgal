@@ -105,6 +105,7 @@ struct is_Point_set_or_Range_or_Iterator
 template <class T>
 inline constexpr bool is_Point_set_or_Range_or_Iterator_v = is_Point_set_or_Range_or_Iterator<T>::value;
 
+
 } // end namespace internal
 } // end namespace IO
 } // namespace CGAL
