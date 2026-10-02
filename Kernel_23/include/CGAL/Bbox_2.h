@@ -75,6 +75,7 @@ public:
 
   inline void dilate(int dist);
   inline void scale(double factor);
+  inline void pad(double factor);
 };
 
 inline
@@ -199,6 +200,21 @@ Bbox_2::scale(double factor)
   rep[1] = center[1] - factor * half_width[1];
   rep[2] = center[0] + factor * half_width[0];
   rep[3] = center[1] + factor * half_width[1];
+}
+
+inline
+void
+Bbox_2::pad(double offset)
+{
+  CGAL_precondition(offset >= 0.);
+
+  if (offset == 0.)
+    return;
+
+  rep[0] -= offset;
+  rep[1] -= offset;
+  rep[2] += offset;
+  rep[3] += offset;
 }
 
 inline
