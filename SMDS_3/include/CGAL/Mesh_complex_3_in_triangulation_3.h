@@ -56,7 +56,7 @@
 
 #include <cstddef>
 #include <iostream>
-#include <oneapi/tbb/concurrent_hash_map.h>
+#include <tbb/concurrent_hash_map.h>
 #include <string>
 #include <utility>
 #include <vector>
@@ -2482,7 +2482,7 @@ operator<< (std::ostream& os,
             const Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_> &c3t3)
 {
   // TODO: implement edge saving
-  if constexpr(c3t3.store_surface_patch_info_in_cell) {
+  if constexpr(Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_>::store_surface_patch_info_in_cell) {
     return os << c3t3.triangulation();
   } else {
     auto& tr = c3t3.triangulation();

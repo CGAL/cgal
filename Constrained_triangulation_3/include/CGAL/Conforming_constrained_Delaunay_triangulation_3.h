@@ -1863,7 +1863,7 @@ public:
   auto number_of_constrained_facets() const
   {
     return std::count_if(tr().all_facets_begin(), tr().all_facets_end(),
-                         [this](auto f) { return is_facet_constrained(f); });
+                         [&](auto f) { return is_facet_constrained(f); });
   }
 
   bool same_triangle(Facet f, CDT_2_face_handle fh) const {

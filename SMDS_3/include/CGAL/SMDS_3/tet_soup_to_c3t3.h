@@ -153,10 +153,8 @@ bool build_finite_cells(C3T3& c3t3,
 
   Tr& tr = c3t3.triangulation();
 
-  CGAL_assertion_code(
-    typename Tr::Geom_traits::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
-    typename Tr::Geom_traits::Orientation_3 orientation = tr.geom_traits().orientation_3_object();
-  )
+  typename Tr::Geom_traits::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
+  typename Tr::Geom_traits::Orientation_3 orientation = tr.geom_traits().orientation_3_object();
 
   typename SubdomainsRange::value_type max_domain = 0;
   if(replace_domain_0)
