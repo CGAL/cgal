@@ -1995,7 +1995,7 @@ void Scene_surface_mesh_item::resetColors()
     d->has_feature_edges = false;
   }
   invalidate(COLORS);
-  itemChanged(); // @fixme really shouldn't call something that strong
+  redraw();
 }
 
 QMenu* Scene_surface_mesh_item::contextMenu()
