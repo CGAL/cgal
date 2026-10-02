@@ -127,8 +127,16 @@ function(CGAL_setup_CGAL_flags target)
     target_compile_options(${target} INTERFACE
       "-D_SCL_SECURE_NO_DEPRECATE;-D_SCL_SECURE_NO_WARNINGS")
     target_compile_options(${target} INTERFACE
-      $<$<COMPILE_LANGUAGE:CXX>:/fp:strict>
-      $<$<COMPILE_LANGUAGE:CXX>:/fp:except->
+      $<$<COMPILE_LANGUAGE:CXX>:/fp:strict>)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|IntelLLVM")
+      # clang-cl and icx warn that /fp:except- overrides part of /fp:strict.
+      target_compile_options(${target} INTERFACE
+        "$<$<COMPILE_LANGUAGE:CXX>:SHELL:-Xclang -ffp-exception-behavior=ignore>")
+    else()
+      target_compile_options(${target} INTERFACE
+        $<$<COMPILE_LANGUAGE:CXX>:/fp:except->)
+    endif()
+    target_compile_options(${target} INTERFACE
       $<$<COMPILE_LANGUAGE:CXX>:/bigobj>  # Use /bigobj by default
       )
   elseif(CMAKE_CXX_COMPILER_ID MATCHES "Intel")
