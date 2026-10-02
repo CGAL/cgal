@@ -26,7 +26,7 @@
 #include <cstdlib>
 #include <vector>
 #include <utility>
-#include <CGAL/config.h>      // included compiler_config.h, defining CGAL_USE_CORE, etc.
+#include <CGAL/config.h>
 #include <CGAL/Polynomial.h>
 #include <CGAL/number_type_config.h>    // CGAL_PI is defined there
 #include <CGAL/enum.h>

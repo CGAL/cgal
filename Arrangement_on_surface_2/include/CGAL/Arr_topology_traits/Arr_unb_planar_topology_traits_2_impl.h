@@ -616,7 +616,7 @@ compare_x (const Point_2& p, const Vertex* v) const
   if (ps_y != ARR_INTERIOR)
   {
     // Compare the x-position of the vertical asymptote of the curve incident
-    // to v with the x-coodinate of p.
+    // to v with the x-coordinate of p.
     Arr_curve_end v_ind = ARR_MIN_END;
     const X_monotone_curve_2* v_cv = _curve (v, v_ind);
 
@@ -650,7 +650,7 @@ compare_xy (const Point_2& p, const Vertex* v) const
 
   if (ps_y != ARR_INTERIOR) {
     // Compare the x-position of the vertical asymptote of the curve incident
-    // to v with the x-coodinate of p.
+    // to v with the x-coordinate of p.
     Arr_curve_end v_ind = ARR_MIN_END;
     const X_monotone_curve_2* v_cv = _curve (v, v_ind);
 

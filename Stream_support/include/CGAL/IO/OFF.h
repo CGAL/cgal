@@ -20,6 +20,7 @@
 
 #include <CGAL/array.h>
 #include <CGAL/assertions.h>
+#include <CGAL/Container_helper.h>
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Kernel_traits.h>
@@ -29,8 +30,8 @@
 
 #include <fstream>
 #include <iostream>
-#include <vector>
 #include <type_traits>
+#include <vector>
 
 namespace CGAL {
 
@@ -67,8 +68,7 @@ bool read_OFF(std::istream& is,
   typedef typename Kernel::Point_2                                                    Texture;
   typedef typename Kernel::Vector_3                                                   Normal;
   typedef typename Kernel::FT                                                         FT;
-  typedef CGAL::IO::Color                                                                 Color;
-
+  typedef CGAL::IO::Color                                                             Color;
 
   if(!is.good()){
     if(verbose)
@@ -79,15 +79,19 @@ bool read_OFF(std::istream& is,
   CGAL::File_scanner_OFF scanner(is);
   if(is.fail())
     return false;
-  points.resize(scanner.size_of_vertices());
-  polygons.resize(scanner.size_of_facets());
+
+  CGAL::internal::reserve(points, scanner.size_of_vertices());
+  CGAL::internal::reserve(polygons, scanner.size_of_facets());
 
   for(std::size_t i=0; i<scanner.size_of_vertices(); ++i)
   {
     double x(0), y(0), z(0), w(0);
     scanner.scan_vertex(x, y, z, w);
     CGAL_assertion(w != 0);
-    internal::fill_point(x, y, z, w, points[i]);
+
+    Point p;
+    internal::fill_point(x, y, z, w, p);
+    points.push_back(p);
 
     if(scanner.has_normals())
     {
@@ -122,7 +126,10 @@ bool read_OFF(std::istream& is,
     if((!is.eof() && !is.good()) || no == std::size_t(-1))
       return false;
 
-    CGAL::internal::resize(polygons[i], no);
+    polygons.emplace_back();
+    auto& polygon = polygons.back();
+
+    CGAL::internal::resize(polygon, no);
     for(std::size_t j=0; j<no; ++j)
     {
       std::size_t id = 0;
@@ -132,7 +139,7 @@ bool read_OFF(std::istream& is,
         return false;
       }
       if(id < scanner.size_of_vertices())
-        integer_type_converter(polygons[i][j], id);
+        integer_type_converter(polygon[j], id);
       else
         return false;
     }
@@ -154,12 +161,10 @@ bool read_OFF(std::istream& is,
  *
  * \brief reads the content of `is` into `points` and `polygons`, using the \ref IOStreamOFF.
  *
- * \tparam PointRange a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
- *                    whose value type is the point type
- * \tparam PolygonRange a model of the concepts `SequenceContainer` and `BackInsertionSequence`
- *                      whose `value_type` is itself a model of the concept `SequenceContainer`
- *                      and `BackInsertionSequence` whose `value_type` is an unsigned integer type
- *                      convertible to `std::size_t`
+ * \tparam PointRange a model of the concept `BackInsertionSequence` whose value type is the point type
+ * \tparam PolygonRange a model of the concept `BackInsertionSequence` whose `value_type` is
+ *                      a model of the concept `RandomAccessContainer` whose `value_type`
+ *                      is an unsigned integer type convertible to `std::size_t`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param is the input stream
@@ -192,14 +197,10 @@ bool read_OFF(std::istream& is,
   using parameters::get_parameter;
 
   return internal::read_OFF(is, points, polygons,
-                            choose_parameter(get_parameter(np, internal_np::vertex_normal_output_iterator),
-                                             CGAL::Emptyset_iterator()),
-                            choose_parameter(get_parameter(np, internal_np::vertex_color_output_iterator),
-                                             CGAL::Emptyset_iterator()),
-                            choose_parameter(get_parameter(np, internal_np::vertex_texture_output_iterator),
-                                             CGAL::Emptyset_iterator()),
-                            choose_parameter(get_parameter(np, internal_np::face_color_output_iterator),
-                                             CGAL::Emptyset_iterator()),
+                            choose_parameter<CGAL::Emptyset_iterator>(get_parameter(np, internal_np::vertex_normal_output_iterator)),
+                            choose_parameter<CGAL::Emptyset_iterator>(get_parameter(np, internal_np::vertex_color_output_iterator)),
+                            choose_parameter<CGAL::Emptyset_iterator>(get_parameter(np, internal_np::vertex_texture_output_iterator)),
+                            choose_parameter<CGAL::Emptyset_iterator>(get_parameter(np, internal_np::face_color_output_iterator)),
                             choose_parameter(get_parameter(np, internal_np::verbose), true));
 }
 
@@ -208,11 +209,10 @@ bool read_OFF(std::istream& is,
  *
  * \brief reads the content of the file `fname` into `points` and `polygons`, using the \ref IOStreamOFF.
  *
- * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type
- * \tparam PolygonRange a model of the concepts `SequenceContainer` and `BackInsertionSequence`
- *                      whose `value_type` is itself a model of the concept `SequenceContainer`
- *                      and `BackInsertionSequence` whose `value_type` is an unsigned integer type
- *                      convertible to `std::size_t`
+ * \tparam PointRange a model of the concept `BackInsertionSequence` whose value type is the point type
+ * \tparam PolygonRange a model of the concept `BackInsertionSequence` whose `value_type` is
+ *                      a model of the concept `RandomAccessContainer` whose `value_type` is
+ *                      an unsigned integer type convertible to `std::size_t`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param fname the path to the input file
@@ -254,10 +254,10 @@ bool read_OFF(const std::string& fname,
  *
  * \brief writes the content of `points` and `polygons` in `os`, using the \ref IOStreamOFF.
  *
- * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type
- * \tparam PolygonRange a model of the concept `SequenceContainer`
- *                      whose `value_type` is itself a model of the concept `SequenceContainer`
- *                      whose `value_type` is an unsigned integer type convertible to `std::size_t`
+ * \tparam PointRange a model of the concept `Range` whose value type is the point type
+ * \tparam PolygonRange a model of the concept `SequenceContainer` whose `value_type` is itself
+ *                      a model of the concept `SequenceContainer` whose `value_type` is
+ *                      an unsigned integer type convertible to `std::size_t`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param os the output stream
@@ -267,6 +267,12 @@ bool read_OFF(const std::string& fname,
  * \param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{point_map}
+ *     \cgalParamDescription{a property map associating points  to the elements of the range`points`}
+ *     \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
+ *                    of the iterator of `PointRange` and value type is a model of the concept `Point_3`}
+ *     \cgalParamDefault{`CGAL::Identity_property_map<std::iterator_traits<PointRange::iterator>::value_type>`}
+ *   \cgalParamNEnd
  *   \cgalParamNBegin{stream_precision}
  *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
  *     \cgalParamType{int}
@@ -295,10 +301,10 @@ bool write_OFF(std::ostream& os,
  *
  * \brief writes the content of `points` and `polygons` in the file `fname`, using the \ref IOStreamOFF.
  *
- * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type
- * \tparam PolygonRange a model of the concept `SequenceContainer`
- *                      whose `value_type` is itself a model of the concept `SequenceContainer`
- *                      whose `value_type` is an unsigned integer type convertible to `std::size_t`
+ * \tparam PointRange a model of the concept `Range` whose value type is the point type
+ * \tparam PolygonRange a model of the concept `SequenceContainer` whose `value_type` is itself
+ *                      a model of the concept `SequenceContainer` whose `value_type` is
+ *                      an unsigned integer type convertible to `std::size_t`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param fname the path to the output file
@@ -308,6 +314,12 @@ bool write_OFF(std::ostream& os,
  * \param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{point_map}
+ *     \cgalParamDescription{a property map associating points to the elements of the range `points`}
+ *     \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
+ *                    of the iterator of `PointRange` and value type is a model of the concept `Kernel::Point_3`}
+ *     \cgalParamDefault{`CGAL::Identity_property_map<std::iterator_traits<PointRange::iterator>::value_type>`}
+ *   \cgalParamNEnd
  *   \cgalParamNBegin{stream_precision}
  *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
  *     \cgalParamType{int}
@@ -331,6 +343,213 @@ bool write_OFF(const std::string& fname,
   Generic_writer<std::ostream, File_writer_OFF> writer(os);
   return writer(points, polygons, np);
 }
+
+/**
+   \ingroup PkgStreamSupportIoFuncsOFF
+
+   \brief reads points (positions + normals, if available), using the \ref IOStreamOFF.
+
+   \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
+   It must be a model of `DefaultConstructible` and defaults to `value_type_traits<PointOutputIterator>::%type`.
+   It can be omitted when the default is fine.
+   \tparam PointOutputIterator iterator over output points.
+   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+
+   \param is input stream
+   \param output output iterator over points
+   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+
+   \cgalNamedParamsBegin
+     \cgalParamNBegin{point_map}
+       \cgalParamDescription{a property map associating points to the elements of the point range}
+       \cgalParamType{a model of `WritablePropertyMap` with value type `geom_traits::Point_3`}
+       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{normal_map}
+       \cgalParamDescription{a property map associating normals to the elements of the point range}
+       \cgalParamType{a model of `WritablePropertyMap` with value type `geom_traits::Vector_3`}
+       \cgalParamDefault{If this parameter is omitted, normals in the input stream are ignored.}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{geom_traits}
+       \cgalParamDescription{an instance of a geometric traits class}
+       \cgalParamType{a model of `Kernel`}
+       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+     \cgalParamNEnd
+   \cgalNamedParamsEnd
+
+   \returns `true` if reading was successful, `false` otherwise.
+
+   \sa \ref IOStreamOFF
+*/
+template <typename OutputIteratorValueType,
+          typename PointOutputIterator,
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool read_OFF(std::istream& is,
+              PointOutputIterator output,
+              const CGAL_NP_CLASS& np = parameters::default_values()
+#ifndef DOXYGEN_RUNNING
+              , std::enable_if_t<CGAL::is_iterator<PointOutputIterator>::value>* = nullptr
+#endif
+              );
+
+
+
+/**
+   \ingroup PkgStreamSupportIoFuncsOFF
+
+   \brief reads points (positions + normals, if available), using the \ref IOStreamOFF.
+
+   \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
+   It must be a model of `DefaultConstructible` and defaults to `value_type_traits<PointOutputIterator>::%type`.
+   It can be omitted when the default is fine.
+   \tparam PointOutputIterator iterator over output points.
+   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+
+   \param fname input file name
+   \param output output iterator over points
+   \param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below.
+
+   \cgalNamedParamsBegin
+     \cgalParamNBegin{point_map}
+       \cgalParamDescription{a property map associating points to the elements of the point range}
+       \cgalParamType{a model of `WritablePropertyMap` with value type `geom_traits::Point_3`}
+       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{normal_map}
+       \cgalParamDescription{a property map associating normals to the elements of the point range}
+       \cgalParamType{a model of `WritablePropertyMap` with value type `geom_traits::Vector_3`}
+       \cgalParamDefault{If this parameter is omitted, normals in the input stream are ignored.}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{geom_traits}
+       \cgalParamDescription{an instance of a geometric traits class}
+       \cgalParamType{a model of `Kernel`}
+       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+     \cgalParamNEnd
+   \cgalNamedParamsEnd
+
+   \returns `true` if reading was successful, `false` otherwise.
+
+   \sa \ref IOStreamOFF
+*/
+template <typename OutputIteratorValueType,
+          typename PointOutputIterator,
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool read_OFF(const std::string& fname,
+              PointOutputIterator output,
+              const CGAL_NP_CLASS& np = parameters::default_values()
+#ifndef DOXYGEN_RUNNING
+              , std::enable_if_t<CGAL::is_iterator<PointOutputIterator>::value>* = nullptr
+#endif
+              );
+
+/**
+   \ingroup PkgStreamSupportIoFuncsOFF
+
+   \brief writes the range of `points` (positions + normals, if available), using the \ref IOStreamOFF.
+
+   \tparam PointRange is a model of `ConstRange`. The value type of
+   its iterator is the key type of the named parameter `point_map`.
+   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+
+   \param os output stream
+   \param points input point range
+   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+
+   \cgalNamedParamsBegin
+     \cgalParamNBegin{point_map}
+       \cgalParamDescription{a property map associating points to the elements of the point range}
+       \cgalParamType{a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`}
+       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{normal_map}
+       \cgalParamDescription{a property map associating normals to the elements of the point range}
+       \cgalParamType{a model of `ReadablePropertyMap` with value type `geom_traits::Vector_3`}
+       \cgalParamDefault{If this parameter is omitted, normals are not written in the output stream.}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{geom_traits}
+       \cgalParamDescription{an instance of a geometric traits class}
+       \cgalParamType{a model of `Kernel`}
+       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+     \cgalParamNEnd
+
+    \cgalParamNBegin{stream_precision}
+      \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+      \cgalParamType{int}
+      \cgalParamDefault{the precision of the stream `os`}
+    \cgalParamNEnd
+   \cgalNamedParamsEnd
+
+   \returns `true` if writing was successful, `false` otherwise.
+*/
+template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool write_OFF(std::ostream& os,
+               const PointRange& points,
+               const CGAL_NP_CLASS& np = parameters::default_values()
+#ifndef DOXYGEN_RUNNING
+               , std::enable_if_t<internal::is_Range<PointRange>::value>* = nullptr
+#endif
+               );
+
+
+
+/**
+   \ingroup PkgStreamSupportIoFuncsOFF
+
+   \brief writes the range of `points` (positions + normals, if available), using the \ref IOStreamOFF.
+
+   \tparam PointRange is a model of `ConstRange`. The value type of
+   its iterator is the key type of the named parameter `point_map`.
+   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+
+   \param filename the path to the output file
+   \param points input point range
+   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+
+   \cgalNamedParamsBegin
+     \cgalParamNBegin{point_map}
+       \cgalParamDescription{a property map associating points to the elements of the point range}
+       \cgalParamType{a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`}
+       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{normal_map}
+       \cgalParamDescription{a property map associating normals to the elements of the point range}
+       \cgalParamType{a model of `ReadablePropertyMap` with value type `geom_traits::Vector_3`}
+       \cgalParamDefault{If this parameter is omitted, normals are not written in the output file.}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{geom_traits}
+       \cgalParamDescription{an instance of a geometric traits class}
+       \cgalParamType{a model of `Kernel`}
+       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+     \cgalParamNEnd
+
+    \cgalParamNBegin{stream_precision}
+      \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+      \cgalParamType{int}
+      \cgalParamDefault{`6`}
+    \cgalParamNEnd
+   \cgalNamedParamsEnd
+
+   \returns `true` if writing was successful, `false` otherwise.
+
+   \sa \ref IOStreamOFF
+*/
+template <typename PointRange,
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool write_OFF(const std::string& filename,
+               const PointRange& points,
+               const CGAL_NP_CLASS& np = parameters::default_values()
+#ifndef DOXYGEN_RUNNING
+               , std::enable_if_t<internal::is_Range<PointRange>::value>* = nullptr
+#endif
+               );
 
 } // namespace IO
 

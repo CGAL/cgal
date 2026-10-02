@@ -110,27 +110,27 @@ public:
 
 public: // virtual interface of Base_property_array
 
-    virtual void reserve(size_t n)
+    void reserve(size_t n) override
     {
         data_.reserve(n);
     }
 
-    virtual void resize(size_t n)
+    void resize(size_t n) override
     {
         data_.resize(n, value_);
     }
 
-    virtual void push_back()
+    void push_back() override
     {
         data_.push_back(value_);
     }
 
-    virtual void reset(size_t idx)
+    void reset(size_t idx) override
     {
         data_[idx] = value_;
     }
 
-    bool transfer(const Base_property_array& other)
+    bool transfer(const Base_property_array& other) override
     {
       const Property_array<T>* pa = dynamic_cast<const Property_array*>(&other);
       if(pa != nullptr){
@@ -140,7 +140,7 @@ public: // virtual interface of Base_property_array
       return false;
     }
 
-    bool transfer(const Base_property_array& other, std::size_t from, std::size_t to)
+    bool transfer(const Base_property_array& other, std::size_t from, std::size_t to) override
     {
       const Property_array<T>* pa = dynamic_cast<const Property_array*>(&other);
       if (pa != nullptr)
@@ -152,32 +152,32 @@ public: // virtual interface of Base_property_array
       return false;
     }
 
-    virtual void shrink_to_fit()
+    void shrink_to_fit() override
     {
         vector_type(data_).swap(data_);
     }
 
-    virtual void swap(size_t i0, size_t i1)
+    void swap(size_t i0, size_t i1) override
     {
         T d(data_[i0]);
         data_[i0]=data_[i1];
         data_[i1]=d;
     }
 
-    virtual Base_property_array* clone() const
+    Base_property_array* clone() const override
     {
         Property_array<T>* p = new Property_array<T>(this->name_, this->value_);
         p->data_ = data_;
         return p;
     }
 
-    virtual Base_property_array* empty_clone() const
+    Base_property_array* empty_clone() const override
     {
         Property_array<T>* p = new Property_array<T>(this->name_, this->value_);
         return p;
     }
 
-    virtual const std::type_info& type() const { return typeid(T); }
+    const std::type_info& type() const override { return typeid(T); }
 
 
 public:

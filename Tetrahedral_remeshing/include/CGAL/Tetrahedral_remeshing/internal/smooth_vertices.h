@@ -91,6 +91,13 @@ private:
   std::vector<bool> m_free_vertices{};
   bool m_flip_smooth_steps{false};
 
+  struct Move
+  {
+    Vector_3 move;
+    int neighbors;
+    FT mass;
+  };
+
 public:
   Tetrahedral_remeshing_smoother(const SizingFunction& sizing,
                                  const CellSelector& cell_selector,
@@ -332,54 +339,24 @@ private:
 
     //collect all facet normals
     std::unordered_map<Facet, Vector_3, boost::hash<Facet>> fnormals;
-    for (const Facet& f : tr.finite_facets())
+    for (const Facet& trf : tr.finite_facets())
     {
-      if (is_boundary(c3t3, f, m_cell_selector))
-      {
-        const Facet cf = canonical_facet(f);
-        fnormals[cf] = CGAL::NULL_VECTOR;
-      }
-    }
-
-    for (const auto& fn : fnormals)
-    {
-      if(fn.second != CGAL::NULL_VECTOR)
+      if(!is_boundary(c3t3, trf, m_cell_selector))
         continue;
 
-      const Facet& f = fn.first;
-      const Facet& mf = tr.mirror_facet(f);
-      CGAL_expensive_assertion(is_boundary(c3t3, f, m_cell_selector));
+      const Facet f = canonical_facet(trf);
+      const Cell_handle c = f.first;
+      const Cell_handle neigh = f.first->neighbor(f.second);
 
-      Vector_3 start_ref = CGAL::Tetrahedral_remeshing::normal(f, tr.geom_traits());
-      if (c3t3.triangulation().is_infinite(mf.first)
-          || c3t3.subdomain_index(mf.first) < c3t3.subdomain_index(f.first))
-        start_ref = opp(start_ref);
-      fnormals[f] = start_ref;
+      Vector_3 n = CGAL::Tetrahedral_remeshing::normal(f, tr.geom_traits());
+      if (c3t3.triangulation().is_infinite(neigh)
+       || c3t3.subdomain_index(neigh) < c3t3.subdomain_index(c))
+        n = opp(n);
 
-      std::list<Facet> facets;
-      facets.push_back(f);
-      while (!facets.empty())
-      {
-        const Facet ff = facets.front();
-        facets.pop_front();
-
-        const Vector_3& ref = fnormals[ff];
-        for (const Edge& ei : facet_edges(ff.first, ff.second, tr))
-        {
-          if (std::optional<Facet> neighbor
-              = find_adjacent_facet_on_surface(ff, ei, c3t3))
-          {
-            const Facet neigh = *neighbor; //already a canonical_facet
-            if (fnormals[neigh] == CGAL::NULL_VECTOR) //check it's not already computed
-            {
-              fnormals[neigh] = compute_normal(neigh, ref, gt);
-              facets.push_back(neigh);
-            }
-          }
-        }
-      }
+      fnormals[f] = n; // n has length equal to the area of the facet
     }
 
+    // accumulate the normals in normals_map
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     std::ofstream osf("dump_facet_normals.polylines.txt");
 #endif
@@ -394,9 +371,8 @@ private:
       for (const Vertex_handle vi : tr.vertices(f))
       {
         typename VertexNormalsMap::iterator patch_vector_it = normals_map.find(vi);
-
-        if (patch_vector_it == normals_map.end()
-            || patch_vector_it->second.find(surf_i) == patch_vector_it->second.end())
+        if (   patch_vector_it == normals_map.end() //vertex not found
+            || patch_vector_it->second.find(surf_i) == patch_vector_it->second.end())//patch not found
         {
           normals_map[vi][surf_i] = n;
         }
@@ -627,8 +603,8 @@ private:
                            const C3t3& c3t3,
                            const bool boundary_edge = false) const
   {
-    const auto mwi = midpoint_with_info(e, boundary_edge, c3t3);
-    const FT s = sizing_at_midpoint(e, mwi.dim, mwi.index, m_sizing, c3t3, m_cell_selector);
+    const auto [pt, dim, index] = midpoint_with_info(e, boundary_edge, c3t3);
+    const FT s = sizing_at_midpoint(e, pt, dim, index, m_sizing, c3t3, m_cell_selector);
     const FT density = 1. / s; //density = 1 / size^(dimension)
                  //edge dimension is 1, so density = 1 / size
                  //to have mass = length * density with no dimension
@@ -655,9 +631,8 @@ private:
     auto& tr = c3t3.triangulation();
 
     const std::size_t nbv = tr.number_of_vertices();
-    std::vector<Vector_3> moves(nbv, CGAL::NULL_VECTOR);
-    std::vector<int> neighbors(nbv, 0);
-    std::vector<FT> masses(nbv, 0.);
+    const Move default_move{CGAL::NULL_VECTOR, 0 /*neighbors*/, 0. /*mass*/};
+    std::vector<Move> moves(nbv, default_move);
 
     //collect neighbors
     for (const Edge& e : c3t3.edges_in_complex())
@@ -683,33 +658,35 @@ private:
 
       if (vh0_moving)
       {
-        moves[i0] += density * Vector_3(p0, p1);
-        neighbors[i0]++;
-        masses[i0] += density;
+        moves[i0].move += density * Vector_3(p0, p1);
+        moves[i0].mass += density;
+        ++moves[i0].neighbors;
       }
       if (vh1_moving)
       {
-        moves[i1] += density * Vector_3(p1, p0);
-        neighbors[i1]++;
-        masses[i1] += density;
+        moves[i1].move += density * Vector_3(p1, p0);
+        moves[i1].mass += density;
+        ++moves[i1].neighbors;
       }
     }
 
-    // iterate over map of <vertex, id>
-    for (auto [v, vid] : m_vertex_id)
+    // iterate over vertices and move
+    for(Vertex_handle v : tr.finite_vertex_handles())
     {
+      const std::size_t vid = vertex_id(v);
+
       if (!is_free(vid) || !is_on_feature(v))
         continue;
 
       const Point_3 current_pos = point(v->point());
 
-      const std::size_t nb_neighbors = neighbors[vid];
+      const std::size_t nb_neighbors = moves[vid].neighbors;
       if(nb_neighbors == 0)
         continue;
 
-      CGAL_assertion(masses[vid] > 0);
+      CGAL_assertion(moves[vid].mass > 0);
       const Vector_3 move = (nb_neighbors > 0)
-                          ? moves[vid] / masses[vid]
+                          ? moves[vid].move / moves[vid].mass
                           : CGAL::NULL_VECTOR;
 
       const Point_3 smoothed_position = current_pos + move;
@@ -771,9 +748,8 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
   auto& tr = c3t3.triangulation();
 
   const std::size_t nbv = tr.number_of_vertices();
-  std::vector<Vector_3> moves(nbv, CGAL::NULL_VECTOR);
-  std::vector<int> neighbors(nbv, 0);
-  std::vector<FT> masses(nbv, 0.);
+  const Move default_move{CGAL::NULL_VECTOR, 0 /*neighbors*/, 0. /*mass*/};
+  std::vector<Move> moves(nbv, default_move);
 
   for (const Edge& e : tr.finite_edges())
   {
@@ -797,26 +773,28 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
 
       if (vh0_moving)
       {
-        moves[i0] += density * Vector_3(p0, p1);
-        neighbors[i0]++;
-        masses[i0] += density;
+        moves[i0].move += density * Vector_3(p0, p1);
+        moves[i0].mass += density;
+        ++moves[i0].neighbors;
       }
       if (vh1_moving)
       {
-        moves[i1] += density * Vector_3(p1, p0);
-        neighbors[i1]++;
-        masses[i1] += density;
+        moves[i1].move += density * Vector_3(p1, p0);
+        moves[i1].mass += density;
+        ++moves[i1].neighbors;
       }
     }
   }
 
-  // iterate over map of <vertex, id>
-  for (auto [v, vid] : m_vertex_id)
+  // iterate over vertices and move
+  for(Vertex_handle v : tr.finite_vertex_handles())
   {
+    const std::size_t vid = vertex_id(v);
+
     if (!is_free(vid) || v->in_dimension() != 2)
       continue;
 
-    const std::size_t nb_neighbors = neighbors[vid];
+    const std::size_t nb_neighbors = moves[vid].neighbors;
     const Point_3 current_pos = point(v->point());
 
     const auto& incident_surface_patches = vertices_surface_indices.at(v);
@@ -830,7 +808,7 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
 
     if (nb_neighbors > 1)
     {
-      const Vector_3 move = moves[vid] / masses[vid];
+      const Vector_3 move = moves[vid].move / moves[vid].mass;
       const Point_3 smoothed_position = point(v->point()) + move;
 
 #ifdef CGAL_TET_REMESHING_SMOOTHING_WITH_MLS
@@ -969,9 +947,9 @@ std::size_t smooth_internal_vertices(C3t3& c3t3,
   auto& tr = c3t3.triangulation();
 
   const std::size_t nbv = tr.number_of_vertices();
-  std::vector<Vector_3> moves(nbv, CGAL::NULL_VECTOR);
-  std::vector<int> neighbors(nbv, 0);/*for dim 3 vertices, start counting directly from 0*/
-  std::vector<FT> masses(nbv, 0.);
+  const Move default_move{CGAL::NULL_VECTOR, 0 /*neighbors*/, 0. /*mass*/};
+  std::vector<Move> moves(nbv, default_move);
+  /*for dim 3 vertices, start counting neighbors directly from 0*/
 
   for (const Edge& e : tr.finite_edges())
   {
@@ -979,8 +957,7 @@ std::size_t smooth_internal_vertices(C3t3& c3t3,
       continue;
     else
     {
-      const Vertex_handle vh0 = e.first->vertex(e.second);
-      const Vertex_handle vh1 = e.first->vertex(e.third);
+      const auto [vh0, vh1] =  make_vertex_pair(e);
 
       const std::size_t& i0 = vertex_id(vh0);
       const std::size_t& i1 = vertex_id(vh1);
@@ -997,31 +974,32 @@ std::size_t smooth_internal_vertices(C3t3& c3t3,
 
       if (vh0_moving)
       {
-        moves[i0] += density * Vector_3(p0, p1);
-        neighbors[i0]++;
-        masses[i0] += density;
+        moves[i0].move += density * Vector_3(p0, p1);
+        moves[i0].mass += density;
+        ++moves[i0].neighbors;
       }
       if (vh1_moving)
       {
-        moves[i1] += density * Vector_3(p1, p0);
-        neighbors[i1]++;
-        masses[i1] += density;
+        moves[i1].move += density * Vector_3(p1, p0);
+        moves[i1].mass += density;
+        ++moves[i1].neighbors;
       }
     }
   }
 
-  // iterate over map of <vertex, id>
-  for (auto [v, vid] : m_vertex_id)
+  // iterate over vertices and move
+  for(Vertex_handle v : tr.finite_vertex_handles())
   {
+    const std::size_t vid = vertex_id(v);
     if (!is_free(vid))
       continue;
 
-    if (c3t3.in_dimension(v) == 3 && neighbors[vid] > 1)
+    if (c3t3.in_dimension(v) == 3 && moves[vid].neighbors > 1)
     {
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
       os_vol << "2 " << point(v->point());
 #endif
-      const Vector_3 move = moves[vid] / masses[vid];// static_cast<FT>(neighbors[vid]);
+      const Vector_3 move = moves[vid].move / moves[vid].mass;// static_cast<FT>(neighbors[vid]);
       Point_3 new_pos = point(v->point()) + move;
       if (check_inversion_and_move(v, new_pos, inc_cells[vid], tr, total_move)){
         nb_done_3d++;

@@ -292,7 +292,7 @@ public:
   }
 
   /// Add the given dart at the end of this path.
-  /// @pre can_be_pushed(dh)
+  /// @pre \link can_be_pushed `can_be_pushed(dh)`\endlink
   void push_back(Dart_const_descriptor dh, bool flip=false,
                  bool update_isclosed=true)
   {

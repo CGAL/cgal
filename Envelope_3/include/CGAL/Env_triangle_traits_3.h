@@ -1037,7 +1037,7 @@ public:
     return std::nullopt;
   }
 
-  // calculate intersection between triangle & point on the same plane plane
+  // calculate intersection between triangle & point on the same plane
   std::optional<Point_3>
   intersection_on_plane_3(const Plane_3& plane,
                           const Xy_monotone_surface_3& triangle,
@@ -1061,7 +1061,7 @@ public:
     else return std::nullopt;
   }
 
-  // calculate intersection between 2 segments on the same vertical plane plane
+  // calculate intersection between 2 segments on the same vertical plane
   std::optional<std::variant<Point_3, Segment_3>>
   intersection_of_segments(const Xy_monotone_surface_3& s1,
                            const Xy_monotone_surface_3& s2) const {

@@ -41,12 +41,8 @@ intersection(const typename K::Ray_3& ray,
   const Direction_3& linedir = ray.direction();
 
   return intersection_bl<K>(box,
-                            CGAL::to_double(linepoint.x()),
-                            CGAL::to_double(linepoint.y()),
-                            CGAL::to_double(linepoint.z()),
-                            CGAL::to_double(linedir.dx()),
-                            CGAL::to_double(linedir.dy()),
-                            CGAL::to_double(linedir.dz()),
+                            linepoint.x(), linepoint.y(), linepoint.z(),
+                            linedir.dx(), linedir.dy(), linedir.dz(),
                             false, true);
 }
 

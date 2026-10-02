@@ -2762,7 +2762,7 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::split (iterator po
         }
 
         // We store a black node along the leftmost spine of rightTree whose
-        // black-hieght is exactly iRightBHeight.
+        // black-height is exactly iRightBHeight.
         iRightBHeight = rightTree.iBlackHeight;
         spineRightP = rightTree.rootP;
       }
@@ -2897,7 +2897,7 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::split (iterator po
         }
 
         // We store a black node along the rightmost spine of leftTree whose
-        // black-hieght is exactly iLeftBHeight.
+        // black-height is exactly iLeftBHeight.
         iLeftBHeight = leftTree.iBlackHeight;
         spineLeftP = leftTree.rootP;
       }

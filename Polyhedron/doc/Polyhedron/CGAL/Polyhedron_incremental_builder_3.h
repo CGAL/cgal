@@ -42,7 +42,7 @@ halfedge data structure is ignored and all indices are relative to the
 newly added surface, or `ABSOLUTE_INDEXING`, in which all indices are
 absolute indices including an already existing polyhedral surface. The
 former mode allows to create easily independent connected components,
-while the latter mode allows to to continue the construction of an
+while the latter mode allows to continue the construction of an
 existing surface, the absolute indexing allows to address existing
 vertices when creating new facets.
 

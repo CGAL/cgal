@@ -28,8 +28,9 @@ create_single_source_cgal_program("random_segments1.cpp")
 create_single_source_cgal_program("random_segments2.cpp")
 create_single_source_cgal_program("sphere_d.cpp")
 
-find_package(Eigen3 3.1.0 QUIET) #(3.1.0 or greater)
+find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
+
 if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("random_points_in_tetrahedral_mesh_3.cpp")
   target_link_libraries(random_points_in_tetrahedral_mesh_3 PRIVATE CGAL::Eigen3_support)

@@ -9,6 +9,9 @@ Traits class that can be used with all the
 
 \tparam R  a representation class
 \tparam PointPropertyMap a property map that maps to points of type `R::Point_2`
+\tparam Container_ the container type used to store the vertices of the output
+        polygon. It must be a model of the `SequenceContainer` concept with
+        value type `R::Point_2`. Defaults to `std::list<R::Point_2>`.
 
 \cgalModels{ConvexPartitionIsValidTraits_2,IsYMonotoneTraits_2,OptimalConvexPartitionTraits_2,PartitionTraits_2,YMonotonePartitionIsValidTraits_2}
 
@@ -22,7 +25,9 @@ Traits class that can be used with all the
 \sa `CGAL::y_monotone_partition_is_valid_2()`
 
 */
-  template< typename R, typename PointPropertyMap = Identity_property_map<R::Point_2> >
+  template< typename R,
+            typename PointPropertyMap = Identity_property_map<R::Point_2>,
+            typename Container_ = std::list<typename boost::property_traits<PointPropertyMap>::key_type> >
 class Partition_traits_2 {
 public:
 
@@ -32,7 +37,7 @@ public:
 /*!
 
 */
-    typedef Partition_traits_2<R,PMap> Self;
+    typedef Partition_traits_2<R,PMap,Container_> Self;
 
 /*!
 
@@ -46,9 +51,11 @@ typedef boost::property_traits<PointPropertyMap>::key_type Point_2;
 
 
 /*!
-
+The sequence container used to store the vertices of the output polygon.
+This is determined by the `Container_` template parameter.
+The default is `std::list<R::Point_2>`.
 */
-typedef std::list<Point_2> Container;
+typedef Container_ Container;
 
 /*!
 

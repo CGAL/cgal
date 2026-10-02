@@ -43,9 +43,6 @@
 /// I/O Functions for the \ref IOStreamXYZ
 /// \ingroup PkgPointSet3IO
 
-/// \defgroup PkgPointSet3IODeprecated Input/Output (Deprecated)
-/// \ingroup PkgPointSet3IO
-/// These I/O functions are deprecated and newer versions should be used.
 
 /*!
 \addtogroup PkgPointSet3Ref

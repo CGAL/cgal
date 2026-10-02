@@ -146,21 +146,21 @@ Foam_box
 <TD class="math" ALIGN=RIGHT NOWRAP>
 382.059
 <TD class="math" ALIGN=RIGHT NOWRAP>
-103
+65
 <TD class="math" ALIGN=RIGHT NOWRAP>
-60
+63
 <TD class="math" ALIGN=RIGHT NOWRAP>
-998
+618
 <TD class="math" ALIGN=RIGHT NOWRAP>
-97
+68
 <TD class="math" ALIGN=RIGHT NOWRAP>
-444
+338
 <TD class="math" ALIGN=RIGHT NOWRAP>
-6.4
+5.1
 <TD class="math" ALIGN=RIGHT NOWRAP>
-3.4
+3.2
 <TD class="math" ALIGN=RIGHT NOWRAP>
-9.9
+8.5
 <TR>
 
 <TD class="math" ALIGN=CENTER NOWRAP>
@@ -168,21 +168,21 @@ Lans
 <TD class="math" ALIGN=RIGHT NOWRAP>
 1.220.459
 <TD class="math" ALIGN=RIGHT NOWRAP>
-324
+499
 <TD class="math" ALIGN=RIGHT NOWRAP>
-169
+209
 <TD class="math" ALIGN=RIGHT NOWRAP>
-3.338
+2.175
 <TD class="math" ALIGN=RIGHT NOWRAP>
-330
+391
 <TD class="math" ALIGN=RIGHT NOWRAP>
-1.175
+1.417
 <TD class="math" ALIGN=RIGHT NOWRAP>
-27,2
+26,1
 <TD class="math" ALIGN=RIGHT NOWRAP>
-11,1
+19,2
 <TD class="math" ALIGN=RIGHT NOWRAP>
-38,4
+47,0
 <TR>
 
 <TD class="math" ALIGN=CENTER NOWRAP>
@@ -190,21 +190,21 @@ Meeting Room
 <TD class="math" ALIGN=RIGHT NOWRAP>
 3.074.625
 <TD class="math" ALIGN=RIGHT NOWRAP>
-1.652
+1.115
 <TD class="math" ALIGN=RIGHT NOWRAP>
-777
+445
 <TD class="math" ALIGN=RIGHT NOWRAP>
-29.737
+15.628
 <TD class="math" ALIGN=RIGHT NOWRAP>
-2.876
+1.563
 <TD class="math" ALIGN=RIGHT NOWRAP>
-11.839
+6.981
 <TD class="math" ALIGN=RIGHT NOWRAP>
-41,4
+62.6
 <TD class="math" ALIGN=RIGHT NOWRAP>
-100,7
+78.1
 <TD class="math" ALIGN=RIGHT NOWRAP>
-142,1
+156,1
 <TR>
 
 <TD class="math" ALIGN=CENTER NOWRAP>
@@ -212,21 +212,21 @@ Full Thing
 <TD class="math" ALIGN=RIGHT NOWRAP>
 1.377.666
 <TD class="math" ALIGN=RIGHT NOWRAP>
-1.947
+1.974
 <TD class="math" ALIGN=RIGHT NOWRAP>
 1.790
 <TD class="math" ALIGN=RIGHT NOWRAP>
-21.845
+22.127
 <TD class="math" ALIGN=RIGHT NOWRAP>
-2.656
+2.533
 <TD class="math" ALIGN=RIGHT NOWRAP>
-12.980
+12.675
 <TD class="math" ALIGN=RIGHT NOWRAP>
-9,9
+12,7
 <TD class="math" ALIGN=RIGHT NOWRAP>
-279,8
+534,0
 <TD class="math" ALIGN=RIGHT NOWRAP>
-289,7
+588,2
 <TR>
 
 <TD class="math" ALIGN=CENTER NOWRAP>
@@ -238,17 +238,17 @@ Hilbert cube
 <TD class="math" ALIGN=RIGHT NOWRAP>
 48
 <TD class="math" ALIGN=RIGHT NOWRAP>
-5.778
+5.481
 <TD class="math" ALIGN=RIGHT NOWRAP>
 986
 <TD class="math" ALIGN=RIGHT NOWRAP>
-4.124
+4.112
 <TD class="math" ALIGN=RIGHT NOWRAP>
-0,6
+0,7
 <TD class="math" ALIGN=RIGHT NOWRAP>
-10,2
+11,0
 <TD class="math" ALIGN=RIGHT NOWRAP>
-10,9
+12,4
 <TR>
 
 <TD class="math" ALIGN=CENTER NOWRAP>
@@ -260,17 +260,17 @@ Asian Dragon
 <TD class="math" ALIGN=RIGHT NOWRAP>
 2.842
 <TD class="math" ALIGN=RIGHT NOWRAP>
-101.651
+36.618
 <TD class="math" ALIGN=RIGHT NOWRAP>
-11.158
+6.701
 <TD class="math" ALIGN=RIGHT NOWRAP>
-35.776
+24.656
 <TD class="math" ALIGN=RIGHT NOWRAP>
-31,7
+54,9
 <TD class="math" ALIGN=RIGHT NOWRAP>
-869,9
+1144,9
 <TD class="math" ALIGN=RIGHT NOWRAP>
-903,5
+1310,7
 <TR>
 
 <TD class="math" ALIGN=CENTER NOWRAP>
@@ -282,17 +282,17 @@ Building_C
 <TD class="math" ALIGN=RIGHT NOWRAP>
 172
 <TD class="math" ALIGN=RIGHT NOWRAP>
-3.468
+2.074
 <TD class="math" ALIGN=RIGHT NOWRAP>
-370
+358
 <TD class="math" ALIGN=RIGHT NOWRAP>
-1.468
+1.412
 <TD class="math" ALIGN=RIGHT NOWRAP>
-41,9
+47,9
 <TD class="math" ALIGN=RIGHT NOWRAP>
-14,5
+28.3
 <TD class="math" ALIGN=RIGHT NOWRAP>
-56,5
+76,3
 <TR>
 <TD ALIGN=LEFT NOWRAP COLSPAN=10><HR>
 </TABLE>
@@ -330,35 +330,35 @@ Foam_box
 <TD class="math" ALIGN=RIGHT NOWRAP>
 0,05
 <TD class="math" ALIGN=RIGHT NOWRAP>
-15
+37
 <TD class="math" ALIGN=RIGHT NOWRAP>
-250
-<TD class="math" ALIGN=RIGHT NOWRAP>
-12
+650
 <TD class="math" ALIGN=RIGHT NOWRAP>
 10
 <TD class="math" ALIGN=RIGHT NOWRAP>
+2.5
+<TD class="math" ALIGN=RIGHT NOWRAP>
 0,01
 <TD class="math" ALIGN=RIGHT NOWRAP>
-2
+1
 <TD class="math" ALIGN=RIGHT NOWRAP>
-0,7
+0,6
 <TR>
 
 <TD class="math" ALIGN=CENTER NOWRAP>
 Lans
 <TD class="math" ALIGN=RIGHT NOWRAP>
-0,15
+0,1
 <TD class="math" ALIGN=RIGHT NOWRAP>
 20
 <TD class="math" ALIGN=RIGHT NOWRAP>
-300
+200
 <TD class="math" ALIGN=RIGHT NOWRAP>
 12
 <TD class="math" ALIGN=RIGHT NOWRAP>
-8
+10
 <TD class="math" ALIGN=RIGHT NOWRAP>
-0,08
+0,1
 <TD class="math" ALIGN=RIGHT NOWRAP>
 2
 <TD class="math" ALIGN=RIGHT NOWRAP>
@@ -368,21 +368,21 @@ Lans
 <TD class="math" ALIGN=CENTER NOWRAP>
 Meeting Room
 <TD class="math" ALIGN=RIGHT NOWRAP>
-0,03
+0,05
 <TD class="math" ALIGN=RIGHT NOWRAP>
 19
 <TD class="math" ALIGN=RIGHT NOWRAP>
-100
+200
 <TD class="math" ALIGN=RIGHT NOWRAP>
 15
 <TD class="math" ALIGN=RIGHT NOWRAP>
 10
 <TD class="math" ALIGN=RIGHT NOWRAP>
-0,03
+0,05
 <TD class="math" ALIGN=RIGHT NOWRAP>
 3
 <TD class="math" ALIGN=RIGHT NOWRAP>
-0,5
+0,6
 <TR>
 
 <TD class="math" ALIGN=CENTER NOWRAP>
@@ -408,11 +408,11 @@ Full Thing
 <TD class="math" ALIGN=CENTER NOWRAP>
 Hilbert cube
 <TD class="math" ALIGN=RIGHT NOWRAP>
-0,3
+0,5
 <TD class="math" ALIGN=RIGHT NOWRAP>
 10
 <TD class="math" ALIGN=RIGHT NOWRAP>
-10
+20
 <TD class="math" ALIGN=RIGHT NOWRAP>
 12
 <TD class="math" ALIGN=RIGHT NOWRAP>
@@ -420,7 +420,7 @@ Hilbert cube
 <TD class="math" ALIGN=RIGHT NOWRAP>
 0,03
 <TD class="math" ALIGN=RIGHT NOWRAP>
-4
+2
 <TD class="math" ALIGN=RIGHT NOWRAP>
 0,5
 <TR>
@@ -462,7 +462,7 @@ Building_C
 <TD class="math" ALIGN=RIGHT NOWRAP>
 2
 <TD class="math" ALIGN=RIGHT NOWRAP>
-0,77
+0,6
 <TR>
 <TD ALIGN=LEFT NOWRAP COLSPAN=10><HR>
 </TABLE>

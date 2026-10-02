@@ -2,6 +2,7 @@ Algebraic_foundations
 Arithmetic_kernel
 BGL
 Basic_viewer
+CGAL_Core
 Cartesian_kernel
 Circulator
 Distance_2
@@ -18,7 +19,6 @@ Kernel_d
 Modular_arithmetic
 Number_types
 Point_set_3
-Point_set_processing_3
 Polygon
 Profiling_tools
 Property_map
@@ -29,4 +29,3 @@ Stream_support
 Surface_mesh
 TDS_2
 Triangulation_2
-CGAL_Core

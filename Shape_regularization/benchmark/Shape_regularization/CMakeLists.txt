@@ -1,11 +1,10 @@
 # Created by the script cgal_create_CMakeLists.
 # This is the CMake script for compiling a set of CGAL applications.
 
+cmake_minimum_required(VERSION 3.12...3.31)
 project(Shape_regularization_Benchmarks)
 
-cmake_minimum_required(VERSION 3.12...3.31)
-
-find_package(CGAL REQUIRED COMPONENTS Core)
+find_package(CGAL REQUIRED)
 
 # Find OSQP library and headers.
 find_package(OSQP QUIET)

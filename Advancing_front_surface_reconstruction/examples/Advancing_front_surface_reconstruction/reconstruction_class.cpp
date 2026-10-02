@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
+#include <filesystem>
+#include <string>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Advancing_front_surface_reconstruction.h>
 
@@ -13,7 +15,11 @@ typedef K::Vector_3 Vector_3;
 
 int main(int argc, char* argv[])
 {
-  std::ifstream in((argc>1)?argv[1]:CGAL::data_file_path("points_3/half.xyz"));
+  const std::string filename = (argc > 1) ?
+    argv[1] :CGAL::data_file_path("points_3/half.xyz");
+  const std::string stem = std::filesystem::path(filename).stem().string();
+
+  std::ifstream in(filename);
   std::istream_iterator<Point_3> begin(in);
   std::istream_iterator<Point_3> end;
 
@@ -25,7 +31,9 @@ int main(int argc, char* argv[])
 
   const TDS_2& tds = reconstruction.triangulation_data_structure_2();
 
-  std::cout << "solid produced with CGAL::Advancing_front_surface_reconstruction\n";
+  std::ofstream out(stem + ".off");
+  out.precision(17);
+  out << "solid produced with CGAL::Advancing_front_surface_reconstruction\n";
   for(TDS_2::Face_iterator fit = tds.faces_begin();
       fit != tds.faces_end();
       ++fit){
@@ -40,17 +48,17 @@ int main(int argc, char* argv[])
           j++;
         }
       }
-      std::cout << "  facet normal "
-                << CGAL::unit_normal(points[0],points[1], points[2]) << "\n"
-                << "  outer loop\n"
-                << "    vertex " << points[0]  << "\n"
-                << "    vertex " << points[1]  << "\n"
-                << "    vertex " << points[2]  << "\n"
-                << "  endloop\n"
-                << "  endfacet\n";
+      out << "  facet normal "
+          << CGAL::unit_normal(points[0],points[1], points[2]) << "\n"
+          << "  outer loop\n"
+          << "    vertex " << points[0]  << "\n"
+          << "    vertex " << points[1]  << "\n"
+          << "    vertex " << points[2]  << "\n"
+          << "  endloop\n"
+          << "  endfacet\n";
     }
   }
-    std::cout << "endsolid" << std::endl;
+  out << "endsolid" << std::endl;
 
   return 0;
 }

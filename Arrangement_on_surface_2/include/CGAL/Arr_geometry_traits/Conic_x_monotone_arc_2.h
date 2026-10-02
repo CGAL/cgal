@@ -260,7 +260,7 @@ private:
     if (this->m_orient == COLLINEAR) return;
 
     // Compute a midpoint between the source and the target and get the y-value
-    // of the arc at its x-coordiante.
+    // of the arc at its x-coordinate.
     Point_2 p_mid =
       ker.construct_midpoint_2_object()(this->source(), this->target());
     Algebraic ys[2];
@@ -505,11 +505,11 @@ public:
   }
   //@}
 
-  /*! computes a point on an arc with the same \f$x\f$-coordiante as the given
+  /*! computes a point on an arc with the same \f$x\f$-coordinate as the given
    * point.
    * \param p The given point.
    * \pre The arc is not vertical and `p` is in the \f$x\f$-range of the arc.
-   * \return A point on the arc with the same \f$x\f$-coordiante as `p`.
+   * \return A point on the arc with the same \f$x\f$-coordinate as `p`.
    */
   CGAL_DEPRECATED
   Point_2 point_at_x(const Point_2& p) const {

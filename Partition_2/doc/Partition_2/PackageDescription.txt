@@ -77,7 +77,7 @@ original polygon).
 
 \cgalCRPSection{Classes}
 - `CGAL::Partition_is_valid_traits_2<Traits, PolygonIsValid>`
-- `CGAL::Partition_traits_2<R,P>`
+- `CGAL::Partition_traits_2<R,P,Container>`
 
 
 \cgalCRPSection{Function Object Classes}

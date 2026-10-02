@@ -41,7 +41,7 @@ of the previous level triangulation.
 Vertex_handle down();
 
 /*!
-sets the handle pointing to to the corresponding vertex
+sets the handle pointing to the corresponding vertex
 of the next level triangulation.
 */
 void set_up(Vertex_handle u);

@@ -529,20 +529,7 @@ bool write_VTP(const std::string& fname, const Graph& g, const CGAL_NP_CLASS& np
 
 } // namespace IO
 
-#ifndef CGAL_NO_DEPRECATED_CODE
 
-/*!
- \ingroup PkgBGLIOFctDeprecated
-
- \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::write_VTP()` should be used instead.
-*/
-template <typename Graph, typename CGAL_NP_TEMPLATE_PARAMETERS>
-CGAL_DEPRECATED bool write_vtp(std::ostream& os, const Graph& g, const CGAL_NP_CLASS& np = parameters::default_values())
-{
-  return IO::write_VTP(os, g, np);
-}
-
-#endif // CGAL_NO_DEPRECATED_CODE
 
 } // namespace CGAL
 

@@ -49,7 +49,7 @@ depending on the type of iterator used to specify the input points. For
 input iterators, the algorithm used is that of Bykat \cgalCite{b-chfsp-78}, which
 has a worst-case running time of \cgalBigO{n h}, where \f$ n\f$ is the number of input
 points and \f$ h\f$ is the number of extreme points. For all other types of
-iterators, the \cgalBigO{n \log n} algorithm of of Akl and Toussaint
+iterators, the \cgalBigO{n \log n} algorithm of Akl and Toussaint
 \cgalCite{at-fcha-78} is used.
 
 

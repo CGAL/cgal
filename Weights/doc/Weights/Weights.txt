@@ -208,7 +208,7 @@ This package is a part of the weights unification effort inside \cgal that has b
 carried out by Dmitry Anisimov in 2020.
 
 
-\section Weights_Acknowledgements Acknowledgments
+\section Weights_Acknowledgments Acknowledgments
 
 We wish to thank Guillaume Damiand, Andreas Fabri, and Mael Rouxel-Labbé for useful
 discussions and reviews.

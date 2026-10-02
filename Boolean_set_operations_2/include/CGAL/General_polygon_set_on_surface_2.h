@@ -7,8 +7,8 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
-//                 Efi Fogel <efif@post.tau.ac.il>
+// Author(s):      Baruch Zukerman <baruchzu@post.tau.ac.il>
+//                 Efi Fogel       <efif@post.tau.ac.il>
 //                 Ophir Setter    <ophir.setter@cs.tau.ac.il>
 
 #ifndef CGAL_GENERAL_POLYGON_SET_ON_SURFACE_2_H
@@ -23,54 +23,48 @@
 
 namespace CGAL {
 
-namespace Boolean_set_operation_2_internal
-{
-  struct PreconditionValidationPolicy
-  {
-   /*! is_valid - Checks if a Traits::Polygon_2 OR
-       Traits::Polygon_with_holes_2 are valid.
-       This validation policy checks that polygons are valid in a
-       CGAL_precondition macro. We inherit from Gps_on_surface_base_2
-       and use preconditions to validate the input polygons.
+namespace Boolean_set_operation_2_internal {
+
+struct PreconditionValidationPolicy {
+  /*! Checks if a Traits::Polygon_2 or Traits::Polygon_with_holes_2 are valid.
+   * This validation policy checks that polygons are valid in a
+   * CGAL_precondition macro. We inherit from Gps_on_surface_base_2 and use
+   * preconditions to validate the input polygons.
    */
-    template <class Polygon, class Traits>
-    inline static void is_valid(const Polygon& p, const Traits& t)
-    {
-      CGAL_precondition(is_valid_unknown_polygon(p, t));
-      CGAL_USE(p); CGAL_USE(t);
-    }
-  };
+  template <typename Polygon, typename Traits>
+  inline static void is_valid(const Polygon& p, const Traits& t) {
+    CGAL_precondition(is_valid_unknown_polygon(p, t));
+    CGAL_USE(p); CGAL_USE(t);
+  }
+};
+
 }
 
-// General_polygon_set_on_surface_2
-/*
-  This class is derived from Gps_on_surface_base_2.
-  It enforces the validation conditions for general polygons, and is therefore
-  the basic implementation that should be used by the user
-*/
-template <class Traits_, class TopTraits_>
-  class General_polygon_set_on_surface_2 :
-  public Gps_on_surface_base_2<Traits_, TopTraits_,
-                 Boolean_set_operation_2_internal::PreconditionValidationPolicy>
-{
+/* `General_polygon_set_on_surface_2` class is derived from
+ * `Gps_on_surface_base_2`.  It enforces the validation conditions for general
+ * polygons, and is therefore the basic implementation that should be used by
+ * the user
+ */
+template <typename Traits_, typename TopTraits_>
+class General_polygon_set_on_surface_2 :
+    public Gps_on_surface_base_2<
+      Traits_, TopTraits_,
+      Boolean_set_operation_2_internal::PreconditionValidationPolicy> {
+
 protected:
-  typedef Traits_                                                   Traits_2;
-  typedef General_polygon_set_on_surface_2<Traits_2, TopTraits_>    Self;
-  typedef Gps_on_surface_base_2<Traits_2, TopTraits_,
-   Boolean_set_operation_2_internal::PreconditionValidationPolicy>  Base;
+  using Traits_2 = Traits_;
+  using Self = General_polygon_set_on_surface_2<Traits_2, TopTraits_>;
+  using Base = Gps_on_surface_base_2<Traits_2, TopTraits_,
+                                     Boolean_set_operation_2_internal::PreconditionValidationPolicy>;
 
 public:
-  typedef typename Base::Polygon_2                                  Polygon_2;
-  typedef typename Base::Polygon_with_holes_2
-    Polygon_with_holes_2;
-  typedef typename Base::Arrangement_on_surface_2
-    Arrangement_on_surface_2;
+  using Polygon_2 = typename Base::Polygon_2;
+  using Polygon_with_holes_2 = typename Base::Polygon_with_holes_2;
+  using Arrangement_on_surface_2 = typename Base::Arrangement_on_surface_2;
 
 public:
-
   // default constructor
-  General_polygon_set_on_surface_2() : Base()
-  {}
+  General_polygon_set_on_surface_2() : Base() {}
 
   // constructor from a traits object
   General_polygon_set_on_surface_2(const Traits_2& traits) : Base(traits) {}
@@ -79,8 +73,7 @@ public:
   General_polygon_set_on_surface_2(const Self& ps) : Base(ps) {}
 
   // assignment operator
-  General_polygon_set_on_surface_2& operator=(const Self& ps)
-  {
+  General_polygon_set_on_surface_2& operator=(const Self& ps) {
     Base::operator=(ps);
     return (*this);
   }
@@ -90,19 +83,15 @@ public:
 
   // constructor from a polygon with holes
   explicit
-  General_polygon_set_on_surface_2(const Polygon_with_holes_2& pwh) :
-    Base(pwh)
-  {}
+  General_polygon_set_on_surface_2(const Polygon_with_holes_2& pwh) : Base(pwh) {}
 
   // constructor from a polygon and a traits object
-  explicit General_polygon_set_on_surface_2(const Polygon_2& pgn,
-                                            const Traits_2& traits) :
+  explicit General_polygon_set_on_surface_2(const Polygon_2& pgn, const Traits_2& traits) :
     Base(pgn, traits) {}
 
   // constructor from a polygon with holes and a traits object
   explicit
-  General_polygon_set_on_surface_2(const Polygon_with_holes_2& pwh,
-                                   const Traits_2& traits) :
+  General_polygon_set_on_surface_2(const Polygon_with_holes_2& pwh, const Traits_2& traits) :
     Base(pwh, traits)
   {}
 
@@ -142,4 +131,4 @@ private:
 
 #include <CGAL/enable_warnings.h>
 
-#endif // CGAL_GENERAL_POLYGON_SET_ON_SURFACE_2_H
+#endif

@@ -165,7 +165,7 @@ typedef unspecified_type Construct_vector_3;
 A function object providing the operator
 
 `bool operator()(const Sphere_3&s, const Point_3&p)` which
-returns true iff `p` lies on the bounded side of `s`.
+returns `true` iff `p` lies on the bounded side of `s`.
 */
 typedef unspecified_type Has_on_bounded_side_3;
 

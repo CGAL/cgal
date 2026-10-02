@@ -1,0 +1,11 @@
+The graph distances of the arrangement vertices from (1 1) :
+(1 1) at distance 0
+(7 1) at distance 20.0907
+(3 7) at distance 20.4082
+(1.85714 3.57143) at distance 7.34694
+(1 4) at distance 8.26531
+(4.33333 2.33333) at distance 11.2018
+(2 2) at distance 10.9796
+(9 3) at distance 28.0907
+(3 3) at distance 8.97959
+(4 4) at distance 10.9796

@@ -17,14 +17,10 @@ int main() {
   auto ctr_cv = traits.construct_curve_2_object();
 
   // Insert a full x-major ellipse
-  CGAL::insert(arr, ctr_cv(1, 4, 0, 0, 0, -16, CGAL::COUNTERCLOCKWISE,
-                           Point(4,0), Point(0,2)));
-  CGAL::insert(arr, ctr_cv(1, 4, 0, 0, 0, -16, CGAL::COUNTERCLOCKWISE,
-                           Point(0,2), Point(-4,0)));
-  CGAL::insert(arr, ctr_cv(1, 4, 0, 0, 0, -16, CGAL::COUNTERCLOCKWISE,
-                           Point(-4,0), Point(0,-2)));
-  CGAL::insert(arr, ctr_cv(1, 4, 0, 0, 0, -16, CGAL::COUNTERCLOCKWISE,
-                           Point(0,-2), Point(4,0)));
+  CGAL::insert(arr, ctr_cv(1, 4, 0, 0, 0, -16, CGAL::COUNTERCLOCKWISE, Point(4, 0), Point(0, 2)));
+  CGAL::insert(arr, ctr_cv(1, 4, 0, 0, 0, -16, CGAL::COUNTERCLOCKWISE, Point(0, 2), Point(-4, 0)));
+  CGAL::insert(arr, ctr_cv(1, 4, 0, 0, 0, -16, CGAL::COUNTERCLOCKWISE, Point(-4, 0), Point(0, -2)));
+  CGAL::insert(arr, ctr_cv(1, 4, 0, 0, 0, -16, CGAL::COUNTERCLOCKWISE, Point(0, -2), Point(4, 0)));
 
   // Insert a full y-major ellipse
   CGAL::insert(arr, ctr_cv(4, 1, 0, 0, 0, -16));
@@ -39,7 +35,7 @@ int main() {
 
   print_arrangement_size(arr);
 
-  CGAL::draw(arr);
+  CGAL::draw(arr, "ellipses");
 
   return 0;
 }

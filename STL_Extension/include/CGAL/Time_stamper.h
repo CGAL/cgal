@@ -13,6 +13,9 @@
 #define CGAL_TIME_STAMPER_H
 
 #include <CGAL/Has_timestamp.h>
+#include <CGAL/assertions.h>
+#include <cstddef>
+#include <iterator>
 #include <string>
 
 namespace CGAL {
@@ -131,7 +134,7 @@ public:
   {
   }
 
-  static auto display_id(const T* pt, int)
+  static auto display_id(const T* pt, int = 0)
   {
     return static_cast<const void*>(pt);
   }

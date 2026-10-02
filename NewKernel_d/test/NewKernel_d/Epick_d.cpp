@@ -277,6 +277,7 @@ void test2(){
   P x4=cp(0,0);
   P x5=cp(0,-1);
   P tab2[]={x1,x2,x3,x4};
+  assert(x1==x1 && x1!=x2);
   assert(dp(x1,x2)[1]==2);
   assert(po(tab2+0,tab2+3)==CGAL::COUNTERCLOCKWISE);
   assert(sos(tab2+0,tab2+3,x4)==CGAL::ON_POSITIVE_SIDE);
@@ -285,6 +286,7 @@ void test2(){
   assert(y1.squared_length()==2);
   assert(sl(y1)==2);
   V y2=cv(3,-3);
+  assert(y1==y1 && y1!=y2);
   assert(spr(y1,y2)==6);
   assert(dv(y2,y1)[0]==2);
   V tab3[]={y1,y2};

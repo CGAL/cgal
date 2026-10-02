@@ -610,16 +610,17 @@ public:
       : m_set_ptr(set_)
     {}
 
-    friend value_type get(const Is_constrained_map& map, const key_type& k)
+    friend value_type get(Is_constrained_map map, const key_type& k)
     {
       CGAL_assertion(map.m_set_ptr != nullptr);
       return map.m_set_ptr->count(k);
     }
-    friend void put(Is_constrained_map& map, const key_type& k, const value_type b)
+    friend void put(Is_constrained_map map, const key_type& k, const value_type b)
     {
       CGAL_assertion(map.m_set_ptr != NULL);
       if (b)  map.m_set_ptr->insert(k);
-      else    map.m_set_ptr->erase(k);
+      else
+        map.m_set_ptr->erase(k);
     }
   };
 
@@ -791,8 +792,7 @@ public:
     // since the selected vertices are a set, we lost order in the process,
     // so find back the correct orientation
     std::array<fg_vertex_descriptor, 3> vs;
-    for(std::size_t i=0; i<3; ++i)
-      vs[i] = *(std::next(selected_vertices.begin(), i));
+    std::copy_n(selected_vertices.begin(), 3, vs.begin());
 
     int pos_counter = 0, neg_counter = 0;
     for(std::size_t i=0; i<3; ++i)

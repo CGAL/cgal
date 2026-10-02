@@ -38,10 +38,6 @@
 #include <CGAL/Polynomial/polynomial_gcd_implementations.h>
 #include <CGAL/polynomial_utils.h>
 
-#ifdef CGAL_USE_NTL
-#include <CGAL/Polynomial/polynomial_gcd_ntl.h>
-#endif
-
 #if CGAL_USE_INTERNAL_MODULAR_GCD
 #include <CGAL/Polynomial/modular_gcd.h>
 #endif
@@ -56,11 +52,6 @@
 //     c) over a field (unless integralized), use the Euclidean algorithm;
 //         over a UFD, use the subresultant algorithm
 //
-// NOTICE: For better performance, especially in AlciX, there exist special
-// modular implementations for the polynmials with coefficient type
-// leda::integer and the CORE::BigInt type which use, when the
-// NTL library is available.
-// see CGAL/Polynomial/polynomial_gcd_ntl.h
 
 namespace CGAL {
 namespace internal {

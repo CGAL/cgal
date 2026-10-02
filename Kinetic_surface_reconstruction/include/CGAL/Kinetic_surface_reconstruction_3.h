@@ -34,6 +34,70 @@
 
 #include <CGAL/boost/graph/helpers.h>
 
+#include <filesystem>
+
+namespace CGAL {
+template<class F>
+struct Output_rep< ::std::array<unsigned char, 3>, F > {
+  const ::std::array<unsigned char, 3>& c;
+  static const bool is_specialized = true;
+  Output_rep(const ::std::array<unsigned char, 3>& c) : c(c) {}
+  std::ostream& operator()(std::ostream& out) const {
+    if (IO::is_ascii(out)) {
+      out << int(c[0]) << " " << int(c[1]) << " " << int(c[2]);
+    }
+    else { out.write(reinterpret_cast<const char*>(&c), sizeof(c)); }
+    return out;
+  }
+};
+
+
+template<typename Kernel, typename Region, typename Point_map>
+void save_point_regions_3(
+  const Region& regions,
+  const std::string fullpath,
+  const Point_map point_map = Point_map()) {
+
+  using Point_3 = typename Kernel::Point_3;
+  using Color = std::array<unsigned char, 3>;
+  using Point_with_color = std::pair<Point_3, Color>;
+  using PLY_Point_map = CGAL::First_of_pair_property_map<Point_with_color>;
+  using PLY_Color_map = CGAL::Second_of_pair_property_map<Point_with_color>;
+
+  std::vector<Point_with_color> pwc;
+  srand(static_cast<unsigned int>(time(NULL)));
+
+  // Iterate through all regions.
+  for (const auto& region : regions) {
+
+    // Generate a random color.
+    const Color color =
+      CGAL::make_array(
+        static_cast<unsigned char>(rand() % 256),
+        static_cast<unsigned char>(rand() % 256),
+        static_cast<unsigned char>(rand() % 256));
+
+    // Iterate through all region items.
+    for (const auto item : region.second) {
+      const auto& point = get(point_map, item);
+      pwc.push_back(std::make_pair(point, color));
+    }
+  }
+
+  std::ofstream out(fullpath);
+  CGAL::IO::set_ascii_mode(out);
+  CGAL::IO::write_PLY_with_properties(
+    out, pwc,
+    CGAL::IO::make_ply_point_writer(PLY_Point_map()),
+    std::make_tuple(
+      PLY_Color_map(),
+      CGAL::IO::PLY_property<unsigned char>("red"),
+      CGAL::IO::PLY_property<unsigned char>("green"),
+      CGAL::IO::PLY_property<unsigned char>("blue")));
+  out.close();
+}
+} // namespace CGAL
+
 namespace CGAL
 {
 /*!
@@ -41,7 +105,7 @@ namespace CGAL
   \brief Pipeline for piecewise planar surface reconstruction from a point cloud via inside/outside labeling of a kinetic partition using min-cut.
 
   \tparam GeomTraits
-    must be a model of `KineticShapePartitionTraits_3`.
+    must be a model of `KineticSpacePartitionTraits_3`.
 
   \tparam PointRange
     must be a range of 3D points and corresponding 3D normal vectors whose iterator type is `RandomAccessIterator`.
@@ -67,30 +131,40 @@ public:
   using Point_range = PointRange;
 
   using KSP = Kinetic_space_partition_3<Kernel, Intersection_kernel>;
+  using Regions = std::vector<std::pair<Plane_3, std::vector<typename boost::property_traits<PointMap>::key_type>>>;
 
   using Point_map = PointMap;
   using Normal_map = NormalMap;
 
+  using LCC_traits = CGAL::Linear_cell_complex_traits<3, CGAL::Exact_predicates_exact_constructions_kernel>;
+  using LCC = CGAL::Linear_cell_complex_for_combinatorial_map<3, 3, LCC_traits, typename KSP::Linear_cell_complex_min_items>;
+
   /*!
-  \brief creates a `Kinetic_shape_reconstruction_3` object.
+    \brief creates a `Kinetic_shape_reconstruction_3` object.
 
-  \param points
-   an instance of `PointRange` with 3D points and corresponding 3D normal vectors.
+    \param points
+     an instance of `PointRange` with 3D points and corresponding 3D normal vectors.
 
-  \param np
-   a sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+    \param np
+     a sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
-  \cgalNamedParamsBegin
-    \cgalParamNBegin{point_map}
-      \cgalParamDescription{a property map associating points to the elements of the point set `points`}
-      \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the iterator of `PointRange` and whose value type is `GeomTraits::Point_3`}
-          \cgalParamDefault{`PointMap()`}
-    \cgalParamNEnd
-  \cgalNamedParamsEnd
+    \cgalNamedParamsBegin
+      \cgalParamNBegin{point_map}
+        \cgalParamDescription{a property map associating points to the elements of the point set `points`}
+        \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the iterator of `PointRange` and whose value type is `GeomTraits::Point_3`}
+            \cgalParamDefault{`PointMap()`}
+      \cgalParamNEnd
+      \cgalParamNBegin{normal_map}
+        \cgalParamDescription{a property map associating normals to the elements of the point set `points`}
+        \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the iterator of `PointRange` and whose value type is `GeomTraits::Vector_3`}
+        \cgalParamDefault{`NormalMap()`}
+      \cgalParamNEnd
+    \cgalNamedParamsEnd
   */
   template<typename NamedParameters = parameters::Default_named_parameters>
   Kinetic_surface_reconstruction_3(Point_range& points,
-    const NamedParameters& np = CGAL::parameters::default_values()) : m_points(points), m_ground_polygon_index(-1), m_kinetic_partition(np) {
+    const NamedParameters& np = CGAL::parameters::default_values()) : m_max_distance_to_plane(-1), m_points(points), m_ground_polygon_index(-1),
+    m_kinetic_partition(np), m_bbox_diagonal(-1), m_lcc(m_lcc_from_kinetic_partition) {
     m_verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false);
     m_debug = parameters::choose_parameter(parameters::get_parameter(np, internal_np::debug), false);
 
@@ -99,7 +173,7 @@ public:
   }
 
   /*!
-    \brief detects shapes in the provided point cloud and regularizes them.
+    \brief detects shapes in the provided point cloud.
 
     \tparam NamedParameters
     a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -107,74 +181,31 @@ public:
     \param np
     an instance of `NamedParameters`.
 
-  \cgalNamedParamsBegin
-    \cgalParamNBegin{point_map}
-      \cgalParamDescription{a property map associating points to the elements of the point set `points`}
-      \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the iterator of `PointRange` and whose value type is `GeomTraits::Point_3`}
-          \cgalParamDefault{`PointMap()`}
-    \cgalParamNEnd
-    \cgalParamNBegin{normal_map}
-      \cgalParamDescription{a property map associating normals to the elements of the point set `points`}
-      \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the iterator of `PointRange` and whose value type is `GeomTraits::Vector_3`}
-      \cgalParamDefault{`NormalMap()`}
-    \cgalParamNEnd
-   \cgalParamNBegin{k_neighbors}
-     \cgalParamDescription{Shape detection: the number of neighbors for each point considered during region growing}
-      \cgalParamType{`std::size_t`}
-      \cgalParamDefault{12}
-    \cgalParamNEnd
-    \cgalParamNBegin{maximum_distance}
-      \cgalParamDescription{Shape detection: the maximum distance from a point to a plane}
-      \cgalParamType{`GeomTraits::FT`}
-      \cgalParamDefault{2% of bounding box diagonal}
-    \cgalParamNEnd
-    \cgalParamNBegin{maximum_angle}
-      \cgalParamDescription{Shape detection: maximum angle in degrees between the normal of a point and the plane normal}
-      \cgalParamType{`GeomTraits::FT`}
-      \cgalParamDefault{15 degrees}
-    \cgalParamNEnd
-    \cgalParamNBegin{minimum_region_size}
-      \cgalParamDescription{Shape detection: minimum number of 3D points a region must have}
-      \cgalParamType{`std::size_t`}
-      \cgalParamDefault{0.5% of input points}
-    \cgalParamNEnd
-    \cgalParamNBegin{angle_tolerance}
-      \cgalParamDescription{Shape regularization: maximum allowed angle in degrees between plane normals used for parallelism, orthogonality, and axis symmetry}
-      \cgalParamType{`GeomTraits::FT`}
-      \cgalParamDefault{5 degrees}
-    \cgalParamNEnd
-    \cgalParamNBegin{maximum_offset}
-      \cgalParamDescription{Shape regularization: maximum allowed orthogonal distance between two parallel planes such that they are considered to be coplanar}
-      \cgalParamType{`GeomTraits::FT`}
-      \cgalParamDefault{0.5% of bounding box diagonal}
-    \cgalParamNEnd
-    \cgalParamNBegin{regularize_parallelism}
-      \cgalParamDescription{Shape regularization: indicates whether parallelism should be regularized or not}
-      \cgalParamType{boolean}
-      \cgalParamDefault{false}
-    \cgalParamNEnd
-    \cgalParamNBegin{regularize_orthogonality}
-      \cgalParamDescription{Shape regularization: indicates whether orthogonality should be regularized or not}
-      \cgalParamType{boolean}
-      \cgalParamDefault{false}
-    \cgalParamNEnd
-    \cgalParamNBegin{regularize_coplanarity}
-      \cgalParamDescription{Shape regularization: indicates whether coplanarity should be regularized or not}
-      \cgalParamType{boolean}
-      \cgalParamDefault{true}
-    \cgalParamNEnd
-    \cgalParamNBegin{regularize_axis_symmetry}
-      \cgalParamDescription{Shape regularization: indicates whether axis symmetry should be regularized or not}
-      \cgalParamType{boolean}
-      \cgalParamDefault{false}
-    \cgalParamNEnd
-    \cgalParamNBegin{symmetry_direction}
-      \cgalParamDescription{Shape regularization: an axis for symmetry regularization}
-      \cgalParamType{`GeomTraits::Vector_3`}
-      \cgalParamDefault{Z axis that is `GeomTraits::Vector_3(0, 0, 1)`}
-    \cgalParamNEnd
-  \cgalNamedParamsEnd
+    \returns
+    the number of detected shapes.
 
+    \cgalNamedParamsBegin
+     \cgalParamNBegin{k_neighbors}
+       \cgalParamDescription{Shape detection: the number of neighbors for each point considered during region growing}
+        \cgalParamType{`std::size_t`}
+        \cgalParamDefault{12}
+      \cgalParamNEnd
+      \cgalParamNBegin{maximum_distance}
+        \cgalParamDescription{Shape detection: the maximum distance from a point to a plane}
+        \cgalParamType{`GeomTraits::FT`}
+        \cgalParamDefault{2% of bounding box diagonal}
+      \cgalParamNEnd
+      \cgalParamNBegin{maximum_angle}
+        \cgalParamDescription{Shape detection: maximum angle in degrees between the normal of a point and the plane normal}
+        \cgalParamType{`GeomTraits::FT`}
+        \cgalParamDefault{15 degrees}
+      \cgalParamNEnd
+      \cgalParamNBegin{minimum_region_size}
+        \cgalParamDescription{Shape detection: minimum number of 3D points a region must have}
+        \cgalParamType{`std::size_t`}
+        \cgalParamDefault{0.5% of input points}
+      \cgalParamNEnd
+    \cgalNamedParamsEnd
   */
   template<typename CGAL_NP_TEMPLATE_PARAMETERS>
   std::size_t detect_planar_shapes(const CGAL_NP_CLASS& np = parameters::default_values()) {
@@ -184,50 +215,169 @@ public:
     if (m_verbose)
       std::cout << std::endl << "--- DETECTING PLANAR SHAPES: " << std::endl;
 
-    m_planes.clear();
     m_polygons.clear();
     m_polygon_indices.clear();
     m_polygon_pts.clear();
-    m_region_map.clear();
     m_regions.clear();
-    m_planar_regions.clear();
 
     create_planar_shapes(np);
 
-    CGAL_assertion(m_planes.size() == m_polygons.size());
-    CGAL_assertion(m_polygons.size() == m_region_map.size());
-
-    return m_polygons.size();
+    return m_regions.size();
   }
 
   /*!
-  \brief returns the support planes of the detected and regularized shapes.
+    \brief regularizes planar shapes.
+    Requires detected or inserted planar shapes and needs to be called before `partition()`.
 
-  @return
-  vector with a `Plane_3` for each detected planar shape.
+    \tparam RegionRange
+    a model of `Range` whose iterator type is `RandomAccessIterator` and value type is `std::pair<Plane_3, std::vector<item>>`,
+    where item is the key type of `Point_map`.
 
-  \pre shape detection performed
+    \tparam NamedParameters
+    a sequence of \ref bgl_namedparameters "Named Parameters"
+
+    \param np
+    an instance of `NamedParameters`.
+
+    \returns
+    the number of shapes after regularization.
+
+    \pre shape detection performed or shapes inserted
+
+    \cgalNamedParamsBegin
+      \cgalParamNBegin{angle_tolerance}
+        \cgalParamDescription{Shape regularization: maximum allowed angle in degrees between plane normals used for parallelism, orthogonality, and axis symmetry}
+        \cgalParamType{`GeomTraits::FT`}
+        \cgalParamDefault{5 degrees}
+      \cgalParamNEnd
+      \cgalParamNBegin{maximum_offset}
+        \cgalParamDescription{Shape regularization: maximum allowed orthogonal distance between two parallel planes such that they are considered to be coplanar}
+        \cgalParamType{`GeomTraits::FT`}
+        \cgalParamDefault{0.5% of bounding box diagonal}
+      \cgalParamNEnd
+      \cgalParamNBegin{regularize_parallelism}
+        \cgalParamDescription{Shape regularization: indicates whether parallelism should be regularized or not}
+        \cgalParamType{boolean}
+        \cgalParamDefault{false}
+      \cgalParamNEnd
+      \cgalParamNBegin{regularize_orthogonality}
+        \cgalParamDescription{Shape regularization: indicates whether orthogonality should be regularized or not}
+        \cgalParamType{boolean}
+        \cgalParamDefault{false}
+      \cgalParamNEnd
+      \cgalParamNBegin{regularize_coplanarity}
+        \cgalParamDescription{Shape regularization: indicates whether coplanarity should be regularized or not}
+        \cgalParamType{boolean}
+        \cgalParamDefault{true}
+      \cgalParamNEnd
+      \cgalParamNBegin{regularize_axis_symmetry}
+        \cgalParamDescription{Shape regularization: indicates whether axis symmetry should be regularized or not}
+        \cgalParamType{boolean}
+        \cgalParamDefault{false}
+      \cgalParamNEnd
+      \cgalParamNBegin{symmetry_direction}
+        \cgalParamDescription{Shape regularization: an axis for symmetry regularization}
+        \cgalParamType{`GeomTraits::Vector_3`}
+        \cgalParamDefault{Z axis that is `GeomTraits::Vector_3(0, 0, 1)`}
+      \cgalParamNEnd
+    \cgalNamedParamsEnd
   */
-  const std::vector<Plane_3>& detected_planar_shapes() {
-    return m_planes;
+  template<typename CGAL_NP_TEMPLATE_PARAMETERS>
+  std::size_t regularize_planar_shapes(const CGAL_NP_CLASS& np = parameters::default_values()) {
+    if (m_regions.empty())
+      return 0;
+
+    FT diag = calculate_bbox_diagonal();
+
+    m_max_distance_to_plane = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_distance), m_max_distance_to_plane);
+    if (m_max_distance_to_plane < -0.5)
+      m_max_distance_to_plane = 0.02 * diag;
+
+    if (m_region_growing) {
+      regularize_planar_shapes(m_regions, m_region_growing->region_map(), diag, np);
+      estimate_ground_plane(m_regions, m_max_distance_to_plane);
+    }
+    else {
+      Region_map region_map;
+      region_map.plane_index.resize(m_points.size(), -1);
+
+      int idx = 0;
+      for (const auto& region : m_regions) {
+        CGAL_assertion(region.second.size() > 0);
+        for (std::size_t i : region.second)
+          region_map.plane_index[i] = idx;
+        idx++;
+      }
+
+      regularize_planar_shapes(m_regions, region_map, diag, np);
+      estimate_ground_plane(m_regions, m_max_distance_to_plane);
+    }
+
+    return m_regions.size();
   }
 
   /*!
-  \brief returns the indices of detected and regularized shapes.
+    \brief inserts planar shapes ti skip shape detection.
 
-  @return
-  indices into `points` for each detected planar shape.
+    \tparam RegionRange
+    a model of `Range` whose iterator type is `RandomAccessIterator` and value type is `std::pair<Plane_3, std::vector<item>>`,
+    where item is the key type of `Point_map`.
 
-  \pre shape detection performed
+    \param regions
+    a range of planar shapes providing their support plane and indices into the point cloud.
   */
-  const std::vector<std::vector<std::size_t> >& detected_planar_shape_indices() {
-    return m_planar_regions;
+  template<typename RegionRange>
+  void insert_planar_shapes(const RegionRange &regions) {
+    insert_shapes(regions);
+  }
+
+  /*!
+    \brief inserts planar shapes and a linear cell complex to skip shape detection and kinetic space partitioning.
+    The input shapes `regions` need to be identical to the shapes used to create the `lcc`.
+
+    \tparam RegionRange
+    a model of `Range` whose iterator type is `RandomAccessIterator` and value type is `std::pair<Plane_3, std::vector<item>>`,
+    where item is the key type of `Point_map`.
+
+    \param regions
+    a range of planar shapes providing their support plane and indices into the point cloud.
+
+    \param lcc
+    linear cell complex created by `Kinetic_space_partition_3`.
+  */
+  template<typename Regions>
+  void insert_planar_shapes_and_linear_cell_complex(const Regions& regions, const LCC& lcc) {
+    // Verify compatibility of provided regions and lcc
+    insert_shapes(regions);
+    m_lcc = lcc;
+  }
+
+  /*!
+    \returns linear cell complex from the kinetic space partition.
+
+    \pre `partition()` called after detection or insertion of planar shapes.
+  */
+  const LCC& get_linear_cell_complex() const {
+    return m_lcc;
+  }
+
+  /*!
+    \brief returns the detected and possibly regularized shapes.
+
+    \returns
+    vector with `std::pair<Plane_3, std::vector<std::size_t>` for each
+    planar shape containing the support plane and the inlier indices.
+
+    \pre shape detection performed or shapes inserted
+  */
+  const Regions& planar_shapes() {
+    return m_regions;
   }
 
   /*!
     \brief detects and regularizes shapes in the provided point cloud and creates the kinetic space partition.
 
-    Combines calls of `detect_planar_shapes()`, `initialize_partition()` and `partition()`.
+    Combines calls of `detect_planar_shapes()` and `partition()`.
 
     \tparam NamedParameters
     a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -238,92 +388,103 @@ public:
     \param np
     an instance of `NamedParameters`.
 
-  \cgalNamedParamsBegin
-    \cgalParamNBegin{point_map}
-      \cgalParamDescription{a property map associating points to the elements of the point set `points`}
-      \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the iterator of `PointRange` and whose value type is `GeomTraits::Point_3`}
-          \cgalParamDefault{`PointMap()`}
-    \cgalParamNEnd
-    \cgalParamNBegin{normal_map}
-      \cgalParamDescription{a property map associating normals to the elements of the point set `points`}
-      \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the iterator of `PointRange` and whose value type is `GeomTraits::Vector_3`}
-      \cgalParamDefault{`NormalMap()`}
-    \cgalParamNEnd
-   \cgalParamNBegin{k_neighbors}
-     \cgalParamDescription{Shape detection: the number of neighbors for each point considered during region growing}
-      \cgalParamType{`std::size_t`}
-      \cgalParamDefault{12}
-    \cgalParamNEnd
-    \cgalParamNBegin{maximum_distance}
-      \cgalParamDescription{Shape detection: the maximum distance from a point to a plane}
-      \cgalParamType{`GeomTraits::FT`}
-      \cgalParamDefault{2% of bounding box diagonal}
-    \cgalParamNEnd
-    \cgalParamNBegin{maximum_angle}
-      \cgalParamDescription{Shape detection: maximum angle in degrees between the normal of a point and the plane normal}
-      \cgalParamType{`GeomTraits::FT`}
-      \cgalParamDefault{15 degrees}
-    \cgalParamNEnd
-    \cgalParamNBegin{minimum_region_size}
-      \cgalParamDescription{Shape detection: minimum number of 3D points a region must have}
-      \cgalParamType{`std::size_t`}
-      \cgalParamDefault{0.5% of input points}
-    \cgalParamNEnd
-    \cgalParamNBegin{angle_tolerance}
-      \cgalParamDescription{Shape regularization: maximum allowed angle in degrees between plane normals used for parallelism, orthogonality, and axis symmetry}
-      \cgalParamType{`GeomTraits::FT`}
-      \cgalParamDefault{5 degrees}
-    \cgalParamNEnd
-    \cgalParamNBegin{maximum_offset}
-      \cgalParamDescription{Shape regularization: maximum allowed orthogonal distance between two parallel planes such that they are considered to be coplanar}
-      \cgalParamType{`GeomTraits::FT`}
-      \cgalParamDefault{0.5% of bounding box diagonal}
-    \cgalParamNEnd
-    \cgalParamNBegin{regularize_parallelism}
-      \cgalParamDescription{Shape regularization: indicates whether parallelism should be regularized or not}
-      \cgalParamType{boolean}
-      \cgalParamDefault{false}
-    \cgalParamNEnd
-    \cgalParamNBegin{regularize_orthogonality}
-      \cgalParamDescription{Shape regularization: indicates whether orthogonality should be regularized or not}
-      \cgalParamType{boolean}
-      \cgalParamDefault{false}
-    \cgalParamNEnd
-    \cgalParamNBegin{regularize_coplanarity}
-      \cgalParamDescription{Shape regularization: indicates whether coplanarity should be regularized or not}
-      \cgalParamType{boolean}
-      \cgalParamDefault{true}
-    \cgalParamNEnd
-    \cgalParamNBegin{regularize_axis_symmetry}
-      \cgalParamDescription{Shape regularization: indicates whether axis symmetry should be regularized or not}
-      \cgalParamType{boolean}
-      \cgalParamDefault{false}
-    \cgalParamNEnd
-    \cgalParamNBegin{symmetry_direction}
-      \cgalParamDescription{Shape regularization: an axis for symmetry regularization}
-      \cgalParamType{`GeomTraits::Vector_3`}
-      \cgalParamDefault{Z axis that is `GeomTraits::Vector_3(0, 0, 1)`}
-    \cgalParamNEnd
-        \cgalParamNBegin{reorient_bbox}
-      \cgalParamDescription{Use the oriented bounding box instead of the axis-aligned bounding box.}
-      \cgalParamType{bool}
-      \cgalParamDefault{false}
-    \cgalParamNEnd
-    \cgalParamNBegin{bbox_dilation_ratio}
-      \cgalParamDescription{Factor for extension of the bounding box of the input data to be used for the partition.}
-      \cgalParamType{FT}
-      \cgalParamDefault{1.1}
-    \cgalParamNEnd
-  \cgalNamedParamsEnd
-
+    \cgalNamedParamsBegin
+      \cgalParamNBegin{point_map}
+        \cgalParamDescription{a property map associating points to the elements of the point set `points`}
+        \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the iterator of `PointRange` and whose value type is `GeomTraits::Point_3`}
+            \cgalParamDefault{`PointMap()`}
+      \cgalParamNEnd
+      \cgalParamNBegin{normal_map}
+        \cgalParamDescription{a property map associating normals to the elements of the point set `points`}
+        \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the iterator of `PointRange` and whose value type is `GeomTraits::Vector_3`}
+        \cgalParamDefault{`NormalMap()`}
+      \cgalParamNEnd
+     \cgalParamNBegin{k_neighbors}
+       \cgalParamDescription{Shape detection: the number of neighbors for each point considered during region growing}
+        \cgalParamType{`std::size_t`}
+        \cgalParamDefault{12}
+      \cgalParamNEnd
+      \cgalParamNBegin{maximum_distance}
+        \cgalParamDescription{Shape detection: the maximum distance from a point to a plane}
+        \cgalParamType{`GeomTraits::FT`}
+        \cgalParamDefault{2% of bounding box diagonal}
+      \cgalParamNEnd
+      \cgalParamNBegin{maximum_angle}
+        \cgalParamDescription{Shape detection: maximum angle in degrees between the normal of a point and the plane normal}
+        \cgalParamType{`GeomTraits::FT`}
+        \cgalParamDefault{15 degrees}
+      \cgalParamNEnd
+      \cgalParamNBegin{minimum_region_size}
+        \cgalParamDescription{Shape detection: minimum number of 3D points a region must have}
+        \cgalParamType{`std::size_t`}
+        \cgalParamDefault{0.5% of input points}
+      \cgalParamNEnd
+      \cgalParamNBegin{angle_tolerance}
+        \cgalParamDescription{Shape regularization: maximum allowed angle in degrees between plane normals used for parallelism, orthogonality, and axis symmetry}
+        \cgalParamType{`GeomTraits::FT`}
+        \cgalParamDefault{5 degrees}
+      \cgalParamNEnd
+      \cgalParamNBegin{maximum_offset}
+        \cgalParamDescription{Shape regularization: maximum allowed orthogonal distance between two parallel planes such that they are considered to be coplanar}
+        \cgalParamType{`GeomTraits::FT`}
+        \cgalParamDefault{0.5% of bounding box diagonal}
+      \cgalParamNEnd
+      \cgalParamNBegin{regularize_parallelism}
+        \cgalParamDescription{Shape regularization: indicates whether parallelism should be regularized or not}
+        \cgalParamType{boolean}
+        \cgalParamDefault{false}
+      \cgalParamNEnd
+      \cgalParamNBegin{regularize_orthogonality}
+        \cgalParamDescription{Shape regularization: indicates whether orthogonality should be regularized or not}
+        \cgalParamType{boolean}
+        \cgalParamDefault{false}
+      \cgalParamNEnd
+      \cgalParamNBegin{regularize_coplanarity}
+        \cgalParamDescription{Shape regularization: indicates whether coplanarity should be regularized or not}
+        \cgalParamType{boolean}
+        \cgalParamDefault{true}
+      \cgalParamNEnd
+      \cgalParamNBegin{regularize_axis_symmetry}
+        \cgalParamDescription{Shape regularization: indicates whether axis symmetry should be regularized or not}
+        \cgalParamType{boolean}
+        \cgalParamDefault{false}
+      \cgalParamNEnd
+      \cgalParamNBegin{symmetry_direction}
+        \cgalParamDescription{Shape regularization: an axis for symmetry regularization}
+        \cgalParamType{`GeomTraits::Vector_3`}
+        \cgalParamDefault{Z axis that is `GeomTraits::Vector_3(0, 0, 1)`}
+      \cgalParamNEnd
+          \cgalParamNBegin{reorient_bbox}
+        \cgalParamDescription{Use the oriented bounding box instead of the axis-aligned bounding box.}
+        \cgalParamType{bool}
+        \cgalParamDefault{false}
+      \cgalParamNEnd
+      \cgalParamNBegin{bbox_dilation_ratio}
+        \cgalParamDescription{Factor for extension of the bounding box of the input data to be used for the partition.}
+        \cgalParamType{FT}
+        \cgalParamDefault{1.1}
+      \cgalParamNEnd
+    \cgalNamedParamsEnd
   */
   template<typename CGAL_NP_TEMPLATE_PARAMETERS>
   void detection_and_partition(std::size_t k, const CGAL_NP_CLASS& np = parameters::default_values()) {
     detect_planar_shapes(np);
-    initialize_partition(np);
+    regularize_planar_shapes(np);
     partition(k);
   }
 
+  /*!
+    \brief statistical estimation of parameters for shape detection.
+
+    \param max_distance
+    will be set to 4 times the mean distance of local point neighborhoods.
+
+    \param normal_dev
+    will be set to the mean normal deviation of local point neighborhoods.
+
+    \param min_inliers
+    will be set to 0.5% of the number of points.
+  */
   void estimate_detection_parameters(FT& max_distance, FT& normal_dev, std::size_t& min_inliers) {
     if (!m_neighbor_query) {
       m_neighbor_query = std::unique_ptr<Neighbor_query>(new Neighbor_query(m_points, parameters::point_map(m_point_map).k_neighbors(12)));
@@ -336,6 +497,11 @@ public:
     min_inliers = m_points.size() * 0.005; // difficult to estimate as it depends on the kind of data, e.g., object scan vs. large scale urban acquisition
   }
 
+  /*!
+    \brief estimates the subdivision depth for the kinetic space partition.
+
+    \returns the estimated subdivision depth.
+  */
   std::size_t estimate_max_subdivision_depth() {
     std::size_t max_depth = 1;
     std::size_t num_shapes = m_polygon_indices.size();
@@ -350,90 +516,100 @@ public:
   }
 
   /*!
-  \brief initializes the kinetic partition.
+    \brief initializes the kinetic partition and propagates the planar shapes
 
-  \param np
-  a sequence of \ref bgl_namedparameters "Named Parameters"
-  among the ones listed below
+    \tparam NamedParameters
+    a sequence of \ref bgl_namedparameters "Named Parameters"
 
-  \cgalNamedParamsBegin
-    \cgalParamNBegin{reorient_bbox}
-      \cgalParamDescription{Use the oriented bounding box instead of the axis-aligned bounding box.}
-      \cgalParamType{bool}
-      \cgalParamDefault{false}
-    \cgalParamNEnd
-    \cgalParamNBegin{bbox_dilation_ratio}
-      \cgalParamDescription{Factor for extension of the bounding box of the input data to be used for the partition.}
-      \cgalParamType{FT}
-      \cgalParamDefault{1.1}
-    \cgalParamNEnd
-  \cgalNamedParamsEnd
+    \param k
+    maximum number of allowed intersections for each input polygon before its expansion stops.
 
-    \pre shape detection performed
+    \param np
+    a sequence of \ref bgl_namedparameters "Named Parameters"
+    among the ones listed below
+
+    \pre planar shapes detected or inserted
+
+    \cgalNamedParamsBegin
+      \cgalParamNBegin{reorient_bbox}
+        \cgalParamDescription{Use the oriented bounding box instead of the axis-aligned bounding box.}
+        \cgalParamType{bool}
+        \cgalParamDefault{false}
+      \cgalParamNEnd
+      \cgalParamNBegin{bbox_dilation_ratio}
+        \cgalParamDescription{Factor for extension of the bounding box of the input data to be used for the partition.}
+        \cgalParamType{FT}
+        \cgalParamDefault{1.1}
+      \cgalParamNEnd
+    \cgalNamedParamsEnd
   */
   template<typename CGAL_NP_TEMPLATE_PARAMETERS>
-  void initialize_partition(const CGAL_NP_CLASS& np = parameters::default_values()) {
+  void partition(std::size_t k, const CGAL_NP_CLASS& np = parameters::default_values()) {
+    if (m_regions.empty())
+      return;
+
+    for (const auto& pair : m_regions) {
+      CGAL_assertion_code(const std::size_t shape_idx =)add_convex_hull_shape(pair.second, pair.first);
+      CGAL_assertion(shape_idx != std::size_t(-1));
+    }
+
+    m_kinetic_partition = KSP(m_polygon_pts, m_polygon_indices, np);
     m_kinetic_partition.initialize(np);
-  }
 
-  /*!
-  \brief propagates the kinetic polygons in the initialized partition.
-
-  \param k
-  maximum number of allowed intersections for each input polygon before its expansion stops.
-
-  \pre partition initialized
-  */
-  void partition(std::size_t k) {
     FT partition_time, finalization_time, conformal_time;
     m_kinetic_partition.partition(k, partition_time, finalization_time, conformal_time);
 
-    if (m_verbose)
-      std::cout << "Bounding box partitioned into " << m_kinetic_partition.number_of_volumes() << " volumes" << std::endl;
+    m_kinetic_partition.get_linear_cell_complex(m_lcc_from_kinetic_partition);
+    const LCC &lcc = m_lcc;
 
-    m_kinetic_partition.get_linear_cell_complex(m_lcc);
-
-    setup_energyterms();
+    if (m_verbose) {
+      std::cout << "Bounding box partitioned into " << m_kinetic_partition.number_of_volumes() << " volumes " << std::endl;
+      std::cout << "LCC with " << lcc.template one_dart_per_cell<3>().size() << " volumes " << lcc.template one_dart_per_cell<2>().size() << " faces " << lcc.template one_dart_per_cell<0>().size() << " vertices " << std::endl;
+    }
+    std::cout << "LCC with " << lcc.template one_dart_per_cell<3>().size() << " volumes " << lcc.template one_dart_per_cell<2>().size() << " faces " << lcc.template one_dart_per_cell<0>().size() << " vertices " << std::endl;
   }
 
   /*!
-  \brief gives access to the kinetic partition.
+    \brief gives access to the kinetic partition.
 
-  @return
-  created kinetic partition data structure
+    \returns
+    created kinetic partition data structure
 
-  \pre partition created
+    \pre partition created
   */
   const KSP& kinetic_partition() const {
     return m_kinetic_partition;
   }
 
   /*!
-  \brief uses min-cut to solve an inside/outside labeling of the volumes of the kinetic partition and provides the reconstructed surface as a list of indexed polygons.
-  Estimates a horizontal ground plane within the detected shapes. Cells in the partition below the ground plane receive a weight to be labeled as inside.
-  The z axis is considered as vertical upwards pointing.
+    \brief uses min-cut to solve an inside/outside labeling of the volumes of the kinetic partition and provides the reconstructed surface as a list of indexed polygons.
+    Estimates a horizontal ground plane within the detected shapes. Cells in the partition below the ground plane receive a weight to be labeled as inside.
+    The z axis is considered as vertical upwards pointing.
 
-  \tparam OutputPointIterator
-  an output iterator taking `Point_3`.
+    \tparam OutputPointIterator
+    an output iterator taking `Point_3`.
 
-  \tparam OutputPolygonIterator
-  an output iterator taking polygon indices `std::vector<std::size_t>`.
+    \tparam OutputPolygonIterator
+    an output iterator taking polygon indices `std::vector<std::size_t>`.
 
-  \param lambda
-  trades data faithfulness of the reconstruction for low complexity. Must be in the range `[0, 1)`.
+    \param lambda
+    trades data faithfulness of the reconstruction for low complexity. Must be in the range `[0, 1)`.
 
-  \param pit
-  output iterator to receive the vertices of the reconstructed surface.
+    \param pit
+    output iterator to receive the vertices of the reconstructed surface.
 
-  \param polyit
-  output iterator to store all polygonal faces of the reconstructed surface.
+    \param polyit
+    output iterator to store all polygonal faces of the reconstructed surface.
 
-  \pre partition created
+    \pre partition created
   */
   template<class OutputPointIterator, class OutputPolygonIterator>
   void reconstruct_with_ground(FT lambda, OutputPointIterator pit, OutputPolygonIterator polyit) {
-    if (m_kinetic_partition.number_of_volumes() == 0)
+    if (m_lcc.get().template one_dart_per_cell<3>().empty())
       return;
+
+    if (m_cost_matrix.empty())
+      setup_energyterms();
 
     KSR_3::Graphcut<Kernel> gc(lambda);
 
@@ -483,34 +659,37 @@ public:
   }
 
   /*!
-  \brief uses min-cut to solve an inside/outside labeling of the volumes of the kinetic partition and provides the reconstructed surface as a list of indexed polygons.
-  The `external_nodes` parameter allows to indicate the preferred labels for faces on the bounding box.
+    \brief uses min-cut to solve an inside/outside labeling of the volumes of the kinetic partition and provides the reconstructed surface as a list of indexed polygons.
+    The `external_nodes` parameter allows to indicate the preferred labels for faces on the bounding box.
 
-  \tparam OutputPointIterator
-  an output iterator taking `Point_3`.
+    \tparam OutputPointIterator
+    an output iterator taking `Point_3`.
 
-  \tparam OutputPolygonIterator
-  an output iterator taking polygon indices `std::vector<std::size_t>`.
+    \tparam OutputPolygonIterator
+    an output iterator taking polygon indices `std::vector<std::size_t>`.
 
-  \param lambda
-  trades data faithfulness of the reconstruction for low complexity. Must be in the range `[0, 1)`.
+    \param lambda
+    trades data faithfulness of the reconstruction for low complexity. Must be in the range `[0, 1)`.
 
-  \param external_nodes
-  adds label preference for the faces on the bounding box. Bounding box sides without preset label are chosen by the min-cut.
-  Setting `external_nodes[ZMIN] = true` sets the inside label as the preferred label for the ZMIN side of the bounding box.
+    \param external_nodes
+    adds label preference for the faces on the bounding box. Bounding box sides without preset label are chosen by the min-cut.
+    Setting `external_nodes[ZMIN] = true` sets the inside label as the preferred label for the ZMIN side of the bounding box.
 
-  \param pit
-  output iterator to receive the vertices of the reconstructed surface.
+    \param pit
+    output iterator to receive the vertices of the reconstructed surface.
 
-  \param polyit
-  output iterator to store all polygonal faces of the reconstructed surface.
+    \param polyit
+    output iterator to store all polygonal faces of the reconstructed surface.
 
-  \pre partition created
+    \pre partition created
   */
   template<class OutputPointIterator, class OutputPolygonIterator>
   void reconstruct(FT lambda, std::map<typename KSP::Face_support, bool> external_nodes, OutputPointIterator pit, OutputPolygonIterator polyit) {
-    if (m_kinetic_partition.number_of_volumes() == 0)
+    if (m_lcc.get().template one_dart_per_cell<3>().empty())
       return;
+
+    if (m_cost_matrix.empty())
+      setup_energyterms();
 
     KSR_3::Graphcut<Kernel> gc(lambda);
 
@@ -530,12 +709,31 @@ public:
       }
     }
 
+    //eliminate outside face cost
+//     for (std::size_t i = 0;i<m_face_neighbors_lcc.size();i++) {
+//       if (m_face_neighbors_lcc[i].first < 6 || m_face_neighbors_lcc[i].second < 6)
+//         m_face_area_lcc[i] = FT(0);
+//     }
+
     gc.solve(m_face_neighbors_lcc, m_face_area_lcc, m_cost_matrix, m_labels);
 
     reconstructed_model_polylist_lcc(pit, polyit, lambda);
   }
 
 private:
+  struct Region_map {
+    typedef std::size_t key_type;
+    typedef int value_type;
+    typedef int& reference;
+    typedef boost::readable_property_map_tag category;
+
+    inline friend reference get(Region_map&s, key_type it) {
+      return s.plane_index[it];
+    }
+
+    std::vector<int> plane_index;
+  };
+
   using Point_2 = typename Kernel::Point_2;
   using Vector_3 = typename Kernel::Vector_3;
   using Triangle_2 = typename Kernel::Triangle_2;
@@ -561,8 +759,6 @@ private:
   using Tds = CGAL::Triangulation_data_structure_2<Vbi, Fbi>;
   using Delaunay_2 = CGAL::Delaunay_triangulation_2<Kernel, Tds>;
 
-  typedef CGAL::Linear_cell_complex_traits<3, CGAL::Exact_predicates_exact_constructions_kernel> Traits;
-  using LCC = CGAL::Linear_cell_complex_for_combinatorial_map<3, 3, Traits, typename KSP::Linear_cell_complex_min_items>;
   using Dart_descriptor = typename LCC::Dart_descriptor;
   using Dart = typename LCC::Dart;
 
@@ -587,32 +783,35 @@ private:
 
   using Face_attribute = typename LCC::Base::template Attribute_descriptor<2>::type;
   using Volume_attribute = typename LCC::Base::template Attribute_descriptor<3>::type;
+  using Face_information = typename KSP::Linear_cell_complex_min_items::Face_attribute;
 
   bool m_verbose;
   bool m_debug;
 
   std::unique_ptr<Neighbor_query> m_neighbor_query;
   std::unique_ptr<Sorting> m_sorting;
+  std::unique_ptr<Region_type> m_region_type;
+  std::unique_ptr<Region_growing> m_region_growing;
+  FT m_max_distance_to_plane;
 
   Point_range &m_points;
   Point_map m_point_map;
   Normal_map m_normal_map;
 
-  std::vector<std::vector<std::size_t> > m_planar_regions;
   std::vector<typename Region_growing::Primitive_and_region> m_regions;
-  std::map<std::size_t, Indices> m_region_map;
-  double m_detection_distance_tolerance;
 
   std::size_t m_ground_polygon_index;
   Plane_3 m_ground_plane;
 
-  std::vector<Plane_3> m_planes;
+  //std::vector<Plane_3> m_planes;
   std::vector<Point_3> m_polygon_pts;
   std::vector<std::vector<std::size_t> > m_polygon_indices;
   std::vector<Polygon_3> m_polygons;
   KSP m_kinetic_partition;
+  mutable FT m_bbox_diagonal;
 
-  LCC m_lcc;
+  LCC m_lcc_from_kinetic_partition;
+  std::reference_wrapper<const LCC> m_lcc;
   std::vector<typename LCC::Dart_const_descriptor> m_faces_lcc;
   std::map<Face_attribute, std::size_t> m_attrib2index_lcc;
   std::vector<std::size_t> lcc2index;
@@ -631,14 +830,65 @@ private:
 
   std::size_t m_total_inliers;
 
+  FT calculate_bbox_diagonal() const {
+    if (m_bbox_diagonal < -0.5)
+      return m_bbox_diagonal;
+
+    FT xmin, ymin, zmin, xmax, ymax, zmax;
+    auto pit = m_points.begin();
+    const Point_3& p = get(m_point_map, *pit);
+    xmin = xmax = p.x();
+    ymin = ymax = p.y();
+    zmin = zmax = p.z();
+
+    pit++;
+
+    while (pit != m_points.end()) {
+      const Point_3& p = get(m_point_map, *pit);
+      xmin = (std::min)(xmin, p.x());
+      xmax = (std::max)(xmax, p.x());
+      ymin = (std::min)(ymin, p.y());
+      ymax = (std::max)(ymax, p.y());
+      zmin = (std::min)(zmin, p.z());
+      zmax = (std::max)(zmax, p.z());
+      pit++;
+    }
+
+    return m_bbox_diagonal = CGAL::sqrt((xmax - xmin) * (xmax - xmin) + (ymax - ymin) * (ymax - ymin) + (zmax - zmin) * (zmax - zmin));
+  }
+
+  template<typename RegionRange>
+  void insert_shapes(const RegionRange& regions) {
+    m_regions.clear();
+    m_polygons.clear();
+    m_polygon_indices.clear();
+    m_polygon_pts.clear();
+    m_regions.reserve(regions.size());
+
+    m_bbox_diagonal = -1;
+
+    for (const auto& region : regions) {
+      CGAL_assertion(region.second.size() > 0);
+      bool skip = false;
+      for (const auto& [pl, indices] : m_regions)
+        if (region.first == pl) {
+          skip = true;
+          break;
+        }
+
+      if (!skip)
+        m_regions.push_back(region);
+    }
+  }
 
   /*!
-  \brief creates the visibility (data-) and regularity energy terms from the input point cloud and the kinetic partition.
+    \brief creates the visibility (data-) and regularity energy terms from the input point cloud and the kinetic partition.
 
-  \pre successful initialization
+    \pre successful initialization
   */
   void setup_energyterms() {
-    if (m_lcc.template one_dart_per_cell<3>().size() == 0) {
+    const LCC &lcc = m_lcc;
+    if (lcc.template one_dart_per_cell<3>().size() == 0) {
       std::cout << "Kinetic partition is not constructed or does not have volumes" << std::endl;
       return;
     }
@@ -646,27 +896,28 @@ private:
     m_face_area.clear();
     m_face_inliers.clear();
 
-    auto face_range = m_lcc.template one_dart_per_cell<2>();
+    auto face_range = lcc.template one_dart_per_cell<2>();
     m_faces_lcc.clear();
     m_faces_lcc.reserve(face_range.size());
     m_attrib2index_lcc.clear();
 
     for (auto& d : face_range) {
-      typename LCC::Dart_descriptor dh = m_lcc.dart_descriptor(d);
+      typename LCC::Dart_descriptor dh = lcc.dart_descriptor(d);
 
-      Face_attribute fa = m_lcc.template attribute<2>(dh);
-      if (fa == m_lcc.null_descriptor) {
-        dh = m_lcc.template beta<3>(dh);
-        fa = m_lcc.template attribute<2>(dh);
+      Face_attribute fa = lcc.template attribute<2>(dh);
+      if (fa == lcc.null_descriptor) {
+        dh = lcc.template beta<3>(dh);
+        fa = lcc.template attribute<2>(dh);
       }
 
-      if (fa == m_lcc.null_descriptor) {
-        std::cout << "null dart 1 " << m_lcc.template one_dart_per_incident_cell<3, 2>(dh).size() << std::endl;
+      if (fa == lcc.null_descriptor) {
+        std::cout << "null dart 1 " << lcc.template one_dart_per_incident_cell<3, 2>(dh).size() << std::endl;
+        continue;
       }
 
       m_faces_lcc.push_back(dh);
 
-      CGAL_assertion_code(auto p = )m_attrib2index_lcc.emplace(std::make_pair(m_lcc.template attribute<2>(m_faces_lcc.back()), m_faces_lcc.size() - 1));
+      CGAL_assertion_code(auto p = )m_attrib2index_lcc.emplace(std::make_pair(lcc.template attribute<2>(m_faces_lcc.back()), m_faces_lcc.size() - 1));
       CGAL_assertion(p.second);
     }
 
@@ -681,50 +932,40 @@ private:
 
     m_cost_matrix.clear();
     m_cost_matrix.resize(2);
-    m_cost_matrix[0].resize(m_kinetic_partition.number_of_volumes() + 6, 0);
-    m_cost_matrix[1].resize(m_kinetic_partition.number_of_volumes() + 6, 0);
+    m_cost_matrix[0].resize(lcc.template one_dart_per_cell<3>().size() + 6, 0);
+    m_cost_matrix[1].resize(lcc.template one_dart_per_cell<3>().size() + 6, 0);
 
     for (std::size_t i = 0; i < m_faces_lcc.size(); i++) {
-      auto n = m_lcc.template one_dart_per_incident_cell<3, 2>(m_faces_lcc[i]);
+      auto n = lcc.template one_dart_per_incident_cell<3, 2>(m_faces_lcc[i]);
 
       CGAL_assertion(n.size() == 1 || n.size() == 2);
       auto it = n.begin();
 
-//      auto& finf = m_lcc.template info<2>(m_faces_lcc[i]);
-
-//      bool skipped = false;
-
-      Volume_attribute va = m_lcc.template attribute<3>(m_lcc.dart_descriptor(*it));
-      if (va == m_lcc.null_descriptor) {
-//        skipped = true;
+      Volume_attribute va = lcc.template attribute<3>(lcc.dart_descriptor(*it));
+      if (va == lcc.null_descriptor)
         it++;
-      }
 
       if (it == n.end()) {
         std::cout << "face not connected to a volume" << std::endl;
         continue;
       }
 
-      va = m_lcc.template attribute<3>(m_lcc.dart_descriptor(*it));
-      if (va == m_lcc.null_descriptor) {
-        write_face(m_lcc.dart_descriptor(*it), "face_wo_volume.ply");
+      va = lcc.template attribute<3>(lcc.dart_descriptor(*it));
+      if (va == lcc.null_descriptor) {
+        write_face(lcc.dart_descriptor(*it), "face_wo_volume.ply");
       }
 
-      int first = static_cast<int>(m_lcc.template info<3>(m_lcc.dart_descriptor(*it)).volume_id);
-      auto& inf1 = m_lcc.template info<3>(m_lcc.dart_descriptor(*it++));
+      int first = static_cast<int>(lcc.template info<3>(lcc.dart_descriptor(*it)).volume_id);
+      auto& inf1 = lcc.template info<3>(lcc.dart_descriptor(*it++));
 
       auto inf2 = inf1;
       if (n.size() == 2 && it != n.end())
-        inf2 = m_lcc.template info<3>(m_lcc.dart_descriptor(*it));
-
-//     int second;
-//      if (n.size() == 2 && it != n.end())
-//        second = static_cast<int>(m_lcc.template info<3>(m_lcc.dart_descriptor(*it)).volume_id);
+        inf2 = lcc.template info<3>(lcc.dart_descriptor(*it));
 
       if (n.size() == 2 && it != n.end())
-        m_face_neighbors_lcc[i] = std::make_pair(first + 6, m_lcc.template info<3>(m_lcc.dart_descriptor(*it)).volume_id + 6);
+        m_face_neighbors_lcc[i] = std::make_pair(first + 6, lcc.template info<3>(lcc.dart_descriptor(*it)).volume_id + 6);
       else
-        m_face_neighbors_lcc[i] = std::make_pair(first + 6, -m_lcc.template info<2>(m_faces_lcc[i]).input_polygon_index - 1);
+        m_face_neighbors_lcc[i] = std::make_pair(first + 6, -lcc.template info<2>(m_faces_lcc[i]).input_polygon_index - 1);
 
       if (m_face_neighbors_lcc[i].first > m_face_neighbors_lcc[i].second)
         m_face_neighbors_lcc[i] = std::make_pair(m_face_neighbors_lcc[i].second, m_face_neighbors_lcc[i].first);
@@ -754,20 +995,7 @@ private:
     // Dump volumes colored by votes
 /*
     if (false) {
-      namespace fs = boost::filesystem;
-      for (fs::directory_iterator end_dir_it, it("gc/i"); it != end_dir_it; ++it) {
-        fs::remove_all(it->path());
-      }
-      for (fs::directory_iterator end_dir_it, it("gc/o"); it != end_dir_it; ++it) {
-        fs::remove_all(it->path());
-      }
-      for (fs::directory_iterator end_dir_it, it("gc/n"); it != end_dir_it; ++it) {
-        fs::remove_all(it->path());
-      }
-      for (fs::directory_iterator end_dir_it, it("gc/all"); it != end_dir_it; ++it) {
-        fs::remove_all(it->path());
-      }
-      for (std::size_t i = 0; i < m_volumes.size(); i++) {
+      for (std::size_t i = 0; i < m_cost_matrix[0].size() - 6; i++) {
         // skip 0/0 volumes? Maybe safe them a few seconds later to be able to separate them?
         CGAL::Color c;
 
@@ -782,21 +1010,18 @@ private:
           c = CGAL::Color(0, 0, m);
         }
 
-        if (diff < 0) {
-          dump_volume(i, "gc/o/" + std::to_string(i) + "-vol-" + std::to_string(m_cost_matrix[0][i + 6]) + "-" + std::to_string(m_cost_matrix[1][i + 6]), c);
-          dump_volume(i, "gc/all/" + std::to_string(i) + "-vol-" + std::to_string(m_cost_matrix[0][i + 6]) + "-" + std::to_string(m_cost_matrix[1][i + 6]), c);
+        std::string fn1 = std::string("Volumes") + "/0-" + std::to_string(i) + ".ply";
+        std::string fni = std::string("Volumes") + "/i/0-" + std::to_string(i) + ".ply";
+        std::string fno = std::string("Volumes") + "/o/0-" + std::to_string(i) + ".ply";
+        if (diff > 0) {
+          //std::cout << fn1 << " " << fni << std::endl;
+          //std::filesystem::rename(fn1, fni);
         }
-        else if (diff > 0) {
-          dump_volume(i, "gc/i/" + std::to_string(i) + "-vol-" + std::to_string(m_cost_matrix[0][i + 6]) + "-" + std::to_string(m_cost_matrix[1][i + 6]), c);
-          dump_volume(i, "gc/all/" + std::to_string(i) + "-vol-" + std::to_string(m_cost_matrix[0][i + 6]) + "-" + std::to_string(m_cost_matrix[1][i + 6]), c);
-        }
-        else {
-          dump_volume(i, "gc/n/" + std::to_string(i) + "-vol-0-0", CGAL::Color(255, 255, 255));
-          dump_volume(i, "gc/all/" + std::to_string(i) + "-vol-0-0", CGAL::Color(255, 255, 255));
-        }
+
+        //if (diff < 0)
+          //std::filesystem::rename(fn1, fno);
       }
-    }
-*/
+    }*/
   }
 
   /*!
@@ -887,6 +1112,7 @@ private:
       return;
 
     From_exact from_exact;
+    const LCC &lcc = m_lcc;
 
     std::map<Point_3, std::size_t> pt2idx;
 
@@ -902,23 +1128,23 @@ private:
       //         continue;
 
       if (m_labels[n.first] != m_labels[n.second]) {
-        Face_attribute fa = m_lcc.template attribute<2>(m_faces_lcc[i]);
+        Face_attribute fa = lcc.template attribute<2>(m_faces_lcc[i]);
 
-        if (fa == m_lcc.null_descriptor)
+        if (fa == lcc.null_descriptor)
           std::cout << "null dart 1" << std::endl;
 
-        if (m_labels[m_lcc.template info<3>(m_faces_lcc[i]).volume_id + 6] == 0) {
-          Dart_descriptor dh = m_lcc.template beta<3>(m_faces_lcc[i]);
-          if (dh == m_lcc.null_dart_descriptor)
+        if (m_labels[lcc.template info<3>(m_faces_lcc[i]).volume_id + 6] == 0) {
+          Dart_descriptor dh = lcc.template beta<3>(m_faces_lcc[i]);
+          if (dh == lcc.null_dart_descriptor)
             continue;
-          if (m_lcc.template attribute<3>(m_faces_lcc[i]) == m_lcc.null_descriptor)
+          if (lcc.template attribute<3>(m_faces_lcc[i]) == lcc.null_descriptor)
             continue;
           m_faces_lcc[i] = dh;
         }
 
-        fa = m_lcc.template attribute<2>(m_faces_lcc[i]);
+        fa = lcc.template attribute<2>(m_faces_lcc[i]);
 
-        if (fa == m_lcc.null_descriptor) {
+        if (fa == lcc.null_descriptor) {
           std::cout << "null dart 2" << std::endl;
           continue;
         }
@@ -927,18 +1153,18 @@ private:
           std::vector<std::vector<Point_3> > faces;
 
           collect_connected_component(m_faces_lcc[i], region_index, region++, faces);
-          planes.push_back(m_lcc.template info_of_attribute<2>(fa).plane);
+          planes.push_back(lcc.template info_of_attribute<2>(fa).plane);
           polygon_regions.push_back(std::move(faces));
         }
       }
     }
 
     for (std::size_t i = 0; i < m_faces_lcc.size(); i++) {
-      Face_attribute fa = m_lcc.template attribute<2>(m_faces_lcc[i]);
+      Face_attribute fa = lcc.template attribute<2>(m_faces_lcc[i]);
       if (region_index[fa] == -1)
         continue;
 
-      if (m_labels[m_lcc.template info<3>(m_faces_lcc[i]).volume_id + 6] == 0)
+      if (m_labels[lcc.template info<3>(m_faces_lcc[i]).volume_id + 6] == 0)
         std::cout << "outside face" << std::endl;
     }
 
@@ -955,7 +1181,7 @@ private:
         typename Intersection_kernel::FT min = (std::numeric_limits<double>::max)();
         for (std::size_t j = 0; j < borders_per_region[i].size(); j++)
           for (std::size_t k = 0; k < borders[borders_per_region[i][j]].size(); k++) {
-            const typename Intersection_kernel::Point_3& p = m_lcc.point(m_lcc.dart_of_attribute<0>(borders[borders_per_region[i][j]][k]));
+            const typename Intersection_kernel::Point_3& p = lcc.point(lcc.dart_of_attribute<0>(borders[borders_per_region[i][j]][k]));
             if (p.x() < min) {
               min = p.x();
               outer = j;
@@ -971,9 +1197,9 @@ private:
           std::ofstream vout(fn);
           vout << (borders[borders_per_region[i][j]].size() + 1);
           for (std::size_t k = 0; k < borders[borders_per_region[i][j]].size(); k++) {
-            vout << " " << from_exact(m_lcc.point(m_lcc.dart_of_attribute<0>(borders[borders_per_region[i][j]][k])));
+            vout << " " << from_exact(lcc.point(lcc.dart_of_attribute<0>(borders[borders_per_region[i][j]][k])));
           }
-          vout << " " << from_exact(m_lcc.point(m_lcc.dart_of_attribute<0>(borders[borders_per_region[i][j]][0]))) << std::endl;
+          vout << " " << from_exact(lcc.point(lcc.dart_of_attribute<0>(borders[borders_per_region[i][j]][0]))) << std::endl;
           vout.close();
         }*/
 
@@ -1002,7 +1228,7 @@ private:
       for (std::size_t j = 0; j != borders[i].size(); j++) {
         auto p = attrib2idx.emplace(borders[i][j], attrib2idx.size());
         if (p.second)
-          *pit++ = from_exact(m_lcc.point(m_lcc.template dart_of_attribute<0>(borders[i][j])));
+          *pit++ = from_exact(lcc.point(lcc.template dart_of_attribute<0>(borders[i][j])));
         indices[j] = p.first->second;
       }
 
@@ -1029,6 +1255,7 @@ private:
       return;
 
     From_exact from_exact;
+    const LCC& lcc = m_lcc;
 
     std::map<Point_3, std::size_t> pt2idx;
 
@@ -1040,8 +1267,8 @@ private:
       if (m_labels[n.first] != m_labels[n.second]) {
         std::vector<Point_3> face;
 
-        for (const auto& vd : m_lcc.template one_dart_per_incident_cell<0, 2>(m_faces_lcc[i]))
-          face.push_back(from_exact(m_lcc.point(m_lcc.dart_descriptor(vd))));
+        for (const auto& vd : lcc.template one_dart_per_incident_cell<0, 2>(m_faces_lcc[i]))
+          face.push_back(from_exact(lcc.point(lcc.dart_descriptor(vd))));
 
         std::vector<std::size_t> indices(face.size());
 
@@ -1057,13 +1284,13 @@ private:
     }
   }
 
+  template<typename Region>
   std::size_t add_convex_hull_shape(
-    const std::vector<std::size_t>& region, const Plane_3& plane) {
+    const Region& region, const Plane_3& plane) {
 
     std::vector<Point_2> points;
     points.reserve(region.size());
-    for (const std::size_t idx : region) {
-      CGAL_assertion(idx < m_points.size());
+    for (auto idx : region) {
       const auto& p = get(m_point_map, idx);
       const auto q = plane.projection(p);
       const auto point = plane.to_2d(q);
@@ -1082,7 +1309,7 @@ private:
 
     const std::size_t shape_idx = m_polygons.size();
     m_polygons.push_back(polygon);
-    m_planes.push_back(plane);
+    //m_planes.push_back(plane);
 
     m_polygon_indices.push_back(std::vector<std::size_t>());
     m_polygon_indices.back().resize(polygon.size());
@@ -1124,14 +1351,16 @@ private:
   }
 
   void check_ground() {
-    std::size_t num_volumes = m_kinetic_partition.number_of_volumes();
+    const LCC& lcc = m_lcc;
+
+    std::size_t num_volumes = lcc.template one_dart_per_cell<3>().size();
     // Set all volumes to not be below the ground, this leads to the standard 6 outside node connection.
     m_volume_below_ground.resize(num_volumes, false);
     From_exact from_exact;
 
     if (m_ground_polygon_index != static_cast<std::size_t>(-1))
-      for (const auto &vd : m_lcc.template one_dart_per_cell<3>()) {
-        const auto& info = m_lcc. template info<3>(m_lcc.dart_descriptor(vd));
+      for (const auto &vd : lcc.template one_dart_per_cell<3>()) {
+        const auto& info = lcc. template info<3>(lcc.dart_descriptor(vd));
 
         m_volume_below_ground[info.volume_id] = (from_exact(info.barycenter) - m_regions[m_ground_polygon_index].first.projection(from_exact(info.barycenter))).z() < 0;
       }
@@ -1142,17 +1371,17 @@ private:
     face_queue.push(face);
 
     From_exact from_exact;
+    const LCC& lcc = m_lcc;
 
-//    auto& finfo = m_lcc.template info<2>(face);
-    int ip = m_lcc.template info<2>(face).input_polygon_index;
-    typename Intersection_kernel::Plane_3 pl = m_lcc.template info<2>(face).plane;
+    int ip = lcc.template info<2>(face).input_polygon_index;
+    typename Intersection_kernel::Plane_3 pl = lcc.template info<2>(face).plane;
 
-    if (m_labels[m_lcc.template info<3>(face).volume_id + 6] == 0)
+    if (m_labels[lcc.template info<3>(face).volume_id + 6] == 0)
       std::cout << "collect_connected_component called on outside face" << std::endl;
 
     while (!face_queue.empty()) {
       Dart_descriptor cur_fdh(face_queue.front());
-      Face_attribute cur_fa = m_lcc.template attribute<2>(cur_fdh);
+      Face_attribute cur_fa = lcc.template attribute<2>(cur_fdh);
       face_queue.pop();
 
       if (region_index[cur_fa] == static_cast<int>(region))
@@ -1165,8 +1394,8 @@ private:
       Dart_descriptor n = cur_fdh;
       std::vector<Point_3> f;
       do {
-        f.push_back(from_exact(m_lcc.point(n)));
-        n = m_lcc.beta(n, 1);
+        f.push_back(from_exact(lcc.point(n)));
+        n = lcc.beta(n, 1);
       } while (n != cur_fdh);
       faces.push_back(std::move(f));
 
@@ -1174,37 +1403,33 @@ private:
 
       Dart_descriptor edh = cur_fdh;
       do {
-        Dart_descriptor fdh = m_lcc.beta(edh, 2, 3);
+        Dart_descriptor fdh = lcc.beta(edh, 2, 3);
         do {
-          Face_attribute fa = m_lcc.template attribute<2>(fdh);
+          Face_attribute fa = lcc.template attribute<2>(fdh);
 
-          if (fa == m_lcc.null_descriptor) {
+          if (fa == lcc.null_descriptor) {
             // fdh is outside of the bbox, switching back inside to check the face on the boundary
-            fdh = m_lcc.template beta<3>(fdh);
-            fa = m_lcc.template attribute<2>(fdh);
+            fdh = lcc.template beta<3>(fdh);
+            fa = lcc.template attribute<2>(fdh);
 
-            if (fa == m_lcc.null_descriptor)
+            if (fa == lcc.null_descriptor)
               break;
           }
 
-          auto& finfo2 = m_lcc.template info<2>(fdh);
+          std::reference_wrapper<const Face_information> finfo2 = lcc.template info<2>(fdh);
           if (fa == cur_fa) {
-            fdh = m_lcc.template beta<2, 3>(fdh);
+            fdh = lcc.template beta<2, 3>(fdh);
             continue;
           }
-//          auto& inf = m_lcc.template info<2>(fdh);
-//          bool added = false;
-
-          //write_face(fdh, std::to_string(region) + "-" + std::to_string(fa) + ".ply");
 
           const auto& n = m_face_neighbors_lcc[m_attrib2index_lcc[fa]];
 
           // Belongs to reconstruction?
           bool internal = m_labels[n.first] == m_labels[n.second];
           if (m_labels[n.first] == m_labels[n.second]) {
-            fdh = m_lcc.template beta<2>(fdh);
-            Dart_descriptor fdh2 = m_lcc.template beta<3>(fdh);
-            if (fdh2 != m_lcc.null_dart_descriptor)
+            fdh = lcc.template beta<2>(fdh);
+            Dart_descriptor fdh2 = lcc.template beta<3>(fdh);
+            if (fdh2 != lcc.null_dart_descriptor)
               fdh = fdh2;
 
             continue;
@@ -1215,23 +1440,23 @@ private:
             if (!internal)
               break;
 
-            fdh = m_lcc.template beta<2>(fdh);
-            Dart_descriptor fdh2 = m_lcc.template beta<3>(fdh);
-            if (fdh2 != m_lcc.null_dart_descriptor)
+            fdh = lcc.template beta<2>(fdh);
+            Dart_descriptor fdh2 = lcc.template beta<3>(fdh);
+            if (fdh2 != lcc.null_dart_descriptor)
               fdh = fdh2;
 
             continue;
           }
 
           // If the face is part of the reconstruction, but on the inside volume, switch to the mirror face on the outside.
-          if (n.first >= 6 && n.second >= 6 && m_labels[m_lcc.template info<3>(fdh).volume_id + 6] == 0) {
-            fdh = m_lcc.template beta<3>(fdh);
-            fa = m_lcc.template attribute<2>(fdh);
-            finfo2 = m_lcc.template info<2>(fdh);
+          if (n.first >= 6 && n.second >= 6 && m_labels[lcc.template info<3>(fdh).volume_id + 6] == 0) {
+            fdh = lcc.template beta<3>(fdh);
+            fa = lcc.template attribute<2>(fdh);
+            finfo2 = lcc.template info<2>(fdh);
           }
 
           if (ip != -7) {
-            if (m_lcc.template info<2>(fdh).input_polygon_index == ip) {
+            if (lcc.template info<2>(fdh).input_polygon_index == ip) {
               if (internal)
                 break;
               face_queue.push(fdh);
@@ -1241,7 +1466,7 @@ private:
                 break;
           }
           else
-            if (m_lcc.template info<2>(fdh).plane == pl || m_lcc.template info<2>(fdh).plane == pl.opposite()) {
+            if (lcc.template info<2>(fdh).plane == pl || lcc.template info<2>(fdh).plane == pl.opposite()) {
               if (internal)
                 break;
 
@@ -1251,44 +1476,39 @@ private:
               if (!internal)
                 break;
 
-//           if (!added)
-//             border_edges.push_back(edh);
-
           break;
         } while (fdh != edh);
-        edh = m_lcc.template beta<1>(edh);
+        edh = lcc.template beta<1>(edh);
       } while (edh != cur_fdh);
     }
   }
 
   bool is_border_edge(typename LCC::Dart_descriptor dh) {
-    const Face_attribute& fa = m_lcc.template attribute<2>(dh);
-    auto& finfo = m_lcc.template info_of_attribute<2>(fa);
+    const LCC& lcc = m_lcc;
+    const Face_attribute& fa = lcc.template attribute<2>(dh);
+    auto& finfo = lcc.template info_of_attribute<2>(fa);
 
-    if (m_labels[m_lcc.template info<3>(dh).volume_id + 6] != 1) {
+    if (m_labels[lcc.template info<3>(dh).volume_id + 6] != 1) {
       write_face(dh, "flipface.ply");
-      std::cout << "is_border_edge called on dart of outside volume, dh " << dh << " volume_id " << m_lcc.template info<3>(dh).volume_id << std::endl;
+      std::cout << "is_border_edge called on dart of outside volume, dh " << dh << " volume_id " << lcc.template info<3>(dh).volume_id << std::endl;
     }
 
-    Dart_descriptor edh = m_lcc.beta(dh, 2, 3);
+    Dart_descriptor edh = lcc.beta(dh, 2, 3);
     do {
-      Face_attribute fa2 = m_lcc.template attribute<2>(edh);
-      if (fa2 == m_lcc.null_descriptor)
+      Face_attribute fa2 = lcc.template attribute<2>(edh);
+      if (fa2 == lcc.null_descriptor)
         return true;
-
-//       if (debug)
-//         write_face(edh, "cur_is_border.ply");
 
       if (fa2 == fa) {
         std::cout << "should not happen" << std::endl;
-        edh = m_lcc.template beta<2, 3>(edh);
+        edh = lcc.template beta<2, 3>(edh);
         continue;
       }
 
       const auto& n = m_face_neighbors_lcc[m_attrib2index_lcc[fa2]];
       bool internal = (m_labels[n.first] == m_labels[n.second]);
 
-      auto& finfo2 = m_lcc.template info_of_attribute<2>(fa2);
+      auto& finfo2 = lcc.template info_of_attribute<2>(fa2);
       // Is neighbor face on same support plane?
       if (finfo2.input_polygon_index != finfo.input_polygon_index)
       {
@@ -1296,9 +1516,9 @@ private:
           return true;
         else {
 
-          edh = m_lcc.template beta<2>(edh);
-          Dart_descriptor edh2 = m_lcc.template beta<3>(edh);
-          if (edh2 != m_lcc.null_dart_descriptor)
+          edh = lcc.template beta<2>(edh);
+          Dart_descriptor edh2 = lcc.template beta<3>(edh);
+          if (edh2 != lcc.null_dart_descriptor)
             edh = edh2;
 
           continue;
@@ -1312,9 +1532,9 @@ private:
           if (!internal)
             return true;
           else {
-            edh = m_lcc.template beta<2>(edh);
-            Dart_descriptor edh2 = m_lcc.template beta<3>(edh);
-            if (edh2 != m_lcc.null_dart_descriptor)
+            edh = lcc.template beta<2>(edh);
+            Dart_descriptor edh2 = lcc.template beta<3>(edh);
+            if (edh2 != lcc.null_dart_descriptor)
               edh = edh2;
 
             continue;
@@ -1355,19 +1575,20 @@ private:
   void insert_ghost_edges_cdt(std::vector<std::vector<std::size_t> >& polygons, const typename Intersection_kernel::Plane_3 pl) const {
     CDT cdt;
     From_exact from_exact;
+    const LCC& lcc = m_lcc;
 
     std::unordered_map<std::size_t, std::size_t> va2vh;
     std::vector<Vertex_handle> vertices;
 
     for (std::size_t i = 0; i < polygons.size(); i++) {
       for (std::size_t j = 0; j < polygons[i].size(); j++) {
-        vertices.push_back(cdt.insert(pl.to_2d(m_lcc.point(m_lcc.template dart_of_attribute<0>(polygons[i][j])))));
+        vertices.push_back(cdt.insert(pl.to_2d(lcc.point(lcc.template dart_of_attribute<0>(polygons[i][j])))));
         CGAL_assertion_code(auto it =) va2vh.insert(std::make_pair(polygons[i][j], vertices.size() - 1));
         CGAL_assertion(it.second || it.first->first == polygons[i][j]);
 
-        vertices.back()->info().i = i;
-        vertices.back()->info().j = j;
-        vertices.back()->info().p = pl.to_2d(m_lcc.point(m_lcc.template dart_of_attribute<0>(polygons[i][j])));
+        vertices.back()->info().i = static_cast<int>(i);
+        vertices.back()->info().j = static_cast<int>(j);
+        vertices.back()->info().p = pl.to_2d(lcc.point(lcc.template dart_of_attribute<0>(polygons[i][j])));
         vertices.back()->info().dh = polygons[i][j];
 
         if (j >= 1)
@@ -1477,15 +1698,16 @@ private:
 
   typename LCC::Dart_descriptor circulate_vertex_2d(typename LCC::Dart_descriptor dh) {
     CGAL_assertion(!is_border_edge(dh));
+    const LCC &lcc = m_lcc;
 
-    const Face_attribute& fa = m_lcc.template attribute<2>(dh);
-    auto& finfo = m_lcc.template info_of_attribute<2>(fa);
+    const Face_attribute& fa = lcc.template attribute<2>(dh);
+    auto& finfo = lcc.template info_of_attribute<2>(fa);
 
-    typename LCC::Dart_descriptor dh2 = m_lcc.template beta<2>(dh);
+    typename LCC::Dart_descriptor dh2 = lcc.template beta<2>(dh);
 
     do {
-      Face_attribute fa2 = m_lcc.template attribute<2>(dh2);
-      auto& finfo2 = m_lcc.template info_of_attribute<2>(fa2);
+      Face_attribute fa2 = lcc.template attribute<2>(dh2);
+      auto& finfo2 = lcc.template info_of_attribute<2>(fa2);
       if (finfo2.input_polygon_index == finfo.input_polygon_index) {
         CGAL_assertion(fa != fa2);
         if (finfo2.input_polygon_index == -7) {
@@ -1494,7 +1716,7 @@ private:
         }
         else return dh2;
       }
-      dh2 = m_lcc.template beta<3, 2>(dh2);
+      dh2 = lcc.template beta<3, 2>(dh2);
 
     } while (dh2 != dh);
 
@@ -1506,31 +1728,32 @@ private:
 
   void collect_border(typename LCC::Dart_descriptor dh, std::vector<bool>& processed, std::vector<std::vector<std::size_t> >& borders) {
     processed[dh] = true;
+    const LCC& lcc = m_lcc;
 
-    if (m_labels[m_lcc.template info<3>(dh).volume_id + 6] != 1)
-      std::cout << "collect_border called on dart of outside volume, dh " << dh << " volume_id " << m_lcc.template info<3>(dh).volume_id << std::endl;
+    if (m_labels[lcc.template info<3>(dh).volume_id + 6] != 1)
+      std::cout << "collect_border called on dart of outside volume, dh " << dh << " volume_id " << lcc.template info<3>(dh).volume_id << std::endl;
 
     std::vector<std::size_t> border;
-    border.push_back(m_lcc.template attribute<0>(dh));
+    border.push_back(lcc.template attribute<0>(dh));
 
-//    const Face_attribute& fa = m_lcc.template attribute<2>(dh);
-//    auto& finfo = m_lcc.template info_of_attribute<2>(fa);
+//    const Face_attribute& fa = lcc.template attribute<2>(dh);
+//    auto& finfo = lcc.template info_of_attribute<2>(fa);
 
     typename LCC::Dart_descriptor cur = dh;
-    cur = m_lcc.template beta<1>(cur);
+    cur = lcc.template beta<1>(cur);
 
     do {
       if (is_border_edge(cur)) {
         CGAL_assertion(!processed[cur]);
         processed[cur] = true;
-        border.push_back(m_lcc.template attribute<0>(cur));
+        border.push_back(lcc.template attribute<0>(cur));
 
-        if (m_labels[m_lcc.template info<3>(cur).volume_id + 6] != 1)
-          std::cout << "border collected from dart of outside volume, dh " << cur << " volume_id " << m_lcc.template info<3>(cur).volume_id << std::endl;
+        if (m_labels[lcc.template info<3>(cur).volume_id + 6] != 1)
+          std::cout << "border collected from dart of outside volume, dh " << cur << " volume_id " << lcc.template info<3>(cur).volume_id << std::endl;
       }
       else
         cur = circulate_vertex_2d(cur);
-      cur = m_lcc.template beta<1>(cur);
+      cur = lcc.template beta<1>(cur);
     } while(cur != dh);
 
     borders.push_back(std::move(border));
@@ -1539,11 +1762,12 @@ private:
   void write_face(const typename LCC::Dart_descriptor dh, const std::string& fn) {
     std::vector<Point_3> face;
     From_exact from_exact;
+    const LCC& lcc = m_lcc;
 
     Dart_descriptor n = dh;
     do {
-      face.push_back(from_exact(m_lcc.point(n)));
-      n = m_lcc.beta(n, 1);
+      face.push_back(from_exact(lcc.point(n)));
+      n = lcc.beta(n, 1);
     } while (n != dh);
 
     KSP_3::internal::dump_polygon<Kernel>(face, fn);
@@ -1551,27 +1775,76 @@ private:
 
   void write_edge(typename LCC::Dart_descriptor dh, const std::string& fn) {
     From_exact from_exact;
+    const LCC& lcc = m_lcc;
     std::ofstream vout(fn);
-    vout << "2 " << from_exact(m_lcc.point(dh)) << " " << from_exact(m_lcc.point(m_lcc.template beta<1>(dh))) << std::endl;
+    vout << "2 " << from_exact(lcc.point(dh)) << " " << from_exact(lcc.point(lcc.template beta<1>(dh))) << std::endl;
     vout.close();
   }
 
   void write_border(std::vector<std::size_t> &border, const std::string& fn) {
     From_exact from_exact;
+    const LCC& lcc = m_lcc;
     std::ofstream vout(fn);
     vout << (border.size() + 1);
     for (std::size_t k = 0; k < border.size(); k++) {
-      vout << " " << from_exact(m_lcc.point(m_lcc.template dart_of_attribute<0>(border[k])));
+      vout << " " << from_exact(lcc.point(lcc.template dart_of_attribute<0>(border[k])));
     }
-    vout << " " << from_exact(m_lcc.point(m_lcc.template dart_of_attribute<0>(border[0]))) << std::endl;
+    vout << " " << from_exact(lcc.point(lcc.template dart_of_attribute<0>(border[0]))) << std::endl;
     vout.close();
   }
 
+  void export_detected_shapes(const std::string& filename) {
+    if (filename.empty())
+      return;
+
+    std::filesystem::path path(filename);
+    std::string extension = path.extension().generic_string();
+    std::transform(extension.begin(), extension.end(), extension.begin(), [](unsigned char c) { return std::tolower(c); });
+    std::ofstream out;
+
+    std::cout << filename << std::endl;
+
+    if (extension == ".vg")
+      out = std::ofstream(filename);
+    else
+      out = std::ofstream(path.stem().generic_string() + ".vg");
+
+    out << "num_points: " << m_points.size() << std::endl;
+    out << std::setprecision(17);
+    for (const auto idx : m_points) {
+      const Point_3& p = get(m_point_map, idx);
+      out << p << std::endl;
+    }
+
+    out << std::endl << "num_normals: " << m_points.size() << std::endl;
+    for (const auto idx : m_points) {
+      const Vector_3& n = get(m_normal_map, idx);
+      out << n << std::endl;
+    }
+
+    out << std::endl << "num_groups: " << m_regions.size() << std::endl;
+    for (const auto& region : m_regions) {
+      out << std::endl << "group_parameters: " << region.first << std::endl;
+      out << "group_num_points: " << region.second.size() << std::endl;
+      bool first = true;
+      for (const auto idx : region.second) {
+        if (first) {
+          out << idx;
+          first = false;
+        }
+        else out << " " << idx;
+      }
+      out << std::endl;
+    }
+    out.close();
+  }
+
   void collect_connected_border(std::vector<std::vector<std::size_t> >& borders, const std::vector<int> &region_index, std::vector<std::vector<std::size_t> > &borders_per_region) {
+    const LCC &lcc = m_lcc;
     // Start extraction of a border from each dart (each dart is a 1/n-edge)
     // Search starting darts by searching faces
     //borders contains Attribute<0> handles casted to std::size_t
-    std::vector<bool> processed(m_lcc.upper_bound_on_dart_ids(), false);
+    std::vector<bool> processed(lcc.upper_bound_on_dart_ids(), false);
 
     for (std::size_t i = 0;i<region_index.size();i++) {
       if (region_index[i] == -1)
@@ -1579,9 +1852,9 @@ private:
 
       typename LCC::Dart_descriptor dh = m_faces_lcc[i];
 
-      Volume_attribute va = m_lcc.template attribute<3>(dh);
-      const Face_attribute &fa = m_lcc.template attribute<2>(dh);
-      auto finfo = m_lcc.template info_of_attribute<2>(fa);
+      Volume_attribute va = lcc.template attribute<3>(dh);
+      const Face_attribute &fa = lcc.template attribute<2>(dh);
+      auto finfo = lcc.template info_of_attribute<2>(fa);
       const auto& n = m_face_neighbors_lcc[m_attrib2index_lcc[fa]];
 
       // Belongs to reconstruction?
@@ -1591,7 +1864,7 @@ private:
       typename LCC::Dart_descriptor dh2 = dh;
 
       do {
-        if (va != m_lcc.template attribute<3>(dh2)) {
+        if (va != lcc.template attribute<3>(dh2)) {
           std::cout << "volume attribute mismatch" << std::endl;
         }
 
@@ -1600,7 +1873,7 @@ private:
 
           collect_border(dh2, processed, borders);
         }
-        dh2 = m_lcc.template beta<1>(dh2);
+        dh2 = lcc.template beta<1>(dh2);
       } while (dh2 != dh);
     }
   }
@@ -1609,20 +1882,19 @@ private:
     FT total_area = 0;
     m_total_inliers = 0;
     From_exact from_exact;
+    const LCC &lcc = m_lcc;
 
-    std::vector<std::vector<Dart_descriptor> > poly2faces(m_kinetic_partition.input_planes().size());
+    std::vector<std::vector<Dart_descriptor> > poly2faces(m_regions.size());
     std::vector<Dart_descriptor> other_faces;
-    for (auto& d : m_lcc.template one_dart_per_cell<2>()) {
-      Dart_descriptor dh = m_lcc.dart_descriptor(d);
-      if (m_lcc.template info<2>(dh).input_polygon_index >= 0)
-        poly2faces[m_lcc.template info<2>(dh).input_polygon_index].push_back(dh);
+    for (auto& d : lcc.template one_dart_per_cell<2>()) {
+      Dart_descriptor dh = lcc.dart_descriptor(d);
+      if (lcc.template info<2>(dh).input_polygon_index >= 0)
+        poly2faces[lcc.template info<2>(dh).input_polygon_index].push_back(dh);
       else
         other_faces.push_back(dh); // Contains faces originating from the octree decomposition as well as bbox faces
     }
 
-    CGAL_assertion(m_kinetic_partition.input_planes().size() == m_regions.size());
-
-    for (std::size_t i = 0; i < m_kinetic_partition.input_planes().size(); i++) {
+    for (std::size_t i = 0; i < m_regions.size(); i++) {
 
       std::vector<std::pair<Dart_descriptor, std::vector<std::size_t> > > mapping;
 
@@ -1636,17 +1908,17 @@ private:
 
       // Remap from mapping to m_face_inliers
       for (auto p : mapping) {
-        m_face_inliers[m_attrib2index_lcc[m_lcc.template attribute<2>(p.first)]].resize(p.second.size());
+        m_face_inliers[m_attrib2index_lcc[lcc.template attribute<2>(p.first)]].resize(p.second.size());
         for (std::size_t k = 0; k < p.second.size(); k++)
-          m_face_inliers[m_attrib2index_lcc[m_lcc.template attribute<2>(p.first)]][k] = m_regions[i].second[p.second[k]];
+          m_face_inliers[m_attrib2index_lcc[lcc.template attribute<2>(p.first)]][k] = m_regions[i].second[p.second[k]];
 
         m_total_inliers += p.second.size();
       }
 
-      Plane_3 pl = from_exact(m_kinetic_partition.input_planes()[i]);
+      Plane_3 pl = m_regions[i].first;
 
       for (std::size_t j = 0; j < poly2faces[i].size(); j++) {
-        std::size_t idx = m_attrib2index_lcc[m_lcc.template attribute<2>(poly2faces[i][j])];
+        std::size_t idx = m_attrib2index_lcc[lcc.template attribute<2>(poly2faces[i][j])];
         m_face_area_lcc[idx] = 0;
 
         //multiple regions per input polygon
@@ -1655,8 +1927,8 @@ private:
 
         Dart_descriptor n = poly2faces[i][j];
         do {
-          tri.insert(pl.to_2d(from_exact(m_lcc.point(n))));
-          n = m_lcc.beta(n, 0);
+          tri.insert(pl.to_2d(from_exact(lcc.point(n))));
+          n = lcc.beta(n, 0);
         } while (n != poly2faces[i][j]);
 
         // Get area
@@ -1675,12 +1947,12 @@ private:
     // Handling face generated by the octree partition. They are not associated with an input polygon.
     for (std::size_t i = 0; i < other_faces.size(); i++) {
       std::vector<Point_3> face;
-      std::size_t idx = m_attrib2index_lcc[m_lcc.template attribute<2>(other_faces[i])];
+      std::size_t idx = m_attrib2index_lcc[lcc.template attribute<2>(other_faces[i])];
 
       Dart_descriptor n = other_faces[i];
       do {
-        face.push_back(from_exact(m_lcc.point(n)));
-        n = m_lcc.beta(n, 0);
+        face.push_back(from_exact(lcc.point(n)));
+        n = lcc.beta(n, 0);
       } while (n != other_faces[i]);
 
       Plane_3 pl;
@@ -1711,14 +1983,15 @@ private:
   FT area(typename LCC::Dart_descriptor face_dart, Plane_3 &pl, std::vector<typename Kernel::Triangle_3> *tris = nullptr) {
     std::vector<Point_3> face;
     From_exact from_exact;
+    const LCC &lcc = m_lcc;
 
     Dart_descriptor n = face_dart;
     do {
-      face.push_back(from_exact(m_lcc.point(n)));
-      n = m_lcc.beta(n, 0);
+      face.push_back(from_exact(lcc.point(n)));
+      n = lcc.beta(n, 0);
     } while (n != face_dart);
 
-    pl = from_exact(m_lcc.template info<2>(face_dart).plane);
+    pl = from_exact(lcc.template info<2>(face_dart).plane);
 
     Delaunay_2 tri;
     for (const Point_3& p : face)
@@ -1741,8 +2014,9 @@ private:
   }
 
   void count_volume_votes_lcc() {
+    const LCC& lcc = m_lcc;
 //    const int debug_volume = -1;
-    std::size_t num_volumes = m_kinetic_partition.number_of_volumes();
+    std::size_t num_volumes = lcc.template one_dart_per_cell<3>().size();
     m_volume_votes.clear();
     m_volume_votes.resize(num_volumes, std::make_pair(0, 0));
 
@@ -1757,10 +2031,10 @@ private:
       std::size_t in[] = {0, 0}, out[] = {0, 0};
 
       std::size_t idx = 0;
-      for (auto& vd : m_lcc.template one_dart_per_incident_cell<3, 2>(m_faces_lcc[i])) {
-        typename LCC::Dart_descriptor vdh = m_lcc.dart_descriptor(vd);
-        v[idx] = m_lcc.template info<3>(vdh).volume_id;
-        c[idx] = from_exact(m_lcc.template info<3>(vdh).barycenter);
+      for (auto& vd : lcc.template one_dart_per_incident_cell<3, 2>(m_faces_lcc[i])) {
+        typename LCC::Dart_descriptor vdh = lcc.dart_descriptor(vd);
+        v[idx] = lcc.template info<3>(vdh).volume_id;
+        c[idx] = from_exact(lcc.template info<3>(vdh).barycenter);
         idx++;
       }
 
@@ -1796,88 +2070,61 @@ private:
 
     if (m_verbose) std::cout << "* getting planar shapes using region growing" << std::endl;
 
-    FT xmin, ymin, zmin, xmax, ymax, zmax;
-    auto pit = m_points.begin();
-    const Point_3& p = get(m_point_map, *pit);
-    xmin = xmax = p.x();
-    ymin = ymax = p.y();
-    zmin = zmax = p.z();
-
-    pit++;
-
-    while (pit != m_points.end()) {
-      const Point_3& p = get(m_point_map, *pit);
-      xmin = (std::min)(xmin, p.x());
-      xmax = (std::max)(xmax, p.x());
-      ymin = (std::min)(ymin, p.y());
-      ymax = (std::max)(ymax, p.y());
-      zmin = (std::min)(zmin, p.z());
-      zmax = (std::max)(zmax, p.z());
-      pit++;
-    }
-
-    FT diag = CGAL::sqrt((xmax - xmin) * (xmax - xmin) + (ymax - ymin) * (ymax - ymin) + (zmax - zmin) * (zmax - zmin));
+    FT diag = calculate_bbox_diagonal();
 
     // Parameters.
     const std::size_t k = parameters::choose_parameter(parameters::get_parameter(np, internal_np::k_neighbors), 12);
-    const FT max_distance_to_plane = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_distance), diag * 0.02);
+    m_max_distance_to_plane = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_distance), diag * 0.02);
     const FT max_accepted_angle = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_angle), FT(15));
     const std::size_t min_region_size = parameters::choose_parameter(parameters::get_parameter(np, internal_np::minimum_region_size), m_points.size() * 0.005);
-
-    m_detection_distance_tolerance = max_distance_to_plane;
 
     // Region growing.
     if (!m_neighbor_query) {
         m_neighbor_query = std::unique_ptr<Neighbor_query>(new Neighbor_query(m_points, parameters::point_map(m_point_map).k_neighbors(k)));
     }
 
-    Region_type region_type = CGAL::Shape_detection::Point_set::make_least_squares_plane_fit_region(
-      m_points,
+    m_region_type = std::unique_ptr<Region_type>(new Region_type(
       CGAL::parameters::
-      maximum_distance(max_distance_to_plane).
+      maximum_distance(m_max_distance_to_plane).
       maximum_angle(max_accepted_angle).
-      minimum_region_size(min_region_size));
+      minimum_region_size(min_region_size).
+      point_map(m_point_map).
+      normal_map(m_normal_map)));
 
     if (!m_sorting) {
       m_sorting = std::unique_ptr<Sorting>(new Sorting(m_points, *m_neighbor_query, parameters::point_map(m_point_map)));
       m_sorting->sort();
     }
 
-    Region_growing region_growing(
-      m_points, m_sorting->ordered(), *m_neighbor_query, region_type);
-    region_growing.detect(std::back_inserter(m_regions));
+    m_region_growing = std::unique_ptr<Region_growing>(new Region_growing(m_points, m_sorting->ordered(), *m_neighbor_query, *m_region_type));
+    m_region_growing->detect(std::back_inserter(m_regions));
 
-    std::size_t unassigned = 0;
-    region_growing.unassigned_items(m_points, boost::make_function_output_iterator([&](const auto&) { ++unassigned; }));
+    if (m_verbose)
+      std::cout << "Detected " << m_regions.size() << " planar regions." << std::endl;
+  }
 
-    // Convert indices.
-    m_planar_regions.clear();
-    m_planar_regions.reserve(m_regions.size());
-
-    // Copy planes for regularization.
-    std::vector<Plane_3> planes(m_regions.size());
-    for (std::size_t i = 0; i < m_regions.size(); i++)
-      planes[i] = m_regions[i].first;
-
-    auto range = m_regions | boost::adaptors::transformed([](typename Region_growing::Primitive_and_region& pr)->Plane_3& {return pr.first; });
-
-    std::size_t num_shapes = m_regions.size();
-
-    if (m_regions.empty())
+  template<typename RegionRange, typename RegionMap, typename NamedParameters>
+  void regularize_planar_shapes(RegionRange &regions, RegionMap &region_map, FT diag, const NamedParameters& np) {
+    if (regions.empty())
       return;
 
+    m_max_distance_to_plane = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_distance), m_max_distance_to_plane);
+    if (m_max_distance_to_plane < -0.5)
+      m_max_distance_to_plane = diag * 0.02;
     const bool regularize_axis_symmetry = parameters::choose_parameter(parameters::get_parameter(np, internal_np::regularize_axis_symmetry), false);
     const bool regularize_coplanarity = parameters::choose_parameter(parameters::get_parameter(np, internal_np::regularize_coplanarity), true);
     const bool regularize_orthogonality = parameters::choose_parameter(parameters::get_parameter(np, internal_np::regularize_orthogonality), false);
     const bool regularize_parallelism = parameters::choose_parameter(parameters::get_parameter(np, internal_np::regularize_parallelism), false);
     const FT angle_tolerance = parameters::choose_parameter(parameters::get_parameter(np, internal_np::angle_tolerance), 5);
-    const FT maximum_offset = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_offset), max_distance_to_plane * 0.5);
+    const FT maximum_offset = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_offset), m_max_distance_to_plane * 0.5);
+
+    auto range = regions | boost::adaptors::transformed([](typename Region_growing::Primitive_and_region& pr)->Plane_3& {return pr.first; });
 
     // Regularize detected planes.
 
     if (regularize_axis_symmetry || regularize_coplanarity || regularize_orthogonality || regularize_parallelism)
       CGAL::Shape_regularization::Planes::regularize_planes(range, m_points,
-        CGAL::parameters::plane_index_map(region_growing.region_map())
+        CGAL::parameters::plane_index_map(region_map)
         .point_map(m_point_map)
         .regularize_axis_symmetry(regularize_axis_symmetry)
         .regularize_orthogonality(regularize_orthogonality)
@@ -1887,16 +2134,19 @@ private:
         .maximum_offset(maximum_offset));
 
     // Merge coplanar regions
-    for (std::size_t i = 0; i < m_regions.size() - 1; i++) {
-      for (std::size_t j = i + 1; j < m_regions.size(); j++) {
-        if (m_regions[i].first == m_regions[j].first || m_regions[i].first.opposite() == m_regions[j].first) {
-          std::move(m_regions[j].second.begin(), m_regions[j].second.end(), std::back_inserter(m_regions[i].second));
-          m_regions.erase(m_regions.begin() + j);
+    for (std::size_t i = 0; i < regions.size() - 1; i++) {
+      for (std::size_t j = i + 1; j < regions.size(); j++) {
+        if (regions[i].first == regions[j].first || regions[i].first.opposite() == regions[j].first) {
+          std::move(regions[j].second.begin(), regions[j].second.end(), std::back_inserter(regions[i].second));
+          regions.erase(regions.begin() + j);
           j--;
         }
       }
     }
+  }
 
+  template<typename RegionRange>
+  void estimate_ground_plane(RegionRange& regions, FT max_distance_to_plane) {
     // Estimate ground plane by finding a low mostly horizontal plane
     std::vector<std::size_t> candidates;
     FT low_z_peak = (std::numeric_limits<FT>::max)();
@@ -1912,11 +2162,11 @@ private:
 
     FT bbox_center[] = { 0.5 * (bbox_min[0] + bbox_max[0]), 0.5 * (bbox_min[1] + bbox_max[1]), 0.5 * (bbox_min[2] + bbox_max[2]) };
 
-    for (std::size_t i = 0; i < m_regions.size(); i++) {
-      Vector_3 d = m_regions[i].first.orthogonal_vector();
+    for (std::size_t i = 0; i < regions.size(); i++) {
+      Vector_3 d = regions[i].first.orthogonal_vector();
       if (abs(d.z()) > 0.98) {
         candidates.push_back(i);
-        FT z = m_regions[i].first.projection(Point_3(bbox_center[0], bbox_center[1], bbox_center[2])).z();
+        FT z = regions[i].first.projection(Point_3(bbox_center[0], bbox_center[1], bbox_center[2])).z();
         low_z_peak = (std::min<FT>)(z, low_z_peak);
       }
     }
@@ -1924,7 +2174,7 @@ private:
     m_ground_polygon_index = -1;
     std::vector<std::size_t> other_ground;
     for (std::size_t i = 0; i < candidates.size(); i++) {
-      FT z = m_regions[candidates[i]].first.projection(Point_3(bbox_center[0], bbox_center[1], bbox_center[2])).z();
+      FT z = regions[candidates[i]].first.projection(Point_3(bbox_center[0], bbox_center[1], bbox_center[2])).z();
       if (z - low_z_peak < max_distance_to_plane) {
         if (m_ground_polygon_index == std::size_t(-1))
           m_ground_polygon_index = candidates[i];
@@ -1936,91 +2186,56 @@ private:
     if (m_ground_polygon_index != std::size_t(-1)) {
 
       for (std::size_t i = 0; i < other_ground.size(); i++)
-        std::move(m_regions[other_ground[i]].second.begin(), m_regions[other_ground[i]].second.end(), std::back_inserter(m_regions[m_ground_polygon_index].second));
+        std::move(regions[other_ground[i]].second.begin(), regions[other_ground[i]].second.end(), std::back_inserter(regions[m_ground_polygon_index].second));
 
       while (other_ground.size() != 0) {
-        m_regions.erase(m_regions.begin() + other_ground.back());
+        regions.erase(regions.begin() + other_ground.back());
         other_ground.pop_back();
       }
 
       std::vector<Point_3> ground_plane;
-      ground_plane.reserve(m_regions[m_ground_polygon_index].second.size());
-      for (std::size_t i = 0; i < m_regions[m_ground_polygon_index].second.size(); i++) {
-        ground_plane.push_back(get(m_point_map, m_regions[m_ground_polygon_index].second[i]));
+      ground_plane.reserve(regions[m_ground_polygon_index].second.size());
+      for (std::size_t i = 0; i < regions[m_ground_polygon_index].second.size(); i++) {
+        ground_plane.push_back(get(m_point_map, regions[m_ground_polygon_index].second[i]));
       }
 
-      CGAL::linear_least_squares_fitting_3(ground_plane.begin(), ground_plane.end(), m_regions[m_ground_polygon_index].first, CGAL::Dimension_tag<0>());
+      CGAL::linear_least_squares_fitting_3(ground_plane.begin(), ground_plane.end(), regions[m_ground_polygon_index].first, CGAL::Dimension_tag<0>());
 
-      if (m_regions[m_ground_polygon_index].first.orthogonal_vector().z() < 0)
-        m_regions[m_ground_polygon_index].first = m_regions[m_ground_polygon_index].first.opposite();
+      if (regions[m_ground_polygon_index].first.orthogonal_vector().z() < 0)
+        regions[m_ground_polygon_index].first = regions[m_ground_polygon_index].first.opposite();
     }
-
-    std::vector<Plane_3> pl;
-    for (const auto& p : m_regions) {
-      bool exists = false;
-      for (std::size_t i = 0; i < pl.size(); i++)
-        if (pl[i] == p.first || pl[i].opposite() == p.first)
-          exists = true;
-
-      if (!exists)
-        pl.push_back(p.first);
-    }
-
-    for (const auto& pair : m_regions) {
-      Indices region;
-      for (auto& i : pair.second)
-        region.push_back(i);
-      m_planar_regions.push_back(region);
-
-      const std::size_t shape_idx = add_convex_hull_shape(region, pair.first);
-      CGAL_assertion(shape_idx != std::size_t(-1));
-      m_region_map[shape_idx] = region;
-    }
-    CGAL_assertion(m_planar_regions.size() == m_regions.size());
-
-    if (m_verbose) {
-      std::cout << "found " << num_shapes << " planar shapes regularized into " << m_planar_regions.size() << std::endl;
-      std::cout << "from " << m_points.size() << " input points " << unassigned << " remain unassigned" << std::endl;
-    }
-
-    num_shapes = m_planar_regions.size();
-
-    m_kinetic_partition = KSP(m_polygon_pts, m_polygon_indices);
   }
 
   void map_points_to_faces(const std::size_t polygon_index, const std::vector<Point_3>& pts, std::vector<std::pair<typename LCC::Dart_descriptor, std::vector<std::size_t> > >& face_to_points) {
-    if (polygon_index >= m_kinetic_partition.input_planes().size())
+    if (polygon_index >= m_regions.size())
       CGAL_assertion(false);
 
     From_exact from_exact;
+    const LCC& lcc = m_lcc;
 
-    const typename Intersection_kernel::Plane_3& pl = m_kinetic_partition.input_planes()[polygon_index];
-    const Plane_3 inexact_pl = from_exact(pl);
+    const Plane_3& pl = m_regions[polygon_index].first;
     std::vector<Point_2> pts2d;
     pts2d.reserve(pts.size());
 
     for (const Point_3& p : pts)
-      pts2d.push_back(inexact_pl.to_2d(p));
+      pts2d.push_back(pl.to_2d(p));
 
     // Iterate over all faces of the lcc
-    for (Dart& d : m_lcc.template one_dart_per_cell<2>()) {
-      Dart_descriptor dd = m_lcc.dart_descriptor(d);
-      if (m_lcc.template info<2>(m_lcc.dart_descriptor(d)).input_polygon_index != static_cast<int>(polygon_index) || !m_lcc.template info<2>(m_lcc.dart_descriptor(d)).part_of_initial_polygon)
+    for (const Dart& d : lcc.template one_dart_per_cell<2>()) {
+      Dart_descriptor dd = lcc.dart_descriptor(d);
+      if (lcc.template info<2>(lcc.dart_descriptor(d)).input_polygon_index != static_cast<int>(polygon_index) || !lcc.template info<2>(lcc.dart_descriptor(d)).part_of_initial_polygon)
         continue;
 
       // No filtering of points per partition
-
-      face_to_points.push_back(std::make_pair(m_lcc.dart_descriptor(d), std::vector<std::size_t>()));
-
-//      auto& info = m_lcc.template info<2>(m_lcc.dart_descriptor(d));
+      face_to_points.push_back(std::make_pair(lcc.dart_descriptor(d), std::vector<std::size_t>()));
 
       std::vector<Point_2> vts2d;
-      vts2d.reserve(m_lcc.template one_dart_per_incident_cell<0, 2>(m_lcc.dart_descriptor(d)).size());
+      vts2d.reserve(lcc.template one_dart_per_incident_cell<0, 2>(lcc.dart_descriptor(d)).size());
 
       typename LCC::Dart_descriptor n = dd;
       do {
-        vts2d.push_back(inexact_pl.to_2d(from_exact(m_lcc.point(n))));
-        n = m_lcc.beta(n, 0);
+        vts2d.push_back(pl.to_2d(from_exact(lcc.point(n))));
+        n = lcc.beta(n, 0);
       } while (n != dd);
 
       Polygon_2<Kernel> poly(vts2d.begin(), vts2d.end());
@@ -2051,33 +2266,6 @@ private:
       }
     }
   }
-
-/*
-  const Plane_3 fit_plane(const std::vector<std::size_t>& region) const {
-
-    std::vector<Point_3> points;
-    points.reserve(region.size());
-    for (const std::size_t idx : region) {
-      CGAL_assertion(idx < m_points.size());
-      points.push_back(get(m_point_map, idx));
-    }
-    CGAL_assertion(points.size() == region.size());
-
-    Plane_3 fitted_plane;
-    Point_3 fitted_centroid;
-    CGAL::linear_least_squares_fitting_3(
-      points.begin(), points.end(),
-      fitted_plane, fitted_centroid,
-      CGAL::Dimension_tag<0>());
-
-    const Plane_3 plane(
-      static_cast<FT>(fitted_plane.a()),
-      static_cast<FT>(fitted_plane.b()),
-      static_cast<FT>(fitted_plane.c()),
-      static_cast<FT>(fitted_plane.d()));
-    return plane;
-  }
-*/
 
   void set_outside_volumes(bool ground, std::vector<std::vector<double> >& cost_matrix) const {
     // Setting preferred outside label for bbox plane nodes

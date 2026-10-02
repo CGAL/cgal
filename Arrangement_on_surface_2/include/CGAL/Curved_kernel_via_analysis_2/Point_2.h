@@ -331,7 +331,7 @@ protected:
      * constructs from a given representation
      */
     /*!\brief
-     * Constructor for for rebind
+     * Constructor for rebind
      *
      * \param rep The representation
      * \return The constructed point
@@ -530,7 +530,7 @@ public:
     }
 
     /*!\brief
-     * Checks if a point lies on on a curve
+     * Checks if a point lies on a curve
      *
      * \param curve The curve to check
      * \return \c true, if *this lies on \c curve, \c false otherwise

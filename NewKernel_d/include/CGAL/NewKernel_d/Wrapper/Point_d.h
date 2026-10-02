@@ -137,6 +137,12 @@ public:
 
   friend auto operator!=(Point_d const&p, Point_d const&q) { return !(p==q); }
 
+  // May be accidentally inherited from the base class otherwise
+  friend auto operator< (Point_d const&p, Point_d const&q) = delete;
+  friend auto operator> (Point_d const&p, Point_d const&q) = delete;
+  friend auto operator<=(Point_d const&p, Point_d const&q) = delete;
+  friend auto operator>=(Point_d const&p, Point_d const&q) = delete;
+
   friend std::ostream& operator <<(std::ostream& os, const Point_d& p)
   {
     auto b = p.cartesian_begin();

@@ -16,7 +16,6 @@
 
 #include <CGAL/license/Shape_detection.h>
 
-// CGAL includes.
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Splitters.h>
 #include <CGAL/Fuzzy_sphere.h>
@@ -24,7 +23,6 @@
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Search_traits_adapter.h>
 
-// Internal includes.
 #include <CGAL/Shape_detection/Region_growing/internal/property_map.h>
 
 namespace CGAL {
@@ -50,12 +48,10 @@ namespace Point_set {
 
   \cgalModels{NeighborQuery}
 */
-template<
-typename GeomTraits,
-typename Item_,
-typename PointMap>
+template<typename GeomTraits,
+         typename Item_,
+         typename PointMap>
 class Sphere_neighbor_query {
-
 public:
   /// \name Types
   /// @{
@@ -70,7 +66,7 @@ public:
   /// \endcond
 
   /// Number type.
-  typedef typename GeomTraits::FT FT;
+  using FT = typename GeomTraits::FT;
 
   /// @}
 
@@ -126,7 +122,7 @@ public:
       \cgalParamNEnd
       \cgalParamNBegin{point_map}
         \cgalParamDescription{an instance of `PointMap` that maps an item from `input_range`
-        to `Kernel::Point_2` or to `Kernel::Point_3`}
+        to `GeomTraits::Point_2` or to `GeomTraits::Point_3`}
         \cgalParamDefault{`PointMap()`}
       \cgalParamNEnd
     \cgalNamedParamsEnd
@@ -134,7 +130,8 @@ public:
     \pre `input_range.size() > 0`
     \pre `sphere_radius > 0`
   */
-  template<typename InputRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
+  template<typename InputRange,
+           typename CGAL_NP_TEMPLATE_PARAMETERS>
   Sphere_neighbor_query(
     const InputRange& input_range,
     const CGAL_NP_CLASS& np = parameters::default_values()) :

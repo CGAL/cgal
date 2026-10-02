@@ -9,6 +9,11 @@
 //
 // Author(s)     : Jane Tournois
 
+#ifndef CGAL_CONSTRAINED_DELAUNAY_TRIANGULATION_3_IO_WRITE_MEDIT_H
+#define CGAL_CONSTRAINED_DELAUNAY_TRIANGULATION_3_IO_WRITE_MEDIT_H
+
+#include <CGAL/license/Constrained_triangulation_3.h>
+
 #include "CGAL/unordered_flat_map.h"
 #include <CGAL/Conforming_constrained_Delaunay_triangulation_3.h>
 
@@ -17,6 +22,7 @@
 
 #include <CGAL/IO/File_medit.h>
 
+#include <vector>
 #include <stack>
 #include <ostream>
 
@@ -93,9 +99,11 @@ void write_MEDIT(std::ostream& os,
   auto plc_patch_map = boost::make_function_property_map<Facet>([&](const Facet& f)
     { return has_plc_face_id ? f.first->ccdt_3_data().face_constraint_index(f.second) + 1 : 1; });
 
+  std::vector<typename Tr_::Edge> edges;
   return SMDS_3::output_to_medit(os,
                                  tr,
                                  tr.finite_vertex_handles(),
+                                 edges,
                                  ccdt.constrained_facets(),
                                  tr.finite_cell_handles(),
                                  boost::make_function_property_map<Vertex_handle>([](Vertex_handle) { return 0; }),
@@ -107,3 +115,5 @@ void write_MEDIT(std::ostream& os,
 
 }// end namespace IO
 }// end namespace CGAL
+
+#endif // CGAL_CONSTRAINED_DELAUNAY_TRIANGULATION_3_IO_WRITE_MEDIT_H

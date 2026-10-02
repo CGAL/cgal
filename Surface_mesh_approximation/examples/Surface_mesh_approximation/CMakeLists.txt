@@ -8,8 +8,9 @@ project(Surface_mesh_approximation_Examples)
 find_package(CGAL REQUIRED)
 
 # Use Eigen (for PCA)
-find_package(Eigen3 3.1.0 QUIET) #(3.1.0 or greater)
+find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
+
 if(NOT TARGET CGAL::Eigen3_support)
   message("NOTICE: This project requires Eigen 3.1 (or greater), and will not be compiled.")
   return()

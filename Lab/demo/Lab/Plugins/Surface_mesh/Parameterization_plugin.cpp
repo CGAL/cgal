@@ -17,13 +17,6 @@
 #include <QPen>
 #include <QDockWidget>
 #include <Messages_interface.h>
-#include <CGAL/Polygon_mesh_processing/border.h>
-#include <CGAL/Polygon_mesh_processing/measure.h>
-#include <CGAL/property_map.h>
-
-
-#include <CGAL/boost/graph/Seam_mesh.h>
-#include <CGAL/boost/graph/graph_traits_Seam_mesh.h>
 
 #include <CGAL/Surface_mesh_parameterization/ARAP_parameterizer_3.h>
 #include <CGAL/Surface_mesh_parameterization/Barycentric_mapping_parameterizer_3.h>
@@ -36,6 +29,12 @@
 #include <CGAL/Surface_mesh_parameterization/internal/orbifold_cone_helper.h>
 #include <CGAL/Surface_mesh_parameterization/Orbifold_Tutte_parameterizer_3.h>
 #include <CGAL/Surface_mesh_parameterization/parameterize.h>
+
+#include <CGAL/boost/graph/border.h>
+#include <CGAL/boost/graph/Seam_mesh.h>
+#include <CGAL/boost/graph/graph_traits_Seam_mesh.h>
+#include <CGAL/Polygon_mesh_processing/measure.h>
+#include <CGAL/property_map.h>
 
 #include <boost/container/flat_map.hpp>
 
@@ -721,8 +720,8 @@ void CGAL_Lab_parameterization_plugin::parameterize(const Parameterization_metho
   for(int current_component=0; current_component<number_of_components; ++current_component)
   {
     std::vector<s_halfedge_descriptor> border;
-    PMP::border_halfedges(s_components.at(current_component),
-                          sMesh, std::back_inserter(border));
+    CGAL::border_halfedges(s_components.at(current_component),
+                           sMesh, std::back_inserter(border));
 
     std::cout << sMesh.number_of_seam_edges() << " seams" << std::endl;
     std::cout << (s_components.at(current_component)).size() << " faces" << std::endl;

@@ -379,7 +379,7 @@ private:
         } else if(type_of_polygon() == WEAKLY_CONVEX) {
             output_stream << "This polygon is weakly convex. The correct computation is not expected!" << std::endl;
         } else if(type_of_polygon() == CONCAVE) {
-            output_stream << "This polygon polygon is not convex. The correct computation is not expected!" << std::endl;
+            output_stream << "This polygon is not convex. The correct computation is not expected!" << std::endl;
         }
 
         output_stream << std::endl << "TYPE OF COORDINATES: " << std::endl << std::endl;

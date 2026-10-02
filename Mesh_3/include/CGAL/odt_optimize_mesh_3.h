@@ -85,7 +85,7 @@ namespace CGAL {
  *   \cgalParamNEnd
  *   \cgalParamNBegin{freeze_bound}
  *     \cgalParamDescription{is designed to reduce running time of each optimization iteration. Any vertex
- *                          that has a displacement less than a given percentage of the length of its shortest incident edge, is frozen (i.e.\ is
+ *                          that has a displacement less than a given percentage of the length of its shortest incident edge, is frozen (i.e.,\ is
  *                          not relocated). The parameter `freeze_bound` gives the threshold ratio.}
  *     \cgalParamType{`double`}
  *     \cgalParamPrecondition{`0 <= freeze_bound <= 1`}

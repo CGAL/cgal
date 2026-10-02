@@ -16,7 +16,6 @@
 
 #include <CGAL/license/Shape_detection.h>
 
-// Internal includes.
 #include <CGAL/Shape_detection/Region_growing/internal/property_map.h>
 #include <CGAL/Shape_detection/Region_growing/internal/utils.h>
 
@@ -24,190 +23,189 @@ namespace CGAL {
 namespace Shape_detection {
 namespace Point_set {
 
+/*!
+  \ingroup PkgShapeDetectionRGOnPoints
+
+  \brief Sorting of 3D points with respect to the local sphere fit quality.
+
+  Indices of 3D input points are sorted with respect to the quality of the
+  least squares sphere fit applied to the neighboring points of each point.
+
+  \tparam GeomTraits
+  a model of `Kernel`
+
+  \tparam Item_
+  a descriptor representing a given point. Must be a model of `Hashable`.
+
+  \tparam NeighborQuery
+  a model of `NeighborQuery`
+
+  \tparam PointMap
+  a model of `ReadablePropertyMap` whose key type is the value type of the input
+  range and value type is `GeomTraits::Point_3`
+*/
+template<typename GeomTraits,
+         typename Item_,
+         typename NeighborQuery,
+         typename PointMap>
+class Least_squares_sphere_fit_sorting {
+public:
+  /// \name Types
+  /// @{
+
+  /// \cond SKIP_IN_MANUAL
+  using Traits = GeomTraits;
+  using Neighbor_query = NeighborQuery;
+  using Point_map = PointMap;
+  /// \endcond
+
+  /// Item type.
+  using Item = Item_;
+
+  /// Seed range.
+  using Seed_range = std::vector<Item>;
+
+  /// @}
+
+private:
+  using FT = typename Traits::FT;
+  using Compare_scores = internal::Compare_scores<FT>;
+
+public:
+  /// \name Initialization
+  /// @{
+
   /*!
-    \ingroup PkgShapeDetectionRGOnPoints
+    \brief initializes all internal data structures.
 
-    \brief Sorting of 3D points with respect to the local sphere fit quality.
+    \tparam InputRange
+    a model of `ConstRange` whose iterator type is `RandomAccessIterator`
 
-    Indices of 3D input points are sorted with respect to the quality of the
-    least squares sphere fit applied to the neighboring points of each point.
+    \tparam NamedParameters
+    a sequence of \ref bgl_namedparameters "Named Parameters"
 
-    \tparam GeomTraits
-    a model of `Kernel`
+    \param input_range
+    an instance of `InputRange` with 3D points
 
-    \tparam Item_
-    a descriptor representing a given point. Must be a model of `Hashable`.
+    \param neighbor_query
+    an instance of `NeighborQuery` that is used internally to
+    access point's neighbors
 
-    \tparam NeighborQuery
-    a model of `NeighborQuery`
+    \param np
+    a sequence of \ref bgl_namedparameters "Named Parameters"
+    among the ones listed below
 
-    \tparam PointMap
-    a model of `ReadablePropertyMap` whose key type is the value type of the input
-    range and value type is `Kernel::Point_3`
+    \cgalNamedParamsBegin
+      \cgalParamNBegin{item_map}
+        \cgalParamDescription{an instance of a model of `ReadablePropertyMap` with `InputRange::const_iterator`
+                              as key type and `Item` as value type.}
+        \cgalParamDefault{A default is provided when `Item` is `InputRange::const_iterator` or its value type.}
+      \cgalParamNEnd
+      \cgalParamNBegin{point_map}
+        \cgalParamDescription{an instance of `PointMap` that maps an item to `GeomTraits::Point_3`}
+        \cgalParamDefault{`PointMap()`}
+      \cgalParamNEnd
+      \cgalParamNBegin{geom_traits}
+        \cgalParamDescription{an instance of `GeomTraits`}
+        \cgalParamDefault{`GeomTraits()`}
+      \cgalParamNEnd
+    \cgalNamedParamsEnd
+
+    \pre `input_range.size() > 0`
   */
-  template<
-  typename GeomTraits,
-  typename Item_,
-  typename NeighborQuery,
-  typename PointMap>
-  class Least_squares_sphere_fit_sorting {
+  template<typename InputRange,
+           typename CGAL_NP_TEMPLATE_PARAMETERS>
+  Least_squares_sphere_fit_sorting(
+    const InputRange& input_range,
+    NeighborQuery& neighbor_query,
+    const CGAL_NP_CLASS& np = parameters::default_values()) :
+    m_neighbor_query(neighbor_query),
+    m_point_map(parameters::choose_parameter<PointMap>(parameters::get_parameter(np, internal_np::point_map))),
+    m_traits(parameters::choose_parameter<GeomTraits>(parameters::get_parameter(np, internal_np::geom_traits))) {
 
-  public:
-    /// \name Types
-    /// @{
+    CGAL_precondition(input_range.size() > 0);
 
-    /// \cond SKIP_IN_MANUAL
-    using Traits = GeomTraits;
-    using Neighbor_query = NeighborQuery;
-    using Point_map = PointMap;
-    /// \endcond
+    using NP_helper = internal::Default_property_map_helper<CGAL_NP_CLASS, Item, typename InputRange::const_iterator, internal_np::item_map_t>;
+    using Item_map = typename NP_helper::type;
+    Item_map item_map = NP_helper::get(np);
 
-    /// Item type.
-    using Item = Item_;
+    m_ordered.resize(input_range.size());
 
-    /// Seed range.
-    using Seed_range = std::vector<Item>;
+    std::size_t index = 0;
+    for (auto it = input_range.begin(); it != input_range.end(); it++)
+      m_ordered[index++] = get(item_map, it);
 
-    /// @}
+    m_scores.resize(input_range.size());
+  }
 
-  private:
-    using FT = typename Traits::FT;
-    using Compare_scores = internal::Compare_scores<FT>;
+  /// @}
 
-  public:
-    /// \name Initialization
-    /// @{
+  /// \name Sorting
+  /// @{
 
-    /*!
-      \brief initializes all internal data structures.
+  /*!
+    \brief sorts indices of input points.
+  */
+  void sort() {
+    std::size_t seed_cutoff = compute_scores();
+    CGAL_postcondition(m_scores.size() > 0);
+    Compare_scores cmp(m_scores);
 
-      \tparam InputRange
-      a model of `ConstRange` whose iterator type is `RandomAccessIterator`
+    std::vector<std::size_t> order(m_ordered.size());
+    std::iota(order.begin(), order.end(), 0);
+    std::sort(order.begin(), order.end(), cmp);
 
-      \tparam NamedParameters
-      a sequence of \ref bgl_namedparameters "Named Parameters"
+    order.resize(m_ordered.size() - seed_cutoff);
 
-      \param input_range
-      an instance of `InputRange` with 3D points
+    std::vector<Item> tmp(order.size());
+    for (std::size_t i = 0; i < order.size(); i++)
+      tmp[i] = m_ordered[order[i]];
 
-      \param neighbor_query
-      an instance of `NeighborQuery` that is used internally to
-      access point's neighbors
+    m_ordered.swap(tmp);
+  }
+  /// @}
 
-      \param np
-      a sequence of \ref bgl_namedparameters "Named Parameters"
-      among the ones listed below
+  /// \name Access
+  /// @{
 
-      \cgalNamedParamsBegin
-        \cgalParamNBegin{item_map}
-          \cgalParamDescription{an instance of a model of `ReadablePropertyMap` with `InputRange::const_iterator`
-                                as key type and `Item` as value type.}
-          \cgalParamDefault{A default is provided when `Item` is `InputRange::const_iterator` or its value type.}
-        \cgalParamNEnd
-        \cgalParamNBegin{point_map}
-          \cgalParamDescription{an instance of `PointMap` that maps an item to `Kernel::Point_3`}
-          \cgalParamDefault{`PointMap()`}
-        \cgalParamNEnd
-        \cgalParamNBegin{geom_traits}
-          \cgalParamDescription{an instance of `GeomTraits`}
-          \cgalParamDefault{`GeomTraits()`}
-        \cgalParamNEnd
-      \cgalNamedParamsEnd
+  /*!
+    \brief returns an instance of `Seed_range` to access the ordered `Items`
+    of input points.
+  */
+  const Seed_range &ordered() {
+    return m_ordered;
+  }
+  /// @}
 
-      \pre `input_range.size() > 0`
-    */
-    template<typename InputRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
-    Least_squares_sphere_fit_sorting(
-      const InputRange& input_range,
-      NeighborQuery& neighbor_query,
-      const CGAL_NP_CLASS& np = parameters::default_values()) :
-      m_neighbor_query(neighbor_query),
-      m_point_map(parameters::choose_parameter<PointMap>(parameters::get_parameter(np, internal_np::point_map))),
-      m_traits(parameters::choose_parameter<GeomTraits>(parameters::get_parameter(np, internal_np::geom_traits))) {
+private:
+  Neighbor_query& m_neighbor_query;
+  const Point_map m_point_map;
+  Traits m_traits;
+  Seed_range m_ordered;
+  std::vector<FT> m_scores;
 
-      CGAL_precondition(input_range.size() > 0);
+  std::size_t compute_scores() {
 
-      using NP_helper = internal::Default_property_map_helper<CGAL_NP_CLASS, Item, typename InputRange::const_iterator, internal_np::item_map_t>;
-      using Item_map = typename NP_helper::type;
-      Item_map item_map = NP_helper::get(np);
+    std::vector<Item> neighbors;
+    std::size_t idx = 0;
+    std::size_t seed_cutoff = 0;
+    for (const Item& item : m_ordered) {
+      neighbors.clear();
+      m_neighbor_query(item, neighbors);
+      neighbors.push_back(item);
 
-      m_ordered.resize(input_range.size());
+      m_scores[idx] = internal::create_sphere(
+        neighbors, m_point_map, m_traits, true).second;
 
-      std::size_t index = 0;
-      for (auto it = input_range.begin(); it != input_range.end(); it++)
-        m_ordered[index++] = get(item_map, it);
+      if (m_scores[idx] == -(std::numeric_limits<double>::max)())
+        seed_cutoff++;
 
-      m_scores.resize(input_range.size());
+      idx++;
     }
 
-    /// @}
-
-    /// \name Sorting
-    /// @{
-
-    /*!
-      \brief sorts indices of input points.
-    */
-    void sort() {
-      std::size_t seed_cutoff = compute_scores();
-      CGAL_postcondition(m_scores.size() > 0);
-      Compare_scores cmp(m_scores);
-
-      std::vector<std::size_t> order(m_ordered.size());
-      std::iota(order.begin(), order.end(), 0);
-      std::sort(order.begin(), order.end(), cmp);
-
-      order.resize(m_ordered.size() - seed_cutoff);
-
-      std::vector<Item> tmp(order.size());
-      for (std::size_t i = 0; i < order.size(); i++)
-        tmp[i] = m_ordered[order[i]];
-
-      m_ordered.swap(tmp);
-    }
-    /// @}
-
-    /// \name Access
-    /// @{
-
-    /*!
-      \brief returns an instance of `Seed_range` to access the ordered `Items`
-      of input points.
-    */
-    const Seed_range &ordered() {
-      return m_ordered;
-    }
-    /// @}
-
-  private:
-    Neighbor_query& m_neighbor_query;
-    const Point_map m_point_map;
-    const Traits m_traits;
-    Seed_range m_ordered;
-    std::vector<FT> m_scores;
-
-    std::size_t compute_scores() {
-
-      std::vector<Item> neighbors;
-      std::size_t idx = 0;
-      std::size_t seed_cutoff = 0;
-      for (const Item& item : m_ordered) {
-        neighbors.clear();
-        m_neighbor_query(item, neighbors);
-        neighbors.push_back(item);
-
-        m_scores[idx] = internal::create_sphere(
-          neighbors, m_point_map, m_traits, true).second;
-
-        if (m_scores[idx] == -(std::numeric_limits<double>::max)())
-          seed_cutoff++;
-
-        idx++;
-      }
-
-      return seed_cutoff;
-    }
-  };
+    return seed_cutoff;
+  }
+};
 
 /*!
   \ingroup PkgShapeDetectionRGOnPointSet3

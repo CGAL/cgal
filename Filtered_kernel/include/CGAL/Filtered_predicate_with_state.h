@@ -54,7 +54,7 @@ public:
 #ifndef CGAL_EPICK_NO_INTERVALS
     typedef typename Remove_needs_FT<CGAL::cpp20::remove_cvref_t<decltype(ap(c2a(args)...))> >::Type Ares;
 
-    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    CGAL_BRANCH_PROFILER(std::string("failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     // Protection is outside the try block as VC8 has the CGAL_CFG_FPU_ROUNDING_MODE_UNWINDING_VC_BUG
     {
       Protect_FPU_rounding<Protection> p;

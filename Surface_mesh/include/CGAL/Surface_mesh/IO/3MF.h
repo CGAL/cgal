@@ -137,20 +137,6 @@ bool read_3MF(const std::string& filename,
 
 } // namespace IO
 
-#ifndef CGAL_NO_DEPRECATED_CODE
-
-/*!
-  \ingroup PkgSurfaceMeshIOFuncDeprecated
-  \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::read_3MF()` should be used instead.
-*/
-template<typename Point>
-CGAL_DEPRECATED int read_3mf(const std::string& filename, std::vector<CGAL::Surface_mesh<Point> >& output)
-{
-  return IO::read_3MF(filename, output);
-}
-
-#endif // CGAL_NO_DEPRECATED_CODE
-
 } // namespace CGAL
 
 #endif // defined(CGAL_LINKED_WITH_3MF) || defined(DOXYGEN_RUNNING)

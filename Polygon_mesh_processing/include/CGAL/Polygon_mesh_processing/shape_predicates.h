@@ -98,6 +98,7 @@ bool is_degenerate_edge(typename boost::graph_traits<PolygonMesh>::edge_descript
 ///
 /// @tparam EdgeRange a model of `Range` with value type `boost::graph_traits<TriangleMesh>::%edge_descriptor`
 /// @tparam TriangleMesh a model of `HalfedgeGraph`
+/// @tparam OutputIterator a model of `OutputIterator`
 /// @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// @param edges a subset of edges of `tm`
@@ -217,7 +218,7 @@ bool is_degenerate_triangle_face(typename boost::graph_traits<TriangleMesh>::fac
 /// collects the degenerate faces within a given range of faces.
 ///
 /// @tparam FaceRange a model of `Range` with value type `boost::graph_traits<TriangleMesh>::%face_descriptor`
-/// @tparam TriangleMesh a model of `FaceGraph`
+/// @tparam TriangleMesh a model of `FaceListGraph`
 /// @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// @param faces a subset of faces of `tm`

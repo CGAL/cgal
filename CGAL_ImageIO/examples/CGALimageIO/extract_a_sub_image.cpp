@@ -8,7 +8,7 @@ int main(int argc, char **argv) {
                  "<ymin> <ymax> <zmin> <zmax>\n";
     return argc != 1;
   }
-  _image *image = ::_readImage(argv[1]);
+  CGAL::_image *image = CGAL::_readImage(argv[1]);
   if (!image)
     return 2;
   const auto xmin = std::stoul(argv[3]);
@@ -25,7 +25,7 @@ int main(int argc, char **argv) {
   const auto new_ydim = ymax + 1 - ymin;
   const auto new_zdim = zmax + 1 - zmin;
 
-  auto *new_image = ::_createImage(new_xdim, new_ydim, new_zdim, 1,
+  auto *new_image = CGAL::_createImage(new_xdim, new_ydim, new_zdim, 1,
                                    image->vx, image->vy, image->vz, image->wdim,
                                    image->wordKind, image->sign);
   const auto* const data = static_cast<char*>(image->data);
@@ -37,8 +37,8 @@ int main(int argc, char **argv) {
         std::copy(pos, pos + image->wdim, new_data);
         new_data += image->wdim;
       }
-  auto r = ::_writeImage(new_image, argv[2]);
+  auto r = CGAL::_writeImage(new_image, argv[2]);
   if(r != ImageIO_NO_ERROR) return 3;
-  ::_freeImage(image);
-  ::_freeImage(new_image);
+  CGAL::_freeImage(image);
+  CGAL::_freeImage(new_image);
 }

@@ -58,8 +58,16 @@ target_link_libraries(Regular_triangulation_2 PRIVATE CGAL::CGAL CGAL::CGAL_Qt6
 
 add_to_cached_list(CGAL_EXECUTABLE_TARGETS Regular_triangulation_2)
 
+#--------------------------------
+# The "Mesh_2" demo: mesh_2_demo
+#--------------------------------
+
+qt_add_executable(mesh_2_demo mesh_2_demo.cpp)
+target_link_libraries(mesh_2_demo PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 Qt6::Widgets)
+add_to_cached_list(CGAL_EXECUTABLE_TARGETS mesh_2_demo)
+
 include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
 foreach(target Constrained_Delaunay_triangulation_2 Delaunay_triangulation_2
-               Regular_triangulation_2)
+               Regular_triangulation_2 mesh_2_demo)
   cgal_add_compilation_test(${target})
 endforeach()

@@ -47,31 +47,33 @@ const char Polynomial<NT>::INDENT_SPACE[3] = { ' ', ' ', ' ' };  // pretty print
 // ==================================================
 
 template <class NT>
-Polynomial<NT>::Polynomial(void) {
-  degree = -1;         // this is the zero polynomial!
-  coeff = NULL;
-}
+Polynomial<NT>::Polynomial(void)
+ : degree(-1)         // this is the zero polynomial!
+{}
 
 //Creates a polynomial with nominal degree n
 template <class NT>
-Polynomial<NT>::Polynomial(int n) {
+Polynomial<NT>::Polynomial(int n)
+  : degree(n)
+{
   CGAL_assertion(n>= -1);
-  degree = n;
   if (n == -1)
     return;        // return the zero polynomial!
   if (n>=0)
-    coeff = new NT[n+1];
+    coeff.resize(n+1);
   coeff[0]=1;                        // otherwise, return the unity polynomial
   for (int i=1; i<=n; i++)
     coeff[i]=0;
 }
 
 template <class NT>
-Polynomial<NT>::Polynomial(int n, const NT * c) {
+Polynomial<NT>::Polynomial(int n, const NT * c)
+  : degree(n)
+ {
   //CGAL_assertion("array c has n+1 elements");
   degree = n;
   if (n >= 0) {
-    coeff = new NT[n+1];
+    coeff.resize(n+1);
     for (int i = 0; i <= n; i++)
       coeff[i] = c[i];
   }
@@ -81,30 +83,34 @@ Polynomial<NT>::Polynomial(int n, const NT * c) {
 // Constructor from a vector of NT's
 ///////////////////////////////////////
 template <class NT>
-Polynomial<NT>::Polynomial(const VecNT & vN) {
-  degree = static_cast<int>(vN.size())-1;
+Polynomial<NT>::Polynomial(const VecNT & vN)
+ : degree( static_cast<int>(vN.size())-1)
+ {
   if (degree >= 0) {
-    coeff = new NT[degree+1];
+    coeff.resize(degree+1);
     for (int i = 0; i <= degree; i++)
       coeff[i] = vN[i];
   }
 }
 
 template <class NT>
-Polynomial<NT>::Polynomial(const Polynomial<NT> & p):degree(-1) {
+Polynomial<NT>::Polynomial(const Polynomial<NT> & p)
+: degree(-1)
+{
   //degree must be initialized to -1 otherwise delete is called on coeff in operator=
-  coeff = NULL;//WHY?
   *this = p;        // reduce to assignment operator=
 }
 
 // Constructor from a Character string of coefficients
 ///////////////////////////////////////
 template <class NT>
-Polynomial<NT>::Polynomial(int n, const char * s[]) {
+Polynomial<NT>::Polynomial(int n, const char * s[])
+: degree(n)
+{
   //CGAL_assertion("array s has n+1 elements");
-  degree = n;
+
   if (n >= 0) {
-    coeff = new NT[n+1];
+    coeff.resize(n+1);
     for (int i = 0; i <= n; i++)
       coeff[i] = s[i];
   }
@@ -141,15 +147,12 @@ void Polynomial<NT>::constructFromString(std::string & s, char myX) {
     }
   }
 
-  coeff = NULL;//Did this to ape the constructor from polynomial above
   *this = getpoly(s);
 }
 
 template <class NT>
-Polynomial<NT>::~Polynomial() {
-  if(degree >= 0)
-    delete[] coeff;
-}
+Polynomial<NT>::~Polynomial()
+{}
 
   ////////////////////////////////////////////////////////
   // METHODS USED BY STRING CONSTRUCTOR ABOVE
@@ -235,7 +238,6 @@ int Polynomial<NT>::getbasicterm(std::string & s, Polynomial<NT> & P){
   const char * cstr = s.c_str();
   unsigned int len = s.length();
   int i=0;
-  //Polynomial<NT> * temp = new Polynomial<NT>();
 
   if(isint(cstr[i])){
     i = getnumber(cstr, i, len, P);
@@ -363,10 +365,11 @@ template <class NT>
 Polynomial<NT> & Polynomial<NT>::operator=(const Polynomial<NT>& p) {
   if (this == &p)
     return *this;        // self-assignment
-  if (degree >=0)  delete[] coeff;
+  if (degree >=0)
+    coeff.resize(0);
   degree = p.getDegree();
   if (degree < 0) return *this;
-  coeff = new NT[degree +1];
+  coeff.resize(degree +1);
   for (int i = 0; i <= degree; i++)
     coeff[i] = p.coeff[i];
   return *this;
@@ -404,13 +407,9 @@ int Polynomial<NT>::expand(int n) {
   if ((n <= degree)||(n < 0))
     return -2;
   int i;
-  NT * c = coeff;
-  coeff = new NT[n+1];
-  for (i = 0; i<= degree; i++)
-    coeff[i] = c[i];
+  coeff.resize(n+1);
   for (i = degree+1; i<=n; i++)
     coeff[i] = 0;
-  delete[] c;
   degree = n;
   return n;
 }
@@ -425,13 +424,9 @@ int Polynomial<NT>::contract() {
     return (-2);  // nothing to do
   else
     degree = d;
-  NT * c = coeff;
   if (degree !=-1){
-    coeff = new NT[d+1];
-    for (int i = 0; i<= d; i++)
-      coeff[i] = c[i];
+    coeff.resize(d+1);
   }
-  delete[] c;
   return d;
 }
 
@@ -462,21 +457,18 @@ Polynomial<NT> & Polynomial<NT>::operator*=(const Polynomial<NT>& p) { // *=
   if (degree==-1) return *this;
   if (p.getDegree()==-1){
     degree=-1;
-    delete[] coeff;
+    coeff.resize(0);
     return *this;
   }
   int d = degree + p.getDegree();
-  NT * c = new NT[d+1];
-  for (int i = 0; i<=d; i++)
-    c[i] = 0;
+  std::vector<NT> c(d+1, 0);
 
   for (int i = 0; i<=p.getDegree(); i++)
     for (int j = 0; j<=degree; j++) {
       c[i+j] += p.coeff[i] * coeff[j];
     }
   degree = d;
-  delete[] coeff;
-  coeff = c;
+  coeff.swap(c);
   return *this;
 }
 
@@ -498,11 +490,10 @@ Polynomial<NT> & Polynomial<NT>::mulXpower(int s) {
   int d = s+getTrueDegree();
   if (d < 0) {
     degree = -1;
-    delete[] coeff;
-    coeff = NULL;
+    coeff.resize(0);
     return *this;
   }
-  NT * c = new NT[d+1];
+  std::vector<NT> c(d+1, 0);
   if (s>0)
     for (int j=0;  j <= d; j++) {
       if (j <= degree)
@@ -514,8 +505,7 @@ Polynomial<NT> & Polynomial<NT>::mulXpower(int s) {
     for (int j=0; j <= d; j++)
       c[d-j] = coeff[d-s-j];  // since s<0, (d-s-j) > (d-j) !!
   }
-  delete[] coeff;
-  coeff = c;
+  coeff.swap(c);
   degree = d;
   return *this;
 }//mulXpower
@@ -723,8 +713,7 @@ template <class NT>
 Polynomial<NT> & Polynomial<NT>::power(unsigned int n) {        // self-power
   if (n == 0) {
     degree = 0;
-    delete [] coeff;
-    coeff = new NT[1];
+    coeff.resize(1);
     coeff[0] = 1;
   } else {
     Polynomial<NT> p = *this;
@@ -1043,12 +1032,11 @@ BigFloat Polynomial<NT>::length() const {
 template <class NT>
 Polynomial<NT> & Polynomial<NT>::differentiate() {        // self-differentiation
   if (degree >= 0) {
-    NT * c = new NT[degree];
+    std::vector<NT> c(degree);
     for (int i=1; i<=degree; i++)
       c[i-1] = coeff[i] * i;
     degree--;
-    delete[] coeff;
-    coeff = c;
+    coeff.swap(c);
   }
   return *this;
 }// differentiation
@@ -1245,11 +1233,10 @@ int Polynomial<NT>::makeTailCoeffNonzero() {
   if (k <= 0)
     return k;        // return either 0 or -1
   degree -=k;                // new (lowered) degree
-  NT * c = new NT[1+degree];
+  std::vector<NT> c(1+degree);
   for (int i=0; i<=degree; i++)
     c[i] = coeff[i+k];
-  delete[] coeff;
-  coeff = c;
+  coeff.swap(c);
   return k;
 }//
 
@@ -1421,8 +1408,7 @@ std::ostream& operator<<(std::ostream& o, const Polynomial<NT>& p) {
 template <class NT>
 std::istream& operator>>(std::istream& is, Polynomial<NT>& p) {
   is >> p.degree;
-  // Don't you need to first do  "delete[] p.coeff;"  ??
-  p.coeff = new NT[p.degree+1];
+  p.coeff.resize(p.degree+1);
   for (int i=0; i<= p.degree; i++)
     is >> p.coeff[i];
   return is;
@@ -1525,7 +1511,7 @@ NT psc(int i,Polynomial<NT> p, Polynomial<NT> q) {
 template <class NT>
 Polynomial<NT> factorI(Polynomial<NT> p, int m){
   int d=p.getTrueDegree();
-  Polynomial<NT> *w = new Polynomial<NT>[d+1];
+  std::vector<Polynomial<NT>> w(d+1);
   w[0] = p;
   Polynomial<NT> temp;
 
@@ -1534,7 +1520,7 @@ Polynomial<NT> factorI(Polynomial<NT> p, int m){
      w[i] = gcd(w[i-1],temp.differentiate());
   }
 
-  Polynomial<NT> *u = new Polynomial<NT>[d+1];
+  std::vector<Polynomial<NT>> u(d+1);
   u[d] = w[d-1];
   for(int i = d-1; i >=m; i--){
         temp = power(u[i+1],2);
@@ -1544,7 +1530,6 @@ Polynomial<NT> factorI(Polynomial<NT> p, int m){
      u[i] = w[i-1].pseudoRemainder(temp);//i-1 since the array starts at 0
   }
 
-        delete[] w;
   return u[m];
 }
 

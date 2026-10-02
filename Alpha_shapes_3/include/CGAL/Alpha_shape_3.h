@@ -358,6 +358,7 @@ public:
   void clear()
     {
       // clears the structure
+      edge_alpha_map.clear();
       alpha_status_container.clear();
       Dt::clear();
 
@@ -1308,7 +1309,7 @@ Alpha_shape_3<Dt,EACT>::initialize_alpha_vertex_maps(bool reinitialize)
       if (as->alpha_mid() > _alpha_solid)  _alpha_solid = as->alpha_mid();
     }
 
-    if (get_mode() == GENERAL) { //reset alpha_mid,  set alph_min
+    if (get_mode() == GENERAL) { //reset alpha_mid,  set alpha_min
       std::list<Vertex_handle> incidentv;
       incident_vertices(static_cast<Vertex_handle>(vit),
                         back_inserter(incidentv));

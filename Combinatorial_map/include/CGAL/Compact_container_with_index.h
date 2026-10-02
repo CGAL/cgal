@@ -453,7 +453,7 @@ public:
 
   // Constructor allowing to transform an index from one container to another
   template<typename Index2>
-  Index_for_cc_with_index(const Index2& idx): m_idx(static_cast<size_t>(idx))
+  Index_for_cc_with_index(const Index2& idx): m_idx(static_cast<size_type>(idx))
   {}
 
   /// Increment the internal index. This operations does not

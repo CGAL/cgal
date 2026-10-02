@@ -64,6 +64,7 @@ public:
   virtual bool                 is_scaling() const { return false; }
   virtual bool                 is_rotation() const { return false; }
   virtual bool                 is_reflection() const { return false; }
+  virtual bool                 has_rotation() const { return false; }
 
   virtual FT                   cartesian(int i, int j) const = 0;
   virtual std::ostream         &print(std::ostream &os) const = 0;
@@ -121,6 +122,11 @@ friend class Reflection_repC2<R>;
   {
     return Direction_2(t11 * dir.dx() + t12 * dir.dy(),
                        t21 * dir.dx() + t22 * dir.dy());
+  }
+
+  virtual bool has_rotation() const
+  {
+    return !(is_zero(t12) && is_zero(t21));
   }
 
   // Note that Aff_transformation is not defined yet,

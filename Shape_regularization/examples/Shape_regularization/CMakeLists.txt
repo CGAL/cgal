@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.12...3.31)
 
 project(Shape_regularization_Examples)
 
-find_package(CGAL REQUIRED COMPONENTS Core)
+find_package(CGAL REQUIRED)
 
 # Find OSQP library and headers.
 find_package(OSQP QUIET)
@@ -27,8 +27,9 @@ if(TARGET CGAL::OSQP_support)
   endforeach()
 
   # Use Eigen.
-  find_package(Eigen3 3.1.0 QUIET) # (3.1.0 or greater)
+  find_package(Eigen3 QUIET)
   include(CGAL_Eigen3_support)
+
   if(TARGET CGAL::Eigen3_support)
     message(STATUS "Found Eigen")
 

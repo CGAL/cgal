@@ -192,9 +192,9 @@ A predicate object type.
 Must provide `Oriented_side operator()(Site_2 s1, Site_2 s2, Point_2 p)`, which returns
 the oriented side of the bisector of `s1` and `s2` that
 contains `p`. Returns `ON_POSITIVE_SIDE` if `p` lies in
-the half-space of `s1` (i.e., `p` is closer to `s1` than
+the halfspace of `s1` (i.e., `p` is closer to `s1` than
 `s2`); returns `ON_NEGATIVE_SIDE` if `p` lies in the
-half-space of `s2`; returns `ON_ORIENTED_BOUNDARY` if `p`
+halfspace of `s2`; returns `ON_ORIENTED_BOUNDARY` if `p`
 lies on the bisector of `s1` and `s2`.
 */
 typedef unspecified_type Oriented_side_of_bisector_2;

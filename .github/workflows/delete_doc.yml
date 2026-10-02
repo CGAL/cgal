@@ -29,14 +29,10 @@ jobs:
          git config --global user.name "cgaltest"
          git clone https://CGAL:${{ secrets.PUSH_TO_CGAL_GITHUB_IO_TOKEN }}@github.com/CGAL/cgal.github.io.git
          cd cgal.github.io/
-         egrep -v " ${PR_NUMBER}\." index.html > tmp.html || true
-         if [ -n "$(diff -q ./index.html ./tmp.html)" ]; then
-           mv tmp.html index.html
-         fi
-         if [ -d ${PR_NUMBER} ]; then
-           git rm -r ${PR_NUMBER}
-         fi
+         sed -i "\@https://cgal.github.io/${PR_NUMBER}/@ d" index.html
+         git add index.html
+         git rm -r "${PR_NUMBER}/" || true
          # `git diff --quiet` exits with 1 if there is a diff
-         if ! git diff --quiet; then
-           git commit -a --amend -m"base commit" && git push -f -u origin master
+         if ! git diff --staged --quiet; then
+           git commit -a --amend -m"sole commit" && git push -f -u origin master
          fi

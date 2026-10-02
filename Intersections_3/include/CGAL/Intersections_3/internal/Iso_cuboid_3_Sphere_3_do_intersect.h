@@ -82,16 +82,60 @@ do_intersect_sphere_box_3(const typename K::Sphere_3& sphere,
   {
     d = to_FT(bzmin) - to_FT(center.z());
     d = square(d);
+    if (certainly(d > sr))
+      return false;
+
     distance += d;
   }
   else if(compare(center.z(), bzmax) == LARGER)
   {
     d = to_FT(center.z()) - to_FT(bzmax);
     d = square(d);
+    if (certainly(d > sr))
+      return false;
+
     distance += d;
   }
+  // Note that with the way the distance above is computed, the distance is '0'
+  // if the box contains the center of the sphere. But since we use '>', we don't exit
+  if (distance > sr)
+    return false;
 
-  return (distance <= sr);
+  distance = FT(0);
+  if (compare(center.x(), (bxmin + bxmax) * FT(0.5)) == SMALLER)
+  {
+    FT d = bxmax - center.x();
+    distance += d * d;
+  }
+  else
+  {
+    FT d = center.x() - bxmin;
+    distance += d * d;
+  }
+
+  if (compare(center.y(), (bymin + bymax) * FT(0.5)) == SMALLER)
+  {
+    FT d = bymax - center.y();
+    distance += d * d;
+  }
+  else
+  {
+    FT d = center.y() - bymin;
+    distance += d * d;
+  }
+
+  if (compare(center.z(), (bzmin + bzmax) * FT(0.5)) == SMALLER)
+  {
+    FT d = bzmax - center.z();
+    distance += d * d;
+  }
+  else
+  {
+    FT d = center.z() - bzmin;
+    distance += d * d;
+  }
+
+  return (distance >= sr);
 }
 
 template <class K>

@@ -263,24 +263,25 @@ private Q_SLOTS:
       .regularize_orthogonality(dock_widget->srOrthogonalityCheck->isChecked())
       .regularize_axis_symmetry(false)
       .angle_tolerance(dock_widget->srAngleToleranceBox->value())
-      .maximum_offset(dock_widget->srMaxOffsetBox->value()));
+      .maximum_offset(dock_widget->srMaxOffsetBox->value())
+      .point_map(m_pwn_item->point_set()->point_map())
+      .normal_map(m_pwn_item->point_set()->normal_map()));
 
-    CGAL::Three::Three::information(QString::number(m_ksr->detected_planar_shapes().size()) + " regularized planar shapes detected");
+    CGAL::Three::Three::information(QString::number(m_ksr->planar_shapes().size()) + " regularized planar shapes detected");
 
-    if (m_ksr->detected_planar_shapes().empty()) {
+    if (m_ksr->planar_shapes().empty()) {
       enable_partition(false);
       enable_reconstruction(false);
 
       return;
     }
 
-    const std::vector<CGAL::Epick::Plane_3> &planes = m_ksr->detected_planar_shapes();
-    const std::vector<std::vector<std::size_t>> &regions = m_ksr->detected_planar_shape_indices();
+    const typename KSR::Regions& regions = m_ksr->planar_shapes();
 
     SMesh* mesh = new SMesh();
     std::vector<std::vector<CGAL::Epick::Point_3> > polys;
     for (std::size_t i = 0; i < regions.size(); i++)
-      convex_hull(regions[i], planes[i], polys);
+      convex_hull(regions[i].second, regions[i].first, polys);
 
     for (std::size_t i = 0; i < polys.size(); i++) {
       std::vector<typename SMesh::Vertex_index> vtx(polys[i].size());
@@ -298,7 +299,7 @@ private Q_SLOTS:
       std::size_t max_depth = m_ksr->estimate_max_subdivision_depth();
       dock_widget->partReorientCheck->setChecked(true);
       dock_widget->partSubdivisionCheck->setChecked(true);
-      dock_widget->partMaxDepthBox->setValue(max_depth);
+      dock_widget->partMaxDepthBox->setValue(static_cast<int>(max_depth));
       dock_widget->partPolygonsPerNodeBox->setValue(40);
       dock_widget->partKBox->setValue(2);
     }
@@ -310,13 +311,11 @@ private Q_SLOTS:
   void run_partition() {
     assert(m_pwn_item);
     assert(m_ksr);
-    assert(!m_ksr->detected_planar_shapes().empty());
+    assert(!m_ksr->planar_shapes().empty());
 
-    m_ksr->initialize_partition(CGAL::parameters::reorient_bbox(dock_widget->partReorientCheck->checkState() == Qt::Checked)
-        .max_octree_depth(dock_widget->partSubdivisionCheck->checkState() == Qt::Checked ? dock_widget->partMaxDepthBox->value() : 0)
-        .max_octree_node_size(dock_widget->partPolygonsPerNodeBox->value()));
-
-    m_ksr->partition(dock_widget->partKBox->value());
+    m_ksr->partition(dock_widget->partKBox->value(), CGAL::parameters::reorient_bbox(dock_widget->partReorientCheck->checkState() == Qt::Checked)
+      .max_octree_depth(dock_widget->partSubdivisionCheck->checkState() == Qt::Checked ? dock_widget->partMaxDepthBox->value() : 0)
+      .max_octree_node_size(dock_widget->partPolygonsPerNodeBox->value()));
 
     CGAL::Three::Three::information(QString::number(m_ksr->kinetic_partition().number_of_volumes()) + " volumes in partition");
 
@@ -367,18 +366,16 @@ private Q_SLOTS:
   }
 
 private:
-  void convex_hull(const std::vector<std::size_t>& region, const CGAL::Epick::Plane_3& plane, std::vector<std::vector<CGAL::Epick::Point_3> > &polys) {
+  template<typename Region>
+  void convex_hull(const Region& region, const CGAL::Epick::Plane_3& plane, std::vector<std::vector<CGAL::Epick::Point_3> > &polys) {
     if (m_pwn_item == nullptr)
       return;
 
-    Point_set* points = m_pwn_item->point_set();
-
     std::vector<CGAL::Epick::Point_2> pts2d;
     pts2d.reserve(region.size());
-    for (const std::size_t idx : region) {
-      CGAL_assertion(idx < points->size());
-      const auto& p = points->point(idx);
-      const auto q = plane.projection(p);
+    auto pmap = m_pwn_item->point_set()->point_map();
+    for (auto idx : region) {
+      const auto q = plane.projection(get(pmap, idx));
       const auto point = plane.to_2d(q);
       pts2d.push_back(point);
     }
@@ -388,7 +385,7 @@ private:
     CGAL::convex_hull_2(pts2d.begin(), pts2d.end(), std::back_inserter(ch));
 
     std::vector<CGAL::Epick::Point_3> polygon;
-    for (const auto& p : ch) {
+    for (auto& p : ch) {
       const auto point = plane.to_3d(p);
       polygon.push_back(point);
     }
@@ -591,7 +588,7 @@ private:
       m_ksr->estimate_detection_parameters(max_distance, max_angle, min_region_size);
       dock_widget->sdMaxDistanceBox->setValue(max_distance);
       dock_widget->sdMaxAngleBox->setValue(max_angle);
-      dock_widget->sdMinRegionSizeBox->setValue(min_region_size);
+      dock_widget->sdMinRegionSizeBox->setValue(static_cast<int>(min_region_size));
       dock_widget->sdkNeighborsBox->setValue(12);
       dock_widget->srCoplanarityCheck->setChecked(true);
       dock_widget->srMaxOffsetBox->setValue(max_distance * 0.5);

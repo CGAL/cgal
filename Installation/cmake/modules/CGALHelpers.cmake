@@ -6,10 +6,10 @@ function(process_CGAL_subdirectory entry subdir type_name)
   get_filename_component(ENTRY_DIR_NAME "${entry}" NAME)
 
   if( NOT "${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}") # out-of-source
-    make_directory("${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}")
+    file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}")
   endif()
 
-  message("\n-- Configuring ${subdir} in ${subdir}/${ENTRY_DIR_NAME}")
+  message("-- Configuring ${subdir} in ${subdir}/${ENTRY_DIR_NAME}")
 
   set(source_dir "")
   if(EXISTS ${entry}/CMakeLists.txt)
@@ -28,7 +28,14 @@ function(process_CGAL_subdirectory entry subdir type_name)
     endif()
   endif()
   if(source_dir)
+    set(CGAL_CMAKE_FOLDER_PREFIX)
+    if(CMAKE_FOLDER)
+      set(CGAL_CMAKE_FOLDER_PREFIX "${CMAKE_FOLDER}/")
+    endif()
+    set(CMAKE_FOLDER "${CGAL_CMAKE_FOLDER_PREFIX}${subdir}/${ENTRY_DIR_NAME}")
+    list(APPEND CMAKE_MESSAGE_INDENT "  ")
     add_subdirectory( "${source_dir}" "${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}" EXCLUDE_FROM_ALL)
+    list(POP_BACK CMAKE_MESSAGE_INDENT)
   endif()
 endfunction()
 

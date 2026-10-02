@@ -153,7 +153,7 @@ private:
     if (! is_outer_boundary_empty) get_outer_loop(arr, outer_boundary);
 
     // Check for each face whether it is a hole in the M-sum. If it is, add it
-    // to 'holes'. See chapter 3 of of Alon's master's thesis.
+    // to 'holes'. See chapter 3 of Alon's master's thesis.
     for (auto fit = arr.faces_begin(); fit != arr.faces_end(); ++fit) {
       // Check whether the face is on the M-sum's border.
 

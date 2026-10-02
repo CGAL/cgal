@@ -22,19 +22,23 @@ typedef CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<K> Remeshing_tria
 template<typename T3>
 void generate_input_one_subdomain(const std::size_t nbv, T3& tr)
 {
-  CGAL::Random rng;
+  CGAL::Random& rng = CGAL::get_default_random();
 
   typedef typename T3::Point Point;
-  std::vector<Point> pts;
-  while (pts.size() < nbv)
-  {
-    const float x = rng.uniform_real(-10.f, 10.f);
-    const float y = rng.uniform_real(-10.f, 10.f);
-    const float z = rng.uniform_real(-10.f, 10.f);
 
-    pts.push_back(Point(x, y, z));
+  while (tr.dimension()!=3)
+  {
+    std::vector<Point> pts;
+    while (pts.size() < nbv)
+    {
+      const float x = rng.uniform_real(-10.f, 10.f);
+      const float y = rng.uniform_real(-10.f, 10.f);
+      const float z = rng.uniform_real(-10.f, 10.f);
+
+      pts.push_back(Point(x, y, z));
+    }
+    tr.insert(pts.begin(), pts.end());
   }
-  tr.insert(pts.begin(), pts.end());
 
   for (typename T3::Cell_handle c : tr.finite_cell_handles())
     c->set_subdomain_index(1);

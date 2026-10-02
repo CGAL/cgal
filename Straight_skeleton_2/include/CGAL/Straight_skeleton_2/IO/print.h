@@ -106,6 +106,14 @@ void print_straight_skeleton( CGAL::Straight_skeleton_2<K> const& ss )
             << " halfedges and " << ss.size_of_faces()
             << " faces" << std::endl ;
 
+  std::cout << "Vertices: " << std::endl;
+  for ( Vertex_const_handle v = ss.vertices_begin(); v != ss.vertices_end(); ++v )
+  {
+    print_vertex(v);
+    print_point(v->point()) ;
+    std::cout << std::endl;
+  }
+
   std::cout << "Faces " << std::endl;
   for ( Halfedge_const_iterator h = ss.halfedges_begin(); h != ss.halfedges_end(); ++h )
   {
@@ -135,7 +143,6 @@ void print_straight_skeleton( CGAL::Straight_skeleton_2<K> const& ss )
   }
 
   std::cout << "All halfedges: " << std::endl;
-
   for ( Halfedge_const_iterator h = ss.halfedges_begin(); h != ss.halfedges_end(); ++h )
   {
     if(h->is_inner_bisector())

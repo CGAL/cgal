@@ -284,7 +284,7 @@ _test_cls_delaunay_3(const Triangulation &)
 
   std::cout << "    Constructor " << std::endl;
   // Beginning with an empty triangulation and adding point until reaching
-  // 3-dimentional triangulation.
+  // 3-dimensional triangulation.
   Cls T0;
   assert(T0.dimension() == -1);
   assert(T0.number_of_vertices() == 0);
