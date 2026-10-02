@@ -179,7 +179,7 @@ struct Vector_plane_orientation_3_static_filter :
 }; // end struct template Vector_plane_orientation_3_static_filter
 
 // An exact line-plane intersection that returns always a point.
-// The line it (pq), and the plane is (abc).
+// The line is (pq), and the plane is (abc).
 //
 // Precondition: [pq] and [abc] are not coplanar.
 template <typename K>

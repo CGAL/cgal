@@ -171,20 +171,20 @@ public:
     If `polyhedron` is closed, its inside will be meshed,
     otherwise there will be no interior and only the surface will be meshed.
   */
-  Polyhedral_mesh_domain_with_features_3(const Polyhedron& polyhedron
+  Polyhedral_mesh_domain_with_features_3(Polyhedron polyhedron
 #ifndef DOXYGEN_RUNNING
                                          , CGAL::Random* p_rng = nullptr
 #endif
                                          )
     : Base(p_rng) , borders_detected_(false)
   {
-    stored_polyhedra.resize(1);
-    stored_polyhedra[0] = polyhedron;
+    stored_polyhedra.emplace_back(std::move(polyhedron));
     get(face_patch_id_t<Patch_id>(), stored_polyhedra[0]);
     this->add_primitives(stored_polyhedra[0]);
+
     this->build();
 
-    if(!is_closed(polyhedron))
+    if(!is_closed(stored_polyhedra[0]))
       this->set_surface_only();
   }
 
@@ -196,22 +196,21 @@ public:
     Using this constructor enables to mesh a polyhedral surface which is not closed, or has holes.
     The inside of `bounding_polyhedron` will be meshed.
   */
-  Polyhedral_mesh_domain_with_features_3(const Polyhedron& polyhedron,
-                                         const Polyhedron& bounding_polyhedron
+  Polyhedral_mesh_domain_with_features_3(Polyhedron polyhedron,
+                                         Polyhedron bounding_polyhedron
 #ifndef DOXYGEN_RUNNING
                                          , CGAL::Random* p_rng = nullptr
 #endif
                                          )
     : Base(p_rng) , borders_detected_(false)
   {
-    stored_polyhedra.resize(2);
-    stored_polyhedra[0] = polyhedron;
-    stored_polyhedra[1] = bounding_polyhedron;
+    stored_polyhedra.emplace_back(std::move(polyhedron));
+    stored_polyhedra.emplace_back(std::move(bounding_polyhedron));
     get(face_patch_id_t<Patch_id>(), stored_polyhedra[0]);
     get(face_patch_id_t<Patch_id>(), stored_polyhedra[1]);
     this->add_primitives(stored_polyhedra[0]);
     this->add_primitives(stored_polyhedra[1]);
-    if(CGAL::is_empty(bounding_polyhedron)) {
+    if(CGAL::is_empty(stored_polyhedra[1])) {
       this->set_surface_only();
     } else {
       this->add_primitives_to_bounding_tree(stored_polyhedra[1]);
@@ -240,7 +239,7 @@ public:
   {
     stored_polyhedra.reserve(std::distance(begin, end));
     for (; begin != end; ++begin) {
-      stored_polyhedra.push_back(**begin);
+      stored_polyhedra.emplace_back(std::move(**begin));
       get(face_patch_id_t<Patch_id>(), stored_polyhedra.back());
       this->add_primitives(stored_polyhedra.back());
     }
@@ -272,7 +271,7 @@ public:
     stored_polyhedra.reserve(std::distance(begin, end)+1);
     if(begin != end) {
       for (; begin != end; ++begin) {
-        stored_polyhedra.push_back(**begin);
+        stored_polyhedra.emplace_back(std::move(**begin));
         get(face_patch_id_t<Patch_id>(), stored_polyhedra.back());
         this->add_primitives(stored_polyhedra.back());
       }

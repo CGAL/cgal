@@ -84,7 +84,7 @@ using Tr = CGAL::Periodic_3_mesh_triangulation_3<Periodic_mesh_domain>::type;
 using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<Tr>;
 
 // Criteria
-using Periodic_mesh_criteria = CGAL::Mesh_criteria_3<Tr>;
+using Periodic_mesh_criteria = CGAL::Mesh_criteria_3<C3t3>;
 
 // To avoid verbose function and named parameters call
 namespace params = CGAL::parameters;

@@ -42,12 +42,12 @@ and a sizing field which may be a uniform or variable field.
 \cgalModels{MeshCellCriteria_3}
 
 \sa `MeshCriteria_3`
-\sa `CGAL::Mesh_criteria_3<Tr>`
+\sa `CGAL::Mesh_criteria_3`
 \sa `CGAL::make_mesh_3()`
 */
-template <typename Tr
+template <typename C3T3
 #ifndef DOXYGEN_RUNNING
-          ,typename Visitor_ = Mesh_3::Cell_criterion_visitor_with_radius_lower_bound<Tr>
+          ,typename Visitor_ = Mesh_3::Cell_criterion_visitor_with_radius_lower_bound<C3T3>
 #endif
           >
 class Mesh_cell_criteria_3
@@ -55,6 +55,8 @@ class Mesh_cell_criteria_3
 public:
   /// \name Types
   /// @{
+
+  typedef typename C3T3::Triangulation Tr;
 
   /*!
     Numerical type
@@ -67,13 +69,13 @@ public:
   typedef typename Visitor::Cell_quality Cell_quality;
   typedef typename Visitor::Is_cell_bad  Is_cell_bad;
 
-  typedef Mesh_3::Abstract_criterion<Tr,Visitor> Abstract_criterion;
+  typedef Mesh_3::Abstract_criterion<C3T3, Visitor> Abstract_criterion;
 private:
-  typedef Mesh_3::Criteria<Tr,Visitor> Criteria;
+  typedef Mesh_3::Criteria<C3T3, Visitor> Criteria;
 
   typedef typename Tr::Cell_handle Cell_handle;
 
-  typedef Mesh_cell_criteria_3<Tr> Self;
+  typedef Mesh_cell_criteria_3<C3T3> Self;
 
 public:
 
@@ -127,7 +129,7 @@ public:
                        ,const FT& min_radius_bound = 0.
 #ifndef DOXYGEN_RUNNING
                        ,std::enable_if_t<
-                         Mesh_3::Is_mesh_domain_field_3<Tr,Sizing_field>::value
+                         Mesh_3::Is_mesh_domain_field_3<Tr, Sizing_field>::value
                        >* = 0
 #endif
                        )
@@ -148,12 +150,12 @@ public:
 
   /**
    * @brief returns whether the cell `cell` is bad or not.
-   * @param tr the triangulation within which `cell` lives
+   * @param c3t3 the mesh complex within which `cell` lives
    * @param cell the cell
    */
-  Is_cell_bad operator()(const Tr& tr, const Cell_handle& cell) const
+  Is_cell_bad operator()(const C3T3& c3t3, const Cell_handle& cell) const
   {
-    return criteria_(tr, cell);
+    return criteria_(c3t3, cell);
   }
 
 #ifndef DOXYGEN_RUNNING
@@ -166,20 +168,20 @@ public:
 private:
   void init_radius_edge(const FT& radius_edge_bound)
   {
-    typedef Mesh_3::Cell_radius_edge_criterion<Tr,Visitor> Radius_edge_criterion;
+    typedef Mesh_3::Cell_radius_edge_criterion<C3T3, Visitor> Radius_edge_criterion;
     criteria_.add(new Radius_edge_criterion(radius_edge_bound));
   }
 
   void init_radius(const FT& radius_bound)
   {
-    typedef Mesh_3::Cell_uniform_size_criterion<Tr,Visitor> Radius_criterion;
+    typedef Mesh_3::Cell_uniform_size_criterion<C3T3, Visitor> Radius_criterion;
     criteria_.add(new Radius_criterion(radius_bound));
   }
 
   template < typename Sizing_field>
   void init_radius(const Sizing_field& radius_bound)
   {
-    typedef Mesh_3::Cell_variable_size_criterion<Tr,Visitor,Sizing_field>
+    typedef Mesh_3::Cell_variable_size_criterion<C3T3, Visitor,Sizing_field>
       Radius_criterion;
 
     criteria_.add(new Radius_criterion(radius_bound));
@@ -187,7 +189,7 @@ private:
 
   void init_min_radius(const FT& min_radius_bound)
   {
-    typedef Mesh_3::Cell_uniform_size_criterion<Tr, Visitor> Radius_criterion;
+    typedef Mesh_3::Cell_uniform_size_criterion<C3T3, Visitor> Radius_criterion;
     criteria_.add(new Radius_criterion(min_radius_bound, true/*lower bound*/));
   }
 

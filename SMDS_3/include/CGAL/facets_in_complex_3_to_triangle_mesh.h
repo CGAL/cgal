@@ -94,7 +94,7 @@ void facets_in_complex_3_to_triangle_soup(const C3T3& c3t3,
   {
     const Cell_handle c = fit.first;
     const int s = fit.second;
-    const Surface_patch_index spi = c->surface_patch_index(s);
+    const Surface_patch_index spi = c3t3.surface_patch_index(c, s);
 
     const typename C3T3::Subdomain_index cell_sdi = c3t3.subdomain_index(c);
     const typename C3T3::Subdomain_index opp_sdi = c3t3.subdomain_index(c->neighbor(s));

@@ -422,7 +422,7 @@ protected:
 template < typename C3T3,
            typename MeshDomain,
            typename SliverCriterion = Mesh_3::Min_dihedral_angle_criterion
-                                  <typename C3T3::Triangulation::Geom_traits>,
+                                  <typename C3T3::Triangulation>,
            typename Visitor_ = Null_perturber_visitor<C3T3> >
 class Sliver_perturber
 : public Sliver_perturber_base<typename C3T3::Triangulation,
@@ -761,7 +761,7 @@ operator()(Visitor visitor)
     sliver_criterion_.set_sliver_bound(sliver_criterion_.get_default_value());
 
   // Reset sliver value cache
-  helper_.reset_cache();
+  helper_.reset_sliver_cache(sliver_criterion_);
 
   // Init time counter
   if (running_time_.is_running())
@@ -778,7 +778,6 @@ operator()(Visitor visitor)
 
   // Initialize vertices ids
   initialize_vertices_id();
-
 
 #if defined(CGAL_MESH_3_PERTURBER_VERBOSE) \
  || defined(CGAL_MESH_3_PROFILING)
@@ -816,8 +815,9 @@ operator()(Visitor visitor)
 #endif
 
   running_time_.stop();
-  helper_.reset_cache();//in case we reuse caches in another operation
-                               // after this perturbation
+
+  // in case we reuse caches in another operation after this perturbation
+  helper_.reset_sliver_cache(sliver_criterion_);
 
 #ifdef CGAL_MESH_3_PERTURBER_VERBOSE
   std::cerr << std::endl
@@ -962,14 +962,9 @@ perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
       CGAL_assertion(pv.is_perturbable());
 
       // Get pvertex slivers list
-# ifdef CGAL_NEW_INCIDENT_SLIVERS
       Cell_vector slivers;
-      helper_.new_incident_slivers(pv.vertex(), sliver_criterion_, sliver_bound,
-                                 std::back_inserter(slivers));
-# else
-      Cell_vector slivers =
-        helper_.incident_slivers(pv.vertex(), sliver_criterion_, sliver_bound);
-# endif
+      helper_.incident_slivers(pv.vertex(), sliver_criterion_, sliver_bound,
+                               std::back_inserter(slivers));
 
       CGAL_assertion(slivers.size() == pv.sliver_nb());
 
@@ -1064,9 +1059,6 @@ perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
   return bad_vertices.empty();
 }
 
-
-#ifdef CGAL_FASTER_BUILD_QUEUE
-
 template <typename C3T3, typename Md, typename Sc, typename V_>
 int
 Sliver_perturber<C3T3,Md,Sc,V_>::
@@ -1086,15 +1078,13 @@ build_priority_queue(const FT& sliver_bound, PQueue& pqueue) const
   typedef boost::unordered_map<Vertex_handle, PVertex, Hash_fct>   M;
 
   M vpm;
-  for ( typename Tr::Finite_cells_iterator cit = tr_.finite_cells_begin();
-       cit != tr_.finite_cells_end() ;
-       ++cit )
+  for (Cell_handle ch : c3t3_.cells_in_complex())
   {
-    if(helper_.is_sliver(cit, sliver_criterion_, sliver_bound))
+    const double d = sliver_criterion_(ch);
+    if(d < sliver_bound)
     {
-      double d = cit->sliver_value();
       for(int i=0; i< 4; i++){
-        Vertex_handle vh = cit->vertex(i);
+        Vertex_handle vh = ch->vertex(i);
         PVertex& pv = vpm[vh];
         if(pv.sliver_nb() ==0)
         {
@@ -1126,40 +1116,6 @@ build_priority_queue(const FT& sliver_bound, PQueue& pqueue) const
 
   return pqueue_size;
 }
-
-#else // not CGAL_FASTER_BUILD_QUEUE
-
-template <typename C3T3, typename Md, typename Sc, typename V_>
-int
-Sliver_perturber<C3T3,Md,Sc,V_>::
-build_priority_queue(const FT& sliver_bound, PQueue& pqueue) const
-{
-  CGAL_precondition(pqueue.empty());
-
-#ifdef CGAL_MESH_3_PERTURBER_HIGH_VERBOSITY
-  CGAL::Real_timer timer;
-  timer.start();
-  std::cerr << "Build pqueue...";
-#endif
-
-  int pqueue_size = 0;
-
-  for ( typename Tr::Finite_vertices_iterator vit = tr_.finite_vertices_begin();
-       vit != tr_.finite_vertices_end() ;
-       ++vit )
-  {
-    PVertex pv = make_pvertex(vit, sliver_bound, get_pvertex_id(vit));
-    pqueue_size += update_priority_queue(pv, pqueue);
-  }
-
-#ifdef CGAL_MESH_3_PERTURBER_HIGH_VERBOSITY
-  std::cerr << "done (" << pqueue_size << " vertices inserted in "
-            << timer.time() << "s)\n";
-#endif
-
-  return pqueue_size;
-}
-#endif // not CGAL_FASTER_BUILD_QUEUE
 
 
 template <typename C3T3, typename Md, typename Sc, typename V_>
@@ -1426,13 +1382,8 @@ void
 Sliver_perturber<C3T3,Md,Sc,V_>::
 update_pvertex(PVertex& pv, const FT& sliver_bound) const
 {
-#ifdef CGAL_NEW_INCIDENT_SLIVERS
   Cell_vector slivers;
-  helper_.new_incident_slivers(pv.vertex(), sliver_criterion_, sliver_bound, std::back_inserter(slivers));
-#else
-  Cell_vector slivers =
-    helper_.incident_slivers(pv.vertex(), sliver_criterion_, sliver_bound);
-#endif
+  helper_.incident_slivers(pv.vertex(), sliver_criterion_, sliver_bound, std::back_inserter(slivers));
 
   pv.set_sliver_nb(static_cast<unsigned int>(slivers.size()));
   pv.set_min_value(helper_.min_sliver_value(slivers, sliver_criterion_));

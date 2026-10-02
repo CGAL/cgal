@@ -292,7 +292,7 @@ struct Test_c3t3_io {
           end1 = t1.finite_cells_end();
         cit1 != end1; ++cit1, ++cit2)
     {
-      if(cit1->subdomain_index() != cit2->subdomain_index() )
+      if(c1.subdomain_index(cit1) != c2.subdomain_index(cit2) )
       {
         std::cerr << "Error: cells are different:\n";
         std::cerr << *cit1 << "\n"

@@ -1,5 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/Mesh_triangulation_3.h>
+#include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 
@@ -9,8 +11,10 @@ typedef CGAL::Polyhedral_mesh_domain_with_features_3<K> Mesh_domain;
 
 // Triangulation
 typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
+typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
+
 // Criteria
-typedef CGAL::Mesh_criteria_3<Tr> Mc;
+typedef CGAL::Mesh_criteria_3<C3t3> Mc;
 typedef CGAL::Mesh_constant_domain_field_3<Tr::Geom_traits,
                                            Mesh_domain::Index> Sizing_field;
 
@@ -28,7 +32,9 @@ int main()
   Tr::Point p3(0,1,0);
   Tr::Point p4(0,0,1);
 
-  Tr tr;
+  C3t3 c3t3;
+  Tr& tr = c3t3.triangulation();
+
   tr.insert(p1);
   tr.insert(p2);
   tr.insert(p3);
@@ -45,16 +51,16 @@ int main()
 
   // Init cell
   tr.dual(ch);
-  ch->set_subdomain_index(sub_index);
+  c3t3.set_subdomain_index(ch, sub_index);
 
   // Init facet
   Tr::Bare_point facet_circum =
     tr.geom_traits().construct_weighted_circumcenter_3_object()(
       tr.point(ch, k+1), tr.point(ch, k+2), tr.point(ch, k+3));
 
-  ch->set_surface_patch_index(k,surf_index);
-  ch->set_facet_surface_center(k,facet_circum);
-  ch->set_facet_surface_center_index(k,index);
+  c3t3.set_surface_patch_index(ch, k, surf_index);
+  c3t3.set_surface_center(ch, k, facet_circum);
+  c3t3.set_surface_center_index(ch, k, index);
 
   // Init vertices
   ch->vertex(0)->set_dimension(2);
@@ -102,10 +108,10 @@ int main()
   FT facet_size_ok = radius_facet*FT(10);
 
   Mc fc1(facet_size = facet_size_ok);
-  assert( ! fc1.facet_criteria_object()(tr, f) );
+  assert( ! fc1.facet_criteria_object()(c3t3, f) );
 
   Mc fc3(facet_size = Fsf(facet_size_ok));
-  assert( ! fc3.facet_criteria_object()(tr, f) );
+  assert( ! fc3.facet_criteria_object()(c3t3, f) );
 
   Mc fc8(facet_distance = 8.);
   Mc fc9(facet_angle = 9.);
@@ -126,10 +132,10 @@ int main()
 
   // Test topological criterion creation
   Mc fc14(facet_topology = CGAL::FACET_VERTICES_ON_SURFACE);
-  assert( ! fc14.facet_criteria_object()(tr, f) );
+  assert( ! fc14.facet_criteria_object()(c3t3, f) );
 
   Mc fc15(facet_topology = CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH);
-  assert( fc15.facet_criteria_object()(tr, f) );
+  assert( fc15.facet_criteria_object()(c3t3, f) );
 
   // -----------------------------------
   // Test cell criteria
@@ -142,13 +148,13 @@ int main()
   FT cell_size_ok = radius_cell*FT(10);
 
   Mc cc1(cell_size = cell_size_ok);
-  assert( ! cc1.cell_criteria_object()(tr, ch) );
+  assert( ! cc1.cell_criteria_object()(c3t3, ch) );
 
   Mc cc3(cell_size = Fsf(cell_size_ok));
-  assert( ! cc3.cell_criteria_object()(tr, ch) );
+  assert( ! cc3.cell_criteria_object()(c3t3, ch) );
 
   Mc cc7(cell_size = Csf(cell_size_ok));
-  assert( ! cc7.cell_criteria_object()(tr, ch) );
+  assert( ! cc7.cell_criteria_object()(c3t3, ch) );
 
   Mc cc8(cell_radius_edge_ratio = 8.);
   Mc cc9(cell_radius_edge_ratio = 9.1,

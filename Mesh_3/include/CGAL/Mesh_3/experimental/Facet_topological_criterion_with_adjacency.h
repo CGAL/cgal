@@ -22,18 +22,19 @@ namespace CGAL {
 
 namespace Mesh_3 {
 
-template <typename Tr, typename MeshDomain, typename Visitor_>
+template <typename C3T3, typename MeshDomain, typename Visitor_>
 class Facet_topological_criterion_with_adjacency :
-public Mesh_3::Abstract_criterion<Tr, Visitor_>
+public Mesh_3::Abstract_criterion<C3T3, Visitor_>
 {
 private:
+  typedef typename C3T3::Triangulation Tr;
   typedef typename Tr::Facet Facet;
 
-  typedef Mesh_3::Abstract_criterion<Tr,Visitor_> Base;
+  typedef Mesh_3::Abstract_criterion<C3T3, Visitor_> Base;
   typedef typename Base::Quality Quality;
   typedef typename Base::Is_bad  Is_bad;
 
-  typedef Facet_topological_criterion_with_adjacency<Tr,MeshDomain, Visitor_> Self;
+  typedef Facet_topological_criterion_with_adjacency<C3T3, MeshDomain, Visitor_> Self;
 
   typedef typename Tr::Geom_traits::FT FT;
 
@@ -60,7 +61,7 @@ protected:
     return new Self(*this);
   }
 
-  virtual Is_bad do_is_bad (const Tr& /*tr*/, const Facet& f) const
+  virtual Is_bad do_is_bad (const C3T3& c3t3, const Facet& f) const
   {
     typedef typename Tr::Vertex_handle  Vertex_handle;
     typedef typename Tr::Cell_handle    Cell_handle;
@@ -70,7 +71,7 @@ protected:
 
     typedef typename MeshDomain::Surface_patch_index Patch_index;
 
-    const Patch_index patch_index = ch->surface_patch_index(i);
+    const Patch_index patch_index = c3t3.surface_patch_index(ch, i);
 
     typedef std::vector<Patch_index> Index_set;
 

@@ -25,7 +25,7 @@ typedef CGAL::Mesh_triangulation_3<Mesh_domain,
 typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 
 // Criteria
-typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
+typedef CGAL::Mesh_criteria_3<C3t3> Mesh_criteria;
 
 typedef CGAL::Mesh_3::Mesher_3<C3t3,
                                Mesh_criteria,

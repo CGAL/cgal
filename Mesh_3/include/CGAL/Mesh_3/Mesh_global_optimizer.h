@@ -39,16 +39,16 @@
   #include <CGAL/Mesh_3/Profiling_tools.h>
 #endif
 
-#include <vector>
-#include <list>
-#include <limits>
-
 #ifdef CGAL_LINKED_WITH_TBB
 # include <atomic>
 # include <mutex>
 # include <tbb/parallel_for_each.h>
 # include <tbb/concurrent_vector.h>
 #endif
+
+#include <limits>
+#include <list>
+#include <vector>
 
 namespace CGAL {
 

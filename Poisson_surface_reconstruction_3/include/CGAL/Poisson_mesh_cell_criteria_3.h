@@ -21,13 +21,12 @@
 #include <CGAL/utils.h> // for min
 
 namespace CGAL {
-
 namespace internal {
 namespace Poisson {
 
 template <class Tr>
 class Constant_sizing_field {
-  typedef typename Tr::FT FT;
+  typedef typename Tr::Geom_traits::FT FT;
   FT sq_radius_bound;
 public:
   FT cell_radius_bound() const { return CGAL::approximate_sqrt(sq_radius_bound); }

@@ -183,7 +183,7 @@ void Scene_tetrahedra_item::computeElements()const
     const Tr::Bare_point& pb = wp2p(cit->vertex(1)->point());
     const Tr::Bare_point& pc = wp2p(cit->vertex(2)->point());
     const Tr::Bare_point& pd = wp2p(cit->vertex(3)->point());
-    const QColor color = d->c3t3_item->getSubdomainIndexColor(cit->subdomain_index());
+    const QColor color = d->c3t3_item->getSubdomainIndexColor(c3t3.subdomain_index(cit));
     //0 - 1 : dihedral angle
     double min_dihedral_angle = 360.0;
     double max_dihedral_angle = -360.0;

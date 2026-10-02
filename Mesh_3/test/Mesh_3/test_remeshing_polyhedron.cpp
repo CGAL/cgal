@@ -36,7 +36,7 @@ struct Polyhedron_tester : public Tester<K>
     using Mesh_domain = CGAL::Polyhedral_mesh_domain_3<Polyhedron, GT>;
     using Tr = typename CGAL::Mesh_triangulation_3<Mesh_domain, GT>::type;
     using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<Tr>;
-    using Mesh_criteria = CGAL::Mesh_criteria_3<Tr>;
+    using Mesh_criteria = CGAL::Mesh_criteria_3<C3t3>;
 
     Polyhedron polyhedron;
     std::ifstream input(filename);
