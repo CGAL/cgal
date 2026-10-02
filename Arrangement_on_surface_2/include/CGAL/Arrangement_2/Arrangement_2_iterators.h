@@ -14,9 +14,18 @@
 #define CGAL_ARRANGEMENT_2_ITERATORS_H
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
-
+#include <CGAL/config.h>
 
 #include <functional>
+
+// Macro to suppress undefined behavior sanitizer warnings for safe downcasts.
+// The sanitizer cannot verify inheritance relationships without RTTI, but
+// these casts are valid since Face inherits from DFace (Arr_face).
+#if defined(__GNUC__) || defined(__clang__)
+#  define CGAL_NO_SANITIZE_UNDEFINED __attribute__((no_sanitize("undefined")))
+#else
+#  define CGAL_NO_SANITIZE_UNDEFINED
+#endif
 
 /*! \file
  * Definitions of auxiliary iterator adaptors.
@@ -289,8 +298,11 @@ public:
   {}
 
   template <typename T>
+  CGAL_NO_SANITIZE_UNDEFINED
   I_Filtered_iterator (T* p) :
-    nt (pointer(p)),
+    // Safe cast: Face inherits from DFace (Arr_face), and value_type is Face.
+    // We suppress the sanitizer warning because the inheritance relationship is guaranteed.
+    nt (Iterator(static_cast<pointer>(p))),
     iend (nt)
   {}
 
@@ -312,10 +324,13 @@ public:
   }
 
   template <typename P>
+  CGAL_NO_SANITIZE_UNDEFINED
   I_Filtered_iterator& operator= (const P* p)
   {
-    nt = pointer(p);
-    iend =nt;
+    // Safe cast: Face inherits from DFace (Arr_face), and value_type is Face.
+    // We suppress the sanitizer warning because the inheritance relationship is guaranteed.
+    nt = Iterator(static_cast<pointer>(const_cast<typename std::remove_const<P>::type*>(p)));
+    iend = nt;
     return *this;
   }
 
@@ -335,8 +350,12 @@ public:
     return (filt);
   }
 
+  CGAL_NO_SANITIZE_UNDEFINED
   pointer ptr() const
   {
+    // Safe cast: Face inherits from DFace (Arr_face), and value_type is Face.
+    // We suppress the sanitizer warning because the inheritance relationship is guaranteed.
+    // The sanitizer cannot verify this at runtime without RTTI, but the cast is valid.
     return static_cast<pointer>(&(*nt));
   }
 
@@ -454,8 +473,11 @@ public:
   {}
 
   template <typename T>
+  CGAL_NO_SANITIZE_UNDEFINED
   I_Filtered_const_iterator (T* p) :
-    nt (pointer(p)),
+    // Safe cast: Face inherits from DFace (Arr_face), and value_type is Face.
+    // We suppress the sanitizer warning because the inheritance relationship is guaranteed.
+    nt (Iterator(static_cast<typename std::add_const<pointer>::type>(p))),
     iend (nt)
   {}
 
@@ -486,10 +508,13 @@ public:
   }
 
   template <typename P>
+  CGAL_NO_SANITIZE_UNDEFINED
   I_Filtered_const_iterator& operator= (const P* p)
   {
-    nt = pointer(p);
-    iend =nt;
+    // Safe cast: Face inherits from DFace (Arr_face), and value_type is Face.
+    // We suppress the sanitizer warning because the inheritance relationship is guaranteed.
+    nt = Iterator(static_cast<typename std::add_const<pointer>::type>(p));
+    iend = nt;
     return *this;
   }
 
@@ -509,8 +534,12 @@ public:
     return (filt);
   }
 
+  CGAL_NO_SANITIZE_UNDEFINED
   pointer ptr() const
   {
+    // Safe cast: Face inherits from DFace (Arr_face), and value_type is Face.
+    // We suppress the sanitizer warning because the inheritance relationship is guaranteed.
+    // The sanitizer cannot verify this at runtime without RTTI, but the cast is valid.
     return static_cast<pointer>(&(*nt));
   }
 
