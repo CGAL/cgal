@@ -11,5 +11,5 @@ set(ProtoSphere_INCLUDE_DIR "" CACHE PATH "Path to ProtoSphere include directory
 set(ProtoSphere_LIBRARY "" CACHE FILEPATH "Path to ProtoSphere library file (e.g. libProtoSphereExtended.a or ProtoSphereExtended.lib)")
 
 create_single_source_cgal_program("sphere_packing.cpp")
-target_link_libraries(sphere_packing PRIVATE ${ProtoSphere_LIBRARY} ) 
+target_link_libraries(sphere_packing PRIVATE ${ProtoSphere_LIBRARY} )
 target_include_directories(sphere_packing PRIVATE ${ProtoSphere_INCLUDE_DIR} )
