@@ -1,7 +1,6 @@
 #include <CGAL/config.h>
 
-#define CGAL_T3_ALLOW_NEGATIVE_VOLUME 1
-#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE 1
+//#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE 1
 // #define CGAL_CDT_2_DEBUG_INTERSECTIONS 1
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
@@ -23,7 +22,7 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Surface_mesh/IO/PLY.h>
 #include <CGAL/Surface_mesh/Surface_mesh.h>
-//#include <CGAL/tetrahedral_remeshing.h>
+#include <CGAL/Constrained_triangulation_3/internal/smooth_Steiner_vertices.h>
 #include <CGAL/use.h>
 #include <CGAL/utility.h>
 
@@ -135,7 +134,7 @@ struct CDT_options
                                                     false;
 #endif
   bool        move_Steiner_vertices_to_the_volume = true;
-  bool        allow_moving_Steiner_vertices_to_create_negative_tets = false;
+  bool        allow_moving_Steiner_vertices_to_create_negative_tets = true;
   bool        use_epeck_for_normals               = false;
   bool        use_epeck_for_Steiner_points        = false;
   bool        call_is_valid                       = true;
@@ -815,13 +814,7 @@ int go(Mesh mesh, CDT_options options) {
                     << move_vertices_guard.time_ms() << " ms\n";
       std::cout << cdt.statistics() << "\n";
     }
-    // CGAL::tetrahedral_isotropic_remeshing(
-    //       cdt,
-    //       3 * bbox_max_span,
-    //       CGAL::parameters::number_of_iterations(30).nb_flip_smooth_iterations(20u)
-    //       .remesh_boundaries(false));
-    // CGAL_assertion(cdt.tr().tds().is_valid(true));
-    // std::cout << cdt.statistics() << "\n";
+    CGAL::internal::smooth_Steiner_vertices_in_volume(cdt, bbox_max_span, true);
   }
 
   return EXIT_SUCCESS;
