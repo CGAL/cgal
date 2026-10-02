@@ -425,7 +425,7 @@ are made exactly symmetrical.
 
 The user can choose to regularize only one or several of these four properties.
 The process is greedy and based on a hierarchical decomposition (coplanar clusters are subgroups of parallel clusters,
-which are subgroups of axis-symmetric and orthogonal clusters) as described by Verdie et al. in \cgalCite{cgal:vla-lod-15}.
+which are subgroups of axis-symmetric and orthogonal clusters) as described by \cgalCite{cgal:vla-lod-15}.
 
 The following example illustrates how to use the plane regularization function.
 

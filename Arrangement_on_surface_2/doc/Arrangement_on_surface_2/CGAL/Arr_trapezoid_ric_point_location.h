@@ -5,8 +5,8 @@ namespace CGAL {
  * \anchor arr_reftrap_pl
  *
  * The `Arr_trapezoid_ric_point_location` class implements the incremental
- * randomized algorithm introduced by Mulmuley \cgalCite{m-fppa-90} as presented
- * by Seidel \cgalCite{s-sfira-91} (see also [\cgalCite{bkos-cgaa-00} Chapter
+ * randomized algorithm introduced by \cgalCite{m-fppa-90} as presented
+ * by \cgalCite{s-sfira-91} (see also [\cgalCite{bkos-cgaa-00} Chapter
  * 6).  It subdivides each arrangement face to pseudo-trapezoidal cells, each of
  * constant complexity, and constructs and maintains a linear-size search
  * structure on top of these cells, such that each query can be answered in
