@@ -24,7 +24,7 @@ def get_internal_package_files_list(package_dir)
                         
   dont_submit_file = package_dir + '/dont_submit' 
  
-  list += IO.readlines(dont_submit_file) if File.exist?(dont_submit_file) 
+  list += File.readlines(dont_submit_file) if File.exist?(dont_submit_file) 
    
   return list ;
  
