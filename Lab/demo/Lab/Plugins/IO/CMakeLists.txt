@@ -33,7 +33,7 @@ cgal_lab_plugin(off_to_nef_plugin OFF_to_nef_io_plugin KEYWORDS Viewer)
 target_link_libraries(off_to_nef_plugin PRIVATE scene_nef_polyhedron_item)
 
 cgal_lab_plugin(polylines_io_plugin Polylines_io_plugin KEYWORDS Viewer Mesh_3)
-target_link_libraries(polylines_io_plugin PRIVATE scene_polylines_item)
+target_link_libraries(polylines_io_plugin PRIVATE scene_polylines_item scene_points_with_normal_item)
 
 cgal_lab_plugin(spheres_io_plugin Spheres_io_plugin KEYWORDS Viewer Mesh_3)
 target_link_libraries(spheres_io_plugin PRIVATE scene_basic_objects)
