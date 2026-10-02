@@ -266,7 +266,7 @@ private:
     if ( elt_it != surface_map_.end() )
       return elt_it->second;
     else
-      return -1;
+      return 0;
   }
 
   int get_first_unused_label(const std::set<int>& label_set,
@@ -336,87 +336,23 @@ private:
 // -----------------------------------
 // Default_vertex_pmap
 // -----------------------------------
-template <typename C3T3, typename Cell_pmap, typename Facet_pmap>
+template <typename C3T3>
 class Default_vertex_pmap
 {
-  typedef typename C3T3::Surface_patch_index Surface_patch_index;
-  typedef typename C3T3::Subdomain_index Subdomain_index;
-  typedef typename C3T3::Index Index;
   typedef typename C3T3::Vertex_handle Vertex_handle;
-  typedef typename C3T3::Cell_handle Cell_handle;
-  typedef typename C3T3::Facet Facet;
 
 public:
-  Default_vertex_pmap(const C3T3& c3t3,
-                      const Cell_pmap& c_pmap,
-                      const Facet_pmap& f_pmap)
-    : c_pmap_(c_pmap)
-    , f_pmap_(f_pmap)
-    , r_c3t3_(c3t3)
-    , edge_index_(0) {}
+  Default_vertex_pmap(const C3T3& c3t3)
+    : r_c3t3_(c3t3)
+    {}
 
   int index(const Vertex_handle& vh) const
   {
-    switch ( r_c3t3_.in_dimension(vh) )
-    {
-    case 0:
-      {
-        return r_c3t3_.corner_index(vh);
-      }
-    case 2:
-      {
-        // Check if each incident surface facet of vh has the same surface index
-        typename std::vector<Facet> facets;
-        r_c3t3_.triangulation().finite_incident_facets(
-            vh, std::back_inserter(facets));
-
-        if ( facets.begin() == facets.end() )
-          return -1;
-
-        // Look for the first surface facet
-        typename std::vector<Facet>::iterator it_facet = facets.begin();
-        while ( ! r_c3t3_.is_in_complex(*it_facet) )
-        {
-          if ( ++it_facet == facets.end() )
-            return -1;
-        }
-
-        Surface_patch_index facet_index = r_c3t3_.surface_patch_index(*it_facet);
-        Facet facet = *it_facet;
-        ++it_facet;
-
-        for( ; it_facet != facets.end() ; ++it_facet)
-        {
-          // If another index is found, return value for edge vertice
-          if (   r_c3t3_.is_in_complex(*it_facet)
-              && !( facet_index == r_c3t3_.surface_patch_index(*it_facet) ) )
-            return edge_index_;
-        }
-
-        return get(f_pmap_,facet);
-      }
-      break;
-
-    case 3:
-      {
-        // Returns value of any incident cell
-        typename std::vector<Cell_handle> cells;
-        r_c3t3_.triangulation().finite_incident_cells(
-            vh,std::back_inserter(cells));
-
-        if ( cells.begin() != cells.end() )
-          return get(c_pmap_, *cells.begin());
-        else
-          return -1;
-      }
-      break;
-
-    default:
-      // must not happen
-      return -1;
-      break;
-    }
-  }
+    if(r_c3t3_.in_dimension(vh) == 0)
+      return r_c3t3_.corner_index(vh);
+    else
+      return 0;
+   }
 
   friend int get(const Default_vertex_pmap& vmap, const Vertex_handle& vh)
   {
@@ -424,10 +360,7 @@ public:
   }
 
 private:
-  const Cell_pmap& c_pmap_;
-  const Facet_pmap& f_pmap_;
   const C3T3& r_c3t3_;
-  const unsigned int edge_index_;
 };
 
 
@@ -462,7 +395,7 @@ struct Medit_pmap_generator<C3T3, RENUMBER_SUBDOMAINS, RENUMBER_SURFACE_PATCH_IN
   typedef Renumber_subdomains_pmap<C3T3>                    Cell_pmap;
   typedef Renumber_surface_patches_pmap<C3T3, Cell_pmap>    Facet_pmap;
   typedef Null_pmap                                         Facet_pmap_twice;
-  typedef Default_vertex_pmap<C3T3, Cell_pmap, Facet_pmap>  Vertex_pmap;
+  typedef Default_vertex_pmap<C3T3>                         Vertex_pmap;
 
   bool print_twice() { return false; }
 };
@@ -474,7 +407,7 @@ struct Medit_pmap_generator<C3T3, RENUMBER_SUBDOMAINS, USE_CELL_INDICES>
   typedef Renumber_subdomains_pmap<C3T3>                    Cell_pmap;
   typedef Use_cell_indices_pmap<C3T3, Cell_pmap, 0>         Facet_pmap;
   typedef Use_cell_indices_pmap<C3T3, Cell_pmap, 1>         Facet_pmap_twice;
-  typedef Default_vertex_pmap<C3T3, Cell_pmap, Facet_pmap>  Vertex_pmap;
+  typedef Default_vertex_pmap<C3T3>                         Vertex_pmap;
 
   bool print_twice() { return true; }
 };
@@ -486,7 +419,7 @@ struct Medit_pmap_generator<C3T3, USE_SUBDOMAIN_INDICES, USE_CELL_INDICES>
   typedef Use_subdomain_indices<C3T3>                       Cell_pmap;
   typedef Use_cell_indices_pmap<C3T3, Cell_pmap, 0>         Facet_pmap;
   typedef Use_cell_indices_pmap<C3T3, Cell_pmap, 1>         Facet_pmap_twice;
-  typedef Default_vertex_pmap<C3T3, Cell_pmap, Facet_pmap>  Vertex_pmap;
+  typedef Default_vertex_pmap<C3T3>                         Vertex_pmap;
 
   bool print_twice() { return true; }
 };
@@ -497,7 +430,7 @@ struct Medit_pmap_generator<C3T3, USE_SUBDOMAIN_INDICES, RENUMBER_SURFACE_PATCH_
   typedef Use_subdomain_indices<C3T3>                       Cell_pmap;
   typedef Renumber_surface_patches_pmap<C3T3, Cell_pmap>    Facet_pmap;
   typedef Null_pmap                                         Facet_pmap_twice;
-  typedef Default_vertex_pmap<C3T3, Cell_pmap, Facet_pmap>  Vertex_pmap;
+  typedef Default_vertex_pmap<C3T3>                         Vertex_pmap;
 
   bool print_twice() { return false; }
 };
@@ -881,7 +814,7 @@ output_to_medit(std::ostream& os,
   Cell_pmap cell_pmap(c3t3);
   Facet_pmap facet_pmap(c3t3,cell_pmap);
   Facet_pmap_twice facet_pmap_twice(c3t3,cell_pmap);
-  Vertex_pmap vertex_pmap(c3t3,cell_pmap,facet_pmap);
+  Vertex_pmap vertex_pmap(c3t3);
 
   const auto& tr = c3t3.triangulation();
 
