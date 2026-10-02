@@ -53,6 +53,9 @@ struct value_type_traits<std::front_insert_iterator<Container> >
   typedef typename Container::value_type type;
 };
 
+template <class T>
+using value_type_traits_t = typename value_type_traits<T>::type;
+
 } //namespace CGAL
 
 #endif // CGAL_VALUE_TYPE_TRAITS_H

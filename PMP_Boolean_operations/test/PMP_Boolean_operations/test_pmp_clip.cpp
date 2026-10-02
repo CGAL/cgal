@@ -1325,7 +1325,7 @@ void dump_constrained_edges(const Surface_mesh& tm, ECM ecm, std::string fname)
 }
 */
 
-void test_edge_is_contrained()
+void test_edge_is_constrained()
 {
   {
   Surface_mesh tm;
@@ -1422,8 +1422,8 @@ int main()
   std::cout << "Done!" << std::endl;
   std::cout << "running test_clip_and_split_with_plane_visitor\n";
   test_clip_and_split_with_plane_visitor();
-  std::cout << "running test_edge_is_contrained\n";
-  test_edge_is_contrained();
+  std::cout << "running test_edge_is_constrained\n";
+  test_edge_is_constrained();
   std::cout << "Done!" << std::endl;
 
   return EXIT_SUCCESS;

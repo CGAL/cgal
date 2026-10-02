@@ -17,6 +17,7 @@ Kernel_23
 Kernel_d
 Modular_arithmetic
 Number_types
+Polygon
 Polynomial
 Profiling_tools
 Property_map
@@ -25,4 +26,3 @@ Snap_rounding_2
 Spatial_searching
 Stream_support
 Surface_sweep_2
-Polygon

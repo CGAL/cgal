@@ -457,3 +457,5 @@ CGAL_add_named_parameter(computation_policy_t, computation_policy, computation_p
 // List of named parameters used in the package 'Linear_cell_complex'
 CGAL_add_named_parameter(use_trimming_t, use_trimming, use_trimming)
 
+//List of named parameters used in Mesh_smoothing_3
+CGAL_add_named_parameter(max_number_of_evaluations_t, max_number_of_evaluations, max_number_of_evaluations)
