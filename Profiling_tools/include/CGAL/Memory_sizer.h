@@ -45,6 +45,7 @@ struct Memory_sizer
 #elif defined __linux__
 #  include <fstream>
 #  include <cstddef>
+#  include <iomanip>
 #  include <unistd.h>
 #elif defined __APPLE__
 #include <mach/task.h>
@@ -116,10 +117,11 @@ private:
     std::ifstream f("/proc/self/stat");
     CGAL_assertion(!f.bad());
 
-    f >> pid >> name >> state >> ppid >> pgrp >> session >> tty >> tpgid >> flags;
+    f >> pid >> std::setw(sizeof(name)) >> name >> state >> ppid >> pgrp >> session >> tty >> tpgid >> flags;
     f >> minflt >> cminflt >> majflt >> cmajflt >> utime >> stime >> cutime;
     f >> cstime >> counter >> priority >> timeout >> itrealvalue >> starttime;
     f >> vsize >> rss;
+    name[sizeof(name)-1] = '\0'; // ensure null-termination
 
     return virtual_size ? vsize : rss * getpagesize();
 
