@@ -130,10 +130,10 @@ bool read_polygon_soup(const std::string& fname,
  *
  * The format is detected from the filename extension (letter case is not important).
  *
+ * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type
  * \tparam PolygonRange a model of the concept `RandomAccessContainer`
  *                      whose `value_type` is a model of the concept `RandomAccessContainer`
  *                      whose `value_type` is `std::size_t`.
- * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param fname the name of the file.
