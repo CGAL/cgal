@@ -2481,26 +2481,34 @@ void Scene_surface_mesh_item::updateVertex(vertex_descriptor vh)
 
 void Scene_surface_mesh_item::updateIds(vertex_descriptor vh)
 {
-  if(d->ids_need_update &&
-     (d->faces_displayed || d->vertices_displayed || d->edges_displayed))
+  if(!d->ids_need_update)
+    return;
+
+  if(!(d->faces_displayed) && !(d->vertices_displayed) && !(d->edges_displayed))
   {
-    invalidate_aabb_tree();
-
-    if(d->all_displayed)
-    {
-      d->killIds();
-      d->all_displayed = true;
-      ::printVertexIds(*d->smesh_, d->textVItems);
-    }
-    else
-    {
-      d->fillTargetedIds(face(halfedge(vh, *d->smesh_), *d->smesh_),
-                         face_graph()->point(vh), CGAL::Three::Three::mainViewer(), CGAL::Three::Three::mainViewer()->offset());
-    }
     d->ids_need_update = false;
+    return;
   }
-}
 
+  invalidate_aabb_tree();
+
+  if(d->all_displayed)
+  {
+    d->killIds();
+    printVertexIds();
+    printEdgeIds();
+    printFaceIds();
+  }
+  else
+  {
+    d->fillTargetedIds(face(halfedge(vh, *d->smesh_), *d->smesh_),
+                       face_graph()->point(vh),
+                       CGAL::Three::Three::mainViewer(),
+                       CGAL::Three::Three::mainViewer()->offset());
+  }
+
+  d->ids_need_update = false;
+}
 
 void Scene_surface_mesh_item::fill_flat_vertex_map()
 {
