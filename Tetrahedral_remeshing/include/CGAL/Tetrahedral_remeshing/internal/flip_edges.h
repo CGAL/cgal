@@ -1988,7 +1988,8 @@ void flip_edges(C3T3& c3t3,
                                                    vertices_subdomain_indices);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-   if(!debug::are_cell_orientations_valid(c3t3.triangulation()))
+   if(  !tr.may_have_badly_oriented_cells()
+     && !debug::are_cell_orientations_valid(c3t3.triangulation()))
       std::cerr << "ERROR in ORIENTATION" << std::endl;
 #endif
 
