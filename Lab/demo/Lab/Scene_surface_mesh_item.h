@@ -82,6 +82,7 @@ public:
   void computeItemColorVectorAutomatically(bool);
   bool isItemMulticolor();
   bool hasPatchIds();
+  std::size_t getNbIsolatedvertices() const;
   Vertex_selection_map vertex_selection_map();
   Face_selection_map face_selection_map();
 

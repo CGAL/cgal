@@ -27,6 +27,7 @@
 
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
+#include <CGAL/Polygon_mesh_processing/repair.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include "triangulate_primitive.h"
 
@@ -308,14 +309,6 @@ Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh* sm)
 {
   d = new Scene_surface_mesh_item_priv(sm, this);
   initialize_priv();
-
-  std::size_t isolated_v = 0;
-  for(vertex_descriptor v : vertices(*sm))
-  {
-    if(sm->is_isolated(v))
-      ++isolated_v;
-  }
-  setNbIsolatedvertices(isolated_v);
 }
 
 Scene_surface_mesh_item::Scene_surface_mesh_item(const SMesh& sm)
@@ -1459,6 +1452,11 @@ bool Scene_surface_mesh_item::isItemMulticolor()
 bool Scene_surface_mesh_item::hasPatchIds()
 {
   return d->has_fpatch_id;
+}
+
+std::size_t Scene_surface_mesh_item::getNbIsolatedvertices() const
+{
+  return CGAL::Polygon_mesh_processing::internal::number_of_isolated_vertices(*d->smesh_);
 }
 
 bool Scene_surface_mesh_item::save(std::ostream& out) const
