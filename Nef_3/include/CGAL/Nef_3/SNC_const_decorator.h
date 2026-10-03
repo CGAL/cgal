@@ -273,7 +273,7 @@ public:
 
     SFace_handle sf;
     if(!CGAL::assign(sf,o)) {
-      CGAL_error_msg( "it is not possible to decide which one is a visible facet (if any)");
+      CGAL_NEF_TRACEN( "it is not possible to decide which one is a visible facet (if any)");
       return Halffacet_handle();
     }
 
