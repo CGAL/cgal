@@ -204,6 +204,7 @@ public Q_SLOTS:
   void showFaces(bool);
   void showPrimitives(bool);
   void zoomToId();
+  void resetIndexZoom();
 protected:
   friend struct Scene_surface_mesh_item_priv;
   Scene_surface_mesh_item_priv* d;

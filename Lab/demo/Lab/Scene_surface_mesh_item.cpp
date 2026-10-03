@@ -2017,6 +2017,11 @@ QMenu* Scene_surface_mesh_item::contextMenu()
     connect(actionZoomToId, &QAction::triggered,
             this, &Scene_surface_mesh_item::zoomToId);
 
+    QAction* actionResetIndexZoom = menu->addAction(tr("Reset Index Zoom"));
+    actionResetIndexZoom->setObjectName("actionResetIndexZoom");
+    connect(actionResetIndexZoom, &QAction::triggered,
+            this, &Scene_surface_mesh_item::resetIndexZoom);
+
     setProperty("menu_changed", true);
     menu->setProperty(prop_name, true);
   }
@@ -2303,6 +2308,20 @@ void Scene_surface_mesh_item::zoomToId()
     break;
   }
 }
+
+void Scene_surface_mesh_item::resetIndexZoom()
+{
+  d->killIds();
+  d->all_displayed = false;
+
+  if(d->vertices_displayed)
+    printVertexIds();
+  if(d->edges_displayed)
+    printEdgeIds();
+  if(d->faces_displayed)
+    printFaceIds();
+}
+
 bool Scene_surface_mesh_item::shouldDisplayIds(CGAL::Three::Scene_item *current_item) const
 {
   return this == current_item;
