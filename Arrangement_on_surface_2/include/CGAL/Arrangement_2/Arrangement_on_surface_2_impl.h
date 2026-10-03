@@ -43,6 +43,7 @@ namespace CGAL {
 //
 template <typename GeomTraits, typename TopTraits>
 Arrangement_on_surface_2<GeomTraits, TopTraits>::Arrangement_on_surface_2() :
+  m_geom_traits(std::make_shared<Traits_adaptor_2>()),
   m_topol_traits()
 {
   typedef has_Left_side_category<GeomTraits> Cond_left;
@@ -76,10 +77,6 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::Arrangement_on_surface_2() :
 
   // Initialize the DCEL structure to represent an empty arrangement.
   m_topol_traits.init_dcel();
-
-  // Allocate the traits.
-  m_geom_traits = new Traits_adaptor_2;
-  m_own_traits = true;
 }
 
 //-----------------------------------------------------------------------------
@@ -88,17 +85,18 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::Arrangement_on_surface_2() :
 template <typename GeomTraits, typename TopTraits>
 Arrangement_on_surface_2<GeomTraits, TopTraits>::
 Arrangement_on_surface_2(const Self& arr) :
-  m_geom_traits(nullptr),
-  m_own_traits(false)
+  m_geom_traits(arr.m_geom_traits),
+  m_topol_traits()
 { assign(arr); }
 
 //-----------------------------------------------------------------------------
-// Constructor given a traits object.
+// Constructor given a shared traits object.
 //
 template <typename GeomTraits, typename TopTraits>
 Arrangement_on_surface_2<GeomTraits, TopTraits>::
-Arrangement_on_surface_2(const Geometry_traits_2* geom_traits) :
-  m_topol_traits(geom_traits)
+Arrangement_on_surface_2(Shared_geometry_traits geom_traits) :
+  m_geom_traits(_adapt(geom_traits)),
+  m_topol_traits(geom_traits.get())
 {
   typedef has_Left_side_category<GeomTraits> Cond_left;
   typedef internal::Validate_left_side_category<GeomTraits, Cond_left::value>
@@ -131,11 +129,16 @@ Arrangement_on_surface_2(const Geometry_traits_2* geom_traits) :
 
   // Initialize the DCEL structure to represent an empty arrangement.
   m_topol_traits.init_dcel();
-
-  // Set the traits.
-  m_geom_traits = static_cast<const Traits_adaptor_2*>(geom_traits);
-  m_own_traits = false;
 }
+
+//-----------------------------------------------------------------------------
+// Constructor given a traits object owned by the caller.
+//
+template <typename GeomTraits, typename TopTraits>
+Arrangement_on_surface_2<GeomTraits, TopTraits>::
+Arrangement_on_surface_2(const Geometry_traits_2* geom_traits) :
+  Arrangement_on_surface_2(_non_owning(geom_traits))
+{}
 
 //-----------------------------------------------------------------------------
 // Assignment operator.
@@ -192,14 +195,8 @@ void Arrangement_on_surface_2<GeomTraits, TopTraits>::assign(const Self& arr)
     }
   }
 
-  // Take care of the traits object.
-  if (m_own_traits && (m_geom_traits != nullptr)) {
-    delete m_geom_traits;
-    m_geom_traits = nullptr;
-  }
-
-  m_geom_traits = (arr.m_own_traits) ? new Traits_adaptor_2 : arr.m_geom_traits;
-  m_own_traits = arr.m_own_traits;
+  // Share the traits object of the source arrangement.
+  m_geom_traits = arr.m_geom_traits;
 
   // Notify the observers that the assignment has been performed.
   _notify_after_assign();
@@ -222,12 +219,6 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::~Arrangement_on_surface_2()
   for (eit = _dcel().edges_begin(); eit != _dcel().edges_end(); ++eit)
     if (! eit->has_null_curve())
       _delete_curve(eit->curve());
-
-  // Free the traits object, if necessary.
-  if (m_own_traits && (m_geom_traits != nullptr)) {
-    delete m_geom_traits;
-    m_geom_traits = nullptr;
-  }
 
   // Detach all observers still attached to the arrangement.
   Observers_iterator  iter = m_observers.begin();

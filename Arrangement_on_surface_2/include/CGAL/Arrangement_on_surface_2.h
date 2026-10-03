@@ -32,6 +32,7 @@
 #include <map>
 #include <vector>
 #include <algorithm>
+#include <memory>
 #include <boost/mpl/assert.hpp>
 
 #include <CGAL/Arr_tags.h>
@@ -70,6 +71,9 @@ public:
 
   // first define adaptor ...
   typedef Arr_traits_basic_adaptor_2<Geometry_traits_2>   Traits_adaptor_2;
+
+  /*! a shared pointer to the (immutable) geometry traits. */
+  typedef std::shared_ptr<const Geometry_traits_2>        Shared_geometry_traits;
 
   // .. as it completes (potentially) missing side tags
   typedef typename Traits_adaptor_2::Left_side_category   Left_side_category;
@@ -893,14 +897,17 @@ protected:
   typedef typename Observers_container::reverse_iterator
                                                   Observers_rev_iterator;
 
+  typedef std::shared_ptr<const Traits_adaptor_2> Shared_traits_adaptor;
+
   // Data members:
+  // m_geom_traits must be declared before m_topol_traits. Members are
+  // destroyed in reverse order of declaration, so the geometry traits outlive
+  // the topology traits, which keep a raw (non-owning) pointer to them.
+  Shared_traits_adaptor   m_geom_traits;   // the geometry-traits adaptor.
   Topology_traits         m_topol_traits;  // the topology traits.
   Points_alloc            m_points_alloc;  // allocator for the points.
   Curves_alloc            m_curves_alloc;  // allocator for the curves.
   Observers_container     m_observers;     // pointers to existing observers.
-  const Traits_adaptor_2* m_geom_traits;   // the geometry-traits adaptor.
-  bool                    m_own_traits;    // indicates whether the geometry
-                                           // traits should be freed.
 
   bool                    m_sweep_mode = false;
                                            // sweep mode efficiently
@@ -909,6 +916,22 @@ protected:
                                            // and memory overhead that
                                            // should be cleaned
                                            // afterwards
+
+private:
+  /*! obtains a pointer to the adaptor view of the given geometry traits that
+   * shares ownership with it (using the aliasing constructor).
+   */
+  static Shared_traits_adaptor
+  _adapt(const Shared_geometry_traits& geom_traits) {
+    CGAL_precondition(geom_traits != nullptr);
+    const auto* adaptor = static_cast<const Traits_adaptor_2*>(geom_traits.get());
+    return Shared_traits_adaptor(geom_traits, adaptor);
+  }
+
+  /*! wraps a caller-owned geometry traits in a non-owning shared pointer. */
+  static Shared_geometry_traits
+  _non_owning(const Geometry_traits_2* geom_traits)
+  { return Shared_geometry_traits(geom_traits, [](const Geometry_traits_2*) {}); }
 
 public:
   /// \name Constructors.
@@ -920,7 +943,15 @@ public:
   /*! constructs copy. */
   Arrangement_on_surface_2(const Self & arr);
 
-  /*! constructs given a traits object. */
+  /*! constructs given a shared geometry-traits object. The arrangement
+   * (co-)owns the traits.
+   */
+  explicit Arrangement_on_surface_2(Shared_geometry_traits geom_traits);
+
+  /*! constructs given a traits object. The caller retains ownership of the
+   * traits and must keep it alive as long as the arrangement (or any copy of
+   * it) exists.
+   */
   Arrangement_on_surface_2(const Geometry_traits_2* geom_traits);
   //@}
 
@@ -952,10 +983,17 @@ public:
 
   /*! accesses the geometry-traits object (const version). */
   inline const Traits_adaptor_2* traits_adaptor() const
-  { return (m_geom_traits); }
+  { return (m_geom_traits.get()); }
 
   /*! accesses the geometry-traits object (const version). */
   inline const Geometry_traits_2* geometry_traits() const
+  { return (m_geom_traits.get()); }
+
+  /*! obtains a shared pointer to the geometry-traits object. If the
+   * arrangement was constructed from a raw pointer, the returned pointer is
+   * non-owning.
+   */
+  inline Shared_geometry_traits shared_geometry_traits() const
   { return (m_geom_traits); }
 
   /*! accesses the topology-traits object (non-const version). */

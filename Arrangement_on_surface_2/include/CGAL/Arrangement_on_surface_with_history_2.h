@@ -30,6 +30,7 @@
 #include <CGAL/Arrangement_2/Arr_with_history_accessor.h>
 
 #include <set>
+#include <memory>
 
 namespace CGAL {
 
@@ -65,6 +66,9 @@ public:
   typedef GeomTraits_                                     Geometry_traits_2;
   typedef TopTraits_                                      Base_topology_traits;
 
+  /*! a shared pointer to the (immutable) geometry traits. */
+  typedef std::shared_ptr<const Geometry_traits_2>        Shared_geometry_traits;
+
 private:
   typedef Arrangement_on_surface_with_history_2<Geometry_traits_2,
                                                 Base_topology_traits>  Self;
@@ -99,6 +103,18 @@ protected:
   // arrangement, templated by the data-traits class and the rebound DCEL.
   typedef Arrangement_on_surface_2<Data_traits_2,
                                    Data_top_traits>    Base_arr_2;
+
+  // A shared pointer to the data traits, as stored by the base arrangement.
+  typedef typename Base_arr_2::Shared_geometry_traits  Shared_data_traits;
+
+  /*! obtains a pointer to the data-traits view of the given geometry traits
+   * that shares ownership with it (using the aliasing constructor). The
+   * downcast is the same one performed by the raw-pointer constructor.
+   */
+  static Shared_data_traits _data_traits(const Shared_geometry_traits& tr) {
+    CGAL_precondition(tr != nullptr);
+    return Shared_data_traits(tr, static_cast<const Data_traits_2*>(tr.get()));
+  }
 
 public:
   typedef Arr_traits_adaptor_2<Data_traits_2>          Traits_adaptor_2;
@@ -360,7 +376,16 @@ public:
   /*! constructs copy. */
   Arrangement_on_surface_with_history_2 (const Self& arr);
 
-  /*! constructs from a traits object. */
+  /*! constructs given a shared geometry-traits object. The arrangement
+   * (co-)owns the traits.
+   */
+  explicit
+  Arrangement_on_surface_with_history_2 (Shared_geometry_traits tr);
+
+  /*! constructs from a traits object. The caller retains ownership of the
+   * traits and must keep it alive as long as the arrangement (or any copy of
+   * it) exists.
+   */
   Arrangement_on_surface_with_history_2 (const Geometry_traits_2 *tr);
   //@}
 
@@ -387,7 +412,16 @@ public:
   /*! accesses the geometry-traits object (const version). */
   inline const Geometry_traits_2 * geometry_traits () const
   {
-    return (this->m_geom_traits);
+    return (this->m_geom_traits.get());
+  }
+
+  /*! obtains a shared pointer to the geometry-traits object. If the
+   * arrangement was constructed from a raw pointer, the returned pointer is
+   * non-owning.
+   */
+  inline Shared_geometry_traits shared_geometry_traits () const
+  {
+    return (Base_arr_2::shared_geometry_traits());
   }
 
   /*! accesses the topology-traits object (non-const version). */

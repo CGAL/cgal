@@ -42,14 +42,25 @@ Arrangement_on_surface_with_history_2 () :
 template<class GeomTr, class TopTr>
 Arrangement_on_surface_with_history_2<GeomTr,TopTr>::
 Arrangement_on_surface_with_history_2 (const Self& arr) :
-  Base_arr_2 ()
+  Base_arr_2 (arr.Base_arr_2::shared_geometry_traits())
 {
   assign (arr);
   m_observer.attach (*this);
 }
 
 //-----------------------------------------------------------------------------
-// Constructor given a traits object.
+// Constructor given a shared traits object.
+//
+template<class GeomTr, class TopTr>
+Arrangement_on_surface_with_history_2<GeomTr,TopTr>::
+Arrangement_on_surface_with_history_2 (Shared_geometry_traits tr) :
+  Base_arr_2 (_data_traits(tr))
+{
+  m_observer.attach (*this);
+}
+
+//-----------------------------------------------------------------------------
+// Constructor given a traits object owned by the caller.
 //
 template<class GeomTr, class TopTr>
 Arrangement_on_surface_with_history_2<GeomTr,TopTr>::

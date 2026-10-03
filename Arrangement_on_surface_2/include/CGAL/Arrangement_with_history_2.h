@@ -113,6 +113,9 @@ public:
   typedef typename Base::Originating_curve_iterator Originating_curve_iterator;
   typedef typename Base::Induced_edge_iterator      Induced_edge_iterator;
 
+  /*! a shared pointer to the (immutable) geometry traits. */
+  typedef typename Base::Shared_geometry_traits     Shared_geometry_traits;
+
   // These types are defined for backward compatibility:
   typedef Geometry_traits_2                        Traits_2;
   typedef typename Base::Inner_ccb_iterator        Hole_iterator;
@@ -138,7 +141,14 @@ public:
     Base (base)
   {}
 
-  /*! constructs from a traits object. */
+  /*! constructs given a shared traits object. The arrangement (co-)owns
+   * the traits.
+   */
+  explicit Arrangement_with_history_2 (Shared_geometry_traits tr) :
+    Base (std::move(tr))
+  {}
+
+  /*! constructs from a traits object (owned by the caller). */
   Arrangement_with_history_2 (const Traits_2 * tr) :
     Base (tr)
   {}
