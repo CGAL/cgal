@@ -1869,8 +1869,9 @@ void Scene_polyhedron_selection_item::invalidateOpenGLBuffers() {
 
 void Scene_polyhedron_selection_item::add_to_selection()
 {
-  for(fg_edge_descriptor ed : temp_selected_edges)
+  while (!temp_selected_edges.empty())
   {
+    fg_edge_descriptor ed = *temp_selected_edges.begin();
     selected_edges.insert(ed);
     temp_selected_edges.erase(ed);
   }
