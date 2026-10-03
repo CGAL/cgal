@@ -257,21 +257,6 @@ void compute_displayed_ids(Mesh& mesh,
     }
   }
 
-  QVector3D point(float(get(ppmap, displayed_vertices[0]).x() + offset.x),
-                  float(get(ppmap, displayed_vertices[0]).y() + offset.y),
-                  float(get(ppmap, displayed_vertices[0]).z() + offset.z));
-
-  // test if we want to erase or not
-  for(TextItem* text_item : *targeted_ids)
-  {
-    if(text_item->position() == point)
-    {
-      // hide and stop
-      deleteIds(viewer, vitems, eitems, fitems, targeted_ids);
-      return;
-    }
-  }
-
   deleteIds(viewer, vitems, eitems, fitems, targeted_ids);
 
   // test the midpoint of edges of the closest face
@@ -408,6 +393,7 @@ void compute_displayed_ids(Mesh& mesh,
                                        float(pos.z()),
                                        QString("%1").arg(get(hidmap, h)/2), true, font, Qt::green);
     eitems->append(text_item);
+    targeted_ids->push_back(text_item);
   }
 
   for(face_descriptor f : displayed_faces)
@@ -430,6 +416,7 @@ void compute_displayed_ids(Mesh& mesh,
                                        float(pos.z()),
                                        QString("%1").arg(get(fidmap,f)), true, font, Qt::blue);
     fitems->append(text_item);
+    targeted_ids->push_back(text_item);
   }
 }
 
