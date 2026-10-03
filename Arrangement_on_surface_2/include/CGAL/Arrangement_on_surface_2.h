@@ -931,7 +931,7 @@ private:
   /*! wraps a caller-owned geometry traits in a non-owning shared pointer. */
   static Shared_geometry_traits
   _non_owning(const Geometry_traits_2* geom_traits)
-  { return Shared_geometry_traits(geom_traits, [](const Geometry_traits_2*) {}); }
+  { return Shared_geometry_traits(std::shared_ptr<void>(), geom_traits); }
 
 public:
   /// \name Constructors.
