@@ -2304,7 +2304,25 @@ void Scene_surface_mesh_item::zoomToId()
                          "ERROR", tr("No face with id %1").arg(id));
     return;
   default: //case 0
-    d->fillTargetedIds(selected_fh, p, viewer, viewer->offset());
+    if(selected_fh != boost::graph_traits<SMesh>::null_face())
+    {
+      d->fillTargetedIds(selected_fh, p, viewer, viewer->offset());
+    }
+    else
+    {
+      // Isolated vertex
+      d->killIds();
+
+      QFont font;
+      font.setBold(true);
+      font.setPointSize(POINT_SIZE);
+      TextItem* text_item = new TextItem(float(p.x()), float(p.y()), float(p.z()),
+                                         id, true, font, Qt::red);
+
+      d->textVItems->append(text_item);
+      if(d->vertices_displayed)
+        showVertices(true);
+    }
     break;
   }
 }
