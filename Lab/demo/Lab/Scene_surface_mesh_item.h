@@ -104,8 +104,6 @@ public:
 
   void compute_bbox()const override;
   bool save(std::ostream& out) const;
-  bool save_obj(std::ostream& out) const;
-  bool load_obj(std::istream& in);
 
   //statistics
   enum STATS

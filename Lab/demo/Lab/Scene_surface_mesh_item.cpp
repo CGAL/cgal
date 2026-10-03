@@ -1507,30 +1507,6 @@ bool Scene_surface_mesh_item::save(std::ostream& out) const
   return (bool) out;
 }
 
-bool Scene_surface_mesh_item::load_obj(std::istream& in)
-{
-  bool failed = !CGAL::IO::read_OBJ(in, *(d->smesh_), CGAL::parameters::verbose(true));
-
-  if((!failed) && !isEmpty())
-  {
-    invalidate(ALL);
-    return true;
-  }
-
-  return false;
-}
-
-bool Scene_surface_mesh_item::save_obj(std::ostream& out) const
-{
-  std::optional<SMesh::template Property_map<SMesh::Vertex_index, EPICK::Vector_3>> vnormals
-    = d->smesh_->template property_map<SMesh::Vertex_index, EPICK::Vector_3>("v:normal");
-
-  if(vnormals.has_value())
-    return CGAL::IO::write_OBJ(out, *(d->smesh_), CGAL::parameters::vertex_normal_map(vnormals.value()));
-  else
-    return CGAL::IO::write_OBJ(out, *(d->smesh_));
-}
-
 void Scene_surface_mesh_item_priv::invalidate_stats()
 {
   number_of_degenerated_faces = static_cast<unsigned int>(-1);
