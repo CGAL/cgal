@@ -21,6 +21,7 @@
 #include <CGAL/config.h>
 #include <typeinfo>
 #include <cstddef>
+#include <atomic>
 
 namespace CGAL {
 
@@ -30,10 +31,39 @@ class Ref_counted_virtual
     Ref_counted_virtual() : count(1) {}
     Ref_counted_virtual(const Ref_counted_virtual&) : count(1) {}
 
-    void  add_reference() { ++count; }
-    void  remove_reference() { --count; }
-    bool  is_referenced() const { return (count != 0); }
-    bool  is_shared() const { return (count > 1); }
+    void add_reference()
+    {
+      if (is_currently_single_threaded())
+        count.store(count.load(std::memory_order_relaxed) + 1, std::memory_order_relaxed);
+      else
+        count.fetch_add(1, std::memory_order_relaxed);
+    }
+
+    bool remove_reference()
+    {
+      if (is_currently_single_threaded())
+      {
+        const unsigned int c = count.load(std::memory_order_relaxed);
+        count.store(c - 1, std::memory_order_relaxed);
+        return c == 1;
+      }
+
+      // TSAN does not support fences :-(
+#if !defined __SANITIZE_THREAD__ && !__has_feature(thread_sanitizer)
+      if (count.load(std::memory_order_relaxed) == 1
+          || count.fetch_sub(1, std::memory_order_release) == 1)
+      {
+        std::atomic_thread_fence(std::memory_order_acquire);
+        return true;
+      }
+      return false;
+#else
+      return count.fetch_sub(1, std::memory_order_acq_rel) == 1;
+#endif
+    }
+
+    bool is_referenced() const { return count.load(std::memory_order_relaxed) != 0; }
+    bool is_shared() const { return count.load(std::memory_order_relaxed) > 1; }
 
     virtual const std::type_info & type() const
     { return typeid(void); }
@@ -44,7 +74,7 @@ class Ref_counted_virtual
     virtual ~Ref_counted_virtual() {}
 
   protected:
-    unsigned int count;
+    std::atomic_uint count;
 };
 
 
@@ -52,8 +82,7 @@ template <class RefCounted>
 // RefCounted must provide
 // add_reference()
 // remove_reference()
-// bool is_referenced() const
-// bool is_shared() const
+// bool remove_reference() (returns true if this was the last reference)
 // and initialize count to 1 in default and copy constructor
 class Handle_for_virtual
 {
@@ -80,8 +109,7 @@ class Handle_for_virtual
     ~Handle_for_virtual()
     {
       if(!ptr) return;
-      ptr->remove_reference();
-      if ( !ptr->is_referenced() )
+      if (ptr->remove_reference())
           delete ptr;
     }
 
@@ -89,8 +117,7 @@ class Handle_for_virtual
     operator=( const Handle_for_virtual& h)
     {
       h.ptr->add_reference();
-      ptr->remove_reference();
-      if ( !ptr->is_referenced() )
+      if (ptr->remove_reference())
           delete ptr;
       ptr = h.ptr;
       return *this;
