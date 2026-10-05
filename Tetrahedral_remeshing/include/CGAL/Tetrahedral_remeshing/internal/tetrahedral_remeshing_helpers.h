@@ -25,6 +25,7 @@
 #include <CGAL/Vector_3.h>
 #include <CGAL/utility.h>
 #include <CGAL/SMDS_3/internal/indices_management.h>
+#include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 
 #include <CGAL/IO/File_binary_mesh_3.h>
 

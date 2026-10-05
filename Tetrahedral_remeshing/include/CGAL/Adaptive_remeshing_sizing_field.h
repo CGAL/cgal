@@ -33,7 +33,6 @@
 #include <CGAL/Tetrahedral_remeshing/internal/property_maps.h>
 
 #include <vector>
-#include <array>
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
 #include <CGAL/property_map.h>
