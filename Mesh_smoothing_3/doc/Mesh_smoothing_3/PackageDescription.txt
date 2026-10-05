@@ -2,7 +2,7 @@
 /// \defgroup pkgMeshSmoothing3Concepts Concepts
 /// \ingroup PkgMeshSmoothing3Ref
 
-/// \defgroup pkgMeshSmoothing3Projection Projection classes
+/// \defgroup pkgMeshSmoothing3Projection Projection Classes
 /// \ingroup PkgMeshSmoothing3Ref
 
 /// \defgroup pkgMeshSmoothing3Functions Functions
@@ -37,7 +37,7 @@
 - `TangentSpace`
 - `ConstructTangentSpace`
 
-\cgalCRPSection{Projection classes}
+\cgalCRPSection{Projection Classes}
 - `CGAL::Mesh_smoothing_3::C3t3_mesh_projector`
 - `CGAL::Mesh_smoothing_3::C3t3_no_projection`
 - `CGAL::Mesh_smoothing_3::Polyhedral_mesh_domain_projector`

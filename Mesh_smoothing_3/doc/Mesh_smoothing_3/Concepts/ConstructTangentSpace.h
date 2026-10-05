@@ -3,7 +3,7 @@
 \cgalConcept
 
 The concept `ConstructTangentSpace` describes the requirements of the class used
-to create local tangent space to project points onto surface patches and feature curves.
+to create a local tangent space to project points onto surface patches and feature curves.
 
 \cgalHasModelsBegin
 \cgalHasModels{CGAL::Mesh_smoothing_3::C3t3_mesh_projector}
@@ -60,16 +60,16 @@ using Tangent_space = unspecified_type;
 /// @{
 
 /*!
-returns a plane tangent to the patch to which its facet should align too.
+returns a plane tangent to the patch to which its facet should align to.
 The range of points contains the current location of the facet vertices.
 
-\warning the function must be thread safe for Concurrent execution
+\warning the function must be thread safe for concurrent execution
 */
 Tangent_space patch_face_projection_plane(Patch_face patch_face, std::vector<Point_3> face_points) const;
 
 
 /*!
-returns a line tangent to the curve to which its edge should align too.
+returns a line tangent to the curve to which its edge should align to.
 The array contains the two current locations of its vertices.
 */
 Tangent_space curve_edge_projection_line(Curve_edge curve_edge, std::array<Point_3,2> edge_points) const;
