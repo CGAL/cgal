@@ -280,6 +280,8 @@ private:
   typedef std::vector<Vertex_handle>                  Far_vertices_vec;
 
 public:
+  using Store_surface_patch_info_in_cell = Boolean_tag<store_surface_patch_info_in_cell>;
+
   enum Face_status {
     NOT_IN_COMPLEX = 0,
     ISOLATED = 1, // - An ISOLATED edge is a marked edge,

@@ -15,10 +15,12 @@
 
 #include <CGAL/license/Tetrahedral_remeshing.h>
 
+#include <CGAL/Has_member.h>
 #include <CGAL/Triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 
 #include <CGAL/Uniform_sizing_field.h>
+#include <CGAL/Tetrahedral_remeshing/Remeshing_triangulation_3.h>
 #include <CGAL/Tetrahedral_remeshing/internal/property_maps.h>
 
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_adaptive_remeshing_impl.h>
@@ -346,8 +348,12 @@ template<typename Tr,
          typename CornerIndex,
          typename CurveIndex,
          typename NamedParameters = parameters::Default_named_parameters>
+#ifdef DOXYGEN_RUNNING
 CGAL::Triangulation_3<typename Tr::Geom_traits,
                       typename Tr::Triangulation_data_structure>
+#else
+auto
+#endif
 convert_to_triangulation_3(
   CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex> c3t3,
   const NamedParameters& np = parameters::default_values())
@@ -355,6 +361,7 @@ convert_to_triangulation_3(
   using parameters::get_parameter;
   using parameters::choose_parameter;
 
+  using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex>;
   using GT   = typename Tr::Geom_traits;
   using TDS  = typename Tr::Triangulation_data_structure;
   using Dummy_sizing = CGAL::Uniform_sizing_field<GT>;
@@ -385,10 +392,40 @@ convert_to_triangulation_3(
       put(vcmap, v, true);
     }
   }
-
-  CGAL::Triangulation_3<GT, TDS> tr;
-  tr.swap(c3t3.triangulation());
-  return tr;
+  if constexpr (false == C3t3::Store_surface_patch_info_in_cell::value)
+  {
+    using Target_triangulation = CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<GT>;
+    Target_triangulation tr;
+    const auto& source_tr = c3t3.triangulation();
+    auto infinite_vertex = tr.tds().copy_tds(
+        source_tr.tds(), source_tr.infinite_vertex(),
+        [&](const auto& source_vertex) {
+          typename Target_triangulation::Vertex vertex;
+          vertex.set_point(source_vertex.point());
+          return vertex;
+        },
+        [&](const auto& source_cell) {
+          typename Target_triangulation::Cell cell;
+          cell.set_surface_patch_index(source_cell.surface_patch_index());
+          return cell;
+        });
+    tr.set_infinite_vertex(infinite_vertex);
+    auto [src_cell_it, src_cell_end] = source_tr.finite_cell_handles();
+    auto [tgt_cell_it, tgt_cell_end] = tr.finite_cell_handles();
+    for (; src_cell_it != src_cell_end; ++src_cell_it, ++tgt_cell_it)
+    {
+      auto subdomain_index = c3t3.subdomain_index(*src_cell_it);
+      (*tgt_cell_it)->set_subdomain_index(subdomain_index);
+      for(int i = 0; i < 4; ++i) {
+        (*tgt_cell_it)->set_surface_patch_index(i, c3t3.surface_patch_index(*src_cell_it, i));
+      }
+    }
+    return tr;
+  } else {
+    CGAL::Triangulation_3<GT, TDS> tr;
+    tr.swap(c3t3.triangulation());
+    return tr;
+  }
 }
 
 ///////////////////////////////////////////////////

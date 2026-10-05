@@ -90,8 +90,13 @@ int main(int argc, char* argv[])
   Constraints_set constraints;
   Constraints_pmap constraints_pmap(constraints);
 
+  const auto src_tr = c3t3.triangulation();
+  const auto src_number_of_vertices = src_tr.number_of_vertices();
+  const auto src_number_of_cells = src_tr.number_of_cells();
   Triangulation_3 tr = CGAL::convert_to_triangulation_3(std::move(c3t3),
       p::edge_is_constrained_map(constraints_pmap));
+  assert(tr.number_of_vertices() == src_number_of_vertices);
+  assert(tr.number_of_cells() == src_number_of_cells);
 
   //note we use the move semantic, with std::move(c3t3),
   //  to avoid a copy of the triangulation by the function
