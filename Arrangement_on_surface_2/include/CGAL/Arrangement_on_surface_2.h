@@ -26,7 +26,7 @@
 #include <CGAL/disable_warnings.h>
 
 /*! \file
- * The header file for the Arrangement_on_surface_2<Traits, TopolTraits> class.
+ * The header file for the Arrangement_on_surface_2<GeomTraits, TopolTraits> class.
  */
 
 #include <iterator>
@@ -269,7 +269,7 @@ public:
     Edge_iterator(const Base& base) : Base(base) {}
 
     // Casting to a halfedge iterator.
-    operator Halfedge_iterator() const { return (Halfedge_iterator(DHalfedge_iter(this->current_iterator()))); }
+    operator Halfedge_iterator() const { return Halfedge_iterator(DHalfedge_iter(this->current_iterator())); }
 
     operator Halfedge_const_iterator() const
     { return Halfedge_const_iterator(DHalfedge_const_iter(this->current_iterator())); }
