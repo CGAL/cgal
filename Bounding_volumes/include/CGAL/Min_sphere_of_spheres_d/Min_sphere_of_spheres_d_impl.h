@@ -248,24 +248,23 @@ namespace  Bounding_volumes {
   bool Min_sphere_of_spheres_d<Traits>::
     is_valid(const Tag_true /* is_exact */) {
     using namespace Min_sphere_of_spheres_d_impl;
-    using std::endl;
 
     // check size of support set:
     if (e > static_cast<int>(l.size()) || e > (D+1)) {
-      std::cerr << "BUG: Min_sphere_of_spheres_d: support set too large." << endl
-           << "Refer to the bug-reporting instructions at https://www.cgal.org/bug_report.html" << endl;
+      std::cerr << "BUG: Min_sphere_of_spheres_d: support set too large." << std::endl
+           << "Refer to the bug-reporting instructions at https://www.cgal.org/bug_report.html" << std::endl;
       return false;
     } else if (l.size() > 0 && e<=0) {
-      std::cerr << "BUG: Min_sphere_of_spheres_d: support set too small." << endl
-           << "Refer to the bug-reporting instructions at https://www.cgal.org/bug_report.html" << endl;
+      std::cerr << "BUG: Min_sphere_of_spheres_d: support set too small." << std::endl
+           << "Refer to the bug-reporting instructions at https://www.cgal.org/bug_report.html" << std::endl;
       return false;
     }
 
     // check case of no balls:
     if (l.size() <= 0) {
       if (!is_empty()) {
-        std::cerr << "BUG: Min_sphere_of_spheres_d: miniball of {} non-empty." << endl
-             << "Refer to the bug-reporting instructions at https://www.cgal.org/bug_report.html" << endl;
+        std::cerr << "BUG: Min_sphere_of_spheres_d: miniball of {} non-empty." << std::endl
+             << "Refer to the bug-reporting instructions at https://www.cgal.org/bug_report.html" << std::endl;
         return false;
       } else
         return true;
@@ -275,8 +274,8 @@ namespace  Bounding_volumes {
     for (unsigned int i=0; i<l.size(); ++i)
       if (!ss.contains(t.center_cartesian_begin(*l[i]),
                        t.radius(*l[i]),Tol<FT>::result(),Is_exact())) {
-        std::cerr << "Min_sphere_of_spheres_d: miniball not enclosing." << endl
-             << "Please contact the author <kf@iaeth.ch>." << endl;
+        std::cerr << "Min_sphere_of_spheres_d: miniball not enclosing." << std::endl
+             << "Please contact the author <kf@iaeth.ch>." << std::endl;
         return false;
       }
 
@@ -303,8 +302,8 @@ namespace  Bounding_volumes {
         isSupporting = false;
     }
     if (!isSupporting) {
-      std::cerr << "BUG: Min_sphere_of_spheres_d: support not on boundary." << endl
-           << "Refer to the bug-reporting instructions at https://www.cgal.org/bug_report.html" << endl;
+      std::cerr << "BUG: Min_sphere_of_spheres_d: support not on boundary." << std::endl
+           << "Refer to the bug-reporting instructions at https://www.cgal.org/bug_report.html" << std::endl;
       return false;
     }
 
@@ -329,8 +328,8 @@ namespace  Bounding_volumes {
         while (i<D+1 && m[j][i]==FT(0))
           ++i;
         if (i >= D+1) {
-          std::cerr << "BUG: Min_sphere_of_spheres_d: supp. centers aff. dep." << endl
-               << "Refer to the bug-reporting instructions at https://www.cgal.org/bug_report.html" << endl;
+          std::cerr << "BUG: Min_sphere_of_spheres_d: supp. centers aff. dep." << std::endl
+               << "Refer to the bug-reporting instructions at https://www.cgal.org/bug_report.html" << std::endl;
           return false;
         }
 
@@ -362,9 +361,9 @@ namespace  Bounding_volumes {
     // check solvability:
     for (int i=e; i<D+1; ++i)
       if (!is_zero(rhs[i],ss.disc())) {
-        std::cerr << "BUG: Min_sphere_of_spheres_d: center of the miniball" << endl
-             << "     not in the span of the support centers." << endl
-             << "Refer to the bug-reporting instructions at https://www.cgal.org/bug_report.html" << endl;
+        std::cerr << "BUG: Min_sphere_of_spheres_d: center of the miniball" << std::endl
+             << "     not in the span of the support centers." << std::endl
+             << "Refer to the bug-reporting instructions at https://www.cgal.org/bug_report.html" << std::endl;
         return false;
       }
 
@@ -380,9 +379,9 @@ namespace  Bounding_volumes {
     // check coefficients:
     for (int i=0; i<e; ++i)
       if (is_neg_or_zero(lambda[i],ss.disc())) {
-        std::cerr << "BUG: Min_sphere_of_spheres_d: center of miniball not in" << endl
-             << "     interior of convex hull of support centers." << endl
-             << "Refer to the bug-reporting instructions at https://www.cgal.org/bug_report.html" << endl;
+        std::cerr << "BUG: Min_sphere_of_spheres_d: center of miniball not in" << std::endl
+             << "     interior of convex hull of support centers." << std::endl
+             << "Refer to the bug-reporting instructions at https://www.cgal.org/bug_report.html" << std::endl;
         return false;
       }
 
