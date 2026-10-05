@@ -35,7 +35,6 @@ void draw(const Conforming_constrained_Delaunay_triangulation_3<Traits, Tr>& ccd
 {
   using Tr_ = CGAL::cpp20::remove_cvref_t<decltype(ccdt.triangulation())>;
   using Vertex_handle = typename Tr_::Vertex_handle;
-  using Cell_handle = typename Tr_::Cell_handle;
   using Edge_descriptor = typename Tr_::Finite_edges_iterator;
   using Facet_descriptor = typename Tr_::Finite_facets_iterator;
 
