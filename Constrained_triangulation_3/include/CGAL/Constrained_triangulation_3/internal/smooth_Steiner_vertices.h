@@ -12,6 +12,8 @@
 #ifndef CGAL_INTERNAL_CDT_3_SMOOTH_STEINER_VERTICES_H
 #define CGAL_INTERNAL_CDT_3_SMOOTH_STEINER_VERTICES_H
 
+#include <CGAL/license/Constrained_triangulation_3.h>
+
 #include <CGAL/tetrahedral_remeshing.h>
 
 #include <CGAL/property_map.h>
