@@ -32,7 +32,7 @@ namespace CGAL {
   class Kd_tree;
 
   template < class TreeTraits, class Splitter, class UseExtendedNode, class EnablePointsCache >
-  class Kd_tree_node {
+  class Kd_tree_node : public Compact_container_base {
 
     friend class Kd_tree<TreeTraits, Splitter, UseExtendedNode, EnablePointsCache>;
 
