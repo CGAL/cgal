@@ -1455,9 +1455,9 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
  *    \cgalParamNEnd
  *    \cgalParamNBegin{number_of_corners}
  *      \cgalParamDescription{fill the pointed variable with the number of corners. If the internal intermediate output was manifold
- *                            it is equal to the number of vertices of vertices `pm_out`, and otherwise it is the number of corners
+ *                            it is equal to the number of vertices of `pm_out`, and otherwise it is the number of corners
  *                            before duplicating some of them to make the graph of `pm_out` manifold.
- *                            In particular, the elements in the range `vertices(pm_out)` after the number of corners are duplicated vertices.}
+ *                            In particular, the elements in the range `vertices(pm_out)` after the number of corners are duplicate vertices.}
  *      \cgalParamType{a pointer to a variable of type `std::size_t`}
  *      \cgalParamDefault{None}
  *    \cgalParamNEnd
