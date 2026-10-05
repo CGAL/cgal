@@ -17,6 +17,8 @@
 
 #include <CGAL/license/Envelope_3.h>
 
+#include <memory>
+#include <utility>
 
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arr_spherical_topology_traits_2.h>
@@ -58,10 +60,23 @@ public:
   using Surface_iterator = typename Face::Data_iterator;
   using Surface_const_iterator = typename Face::Data_const_iterator;
 
+  /*! A shared pointer to the (immutable) geometry traits. */
+  using Shared_geometry_traits = typename Base::Shared_geometry_traits;
+
   /*! Default constructor. */
   Envelope_diagram_on_surface_2() : Base() {}
 
-  /*! Constructor with a traits-class instance. */
+  /*! Constructor with a shared traits-class instance. The diagram (co-)owns
+   * the traits.
+   */
+  explicit Envelope_diagram_on_surface_2(Shared_geometry_traits tr) :
+    Base(std::move(tr))
+  {}
+
+  /*! Constructor with a traits-class instance. The caller retains ownership
+   * of the traits and must keep it alive as long as the diagram (or any copy
+   * of it) exists.
+   */
   Envelope_diagram_on_surface_2(const Traits_3* tr) : Base(tr) {}
 };
 
@@ -97,10 +112,21 @@ public:
   // The following is not needed anymore, but kept for backward compatibility
   using Arrangement = typename Base::Base;
 
+  /*! A shared pointer to the (immutable) geometry traits. */
+  using Shared_geometry_traits = typename Base::Shared_geometry_traits;
+
   /*! Default constructor. */
   Envelope_diagram_2() : Base() {}
 
-  /*! Constructor with a traits-class instance. */
+  /*! Constructor with a shared traits-class instance. The diagram (co-)owns
+   * the traits.
+   */
+  explicit Envelope_diagram_2(Shared_geometry_traits tr) : Base(std::move(tr)) {}
+
+  /*! Constructor with a traits-class instance. The caller retains ownership
+   * of the traits and must keep it alive as long as the diagram (or any copy
+   * of it) exists.
+   */
   Envelope_diagram_2(const Traits_3* tr) : Base(tr) {}
 };
 
