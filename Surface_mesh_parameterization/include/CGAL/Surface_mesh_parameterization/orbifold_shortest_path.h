@@ -144,7 +144,7 @@ void compute_shortest_paths_between_two_cones(const TriangleMesh& mesh,
   try {
     boost::dijkstra_shortest_paths(mesh, source, boost::predecessor_map(pred_pmap).visitor(vis));
   } catch (const std::exception& e) {
-    std::cerr << e.what() << std::endl;
+    std::cerr  << "catched exception: " << e.what() << std::endl;
   }
 
   // Draw the path from target to source and collect the edges along the way
