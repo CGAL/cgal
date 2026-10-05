@@ -1836,7 +1836,7 @@ bool autorefine_triangle_soup(PointRange& soup_points,
 
 /**
  * \ingroup PMP_corefinement_grp
- * refines a triangle mesh to ensure no pair of triangles intersects, execpt at a shared edge or vertex.
+ * refines a triangle mesh to ensure no pair of triangles intersects, except at a shared edge or vertex.
  * If the input does self-intersect, then the intersection will be resolved in the output but the
  * mesh will still be self-intersecting.
  *

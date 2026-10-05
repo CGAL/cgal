@@ -339,7 +339,7 @@ The kernel functions and the specialization of clipping and plane refinement to 
 inputs were implemented in 2025 by Léo Valque, inspired by the work of Sorgente et al.
 \cgalCite{sorgente2022polyhedron}.
 
-The illustrations of the package pays homage to French sculptor and painter Sacha Sosno.
+The illustrations of the package pay homage to French sculptor and painter Sacha Sosno.
 
 */
 } /* namespace CGAL */
