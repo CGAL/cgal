@@ -757,6 +757,15 @@ private:
   static Shared_geometry_traits _non_owning(const Geometry_traits_2* geom_traits)
   { return Shared_geometry_traits(std::shared_ptr<void>(), geom_traits); }
 
+  /*! checks at compile time that the geometry traits define all four side
+   * categories. A missing category triggers a compiler warning (not an error),
+   * and the oblivious side tag is assumed instead.
+   */
+  static void _check_side_categories();
+
+  /*! frees all points and curves stored in the DCEL. */
+  void _free_points_and_curves();
+
 public:
   /// \name Constructors.
   //@{
@@ -795,12 +804,12 @@ public:
   /*! destructs. */
   virtual ~Arrangement_on_surface_2();
 
-  /*! changes mode. */
-  void set_sweep_mode(bool mode) { m_sweep_mode = mode; }
-
   /*! clears the arrangement. */
   virtual void clear();
   //@}
+
+  /*! sets the sweep mode (see clean_inner_ccbs_after_sweep()). */
+  void set_sweep_mode(bool mode) { m_sweep_mode = mode; }
 
   /// \name Access the traits-class objects.
   //@{
@@ -852,18 +861,8 @@ public:
   Size number_of_faces() const { return m_topol_traits.number_of_valid_faces(); }
 
   /*! obtains the number of unbounded faces in the arrangement. */
-  Size number_of_unbounded_faces() const {
-    Unbounded_face_const_iterator iter = unbounded_faces_begin();
-    Unbounded_face_const_iterator end = unbounded_faces_end();
-    Size n_unb = 0;
-
-    while (iter != end) {
-      ++n_unb;
-      ++iter;
-    }
-
-    return n_unb;
-  }
+  Size number_of_unbounded_faces() const
+  { return static_cast<Size>(std::distance(unbounded_faces_begin(), unbounded_faces_end())); }
   //@}
 
   /// \name Traversal functions for the arrangement vertices.
@@ -1051,20 +1050,12 @@ public:
 
   /// \name Casting away constness for handle types.
   //@{
-  Vertex_handle non_const_handle(Vertex_const_handle vh) {
-    DVertex* p_v = (DVertex*)&(*vh);
-    return Vertex_handle(p_v);
-  }
+  Vertex_handle non_const_handle(Vertex_const_handle vh) { return Vertex_handle(const_cast<DVertex*>(_vertex(vh))); }
 
-  Halfedge_handle non_const_handle(Halfedge_const_handle hh) {
-    DHalfedge* p_he = (DHalfedge*)&(*hh);
-    return Halfedge_handle(p_he);
-  }
+  Halfedge_handle non_const_handle(Halfedge_const_handle hh)
+  { return Halfedge_handle(const_cast<DHalfedge*>(_halfedge(hh))); }
 
-  Face_handle non_const_handle(Face_const_handle fh) {
-    DFace* p_f = (DFace*) &(*fh);
-    return Face_handle(p_f);
-  }
+  Face_handle non_const_handle(Face_const_handle fh) { return Face_handle(const_cast<DFace*>(_face(fh))); }
   //@}
 
   /// \name Specialized insertion functions.
@@ -1243,8 +1234,7 @@ public:
 
   //@}
 
-  /*! cleans the inner CCB if sweep mode was used, by removing all
-   * invalid inner CCBs
+  /*! cleans the inner CCBs if sweep mode was used, by removing all invalid inner CCBs
    */
   void clean_inner_ccbs_after_sweep() {
     for (DHalfedge_iter he = _dcel().halfedges_begin(); he != _dcel().halfedges_end(); ++he) {
@@ -1255,6 +1245,9 @@ public:
 
       // Calling Halfedge::inner_ccb() reduces the path and makes the
       // halfedge point to a correct CCB
+      // Note that inner_ccb() is not a mere accessor: it redirects the halfedge
+      // to the valid inner CCB, which must be done before the invalid inner
+      // CCBs are deleted below. Do not remove this call.
       DInner_ccb* ic2 = he->inner_ccb();
       CGAL_USE(ic2);
       CGAL_assertion(ic2->halfedge()->is_on_inner_ccb() && ic2->halfedge()->inner_ccb_no_redirect() == ic2);

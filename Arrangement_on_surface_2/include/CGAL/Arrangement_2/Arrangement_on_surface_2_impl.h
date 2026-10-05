@@ -45,9 +45,18 @@ template <typename GeomTraits, typename TopolTraits>
 Arrangement_on_surface_2<GeomTraits, TopolTraits>::Arrangement_on_surface_2() :
   m_geom_traits(std::make_shared<Traits_adaptor_2>()),
   m_topol_traits() {
+  _check_side_categories();
+  // Initialize the DCEL structure to represent an empty arrangement.
+  m_topol_traits.init_dcel();
+}
+
+//-----------------------------------------------------------------------------
+// Check that the geometry traits define all four side categories.
+//
+template <typename GeomTraits, typename TopolTraits>
+void Arrangement_on_surface_2<GeomTraits, TopolTraits>::_check_side_categories() {
   using Cond_left = has_Left_side_category<GeomTraits>;
   using Validate_left_side_category = internal::Validate_left_side_category<GeomTraits, Cond_left::value>;
-
   void (Validate_left_side_category::*pleft)(void) =
     &Validate_left_side_category::template missing__Left_side_category<int>;
   (void)pleft;
@@ -69,9 +78,6 @@ Arrangement_on_surface_2<GeomTraits, TopolTraits>::Arrangement_on_surface_2() :
   void (Validate_right_side_category::*pright)(void) =
     &Validate_right_side_category::template missing__Right_side_category<int>;
   (void)pright;
-
-  // Initialize the DCEL structure to represent an empty arrangement.
-  m_topol_traits.init_dcel();
 }
 
 //-----------------------------------------------------------------------------
@@ -92,33 +98,7 @@ Arrangement_on_surface_2<GeomTraits, TopolTraits>::
 Arrangement_on_surface_2(Shared_geometry_traits geom_traits) :
   m_geom_traits(_adapt(geom_traits)),
   m_topol_traits(geom_traits.get()) {
-  using Cond_left = has_Left_side_category<GeomTraits>;
-  using Validate_left_side_category = internal::Validate_left_side_category<GeomTraits, Cond_left::value>;
-
-  void (Validate_left_side_category::*pleft)(void) =
-    &Validate_left_side_category::template missing__Left_side_category<int>;
-  (void)pleft;
-
-  using Cond_bottom = has_Bottom_side_category<GeomTraits>;
-  using Validate_bottom_side_category = internal::Validate_bottom_side_category<GeomTraits, Cond_bottom::value>;
-
-  void (Validate_bottom_side_category::*pbottom)(void) =
-    &Validate_bottom_side_category::template missing__Bottom_side_category<int>;
-  (void)pbottom;
-
-  using Cond_top = has_Top_side_category<GeomTraits>;
-  using Validate_top_side_category = internal::Validate_top_side_category<GeomTraits, Cond_top::value>;
-
-  void (Validate_top_side_category::*ptop)(void) =
-    &Validate_top_side_category::template missing__Top_side_category<int>;
-  (void)ptop;
-
-  using Cond_right = has_Right_side_category<GeomTraits>;
-  using Validate_right_side_category = internal::Validate_right_side_category<GeomTraits, Cond_right::value>;
-
-  void (Validate_right_side_category::*pright)(void) =
-    &Validate_right_side_category::template missing__Right_side_category<int>;
-  (void)pright;
+  _check_side_categories();
 
   // Initialize the DCEL structure to represent an empty arrangement.
   m_topol_traits.init_dcel();
@@ -137,8 +117,7 @@ Arrangement_on_surface_2(const Geometry_traits_2* geom_traits) : Arrangement_on_
 template <typename GeomTraits, typename TopolTraits>
 Arrangement_on_surface_2<GeomTraits, TopolTraits>&
 Arrangement_on_surface_2<GeomTraits, TopolTraits>::operator=(const Self& arr) {
-  if (this == &arr) return *this;     // handle self-assignment
-  assign(arr);
+  if (this != &arr) assign(arr);
   return *this;
 }
 
@@ -157,8 +136,7 @@ void Arrangement_on_surface_2<GeomTraits, TopolTraits>::assign(const Self& arr) 
   m_topol_traits.assign(arr.m_topol_traits);
 
   // Go over the vertices and create duplicates of the stored points.
-  typename Dcel::Vertex_iterator vit;
-  for (vit = _dcel().vertices_begin(); vit != _dcel().vertices_end(); ++vit) {
+  for (auto vit = _dcel().vertices_begin(); vit != _dcel().vertices_end(); ++vit) {
     DVertex* p_v = &(*vit);
 
     if (! p_v->has_null_point()) {
@@ -171,8 +149,7 @@ void Arrangement_on_surface_2<GeomTraits, TopolTraits>::assign(const Self& arr) 
   }
 
   // Go over the edge and create duplicates of the stored curves.
-  typename Dcel::Edge_iterator eit;
-  for (eit = _dcel().edges_begin(); eit != _dcel().edges_end(); ++eit) {
+  for (auto eit = _dcel().edges_begin(); eit != _dcel().edges_end(); ++eit) {
     DHalfedge* p_e = &(*eit);
 
     if (! p_e->has_null_curve()) {
@@ -196,27 +173,23 @@ void Arrangement_on_surface_2<GeomTraits, TopolTraits>::assign(const Self& arr) 
 //
 template <typename GeomTraits, typename TopolTraits>
 Arrangement_on_surface_2<GeomTraits, TopolTraits>::~Arrangement_on_surface_2() {
-  // Free all stored points.
-  typename Dcel::Vertex_iterator vit;
-  for (vit = _dcel().vertices_begin(); vit != _dcel().vertices_end(); ++vit)
+  _free_points_and_curves();
+  // Detach all observers still attached to the arrangement.
+  // detach() unregisters the observer, which erases it from the list; hence,
+  // the iterator is advanced before the call.
+  for (auto it = m_observers.begin(); it != m_observers.end();) (*it++)->detach();
+}
+
+//-----------------------------------------------------------------------------
+// Free all points and curves stored in the DCEL.
+//
+template <typename GeomTraits, typename TopolTraits>
+void Arrangement_on_surface_2<GeomTraits, TopolTraits>::_free_points_and_curves() {
+  for (auto vit = _dcel().vertices_begin(); vit != _dcel().vertices_end(); ++vit)
     if (! vit->has_null_point()) _delete_point(vit->point());
 
-  // Free all stores curves.
-  typename Dcel::Edge_iterator eit;
-  for (eit = _dcel().edges_begin(); eit != _dcel().edges_end(); ++eit)
+  for (auto eit = _dcel().edges_begin(); eit != _dcel().edges_end(); ++eit)
     if (! eit->has_null_curve()) _delete_curve(eit->curve());
-
-  // Detach all observers still attached to the arrangement.
-  Observers_iterator iter = m_observers.begin();
-  Observers_iterator next;
-  Observers_iterator end = m_observers.end();
-
-  while (iter != end) {
-    next = iter;
-    ++next;
-    (*iter)->detach();
-    iter = next;
-  }
 }
 
 //-----------------------------------------------------------------------------
@@ -227,15 +200,7 @@ void Arrangement_on_surface_2<GeomTraits, TopolTraits>::clear() {
   // Notify the observers that we are about to clear the arrangement.
   _notify_before_clear();
 
-  // Free all stored points.
-  typename Dcel::Vertex_iterator vit;
-  for (vit = _dcel().vertices_begin(); vit != _dcel().vertices_end(); ++vit)
-    if (! vit->has_null_point()) _delete_point(vit->point());
-
-  // Free all stores curves.
-  typename Dcel::Edge_iterator eit;
-  for (eit = _dcel().edges_begin(); eit != _dcel().edges_end(); ++eit)
-    if (! eit->has_null_curve()) _delete_curve(eit->curve());
+  _free_points_and_curves();
 
   // Clear the DCEL and construct an empty arrangement.
   _dcel().delete_all();
@@ -300,10 +265,8 @@ insert_in_face_interior(const X_monotone_curve_2& cv, Face_handle f) {
 
   // Check if cv's left end has boundary conditions, and obtain a vertex v1
   // that corresponds to this end.
-  const Arr_parameter_space  ps_x1 =
-    m_geom_traits->parameter_space_in_x_2_object()(cv, ARR_MIN_END);
-  const Arr_parameter_space  ps_y1 =
-    m_geom_traits->parameter_space_in_y_2_object()(cv, ARR_MIN_END);
+  const Arr_parameter_space ps_x1 = m_geom_traits->parameter_space_in_x_2_object()(cv, ARR_MIN_END);
+  const Arr_parameter_space ps_y1 = m_geom_traits->parameter_space_in_y_2_object()(cv, ARR_MIN_END);
   DHalfedge* fict_prev1 = nullptr;
 
   DVertex* v1 = ((ps_x1 == ARR_INTERIOR) && (ps_y1 == ARR_INTERIOR)) ?
@@ -473,20 +436,16 @@ insert_from_left_vertex(const X_monotone_curve_2& cv, Vertex_handle v, Face_hand
   // Go over the incident halfedges around v and find the halfedge after
   // which the new curve should be inserted.
   DHalfedge* prev1 = _locate_around_vertex(_vertex(v), cv, ARR_MIN_END);
-  CGAL_assertion_msg
-    (prev1 != nullptr,
-     "The inserted curve cannot be located in the arrangement.");
+  CGAL_assertion_msg(prev1 != nullptr, "The inserted curve cannot be located in the arrangement.");
 
-  DFace* f1 = prev1->is_on_inner_ccb() ? prev1->inner_ccb()->face() :
-    prev1->outer_ccb()->face();
+  DFace* f1 = prev1->is_on_inner_ccb() ? prev1->inner_ccb()->face() : prev1->outer_ccb()->face();
 
   // If the vertex that corresponds to cv's right end has boundary conditions,
   // create it now.
   if (v2 == nullptr)
     // Locate the DCEL features that will be used for inserting the curve's
     // right end.
-    v2 =
-      _place_and_set_curve_end(f1, cv, ARR_MAX_END, ps_x2, ps_y2, &fict_prev2);
+    v2 = _place_and_set_curve_end(f1, cv, ARR_MAX_END, ps_x2, ps_y2, &fict_prev2);
 
   // Perform the insertion (note that we know that prev1->vertex is smaller
   // than v2).
@@ -627,8 +586,8 @@ insert_from_right_vertex(const X_monotone_curve_2& cv, Vertex_handle v, Face_han
 
   // Check if cv's left end has boundary conditions. If not, create a vertex
   // that corresponds to the left endpoint.
-  const Arr_parameter_space  ps_x1 = m_geom_traits->parameter_space_in_x_2_object()(cv, ARR_MIN_END);
-  const Arr_parameter_space  ps_y1 = m_geom_traits->parameter_space_in_y_2_object()(cv, ARR_MIN_END);
+  const Arr_parameter_space ps_x1 = m_geom_traits->parameter_space_in_x_2_object()(cv, ARR_MIN_END);
+  const Arr_parameter_space ps_y1 = m_geom_traits->parameter_space_in_y_2_object()(cv, ARR_MIN_END);
   DVertex* v1 = nullptr;
   DHalfedge* fict_prev1 = nullptr;
 
@@ -684,11 +643,9 @@ insert_from_right_vertex(const X_monotone_curve_2& cv, Vertex_handle v, Face_han
   // Go over the incident halfedges around v and find the halfedge after
   // which the new curve should be inserted.
   DHalfedge* prev2 = _locate_around_vertex(_vertex(v), cv, ARR_MAX_END);
-  CGAL_assertion_msg
-    (prev2 != nullptr, "The inserted curve cannot be located in the arrangement.");
+  CGAL_assertion_msg(prev2 != nullptr, "The inserted curve cannot be located in the arrangement.");
 
-  DFace* f2 = prev2->is_on_inner_ccb() ? prev2->inner_ccb()->face() :
-    prev2->outer_ccb()->face();
+  DFace* f2 = prev2->is_on_inner_ccb() ? prev2->inner_ccb()->face() : prev2->outer_ccb()->face();
 
   // If the vertex that corresponds to cv's left end has boundary conditions,
   // create it now.
