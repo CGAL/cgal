@@ -96,8 +96,8 @@ void random_test(std::size_t n = 1000)
       const double x2 = r.get_double(0,10),
                    y2 = r.get_double(0,10),
                    z2 = r.get_double(0,10);
-      boxes.emplace_back(CGAL::Bbox_3(std::min(x1,x2), std::min(y1,y2), std::min(z1,z2),
-                                      std::max(x1,x2), std::max(y1,y2), std::max(z1,z2)), i);
+      boxes.emplace_back(CGAL::Bbox_3((std::min)(x1,x2), (std::min)(y1,y2), (std::min)(z1,z2),
+                                      (std::max)(x1,x2), (std::max)(y1,y2), (std::max)(z1,z2)), i);
     }
   };
   auto generate_unit_boxes = [&](BoxRange& boxes)
