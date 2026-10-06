@@ -32,29 +32,52 @@ class Aff_transformation_3 : public R_::Kernel_base::Aff_transformation_3
 {
   typedef typename R_::RT            RT;
   typedef typename R_::Vector_3      Vector_3;
-  typedef typename R_::Kernel_base::Aff_transformation_3 RAff_transformation_3;
+  typedef Aff_transformation_3       Self;
+
 public:
 
   typedef CGAL::Dimension_tag<3>    Ambient_dimension;
+
+  typedef typename R_::Kernel_base::Aff_transformation_3 Rep;
+
+  const Rep& rep() const
+  {
+    return *this;
+  }
+
+  Rep& rep()
+  {
+    return *this;
+  }
 
   typedef R_                        R;
 
   Aff_transformation_3() {}
 
-  Aff_transformation_3(const RAff_transformation_3&  t)
-    : RAff_transformation_3(t) {}
+  Aff_transformation_3(const Rep&  t)
+    : Rep(t) {}
+
+  Aff_transformation_3(Rep&& t)
+      : Rep(std::move(t)) {}
 
   Aff_transformation_3(const Identity_transformation& tag)
-    : RAff_transformation_3(tag) {}
+    : Rep(typename R::Construct_aff_transformation_3()(Return_base_tag(), tag)) {}
 
   Aff_transformation_3(const Translation tag,
                        const Vector_3& v)
-    : RAff_transformation_3(tag, v) {}
+    : Rep(typename R::Construct_aff_transformation_3()(Return_base_tag(), tag, v)) {}
+
+  Aff_transformation_3(const Scaling tag,
+                       const RT& s)
+    : Rep(typename R::Construct_aff_transformation_3()(Return_base_tag(), tag, s)) {}
+
 
   Aff_transformation_3(const Scaling tag,
                        const RT& s,
-                       const RT& w= RT(1) )
-    : RAff_transformation_3(tag, s, w) {}
+                       const RT& w)
+    : Rep(typename R::Construct_aff_transformation_3()(Return_base_tag(), tag, s ,w)) {}
+
+
 
   // the general case:
   Aff_transformation_3(
@@ -62,20 +85,20 @@ public:
       const RT& m21, const RT& m22, const RT& m23, const RT& m24,
       const RT& m31, const RT& m32, const RT& m33, const RT& m34,
                                                    const RT& w= RT(1) )
-    : RAff_transformation_3(m11, m12, m13, m14,
+    : Rep(typename R::Construct_aff_transformation_3()(Return_base_tag(), m11, m12, m13, m14,
                             m21, m22, m23, m24,
                             m31, m32, m33, m34,
-                                           w) {}
+                                           w)) {}
 
   Aff_transformation_3(
       const RT& m11, const RT& m12, const RT& m13,
       const RT& m21, const RT& m22, const RT& m23,
       const RT& m31, const RT& m32, const RT& m33,
                                                    const RT& w = RT(1) )
-    : RAff_transformation_3(m11, m12, m13,
+    : Rep(typename R::Construct_aff_transformation_3()(Return_base_tag(), m11, m12, m13,
                            m21, m22, m23,
                            m31, m32, m33,
-                                          w) {}
+                                          w)) {}
 };
 
 #ifndef CGAL_NO_OSTREAM_INSERT_AFF_TRANSFORMATION_3
