@@ -363,18 +363,10 @@ convert_to_triangulation_3(
 
   using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex>;
   using GT   = typename Tr::Geom_traits;
-  using TDS  = typename Tr::Triangulation_data_structure;
-  using Dummy_sizing = CGAL::Uniform_sizing_field<GT>;
 
-  using Remesher_types
-    = typename Tetrahedral_remeshing::internal::Adaptive_remesher_type_generator
-    <Tr, Dummy_sizing, NamedParameters, CornerIndex, CurveIndex>;
-
-  using Default_edge_pmap = typename Remesher_types::Default_ECMap;
-  using ECMap = typename Remesher_types::ECMap;
-  if (!std::is_same_v<ECMap, Default_edge_pmap>)
+  if constexpr (np.has_parameter(internal_np::edge_is_constrained))
   {
-    ECMap ecmap = choose_parameter<Default_edge_pmap>(get_parameter(np, internal_np::edge_is_constrained));
+    auto ecmap = np.parameter(internal_np::edge_is_constrained);
     for (auto e : c3t3.edges_in_complex())
     {
       const auto evv = CGAL::Tetrahedral_remeshing::make_vertex_pair(e);//ordered pair
@@ -382,16 +374,15 @@ convert_to_triangulation_3(
     }
   }
 
-  using Default_vertex_pmap = typename Remesher_types::Default_VCMap;
-  using VCMap = typename Remesher_types::VCMap;
-  if (!std::is_same_v<VCMap, Default_vertex_pmap>)
+  if constexpr (np.has_parameter(internal_np::vertex_is_constrained))
   {
-    VCMap vcmap = choose_parameter<Default_vertex_pmap>(get_parameter(np, internal_np::vertex_is_constrained));
+    auto vcmap = np.parameter(internal_np::vertex_is_constrained);
     for (auto v : c3t3.vertices_in_complex())
     {
       put(vcmap, v, true);
     }
   }
+
   if constexpr (false == C3t3::Store_surface_patch_info_in_cell::value)
   {
     using Target_triangulation = CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<GT>;
@@ -421,7 +412,8 @@ convert_to_triangulation_3(
       }
     }
     return tr;
-  } else {
+  } else { // C3t3::Store_surface_patch_info_in_cell::value == true
+    using TDS  = typename Tr::Triangulation_data_structure;
     CGAL::Triangulation_3<GT, TDS> tr;
     tr.swap(c3t3.triangulation());
     return tr;

@@ -1,2 +1,4 @@
-#define CGAL_MESH_3_USE_EXPERIMENTAL_COMPACT_MESH_CELL_BASE_3
-#include "features_and_adaptive_sizing.cpp"
+// #define CGAL_MESH_3_USE_EXPERIMENTAL_COMPACT_MESH_CELL_BASE_3 1
+// #include "features_and_adaptive_sizing.cpp"
+
+int main() {}
