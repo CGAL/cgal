@@ -32,8 +32,8 @@ Random_numbers
 SMDS_3
 STL_Extension
 Solver_interface
-Spatial_sorting
 Spatial_searching
+Spatial_sorting
 Stream_support
 Surface_mesh
 TDS_2
