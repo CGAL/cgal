@@ -18,6 +18,7 @@
 
 #include <CGAL/Dimension.h>
 #include <CGAL/aff_transformation_tags.h>
+#include <CGAL/Kernel/Return_base_tag.h>
 
 #ifndef CGAL_NO_OSTREAM_INSERT_AFF_TRANSFORMATION_3
 #include <ostream>
