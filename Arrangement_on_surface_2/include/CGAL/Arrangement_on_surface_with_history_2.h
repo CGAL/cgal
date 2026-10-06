@@ -28,7 +28,6 @@
 #include <map>
 #include <memory>
 #include <set>
-#include <type_traits>
 #include <vector>
 
 #include <CGAL/Arrangement_on_surface_2.h>
@@ -55,13 +54,14 @@ namespace CGAL {
  * class should also be aware of the kind of surface on which its curves and
  * points are defined.
  */
+
 namespace internal {
 
 /*! computes the base class of `Arrangement_on_surface_with_history_2`: an arrangement on surface instantiated with
  * the consolidated-curve-data traits and with the topology traits and the \dcel rebound to these traits.
  */
 template <typename GeomTraits, typename TopolTraits>
-struct Aos_with_history_base {
+struct Aos_with_history_base_2 {
   using Data_traits = Arr_consolidated_curve_data_traits_2<GeomTraits, typename GeomTraits::Curve_2*>;
   using Data_dcel = typename TopolTraits::Dcel::template rebind<Data_traits>::other;
   using Data_topol_traits = typename TopolTraits::template rebind<Data_traits, Data_dcel>::other;
@@ -72,7 +72,10 @@ struct Aos_with_history_base {
 
 template <typename GeomTraits_, typename TopolTraits_>
 class Arrangement_on_surface_with_history_2 :
-    public internal::Aos_with_history_base<GeomTraits_, TopolTraits_>::type {
+    public internal::Aos_with_history_base_2<GeomTraits_, TopolTraits_>::type {
+  // The computation of the base class and of the types it is instantiated with.
+  using Base_helper = internal::Aos_with_history_base_2<GeomTraits_, TopolTraits_>;
+
 public:
   using Geometry_traits_2 = GeomTraits_;
   using Base_topology_traits = TopolTraits_;
@@ -92,24 +95,19 @@ protected:
   friend class Arr_accessor<Self>;
   friend class Arr_with_history_accessor<Self>;
 
-  // Define the data-traits class based on Geometry_traits_2.
-  using Data_traits_2 = Arr_consolidated_curve_data_traits_2<Geometry_traits_2, Curve_2*>;
+  // The data-traits class, based on Geometry_traits_2.
+  using Data_traits_2 = typename Base_helper::Data_traits;
   using Data_curve_2 = typename Data_traits_2::Curve_2;
   using Data_x_curve_2 = typename Data_traits_2::X_monotone_curve_2;
   using Data_iterator = typename Data_traits_2::Data_iterator;
 
-  // Rebind the \dcel and the topology traits to the data-traits class.
-  using Base_dcel = typename Base_topology_traits::Dcel;
-  using Dcel_rebind = typename Base_dcel::template rebind<Data_traits_2>;
-  using Data_dcel = typename Dcel_rebind::other;
-
-  using Top_traits_rebind = typename Base_topology_traits::template rebind<Data_traits_2, Data_dcel>;
-  using Data_top_traits = typename Top_traits_rebind::other;
+  // The \dcel and the topology traits rebound to the data-traits class.
+  using Data_dcel = typename Base_helper::Data_dcel;
+  using Data_top_traits = typename Base_helper::Data_topol_traits;
 
   // The arrangement with history is based on the representation of an
   // arrangement, templated by the data-traits class and the rebound \dcel.
-  using Base_arr_2 = Arrangement_on_surface_2<Data_traits_2, Data_top_traits>;
-  static_assert(std::is_same_v<Base_arr_2, typename internal::Aos_with_history_base<GeomTraits_, TopolTraits_>::type>);
+  using Base_arr_2 = typename Base_helper::type;
 
   // A shared pointer to the data traits, as stored by the base arrangement.
   using Shared_data_traits = typename Base_arr_2::Shared_geometry_traits;
