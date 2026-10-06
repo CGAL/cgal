@@ -19,31 +19,33 @@
 #include <CGAL/disable_warnings.h>
 
 /*! \file
- * The header file for the Arrangement_with_history_2<Traits,Dcel> class.
+ * The header file for the `Arrangement_with_history_2<GeomTraits, Dcel>` class.
  */
 
+#include <utility>
+
+#include <CGAL/Arr_default_dcel.h>
 #include <CGAL/Arrangement_on_surface_with_history_2.h>
 #include <CGAL/Arrangement_2/Arr_default_planar_topology.h>
-#include <CGAL/Arr_default_dcel.h>
 
 namespace CGAL {
 
-/*! \class Arrangement_on_history_2
+/*! \class Arrangement_with_history_2
  * The arrangement with history class, representing planar subdivisions
  * induced by a set of arbitrary planar curves and storing the curve history.
  * The `GeomTraits` parameter corresponds to a geometry-traits class that
- * defines the Point_2 and X_monotone_curve_2 types and implements the
+ * defines the `Point_2`, `X_monotone_curve_2`, and `Curve_2` types and implements the
  * geometric predicates and constructions for the family of curves it defines.
- * The `Dcel` parameter should be a model of the ArrDcel concept and support
+ * The `Dcel` parameter should be a model of the `AosDcelWithRebind` concept and support
  * the basic topological operations on a doubly-connected edge-list.
  */
-template <typename GeomTraits_, typename Dcel_ = Arr_default_dcel<GeomTraits_> >
+template <typename GeomTraits_, typename Dcel_ = Arr_default_dcel<GeomTraits_>>
 class Arrangement_with_history_2 :
   public Arrangement_on_surface_with_history_2<GeomTraits_,
                                                typename Default_planar_topology<GeomTraits_, Dcel_>::Traits> {
 private:
   using Default_topology = Default_planar_topology<GeomTraits_, Dcel_>;
-  using Base = Arrangement_on_surface_with_history_2<GeomTraits_,             typename Default_topology::Traits>;
+  using Base = Arrangement_on_surface_with_history_2<GeomTraits_, typename Default_topology::Traits>;
 
 public:
   using Geometry_traits_2 = GeomTraits_;
@@ -122,14 +124,12 @@ public:
   //@{
 
   /*! constructs default. */
-  Arrangement_with_history_2() : Base() {}
+  Arrangement_with_history_2() = default;
 
   /*! constructs copy (from a base arrangement). */
   Arrangement_with_history_2(const Base& base) : Base(base) {}
 
-  /*! constructs given a shared traits object. The arrangement (co-)owns
-   * the traits.
-   */
+  /*! constructs given a shared traits object. The arrangement (co-)owns the traits. */
   explicit Arrangement_with_history_2(Shared_geometry_traits tr) : Base(std::move(tr)) {}
 
   /*! constructs from a traits object (owned by the caller). */
@@ -149,7 +149,7 @@ public:
   void assign(const Base& base) { Base::assign(base); }
   //@}
 
-  ///! \name Specialized access methods.
+  /// \name Specialized access methods.
   //@{
 
   /*! obtains the geometry-traits class (for backward compatibility). */
@@ -161,34 +161,8 @@ public:
     return this->topology_traits()->number_of_valid_vertices() - this->topology_traits()->number_of_concrete_vertices();
   }
 
-  /*! obtains the number of unbounded faces. */
-  Size number_of_unbounded_faces() const {
-    typename Base::Face_const_iterator fit = this->faces_begin();
-    typename Base::Face_const_iterator end = this->faces_end();
-    Size n_unb = 0;
-
-    while (fit != end) {
-      if (fit->is_unbounded()) ++n_unb;
-      ++fit;
-    }
-
-    return n_unb;
-  }
-
   /*! obtains the unbounded face (non-const version). */
-  Face_handle unbounded_face() {
-    // The fictitious un_face contains all other valid faces in a single
-    // hole inside it. We return a handle to one of its neighboring faces,
-    // which is necessarily unbounded.
-    typename Base::DFace* un_face = const_cast<typename Base::DFace*>(this->topology_traits()->initial_face());
-
-    if (! un_face->is_fictitious()) return (Face_handle (un_face));
-
-    typename Base::DHalfedge* p_he = *(un_face->inner_ccbs_begin());
-    typename Base::DHalfedge* p_opp = p_he->opposite();
-    typename Base::DOuter_ccb* p_oc = p_opp->outer_ccb();
-    return Face_handle(p_oc->face());
-  }
+  Face_handle unbounded_face() { return this->non_const_handle(std::as_const(*this).unbounded_face()); }
 
   /*! obtains the unbounded face (const version). */
   Face_const_handle unbounded_face() const {
@@ -208,7 +182,7 @@ public:
   //@}
 };
 
-} //namespace CGAL
+} // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 
