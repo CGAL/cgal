@@ -389,14 +389,14 @@ bool read_MEDIT(std::istream& is,
  *
  *   \cgalParamNBegin{facets_with_patch_index}
  *     \cgalParamDescription{a non-const reference wrapper of a container of quadruples of integers that will be filled by this function.
- *                           Each element represents a facet with vertices corresponding to the three first integers, and the last integer being the surface patch index of the facet.}
+ *                           Each element represents a facet with vertices corresponding to the first three integers, and the last integer being the surface patch index of the facet.}
  *     \cgalParamType{a `std::reference_wrapper` to a model of `BackInsertionSequence` with a value type constructible using a braced initializer list of four integers.}
  *     \cgalParamDefault{facets are ignored}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{edges_with_curve_index}
  *     \cgalParamDescription{a non-const reference wrapper of a container of triples of integers that will be filled by this function.
- *                           Each element represents an edge with vertices corresponding  to the two first integers, and the last integer being the curve index of the edge.}
+ *                           Each element represents an edge with vertices corresponding  to the first two integers, and the last integer being the curve index of the edge.}
  *     \cgalParamType{a `std::reference_wrapper` to a model of `BackInsertionSequence`  with a value type constructible using a braced initializer list of three integers.}
  *     \cgalParamDefault{edges are ignored}
  *   \cgalParamNEnd
