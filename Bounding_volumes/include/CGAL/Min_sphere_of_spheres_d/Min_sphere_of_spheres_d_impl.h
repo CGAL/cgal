@@ -275,7 +275,7 @@ namespace  Bounding_volumes {
       if (!ss.contains(t.center_cartesian_begin(*l[i]),
                        t.radius(*l[i]),Tol<FT>::result(),Is_exact())) {
         std::cerr << "Min_sphere_of_spheres_d: miniball not enclosing." << std::endl
-             << "Please contact the author <kf@iaeth.ch>." << std::endl;
+             << "Refer to the bug-reporting instructions at https://www.cgal.org/bug_report.html" << std::endl;
         return false;
       }
 
