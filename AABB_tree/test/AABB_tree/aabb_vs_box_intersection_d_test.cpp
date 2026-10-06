@@ -118,7 +118,8 @@ void random_test(std::size_t n = 1000)
   test(boxes1, boxes2);
 }
 
-void test_from_data(std::string filename1, std::string filename2)
+template <typename Path>
+void test_from_data(Path filename1, Path filename2)
 {
   using Mesh = CGAL::Surface_mesh<K::Point_3>;
 
