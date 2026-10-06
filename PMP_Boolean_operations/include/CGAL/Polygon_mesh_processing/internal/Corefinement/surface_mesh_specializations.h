@@ -207,6 +207,7 @@ auto append_patches_to_triangle_mesh(
   UserVisitor& user_visitor) -> std::enable_if_t<is_surface_mesh<SurfaceMesh>::value>
 {
   using SM = SurfaceMesh;
+  using size_type = typename SM::size_type;
   SM& tm = patches.pm;
 
   std::size_t vertices_idx_begin = output.num_vertices();
