@@ -35,11 +35,15 @@ void test_values_and_types(const NamedParameters& np)
 
   // test values
   assert(get_parameter(np, inp::vertex_index).v == 0);
+  assert(np.parameter(inp::vertex_index).v == 0);
   assert(get_parameter(np, inp::visitor).v == 1);
+  assert(np.parameter(inp::visitor).v == 1);
 
   // test types
   check_same_type<0>(get_parameter(np, inp::vertex_index));
+  check_same_type<0>(np.parameter(inp::vertex_index));
   check_same_type<1>(get_parameter(np, inp::visitor));
+  check_same_type<1>(np.parameter(inp::visitor));
 }
 
 template<class NamedParameters>
