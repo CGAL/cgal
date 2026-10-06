@@ -2481,7 +2481,8 @@ operator<< (std::ostream& os,
             const Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_> &c3t3)
 {
   // TODO: implement edge saving
-  if constexpr(Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_>::store_surface_patch_info_in_cell) {
+  using C3t3 = Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_>;
+  if constexpr(C3t3::store_surface_patch_info_in_cell) {
     return os << c3t3.triangulation();
   } else {
     auto& tr = c3t3.triangulation();
@@ -2571,14 +2572,14 @@ operator>> (std::istream& is,
             Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_> &c3t3)
 {
   // TODO: implement edge loading
+  using C3t3 = Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_>;
   c3t3.clear();
-  if constexpr(c3t3.store_surface_patch_info_in_cell) {
+  if constexpr(C3t3::store_surface_patch_info_in_cell) {
     is >> c3t3.triangulation();
   } else {
     auto& tr = c3t3.triangulation();
     using Vertex_handle = typename Tr::Vertex_handle;
     using Cell_handle = typename Tr::Cell_handle;
-    using C3t3 = Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_>;
 
 
     tr.tds().clear(); // infinite vertex deleted
