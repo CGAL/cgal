@@ -56,6 +56,7 @@ void append_patch(
   std::size_t faces_idx_begin)
 {
   using SM = SurfaceMesh;
+  using size_type = typename SM::size_type;
   using vertex_descriptor = typename SM::Vertex_index;
   using edge_descriptor = typename SM::Edge_index;
   using halfedge_descriptor = typename SM::Halfedge_index;
@@ -64,7 +65,7 @@ void append_patch(
   // Fill Vertex to vertex map and vpm for interior vertices
   auto fill_vertex = [&](std::size_t i){
     vertex_descriptor v = patch.interior_vertices[i];
-    vertex_descriptor new_v(vertices_idx_begin + i);
+    vertex_descriptor new_v(static_cast<size_type>(vertices_idx_begin + i));
 
     put(tm_to_output_vertices, v, new_v);
     put(vpm_out, new_v, get(vpm_tm, v));
@@ -85,7 +86,7 @@ void append_patch(
   // Also fill target of halfedges and halfedge of vertices
   auto fill_edge = [&](std::size_t i){
     halfedge_descriptor h = patch.interior_edges[i];
-    edge_descriptor new_edge(i+edges_idx_begin);
+    edge_descriptor new_edge(static_cast<size_type>(i+edges_idx_begin));
     halfedge_descriptor new_h = output.halfedge(new_edge);
 
     vertex_descriptor src = get(tm_to_output_vertices, tm.source(h));
@@ -156,7 +157,7 @@ void append_patch(
     std::array<halfedge_descriptor, 3> hedges = { get_halfedge(h_in_1), get_halfedge(h_in_2), get_halfedge(h_in_3) };
 
     user_visitor.before_face_copy(f, tm, output);
-    face_descriptor new_f(faces_idx_begin + i);
+    face_descriptor new_f(static_cast<size_type>(faces_idx_begin + i));
     user_visitor.after_face_copy(f, tm, new_f, output);
     output.set_halfedge(new_f, hedges[0]);
 
@@ -220,7 +221,7 @@ auto append_patches_to_triangle_mesh(
     tne += patches[i].interior_edges.size();
     tnf += patches[i].faces.size();
   }
-  output.resize(tnv, tne, tnf);
+  output.resize(static_cast<size_type>(tnv), static_cast<size_type>(tne), static_cast<size_type>(tnf));
 
   std::vector<std::size_t> ids_of_patches_to_append;
   ids_of_patches_to_append.reserve(patches_to_append.count());
@@ -320,6 +321,7 @@ auto fill_new_triangle_mesh(
   using SM = SurfaceMesh;
   using vertex_descriptor = typename SM::Vertex_index;
   using edge_descriptor = typename SM::Edge_index;
+  using size_type = typename SM::size_type;
 
   using V2V_tag = typename CGAL::dynamic_vertex_property_t<vertex_descriptor>;
   using Vertex_to_vertex_map = typename boost::property_map<SM, V2V_tag>::type;
@@ -365,15 +367,15 @@ auto fill_new_triangle_mesh(
   std::vector<std::size_t> ids_of_patches_to_append_from_tm1;
   std::vector<std::size_t> ids_of_patches_to_append_from_tm2;
   ids_of_patches_to_append_from_tm1.reserve(patches_of_tm1_to_import.count());
-  for (std::size_t i= patches_of_tm1_to_import.find_first();
-                  i < patches_of_tm1_to_import.npos;
-                  i = patches_of_tm1_to_import.find_next(i)){
+  for (std::size_t i = patches_of_tm1_to_import.find_first();
+                   i < patches_of_tm1_to_import.npos;
+                   i = patches_of_tm1_to_import.find_next(i)){
     ids_of_patches_to_append_from_tm1.push_back(i);
   }
   ids_of_patches_to_append_from_tm2.reserve(patches_of_tm2_to_import.count());
-  for (std::size_t i= patches_of_tm2_to_import.find_first();
-                  i < patches_of_tm2_to_import.npos;
-                  i = patches_of_tm2_to_import.find_next(i)){
+  for (std::size_t i = patches_of_tm2_to_import.find_first();
+                   i < patches_of_tm2_to_import.npos;
+                   i = patches_of_tm2_to_import.find_next(i)){
     ids_of_patches_to_append_from_tm2.push_back(i);
   }
 
@@ -414,7 +416,7 @@ auto fill_new_triangle_mesh(
     tne += patches_of_tm2[i].interior_edges.size();
     tnf += patches_of_tm2[i].faces.size();
   }
-  output.resize(tnv, tne, tnf);
+  output.resize(static_cast<size_type>(tnv), static_cast<size_type>(tne), static_cast<size_type>(tnf));
 
   // Append patches
   for (std::size_t i : ids_of_patches_to_append_from_tm1){
