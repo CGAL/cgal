@@ -84,8 +84,8 @@ public:
   {
      FT zero(0);
      entries = {m11, m12, m13, zero,
-                       m21, m22, m23, zero,
-                       m31, m32, m33, zero,  };
+                m21, m22, m23, zero,
+                m31, m32, m33, zero };
   }
 
   // General form: without translation
@@ -97,8 +97,8 @@ public:
   {
     FT zero(0);
     entries = {m11/w, m12/w, m13/w, zero,
-                       m21/w, m22/w, m23/w, zero,
-                       m31/w, m32/w, m33/w, zero};
+               m21/w, m22/w, m23/w, zero,
+               m31/w, m32/w, m33/w, zero};
   }
 
 
@@ -109,9 +109,9 @@ public:
               const FT& m31, const FT& m32, const FT& m33, const FT& m34)
   : entries(12), variant(3)
   {
-      entries = {m11, m12, m13, m14,
-                       m21, m22, m23, m24,
-                       m31, m32, m33, m34 };
+    entries = {m11, m12, m13, m14,
+               m21, m22, m23, m24,
+               m31, m32, m33, m34 };
   }
   // General form: with translation
   Aff_transformationC3(
@@ -121,9 +121,9 @@ public:
               const FT& w)
   : entries(12), variant(3)
   {
-      entries = {m11/w, m12/w, m13/w, m14/w,
-                       m21/w, m22/w, m23/w, m24/w,
-                       m31/w, m32/w, m33/w, m34/w };
+    entries = {m11/w, m12/w, m13/w, m14/w,
+               m21/w, m22/w, m23/w, m24/w,
+               m31/w, m32/w, m33/w, m34/w };
   }
 
 
@@ -191,10 +191,10 @@ template <class T>
                                     p.d()  - ( p.a()*entries[0] + p.b()*entries[1]  + p.c()*entries[2] ));
     if (is_even())
       return Plane_3(transform(p.point()),
-                 transpose().inverse().transform(p.orthogonal_direction()));
+                     transpose().inverse().transform(p.orthogonal_direction()));
     else
       return Plane_3(transform(p.point()),
-               - transpose().inverse().transform(p.orthogonal_direction()));
+                     - transpose().inverse().transform(p.orthogonal_direction()));
   }
 
   Plane_3
@@ -279,39 +279,41 @@ template <class T>
       if(t.variant == 1) return Aff_transformation_3(SCALING, entries[0]*t.entries[0]);
       if(t.variant == 2) return Aff_transformation_3(TRANSLATION, Vector_3(entries[0]*t.entries[0], entries[0]*t.entries[1], entries[0]*t.entries[2]));
       return Aff_transformation_3(entries[0]*t.entries[0], entries[0]*t.entries[1], entries[0]*t.entries[2], entries[0]*t.entries[3],
-                                   entries[0]*t.entries[4], entries[0]*t.entries[5], entries[0]*t.entries[6], entries[0]*t.entries[7],
-                                   entries[0]*t.entries[8], entries[0]*t.entries[9], entries[0]*t.entries[10], entries[0]*t.entries[11]);
+                                  entries[0]*t.entries[4], entries[0]*t.entries[5], entries[0]*t.entries[6], entries[0]*t.entries[7],
+                                  entries[0]*t.entries[8], entries[0]*t.entries[9], entries[0]*t.entries[10], entries[0]*t.entries[11]);
     }
     if(variant == 2){
       if(t.variant == 0) return *this;
       if(t.variant == 1) return Aff_transformation_3(TRANSLATION, Vector_3(entries[0]*t.entries[0], entries[1]*t.entries[0], entries[2]*t.entries[0]));
       if(t.variant == 2) return Aff_transformation_3(TRANSLATION, Vector_3(entries[0]+t.entries[0], entries[1]+t.entries[1], entries[2]+t.entries[2]));
       return Aff_transformation_3(t.entries[0]+entries[0], t.entries[1]+entries[1], t.entries[2]+entries[2], t.entries[3],
-                                   t.entries[4]+entries[0], t.entries[5]+entries[1], t.entries[6]+entries[2], t.entries[7],
-                                   t.entries[8]+entries[0], t.entries[9]+entries[1], t.entries[10]+entries[2], t.entries[11]);
+                                  t.entries[4]+entries[0], t.entries[5]+entries[1], t.entries[6]+entries[2], t.entries[7],
+                                  t.entries[8]+entries[0], t.entries[9]+entries[1], t.entries[10]+entries[2], t.entries[11]);
     }
       if(t.variant == 0) return *this;
-      if(t.variant == 1) return Aff_transformation_3(entries[0]*t.entries[0], entries[1]*t.entries[0], entries[2]*t.entries[0], entries[3]*t.entries[0],
-                                   entries[4]*t.entries[0], entries[5]*t.entries[0], entries[6]*t.entries[0], entries[7]*t.entries[0],
-                                   entries[8]*t.entries[0], entries[9]*t.entries[0], entries[10]*t.entries[0], entries[11]*t.entries[0]);
-      if(t.variant == 2) return Aff_transformation_3(entries[0]+entries[3]*t.entries[0], entries[1]+entries[3]*t.entries[1], entries[2]+entries[3]*t.entries[2], entries[3],
-                                   entries[4]+entries[7]*t.entries[0], entries[5]+entries[7]*t.entries[1], entries[6]+entries[7]*t.entries[2], entries[7],
-                                   entries[8]+entries[11]*t.entries[0], entries[9]+entries[11]*t.entries[1], entries[10]+entries[11]*t.entries[2], entries[11]);
+      if(t.variant == 1)
+        return Aff_transformation_3(entries[0]*t.entries[0], entries[1]*t.entries[0], entries[2]*t.entries[0], entries[3]*t.entries[0],
+                                    entries[4]*t.entries[0], entries[5]*t.entries[0], entries[6]*t.entries[0], entries[7]*t.entries[0],
+                                    entries[8]*t.entries[0], entries[9]*t.entries[0], entries[10]*t.entries[0], entries[11]*t.entries[0]);
+      if(t.variant == 2)
+        return Aff_transformation_3(entries[0]+entries[3]*t.entries[0], entries[1]+entries[3]*t.entries[1], entries[2]+entries[3]*t.entries[2], entries[3],
+                                    entries[4]+entries[7]*t.entries[0], entries[5]+entries[7]*t.entries[1], entries[6]+entries[7]*t.entries[2], entries[7],
+                                    entries[8]+entries[11]*t.entries[0], entries[9]+entries[11]*t.entries[1], entries[10]+entries[11]*t.entries[2], entries[11]);
 
       return Aff_transformation_3(t.entries[0]*entries[0] + t.entries[1]*entries[4] + t.entries[2]*entries[8],
-                              t.entries[0]*entries[1] + t.entries[1]*entries[5] + t.entries[2]*entries[9],
-                              t.entries[0]*entries[2] + t.entries[1]*entries[6] + t.entries[2]*entries[10],
-                              t.entries[0]*entries[3] + t.entries[1]*entries[7] + t.entries[2]*entries[11] + t.entries[3],
+                                  t.entries[0]*entries[1] + t.entries[1]*entries[5] + t.entries[2]*entries[9],
+                                  t.entries[0]*entries[2] + t.entries[1]*entries[6] + t.entries[2]*entries[10],
+                                  t.entries[0]*entries[3] + t.entries[1]*entries[7] + t.entries[2]*entries[11] + t.entries[3],
 
-                              t.entries[4]*entries[0] + t.entries[5]*entries[4] + t.entries[6]*entries[8],
-                              t.entries[4]*entries[1] + t.entries[5]*entries[5] + t.entries[6]*entries[9],
-                              t.entries[4]*entries[2] + t.entries[5]*entries[6] + t.entries[6]*entries[10],
-                              t.entries[4]*entries[3] + t.entries[5]*entries[7] + t.entries[6]*entries[11] + t.entries[7],
+                                  t.entries[4]*entries[0] + t.entries[5]*entries[4] + t.entries[6]*entries[8],
+                                  t.entries[4]*entries[1] + t.entries[5]*entries[5] + t.entries[6]*entries[9],
+                                  t.entries[4]*entries[2] + t.entries[5]*entries[6] + t.entries[6]*entries[10],
+                                  t.entries[4]*entries[3] + t.entries[5]*entries[7] + t.entries[6]*entries[11] + t.entries[7],
 
-                              t.entries[8]*entries[0] + t.entries[9]*entries[4] + t.entries[10]*entries[8],
-                              t.entries[8]*entries[1] + t.entries[9]*entries[5] + t.entries[10]*entries[9],
-                              t.entries[8]*entries[2] + t.entries[9]*entries[6] + t.entries[10]*entries[10],
-                              t.entries[8]*entries[3] + t.entries[9]*entries[7] + t.entries[10]*entries[11] + t.entries[11]);
+                                  t.entries[8]*entries[0] + t.entries[9]*entries[4] + t.entries[10]*entries[8],
+                                  t.entries[8]*entries[1] + t.entries[9]*entries[5] + t.entries[10]*entries[9],
+                                  t.entries[8]*entries[2] + t.entries[9]*entries[6] + t.entries[10]*entries[10],
+                                  t.entries[8]*entries[3] + t.entries[9]*entries[7] + t.entries[10]*entries[11] + t.entries[11]);
 
   }
 
@@ -361,8 +363,8 @@ Aff_transformationC3<R>::print(std::ostream &os) const
     return os << "Translation: " << entries[0] << " " << entries[1] << " " << entries[2];
   }
   return os << entries[0] << " " << entries[1] << " " << entries[2] << " " << entries[3] << "\n"
-     << entries[4] << " " << entries[5] << " " << entries[6] << " " << entries[7] << "\n"
-     << entries[8] << " " << entries[9] << " " << entries[10] << " " << entries[11];
+            << entries[4] << " " << entries[5] << " " << entries[6] << " " << entries[7] << "\n"
+            << entries[8] << " " << entries[9] << " " << entries[10] << " " << entries[11];
   return os;
 }
 
