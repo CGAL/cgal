@@ -337,7 +337,7 @@ insert_in_face_interior(const X_monotone_curve_2& cv, Face_handle f) {
     new_he = _insert_at_vertices(fict_prev1, cv, ARR_LEFT_TO_RIGHT, fict_prev2->next(), new_face_created,
                                  check_swapped_predecessors);
     // Comment EBEB 2012-10-21: Swapping does not take place as there is no local minimum so far
-    CGAL_assertion(!check_swapped_predecessors);
+    CGAL_assertion(! check_swapped_predecessors);
     // usually one would expect to have an new_he (and its twin) lying on the
     // same _inner_ CCB ...
 
@@ -675,7 +675,7 @@ insert_from_right_vertex(const X_monotone_curve_2& cv, Vertex_handle v, Face_han
     // Comment EBEB 2012-10-21: Swapping does not take place as the insertion
     // merges the CCB as an "interior" extension into an outer CCB of a face
     // incident the parameter space's boundary.
-    CGAL_assertion(!check_swapped_predecessors);
+    CGAL_assertion(! check_swapped_predecessors);
 
     if (new_face_created) {
       CGAL_assertion(new_he->is_on_outer_ccb());
@@ -760,7 +760,7 @@ insert_from_right_vertex(const X_monotone_curve_2& cv, Halfedge_handle prev) {
     // Comment EBEB 2012-10-21: Swapping does not take place as the insertion
     // merges the CCB as an "interior" extension into an outer CCB of a face
     // incident the parameter space's boundary.
-    CGAL_assertion(!check_swapped_predecessors);
+    CGAL_assertion(! check_swapped_predecessors);
 
     if (new_face_created) {
       CGAL_assertion(new_he->is_on_outer_ccb());
@@ -927,8 +927,7 @@ insert_at_vertices(const X_monotone_curve_2& cv, Vertex_handle v1, Vertex_handle
     // Go over the incident halfedges around v2 and find the halfedge after
     // which the new curve should be inserted.
     DHalfedge* prev2 = _locate_around_vertex(_vertex(v2), cv, ind2);
-    CGAL_assertion_msg(prev2 != nullptr,
-                       "The inserted curve cannot be located in the arrangement.");
+    CGAL_assertion_msg(prev2 != nullptr, "The inserted curve cannot be located in the arrangement.");
 
     CGAL_assertion_code(DFace* f2 = prev2->is_on_inner_ccb() ? prev2->inner_ccb()->face() :
                         prev2->outer_ccb()->face());
@@ -963,8 +962,7 @@ insert_at_vertices(const X_monotone_curve_2& cv, Vertex_handle v1, Vertex_handle
     // Go over the incident halfedges around v1 and find the halfedge after
     // which the new curve should be inserted.
     DHalfedge* prev1 = _locate_around_vertex(_vertex(v1), cv, ind1);
-    CGAL_assertion_msg(prev1 != nullptr,
-                       "The inserted curve cannot be located in the arrangement.");
+    CGAL_assertion_msg(prev1 != nullptr, "The inserted curve cannot be located in the arrangement.");
 
     CGAL_assertion_code(DFace* f1 = prev1->is_on_inner_ccb() ? prev1->inner_ccb()->face() :
                         prev1->outer_ccb()->face());
@@ -1137,8 +1135,8 @@ insert_at_vertices(const X_monotone_curve_2& cv, Halfedge_handle prev1, Halfedge
   // given halfedges) matches the left end of the given curve.
   // Thus, we can determine the comparison result between prev1->target()
   // and prev2->target().
-  const bool at_obnd1 = !m_geom_traits->is_closed_2_object()(cv, ARR_MIN_END);
-  const bool at_obnd2 = !m_geom_traits->is_closed_2_object()(cv, ARR_MAX_END);
+  const bool at_obnd1 = ! m_geom_traits->is_closed_2_object()(cv, ARR_MIN_END);
+  const bool at_obnd2 = ! m_geom_traits->is_closed_2_object()(cv, ARR_MAX_END);
   Comparison_result  res;
 
   if (! at_obnd1) {
@@ -1755,8 +1753,7 @@ template <typename GeomTraits, typename TopolTraits>
 void Arrangement_on_surface_2<GeomTraits, TopolTraits>::_insert_isolated_vertex(DFace* f, DVertex* v) {
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
   std::cout << "Aos_2: _insert_isolated_vertex (internal)" << std::endl;
-  if (!v->has_null_point())
-    std::cout << "v->point: " << v->point() << std::endl;
+  if (! v->has_null_point()) std::cout << "v->point: " << v->point() << std::endl;
   std::cout << "face   : " << f << std::endl;
 #endif
 
@@ -2032,10 +2029,8 @@ _insert_in_face_interior(DFace* f, const X_monotone_curve_2& cv, Arr_halfedge_di
   std::cout << "face  : " << f << std::endl;
   std::cout << "cv    : " << cv << std::endl;
   std::cout << "cv_dir: " << cv_dir << std::endl;
-  if (!v1->has_null_point())
-    std::cout << "v1->point: " << v1->point() << std::endl;
-  if (!v2->has_null_point())
-    std::cout << "v2->point: " << v2->point() << std::endl;
+  if (! v1->has_null_point()) std::cout << "v1->point: " << v1->point() << std::endl;
+  if (! v2->has_null_point()) std::cout << "v2->point: " << v2->point() << std::endl;
 #endif
 
   // Notify the observers that we are about to create a new edge.
@@ -2265,7 +2260,7 @@ _insert_at_vertices(DHalfedge* he_to, const X_monotone_curve_2& cv, Arr_halfedge
       std::cout << "#local_mins2: " << local_mins2.size() << std::endl;
 #endif
 
-      if (!m_topol_traits.let_me_decide_the_outer_ccb(signs1, signs2, swap_predecessors))
+      if (! m_topol_traits.let_me_decide_the_outer_ccb(signs1, signs2, swap_predecessors))
       {
         // COMMENT: The previous solution needed O(min(length1, length2)) steps
         //          to determine which path is shorter and the search for the
@@ -2353,7 +2348,7 @@ _insert_at_vertices(DHalfedge* he_to, const X_monotone_curve_2& cv, Arr_halfedge
   if (curr != curr->next()) {
     curr = curr->next();
     while (curr != prev1) {
-      if (!curr->has_null_curve()) std::cout << "curr: " << curr->curve() << std::endl;
+      if (! curr->has_null_curve()) std::cout << "curr: " << curr->curve() << std::endl;
       else std::cout << "curr: fictitious" << std::endl;
       std::cout << "dir: " << (curr->direction() == CGAL::ARR_LEFT_TO_RIGHT ? "L2R" : "R2L") << std::endl;
       curr = curr->next();
@@ -3212,8 +3207,8 @@ _compute_signs_and_local_minima(const DHalfedge* he_to, const X_monotone_curve_2
   ps_x_save = ps_x_he_away_tgt;
   ps_y_save = ps_y_he_away_tgt;
 
-  CGAL_assertion(!is_open(ps_x_curr, ps_y_curr));
-  CGAL_assertion(!is_open(ps_x_next, ps_y_next));
+  CGAL_assertion(! is_open(ps_x_curr, ps_y_curr));
+  CGAL_assertion(! is_open(ps_x_next, ps_y_next));
 
   if ((cv_dir == ARR_RIGHT_TO_LEFT) && (he_away->direction() == ARR_LEFT_TO_RIGHT)) {
     const DHalfedge* null_he = nullptr;
@@ -3227,7 +3222,7 @@ _compute_signs_and_local_minima(const DHalfedge* he_to, const X_monotone_curve_2
   while (he != he_to) {
     ps_x_curr = ps_x_save;
     ps_y_curr = ps_y_save;
-    CGAL_assertion(!is_open(ps_x_curr, ps_y_curr));
+    CGAL_assertion(! is_open(ps_x_curr, ps_y_curr));
 
     Arr_curve_end he_next_src_end, he_next_tgt_end;
     if (he->next()->direction() == ARR_LEFT_TO_RIGHT) {
@@ -3241,7 +3236,7 @@ _compute_signs_and_local_minima(const DHalfedge* he_to, const X_monotone_curve_2
 
     ps_x_next = parameter_space_in_x(he->next()->curve(), he_next_src_end);
     ps_y_next = parameter_space_in_y(he->next()->curve(), he_next_src_end);
-    CGAL_assertion(!is_open(ps_x_next, ps_y_next));
+    CGAL_assertion(! is_open(ps_x_next, ps_y_next));
 
     ps_x_save = parameter_space_in_x(he->next()->curve(), he_next_tgt_end);
     ps_y_save = parameter_space_in_y(he->next()->curve(), he_next_tgt_end);
@@ -3263,8 +3258,8 @@ _compute_signs_and_local_minima(const DHalfedge* he_to, const X_monotone_curve_2
   ps_x_next = ps_x_cv_to;
   ps_y_next = ps_y_cv_to;
 
-  CGAL_assertion(!is_open(ps_x_curr, ps_y_curr));
-  CGAL_assertion(!is_open(ps_x_next, ps_y_next));
+  CGAL_assertion(! is_open(ps_x_curr, ps_y_curr));
+  CGAL_assertion(! is_open(ps_x_next, ps_y_next));
 
   if ((he_to->direction() == ARR_RIGHT_TO_LEFT) && (cv_dir == ARR_LEFT_TO_RIGHT))
     *local_mins_it++ = std::make_pair(he_to, x_index);
@@ -3324,12 +3319,12 @@ Arrangement_on_surface_2<GeomTraits, TopolTraits>::_compute_signs(const DHalfedg
   do {
     ps_x_curr = ps_x_save;
     ps_y_curr = ps_y_save;
-    CGAL_assertion(!is_open(ps_x_curr, ps_y_curr));
+    CGAL_assertion(! is_open(ps_x_curr, ps_y_curr));
 
     Arr_curve_end he_next_src_end = (he_next->direction() == ARR_LEFT_TO_RIGHT) ? ARR_MIN_END : ARR_MAX_END;
     ps_x_next = parameter_space_in_x(he_next->curve(), he_next_src_end);
     ps_y_next = parameter_space_in_y(he_next->curve(), he_next_src_end);
-    CGAL_assertion(!is_open(ps_x_next, ps_y_next));
+    CGAL_assertion(! is_open(ps_x_next, ps_y_next));
 
     Arr_curve_end he_next_tgt_end = (he_next->direction() == ARR_LEFT_TO_RIGHT) ? ARR_MAX_END : ARR_MIN_END;
     ps_x_save = parameter_space_in_x(he_next->curve(), he_next_tgt_end);

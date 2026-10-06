@@ -34,19 +34,21 @@
 
 namespace CGAL {
 
-/*! \class
+/*! \class Arrangement_on_surface_with_history_2
  * A class representing planar subdivisions induced by a set of arbitrary
  * input planar curves. These curves are split and form a set of sweepable
- * (x-monotone) and pairwise interior-disjoint curves that are associated
+ * (`x`-monotone) and pairwise interior-disjoint curves that are associated
  * with the arrangement edges.
- * The Arrangement_on_surface_with_history_2 class enables tracking the input
+ * The `Arrangement_on_surface_with_history_2` class enables tracking the input
  * curve(s) that originated each such subcurve. It also enables keeping track
  * of the edges that resulted from each input curve.
  * The Traits parameter corresponds to a traits class that defines the
- * Point_2, X_monotone_curve_2 and Curve_2 types and implements the geometric
+ * `Point_2`, `X_monotone_curve_2` and `Curve_2` types and implements the geometric
  * predicates and constructions for the family of curves it defines.
- * The Dcel parameter should be a model of the ArrDcel concept and support
- * the basic topological operations on a doubly-connected edge-list.
+ * The `TopolTraits` parameter corresponds to a topology-traits class that defines
+ * the topological structure of the surface. Note that the geometry traits
+ * class should also be aware of the kind of surface on which its curves and
+ * points are defined.
  */
 template <typename GeomTraits_, typename TopolTraits_>
 class Arrangement_on_surface_with_history_2 :
@@ -157,7 +159,7 @@ protected:
   class Curve_halfedges_observer;
 
 public:
-  /*! \class
+  /*! \class Curve_halfedges
    * Extension of a curve with the set of edges that it induces.
    * Each edge is represented by one of the halfedges.
    */
@@ -204,7 +206,7 @@ public:
     /*! obtains a past-the-end iterator for the set edges (non-const version). */
     iterator end() { return m_halfedges.end(); }
 
-    /*! Insert an edge to the set. */
+    /*! inserts an edge to the set. */
     iterator _insert(Halfedge_handle he) {
       std::pair<iterator, bool> res = m_halfedges.insert(he);
       CGAL_assertion(res.second);
@@ -221,7 +223,7 @@ public:
       CGAL_assertion(res != 0);
     }
 
-    /*! cleats the edges set. */
+    /*! clears the edges set. */
     void clear() { m_halfedges.clear(); }
   };
 
@@ -229,7 +231,7 @@ protected:
   using Curves_alloc = CGAL_ALLOCATOR(Curve_halfedges);
   using Curve_halfedges_list = In_place_list<Curve_halfedges, false>;
 
-  /*! \class
+  /*! \class Curve_halfedges_observer
    * Observer for the base arrangement. It keeps track of all local changes
    * involving edges and updates the list of halfedges associated with the
    * input curves accordingly.
@@ -242,33 +244,33 @@ protected:
     using Halfedge_handle = typename Base_aos::Halfedge_handle;
     using X_monotone_curve_2 = typename Base_aos::X_monotone_curve_2;
 
-    /*! Notification after the creation of a new edge.
+    /*! notifies after the creation of a new edge.
      * \param e A handle to one of the twin halfedges that were created.
      */
     virtual void after_create_edge(Halfedge_handle e) override { _register_edge(e); }
 
-    /*! Notification before the modification of an existing edge.
+    /*! notifies before the modification of an existing edge.
      * \param e A handle to one of the twin halfedges to be updated.
-     * \param c The x-monotone curve to be associated with the edge.
+     * \param c The `x`-monotone curve to be associated with the edge.
      */
     virtual void before_modify_edge(Halfedge_handle e, const X_monotone_curve_2& /* c */) override
     { _unregister_edge(e); }
 
-    /*! Notification after an edge was modified.
+    /*! notifies after an edge was modified.
      * \param e A handle to one of the twin halfedges that were updated.
      */
     virtual void after_modify_edge(Halfedge_handle e) override { _register_edge(e); }
 
-    /*! Notification before the splitting of an edge into two.
+    /*! notifies before the splitting of an edge into two.
      * \param e A handle to one of the existing halfedges.
-     * \param c1 The x-monotone curve to be associated with the first edge.
-     * \param c2 The x-monotone curve to be associated with the second edge.
+     * \param c1 The `x`-monotone curve to be associated with the first edge.
+     * \param c2 The `x`-monotone curve to be associated with the second edge.
      */
     virtual void before_split_edge(Halfedge_handle e, Vertex_handle /* v */,
                                    const X_monotone_curve_2& /* c1 */, const X_monotone_curve_2& /* c2 */) override
     { _unregister_edge(e); }
 
-    /*! Notification after an edge was split.
+    /*! notifies after an edge was split.
      * \param e1 A handle to one of the twin halfedges forming the first edge.
      * \param e2 A handle to one of the twin halfedges forming the second edge.
      */
@@ -277,22 +279,22 @@ protected:
       _register_edge(e2);
     }
 
-    /*! Notification before the merging of two edges.
+    /*! notifies before the merging of two edges.
      * \param e1 A handle to one of the halfedges forming the first edge.
      * \param e2 A handle to one of the halfedges forming the second edge.
-     * \param c The x-monotone curve to be associated with the merged edge.
+     * \param c The `x`-monotone curve to be associated with the merged edge.
      */
     virtual void before_merge_edge(Halfedge_handle e1, Halfedge_handle e2, const X_monotone_curve_2& /* c */) override {
       _unregister_edge(e1);
       _unregister_edge(e2);
     }
 
-    /*! Notification after an edge was merged.
+    /*! notifies after an edge was merged.
      * \param e A handle to one of the twin halfedges forming the merged edge.
      */
     virtual void after_merge_edge(Halfedge_handle e) override { _register_edge(e); }
 
-    /*! Notification before the removal of an edge.
+    /*! notifies before the removal of an edge.
      * \param e A handle to one of the twin halfedges to be deleted.
      */
     virtual void before_remove_edge(Halfedge_handle e) override { _unregister_edge(e); }
@@ -339,15 +341,13 @@ public:
   /*! constructs copy. */
   Arrangement_on_surface_with_history_2(const Self& arr);
 
-  /*! constructs given a shared geometry-traits object. The arrangement
-   * (co-)owns the traits.
+  /*! constructs given a shared geometry-traits object.
    */
   explicit
   Arrangement_on_surface_with_history_2(Shared_geometry_traits tr);
 
-  /*! constructs from a traits object. The caller retains ownership of the
-   * traits and must keep it alive as long as the arrangement (or any copy of
-   * it) exists.
+  /*! constructs from a traits object. The caller retains ownership of the traits
+   * and must keep it alive as long as the arrangement (or any copy of it) exists.
    */
   Arrangement_on_surface_with_history_2(const Geometry_traits_2 *tr);
   //@}
@@ -372,7 +372,7 @@ public:
   virtual void clear();
   //@}
 
-  /*! accesses the geometry-traits object (const version). */
+  /*! obtains the geometry-traits object (const version). */
   inline const Geometry_traits_2* geometry_traits() const { return this->m_geom_traits.get(); }
 
   /*! obtains a shared pointer to the geometry-traits object. If the
@@ -381,10 +381,10 @@ public:
    */
   inline Shared_geometry_traits shared_geometry_traits() const { return Base_arr_2::shared_geometry_traits(); }
 
-  /*! accesses the topology-traits object (non-const version). */
+  /*! obtains the topology-traits object (non-const version). */
   inline Topology_traits* topology_traits() { return &(this->m_topol_traits); }
 
-  /*! accesses the topology-traits object (const version). */
+  /*! obtains the topology-traits object (const version). */
   inline const Topology_traits* topology_traits() const { return &(this->m_topol_traits); }
 
   /// \name Traversal of the arrangement curves.
@@ -400,8 +400,8 @@ public:
   Curve_const_iterator curves_end() const { return m_curves.end(); }
   //@}
 
-  /*! \class
-   * Edges iterator - defined as a derived class to make it assignable
+  /*! \class Originating_curve_iterator
+   * Edges iterator defined as a derived class to make it assignable
    * to the halfedge iterator type.
    */
   class Originating_curve_iterator :
@@ -706,7 +706,7 @@ public:
 //-----------------------------------------------------------------------------
 
 /*! inserts a curve into the arrangement (incremental insertion).
- * The inserted curve may not necessarily be x-monotone and may intersect the
+ * The inserted curve may not necessarily be `x`-monotone and may intersect the
  * existing arrangement.
  * \param arr The arrangement-with-history object.
  * \param cv The curve to be inserted.
@@ -723,7 +723,7 @@ insert(Arrangement_on_surface_with_history_2<GeomTraits,TopolTraits>& arr,
 }
 
 /*! inserts a curve into the arrangement (incremental insertion).
- * The inserted curve may not necessarily be x-monotone and may intersect the
+ * The inserted curve may not necessarily be `x`-monotone and may intersect the
  * existing arrangement. The default "walk" point-location strategy is used
  * for inserting the curve.
  * \param arr The arrangement-with-history object.
