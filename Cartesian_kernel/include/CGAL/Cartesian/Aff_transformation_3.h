@@ -239,7 +239,11 @@ template <class T>
   bool is_odd() const { return  ! is_even(); }
   bool is_translation() const { return variant == 2; }
   bool is_scaling() const { return variant == 1; }
-  bool has_rotation() const { return this->Ptr()->has_rotation(); }
+
+  bool has_rotation() const {
+    if(variant == 3)
+      return  !(is_zero(entries[0]) && is_zero(entries[1]) && is_zero(entries[2]) && is_zero(entries[4]) && is_zero(entries[6]) && is_zero(entries[8]) && is_zero(entries[9]));
+  }
 
 
   FT cartesian(int i, int j) const {
