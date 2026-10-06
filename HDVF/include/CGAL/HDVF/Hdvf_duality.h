@@ -332,7 +332,7 @@ public:
     /**
      * \brief Writes a `Hdvf_duality` together with the associated reduction (f, g, h, d matrices)
      *
-     * Writes a `HDVF_duality` to a stream in `hdvf` file format (a simple text file format, see for a specification).
+     * Exports a `HDVF_duality` to a stream in `hdvf` file format (a simple text file format, see for a specification).
      *
      * \param out Output stream.
      */
@@ -341,7 +341,7 @@ public:
     /**
      * \brief Writes a `Hdvf_duality` together with the associated reduction to a file (f, g, h, d matrices).
      *
-     * Writes a `Hdvf_duality` to a file in `hdvf` file format (a simple text file format, see for a specification).
+     * Exports a `Hdvf_duality` to a file in `hdvf` file format (a simple text file format, see for a specification).
      *
      * \param filename Output file name.
      *
@@ -362,7 +362,7 @@ public:
     /**
      * \brief Reads a `Hdvf_duality` together with the associated reduction (f, g, h, d matrices)
      *
-     * Reads a `Hdvf_duality` from a stream in `hdvf` file format (a simple text file format, see for a specification).
+     * Imports a `Hdvf_duality` from a stream in `hdvf` file format (a simple text file format, see for a specification).
      *
      * \param in Input stream.
      */
@@ -371,7 +371,7 @@ public:
     /**
      * \brief Loads a `Hdvf_duality` together with the associated reduction from a file (f, g, h, d matrices)
      *
-     * Load a `Hdvf_duality` and its reduction from a file in `hdvf` file format, a simple text file format (see for a specification).
+     * Imports a `Hdvf_duality` and its reduction from a file in `hdvf` file format, a simple text file format (see for a specification).
      * \warning The underlying complex is not stored in the file!
      *
      * \param filename Input file name.
@@ -393,7 +393,7 @@ public:
     /**
      * \brief Prints the homology and cohomology reduction information for the current sub chain complex.
      *
-     * Prints \f$f^*\f$, \f$g\f$ \f$\partial'\f$ the reduced boundary over each critical cell.
+     * Writes \f$f^*\f$, \f$g\f$ \f$\partial'\f$ the reduced boundary over each critical cell.
      *
      * By default, outputs the complex to `std::cout`.
     */

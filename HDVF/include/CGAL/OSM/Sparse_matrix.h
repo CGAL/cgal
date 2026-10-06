@@ -355,7 +355,7 @@ public:
 
     /** \relates Sparse_matrix_core
      *
-     * \brief Writes a sparse matrix in the output stream.
+     * \brief Writes a sparse matrix in the output stream with a compact "user friendly" format.
      *
      * \param stream The output stream.
      * \param matrix The matrix to display.

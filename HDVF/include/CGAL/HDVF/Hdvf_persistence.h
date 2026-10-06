@@ -599,7 +599,7 @@ public:
     /**
      * \brief Writes a `HDVF_persistence` together with the associated reduction (f, g, h, d matrices)
      *
-     * Writes a `HDVF_persistence` to a stream in `hdvf` file format (a simple text file format, see for a specification).
+     * Exports a `HDVF_persistence` to a stream in `hdvf` file format (a simple text file format, see for a specification).
      *
      * \param out Output stream.
      */
@@ -608,7 +608,7 @@ public:
     /**
      * \brief Writes a `HDVF_persistence` together with the associated reduction to a file (f, g, h, d matrices).
      *
-     * Writes a `HDVF_persistence` to a file in `hdvf` file format (a simple text file format, see for a specification).
+     * Exports a `HDVF_persistence` to a file in `hdvf` file format (a simple text file format, see for a specification).
      *
      * \param filename Output file name.
      *
@@ -629,7 +629,7 @@ public:
     /**
      * \brief Reads a `HDVF_persistence` together with the associated reduction (f, g, h, d matrices)
      *
-     * Reads a `HDVF_persistence` from a stream in `hdvf` file format (a simple text file format, see for a specification).
+     * Imports a `HDVF_persistence` from a stream in `hdvf` file format (a simple text file format, see for a specification).
      *
      * \param in Input stream.
      */
@@ -638,7 +638,7 @@ public:
     /**
      * \brief Loads a `HDVF_persistence` together with the associated reduction from a file (f, g, h, d matrices)
      *
-     * Load a `HDVF_persistence` and its reduction from a file in `hdvf` file format, a simple text file format (see for a specification).
+     * Imports a `HDVF_persistence` and its reduction from a file in `hdvf` file format, a simple text file format (see for a specification).
      * \warning The underlying complex is not stored in the file!
      *
      * \param filename Input file name.

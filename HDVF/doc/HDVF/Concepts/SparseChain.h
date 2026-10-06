@@ -65,22 +65,6 @@ public:
      */
     SparseChain(size_t chainSize);
 
-    /*!
-     * \brief Creates new sparse chain by copy.
-     *
-     * Copy constructor, initialize a sparse chain from an existing sparse chain of same storage format.
-     */
-    SparseChain(const SparseChain &other);
-
-    /*!
-     * \brief Assigns to other chain.
-     *
-     * Assign to other chain coefficient-wise, equivalent to copying it.
-     *
-     * SparseChain must have the same `Coefficient_ring`.
-     */
-    SparseChain& operator=(const SparseChain &other);
-
     /// @}
 
     /// \name Matrix informations and iterators
@@ -151,7 +135,7 @@ public:
     /*!
      * \brief Adds two chains together.
      *
-     * Add two chains and return the result in a new matrix.
+     * Returns the result in a new matrix.
      * Chains must have the same `Coefficient_ring` and the same storage format.
      */
     friend SparseChain operator+(const SparseChain &first, const SparseChain &second);
@@ -159,18 +143,18 @@ public:
     /*!
      * \brief Subtracts a chain from another chain.
      *
-     * Subtract two chains and return the result in a new matrix.
+     * Returns the result in a new matrix.
      * Chains must have the same `Coefficient_ring` and the same storage format.
      */
     friend SparseChain operator-(const SparseChain &first, const SparseChain &second);
 
     /*!
-     * \brief Applies multiplication on each coefficient.
+     * \brief Multiplies each coefficient of `chain` by `lambda`.
      */
     friend SparseChain operator*(const Coefficient_ring& lambda, const SparseChain &chain);
 
     /*!
-     * \brief Applies multiplication on each coefficient.
+     * \brief Multiplies each coefficient of `chain` by `lambda`.
      */
     friend SparseChain operator*(const SparseChain &_chain, const Coefficient_ring& lambda);
 
@@ -217,7 +201,7 @@ public:
     SparseChain& operator-=(const SparseChain &_other);
 
     /*!
-     * \brief Applies multiplication on each coefficient of `this`.
+     * \brief Multiplies each coefficient of `this` by `lambda`.
      */
     SparseChain& operator*=(const Coefficient_ring& lambda);
 
@@ -234,22 +218,22 @@ public:
     /// @{
 
     /*!
-     * \brief Compares two chains.
+     * \brief Test if the two chains are equal.
      */
     bool operator==(const SparseChain& other_chain);
 
     /*!
-     * \brief Gets the value of a coefficient of the chain.
+     * \brief Gets the value of coefficient index of the chain.
      */
     Coefficient_ring operator[](size_t index);
 
     /*!
-     * \brief Gets the value of a coefficient of the chain.
+     * \brief Gets the value of a coefficient index of the chain.
      */
     Coefficient_ring get_coefficient(size_t index) const ;
 
     /**
-     * \brief Sets a given coefficient of the chain.
+     * \brief Sets coefficient index of the chain to value `d`.
      */
     void set_coefficient(size_t index, Coefficient_ring d);
 
@@ -273,9 +257,9 @@ public:
     /*!
      * \brief Gets a sub-chain from the chain.
      *
-     * Return a new chain where the coefficients at a given index is removed.
+     * Returns a copy of `chain` with the coefficient at a given index removed.
      */
-    friend SparseChain operator/(const SparseChain &chain, size_t indices);
+    friend SparseChain operator/(const SparseChain &chain, size_t index);
 
     /*!
      * \brief Restricts the chain to a sub-chain by removing indices.
@@ -287,7 +271,7 @@ public:
     /**
      * \brief Restricts the chain to a sub-chain by removing a given index.
      *
-     * Removes the index provided from the chain. Return a reference to the modified chain.
+     * Removes `index`  from the chain. Returns a reference to the modified chain.
      */
     SparseChain& operator/=(size_t index);
 

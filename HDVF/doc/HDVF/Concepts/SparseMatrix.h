@@ -93,26 +93,9 @@ public:
     SparseMatrix(const size_t rowCount, const size_t columnCount) ;
 
     /**
-     * \brief Creates a new sparse matrix from another sparse matrix object (with possibly a different `StorageFormat`).
-     *
-     * Copy constructor, initialize a sparse matrix of same sizes, containing the same coefficients (but not necessarly of the same `StorageFormat`).
-     * If types are different, the constructor performs conversion.
-     */
-    SparseMatrix(const SparseMatrix& otherToCopy);
-
-    /*!
-     * \brief Assigns to other matrix.
-     *
-     * Assign to other matrix coefficient-wise, equivalent to copying it.
-     *
-     * Matrices must have the same type.
-     */
-    SparseMatrix& operator=(const SparseMatrix& _otherToCopy);
-
-    /**
      * \brief Cleans a sparse matrix (set all coefficients to zero).
      *
-     * Empty all structures of the sparse matrix.
+     * Empties all structures of the sparse matrix.
      *
      */
     void nullify();
@@ -125,7 +108,7 @@ public:
     /**
      * \brief Tests if a sparse matrix is null.
      *
-     * The function returns `true` if the sparse matrix is null (that is, empty) and `false` otherwise.
+     * The function returns `true` if the sparse matrix is null (technically, the sparse matrix is empty, and thus encodes a matrix in which all coefficients are zero) and `false` otherwise.
      */
     bool is_null();
 
@@ -170,7 +153,7 @@ public:
     /// @{
 
     /**
-     * \brief Inserts `matrix` in the output stream.
+     * \brief Inserts `matrix` in the output stream with a compact "user friendly" format.
      */
     friend std::ostream& operator<<(std::ostream &_stream, const SparseMatrix &matrix);
 
@@ -191,9 +174,9 @@ public:
     /// @{
 
     /**
-     * \brief Adds a matrix and assign.
+     * \brief Sums the matrix `other` into the matrix.
      *
-     * Adds each coefficient of the matrix stores the result in `this`.
+     * Adds each coefficient of the matrix `other` to `this`.
      * Matrices must have the same `Coefficient_ring` but can have different `StorageFormat`.
      */
     friend SparseMatrix& operator+=(SparseMatrix &matrix, const SparseMatrix &other);
@@ -201,16 +184,16 @@ public:
     /**
      * \brief Adds two matrices together.
      *
-     * Adds each coefficient of the matrices together and returns a new matrix (of the same type as `first`) representing the result (when possible, prefer `+=` for efficiency).
+     * Sums each coefficient of the matrices together and returns a new matrix (of the same type as `first`) representing the result (when possible, prefer `+=` for efficiency).
      * Matrices must have the same `Coefficient_ring` but can have different `StorageFormat`.
      */
     friend SparseMatrix operator+(const SparseMatrix &first, const SparseMatrix &second);
 
 
     /**
-     * \brief Subtracts a matrix and assign.
+     * \brief Subtracts the matrix `other`from the matrix.
      *
-     * Subtracts each coefficient of the matrix and stores the result in `matrix`.
+     * Subtracts each coefficient of the matrix `other` from `this`.
      * Matrices must have the same `Coefficient_ring` but can have different `StorageFormat`.
      */
     SparseMatrix& operator-=(SparseMatrix &matrix, const SparseMatrix &other);
@@ -231,14 +214,14 @@ public:
     friend SparseMatrix operator-(const SparseMatrix& matrix);
 
     /**
-     * \brief Applies factor on each coefficients into a new matrix.
+     * \brief Multiplies factor on each coefficients into a new matrix.
      *
      * This method creates a new matrix obtained by multiplying the matrix by a scalar factor `lambda`. If `lambda` is zero, the function comes to nullify the matrix (when possible, prefer `*=` for efficiency).
      */
     friend SparseMatrix operator*(const Coefficient_ring& lambda, const SparseMatrix &matrix);
 
     /**
-     * \brief Applies factor on each coefficients into a new matrix.
+     * \brief Multiplies factor on each coefficients into a new matrix.
      *
      * This method creates a new matrix obtained by multiplying the matrix by a scalar factor `lambda`. If `lambda` is zero, the function comes to nullify the matrix (when possible, prefer `*=` for efficiency).
      */
@@ -314,14 +297,14 @@ public:
     Matrix_chain operator[](size_t index) const;
 
     /**
-     * \brief Sets a given coefficient.
+     * \brief Sets coefficient (`i`,`j`) to `d`.
      *
      * Assign the scalar `d` to the coefficient on row `i` and column `j`.
      */
     friend void set_coefficient(SparseMatrix& matrix, size_t i, size_t j, const Coefficient_ring d);
 
     /**
-     * \brief Gets a given coefficient.
+     * \brief Gets coefficient (`i`, `j`).
      *
      * Returns the coefficient on row `i` and column `j` of the matrix.
      */
@@ -377,7 +360,7 @@ public:
      * For row-matrices, it should be equivalent to an assignment, however, for column-matrices, a traversal of the matrix is required (in \f$\mathcal O(n)\f$).
      * \pre `row.is_row()` must be `true`
      */
-    void set_row(SparseMatrix &matrix, size_t i, const Sparse_chain &row);
+    void set_row(SparseMatrix &matrix, size_t i, const SparseChain &row);
 
     /**
      * \brief Gets a submatrix from the matrix.

@@ -46,7 +46,7 @@ struct Hdvf_traits_d {
     typedef typename Exact_predicates_inexact_constructions_kernel::Point_3 Point3;
     /** \brief Converts a `Point` to a `Point3` for %VTK rendering.
      *
-     * By default, this function is the default projection. Update it to change the projection for %VTK rendering.
+     * By default, this function is set to `default_projection` (which maps \f$\mathbb R^d\f$ to \f$\mathbb R^3\f$ by projecting on the three first coordinates). Update it to change the projection for %VTK rendering.
      *
      * \param p Constant reference over the projected point.
      *
@@ -56,7 +56,7 @@ struct Hdvf_traits_d {
 
     // Set of standard projection operators
 
-    /** \brief Default projection operator.
+    /* \brief Default projection operator.
      *
      * Projects a dD point to its three first coordinates.
      */

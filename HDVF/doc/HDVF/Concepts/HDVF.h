@@ -262,7 +262,7 @@ const Column_matrix& matrix_dd (int q) const;
 /*!
  * \brief Writes the matrices of the reduction.
  *
- * Writes the matrices of the reduction (that is \f$f\f$, \f$g\f$, \f$h\f$, \f$\partial'\f$ the reduced boundary).
+ * Exports the matrices of the reduction (that is \f$f\f$, \f$g\f$, \f$h\f$, \f$\partial'\f$ the reduced boundary).
  *
  * By default, writes the complex to `std::cout`.
 */
@@ -270,7 +270,7 @@ std::ostream& write_matrices(std::ostream &out = std::cout) const;
 
 /*! \brief Writes the homology and cohomology reduction information.
  *
- * Writes the homology and cohomology reduction information (that is \f$f^*\f$, \f$g\f$ \f$\partial'\f$ the reduced boundary over each critical cell).
+ * Exports  the homology and cohomology reduction information (that is \f$f^*\f$, \f$g\f$ \f$\partial'\f$ the reduced boundary over each critical cell).
  *
  * By default, writes the complex to `std::cout`.
 */
@@ -279,7 +279,7 @@ std::ostream& write_reduction(std::ostream &out = std::cout) const;
 /*!
  *\brief Writes a HDVF and its reduction to a stream.
  *
- * Writes them to a stream  in  `.hdvf` file format (see xxx for a specification).
+ * Exports  them to a stream  in  `.hdvf` file format (see xxx for a specification).
  */
 
 std::ostream& write_hdvf_reduction(std::ostream& out) ;
@@ -287,7 +287,7 @@ std::ostream& write_hdvf_reduction(std::ostream& out) ;
 /*!
  * \brief Reads a HDVF and its reduction from a stream.
  *
- * Reads them from a `.hdvf` file format (see xxx for a specification).
+ * Imports them from a `.hdvf` file format (see xxx for a specification).
  */
 std::istream& read_hdvf_reduction(std::istream& in) ;
 

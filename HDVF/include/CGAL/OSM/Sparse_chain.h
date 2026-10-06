@@ -223,7 +223,7 @@ public:
     /**
      * \brief Adds two chains.
      *
-     * Adds two chains and return the result in a new matrix.
+     * Adds `other` chain to current chain and returns the result in a new matrix.
      *
      * \pre Chains must have the same `CoefficientRing` and the same `StorageFormat`.
      *
@@ -244,7 +244,7 @@ public:
     /**
      * \brief Subtracts a chain from current chain.
      *
-     * Subtract `other` chain from current chain and return the result in a new matrix.
+     * Subtracts `other` chain from current chain and returns the result in a new matrix.
      *
      * \pre Chains must have the same `CoefficientRing` and the same `StorageFormat`.
      *
@@ -264,7 +264,7 @@ public:
 
     /*! \relates Sparse_chain
      *
-     * \brief Applies multiplication on each coefficient.
+     * \brief Multiplies each coefficient of `chain` by `lambda`.
      *
      * \param lambda The factor to apply.
      * \param chain The  chain.
@@ -280,7 +280,7 @@ public:
     }
 
     /**
-     * \brief Applies multiplication on each coefficient.
+     * \brief Multiplies each coefficient of `chain` by `lambda`.
      *
      * \param lambda The factor to apply.
      *
@@ -406,7 +406,7 @@ public:
     }
 
     /**
-     * \brief Applies multiplication on each coefficient of `this`.
+     * \brief Multiplies each coefficient of `this` by `lambda`.
      *
      * If `lambda` is null, this function comes to nullify the chain.
      *
@@ -428,7 +428,7 @@ public:
     }
 
     /**
-     * \brief Gets the value of a coefficient of the chain.
+     * \brief Gets the value of a coefficient index of the chain.
      *
      * \warning The chain will perform boundary check.
      *
@@ -448,7 +448,7 @@ public:
     }
 
     /**
-     * \brief Gets the value of a coefficient of the chain.
+     * \brief Gets the value of a coefficient index of the chain.
      *
      * \warning The chain will perform boundary check.
      *
@@ -468,9 +468,9 @@ public:
     }
 
     /**
-     * \brief Sets a given coefficient of the chain.
+     * \brief Sets coefficient index of the chain to value `d`.
      *
-     * Set the value of the coefficient in the chain at `index`.
+     * Sets the value of the coefficient in the chain at `index`.
      *
      * \warning The chain will perform boundary check.
      *
@@ -712,21 +712,21 @@ private:
 
     /** \relates Sparse_chain
      *
-     * \brief Comparison of a `COLUMN`  and a `ROW` chain.
+     * \brief Test if a `COLUMN`  and a `ROW` chain are equal.
      */
     template <typename _CT>
     friend bool operator==(const Sparse_chain<_CT, OSM::COLUMN>& chain, const Sparse_chain<_CT, OSM::ROW> &other);
 
     /** \relates Sparse_chain
      *
-     * \brief Comparison of a `ROW` and a `COLUMN` chain.
+     * \brief Tests if a `ROW` and a `COLUMN` chain are equal.
      */
     template <typename _CT>
     friend bool operator==(const Sparse_chain<_CT, OSM::ROW>& chain, const Sparse_chain<_CT, OSM::COLUMN> &other);
 
     /** \relates Sparse_chain
      *
-     * \brief Comparison of two `ROW` chains.
+     * \brief Tests if two chains with similar storage formats are equal.
      */
     template <typename _CT>
     friend bool operator==(const Sparse_chain<_CT, OSM::ROW>& chain, const Sparse_chain<_CT, OSM::ROW> &other);

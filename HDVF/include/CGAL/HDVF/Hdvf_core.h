@@ -885,7 +885,7 @@ public:
     /**
      * \brief Writes a HDVF together with the associated reduction (f, g, h, d matrices)
      *
-     * Writes a HDVF to a stream in `hdvf` file format (a simple text file format, see for a specification).
+     * Exports a HDVF to a stream in `hdvf` file format (a simple text file format, see for a specification).
      *
      * \param out Output stream.
      */
@@ -894,7 +894,7 @@ public:
     /**
      * \brief Writes a HDVF together with the associated reduction to a file (f, g, h, d matrices).
      *
-     * Writes a HDVF to a file in `hdvf` file format (a simple text file format, see for a specification).
+     * Exports a HDVF to a file in `hdvf` file format (a simple text file format, see for a specification).
      *
      * \param filename Output file name.
      *
@@ -920,9 +920,9 @@ protected:
 public:
 
     /**
-     * \brief Loads a HDVF together with the associated reduction (f, g, h, d matrices)
+     * \brief Reads a HDVF together with the associated reduction (f, g, h, d matrices)
      *
-     * Load a HDVF and its reduction from a stream in `hdvf` file format, a simple text file format (see for a specification).
+     * Loads a HDVF and its reduction from a stream in `hdvf` file format, a simple text file format (see for a specification).
      * \warning The underlying complex is not stored in the file!
      *
      * \param in_stream Input stream.
@@ -938,9 +938,9 @@ public:
     std::istream& read_hdvf_reduction(std::istream& in_stream) ;
 
     /**
-     * \brief Loads a HDVF together with the associated reduction from a file (f, g, h, d matrices)
+     * \brief Reads a HDVF together with the associated reduction from a file (f, g, h, d matrices)
      *
-     * Load a HDVF and its reduction from a file in `hdvf` file format, a simple text file format (see for a specification).
+     * Loads a HDVF and its reduction from a file in `hdvf` file format, a simple text file format (see for a specification).
      * \warning The underlying complex is not stored in the file!
      *
      * \param filename Input file name.
