@@ -12,8 +12,8 @@
 //            Efi Fogel        <efif@post.tau.ac.il>
 //            Baruch Zukerman  <baruchzu@post.tau.ac.il>
 
-#ifndef CGAL_ARR_ON_SURFACE_WITH_HISTORY_2_IMPL_H
-#define CGAL_ARR_ON_SURFACE_WITH_HISTORY_2_IMPL_H
+#ifndef CGAL_ARRANGEMENT_ON_SURFACE_WITH_HISTORY_2_IMPL_H
+#define CGAL_ARRANGEMENT_ON_SURFACE_WITH_HISTORY_2_IMPL_H
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
@@ -28,8 +28,7 @@ namespace CGAL {
 // Default constructor.
 //
 template <typename GeomTraits, typename TopolTraits>
-Arrangement_on_surface_with_history_2<GeomTraits, TopolTraits>::Arrangement_on_surface_with_history_2() :
-  Base_arr_2()
+Arrangement_on_surface_with_history_2<GeomTraits, TopolTraits>::Arrangement_on_surface_with_history_2()
 { m_observer.attach(*this); }
 
 //-----------------------------------------------------------------------------
@@ -66,7 +65,6 @@ Arrangement_on_surface_with_history_2(const Geometry_traits_2* tr) :
 template <typename GeomTraits, typename TopolTraits>
 Arrangement_on_surface_with_history_2<GeomTraits, TopolTraits>&
 Arrangement_on_surface_with_history_2<GeomTraits, TopolTraits>::operator=(const Self& arr) {
-  // Check for self-assignment.
   if (this != &arr) assign(arr);
   return *this;
 }
@@ -82,50 +80,11 @@ void Arrangement_on_surface_with_history_2<GeomTraits, TopolTraits>::assign(cons
   // Assign the base arrangement.
   Base_arr_2::assign(arr);
 
-  // Create duplicates of the stored curves and map the curves of the
-  // original arrangement to their corresponding duplicates.
-  using Curve_map = std::map<const Curve_halfedges*, Curve_halfedges*>;
-  using Curve_map_entry = typename Curve_map::value_type;
-
+  // Duplicate the curves of arr, and redirect the curve pointers stored with the edges (which were copied from arr)
+  // to the duplicates.
   Curve_map cv_map;
-  const Curve_2* p_cv;
-  Curve_halfedges* dup_c;
-
-  for (auto ocit = arr.curves_begin(); ocit != arr.curves_end(); ++ocit) {
-    // Create a duplicate of the current curve.
-    dup_c = m_curves_alloc.allocate(1);
-
-    p_cv = &(*ocit);
-    std::allocator_traits<Curves_alloc>::construct(m_curves_alloc, dup_c, *p_cv);
-    m_curves.push_back(*dup_c);
-
-    // Assign a map entry.
-    cv_map.insert(Curve_map_entry(&(*ocit), dup_c));
-  }
-
-  // Go over the list of halfedges in our arrangement. The curves associated
-  // with these edges store pointers to the curves in the original
-  // arrangement, so we now have to modify these pointers, according to the
-  // mapping we have just created. While doing so, we also construct the set
-  // of edges associated with each (duplicated) curve in our arrangement.
-  std::list<Curve_2*> dup_curves;
-  const Curve_halfedges* org_c;
-
-  for (auto eit = this->edges_begin(); eit != this->edges_end(); ++eit) {
-    Halfedge_handle e = eit;
-    dup_curves.clear();
-    for (auto dit = e->curve().data().begin(); dit != e->curve().data().end(); ++dit) {
-      org_c = static_cast<Curve_halfedges*>(*dit);
-      dup_c = (cv_map.find(org_c))->second;
-
-      dup_curves.push_back(dup_c);
-      dup_c->_insert(e);
-    }
-
-    // Replace the curve pointers associated with the edge.
-    e->curve().data().clear();
-    for (auto iter = dup_curves.begin(); iter != dup_curves.end(); ++iter) e->curve().data().insert(*iter);
-  }
+  _duplicate_curves(arr.curves_begin(), arr.curves_end(), cv_map);
+  _relink_edges(cv_map);
 }
 
 //-----------------------------------------------------------------------------
@@ -139,19 +98,8 @@ Arrangement_on_surface_with_history_2<GeomTraits, TopolTraits>::~Arrangement_on_
 //
 template <typename GeomTraits, typename TopolTraits>
 void Arrangement_on_surface_with_history_2<GeomTraits, TopolTraits>::clear() {
-  // Free all stored curves.
-  Curve_iterator cit = m_curves.begin();
-  Curve_halfedges* p_cv;
-
-  while (cit != m_curves.end()) {
-    p_cv = &(*cit);
-    ++cit;
-
-    m_curves.erase(p_cv);
-    std::allocator_traits<Curves_alloc>::destroy(m_curves_alloc,p_cv);
-    m_curves_alloc.deallocate(p_cv, 1);
-  }
-  m_curves.destroy();
+  // Free all stored curves. Note that the iterator is advanced before the curve it points to is erased.
+  for (auto cit = m_curves.begin(); cit != m_curves.end();) _delete_curve_halfedges(&*cit++);
 
   // Clear the base arrangement.
   Base_arr_2::clear();
@@ -173,8 +121,8 @@ Arrangement_on_surface_with_history_2<GeomTraits, TopolTraits>::split_edge(Halfe
   // we should split and return the halfedge associated with cv1, and
   // otherwise we should return the halfedge associated with cv2 after the
   // split.
-  if (e->direction() == ARR_LEFT_TO_RIGHT) return Base_arr_2::split_edge(e, cv1, cv2);
-  else return Base_arr_2::split_edge(e, cv2, cv1);
+  return (e->direction() == ARR_LEFT_TO_RIGHT) ?
+    Base_arr_2::split_edge(e, cv1, cv2) : Base_arr_2::split_edge(e, cv2, cv1);
 }
 
 //-----------------------------------------------------------------------------
@@ -205,10 +153,8 @@ are_mergeable(Halfedge_const_handle e1, Halfedge_const_handle e2) const {
   Vertex_const_handle vh;
 
   if (e1->target() == e2->source() || e1->target() == e2->target()) vh = e1->target();
-  else {
-    if (e1->source() == e2->source() || e1->source() == e2->target()) vh = e1->source();
-    else return false;  // No common end-vertex: the edges are not mergeable.
-  }
+  else if (e1->source() == e2->source() || e1->source() == e2->target()) vh = e1->source();
+  else return false;  // No common end-vertex: the edges are not mergeable.
 
   // If there are other edges incident to vh, it is impossible to remove it
   // and merge the two edges.
@@ -218,6 +164,6 @@ are_mergeable(Halfedge_const_handle e1, Halfedge_const_handle e2) const {
   return this->m_geom_traits->are_mergeable_2_object()(e1->curve(), e2->curve());
 }
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif
