@@ -56,7 +56,6 @@
 
 #include <cstddef>
 #include <iostream>
-#include <tbb/concurrent_hash_map.h>
 #include <string>
 #include <utility>
 #include <vector>
