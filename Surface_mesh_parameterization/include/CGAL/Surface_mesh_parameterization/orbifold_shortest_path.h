@@ -139,7 +139,7 @@ void compute_shortest_paths_between_two_cones(const TriangleMesh& mesh,
 
   try {
     boost::dijkstra_shortest_paths(mesh, source, boost::predecessor_map(pred_pmap).visitor(vis));
-  } catch (const internal::Dijkstra_end_exception) {
+  } catch ([[maybe_unused]] const internal::Dijkstra_end_exception& e) {
 #ifdef CGAL_SMP_ORBIFOLD_DEBUG
     std::cout  << e.what();
 #endif
