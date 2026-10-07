@@ -339,24 +339,25 @@ void refine_with_plane(PolygonMesh& pm,
                        typename internal_np::Get_param<typename NamedParameters::base,
                                                        internal_np::vertex_oriented_side_map_t>::type>;
 
-
-  Vertex_oriented_side_map vertex_os;
-  if constexpr (use_default_vosm)
-    vertex_os = get(V_os_tag(), pm);
-  else
-    vertex_os = get_parameter(np, internal_np::vertex_oriented_side_map);
+  Vertex_oriented_side_map vertex_os =
+    choose_parameter(get_parameter(np, internal_np::vertex_oriented_side_map), V_os_tag(), pm);
 
   std::vector<edge_descriptor> inters;
+
+  bool read_vos = choose_parameter(get_parameter(np, internal_np::read_vertex_oriented_side_map),false);
 
   bool all_in = true;
   bool all_out = true;
   bool at_least_one_on = false;
+
   std::vector<vertex_descriptor> on_obnd;
   //TODO: parallel for
   for (vertex_descriptor v : vertices(pm))
   {
-    Oriented_side os = oriented_side(plane,  get(vpm, v));
-    put(vertex_os,v,os);
+    Oriented_side os = read_vos ? get(vertex_os,v) : oriented_side(plane,  get(vpm, v));
+    CGAL_assertion(os == oriented_side(plane,  get(vpm, v)));
+    if (!read_vos)
+      put(vertex_os,v,os);
     switch(os)
     {
       case ON_POSITIVE_SIDE:

@@ -61,6 +61,8 @@ CGAL_add_named_parameter(vertex_normal_map_t, vertex_normal_map, vertex_normal_m
 CGAL_add_named_parameter(vertex_color_map_t, vertex_color_map, vertex_color_map)
 CGAL_add_named_parameter(vertex_texture_map_t, vertex_texture_map, vertex_texture_map)
 CGAL_add_named_parameter(vertex_oriented_side_map_t, vertex_oriented_side_map, vertex_oriented_side_map)
+CGAL_add_named_parameter(read_vertex_oriented_side_map_t, read_vertex_oriented_side_map, read_vertex_oriented_side_map)
+
 
 CGAL_add_named_parameter(face_color_map_t, face_color_map, face_color_map)
 CGAL_add_named_parameter(repair_polygon_soup_t, repair_polygon_soup, repair_polygon_soup)
