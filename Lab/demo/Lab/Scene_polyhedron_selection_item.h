@@ -239,12 +239,9 @@ public:
 protected:
   void init(Scene_face_graph_item* poly_item, QMainWindow* mw);
 
-  Active_handle::Type get_active_handle_type()
-  { return k_ring_selector.active_handle_type; }
-  void set_active_handle_type(Active_handle::Type aht)
-  { k_ring_selector.active_handle_type = aht; }
-  void set_lasso_mode(bool b)
-  { k_ring_selector.set_lasso_mode(b); }
+  Active_handle::Type get_active_handle_type() { return k_ring_selector.active_handle_type; }
+  void set_active_handle_type(Active_handle::Type aht) { k_ring_selector.active_handle_type = aht; }
+  void set_lasso_mode(bool b) { k_ring_selector.set_lasso_mode(b); }
   int get_k_ring() { return k_ring_selector.k_ring; }
   void set_k_ring(int k) { k_ring_selector.k_ring = k; }
 
@@ -331,22 +328,29 @@ public:
                  item_bbox->xmax(),item_bbox->ymax(),item_bbox->zmax()));
   }
 
-  bool save(const std::string& file_name) const {
+  bool save(const std::string& file_name) const
+  {
     // update id fields before using
-    if(selected_vertices.size() > 0
-    ||selected_facets.size() > 0
-    || (selected_edges.size() > 0 &&
-        selected_vertices.empty() ))   { poly_item->face_graph()->collect_garbage(); }
+    if(selected_vertices.size() > 0 ||
+       selected_facets.size() > 0 ||
+       (selected_edges.size() > 0 && selected_vertices.empty()))
+    {
+      poly_item->face_graph()->collect_garbage();
+    }
 
     std::ofstream out(file_name.c_str());
     if(!out) { return false; }
 
     for(Selection_set_vertex::const_iterator it = selected_vertices.begin(); it != selected_vertices.end(); ++it)
-      { out << get(boost::vertex_index, *polyhedron(), *it) << " "; }
+    {
+      out << get(boost::vertex_index, *polyhedron(), *it) << " ";
+    }
     out << "\n";
 
     for(Selection_set_facet::const_iterator it = selected_facets.begin(); it != selected_facets.end(); ++it)
-      { out << get(boost::face_index, *polyhedron(), *it) << " "; }
+    {
+      out << get(boost::face_index, *polyhedron(), *it) << " ";
+    }
     out << "\n";
 
     for(Selection_set_edge::const_iterator it = selected_edges.begin(); it != selected_edges.end(); ++it)
@@ -360,18 +364,16 @@ public:
     return true;
   }
 
-
-  bool load(const std::string& file_name) {
+  bool load(const std::string& file_name)
+  {
     file_name_holder = file_name;
     return true;
   }
-
 
   // this function is called by selection_plugin, since at the time of the call of load(...)
   // we do not have access to selected polyhedron item
   bool actual_load(Scene_face_graph_item* poly_item, QMainWindow* mw)
   {
-
     init(poly_item, mw);
 
     std::vector<fg_vertex_descriptor> all_vertices;
@@ -666,17 +668,22 @@ public:
     );
 
     bool any_change = false;
-    for(typename Tr::Iterator it = tr.iterator_begin() ; it != tr.iterator_end(); ++it) {
-      if(mark[tr.id(*it)]) {
+    for(typename Tr::Iterator it = tr.iterator_begin() ; it != tr.iterator_end(); ++it)
+    {
+      if(mark[tr.id(*it)])
         any_change |= tr.container().insert(*it).second;
-      }
     }
-    if(any_change) { invalidateOpenGLBuffers(); Q_EMIT itemChanged(); }
+
+    if(any_change)
+    {
+      invalidateOpenGLBuffers();
+      Q_EMIT itemChanged();
+    }
   }
 
   template <class Handle, class Tag>
-  void reduce_selection(unsigned int steps) {
-
+  void reduce_selection(unsigned int steps)
+  {
     typedef Selection_traits<Handle, Scene_polyhedron_selection_item> Tr;
     Tr tr(this);
 
@@ -695,16 +702,24 @@ public:
     );
 
     bool any_change = false;
-    for(typename Tr::Iterator it = tr.iterator_begin() ; it != tr.iterator_end(); ++it) {
-      if(!mark[tr.id(*it)]) {
+    for(typename Tr::Iterator it = tr.iterator_begin() ; it != tr.iterator_end(); ++it)
+    {
+      if(!mark[tr.id(*it)])
         any_change |= (tr.container().erase(*it)!=0);
-      }
     }
-    if(any_change) { invalidateOpenGLBuffers(); Q_EMIT itemChanged(); }
+
+    if(any_change)
+    {
+      invalidateOpenGLBuffers();
+      Q_EMIT itemChanged();
+    }
   }
 
-  void erase_selected_facets() {
-    if(selected_facets.empty()) {return;}
+  void erase_selected_facets()
+  {
+    if(selected_facets.empty())
+      return;
+
     // no-longer-valid vertices and edges will be handled when item_about_to_be_changed()
 
     for (Selection_set_edge::iterator eit = selected_edges.begin(); eit != selected_edges.end();)
@@ -736,8 +751,10 @@ public:
 
 
   // This function writes into the id() of a Polyhedron
-  void keep_connected_components() {
-    if (selected_facets.empty()) { return; }
+  void keep_connected_components()
+  {
+    if (selected_facets.empty())
+      return;
 
     Selection_traits<fg_face_descriptor, Scene_polyhedron_selection_item> trf(this);
     Selection_traits<fg_vertex_descriptor, Scene_polyhedron_selection_item> trv(this);
@@ -746,7 +763,8 @@ public:
     changed_with_poly_item();
   }
 
-  bool export_selected_facets_as_polyhedron(Face_graph* out) {
+  bool export_selected_facets_as_polyhedron(Face_graph* out)
+  {
     // Note: might be a more performance wise solution
     // assign sequential id to vertices neighbor to selected facets
     for(Selection_set_facet::iterator fb = selected_facets.begin(); fb != selected_facets.end(); ++fb) {

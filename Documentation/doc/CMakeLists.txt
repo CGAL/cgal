@@ -121,7 +121,9 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
     APPEND ${CGAL_DOC_PACKAGE_DEFAULTS}
     "ALIASES += \"cgalPkgManuals{2}=<div class=\\\"PkgManuals\\\"></div>\"\n")
   file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "INPUT = ${CGAL_PACKAGE_DOC_DIR}\n")
-  if(NOT EXISTS "${CGAL_PACKAGE_DOC_DIR}/CGAL")
+
+  #special cases for Stream_support and Documentation package: stream support also needs include/CGAL while Documentation
+  if((NOT EXISTS "${CGAL_PACKAGE_DOC_DIR}/CGAL" AND (NOT ${CGAL_PACKAGE_NAME} STREQUAL "Documentation")) OR ${CGAL_PACKAGE_NAME} STREQUAL "Stream_support")
     # This package has in-source documentation.
     if(CGAL_BRANCH_BUILD) # use the entire include subdir
       file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS}

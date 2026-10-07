@@ -39,21 +39,23 @@ template <typename C3t3,
              Output_rep<typename C3t3::Subdomain_index>::is_specialized)
           >
 struct Dump_c3t3 {
-  void dump_c3t3(const C3t3& c3t3, std::string prefix, bool verbose) const
+  void dump_c3t3(const C3t3& c3t3, std::filesystem::path prefix, bool verbose) const
   {
     if (verbose)
       std::clog<<"======dump c3t3===== to: " << prefix << std::endl;
-    std::ofstream medit_file((prefix+".mesh").c_str());
+    std::filesystem::path medit_filename = prefix;
+    medit_filename += ".mesh";
+    std::ofstream medit_file(medit_filename);
     medit_file.precision(17);
     CGAL::IO::output_to_medit(medit_file, c3t3, false /*rebind*/, true /*show_patches*/);
     medit_file.close();
 
-    std::string bin_filename = prefix;
+    std::filesystem::path bin_filename = prefix;
     bin_filename += ".binary.cgal";
-    std::ofstream bin_file(bin_filename.c_str(),
+    std::ofstream bin_file(bin_filename,
                            std::ios_base::binary | std::ios_base::out);
     std::string signature = CGAL::Get_io_signature<C3t3>()();
-    CGAL_assertion(signature != std::string());
+    CGAL_assertion(! signature.empty());
     bin_file << "binary CGAL c3t3 " << signature << "\n";
     CGAL::IO::set_binary_mode(bin_file);
     bin_file << c3t3;
@@ -63,7 +65,7 @@ struct Dump_c3t3 {
 template <typename C3t3>
 struct Dump_c3t3<C3t3, false>
 {
-  void dump_c3t3(const C3t3&, std::string, bool) {
+  void dump_c3t3(const C3t3&, std::filesystem::path, bool) {
     std::cerr << "Warning " << __FILE__ << ":" << __LINE__ << "\n"
               << "  the c3t3 object of following type:\n"
               << typeid(C3t3).name() << std::endl
@@ -102,12 +104,13 @@ struct Dump_c3t3<C3t3, false>
 }; // end struct template specialization Dump_c3t3<C3t3, false>
 
 template <typename C3t3>
-void dump_c3t3_edges(const C3t3& c3t3, std::string prefix)
+void dump_c3t3_edges(const C3t3& c3t3, std::filesystem::path prefix)
 {
   typename C3t3::Triangulation::Geom_traits::Construct_point_3 cp =
     c3t3.triangulation().geom_traits().construct_point_3_object();
 
-  std::ofstream file((prefix+".polylines.txt").c_str());
+  prefix += ".polylines.txt";
+  std::ofstream file(prefix);
   file.precision(17);
   for(typename C3t3::Edges_in_complex_iterator
         edge_it = c3t3.edges_in_complex_begin(),
@@ -123,7 +126,7 @@ void dump_c3t3_edges(const C3t3& c3t3, std::string prefix)
   }
 }
 template <typename C3t3>
-void dump_c3t3(const C3t3& c3t3, std::string prefix,
+void dump_c3t3(const C3t3& c3t3, std::filesystem::path prefix,
 #ifdef CGAL_MESH_3_VERBOSE
                bool verbose = true)
 #else

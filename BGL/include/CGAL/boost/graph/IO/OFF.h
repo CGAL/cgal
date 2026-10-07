@@ -233,7 +233,7 @@ bool read_OFF(std::istream& is,
 */
 template <typename Graph,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool read_OFF(const std::string& fname,
+bool read_OFF(const std::filesystem::path& fname,
               Graph& g,
               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
@@ -404,7 +404,7 @@ bool write_OFF(std::ostream& os,
 */
 template <typename Graph,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool write_OFF(const std::string& fname,
+bool write_OFF(const std::filesystem::path& fname,
                const Graph& g,
                const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING

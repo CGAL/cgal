@@ -29,7 +29,7 @@
 template <typename K>
 struct Polyhedron_tester : public Tester<K>
 {
-  void polyhedron(const std::string& filename) const
+  void polyhedron(const std::filesystem::path& filename) const
   {
     using GT = K;
     using Polyhedron = CGAL::Polyhedron_3<GT>;
@@ -92,11 +92,11 @@ int main()
   Polyhedron_tester<K_e_i> test_epic;
 
   std::cerr << "Remeshing from a closed polyhedron (sphere.off):\n";
-  const std::string sphere = CGAL::data_file_path("meshes/sphere.off");
+  const std::filesystem::path sphere = CGAL::data_file_path("meshes/sphere.off");
   test_epic.polyhedron(sphere);
 
   std::cerr << "Remeshing from a non-closed polyhedron (lion.off):\n";
-  const std::string lion = CGAL::data_file_path("meshes/lion.off");
+  const std::filesystem::path lion = CGAL::data_file_path("meshes/lion.off");
   test_epic.polyhedron(lion);
 
   return EXIT_SUCCESS;

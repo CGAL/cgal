@@ -80,24 +80,18 @@ public:
     this->mw = mainWindow;
     this->m_messages = messages;
 
-    dock_widget = new QDockWidget(
-          "Shortest Path"
-          , mw);
+    dock_widget = new QDockWidget("Shortest Path", mw);
 
     dock_widget->setVisible(false);
 
     ui_widget.setupUi(dock_widget);
-    dock_widget->setWindowTitle(tr(
-                                  "Shortest Path "
-                                  ));
+    dock_widget->setWindowTitle(tr("Shortest Path "));
     addDockWidget(dock_widget);
 
     connect(ui_widget.Selection_type_combo_box, SIGNAL(currentIndexChanged(int)),  this, SLOT(on_Selection_type_combo_box_changed(int)));
     connect(ui_widget.Primitives_type_combo_box, SIGNAL(currentIndexChanged(int)), this, SLOT(on_Primitives_type_combo_box_changed(int)));
 
-    actionMakeShortestPaths = new QAction(
-          "Make Shortest Path"
-          , this->mw);
+    actionMakeShortestPaths = new QAction("Make Shortest Path", this->mw);
     actionMakeShortestPaths->setProperty("subMenuName", "Triangulated Surface Mesh Shortest Paths");
     actionMakeShortestPaths->setObjectName("actionMakeShortestPaths");
 
@@ -241,7 +235,7 @@ void CGAL_Lab_shortest_path_plugin::on_actionMakeShortestPaths_triggered()
       dock_widget->raise();
       // The other parts of initialization will be handled by the 'new_item' callback
       Scene_group_item* group = new Scene_group_item(QString("%1 Shortest Path").arg(polyhedronItem->name()));
-      Scene_polyhedron_shortest_path_item* sp_item =new Scene_polyhedron_shortest_path_item(polyhedronItem, this->scene, this->m_messages, this->mw);
+      Scene_polyhedron_shortest_path_item* sp_item = new Scene_polyhedron_shortest_path_item(polyhedronItem, this->scene, this->m_messages, this->mw);
       sp_item->setName(tr("Source Points for %1").arg(polyhedronItem->name()));
       scene->addItem(sp_item);
       scene->addItem(group);

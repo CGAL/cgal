@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
 {
   // instantiating and reading mesh
   Mesh smesh;
-  const std::string filename = (argc > 1) ?
+  const std::filesystem::path filename = (argc > 1) ?
     argv[1] :
     CGAL::data_file_path("meshes/sphere.off");
 

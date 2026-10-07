@@ -79,7 +79,7 @@ int main(int argc, char** argv)
   CGAL::Random rng;
   std::cout << "Random seed = " << rng.get_seed() << std::endl;
 
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/armadillo.off");
+  const std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/armadillo.off");
 
   // = read the soup
   Points points;

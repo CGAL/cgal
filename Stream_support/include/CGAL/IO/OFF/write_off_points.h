@@ -102,7 +102,7 @@ bool write_OFF(std::ostream& os,
 // // doxygen in ../OFF.h
 template <typename PointRange,
           typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT>
-bool write_OFF(const std::string& filename,
+bool write_OFF(const std::filesystem::path& filename,
                const PointRange& points,
                const CGAL_NP_CLASS& np, std::enable_if_t<internal::is_Range<PointRange>::value>*
                )

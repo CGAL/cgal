@@ -12,9 +12,10 @@ Release date: December 2026
 
 ### [Linear Cell Complex](https://doc.cgal.org/6.3/Manual/packages.html#PkgLinearCellComplex)
 - added `tetrahedron_soup_to_lcc()` to import a tetrahedron soup into a linear cell complex.
-
+- The following function have been deprecated and renamed for better naming clarity and consistency:
+  - `(polyhedron_3_to_lcc())` → [`import_face_graph_in_lcc()`](https://doc.cgal.org/6.3/Linear_cell_complex/group__PkgLinearCellComplexConstructions.html#gaf2fa5a468b97eb3358d25b2f147c2a72)
 ### [2D and 3D Fast Intersection and Distance Computation (AABB Tree)](https://doc.cgal.org/6.3/Manual/packages.html#PkgAABBTree)
-- `CGAL::AABB_tree::build()` now accepts an optional `Concurrency_tag` template parameter (`CGAL::Sequential_tag` by default).
+- `CGAL::AABB_tree::build()` now accepts an optional `ConcurrencyTag` template parameter (`CGAL::Sequential_tag` by default).
    When `CGAL::Parallel_tag` is specified, the tree construction is performed in parallel.
 - Added the functions `CGAL::AABB_trees::do_intersect()` and `CGAL::AABB_trees::all_pairs_of_intersecting_primitives()`.
   These functions respectively determine whether two AABB trees intersect and compute all pairs of intersecting primitives
@@ -60,6 +61,8 @@ Release date: December 2026
 
 ### [Stream Support](https://doc.cgal.org/6.3/Manual/packages.html#PkgStreamSupport)
 
+- **Breaking change** The return type as well as type of the parameter for the file name passed to IO functions is changed from
+  `std::string`  to `std::filesystem::path`, which enables to use non latin languages like Chinese for directory and file names.
 - Added overloaded versions of the functions `CGAL::IO::read_MEDIT()` and `CGAL::IO::write_MEDIT()`, for indexed tetrahedron soups.
 
 ### [Basic Viewer](https://doc.cgal.org/6.3/Manual/packages.html#PkgBasicViewer)
@@ -3153,7 +3156,7 @@ Release date: April 2016
 
 ### Point Set Processing
 
-- **Breaking change:** new template parameter `Concurrency_tag` for
+- **Breaking change:** new template parameter `ConcurrencyTag` for
     the functions `compute_average_spacing()`,
     `edge_aware_upsample_point_set()`, `jet_estimate_normals()`,
     `jet_smooth_point_set()`, and `pca_estimate_normals()`. To update

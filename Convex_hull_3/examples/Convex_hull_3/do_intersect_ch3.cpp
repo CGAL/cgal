@@ -21,8 +21,8 @@ typedef CGAL::Convex_hull_hierarchy_3<Mesh>                      Convex_hull_hie
 
 int main(int argc, char* argv[])
 {
-  const std::string f1 = (argc>1) ? argv[1] : CGAL::data_file_path("meshes/elephant.off");
-  const std::string f2 = (argc>2) ? argv[2] : CGAL::data_file_path("meshes/sphere.off");
+  const std::filesystem::path f1 = (argc>1) ? argv[1] : CGAL::data_file_path("meshes/elephant.off");
+  const std::filesystem::path f2 = (argc>2) ? argv[2] : CGAL::data_file_path("meshes/sphere.off");
   Mesh sm1, sm2;
   if(!CGAL::IO::read_polygon_mesh(f1, sm1))
   {

@@ -55,7 +55,7 @@ void test_types()
 
 int main(int argc, char** argv)
 {
-  const std::string ply_file = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/colored_tetra.ply");
+  const std::filesystem::path ply_file = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/colored_tetra.ply");
 
   std::vector<Point> points;
   std::vector<Face> polygons;
@@ -69,8 +69,7 @@ int main(int argc, char** argv)
 
   points.clear();
   polygons.clear();
-  std::string ply_string(ply_file);
-  ok = CGAL::IO::read_PLY(ply_string, points, polygons);
+  ok = CGAL::IO::read_PLY(ply_file, points, polygons);
   assert(ok);
 
   points.clear();

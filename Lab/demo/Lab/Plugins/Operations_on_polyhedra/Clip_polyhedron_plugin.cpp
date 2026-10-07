@@ -246,7 +246,7 @@ public Q_SLOTS:
         if(sm_item)
         {
           if(!ui_widget.do_not_modify_CheckBox->isChecked() && CGAL::Polygon_mesh_processing::does_self_intersect(*sm_item->face_graph()))
-            CGAL::Three::Three::warning(tr("%1 has not been clipped because it has self intersections.").arg(sm_item->name()));
+            CGAL::Three::Three::warning(tr("%1 has not been clipped because it has self-intersections.").arg(sm_item->name()));
           else
             polyhedra << sm_item;
         }

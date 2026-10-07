@@ -15,11 +15,11 @@ typedef OpenMesh::PolyMesh_ArrayKernelT< >                  Mesh;
 
 int main(int argc, char* argv[])
 {
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cube_quad.off");
+  const std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cube_quad.off");
   const char* outfilename = (argc > 2) ? argv[2] : "cube_tri.off";
 
   Mesh mesh;
-  OpenMesh::IO::read_mesh(mesh, filename);
+  OpenMesh::IO::read_mesh(mesh, filename.string());
 
   CGAL::Polygon_mesh_processing::triangulate_faces(mesh,
                                                    CGAL::parameters::vertex_point_map(get(CGAL::vertex_point, mesh))

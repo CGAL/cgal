@@ -48,9 +48,9 @@ namespace CGAL
  */
   template <class LCC, class PointRange, class TetrahedronRange>
   typename LCC::Dart_descriptor
-  tetrahedron_soup_to_lcc(const PointRange& points,
-                          const TetrahedronRange& tetrahedra,
-                          LCC& lcc)
+  tetrahedron_soup_to_lcc(LCC& lcc,
+                          const PointRange& points,
+                          const TetrahedronRange& tetrahedra)
   {
     static_assert( LCC::dimension>=3 && LCC::ambient_dimension==3 );
 

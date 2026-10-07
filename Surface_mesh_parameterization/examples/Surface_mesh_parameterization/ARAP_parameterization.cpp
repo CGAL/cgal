@@ -31,7 +31,7 @@ int main(int argc, char** argv)
 #else
   std::cout << "Using Eigen3" << std::endl;
 #endif
-  const std::string filename = (argc>1) ? argv[1] : CGAL::data_file_path("meshes/head.off");
+  const std::filesystem::path filename = (argc>1) ? argv[1] : CGAL::data_file_path("meshes/head.off");
 
   SurfaceMesh sm;
   if(!CGAL::IO::read_polygon_mesh(filename, sm))

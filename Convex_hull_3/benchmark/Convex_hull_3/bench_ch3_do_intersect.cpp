@@ -346,8 +346,8 @@ int main(int argc, char** argv)
   Test<CGAL::Exact_predicates_inexact_constructions_kernel>(r).run();
   // Test<CGAL::Exact_predicates_exact_constructions_kernel>(r).run();
 
-  const std::string f1 = (argc>2) ? argv[2] : CGAL::data_file_path("meshes/elephant.off");
-  const std::string f2 = (argc>3) ? argv[3] : CGAL::data_file_path("meshes/sphere.off");
+  const std::filesystem::path f1 = (argc>2) ? argv[2] : CGAL::data_file_path("meshes/elephant.off");
+  const std::filesystem::path f2 = (argc>3) ? argv[3] : CGAL::data_file_path("meshes/sphere.off");
   // bench_on_data<CGAL::Exact_predicates_inexact_constructions_kernel>(f1,f2);
 
   std::cout << "Done!" << std::endl;

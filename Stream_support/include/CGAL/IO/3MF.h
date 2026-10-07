@@ -29,6 +29,7 @@
 #include <string>
 #include <vector>
 #include <type_traits>
+#include <filesystem>
 
 #if defined(CGAL_LINKED_WITH_3MF) || defined(DOXYGEN_RUNNING)
 
@@ -44,7 +45,7 @@ namespace IO {
 
 template<typename PointRanges, typename TriangleRanges, typename ColorRanges,
          typename PointRange, typename TriangleRange, typename ColorRange>
-bool read_3MF(const std::string& fname,
+bool read_3MF(const std::filesystem::path& fname,
               PointRanges& all_points,
               TriangleRanges& all_triangles,
               ColorRanges& all_colors,
@@ -413,7 +414,7 @@ bool read_3MF(const std::string& fname,
  * \returns `true` if reading was successful, `false` otherwise.
  */
 template<typename PointRanges, typename TriangleRanges, typename ColorRanges>
-bool read_3MF(const std::string& fname,
+bool read_3MF(const std::filesystem::path& fname,
              PointRanges& all_points,
              TriangleRanges& all_triangles,
              ColorRanges& all_colors,
@@ -452,7 +453,7 @@ bool read_3MF(const std::string& fname,
  * \return `true` if the writing is successful, `false` otherwise.
  */
 template<typename PointRanges, typename TriangleRanges>
-bool write_3MF(const std::string& fname,
+bool write_3MF(const std::filesystem::path& fname,
                const PointRanges& all_points,
                const TriangleRanges& all_triangles,
                const std::vector<std::string>& names)
@@ -490,7 +491,7 @@ bool write_3MF(const std::string& fname,
 
 // convenience
 template<typename PointRange, typename TriangleRange>
-bool write_3MF(const std::string& fname,
+bool write_3MF(const std::filesystem::path& fname,
                const PointRange& points,
                const TriangleRange& triangles,
                const std::string& name)
@@ -503,7 +504,7 @@ bool write_3MF(const std::string& fname,
 }
 
 template<typename PointRange, typename TriangleRange>
-bool write_3MF(const std::string& fname, const PointRange& points, const TriangleRange& triangles,
+bool write_3MF(const std::filesystem::path& fname, const PointRange& points, const TriangleRange& triangles,
                std::enable_if_t<internal::is_Range<PointRange>::value>* = nullptr)
 {
   return write_triangle_soup_to_3mf(fname, points, triangles, "anonymous");

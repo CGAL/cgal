@@ -35,7 +35,7 @@ using namespace CGAL::parameters;
 
 int main()
 {
-  const std::string fname = CGAL::data_file_path("meshes/halfcube.off");
+  const std::filesystem::path fname = CGAL::data_file_path("meshes/halfcube.off");
   // Create input polyhedron
   Polyhedron polyhedron;
   std::ifstream input(fname);

@@ -10,6 +10,7 @@
 #include <CGAL/Three/TextRenderer.h>
 #include <CGAL/Three/Three.h>
 
+#include <cmath>
 #include <vector>
 
 #define POINT_SIZE 11
@@ -256,21 +257,6 @@ void compute_displayed_ids(Mesh& mesh,
     }
   }
 
-  QVector3D point(float(get(ppmap, displayed_vertices[0]).x() + offset.x),
-                  float(get(ppmap, displayed_vertices[0]).y() + offset.y),
-                  float(get(ppmap, displayed_vertices[0]).z() + offset.z));
-
-  // test if we want to erase or not
-  for(TextItem* text_item : *targeted_ids)
-  {
-    if(text_item->position() == point)
-    {
-      // hide and stop
-      deleteIds(viewer, vitems, eitems, fitems, targeted_ids);
-      return;
-    }
-  }
-
   deleteIds(viewer, vitems, eitems, fitems, targeted_ids);
 
   // test the midpoint of edges of the closest face
@@ -407,6 +393,7 @@ void compute_displayed_ids(Mesh& mesh,
                                        float(pos.z()),
                                        QString("%1").arg(get(hidmap, h)/2), true, font, Qt::green);
     eitems->append(text_item);
+    targeted_ids->push_back(text_item);
   }
 
   for(face_descriptor f : displayed_faces)
@@ -429,6 +416,7 @@ void compute_displayed_ids(Mesh& mesh,
                                        float(pos.z()),
                                        QString("%1").arg(get(fidmap,f)), true, font, Qt::blue);
     fitems->append(text_item);
+    targeted_ids->push_back(text_item);
   }
 }
 
@@ -594,7 +582,7 @@ int zoomToId(const Mesh& mesh,
   }
 
   const CGAL::qglviewer::Vec offset = viewer->offset();
-  typename Traits::Vector_3 normal;
+  typename Traits::Vector_3 normal = CGAL::NULL_VECTOR;
   if(first == QString("v"))
   {
     bool found = false;
@@ -608,11 +596,18 @@ int zoomToId(const Mesh& mesh,
                   get(ppmap, vh).z() + offset.z);
 
         typename boost::graph_traits<Mesh>::halfedge_descriptor hf = halfedge(vh, mesh);
-        if(CGAL::is_border(hf, mesh))
-          hf = opposite(hf, mesh);
+        if(hf != boost::graph_traits<Mesh>::null_halfedge())
+        {
+          if(CGAL::is_border(hf, mesh))
+            hf = opposite(hf, mesh);
 
-        selected_fh = face(hf, mesh);
-        normal = CGAL::Polygon_mesh_processing::compute_vertex_normal(vh, mesh);
+          if(!CGAL::is_border(hf, mesh))
+          {
+            selected_fh = face(hf, mesh);
+            normal = CGAL::Polygon_mesh_processing::compute_vertex_normal(vh, mesh);
+          }
+        }
+
         found = true;
         break;
       }
@@ -689,24 +684,60 @@ int zoomToId(const Mesh& mesh,
       return 4; // "No face with id %1").arg(id)
   }
 
-  CGAL::qglviewer::Quaternion new_orientation(CGAL::qglviewer::Vec(0,0,-1),
-                                              CGAL::qglviewer::Vec(-normal.x(), -normal.y(), -normal.z()));
-  Point new_pos = p +
-      0.25*CGAL::qglviewer::Vec(
-        viewer->camera()->position().x - viewer->camera()->pivotPoint().x,
-        viewer->camera()->position().y - viewer->camera()->pivotPoint().y,
-        viewer->camera()->position().z - viewer->camera()->pivotPoint().z)
-      .norm() * normal ;
+  if(viewer->camera()->frame()->isSpinning())
+    viewer->camera()->frame()->stopSpinning();
 
-  viewer->camera()->setPivotPoint(CGAL::qglviewer::Vec(p.x(), p.y(), p.z()));
+  if(normal == CGAL::NULL_VECTOR || (normal.x() == 0 && normal.y() == 0 && normal.z() == 0))
+  {
+    // same as lookat
+    CGAL::qglviewer::ManipulatedCameraFrame backup_frame(*viewer->camera()->frame());
+    viewer->camera()->fitSphere(CGAL::qglviewer::Vec(p.x(), p.y(), p.z()),
+                                viewer->camera()->sceneRadius()/100);
+    CGAL::qglviewer::ManipulatedCameraFrame new_frame(*viewer->camera()->frame());
+    *viewer->camera()->frame() = backup_frame;
+    viewer->camera()->interpolateTo(new_frame, 1.f);
+    viewer->setVisualHintsMask(1);
 
-  viewer->moveCameraToCoordinates(QString("%1 %2 %3 %4 %5 %6 %7").arg(new_pos.x())
-                                                                 .arg(new_pos.y())
-                                                                 .arg(new_pos.z())
-                                                                 .arg(new_orientation[0])
-                                                                 .arg(new_orientation[1])
-                                                                 .arg(new_orientation[2])
-                                                                 .arg(new_orientation[3]));
+    viewer->camera()->setPivotPoint(CGAL::qglviewer::Vec(p.x(), p.y(), p.z()));
+  }
+  else
+  {
+    // Keep the whole selected face in view by sizing the camera distance to the
+    // face radius instead of the current camera-to-pivot distance.
+    double radius = 0.0;
+    for(vertex_descriptor vh : vertices_around_face(halfedge(selected_fh, mesh), mesh))
+    {
+      const Point& q = get(ppmap, vh);
+      const Point v(q.x() + offset.x,
+                    q.y() + offset.y,
+                    q.z() + offset.z);
+      const double d2 = CGAL::squared_distance(v, p);
+      const double d = std::sqrt(d2);
+      if(d > radius)
+        radius = d;
+    }
+
+    const double half_fov = 0.5 * viewer->camera()->fieldOfView();
+    double dist = radius / std::sin(half_fov);
+    if(dist <= 0.0 || !std::isfinite(dist))
+      dist = 1.0;
+
+    CGAL::qglviewer::Quaternion new_orientation =
+      CGAL::qglviewer::Quaternion(CGAL::qglviewer::Vec(0, 0, -1),
+                                  CGAL::qglviewer::Vec(-normal.x(), -normal.y(), -normal.z()));
+    Point new_pos = p + dist * normal;
+
+    viewer->camera()->setPivotPoint(CGAL::qglviewer::Vec(p.x(), p.y(), p.z()));
+    viewer->moveCameraToCoordinates(QString("%1 %2 %3 %4 %5 %6 %7")
+                                    .arg(new_pos.x())
+                                    .arg(new_pos.y())
+                                    .arg(new_pos.z())
+                                    .arg(new_orientation[0])
+                                    .arg(new_orientation[1])
+                                    .arg(new_orientation[2])
+                                    .arg(new_orientation[3]));
+  }
+
   viewer->update();
 
   return 0; // all clear;

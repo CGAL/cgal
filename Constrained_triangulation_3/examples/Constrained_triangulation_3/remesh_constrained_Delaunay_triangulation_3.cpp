@@ -41,7 +41,7 @@ using Constraints_pmap = CGAL::Boolean_property_map<Constraints_set>;
 
 int main(int argc, char* argv[])
 {
-  std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/mpi.off");
+  std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/mpi.off");
   double target_edge_length = (argc > 2) ? std::stod(argv[2]) : 1.0;
   unsigned int iterations = (argc > 3) ? std::stoi(argv[3]) : 3;
 
