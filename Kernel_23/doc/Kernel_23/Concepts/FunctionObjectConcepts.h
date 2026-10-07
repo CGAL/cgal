@@ -311,69 +311,8 @@ public:
 
 }; /* end Kernel::AreStrictlyOrderedAlongLine_3 */
 
-/*!
-  \ingroup PkgKernel23ConceptsFunctionObjects
-  \cgalConcept
-
- \deprecated This class is deprecated since \cgal 4.3 and type safe ways should be preferred.
-
-  \cgalRefines{AdaptableBinaryFunction}
-
-  \sa `CGAL::Object`
-  \sa `Kernel::Object_2`
-  \sa `Kernel::Intersect_2`
-
-*/
-class Assign_2 {
-public:
-
-  /// \name Operations
-  /// A model of this concept must provide:
-  /// @{
-
-  /*!
-    assigns `o` to `t` if `o`
-    was constructed from an object of type `T`.
-    Returns `true`, if the assignment was possible.
-  */
-  template <class T>
-  bool operator()(T& t, const Kernel::Object_2&o);
 
 
-  /// @}
-
-}; /* end Kernel::Assign_2 */
-
-/*!
-  \ingroup PkgKernel23ConceptsFunctionObjects
-  \cgalConcept
-
-  \cgalRefines{AdaptableBinaryFunction}
-
- \deprecated This class is deprecated since \cgal 4.3 and type safe ways should be preferred.
-  \sa `CGAL::Object`
-  \sa `Kernel::Object_3`
-  \sa `Kernel::Intersect_3`
-
-*/
-class Assign_3 {
-public:
-
-  /// \name Operations
-  /// A model of this concept must provide:
-  /// @{
-
-  /*!
-    assigns `o` to `t` if `o`
-    was constructed from an object of type `T`.
-    Returns `true`, if the assignment was possible.
-  */
-  template <class T>
-  bool operator()(T& t, const Kernel::Object_3&o);
-
-  /// @}
-
-}; /* end Kernel::Assign_3 */
 
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
@@ -5253,69 +5192,8 @@ public:
 
 }; /* end Kernel::ConstructNormal_3 */
 
-/*!
-  \ingroup PkgKernel23ConceptsFunctionObjects
-  \cgalConcept
-
-  \cgalRefines{AdaptableUnaryFunction}
-
-  \deprecated This class is deprecated since \cgal 4.3 and type safe ways should be preferred.
-
-  \sa `CGAL::Object`
-  \sa `Kernel::Assign_2`
-  \sa `Kernel::Assign_3`
-  \sa `Kernel::Object_2`
-  \sa `Kernel::Object_3`
-
-*/
-class ConstructObject_2 {
-public:
-
-  /// \name Operations
-  /// A model of this concept must provide:
-  /// @{
-
-  /*!
-    constructs an object that contains `t` and returns it.
-  */
-  template <class T>
-  Object_2 operator()(const T& t);
-
-  /// @}
-
-}; /* end Kernel::ConstructObject_2 */
-
-/*!
-  \ingroup PkgKernel23ConceptsFunctionObjects
-  \cgalConcept
-
-  \cgalRefines{AdaptableUnaryFunction}
-
- \deprecated This class is deprecated since \cgal 4.3 and type safe ways should be preferred.
-  \sa `CGAL::Object`
-  \sa `Kernel::Assign_2`
-  \sa `Kernel::Assign_3`
-  \sa `Kernel::Object_2`
-  \sa `Kernel::Object_3`
-
-*/
-class ConstructObject_3 {
-public:
-
-  /// \name Operations
-  /// A model of this concept must provide:
-  /// @{
-
-  /*!
-    constructs an object that contains `t` and returns it.
-  */
-  template <class T>
-  Object_3 operator()(const T& t);
 
 
-  /// @}
-
-}; /* end Kernel::ConstructObject_3 */
 
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
