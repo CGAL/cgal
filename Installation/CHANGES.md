@@ -54,8 +54,9 @@ Release date: December 2026
 
 ### [Stream Support](https://doc.cgal.org/6.3/Manual/packages.html#PkgStreamSupport)
 
-- The type of the parameter for the file name passed to IO functions is changed from `std::string`  to `std::filesystem::path`,
-   which enables to use non latin languages like Chinese for directory and file names.
+- **Breaking change** The return type as well as type of the parameter for the file name passed to IO functions is changed from
+  `std::string`  to `std::filesystem::path`, which enables to use non latin languages like Chinese for directory and file names.
+
 ### [Basic Viewer](https://doc.cgal.org/6.3/Manual/packages.html#PkgBasicViewer)
 
 - Added the possibility to color the faces by a value mapped to a color palette: the
