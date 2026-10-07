@@ -272,8 +272,6 @@ CGAL_Kernel_cons(Compute_weight_2,
                  compute_weight_2_object)
 CGAL_Kernel_cons(Compute_weight_3,
                  compute_weight_3_object)
-CGAL_Kernel_cons(Construct_aff_transformation_3,
-                 construct_aff_transformation_3_object)
 CGAL_Kernel_cons(Construct_barycenter_2,
                  construct_barycenter_2_object)
 CGAL_Kernel_cons(Construct_barycenter_3,

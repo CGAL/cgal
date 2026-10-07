@@ -477,64 +477,6 @@ namespace CommonKernelFunctors {
     }
   };
 
-
-  template < typename K >
-  class Construct_aff_transformation_3
-  {
-  public:
-    typedef typename K::FT          FT;
-    typedef typename K::RT          RT;
-    typedef typename K::Vector_3     Vector_3;
-    typedef typename K::Aff_transformation_3    Aff_transformation_3;
-    typedef typename Aff_transformation_3::Rep  Rep;
-
-  public:
-    Rep
-    operator()( Return_base_tag,
-                Identity_transformation tag) const
-    { return Rep(tag); }
-
-    Rep
-    operator()( Return_base_tag,
-                Scaling tag, const FT& s) const
-    {return Rep(tag, s); }
-
-    Rep
-    operator()( Return_base_tag,
-                Scaling tag, const RT& s, const RT& w) const
-    {return Rep(tag, s, w); }
-
-    Rep
-    operator()( Return_base_tag,
-                Translation tag, const Vector_3& v) const
-    {return Rep(tag, v); }
-
-
-
-    Rep
-    operator()( Return_base_tag,
-                const RT& m11, const RT& m12, const RT& m13, const RT& m14,
-      const RT& m21, const RT& m22, const RT& m23, const RT& m24,
-      const RT& m31, const RT& m32, const RT& m33, const RT& m34,
-                                                   const RT& w= RT(1) ) const
-    {return Rep(m11, m12, m13, m14,
-                            m21, m22, m23, m24,
-                            m31, m32, m33, m34,
-                                           w); }
-
-    Rep
-    operator()( Return_base_tag,
-                const RT& m11, const RT& m12, const RT& m13,
-      const RT& m21, const RT& m22, const RT& m23,
-      const RT& m31, const RT& m32, const RT& m33,
-      const RT& w= RT(1) ) const
-    {return Rep(m11, m12, m13,
-                            m21, m22, m23,
-                            m31, m32, m33,
-                                           w); }
-  };
-
-
   template < typename K >
   class Construct_weighted_circumcenter_3
   {

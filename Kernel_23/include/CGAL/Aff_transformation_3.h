@@ -62,21 +62,21 @@ public:
       : Rep(std::move(t)) {}
 
   Aff_transformation_3(const Identity_transformation& tag)
-    : Rep(typename R::Construct_aff_transformation_3()(Return_base_tag(), tag)) {}
+    : Rep(tag) {}
 
   Aff_transformation_3(const Translation tag,
                        const Vector_3& v)
-    : Rep(typename R::Construct_aff_transformation_3()(Return_base_tag(), tag, v)) {}
+    : Rep( tag, v) {}
 
   Aff_transformation_3(const Scaling tag,
                        const RT& s)
-    : Rep(typename R::Construct_aff_transformation_3()(Return_base_tag(), tag, s)) {}
+    : Rep(tag, s) {}
 
 
   Aff_transformation_3(const Scaling tag,
                        const RT& s,
                        const RT& w)
-    : Rep(typename R::Construct_aff_transformation_3()(Return_base_tag(), tag, s ,w)) {}
+    : Rep(tag, s ,w) {}
 
 
 
@@ -86,20 +86,20 @@ public:
       const RT& m21, const RT& m22, const RT& m23, const RT& m24,
       const RT& m31, const RT& m32, const RT& m33, const RT& m34,
                                                    const RT& w= RT(1) )
-    : Rep(typename R::Construct_aff_transformation_3()(Return_base_tag(), m11, m12, m13, m14,
+    : Rep(m11, m12, m13, m14,
                             m21, m22, m23, m24,
                             m31, m32, m33, m34,
-                                           w)) {}
+                                           w) {}
 
   Aff_transformation_3(
       const RT& m11, const RT& m12, const RT& m13,
       const RT& m21, const RT& m22, const RT& m23,
       const RT& m31, const RT& m32, const RT& m33,
                                                    const RT& w = RT(1) )
-    : Rep(typename R::Construct_aff_transformation_3()(Return_base_tag(), m11, m12, m13,
+    : Rep(m11, m12, m13,
                            m21, m22, m23,
                            m31, m32, m33,
-                                          w)) {}
+                                          w) {}
 };
 
 #ifndef CGAL_NO_OSTREAM_INSERT_AFF_TRANSFORMATION_3
