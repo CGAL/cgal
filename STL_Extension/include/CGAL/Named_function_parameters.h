@@ -71,10 +71,6 @@ struct Named_params_impl : Base
     : Base(b)
     , v(v)
   {}
-
-  constexpr decltype(auto) parameter(Tag) const noexcept { return v; }
-  static constexpr bool has_parameter(Tag) noexcept { return true; }
-  using Base::parameter;
 };
 
 // partial specialization for base class of the recursive nesting
@@ -83,11 +79,9 @@ struct Named_params_impl<T, Tag, No_property>
 {
   typename std::conditional<std::is_copy_constructible<T>::value,
                             T, std::reference_wrapper<const T> >::type v; // copy of the parameter if copyable
-  constexpr Named_params_impl(const T& v)
+  Named_params_impl(const T& v)
     : v(v)
   {}
-  constexpr decltype(auto) parameter(Tag) const noexcept { return v; }
-  static constexpr bool has_parameter(Tag) noexcept { return true; }
 };
 
 // Helper class to get the type of a named parameter pack given a query tag
@@ -261,14 +255,15 @@ namespace parameters{
 
 typedef Named_function_parameters<bool, internal_np::all_default_t>  Default_named_parameters;
 
-inline constexpr Default_named_parameters default_values();
+Default_named_parameters
+inline default_values();
 
 // function to extract a parameter
 template <typename T, typename Tag, typename Base, typename Query_tag>
 typename internal_np::Get_param<internal_np::Named_params_impl<T, Tag, Base>, Query_tag>::type
 get_parameter(const Named_function_parameters<T, Tag, Base>& np, Query_tag tag)
 {
-  return np.parameter(tag);
+  return internal_np::get_parameter_impl(static_cast<const internal_np::Named_params_impl<T, Tag, Base>&>(np), tag);
 }
 
 template <typename T, typename Tag, typename Base, typename Query_tag>
@@ -371,29 +366,15 @@ struct Named_function_parameters
   typedef internal_np::Named_params_impl<T, Tag, Base> base;
   typedef Named_function_parameters<T, Tag, Base> self;
 
-  using base::parameter;
-  using base::has_parameter;
-  constexpr auto parameter(...) const { return internal_np::Param_not_found(); }
-  static constexpr bool has_parameter(...) { return false; }
-
-  template <typename U, typename Tag2>
-  constexpr decltype(auto) parameter_or([[maybe_unused]] U&& default_value) const {
-    if constexpr (has_parameter(Tag2())) {
-      return parameter(Tag2());
-    } else {
-      return std::forward<U>(default_value);
-    }
-  }
-
-  constexpr Named_function_parameters() : base(T()) {}
-  constexpr Named_function_parameters(const T& v) : base(v) {}
-  constexpr Named_function_parameters(const T& v, const Base& b) : base(v, b) {}
+  Named_function_parameters() : base(T()) {}
+  Named_function_parameters(const T& v) : base(v) {}
+  Named_function_parameters(const T& v, const Base& b) : base(v, b) {}
 
 // create the functions for new named parameters and the one imported boost
 // used to concatenate several parameters
 #define CGAL_add_named_parameter(X, Y, Z)                             \
   template<typename K>                                                \
-  constexpr Named_function_parameters<K, internal_np::X, self>                  \
+  Named_function_parameters<K, internal_np::X, self>                  \
   Z(const K& k) const                                                 \
   {                                                                   \
     typedef Named_function_parameters<K, internal_np::X, self> Params;\
@@ -401,7 +382,7 @@ struct Named_function_parameters
   }
 #define CGAL_add_named_parameter_with_compatibility(X, Y, Z)          \
   template<typename K>                                                \
-  constexpr Named_function_parameters<K, internal_np::X, self>                  \
+  Named_function_parameters<K, internal_np::X, self>                  \
   Z(const K& k) const                                                 \
   {                                                                   \
     typedef Named_function_parameters<K, internal_np::X, self> Params;\
@@ -409,7 +390,7 @@ struct Named_function_parameters
   }
 #define CGAL_add_named_parameter_with_compatibility_cref_only(X, Y, Z) \
   template<typename K>                                                \
-  constexpr Named_function_parameters<std::reference_wrapper<const K>,          \
+  Named_function_parameters<std::reference_wrapper<const K>,          \
                             internal_np::X, self>                     \
   Z(const K& k) const                                                 \
   {                                                                   \
@@ -419,7 +400,7 @@ struct Named_function_parameters
   }
 #define CGAL_add_named_parameter_with_compatibility_ref_only(X, Y, Z) \
   template<typename K>                                                \
-  constexpr Named_function_parameters<std::reference_wrapper<K>,                \
+  Named_function_parameters<std::reference_wrapper<K>,                \
                             internal_np::X, self>                     \
   Z(K& k) const                                                       \
   {                                                                   \
@@ -429,7 +410,7 @@ struct Named_function_parameters
   }
 #define CGAL_add_extra_named_parameter_with_compatibility(X, Y, Z)    \
   template<typename K>                                                \
-  constexpr Named_function_parameters<K, internal_np::X, self>                  \
+  Named_function_parameters<K, internal_np::X, self>                  \
   Z(const K& k) const                                                 \
   {                                                                   \
     typedef Named_function_parameters<K, internal_np::X, self> Params;\
@@ -452,14 +433,14 @@ struct Named_function_parameters
 #undef CGAL_NP_BUILD
 
   template <typename OT, typename OTag>
-  constexpr Named_function_parameters<OT, OTag, self>
+  Named_function_parameters<OT, OTag, self>
   combine(const Named_function_parameters<OT,OTag>& np) const
   {
     return Named_function_parameters<OT, OTag, self>(np.v,*this);
   }
 
   template <typename OT, typename OTag, typename ... NPS>
-  constexpr auto
+  auto
   combine(const Named_function_parameters<OT,OTag>& np, const NPS& ... nps) const
   {
     return Named_function_parameters<OT, OTag, self>(np.v,*this).combine(nps...);
@@ -471,8 +452,8 @@ struct Named_function_parameters
 
 namespace parameters {
 
-inline constexpr Default_named_parameters
-default_values()
+Default_named_parameters
+inline default_values()
 {
   return Default_named_parameters();
 }
@@ -489,7 +470,7 @@ template <class Tag, bool ref_only = false, bool ref_is_const = false>
 struct Boost_parameter_compatibility_wrapper
 {
   template <typename K>
-  constexpr Named_function_parameters<K, Tag>
+  Named_function_parameters<K, Tag>
   operator()(const K& p) const
   {
     typedef Named_function_parameters<K, Tag> Params;
@@ -497,7 +478,7 @@ struct Boost_parameter_compatibility_wrapper
   }
 
   template <typename K>
-  constexpr Named_function_parameters<K, Tag>
+  Named_function_parameters<K, Tag>
   operator=(const K& p) const
   {
     typedef Named_function_parameters<K, Tag> Params;
@@ -509,7 +490,7 @@ template <class Tag>
 struct Boost_parameter_compatibility_wrapper<Tag, true, true>
 {
   template <typename K>
-  constexpr Named_function_parameters<std::reference_wrapper<const K>, Tag>
+  Named_function_parameters<std::reference_wrapper<const K>, Tag>
   operator()(const K& p) const
   {
     typedef Named_function_parameters<std::reference_wrapper<const K>, Tag> Params;
@@ -517,7 +498,7 @@ struct Boost_parameter_compatibility_wrapper<Tag, true, true>
   }
 
   template <typename K>
-  constexpr Named_function_parameters<std::reference_wrapper<const K>, Tag>
+  Named_function_parameters<std::reference_wrapper<const K>, Tag>
   operator=(const K& p) const
   {
     typedef Named_function_parameters<std::reference_wrapper<const K>, Tag> Params;
@@ -529,7 +510,7 @@ template <class Tag>
 struct Boost_parameter_compatibility_wrapper<Tag, true, false>
 {
   template <typename K>
-  constexpr Named_function_parameters<std::reference_wrapper<K>, Tag>
+  Named_function_parameters<std::reference_wrapper<K>, Tag>
   operator()(K& p) const
   {
     typedef Named_function_parameters<std::reference_wrapper<K>, Tag> Params;
@@ -537,7 +518,7 @@ struct Boost_parameter_compatibility_wrapper<Tag, true, false>
   }
 
   template <typename K>
-  constexpr Named_function_parameters<std::reference_wrapper<K>, Tag>
+  Named_function_parameters<std::reference_wrapper<K>, Tag>
   operator=(std::reference_wrapper<K> p) const
   {
     typedef Named_function_parameters<std::reference_wrapper<K>, Tag> Params;
@@ -549,20 +530,20 @@ struct Boost_parameter_compatibility_wrapper<Tag, true, false>
 #define CGAL_add_named_parameter(X, Y, Z)        \
   template <typename K>                        \
   Named_function_parameters<K, internal_np::X>                  \
-  constexpr Z(const K& p)                                \
+  Z(const K& p)                                \
   {                                            \
     typedef Named_function_parameters<K, internal_np::X> Params;\
     return Params(p);                          \
   }
 
 #define CGAL_add_named_parameter_with_compatibility(X, Y, Z)        \
-  inline constexpr Boost_parameter_compatibility_wrapper<internal_np::X> Z;
+  inline const Boost_parameter_compatibility_wrapper<internal_np::X> Z;
 #define CGAL_add_named_parameter_with_compatibility_cref_only(X, Y, Z)        \
-  inline constexpr Boost_parameter_compatibility_wrapper<internal_np::X, true, true> Z;
+  inline const Boost_parameter_compatibility_wrapper<internal_np::X, true, true> Z;
 #define CGAL_add_named_parameter_with_compatibility_ref_only(X, Y, Z)        \
-  inline constexpr Boost_parameter_compatibility_wrapper<internal_np::X, true, false> Z;
+  inline const Boost_parameter_compatibility_wrapper<internal_np::X, true, false> Z;
 #define CGAL_add_extra_named_parameter_with_compatibility(X, Y, Z)        \
-  inline constexpr Boost_parameter_compatibility_wrapper<internal_np::X> Z;
+  inline const Boost_parameter_compatibility_wrapper<internal_np::X> Z;
 #include <CGAL/STL_Extension/internal/parameters_interface.h>
 #undef CGAL_add_named_parameter
 #undef CGAL_add_extra_named_parameter_with_compatibility

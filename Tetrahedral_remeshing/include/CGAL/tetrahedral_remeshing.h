@@ -15,12 +15,10 @@
 
 #include <CGAL/license/Tetrahedral_remeshing.h>
 
-#include <CGAL/Has_member.h>
 #include <CGAL/Triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 
 #include <CGAL/Uniform_sizing_field.h>
-#include <CGAL/Tetrahedral_remeshing/Remeshing_triangulation_3.h>
 #include <CGAL/Tetrahedral_remeshing/internal/property_maps.h>
 
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_adaptive_remeshing_impl.h>
@@ -348,12 +346,8 @@ template<typename Tr,
          typename CornerIndex,
          typename CurveIndex,
          typename NamedParameters = parameters::Default_named_parameters>
-#ifdef DOXYGEN_RUNNING
 CGAL::Triangulation_3<typename Tr::Geom_traits,
                       typename Tr::Triangulation_data_structure>
-#else
-auto
-#endif
 convert_to_triangulation_3(
   CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex> c3t3,
   const NamedParameters& np = parameters::default_values())
@@ -361,12 +355,19 @@ convert_to_triangulation_3(
   using parameters::get_parameter;
   using parameters::choose_parameter;
 
-  using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex>;
   using GT   = typename Tr::Geom_traits;
+  using TDS  = typename Tr::Triangulation_data_structure;
+  using Dummy_sizing = CGAL::Uniform_sizing_field<GT>;
 
-  if constexpr (NamedParameters::has_parameter(internal_np::edge_is_constrained))
+  using Remesher_types
+    = typename Tetrahedral_remeshing::internal::Adaptive_remesher_type_generator
+    <Tr, Dummy_sizing, NamedParameters, CornerIndex, CurveIndex>;
+
+  using Default_edge_pmap = typename Remesher_types::Default_ECMap;
+  using ECMap = typename Remesher_types::ECMap;
+  if (!std::is_same_v<ECMap, Default_edge_pmap>)
   {
-    auto ecmap = np.parameter(internal_np::edge_is_constrained);
+    ECMap ecmap = choose_parameter<Default_edge_pmap>(get_parameter(np, internal_np::edge_is_constrained));
     for (auto e : c3t3.edges_in_complex())
     {
       const auto evv = CGAL::Tetrahedral_remeshing::make_vertex_pair(e);//ordered pair
@@ -374,50 +375,20 @@ convert_to_triangulation_3(
     }
   }
 
-  if constexpr (NamedParameters::has_parameter(internal_np::vertex_is_constrained))
+  using Default_vertex_pmap = typename Remesher_types::Default_VCMap;
+  using VCMap = typename Remesher_types::VCMap;
+  if (!std::is_same_v<VCMap, Default_vertex_pmap>)
   {
-    auto vcmap = np.parameter(internal_np::vertex_is_constrained);
+    VCMap vcmap = choose_parameter<Default_vertex_pmap>(get_parameter(np, internal_np::vertex_is_constrained));
     for (auto v : c3t3.vertices_in_complex())
     {
       put(vcmap, v, true);
     }
   }
 
-  if constexpr (false == C3t3::Store_surface_patch_info_in_cell::value)
-  {
-    using Target_triangulation = CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<GT>;
-    Target_triangulation tr;
-    const auto& source_tr = c3t3.triangulation();
-    auto infinite_vertex = tr.tds().copy_tds(
-        source_tr.tds(), source_tr.infinite_vertex(),
-        [&](const auto& source_vertex) {
-          typename Target_triangulation::Vertex vertex;
-          vertex.set_point(source_vertex.point());
-          return vertex;
-        },
-        [&](const auto& source_cell) {
-          typename Target_triangulation::Cell cell;
-          cell.set_surface_patch_index(source_cell.surface_patch_index());
-          return cell;
-        });
-    tr.set_infinite_vertex(infinite_vertex);
-    auto [src_cell_it, src_cell_end] = source_tr.finite_cell_handles();
-    auto [tgt_cell_it, tgt_cell_end] = tr.finite_cell_handles();
-    for (; src_cell_it != src_cell_end; ++src_cell_it, ++tgt_cell_it)
-    {
-      auto subdomain_index = c3t3.subdomain_index(*src_cell_it);
-      (*tgt_cell_it)->set_subdomain_index(subdomain_index);
-      for(int i = 0; i < 4; ++i) {
-        (*tgt_cell_it)->set_surface_patch_index(i, c3t3.surface_patch_index(*src_cell_it, i));
-      }
-    }
-    return tr;
-  } else { // C3t3::Store_surface_patch_info_in_cell::value == true
-    using TDS  = typename Tr::Triangulation_data_structure;
-    CGAL::Triangulation_3<GT, TDS> tr;
-    tr.swap(c3t3.triangulation());
-    return tr;
-  }
+  CGAL::Triangulation_3<GT, TDS> tr;
+  tr.swap(c3t3.triangulation());
+  return tr;
 }
 
 ///////////////////////////////////////////////////
