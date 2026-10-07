@@ -192,7 +192,7 @@ bool read_MEDIT(std::istream& is,
           return false;
         }
         points.emplace_back(x,y,z);
-        if(ref != 0){
+        if(read_vertices_with_corner_index && ref != 0){
            vertices_with_corner_index.push_back({offset + i, ref});
         }
       }
@@ -289,6 +289,7 @@ bool read_MEDIT(std::istream& is,
 
     if(line.find("Corners") != std::string::npos)
     {
+        // TODO: are we sure we always ignore the info?
         is >> nvertices;
         std::string buffer;
         for(int i=0; i<nvertices; ++i)
@@ -461,6 +462,7 @@ bool read_MEDIT(std::istream& is,
 
   constexpr bool is_facets_with_patch_index_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::facets_with_patch_index_t>::value;
 
+
   constexpr bool is_edges_with_curve_index_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::edges_with_curve_index_t>::value;
 
   constexpr bool is_vertices_with_corner_index_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::vertices_with_corner_index_t>::value;
@@ -469,7 +471,7 @@ bool read_MEDIT(std::istream& is,
 
   return internal::read_MEDIT(is, points, cells, subdomain_indices,
                               facets_with_patch_index, is_facets_with_patch_index_map,
-                              edges_with_curve_index, is_facets_with_patch_index_map,
+                              edges_with_curve_index, is_edges_with_curve_index_map,
                               vertices_with_corner_index, is_vertices_with_corner_index_map,
                               verbose, is_CGAL_mesh);
 }
