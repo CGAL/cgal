@@ -211,6 +211,8 @@ Bbox_3::dilate(int dist)
   rep[3] = float_advance(rep[3],dist);
   rep[4] = float_advance(rep[4],dist);
   rep[5] = float_advance(rep[5],dist);
+
+  CGAL_postcondition(rep[0] < rep[3] && rep[1] < rep[4] && rep[2] < rep[5]);
 }
 
 inline
@@ -240,7 +242,6 @@ inline
 void
 Bbox_3::pad(double offset)
 {
-  CGAL_precondition(offset >= 0.);
 
   if (offset == 0.)
     return;
@@ -251,6 +252,8 @@ Bbox_3::pad(double offset)
   rep[3] += offset;
   rep[4] += offset;
   rep[5] += offset;
+
+  CGAL_postcondition(rep[0] < rep[3] && rep[1] < rep[4] && rep[2] < rep[5]);
 
 }
 
