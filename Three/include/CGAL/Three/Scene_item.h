@@ -96,14 +96,6 @@ public:
   //! This is where the vectors of VBOs and VAOs are initialized.
   Scene_item(int buffers_size = 20, int vaos_size = 10);
 
-  //! \brief sets the number of isolated vertices.
-  //!
-  //! This number will be displayed in a warning box at loading.
-  //! @see getNbIsolatedvertices
-  void setNbIsolatedvertices(std::size_t nb) { nb_isolated_vertices = nb;}
-  //! Getter for the number of isolated vertices.
-  //! @see setNbIsolatedvertices
-  std::size_t getNbIsolatedvertices() const {return nb_isolated_vertices;}
   virtual ~Scene_item();
   //! \brief duplicates the item.
   //!
@@ -427,9 +419,7 @@ protected:
   Scene_group_item* parent_group;
   //!Specifies if the item is currently selected.
   bool is_selected;
-  //! Holds the number of vertices that are not linked to the polyhedron from the OFF
-  //! file.
-  std::size_t nb_isolated_vertices;
+
   /*! Decides if the draw function must call initializeBuffers() or not. It is set
    * to true in the end of initializeBuffers() and to false in invalidateOpenGLBuffers(). The need of
    * this boolean comes from the need of a context from the OpenGLFunctions used in

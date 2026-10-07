@@ -28,6 +28,24 @@
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
+namespace internal {
+
+template <class PolygonMesh>
+std::size_t number_of_isolated_vertices(const PolygonMesh& pmesh)
+{
+  using vertex_descriptor = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
+
+  std::size_t count = 0;
+  for(vertex_descriptor v : vertices(pmesh))
+  {
+    const auto h = CGAL::halfedges_around_target(v, pmesh);
+    if (h.first == h.second)
+      ++count;
+  }
+  return count;
+}
+
+} // namespace internal
 
 /// \ingroup PMP_geometric_repair_grp
 ///

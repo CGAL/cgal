@@ -76,7 +76,6 @@ public Q_SLOTS:
     void merge(Scene_polylines_item*);
 
     void smooth();
-    void point_set_from_polyline();
 public:
     Polylines_container polylines;
 protected:
