@@ -73,7 +73,7 @@ struct Named_params_impl : Base
   {}
 
   constexpr decltype(auto) parameter(Tag) const noexcept { return v; }
-  constexpr bool has_parameter(Tag) const noexcept { return true; }
+  static constexpr bool has_parameter(Tag) noexcept { return true; }
   using Base::parameter;
 };
 
@@ -87,7 +87,7 @@ struct Named_params_impl<T, Tag, No_property>
     : v(v)
   {}
   constexpr decltype(auto) parameter(Tag) const noexcept { return v; }
-  constexpr bool has_parameter(Tag) const noexcept { return true; }
+  static constexpr bool has_parameter(Tag) noexcept { return true; }
 };
 
 // Helper class to get the type of a named parameter pack given a query tag
@@ -374,7 +374,7 @@ struct Named_function_parameters
   using base::parameter;
   using base::has_parameter;
   constexpr auto parameter(...) const { return internal_np::Param_not_found(); }
-  constexpr bool has_parameter(...) const { return false; }
+  static constexpr bool has_parameter(...) { return false; }
 
   template <typename U, typename Tag2>
   constexpr decltype(auto) parameter_or([[maybe_unused]] U&& default_value) const {

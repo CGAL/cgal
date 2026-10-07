@@ -364,7 +364,7 @@ convert_to_triangulation_3(
   using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex>;
   using GT   = typename Tr::Geom_traits;
 
-  if constexpr (np.has_parameter(internal_np::edge_is_constrained))
+  if constexpr (NamedParameters::has_parameter(internal_np::edge_is_constrained))
   {
     auto ecmap = np.parameter(internal_np::edge_is_constrained);
     for (auto e : c3t3.edges_in_complex())
@@ -374,7 +374,7 @@ convert_to_triangulation_3(
     }
   }
 
-  if constexpr (np.has_parameter(internal_np::vertex_is_constrained))
+  if constexpr (NamedParameters::has_parameter(internal_np::vertex_is_constrained))
   {
     auto vcmap = np.parameter(internal_np::vertex_is_constrained);
     for (auto v : c3t3.vertices_in_complex())
