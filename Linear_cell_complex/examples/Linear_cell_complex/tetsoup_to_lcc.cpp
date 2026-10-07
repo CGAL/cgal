@@ -32,7 +32,7 @@ int main(int argc, char** argv)
       filtered_tetras.push_back(tetras[i]);
 
   LCC lcc;
-  CGAL::tetrahedron_soup_to_lcc(points, filtered_tetras, lcc);
+  CGAL::tetrahedron_soup_to_lcc(lcc, points, filtered_tetras);
 
   CGAL::draw(lcc);
 }
