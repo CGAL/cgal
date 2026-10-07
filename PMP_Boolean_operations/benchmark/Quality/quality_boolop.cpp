@@ -28,9 +28,9 @@ int main(int argc, char** argv)
 
   Mesh tm2 = tm1;
   const CGAL::Bbox_3 bb = PMP::bbox(tm1);
-  const Vector_3 translation((bb.xmax()-bb.xmin()) * 0.5,
-                             (bb.ymax()-bb.ymin()) * 0.5,
-                             (bb.zmax()-bb.zmin()) * 0.5);
+  const Vector_3 translation((bb.xmax()-bb.xmin()) * 0.2,
+                             (bb.ymax()-bb.ymin()) * 0.2,
+                             (bb.zmax()-bb.zmin()) * 0.2);
   for(auto v : tm2.vertices())
     tm2.point(v) = tm2.point(v) + translation;
 

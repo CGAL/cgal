@@ -57,9 +57,9 @@ int main(int argc, char** argv)
     return 1;
 
   const CGAL::Bbox_3 bb = PMP::bbox(input);
-  const Vector_3 translation((bb.xmax()-bb.xmin()) * 0.5,
-                             (bb.ymax()-bb.ymin()) * 0.5,
-                             (bb.zmax()-bb.zmin()) * 0.5);
+  const Vector_3 translation((bb.xmax()-bb.xmin()) * 0.2,
+                             (bb.ymax()-bb.ymin()) * 0.2,
+                             (bb.zmax()-bb.zmin()) * 0.2);
 
   const char* output_names[] = {"outplace", "inplace_tm1", "inplace_tm2"};
   for(std::size_t op=0; op<4; ++op)
