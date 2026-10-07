@@ -13,25 +13,24 @@
 #include <string>
 #include <vector>
 
-/*
- this program gets a text file that contains operation on an arrangement
- such as inserting and removing curves and points. each operation invokes
- some notifications which compare the expected notification from the input
- file and the actual notification. it is very important to keep the right
- order of notification in order to pass the test.
-*/
+/* this program gets a text file that contains operation on an arrangement such
+ * as inserting and removing curves and points. each operation invokes some
+ * notifications which compare the expected notification from the input file and
+ * the actual notification. it is very important to keep the right order of
+ * notification in order to pass the test.
+ */
 
 int ok;
 std::ifstream global_input_file;
 char one_line[128];
 char buff[128];
 
-typedef CGAL::Quotient<CGAL::MP_Float>                Number_type;
-typedef CGAL::Cartesian<Number_type>                  Kernel;
-typedef CGAL::Arr_segment_traits_2<Kernel>            Traits_2;
-typedef Traits_2::Point_2                             Point_2;
-typedef Traits_2::X_monotone_curve_2                  Segment_2;
-typedef CGAL::Arrangement_2<Traits_2>                 Arrangement_2;
+using Number_type = CGAL::Quotient<CGAL::MP_Float>;
+using Kernel = CGAL::Cartesian<Number_type>;
+using Traits_2 = CGAL::Arr_segment_traits_2<Kernel>;
+using Point_2 = Traits_2::Point_2;
+using Segment_2 = Traits_2::X_monotone_curve_2;
+using Arrangement_2 = CGAL::Arrangement_2<Traits_2>;
 
 void skip_comments(std::ifstream & is, char* line) {
   while (!is.eof()) {
@@ -45,8 +44,7 @@ void compare_results(std::string str) {
   std::istringstream str_stream(one_line);
   str_stream.getline(buff, 128, ' ');
   if (std::string(buff) != str) {
-    std::cout << "Expected " << std::string(buff) << " obtained "
-              << str << std::endl;
+    std::cout << "Expected " << std::string(buff) << " obtained " << str << std::endl;
     ok = -1;
   }
 }
@@ -140,6 +138,10 @@ public:
   virtual void after_create_vertex(Vertex_handle /* v */) override
   { compare_results("after_create_vertex"); }
 
+  // Only the curve-end overload of before_create_boundary_vertex() is overridden below; unhide the point overload
+  // inherited from the base observer (otherwise it is hidden, and -Woverloaded-virtual warns).
+  using Observer::before_create_boundary_vertex;
+
   /*! Notification before the creation of a new boundary vertex.
    * \param cv The curve incident to the surface boundary.
    * \param ind The relevant curve-end.
@@ -150,8 +152,7 @@ public:
   before_create_boundary_vertex(const X_monotone_curve_2& /*cv*/,
                                 CGAL::Arr_curve_end /* ind */,
                                 CGAL::Arr_parameter_space /* bound_x */,
-                                CGAL::Arr_parameter_space /* bound_y */)
-    override
+                                CGAL::Arr_parameter_space /* bound_y */) override
   { compare_results("before_create_boundary_vertex"); }
 
   /*! Notification after the creation of a new vertex at infinity.
