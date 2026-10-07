@@ -42,6 +42,30 @@ struct Facet_with_patch_index
   SurfacePatchIndex surface_patch_index;
 };
 
+template <class FWPI>
+struct get_surface_path_index_type
+{
+  using type = int;
+};
+
+template <typename SurfacePatchIndex>
+struct get_surface_path_index_type<Facet_with_patch_index<SurfacePatchIndex>>
+{
+  using type = SurfacePatchIndex;
+};
+
+template <typename I>
+struct get_surface_path_index_type<std::array<I,4>>
+{
+  using type = I;
+};
+
+template <typename A, typename I>
+struct get_surface_path_index_type<std::tuple<A,A,A,I>>
+{
+  using type = I;
+};
+
 template<typename CurveIndex>
 struct Edge_with_curve_index
 {
@@ -210,7 +234,7 @@ bool read_MEDIT(std::istream& is,
         for(int i=0; i<nf; ++i)
         {
           int n[3];
-          int surface_patch_id;
+          typename get_surface_path_index_type<typename std::iterator_traits<typename FacetWithIndexRange::iterator>::value_type>::type surface_patch_id;
           if(!(is >> n[0] >> n[1] >> n[2] >> surface_patch_id))
           {
             if(verbose)
