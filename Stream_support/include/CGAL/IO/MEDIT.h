@@ -522,9 +522,10 @@ bool read_MEDIT(std::istream& is,
  *
  *   \cgalParamNBegin{vertices_with_corner_index}
  *     \cgalParamDescription{a const reference wrapper of a container of pair of integers that will be written by this function.
- *                           Each element corresponds to a corner at the vertex corresponding to the first integer, the second integer being the corner index.}
+ *                           Each element corresponds to a corner at the vertex corresponding to the first integer, the second integer being the corner index.
+ *                           For vertices not in the container, the corner index is set to `0`.}
  *     \cgalParamType{a `std::reference_wrapper` to a model of `SequenceContainer` with a value type where the elements of the pairs can be accessed with `std::get<int>()`}
- *     \cgalParamDefault{vertices are not written}
+ *     \cgalParamDefault{corners are not written}
  *   \cgalParamNEnd
  *
  * \cgalNamedParamsEnd
