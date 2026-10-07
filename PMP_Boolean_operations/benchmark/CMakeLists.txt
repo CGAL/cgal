@@ -14,8 +14,16 @@ create_single_source_cgal_program("Performance/performance_snap_polygon_soup.cpp
 create_single_source_cgal_program("Robustness/robustness_snap_polygon_soup.cpp")
 create_single_source_cgal_program("Quality/quality_snap_polygon_soup.cpp")
 
-create_single_source_cgal_program("polygon_mesh_slicer.cpp")
-target_link_libraries(polygon_mesh_slicer PRIVATE CGAL::Eigen3_support)
+create_single_source_cgal_program("Performance/performance_autorefine.cpp")
+create_single_source_cgal_program("Robustness/robustness_autorefine.cpp")
+create_single_source_cgal_program("Quality/quality_autorefine.cpp")
+
+create_single_source_cgal_program("Performance/performance_boolop.cpp")
+create_single_source_cgal_program("Robustness/robustness_boolop.cpp")
+create_single_source_cgal_program("Quality/quality_boolop.cpp")
+
+#create_single_source_cgal_program("polygon_mesh_slicer.cpp")
+#target_link_libraries(polygon_mesh_slicer PRIVATE CGAL::Eigen3_support)
 
 find_package(TBB QUIET)
 include(CGAL_TBB_support)

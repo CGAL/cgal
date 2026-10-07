@@ -22,13 +22,13 @@ process_file() {
         echo "    \"$INPUT_ID\": {"
         echo "      \"path\": \"$INPUT_PATH\","
 
-        PERF_OUTPUT=$(bash "$PROJECT_DIR/Performance/run_performance.sh" "$INPUT_PATH" "$TIMEOUT" "$GRID_SIZE" "$ERASE_ALL_DUPLICATE" 2>> "$OUTPUT_DIR/Logs/$COMPONENT_NAME/Performance/$INPUT_ID.log")
+        PERF_OUTPUT=$(bash "$PROJECT_DIR/Performance/run_performance_snap.sh" "$INPUT_PATH" "$TIMEOUT" "$GRID_SIZE" "$ERASE_ALL_DUPLICATE" 2>> "$OUTPUT_DIR/Logs/$COMPONENT_NAME/Performance/$INPUT_ID.log")
         echo "      \"Performance\": $PERF_OUTPUT,"
 
-        QUALITY_OUTPUT=$(bash "$PROJECT_DIR/Quality/run_quality.sh" "$INPUT_PATH" "$TIMEOUT" "$GRID_SIZE" "$ERASE_ALL_DUPLICATE" 2>> "$OUTPUT_DIR/Logs/$COMPONENT_NAME/Quality/$INPUT_ID.log")
+        QUALITY_OUTPUT=$(bash "$PROJECT_DIR/Quality/run_quality_snap.sh" "$INPUT_PATH" "$TIMEOUT" "$GRID_SIZE" "$ERASE_ALL_DUPLICATE" 2>> "$OUTPUT_DIR/Logs/$COMPONENT_NAME/Quality/$INPUT_ID.log")
         echo "      \"Quality\": $QUALITY_OUTPUT,"
 
-        ROBUST_OUTPUT=$(bash "$PROJECT_DIR/Robustness/run_robustness.sh" "$INPUT_PATH" "$TIMEOUT" "$GRID_SIZE" "$ERASE_ALL_DUPLICATE" 2>> "$OUTPUT_DIR/Logs/$COMPONENT_NAME/Robustness/$INPUT_ID.log")
+        ROBUST_OUTPUT=$(bash "$PROJECT_DIR/Robustness/run_robustness_snap.sh" "$INPUT_PATH" "$TIMEOUT" "$GRID_SIZE" "$ERASE_ALL_DUPLICATE" 2>> "$OUTPUT_DIR/Logs/$COMPONENT_NAME/Robustness/$INPUT_ID.log")
         echo "      \"Robustness\": $ROBUST_OUTPUT"
 
         echo "    }"
