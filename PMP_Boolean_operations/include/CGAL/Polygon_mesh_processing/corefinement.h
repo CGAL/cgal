@@ -181,9 +181,10 @@ enum Boolean_operation_type {UNION = 0, INTERSECTION=1,
   *
   * \cgalNamedParamsBegin
   *   \cgalParamNBegin{concurrency_tag}
-  *     \cgalParamDescription{a tag indicating if the task should be done using one or several threads.}
+  *     \cgalParamDescription{a tag specifying whether the task should be performed using a single or multiple threads.}
   *     \cgalParamType{Either `CGAL::Sequential_tag`, or `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`}
   *     \cgalParamDefault{`CGAL::Sequential_tag`}
+  *     \cgalParamExtra{`np1` only}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{vertex_point_map}
@@ -532,9 +533,10 @@ corefine_and_compute_boolean_operations(
   *
   * \cgalNamedParamsBegin
   *   \cgalParamNBegin{concurrency_tag}
-  *     \cgalParamDescription{a tag indicating if the task should be done using one or several threads.}
+  *     \cgalParamDescription{a tag specifying whether the task should be performed using a single or multiple threads.}
   *     \cgalParamType{Either `CGAL::Sequential_tag`, or `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`}
   *     \cgalParamDefault{`CGAL::Sequential_tag`}
+  *     \cgalParamExtra{`np1` only}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{vertex_point_map}
@@ -731,6 +733,13 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
  * @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{concurrency_tag}
+ *     \cgalParamDescription{a tag specifying whether the task should be performed using a single or multiple threads.}
+ *     \cgalParamType{Either `CGAL::Sequential_tag`, or `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`}
+ *     \cgalParamDefault{`CGAL::Sequential_tag`}
+ *     \cgalParamExtra{`np1` only}
+ *   \cgalParamNEnd
+ *
  *   \cgalParamNBegin{vertex_point_map}
  *     \cgalParamDescription{a property map associating points to the vertices of `tm1` (`tm2`)}
  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
@@ -884,6 +893,12 @@ namespace experimental {
  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{concurrency_tag}
+ *     \cgalParamDescription{a tag specifying whether the task should be performed using a single or multiple threads.}
+ *     \cgalParamType{Either `CGAL::Sequential_tag`, or `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`}
+ *     \cgalParamDefault{`CGAL::Sequential_tag`}
+ *   \cgalParamNEnd
+ *
  *   \cgalParamNBegin{vertex_point_map}
  *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
@@ -983,6 +998,11 @@ autorefine(      TriangleMesh& tm,
  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{concurrency_tag}
+ *     \cgalParamDescription{a tag specifying whether the task should be performed using a single or multiple threads.}
+ *     \cgalParamType{Either `CGAL::Sequential_tag`, or `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`}
+ *     \cgalParamDefault{`CGAL::Sequential_tag`}
+ *   \cgalParamNEnd
  *   \cgalParamNBegin{vertex_point_map}
  *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
