@@ -32,9 +32,9 @@ int main(int argc, char*argv[])
 {
   std::cout.precision(17);
   std::cerr.precision(17);
-  const std::string fname = (argc>1)?argv[1]:CGAL::data_file_path("meshes/horizons.off");
+  const std::filesystem::path fname = (argc>1)?argv[1]:CGAL::data_file_path("meshes/horizons.off");
   std::ifstream input(fname);
-  const std::string fname2 = (argc>2)?argv[2]:CGAL::data_file_path("meshes/horizons-domain.off");
+  const std::filesystem::path fname2 = (argc>2)?argv[2]:CGAL::data_file_path("meshes/horizons-domain.off");
   std::ifstream input2(fname2);
   Polyhedron sm, smbounding;
   input >> sm;

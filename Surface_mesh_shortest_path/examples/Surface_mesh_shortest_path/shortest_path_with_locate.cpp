@@ -32,7 +32,7 @@ typedef CGAL::AABB_tree<AABB_face_graph_traits>                         AABB_tre
 
 int main(int argc, char** argv)
 {
-  const std::string filename = (argc>1) ? argv[1] : CGAL::data_file_path("meshes/elephant.off");
+  const std::filesystem::path filename = (argc>1) ? argv[1] : CGAL::data_file_path("meshes/elephant.off");
 
   Triangle_mesh tmesh;
   if(!CGAL::IO::read_polygon_mesh(filename, tmesh) ||

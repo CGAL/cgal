@@ -115,6 +115,7 @@ the printing mode.
 - \link IOstreamOperators `CGAL::operator<<()` \endlink
 - `CGAL::IO::iformat()`
 - `CGAL::IO::oformat()`
+- `CGAL::data_file_path()`
 
 \cgalCRPSection{I/O Functions}
 - `CGAL::IO::read_polygon_soup()`

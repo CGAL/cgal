@@ -84,20 +84,20 @@ namespace IO {
 template <typename OutputIteratorValueType,
           typename PointOutputIterator,
           typename NamedParameters = parameters::Default_named_parameters>
-bool read_points(const std::string& fname,
+bool read_points(const std::filesystem::path& fname,
                  PointOutputIterator output,
                  const NamedParameters& np = parameters::default_values())
 {
-  const std::string ext = internal::get_file_extension(fname);
+  const std::string ext = fname.extension().string();
 
-  if(ext == "xyz" || ext == "pwn")
+  if(ext == ".xyz" || ext == ".pwn")
     return read_XYZ<OutputIteratorValueType>(fname, output, np);
-  else if(ext == "off")
+  else if(ext == ".off")
     return read_OFF<OutputIteratorValueType>(fname, output, np);
-  else if(ext == "ply")
+  else if(ext == ".ply")
     return read_PLY<OutputIteratorValueType>(fname, output, np);
 #ifdef CGAL_LINKED_WITH_LASLIB
-  else if(ext == "las")
+  else if(ext == ".las")
     return read_LAS<OutputIteratorValueType>(fname, output, np);
 #endif
 
@@ -108,7 +108,7 @@ bool read_points(const std::string& fname,
 
 // variant with default OutputIteratorType
 template <typename OutputIterator, typename NamedParameters = parameters::Default_named_parameters>
-bool read_points(const std::string& fname, OutputIterator output, const NamedParameters& np = parameters::default_values())
+bool read_points(const std::filesystem::path& fname, OutputIterator output, const NamedParameters& np = parameters::default_values())
 {
   return read_points<typename value_type_traits<OutputIterator>::type>(fname, output, np);
 }

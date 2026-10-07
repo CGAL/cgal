@@ -281,8 +281,8 @@ void test_concept()
 
 int main(int argc, char** argv)
 {
-  const std::string filename1 = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/elephant.off");
-  const std::string filename2 = (argc > 2) ? argv[2] : CGAL::data_file_path("meshes/blobby_3cc.off");
+  const std::filesystem::path filename1 = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/elephant.off");
+  const std::filesystem::path filename2 = (argc > 2) ? argv[2] : CGAL::data_file_path("meshes/blobby_3cc.off");
 
   Mesh m1, m2;
   if(!PMP::IO::read_polygon_mesh(filename1, m1))

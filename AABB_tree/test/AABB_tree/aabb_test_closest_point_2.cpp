@@ -47,7 +47,7 @@ int main(int argc, char** argv)
   std::cout.precision(17);
 
   // Read the input
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/camel.off");
+  const std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/camel.off");
   std::cout << "Reading " << filename << "..." << std::endl;
 
   std::vector<CGAL::Simple_cartesian<double>::Point_3> points;

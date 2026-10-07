@@ -37,10 +37,10 @@ double max_coordinate(const Mesh& mesh)
 
 int main(int argc, char* argv[])
 {
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/eight.off");
+  const std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/eight.off");
 
   Mesh mesh;
-  OpenMesh::IO::read_mesh(mesh, filename);
+  OpenMesh::IO::read_mesh(mesh, filename.string());
   if (CGAL::is_empty(mesh) || !CGAL::is_triangle_mesh(mesh))
   {
     std::cerr << "Input geometry is not triangulated." << std::endl;

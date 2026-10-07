@@ -20,7 +20,6 @@
 #include <iostream>
 #include <fstream>
 #include <set>
-#include <string>
 #include <vector>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
@@ -34,7 +33,7 @@ typedef CGAL::Polyhedron_3<EPICK, CGAL::Polyhedron_items_with_id_3>   Polyhedron
 typedef CGAL::Surface_mesh<EPICK::Point_3>                            Surface_mesh;
 
 template <typename Kernel, typename Mesh>
-void read_mesh(const std::string filename,
+void read_mesh(const std::filesystem::path filename,
                Mesh& sm)
 {
   typedef typename Kernel::Point_3                                    Point;
@@ -46,8 +45,7 @@ void read_mesh(const std::string filename,
     std::exit(1);
   }
 
-  std::string fn(filename);
-  if(fn.substr(fn.find_last_of(".") + 1) == "stl")
+  if(filename.extension() == ".stl")
   {
     std::vector<Point> points;
     std::vector<std::array<int, 3> > faces;
@@ -69,7 +67,7 @@ void read_mesh(const std::string filename,
 }
 
 template <typename Kernel, typename Mesh>
-void test(const std::string filename,
+void test(const std::filesystem::path filename,
           const double large_tolerance,
           const double good_tolerance,
           const double small_tolerance)
@@ -138,7 +136,7 @@ void test(const std::string filename,
   out4.close();
 }
 
-void test(const std::string filename,
+void test(const std::filesystem::path filename,
           const double large_tolerance,
           const double good_tolerance,
           const double small_tolerance)

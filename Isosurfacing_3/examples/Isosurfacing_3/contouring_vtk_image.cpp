@@ -23,6 +23,7 @@
 
 #include <iostream>
 #include <vector>
+#include <filesystem>
 
 using Kernel = CGAL::Simple_cartesian<double>;
 using FT = typename Kernel::FT;
@@ -91,11 +92,11 @@ void run_dual_contouring(const Grid& grid,
 }
 
 template <typename VtkReader>
-void run(const char* filename,
+void run(const std::filesystem::path& filename,
          const FT isovalue)
 {
   vtkNew<VtkReader> reader;
-  reader->SetFileName(filename);
+  reader->SetFileName(filename.string().c_str());
   reader->Update();
   CGAL::Image_3 image = CGAL::IO::read_vtk_image_data(reader->GetOutput());
 
@@ -119,21 +120,20 @@ void run(const char* filename,
 
 int main(int argc, char* argv[])
 {
-  const std::string fname = (argc>1) ? argv[1] : CGAL::data_file_path("images/torus_gray_image.vti");
+  const std::filesystem::path filename = (argc>1) ? argv[1] : CGAL::data_file_path("images/torus_gray_image.vti");
 
-  const char* filename = fname.c_str();
   const FT isovalue = (argc > 2) ? std::stod(argv[2]) : 3;
 
-  const std::string ext = CGAL::IO::internal::get_file_extension(filename);
-  if(ext == "mhd" || ext == "mha")
+  const std::filesystem::path ext = filename.extension();
+  if(ext == ".mhd" || ext == ".mha")
     run<vtkMetaImageReader>(filename, isovalue);
-  else if(ext == "vti")
+  else if(ext == ".vti")
     run<vtkXMLImageDataReader>(filename, isovalue);
-  else if(ext == "tif")
+  else if(ext == ".tif")
     run<vtkTIFFReader>(filename, isovalue);
-  else if(ext == "nrrd")
+  else if(ext == ".nrrd")
     run<vtkNrrdReader>(filename, isovalue);
-  else if(ext == "mnc")
+  else if(ext == ".mnc")
     run<vtkMINCImageReader>(filename, isovalue);
   else
   {

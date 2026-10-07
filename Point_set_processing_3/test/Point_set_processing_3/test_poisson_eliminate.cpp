@@ -33,7 +33,7 @@ void no_check(const std::vector<CGAL::Exact_predicates_exact_constructions_kerne
 }
 
 template<class K, class Check_distance_functor>
-void sampling(const std::string& filename, Check_distance_functor check_average_distance) {
+void sampling(const std::filesystem::path& filename, Check_distance_functor check_average_distance) {
   using Point_3 = typename K::Point_3;
   std::vector<Point_3> points;
 
