@@ -34,7 +34,6 @@ class Aff_transformation_3 : public R_::Kernel_base::Aff_transformation_3
   typedef typename R_::RT            RT;
   typedef typename R_::Vector_3      Vector_3;
   typedef Aff_transformation_3       Self;
-
 public:
 
   typedef CGAL::Dimension_tag<3>    Ambient_dimension;

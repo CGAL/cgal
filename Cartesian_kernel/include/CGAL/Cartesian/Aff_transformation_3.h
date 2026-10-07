@@ -22,15 +22,6 @@
 
 namespace CGAL {
 
-class Identity_transformation;
-
-} //namespace CGAL
-
-
-
-namespace CGAL {
-
-
 template < class R_ >
 class Aff_transformationC3
 {
@@ -66,7 +57,6 @@ public:
       entries[0] = s;
   }
 
-
   Aff_transformationC3(const Translation, const Vector_3 &v)
   : entries(3), variant(2)
   {
@@ -74,7 +64,6 @@ public:
     entries[1] = v.y();
     entries[2] = v.z();
   }
-
 
   // General form: without translation
   Aff_transformationC3(const FT& m11, const FT& m12, const FT& m13,
@@ -101,7 +90,6 @@ public:
                m31/w, m32/w, m33/w, zero};
   }
 
-
   // General form: with translation
   Aff_transformationC3(
               const FT& m11, const FT& m12, const FT& m13, const FT& m14,
@@ -113,6 +101,7 @@ public:
                m21, m22, m23, m24,
                m31, m32, m33, m34 };
   }
+
   // General form: with translation
   Aff_transformationC3(
               const FT& m11, const FT& m12, const FT& m13, const FT& m14,
