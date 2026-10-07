@@ -371,7 +371,7 @@ bool read_MEDIT(std::istream& is,
  * edge curve index to edge reference,
  * and vertex corner index to vertex reference.
  *
- * \note Currently only tetrahedral meshes are supported.
+ * \note Currently, only tetrahedral cells are supported.
  * \note The cell soup is not cleared, and the data from the stream are appended.
  *
  * \tparam PointRange a model of the concept `BackInsertionSequence` whose value type is the point type
@@ -485,7 +485,7 @@ bool read_MEDIT(std::istream& is,
  * edge curve index to edge reference,
  * and vertex corner index to vertex reference.
 
- * \note Currently only tetrahedral meshes are supported.
+ * \note Currently only tetrahedral cells are supported.
  *
  * \tparam PointRange a model of the concept `ConstRange` whose value type is the point type
  * \tparam CellRange a model of the concept `ConstRange`
