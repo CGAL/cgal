@@ -19,7 +19,7 @@ class expected {};
 Replacement for `std::unexpected` that is added in C++23.
 Wrapper for the error value of a `CGAL::cpp23::expected`.
 
-\see CGAL::cpp23::expect
+\see CGAL::cpp23::expected<T, E>
 */
 template <typename E>
 class unexpected {};
@@ -29,7 +29,7 @@ class unexpected {};
 
 Replacement for `std::bad_expected_access` that is added in C++23.
 
-\see CGAL::cpp23::expect
+\see CGAL::cpp23::expected<T, E>
 */
 template <typename E>
 class bad_expected_access {};
