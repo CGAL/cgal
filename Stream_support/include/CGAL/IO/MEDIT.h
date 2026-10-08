@@ -162,6 +162,7 @@ bool read_MEDIT(std::istream& is,
   int dim;
   int nv, nf, ntet, ref, nvertices, nedges, nridges;
   int offset = static_cast<int>(points.size());
+  std::vector<int> refs;
   std::string word;
 
   is >> word >> dim; // MeshVersionFormatted 1
@@ -216,9 +217,7 @@ bool read_MEDIT(std::istream& is,
           return false;
         }
         points.emplace_back(x,y,z);
-        if(read_vertices_with_corner_index && ref != 0){
-           vertices_with_corner_index.push_back({offset + i, ref});
-        }
+        refs.emplace_back(ref);
       }
     }
 
@@ -313,11 +312,14 @@ bool read_MEDIT(std::istream& is,
 
     if(line.find("Corners") != std::string::npos)
     {
-        // TODO: are we sure we always ignore the info?
         is >> nvertices;
-        std::string buffer;
-        for(int i=0; i<nvertices; ++i)
-          std::getline(is, buffer);
+        int ci;
+        for(int i=0; i<nvertices; ++i){
+          is >> ci;
+          if(read_vertices_with_corner_index){
+           vertices_with_corner_index.push_back({offset + i, refs[ci-1]});
+          }
+        }
     }
 
     if(line.find("Edges") != std::string::npos)
