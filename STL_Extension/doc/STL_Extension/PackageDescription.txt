@@ -109,6 +109,9 @@
 - `CGAL::Parallel_tag`
 - `CGAL::Parallel_if_available_tag`
 - `CGAL::Uncertain<T>`
+- `CGAL::cpp23::expected<T, E>`
+- `CGAL::cpp23::unexpected<E>`
+- `CGAL::cpp23::bad_expected_access<E>`
 - `CGAL::Default`
 - `CGAL::Fast`
 - `CGAL::Compact`
