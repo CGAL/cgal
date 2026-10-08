@@ -26,9 +26,9 @@ namespace CGAL {
 namespace Homological_discrete_vector_field {
 
 // ------ For cubical complexes
-/** \brief Type of cells coordinates in Cub_object_io (Khalimsky or voxel coordinates) */
+/** \brief Type of cells coordinates in `Cub_object_io` (Khalimsky or voxel coordinates) */
 typedef std::vector<size_t> IOCubCellType ;
-/** \brief Type of pre-chains in Cub_object_io (list of cells without coefficients). */
+/** \brief Type of pre-chains in `Cub_object_io` (list of cells without coefficients). */
 typedef std::vector<IOCubCellType> IOCubChainType ;
 
 /*!
@@ -40,20 +40,21 @@ template <typename Traits>
 class Cub_object_io
 {
 protected:
-    /* \brief Dimension of the complex. */
+    /*  Dimension of the complex. */
     int _dim = 0 ; // Dimension of the complex
-    /* \brief Number of cubs in each dimension. */
+    /*  Number of cubs in each dimension. */
     std::vector<size_t> _ncubs ; // Number of cubs in each dimension
-    /* \brief Size of the bounding box along each dimension. */
+    /*  Size of the bounding box along each dimension. */
     std::vector<size_t> _N ; // Size of BB along each dimension
-    /* \brief List of cubs in each dimension. */
+    /*  List of cubs in each dimension. */
     std::vector<IOCubCellType> _cubs ;
 
-    /** \brief Khalimsky or coordinates mode.
+    /* Khalimsky or coordinates mode.
      *
-     * If true, `cubs` contains cubical cells encoded with Khalismky coordinates, if false, `cubs` contains voxel coordinates (i.e. cells of dimension `_dim`).
+     * If true, `cubs` contains cubical cells encoded with Khalismky coordinates, if false, `cubs` contains voxel coordinates (i.e. cells of dimension `dimension()`).
      */
     bool _khalimsky ;
+    
 public:
     /** \brief Returns the dimension of the complex. */
     int dimension() const { return _dim; }
@@ -106,12 +107,10 @@ public:
         check_dimension() ;
     }
 
-    /* \brief Copy constructor. */
-    Cub_object_io(const Cub_object_io &m) : _dim(m._dim), _ncubs(m._ncubs), _N(m._N), _cubs(m._cubs), _khalimsky(m._khalimsky) {}
 
     // Mesh operations
-    /** \brief Removes all cells of the list. */
-    void clear_cubs() { _cubs.clear() ; for (size_t i=0; i<_dim; ++i) _ncubs[i] = 0 ; }
+    /** \brief Removes all cubs of the `Cub_object_io`. */
+    void clear() { _cubs.clear() ; for (size_t i=0; i<_dim; ++i) _ncubs[i] = 0 ; }
 
 
     /** \brief Adds one empty cell of higher dimension all around the complex.
@@ -144,7 +143,7 @@ public:
     /** \brief Imports a %PGM file  (%PGM version 2).
      *
      * \param filename Name of the %PGM file.
-     * \param khal If true, Khalimsky coordinates of voxels are stored in `_cubs` (for `PRIMAL` construction of a cubical complex), otherwise, integer coordinates of voxels are stored in `_cubs`(for `DUAL` construction).
+     * \param khal If true, Khalimsky coordinates of voxels are stored (for `PRIMAL` construction of a cubical complex), otherwise, integer coordinates of voxels are stored (for `DUAL` construction).
      *
      * \exception File_not_found If `filename` does not exist, raise a `%std::runtime_error` exception.
      *
@@ -241,7 +240,7 @@ public:
     /** \brief Imports a %CUB file.
      *
      * \param filename Name of the %CUB file (cells are described in Khalimsky coordinates).
-     * \param khalimsky If true, Khalimsky coordinates are loaded in `_cubs` (for `PRIMAL` construction of a cubical complex), otherwise, checks that all cells provided are of maximal dimension and load the integer coordinates of voxels in `_cubs`(for `DUAL` construction).
+     * \param khalimsky If true, Khalimsky coordinates are loaded  (for `PRIMAL` construction of a cubical complex), otherwise, checks that all cells provided are of maximal dimension and load the integer coordinates of voxels (for `DUAL` construction).
      *
      * \exception File_not_found If `filename` does not exist, raise a `%std::runtime_error` exception.
      *
@@ -249,7 +248,7 @@ public:
      *
      * \exception Invalid_line If a line is invalid (does not contain a sequence of coordinates), raises a `%std::runtime_error`.
      *
-     * \exception Incoherent_cell A `%std::runtime_error` is raised if `khalimsky` is false but a cell of non-maximal dimension is encoutered.
+     * \exception Incoherent_cell A `%std::runtime_error` is raised if `khalimsky` is false but a cell of non-maximal %dimension is encoutered.
      */
     bool read_cub(const std::string &filename, bool khalimsky = false) {
         // 0 - open input file
