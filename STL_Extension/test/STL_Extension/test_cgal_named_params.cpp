@@ -13,6 +13,14 @@ namespace params = CGAL::parameters;
 template <int i>
 using Static_int = std::integral_constant<int, i>;
 
+void test_all_cgal_named_params() {
+  struct A{};
+  A a;
+#define CGAL_add_named_parameter(X, Y, Z) \
+  (void)params::Z(a).Z(a);
+#include <CGAL/STL_Extension/internal/parameters_interface.h>
+}
+
 struct Non_copyable
 {
   int value = 0;
@@ -169,6 +177,7 @@ void test_references()
 
 int main()
 {
+  test_all_cgal_named_params();
   test_values_and_types();
 
   test_missing_parameters();

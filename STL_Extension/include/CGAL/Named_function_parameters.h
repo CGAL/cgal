@@ -343,25 +343,26 @@ template <class Tag, bool ref_only = false, bool ref_is_const = false>
 struct Boost_parameter_compatibility_wrapper
 {
   template <typename K>
-  constexpr auto operator()(const K& p) const
+  constexpr auto operator()(K&& p) const
   {
+    using KK = CGAL::cpp20::remove_cvref_t<K>;
     if constexpr (ref_only)
     {
       if constexpr (ref_is_const)
       {
-        using Params = Named_function_parameters<std::reference_wrapper<const K>, Tag>;
-        return Params(std::cref(p));
+        using Params = Named_function_parameters<std::reference_wrapper<const KK>, Tag>;
+        return Params{std::cref(std::forward<K>(p))};
       }
       else
       {
-        using Params = Named_function_parameters<std::reference_wrapper<K>, Tag>;
-        return Params(std::ref(p));
+        using Params = Named_function_parameters<std::reference_wrapper<KK>, Tag>;
+        return Params{std::ref(std::forward<K>(p))};
       }
     }
     else
     {
       using Params = Named_function_parameters<K, Tag>;
-      return Params(p);
+      return Params{std::forward<K>(p)};
     }
   }
 
@@ -377,7 +378,7 @@ struct Boost_parameter_compatibility_wrapper
   template <typename K>                                           \
   constexpr auto Z(const K& p) {                                  \
     using Params = Named_function_parameters<K, internal_np::X>;  \
-    return Params(p);                                             \
+    return Params{p};                                             \
   }
 
 #define CGAL_add_named_parameter_with_compatibility(X, Y, Z)        \
