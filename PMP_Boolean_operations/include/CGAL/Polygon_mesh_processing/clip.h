@@ -1508,6 +1508,7 @@ void split(PolygonMesh& pm,
                                           .edge_is_marked_map(ecm)
                                           .vertex_point_map(vpm)
                                           .geom_traits(traits)
+                                          .do_not_mark_intersection_polylines(true)
                                           .do_not_triangulate_faces(!triangulate)
                                           .throw_on_self_intersection(throw_on_self_intersection)
                                           .concurrency_tag(Concurrency_tag())

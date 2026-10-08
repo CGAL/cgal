@@ -374,6 +374,8 @@ void refine_with_plane(PolygonMesh& pm,
     }
   }
 
+  bool ignore_1d_tangencies = choose_parameter(get_parameter(np, internal_np::do_not_mark_intersection_polylines), false);
+
   if (at_least_one_on || (!all_in && !all_out))
   {
     //TODO: parallel for
@@ -384,29 +386,36 @@ void refine_with_plane(PolygonMesh& pm,
       {
         if (get(vertex_os, tgt)==CGAL::ON_ORIENTED_BOUNDARY)
         {
-          bool pure_coplanar=true;
-          if (!is_border(e, pm))
-          {
-            halfedge_descriptor he=halfedge(e, pm);
+          bool on_boundary=false;
+          halfedge_descriptor he=halfedge(e, pm);
+          Oriented_side os1=ON_ORIENTED_BOUNDARY;
+          if (!is_border(he, pm))
             for (halfedge_descriptor h : halfedges_around_face(he,pm))
-              if (get(vertex_os,target(h, pm))!=CGAL::ON_ORIENTED_BOUNDARY)
-              {
-                pure_coplanar=false;
-                break;
-              }
-            if (pure_coplanar)
             {
-              he=opposite(he, pm);
-              for (halfedge_descriptor h : halfedges_around_face(he,pm))
-                if (get(vertex_os, target(h, pm))!=CGAL::ON_ORIENTED_BOUNDARY)
-                {
-                  pure_coplanar=false;
-                  break;
-                }
+              os1 = get(vertex_os,target(h, pm));
+              if (os1!=CGAL::ON_ORIENTED_BOUNDARY) break;
             }
+          else
+            on_boundary=true;
+          he=opposite(he, pm);
+          Oriented_side os2=ON_ORIENTED_BOUNDARY;
+          if (!is_border(he, pm))
+            for (halfedge_descriptor h : halfedges_around_face(he,pm))
+            {
+              os2 = get(vertex_os,target(h, pm));
+              if (os2!=CGAL::ON_ORIENTED_BOUNDARY) break;
+            }
+          else
+            on_boundary=true;
+
+          if (os1==os2)
+          {
+            if (!ignore_1d_tangencies && os1!=ON_ORIENTED_BOUNDARY)
+              put(edge_is_marked, e, true);
           }
-          if (!pure_coplanar)
-            put(edge_is_marked, e, true);
+          else
+            if (!on_boundary || !ignore_1d_tangencies)
+              put(edge_is_marked, e, true);
         }
       }
       else
