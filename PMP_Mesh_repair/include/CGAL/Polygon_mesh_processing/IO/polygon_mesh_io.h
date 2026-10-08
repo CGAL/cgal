@@ -71,7 +71,7 @@ namespace IO {
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{repair_polygon_soup}
- *     \cgalParamDescription{a parameter used indicate whether `CGAL::Polygon_mesh_processing::repair_polygon_soup()`
+ *     \cgalParamDescription{a parameter used to indicate whether `CGAL::Polygon_mesh_processing::repair_polygon_soup()`
  *                           should be called on the intermediate polygon soup.}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`true`}
