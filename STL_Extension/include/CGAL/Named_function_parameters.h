@@ -345,7 +345,7 @@ struct Boost_parameter_compatibility_wrapper
   template <typename K>
   constexpr auto operator()(K&& p) const
   {
-    using KK = CGAL::cpp20::remove_cvref_t<K>;
+    using KK = cpp20::remove_cvref_t<cpp20::unwrap_ref_decay_t<K>>;
     if constexpr (ref_only)
     {
       if constexpr (ref_is_const)
@@ -367,9 +367,9 @@ struct Boost_parameter_compatibility_wrapper
   }
 
   template <typename K>
-  constexpr auto operator=(const K& p) const
+  constexpr auto operator=(K&& p) const
   {
-    return operator()(p);
+    return operator()(std::forward<K>(p));
   }
 };
 
