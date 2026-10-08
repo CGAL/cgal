@@ -351,12 +351,14 @@ struct Boost_parameter_compatibility_wrapper
       if constexpr (ref_is_const)
       {
         using Params = Named_function_parameters<std::reference_wrapper<const KK>, Tag>;
-        return Params{std::cref(std::forward<K>(p))};
+        const auto& ref = cpp20::unwrap_reference_t<K>(p);
+        return Params{std::cref(ref)};
       }
       else
       {
         using Params = Named_function_parameters<std::reference_wrapper<KK>, Tag>;
-        return Params{std::ref(std::forward<K>(p))};
+        auto& ref = cpp20::unwrap_reference_t<K>(p);
+        return Params{std::ref(ref)};
       }
     }
     else
