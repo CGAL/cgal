@@ -252,7 +252,7 @@ void fill_Voronoi_structure(const SDG& sdg,
   std::cout << nr << " rays" << std::endl;
   std::cout << np << " parabolas" << std::endl;
 #else
-   CGAL::USE(nl); CGAL::USE(ns); CGAL::USE(nr); CGAL::USE(np);
+   CGAL_USE(nl); CGAL_USE(ns); CGAL_USE(nr); CGAL_USE(np);
 #endif
 }
 
