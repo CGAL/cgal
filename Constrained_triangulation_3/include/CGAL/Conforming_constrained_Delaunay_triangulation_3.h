@@ -1416,6 +1416,10 @@ public:
     cdt_impl.move_Steiner_vertices_to_the_volume();
   }
 
+  void remove_bbox_points() {
+    cdt_impl.remove_bbox_points();
+  }
+
   // Lightweight accessors used by tests/tools
   size_type number_of_vertices() const              { return static_cast<size_type>(cdt_impl.number_of_vertices()); }
   size_type number_of_cells() const                 { return triangulation().number_of_cells(); }
@@ -6064,6 +6068,62 @@ public:
     }
   }
 
+  void remove_bbox_points()
+  {
+    std::vector<Vertex_handle> bbox_vertices;
+    this->adjacent_vertices(this->infinite_vertex(), std::back_inserter(bbox_vertices));
+    if(bbox_vertices.size() != 8)
+      return;
+
+    auto remove_bbox_vertex = [this](Vertex_handle v)
+      {
+        // collect facets that will be on the outer hull after removing v
+        // seen from the other side, so that they remain valid
+        std::vector<Cell_handle> cells_incident_to_v;
+        this->finite_incident_cells(v, std::back_inserter(cells_incident_to_v));
+
+        std::unordered_set<Facet, boost::hash<Facet>> cavity_outer_hull;
+        for(Cell_handle c : cells_incident_to_v)
+          cavity_outer_hull.insert(this->mirror_facet({c, c->index(v)}));
+
+        // remove v
+        this->remove(v);
+
+        // mark the facets that are on the outer hull after removal
+        for(const auto& f : cavity_outer_hull) // f is seen from the "inside"
+        {
+          const auto& outer_facet = f;
+          const auto& outer_data = outer_facet.first->ccdt_3_data();
+          const auto& cavity_facet = this->mirror_facet(outer_facet);
+
+          const Cell_handle outer_cell = outer_facet.first;
+          const int outer_index = outer_facet.second;
+          if(outer_cell->ccdt_3_data().is_facet_constrained(outer_index))
+          {
+            const CDT_3_signed_index face_id = face_constraint_index(outer_facet);
+            const auto& cdt_2d = this->face_cdt_2(face_id);
+            auto f_2d = outer_data.face_2(cdt_2d, outer_index);//CDT_2_face_handle
+            Facet oriented_facet = same_triple(outer_facet, f_2d)
+                                 ? outer_facet
+                                 : cavity_facet;
+            set_facet_constrained(oriented_facet, face_id, f_2d);
+          }
+          else
+            set_facet_as_not_constrained(cavity_facet);
+        }
+      };
+
+    for(auto v : bbox_vertices)
+    {
+      if (v->ccdt_3_data().vertex_type() != CDT_3_vertex_type::BBOX)
+      {
+        std::cout << "Bbox invalid. Cannot be removed" << std::endl;
+        return;
+      }
+      remove_bbox_vertex(v);
+    }
+  }
+
   static void write_region_to_OFF(std::ostream& out, const CDT_2& cdt_2) {
     out.precision(17);
     auto color_fn = [](CDT_2_face_handle fh_2d) -> CGAL::IO::Color {
@@ -6635,7 +6695,6 @@ public:
 
   /// @{
   /// remove functions cannot be called
-  void remove(Vertex_handle) = delete;
   void remove_cluster() = delete;
   /// @}
 
