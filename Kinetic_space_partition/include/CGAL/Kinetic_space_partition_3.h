@@ -403,7 +403,8 @@ public:
     const PolygonRange& polygons,
     const NamedParameters& np = CGAL::parameters::default_values())
   {
-    CGAL_CHECK_AUTHORIZED_NAMED_PARAMETERS(np, point_t);
+    CGAL_CHECK_AUTHORIZED_NAMED_PARAMETERS(np, point_t, debug_t, verbose_t, reorient_bbox_t,
+                                           bbox_dilation_ratio_t, max_octree_depth_t, max_octree_node_size_t);
 
     using NP_helper = Point_set_processing_3_np_helper<PointRange, NamedParameters>;
     using PointMap = typename NP_helper::Point_map;

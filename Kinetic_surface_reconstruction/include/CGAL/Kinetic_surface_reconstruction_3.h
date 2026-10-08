@@ -165,7 +165,7 @@ public:
   Kinetic_surface_reconstruction_3(Point_range& points,
     const NamedParameters& np = CGAL::parameters::default_values()) : m_max_distance_to_plane(-1), m_points(points), m_ground_polygon_index(-1),
     m_kinetic_partition(np), m_bbox_diagonal(-1), m_lcc(m_lcc_from_kinetic_partition) {
-    CGAL_CHECK_AUTHORIZED_NAMED_PARAMETERS(np, point_t);
+    CGAL_CHECK_AUTHORIZED_NAMED_PARAMETERS(np, point_t, normal_t, verbose_t, debug_t);
 
     m_verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false);
     m_debug = parameters::choose_parameter(parameters::get_parameter(np, internal_np::debug), false);
@@ -557,7 +557,8 @@ public:
   */
   template<typename CGAL_NP_TEMPLATE_PARAMETERS>
   void partition(std::size_t k, const CGAL_NP_CLASS& np = parameters::default_values()) {
-    CGAL_CHECK_AUTHORIZED_NAMED_PARAMETERS(np, reorient_bbox_t, bbox_dilation_ratio_t);
+    CGAL_CHECK_AUTHORIZED_NAMED_PARAMETERS(np, reorient_bbox_t, bbox_dilation_ratio_t, point_t, normal_t, verbose_t,
+                                           debug_t, max_octree_depth_t, max_octree_node_size_t);
 
     if (m_regions.empty())
       return;
