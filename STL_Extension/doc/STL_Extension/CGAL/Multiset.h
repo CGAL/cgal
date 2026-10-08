@@ -147,7 +147,7 @@ typedef unspecified_type const_reverse_iterator;
 /// @{
 /*!
 
-creates an an empty set `s` that uses a default comparison
+creates an empty set `s` that uses a default comparison
 functor.
 */
 Multiset<Type,Compare,Allocator>();
@@ -161,7 +161,7 @@ Multiset<Type,Compare,Allocator>();
 /// @{
 /*!
 
-creates an an empty set `s` that uses the given comparison
+creates an empty set `s` that uses the given comparison
 functor `comp`.
 */
 Multiset<Type,Compare,Allocator>(

@@ -2,8 +2,8 @@ Algebraic_foundations
 Arithmetic_kernel
 BGL
 Bounding_volumes
-Cartesian_kernel
 CGAL_Core
+Cartesian_kernel
 Circulator
 Combinatorial_map
 Convex_hull_2
@@ -25,8 +25,8 @@ Linear_cell_complex
 Modular_arithmetic
 Number_types
 Orthtree
+PMP_Boolean_operations
 Point_set_3
-Point_set_processing_3
 Polygon
 Polygon_mesh_processing
 Principal_component_analysis
@@ -34,9 +34,9 @@ Principal_component_analysis_LGPL
 Profiling_tools
 Property_map
 Random_numbers
+STL_Extension
 Shape_detection
 Shape_regularization
-STL_Extension
 Solver_interface
 Spatial_searching
 Spatial_sorting

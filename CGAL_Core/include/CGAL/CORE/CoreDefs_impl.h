@@ -87,7 +87,7 @@ extLong defBFsqrtAbsPrec = 54;
 /**
  * Escape Precision
  *   -- we will not compare a number to precision higher than this
- *   -- if this is infinity, there there is no escape precision */
+ *   -- if this is infinity, there is no escape precision */
 extLong EscapePrec  = CORE_posInfty;
 
 /** this flag becomes negative if the EscapePrec is used. */

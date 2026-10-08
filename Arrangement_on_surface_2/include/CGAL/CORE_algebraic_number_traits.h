@@ -421,10 +421,10 @@ public:
     // Construct two polynomials with integer coefficients.
     Integer        p_scale, q_scale;
 
-    construct_polynomial (*(P.getCoeffs()), p_deg,
+    construct_polynomial (P.getCoeffs(), p_deg,
                           p_poly, q_scale);
 
-    construct_polynomial (*(Q.getCoeffs()), q_deg,
+    construct_polynomial (Q.getCoeffs(), q_deg,
                           q_poly, p_scale);
 
     // Scale the result polynomials.

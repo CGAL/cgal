@@ -47,9 +47,11 @@ void all_pairs( ForwardIter1 p_begin, ForwardIter1 p_end,
     const int last_dim = Traits::dimension() - 1;
     for( ForwardIter1 p = p_begin; p != p_end; ++p ) {
         for( ForwardIter2 i = i_begin; i != i_end; ++i ) {
-            if ((complete_case && Traits::id(*p) >= Traits::id(*i))
-                || Traits::id(*p) == Traits::id(*i))
-                continue;
+            if constexpr(Traits::has_unique_box_traits)
+                if ((complete_case && Traits::id(*p) >= Traits::id(*i))
+                    || Traits::id(*p) == Traits::id(*i))
+                    continue;
+
             for( int dim = 0; dim <= last_dim; ++dim )
                 if( !Traits::does_intersect( *p, *i, dim ) )
                     goto no_intersection1;
@@ -83,12 +85,11 @@ void all_pairs( ForwardIter p_begin, ForwardIter p_end,
 }
 
 
-template< class RandomAccessIter1, class RandomAccessIter2,
+template< bool in_order = true, class RandomAccessIter1, class RandomAccessIter2,
           class Callback, class Traits >
 void one_way_scan( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
                    RandomAccessIter2 i_begin, RandomAccessIter2 i_end,
-                   Callback callback, Traits, int last_dim,
-                   bool in_order = true )
+                   Callback callback, Traits, int last_dim )
 {
     typedef typename Traits::Compare Compare;
 
@@ -107,12 +108,21 @@ void one_way_scan( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
              p != p_end && Traits::is_lo_less_hi( *p, *i, 0 );
              ++p )
         {
-            if( Traits::id( *p ) == Traits::id( *i ) )
-                continue;
+
+            if constexpr(Traits::has_unique_box_traits)
+                if( Traits::id( *p ) == Traits::id( *i ) )
+                    continue;
+
             for( int dim = 1; dim <= last_dim; ++dim )
-                if( !Traits::does_intersect( *p, *i, dim ) )
-                    goto no_intersection;
-            if( in_order )
+                if constexpr( in_order )
+                {
+                    if( !Traits::does_intersect( *p, *i, dim ) )
+                        goto no_intersection;
+                }
+                else
+                    if( !Traits::does_intersect( *i, *p, dim ) )
+                        goto no_intersection;
+            if constexpr( in_order )
                 callback( *p, *i );
             else
                 callback( *i, *p );
@@ -123,13 +133,12 @@ void one_way_scan( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
 
 }
 
-template< class RandomAccessIter1, class RandomAccessIter2,
+template< bool in_order = true, class RandomAccessIter1, class RandomAccessIter2,
           class Callback, class Traits >
 void modified_two_way_scan(
     RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
     RandomAccessIter2 i_begin, RandomAccessIter2 i_end,
-    Callback callback, Traits, int last_dim,
-    bool in_order = true )
+    Callback callback, Traits, int last_dim)
 {
     typedef typename Traits::Compare Compare;
 
@@ -143,14 +152,15 @@ void modified_two_way_scan(
                  p != p_end && Traits::is_lo_less_hi( *p, *i_begin, 0 );
                  ++p )
             {
-                if( Traits::id( *p ) == Traits::id( *i_begin ) )
-                    continue;
+                if constexpr(Traits::has_unique_box_traits)
+                    if( Traits::id( *p ) == Traits::id( *i_begin ) )
+                        continue;
 
                 for( int dim = 1; dim <= last_dim; ++dim )
                     if( !Traits::does_intersect( *p, *i_begin, dim ) )
                         goto no_intersection1;
                 if( Traits::contains_lo_point( *i_begin, *p, last_dim ) ) {
-                    if( in_order )
+                    if constexpr( in_order )
                         callback( *p, *i_begin );
                     else
                         callback( *i_begin, *p );
@@ -164,13 +174,14 @@ void modified_two_way_scan(
                  i != i_end && Traits::is_lo_less_hi( *i, *p_begin, 0 );
                  ++i )
             {
-                if( Traits::id( *p_begin ) == Traits::id( *i ) )
-                    continue;
+                if constexpr(Traits::has_unique_box_traits)
+                    if( Traits::id( *p_begin ) == Traits::id( *i ) )
+                        continue;
                 for( int dim = 1; dim <= last_dim; ++dim )
                     if( !Traits::does_intersect( *p_begin, *i, dim ) )
                         goto no_intersection2;
                 if( Traits::contains_lo_point( *i, *p_begin, last_dim ) ) {
-                    if( in_order )
+                    if constexpr( in_order )
                         callback( *p_begin, *i );
                     else
                         callback( *i, *p_begin );
@@ -368,13 +379,14 @@ struct Counter {
    ~Counter() { --value; }
 };
 
-template< class RandomAccessIter1, class RandomAccessIter2,
+template< bool in_order,
+          class RandomAccessIter1, class RandomAccessIter2,
           class Callback, class T, class Predicate_traits >
 void segment_tree( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
                    RandomAccessIter2 i_begin, RandomAccessIter2 i_end,
                    T lo, T hi,
                    Callback callback, Predicate_traits traits,
-                   std::ptrdiff_t cutoff, int dim, bool in_order)
+                   std::ptrdiff_t cutoff, int dim)
 {
     typedef typename Predicate_traits::Spanning   Spanning;
     typedef typename Predicate_traits::Lo_less    Lo_less;
@@ -382,7 +394,6 @@ void segment_tree( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
 
     const T inf = box_limits< T >::inf();
     const T sup = box_limits< T >::sup();
-
 
     CGAL_STATIC_THREAD_LOCAL_VARIABLE(int, level, -1);
     Counter<int> bla( level );
@@ -420,8 +431,8 @@ void segment_tree( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
 
     if( dim == 0 )  {
         CGAL_BOX_INTERSECTION_DUMP( "dim = 0. scanning ... " << std::endl )
-        one_way_scan( p_begin, p_end, i_begin, i_end,
-                      callback, traits, dim, in_order );
+        one_way_scan<in_order>( p_begin, p_end, i_begin, i_end,
+                                callback, traits, dim);
         if(report_impl(callback,dim)){
           progress_impl(callback, 1.0 / (1 << level));
         }
@@ -432,8 +443,8 @@ void segment_tree( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
         std::distance( i_begin, i_end ) < cutoff  )
     {
         CGAL_BOX_INTERSECTION_DUMP( "scanning ... " << std::endl )
-        modified_two_way_scan( p_begin, p_end, i_begin, i_end,
-                               callback, traits, dim, in_order );
+        modified_two_way_scan<in_order>(p_begin, p_end, i_begin, i_end,
+                                        callback, traits, dim);
         if(report_impl(callback,dim)){
           progress_impl(callback, 1.0 / (1 << level));
         }
@@ -447,10 +458,10 @@ void segment_tree( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
         CGAL_BOX_INTERSECTION_DUMP( "checking spanning intervals ... "
                                     << std::endl )
         // make two calls for roots of segment tree at next level.
-        segment_tree( p_begin, p_end, i_begin, i_span_end, inf, sup,
-                      callback, traits, cutoff, dim - 1,  in_order );
-        segment_tree( i_begin, i_span_end, p_begin, p_end, inf, sup,
-                      callback, traits, cutoff, dim - 1, !in_order );
+        segment_tree< in_order>(p_begin, p_end, i_begin, i_span_end, inf, sup,
+                                callback, traits, cutoff, dim - 1);
+        segment_tree<!in_order>(i_begin, i_span_end, p_begin, p_end, inf, sup,
+                                callback, traits, cutoff, dim - 1);
     }
 
     T mi;
@@ -461,8 +472,8 @@ void segment_tree( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
         //dump_points( p_begin, p_end, traits, dim );
         CGAL_BOX_INTERSECTION_DUMP( "performing modified two_way_san ... "
                                      << std::endl )
-        modified_two_way_scan( p_begin, p_end, i_span_end, i_end,
-                               callback, traits, dim, in_order );
+        modified_two_way_scan<in_order>(p_begin, p_end, i_span_end, i_end,
+                                        callback, traits, dim);
         if(report_impl(callback,dim)){
           progress_impl(callback, 1.0 / (1 << level));
         }
@@ -474,14 +485,14 @@ void segment_tree( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
     // left intervals have a low point strictly less than mi
     i_mid = std::partition( i_span_end, i_end, Lo_less( mi, dim ) );
     CGAL_BOX_INTERSECTION_DUMP("->left" << std::endl )
-    segment_tree( p_begin, p_mid, i_span_end, i_mid, lo, mi,
-                  callback, traits, cutoff, dim, in_order );
+    segment_tree<in_order>( p_begin, p_mid, i_span_end, i_mid, lo, mi,
+                  callback, traits, cutoff, dim);
     // separate right intervals.
     // right intervals have a high point strictly higher than mi
     i_mid = std::partition( i_span_end, i_end, Hi_greater( mi, dim ) );
     CGAL_BOX_INTERSECTION_DUMP("->right"<< std::endl )
-    segment_tree( p_mid, p_end, i_span_end, i_mid, mi, hi,
-                  callback, traits, cutoff, dim, in_order );
+    segment_tree<in_order>( p_mid, p_end, i_span_end, i_mid, mi, hi,
+                  callback, traits, cutoff, dim);
 }
 
 #if CGAL_BOX_INTERSECTION_DEBUG

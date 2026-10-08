@@ -17,6 +17,7 @@
 
 
 #include <CGAL/Triangulation_vertex_base_2.h>
+#include <CGAL/Time_stamper.h>
 
 namespace CGAL {
 
@@ -67,7 +68,7 @@ public:
 
   void set_time_stamp(const std::size_t& ts) { time_stamp_ = ts; }
 
-  std::size_t time_stamp_ = std::size_t(-2);
+  std::size_t time_stamp_ = Time_stamper<void>::invalid_time_stamp;
 #endif // CGAL_MESH_2_DEBUG_REFINEMENT_POINTS
 };
 

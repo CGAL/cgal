@@ -78,7 +78,7 @@ public:
   result_type
   operator()(Args&&... args) const
   {
-    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    CGAL_BRANCH_PROFILER(std::string("failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     // Protection is outside the try block as VC8 has the CGAL_CFG_FPU_ROUNDING_MODE_UNWINDING_VC_BUG
     {
       Protect_FPU_rounding<Protection> p;

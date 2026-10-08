@@ -5,8 +5,9 @@ project(Surface_mesh_parameterization_Examples)
 
 find_package(CGAL REQUIRED)
 
-find_package(Eigen3 3.1.0 QUIET) #(requires 3.1.0 or greater)
+find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
+
 if(TARGET CGAL::Eigen3_support)
   # Executables that require Eigen 3.1
 
@@ -36,7 +37,7 @@ if(TARGET CGAL::Eigen3_support)
   target_link_libraries(iterative_authalic_parameterizer PRIVATE CGAL::Eigen3_support)
   if(TARGET SuiteSparse::UMFPACK)
     target_link_libraries(ARAP_parameterization PRIVATE SuiteSparse::UMFPACK)
-    target_link_libraries(orbifold PRIVATE PRIVATE SuiteSparse::UMFPACK)
+    target_link_libraries(orbifold PRIVATE SuiteSparse::UMFPACK)
     target_compile_definitions(ARAP_parameterization PRIVATE EIGEN_DONT_ALIGN_STATICALLY CGAL_SMP_USE_SUITESPARSE_SOLVERS)
     target_compile_definitions(orbifold PRIVATE EIGEN_DONT_ALIGN_STATICALLY CGAL_SMP_USE_SUITESPARSE_SOLVERS)
   endif()

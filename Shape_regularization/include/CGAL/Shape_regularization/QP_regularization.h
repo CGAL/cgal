@@ -150,8 +150,8 @@ namespace Shape_regularization {
     m_neighbor_query(neighbor_query),
     m_regularization_type(regularization_type),
     m_quadratic_program(quadratic_program),
-    m_traits(parameters::choose_parameter(parameters::get_parameter(
-      np, internal_np::geom_traits), GeomTraits())),
+    m_traits(parameters::choose_parameter<GeomTraits>(parameters::get_parameter(
+      np, internal_np::geom_traits))),
     m_parameters(Parameters()) {
 
       clear();

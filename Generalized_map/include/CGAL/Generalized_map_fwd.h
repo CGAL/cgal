@@ -9,8 +9,8 @@
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
-#ifndef GENERALIZED_MAP_FWD_H
-#define GENERALIZED_MAP_FWD_H 1
+#ifndef CGAL_GENERALIZED_MAP_FWD_H
+#define CGAL_GENERALIZED_MAP_FWD_H 1
 
 #include <CGAL/memory.h>
 #include <CGAL/tags.h>
@@ -74,4 +74,4 @@ class Generalized_map;
 
 } // CGAL
 
-#endif // GENERALIZED_MAP_FWD_H
+#endif // CGAL_GENERALIZED_MAP_FWD_H

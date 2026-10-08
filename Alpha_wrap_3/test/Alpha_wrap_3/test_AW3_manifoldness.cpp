@@ -4,6 +4,7 @@
 //#define CGAL_AW3_DEBUG_STEINER_COMPUTATION
 //#define CGAL_AW3_DEBUG_INITIALIZATION
 //#define CGAL_AW3_DEBUG_QUEUE
+#define CGAL_AW3_COMPUTE_AND_STORE_STEINER_INFO_AT_GATE_CREATION
 
 #include <CGAL/alpha_wrap_3.h>
 #include <CGAL/Alpha_wrap_3/internal/validation.h>
@@ -57,7 +58,7 @@ void alpha_wrap_triangle_manifoldness(Mesh& input_mesh,
     assert(AW3::internal::has_expected_Hausdorff_distance(nm_wrap, input_mesh, alpha, offset));
   }
 
-  assert(AW3::internal::check_edge_length(nm_wrap, alpha));
+  assert(AW3::internal::has_bounded_edge_length(nm_wrap, alpha));
 
   FT base_vol = 0;
   if(!is_closed(nm_wrap))

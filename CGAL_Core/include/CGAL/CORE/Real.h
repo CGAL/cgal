@@ -309,7 +309,7 @@ struct _real_mul {
   }
   // specialized for two long values
   static Real eval(long a, long b) {
-    if (flrLg(a) + flrLg(b) >= static_cast<int>(LONG_BIT-2))
+    if (flrLg(a) + flrLg(b) >= static_cast<int>(CORE_LONG_BIT-2))
       return BigInt(BigInt(a)*BigInt(b));
     else
       return a*b;

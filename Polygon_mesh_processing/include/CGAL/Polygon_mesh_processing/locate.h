@@ -1108,7 +1108,7 @@ locate_in_face(const typename internal::Location_traits<TriangleMesh, NamedParam
     std::cerr << "Warning: point " << query << " is not in the input face" << std::endl;
     std::cerr << "Coordinates: " << coords[0] << " " << coords[1] << " " << coords[2] << std::endl;
 
-    // Try to to snap the coordinates, hoping the problem is just a -1e-17ish epsilon
+    // Try to snap the coordinates, hoping the problem is just a -1e-17ish epsilon
     // pushing the coordinates over the edge
     internal::snap_coordinates_to_border(coords, snap_tolerance);
   }

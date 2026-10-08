@@ -1179,7 +1179,7 @@ data. As proved in \cgalCite{d-iirdt-98}, this structure has an optimal behavior
 when it is built for Delaunay triangulations.
 However, it can be used as well for other triangulations
 and the class `Triangulation_hierarchy_2<Tr>` is templated by a parameter
-which is to be instantiated by one of the \cgal triangulation
+which is to be instantiated with one of the \cgal triangulation
 classes.
 
 The class `Triangulation_hierarchy_2<Tr>` inherits from the
@@ -1205,7 +1205,7 @@ triangulations of the next and preceding levels.
 which is a model for the concept
 `TriangulationHierarchyVertexBase_2`.
 This class is templated by a parameter `Vb`
-which is to be instantiated by a model of the concept
+which is to be instantiated with a model of the concept
 `TriangulationVertexBase_2`.
 The class `Triangulation_hierarchy_vertex_base_2<Vb>` inherits
 from its template parameter `Vb`.
@@ -1245,7 +1245,7 @@ which the user can instantiate with his own customized classes.
 
 The most useful flexibility however comes from the fact
 that the triangulation data structure itself has two template
-parameters to be instantiated by
+parameters to be instantiated with
 classes for the vertices and faces of the triangulation.
 Using his own customized classes to instantiate these
 parameters, the user can easily build up a triangulation with additional
@@ -1345,14 +1345,14 @@ the `insert()` function of the triangulation with a range of such pairs.
 \subsection Triangulation_2UsingtheBoostZipIterator Using the Boost Zip Iterator
 
 Information and points are in separate containers. We use
-<A HREF="https://www.boost.org/libs/iterator/doc/index.html#specialized-adaptors">`boost::zip_iterator`</A> to provide an iterator gathering them.
+<A HREF="https://www.boost.org/doc/libs/latest/libs/iterator/doc/zip_iterator.html">`boost::zip_iterator`</A> to provide an iterator gathering them.
 
 \cgalExample{Triangulation_2/info_insert_with_zip_iterator_2.cpp}
 
 \subsection Triangulation_2UsingtheBoostTransformIterator Using the Boost Transform Iterator
 
 We define a functor `Auto_count` used together with
-<A HREF="https://www.boost.org/libs/iterator/doc/index.html#specialized-adaptors">`boost::transform_iterator`</A> to set the order of each point
+<A HREF="https://www.boost.org/doc/libs/latest/libs/iterator/doc/transform_iterator.html">`boost::transform_iterator`</A> to set the order of each point
 in the range. Note that this is correct because the iterator
 is dereferenced only once per point during the insertion.
 \cgalExample{Triangulation_2/info_insert_with_transform_iterator_2.cpp}

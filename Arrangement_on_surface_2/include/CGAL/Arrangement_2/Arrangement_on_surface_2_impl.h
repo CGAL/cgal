@@ -2716,7 +2716,7 @@ _insert_at_vertices(DHalfedge* he_to,
     // swapping is currently only disabled when _insert_at_vertices is called
     // from Arr_construction_ss_visitor, which however uses the
     // 'swap_predecessors' member of the topology traits' construction helper.
-    // So it's questionable whether we can combine the light-weigth swap
+    // So it's questionable whether we can combine the light-weight swap
     // information with the slightly more expensive sign computations, to keep
     // efficient translated code after compile-time.
     std::pair<bool, bool> res =

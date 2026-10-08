@@ -60,13 +60,13 @@ public:
   void before_conflicts(E, P) const {}
 
   template <typename E, typename P, typename Z>
-  void before_insertion(E, P, Z) const {}
+  void before_insertion(E, P, const Z&) const {}
 
   template <typename V>
   void after_insertion(V) const {}
 
   template <typename E, typename P, typename Z>
-  void after_no_insertion(E, P, Z) const {}
+  void after_no_insertion(E, P, const Z&) const {}
 }; // end class Null_mesh_visitor
 
 template <typename V1, typename V2>

@@ -475,10 +475,7 @@ public:
   unsigned int index_unconstrained_vertices()
   {
     unsigned int index = 0;
-    for (Finite_vertices_iterator v = finite_vertices_begin(),
-         e = finite_vertices_end();
-         v!= e;
-         ++v)
+    for (Vertex_handle v : Base::finite_vertex_handles())
     {
       if(! is_constrained(v))
         v->index() = index++;

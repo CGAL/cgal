@@ -1864,10 +1864,10 @@ private:
   Point_2 face_location_with_normalized_coordinates(const Cone_tree_node* node,
                                                     const Barycentric_coordinates& location) const
   {
-    return construct_barycenter_in_triangle_2(node->layout_face(), localized_coordiate(node, location));
+    return construct_barycenter_in_triangle_2(node->layout_face(), localized_coordinate(node, location));
   }
 
-  Barycentric_coordinates localized_coordiate(const Cone_tree_node* node,
+  Barycentric_coordinates localized_coordinate(const Cone_tree_node* node,
                                               const Barycentric_coordinates& location) const
   {
     return shifted_coordinates(location, node->edge_face_index());
@@ -1918,7 +1918,7 @@ private:
 
     if (closest)
     {
-      return std::make_pair(Node_distance_pair(closest, closestDistance), localized_coordiate(closest, location));
+      return std::make_pair(Node_distance_pair(closest, closestDistance), localized_coordinate(closest, location));
     }
     else
     {

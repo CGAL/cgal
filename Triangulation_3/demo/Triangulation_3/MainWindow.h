@@ -36,9 +36,6 @@ public Q_SLOTS:
   // show menu
   void on_actionClear_Scene_triggered();
 
-  // about menu
-  void popupAboutCGAL();
-
   Q_SIGNALS:
   void sceneChanged();
 

@@ -172,10 +172,10 @@ struct BigFloatRep::DecimalOutput {
 
 // constants used by BigFloatRep
 //        NOTES:  CHUNK_BIT is the number of bits in each Chunk
-//        Since LONG_BIT = 32 or 64, then CHUNK_BIT = 14 or 30.
+//        Since CORE_LONG_BIT = 32 or 64, then CHUNK_BIT = 14 or 30.
 //        We have:  0 <= err < 4 * 2^{CHUNK_BIT}
 
-const long CHUNK_BIT = (long)(LONG_BIT / 2 - 2);         //  chunks
+const long CHUNK_BIT = (long)(CORE_LONG_BIT / 2 - 2);         //  chunks
 const long HALF_CHUNK_BIT = (CHUNK_BIT + 1) / 2;
 const long DBL_MAX_CHUNK = (DBL_MAX_EXP - 1) / CHUNK_BIT + 1;
 const double lgTenM = 3.321928094887362;

@@ -15,9 +15,6 @@
 #include <CGAL/Delaunay_mesher_2.h>
 #include <CGAL/Delaunay_mesh_size_criteria_2.h>
 
-#include <fstream>
-
-
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Projection_traits_xy_3<K>  Gt;
 typedef CGAL::Triangulation_vertex_base_2<Gt> Vb;

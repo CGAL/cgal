@@ -86,10 +86,8 @@ public:
     {
       case 3:
         return lloyd_move_inside_domain(v,incident_cells,c3t3,sizing_field);
-        break;
       case 2:
         return lloyd_move_on_boundary(v,c3t3,sizing_field);
-        break;
       case 1:
       case 0:
       case -1:
@@ -97,12 +95,10 @@ public:
         // N.B.: dimension = -1 is possible if we added points on a far sphere
         //       during initialization
         return CGAL::NULL_VECTOR;
-        break;
       default:
         // Should not happen
         CGAL_assertion(false);
         return CGAL::NULL_VECTOR;
-        break;
     }
 
     return CGAL::NULL_VECTOR;
@@ -225,31 +221,39 @@ private:
     {
       case 0: // could happen if there is an isolated surface point into mesh
       case 1: // don't do anything, as the point is already on the surface
-      {
         return CGAL::NULL_VECTOR;
-        break;
-      }
       case 2: // segment centroid
-      {
-        const Bare_point& a = points.front();
-        const Bare_point& b = points.back();
-        return centroid_segment_move(v, a, b, c3t3, sizing_field);
-        break;
-      }
+        return centroid_of_segment_move(v, points, c3t3, sizing_field);
       case 3: // triangle centroid
-      {
-        const Bare_point& a = points.at(0);
-        const Bare_point& b = points.at(1);
-        const Bare_point& c = points.at(2);
-        return centroid_triangle_move(v, a, b, c, c3t3, sizing_field);
-        break;
-      }
+        return centroid_of_triangle_move(v, points, c3t3, sizing_field);
       default: // >= 4 points, centroid + projection
         return centroid_general_move(v, points.begin(), points.end(), c3t3, sizing_field);
-        break;
     }
 
     return CGAL::NULL_VECTOR;
+  }
+
+  Vector_3 centroid_of_segment_move(const Vertex_handle& v,
+                                          const std::vector<Bare_point>& points,
+                                          const C3T3& c3t3,
+                                          const Sizing_field& sizing_field) const
+  {
+    CGAL_precondition(points.size() == 2);
+    const Bare_point& a = points.front();
+    const Bare_point& b = points.back();
+    return centroid_segment_move(v, a, b, c3t3, sizing_field);
+  }
+
+  Vector_3 centroid_of_triangle_move(const Vertex_handle& v,
+                                           const std::vector<Bare_point>& points,
+                                           const C3T3& c3t3,
+                                           const Sizing_field& sizing_field) const
+  {
+    CGAL_precondition(points.size() == 3);
+    const Bare_point& a = points.at(0);
+    const Bare_point& b = points.at(1);
+    const Bare_point& c = points.at(2);
+    return centroid_triangle_move(v, a, b, c, c3t3, sizing_field);
   }
 
   /**
@@ -265,7 +269,10 @@ private:
 
     Facet_vector incident_facets;
     incident_facets.reserve(64);
-    tr.finite_incident_facets(v, std::back_inserter(incident_facets));
+    if (tr.is_parallel())
+      tr.incident_facets_threadsafe(v, std::back_inserter(incident_facets));
+    else
+      tr.incident_facets(v, std::back_inserter(incident_facets));
 
     std::vector<Bare_point> points;
     points.reserve(64);
@@ -391,9 +398,21 @@ private:
     std::transform(ch_2d.begin(), ch_2d.end(),
                    std::back_inserter(polygon_3d), To_3d(to_3d));
 
-    // Compute centroid using quadrature sizing
-    return centroid_3d_polygon_move(v, polygon_3d.begin(), polygon_3d.end(),
-                                    c3t3, sizing_field);
+    switch(polygon_3d.size())
+    {
+    case 1:
+      return CGAL::NULL_VECTOR;
+    case 2: // segment centroid
+      return centroid_of_segment_move(v, polygon_3d, c3t3, sizing_field);
+    case 3: // triangle centroid
+      return centroid_of_triangle_move(v, polygon_3d, c3t3, sizing_field);
+    default: // >= 4 points, centroid + projection
+      // Compute centroid using quadrature sizing
+      return centroid_3d_polygon_move(v, polygon_3d.begin(), polygon_3d.end(), c3t3, sizing_field);
+    }
+
+    CGAL_unreachable();
+    return CGAL::NULL_VECTOR;
   }
 
   /**

@@ -24,7 +24,7 @@ COPY cgal-NO_ADDITIONAL_DETAILS.patch .
 FROM sources_deps AS build
 
 # Build and install Doxygen from sources
-ARG DOXYGEN_VERSION=1.9.6
+ARG DOXYGEN_VERSION=1.17.0
 ARG MAKEFLAGS=-j$(nproc)
 RUN if [ -n "$DEBUG"];then set -x && make --version && ls -lZ /tmp && id; fi \
     && DOXYGEN_VERSION_UNDERSCORE=$(echo ${DOXYGEN_VERSION} | sed 's/\./_/g') \

@@ -3,6 +3,7 @@
 
 #include <CGAL/Arr_overlay_2.h>
 #include <CGAL/Arr_default_overlay_traits.h>
+#include <CGAL/draw_arrangement_2.h>
 
 #include "arr_geodesic_on_sphere.h"
 
@@ -34,8 +35,8 @@ int main() {
   Arrangement overlay_arr;
   Overlay_traits overlay_traits;
   overlay(arr1, arr2, overlay_arr, overlay_traits);
-  std::cout << "No. of vertices: " << overlay_arr.number_of_vertices()
-            << std::endl;
+  std::cout << "No. of vertices: " << overlay_arr.number_of_vertices() << std::endl;
+  CGAL::draw(overlay_arr, "spherical overlay");
 
   return 0;
 }

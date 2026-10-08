@@ -26,7 +26,7 @@ is uniquely defined by its coefficients \f$\alpha\f$ and \f$\beta\f$.
 Considering the set of generators \f$\mathcal A = [a, \overline{b}, c, \overline{d}, \overline{a},
 b, \overline{c}, d]\f$ as an alphabet, a translation \f$g\f$ in \f$\mathcal G\f$ can be seen as a
 word on the alphabet \f$\mathcal A\f$. Each letter of this alphabet is represented as an unsigned
-integer from from 0 to 7, and each word (i.e., translation) is a sequence of letters.
+integer from 0 to 7, and each word (i.e., translation) is a sequence of letters.
 */
 
 template <typename FT = CORE::Expr>

@@ -77,7 +77,7 @@ public:
 
   static void print_supported_file_format()
   {
-    ::printSupportedFileFormat();
+    CGAL::printSupportedFileFormat();
   }
 
   FT operator()(Point p) const
@@ -86,7 +86,7 @@ public:
     const float Y=static_cast<float>(to_double(p.y()));
     const float Z=static_cast<float>(to_double(p.z()));
 
-    float value = ::triLinInterp(this->image_ptr.get(), X, Y, Z, value_outside);
+    float value = CGAL::triLinInterp(this->image_ptr.get(), X, Y, Z, value_outside);
     if (positive_inside)
     {
       if (value > isovalue) // inside

@@ -474,10 +474,16 @@ protected:
     const Weighted_point& weighted_initial_loc = c3t3.triangulation().point(v);
     Bare_point initial_loc = cp(weighted_initial_loc);
     Bare_point new_loc = translate(initial_loc, step_vector);
-    Bare_point final_loc = new_loc;
 
-    if ( c3t3.in_dimension(v) < 3 )
-      final_loc = helper.project_on_surface(v, new_loc);
+    auto project_on_surface_if_in_dimension_is_2 = [&](Vertex_handle vh, const Bare_point& p) {
+      if ( c3t3.in_dimension(vh) == 2 ) {
+        return helper.project_on_surface(vh, p).first;
+      }
+      else
+        return p;
+    };
+
+    Bare_point final_loc = project_on_surface_if_in_dimension_is_2(v, new_loc);
 
     Vector_3 move_vector = vector(initial_loc, final_loc);
 
@@ -491,11 +497,7 @@ protected:
            ++i <= max_step_nb_ )
       {
         new_loc = translate(new_loc, step_vector);
-
-        if ( c3t3.in_dimension(v) == 3 )
-          final_loc = new_loc;
-        else
-          final_loc = helper.project_on_surface(v, new_loc);
+        final_loc = project_on_surface_if_in_dimension_is_2(v, new_loc);
       }
     }
     else
@@ -505,12 +507,7 @@ protected:
              ++i <= max_step_nb_ )
       {
         new_loc = translate(new_loc, step_vector);
-
-        if ( c3t3.in_dimension(v) == 3 )
-          final_loc = new_loc;
-        else
-          final_loc = helper.project_on_surface(v, new_loc);
-
+        final_loc = project_on_surface_if_in_dimension_is_2(v, new_loc);
         move_vector = vector(initial_loc, final_loc);
       }
     }
@@ -1354,7 +1351,7 @@ private:
       Bare_point new_location = translate(initial_location, delta);
 
       if ( c3t3.in_dimension(moving_vertex) < 3 )
-        new_location = helper.project_on_surface(moving_vertex, new_location);
+        new_location = helper.project_on_surface(moving_vertex, new_location).first;
 
       // check that we don't insert a vertex inside a protecting ball
       if(Th().inside_protecting_balls(c3t3.triangulation(),

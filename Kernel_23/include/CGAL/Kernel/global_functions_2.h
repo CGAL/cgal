@@ -368,6 +368,36 @@ compare_slopes(const Segment_2<K> &s1, const Segment_2<K> &s2)
 template < class K >
 inline
 typename K::Comparison_result
+compare_squared_radius(const Point_2<K> &p,
+                       const typename K::FT &sr)
+{
+  return internal::compare_squared_radius(p, sr, K());
+}
+
+template < class K >
+inline
+typename K::Comparison_result
+compare_squared_radius(const Point_2<K> &p,
+                       const Point_2<K> &q,
+                       const typename K::FT &sr)
+{
+  return internal::compare_squared_radius(p, q, sr, K());
+}
+
+template < class K >
+inline
+typename K::Comparison_result
+compare_squared_radius(const Point_2<K> &p,
+                       const Point_2<K> &q,
+                       const Point_2<K> &r,
+                       const typename K::FT &sr)
+{
+  return internal::compare_squared_radius(p, q, r, sr, K());
+}
+
+template < class K >
+inline
+typename K::Comparison_result
 compare_x(const Point_2<K> &p, const Point_2<K> &q)
 {
   return internal::compare_x(p, q, K());

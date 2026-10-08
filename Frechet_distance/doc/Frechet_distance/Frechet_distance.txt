@@ -123,11 +123,11 @@ In the example below, we can see a query where:
 </center>
 
 
-\subsection subsecFrechetDistanceImageCredits  Image Credits
+\section subsecFrechetDistanceImageCredits  Image Credits
 
 The character image is a visualization of two data points from the <a href="https://archive.ics.uci.edu/dataset/175/character+trajectories">Character Trajectories</a> data set.
 
-\subsection subsecFrechetDistanceImplementation  Implementation History
+\section subsecFrechetDistanceImplementation  Implementation History
 
 An initial version using floating point arithmetic was developed by the authors
 while working at the Max-Planck Institute for Informatics in Saarbrücken, Germany.

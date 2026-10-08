@@ -41,7 +41,8 @@ class Reflex_vertex_searcher : public Modifier_base<typename Nef_::SNC_structure
   typedef typename SNC_structure::SHalfloop_handle        SHalfloop_handle;
   typedef typename SNC_structure::SFace_handle            SFace_handle;
 
-  typedef typename SNC_structure::SVertex_handle    SVertex_handle;
+  typedef typename SNC_structure::SVertex_handle          SVertex_handle;
+  typedef typename SNC_structure::Object_handle           Object_handle;
 
   typedef typename SNC_structure::Vertex_iterator         Vertex_iterator;
   typedef typename SNC_structure::Volume_iterator         Volume_iterator;

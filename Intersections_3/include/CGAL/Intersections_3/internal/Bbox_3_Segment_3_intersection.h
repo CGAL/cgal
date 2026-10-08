@@ -20,6 +20,8 @@
 #include <CGAL/Intersection_traits_3.h>
 
 #include <CGAL/Bbox_3.h>
+#include <CGAL/Coercion_traits.h>
+#include <CGAL/NT_converter.h>
 #include <CGAL/number_utils.h>
 
 #include <optional>
@@ -29,39 +31,45 @@ namespace CGAL {
 namespace Intersections {
 namespace internal {
 
-// This function intersects a bbox with a ray, line or segment
-// Its essentially a copy of the function that was in Bbox_3_intersections.cpp
-// But it must be a template function since the original kernel must be
-// taken into account.
+// Intersects a bbox with a segment, ray or line given by a point (lp) and a
+// direction vector (ld). The flags select the kind of object:
+//   segment: min_infinite = max_infinite = false
+//   ray:     min_infinite = false, max_infinite = true
+//   line:    min_infinite = max_infinite = true
+//
 template <class K>
 typename std::optional< std::variant<typename K::Segment_3, typename K::Point_3 > >
 intersection_bl(const Bbox_3& box,
-                double lpx, double lpy, double lpz,
-                double ldx, double ldy, double ldz,
+                const typename K::FT& lpx, const typename K::FT& lpy, const typename K::FT& lpz,
+                const typename K::FT& ldx, const typename K::FT& ldy, const typename K::FT& ldz,
                 bool min_infinite, bool max_infinite)
 {
-  typedef typename K::FT FT;
   typedef typename K::Point_3 Point_3;
-  typedef typename K::Vector_3  Vector_3;
   typedef typename K::Segment_3 Segment_3;
-
   typedef typename std::optional<std::variant< Segment_3, Point_3 > > result_type;
 
-  double seg_min = 0.0, seg_max = 1.0;
+  typedef typename Coercion_traits<typename K::FT, double>::Type CFT;
+  typename Coercion_traits<typename K::FT, double>::Cast to_CFT;
+
+  const CFT clpx = to_CFT(lpx), clpy = to_CFT(lpy), clpz = to_CFT(lpz);
+  const CFT cldx = to_CFT(ldx), cldy = to_CFT(ldy), cldz = to_CFT(ldz);
+
+  CFT seg_min = 0, seg_max = 1;
+
   // first on x value
-  if(ldx == 0.0) {
-    if(lpx < box.xmin())
+  if(cldx == 0) {
+    if(clpx < to_CFT(box.xmin()))
       return result_type();
-    if(lpx > box.xmax())
+    if(clpx > to_CFT(box.xmax()))
       return result_type();
   } else {
-    double newmin, newmax;
-    if(ldx > 0.0) {
-      newmin = (box.xmin()-lpx)/ldx;
-      newmax = (box.xmax()-lpx)/ldx;
+    CFT newmin, newmax;
+    if(cldx > 0) {
+      newmin = (to_CFT(box.xmin())-clpx)/cldx;
+      newmax = (to_CFT(box.xmax())-clpx)/cldx;
     } else {
-      newmin = (box.xmax()-lpx)/ldx;
-      newmax = (box.xmin()-lpx)/ldx;
+      newmin = (to_CFT(box.xmax())-clpx)/cldx;
+      newmax = (to_CFT(box.xmin())-clpx)/cldx;
     }
 
     if(min_infinite) {
@@ -85,19 +93,19 @@ intersection_bl(const Bbox_3& box,
   }
 
   // now on y value
-  if(ldy == 0.0) {
-    if(lpy < box.ymin())
+  if(cldy == 0) {
+    if(clpy < to_CFT(box.ymin()))
       return result_type();
-    if(lpy > box.ymax())
+    if(clpy > to_CFT(box.ymax()))
       return result_type();
   } else {
-    double newmin, newmax;
-    if(ldy > 0.0) {
-      newmin = (box.ymin()-lpy)/ldy;
-      newmax = (box.ymax()-lpy)/ldy;
+    CFT newmin, newmax;
+    if(cldy > 0) {
+      newmin = (to_CFT(box.ymin())-clpy)/cldy;
+      newmax = (to_CFT(box.ymax())-clpy)/cldy;
     } else {
-      newmin = (box.ymax()-lpy)/ldy;
-      newmax = (box.ymin()-lpy)/ldy;
+      newmin = (to_CFT(box.ymax())-clpy)/cldy;
+      newmax = (to_CFT(box.ymin())-clpy)/cldy;
     }
 
     if(min_infinite) {
@@ -121,19 +129,19 @@ intersection_bl(const Bbox_3& box,
   }
 
   // now on z value
-  if(ldz == 0.0) {
-    if(lpz < box.zmin())
+  if(cldz == 0) {
+    if(clpz < to_CFT(box.zmin()))
       return result_type();
-    if(lpz > box.zmax())
+    if(clpz > to_CFT(box.zmax()))
       return result_type();
   } else {
-    double newmin, newmax;
-    if(ldz > 0.0) {
-      newmin = (box.zmin()-lpz)/ldz;
-      newmax = (box.zmax()-lpz)/ldz;
+    CFT newmin, newmax;
+    if(cldz > 0) {
+      newmin = (to_CFT(box.zmin())-clpz)/cldz;
+      newmax = (to_CFT(box.zmax())-clpz)/cldz;
     } else {
-      newmin = (box.zmax()-lpz)/ldz;
-      newmax = (box.zmin()-lpz)/ldz;
+      newmin = (to_CFT(box.zmax())-clpz)/cldz;
+      newmax = (to_CFT(box.zmin())-clpz)/cldz;
     }
 
     if(min_infinite) {
@@ -156,18 +164,22 @@ intersection_bl(const Bbox_3& box,
       return result_type();
   }
 
-  if(min_infinite || max_infinite) {
-    seg_max = 0.0;
-    CGAL_kernel_assertion_msg(true, "Zero direction vector of line detected.");
-  }
+  if(min_infinite || max_infinite)
+    seg_max = seg_min;
 
-  Point_3 ref_point{FT(lpx), FT(lpy), FT(lpz)};
-  Vector_3 dir{FT(ldx), FT(ldy), FT(ldz)};
+  NT_converter<CFT, typename K::FT> to_FT;
 
   if(seg_max == seg_min)
-    return result_type(ref_point + dir * FT(seg_max));
+    return result_type(Point_3(to_FT(clpx + cldx*seg_min),
+                               to_FT(clpy + cldy*seg_min),
+                               to_FT(clpz + cldz*seg_min)));
 
-  return result_type(Segment_3{ref_point + dir*FT(seg_min), ref_point + dir*FT(seg_max)});
+  return result_type(Segment_3(Point_3(to_FT(clpx + cldx*seg_min),
+                                       to_FT(clpy + cldy*seg_min),
+                                       to_FT(clpz + cldz*seg_min)),
+                               Point_3(to_FT(clpx + cldx*seg_max),
+                                       to_FT(clpy + cldy*seg_max),
+                                       to_FT(clpz + cldz*seg_max))));
 }
 
 template <class K>
@@ -180,15 +192,11 @@ intersection(const typename K::Segment_3& seg,
   typedef typename K::Vector_3 Vector_3;
 
   const Point_3& linepoint = seg.source();
-  const Vector_3& diffvec = seg.target() - linepoint;
+  const Vector_3 diffvec = seg.target() - linepoint;
 
   return intersection_bl<K>(box,
-                            CGAL::to_double(linepoint.x()),
-                            CGAL::to_double(linepoint.y()),
-                            CGAL::to_double(linepoint.z()),
-                            CGAL::to_double(diffvec.x()),
-                            CGAL::to_double(diffvec.y()),
-                            CGAL::to_double(diffvec.z()),
+                            linepoint.x(), linepoint.y(), linepoint.z(),
+                            diffvec.x(), diffvec.y(), diffvec.z(),
                             false, false);
 }
 

@@ -50,4 +50,8 @@
 - `CGAL::AABB_primitive<Id,ObjectPropertyMap,PointPropertyMap,ExternalPropertyMaps,CacheDatum>`
 - `CGAL::AABB_halfedge_graph_segment_primitive<HalfedgeGraph,Vpm,OneHalfedgeGraphPerTree,CacheDatum>`
 - `CGAL::AABB_face_graph_triangle_primitive<FaceGraph,Vpm,OneFaceGraphPerTree,CacheDatum>`
+
+\cgalCRPSection{Functions}
+- `CGAL::AABB_trees::do_intersect()`
+- `CGAL::AABB_trees::all_pairs_of_intersecting_primitives()`
 */

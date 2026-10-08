@@ -18,24 +18,14 @@
  * \cgalHasModels{CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>}
  * \cgalHasModelsEnd
  *
- * \sa `AosConstructXMonotoneCurveTraits_2`
- * \sa `AosXMonotoneTraits_2`
  * \sa `AosTraits_2`
  */
 class AosApproximatePointTraits_2 {
 public:
-  /// \name Types
-  /// @{
-
-  //! the number type used to approximate point coordinates, e.g., double.
-  typedef unspecified_type Approximate_number_type;
-
-  /// @}
-
   /// \name Functor Types
   /// @{
 
-  /// models the concept `AosTraits::Approximate_2`.
+  /// models the concept `AosTraits::ApproximatePoint_2`.
   typedef unspecified_type Approximate_2;
 
   /// @}

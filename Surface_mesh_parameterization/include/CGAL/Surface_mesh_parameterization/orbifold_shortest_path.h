@@ -104,7 +104,7 @@ public:
 /// \ingroup PkgSurfaceMeshParameterizationOrbifoldHelperFunctions
 ///
 /// computes the shortest path between `source` and `target` over `mesh`, using
-/// <a href="https://www.boost.org/doc/libs/release/libs/graph/doc/dijkstra_shortest_paths.html">
+/// <a href="https://www.boost.org/doc/libs/latest/libs/graph/doc/html/graph/algorithms/shortest_paths/dijkstra_shortest_paths.html">
 /// boost::dijkstra_shortest_paths()</a>.
 ///
 /// \tparam TriangleMesh A triangle mesh, model of `FaceListGraph` and `HalfedgeListGraph`.

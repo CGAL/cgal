@@ -2,7 +2,7 @@
 #include <cassert>
 
 template <class AK>
-void _test_constuctor(AK ak)
+void _test_constructor(AK ak)
 {
   CGAL::Random generatorOfgenerator;
   int random_seed = generatorOfgenerator.get_int(0, 123456);

@@ -15,8 +15,8 @@
 
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
-#include <CGAL/IO/read_xyz_points.h>
-#include <CGAL/IO/write_xyz_points.h>
+#include <CGAL/IO/XYZ/read_xyz_points.h>
+#include <CGAL/IO/XYZ/write_xyz_points.h>
 
 #include <fstream>
 #include <string>

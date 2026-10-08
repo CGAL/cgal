@@ -41,7 +41,7 @@ for the iterator requirements.
 <B>Singular values:</B> There are no singular values for
 circulators\cgalFootnote{Since circulators must be implemented as classes
 anyway, there is no need to allow singular values for them. An
-un-initalized circulator does not have a singular value, but is
+un-initialized circulator does not have a singular value, but is
 supposed to refer to an empty sequence.}
 
 <B>Empty sequence:</B> The comparison `c == nullptr` (or `c == 0`)

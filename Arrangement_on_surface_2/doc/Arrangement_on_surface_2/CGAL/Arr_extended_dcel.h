@@ -174,7 +174,7 @@ public:
  *
  * The `Arr_face_extended_dcel` class-template extends the \dcel face-records,
  * making it possible to store extra (non-geometric) data with the arrangement
- * faces.  The class should be instantiated by an `FData` type which represents
+ * faces.  The class should be instantiated with an `FData` type which represents
  * the extra data stored with each face.
  *
  * Note that all types of \dcel features (namely vertex, halfedge and face)

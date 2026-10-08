@@ -153,14 +153,14 @@ write_cells_tag_2(std::ostream& os,
     {
       if(get(in_domain, fit))
       {
-        os << "5 ";
+        os << "5 "; // VTK_TRIANGLE == 5
       }
     }
     for(std::size_t i = 0, end = std::distance(tr.constrained_edges_begin(),
                                                tr.constrained_edges_end());
         i < end; ++i)
     {
-      os << "3 ";
+      os << "3 "; // VTK_LINE == 3
     }
     os << "      </DataArray>\n";
   }
@@ -178,9 +178,9 @@ write_cells_2(std::ostream& os,
 {
   std::vector<std::size_t> connectivity_table;
   std::vector<std::size_t> offsets;
-  std::vector<unsigned char> cell_type(number_of_triangles,5);  // triangles == 5
+  std::vector<unsigned char> cell_type(number_of_triangles,5);  // VTK_TRIANGLE == 5
   cell_type.resize(cell_type.size() + std::distance(tr.constrained_edges_begin(),
-                                                     tr.constrained_edges_end()), 3);  // line == 3
+                                                     tr.constrained_edges_end()), 3);  // VTK_LINE == 3
 
   std::size_t off = 0;
   for(typename CDT::Finite_faces_iterator
@@ -390,6 +390,27 @@ void write_VTU_with_attributes(std::ostream& os,
 
 } // namespace internal
 
+//!\ingroup PkgMesh2IO
+//! \brief writes the faces of a domain and its constrained edges embedded in
+//! a 2D constrained Delaunay triangulation using the `PolyData` XML
+//! format.
+//! The faces output are those for which `get(ipm, f)` returns
+//! `true` where `f` is a  `CDT::Face_handle`,
+//! the edges are those for which `ConstrainedTriangulationFaceBase_2::is_constrained()` returns `true`.
+//!
+//!\attention To read a binary file, the flag `std::ios::binary` must be set during the creation of `os`.
+//!
+//! \tparam CDT a `Constrained_Delaunay_triangulation_2` with face
+//! type model of `DelaunayMeshFaceBase_2`.
+//! \tparam InDomainPmap a class model of `ReadWritePropertyMap` with
+//! `CDT::Face_handle` as key type and `bool` as value type.
+//!
+//! \param os the stream used for writing.
+//! \param tr the triangulated domain to be written.
+//! \param ipm the property map storing if a face is in the domain.
+//! \param mode decides if the data should be written in binary (`BINARY`)
+//!             or in \ascii (`ASCII`).
+//!
 template <class CDT, class InDomainPmap>
 void write_VTU(std::ostream& os,
                const CDT& tr,
@@ -400,6 +421,21 @@ void write_VTU(std::ostream& os,
   internal::write_VTU_with_attributes(os, tr, ipm, dummy_atts, mode);
 }
 
+//!\ingroup PkgMesh2IO
+//! \brief writes the faces of a domain and its constrained edges embedded in
+//! a 2D constrained Delaunay triangulation using the `PolyData` XML format.
+//!
+//! The faces output are those for which `DelaunayMeshFaceBase_2::is_in_domain()` returns `true`,
+//! the edges are those for which `ConstrainedTriangulationFaceBase_2::is_constrained()` returns `true`.
+//!\attention To read a binary file, the flag `std::ios::binary` must be set during the creation of `os`.
+//!
+//! \tparam CDT a `Constrained_Delaunay_triangulation_2` with face type model of `DelaunayMeshFaceBase_2`.
+//!
+//! \param os the stream used for writing.
+//! \param tr the triangulated domain to be written.
+//! \param mode decides if the data should be written in binary (`BINARY`)
+//!             or in \ascii (`ASCII`).
+//!
 template <class CDT>
 void write_VTU(std::ostream& os,
                const CDT& tr,
@@ -407,6 +443,27 @@ void write_VTU(std::ostream& os,
 {
   CGAL::internal::In_domain<CDT> in_domain;
   write_VTU(os, tr, in_domain, mode);
+}
+
+template <class CDT, class InDomainPmap>
+bool write_VTU(std::string filename,
+               const CDT& tr,
+               InDomainPmap ipm,
+               Mode mode = BINARY)
+{
+  std::ofstream os(filename.c_str(), (mode == BINARY ? std::ios::binary : std::ios::out));
+  if(mode != BINARY) os.precision(17);
+  write_VTU(os, tr, ipm, mode);
+  return !os.fail();
+}
+
+template <class CDT>
+bool write_VTU(std::string filename,
+               const CDT& tr,
+               Mode mode = BINARY)
+{
+  CGAL::internal::In_domain<CDT> in_domain;
+  return write_VTU(filename, tr, in_domain, mode);
 }
 
 

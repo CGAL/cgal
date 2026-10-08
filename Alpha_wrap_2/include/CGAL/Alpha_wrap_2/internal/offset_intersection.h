@@ -1,0 +1,224 @@
+// Copyright (c) 2019-2022 Google LLC (USA).
+// Copyright (c) 2025 GeometryFactory (France)
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s)     : Mael Rouxel-Labbé
+//
+#ifndef CGAL_ALPHA_WRAP_2_INTERNAL_OFFSET_INTERSECTION_H
+#define CGAL_ALPHA_WRAP_2_INTERNAL_OFFSET_INTERSECTION_H
+
+#include <CGAL/license/Alpha_wrap_2.h>
+
+#include <CGAL/number_utils.h>
+
+namespace CGAL {
+namespace Alpha_wraps_2 {
+namespace internal {
+
+template <typename AABBTree,
+          typename AABBTraversalTraits>
+struct AABB_tree_oracle_helper;
+
+template <typename AABBTree, typename AABBTraversalTraits>
+struct AABB_distance_oracle
+{
+  using FT = typename AABBTree::FT;
+  using Point_2 = typename AABBTree::Point;
+
+  using AABB_helper = AABB_tree_oracle_helper<AABBTree, AABBTraversalTraits>;
+
+  AABB_distance_oracle(const AABBTree& tree) : tree(tree) { }
+
+  FT operator()(const Point_2& p) const
+  {
+    return approximate_sqrt(AABB_helper::squared_distance(p, tree));
+  }
+
+public:
+  const AABBTree& tree;
+};
+
+// @todo even with EPECK, the precision cannot be 0 (otherwise it will not converge),
+// thus exactness is pointless. Might as well use a cheap kernel (e.g. SC<double>), as long
+// as there exists a mechanism to catch when the cheap kernel fails to converge (iterations?)
+template <class Kernel, class DistanceOracle>
+class Offset_intersection
+{
+  using FT = typename Kernel::FT;
+  using Point_2 = typename Kernel::Point_2;
+  using Vector_2 = typename Kernel::Vector_2;
+
+public:
+  Offset_intersection(const DistanceOracle& oracle,
+                      const FT& off,
+                      const FT& prec)
+    : dist_oracle(oracle), offset(off), precision(prec)
+  {
+    CGAL_assertion(offset > precision);
+  }
+
+  bool first_intersection(const Point_2& s,
+                          const Point_2& t,
+                          Point_2& output_pt)
+  {
+    return sphere_marching_search(s, t, output_pt);
+  }
+
+private:
+  Point_2 source;
+  Point_2 target;
+  FT seg_length;
+  Vector_2 seg_unit_v;
+  DistanceOracle dist_oracle;
+  FT offset;
+  FT precision;
+
+  bool sphere_marching_search(const Point_2& s,
+                              const Point_2& t,
+                              Point_2& output_pt)
+  {
+#ifdef CGAL_AW2_DEBUG_SPHERE_MARCHING
+    std::cout << "Sphere march between " << s << " and " << t << std::endl;
+#endif
+
+    Point_2 current_pt = s;
+    Point_2 closest_point = dist_oracle.tree.closest_point(current_pt);
+    FT current_dist = approximate_sqrt(squared_distance(current_pt, closest_point)) - offset;
+
+    const FT sq_seg_length = squared_distance(s, t);
+    const FT seg_length = approximate_sqrt(sq_seg_length);
+    if(is_zero(seg_length))
+    {
+      closest_point = dist_oracle.tree.closest_point(t);
+      current_dist = approximate_sqrt(squared_distance(t, closest_point)) - offset;
+      output_pt = t;
+      return (CGAL::abs(current_dist) < precision);
+    }
+
+    const Vector_2 seg_unit_v = (t - s) / seg_length;
+
+    for(;;)
+    {
+#ifdef CGAL_AW2_DEBUG_SPHERE_MARCHING
+      std::cout << "current point " << current_pt << std::endl;
+      std::cout << "current dist " << current_dist << std::endl;
+#endif
+
+      if(CGAL::abs(current_dist) < precision)
+      {
+        output_pt = current_pt;
+        return true;
+      }
+
+      // use the previous closest point as a hint: it's an upper bound
+      current_pt = current_pt + (current_dist * seg_unit_v);
+
+      if(squared_distance(s, current_pt) > sq_seg_length)
+        return false;
+
+      closest_point = dist_oracle.tree.closest_point(current_pt, closest_point /*hint*/);
+      current_dist = approximate_sqrt(squared_distance(current_pt, closest_point)) - offset;
+    }
+
+    return false;
+  }
+
+  // @fixme somehow this is slower than the naive version...
+  bool sphere_marching_search_pp(const Point_2& s,
+                                const Point_2& t,
+                                Point_2& output_pt)
+  {
+    // Initial evaluation at s
+    Point_2 closest_point = dist_oracle.tree.closest_point(s);
+    FT initial_dist = approximate_sqrt(squared_distance(s, closest_point)) - offset;
+
+    const FT sq_seg_length = squared_distance(s, t);
+    const FT seg_length = approximate_sqrt(sq_seg_length);
+    if(is_zero(seg_length))
+    {
+      closest_point = dist_oracle.tree.closest_point(t);
+      FT dist = approximate_sqrt(squared_distance(t, closest_point)) - offset;
+      output_pt = t;
+      return (CGAL::abs(dist) < precision);
+    }
+
+    const Vector_2 seg_unit_v = (t - s) / seg_length;
+
+    const FT function_sign = initial_dist < 0 ? -1 : 1;
+
+    FT w = 1.6;
+    FT step = 0;
+    FT step_length = 0;
+
+    FT candidate_error = std::numeric_limits<FT>::infinity();
+    FT candidate_step = 0;
+    Point_2 candidate_pt = s;
+    FT previous_radius = 0;
+
+    const FT t_max = 2 * seg_length;
+
+    for (;;)
+    {
+      Point_2 current_pt = s + (step * seg_unit_v);
+#ifdef CGAL_AW2_DEBUG_SPHERE_MARCHING
+      std::cout << "current_pt = " << current_pt << std::endl;
+#endif
+
+      closest_point = dist_oracle.tree.closest_point(current_pt, closest_point);
+      FT dist = approximate_sqrt(squared_distance(current_pt, closest_point)) - offset;
+
+      FT signed_radius = function_sign * dist;
+      FT radius = CGAL::abs(signed_radius);
+
+      const bool sor_fail = w > 1 && (radius + previous_radius) < step_length;
+
+      if(sor_fail)
+      {
+        step_length -= w * step_length;
+        w = 1;
+      }
+      else
+      {
+        step_length = signed_radius * w;
+      }
+
+      previous_radius = radius;
+
+      if(step <= seg_length)
+      {
+        FT error = radius;
+        if(!sor_fail && error < candidate_error)
+        {
+          candidate_step = step;
+          candidate_error = error;
+          candidate_pt = current_pt;
+        }
+      }
+
+      if(!sor_fail && candidate_error < precision)
+        break;
+
+      step += step_length;
+    }
+
+    if(candidate_error < precision)
+    {
+      output_pt = candidate_pt;
+      return true;
+    }
+
+    return false;
+  }
+};
+
+} // namespace internal
+} // namespace Alpha_wraps_2
+} // namespace CGAL
+
+#endif // CGAL_ALPHA_WRAP_2_INTERNAL_OFFSET_INTERSECTION_H

@@ -71,7 +71,7 @@ auto blobby_gradient = [](const Point& p) -> Vector
 // This refines:
 // - at the minimum till minimum depth
 // - at the maximum till maximum depth
-// - we split if the the isovalue goes through the voxel, i.e. if not all vertices of the cell
+// - we split if the isovalue goes through the voxel, i.e. if not all vertices of the cell
 //   are on the same side of the isosurface defined by a function
 // It's not a great refinement technique because the surface can enter and leave a cell
 // without involving the cell's vertex. In practice, that means a hole if at nearby adjacent

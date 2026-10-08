@@ -66,7 +66,7 @@ This gap between the theoretical and the practical settings was addressed by Car
 the solution is to use a <em>regular</em> triangulation, which is a generalization of the Delaunay triangulation
 to sets of <em>weighted points</em>
 (see \ref Section_2D_Triangulations_Regular "2D Regular Triangulations" for more information).
-A weighted point \f$(p,w)\f$ of \f$ \mathbb{R}^2\f$ can naturally be seen as as a circle with center \f$ p\f$
+A weighted point \f$(p,w)\f$ of \f$ \mathbb{R}^2\f$ can naturally be seen as a circle with center \f$ p\f$
 and radius \f$ r\f$ such that \f$ r^2 = w\f$ and similarly to Delaunay triangulations and the definition
 of regular triangulations in \f$ \mathbb{R}^2\f$ can be naturally extended to circles on \f$ \mathbb{S}\f$.
 Given a set of points \f$ \mathcal{P}_3\f$ living in \f$ \mathbb{R}^3\f$, Caroli et al. compute

@@ -26,7 +26,7 @@ namespace CGAL {
   namespace Polygon_mesh_processing {
 
   /*!
-   * \ingroup PkgPolygonMeshProcessingRef
+   * \ingroup PMP_misc_grp
    *
    * computes a triangle for a face descriptor of a triangle mesh.
    *

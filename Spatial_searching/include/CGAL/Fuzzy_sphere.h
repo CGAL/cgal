@@ -134,6 +134,7 @@ class Fuzzy_sphere:
   typedef internal::Fuzzy_sphere_impl<SearchTraits,typename SearchTraits::Point_d> Base;
   typedef typename Base::FT FT;
 public:
+  typedef typename SearchTraits::Point_d Point_d;
   // constructors
   Fuzzy_sphere(const SearchTraits& traits_=SearchTraits()):Base(traits_){}
   Fuzzy_sphere(const typename SearchTraits::Point_d& center, FT radius, FT epsilon=FT(0),const SearchTraits& traits_=SearchTraits()) :
@@ -149,6 +150,7 @@ class Fuzzy_sphere< Search_traits_adapter<K,PM,Base_traits> >
   typedef internal::Fuzzy_sphere_impl<SearchTraits,typename Base_traits::Point_d> Base;
   typedef typename Base_traits::FT FT;
 public:
+  typedef typename SearchTraits::Point_d Point_d;
   // constructors
   Fuzzy_sphere(const SearchTraits& traits_=SearchTraits()):Base(traits_){}
 

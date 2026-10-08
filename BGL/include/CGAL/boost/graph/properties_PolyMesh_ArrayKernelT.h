@@ -12,7 +12,7 @@
 #define CGAL_PROPERTIES_POLYMESH_ARRAYKERNELT_H
 
 #include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
-#define OPEN_MESH_CLASS OpenMesh::PolyMesh_ArrayKernelT<K>
+#define CGAL_OPEN_MESH_CLASS OpenMesh::PolyMesh_ArrayKernelT<K>
 #include <CGAL/boost/graph/properties_OpenMesh.h>
 
 #endif /* CGAL_PROPERTIES_POLYMESH_ARRAYKERNELT_H */

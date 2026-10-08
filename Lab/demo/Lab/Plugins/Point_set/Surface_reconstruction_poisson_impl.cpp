@@ -310,6 +310,7 @@ SMesh* poisson_reconstruct(Point_set& points,
     // Defines surface mesh generation criteria
     Mesh_criteria criteria(CGAL::parameters::facet_angle = sm_angle,
                            CGAL::parameters::facet_size = sm_radius*average_spacing,
+                           CGAL::parameters::facet_min_size = 2.*sm_dichotomy_error,
                            CGAL::parameters::facet_distance = sm_distance*average_spacing);
 
     CGAL_TRACE_STREAM << "  make_mesh_3 with\n"

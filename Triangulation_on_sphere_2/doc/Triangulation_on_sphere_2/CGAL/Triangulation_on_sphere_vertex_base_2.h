@@ -20,7 +20,7 @@ for the triangulation traits class. This ensures that the point type defined by
 the triangulation.
 
 \tparam Vb must be a model of the concept `TriangulationDSVertexBase_2`.
-By default this parameter is instantiated by `Triangulation_ds_vertex_base_2<>`.
+By default this parameter is instantiated with `Triangulation_ds_vertex_base_2<>`.
 
 \sa `CGAL::Triangulation_ds_vertex_base_2<Tds>`
 \sa `CGAL::Triangulation_on_sphere_face_base_2<Traits,Fb>`

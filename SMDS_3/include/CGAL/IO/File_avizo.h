@@ -90,7 +90,7 @@ namespace internal {
     return false;
   }
 
-  bool line_starts_with(const std::string& line, const char* cstr)
+  inline bool line_starts_with(const std::string& line, const char* cstr)
   {
     const std::size_t fnws = line.find_first_not_of(" \t");
     if (fnws != std::string::npos)
@@ -277,6 +277,7 @@ namespace internal {
     }
   }
 
+  inline
   void read_tetrahedra(std::istream& input,
                        std::vector<std::array<int, 4> >& tetrahedra,
                        const int& nb_tets,
@@ -349,6 +350,7 @@ namespace internal {
     std::string at_label;
   };
 
+  inline
   void go_to_at_label(std::istream& input,
                       std::string& line,
                       const char* at_label)// "@1"
@@ -363,6 +365,7 @@ namespace internal {
     }
   }
 
+  inline
   bool is_avizo_tetra_format(std::istream& in, const char* binary_or_ascii)
   {
     std::string format(binary_or_ascii);
@@ -499,17 +502,34 @@ namespace internal {
       }
     }
 
+    struct Edge_with_index
+    {
+      int v0, v1;
+      typename Tr::Triangulation_data_structure::Vertex::Index curve_index;
+    };
+    struct Corner_with_index
+    {
+      int v;
+      typename Tr::Triangulation_data_structure::Vertex::Index corner_index;
+    };
+
     boost::unordered_map<std::array<int, 3>,
       typename Tr::Cell::Surface_patch_index> empty_facets_map;
+    std::vector<Edge_with_index> no_edges;
+    std::vector<Corner_with_index> no_corners;
 
     CGAL::SMDS_3::build_triangulation_with_subdomains_range(tr,
       points,
       tetrahedra,
       labels,
       empty_facets_map,
+      no_edges,
+      no_corners,
+      CGAL::Emptyset_iterator(),
       true,//verbose
       false,//replace subdomain 0
-      true);//allow non manifold
+      true,//allow non manifold
+      true);//allow negative volumes
 
     return true;
   }

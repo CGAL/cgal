@@ -324,6 +324,10 @@ public:
                        const Point& p1,
                        const Point& p2) const;
 
+  const Point& geometry(Vertex_handle v) const { return point(v); }
+  Segment geometry(const Edge& e) const { return segment(e); }
+  Triangle geometry(Face_handle f) const { return triangle(f); }
+
 
   //MOVE - INSERTION - DELETION - Flip
 public:

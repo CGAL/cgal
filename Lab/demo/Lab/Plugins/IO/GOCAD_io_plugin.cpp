@@ -39,7 +39,8 @@ public:
 };
 
 QString CGAL_Lab_gocad_plugin::nameFilters() const {
-  return "GOCAD files (*.ts)";
+  return "GOCAD files (*.ts *.ml)";
+
 }
 
 bool CGAL_Lab_gocad_plugin::canLoad(QFileInfo) const {
@@ -52,53 +53,72 @@ CGAL_Lab_gocad_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
 
   // Open file
   std::ifstream in(fileinfo.filePath().toUtf8());
+  QList<Scene_item*>  new_item_list;
   if(!in) {
     std::cerr << "Error! Cannot open file " << (const char*)fileinfo.filePath().toUtf8() << std::endl;
     ok = false;
-    return QList<Scene_item*>();
+    return new_item_list;
   }
-  in.close();
 
   CGAL::Timer t;
   t.start();
-  // Try to read GOCAD file in a surface_mesh
-  Scene_surface_mesh_item* item = new Scene_surface_mesh_item(new SMesh());
-  if(fileinfo.size() == 0)
+
+  SMesh P;
+  std::pair<std::string,std::string> name_and_color;
+  while(!in.eof() && CGAL::IO::read_GOCAD(in, name_and_color, P, CGAL::parameters::read_only_one_object(true)))
   {
-    CGAL::Three::Three::warning( tr("The file you are trying to load is empty."));
-    ok = true;
+    if (P.is_empty()) continue; // skip non-handled objects
+
+    Scene_surface_mesh_item* item = new Scene_surface_mesh_item(new SMesh(std::move(P)));
+
+    P = SMesh();
+
+    if(name_and_color.first.size() == 0){
+      item->setName(fileinfo.completeBaseName());
+    } else {
+      item->setName(name_and_color.first.c_str());
+    }
+    QColor qcolor(name_and_color.second.c_str());
+    if(qcolor.isValid())
+    {
+      item->setColor(qcolor);
+    }
+    item->invalidateOpenGLBuffers();
+
     if(add_to_scene)
        CGAL::Three::Three::scene()->addItem(item);
-    return QList<Scene_item*>()<<item;
-  }
-  SMesh& P = * const_cast<SMesh*>(item->polyhedron());
 
-  std::pair<std::string,std::string> name_and_color;
-  if(! CGAL::IO::read_GOCAD(in, name_and_color, P))
-  {
-    std::cerr << "Error: Invalid polyhedron" << std::endl;
-    delete item;
-    ok = false;
-    return QList<Scene_item*>();
+    new_item_list << item;
   }
+
+  std::cout << new_item_list.size() << "\n";
+
+  if (in.bad())
+  {
+    std::cerr << "Error while parsing file" << std::endl;
+    ok=false;
+    for(auto item : new_item_list)
+      delete item;
+    new_item_list.clear();
+    return new_item_list;
+  }
+
+  ok = true;
 
   t.stop();
   std::cerr << "Reading took " << t.time() << " sec." << std::endl;
-  if(name_and_color.first.size() == 0){
-    item->setName(fileinfo.completeBaseName());
-  } else {
-    item->setName(name_and_color.first.c_str());
-  }
-  QColor qcolor(name_and_color.second.c_str());
-  if(qcolor.isValid())
+
+  if (new_item_list.size()>1)
   {
-    item->setColor(qcolor);
+    Scene_group_item* group = new Scene_group_item(fileinfo.completeBaseName());
+    if(add_to_scene)
+      CGAL::Three::Three::scene()->addItem(group);
+    for (Scene_item* item : new_item_list)
+      CGAL::Three::Three::scene()->changeGroup(item, group);
+    return QList<Scene_item*>()<<group;
   }
-  item->invalidateOpenGLBuffers();
-  ok = true;
-  if(add_to_scene)
-     CGAL::Three::Three::scene()->addItem(item);
-  return QList<Scene_item*>()<<item;
+
+  return new_item_list;
 }
 
 bool CGAL_Lab_gocad_plugin::canSave(const CGAL::Three::Scene_item* item)

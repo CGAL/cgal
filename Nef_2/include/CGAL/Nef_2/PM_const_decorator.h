@@ -21,6 +21,7 @@
 #include <string>
 #include <list>
 #include <sstream>
+#include <CGAL/Nef_2/Object_handle.h>
 #include <CGAL/Nef_2/Object_index.h>
 #include <CGAL/Nef_2/iterator_tools.h>
 #undef CGAL_NEF_DEBUG
@@ -158,6 +159,12 @@ typedef typename HDS::Face_handle             Face_handle;
 typedef typename HDS::Face_const_handle       Face_const_handle;
 typedef typename HDS::Face_const_iterator     Face_const_iterator;
 
+typedef typename CGAL::Type_pack<Vertex_handle,   Vertex_const_handle,
+                                 Halfedge_handle, Halfedge_const_handle,
+                                 Face_handle,     Face_const_handle>
+                                                  Object;
+
+typedef typename CGAL::Object_handle<Object> Object_handle;
 
 /*{\Mtext Local types are handles, iterators and circulators of the
 following kind: |Vertex_const_handle|,

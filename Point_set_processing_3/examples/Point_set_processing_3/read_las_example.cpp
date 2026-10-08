@@ -1,7 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/property_map.h>
-#include <CGAL/IO/read_las_points.h>
+#include <CGAL/IO/LAS.h>
 
 #include <utility>
 #include <vector>

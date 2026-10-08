@@ -231,7 +231,7 @@ Size_type number_of_sfaces() const
 
 SFace_cycle_iterator sface_cycles_begin(SFace_handle f) const
 /*{\Mop returns an iterator for all bounding face cycles of |f|.
-The iterator is is convertible to |SVertex_handle|,
+The iterator is convertible to |SVertex_handle|,
 |SHalfloop_handle|, or |SHalfedge_handle|.}*/
 { return f->boundary_entry_objects().begin(); }
 
@@ -315,7 +315,7 @@ bool is_sm_boundary_object(H h) const
 template <typename H>
 void store_sm_boundary_object(H h, SFace_handle f) {
   CGAL_assertion(!map()->is_sm_boundary_object(h));
-  f->boundary_entry_objects().push_back(make_object(h));
+  f->boundary_entry_objects().emplace_back(h);
   map()->store_sm_boundary_item(h, --(f->sface_cycles_end()));
 }
 

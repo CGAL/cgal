@@ -32,7 +32,7 @@ namespace CGAL {
 
 namespace poisson_eliminate_impl {
 
-double get_maximum_radius(std::size_t dimension, std::size_t sample_size, double domain_size) {
+inline double get_maximum_radius(std::size_t dimension, std::size_t sample_size, double domain_size) {
   double sampleArea = domain_size / double(sample_size);
   double r_max;
   switch (dimension) {
@@ -58,6 +58,7 @@ double get_maximum_radius(std::size_t dimension, std::size_t sample_size, double
   return r_max;
 }
 
+inline
 double get_minimum_radius(std::size_t input_size, std::size_t output_size, double beta, double gamma, double r_max) {
   double ratio = output_size / double(input_size);
   return r_max * (1 - std::pow(ratio, gamma)) * beta;
@@ -133,6 +134,7 @@ private:
   double alpha;
 };
 
+inline
 void move_down(std::vector<std::size_t>& heap, std::vector<std::size_t>& heap_pos, std::size_t heap_size, std::vector<double>& weights, std::size_t idx) {
   CGAL_assertion(idx <= heap.size());
   std::size_t child = idx * 2 + 1;
@@ -160,6 +162,7 @@ void move_down(std::vector<std::size_t>& heap, std::vector<std::size_t>& heap_po
   }
 }
 
+inline
 void pop_heap(std::vector<std::size_t>& heap, std::vector<std::size_t>& heap_pos, std::size_t &heap_size, std::vector<double>& weights) {
   std::swap(heap.front(), heap[heap_size - 1]);
   heap_pos[heap.front()] = 0;
@@ -304,12 +307,12 @@ void poisson_eliminate(const PointRange &points, std::size_t number_of_points, O
   const double beta = 0.65; // not used currently
   const double gamma = 1.5; // not used currently
   // named parameters for weight limiting, currently not used as the performance gain seems small and there is a high risk to get a defective output
-  const bool weight_limiting = parameters::choose_parameter(parameters::get_parameter(np, internal_np::weight_limiting), false);
+  const bool weight_limiting = choose_parameter(get_parameter(np, internal_np::weight_limiting), false);
   // named parameter for progressive
-  const bool progressive = parameters::choose_parameter(parameters::get_parameter(np, internal_np::progressive), false);
+  const bool progressive = choose_parameter(get_parameter(np, internal_np::progressive), false);
   // named parameter for tiling
-  const bool tiling = parameters::choose_parameter(parameters::get_parameter(np, internal_np::tiling), false);
-  const unsigned int dimension = parameters::choose_parameter(parameters::get_parameter(np, internal_np::dimension), 2);
+  const bool tiling = choose_parameter(get_parameter(np, internal_np::tiling), false);
+  const unsigned int dimension = choose_parameter(get_parameter(np, internal_np::dimension), 2);
 
   CGAL_assertion(ambient_dimension >= dimension);
 
@@ -333,10 +336,10 @@ void poisson_eliminate(const PointRange &points, std::size_t number_of_points, O
     domain_size *= CGAL::to_double(upper[i] - lower[i]);
 
   // named parameter for r_max
-  double r_max = CGAL::to_double(parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_radius), 2 * poisson_eliminate_impl::get_maximum_radius(dimension, number_of_points, domain_size)));
+  double r_max = CGAL::to_double(choose_parameter(get_parameter(np, internal_np::maximum_radius), 2 * poisson_eliminate_impl::get_maximum_radius(dimension, number_of_points, domain_size)));
   double r_min = CGAL::to_double(weight_limiting ? poisson_eliminate_impl::get_minimum_radius(points.size(), number_of_points, beta, gamma, r_max) : 0);
 
-  auto weight_functor = parameters::choose_parameter(parameters::get_parameter(np, internal_np::weight_function), poisson_eliminate_impl::Weight_functor<Point>(r_min, alpha));
+  auto weight_functor = choose_parameter(get_parameter(np, internal_np::weight_function), poisson_eliminate_impl::Weight_functor<Point>(r_min, alpha));
 
   std::size_t heap_size = points.size();
   std::vector<Point> tiling_points;

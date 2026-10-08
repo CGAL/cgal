@@ -134,7 +134,7 @@ int main(int argc, char** argv)
   // If file(s) are provided, the associated expected result must also be provided.
   // Note that this expected value is a Boolean that is passed in command line
   // with either 'true' or 'false' (and not integers), that is for example:
-  // > self_intersection_surface_mesh_test data/U.off false
+  // > self_intersection_surface_mesh_test data/U_sheet.off false
 
   // First test ----------------------------------------------------------------
   bool expected = false;
@@ -186,7 +186,7 @@ int main(int argc, char** argv)
 
   // Fourth test ----------------------------------------------------------------
   expected = true;
-  filename = (argc > 7) ? argv[7] : "data_degeneracies/degtri_single.off";
+  filename = (argc > 7) ? argv[7] : CGAL::data_file_path("meshes/degeneracies/degtri_single.off");
   if(argc > 7) {
     assert(argc > 8);
     std::stringstream ss(argv[8]);
@@ -207,6 +207,21 @@ int main(int argc, char** argv)
 
   std::cout << "Test with maximum_number (EPECK):" << std::endl;
   r += test_limited_self_intersections<EPECK>(filename);
+
+  // test degenerate surface mesh
+  {
+    CGAL::Surface_mesh<EPICK::Point_3> mesh;
+
+    auto v0 = mesh.add_vertex(EPICK::Point_3(0.0, 0.0, 0.0));
+    auto v1 = mesh.add_vertex(EPICK::Point_3(1.0, 0.0, 0.0));
+    auto v2 = mesh.add_vertex(EPICK::Point_3(0.0, 1.0, 0.0));
+
+    mesh.add_face(v0, v1, v2);
+    mesh.add_face(v0, v2, v1);
+
+    assert(CGAL::Polygon_mesh_processing::does_self_intersect(mesh));
+  }
+
 
   return r;
 }

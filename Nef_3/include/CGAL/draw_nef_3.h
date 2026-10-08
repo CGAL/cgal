@@ -134,10 +134,8 @@ public:
     if(se==0)
     { return; } //return if not-shalfedge
 
-    if(gs_options.colored_face(nef, f))
-    { graphics_scene.face_begin(gs_options.face_color(nef, f)); }
-    else
-    { graphics_scene.face_begin(); }
+    // The facet inherits the color of its volume (set in compute_elements).
+    graphics_scene.face_begin();
 
     SHalfedge_around_facet_const_circulator hc_start(se);
     SHalfedge_around_facet_const_circulator hc_end(hc_start);
@@ -226,9 +224,17 @@ void compute_elements(const Nef_Polyhedron &nef,
   Nef_Visitor<Nef_Polyhedron, GSOptions> V(nef, graphics_scene, gs_options);
   CGAL_forall_volumes(c, nef)
   {
+    // Only cap solid volumes; skip the outer volume and any empty cavities.
+    if (!c->mark()) { continue; }
+
+    // One group per solid volume, colored so each caps in its own color. A facet
+    // bounds a single solid volume, so it falls in that volume's group.
+    CGAL::Random random((unsigned int)(std::size_t)(&(*c)));
+    graphics_scene.volume_begin(get_random_color(random));
     Shell_entry_const_iterator it;
     CGAL_forall_shells_of(it, c)
     { nef.visit_shell_objects(SFace_const_handle(it), V); }
+    graphics_scene.volume_end();
   }
 
   graphics_scene.reverse_all_normals();
@@ -261,20 +267,7 @@ void add_to_graphics_scene(const CGAL_NEF3_TYPE &anef,
                   typename CGAL_NEF3_TYPE::Halffacet_const_handle /*fh*/>
       gs_options;
 
-  gs_options.colored_face=[](const CGAL_NEF3_TYPE&,
-                             typename CGAL_NEF3_TYPE::Halffacet_const_handle) -> bool
-  { return true; };
-
-  gs_options.face_color=[](const CGAL_NEF3_TYPE&,
-                           typename CGAL_NEF3_TYPE::Halffacet_const_handle fh) -> CGAL::IO::Color
-  {
-    if (fh==nullptr) // use to get the mono color
-    { return CGAL::IO::Color(100, 125, 200); }
-
-    CGAL::Random random((unsigned int)(std::size_t)(&(*fh)));
-    return get_random_color(random);
-  };
-
+  // Faces are colored per volume in compute_elements; no per-face color needed.
   add_to_graphics_scene(anef, graphics_scene, gs_options);
 }
 

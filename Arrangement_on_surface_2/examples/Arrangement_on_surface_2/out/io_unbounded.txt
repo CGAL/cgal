@@ -1,0 +1,6 @@
+Writing an arrangement of size:
+   V = 6 (plus 7 at infinity),  E = 11,  F = 7 (6 unbounded)
+
+Read an arrangement of size:
+   V = 6 (plus 7 at infinity),  E = 11,  F = 7 (6 unbounded)
+

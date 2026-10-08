@@ -98,7 +98,7 @@ bool project_points(C3T3& c3t3,
     CGAL_assertion(weighted_old_position.weight() == FT(0)); // point projection happens before optimizers
 
     const Bare_point& old_position = cp(weighted_old_position);
-    const Bare_point new_position = helper.project_on_surface(old_vertex, old_position);
+    const auto [new_position, new_index] = helper.project_on_surface(old_vertex, old_position);
     const FT sq_d = csd(new_position, old_position);
 
 #ifdef CGAL_PERIODIC_3_MESH_3_DEBUG_DUMMY_PROJECTION
@@ -140,15 +140,7 @@ bool project_points(C3T3& c3t3,
     {
       new_vertex->info().is_dummy_vertex = false;
       c3t3.set_dimension(new_vertex, 2); // on the surface
-
-      // @fixme
-      // This actually should be the index from the surface patch index...
-      // It can be obtained either by modifying project_on_surface to return the surface_patch index
-      auto opt_si = domain.is_in_domain_object()(cp(c3t3.triangulation().point(new_vertex)));
-      if(opt_si.has_value())
-        c3t3.set_index(new_vertex, domain.index_from_subdomain_index(*opt_si));
-      else
-        c3t3.set_index(new_vertex, 0);
+      c3t3.set_index(new_vertex, new_index);
     }
     else
     {

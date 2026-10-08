@@ -48,9 +48,9 @@ class Do_not_refine_edges :
 
   typedef typename Triangulation_mesher_level_traits_2<Tr>::Zone Zone;
 
+public:
   using Super::triangulation_ref_impl;
 
-public:
   Do_not_refine_edges(Tr& tr_)
     : Super(tr_) {}
 

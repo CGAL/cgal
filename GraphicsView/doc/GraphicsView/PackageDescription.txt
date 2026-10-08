@@ -13,12 +13,12 @@
 \cgalPkgPicture{detail.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Andreas Fabri and Laurent Rineau}
-\cgalPkgDesc{This package provides classes for displaying \cgal objects  and data structures in the <A HREF="https://doc.qt.io/qt-6/graphicsview.html">Qt 5 Graphics View Framework</A>.}
+\cgalPkgDesc{This package provides classes for displaying \cgal objects  and data structures in the <A HREF="https://doc.qt.io/qt-6/graphicsview.html">Qt 6 Graphics View Framework</A>.}
 \cgalPkgManuals{Chapter_CGAL_and_the_Qt_Graphics_View_Framework,PkgGraphicsViewRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.4}
-\cgalPkgDependsOn{\qt 5}
+\cgalPkgDependsOn{\qt 6}
 \cgalPkgBib{cgal:fr-cqgvf}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
 \cgalPkgShortInfoEnd

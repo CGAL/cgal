@@ -178,7 +178,7 @@ struct Lazy_construction2 {
 
   template<class...L>
   std::enable_if_t<(sizeof...(L)>0), result_type> operator()(L const&...l) const {
-    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    CGAL_BRANCH_PROFILER(std::string("failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     {
       Protect_FPU_rounding<Protection> P;
       try {

@@ -30,7 +30,7 @@ typedef Segment_tree_d<Data,Window,Interval_traits> Segment_Tree_d;
 int main(){
   Tree_Anchor *anchor = new Tree_Anchor;
   Segment_Tree_d *segment_tree = new Segment_Tree_d(*anchor);
-  delete anchor;
   delete segment_tree;
+  delete anchor;
   return 0;
 }

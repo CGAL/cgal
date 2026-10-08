@@ -8,7 +8,7 @@ The class `Regular_triangulation_cell_base_with_weighted_circumcenter_3` derives
 `Cb`, a cell base class of a 3D triangulation.
 It provides an easy way to cache the computation of the weighted circumcenters of
 tetrahedra.
-Note that input/output operators discard this additional information.
+Note that input/output stream operators discard this additional information.
 
 All functions modifying the vertices of the cell invalidate the cached
 circumcenter.

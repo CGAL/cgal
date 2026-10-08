@@ -10,8 +10,8 @@
 // Author(s) : Simon Giraudot, Pierre Alliez
 
 
-#ifndef HIERARCHY_SIMPLIFY_POINT_SET_H
-#define HIERARCHY_SIMPLIFY_POINT_SET_H
+#ifndef CGAL_HIERARCHY_SIMPLIFY_POINT_SET_H
+#define CGAL_HIERARCHY_SIMPLIFY_POINT_SET_H
 
 #include <CGAL/license/Point_set_processing_3.h>
 
@@ -197,8 +197,7 @@ namespace CGAL {
     PointMap point_map = NP_helper::get_point_map(points, np);
     unsigned int size = choose_parameter(get_parameter(np, internal_np::size), 10);
     double var_max = choose_parameter(get_parameter(np, internal_np::maximum_variation), 1./3.);
-    const std::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
-                                                                   std::function<bool(double)>());
+    const std::function<bool(double)>& callback = choose_parameter<std::function<bool(double)>>(get_parameter(np, internal_np::callback));
 
     typedef typename std::iterator_traits<typename PointRange::iterator>::value_type Input_type;
 
@@ -377,4 +376,4 @@ namespace CGAL {
 
 #include <CGAL/enable_warnings.h>
 
-#endif // HIERARCHY_SIMPLIFY_POINT_SET_H
+#endif // CGAL_HIERARCHY_SIMPLIFY_POINT_SET_H

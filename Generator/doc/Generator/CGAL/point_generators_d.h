@@ -103,7 +103,7 @@ namespace CGAL {
 /*!
 
 The class `Random_points_in_cube_d` is an input iterator creating points uniformly
-distributed in an half-open cube.
+distributed in a half-open cube.
 
 \cgalModels{InputIterator,PointGenerator}
 

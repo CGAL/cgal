@@ -19,9 +19,7 @@
 
 #include <CGAL/license/Mesh_3.h>
 
-#include <CGAL/Image_3.h>
-
-#include <CGAL/Mesh_3/polylines_to_protect.h>
+#include <CGAL/Mesh_3/polylines_to_protect_in_image.h>
 #include <CGAL/Mesh_3/features_detection/postprocess_weights.h>
 
 #include <vector>

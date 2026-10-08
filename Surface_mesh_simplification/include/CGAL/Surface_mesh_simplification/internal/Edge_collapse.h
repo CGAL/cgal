@@ -22,6 +22,7 @@
 #include <CGAL/use.h>
 
 #include <boost/scoped_array.hpp>
+#include <boost/scoped_ptr.hpp>
 
 namespace CGAL {
 namespace Surface_mesh_simplification {
@@ -823,7 +824,7 @@ is_collapse_topologically_valid(const Profile& profile)
 
           if(!is_face)
           {
-            CGAL_SMS_TRACE(3,"  k=V" << get(m_vim,k) << " IS NOT in a face with p-q. NON-COLLAPSABLE edge.");
+            CGAL_SMS_TRACE(3,"  k=V" << get(m_vim,k) << " IS NOT in a face with p-q. NON-COLLAPSIBLE edge.");
             res = false;
             break;
           }
@@ -850,7 +851,7 @@ is_collapse_topologically_valid(const Profile& profile)
       if(is_open_triangle(profile.v0_v1()))
       {
         res = false;
-        CGAL_SMS_TRACE(3,"  p-q belongs to an open triangle. NON-COLLAPSABLE edge.");
+        CGAL_SMS_TRACE(3,"  p-q belongs to an open triangle. NON-COLLAPSIBLE edge.");
       }
     }
     else if(profile.is_v1_v0_a_border())
@@ -858,7 +859,7 @@ is_collapse_topologically_valid(const Profile& profile)
       if(is_open_triangle(profile.v1_v0()))
       {
         res = false;
-        CGAL_SMS_TRACE(3,"  p-q belongs to an open triangle. NON-COLLAPSABLE edge.");
+        CGAL_SMS_TRACE(3,"  p-q belongs to an open triangle. NON-COLLAPSIBLE edge.");
       }
     }
     else
@@ -866,7 +867,7 @@ is_collapse_topologically_valid(const Profile& profile)
       if(is_border(profile.v0(), m_tm) && is_border(profile.v1(), m_tm))
       {
         res = false;
-        CGAL_SMS_TRACE(3,"  both p and q are boundary vertices but p-q is not. NON-COLLAPSABLE edge.");
+        CGAL_SMS_TRACE(3,"  both p and q are boundary vertices but p-q is not. NON-COLLAPSIBLE edge.");
       }
       else
       {
@@ -877,7 +878,7 @@ is_collapse_topologically_valid(const Profile& profile)
         if(tetra)
         {
           res = false;
-          CGAL_SMS_TRACE(3,"  p-q belongs to a tetrahedron. NON-COLLAPSABLE edge.");
+          CGAL_SMS_TRACE(3,"  p-q belongs to a tetrahedron. NON-COLLAPSIBLE edge.");
         }
 
         if(next(profile.v0_v1(), m_tm) == opposite(prev(profile.v1_v0(), m_tm), m_tm) &&
@@ -1132,6 +1133,8 @@ is_collapse_geometrically_valid(const Profile& profile, Placement_type k0)
       }
     }
   }
+
+  CGAL_SMS_TRACE(3,"collapse validity: " << res);
 
   return res;
 }

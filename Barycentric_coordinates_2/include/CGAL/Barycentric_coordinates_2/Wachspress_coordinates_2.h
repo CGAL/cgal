@@ -201,10 +201,10 @@ namespace Barycentric_coordinates {
     // Fields.
     const VertexRange& m_polygon;
     const Computation_policy_2 m_computation_policy;
-    const GeomTraits m_traits;
+    GeomTraits m_traits;
     const PointMap m_point_map;
 
-    const Area_2 m_area_2;
+    Area_2 m_area_2;
 
     Wachspress_weights_2 m_wachspress_weights_2;
 
@@ -235,11 +235,11 @@ namespace Barycentric_coordinates {
         }
 
         case Computation_policy_2::PRECISE_WITH_EDGE_CASES: {
-          const auto edge_case = verify(query, output);
-          if (edge_case == internal::Edge_case::BOUNDARY) {
+          const Weights::internal::Edge_case edge_case = verify(query, output);
+          if (edge_case == Weights::internal::Edge_case::BOUNDARY) {
             return output;
           }
-          if (edge_case == internal::Edge_case::EXTERIOR) {
+          if (edge_case == Weights::internal::Edge_case::EXTERIOR) {
             std::cerr << std::endl <<
             "WARNING: query does not belong to the polygon!" << std::endl;
           }
@@ -258,11 +258,11 @@ namespace Barycentric_coordinates {
         }
 
         case Computation_policy_2::FAST_WITH_EDGE_CASES: {
-          const auto edge_case = verify(query, output);
-          if (edge_case == internal::Edge_case::BOUNDARY) {
+          const Weights::internal::Edge_case edge_case = verify(query, output);
+          if (edge_case == Weights::internal::Edge_case::BOUNDARY) {
             return output;
           }
-          if (edge_case == internal::Edge_case::EXTERIOR) {
+          if (edge_case == Weights::internal::Edge_case::EXTERIOR) {
             std::cerr << std::endl <<
             "WARNING: query does not belong to the polygon!" << std::endl;
           }
@@ -278,19 +278,19 @@ namespace Barycentric_coordinates {
     }
 
     template<typename OutputIterator>
-    internal::Edge_case verify(
+    Weights::internal::Edge_case verify(
       const Point_2& query, OutputIterator output) const {
 
       const auto result = internal::locate_wrt_polygon_2(
         m_polygon, query, m_traits, m_point_map);
       if (!result) {
-        return internal::Edge_case::EXTERIOR;
+        return Weights::internal::Edge_case::EXTERIOR;
       }
 
       const auto location = (*result).first;
       const std::size_t index = (*result).second;
       if (location == internal::Query_point_location::ON_UNBOUNDED_SIDE) {
-        return internal::Edge_case::EXTERIOR;
+        return Weights::internal::Edge_case::EXTERIOR;
       }
 
       if (
@@ -298,9 +298,9 @@ namespace Barycentric_coordinates {
         location == internal::Query_point_location::ON_EDGE ) {
         internal::boundary_coordinates_2(
           m_polygon, query, location, index, output, m_traits, m_point_map);
-        return internal::Edge_case::BOUNDARY;
+        return Weights::internal::Edge_case::BOUNDARY;
       }
-      return internal::Edge_case::INTERIOR;
+      return Weights::internal::Edge_case::INTERIOR;
     }
 
     template<typename OutputIterator>
@@ -421,7 +421,7 @@ namespace Barycentric_coordinates {
     const PointRange& polygon,
     const typename GeomTraits::Point_2& query,
     OutIterator w_begin,
-    const GeomTraits& traits,
+    GeomTraits& traits,
     const Computation_policy_2 policy =
     Computation_policy_2::FAST_WITH_EDGE_CASES) {
 
@@ -508,7 +508,7 @@ namespace Barycentric_coordinates {
     const PointRange& polygon,
     const typename GeomTraits::Point_2& query,
     OutIterator c_begin,
-    const GeomTraits& traits,
+    GeomTraits& traits,
     const Computation_policy_2 policy =
     Computation_policy_2::PRECISE_WITH_EDGE_CASES) {
 

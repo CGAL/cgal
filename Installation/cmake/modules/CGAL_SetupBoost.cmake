@@ -13,7 +13,7 @@
 include_guard(GLOBAL)
 include(${CMAKE_CURRENT_LIST_DIR}/CGAL_TweakFindBoost.cmake)
 
-cmake_policy(VERSION 3.12...3.30)
+cmake_policy(VERSION 3.12...3.31)
 find_package( Boost 1.74 REQUIRED )
 
 if(Boost_FOUND AND Boost_VERSION VERSION_LESS 1.74)
@@ -25,8 +25,10 @@ if(Boost_FOUND AND Boost_VERSION VERSION_LESS 1.74)
   endif()
 endif()
 
-message( STATUS "Boost include dirs: ${Boost_INCLUDE_DIRS}" )
-message( STATUS "Boost libraries:    ${Boost_LIBRARIES}" )
+if (NOT CGAL_FIND_QUIETLY)
+  message (STATUS "Boost include dirs: ${Boost_INCLUDE_DIRS}")
+  message (STATUS "Boost libraries:    ${Boost_LIBRARIES}")
+endif ()
 
 set ( CGAL_USE_BOOST 1 )
 

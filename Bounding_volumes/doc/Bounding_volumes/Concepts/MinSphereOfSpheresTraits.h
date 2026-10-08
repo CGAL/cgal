@@ -34,7 +34,7 @@ static const int D;
 /// @{
 
 /*!
-is a typedef to to some class representing a sphere.
+is a typedef to some class representing a sphere.
 (The package will compute the minsphere of spheres of type
 `Sphere`.) The type `Sphere` must provide a copy constructor.
 */

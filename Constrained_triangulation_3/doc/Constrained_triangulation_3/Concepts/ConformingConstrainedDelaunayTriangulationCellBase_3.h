@@ -3,7 +3,7 @@
 \cgalConcept
 
 The concept `ConformingConstrainedDelaunayTriangulationCellBase_3` refines the concept
-`TriangulationCellBase_3` and and describes the requirements for a base cell class of
+`TriangulationCellBase_3` and describes the requirements for a base cell class of
 the `CGAL::Conforming_constrained_Delaunay_triangulation_3` class.
 
 \cgalRefines{TriangulationCellBase_3, BaseWithTimeStamp}

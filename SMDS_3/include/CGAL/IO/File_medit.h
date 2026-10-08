@@ -18,6 +18,7 @@
 
 #include <CGAL/SMDS_3/Mesh_complex_3_in_triangulation_3_fwd.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
+#include <CGAL/IO/MEDIT.h>
 #include <CGAL/SMDS_3/tet_soup_to_c3t3.h>
 
 #include <CGAL/utility.h>
@@ -35,6 +36,8 @@
 #include <vector>
 #include <unordered_map>
 #include <type_traits>
+#include <utility>
+#include <variant> //for std::visit
 
 namespace CGAL {
 
@@ -500,20 +503,74 @@ struct Medit_pmap_generator<C3T3, USE_SUBDOMAIN_INDICES, RENUMBER_SURFACE_PATCH_
 // IO functions
 //-------------------------------------------------------
 
+template <class Tr, class Curve_index, class Corner_index, class CxEdgesOutputIterator>
+bool build_triangulation_from_file(std::istream& is,
+                                   Tr& tr,
+                                   const bool verbose,
+                                   const bool replace_domain_0,
+                                   const bool allow_non_manifold,
+                                   const bool allow_negative_orientation,
+                                   CxEdgesOutputIterator cx_edges_oit)
+{
+  using Point_3 = typename Tr::Point;
+  using Subdomain_index = typename Tr::Cell::Subdomain_index;
+  using Surface_patch_index = typename Tr::Cell::Surface_patch_index;
 
+  using Facet = std::array<int, 3>;        // 3 = id
+  using Tet_with_ref = std::array<int, 4>; // 4 = id
+
+  using Edge_with_index = CGAL::IO::internal::Edge_with_index<Curve_index>;
+  using Corner_with_index = CGAL::IO::internal::Corner_with_index<Corner_index>;
+
+  std::vector<Tet_with_ref> finite_cells;
+  std::vector<Subdomain_index> subdomains;
+  std::vector<Point_3> points;
+  boost::unordered_map<Facet, Surface_patch_index> border_facets;
+  std::vector<Edge_with_index> edge_indices;
+  std::vector<Corner_with_index> corner_indices;
+
+  bool is_CGAL_mesh = false;
+  if(verbose) {
+    std::cout << "Reading .mesh file..." << std::endl;
+    std::cout << "Replace domain #0 = " << replace_domain_0 << std::endl;
+    std::cout << "Allow non-manifoldness = " << allow_non_manifold << std::endl;
+  }
+
+  bool ok = CGAL::IO::internal::read_MEDIT(is, points, finite_cells, subdomains,
+                                           border_facets, true,
+                                           edge_indices, corner_indices,
+                                           verbose, is_CGAL_mesh);
+  if(!ok) {
+    return false;
+  }
+
+  if(!is_CGAL_mesh)
+    tr.may_have_badly_oriented_cells(true);
+
+  return CGAL::SMDS_3::build_triangulation_with_subdomains_range(
+      tr, points, finite_cells,
+      subdomains, border_facets, edge_indices, corner_indices,
+      cx_edges_oit,
+      verbose,
+      replace_domain_0 && !is_CGAL_mesh,
+      allow_non_manifold,
+      allow_negative_orientation);
+}
 
 template <class Tr,
           class Vertices_range,
+          class Edges_range,
           class Facets_range,
           class Cells_range,
           class Vertex_index_property_map,
           class Facet_index_property_map,
-          class Facet_index_property_map_twice = Null_pmap,
-          class Cell_index_property_map>
+          class Cell_index_property_map,
+          class Facet_index_property_map_twice = Null_pmap>
 void
 output_to_medit(std::ostream& os,
                 const Tr& tr,
                 const Vertices_range& vertices,
+                const Edges_range& edges,
                 const Facets_range& facets,
                 const Cells_range& cells,
                 const Vertex_index_property_map& vertex_pmap,
@@ -609,11 +666,163 @@ output_to_medit(std::ostream& os,
   }
 
   //-------------------------------------------------------
+  // Corners
+  //-------------------------------------------------------
+  std::vector<typename Tr::Vertex_handle> corners;
+  for(const auto& v : vertices) {
+    if(SMDS_3_internal::is_corner(v, tr)) {
+      corners.push_back(v);
+    }
+  }
+  os << "Corners\n"
+     << size(corners) << '\n';
+  for(const auto& v : corners) {
+    os << V[v] << '\n';
+  }
+
+  //-------------------------------------------------------
+  // Edges
+  //-------------------------------------------------------
+  constexpr bool write_edges = SMDS_3_internal::Has_in_dimension<typename Tr::Triangulation_data_structure::Vertex>::value;
+  if constexpr(write_edges)
+  {
+    os << "Edges\n"
+       << size(edges) << '\n';
+    for(const auto& e : edges) {
+      auto [vh1, vh2] = tr.vertices(e);
+      auto index = (vh1->in_dimension() == 1)
+                  ? vh1->index()
+                  : (vh2->in_dimension() == 1 ? vh2->index() : 42 /*todo : magic id*/);
+      os << V[vh1] << ' ' << V[vh2] << ' ';
+      os << IO::oformat(index);
+      os << '\n';
+    }
+  }
+
+  //-------------------------------------------------------
+  // Ridges (???)
+  //-------------------------------------------------------
+  //"Ridges"
+  //number of ridges
+  //a list of ids (one per line)
+
+  //-------------------------------------------------------
   // End
   //-------------------------------------------------------
   os << "End\n";
 
 } // end output_to_medit(...)
+
+
+template <class Tr,
+          class Vertices_range,
+          class Facets_range,
+          class Cells_range>
+void
+output_T3_to_medit(std::ostream& os,
+                const Tr& tr,
+                const Vertices_range& vertices,
+                const Facets_range& facets,
+                const Cells_range& cells)
+{
+  using std::size;
+  using Vertex_handle = typename Tr::Vertex_handle;
+
+  //-------------------------------------------------------
+  // File output
+  //-------------------------------------------------------
+
+  //-------------------------------------------------------
+  // Header
+  //-------------------------------------------------------
+  os << std::setprecision(17);
+
+  os << "MeshVersionFormatted 1\n"
+     << "Dimension 3\n";
+  os << "# CGAL::Mesh_complex_3_in_triangulation_3\n";
+
+  //-------------------------------------------------------
+  // Vertices
+  //-------------------------------------------------------
+
+  std::unordered_map<Vertex_handle, int> V;
+  int inum = 1;
+
+  std::ostringstream oss;
+  oss.precision(os.precision());
+  for(auto v: vertices) {
+    auto& v_num = V[v];
+    if(v_num != 0) return;
+    v_num = inum++;
+    const auto& p = tr.point(v);
+    oss << CGAL::to_double(p.x()) << ' '
+        << CGAL::to_double(p.y()) << ' '
+        << CGAL::to_double(p.z()) << ' '
+        << 0
+        << '\n';
+  }
+  os << "Vertices\n" << V.size() << "\n";
+  os << oss.str();
+
+
+  #if 1
+  //-------------------------------------------------------
+  // Facets
+  //-------------------------------------------------------
+  auto number_of_triangles = size(facets);
+ bool print_each_facet_twice = false;
+
+  if ( print_each_facet_twice )
+    number_of_triangles += number_of_triangles;
+
+  os << "Triangles\n"
+     << number_of_triangles << '\n';
+
+  for (auto f : facets) {
+    // auto [c, index] = f;
+    // Apply priority among subdomains, to get consistent facet orientation per subdomain-pair interface.
+    if (print_each_facet_twice) {
+      auto mirror_facet = tr.mirror_facet(f);
+      [[maybe_unused]] auto [c2, _] = mirror_facet;
+      // NOTE: We mirror a facet when needed to make it consistent with Use_cell_indices_pmap.
+      if (true) /* AF ???? (get(cell_pmap, c) > get(cell_pmap, c2))*/ {
+        f = mirror_facet;
+      }
+    }
+
+    // Get facet vertices in CCW order.
+    auto [vh1, vh2, vh3] = tr.vertices(f);
+
+    os << V[vh1] << ' ' << V[vh2] << ' ' << V[vh3] << ' ';
+    os << 1 << '\n';
+
+    // Print triangle again if needed, with opposite orientation
+    if (print_each_facet_twice) {
+      os << V[vh3] << ' ' << V[vh2] << ' ' << V[vh1] << ' ';
+      os << 1 << '\n';
+    }
+  }
+#endif
+  //-------------------------------------------------------
+  // Tetrahedra
+  //-------------------------------------------------------
+  os << "Tetrahedra\n"
+     << size(cells) << '\n';
+  for (const auto& c : cells) {
+    for (auto v : tr.vertices(c))
+      os << V[v] << ' ';
+    os << 1 << '\n';
+  }
+
+  //-------------------------------------------------------
+  // End
+  //-------------------------------------------------------
+  os << "End\n";
+
+} // end output_T3_to_medit(...)
+
+
+
 
 template <class C3T3, Renumber_subdomain_indices renumber_subdomain_indices, Facet_indices no_patch>
 void
@@ -646,6 +855,7 @@ output_to_medit(std::ostream& os,
   auto output_to_medit = [&](const auto& vertices, const auto& cells) {
     CGAL::SMDS_3::output_to_medit(os, tr,
                                   vertices,
+                                  c3t3.edges_in_complex(),
                                   c3t3.facets_in_complex(),
                                   cells,
                                   vertex_pmap, facet_pmap, cell_pmap, facet_pmap_twice,
@@ -679,29 +889,14 @@ output_to_medit(std::ostream& os,
 
 namespace IO {
 
-/**
- * @ingroup PkgSMDS3IOFunctions
- * @deprecated This function is deprecated. Users should instead use `CGAL::IO::write_MEDIT()`
- * @brief outputs a mesh complex to the medit (`.mesh`) file format.
-        See \cgalCite{frey:inria-00069921} for a comprehensive description of this file format.
- * @param os the output stream
- * @param c3t3 the mesh complex
- * @param renumber_subdomain_indices if `true`, labels of cells are renumbered into `[1..nb_of_labels]`
- * @param show_patches if `true`, patches are labeled with different labels than
- *                     cells. If `false`, each surface facet is written twice,
- *                     using the label of each adjacent cell.
- * \see \ref IOStreamMedit
- */
 template <class C3T3>
 void
 output_to_medit(std::ostream& os,
                 const C3T3& c3t3,
                 bool renumber_subdomain_indices, // = false,
                 bool show_patches // = false
-#ifndef DOXYGEN_RUNNING
               , bool all_vertices // = true
               , bool all_cells    // = false
-#endif
 )
 {
   using namespace CGAL::SMDS_3;
@@ -861,7 +1056,15 @@ void write_MEDIT(std::ostream& os,
   const CGAL::Mesh_complex_3_in_triangulation_3<T3, CornerIndex, CurveIndex>& c3t3,
   const NamedParameters& np = parameters::default_values())
 {
-  return write_MEDIT(os, c3t3.triangulation(), np);
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  bool renumber_subdomain_indices = choose_parameter(get_parameter(np, internal_np::rebind_labels), false);
+  bool show_patches = choose_parameter(get_parameter(np, internal_np::show_patches), true);
+  bool all_c = choose_parameter(get_parameter(np, internal_np::all_cells), true);
+  bool all_v = all_c || choose_parameter(get_parameter(np, internal_np::all_vertices), true);
+
+  output_to_medit(os, c3t3, renumber_subdomain_indices, show_patches, all_v, all_c);
 }
 
 /**
@@ -905,6 +1108,8 @@ void write_MEDIT(std::ostream& os,
  * data structure (see `TriangulationDataStructure_3 `),
  * positively oriented cells,
  * and cover the geometric convex hull of all points in `t3`.
+ *
+ *  \see \ref IOStreamMedit
  */
 template<typename T3, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_MEDIT(std::istream& in,
@@ -917,19 +1122,161 @@ bool read_MEDIT(std::istream& in,
   // Default non_manifold value is true if the triangulation periodic, false otherwise
   const bool non_manifold = choose_parameter(get_parameter(np, internal_np::allow_non_manifold),
                                              std::is_same<typename T3::Periodic_tag, Tag_true>::value);
+  const bool negative_allowed = choose_parameter(get_parameter(np, internal_np::allow_negative_orientation), false);
   const bool verbose = choose_parameter(get_parameter(np, internal_np::verbose), false);
 
-  bool b = CGAL::SMDS_3::build_triangulation_from_file(in, t3, verbose, false /*replace_domain_0*/, non_manifold);
+  bool b = CGAL::SMDS_3::build_triangulation_from_file(in, t3, verbose, false /*replace_domain_0*/,
+                                                       non_manifold, negative_allowed,
+                                                       CGAL::Emptyset_iterator());
   if(!b)
     t3.clear();
   return b;
 }
 
-} // namespace IO
+/**
+ * @ingroup PkgSMDS3IOFunctions
+ * @brief reads a mesh complex written in the medit (`.mesh`) file format.
+ *   See \cgalCite{frey:inria-00069921} for a comprehensive description of this file format.
+ * @tparam T3 can be instantiated with any 3D triangulation of \cgal provided that its
+ *  vertex and cell base class are models of the concepts `MeshVertexBase_3` and `MeshCellBase_3`,
+ *  respectively.
+ * @tparam CornerIndex is the type of the indices for corners in the mesh complex
+ * @tparam CurveIndex is the type of the indices for curves in the mesh complex
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+ *
+ * @brief reads a mesh complex written in the medit (`.mesh`) file format.
+ *   See \cgalCite{frey:inria-00069921} for a comprehensive description of this file format.
+ * @tparam T3 can be instantiated with any 3D triangulation of \cgal provided that its
+ *  vertex and cell base class are models of the concepts `MeshVertexBase_3` and `MeshCellBase_3`,
+ *  respectively.
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+ *
+ * @param in the input stream
+ * @param c3t3 the mesh complex (to be built from the data read from `in`)
+ * @param np optional \ref bgl_namedparameters "Named Parameters" described below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{verbose}
+ *     \cgalParamDescription{indicates whether output warnings and error messages should be printed or not.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`false`}
+ *   \cgalParamNEnd
+ *   \cgalParamNBegin{allow_non_manifold}
+ *     \cgalParamDescription{allows the construction of a triangulation with non-manifold edges
+ *       and non manifold vertices. The triangulation is invalid if this situation is met,
+ *       so it should be used only in advanced cases, and the triangulation will be hardly usable.}
+ *     \cgalParamType{bool}
+ *     \cgalParamDefault{false}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
+ *
+ * @returns `true` if the connectivity of the triangulation could be built consistently
+ * from \p in,
+ * and `false` if the triangulation is empty, or if the connectivity
+ * of \p c3t3 could not be built.
+ * If `false` is returned, \p c3t3 is empty when the function returns.
+ *
+ * This function reads the data about vertices, surface facets, and
+ * triangulation cells from `in`, and builds a valid `T3` from it.
+ *
+ * Note that a valid 3D triangulation of \cgal must have a valid
+ * data structure (see `TriangulationDataStructure_3 `),
+ * positively oriented cells,
+ * and cover the geometric convex hull of all points in `t3`.
+ *
+ * \see \ref IOStreamMedit
+ */
+template <typename T3,
+          typename Corner_index,
+          typename Curve_index,
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool read_MEDIT(std::istream& in,
+                CGAL::Mesh_complex_3_in_triangulation_3<T3, Corner_index, Curve_index>& c3t3,
+                const CGAL_NP_CLASS& np = parameters::default_values())
+{
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
-#ifndef CGAL_NO_DEPRECATED_CODE
-using IO::output_to_medit;
-#endif
+  // Default non_manifold value is true if the triangulation periodic, false otherwise
+  const bool non_manifold = choose_parameter(get_parameter(np, internal_np::allow_non_manifold),
+                                             std::is_same<typename T3::Periodic_tag, Tag_true>::value);
+  const bool negative_allowed = choose_parameter(get_parameter(np, internal_np::allow_negative_orientation), false);
+  const bool verbose = choose_parameter(get_parameter(np, internal_np::verbose), false);
+
+  struct Cx_edge
+  {
+    typename T3::Vertex_handle v0;
+    typename T3::Vertex_handle v1;
+    Curve_index cid;
+  };
+  std::vector<Cx_edge> cx_edges;
+
+  bool built = CGAL::SMDS_3::build_triangulation_from_file(in, c3t3.triangulation(),
+                                                           verbose,
+                                                           false /*replace_domain_0*/,
+                                                           non_manifold,
+                                                           negative_allowed,
+                                                           std::back_inserter(cx_edges));
+  if(!built)
+  {
+    c3t3.triangulation().clear();
+    return built;
+  }
+
+  using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<T3, Corner_index, Curve_index>;
+  using Cell_handle = typename C3t3::Triangulation::Cell_handle;
+  using Facet = typename C3t3::Triangulation::Facet;
+  using Vertex_handle = typename C3t3::Triangulation::Vertex_handle;
+  using Subdomain_index = typename C3t3::Subdomain_index;
+
+  c3t3.rescan_after_load_of_triangulation(); // fix counters for facets and cells
+  for(Cell_handle cit : c3t3.triangulation().finite_cell_handles())
+  {
+    if(cit->subdomain_index() != Subdomain_index())
+      c3t3.add_to_complex(cit, cit->subdomain_index());
+
+    for(int i = 0; i < 4; ++i) {
+      if(cit->surface_patch_index(i) > 0)
+        c3t3.add_to_complex(cit, i, cit->surface_patch_index(i));
+    }
+  }
+
+  // if there is no facet in the complex, we add the border facets.
+  if(c3t3.number_of_facets_in_complex() == 0)
+  {
+    for(Facet fit : c3t3.triangulation().finite_facets())
+    {
+      Cell_handle c = fit.first;
+      Cell_handle nc = c->neighbor(fit.second);
+
+      // By definition, Subdomain_index() is supposed to be the id of the exterior
+      if(c->subdomain_index() != Subdomain_index() &&
+         nc->subdomain_index() == Subdomain_index())
+      {
+        // Color the border facet with the index of its cell
+        c3t3.add_to_complex(c, fit.second, c->subdomain_index());
+      }
+    }
+  }
+
+  // feature edges
+  for(const auto& [v0, v1, cid] : cx_edges)
+  {
+    c3t3.add_to_complex(v0, v1, cid);
+  }
+
+  // corner vertices
+  int v_cx_id = 0;
+  for(Vertex_handle v : c3t3.triangulation().finite_vertex_handles())
+  {
+    if(v->in_dimension() == 0)
+      c3t3.add_to_complex(v, ++v_cx_id);
+  }
+
+  return built;
+}
+
+} // namespace IO
 
 } // end namespace CGAL
 

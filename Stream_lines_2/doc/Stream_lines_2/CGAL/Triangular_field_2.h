@@ -10,7 +10,7 @@ Delaunay triangulation, and for each point `p` in the domain
 located in a face `f`, its vector value is interpolated from the
 vertices of the face `f`.
 
-\tparam StreamLinesTraits_2 has to be instantiated by a model of the concept `StreamLinesTraits_2`.
+\tparam StreamLinesTraits_2 has to be instantiated with a model of the concept `StreamLinesTraits_2`.
 
 \cgalModels{VectorField_2}
 

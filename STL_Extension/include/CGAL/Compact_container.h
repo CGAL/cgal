@@ -1235,7 +1235,9 @@ public:
 };
 
 struct With_offset_tag {
-  int offset = 0;
+  int offset = -1; // offset == -1 is a good default value: that allows to
+                   // display timestamps the *finite* vertices of the triangulation
+                   // from 0 to number_of_vertices-1.
 };
 
 struct With_point_tag : public With_offset_tag {

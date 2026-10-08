@@ -12,6 +12,11 @@
 #ifndef QGLVIEWER_FRAME_H
 #define QGLVIEWER_FRAME_H
 
+#if defined(__GNUC__) && !defined(__clang__) && __GNUC__ >= 16
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wsfinae-incomplete"
+#endif
+
 #include <QObject>
 #include <QString>
 #include <CGAL/export/Qt.h>
@@ -443,5 +448,9 @@ private:
 #ifdef CGAL_HEADER_ONLY
 //#include <CGAL/Qt/qglviewer_impl_list.h>
 #endif // CGAL_HEADER_ONLY
+
+#if defined(__GNUC__) && !defined(__clang__) && __GNUC__ >= 16
+#  pragma GCC diagnostic pop
+#endif
 
 #endif // QGLVIEWER_FRAME_H

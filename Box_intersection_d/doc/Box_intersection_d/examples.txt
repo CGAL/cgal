@@ -8,4 +8,5 @@
 \example Box_intersection_d/triangle_self_intersect.cpp
 \example Box_intersection_d/triangle_self_intersect_pointers.cpp
 \example Box_intersection_d/box_d_do_intersect_polylines.cpp
+\example Box_intersection_d/boxes_with_different_types.cpp
 */

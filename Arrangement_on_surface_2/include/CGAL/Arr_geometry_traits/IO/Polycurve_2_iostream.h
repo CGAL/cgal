@@ -33,7 +33,7 @@ void write_polyline(OutputStream& os,
   typedef PointType_2                                   Point_type_2;
   typedef Polycurve_2<Subcurve_type_2, Point_type_2>    Curve_2;
 
-  os << xcv.number_of_subcurves();       // export the number of points.
+  os << xcv.number_of_subcurves();       // export the number of subcurves.
 
   // Write the points.
   typename Curve_2::Point_const_iterator it = xcv.points_begin();

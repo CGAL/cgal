@@ -9,6 +9,8 @@
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/Mesh_cell_base_3.h>
 
+#include <CGAL/Mesh_criteria_3.h>
+#include <CGAL/make_mesh_3.h>
 #include <CGAL/tags.h>
 
 #include <iostream>
@@ -95,7 +97,25 @@ int main (int argc, char** argv){
 
   std::ofstream out("graph.off");
   out << poly;
+  out.close();
 
   assert(is_valid(poly));
+
+  Polyhedral_mesh_domain::Polyhedron polyhedron;
+  CGAL::IO::read_OFF(CGAL::data_file_path("meshes/elephant.off"), polyhedron);
+  Polyhedral_mesh_domain domain(polyhedron);
+  namespace p = CGAL::parameters;
+  // Mesh criteria (no cell_size set)
+  CGAL::Mesh_criteria_3<Tr> criteria(p::facet_angle=25);
+  // Mesh generation
+
+  c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria);
+  poly.clear();
+  CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, poly);
+  std::cout << "Graph has " << num_faces(poly) << " faces" << std::endl;
+  std::cout << "Graph has " << num_vertices(poly) << " vertices" << std::endl;
+  out.open("graph2.off");
+  out << poly;
+  out.close();
   return EXIT_SUCCESS;
 }

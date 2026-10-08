@@ -2302,7 +2302,7 @@ set_adjacency(Face_handle fh,
               int ih,
               std::map< Vh_pair, Edge>& edge_map)
 {
-  // set adjacency to (fh,ih) using the the map edge_map
+  // set adjacency to (fh,ih) using the map edge_map
   // or insert (fh,ih) in edge map
   Vertex_handle vhcw  =  fh->vertex(cw(ih));
   Vertex_handle vhccw =  fh->vertex(ccw(ih));

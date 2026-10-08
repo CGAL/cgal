@@ -3,7 +3,7 @@ namespace AosTraits {
 /*! \ingroup PkgArrangementOnSurface2ConceptsFunctionObjects
  * \cgalConcept
  *
- * \cgalRefines{Functor}
+ * \cgalRefines{ApproximatePoint_2}
  *
  * \cgalHasModelsBegin
  * \cgalHasModels{AosApproximatePointTraits_2::Approximate_2}
@@ -12,19 +12,22 @@ namespace AosTraits {
  */
 class Approximate_2 {
 public:
-  /// \name Operations
   /// A model of this concept must provide:
+
+  /// \name Types
   /// @{
 
-  /*! obtains an approximation of `p`'s \f$x\f$-coordinate (if `i == 0`), or of
-   * `p`'s \f$y\f$-coordinate (if `i == 1`).
-   * \pre `i` is either 0 or 1.
-   */
-  CGAL::Approximate_number_type operator()(AosTraits::Point_2 p, int i);
+  //! the approximate point type.
+  typedef unspecified_type Approximate_point_2;
+
+  /// @}
+
+  /// \name Operations
+  /// @{
 
   /*! obtains an approximation of `p`.
    */
-  CGAL::Approximate_point_2 operator()(AosTraits::Point_2 p);
+  Approximate_point_2 operator()(AosTraits::Point_2 p);
 
   /*! approximates a given \f$x\f$-monotone curve. It computes a sequence of
    * approximate points that represent an approximate polyline, and inserts
@@ -42,7 +45,7 @@ public:
    * \return The past-the-end iterator of the output container.
    *
    * \pre Dereferencing `oi` must yield an object of type
-   *      `Arr_conic_traits_2::Approximate_point_2`.
+   *      `AosApproximateTraits_2::Approximate_point_2`.
    */
   template <typename OutputIterator>
   OutputIterator operator()(const X_monotone_curve_2& xcv, double error,

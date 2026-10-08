@@ -87,9 +87,9 @@ public:
 private:
 
 
-    std::vector<std::size_t> get_close_curves(const PointRange& query, double distance, Sequential_tag);
+    auto get_close_curves(const PointRange& query, double distance, Sequential_tag) -> std::vector<std::size_t>;
 #ifdef CGAL_LINKED_WITH_TBB
-    std::vector<std::size_t> get_close_curves(const PointRange& query, double distance, Parallel_tag);
+    auto get_close_curves(const PointRange& query, double distance, Parallel_tag) -> std::vector<std::size_t>;
 #endif
 
     Polylines curves;
@@ -98,12 +98,7 @@ private:
 
 
 template <class PointRange, class Traits>
-#ifdef DOXYGEN_RUNNING
-std::vector<std::size_t>
-#else
-auto
-#endif
-Neighbor_search<PointRange, Traits>::get_close_curves(
+auto Neighbor_search<PointRange, Traits>::get_close_curves(
     const PointRange& curve, double distance, Sequential_tag) -> std::vector<std::size_t>
 {
     auto result = kd_tree.search(curve, distance);
@@ -124,12 +119,7 @@ Neighbor_search<PointRange, Traits>::get_close_curves(
 
 #ifdef CGAL_LINKED_WITH_TBB
 template <class PointRange, class Traits>
-#ifdef DOXYGEN_RUNNING
-std::vector<std::size_t>
-#else
-auto
-#endif
-Neighbor_search<PointRange, Traits>::get_close_curves(
+auto Neighbor_search<PointRange, Traits>::get_close_curves(
     const PointRange& curve, double distance, Parallel_tag) -> std::vector<std::size_t>
 {
     std::vector<std::size_t> result;

@@ -335,7 +335,7 @@ namespace CGAL {
                                                          transform_functor(value_at_p2)));
 
             visitor.new_point(mid);
-            CGAL_SURFACE_MESHER_HISTOGRAM_PROFILER("Implificit_surface_oracle::Intersect_3::operator(Segment_3) bissection steps", steps)
+            CGAL_SURFACE_MESHER_HISTOGRAM_PROFILER("Implificit_surface_oracle::Intersect_3::operator(Segment_3) bisection steps", steps)
             return make_object(mid);
           }
 

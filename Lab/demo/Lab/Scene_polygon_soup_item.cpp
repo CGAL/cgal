@@ -23,6 +23,7 @@
 #include <CGAL/Polygon_mesh_processing/repair.h>
 #include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
+#include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/version.h>
 
@@ -47,6 +48,8 @@ typedef Viewer_interface Vi;
 typedef Triangle_container Tc;
 typedef Edge_container Ec;
 typedef Point_container Pc;
+
+typedef CGAL::Polygon_mesh_processing::Duplicate_polygon_erase_policy Policy;
 
 struct Scene_polygon_soup_item_priv{
 
@@ -101,6 +104,7 @@ struct Scene_polygon_soup_item_priv{
   bool is_triangle, is_quad, stats_computed;
   double minl, maxl, meanl, midl, mini, maxi, ave;
   std::size_t nb_null_edges, nb_degen_faces;
+  bool does_self_intersect;
 
   Scene_polygon_soup_item* item;
 
@@ -407,13 +411,13 @@ void Scene_polygon_soup_item::inside_out()
   invalidateOpenGLBuffers();
 }
 
-void Scene_polygon_soup_item::repair(bool erase_dup, bool req_same_orientation)
+void Scene_polygon_soup_item::repair(Policy erase_policy, bool req_same_orientation)
 {
   QApplication::setOverrideCursor(Qt::BusyCursor);
   CGAL::Polygon_mesh_processing::repair_polygon_soup(
         d->soup->points,
         d->soup->polygons,
-        CGAL::parameters::erase_all_duplicates(erase_dup)
+        CGAL::parameters::erase_policy(erase_policy)
                          .require_same_orientation(req_same_orientation));
   QApplication::restoreOverrideCursor();
   invalidateOpenGLBuffers();
@@ -913,7 +917,7 @@ CGAL::Three::Scene_item::Header_data Scene_polygon_soup_item::header() const
   CGAL::Three::Scene_item::Header_data data;
 
   //categories
-  data.categories.append(std::pair<QString,int>(QString("Properties"),2));
+  data.categories.append(std::pair<QString,int>(QString("Properties"),3));
   data.categories.append(std::pair<QString,int>(QString("Vertices"),1));
   data.categories.append(std::pair<QString,int>(QString("Polygons"),2));
   data.categories.append(std::pair<QString,int>(QString("Edges"),6));
@@ -922,6 +926,7 @@ CGAL::Three::Scene_item::Header_data Scene_polygon_soup_item::header() const
   //titles
   data.titles.append(QString("Pure Triangle"));
   data.titles.append(QString("Pure Quad"));
+  data.titles.append(QString("Self-Intersecting"));
 
   data.titles.append(QString("#Points"));
 
@@ -994,6 +999,10 @@ QString Scene_polygon_soup_item::computeStats(int type)
       return QString("yes");
     else
       return QString("no");
+  case SELFINTER:
+      if(d->is_triangle)
+        return d->does_self_intersect?QString("yes"):QString("no");
+      return QString("n/a");
   }
   return QString();
 }
@@ -1013,6 +1022,7 @@ invalidate_stats()
   ave=0;
   nb_null_edges=0;
   nb_degen_faces=0;
+  does_self_intersect=false;
   stats_computed = false;
 }
 
@@ -1032,6 +1042,11 @@ Scene_polygon_soup_item_priv::compute_stats()
   {
     if(poly.size() != 3)
       is_triangle = false;
+    else
+    {
+      if (CGAL::collinear(soup->points[poly[0]], soup->points[poly[1]], soup->points[poly[2]]))
+        ++nb_degen_faces;
+    }
     if(poly.size() != 4)
       is_quad = false;
     for(std::size_t i = 0; i< poly.size(); ++i)
@@ -1046,11 +1061,10 @@ Scene_polygon_soup_item_priv::compute_stats()
       typename Traits::Vector_3 bc(b, c);
       double cos_angle = (ba * bc)
         / std::sqrt(ba.squared_length() * bc.squared_length());
-      if(cos_angle == CGAL_PI || cos_angle == 0)
-        ++nb_degen_faces;
       angles_acc(std::acos(cos_angle) * rad_to_deg);
     }
   }
+  does_self_intersect=CGAL::Polygon_mesh_processing::does_triangle_soup_self_intersect(soup->points, soup->polygons);
 
   minl = extract_result< tag::min >(edges_acc);
   maxl = extract_result< tag::max >(edges_acc);

@@ -14,6 +14,7 @@
 #include <CGAL/Qt/debug.h>
 #include <CGAL/double.h>
 
+#include <QtGlobal>
 #include <QJsonArray>
 #include <QtDebug>
 #include <QFileDialog>
@@ -46,7 +47,11 @@
 #include <fstream>
 #include <QElapsedTimer>
 #include <QWidgetAction>
+#if QT_VERSION < QT_VERSION_CHECK(6, 11, 0)
 #include <QSequentialIterable>
+#else
+#include <QMetaSequence>
+#endif
 #include <QDir>
 #include <QJSValue>
 #include <QLoggingCategory>
@@ -992,7 +997,13 @@ void MainWindow::reloadItem() {
       item->deleteLater();
       return;
     }
-    QSequentialIterable iterable = varian.value<QSequentialIterable>();
+#if QT_VERSION < QT_VERSION_CHECK(6, 11, 0)
+    using Iterable = QSequentialIterable;
+#else
+     using Iterable = QMetaSequence::Iterable;
+#endif
+
+    Iterable iterable = varian.value<Iterable>();
 
        // Can use foreach:
     int mate_id = 0;
@@ -1795,8 +1806,8 @@ bool MainWindow::loadScript(QFileInfo info)
   QString program;
   QString filename = info.absoluteFilePath();
   QFile script_file(filename);
-  script_file.open(QIODevice::ReadOnly);
-  if(!script_file.isReadable()) {
+  bool success = script_file.open(QIODevice::ReadOnly);
+  if((! success) || (!script_file.isReadable())) {
     throw std::ios_base::failure(script_file.errorString().toStdString());
   }
   program = script_file.readAll();
@@ -2747,9 +2758,9 @@ void MainWindow::exportStatistics()
   if(filename.isEmpty())
     return;
   QFile output(filename);
-  output.open(QIODevice::WriteOnly | QIODevice::Text);
+  bool success = output.open(QIODevice::WriteOnly | QIODevice::Text);
 
-  if(!output.isOpen()){
+  if((! success) || (!output.isOpen())){
     qDebug() << "- Error, unable to open" << "outputFilename" << "for output";
   }
   QTextStream outStream(&output);

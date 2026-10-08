@@ -15,7 +15,7 @@
 
 #include <CGAL/license/AABB_tree.h>
 
-
+#include <CGAL/AABB_tree/internal/Primitive_helper.h>
 #include <CGAL/AABB_tree/internal/AABB_node.h>
 #include <optional>
 
@@ -104,7 +104,7 @@ private:
 /**
  * @class Listing_intersection_traits
  */
-template<typename AABBTraits, typename Query, typename Output_iterator>
+template<typename AABBTraits, typename Query, typename OutputIterator>
 class Listing_intersection_traits
 {
   typedef typename AABBTraits::FT FT;
@@ -117,7 +117,7 @@ class Listing_intersection_traits
   typedef ::CGAL::AABB_node<AABBTraits> Node;
 
 public:
-  Listing_intersection_traits(Output_iterator out_it, const AABBTraits& traits)
+  Listing_intersection_traits(OutputIterator out_it, const AABBTraits& traits)
     : m_out_it(out_it), m_traits(traits) {}
 
   constexpr bool go_further() const { return true; }
@@ -139,7 +139,7 @@ public:
   }
 
 private:
-  Output_iterator m_out_it;
+  OutputIterator m_out_it;
   const AABBTraits& m_traits;
 };
 
@@ -147,7 +147,7 @@ private:
 /**
  * @class Listing_primitive_traits
  */
-template<typename AABBTraits, typename Query, typename Output_iterator>
+template<typename AABBTraits, typename Query, typename OutputIterator>
 class Listing_primitive_traits
 {
   typedef typename AABBTraits::FT FT;
@@ -160,7 +160,7 @@ class Listing_primitive_traits
   typedef ::CGAL::AABB_node<AABBTraits> Node;
 
 public:
-  Listing_primitive_traits(Output_iterator out_it, const AABBTraits& traits)
+  Listing_primitive_traits(OutputIterator out_it, const AABBTraits& traits)
     : m_out_it(out_it), m_traits(traits) {}
 
   constexpr bool go_further() const { return true; }
@@ -179,7 +179,103 @@ public:
   }
 
 private:
-  Output_iterator m_out_it;
+  OutputIterator m_out_it;
+  const AABBTraits& m_traits;
+};
+
+/**
+ * It is more efficient to apply the inverse transformation to the query and then use the original traits,
+ * but except if the constructions are exact, the result may differ from applying the original transformation to the tree.
+ * @class Listing_primitive_traits_with_transformation
+ */
+template<typename AABBTraits, typename Query, typename OutputIterator, typename AffTransformation, typename SUPPORTS_ROTATION = CGAL::Tag_true>
+class Listing_primitive_traits_with_transformation
+{
+  typedef typename AABBTraits::FT FT;
+  typedef typename AABBTraits::Point Point;
+  typedef typename AABBTraits::Primitive Primitive;
+  typedef typename AABBTraits::Bounding_box Bounding_box;
+  typedef typename AABBTraits::Primitive::Id Primitive_id;
+  typedef typename AABBTraits::Point_and_primitive_id Point_and_primitive_id;
+  typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;
+  typedef ::CGAL::AABB_node<AABBTraits> Node;
+
+public:
+  Listing_primitive_traits_with_transformation(OutputIterator out_it, const AABBTraits& traits)
+    : m_out_it(out_it), m_traits(traits), m_transfo(CGAL::IDENTITY), m_has_rotation(false)
+  {}
+
+  Listing_primitive_traits_with_transformation(OutputIterator out_it, const AABBTraits& traits, const AffTransformation& transfo)
+    : m_out_it(out_it), m_traits(traits), m_transfo(transfo), m_has_rotation(transfo.has_rotation())
+  {}
+
+  constexpr bool go_further() const { return true; }
+
+  void intersection(const Query& query, const Primitive& primitive)
+  {
+    auto datum_transformed = internal::Primitive_helper<AABBTraits>::get_datum(primitive, m_traits).transform(m_transfo);
+    if( CGAL::do_intersect(query, datum_transformed) )
+    {
+      *m_out_it++ = primitive.id();
+    }
+  }
+
+  bool do_intersect(const Query& query, const Node& node) const
+  {
+    return m_traits.do_intersect_object()(query, compute_transformed_bbox(m_transfo, node.bbox(), m_has_rotation));
+  }
+
+  const AffTransformation& transformation() const { return m_transfo; }
+  void set_transformation(const AffTransformation& transfo)
+  {
+    m_transfo = transfo;
+    m_has_rotation = m_transfo.has_rotation();
+  }
+
+private:
+  OutputIterator m_out_it;
+  const AABBTraits& m_traits;
+  AffTransformation m_transfo;
+  bool m_has_rotation;
+};
+
+/**
+ * @class Listing_distinct_primitive_traits
+ * used by `all_pairs_of_intersecting_primitives()` to avoid reporting `(i, i)` and twice `(i, j)`.
+ */
+template<typename AABBTraits, typename OutputIterator>
+class Listing_distinct_primitive_traits
+{
+  typedef typename AABBTraits::FT FT;
+  typedef typename AABBTraits::Point Point;
+  typedef typename AABBTraits::Primitive Primitive;
+  typedef typename AABBTraits::Bounding_box Bounding_box;
+  typedef typename AABBTraits::Primitive::Id Primitive_id;
+  typedef typename AABBTraits::Point_and_primitive_id Point_and_primitive_id;
+  typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;
+  typedef ::CGAL::AABB_node<AABBTraits> Node;
+
+public:
+  Listing_distinct_primitive_traits(OutputIterator out_it, const AABBTraits& traits)
+    : m_out_it(out_it), m_traits(traits) {}
+
+  constexpr bool go_further() const { return true; }
+
+  void intersection(const Primitive& query, const Primitive& primitive)
+  {
+    if( query.id()<primitive.id() && m_traits.do_intersect_object()(internal::Primitive_helper<AABBTraits>::get_datum(query, m_traits), primitive) )
+    {
+      *m_out_it++ = primitive.id();
+    }
+  }
+
+  bool do_intersect(const Primitive& query, const Node& node) const
+  {
+    return m_traits.do_intersect_object()(internal::Primitive_helper<AABBTraits>::get_datum(query, m_traits), node.bbox());
+  }
+
+private:
+  OutputIterator m_out_it;
   const AABBTraits& m_traits;
 };
 
@@ -270,6 +366,61 @@ private:
   const AABBTraits& m_traits;
 };
 
+/**
+ * It is more efficient to apply the inverse transformation to the query and then use the original traits,
+ * but except if the constructions are exact, the result may differ from applying the original transformation to the tree.
+ * @class Do_intersect_traits_with_transformation
+ */
+template<typename AABBTraits, typename Query, typename AffTransformation, typename SUPPORTS_ROTATION = CGAL::Tag_true>
+class Do_intersect_traits_with_transformation
+{
+  typedef typename AABBTraits::FT FT;
+  typedef typename AABBTraits::Point Point;
+  typedef typename AABBTraits::Primitive Primitive;
+  typedef typename AABBTraits::Bounding_box Bounding_box;
+  typedef typename AABBTraits::Primitive::Id Primitive_id;
+  typedef typename AABBTraits::Point_and_primitive_id Point_and_primitive_id;
+  typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;
+  typedef ::CGAL::AABB_node<AABBTraits> Node;
+
+public:
+  Do_intersect_traits_with_transformation(const AABBTraits& traits)
+    : m_is_found(false), m_traits(traits), m_transfo(CGAL::IDENTITY), m_has_rotation(false)
+  {}
+
+  Do_intersect_traits_with_transformation(const AABBTraits& traits, const AffTransformation& transfo)
+    : m_is_found(false), m_traits(traits), m_transfo(transfo), m_has_rotation(transfo.has_rotation())
+  {}
+
+  bool go_further() const { return !m_is_found; }
+
+  void intersection(const Query& query, const Primitive& primitive)
+  {
+    auto datum_transformed = internal::Primitive_helper<AABBTraits>::get_datum(primitive, m_traits).transform(m_transfo);
+    if( CGAL::do_intersect(query, datum_transformed))
+      m_is_found = true;
+  }
+
+  bool do_intersect(const Query& query, const Node& node) const
+  {
+    return m_traits.do_intersect_object()(query, compute_transformed_bbox(m_transfo, node.bbox(), m_has_rotation));
+  }
+
+  bool is_intersection_found() const { return m_is_found; }
+
+  const AffTransformation& transformation() const { return m_transfo; }
+  void set_transformation(const AffTransformation& transfo)
+  {
+    m_transfo = transfo;
+    m_has_rotation = m_transfo.has_rotation();
+  }
+
+private:
+  bool m_is_found;
+  const AABBTraits& m_traits;
+  AffTransformation m_transfo;
+  bool m_has_rotation;
+};
 
 /**
  * @class Projection_traits

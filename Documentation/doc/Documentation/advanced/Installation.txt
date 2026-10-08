@@ -152,11 +152,6 @@ For example:
     cd CGAL-\cgalReleaseNumber/build
     cmake ..
 
-The configuration process not only determines the location of the required dependencies, it also dynamically generates a
-`compiler_config.h` file, which encodes the properties of your system and a special file named
-`CGALConfig.cmake`, which is used to build programs using \cgal. The
-purpose of this file is explained below.
-
 \cgalAdvancedBegin
 CMake keeps the variables that a user can manipulate in a
 so-called <I>CMake cache</I>, a simple text file named

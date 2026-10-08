@@ -1,0 +1,1 @@
+This package contains functions that perform detection and treatment of defects in polygon meshes.

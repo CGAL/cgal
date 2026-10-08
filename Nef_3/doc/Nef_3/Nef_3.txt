@@ -569,7 +569,7 @@ which is a polymorphic handle type representing any handle type, no
 matter if it is mutable or const. For further usage of the result,
 the `Object_handle` has to be casted to the concrete handle type.
 The `assign()` function performs such a cast. It returns a
-Boolean that reports the success or the failure of of the cast.
+Boolean that reports the success or the failure of the cast.
 Looking at the possible return values of the `locate` function,
 the `Object_handle` can represent a `Vertex_const_handle`, a
 `Halfedge_const_handle`, a `Halffacet_handle`, or a

@@ -1,0 +1,3 @@
+This package contains functions that perform Boolean operations on triangulated surface meshes;
+clipping and splitting of meshes using planes, boxes, or other meshes;
+and slicing of meshes with planes.

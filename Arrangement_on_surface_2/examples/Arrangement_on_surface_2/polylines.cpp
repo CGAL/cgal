@@ -45,7 +45,7 @@ int main() {
   insert(arr, pi1);
   insert(arr, pi2);
   insert(arr, pi3);
-  print_arrangement_size(arr);          // print the arrangement size
-  CGAL::draw(arr);
+  print_arrangement_size(arr); // print the arrangement size
+  CGAL::draw(arr, "polylines");
   return 0;
 }

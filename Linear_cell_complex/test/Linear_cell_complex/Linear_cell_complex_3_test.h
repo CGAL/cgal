@@ -977,7 +977,7 @@ bool test_LCC_3()
   lcc.template sew<3>(dh3, lcc.make_combinatorial_polygon(4));
   create_attributes_3(lcc);
 
-  // Create an hole in the face between the two cubes
+  // Create a hole in the face between the two cubes
   lcc.insert_cell_1_between_two_cells_2(lcc.template opposite<2>(lcc.next(lcc.next(dh1))),
                                         lcc.next(lcc.next(dh3)));
 

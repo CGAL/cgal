@@ -1,4 +1,4 @@
-// Copyright (c) 2008  GeometryFactory Sarl (France).
+// Copyright (c) 2008,2026  GeometryFactory Sarl (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -39,6 +39,9 @@ class CGAL_QT_EXPORT GraphicsItem : public QObject, public QGraphicsItem {
 public Q_SLOTS:
 
   virtual void modelChanged() = 0;
+  void setVisible(bool visible) {
+    QGraphicsItem::setVisible(visible);
+  }
 };
 
 

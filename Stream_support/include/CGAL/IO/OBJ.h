@@ -20,16 +20,16 @@
 #include <CGAL/IO/helpers.h>
 
 #include <CGAL/Container_helper.h>
+#include <CGAL/Named_function_parameters.h>
 
 #include <boost/range/value_type.hpp>
-#include <CGAL/Named_function_parameters.h>
+#include <boost/container/small_vector.hpp>
 
 #include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <vector>
 #include <type_traits>
 
 namespace CGAL {
@@ -41,10 +41,12 @@ namespace CGAL {
 namespace IO {
 namespace internal {
 
-template <typename PointRange, typename PolygonRange, typename VertexNormalOutputIterator, typename VertexTextureOutputIterator>
+template <typename PointRange, typename PolygonRange, typename PolylineRange,
+          typename VertexNormalOutputIterator, typename VertexTextureOutputIterator>
 bool read_OBJ(std::istream& is,
               PointRange& points,
               PolygonRange& polygons,
+              PolylineRange& polylines,
               VertexNormalOutputIterator,
               VertexTextureOutputIterator,
               const bool verbose = false)
@@ -95,13 +97,27 @@ bool read_OBJ(std::istream& is,
 
     if(s == "v")
     {
-      if(!(iss >> p))
+      double x, y, z;
+      if(!(iss >> IO::iformat(x) >> IO::iformat(y) >> IO::iformat(z)))
       {
         if(verbose)
           std::cerr << "error while reading OBJ vertex." << std::endl;
         return false;
       }
 
+      // there might be a w coordinate...
+      double w = 1.;
+      if(iss >> IO::iformat(w))
+      {
+        if(w == 0.)
+        {
+          if(verbose)
+            std::cerr << "warning: w coordinate is 0, treating it as 1." << std::endl;
+          w = 1.;
+        }
+      }
+
+      fill_point(x, y, z, w, p);
       points.push_back(p);
     }
     else if(s == "vt")
@@ -114,29 +130,91 @@ bool read_OBJ(std::istream& is,
     }
     else if(s == "f")
     {
+      // Scan all vertex indices of the face into a scratch buffer first
+      boost::container::small_vector<int, 3> face_indices;
+
       int i;
-      polygons.emplace_back();
       while(iss >> i)
       {
-        if(i < 1)
+        if (i == 0)
         {
-          const std::size_t n = polygons.back().size();
-          ::CGAL::internal::resize(polygons.back(), n + 1);
-          polygons.back()[n] = static_cast<int>(points.size()) + i; // negative indices are relative references
+          if(verbose)
+            std::cerr << "error: vertex index of face cannot be 0" << std::endl;
+          return false;
+        }
+        else if(i < 1)
+        {
+          // negative indices are relative references
+          face_indices.push_back(static_cast<int>(points.size()) + i);
           if(i < mini)
             mini = i;
         }
         else
         {
-          const std::size_t n = polygons.back().size();
-          ::CGAL::internal::resize(polygons.back(), n + 1);
-          polygons.back()[n] = i - 1;
+          face_indices.push_back(i - 1);
+          if(i - 1 > maxi)
+            maxi = i - 1;
+        }
+
+        // the format can be "f v1/vt1/vn1 v2/vt2/vn2 v3/vt3/vn3 ..." and we only read
+        // vertex ids for now, so skip to the next vertex, but be tolerant about which
+        // whitespace is used
+        if(!std::isspace(iss.peek()))
+        {
+          std::string ignoreme;
+          iss >> ignoreme;
+        }
+      }
+
+      if(face_indices.empty())
+      {
+        if(verbose)
+          std::cerr << "error: empty 'f' line." << std::endl;
+        return false;
+      }
+
+      if(iss.bad())
+      {
+        if(verbose)
+          std::cerr << "error while reading OBJ face." << std::endl;
+        return false;
+      }
+
+      polygons.emplace_back();
+      auto& polygon = polygons.back();
+      ::CGAL::internal::resize(polygon, face_indices.size());
+      std::copy(face_indices.begin(), face_indices.end(), polygon.begin());
+    }
+    else if(s == "l")
+    {
+      int i;
+      polylines.emplace_back();
+      while(iss >> i)
+      {
+        if (i == 0)
+        {
+          if(verbose)
+            std::cerr << "error: vertex index of polyline cannot be 0" << std::endl;
+          return false;
+        }
+        else if(i < 1)
+        {
+          const std::size_t n = polylines.back().size();
+          ::CGAL::internal::resize(polylines.back(), n + 1);
+          polylines.back()[n] = static_cast<int>(points.size()) + i; // negative indices are relative references
+          if(i < mini)
+            mini = i;
+        }
+        else
+        {
+          const std::size_t n = polylines.back().size();
+          ::CGAL::internal::resize(polylines.back(), n + 1);
+          polylines.back()[n] = i - 1;
           if(i-1 > maxi)
             maxi = i-1;
         }
 
-        // the format can be "f v1/vt1/vn1 v2/vt2/vn2 v3/vt3/vn3 ..." and we only read vertex ids for now,
-        // so skip to the next vertex, but be tolerant about which whitespace is used
+        // skip to the next vertex, tolerant about whitespace
         if (!std::isspace(iss.peek())) {
           std::string ignoreme;
           iss >> ignoreme;
@@ -146,7 +224,14 @@ bool read_OBJ(std::istream& is,
       if(iss.bad())
       {
         if(verbose)
-          std::cerr << "error while reading OBJ face." << std::endl;
+          std::cerr << "error while reading OBJ polyline." << std::endl;
+        return false;
+      }
+
+      if(polylines.back().empty())
+      {
+        if(verbose)
+          std::cerr << "error: empty 'f' line." << std::endl;
         return false;
       }
     }
@@ -174,8 +259,7 @@ bool read_OBJ(std::istream& is,
     else
     {
       if(verbose)
-        std::cerr << "Error: unrecognized line: " << s << std::endl;
-      return false;
+        std::cerr << "Warning: unrecognized line: " << s << std::endl;
     }
   }
 
@@ -184,7 +268,7 @@ bool read_OBJ(std::istream& is,
   if(tex_found && verbose)
     std::cout << "NOTE: textures were found in this file, but were discarded." << std::endl;
 
-  if(points.empty() || polygons.empty())
+  if(points.empty() || (polygons.empty() && polylines.empty()))
   {
     if(verbose)
       std::cerr << "warning: empty file?" << std::endl;
@@ -201,37 +285,50 @@ bool read_OBJ(std::istream& is,
   return !is.bad();
 }
 
+// convenience overload
+template <typename PointRange, typename PolygonRange, typename PolylineRange>
+bool read_OBJ(std::istream& is,
+              PointRange& points,
+              PolygonRange& polygons,
+              PolylineRange& polylines,
+              const bool verbose = false)
+{
+  return read_OBJ(is, points, polygons, polylines,
+                  CGAL::Emptyset_iterator(), CGAL::Emptyset_iterator(),
+                  verbose);
+}
+
 } // namespace internal
 
-/// \ingroup PkgStreamSupportIoFuncsOBJ
-///
-/// \brief reads the content of `is` into `points` and `polygons`, using the \ref IOStreamOBJ.
-///
-/// \attention The polygon soup is not cleared, and the data from the stream are appended.
-///
-/// \tparam PointRange a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
-///                    whose value type is the point type
-/// \tparam PolygonRange a model of the concepts `SequenceContainer` and `BackInsertionSequence`
-///                      whose `value_type` is itself a model of the concepts `SequenceContainer`
-///                      and `BackInsertionSequence` whose `value_type` is an unsigned integer type
-///                      convertible to `std::size_t`
-/// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
-///
-/// \param is the input stream
-/// \param points points of the soup of polygons
-/// \param polygons a range of polygons. Each element in it describes a polygon
-///        using the indices of the points in `points`.
-/// \param np optional \ref bgl_namedparameters "Named Parameters" described below
-///
-/// \cgalNamedParamsBegin
-///   \cgalParamNBegin{verbose}
-///     \cgalParamDescription{indicates whether output warnings and error messages should be printed or not.}
-///     \cgalParamType{Boolean}
-///     \cgalParamDefault{`false`}
-///   \cgalParamNEnd
-/// \cgalNamedParamsEnd
-///
-/// \returns `true` if the reading was successful, `false` otherwise.
+/*!
+ * \ingroup PkgStreamSupportIoFuncsOBJ
+ *
+ * \brief reads the content of `is` into `points` and `polygons`, using the \ref IOStreamOBJ.
+ *
+ * \attention The polygon soup is not cleared, and the data from the stream are appended.
+ *
+ * \tparam PointRange a model of the concept `BackInsertionSequence` whose value type is the point type
+ * \tparam PolygonRange a model of the concept `BackInsertionSequence` whose `value_type` is
+ *                      a model of the concepts `RandomAccessContainer` whose `value_type` is
+ *                      an unsigned integer type convertible to `std::size_t`
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+ *
+ * \param is the input stream
+ * \param points points of the soup of polygons
+ * \param polygons a range of polygons. Each element in it describes a polygon
+ *        using the indices of the points in `points`.
+ * \param np optional \ref bgl_namedparameters "Named Parameters" described below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{verbose}
+ *     \cgalParamDescription{indicates whether output warnings and error messages should be printed or not.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`false`}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
+ *
+ * \returns `true` if the reading was successful, `false` otherwise.
+ */
 template <typename PointRange, typename PolygonRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_OBJ(std::istream& is,
               PointRange& points,
@@ -244,39 +341,44 @@ bool read_OBJ(std::istream& is,
 {
   const bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false);
 
-  return internal::read_OBJ(is, points, polygons,
-                            CGAL::Emptyset_iterator(), CGAL::Emptyset_iterator(),
-                            verbose);
+  std::vector<std::vector<std::size_t> > unused_polylines;
+  bool success = internal::read_OBJ(is, points, polygons, unused_polylines,
+                                    CGAL::Emptyset_iterator(), CGAL::Emptyset_iterator(),
+                                    verbose);
+
+  // we want an item with only polylines to return 'false' in this function
+  return (success && !polygons.empty());
 }
 
-/// \ingroup PkgStreamSupportIoFuncsOBJ
-///
-/// \brief reads the content of the file `fname` into `points` and `polygons`, using the \ref IOStreamOBJ.
-///
-/// \attention The polygon soup is not cleared, and the data from the file are appended.
-///
-/// \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
-/// \tparam PolygonRange a model of the concepts `SequenceContainer` and `BackInsertionSequence`
-///                      whose `value_type` is itself a model of the concept `SequenceContainer`
-///                      and `BackInsertionSequence` whose `value_type` is an unsigned integer type
-///                      convertible to `std::size_t`
-/// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
-///
-/// \param fname the path to the input file
-/// \param points points of the soup of polygons
-/// \param polygons a range of polygons. Each element in it describes a polygon
-///        using the indices of the points in `points`.
-/// \param np optional \ref bgl_namedparameters "Named Parameters" described below
-///
-/// \cgalNamedParamsBegin
-///   \cgalParamNBegin{verbose}
-///     \cgalParamDescription{indicates whether output warnings and error messages should be printed or not.}
-///     \cgalParamType{Boolean}
-///     \cgalParamDefault{`false`}
-///   \cgalParamNEnd
-/// \cgalNamedParamsEnd
-///
-/// \returns `true` if the reading was successful, `false` otherwise.
+/*!
+ * \ingroup PkgStreamSupportIoFuncsOBJ
+ *
+ * \brief reads the content of the file `fname` into `points` and `polygons`, using the \ref IOStreamOBJ.
+ *
+ * \attention The polygon soup is not cleared, and the data from the file are appended.
+ *
+ * \tparam PointRange a model of the concept `BackInsertionSequence` whose value type is the point type.
+ * \tparam PolygonRange a model of the concept `BackInsertionSequence` whose `value_type` is
+ *                      a model of the concept `RandomAccessContainer` whose `value_type` is
+ *                      an unsigned integer type convertible to `std::size_t`
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+ *
+ * \param fname the path to the input file
+ * \param points points of the soup of polygons
+ * \param polygons a range of polygons. Each element in it describes a polygon
+ *        using the indices of the points in `points`.
+ * \param np optional \ref bgl_namedparameters "Named Parameters" described below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{verbose}
+ *     \cgalParamDescription{indicates whether output warnings and error messages should be printed or not.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`false`}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
+ *
+ * \returns `true` if the reading was successful, `false` otherwise.
+ */
 template <typename PointRange, typename PolygonRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_OBJ(const std::string& fname,
               PointRange& points,
@@ -296,15 +398,34 @@ bool read_OBJ(const std::string& fname,
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Write
 
+namespace internal {
+
+template <typename PointRange,
+          typename PolygonRange,
+          typename PolylineRange,
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool write_OBJ(std::ostream& os,
+               const PointRange& points,
+               const PolygonRange& polygons,
+               const PolylineRange& polylines,
+               const CGAL_NP_CLASS& np = parameters::default_values())
+{
+  set_ascii_mode(os); // obj is ASCII only
+  Generic_writer<std::ostream, File_writer_wavefront> writer(os);
+  return writer(points, polygons, polylines, np);
+}
+
+} // namespace internal
+
 /*!
  * \ingroup PkgStreamSupportIoFuncsOBJ
  *
  * \brief writes the content of `points` and `polygons` in `os`, using the \ref IOStreamOBJ.
  *
- * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type
- * \tparam PolygonRange a model of the concept `SequenceContainer`
- *                      whose `value_type` is itself a model of the concept `SequenceContainer`
- *                      whose `value_type` is an unsigned integer type convertible to `std::size_t`
+ * \tparam PointRange a model of the concept `Range` whose value type is the point type
+ * \tparam PolygonRange a model of the concept `SequenceContainer` whose `value_type` is itself
+ *                      a model of the concept `SequenceContainer` whose `value_type` is
+ *                      an unsigned integer type convertible to `std::size_t`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param os the output stream
@@ -314,6 +435,12 @@ bool read_OBJ(const std::string& fname,
  * \param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{point_map}
+ *     \cgalParamDescription{a property map associating points to the elements of the range `points`}
+ *     \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
+ *                    of the iterator of `PointRange` and value type is a model of the concept `Point_3`}
+ *     \cgalParamDefault{`CGAL::Identity_property_map<std::iterator_traits<PointRange::iterator>::value_type>`}
+ *   \cgalParamNEnd
  *   \cgalParamNBegin{stream_precision}
  *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
  *     \cgalParamType{int}
@@ -335,9 +462,8 @@ bool write_OBJ(std::ostream& os,
 #endif
                )
 {
-  set_ascii_mode(os); // obj is ASCII only
-  Generic_writer<std::ostream, File_writer_wavefront> writer(os);
-  return writer(points, polygons, np);
+  std::vector<std::vector<std::size_t> > unused_polylines;
+  return internal::write_OBJ(os, points, polygons, unused_polylines, np);
 }
 
 /*!
@@ -346,9 +472,9 @@ bool write_OBJ(std::ostream& os,
  * \brief writes the content of `points` and `polygons` in a file named `fname`, using the \ref IOStreamOBJ.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type
- * \tparam PolygonRange a model of the concept `SequenceContainer`
- *                      whose `value_type` is itself a model of the concept `SequenceContainer`
- *                      whose `value_type` is an unsigned integer type convertible to `std::size_t`
+ * \tparam PolygonRange a model of the concept `SequenceContainer` whose `value_type` is itself
+ *                      a model of the concept `SequenceContainer` whose `value_type` is
+ *                      an unsigned integer type convertible to `std::size_t`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param fname the path to the output file
@@ -358,6 +484,12 @@ bool write_OBJ(std::ostream& os,
  * \param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{point_map}
+ *     \cgalParamDescription{a property map associating points to the elements of the range `points`}
+ *     \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
+ *                    of the iterator of `PointRange` and value type is a model of the concept `Kernel::Point_3`}
+ *     \cgalParamDefault{`CGAL::Identity_property_map<std::iterator_traits<PointRange::iterator>::value_type>`}
+ *   \cgalParamNEnd
  *   \cgalParamNBegin{stream_precision}
  *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
  *     \cgalParamType{int}

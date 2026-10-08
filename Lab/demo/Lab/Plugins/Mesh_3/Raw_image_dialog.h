@@ -12,8 +12,8 @@ public:
   Raw_image_dialog(QWidget* parent = nullptr);
 
   std::size_t image_word_size() const;
-  WORD_KIND image_word_kind() const;
-  SIGN image_sign() const;
+  CGAL::WORD_KIND image_word_kind() const;
+  CGAL::SIGN image_sign() const;
 
 private Q_SLOTS:
   void update_image_size();

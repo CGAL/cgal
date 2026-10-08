@@ -667,7 +667,7 @@ public:
                       " has plane " << h << " has circle " << e->circle() <<
                       " has signum " << sign_of(h));
       if ( sign_of(h)<0 ) continue;
-      M[normalized(h)].push_back(make_object(e->twin()));
+      M[normalized(h)].emplace_back(e->twin());
       CGAL_NEF_TRACEN(" normalized as " << normalized(h));
       /*
         Unique_hash_map<SHalfedge_handle, bool> Done(false);
@@ -688,7 +688,7 @@ public:
       }
       SHalfedge_around_facet_circulator sfc(e), send(sfc);
       CGAL_For_all(sfc, send) {
-        M[normalized(h)].push_back(make_object(e->twin()));
+        M[normalized(h)].emplace_back(e->twin());
         Done[sfc] = true;
         Done[sfc->twin()] = true;
         CGAL_NEF_TRACEN(" normalized as " << normalized(h));
@@ -701,7 +701,7 @@ public:
       Plane_3 h = c.plane_through(l->incident_sface()->center_vertex()->point());
       if ( sign_of(h)<0 ) continue;
       // CGAL_assertion( h == normalized(h));
-      M[normalized(h)].push_back(make_object(l->twin()));
+      M[normalized(h)].emplace_back(l->twin());
     }
 
 #ifdef CGAL_NEF3_TIMER_PLANE_SWEEPS
@@ -872,7 +872,7 @@ public:
     Halffacet_handle f;
     CGAL_NEF_TRACEN("get_facet_below");
     if( CGAL::assign(v, o)) {
-      CGAL_NEF_TRACEN("facet below from from vertex...");
+      CGAL_NEF_TRACEN("facet below from vertex...");
       f_below = get_visible_facet(v, ray);
       if( f_below == Halffacet_handle()) {
         CGAL_assertion(v->sfaces_begin() == v->sfaces_last());
@@ -881,7 +881,7 @@ public:
       }
     }
     else if( CGAL::assign(e, o)) {
-      CGAL_NEF_TRACEN("facet below from from edge...");
+      CGAL_NEF_TRACEN("facet below from edge...");
       f_below = get_visible_facet(e, ray);
       if( f_below == Halffacet_handle()) {
         CGAL_assertion(e->source()->sfaces_begin() == e->source()->sfaces_last());
@@ -890,7 +890,7 @@ public:
       }
     }
     else if( CGAL::assign(f, o)) {
-      CGAL_NEF_TRACEN("facet below from from facet...");
+      CGAL_NEF_TRACEN("facet below from facet...");
       f_below = get_visible_facet(f, ray);
       CGAL_assertion( f_below != Halffacet_handle());
     }
@@ -1181,13 +1181,13 @@ public:
     CGAL_forall_shalfedges(e,*this->sncp()) {
       if(e->get_index() > e->twin()->get_index())
         continue;
-      M[e->get_index()].push_back(make_object(e));
+      M[e->get_index()].emplace_back(e);
     }
     SHalfloop_iterator l;
     CGAL_forall_shalfloops(l,*this->sncp()) {
       if(l->get_index() > l->twin()->get_index())
         continue;
-      M[l->get_index()].push_back(make_object(l));
+      M[l->get_index()].emplace_back(l);
     }
 
 #ifdef CGAL_NEF3_TIMER_PLANE_SWEEPS

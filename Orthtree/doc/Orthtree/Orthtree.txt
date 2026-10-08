@@ -139,7 +139,7 @@ The Orthtree uses a mechanism to attach properties to nodes at run-time which fo
 The `Orthtree` class provides a
 number of different solutions for traversing the tree.
 
-\subsection Section_Orthtree_Manual_Traveral Manual Traversal
+\subsection Section_Orthtree_Manual_Traversal Manual Traversal
 
 Because our orthtree is a form of connected acyclic undirected graph, it is possible to navigate between any two nodes.
 What that means in practice is that given a node on the tree, it is possible to

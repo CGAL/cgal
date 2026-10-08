@@ -128,6 +128,22 @@ _test_cls_sphere_3(const R& )
  assert( cc.has_on_boundary( p3 + vy6) );
  assert( cc.has_on_boundary( p3 - vx6) );
 
+ assert(!CGAL::Sphere_3<R>(CGAL::Point_3<R>(0, 0, 0), 4).has_on_unbounded_side(CGAL::Iso_cuboid_3<R>(CGAL::Point_3<R>(-2, 0, 0), CGAL::Point_3<R>(2, 0, 0)))); // the cuboid is a segment, and the endpoints are on the sphere
+ assert(!CGAL::Sphere_3<R>(CGAL::Point_3<R>(0, 0, 0), 4).has_on_unbounded_side(CGAL::Iso_cuboid_3<R>(CGAL::Point_3<R>(-2, 0, 0), CGAL::Point_3<R>(-3, 0, 0)))); // the cuboid is a segment, and one endpoint is on the sphere, the other is outside
+ assert( CGAL::Sphere_3<R>(CGAL::Point_3<R>(0, 0, 0), 4).has_on_unbounded_side(CGAL::Iso_cuboid_3<R>(CGAL::Point_3<R>(FT(-2.1), 0, 0), CGAL::Point_3<R>(-3, 0, 0)))); // the cuboid is a segment, and both endpoints are outside
+ assert(!CGAL::Sphere_3<R>(CGAL::Point_3<R>(0, 0, 0), 4).has_on_unbounded_side(CGAL::Iso_cuboid_3<R>(CGAL::Point_3<R>(-3, -3, -3), CGAL::Point_3<R>(3, 3, 3)))); // the cuboid contains the sphere
+ assert(!CGAL::Sphere_3<R>(CGAL::Point_3<R>(0, 0, 0), 1).has_on_unbounded_side(CGAL::Iso_cuboid_3<R>(CGAL::Point_3<R>(-1, -1, -1), CGAL::Point_3<R>(0, 0, 0)))); // one corner at the center of the sphere, three on the sphere and the remaining ones outside
+ assert(!CGAL::Sphere_3<R>(CGAL::Point_3<R>(0, 0, 0), 1).has_on_unbounded_side(CGAL::Iso_cuboid_3<R>(CGAL::Point_3<R>(-1, -1, -1), CGAL::Point_3<R>(1, 1, 1)))); // the cuboid contains the sphere and touches it in the mid of the faces
+ assert(!CGAL::Sphere_3<R>(CGAL::Point_3<R>(0, 0, 0), 1).has_on_unbounded_side(CGAL::Iso_cuboid_3<R>(CGAL::Point_3<R>(-1.1, -1.1, -1.1), CGAL::Point_3<R>(1.1, 1.1, 1.1)))); // the cuboid contains the sphere and is strictly larger than it
+ assert(!CGAL::Sphere_3<R>(CGAL::Point_3<R>(0, 0, 0), 1).has_on_unbounded_side(CGAL::Iso_cuboid_3<R>(CGAL::Point_3<R>(-1.1, -1.1, -2), CGAL::Point_3<R>(1.1, 1.1, 0)))); // the cuboid intersects with the sphere
+ assert(!CGAL::Sphere_3<R>(CGAL::Point_3<R>(0, 0, 0), 1).has_on_unbounded_side(CGAL::Iso_cuboid_3<R>(CGAL::Point_3<R>(-0.1, -0.1, -0.1), CGAL::Point_3<R>(0.1, 0.1, 0.1)))); // the cuboid is strictly contained in the sphere
+ assert(!CGAL::Sphere_3<R>(CGAL::Point_3<R>(5, 5, 11), 4).has_on_unbounded_side(CGAL::Iso_cuboid_3<R>(CGAL::Point_3<R>(0, 0, 0), CGAL::Point_3<R>(10, 10, 10)))); // the cuboid intersects with the sphere at a face
+ assert( CGAL::Sphere_3<R>(CGAL::Point_3<R>(5, 5, 11), 0.5).has_on_unbounded_side(CGAL::Iso_cuboid_3<R>(CGAL::Point_3<R>(0, 0, 0), CGAL::Point_3<R>(10, 10, 10)))); // same positioning without intersection
+ assert(!CGAL::Sphere_3<R>(CGAL::Point_3<R>(5, 11, 11), 4).has_on_unbounded_side(CGAL::Iso_cuboid_3<R>(CGAL::Point_3<R>(0, 0, 0), CGAL::Point_3<R>(10, 10, 10)))); // the cuboid intersects with the sphere at an edge
+ assert( CGAL::Sphere_3<R>(CGAL::Point_3<R>(5, 11, 11), 1).has_on_unbounded_side(CGAL::Iso_cuboid_3<R>(CGAL::Point_3<R>(0, 0, 0), CGAL::Point_3<R>(10, 10, 10)))); // same positioning without intersection
+ assert(!CGAL::Sphere_3<R>(CGAL::Point_3<R>(11, 11, 11), 4).has_on_unbounded_side(CGAL::Iso_cuboid_3<R>(CGAL::Point_3<R>(0, 0, 0), CGAL::Point_3<R>(10, 10, 10)))); // the cuboid intersects with the sphere at a corner
+ assert( CGAL::Sphere_3<R>(CGAL::Point_3<R>(11, 11, 11), 1).has_on_unbounded_side(CGAL::Iso_cuboid_3<R>(CGAL::Point_3<R>(0, 0, 0), CGAL::Point_3<R>(10, 10, 10)))); // same positioning without intersection
+
  std::cout << '.';
 
  RT sin1;

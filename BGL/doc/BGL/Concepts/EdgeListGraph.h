@@ -3,13 +3,13 @@
 \cgalConcept
 
 Concept from the Boost Graph Library.
-See https://www.boost.org/libs/graph/doc/EdgeListGraph.html.
+See https://www.boost.org/doc/libs/latest/libs/graph/doc/html/graph/concepts/EdgeListGraph.html.
 
 The concept `EdgeListGraph` refines the concept
-<a href="https://www.boost.org/libs/graph/doc/Graph.html"><code>Graph</code></a>
+<a href="https://www.boost.org/doc/libs/latest/libs/graph/doc/html/graph/concepts/Graph.html"><code>Graph</code></a>
 and adds the requirement for traversal of all edges in a graph.
 
-\cgalRefines{<a href="https://www.boost.org/libs/graph/doc/Graph.html">Graph</a>}
+\cgalRefines{<a href="https://www.boost.org/doc/libs/latest/libs/graph/doc/html/graph/concepts/Graph.html">Graph</a>}
 
 \cgalHasModelsBegin
 \cgalHasModelsBare{See \link PkgBGLTraits Boost Graph Traits Specializations \endlink}

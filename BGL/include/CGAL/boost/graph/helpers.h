@@ -537,7 +537,7 @@ bool is_valid_polygon_mesh(const Mesh& g, bool verb = false)
     return false;
 
   // test for 2-manifoldness
-  // Distinct facets on each side of an halfedge.
+  // Distinct facets on each side of a halfedge.
   for(halfedge_descriptor i : halfedges(g))
   {
     valid = (face(i, g) != face(opposite(i, g), g));
@@ -945,7 +945,7 @@ void collect_garbage(Graph&)
 /**
  * \ingroup PkgBGLHelperFct
  *
- * removes all vertices, faces and halfedges from a graph. Calls
+ * removes all vertices, edges, and faces from a graph. Calls
  * \link MutableHalfedgeGraph `remove_vertex()`\endlink,
  * \link MutableHalfedgeGraph `remove_edge()`\endlink, and
  * \link MutableFaceGraph `remove_face()`\endlink, for each vertex, edge, and face.
@@ -1000,7 +1000,7 @@ clear_impl(FaceGraph& g)
 /**
  * \ingroup PkgBGLHelperFct
  *
- * removes all vertices, faces and halfedges from a graph. Calls
+ * removes all vertices, edges, and faces from a graph. Calls
  * \link MutableHalfedgeGraph `remove_vertex()`\endlink,
  * \link MutableHalfedgeGraph `remove_edge()`\endlink, and
  * \link MutableFaceGraph `remove_face()`\endlink, for each vertex, edge, and face.

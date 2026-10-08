@@ -1,0 +1,33 @@
+# vtk DataFile Version 2.0
+CGAL Linear_cell_complex
+ASCII
+DATASET UNSTRUCTURED_GRID
+
+POINTS 5 double
+ -3.38189 0.624914 -0.442232
+ -3.04657 -1.38801 -0.227267
+ -1.24112 -0.450255 -0.494661
+ -1.42311 -1.94845 0.895599
+ -2.49044 0.337128 1.70461
+
+CELLS 2 10
+ 4 1 0 4 2
+ 4 1 2 4 3
+
+CELL_TYPES 2
+10
+10
+
+POINT_DATA 5
+SCALARS point_scalars float 1
+LOOKUP_TABLE default
+0
+1
+2
+3
+4
+CELL_DATA 2
+SCALARS cell_scalars unsigned_long 1
+LOOKUP_TABLE default
+4
+4

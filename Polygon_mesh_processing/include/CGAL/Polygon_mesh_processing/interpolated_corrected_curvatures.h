@@ -625,8 +625,7 @@ void interpolated_corrected_curvatures_one_vertex(
   Vertex_position_map vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
     get_const_property_map(CGAL::vertex_point, pmesh));
 
-  Vertex_normal_map vnm = choose_parameter(get_parameter(np, internal_np::vertex_normal_map),
-    get(Vector_map_tag(), pmesh));
+  Vertex_normal_map vnm = choose_parameter(get_parameter(np, internal_np::vertex_normal_map), Vector_map_tag(), pmesh);
 
   // if the normal map is not provided, compute it
   if (is_default_parameter<NamedParameters, internal_np::vertex_normal_map_t>::value)
@@ -776,8 +775,7 @@ private:
     vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
       get_const_property_map(CGAL::vertex_point, pmesh));
 
-    vnm = choose_parameter(get_parameter(np, internal_np::vertex_normal_map),
-      get(Vector_map_tag(), pmesh));
+    vnm = choose_parameter(get_parameter(np, internal_np::vertex_normal_map), Vector_map_tag(), pmesh);
 
     // if no normal map is given, compute normals
     if (is_default_parameter<NamedParameters, internal_np::vertex_normal_map_t>::value)
@@ -793,9 +791,9 @@ private:
     is_Gaussian_curvature_selected = !is_default_parameter<NamedParameters, internal_np::vertex_Gaussian_curvature_map_t>::value;
     is_principal_curvatures_and_directions_selected = !is_default_parameter<NamedParameters, internal_np::vertex_principal_curvatures_and_directions_map_t>::value;
 
-    mean_curvature_map = choose_parameter(get_parameter(np, internal_np::vertex_mean_curvature_map), Default_scalar_map());
-    gaussian_curvature_map = choose_parameter(get_parameter(np, internal_np::vertex_Gaussian_curvature_map), Default_scalar_map());
-    principal_curvatures_and_directions_map = choose_parameter(get_parameter(np, internal_np::vertex_principal_curvatures_and_directions_map), Default_principal_map());
+    mean_curvature_map = choose_parameter<Default_scalar_map>(get_parameter(np, internal_np::vertex_mean_curvature_map));
+    gaussian_curvature_map = choose_parameter<Default_scalar_map>(get_parameter(np, internal_np::vertex_Gaussian_curvature_map));
+    principal_curvatures_and_directions_map = choose_parameter<Default_principal_map>(get_parameter(np, internal_np::vertex_principal_curvatures_and_directions_map));
   }
 
   void set_ball_radius(const FT radius) {
@@ -1004,7 +1002,7 @@ private:
 *
 * \note This function depends on the \eigen 3.1 (or later) library.
 *
-* @tparam PolygonMesh a model of `FaceListGraph`.
+* @tparam PolygonMesh a model of `VertexListGraph` and `FaceListGraph`.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters".
 *
 * @param pmesh the polygon mesh.

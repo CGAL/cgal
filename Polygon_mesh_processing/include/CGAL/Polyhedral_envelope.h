@@ -92,18 +92,17 @@
 namespace CGAL {
 
 /**
- * \ingroup PkgPolygonMeshProcessingRef
+ * \ingroup PMP_predicates_grp
+ *
  * This class can be used to check if a query point, segment, or triangle
- * is inside or outside a polyhedral envelope of a set of triangles, constructed for a given  \f$ \epsilon \f$ distance tolerance.
+ * is inside or outside a polyhedral envelope of a set of triangles, constructed for a given \f$ \epsilon \f$ distance tolerance.
  * The polyhedral envelope is the union of <em>prisms</em> obtained. See Section \ref PMPEnvelope for more details.
  *
  * @tparam GeomTraits a geometric traits class, model of `Kernel`
  */
-
-
 template <typename GeomTraits>
-struct Polyhedral_envelope {
-
+struct Polyhedral_envelope
+{
 public:
   typedef typename GeomTraits::Point_3 Point_3;
 #ifndef DOXYGEN_RUNNING
@@ -302,7 +301,7 @@ public:
   /// @{
 
   /**
-   * Default constructor, envelope is empty
+   * %Default constructor, envelope is empty
    */
   Polyhedral_envelope()
   {}
@@ -334,7 +333,8 @@ public:
 
   /**
    * Constructor with a triangulated surface mesh.
-   * @tparam TriangleMesh a model of `FaceListGraph`
+   *
+   * @tparam TriangleMesh a model of `VertexListGraph` and `FaceListGraph`
    * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
    *
    * @param tmesh a triangle mesh
@@ -430,7 +430,7 @@ public:
   /**
    * Constructor using a subset of faces of a triangulated surface mesh
    *
-   * @tparam FaceRange a model of `ConstRange` with `ConstRange::const_iterator`
+   * @tparam FaceRange a model of `ConstRange` with `FaceRange::const_iterator`
    *                   being a model of `InputIterator` with `boost::graph_traits<TriangleMesh>::%face_descriptor`
    *                   as value type
    * @tparam TriangleMesh a model of `FaceListGraph`
@@ -2316,9 +2316,9 @@ public:
 
   /**
    * returns `true`, iff all the triangles in `triangle_range` are inside the polyhedral envelope.
-   * @tparam TriangleRange a model of `ConstRange` with `ConstRange::const_iterator`
+   * @tparam TriangleRange a model of `ConstRange` with `TriangleRange::const_iterator`
    *                       being a model of `InputIterator` with a value type being itself a model of
-   *                       `ConstRange` with `ConstRange::const_iterator` being a model of `InputIterator`
+   *                       `ConstRange` whose `const_iterator` is a model of `InputIterator`
    *                       with `Point_3` as value type.
    *
    * @param triangle_range a range of triangles
@@ -2349,7 +2349,7 @@ public:
 
   /// @}
 
-  /// returns `true` if the polyhedral envelope is empty and `false` otherwise.
+  /// returns `true` if the polyhedral envelope is empty, and `false` otherwise.
   bool is_empty() const
   {
     return env_faces.empty();

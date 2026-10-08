@@ -8,7 +8,7 @@ The class `Delaunay_triangulation_cell_base_with_circumcenter_3` derives from
 `Cb`, a cell base class of a 3D triangulation.
 It provides an easy way to cache the computation of the circumcenters of
 tetrahedra.
-Note that input/output operators discard this additional information.
+Note that input/output stream operators discard this additional information.
 
 All functions modifying the vertices of the cell invalidate the cached
 circumcenter.

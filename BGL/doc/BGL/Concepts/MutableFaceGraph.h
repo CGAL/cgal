@@ -26,7 +26,7 @@ add_face(MutableFaceGraph& g);
 Removes `f` from the graph.
  */
 template <typename MutableFaceGraph>
-boost::graph_traits<MutableFaceGraph>::face_descriptor
+void
 remove_face(boost::graph_traits<MutableFaceGraph>::face_descriptor f, MutableFaceGraph& g);
 
 /*! \relates MutableFaceGraph

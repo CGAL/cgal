@@ -399,13 +399,13 @@ private:
       // Center vertex
       VertexHandle vhc = mesh.add_vertex(c);
 
-      // Get first half-face
+      // Get first halfface
       HalfFaceHandle curHF = *mesh.cell(*c_it).halffaces().begin();
 
       HalfFaceHandle ohf0, ohf1, ohf2, ohf3;
       ohf0 = curHF;
 
-      // Get first half-edge
+      // Get first halfedge
       HalfEdgeHandle curHE = *mesh.halfface(curHF).halfedges().begin();
 
       VertexHandle vh0 = mesh.halfedge(curHE).from_vertex();
@@ -546,13 +546,13 @@ private:
       // Center vertex
       VertexHandle vhc = mesh.add_vertex(c);
 
-      // Get first half-face
+      // Get first halfface
       HalfFaceHandle curHF = *mesh.cell(*c_it).halffaces().begin();
 
       HalfFaceHandle ohf0, ohf1, ohf2, ohf3;
       ohf0 = curHF;
 
-      // Get first half-edge
+      // Get first halfedge
       HalfEdgeHandle curHE = *mesh.halfface(curHF).halfedges().begin();
 
       VertexHandle vh0 = mesh.halfedge(curHE).from_vertex();

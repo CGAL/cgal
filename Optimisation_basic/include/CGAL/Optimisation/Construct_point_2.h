@@ -17,20 +17,8 @@
 #ifndef CGAL_OPTIMISATION_CONSTRUCT_POINT_2_H
 #define CGAL_OPTIMISATION_CONSTRUCT_POINT_2_H
 
-#include <CGAL/Point_2.h>
-#include <vector>
-#include <functional>
-#include <iterator>
-
 namespace CGAL {
 
-// Class declaration
-// =================
-template < class K >
-class _Construct_point_2;
-
-// Class interface
-// ===============
 template < class K_ >
 class _Construct_point_2 {
   public:

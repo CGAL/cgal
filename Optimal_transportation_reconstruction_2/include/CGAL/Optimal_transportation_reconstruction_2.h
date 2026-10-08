@@ -69,11 +69,11 @@ Furthermore, we can relocate the vertices by calling `relocate_all_points()`.
 \tparam Traits a model of the concept `OptimalTransportationReconstructionTraits_2`.
 
 \tparam PointPMap a model of `ReadablePropertyMap` with value type `Traits::Point_2`.
-        Defaults to <a href="https://www.boost.org/doc/libs/release/libs/property_map/doc/identity_property_map.html">`boost::typed_identity_property_map<Traits::Point_2>`</a>
+        Defaults to <a href="https://www.boost.org/doc/libs/latest/libs/property_map/doc/identity_property_map.html">`boost::typed_identity_property_map<Traits::Point_2>`</a>
         (for the case the input is points without mass).
 
 \tparam MassPMap a model of `ReadablePropertyMap` with value type `Traits::FT`
-        Defaults to <a href="https://www.boost.org/doc/libs/release/libs/property_map/doc/static_property_map.html">`boost::static_property_map<Traits::FT>`</a>
+        Defaults to <a href="https://www.boost.org/doc/libs/latest/libs/property_map/doc/static_property_map.html">`boost::static_property_map<Traits::FT>`</a>
         (for the case the input is points without mass).
 
  */
@@ -258,8 +258,8 @@ public:
 
 
   /*!
-        The use_flip parameter determines whether the edge flipping procedure
-        is used for the half-edge collapse.
+        The `use_flip` parameter determines whether the edge flipping procedure
+        is used for the halfedge collapse.
    */
   void set_use_flip(const bool use_flip) {
     m_use_flip = use_flip;
@@ -340,7 +340,7 @@ public:
     m_ignore = 0;
   }
 
-  //Function if one wants to create a Optimal_transportation_reconstruction_2
+  //Function if one wants to create an Optimal_transportation_reconstruction_2
   //without yet specifying the input in the constructor.
   template <class InputIterator>
   void initialize(
@@ -1598,7 +1598,9 @@ public:
 
 
   /*!
-    Since noise and missing data may prevent the reconstructed shape to have sharp corners well located, the algorithm offers the possibility to automatically relocate points after each edge collapse. The new location of the points is chosen such that the fitting of the output segments to the input points is improved.
+    Since noise and missing data may prevent the reconstructed shape to have sharp corners well located,
+    the algorithm offers the possibility to automatically relocate points after each edge collapse.
+    The new location of the points is chosen such that the fitting of the output segments to the input points is improved.
    */
   void relocate_all_points() {
     CGAL::Real_timer timer;

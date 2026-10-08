@@ -658,13 +658,13 @@ namespace CGAL {
 
         template<typename FT>
         std::size_t Mixed_integer_program_traits<FT>::number_of_integer_variables() const {
-                std::size_t num_iteger_var = 0;
+                std::size_t num_integer_var = 0;
                 for (std::size_t i = 0; i < variables_.size(); ++i) {
                         const Variable* v = variables_[i];
                         if (v->variable_type() == Variable::INTEGER)
-                                ++num_iteger_var;
+                                ++num_integer_var;
                 }
-                return num_iteger_var;
+                return num_integer_var;
         }
 
         template<typename FT>

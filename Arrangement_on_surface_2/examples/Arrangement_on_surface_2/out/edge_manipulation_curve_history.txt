@@ -1,0 +1,12 @@
+The initial arrangement size:
+The arrangement size:
+   |V| = 48,  |E| = 78,  |F| = 32
+Removing C[0]: 18 edges have been removed.
+The arrangement size:
+   |V| = 46,  |E| = 60,  |F| = 16
+After edge split:
+The arrangement size:
+   |V| = 47,  |E| = 61,  |F| = 16
+After edge merge:
+The arrangement size:
+   |V| = 46,  |E| = 60,  |F| = 16

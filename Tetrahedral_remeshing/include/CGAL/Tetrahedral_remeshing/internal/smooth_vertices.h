@@ -339,54 +339,24 @@ private:
 
     //collect all facet normals
     std::unordered_map<Facet, Vector_3, boost::hash<Facet>> fnormals;
-    for (const Facet& f : tr.finite_facets())
+    for (const Facet& trf : tr.finite_facets())
     {
-      if (is_boundary(c3t3, f, m_cell_selector))
-      {
-        const Facet cf = canonical_facet(f);
-        fnormals[cf] = CGAL::NULL_VECTOR;
-      }
-    }
-
-    for (const auto& fn : fnormals)
-    {
-      if(fn.second != CGAL::NULL_VECTOR)
+      if(!is_boundary(c3t3, trf, m_cell_selector))
         continue;
 
-      const Facet& f = fn.first;
-      const Facet& mf = tr.mirror_facet(f);
-      CGAL_expensive_assertion(is_boundary(c3t3, f, m_cell_selector));
+      const Facet f = canonical_facet(trf);
+      const Cell_handle c = f.first;
+      const Cell_handle neigh = f.first->neighbor(f.second);
 
-      Vector_3 start_ref = CGAL::Tetrahedral_remeshing::normal(f, tr.geom_traits());
-      if (c3t3.triangulation().is_infinite(mf.first)
-          || c3t3.subdomain_index(mf.first) < c3t3.subdomain_index(f.first))
-        start_ref = opp(start_ref);
-      fnormals[f] = start_ref;
+      Vector_3 n = CGAL::Tetrahedral_remeshing::normal(f, tr.geom_traits());
+      if (c3t3.triangulation().is_infinite(neigh)
+       || c3t3.subdomain_index(neigh) < c3t3.subdomain_index(c))
+        n = opp(n);
 
-      std::list<Facet> facets;
-      facets.push_back(f);
-      while (!facets.empty())
-      {
-        const Facet ff = facets.front();
-        facets.pop_front();
-
-        const Vector_3& ref = fnormals[ff];
-        for (const Edge& ei : facet_edges(ff.first, ff.second, tr))
-        {
-          if (std::optional<Facet> neighbor
-              = find_adjacent_facet_on_surface(ff, ei, c3t3))
-          {
-            const Facet neigh = *neighbor; //already a canonical_facet
-            if (fnormals[neigh] == CGAL::NULL_VECTOR) //check it's not already computed
-            {
-              fnormals[neigh] = compute_normal(neigh, ref, gt);
-              facets.push_back(neigh);
-            }
-          }
-        }
-      }
+      fnormals[f] = n; // n has length equal to the area of the facet
     }
 
+    // accumulate the normals in normals_map
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     std::ofstream osf("dump_facet_normals.polylines.txt");
 #endif
@@ -401,9 +371,8 @@ private:
       for (const Vertex_handle vi : tr.vertices(f))
       {
         typename VertexNormalsMap::iterator patch_vector_it = normals_map.find(vi);
-
-        if (patch_vector_it == normals_map.end()
-            || patch_vector_it->second.find(surf_i) == patch_vector_it->second.end())
+        if (   patch_vector_it == normals_map.end() //vertex not found
+            || patch_vector_it->second.find(surf_i) == patch_vector_it->second.end())//patch not found
         {
           normals_map[vi][surf_i] = n;
         }

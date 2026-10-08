@@ -284,7 +284,7 @@ const_iterator begin() const;
 an iterator pointing beyond the last entry
 of \f$ M\f$.
 */
-const_terator end() const;
+const_iterator end() const;
 
 
 /*!

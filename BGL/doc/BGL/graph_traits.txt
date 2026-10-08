@@ -4,7 +4,7 @@
 \ingroup PkgBGLRef
 
 The \bgl defines the class template
-<A HREF="https://www.boost.org/libs/graph/doc/graph_traits.html">`boost::graph_traits`</A>
+<A HREF="https://www.boost.org/doc/libs/latest/libs/graph/doc/html/graph/traits/graph_traits.html">`boost::graph_traits`</A>
 as a uniform interface to the properties and types of %graph types.
 
 We provide specializations of this class template for several \cgal data structures.

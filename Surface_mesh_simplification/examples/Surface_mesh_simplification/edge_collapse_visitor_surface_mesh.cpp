@@ -117,7 +117,7 @@ int main(int argc, char** argv)
   Stats stats;
   My_visitor vis(&stats);
 
-  // The index maps are not explicitelty passed as in the previous
+  // The index maps are not explicitly passed as in the previous
   // example because the surface mesh items have a proper id() field.
   // On the other hand, we pass here explicit cost and placement
   // function which differ from the default policies, omitted in

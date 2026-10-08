@@ -41,7 +41,7 @@ the operator
 `Comparison_result operator()(Point_2 p, Point_2 q)`
 which returns
 `SMALLER, EQUAL` or `LARGER`
-according ding to the
+according to the
 \f$ x\f$-ordering of points `p` and `q`.
 */
 typedef unspecified_type Compare_x_2;

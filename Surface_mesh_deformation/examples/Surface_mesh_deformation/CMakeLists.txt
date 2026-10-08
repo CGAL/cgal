@@ -6,8 +6,9 @@ project(Surface_mesh_deformation_Examples)
 
 find_package(CGAL REQUIRED)
 
-find_package(Eigen3 3.1.91 QUIET) #(requires 3.1.91 or greater)
+find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
+
 if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("all_roi_assign_example.cpp")
   create_single_source_cgal_program("all_roi_assign_example_custom_polyhedron.cpp")
@@ -44,5 +45,5 @@ if(TARGET CGAL::Eigen3_support)
   endif()
 
 else()
-  message("NOTICE: These examples require Eigen 3.1.91 (or greater) or later and will not be compiled.")
+  message("NOTICE: These examples require Eigen 3.1.91 (or greater) and will not be compiled.")
 endif()

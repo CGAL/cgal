@@ -9,8 +9,8 @@
 //
 // Author(s)    : Samuel Hornus, Olivier Devillers
 
-#ifndef REFERENCED_ARGUMENT_H
-#define REFERENCED_ARGUMENT_H
+#ifndef CGAL_REFERENCED_ARGUMENT_H
+#define CGAL_REFERENCED_ARGUMENT_H
 
 template< typename T>
 struct Referenced_argument
@@ -26,4 +26,4 @@ protected:
     T arg_;
 };
 
-#endif // REFERENCED_ARGUMENT_H
+#endif // CGAL_REFERENCED_ARGUMENT_H

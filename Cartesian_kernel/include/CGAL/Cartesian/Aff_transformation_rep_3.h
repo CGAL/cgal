@@ -59,6 +59,8 @@ public:
 
   virtual bool                 is_translation() const { return false; }
   virtual bool                 is_scaling() const { return false; }
+  virtual bool                 has_rotation() const { return false; }
+
   virtual FT                   cartesian(int i, int j) const = 0;
   virtual std::ostream         &print(std::ostream &os) const = 0;
 };
@@ -135,7 +137,7 @@ public:
 
   virtual Plane_3 transform(const Plane_3& p) const
   {
-      if (is_even())
+    if (is_even())
       return Plane_3(transform(p.point()),
                  transpose().inverse().transform(p.orthogonal_direction()));
     else
@@ -143,6 +145,10 @@ public:
                - transpose().inverse().transform(p.orthogonal_direction()));
   }
 
+  virtual bool has_rotation() const
+  {
+    return !(is_zero(t11) && is_zero(t12) && is_zero(t13) && is_zero(t21) && is_zero(t23) && is_zero(t31) && is_zero(t32));
+  }
 
   // Note that Aff_transformation is not defined yet,
   // so the following 6 functions have to be implemented
@@ -157,8 +163,8 @@ public:
   virtual bool is_even() const
   {
     return sign_of_determinant(t11, t12, t13,
-                                  t21, t22, t23,
-                                  t31, t32, t33) == POSITIVE;
+                               t21, t22, t23,
+                               t31, t32, t33) == POSITIVE;
   }
 
 

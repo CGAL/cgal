@@ -15,13 +15,29 @@
 
 #include <CGAL/license/Mesh_2.h>
 
-#include <CGAL/Meshes/Triangulation_mesher_level_traits_2.h>
-#include <CGAL/Mesh_2/Face_badness.h>
-#include <CGAL/Double_map.h>
+#include <CGAL/assertions.h>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
+#include <CGAL/Double_map.h>
+#include <CGAL/enum.h>
+#include <CGAL/functional.h>
+#if defined(CGAL_MESH_2_DEBUG_BAD_FACES) || defined(CGAL_MESH_2_DEBUG_REFINEMENT_POINTS) || \
+    defined(CGAL_MESH_2_DEBUG_INSERTIONS)
+#  include <CGAL/IO/io.h>
+#endif
+#include <CGAL/Mesh_2/Face_badness.h>
+#include <CGAL/Mesher_level_default_implementations.h>
+#include <CGAL/Mesher_level.h>
+#include <CGAL/Meshes/Triangulation_mesher_level_traits_2.h>
+#include <CGAL/Named_function_parameters.h>
 
-#include <string>
+#include <boost/iterator/transform_iterator.hpp>
+#include <boost/math/special_functions/next.hpp>
+
+#include <iostream>
 #include <sstream>
+#include <string>
+#include <type_traits>
+
 
 namespace CGAL {
 
@@ -159,13 +175,6 @@ public:
     Face_handle fh = bad_faces.front()->second;
     current_badness = is_bad(bad_faces.front()->first);
 
-    CGAL_assertion_code
-      (typename Geom_traits::Orientation_2 orientation =
-       triangulation_ref_impl().geom_traits().orientation_2_object()
-       );
-    CGAL_assertion(orientation(fh->vertex(0)->point(),
-                               fh->vertex(1)->point(),
-                               fh->vertex(2)->point()) != COLLINEAR );
     return fh;
   }
 
@@ -178,16 +187,19 @@ public:
   /** Returns the circumcenter of the face. */
   Point refinement_point_impl(const Face_handle& f) const
   {
-#ifdef CGAL_MESH_2_DEBUG_REFINEMENT_POINTS
-    std::cerr << "refinement_point_impl("
-              << "#" << f->vertex(0)->time_stamp() << ": " << f->vertex(0)->point() << ", "
-              << "#" << f->vertex(1)->time_stamp() << ": " << f->vertex(1)->point() << ", "
-              << "#" << f->vertex(2)->time_stamp() << ": " << f->vertex(2)->point() << ") = ";
     auto p = triangulation_ref_impl().circumcenter(f);
-    std::cerr << p << '\n';
-    return p;
+
+#ifdef CGAL_MESH_2_DEBUG_REFINEMENT_POINTS
+    auto v0 = f->vertex(0);
+    auto v1 = f->vertex(1);
+    auto v2 = f->vertex(2);
+    std::cerr << "refinement_point_impl(Face: "
+              << IO::oformat(v0, With_point_tag{}) << ", "
+              << IO::oformat(v1, With_point_tag{}) << ", "
+              << IO::oformat(v2, With_point_tag{}) << ") = "
+              << p << '\n';
 #endif // CGAL_MESH_2_DEBUG_BAD_FACES
-    return triangulation_ref_impl().circumcenter(f);
+    return p;
   }
 
   /** \todo ?? */
@@ -208,9 +220,32 @@ public:
       {
         if((*fh_it)->is_in_domain() )
           remove_bad_face(*fh_it);
-        (*fh_it)->set_in_domain(false);
+        if(zone.locate_type != Tr::VERTEX) {
+          (*fh_it)->set_in_domain(false);
+        }
       }
   }
+
+  Vertex_handle insert_impl(const Point& p, Zone& zone)
+  {
+#ifdef CGAL_MESH_2_DEBUG_INSERTIONS
+    std::cerr << "on face, insert(" << p << "): "
+              << zone.boundary_edges.size() << " edges." << std::endl;
+#endif
+    if( zone.locate_type == Tr::VERTEX )
+      return zone.fh->vertex(zone.i);
+    auto v = triangulation_ref_impl().
+      star_hole(p,
+                zone.boundary_edges.begin(),
+                zone.boundary_edges.end(),
+                zone.faces.begin(),
+                zone.faces.end());
+#ifdef CGAL_MESH_2_DEBUG_INSERTIONS
+    std::cerr << " inserted new vertex " << IO::oformat(v, With_point_tag{}) << std::endl;
+#endif // CGAL_MESH_2_DEBUG_INSERTIONS
+    return v;
+  }
+
 
   /** Restore markers in the star of `v`. */
   void after_insertion_impl(const Vertex_handle& v)
@@ -242,6 +277,11 @@ public:
    * be public.
    */
   void compute_new_bad_faces(Vertex_handle v);
+
+  // In the case of locate_type == VERTEX
+  template <typename Face_handles_iterator>
+  void compute_new_bad_faces(Face_handles_iterator begin,
+                             Face_handles_iterator end);
 
   /** Auxiliary function called to erase a face handle from the map. */
   void remove_bad_face(Face_handle fh);
@@ -282,9 +322,9 @@ push_in_bad_faces(Face_handle fh, const Quality& q)
 {
 #ifdef CGAL_MESH_2_DEBUG_BAD_FACES
   std::cerr << "push_in_bad_faces("
-            << fh->vertex(0)->point() << ","
-            << fh->vertex(1)->point() << ","
-            << fh->vertex(2)->point() << ")\n";
+            << IO::oformat(fh->vertex(0), With_point_tag{}) << ", "
+            << IO::oformat(fh->vertex(1), With_point_tag{}) << ", "
+            << IO::oformat(fh->vertex(2), With_point_tag{}) << ")\n";
 #endif // CGAL_MESH_2_DEBUG_BAD_FACES
   CGAL_assertion_code
     (typename Geom_traits::Orientation_2 orientation =
@@ -304,9 +344,9 @@ remove_bad_face(Face_handle fh)
 {
 #ifdef CGAL_MESH_2_DEBUG_BAD_FACES
   std::cerr << "bad_faces.erase("
-            << fh->vertex(0)->point() << ","
-            << fh->vertex(1)->point() << ","
-            << fh->vertex(2)->point() << ")\n";
+            << IO::oformat(fh->vertex(0), With_point_tag{}) << ", "
+            << IO::oformat(fh->vertex(1), With_point_tag{}) << ", "
+            << IO::oformat(fh->vertex(2), With_point_tag{}) << ")\n";
 #endif // CGAL_MESH_2_DEBUG_BAD_FACES
   bad_faces.erase(fh);
 }
@@ -322,11 +362,46 @@ compute_new_bad_faces(Vertex_handle v)
         {
           Quality q;
           Mesh_2::Face_badness badness = is_bad(fc, q);
-          if( badness != Mesh_2::NOT_BAD )
+          if( badness != Mesh_2::NOT_BAD ) {
+            if constexpr (std::is_floating_point_v<FT>) {
+              auto bbox = triangulation_ref_impl().geom_traits().construct_bbox_2_object();
+              auto box = bbox(fc->vertex(0)->point()) + bbox(fc->vertex(1)->point()) + bbox(fc->vertex(2)->point());
+              using boost::math::float_advance;
+              if(box.xmax() <= float_advance(box.xmin(), 4) &&
+                 box.ymax() <= float_advance(box.ymin(), 4))
+              {
+#ifdef CGAL_MESH_2_DEBUG_BAD_FACES
+                std::cerr << "Skipping bad face with too small bbox: "
+                          << IO::oformat(fc->vertex(0), With_point_tag{}) << ", "
+                          << IO::oformat(fc->vertex(1), With_point_tag{}) << ", "
+                          << IO::oformat(fc->vertex(2), With_point_tag{}) << "\n";
+                std::cerr << "Quality: " << IO::oformat(q) << "\n";
+#endif // CGAL_MESH_2_DEBUG_BAD_FACES
+                continue;
+              }
+            }
             push_in_bad_faces(fc, q);
+          }
         }
-    fc++;
-  } while(fc!=fcbegin);
+  } while(++fc!=fcbegin);
+}
+
+template <typename Tr, typename Criteria, typename Previous>
+template <typename Face_handles_iterator>
+void Refine_faces_base<Tr, Criteria, Previous>::
+compute_new_bad_faces(Face_handles_iterator fit,
+                      Face_handles_iterator end)
+{
+  for(; fit != end; ++fit) {
+    if(!triangulation_ref_impl().is_infinite(*fit)) {
+      if((*fit)->is_in_domain()) {
+        Quality q;
+        Mesh_2::Face_badness badness = is_bad(*fit, q);
+        if(badness != Mesh_2::NOT_BAD)
+          push_in_bad_faces(*fit, q);
+      }
+    }
+  }
 }
 
 template <typename Tr, typename Criteria, typename Previous>

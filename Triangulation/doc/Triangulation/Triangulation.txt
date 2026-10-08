@@ -401,7 +401,7 @@ unique triangulation even in these cases.
 When a new point `p` is inserted into a Delaunay triangulation, the
 full cells whose circumscribing ball contains `p` are said to
 <I>be in conflict</I> with point `p`. Note that the circumscribing ball
-of an infinite full cell is the empty half-space bounded by the affine hull
+of an infinite full cell is the empty halfspace bounded by the affine hull
 of the finite facet of this cell. The set of full cells that are in
 conflict with `p` form the <I>conflict zone</I>. The full cells
 in the conflict zone are removed, leaving a hole that contains `p`. That

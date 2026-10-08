@@ -469,7 +469,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandleSimultaneousEdgeEvent( Vertex_h
 
   // The code above corrects the links for vertices aA/aB to the erased halfedges lOA and lIA.
   // However, any of these vertices (aA/aB) may be one of the twin vertices of a split event.
-  // If that's the case, the erased halfedge may be be linked to a 'couple' of those vertices.
+  // If that's the case, the erased halfedge may be linked to a 'couple' of those vertices.
   // This situation is corrected below:
 
   if ( !lOAV->has_infinite_time() && lOAV != aA && lOAV != aB )
@@ -2104,7 +2104,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::EnforceSimpleConnectedness()
   // For each face with hole(s), create the extra halfedges to bridge the gap between
   // the skeleton face's border and the holes by shooting a ray from a vertex hole to a halfedge
   //   .first is the source of the ray
-  //   .second is th event creating the intersection of the ray with an halfedge
+  //   .second is th event creating the intersection of the ray with a halfedge
 
   // Collect first for all faces, apply later because one might split
   std::vector<std::pair<Halfedge_handle, EventPtr> > artifical_events;

@@ -14,7 +14,7 @@ int main()
   _test_sign_at(ak1);
   _test_critical_points(ak1);
   _test_compare_Root_for_circles(ak1);
-  _test_constuctor(ak1);
+  _test_constructor(ak1);
 
   return 0;
 }

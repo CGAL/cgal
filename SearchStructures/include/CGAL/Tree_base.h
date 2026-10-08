@@ -38,10 +38,10 @@ struct Tree_node_base {
   Node *left_link;
   Node *right_link;
   Tree_node_base()
-    : parent_link(0), left_link(0), right_link(0)
+    : parent_link(nullptr), left_link(nullptr), right_link(nullptr)
   {}
   Tree_node_base(Node* ll, Node* rl)
-    : parent_link(0), left_link(ll), right_link(rl)
+    : parent_link(nullptr), left_link(ll), right_link(rl)
   {}
 };
 
@@ -80,11 +80,11 @@ public:
   // 'make_tree()' returns an object which can be used as argument to 'delete'
   virtual bool make_tree(const typename std::list<C_Data>::iterator& beg,
                          const typename std::list<C_Data>::iterator& end,
-                         lit *dummy=0) =0;
+                         lit *dummy= nullptr) =0;
 #ifdef stlvector
   virtual bool make_tree(const typename std::vector<C_Data>::iterator& beg,
                          const typename std::vector<C_Data>::iterator& end,
-                         vit *dummy=0) =0;
+                         vit *dummy= nullptr) =0;
 #endif
 #ifdef carray
   virtual bool make_tree(const C_Data *beg,
@@ -92,10 +92,10 @@ public:
 #endif
   virtual std::back_insert_iterator< std::list<C_Data> >
     window_query(C_Window const &win,  std::back_insert_iterator<
-                 std::list<C_Data> > out,lbit *dummy=0 ) = 0;
+                 std::list<C_Data> > out,lbit *dummy= nullptr ) = 0;
   virtual std::back_insert_iterator< std::vector<C_Data> >
     window_query(C_Window const &win,  std::back_insert_iterator<
-                  std::vector<C_Data> > out,vbit *dummy=0) = 0;
+                  std::vector<C_Data> > out,vbit *dummy= nullptr) = 0;
 #ifdef carray
   virtual C_Data * window_query( C_Window const &win,
                                 C_Data * out) = 0;
@@ -104,14 +104,14 @@ public:
   typedef std::ostream_iterator< C_Data> oit;
   virtual  std::ostream_iterator< C_Data> window_query( C_Window const &win,
                                      std::ostream_iterator< C_Data> out,
-                                        oit *dummy=0               ) = 0;
+                                        oit *dummy= nullptr               ) = 0;
 #endif
   virtual  std::back_insert_iterator< std::list< C_Data> >
     enclosing_query( C_Window const &win,  std::back_insert_iterator<
-                     std::list< C_Data> > out, lbit *dummy=0 ) = 0;
+                     std::list< C_Data> > out, lbit *dummy= nullptr ) = 0;
   virtual  std::back_insert_iterator< std::vector< C_Data> >
     enclosing_query( C_Window const &win,  std::back_insert_iterator<
-                     std::vector< C_Data> > out,vbit *dummy=0 ) = 0;
+                     std::vector< C_Data> > out,vbit *dummy= nullptr ) = 0;
 #ifdef carray
   virtual   C_Data * enclosing_query( C_Window const &win,
                                     C_Data *out) = 0;
@@ -119,7 +119,7 @@ public:
 #ifdef ostreamiterator
   virtual  std::ostream_iterator< C_Data> enclosing_query( C_Window const &win,
                                            std::ostream_iterator< C_Data> out,
-                                           oit *dummy=0) = 0;
+                                           oit *dummy= nullptr) = 0;
 #endif
   virtual bool is_inside( C_Window const &win,
                           C_Data const& object) const =0;
@@ -140,20 +140,20 @@ public:
   // Construct a factory with the given factory as sublayer
   Tree_anchor() {}
   virtual ~Tree_anchor(){}
-  Tree_base<C_Data, C_Window> *clone() const { return new Tree_anchor(); }
+  Tree_base<C_Data, C_Window> *clone() const { return const_cast<Tree_anchor<C_Data, C_Window> *>(this); }
   typedef Tree_base<C_Data, C_Window> tbt;
 //  Tree_base_type *clone() const { return new Tree_anchor(); }
 
   bool make_tree(const typename std::list< C_Data>::iterator& /*beg*/,
                  const typename std::list< C_Data>::iterator& /*end*/,
-                 typename tbt::lit * =0)
+                 typename tbt::lit * = nullptr)
   {
     return true;
   }
 #ifdef stlvector
   bool make_tree(const typename std::vector< C_Data>::iterator& /*beg*/,
                  const typename std::vector< C_Data>::iterator& /*end*/,
-                 typename tbt::vit * =0)
+                 typename tbt::vit * = nullptr)
   {
     return true;
   }
@@ -169,14 +169,14 @@ public:
       window_query(
        C_Window const &,
        std::back_insert_iterator< std::list< C_Data> > out,
-       typename tbt::lbit * =0){
+       typename tbt::lbit * = nullptr){
     return out;
   }
 
   std::back_insert_iterator< std::vector< C_Data> >
       window_query( C_Window const &,
                     std::back_insert_iterator< std::vector< C_Data> > out,
-                    typename tbt::vbit * =0){
+                    typename tbt::vbit * = nullptr){
     return out;
   }
 #ifdef carray
@@ -188,18 +188,18 @@ public:
 #ifdef ostreamiterator
    std::ostream_iterator< C_Data> window_query( C_Window const &,
                                         std::ostream_iterator< C_Data> out,
-                                        typename tbt::oit *dummy=0){
+                                        typename tbt::oit *dummy= nullptr){
     return out;
   }
 #endif
    std::back_insert_iterator< std::list< C_Data> > enclosing_query( C_Window const &,
                                    std::back_insert_iterator< std::list< C_Data> > out,
-                                   typename tbt::lbit * =0){
+                                   typename tbt::lbit * = nullptr){
     return out;
   }
    std::back_insert_iterator< std::vector< C_Data> > enclosing_query( C_Window const &,
                                    std::back_insert_iterator< std::vector< C_Data> > out,
-                                   typename tbt::vbit * =0){
+                                   typename tbt::vbit * = nullptr){
     return out;
   }
 #ifdef carray
@@ -211,7 +211,7 @@ public:
 #ifdef ostreamiterator
    std::ostream_iterator< C_Data> enclosing_query( C_Window const &,
                                            std::ostream_iterator< C_Data> out,
-                                           typename tbt::oit *dummy=0){
+                                           typename tbt::oit *dummy= nullptr){
     return out;
   }
 #endif

@@ -1,4 +1,5 @@
 #include <CGAL/Simple_cartesian.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/IO/GOCAD.h>
 #include <CGAL/IO/polygon_soup_io.h>
@@ -10,6 +11,53 @@
 typedef CGAL::Simple_cartesian<double>                Kernel;
 typedef Kernel::Point_3                               Point;
 typedef std::vector<std::size_t>                      Face;
+
+template <typename PointType, typename PolygonType>
+void read(const std::string& fname,
+          std::size_t v, std::size_t f)
+{
+  std::cout << "Reading "<< fname << std::endl;
+  std::ifstream input(fname);
+  assert(input);
+
+  std::cout << "Types: " << std::endl;
+  std::cout << typeid(PointType).name() << std::endl;
+  std::cout << typeid(PolygonType).name() << std::endl;
+
+  std::cout << "Expecting " << v << " vertices and " << f << " triangles" << std::endl;
+
+  std::vector<PointType> points;
+  std::vector<PolygonType> faces;
+  bool ok = CGAL::IO::read_GOCAD(input, points, faces);
+
+  std::cout << "Read " << points.size() << " vertices and " << faces.size() << " triangles" << std::endl;
+
+  assert(ok);
+  assert(points.size() == v);
+  assert(faces.size() == f);
+}
+
+void test_types()
+{
+  // bunch of types to test
+  typedef std::array<double, 3>                                       Point_type_1;
+  typedef CGAL::Exact_predicates_exact_constructions_kernel::Point_3  Point_type_2;
+  typedef std::basic_string<double>                                   Point_type_3;
+
+  typedef std::array<int, 3>                                          Polygon_type_1;
+  typedef std::vector<int>                                            Polygon_type_2;
+  typedef std::basic_string<int>                                      Polygon_type_3;
+
+  read<Point_type_1, Polygon_type_1>("data/2016206_MHT_surface.ts", 12491, 24191);
+  read<Point_type_1, Polygon_type_2>("data/2016206_MHT_surface.ts", 12491, 24191);
+  read<Point_type_1, Polygon_type_3>("data/2016206_MHT_surface.ts", 12491, 24191);
+  read<Point_type_2, Polygon_type_1>("data/2016206_MHT_surface.ts", 12491, 24191);
+  read<Point_type_2, Polygon_type_2>("data/2016206_MHT_surface.ts", 12491, 24191);
+  read<Point_type_2, Polygon_type_3>("data/2016206_MHT_surface.ts", 12491, 24191);
+  read<Point_type_3, Polygon_type_1>("data/2016206_MHT_surface.ts", 12491, 24191);
+  read<Point_type_3, Polygon_type_2>("data/2016206_MHT_surface.ts", 12491, 24191);
+  read<Point_type_3, Polygon_type_3>("data/2016206_MHT_surface.ts", 12491, 24191);
+}
 
 int main(int argc, char** argv)
 {
@@ -63,6 +111,8 @@ int main(int argc, char** argv)
 
   assert(points.size() == ptn);
   assert(polygons.size() == pln);
+
+  test_types();
 
   std::cout << "Done!" << std::endl;
   return EXIT_SUCCESS;

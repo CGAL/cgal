@@ -88,6 +88,7 @@ typedef typename Map::SHalfloop_const_handle SHalfloop_const_handle;
 typedef typename Map::SHalfloop_const_iterator SHalfloop_const_iterator;
 typedef typename Map::SFace_const_handle SFace_const_handle;
 typedef typename Map::SFace_const_iterator SFace_const_iterator;
+typedef typename Map::Object_handle Object_handle;
 
 /*{\Mtext Local types are handles, iterators and circulators of the
 following kind: |SVertex_handle|, |SVertex_iterator|, |SHalfedge_handle|,
@@ -192,7 +193,7 @@ SHalfedge_around_svertex_const_circulator
 
 SFace_cycle_const_iterator sface_cycles_begin(SFace_const_handle f) const
 /*{\Mop returns an iterator for all bounding face cycles of |f|.
-The iterator is is convertible to |SVertex_const_handle|,
+The iterator is convertible to |SVertex_const_handle|,
 |SHalfloop_const_handle|, or |SHalfedge_const_handle|.}*/
 { return f->boundary_entry_objects_.begin(); }
 

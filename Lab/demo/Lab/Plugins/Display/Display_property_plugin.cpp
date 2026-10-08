@@ -1115,9 +1115,9 @@ private:
 
     QString sid;
     if(std::is_same<Simplex, vertex_descriptor>::value)
-      sid = QString("v%1").arg(extremum_s);
+      sid = QString("v%1").arg(static_cast<int>(extremum_s));
     else
-      sid = QString("f%1").arg(extremum_s);
+      sid = QString("f%1").arg(static_cast<int>(extremum_s));
 
     face_descriptor unused_fd;
     Point_3 unused_p;

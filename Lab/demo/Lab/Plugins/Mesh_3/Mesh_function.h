@@ -98,17 +98,17 @@ class Mesh_function
 public:
   Mesh_function(C3t3& c3t3, Domain* domain, const Mesh_parameters& p);
 
-  ~Mesh_function();
+  ~Mesh_function() override;
 
   // Launch
-  virtual void launch();
+  void launch() override;
 
   // Stop
-  virtual void stop();
+  void stop() override;
 
   // Logs
-  virtual QStringList parameters_log() const;
-  virtual QString status(double time_period) const;
+  QStringList parameters_log() const override;
+  QString status(double time_period) const override;
 
 private:
   typedef typename Domain::Point_3                  Point_3;

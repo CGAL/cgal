@@ -16,7 +16,7 @@
 #include <CGAL/boost/graph/properties_TriMesh_ArrayKernelT.h>
 #include <OpenMesh/Core/Mesh/TriMesh_ArrayKernelT.hh>
 
-#define OPEN_MESH_CLASS OpenMesh::TriMesh_ArrayKernelT<K>
+#define CGAL_OPEN_MESH_CLASS OpenMesh::TriMesh_ArrayKernelT<K>
 #include <CGAL/boost/graph/graph_traits_OpenMesh.h>
 
 #endif // CGAL_BOOST_GRAPH_TRAITS_TRIMESH_ARRAYKERNELT_H

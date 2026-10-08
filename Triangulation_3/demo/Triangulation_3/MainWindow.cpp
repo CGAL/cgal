@@ -209,31 +209,3 @@ void MainWindow::on_actionClear_Scene_triggered()
   // update viewer
   Q_EMIT( sceneChanged() );
 }
-
-void MainWindow::popupAboutCGAL()
-{
-  // read contents from .html file
-  QFile about_CGAL(":/documentation/documentation/about_CGAL.html");
-  about_CGAL.open(QIODevice::ReadOnly|QIODevice::Text);
-  QString about_CGAL_txt = QTextStream(&about_CGAL).readAll();
-
-  // popup a message box
-  QMessageBox mb(QMessageBox::NoIcon,
-                 tr("About CGAL..."),
-                 about_CGAL_txt,
-                 QMessageBox::Ok,
-                 this);
-
-  // set links to be accessible by mouse or keyboard
-  QLabel* mb_label = mb.findChild<QLabel*>("qt_msgbox_label");
-  if(mb_label) {
-    mb_label->setTextInteractionFlags(mb_label->textInteractionFlags() |
-                                      ::Qt::LinksAccessibleByMouse |
-                                      ::Qt::LinksAccessibleByKeyboard);
-  } else {
-    std::cerr << "Cannot find child \"qt_msgbox_label\" in QMessageBox\n"
-              << "  with Qt version " << QT_VERSION_STR << "!\n";
-  }
-
-  mb.exec();
-}

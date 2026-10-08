@@ -85,7 +85,7 @@ public:
 
   int degree;        // This is the nominal degree (an upper bound
   // on the true degree)
-  NT * coeff;        // coeff is an array of size degree+1;
+  std::vector<NT> coeff;        // coeff is an array of size degree+1;
   //        This remark holds even when degree = -1.
   // Notes:
   // (1) coeff[i] is the coefficient of x^i
@@ -166,7 +166,7 @@ public:
   NT getCoeffi(int i) const;
   const NT & getLeadCoeff() const;      // get TRUE leading coefficient
   const NT & getTailCoeff() const;      // get last non-zero coefficient
-  NT** getCoeffs() ;                // get all coefficients
+  NT* getCoeffs() ;                     // get all coefficients
   const NT& getCoeff(int i) const;      // Get single coefficient of X^i
                                         // nullptr pointer if invalid i
   // Set functions
@@ -389,11 +389,14 @@ const NT & Polynomial<NT>::getTailCoeff() const {
   return *zero;
 }
 
+
 template < class NT >
 CORE_INLINE
-NT** Polynomial<NT>::getCoeffs() {
-  return &coeff;
+NT* Polynomial<NT>::getCoeffs() {
+  return coeff.data();
 }
+
+
 template < class NT >
 CORE_INLINE
 const NT& Polynomial<NT>::getCoeff(int i) const {

@@ -275,12 +275,12 @@ int operator()( const Polynomial&           poly,
                                   facmul.begin(),facmul.end(),
                                   oi_poly);
 
-    int numer_of_real_roots =
+    int number_of_real_roots =
       gen_agebraic_reals_with_mults(sqffac.begin(),sqffac.end(),
                                     facmul.begin(),facmul.end(),
                                     oi_root,
                                     oi_mult);
-    return numer_of_real_roots;
+    return number_of_real_roots;
           }
            };
 

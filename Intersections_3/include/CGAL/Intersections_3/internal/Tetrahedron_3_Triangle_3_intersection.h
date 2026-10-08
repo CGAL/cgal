@@ -15,16 +15,18 @@
 #ifndef CGAL_INTERNAL_INTERSECTIONS_3_TETRAHEDRON_3_TRIANGLE_3_INTERSECTIONS_H
 #define CGAL_INTERNAL_INTERSECTIONS_3_TETRAHEDRON_3_TRIANGLE_3_INTERSECTIONS_H
 
+#include <CGAL/enum.h>
+#include <CGAL/Intersection_traits.h>
 #include <CGAL/Intersections_3/internal/Line_3_Plane_3_intersection.h>
-
 #include <CGAL/kernel_basic.h>
+#include <CGAL/Object.h>
 
-#include <algorithm>
-#include <iterator>
-#include <list>
-#include <utility>
-#include <vector>
+#include <array>
 #include <bitset>
+#include <cstddef>
+#include <cstdint>
+#include <optional>
+#include <vector>
 
 namespace CGAL {
 namespace Intersections {

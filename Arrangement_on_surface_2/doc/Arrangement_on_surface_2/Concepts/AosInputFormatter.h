@@ -6,6 +6,7 @@
  * specific format.
  *
  * \cgalHasModelsBegin
+ * \cgalHasModels{DefaultConstructible}
  * \cgalHasModels{CGAL::Arr_text_formatter<Arrangement>}
  * \cgalHasModels{CGAL::Arr_face_extended_text_formatter<Arrangement>}
  * \cgalHasModels{CGAL::Arr_extended_dcel_text_formatter<Arrangement>}
@@ -42,13 +43,9 @@ public:
   /// \name Creation
   /// @{
 
-  /*! default constructor.
-   */
-  Arr_in_formatter();
-
   /*! constructs a formatter that reads from `is`.
    */
-  Arr_in_formatter(std::istream& is);
+  AosInputFormatter(std::istream& is);
 
   /*! directs `inf` to read from `is`.
    */
@@ -142,7 +139,7 @@ public:
    */
   void read_outer_ccbs_begin();
 
-  /*! reads a message indicating the end of of the container of outer CCBs of
+  /*! reads a message indicating the end of the container of outer CCBs of
    * the current face.
    */
   void read_outer_ccbs_end();
@@ -152,7 +149,7 @@ public:
    */
   void read_inner_ccbs_begin();
 
-  /*! reads a message indicating the end of of the container of inner CCBs of the
+  /*! reads a message indicating the end of the container of inner CCBs of the
    * current face.
    */
   void read_inner_ccbs_end();

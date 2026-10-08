@@ -2,3 +2,4 @@
 
 PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - 2D Conforming Triangulations and Meshes"
 INPUT += ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/lloyd_optimize_mesh_2.h
+INPUT += ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/IO/write_VTU.h

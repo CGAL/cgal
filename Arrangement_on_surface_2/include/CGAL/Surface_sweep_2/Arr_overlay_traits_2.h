@@ -74,8 +74,6 @@ public:
   typedef typename Gt2::Split_2                     Base_split_2;
   typedef typename Gt2::Equal_2                     Base_equal_2;
 
-  typedef typename Gt2::Has_do_intersect_category   Has_do_intersect_category;
-
   typedef typename internal::Arr_complete_left_side_category<Gt2>::Category
                                                         Left_side_category;
   typedef typename internal::Arr_complete_bottom_side_category<Gt2>::Category
@@ -815,7 +813,7 @@ public:
   Compare_y_at_x_2 compare_y_at_x_2_object() const
   { return (Compare_y_at_x_2(m_base_traits->compare_y_at_x_2_object())); }
 
-  /*! A functor that compares compares the y-coordinates of two x-monotone
+  /*! A functor that compares the y-coordinates of two x-monotone
    * curves immediately to the right of their intersection point.
    */
   class Compare_y_at_x_right_2 {

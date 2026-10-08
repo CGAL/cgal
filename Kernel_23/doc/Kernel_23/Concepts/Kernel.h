@@ -35,9 +35,6 @@
   \sa `CGAL::Ambient_dimension`
   \sa `CGAL::Feature_dimension`
   \sa `CGAL::Kernel_traits`
-
-  \todo `Kernel::ConstructUnitNormal_3` as no model in the concept
-  \todo `Kernel::CompareSquaredRadius_3` as no model in the concept
 */
 class Kernel {
 public:
@@ -1464,6 +1461,12 @@ public:
     a model of `Kernel::LessSignedDistanceToPlane_3`
   */
   typedef unspecified_type Less_signed_distance_to_plane_3;
+
+
+  /*!
+    a model of `Kernel::CompareProjectionAlongDirection_3`
+  */
+  typedef unspecified_type Compare_projection_along_direction_3;
 
   /*!
     a model of `Kernel::LessDistanceToPoint_3`

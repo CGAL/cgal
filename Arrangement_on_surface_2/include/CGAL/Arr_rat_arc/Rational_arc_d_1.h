@@ -548,7 +548,7 @@ public:
     }
     else
     {
-      // The y-coodinate is unbounded, but we can set its sign.
+      // The y-ccoordinate is unbounded, but we can set its sign.
       std::pair<CGAL::Sign, CGAL::Sign>  signs = _analyze_near_pole(x_s);
       const CGAL::Sign sign_s = (dir_right ? signs.second : signs.first);
 
@@ -649,7 +649,7 @@ public:
     }
     else
     {
-      // The y-coodinate is unbounded, but we can set its sign.
+      // The y-coordinate is unbounded, but we can set its sign.
       std::pair<CGAL::Sign, CGAL::Sign>  signs = _analyze_near_pole(x_s);
       const CGAL::Sign sign_s =
         ((_info & IS_DIRECTED_RIGHT) != 0) ? signs.second : signs.first;
@@ -671,7 +671,7 @@ public:
     }
     else
     {
-      // The y-coodinate is unbounded, but we can set its sign.
+      // The y-coordinate is unbounded, but we can set its sign.
       std::pair<CGAL::Sign, CGAL::Sign>  signs = _analyze_near_pole(x_t);
       const CGAL::Sign sign_t =
         ((_info & IS_DIRECTED_RIGHT) != 0) ? signs.first : signs.second;

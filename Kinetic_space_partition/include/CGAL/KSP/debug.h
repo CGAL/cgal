@@ -608,7 +608,7 @@ public:
       stream << polygons[k].size() << " ";
       for (std::size_t j = 0; j < polygons[k].size(); ++j)
         stream << i++ << " ";
-      stream << colors[k] << std::endl;
+      stream << int(colors[k].r()) << " " << int(colors[k].g()) << " " << int(colors[k].b()) << " " << std::endl;
     }
     save(stream, file_name + ".ply");
   }
@@ -791,7 +791,6 @@ private:
       "property uchar red" << std::endl <<
       "property uchar green" << std::endl <<
       "property uchar blue" << std::endl <<
-      "property uchar alpha" << std::endl <<
       "end_header" << std::endl;
   }
 

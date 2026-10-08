@@ -60,7 +60,7 @@ public:
   /// the base curve.
   typedef typename Base_traits_2::Curve_2               Base_curve_2;
 
-  /// the base \f$x\f$-monotone curve curve.
+  /// the base \f$x\f$-monotone curve.
   typedef typename Base_traits_2::X_monotone_curve_2    Base_x_monotone_curve_2;
 
   /// the point type.

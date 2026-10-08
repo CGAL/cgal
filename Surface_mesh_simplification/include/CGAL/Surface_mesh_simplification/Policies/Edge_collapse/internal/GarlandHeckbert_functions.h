@@ -17,7 +17,12 @@
 #include <CGAL/Surface_mesh_simplification/internal/Common.h>
 #include <CGAL/boost/graph/helpers.h>
 
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
+
 #include <CGAL/Origin.h>
+
+#include <Eigen/Dense>
+#include <Eigen/Eigenvalues>
 
 #include <iostream>
 
@@ -236,8 +241,8 @@ construct_optimal_point_singular(const typename GarlandHeckbert_matrix_types<Geo
   }
   else
   {
+#if 1
     Col_4 opt_pt;
-
     const Col_4 p1mp0 = p1 - p0;
     const FT a = (p1mp0.transpose() * quadric * p1mp0)(0, 0);
     const FT b = 2 * (p0.transpose() * quadric * p1mp0)(0, 0);
@@ -271,6 +276,26 @@ construct_optimal_point_singular(const typename GarlandHeckbert_matrix_types<Geo
         opt_pt = p0 + ext_t * (p1 - p0);
       }
     }
+
+#else
+    /*
+    Note:
+    A simpler code for the case of a non-invertible matrix
+    Experiments show that the results are identical to the version above in the majority of the cases, and nearly identical runtime
+    Therefore old case was kept.
+    */
+
+    // low rank -> svd pseudo-inverse
+    Eigen::JacobiSVD<Eigen::MatrixXd> svd_decomp(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
+    svd_decomp.setThreshold(1e-5);
+
+    opt_pt(0) = mean.x();
+    opt_pt(1) = mean.y();
+    opt_pt(2) = mean.z();
+    opt_pt(3) = 1.;
+
+    opt_pt += svd_decomp.solve(Col_4(0,0,0,1) - mat * opt_pt);
+#endif
 
     return opt_pt;
   }
@@ -507,6 +532,45 @@ construct_prob_triangle_quadric_from_face(typename boost::graph_traits<TriangleM
 
   return ret;
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// LINE QUADRICS (Liu et al. 2025)
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+template <typename GeomTraits>
+typename GarlandHeckbert_matrix_types<GeomTraits>::Mat_4
+construct_line_quadric_from_normal(const typename GeomTraits::Vector_3& normal,
+                                   const typename GeomTraits::Point_3& point,
+                                   const GeomTraits& gt)
+{
+  typedef typename GeomTraits::Vector_3 Vector_3;
+
+  auto cp = gt.construct_cross_product_vector_3_object();
+  auto plane = gt.construct_plane_3_object();
+  auto c_point = gt.construct_point_3_object();
+  auto base= gt.construct_base_vector_3_object();
+
+  Vector_3 x = base(plane(c_point(0,0,0),normal), 1);
+  CGAL::Polygon_mesh_processing::internal::normalize(x, gt);
+  Vector_3 y = cp(x,normal);
+
+  return construct_classic_plane_quadric_from_normal(x, point, gt)+construct_classic_plane_quadric_from_normal(y, point, gt);
+}
+
+/*
+template <typename TriangleMesh, typename VertexPointMap, typename GeomTraits>
+typename GarlandHeckbert_matrix_types<GeomTraits>::Mat_4
+construct_line_quadric_from_vertex(const typename boost::graph_traits<TriangleMesh>::vertex_descriptor v,
+                                   const TriangleMesh& mesh,
+                                   const VertexPointMap vpm,
+                                   const GeomTraits& gt)
+{
+  typedef typename GeomTraits::Vector_3 Vector_3;
+
+  const Vector_3 normal = Polygon_mesh_processing::compute_vertex_normal(v, mesh, parameters::geom_traits(gt).vertex_point_map(vpm));
+  return construct_line_quadric_from_normal(normal, get(vpm, v), gt);
+}
+*/
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// PROB VARIANCE

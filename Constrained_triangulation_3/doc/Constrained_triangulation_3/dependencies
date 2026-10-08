@@ -3,6 +3,8 @@ BGL
 Kernel_23
 Manual
 Polygon_mesh_processing
+PMP_Boolean_operations
+PMP_Remeshing
 Property_map
 SMDS_3
 STL_Extension
