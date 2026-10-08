@@ -175,25 +175,36 @@ void test_authorized_options()
   auto np_permissive = np_ko.do_not_check_allowed_np(true);
   auto np_default = CGAL::parameters::default_values();
 
+  static_assert(decltype(np_ok1)::number_of_parameters == 3);
+  static_assert(decltype(np_ok2)::number_of_parameters == 3);
+  static_assert(decltype(np_ko)::number_of_parameters == 4);
+  static_assert(decltype(np_permissive)::number_of_parameters == 5);
+  static_assert(decltype(np_default)::number_of_parameters == 1);
 
-  static_assert(CGAL::parameters::authorized_options<CGAL::internal_np::vertex_point_t,
+  static_assert(CGAL::parameters::authorized_options<decltype(np_default),
+                                                     CGAL::internal_np::vertex_point_t,
                                                      CGAL::internal_np::edge_index_t,
-                                                     CGAL::internal_np::face_index_t>(np_default));
-  static_assert(CGAL::parameters::authorized_options<CGAL::internal_np::vertex_point_t,
+                                                     CGAL::internal_np::face_index_t>());
+  static_assert(CGAL::parameters::authorized_options<decltype(np_ok1),
+                                                     CGAL::internal_np::vertex_point_t,
                                                      CGAL::internal_np::edge_index_t,
-                                                     CGAL::internal_np::face_index_t>(np_ok1));
-  static_assert(CGAL::parameters::authorized_options<CGAL::internal_np::vertex_point_t,
+                                                     CGAL::internal_np::face_index_t>());
+  static_assert(CGAL::parameters::authorized_options<decltype(np_ok2),
+                                                     CGAL::internal_np::vertex_point_t,
                                                      CGAL::internal_np::edge_index_t,
-                                                     CGAL::internal_np::face_index_t>(np_ok2));
-  static_assert(!CGAL::parameters::authorized_options<CGAL::internal_np::vertex_point_t,
+                                                     CGAL::internal_np::face_index_t>());
+  static_assert(!CGAL::parameters::authorized_options<decltype(np_ko),
+                                                      CGAL::internal_np::vertex_point_t,
                                                       CGAL::internal_np::edge_index_t,
-                                                      CGAL::internal_np::face_index_t>(np_ko));
-  static_assert(CGAL::parameters::authorized_options<CGAL::internal_np::vertex_point_t,
+                                                      CGAL::internal_np::face_index_t>());
+  static_assert(CGAL::parameters::authorized_options<decltype(np_permissive),
+                                                     CGAL::internal_np::vertex_point_t,
                                                      CGAL::internal_np::edge_index_t,
-                                                     CGAL::internal_np::face_index_t>(np_permissive));
-  static_assert(CGAL::parameters::authorized_options<CGAL::internal_np::vertex_point_t,
+                                                     CGAL::internal_np::face_index_t>());
+  static_assert(CGAL::parameters::authorized_options<decltype(np_ko.do_not_check_allowed_np(true)),
+                                                     CGAL::internal_np::vertex_point_t,
                                                      CGAL::internal_np::edge_index_t,
-                                                     CGAL::internal_np::face_index_t>(np_ko.do_not_check_allowed_np(true)));
+                                                     CGAL::internal_np::face_index_t>());
 
   CGAL_CHECK_AUTHORIZED_NAMED_PARAMETERS(np_ok1, vertex_point_t, edge_index_t, face_index_t);
   CGAL_CHECK_AUTHORIZED_NAMED_PARAMETERS(np_ok2, vertex_point_t, edge_index_t, face_index_t);

@@ -12,16 +12,18 @@
 #ifndef CGAL_NAMED_FUNCTION_PARAMETERS_H
 #define CGAL_NAMED_FUNCTION_PARAMETERS_H
 
-#include <CGAL/type_traits.h>
+#include <array>
 #ifndef CGAL_NO_STATIC_ASSERTION_TESTS
 #include <CGAL/basic.h>
 #endif
 
-#include <CGAL/tags.h>
 #include <CGAL/STL_Extension/internal/mesh_option_classes.h>
+#include <CGAL/tags.h>
+#include <CGAL/type_traits.h>
 
 #include <boost/mpl/has_xxx.hpp>
 
+#include <cstddef>
 #include <functional>
 #include <type_traits>
 #include <utility>
@@ -42,7 +44,10 @@
 namespace CGAL {
 namespace internal_np{
 
-struct No_property {};
+struct No_property {
+  static const std::size_t number_of_parameters = 0;
+};
+
 struct Param_not_found {};
 
 template <typename T>
@@ -78,6 +83,10 @@ namespace internal_np {
 template <typename T, typename Tag, typename Base>
 struct Named_params_impl : Base
 {
+  static constexpr std::size_t number_of_parameters = 1 + Base::number_of_parameters;
+  using tag = Tag;
+  using base = Base;
+
   typename std::conditional<std::is_copy_constructible<T>::value,
                             T, std::reference_wrapper<const T> >::type v; // copy of the parameter if copyable
   constexpr Named_params_impl(const T& v, const Base& b)
@@ -95,6 +104,9 @@ struct Named_params_impl : Base
 template <typename T, typename Tag>
 struct Named_params_impl<T, Tag, No_property>
 {
+  static constexpr std::size_t number_of_parameters = 1;
+  using tag = Tag;
+
   typename std::conditional<std::is_copy_constructible<T>::value,
                             T, std::reference_wrapper<const T> >::type v; // copy of the parameter if copyable
   constexpr Named_params_impl(const T& v)
@@ -234,8 +246,11 @@ template <typename T, typename Tag, typename Base>
 struct Named_function_parameters
   : internal_np::Named_params_impl<T, Tag, Base>
 {
-  typedef internal_np::Named_params_impl<T, Tag, Base> base;
-  typedef Named_function_parameters<T, Tag, Base> self;
+  using base = internal_np::Named_params_impl<T, Tag, Base>;
+  using self = Named_function_parameters<T, Tag, Base>;
+  using tag = Tag;
+
+  static constexpr std::size_t number_of_parameters = base::number_of_parameters;
 
   using base::parameter;
   using base::has_parameter;
@@ -321,7 +336,7 @@ struct Named_function_parameters
   }
 
   // typedef for SFINAE
-  typedef int CGAL_Named_function_parameters_class;
+  using CGAL_Named_function_parameters_class = int;
 };
 
 namespace parameters {
@@ -398,51 +413,41 @@ using is_default_parameter = Boolean_tag<!NamedParameters::has_parameter(Paramet
 namespace authorized_parameters_impl
 {
 
-template <class ... Tag>
-struct Tag_wrapper{};
-
-template <class Tag>
-constexpr
-bool is_tag_present(Tag_wrapper<Tag>, Tag)
-{
-  return true;
-}
-
-template <class TagAllowed, class Tag>
-constexpr
-bool is_tag_present(Tag_wrapper<TagAllowed>, Tag)
-{
-  return false;
-}
-
-template <class TagAllowed, class ... TagsAllowed, class Tag, class = std::enable_if_t<sizeof...(TagsAllowed) >= 1>>
-constexpr
-bool is_tag_present(Tag_wrapper<TagAllowed, TagsAllowed...>, Tag)
-{
-  if (std::is_same_v<TagAllowed, Tag>)
-    return true;
-  else
-    return is_tag_present(Tag_wrapper<TagsAllowed...>(), Tag());
-}
-
-template<class NP, class ... TagsAllowed>
-struct Authorized_options_rec;
-
-template <class ... TagsAllowed, class T, class Tag, class Base>
-struct Authorized_options_rec< Named_function_parameters<T, Tag, Base>, TagsAllowed...>
-{
-  static constexpr bool value =
-    std::is_same_v<Tag, internal_np::do_not_check_allowed_np_t> ||
-    (is_tag_present(Tag_wrapper<TagsAllowed...>(), Tag()) || Authorized_options_rec<Base, TagsAllowed...>::value);
-
+template <typename Tag>
+struct Wrapped_type {
+  static void id();
 };
 
-template <class ... TagsAllowed, class T, class Tag>
-struct Authorized_options_rec< Named_function_parameters<T, Tag>, TagsAllowed...>
+template <typename Tag>
+inline constexpr auto meta = Wrapped_type<Tag>::id;
+
+using Meta = std::remove_const_t<decltype(meta<void>)>;
+
+template <typename NamedParameters>
+constexpr auto parameter_types()
 {
-  static constexpr bool value =
-    std::is_same_v<Tag, internal_np::do_not_check_allowed_np_t> || is_tag_present(Tag_wrapper<TagsAllowed...>(), Tag());
-};
+  std::array<Meta, NamedParameters::number_of_parameters> result{};
+  if constexpr (result.size() > 0) {
+    result.back() = meta<typename NamedParameters::tag>;
+  }
+  if constexpr (result.size() > 1) {
+    auto base_result = parameter_types<typename NamedParameters::base::base>();
+    static_assert(base_result.size() + 1 == result.size());
+    for(auto i = 0u; i < base_result.size(); ++i) {
+      result[i] = base_result[i];
+    }
+  }
+  return result;
+}
+
+template <std::size_t N>
+inline constexpr int find_index(const std::array<Meta, N>& arr, Meta value)
+{
+  for (std::size_t i = 0; i < N; ++i) {
+    if (arr[i] == value) return static_cast<int>(i);
+  }
+  return -1;
+}
 
 }// impl namespace
 
@@ -451,9 +456,17 @@ constexpr
 bool authorized_options()
 {
 #ifndef CGAL_DISABLE_NAMED_FUNCTION_PARAMETERS_CHECKS
-  using NP = cpp20::remove_cvref_t<Named_function_parameters>;
-  return authorized_parameters_impl::Authorized_options_rec
-    <NP, internal_np::all_default_t, TagsAllowed...>::value;
+  using NP = CGAL::cpp20::remove_cvref_t<Named_function_parameters>;
+  if constexpr(NP::has_parameter(internal_np::do_not_check_allowed_np_t{})) {
+    return true;
+  }
+  constexpr auto np_types = authorized_parameters_impl::parameter_types<NP>();
+  constexpr std::array allowed_types{ authorized_parameters_impl::meta<TagsAllowed>... };
+  for(auto m : np_types) {
+    if(m == authorized_parameters_impl::meta<internal_np::all_default_t>) continue;
+    if(authorized_parameters_impl::find_index(allowed_types, m) == -1) return false;
+  }
+  return true;
 #else
   return true;
 #endif
@@ -464,9 +477,14 @@ bool authorized_options()
 #ifdef CGAL_NDEBUG
 #define CGAL_CHECK_AUTHORIZED_NAMED_PARAMETERS(np, ...)
 #else
-#define CGAL_CHECK_AUTHORIZED_NAMED_PARAMETERS(np, ...) \
-{ \
-using namespace ::CGAL::internal_np; \
+#define CGAL_CHECK_AUTHORIZED_NAMED_PARAMETERS(np, ...)                             \
+{                                                                                   \
+using namespace ::CGAL::internal_np;                                                \
+using ::CGAL::internal_np::vertex_point_t;                                          \
+using ::CGAL::internal_np::vertex_index_t;                                          \
+using ::CGAL::internal_np::halfedge_index_t;                                        \
+using ::CGAL::internal_np::edge_index_t;                                            \
+using ::CGAL::internal_np::face_index_t;                                            \
 static_assert(::CGAL::parameters::authorized_options<decltype(np), __VA_ARGS__>()); \
 }
 #endif
