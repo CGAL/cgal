@@ -63,14 +63,21 @@ public:
       : m_face_variance_map(fvm)
   { }
 
+  template<class VertexPointMap>
   Probabilistic_plane_quadric_calculator(TriangleMesh& tmesh,
+                                         VertexPointMap vpm,
                                          std::enable_if_t<std::is_same<Face_variance_map, Default_FVM>::value >* = nullptr)
   {
     // try to initialize the face variance map using the estimated variance
     // parameters are constants defined for this class
-    m_face_variance_map = Default_FVM { internal::estimate_variances(tmesh, GeomTraits(),
-                                                                     default_variance_unit,
-                                                                     position_variance_factor) };
+    if constexpr (std::is_same_v<VertexPointMap, Default>)
+      m_face_variance_map = Default_FVM { internal::estimate_variances(tmesh, get(CGAL::vertex_point, tmesh), GeomTraits(),
+                                                                       default_variance_unit,
+                                                                       position_variance_factor) };
+    else
+      m_face_variance_map = Default_FVM { internal::estimate_variances(tmesh, vpm, GeomTraits(),
+                                                                       default_variance_unit,
+                                                                       position_variance_factor) };
   }
 
 public:
@@ -160,9 +167,11 @@ public:
 
 public:
   // Only available if the quadric calculator is using the default (constant) variance property map
+  template <class VertexPointMap = Default>
   GarlandHeckbert_probabilistic_plane_policies(TriangleMesh& tmesh,
+                                               VertexPointMap vpm = VertexPointMap(),
                                                const FT dm = FT(100))
-    : Base(tmesh, Quadric_calculator(tmesh), dm)
+    : Base(tmesh, Quadric_calculator(tmesh, vpm), dm)
   { }
 
   template <typename FVM>
