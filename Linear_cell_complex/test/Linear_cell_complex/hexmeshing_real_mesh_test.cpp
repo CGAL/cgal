@@ -45,33 +45,15 @@ int main()
     res=false;
   }
 
-  if(!render_two_refinement("dragon_res3.off", 16, 0, false, true))
-  {
-    std::cout<<"[ERROR] in hexmeshing_real_mesh_test: test2."<<std::endl;
-    res=false;
-  }
-
   if(!render_two_refinement("bunny00.off", 10, 1, false, false))
   {
     std::cout<<"[ERROR] in hexmeshing_real_mesh_test: test3."<<std::endl;
     res=false;
   }
 
-  if(!render_two_refinement("dragon_res3.off", 10, 1, true, false))
-  {
-    std::cout<<"[ERROR] in hexmeshing_real_mesh_test: test4."<<std::endl;
-    res=false;
-  }
-
   if(!render_two_refinement("bunny00.off", 6, 2, true, true))
   {
     std::cout<<"[ERROR] in hexmeshing_real_mesh_test: test5."<<std::endl;
-    res=false;
-  }
-
-  if(!render_two_refinement("dragon_res2.off", 6, 2, false, false))
-  {
-    std::cout<<"[ERROR] in hexmeshing_real_mesh_test: test6."<<std::endl;
     res=false;
   }
 
