@@ -59,7 +59,7 @@ struct LCC_geom_utils<LCC, Local_kernel, 2>
 
 template <class LCC, class GSOptionsLCC>
 void compute_face(const LCC& lcc,
-                  typename LCC::Dart_const_handle dh,
+                  typename LCC::Dart_const_descriptor dh,
                   CGAL::Graphics_scene& graphics_scene,
                   const GSOptionsLCC& gso)
 {
@@ -67,7 +67,7 @@ void compute_face(const LCC& lcc,
   { return; }
 
   // We fill only closed faces.
-  typename LCC::Dart_const_handle cur=dh;
+  typename LCC::Dart_const_descriptor cur=dh;
   do
   {
     if (!lcc.is_next_exist(cur))
@@ -97,7 +97,7 @@ void compute_face(const LCC& lcc,
 
 template <class LCC, class GSOptions>
 void compute_edge(const LCC& lcc,
-                  typename LCC::Dart_const_handle dh,
+                  typename LCC::Dart_const_descriptor dh,
                   CGAL::Graphics_scene& graphics_scene,
                   const GSOptions& gso)
 {
@@ -105,7 +105,7 @@ void compute_edge(const LCC& lcc,
   { return; }
 
   const typename LCC::Point& p1=lcc.point(dh);
-  typename LCC::Dart_const_handle d2=lcc.other_extremity(dh);
+  typename LCC::Dart_const_descriptor d2=lcc.other_extremity(dh);
   if (d2!=LCC::null_descriptor)
   {
     if (gso.colored_edge(lcc, dh))
@@ -120,7 +120,7 @@ void compute_edge(const LCC& lcc,
 
 template <class LCC, class GSOptionsLCC>
 void compute_vertex(const LCC& lcc,
-                    typename LCC::Dart_const_handle dh,
+                    typename LCC::Dart_const_descriptor dh,
                     CGAL::Graphics_scene& graphics_scene,
                     const GSOptionsLCC& gso)
 {
@@ -284,18 +284,18 @@ void add_to_graphics_scene(const CGAL_LCC_TYPE& alcc,
                            CGAL::Graphics_scene& graphics_scene)
 {
   CGAL::Graphics_scene_options<CGAL_LCC_TYPE,
-                               typename CGAL_LCC_TYPE::Dart_const_handle,
-                               typename CGAL_LCC_TYPE::Dart_const_handle,
-                               typename CGAL_LCC_TYPE::Dart_const_handle,
-                               typename CGAL_LCC_TYPE::Dart_const_handle>
+                               typename CGAL_LCC_TYPE::Dart_const_descriptor,
+                               typename CGAL_LCC_TYPE::Dart_const_descriptor,
+                               typename CGAL_LCC_TYPE::Dart_const_descriptor,
+                               typename CGAL_LCC_TYPE::Dart_const_descriptor>
     gso;
 
   gso.colored_volume = [](const CGAL_LCC_TYPE&,
-                          typename CGAL_LCC_TYPE::Dart_const_handle) -> bool
+                          typename CGAL_LCC_TYPE::Dart_const_descriptor) -> bool
   { return true; };
 
   gso.volume_color =  [] (const CGAL_LCC_TYPE& alcc,
-                          typename CGAL_LCC_TYPE::Dart_const_handle dh) -> CGAL::IO::Color
+                          typename CGAL_LCC_TYPE::Dart_const_descriptor dh) -> CGAL::IO::Color
   {
     CGAL::Random random((unsigned int)(alcc.darts().index(dh)));
     return get_random_color(random);
