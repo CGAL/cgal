@@ -54,7 +54,7 @@ protected:
      * If true, `cubs` contains cubical cells encoded with Khalismky coordinates, if false, `cubs` contains voxel coordinates (i.e. cells of dimension `dimension()`).
      */
     bool _khalimsky ;
-    
+
 public:
     /** \brief Returns the dimension of the complex. */
     int dimension() const { return _dim; }
