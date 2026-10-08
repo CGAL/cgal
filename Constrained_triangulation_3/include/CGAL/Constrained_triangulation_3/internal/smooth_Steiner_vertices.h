@@ -116,7 +116,7 @@ void smooth_Steiner_vertices_in_volume(CDT_3& cdt,
 
   std::ofstream ofs00("out_before_steiner_smoothing.mesh");
   ofs00.precision(17);
-  CGAL::IO::write_MEDIT(ofs00, cdt, CGAL::parameters::all_cells(true));
+  CGAL::IO::write_MEDIT(ofs00, cdt, CGAL::parameters::all_cells(true).with_plc_face_id(true));
   ofs00.close();
 
   if(count_negative_tetrahedra(cdt) == 0) {
