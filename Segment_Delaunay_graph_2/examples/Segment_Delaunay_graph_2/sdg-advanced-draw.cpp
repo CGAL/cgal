@@ -7,6 +7,7 @@
 
 #include <CGAL/Bbox_2.h>
 #include <CGAL/number_utils.h>
+#include <CGAL/use.h>
 
 #include <fstream>
 #include <iostream>
@@ -250,6 +251,8 @@ void fill_Voronoi_structure(const SDG& sdg,
   std::cout << ns << " segments" << std::endl;
   std::cout << nr << " rays" << std::endl;
   std::cout << np << " parabolas" << std::endl;
+#else
+   CGAL::USE(nl); CGAL::USE(ns); CGAL::USE(nr); CGAL::USE(np);
 #endif
 }
 
