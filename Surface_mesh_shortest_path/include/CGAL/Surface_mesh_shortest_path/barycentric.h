@@ -136,13 +136,13 @@ public:
 */
 enum Barycentric_coordinates_type
 {
-  /// If the coordinates is invalid
+  /// If the coordinates are invalid
   BARYCENTRIC_COORDINATES_INVALID = 0,
-  /// if the coordinates has exactly one non-zero weight equal to 1, and the rest are zero
+  /// if the coordinates have exactly one non-zero weight equal to 1, and the rest are zero
   BARYCENTRIC_COORDINATES_ON_VERTEX,
-  ///if the coordinates has exactly one zero weight, and the rest sum to 1
+  ///if the coordinates have exactly one zero weight, and the rest sum to 1
   BARYCENTRIC_COORDINATES_ON_BOUNDARY,
-  /// if the coordinates has no non-zero weight, and they all sum to 1
+  /// if the coordinates have no non-zero weight, and they all sum to 1
   BARYCENTRIC_COORDINATES_ON_BOUNDED_SIDE,
   /// if the weights of the coordinates do not sum to 1
   BARYCENTRIC_COORDINATES_ON_UNBOUNDED_SIDE
