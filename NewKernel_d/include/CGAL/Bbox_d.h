@@ -122,9 +122,21 @@ public:
       for(int i=0; i<d; ++i){
         min_values[i] = float_advance(min_values[i],-dist);
         max_values[i] = float_advance(max_values[i], dist);
+        CGAL_postcondition(min_values[i] < max_values[i]);
       }
     }
 
+    void pad(double offset)
+    {
+      if (offset == 0.)
+        return;
+      int d = dimension();
+      for(int i=0; i<d; ++i){
+        min_values[i] -= offset;
+        max_values[i] += offset;
+        CGAL_postcondition(min_values[i] < max_values[i]);
+      }
+    }
 
 
     bool operator==(const Bbox& bbox) const {

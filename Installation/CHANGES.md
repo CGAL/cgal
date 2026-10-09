@@ -11,8 +11,8 @@ Release date: December 2026
   and can be applied on the output of the 3D Mesh Generation Package.
 
 ### [Linear Cell Complex](https://doc.cgal.org/6.3/Manual/packages.html#PkgLinearCellComplex)
-- added `tetrahedron_soup_to_lcc()` to import a tetrahedron soup into a linear cell complex.
-- added `generate_hexahedral_mesh_using_two_refinement()` to generate a pure hexahedral mesh from a surface triangle mesh using the two-refinement algorithm described in the paper "A template-based approach for parallel hexahedral two-refinement" of Steven J. Owen, Ryan M. Shih and Corey D. Ernst.
+- Added `tetrahedron_soup_to_lcc()` to import a tetrahedron soup into a linear cell complex.
+- Added `generate_hexahedral_mesh_using_two_refinement()` to generate a pure hexahedral mesh from a surface triangle mesh using the two-refinement algorithm described in the paper "A template-based approach for parallel hexahedral two-refinement" of Steven J. Owen, Ryan M. Shih and Corey D. Ernst.
 - The following function have been deprecated and renamed for better naming clarity and consistency:
   - `(polyhedron_3_to_lcc())` → [`import_face_graph_in_lcc()`](https://doc.cgal.org/6.3/Linear_cell_complex/group__PkgLinearCellComplexConstructions.html#gaf2fa5a468b97eb3358d25b2f147c2a72)
 
@@ -29,7 +29,13 @@ Release date: December 2026
 
 ### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/6.3/Manual/packages.html#PkgKernel23)
 
-- Add operator to functor `Orientation_3` that takes 5 points as argument, with the last two getting tested against the first three points
+- Added operator to functor `Orientation_3` that takes 5 points as argument, with the last two getting tested against the first three points
+- Added the function `pad(double offset)` to the classes `Bbox_2` and `Bbox_3`
+
+### [dD Kernel](https://doc.cgal.org/6.3/Manual/packages.html#PkgKernelD)
+
+- Added the function `pad(double offset)` to the class `Bbox_d`
+
 
 ### [2D Snap Rounding](https://doc.cgal.org/6.3/Manual/packages.html#PkgSnapRounding2) (major changes)
 
