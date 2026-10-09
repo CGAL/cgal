@@ -1,4 +1,8 @@
-﻿#include <CGAL/Polygon_mesh_processing/locate.h>
+﻿#define CGAL_PMP_LOCATE_DEBUG
+
+#include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
+
+#include <CGAL/Polygon_mesh_processing/locate.h>
 
 // Graphs
 #include <CGAL/Polyhedron_3.h>
@@ -210,14 +214,20 @@ void test_constructions(const G& g,
   descriptor_variant dv = PMP::get_descriptor_from_location(loc, g);
   const face_descriptor* fd = std::get_if<face_descriptor>(&dv);
   assert(fd);
+  assert(PMP::is_in_face(loc.second));
+  assert(PMP::is_in_face(loc, g));
 
   loc = std::make_pair(f, CGAL::make_array(FT(0.5), FT(0.5), FT(0)));
   dv = PMP::get_descriptor_from_location(loc, g);
   const halfedge_descriptor* hd = std::get_if<halfedge_descriptor>(&dv);
   assert(hd);
+  assert(PMP::is_on_halfedge(loc.second));
+  assert(PMP::is_on_halfedge(loc, g));
 
   loc = std::make_pair(f, CGAL::make_array(FT(1), FT(0), FT(0)));
   assert(PMP::is_on_vertex(loc, source(halfedge(f, g), g), g));
+  assert(PMP::is_on_vertex(loc.second));
+  assert(PMP::is_on_vertex(loc, g));
 
   dv = PMP::get_descriptor_from_location(loc, g);
   if(const vertex_descriptor* v = std::get_if<vertex_descriptor>(&dv)) { } else { assert(false); }
@@ -682,6 +692,39 @@ struct Locate_with_AABB_tree_Tester<K, VPM, 3> // 3D
     if (std::is_same<K, EPECK>()) {
       assert(is_equal(CGAL::squared_distance(PMP::construct_point(loc, g), p3_a), FT(0)));
       assert(PMP::is_in_face(loc, g));
+#ifndef CGAL_NO_DEPRECATED_CODE
+      assert(PMP::is_in_face(loc.second, g));
+#endif
+    }
+
+    if (std::is_same<typename boost::property_traits<VPM>::value_type, Point_3>::value) {
+      std::cout << "new tests!" << std::endl;
+      vertex_descriptor v0 = source(halfedge(f, g), g);
+      const Point_3 p0 = get(vpm, v0);
+      vertex_descriptor v1 = target(halfedge(f, g), g);
+      const Point_3 p1 = get(vpm, v1);
+      vertex_descriptor v2 = target(next(halfedge(f, g), g), g);
+      const Point_3 p2 = get(vpm, v2);
+
+      const FT tiny = FT(1e-9);
+      const Point_3 near_edge_query = CGAL::barycenter(p0, FT(1) - tiny, p1, tiny, p2, -tiny);
+
+      auto loc_with_tree = PMP::locate_with_AABB_tree(near_edge_query, tree_a, g,
+                             CGAL::parameters::vertex_point_map(vpm).snapping_tolerance(1e-7));
+      auto loc_without_tree = PMP::locate(near_edge_query, g,
+                                CGAL::parameters::vertex_point_map(vpm).snapping_tolerance(1e-7));
+
+      assert(PMP::is_on_face_border(loc_with_tree, g));
+      assert(PMP::is_on_face_border(loc_without_tree, g));
+
+      loc_with_tree = PMP::locate_with_AABB_tree(near_edge_query, tree_a, g);
+      std::cout << "loc with tree (1): " << loc_with_tree.second[0] << " " << loc_with_tree.second[1] << " " << loc_with_tree.second[2] << std::endl;
+      assert(!PMP::is_on_vertex(loc_with_tree, v0, g));
+
+      loc_with_tree = PMP::locate_with_AABB_tree(near_edge_query, tree_a, g, CGAL::parameters::snapping_tolerance(1e-7));
+
+      std::cout << "loc with tree (2): " << loc_with_tree.second[0] << " " << loc_with_tree.second[1] << " " << loc_with_tree.second[2] << std::endl;
+      assert(PMP::is_on_vertex(loc_with_tree, v0, g));
     }
 
     loc = PMP::locate_with_AABB_tree(CGAL::ORIGIN, tree_b, g, CGAL::parameters::vertex_point_map(custom_vpm_3D));
