@@ -234,7 +234,7 @@ output_to_avizo(std::ostream& os,
          end = c3t3.cells_in_complex_end();
        cit != end; ++cit)
   {
-    os << cit->subdomain_index() << "\n";
+    os << c3t3.subdomain_index(cit) << "\n";
   }
 
 } // end output_to_avizo(...)
@@ -386,11 +386,11 @@ namespace internal {
     return false;
   }
 
-  template<typename Tr>
-  bool read_tetra_am(std::istream& input, Tr& tr)
+  template<typename C3T3>
+  bool read_tetra_am(std::istream& input, C3T3& c3t3)
   {
     using Material_type = unsigned char;
-    using Point_3 = typename Tr::Geom_traits::Point_3;
+    using Point_3 = typename C3T3::Triangulation::Geom_traits::Point_3;
 
     int n_nodes, n_tets, n_edges;
     std::vector<Data_def> data;
@@ -505,26 +505,28 @@ namespace internal {
     struct Edge_with_index
     {
       int v0, v1;
-      typename Tr::Triangulation_data_structure::Vertex::Index curve_index;
+      typename C3T3::Index curve_index;
     };
     struct Corner_with_index
     {
       int v;
-      typename Tr::Triangulation_data_structure::Vertex::Index corner_index;
+      typename C3T3::Index corner_index;
     };
 
     boost::unordered_map<std::array<int, 3>,
-      typename Tr::Cell::Surface_patch_index> empty_facets_map;
+    typename C3T3::Surface_patch_index> empty_facets_map;
     std::vector<Edge_with_index> no_edges;
     std::vector<Corner_with_index> no_corners;
+    std::vector<typename C3T3::Triangulation::Vertex_handle> no_vertices;
 
-    CGAL::SMDS_3::build_triangulation_with_subdomains_range(tr,
+    CGAL::SMDS_3::build_mesh_complex_with_subdomains_range(c3t3,
       points,
       tetrahedra,
       labels,
       empty_facets_map,
       no_edges,
       no_corners,
+      no_vertices,
       CGAL::Emptyset_iterator(),
       true,//verbose
       false,//replace subdomain 0
@@ -537,15 +539,15 @@ namespace internal {
 }// end namespace internal
 
 
-  template<typename T3>
-  bool read_AVIZO_TETRA(std::istream& in, T3& tr)
+  template<typename C3T3>
+  bool read_AVIZO_TETRA(std::istream& in, C3T3& c3t3)
   {
     if (!in)
     {
       std::cerr << "Cannot open file " << std::endl;
       return false;
     }
-    return CGAL::IO::internal::read_tetra_am(in, tr);
+    return CGAL::IO::internal::read_tetra_am(in, c3t3);
   }
 
 } // end namespace IO

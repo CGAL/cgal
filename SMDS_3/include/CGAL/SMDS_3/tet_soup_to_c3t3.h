@@ -21,52 +21,31 @@
 
 #include <CGAL/assertions.h>
 #include <CGAL/Default.h>
+#include <CGAL/enum.h>
+#include <CGAL/IO/MEDIT.h>
+#include <CGAL/iterator.h>
+#include <CGAL/Mesh_complex_3_in_triangulation_3.h>
+#include <CGAL/SMDS_3/utilities.h>
 #include <CGAL/utility.h>
 #include <CGAL/value_type_traits.h>
 
+#include <boost/unordered/unordered_map_fwd.hpp>
 #include <boost/unordered_map.hpp>
 
+#include <algorithm>
 #include <array>
+#include <cassert>
+#include <cstddef>
+#include <iostream>
+#include <istream>
+#include <iterator>
 #include <map>
+#include <ostream>
 #include <utility>
 #include <vector>
 #include <type_traits>
 
 namespace CGAL {
-
-namespace SMDS_3_internal {
-template <typename T, typename = void>
-struct Has_in_dimension : std::false_type
-{};
-
-template <typename T>
-struct Has_in_dimension<T, std::void_t<decltype(std::declval<T>().in_dimension())>>
-  : std::true_type
-{};
-
-template <typename T, typename = void>
-struct Has_is_corner : std::false_type
-{};
-
-template <typename T>
-struct Has_is_corner<T, std::void_t<decltype(std::declval<T>().is_corner())>>
-  : std::true_type
-{};
-
-template <typename Tr>
-bool is_corner(const typename Tr::Vertex_handle v, const Tr&)
-{
-  using V = typename Tr::Triangulation_data_structure::Vertex;
-
-  if constexpr(Has_in_dimension<V>::value)
-    return v->in_dimension() == 0;
-  else if constexpr(Has_is_corner<V>::value)
-    return v->ccdt_3_data().is_corner();
-  else
-    return false;
-}
-
-} // namespace SMDS_3_internal
 
 namespace SMDS_3 {
 
@@ -150,23 +129,29 @@ bool add_facet_to_incident_cells_map(const typename Tr::Cell_handle c, int i,
   return success;
 }
 
-template <class Tr, typename CellRange, typename SubdomainsRange, typename FacetPatchMap>
-bool build_finite_cells(Tr& tr,
+template <class C3T3,
+          typename CellRange,
+          typename SubdomainsRange,
+          typename FacetPatchMap>
+bool build_finite_cells(C3T3& c3t3,
                         const CellRange& finite_cells,
                         const SubdomainsRange& subdomains,
-                        const std::vector<typename Tr::Vertex_handle>& vertex_handle_vector,
-                        boost::unordered_map<std::array<typename Tr::Vertex_handle, 3>,
-                                             std::vector<std::pair<typename Tr::Cell_handle, int> > >& incident_cells_map,
+                        const std::vector<typename C3T3::Triangulation::Vertex_handle>& vertex_handle_vector,
+                        boost::unordered_map<std::array<typename C3T3::Triangulation::Vertex_handle, 3>,
+                                             std::vector<std::pair<typename C3T3::Triangulation::Cell_handle, int> > >& incident_cells_map,
                         const FacetPatchMap& border_facets,
                         const bool verbose,
                         const bool replace_domain_0,
                         const bool allow_negative_orientation)
 {
+  typedef typename C3T3::Surface_patch_index                    Surface_patch_index;
+  typedef typename C3T3::Triangulation                          Tr;
   typedef typename Tr::Vertex_handle                            Vertex_handle;
   typedef typename Tr::Cell_handle                              Cell_handle;
-  typedef typename Tr::Cell::Surface_patch_index                Surface_patch_index;
 
   bool success = true;
+
+  Tr& tr = c3t3.triangulation();
 
   typename Tr::Geom_traits::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
   typename Tr::Geom_traits::Orientation_3 orientation = tr.geom_traits().orientation_3_object();
@@ -211,9 +196,9 @@ bool build_finite_cells(Tr& tr,
                                  cp(tr.point(vs[2])), cp(tr.point(vs[3]))) == POSITIVE);
 
     Cell_handle c = tr.tds().create_cell(vs[0], vs[1], vs[2], vs[3]);
-    c->set_subdomain_index(subdomains[i]); // the cell's info keeps the reference of the tetrahedron
+    c3t3.set_subdomain_index(c, subdomains[i]); // the cell's info keeps the reference of the tetrahedron
     if(replace_domain_0 && subdomains[i] == 0)
-      c->set_subdomain_index(max_domain+1); // the cell's info keeps the reference of the tetrahedron
+      c3t3.set_subdomain_index(c, max_domain+1); // the cell's info keeps the reference of the tetrahedron
 
     // assign cells to vertices
     for(int j=0; j<4; ++j)
@@ -247,7 +232,7 @@ bool build_finite_cells(Tr& tr,
         typename FacetPatchMap::const_iterator it = border_facets.find(facet);
         if(it != border_facets.end())
         {
-          c->set_surface_patch_index(j, it->second);
+          c3t3.set_surface_patch_index(c, j, it->second);
         }
         else
         {
@@ -255,9 +240,9 @@ bool build_finite_cells(Tr& tr,
 
           it = border_facets.find(facet);
           if(it != border_facets.end())
-            c->set_surface_patch_index(j, it->second);
+            c3t3.set_surface_patch_index(c, j, it->second);
           else
-            c->set_surface_patch_index(j, Surface_patch_index());
+            c3t3.set_surface_patch_index(c, j, Surface_patch_index());
         }
       }
     }
@@ -284,18 +269,21 @@ bool add_infinite_facets_to_incident_cells_map(typename Tr::Cell_handle c,
   return b1 && b2 && b3;
 }
 
-template<class Tr>
-bool build_infinite_cells(Tr& tr,
-                          boost::unordered_map<std::array<typename Tr::Vertex_handle, 3>,
-                                               std::vector<std::pair<typename Tr::Cell_handle, int> > >& incident_cells_map,
+template <class C3T3>
+bool build_infinite_cells(C3T3& c3t3,
+                          boost::unordered_map<std::array<typename C3T3::Triangulation::Vertex_handle, 3>,
+                                               std::vector<std::pair<typename C3T3::Triangulation::Cell_handle, int> > >& incident_cells_map,
                           const bool verbose,
                           const bool allow_non_manifold)
 {
+  typedef typename C3T3::Triangulation                             Tr;
   typedef typename Tr::Vertex_handle                               Vertex_handle;
   typedef typename Tr::Cell_handle                                 Cell_handle;
   typedef std::array<Vertex_handle, 3>                             Facet_vvv;
   typedef std::pair<Cell_handle, int>                              Incident_cell;
   typedef boost::unordered_map<Facet_vvv, std::vector<Incident_cell> > Incident_cells_map;
+
+  Tr& tr = c3t3.triangulation();
 
   bool success = true;
 
@@ -338,7 +326,7 @@ bool build_infinite_cells(Tr& tr,
     it->second.emplace_back(opp_c, 0);
     CGAL_assertion(it->second.size() == 2);
 
-    opp_c->set_surface_patch_index(0, c->surface_patch_index(i));
+    c3t3.set_surface_patch_index(opp_c, 0, c3t3.surface_patch_index(c, i));
   }
 
 #ifdef CGAL_TET_SOUP_TO_C3T3_DEBUG
@@ -449,21 +437,21 @@ int euler_characteristic(const Tds& tds)
   return (cell_count - facet_count + edge_count - vertex_count);
 }
 
-template<class Tr,
+template<class C3T3,
          typename PointRange,
          typename CellRange,
          typename FacetPatchMap,
          typename EdgesRange,
          typename CornersRange,
          typename ComplexEdgesOutputIterator>
-bool build_triangulation_impl(Tr& tr,
+bool build_mesh_complex_impl(C3T3& c3t3,
                               const PointRange& points,
                               const CellRange& finite_cells,
-                              const std::vector<typename Tr::Cell::Subdomain_index>& subdomains,
+                              const std::vector<typename C3T3::Subdomain_index>& subdomains,
                               const FacetPatchMap& border_facets,
                               const EdgesRange& edges,
                               const CornersRange& corners,
-                              std::vector<typename Tr::Vertex_handle>& vertex_handle_vector,
+                              std::vector<typename C3T3::Triangulation::Vertex_handle>& vertex_handle_vector,
                               ComplexEdgesOutputIterator cx_edges_out,
                               const bool verbose,// = false,
                               const bool replace_domain_0,// = false,
@@ -471,8 +459,9 @@ bool build_triangulation_impl(Tr& tr,
                               const bool allow_negative_orientation) // = false
 {
   if (verbose)
-    std::cout << "build_triangulation_impl()..." << std::endl;
+    std::cout << "build_mesh_complex_impl()..." << std::endl;
 
+  typedef typename C3T3::Triangulation          Tr;
   typedef typename Tr::Vertex_handle            Vertex_handle;
   typedef typename Tr::Cell_handle              Cell_handle;
   typedef std::array<Vertex_handle, 3>          Facet_vvv;
@@ -484,7 +473,10 @@ bool build_triangulation_impl(Tr& tr,
 
   CGAL_precondition(!points.empty());
 
+  Tr& tr = c3t3.triangulation();
+
   bool success = true;
+
   Incident_cells_map incident_cells_map;
 
   // id to vertex_handle
@@ -510,9 +502,9 @@ bool build_triangulation_impl(Tr& tr,
 
   if (!finite_cells.empty())
   {
-    if (!CGAL::SMDS_3::build_finite_cells<Tr>(tr, finite_cells, subdomains, vertex_handle_vector,
-                                              incident_cells_map, border_facets, verbose, replace_domain_0,
-                                              allow_negative_orientation))
+    if (!CGAL::SMDS_3::build_finite_cells(c3t3, finite_cells, subdomains, vertex_handle_vector,
+                                          incident_cells_map, border_facets, verbose, replace_domain_0,
+                                          allow_negative_orientation))
     {
       if (verbose)
         std::cerr << "Error: build_finite_cells went wrong!" << std::endl;
@@ -523,7 +515,7 @@ bool build_triangulation_impl(Tr& tr,
       std::cout << "build finite cells done (" << tr.tds().cells().size() << " cells)" << std::endl;
     }
 
-    if (!CGAL::SMDS_3::build_infinite_cells<Tr>(tr, incident_cells_map, verbose, allow_non_manifold))
+    if (!CGAL::SMDS_3::build_infinite_cells(c3t3, incident_cells_map, verbose, allow_non_manifold))
     {
       if(verbose)
         std::cerr << "Error: build_infinite_cells went wrong!" << std::endl;
@@ -548,7 +540,7 @@ bool build_triangulation_impl(Tr& tr,
 
     tr.tds().set_dimension(3);
 
-    if (!CGAL::SMDS_3::assign_neighbors<Tr>(tr, incident_cells_map, allow_non_manifold))
+    if (!CGAL::SMDS_3::assign_neighbors(c3t3.triangulation(), incident_cells_map, allow_non_manifold))
     {
       if(verbose)
         std::cerr << "Error: assign_neighbors went wrong!" << std::endl;
@@ -604,13 +596,44 @@ bool build_triangulation_impl(Tr& tr,
   return success;
 }
 
-template<class Tr,
+template<class C3T3,
          typename PointRange,
          typename CellRange,
          typename FacetPatchMap,
          typename EdgesRange,
          typename CornersRange,
          typename CxEdgesOutputIterator>
+bool build_mesh_complex_one_subdomain(C3T3& c3t3,
+                                      const PointRange& points,
+                                      const CellRange& finite_cells,
+                                      const typename C3T3::Subdomain_index& subdomain,
+                                      const FacetPatchMap& border_facets,
+                                      const EdgesRange& edges,
+                                      const CornersRange& corners,
+                                      std::vector<typename C3T3::Triangulation::Vertex_handle>& vertex_handle_vector,
+                                      CxEdgesOutputIterator cx_edges_out,
+                                      const bool verbose,// = false,
+                                      const bool replace_domain_0,// = false
+                                      const bool allow_non_manifold,// = false
+                                      const bool allow_negative_orientation)// = false
+{
+  std::vector<typename C3T3::Subdomain_index> subdomains(finite_cells.size(), subdomain);
+  return build_mesh_complex_impl(c3t3, points, finite_cells, subdomains,
+                                 border_facets, edges, corners,
+                                 vertex_handle_vector,
+                                 cx_edges_out,
+                                 verbose, replace_domain_0,
+                                 allow_non_manifold,
+                                 allow_negative_orientation);
+}
+
+template<class Tr,
+         typename PointRange,
+         typename CellRange,
+         typename FacetPatchMap,
+         typename EdgesRange,
+         typename CornersRange,
+         typename ComplexEdgesOutputIterator>
 bool build_triangulation_one_subdomain(Tr& tr,
                                        const PointRange& points,
                                        const CellRange& finite_cells,
@@ -618,53 +641,57 @@ bool build_triangulation_one_subdomain(Tr& tr,
                                        const FacetPatchMap& border_facets,
                                        const EdgesRange& edges,
                                        const CornersRange& corners,
-                                       std::vector<typename Tr::Vertex_handle>& vertex_handle_vector,
-                                       CxEdgesOutputIterator cx_edges_out,
+                                       ComplexEdgesOutputIterator cx_edges_out,
                                        const bool verbose,// = false,
                                        const bool replace_domain_0,// = false
                                        const bool allow_non_manifold,// = false
                                        const bool allow_negative_orientation)// = false
 {
-  std::vector<typename Tr::Cell::Subdomain_index> subdomains(finite_cells.size(), subdomain);
-  return build_triangulation_impl(tr, points, finite_cells, subdomains,
-                                  border_facets, edges, corners,
-                                  vertex_handle_vector,
-                                  cx_edges_out,
-                                  verbose, replace_domain_0,
-                                  allow_non_manifold, allow_negative_orientation);
+  using C3T3 = CGAL::Mesh_complex_3_in_triangulation_3<Tr, int, int>;
+  C3T3 c3t3; // @fixme what if 'tr' wasn't empty...
+  std::vector<typename Tr::Vertex_handle> vertex_handle_vector;
+  bool res = build_mesh_complex_one_subdomain(c3t3, points, finite_cells, subdomain,
+                                              border_facets, edges, corners,
+                                              vertex_handle_vector, cx_edges_out,
+                                              verbose, replace_domain_0,
+                                              allow_non_manifold,
+                                              allow_negative_orientation);
+  tr = std::move(c3t3).triangulation();
+  return res;
 }
 
-template<class Tr,
+template<class C3T3,
          typename PointRange,
          typename CellRange,
+         typename SubdomainsRange,
          typename FacetPatchMap,
          typename EdgesRange,
          typename CornersRange,
          typename CxEdgesOutputIterator>
-bool build_triangulation_one_subdomain(Tr& tr,
-                                       const PointRange& points,
-                                       const CellRange& finite_cells,
-                                       const typename Tr::Cell::Subdomain_index& subdomain,
-                                       const FacetPatchMap& border_facets,
-                                       const EdgesRange& edges,
-                                       const CornersRange& corners,
-                                       CxEdgesOutputIterator cx_edges_out,
-                                       const bool verbose, // = false,
-                                       const bool replace_domain_0,// = false
-                                       const bool allow_non_manifold,// = false
-                                       const bool allow_negative_orientation)// = false
+bool build_mesh_complex_with_subdomains_range(C3T3& c3t3,
+                                              const PointRange& points,
+                                              const CellRange& finite_cells,
+                                              const SubdomainsRange& subdomains,
+                                              const FacetPatchMap& border_facets,
+                                              const EdgesRange& edges,
+                                              const CornersRange& corners,
+                                              std::vector<typename C3T3::Triangulation::Vertex_handle>& vertex_handle_vector,
+                                              CxEdgesOutputIterator cx_edges_out,
+                                              const bool verbose,// = false
+                                              const bool replace_domain_0,// = false,
+                                              const bool allow_non_manifold,// = false,
+                                              const bool allow_negative_orientation)// = false
 {
-  std::vector<typename Tr::Cell::Subdomain_index> subdomains(finite_cells.size(), subdomain);
-  std::vector<typename Tr::Vertex_handle> vertex_handle_vector;
-  return build_triangulation_impl(tr, points, finite_cells, subdomains,
-                                  border_facets,
-                                  edges, corners,
-                                  vertex_handle_vector,
-                                  cx_edges_out,
-                                  verbose, replace_domain_0,
-                                  allow_non_manifold, allow_negative_orientation);
+  std::vector<typename C3T3::Subdomain_index> subdomains_vector(
+      subdomains.begin(), subdomains.end());
+  return build_mesh_complex_impl(c3t3, points, finite_cells, subdomains_vector, border_facets,
+                                 edges, corners,
+                                 vertex_handle_vector,
+                                 cx_edges_out,
+                                 verbose, replace_domain_0,
+                                 allow_non_manifold,
+                                 allow_negative_orientation);
 }
-
 template<class Tr,
          typename PointRange,
          typename CellRange,
@@ -686,18 +713,110 @@ bool build_triangulation_with_subdomains_range(Tr& tr,
                                                const bool allow_non_manifold,// = false
                                                const bool allow_negative_orientation)// = false
 {
+  CGAL::Mesh_complex_3_in_triangulation_3<Tr, int, int> c3t3; // @fixme what if 'tr' wasn't empty...
+
   std::vector<typename Tr::Vertex_handle> vertex_handle_vector;
   std::vector<typename Tr::Cell::Subdomain_index> subdomains_vector(
       subdomains.begin(), subdomains.end());
-  return build_triangulation_impl(tr, points, finite_cells, subdomains_vector, border_facets,
-                                  edges, corners,
-                                  vertex_handle_vector,
-                                  cx_edges_oit,
-                                  verbose, replace_domain_0,
-                                  allow_non_manifold,
-                                  allow_negative_orientation);
+  bool res = build_mesh_complex_with_subdomains_range(c3t3, points, finite_cells, subdomains_vector, border_facets,
+                                                      edges, corners,
+                                                      vertex_handle_vector,
+                                                      cx_edges_oit,
+                                                      verbose, replace_domain_0,
+                                                      allow_non_manifold,
+                                                      allow_negative_orientation);
+  tr = std::move(c3t3).triangulation();
+  return res;
 }
 
+template<class C3T3,
+         class CxEdgesOutputIterator>
+bool build_mesh_complex_from_file(std::istream& is,
+                                  C3T3& c3t3,
+                                  const bool verbose,
+                                  const bool replace_domain_0,
+                                  const bool allow_non_manifold,
+                                  const bool allow_negative_orientation,
+                                  CxEdgesOutputIterator cx_edges_oit)
+{
+  using Tr = typename C3T3::Triangulation;
+  using Point_3 = typename Tr::Point;
+  using Subdomain_index = typename C3T3::Subdomain_index;
+  using Surface_patch_index = typename C3T3::Surface_patch_index;
+  using Curve_index = typename C3T3::Curve_index;
+  using Corner_index = typename C3T3::Corner_index;
+
+  using Facet        = std::array<int, 3>; // 3 = id
+  using Tet_with_ref = std::array<int, 4>; // 4 = id
+
+  using Edge_with_index = CGAL::IO::internal::Edge_with_index<Curve_index>;
+  using Corner_with_index = CGAL::IO::internal::Corner_with_index<Corner_index>;
+
+  std::vector<Tet_with_ref> finite_cells;
+  std::vector<Subdomain_index> subdomains;
+  std::vector<Point_3> points;
+  boost::unordered_map<Facet, Surface_patch_index> border_facets;
+  std::vector<Edge_with_index> edge_indices;
+  std::vector<Corner_with_index> corner_indices;
+
+  bool is_CGAL_mesh = false;
+
+  if(verbose)
+  {
+    std::cout << "Reading .mesh file..." << std::endl;
+    std::cout << "Replace domain #0 = " << replace_domain_0 << std::endl;
+    std::cout << "Allow non-manifoldness = " << allow_non_manifold << std::endl;
+  }
+
+  bool ok = CGAL::IO::internal::read_MEDIT(is, points, finite_cells, subdomains,
+                                           border_facets, true,
+                                           edge_indices,
+                                           corner_indices,
+                                           verbose,
+                                           is_CGAL_mesh);
+
+  if(!ok){
+    return false;
+  }
+
+  if(!is_CGAL_mesh)
+    c3t3.triangulation().may_have_badly_oriented_cells(true);
+
+  std::vector<typename C3T3::Triangulation::Vertex_handle> no_vertices;
+  return build_mesh_complex_with_subdomains_range(c3t3,
+                                                  points, finite_cells, subdomains, border_facets,
+                                                  edge_indices,
+                                                  corner_indices,
+                                                  no_vertices,
+                                                  cx_edges_oit,
+                                                  verbose,
+                                                  replace_domain_0 && !is_CGAL_mesh,
+                                                  allow_non_manifold,
+                                                  allow_negative_orientation);
+}
+
+
+template<class Tr,
+         class Curve_index,
+         class Corner_index,
+         class CxEdgesOutputIterator>
+bool build_triangulation_from_file(std::istream& is,
+                                   Tr& tr,
+                                   const bool verbose,
+                                   const bool replace_domain_0,
+                                   const bool allow_non_manifold,
+                                   const bool allow_negative_orientation,
+                                   CxEdgesOutputIterator cx_edges_oit)
+{
+  using C3T3 = CGAL::Mesh_complex_3_in_triangulation_3<Tr, Corner_index, Curve_index>;
+  C3T3 c3t3; // @fixme what if 'tr' wasn't empty...
+  bool res = build_mesh_complex_from_file(is, c3t3, verbose, replace_domain_0,
+                                          allow_non_manifold,
+                                          allow_negative_orientation,
+                                          cx_edges_oit);
+  tr = std::move(c3t3).triangulation();
+  return res;
+}
 
 } // namespace SMDS_3
 } // namespace CGAL

@@ -115,9 +115,10 @@ template<class GT,
          class Index_,
          class Vb>
 class Mesh_vertex_3
-: public Vb,
-  public Mesh_vertex_base_3_base<
-    typename Vb::Triangulation_data_structure::Concurrency_tag>
+: public Mesh_vertex_base_3_base<
+    typename Vb::Triangulation_data_structure::Concurrency_tag>,
+  public Vb
+
 {
 public:
   typedef Vb Cmvb3_base;
@@ -131,12 +132,12 @@ public:
   // Constructor
   Mesh_vertex_3()
     : Vb()
-    , number_of_incident_facets_(0)
-    , number_of_components_(0)
-    , index_()
-    , meshing_info_(0)
     , dimension_(-1)
     , cache_validity(false)
+    , index_()
+    , number_of_incident_facets_(0)
+    , number_of_components_(0)
+    , meshing_info_(0)
 #ifdef CGAL_INTRUSIVE_LIST
     , next_intrusive_()
     , previous_intrusive_()
@@ -201,7 +202,7 @@ public:
   std::size_t time_stamp() const {
     return time_stamp_;
   }
-  void set_time_stamp(const std::size_t& ts) {
+  void set_time_stamp(const std::size_t ts) {
     time_stamp_ = ts;
   }
   ///@}
@@ -210,24 +211,23 @@ public:
     return cache_validity;
   }
 
-  void invalidate_c2t3_cache()
-  {
+  void invalidate_c2t3_cache() {
     cache_validity = false;
   }
 
-  void set_c2t3_cache(const std::size_t i, const std::size_t j)
+  void set_c2t3_cache(const int i, const int j)
   {
     number_of_incident_facets_ = i;
     number_of_components_ = j;
     cache_validity = true;
   }
 
-  std::size_t cached_number_of_incident_facets() const
+  int cached_number_of_incident_facets() const
   {
     return number_of_incident_facets_;
   }
 
-  std::size_t cached_number_of_components() const
+  int cached_number_of_components() const
   {
     return number_of_components_;
   }
@@ -240,30 +240,31 @@ public:
       Get_io_signature<int>()() + "+" +
       Get_io_signature<Index>()();
   }
+
 private:
+  short dimension_;
 
-  std::size_t number_of_incident_facets_;
-  std::size_t number_of_components_; // number of components in the adjacency
-  // graph of incident facets (in complex)
-
+  // Dimension of the lowest dimensional face of the input 3D complex
+  // that contains me. Negative values are a marker for special vertices.
+  bool cache_validity;
 
   // Index of the lowest dimensional face of the input 3D complex
   // that contains me
   Index index_;
+
+  int number_of_incident_facets_;
+  int number_of_components_; // number of components in the adjacency
+  // graph of incident facets (in complex)
+
   // Stores info needed by optimizers
   FT meshing_info_;
 
-  // Dimension of the lowest dimensional face of the input 3D complex
-  // that contains me. Negative values are a marker for special vertices.
-  short dimension_;
-  bool cache_validity;
 #ifdef CGAL_INTRUSIVE_LIST
   Vertex_handle next_intrusive_;
   Vertex_handle previous_intrusive_;
 #endif
   std::size_t time_stamp_ = Time_stamper<void>::invalid_time_stamp;
 public:
-
   friend std::istream& operator>>(std::istream &is, Mesh_vertex_3& v)
   {
     is >> static_cast<Cmvb3_base&>(v);

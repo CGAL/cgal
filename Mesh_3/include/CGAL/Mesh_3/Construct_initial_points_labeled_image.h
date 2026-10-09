@@ -16,7 +16,7 @@
 #include <CGAL/license/Mesh_3.h>
 
 #include <CGAL/Mesh_3/search_for_connected_components_in_labeled_image.h>
-
+#include <CGAL/Mesh_3/Triangulation_helpers.h>
 #include <CGAL/iterator.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Named_function_parameters.h>
@@ -170,13 +170,16 @@ struct Construct_initial_points_labeled_image
     typedef typename MeshDomain::Index         Index;
 
     typedef typename C3t3::Triangulation       Tr;
+    typedef Mesh_3::Triangulation_helpers<Tr>  Th;
+
     typedef typename Tr::Geom_traits           GT;
     typedef typename GT::FT                    FT;
     typedef typename Tr::Weighted_point        Weighted_point;
     typedef typename Tr::Segment               Segment_3;
+    typedef typename GT::Vector_3              Vector_3;
+
     typedef typename Tr::Vertex_handle         Vertex_handle;
     typedef typename Tr::Cell_handle           Cell_handle;
-    typedef typename GT::Vector_3              Vector_3;
 
     C3t3 c3t3;
     Tr& tr = c3t3.triangulation();
@@ -328,7 +331,7 @@ struct Construct_initial_points_labeled_image
               continue;
 
             // if the (squared) distance between intersect_point and cv is smaller or equal than cv's weight
-            if (cwsr(cv_wp, - tr.min_squared_distance(intersect_point, cp(cv_wp))) != CGAL::LARGER)
+            if (cwsr(cv_wp, - Th().min_squared_distance(tr, intersect_point, cp(cv_wp))) != CGAL::LARGER)
             {
               pi_inside_protecting_sphere = true;
               break;

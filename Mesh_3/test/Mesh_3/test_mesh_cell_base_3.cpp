@@ -1,3 +1,4 @@
+#include <CGAL/config.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/facets_in_complex_3_to_triangle_mesh.h>
@@ -44,27 +45,29 @@ int main (int argc, char** argv){
 
 
   // Open file
-  std::ifstream in (argc > 1 ? argv[1] : "data/elephant.mesh",
-                    std::ios_base::in);
+  std::string input_file = (argc > 1 ? argv[1] : CGAL::data_file_path("meshes/elephant.mesh"));
+  std::ifstream in (input_file, std::ios_base::in);
   if(!in) {
-    std::cerr << "Error! Cannot open file " << argv[1] << std::endl;
+    std::cerr << "Error! Cannot open file " << input_file << std::endl;
     return 1;
   }
   C3t3 c3t3;
-  if(CGAL::SMDS_3::build_triangulation_from_file(in, c3t3.triangulation()))
+  if(CGAL::SMDS_3::build_mesh_complex_from_file(in, c3t3))
   {
     for( C3t3::Triangulation::Finite_cells_iterator
          cit = c3t3.triangulation().finite_cells_begin();
          cit != c3t3.triangulation().finite_cells_end();
          ++cit)
     {
-      assert(cit->subdomain_index() >= 0);
-      c3t3.add_to_complex(cit, cit->subdomain_index());
+      auto subdomain_index = c3t3.subdomain_index(cit);
+      assert(subdomain_index >= 0);
+      if(subdomain_index > 0)
+      c3t3.add_to_complex(cit, subdomain_index);
       for(int i=0; i < 4; ++i)
       {
-        if(cit->surface_patch_index(i)>0)
+        if(c3t3.surface_patch_index(cit, i) > 0)
         {
-          c3t3.add_to_complex(cit, i, cit->surface_patch_index(i));
+          c3t3.add_to_complex(cit, i, c3t3.surface_patch_index(cit, i));
         }
       }
     }
@@ -106,7 +109,7 @@ int main (int argc, char** argv){
   Polyhedral_mesh_domain domain(polyhedron);
   namespace p = CGAL::parameters;
   // Mesh criteria (no cell_size set)
-  CGAL::Mesh_criteria_3<Tr> criteria(p::facet_angle=25);
+  CGAL::Mesh_criteria_3<C3t3> criteria(p::facet_angle=25);
   // Mesh generation
 
   c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria);

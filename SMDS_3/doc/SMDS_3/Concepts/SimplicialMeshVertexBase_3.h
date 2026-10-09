@@ -68,7 +68,7 @@ bool is_c2t3_cache_valid();
 /*!
 Sets the cache.
 */
-void set_c2t3_cache(std::size_t i, std::size_t j)
+void set_c2t3_cache(int i, int j)
 
 /*!
 Invalidates the cache.
@@ -78,14 +78,14 @@ void invalidate_c2t3_cache();
 /*!
 Returns the cached number of facets of the complex incident to the vertex.
 */
-std::size_t cached_number_of_incident_facets();
+int cached_number_of_incident_facets();
 
 /*!
 This method concerns the adjacency
 graph of the facets of the complex incident to the vertex
 and returns a cached value for the number of connected components this graph.
 */
-std::size_t cached_number_of_components();
+int cached_number_of_components();
 
 /// @}
 

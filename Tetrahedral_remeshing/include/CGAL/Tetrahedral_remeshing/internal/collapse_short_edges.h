@@ -159,8 +159,8 @@ public:
     std::map<Facet, typename C3t3::Surface_patch_index> border_facets;//unused here
     std::vector<std::array<int, 3>> feature_edges_and_indices;//unused here
     std::vector<std::array<int, 2>> corners_and_indices;//unused here
-    if (CGAL::SMDS_3::build_triangulation_impl(
-            triangulation, points, finite_cells, subdomains, border_facets,
+    if (CGAL::SMDS_3::build_mesh_complex_impl(
+            c3t3, points, finite_cells, subdomains, border_facets,
             feature_edges_and_indices,
             corners_and_indices,
             new_vertices,
@@ -170,6 +170,7 @@ public:
             /*allow_non_manifold*/false,
             /*allow_negative_volumes*/true))
     {
+      const Tr& triangulation = c3t3.triangulation();
       CGAL_expensive_assertion(triangulation.tds().is_valid());
       CGAL_assertion(triangulation.infinite_vertex() == new_vertices[0]);
 
@@ -196,6 +197,8 @@ public:
 
   Result_type collapse()
   {
+    Tr& triangulation = c3t3.triangulation();
+
     if (not_an_edge)
     {
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
@@ -344,7 +347,7 @@ public:
   }
 
 protected:
-  Tr triangulation;
+  C3t3 c3t3;
 
   const Collapse_type collapse_type;
 
@@ -852,12 +855,12 @@ void merge_surface_patch_indices(const typename C3t3::Facet& f1,
   if (in_cx_f1 && !in_cx_f2)
   {
     typename C3t3::Surface_patch_index patch = c3t3.surface_patch_index(f1);
-    f2.first->set_surface_patch_index(f2.second, patch);
+    c3t3.set_surface_patch_index(f2, patch);
   }
   else if (in_cx_f2 && !in_cx_f1)
   {
     typename C3t3::Surface_patch_index patch = c3t3.surface_patch_index(f2);
-    f1.first->set_surface_patch_index(f1.second, patch);
+    c3t3.set_surface_patch_index(f1, patch);
   }
   else if(in_cx_f1 && in_cx_f2)
   {
@@ -865,7 +868,7 @@ void merge_surface_patch_indices(const typename C3t3::Facet& f1,
 
     typename C3t3::Surface_patch_index patch = c3t3.surface_patch_index(f2);
     c3t3.remove_from_complex(f2);
-    f2.first->set_surface_patch_index(f2.second, patch);
+    c3t3.set_surface_patch_index(f2, patch);
   }
 }
 

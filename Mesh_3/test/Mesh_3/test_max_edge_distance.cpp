@@ -117,7 +117,7 @@ struct Distance_polyhedral_tester : public Tester<K_e_i>, public Edge_distance_t
   typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 
   // Criteria
-  typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
+  typedef CGAL::Mesh_criteria_3<C3t3> Mesh_criteria;
 
 public:
   void operator()(const std::size_t min_vertices_expected = 0,
@@ -196,7 +196,7 @@ struct Distance_label_image_tester : public Tester<K_e_i>, public Edge_distance_
   typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 
   // Criteria
-  typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
+  typedef CGAL::Mesh_criteria_3<C3t3> Mesh_criteria;
 
 public:
 

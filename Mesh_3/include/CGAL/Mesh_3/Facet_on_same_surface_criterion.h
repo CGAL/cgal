@@ -28,18 +28,19 @@ namespace CGAL {
 namespace Mesh_3 {
 
 
-//template <typename Tr, typename Visitor_>
+//template <typename C3T3, typename Visitor_>
 //class Facet_on_same_surface_criterion :
-//public Mesh_3::Abstract_criterion<Tr, Visitor_>
+//public Mesh_3::Abstract_criterion<C3T3, Visitor_>
 //{
 //private:
+//  typedef typename C3T3::Triangulation Tr;
 //  typedef typename Tr::Facet Facet;
 //
-//  typedef Mesh_3::Abstract_criterion<Tr,Visitor_> Base;
+//  typedef Mesh_3::Abstract_criterion<C3T3, Visitor_> Base;
 //  typedef typename Base::Quality Quality;
 //  typedef typename Base::Is_bad  Is_bad;
 //
-//  typedef Facet_on_same_surface_criterion<Tr,Visitor_> Self;
+//  typedef Facet_on_same_surface_criterion<C3T3, Visitor_> Self;
 //
 //public:
 //  /// Constructor

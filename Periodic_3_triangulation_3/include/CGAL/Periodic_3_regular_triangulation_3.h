@@ -780,7 +780,7 @@ public:
   // They do not check the validity of the mesh.
   void set_point(const Vertex_handle v,
                  const Vector& move,
-                 const Weighted_point& new_position)
+                 const Weighted_point& new_position) const
   {
     Bare_point p = geom_traits().construct_point_3_object()(point(v));
     Bare_point moved_p = p + move;

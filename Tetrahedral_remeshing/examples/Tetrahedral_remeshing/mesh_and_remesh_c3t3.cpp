@@ -32,7 +32,7 @@ using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<
   Tr, Mesh_domain::Corner_index, Mesh_domain::Curve_index>;
 
 // Criteria
-using Mesh_criteria = CGAL::Mesh_criteria_3<Tr>;
+using Mesh_criteria = CGAL::Mesh_criteria_3<C3t3>;
 
 // Triangulation for Remeshing
 using Triangulation_3 = CGAL::Triangulation_3<Tr::Geom_traits,
