@@ -848,7 +848,7 @@ if(CGAL_BRANCH_BUILD)
             ${Qt6OpenGL_DEFINITIONS} ${Qt6Gui_DEFINITIONS} ${Qt6OpenGL_EXECUTABLE_COMPILE_FLAGS} -fPIC
             ${Qt6Gui_EXECUTABLE_COMPILE_FLAGS} ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_Qt6_3RD_PARTY_DEFINITIONS}
             ${CGAL_DEFINITIONS} -std=c++17)
-    message("COMPILATION OPTIONS ARE :  ${compile_options}")
+    message("COMPILATION OPTIONS ARE: ${compile_options}")
 
     if(NOT OpenMesh_FOUND)
       list(APPEND compile_options
@@ -1105,14 +1105,13 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
 
     add_custom_target(check_headers DEPENDS ${check_pkg_target_list} check_headers_linked_twice)
 
-    string(REPLACE " " ";" compile_options ${compile_options})
     string(REPLACE " " ";" include_options ${include_options_str})
     add_custom_command(
       TARGET check_headers
       COMMENT "Check that all headers can be included in the same translation unit"
       POST_BUILD
       COMMAND ${CMAKE_CXX_COMPILER} ${compile_options} ${include_options} -x
-              c++ -fsyntax-only ${CGAL_BINARY_DIR}/test_headers.cpp)
+              c++ -fsyntax-only "${CGAL_BINARY_DIR}/test_headers.cpp")
 
 
     add_custom_target(packages_dependencies DEPENDS ${packages_deps})
