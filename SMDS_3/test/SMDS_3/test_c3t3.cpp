@@ -5,7 +5,7 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+// SPD-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stephane Tayeb
@@ -335,7 +335,7 @@ struct Tester
 
     c3t3.set_subdomain_index(ch, subdomain_index_bis);
     c3t3.set_surface_patch_index(f2, surface_patch_index_bis);
-#ifndef CGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
+#ifndef CGAL_MESH_3_NO_DEPRECATED_SURFACE_INDE
     c3t3.set_surface_index(f2, surface_patch_index_bis);
     c3t3.set_surface_index(f2.first, f2.second, surface_patch_index_bis);
 #endif
@@ -344,7 +344,7 @@ struct Tester
 
     assert(c3t3.subdomain_index(ch) == subdomain_index_bis);
     assert(c3t3.surface_patch_index(f2) == surface_patch_index_bis);
-#ifndef CGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
+#ifndef CGAL_MESH_3_NO_DEPRECATED_SURFACE_INDE
     assert(c3t3.surface_index(f2) == surface_patch_index_bis);
     assert(c3t3.surface_index(f2.first, f2.second) == surface_patch_index_bis);
 #endif
@@ -401,7 +401,7 @@ struct Tester
     assert ( c3t3.surface_patch_index(*patch_fit_bis) == surface_patch_index_bis );
 
     std::ofstream out_medit("test-medit.mesh");
-    CGAL::IO::Xwrite_MEDIT(out_medit, c3t3);
+    CGAL::IO::write_MEDIT(out_medit, c3t3);
     out_medit.close();
     CGAL::IO::output_to_tetgen("test-tetgen", c3t3);
   }

@@ -977,7 +977,7 @@ output_to_medit(std::ostream& os,
  * \see \ref IOStreamMedit
  */
 template<typename T3, typename NamedParameters = parameters::Default_named_parameters>
-void Xwrite_MEDIT(std::ostream& os,
+void write_MEDIT(std::ostream& os,
                  const T3& t3,
                  const NamedParameters& np = parameters::default_values())
 {
@@ -1057,7 +1057,7 @@ template<typename T3,
          typename CornerIndex,
          typename CurveIndex,
          typename NamedParameters = parameters::Default_named_parameters>
-void Xwrite_MEDIT(std::ostream& os,
+void write_MEDIT(std::ostream& os,
   const CGAL::Mesh_complex_3_in_triangulation_3<T3, CornerIndex, CurveIndex>& c3t3,
   const NamedParameters& np = parameters::default_values())
 {
@@ -1117,7 +1117,7 @@ void Xwrite_MEDIT(std::ostream& os,
  *  \see \ref IOStreamMedit
  */
 template<typename T3, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool Xread_MEDIT(std::istream& in,
+bool read_MEDIT(std::istream& in,
                 T3& t3,
                 const CGAL_NP_CLASS& np = parameters::default_values())
 {
@@ -1195,7 +1195,7 @@ template <typename T3,
           typename Corner_index,
           typename Curve_index,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool Xread_MEDIT(std::istream& in,
+bool read_MEDIT(std::istream& in,
                 CGAL::Mesh_complex_3_in_triangulation_3<T3, Corner_index, Curve_index>& c3t3,
                 const CGAL_NP_CLASS& np = parameters::default_values())
 {

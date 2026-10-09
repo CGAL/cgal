@@ -13,6 +13,7 @@
 #define CGAL_IO_MEDIT_H
 
 #include <CGAL/assertions.h>
+#include <CGAL/IO/helpers.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Container_helper.h>
 #include <CGAL/Named_function_parameters.h>
@@ -483,7 +484,11 @@ bool read_MEDIT(std::istream& is,
 template<class PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_MEDIT(std::istream& is,
                 PointRange& points,
-                const CGAL_NP_CLASS& np = parameters::default_values())
+                const CGAL_NP_CLASS& np = parameters::default_values()
+#ifndef DOXYGEN_RUNNING
+                 , std::enable_if_t<internal::is_Range<PointRange>::value>* = nullptr
+#endif
+              )
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -626,7 +631,7 @@ bool write_MEDIT(std::ostream& os,
                  const PointRange& points,
                  const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-                 , std::enable_if_t<!is_named_function_parameter<PointRange>>* = nullptr
+                 , std::enable_if_t<internal::is_Range<PointRange>::value>* = nullptr
 #endif
                  )
 
