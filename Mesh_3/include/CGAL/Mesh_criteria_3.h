@@ -150,11 +150,8 @@ the class `Mesh_criteria_3`
 handles the definition of a sizing field to guide the discretization of
 1-dimensional features.
 
-\tparam Tr has to be instantiated with the type used for
-`C3T3::Triangulation`,
-where `C3T3` is the model of `MeshComplex_3InTriangulation_3`
-used in the mesh generation process,
-and `C3T3::Triangulation` its nested triangulation type.
+\tparam C3T3 is the model of `MeshComplex_3InTriangulation_3` used in the
+mesh generation process.
 
 \cgalModels{MeshCriteria_3,MeshCriteriaWithFeatures_3}
 
@@ -182,9 +179,9 @@ Mesh_criteria_3<C3t3> criteria (parameters::cell_radius_edge_ratio(2).
 \sa `MeshEdgeCriteria_3`
 \sa `MeshFacetCriteria_3`
 \sa `MeshDomainField_3`
-\sa `CGAL::Mesh_cell_criteria_3<Tr>`
-\sa `CGAL::Mesh_edge_criteria_3<Tr>`
-\sa `CGAL::Mesh_facet_criteria_3<Tr>`
+\sa `CGAL::Mesh_cell_criteria_3<C3T3>`
+\sa `CGAL::Mesh_edge_criteria_3<C3T3>`
+\sa `CGAL::Mesh_facet_criteria_3<C3T3>`
 \sa `CGAL::Mesh_facet_topology`
 
 */

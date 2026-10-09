@@ -39,9 +39,7 @@ namespace CGAL {
   a uniform or variable distance field
   for the approximation error criterion.
 
-  \tparam Tr must be identical to the nested type
-  `Triangulation` of the instance used as model of
-  `MeshComplex_3InTriangulation_3`.
+  \tparam C3T3 must be a model of `MeshComplex_3InTriangulation_3`.
 
   \cgalModels{MeshFacetCriteria_3}
 

@@ -35,9 +35,7 @@ for the mesh tetrahedra,
 a uniform shape criterion
 and a sizing field which may be a uniform or variable field.
 
-\tparam Tr must be identical to the nested type
-`Triangulation` of the instance used as model of
-`MeshComplex_3InTriangulation_3`.
+\tparam C3T3 must be a model of `MeshComplex_3InTriangulation_3`.
 
 \cgalModels{MeshCellCriteria_3}
 

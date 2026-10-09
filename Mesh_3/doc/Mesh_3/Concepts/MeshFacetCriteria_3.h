@@ -10,7 +10,7 @@ The concept `MeshFacetCriteria_3` describes the types that
 handle the refinement criteria for surface facets.
 
 \cgalHasModelsBegin
-\cgalHasModels{CGAL::Mesh_facet_criteria_3<Tr>}
+\cgalHasModels{CGAL::Mesh_facet_criteria_3<C3T3>}
 \cgalHasModelsEnd
 
 \sa `MeshCellCriteria_3`
@@ -30,14 +30,14 @@ public:
 /*!
 Type for the facets of the
 triangulation. Must match the `Facet` type in the
-triangulation type used by the mesh generation function.
+triangulation nested in the mesh complex type used by the mesh generation function.
 */
 typedef unspecified_type Facet;
 
 /*!
 Handle type for the cells of the
 triangulation. Must match the `Cell_handle` type in the
-triangulation type used by the mesh generation function.
+triangulation nested in the mesh complex type used by the mesh generation function.
 */
 typedef unspecified_type Cell_handle;
 
@@ -73,10 +73,11 @@ typedef unspecified_type FT;
 /// @{
 
 /*!
-Returns the `Is_facet_bad` value of the facet `f`, which lives in the triangulation `tr`.
-The type `Tr` must be identical to the triangulation type used by the mesh generation function.
+Returns the `Is_facet_bad` value of the facet `f`, which belongs to the mesh complex
+`c3t3` used by the mesh generation function.
+The type `C3T3` must be the mesh complex type used by the mesh generation function.
 */
-Is_facet_bad operator()(const Tr& tr, Facet f);
+Is_facet_bad operator()(const C3T3& c3t3, Facet f);
 
 /**
 * @returns the squared value of minimal radius bound if set,
