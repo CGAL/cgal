@@ -14,46 +14,48 @@ typedef Kernel::Point_3                 Point_3;
 int main() {
   const std::string filename = "./data/polyhedral_complex.mesh";
   std::ifstream input(filename);
-  std::vector<Point_3> points;
-  std::vector<std::array<int,4>> cells;
-  std::vector<int> subdomains;
-  std::vector<std::array<int,3>> edges;
-  std::vector<std::tuple<int,int,int,int>> facets;
-  std::deque<CGAL::IO::internal::Vertex_with_corner_index<int>> corners;
-  bool verbose = false;
-  bool success = CGAL::IO::read_MEDIT(input, points, cells, CGAL::parameters::subdomain_indices(std::ref(subdomains))
-                                                                             .facets_with_patch_index(std::ref(facets))
-                                                                             .edges_with_curve_index(std::ref(edges))
-                                                                             .vertices_with_corner_index(std::ref(corners))
-                                                                             .verbose(verbose));
+  std::vector<std::pair<Point_3,int>> points_with_ref;
+  std::vector<std::array<int,5>> cells_with_ref;
+  std::vector<std::array<int,3>> edges_with_ref;
+  std::vector<std::tuple<int,int,int,int>> facets_with_ref;
+  std::vector<int> ridges;
+  std::deque<int> corners;
+  bool success = CGAL::IO::read_MEDIT(input, points_with_ref, CGAL::parameters::tetrahedra(std::ref(cells_with_ref))
+                                                                               .triangles(std::ref(facets_with_ref))
+                                                                               .edges(std::ref(edges_with_ref))
+                                                                               .ridges(std::ref(ridges))
+                                                                               .corners(std::ref(corners))
+                                                                               .verbose(false));
   assert(success);
 
   std::ostringstream output;
   output.precision(17);
-  CGAL::IO::write_MEDIT(output, points, cells, CGAL::parameters::subdomain_indices(std::cref(subdomains))
-                                                                .facets_with_patch_index(std::cref(facets))
-                                                                .edges_with_curve_index(std::cref(edges))
-                                                                .vertices_with_corner_index(std::cref(corners)));
+  CGAL::IO::write_MEDIT(output, points_with_ref, CGAL::parameters::tetrahedra(std::cref(cells_with_ref))
+                                                                  .triangles(std::cref(facets_with_ref))
+                                                                  .edges(std::cref(edges_with_ref))
+                                                                  .ridges(std::cref(ridges))
+                                                                  .corners(std::cref(corners)));
 
-  std::istringstream input2(output.str());
-  std::vector<Point_3> points2;
-  std::vector<std::array<int,4>> cells2;
-  std::vector<int> subdomains2;
-  std::vector<std::array<int,3>> edges2;
-  std::vector<std::tuple<int,int,int,int>> facets2;
-  std::deque<CGAL::IO::internal::Vertex_with_corner_index<int>> corners2;
-  success = CGAL::IO::read_MEDIT(input2, points2, cells2, CGAL::parameters::subdomain_indices(std::ref(subdomains2))
-                                                                           .facets_with_patch_index(std::ref(facets2))
-                                                                           .edges_with_curve_index(std::ref(edges2))
-                                                                           .vertices_with_corner_index(std::ref(corners2))
-                                                                           .verbose(verbose));
+  std::istringstream input_bis(output.str());
+  std::vector<std::pair<Point_3,int>> points_with_ref_bis;
+  std::vector<std::array<int,5>> cells_with_ref_bis;
+  std::vector<std::array<int,3>> edges_with_ref_bis;
+  std::vector<std::tuple<int,int,int,int>> facets_with_ref_bis;
+  std::vector<int> ridges_bis;
+  std::deque<int> corners_bis;
+  success = CGAL::IO::read_MEDIT(input_bis, points_with_ref_bis, CGAL::parameters::tetrahedra(std::ref(cells_with_ref_bis))
+                                                                                   .triangles(std::ref(facets_with_ref_bis))
+                                                                                   .edges(std::ref(edges_with_ref_bis))
+                                                                                   .ridges(std::ref(ridges_bis))
+                                                                                   .corners(std::ref(corners_bis))
+                                                                                   .verbose(false));
 
-  assert(points == points2);
-  assert(cells == cells2);
-  assert(subdomains == subdomains2);
-  assert(corners == corners2);
-  assert(edges == edges2);
-  assert(facets == facets2);
+  assert(points_with_ref== points_with_ref_bis);
+  assert(cells_with_ref == cells_with_ref_bis);
+  assert(facets_with_ref == facets_with_ref_bis);
+  assert(edges_with_ref == edges_with_ref_bis);
+  assert(corners == corners_bis);
+  assert(ridges == ridges_bis);
   assert(success);
   std::cout << "done" << std::endl;
   return 0;

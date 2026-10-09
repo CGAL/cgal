@@ -698,6 +698,7 @@ bool build_triangulation_with_subdomains_range(Tr& tr,
                                   allow_negative_orientation);
 }
 
+
 } // namespace SMDS_3
 } // namespace CGAL
 

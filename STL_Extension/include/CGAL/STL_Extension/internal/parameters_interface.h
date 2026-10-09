@@ -69,9 +69,10 @@ CGAL_add_named_parameter(stream_precision_t, stream_precision, stream_precision)
 CGAL_add_named_parameter(read_only_one_object_t, read_only_one_object, read_only_one_object)
 
 // List of named parameters that we use in the package 'Stream_support'
-CGAL_add_named_parameter(facets_with_patch_index_t, facets_with_patch_index, facets_with_patch_index)
-CGAL_add_named_parameter(edges_with_curve_index_t, edges_with_curve_index, edges_with_curve_index)
-CGAL_add_named_parameter(vertices_with_corner_index_t, vertices_with_corner_index, vertices_with_corner_index)
+CGAL_add_named_parameter(tetrahedra_t, tetrahedra, tetrahedra)
+CGAL_add_named_parameter(edges_t, edges, edges)
+CGAL_add_named_parameter(ridges_t, ridges, ridges)
+CGAL_add_named_parameter(corners_t, corners, corners)
 
 
 // List of named parameters that we use in the package 'Mesh_3'
