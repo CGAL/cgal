@@ -21,6 +21,8 @@
 
 #include <CGAL/disable_warnings.h>
 
+#include <boost/config.hpp>
+
 #include <CGAL/assertions.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Iterator_range.h>
@@ -28,14 +30,13 @@
 #include <CGAL/type_traits.h>
 #include <CGAL/use.h>
 
-#include <variant>
-#include <optional>
-#include <boost/config.hpp>
-
-#include <vector>
 #include <map>
-#include <utility>
+#include <optional>
+#include <tuple>
 #include <type_traits>
+#include <utility>
+#include <variant>
+#include <vector>
 
 namespace CGAL {
 
@@ -1321,65 +1322,6 @@ struct Output_visitor {
 
 } // internal
 
-
-
-namespace internal {
-
-template < typename D, bool with_drop, typename V = std::tuple<>, typename O = std::tuple<> >
-struct Derivator
-{
-  typedef Derivator<D, with_drop, V, O> Self;
-  Derivator() = default;
-  Derivator(const Self&) = default;
-  Self& operator=(const Self&) = delete;
-  template <class Tuple>
-  void tuple_dispatch(const Tuple&)
-  {}
-};
-
-template < typename D>
-struct Derivator<D, true, std::tuple<>, std::tuple<>>
-{
-  typedef Derivator<D, true, std::tuple<>, std::tuple<>> Self;
-  Derivator() = default;
-  Derivator(const Self&) = default;
-  Self& operator=(const Self&) = delete;
-  template <class Tuple>
-  void tuple_dispatch(const Tuple&){}
-  template <class T>
-  Self& operator=(const T&) { return *this; } // dropping value
-};
-
-template < typename D, bool with_drop, typename V1, typename O1, typename... V, typename... O>
-struct Derivator<D, with_drop, std::tuple<V1, V...>, std::tuple<O1, O...> >
-  : public Derivator<D, with_drop, std::tuple<V...>, std::tuple<O...> >
-{
-  typedef Derivator<D, with_drop, std::tuple<V1, V...>, std::tuple<O1, O...> > Self;
-  typedef Derivator<D, with_drop, std::tuple<V...>, std::tuple<O...> > Base;
-
-  Derivator() = default;
-  Derivator(const Self&) = default;
-  Self& operator=(const Self&) = delete;
-
-  using Base::operator=;
-
-  D& operator=(const V1& v)
-  {
-    * std::get< D::size - sizeof...(V) - 1 >(static_cast<typename D::Iterator_tuple&>(static_cast<D&>(*this))) ++ = v;
-    return static_cast<D&>(*this);
-  }
-
-  template <class Tuple>
-  void tuple_dispatch(const Tuple& t)
-  {
-    * std::get< D::size - sizeof...(V) - 1 >(static_cast<typename D::Iterator_tuple&>(static_cast<D&>(*this))) ++ =
-        std::get< D::size - sizeof...(V) - 1 >(t);
-    static_cast<Base&>(*this).tuple_dispatch(t);
-  }
-};
-
-} // internal
-
 namespace tuple_internal {
 template <typename ...Args, std::size_t ...Is>
 auto to_tuple(std::tuple<Args...> &t, std::index_sequence<Is...>)
@@ -1391,51 +1333,104 @@ auto to_tuple(std::tuple<Args...> &t, std::index_sequence<Is...>)
 
 // OutputIterator which accepts several types in *o++= and dispatches,
 // wraps several other output iterators, and dispatches accordingly.
-template < typename V, typename O, bool drop_unknown_value_types>
-class Dispatch_output_iterator_impl;
+template < typename V, typename O, bool or_drop = false >
+class Dispatch_output_iterator;
 
-template < typename... V, typename... O,  bool drop_unknown_value_types>
-class Dispatch_output_iterator_impl < std::tuple<V...>, std::tuple<O...>, drop_unknown_value_types>
- : private internal::Derivator<Dispatch_output_iterator_impl< std::tuple<V...>, std::tuple<O...>, drop_unknown_value_types >, drop_unknown_value_types, std::tuple<V...>, std::tuple<O...> >
- , public std::tuple<O...>
+template <std::size_t N, typename V, typename O>
+struct Output_to_nth_of_tuple_of_iterators {
+  template <typename Tuple>
+  static void assign(Tuple& tuple, const V& v) {
+    *std::get<N>(tuple)++ = v;
+  }
+};
+
+template <bool drop_value>
+struct Drop_output_iterator
 {
-  static_assert(sizeof...(V) == sizeof...(O),
-                "The number of explicit template parameters has to match the number of arguments");
+  template <typename Tuple, typename T>
+  static void assign(Tuple&, const T&) {
+    // Drop the value... Only if `drop_value==true`.
+  }
+};
+
+template <>
+struct Drop_output_iterator<false>
+{
+  // fake assign, declared but deleted
+  template <typename Tuple>
+  static void assign(Tuple& tuple, Null_tag) = delete;
+};
+
+template <typename Values, typename OutputIterators, typename Indices, bool>
+struct Dispatch_output_iterator_aux;
+
+template <typename... V, typename... O, std::size_t... Indices, bool drop_unknown_value_types>
+struct Dispatch_output_iterator_aux<std::tuple<V...>,
+                                    std::tuple<O...>,
+                                    std::index_sequence<Indices...>,
+                                    drop_unknown_value_types>
+    : public Output_to_nth_of_tuple_of_iterators<Indices, V, O>...,
+      public Drop_output_iterator<drop_unknown_value_types>
+{
+  using Output_to_nth_of_tuple_of_iterators<Indices, V, O>::assign...;
+  using Drop_output_iterator<drop_unknown_value_types>::assign;
+
+  template <typename This, typename Tuple>
+  void tuple_dispatch(This& self, const Tuple& t) {
+    // Assign each element of the tuple to the corresponding output iterator,
+    // using a fold expression on "operator," to expand the parameter pack.
+    ( static_cast<Output_to_nth_of_tuple_of_iterators<Indices, V, O>&>(*this).
+          assign(self, std::get<Indices>(t)), ...);
+  }
+};
+
+template < typename... V, typename... O, bool drop_unknown_value_types >
+class Dispatch_output_iterator < std::tuple<V...>, std::tuple<O...>, drop_unknown_value_types >
+  : public Dispatch_output_iterator_aux< std::tuple<V...>, std::tuple<O...>,
+                                         std::make_index_sequence<sizeof...(O)>, drop_unknown_value_types >
+  , public std::tuple<O...>
+{
+  static_assert(
+      sizeof...(V) == sizeof...(O),
+      "Dispatch_output_iterator: The number of value types (V...) must match the number of output iterators (O...).");
 
   static const int size = sizeof...(V);
 
-  template <typename D, bool with_drop, typename V_, typename O_>
-  friend struct internal::Derivator;
-
 public:
+  using Iterator_tuple = std::tuple<O...>;
+  using Value_type_tuple = std::tuple<V...>;
 
-  typedef std::tuple<O...>               Iterator_tuple;
-  typedef std::tuple<V...>               Value_type_tuple;
-
-  typedef std::output_iterator_tag  iterator_category;
-  typedef void                      value_type;
-  typedef void                      difference_type;
-  typedef void                      pointer;
-  typedef void                      reference;
+  using iterator_category = std::output_iterator_tag;
+  using value_type = void;
+  using difference_type = void;
+  using pointer = void;
+  using reference = void;
 
 private:
-
-  typedef Dispatch_output_iterator_impl Self;
-  typedef internal::Derivator<Self, drop_unknown_value_types, Value_type_tuple, Iterator_tuple > Base;
+  using Self = Dispatch_output_iterator;
+  using Base = Dispatch_output_iterator_aux<std::tuple<V...>,
+                                            std::tuple<O...>,
+                                            std::index_sequence_for<O...>,
+                                            drop_unknown_value_types>;
 
 public:
 
-  using Base::operator=;
   using Base::tuple_dispatch;
 
-  Dispatch_output_iterator_impl(O... o) : std::tuple<O...>(o...) {}
+  Dispatch_output_iterator(O... o) : std::tuple<O...>(o...) {}
 
 
-  Dispatch_output_iterator_impl(const Dispatch_output_iterator_impl&)=default;
+  Dispatch_output_iterator(const Dispatch_output_iterator&)=default;
 
   Self& operator=(const Self& s)
   {
     static_cast<Iterator_tuple&>(*this) = static_cast<const Iterator_tuple&>(s);
+    return *this;
+  }
+
+  template <typename T, typename = std::enable_if_t<!std::is_convertible_v<T, Self>>>
+  Self& operator=(const T& t) {
+    this->assign(*this, t);
     return *this;
   }
 
@@ -1461,8 +1456,8 @@ public:
 
   Self& operator=(const std::tuple<V...>& t)
   {
-    tuple_dispatch(t);
-    return *this;
+      this->tuple_dispatch(*this, t);
+      return *this;
   }
 
   operator std::tuple<O&...>()
@@ -1476,10 +1471,6 @@ public:
   }
 };
 
-
-template<class V, class O>
-using Dispatch_output_iterator = Dispatch_output_iterator_impl<V,O,false>;
-
 template < typename... V, typename... O>
 Dispatch_output_iterator<std::tuple<V...>, std::tuple<O...> >
 dispatch_output(O... o)
@@ -1491,8 +1482,8 @@ dispatch_output(O... o)
 // Same as Dispatch_output_iterator, but has a dummy *o++= for all other types
 // that drops the data (same as Emptyset_iterator).
 
-template<class V, class O>
-using Dispatch_or_drop_output_iterator = Dispatch_output_iterator_impl<V,O,true>;
+template < typename Tuple_of_v, typename Tuple_of_output_it >
+using Dispatch_or_drop_output_iterator = Dispatch_output_iterator< Tuple_of_v, Tuple_of_output_it, true >;
 
 template < typename... V, typename... O>
 inline
