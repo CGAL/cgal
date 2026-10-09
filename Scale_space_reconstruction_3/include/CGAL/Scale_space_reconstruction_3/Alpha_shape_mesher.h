@@ -729,24 +729,16 @@ private:
               a = f.first->vertex( f.second );
               cl = _shape->classify( SFacet(n, ni) );
 
-              int n0 = -1, n1 = -1;
-              bool n0found = false;
-              for (int j = 0; j < 4; ++ j)
-              {
-                if (j != ni && j != f.second)
-                {
-                  if (n0found)
-                  {
-                    n1 = j;
-                    break;
-                  }
-                  else
-                  {
-                    n0 = j;
-                    n0found = true;
-                  }
-                }
-              }
+              CGAL_assertion(ni != f.second);
+              CGAL_assume(ni != f.second);
+
+              int n0 = 0;
+              while (n0 == ni || n0 == f.second)
+                ++n0;
+
+              int n1 = n0 + 1;
+              while (n1 == ni || n1 == f.second)
+                ++n1;
 
               VEdge vedge = (n->vertex (n0) < n->vertex (n1))
                 ? std::make_pair (n->vertex (n0), n->vertex (n1))
