@@ -13,6 +13,14 @@ namespace params = CGAL::parameters;
 template <int i>
 using Static_int = std::integral_constant<int, i>;
 
+void test_all_cgal_named_params() {
+  struct A{};
+  A a;
+#define CGAL_add_named_parameter(X, Y, Z) \
+  (void)params::Z(a).Z(a);
+#include <CGAL/STL_Extension/internal/parameters_interface.h>
+}
+
 struct Non_copyable
 {
   int value = 0;
@@ -167,6 +175,29 @@ void test_references()
   assert(&eim_ref == &default_value);
 }
 
+
+void test_ref_only_parameters()
+{
+  int i = 42;
+  auto np_ref_only_i = params::weights(i).weights(i);
+  auto& ref_i = np_ref_only_i.parameter_ref(CGAL::internal_np::weights_param_t{});
+  assert(&ref_i == &i);
+
+  const int ci = 43;
+  auto np_cref_only_ci = params::image(ci).image(ci);
+  auto& ref_ci = np_cref_only_ci.parameter_ref(CGAL::internal_np::image_3_param_t{});
+  assert(&ref_ci == &ci);
+
+  auto np_ref_only_ci = params::weights(ci).weights(ci);
+  auto& ref_ci2 = np_ref_only_ci.parameter_ref(CGAL::internal_np::weights_param_t{});
+  assert(&ref_ci2 == &ci);
+
+  auto np_cref_only_2 = params::image(2*3).image(2*3);
+  auto& ref_2 = np_cref_only_2.parameter_ref(CGAL::internal_np::image_3_param_t{});
+  static_assert(std::is_const_v<std::remove_reference_t<decltype(ref_2)>>);
+  assert(np_cref_only_2.parameter_ref(CGAL::internal_np::image_3_param_t{}) == 6);
+}
+
 void test_authorized_options()
 {
   auto np_ok1 = CGAL::parameters::vertex_point_map(0).edge_index_map(2).face_index_map(3);
@@ -212,6 +243,7 @@ void test_authorized_options()
 
 int main()
 {
+  test_all_cgal_named_params();
   test_values_and_types();
 
   test_missing_parameters();
@@ -221,6 +253,8 @@ int main()
   test_no_copyable();
 
   test_references();
+
+  test_ref_only_parameters();
 
   // test that, in case of duplicates, the last parameter value is kept
   auto np = params::visitor(1).visitor(2);

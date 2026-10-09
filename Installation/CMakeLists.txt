@@ -830,6 +830,7 @@ if(CGAL_BRANCH_BUILD)
     find_package(GMP REQUIRED)
     find_package(Doxygen REQUIRED)
     find_package(Eigen3 REQUIRED)
+    include(CGAL_Eigen3_support)
     get_target_property(CGAL_EIGEN_3_INCLUDE_DIRS Eigen3::Eigen INTERFACE_INCLUDE_DIRECTORIES)
     find_package(Qt6 COMPONENTS Core Widgets OpenGL Gui REQUIRED)
     set(CMAKE_POLICY_DEFAULT_CMP0167 NEW)
@@ -843,23 +844,18 @@ if(CGAL_BRANCH_BUILD)
     find_package(OpenMesh)
     find_package(OpenCV QUIET)
 
-    set(compile_options
-        "\
-${CMAKE_CXX_FLAGS} -DCGAL_EIGEN3_ENABLED -DCGAL_PROFILE \
-${Qt6Widgets_DEFINITIONS} ${Qt6OpenGL_DEFINITIONS} ${Qt6Gui_DEFINITIONS} \
-${Qt6OpenGL_EXECUTABLE_COMPILE_FLAGS} -fPIC \
-${Qt6Gui_EXECUTABLE_COMPILE_FLAGS} \
-${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_Qt6_3RD_PARTY_DEFINITIONS} \
-${CGAL_DEFINITIONS}" -std=c++17)
-    message("COMPILATION OPTIONS ARE :  ${compile_options}")
+    set(compile_options ${CMAKE_CXX_FLAGS} -DCGAL_EIGEN3_ENABLED -DCGAL_PROFILE ${Qt6Widgets_DEFINITIONS}
+            ${Qt6OpenGL_DEFINITIONS} ${Qt6Gui_DEFINITIONS} ${Qt6OpenGL_EXECUTABLE_COMPILE_FLAGS} -fPIC
+            ${Qt6Gui_EXECUTABLE_COMPILE_FLAGS} ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_Qt6_3RD_PARTY_DEFINITIONS}
+            ${CGAL_DEFINITIONS} -std=c++17)
+    message("COMPILATION OPTIONS ARE: ${compile_options}")
 
     if(NOT OpenMesh_FOUND)
-      set(compile_options
-          "${compile_options} \
--DCGAL_BOOST_GRAPH_GRAPH_TRAITS_POLYMESH_ARRAYKERNELT_H \
--DCGAL_BOOST_GRAPH_GRAPH_TRAITS_TRIMESH_ARRAYKERNELT_H \
--DCGAL_PROPERTIES_POLYMESH_ARRAYKERNELT_H \
--DCGAL_PROPERTIES_TRIMESH_ARRAYKERNELT_H")
+      list(APPEND compile_options
+        -DCGAL_BOOST_GRAPH_GRAPH_TRAITS_POLYMESH_ARRAYKERNELT_H
+        -DCGAL_BOOST_GRAPH_GRAPH_TRAITS_TRIMESH_ARRAYKERNELT_H
+        -DCGAL_PROPERTIES_POLYMESH_ARRAYKERNELT_H
+        -DCGAL_PROPERTIES_TRIMESH_ARRAYKERNELT_H)
       message(
         STATUS
           "Skip headers \
@@ -870,17 +866,17 @@ ${CGAL_DEFINITIONS}" -std=c++17)
 because OpenMesh_FOUND is false.")
     endif()
     if(NOT OpenCV_FOUND)
-      set(compile_options "${compile_options} \
--DCGAL_CLASSIFICATION_OPENCV_RANDOM_FOREST_CLASSIFIER_H")
+      list(APPEND compile_options
+        -DCGAL_CLASSIFICATION_OPENCV_RANDOM_FOREST_CLASSIFIER_H)
       message(STATUS "Skip header \
 \"CGAL/Classification/OpenCV_random_forest_classifier.h\" \
 because OpenCV_FOUND is false")
     endif()
     if(LEDA_FOUND)
-      set(compile_options "${compile_options} -DCGAL_USE_LEDA")
+      list(APPEND compile_options -DCGAL_USE_LEDA)
     endif()
     if(NOT IPE_FOUND)
-      set(compile_options "${compile_options} -DCGAL_IPELET_BASE_H=1")
+      list(APPEND compile_options -DCGAL_IPELET_BASE_H=1)
       message(STATUS "Skip header \"CGAL/CGAL_ipelet_base.h\" \
 because IPE_FOUND is false.")
     endif()
@@ -929,7 +925,6 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
       ${GMP_INCLUDE_DIR}
       ${Qt6OpenGL_INCLUDE_DIRS}
       ${Qt6Widgets_INCLUDE_DIRS}
-      ${Qt6Gui_DEFINITIONS}
       ${CGAL_3RD_PARTY_INCLUDE_DIRS}
       ${CGAL_Qt6_3RD_PARTY_INCLUDE_DIRS})
       list(APPEND include_options "-I${incdir}")
@@ -1062,6 +1057,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
           endif() # end the if on list_of_documented_headers
         endforeach() # look on headers
         add_custom_target(check_pkg_${package}_headers
+                          COMMENT "Check headers for package ${package}"
                           DEPENDS ${check_pkg_headers_depends})
         add_custom_command(
           OUTPUT ${CGAL_BINARY_DIR}/package_info/${package}/included_headers
@@ -1078,6 +1074,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
             ${check_pkg_headers_depends})
         add_custom_target(
           pkg_${package}_deps
+          COMMENT "Compute dependencies for package ${package}"
           DEPENDS ${CGAL_BINARY_DIR}/package_info/${package}/dependencies)
         list(APPEND check_pkg_target_list check_pkg_${package}_headers)
         list(APPEND packages_deps
@@ -1095,26 +1092,27 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
     file(COPY_FILE ${CGAL_BINARY_DIR}/test_headers.cpp ${CGAL_BINARY_DIR}/test_headers2.cpp)
     file(APPEND ${CGAL_BINARY_DIR}/test_headers.cpp "int main(){}\n")
 
-    add_custom_target(check_headers DEPENDS ${check_pkg_target_list})
-
-    string(REPLACE " " ";" compile_options ${compile_options})
-    string(REPLACE " " ";" include_options ${include_options_str})
-    add_custom_command(
-      TARGET check_headers
-      POST_BUILD
-      COMMAND ${CMAKE_CXX_COMPILER} ${compile_options} ${include_options} -x
-              c++ -fsyntax-only ${CGAL_BINARY_DIR}/test_headers.cpp)
-
     # New check that headers can be included in different compilation units, that can be linked
     # together. That checks for missing `inline` keywords.
     add_executable(check_headers_linked_twice
                    ${CGAL_BINARY_DIR}/test_headers.cpp
                    ${CGAL_BINARY_DIR}/test_headers2.cpp)
-    target_link_libraries(check_headers_linked_twice PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 Qt6::Widgets)
+    target_link_libraries(check_headers_linked_twice PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 Qt6::Widgets CGAL::Eigen3_support)
+    target_compile_options(check_headers_linked_twice PRIVATE ${compile_options} ${include_options})
     if(VTK_FOUND)
       target_link_libraries(check_headers_linked_twice PRIVATE VTK::IOImage)
     endif()
-    target_compile_options(check_headers_linked_twice PRIVATE ${compile_options} ${include_options})
+
+    add_custom_target(check_headers DEPENDS ${check_pkg_target_list} check_headers_linked_twice)
+
+    string(REPLACE " " ";" include_options ${include_options_str})
+    add_custom_command(
+      TARGET check_headers
+      COMMENT "Check that all headers can be included in the same translation unit"
+      POST_BUILD
+      COMMAND ${CMAKE_CXX_COMPILER} ${compile_options} ${include_options} -x
+              c++ -fsyntax-only "${CGAL_BINARY_DIR}/test_headers.cpp")
+
 
     add_custom_target(packages_dependencies DEPENDS ${packages_deps})
     message(

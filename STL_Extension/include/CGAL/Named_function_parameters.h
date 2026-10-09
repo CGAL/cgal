@@ -257,6 +257,12 @@ struct Named_function_parameters
   constexpr auto parameter(...) const { return internal_np::Param_not_found(); }
   static constexpr bool has_parameter(...) { return false; }
 
+  template <typename Query_tag>
+  constexpr decltype(auto) parameter_ref([[maybe_unused]] Query_tag tag) const {
+    static_assert(has_parameter(Query_tag()), "Parameter not found");
+    return internal_np::get_reference(parameter(tag));
+  }
+
   template <typename D, typename Query_tag>
   constexpr decltype(auto) parameter_or([[maybe_unused]] Query_tag tag, [[maybe_unused]] D&& default_value) const {
     if constexpr (has_parameter(Query_tag())) {
@@ -358,32 +364,35 @@ template <class Tag, bool ref_only = false, bool ref_is_const = false>
 struct Boost_parameter_compatibility_wrapper
 {
   template <typename K>
-  constexpr auto operator()(const K& p) const
+  constexpr auto operator()(K&& p) const
   {
     if constexpr (ref_only)
     {
+      using Pointed_type = std::remove_reference_t<cpp20::unwrap_reference_t<K>>;
       if constexpr (ref_is_const)
       {
-        using Params = Named_function_parameters<std::reference_wrapper<const K>, Tag>;
-        return Params(std::cref(p));
+        using Params = Named_function_parameters<std::reference_wrapper<const Pointed_type>, Tag>;
+        const auto& ref = cpp20::unwrap_reference_t<K>(p);
+        return Params{std::cref(ref)};
       }
       else
       {
-        using Params = Named_function_parameters<std::reference_wrapper<K>, Tag>;
-        return Params(std::ref(p));
+        using Params = Named_function_parameters<std::reference_wrapper<Pointed_type>, Tag>;
+        auto& ref = cpp20::unwrap_reference_t<K>(p);
+        return Params{std::ref(ref)};
       }
     }
     else
     {
       using Params = Named_function_parameters<K, Tag>;
-      return Params(p);
+      return Params{std::forward<K>(p)};
     }
   }
 
   template <typename K>
-  constexpr auto operator=(const K& p) const
+  constexpr auto operator=(K&& p) const
   {
-    return operator()(p);
+    return operator()(std::forward<K>(p));
   }
 };
 
@@ -392,7 +401,7 @@ struct Boost_parameter_compatibility_wrapper
   template <typename K>                                           \
   constexpr auto Z(const K& p) {                                  \
     using Params = Named_function_parameters<K, internal_np::X>;  \
-    return Params(p);                                             \
+    return Params{p};                                             \
   }
 
 #define CGAL_add_named_parameter_with_compatibility(X, Y, Z)        \
