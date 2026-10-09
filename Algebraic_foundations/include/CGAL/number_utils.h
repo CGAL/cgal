@@ -91,6 +91,14 @@ is_one( const AS& x ) {
 
 template< class AS >
 inline
+typename Algebraic_structure_traits<AS>::Is_invertible::result_type
+is_invertible( const AS& x ) {
+    typename Algebraic_structure_traits< AS >::Is_invertible is_invertible;
+    return is_invertible( x );
+}
+
+template< class AS >
+inline
 typename Algebraic_structure_traits< AS >::Sqrt::result_type
 sqrt( const AS& x ) {
     typename Algebraic_structure_traits< AS >::Sqrt sqrt;

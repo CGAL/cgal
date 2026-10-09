@@ -42,6 +42,7 @@ int main(){
     CGAL_IS_AST_NULL_FUNCTOR (  Square);
     CGAL_IS_AST_NULL_FUNCTOR (  Is_zero);
     CGAL_IS_AST_NULL_FUNCTOR (  Is_one);
+    CGAL_IS_AST_NULL_FUNCTOR (  Is_invertible);
     CGAL_IS_AST_NULL_FUNCTOR (  Sqrt);
     CGAL_IS_AST_NULL_FUNCTOR (  Kth_root);
     CGAL_IS_AST_NULL_FUNCTOR (  Root_of);

@@ -59,6 +59,23 @@ template<> class Algebraic_structure_traits< int >
 
     typedef INTERN_INT::
        Is_square_per_double_conversion< Type > Is_square;
+
+    class Inverse
+      : public CGAL::cpp98::unary_function< Type, Type > {
+      public:
+        Type operator()( const Type& t) const {
+          CGAL_precondition( (t == 1) || (t == -1) );
+          return t;
+        }
+    };
+
+    class Is_invertible
+    : public CGAL::cpp98::unary_function< Type, bool > {
+    public:
+      bool operator()( const Type& t) const {
+        return (t == 1) || (t == -1);
+      }
+  };
 };
 
 template <> class Real_embeddable_traits< int >
