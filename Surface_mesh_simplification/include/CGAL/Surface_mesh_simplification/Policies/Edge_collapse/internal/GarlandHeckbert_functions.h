@@ -576,15 +576,16 @@ construct_line_quadric_from_vertex(const typename boost::graph_traits<TriangleMe
 /// PROB VARIANCE
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-template <typename TriangleMesh, typename GeomTraits>
+template <typename TriangleMesh, typename VertexPointMap, typename GeomTraits>
 std::pair<typename GeomTraits::FT, typename GeomTraits::FT>
 estimate_variances(const TriangleMesh& mesh,
+                   VertexPointMap vpm,
                    const GeomTraits& gt,
                    const typename GeomTraits::FT variance,
                    const typename GeomTraits::FT p_factor)
 {
-  typedef typename TriangleMesh::Vertex_index                                  vertex_descriptor;
-  typedef typename TriangleMesh::Edge_index                                    edge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor        vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor          edge_descriptor;
 
   typedef typename GeomTraits::FT                                              FT;
   typedef typename GeomTraits::Point_3                                         Point_3;
@@ -600,11 +601,11 @@ estimate_variances(const TriangleMesh& mesh,
   std::size_t ne = 0;
   for(edge_descriptor e : edges(mesh))
   {
-    vertex_descriptor v1 = mesh.vertex(e, 0);
-    vertex_descriptor v2 = mesh.vertex(e, 1);
+    vertex_descriptor v1 = source(e, mesh);
+    vertex_descriptor v2 = target(e, mesh);
 
-    const Point_3& p1 = mesh.point(v1); // @fixme Surface_mesh API
-    const Point_3& p2 = mesh.point(v2);
+    const Point_3& p1 = get(vpm, v1);
+    const Point_3& p2 = get(vpm, v2);
 
     const Vector_3 vec = construct_vector(p1, p2);
     average_edge_length += sqrt(squared_length(vec));
