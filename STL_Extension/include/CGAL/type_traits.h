@@ -15,6 +15,7 @@
 #include <boost/type_traits/is_base_and_derived.hpp>
 #include <boost/mpl/or.hpp>
 
+#include <functional>
 #include <type_traits>
 
 namespace CGAL {
@@ -53,6 +54,21 @@ namespace cpp20 {
 
   template< class T >
   using remove_cvref_t = typename remove_cvref<T>::type;
+
+  template<class T>
+  struct unwrap_reference { using type = T; };
+
+  template<class U>
+  struct unwrap_reference<std::reference_wrapper<U>> { using type = U&; };
+
+  template<class T>
+  using unwrap_reference_t = typename unwrap_reference<T>::type;
+
+  template<class T>
+  struct unwrap_ref_decay : unwrap_reference<std::decay_t<T>> {};
+
+  template<class T>
+  using unwrap_ref_decay_t = typename unwrap_ref_decay<T>::type;
 
 } // end namespace cpp20
 

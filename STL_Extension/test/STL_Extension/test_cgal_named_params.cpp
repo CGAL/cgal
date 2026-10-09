@@ -1,118 +1,231 @@
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/assertions.h>
-#include <type_traits>
+#include <CGAL/use.h>
 
+#include <cassert>
 #include <cstdlib>
+#include <functional>
+#include <type_traits>
 
 namespace inp = CGAL::internal_np;
 namespace params = CGAL::parameters;
 
 template <int i>
-struct A
-{
-  A(int v):v(v){}
-  int v;
-};
+using Static_int = std::integral_constant<int, i>;
 
-struct B
+void test_all_cgal_named_params() {
+  struct A{};
+  A a;
+#define CGAL_add_named_parameter(X, Y, Z) \
+  (void)params::Z(a).Z(a);
+#include <CGAL/STL_Extension/internal/parameters_interface.h>
+}
+
+struct Non_copyable
 {
-  B(){}
-  B(const B&) = delete;
+  int value = 0;
+  Non_copyable() = default;
+  Non_copyable(const Non_copyable&) = delete;
 };
 
 template <int i, class T>
 void check_same_type(T)
 {
-  static const bool b = std::is_same< A<i>, T >::value;
+  static const bool b = std::is_same_v<Static_int<i>, T>;
   static_assert(b);
   assert(b);
 }
 
-template<class NamedParameters>
-void test_values_and_types(const NamedParameters& np)
+void test_values_and_types()
 {
+  auto np = params::vertex_index_map(Static_int<0>())
+                          .visitor(Static_int<1>());
   using params::get_parameter;
+  using CGAL::parameter_or;
 
   // test values
-  assert(get_parameter(np, inp::vertex_index).v == 0);
-  assert(get_parameter(np, inp::visitor).v == 1);
+  assert(get_parameter(np, inp::vertex_index).value == 0);
+  assert(np.parameter(inp::vertex_index).value == 0);
+  assert(get_parameter(np, inp::visitor).value == 1);
+  assert(np.parameter(inp::visitor).value == 1);
 
   // test types
   check_same_type<0>(get_parameter(np, inp::vertex_index));
+  check_same_type<0>(np.parameter(inp::vertex_index));
+  check_same_type<0>(parameter_or(np, inp::vertex_index, Static_int<42>{}));
+  check_same_type<0>(parameter_or<Static_int<42>>(np, inp::vertex_index));
   check_same_type<1>(get_parameter(np, inp::visitor));
+  check_same_type<1>(np.parameter(inp::visitor));
+  check_same_type<1>(parameter_or(np, inp::visitor, Static_int<42>{}));
+  check_same_type<1>(parameter_or<Static_int<42>>(np, inp::visitor));
+
+  auto v = parameter_or(np, inp::face_color_map, Static_int<42>{});
+  assert(v.value == 42);
+  assert(v.value == np.parameter_or(inp::face_color_map, Static_int<42>{}).value);
+
+  auto v2 = parameter_or<Static_int<42>>(np, inp::face_color_map);
+  assert(v2.value == 42);
+  assert(v2.value == np.parameter_or<Static_int<42>>(inp::face_color_map).value);
 }
 
-template<class NamedParameters>
-void test_no_copyable(const NamedParameters& np)
+void test_missing_parameters()
 {
-  typedef typename inp::Get_param<typename NamedParameters::base,inp::visitor_t>::type NP_type;
-  static_assert(std::is_same<NP_type,std::reference_wrapper<const B> >::value);
+  const auto np = params::default_values();
+  using NamedParameters = decltype(np);
 
-  const A<4>& a  = params::choose_parameter(params::get_parameter_reference(np, inp::edge_index), A<4>(4));
-  assert(a.v==4);
+  static_assert(!NamedParameters::has_parameter(inp::vertex_index));
+  static_assert(params::is_default_parameter<NamedParameters, inp::vertex_index_t>::value);
+  static_assert(std::is_same_v<decltype(np.parameter(inp::vertex_index)), inp::Param_not_found>);
+
+  Static_int<4> fallback;
+  Static_int<4>& result = CGAL::parameter_or(np, inp::vertex_index, fallback);
+  assert(&result == &fallback);
+
+  Static_int<4>& member_result = np.parameter_or(inp::vertex_index, fallback);
+  assert(&member_result == &fallback);
+
+  auto default_constructed = CGAL::parameter_or<Static_int<42>>(np, inp::vertex_index);
+  assert(default_constructed.value == 42);
 }
 
-template <class NamedParameters>
-void test_references(const NamedParameters& np)
+void test_compatibility_aliases()
 {
-  typedef A<2> Default_type;
-  Default_type default_value(2);
+  auto np = params::default_values()
+    .seeds(Static_int<5>{})
+    .time_limit(0.5)
+    .max_iteration_number(9);
+
+  static_assert(!params::is_default_parameter<decltype(np), inp::seeds_t>::value);
+  static_assert(!params::is_default_parameter<decltype(np), inp::maximum_running_time_t>::value);
+  static_assert(!params::is_default_parameter<decltype(np), inp::number_of_iterations_t>::value);
+  assert(params::get_parameter(np, inp::seeds).value == 5);
+  assert(params::get_parameter(np, inp::maximum_running_time) == 0.5);
+  assert(params::get_parameter(np, inp::number_of_iterations) == 9);
+}
+
+void test_no_copyable()
+{
+  Non_copyable b;
+  auto np = params::visitor(b);
+  using NamedParameters = decltype(np);
+  using NP_type = typename inp::Get_param<typename NamedParameters::base,inp::visitor_t>::type;
+  static_assert(std::is_same_v<NP_type, std::reference_wrapper<const Non_copyable>>);
+
+  const Static_int<4>& a = params::choose_parameter(
+    params::get_parameter_reference(np, inp::edge_index), Static_int<4>());
+  assert(a.value == 4);
+}
+
+void test_references()
+{
+  Non_copyable b;
+  auto v = Static_int<0>();
+  auto np = params::visitor(std::ref(b))
+                                .vertex_point_map(b)
+                                .vertex_index_map(v)
+                                .face_index_map(std::cref(b));
+  using NamedParameters = decltype(np);
+  using Default_type = Static_int<2>;
+  Default_type default_value;
 
   // std::reference_wrapper
-  typedef typename inp::Lookup_named_param_def<inp::visitor_t, NamedParameters, Default_type>::reference Visitor_reference_type;
-  static_assert(std::is_same<B&, Visitor_reference_type>::value);
-  Visitor_reference_type vis_ref = params::choose_parameter(params::get_parameter_reference(np, inp::visitor), default_value);
+  using Visitor_reference_type =
+      typename inp::Lookup_named_param_def<inp::visitor_t, NamedParameters, Default_type>::reference;
+  static_assert(std::is_same_v<Non_copyable&, Visitor_reference_type>);
+  Visitor_reference_type vis_ref =
+      params::choose_parameter(params::get_parameter_reference(np, inp::visitor), default_value);
   CGAL_USE(vis_ref);
+  assert(&vis_ref == &b);
+  vis_ref.value = 42;
+  assert(b.value == 42);
 
   // std::reference_wrapper of const
-  typedef typename inp::Lookup_named_param_def<inp::face_index_t, NamedParameters, Default_type>::reference FIM_reference_type;
-  static_assert(std::is_same<const B&, FIM_reference_type>::value);
-  FIM_reference_type fim_ref = params::choose_parameter(params::get_parameter_reference(np, inp::face_index), default_value);
+  using FIM_reference_type =
+      typename inp::Lookup_named_param_def<inp::face_index_t, NamedParameters, Default_type>::reference;
+  static_assert(std::is_same_v<const Non_copyable&, FIM_reference_type>);
+  FIM_reference_type fim_ref =
+      params::choose_parameter(params::get_parameter_reference(np, inp::face_index), default_value);
   CGAL_USE(fim_ref);
+  assert(&fim_ref == &b);
 
   // non-copyable
-  typedef typename inp::Lookup_named_param_def<inp::vertex_point_t, NamedParameters, Default_type>::reference VPM_reference_type;
-  static_assert(std::is_same<const B&, VPM_reference_type>::value);
-  VPM_reference_type vpm_ref = params::choose_parameter(params::get_parameter_reference(np, inp::vertex_point), default_value);
+  using VPM_reference_type =
+      typename inp::Lookup_named_param_def<inp::vertex_point_t, NamedParameters, Default_type>::reference;
+  static_assert(std::is_same_v<const Non_copyable&, VPM_reference_type>);
+  VPM_reference_type vpm_ref =
+      params::choose_parameter(params::get_parameter_reference(np, inp::vertex_point), default_value);
   CGAL_USE(vpm_ref);
+  assert(&vpm_ref == &b);
 
   // passed by copy
-  typedef typename inp::Lookup_named_param_def<inp::vertex_index_t, NamedParameters, Default_type>::reference VIM_reference_type;
-  static_assert(std::is_same<A<0>, VIM_reference_type>::value);
-  VIM_reference_type vim_ref = params::choose_parameter(params::get_parameter_reference(np, inp::vertex_index), default_value);
+  using VIM_reference_type =
+      typename inp::Lookup_named_param_def<inp::vertex_index_t, NamedParameters, Default_type>::reference;
+  static_assert(std::is_same_v<Static_int<0>, VIM_reference_type>);
+  VIM_reference_type vim_ref =
+      params::choose_parameter(params::get_parameter_reference(np, inp::vertex_index), default_value);
   CGAL_USE(vim_ref);
+  assert(&vim_ref != &v);
 
   // default
-  typedef typename inp::Lookup_named_param_def<inp::edge_index_t, NamedParameters, Default_type>::reference EIM_reference_type;
-  static_assert(std::is_same<Default_type&, EIM_reference_type>::value);
-  EIM_reference_type eim_ref = params::choose_parameter(params::get_parameter_reference(np, inp::edge_index), default_value);
-  assert(&eim_ref==&default_value);
+  using EIM_reference_type =
+      typename inp::Lookup_named_param_def<inp::edge_index_t, NamedParameters, Default_type>::reference;
+  static_assert(std::is_same_v<Default_type&, EIM_reference_type>);
+  EIM_reference_type eim_ref =
+      params::choose_parameter(params::get_parameter_reference(np, inp::edge_index), default_value);
+  assert(&eim_ref == &default_value);
+}
+
+
+void test_ref_only_parameters()
+{
+  int i = 42;
+  auto np_ref_only_i = params::weights(i).weights(i);
+  auto& ref_i = np_ref_only_i.parameter_ref(CGAL::internal_np::weights_param_t{});
+  assert(&ref_i == &i);
+
+  const int ci = 43;
+  auto np_cref_only_ci = params::image(ci).image(ci);
+  auto& ref_ci = np_cref_only_ci.parameter_ref(CGAL::internal_np::image_3_param_t{});
+  assert(&ref_ci == &ci);
+
+  auto np_ref_only_ci = params::weights(ci).weights(ci);
+  auto& ref_ci2 = np_ref_only_ci.parameter_ref(CGAL::internal_np::weights_param_t{});
+  assert(&ref_ci2 == &ci);
+
+  auto np_cref_only_2 = params::image(2*3).image(2*3);
+  auto& ref_2 = np_cref_only_2.parameter_ref(CGAL::internal_np::image_3_param_t{});
+  static_assert(std::is_const_v<std::remove_reference_t<decltype(ref_2)>>);
+  assert(np_cref_only_2.parameter_ref(CGAL::internal_np::image_3_param_t{}) == 6);
 }
 
 int main()
 {
-  test_values_and_types(params::vertex_index_map(A<0>(0)).visitor(A<1>(1)));
+  test_all_cgal_named_params();
+  test_values_and_types();
 
-  B b;
-  test_no_copyable(params::visitor(b));
+  test_missing_parameters();
 
-  test_references(params::visitor(std::ref(b))
-                         .vertex_point_map(b)
-                         .vertex_index_map(A<0>(0))
-                         .face_index_map(std::reference_wrapper<const B>(b))
-  );
+  test_compatibility_aliases();
+
+  test_no_copyable();
+
+  test_references();
+
+  test_ref_only_parameters();
 
   // test that, in case of duplicates, the last parameter value is kept
   auto np = params::visitor(1).visitor(2);
+  static_assert(decltype(np)::has_parameter(inp::visitor));
   assert(params::get_parameter(np, inp::visitor) == 2);
+  assert(CGAL::parameter_or(np, inp::visitor, 3) == 2);
 
   auto d = CGAL::parameters::default_values();
-  static_assert(std::is_same<decltype(d),CGAL::parameters::Default_named_parameters>::value);
+  static_assert(std::is_same_v<decltype(d), CGAL::parameters::Default_named_parameters>);
 #ifndef CGAL_NO_DEPRECATED_CODE
   auto d1 = CGAL::parameters::all_default();
-  static_assert(std::is_same<decltype(d1),CGAL::parameters::Default_named_parameters>::value);
+  static_assert(std::is_same_v<decltype(d1), CGAL::parameters::Default_named_parameters>);
   auto d2 = CGAL::Polygon_mesh_processing::parameters::all_default();
-  static_assert(std::is_same<decltype(d2),CGAL::parameters::Default_named_parameters>::value);
+  static_assert(std::is_same_v<decltype(d2), CGAL::parameters::Default_named_parameters>);
 #endif
 
   return EXIT_SUCCESS;
