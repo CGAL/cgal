@@ -15,6 +15,7 @@
 #include <CGAL/license/Constrained_triangulation_3.h>
 
 #include <CGAL/Constrained_triangulation_3/internal/config.h>
+#include <CGAL/Constrained_triangulation_3_types.h>
 
 #include <array>
 #include <bitset>
@@ -25,7 +26,7 @@ enum class CDT_3_cell_marker {
   IN_REGION = 1,
   VISITED = 1,
   ON_REGION_BOUNDARY = 2,
-  nb_of_markers
+  last = ON_REGION_BOUNDARY,
 };
 
 /*!
@@ -44,7 +45,7 @@ class Conforming_constrained_Delaunay_triangulation_cell_data_3 {
 
   std::array<CDT_3_signed_index, 4> face_id = { -1, -1, -1, -1 };
   std::array<void*, 4> facet_2d = {nullptr, nullptr, nullptr, nullptr};
-  std::bitset<static_cast<unsigned>(CDT_3_cell_marker::nb_of_markers)> markers;
+  std::bitset<static_cast<unsigned>(CDT_3_cell_marker::last) + 1> markers{};
 
   bool is_marked() const { return markers.any(); }
   bool is_marked(CDT_3_cell_marker m) const { return markers.test(static_cast<unsigned>(m)); }

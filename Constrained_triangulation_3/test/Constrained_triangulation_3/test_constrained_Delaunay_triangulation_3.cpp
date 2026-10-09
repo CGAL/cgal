@@ -1,9 +1,21 @@
-#include <CGAL/make_conforming_constrained_Delaunay_triangulation_3.h>
+#include <CGAL/config.h>
 #include <CGAL/Conforming_constrained_Delaunay_triangulation_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/make_conforming_constrained_Delaunay_triangulation_3.h>
 #include <CGAL/Surface_mesh.h>
+#include <CGAL/Surface_mesh/IO/OFF.h>
+#include <CGAL/Surface_mesh/Surface_mesh.h>
+#include <CGAL/type_traits.h>
 
-#include <algorithm>
+#include <cassert>
+#include <cstddef>
+#include <cstdlib>
+#include <fstream>
+#include <iostream>
+#include <iterator>
+#include <ostream>
+#include <type_traits>
+#include <utility>
 
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 using CDT = CGAL::Conforming_constrained_Delaunay_triangulation_3<K>;

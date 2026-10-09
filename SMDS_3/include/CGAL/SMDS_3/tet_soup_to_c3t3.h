@@ -164,7 +164,7 @@ bool build_finite_cells(Tr& tr,
 {
   typedef typename Tr::Vertex_handle                            Vertex_handle;
   typedef typename Tr::Cell_handle                              Cell_handle;
-  typedef typename Tr::Cell::Surface_patch_index                Surface_patch_index;
+  typedef typename FacetPatchMap::value_type                    Surface_patch_index;
 
   bool success = true;
 
@@ -196,7 +196,6 @@ bool build_finite_cells(Tr& tr,
       vs[j]->set_dimension(3);
     }
 
-    // this assertion also tests for degeneracy
     if (allow_negative_orientation)
     {
       if(!tr.may_have_badly_oriented_cells())
@@ -206,7 +205,7 @@ bool build_finite_cells(Tr& tr,
         tr.may_have_badly_oriented_cells(o != CGAL::POSITIVE);
       }
     }
-    else
+    else    // this assertion also tests for degeneracy
       CGAL_assertion(orientation(cp(tr.point(vs[0])), cp(tr.point(vs[1])),
                                  cp(tr.point(vs[2])), cp(tr.point(vs[3]))) == POSITIVE);
 
@@ -256,8 +255,8 @@ bool build_finite_cells(Tr& tr,
           it = border_facets.find(facet);
           if(it != border_facets.end())
             c->set_surface_patch_index(j, it->second);
-          else
-            c->set_surface_patch_index(j, Surface_patch_index());
+//          else
+//            c->set_surface_patch_index(j, Surface_patch_index());
         }
       }
     }
@@ -338,7 +337,7 @@ bool build_infinite_cells(Tr& tr,
     it->second.emplace_back(opp_c, 0);
     CGAL_assertion(it->second.size() == 2);
 
-    opp_c->set_surface_patch_index(0, c->surface_patch_index(i));
+//    opp_c->set_surface_patch_index(0, c->surface_patch_index(i));
   }
 
 #ifdef CGAL_TET_SOUP_TO_C3T3_DEBUG

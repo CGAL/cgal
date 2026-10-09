@@ -438,7 +438,8 @@ struct Scene_triangulation_3_item_priv {
     SMALLEST_RAD_RAD,
     SMALLEST_EDGE_RAD,
     BIGGEST_VL3_CUBE,
-    NB_SUBDOMAINS
+    NB_SUBDOMAINS,
+    NB_BADLY_ORIENTED_CELLS
   };
   Scene_triangulation_3_item* item;
   T3 triangulation;
@@ -520,6 +521,7 @@ struct Scene_triangulation_3_item_priv {
   mutable std::size_t nb_subdomains = 0;
   mutable std::size_t nb_vertices = 0;
   mutable std::size_t nb_tets = 0;
+  mutable std::size_t nb_badly_oriented_cells = 0;
   mutable float smallest_radius_radius = 0.f;
   mutable float smallest_edge_radius = 0.f;
   mutable float biggest_v_sma_cube = 0.f;
@@ -1837,7 +1839,12 @@ QString Scene_triangulation_3_item::computeStats(int type)
       const Tr::Bare_point& p1 = wp2p(cit->vertex(1)->point());
       const Tr::Bare_point& p2 = wp2p(cit->vertex(2)->point());
       const Tr::Bare_point& p3 = wp2p(cit->vertex(3)->point());
-      double v = std::abs(CGAL::volume(p0, p1, p2, p3));
+      double v = CGAL::volume(p0, p1, p2, p3);
+
+      if(v < 0)
+        ++d->nb_badly_oriented_cells;
+      v = std::abs(v);
+
       double circumradius = std::sqrt(CGAL::squared_radius(p0, p1, p2, p3));
       //find smallest edge
       double edges[6];
@@ -1943,6 +1950,8 @@ QString Scene_triangulation_3_item::computeStats(int type)
     return QString::number(d->biggest_v_sma_cube);
   case Scene_triangulation_3_item_priv::NB_SUBDOMAINS:
     return QString::number(d->nb_subdomains);
+  case Scene_triangulation_3_item_priv::NB_BADLY_ORIENTED_CELLS:
+    return QString::number(d->nb_badly_oriented_cells);
 
   default:
     return QString();
@@ -1969,6 +1978,7 @@ CGAL::Three::Scene_item::Header_data Scene_triangulation_3_item::header() const
   data.titles.append(QString("Smallest Edge-Radius Ratio"));
   data.titles.append(QString("Biggest Vl^3"));
   data.titles.append(QString("#Subdomains"));
+  data.titles.append(QString("#Badly Oriented Cells"));
   return data;
 }
 

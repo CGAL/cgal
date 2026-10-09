@@ -40,10 +40,10 @@ namespace internal
 {
 
 template<typename C3t3>
-bool positive_orientation_after_edge_split(const typename C3t3::Edge& e,
+bool valid_orientation_after_edge_split(const typename C3t3::Edge& e,
                                            const typename C3t3::Cell_handle circ,
                                            const typename C3t3::Triangulation::Geom_traits::Point_3& steiner,
-                                           const C3t3&)
+                                           const C3t3& c3t3)
 {
   using Point = typename C3t3::Triangulation::Geom_traits::Point_3;
 
@@ -54,6 +54,13 @@ bool positive_orientation_after_edge_split(const typename C3t3::Edge& e,
                               point(circ->vertex(1)->point()),
                               point(circ->vertex(2)->point()),
                               point(circ->vertex(3)->point())};
+
+  // if the orientation is already bad before split, do not bother checking
+  // orientation after split, and return true straight away
+  if(c3t3.triangulation().may_have_badly_oriented_cells()
+    && CGAL::orientation(pts[0], pts[1], pts[2], pts[3]) != CGAL::POSITIVE)
+    return true;
+
   // 1st half-cell
   const int i1 = circ->index(v1);
   const Point p1 = pts[i1];
@@ -103,7 +110,7 @@ construct_steiner_point(const typename C3t3::Edge& e,
     do
     {
       Cell_handle c = circ;
-      if(!positive_orientation_after_edge_split(e, c, steiner, c3t3))
+      if(!valid_orientation_after_edge_split(e, c, steiner, c3t3))
       {
         steiner_successful = false;
         break;
@@ -151,7 +158,8 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
     else if(nb_patches == 0)
       dimension = 3;
     else
-      CGAL_assertion(false);//e should be in complex
+      dimension = 1;//e is in complex
+//      CGAL_assertion(false);//e should be in complex
   }
   CGAL_assertion(dimension > 0);
 
@@ -184,7 +192,7 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
     }
 
     const Cell_handle c = circ;
-    if(!positive_orientation_after_edge_split(e, c, m, c3t3))
+    if(!valid_orientation_after_edge_split(e, c, m, c3t3))
     {
       const std::optional<Point> steiner = construct_steiner_point(e, c3t3);
       if (steiner != std::nullopt)
@@ -233,7 +241,7 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
   // insert midpoint
   Vertex_handle new_v = tr.tds().insert_in_edge(e);
   new_v->set_point(typename Tr::Point(m));
-  new_v->set_dimension(dimension);
+  c3t3.set_dimension(new_v, dimension);
 
   // update c3t3 with subdomain and surface patch indices
   std::vector<Cell_handle> new_cells;
@@ -254,16 +262,15 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
     const Facet_info v_and_opp_patch = facets_info.at(mfi);
 
     // facet opposite to new_v (status wrt c3t3 is unchanged)
-    new_cell->set_surface_patch_index(new_cell->index(new_v),
-                                      mfi.first->surface_patch_index(mfi.second));
+    c3t3.set_surface_patch_index({new_cell, new_cell->index(new_v)},
+                                 c3t3.surface_patch_index(mfi));
 
     // new half-facet (added or not to c3t3 depending on the stored surface patch index)
     if (Surface_patch_index() == v_and_opp_patch.patch_index_)
-      new_cell->set_surface_patch_index(new_cell->index(v_and_opp_patch.opp_vertex_),
-                                        Surface_patch_index());
+      c3t3.set_surface_patch_index({new_cell, new_cell->index(v_and_opp_patch.opp_vertex_)},
+                                   Surface_patch_index());
     else
-      c3t3.add_to_complex(new_cell,
-                          new_cell->index(v_and_opp_patch.opp_vertex_),
+      c3t3.add_to_complex({new_cell, new_cell->index(v_and_opp_patch.opp_vertex_)},
                           v_and_opp_patch.patch_index_);
 
     // newly created internal facet
@@ -272,7 +279,7 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
       const Vertex_handle vi = new_cell->vertex(i);
       if (vi == v1 || vi == v2)
       {
-        new_cell->set_surface_patch_index(i, Surface_patch_index());
+        c3t3.set_surface_patch_index({new_cell, i}, Surface_patch_index());
         break;
       }
     }

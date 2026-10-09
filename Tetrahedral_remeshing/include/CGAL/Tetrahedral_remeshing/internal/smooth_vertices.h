@@ -137,7 +137,7 @@ public:
   {
     CGAL_assertion(!m_flip_smooth_steps);
     reset_vertex_id_map(c3t3.triangulation());
-    reset_free_vertices(c3t3.triangulation());
+    reset_free_vertices(c3t3);
 
     // once this variable is set to true,
     // m_vertex_id becomes constant and
@@ -169,8 +169,9 @@ private:
 
   // this function can be used iff m_vertex_id
   // has already been initialized
-  void reset_free_vertices(const Tr& tr)
+  void reset_free_vertices(const C3t3& c3t3)
   {
+    const auto& tr = c3t3.triangulation();
     // when flip-smooth steps start,
     // m_free_vertices should already be initialized
     // by the last smoothing step.
@@ -192,7 +193,7 @@ private:
       for (auto vi : tr.vertices(c))
       {
         const std::size_t idi = vertex_id(vi);
-        const int dim = vi->in_dimension();
+        const int dim = c3t3.in_dimension(vi);
 
         switch (dim)
         {
@@ -496,8 +497,6 @@ private:
     const typename Tr::Point backup = v->point(); //backup v's position
     const typename Tr::Geom_traits::Point_3 pv = point(backup);
 
-    bool valid_orientation = false;
-    bool angles_improved = true;
     double frac = 1.0;
     typename Tr::Geom_traits::Vector_3 move(pv, final_pos);
 
@@ -505,7 +504,11 @@ private:
       ? max_cosine(tr, inc_cells)
       : Dihedral_angle_cosine(CGAL::ZERO, 0., 1.);//Dummy unused value
 
+    const bool check_orientation = need_to_check_orientation_after_change(tr, inc_cells);
+
     bool valid_try = true;
+    bool valid_orientation = true;
+    bool angles_improved = true;
     do
     {
       v->set_point(typename Tr::Point(pv + frac * move));
@@ -516,10 +519,7 @@ private:
 
       for (const typename Tr::Cell_handle& ci : inc_cells)
       {
-        if (CGAL::POSITIVE != CGAL::orientation(point(ci->vertex(0)->point()),
-                                                point(ci->vertex(1)->point()),
-                                                point(ci->vertex(2)->point()),
-                                                point(ci->vertex(3)->point())))
+        if(check_orientation && !is_well_oriented(tr, ci))
         {
           frac = 0.5 * frac;
           valid_try = false;
@@ -640,8 +640,8 @@ private:
       const Vertex_handle vh0 = e.first->vertex(e.second);
       const Vertex_handle vh1 = e.first->vertex(e.third);
 
-      CGAL_expensive_assertion(is_on_feature(vh0));
-      CGAL_expensive_assertion(is_on_feature(vh1));
+      CGAL_expensive_assertion(is_on_feature(c3t3, vh0));
+      CGAL_expensive_assertion(is_on_feature(c3t3, vh1));
 
       const std::size_t& i0 = vertex_id(vh0);
       const std::size_t& i1 = vertex_id(vh1);
@@ -675,7 +675,7 @@ private:
     {
       const std::size_t vid = vertex_id(v);
 
-      if (!is_free(vid) || !is_on_feature(v))
+      if (!is_free(vid) || !is_on_feature(c3t3, v))
         continue;
 
       const Point_3 current_pos = point(v->point());
@@ -761,8 +761,8 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
       const std::size_t& i0 = vertex_id(vh0);
       const std::size_t& i1 = vertex_id(vh1);
 
-      const bool vh0_moving = !is_on_feature(vh0) && is_free(i0);
-      const bool vh1_moving = !is_on_feature(vh1) && is_free(i1);
+      const bool vh0_moving = !is_on_feature(c3t3, vh0) && is_free(i0);
+      const bool vh1_moving = !is_on_feature(c3t3, vh1) && is_free(i1);
 
       if (!vh0_moving && !vh1_moving)
         continue;
@@ -791,7 +791,7 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
   {
     const std::size_t vid = vertex_id(v);
 
-    if (!is_free(vid) || v->in_dimension() != 2)
+    if (!is_free(vid) || c3t3.in_dimension(v) != 2)
       continue;
 
     const std::size_t nb_neighbors = moves[vid].neighbors;
@@ -804,7 +804,7 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
 
     CGAL_assertion(si != Surface_patch_index());
     CGAL_expensive_assertion_code(auto siv = surface_patch_index(v, c3t3));
-    CGAL_expensive_assertion(si == siv);
+    CGAL_expensive_assertion(si == siv.value());
 
     if (nb_neighbors > 1)
     {
@@ -1054,7 +1054,7 @@ public:
     reset_vertex_id_map(tr);
 
     //are vertices free to move? indices are in `vertex_id`
-    reset_free_vertices(tr);
+    reset_free_vertices(c3t3);
 
     //collect incident cells
     using Incident_cells_vector = boost::container::small_vector<Cell_handle, 40>;
@@ -1089,7 +1089,9 @@ public:
 #endif
       );
     }
-    CGAL_expensive_assertion(CGAL::Tetrahedral_remeshing::debug::are_cell_orientations_valid(tr));
+    CGAL_expensive_assertion(
+      !tr.may_have_badly_oriented_cells() ||
+      CGAL::Tetrahedral_remeshing::debug::are_cell_orientations_valid(tr));
     ////   end if(!protect_boundaries)
 
     ////////////// INTERNAL VERTICES ///////////////////////
@@ -1103,7 +1105,9 @@ public:
 #endif
     );
 
-    CGAL_expensive_assertion(CGAL::Tetrahedral_remeshing::debug::are_cell_orientations_valid(tr));
+    CGAL_expensive_assertion(
+      !tr.may_have_badly_oriented_cells() ||
+      CGAL::Tetrahedral_remeshing::debug::are_cell_orientations_valid(tr));
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
     timer.stop();
@@ -1115,7 +1119,7 @@ public:
 #endif
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
-      c3t3.triangulation(), "c3t3_vertices_after_smoothing");
+      c3t3, "c3t3_vertices_after_smoothing");
     os_surf.close();
     os_vol.close();
 #endif
