@@ -608,7 +608,7 @@ int Texture::ReadBufferByte32(unsigned char *pData,
   if(pData == nullptr)
     return 0;
 
-  memcpy(m_pData,pData,height*m_WidthByte32);
+  memcpy(m_pData, pData, static_cast<size_t>(height) * static_cast<size_t>(m_WidthByte32));
   return 1;
 }
 
