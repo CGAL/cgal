@@ -24,6 +24,10 @@
 /// I/O Functions for the \ref IOStreamVTK
 /// \ingroup IOstreamFunctions
 
+/// \defgroup PkgStreamSupportIoFuncsGLTF GLTF I/O Functions
+/// I/O Functions for the \ref IOStreamGLTF
+/// \ingroup IOstreamFunctions
+
 /// \defgroup PkgStreamSupportIoFuncsGOCAD GOCAD I/O Functions
 /// I/O Functions for the \ref IOStreamGocad
 /// \ingroup IOstreamFunctions
