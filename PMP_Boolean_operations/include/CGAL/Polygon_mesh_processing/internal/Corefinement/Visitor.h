@@ -1344,7 +1344,18 @@ public:
                            q = nodes.to_exact(get(vpm,f_vertices[1])),
                            r = nodes.to_exact(get(vpm,f_vertices[2]));
 ///TODO use a positive normal and remove all workaround to guarantee that triangulation of coplanar patches are compatible
-      CDT_traits traits(typename EK::Construct_normal_3()(p,q,r));
+      typename EK::Vector_3 n = typename EK::Construct_normal_3()(p,q,r);
+      typename EK::Point_3 o(CGAL::ORIGIN);
+
+      bool orientation_flipped = false;
+      if ( typename EK::Less_xyz_3()(o+n,o) )
+      {
+        n=-n;
+        orientation_flipped = true;
+      }
+
+
+      CDT_traits traits(n);
       CDT cdt(traits);
 
       // insert triangle points
@@ -1352,7 +1363,7 @@ public:
       //we can do this to_exact because these are supposed to be input points.
       triangle_vertices[0]=cdt.insert_outside_affine_hull(p);
       triangle_vertices[1]=cdt.insert_outside_affine_hull(q);
-      triangle_vertices[2]=cdt.tds().insert_dim_up(cdt.infinite_vertex(), false);
+      triangle_vertices[2]=cdt.tds().insert_dim_up(cdt.infinite_vertex(), orientation_flipped);
       triangle_vertices[2]->set_point(r);
 
       triangle_vertices[0]->info()=f_indices[0];
@@ -1378,6 +1389,7 @@ public:
             // is already tight and the call in Intersection_nodes::finalize() will not fix anything
         }
       }
+
       //insert points on edges
       if (it_fb!=face_boundaries.end()) //if f not a triangle?
       {
@@ -1386,9 +1398,18 @@ public:
         for (int i=0;i<3;++i)
         {
           int oi=-1;
-          CGAL_assertion_code(bool is_edge = )
-          cdt.is_edge(triangle_vertices[i], triangle_vertices[(i+1)%3], infinite_faces[i], oi);
-          CGAL_assertion(is_edge);
+          if (orientation_flipped)
+          {
+            CGAL_assertion_code(bool is_edge = )
+            cdt.is_edge(triangle_vertices[(i+1)%3], triangle_vertices[i], infinite_faces[i], oi);
+            CGAL_assertion(is_edge);
+          }
+          else
+          {
+            CGAL_assertion_code(bool is_edge = )
+            cdt.is_edge(triangle_vertices[i], triangle_vertices[(i+1)%3], infinite_faces[i], oi);
+            CGAL_assertion(is_edge);
+          }
           CGAL_assertion( cdt.is_infinite( infinite_faces[i]->vertex(oi) ) );
         }
 
@@ -1400,22 +1421,30 @@ public:
           //handle case of halfedge starting at triangle_vertices[i]
           // and ending at triangle_vertices[(i+1)%3]
 
-          const Node_ids& ids_on_edge=f_boundary.node_ids_array[i];
+          Node_ids& ids_on_edge=f_boundary.node_ids_array[i];
           CDT_Vertex_handle previous=triangle_vertices[i];
-          Node_id prev_index=f_indices[i];// node-id of the mesh vertex
+          Node_id prev_index=orientation_flipped?f_indices[(i+1)%3]:f_indices[i];// node-id of the mesh vertex
           halfedge_descriptor hedge = next(f_boundary.halfedges[(i+2)%3],tm);
-          CGAL_assertion( source(hedge,tm)==f_boundary.vertices[i] );
+          if (orientation_flipped)
+            for (std::size_t l=0;l<ids_on_edge.size(); ++l)
+              hedge=next(hedge, tm);
+          //CGAL_assertion( source(hedge,tm)==f_boundary.vertices[i] );
+
           if (!ids_on_edge.empty()){ //is there at least one node on this edge?
             // fh must be an infinite face
             // The points must be ordered from fh->vertex(cw(infinite_vertex)) to fh->vertex(ccw(infinite_vertex))
+            if (orientation_flipped)
+              std::reverse(ids_on_edge.begin(), ids_on_edge.end());
             for(Node_id id : ids_on_edge)
             {
               CDT_Vertex_handle vh=insert_point_on_ch_edge(cdt,infinite_faces[i],nodes.exact_node(id));
               vh->info()=id;
               id_to_CDT_vh.insert(std::make_pair(id,vh));
-              edge_to_hedge[std::make_pair(prev_index,id)]=hedge;
+              auto key = orientation_flipped ? std::make_pair(id, prev_index)
+                                             : std::make_pair(prev_index,id);
+              edge_to_hedge[key]=hedge;
               previous=vh;
-              hedge=next(hedge,tm);
+              hedge=orientation_flipped?prev(hedge,tm):next(hedge,tm);
               prev_index=id;
             }
           }
@@ -1424,9 +1453,11 @@ public:
             CGAL_assertion( target(hd,tm) == f_boundary.vertices[(i+1)%3] );
             CGAL_assertion( source(hd,tm) == f_boundary.vertices[ i ] );
           }
-          CGAL_assertion(hedge==f_boundary.halfedges[i]);
-          edge_to_hedge[std::make_pair(prev_index,f_indices[(i+1)%3])] =
-            it_fb->second.halfedges[i];
+          CGAL_assertion(orientation_flipped || hedge==f_boundary.halfedges[i]);
+          CGAL_assertion(!orientation_flipped || hedge==next(f_boundary.halfedges[(i+2)%3],tm));
+          auto key = orientation_flipped ? std::make_pair(f_indices[i], prev_index)
+                                         : std::make_pair(prev_index,f_indices[(i+1)%3]);
+          edge_to_hedge[key] = hedge/* it_fb->second.halfedges[i] */;
         }
       }
 
@@ -1507,7 +1538,7 @@ public:
 
       // import the triangle in `cdt` in the face `f` of `tm`
       triangulate_a_face(f, tm, nodes, node_ids, node_id_to_vertex,
-        edge_to_hedge, cdt, vpm, output_builder, user_visitor);
+        edge_to_hedge, cdt, vpm, orientation_flipped, output_builder, user_visitor);
 
       // TODO Here we do the update only for internal edges.
       // Update for border halfedges could be done during the split
