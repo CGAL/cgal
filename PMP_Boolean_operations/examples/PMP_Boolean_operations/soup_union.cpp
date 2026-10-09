@@ -22,10 +22,15 @@ int main(int argc, char* argv[])
   std::vector<Point> points1, points2;
   std::vector<std::array<std::size_t, 3>> triangles1, triangles2;
 
-  if(!CGAL::IO::read_polygon_soup(filename1, points1, triangles1) ||
-     !CGAL::IO::read_polygon_soup(filename2, points2, triangles2))
+  if(!CGAL::IO::read_polygon_soup(filename1, points1, triangles1))
   {
-    std::cerr << "Invalid input." << std::endl;
+    std::cerr << "Failed to read file: " << filename1 << std::endl;
+    return 1;
+  }
+
+  if(!CGAL::IO::read_polygon_soup(filename2, points2, triangles2))
+  {
+    std::cerr << "Failed to read file: " << filename2 << std::endl;
     return 1;
   }
 
@@ -34,7 +39,8 @@ int main(int argc, char* argv[])
 
   PMP::compute_union(points1, triangles1,
                      points2, triangles2,
-                     points_output, triangles_output);
+                     points_output, triangles_output,
+                    CGAL::parameters::concurrency_tag(CGAL::Parallel_if_available_tag()));
 
   std::cout << "Union was successfully computed\n";
 

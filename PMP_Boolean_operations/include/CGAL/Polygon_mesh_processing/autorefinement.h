@@ -1473,21 +1473,42 @@ bool autorefine_triangle_soup(PointRange& soup_points,
   Point_id_map point_id_map;
 
 #if ! defined(CGAL_NDEBUG) || defined(CGAL_DEBUG_PMP_AUTOREFINE)
-  std::vector<EK::Point_3> exact_soup_points;
+#ifdef CGAL_LINKED_WITH_TBB
+  typedef std::conditional_t<parallel_execution,
+                             tbb::concurrent_vector<EK::Point_3>,
+                             std::vector<EK::Point_3>> Exact_point_range;
+#else
+  typedef std::vector<EK::Point_3> Exact_point_range;
+#endif
+  Exact_point_range exact_soup_points;
 #endif
 
   // TODO: parallel_for?
   // for input points, we on purpose keep duplicated points and isolated points
-  for (std::size_t pid = 0; pid<soup_points.size(); ++pid)
+  const auto insert_point_id = [&](std::size_t pid)
   {
 #if ! defined(CGAL_NDEBUG) || defined(CGAL_DEBUG_PMP_AUTOREFINE)
     auto insert_res =
 #endif
-    point_id_map.insert(
-      std::make_pair(to_exact(get(pm,soup_points[pid])), pid));
+    point_id_map.insert(std::make_pair(to_exact(get(pm,soup_points[pid])), pid));
 #if ! defined(CGAL_NDEBUG) || defined(CGAL_DEBUG_PMP_AUTOREFINE)
-      exact_soup_points.push_back(insert_res.first->first);
+    exact_soup_points.push_back(insert_res.first->first);
 #endif
+  };
+#ifdef CGAL_LINKED_WITH_TBB
+  if constexpr (parallel_execution)
+  {
+    tbb::parallel_for(tbb::blocked_range<std::size_t>(0, soup_points.size()),
+                      [&](const tbb::blocked_range<std::size_t>& r) {
+                        for (std::size_t pid = r.begin(); pid != r.end(); ++pid)
+                          insert_point_id(pid);
+                      });
+  }
+  else
+#endif
+  for (std::size_t pid = 0; pid<soup_points.size(); ++pid)
+  {
+    insert_point_id(pid);
   }
 
   TriangleRange soup_triangles_out;

@@ -50,6 +50,7 @@ find_package(TBB QUIET)
 include(CGAL_TBB_support)
 if(TARGET CGAL::TBB_support)
   target_link_libraries(soup_autorefinement PRIVATE CGAL::TBB_support)
+  target_link_libraries(soup_union PRIVATE CGAL::TBB_support)
   target_link_libraries(snap_polygon_soup PRIVATE CGAL::TBB_support)
 
   create_single_source_cgal_program("corefinement_parallel_union_meshes.cpp")
