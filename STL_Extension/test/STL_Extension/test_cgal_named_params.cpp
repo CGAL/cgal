@@ -175,6 +175,29 @@ void test_references()
   assert(&eim_ref == &default_value);
 }
 
+
+void test_ref_only_parameters()
+{
+  int i = 42;
+  auto np_ref_only_i = params::weights(i).weights(i);
+  auto& ref_i = np_ref_only_i.parameter_ref(CGAL::internal_np::weights_param_t{});
+  assert(&ref_i == &i);
+
+  const int ci = 43;
+  auto np_cref_only_ci = params::image(ci).image(ci);
+  auto& ref_ci = np_cref_only_ci.parameter_ref(CGAL::internal_np::image_3_param_t{});
+  assert(&ref_ci == &ci);
+
+  auto np_ref_only_ci = params::weights(ci).weights(ci);
+  auto& ref_ci2 = np_ref_only_ci.parameter_ref(CGAL::internal_np::weights_param_t{});
+  assert(&ref_ci2 == &ci);
+
+  auto np_cref_only_2 = params::image(2*3).image(2*3);
+  auto& ref_2 = np_cref_only_2.parameter_ref(CGAL::internal_np::image_3_param_t{});
+  static_assert(std::is_const_v<std::remove_reference_t<decltype(ref_2)>>);
+  assert(np_cref_only_2.parameter_ref(CGAL::internal_np::image_3_param_t{}) == 6);
+}
+
 int main()
 {
   test_all_cgal_named_params();
@@ -187,6 +210,8 @@ int main()
   test_no_copyable();
 
   test_references();
+
+  test_ref_only_parameters();
 
   // test that, in case of duplicates, the last parameter value is kept
   auto np = params::visitor(1).visitor(2);

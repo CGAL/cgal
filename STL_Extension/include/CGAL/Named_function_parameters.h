@@ -242,6 +242,12 @@ struct Named_function_parameters
   constexpr auto parameter(...) const { return internal_np::Param_not_found(); }
   static constexpr bool has_parameter(...) { return false; }
 
+  template <typename Query_tag>
+  constexpr decltype(auto) parameter_ref([[maybe_unused]] Query_tag tag) const {
+    static_assert(has_parameter(Query_tag()), "Parameter not found");
+    return internal_np::get_reference(parameter(tag));
+  }
+
   template <typename D, typename Query_tag>
   constexpr decltype(auto) parameter_or([[maybe_unused]] Query_tag tag, [[maybe_unused]] D&& default_value) const {
     if constexpr (has_parameter(Query_tag())) {
@@ -345,18 +351,18 @@ struct Boost_parameter_compatibility_wrapper
   template <typename K>
   constexpr auto operator()(K&& p) const
   {
-    using KK = cpp20::remove_cvref_t<cpp20::unwrap_ref_decay_t<K>>;
     if constexpr (ref_only)
     {
+      using Pointed_type = std::remove_reference_t<cpp20::unwrap_reference_t<K>>;
       if constexpr (ref_is_const)
       {
-        using Params = Named_function_parameters<std::reference_wrapper<const KK>, Tag>;
+        using Params = Named_function_parameters<std::reference_wrapper<const Pointed_type>, Tag>;
         const auto& ref = cpp20::unwrap_reference_t<K>(p);
         return Params{std::cref(ref)};
       }
       else
       {
-        using Params = Named_function_parameters<std::reference_wrapper<KK>, Tag>;
+        using Params = Named_function_parameters<std::reference_wrapper<Pointed_type>, Tag>;
         auto& ref = cpp20::unwrap_reference_t<K>(p);
         return Params{std::ref(ref)};
       }
