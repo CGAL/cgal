@@ -667,9 +667,7 @@ struct SD_boost_mp <NT, boost::mpl::int_<boost::multiprecision::number_kind_inte
 {
   void operator()(double d, NT &num, NT &den) const
   {
-    std::pair<double, double> p = split_numerator_denominator(d);
-    num = NT(p.first);
-    den = NT(p.second);
+    CGAL::internal::split_double_as_integer_ratio(d, num, den);
   }
 };
 
