@@ -73,7 +73,10 @@ CGAL_add_named_parameter(tetrahedra_t, tetrahedra, tetrahedra)
 CGAL_add_named_parameter(edges_t, edges, edges)
 CGAL_add_named_parameter(ridges_t, ridges, ridges)
 CGAL_add_named_parameter(corners_t, corners, corners)
-
+CGAL_add_named_parameter(tetrahedra_ref_t, tetrahedra_ref, tetrahedra_ref)
+CGAL_add_named_parameter(triangles_ref_t, triangles_ref, triangles_ref)
+CGAL_add_named_parameter(edges_ref_t, edges_ref, edges_ref)
+CGAL_add_named_parameter(vertices_ref_t, vertices_ref, vertices_ref)
 
 // List of named parameters that we use in the package 'Mesh_3'
 CGAL_add_named_parameter(vertex_feature_degree_t, vertex_feature_degree, vertex_feature_degree_map)
