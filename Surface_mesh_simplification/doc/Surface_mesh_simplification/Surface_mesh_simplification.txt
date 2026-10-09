@@ -430,7 +430,7 @@ Note that these policies depend on the third party \ref thirdpartyEigen library.
 \subsection Surface_mesh_simplificationExampleParallel Example Using Parallelism
 
 When using a local stop criterium like only collapsing small edges, a trivial parallelization is possible.
-First the mesh must be partitioned with the help of the \thirdpartyMETIS library.
+First the mesh must be partitioned with the help of the \ref thirdpartyMETIS library.
 Then copies of the patches are generated, simplified independently, the result reassembled,
 and a final pass done sequentially as the boundaries of the patches where not collapsed.
 
