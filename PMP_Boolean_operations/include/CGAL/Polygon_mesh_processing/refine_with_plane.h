@@ -442,7 +442,7 @@ void refine_with_plane(PolygonMesh& pm,
     std::sort(test_faces.begin(), test_faces.end());
     auto last = std::unique(test_faces.begin(), test_faces.end());
     test_faces.erase(last, test_faces.end());
-    if (does_self_intersect<Concurrency_tag>(test_faces, pm, np))
+    if (does_self_intersect<Concurrency_tag>(test_faces, pm, parameters::vertex_point_map(vpm).concurrency_tag(Concurrency_tag())))
       throw Corefinement::Self_intersection_exception();
   }
 

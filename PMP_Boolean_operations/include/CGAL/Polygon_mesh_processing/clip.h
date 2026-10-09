@@ -820,6 +820,13 @@ struct Visitor_wrapper_for_triangulate_face
   *
   *
   * \cgalNamedParamsBegin
+  *   \cgalParamNBegin{concurrency_tag}
+  *     \cgalParamDescription{a tag specifying whether the task should be performed using a single or multiple threads.}
+  *     \cgalParamType{Either `CGAL::Sequential_tag`, or `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`}
+  *     \cgalParamDefault{`CGAL::Sequential_tag`}
+  *     \cgalParamExtra{`np_tm` only}
+  *   \cgalParamNEnd
+  *
   *   \cgalParamNBegin{vertex_point_map}
   *     \cgalParamDescription{a property map associating points to the vertices of `tm` (resp. `clipper`)}
   *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
@@ -938,7 +945,7 @@ clip(TriangleMesh& tm,
   * \cgalNamedParamsBegin
   *
   *   \cgalParamNBegin{concurrency_tag}
-  *     \cgalParamDescription{a tag indicating if the task should be performed using one or several threads.}
+  *     \cgalParamDescription{a tag specifying whether the task should be performed using a single or multiple threads.}
   *     \cgalParamType{Either `CGAL::Sequential_tag`, or `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`}
   *     \cgalParamDefault{`CGAL::Sequential_tag`}
   *   \cgalParamNEnd
@@ -1179,6 +1186,12 @@ bool clip(PolygonMesh& pm,
   * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
+  *   \cgalParamNBegin{concurrency_tag}
+  *     \cgalParamDescription{a tag specifying whether the task should be performed using a single or multiple threads.}
+  *     \cgalParamType{Either `CGAL::Sequential_tag`, or `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`}
+  *     \cgalParamDefault{`CGAL::Sequential_tag`}
+  *   \cgalParamNEnd
+  *
   *   \cgalParamNBegin{vertex_point_map}
   *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
   *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
@@ -1291,6 +1304,13 @@ bool clip(TriangleMesh& tm,
   * @param np_s an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
+  *   \cgalParamNBegin{concurrency_tag}
+  *     \cgalParamDescription{a tag specifying whether the task should be performed using a single or multiple threads.}
+  *     \cgalParamType{Either `CGAL::Sequential_tag`, or `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`}
+  *     \cgalParamDefault{`CGAL::Sequential_tag`}
+  *     \cgalParamExtra{`np_tm` only}
+  *   \cgalParamNEnd
+  *
   *   \cgalParamNBegin{vertex_point_map}
   *     \cgalParamDescription{a property map associating points to the vertices of `tm` (`splitter`)}
   *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
@@ -1342,6 +1362,12 @@ void split(TriangleMesh& tm,
   using parameters::get_parameter;
   using parameters::choose_parameter;
 
+  typedef typename internal_np::Lookup_named_param_def <
+    internal_np::concurrency_tag_t,
+    NamedParameters1,
+    Sequential_tag
+  > ::type Concurrency_tag;
+
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters1>::type VPM1;
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters2>::type VPM2;
 
@@ -1368,7 +1394,7 @@ void split(TriangleMesh& tm,
   const bool do_not_modify_splitter = choose_parameter(get_parameter(np_s, internal_np::do_not_modify), false);
 
   PMP::corefine(tm, splitter,
-                CGAL::parameters::vertex_point_map(vpm_tm).edge_is_marked_map(ecm).visitor(uv),
+                CGAL::parameters::vertex_point_map(vpm_tm).edge_is_marked_map(ecm).visitor(uv).concurrency_tag(Concurrency_tag()),
                 CGAL::parameters::vertex_point_map(vpm_s).do_not_modify(do_not_modify_splitter));
 
   //split mesh along marked edges
@@ -1511,6 +1537,12 @@ void split(PolygonMesh& pm,
   * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
+  *   \cgalParamNBegin{concurrency_tag}
+  *     \cgalParamDescription{a tag specifying whether the task should be performed using a single or multiple threads.}
+  *     \cgalParamType{Either `CGAL::Sequential_tag`, or `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`}
+  *     \cgalParamDefault{`CGAL::Sequential_tag`}
+  *   \cgalParamNEnd
+  *
   *   \cgalParamNBegin{vertex_point_map}
   *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
   *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
