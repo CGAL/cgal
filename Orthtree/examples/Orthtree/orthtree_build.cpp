@@ -30,7 +30,8 @@ int main()
   Orthtree orthtree(points_dd);
   orthtree.refine(10, 5);
 
-  std::cout << orthtree << std::endl;
+
+  std::cout << "The depth of the orthtree is " << orthtree.depth() << std::endl;
 
   return EXIT_SUCCESS;
 }

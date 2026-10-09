@@ -34,8 +34,7 @@ int main(int argc, char **argv) {
   // Build the octree with a small bucket size, using a more verbose method
   octree.refine(CGAL::Orthtrees::Maximum_contained_elements(10));
 
-  // Print out the tree
-  std::cout << octree << std::endl;
+  std::cout << "The depth of the octree is " << octree.depth() << std::endl;
 
   return EXIT_SUCCESS;
 }
