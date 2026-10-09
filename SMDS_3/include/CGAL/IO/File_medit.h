@@ -1228,6 +1228,28 @@ bool read_MEDIT(std::istream& in,
   using Facet = typename C3t3::Triangulation::Facet;
   using Vertex_handle = typename C3t3::Triangulation::Vertex_handle;
   using Subdomain_index = typename C3t3::Subdomain_index;
+  using Surface_patch_index = typename C3t3::Surface_patch_index;
+
+  auto sync_surface_patch_index_with_mirror = [&](Facet f) -> bool
+    {
+      if(f.first->surface_patch_index(f.second) != Surface_patch_index())
+      {
+        Facet mf = c3t3.triangulation().mirror_facet(f);
+        mf.first->set_surface_patch_index(mf.second, f.first->surface_patch_index(f.second));
+        return true;
+      }
+    return false;
+   };
+
+  for(Facet f : c3t3.triangulation().finite_facets())
+  {
+    if(sync_surface_patch_index_with_mirror(f) ||
+       sync_surface_patch_index_with_mirror(c3t3.triangulation().mirror_facet(f)))
+    {
+      if(!c3t3.is_in_complex(f))
+        c3t3.add_to_complex(f, f.first->surface_patch_index(f.second));
+    }
+  }
 
   c3t3.rescan_after_load_of_triangulation(); // fix counters for facets and cells
   for(Cell_handle cit : c3t3.triangulation().finite_cell_handles())
