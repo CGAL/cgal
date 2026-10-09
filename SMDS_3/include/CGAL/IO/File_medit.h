@@ -456,20 +456,22 @@ bool build_triangulation_from_file(std::istream& is,
   using Subdomain_index = typename Tr::Cell::Subdomain_index;
   using Surface_patch_index = typename Tr::Cell::Surface_patch_index;
 
+  using Edge         = std::array<int,2>;
   using Facet        = std::array<int, 3>; // 3 = id
-  using Tet_with_ref = std::array<int, 4>; // 4 = id
+  using Tet = std::array<int, 4>; // 4 = id
 
   using Facet_with_index = CGAL::IO::internal::Facet_with_patch_index<Surface_patch_index>;
   using Edge_with_index = CGAL::IO::internal::Edge_with_curve_index<Curve_index>;
   using Corner_with_index = CGAL::IO::internal::Vertex_with_corner_index<Corner_index>;
 
-  std::vector<Tet_with_ref> finite_cells;
+  std::vector<Tet> finite_cells;
   std::vector<Subdomain_index> subdomains;
   std::vector<Point_3> points;
 
-  std::vector<Facet_with_index> facet_indices;
-  std::vector<Edge_with_index> edge_indices;
-  std::vector<Corner_with_index> corner_indices;
+  std::vector<Facet> facets;
+  std::vector<Edge> edges;
+  std::vector<int> corners, facet_refs, edge_refs, point_refs;
+  std::vector<int>  ignored_ridges;
 
   bool is_CGAL_mesh = false;
 
@@ -479,14 +481,46 @@ bool build_triangulation_from_file(std::istream& is,
     std::cout << "Allow non-manifoldness = " << allow_non_manifold << std::endl;
   }
 
-  bool ok = CGAL::IO::internal::read_MEDIT(is, points, finite_cells, subdomains,
-                                           facet_indices, true,
-                                           edge_indices, true,
-                                           corner_indices, true,
+  bool ok = CGAL::IO::internal::read_MEDIT(is, points, finite_cells,
+                                           facets, true,
+                                           edges, true,
+                                           ignored_ridges, false,
+                                           corners, true,
+                                           point_refs, true,
+                                           subdomains, true,
+                                           facet_refs, true,
+                                           edge_refs, true,
                                            verbose,
                                            is_CGAL_mesh);
   if(!ok){
     return false;
+  }
+
+  std::vector<Edge_with_index> edge_indices;
+  for(int i = 0; i < edges.size(); ++i){
+    Edge_with_index ewi;
+    ewi.v0 = edges[i][0];
+    ewi.v1 = edges[i][1];
+    ewi.curve_index = edge_refs[i];
+    edge_indices.emplace_back(ewi);
+  }
+
+  std::vector<Facet_with_index> facet_indices;
+  for(int i = 0; i < facets.size(); ++i){
+    Facet_with_index fwi;
+    fwi.v0 = facets[i][0];
+    fwi.v1 = facets[i][1];
+    fwi.v2 = facets[i][2];
+    fwi.surface_patch_index = facet_refs[i];
+    facet_indices.emplace_back(fwi);
+  }
+
+  std::vector<Corner_with_index> corner_indices;
+  for(int i = 0; i < corners.size(); ++i){
+    Corner_with_index cwi;
+    cwi.v = corners[i];
+    cwi.corner_index = point_refs[i];
+    corner_indices.emplace_back(cwi);
   }
 
   boost::unordered_map<Facet, Surface_patch_index> border_facets;
@@ -525,6 +559,7 @@ bool build_triangulation_from_file(std::istream& is,
                                                    replace_domain_0 && !is_CGAL_mesh,
                                                    allow_non_manifold,
                                                    allow_negative_orientation);
+return true;
 }
 
 template <class Tr,
@@ -942,7 +977,7 @@ output_to_medit(std::ostream& os,
  * \see \ref IOStreamMedit
  */
 template<typename T3, typename NamedParameters = parameters::Default_named_parameters>
-void write_MEDIT(std::ostream& os,
+void Xwrite_MEDIT(std::ostream& os,
                  const T3& t3,
                  const NamedParameters& np = parameters::default_values())
 {
@@ -1022,7 +1057,7 @@ template<typename T3,
          typename CornerIndex,
          typename CurveIndex,
          typename NamedParameters = parameters::Default_named_parameters>
-void write_MEDIT(std::ostream& os,
+void Xwrite_MEDIT(std::ostream& os,
   const CGAL::Mesh_complex_3_in_triangulation_3<T3, CornerIndex, CurveIndex>& c3t3,
   const NamedParameters& np = parameters::default_values())
 {
@@ -1082,7 +1117,7 @@ void write_MEDIT(std::ostream& os,
  *  \see \ref IOStreamMedit
  */
 template<typename T3, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool read_MEDIT(std::istream& in,
+bool Xread_MEDIT(std::istream& in,
                 T3& t3,
                 const CGAL_NP_CLASS& np = parameters::default_values())
 {
@@ -1160,7 +1195,7 @@ template <typename T3,
           typename Corner_index,
           typename Curve_index,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool read_MEDIT(std::istream& in,
+bool Xread_MEDIT(std::istream& in,
                 CGAL::Mesh_complex_3_in_triangulation_3<T3, Corner_index, Curve_index>& c3t3,
                 const CGAL_NP_CLASS& np = parameters::default_values())
 {

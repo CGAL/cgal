@@ -53,13 +53,13 @@ int test_MEDIT_with_features()
   const std::size_t nb_corners = c3t3.number_of_corners();
 
   std::ofstream os("fandisk_out.mesh");
-  CGAL::IO::write_MEDIT(os, c3t3,
+  CGAL::IO::Xwrite_MEDIT(os, c3t3,
                         CGAL::parameters::all_vertices(true).all_cells(true));
   os.close();
 
   std::ifstream is("fandisk_out.mesh");
   C3t3 c3t3_in;
-  CGAL::IO::read_MEDIT(is, c3t3_in);
+  CGAL::IO::Xread_MEDIT(is, c3t3_in);
   is.close();
 
   std::cout << "Read " << c3t3_in.number_of_facets() << " facets, " << c3t3_in.number_of_edges() << " edges, "
@@ -88,16 +88,16 @@ int test_MEDIT_negative_cells()
   }
 
   Tr tr;
-  CGAL::IO::read_MEDIT(in, tr, CGAL::parameters::allow_negative_orientation(true));
+  CGAL::IO::Xread_MEDIT(in, tr, CGAL::parameters::allow_negative_orientation(true));
   assert(tr.is_valid());
   std::ofstream os("negative_cells_out.mesh");
-  CGAL::IO::write_MEDIT(os, tr,
+  CGAL::IO::Xwrite_MEDIT(os, tr,
     CGAL::parameters::all_vertices(false).all_cells(true));
   os.close();
 
   Tr tr2;
   std::ifstream is2("negative_cells_out.mesh");
-  CGAL::IO::read_MEDIT(is2, tr2, CGAL::parameters::allow_negative_orientation(true));
+  CGAL::IO::Xread_MEDIT(is2, tr2, CGAL::parameters::allow_negative_orientation(true));
   is2.close();
   assert(tr2.is_valid());
 
@@ -117,11 +117,11 @@ int test()
     return 1;
   }
   Tr tr;
-  CGAL::IO::read_MEDIT(in, tr);
+  CGAL::IO::Xread_MEDIT(in, tr);
   assert(tr.is_valid());
 
   std::ofstream os("elephant_out.mesh");
-  CGAL::IO::write_MEDIT(os, tr,
+  CGAL::IO::Xwrite_MEDIT(os, tr,
     CGAL::parameters::all_vertices(false).all_cells(true));
   os.close();
 
@@ -134,24 +134,24 @@ int test()
     tr.insert(isocuboid.vertex(i));
 
   std::ofstream os2("elephant_out_not_all_vertices.mesh");
-  CGAL::IO::write_MEDIT(os2, tr,
+  CGAL::IO::Xwrite_MEDIT(os2, tr,
     CGAL::parameters::all_vertices(false));
   os2.close();
 
   Tr tr2;
   std::ifstream is2("elephant_out_not_all_vertices.mesh");
-  CGAL::IO::read_MEDIT(is2, tr2);;
+  CGAL::IO::Xread_MEDIT(is2, tr2);;
   is2.close();
   assert(tr2.is_valid());
 
   // non convex
   std::ofstream os3("elephant_out_not_all_cells.mesh");
-  CGAL::IO::write_MEDIT(os3, tr, CGAL::parameters::all_cells(false));
+  CGAL::IO::Xwrite_MEDIT(os3, tr, CGAL::parameters::all_cells(false));
   os3.close();
 
   Tr tr3;
   std::ifstream is3("elephant_out_not_all_cells.mesh");
-  CGAL::IO::read_MEDIT(is3, tr3);
+  CGAL::IO::Xread_MEDIT(is3, tr3);
   is3.close();
   assert(tr3.is_valid());
 

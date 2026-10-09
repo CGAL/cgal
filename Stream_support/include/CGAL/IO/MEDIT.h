@@ -36,7 +36,7 @@ namespace IO {
 namespace internal {
 
 template<typename SurfacePatchIndex>
-struct Facet
+struct Facet_with_patch_index
 {
   int v0, v1, v2;
   SurfacePatchIndex surface_patch_index;
@@ -49,7 +49,7 @@ struct get_surface_path_index_type
 };
 
 template <typename SurfacePatchIndex>
-struct get_surface_path_index_type<Facet<SurfacePatchIndex>>
+struct get_surface_path_index_type<Facet_with_patch_index<SurfacePatchIndex>>
 {
   using type = SurfacePatchIndex;
 };
@@ -67,7 +67,7 @@ struct get_surface_path_index_type<std::tuple<A,A,A,I>>
 };
 
 template<typename CurveIndex>
-struct Edge
+struct Edge_with_curve_index
 {
   int v0, v1;
   CurveIndex curve_index;
@@ -116,19 +116,19 @@ CornerIndex get_one(const Vertex_with_corner_index<CornerIndex>& t)
 }
 
 template<typename CurveIndex>
-int get_zero(const Edge<CurveIndex>& t)
+int get_zero(const Edge_with_curve_index<CurveIndex>& t)
 {
   return t.v0;
 }
 
 template<typename CurveIndex>
-int get_one(const Edge<CurveIndex>& t)
+int get_one(const Edge_with_curve_index<CurveIndex>& t)
 {
   return t.v1;
 }
 
 template<typename CurveIndex>
-CurveIndex get_two(const Edge<CurveIndex>& t)
+CurveIndex get_two(const Edge_with_curve_index<CurveIndex>& t)
 {
   return t.curve_index;
 }
@@ -362,7 +362,7 @@ bool read_MEDIT(std::istream& is,
       for(int i=0; i<nedges; ++i)
         std::getline(is, buffer);
     }
-
+  }
     if(line.find("Ridges") != std::string::npos)
     {
       is >> nridges;
@@ -388,7 +388,6 @@ bool read_MEDIT(std::istream& is,
     }
   }
 
-  }
 
   if (verbose)
   {

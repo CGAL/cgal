@@ -30,7 +30,7 @@ C3t3 load_example_mesh()
   C3t3 c3t3;
   std::ifstream is(MS3_EXAMPLE_MESH_FILE, std::ios::in);
   assert(is);
-  const bool read_ok = CGAL::IO::read_MEDIT(is, c3t3.triangulation());
+  const bool read_ok = CGAL::IO::Xread_MEDIT(is, c3t3.triangulation());
   assert(read_ok);
   c3t3.rescan_after_load_of_triangulation();
   return c3t3;
