@@ -492,6 +492,7 @@ public:
   typedef internal::Construct_hyperbolic_bisector_2<Self>       Construct_hyperbolic_bisector_2;
   typedef internal::Is_Delaunay_hyperbolic<Self>                Is_Delaunay_hyperbolic;
   typedef internal::Side_of_oriented_hyperbolic_segment_2<Self> Side_of_oriented_hyperbolic_segment_2;
+  typedef typename internal::Hyperbolic_orientation_2<Self>     Hyperbolic_orientation_2;
 
   // Needed for P4HT2
   typedef typename Kernel::Construct_bisector_2                 Construct_Euclidean_bisector_2;
@@ -548,6 +549,10 @@ public:
   Compute_squared_Euclidean_distance_2
   compute_squared_Euclidean_distance_2_object() const
   { return this->Base::compute_squared_distance_2_object(); }
+
+  Hyperbolic_orientation_2
+  hyperbolic_orientation_2() const
+  { return Hyperbolic_orientation_2(*this); }
 
 }; // class Hyperbolic_Delaunay_triangulation_traits_2
 

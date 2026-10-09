@@ -10,4 +10,5 @@ namespace CGAL {
 template<class HyperbolicTraits>
 class Hyperbolic_surface_traits_2 : public HyperbolicTraits {};
 
+
 } // namespace CGAL
