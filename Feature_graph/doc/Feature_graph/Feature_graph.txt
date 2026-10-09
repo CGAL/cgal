@@ -1,0 +1,31 @@
+namespace CGAL {
+/*!
+
+\mainpage User Manual
+\anchor Chapter_Feature_Graph
+\anchor chaptermine
+\cgalAutoToc
+\author Ange Clément
+
+The manual will be completed later.
+
+This chapter describes the ...
+
+\section secmydefinitions Definitions
+
+Section on definitions here ...
+
+\section secExamples Examples
+
+\subsection exFromSegmentedImage Feature Graph Extraction from a Segmented Image
+
+The following example shows the extraction of the feature graph from a segmented image.
+
+\cgalExample{Feature_graph/feature_graph_from_segmented_image.cpp}
+
+\cgalFigureBegin{figPck,feature_graph_small.png}
+Left: ...
+\cgalFigureEnd
+
+*/
+} /* namespace CGAL */
