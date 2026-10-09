@@ -9,6 +9,24 @@
 //
 // Author(s)     : Maxime Gimeno
 
+#include <CGAL/Named_function_parameters.h>
+
+#ifndef CGAL_add_named_parameter_with_compatibility
+#  define CGAL_add_named_parameter_with_compatibility(X, Y, Z) CGAL_add_named_parameter(X, Y, Z)
+#endif
+
+#ifndef CGAL_add_named_parameter_with_compatibility_cref_only
+#  define CGAL_add_named_parameter_with_compatibility_cref_only(X, Y, Z) CGAL_add_named_parameter(X, Y, Z)
+#endif
+
+#ifndef CGAL_add_named_parameter_with_compatibility_ref_only
+#  define CGAL_add_named_parameter_with_compatibility_ref_only(X, Y, Z) CGAL_add_named_parameter(X, Y, Z)
+#endif
+
+#ifndef CGAL_add_extra_named_parameter_with_compatibility
+#  define CGAL_add_extra_named_parameter_with_compatibility(X, Y, Z)
+#endif
+
 // List of named parameters that we use in CGAL
 CGAL_add_named_parameter(vertex_point_t, vertex_point, vertex_point_map)
 CGAL_add_named_parameter(halfedge_index_t, halfedge_index, halfedge_index_map)
@@ -224,6 +242,7 @@ CGAL_add_named_parameter(bounding_box_t, bounding_box, bounding_box)
 CGAL_add_named_parameter(starting_vertex_descriptor_t, starting_vertex_descriptor, starting_vertex_descriptor)
 CGAL_add_named_parameter(used_to_find_a_point_t, used_to_find_a_point, used_to_find_a_point)
 
+CGAL_add_named_parameter(do_not_check_allowed_np_t, do_not_check_allowed_np, do_not_check_allowed_np)
 
 // List of named parameters used in the Point Set Processing package
 CGAL_add_named_parameter(query_point_t, query_point_map, query_point_map)
@@ -459,3 +478,9 @@ CGAL_add_named_parameter(use_trimming_t, use_trimming, use_trimming)
 
 //List of named parameters used in Mesh_smoothing_3
 CGAL_add_named_parameter(max_number_of_evaluations_t, max_number_of_evaluations, max_number_of_evaluations)
+
+#undef CGAL_add_named_parameter
+#undef CGAL_add_named_parameter_with_compatibility
+#undef CGAL_add_extra_named_parameter_with_compatibility
+#undef CGAL_add_named_parameter_with_compatibility_cref_only
+#undef CGAL_add_named_parameter_with_compatibility_ref_only
