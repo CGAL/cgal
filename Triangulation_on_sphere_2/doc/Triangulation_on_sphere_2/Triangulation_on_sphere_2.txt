@@ -62,7 +62,7 @@ the class `CORE::Expr`, but this comes with the drawback of a substantially high
 This lack of exact representation is an obvious problem as the interpretation of the Delaunay property
 as an orientation test does not stand if points do not lie in a convex position.
 
-This gap between the theoretical and the practical settings was addressed by Caroli et al. \cgalCite{cgal:ccplr-redtp-10} :
+This gap between the theoretical and the practical settings was addressed by \cgalCite{cgal:ccplr-redtp-10} :
 the solution is to use a <em>regular</em> triangulation, which is a generalization of the Delaunay triangulation
 to sets of <em>weighted points</em>
 (see \ref Section_2D_Triangulations_Regular "2D Regular Triangulations" for more information).
@@ -231,7 +231,7 @@ which greatly speeds up the insertion.
 
 \section Section_2D_ToS_Design Design and Implementation History
 
-Prototype code implementing the publication of Caroli et al. \cgalCite{cgal:ccplr-redtp-10}
+Prototype code implementing the publication of \cgalCite{cgal:ccplr-redtp-10}
 was developed over the two internships of Oliver Rouiller and Claudia Werner at Inria,
 under the supervision of Monique Teillaud and with the help of Sébastien Loriot.
 Based on this prototype, Mael Rouxel-Labbé developed the initial version of this package.

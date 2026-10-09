@@ -10,7 +10,7 @@ namespace CGAL {
 
 \section Ksp_introduction Introduction
 
-This \cgal component implements the kinetic space partition proposed by Bauchet et. al \cgalCite{bauchet2020kinetic}. It takes as input a set of non-coplanar convex polygons and partitions the bounding box of the input into polyhedra, where each polyhedron and its facets are convex. Each facet of the partition is part of the input polygons or an extension of them.
+This \cgal component implements the kinetic space partition proposed by \cgalCite{bauchet2020kinetic}. It takes as input a set of non-coplanar convex polygons and partitions the bounding box of the input into polyhedra, where each polyhedron and its facets are convex. Each facet of the partition is part of the input polygons or an extension of them.
 
 The kinetic partition homogeneously expands each input polygon along its support plane until collisions occur between them. At each collision, their expansion may stop, they may restrict the propagation along an intersection line between two support planes or they may continue beyond the intersection line. The polygons are split at the beginning of the kinetic simulation and at each collision along the intersection line to be intersection-free.
 
@@ -63,7 +63,7 @@ The following example reads a set of polygons from a file and creates a kinetic 
 
 \section Ksp_history Design and Implementation History
 
-This package is an implementation of Bauchet et. al \cgalCite{bauchet2020kinetic} with an octree replacing the grid subdivision.
+This package is an implementation of \cgalCite{bauchet2020kinetic} with an octree replacing the grid subdivision.
 A proof of concept of the kinetic partition was developed by Simon Giraudot and Dmitry Anisimov.
 
 */

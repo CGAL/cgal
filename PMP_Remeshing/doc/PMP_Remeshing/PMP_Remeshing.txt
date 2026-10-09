@@ -65,8 +65,8 @@ The following example demonstrates its usage.
 
 \subsection isorem Isotropic Incremental Remeshing
 
-The incremental triangle-based isotropic remeshing algorithm introduced by Botsch et al
- \cgalCite{botsch2004remeshing}, \cgalCite{botsch2010PMP} is implemented in this package.
+The incremental triangle-based isotropic remeshing algorithm introduced by
+ \cgalCite{botsch2004remeshing} and \cgalCite{botsch2010PMP} is implemented in this package.
 This algorithm incrementally performs simple operations such as edge splits, edge collapses,
 edge flips, and Laplacian smoothing. All the vertices of the remeshed patch are reprojected
 to the original surface to maintain a good approximation of the input.
@@ -177,7 +177,7 @@ minimizing dependence on discretization and focusing on smoothing the underlying
 `CGAL::Polygon_mesh_processing::angle_and_area_smoothing()` moves vertices to optimize the geometry
 around each vertex, aiming to equalize angles between incident edges and/or equalize areas of adjacent
 triangles. Border vertices are treated as constrained and remain fixed throughout the procedure.
-No new vertices are inserted. The algorithms are based on Surazhsky and Gotsman \cgalCite{cgal:sg-hqct-04}.
+No new vertices are inserted. The algorithms are based on \cgalCite{cgal:sg-hqct-04}.
 Area smoothing alone may produce long and skinny triangles; to mitigate this, an optional step
 of Delaunay-based edge flips can be applied. Area smoothing improves the spatial distribution
 of vertices over the smoothed region.
@@ -215,8 +215,8 @@ mesh relaxation function can be used.
 
 - Shape smoothing: `CGAL::Polygon_mesh_processing::smooth_shape()` moves vertices towards a weighted
 barycenter of their neighbors along the mean curvature flow. The curvature flow algorithm for shape
-smoothing is based on Desbrun et al. \cgalCite{cgal:dmsb-ifamdcf-99} and
-Kazhdan et al. \cgalCite{kazhdan2012can}. Vertices are translated along the surface normal at a speed
+smoothing is based on \cgalCite{cgal:dmsb-ifamdcf-99} and
+\cgalCite{kazhdan2012can}. Vertices are translated along the surface normal at a speed
 proportional to the mean curvature of the region being smoothed. Vertices on sharp corners move faster,
 while those in flat regions remain stationary (zero curvature). To prevent undesirable neck pinches
 (singularities in cylindrical regions), the algorithm slows evolution in such areas.

@@ -280,7 +280,7 @@ Perhaps the first (historically) use-case of straight skeletons: given a polygon
 directly gives the layout of each tent. If each skeleton edge is lifted from the plane a height equal
 to its offset distance, the resulting roof is "correct" in that water will always fall down
 to the contour edges (the roof's border), regardless of where it falls on the roof.
-Laycock and Day \cgalCite{cgal:ld-agrm-03} give an algorithm for roof design based on the straight skeleton.
+\cgalCite{cgal:ld-agrm-03} give an algorithm for roof design based on the straight skeleton.
 
 This \cgal package implements skeleton extrusion for polygons with holes, with support for positive
 multiplicative weights. The output is a closed, combinatorially 2-manifold surface triangle mesh.
