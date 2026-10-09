@@ -432,25 +432,24 @@ bool read_MEDIT(std::istream& is,
  *
  * \cgalNamedParamsBegin
  *
- *
  *   \cgalParamNBegin{tetrahedra}
- *     \cgalParamDescription{a non-const reference wrapper of a container of quintuples of integers that will be filled by this function.
- *                           Each element represents a tetrahedron with vertices corresponding to the first four integers, and the last integer being the subdomin index of the tetrahedron.}
- *     \cgalParamType{a `std::reference_wrapper` to a model of `BackInsertionSequence` with a value type constructible using a braced initializer list of five integers.}
- *     \cgalParamDefault{facets are ignored}
- *   \cgalParamNEnd
- *
- *   \cgalParamNBegin{triangles}
  *     \cgalParamDescription{a non-const reference wrapper of a container of quadruples of integers that will be filled by this function.
- *                           Each element represents a triangle with vertices corresponding to the first three integers, and the last integer being the surface patch index of the triangle.}
+ *                           Each element represents a tetrahedron with vertices corresponding to the four integers.}
  *     \cgalParamType{a `std::reference_wrapper` to a model of `BackInsertionSequence` with a value type constructible using a braced initializer list of four integers.}
  *     \cgalParamDefault{facets are ignored}
  *   \cgalParamNEnd
  *
- *   \cgalParamNBegin{edges}
+ *   \cgalParamNBegin{triangles}
  *     \cgalParamDescription{a non-const reference wrapper of a container of triples of integers that will be filled by this function.
- *                           Each element represents an edge with vertices corresponding  to the first two integers, and the last integer being the curve index of the edge.}
- *     \cgalParamType{a `std::reference_wrapper` to a model of `BackInsertionSequence`  with a value type constructible using a braced initializer list of three integers.}
+ *                           Each element represents a triangle with vertices corresponding to the three integers.}
+ *     \cgalParamType{a `std::reference_wrapper` to a model of `BackInsertionSequence` with a value type constructible using a braced initializer list of three integers.}
+ *     \cgalParamDefault{facets are ignored}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{edges}
+ *     \cgalParamDescription{a non-const reference wrapper of a container of pairs of integers that will be filled by this function.
+ *                           Each element represents an edge with vertices corresponding  to the two integers.}
+ *     \cgalParamType{a `std::reference_wrapper` to a model of `BackInsertionSequence`  with a value type constructible using a braced initializer list of two integers.}
  *     \cgalParamDefault{edges are ignored}
  *   \cgalParamNEnd
  *
@@ -463,9 +462,16 @@ bool read_MEDIT(std::istream& is,
  *
  *   \cgalParamNBegin{corners}
  *     \cgalParamDescription{a non-const reference wrapper of a container of integers that will be filled by this function.
- *                           Each element  in the container is an index in the sequence of points}
+ *                           Each element  in the container is an index in the sequence of points.}
  *     \cgalParamType{a `std::reference_wrapper` to a model of `BackInsertionSequence`  with a value type constructible from an integer.}
  *     \cgalParamDefault{corners are ignored/}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{terahedra_ref}
+ *     \cgalParamDescription{a non-const reference wrapper of a container of integers that will be filled by this function.
+ *                           Each element in the container corresponds to an element in `tetrahedra`.}
+ *     \cgalParamType{a `std::reference_wrapper` to a model of `BackInsertionSequence`  with a value type constructible from an integer.}
+ *     \cgalParamDefault{elements are ignored/}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{verbose}
@@ -584,38 +590,44 @@ bool read_MEDIT(std::istream& is,
  *
  * \cgalNamedParamsBegin
  *
- *
  *   \cgalParamNBegin{tetrahedra}
- *     \cgalParamDescription{a const reference wrapper of a container of quintuples of integers that will be written by this function.
- *                           Each element corresponds to a tetrahedron with vertices corresponding to the first four integers, and the last integer being the subdomain index.}
- *     \cgalParamType{a `std::reference_wrapper` to a model of `SequenceContainer` with a value type where the elements of the quintuples can be accessed with `std::get<int>()`}
+ *     \cgalParamDescription{a const reference wrapper of a container of quadruples of integers that will be written by this function.
+ *                           Each element corresponds to a tetrahedron with vertices corresponding to the four integers.}
+ *     \cgalParamType{a `std::reference_wrapper` to a model of `SequenceContainer` with a value type where the elements of the quadruples can be accessed with `std::get<int>()`}
  *     \cgalParamDefault{tetrahedra are not written}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{triangles}
- *     \cgalParamDescription{a const reference wrapper of a container of quadruples of integers that will be written by this function.
- *                           Each element corresponds to a triangle with vertices corresponding to the first three integers, and the last integer being the surface patch index of the triangle.}
- *     \cgalParamType{a `std::reference_wrapper` to a model of `SequenceContainer` with a value type where the elements of the quadruples can be accessed with `std::get<int>()`}
+ *     \cgalParamDescription{a const reference wrapper of a container of triples of integers that will be written by this function.
+ *                           Each element corresponds to a triangle with vertices corresponding to the three integers.}
+ *     \cgalParamType{a `std::reference_wrapper` to a model of `SequenceContainer` with a value type where the elements of the triples can be accessed with `std::get<int>()`}
  *     \cgalParamDefault{triangles are not written}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{edges}
- *     \cgalParamDescription{a const reference wrapper of a container of triples of integers that will be written by this function.
- *                           Each element corresponds to an edge with vertices corresponding  to the first two integers, and the last integer being the curve index of the edge.}
- *     \cgalParamType{a `std::reference_wrapper` to a model of `SequenceContainer` with a value type where the elements of the triples can be accessed with `std::get<int>()`}
+ *     \cgalParamDescription{a const reference wrapper of a container of pairs of integers that will be written by this function.
+ *                           Each element corresponds to an edge with vertices corresponding  to the two integers.}
+ *     \cgalParamType{a `std::reference_wrapper` to a model of `SequenceContainer` with a value type where the elements of the pairs can be accessed with `std::get<int>()`}
  *     \cgalParamDefault{edges are not written}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{ridges}
  *     \cgalParamDescription{a const reference wrapper of a container of integers that will be written by this function.
  *                           Each element in the container is an index in the sequence of edges.}
- *     \cgalParamType{a `std::reference_wrapper` to a model of `SequenceContainer` with an integer type as  value type..}
+ *     \cgalParamType{a `std::reference_wrapper` to a model of `SequenceContainer` with an integer type as  value type.}
  *     \cgalParamDefault{ridges are not written}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{corners}
  *     \cgalParamDescription{a const reference wrapper of a container of integers that will be written by this function.
  *                           Each element in the container is an index in the sequence of points.}
+ *     \cgalParamType{a `std::reference_wrapper` to a model of `SequenceContainer` with an integer type as  value type.}
+ *     \cgalParamDefault{corners are not written}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{tetrahedra_ref}
+ *     \cgalParamDescription{a const reference wrapper of a container of integers that will be written by this function.
+ *                           It must have the same size as `tetrahedra`, and each element in the container is a value associated to the tetrahedron at the same position.}
  *     \cgalParamType{a `std::reference_wrapper` to a model of `SequenceContainer` with an integer type as  value type.}
  *     \cgalParamDefault{corners are not written}
  *   \cgalParamNEnd
