@@ -40,24 +40,24 @@ public:
 
   Translation_repC3() {}
   Translation_repC3(const Vector_3 &tv) : translationvector_(tv) {}
-  virtual ~Translation_repC3() {}
+  ~Translation_repC3() override {}
 
-  virtual Point_3     transform(const Point_3 &p) const
+  Point_3     transform(const Point_3 &p) const override
   {
     return p + translationvector_;
   }
 
-  virtual Vector_3    transform(const Vector_3 &v) const
+  Vector_3    transform(const Vector_3 &v) const override
   {
     return v;
   }
 
-  virtual Direction_3 transform(const Direction_3 &d) const
+  Direction_3 transform(const Direction_3 &d) const override
   {
     return d;
   }
 
-  virtual Plane_3 transform(const Plane_3 &p) const
+  Plane_3 transform(const Plane_3 &p) const override
   {
     // direction ( which is (p.a(), p.b(), p.c())) does not change
     return Plane_3(p.a(),
@@ -66,12 +66,12 @@ public:
                    p.d()  - ( p.a()*translationvector_.x() + p.b()*translationvector_.y() + p.c()*translationvector_.z()));
   }
 
-  virtual Aff_transformation_3 operator*(const Transformation_base_3 &t) const
+  Aff_transformation_3 operator*(const Transformation_base_3 &t) const override
   {
     return t.compose(*this);
   }
 
-  virtual Aff_transformation_3 compose(const Transformation_3 &t) const
+  Aff_transformation_3 compose(const Transformation_3 &t) const override
   {
     return Aff_transformation_3(t.t11,
                                 t.t12,
@@ -95,13 +95,13 @@ public:
                                 + t.t33 * translationvector_.z() + t.t34);
   }
 
-  virtual Aff_transformation_3 compose(const Translation_3 &t) const
+  Aff_transformation_3 compose(const Translation_3 &t) const override
   {
     return Aff_transformation_3(TRANSLATION,
                                 translationvector_ + t.translationvector_);
   }
 
-  virtual Aff_transformation_3 compose(const Scaling_3 &t) const
+  Aff_transformation_3 compose(const Scaling_3 &t) const override
   {
     FT ft0(0);
     return Aff_transformation_3(t.scalefactor_,
@@ -120,34 +120,34 @@ public:
                                 t.scalefactor_ * translationvector_.z());
   }
 
-  virtual Aff_transformation_3 inverse() const
+  Aff_transformation_3 inverse() const override
   {
     return Aff_transformation_3(TRANSLATION, - translationvector_);
   }
 
-  virtual Aff_transformation_3 transpose() const
+  Aff_transformation_3 transpose() const override
   {
     return Aff_transformation_3(TRANSLATION, translationvector_);
   }
 
-  virtual bool is_even() const
+  bool is_even() const override
   {
     return true;
   }
 
-  virtual bool is_translation() const
+  bool is_translation() const override
   {
     return true;
   }
 
-  virtual FT cartesian(int i, int j) const
+  FT cartesian(int i, int j) const override
   {
     if (j==i) return FT(1);
     if (j==3) return translationvector_[i];
     return FT(0);
   }
 
-  virtual std::ostream &print(std::ostream &os) const
+  std::ostream &print(std::ostream &os) const override
   {
     os << "Aff_transformationC3(VectorC3("<< translationvector_.x() << ","
        << translationvector_.y() << ","
