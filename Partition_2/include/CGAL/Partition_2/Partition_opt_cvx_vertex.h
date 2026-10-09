@@ -84,7 +84,8 @@ public:
    // Pre:  stack is not empty
    void stack_pop()
    {
-       _best_so_far = _stack.back();
+       if (_stack.back().value() < _best_so_far.value())
+          _best_so_far = _stack.back();
        _stack.pop_back();
    }
 
