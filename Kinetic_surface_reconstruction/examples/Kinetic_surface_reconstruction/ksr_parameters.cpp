@@ -5,6 +5,7 @@
 #include <CGAL/Point_set_3/IO.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/IO/PLY.h>
+#include <CGAL/IO/VG.h>
 #include <CGAL/IO/polygon_soup_io.h>
 #include <CGAL/pca_estimate_normals.h>
 #include <CGAL/mst_orient_normals.h>
@@ -90,6 +91,7 @@ void parse_terminal(Terminal_parser& parser, Parameters& parameters) {
 }
 
 int main(const int argc, const char** argv) {
+  system("cls");
   // Parameters.
   std::cout.precision(20);
   std::cout << std::endl;
@@ -109,6 +111,10 @@ int main(const int argc, const char** argv) {
   Point_set point_set;
   std::vector<std::pair<Plane_3, std::vector<typename Point_set::Index>>> regions;
   std::filesystem::path path = parameters.data;
+
+  if (CGAL::IO::read_VG("planar_shapes.vg", point_set, std::back_inserter(regions))) {
+    std::cout << "Successfully read planar_shapes_.vg" << std::endl;
+  }
 
   // Input.
   if (!regions.empty())
@@ -183,19 +189,21 @@ int main(const int argc, const char** argv) {
   typename KSR::LCC lcc_input;
   std::string lcc_file = path.filename().generic_string() + "_" + to_stringp(parameters.maximum_distance) + "_" + to_stringp(parameters.maximum_angle) + "_" + std::to_string(parameters.min_region_size) + ".lcc";
 
-  if (!regions.empty() && std::filesystem::exists(lcc_file)) {
-    std::ifstream lccfile(lcc_file);
-    if (lccfile.is_open()) {
-      lccfile >> lcc_input;
-      lccfile.close();
-    }
-  }
+//   if (!regions.empty() && std::filesystem::exists(lcc_file)) {
+//     std::ifstream lccfile(lcc_file);
+//     if (lccfile.is_open()) {
+//       lccfile >> lcc_input;
+//       lccfile.close();
+//     }
+//   }
 
   Timer timer;
   timer.start();
 
-  if (regions.empty())
+  if (regions.empty()) {
     ksr.detect_planar_shapes(param);
+    CGAL::IO::write_VG("planar_shapes.vg", point_set, ksr.planar_shapes());
+  }
   else if (lcc_input.template one_dart_per_cell<3>().empty() && lcc_input.template one_dart_per_cell<3>().empty())
       ksr.insert_planar_shapes(regions);
 

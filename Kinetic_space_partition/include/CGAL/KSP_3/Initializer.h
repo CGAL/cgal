@@ -556,8 +556,7 @@ private:
           std::size_t second = *(++vts[v_idx].constraints.begin());
 
           bool prev_has_first = false, prev_has_second = false;
-          bool next_has_first = false;
-          CGAL_assertion_code(bool next_has_second = false;);
+          bool next_has_first = false, next_has_second = false;
           bool add_prev = false, add_next = false;
 
           // Identify right constraint by on which side of the moving edge the potential itarget is?
@@ -568,15 +567,13 @@ private:
 
           if (vts[*next].constraints.find(first) != vts[*next].constraints.end())
             next_has_first = true;
-          CGAL_assertion_code(
-            if (vts[*next].constraints.find(second) != vts[*next].constraints.end())
-              next_has_second = true;
-          );
+          if (vts[*next].constraints.find(second) != vts[*next].constraints.end())
+            next_has_second = true;
 
           if (vts[*prev].moving && !prev_has_first && !prev_has_second)
             add_prev = true;
 
-          if (vts[*next].moving && !prev_has_first && !prev_has_second)
+          if (vts[*next].moving && !next_has_first && !next_has_second)
             add_next = true;
 
           if (add_prev && !add_next) {
@@ -1113,60 +1110,25 @@ private:
   }
 
   void restrict_to_bbox(const std::size_t support_plane_idx, std::vector<typename Intersection_kernel::Point_2>& polygon_2) {
+    // The input points are projected exactly onto their support planes before the octree clips
+    // them (see Kinetic_space_partition_3::split_octree()). Hence all vertices are exactly inside
+    // the bbox or on its boundary and no snapping is required.
+#ifndef CGAL_NO_ASSERTIONS
     Support_plane &sp = m_data.support_plane(support_plane_idx);
-    std::set<std::size_t> line_idx;
-
-    for (const auto &e : sp.data().iedges)
-      line_idx.insert(m_data.igraph().edge(e).line);
-
-    std::vector<IkLine_2> lines;
-    lines.reserve(line_idx.size());
-    for (std::size_t l : line_idx) {
-      const typename Intersection_kernel::Line_3 &line = m_data.igraph().line(l);
-      lines.push_back(sp.to_2d(line));
-    }
-
     IkPoint_2 c = CGAL::centroid(polygon_2.begin(), polygon_2.end(), CGAL::Dimension_tag<0>());
-    std::vector<CGAL::Oriented_side> signs;
-    signs.resize(lines.size());
-
-    for (std::size_t i = 0;i<lines.size();i++) {
-      signs[i] = lines[i].oriented_side(c);
-      CGAL_assertion(signs[i] != CGAL::ON_ORIENTED_BOUNDARY);
-    }
-
-    IkPoint_3 bbox_min = m_data.point_3(IVertex(0));
-    IkPoint_3 bbox_max = m_data.point_3(IVertex(7));
-
-    IkFT max_span = (std::max)(bbox_max.x() - bbox_min.x(), (std::max)(bbox_max.y() - bbox_min.y(), bbox_max.z() - bbox_min.z()));
-
-    IkFT tol2 = square(0.0000001 * max_span);
-
-    for (typename Intersection_kernel::Point_2 &p : polygon_2) {
-      std::vector<std::size_t> refit;
-      for (std::size_t i = 0; i < lines.size(); i++) {
-        IkFT d = lines[i].a() * p.x() + lines[i].b() * p.y() + lines[i].c();
-        IkFT l = CGAL::approximate_sqrt(square(lines[i].a()) + square(lines[i].b()));
-        if (signs[i] == CGAL::ON_NEGATIVE_SIDE) {
-          if (d > -tol2 * l)
-            refit.push_back(i);
-        }
-        else if (signs[i] == CGAL::ON_POSITIVE_SIDE)
-          if (d < tol2 * l)
-            refit.push_back(i);
-      }
-      if (!refit.empty()) {
-        if (refit.size() == 1) {
-          p = lines[refit.front()].projection(p);
-        }
-        else {
-          CGAL_assertion(refit.size() == 2);
-          auto res = CGAL::intersection(lines[refit[0]], lines[refit[1]]);
-          CGAL_assertion_code(bool success = )CGAL::assign(p, res);
-          CGAL_assertion(success);
-        }
+    for (const auto &e : sp.data().iedges) {
+      const IkLine_2 line = sp.to_2d(m_data.igraph().line(m_data.igraph().edge(e).line));
+      const CGAL::Oriented_side inside = line.oriented_side(c);
+      CGAL_assertion(inside != CGAL::ON_ORIENTED_BOUNDARY);
+      for (const auto& p : polygon_2) {
+        CGAL_assertion_code(const CGAL::Oriented_side side = line.oriented_side(p);)
+        CGAL_assertion(side == inside || side == CGAL::ON_ORIENTED_BOUNDARY);
       }
     }
+#else
+    CGAL_USE(support_plane_idx);
+#endif
+
     Polygon_2<Intersection_kernel> poly(polygon_2.begin(), polygon_2.end());
     polygon_2.clear();
     convex_hull_2(poly.vertices_begin(), poly.vertices_end(), std::back_inserter(polygon_2));

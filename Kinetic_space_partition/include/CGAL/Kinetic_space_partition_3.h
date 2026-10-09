@@ -2258,11 +2258,14 @@ private:
       m_transform = to_exact(get_obb2abb(m_input_polygons));
       auto trans = from_exact(m_transform);
 
-      for (const auto& p : m_input_polygons) {
+      for (std::size_t i = 0; i < m_input_polygons.size(); i++) {
+        const auto& p = m_input_polygons[i];
         std::size_t idx = m_points.size();
         for (const Point_3& pt : p) {
           m_points.push_back(trans.transform(pt));
-          pts.push_back(m_transform.transform(to_exact(pt)));
+          // Project exactly onto the support plane, so that the clipped polygons are exactly
+          // incident to the intersection lines of their support plane and the octree box planes.
+          pts.push_back(m_transform.transform(m_input_planes[i].projection(to_exact(pt))));
         }
 
         m_polygons.push_back(std::vector<std::size_t>(p.size()));
@@ -2272,11 +2275,14 @@ private:
     else {
       m_transform = CGAL::Aff_transformation_3<Intersection_kernel>(CGAL::IDENTITY);
 
-      for (const auto& p : m_input_polygons) {
+      for (std::size_t i = 0; i < m_input_polygons.size(); i++) {
+        const auto& p = m_input_polygons[i];
         std::size_t idx = m_points.size();
         std::copy(p.begin(), p.end(), std::back_inserter(m_points));
+        // Project exactly onto the support plane, so that the clipped polygons are exactly
+        // incident to the intersection lines of their support plane and the octree box planes.
         for (const auto &pt : p)
-          pts.push_back(to_exact(pt));
+          pts.push_back(m_input_planes[i].projection(to_exact(pt)));
         m_polygons.push_back(std::vector<std::size_t>(p.size()));
         std::iota(m_polygons.back().begin(), m_polygons.back().end(), idx);
       }
