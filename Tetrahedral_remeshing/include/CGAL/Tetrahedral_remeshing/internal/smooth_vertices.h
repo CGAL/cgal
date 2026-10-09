@@ -497,8 +497,6 @@ private:
     const typename Tr::Point backup = v->point(); //backup v's position
     const typename Tr::Geom_traits::Point_3 pv = point(backup);
 
-    bool valid_orientation = false;
-    bool angles_improved = true;
     double frac = 1.0;
     typename Tr::Geom_traits::Vector_3 move(pv, final_pos);
 
@@ -506,7 +504,11 @@ private:
       ? max_cosine(tr, inc_cells)
       : Dihedral_angle_cosine(CGAL::ZERO, 0., 1.);//Dummy unused value
 
+    const bool check_orientation = need_to_check_orientation_after_change(tr, inc_cells);
+
     bool valid_try = true;
+    bool valid_orientation = true;
+    bool angles_improved = true;
     do
     {
       v->set_point(typename Tr::Point(pv + frac * move));
@@ -517,10 +519,7 @@ private:
 
       for (const typename Tr::Cell_handle& ci : inc_cells)
       {
-        if (CGAL::POSITIVE != CGAL::orientation(point(ci->vertex(0)->point()),
-                                                point(ci->vertex(1)->point()),
-                                                point(ci->vertex(2)->point()),
-                                                point(ci->vertex(3)->point())))
+        if(check_orientation && !is_well_oriented(tr, ci))
         {
           frac = 0.5 * frac;
           valid_try = false;
