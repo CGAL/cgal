@@ -45,7 +45,8 @@ int test_MEDIT_with_features()
   Mesh_criteria criteria(CGAL::parameters::edge_size(0.025)
                                           .facet_distance(0.005)
                                           .cell_size(0.05));
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria);
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
+                                      CGAL::parameters::no_perturb().no_exude());
 
   const std::size_t nb_facets = c3t3.number_of_facets();
   const std::size_t nb_edges = c3t3.number_of_edges();

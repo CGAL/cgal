@@ -76,6 +76,7 @@ Release date: December 2026
 
 - **Breaking change** The return type as well as type of the parameter for the file name passed to IO functions is changed from
   `std::string`  to `std::filesystem::path`, which enables to use non latin languages like Chinese for directory and file names.
+- Added overloaded versions of the functions `CGAL::IO::read_MEDIT()` and `CGAL::IO::write_MEDIT()`, for indexed tetrahedron soups.
 
 ### [Basic Viewer](https://doc.cgal.org/6.3/Manual/packages.html#PkgBasicViewer)
 
@@ -100,7 +101,6 @@ Release date: December 2026
 Release date: June 2026
 
 ### General Changes
-
 
 - The new list of supported compilers is:
   - Visual C++ 15.9, 16.10, 17.14, 18.0 (from Visual Studio 2017, 2019, 2022, and 2026) or later

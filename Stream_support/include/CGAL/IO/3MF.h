@@ -385,7 +385,7 @@ bool read_3MF(const std::filesystem::path& fname,
  *
  * \brief reads ranges of points and triangles from an input file, using the \ref IOStream3MF.
  *
- * \attention The ranges not cleared, and the data from the file are appended.
+ * \note The ranges not cleared, and the data from the file are appended.
  *
  * \tparam PointRanges a model of the concepts `RandomAccessContainer` and
  *                     `BackInsertionSequence` whose `value_type` is

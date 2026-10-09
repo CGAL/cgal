@@ -70,6 +70,16 @@ CGAL_add_named_parameter(output_color_t, output_color, output_color)
 CGAL_add_named_parameter(stream_precision_t, stream_precision, stream_precision)
 CGAL_add_named_parameter(read_only_one_object_t, read_only_one_object, read_only_one_object)
 
+// List of named parameters that we use in the package 'Stream_support'
+CGAL_add_named_parameter(tetrahedra_t, tetrahedra, tetrahedra)
+CGAL_add_named_parameter(edges_t, edges, edges)
+CGAL_add_named_parameter(ridges_t, ridges, ridges)
+CGAL_add_named_parameter(corners_t, corners, corners)
+CGAL_add_named_parameter(tetrahedra_ref_t, tetrahedra_ref, tetrahedra_ref)
+CGAL_add_named_parameter(triangles_ref_t, triangles_ref, triangles_ref)
+CGAL_add_named_parameter(edges_ref_t, edges_ref, edges_ref)
+CGAL_add_named_parameter(vertices_ref_t, vertices_ref, vertices_ref)
+
 // List of named parameters that we use in the package 'Mesh_3'
 CGAL_add_named_parameter(vertex_feature_degree_t, vertex_feature_degree, vertex_feature_degree_map)
 
@@ -437,7 +447,7 @@ CGAL_add_named_parameter_with_compatibility(cell_min_size_param_t, cell_min_size
 CGAL_add_named_parameter_with_compatibility(function_param_t, function_param, function)
 CGAL_add_named_parameter_with_compatibility(bounding_object_param_t, bounding_object_param, bounding_object)
 
-// List of named parameters used in the package ' 3D Surface Subdivision Methods'
+// List of named parameters used in the package '3D Surface Subdivision Methods'
 CGAL_add_named_parameter(do_not_modify_geometry_t, do_not_modify_geometry, do_not_modify_geometry)
 
 //List of named parameters used in Straight_skeleton_2

@@ -24,7 +24,7 @@ int main(int argc, char** argv)
     return 1;
   }
 
-  CGAL::IO::read_MEDIT(in, points, tetras, subdomains);
+  CGAL::IO::read_MEDIT(in, points, tetras, CGAL::parameters::subdomain_indices(std::ref(subdomains)));
 
   //filter out subdomain 0
   std::vector<std::array<std::size_t,4>> filtered_tetras;

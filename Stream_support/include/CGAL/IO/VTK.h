@@ -130,7 +130,7 @@ bool read_VTP(const std::filesystem::path& fname,
  *
  * \brief reads the content of the input file into `points` and `polygons`, using the \ref IOStreamVTK.
  *
- * \attention The polygon soup is not cleared, and the data from the file are appended.
+ * \note The polygon soup is not cleared, and the data from the file are appended.
  *
  * \tparam PointRange a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
  *                    whose `value_type` is the point type
@@ -186,7 +186,7 @@ bool read_VTK(const std::filesystem::path& fname,
  *
  * \brief reads the content of the input file into `points` and `polygons`, using the legacy file format of the \ref IOStreamVTK.
  *
- * \attention The polygon soup is not cleared, and the data from the file are appended.
+ * \note The polygon soup is not cleared, and the data from the file are appended.
  *
  * \tparam PointRange a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
  *                    whose `value_type` is the point type
