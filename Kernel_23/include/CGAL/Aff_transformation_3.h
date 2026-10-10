@@ -18,6 +18,7 @@
 
 #include <CGAL/Dimension.h>
 #include <CGAL/aff_transformation_tags.h>
+#include <CGAL/Kernel/Return_base_tag.h>
 
 #ifndef CGAL_NO_OSTREAM_INSERT_AFF_TRANSFORMATION_3
 #include <ostream>
@@ -32,29 +33,51 @@ class Aff_transformation_3 : public R_::Kernel_base::Aff_transformation_3
 {
   typedef typename R_::RT            RT;
   typedef typename R_::Vector_3      Vector_3;
-  typedef typename R_::Kernel_base::Aff_transformation_3 RAff_transformation_3;
+  typedef Aff_transformation_3       Self;
 public:
 
   typedef CGAL::Dimension_tag<3>    Ambient_dimension;
+
+  typedef typename R_::Kernel_base::Aff_transformation_3 Rep;
+
+  const Rep& rep() const
+  {
+    return *this;
+  }
+
+  Rep& rep()
+  {
+    return *this;
+  }
 
   typedef R_                        R;
 
   Aff_transformation_3() {}
 
-  Aff_transformation_3(const RAff_transformation_3&  t)
-    : RAff_transformation_3(t) {}
+  Aff_transformation_3(const Rep&  t)
+    : Rep(t) {}
+
+  Aff_transformation_3(Rep&& t)
+      : Rep(std::move(t)) {}
 
   Aff_transformation_3(const Identity_transformation& tag)
-    : RAff_transformation_3(tag) {}
+    : Rep(tag) {}
 
   Aff_transformation_3(const Translation tag,
                        const Vector_3& v)
-    : RAff_transformation_3(tag, v) {}
+    : Rep( tag, v) {}
+
+  Aff_transformation_3(const Scaling tag,
+                       const RT& s)
+    : Rep(tag, s) {}
+
 
   Aff_transformation_3(const Scaling tag,
                        const RT& s,
-                       const RT& w= RT(1) )
-    : RAff_transformation_3(tag, s, w) {}
+                       const RT& w)
+    : Rep(tag, s ,w) {}
+
+
 
   // the general case:
   Aff_transformation_3(
@@ -62,7 +85,7 @@ public:
       const RT& m21, const RT& m22, const RT& m23, const RT& m24,
       const RT& m31, const RT& m32, const RT& m33, const RT& m34,
                                                    const RT& w= RT(1) )
-    : RAff_transformation_3(m11, m12, m13, m14,
+    : Rep(m11, m12, m13, m14,
                             m21, m22, m23, m24,
                             m31, m32, m33, m34,
                                            w) {}
@@ -72,7 +95,7 @@ public:
       const RT& m21, const RT& m22, const RT& m23,
       const RT& m31, const RT& m32, const RT& m33,
                                                    const RT& w = RT(1) )
-    : RAff_transformation_3(m11, m12, m13,
+    : Rep(m11, m12, m13,
                            m21, m22, m23,
                            m31, m32, m33,
                                           w) {}
