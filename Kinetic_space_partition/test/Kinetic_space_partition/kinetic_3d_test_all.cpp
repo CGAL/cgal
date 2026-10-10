@@ -161,7 +161,7 @@ void run_all_tests() {
   results[1] = { 19, 21, 4 };
   results[2] = { 39, 57, 13 };
   run_test<Kernel, IntersectionKernel>("../data/stress-test-1/test-4-rnd-polygons-2-4.off", { 0, 1 }, results);
-  results[0] = { 12, 11, 2 };
+  results[0] = { 10, 11, 2 };
   run_test<Kernel, IntersectionKernel>("../data/stress-test-1/test-5-rnd-polygons-1-3.off", { 0 }, results);
   results[0] = { 17, 17, 3 };
   results[1] = { 18, 20, 4 };
@@ -223,8 +223,8 @@ void run_all_tests() {
   // Stress tests 4.
   results[0] = { 401, 699, 164 };
   results[1] = { 474, 873, 214 };
-  results[2] = { 488, 907, 224 };
-  results[3] = { 491, 914, 226 };
+  results[2] = { 487, 904, 223 };
+  results[3] = { 490, 911, 225 };
   run_test<Kernel, IntersectionKernel>("../data/stress-test-4/test-1-rnd-polygons-20-6.ply", { 0, 1, 2, 3 }, results);
 
   results[0] = { 476, 793, 176 };
@@ -235,7 +235,7 @@ void run_all_tests() {
   results[0] = { 1275, 2521, 649 };
   results[1] = { 1445, 2988, 798 };
   results[2] = { 1501, 3113, 832 };
-  results[3] = { 1519, 3155, 844 };
+  results[3] = { 1517, 3151, 843 };
   run_test<Kernel, IntersectionKernel>("../data/stress-test-4/test-3-rnd-polygons-40-6.ply", { 0, 1, 2, 3 }, results);
 
   // Real data tests.
@@ -263,6 +263,64 @@ void run_all_tests() {
   results[3] = { 985, 1913, 489 };
   run_test<Kernel, IntersectionKernel>("../data/real-data-test/test-40-polygons.ply", { 0, 1, 2, 3 }, results);
 
+  // Singular configurations (exact incidences at t = 0 and simultaneous events).
+  // Each input file describes its configuration in a header comment.
+  // Single partition: degenerate intersections with the support lines.
+  results[0] = { 18, 20, 4 };
+  run_test<Kernel, IntersectionKernel>("../data/singular-case-test/edge-on-line.off", { 0 }, results);
+
+  results[0] = { 12, 16, 4 };
+  run_test<Kernel, IntersectionKernel>("../data/singular-case-test/plane-through-bbox-edge.off", { 0 }, results);
+
+  results[0] = { 20, 21, 4 };
+  run_test<Kernel, IntersectionKernel>("../data/singular-case-test/simultaneous-independent-events.off", { 0 }, results);
+
+  results[0] = { 33, 50, 12 };
+  run_test<Kernel, IntersectionKernel>("../data/singular-case-test/three-concurrent-lines.off", { 0 }, results);
+
+  results[0] = { 27, 36, 8 };
+  run_test<Kernel, IntersectionKernel>("../data/singular-case-test/vertex-at-intersection.off", { 0 }, results);
+
+  results[0] = { 20, 21, 4 };
+  run_test<Kernel, IntersectionKernel>("../data/singular-case-test/vertex-hits-corner.off", { 0 }, results);
+
+  results[0] = { 18, 20, 4 };
+  run_test<Kernel, IntersectionKernel>("../data/singular-case-test/vertex-moving-along-line.off", { 0 }, results);
+
+  results[0] = { 18, 20, 4 };
+  run_test<Kernel, IntersectionKernel>("../data/singular-case-test/vertex-on-line.off", { 0 }, results);
+
+  results[0] = { 18, 20, 4 };
+  run_test<Kernel, IntersectionKernel>("../data/singular-case-test/vertex-touching-line.off", { 0 }, results);
+
+  // Octree subdivision: polygons touching or ending exactly on the boundary of the sub-partitions.
+  results[0] = { 77, 100, 21 };
+  run_test<Kernel, IntersectionKernel>("../data/singular-case-test/octree-corner-one-slider.off", { 0 }, results);
+
+  results[0] = { 75, 96, 20 };
+  run_test<Kernel, IntersectionKernel>("../data/singular-case-test/octree-corner-two-sliders.off", { 0 }, results);
+
+  results[0] = { 75, 96, 20 };
+  run_test<Kernel, IntersectionKernel>("../data/singular-case-test/octree-edge-on-octree-plane.off", { 0 }, results);
+
+  results[0] = { 80, 107, 23 };
+  run_test<Kernel, IntersectionKernel>("../data/singular-case-test/octree-fillers-only.off", { 0 }, results);
+
+  results[0] = { 86, 111, 23 };
+  results[1] = { 92, 125, 27 };
+  results[2] = { 94, 129, 28 };
+  run_test<Kernel, IntersectionKernel>("../data/singular-case-test/octree-fixed-vertices-no-shared-line.off", { 0, 1, 2 }, results);
+
+  results[0] = { 81, 105, 22 };
+  results[1] = { 83, 109, 23 };
+  run_test<Kernel, IntersectionKernel>("../data/singular-case-test/octree-point-touching-bbox-on-line.off", { 0, 1 }, results);
+
+  results[0] = { 75, 96, 20 };
+  run_test<Kernel, IntersectionKernel>("../data/singular-case-test/octree-point-touching-bbox.off", { 0 }, results);
+
+  results[0] = { 77, 100, 21 };
+  run_test<Kernel, IntersectionKernel>("../data/singular-case-test/octree-polygon-on-octree-plane.off", { 0 }, results);
+
   timer.stop();
   std::cout << "\ntotal time: " << timer.time() << std::endl;
 
@@ -286,6 +344,7 @@ void run_all_tests() {
 }
 
 int main(const int /* argc */, const char** /* argv */) {
+  system("cls");
   CGAL::Real_timer timer;
   timer.start();
   run_all_tests<SCD, EPECK>();

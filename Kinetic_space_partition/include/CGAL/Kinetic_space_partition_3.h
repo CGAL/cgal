@@ -2332,16 +2332,16 @@ private:
 
         // The octree clipping assigns a polygon that only touches the box of the node in a vertex or along an edge
         // to that node as well. Such pieces have no area inside the box and are removed.
+        // A piece has no area iff all its points are collinear: find a second point distinct from the first one
+        // and check whether any further point is not collinear to both (linear effort).
         polys.erase(std::remove_if(polys.begin(), polys.end(), [](const auto& p) {
           const auto& pts = p.second;
-          for (std::size_t a = 0; a < pts.size(); a++)
-            for (std::size_t b = a + 1; b < pts.size(); b++) {
-              if (pts[a] == pts[b])
-                continue;
-              for (std::size_t c = b + 1; c < pts.size(); c++)
-                if (!CGAL::collinear(pts[a], pts[b], pts[c]))
-                  return false;
-            }
+          std::size_t j = 1;
+          while (j < pts.size() && pts[j] == pts[0])
+            j++;
+          for (std::size_t k = j + 1; k < pts.size(); k++)
+            if (!CGAL::collinear(pts[0], pts[j], pts[k]))
+              return false;
           return true;
           }), polys.end());
 
