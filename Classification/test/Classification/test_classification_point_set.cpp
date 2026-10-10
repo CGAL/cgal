@@ -109,40 +109,22 @@ int main (int, char**)
 
   Classifier classifier (labels, features);
 
-  classifier.train<CGAL::Sequential_tag> (training_set, 800);
-#ifdef CGAL_LINKED_WITH_TBB
-  classifier.train<CGAL::Parallel_tag> (training_set, 800);
-#endif
+  classifier.train<CGAL::Parallel_if_available_tag> (training_set, 800);
 
   std::vector<int> label_indices(pts.size(), -1);
 
-  Classification::classify<CGAL::Sequential_tag>
+  Classification::classify<CGAL::Parallel_if_available_tag>
     (pts, labels, classifier, label_indices);
 
-  Classification::classify_with_local_smoothing<CGAL::Sequential_tag>
+  Classification::classify_with_local_smoothing<CGAL::Parallel_if_available_tag>
     (pts, pts.point_map(), labels, classifier,
      generator.neighborhood().sphere_neighbor_query(0.01f),
      label_indices);
 
-  Classification::classify_with_graphcut<CGAL::Sequential_tag>
+  Classification::classify_with_graphcut<CGAL::Parallel_if_available_tag>
     (pts, pts.point_map(), labels, classifier,
      generator.neighborhood().k_neighbor_query(12),
      0.2f, 10, label_indices);
-
-#ifdef CGAL_LINKED_WITH_TBB
-  Classification::classify<CGAL::Sequential_tag>
-    (pts, labels, classifier, label_indices);
-
-  Classification::classify_with_local_smoothing<CGAL::Sequential_tag>
-    (pts, pts.point_map(), labels, classifier,
-     generator.neighborhood().sphere_neighbor_query(0.01f),
-     label_indices);
-
-  Classification::classify_with_graphcut<CGAL::Sequential_tag>
-    (pts, pts.point_map(), labels, classifier,
-     generator.neighborhood().k_neighbor_query(12),
-     0.2f, 10, label_indices);
-#endif
 
   Classification::Evaluation evaluation (labels, training_set, label_indices);
 
