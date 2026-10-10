@@ -6,8 +6,12 @@
 /// Functions to corefine triangulated surface meshes and triangle soups.
 /// \ingroup PkgPMPBooleanOperationsRef
 
-/// \defgroup PMP_boolop_grp Boolean Operations
-/// Functions to compute triangulated the union, difference, and intersection of meshes.
+/// \defgroup PMP_boolop_grp Boolean Operations on Triangle Meshes
+/// Functions to compute the union, difference, and intersection of triangle meshes.
+/// \ingroup PkgPMPBooleanOperationsRef
+
+/// \defgroup PMP_boolop_soup_grp Boolean Operations on Triangle Soups
+/// Functions to compute triangulated the union, difference, and intersection of triangle soups (possibly non-manifold).
 /// \ingroup PkgPMPBooleanOperationsRef
 
 /// \defgroup PMP_clip_grp Clipping and Splitting
@@ -65,6 +69,11 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - `CGAL::Polygon_mesh_processing::corefine_and_compute_boolean_operations()`
 - `CGAL::Polygon_mesh_processing::surface_intersection()` (deprecated)
 - `CGAL::Polygon_mesh_processing::intersection_polylines()`
+
+\cgalCRPSection{General Boolean Operations}
+- `CGAL::Polygon_mesh_processing::compute_union()`
+- `CGAL::Polygon_mesh_processing::compute_difference()`
+- `CGAL::Polygon_mesh_processing::compute_intersection()`
 
 \cgalCRPSection{Clipping and Splitting}
 - `CGAL::Polygon_mesh_processing::clip()`
