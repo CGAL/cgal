@@ -2329,6 +2329,22 @@ private:
         // Get consistent Plane_3 from Octree to generate exact planes
 
         auto polys = m_octree->data(node);
+
+        // The octree clipping assigns a polygon that only touches the box of the node in a vertex or along an edge
+        // to that node as well. Such pieces have no area inside the box and are removed.
+        polys.erase(std::remove_if(polys.begin(), polys.end(), [](const auto& p) {
+          const auto& pts = p.second;
+          for (std::size_t a = 0; a < pts.size(); a++)
+            for (std::size_t b = a + 1; b < pts.size(); b++) {
+              if (pts[a] == pts[b])
+                continue;
+              for (std::size_t c = b + 1; c < pts.size(); c++)
+                if (!CGAL::collinear(pts[a], pts[b], pts[c]))
+                  return false;
+            }
+          return true;
+          }), polys.end());
+
         for (std::size_t j = 0; j < polys.size(); j++) {
           m_partition_nodes[idx].input_polygons.push_back(polys[j].first);
           m_partition_nodes[idx].m_input_planes.push_back(m_input_planes[polys[j].first]);

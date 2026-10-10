@@ -558,9 +558,25 @@ public:
     }
     CGAL_assertion(all_iplanes.size() == n);
 
+    // If the plane contains an existing iedge, e.g., an edge of the bbox, consecutive vertices of the polygon are
+    // connected by this iedge. It is reused instead of creating a new iedge on the same line.
+    std::vector<IEdge> existing(n, null_iedge());
+    for (std::size_t i = 0; i < n; ++i) {
+      const std::size_t ip = (i + 1) % n;
+      if (polygon[i].second.first != null_ivertex() && polygon[ip].second.first != null_ivertex()
+        && m_intersection_graph.is_edge(polygon[i].second.first, polygon[ip].second.first))
+        existing[i] = m_intersection_graph.edge(polygon[i].second.first, polygon[ip].second.first);
+    }
+
     for (std::size_t i = 0; i < n; ++i) {
       const std::size_t ip = (i + 1) % n;
       const auto& item = polygon[i].second;
+
+      if (existing[i] != null_iedge()) {
+        common_bbox_planes_idx.push_back(static_cast<std::size_t>(-1));
+        vertices.push_back(item.first);
+        continue;
+      }
 
       const auto& iplanes0 = all_iplanes[i];
       const auto& iplanes1 = all_iplanes[ip];
@@ -624,6 +640,17 @@ public:
     for (std::size_t i = 0; i < n; ++i) {
       const std::size_t ip = (i + 1) % n;
       const auto& item = polygon[i].second;
+
+      if (existing[i] != null_iedge()) {
+        const IEdge iedge = existing[i];
+        m_intersection_graph.intersected_planes(iedge).insert(sp_idx);
+        sp.iedges().insert(iedge);
+        const std::size_t line_idx = m_intersection_graph.line(iedge);
+        const IkLine_2 line(sp.to_2d(point_3(vertices[i])), sp.to_2d(point_3(vertices[ip])));
+        sp.data().bbox_lines[line_idx] = line;
+        sp.data().lines[line_idx] = line;
+        continue;
+      }
 
       const std::size_t common_bbox_plane_idx = common_bbox_planes_idx[i];
       const auto new_iedge = m_intersection_graph.add_edge(vertices[i], vertices[ip], sp_idx).first;
@@ -837,7 +864,7 @@ public:
     return PVertex(pvertex.first, support_plane(pvertex).next(pvertex.second));
   }
 
-  void get_and_sort_all_connected_iedges(const std::size_t sp_idx, const IVertex& ivertex, std::vector< std::pair<IEdge, Direction_2> >& iedges) const {
+  void get_and_sort_all_connected_iedges(const std::size_t sp_idx, const IVertex& ivertex, std::vector< std::pair<IEdge, IkDirection_2> >& iedges) const {
     auto inc_iedges = incident_iedges(ivertex);
     const std::function<void(const IEdge& inc_iedge)> lambda =
       [&](const IEdge& inc_iedge) {
@@ -845,9 +872,10 @@ public:
         if (iplanes.find(sp_idx) == iplanes.end()) {
           return;
         }
-        const Direction_2 direction(
-          point_2(sp_idx, opposite(inc_iedge, ivertex)) -
-          point_2(sp_idx, ivertex));
+        const Support_plane& sp = support_plane(sp_idx);
+        const IkDirection_2 direction(
+          sp.to_2d(point_3(opposite(inc_iedge, ivertex))) -
+          sp.to_2d(point_3(ivertex)));
         iedges.push_back(std::make_pair(inc_iedge, direction));
       };
 
@@ -857,8 +885,8 @@ public:
     );
 
     std::sort(iedges.begin(), iedges.end(),
-      [&](const std::pair<IEdge, Direction_2>& a,
-          const std::pair<IEdge, Direction_2>& b) -> bool {
+      [&](const std::pair<IEdge, IkDirection_2>& a,
+          const std::pair<IEdge, IkDirection_2>& b) -> bool {
         return a.second < b.second;
       }
     );
@@ -966,7 +994,7 @@ public:
     typename Intersection_kernel::Vector_3 v3d = sp.exact_plane().base1() * v.v[0] + sp.exact_plane().base2() * v.v[1];
     if (CGAL::is_positive(v3d * line.to_vector())) {
       if (low == high) {
-        CGAL_assertion(low < signed(vol.size()) - 2);
+        CGAL_assertion(low + 1 < signed(vol.size()));
         s = vol[low].second;
         t = vol[low + 1].second;
       }
@@ -992,191 +1020,118 @@ public:
     return split_polygon(m_kinetic_vertices, poly, line_idx, pos);
   }
 
+  // Side of a point moving with p + t * v with respect to a line at t = 0+.
+  static CGAL::Oriented_side side_0plus(const IkLine_2& l, const IkPoint_2& p, const IkVector_2& v) {
+    CGAL::Oriented_side s = l.oriented_side(p);
+    if (s != CGAL::ON_ORIENTED_BOUNDARY)
+      return s;
+    return CGAL::Oriented_side(CGAL::sign(l.a() * v.x() + l.b() * v.y()));
+  }
+
+  // Splits the convex polygon poly along the line line_idx. The side of each vertex is decided at t = 0+.
+  // Vertices on the positive side are moved into pos, the others remain in poly.
+  // A vertex staying on the line (moving along it or not moving) belongs to both parts and is duplicated.
+  // For each edge crossing the line, a pair of vertices (one for each part) is created at the intersection.
+  // If the crossing edge lies on another line, the new vertices are fixed at the intersection of both lines.
+  // Returns true if the line splits the polygon, otherwise poly is not changed and pos is empty.
   bool split_polygon(std::vector<Vertex> &vts, std::list<std::size_t> &poly, std::size_t line_idx, std::list<std::size_t> &pos) {
-    std::vector<CGAL::Oriented_side> sign;
-    sign.reserve(poly.size());
     Support_plane &sp = m_support_planes[vts[poly.front()].sp_idx];
     const IkLine_2 &l = sp.data().lines[line_idx];
 
-    // Which side of the line are the vertices on?
-    for (const std::size_t& i : poly) {
-      Vertex& v = vts[i];
-      CGAL::Oriented_side s = l.oriented_side(v.p0);
-      if (s == CGAL::ON_ORIENTED_BOUNDARY)
-        s = l.oriented_side(v.p0 + v.v);
-      sign.push_back(s);
+    std::vector<std::size_t> idx(poly.begin(), poly.end());
+    const std::size_t n = idx.size();
+    std::vector<CGAL::Oriented_side> sign(n);
+    bool has_pos = false, has_neg = false;
+    for (std::size_t i = 0; i < n; i++) {
+      sign[i] = side_0plus(l, vts[idx[i]].p0, vts[idx[i]].v);
+      has_pos |= (sign[i] == CGAL::ON_POSITIVE_SIDE);
+      has_neg |= (sign[i] == CGAL::ON_NEGATIVE_SIDE);
     }
 
-    int first_pos = -1, last_pos = -1, first_neg = -1, last_neg = -1;
-    int zeroes = 0; // still possible, but then the vertex is directly on the line.
-    for (std::size_t v = 0; v < sign.size(); v++) {
-      if (sign[v] == CGAL::ON_POSITIVE_SIDE) {
-        if (sign[(v + 1) % sign.size()] != CGAL::ON_POSITIVE_SIDE)
-          last_pos = static_cast<int>(v);
-        if (sign[(v + sign.size() - 1) % sign.size()] != CGAL::ON_POSITIVE_SIDE)
-          first_pos = static_cast<int>(v);
-      }
-      else if (sign[v] == CGAL::ON_NEGATIVE_SIDE) {
-        if (sign[(v + 1) % sign.size()] != CGAL::ON_NEGATIVE_SIDE)
-          last_neg = static_cast<int>(v);
-        if (sign[(v + sign.size() - 1) % sign.size()] != CGAL::ON_NEGATIVE_SIDE)
-          first_neg = static_cast<int>(v);
-      }
-      else if (sign[v] == CGAL::ON_ORIENTED_BOUNDARY)
-        zeroes++;
-    }
-
-    // Does it split?
-    if (first_pos == -1 || first_neg == -1) {
-      CGAL_assertion(zeroes == 0);
+    pos.clear();
+    if (!has_pos || !has_neg) {
+      // Not split. A vertex moving along the line stays on it and is constrained to it.
+      for (std::size_t i = 0; i < n; i++)
+        if (sign[i] == CGAL::ON_ORIENTED_BOUNDARY && vts[idx[i]].moving)
+          vts[idx[i]].constraints.insert(line_idx);
       return false;
     }
 
-    if (zeroes) {
-      std::cout << "vertex exactly on line" << std::endl;
-      auto it = poly.end();
-      auto it2 = sign.end();
-      do {
-        --it;
-        --it2;
-        if (*it2 == CGAL::ON_ORIENTED_BOUNDARY) {
-          poly.erase(it);
-          sign.erase(it2);
-        }
-      } while (it != poly.begin());
-    }
+    auto make_twins = [&](std::size_t first, std::size_t second) {
+      vts[first].other = second;
+      vts[second].other = first;
+    };
 
-    //export_poly_line(poly, line, m_data.prefix() + std::to_string(counter) + "_" + std::to_string(sp_idx) + "_poly_" + std::to_string(i) + "_line" + std::to_string(line_idx) + ".polylines.txt");
+    // Create the vertices at the crossings. The pair for the crossing from the positive to the negative side is
+    // created first (keeps the vertex order of the previous implementation).
+    std::vector<std::pair<std::size_t, std::size_t> > crossing(n, std::make_pair(std::size_t(-1), std::size_t(-1)));
+    for (int pass = 0; pass < 2; pass++)
+      for (std::size_t i = 0; i < n; i++) {
+        const std::size_t j = (i + 1) % n;
+        if (sign[i] != (pass == 0 ? CGAL::ON_POSITIVE_SIDE : CGAL::ON_NEGATIVE_SIDE) || sign[j] != CGAL::opposite(sign[i]))
+          continue;
 
-    bool pos_neg_adjacent = signed((last_pos + 1) % sign.size()) == first_neg;
-    bool neg_pos_adjacent = signed((last_neg + 1) % sign.size()) == first_pos;
-
-    if (first_pos <= last_pos) {
-      auto first = poly.begin();
-      std::advance(first, first_pos);
-      auto last = poly.begin();
-      std::advance(last, last_pos + 1);
-      pos.splice(pos.begin(), std::move(poly), (first), (last));
-      if (last_pos < first_neg)
-        first_neg -= (last_pos - first_pos + 1);
-      if (last_pos < last_neg)
-        last_neg -= (last_pos - first_pos + 1);
-    }
-    else {
-      auto first = poly.begin();
-      std::advance(first, first_pos);
-      auto last = poly.begin();
-      std::advance(last, last_pos + 1);
-      pos.splice(pos.begin(), std::move(poly), first, poly.end());
-      pos.splice(pos.end(), std::move(poly), poly.begin(), last);
-      first_neg = 0;
-      last_neg = static_cast<int>(poly.size() - 1);
-    }
-
-    auto first_neg_it = poly.begin();
-    std::advance(first_neg_it, first_neg);
-    auto last_neg_it = poly.begin();
-    std::advance(last_neg_it, last_neg);
-
-    // Get intersection points for the two crossing edges (or vertex exactly on the line).
-    if (pos_neg_adjacent) {
-      IkLine_2 seg(vts[pos.back()].p0, vts[*first_neg_it].p0);
-      auto res = CGAL::intersection(l, seg);
-      CGAL_assertion(bool(res));
-      IkPoint_2 intersection;
-      if (CGAL::assign(intersection, res)) {
-        bool moving = true;
-        IkVector_2 dir(0, 0);
-
+        const std::size_t a = idx[i], b = idx[j];
         std::set<std::size_t> common;
-        std::set_intersection(vts[pos.back()].constraints.begin(), vts[pos.back()].constraints.end(),
-          vts[*first_neg_it].constraints.begin(), vts[*first_neg_it].constraints.end(), std::inserter(common, common.begin()));
+        std::set_intersection(vts[a].constraints.begin(), vts[a].constraints.end(),
+          vts[b].constraints.begin(), vts[b].constraints.end(), std::inserter(common, common.begin()));
 
-        CGAL_assertion(common.size() <= 1);
-        if (!common.empty())
-          moving = false;
-        else
-          dir = Support_plane::calculate_edge_speed(vts[pos.back()], vts[*first_neg_it], intersection, l);
+        IkPoint_2 intersection = vts[a].p0;
+        if (vts[a].p0 != vts[b].p0) {
+          auto res = CGAL::intersection(l, IkLine_2(vts[a].p0, vts[b].p0));
+          CGAL_assertion_code(bool success =) CGAL::assign(intersection, res);
+          CGAL_assertion(success);
+        }
 
-        vts.emplace_back(vts[poly.front()].sp_idx, intersection, dir);
-        std::size_t first = vts.size() - 1;
-        pos.push_back(first);
-
-        vts[first].constraints.insert(line_idx);
-        vts[first].moving = moving;
-
-        if (!moving)
-          vts[first].constraints.insert(*common.begin());
-
-        // insert copy of vertex on neg side
-        std::list<std::size_t>::iterator it;
-        vts.emplace_back(vts[poly.front()].sp_idx, intersection, dir);
-        std::size_t second = vts.size() - 1;
-        if (first_neg == 0) {
-          poly.emplace_front(second);
-          it = poly.begin();
+        Vertex x(vts[a].sp_idx, intersection, IkVector_2(0, 0));
+        x.constraints = common;
+        x.constraints.insert(line_idx);
+        if (common.empty()) {
+          CGAL_assertion(vts[a].moving && vts[b].moving);
+          x.v = Support_plane::calculate_edge_speed(vts[a], vts[b], intersection, l);
         }
         else
-          it = poly.emplace(first_neg_it, second);
+          x.moving = false;
 
-        vts[second].constraints = vts[pos.back()].constraints;
-        vts[second].moving = moving;
-        vts[second].other = first;
-        vts[first].other = second;
+        vts.push_back(x);
+        vts.push_back(x);
+        crossing[i] = std::make_pair(vts.size() - 2, vts.size() - 1);
+        make_twins(vts.size() - 2, vts.size() - 1);
+      }
+
+    std::list<std::size_t> neg;
+    for (std::size_t i = 0; i < n; i++) {
+      const std::size_t a = idx[i];
+      if (sign[i] == CGAL::ON_POSITIVE_SIDE)
+        pos.push_back(a);
+      else if (sign[i] == CGAL::ON_NEGATIVE_SIDE)
+        neg.push_back(a);
+      else {
+        // Vertex staying on the line.
+        vts[a].constraints.insert(line_idx);
+        Vertex copy = vts[a];
+        vts.push_back(copy);
+        pos.push_back(a);
+        neg.push_back(vts.size() - 1);
+        make_twins(a, vts.size() - 1);
+      }
+
+      if (crossing[i].first != std::size_t(-1)) {
+        pos.push_back(crossing[i].first);
+        neg.push_back(crossing[i].second);
       }
     }
 
-    if (neg_pos_adjacent) {
-      IkLine_2 seg(vts[pos.front()].p0, vts[*last_neg_it].p0);
-      auto res = CGAL::intersection(l, seg);
-      CGAL_assertion(bool(res));
-      IkPoint_2 intersection;
-      if (CGAL::assign(intersection, res)) {
-        // are both adjacent vertices constrained? then don't waste time on calculating speed -> vertex won't move anyway
-        bool moving = true;
-        IkVector_2 dir(0, 0);
-
-        std::set<std::size_t> common;
-        std::set_intersection(vts[pos.front()].constraints.begin(), vts[pos.front()].constraints.end(),
-          vts[*last_neg_it].constraints.begin(), vts[*last_neg_it].constraints.end(), std::inserter(common, common.begin()));
-
-        CGAL_assertion(common.size() <= 1);
-        if (!common.empty())
-          moving = false;
-        else
-          dir = Support_plane::calculate_edge_speed(vts[pos.front()], vts[*last_neg_it], intersection, l);
-
-        vts.emplace_back(vts[poly.front()].sp_idx, intersection, dir);
-        std::size_t first = vts.size() - 1;
-        vts[first].constraints.insert(line_idx);
-        vts[first].moving = moving;
-        pos.push_back(first);
-
-        if (!moving)
-          vts[first].constraints.insert(*common.begin());
-
-        // insert copy of vertex on neg side
-        std::list<std::size_t>::iterator it;
-        vts.emplace_back(vts[poly.front()].sp_idx, intersection, dir);
-        std::size_t second = vts.size() - 1;
-        if (first_neg == 0) {
-          poly.push_back(second);
-          it = poly.end();
-          --it;
-        }
-        else {
-          last_neg_it++;
-          it = poly.emplace(last_neg_it, second);
-        }
-
-        vts[second].constraints = vts[first].constraints;
-        vts[second].moving = moving;
-        vts[second].other = first;
-        vts[first].other = second;
+    // Let the positive part start with the first vertex of the positive run (keeps the order of the previous implementation).
+    for (std::size_t i = 0; i < n; i++)
+      if (sign[i] == CGAL::ON_POSITIVE_SIDE && sign[(i + n - 1) % n] != CGAL::ON_POSITIVE_SIDE) {
+        auto it = std::find(pos.begin(), pos.end(), idx[i]);
+        pos.splice(pos.end(), pos, pos.begin(), it);
+        break;
       }
-    }
 
-    return !pos.empty() && !poly.empty();
+    poly = std::move(neg);
+    return true;
   }
 
   const IFace add_iface(std::size_t support_plane) {
@@ -1244,6 +1199,28 @@ public:
     }
 
     return true;
+  }
+
+  // Face containing the point p + t * v at t = 0+. The point is strictly inside one face at t = 0+, unless it moves along a line.
+  IFace locate_iface_0plus(std::size_t sp_idx, const IkPoint_2& p, const IkVector_2& v) const {
+    const Support_plane &sp = m_support_planes[sp_idx];
+    for (auto& f : sp.ifaces()) {
+      const typename Intersection_graph::Face_property& fp = m_intersection_graph.face(f);
+      bool inside = true;
+      // pts are oriented ccw
+      for (std::size_t i = 0; i < fp.pts.size() && inside; i++) {
+        const IkPoint_2& a = fp.pts[i];
+        const IkPoint_2& b = fp.pts[(i + 1) % fp.pts.size()];
+        CGAL::Orientation o = CGAL::orientation(a, b, p);
+        if (o == CGAL::COLLINEAR)
+          o = CGAL::Orientation(CGAL::sign((b.x() - a.x()) * v.y() - (b.y() - a.y()) * v.x()));
+        inside = (o == CGAL::LEFT_TURN);
+      }
+      if (inside)
+        return f;
+    }
+
+    return IFace(-1);
   }
 
   IFace locate_iface(std::size_t sp_idx, const IkPoint_2& p) const {

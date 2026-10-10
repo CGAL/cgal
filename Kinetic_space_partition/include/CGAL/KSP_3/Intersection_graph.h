@@ -215,11 +215,19 @@ public:
 
   const std::pair<Vertex_descriptor, bool> add_vertex(
     const Point_3& point, const std::vector<std::size_t>& intersected_planes) {
+    // More than three planes may intersect in the same point. Each subset of planes refers to the same vertex.
+    const auto pit = m_map_points.find(point);
+    if (pit != m_map_points.end()) {
+      m_map_vertices.insert(std::make_pair(intersected_planes, pit->second));
+      return std::make_pair(pit->second, false);
+    }
+
     const auto pair = m_map_vertices.insert(std::make_pair(intersected_planes, Vertex_descriptor()));
     const auto is_inserted = pair.second;
     if (is_inserted) {
       pair.first->second = boost::add_vertex(m_graph);
       m_graph[pair.first->second].point = point;
+      m_map_points.insert(std::make_pair(point, pair.first->second));
     }
     return std::make_pair(pair.first->second, is_inserted);
   }

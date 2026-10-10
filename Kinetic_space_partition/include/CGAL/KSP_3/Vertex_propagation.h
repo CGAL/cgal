@@ -215,7 +215,6 @@ private:
           CGAL_assertion(v1.v != IkVector_2(0, 0));
           if (v1.p0 == v2.p0) {
             CGAL_assertion(v1.t_init == v2.t_init);
-            CGAL_assertion(v1.t_init != 0);
           }
           else
             CGAL_assertion(CGAL::is_negative((v2.p0 - v1.p0) * v1.v));
@@ -225,7 +224,6 @@ private:
           CGAL_assertion(v2.v != IkVector_2(0, 0));
           if (v1.p0 == v2.p0) {
             CGAL_assertion(v1.t_init == v2.t_init);
-            CGAL_assertion(v1.t_init != 0);
           }
           else
             CGAL_assertion(CGAL::is_negative((v1.p0 - v2.p0) * v2.v));
@@ -494,7 +492,17 @@ private:
         auto l_3d = m_data.igraph().line(line_idx);
 
         ce.u = (sp.to_3d(ce.p) - l_3d.point()) * l_3d.to_vector();
-        ce.e = m_data.igraph().locate_edge_on_line(line_idx, ce.u);
+
+        // If the vertex hits the border edge of its face, this edge is crossed. This also holds if the hit point is an end
+        // of the edge, i.e., if the vertex hits several lines at once: it is treated as hitting this line first.
+        IkFT u_s = m_data.get_u_on_line(m_data.igraph().source(e), line_idx);
+        IkFT u_t = m_data.get_u_on_line(m_data.igraph().target(e), line_idx);
+        if (u_t < u_s)
+          std::swap(u_s, u_t);
+        if (u_s <= ce.u && ce.u <= u_t)
+          ce.e = e;
+        else
+          ce.e = m_data.igraph().locate_edge_on_line(line_idx, ce.u);
         //ve.face = m_data.igraph().get_other_face(sp_idx, e, face);
 
         if (ce.e != m_data.igraph().null_iedge()) {
@@ -553,7 +561,8 @@ private:
         CGAL_assertion(v.itarget != std::size_t(-1));
         IkPoint_2 target = sp.data().exact_plane.to_2d(m_data.igraph().point_3(v.itarget));
         IkFT t1 = intersection_time(v, target);
-        CGAL_assertion(t1 > time);
+        // The target may be reached immediately, if the vertex was created by a vertex hitting several lines at once.
+        CGAL_assertion(t1 >= time);
 
         ve.time = t1;
         ce.p = target;
@@ -2414,34 +2423,84 @@ private:
       calculate_events(v, e1.time);
   }
 
+  // Lines an event hits: the crossed line for an unconstrained vertex or the other lines through the destination
+  // in the support plane for a constrained vertex.
+  std::set<std::size_t> hit_lines(const Event& e) const {
+    std::set<std::size_t> lines;
+    const Vertex& v = vts[e.vertex];
+    if (v.constraints.empty()) {
+      if (e.crossed_edge != m_data.igraph().null_iedge())
+        lines.insert(m_data.igraph().edge(e.crossed_edge).line);
+    }
+    else if (e.destination != m_data.igraph().null_ivertex()) {
+      for (const IEdge& edge : m_data.incident_iedges(e.destination)) {
+        const auto& planes = m_data.intersected_planes(edge);
+        if (planes.find(v.sp_idx) == planes.end())
+          continue;
+        std::size_t line_idx = m_data.igraph().edge(edge).line;
+        if (v.constraints.find(line_idx) == v.constraints.end())
+          lines.insert(line_idx);
+      }
+    }
+    return lines;
+  }
+
+  bool are_adjacent(std::size_t a, std::size_t b) const {
+    const std::list<std::size_t>& poly = m_data.support_plane(vts[a].sp_idx).data().polygons.at(vts[a].face);
+    auto it = std::find(poly.begin(), poly.end(), a);
+    CGAL_assertion(it != poly.end());
+    auto prev = (it == poly.begin()) ? std::prev(poly.end()) : std::prev(it);
+    auto next = (std::next(it) == poly.end()) ? poly.begin() : std::next(it);
+    return *prev == b || *next == b;
+  }
+
+  // Two events at the same time are coupled if they belong to the same vertex or to adjacent vertices
+  // of the same polygon that reach the same destination or hit a common line.
+  bool are_coupled(const Event& a, const Event& b) const {
+    if (a.vertex == b.vertex)
+      return true;
+    if (vts[a.vertex].sp_idx != vts[b.vertex].sp_idx || vts[a.vertex].face != vts[b.vertex].face)
+      return false;
+    if (!are_adjacent(a.vertex, b.vertex))
+      return false;
+    if (!vts[a.vertex].constraints.empty() && !vts[b.vertex].constraints.empty() && a.destination == b.destination)
+      return true;
+    const std::set<std::size_t> la = hit_lines(a), lb = hit_lines(b);
+    for (std::size_t l : la)
+      if (lb.count(l))
+        return true;
+    return false;
+  }
+
+  // Extracts the first event and all events coupled with it (directly or indirectly) from the list of events at the same time.
   std::vector<Event> get_connected_events(std::list<Event> &events, std::vector<std::size_t> &vertices) {
     std::vector<Event> connected;
-    if (events.size() == 1) {
-      connected.push_back(*events.begin());
-      vertices.push_back(connected.front().vertex);
-      events.clear();
-      return connected;
-    }
-
     connected.push_back(events.front());
     events.pop_front();
 
-    std::set<std::size_t> unique_v;
-    unique_v.insert(connected.front().vertex);
-
-    auto it = events.begin();
-    while (it != events.end()) {
-      if (vts[it->vertex].face == vts[connected[0].vertex].face) {
-        // check whether they hit the same edge (or a vertex of it) or if they all hit the same vertex
-        unique_v.insert(it->vertex);
-        connected.push_back(*it);
-        it = events.erase(it);
-        // I also need to check whether they are hitting the same edge)
+    bool added = true;
+    while (added) {
+      added = false;
+      for (auto it = events.begin(); it != events.end();) {
+        bool coupled = false;
+        for (const Event& c : connected)
+          if (are_coupled(*it, c)) {
+            coupled = true;
+            break;
+          }
+        if (coupled) {
+          connected.push_back(*it);
+          it = events.erase(it);
+          added = true;
+        }
+        else
+          ++it;
       }
-
-      if (it != events.end())
-        it++;
     }
+
+    std::set<std::size_t> unique_v;
+    for (const Event& e : connected)
+      unique_v.insert(e.vertex);
 
     vertices.clear();
     std::copy(unique_v.begin(), unique_v.end(), std::back_inserter(vertices));
