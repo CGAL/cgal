@@ -654,9 +654,14 @@ private:
           vts[i].face = face;
 
         // Move faces into sp data structure
+        // A zero-area piece beyond a line touched by the polygon at t = 0 is only added to the mesh at the beginning
+        // of the propagation if the polygon is allowed to cross that line (see Vertex_propagation::filter_touching_pieces()).
+        const bool zero_area = m_data.is_zero_area(poly);
         CGAL_assertion_code(auto res = ) sp.data().polygons.insert(std::make_pair(face, std::move(poly)));
         CGAL_assertion(res.second);
         sp.link_property_maps();
+        if (zero_area)
+          continue;
         m_data.init_border(face, true);
         sp.data().initial_ifaces.push_back(face);
 

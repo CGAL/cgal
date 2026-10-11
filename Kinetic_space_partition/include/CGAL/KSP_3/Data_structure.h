@@ -1016,6 +1016,21 @@ public:
     }
   }
 
+  // Does the polygon have zero area at t = 0? (A piece beyond a line touched by the polygon at t = 0.)
+  bool is_zero_area(const std::list<std::size_t>& poly) const {
+    auto it = poly.begin();
+    const IkPoint_2& p = m_kinetic_vertices[*it].p0;
+    while (it != poly.end() && m_kinetic_vertices[*it].p0 == p)
+      ++it;
+    if (it == poly.end())
+      return true;
+    const IkPoint_2& q = m_kinetic_vertices[*it].p0;
+    for (; it != poly.end(); ++it)
+      if (!CGAL::collinear(p, q, m_kinetic_vertices[*it].p0))
+        return false;
+    return true;
+  }
+
   bool split_polygon(std::list<std::size_t>& poly, std::size_t line_idx, std::list<std::size_t>& pos) {
     return split_polygon(m_kinetic_vertices, poly, line_idx, pos);
   }

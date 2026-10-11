@@ -266,8 +266,9 @@ void run_all_tests() {
   // Singular configurations (exact incidences at t = 0 and simultaneous events).
   // Each input file describes its configuration in a header comment.
   // Single partition: degenerate intersections with the support lines.
-  results[0] = { 18, 20, 4 };
-  run_test<Kernel, IntersectionKernel>("../data/singular-case-test/edge-on-line.off", { 0 }, results);
+  results[0] = { 16, 16, 3 };
+  results[1] = { 18, 20, 4 };
+  run_test<Kernel, IntersectionKernel>("../data/singular-case-test/edge-on-line.off", { 0, 1 }, results);
 
   results[0] = { 12, 16, 4 };
   run_test<Kernel, IntersectionKernel>("../data/singular-case-test/plane-through-bbox-edge.off", { 0 }, results);
@@ -278,8 +279,9 @@ void run_all_tests() {
   results[0] = { 33, 50, 12 };
   run_test<Kernel, IntersectionKernel>("../data/singular-case-test/three-concurrent-lines.off", { 0 }, results);
 
-  results[0] = { 27, 36, 8 };
-  run_test<Kernel, IntersectionKernel>("../data/singular-case-test/vertex-at-intersection.off", { 0 }, results);
+  results[0] = { 24, 29, 6 };
+  results[1] = { 27, 36, 8 };
+  run_test<Kernel, IntersectionKernel>("../data/singular-case-test/vertex-at-intersection.off", { 0, 1 }, results);
 
   results[0] = { 20, 21, 4 };
   run_test<Kernel, IntersectionKernel>("../data/singular-case-test/vertex-hits-corner.off", { 0 }, results);
@@ -290,8 +292,9 @@ void run_all_tests() {
   results[0] = { 18, 20, 4 };
   run_test<Kernel, IntersectionKernel>("../data/singular-case-test/vertex-on-line.off", { 0 }, results);
 
-  results[0] = { 18, 20, 4 };
-  run_test<Kernel, IntersectionKernel>("../data/singular-case-test/vertex-touching-line.off", { 0 }, results);
+  results[0] = { 16, 16, 3 };
+  results[1] = { 18, 20, 4 };
+  run_test<Kernel, IntersectionKernel>("../data/singular-case-test/vertex-touching-line.off", { 0, 1 }, results);
 
   // Octree subdivision: polygons touching or ending exactly on the boundary of the sub-partitions.
   results[0] = { 77, 100, 21 };
