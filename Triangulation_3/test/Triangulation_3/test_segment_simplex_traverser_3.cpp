@@ -403,11 +403,18 @@ bool test(const DT& dt,
           const std::array<unsigned, 4>& expected_result);
 
 
-int main(int, char* [])
+int main(int argc, char* [])
 {
   std::cerr.precision(17);
   std::clog.precision(17);
   std::cout.precision(17);
+
+  auto old_clog_buf = std::clog.rdbuf();
+  std::basic_filebuf<char> empty_filebuf;
+  if(argc < 2) {
+    // silence clog output
+    std::clog.rdbuf(&empty_filebuf);
+  }
 
   bool ok = true;
   ok = test_a_simple_tetrahedron() && ok;
@@ -471,6 +478,7 @@ int main(int, char* [])
     std::cout << "Some tests failed\n";
     return EXIT_FAILURE;
   }
+  std::clog.rdbuf(old_clog_buf);
 }
 
 bool test(const DT& dt,
