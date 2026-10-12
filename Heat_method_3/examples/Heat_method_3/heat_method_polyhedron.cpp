@@ -31,9 +31,16 @@ int main(int argc, char* argv[])
                                                    source) ;
 
   std::cout << "Source vertex at: " << source->point() << std::endl;
+  double max = 0;
+  vertex_descriptor vfar = source;
   for(vertex_descriptor vd : vertices(tm)){
-    std::cout << vd->point() << "  is at distance " << vertex_distance[vd] << std::endl;
+    double d = vertex_distance[vd];
+    if(d>max){
+      max = d;
+      vfar = vd;
+    }
   }
+  std::cout << "Furthest point at: " << vfar->point() << std::endl;
 
   return 0;
 }
