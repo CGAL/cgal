@@ -460,7 +460,6 @@ bool build_triangulation_from_file(std::istream& is,
   using Facet        = std::array<int, 3>; // 3 = id
   using Tet = std::array<int, 4>; // 4 = id
 
-  using Facet_with_index = CGAL::IO::internal::Facet_with_patch_index<Surface_patch_index>;
   using Edge_with_index = CGAL::IO::internal::Edge_with_curve_index<Curve_index>;
   using Corner_with_index = CGAL::IO::internal::Vertex_with_corner_index<Corner_index>;
 
@@ -498,7 +497,7 @@ bool build_triangulation_from_file(std::istream& is,
 
   std::vector<Edge_with_index> edge_indices;
   edge_indices.reserve(edges.size());
-  for(int i = 0; i < edges.size(); ++i){
+  for(std::size_t i = 0; i < edges.size(); ++i){
     Edge_with_index ewi;
     ewi.v0 = edges[i][0];
     ewi.v1 = edges[i][1];
@@ -508,7 +507,7 @@ bool build_triangulation_from_file(std::istream& is,
 
   std::vector<Corner_with_index> corner_indices;
   corner_indices.reserve(corners.size());
-  for(int i = 0; i < corners.size(); ++i){
+  for(std::size_t i = 0; i < corners.size(); ++i){
     Corner_with_index cwi;
     cwi.v = corners[i];
     cwi.corner_index = point_refs[i];
@@ -521,7 +520,7 @@ bool build_triangulation_from_file(std::istream& is,
   bool has_negative_surface_patch_ids = false;
   Surface_patch_index max_surface_patch_id{0};
 
-  for (int i = 0; i < facets.size(); ++i)
+  for (std::size_t i = 0; i < facets.size(); ++i)
   {
     if (facet_refs[i] < 0)
       has_negative_surface_patch_ids=true;
