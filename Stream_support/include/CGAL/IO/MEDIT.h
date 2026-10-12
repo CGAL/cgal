@@ -432,11 +432,25 @@ bool read_MEDIT(std::istream& is,
  *
  * \cgalNamedParamsBegin
  *
+ * \cgalParamNBegin{point_refs}
+ *     \cgalParamDescription{a non-const reference wrapper of a container of integers that will be filled by this function.
+ *                           Each element in the container corresponds to an element in `points`.}
+ *     \cgalParamType{a `std::reference_wrapper` to a model of `BackInsertionSequence`  with a value type constructible from an integer.}
+ *     \cgalParamDefault{entries are ignored}
+ *   \cgalParamNEnd
+ *
  *   \cgalParamNBegin{tetrahedra}
  *     \cgalParamDescription{a non-const reference wrapper of a container of quadruples of integers that will be filled by this function.
  *                           Each element represents a tetrahedron with vertices corresponding to the four integers.}
  *     \cgalParamType{a `std::reference_wrapper` to a model of `BackInsertionSequence` with a value type constructible using a braced initializer list of four integers.}
  *     \cgalParamDefault{facets are ignored}
+ *   \cgalParamNEnd
+ *
+ * \cgalParamNBegin{tetrahedron_refs}
+ *     \cgalParamDescription{a non-const reference wrapper of a container of integers that will be filled by this function.
+ *                           Each element in the container corresponds to an element in `tetrahedra`.}
+ *     \cgalParamType{a `std::reference_wrapper` to a model of `BackInsertionSequence`  with a value type constructible from an integer.}
+ *     \cgalParamDefault{entries are ignored}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{triangles}
@@ -446,11 +460,25 @@ bool read_MEDIT(std::istream& is,
  *     \cgalParamDefault{facets are ignored}
  *   \cgalParamNEnd
  *
+ * \cgalParamNBegin{triangle_refs}
+ *     \cgalParamDescription{a non-const reference wrapper of a container of integers that will be filled by this function.
+ *                           Each element in the container corresponds to an element in `triangles`.}
+ *     \cgalParamType{a `std::reference_wrapper` to a model of `BackInsertionSequence`  with a value type constructible from an integer.}
+ *     \cgalParamDefault{entries are ignored}
+ *   \cgalParamNEnd
+ *
  *   \cgalParamNBegin{edges}
  *     \cgalParamDescription{a non-const reference wrapper of a container of pairs of integers that will be filled by this function.
  *                           Each element represents an edge with vertices corresponding  to the two integers.}
  *     \cgalParamType{a `std::reference_wrapper` to a model of `BackInsertionSequence`  with a value type constructible using a braced initializer list of two integers.}
  *     \cgalParamDefault{edges are ignored}
+ *   \cgalParamNEnd
+ *
+ * \cgalParamNBegin{edge_refs}
+ *     \cgalParamDescription{a non-const reference wrapper of a container of integers that will be filled by this function.
+ *                           Each element in the container corresponds to an element in `edges`.}
+ *     \cgalParamType{a `std::reference_wrapper` to a model of `BackInsertionSequence`  with a value type constructible from an integer.}
+ *     \cgalParamDefault{entries are ignored}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{ridges}
@@ -465,13 +493,6 @@ bool read_MEDIT(std::istream& is,
  *                           Each element  in the container is an index in the sequence of points.}
  *     \cgalParamType{a `std::reference_wrapper` to a model of `BackInsertionSequence`  with a value type constructible from an integer.}
  *     \cgalParamDefault{corners are ignored/}
- *   \cgalParamNEnd
- *
- *   \cgalParamNBegin{terahedra_ref}
- *     \cgalParamDescription{a non-const reference wrapper of a container of integers that will be filled by this function.
- *                           Each element in the container corresponds to an element in `tetrahedra`.}
- *     \cgalParamType{a `std::reference_wrapper` to a model of `BackInsertionSequence`  with a value type constructible from an integer.}
- *     \cgalParamDefault{elements are ignored/}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{verbose}
@@ -527,32 +548,32 @@ bool read_MEDIT(std::istream& is,
   using Corners = typename internal_np::Lookup_named_param_def<internal_np::corners_t, CGAL_NP_CLASS, std::vector<int>>::reference;
   Corners corners = choose_parameter(get_parameter_reference(np, internal_np::corners), default_corners);
 
-  // tetrahedra_ref
-  std::vector<int> default_tetrahedra_ref;
-  using Tetrahedra_ref = typename internal_np::Lookup_named_param_def<internal_np::tetrahedra_ref_t, CGAL_NP_CLASS, std::vector<int>>::reference;
-  Tetrahedra_ref  tetrahedra_ref  = choose_parameter(get_parameter_reference(np, internal_np::tetrahedra_ref), default_tetrahedra_ref);
+  // tetrahedron_refs
+  std::vector<int> default_tetrahedron_refs;
+  using Tetrahedron_refs = typename internal_np::Lookup_named_param_def<internal_np::tetrahedron_refs_t, CGAL_NP_CLASS, std::vector<int>>::reference;
+  Tetrahedron_refs  tetrahedron_refs  = choose_parameter(get_parameter_reference(np, internal_np::tetrahedron_refs), default_tetrahedron_refs);
 
-  std::vector<int> default_triangles_ref;
-  using Triangles_ref = typename internal_np::Lookup_named_param_def<internal_np::triangles_ref_t, CGAL_NP_CLASS, std::vector<int>>::reference;
-  Triangles_ref  triangles_ref  = choose_parameter(get_parameter_reference(np, internal_np::triangles_ref), default_triangles_ref);
+  std::vector<int> default_triangle_refs;
+  using Triangle_refs = typename internal_np::Lookup_named_param_def<internal_np::triangle_refs_t, CGAL_NP_CLASS, std::vector<int>>::reference;
+  Triangle_refs  triangle_refs  = choose_parameter(get_parameter_reference(np, internal_np::triangle_refs), default_triangle_refs);
 
-  std::vector<int> default_edges_ref;
-  using Edges_ref = typename internal_np::Lookup_named_param_def<internal_np::edges_ref_t, CGAL_NP_CLASS, std::vector<int>>::reference;
-  Edges_ref  edges_ref  = choose_parameter(get_parameter_reference(np, internal_np::edges_ref), default_edges_ref);
+  std::vector<int> default_edge_refs;
+  using Edge_refs = typename internal_np::Lookup_named_param_def<internal_np::edge_refs_t, CGAL_NP_CLASS, std::vector<int>>::reference;
+  Edge_refs  edge_refs  = choose_parameter(get_parameter_reference(np, internal_np::edge_refs), default_edge_refs);
 
-  std::vector<int> default_vertices_ref;
-  using Vertices_ref = typename internal_np::Lookup_named_param_def<internal_np::vertices_ref_t, CGAL_NP_CLASS, std::vector<int>>::reference;
-  Vertices_ref  vertices_ref  = choose_parameter(get_parameter_reference(np, internal_np::vertices_ref), default_vertices_ref);
+  std::vector<int> default_point_refs;
+  using Point_refs = typename internal_np::Lookup_named_param_def<internal_np::point_refs_t, CGAL_NP_CLASS, std::vector<int>>::reference;
+  Point_refs  point_refs  = choose_parameter(get_parameter_reference(np, internal_np::point_refs), default_point_refs);
 
   constexpr bool is_triangles_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::triangles_t>::value;
   constexpr bool is_edges_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::edges_t>::value;
   constexpr bool is_ridges_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::ridges_t>::value;
   constexpr bool is_corners_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::corners_t>::value;
 
-  constexpr bool is_tetrahedra_ref_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::tetrahedra_ref_t>::value;
-  constexpr bool is_triangles_ref_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::triangles_ref_t>::value;
-  constexpr bool is_edges_ref_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::edges_ref_t>::value;
-  constexpr bool is_vertices_ref_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::vertices_ref_t>::value;
+  constexpr bool is_tetrahedron_refs_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::tetrahedron_refs_t>::value;
+  constexpr bool is_triangle_refs_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::triangle_refs_t>::value;
+  constexpr bool is_edge_refs_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::edge_refs_t>::value;
+  constexpr bool is_point_refs_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::point_refs_t>::value;
 
   bool is_CGAL_mesh;
 
@@ -561,10 +582,10 @@ bool read_MEDIT(std::istream& is,
                               edges, is_edges_map,
                               ridges, is_ridges_map,
                               corners, is_corners_map,
-                              vertices_ref, is_vertices_ref_map,
-                              tetrahedra_ref, is_tetrahedra_ref_map,
-                              triangles_ref, is_triangles_ref_map,
-                              edges_ref, is_edges_ref_map,
+                              point_refs, is_point_refs_map,
+                              tetrahedron_refs, is_tetrahedron_refs_map,
+                              triangle_refs, is_triangle_refs_map,
+                              edge_refs, is_edge_refs_map,
                               verbose, is_CGAL_mesh);
 }
 
@@ -590,11 +611,25 @@ bool read_MEDIT(std::istream& is,
  *
  * \cgalNamedParamsBegin
  *
+ *   \cgalParamNBegin{point_refs}
+ *     \cgalParamDescription{a const reference wrapper of a container of integers that will be written by this function.
+ *                           It must have the same size as `points`, and each element in the container is a value associated to the point at the same position.}
+ *     \cgalParamType{a `std::reference_wrapper` to a model of `SequenceContainer` with an integer type as  value type.}
+ *     \cgalParamDefault{The value `0` is written for each point}
+ *   \cgalParamNEnd
+ *
  *   \cgalParamNBegin{tetrahedra}
  *     \cgalParamDescription{a const reference wrapper of a container of quadruples of integers that will be written by this function.
  *                           Each element corresponds to a tetrahedron with vertices corresponding to the four integers.}
  *     \cgalParamType{a `std::reference_wrapper` to a model of `SequenceContainer` with a value type where the elements of the quadruples can be accessed with `std::get<int>()`}
  *     \cgalParamDefault{tetrahedra are not written}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{tetrahedron_refs}
+ *     \cgalParamDescription{a const reference wrapper of a container of integers that will be written by this function.
+ *                           It must have the same size as `tetrahedra`, and each element in the container is a value associated to the tetrahedron at the same position.}
+ *     \cgalParamType{a `std::reference_wrapper` to a model of `SequenceContainer` with an integer type as  value type.}
+ *     \cgalParamDefault{The value `0` is written for each tetrahedron}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{triangles}
@@ -604,11 +639,25 @@ bool read_MEDIT(std::istream& is,
  *     \cgalParamDefault{triangles are not written}
  *   \cgalParamNEnd
  *
+ *   \cgalParamNBegin{triangle_refs}
+ *     \cgalParamDescription{a const reference wrapper of a container of integers that will be written by this function.
+ *                           It must have the same size as `triangles`, and each element in the container is a value associated to the triangle at the same position.}
+ *     \cgalParamType{a `std::reference_wrapper` to a model of `SequenceContainer` with an integer type as  value type.}
+ *     \cgalParamDefault{The value `0` is written for each triangle}
+ *   \cgalParamNEnd
+ *
  *   \cgalParamNBegin{edges}
  *     \cgalParamDescription{a const reference wrapper of a container of pairs of integers that will be written by this function.
  *                           Each element corresponds to an edge with vertices corresponding  to the two integers.}
  *     \cgalParamType{a `std::reference_wrapper` to a model of `SequenceContainer` with a value type where the elements of the pairs can be accessed with `std::get<int>()`}
  *     \cgalParamDefault{edges are not written}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{edge_refs}
+ *     \cgalParamDescription{a const reference wrapper of a container of integers that will be written by this function.
+ *                           It must have the same size as `edges`, and each element in the container is a value associated to the edge at the same position.}
+ *     \cgalParamType{a `std::reference_wrapper` to a model of `SequenceContainer` with an integer type as  value type.}
+ *     \cgalParamDefault{The value `0` is written for each edge}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{ridges}
@@ -625,12 +674,6 @@ bool read_MEDIT(std::istream& is,
  *     \cgalParamDefault{corners are not written}
  *   \cgalParamNEnd
  *
- *   \cgalParamNBegin{tetrahedra_ref}
- *     \cgalParamDescription{a const reference wrapper of a container of integers that will be written by this function.
- *                           It must have the same size as `tetrahedra`, and each element in the container is a value associated to the tetrahedron at the same position.}
- *     \cgalParamType{a `std::reference_wrapper` to a model of `SequenceContainer` with an integer type as  value type.}
- *     \cgalParamDefault{The value `0` is written for each tetrahedron}
- *   \cgalParamNEnd
  *
  * \cgalNamedParamsEnd
  *
@@ -657,7 +700,7 @@ bool write_MEDIT(std::ostream& os,
     return false;
 
   std::vector<int> default_ridges, default_corners;
-  std::vector<int> default_tetrahedra_ref, default_triangles_ref, default_edges_ref, default_vertices_ref;
+  std::vector<int> default_tetrahedron_refs, default_triangle_refs, default_edge_refs, default_point_refs;
   std::vector<std::array<int,2>> default_edges;
   std::vector<std::array<int,3>> default_facets;
   std::vector<std::array<int,4>> default_cells;
@@ -677,22 +720,22 @@ bool write_MEDIT(std::ostream& os,
   using corners = typename internal_np::Lookup_named_param_def<internal_np::corners_t, CGAL_NP_CLASS, std::vector<internal::Vertex_with_corner_index<int>>>::reference;
   corners vertices = choose_parameter(get_parameter_reference(np, internal_np::corners), default_corners);
 
-  using Tetrahedra_ref = typename internal_np::Lookup_named_param_def<internal_np::tetrahedra_ref_t, CGAL_NP_CLASS, std::vector<int>>::reference;
-  Tetrahedra_ref tetrahedra_ref = choose_parameter(get_parameter_reference(np, internal_np::tetrahedra_ref), default_tetrahedra_ref);
+  using Tetrahedron_refs = typename internal_np::Lookup_named_param_def<internal_np::tetrahedron_refs_t, CGAL_NP_CLASS, std::vector<int>>::reference;
+  Tetrahedron_refs tetrahedron_refs = choose_parameter(get_parameter_reference(np, internal_np::tetrahedron_refs), default_tetrahedron_refs);
 
-  using Triangles_ref = typename internal_np::Lookup_named_param_def<internal_np::triangles_ref_t, CGAL_NP_CLASS, std::vector<int>>::reference;
-  Triangles_ref triangles_ref = choose_parameter(get_parameter_reference(np, internal_np::triangles_ref), default_triangles_ref);
+  using Triangle_refs = typename internal_np::Lookup_named_param_def<internal_np::triangle_refs_t, CGAL_NP_CLASS, std::vector<int>>::reference;
+  Triangle_refs triangle_refs = choose_parameter(get_parameter_reference(np, internal_np::triangle_refs), default_triangle_refs);
 
-  using Edges_ref = typename internal_np::Lookup_named_param_def<internal_np::edges_ref_t, CGAL_NP_CLASS, std::vector<int>>::reference;
-  Edges_ref edges_ref = choose_parameter(get_parameter_reference(np, internal_np::edges_ref), default_edges_ref);
+  using Edge_refs = typename internal_np::Lookup_named_param_def<internal_np::edge_refs_t, CGAL_NP_CLASS, std::vector<int>>::reference;
+  Edge_refs edge_refs = choose_parameter(get_parameter_reference(np, internal_np::edge_refs), default_edge_refs);
 
-  using Vertices_ref = typename internal_np::Lookup_named_param_def<internal_np::vertices_ref_t, CGAL_NP_CLASS, std::vector<int>>::reference;
-  Vertices_ref vertices_ref = choose_parameter(get_parameter_reference(np, internal_np::vertices_ref), default_vertices_ref);
+  using Point_refs = typename internal_np::Lookup_named_param_def<internal_np::point_refs_t, CGAL_NP_CLASS, std::vector<int>>::reference;
+  Point_refs point_refs = choose_parameter(get_parameter_reference(np, internal_np::point_refs), default_point_refs);
 
-  constexpr bool is_tetrahedra_ref_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::tetrahedra_ref_t>::value;
-  constexpr bool is_triangles_ref_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::triangles_ref_t>::value;
-  constexpr bool is_edges_ref_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::edges_ref_t>::value;
-  constexpr bool is_vertices_ref_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::vertices_ref_t>::value;
+  constexpr bool is_tetrahedron_refs_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::tetrahedron_refs_t>::value;
+  constexpr bool is_triangle_refs_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::triangle_refs_t>::value;
+  constexpr bool is_edge_refs_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::edge_refs_t>::value;
+  constexpr bool is_point_refs_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::point_refs_t>::value;
 
   os << "MeshVersionFormatted 1\nDimension 3\n";
 
@@ -700,7 +743,7 @@ bool write_MEDIT(std::ostream& os,
   os << points.size() << "\n";
   for (std::size_t k = 0; k < points.size(); ++k){
     const auto& p = points[k];
-    int ref = is_vertices_ref_map ? vertices_ref[k] : 0;
+    int ref = is_point_refs_map ? point_refs[k] : 0;
     os << p << " " << ref  << "\n";
   }
 
@@ -708,7 +751,7 @@ bool write_MEDIT(std::ostream& os,
   os << cells.size() << "\n";
   for (std::size_t k=0; k < cells.size(); ++k)
   {
-    int ref = is_tetrahedra_ref_map ? tetrahedra_ref[k] : 0;
+    int ref = is_tetrahedron_refs_map ? tetrahedron_refs[k] : 0;
     os << cells[k][0]+1 << " "
        << cells[k][1]+1 << " "
        << cells[k][2]+1 << " "
@@ -720,20 +763,16 @@ bool write_MEDIT(std::ostream& os,
     os << "Edges\n" << edges.size() << "\n";
     for(std::size_t k = 0; k < edges.size(); ++k){
       const auto& e = edges[k];
-      int ref = is_edges_ref_map ? edges_ref[k] : 0;
+      int ref = is_edge_refs_map ? edge_refs[k] : 0;
       os << internal::get_zero(e) +1 << " " << internal::get_one(e) + 1 << " " << ref  << "\n";
     }
-
-    os << "Ridges\n" << edges.size() << "\n";
-    for(std::size_t i = 1; i <= edges.size(); ++i)
-      os << i << "\n";
   }
 
   if(!facets.empty()){
     os << "Triangles\n" << facets.size() << "\n";
     for(std::size_t k = 0; k < facets.size(); ++k){
       const auto& f =  facets[k];
-      int ref = is_triangles_ref_map ? triangles_ref[k]: 0;
+      int ref = is_triangle_refs_map ? triangle_refs[k]: 0;
       os << std::get<0>(f) +1 << " " << std::get<1>(f) + 1 << " " << std::get<2>(f) + 1 << " " <<  ref << "\n";
     }
   }
