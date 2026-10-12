@@ -182,6 +182,7 @@ function(CGAL_add_config_file_test test_name src_dir cgal_config_path)
     COMMAND ${CMAKE_COMMAND} ${GENERATOR} ${INIT_FILE}
                              -DCGAL_ENABLE_TESTING=ON
                              -DCMAKE_BUILD_TYPE=${CGAL_TESTSUITE_BUILD_TYPE} -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON
+                             -DCMAKE_FIND_PACKAGE_PREFER_CONFIG=ON
                              "-DCGAL_DIR=${cgal_dir}"
                              "-DCGAL_GIVEN_DIR=${cgal_dir}"
                              -S "${src_dir}" -B "${build_dir}")
@@ -228,6 +229,7 @@ endfunction()
 function(test_CGAL_installation test_name install_prefix build_dir)
   add_test(NAME "config___${test_name}"
     COMMAND ${CMAKE_COMMAND} ${GENERATOR} ${INIT_FILE} -DCMAKE_BUILD_TYPE=${CGAL_TESTSUITE_BUILD_TYPE} -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON
+                                                       -DCMAKE_FIND_PACKAGE_PREFER_CONFIG=ON
                                                        "-DCMAKE_INSTALL_PREFIX=${install_prefix}"
                                                        "-DCGAL_INSTALL_LIB_DIR=lib"
                                                        -S "${CGAL_SOURCE_DIR}" -B "${build_dir}")
