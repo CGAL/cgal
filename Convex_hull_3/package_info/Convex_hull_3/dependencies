@@ -11,11 +11,13 @@ Distance_3
 Filtered_kernel
 HalfedgeDS
 Hash_map
+Homogeneous_kernel
 Installation
 Intersections_2
 Intersections_3
 Interval_support
 Kernel_23
+Kernel_d
 Modular_arithmetic
 Number_types
 Profiling_tools

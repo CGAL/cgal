@@ -449,8 +449,7 @@ wlop_simplify_and_regularize_point_set(
   double radius = choose_parameter(get_parameter(np, internal_np::neighbor_radius), -1);
   unsigned int iter_number = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 35);
   bool require_uniform_sampling = choose_parameter(get_parameter(np, internal_np::require_uniform_sampling), false);
-  const std::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
-                                                                 std::function<bool(double)>());
+  const std::function<bool(double)>& callback = choose_parameter<std::function<bool(double)>>(get_parameter(np, internal_np::callback));
 
   typedef typename Kernel::Point_3   Point;
   typedef typename Kernel::FT        FT;

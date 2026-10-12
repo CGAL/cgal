@@ -20,6 +20,7 @@ include(CGAL_TBB_support)
 
 find_package(ITT QUIET)
 
+create_single_source_cgal_program("surface_mesh_to_tetrahedral_mesh.cpp")
 create_single_source_cgal_program( "test_boost_has_xxx.cpp" )
 create_single_source_cgal_program( "test_mesh_capsule_var_distance_bound.cpp" )
 create_single_source_cgal_program( "test_implicit_multi_domain_to_labeling_function_wrapper.cpp" )
@@ -59,6 +60,7 @@ create_single_source_cgal_program( "test_max_edge_distance.cpp")
 create_single_source_cgal_program( "test_remeshing_polyhedron.cpp" )
 
 foreach(target
+    surface_mesh_to_tetrahedral_mesh
     test_boost_has_xxx
     test_mesh_capsule_var_distance_bound
     test_implicit_multi_domain_to_labeling_function_wrapper
@@ -98,6 +100,7 @@ endforeach()
 
 if(TARGET CGAL::TBB_support)
   foreach(target
+      surface_mesh_to_tetrahedral_mesh
       test_meshing_verbose
       test_meshing_polyhedron_with_features
       test_meshing_utilities.h
@@ -124,6 +127,7 @@ if(TARGET CGAL::TBB_support)
 
   if(CGAL_ENABLE_TESTING)
     set_property(TEST
+      "execution   of  surface_mesh_to_tetrahedral_mesh"
       "execution   of  test_meshing_verbose"
       "execution   of  test_meshing_polyhedron_with_features"
       "execution   of  test_meshing_implicit_function"
@@ -135,6 +139,7 @@ if(TARGET CGAL::TBB_support)
       "execution   of  test_mesh_3_issue_8773"
       "execution   of  test_mesh_cell_base_3"
       "execution   of  test_remeshing_polyhedron"
+      "execution   of  test_mesh_cell_base_3"
       PROPERTY RUN_SERIAL 1)
     if(TARGET test_meshing_3D_image)
       set_property(TEST

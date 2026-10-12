@@ -139,7 +139,7 @@ gray level images (`Gray_level_image_3<FT, Point>`).
 
 The parameter `criteria` handles the description of the size and shape
 criteria driving the meshing process. The template parameter `FacetsCriteria`
-has to be instantiated by a model of the concept `SurfaceMeshFacetsCriteria_3`.
+has to be instantiated with a model of the concept `SurfaceMeshFacetsCriteria_3`.
 
 The parameter `Tag` is a tag
 whose type influences the behavior of the

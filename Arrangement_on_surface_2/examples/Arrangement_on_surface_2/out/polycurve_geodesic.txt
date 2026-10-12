@@ -1,0 +1,2 @@
+# seg. vertives: 5
+# poly vertives: 5

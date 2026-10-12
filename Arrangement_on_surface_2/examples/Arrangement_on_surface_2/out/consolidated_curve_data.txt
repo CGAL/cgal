@@ -1,0 +1,5 @@
+Red intersect blue at (0.666667 2.33333)
+Red intersect blue at (2.52941 1.58824)
+Red intersect blue at (-0.444444 0.111111)
+Red intersect blue at (2.21429 0.642857)
+Red overlap blue at [0 3 1 4]

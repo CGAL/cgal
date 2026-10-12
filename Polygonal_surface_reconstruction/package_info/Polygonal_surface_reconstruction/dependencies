@@ -19,10 +19,10 @@ Kernel_23
 Kernel_d
 Modular_arithmetic
 Number_types
+PMP_Mesh_repair
 Point_set_3
 Point_set_processing_3
 Polygon
-Polygon_mesh_processing
 Polygonal_surface_reconstruction
 Principal_component_analysis
 Principal_component_analysis_LGPL

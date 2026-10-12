@@ -204,7 +204,8 @@ a.el {
 
   .image > img {
     border-radius: 1ex;
-    background: white;
+    background-color: white;
+    padding: 1ex;
   }
 }
 

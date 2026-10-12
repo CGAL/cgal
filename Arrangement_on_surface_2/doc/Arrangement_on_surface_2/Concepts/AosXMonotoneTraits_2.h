@@ -17,20 +17,21 @@
  * \cgalRefines{AosBasicTraits_2}
  *
  * \cgalHasModelsBegin
- * \cgalHasModels{CGAL::Arr_segment_traits_2<Kernel>}
- * \cgalHasModels{CGAL::Arr_non_caching_segment_traits_2<Kernel>}
- * \cgalHasModels{CGAL::Arr_linear_traits_2<Kernel>}
- * \cgalHasModels{CGAL::Arr_polyline_traits_2<SegmentTraits>}
+ * \cgalHasModels{CGAL::Arr_algebraic_segment_traits_2<Coefficient>}
+ * \cgalHasModels{CGAL::Arr_Bezier_curve_traits_2<RatKernel,AlgKernel,NtTraits>}
  * \cgalHasModels{CGAL::Arr_circle_segment_traits_2<Kernel>}
- * \cgalHasModels{CGAL::Arr_line_arc_traits_2<CircularKernel>}
  * \cgalHasModels{CGAL::Arr_circular_arc_traits_2<CircularKernel>}
  * \cgalHasModels{CGAL::Arr_circular_line_arc_traits_2<CircularKernel>}
  * \cgalHasModels{CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>}
- * \cgalHasModels{CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>}
- * \cgalHasModels{CGAL::Arr_Bezier_curve_traits_2<RatKernel,AlgKernel,NtTraits>}
- * \cgalHasModels{CGAL::Arr_algebraic_segment_traits_2<Coefficient>}
- * \cgalHasModels{CGAL::Arr_curve_data_traits_2<Tr,XData,Mrg,CData,Cnv>}
  * \cgalHasModels{CGAL::Arr_consolidated_curve_data_traits_2<Traits,Data>}
+ * \cgalHasModels{CGAL::Arr_curve_data_traits_2<Tr,XData,Mrg,CData,Cnv>}
+ * \cgalHasModels{CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel, AtanX, AtanY>}
+ * \cgalHasModels{CGAL::Arr_linear_traits_2<Kernel>}
+ * \cgalHasModels{CGAL::Arr_line_arc_traits_2<CircularKernel>}
+ * \cgalHasModels{CGAL::Arr_non_caching_segment_traits_2<Kernel>}
+ * \cgalHasModels{CGAL::Arr_polyline_traits_2<SegmentTraits>}
+ * \cgalHasModels{CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>}
+ * \cgalHasModels{CGAL::Arr_segment_traits_2<Kernel>}
  * \cgalHasModelsEnd
  *
  * \sa `AosBasicTraits_2`

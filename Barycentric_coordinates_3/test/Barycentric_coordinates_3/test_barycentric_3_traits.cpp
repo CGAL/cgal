@@ -221,7 +221,7 @@ public:
 #include <CGAL/Barycentric_coordinates_3/Wachspress_coordinates_3.h>
 #include <CGAL/Barycentric_coordinates_3/Discrete_harmonic_coordinates_3.h>
 #include <CGAL/Barycentric_coordinates_3/Mean_value_coordinates_3.h>
-#include <CGAL/Barycentric_coordinates_3/tetrahedron_coordinates.h>
+#include <CGAL/Barycentric_coordinates_3/tetrahedron_coordinates_3.h>
 #include "include/utils.h"
 
 // Typedefs.
@@ -251,8 +251,8 @@ int main() {
     CGAL::Barycentric_coordinates::discrete_harmonic_coordinates_3(tetrahedron, Custom_barycentric_traits::Point_3(), std::back_inserter(coordinates), CGAL::parameters::geom_traits(Custom_barycentric_traits::instance()));
     CGAL::Barycentric_coordinates::mean_value_coordinates_3(tetrahedron, Custom_barycentric_traits::Point_3(), std::back_inserter(coordinates), CGAL::parameters::geom_traits(Custom_barycentric_traits::instance()));
 
-    Custom_barycentric_traits::Point_3 p1 = CGAL::Barycentric_coordinates::apply_barycentric_coordinates(tetrahedron, coordinates, *tetrahedron.property_map<Mesh::Vertex_index, Custom_barycentric_traits::Point_3>("v:point"), Custom_barycentric_traits::instance());
-    Custom_barycentric_traits::Point_3 p2 = CGAL::Barycentric_coordinates::apply_barycentric_coordinates(vertices, coordinates, Custom_barycentric_traits::instance());
+    Custom_barycentric_traits::Point_3 p1 = CGAL::Barycentric_coordinates::apply_barycentric_coordinates_3(tetrahedron, coordinates, *tetrahedron.property_map<Mesh::Vertex_index, Custom_barycentric_traits::Point_3>("v:point"), Custom_barycentric_traits::instance());
+    Custom_barycentric_traits::Point_3 p2 = CGAL::Barycentric_coordinates::apply_barycentric_coordinates_3(vertices, coordinates, Custom_barycentric_traits::instance());
 
     CGAL_USE(p1);
     CGAL_USE(p2);

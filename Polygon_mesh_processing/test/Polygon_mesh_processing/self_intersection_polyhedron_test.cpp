@@ -16,7 +16,7 @@ typedef CGAL::Exact_predicates_exact_constructions_kernel       Epec;
 
 template <typename K>
 int
-test_self_intersections(const std::string filename, const bool expected)
+test_self_intersections(const std::filesystem::path& filename, const bool expected)
 {
   typedef CGAL::Polyhedron_3<K>                                      Polyhedron;
   typedef typename boost::graph_traits<Polyhedron>::face_descriptor  face_descriptor;
@@ -65,11 +65,11 @@ int main(int argc, char** argv)
   // If file(s) are provided, the associated expected result must also be provided.
   // Note that this expected value is a Boolean that is passed in command line
   // with either 'true' or 'false' (but not integers), that is for example:
-  // > self_intersection_polyhedron_test data/U.off false
+  // > self_intersection_polyhedron_test data/U_sheet.off false
 
   // First test ----------------------------------------------------------------
   bool expected = false;
-  std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/elephant.off");
+  std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/elephant.off");
   if(argc > 1) {
     assert(argc > 2);
     std::stringstream ss(argv[2]);

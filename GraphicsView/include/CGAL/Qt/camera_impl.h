@@ -1910,6 +1910,14 @@ KeyFrameInterpolator *Camera::keyFrameInterpolator(unsigned int i) const {
   else
     return nullptr;
 }
+CGAL_INLINE_FUNCTION
+void Camera::stopAllPaths(){
+    for(auto [key,value]: kfi_.asKeyValueRange()){
+          if(value->interpolationIsStarted()){
+              value->stopInterpolation();
+          }
+      }
+}
 
 /*! Sets the KeyFrameInterpolator that defines the Camera path of index \p i.
 

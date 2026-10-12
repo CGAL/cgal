@@ -128,7 +128,8 @@ struct Region_and_Sorting_helper<GeomTraits, PolygonMesh, VertexToPointMap, ECM,
 } // namespace internal
 
 /*!
-  \ingroup PkgPolygonMeshProcessingRef
+  \ingroup PMP_detect_features_grp
+
   \brief applies a region growing algorithm to fit planes on faces of a mesh.
 
   See Section \ref Shape_detection_RegionGrowing for more details on the method.
@@ -235,8 +236,7 @@ region_growing_of_planes_on_faces(const PolygonMesh& mesh,
       NamedParameters,
       Static_boolean_property_map<edge_descriptor, false> // default (no constraint pmap)
     > ::type ECM;
-  ECM ecm = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
-                             Static_boolean_property_map<edge_descriptor, false>());
+  ECM ecm = choose_parameter<Static_boolean_property_map<edge_descriptor, false>>(get_parameter(np, internal_np::edge_is_constrained));
 
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::least_squares_fitting_t,
@@ -327,8 +327,9 @@ region_growing_of_planes_on_faces(const PolygonMesh& mesh,
 }
 
 /*!
-  \ingroup PkgPolygonMeshProcessingRef
-    \brief detects the corners on the boundary of almost planar regions by applying the region growing algorithm fitting lines on segment edges of a partition of a mesh.
+  \ingroup PMP_detect_features_grp
+
+  \brief detects the corners on the boundary of almost planar regions by applying the region growing algorithm fitting lines on segment edges of a partition of a mesh.
 
     More precisely, a corner on the boundary of a region is a vertex that is either shared by at least three regions (two if it is also a vertex on the boundary of the mesh), or that is incident to two segments edges assigned to different lines.
   See Section \ref Shape_detection_RegionGrowing for more details on the method.
@@ -413,7 +414,6 @@ detect_corners_of_regions(
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
-  using parameters::is_default_parameter;
 
   using VPM = typename GetVertexPointMap < PolygonMesh, NamedParameters>::const_type;
   using Traits = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
@@ -430,14 +430,7 @@ detect_corners_of_regions(
                 Default_ecm
               > ::type;
 
-  Default_ecm dynamic_ecm;
-  if(is_default_parameter<NamedParameters, internal_np::edge_is_constrained_t>::value)
-  {
-    dynamic_ecm = get(CGAL::dynamic_edge_property_t<bool>(), mesh);
-    for (edge_descriptor e : edges(mesh))
-      put(dynamic_ecm, e, false);
-  }
-  Ecm ecm = choose_parameter(get_parameter(np, internal_np::edge_is_constrained), dynamic_ecm);
+  Ecm ecm = choose_parameter(get_parameter(np, internal_np::edge_is_constrained), CGAL::dynamic_edge_property_t<bool>(), mesh, false);
 
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::least_squares_fitting_t,

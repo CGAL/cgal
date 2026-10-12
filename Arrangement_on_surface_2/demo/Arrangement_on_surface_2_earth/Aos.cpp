@@ -46,9 +46,10 @@ namespace {
     CGAL::Arr_spherical_topology_traits_2<Geom_traits, Ext_dcel>;
   using Ext_aos = CGAL::Arrangement_on_surface_2<Geom_traits, Ext_topol_traits>;
   using Dir3 = Kernel::Direction_3;
-  using Approximate_point_2 = Geom_traits::Approximate_point_2;
-  using Approximate_number_type = Geom_traits::Approximate_number_type;
-  using Approximate_kernel = Geom_traits::Approximate_kernel;
+  using Geom_traits_approximate_2 = Geom_traits::Approximate_2;
+  using Approximate_point_2 = Geom_traits_approximate_2::Approximate_point_2;
+  using Approximate_number_type = Geom_traits_approximate_2::Approximate_number_type;
+  using Approximate_kernel = Geom_traits_approximate_2::Approximate_kernel;
   using Approximate_Vector_3 = CGAL::Vector_3<Approximate_kernel>;
   using Approximate_Direction_3 = Approximate_kernel::Direction_3;
   using Direction_3 = Kernel::Direction_3;

@@ -612,7 +612,7 @@ weighted_circumcenterC3(const FT &px, const FT &py, const FT &pz, const FT &pw,
                                            qx, qy, qz, qw,
                                            rx, ry, rz, rw,
                                            sx, sy, sz, sw,
-                                           num_x,  num_y, num_z,den);
+                                           num_x, num_y, num_z, den);
 
   CGAL_assertion( ! CGAL_NTS is_zero(den) );
   FT inv = FT(1)/(FT(2) * den);
@@ -636,7 +636,7 @@ weighted_circumcenterC3(const FT &px, const FT &py, const FT &pz, const FT &pw,
                                            qx, qy, qz, qw,
                                            rx, ry, rz, rw,
                                            sx, sy, sz, sw,
-                                           num_x,  num_y, num_z, den);
+                                           num_x, num_y, num_z, den);
 
   CGAL_assertion( ! CGAL_NTS is_zero(den) );
   FT inv = FT(1)/(FT(2) * den);

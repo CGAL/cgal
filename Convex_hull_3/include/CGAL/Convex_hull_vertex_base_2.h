@@ -22,6 +22,7 @@
 #include <CGAL/Has_timestamp.h>
 #include <CGAL/Time_stamper.h>
 
+#include <cstddef>
 #include <iostream>
 
 namespace CGAL {
@@ -40,7 +41,7 @@ public:
 private:
   int _info = 0;
   Point _p;
-  std::size_t time_stamp_ = std::size_t(-2);
+  std::size_t time_stamp_ = Time_stamper<void>::invalid_time_stamp;
 
 public:
   template < typename TDS2 >

@@ -1,7 +1,3 @@
-#ifdef _MSC_VER
-#  pragma warning(disable: 4455)
-#endif
-
 #include <CGAL/config.h>
 
 // #define CGAL_CDT_2_DEBUG_INTERSECTIONS 1
@@ -179,7 +175,7 @@ struct CDT_options
   double      segment_vertex_epsilon              = 0.; // 1e-14;
   double      coplanar_polygon_max_angle          = 5.1;
   double      coplanar_polygon_max_distance       = 1e-6;
-  std::string input_filename                      = CGAL::data_file_path("meshes/mpi.off");
+  std::string input_filename                      = CGAL::data_file_path("meshes/mpi.off").string();
   std::string output_filename                     {"dump.off"};
   std::string dump_patches_after_merge_filename   {};
   std::string dump_surface_mesh_after_merge_filename{};
@@ -193,7 +189,7 @@ CDT_options::CDT_options(int argc, char* argv[]) {
   const std::vector<std::string_view> args(argv + 1, argv + argc);
   int positional = 0;
 
-  using std::literals::string_view_literals::operator""sv;
+  using namespace std::literals::string_view_literals;
   for (auto it = args.begin(); it != args.end(); ++it) {
     auto get_next_arg_or_error_out = [&it, &args]() -> std::string {
       if(it + 1 == args.end()) {

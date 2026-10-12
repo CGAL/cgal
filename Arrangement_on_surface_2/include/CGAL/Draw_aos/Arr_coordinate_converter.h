@@ -89,7 +89,9 @@ public:
   }
 
   Approx_point to_cartesian(Point point) const {
-    using Direction_3 = typename Geom_traits::Approximate_kernel::Direction_3;
+    using Gt_approximate_2 = typename Geom_traits::Approximate_2;
+    using Approximate_kernel = typename Gt_approximate_2::Approximate_kernel;
+    using Direction_3 = typename Approximate_kernel::Direction_3;
 
     Approx_nt polar = point.y();
     if(point.y() == CGAL_PI) return Approx_point(Direction_3(0, 0, 1), Approx_point::MAX_BOUNDARY_LOC);

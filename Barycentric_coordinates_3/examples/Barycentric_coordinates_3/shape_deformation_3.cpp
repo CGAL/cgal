@@ -10,7 +10,7 @@ using Point_3 =  Kernel::Point_3;
 using Surface_mesh =  CGAL::Surface_mesh<Point_3>;
 
 int main(int argc, char** argv) {
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/armadillo.off");
+  const std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/armadillo.off");
   Surface_mesh sm;
 
   if(!CGAL::IO::read_polygon_mesh(filename, sm)) {
@@ -48,7 +48,7 @@ int main(int argc, char** argv) {
     coords.clear();
     mv(vertex_val, std::back_inserter(coords));
 
-    Point_3 p = CGAL::Barycentric_coordinates::apply_barycentric_coordinates(target_cube, coords);
+    Point_3 p = CGAL::Barycentric_coordinates::apply_barycentric_coordinates_3(target_cube, coords);
 
     put(vertex_point_map, v, p);
   }

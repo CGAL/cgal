@@ -14,12 +14,10 @@
 #ifndef CGAL_READ_VTK_IMAGE_DATA_H
 #define CGAL_READ_VTK_IMAGE_DATA_H
 
-#ifndef CGAL_NO_DEPRECATED_CODE
-#include <CGAL/IO/read_vtk_image_data.h>
-
 #define CGAL_DEPRECATED_HEADER "<CGAL/read_vtk_image_data.h>"
 #define CGAL_REPLACEMENT_HEADER "<CGAL/IO/read_vtk_image_data.h>"
 #include <CGAL/Installation/internal/deprecation_warning.h>
-#endif
+
+#include <CGAL/IO/read_vtk_image_data.h>
 
 #endif // CGAL_READ_VTK_IMAGE_DATA_H

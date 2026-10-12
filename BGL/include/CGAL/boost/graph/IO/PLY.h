@@ -227,7 +227,7 @@ bool read_PLY(std::istream& is,
 */
 template <typename Graph,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool read_PLY(const std::string& fname,
+bool read_PLY(const std::filesystem::path& fname,
               Graph& g,
               std::string& comments,
               const CGAL_NP_CLASS& np = parameters::default_values()
@@ -253,7 +253,7 @@ bool read_PLY(const std::string& fname,
 
 template <typename Graph,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool read_PLY(const std::string& fname,
+bool read_PLY(const std::filesystem::path& fname,
               Graph& g,
               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
@@ -366,8 +366,8 @@ bool write_PLY(std::ostream& os,
   using parameters::is_default_parameter;
   using parameters::get_parameter;
 
-  VCM vcm = choose_parameter(get_parameter(np, internal_np::vertex_color_map), VCM());
-  FCM fcm = choose_parameter(get_parameter(np, internal_np::face_color_map), FCM());
+  VCM vcm = choose_parameter<VCM>(get_parameter(np, internal_np::vertex_color_map));
+  FCM fcm = choose_parameter<FCM>(get_parameter(np, internal_np::face_color_map));
 
   bool has_vcolor = !is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_color_map_t>::value;
   bool has_fcolor = !is_default_parameter<CGAL_NP_CLASS, internal_np::face_color_map_t>::value;
@@ -470,8 +470,6 @@ bool write_PLY(std::ostream& os,
       decltype(auto) fp = get(fvpm, vd);
       internal::output_properties(os, &fp, make_ply_point_writer (CGAL::Identity_property_map<Target_point>()));
     }
-
-    std::cout << "using generic writer" << std::endl;
 
     if constexpr (!parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_normal_map_t>::value)
     {
@@ -609,7 +607,7 @@ bool write_PLY(std::ostream& os, const Graph& g, const CGAL_NP_CLASS& np = param
  \returns `true` if writing was successful, `false` otherwise.
 */
 template <typename Graph, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool write_PLY(const std::string& fname,
+bool write_PLY(const std::filesystem::path& fname,
                const Graph& g,
                const std::string& comments,
                const CGAL_NP_CLASS& np = parameters::default_values()
@@ -637,7 +635,7 @@ bool write_PLY(const std::string& fname,
 /// \cond SKIP_IN_MANUAL
 
 template <typename Graph, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool write_PLY(const std::string& fname, const Graph& g, const CGAL_NP_CLASS& np = parameters::default_values(),
+bool write_PLY(const std::filesystem::path& fname, const Graph& g, const CGAL_NP_CLASS& np = parameters::default_values(),
                std::enable_if_t<!internal::is_Point_set_or_Range_or_Iterator<Graph>::value>* = nullptr)
 {
   return write_PLY(fname, g, std::string(), np);

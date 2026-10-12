@@ -14,6 +14,7 @@
 #include <CGAL/Qt/debug.h>
 #include <CGAL/double.h>
 
+#include <QtGlobal>
 #include <QJsonArray>
 #include <QtDebug>
 #include <QFileDialog>
@@ -46,7 +47,11 @@
 #include <fstream>
 #include <QElapsedTimer>
 #include <QWidgetAction>
+#if QT_VERSION < QT_VERSION_CHECK(6, 11, 0)
 #include <QSequentialIterable>
+#else
+#include <QMetaSequence>
+#endif
 #include <QDir>
 #include <QJSValue>
 #include <QLoggingCategory>
@@ -992,7 +997,13 @@ void MainWindow::reloadItem() {
       item->deleteLater();
       return;
     }
-    QSequentialIterable iterable = varian.value<QSequentialIterable>();
+#if QT_VERSION < QT_VERSION_CHECK(6, 11, 0)
+    using Iterable = QSequentialIterable;
+#else
+     using Iterable = QMetaSequence::Iterable;
+#endif
+
+    Iterable iterable = varian.value<Iterable>();
 
        // Can use foreach:
     int mate_id = 0;

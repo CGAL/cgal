@@ -38,7 +38,15 @@
 #include <CGAL/Number_types/internal/Exact_type_selector.h>
 #include <CGAL/NT_converter.h>
 #include <CGAL/Unique_hash_map.h>
+#include <CGAL/tags.h>
 #include <CGAL/use.h>
+#include <CGAL/utility.h>
+#include <boost/unordered/unordered_map_fwd.hpp>
+#include <CGAL/IO/io.h>
+#include <CGAL/Iterator_range.h>
+#include <CGAL/Triangulation_utils_3.h>
+#include <CGAL/enum.h>
+#include <CGAL/iterator.h>
 
 #ifndef CGAL_NO_STRUCTURAL_FILTERING
 #include <CGAL/Filtered_kernel/internal/Static_filters/tools.h>
@@ -50,14 +58,18 @@
 #include <boost/random/uniform_smallint.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <boost/tuple/tuple.hpp>
-#include <boost/unordered_map.hpp>
+#include <boost/unordered/unordered_map.hpp>
 
-#include <iostream>
 #include <algorithm>
-#include <cmath>
-#include <functional>
+#include <array>
+#include <cstddef>
+#include <iostream>
 #include <list>
+#include <map>
+#include <set>
+#include <stack>
 #include <utility>
+#include <vector>
 
 namespace CGAL {
 
@@ -182,11 +194,11 @@ public:
 private:
   typedef typename GT::FT                      FT;
   typedef std::pair< Vertex_handle, Offset >   Virtual_vertex;
-  typedef boost::unordered_map<Vertex_handle, Virtual_vertex>
+  typedef boost::unordered::unordered_map<Vertex_handle, Virtual_vertex>
                                                Virtual_vertex_map;
   typedef typename Virtual_vertex_map::const_iterator
                                                Virtual_vertex_map_it;
-  typedef boost::unordered_map<Vertex_handle, std::vector<Vertex_handle > >
+  typedef boost::unordered::unordered_map<Vertex_handle, std::vector<Vertex_handle > >
                                                Virtual_vertex_reverse_map;
   typedef typename Virtual_vertex_reverse_map::const_iterator
                                                Virtual_vertex_reverse_map_it;
@@ -235,6 +247,13 @@ public:
   typedef Facet_iterator                       Finite_facets_iterator;
   typedef Edge_iterator                        Finite_edges_iterator;
   typedef Vertex_iterator                      Finite_vertices_iterator;
+
+  typedef Iterator_range<Prevent_deref<Finite_cells_iterator,
+                                       const Cell_handle&> >         Finite_cell_handles;
+  typedef Iterator_range<Finite_facets_iterator> Finite_facets;
+  typedef Iterator_range<Finite_edges_iterator> Finite_edges;
+  typedef Iterator_range<Prevent_deref<Finite_vertices_iterator,
+                                       const Vertex_handle&> >       Finite_vertex_handles;
 
   int dimension() const { return (number_of_vertices() == 0) ? -2 : 3; }
 
@@ -1729,11 +1748,21 @@ public:
     return _tds.edges_end();
   }
 
+  Finite_edges finite_edges() const
+  {
+    return Finite_edges(finite_edges_begin(), finite_edges_end());
+  }
+
   Facet_iterator finite_facets_begin() const {
     return _tds.facets_begin();
   }
   Facet_iterator finite_facets_end() const {
     return _tds.facets_end();
+  }
+
+  Finite_facets finite_facets() const
+  {
+    return Finite_facets(finite_facets_begin(), finite_facets_end());
   }
 
   // All iterators (= finite, for periodic triangulations)
@@ -1932,24 +1961,15 @@ public:
   /// Vertex ranges defining a simplex
   static std::array<Vertex_handle, 2> vertices(const Edge& e)
   {
-    return std::array<Vertex_handle, 2>{
-             e.first->vertex(e.second),
-             e.first->vertex(e.third)};
+    return Triangulation_data_structure::vertices(e);
   }
   static std::array<Vertex_handle, 3> vertices(const Facet& f)
   {
-    return std::array<Vertex_handle, 3>{
-             f.first->vertex(vertex_triple_index(f.second, 0)),
-             f.first->vertex(vertex_triple_index(f.second, 1)),
-             f.first->vertex(vertex_triple_index(f.second, 2))};
+    return Triangulation_data_structure::vertices(f);
   }
   static std::array<Vertex_handle, 4> vertices(const Cell_handle c)
   {
-    return std::array<Vertex_handle, 4>{
-             c->vertex(0),
-             c->vertex(1),
-             c->vertex(2),
-             c->vertex(3)};
+    return Triangulation_data_structure::vertices(c);
   }
 
 private:

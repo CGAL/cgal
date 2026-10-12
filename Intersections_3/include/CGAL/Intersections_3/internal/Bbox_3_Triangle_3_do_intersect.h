@@ -38,36 +38,37 @@ bool do_bbox_intersect(const typename K::Triangle_3& triangle,
   const typename K::Point_3& p = triangle.vertex(0);
   const typename K::Point_3& q = triangle.vertex(1);
   const typename K::Point_3& r = triangle.vertex(2);
+  using FT = typename K::FT;
 
   for(int i = 0; i < 3; ++i) {
     if(p[i] <= q[i]) {
       if(q[i] <= r[i]) { // pqr
-        if((bbox.max_coord(i) < p[i]) || (bbox.min_coord(i) > r[i]))
+        if((FT(bbox.max_coord(i)) < p[i]) || (FT(bbox.min_coord(i)) > r[i]))
           return false;
       }
       else {
         if(p[i] <= r[i]) { // prq
-          if(bbox.max_coord(i) < p[i] || bbox.min_coord(i) > q[i])
+          if(FT(bbox.max_coord(i)) < p[i] || FT(bbox.min_coord(i)) > q[i])
             return false;
         }
         else { // rpq
-          if(bbox.max_coord(i) < r[i] || bbox.min_coord(i) > q[i])
+          if(FT(bbox.max_coord(i)) < r[i] || FT(bbox.min_coord(i)) > q[i])
             return false;
         }
       }
     }
     else {
       if(p[i] <= r[i]) { // qpr
-        if(bbox.max_coord(i) < q[i] || bbox.min_coord(i) > r[i])
+        if(FT(bbox.max_coord(i)) < q[i] || FT(bbox.min_coord(i)) > r[i])
           return false;
       }
       else {
         if(q[i] <= r[i]) { // qrp
-          if(bbox.max_coord(i) < q[i] || bbox.min_coord(i) > p[i])
+          if(FT(bbox.max_coord(i)) < q[i] || FT(bbox.min_coord(i)) > p[i])
             return false;
         }
         else { // rqp
-          if(bbox.max_coord(i) < r[i] || bbox.min_coord(i) > p[i])
+          if(FT(bbox.max_coord(i)) < r[i] || FT(bbox.min_coord(i)) > p[i])
             return false;
         }
       }

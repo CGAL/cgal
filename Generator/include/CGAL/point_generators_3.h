@@ -430,7 +430,7 @@ template <class EdgeListGraph,
                             typename Kernel_traits< typename boost::property_traits<VertexPointMap>::value_type >::Kernel::RT,
                             typename boost::property_traits<VertexPointMap>::value_type >
 >
-struct Random_points_on_edge_list_graph_3
+struct Random_points_on_graph_edges_3
   : public Generic_random_point_generator<
              typename boost::graph_traits <EdgeListGraph>::edge_descriptor,
              CGAL::Property_map_to_unary_function<CGAL::Segment_from_edge_descriptor_map<
@@ -448,16 +448,16 @@ struct Random_points_on_edge_list_graph_3
                      EdgeListGraph,VertexPointMap>                          Object_from_id;
   typedef typename boost::graph_traits<EdgeListGraph>::edge_descriptor      Id;
   typedef P result_type;
-  typedef Random_points_on_edge_list_graph_3< EdgeListGraph, VertexPointMap, Creator>  This;
+  typedef Random_points_on_graph_edges_3< EdgeListGraph, VertexPointMap, Creator>  This;
 
-  Random_points_on_edge_list_graph_3( const EdgeListGraph& mesh,Random& rnd = get_default_random())
+  Random_points_on_graph_edges_3( const EdgeListGraph& mesh,Random& rnd = get_default_random())
     : Base( edges(mesh),
             CGAL::Property_map_to_unary_function<Object_from_id>(Object_from_id(&mesh, get(vertex_point, mesh))),
             internal::Apply_approx_sqrt<typename Kernel_traits<P>::Kernel::Compute_squared_length_3>(),
             rnd )
   {
   }
-  Random_points_on_edge_list_graph_3( const EdgeListGraph& mesh, VertexPointMap vpm, Random& rnd = get_default_random())
+  Random_points_on_graph_edges_3( const EdgeListGraph& mesh, VertexPointMap vpm, Random& rnd = get_default_random())
     : Base( edges(mesh),
             CGAL::Property_map_to_unary_function<Object_from_id>(Object_from_id(&mesh, vpm)),
             internal::Apply_approx_sqrt<typename Kernel_traits<P>::Kernel::Compute_squared_length_3>(),
@@ -540,7 +540,7 @@ public:
   const Tr& tr;
 };
 
-template<typename Triangle, typename PointRange>
+template<typename PointRange, typename TriangleRange>
 class Triangle_3_from_soup
 {
   typedef typename boost::range_value<PointRange>::type  Point_3;
@@ -548,15 +548,19 @@ class Triangle_3_from_soup
 public:
   typedef typename Kernel::Triangle_3                    result_type;
 
-  Triangle_3_from_soup(const PointRange& pts) : points(pts) { }
+  Triangle_3_from_soup(const PointRange& pts, const TriangleRange& trgls)
+    : points(pts)
+    , triangles(trgls)
+  {}
 
-  result_type operator()(const Triangle& t) const
+  result_type operator()(std::size_t id) const
   {
-    return result_type(points[t[0]], points[t[1]], points[t[2]]);
+    return result_type(points[triangles[id][0]], points[triangles[id][1]], points[triangles[id][2]]);
   }
 
 private:
   const PointRange& points;
+  const TriangleRange& triangles;
 };
 
 }//end namespace internal
@@ -710,32 +714,31 @@ struct Random_points_in_triangles_3
 
 
 template <class PointRange,
-          class Triangle = std::vector<std::size_t>,
+          class TriangleRange,
           class Creator = Creator_uniform_3<
                             typename Kernel_traits< typename PointRange::value_type >::Kernel::RT,
                             typename PointRange::value_type> >
-struct Random_points_in_triangle_soup
-    : public Generic_random_point_generator<Triangle,
-                                            internal::Triangle_3_from_soup<Triangle, PointRange>,
+struct Random_points_in_triangle_soup_3
+    : public Generic_random_point_generator<std::size_t,
+                                            internal::Triangle_3_from_soup<PointRange,TriangleRange>,
                                             Random_points_in_triangle_3<typename PointRange::value_type>,
                                             typename PointRange::value_type>
 {
-  typedef Generic_random_point_generator<Triangle,
-                                         internal::Triangle_3_from_soup<Triangle, PointRange>,
+  typedef Generic_random_point_generator<std::size_t,
+                                         internal::Triangle_3_from_soup<PointRange,TriangleRange>,
                                          Random_points_in_triangle_3<typename PointRange::value_type>,
                                          typename PointRange::value_type> Base;
   typedef typename PointRange::value_type                                 Point_3;
   typedef typename Kernel_traits<Point_3>::Kernel                         Kernel;
-  typedef Triangle                                                        Id;
+  typedef std::size_t                                                     Id;
   typedef Point_3                                                         result_type;
-  typedef Random_points_in_triangle_soup<PointRange, Triangle, Creator>   This;
+  typedef Random_points_in_triangle_soup_3<PointRange, TriangleRange, Creator>   This;
 
-  template<typename TriangleRange>
-  Random_points_in_triangle_soup(const TriangleRange& triangles,
-                                 const PointRange& points,
-                                 Random& rnd = get_default_random())
-    : Base(triangles,
-           internal::Triangle_3_from_soup<Triangle, PointRange>(points),
+  Random_points_in_triangle_soup_3(const PointRange& points,
+                                   const TriangleRange& triangles,
+                                   Random& rnd = get_default_random())
+    : Base(make_range(boost::counting_iterator<std::size_t>(0),boost::counting_iterator<std::size_t>(triangles.size())),
+           internal::Triangle_3_from_soup<PointRange, TriangleRange>(points, triangles),
            internal::Apply_approx_sqrt<typename Kernel_traits<Point_3>::Kernel::Compute_squared_area_3>(),
            rnd)
   { }

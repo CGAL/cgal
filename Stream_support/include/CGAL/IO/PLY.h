@@ -25,12 +25,12 @@
 
 #include <fstream>
 #include <iostream>
+#include <filesystem>
 #include <string>
 #include <tuple>
 #include <type_traits>
 #include <utility>
 #include <vector>
-#include <type_traits>
 
 namespace CGAL {
 
@@ -278,12 +278,10 @@ bool read_PLY(std::istream& is,
  *
  * \attention To read a binary file, the flag `std::ios::binary` must be set during the creation of the `ifstream`.
  *
- * \tparam PointRange a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
- *                    whose value type is the point type
- * \tparam PolygonRange a model of the concepts `SequenceContainer` and `BackInsertionSequence`
- *                      whose `value_type` is itself a model of the concept `SequenceContainer`
- *                      and `BackInsertionSequence` whose `value_type` is an unsigned integer type
- *                      convertible to `std::size_t`
+ * \tparam PointRange a model of the concept `BackInsertionSequence` whose value type is the point type
+ * \tparam PolygonRange a model of the concept `BackInsertionSequence` whose `value_type` is
+ *                      a model of the concept `RandomAccessContainer` whose `value_type`
+ *                      is an unsigned integer type convertible to `std::size_t`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param is the input stream
@@ -327,10 +325,8 @@ bool read_PLY(std::istream& is,
   std::vector<std::pair<float, float> > dummy_pf;
 
   return internal::read_PLY(is, points, polygons, comments, std::back_inserter(dummy_pui),
-                            choose_parameter(get_parameter(np, internal_np::face_color_output_iterator),
-                                             CGAL::Emptyset_iterator()),
-                            choose_parameter(get_parameter(np, internal_np::vertex_color_output_iterator),
-                                             CGAL::Emptyset_iterator()),
+                            choose_parameter<CGAL::Emptyset_iterator>(get_parameter(np, internal_np::face_color_output_iterator)),
+                            choose_parameter<CGAL::Emptyset_iterator>(get_parameter(np, internal_np::vertex_color_output_iterator)),
                             std::back_inserter(dummy_pf),
                             choose_parameter(get_parameter(np, internal_np::verbose), true));
 }
@@ -356,10 +352,10 @@ bool read_PLY(std::istream& is,
  *
  * \attention The polygon soup is not cleared, and the data from the file are appended.
  *
- * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
- * \tparam PolygonRange a model of the concepts `SequenceContainer` and `BackInsertionSequence`
- *                      whose `value_type` is itself a model of the concept `SequenceContainer`
- *                      and `BackInsertionSequence` whose `value_type` is an integer type
+ * \tparam PointRange a model of the concept `BackInsertionSequence` whose value type is the point type.
+ * \tparam PolygonRange a model of the concept `BackInsertionSequence` whose `value_type` is
+ *                      a model of the concept `RandomAccessContainer` whose `value_type` is
+ *                      an integer type convertible to `std::size_t`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param fname the path to the input file
@@ -386,7 +382,7 @@ bool read_PLY(std::istream& is,
  * \returns `true` if the reading was successful, `false` otherwise.
  */
 template <typename PointRange, typename PolygonRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool read_PLY(const std::string& fname,
+bool read_PLY(const std::filesystem::path& fname,
               PointRange& points,
               PolygonRange& polygons,
               std::string& comments,
@@ -412,7 +408,7 @@ bool read_PLY(const std::string& fname,
 }
 
 template <typename PointRange, typename PolygonRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool read_PLY(const std::string& fname,
+bool read_PLY(const std::filesystem::path& fname,
               PointRange& points,
               PolygonRange& polygons,
               const CGAL_NP_CLASS& np = parameters::default_values()
@@ -441,9 +437,9 @@ bool read_PLY(const std::string& fname,
  *            of the stream must be set to `BINARY`.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type
- * \tparam PolygonRange a model of the concept `SequenceContainer`
- *                      whose `value_type` is itself a model of the concept `SequenceContainer`
- *                      whose `value_type` is an unsigned integer type convertible to `std::size_t`
+ * \tparam PolygonRange a model of the concept `SequenceContainer` whose `value_type` is itself
+ *                      a model of the concept `SequenceContainer` whose `value_type` is
+ *                      an unsigned integer type convertible to `std::size_t`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param out the output stream
@@ -514,9 +510,9 @@ bool write_PLY(std::ostream& out,
  * \brief writes the content of `points` and `polygons` in  the file `fname`, using the \ref IOStreamPLY.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type
- * \tparam PolygonRange a model of the concept `SequenceContainer`
- *                      whose `value_type` is itself a model of the concept `SequenceContainer`
- *                      whose `value_type` is an unsigned integer type convertible to `std::size_t`
+ * \tparam PolygonRange a model of the concept `SequenceContainer` whose `value_type` is itself
+ *                      a model of the concept `SequenceContainer` whose `value_type` is
+ *                      an unsigned integer type convertible to `std::size_t`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param fname the path to the output file
@@ -543,7 +539,7 @@ bool write_PLY(std::ostream& out,
  * \return `true` if the writing was successful, `false` otherwise.
  */
 template <class PointRange, class PolygonRange, typename CGAL_NP_TEMPLATE_PARAMETERS >
-bool write_PLY(const std::string& fname,
+bool write_PLY(const std::filesystem::path& fname,
                const PointRange& points,
                const PolygonRange& polygons,
                const CGAL_NP_CLASS& np = parameters::default_values()
@@ -779,7 +775,7 @@ bool read_PLY(std::istream& is,
 template <typename OutputIteratorValueType,
           typename PointOutputIterator,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool read_PLY(const std::string& fname,
+bool read_PLY(const std::filesystem::path& fname,
               PointOutputIterator output,
               const CGAL_NP_CLASS& np = parameters::default_values()
               #ifndef DOXYGEN_RUNNING
@@ -976,7 +972,7 @@ bool write_PLY(std::ostream& os,
    \sa `write_PLY_with_properties()`
 */
 template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool write_PLY(const std::string& filename,
+bool write_PLY(const std::filesystem::path& filename,
                const PointRange& points,
                const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING

@@ -39,7 +39,7 @@ namespace CGAL {
    *
    * The class `Face_filtered_graph` is an adaptor that creates a filtered view of a graph
    * by restricting it to a subset of faces. Contrary to
-   * <a href="https://www.boost.org/doc/libs/release/libs/graph/doc/filtered_graph.html"><code>boost::filtered_graph</code></a>,
+   * <a href="https://www.boost.org/doc/libs/latest/libs/graph/doc/html/graph/adaptors/filtered_graph.html"><code>boost::filtered_graph</code></a>,
    * this class only requires a way to access the selected faces and will automatically select the
    * edges/halfedges and vertices present in the adapted graph. A vertex is selected if it is incident to at least one
    * selected face. An edge is selected if it is incident to at least a selected face. A halfedge is selected if its edge
@@ -63,12 +63,13 @@ namespace CGAL {
    * where `fim`, `him`, and `vim` are the respective index maps. The order of the arguments is not important and any of them can be
    * missing if the default is fine.
    *
-   * \tparam Graph must be a model of a `FaceListGraph`, `HalfedgeListGraph`, and \bgllink{VertexListGraph}.
+   * \tparam Graph must be a model of a `FaceListGraph`, `HalfedgeListGraph`,
+   *         and <A href="https://www.boost.org/doc/libs/latest/libs/graph/doc/html/graph/concepts/VertexListGraph.htmlVertexListGraph">`VertexListGraph`</A>.
    * \tparam FIMap a model of `ReadablePropertyMap` with `graph_traits<Graph>::%face_descriptor` as key and `graph_traits<Graph>::%faces_size_type` as value
    * \tparam VIMap a model of `ReadablePropertyMap` with `graph_traits<Graph>::%vertex_descriptor` as key and `graph_traits<Graph>::%vertices_size_type` as value
    * \tparam HIMap a model of `ReadablePropertyMap` with `graph_traits<Graph>::%halfedge_descriptor` as key and `graph_traits<Graph>::%halfedges_size_type` as value
    *
-   * \cgalModels{FaceListGraph,HalfedgeListGraph,\bgllink{VertexListGraph}}
+   * \cgalModels{FaceListGraph,HalfedgeListGraph,<A href="https://www.boost.org/doc/libs/latest/libs/graph/doc/html/graph/concepts/VertexListGraph.htmlVertexListGraph">`VertexListGraph`</A>}
    */
 template<typename Graph,
          typename FIMap = Default,

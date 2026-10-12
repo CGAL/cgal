@@ -31,7 +31,7 @@ double max_coordinate(const Mesh& poly)
 
 int main(int argc, char* argv[])
 {
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/eight.off");
+  const std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/eight.off");
 
   Mesh poly;
   if(!PMP::IO::read_polygon_mesh(filename, poly) || CGAL::is_empty(poly) || !CGAL::is_triangle_mesh(poly))

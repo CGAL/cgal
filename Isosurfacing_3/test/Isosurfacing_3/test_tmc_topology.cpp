@@ -11,8 +11,8 @@
 #include <CGAL/Isosurfacing_3/internal/implicit_shapes_helper.h>
 
 #include <CGAL/IO/polygon_soup_io.h>
+#include <CGAL/boost/graph/border.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
-#include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 
 #include <CGAL/Random.h>

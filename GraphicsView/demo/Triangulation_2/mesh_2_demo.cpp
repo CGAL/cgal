@@ -1553,7 +1553,7 @@ void MainWindow::loadObjConstraints(const QString& filename) {
   std::vector<std::vector<std::size_t>> polylines;
   std::vector<std::vector<std::size_t>> unused_polygons;
 
-  if(!CGAL::IO::internal::read_OBJ(ifs, points, polylines, unused_polygons)) {
+  if(!CGAL::IO::internal::read_OBJ(ifs, points, unused_polygons, polylines)) {
     QMessageBox::warning(this, "Error", "Failed to read OBJ file");
     return;
   }

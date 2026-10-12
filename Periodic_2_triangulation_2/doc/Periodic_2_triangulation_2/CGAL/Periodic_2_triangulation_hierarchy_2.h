@@ -13,7 +13,7 @@ location queries.
 
 \cgalHeading{Parameters}
 
-It is templated by a parameter which must be instantiated by one of the \cgal periodic triangulation classes. <I>In the current
+It is templated by a parameter which must be instantiated with one of the \cgal periodic triangulation classes. <I>In the current
 implementation, only `Periodic_2_Delaunay_triangulation_2` is
 supported for `PTr`.</I>
 

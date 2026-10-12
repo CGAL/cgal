@@ -58,11 +58,9 @@ public:
   void write_vertex(const double x, const double y, const double z) {
     out() << "v " << IO::oformat(x) << ' ' << IO::oformat(y) << ' ' << IO::oformat(z) << '\n';
   }
-
   void write_vertex_normal(const double x, const double y, const double z) {
     out() << "vn " << IO::oformat(x) << ' ' << IO::oformat(y) << ' ' << IO::oformat(z) << '\n';
   }
-
   void write_vertex_color(const double, const double, const double) { }
   void write_vertex_texture(const double, const double) { }
 
@@ -75,6 +73,16 @@ public:
   void write_facet_vertex_index(std::size_t idx) { out() << ' ' << idx+1; }
   void write_face_color(const double, const double, const double) { }
   void write_facet_end() { out() << '\n'; }
+
+  void write_polyline_header(std::size_t polylines) {
+    if (polylines > 0) {
+      out() << "\n# " << polylines << " polylines\n";
+      out() << "# ------------------------------------------\n\n";
+    }
+  }
+  void write_polyline_begin(std::size_t /*size*/) { out() << "l"; }
+  void write_polyline_vertex_index(std::size_t idx) { out() << ' ' << idx+1; }
+  void write_polyline_end() { out() << '\n'; }
 };
 
 } // namespace CGAL

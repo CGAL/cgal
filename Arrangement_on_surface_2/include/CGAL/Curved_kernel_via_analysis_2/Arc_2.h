@@ -1376,7 +1376,7 @@ public:
         Point_container tmp;
         _intersection_points(
                 *dynamic_cast< const Kernel_arc_2*>(this), cv2,
-                back_inserter(tmp)
+                std::back_inserter(tmp)
         );
         typename Point_container::const_iterator it;
         for (it = tmp.begin(); it != tmp.end(); it++) {
@@ -1417,7 +1417,7 @@ public:
         Point_container tmp;
         _intersection_points(
                 *dynamic_cast< const Kernel_arc_2*>(this), cv2,
-                back_inserter(tmp)
+                std::back_inserter(tmp)
         );
         typename Point_container::const_reverse_iterator it;
         for(it = tmp.rbegin(); it != tmp.rend(); it++) {

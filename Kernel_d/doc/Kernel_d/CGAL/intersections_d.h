@@ -155,8 +155,6 @@ void foo(Segment_d<R> seg, Line_d<R> lin)
 
 \sa `do_intersect`
 \sa `Kernel_d::Intersect_d`
-\sa <a HREF="https://www.boost.org/doc/libs/release/libs/optional/index.html">`std::optional`</a>
-\sa <a HREF="https://www.boost.org/doc/html/variant.html">`std::variant`</a>
 
 */
 decltype(auto)

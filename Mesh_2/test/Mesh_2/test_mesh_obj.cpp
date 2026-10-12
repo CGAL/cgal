@@ -47,7 +47,7 @@ struct Obj_data {
   std::vector<std::vector<std::size_t> > polylines;
 };
 
-static auto save_obj(const Obj_data& data, const std::string& filename)
+static auto save_obj(const Obj_data& data, const std::filesystem::path& filename)
 {
   struct Stream_plus_unused {
     std::ofstream out;
@@ -153,13 +153,9 @@ static int run_mesh(const Obj_data& data)
   return EXIT_SUCCESS;
 }
 
-static std::string join_path(const std::string& dir, const std::string& name)
+static std::filesystem::path join_path(const std::filesystem::path& dir, const std::filesystem::path& name)
 {
-  if(dir.empty())
-    return name;
-  if(dir.back() == '/')
-    return dir + name;
-  return dir + "/" + name;
+  return dir / name;
 }
 
 int main(int argc, char*argv[] )
@@ -167,7 +163,7 @@ int main(int argc, char*argv[] )
   std::cerr.precision(17);
   std::cout.precision(17);
   std::clog.precision(17);
-  std::ifstream in(argc > 1 ? argv[1] : "mini.obj");
+  std::ifstream in(argc > 1 ? argv[1] : CGAL::data_file_path("2d_segments/mini.obj"));
   if(!in)
     return EXIT_FAILURE;
 
@@ -196,7 +192,7 @@ int main(int argc, char*argv[] )
   std::string output_dir = "./";
 
   auto save_fn = [&](const Obj_data& d, const std::string& prefix) {
-    const std::string filename = join_path(output_dir, "bisect_" + prefix + ".obj");
+    const std::filesystem::path filename = join_path(output_dir, "bisect_" + prefix + ".obj");
     save_obj(d, filename);
   };
 

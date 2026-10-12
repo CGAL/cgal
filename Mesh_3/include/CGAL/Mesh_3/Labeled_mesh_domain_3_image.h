@@ -117,10 +117,10 @@ create_gray_image_mesh_domain(const CGAL::Image_3& image_, const CGAL_NP_CLASS& 
   auto iso_value_ = choose_parameter(get_parameter(np, internal_np::iso_value_param), 0);
   auto value_outside_ = choose_parameter(get_parameter(np, internal_np::voxel_value), 0);
   FT relative_error_bound_ = choose_parameter(get_parameter(np, internal_np::error_bound), FT(1e-3));
-  auto image_values_to_subdomain_indices_ = choose_parameter(get_parameter(np, internal_np::image_subdomain_index), Null_functor());
+  auto image_values_to_subdomain_indices_ = choose_parameter<Null_functor>(get_parameter(np, internal_np::image_subdomain_index));
   CGAL::Random* p_rng_ = choose_parameter(get_parameter(np, internal_np::rng), nullptr);
-  auto null_subdomain_index_ = choose_parameter(get_parameter(np, internal_np::null_subdomain_index_param), Null_functor());
-  auto construct_surface_patch_index_ = choose_parameter(get_parameter(np, internal_np::surface_patch_index), Null_functor());
+  auto null_subdomain_index_ = choose_parameter<Null_functor>(get_parameter(np, internal_np::null_subdomain_index_param));
+  auto construct_surface_patch_index_ = choose_parameter<Null_functor>(get_parameter(np, internal_np::surface_patch_index));
   namespace p = CGAL::parameters;
   return Labeled_mesh_domain_3
             (p::function = create_gray_image_wrapper
@@ -151,10 +151,10 @@ create_labeled_image_mesh_domain(const CGAL::Image_3& image_, const CGAL_NP_CLAS
   auto iso_value_ = choose_parameter(get_parameter(np, internal_np::iso_value_param), 0);
   auto value_outside_ = choose_parameter(get_parameter(np, internal_np::voxel_value), 0);
   FT relative_error_bound_ = choose_parameter(get_parameter(np, internal_np::error_bound), FT(1e-3));
-  auto image_values_to_subdomain_indices_ = choose_parameter(get_parameter(np, internal_np::image_subdomain_index), Null_functor());
+  auto image_values_to_subdomain_indices_ = choose_parameter<Null_functor>(get_parameter(np, internal_np::image_subdomain_index));
   CGAL::Random* p_rng_ = choose_parameter(get_parameter(np, internal_np::rng), nullptr);
-  auto null_subdomain_index_ = choose_parameter(get_parameter(np, internal_np::null_subdomain_index_param), Null_functor());
-  auto construct_surface_patch_index_ = choose_parameter(get_parameter(np, internal_np::surface_patch_index), Null_functor());
+  auto null_subdomain_index_ = choose_parameter<Null_functor>(get_parameter(np, internal_np::null_subdomain_index_param));
+  auto construct_surface_patch_index_ = choose_parameter<Null_functor>(get_parameter(np, internal_np::surface_patch_index));
 
   using Image_ref_type = typename internal_np::Lookup_named_param_def<internal_np::weights_param_t,
                                                                       CGAL_NP_CLASS,
@@ -225,10 +225,10 @@ create_gray_image_mesh_domain(const CGAL_NP_CLASS& np)
   auto iso_value_ = choose_parameter(get_parameter(np, internal_np::iso_value_param), 0);
   auto value_outside_ = choose_parameter(get_parameter(np, internal_np::voxel_value), 0);
   FT relative_error_bound_ = choose_parameter(get_parameter(np, internal_np::error_bound), FT(1e-3));
-  auto image_values_to_subdomain_indices_ = choose_parameter(get_parameter(np, internal_np::image_subdomain_index), Null_functor());
+  auto image_values_to_subdomain_indices_ = choose_parameter<Null_functor>(get_parameter(np, internal_np::image_subdomain_index));
   CGAL::Random* p_rng_ = choose_parameter(get_parameter(np, internal_np::rng), nullptr);
-  auto null_subdomain_index_ = choose_parameter(get_parameter(np, internal_np::null_subdomain_index_param), Null_functor());
-  auto construct_surface_patch_index_ = choose_parameter(get_parameter(np, internal_np::surface_patch_index), Null_functor());
+  auto null_subdomain_index_ = choose_parameter<Null_functor>(get_parameter(np, internal_np::null_subdomain_index_param));
+  auto construct_surface_patch_index_ = choose_parameter<Null_functor>(get_parameter(np, internal_np::surface_patch_index));
   namespace p = CGAL::parameters;
   return Labeled_mesh_domain_3
           (p::function = create_gray_image_wrapper

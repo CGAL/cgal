@@ -28,7 +28,7 @@ The 2D Apollonius graph class of \cgal is designed to compute the
 dual of the <I>Apollonius diagram</I> or, as it is also known, the
 <I>Additively weighted Voronoi diagram</I>. The algorithm that has been
 implemented is dynamic, which means that we can perform insertions and
-deletions on line. The corresponding \cgal class is called
+deletions online. The corresponding \cgal class is called
 `Apollonius_graph_2<ApolloniusGraphTraits_2,ApolloniusGraphDataStructure_2>`
 and will be discussed in more detail in the sequel. The interested
 reader may want to refer to the paper by Karavelas and Yvinec
@@ -152,7 +152,7 @@ hidden.
 
 Hidden circles pose an additional
 difficulty to our algorithm and software design. Since we allow
-circles to be inserted and deleted at wish, it is possible that a
+circles to be inserted and deleted at will, it is possible that a
 circle that was hidden at some point in time, may become visible at
 a later point in time; for example this can happen if we delete the
 circle that hides it. For this purpose we store hidden circles and
@@ -285,7 +285,7 @@ The `Vertex_conflict_2` predicate. The left-most, bottom-most and top-most circl
 What we essentially want to compute when we construct incrementally a
 Voronoi diagram, is whether the object to be inserted destroys an edge
 of the Voronoi diagram or not. In the case of points this is really
-easy and it amounts to the well known <I>incircle</I> test.
+easy and it amounts to the well-known <I>incircle</I> test.
 In the case
 of circles the situation is more complicated. We can have six possible
 outcomes as to what portion of an edge of the Apollonius diagram the

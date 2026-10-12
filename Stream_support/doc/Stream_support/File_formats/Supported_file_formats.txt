@@ -240,7 +240,7 @@ A precise specification of those formats is available <a href="https://paulbourk
   </tr>
   <tr>
     <td>Any point range</td>
-    <td>\link PkgStreamSupportIoFuncsPLY CGAL::IO::read_PLY(const std::string&, PointRange&)\endlink</td>
+    <td>\link PkgStreamSupportIoFuncsPLY CGAL::IO::read_PLY(const std::string&, PointOutputIterator)\endlink</td>
   </tr>
   <tr>
     <td>Polygon Soup</td>
@@ -299,7 +299,7 @@ A precise specification of those formats is available
   </tr>
   <tr>
     <td>Any point range</td>
-    <td>\link PkgStreamSupportIoFuncsLAS CGAL::IO::read_LAS(const std::string&, PointRange&)\endlink</td>
+    <td>\link PkgStreamSupportIoFuncsLAS CGAL::IO::read_LAS(const std::string&, PointOutputIterator)\endlink</td>
   </tr>
   <tr>
     <td rowspan="2">Output</td>
@@ -332,7 +332,7 @@ of its coordinates and other properties. Only coordinates and normals are curren
   </tr>
   <tr>
     <td>Any point range</td>
-    <td>\link PkgStreamSupportIoFuncsXYZ CGAL::IO::read_XYZ(const std::string&, PointRange&)\endlink</td>
+    <td>\link PkgStreamSupportIoFuncsXYZ CGAL::IO::read_XYZ(const std::string&, PointOutputIterator&)\endlink</td>
   </tr>
   <tr>
     <td rowspan="2">Output</td>
@@ -556,6 +556,8 @@ The following \cgal data structures can be exported into the `.mesh` file format
 - `CGAL::Conforming_constrained_Delaunay_triangulation_3`, using the function
   \link CGAL::IO::write_MEDIT(std::ostream &os, const CGAL::Conforming_constrained_Delaunay_triangulation_3< Traits, Tr > &ccdt, const NamedParameters& np) `CGAL::IO::write_MEDIT()` \endlink.
 
+The following function enables to read into a tetrahedron soup
+- \link CGAL::IO::read_MEDIT(std::istream&, PointRange&, CellRange&, std::vector<int>&,bool) `CGAL::IO::read_MEDIT()` \endlink
 
 \section IOStreamTetgen Tetgen File Format
 

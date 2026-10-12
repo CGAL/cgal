@@ -6,7 +6,7 @@ permissions:
   contents: read
 
 jobs:
-  test:
+  cmake:
     if: github.repository == 'CGAL/cgal' || github.event_name != 'push'
     runs-on: ubuntu-latest
     name: test (with_qt=${{ matrix.with_qt }})${{ case(matrix.from_release_tarball, ' (from tarball)', '')}}
@@ -36,3 +36,20 @@ jobs:
     - name: run CGAL CMake testsuite
       run: |
         ctest --test-dir build -L Installation -j $(getconf _NPROCESSORS_ONLN) --output-on-failure
+
+  cmake-quiet:
+    if: github.repository == 'CGAL/cgal' || github.event_name != 'push'
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v6
+    - name: install dependencies
+      run: sudo apt-get install -y libboost-dev libboost-program-options-dev libmpfr-dev libeigen3-dev
+    - name: ensure find_package quiet mode is honored
+      run: |
+        set -e
+        cmake -DCMAKE_INSTALL_PREFIX=/tmp/install -DCMAKE_BUILD_TYPE=Release -B build .
+        cmake --build build --target install
+        mkdir quiet && cd quiet
+        echo -e "cmake_minimum_required(VERSION 3.18)\nproject(quiet)\nfind_package(CGAL CONFIG REQUIRED QUIET)\n" > CMakeLists.txt
+        cmake -DCGAL_DIR=/tmp/install/lib/cmake/CGAL -DCMAKE_BUILD_TYPE=Release . | tee stdout.txt
+        test "$(wc -l < stdout.txt)" -le 20

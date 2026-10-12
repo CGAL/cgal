@@ -2,14 +2,17 @@
 
 #include <cassert>
 #include <cstddef>
-#include <list>
+#include <iostream>
+#include <ostream>
 #include <vector>
 #include <type_traits>
 
 #include <boost/iterator/filter_iterator.hpp>
 
+#include <CGAL/Default.h>
 #include <CGAL/Compact_container.h>
 #include <CGAL/Random.h>
+#include <CGAL/Time_stamper.h>
 
 #include <CGAL/tags.h>
 #include <CGAL/use.h>
@@ -51,7 +54,7 @@ struct Node_1
   }
   ///@}
   int m_erase_counter;
-  std::size_t time_stamp_ = std::size_t(-2);
+  std::size_t time_stamp_ = CGAL::Time_stamper<void>::invalid_time_stamp;
 };
 
 class Node_2

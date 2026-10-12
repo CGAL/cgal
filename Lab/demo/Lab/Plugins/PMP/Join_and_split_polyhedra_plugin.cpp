@@ -217,7 +217,7 @@ void CGAL_Lab_join_and_split_polyhedra_plugin::on_actionColorConnectedComponents
       item->computeItemColorVectorAutomatically(true);
       item->invalidateOpenGLBuffers();
       item->setProperty("NbPatchIds", nb_patch_ids);
-      scene->itemChanged(item); // @todo emits
+      scene->itemChanged(item);
     }
     else
     {
@@ -247,8 +247,6 @@ void CGAL_Lab_join_and_split_polyhedra_plugin::on_actionColorConnectedComponents
           fccmap(static_cast<unsigned>(num_faces(pmesh)),fim);
         boost::property_map<FaceGraph, CGAL::face_patch_id_t<int> >::type pid
           = get(CGAL::face_patch_id_t<int>(), pmesh);
-
-        std::cout << "color CC" << std::endl;
 
         int nb_patch_ids = PMP::connected_components(pmesh
                                                      , fccmap

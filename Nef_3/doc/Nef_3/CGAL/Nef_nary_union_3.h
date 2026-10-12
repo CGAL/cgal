@@ -20,7 +20,7 @@ polyhedra in a sorted way and add them one by one to `Nef_nary_union_3`.
 
 
 */
-template< typename Nef_polyhedron_3 >
+template< typename NefPolyhedron_3 >
 class Nef_nary_union_3 {
 public:
 
