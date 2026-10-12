@@ -79,7 +79,6 @@ public:
   }
 
   virtual std::vector<uint4> const& getIndices() const {
-#pragma message("ToDo: Does this work with garbage collection?")
     if (indices.empty()) {
       indices.reserve(faces(mesh).size() * 3);
       for (const auto& f : faces(mesh)) {

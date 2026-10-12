@@ -2,14 +2,16 @@ cmake_minimum_required(VERSION 3.12...3.31)
 project(Sphere_packing_Examples)
 
 find_package(CGAL REQUIRED)
-#find_package(ProtoSphere)
-
-# Allow the user to specify the path to ProtoSphere's include directory
-set(ProtoSphere_INCLUDE_DIR "" CACHE PATH "Path to ProtoSphere include directory")
-
-# Allow the user to specify the path to ProtoSphere's library directory
-set(ProtoSphere_LIBRARY "" CACHE FILEPATH "Path to ProtoSphere library file (e.g. libProtoSphereExtended.a or ProtoSphereExtended.lib)")
+find_package(ProtoSphere)
+include(CGAL_ProtoSphere_support)
 
 create_single_source_cgal_program("sphere_packing.cpp")
-target_link_libraries(sphere_packing PRIVATE ${ProtoSphere_LIBRARY} )
-target_include_directories(sphere_packing PRIVATE ${ProtoSphere_INCLUDE_DIR} )
+target_link_libraries(sphere_packing PRIVATE CGAL::ProtoSphere_support )
+
+# Windows: copy the ProtoSphere DLL (Debug or Release, matching the build) next to the executable
+if(WIN32)
+  add_custom_command(TARGET sphere_packing POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_FILE:ProtoSphere::ProtoSphereExtended>
+            $<TARGET_FILE_DIR:sphere_packing>)
+endif()
