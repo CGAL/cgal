@@ -629,7 +629,7 @@ bool read_MEDIT(std::istream& is,
  *     \cgalParamDescription{a const reference wrapper of a container of integers that will be written by this function.
  *                           It must have the same size as `tetrahedra`, and each element in the container is a value associated to the tetrahedron at the same position.}
  *     \cgalParamType{a `std::reference_wrapper` to a model of `SequenceContainer` with an integer type as  value type.}
- *     \cgalParamDefault{corners are not written}
+ *     \cgalParamDefault{The value `0` is written for each tetrahedron}
  *   \cgalParamNEnd
  *
  * \cgalNamedParamsEnd
