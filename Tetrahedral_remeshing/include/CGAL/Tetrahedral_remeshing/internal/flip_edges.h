@@ -205,6 +205,11 @@ Sliver_removal_result flip_3_to_2(typename C3t3::Edge& edge,
   }
   else if (criterion == AVERAGE_ANGLE_BASED)
   {
+    auto min_dihedral_angle = [](auto&& ...args) {
+      auto angle = CGAL::Tetrahedral_remeshing::min_dihedral_angle(std::forward<decltype(args)>(args)...);
+      return to_double(exact(angle));
+    };
+
     //Current worst dihedral angle
     double average_min_dh = min_dihedral_angle(tr, ch0);
     average_min_dh += min_dihedral_angle(tr, ch1);

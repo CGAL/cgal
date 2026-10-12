@@ -529,9 +529,9 @@ bool edges_form_a_sharp_angle(const EdgesVector& incident_edges,
   CGAL_assertion(shared_vertex != v2);
   CGAL_assertion(v1 != v2);
 
-  const double angle = CGAL::approximate_angle(point(v1->point()),
-                                               point(shared_vertex->point()),
-                                               point(v2->point()));
+  const auto angle = CGAL::approximate_angle(point(v1->point()),
+                                             point(shared_vertex->point()),
+                                             point(v2->point()));
   return angle < angle_bound;
 }
 

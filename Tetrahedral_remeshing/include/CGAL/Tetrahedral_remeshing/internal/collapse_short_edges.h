@@ -618,10 +618,10 @@ bool collapse_preserves_surface_star(const typename C3t3::Edge& edge,
     if(do_opp)
       n_after_collapse = opp(n_after_collapse);
 
-    const double dotref = product(reference_normal, n_after_collapse);
+    const auto dotref = product(reference_normal, n_after_collapse);
     if(dotref < 0)
       return false;
-    const double dot = product(n_before_collapse, n_after_collapse);
+    const auto dot = product(n_before_collapse, n_after_collapse);
     if(dot < 0)
       return false;
 
