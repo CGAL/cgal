@@ -109,7 +109,6 @@ void smooth_Steiner_vertices_in_volume(CDT_3& cdt,
                                        const double bbox_max_span,
                                        const bool remesh)
 {
-  using Cell_handle = typename CDT_3::Cell_handle;
   using Vertex_handle = typename CDT_3::Vertex_handle;
 
   std::cout << "#Negative tetrahedra before Steiner smoothing: " << count_negative_tetrahedra(cdt) << std::endl;
