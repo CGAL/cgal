@@ -409,11 +409,9 @@ int main(int argc, char* [])
   std::clog.precision(17);
   std::cout.precision(17);
 
-  auto old_clog_buf = std::clog.rdbuf();
-  std::basic_filebuf<char> empty_filebuf;
   if(argc < 2) {
     // silence clog output
-    std::clog.rdbuf(&empty_filebuf);
+    std::clog.setstate(std::ios_base::failbit);
   }
 
   bool ok = true;
@@ -478,7 +476,6 @@ int main(int argc, char* [])
     std::cout << "Some tests failed\n";
     return EXIT_FAILURE;
   }
-  std::clog.rdbuf(old_clog_buf);
 }
 
 bool test(const DT& dt,
