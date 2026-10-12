@@ -653,11 +653,8 @@ bool write_MEDIT(std::ostream& os,
   using parameters::get_parameter_reference;
   using parameters::is_default_parameter;
 
-  using Point_3 = typename PointRange::value_type;
-
   if(!os)
     return false;
-
 
   std::vector<int> default_ridges, default_corners;
   std::vector<int> default_tetrahedra_ref, default_triangles_ref, default_edges_ref, default_vertices_ref;
@@ -691,7 +688,6 @@ bool write_MEDIT(std::ostream& os,
 
   using Vertices_ref = typename internal_np::Lookup_named_param_def<internal_np::vertices_ref_t, CGAL_NP_CLASS, std::vector<int>>::reference;
   Vertices_ref vertices_ref = choose_parameter(get_parameter_reference(np, internal_np::vertices_ref), default_vertices_ref);
-
 
   constexpr bool is_tetrahedra_ref_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::tetrahedra_ref_t>::value;
   constexpr bool is_triangles_ref_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::triangles_ref_t>::value;

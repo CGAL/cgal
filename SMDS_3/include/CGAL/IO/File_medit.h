@@ -516,7 +516,7 @@ bool build_triangulation_from_file(std::istream& is,
   }
 
   boost::unordered_map<Facet, Surface_patch_index> border_facets;
-  border_facets.reserve(facet_indices.size());
+  border_facets.reserve(facets.size());
 
   bool has_negative_surface_patch_ids = false;
   Surface_patch_index max_surface_patch_id{0};
@@ -526,7 +526,7 @@ bool build_triangulation_from_file(std::istream& is,
     if (facet_refs[i] < 0)
       has_negative_surface_patch_ids=true;
     max_surface_patch_id=(std::max)(max_surface_patch_id, facet_refs[i]);
-    border_facets.emplace(facet[i], facet_refs[i]);
+    border_facets.emplace(facets[i], facet_refs[i]);
   }
 
   if(has_negative_surface_patch_ids)
