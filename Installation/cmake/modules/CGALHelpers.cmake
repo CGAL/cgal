@@ -10,7 +10,6 @@ function(process_CGAL_subdirectory entry subdir type_name)
   endif()
 
   message("-- Configuring ${subdir} in ${subdir}/${ENTRY_DIR_NAME}")
-  list(APPEND CMAKE_MESSAGE_INDENT "  ")
 
   set(source_dir "")
   if(EXISTS ${entry}/CMakeLists.txt)
@@ -38,7 +37,6 @@ function(process_CGAL_subdirectory entry subdir type_name)
     add_subdirectory( "${source_dir}" "${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}" EXCLUDE_FROM_ALL)
     list(POP_BACK CMAKE_MESSAGE_INDENT)
   endif()
-  list(POP_BACK CMAKE_MESSAGE_INDENT)
 endfunction()
 
 function(CGAL_handle_subdirectories subdir_name plural_name)
