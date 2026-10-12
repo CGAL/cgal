@@ -524,7 +524,8 @@ bool build_triangulation_from_file(std::istream& is,
   {
     if (facet_refs[i] < 0)
       has_negative_surface_patch_ids=true;
-    max_surface_patch_id=(std::max)(max_surface_patch_id, facet_refs[i]);
+      if(facet_refs[i] > max_surface_patch_id)
+        max_surface_patch_id= facet_refs[i];
     border_facets.emplace(facets[i], facet_refs[i]);
   }
 
