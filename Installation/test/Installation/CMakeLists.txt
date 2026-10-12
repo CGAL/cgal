@@ -72,6 +72,12 @@ if("$ENV{INIT_FILE}" STREQUAL "")
 else()
   set(INIT_FILE "-C$ENV{INIT_FILE}")
 endif()
+if(CMAKE_BUILD_TYPE)
+  set(CGAL_TESTSUITE_BUILD_TYPE "${CMAKE_BUILD_TYPE}")
+else()
+  set(CGAL_TESTSUITE_BUILD_TYPE Release)
+endif()
+
 ##
 # Function: CGAL_installation_test_find_package_version
 # Adds a test for finding the CGAL package with a specific version mode.
@@ -106,12 +112,12 @@ function(CGAL_installation_test_find_package_version mode)
 
   add_test(NAME "test_find_package_version_${mode}"
     COMMAND ${CMAKE_COMMAND} ${INIT_FILE}
-                             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON
+                             -DCMAKE_BUILD_TYPE=${CGAL_TESTSUITE_BUILD_TYPE} -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON
                              -S "${CMAKE_CURRENT_BINARY_DIR}/test_find_package_version_${mode}"
                              -B "${CMAKE_CURRENT_BINARY_DIR}/build-test_find_package_version_${mode}"
     )
   cgal_setup_test_properties("test_find_package_version_${mode}")
-  if(ARGN STREQUAL "FAIL")
+  if(FAIL)
     set_tests_properties("test_find_package_version_${mode}" PROPERTIES WILL_FAIL TRUE)
   endif()
 endfunction()
@@ -127,10 +133,10 @@ find_package(CGAL COMPONENTS Qt6)
 
 #If ctest is ran from a global config, CGAL_SOURCE_DIR exists, but from Installation/test it doesn't. In that case, however, there is a CGAL_DIR.
 if(NOT CGAL_SOURCE_DIR)
-  if(NOT ENV{CGAL_RELEASE_DIR})
+  if("$ENV{CGAL_RELEASE_DIR}" STREQUAL "")
     set(CGAL_SOURCE_DIR "${CGAL_DIR}")
   else()
-    set(CGAL_SOURCE_DIR "${ENV{CGAL_RELEASE_DIR}}")
+    set(CGAL_SOURCE_DIR "$ENV{CGAL_RELEASE_DIR}")
   endif()
 endif()
 string(REGEX REPLACE "/cygdrive/c/" "C:/" CGAL_SOURCE_DIR "${CGAL_SOURCE_DIR}")
@@ -175,7 +181,7 @@ function(CGAL_add_config_file_test test_name src_dir cgal_config_path)
   add_test(NAME "config___${test_name}"
     COMMAND ${CMAKE_COMMAND} ${GENERATOR} ${INIT_FILE}
                              -DCGAL_ENABLE_TESTING=ON
-                             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON
+                             -DCMAKE_BUILD_TYPE=${CGAL_TESTSUITE_BUILD_TYPE} -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON
                              "-DCGAL_DIR=${cgal_dir}"
                              "-DCGAL_GIVEN_DIR=${cgal_dir}"
                              -S "${src_dir}" -B "${build_dir}")
@@ -221,7 +227,7 @@ endfunction()
 ##
 function(test_CGAL_installation test_name install_prefix build_dir)
   add_test(NAME "config___${test_name}"
-    COMMAND ${CMAKE_COMMAND} ${GENERATOR} ${INIT_FILE} "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON"
+    COMMAND ${CMAKE_COMMAND} ${GENERATOR} ${INIT_FILE} -DCMAKE_BUILD_TYPE=${CGAL_TESTSUITE_BUILD_TYPE} -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON
                                                        "-DCMAKE_INSTALL_PREFIX=${install_prefix}"
                                                        "-DCGAL_INSTALL_LIB_DIR=lib"
                                                        -S "${CGAL_SOURCE_DIR}" -B "${build_dir}")
