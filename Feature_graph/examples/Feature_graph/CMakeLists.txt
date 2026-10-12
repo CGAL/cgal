@@ -27,14 +27,29 @@ if(NOT TARGET CGAL::Eigen3_support)
   return()
 endif()
 
+# Use DGtal
+find_package(DGtal QUIET)
+if(DGtal_FOUND AND NOT TARGET CGAL::DGTAL_support)
+  add_library(CGAL::DGTAL_support INTERFACE IMPORTED)
+  set_target_properties(CGAL::DGTAL_support PROPERTIES
+  	INTERFACE_COMPILE_DEFINITIONS "CGAL_DGTAL_ENABLED"
+    INTERFACE_INCLUDE_DIRECTORIES "${DGTAL_INCLUDE_DIRS}"
+    INTERFACE_LINK_LIBRARIES "${DGTAL_LIBRARIES}")
+  set(CGAL_Feature_graph_USE_DGTAL ON CACHE BOOL "CGAL_Feature_graph_USE_DGTAL uses DGtal")
+endif()
+
 if(TARGET CGAL::CGAL_ImageIO)
 
   if(CGAL_ImageIO_USE_ZLIB)
 
-    create_single_source_cgal_program(
-      "feature_graph_from_segmented_image.cpp")
-    target_link_libraries(feature_graph_from_segmented_image
-                          PUBLIC CGAL::Eigen3_support)
+    if(CGAL_Feature_graph_USE_DGTAL)
+      create_single_source_cgal_program(
+        "feature_graph_from_segmented_image.cpp")
+      target_link_libraries(feature_graph_from_segmented_image
+                            PUBLIC CGAL::Eigen3_support CGAL::DGTAL_support)
+    else()
+      message(STATUS "NOTICE: The example feature_graph_from_segmented_image.cpp need CGAL_Feature_graph to be configured with DGtal support, and will not be compiled.")
+    endif()
   else()
     message(STATUS "NOTICE: The example feature_graph_from_segmented_image.cpp need CGAL_ImageIO to be configured with ZLIB support, and will not be compiled.")
   endif()

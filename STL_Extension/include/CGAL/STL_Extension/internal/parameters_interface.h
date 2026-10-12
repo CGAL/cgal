@@ -443,3 +443,7 @@ CGAL_add_named_parameter(with_plc_face_id_t, with_plc_face_id, with_plc_face_id)
 
 // List of named parameters used in the package 'Barycentric_coordinates_3'
 CGAL_add_named_parameter(computation_policy_t, computation_policy, computation_policy)
+
+// List of named parameters used in the package 'Feature_graph'
+CGAL_add_named_parameter(sharpness_estimator_t, sharpness_estimator, sharpness_estimator)
+CGAL_add_named_parameter(normal_estimator_t, normal_estimator, normal_estimator)
