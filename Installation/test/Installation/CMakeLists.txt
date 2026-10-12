@@ -48,9 +48,9 @@ if(WIN32 OR CMAKE_SYSTEM_NAME STREQUAL Windows)
   create_single_source_cgal_program(test_gmp_mpfr_dll.cpp)
   target_link_libraries(test_gmp_mpfr_dll PRIVATE version)
   string(RANDOM RDM_DIR)#5 random chars to avoid conflicts in parallel testsuites
-  set(WORKING_DIRS_PREFIX $ENV{TEMP}/${RDM_DIR})
+  set(WORKING_DIRS_PREFIX $ENV{TEMP}/CGAL_cmake_test_suite/${RDM_DIR})
 else()
-  set(WORKING_DIRS_PREFIX ${CMAKE_BINARY_DIR})
+  set(WORKING_DIRS_PREFIX ${CMAKE_BINARY_DIR}/CGAL_cmake_test_suite)
 endif()
 
 if(WITH_CGAL_Qt6)
@@ -142,11 +142,11 @@ endif()
 string(REGEX REPLACE "/cygdrive/c/" "C:/" CGAL_SOURCE_DIR "${CGAL_SOURCE_DIR}")
 
 file(MAKE_DIRECTORY "${WORKING_DIRS_PREFIX}/test_config_file")
-configure_file(test_configuration.cmake.in "${CMAKE_BINARY_DIR}/test_config_file/CMakeLists.txt" @ONLY)
+configure_file(test_configuration.cmake.in "${WORKING_DIRS_PREFIX}/test_config_file/CMakeLists.txt" @ONLY)
 
 if(CGAL_Qt6_FOUND)
   file(MAKE_DIRECTORY "${WORKING_DIRS_PREFIX}/test_config_file_qt")
-  configure_file(test_configuration_qt.cmake.in "${CMAKE_BINARY_DIR}/test_config_file_qt/CMakeLists.txt" @ONLY)
+  configure_file(test_configuration_qt.cmake.in "${WORKING_DIRS_PREFIX}/test_config_file_qt/CMakeLists.txt" @ONLY)
 endif()#CGAL_Qt6_FOUND
 
 if(EXISTS "${CGAL_SOURCE_DIR}/Installation/lib/cmake/CGAL/CGALConfig.cmake")
@@ -173,7 +173,7 @@ function(CGAL_add_config_file_test test_name src_dir cgal_config_path)
   endif()
   math(EXPR _counter "${_counter} + 1")
   set_property(GLOBAL PROPERTY CGAL_CONFIG_TEST_COUNTER "${_counter}")
-  set(build_dir "${WORKING_DIRS_PREFIX}/CGAL_cmake_test_suite/b${_counter}")
+  set(build_dir "${WORKING_DIRS_PREFIX}/b${_counter}")
   get_filename_component(cgal_dir "${cgal_config_path}" DIRECTORY)
   if(arg_TEST_EXAMPLES)
     set(extra_ctest_args -R terrain_with_info)
@@ -244,36 +244,36 @@ endfunction()
 
 CGAL_add_config_file_test(
   "CGAL_DIR=root_of_CGAL_source_tree"
-  "${CMAKE_BINARY_DIR}/test_config_file"
+  "${WORKING_DIRS_PREFIX}/test_config_file"
   "${CGAL_SOURCE_DIR}/CGALConfig.cmake"
 )
 
 CGAL_add_config_file_test(
   "CGAL_DIR=root_of_CGAL_source_tree_lib_cmake_CGAL"
-  "${CMAKE_BINARY_DIR}/test_config_file"
+  "${WORKING_DIRS_PREFIX}/test_config_file"
   "${CGAL_INSTALLATION_FILES_DIR}/lib/cmake/CGAL/CGALConfig.cmake"
 )
 
 # install cgal in the non standard place without Qt6
-get_filename_component(CORRECT_INSTALL_PATH "${WORKING_DIRS_PREFIX}/CGAL_cmake_test_suite/non_standard_install/dummy.txt" DIRECTORY)
+get_filename_component(CORRECT_INSTALL_PATH "${WORKING_DIRS_PREFIX}/non_standard_install/dummy.txt" DIRECTORY)
 test_CGAL_installation(
   non_standard_cgal_installation_directory
   "${CORRECT_INSTALL_PATH}"
-  "${WORKING_DIRS_PREFIX}/CGAL_cmake_test_suite/non_standard_build"
+  "${WORKING_DIRS_PREFIX}/non_standard_build"
 )
 
 #test CGAL_DIR=non standard place without cgal_qt
 CGAL_add_config_file_test(
   "CGAL_DIR=standard_installation_directory"
-  "${CMAKE_BINARY_DIR}/test_config_file"
-  "${WORKING_DIRS_PREFIX}/CGAL_cmake_test_suite/non_standard_build/CGALConfig.cmake"
+  "${WORKING_DIRS_PREFIX}/test_config_file"
+  "${WORKING_DIRS_PREFIX}/non_standard_build/CGALConfig.cmake"
   FIXTURES_REQUIRED non_standard_cgal_installation_directory
 )
 
 CGAL_add_config_file_test(
   "CGAL_DIR=non_standard_installation_directory_lib_cmake_CGAL"
-  "${CMAKE_BINARY_DIR}/test_config_file"
-  "${WORKING_DIRS_PREFIX}/CGAL_cmake_test_suite/non_standard_install/lib/cmake/CGAL/CGALConfig.cmake"
+  "${WORKING_DIRS_PREFIX}/test_config_file"
+  "${WORKING_DIRS_PREFIX}/non_standard_install/lib/cmake/CGAL/CGALConfig.cmake"
   FIXTURES_REQUIRED non_standard_cgal_installation_directory
 )
 
@@ -281,15 +281,15 @@ if(CGAL_Qt6_FOUND)
   #configure cgal for a non standard install with Qt6
   test_CGAL_installation(
     non_standard_cgal_installation_directory_with_qt
-    "${WORKING_DIRS_PREFIX}/CGAL_cmake_test_suite/non_standard_install_qt"
-    "${WORKING_DIRS_PREFIX}/CGAL_cmake_test_suite/non_standard_build_qt"
+    "${WORKING_DIRS_PREFIX}/non_standard_install_qt"
+    "${WORKING_DIRS_PREFIX}/non_standard_build_qt"
   )
 
   #test CGAL_DIR=non standard place with cgal_qt
   CGAL_add_config_file_test(
     "CGAL_DIR=non_standard_installation_directory_with_qt_lib_cmake_CGAL"
-    "${CMAKE_BINARY_DIR}/test_config_file_qt"
-    "${WORKING_DIRS_PREFIX}/CGAL_cmake_test_suite/non_standard_install_qt/lib/cmake/CGAL/CGALConfig.cmake"
+    "${WORKING_DIRS_PREFIX}/test_config_file_qt"
+    "${WORKING_DIRS_PREFIX}/non_standard_install_qt/lib/cmake/CGAL/CGALConfig.cmake"
     FIXTURES_REQUIRED non_standard_cgal_installation_directory_with_qt
   )
 endif()#CGAL_Qt6_FOUND
