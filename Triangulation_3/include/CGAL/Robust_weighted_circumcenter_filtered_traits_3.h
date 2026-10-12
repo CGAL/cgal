@@ -300,7 +300,7 @@ public:
         }
         else
         {
-          // We use power_side_of_power_sphere_3: it is static filtered and
+          // We use power_side_of_oriented_sphere_3: it is static filtered and
           // we know that p,q,r,s are positive oriented
           typename Kernel::Power_side_of_oriented_power_sphere_3 power_side_of_oriented_power_sphere =
             traits.power_side_of_oriented_power_sphere_3_object();

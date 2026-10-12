@@ -21,7 +21,7 @@ Given a field of a scalar values, an isosurface is defined as the locus of point
 has a given constant value; in other words, it is a level set.
 This constant value is referred to as the "isovalue", and, for well-behaved fields,
 the level set forms a surface.
-In the following, we shall refer to the the field of scalar values as the value field.
+In the following, we shall refer to the field of scalar values as the value field.
 "Isosurfacing", also known as "isosurface extraction" or "contouring", is the process of constructing
 the isosurface corresponding to a given value field and isovalue.
 %Isosurfacing is often needed for volume visualization and for the simulation of physical phenomena.

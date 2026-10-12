@@ -14,7 +14,7 @@
 
 #include <OpenMesh/Core/Mesh/TriMesh_ArrayKernelT.hh>
 #include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
-#define OPEN_MESH_CLASS OpenMesh::TriMesh_ArrayKernelT<K>
+#define CGAL_OPEN_MESH_CLASS OpenMesh::TriMesh_ArrayKernelT<K>
 #include <CGAL/boost/graph/properties_OpenMesh.h>
 
 #endif /* CGAL_PROPERTIES_TRIMESH_ARRAYKERNELT_H */

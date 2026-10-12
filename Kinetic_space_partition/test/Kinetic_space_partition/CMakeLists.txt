@@ -8,7 +8,7 @@ project(Kinetic_space_partition_Tests)
 find_package(CGAL REQUIRED)
 include(CGAL_CreateSingleSourceCGALProgram)
 
-find_package(Eigen3 3.1.0 REQUIRED)
+find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
 
 set(targets kinetic_3d_test_all issue_8624)

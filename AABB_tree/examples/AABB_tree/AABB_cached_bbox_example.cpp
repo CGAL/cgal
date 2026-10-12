@@ -20,14 +20,14 @@ typedef CGAL::Timer Timer;
 
 
 template <typename TriangleMesh>
-void triangle_mesh(std::string fname)
+void triangle_mesh(const std::filesystem::path& fname)
 {
   typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh> Primitive;
   typedef CGAL::AABB_traits_3<K, Primitive> Traits;
   typedef CGAL::AABB_tree<Traits> Tree;
 
   TriangleMesh tmesh;
-  if(!CGAL::IO::read_polygon_mesh(fname, tmesh) || CGAL::is_triangle_mesh(tmesh))
+  if(!CGAL::IO::read_polygon_mesh(fname, tmesh) || !CGAL::is_triangle_mesh(tmesh))
   {
     std::cerr << "Invalid input." << std::endl;
     return;
@@ -51,7 +51,7 @@ Bbox_3 bbox(boost::graph_traits<Surface_mesh>::face_descriptor fd,
   return res;
 }
 
-void surface_mesh_cache_bbox(std::string fname)
+void surface_mesh_cache_bbox(const std::filesystem::path& fname)
 {
   typedef boost::graph_traits<Surface_mesh>::face_descriptor face_descriptor;
   typedef Surface_mesh::Property_map<face_descriptor,Bbox_3> Bbox_pmap;

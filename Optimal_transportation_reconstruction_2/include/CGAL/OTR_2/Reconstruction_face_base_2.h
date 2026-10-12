@@ -16,8 +16,14 @@
 
 
 #include <CGAL/OTR_2/Cost.h>
+#include <CGAL/OTR_2/Sample.h>
+#include <CGAL/tags.h>
 #include <CGAL/Triangulation_face_base_2.h>
+#include <CGAL/Has_timestamp.h>
+#include <CGAL/Time_stamper.h>
 
+#include <cstddef>
+#include <utility>
 #include <vector>
 
 /// \cond SKIP_IN_MANUAL
@@ -61,6 +67,8 @@ private:
   int   m_plan[3];
 
   FT m_relevance[3];
+
+  std::size_t time_stamp_ = Time_stamper<void>::invalid_time_stamp;
 
 public:
   Reconstruction_face_base_2()
@@ -190,6 +198,18 @@ public:
     for (int i = 0; i < 3; ++i)
       clean_samples(i);
   }
+
+  /// For the determinism of Compact_container iterators
+  ///@{
+  typedef Tag_true Has_timestamp;
+
+  std::size_t time_stamp() const {
+    return time_stamp_;
+  }
+  void set_time_stamp(const std::size_t& ts) {
+    time_stamp_ = ts;
+  }
+  ///@}
 };
 
 //---------------STRUCT LESS FACE_HANDLE---------------------

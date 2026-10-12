@@ -37,12 +37,12 @@ init_with_hint(const X_monotone_curve_2& cv, Pl_result_type obj) {
   // associated with valid endpoints.
   m_cv = cv;
 
+  auto psx = m_geom_traits->parameter_space_in_x_2_object();
+  auto psy = m_geom_traits->parameter_space_in_y_2_object();
   if (m_geom_traits->is_closed_2_object()(m_cv, ARR_MIN_END)) {
     // The left endpoint is valid.
-    const Arr_parameter_space ps_x1 =
-      m_geom_traits->parameter_space_in_x_2_object()(m_cv, ARR_MIN_END);
-    const Arr_parameter_space ps_y1 =
-      m_geom_traits->parameter_space_in_y_2_object()(m_cv, ARR_MIN_END);
+    const Arr_parameter_space ps_x1 = psx(m_cv, ARR_MIN_END);
+    const Arr_parameter_space ps_y1 = psy(m_cv, ARR_MIN_END);
     m_has_left_pt = true;
     m_left_on_boundary = (ps_x1 != ARR_INTERIOR || ps_y1 != ARR_INTERIOR);
     m_left_pt = m_geom_traits->construct_min_vertex_2_object()(m_cv);
@@ -55,10 +55,8 @@ init_with_hint(const X_monotone_curve_2& cv, Pl_result_type obj) {
 
   if (m_geom_traits->is_closed_2_object()(m_cv, ARR_MAX_END)) {
     // The right endpoint is valid.
-    const Arr_parameter_space ps_x2 =
-      m_geom_traits->parameter_space_in_x_2_object()(m_cv, ARR_MAX_END);
-    const Arr_parameter_space ps_y2 =
-      m_geom_traits->parameter_space_in_y_2_object()(m_cv, ARR_MAX_END);
+    const Arr_parameter_space ps_x2 = psx(m_cv, ARR_MAX_END);
+    const Arr_parameter_space ps_y2 = psy(m_cv, ARR_MAX_END);
     m_has_right_pt = true;
     m_right_on_boundary = (ps_x2 != ARR_INTERIOR || ps_y2 != ARR_INTERIOR);
     m_right_pt = m_geom_traits->construct_max_vertex_2_object()(m_cv);
@@ -252,11 +250,12 @@ bool  Arrangement_zone_2<Arrangement, ZoneVisitor>::
 do_overlap_impl(const X_monotone_curve_2& cv1,
                 const X_monotone_curve_2& cv2,
                 const Point_2& p, Arr_not_all_sides_oblivious_tag) const {
-  typename Traits_adaptor_2::Compare_y_at_x_right_2 cmp_right =
-    m_geom_traits->compare_y_at_x_right_2_object();
+  auto cmp_right = m_geom_traits->compare_y_at_x_right_2_object();
+  auto psx = m_geom_traits->parameter_space_in_x_2_object();
+  auto psy = m_geom_traits->parameter_space_in_y_2_object();
 
-  auto psx1 = m_geom_traits->parameter_space_in_x_2_object()(cv1, ARR_MIN_END);
-  auto psy1 = m_geom_traits->parameter_space_in_y_2_object()(cv1, ARR_MIN_END);
+  auto psx1 = psx(cv1, ARR_MIN_END);
+  auto psy1 = psy(cv1, ARR_MIN_END);
 
   if ((psx1 == ARR_INTERIOR) && (psy1 == ARR_INTERIOR))
     return (cmp_right(cv1, cv2, p) == EQUAL);
@@ -265,8 +264,8 @@ do_overlap_impl(const X_monotone_curve_2& cv1,
   bool vertical2 = m_geom_traits->is_vertical_2_object()(cv2);
   if (vertical1 != vertical2) return false;
 
-  auto psx2 = m_geom_traits->parameter_space_in_x_2_object()(cv2, ARR_MIN_END);
-  auto psy2 = m_geom_traits->parameter_space_in_y_2_object()(cv2, ARR_MIN_END);
+  auto psx2 = psx(cv2, ARR_MIN_END);
+  auto psy2 = psy(cv2, ARR_MIN_END);
 
   // If, for example, both curves are vertical and the bottom boundary is
   // contracted, they may have different parameter space in x values.
@@ -277,8 +276,7 @@ do_overlap_impl(const X_monotone_curve_2& cv1,
     // left boundary, they completely lie on the left boundary and they overlap.
     if (vertical1) return true;
 
-    typename Traits_adaptor_2::Compare_y_near_boundary_2 cmp_near =
-      m_geom_traits->compare_y_near_boundary_2_object();
+    auto cmp_near = m_geom_traits->compare_y_near_boundary_2_object();
     return (cmp_near(cv1, cv2, ARR_MIN_END) == EQUAL);
   }
 
@@ -407,7 +405,7 @@ _direct_intersecting_edge_to_right(const X_monotone_curve_2& cv_ins,
 
   // Check whether the curve lies above of below the edge immediately to
   // the right of its left endpoint.
-  const Comparison_result  pos_res =
+  const Comparison_result pos_res =
     m_geom_traits->compare_y_at_x_right_2_object()(cv_ins, query_he->curve(),
                                                    cv_left_pt);
 
@@ -459,7 +457,7 @@ _direct_intersecting_edge_to_left(const X_monotone_curve_2& cv_ins,
   // Check whether the curve lies above of below the edge (we use the curve
   // position predicate, as we know they cruves do not overlap and intersect
   // only at the split point).
-  Comparison_result        pos_res =
+  Comparison_result pos_res =
       m_geom_traits->compare_y_position_2_object()(cv_ins, query_he->curve());
 
   if (pos_res == EQUAL) {
@@ -729,14 +727,14 @@ _is_to_left_impl(const Point_2& p, Halfedge_handle he,
 
   // Check the boundary conditions of the minimal end of the curve associated
   // with the given halfedge.
-  auto ps_in_x = m_geom_traits->parameter_space_in_x_2_object();
-  auto ps_x_min = ps_in_x(he->curve(), ARR_MIN_END);
+  auto psx = m_geom_traits->parameter_space_in_x_2_object();
+  auto ps_x_min = psx(he->curve(), ARR_MIN_END);
 
   // Any point is not to the left of the left boundary.
   if (ps_x_min == ARR_LEFT_BOUNDARY) return false;
 
-  auto ps_in_y = m_geom_traits->parameter_space_in_y_2_object();
-  auto ps_y_min = ps_in_y(he->curve(), ARR_MIN_END);
+  auto psy = m_geom_traits->parameter_space_in_y_2_object();
+  auto ps_y_min = psy(he->curve(), ARR_MIN_END);
   if (ps_y_min != ARR_INTERIOR) {
     // Check if p is to the left of the minimal curve-end:
     auto cmp_x = m_geom_traits->compare_x_point_curve_end_2_object();
@@ -766,16 +764,16 @@ _is_to_right_impl(const Point_2& p, Halfedge_handle he,
 
   // Check the boundary conditions of the maximal end of the curve associated
   // with the given halfedge.
-  auto ps_in_x = m_geom_traits->parameter_space_in_x_2_object();
-  auto ps_x_max = ps_in_x(he->curve(), ARR_MAX_END);
+  auto psx = m_geom_traits->parameter_space_in_x_2_object();
+  auto ps_x_max = psx(he->curve(), ARR_MAX_END);
 
   // Any point is not to the right of the right boundary.
   if (ps_x_max == ARR_RIGHT_BOUNDARY) return false;
   // Any interior point is to the right of the left boundary.
   if (ps_x_max == ARR_LEFT_BOUNDARY) return true;
 
-  auto ps_in_y = m_geom_traits->parameter_space_in_y_2_object();
-  auto ps_y_max = ps_in_y(he->curve(), ARR_MAX_END);
+  auto psy = m_geom_traits->parameter_space_in_y_2_object();
+  auto ps_y_max = psy(he->curve(), ARR_MAX_END);
   if (ps_y_max != ARR_INTERIOR) {
     // Check if p is to the right of the maximal curve-end:
     auto cmp_x = m_geom_traits->compare_x_point_curve_end_2_object();
@@ -788,6 +786,59 @@ _is_to_right_impl(const Point_2& p, Halfedge_handle he,
   auto v_right = (he->direction() == ARR_LEFT_TO_RIGHT) ?
     he->target() : he->source();
   return (m_geom_traits->compare_xy_2_object()(p, v_right->point()) == LARGER);
+}
+
+//! checks whether a point lies to the left of another point.
+template <typename Arrangement, typename ZoneVisitor>
+bool Arrangement_zone_2<Arrangement, ZoneVisitor>::
+is_to_left_impl(const Point_2& p1, Arr_parameter_space /* ps1 */,
+                const Point_2& p2, Arr_parameter_space /* ps2 */,
+                Arr_all_sides_oblivious_tag) const {
+  auto cmp_xy = m_geom_traits->compare_xy_2_object();
+  return (cmp_xy(p2, p1) == SMALLER);
+}
+
+//! checks whether a point lies to the left of another point.
+template <typename Arrangement, typename ZoneVisitor>
+bool Arrangement_zone_2<Arrangement, ZoneVisitor>::
+is_to_left_impl(const Point_2& p1, Arr_parameter_space /* ps1 */,
+                const Point_2& p2, Arr_parameter_space /* ps2 */,
+                Arr_has_identified_side_tag) const {
+  auto is_on_y_ident = m_geom_traits->is_on_y_identification_2_object();
+  if (is_on_y_ident(p1)) {
+    if (is_on_y_ident(p2)) {
+      auto cmp_y_on_boundary = m_geom_traits->compare_y_on_boundary_2_object();
+      return (cmp_y_on_boundary(p2, p1) == SMALLER);
+    }
+    return false;
+  }
+  if (is_on_y_ident(p2)) return true;
+  auto cmp_xy = m_geom_traits->compare_xy_2_object();
+  return (cmp_xy(p2, p1) == SMALLER);
+}
+
+//! checks whether a point lies to the left of another point.
+template <typename Arrangement, typename ZoneVisitor>
+bool Arrangement_zone_2<Arrangement, ZoneVisitor>::
+is_to_left_impl(const Point_2& p1, Arr_parameter_space ps1,
+                const Point_2& p2, Arr_parameter_space ps2,
+                Arr_boundary_cond_tag) const {
+  if (ps1 == ARR_LEFT_BOUNDARY) {
+    if (ps2 == ARR_LEFT_BOUNDARY) {
+      auto cmp_y_on_boundary = m_geom_traits->compare_y_on_boundary_2_object();
+      return (cmp_y_on_boundary(p2, p1) == SMALLER);
+    }
+    return false;
+  }
+  if (ps1 == ARR_RIGHT_BOUNDARY) {
+    if (ps2 == ARR_RIGHT_BOUNDARY) {
+      auto cmp_y_on_boundary = m_geom_traits->compare_y_on_boundary_2_object();
+      return (cmp_y_on_boundary(p2, p1) == SMALLER);
+    }
+    return true;
+  }
+  auto cmp_xy = m_geom_traits->compare_xy_2_object();
+  return (cmp_xy(p2, p1) == SMALLER);
 }
 
 //-----------------------------------------------------------------------------
@@ -866,11 +917,7 @@ _leftmost_intersection(Ccb_halfedge_circulator he_curr, bool on_boundary,
 
       // Found a simple intersection point. Check if it is the leftmost
       // intersection point so far.
-      if (! m_found_intersect ||
-          ((intersection_location != ARR_RIGHT_BOUNDARY) &&
-           ((leftmost_location == ARR_RIGHT_BOUNDARY) ||
-            compare_xy(ip, m_intersect_p) == SMALLER)))
-      {
+      if (! m_found_intersect || is_to_left(m_intersect_p, leftmost_location, ip, intersection_location)) {
         // Store the leftmost intersection point and the halfedge handle.
         m_intersect_p = ip;
         m_ip_multiplicity = int_p->second;
@@ -1034,9 +1081,14 @@ _zone_in_face(Face_handle face, bool on_boundary) {
 
     // Set m_cv to be the remaining portion.
     m_has_left_pt = true;
-    m_left_on_boundary = false;
     m_left_pt = m_intersect_p;
     m_cv = m_sub_cv2;
+
+    auto psx = m_geom_traits->parameter_space_in_x_2_object();
+    auto psy = m_geom_traits->parameter_space_in_y_2_object();
+    auto ps_x = psx(m_left_pt);
+    auto ps_y = psy(m_left_pt);
+    m_left_on_boundary = (ps_x != ARR_INTERIOR || ps_y != ARR_INTERIOR);
   }
 
   const X_monotone_curve_2* p_orig_curve = nullptr;
@@ -1220,11 +1272,9 @@ bool Arrangement_zone_2<Arrangement, ZoneVisitor>::_zone_in_overlap() {
 #endif
 
   // Obtain some geometry-traits functors.
-  typename Traits_adaptor_2::Equal_2 equal = m_geom_traits->equal_2_object();
-  typename Traits_adaptor_2::Is_closed_2 is_closed =
-    m_geom_traits->is_closed_2_object();
-  typename Traits_adaptor_2::Construct_max_vertex_2 ctr_max_vertex =
-    m_geom_traits->construct_max_vertex_2_object();
+  auto equal = m_geom_traits->equal_2_object();
+  auto is_closed = m_geom_traits->is_closed_2_object();
+  auto ctr_max_vertex = m_geom_traits->construct_max_vertex_2_object();
 
   // Check if the right end of m_overlap_cv is bounded. If so, compute its
   // right endpoint.
@@ -1310,8 +1360,13 @@ bool Arrangement_zone_2<Arrangement, ZoneVisitor>::_zone_in_overlap() {
 
   // Set m_cv to be the remaining portion.
   m_has_left_pt = true;
-  m_left_on_boundary = false;
   m_left_pt = cv_right_pt;
+  auto psx = m_geom_traits->parameter_space_in_x_2_object();
+  auto psy = m_geom_traits->parameter_space_in_y_2_object();
+  auto ps_x = psx(m_left_pt);
+  auto ps_y = psy(m_left_pt);
+  m_left_on_boundary = (ps_x != ARR_INTERIOR || ps_y != ARR_INTERIOR);
+
   m_cv = m_sub_cv2;
 
   // Move to the remaining portion of the curve, whose left endpoint is the

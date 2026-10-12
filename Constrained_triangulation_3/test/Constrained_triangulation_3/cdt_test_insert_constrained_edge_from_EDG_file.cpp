@@ -1,6 +1,3 @@
-#if __has_include(<format>)
-#define CGAL_DEBUG_CDT_3 1
-#endif
 #define CGAL_TRIANGULATION_CHECK_EXPENSIVE 1
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
@@ -52,7 +49,7 @@ int main()
     assert(cdt.is_cell(vertices[1], vertices[2], vertices[3], vertices[4], c));
 
     Delaunay::Cell_handle ch;
-    int li, lj;
+    [[maybe_unused]] int li, lj;
     assert(!cdt.is_edge(vertices[0], vertices[1], ch, li, lj));
     cdt.insert_constrained_edge(vertices[0], vertices[1]);
     cdt.insert_constrained_edge(vertices[5], vertices[1]);
@@ -65,7 +62,7 @@ int main()
 
   enum Dim { DIM_2D, DIM_3D };
 
-  auto test2 = [](std::string filename, Dim dim = DIM_3D) {
+  auto test2 = [](std::filesystem::path filename, Dim dim = DIM_3D) {
 #ifndef CGAL_TEST_CDT_3_USE_CDT
     CGAL::Conforming_Delaunay_triangulation_3<Delaunay> cdt;
 #else

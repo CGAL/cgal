@@ -862,7 +862,7 @@ void BiPoly<NT>::reverse() {
   }//reverse
 
   //replaceYwithX()
-  //   used used when the coeffX in BiPoly are constants,
+  //   used when the coeffX in BiPoly are constants,
   //   to get the corresponding univariate poly in X
   //   E.g., Y^2+2*Y+9 will be converted to X^2+2*X+9
 template <class NT>
@@ -1394,7 +1394,7 @@ cout <<"Number of roots at " << xCurr << " are " << numRoots<<endl;
 
 
 //Xintersections(C, D, vI):
-//  returns the list vI of x-ccordinates of possible intersection points.
+//  returns the list vI of x-coordinates of possible intersection points.
 //  Assumes that C & D are quasi-monic.(or generally aligned)
 template <class NT>
 void  Xintersections( Curve<NT>& P ,Curve<NT>& Q, BFVecInterval &vI){

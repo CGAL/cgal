@@ -16,11 +16,11 @@ int main()
 
 #include <cassert>
 #include <cstddef>
-#include <list>
 #include <vector>
 #include <CGAL/Compact_container.h>
 #include <CGAL/Concurrent_compact_container.h>
 #include <CGAL/Random.h>
+#include <CGAL/Time_stamper.h>
 #include <CGAL/use.h>
 #define TBB_PREVIEW_GLOBAL_CONTROL 1
 # include <tbb/global_control.h>
@@ -44,7 +44,7 @@ struct Node_1
   void set_time_stamp(const std::size_t& ts) {
     time_stamp_ = ts;
   }
-  std::size_t time_stamp_ = std::size_t(-2);
+  std::size_t time_stamp_ = CGAL::Time_stamper<void>::invalid_time_stamp;
 };
 
 class Node_2

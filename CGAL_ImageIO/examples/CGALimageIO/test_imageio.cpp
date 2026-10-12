@@ -8,7 +8,7 @@ int main(int argc, char** argv)
 {
   if(argc > 1)
   {
-    _image* image = ::_readImage(argv[1]);
+    CGAL::_image* image = CGAL::_readImage(argv[1]);
     if(image)
     {
       std::cerr
@@ -40,29 +40,29 @@ int main(int argc, char** argv)
         << "\n  " << image->imageFormat->realName
         << " (extension list: " << image->imageFormat->fileExtension << ")"
         << "\nvectors interlaced or not ("
-        << SHOWENUM(VM_INTERLACED) << ", "
-        << SHOWENUM(VM_NON_INTERLACED) << ", "
-        << SHOWENUM(VM_SCALAR) << ")"
+        << SHOWENUM(CGAL::VM_INTERLACED) << ", "
+        << SHOWENUM(CGAL::VM_NON_INTERLACED) << ", "
+        << SHOWENUM(CGAL::VM_SCALAR) << ")"
         << SHOW(vectMode)
         << "\nword kind ("
-        << SHOWENUM(WK_FIXED) << ", "
-        << SHOWENUM(WK_FLOAT) << ", "
-        << SHOWENUM(WK_UNKNOWN)
+        << SHOWENUM(CGAL::WK_FIXED) << ", "
+        << SHOWENUM(CGAL::WK_FLOAT) << ", "
+        << SHOWENUM(CGAL::WK_UNKNOWN)
         << ")"
         << SHOW(wordKind)
         << "\nword sign ("
-        << SHOWENUM(SGN_SIGNED) << ", "
-        << SHOWENUM(SGN_UNSIGNED) << ", "
-        << SHOWENUM(SGN_UNKNOWN)
+        << SHOWENUM(CGAL::SGN_SIGNED) << ", "
+        << SHOWENUM(CGAL::SGN_UNSIGNED) << ", "
+        << SHOWENUM(CGAL::SGN_UNKNOWN)
         << ")"
         << SHOW(sign)
         << "\n";
 
-      ::_freeImage(image);
+      CGAL::_freeImage(image);
     }
     else
       std::cerr << "\"" << argv[1] << "\" is not a supported file.\n";
   }
   else
-    ::printSupportedFileFormat();
+    CGAL::printSupportedFileFormat();
 }

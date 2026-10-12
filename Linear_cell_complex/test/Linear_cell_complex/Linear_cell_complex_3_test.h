@@ -15,7 +15,7 @@
 #include <CGAL/Combinatorial_map_operations.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/Polyhedron_3_to_lcc.h>
+#include <CGAL/import_face_graph_to_lcc.h>
 #include <CGAL/Triangulation_3_to_lcc.h>
 #include "Linear_cell_complex_2_test.h"
 #include <fstream>
@@ -977,7 +977,7 @@ bool test_LCC_3()
   lcc.template sew<3>(dh3, lcc.make_combinatorial_polygon(4));
   create_attributes_3(lcc);
 
-  // Create an hole in the face between the two cubes
+  // Create a hole in the face between the two cubes
   lcc.insert_cell_1_between_two_cells_2(lcc.template opposite<2>(lcc.next(lcc.next(dh1))),
                                         lcc.next(lcc.next(dh3)));
 
@@ -997,7 +997,7 @@ bool test_LCC_3()
     }
     in >> P;
 
-    CGAL::import_from_polyhedron_3<LCC>(lcc,P);
+    CGAL::import_face_graph_to_lcc(lcc, P);
     if ( !check_number_of_cells_3(lcc, 1539, 4434, 2894, 2, 2) )
       return false;
 
@@ -1029,7 +1029,7 @@ bool test_LCC_3()
     }
     T.insert ( std::istream_iterator < Point >(in),
                std::istream_iterator < Point >() );
-    CGAL::import_from_triangulation_3<LCC>(lcc,T);
+    CGAL::triangulation_3_to_lcc<LCC>(lcc,T);
     if ( !lcc.is_valid() )
       return false;
 

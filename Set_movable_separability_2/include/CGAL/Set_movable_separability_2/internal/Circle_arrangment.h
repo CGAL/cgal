@@ -38,7 +38,7 @@
  * depth 0,1,2+ where depth is the number of inserted open half-circles inserted
  * that covers this cell in addition this class contains some static functions
  * that are in this class inorder of sharing its typedefs all the circle is
- * always covered by some cell. there can't be an hole
+ * always covered by some cell. there can't be a hole
  */
 
 namespace CGAL {

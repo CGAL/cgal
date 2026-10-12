@@ -791,7 +791,7 @@ void test_2D_surface_mesh(const std::string fname, CGAL::Random& rnd)
 }
 
 template<typename K>
-void test_surface_mesh_3D(const std::string fname, CGAL::Random& rnd)
+void test_surface_mesh_3D(const std::filesystem::path& fname, CGAL::Random& rnd)
 {
   typedef typename K::Point_3                                 Point;
   typedef CGAL::Surface_mesh<Point>                           Mesh;
@@ -814,7 +814,7 @@ void test_surface_mesh_3D(const std::string fname, CGAL::Random& rnd)
 }
 
 template<typename K>
-void test_surface_mesh_projection(const std::string fname, CGAL::Random& rnd)
+void test_surface_mesh_projection(const std::filesystem::path& fname, CGAL::Random& rnd)
 {
   typedef typename K::Point_3                                       Point;
   typedef CGAL::Surface_mesh<Point>                                 Mesh;
@@ -846,7 +846,7 @@ void test_surface_mesh_projection(const std::string fname, CGAL::Random& rnd)
 }
 
 template<typename K>
-void test_polyhedron(const std::string fname, CGAL::Random& rnd)
+void test_polyhedron(const std::filesystem::path& fname, CGAL::Random& rnd)
 {
   typedef CGAL::Polyhedron_3<K>                               Polyhedron;
 
@@ -871,7 +871,7 @@ void test(CGAL::Random& rnd)
 //  test_2D_surface_mesh<K>("data/blobby_2D.off", rnd); // temporarily disabled, until Surface_mesh's IO is "fixed"
   test_surface_mesh_3D<K>(CGAL::data_file_path("meshes/mech-holes-shark.off"), rnd);
   test_surface_mesh_projection<K>("data/unit-grid.off", rnd);
-  test_polyhedron<K>("data-coref/elephant_split_2.off", rnd);
+  test_polyhedron<K>(CGAL::data_file_path("meshes/bull.off"), rnd);
 }
 
 int main()

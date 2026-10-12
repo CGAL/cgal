@@ -1,0 +1,2 @@
+Point no. 47: (-50 -74), Point no. 27: (-65 -29), Point no. 41: (-88 40), are collinear.
+Point no. 17: (65 -18), Point no. 44: (-25 -36), Point no. 48: (-100 -51), are collinear.

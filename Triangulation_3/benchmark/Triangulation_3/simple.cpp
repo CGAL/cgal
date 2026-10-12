@@ -21,7 +21,7 @@ typedef CGAL::Timer                                          Timer;
 
 int main(int argc, char* argv[])
 {
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("points_3/ocean_r.xyz");
+  const std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("points_3/ocean_r.xyz");
   std::ifstream in(filename.c_str());
   std::vector<Point_3> points;
   Point_3 p, q;

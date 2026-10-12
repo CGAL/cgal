@@ -1,7 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/property_map.h>
-#include <CGAL/IO/read_ply_points.h>
+#include <CGAL/IO/PLY.h>
 
 #include <utility>
 #include <vector>
@@ -23,14 +23,14 @@ typedef CGAL::Nth_of_tuple_property_map<3, PNCI> Intensity_map;
 
 int main(int argc, char*argv[])
 {
-  const std::string fname = (argc>1) ? argv[1] : CGAL::data_file_path("points_3/colors.ply");
+  const std::filesystem::path fname = (argc>1) ? argv[1] : CGAL::data_file_path("points_3/colors.ply");
 
   // Reads a .ply point set file with normal vectors and colors
   std::vector<PNCI> points; // store points
   std::ifstream in(fname);
   if(!CGAL::IO::read_PLY_with_properties(in, std::back_inserter(points),
-                                         CGAL::make_ply_point_reader(Point_map()),
-                                         std::make_pair(Intensity_map(), CGAL::PLY_property<int>("intensity")),
+                                         CGAL::IO::make_ply_point_reader(Point_map()),
+                                         std::make_pair(Intensity_map(), CGAL::IO::PLY_property<int>("intensity")),
                                          std::make_tuple(Color_map(),
                                                          CGAL::Construct_array(),
                                                          CGAL::IO::PLY_property<unsigned char>("red"),

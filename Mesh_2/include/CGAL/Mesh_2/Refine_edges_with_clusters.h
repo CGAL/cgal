@@ -16,10 +16,13 @@
 #include <CGAL/license/Mesh_2.h>
 
 
-#include <CGAL/Mesh_2/Refine_edges.h>
 #include <CGAL/Mesh_2/Clusters.h>
-#include <CGAL/utils.h>
+#include <CGAL/Mesh_2/Refine_edges.h>
+#include <CGAL/Mesher_level.h>
+#include <CGAL/Meshes/Triangulation_mesher_level_traits_2.h>
+#include <CGAL/number_type_config.h>
 #include <CGAL/number_utils.h>
+#include <CGAL/utils.h>
 
 namespace CGAL {
 
@@ -31,7 +34,7 @@ namespace Mesh_2 {
  *
  * \param Tr is the type of triangulation on which the level acts.
  * \param Is_locally_conform defines the locally conform criterion: Gabriel
- *        or Delaunay. It defaults to the Garbriel criterion.
+ *        or Delaunay. It defaults to the Gabriel criterion.
  * \param Container is the type of container. It defaults to a filtered
  *        queue of `Vertex_handle` pair (see `Filtered_queue_container`).
  */
@@ -91,14 +94,16 @@ public:
 
     this->va = edge.first->vertex(Tr::cw (edge.second));
     this->vb = edge.first->vertex(Tr::ccw(edge.second));
-#ifdef CGAL_MESH_2_DEBUG_REFINEMENT_POINTS
-    std::cerr << "refinement_point_impl("
-              << "#" << this->va->time_stamp() << ": " << this->va->point() << ", "
-              << "#" << this->vb->time_stamp() << ": " << this->vb->point() << ") = ";
-#endif // CGAL_MESH_2_DEBUG_BAD_FACES
 
-//     std::cerr << "refinement_point_impl\n" << this->va->point() << " / "
-//               << this->vb->point() << std::endl;
+    auto display_return_point = [&](const Point& p) {
+#ifdef CGAL_MESH_2_DEBUG_REFINEMENT_POINTS
+      std::cerr << "Refine_edges_with_clusters::refinement_point_impl(Edge: ("
+                << IO::oformat(this->va, With_point_tag{}) << ", "
+                << IO::oformat(this->vb, With_point_tag{}) << ") = "
+                << p << '\n';
+#endif // CGAL_MESH_2_DEBUG_REFINEMENT_POINTS
+      return p;
+    };
 
     va_has_a_cluster = false;
     vb_has_a_cluster = false;
@@ -112,48 +117,32 @@ public:
           va_has_a_cluster = true;
           vb_has_a_cluster = true;
 #ifdef CGAL_MESH_2_DEBUG_CLUSTERS
-          std::cerr << "midpoint(" << this->va->point()
-                    << " , " << this->vb->point() << ")\n";
+          std::cerr << "midpoint(" << IO::oformat(this->va, With_point_tag{})
+                    << " , " << IO::oformat(this->vb, With_point_tag{}) << ")\n";
 #endif // CGAL_MESH_2_DEBUG_CLUSTERS
-#ifdef CGAL_MESH_2_DEBUG_REFINEMENT_POINTS
-          auto p = midpoint(this->va->point(), this->vb->point());
-          std::cerr << p << '\n';
-          return p;
-#endif // CGAL_MESH_2_DEBUG_BAD_FACES
-          return midpoint(this->va->point(), this->vb->point());
-        }
-      else {
+          return display_return_point(
+              this->maybe_snap_to_existing_vertex(edge, midpoint(this->va->point(), this->vb->point())));
+      } else {
         // va only is a cluster
         va_has_a_cluster = true;
-#ifdef CGAL_MESH_2_DEBUG_REFINEMENT_POINTS
-        auto p = split_cluster_point(this->va,this->vb,ca);
-        std::cerr << p << '\n';
-        return p;
-#endif // CGAL_MESH_2_DEBUG_BAD_FACES
-        return split_cluster_point(this->va,this->vb,ca);
+        return display_return_point(
+            this->maybe_snap_to_existing_vertex(edge, split_cluster_point(this->va, this->vb, ca)));
       }
     } else
     if( clusters.get_cluster(this->vb,this->va,cb,cb_it) ){
       // vb only is a cluster
       vb_has_a_cluster = true;
-#ifdef CGAL_MESH_2_DEBUG_REFINEMENT_POINTS
-      auto p = split_cluster_point(this->vb,this->va,cb);
-      std::cerr << p << '\n';
-      return p;
-#endif // CGAL_MESH_2_DEBUG_BAD_FACES
-      return split_cluster_point(this->vb,this->va,cb);
-    }else{
+      return display_return_point(
+          this->maybe_snap_to_existing_vertex(edge, split_cluster_point(this->vb, this->va, cb)));
+    } else {
       // no cluster
+
 #ifdef CGAL_MESH_2_DEBUG_CLUSTERS
-      std::cerr << "midpoint(" << this->va->point()
-                << " , " << this->vb->point() << ")\n";
+      std::cerr << "midpoint(" << IO::oformat(this->va, With_point_tag{})
+                << " , " << IO::oformat(this->vb, With_point_tag{}) << ")\n";
 #endif // CGAL_MESH_2_DEBUG_CLUSTERS
-#ifdef CGAL_MESH_2_DEBUG_REFINEMENT_POINTS
-      auto p = midpoint(this->va->point(), this->vb->point());
-      std::cerr << p << '\n';
-      return p;
-#endif // CGAL_MESH_2_DEBUG_BAD_FACES
-      return midpoint(this->va->point(), this->vb->point());
+
+      return Super::refinement_point_impl(edge);
     }
   };
 
@@ -223,13 +212,13 @@ public:
 // What Shewchuk says:
 // - If the cluster is not reduced (all segments don't have the same
 // length as [v1,v2]), then split the edge
-// - Else, let rmin be the minimum insertion radius introduced by the
+// - Else, let next_sq_insertion_radius be the minimum insertion radius introduced by the
 // potential split, let T be the triangle whose circumcenter
 // encroaches [v1,v2] and let rg be the length of the shortest edge
-// of T. If rmin >= rg, then split the edge.
+// of T. If next_sq_insertion_radius >= rg, then split the edge.
 
               if( this->imperatively || !ca.is_reduced() ||
-                  ca.rmin >=  sq_r_of_p_parent)
+                  ca.next_sq_insertion_radius >=  sq_r_of_p_parent)
                 this->add_constrained_edge_to_be_conformed(v1,v2);
               else
                 status = CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED;
@@ -283,8 +272,8 @@ private:
     const Point& b = vb->point();
 
 #ifdef CGAL_MESH_2_DEBUG_CLUSTERS
-    std::cerr << "split_cluster_point(" << va->point()
-              << " , " << vb->point() << ")\n"
+    std::cerr << "split_cluster_point(" << IO::oformat(va, With_point_tag{})
+              << " , " << IO::oformat(vb, With_point_tag{}) << ")\n"
               << "  reduced: " << c.is_reduced() << "\nresult:  ";
 #endif // CGAL_MESH_2_DEBUG_CLUSTERS
     if( c.is_reduced() ) {

@@ -7,6 +7,7 @@
 #include <CGAL/Three/CGAL_Lab_io_plugin_interface.h>
 #include <CGAL/Surface_mesh/IO/PLY.h>
 #include <CGAL/Three/Three.h>
+#include <CGAL/use.h>
 
 #include <QInputDialog>
 #include <QApplication>
@@ -54,7 +55,7 @@ canLoad(QFileInfo) const {
 QList<Scene_item*>
 CGAL_Lab_ply_plugin::
 load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
-  std::ifstream in(fileinfo.filePath().toUtf8(), std::ios_base::binary);
+  std::ifstream in(fileinfo.filesystemFilePath(), std::ios_base::binary);
 
   if(!in)
     std::cerr << "Error!\n";
@@ -132,8 +133,9 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
     std::vector<CGAL::IO::Color> fcolors;
     std::vector<CGAL::IO::Color> vcolors;
 
-    if (!(CGAL::IO::read_PLY (in, points, polygons, fcolors, vcolors)))
+    if (!(CGAL::IO::read_PLY (in, points, polygons, comments, fcolors, vcolors)))
     {
+      CGAL_USE(comments);
       QApplication::restoreOverrideCursor();
       ok = false;
       return QList<Scene_item*>();
@@ -203,7 +205,7 @@ save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
   if (!ok)
     return false;
 
-  std::ofstream out(fileinfo.filePath().toUtf8().data(), std::ios::binary);
+  std::ofstream out(fileinfo.filesystemFilePath(), std::ios::binary);
   if (choice == tr("Binary"))
     CGAL::IO::set_binary_mode(out);
   else

@@ -43,7 +43,7 @@ void test_function_overload()
   }
 }
 
-void test_triangulated_cube(const std::string fname)
+void test_triangulated_cube(const std::filesystem::path& fname)
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
   typedef K::Point_3 Point_3;
@@ -72,7 +72,7 @@ void test_triangulated_cube(const std::string fname)
   assert(extreme_points.size() == 8);
 }
 
-void test_coplanar_points(const std::string fname)
+void test_coplanar_points(const std::filesystem::path& fname)
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
   typedef K::Point_3 Point_3;
@@ -201,7 +201,7 @@ void test_equal_points()
 }
 
 
-void test_extreme_vertices(const std::string fname)
+void test_extreme_vertices(const std::filesystem::path& fname)
 {
   std::ifstream input(fname);
   Polyhedron_3 P;
@@ -232,7 +232,7 @@ int main()
   test_3_points();
   test_up_to_3_extreme_points();
   test_3_collinear();
-  test_triangulated_cube("data/cube_meshed.off");
+  test_triangulated_cube(CGAL::data_file_path("meshes/cube_meshed.off"));
   test_coplanar_points("data/coplanar_points.xyz");
   test_equal_points();
   test_extreme_vertices(CGAL::data_file_path("meshes/cross.off"));

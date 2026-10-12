@@ -11,7 +11,7 @@ Currently it only supports the insertions of sites.
 \tparam Gt must be a model of `SegmentDelaunayGraphTraits_2`.
 
 \tparam St must be a model of `SegmentDelaunayGraphStorageTraits_2`.
-        By default, the storage traits is instantiated by `Segment_Delaunay_graph_storage_traits_2<Gt>`.
+        By default, the storage traits is instantiated with `Segment_Delaunay_graph_storage_traits_2<Gt>`.
 
 \tparam DS must be a model of `SegmentDelaunayGraphDataStructure_2` whose vertex and face are
         models of the concepts `SegmentDelaunayGraphVertexBase_2` and `TriangulationFaceBase_2`, respectively.

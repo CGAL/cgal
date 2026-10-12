@@ -16,8 +16,8 @@
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/IO/helpers.h>
-#include <CGAL/IO/read_off_points.h>
-#include <CGAL/IO/write_off_points.h>
+#include <CGAL/IO/OFF/read_off_points.h>
+#include <CGAL/IO/OFF/write_off_points.h>
 
 #include <fstream>
 #include <string>
@@ -84,7 +84,7 @@ bool read_OFF(std::istream& is,
   \return `true` if the reading was successful, `false` otherwise.
 */
 template <typename Point, typename Vector>
-bool read_OFF(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_set)
+bool read_OFF(const std::filesystem::path& fname, CGAL::Point_set_3<Point, Vector>& point_set)
 {
   std::ifstream is(fname);
   return read_OFF(is, point_set);
@@ -174,7 +174,7 @@ bool write_OFF(std::ostream& os,
   \return `true` if the writing was successful, `false` otherwise.
 */
 template <typename Point, typename Vector, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool write_OFF(const std::string& fname, const CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_NP_CLASS& np = parameters::default_values())
+bool write_OFF(const std::filesystem::path& fname, const CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   std::ofstream os(fname);
   return write_OFF(os, point_set, np);

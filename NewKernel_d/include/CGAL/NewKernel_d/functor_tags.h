@@ -282,6 +282,7 @@ namespace CGAL {
         CGAL_DECL_PREDICATE(Less_lexicographically);
         CGAL_DECL_PREDICATE(Less_or_equal_lexicographically);
         CGAL_DECL_PREDICATE(Equal_points);
+        CGAL_DECL_PREDICATE(Equal_vectors);
         CGAL_DECL_PREDICATE(Has_on_positive_side);
         CGAL_DECL_PREDICATE_(Orientation); // duplicate with the type
         CGAL_DECL_PREDICATE_(Oriented_side); // duplicate with the type

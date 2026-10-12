@@ -28,6 +28,7 @@
 #include <set>
 #include <cstdlib>
 #include <string>
+#include <filesystem>
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
@@ -75,7 +76,7 @@ class CGAL_IMAGEIO_EXPORT Image_3
       if(!own_the_data && image != 0) {
         image->data = 0;
       }
-      ::_freeImage(image);
+      _freeImage(image);
     }
   };
 public:
@@ -158,7 +159,7 @@ public:
               const std::size_t j,
               const std::size_t k) const
   {
-    return ::evaluate(image(),i,j,k);
+    return evaluate(image(),i,j,k);
   }
 
   bool is_valid() const
@@ -170,12 +171,17 @@ public:
 
   bool read(const char* file)
   {
-    return private_read(::_readImage(file));
+    return private_read(_readImage(file));
   }
 
   bool read(const std::string& file)
   {
     return read(file.c_str());
+  }
+
+  bool read(const std::filesystem::path& file)
+  {
+    return read(file.string().c_str());
   }
 
   bool read_raw(const char* file,
@@ -191,7 +197,7 @@ public:
                 SIGN sign = SGN_UNSIGNED
                 )
   {
-    return private_read(::_readImage_raw(file,
+    return private_read(_readImage_raw(file,
                                          rx,ry,rz,
                                          vx,vy,vz,offset,
                                          wdim, wk, sign));

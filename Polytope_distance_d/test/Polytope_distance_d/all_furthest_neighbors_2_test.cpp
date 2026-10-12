@@ -78,7 +78,7 @@ int main()
                            neighbors2.begin()));
   } // for (i = 0..4)
 
-  // try also once with a random-acccess iterator:
+  // try also once with a random-access iterator:
   int n = 222;
   // generate random convex polygon:
   Polygon_2 p;

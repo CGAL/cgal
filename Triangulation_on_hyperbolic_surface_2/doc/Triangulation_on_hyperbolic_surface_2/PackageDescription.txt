@@ -29,7 +29,7 @@
 \cgalPkgDependsOn{\ref PkgCombinatorialMaps}
 \cgalPkgBib{cgal:ddpt-thss}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{2D Triangulations on Hyperbolic Surfaces,nofilefornow.zip}
+\cgalPkgDemo{2D Triangulations on Hyperbolic Surfaces,triangulation_on_hyperbolic_surface_2.zip}
 \cgalPkgShortInfoEnd
 
 \cgalPkgDescriptionEnd

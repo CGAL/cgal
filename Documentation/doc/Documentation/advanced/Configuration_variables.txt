@@ -244,27 +244,6 @@ Similar variables exist for \rs3.
 | `RS3_LIB_DIR` | Idem | Environment |
 | `RS3_LIBRARIES` | Full pathname of the compiled \rs3 library | CMake |
 
-
-\subsection installation_ntl NTL Library
-
-Some polynomial computations in \cgal's algebraic kernel
-are speed up when \ntl is available.
-As the algebraic kernel is not compiled as a part of the \cgal
-library, this library is not detected nor configured at installation time.
-
-CMake will try to find \ntl in the standard header and library
-directories. When it is not automatically detected, the locations of the
-headers and library files must be specified using environment variables.
-
-| Variable             | Description           | Type        |
-| :-                   | :-                    | :-             |
-| `NTL_DIR` | Directory of \ntl default installation | Environment |
-| `NTL_INCLUDE_DIR` | Directory containing the `NTL/ZZX.h` file | CMake |
-| `NTL_INC_DIR` | Idem | Environment |
-| `NTL_LIBRARIES_DIR` | Directory containing the compiled \ntl library | CMake |
-| `NTL_LIB_DIR` | Idem | Environment |
-| `NTL_LIBRARIES` | Full pathname of the compiled \ntl library | CMake |
-
 \subsection installation_eigen Eigen Library
 
 \eigen is a header-only template library.
@@ -366,29 +345,5 @@ If GLPK is not automatically found, the following variables must be set:
 | :-                   | :-                    | :-             |
 | `GLPK_INCLUDE_DIR` | Directory containing the file `glpk.h` | CMake |
 | `GLPK_LIBRARIES` | Full pathname of the compiled GLPK library | CMake |
-
-\section installation_compiler_workarounds Compiler Workarounds
-
-A number of boolean flags are used to workaround compiler bugs and
-limitations. They all start with the prefix `CGAL_CFG`. These
-flags are used to work around compiler bugs and limitations.
-
-For each installation a file <TT><CGAL/compiler_config.h></TT>
-is defined, with the correct
-settings of all flags. This file is generated automatically by CMake,
-and it is located in the `include` directory of where you run
-CMake. For an in-source configuration this means
-`CGAL-\cgalReleaseNumber``/include`.
-
-The test programs used to generate the `compiler_config.h`
-file can be found in `config/testfiles`.
-Both
-`compiler_config.h` and the test programs contain a short
-description of the problem. In case of trouble with one of the
-`CGAL_CFG` flags, it is a good idea to take a look at it.
-
-The file `CGAL/compiler_config.h` is included from
-`<CGAL/config.h>`.
-which is included by all \cgal header files.
 
 */

@@ -48,7 +48,7 @@ private:
 
   // this is only used when we fall back to probabilistic planes for the discontinuous edges,
   // the actual triangle quadric calculation only uses the normal variance
-  static constexpr FT position_variance_factor = 1;
+  static constexpr FT position_variance_factor = 0.1;
 
   Face_variance_map m_face_variance_map;
 
@@ -60,20 +60,35 @@ public:
       : m_face_variance_map(fvm)
   { }
 
+  template<class VertexPointMap>
   Probabilistic_triangle_quadric_calculator(TriangleMesh& tmesh,
+                                            VertexPointMap vpm,
                                             std::enable_if_t<std::is_same<Face_variance_map, Default_FVM>::value >* = nullptr)
   {
     // try to initialize the face variance map using the estimated variance
     // parameters are constants defined for this class
     FT variance, discard_position;
-    std::tie(variance, discard_position) =
-      estimate_variances(tmesh, GeomTraits(), default_variance_unit, position_variance_factor);
+    if constexpr (std::is_same_v<VertexPointMap, Default>)
+      std::tie(variance, discard_position) =
+        estimate_variances(tmesh, get(CGAL::vertex_point, tmesh), GeomTraits(), default_variance_unit, position_variance_factor);
+    else
+      std::tie(variance, discard_position) =
+        estimate_variances(tmesh, vpm, GeomTraits(), default_variance_unit, position_variance_factor);
 
     // see probabilistic plane quadrics
     m_face_variance_map = Default_FVM { variance };
   }
 
 public:
+  template <typename VertexPointMap>
+  Mat_4 construct_quadric_from_vertex(typename boost::graph_traits<TriangleMesh>::vertex_descriptor /*v*/,
+                                      const TriangleMesh& /*tmesh*/,
+                                      const VertexPointMap /*point_map*/,
+                                      const GeomTraits& /*gt*/) const
+  {
+    return Mat_4::Zero();
+  }
+
   // we don't have a sensible way to construct a triangle quadric
   // from an edge, so we fall back to probabilistic plane quadrics here
   template<typename VertexPointMap>
@@ -141,9 +156,11 @@ public:
 
 public:
   // Only available if the quadric calculator is using the default (constant) variance property map
+  template <class VertexPointMap = Default>
   GarlandHeckbert_probabilistic_triangle_policies(TriangleMesh& tmesh,
+                                                  VertexPointMap vpm = VertexPointMap(),
                                                   const FT dm = FT(100))
-    : Base(tmesh, Quadric_calculator(tmesh), dm)
+    : Base(tmesh, Quadric_calculator(tmesh, vpm), dm)
   { }
 
   template <typename FVM>

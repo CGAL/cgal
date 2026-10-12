@@ -19,7 +19,7 @@ the dimension of \f$ p\f$.
 int dimension(const Kernel_d::Point_d& p);
 
 /*!
-returns the ith homogeneous coordinate of \f$ p\f$.
+returns the i-th homogeneous coordinate of \f$ p\f$.
 
 \pre `0 <= i <= dimension(p)`.
 */
@@ -27,7 +27,7 @@ Kernel_d::RT homogeneous(const Kernel_d::Point_d& p,
 int i);
 
 /*!
-returns the ith %Cartesian coordinate of \f$ p\f$.
+returns the i-th %Cartesian coordinate of \f$ p\f$.
 
 \pre `0 <= i < dimension(p)`.
 */

@@ -105,11 +105,12 @@ There are several member functions allowing to insert specific configurations of
 
 There are two functions allowing to build a linear cell complex from two other \cgal data types:
 <UL>
-<LI>\link ::import_from_triangulation_3 `import_from_triangulation_3(lcc,atr)`\endlink: adds in `lcc` all the tetrahedra present in `atr`, a \link CGAL::Triangulation_3 `Triangulation_3`\endlink;
-<LI>\link ::import_from_polyhedron_3 `import_from_polyhedron_3(lcc,ap)`\endlink: adds in `lcc` all the cells present in `ap`, a `Polyhedron_3`.
+
+<LI>\link CGAL::triangulation_3_to_lcc `triangulation_3_to_lcc(lcc,atr)`\endlink: adds in `lcc` all the tetrahedra present in `atr`, a \link CGAL::Triangulation_3 `Triangulation_3`\endlink;
+<LI>\link CGAL::import_face_graph_to_lcc `import_face_graph_to_lcc(lcc, ap)`\endlink: adds in `lcc` all the cells present in `ap`, a face graph such as `Polyhedron_3` or `Surface_mesh`.
 </UL>
 
-Lastly, the function \link ::import_from_plane_graph `import_from_plane_graph(lcc,ais)`\endlink adds in `lcc` all the cells reconstructed from the planar graph read in `ais`, a `std::istream` (see the  \link ::import_from_plane_graph `reference manual`\endlink for the file format).
+Lastly, the function \link CGAL::read_plane_graph_in_lcc `read_plane_graph_in_lcc(lcc,ais)`\endlink adds in `lcc` all the cells reconstructed from the planar graph read in `ais`, a `std::istream` (see the \link CGAL::read_plane_graph_in_lcc `reference manual`\endlink for the file format).
 
 \subsection Linear_cell_complexModificationOperations Modification Operations
 \anchor ssecmodifop
@@ -148,6 +149,16 @@ A utility class `Linear_cell_complex_incremental_builder_3` helps in creating 2D
 from a list of points followed by a list of facets that are represented as indices into the point list.
 Note that, compared to `Polyhedron_incremental_builder_3` it has only absolute indexing and no rollback
 mechanism.
+
+\subsection Linear_cell_complexHexmeshing Hexahedral Two-refinement
+
+A function `generate_hexahedral_mesh_using_two_refinement()` outputs a hexahedral grid created by the method described in \cgalCite{cgal:owen2017template-based}, a two-refinement algorithm followed by a smoothing.
+Given a surface mesh supplied as any model of `FaceListGraph` (e.g., `Polyhedron_3`), it generates a `Linear_cell_complex_for_combinatorial_map` grid in which the regions near the intersections with the input mesh are finely subdivided.
+It then applies Laplacian smoothing to drive the 3-cell shapes toward more cube-like hexahedra.
+
+\cgalFigureBegin{fig_dragon_summary,dragon_summary.png}
+Example of hexahedral two-refinement for <a href="https://graphics.stanford.edu/data/3Dscanrep/">Stanford dragon</a>. <B>Left</B>: Initial mesh. <B>Middle</B>: Result of the hexahedral 2-refinement. <B>Right</B>: Cross-section of the result of the smoothing.
+\cgalFigureEnd
 
 \section Linear_cell_complexExamples Examples
 
@@ -280,7 +291,7 @@ The following example shows the incremental builder.
 
 \subsection Linear_cell_complexInsert Insert an Edge Between Two Different Faces
 
-The following example shows the use of \link GenericMap::insert_cell_1_between_two_cells_2 `insert_cell_1_between_two_cells_2`\endlink operation that inserts an edge between two different faces, thus creating an hole in the first face.
+The following example shows the use of \link GenericMap::insert_cell_1_between_two_cells_2 `insert_cell_1_between_two_cells_2`\endlink operation that inserts an edge between two different faces, thus creating a hole in the first face.
 
 \cgalExample{Linear_cell_complex/linear_cell_complex_3_insert.cpp}
 
@@ -288,9 +299,30 @@ The following example shows the use of \link GenericMap::insert_cell_1_between_t
 Result of the run of the linear_cell_complex_3_insert program. A window shows the 3D cube where one face has a hole.
 \cgalFigureEnd
 
+\subsection Linear_cell_complexHexaMeshing Hexahedral Mesh Refinement and Smoothing
+
+The following example shows the use of the `generate_hexahedral_mesh_using_two_refinement()` function that creates a hexahedral LCC grid for a given surface mesh.
+
+\cgalExample{Linear_cell_complex/hexmeshing_basic.cpp}
+
+\cgalFigureBegin{fig_hexmeshing,hexmeshing.png}
+Result of the run of the hexmeshing_basic program. A window shows the 3D grid refined for the Bunny surface mesh and smoothed.
+\cgalFigureEnd
+
+\subsection Linear_cell_complexWriteVTK Writing a Linear Cell Complex to a VTK File
+\anchor ssecLCCWriteVtK
+
+This example loads a 3D linear cell complex from a `.3map` file (using the `operator>>`). It computes for each 3-cell (volume) the number of incident vertices (0-cells), stores these values in a `std::vector<std::size_t>`, and writes the result to a `.vtk` file using `CGAL::IO::write_VTK()`, with the computed values as scalars for each volume.
+
+\cgalExample{Linear_cell_complex/linear_cell_complex_3_vtk_io.cpp}
+
+\cgalFigureBegin{fig_lcc_export_vtk,lcc-export-vtk.png}
+Visualization of the VTK file generated by the `linear_cell_complex_3_vtk_io` program, using Paraview. Each volume is colored depending on its number of vertices.
+\cgalFigureEnd
+
 \section Linear_cell_complexDesign Design and Implementation History
 
-This package was developed by Guillaume Damiand, with the help of Andreas Fabri, S&eacute;bastien Loriot and Laurent Rineau. Monique Teillaud and Bernd G&auml;rtner contributed to the manual.
+This package was developed by Guillaume Damiand, with the help of Andreas Fabri, S&eacute;bastien Loriot, Laurent Rineau, Th&eacute;o B&eacute;nard and Soichiro Yamazaki. Monique Teillaud and Bernd G&auml;rtner contributed to the manual.
 
 */
 } /* namespace CGAL */

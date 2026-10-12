@@ -6,6 +6,7 @@ project(Surface_mesh_simplification_Tests)
 
 find_package(CGAL REQUIRED)
 
+create_single_source_cgal_program("issue_8213.cpp")
 create_single_source_cgal_program("edge_collapse_topology.cpp")
 create_single_source_cgal_program("test_edge_collapse_bounded_distance.cpp")
 create_single_source_cgal_program("test_edge_collapse_Envelope.cpp")
@@ -14,11 +15,19 @@ create_single_source_cgal_program("test_edge_profile_link.cpp")
 create_single_source_cgal_program("test_edge_deprecated_stop_predicates.cpp")
 create_single_source_cgal_program("test_edge_collapse_stability.cpp")
 
-find_package(Eigen3 3.1.0 QUIET) #(3.1.0 or greater)
+find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
+
 if(TARGET CGAL::Eigen3_support)
-  create_single_source_cgal_program("edge_collapse_garland_heckbert_variations.cpp")
-  target_link_libraries(edge_collapse_garland_heckbert_variations PRIVATE CGAL::Eigen3_support)
+  add_executable(edge_collapse_garland_heckbert_variations_sm "edge_collapse_garland_heckbert_variations.cpp")
+  target_link_libraries(edge_collapse_garland_heckbert_variations_sm PRIVATE CGAL::CGAL CGAL::Eigen3_support)
+
+  add_executable(edge_collapse_garland_heckbert_variations_poly "edge_collapse_garland_heckbert_variations.cpp")
+  target_compile_definitions(edge_collapse_garland_heckbert_variations_poly PRIVATE -DUSE_POLYHEDRON)
+  target_link_libraries(edge_collapse_garland_heckbert_variations_poly PRIVATE CGAL::CGAL CGAL::Eigen3_support)
+
+  cgal_add_test(edge_collapse_garland_heckbert_variations_poly)
+  cgal_add_test(edge_collapse_garland_heckbert_variations_sm)
 else()
   message(STATUS "NOTICE: Garland-Heckbert polices require the Eigen library, which has not been found; related examples will not be compiled.")
 endif()

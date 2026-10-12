@@ -67,7 +67,7 @@ distance between `b` and `p`.
 FT transformed_distance(Query_item b, Point_d p) const;
 
 /*!
-Returns the transformed value of of `d`.
+Returns the transformed value of `d`.
 */
 FT transformed_distance(FT d) const;
 

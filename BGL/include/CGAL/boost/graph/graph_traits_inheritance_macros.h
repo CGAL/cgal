@@ -67,23 +67,8 @@ template <CGAL_GRAPH_TRAITS_INHERITANCE_TEMPLATE_PARAMS, typename CGAL_XX_YATP> 
 struct property_map<CGAL_GRAPH_TRAITS_INHERITANCE_CLASS_NAME, DTAG<CGAL_XX_YATP> > \
   : property_map<CGAL_GRAPH_TRAITS_INHERITANCE_BASE_CLASS_NAME, DTAG<CGAL_XX_YATP> > \
 {};\
-} /* boost namespace */\
-\
-namespace CGAL { \
-template <CGAL_GRAPH_TRAITS_INHERITANCE_TEMPLATE_PARAMS, typename CGAL_XX_YATP>\
-typename boost::property_map<CGAL_GRAPH_TRAITS_INHERITANCE_CLASS_NAME, DTAG<CGAL_XX_YATP> >::type \
-get(DTAG<CGAL_XX_YATP> t, CGAL_GRAPH_TRAITS_INHERITANCE_CLASS_NAME& g, const CGAL_XX_YATP& default_value = CGAL_XX_YATP()) \
-{ \
-  return get(t, static_cast<CGAL_GRAPH_TRAITS_INHERITANCE_BASE_CLASS_NAME&>(g), default_value); \
-} \
-\
-template <CGAL_GRAPH_TRAITS_INHERITANCE_TEMPLATE_PARAMS, typename CGAL_XX_YATP>\
-typename boost::property_map<CGAL_GRAPH_TRAITS_INHERITANCE_CLASS_NAME, DTAG<CGAL_XX_YATP> >::const_type \
-get(DTAG<CGAL_XX_YATP> t, const CGAL_GRAPH_TRAITS_INHERITANCE_CLASS_NAME& g, const CGAL_XX_YATP& default_value = CGAL_XX_YATP()) \
-{ \
-  return get(t, static_cast<const CGAL_GRAPH_TRAITS_INHERITANCE_BASE_CLASS_NAME&>(g), default_value); \
-}\
-} //CGAL namespace
+} /* boost namespace */
+
 
 CGAL_PM_DT_SPEC(CGAL::dynamic_vertex_property_t)
 CGAL_PM_DT_SPEC(CGAL::dynamic_halfedge_property_t)
@@ -94,11 +79,30 @@ CGAL_PM_DT_SPEC(CGAL::dynamic_edge_property_t)
 
 namespace CGAL {
 
+template <CGAL_GRAPH_TRAITS_INHERITANCE_TEMPLATE_PARAMS,
+          typename Dynamic_property_tag,
+          typename = std::enable_if_t<is_dynamic_property_tag<Dynamic_property_tag>()>,
+          typename ...Default_value_args>
+auto
+get(Dynamic_property_tag t, CGAL_GRAPH_TRAITS_INHERITANCE_CLASS_NAME& g, Default_value_args&&... default_value_args)
+{
+  return get(t, static_cast<CGAL_GRAPH_TRAITS_INHERITANCE_BASE_CLASS_NAME&>(g), default_value_args...);
+}
+
+template <CGAL_GRAPH_TRAITS_INHERITANCE_TEMPLATE_PARAMS,
+          typename Dynamic_property_tag,
+          typename = std::enable_if_t<is_dynamic_property_tag<Dynamic_property_tag>()>,
+          typename ...Default_value_args>
+auto
+get(Dynamic_property_tag t, const CGAL_GRAPH_TRAITS_INHERITANCE_CLASS_NAME& g, Default_value_args&&... default_value_args)
+{
+  return get(t, static_cast<const CGAL_GRAPH_TRAITS_INHERITANCE_BASE_CLASS_NAME&>(g), default_value_args...);
+}
+
 template <CGAL_GRAPH_TRAITS_INHERITANCE_TEMPLATE_PARAMS, typename CGAL_XX_YATP>
 struct graph_has_property<CGAL_GRAPH_TRAITS_INHERITANCE_CLASS_NAME, CGAL_XX_YATP> :
   public CGAL::graph_has_property<CGAL_GRAPH_TRAITS_INHERITANCE_BASE_CLASS_NAME, CGAL_XX_YATP>
 {};
-
 
 } // CGAL namespace
 
@@ -126,23 +130,8 @@ template <typename CGAL_XX_YATP> \
 struct property_map<CGAL_GRAPH_TRAITS_INHERITANCE_CLASS_NAME, DTAG<CGAL_XX_YATP> > \
   : property_map<CGAL_GRAPH_TRAITS_INHERITANCE_BASE_CLASS_NAME, DTAG<CGAL_XX_YATP> > \
 {};\
-} /* boost namespace */\
-\
-namespace CGAL { \
-template <typename CGAL_XX_YATP>\
-typename boost::property_map<CGAL_GRAPH_TRAITS_INHERITANCE_CLASS_NAME, DTAG<CGAL_XX_YATP> >::type \
-get(DTAG<CGAL_XX_YATP> t, CGAL_GRAPH_TRAITS_INHERITANCE_CLASS_NAME& g, const CGAL_XX_YATP& default_value = CGAL_XX_YATP()) \
-{ \
-  return get(t, static_cast<CGAL_GRAPH_TRAITS_INHERITANCE_BASE_CLASS_NAME&>(g), default_value); \
-} \
-\
-template <typename CGAL_XX_YATP>\
-typename boost::property_map<CGAL_GRAPH_TRAITS_INHERITANCE_CLASS_NAME, DTAG<CGAL_XX_YATP> >::const_type \
-get(DTAG<CGAL_XX_YATP> t, const CGAL_GRAPH_TRAITS_INHERITANCE_CLASS_NAME& g, const CGAL_XX_YATP& default_value = CGAL_XX_YATP()) \
-{ \
-  return get(t, static_cast<const CGAL_GRAPH_TRAITS_INHERITANCE_BASE_CLASS_NAME&>(g), default_value); \
-}\
-} //CGAL namespace
+} /* boost namespace */
+
 
 CGAL_PM_DT_SPEC(CGAL::dynamic_vertex_property_t)
 CGAL_PM_DT_SPEC(CGAL::dynamic_halfedge_property_t)
@@ -153,13 +142,31 @@ CGAL_PM_DT_SPEC(CGAL::dynamic_edge_property_t)
 
 namespace CGAL {
 
+template <typename Dynamic_property_tag,
+          typename = std::enable_if_t<is_dynamic_property_tag<Dynamic_property_tag>()>,
+          typename ...Default_value_args>
+auto
+get(Dynamic_property_tag t, CGAL_GRAPH_TRAITS_INHERITANCE_CLASS_NAME& g, Default_value_args&&... default_value_args)
+{
+  return get(t, static_cast<CGAL_GRAPH_TRAITS_INHERITANCE_BASE_CLASS_NAME&>(g), default_value_args...);
+}
+
+template <typename Dynamic_property_tag,
+          typename = std::enable_if_t<is_dynamic_property_tag<Dynamic_property_tag>()>,
+          typename ...Default_value_args>
+auto
+get(Dynamic_property_tag t, const CGAL_GRAPH_TRAITS_INHERITANCE_CLASS_NAME& g, Default_value_args&&... default_value_args)
+{
+  return get(t, static_cast<const CGAL_GRAPH_TRAITS_INHERITANCE_BASE_CLASS_NAME&>(g), default_value_args...);
+}
+
 template <typename CGAL_XX_YATP>
 struct graph_has_property<CGAL_GRAPH_TRAITS_INHERITANCE_CLASS_NAME, CGAL_XX_YATP> :
   public CGAL::graph_has_property<CGAL_GRAPH_TRAITS_INHERITANCE_BASE_CLASS_NAME, CGAL_XX_YATP>
 {};
 
-
 } // CGAL namespace
+
 
 #endif
 

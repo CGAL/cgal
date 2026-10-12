@@ -97,7 +97,7 @@ public:
   {
     CGAL_precondition(facet>=0 && facet<4);
     char current_bits = bits_;
-    while (bits_.compare_exchange_weak(current_bits, current_bits | (1 << facet)) )
+    while (!bits_.compare_exchange_weak(current_bits, current_bits | char(1 << facet)) )
     {
       current_bits = bits_;
     }
@@ -108,8 +108,9 @@ public:
   {
     CGAL_precondition(facet>=0 && facet<4);
     char current_bits = bits_;
-    while (bits_.compare_exchange_weak(current_bits, current_bits & (15 & ~(1 << facet))))
-    {
+    char mask = char(15 & ~(1 << facet));
+    char wanted_value = current_bits & mask;
+    while(!bits_.compare_exchange_weak(current_bits, wanted_value)) {
       current_bits = bits_;
     }
   }
@@ -170,6 +171,7 @@ public:
     : Cb (v0, v1, v2, v3)
     , surface_index_table_()
     , surface_center_table_()
+    , surface_center_index_table_()
   { }
 
   Mesh_surface_cell_base_3(Vertex_handle v0, Vertex_handle v1,
@@ -179,8 +181,21 @@ public:
     : Cb (v0, v1, v2, v3, n0, n1, n2, n3)
     , surface_index_table_()
     , surface_center_table_()
+    , surface_center_index_table_()
   { }
 
+  Mesh_surface_cell_base_3(const Mesh_surface_cell_base_3& rhs)
+      : Cb(rhs)
+      , surface_index_table_()
+      , surface_center_table_()
+      , surface_center_index_table_()
+  {
+    for(int i=0; i <4; i++){
+      surface_index_table_[i] = rhs.surface_index_table_[i];
+      surface_center_table_[i]= rhs.surface_center_table_[i];
+      surface_center_index_table_[i] = rhs.surface_center_index_table_[i];
+    }
+  }
 
   /// Destructor
   ~Mesh_surface_cell_base_3() { }

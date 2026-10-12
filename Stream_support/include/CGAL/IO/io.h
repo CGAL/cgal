@@ -91,7 +91,7 @@ enum Mode {ASCII = 0, PRETTY, BINARY};
 \brief Inserts object `c` in the stream `os`. Returns `os`.
 \cgal defines output operators for classes that are derived
 from the class `ostream`. This allows to write to ostreams
-as `cout` or `cerr`, as well as to `std::ostringstream`
+as `std::cout` or `std::cerr`, as well as to `std::ostringstream`
 and `std::ofstream`.
 The output operator is defined for all classes in the \cgal `Kernel` and for the class `Color` as well.
 
@@ -233,8 +233,8 @@ public:
   \relates Output_rep
   \brief stream output of the \c Output_rep calls its \c operator().
 
-  \cgal defines output operators for classes that are derived from the class `ostream`.
-  This enables to write to ostreams as `cout` or `cerr`, as well as to `std::ostringstream`
+  \cgal defines output operators for classes that are derived from the class `std::ostream`.
+  This enables to write to output streams as `std::cout` or `std::cerr`, as well as to `std::ostringstream`
   and `std::ofstream`.
   The output operator is defined for all classes in the \cgal `Kernel` and for the class `Color` as well.
 */
@@ -455,7 +455,7 @@ public:
     \brief stream input to the \c Input_rep calls its \c operator().
 
 \brief \cgal defines input operators for classes that are derived
-from the class `istream`. This allows to read from istreams
+from the class `std::istream`. This allows to read from input streams
 as `std::cin`, as well as from `std::istringstream` and `std::ifstream`.
 The input operator is defined for all classes in the \cgal `Kernel`.
 */
@@ -784,20 +784,6 @@ serialize(const P& p) {
 
 } // IO namespace
 
-#ifndef CGAL_NO_DEPRECATED_CODE
-using IO::oformat;
-using IO::iformat;
-using IO::bmformat;
-using IO::get_mode;
-using IO::set_ascii_mode;
-using IO::set_binary_mode;
-using IO::set_pretty_mode;
-using IO::set_mode;
-using IO::is_pretty;
-using IO::is_ascii;
-using IO::is_binary;
-using IO::mode_name;
-#endif
 
 // From polynomial.h TODO: Where to put this?
 inline void swallow(std::istream &is, char d)

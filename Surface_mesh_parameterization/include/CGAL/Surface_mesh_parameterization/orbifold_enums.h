@@ -60,7 +60,7 @@ enum Orbifold_type
 /// \brief Convert the orbifold type to a literal message.
 /// \param orb_type the integer value in the enum
 /// \return the string describing the orbifold type.
-const char* get_orbifold_type(int orb_type)
+inline const char* get_orbifold_type(int orb_type)
 {
   // Messages corresponding to the different orbifold types.
   static const char* type[Parallelogram+1] = {

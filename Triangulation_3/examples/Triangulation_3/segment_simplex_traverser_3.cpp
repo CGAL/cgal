@@ -6,7 +6,7 @@
 #include <fstream>
 #include <string>
 
-#include <CGAL/IO/read_xyz_points.h>
+#include <CGAL/IO/XYZ.h>
 #include <CGAL/Random.h>
 
 #define CGAL_TRIANGULATION_3_VERBOSE_TRAVERSER_EXAMPLE
@@ -22,7 +22,7 @@ typedef CGAL::Triangulation_simplex_3<DT::Triangulation_data_structure> Simplex;
 
 int main(int argc, char* argv[])
 {
-  const std::string fname = (argc>1) ? argv[1] : CGAL::data_file_path("points_3/blobby.xyz");
+  const std::filesystem::path fname = (argc>1) ? argv[1] : CGAL::data_file_path("points_3/blobby.xyz");
 
   std::vector<Point_3> points;
   std::ifstream stream(fname);

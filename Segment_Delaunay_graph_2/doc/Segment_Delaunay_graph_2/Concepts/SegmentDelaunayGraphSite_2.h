@@ -239,14 +239,14 @@ Point_2 target_of_supporting_site(unsigned int i);
 /*!
 Returns the source point of the `i`-th crossing site of the
 this site.
-\pre `is_segment()` must be `true`, `is_input(i)` must be `false` and `i` must either be `0` or `1`.
+\pre `is_segment()` must be `true`, \link is_input(unsigned int) `is_input(i)`\endlink must be `false` and `i` must either be `0` or `1`.
 */
 Point_2 source_of_crossing_site(unsigned int i);
 
 /*!
 Returns the target point of the `i`-th supporting site of the
 this site.
-\pre `is_segment()` must be `true`, `is_input(i)` must be `false` and `i` must either be `0` or `1`.
+\pre `is_segment()` must be `true`, \link is_input(unsigned int) `is_input(i)`\endlink must be `false` and `i` must either be `0` or `1`.
 */
 Point_2 target_of_crossing_site(unsigned int i);
 

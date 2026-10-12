@@ -799,7 +799,7 @@ centroid(InputIterator begin,
 // centroid(begin, end, kernel, dim_tag)
 
 // One issue is that it is difficult to separate the 2 overloads with 3 arguments.
-// So we have to resort to an internal internal dispatcher hack.
+// So we have to resort to an internal dispatcher hack.
 // ( Note : Dynamic_dimension_tag is not yet supported, but shouldn't be too hard. )
 
 // computes the centroid of a set of kernel objects

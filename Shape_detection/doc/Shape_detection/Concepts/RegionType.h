@@ -69,6 +69,13 @@ public:
   }
 
   /*!
+    provides an empty `Region_index_map`.
+  */
+  Region_index_map region_index_map() {
+    return Region_index_map(m_region_map);
+  }
+
+  /*!
     enables to update any information about the region represented by the collection of items `region`.
 
     `CGAL::Shape_detection::Region_growing` calls this function each time when a

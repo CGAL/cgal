@@ -1,6 +1,3 @@
-#if __has_include(<format>)
-#define CGAL_DEBUG_CDT_3 1
-#endif
 #define CGAL_TRIANGULATION_CHECK_EXPENSIVE 1
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
@@ -33,7 +30,7 @@ int main(int argc, char* argv[])
   std::cerr.precision(17);
   std::cout.precision(17);
 
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/fandisk.off");
+  const std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/fandisk.off");
   std::ifstream input(filename);
   Mesh mesh;
   if (!input || !(input >> mesh))

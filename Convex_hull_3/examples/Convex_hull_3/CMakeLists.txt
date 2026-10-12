@@ -18,6 +18,7 @@ create_single_source_cgal_program("graph_hull_3.cpp")
 create_single_source_cgal_program("quickhull_any_dim_3.cpp")
 create_single_source_cgal_program("extreme_points_3_sm.cpp")
 create_single_source_cgal_program("extreme_indices_3.cpp")
+create_single_source_cgal_program("do_intersect_ch3.cpp")
 
 find_package(OpenMesh QUIET)
 if(OpenMesh_FOUND)

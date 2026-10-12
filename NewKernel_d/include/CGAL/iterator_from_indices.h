@@ -29,7 +29,7 @@ template <class Container_, class Value_, class Ref_=
         >
 class Iterator_from_indices
 : public boost::iterator_facade<Iterator_from_indices<Container_,Value_,Ref_,Coord_access>,
-        Value_, std::bidirectional_iterator_tag, Ref_>
+        Value_, std::random_access_iterator_tag, Ref_>
 {
         friend class boost::iterator_core_access;
         //FIXME: use int to save space
@@ -53,6 +53,9 @@ class Iterator_from_indices
                 return ca(*cont,index);
         }
         public:
+        Ref_ operator[](std::ptrdiff_t n) const {
+                return ca(*cont,index+n);
+        }
         Iterator_from_indices(){}
         Iterator_from_indices(Container_& cont_,std::size_t n)
                 : cont(&cont_), index(n) {}

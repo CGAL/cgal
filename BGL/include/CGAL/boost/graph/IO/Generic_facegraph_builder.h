@@ -88,6 +88,7 @@ public:
 
     const bool verbose = choose_parameter(get_parameter(np, internal_np::verbose), false);
     const bool binary = choose_parameter(get_parameter(np, internal_np::use_binary_mode), true);
+    const bool read_only_one_object = choose_parameter(get_parameter(np, internal_np::read_only_one_object), false);
 
     bool ok =
         static_cast<Derived*>(this)->read(m_is, m_points, m_faces,
@@ -96,16 +97,17 @@ public:
                                                      .vertex_texture_output_iterator(std::back_inserter(vertex_textures))
                                                      .face_color_output_iterator(std::back_inserter(face_colors))
                                                      .verbose(verbose)
-                                                     .use_binary_mode(binary));
+                                                     .use_binary_mode(binary)
+                                                     .read_only_one_object(read_only_one_object));
     if(!ok)
       return false;
 
     // Construct the graph
     VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point), get_property_map(CGAL::vertex_point, g));
-    VNM vnm = choose_parameter(get_parameter(np, internal_np::vertex_normal_map), VNM());
-    VCM vcm = choose_parameter(get_parameter(np, internal_np::vertex_color_map), VCM());
-    VTM vtm = choose_parameter(get_parameter(np, internal_np::vertex_texture_map), VTM());
-    FCM fcm = choose_parameter(get_parameter(np, internal_np::face_color_map), FCM());
+    VNM vnm = choose_parameter<VNM>(get_parameter(np, internal_np::vertex_normal_map));
+    VCM vcm = choose_parameter<VCM>(get_parameter(np, internal_np::vertex_color_map));
+    VTM vtm = choose_parameter<VTM>(get_parameter(np, internal_np::vertex_texture_map));
+    FCM fcm = choose_parameter<FCM>(get_parameter(np, internal_np::face_color_map));
 
     const bool has_vertex_normals = (is_vnm_requested && !(vertex_normals.empty()));
     const bool has_vertex_colors = (is_vcm_requested && !(vertex_colors.empty()));
@@ -144,8 +146,16 @@ public:
         face[j] = vertices[m_faces[i][j]];
 
       face_descriptor f = CGAL::Euler::add_face(face, g);
-      if(f == boost::graph_traits<Graph>::null_face())
+      if(f == boost::graph_traits<Graph>::null_face()) {
+        if (verbose) {
+          std::cerr << "Error: Failed to add face [" << i << "]\n";
+          std::cerr << "Diagnostic:" << std::endl;
+          CGAL_assertion_code(bool cannot_add = )
+            CGAL::Euler::can_add_face(face, g, true /*verbose*/);
+          CGAL_assertion(!cannot_add);
+        }
         return false;
+      }
 
       if(has_face_colors)
         put(fcm, f, face_colors[i]);

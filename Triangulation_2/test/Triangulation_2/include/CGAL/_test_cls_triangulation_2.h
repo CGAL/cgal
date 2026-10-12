@@ -182,6 +182,7 @@ _test_cls_triangulation_2( const Triangul & )
   Triangul T0_2;
   Vertex_handle v0_2_0 =   T0_2.insert_first(p0);
   assert( v0_2_0 != nullptr );
+  assert( T0_2.is_vertex(v0_2_0) );
   assert( T0_2.dimension() == 0 );
   assert( T0_2.number_of_vertices() == 1 );
   assert( T0_2.number_of_faces() == 0);

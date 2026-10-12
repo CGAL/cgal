@@ -44,12 +44,14 @@ Type of input datum.
 typedef unspecified_type Datum;
 
 /*!
-Point reference type returned by the function `point(const Shared_data&)`. It is convertible to the type `Point`.
+Point reference type returned by the function \link reference_point `reference_point(const Shared_data&)`\endlink.
+It is convertible to the type `Point`.
  */
 typedef unspecified_type Point_reference;
 
 /*!
-Datum reference type returned by the function `datum(const Shared_data&)`. It is convertible to the type `Datum`.
+Datum reference type returned by the function \link datum `datum(const Shared_data&)`\endlink.
+It is convertible to the type `Datum`.
 */
 typedef unspecified_type Datum_reference;
 

@@ -1722,7 +1722,7 @@ private:
     std::vector<std::optional<Bound> >& intermediate_values() const
       {
         if(! this->ptr()->intermediate_values) {
-            // This is created during event_coordiantes()
+            // This is created during event_coordinates()
             event_coordinates();
             CGAL_assertion(bool(this->ptr()->intermediate_values));
         }

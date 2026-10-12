@@ -104,7 +104,7 @@ int main()
   typedef CGAL::Polyhedron_3<EPICK, CGAL::Polyhedron_items_with_id_3>    EPICK_Polyhedron;
   typedef CGAL::Polyhedron_3<Simple_K, CGAL::Polyhedron_items_with_id_3> Simple_K_Polyhedron;
 
-  std::vector<std::string> files;
+  std::vector<std::filesystem::path> files;
   files.push_back(CGAL::data_file_path("meshes/dino.off"));
   files.push_back(CGAL::data_file_path("meshes/bear_bis.off"));
   files.push_back(CGAL::data_file_path("meshes/refined_elephant.off"));

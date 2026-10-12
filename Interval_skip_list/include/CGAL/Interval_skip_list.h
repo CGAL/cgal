@@ -177,7 +177,7 @@ class Interval_for_container : public Interval_
 
 
     // remove markers for Interval I starting at left, the left endpoint
-    // of I, and and stopping at the right endpoint of I.
+    // of I, and stopping at the right endpoint of I.
     Interval_handle removeMarkers(IntervalSLnode<Interval>* left,
                                   const Interval& I);
 

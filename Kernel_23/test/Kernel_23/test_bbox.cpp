@@ -42,6 +42,11 @@ int main()
   CGAL::Bbox_2 span{1,2,5,8};
   assert( span.x_span() == 4);
   assert( span.y_span() == 6);
+
+
+  b1 = CGAL::Bbox_2(0,0,4,4);
+  b1.pad(1.0);
+  assert( b1 == CGAL::Bbox_2(-1,-1, 5,5));
   }
 
   {
@@ -77,6 +82,11 @@ int main()
   assert( span.x_span() == 4);
   assert( span.y_span() == 6);
   assert( span.z_span() == 8);
+
+  b1 = CGAL::Bbox_3(0,0,0,4,4,4);
+  b1.pad(1.0);
+  assert( b1 == CGAL::Bbox_3(-1,-1,-1, 5,5,5));
+
   }
 
 }

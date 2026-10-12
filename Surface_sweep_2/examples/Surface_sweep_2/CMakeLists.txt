@@ -1,10 +1,11 @@
-# Created by the script cgal_create_CMakeLists
-# This is the CMake script for compiling a set of CGAL applications.
-
 cmake_minimum_required(VERSION 3.12...3.31)
 project(Surface_sweep_2_Examples)
-
-# CGAL and its components
-find_package(CGAL REQUIRED)
-
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 create_single_source_cgal_program("plane_sweep.cpp")
+create_single_source_cgal_program("plane_sweep_polylines.cpp")
+create_single_source_cgal_program("intersection_polylines.cpp")
+if (CGAL_Qt6_FOUND)
+  target_link_libraries(intersection_polylines PRIVATE CGAL::CGAL_Basic_viewer)
+else()
+  message(STATUS "NOTICE: Several examples require Qt and will not be compiled.")
+endif()

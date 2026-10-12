@@ -1,35 +1,63 @@
 ---
+# CGAL clang-format configuration
+# This file defines the code formatting style for C++ files in the CGAL project.
+
 Language:        Cpp
 BasedOnStyle:  LLVM
-AccessModifierOffset: -2
-AllowShortFunctionsOnASingleLine: true
-BinPackParameters: false
-BreakConstructorInitializers: BeforeComma
+
+# Indentation
+AccessModifierOffset: -2  # Indent public:/private:/protected: 2 spaces to the left
+
+# Function formatting
+AllowShortFunctionsOnASingleLine: Inline  # Allow short inline/member functions on one line, but not free functions
+AlwaysBreakAfterReturnType: None  # Don't force return type on separate line
+
+# Parameter and argument formatting
+BinPackParameters: false  # Put each parameter on its own line for better readability
+
+# Constructor formatting
+BreakConstructorInitializers: BeforeComma  # Put comma before each initializer: `MyClass() \n  , member1(val1) \n  , member2(val2)`
+
+# Brace wrapping configuration
 BreakBeforeBraces: Custom
 BraceWrapping:
-  AfterCaseLabel:  false
-  AfterClass:      true
-  AfterControlStatement: MultiLine
-  AfterEnum:       false
-  AfterFunction:   false
-  AfterNamespace:  false
-  AfterObjCDeclaration: false
-  AfterStruct:     true
-  AfterUnion:      false
-  AfterExternBlock: false
-  BeforeCatch:     false
-  BeforeElse:      false
-  BeforeLambdaBody: false
-  BeforeWhile:     false
-  IndentBraces:    false
-  SplitEmptyFunction: false
-  SplitEmptyRecord: false
-  SplitEmptyNamespace: false
-ColumnLimit:     120
-# Force pointers to the type for C++.
+  AfterCaseLabel:  false       # Don't put brace on new line after case labels
+  AfterClass:      true        # Put opening brace on new line after class definition
+  AfterControlStatement: MultiLine  # Only break before braces if the control statement spans multiple lines
+  AfterEnum:       false       # Don't break after enum
+  AfterFunction:   false       # Don't break after function declaration (keep on same line)
+  AfterNamespace:  false       # Don't break after namespace
+  AfterObjCDeclaration: false  # Objective-C related (not used in CGAL)
+  AfterStruct:     true        # Put opening brace on new line after struct definition
+  AfterUnion:      false       # Don't break after union
+  AfterExternBlock: false      # Don't break after extern "C" blocks
+  BeforeCatch:     false       # Don't put catch on new line
+  BeforeElse:      false       # Don't put else on new line
+  BeforeLambdaBody: false      # Don't break before lambda body
+  BeforeWhile:     false       # Don't put while on new line (do-while loops)
+  IndentBraces:    false       # Don't indent the braces themselves
+  SplitEmptyFunction: false    # Don't split empty functions across lines
+  SplitEmptyRecord: false      # Don't split empty classes/structs across lines
+  SplitEmptyNamespace: false   # Don't split empty namespaces across lines
+
+# Line length
+ColumnLimit:     120  # Maximum line length of 120 characters
+
+# Pointer and reference alignment
+# Force pointers and references to align with the type (e.g., `int* ptr` not `int *ptr`)
 DerivePointerAlignment: false
 PointerAlignment: Left
-# Control the spaces around conditionals
-SpacesInConditionalStatement: false
-SpaceBeforeParens: false
+
+# Spacing in control statements
+SpacesInConditionalStatement: false  # No extra spaces inside conditionals: `if(condition)` not `if( condition )`
+SpaceBeforeParens: false  # No space before parentheses: `if(` not `if (`
+
+# Include directive handling
+SortIncludes:    Never  # Preserve the original order of #include statements (don't sort them)
+
+# Preprocessor directive formatting
+IndentPPDirectives: None  # Don't indent preprocessor directives (#ifdef, #include, etc.)
+
+# Blank line handling
+MaxEmptyLinesToKeep: 2  # Keep up to 2 consecutive blank lines
 ...

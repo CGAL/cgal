@@ -665,6 +665,9 @@ public:
   {
     CGAL_precondition(dimension() >= 2);
 
+    if(the_facet_is_in_its_cz)
+      *the_facet_is_in_its_cz = false;
+
     std::vector<Cell_handle> cells;
     cells.reserve(32);
     std::vector<Facet> facets;
@@ -779,15 +782,6 @@ public:
     return std::copy(vertices.begin(), vertices.end(), res);
   }
 
-#ifndef CGAL_NO_DEPRECATED_CODE
-  // Returns the vertices on the boundary of the conflict hole.
-  template <class OutputIterator>
-  OutputIterator vertices_in_conflict(const Weighted_point&p, Cell_handle c,
-                                      OutputIterator res) const
-  {
-    return vertices_on_conflict_zone_boundary(p, c, res);
-  }
-#endif // CGAL_NO_DEPRECATED_CODE
 
   // Returns the vertices on the boundary of the conflict hole.
   template <class OutputIterator>
@@ -876,7 +870,7 @@ public:
 #ifdef CGAL_LINKED_WITH_TBB
     if(this->is_parallel())
     {
-      // TODO: avoid that by asking for ramdom-access iterators?
+      // TODO: avoid that by asking for random-access iterators?
       std::vector<Vertex_handle> vertices(first, beyond);
       tbb::concurrent_vector<Vertex_handle> vertices_to_remove_sequentially;
 

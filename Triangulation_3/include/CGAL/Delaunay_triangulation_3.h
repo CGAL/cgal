@@ -603,15 +603,6 @@ public:
       return std::make_pair(t.first, t.second);
   }
 
-#ifndef CGAL_NO_DEPRECATED_CODE
-  // Returns the vertices on the boundary of the conflict hole.
-  template <class OutputIterator>
-  OutputIterator
-  vertices_in_conflict(const Point&p, Cell_handle c, OutputIterator res) const
-  {
-    return vertices_on_conflict_zone_boundary(p, c, res);
-  }
-#endif // CGAL_NO_DEPRECATED_CODE
 
   // Returns the vertices on the boundary of the conflict hole.
   template <class OutputIterator>
@@ -1533,7 +1524,7 @@ side_of_circle(Cell_handle c, int i, const Point& p, bool perturb) const
   // in dimension 2, for an infinite facet
   // in this case, returns ON_BOUNDARY if the point lies on the
   // finite edge (endpoints included)
-  // ON_BOUNDED_SIDE for a point in the open half-plane
+  // ON_BOUNDED_SIDE for a point in the open halfplane
   // ON_UNBOUNDED_SIDE elsewhere
 
   CGAL_precondition(dimension() >= 2);

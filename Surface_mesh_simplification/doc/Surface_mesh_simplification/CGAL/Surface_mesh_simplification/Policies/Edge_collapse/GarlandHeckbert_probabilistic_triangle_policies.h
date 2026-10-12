@@ -14,7 +14,7 @@ for speed and quality of the result (Section \ref SurfaceMeshSimplificationGarla
 Both the cost and the placement policies must be used together as they internally use
 and share information associating quadrics to vertices.
 Note however, that they may still be wrapped with behavior modifying classes
-such as `Constrained_placement` or `Bounded_normal_change_placement`.
+such as `Constrained_placement` or `Bounded_normal_change_filter`.
 
 \tparam TriangleMesh is the type of surface mesh being simplified, and must be a model
                      of the `MutableFaceGraph` and `HalfedgeListGraph` concepts.
@@ -26,6 +26,7 @@ These policies depend on the third party \ref thirdpartyEigen library.
 \sa `GarlandHeckbert_plane_policies`
 \sa `GarlandHeckbert_probabilistic_plane_policies`
 \sa `GarlandHeckbert_triangle_policies`
+\sa `GarlandHeckbert_plane_and_line_policies`
 */
 template <typename TriangleMesh, typename GeomTraits>
 class GarlandHeckbert_probabilistic_triangle_policies
@@ -43,7 +44,8 @@ public:
   /*!
   initializes the Garland-Heckbert "Probabilistic Triangle" policies.
   */
-  GarlandHeckbert_probabilistic_triangle_policies(TriangleMesh& tmesh);
+  template <class VertexPointMap = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::type>
+  GarlandHeckbert_probabilistic_triangle_policies(TriangleMesh& tmesh, VertexPointMap vpm=get(CGAL::vertex_point, tmesh));
 
   /// @}
 

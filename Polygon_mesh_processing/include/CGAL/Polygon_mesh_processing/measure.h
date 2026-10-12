@@ -23,8 +23,8 @@
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/boost/graph/border.h>
 
-#include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/utils_classes.h>
 
 #include <CGAL/Lazy.h> // needed for CGAL::exact(FT)/CGAL::exact(Lazy_exact_nt<T>)
@@ -573,7 +573,7 @@ FT
 #else
 typename GetGeomTraits<TriangleMesh, CGAL_NP_CLASS>::type::FT
 #endif
-area(FaceRange face_range,
+area(const FaceRange& face_range,
      const TriangleMesh& tmesh,
      const CGAL_NP_CLASS& np = parameters::default_values())
 {
@@ -912,6 +912,8 @@ centroid(const TriangleMesh& tmesh,
   Scale scale = k.construct_scaled_vector_3_object();
   Sum sum = k.construct_sum_of_vectors_3_object();
 
+  ::CGAL::internal::Evaluate<FT> evaluate;
+
   for(face_descriptor fd : faces(tmesh))
   {
     const Point_3_ref p = get(vpm, target(halfedge(fd, tmesh), tmesh));
@@ -922,6 +924,7 @@ centroid(const TriangleMesh& tmesh,
              vr = vector(ORIGIN, r);
     Vector_3 n = normal(p, q, r);
     volume += (scalar_product(n,vp))/FT(6);
+    evaluate(volume);
     n = scale(n, FT(1)/FT(24));
 
     Vector_3 v2 = sum(vp, vq);
@@ -932,6 +935,7 @@ centroid(const TriangleMesh& tmesh,
     v3 = sum(v3, Vector_3(square(v2.x()), square(v2.y()), square(v2.z())));
 
     centroid = sum(centroid, Vector_3(n.x() * v3.x(), n.y() * v3.y(), n.z() * v3.z()));
+    evaluate(centroid);
   }
 
   centroid = scale(centroid, FT(1)/(FT(2)*volume));

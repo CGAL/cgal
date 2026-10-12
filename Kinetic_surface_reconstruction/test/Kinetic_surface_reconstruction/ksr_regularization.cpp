@@ -20,9 +20,9 @@ int main(const int, const char**) {
   // Input.
 
   Point_set point_set;
-  CGAL::IO::read_point_set("hilbert_cube.ply", point_set);
+  CGAL::IO::read_point_set(CGAL::data_file_path("points_3/building.xyz"), point_set);
 
-  auto with_reg = CGAL::parameters::maximum_distance(0.1)
+  auto params = CGAL::parameters::maximum_distance(0.1)
     .maximum_angle(10)
     .k_neighbors(12)
     .minimum_region_size(10)
@@ -32,23 +32,16 @@ int main(const int, const char**) {
     .angle_tolerance(10)
     .debug(true);
 
-  auto without_reg = CGAL::parameters::maximum_distance(0.1)
-    .maximum_angle(10)
-    .k_neighbors(12)
-    .minimum_region_size(10)
-    .regularize_coplanarity(false)
-    .regularize_parallelism(false);
-
   // Algorithm.
   KSR ksr(point_set);
 
-  ksr.detect_planar_shapes(without_reg);
+  ksr.detect_planar_shapes(params);
 
-  std::size_t detected = ksr.detected_planar_shapes().size();
+  std::size_t detected = ksr.planar_shapes().size();
 
-  ksr.detect_planar_shapes(with_reg);
+  ksr.regularize_planar_shapes(params);
 
-  std::size_t regularized = ksr.detected_planar_shapes().size();
+  std::size_t regularized = ksr.planar_shapes().size();
 
   std::cout << detected << " planar shapes regularized into " << regularized << std::endl;
 

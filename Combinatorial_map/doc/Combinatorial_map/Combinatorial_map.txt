@@ -472,7 +472,7 @@ The output is:
 Number of 2-free darts: 4
 \endverbatim
 
-We can verify that there are 6 2-cells after the insertion since the squared face was inserted as a hole in one face of the hexahedron. We can also see that there are 4 2-free darts, which are the darts of the squared face. Since they bound an hole, there is no face filling the hole and thus 4 darts are 2-free.
+We can verify that there are 6 2-cells after the insertion since the squared face was inserted as a hole in one face of the hexahedron. We can also see that there are 4 2-free darts, which are the darts of the squared face. Since they bound a hole, there is no face filling the hole and thus 4 darts are 2-free.
 
 See also a similar example for Linear cell complex \ref Linear_cell_complexInsert "Insert an Edge Between Two Different Faces".
 

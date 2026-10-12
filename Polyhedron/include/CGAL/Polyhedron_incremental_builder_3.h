@@ -384,7 +384,7 @@ protected:
 
     Halfedge_handle lookup_halfedge( size_type w, size_type v) {
         // Pre: 0 <= w,v < new_vertices
-        // Case a: It exists an halfedge g from w to v:
+        // Case a: It exists a halfedge g from w to v:
         //     g must be a border halfedge and the facet of g->opposite()
         //     must be set and different from the current facet.
         //     Set the facet of g to the current facet. Return the

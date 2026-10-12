@@ -205,7 +205,7 @@ class My_geo_object : public Handle_for<My_rep>
 \endcode
 
 You should also define a copy constructor for `My_rep` as this may be used
-in in-place creation in the allocator scheme.
+for in-place creation in the allocator scheme.
 The constructors of class `My_geo_object` are responsible for constructing
 the `My_rep` object.
 Typically, a corresponding constructor call of `My_rep` is forwarded

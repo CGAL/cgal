@@ -250,7 +250,7 @@ Returns `true`, if the vertex `v` belongs to the 2D complex.
 bool is_in_complex(Vertex_handle v);
 
 /*!
-Returns true if the status of vertex `v` is `REGULAR` or `BOUNDARY`.
+Returns `true` if the status of vertex `v` is `REGULAR` or `BOUNDARY`.
 \pre All the edges of the complex incident to `v` are `REGULAR` or `BOUNDARY`.
 */
 bool is_regular_or_boundary_for_vertices (Vertex_handle v);

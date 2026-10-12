@@ -28,7 +28,7 @@ usage() {
     printerr '  --help           : prints this usage help'
     printerr '  --public         : also build the corresponding public versions'
     printerr '  --do-it          : the real thing (NOT for local tests!  Only for the release'
-    printerr '                     master! Does write operations (updating the version_number,'
+    printerr '                     main! Does write operations (updating the version_number,'
     printerr '                     tag, copying on the web server...)'
     printerr '  --do-not-tag     : when used with --do-it, the tag is not created.'
     printerr '  --tag            : when used without --do-it, the tag is created, but files'

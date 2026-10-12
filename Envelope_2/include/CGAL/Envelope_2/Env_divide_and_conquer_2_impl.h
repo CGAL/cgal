@@ -223,7 +223,7 @@ _merge_envelopes(const Envelope_diagram_1& d1,
   do
   {
     // Locate the vertex that has smaller x-coordinate between v1 and v2.
-    // If both have the same x-ccordinate, find the one that should be in
+    // If both have the same x-coordinate, find the one that should be in
     // the envelope.
     same_x = false;
 
@@ -454,11 +454,11 @@ compare_y_at_end(const X_monotone_curve_2& xcv1,
   const auto compare_y_at_x = traits->compare_y_at_x_2_object();
   const auto min_vertex = traits->construct_min_vertex_2_object();
   const auto max_vertex = traits->construct_max_vertex_2_object();
-  const auto parm_space_in_x = traits->parameter_space_in_x_2_object();
+  const auto param_space_in_x = traits->parameter_space_in_x_2_object();
 
   // First check whether any of the curves is defined at x boundary.
-  const Arr_parameter_space ps_x1 = parm_space_in_x(xcv1, curve_end);
-  const Arr_parameter_space ps_x2 = parm_space_in_x(xcv2, curve_end);
+  const Arr_parameter_space ps_x1 = param_space_in_x(xcv1, curve_end);
+  const Arr_parameter_space ps_x2 = param_space_in_x(xcv2, curve_end);
 
   if (ps_x1 != ARR_INTERIOR) {
     if (ps_x2 != ARR_INTERIOR) {
@@ -469,8 +469,8 @@ compare_y_at_end(const X_monotone_curve_2& xcv1,
     }
 
     // Check if the left end of xcv2 lies at y boundary.
-    const auto parm_space_in_y = traits->parameter_space_in_y_2_object();
-    const Arr_parameter_space ps_y2 = parm_space_in_y(xcv2, curve_end);
+    const auto param_space_in_y = traits->parameter_space_in_y_2_object();
+    const Arr_parameter_space ps_y2 = param_space_in_y(xcv2, curve_end);
 
     if (ps_y2 == ARR_BOTTOM_BOUNDARY) return LARGER;
     else if (ps_y2 == ARR_TOP_BOUNDARY) return SMALLER;
@@ -486,8 +486,8 @@ compare_y_at_end(const X_monotone_curve_2& xcv1,
   }
   else if (ps_x2 != ARR_INTERIOR) {
     // Check if the left end of xcv1 lies at y boundary.
-    const auto parm_space_in_y = traits->parameter_space_in_y_2_object();
-    const Arr_parameter_space ps_y1 = parm_space_in_y(xcv1, curve_end);
+    const auto param_space_in_y = traits->parameter_space_in_y_2_object();
+    const Arr_parameter_space ps_y1 = param_space_in_y(xcv1, curve_end);
 
     if (ps_y1 == ARR_BOTTOM_BOUNDARY) return SMALLER;
     else if (ps_y1 == ARR_TOP_BOUNDARY) return LARGER;
@@ -501,9 +501,9 @@ compare_y_at_end(const X_monotone_curve_2& xcv1,
   }
 
   // Check if the left curve end lies at y = +/- oo.
-  const auto parm_space_in_y = traits->parameter_space_in_y_2_object();
-  const Arr_parameter_space ps_y1 = parm_space_in_y(xcv1, curve_end);
-  const Arr_parameter_space ps_y2 = parm_space_in_y(xcv2, curve_end);
+  const auto param_space_in_y = traits->parameter_space_in_y_2_object();
+  const Arr_parameter_space ps_y1 = param_space_in_y(xcv1, curve_end);
+  const Arr_parameter_space ps_y2 = param_space_in_y(xcv2, curve_end);
 
   if (ps_y1 != ARR_INTERIOR) {
     if (ps_y2 != ARR_INTERIOR) {

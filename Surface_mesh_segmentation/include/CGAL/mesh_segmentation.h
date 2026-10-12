@@ -66,7 +66,7 @@ sdf_values( const TriangleMesh& triangle_mesh,
  * It is possible to compute raw SDF values (without postprocessing). In such a case,
  * -1 is used to indicate when no SDF value could be computed for a facet.
  *
- * @pre `is_triangle_mesh(triangle_mesh)`
+ * @pre \link CGAL::is_triangle_mesh `CGAL::is_triangle_mesh(tmesh)` \endlink
  *
  * @tparam TriangleMesh a model of `FaceListGraph`
  * @tparam SDFPropertyMap  a `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor` as key and `double` as value type
@@ -119,7 +119,7 @@ sdf_values( const TriangleMesh& triangle_mesh,
  *
  * See the section \ref Surface_mesh_segmentationPostprocessing for more details.
  *
- * @pre `is_triangle_mesh(triangle_mesh)`
+ * @pre \link CGAL::is_triangle_mesh `CGAL::is_triangle_mesh(tmesh)` \endlink
  * @pre Raw values should be greater or equal to 0. -1 indicates when no value could be computed
  *
  * @tparam TriangleMesh a model of `FaceListGraph`
@@ -157,7 +157,7 @@ sdf_values_postprocessing(const TriangleMesh& triangle_mesh,
  * \note There is no direct relation between the parameter `number_of_clusters`
  * and the final number of segments after segmentation. However, setting a large number of clusters will result in a detailed segmentation of the mesh with a large number of segments.
  *
- * @pre `is_triangle_mesh(triangle_mesh)`
+ * @pre \link CGAL::is_triangle_mesh `CGAL::is_triangle_mesh(tmesh)` \endlink
  * @pre `number_of_clusters > 0`
  *
  * @tparam TriangleMesh a model of `FaceListGraph`
@@ -253,7 +253,7 @@ segmentation_via_sdf_values(const TriangleMesh& triangle_mesh,
  * it is more efficient to first compute the SDF values using `CGAL::sdf_values()` and use them in different calls to
  * `CGAL::segmentation_from_sdf_values()`.
  *
- * @pre `is_triangle_mesh(triangle_mesh)`
+ * @pre \link CGAL::is_triangle_mesh `CGAL::is_triangle_mesh(tmesh)` \endlink
  * @pre `number_of_clusters > 0`
  *
  * @tparam TriangleMesh a model of `FaceListGraph`

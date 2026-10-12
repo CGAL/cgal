@@ -4,8 +4,6 @@
 #ifndef P2T2_UNIT_TEST_TYPES_H
 #define P2T2_UNIT_TEST_TYPES_H
 
-#define _USE_MATH_DEFINES
-#include <math.h>
 
 #include <CGAL/Periodic_2_triangulation_2.h>
 #include <CGAL/Periodic_2_triangulation_traits_2.h>

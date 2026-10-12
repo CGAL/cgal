@@ -25,6 +25,9 @@ int main(int argc, char** argv)
   app.setOrganizationName("INRIA");
   app.setApplicationName("3D Triangulation Demo");
 
+  // Import resources from libCGALQt (Qt6).
+  CGAL_QT_INIT_RESOURCES;
+
   MainWindow mw;
   mw.show();
 

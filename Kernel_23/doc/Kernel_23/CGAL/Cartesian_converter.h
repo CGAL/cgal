@@ -48,7 +48,7 @@ Cartesian_converter<>();
 /// @{
 
 /*!
-returns a `K2::Point_2` which coordinates are those of `p`,
+returns a `K2::Point_2` whose coordinates are those of `p`,
 converted by `NTConverter`.
 */
 K2::Point_2 operator()(const K1::Point_2&p);

@@ -8,7 +8,6 @@
 //
 // Author: Luis Peñaranda <luis.penaranda@gmx.com>
 //         Michael Hemmer <Michael.Hemmer@sophia.inria.fr>
-
 #ifndef CGAL_GMPFI_H
 #define CGAL_GMPFI_H
 
@@ -349,6 +348,71 @@ namespace Eigen {
       MulCost = 100
     };
   };
+
+  template<class A, class B, class C>struct ScalarBinaryOpTraits;
+  template<typename BinaryOp>
+    struct ScalarBinaryOpTraits<CGAL::Gmpfi, double, BinaryOp> {
+      typedef CGAL::Gmpfi ReturnType;
+    };
+  template<typename BinaryOp>
+    struct ScalarBinaryOpTraits<double, CGAL::Gmpfi, BinaryOp> {
+      typedef CGAL::Gmpfi ReturnType;
+    };
+
+namespace internal {
+
+  // Without this, when computing some decompositions for a matrix of
+    // intervals, Eigen looks for the largest element in a column (for
+    // instance). There may easily be 2 equal, slightly imprecise numbers that
+    // could equally well be used as pivots, but Eigen ends up spuriously
+    // throwing in the comparison between them. So we provide a different
+    // strategy for picking the pivot.
+    template<typename> struct scalar_score_coeff_op;
+
+    template<> struct scalar_score_coeff_op<CGAL::Gmpfi> {
+      // If all coeffs can be 0, it is essential to designate as the best one
+      // that can be non-zero and has a non-zero score, if there is one.
+      struct result_type : boost::totally_ordered1<result_type> {
+        CGAL::Gmpfi i;
+        result_type():i(){}
+        result_type(const CGAL::Gmpfi& j):i(j){}
+        friend bool operator<(result_type x, result_type y){
+          if(x.i.inf()==0){
+            if(y.i.inf()==0)return x.i.sup()<y.i.sup(); // [0,0]<[0,1]
+            else return true; // [0,*]<[1,*]
+          }
+#if 0
+          // The following is already handled by the general formula below
+          if(y.i.inf()==0)return false; // [0,*]<[1,*]
+#endif
+          // Both numbers are guaranteed non-zero. With double people usually
+          // pick the biggest number. Here we choose the tightest interval.
+          // This is purely heuristic, it doesn't matter much if overflow makes
+          // us do random choices.
+          // Best is largest inf/sup (ideally 1)
+          // Risk of {over,under}flow
+          return x.i.inf()*y.i.sup() < y.i.inf()*x.i.sup();
+        }
+        // Only used as: if(max==Score(0))
+        friend bool operator==(result_type x, result_type y){
+          // Throw if we don't know if the max coeff is 0
+          return x.i == y.i;
+        }
+      };
+      result_type operator()(const CGAL::Gmpfi& x)const{return abs(x);}
+    };
+    template<typename> struct functor_traits;
+    template<> struct functor_traits<scalar_score_coeff_op<CGAL::Gmpfi> >
+    {
+      enum {
+        Cost = 10,
+        PacketAccess = false
+      };
+    };
+
+  }
+
+
 }
 
 #include <CGAL/GMP/Gmpfi_type.h>

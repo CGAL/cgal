@@ -14,7 +14,7 @@ typedef CGAL::Exact_predicates_exact_constructions_kernel Epec;
 
 
 template <class K>
-int test_surface_mesh(const std::string filename)
+int test_surface_mesh(const std::filesystem::path& filename)
 {
   typedef typename K::Point_3 Point;
   typedef CGAL::Surface_mesh<Point> Mesh;
@@ -52,7 +52,7 @@ int test_surface_mesh(const std::string filename)
 
 int main(int argc, char** argv)
 {
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/elephant.off");
+  const std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/elephant.off");
 
   assert(test_surface_mesh<Epic>(filename) == 0);
   assert(test_surface_mesh<Epec>(filename) == 0);

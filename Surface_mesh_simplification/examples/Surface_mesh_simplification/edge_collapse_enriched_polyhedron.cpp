@@ -23,7 +23,7 @@ namespace SMS = CGAL::Surface_mesh_simplification;
 int main(int argc, char** argv)
 {
   Surface_mesh surface_mesh;
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/small_cube.off");
+  const std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/small_cube.off");
   std::ifstream is(filename);
   if(!is || !(is >> surface_mesh))
   {
@@ -55,7 +55,7 @@ int main(int argc, char** argv)
   const double ratio = (argc > 2) ? std::stod(argv[2]) : 0.1;
   SMS::Edge_count_ratio_stop_predicate<Surface_mesh> stop(ratio);
 
-  // The index maps are not explicitelty passed as in the previous
+  // The index maps are not explicitly passed as in the previous
   // example because the surface mesh items have a proper id() field.
   // On the other hand, we pass here explicit cost and placement
   // function which differ from the default policies, omitted in

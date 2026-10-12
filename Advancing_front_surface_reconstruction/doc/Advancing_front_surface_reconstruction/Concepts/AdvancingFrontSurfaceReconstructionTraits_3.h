@@ -4,7 +4,7 @@
 \cgalConcept
 
 The concept `AdvancingFrontSurfaceReconstructionTraits_3` describes the requirements
-for the the geometric traits of the class `CGAL::Delaunay_triangulation_3`
+for the geometric traits of the class `CGAL::Delaunay_triangulation_3`
 used in the class `CGAL::Advancing_front_surface_reconstruction`.
 It defines the geometric objects (points, segments...) forming the triangulation
 together with a few geometric predicates and constructions on these objects.

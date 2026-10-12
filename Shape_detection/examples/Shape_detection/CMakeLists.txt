@@ -4,14 +4,15 @@
 cmake_minimum_required(VERSION 3.12...3.31)
 project(Shape_detection_Examples)
 
-find_package(CGAL REQUIRED COMPONENTS Core)
+find_package(CGAL REQUIRED)
 
 create_single_source_cgal_program("efficient_RANSAC_with_custom_shape.cpp")
 create_single_source_cgal_program("efficient_RANSAC_with_parameters.cpp")
 create_single_source_cgal_program("efficient_RANSAC_with_point_access.cpp")
 
-find_package(Eigen3 3.1.0 QUIET) # (3.1.0 or greater)
+find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
+
 if(TARGET CGAL::Eigen3_support)
   message(STATUS "Found Eigen 3")
 

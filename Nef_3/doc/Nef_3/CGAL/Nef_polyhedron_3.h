@@ -24,19 +24,12 @@ namespace CGAL {
   for every item, and an incidence relation on them. Each edge and each facet
   is represented by two halfedges or two halffacets, respectively.
 
-\cgalHeading{Template Parameters}
-
-  The first parameter requires one of the following exact kernels:
+\tparam NefPolyhedronTraits_3 one of the following exact kernels:
   `Homogeneous`, `Simple_homogeneous`, `Extended_homogeneous`
   parametrized with `Gmpz`, `leda_integer` or any other number type
   modeling \f$\mathbb{Z}\f$, or `Cartesian`, `Simple_cartesian`,
   `Extended_cartesian` parametrized with `Gmpq`, `leda_rational`,
   `Quotient<Gmpz>` or any other number type modeling \f$\mathbb{Q}\f$.
-
-  The second parameter and the third parameter are for future considerations.
-  Neither `Nef_polyhedronItems_3` nor `Nef_polyhedronMarks` is
-  specified, yet. Do not use any other than the default types for these two
-  template parameters.
 
   \sa `CGAL::Nef_polyhedron_3::Vertex`
   \sa `CGAL::Nef_polyhedron_3::Halfedge`
@@ -49,10 +42,8 @@ namespace CGAL {
   \sa `CGAL::Polyhedron_3<Traits>`
 
 */
-template< class Nef_polyhedronTraits_3,
-          class Nef_polyhedronItems_3 = CGAL::Default_items<Nef_polyhedronTraits_3>
-          class Nef_polyhedronMarks = bool
-          > class Nef_polyhedron_3 {
+template< class NefPolyhedronTraits_3 >
+class Nef_polyhedron_3 {
 public:
 
 /// \name Types
@@ -79,7 +70,7 @@ public:
   function `twin()` returns the opposite halfedge.
 
   Looking at the incidence structure on a sphere map, the member function
-  `out_sedge` returns the first outgoing shalfedge, and `incident_sface`
+  `out_sedge()` returns the first outgoing shalfedge, and `incident_sface()`
   returns the incident sface.
 
 \cgalHeading{Creation}
@@ -456,7 +447,7 @@ public:
  An entry item to each boundary cycle can be accessed
   using the iterator range `[sface_cycles_begin(), sface_cycles_end())`.
   Additionally, `Nef_polyhedron_S2` provides the macro
-  `CGAL_forall_sface_cylces_of`. The iterators are of type
+  `CGAL_forall_sface_cycles_of`. The iterators are of type
   `SFace_cycle_const_iterator` and represent either a shalfedge, a shalfloop,
   or a svertex.
 
@@ -946,7 +937,7 @@ public:
   }; /* end Volume */
 
 /*!
-  traits class selected for `Nef_polyhedronTraits_3`.
+  traits class selected for `NefPolyhedronTraits_3`.
 */
   typedef unspecified_type Traits;
 
@@ -1183,9 +1174,12 @@ public:
 /*!
 
   creates a Nef polyhedron, which represents the same point set as
-  the polyhedral surface `P` does.
+  the polyhedral surface `pm` does.
+  \tparam PolygonMesh a model of `FaceListGraph` and `VertexListGraph`
+          with vertices holding `NefPolyhedronTraits_3::Point_3`.
 */
-  Nef_polyhedron_3(Polyhedron& P);
+  template <class PolygonMesh>
+  explicit Nef_polyhedron_3(const PolygonMesh& pm);
 
 /*!
   creates a Nef polyhedron, which represents the same point set as

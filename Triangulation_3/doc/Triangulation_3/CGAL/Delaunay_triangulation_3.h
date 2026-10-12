@@ -290,8 +290,8 @@ This function will try to remove `v` only if the removal does not
 decrease the dimension.
 
 The return value is only meaningful if `*could_lock_zone` is `true`:
-  - returns true if the vertex was removed
-  - returns false if the vertex wasn't removed since it would decrease
+  - returns `true` if the vertex was removed
+  - returns `false` if the vertex wasn't removed since it would decrease
     the dimension.
 
 \pre `v` is a finite vertex of the triangulation.
@@ -487,12 +487,6 @@ find_conflicts(const Point& p, Cell_handle c,
                OutputIteratorInternalFacets ifit,
                bool *could_lock_zone = nullptr);
 
-/*!
-\deprecated This function is renamed `vertices_on_conflict_zone_boundary` since CGAL-3.8.
-*/
-template <class OutputIterator>
-OutputIterator
-vertices_in_conflict(const Point& p, Cell_handle c, OutputIterator res);
 
 /*!
 Similar to `find_conflicts()`, but reports the vertices which are on the

@@ -31,9 +31,9 @@ namespace CGAL {
 // Utility struct
 template <typename Polygon>
 struct Gps_polyline_traits {
-  typedef typename Gps_default_traits<Polygon>::Arr_traits      Segment_traits;
-  typedef Arr_polyline_traits_2<Segment_traits>                 Polyline_traits;
-  typedef Gps_traits_2<Polyline_traits>                         Traits;
+  using Segment_traits = typename Gps_default_traits<Polygon>::Arr_traits;
+  using Polyline_traits = Arr_polyline_traits_2<Segment_traits>;
+  using Traits = Gps_traits_2<Polyline_traits>;
 };
 
 // Helper to map Polygon_2 -> General_polygon_2 / PWH_2 -> General_PWH_2
@@ -85,9 +85,7 @@ using Disable_if_Polygon_2_iterator =
 // Convert Polygon_2 to General_polygon_2<Polyline_traits>
   template <typename Kernel, typename Container, typename ArrTraits>
 General_polygon_2<ArrTraits>
-convert_polygon(const Polygon_2<Kernel, Container>& polygon,
-                const ArrTraits& traits)
-{
+convert_polygon(const Polygon_2<Kernel, Container>& polygon, const ArrTraits& traits) {
   auto ctr = traits.construct_curve_2_object();
   if (polygon.is_empty()) return General_polygon_2<ArrTraits>();
   using Point = typename ArrTraits::Point_2;
@@ -99,22 +97,20 @@ convert_polygon(const Polygon_2<Kernel, Container>& polygon,
   General_polygon_2<ArrTraits> gpgn;
   auto make_x_mtn = traits.make_x_monotone_2_object();
   make_x_mtn(cv,
-             boost::make_function_output_iterator
-             ([&](const Make_x_monotone_result& obj)
-              { gpgn.push_back(*(std::get_if<X_monotone_curve>(&obj))); }));
+             boost::make_function_output_iterator([&](const Make_x_monotone_result& obj)
+             { gpgn.push_back(*(std::get_if<X_monotone_curve>(&obj))); }));
   return gpgn;
 }
 
 // Convert Polygon_with_holes_2 to General_polygon_with_holes_2<Polyline_traits>
   template <typename Kernel, typename Container, typename ArrTraits>
-General_polygon_with_holes_2<General_polygon_2<ArrTraits> >
+General_polygon_with_holes_2<General_polygon_2<ArrTraits>>
 convert_polygon(const Polygon_with_holes_2<Kernel, Container>& pwh,
                 const ArrTraits& traits) {
-  typedef General_polygon_2<ArrTraits>          General_pgn;
-  typedef Polygon_2<Kernel, Container>          Pgn;
-  auto converter = [&](const Pgn& pgn)->General_pgn {
-    return convert_polygon(pgn, traits);
-  };
+  using General_pgn = General_polygon_2<ArrTraits>;
+  using Pgn = Polygon_2<Kernel, Container>;
+  auto converter = [&](const Pgn& pgn)->General_pgn
+  { return convert_polygon(pgn, traits); };
   return General_polygon_with_holes_2<General_polygon_2<ArrTraits>>
     (convert_polygon(pwh.outer_boundary(), traits),
      boost::make_transform_iterator(pwh.holes().begin(), converter),
@@ -137,14 +133,11 @@ convert_polygon_back(const General_polygon_2<ArrTraits>& gpgn) {
 // Convert General_polygon_with_holes_2<Polyline_traits> to Polygon_with_holes_2
 template <typename Kernel, typename Container, typename ArrTraits>
 Polygon_with_holes_2<Kernel, Container>
-convert_polygon_back(const General_polygon_with_holes_2
-                       <General_polygon_2<ArrTraits> >& gpwh)
-{
+convert_polygon_back(const General_polygon_with_holes_2<General_polygon_2<ArrTraits>>& gpwh) {
   using Pgn = Polygon_2<Kernel, Container>;
   using General_pgn = General_polygon_2<ArrTraits>;
-  auto converter = [](const General_pgn& gpgn)->Pgn {
-    return convert_polygon_back<Kernel, Container>(gpgn);
-  };
+  auto converter = [](const General_pgn& gpgn)->Pgn
+  { return convert_polygon_back<Kernel, Container>(gpgn); };
   return Polygon_with_holes_2<Kernel, Container>
     (convert_polygon_back<Kernel, Container>(gpwh.outer_boundary()),
      boost::make_transform_iterator(gpwh.holes().begin(), converter),
@@ -155,21 +148,17 @@ convert_polygon_back(const General_polygon_with_holes_2
 // Polygon_2 to General_polygon_2<Polyline_traits>, or
 // Polygon_with_holes_2 to General_polygon_with_holes_2<Polyline_traits>
 template <typename InputIterator, typename Traits>
-boost::transform_iterator
-<std::function
- <typename General_polygon_of_polygon<typename std::iterator_traits
-                                      <InputIterator>::value_type>::type
-  (typename std::iterator_traits<InputIterator>::reference)>,
- InputIterator>
-convert_polygon_iterator(InputIterator it, const Traits& traits)
-{
+boost::transform_iterator<std::function<
+  typename General_polygon_of_polygon<typename std::iterator_traits<
+    InputIterator>::value_type>::type
+  (typename std::iterator_traits<InputIterator>::reference)>, InputIterator>
+convert_polygon_iterator(InputIterator it, const Traits& traits) {
   using Input_type = typename std::iterator_traits<InputIterator>::value_type;
   using Return_type = typename General_polygon_of_polygon<Input_type>::type;
   using Function_type = std::function<Return_type(Input_type)>;
 
-  Function_type func =
-    [&traits](const Input_type& p)->Return_type
-    { return convert_polygon(p, traits); };
+  Function_type func = [&traits](const Input_type& p)->Return_type
+  { return convert_polygon(p, traits); };
 
   return boost::transform_iterator<Function_type, InputIterator>(it, func);
 }
@@ -186,8 +175,7 @@ struct Polygon_converter {
 
   // Convert and export to output iterator.
   template <typename ArrTraits>
-  void operator()(const General_polygon_with_holes_2
-                  <General_polygon_2<ArrTraits> >& gpwh) const
+  void operator()(const General_polygon_with_holes_2<General_polygon_2<ArrTraits>>& gpwh) const
   { *m_output++ = convert_polygon_back<Kernel, Container>(gpwh); }
 };
 
@@ -195,9 +183,7 @@ struct Polygon_converter {
 // OutputIterator
 template <typename Kernel, typename Container, typename OutputIterator>
 struct Polygon_converter_output_iterator :
-  boost::function_output_iterator<Polygon_converter
-                                  <Kernel, Container, OutputIterator> >
-{
+  boost::function_output_iterator<Polygon_converter<Kernel, Container, OutputIterator>> {
   using Converter = Polygon_converter<Kernel, Container, OutputIterator>;
   using Base = boost::function_output_iterator<Converter>;
 
@@ -214,11 +200,8 @@ struct Polygon_converter_output_iterator :
 // (indirection with Polygon_2)
 template <typename OutputIterator, typename Kernel, typename Container>
 Polygon_converter_output_iterator<Kernel, Container, OutputIterator>
-convert_polygon_back(OutputIterator& output,
-                     const Polygon_2<Kernel, Container>&)
-{
-  return Polygon_converter_output_iterator
-    <Kernel, Container, OutputIterator>(output);
+convert_polygon_back(OutputIterator& output, const Polygon_2<Kernel, Container>&) {
+  return Polygon_converter_output_iterator<Kernel, Container, OutputIterator>(output);
 }
 
 // Converts General_polygon_with_holes_2<Polyline_traits> to Polygon_with_holes_2
@@ -226,10 +209,8 @@ convert_polygon_back(OutputIterator& output,
 template <typename OutputIterator, typename Kernel, typename Container>
 Polygon_converter_output_iterator<Kernel, Container, OutputIterator>
 convert_polygon_back(OutputIterator& output,
-                     const Polygon_with_holes_2<Kernel, Container>&)
-{
-  return Polygon_converter_output_iterator
-    <Kernel, Container, OutputIterator>(output);
+                     const Polygon_with_holes_2<Kernel, Container>&) {
+  return Polygon_converter_output_iterator<Kernel, Container, OutputIterator>(output);
 }
 
 template <typename InputIterator>
@@ -238,7 +219,6 @@ struct Iterator_to_gps_traits {
   typedef typename Gps_default_traits<InputPolygon>::Traits    Traits;
 };
 
-
 }
 
-#endif // CGAL_BSO_POLYGON_CONVERSIONS_H
+#endif

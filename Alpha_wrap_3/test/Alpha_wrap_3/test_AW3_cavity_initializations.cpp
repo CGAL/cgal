@@ -105,7 +105,7 @@ void alpha_wrap_triangle_mesh(Mesh& input_mesh,
   }
 
   if(!enforce_manifoldness)
-    assert(AW3::internal::check_edge_length(wrap, alpha));
+    assert(AW3::internal::has_bounded_edge_length(wrap, alpha));
 }
 
 void alpha_wrap_triangle_mesh(Mesh& input_mesh,

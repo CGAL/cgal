@@ -17,11 +17,16 @@
 #include <CGAL/license/Mesh_2.h>
 
 
+#include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <CGAL/Filter_circulator.h>
+#include <CGAL/tags.h>
 #include <CGAL/Unique_hash_map.h>
 
+#include <boost/iterator/transform_iterator.hpp>
+#include <CGAL/enum.h>
+#include <CGAL/functional.h>
+#include <map>
 #include <utility>
-#include <CGAL/boost/iterator/transform_iterator.hpp>
 
 namespace CGAL {
 
@@ -71,25 +76,22 @@ public:
 
   /**
    * `Cluster` register information about clusters.
-   * A cluster is a set of vertices v_i incident to one vertice
+   * A cluster is a set of vertices v_i adjacent to one vertex
    * v_0, so that angles between segments [v_0, v_i] is less than 60
    * degrees.
    */
   struct Cluster {
-    bool reduced ; /**< Is the cluster reduced? */
+    bool reduced ; ///< Is the cluster reduced?
 
-    /**
-     * Smallest_angle gives the two vertices defining the
-     * smallest angle in the cluster.
-     */
+    /// the two vertices defining the smallest angle in the cluster.
     std::pair<Vertex_handle, Vertex_handle> smallest_angle;
 
-    FT rmin; // @fixme: rmin has no meaning if reduced=false!!!
+    FT next_sq_insertion_radius; // next_sq_insertion_radius has no meaning if reduced=false
     Squared_length minimum_squared_length;
 
     /**
-     * The following map tells what vertices are in the cluster and if
-     * the corresponding segment has been split once.
+     * The following map tells which vertices are in the cluster and if
+     * the corresponding segment has already been split.
      */
     typedef std::map<Vertex_handle, bool> Vertices_map;
     Vertices_map vertices;
@@ -345,12 +347,12 @@ update_cluster(Cluster& c, iterator it, Vertex_handle va,
     }
 
   if(c.is_reduced())
-    c.rmin = squared_distance(c.smallest_angle.first->point(),
-                              c.smallest_angle.second->point())/FT(4);
+    c.next_sq_insertion_radius =
+        squared_distance(c.smallest_angle.first->point(), c.smallest_angle.second->point()) / FT(4);
   cluster_map.insert(Cluster_map_value_type(va,c));
 #ifdef CGAL_MESH_2_DEBUG_CLUSTERS
-  std::cerr << "Cluster at " << va->point() << " is updated.  "
-            << "\n  vm: " << vm->point()
+  std::cerr << "Cluster at " << IO::oformat(va, With_point_tag{}) << " is updated.  "
+            << "\n  vm: " << IO::oformat(vm, With_point_tag{})
             << "\n  reduction: " << reduction
             << "\n  min_sq_len: " << c.minimum_squared_length
             << "\n";
@@ -469,7 +471,7 @@ construct_cluster(Vertex_handle v,
   if(c.vertices.empty())
     {
       c.reduced = false;
-      // c.rmin is not initialized because
+      // c.next_sq_insertion_radius is not initialized because
       // reduced=false!
       c.minimum_squared_length =
         squared_distance(v->point(), target(begin)->point());

@@ -17,13 +17,14 @@
 
 
 // includes
-#  include <CGAL/Optimisation/basic.h>
-#  include <CGAL/Random.h>
-#  include <CGAL/algorithm.h>
-#  include <list>
-#  include <vector>
-#  include <algorithm>
-#  include <iostream>
+#include <CGAL/Optimisation/basic.h>
+#include <CGAL/Random.h>
+#include <CGAL/algorithm.h>
+#include <list>
+#include <vector>
+#include <array>
+#include <algorithm>
+#include <iostream>
 
 namespace CGAL {
 
@@ -38,11 +39,11 @@ template < class Traits_ >
 class Min_circle_2 {
   public:
     // types
-    typedef           Traits_                           Traits;
-    typedef typename  Traits_::Point                    Point;
-    typedef typename  Traits_::Circle                   Circle;
-    typedef typename  std::list<Point>::const_iterator  Point_iterator;
-    typedef           const Point *                     Support_point_iterator;
+    typedef           Traits_                             Traits;
+    typedef typename  Traits_::Point                      Point;
+    typedef typename  Traits_::Circle                     Circle;
+    typedef typename  std::list<Point>::const_iterator    Point_iterator;
+    typedef typename  std::array<Point,3>::const_iterator Support_point_iterator;
 
     /**************************************************************************
     WORKAROUND: Some compilers are unable to match member functions defined
@@ -110,8 +111,8 @@ class Min_circle_2 {
     // private data members
     Traits       tco;                           // traits class object
     std::list<Point>  points;                   // doubly linked list of points
-  std::size_t         n_support_points;              // number of support points
-    Point*       support_points;                // array of support points
+    std::size_t         n_support_points;              // number of support points
+    std::array<Point,3> support_points;                // array of support points
 
 
     // copying and assignment not allowed!
@@ -176,14 +177,14 @@ class Min_circle_2 {
     Support_point_iterator
     support_points_begin( ) const
     {
-        return( support_points);
+        return (support_points.begin());
     }
 
     inline
     Support_point_iterator
     support_points_end( ) const
     {
-        return( support_points+n_support_points);
+        return( support_points.begin()+ n_support_points);
     }
 
     // random access for support points
@@ -302,9 +303,6 @@ class Min_circle_2 {
                       const Traits& traits    = Traits())
             : tco( traits)
         {
-            // allocate support points' array
-            support_points = new Point[ 3];
-
             // range of points not empty?
             if ( first != last) {
 
@@ -328,9 +326,6 @@ class Min_circle_2 {
     Min_circle_2( const Traits& traits = Traits())
         : tco( traits), n_support_points( 0)
     {
-        // allocate support points' array
-        support_points = new Point[ 3];
-
         // initialize circle
         tco.circle.set();
 
@@ -342,9 +337,6 @@ class Min_circle_2 {
     Min_circle_2( const Point& p, const Traits& traits = Traits())
         : tco( traits), points( 1, p), n_support_points( 1)
     {
-        // allocate support points' array
-        support_points = new Point[ 3];
-
         // initialize circle
         support_points[ 0] = p;
         tco.circle.set( p);
@@ -360,9 +352,6 @@ class Min_circle_2 {
                   const Traits& traits = Traits())
         : tco( traits)
     {
-        // allocate support points' array
-        support_points = new Point[ 3];
-
         // store points
         points.push_back( p1);
         points.push_back( p2);
@@ -377,9 +366,6 @@ class Min_circle_2 {
                   const Traits& traits = Traits())
         : tco( traits)
     {
-        // allocate support points' array
-        support_points = new Point[ 3];
-
         // store points
         points.push_back( p1);
         points.push_back( p2);
@@ -389,15 +375,6 @@ class Min_circle_2 {
         mc( points.end(), 0);
     }
 
-
-    // Destructor
-    // ----------
-    inline
-    ~Min_circle_2( )
-    {
-        // free support points' array
-        delete[] support_points;
-    }
 
     // Modifiers
     // ---------
@@ -443,17 +420,15 @@ class Min_circle_2 {
     bool
     is_valid( bool verbose = false, int level = 0) const
     {
-        using namespace std;
-
         CGAL::Verbose_ostream verr( verbose);
-        verr << endl;
-        verr << "CGAL::Min_circle_2<Traits>::" << endl;
-        verr << "is_valid( true, " << level << "):" << endl;
+        verr << std::endl;
+        verr << "CGAL::Min_circle_2<Traits>::" << std::endl;
+        verr << "is_valid( true, " << level << "):" << std::endl;
         verr << "  |P| = " << number_of_points()
-             << ", |S| = " << number_of_support_points() << endl;
+             << ", |S| = " << number_of_support_points() << std::endl;
 
         // containment check (a)
-        verr << "  a) containment check..." << flush;
+        verr << "  a) containment check..." << std::flush;
         Point_iterator point_iter;
         for ( point_iter  = points_begin();
               point_iter != points_end();
@@ -461,10 +436,10 @@ class Min_circle_2 {
             if ( has_on_unbounded_side( *point_iter))
                 return( CGAL::_optimisation_is_valid_fail( verr,
                             "circle does not contain all points"));
-        verr << "passed." << endl;
+        verr << "passed." << std::endl;
 
         // support set checks (b)+(c)
-        verr << "  b)+c) support set checks..." << flush;
+        verr << "  b)+c) support set checks..." << std::flush;
         switch( number_of_support_points()) {
 
           case 0:
@@ -548,9 +523,9 @@ class Min_circle_2 {
                         "illegal number of support points, \
                          not between 0 and 3."));
         };
-        verr << "passed." << endl;
+        verr << "passed." << std::endl;
 
-        verr << "  object is valid!" << endl;
+        verr << "  object is valid!" << std::endl;
         return( true);
     }
 

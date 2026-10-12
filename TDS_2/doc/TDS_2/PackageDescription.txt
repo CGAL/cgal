@@ -35,14 +35,14 @@ derives its `Vertex` and `Face` types from the two template parameters
 \c %Vb and \c %Fb respectively.
 
 If the triangulation data structure is used alone, these parameters
-have to be instantiated by models of the concepts
+have to be instantiated with models of the concepts
 `TriangulationDSFaceBase_2` and `TriangulationDSVertexBase_2`. These
 concepts are described in this chapter together with their default
 models `CGAL::Triangulation_ds_face_base_2<Tds>` and
 `CGAL::Triangulation_ds_vertex_base_2<Tds>`.
 
 If the triangulation data structure is plugged into a triangulation
-class, the parameters have to be instantiated by models of different
+class, the parameters have to be instantiated with models of different
 refining concepts according to the actual type of the triangulation.
 These refining concepts and their models are described in Chapter
 \ref Chapter_2D_Triangulations "2D Triangulations".

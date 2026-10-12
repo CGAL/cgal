@@ -38,7 +38,6 @@ struct Triangulation_mesher_level_traits_2 :
   struct Zone {
     typedef std::list<Face_handle> Faces;
     typedef std::list<Edge> Edges;
-  public:
     typedef typename Faces::iterator Faces_iterator;
     typedef typename Edges::iterator Edges_iterator;
 
@@ -50,6 +49,7 @@ struct Triangulation_mesher_level_traits_2 :
                              // the face.
     Faces faces;
     Edges boundary_edges;
+    Edges edges_to_flip;
   };
 
   Vertex_handle insert_impl(const Point& p, Zone& zone)

@@ -20,7 +20,7 @@ namespace PMP = ::CGAL::Polygon_mesh_processing;
 namespace CP = ::CGAL::parameters;
 
 template <typename K>
-int test_self_intersections(const std::string filename,
+int test_self_intersections(const std::filesystem::path& filename,
                             const bool expected)
 {
   std::vector<typename K::Point_3> points;
@@ -64,7 +64,7 @@ int test_self_intersections(const std::string filename,
 }
 
 template <typename K>
-int test_limited_self_intersections(const std::string& filename)
+int test_limited_self_intersections(const std::filesystem::path& filename)
 {
   std::vector<typename K::Point_3> points;
   std::vector< std::array<std::size_t, 3> > triangles;
@@ -113,11 +113,11 @@ int main(int argc, char** argv)
   // If file(s) are provided, the associated expected result must also be provided.
   // Note that this expected value is a Boolean that is passed in command line
   // with either 'true' or 'false' (and not integers), that is for example:
-  // > self_intersection_surface_mesh_test data/U.off false
+  // > self_intersection_surface_mesh_test data/U_sheet.off false
 
   // First test ----------------------------------------------------------------
   bool expected = false;
-  std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/elephant.off");
+  std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/elephant.off");
   if(argc > 1) {
     assert(argc > 2);
     std::stringstream ss(argv[2]);
@@ -165,7 +165,7 @@ int main(int argc, char** argv)
 
   // Fourth test ----------------------------------------------------------------
   expected = true;
-  filename = (argc > 7) ? argv[7] : "data_degeneracies/degtri_single.off";
+  filename = (argc > 7) ? argv[7] : CGAL::data_file_path("meshes/degeneracies/degtri_single.off");
   if(argc > 7) {
     assert(argc > 8);
     std::stringstream ss(argv[8]);
@@ -229,6 +229,13 @@ int main(int argc, char** argv)
     std::vector<EPICK::Point_3> points = {Point_3(0,0,0), Point_3(1,0,0), Point_3(0,1,0), Point_3(0,0.5,0), Point_3(0,0,1), Point_3(0,0,-1)};
     std::vector< std::array<std::size_t, 3> > triangles={{0,1,2},{0,1,3},{0,1,4},{0,1,5}};
     assert(PMP::does_triangle_soup_self_intersect(points, triangles));
+  }
+  {
+    // 4 identical triangles: no self-intersection
+    typedef EPICK::Point_3 Point_3;
+    std::vector<EPICK::Point_3> points = {Point_3(0,0,0), Point_3(1,0,0), Point_3(0,1,0)};
+    std::vector< std::array<std::size_t, 3> > triangles={{0,1,2},{0,2,1},{0,1,2},{0,2,1}};
+    assert(!PMP::does_triangle_soup_self_intersect(points, triangles));
   }
 
   return r;

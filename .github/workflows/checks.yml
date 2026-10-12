@@ -17,8 +17,8 @@ jobs:
         set -x
         sudo apt-get update && sudo apt-get install -y graphviz ssh bibtex2html
         sudo pip install lxml
-        sudo pip install 'pyquery==1.4.1' # it seems to be the last py2 compatible version
-        wget --no-verbose -O doxygen_exe https://cgal.geometryfactory.com/~cgaltest/doxygen_1_8_13_patched/doxygen
+        sudo pip install pyquery
+        wget --no-verbose -O doxygen_exe https://cgal.geometryfactory.com/~cgaltest/doxygen_1_17_0_patched/doxygen
         sudo mv doxygen_exe /usr/bin/doxygen
         sudo chmod +x /usr/bin/doxygen
         git config --global user.email "cgal@geometryfactory.com"
@@ -26,7 +26,6 @@ jobs:
 
     - name: Run checks
       run: |
-        zsh Scripts/developer_scripts/test_merge_of_branch HEAD
+        bash ${RUNNER_DEBUG:+-x} Scripts/developer_scripts/test_merge_of_branch HEAD | tee -a "$GITHUB_STEP_SUMMARY"
         #test dependencies
-        bash Scripts/developer_scripts/cgal_check_dependencies.sh --check_headers /usr/bin/doxygen
-
+        bash ${RUNNER_DEBUG:+-x} Scripts/developer_scripts/cgal_check_dependencies.sh --check_headers /usr/bin/doxygen

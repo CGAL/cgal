@@ -170,7 +170,7 @@ pullout_directions
  *         is a closed range of pull-out directions represented as a pair
  *         of the extreme directions in the range. If the input edge is not
  *         a valid top edge, the range is nondeterministic.
- *         a pair of Directions is build this way [firstClockwise,secondClockwise]
+ *         a pair of Directions is built this way [firstClockwise,secondClockwise]
  *
  * \pre `png` must be non-degenerate (has at least 3 vertices), simple, and
  * does not have three consecutive collinear vertices.

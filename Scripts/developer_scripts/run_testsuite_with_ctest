@@ -384,8 +384,9 @@ EOF
   #####################
   ##   GET RESULTS   ##
   #####################
-  TAG_DIR=$(awk '/^Create new tag: /{print $4F}' tmp.txt)
-  rm tmp.txt
+
+  TAG_DIR=$(dirname "$(find Testing -type f -name 'Test.xml' 2>/dev/null | head -1)")
+  TAG_DIR=${TAG_DIR##Testing/}
   cd "Testing/${TAG_DIR}" || exit 1
   RESULT_FILE=./"results_${CGAL_TESTER}_${PLATFORM}.txt"
   rm -f "$RESULT_FILE"

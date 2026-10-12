@@ -1,10 +1,10 @@
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.31)
 
 project(Isosurfacing_3_Tests)
 
 find_package(CGAL REQUIRED)
 
-find_package(Eigen3 3.1.0 QUIET) #(3.1.0 or greater)
+find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
 
 find_package(TBB QUIET)

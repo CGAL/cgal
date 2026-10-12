@@ -14,18 +14,29 @@
 
 #include <CGAL/license/Constrained_triangulation_3.h>
 
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Constrained_triangulation_3/internal/cdt_debug_io.h>
 #include <CGAL/Constrained_triangulation_3/internal/ostream_redirect_guard.h>
-
+#include <CGAL/expected.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_self_intersections.h>
-#include <tl/expected.hpp>
+
+#include <boost/property_map/property_map.hpp>
+
+#include <cstddef>
+#include <iostream>
+#include <ostream>
 #include <sstream>
+#include <string>
+#include <utility>
+#include <vector>
+#include <filesystem>
 
 namespace CGAL {
 
   template <typename PolygonMesh>
   struct CDT_3_read_polygon_mesh_output {
-    tl::expected<PolygonMesh, std::string> polygon_mesh;
+    cpp23::expected<PolygonMesh, std::string> polygon_mesh;
 
     std::size_t nb_of_duplicated_points = 0;
     std::size_t nb_of_simplified_polygons = 0;
@@ -54,7 +65,7 @@ namespace CGAL {
     auto traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
     auto verbose = choose_parameter(get_parameter(np, internal_np::verbose), false);
     bool do_repair = choose_parameter(get_parameter(np, internal_np::repair_polygon_soup), true);
-    const auto& return_error = parameters::get_parameter_reference(np, internal_np::callback);
+    auto return_error = parameters::get_parameter_reference(np, internal_np::callback);
 
     namespace PMP = CGAL::Polygon_mesh_processing;
     namespace PMP_internal = PMP::internal;
@@ -93,7 +104,7 @@ namespace CGAL {
 
   template <typename PolygonMesh, typename NamedParameters = parameters::Default_named_parameters>
   CDT_3_read_polygon_mesh_output<PolygonMesh>
-  read_polygon_mesh_for_cdt_3(const std::string &fname,
+  read_polygon_mesh_for_cdt_3(const std::filesystem::path& fname,
                               const NamedParameters &np = parameters::default_values())
   {
     CDT_3_read_polygon_mesh_output<PolygonMesh> result;
@@ -111,7 +122,7 @@ namespace CGAL {
       auto cerr_redirect = CGAL::internal::ostream_redirect_guard::redirect(std::cerr).to(local_verbose_output);
 
       auto return_error = [&]() {
-        result.polygon_mesh = tl::unexpected(std::move(local_verbose_output).str());
+        result.polygon_mesh = cpp23::unexpected(std::move(local_verbose_output).str());
         return result;
       };
 

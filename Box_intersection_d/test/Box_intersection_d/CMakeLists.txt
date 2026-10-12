@@ -10,6 +10,7 @@ create_single_source_cgal_program("automated_test.cpp")
 create_single_source_cgal_program("benchmark_box_intersection.cpp")
 create_single_source_cgal_program("random_set_test.cpp")
 create_single_source_cgal_program("test_box_grid.cpp")
+create_single_source_cgal_program("test_box_type.cpp")
 create_single_source_cgal_program("test_Has_member_report.cpp")
 
 find_package(TBB QUIET)

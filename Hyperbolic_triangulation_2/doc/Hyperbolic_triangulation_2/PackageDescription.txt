@@ -47,7 +47,7 @@ The Delaunay triangulation of a set of points \f$P\f$ in the hyperbolic plane \f
 
 - `HyperbolicDelaunayTriangulationTraits_2` describes the requirements for an interface for geometric objects, constructions, and predicates in the hyperbolic plane.
 - `HyperbolicTriangulationFaceBase_2` describes the requirements for faces of the hyperbolic Delaunay triangulation.
-- `HyperbolicFaceData` describes the requirements for an hyperbolic marker of faces of the hyperbolic Delaunay triangulation, used to filter faces of the Euclidean Delaunay triangulation.
+- `HyperbolicFaceData` describes the requirements for a hyperbolic marker of faces of the hyperbolic Delaunay triangulation, used to filter faces of the Euclidean Delaunay triangulation.
 
 \cgalCRPSection{Classes}
 

@@ -113,7 +113,10 @@ struct Lambda<Curve<FilteredTraits,true>>
     //     fill_lambda returns a pair and we are only interested in a bound
     bool update_exact() const
     {
-        if (is_exact) {
+        if (is_exact){
+            if (!exact.has_value()){
+                exact = (is_one) ? std::make_optional(Exact(1)) : std::make_optional(Exact(0));
+            }
             return true;
         }
 
@@ -198,7 +201,9 @@ struct Lambda<Curve<FilteredTraits,true>>
     {
         if ((is_zero && other.is_zero) || (is_one && other.is_one))
             return false;
-        if ((is_zero && (!other.is_zero)) || (!is_one && other.is_one))
+        // AF this may be wrong if approx is [0.9,1.1]  and other.is_one:
+        // if ((is_zero && (!other.is_zero)) || (!is_one && other.is_one))
+        if(is_zero && other.is_one)
             return true;
         CGAL::Uncertain<bool> res = approx < other.approx;
         if (CGAL::is_certain(res)) {
@@ -206,7 +211,8 @@ struct Lambda<Curve<FilteredTraits,true>>
         }
         update_exact();
         other.update_exact();
-        return exact < other.exact;
+        bool eres = exact.value() < other.exact.value();
+        return eres;
     }
 };
 

@@ -136,7 +136,7 @@ public:
   /// \name Face Creation
   /// The following function is invoked whenever a new face is
   /// created. It is guaranteed that all halfedges along the face
-  /// boundary have already been created an have their auxiliary data
+  /// boundary have already been created and have their auxiliary data
   /// fields attached to them:
   /// @{
 

@@ -22,16 +22,6 @@
 
 namespace CGAL {
 
-// Class declarations
-// ==================
-template < class R_ >
-class Access_coordinates_begin_2;
-
-template < class R_ >
-class Point_2_coordinate_iterator;
-
-// Class interfaces
-// ================
 template < class R_ >
 class Point_2_coordinate_iterator {
   public:

@@ -176,7 +176,7 @@ namespace CGAL {
       {
         if (amap.template attribute<i>(it)!=amap.null_descriptor)
         {
-          // make composant, dart and property node
+          // make component, dart and property node
           boost::property_tree::ptree & nattr = ndim.add("a", "");
           /* boost::property_tree::ptree & ndarts = */
           nattr.add("d", myDarts[it]);
@@ -209,7 +209,7 @@ namespace CGAL {
       {
         if (amap.template attribute<i>(it)!=amap.null_descriptor)
         {
-          // make composant, dart and property node
+          // make component, dart and property node
           boost::property_tree::ptree & nattr = ndim.add("a", "");
           /* boost::property_tree::ptree & ndarts = */
           nattr.add("d", myDarts[it]);
@@ -242,7 +242,7 @@ namespace CGAL {
       {
         if (amap.template attribute<i>(it)!=amap.null_descriptor)
         {
-          // make composant, dart and property node
+          // make component, dart and property node
           boost::property_tree::ptree & nattr = ndim.add("a", "");
           /* boost::property_tree::ptree & ndarts = */
           nattr.add("d", myDarts[it]);
@@ -274,7 +274,7 @@ namespace CGAL {
       {
         if (amap.template attribute<i>(it)!=amap.null_descriptor)
         {
-          // make composant, dart and property node
+          // make component, dart and property node
           boost::property_tree::ptree & nattr = ndim.add("a", "");
           /* boost::property_tree::ptree & ndarts = */
           nattr.add("d", myDarts[it]);

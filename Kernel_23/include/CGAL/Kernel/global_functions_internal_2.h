@@ -383,6 +383,40 @@ compare_slope(const typename K::Point_2 &s1s,
   return k.compare_slope_2_object()(s1s, s1t, s2s, s2t);
 }
 
+
+template < class K >
+inline
+typename K::Comparison_result
+compare_squared_radius(const typename K::Point_2 &p,
+                       const typename K::FT &sr,
+                       const K& k)
+{
+  return k.compare_squared_radius_2_object()(p, sr);
+}
+
+template < class K >
+inline
+typename K::Comparison_result
+compare_squared_radius(const typename K::Point_2 &p,
+                       const typename K::Point_2 &q,
+                       const typename K::FT &sr,
+                       const K& k)
+{
+  return k.compare_squared_radius_2_object()(p, q, sr);
+}
+
+template < class K >
+inline
+typename K::Comparison_result
+compare_squared_radius(const typename K::Point_2 &p,
+                       const typename K::Point_2 &q,
+                       const typename K::Point_2 &r,
+                       const typename K::FT &sr,
+                       const K& k)
+{
+  return k.compare_squared_radius_2_object()(p, q, r, sr);
+}
+
 template < class K >
 inline
 typename K::Comparison_result

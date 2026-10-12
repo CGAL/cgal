@@ -13,7 +13,8 @@
 //
 #include "MainWindow.h"
 #include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/Polyhedron_3_to_lcc.h>
+#include <CGAL/import_face_graph_to_lcc.h>
+#include <CGAL/Polyhedron_3.h>
 #include <CGAL/Triangulation_3_to_lcc.h>
 #include <QSettings>
 #include <QHeaderView>
@@ -375,7 +376,12 @@ void MainWindow::load_off (const QString & fileName, bool clear)
 
   std::ifstream ifs (qPrintable (fileName));
 
-  CGAL::import_from_polyhedron_3_flux < LCC > (*scene.lcc, ifs);
+  if (ifs.good())
+  {
+    CGAL::Polyhedron_3<LCC::Traits> P;
+    ifs >> P;
+    CGAL::import_face_graph_to_lcc(*scene.lcc, P);
+  }
 
 #ifdef CGAL_PROFILE_LCC_DEMO
   timer.stop();
@@ -415,7 +421,7 @@ void MainWindow::load_3DTDS (const QString & fileName, bool clear)
   T.insert (std::istream_iterator < Point_3 >(ifs),
             std::istream_iterator < Point_3 >() );
 
-  CGAL::import_from_triangulation_3 < LCC, Triangulation >(*scene.lcc, T);
+  CGAL::triangulation_3_to_lcc < LCC, Triangulation >(*scene.lcc, T);
 
 #ifdef CGAL_PROFILE_LCC_DEMO
   timer.stop();
@@ -673,7 +679,7 @@ void MainWindow::on_actionCompute_Voronoi_3D_triggered ()
   std::map<Triangulation::Cell_handle,
       LCC::Dart_descriptor > vol_to_dart;
 
-  dh = CGAL::import_from_triangulation_3 < LCC, Triangulation >
+  dh = CGAL::triangulation_3_to_lcc < LCC, Triangulation >
       (delaunay_lcc, T, &vol_to_dart);
 
   Dart_descriptor ddh=delaunay_lcc.dual(*scene.lcc, dh);

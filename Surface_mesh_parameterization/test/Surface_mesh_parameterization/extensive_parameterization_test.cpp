@@ -78,6 +78,11 @@ typedef boost::graph_traits<SM_Seam_mesh>::halfedge_descriptor    SM_SE_halfedge
 
 int main(int, char**)
 {
+#ifdef CGAL_SMP_USE_SUITESPARSE_SOLVERS
+  std::cout << "Using SuiteSparse" << std::endl;
+#else
+  std::cout << "Using Eigen3" << std::endl;
+#endif
   std::cout.precision(17);
   CGAL::IO::set_pretty_mode(std::cout);
 
@@ -522,7 +527,7 @@ int main(int, char**)
       return EXIT_FAILURE;
     }
     else {
-      std::cout << "Parameterized with Barycentric (SM)!" << std::endl;
+      std::cout << "Parameterized with Iterative Authalic (SM)!" << std::endl;
     }
   }
 #endif // DAC_SM_SEAM_MESH

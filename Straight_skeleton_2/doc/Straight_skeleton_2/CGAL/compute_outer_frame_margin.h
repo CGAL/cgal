@@ -7,7 +7,7 @@ computes the separation required between a polygon and the outer frame used to o
 suitable for the computation of outer offset polygons at a given distance.
 
 Given a non-degenerate strictly-simple 2D polygon whose vertices are passed
-in the range [`first`,`beyond`), calculates the largest euclidean distance
+in the range [`first`,`beyond`), calculates the largest Euclidean distance
 `d` between each input vertex and its corresponding offset vertex at
 a distance `offset`.
 
@@ -46,10 +46,10 @@ the kernel in which the type `InputIterator::value_type` is defined.
 \sa `PolygonOffsetBuilderTraits_2`
 \sa `CGAL::Polygon_offset_builder_traits_2<K>`
 */
-template <class InputIterator, class Traits>
+template <class Traits, class InputIterator>
 std::optional< typename Traits::FT >
 compute_outer_frame_margin( InputIterator first, InputIterator beyond,
-                            typename Traits::FT offset,
+                            const typename Traits::FT& offset,
                             const Traits& traits = Default_traits );
 
 } /* namespace CGAL */

@@ -8,7 +8,6 @@
 
 #include <CGAL/exceptions.h>
 #include <CGAL/IO/OFF.h>
-#include <CGAL/IO/OBJ.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
 
 #include <QMessageBox>
@@ -17,6 +16,7 @@
 #include <iostream>
 #include <fstream>
 #include <limits>
+#include <memory>
 
 using namespace CGAL::Three;
 
@@ -43,11 +43,10 @@ public:
     return false;
   }
   QString name() const override{ return "off_plugin"; }
-  QString nameFilters() const override { return "OFF files (*.off);;Wavefront OBJ (*.obj)"; }
+  QString nameFilters() const override { return "OFF files (*.off)"; }
   bool canLoad(QFileInfo fileinfo) const override;
   QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true) override;
   CGAL::Three::Scene_item* load_off(QFileInfo fileinfo);
-  CGAL::Three::Scene_item* load_obj(QFileInfo fileinfo);
 
   bool canSave(const CGAL::Three::Scene_item*) override;
   bool save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& ) override;
@@ -84,21 +83,6 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
       ok = false;
       return QList<Scene_item*>();
     }
-  } else if(fileinfo.suffix().toLower() == "obj"){
-
-    Scene_item* item = load_obj(fileinfo);
-    if(item)
-    {
-      ok = true;
-      if(add_to_scene)
-        CGAL::Three::Three::scene()->addItem(item);
-      return QList<Scene_item*>()<<item;
-    }
-    else
-    {
-      ok = true;
-      return QList<Scene_item*>();
-    }
   }
   return QList<Scene_item*>();
 }
@@ -107,12 +91,11 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
 CGAL::Three::Scene_item*
 CGAL_Lab_off_plugin::load_off(QFileInfo fileinfo) {
   // Open file
-  std::ifstream in(fileinfo.filePath().toUtf8());
+  std::ifstream in(fileinfo.filesystemFilePath());
   if(!in) {
-    std::cerr << "Error! Cannot open file " << (const char*)fileinfo.filePath().toUtf8() << std::endl;
+    std::cerr << "Error! Cannot open file " << fileinfo.filesystemFilePath() << std::endl;
     return nullptr;
   }
-
 
   CGAL::File_scanner_OFF scanner( in, false);
 
@@ -151,12 +134,16 @@ CGAL_Lab_off_plugin::load_off(QFileInfo fileinfo) {
     // Try to read .off in a polygon soup
     Scene_polygon_soup_item* soup_item = new Scene_polygon_soup_item();
     soup_item->setName(fileinfo.completeBaseName());
-    std::ifstream in2(fileinfo.filePath().toUtf8());
+    std::ifstream in2(fileinfo.filesystemFilePath());
     if(!soup_item->load(in2)) {
+      QString filename;
+      filename.fromStdWString(fileinfo.filesystemFilePath().wstring());
+      QString msg = QString("Cannot open file: ");
+      msg.append(filename);
       QMessageBox::warning(
             CGAL::Three::Three::mainWindow(),
             "Cannot Open File",
-            QString("Cannot open file %1").arg((const char*)fileinfo.filePath().toUtf8()));
+            msg);
       delete soup_item;
       return nullptr;
     }
@@ -170,24 +157,7 @@ CGAL_Lab_off_plugin::load_off(QFileInfo fileinfo) {
   }
   Scene_surface_mesh_item* item = new Scene_surface_mesh_item(surface_mesh);
   item->setName(fileinfo.completeBaseName());
-  std::size_t isolated_v = 0;
-  for(vertex_descriptor v : vertices(*surface_mesh))
-  {
-    if(surface_mesh->is_isolated(v))
-    {
-      ++isolated_v;
-    }
-  }
-  if(isolated_v >0)
-  {
-    item->setNbIsolatedvertices(isolated_v);
-    //needs two restore, it's not a typo
-    QApplication::restoreOverrideCursor();
-    QMessageBox::warning((QWidget*)nullptr,
-                         tr("Isolated vertices"),
-                         tr("%1 isolated vertices found")
-                         .arg(item->getNbIsolatedvertices()));
-  }
+
   typedef boost::function_output_iterator<CGAL::internal::Throw_at_output> OutputIterator;
   try{
     CGAL::Polygon_mesh_processing::non_manifold_vertices(*surface_mesh, OutputIterator());
@@ -196,7 +166,7 @@ CGAL_Lab_off_plugin::load_off(QFileInfo fileinfo) {
   {
 
     QApplication::restoreOverrideCursor();
-    QMessageBox::warning((QWidget*)nullptr,
+    QMessageBox::warning(CGAL::Three::Three::mainWindow(),
                          tr("Non Manifold Vertices"),
                          tr("Non-manifold vertices have been found"));
   }
@@ -204,30 +174,6 @@ CGAL_Lab_off_plugin::load_off(QFileInfo fileinfo) {
   if(item->isItemMulticolor())
     item->computeItemColorVectorAutomatically(true);
   return item;
-}
-
-CGAL::Three::Scene_item*
-CGAL_Lab_off_plugin::load_obj(QFileInfo fileinfo) {
-  // Open file
-  std::ifstream in(fileinfo.filePath().toUtf8());
-  if(!in) {
-    std::cerr << "Error! Cannot open file " << (const char*)fileinfo.filePath().toUtf8() << std::endl;
-    return nullptr;
-  }
-  Scene_surface_mesh_item* item = new Scene_surface_mesh_item();
-  item->setName(fileinfo.completeBaseName());
-  if(item->load_obj(in))
-    return item;
-  //if not polygonmesh load in soup
-  std::vector<Point_3> points;
-  std::vector<std::vector<std::size_t> > polygons;
-  if(CGAL::IO::read_OBJ(in, points, polygons))
-  {
-    Scene_polygon_soup_item* soup_item = new Scene_polygon_soup_item();
-    soup_item->load(points, polygons);
-    return soup_item;
-  }
-  return nullptr;
 }
 
 bool CGAL_Lab_off_plugin::canSave(const CGAL::Three::Scene_item* item)
@@ -255,7 +201,7 @@ save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
   if(!sm_item && !soup_item && !points_item)
     return false;
 
-  std::ofstream out(fileinfo.filePath().toUtf8());
+  std::ofstream out(fileinfo.filesystemFilePath());
   out.precision (std::numeric_limits<double>::digits10 + 2);
 
   if(fileinfo.suffix().toLower() == "off"){
@@ -269,17 +215,6 @@ save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
     else{
       return false;
     }
-  }
-  if(fileinfo.suffix().toLower() == "obj"){
-    bool res = (sm_item && sm_item->save_obj(out))
-        || (soup_item && CGAL::IO::write_OBJ(out, soup_item->points(), soup_item->polygons()));
-    if(res)
-    {
-      items.pop_front();
-      return true;
-    }
-    else
-      return false;
   }
   return false;
 }

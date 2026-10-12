@@ -5,8 +5,8 @@
 #include <CGAL/Shape_detection/Region_growing/Point_set.h>
 
 
-#include <CGAL/IO/read_xyz_points.h>
-#include <CGAL/IO/write_ply_points.h>
+#include <CGAL/IO/XYZ.h>
+#include <CGAL/IO/PLY.h>
 
 #include <CGAL/Real_timer.h>
 
@@ -44,7 +44,7 @@ void test_copied_point_cloud (const Point_set& points, std::size_t nb);
 int main (int argc, char** argv)
 {
   Point_set points;
-  const std::string ifilename = (argc > 1) ? argv[1] : CGAL::data_file_path("points_3/building.xyz");
+  const std::filesystem::path ifilename = (argc > 1) ? argv[1] : CGAL::data_file_path("points_3/building.xyz");
   std::ifstream ifile(ifilename);
 
   if (!ifile ||

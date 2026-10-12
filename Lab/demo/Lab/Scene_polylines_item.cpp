@@ -1,6 +1,5 @@
 #include "Scene_polylines_item.h"
 #include "Scene_spheres_item.h"
-#include "Scene_points_with_normal_item.h"
 
 #include <CGAL/bounding_box.h>
 #include <CGAL/Three/Three.h>
@@ -13,6 +12,9 @@
 #include <CGAL/Three/Edge_container.h>
 #include <CGAL/Three/Point_container.h>
 #include <CGAL/Three/Three.h>
+
+#include <array>
+#include <cstddef>
 
 using namespace CGAL::Three;
 typedef Edge_container Ec;
@@ -219,6 +221,7 @@ Scene_polylines_item_private::computeSpheres()
       // corners.
       //Finds the centers of the spheres and their color
       int s_id = 0;
+      std::array<std::size_t, 5> nb_of_spheres_per_color{0, 0, 0, 0, 0};
       for(iterator
           p_it = corner_polyline_nb.begin(),
           end = corner_polyline_nb.end();
@@ -252,19 +255,34 @@ Scene_polylines_item_private::computeSpheres()
               colors[1] = 0;
               colors[2] = 200;
           }
+          switch(p_it->second) {
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+              ++nb_of_spheres_per_color[p_it->second];
+              break;
+            default:
+              ++nb_of_spheres_per_color[0];
+          }
 
           CGAL::IO::Color c(colors[0], colors[1], colors[2]);
           spheres->add_sphere(K::Sphere_3(center+offset, spheres_drawn_square_radius),s_id++, c);
       }
       spheres->setToolTip(
             QString("<p>Legend of endpoints colors: <ul>"
-                    "<li>black: one incident polyline</li>"
-                    "<li>green: two incident polylines</li>"
-                    "<li>blue: three incident polylines</li>"
-                    "<li>red: four incident polylines</li>"
-                    "<li>fuchsia: five or more incident polylines</li>"
+                    "<li>black: one incident polyline (%1 spheres)</li>"
+                    "<li>green: two incident polylines (%2 spheres)</li>"
+                    "<li>blue: three incident polylines (%3 spheres)</li>"
+                    "<li>red: four incident polylines (%4 spheres)</li>"
+                    "<li>fuchsia: five or more incident polylines (%5 spheres)</li>"
                     "</ul></p>"
                     "<p>Tip: To remove this item, set the corner radius of its corresponding polyline to 0, or simply delete it. </p>")
+                    .arg(nb_of_spheres_per_color[1])
+                    .arg(nb_of_spheres_per_color[2])
+                    .arg(nb_of_spheres_per_color[3])
+                    .arg(nb_of_spheres_per_color[4])
+                    .arg(nb_of_spheres_per_color[0])
                             );
       spheres->computeElements();
       QApplication::restoreOverrideCursor();
@@ -509,11 +527,6 @@ QMenu* Scene_polylines_item::contextMenu()
 
         menu->setProperty(prop_name, true);
         container->menuAction()->setProperty("is_groupable", true);
-        QAction* actionCreatePointSet =
-            menu->addAction(tr("Create Point Set from Polyline"));
-        actionCreatePointSet->setObjectName("actionCreatePointSet");
-        connect(actionCreatePointSet, &QAction::triggered,
-                this, &Scene_polylines_item::point_set_from_polyline);
     }
     return menu;
 }
@@ -778,24 +791,3 @@ void Scene_polylines_item::computeElements() const
   d->computeElements();
 }
 
-void Scene_polylines_item::point_set_from_polyline()
-{
-  Scene_points_with_normal_item* new_ps_item
-      = new Scene_points_with_normal_item();
-  for(auto it = polylines.begin();
-      it != polylines.end();
-      ++it)
-  {
-    std::size_t length = it->size();
-    for(std::size_t id = 0; id < length; ++id)
-    {
-      if(id != length - 1
-         || it->at(id) != it->front())
-        new_ps_item->point_set()->insert(it->at(id));
-    }
-  }
-  new_ps_item->setName(tr("Points from %1").arg(name()));
-  CGAL::Three::Three::scene()->addItem(new_ps_item);
-  new_ps_item->invalidateOpenGLBuffers();
-  new_ps_item->redraw();
-}
