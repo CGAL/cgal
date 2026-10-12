@@ -573,8 +573,10 @@ void tetrahedral_isotropic_remeshing(CDT_3& cdt3,
       choose_parameter(get_parameter(np, internal_np::do_split), true),
       choose_parameter(get_parameter(np, internal_np::do_collapse), true),
       choose_parameter(get_parameter(np, internal_np::do_flip), true),
-      choose_parameter(get_parameter(np, internal_np::nb_smoothing_iterations), std::size_t{1}),
-      choose_parameter(get_parameter(np, internal_np::nb_flip_smooth_iterations), std::size_t{3})};
+      static_cast<std::size_t>(
+          choose_parameter(get_parameter(np, internal_np::nb_smoothing_iterations), std::size_t{1})),
+      static_cast<std::size_t>(
+          choose_parameter(get_parameter(np, internal_np::nb_flip_smooth_iterations), std::size_t{3}))};
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
   std::cout << "Tetrahedral remeshing ("
