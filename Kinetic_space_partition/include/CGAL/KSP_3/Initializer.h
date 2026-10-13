@@ -523,6 +523,7 @@ private:
             vts[v].other = std::size_t(-1);
       }
 
+      std::vector<bool> zero_area_polygons(polygons.size(), false);
       for (auto [line_idx, line] : sp.data().lines) {
         // Skip lines on the bounding box, they won't split the polygon.
         if (m_data.igraph().line_is_on_bbox(line_idx))
@@ -532,8 +533,13 @@ private:
         for (std::size_t i = 0; i < num_polys; i++) {
           Polygon& poly = polygons[i];
           std::list<std::size_t> pos_side;
-          if (m_data.split_polygon(poly, line_idx, pos_side))
+          std::pair<bool, bool> zero_area;
+          if (m_data.split_polygon(poly, line_idx, pos_side, &zero_area)) {
+            // A part without a vertex strictly on its side at t = 0 has zero area (polygon touching the line).
             polygons.emplace_back(std::move(pos_side));
+            zero_area_polygons.push_back(zero_area_polygons[i] || zero_area.second);
+            zero_area_polygons[i] = zero_area_polygons[i] || zero_area.first;
+          }
         }
       }
 
@@ -557,7 +563,8 @@ private:
 
       // Identify which polygon belongs to which face and link the constrained vertices to the iedges.
 
-      for (Polygon& poly : polygons) {
+      for (std::size_t poly_idx = 0; poly_idx < polygons.size(); poly_idx++) {
+        Polygon& poly = polygons[poly_idx];
         bool has_moving = false;
 
         // The face is located with the centroid of the polygon at t = 0+, as the polygon may have zero area at t = 0
@@ -656,7 +663,8 @@ private:
         // Move faces into sp data structure
         // A zero-area piece beyond a line touched by the polygon at t = 0 is only added to the mesh at the beginning
         // of the propagation if the polygon is allowed to cross that line (see Vertex_propagation::filter_touching_pieces()).
-        const bool zero_area = m_data.is_zero_area(poly);
+        const bool zero_area = zero_area_polygons[poly_idx];
+        CGAL_assertion(zero_area == m_data.is_zero_area(poly));
         CGAL_assertion_code(auto res = ) sp.data().polygons.insert(std::make_pair(face, std::move(poly)));
         CGAL_assertion(res.second);
         sp.link_property_maps();

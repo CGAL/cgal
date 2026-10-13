@@ -146,10 +146,12 @@ private:
   std::map<std::pair<IkFT, int>, std::list<Event> > queue;
 
 
+  // Zero-area pieces are not added to the mesh by the initializer (no border yet), see filter_touching_pieces().
   bool is_degenerate_piece(Support_plane& sp, IFace f) {
-    auto it = sp.data().polygons.find(f);
-    CGAL_assertion(it != sp.data().polygons.end());
-    return m_data.is_zero_area(it->second);
+    CGAL_assertion(sp.data().polygons.find(f) != sp.data().polygons.end());
+    const bool degenerate = sp.data().borders.find(f) == sp.data().borders.end();
+    CGAL_assertion(degenerate == m_data.is_zero_area(sp.data().polygons[f]));
+    return degenerate;
   }
 
   // Does the polygon registered with ov on an iedge cross the iedge at t = 0, i.e., does it have pieces with an area
@@ -818,9 +820,6 @@ private:
 
       apply(events);
     }
-
-    if (t_events != 0)
-      std::cout << "\n" << t_events << std::endl;
 
     return iteration;
   }
@@ -2470,154 +2469,338 @@ private:
     return std::find_if(vol.begin(), vol.end(), [&](const std::pair<IkFT, IVertex>& p) { return p.second == v; }) != vol.end();
   }
 
-  // Does event e of a vertex adjacent to the corner make the vertex reach the line of edge?
-  bool reaches_line(const Event& e, IEdge edge) const {
-    std::size_t line_idx = m_data.igraph().edge(edge).line;
+  // Does event e make its vertex reach the line line_idx?
+  bool reaches_line(const Event& e, std::size_t line_idx) const {
     if (vts[e.vertex].constraints.empty())
       return e.crossed_edge != m_data.igraph().null_iedge() && m_data.igraph().edge(e.crossed_edge).line == line_idx;
     return e.destination != m_data.igraph().null_ivertex() && ivertex_on_line(e.destination, line_idx);
   }
 
-  // A corner c of a polygon reaches the ivertex X of its face while both adjacent edges (c, a) and (c, b) reach the
-  // lines L1 and L2 through X, i.e., the polygon corner and the face corner coincide.
-  // Locally, the polygon stops at X in its face F and its edges (a, c) and (c, b) end on L1 and L2. The polygon may
-  // continue into the face F1 beyond L1, the face F2 beyond L2 and the face F3 beyond both lines.
-  //
-  //            F1  L2' | F3                F1: [X, a on L1, a prolongation, slider on L2']
-  //                    |                   F2: [X, slider on L1', b prolongation, b on L2]
-  //     L1 --a---------X--------- L1'      F3: [X, slider on L2', c prolongation, slider on L1']
-  //            F       |   F2
-  //                    b L2
-  //
-  // The vertices on the lines are sliders if a/b are unconstrained, or fixed vertices at the ends of their constraint
-  // edges if they are constrained (then a/b continue on their constraint lines beyond L1/L2).
-  void case_D2(const std::vector<Event>& events) {
-    d2_events++;
+  // Consecutive corners c_0, ..., c_{m-1} of a polygon reaching corners of their face at the same time: the polygon
+  // edges between them lie on the lines of the face. Edge j connects corner j-1 and corner j and lies on line L_j.
+  // In an open chain, edge 0 connects the neighbor a with c_0 and edge m connects c_{m-1} with the neighbor b,
+  // a and b reach L_0 and L_m. In a closed chain, all vertices of the polygon are corners (the polygon fits its face).
+  struct Corner_chain {
+    bool closed = false;
+    bool forward = true; // the chain follows the order of the polygon
+    std::vector<std::size_t> corners;
+    std::vector<std::pair<Event, Event> > corner_events; // events of corner i on L_i and on L_{i+1}
+    std::vector<std::size_t> lines;                      // L_j
+    std::size_t a = std::size_t(-1), b = std::size_t(-1);
+    Event ea, eb;
+  };
 
-    // Identify corner vertex c (two events) and its neighbors a and b.
+  // Extracts a chain of corners from coupled events at the same time; events that do not belong to it are returned in rest.
+  bool build_corner_chain(const std::vector<Event>& events, Corner_chain& ch, std::vector<Event>& rest) {
     std::map<std::size_t, std::vector<std::size_t> > by_vertex;
     for (std::size_t i = 0; i < events.size(); i++)
       by_vertex[events[i].vertex].push_back(i);
 
-    std::size_t c = std::size_t(-1);
+    auto corner_lines = [&](std::size_t v, std::size_t& l1, std::size_t& l2) {
+      auto it = by_vertex.find(v);
+      if (it == by_vertex.end() || it->second.size() != 2 || !vts[v].constraints.empty())
+        return false;
+      const Event& e1 = events[it->second[0]];
+      const Event& e2 = events[it->second[1]];
+      if (e1.crossed_edge == m_data.igraph().null_iedge() || e2.crossed_edge == m_data.igraph().null_iedge())
+        return false;
+      l1 = m_data.igraph().edge(e1.crossed_edge).line;
+      l2 = m_data.igraph().edge(e2.crossed_edge).line;
+      return l1 != l2;
+    };
+    auto shared_line = [&](std::size_t p, std::size_t q, std::size_t& l) {
+      std::size_t p1, p2, q1, q2;
+      if (!corner_lines(p, p1, p2) || !corner_lines(q, q1, q2))
+        return false;
+      if (p1 == q1 || p1 == q2) { l = p1; return true; }
+      if (p2 == q1 || p2 == q2) { l = p2; return true; }
+      return false;
+    };
+    auto event_on = [&](std::size_t v, std::size_t line_idx) -> std::size_t {
+      auto it = by_vertex.find(v);
+      if (it == by_vertex.end())
+        return std::size_t(-1);
+      for (std::size_t i : it->second)
+        if (reaches_line(events[i], line_idx))
+          return i;
+      return std::size_t(-1);
+    };
+
+    std::size_t c0 = std::size_t(-1), l1, l2, l;
     for (const auto& [v, idx] : by_vertex)
-      if (idx.size() == 2)
-        c = v;
-
-    CGAL_assertion(events.size() == 4 && by_vertex.size() == 3 && c != std::size_t(-1));
-    CGAL_assertion(vts[c].constraints.empty());
-
-    const Event& ec_0 = events[by_vertex[c][0]];
-    const Event& ec_1 = events[by_vertex[c][1]];
-    CGAL_assertion(ec_0.crossed_edge != m_data.igraph().null_iedge());
-    CGAL_assertion(ec_1.crossed_edge != m_data.igraph().null_iedge());
-
-    std::size_t a = std::size_t(-1), b = std::size_t(-1);
-    for (const auto& [v, idx] : by_vertex)
-      if (v != c) {
-        if (a == std::size_t(-1))
-          a = v;
-        else
-          b = v;
+      if (corner_lines(v, l1, l2)) {
+        c0 = v;
+        break;
       }
+    if (c0 == std::size_t(-1))
+      return false;
 
-    // Assign the lines: a reaches L1, b reaches L2.
-    const Event* ea = &events[by_vertex[a][0]];
-    const Event* eb = &events[by_vertex[b][0]];
-    const Event* ec1 = &ec_0;
-    const Event* ec2 = &ec_1;
-    if (!(reaches_line(*ea, ec1->crossed_edge) && reaches_line(*eb, ec2->crossed_edge)))
-      std::swap(ec1, ec2);
-    CGAL_assertion(reaches_line(*ea, ec1->crossed_edge) && reaches_line(*eb, ec2->crossed_edge));
+    const std::list<std::size_t>& poly = m_data.support_plane(vts[c0].sp_idx).data().polygons[vts[c0].face];
+    const std::vector<std::size_t> pv(poly.begin(), poly.end());
+    const std::size_t n = pv.size();
+    const std::size_t pos0 = std::find(pv.begin(), pv.end(), c0) - pv.begin();
 
-    const std::size_t L1 = m_data.igraph().edge(ec1->crossed_edge).line, L2 = m_data.igraph().edge(ec2->crossed_edge).line;
-    CGAL_assertion(L1 != L2);
+    std::size_t s = pos0, steps = 0;
+    while (steps < n && shared_line(pv[(s + n - 1) % n], pv[s], l)) {
+      s = (s + n - 1) % n;
+      steps++;
+    }
 
-    // The crossed edges of the corner may have been computed in a former face of the vertex. The edges of the current
-    // face on L1 and L2 meeting in X are used instead.
-    IEdge E1 = m_data.igraph().null_iedge(), E2 = m_data.igraph().null_iedge();
-    IVertex X = m_data.igraph().null_ivertex();
-    for (IEdge f1 : m_data.igraph().face(vts[c].face).edges) {
-      if (m_data.igraph().edge(f1).line != L1)
-        continue;
-      for (IEdge f2 : m_data.igraph().face(vts[c].face).edges) {
-        if (m_data.igraph().edge(f2).line != L2)
-          continue;
-        for (IVertex v : { m_data.igraph().source(f1), m_data.igraph().target(f1) })
-          if (v == m_data.igraph().source(f2) || v == m_data.igraph().target(f2)) {
-            E1 = f1;
-            E2 = f2;
-            X = v;
-          }
+    ch = Corner_chain();
+    if (steps >= n) {
+      ch.closed = true;
+      for (std::size_t i = 0; i < n; i++)
+        ch.corners.push_back(pv[(pos0 + i) % n]);
+      for (std::size_t j = 0; j < n; j++) {
+        shared_line(ch.corners[(j + n - 1) % n], ch.corners[j], l);
+        ch.lines.push_back(l);
       }
     }
-    CGAL_assertion(X != m_data.igraph().null_ivertex());
+    else {
+      ch.corners.push_back(pv[s]);
+      std::size_t e = s;
+      while (ch.corners.size() < n && shared_line(pv[e], pv[(e + 1) % n], l)) {
+        e = (e + 1) % n;
+        ch.corners.push_back(pv[e]);
+      }
+      ch.a = pv[(s + n - 1) % n];
+      ch.b = pv[(e + 1) % n];
+      if (ch.a == ch.b || std::find(ch.corners.begin(), ch.corners.end(), ch.a) != ch.corners.end()
+        || std::find(ch.corners.begin(), ch.corners.end(), ch.b) != ch.corners.end())
+        return false;
 
-    const IkFT t = ec1->time;
-    const IkPoint_2 pX = ec1->p, pA = ea->p, pB = eb->p;
-    const std::size_t sp_idx = vts[c].sp_idx;
-    const IFace F = vts[c].face;
+      const std::size_t m = ch.corners.size();
+      ch.lines.resize(m + 1);
+      for (std::size_t j = 1; j < m; j++)
+        shared_line(ch.corners[j - 1], ch.corners[j], ch.lines[j]);
+      corner_lines(ch.corners[0], l1, l2);
+      if (m > 1)
+        ch.lines[0] = (l1 == ch.lines[1]) ? l2 : l1;
+      corner_lines(ch.corners[m - 1], l1, l2);
+      if (m > 1)
+        ch.lines[m] = (l1 == ch.lines[m - 1]) ? l2 : l1;
+      if (m == 1) {
+        ch.lines[0] = l1;
+        ch.lines[1] = l2;
+        if (event_on(ch.a, ch.lines[0]) == std::size_t(-1) || event_on(ch.b, ch.lines[1]) == std::size_t(-1))
+          std::swap(ch.lines[0], ch.lines[1]);
+      }
+      const std::size_t ia = event_on(ch.a, ch.lines[0]), ib = event_on(ch.b, ch.lines[m]);
+      if (ia == std::size_t(-1) || ib == std::size_t(-1))
+        return false;
+      ch.ea = events[ia];
+      ch.eb = events[ib];
+
+      // A single corner is processed as before (a is the neighbor with the lower index).
+      if (m == 1 && ch.b < ch.a) {
+        ch.forward = false;
+        std::swap(ch.a, ch.b);
+        std::swap(ch.ea, ch.eb);
+        std::swap(ch.lines[0], ch.lines[1]);
+      }
+    }
+
+    const std::size_t m = ch.corners.size();
+    const std::size_t ne = ch.lines.size();
+    for (std::size_t i = 0; i < m; i++) {
+      const std::size_t il = event_on(ch.corners[i], ch.lines[i]), ir = event_on(ch.corners[i], ch.lines[(i + 1) % ne]);
+      if (il == std::size_t(-1) || ir == std::size_t(-1) || il == ir)
+        return false;
+      ch.corner_events.push_back(std::make_pair(events[il], events[ir]));
+    }
+
+    // The other events are processed afterwards.
+    rest.clear();
+    for (const Event& e : events) {
+      bool used = (!ch.closed && ((e.vertex == ch.a && e.time == ch.ea.time && e.crossed_edge == ch.ea.crossed_edge && e.destination == ch.ea.destination)
+        || (e.vertex == ch.b && e.time == ch.eb.time && e.crossed_edge == ch.eb.crossed_edge && e.destination == ch.eb.destination)));
+      used = used || std::find(ch.corners.begin(), ch.corners.end(), e.vertex) != ch.corners.end();
+      if (!used)
+        rest.push_back(e);
+    }
+    return true;
+  }
+
+  // Coupled events forming a chain of corners (see Corner_chain). Other events of the group are queued again.
+  bool handle_corner_chain(const std::vector<Event>& events) {
+    Corner_chain ch;
+    std::vector<Event> rest;
+    if (!build_corner_chain(events, ch, rest))
+      return false;
+    for (const Event& e : rest) {
+      vts[e.vertex].queued_events++;
+      m_event_queue.push(e);
+    }
+    case_corner_chain(ch);
+    return true;
+  }
+
+  void case_D2(const std::vector<Event>& events) {
+    if (!handle_corner_chain(events))
+      std::cout << "Error: Unknown event type!" << std::endl;
+  }
+
+  // Corners of a polygon reach corners X_i of their face at the same time (case D2 for one corner).
+  // Locally, the polygon stops in its face F: the corners become fixed vertices at X_i, the end vertices a and b are
+  // replaced by sliders moving away from the chain (or stop at the ends of their constraint edges if constrained).
+  // The polygon may continue beyond each line L_j (face G_j, decided with can_cross(), i.e., counted against k) and
+  // beyond both lines at each corner (diagonal face H_i, only through free lines like q3 in case C2). A face G_j can
+  // also be reached from a diagonal face if L_j is blocked directly (like q4 in case C2).
+  //
+  //            G_0 L_1'| H_0               G_0: [X_0, a on L_0, a prolongation, slider on L_1']
+  //                    |                   G_1: [X_0, slider on L_0', b prolongation, b on L_1]
+  //     L_0 --a-------X_0-------- L_0'     H_0: [X_0, slider on L_1', c_0 prolongation, slider on L_0']
+  //            F       |   G_1
+  //                    b L_1
+  //
+  // Between two corners, G_j is [X_j, X_{j-1}, slider at X_{j-1}, slider at X_j].
+  void case_corner_chain(const Corner_chain& ch) {
+    d2_events++;
+    const std::size_t m = ch.corners.size();
+    const bool open = !ch.closed;
+    const std::size_t ne = ch.lines.size();
+    const std::size_t none = std::size_t(-1);
+    const IEdge null_edge = m_data.igraph().null_iedge();
+    const std::size_t sp_idx = vts[ch.corners[0]].sp_idx;
+    const IFace F = vts[ch.corners[0]].face;
     Support_plane& sp = m_data.support_plane(sp_idx);
     sp.ed2++;
+    const IkFT t = ch.corner_events[0].first.time;
+    const std::vector<std::size_t>& L = ch.lines;
 
-    const bool a_constrained = !vts[a].constraints.empty();
-    const bool b_constrained = !vts[b].constraints.empty();
-    CGAL_assertion(!a_constrained || m_data.igraph().other(E1, X) == ea->destination);
-    CGAL_assertion(!b_constrained || m_data.igraph().other(E2, X) == eb->destination);
+    // Edge j connects the corners left_corner(j) and right_corner(j) (none for a and b); corner i lies between edge i and edge i + 1.
+    auto left_corner = [&](std::size_t j) { return open ? (j == 0 ? none : j - 1) : (j + m - 1) % m; };
+    auto right_corner = [&](std::size_t j) { return (open && j == m) ? none : j; };
+    auto right_edge = [&](std::size_t i) { return (i + 1) % ne; };
 
-    // Order in polygon: a, c, b (forward) or b, c, a.
+    // The crossed edges of the corners may have been computed in a former face of the vertex. The edges of the
+    // current face meeting in the corners are used instead.
+    std::vector<IVertex> X(m, m_data.igraph().null_ivertex());
+    std::vector<IEdge> E(ne, null_edge);
+    std::vector<IkPoint_2> pX(m);
+    for (std::size_t i = 0; i < m; i++) {
+      pX[i] = ch.corner_events[i].first.p;
+      for (IEdge f1 : m_data.igraph().face(F).edges) {
+        if (m_data.igraph().edge(f1).line != L[i])
+          continue;
+        for (IEdge f2 : m_data.igraph().face(F).edges) {
+          if (m_data.igraph().edge(f2).line != L[right_edge(i)])
+            continue;
+          for (IVertex v : { m_data.igraph().source(f1), m_data.igraph().target(f1) })
+            if (v == m_data.igraph().source(f2) || v == m_data.igraph().target(f2)) {
+              CGAL_assertion(sp.to_2d(m_data.igraph().point_3(v)) == pX[i]);
+              X[i] = v;
+              CGAL_assertion(E[i] == null_edge || E[i] == f1);
+              CGAL_assertion(E[right_edge(i)] == null_edge || E[right_edge(i)] == f2);
+              E[i] = f1;
+              E[right_edge(i)] = f2;
+            }
+        }
+      }
+      CGAL_assertion(X[i] != m_data.igraph().null_ivertex());
+    }
+
+    // End vertices of an open chain.
+    const std::size_t a = ch.a, b = ch.b;
+    const bool a_constrained = open && !vts[a].constraints.empty();
+    const bool b_constrained = open && !vts[b].constraints.empty();
+    CGAL_assertion(!a_constrained || m_data.igraph().other(E[0], X[0]) == ch.ea.destination);
+    CGAL_assertion(!b_constrained || m_data.igraph().other(E[m], X[m - 1]) == ch.eb.destination);
+
     std::list<std::size_t>& poly = sp.data().polygons[F];
     auto cyc_next = [&](std::list<std::size_t>::iterator it) { return (std::next(it) == poly.end()) ? poly.begin() : std::next(it); };
     auto cyc_prev = [&](std::list<std::size_t>::iterator it) { return (it == poly.begin()) ? std::prev(poly.end()) : std::prev(it); };
-    std::list<std::size_t>::iterator it_c = std::find(poly.begin(), poly.end(), c);
-    CGAL_assertion(it_c != poly.end());
-    const bool forward = (*cyc_prev(it_c) == a);
-    CGAL_assertion(forward ? (*cyc_next(it_c) == b) : (*cyc_next(it_c) == a && *cyc_prev(it_c) == b));
-    std::list<std::size_t>::iterator it_a = forward ? cyc_prev(it_c) : cyc_next(it_c);
-    std::list<std::size_t>::iterator it_b = forward ? cyc_next(it_c) : cyc_prev(it_c);
-    const std::size_t a_adj = forward ? *cyc_prev(it_a) : *cyc_next(it_a);
-    const std::size_t b_adj = forward ? *cyc_next(it_b) : *cyc_prev(it_b);
+    // Neighbor of an end vertex that is not in the chain.
+    auto outer_neighbor = [&](std::size_t v, std::size_t corner) {
+      auto it = std::find(poly.begin(), poly.end(), v);
+      return (*cyc_prev(it) == corner) ? *cyc_next(it) : *cyc_prev(it);
+    };
 
-    // Faces and edges around X.
-    const IFace F1 = m_data.igraph().iedge_is_on_bbox(E1) ? IFace(-1) : m_data.igraph().get_other_face(sp_idx, E1, F);
-    const IFace F2 = m_data.igraph().iedge_is_on_bbox(E2) ? IFace(-1) : m_data.igraph().get_other_face(sp_idx, E2, F);
-    const IEdge E1x = (F1 == IFace(-1)) ? m_data.igraph().null_iedge() : other_face_edge(F1, E1, X); // F1 | F3, normally on L2
-    const IEdge E2x = (F2 == IFace(-1)) ? m_data.igraph().null_iedge() : other_face_edge(F2, E2, X); // F2 | F3, normally on L1
-
-    // Decide propagation before changing anything.
-    bool cross1 = can_cross(*ec1, E1) || can_cross(*ea, E1);
-    bool cross2 = can_cross(*ec2, E2) || can_cross(*eb, E2);
-    const bool lateral_a = cross1 && a_constrained && expands_laterally(*ea, L1, E1);
-    const bool lateral_b = cross2 && b_constrained && expands_laterally(*eb, L2, E2);
-
-    IFace F3 = IFace(-1);
-    bool cross3 = false;
-    if (E1x != m_data.igraph().null_iedge() && E2x != m_data.igraph().null_iedge()
-      && m_data.igraph().edge(E1x).line == L2 && m_data.igraph().edge(E2x).line == L1
-      && !m_data.igraph().iedge_is_on_bbox(E1x) && !m_data.igraph().iedge_is_on_bbox(E2x)) {
-      F3 = m_data.igraph().get_other_face(sp_idx, E1x, F1);
-      CGAL_assertion(F3 == m_data.igraph().get_other_face(sp_idx, E2x, F2));
-      if (F3 != IFace(-1) && sp.data().polygons.find(F3) == sp.data().polygons.end())
-        cross3 = (cross1 && could_cross(sp_idx, F1, X, t, E1x)) || (cross2 && could_cross(sp_idx, F2, X, t, E2x));
-
-      // The polygon may reach F1 or F2 from F3 if it cannot cross L1 or L2 directly (like q4 in case C2).
-      if (cross3 && !cross1 && sp.data().polygons.find(F1) == sp.data().polygons.end() && could_cross(sp_idx, F3, X, t, E1x))
-        cross1 = true;
-      if (cross3 && !cross2 && sp.data().polygons.find(F2) == sp.data().polygons.end() && could_cross(sp_idx, F3, X, t, E2x))
-        cross2 = true;
+    // Faces and edges around the corners.
+    std::vector<IFace> G(ne, IFace(-1));
+    std::vector<IEdge> SL(ne, null_edge), SR(ne, null_edge); // edges of G_j at its left and right corner
+    for (std::size_t j = 0; j < ne; j++) {
+      if (m_data.igraph().iedge_is_on_bbox(E[j]))
+        continue;
+      G[j] = m_data.igraph().get_other_face(sp_idx, E[j], F);
+      if (G[j] == IFace(-1))
+        continue;
+      if (left_corner(j) != none)
+        SL[j] = other_face_edge(G[j], E[j], X[left_corner(j)]);
+      if (right_corner(j) != none)
+        SR[j] = other_face_edge(G[j], E[j], X[right_corner(j)]);
     }
 
-    // Speeds of the vertices sliding on the lines (computed before any vertex is stopped).
-    const IkVector_2 va = vts[a].v, vb = vts[b].v, vc = vts[c].v;
-    IkVector_2 v_s1(0, 0), v_s2(0, 0), v_l2x(0, 0), v_l1x(0, 0);
-    if (!a_constrained)
-      v_s1 = sp.calculate_edge_speed(vts[a], vts[a_adj], pA, sp_line(sp, L1), t);
-    if (!b_constrained)
-      v_s2 = sp.calculate_edge_speed(vts[b], vts[b_adj], pB, sp_line(sp, L2), t);
-    if ((cross1 || cross3) && E1x != m_data.igraph().null_iedge())
-      v_l2x = sp.calculate_edge_speed(vts[c], vts[a], pX, sp_line(sp, m_data.igraph().edge(E1x).line), t);
-    if ((cross2 || cross3) && E2x != m_data.igraph().null_iedge())
-      v_l1x = sp.calculate_edge_speed(vts[c], vts[b], pX, sp_line(sp, m_data.igraph().edge(E2x).line), t);
+    // Decide the propagation before changing anything.
+    std::vector<bool> crossG(ne, false);
+    for (std::size_t j = 0; j < ne; j++) {
+      std::vector<const Event*> ends;
+      if (left_corner(j) != none)
+        ends.push_back(&ch.corner_events[left_corner(j)].second);
+      if (right_corner(j) != none)
+        ends.push_back(&ch.corner_events[right_corner(j)].first);
+      if (open && j == 0)
+        ends.push_back(&ch.ea);
+      if (open && j == m)
+        ends.push_back(&ch.eb);
+      for (const Event* e : ends)
+        if (can_cross(*e, E[j])) {
+          crossG[j] = true;
+          break;
+        }
+    }
+    const bool lateral_a = open && crossG[0] && a_constrained && expands_laterally(ch.ea, L[0], E[0]);
+    const bool lateral_b = open && crossG[m] && b_constrained && expands_laterally(ch.eb, L[m], E[m]);
+
+    std::vector<IFace> H(m, IFace(-1));
+    std::vector<bool> crossH(m, false);
+    for (std::size_t i = 0; i < m; i++) {
+      const std::size_t jl = i, jr = right_edge(i);
+      if (SR[jl] == null_edge || SL[jr] == null_edge || m_data.igraph().edge(SR[jl]).line != L[jr] || m_data.igraph().edge(SL[jr]).line != L[jl]
+        || m_data.igraph().iedge_is_on_bbox(SR[jl]) || m_data.igraph().iedge_is_on_bbox(SL[jr]))
+        continue;
+      H[i] = m_data.igraph().get_other_face(sp_idx, SR[jl], G[jl]);
+      CGAL_assertion(H[i] == m_data.igraph().get_other_face(sp_idx, SL[jr], G[jr]));
+    }
+    for (bool changed = true; changed;) {
+      changed = false;
+      for (std::size_t i = 0; i < m; i++) {
+        const std::size_t jl = i, jr = right_edge(i);
+        if (H[i] == IFace(-1) || crossH[i] || sp.data().polygons.find(H[i]) != sp.data().polygons.end())
+          continue;
+        if ((crossG[jl] && could_cross(sp_idx, G[jl], X[i], t, SR[jl])) || (crossG[jr] && could_cross(sp_idx, G[jr], X[i], t, SL[jr]))) {
+          crossH[i] = true;
+          changed = true;
+        }
+      }
+      for (std::size_t j = 0; j < ne; j++) {
+        if (crossG[j] || G[j] == IFace(-1) || sp.data().polygons.find(G[j]) != sp.data().polygons.end())
+          continue;
+        const std::size_t lc = left_corner(j), rc = right_corner(j);
+        if ((lc != none && crossH[lc] && could_cross(sp_idx, H[lc], X[lc], t, SL[j])) || (rc != none && crossH[rc] && could_cross(sp_idx, H[rc], X[rc], t, SR[j]))) {
+          crossG[j] = true;
+          changed = true;
+        }
+      }
+    }
+
+    // Speeds (computed before any vertex is stopped).
+    std::vector<IkVector_2> vc(m), vL(ne, IkVector_2(0, 0)), vR(ne, IkVector_2(0, 0));
+    for (std::size_t i = 0; i < m; i++)
+      vc[i] = vts[ch.corners[i]].v;
+    const IkVector_2 va = open ? vts[a].v : IkVector_2(0, 0), vb = open ? vts[b].v : IkVector_2(0, 0);
+    IkVector_2 v_s1(0, 0), v_s2(0, 0);
+    if (open && !a_constrained)
+      v_s1 = sp.calculate_edge_speed(vts[a], vts[outer_neighbor(a, ch.corners[0])], ch.ea.p, sp_line(sp, L[0]), t);
+    if (open && !b_constrained)
+      v_s2 = sp.calculate_edge_speed(vts[b], vts[outer_neighbor(b, ch.corners[m - 1])], ch.eb.p, sp_line(sp, L[m]), t);
+    for (std::size_t j = 0; j < ne; j++) {
+      const std::size_t lc = left_corner(j), rc = right_corner(j);
+      if (rc != none && SR[j] != null_edge && (crossG[j] || crossH[rc]))
+        vR[j] = sp.calculate_edge_speed(vts[ch.corners[rc]], vts[lc != none ? ch.corners[lc] : a], pX[rc], sp_line(sp, m_data.igraph().edge(SR[j]).line), t);
+      if (lc != none && SL[j] != null_edge && (crossG[j] || crossH[lc]))
+        vL[j] = sp.calculate_edge_speed(vts[ch.corners[lc]], vts[rc != none ? ch.corners[rc] : b], pX[lc], sp_line(sp, m_data.igraph().edge(SL[j]).line), t);
+    }
 
     std::vector<std::size_t> new_moving_vertices;
 
@@ -2641,7 +2824,7 @@ private:
       vts.back().constraint_edge = ce;
       vts.back().itarget = m_data.igraph().other(ce, from);
       CGAL_assertion(vts.back().itarget == m_data.get_target_ivertex(vts.back(), ce));
-      if (twin != std::size_t(-1)) {
+      if (twin != none) {
         vts.back().other = twin;
         vts[twin].other = vts.size() - 1;
       }
@@ -2680,101 +2863,125 @@ private:
       m_data.igraph().edge(prolongation_edge).vertices.insert(std::make_pair(sp_idx, std::make_pair(fixed, moving)));
     };
 
+    // Vertices are given in the order of the chain, starting with a fixed vertex.
     auto new_polygon = [&](IFace face, std::vector<std::size_t> seq) {
       m_data.init_border(face);
       std::list<std::size_t>& p = sp.data().polygons[face];
       CGAL_assertion(p.empty());
       sp.active_polygons++;
-      if (!forward)
+      if (!ch.forward)
         std::reverse(seq.begin(), seq.end());
       p.assign(seq.begin(), seq.end());
     };
 
-    // Face F: a and b are replaced by sliders moving away from X if they are unconstrained.
-    std::size_t s1 = std::size_t(-1), s2 = std::size_t(-1);
-    if (!a_constrained) {
-      s1 = add_slider(pA, v_s1, F, E1, X, std::size_t(-1));
-      *it_a = s1;
+    // Face F: a and b are replaced by sliders moving away from the chain if they are unconstrained.
+    std::size_t s1 = none, s2 = none;
+    if (open && !a_constrained) {
+      s1 = add_slider(ch.ea.p, v_s1, F, E[0], X[0], none);
+      *std::find(poly.begin(), poly.end(), a) = s1;
     }
-    if (!b_constrained) {
-      s2 = add_slider(pB, v_s2, F, E2, X, std::size_t(-1));
-      *it_b = s2;
+    if (open && !b_constrained) {
+      s2 = add_slider(ch.eb.p, v_s2, F, E[m], X[m - 1], none);
+      *std::find(poly.begin(), poly.end(), b) = s2;
     }
-    m_data.igraph().edge(E1).vertices.insert(std::make_pair(sp_idx, std::make_pair(c, a_constrained ? a : s1)));
-    m_data.igraph().edge(E2).vertices.insert(std::make_pair(sp_idx, std::make_pair(c, b_constrained ? b : s2)));
+    for (std::size_t j = 0; j < ne; j++) {
+      const std::size_t lc = left_corner(j), rc = right_corner(j);
+      const std::size_t left = (lc != none) ? ch.corners[lc] : (a_constrained ? a : s1);
+      const std::size_t right = (rc != none) ? ch.corners[rc] : (b_constrained ? b : s2);
+      if (rc != none && lc == none)
+        m_data.igraph().edge(E[j]).vertices.insert(std::make_pair(sp_idx, std::make_pair(right, left)));
+      else
+        m_data.igraph().edge(E[j]).vertices.insert(std::make_pair(sp_idx, std::make_pair(left, right)));
+    }
 
-    // Face F1 beyond L1.
-    std::size_t l2x = std::size_t(-1), l1x = std::size_t(-1);
-    if (cross1) {
-      std::size_t x1 = add_fixed(pX, F1, X, E1, E1x);
-      std::size_t on_l1, a_prol;
-      if (a_constrained)
-        add_constrained_prolongation(a, *ea, va, F1, E1, on_l1, a_prol);
+    // Faces G_j beyond the lines.
+    std::vector<std::size_t> L_up(ne, none), R_up(ne, none);
+    for (std::size_t j = 0; j < ne; j++) {
+      if (!crossG[j])
+        continue;
+      const std::size_t lc = left_corner(j), rc = right_corner(j);
+      std::size_t L_on = none, R_on = none;
+      if (rc != none)
+        R_on = add_fixed(pX[rc], G[j], X[rc], E[j], SR[j]);
+      if (lc != none)
+        L_on = add_fixed(pX[lc], G[j], X[lc], E[j], SL[j]);
+
+      if (lc != none)
+        L_up[j] = add_slider(pX[lc], vL[j], G[j], SL[j], X[lc], none);
+      else if (a_constrained)
+        add_constrained_prolongation(a, ch.ea, va, G[j], E[j], L_on, L_up[j]);
       else {
-        on_l1 = add_slider(pA, v_s1, F1, E1, X, s1);
-        a_prol = add_free_prolongation(a, pA, va, F1);
+        L_on = add_slider(ch.ea.p, v_s1, G[j], E[j], X[rc], s1);
+        L_up[j] = add_free_prolongation(a, ch.ea.p, va, G[j]);
       }
-      l2x = add_slider(pX, v_l2x, F1, E1x, X, std::size_t(-1));
-      m_data.igraph().edge(E1x).vertices.insert(std::make_pair(sp_idx, std::make_pair(x1, l2x)));
-      new_polygon(F1, { x1, on_l1, a_prol, l2x });
-    }
 
-    // Face F2 beyond L2.
-    if (cross2) {
-      std::size_t x2 = add_fixed(pX, F2, X, E2, E2x);
-      l1x = add_slider(pX, v_l1x, F2, E2x, X, std::size_t(-1));
-      std::size_t on_l2, b_prol;
-      if (b_constrained)
-        add_constrained_prolongation(b, *eb, vb, F2, E2, on_l2, b_prol);
+      if (rc != none)
+        R_up[j] = add_slider(pX[rc], vR[j], G[j], SR[j], X[rc], none);
+      else if (b_constrained)
+        add_constrained_prolongation(b, ch.eb, vb, G[j], E[j], R_on, R_up[j]);
       else {
-        on_l2 = add_slider(pB, v_s2, F2, E2, X, s2);
-        b_prol = add_free_prolongation(b, pB, vb, F2);
+        R_on = add_slider(ch.eb.p, v_s2, G[j], E[j], X[lc], s2);
+        R_up[j] = add_free_prolongation(b, ch.eb.p, vb, G[j]);
       }
-      m_data.igraph().edge(E2x).vertices.insert(std::make_pair(sp_idx, std::make_pair(x2, l1x)));
-      new_polygon(F2, { x2, l1x, b_prol, on_l2 });
+
+      if (lc != none)
+        m_data.igraph().edge(SL[j]).vertices.insert(std::make_pair(sp_idx, std::make_pair(L_on, L_up[j])));
+      if (rc != none)
+        m_data.igraph().edge(SR[j]).vertices.insert(std::make_pair(sp_idx, std::make_pair(R_on, R_up[j])));
+
+      if (rc != none)
+        new_polygon(G[j], { R_on, L_on, L_up[j], R_up[j] });
+      else
+        new_polygon(G[j], { L_on, L_up[j], R_up[j], R_on });
     }
 
-    // Face F3 beyond both lines.
-    if (cross3) {
-      std::size_t x3 = add_fixed(pX, F3, X, E1x, E2x);
-      std::size_t s3_l2 = add_slider(pX, v_l2x, F3, E1x, X, l2x);
-      std::size_t c_prol = add_free_prolongation(c, pX, vc, F3);
-      std::size_t s3_l1 = add_slider(pX, v_l1x, F3, E2x, X, l1x);
-      m_data.igraph().edge(E1x).vertices.insert(std::make_pair(sp_idx, std::make_pair(x3, s3_l2)));
-      m_data.igraph().edge(E2x).vertices.insert(std::make_pair(sp_idx, std::make_pair(x3, s3_l1)));
-      new_polygon(F3, { x3, s3_l2, c_prol, s3_l1 });
+    // Diagonal faces H_i.
+    for (std::size_t i = 0; i < m; i++) {
+      if (!crossH[i])
+        continue;
+      const std::size_t jl = i, jr = right_edge(i);
+      std::size_t x = add_fixed(pX[i], H[i], X[i], SR[jl], SL[jr]);
+      std::size_t s_l = add_slider(pX[i], vR[jl], H[i], SR[jl], X[i], R_up[jl]);
+      std::size_t c_prol = add_free_prolongation(ch.corners[i], pX[i], vc[i], H[i]);
+      std::size_t s_r = add_slider(pX[i], vL[jr], H[i], SL[jr], X[i], L_up[jr]);
+      m_data.igraph().edge(SR[jl]).vertices.insert(std::make_pair(sp_idx, std::make_pair(x, s_l)));
+      m_data.igraph().edge(SL[jr]).vertices.insert(std::make_pair(sp_idx, std::make_pair(x, s_r)));
+      new_polygon(H[i], { x, s_l, c_prol, s_r });
     }
 
     // Constrained a/b also continue on their constraint lines beyond the face of the corner (like in D1).
     if (lateral_a)
-      propagate_laterally(*ea, *ec1, E1, new_moving_vertices);
+      propagate_laterally(ch.ea, ch.corner_events[0].first, E[0], new_moving_vertices);
     if (lateral_b)
-      propagate_laterally(*eb, *ec2, E2, new_moving_vertices);
+      propagate_laterally(ch.eb, ch.corner_events[m - 1].second, E[m], new_moving_vertices);
 
     // Stop the event vertices.
-    vts[c].stop(*ec1);
-    vts[c].ivertex = X;
-    vts[c].constraints.insert(L1);
-    vts[c].constraints.insert(L2);
-    vts[c].constraint_edge = E1;
-    vts[c].other_constraint_edge = E2;
-
-    vts[a].stop(*ea);
-    vts[b].stop(*eb);
-    if (a_constrained) {
-      vts[a].constraints.insert(L1);
-      vts[a].other_constraint_edge = E1;
+    for (std::size_t i = 0; i < m; i++) {
+      Vertex& c = vts[ch.corners[i]];
+      c.stop(ch.corner_events[i].first);
+      c.ivertex = X[i];
+      c.constraints.insert(L[i]);
+      c.constraints.insert(L[right_edge(i)]);
+      c.constraint_edge = E[i];
+      c.other_constraint_edge = E[right_edge(i)];
     }
-    if (b_constrained) {
-      vts[b].constraints.insert(L2);
-      vts[b].other_constraint_edge = E2;
+    if (open) {
+      vts[a].stop(ch.ea);
+      vts[b].stop(ch.eb);
+      if (a_constrained) {
+        vts[a].constraints.insert(L[0]);
+        vts[a].other_constraint_edge = E[0];
+      }
+      if (b_constrained) {
+        vts[b].constraints.insert(L[m]);
+        vts[b].other_constraint_edge = E[m];
+      }
     }
 
     for (std::size_t v : new_moving_vertices)
       calculate_events(v, t);
 
-    CGAL_assertion_code(check_vertices_on_edge(E1));
-    CGAL_assertion_code(check_vertices_on_edge(E2));
+    CGAL_assertion_code(for (IEdge e : E) check_vertices_on_edge(e);)
   }
 
   // Lines an event hits: the crossed line for an unconstrained vertex or the other lines through the destination
@@ -2945,7 +3152,9 @@ private:
         case_D2(connected); // Edge with two unconstrained vertices hits line (like A, but with neighbor vertex hitting in the same time)
         break;
       default:
-        std::cout << "Error: Unknown event type!" << std::endl;
+        // Several corners of a polygon reach lines at the same time, e.g., a polygon fitting exactly into its face.
+        if (!handle_corner_chain(connected))
+          std::cout << "Error: Unknown event type!" << std::endl;
       }
       handled_events++;
     }

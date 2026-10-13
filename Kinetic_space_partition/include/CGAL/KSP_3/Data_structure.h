@@ -864,33 +864,68 @@ public:
     return PVertex(pvertex.first, support_plane(pvertex).next(pvertex.second));
   }
 
+  // Sorts the iedges of the support plane cyclically around ivertex. Only the cyclic order is defined, not the first
+  // iedge. The order is computed with the interval approximations of the directions, starting after the largest angular
+  // gap; only nearly parallel directions are compared exactly (e.g., iedges of nearly coincident planes).
   void get_and_sort_all_connected_iedges(const std::size_t sp_idx, const IVertex& ivertex, std::vector< std::pair<IEdge, IkDirection_2> >& iedges) const {
-    auto inc_iedges = incident_iedges(ivertex);
-    const std::function<void(const IEdge& inc_iedge)> lambda =
-      [&](const IEdge& inc_iedge) {
-        const auto iplanes = intersected_planes(inc_iedge);
-        if (iplanes.find(sp_idx) == iplanes.end()) {
-          return;
-        }
-        const Support_plane& sp = support_plane(sp_idx);
-        const IkDirection_2 direction(
-          sp.to_2d(point_3(opposite(inc_iedge, ivertex))) -
-          sp.to_2d(point_3(ivertex)));
-        iedges.push_back(std::make_pair(inc_iedge, direction));
-      };
+    const Support_plane& sp = support_plane(sp_idx);
+    const typename Intersection_kernel::Point_2 center = sp.to_2d(point_3(ivertex));
 
-    std::copy(
-      inc_iedges.begin(), inc_iedges.end(),
-      boost::make_function_output_iterator(lambda)
-    );
+    struct Entry {
+      IEdge edge;
+      typename Intersection_kernel::Vector_2 v;
+      double angle, error;
+    };
+    std::vector<Entry> entries;
+    for (const IEdge& inc_iedge : incident_iedges(ivertex)) {
+      const auto& iplanes = intersected_planes(inc_iedge);
+      if (iplanes.find(sp_idx) == iplanes.end())
+        continue;
+      const typename Intersection_kernel::Vector_2 v = sp.to_2d(point_3(opposite(inc_iedge, ivertex))) - center;
+      const std::pair<double, double> x = CGAL::to_interval(v.x()), y = CGAL::to_interval(v.y());
+      const double mx = (x.first + x.second) / 2, my = (y.first + y.second) / 2;
+      const double len = std::sqrt(mx * mx + my * my);
+      double angle = std::atan2(my, mx);
+      if (angle < 0)
+        angle += 2 * CGAL_PI;
+      // Bound of the angular error of the approximation (plus rounding of atan2).
+      const double error = (len > 0) ? ((std::max)(x.second - x.first, y.second - y.first) / len + 1e-12) : 10.0;
+      entries.push_back({ inc_iedge, v, angle, error });
+    }
+    CGAL_assertion(entries.size() > 0);
 
-    std::sort(iedges.begin(), iedges.end(),
-      [&](const std::pair<IEdge, IkDirection_2>& a,
-          const std::pair<IEdge, IkDirection_2>& b) -> bool {
-        return a.second < b.second;
+    std::sort(entries.begin(), entries.end(), [](const Entry& a, const Entry& b) { return a.angle < b.angle; });
+
+    // Start after the largest gap, so that no direction lies close to the cut.
+    std::size_t start = 0;
+    double max_gap = -1;
+    for (std::size_t i = 0; i < entries.size(); i++) {
+      const std::size_t n = (i + 1) % entries.size();
+      double gap = entries[n].angle - entries[i].angle;
+      if (n == 0)
+        gap += 2 * CGAL_PI;
+      if (gap > max_gap) {
+        max_gap = gap;
+        start = n;
       }
-    );
-    CGAL_assertion(iedges.size() > 0);
+    }
+    const double cut = entries[start].angle;
+    for (Entry& e : entries) {
+      e.angle -= cut;
+      if (e.angle < 0)
+        e.angle += 2 * CGAL_PI;
+    }
+
+    std::sort(entries.begin(), entries.end(), [&](const Entry& a, const Entry& b) {
+      if (std::abs(a.angle - b.angle) > 4 * (a.error + b.error))
+        return a.angle < b.angle;
+      // Nearly parallel: b follows a counterclockwise.
+      return CGAL::orientation(a.v, b.v) == CGAL::LEFT_TURN;
+    });
+
+    iedges.clear();
+    for (const Entry& e : entries)
+      iedges.push_back(std::make_pair(e.edge, IkDirection_2(e.v)));
   }
 
   void init_border(IFace f_idx, bool initial = false) {
@@ -1031,8 +1066,8 @@ public:
     return true;
   }
 
-  bool split_polygon(std::list<std::size_t>& poly, std::size_t line_idx, std::list<std::size_t>& pos) {
-    return split_polygon(m_kinetic_vertices, poly, line_idx, pos);
+  bool split_polygon(std::list<std::size_t>& poly, std::size_t line_idx, std::list<std::size_t>& pos, std::pair<bool, bool>* zero_area = nullptr) {
+    return split_polygon(m_kinetic_vertices, poly, line_idx, pos, zero_area);
   }
 
   // Side of a point moving with p + t * v with respect to a line at t = 0+.
@@ -1049,19 +1084,26 @@ public:
   // For each edge crossing the line, a pair of vertices (one for each part) is created at the intersection.
   // If the crossing edge lies on another line, the new vertices are fixed at the intersection of both lines.
   // Returns true if the line splits the polygon, otherwise poly is not changed and pos is empty.
-  bool split_polygon(std::vector<Vertex> &vts, std::list<std::size_t> &poly, std::size_t line_idx, std::list<std::size_t> &pos) {
+  // If zero_area is given, it reports whether the remaining (negative) part and the positive part have no vertex
+  // strictly on their side at t = 0, i.e., whether they are zero-area pieces beyond a line touched by the polygon.
+  bool split_polygon(std::vector<Vertex> &vts, std::list<std::size_t> &poly, std::size_t line_idx, std::list<std::size_t> &pos, std::pair<bool, bool>* zero_area = nullptr) {
     Support_plane &sp = m_support_planes[vts[poly.front()].sp_idx];
     const IkLine_2 &l = sp.data().lines[line_idx];
 
     std::vector<std::size_t> idx(poly.begin(), poly.end());
     const std::size_t n = idx.size();
     std::vector<CGAL::Oriented_side> sign(n);
-    bool has_pos = false, has_neg = false;
+    bool has_pos = false, has_neg = false, strict_pos = false, strict_neg = false;
     for (std::size_t i = 0; i < n; i++) {
-      sign[i] = side_0plus(l, vts[idx[i]].p0, vts[idx[i]].v);
+      const CGAL::Oriented_side s0 = l.oriented_side(vts[idx[i]].p0);
+      sign[i] = (s0 != CGAL::ON_ORIENTED_BOUNDARY) ? s0 : CGAL::Oriented_side(CGAL::sign(l.a() * vts[idx[i]].v.x() + l.b() * vts[idx[i]].v.y()));
       has_pos |= (sign[i] == CGAL::ON_POSITIVE_SIDE);
       has_neg |= (sign[i] == CGAL::ON_NEGATIVE_SIDE);
+      strict_pos |= (s0 == CGAL::ON_POSITIVE_SIDE);
+      strict_neg |= (s0 == CGAL::ON_NEGATIVE_SIDE);
     }
+    if (zero_area != nullptr)
+      *zero_area = std::make_pair(!strict_neg, !strict_pos);
 
     pos.clear();
     if (!has_pos || !has_neg) {

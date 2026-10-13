@@ -638,7 +638,7 @@ public:
 
       if (m_parameters.verbose) {
         std::cout << std::endl << "--- RUNNING THE QUEUE:" << std::endl;
-        std::cout << "* propagation started" << std::endl;
+        std::cout << "* propagation started " << idx << std::endl;
       }
 
       // Propagation.
