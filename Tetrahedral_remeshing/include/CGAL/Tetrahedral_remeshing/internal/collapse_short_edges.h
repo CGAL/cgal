@@ -407,57 +407,80 @@ bool is_link_condition_valid(const typename Triangulation::Edge& edge,
     return false;
 
   // collect vertices of link(edge) - the "circle" around edge
-  std::set<Vertex_handle> edge_link_vertices;
+  std::vector<Vertex_handle> edge_link_vertices;
+  edge_link_vertices.reserve(12);
+
   Cell_circulator circ = tr.incident_cells(edge);
   Cell_circulator done = circ;
   do
   {
+    if(tr.is_infinite(circ))
+      return false;
+
     for(int k = 0; k < 4; ++k)
     {
       Vertex_handle vk = circ->vertex(k);
       if(vk != v0 && vk != v1)
-        edge_link_vertices.insert(vk);
+        edge_link_vertices.push_back(vk);
     }
   } while(++circ != done);
 
+  std::sort(edge_link_vertices.begin(), edge_link_vertices.end());
+  edge_link_vertices.erase(std::unique(edge_link_vertices.begin(), edge_link_vertices.end()),
+                           edge_link_vertices.end());
+
+  const std::size_t ring_size = edge_link_vertices.size();
+
   // collect the intersection of neighbors of v0 and neighbors of v1
-  std::set<Vertex_handle> neighbors_v0, neighbors_v1;
-  tr.adjacent_vertices(v0, std::inserter(neighbors_v0, neighbors_v0.end()));
-  tr.adjacent_vertices(v1, std::inserter(neighbors_v1, neighbors_v1.end()));
+  std::vector<Vertex_handle> neighbors_v0, neighbors_v1;
+  tr.adjacent_vertices(v0, std::back_inserter(neighbors_v0));
+  if(neighbors_v0.size() < ring_size)
+    return false; // v0 has fewer neighbors than the link, so there must be a shared neighbor outside the link
 
-  std::set<Vertex_handle> intersection_neighbors_v0v1;
-  std::set_intersection(neighbors_v0.begin(), neighbors_v0.end(),
-                        neighbors_v1.begin(), neighbors_v1.end(),
-                        std::inserter(intersection_neighbors_v0v1, intersection_neighbors_v0v1.end()));
+  tr.adjacent_vertices(v1, std::back_inserter(neighbors_v1));
+  if(neighbors_v1.size() < ring_size)
+    return false; // v1 has fewer neighbors than the link, so there must be a shared neighbor outside the link
 
-  if(intersection_neighbors_v0v1 != edge_link_vertices)
-    return false; // there are vertices shared by v0 and v1 outside edge_link_vertices
+  std::sort(neighbors_v0.begin(), neighbors_v0.end());
+  std::sort(neighbors_v1.begin(), neighbors_v1.end());
+
+  std::size_t common_count = 0;
+  auto it0 = neighbors_v0.begin();
+  auto it1 = neighbors_v1.begin();
+
+  while(it0 != neighbors_v0.end() && it1 != neighbors_v1.end())
+  {
+    if(*it0 < *it1)       ++it0;
+    else if(*it1 < *it0)  ++it1;
+    else
+    {
+      if(!std::binary_search(edge_link_vertices.begin(), edge_link_vertices.end(), *it0))
+        return false;// there is a shared neighbor of v0 and v1 that is not in the link of edge
+      ++common_count;
+      ++it0;
+      ++it1;
+    }
+  }
+
+  if(common_count != ring_size)
+    return false; // there are missing or extra vertices
+
+  if(ring_size == neighbors_v0.size() && ring_size == neighbors_v1.size())
+    return true; // the link is exactly the set of neighbors of v0 and v1
+                 // there is no extra chord edge possible
 
   // Check the link condition
   // for each pair of vertices in the link, if they are connected by an edge of the triangulation,
   // that edge must belong to one of the cells incident to `edge`
   // (checking that there are no "chords" in the link that would violate the link condition)
-  for(Vertex_handle link_vertex : edge_link_vertices)
+  for(std::size_t i = 0; i < ring_size; ++i)
   {
-    std::vector<Vertex_handle> neighbors;
-    tr.adjacent_vertices(link_vertex, std::back_inserter(neighbors));
+    const Vertex_handle v_curr = edge_link_vertices[i];
+    const Vertex_handle v_next = edge_link_vertices[(i + 1) % ring_size];
 
-    for(Vertex_handle neighbor : neighbors)
-    {
-      if(neighbor < link_vertex) // avoid checking the same edge twice
-        continue;
-      if(edge_link_vertices.find(neighbor) != edge_link_vertices.end())
-      {
-        // the edge [link_vertex, neighbor] exists
-        // if facet [v0, link_vertex, neighbor] is not in the triangulation
-        // then the edge [link_vertex, neighbor] is not part of the link of [v0, v1]
-        if(!tr.is_facet(v0, link_vertex, neighbor))
-        {
-          CGAL_assertion(!tr.is_facet(v1, link_vertex, neighbor));
-          return false;
-        }
-      }
-    }
+    // check that the facet "closing" the ring exists in the triangulation
+    if(!tr.is_facet(v0, v_curr, v_next) && !tr.is_facet(v1, v_curr, v_next))
+      return false;
   }
 
   return true;
