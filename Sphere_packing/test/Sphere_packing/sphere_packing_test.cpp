@@ -9,6 +9,9 @@
 #include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 
+#include <cmath>
+#include <iomanip>
+
 using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
 using FT = typename Kernel::FT;
 using Point = typename Kernel::Point_3;
@@ -44,12 +47,14 @@ int main(int argc, const char** argv) {
 
   // The sphere packing runs on GPU and thus does not use exact arithmetic and an exact inside check for each sphere will not work.
   // Thus, a tolerance is used to check if the sphere is inside the mesh. The tolerance is set to 1e-4 times the diagonal length of the bounding box of the mesh.
-  double tol = CGAL::to_double(tree.bbox().squared_diagonal_length()) * 1e-6;
+  double tol = std::sqrt(CGAL::to_double(tree.bbox().squared_diagonal_length())) * 1e-4;
 
   bool pass = true;
   for (const auto& s : spheres)
-    if (CGAL::ON_BOUNDED_SIDE != inside(s.center()))
-      std::cerr << "Sphere center is not inside the mesh." << std::endl;
+    if (CGAL::ON_BOUNDED_SIDE != inside(s.center())) {
+      std::cerr << std::setprecision(17) << "Sphere center is not inside the mesh. c: (" << s.center() << ") r: " << CGAL::approximate_sqrt(s.squared_radius()) << std::endl;
+      pass = false;
+    }
     else {
       Point cp = tree.closest_point(s.center());
       FT d = CGAL::approximate_sqrt(CGAL::squared_distance(cp, s.center()));

@@ -5,10 +5,10 @@ find_package(CGAL REQUIRED)
 find_package(ProtoSphere)
 include(CGAL_ProtoSphere_support)
 
-if (TARGET CGAL::ProtoSphere)
+if (TARGET CGAL::ProtoSphere_support)
   create_single_source_cgal_program("sphere_packing_test.cpp")
   target_link_libraries(sphere_packing_test PRIVATE CGAL::ProtoSphere_support )
-  
+
   # Windows: copy the ProtoSphere DLL (Debug or Release, matching the build) next to the executable
   if(WIN32)
     add_custom_command(TARGET sphere_packing_test POST_BUILD
@@ -17,5 +17,5 @@ if (TARGET CGAL::ProtoSphere)
               $<TARGET_FILE_DIR:sphere_packing_test>)
   endif()
 else()
-  message(STATUS "NOTICE: The Sphere_packing package requires the ProtoSphere library will not be compiled.")  
+  message(STATUS "NOTICE: The Sphere_packing package requires the ProtoSphere library will not be compiled.")
 endif()

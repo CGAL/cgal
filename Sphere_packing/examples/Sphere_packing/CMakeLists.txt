@@ -5,7 +5,7 @@ find_package(CGAL REQUIRED)
 find_package(ProtoSphere)
 include(CGAL_ProtoSphere_support)
 
-if (TARGET CGAL::ProtoSphere)
+if (TARGET CGAL::ProtoSphere_support)
   create_single_source_cgal_program("sphere_packing.cpp")
   target_link_libraries(sphere_packing PRIVATE CGAL::ProtoSphere_support )
 
