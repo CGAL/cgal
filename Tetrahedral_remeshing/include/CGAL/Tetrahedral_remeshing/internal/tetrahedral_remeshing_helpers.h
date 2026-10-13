@@ -1803,12 +1803,7 @@ void get_edge_info(const typename C3t3::Edge& edge,
   if (dim0 < 2 || dim1 < 2)
   {
     if (!topology_test(edge, c3t3, cell_selector))
-    {
-#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
-      nb_topology_test++;
-#endif
       return;
-    }
 
     if (c3t3.is_in_complex(edge))
     {

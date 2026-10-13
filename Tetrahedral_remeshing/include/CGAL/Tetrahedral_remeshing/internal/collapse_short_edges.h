@@ -476,19 +476,6 @@ bool is_valid_collapse(const typename C3t3::Edge& edge,
   const Vertex_handle v0 = edge.first->vertex(edge.second);
   const Vertex_handle v1 = edge.first->vertex(edge.third);
 
-#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
-  const bool in_cx = c3t3.is_in_complex(edge);
-  if (in_cx)
-  {
-    if (collapse_type == TO_MIDPOINT)
-      nb_test_midpoint++;
-    else if (collapse_type == TO_V1)
-      nb_test_v1++;
-    else
-      nb_test_v0++;
-  }
-#endif
-
   if (collapse_type == TO_V1 || collapse_type == TO_MIDPOINT)
   {
     std::vector<Cell_handle> cells_to_check;
@@ -508,15 +495,6 @@ bool is_valid_collapse(const typename C3t3::Edge& edge,
         if (CGAL::orientation(point(pts[0]), point(pts[1]), point(pts[2]), point(pts[3]))
             != CGAL::POSITIVE)
         {
-#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
-          if (in_cx)
-          {
-            if (collapse_type == TO_MIDPOINT)
-              nb_orientation_midpoint++;
-            else
-              nb_orientation_v1++;
-          }
-#endif
           return false;
         }
       }
@@ -541,15 +519,6 @@ bool is_valid_collapse(const typename C3t3::Edge& edge,
         if (CGAL::orientation(point(pts[0]), point(pts[1]), point(pts[2]), point(pts[3]))
             != CGAL::POSITIVE)
         {
-#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
-          if (in_cx)
-          {
-            if (collapse_type == TO_MIDPOINT)
-              nb_orientation_midpoint++;
-            else
-              nb_orientation_v0++;
-          }
-#endif
           return false;
         }
       }
@@ -1136,12 +1105,6 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
 
   Collapse_type collapse_type = get_collapse_type(edge, c3t3, cell_selector);
 
-#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
-  const bool in_cx = c3t3.is_in_complex(edge);
-  if (in_cx && collapse_type == IMPOSSIBLE)
-    nb_impossible++;
-#endif
-
   if (collapse_type == IMPOSSIBLE)
     return Vertex_handle();
 
@@ -1173,22 +1136,10 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
         new_pos = v1->point();
       }
       else
-      {
-#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
-        if (in_cx)
-          nb_invalid_collapse++;
-#endif
         return Vertex_handle();
-      }
     }
     else
-    {
-#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
-      if (in_cx)
-        nb_invalid_collapse++;
-#endif
       return Vertex_handle();
-    }
   }
 
   if (are_edge_lengths_valid(edge, c3t3, collapse_type, new_pos, sizing, cell_selector)
@@ -1214,18 +1165,8 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
 
     Result_type res = local_tri.collapse();
     if (res == VALID)
-    {
-#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
-      if (in_cx)
-        nb_valid_collapse++;
-#endif
       return collapse(edge, collapse_type, cell_selector, c3t3, short_edges);
-    }
   }
-#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
-  else if (in_cx)
-    nb_invalid_lengths++;
-#endif
   return Vertex_handle();
 }
 
