@@ -2702,7 +2702,7 @@ private:
 
   void case_D2(const std::vector<Event>& events) {
     if (!handle_corner_chain(events))
-      std::cout << "Error: Unknown event type!" << std::endl;
+      KSP::internal::Log_line(m_data.log_prefix()) << "Error: Unknown event type!";
   }
 
   // Corners of a polygon reach corners X_i of their face at the same time (case D2 for one corner).
@@ -3220,7 +3220,7 @@ private:
       default:
         // Several corners of a polygon reach lines at the same time, e.g., a polygon fitting exactly into its face.
         if (!handle_corner_chain(connected))
-          std::cout << "Error: Unknown event type!" << std::endl;
+          KSP::internal::Log_line(m_data.log_prefix()) << "Error: Unknown event type!";
       }
       handled_events++;
     }

@@ -20,6 +20,7 @@
 #include <CGAL/Named_function_parameters.h>
 
 #include <algorithm>
+#include <atomic>
 #include <numeric>
 
 // CGAL includes.
@@ -27,6 +28,8 @@
 #include <CGAL/convex_hull_2.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/Real_timer.h>
+#include <CGAL/tags.h>
+#include <CGAL/for_each.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
@@ -466,7 +469,7 @@ public:
   }
 
   /*!
-  \brief initializes the kinetic partition of the bounding box.
+  \brief initializes the kinetic partition and separates the input polygons using an octree.
 
   \tparam NamedParameters
   a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -580,21 +583,35 @@ public:
   /*!
   \brief propagates the kinetic polygons in the initialized partition.
 
-  The internal kinetic data structures are released after the propagation. Hence, `partition()` can only be called once after `initialize()`.
+  The kinetic partitions of the octree leaves are computed independently and, if `ConcurrencyTag` is `Parallel_tag`, in parallel.
+  The internal kinetic data structure of each leaf is created right before its propagation and released after its finalization.
+  Hence, `partition()` can only be called once after `initialize()`.
   To create a partition with a different `k`, `initialize()` has to be called again.
+
+  \note In the parallel version, several kinetic data structures exist at the same time, one per running thread.
+  Thus, the memory consumption is higher than in the sequential version.
+
+  \tparam ConcurrencyTag enables sequential versus parallel algorithm. Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
 
   \param k
    maximum number of allowed intersections for each vertex of the polygon before its expansion stops.
 
   \pre initialized partition and `k != 0`
   */
+  template<typename ConcurrencyTag = Parallel_if_available_tag>
   void partition(std::size_t k) {
     FT a, b, c;
-    partition(k, a, b, c);
+    partition<ConcurrencyTag>(k, a, b, c);
   }
 
 #ifndef DOXYGEN_RUNNING
+  template<typename ConcurrencyTag = Parallel_if_available_tag>
   void partition(std::size_t k, FT& partition_time, FT& finalization_time, FT& conformal_time) {
+#ifndef CGAL_LINKED_WITH_TBB
+    static_assert (!std::is_convertible<ConcurrencyTag, Parallel_tag>::value,
+                   "Parallel_tag is enabled but TBB is unavailable.");
+#endif
+
     // The kinetic data structures are released after finalizing each partition.
     // Thus, partition() can only be called once after initialize().
     if (!m_volumes.empty()) {
@@ -613,65 +630,34 @@ public:
     conformal_time = 0;
     FT initialization_time = 0;
 
-    for (std::size_t idx : m_partitions) {
-      Sub_partition& partition = m_partition_nodes[idx];
-      timer.reset();
-      std::cout.precision(20);
+    std::cout.precision(17);
 
-      // Initialization of the kinetic data structure. It is released again after finalization in extract_finalized_data().
-      partition.m_data = std::make_shared<Data_structure>(m_parameters, std::to_string(idx) + "-");
+    // Times are collected per partition. In the parallel version, they sum up to more than the elapsed time.
+    std::vector<FT> initialization_times(m_partitions.size(), 0), partition_times(m_partitions.size(), 0), finalization_times(m_partitions.size(), 0);
+    std::vector<std::size_t> positions(m_partitions.size());
+    std::iota(positions.begin(), positions.end(), 0);
+    std::atomic<bool> failed(false);
 
-      Initializer initializer(partition.clipped_polygons, partition.m_input_planes, *partition.m_data, m_parameters, m_partitions.size() != 1);
-      initializer.initialize(partition.bbox, partition.input_polygons);
+    CGAL::for_each<ConcurrencyTag>(positions, [&](const std::size_t i) -> bool {
+      if (failed)
+        return false;
 
-      initialization_time += timer.time();
-      timer.reset();
-
-      // Initialization successful?
-      if (partition.m_data->number_of_support_planes() < 6) {
-        std::cout << "Kinetic partition not initialized or empty. Number of support planes: " << partition.m_data->number_of_support_planes() << std::endl;
-
-        return;
+      if (!compute_partition(m_partitions[i], k, initialization_times[i], partition_times[i], finalization_times[i])) {
+        failed = true;
+        std::cout << "Warning: partition() failed for partition " << i << " " << m_partitions[i] << std::endl;
+        return false;
       }
 
-      if (m_parameters.verbose) {
-        std::cout << std::endl << "--- RUNNING THE QUEUE:" << std::endl;
-        std::cout << "* propagation started " << idx << std::endl;
-      }
+      return true;
+    });
 
-      // Propagation.
-      Propagation propagation(*partition.m_data, m_parameters);
-      propagation.propagate(k);
+    if (failed)
+      return;
 
-      partition_time += timer.time();
-
-      if (m_parameters.verbose) {
-        std::cout << "events in partition " << idx << ": " << propagation.handled_events << std::endl;
-        std::cout << "* propagation finished" << std::endl;
-      }
-
-      if (m_parameters.verbose) {
-        std::cout << std::endl << "--- FINALIZING PARTITION:" << std::endl;
-      }
-
-      // Finalization.
-
-      for (std::size_t i = 0; i < partition.m_data->number_of_support_planes(); i++)
-        if (!partition.m_data->support_plane(i).mesh().is_valid(true))
-          std::cout << i << ". support has an invalid mesh!" << std::endl;
-
-      Finalizer finalizer(*partition.m_data, m_parameters);
-
-      if (m_parameters.verbose)
-        std::cout << "* getting volumes ..." << std::endl;
-
-      finalizer.create_polyhedra();
-      finalization_time += timer.time();
-
-      if (m_parameters.verbose)
-        std::cout << idx << ". partition with " << partition.input_polygons.size() << " input polygons split into " << partition.m_data->number_of_volumes() << " volumes" << std::endl;
-
-      extract_finalized_data(partition, idx);
+    for (std::size_t i = 0; i < m_partitions.size(); i++) {
+      initialization_time += initialization_times[i];
+      partition_time += partition_times[i];
+      finalization_time += finalization_times[i];
     }
 
     if (m_parameters.verbose)
@@ -1516,6 +1502,73 @@ private:
     }
 
     return result;
+  }
+
+  // Initializes, propagates and finalizes the kinetic partition of one octree leaf.
+  // Only accesses data of the given Sub_partition and read-only shared data. Thus, it can be called in parallel for different leaves.
+  bool compute_partition(std::size_t idx, std::size_t k, FT& initialization_time, FT& partition_time, FT& finalization_time) {
+    Sub_partition& partition = m_partition_nodes[idx];
+    // Each line written to std::cout gets the index of the partition as prefix, as partitions may be computed in parallel.
+    const std::string log_prefix = "[P" + std::to_string(idx) + "] ";
+    Timer timer;
+    timer.start();
+
+    // Initialization of the kinetic data structure. It is released again after finalization in extract_finalized_data().
+    partition.m_data = std::make_shared<Data_structure>(m_parameters, std::to_string(idx) + "-", log_prefix);
+
+    Initializer initializer(partition.clipped_polygons, partition.m_input_planes, *partition.m_data, m_parameters, m_partitions.size() != 1);
+    initializer.initialize(partition.bbox, partition.input_polygons);
+
+    initialization_time = timer.time();
+    timer.reset();
+
+    // Initialization successful?
+    if (partition.m_data->number_of_support_planes() < 6) {
+      KSP::internal::Log_line(log_prefix) << "Kinetic partition not initialized or empty. Number of support planes: " << partition.m_data->number_of_support_planes();
+
+      return false;
+    }
+
+    if (m_parameters.verbose) {
+      KSP::internal::Log_line(log_prefix) << "--- RUNNING THE QUEUE:";
+      KSP::internal::Log_line(log_prefix) << "* propagation started";
+    }
+
+    // Propagation.
+    Propagation propagation(*partition.m_data, m_parameters);
+    propagation.propagate(k);
+
+    partition_time = timer.time();
+
+    if (m_parameters.verbose) {
+      KSP::internal::Log_line(log_prefix) << "events in partition: " << propagation.handled_events;
+      KSP::internal::Log_line(log_prefix) << "* propagation finished";
+    }
+
+    if (m_parameters.verbose) {
+      KSP::internal::Log_line(log_prefix) << "--- FINALIZING PARTITION:";
+    }
+
+    // Finalization.
+
+    for (std::size_t i = 0; i < partition.m_data->number_of_support_planes(); i++)
+      if (!partition.m_data->support_plane(i).mesh().is_valid(true))
+        KSP::internal::Log_line(log_prefix) << i << ". support has an invalid mesh!";
+
+    Finalizer finalizer(*partition.m_data, m_parameters);
+
+    if (m_parameters.verbose)
+      KSP::internal::Log_line(log_prefix) << "* getting volumes ...";
+
+    finalizer.create_polyhedra();
+    finalization_time = timer.time();
+
+    if (m_parameters.verbose)
+      KSP::internal::Log_line(log_prefix) << "partition with " << partition.input_polygons.size() << " input polygons split into " << partition.m_data->number_of_volumes() << " volumes";
+
+    extract_finalized_data(partition, idx);
+
+    return true;
   }
 
   // Moves the results of the Finalizer from the kinetic data structure into the Sub_partition.

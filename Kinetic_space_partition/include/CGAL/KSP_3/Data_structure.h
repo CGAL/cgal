@@ -214,6 +214,7 @@ private:
   const Parameters& m_parameters;
 
   std::string m_prefix;
+  std::string m_log_prefix; // Prefix for each line written to std::cout, e.g., the index of the partition.
 
   std::vector<Volume_cell> m_volumes;
   std::vector<Point_3> m_vertices;
@@ -230,8 +231,8 @@ private:
   std::map<std::size_t, std::size_t> m_input_polygon_map; // Maps index of input polygon onto support plane indices.
 
 public:
-  Data_structure(const Parameters& parameters, const std::string &prefix)
-    : to_exact(), from_exact(), m_parameters(parameters), m_prefix(prefix)
+  Data_structure(const Parameters& parameters, const std::string &prefix, const std::string &log_prefix = std::string())
+    : to_exact(), from_exact(), m_parameters(parameters), m_prefix(prefix), m_log_prefix(log_prefix)
   {}
 
   template<typename Type1, typename Type2, typename ResultType>
@@ -343,6 +344,7 @@ public:
   Intersection_graph& igraph() { return m_intersection_graph; }
 
   const std::string& prefix() const { return m_prefix; }
+  const std::string& log_prefix() const { return m_log_prefix; }
 
   void resize(const std::size_t number_of_items) {
     m_support_planes.resize(number_of_items);
@@ -1215,11 +1217,11 @@ public:
 
     Face_index fi = sp.mesh().add_face(vertices);
     if (fi == Support_plane::Mesh::null_face()) {
-      std::cout << "ERROR: invalid face created!" << std::endl;
+      KSP::internal::Log_line(m_log_prefix) << "ERROR: invalid face created!";
       for (std::size_t i = 0; i < f.vertices.size(); i++) {
-        std::cout << "2 " << point_3(f.vertices[i]) << " " << point_3(f.vertices[(i + 1) % f.vertices.size()]) << std::endl;
+        KSP::internal::Log_line(m_log_prefix) << "2 " << point_3(f.vertices[i]) << " " << point_3(f.vertices[(i + 1) % f.vertices.size()]);
       }
-      std::cout << "ERROR: end of invalid face" << std::endl;
+      KSP::internal::Log_line(m_log_prefix) << "ERROR: end of invalid face";
       exit(1);
     }
 
@@ -1652,7 +1654,7 @@ public:
 
     if (!is_valid) {
       for (const auto& pair : polygon) {
-        std::cout << m_support_planes[sp_idx].to_3d(pair.first) << std::endl;
+        KSP::internal::Log_line(m_log_prefix) << m_support_planes[sp_idx].to_3d(pair.first);
       }
     }
 
@@ -1666,14 +1668,14 @@ public:
       for (const auto pface : pfaces) {
         for (const auto pvertex : pvertices_of_pface(pface)) {
           if (!has_ivertex(pvertex)) {
-            std::cout << "debug pvertex: " << std::endl;
+            KSP::internal::Log_line(m_log_prefix) << "debug pvertex: ";
             CGAL_assertion_msg(has_ivertex(pvertex), "ERROR: BBOX VERTEX IS MISSING AN IVERTEX!");
             return false;
           }
         }
         for (const auto pedge : pedges_of_pface(pface)) {
           if (!has_iedge(pedge)) {
-            std::cout << "debug pedge: " << std::endl;
+            KSP::internal::Log_line(m_log_prefix) << "debug pedge: ";
             CGAL_assertion_msg(has_iedge(pedge), "ERROR: BBOX EDGE IS MISSING AN IEDGE!");
             return false;
           }
@@ -1689,14 +1691,14 @@ public:
       for (const auto pface : pfaces) {
         for (const auto pvertex : pvertices_of_pface(pface)) {
           if (!has_ivertex(pvertex)) {
-            std::cout << "debug pvertex " << std::endl;
+            KSP::internal::Log_line(m_log_prefix) << "debug pvertex ";
             CGAL_assertion_msg(has_ivertex(pvertex), "ERROR: INTERIOR VERTEX IS MISSING AN IVERTEX!");
             return false;
           }
         }
         for (const auto pedge : pedges_of_pface(pface)) {
           if (!has_iedge(pedge)) {
-            std::cout << "debug pedge " << std::endl;
+            KSP::internal::Log_line(m_log_prefix) << "debug pedge ";
             CGAL_assertion_msg(has_iedge(pedge), "ERROR: INTERIOR EDGE IS MISSING AN IEDGE!");
             return false;
           }
@@ -1712,7 +1714,7 @@ public:
     for (const auto vertex : m_intersection_graph.vertices()) {
       const auto nedges = m_intersection_graph.incident_edges(vertex);
       if (nedges.size() <= 2) {
-        std::cout << "ERROR: CURRENT NUMBER OF EDGES = " << nedges.size() << std::endl;
+        KSP::internal::Log_line(m_log_prefix) << "ERROR: CURRENT NUMBER OF EDGES = " << nedges.size();
         CGAL_assertion_msg(nedges.size() > 2,
         "ERROR: VERTEX MUST HAVE AT LEAST 3 NEIGHBORS!");
         success = false;
@@ -1728,9 +1730,9 @@ public:
     for (const auto edge : m_intersection_graph.edges()) {
       incident_faces(edge, nfaces);
       if (nfaces.size() == 1) {
-        std::cout << "ERROR: CURRENT NUMBER OF FACES = " << nfaces.size() << std::endl;
-        std::cout << edge << std::endl;
-        std::cout << "PFace(" << nfaces[0].first << " " << nfaces[0].second << ")" << std::endl;
+        KSP::internal::Log_line(m_log_prefix) << "ERROR: CURRENT NUMBER OF FACES = " << nfaces.size();
+        KSP::internal::Log_line(m_log_prefix) << edge;
+        KSP::internal::Log_line(m_log_prefix) << "PFace(" << nfaces[0].first << " " << nfaces[0].second << ")";
         CGAL_assertion_msg(nfaces.size() != 1,
         "ERROR: EDGE MUST HAVE 0 OR AT LEAST 2 NEIGHBORS!");
         success = false;
@@ -1747,7 +1749,7 @@ public:
       for (const auto pface : pfaces) {
         const auto nvolumes = incident_volumes(pface);
         if (nvolumes.size() == 0 || nvolumes.size() > 2) {
-          std::cout << "ERROR: CURRENT NUMBER OF VOLUMES = " << nvolumes.size() << std::endl;
+          KSP::internal::Log_line(m_log_prefix) << "ERROR: CURRENT NUMBER OF VOLUMES = " << nvolumes.size();
           CGAL_assertion_msg(nvolumes.size() == 1 || nvolumes.size() == 2,
             "ERROR: FACE MUST HAVE 1 OR 2 NEIGHBORS!");
           success = false;
@@ -1771,7 +1773,7 @@ public:
         if (num_found == 1) ++count;
       }
       if (count != n) {
-        std::cout << "- current number of neighbors " << count << " != " << n << std::endl;
+        KSP::internal::Log_line(m_log_prefix) << "- current number of neighbors " << count << " != " << n;
         dump_info(*this, pface, *pedges.begin(), pfaces, "");
         return true;
       }

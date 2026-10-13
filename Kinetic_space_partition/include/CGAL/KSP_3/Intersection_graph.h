@@ -18,6 +18,8 @@
 // Boost includes.
 #include <boost/graph/adjacency_list.hpp>
 
+#include <atomic>
+
 // CGAL includes.
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Polygon_2.h>
@@ -74,7 +76,9 @@ public:
       return *this;
     }
   private:
-    static std::size_t edge_counter;
+    // Atomic, as the kinetic partitions of the octree leaves may be computed in parallel.
+    // Each intersection graph is built by a single thread, so the order of its edges still follows their creation.
+    static std::atomic<std::size_t> edge_counter;
   };
 
   using Graph = boost::adjacency_list<
@@ -372,7 +376,7 @@ public:
     Edge_descriptor sedge;
     std::tie(sedge, is_inserted) = boost::add_edge(source, vertex, m_graph);
     if (!is_inserted) {
-      std::cerr << "WARNING: " << segment_3(edge) << " " << point_3(vertex) << std::endl;
+      KSP::internal::Log_line(std::string(), std::cerr) << "WARNING: " << segment_3(edge) << " " << point_3(vertex);
     }
     CGAL_assertion(is_inserted);
     m_graph[sedge] = prop;
@@ -380,7 +384,7 @@ public:
     Edge_descriptor tedge;
     std::tie(tedge, is_inserted) = boost::add_edge(vertex, target, m_graph);
     if (!is_inserted) {
-      std::cerr << "WARNING: " << segment_3(edge) << " " << point_3(vertex) << std::endl;
+      KSP::internal::Log_line(std::string(), std::cerr) << "WARNING: " << segment_3(edge) << " " << point_3(vertex);
     }
     CGAL_assertion(is_inserted);
     m_graph[tedge] = prop;
@@ -456,7 +460,7 @@ public:
   }
 };
 
-template<typename GeomTraits, typename IntersectionKernel> std::size_t Intersection_graph<GeomTraits, IntersectionKernel>::Edge_property::edge_counter = 0;
+template<typename GeomTraits, typename IntersectionKernel> std::atomic<std::size_t> Intersection_graph<GeomTraits, IntersectionKernel>::Edge_property::edge_counter{0};
 
 #endif //DOXYGEN_RUNNING
 

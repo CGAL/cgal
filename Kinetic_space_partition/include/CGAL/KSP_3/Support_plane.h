@@ -301,7 +301,7 @@ public:
     }
 
     if (s == Mesh::null_vertex()) {
-      std::cout << "Support plane does not have border vertices" << std::endl;
+      KSP::internal::Log_line() << "Support plane does not have border vertices";
       return;
     }
 
@@ -319,7 +319,7 @@ public:
     } while (n != h && n != Mesh::null_halfedge());
 
     if (n == Mesh::null_halfedge()) {
-      std::cout << " NULL_HALFEDGE!";
+      KSP::internal::Log_line() << "NULL_HALFEDGE!";
     }
   }
 
@@ -339,7 +339,7 @@ public:
     } while (h != first && h != Mesh::null_halfedge());
 
     if (h == Mesh::null_halfedge()) {
-      std::cout << " NULL_HALFEDGE!";
+      KSP::internal::Log_line() << "NULL_HALFEDGE!";
     }
   }
 
@@ -747,7 +747,7 @@ public:
     FT s2 = orth * m_data->original_vectors[v2];
 
     if (abs(s1 - s2) > 0.0001)
-      std::cout << "edge speed seems inconsistent" << std::endl;
+      KSP::internal::Log_line() << "edge speed seems inconsistent";
 
     return s1 * orth;
   }

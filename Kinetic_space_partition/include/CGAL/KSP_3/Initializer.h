@@ -105,7 +105,7 @@ public:
     m_data.igraph().finished_bbox();
 
     if (m_parameters.verbose)
-      std::cout << "* intersecting input polygons ... ";
+      KSP::internal::Log_line(m_data.log_prefix()) << "* intersecting input polygons ...";
 
     double t1 = timer.time();
 
@@ -131,7 +131,7 @@ public:
 
     // Starting from here the intersection graph is const, it won't change anymore.
     if (m_parameters.verbose)
-      std::cout << "done" << std::endl;
+      KSP::internal::Log_line(m_data.log_prefix()) << "* intersecting input polygons done";
 
     CGAL_assertion(m_data.check_bbox());
 
@@ -144,12 +144,12 @@ public:
 
     if (m_parameters.verbose) {
       double t6 = timer.time();
-      std::cout << "inserting polygons: " << t1 << std::endl;
-      std::cout << "internal vertices:  " << (t2 - t1) << std::endl;
-      std::cout << "creating ifaces:    " << (t3 - t2) << std::endl;
-      std::cout << "polygon splitting:  " << (t4 - t3) << std::endl;
-      std::cout << "bbox meshes:        " << (t5 - t4) << std::endl;
-      std::cout << "finishing up:       " << (t6 - t5) << std::endl;
+      KSP::internal::Log_line(m_data.log_prefix()) << "inserting polygons: " << t1;
+      KSP::internal::Log_line(m_data.log_prefix()) << "internal vertices:  " << (t2 - t1);
+      KSP::internal::Log_line(m_data.log_prefix()) << "creating ifaces:    " << (t3 - t2);
+      KSP::internal::Log_line(m_data.log_prefix()) << "polygon splitting:  " << (t4 - t3);
+      KSP::internal::Log_line(m_data.log_prefix()) << "bbox meshes:        " << (t5 - t4);
+      KSP::internal::Log_line(m_data.log_prefix()) << "finishing up:       " << (t6 - t5);
     }
   }
 
@@ -611,7 +611,7 @@ private:
               v.ivertex = m_data.igraph().vertex(sp.to_3d(v.p0));
 
             if (v.ivertex == IVertex(-1)) {
-              std::cout << "vertex not found: " << sp_idx << " " << idx << std::endl;
+              KSP::internal::Log_line(m_data.log_prefix()) << "vertex not found: " << sp_idx << " " << idx;
               continue;
             }
           }
@@ -810,7 +810,7 @@ private:
     CGAL_assertion(m_data.iedges().size() == 12);
 
     if (m_parameters.verbose) {
-      std::cout << "* inserted bbox faces: " << bbox_faces.size() << std::endl;
+      KSP::internal::Log_line(m_data.log_prefix()) << "* inserted bbox faces: " << bbox_faces.size();
     }
   }
 
@@ -833,8 +833,8 @@ private:
 
     CGAL_assertion(m_data.number_of_support_planes() >= 6);
     if (m_parameters.verbose) {
-      std::cout << "* provided input polygons: " << m_data.input_polygons().size() << std::endl;
-      std::cout << "* inserted input polygons: " << polygons.size() << std::endl;
+      KSP::internal::Log_line(m_data.log_prefix()) << "* provided input polygons: " << m_data.input_polygons().size();
+      KSP::internal::Log_line(m_data.log_prefix()) << "* inserted input polygons: " << polygons.size();
     }
   }
 
@@ -908,7 +908,7 @@ private:
     const bool is_debug = true;
     CGAL_assertion(support_plane_idx >= 6);
     if (is_debug) {
-      std::cout << std::endl << "support plane idx: " << support_plane_idx << std::endl;
+      KSP::internal::Log_line(m_data.log_prefix()) << "support plane idx: " << support_plane_idx;
     }
 
     // Add points from a to b.
@@ -922,15 +922,15 @@ private:
     create_merged_polygon(points, merged);
 
     if (is_debug) {
-      std::cout << "merged polygon: " << std::endl;
+      KSP::internal::Log_line(m_data.log_prefix()) << "merged polygon: ";
       From_exact from_exact;
       for (std::size_t i = 0; i < merged.size(); ++i) {
         const std::size_t ip = (i + 1) % merged.size();
         const auto& p = merged[i];
         const auto& q = merged[ip];
-        std::cout << "2 " <<
+        KSP::internal::Log_line(m_data.log_prefix()) << "2 " <<
           m_data.to_3d(support_plane_idx, from_exact(p)) << " " <<
-          m_data.to_3d(support_plane_idx, from_exact(q)) << std::endl;
+          m_data.to_3d(support_plane_idx, from_exact(q));
       }
     }
 

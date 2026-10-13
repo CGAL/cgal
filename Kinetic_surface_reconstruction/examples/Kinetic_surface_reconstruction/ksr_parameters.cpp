@@ -57,6 +57,7 @@ void parse_terminal(Terminal_parser& parser, Parameters& parameters) {
 
   // Shape detection.
   parser.add_val_parameter("-kn", parameters.k_neighbors);
+  parser.add_val_parameter("-knn", parameters.k_neighbors);
   parser.add_val_parameter("-dist", parameters.maximum_distance);
   parser.add_val_parameter("-angle", parameters.maximum_angle);
   parser.add_val_parameter("-minp", parameters.min_region_size);

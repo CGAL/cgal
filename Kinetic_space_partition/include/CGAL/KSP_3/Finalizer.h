@@ -107,7 +107,6 @@ public:
       for (std::size_t sp = 0; sp < m_data.number_of_support_planes(); sp++)
         dump_2d_surface_mesh(m_data, sp, m_data.prefix() + "after-partition-sp" + std::to_string(sp));
 
-    std::cout.precision(20);
     CGAL_assertion(m_data.check_bbox());
     CGAL_assertion(m_data.check_interior());
     CGAL_assertion(m_data.check_vertices());
@@ -645,15 +644,15 @@ private:
             break;
           c_other = fcm[f_other];
           if (c0 == c_other && ecm[Edge_index(n >> 1)])
-            std::cout << "edge and face constraint map inconsistent1" << std::endl;
+            KSP::internal::Log_line(m_data.log_prefix()) << "edge and face constraint map inconsistent1";
 
           if (c0 != c_other && !ecm[Edge_index(n >> 1)])
-            std::cout << "edge and face constraint map inconsistent2" << std::endl;
+            KSP::internal::Log_line(m_data.log_prefix()) << "edge and face constraint map inconsistent2";
         } while (c0 == c_other && n != h);
 
         if (n == h) {
           // Should not happen.
-          std::cout << "Searching for next edge of connected component failed" << std::endl;
+          KSP::internal::Log_line(m_data.log_prefix()) << "Searching for next edge of connected component failed";
         }
         loop.push_back(n);
         set_face(n, f0, mesh);
@@ -683,7 +682,7 @@ private:
     }
 
     if (!mesh.is_valid(true)) {
-      std::cout << "mesh is not valid after merging faces of sp " << sp_idx << std::endl;
+      KSP::internal::Log_line(m_data.log_prefix()) << "mesh is not valid after merging faces of sp " << sp_idx;
     }
   }
 
@@ -732,7 +731,7 @@ private:
           if (!face_filled)
             face2vertices[cell.faces[f]].push_back(vertices.size());
           else
-            std::cout << "Should not happen" << std::endl;
+            KSP::internal::Log_line(m_data.log_prefix()) << "Should not happen";
           vertices.push_back(from_exact(m_data.point_3(ivertex)));
           exact_vertices.push_back(m_data.point_3(ivertex));
         }

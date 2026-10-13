@@ -518,6 +518,8 @@ public:
   /*!
     \brief initializes the kinetic partition and propagates the planar shapes
 
+    \tparam ConcurrencyTag enables sequential versus parallel computation of the kinetic partitions of the octree leaves. Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
+
     \tparam NamedParameters
     a sequence of \ref bgl_namedparameters "Named Parameters"
 
@@ -543,7 +545,7 @@ public:
       \cgalParamNEnd
     \cgalNamedParamsEnd
   */
-  template<typename CGAL_NP_TEMPLATE_PARAMETERS>
+  template<typename ConcurrencyTag = CGAL::Parallel_if_available_tag, typename CGAL_NP_TEMPLATE_PARAMETERS>
   void partition(std::size_t k, const CGAL_NP_CLASS& np = parameters::default_values()) {
     if (m_regions.empty())
       return;
@@ -557,7 +559,7 @@ public:
     m_kinetic_partition.initialize(np);
 
     FT partition_time, finalization_time, conformal_time;
-    m_kinetic_partition.partition(k, partition_time, finalization_time, conformal_time);
+    m_kinetic_partition.template partition<ConcurrencyTag>(k, partition_time, finalization_time, conformal_time);
 
     m_kinetic_partition.get_linear_cell_complex(m_lcc_from_kinetic_partition);
     const LCC &lcc = m_lcc;

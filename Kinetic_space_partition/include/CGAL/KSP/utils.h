@@ -27,6 +27,7 @@
 #include <deque>
 #include <queue>
 #include <map>
+#include <iostream>
 
 // CGAL includes.
 #include <CGAL/Iterator_range.h>
@@ -45,6 +46,44 @@ namespace internal {
 
 #ifdef DOXYGEN_RUNNING
 #else
+
+// Collects the output of one line and writes it, including the line break, into the stream
+// with a single output operation when going out of scope, e.g.:
+//   Log_line("[P3] ") << "number of events: " << n;
+// A single output operation is not interleaved with output of other threads by the standard
+// stream implementations. Thus, lines written in parallel stay intact without additional locking.
+class Log_line {
+public:
+  explicit Log_line(const std::string& prefix = std::string(), std::ostream& os = std::cout) : m_os(os) {
+    m_buffer.precision(os.precision());
+    m_buffer << prefix;
+  }
+
+  Log_line(const Log_line&) = delete;
+  Log_line& operator=(const Log_line&) = delete;
+
+  ~Log_line() {
+    m_buffer << '\n';
+    m_os << m_buffer.str();
+    m_os.flush();
+  }
+
+  template<typename T>
+  Log_line& operator<<(const T& t) {
+    m_buffer << t;
+    return *this;
+  }
+
+  // Manipulators, e.g., std::setprecision.
+  Log_line& operator<<(std::ostream& (*manipulator)(std::ostream&)) {
+    m_buffer << manipulator;
+    return *this;
+  }
+
+private:
+  std::ostringstream m_buffer;
+  std::ostream& m_os;
+};
 
 // Convert point to string.
 template<typename Point_d>
