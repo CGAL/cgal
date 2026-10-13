@@ -2237,6 +2237,24 @@ private:
     }
   }
 
+  // Projects p onto the plane along the coordinate axis that is most orthogonal to the plane, i.e., only the coordinate
+  // of that axis is changed. Like an orthogonal projection, the point is afterwards exactly on the plane, but the other
+  // two coordinates are kept as they are. This keeps the bit complexity of the exact coordinates low.
+  static typename Intersection_kernel::Point_3 project_along_axis(const typename Intersection_kernel::Plane_3& pl, const typename Intersection_kernel::Point_3& p) {
+    using IFT = typename Intersection_kernel::FT;
+    const IFT& a = pl.a();
+    const IFT& b = pl.b();
+    const IFT& c = pl.c();
+    const IFT& d = pl.d();
+    const double ax = CGAL::abs(CGAL::to_double(a)), ay = CGAL::abs(CGAL::to_double(b)), az = CGAL::abs(CGAL::to_double(c));
+    // The approximation of the largest coefficient is non-zero, thus the coefficient itself is non-zero.
+    if (az >= ax && az >= ay)
+      return typename Intersection_kernel::Point_3(p.x(), p.y(), -(a * p.x() + b * p.y() + d) / c);
+    if (ay >= ax)
+      return typename Intersection_kernel::Point_3(p.x(), -(a * p.x() + c * p.z() + d) / b, p.z());
+    return typename Intersection_kernel::Point_3(-(b * p.y() + c * p.z() + d) / a, p.y(), p.z());
+  }
+
   void split_octree() {
     // Octree creation for sub partition
     std::size_t count = 0;
@@ -2265,7 +2283,7 @@ private:
           m_points.push_back(trans.transform(pt));
           // Project exactly onto the support plane, so that the clipped polygons are exactly
           // incident to the intersection lines of their support plane and the octree box planes.
-          pts.push_back(m_transform.transform(m_input_planes[i].projection(to_exact(pt))));
+          pts.push_back(m_transform.transform(project_along_axis(m_input_planes[i], to_exact(pt))));
         }
 
         m_polygons.push_back(std::vector<std::size_t>(p.size()));
@@ -2282,7 +2300,7 @@ private:
         // Project exactly onto the support plane, so that the clipped polygons are exactly
         // incident to the intersection lines of their support plane and the octree box planes.
         for (const auto &pt : p)
-          pts.push_back(m_input_planes[i].projection(to_exact(pt)));
+          pts.push_back(project_along_axis(m_input_planes[i], to_exact(pt)));
         m_polygons.push_back(std::vector<std::size_t>(p.size()));
         std::iota(m_polygons.back().begin(), m_polygons.back().end(), idx);
       }
@@ -2331,9 +2349,7 @@ private:
         auto polys = m_octree->data(node);
 
         // The octree clipping assigns a polygon that only touches the box of the node in a vertex or along an edge
-        // to that node as well. Such pieces have no area inside the box and are removed.
-        // A piece has no area iff all its points are collinear: find a second point distinct from the first one
-        // and check whether any further point is not collinear to both (linear effort).
+        // to that node as well. 
         polys.erase(std::remove_if(polys.begin(), polys.end(), [](const auto& p) {
           const auto& pts = p.second;
           std::size_t j = 1;

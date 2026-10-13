@@ -41,8 +41,6 @@ bool run_test(
     return false;
   }
 
-  std::cout << "checking " << filename << std::endl;
-
   for (std::size_t i = 0; i < ks.size(); i++) {
     CGAL::Real_timer timer;
     timer.start();
@@ -358,5 +356,6 @@ int main(const int /* argc */, const char** /* argv */) {
   //run_all_tests<GMPQ, GMPQ>();
   timer.stop();
   std::cout << "all tests time: " << timer.time() << std::endl;
+
   return EXIT_SUCCESS;
 }
