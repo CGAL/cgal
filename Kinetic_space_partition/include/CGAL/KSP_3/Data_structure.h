@@ -352,7 +352,7 @@ public:
   OutputIterator border(std::size_t sp_idx, IFace face, OutputIterator oi) const {
     const auto boundary = m_intersection_graph.face(face).edges;
     for (IEdge e : boundary) {
-      auto it = m_intersection_graph.edge(e).vertices.find(sp_idx);
+      auto it = m_intersection_graph.edge(e).vertices.find(std::make_pair(sp_idx, face));
       if (it == m_intersection_graph.edge(e).vertices.end() || m_kinetic_vertices[it->second.first].moving || m_kinetic_vertices[it->second.second].moving)
         *oi++ = e;
     }

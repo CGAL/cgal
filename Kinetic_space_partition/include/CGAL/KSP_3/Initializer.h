@@ -592,10 +592,10 @@ private:
 
             std::pair<std::size_t, std::size_t> p1(idx, -1);
 
-            auto pair = m_data.igraph().edge(v.constraint_edge).vertices.insert(std::make_pair(sp_idx, p1));
+            auto pair = m_data.igraph().edge(v.constraint_edge).vertices.insert(std::make_pair(std::make_pair(sp_idx, face), p1));
 
-            // In case of paired vertices, only add one of them
-            if (!pair.second && pair.first->second.first != v.other)
+            // The second vertex of this face on the edge fills the second spot.
+            if (!pair.second && pair.first->second.second == std::size_t(-1))
               pair.first->second.second = idx;
           }
 
@@ -643,13 +643,13 @@ private:
 
             std::pair<std::size_t, std::size_t> p1(*it, -1);
 
-            auto pair = m_data.igraph().edge(v.constraint_edge).vertices.insert(std::make_pair(sp_idx, p1));
+            auto pair = m_data.igraph().edge(v.constraint_edge).vertices.insert(std::make_pair(std::make_pair(sp_idx, face), p1));
 
             // Already exists? Then fill in the second spot.
             if (!pair.second && pair.first->second.second == std::size_t(-1))
               pair.first->second.second = *it;
 
-            auto pair2 = m_data.igraph().edge(v.other_constraint_edge).vertices.insert(std::make_pair(sp_idx, p1));
+            auto pair2 = m_data.igraph().edge(v.other_constraint_edge).vertices.insert(std::make_pair(std::make_pair(sp_idx, face), p1));
 
             // Already exists? Then fill in the second spot.
             if (!pair2.second && pair2.first->second.second == std::size_t(-1))
@@ -706,7 +706,7 @@ private:
             CGAL_assertion(vts[i].constraints.size() == 1);
             CGAL_assertion(vts[i].constraint_edge != m_data.igraph().null_iedge());
             //CGAL_assertion(vts[i].other != std::size_t(-1));
-            auto it = m_data.igraph().edge(vts[i].constraint_edge).vertices.find(vts[i].sp_idx);
+            auto it = m_data.igraph().edge(vts[i].constraint_edge).vertices.find(std::make_pair(vts[i].sp_idx, vts[i].face));
             CGAL_assertion(it != m_data.igraph().edge(vts[i].constraint_edge).vertices.end());
             Vertex& v1 = vts[it->second.first];
             Vertex& v2 = vts[it->second.second];

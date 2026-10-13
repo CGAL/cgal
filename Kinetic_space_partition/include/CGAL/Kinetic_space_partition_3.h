@@ -542,12 +542,10 @@ public:
     if (m_parameters.verbose) {
       //const std::string is_reorient = (m_parameters.reorient ? "true" : "false");
 
-      std::cout << std::endl << "--- PARTITION OPTIONS: " << std::endl;
-      std::cout << "* enlarge bbox ratio: " << m_parameters.bbox_dilation_ratio << std::endl;
-    }
+      std::cout << "\n--- PARTITION OPTIONS: \n";
+      std::cout << "* enlarge bbox ratio: " << m_parameters.bbox_dilation_ratio << "\n";
 
-    if (m_parameters.verbose) {
-      std::cout << std::endl << "--- INITIALIZING PARTITION:" << std::endl;
+      std::cout << "\n--- CREATING SUBPARTITIONS:" << std::endl;
 
       // Initialization.
       timer.reset();

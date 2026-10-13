@@ -59,7 +59,9 @@ public:
     std::size_t order;
     std::map<std::size_t, std::pair<std::size_t, std::size_t> > faces; // For each intersecting support plane there is one pair of adjacent faces (or less if the edge is on the bbox)
     std::set<std::size_t> planes;
-    std::map<std::size_t, std::pair<std::size_t, std::size_t> > vertices; // Maps support plane to a pair of vertices. (Can't be just one, can't be more than two)
+    // Maps (support plane, face) to the pair of kinetic vertices bounding the polygon of that face on this edge.
+    // An edge of a support plane separates two faces, and both may hold a polygon touching the edge.
+    std::map<std::pair<std::size_t, std::size_t>, std::pair<std::size_t, std::size_t> > vertices;
     Edge_property() : line(std::size_t(-1)), order(edge_counter++) { }
 
     Edge_property(const Edge_property &e) = default;
