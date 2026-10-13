@@ -391,39 +391,74 @@ Collapse_type get_collapse_type(const typename C3t3::Edge& edge,
 //  return NO_COLLAPSE;
 //}
 
-template<typename C3t3>
-bool is_valid_collapse(const typename C3t3::Edge& edge,
-                       const C3t3& c3t3)
+
+template <typename Triangulation>
+bool is_link_condition_valid(const typename Triangulation::Edge& edge,
+                             const Triangulation& tr)
 {
-  typedef typename C3t3::Vertex_handle Vertex_handle;
-  typedef typename C3t3::Cell_handle   Cell_handle;
-  typedef typename C3t3::Triangulation::Cell_circulator Cell_circulator;
+  using Vertex_handle = typename Triangulation::Vertex_handle;
+  using Cell_handle = typename Triangulation::Cell_handle;
+  using Cell_circulator = typename Triangulation::Cell_circulator;
 
   const Vertex_handle v0 = edge.first->vertex(edge.second);
   const Vertex_handle v1 = edge.first->vertex(edge.third);
 
-  Cell_circulator circ = c3t3.triangulation().incident_cells(edge);
+  if(tr.is_infinite(v0) || tr.is_infinite(v1))
+    return false;
+
+  // collect vertices of link(edge) - the "circle" around edge
+  std::set<Vertex_handle> edge_link_vertices;
+  Cell_circulator circ = tr.incident_cells(edge);
   Cell_circulator done = circ;
   do
   {
-    int v0_id = circ->index(v0);
-    int v1_id = circ->index(v1);
-
-    Cell_handle n0_ch = circ->neighbor(v0_id);
-    Cell_handle n1_ch = circ->neighbor(v1_id);
-
-    if (n0_ch->has_vertex(v0)
-        || n1_ch->has_vertex(v1)
-        || n0_ch->has_neighbor(n1_ch))
+    for(int k = 0; k < 4; ++k)
     {
-#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
-      if (c3t3.is_in_complex(edge))
-        ++nb_invalid_collapse_short;
-#endif
-      return false;
+      Vertex_handle vk = circ->vertex(k);
+      if(vk != v0 && vk != v1)
+        edge_link_vertices.insert(vk);
+    }
+  } while(++circ != done);
+
+  // collect the intersection of neighbors of v0 and neighbors of v1
+  std::set<Vertex_handle> neighbors_v0, neighbors_v1;
+  tr.adjacent_vertices(v0, std::inserter(neighbors_v0, neighbors_v0.end()));
+  tr.adjacent_vertices(v1, std::inserter(neighbors_v1, neighbors_v1.end()));
+
+  std::set<Vertex_handle> intersection_neighbors_v0v1;
+  std::set_intersection(neighbors_v0.begin(), neighbors_v0.end(),
+                        neighbors_v1.begin(), neighbors_v1.end(),
+                        std::inserter(intersection_neighbors_v0v1, intersection_neighbors_v0v1.end()));
+
+  if(intersection_neighbors_v0v1 != edge_link_vertices)
+    return false; // there are vertices shared by v0 and v1 outside edge_link_vertices
+
+  // Check the link condition
+  // for each pair of vertices in the link, if they are connected by an edge of the triangulation,
+  // that edge must belong to one of the cells incident to `edge`
+  // (checking that there are no "chords" in the link that would violate the link condition)
+  for(Vertex_handle link_vertex : edge_link_vertices)
+  {
+    std::vector<Vertex_handle> neighbors;
+    tr.adjacent_vertices(link_vertex, std::back_inserter(neighbors));
+
+    for(Vertex_handle neighbor : neighbors)
+    {
+      if(neighbor < link_vertex) // avoid checking the same edge twice
+        continue;
+      if(edge_link_vertices.find(neighbor) != edge_link_vertices.end())
+      {
+        // the edge [link_vertex, neighbor] exists
+        // if facet [v0, link_vertex, neighbor] is not in the triangulation
+        // then the edge [link_vertex, neighbor] is not part of the link of [v0, v1]
+        if(!tr.is_facet(v0, link_vertex, neighbor))
+        {
+          CGAL_assertion(!tr.is_facet(v1, link_vertex, neighbor));
+          return false;
+        }
+      }
     }
   }
-  while (++circ != done);
 
   return true;
 }
@@ -521,7 +556,7 @@ bool is_valid_collapse(const typename C3t3::Edge& edge,
     }
   }
 
-  return is_valid_collapse(edge, c3t3);
+  return is_link_condition_valid(edge, c3t3.triangulation());
 }
 
 template<typename Facet, typename Vh>
