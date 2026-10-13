@@ -133,7 +133,7 @@ struct CDT_options
 #else
                                                     false;
 #endif
-  bool        move_Steiner_vertices_to_the_volume = true;
+  bool        move_Steiner_vertices_to_the_volume = false;
   bool        allow_moving_Steiner_vertices_to_create_negative_tets = true;
   bool        use_epeck_for_normals               = false;
   bool        use_epeck_for_Steiner_points        = false;
