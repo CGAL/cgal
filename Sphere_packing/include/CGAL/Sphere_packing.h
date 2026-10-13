@@ -25,7 +25,7 @@
 
 #pragma warning( push )
 #pragma warning( disable : 4251 )
-#include <ProtoSphereExtended.h>
+#include "ProtoSphereExtended.h"
 #pragma warning( pop )
 
 namespace CGAL {
