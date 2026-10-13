@@ -286,9 +286,13 @@ void run_all_tests() {
 }
 
 int main(const int /* argc */, const char** /* argv */) {
+  CGAL::Real_timer timer;
+  timer.start();
   run_all_tests<SCD, EPECK>();
-  //run_all_tests<EPICK, EPECK>();
+  run_all_tests<EPICK, EPECK>();
   //run_all_tests<EPECK, EPECK>();
   //run_all_tests<GMPQ, GMPQ>();
+  timer.stop();
+  std::cout << "all tests time: " << timer.time() << std::endl;
   return EXIT_SUCCESS;
 }
