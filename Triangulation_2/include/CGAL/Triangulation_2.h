@@ -310,6 +310,22 @@ public:
   construct_point(const Point& p) const { return geom_traits().construct_point_2_object()(p); }
 
 
+  std::array<Vertex_handle, 3> vertices(Face_handle f) const {
+    return {f->vertex(0), f->vertex(1), f->vertex(2)};
+  }
+
+  std::array<Vertex_handle, 2> vertices(Face_handle f, int i) const {
+    return {f->vertex(ccw(i)), f->vertex(cw(i))};
+  }
+
+  std::array<Vertex_handle, 2> vertices(Edge e) const {
+    return {e.first->vertex(ccw(e.second)), e.first->vertex(cw(e.second))};
+  }
+
+  std::array<Vertex_handle, 1> vertices(Vertex_handle v) const {
+    return {v};
+  }
+
   const Point& point(Face_handle f, int i) const;
   const Point& point(Vertex_handle v) const;
 

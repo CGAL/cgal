@@ -18,10 +18,14 @@
 
 #include <CGAL/disable_warnings.h>
 
-#include <set>
-#include <exception>
+#include <iostream>
+#include <sstream>
+#include <stdexcept>
+#include <string>
 #include <type_traits>
 
+#include <CGAL/Compact_container.h>
+#include <CGAL/IO/io_tags.h>
 #include <CGAL/assertions.h>
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Constrained_triangulation_face_base_2.h>
@@ -42,6 +46,54 @@ struct No_constraint_intersection_tag{};
 struct No_constraint_intersection_requiring_constructions_tag{};
 struct Exact_intersections_tag{}; // to be used with an exact number type
 struct Exact_predicates_tag{}; // to be used with filtered exact number
+
+class Intersection_of_constraints_exception : public std::runtime_error
+{
+  static auto construct_what()
+  {
+    return std::string("Unauthorized intersections of constraints");
+  }
+
+  template <typename Vertex_handle>
+  static auto with_point(Vertex_handle v) {
+    return IO::oformat([v](std::ostream& os) -> auto& {
+      return os << IO::oformat(v, With_point_tag{});
+    }, IO_manip_tag{});
+  }
+
+  template <typename Vertex_handle>
+  static auto construct_what(Vertex_handle vaa,
+                             Vertex_handle vbb,
+                             Vertex_handle v1,
+                             Vertex_handle v2)
+  {
+    std::stringstream ss;
+    ss.copyfmt(std::cerr);
+    ss << "Unauthorized intersections of constraints: ( "
+        << with_point(vaa) << "  " << with_point(vbb) << " )" << " intersects with ("
+        << with_point(v1) << ", " << with_point(v2) << ")";
+    return ss.str();
+  }
+
+  template <typename Vertex_handle,
+            typename Point>
+  static auto construct_what(Point p,
+                             Vertex_handle v1,
+                             Vertex_handle v2)
+  {
+    std::stringstream ss;
+    ss.copyfmt(std::cerr);
+    ss << "Unauthorized intersections of constraints: point "
+        << p  << " intersects with (" << with_point(v1) << ", " << with_point(v2) << ")";
+    return ss.str();
+  }
+
+public:
+  template <typename ... Args>
+  Intersection_of_constraints_exception(Args&&... args)
+    : std::runtime_error(construct_what(std::forward<Args>(args)...))
+  {}
+};
 
 // This was deprecated and replaced by ` No_constraint_intersection_tag` and `No_constraint_intersection_requiring_constructions_tag`
 // due to an inconsistency between the code and the documentation.
@@ -127,14 +179,7 @@ public:
     }
   };
 
-
-  class Intersection_of_constraints_exception : public std::exception
-  {
-    const char* what() const throw ()
-    {
-      return "Unauthorized intersections of constraints";
-    }
-  };
+  using Intersection_of_constraints_exception = CGAL::Intersection_of_constraints_exception;
 
   typedef boost::filter_iterator<Is_constrained,
                                  typename Triangulation::All_edges_iterator>
@@ -346,7 +391,7 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb, OutputIterator out)
     // then this is an intersection
     if constexpr (std::is_same_v<Itag, No_constraint_intersection_tag>) {
       if(fr->is_constrained(dimension() == 1 ? 2 : i)) {
-        throw Intersection_of_constraints_exception();
+        throw Intersection_of_constraints_exception(vaa, vbb, vaa, vi);
       }
     }
 
@@ -722,12 +767,12 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
   }
   if ( lt == Triangulation::EDGE && loc->is_constrained(li) )
   {
-    if constexpr (std::is_same_v<Itag, No_constraint_intersection_tag>)
-      throw Intersection_of_constraints_exception();
-
-    insert_in_constrained_edge = true;
     v1=loc->vertex(ccw(li)); //endpoint of the constraint
     v2=loc->vertex(cw(li)); // endpoint of the constraint
+    if constexpr (std::is_same_v<Itag, No_constraint_intersection_tag>)
+      throw Intersection_of_constraints_exception(a, v1, v2);
+
+    insert_in_constrained_edge = true;
   }
 
   va = Triangulation::insert(a,lt,loc,li);
@@ -837,7 +882,7 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
       // then this is an intersection
       if constexpr (std::is_same_v<Itag, No_constraint_intersection_tag>) {
         if(fr->is_constrained(dimension() == 1 ? 2 : i)) {
-          throw Intersection_of_constraints_exception();
+          throw Intersection_of_constraints_exception(vaa, vbb, vaa, vi);
         }
       }
 
@@ -1028,24 +1073,26 @@ intersect(Face_handle f, int i,
 template <class Gt, class Tds, class Itag >
 typename Constrained_triangulation_2<Gt,Tds,Itag>::Vertex_handle
 Constrained_triangulation_2<Gt,Tds,Itag>::
-intersect(Face_handle , int ,
-          Vertex_handle ,
-          Vertex_handle ,
+intersect(Face_handle f, int i,
+          Vertex_handle vaa,
+          Vertex_handle vbb,
           No_constraint_intersection_tag)
 {
-  throw Intersection_of_constraints_exception();
+  auto [v1, v2] = this->vertices(f, i);
+  throw Intersection_of_constraints_exception(vaa, vbb, v1, v2);
   return Vertex_handle() ;
 }
 
 template <class Gt, class Tds, class Itag >
 typename Constrained_triangulation_2<Gt,Tds,Itag>::Vertex_handle
 Constrained_triangulation_2<Gt,Tds,Itag>::
-intersect(Face_handle , int ,
-          Vertex_handle ,
-          Vertex_handle ,
+intersect(Face_handle f, int i,
+          Vertex_handle vaa,
+          Vertex_handle vbb,
           No_constraint_intersection_requiring_constructions_tag)
 {
-  throw Intersection_of_constraints_exception();
+  auto [v1, v2] = this->vertices(f, i);
+  throw Intersection_of_constraints_exception(vaa, vbb, v1, v2);
   return Vertex_handle() ;
 }
 
