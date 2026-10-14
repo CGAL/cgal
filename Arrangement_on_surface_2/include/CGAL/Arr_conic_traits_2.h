@@ -2206,6 +2206,9 @@ public:
 
     /*! constructs a conic arc which is the full conic:
      *   `C: r*x^2 + s*y^2 + t*xy + u*x + v*y + w = 0`
+     * For a non-degenerate ellipse, positive `r` gives a clockwise orientation
+     * and negative `r` gives a counterclockwise orientation. Negating all six
+     * coefficients reverses the orientation without changing the ellipse.
      * \pre The conic C must be an ellipse (so `4rs - t^2 > 0`).
      */
     Curve_2 operator()(const Rational& r, const Rational& s, const Rational& t,
@@ -2224,6 +2227,24 @@ public:
       rat_coeffs[5] = w;
       Curve_2 arc;
       m_traits.set_full(arc, rat_coeffs, true);
+      return arc;
+    }
+
+    /*! constructs a full ellipse with the given orientation.
+     * \param orient The orientation of the ellipse (clockwise or counterclockwise).
+     * \pre The supporting conic must be an ellipse.
+     * \pre `orient` is not `COLLINEAR`.
+     */
+    Curve_2 operator()(const Rational& r, const Rational& s, const Rational& t,
+                       const Rational& u, const Rational& v, const Rational& w,
+                       Orientation orient) const {
+      CGAL_precondition(CGAL::sign(4*r*s - t*t) == POSITIVE);
+      CGAL_precondition(orient != COLLINEAR);
+
+      Rational rat_coeffs[6] = {r, s, t, u, v, w};
+      Curve_2 arc;
+      arc.set_orientation(orient);
+      m_traits.set_full(arc, rat_coeffs, false);
       return arc;
     }
 
