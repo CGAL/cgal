@@ -12,6 +12,13 @@
 
 #include <CGAL/generate_hexahedral_mesh_using_two_refinement.h>
 
+#include <CGAL/Polyhedral_mesh_domain_3.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
+
+#include <CGAL/Mesh_smoothing_3/mesh_representations.h>
+#include <CGAL/Mesh_smoothing_3/Mesh_smoothing_3.h>
+#include <CGAL/Mesh_smoothing_3/Projectors.h>
+
 using namespace CGAL::Three;
 class CGAL_Lab_hexmeshing_lcc_plugin :
   public QObject,
@@ -138,9 +145,54 @@ void CGAL_Lab_hexmeshing_lcc_plugin::on_actionHexmeshingSmoothing_triggered()
 
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  // TODO: add smoothing code here
-  QApplication::restoreOverrideCursor();
 
+  SMesh poly = *pMesh;
+  CGAL::Polygon_mesh_processing::triangulate_faces(poly);
+  using K = CGAL::Exact_predicates_inexact_constructions_kernel;
+  using Mesh_domain = CGAL::Polyhedral_mesh_domain_3<SMesh, K>;
+  Mesh_domain mesh_domain(poly);
+  CGAL::Mesh_smoothing_3::Polyhedral_mesh_domain_projector<Mesh_domain> projector(mesh_domain);
+
+  using ConcurrencyTag = CGAL::Mesh_smoothing_3::Parallel_if_available_tag;
+  unsigned max_nb_metric_evaluations = 10000;
+  double time_limit = 0.;
+  bool verbose = true;
+
+  LCC& lcc = *pLcc;
+
+  using LCC_mixed_mesh = CGAL::Mesh_smoothing_3::cgal_types::LCC_mixed_mesh<LCC>;
+  using Mixed_mesh = CGAL::Mesh_smoothing_3::helper_structures::Mixed_mesh_wrapper<LCC_mixed_mesh>;
+
+  LCC_mixed_mesh lcc_mixed_mesh(lcc);
+  Mixed_mesh mixed_mesh(lcc_mixed_mesh);
+
+  using Lcc_surface = CGAL::Mesh_smoothing_3::cgal_types::LCC_surface_mesh<LCC>;
+  Lcc_surface surface(lcc);
+
+  using Curve_network = CGAL::Mesh_smoothing_3::default_structures::Empty_edge_network<Mixed_mesh::Vertex_descriptor>;
+
+  CGAL::Mesh_smoothing_3::Mesh_smoother<Mixed_mesh, Lcc_surface, Curve_network, ConcurrencyTag>
+  smoother(mixed_mesh, surface);
+
+  smoother.set_predicates_mode(CGAL::Mesh_smoothing_3::Parameters::STRONG_ENFORCEMENT);
+  smoother.set_verbose(verbose);
+  smoother.set_maximum_running_time(time_limit);
+  smoother.set_maximum_number_of_metric_evaluations(max_nb_metric_evaluations);
+
+  smoother.set_boundary_query([&](std::vector<K::Point_3> const& pts, Lcc_surface::Surface_patch_index patch_face) {
+      auto proj = projector.patch_face_projection_plane(patch_face, pts);
+      return std::make_tuple(proj.origin(), proj.vector(), 1.);
+  });
+
+  auto result = smoother.run();
+
+  std::cout << "Number of inverted elements: " << result.nb_invalid_elements << std::endl;
+  std::cout << "Number of vertex updates: " << result.nb_vertex_updates << std::endl;
+  std::cout << "Number of metric evaluations: " << result.nb_metric_evaluations << std::endl;
+  std::cout << "Pre-processing time: " << result.pre_processing_time << std::endl;
+  std::cout << "Smoothing time: " << result.optimization_time << std::endl;
+
+  QApplication::restoreOverrideCursor();
 
   lcc_item->invalidateOpenGLBuffers();
   lcc_item->itemChanged();
