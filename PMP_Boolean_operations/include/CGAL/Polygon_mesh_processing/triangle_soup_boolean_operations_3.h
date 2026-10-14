@@ -22,12 +22,14 @@
 
 #include <fstream>
 
-#ifdef CGAL_BO3_TIMERS
-#include <CGAL/Real_timer.h>
-#endif
+#include <fstream>
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include <oneapi/tbb/parallel_sort.h>
+#endif
+
+#if defined(CGAL_BO3_TIMERS) || defined(CGAL_BO3_SELECT_TIMERS)
+#include <CGAL/Real_timer.h>
 #endif
 
 namespace CGAL {
@@ -108,7 +110,7 @@ select(const std::vector<Exact_point>& points,
              std::vector<unsigned int>& input_ids,
        const unsigned int nb_meshes)
 {
-#ifdef CGAL_BO3_TIMERS
+#ifdef CGAL_BO3_SELECT_TIMERS
   Real_timer t;
   t.start();
 #endif
@@ -154,6 +156,10 @@ select(const std::vector<Exact_point>& points,
     }
   }
 
+#ifdef CGAL_BO3_SELECT_TIMERS
+  std::cout << t.time() << " sec. to collect edge records\n";
+#endif
+
 #ifdef CGAL_LINKED_WITH_TBB
   if (std::is_same_v<Concurrency_tag, Parallel_tag>)
   {
@@ -165,7 +171,11 @@ select(const std::vector<Exact_point>& points,
     std::sort(partial_edges.begin(), partial_edges.end());
   }
 
-  // TODO parallellize (need a mutex to push on small_vector)
+#ifdef CGAL_BO3_SELECT_TIMERS
+  std::cout << t.time() << " sec. to sort edge records\n";
+#endif
+
+  // Build adjacencies between edges and faces
   std::vector<std::array<EID, 3>> adjacent_edges(triangles.size());
   std::vector<boost::container::small_vector<TID, 2>> adjacent_faces;
   adjacent_faces.reserve(partial_edges.size());
@@ -192,11 +202,19 @@ select(const std::vector<Exact_point>& points,
     CGAL_assertion(!adjacent_faces.back().empty());
   }
 
+#ifdef CGAL_BO3_SELECT_TIMERS
+  std::cout << t.time() << " sec. to build adjacencies\n";
+#endif
+
   // extract connected_components bounded by non-manifold edges
   std::vector<std::size_t>& ccids = data_out.ccids;
   std::vector< EID > nm_edges;
   std::vector<std::size_t> one_triangle_per_cc = boolops_3::connected_components(triangles, adjacent_edges, adjacent_faces, ccids, nm_edges);
   std::size_t nb_cc = one_triangle_per_cc.size();
+
+#ifdef CGAL_BO3_SELECT_TIMERS
+  std::cout << t.time() << " sec. to compute connected components\n";
+#endif
 
   // Erase duplicates
   std::sort(nm_edges.begin(), nm_edges.end());
@@ -542,8 +560,8 @@ select(const std::vector<Exact_point>& points,
 
 
   data_out.input_ids.swap(input_ids);
-#ifdef CGAL_BO3_TIMERS
-  std::cout << "select intern in " << t.time() << "\n";
+#ifdef CGAL_BO3_SELECT_TIMERS
+  std::cout << "select done in " << t.time() << "\n";
 #endif
   return data_out;
 }
@@ -615,6 +633,7 @@ prepare_data(const PointRange& points_1, const TriangleRange& triangles_1,
   timer.stop();
   std::cout << "autorefine done in " << timer.time() << "\n";
   timer.reset();
+  timer.start();
 #endif
 #ifdef CGAL_BO_AUTOREF_DEBUG
   CGAL::IO::write_OFF("autorefined.off", out_points, out_triangles, CGAL::parameters::stream_precision(17));

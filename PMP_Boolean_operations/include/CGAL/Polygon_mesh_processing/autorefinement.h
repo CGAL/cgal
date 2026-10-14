@@ -65,10 +65,6 @@
 //#define CGAL_AUTOREFINE_DEBUG_COUNTERS
 //#define CGAL_AUTOREF_DEBUG_DEPTH
 
-#ifdef CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS
-#include <CGAL/Real_timer.h>
-#endif
-
 #if defined(CGAL_AUTOREFINE_DEBUG_COUNTERS) || defined(CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS)
 #include <CGAL/Real_timer.h>
 #endif
@@ -1114,7 +1110,7 @@ bool autorefine_triangle_soup(PointRange& soup_points,
 #if defined(CGAL_AUTOREFINE_DEBUG_COUNTERS) || defined(CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS)
   timer.stop();
   std::cout << "collecting intersecting pairs took (" << mode << ") " << timer.time() << "\n";
-  t.reset();
+  timer.reset();
 #endif
 
   if (si_pairs.empty())
@@ -1182,7 +1178,7 @@ bool autorefine_triangle_soup(PointRange& soup_points,
 
   CGAL_PMP_AUTOREFINE_VERBOSE("compute intersections ("+std::to_string(si_pairs.size())+")");
 #ifdef CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS
-  t.start();
+  timer.start();
 #endif
   std::set<std::pair<std::size_t, std::size_t> > intersecting_triangles;
   std::set<std::pair<std::size_t, std::size_t> > coplanar_triangles;
@@ -1271,13 +1267,13 @@ bool autorefine_triangle_soup(PointRange& soup_points,
     }
   }
 #ifdef CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS
-  t.stop();
-  std::cout << t.time() << " sec. for #2" << std::endl;
-  t.reset();
+  timer.stop();
+  std::cout << timer.time() << " sec. for #2" << std::endl;
+  timer.reset();
 #endif
 
 #ifdef CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS
-  t.start();
+  timer.start();
 #endif
 
   // deduplicate inserted segments
@@ -1383,9 +1379,9 @@ bool autorefine_triangle_soup(PointRange& soup_points,
   }
 
 #ifdef CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS
-  t.stop();
-  std::cout << t.time() << " sec. for #3" << std::endl;
-  t.reset();
+  timer.stop();
+  std::cout << timer.time() << " sec. for #3" << std::endl;
+  timer.reset();
 #endif
 
   CGAL_PMP_AUTOREFINE_VERBOSE("triangulate faces ("+std::to_string(triangles.size())+")");
@@ -1434,7 +1430,7 @@ bool autorefine_triangle_soup(PointRange& soup_points,
   };
 
 #ifdef CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS
-  t.start();
+  timer.start();
 #endif
 #ifdef CGAL_LINKED_WITH_TBB
   if (parallel_execution)
@@ -1453,9 +1449,10 @@ bool autorefine_triangle_soup(PointRange& soup_points,
   }
 
 #ifdef CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS
-  t.stop();
-  std::cout << t.time() << " sec. for #1" << std::endl;
-  t.reset();
+  timer.stop();
+  std::cout << timer.time() << " sec. for #1" << std::endl;
+  timer.reset();
+  timer.start();
 #endif
 
   // brute force output: create a soup, orient and to-mesh
@@ -1512,7 +1509,10 @@ bool autorefine_triangle_soup(PointRange& soup_points,
   }
 
 #ifdef CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS
-  std::cout << timer.time() << "s to fill point id map" << std::endl;
+  timer.stop();
+  std::cout << timer.time() << " sec. to fill point id map" << std::endl;
+  timer.reset();
+  timer.start();
 #endif
 
   TriangleRange soup_triangles_out;
@@ -1552,7 +1552,9 @@ bool autorefine_triangle_soup(PointRange& soup_points,
   }
 
 #ifdef CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS
-  std::cout << timer.time() << " to build the output" << std::endl;
+  timer.stop();
+  std::cout << timer.time() << " sec. to build the output" << std::endl;
+  timer.reset();
 #endif
 
   // import refined triangles
@@ -1572,7 +1574,7 @@ bool autorefine_triangle_soup(PointRange& soup_points,
   };
 
 #ifdef CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS
-  t.start();
+  timer.start();
 #endif
 
   std::size_t offset = soup_triangles_out.size();
@@ -1742,9 +1744,9 @@ bool autorefine_triangle_soup(PointRange& soup_points,
 
 
 #ifdef CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS
-  t.stop();
-  std::cout << t.time() << " sec. for #4 (" << mode << ")" << std::endl;
-  t.reset();
+  timer.stop();
+  std::cout << timer.time() << " sec. for #4 (" << mode << ")" << std::endl;
+  timer.reset();
 #endif
 
 #ifndef CGAL_NDEBUG
