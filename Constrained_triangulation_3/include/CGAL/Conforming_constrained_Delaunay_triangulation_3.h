@@ -5954,8 +5954,9 @@ public:
       try {
         fill_cdt_2(cdt_2, i);
         search_for_missing_subfaces(i);
-      } catch (typename CDT_2::Intersection_of_constraints_exception&) {
-        std::cerr << "ERROR: Intersection of constraints in face F#" << i << "\n";
+      } catch (typename CDT_2::Intersection_of_constraints_exception& e) {
+        std::cerr << "ERROR: Intersection of constraints in face F#" << i << ": "
+                  << e.what() << "\n";
         this->face_data[i].skip_face = true;
         dump_face_polygons(build_face_border_handles(face_borders(i)), i);
       } catch (Null_normal_error& e) {
