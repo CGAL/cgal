@@ -232,6 +232,7 @@ template <class T>
   bool has_rotation() const {
     if(variant == 3)
       return  !(is_zero(entries[0]) && is_zero(entries[1]) && is_zero(entries[2]) && is_zero(entries[4]) && is_zero(entries[6]) && is_zero(entries[8]) && is_zero(entries[9]));
+     return false;
   }
 
 
