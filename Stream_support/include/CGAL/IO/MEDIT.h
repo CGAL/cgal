@@ -14,6 +14,7 @@
 
 #include <CGAL/assertions.h>
 #include <CGAL/Kernel_traits.h>
+
 #include <iostream>
 #include <string>
 #include <tuple>
@@ -272,7 +273,8 @@ bool read_MEDIT(std::istream& is,
 
       for(int i = 0; i < nedges; ++i)
       {
-        int n[2], curve_index;
+        int n[2];
+        Curve_index curve_index = 0;
         if(!(is >> n[0] >> n[1] >> curve_index))
         {
           if(verbose)

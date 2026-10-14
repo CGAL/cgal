@@ -667,7 +667,7 @@ public:
                       " has plane " << h << " has circle " << e->circle() <<
                       " has signum " << sign_of(h));
       if ( sign_of(h)<0 ) continue;
-      M[normalized(h)].push_back(make_object(e->twin()));
+      M[normalized(h)].emplace_back(e->twin());
       CGAL_NEF_TRACEN(" normalized as " << normalized(h));
       /*
         Unique_hash_map<SHalfedge_handle, bool> Done(false);
@@ -688,7 +688,7 @@ public:
       }
       SHalfedge_around_facet_circulator sfc(e), send(sfc);
       CGAL_For_all(sfc, send) {
-        M[normalized(h)].push_back(make_object(e->twin()));
+        M[normalized(h)].emplace_back(e->twin());
         Done[sfc] = true;
         Done[sfc->twin()] = true;
         CGAL_NEF_TRACEN(" normalized as " << normalized(h));
@@ -701,7 +701,7 @@ public:
       Plane_3 h = c.plane_through(l->incident_sface()->center_vertex()->point());
       if ( sign_of(h)<0 ) continue;
       // CGAL_assertion( h == normalized(h));
-      M[normalized(h)].push_back(make_object(l->twin()));
+      M[normalized(h)].emplace_back(l->twin());
     }
 
 #ifdef CGAL_NEF3_TIMER_PLANE_SWEEPS
@@ -1181,13 +1181,13 @@ public:
     CGAL_forall_shalfedges(e,*this->sncp()) {
       if(e->get_index() > e->twin()->get_index())
         continue;
-      M[e->get_index()].push_back(make_object(e));
+      M[e->get_index()].emplace_back(e);
     }
     SHalfloop_iterator l;
     CGAL_forall_shalfloops(l,*this->sncp()) {
       if(l->get_index() > l->twin()->get_index())
         continue;
-      M[l->get_index()].push_back(make_object(l));
+      M[l->get_index()].emplace_back(l);
     }
 
 #ifdef CGAL_NEF3_TIMER_PLANE_SWEEPS

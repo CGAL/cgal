@@ -39,10 +39,11 @@
 #include <map>
 
 #include <Scene.h>
+
 typedef Scene_surface_mesh_item Scene_face_graph_item;
 
 typedef Scene_face_graph_item::Face_graph Face_graph;
-typedef boost::property_map<Face_graph,CGAL::vertex_point_t>::type VPmap;
+typedef boost::property_map<Face_graph, CGAL::vertex_point_t>::type VPmap;
 
 struct Is_terminal
 {
@@ -52,7 +53,6 @@ struct Is_terminal
     return false; // degree(vd,g) != 2; is a bad test in case of parallel edges
   }
 };
-
 
 template <typename Graph>
 struct Polyline_visitor
@@ -77,6 +77,7 @@ struct Polyline_visitor
   }
   void end_polyline(){}
 };
+
 using namespace CGAL::Three;
 class CGAL_Lab_selection_plugin :
   public QObject,
@@ -91,7 +92,8 @@ public:
   QString nameFilters() const override { return "Selection files(*.selection.txt)"; }
   QString name() const override { return "selection_sm_plugin"; }
 
-  bool canLoad(QFileInfo) const override {
+  bool canLoad(QFileInfo) const override
+  {
     Scene_item * item = CGAL::Three::Three::scene()->item(
           CGAL::Three::Three::scene()->mainSelectionIndex());
     Scene_facegraph_item* fg_item = qobject_cast<Scene_facegraph_item*>(item);
@@ -99,12 +101,13 @@ public:
       return true;
     Scene_polyhedron_selection_item* sel_item =
         qobject_cast<Scene_polyhedron_selection_item*>(item);
-    if (sel_item)
+    if(sel_item)
       return true;
     return false;
   }
 
-  QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true) override {
+  QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true) override
+  {
       if(fileinfo.suffix().toLower() != "txt")
       {
         ok = false;
@@ -124,10 +127,13 @@ public:
       return QList<Scene_item*>()<<item;
   }
 
-  bool canSave(const CGAL::Three::Scene_item* scene_item) override {
-      return qobject_cast<const Scene_polyhedron_selection_item*>(scene_item);
+  bool canSave(const CGAL::Three::Scene_item* scene_item) override
+  {
+    return qobject_cast<const Scene_polyhedron_selection_item*>(scene_item);
   }
-  bool save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items) override {
+
+  bool save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items) override
+  {
     Scene_item* scene_item = items.front();
       const Scene_polyhedron_selection_item* item = qobject_cast<const Scene_polyhedron_selection_item*>(scene_item);
       if(item == nullptr) { return false; }
@@ -138,43 +144,50 @@ public:
       return res;
   }
 
-  bool isDefaultLoader(const Scene_item* item) const override{
+  bool isDefaultLoader(const Scene_item* item) const override
+  {
     if(qobject_cast<const Scene_polyhedron_selection_item*>(item))
       return true;
     return false;
   }
 
-  bool applicable(QAction* action) const override {
+  bool applicable(QAction* action) const override
+  {
     if(action == actionSelfIntersection)
       return qobject_cast<Scene_face_graph_item*>(scene->item(scene->mainSelectionIndex()));
     else if(action == actionSelection)
       return qobject_cast<Scene_face_graph_item*>(scene->item(scene->mainSelectionIndex()))
           || qobject_cast<Scene_polyhedron_selection_item*>(scene->item(scene->mainSelectionIndex()));
-    else if (action == actionSelectPolylines)
+    else if(action == actionSelectPolylines)
     {
       bool polylines_found = false;
       bool facegraph_found = false;
-      for (const auto index : scene->selectionIndices())
+      for(const auto index : scene->selectionIndices())
       {
-        if (!polylines_found && qobject_cast<Scene_polylines_item*>(scene->item(index)))
+        if(!polylines_found && qobject_cast<Scene_polylines_item*>(scene->item(index)))
           polylines_found = true;
-        if (!facegraph_found && qobject_cast<Scene_facegraph_item*>(scene->item(index)))
+        if(!facegraph_found && qobject_cast<Scene_facegraph_item*>(scene->item(index)))
           facegraph_found = true;
       }
       return polylines_found && facegraph_found;
     }
     return false;
   }
+
   void print_message(QString message) { CGAL::Three::Three::information(message); }
 
-  QList<QAction*> actions() const override {
+  QList<QAction*> actions() const override
+  {
     return QList<QAction*>() << actionSelection
                              << actionSelfIntersection
                              << actionSelectPolylines;
   }
 
   using CGAL_Lab_io_plugin_interface::init;
-  virtual void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m) override{
+  virtual void init(QMainWindow* mainWindow,
+                    CGAL::Three::Scene_interface* scene_interface,
+                    Messages_interface* m) override
+  {
     mw = mainWindow;
     scene = scene_interface;
     messages = m;
@@ -189,20 +202,14 @@ public:
     actionSelectPolylines->setProperty("subMenuName", "Polygon Mesh Processing");
     connect(actionSelectPolylines, SIGNAL(triggered()), this, SLOT(on_actionSelectPolylines_triggered()));
 
-    actionSelection = new QAction(
-          QString("Surface Mesh Selection")
-          , mw);
+    actionSelection = new QAction(QString("Surface Mesh Selection"), mw);
     actionSelection->setObjectName("actionSelection");
     connect(actionSelection, SIGNAL(triggered()), this, SLOT(selection_action()));
     last_mode = 0;
-    dock_widget = new QDockWidget(
-                "Surface Mesh Selection"
-          , mw);
+    dock_widget = new QDockWidget("Surface Mesh Selection", mw);
     dock_widget->setVisible(false);
     ui_widget.setupUi(dock_widget);
-    dock_widget->setWindowTitle(tr(
-                                  "Surface Mesh Selection"
-                                  ));
+    dock_widget->setWindowTitle(tr("Surface Mesh Selection"));
     connect(dock_widget, &QDockWidget::visibilityChanged,
             this, [this](bool b){
         this->set_highlighting(b);
@@ -282,13 +289,13 @@ public:
   {
     dock_widget->hide();
   }
+
 Q_SIGNALS:
   void save_handleType();
   void set_operation_mode(int);
   void set_highlighting(bool);
 
 public Q_SLOTS:
-
   void on_actionSelfIntersection_triggered();
   void on_actionSelectPolylines_triggered();
 
@@ -301,7 +308,7 @@ public Q_SLOTS:
     this->set_highlighting(ui_widget.hl_checkBox->isChecked());
     int item_id = scene->addItem(new_item);
    // QObject* scene_ptr = dynamic_cast<QObject*>(scene);
-   // if (scene_ptr)
+   // if(scene_ptr)
    //   connect(new_item,SIGNAL(simplicesSelected(CGAL::Three::Scene_item*)), scene_ptr, SLOT(setSelectedItem(CGAL::Three::Scene_item*)));
     connect(new_item,SIGNAL(isCurrentlySelected(Scene_facegraph_item_k_ring_selection*)), this, SLOT(isCurrentlySelected(Scene_facegraph_item_k_ring_selection*)));
     connect(new_item,SIGNAL(simplicesSelected(CGAL::Three::Scene_item*)), this, SLOT(filter_operations()));
@@ -311,6 +318,7 @@ public Q_SLOTS:
       on_Selection_type_combo_box_changed(ui_widget.Selection_type_combo_box->currentIndex());
     filter_operations();
   }
+
   // If the selection_item or the polyhedron_item associated to the k-ring_selector is currently selected,
   // set the k-ring_selector as currently selected. (A k-ring_selector that is not "currently selected" will
   // not process selection events)
@@ -333,7 +341,8 @@ public Q_SLOTS:
     print_message(s);
   }
 
-  void selection_action() {
+  void selection_action()
+  {
     dock_widget->show();
     dock_widget->raise();
     Scene_face_graph_item* poly_item = getSelectedItem<Scene_face_graph_item>();
@@ -343,7 +352,8 @@ public Q_SLOTS:
     connectItem(new_item);
   }
 
-  Scene_polyhedron_selection_item* onTheFlyItem() {
+  Scene_polyhedron_selection_item* onTheFlyItem()
+  {
     Scene_face_graph_item* poly_item = qobject_cast<Scene_face_graph_item*>(scene->item(scene->mainSelectionIndex()));
     if(!poly_item)
       return nullptr;
@@ -354,7 +364,8 @@ public Q_SLOTS:
 
   }
   // Select all
-  void on_Select_all_button_clicked() {
+  void on_Select_all_button_clicked()
+  {
     Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
     if(!selection_item)
       selection_item = onTheFlyItem();
@@ -383,7 +394,8 @@ public Q_SLOTS:
   }
 
   // Select Boundary
-  void on_Select_boundaryButton_clicked() {
+  void on_Select_boundaryButton_clicked()
+  {
     Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
     if(!selection_item)
       selection_item = onTheFlyItem();
@@ -409,8 +421,10 @@ public Q_SLOTS:
     selection_item->add_to_selection();
     filter_operations();
   }
+
   // Regularize selection using graph cut
-  void on_Regularize_button_clicked() {
+  void on_Regularize_button_clicked()
+  {
     Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
     if(!selection_item) {
       print_message("Error: there is no selected polyhedron selection item!");
@@ -425,52 +439,45 @@ public Q_SLOTS:
 
     QCheckBox* prevent_unselection = dialog.add<QCheckBox> ("Prevent unselection");
 
-    if (dialog.exec() != QDialog::Accepted)
+    if(dialog.exec() != QDialog::Accepted)
       return;
 
     std::unordered_map<fg_face_descriptor, bool> is_selected_map;
     for(fg_face_descriptor fh : faces(*selection_item->polyhedron()))
     {
-      if(selection_item->selected_facets.find(fh)
-         == selection_item->selected_facets.end())
-        is_selected_map[fh]=false;
-      else
-      {
-        is_selected_map[fh]=true;
-      }
+      is_selected_map[fh] = (selection_item->selected_facets.find(fh) != selection_item->selected_facets.end());
     }
 
-    auto border_length =
-      [&]() -> double
+    auto border_length = [&]() -> double
+    {
+      double out = 0.;
+      for(Scene_polyhedron_selection_item::fg_edge_descriptor ed : edges(*selection_item->polyhedron()))
       {
-        double out = 0.;
-        for(Scene_polyhedron_selection_item::fg_edge_descriptor ed : edges(*selection_item->polyhedron()))
-        {
-          fg_face_descriptor f0 = face (halfedge (ed, *selection_item->polyhedron()),
-                                        *selection_item->polyhedron());
-          fg_face_descriptor f1 = face (opposite(halfedge (ed, *selection_item->polyhedron()),
-                                                 *selection_item->polyhedron()),
-                                        *selection_item->polyhedron());
-          if (is_selected_map[f0] == is_selected_map[f1])
-            continue;
+        fg_face_descriptor f0 = face (halfedge (ed, *selection_item->polyhedron()),
+                                      *selection_item->polyhedron());
+        fg_face_descriptor f1 = face (opposite(halfedge (ed, *selection_item->polyhedron()),
+                                                *selection_item->polyhedron()),
+                                      *selection_item->polyhedron());
+        if(is_selected_map[f0] == is_selected_map[f1])
+          continue;
 
-          fg_vertex_descriptor esource = source(ed, *selection_item->polyhedron());
-          fg_vertex_descriptor etarget = target(ed, *selection_item->polyhedron());
+        fg_vertex_descriptor esource = source(ed, *selection_item->polyhedron());
+        fg_vertex_descriptor etarget = target(ed, *selection_item->polyhedron());
 
-          out += std::sqrt(CGAL::squared_distance (get (get(CGAL::vertex_point,*selection_item->polyhedron()), esource),
-                                                   get (get(CGAL::vertex_point,*selection_item->polyhedron()), etarget)));
-        }
-        return out;
-      };
+        out += std::sqrt(CGAL::squared_distance(get(get(CGAL::vertex_point,*selection_item->polyhedron()), esource),
+                                                get(get(CGAL::vertex_point,*selection_item->polyhedron()), etarget)));
+      }
+      return out;
+    };
 
     std::cerr << "[Selection Regularization] Weight = " << weight->value() << std::endl;
 
     std::cerr << "Length of border before regularization = " << border_length() << std::endl;
 
-    CGAL::regularize_face_selection_borders (*selection_item->polyhedron(),
-                                             boost::make_assoc_property_map(is_selected_map),
-                                             weight->value(),
-                                             CGAL::parameters::prevent_unselection (prevent_unselection->isChecked()));
+    CGAL::regularize_face_selection_borders(*selection_item->polyhedron(),
+                                            boost::make_assoc_property_map(is_selected_map),
+                                            weight->value(),
+                                            CGAL::parameters::prevent_unselection (prevent_unselection->isChecked()));
 
     std::cerr << "Length of border after regularization = " << border_length() << std::endl;
 
@@ -478,12 +485,13 @@ public Q_SLOTS:
 
     for(fg_face_descriptor fh : faces(*selection_item->polyhedron()))
     {
-      if (is_selected_map[fh])
+      if(is_selected_map[fh])
         selection_item->selected_facets.insert(fh);
     }
     selection_item->invalidateOpenGLBuffers();
     selection_item->itemChanged();
   }
+
   // Clear selection
   void on_Clear_button_clicked() {
     Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
@@ -501,6 +509,7 @@ public Q_SLOTS:
     }
     filter_operations();
   }
+
   void on_Clear_all_button_clicked(){
     Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
     if(!selection_item) {
@@ -511,6 +520,7 @@ public Q_SLOTS:
     selection_item->clear_all();
     filter_operations();
   }
+
   void on_Inverse_selection_button_clicked()
   {
     Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
@@ -521,6 +531,7 @@ public Q_SLOTS:
     selection_item->inverse_selection();
     filter_operations();
   }
+
   // Isolated component related functions
   void on_Select_isolated_components_button_clicked() {
     Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
@@ -538,6 +549,7 @@ public Q_SLOTS:
     }
     filter_operations();
   }
+
   void on_Get_minimum_button_clicked() {
     Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
     if(!selection_item)
@@ -712,10 +724,10 @@ public Q_SLOTS:
       Scene_polylines_item* polyline_item = new Scene_polylines_item();
       polyline_item->setName(QString("%1-edges").arg(selection_item->name()));
 
-      typedef boost::adjacency_list < boost::listS,
-          boost::vecS,
-          boost::undirectedS,
-          Kernel::Point_3 > Edge_graph;
+      typedef boost::adjacency_list<boost::listS,
+                                    boost::vecS,
+                                    boost::undirectedS,
+                                    Kernel::Point_3 > Edge_graph;
 
       Edge_graph edge_graph;
       std::map<fg_vertex_descriptor, Edge_graph::vertex_descriptor> p2vd;
@@ -730,7 +742,7 @@ public Q_SLOTS:
         fg_vertex_descriptor source = target(opposite(halfedge(*begin,*poly),*poly),*poly);
         std::tie(it_find, insert_OK)
             = p2vd.insert(std::make_pair(source, Edge_graph::vertex_descriptor()));
-        if (insert_OK)
+        if(insert_OK)
         {
           it_find->second = add_vertex(edge_graph);
           edge_graph[it_find->second] = get(vpm,source);
@@ -740,7 +752,7 @@ public Q_SLOTS:
         fg_vertex_descriptor targ = target(halfedge(*begin,*poly),*poly);
         std::tie(it_find, insert_OK)
             = p2vd.insert(std::make_pair(targ, Edge_graph::vertex_descriptor()));
-        if (insert_OK)
+        if(insert_OK)
         {
           it_find->second = add_vertex(edge_graph);
           edge_graph[it_find->second] = get(vpm,targ);
@@ -796,7 +808,7 @@ public Q_SLOTS:
     case 4:
     {
       Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
-      if (!selection_item) {
+      if(!selection_item) {
         print_message("Error: there is no selected polyhedron selection item!");
         return;
       }
@@ -807,7 +819,7 @@ public Q_SLOTS:
     case 5:
     {
       Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
-      if (!selection_item ||
+      if(!selection_item ||
           selection_item->selected_facets.empty())
       {
         print_message("Error: Please select a selection item with a selection of faces.");
@@ -830,7 +842,7 @@ public Q_SLOTS:
 
       for(fg_face_descriptor fh : faces(*selection_item->polyhedron()))
       {
-        if (is_selected_map[fh])
+        if(is_selected_map[fh])
           selection_item->selected_facets.insert(fh);
       }
       selection_item->invalidateOpenGLBuffers();
@@ -975,7 +987,7 @@ public Q_SLOTS:
       bool is_valid = true;
       for(boost::graph_traits<Face_graph>::face_descriptor fd : faces(*selection_item->polyhedron()))
       {
-        if (CGAL::is_triangle(halfedge(fd, *selection_item->polyhedron()), *selection_item->polyhedron())
+        if(CGAL::is_triangle(halfedge(fd, *selection_item->polyhedron()), *selection_item->polyhedron())
             && CGAL::Polygon_mesh_processing::is_degenerate_triangle_face(fd, *selection_item->polyhedron()))
         {
           is_valid = false;
@@ -999,7 +1011,7 @@ public Q_SLOTS:
     }
   }
 
-  void on_editionBox_changed(int mode )
+  void on_editionBox_changed(int mode)
   {
     Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
     if(selection_item)
@@ -1098,8 +1110,8 @@ public Q_SLOTS:
     int counter = 0;
     double coord[3];
     bool ok = true;
-    if (list.isEmpty()) return;
-    if (list.size() != 3){
+    if(list.isEmpty()) return;
+    if(list.size() != 3){
       QMessageBox *msgBox = new QMessageBox;
       msgBox->setWindowTitle("Error");
       msgBox->setText("ERROR : Input should consist of a triplet.");
@@ -1138,7 +1150,7 @@ public Q_SLOTS:
       Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
       if(!selection_item)
         selection_item = onTheFlyItem();
-      if (!selection_item) {
+      if(!selection_item) {
         print_message("Error: there is no selected polyhedron selection item!");
         return;
       }
@@ -1147,11 +1159,12 @@ public Q_SLOTS:
     }
   }
 
-  void on_Select_sharp_edges_button_clicked() {
+  void on_Select_sharp_edges_button_clicked()
+  {
     Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
     if(!selection_item)
       selection_item = onTheFlyItem();
-    if (!selection_item) {
+    if(!selection_item) {
       print_message("Error: there is no selected polyhedron selection item!");
       return;
     }
@@ -1162,7 +1175,8 @@ public Q_SLOTS:
     filter_operations();
   }
 
-  void on_Expand_reduce_button_clicked() {
+  void on_Expand_reduce_button_clicked()
+  {
     Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
     if(!selection_item) {
       print_message("Error: there is no selected polyhedron selection item!");
@@ -1173,8 +1187,10 @@ public Q_SLOTS:
     selection_item->expand_or_reduce(steps);
     filter_operations();
   }
+
   // To handle empty selection items coming from loader
-  void new_item_created(int item_id) {
+  void new_item_created(int item_id)
+  {
     typedef Scene_polyhedron_selection_item::Active_handle Active_handle;
     Scene_polyhedron_selection_item* selection_item =
       qobject_cast<Scene_polyhedron_selection_item*>(scene->item(item_id));
@@ -1231,7 +1247,7 @@ public Q_SLOTS:
     connect(this, SIGNAL(set_highlighting(bool)),selection_item, SLOT(set_highlighting(bool)));
     this->set_highlighting(ui_widget.hl_checkBox->isChecked());
     //QObject* scene_ptr = dynamic_cast<QObject*>(scene);
-    //if (scene_ptr)
+    //if(scene_ptr)
     //  connect(selection_item,SIGNAL(simplicesSelected(CGAL::Three::Scene_item*)), scene_ptr, SLOT(setSelectedItem(CGAL::Three::Scene_item*)));
     connect(selection_item,SIGNAL(isCurrentlySelected(Scene_facegraph_item_k_ring_selection*)), this, SLOT(isCurrentlySelected(Scene_facegraph_item_k_ring_selection*)));
     on_LassoCheckBox_changed(ui_widget.lassoCheckBox->isChecked());
@@ -1245,7 +1261,9 @@ public Q_SLOTS:
     if(last_mode == 0)
       on_Selection_type_combo_box_changed(ui_widget.Selection_type_combo_box->currentIndex());
   }
-  void item_about_to_be_destroyed(CGAL::Three::Scene_item* scene_item) {
+
+  void item_about_to_be_destroyed(CGAL::Three::Scene_item* scene_item)
+  {
     // if polyhedron item
     Scene_face_graph_item* poly_item = qobject_cast<Scene_face_graph_item*>(scene_item);
     if(poly_item) {
@@ -1271,49 +1289,51 @@ public Q_SLOTS:
       }
     }
   }
-void filter_operations()
-{
-  Scene_polyhedron_selection_item* selection_item =
-      qobject_cast<Scene_polyhedron_selection_item*>(scene->item(
-                                                       scene->mainSelectionIndex()));
-  if (!selection_item)
-    return;
-  QString current_op = ui_widget.operationsBox->currentText();
-  ui_widget.operationsBox->clear();
 
-  bool has_v(!selection_item->selected_vertices.empty() ||
-             ui_widget.Selection_type_combo_box->currentIndex() == 0),
-      has_e(!selection_item->selected_edges.empty()||
-            ui_widget.Selection_type_combo_box->currentIndex() == 2||
-            ui_widget.Selection_type_combo_box->currentIndex() == 4),
-      has_f(!selection_item->selected_facets.empty()||
-            ui_widget.Selection_type_combo_box->currentIndex() == 1||
-            ui_widget.Selection_type_combo_box->currentIndex() == 3);
+  void filter_operations()
+  {
+    Scene_polyhedron_selection_item* selection_item =
+        qobject_cast<Scene_polyhedron_selection_item*>(scene->item(
+                                                        scene->mainSelectionIndex()));
+    if(!selection_item)
+      return;
+    QString current_op = ui_widget.operationsBox->currentText();
+    ui_widget.operationsBox->clear();
 
-  if(has_v)
-  {
-    ui_widget.operationsBox->addItem(operations_strings[0]);
-    if(selection_item->selected_vertices.size() == 3)
-      ui_widget.operationsBox->addItem(operations_strings[10]);
+    bool has_v(!selection_item->selected_vertices.empty() ||
+               ui_widget.Selection_type_combo_box->currentIndex() == 0),
+         has_e(!selection_item->selected_edges.empty()||
+               ui_widget.Selection_type_combo_box->currentIndex() == 2||
+               ui_widget.Selection_type_combo_box->currentIndex() == 4),
+         has_f(!selection_item->selected_facets.empty()||
+               ui_widget.Selection_type_combo_box->currentIndex() == 1||
+               ui_widget.Selection_type_combo_box->currentIndex() == 3);
+
+    if(has_v)
+    {
+      ui_widget.operationsBox->addItem(operations_strings[0]);
+      if(selection_item->selected_vertices.size() == 3)
+        ui_widget.operationsBox->addItem(operations_strings[10]);
+    }
+    if(has_e)
+    {
+      ui_widget.operationsBox->addItem(operations_strings[1]);
+      ui_widget.operationsBox->addItem(operations_strings[6]);
+      ui_widget.operationsBox->addItem(operations_strings[7]);
+    }
+    if(has_f)
+    {
+      ui_widget.operationsBox->addItem(operations_strings[2]);
+      ui_widget.operationsBox->addItem(operations_strings[3]);
+      ui_widget.operationsBox->addItem(operations_strings[4]);
+      ui_widget.operationsBox->addItem(operations_strings[5]);
+      ui_widget.operationsBox->addItem(operations_strings[8]);
+      ui_widget.operationsBox->addItem(operations_strings[9]);
+    }
+    if(!current_op.isEmpty())
+      ui_widget.operationsBox->setCurrentText(current_op);
   }
-  if(has_e)
-  {
-    ui_widget.operationsBox->addItem(operations_strings[1]);
-    ui_widget.operationsBox->addItem(operations_strings[6]);
-    ui_widget.operationsBox->addItem(operations_strings[7]);
-  }
-  if(has_f)
-  {
-    ui_widget.operationsBox->addItem(operations_strings[2]);
-    ui_widget.operationsBox->addItem(operations_strings[3]);
-    ui_widget.operationsBox->addItem(operations_strings[4]);
-    ui_widget.operationsBox->addItem(operations_strings[5]);
-    ui_widget.operationsBox->addItem(operations_strings[8]);
-    ui_widget.operationsBox->addItem(operations_strings[9]);
-  }
-  if(!current_op.isEmpty())
-    ui_widget.operationsBox->setCurrentText(current_op);
-}
+
 private:
   Messages_interface* messages;
   QAction* actionSelection;
@@ -1330,9 +1350,10 @@ private:
   bool from_plugin;
 }; // end CGAL_Lab_selection_plugin
 
-
 template<class Mesh>
-bool selfIntersect(Mesh* mesh, std::vector<std::pair<typename boost::graph_traits<Mesh>::face_descriptor,typename boost::graph_traits<Mesh>::face_descriptor> > &faces)
+bool selfIntersect(Mesh* mesh,
+                   std::vector<std::pair<typename boost::graph_traits<Mesh>::face_descriptor,
+                                         typename boost::graph_traits<Mesh>::face_descriptor> >& faces)
 {
   if(!CGAL::is_triangle_mesh(*mesh))
   {
@@ -1358,8 +1379,10 @@ void CGAL_Lab_selection_plugin::on_actionSelfIntersection_triggered()
 {
   typedef boost::graph_traits<Face_graph>::face_descriptor Face_descriptor;
   typedef boost::graph_traits<Face_graph>::halfedge_descriptor halfedge_descriptor;
+
   QCursor tmp_cursor(Qt::WaitCursor);
   CGAL::Three::Three::CursorScopeGuard guard(tmp_cursor);
+
   bool found = false;
   std::vector<Scene_face_graph_item*> selected_polys;
   for(Scene_interface::Item_id index : scene->selectionIndices())
@@ -1371,6 +1394,7 @@ void CGAL_Lab_selection_plugin::on_actionSelfIntersection_triggered()
       selected_polys.push_back(poly_item);
     }
   }
+
   for(Scene_face_graph_item* poly_item : selected_polys)
   {
     Face_graph* mesh = poly_item->face_graph();
@@ -1439,23 +1463,25 @@ void CGAL_Lab_selection_plugin::on_actionSelectPolylines_triggered()
   Scene_face_graph_item* facegraph_item = nullptr;
   Scene_polylines_item* polylines_item = nullptr;
 
-  for (Scene_interface::Item_id index : scene->selectionIndices())
+  for(Scene_interface::Item_id index : scene->selectionIndices())
   {
     Scene_face_graph_item* tmp_item =
       qobject_cast<Scene_face_graph_item*>(scene->item(index));
-    if (tmp_item)
+    if(tmp_item)
+    {
       facegraph_item = tmp_item;
+    }
     else
     {
       Scene_polylines_item* tmp_item2 =
         qobject_cast<Scene_polylines_item*>(scene->item(index));
-      if (tmp_item2)
+      if(tmp_item2)
         polylines_item = tmp_item2;
     }
   }
 
   const auto& tm = *facegraph_item->face_graph();
-  if (!is_triangle_mesh(tm))
+  if(!is_triangle_mesh(tm))
   {
     QMessageBox::warning(mw, "Non triangle mesh", "Selection of edges works only on a triangulated surface.");
     return;
@@ -1465,9 +1491,9 @@ void CGAL_Lab_selection_plugin::on_actionSelectPolylines_triggered()
   Scene_polyhedron_selection_item* selection_item = nullptr;
   bool should_add = true;
   const auto selection_item_found = selection_item_map.find(facegraph_item);
-  if (selection_item_found != selection_item_map.end())
+  if(selection_item_found != selection_item_map.end())
   {
-    if (QMessageBox::question(mw, "Question", "Only one Selection Item can be associated to an item at once, "
+    if(QMessageBox::question(mw, "Question", "Only one Selection Item can be associated to an item at once, "
         "and one already exists. Would you like to keep it and add polylines ? (If not, this item will be skipped.)")
         == QMessageBox::Yes)
     {
@@ -1493,30 +1519,30 @@ void CGAL_Lab_selection_plugin::on_actionSelectPolylines_triggered()
   PMP::build_AABB_tree(tm, tree);
 
   auto locate_vertex = [&](const Point_3& p)->vertex_descriptor
-    {
-//      const double tol = 1e-5; //todo : make tolerance depend on bbox size
+  {
+    // const double tol = 1e-5; //todo : make tolerance depend on bbox size
 
-      if (!CGAL::do_overlap(tree.bbox(), p.bbox()))
-        return SMesh::null_vertex();
-
-      auto ploc = PMP::locate_with_AABB_tree(p, tree, tm);
-
-      const face_descriptor f = ploc.first;
-      double w0 = ploc.second[0];//source(halfedge(f, tm), tm)
-      double w1 = ploc.second[1];//target(halfedge(f, tm), tm)
-      double w2 = ploc.second[2];//target(next(halfedge(f, tm), tm), tm)
-
-      //  if(CGAL::abs(w0) < tol) w0 = 0.;
-      //  if(CGAL::abs(w1) < tol) w1 = 0.;
-      //  if(CGAL::abs(w2) < tol) w2 = 0.;
-
-      if (w0 > w1 && w0 > w2) return source(halfedge(f, tm), tm);
-      else if (w1 > w0 && w1 > w2) return target(halfedge(f, tm), tm);
-      else if (w2 > w0 && w2 > w1) return target(next(halfedge(f, tm), tm), tm);
-
-      std::cerr << "ERROR : Can't locate vertex at " << p << std::endl;
+    if(!CGAL::do_overlap(tree.bbox(), p.bbox()))
       return SMesh::null_vertex();
-    };
+
+    auto ploc = PMP::locate_with_AABB_tree(p, tree, tm);
+
+    const face_descriptor f = ploc.first;
+    double w0 = ploc.second[0];//source(halfedge(f, tm), tm)
+    double w1 = ploc.second[1];//target(halfedge(f, tm), tm)
+    double w2 = ploc.second[2];//target(next(halfedge(f, tm), tm), tm)
+
+    //  if(CGAL::abs(w0) < tol) w0 = 0.;
+    //  if(CGAL::abs(w1) < tol) w1 = 0.;
+    //  if(CGAL::abs(w2) < tol) w2 = 0.;
+
+    if(w0 > w1 && w0 > w2) return source(halfedge(f, tm), tm);
+    else if(w1 > w0 && w1 > w2) return target(halfedge(f, tm), tm);
+    else if(w2 > w0 && w2 > w1) return target(next(halfedge(f, tm), tm), tm);
+
+    std::cerr << "ERROR : Can't locate vertex at " << p << std::endl;
+    return SMesh::null_vertex();
+  };
 
   unsigned int count_edges_added = 0;
   unsigned int count_edges_not_found = 0;
@@ -1524,14 +1550,15 @@ void CGAL_Lab_selection_plugin::on_actionSelectPolylines_triggered()
   // add edges to selection
   for(const Scene_polylines_item::Polyline& polyline : features)
   {
-    if (polyline.empty())
+    if(polyline.empty())
       continue;
+
     for(std::size_t i = 0; i < polyline.size() - 1; ++i)
     {
       vertex_descriptor v = locate_vertex(polyline[i]);
       vertex_descriptor w = locate_vertex(polyline[i+1]);
 
-      if (v == SMesh::null_vertex() || w == SMesh::null_vertex())
+      if(v == SMesh::null_vertex() || w == SMesh::null_vertex())
       {
         ++count_edges_not_found;
         continue;
@@ -1551,18 +1578,18 @@ void CGAL_Lab_selection_plugin::on_actionSelectPolylines_triggered()
       }
     }
   }
+
   std::cout << "edges added to selection : " << count_edges_added << std::endl;
   std::cout << "edges not found : " << count_edges_not_found << std::endl;
 
   selection_item->invalidateOpenGLBuffers();
   selection_item->setName(tr("%1 (selection) ").arg(polylines_item->name()));
-  if (should_add)
+  if(should_add)
     connectItem(selection_item);
   scene->itemChanged(facegraph_item);
 
   QApplication::restoreOverrideCursor();
 }
-
 
 //Q_EXPORT_PLUGIN2(CGAL_Lab_selection_plugin, CGAL_Lab_selection_plugin)
 

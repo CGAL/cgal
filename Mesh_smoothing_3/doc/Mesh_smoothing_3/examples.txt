@@ -1,0 +1,5 @@
+/*!
+\example Mesh_smoothing_3/c3t3_smooth.cpp
+\example Mesh_smoothing_3/implicit_domain_feature_recovery.cpp
+\example Mesh_smoothing_3/hybrid_domain_feature_recovery.cpp
+*/

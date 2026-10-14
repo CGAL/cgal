@@ -29,7 +29,7 @@ int main() {
   octree.refine(10, 1);
 
   // Print out the tree
-  std::cout << octree;
+  std::cout << octree << std::endl;
 
   return EXIT_SUCCESS;
 }

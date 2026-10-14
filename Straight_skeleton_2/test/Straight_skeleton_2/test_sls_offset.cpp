@@ -349,8 +349,8 @@ void test_offset_square()
     CGAL::create_interior_skeleton_and_offset_polygons_2(0.5, Polygon_2(square.begin(), square.end()), K());
 
   std::cout << offset_polys.size() << " polygons" << std::endl;
-  for(const auto& offp : offset_polys)
-    CGAL::Straight_skeletons_2::IO::print_polygon(*offp);
+  // for(const auto& offp : offset_polys)
+  //   CGAL::Straight_skeletons_2::IO::print_polygon(*offp);
 
   assert(offset_polys.empty());
 }

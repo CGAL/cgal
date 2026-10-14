@@ -17,7 +17,7 @@ template <class TriangleMesh>
 void test()
 {
   int i=0;
-  auto run_a_test = [&i] (std::string f, double a, double b, double c, double d)
+  auto run_a_test = [&i] (std::filesystem::path f, double a, double b, double c, double d)
   {
     std::cout << "running test " << i << "\n";
     {
