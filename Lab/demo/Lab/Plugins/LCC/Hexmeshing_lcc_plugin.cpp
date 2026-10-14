@@ -27,21 +27,39 @@ public:
   {
     scene = scene_interface;
     this->mw = mw;
-    QAction *actionHexmeshing = new QAction("Hexmeshing using 2-refinement", mw);
+    actionHexmeshing = new QAction("Hexmeshing using 2-refinement", mw);
     connect(actionHexmeshing, SIGNAL(triggered()), this, SLOT(on_actionHexmeshing_triggered()));
-    _actions <<actionHexmeshing;
+    actionHexmeshingSmoothing = new QAction("Hexmeshing Smoothing", mw);
+    connect(actionHexmeshing, SIGNAL(triggered()), this, SLOT(on_actionHexmeshingSmoothing_triggered()));
+    _actions << actionHexmeshingSmoothing;
   }
 
   QList<QAction*> actions()const {return _actions;}
 
-  bool applicable(QAction*) const {
-    return qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
+  bool applicable(QAction* action) const {
+    if (action == actionHexmeshing)
+      return qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
+    else
+    {
+      // smoothing
+      if (scene->selectionIndices().size()==2)
+      {
+        return ( qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->selectionIndices()[0])) && qobject_cast<Scene_lcc_item*>(scene->item(scene->selectionIndices()[1])) ) ||
+               ( qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->selectionIndices()[1])) && qobject_cast<Scene_lcc_item*>(scene->item(scene->selectionIndices()[0])) );
+      }
+      else
+        return false;
+    }
+
   }
 
 public Q_SLOTS:
   void on_actionHexmeshing_triggered();
+  void on_actionHexmeshingSmoothing_triggered();
 private:
   QList<QAction*> _actions;
+  QAction* actionHexmeshing;
+  QAction* actionHexmeshingSmoothing;
   Scene_interface* scene;
   QMainWindow* mw;
 }; // end CGAL_Lab_hexmeshing_lcc_plugin
@@ -105,6 +123,14 @@ void CGAL_Lab_hexmeshing_lcc_plugin::on_actionHexmeshing_triggered()
     // default cursor
     QApplication::restoreOverrideCursor();
   }
+}
+
+void CGAL_Lab_hexmeshing_lcc_plugin::on_actionHexmeshingSmoothing_triggered()
+{
+  Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->selectionIndices()[0]));
+  if (!sm_item) sm_item = qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->selectionIndices()[1]))
+  Scene_lcc_item* lcc_item = qobject_cast<Scene_lcc_item*>(scene->item(scene->selectionIndices()[0]));
+  if (!lcc_item) lcc_item = qobject_cast<Scene_lcc_item*>(scene->item(scene->selectionIndices()[1]))
 }
 
 #include "Hexmeshing_lcc_plugin.moc"
