@@ -39,11 +39,6 @@ decltype(auto) value_check_expected(V&& value, [[maybe_unused]] const E& expecte
   return std::forward<V>(value);
 };
 
-auto oformat(Vertex_handle vh)
-{
-    return CGAL::IO::oformat(vh, CGAL::With_point_tag{});
-};
-
 int main()
 {
     CDTP cdtp;
@@ -52,6 +47,11 @@ int main()
     {
         std::cout << msg << std::endl;
         cdtp.print_hierarchy(std::cout);
+    };
+
+    auto oformat = [tr = &cdtp](Vertex_handle vh)
+    {
+        return CGAL::IO::oformat(vh, CGAL::With_point_tag{ {-1}, tr });
     };
 
     const std::array<Point, 6> collinear_points = {

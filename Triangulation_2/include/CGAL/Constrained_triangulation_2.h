@@ -55,55 +55,59 @@ class Intersection_of_constraints_exception : public std::runtime_error
     return std::string("Unauthorized intersections of constraints");
   }
 
-  template <typename Vertex_handle, typename = void>
+  template <typename Tr, typename Vertex_handle, typename = void>
   struct Can_the_point_be_displayed : std::false_type
   {};
 
-  template <typename Vertex_handle>
+  template <typename Tr, typename Vertex_handle>
   struct Can_the_point_be_displayed<
+      Tr,
       Vertex_handle,
-      std::void_t<decltype(std::declval<std::ostream&>() << std::declval<Vertex_handle>()->point())>> : std::true_type
+      std::void_t<decltype(std::declval<std::ostream&>() << std::declval<Tr>().point(std::declval<Vertex_handle>()))>>
+      : std::true_type
   {};
 
-  template <typename Vertex_handle>
-  static inline constexpr bool can_the_point_be_displayed = Can_the_point_be_displayed<Vertex_handle>::value;
+  template <typename Tr, typename Vertex_handle>
+  static inline constexpr bool can_the_point_be_displayed = Can_the_point_be_displayed<Tr, Vertex_handle>::value;
 
-  template <typename Vertex_handle>
-  static auto with_point(Vertex_handle v) {
-    return IO::oformat([v](std::ostream& os) -> auto& {
-      return os << IO::oformat(v, With_point_tag{});
+  template <typename Tr, typename Vertex_handle>
+  static auto with_point(Tr* tr, Vertex_handle v) {
+    return IO::oformat([v, tr](std::ostream& os) -> auto& {
+      return os << IO::oformat(v, With_point_tag{{-1}, tr});
     }, IO_manip_tag{});
   }
 
-  template <typename Vertex_handle>
-  static auto construct_what(Vertex_handle vaa,
+  template <typename Tr, typename Vertex_handle>
+  static auto construct_what(Tr* tr,
+                             Vertex_handle vaa,
                              Vertex_handle vbb,
                              Vertex_handle v1,
                              Vertex_handle v2)
   {
-    if constexpr(can_the_point_be_displayed<decltype(vaa)>) {
+    if constexpr(can_the_point_be_displayed<Tr, Vertex_handle>) {
       std::stringstream ss;
       ss.copyfmt(std::cerr);
       ss << "Unauthorized intersections of constraints: ( "
-          << with_point(vaa) << "  " << with_point(vbb) << " )" << " intersects with ("
-          << with_point(v1) << ", " << with_point(v2) << ")";
+          << with_point(tr, vaa) << "  " << with_point(tr, vbb) << " )" << " intersects with ("
+          << with_point(tr, v1) << ", " << with_point(tr, v2) << ")";
       return ss.str();
     } else {
       return std::string("Unauthorized intersections of constraints");
     }
   }
 
-  template <typename Vertex_handle,
+  template <typename Tr, typename Vertex_handle,
             typename Point>
-  static auto construct_what(Point p,
+  static auto construct_what(Tr* tr,
+                             Point p,
                              Vertex_handle v1,
                              Vertex_handle v2)
   {
-    if constexpr(can_the_point_be_displayed<decltype(v1)>) {
+    if constexpr(can_the_point_be_displayed<Tr, Vertex_handle>) {
       std::stringstream ss;
       ss.copyfmt(std::cerr);
       ss << "Unauthorized intersections of constraints: point "
-          << p  << " intersects with (" << with_point(v1) << ", " << with_point(v2) << ")";
+          << p  << " intersects with (" << with_point(tr, v1) << ", " << with_point(tr, v2) << ")";
       return ss.str();
     } else {
       return std::string("Unauthorized intersections of constraints");
@@ -111,9 +115,9 @@ class Intersection_of_constraints_exception : public std::runtime_error
   }
 
 public:
-  template <typename ... Args>
-  Intersection_of_constraints_exception(Args&&... args)
-    : std::runtime_error(construct_what(std::forward<Args>(args)...))
+  template <typename Tr, typename ... Args>
+  Intersection_of_constraints_exception(Tr* tr, Args&&... args)
+    : std::runtime_error(construct_what(tr, std::forward<Args>(args)...))
   {}
 };
 
@@ -413,7 +417,7 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb, OutputIterator out)
     // then this is an intersection
     if constexpr (std::is_same_v<Itag, No_constraint_intersection_tag>) {
       if(fr->is_constrained(dimension() == 1 ? 2 : i)) {
-        throw Intersection_of_constraints_exception(vaa, vbb, vaa, vi);
+        throw Intersection_of_constraints_exception(this, vaa, vbb, vaa, vi);
       }
     }
 
@@ -661,7 +665,7 @@ public:
 
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
   auto display_vertex(Vertex_handle v) const {
-    With_point_tag point_tag;
+    With_point_tag point_tag{ {-1}, this };
     using CGAL::IO::oformat;
     return IO::oformat(v, point_tag);
   }
@@ -792,7 +796,7 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
     v1=loc->vertex(ccw(li)); //endpoint of the constraint
     v2=loc->vertex(cw(li)); // endpoint of the constraint
     if constexpr (std::is_same_v<Itag, No_constraint_intersection_tag>)
-      throw Intersection_of_constraints_exception(a, v1, v2);
+      throw Intersection_of_constraints_exception(this, a, v1, v2);
 
     insert_in_constrained_edge = true;
   }
@@ -904,7 +908,7 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
       // then this is an intersection
       if constexpr (std::is_same_v<Itag, No_constraint_intersection_tag>) {
         if(fr->is_constrained(dimension() == 1 ? 2 : i)) {
-          throw Intersection_of_constraints_exception(vaa, vbb, vaa, vi);
+          throw Intersection_of_constraints_exception(this, vaa, vbb, vaa, vi);
         }
       }
 
@@ -1101,7 +1105,7 @@ intersect(Face_handle f, int i,
           No_constraint_intersection_tag)
 {
   auto [v1, v2] = this->vertices(f, i);
-  throw Intersection_of_constraints_exception(vaa, vbb, v1, v2);
+  throw Intersection_of_constraints_exception(this, vaa, vbb, v1, v2);
   return Vertex_handle() ;
 }
 
@@ -1114,7 +1118,7 @@ intersect(Face_handle f, int i,
           No_constraint_intersection_requiring_constructions_tag)
 {
   auto [v1, v2] = this->vertices(f, i);
-  throw Intersection_of_constraints_exception(vaa, vbb, v1, v2);
+  throw Intersection_of_constraints_exception(this, vaa, vbb, v1, v2);
   return Vertex_handle() ;
 }
 

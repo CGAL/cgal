@@ -175,6 +175,8 @@ private:
   typedef Delaunay_triangulation_3<Kernel>                   Dt;
   typedef Triangulation_helpers<Dt>                          Dt_helpers;
 
+  With_point_tag with_point_tag;
+
 public:
   Protect_edges_sizing_field(C3T3& c3t3,
                              const MeshDomain& domain,
@@ -859,6 +861,7 @@ Protect_edges_sizing_field(C3T3& c3t3, const MD& domain,
 #ifndef CGAL_NO_ATOMIC
   , stop_ptr_(stop_ptr)
 #endif
+  , with_point_tag{{-1}, &c3t3.triangulation()}
 {
 #ifndef CGAL_MESH_3_NO_PROTECTION_NON_LINEAR
   set_nonlinear_growth_of_balls();
