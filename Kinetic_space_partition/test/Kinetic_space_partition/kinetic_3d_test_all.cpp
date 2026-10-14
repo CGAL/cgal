@@ -50,7 +50,7 @@ bool run_test(
 
     ksp.initialize(CGAL::parameters::verbose(false).debug(false).bbox_dilation_ratio(1.004).max_octree_node_size(10));
     //std::cout << std::endl << "--INPUT K: " << k << std::endl;
-    ksp.partition<Concurrency_tag>(ks[i]);
+    ksp.template partition<Concurrency_tag>(ks[i]);
 
     CGAL::Linear_cell_complex_for_combinatorial_map<3, 3, CGAL::Linear_cell_complex_traits<3, Kernel>, typename KSP::Linear_cell_complex_min_items> lcc;
     ksp.get_linear_cell_complex(lcc);
@@ -87,6 +87,9 @@ bool run_test(
 template<typename Kernel, typename IntersectionKernel, typename Concurrency_tag>
 void run_all_tests() {
   different = 0;
+  no_input = 0;
+  failed = 0;
+  passed = 0;
   std::cout.precision(10);
   std::vector< std::vector<double> > all_times;
 
@@ -96,7 +99,7 @@ void run_all_tests() {
   timer.start();
 
   results[0] = { 38, 46, 9 };
-  results[1] = { 47, 67, 15 };
+  results[1] = { 45, 63, 14 };
   run_test<Kernel, IntersectionKernel, Concurrency_tag>("data/edge-case-test/test-same-time.off", { 0, 1 }, results);
 
   // Edge tests.
@@ -189,9 +192,9 @@ void run_all_tests() {
   results[1] = { 29, 35, 7 };
   run_test<Kernel, IntersectionKernel, Concurrency_tag>("data/stress-test-2/test-4-rnd-polygons-4-6.off", { 0, 1 }, results);
   results[0] = { 47, 61, 12 };
-  results[1] = { 53, 75, 16 };
-  results[2] = { 64, 92, 19 };
-  results[3] = { 65, 95, 20 };
+  results[1] = { 55, 81, 18 };
+  results[2] = { 66, 100, 22 };
+  results[3] = { 67, 103, 23 };
   run_test<Kernel, IntersectionKernel, Concurrency_tag>("data/stress-test-2/test-5-rnd-polygons-6-4.off", { 0, 1, 2, 3 }, results);
 
   results[0] = { 41, 56, 12 };
@@ -205,37 +208,37 @@ void run_all_tests() {
   run_test<Kernel, IntersectionKernel, Concurrency_tag>("data/stress-test-2/test-8-rnd-polygons-7-8.off", { 0, 1 }, results);
   results[0] = { 193, 324, 75 };
   results[1] = { 216, 389, 96 };
-  results[2] = { 217, 392, 97 };
+  results[2] = { 218, 395, 98 };
   run_test<Kernel, IntersectionKernel, Concurrency_tag>("data/stress-test-2/test-9-rnd-polygons-12-4.off", { 0, 1, 2 }, results);
 
   // Stress tests 3.
 
   results[0] = { 240, 414, 98 };
-  results[1] = { 293, 540, 134 };
-  results[2] = { 309, 574, 143 };
+  results[1] = { 292, 537, 133 };
+  results[2] = { 308, 571, 142 };
   run_test<Kernel, IntersectionKernel, Concurrency_tag>("data/stress-test-3/test-1-rnd-polygons-15-6.off", { 0, 1, 2 }, results);
 
   results[0] = { 407, 691, 157 };
-  results[1] = { 478, 879, 215 };
-  results[2] = { 492, 920, 228 };
+  results[1] = { 474, 871, 213 };
+  results[2] = { 484, 902, 223 };
   run_test<Kernel, IntersectionKernel, Concurrency_tag>("data/stress-test-3/test-2-rnd-polygons-20-4.off", { 0, 1, 2 }, results);
 
   // Stress tests 4.
   results[0] = { 401, 699, 164 };
-  results[1] = { 474, 873, 214 };
-  results[2] = { 488, 907, 224 };
-  results[3] = { 491, 914, 226 };
+  results[1] = { 475, 878, 216 };
+  results[2] = { 489, 913, 227 };
+  results[3] = { 490, 916, 228 };
   run_test<Kernel, IntersectionKernel, Concurrency_tag>("data/stress-test-4/test-1-rnd-polygons-20-6.ply", { 0, 1, 2, 3 }, results);
 
   results[0] = { 476, 793, 176 };
-  results[1] = { 565, 1019, 244 };
-  results[2] = { 602, 1100, 266 };
+  results[1] = { 567, 1023, 245 };
+  results[2] = { 603, 1103, 267 };
   run_test<Kernel, IntersectionKernel, Concurrency_tag>("data/stress-test-4/test-2-rnd-polygons-25-4.ply", { 0, 1, 2 }, results);
 
   results[0] = { 1275, 2521, 649 };
-  results[1] = { 1445, 2988, 798 };
-  results[2] = { 1501, 3113, 832 };
-  results[3] = { 1517, 3151, 843 };
+  results[1] = { 1443, 2984, 797 };
+  results[2] = { 1495, 3104, 831 };
+  results[3] = { 1512, 3143, 842 };
   run_test<Kernel, IntersectionKernel, Concurrency_tag>("data/stress-test-4/test-3-rnd-polygons-40-6.ply", { 0, 1, 2, 3 }, results);
 
   // Real data tests.
@@ -252,9 +255,9 @@ void run_all_tests() {
   run_test<Kernel, IntersectionKernel, Concurrency_tag>("data/real-data-test/test-15-polygons.off", { 0, 1, 2 }, results);
 
   results[0] = { 370, 660, 160 };
-  results[1] = { 442, 848, 217 };
-  results[2] = { 446, 862, 222 };
-  results[3] = { 447, 865, 223 };
+  results[1] = { 441, 847, 217 };
+  results[2] = { 445, 861, 222 };
+  results[3] = { 446, 864, 223 };
   run_test<Kernel, IntersectionKernel, Concurrency_tag>("data/real-data-test/test-20-polygons.off", { 0, 1, 2, 3 }, results);
 
   results[0] = { 738, 1339, 327 };

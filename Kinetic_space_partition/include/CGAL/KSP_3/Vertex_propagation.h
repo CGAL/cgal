@@ -88,10 +88,26 @@ private:
 
   using From_exact = CGAL::Cartesian_converter<Intersection_kernel, Kernel>;
 
+  // Strict total order on the events. Simultaneous events are popped from the priority queue in the order given by
+  // the tie-breaks below. Without them, the order of simultaneous events would depend on the heap implementation of
+  // the standard library and on the insertion order, and the results would differ between platforms.
   template<typename Event>
   struct Event_order {
-    bool operator()(const Event& a, const Event& b) {
-      return a.time > b.time;
+    static std::size_t edge_order(const IEdge& e) {
+      using Edge_property = typename Data_structure::Intersection_graph::Edge_property;
+      const Edge_property* p = static_cast<const Edge_property*>(e.get_property());
+      return (p == nullptr) ? std::size_t(-1) : p->order;
+    }
+
+    bool operator()(const Event& a, const Event& b) const {
+      if (a.time != b.time)
+        return a.time > b.time;
+      if (a.vertex != b.vertex)
+        return a.vertex > b.vertex;
+      const std::size_t ea = edge_order(a.crossed_edge), eb = edge_order(b.crossed_edge);
+      if (ea != eb)
+        return ea > eb;
+      return a.destination > b.destination;
     }
   };
 
@@ -1528,7 +1544,7 @@ private:
     if (other == std::size_t(-1)) {
       // Check if there is a vertex on the other side of vts[adj];
       other_face = m_data.igraph().get_other_face(vts[e.vertex].sp_idx, vts[adj].constraint_edge, vts[e.vertex].face);
-      typename std::unordered_map<IFace, std::list<std::size_t> >::iterator it;
+      typename std::map<IFace, std::list<std::size_t> >::iterator it;
       if (other_face != std::size_t(-1) && (it = sp.data().polygons.find(other_face)) != sp.data().polygons.end()) {
         std::list<std::size_t>& other_poly = it->second;
         CGAL_assertion(!other_poly.empty());

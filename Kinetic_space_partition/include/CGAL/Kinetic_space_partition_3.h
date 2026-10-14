@@ -2215,7 +2215,7 @@ private:
   }
 
   void make_conformal(std::vector<Index>& a, std::vector<Index>& b, typename Intersection_kernel::Plane_3& plane) {
-    std::unordered_map<std::size_t, std::vector<Index> > a_sets, b_sets;
+    std::map<std::size_t, std::vector<Index> > a_sets, b_sets;
     for (const Index& i : a)
       a_sets[i.first].push_back(i);
     for (const Index& i : b)

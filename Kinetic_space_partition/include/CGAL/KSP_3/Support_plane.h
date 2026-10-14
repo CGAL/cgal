@@ -164,7 +164,9 @@ public:
     F_bool_map f_initial_map;
     V_original_map v_original_map;
     std::map<IEdge, std::pair<IFace, IFace> > iedge2ifaces;
-    std::unordered_map<std::size_t, typename Intersection_kernel::Line_2> lines, bbox_lines;
+    // Ordered containers: the iteration order of lines and polygons determines the order in which polygons are split
+    // and events are queued. An unordered container would make the result depend on the standard library.
+    std::map<std::size_t, typename Intersection_kernel::Line_2> lines, bbox_lines;
     std::set<IFace> ifaces; // All ifaces in the support plane
     std::vector<IFace> initial_ifaces; // IFaces which intersect with the input polygon and are thus part of the mesh before the propagation starts.
     std::vector<Face_index> initial_pfaces;
@@ -178,7 +180,7 @@ public:
     std::vector<Direction_2> original_directions;
     std::vector<typename Intersection_kernel::Direction_2> exact_directions;
     std::vector<typename Intersection_kernel::Ray_2> original_rays;
-    std::unordered_map<IFace, std::list<std::size_t> > polygons;
+    std::map<IFace, std::list<std::size_t> > polygons;
     std::unordered_map<IFace, Face_index> iface2pface;
     std::unordered_map<IFace, std::list<IEdge>> borders;
     std::vector<Vertex> &vertices;
