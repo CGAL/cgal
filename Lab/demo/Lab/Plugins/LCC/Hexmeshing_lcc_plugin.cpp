@@ -128,9 +128,22 @@ void CGAL_Lab_hexmeshing_lcc_plugin::on_actionHexmeshing_triggered()
 void CGAL_Lab_hexmeshing_lcc_plugin::on_actionHexmeshingSmoothing_triggered()
 {
   Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->selectionIndices()[0]));
-  if (!sm_item) sm_item = qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->selectionIndices()[1]))
+  if (!sm_item) sm_item = qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->selectionIndices()[1]));
   Scene_lcc_item* lcc_item = qobject_cast<Scene_lcc_item*>(scene->item(scene->selectionIndices()[0]));
-  if (!lcc_item) lcc_item = qobject_cast<Scene_lcc_item*>(scene->item(scene->selectionIndices()[1]))
+  if (!lcc_item) lcc_item = qobject_cast<Scene_lcc_item*>(scene->item(scene->selectionIndices()[1]));
+
+  using LCC=Scene_lcc_item::LCC;
+  LCC* pLcc = lcc_item->lcc();
+  SMesh* pMesh = sm_item->polyhedron();
+
+
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+  // TODO: add smoothing code here
+  QApplication::restoreOverrideCursor();
+
+
+  lcc_item->invalidateOpenGLBuffers();
+  lcc_item->itemChanged();
 }
 
 #include "Hexmeshing_lcc_plugin.moc"
