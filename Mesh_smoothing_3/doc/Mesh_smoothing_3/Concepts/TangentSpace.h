@@ -48,22 +48,23 @@ a normal for a surface and a tangent direction for a curve.
 */
 Vector_3 vector() const;
 
-/// \cgalAdvancedBegin
 /*!
 returns the projection weighting mode.
-This is an advanced function and always returning `CGAL::Mesh_smoothing_3::DEFAULT` is recommended. More details are given in the reseach article \cgalCite{cgal:pcl-vvfaf-26}.
+
+\cgalAdvancedBegin
+This is an advanced function and always returning `CGAL::Mesh_smoothing_3::DEFAULT` is recommended. More details are given in the research article \cgalCite{cgal:pcl-vvfaf-26}.
+\cgalAdvancedEnd
 */
-/// \cgalAdvancedEnd
 CGAL::Mesh_smoothing_3::Projection_weight_mode  projection_mode() const;
 
-/// \cgalAdvancedBegin
 /*!
 returns the custom projection weight.
 
+\cgalAdvancedBegin
 This value is used only when `projection_mode()` returns
 `CGAL::Mesh_smoothing_3::Projection_weight_mode::CUSTOM`.
+\cgalAdvancedEnd
 */
-/// \cgalAdvancedEnd
 double custom_weight() const;
 
 

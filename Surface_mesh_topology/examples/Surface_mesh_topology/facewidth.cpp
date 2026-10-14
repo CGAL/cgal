@@ -13,7 +13,7 @@ using Dart_const_descriptor=LCC_3::Dart_const_descriptor;
 int main(int argc, char* argv[])
 {
   std::cout<<"Program facewidth_on_unweighted_map started."<<std::endl;
-  std::string filename(argc==1?CGAL::data_file_path("meshes/double-torus-example.off"):argv[1]);
+  std::filesystem::path filename(argc==1?CGAL::data_file_path("meshes/double-torus-example.off"):argv[1]);
   std::ifstream inp(filename);
   if (inp.fail())
   {

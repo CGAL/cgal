@@ -115,7 +115,7 @@ public:
 
 int main(int argc, char** argv)
 {
-  const std::string filename = argc == 1 ? CGAL::data_file_path("meshes/elephant.off")
+  const std::filesystem::path filename = argc == 1 ? CGAL::data_file_path("meshes/elephant.off")
                                          : std::string(argv[1]);
 
   // const std::string out_file = argc <= 2 ? "rounded_soup.off"

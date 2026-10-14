@@ -33,11 +33,12 @@ namespace CGAL {
 
 namespace Mesh_smoothing_3 {
 
-/// \cgalAdvancedBegin
 /*!
  * \ingroup pkgMeshSmoothing3Projection
  *
  * \brief specifies the weight used for projection onto a tangent space.
+ *
+ * \cgalAdvancedBegin
  */
 enum class Projection_weight_mode
 {
@@ -130,7 +131,7 @@ public:
 public:
 
     /*!
-        CConstructor
+        Constructor
 
         \param c3t3 is the mesh used for projection.
     */

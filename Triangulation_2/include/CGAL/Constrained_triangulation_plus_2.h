@@ -1089,12 +1089,12 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
 
   if ( lt == Triangulation::EDGE && loc->is_constrained(li) )
   {
-    if(std::is_same<typename Tr::Itag, No_constraint_intersection_tag>::value)
-      throw typename Tr::Intersection_of_constraints_exception();
-
-    insert_in_constrained_edge = true;
     v1=loc->vertex(ccw(li)); //endpoint of the constraint
     v2=loc->vertex(cw(li)); // endpoint of the constraint
+    if(std::is_same<typename Tr::Itag, No_constraint_intersection_tag>::value)
+      throw typename Tr::Intersection_of_constraints_exception(a, v1, v2);
+
+    insert_in_constrained_edge = true;
   }
 
   Vertex_handle va = Triangulation::insert(a,lt,loc,li);
@@ -1126,24 +1126,26 @@ intersect(Face_handle f, int i,
 template <class Tr>
 typename Constrained_triangulation_plus_2<Tr>:: Vertex_handle
 Constrained_triangulation_plus_2<Tr>::
-intersect(Face_handle, int,
-          Vertex_handle,
-          Vertex_handle,
+intersect(Face_handle f, int i,
+          Vertex_handle vaa,
+          Vertex_handle vbb,
           No_constraint_intersection_tag)
 {
-  throw typename Tr::Intersection_of_constraints_exception();
+  auto [v1, v2] = this->vertices(f, i);
+  throw typename Tr::Intersection_of_constraints_exception(vaa, vbb, v1, v2);
   return Vertex_handle();
 }
 
 template <class Tr>
 typename Constrained_triangulation_plus_2<Tr>:: Vertex_handle
 Constrained_triangulation_plus_2<Tr>::
-intersect(Face_handle, int,
-          Vertex_handle,
-          Vertex_handle,
+intersect(Face_handle f, int i,
+          Vertex_handle vaa,
+          Vertex_handle vbb,
           No_constraint_intersection_requiring_constructions_tag)
 {
-  throw typename Tr::Intersection_of_constraints_exception();
+  auto [v1, v2] = this->vertices(f, i);
+  throw typename Tr::Intersection_of_constraints_exception(vaa, vbb, v1, v2);
   return Vertex_handle();
 }
 
