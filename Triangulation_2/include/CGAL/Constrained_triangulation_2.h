@@ -23,6 +23,7 @@
 #include <stdexcept>
 #include <string>
 #include <type_traits>
+#include <utility>
 
 #include <CGAL/Compact_container.h>
 #include <CGAL/IO/io_tags.h>
@@ -54,6 +55,19 @@ class Intersection_of_constraints_exception : public std::runtime_error
     return std::string("Unauthorized intersections of constraints");
   }
 
+  template <typename Vertex_handle, typename = void>
+  struct Can_the_point_be_displayed : std::false_type
+  {};
+
+  template <typename Vertex_handle>
+  struct Can_the_point_be_displayed<
+      Vertex_handle,
+      std::void_t<decltype(std::declval<std::ostream&>() << std::declval<Vertex_handle>()->point())>> : std::true_type
+  {};
+
+  template <typename Vertex_handle>
+  static inline constexpr bool can_the_point_be_displayed = Can_the_point_be_displayed<Vertex_handle>::value;
+
   template <typename Vertex_handle>
   static auto with_point(Vertex_handle v) {
     return IO::oformat([v](std::ostream& os) -> auto& {
@@ -67,12 +81,16 @@ class Intersection_of_constraints_exception : public std::runtime_error
                              Vertex_handle v1,
                              Vertex_handle v2)
   {
-    std::stringstream ss;
-    ss.copyfmt(std::cerr);
-    ss << "Unauthorized intersections of constraints: ( "
-        << with_point(vaa) << "  " << with_point(vbb) << " )" << " intersects with ("
-        << with_point(v1) << ", " << with_point(v2) << ")";
-    return ss.str();
+    if constexpr(can_the_point_be_displayed<decltype(vaa)>) {
+      std::stringstream ss;
+      ss.copyfmt(std::cerr);
+      ss << "Unauthorized intersections of constraints: ( "
+          << with_point(vaa) << "  " << with_point(vbb) << " )" << " intersects with ("
+          << with_point(v1) << ", " << with_point(v2) << ")";
+      return ss.str();
+    } else {
+      return std::string("Unauthorized intersections of constraints");
+    }
   }
 
   template <typename Vertex_handle,
@@ -81,11 +99,15 @@ class Intersection_of_constraints_exception : public std::runtime_error
                              Vertex_handle v1,
                              Vertex_handle v2)
   {
-    std::stringstream ss;
-    ss.copyfmt(std::cerr);
-    ss << "Unauthorized intersections of constraints: point "
-        << p  << " intersects with (" << with_point(v1) << ", " << with_point(v2) << ")";
-    return ss.str();
+    if constexpr(can_the_point_be_displayed<decltype(v1)>) {
+      std::stringstream ss;
+      ss.copyfmt(std::cerr);
+      ss << "Unauthorized intersections of constraints: point "
+          << p  << " intersects with (" << with_point(v1) << ", " << with_point(v2) << ")";
+      return ss.str();
+    } else {
+      return std::string("Unauthorized intersections of constraints");
+    }
   }
 
 public:
