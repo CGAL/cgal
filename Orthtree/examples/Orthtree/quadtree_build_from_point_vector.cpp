@@ -21,5 +21,6 @@ int main()
   Quadtree quadtree(points_2d);
   quadtree.refine(10, 5);
 
+  std::cout << "The depth of the quadtree is " << quadtree.depth() << std::endl;
   return EXIT_SUCCESS;
 }

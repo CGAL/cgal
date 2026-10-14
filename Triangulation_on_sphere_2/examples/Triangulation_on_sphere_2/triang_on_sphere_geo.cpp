@@ -45,7 +45,6 @@ int main(int argc, char** argv)
   {
     Point_3 cp(x, y, z);
     Point ps = cps2(cp);
-    std::cout << "Cartesian point: " << cp << " Coordinates on the sphere: " << ps << std::endl;
     points.push_back(ps);
   }
 

@@ -24,7 +24,8 @@ void kruskal(const Mesh& sm)
   boost::kruskal_minimum_spanning_tree(sm,
                                        std::back_inserter(mst));
 
-  std::cout << "#VRML V2.0 utf8\n"
+  std::ofstream out("kruskal.wrl");
+  out << "#VRML V2.0 utf8\n"
     "Shape {\n"
     "  appearance Appearance {\n"
     "    material Material { emissiveColor 1 0 0}}\n"
@@ -35,10 +36,10 @@ void kruskal(const Mesh& sm)
 
   vertex_iterator vb,ve;
   for(std::tie(vb, ve) = vertices(sm); vb!=ve; ++vb){
-    std::cout <<  "        " << sm.point(*vb) << "\n";
+    out <<  "        " << sm.point(*vb) << "\n";
   }
 
-  std::cout << "        ]\n"
+  out << "        ]\n"
                "     }\n"
     "      coordIndex [\n";
 
@@ -47,10 +48,10 @@ void kruskal(const Mesh& sm)
     edge_descriptor e = *it ;
     vertex_descriptor s = source(e,sm);
     vertex_descriptor t = target(e,sm);
-    std::cout << "      " << s << ", " << t <<  ", -1\n";
+    out << "      " << s << ", " << t <<  ", -1\n";
   }
 
-  std::cout << "]\n"
+  out << "]\n"
     "  }#IndexedLineSet\n"
     "}# Shape\n";
 }
