@@ -1483,7 +1483,11 @@ bool autorefine_triangle_soup(PointRange& soup_points,
   Exact_point_range exact_soup_points;
 #endif
 
-  // TODO: parallel_for?
+
+#if ! defined(CGAL_NDEBUG) || defined(CGAL_DEBUG_PMP_AUTOREFINE)
+    exact_soup_points.resize(soup_points.size());
+#endif
+
   // for input points, we on purpose keep duplicated points and isolated points
   const auto insert_point_id = [&](std::size_t pid)
   {
@@ -1492,7 +1496,7 @@ bool autorefine_triangle_soup(PointRange& soup_points,
 #endif
     point_id_map.insert(std::make_pair(to_exact(get(pm,soup_points[pid])), pid));
 #if ! defined(CGAL_NDEBUG) || defined(CGAL_DEBUG_PMP_AUTOREFINE)
-    exact_soup_points.push_back(insert_res.first->first);
+    exact_soup_points[pid]=insert_res.first->first;
 #endif
   };
 #ifdef CGAL_LINKED_WITH_TBB
