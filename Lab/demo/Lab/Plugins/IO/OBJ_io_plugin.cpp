@@ -96,14 +96,15 @@ CGAL_Lab_obj_plugin::load_obj(QFileInfo fileinfo) {
     return nullptr;
   }
 
-  auto set_name = [&](CGAL::Three::Scene_item* item){
-    item->setName(fileinfo.completeBaseName());
-    return item;
-  };
-
-  auto mesh_item = std::make_unique<Scene_surface_mesh_item>();
-  if(CGAL::IO::read_OBJ(in, *(mesh_item->polyhedron()), CGAL::parameters::verbose(true)))
-    return set_name(mesh_item.release());
+  SMesh* mesh = new SMesh();
+  if(CGAL::IO::read_OBJ(in, *mesh, CGAL::parameters::verbose(true))) {
+    Scene_surface_mesh_item* mesh_item = new Scene_surface_mesh_item(mesh);
+    mesh_item->setName(fileinfo.completeBaseName());
+    mesh_item->compute_bbox();
+    mesh_item->invalidateOpenGLBuffers();
+    return mesh_item;
+  }
+  delete mesh;
 
   in.clear();
   in.seekg(0, std::ios::beg);
@@ -118,9 +119,10 @@ CGAL_Lab_obj_plugin::load_obj(QFileInfo fileinfo) {
   }
 
   if(!polygons.empty()) {
-    auto soup_item = std::make_unique<Scene_polygon_soup_item>();
+    Scene_polygon_soup_item* soup_item = new Scene_polygon_soup_item();
     soup_item->load(points, polygons);
-    return set_name(soup_item.release());
+    soup_item->setName(fileinfo.completeBaseName());
+    return soup_item;
   }
 
   if(!polylines.empty()) {
@@ -133,9 +135,10 @@ CGAL_Lab_obj_plugin::load_obj(QFileInfo fileinfo) {
       }
       item_polylines.push_back(std::move(item_pl));
     }
-    auto polyline_item = std::make_unique<Scene_polylines_item>();
+    Scene_polylines_item* polyline_item = new Scene_polylines_item();
     polyline_item->polylines = std::move(item_polylines);
-    return set_name(polyline_item.release());
+    polyline_item->setName(fileinfo.completeBaseName());
+    return polyline_item;
   }
 
   return nullptr;
