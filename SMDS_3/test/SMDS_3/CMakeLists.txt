@@ -8,7 +8,6 @@ find_package(CGAL REQUIRED)
 
 create_single_source_cgal_program( "test_simplicial_cb_vb.cpp")
 create_single_source_cgal_program( "test_tet_soup_to_c3t3.cpp")
-create_single_source_cgal_program( "test_complex_index_counts.cpp")
 
 find_package(Eigen3 QUIET)
 include(CGAL_Eigen3_support)
@@ -35,3 +34,5 @@ if(TARGET CGAL::Eigen3_support)
 else()
   message(STATUS "NOTICE: Some tests require Eigen 3.1 (or greater), and will not be compiled.")
 endif()
+
+create_single_source_cgal_program( "test_complex_index_counts.cpp")
