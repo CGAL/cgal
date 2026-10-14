@@ -108,6 +108,11 @@ select(const std::vector<Exact_point>& points,
              std::vector<unsigned int>& input_ids,
        const unsigned int nb_meshes)
 {
+#ifdef CGAL_BO3_TIMERS
+  Real_timer t;
+  t.start();
+#endif
+
   namespace PMP = CGAL::Polygon_mesh_processing;
   namespace pred = PMP::Corefinement;
   Selection_data data_out;
@@ -537,6 +542,9 @@ select(const std::vector<Exact_point>& points,
 
 
   data_out.input_ids.swap(input_ids);
+#ifdef CGAL_BO3_TIMERS
+  std::cout << "select intern in " << t.time() << "\n";
+#endif
   return data_out;
 }
 
@@ -611,7 +619,12 @@ prepare_data(const PointRange& points_1, const TriangleRange& triangles_1,
 #ifdef CGAL_BO_AUTOREF_DEBUG
   CGAL::IO::write_OFF("autorefined.off", out_points, out_triangles, CGAL::parameters::stream_precision(17));
 #endif
-  return select<Concurrency_tag>(out_points, out_triangles, input_ids, 2);
+  auto res =select<Concurrency_tag>(out_points, out_triangles, input_ids, 2);
+#ifdef CGAL_BO3_TIMERS
+  timer.stop();
+  std::cout << "select done in " << timer.time() << "\n";
+#endif
+  return res;
 }
 
 template <class Concurrency_tag = Sequential_tag, class PointRange, class TriangleRange>
@@ -750,6 +763,9 @@ void compute_self_union(PointRange& points, TriangleRange& triangles,
   std::vector<std::size_t> one_triangle_per_cc =
     boolops_3::connected_components(triangles, adjacent_edges, adjacent_faces, ccids, nm_edges);
   std::size_t nb_cc = one_triangle_per_cc.size();
+
+  std::sort(nm_edges.begin(), nm_edges.end());
+  nm_edges.erase(std::unique(nm_edges.begin(), nm_edges.end()), nm_edges.end());
 
   // Get the vertices associate to an edge
   auto edge_vertices = [&](EID eid) {
@@ -1000,10 +1016,18 @@ void compute_union(const PointRange& points_1, const TriangleRange& triangles_1,
     Sequential_tag
   > ::type Concurrency_tag;
 
+#ifdef CGAL_BO3_TIMERS
+  Real_timer t;
+  t.start();
+#endif
+
   using namespace boolops_3;
   Selection_data data_out=prepare_data<Concurrency_tag>(points_1, triangles_1, points_2, triangles_2, out_points, out_triangles);
   const unsigned int nb_meshes=2;
 
+#ifdef CGAL_BO3_TIMERS
+  std::cout << "Prepare_data + autoref: " << t.time() << "\n";
+#endif
   std::vector<bool> to_keep(out_triangles.size(), false);
   std::size_t nb_out_triangles=0;
 
@@ -1035,7 +1059,13 @@ void compute_union(const PointRange& points_1, const TriangleRange& triangles_1,
     }
   }
 
+#ifdef CGAL_BO3_TIMERS
+  std::cout << "Collect patches: " << t.time() << "\n";
+#endif
   boolops_3::update_output<Concurrency_tag>(out_points, out_triangles, nb_out_triangles, to_keep);
+#ifdef CGAL_BO3_TIMERS
+  std::cout << "BO3 Building output: " << t.time() << "\n";
+#endif
 }
 
 /**

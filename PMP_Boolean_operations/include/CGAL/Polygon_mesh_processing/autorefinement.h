@@ -1511,6 +1511,10 @@ bool autorefine_triangle_soup(PointRange& soup_points,
     insert_point_id(pid);
   }
 
+#ifdef CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS
+  std::cout << timer.time() << "s to fill point id map" << std::endl;
+#endif
+
   TriangleRange soup_triangles_out;
   soup_triangles_out.reserve(soup_triangles.size());
 
@@ -1546,6 +1550,10 @@ bool autorefine_triangle_soup(PointRange& soup_points,
       tri_inter_ids_inverse[tiid]=f;
     }
   }
+
+#ifdef CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS
+  std::cout << timer.time() << " to build the output" << std::endl;
+#endif
 
   // import refined triangles
 
