@@ -83,6 +83,7 @@ void test(const std::string& p_filename, const std::string& q_filename)
 
     // Convert the mesh result to a soup for comparison.
     Mesh M;
+    PMP::duplicate_non_manifold_edges_in_polygon_soup(soup_points[i], soup_polygons[i]);
     PMP::polygon_soup_to_polygon_mesh(soup_points[i], soup_polygons[i], M);
 
     std::vector<face_descriptor> m1_only;
