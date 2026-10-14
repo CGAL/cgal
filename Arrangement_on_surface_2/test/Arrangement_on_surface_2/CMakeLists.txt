@@ -9,3 +9,5 @@ enable_testing()
 find_package(CGAL REQUIRED)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/cgal_test.cmake)
+
+create_single_source_cgal_program( "test_conic_orientation.cpp" )
