@@ -164,7 +164,6 @@ bool build_finite_cells(Tr& tr,
 {
   typedef typename Tr::Vertex_handle                            Vertex_handle;
   typedef typename Tr::Cell_handle                              Cell_handle;
-  typedef typename FacetPatchMap::value_type                    Surface_patch_index;
 
   bool success = true;
 

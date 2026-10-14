@@ -758,7 +758,7 @@ public:
   {
     CGAL_precondition(!triangulation().is_infinite(c));
     CGAL_precondition(index == Subdomain_index{1});
-    CGAL_USE(index);
+    CGAL_USE(c); CGAL_USE(index);
   }
   void set_subdomain_index(const Cell_handle, const Subdomain_index&)
   {
@@ -785,6 +785,7 @@ public:
   void remove_from_complex(const Cell_handle c)
   {
     CGAL_precondition(!triangulation().is_infinite(c));
+    CGAL_USE(c);
   }
   void remove_from_complex(const Facet& f)
   {
