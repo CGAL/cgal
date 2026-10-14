@@ -27,8 +27,7 @@ int main(int argc, char** argv)
   std::vector<Exact_point> points;
   std::vector<Triangle> triangles;
 
-  auto filename = argc == 1 ? CGAL::data_file_path("meshes/elephant.off")
-                            : std::string(argv[1]);
+  auto filename = argc == 1 ? CGAL::data_file_path("meshes/elephant.off") : argv[1];
 
   if (!CGAL::IO::read_polygon_soup(filename, points, triangles))
   {
