@@ -16,6 +16,7 @@
 
 #include <CGAL/disable_warnings.h>
 
+#include <array>
 #include <list>
 #include <vector>
 #include <unordered_map>
@@ -311,19 +312,19 @@ public:
 
 
   std::array<Vertex_handle, 3> vertices(Face_handle f) const {
-    return {f->vertex(0), f->vertex(1), f->vertex(2)};
+    return _tds.vertices(f);
   }
 
   std::array<Vertex_handle, 2> vertices(Face_handle f, int i) const {
-    return {f->vertex(ccw(i)), f->vertex(cw(i))};
+    return _tds.vertices(f, i);
   }
 
   std::array<Vertex_handle, 2> vertices(Edge e) const {
-    return {e.first->vertex(ccw(e.second)), e.first->vertex(cw(e.second))};
+    return _tds.vertices(e);
   }
 
   std::array<Vertex_handle, 1> vertices(Vertex_handle v) const {
-    return {v};
+    return _tds.vertices(v);
   }
 
   const Point& point(Face_handle f, int i) const;
