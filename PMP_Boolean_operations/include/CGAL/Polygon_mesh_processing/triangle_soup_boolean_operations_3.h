@@ -178,28 +178,102 @@ select(const std::vector<Exact_point>& points,
   // Build adjacencies between edges and faces
   std::vector<std::array<EID, 3>> adjacent_edges(triangles.size());
   std::vector<boost::container::small_vector<TID, 2>> adjacent_faces;
-  adjacent_faces.reserve(partial_edges.size());
-  for (std::size_t i = 0; i < partial_edges.size(); )
-  {
-    const PID a = std::get<0>(partial_edges[i]);
-    const PID b = std::get<1>(partial_edges[i]);
-    const std::size_t idx = adjacent_faces.size();
-    adjacent_faces.emplace_back();
-    CGAL_assertion(adjacent_faces.back().empty());
-    do
-    {
-      const TID tid = std::get<2>(partial_edges[i]);
-      adjacent_faces.back().push_back(tid);
-      ++i;
 
-      for(std::size_t j = 0; j < 3; ++j)
-        if ((triangles[tid][j] == a && triangles[tid][(j+1)%3] == b) ||
-            (triangles[tid][j] == b && triangles[tid][(j+1)%3] == a)){
-          adjacent_edges[tid][(j+2)%3] = idx;
-          break;
+#ifdef CGAL_LINKED_WITH_TBB
+  if constexpr(std::is_same_v<Concurrency_tag, Parallel_tag>)
+  {
+    // Cut partial_edges in blocks and compute the offset on edges for each block
+    const std::size_t block_size = 4096;
+    const std::size_t nb_blocks = (partial_edges.size() + block_size - 1) / block_size;
+
+    std::vector<std::size_t> counts(nb_blocks, 0);
+
+    // count edge groups whose first record belongs to each block.
+    tbb::parallel_for(tbb::blocked_range<std::size_t>(0, nb_blocks, 1), [&](const tbb::blocked_range<std::size_t>& r)
+    {
+      for (std::size_t bi = r.begin(); bi != r.end(); ++bi){
+        const std::size_t begin = bi * block_size;
+        const std::size_t end = (std::min)(begin + block_size, partial_edges.size());
+
+        for (std::size_t i = begin; i < end; ++i)
+          if (i == 0 || std::get<0>(partial_edges[i]) != std::get<0>(partial_edges[i-1]) ||
+                        std::get<1>(partial_edges[i]) != std::get<1>(partial_edges[i-1]))
+            ++counts[bi];
+      }
+    });
+
+    // Compute offset for each block
+    std::vector<std::size_t> offsets(nb_blocks+1, 0);
+    for (std::size_t i=0; i < nb_blocks; ++i)
+      offsets[i+1] = offsets[i] + counts[i];
+
+    adjacent_faces.resize(offsets.back());
+
+    tbb::parallel_for(tbb::blocked_range<std::size_t>(0, nb_blocks, 1), [&](const tbb::blocked_range<std::size_t>& r)
+    {
+      for (std::size_t bi = r.begin(); bi != r.end(); ++bi)
+      {
+        std::size_t begin = bi * block_size;
+        const std::size_t end = (std::min)(begin + block_size, partial_edges.size());
+        std::size_t idx = offsets[bi];
+
+        // Skip a group that started in the previous block.
+        if(begin != 0)
+          while(std::get<0>(partial_edges[begin-1]) == std::get<0>(partial_edges[begin]) &&
+                std::get<1>(partial_edges[begin-1]) == std::get<1>(partial_edges[begin]))
+            ++begin;
+
+        for (std::size_t i = begin; i < end; )
+        {
+          const PID a = std::get<0>(partial_edges[i]);
+          const PID b = std::get<1>(partial_edges[i]);
+
+          auto& faces = adjacent_faces[idx];
+          CGAL_assertion(faces.empty());
+
+          // may extend beyond the block's end, but is processed only once.
+          do
+          {
+            const TID tid = std::get<2>(partial_edges[i]);
+            const auto& t = triangles[tid];
+            faces.push_back(tid);
+
+            const std::size_t k = (t[0] == a || t[0] == b) ? ((t[1] == a || t[1] == b) ? 2 : 1) : 0;
+            CGAL_assertion((t[(k+1)%3] == a && t[(k+2)%3] == b) || (t[(k+1)%3] == b && t[(k+2)%3] == a));
+            adjacent_edges[tid][k] = idx;
+            ++i;
+          } while (i < partial_edges.size() && std::get<0>(partial_edges[i]) == a &&
+                                               std::get<1>(partial_edges[i]) == b);
+          ++idx;
         }
-    } while (i < partial_edges.size() && std::get<0>(partial_edges[i]) == a && std::get<1>(partial_edges[i]) == b);
-    CGAL_assertion(!adjacent_faces.back().empty());
+        CGAL_assertion(idx == offsets[bi+1]);
+      }
+    });
+  }
+  else
+#endif
+  {
+    adjacent_faces.reserve(partial_edges.size());
+    for (std::size_t i = 0; i < partial_edges.size(); )
+    {
+      const PID a = std::get<0>(partial_edges[i]);
+      const PID b = std::get<1>(partial_edges[i]);
+      const std::size_t idx = adjacent_faces.size();
+      adjacent_faces.emplace_back();
+      CGAL_assertion(adjacent_faces.back().empty());
+      do
+      {
+        const TID tid = std::get<2>(partial_edges[i]);
+        const auto& t = triangles[tid];
+        adjacent_faces.back().push_back(tid);
+        ++i;
+
+        std::size_t k = (t[0] == a || t[0] == b) ? ((t[1] == a || t[1] == b) ? 2 : 1) : 0;
+        CGAL_assertion((t[(k+1)%3] == a && t[(k+2)%3] == b) || (t[(k+1)%3] == b && t[(k+2)%3] == a));
+        adjacent_edges[tid][k] = idx;
+      } while (i < partial_edges.size() && std::get<0>(partial_edges[i]) == a && std::get<1>(partial_edges[i]) == b);
+      CGAL_assertion(!adjacent_faces.back().empty());
+    }
   }
 
 #ifdef CGAL_BO3_SELECT_TIMERS
@@ -789,9 +863,9 @@ void compute_self_union(PointRange& points, TriangleRange& triangles,
   // Get the vertices associate to an edge
   auto edge_vertices = [&](EID eid) {
     std::size_t tid = adjacent_faces[eid].front();
-    for(std::size_t k=0; k<3; ++k)
-      if(adjacent_edges[tid][k] == eid)
-        return std::make_pair(triangles[tid][(k+1)%3], triangles[tid][(k+2)%3]);
+    std::size_t k = adjacent_edges[tid][0] == eid ? 0 :adjacent_edges[tid][1] == eid ? 1 : 2;
+    CGAL_assertion(adjacent_edges[tid][k] == eid);
+    return std::make_pair(triangles[tid][(k+1)%3], triangles[tid][(k+2)%3]);
   };
 
 
