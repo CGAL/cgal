@@ -95,8 +95,7 @@ public:
 
   ~Segment_tree_1()
   {
-    if (segment_tree_1 != nullptr)
-      delete segment_tree_1;
+    delete segment_tree_1;
   }
 };
 
@@ -186,10 +185,8 @@ public:
 
   ~Segment_tree_2()
   {
-    if (segment_tree_2 != nullptr)
-      delete segment_tree_2;
-    if (segment_tree_1 != nullptr)
-      delete segment_tree_1;
+    delete segment_tree_2;
+    delete segment_tree_1;
   }
 };
 
@@ -294,12 +291,9 @@ public:
 
   ~Segment_tree_3()
   {
-    if (segment_tree_3 != nullptr)
-      delete segment_tree_3;
-    if (segment_tree_2 != nullptr)
-      delete segment_tree_2;
-    if (segment_tree_1 != nullptr)
-      delete segment_tree_1;
+    delete segment_tree_3;
+    delete segment_tree_2;
+    delete segment_tree_1;
   }
 };
 
@@ -417,18 +411,10 @@ public:
 
   ~Segment_tree_4()
   {
-    if (segment_tree_4 != nullptr)
-      delete segment_tree_4;
-
-    if (segment_tree_3 != nullptr)
-      delete segment_tree_3;
-
-    if (segment_tree_2 != nullptr)
-      delete segment_tree_2;
-
-    if (segment_tree_1 != nullptr)
-      delete segment_tree_1;
-
+    delete segment_tree_4;
+    delete segment_tree_3;
+    delete segment_tree_2;
+    delete segment_tree_1;
   }
 };
 
