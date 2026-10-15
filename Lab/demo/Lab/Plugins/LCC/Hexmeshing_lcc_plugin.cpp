@@ -36,14 +36,16 @@ public:
     this->mw = mw;
     actionHexmeshing = new QAction("Hexmeshing using 2-refinement", mw);
     connect(actionHexmeshing, SIGNAL(triggered()), this, SLOT(on_actionHexmeshing_triggered()));
+    _actions << actionHexmeshing;
     actionHexmeshingSmoothing = new QAction("Hexmeshing Smoothing", mw);
-    connect(actionHexmeshing, SIGNAL(triggered()), this, SLOT(on_actionHexmeshingSmoothing_triggered()));
+    connect(actionHexmeshingSmoothing, SIGNAL(triggered()), this, SLOT(on_actionHexmeshingSmoothing_triggered()));
     _actions << actionHexmeshingSmoothing;
   }
 
   QList<QAction*> actions()const {return _actions;}
 
-  bool applicable(QAction* action) const {
+  bool applicable(QAction* action) const
+  {
     if (action == actionHexmeshing)
       return qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
     else
