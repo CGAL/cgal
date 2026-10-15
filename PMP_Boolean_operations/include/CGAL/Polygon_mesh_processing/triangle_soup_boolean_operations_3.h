@@ -934,7 +934,7 @@ void compute_self_union(PointRange& points, TriangleRange& triangles,
   std::vector<std::size_t> ccids;
   std::vector<EID> nm_edges;
   std::vector<std::size_t> one_triangle_per_cc =
-    boolops_3::connected_components(triangles, adjacent_edges, adjacent_faces, ccids, nm_edges);
+    boolops_3::connected_components(adjacent_edges, adjacent_faces, ccids, nm_edges);
   std::size_t nb_cc = one_triangle_per_cc.size();
 
   std::sort(nm_edges.begin(), nm_edges.end());
