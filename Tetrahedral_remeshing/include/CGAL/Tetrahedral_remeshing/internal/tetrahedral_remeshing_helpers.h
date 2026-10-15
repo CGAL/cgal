@@ -861,7 +861,7 @@ surface_patch_index(const typename C3t3::Vertex_handle v,
 
   // the star is examined through an output iterator rather than collected :
   // only the first facet of the complex is of interest
-  c3t3.triangulation().incident_facets(v,
+  c3t3.triangulation().finite_incident_facets(v,
     boost::make_function_output_iterator([&](const Facet& f)
     {
       if (patch == std::nullopt && c3t3.is_in_complex(f))
@@ -871,30 +871,21 @@ surface_patch_index(const typename C3t3::Vertex_handle v,
   return patch;
 }
 
-template<typename C3t3>
-void set_index(typename C3t3::Vertex_handle v, const C3t3& c3t3)
+template <typename C3t3>
+std::optional<typename C3t3::Surface_patch_index>
+surface_patch_index(const typename C3t3::Edge& e, const C3t3& c3t3)
 {
-  switch (c3t3.in_dimension(v))
+  auto fcirc = c3t3.triangulation().incident_facets(e);
+  auto end = fcirc;
+  do
   {
-  case 3:
-    c3t3.set_index(v, c3t3.subdomain_index(v->cell()));
-    break;
-  case 2:
-    CGAL_expensive_assertion(surface_patch_index(v, c3t3)
-                  != typename C3t3::Surface_patch_index());
-    c3t3.set_index(v, surface_patch_index(v, c3t3).value());
-    break;
-  case 1:
-    c3t3.set_index(v, typename C3t3::Curve_index(1));
-    break;
-  case 0:
-    c3t3.set_index(v, Mesh_3::internal::get_index<typename C3t3::Corner_index>(c3t3.index(v)));
-    break;
-  case -1://far points from concurrent Mesh_3
-    break;
-  default:
-    CGAL_assertion(false);
+    const auto& f = *fcirc;
+    if(c3t3.is_in_complex(f))
+      return c3t3.surface_patch_index(f);
   }
+  while(++fcirc != end);
+
+  return std::nullopt;
 }
 
 template<typename C3t3>
