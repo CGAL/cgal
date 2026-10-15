@@ -38,7 +38,11 @@ namespace boolops_3 {
 //TODO: update nm_edges for identical coplanar status (less test below then)
 template <class Polygons, class EdgeConnectivity, class FaceConnectivity, class NM_edges>
 std::vector<std::size_t>
-connected_components(const Polygons& triangles,
+connected_components(std::size_t begin,
+                     std::size_t end,
+                     int offset,
+                     int increment,
+                     const Polygons& triangles,
                      const EdgeConnectivity& adjacent_edges,
                      const FaceConnectivity& adjacent_faces,
                      std::vector<std::size_t>& ccids,
@@ -47,12 +51,10 @@ connected_components(const Polygons& triangles,
   auto is_handled = [&](std::size_t tid){ return ccids[tid]!=std::size_t(-1); };
   std::vector<std::size_t> one_triangle_per_cc;
 
-  std::size_t nb_poly = triangles.size();
-  ccids.resize(nb_poly, std::size_t(-1));
-  std::size_t i=0;
+  std::size_t i=offset;
 
   std::vector<std::size_t> queue;
-  for (std::size_t tid=0; tid<nb_poly; ++tid)
+  for (std::size_t tid=begin; tid<end; ++tid)
   {
     if (is_handled(tid)) continue;
     queue.push_back(tid);
@@ -89,10 +91,65 @@ connected_components(const Polygons& triangles,
       }
     }
     one_triangle_per_cc.push_back(tid);
-    ++i;
+    i += increment;
   }
   return one_triangle_per_cc;
 }
+
+template <class Polygons, class EdgeConnectivity, class FaceConnectivity, class NM_edges>
+std::vector<std::size_t>
+connected_components(const Polygons& triangles,
+                     const EdgeConnectivity& adjacent_edges,
+                     const FaceConnectivity& adjacent_faces,
+                     std::vector<std::size_t>& ccids,
+                     NM_edges& nm_edges)
+{
+  std::size_t nb_poly = triangles.size();
+  ccids.resize(nb_poly, std::size_t(-1));
+  return connected_components(0, nb_poly, 0, 1, triangles, adjacent_edges, adjacent_faces, ccids, nm_edges);
+}
+
+#ifdef CGAL_LINKED_WITH_TBB
+template <class Polygons, class EdgeConnectivity, class FaceConnectivity, class NM_edges>
+std::vector<std::size_t>
+parallel_connected_components(const size_t split_range_at,
+                              const size_t new_triangles_at,
+                              const Polygons& triangles,
+                              const EdgeConnectivity& adjacent_edges,
+                              const FaceConnectivity& adjacent_faces,
+                              std::vector<std::size_t>& ccids,
+                              NM_edges& nm_edges)
+{
+  std::size_t nb_poly = triangles.size();
+  ccids.resize(nb_poly, std::size_t(-1));
+  std::vector<std::size_t> trs_per_cc_1, trs_per_cc_2, trs_per_cc_end, merged_trs_per_cc;
+
+  tbb::task_group task_group;
+  task_group.run([&](){
+    trs_per_cc_1 = connected_components(0, split_range_at, 0, 2, triangles,adjacent_edges, adjacent_faces, ccids, nm_edges);
+  });
+  NM_edges nm_edges_cc_2;
+  trs_per_cc_2 = connected_components(split_range_at, new_triangles_at, 1, 2, triangles, adjacent_edges, adjacent_faces, ccids, nm_edges_cc_2);
+  task_group.wait();
+  nm_edges.insert(nm_edges.end(), nm_edges_cc_2.begin(), nm_edges_cc_2.end());
+  std::size_t max_size = (std::max)(trs_per_cc_1.size(), trs_per_cc_2.size());
+  trs_per_cc_end = connected_components(new_triangles_at, nb_poly, max_size, 1, triangles, adjacent_edges, adjacent_faces, ccids, nm_edges);
+
+  // New triangles are
+  CGAL_assertion_code(
+    for(std::size_t i=new_triangles_at; i<nb_poly; ++i));
+      CGAL_assertion(ccids[i]!=-1);
+
+  merged_trs_per_cc.resize(2 * max_size + trs_per_cc_end.size(), std::size_t(-1));
+  for(std::size_t i=0; i<trs_per_cc_1.size(); ++i)
+    merged_trs_per_cc[2*i] = trs_per_cc_1[i];
+  for(std::size_t i=0; i<trs_per_cc_2.size(); ++i)
+    merged_trs_per_cc[2*i+1] = trs_per_cc_2[i];
+  for(std::size_t i=0; i<trs_per_cc_end.size(); ++i)
+    merged_trs_per_cc[max_size+i] = trs_per_cc_end[i];
+  return merged_trs_per_cc;
+}
+#endif
 
 struct Selection_data
 {
@@ -108,6 +165,13 @@ Selection_data
 select(const std::vector<Exact_point>& points,
        const std::vector<Triangle>& triangles,
              std::vector<unsigned int>& input_ids,
+#ifdef CGAL_LINKED_WITH_TBB
+             std::size_t split_at,
+             std::size_t new_triangles_at,
+#else
+             std::size_t /* split_at */,
+             std::size_t /* new_triangles_at */,
+#endif
        const unsigned int nb_meshes)
 {
 #ifdef CGAL_BO3_SELECT_TIMERS
@@ -283,7 +347,17 @@ select(const std::vector<Exact_point>& points,
   // extract connected_components bounded by non-manifold edges
   std::vector<std::size_t>& ccids = data_out.ccids;
   std::vector< EID > nm_edges;
-  std::vector<std::size_t> one_triangle_per_cc = boolops_3::connected_components(triangles, adjacent_edges, adjacent_faces, ccids, nm_edges);
+#ifdef CGAL_LINKED_WITH_TBB
+  std::vector<std::size_t> one_triangle_per_cc;
+  if constexpr(std::is_same_v<Concurrency_tag, Parallel_tag>)
+  {
+    one_triangle_per_cc = boolops_3::parallel_connected_components(split_at, new_triangles_at, triangles, adjacent_edges, adjacent_faces, ccids, nm_edges);
+  }
+  else
+#endif
+  {
+    one_triangle_per_cc = boolops_3::connected_components(triangles, adjacent_edges, adjacent_faces, ccids, nm_edges);
+  }
   std::size_t nb_cc = one_triangle_per_cc.size();
 
 #ifdef CGAL_BO3_SELECT_TIMERS
@@ -312,6 +386,12 @@ select(const std::vector<Exact_point>& points,
   std::vector<bool>& coplanar_patches=data_out.coplanar_patches;
   std::vector<bool>& coplanar_patches_for_union_and_intersection=data_out.coplanar_patches_for_union_and_intersection;
   std::vector< std::vector<bool> >& cc_is_inside_per_mesh=data_out.cc_is_inside_per_mesh;
+
+  for(std::size_t cc=0; cc<nb_cc; ++cc)
+    if( one_triangle_per_cc[cc] == std::size_t(-1)){
+      ++nb_handled;
+      cc_handled[cc] = true;
+    }
 
   coplanar_patches.assign(nb_cc, false);
   coplanar_patches_for_union_and_intersection.assign(nb_cc, false);
@@ -676,6 +756,10 @@ prepare_data(const PointRange& points_1, const TriangleRange& triangles_1,
 {
   namespace PMP = CGAL::Polygon_mesh_processing;
 
+#ifdef CGAL_BO3_TIMERS
+  Real_timer timer;
+  timer.start();
+#endif
   out_points.reserve(points_1.size()+points_2.size());
   out_points.insert(out_points.end(), points_1.begin(), points_1.end());
   out_points.insert(out_points.end(), points_2.begin(), points_2.end());
@@ -690,14 +774,18 @@ prepare_data(const PointRange& points_1, const TriangleRange& triangles_1,
     out_triangles.push_back(t);
   }
 
-#ifdef CGAL_BO3_TIMERS
-  Real_timer timer;
-  timer.start();
-#endif
   std::vector<unsigned int> input_ids(nbt_1+nbt_2, 0);
   for (std::size_t i=nbt_1; i<nbt_1+nbt_2; ++i)
     input_ids[i]=1;
   Autoref_visitor visitor(input_ids, nbt_1, nbt_2);
+
+#ifdef CGAL_BO3_TIMERS
+  timer.stop();
+  std::cout << "merged input done in " << timer.time() << "\n";
+  timer.reset();
+  timer.start();
+#endif
+
   //TODO:  investigate if a detection of identical triangles in the input could be interesting
   //TODO: import optimisation on the triangle ranges with bboxes meshes intersection to restrict the number of intersection tests
   //TODO: import identical patches opti
@@ -712,7 +800,7 @@ prepare_data(const PointRange& points_1, const TriangleRange& triangles_1,
 #ifdef CGAL_BO_AUTOREF_DEBUG
   CGAL::IO::write_OFF("autorefined.off", out_points, out_triangles, CGAL::parameters::stream_precision(17));
 #endif
-  auto res =select<Concurrency_tag>(out_points, out_triangles, input_ids, 2);
+  auto res =select<Concurrency_tag>(out_points, out_triangles, input_ids, nbt_1, nbt_1+nbt_2, 2);
 #ifdef CGAL_BO3_TIMERS
   timer.stop();
   std::cout << "select done in " << timer.time() << "\n";
@@ -850,7 +938,7 @@ void compute_self_union(PointRange& points, TriangleRange& triangles,
     } while (i < partial_edges.size() && std::get<0>(partial_edges[i]) == a && std::get<1>(partial_edges[i]) == b);
   }
 
-  // extract connected_components bounded by non-manifold edges  (TODO: move to a function)
+  // extract connected_components bounded by non-manifold edges
   std::vector<std::size_t> ccids;
   std::vector<EID> nm_edges;
   std::vector<std::size_t> one_triangle_per_cc =
