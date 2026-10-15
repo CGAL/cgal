@@ -44,28 +44,32 @@ struct Facet_with_patch_index
 };
 
 template <class FWPI>
-struct get_surface_path_index_type
+struct Get_surface_path_index_type
 {
   using type = int;
 };
 
 template <typename SurfacePatchIndex>
-struct get_surface_path_index_type<Facet_with_patch_index<SurfacePatchIndex>>
+struct Get_surface_path_index_type<Facet_with_patch_index<SurfacePatchIndex>>
 {
   using type = SurfacePatchIndex;
 };
 
 template <typename I>
-struct get_surface_path_index_type<std::array<I,4>>
+struct Get_surface_path_index_type<std::array<I,4>>
 {
   using type = I;
 };
 
 template <typename A, typename I>
-struct get_surface_path_index_type<std::tuple<A,A,A,I>>
+struct Get_surface_path_index_type<std::tuple<A,A,A,I>>
 {
   using type = I;
 };
+
+template <class FacetRange>
+using Surface_path_index_t =
+  typename Get_surface_path_index_type<typename std::iterator_traits<typename FacetRange::iterator>::value_type>::type;
 
 template<typename CurveIndex>
 struct Edge_with_curve_index
@@ -73,6 +77,34 @@ struct Edge_with_curve_index
   int v0, v1;
   CurveIndex curve_index;
 };
+
+template <class EWCI>
+struct Get_curve_index_type
+{
+  using type = int;
+};
+
+template <typename CurveIndex>
+struct Get_curve_index_type<Edge_with_curve_index<CurveIndex>>
+{
+  using type = CurveIndex;
+};
+
+template <typename I>
+struct Get_curve_index_type<std::array<I,3>>
+{
+  using type = I;
+};
+
+template <typename A, typename I>
+struct Get_curve_index_type<std::tuple<A,A,I>>
+{
+  using type = I;
+};
+
+template <class EdgeRange>
+using Curve_index_t =
+  typename Get_curve_index_type<typename std::iterator_traits<typename EdgeRange::iterator>::value_type>::type;
 
 template<typename CornerIndex>
 struct Vertex_with_corner_index
@@ -248,7 +280,7 @@ bool read_MEDIT(std::istream& is,
         for(int i=0; i<nf; ++i)
         {
           int n[3];
-          typename get_surface_path_index_type<typename std::iterator_traits<typename FacetRange::iterator>::value_type>::type surface_patch_id;
+          Surface_path_index_t<FacetRange> surface_patch_id;
           if(!(is >> n[0] >> n[1] >> n[2] >> surface_patch_id))
           {
             if(verbose)
@@ -343,7 +375,7 @@ bool read_MEDIT(std::istream& is,
       for(int i = 0; i < nedges; ++i)
       {
         int n[2];
-        /* AF: was Curve_index*/ int  ref = 0;
+        Curve_index_t<EdgeRange> ref = 0;
         if(!(is >> n[0] >> n[1] >> ref))
         {
           if(verbose)
