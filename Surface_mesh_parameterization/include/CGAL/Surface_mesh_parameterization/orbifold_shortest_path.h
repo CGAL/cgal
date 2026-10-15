@@ -38,11 +38,7 @@ class Dijkstra_end_exception : public std::exception
 {
   const char* what() const throw ()
   {
-#ifdef CGAL_SMP_ORBIFOLD_DEBUG
-    return "Dijkstra: reached the target vertex";
-#else
-    return "";
-#endif
+    return "Dijkstra: reached the target vertex\n";
   }
 };
 
@@ -143,8 +139,10 @@ void compute_shortest_paths_between_two_cones(const TriangleMesh& mesh,
 
   try {
     boost::dijkstra_shortest_paths(mesh, source, boost::predecessor_map(pred_pmap).visitor(vis));
-  } catch (const std::exception& e) {
-    std::cerr << e.what() << std::endl;
+  } catch ([[maybe_unused]] const internal::Dijkstra_end_exception& e) {
+#ifdef CGAL_SMP_ORBIFOLD_DEBUG
+    std::cout  << e.what();
+#endif
   }
 
   // Draw the path from target to source and collect the edges along the way

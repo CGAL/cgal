@@ -32,48 +32,56 @@ void test_polygon_canonicalization(const bool verbose = false)
 
   // empty
   CGAL_polygon polygon;
-  CGAL_polygon canonical_polygon = PMP::internal::construct_canonical_polygon(points, polygon, K());
-  assert(canonical_polygon.empty());
+  PMP::internal::canonicalize_polygon(points, polygon, K());
+  assert(polygon.empty());
 
   // 1 point
   polygon.push_back(5);
 
-  canonical_polygon = PMP::internal::construct_canonical_polygon(points, polygon, K());
-  assert(canonical_polygon == polygon);
+  PMP::internal::canonicalize_polygon(points, polygon, K());
+  assert(polygon.size() == 1 && polygon[0] == 5);
 
   // 2 points
   polygon.clear();
   polygon.push_back(4); polygon.push_back(3);
 
-  canonical_polygon = PMP::internal::construct_canonical_polygon(points, polygon, K());
-  assert(canonical_polygon[0] == 3 && canonical_polygon[1] == 4);
+  CGAL_polygon canonical_polygon = polygon;
+  PMP::internal::canonicalize_polygon(points, canonical_polygon, K());
+  assert(canonical_polygon.size() == 2 && canonical_polygon[0] == 3 && canonical_polygon[1] == 4);
+
   std::swap(polygon[0], polygon[1]);
-  canonical_polygon = PMP::internal::construct_canonical_polygon(points, polygon, K());
-  assert(canonical_polygon[0] == 3 && canonical_polygon[1] == 4);
+  canonical_polygon = polygon;
+  PMP::internal::canonicalize_polygon(points, canonical_polygon, K());
+  assert(canonical_polygon.size() == 2 && canonical_polygon[0] == 3 && canonical_polygon[1] == 4);
 
   // 3 points
   polygon.clear();
   polygon.push_back(4); polygon.push_back(1); polygon.push_back(3);
 
-  canonical_polygon = PMP::internal::construct_canonical_polygon(points, polygon, K());
-  assert(canonical_polygon[0] == 1 && canonical_polygon[1] == 3 && canonical_polygon[2] == 4);
+  canonical_polygon = polygon;
+  PMP::internal::canonicalize_polygon(points, canonical_polygon, K());
+  assert(canonical_polygon.size() == 3 && canonical_polygon[0] == 1 && canonical_polygon[1] == 3 && canonical_polygon[2] == 4);
+
   std::swap(polygon[0], polygon[2]);
-  canonical_polygon = PMP::internal::construct_canonical_polygon(points, polygon, K());
-  assert(canonical_polygon[0] == 1 && canonical_polygon[1] == 3 && canonical_polygon[2] == 4);
+  canonical_polygon = polygon;
+  PMP::internal::canonicalize_polygon(points, canonical_polygon, K());
+  assert(canonical_polygon.size() == 3 && canonical_polygon[0] == 1 && canonical_polygon[1] == 3 && canonical_polygon[2] == 4);
 
   // Generic case
   polygon.clear();
   polygon.push_back(0); polygon.push_back(2); polygon.push_back(5); polygon.push_back(4); polygon.push_back(1);
 
   // Whether reversed or with cyclic permutations, it should always yield the same canonical polygon
-  canonical_polygon = PMP::internal::construct_canonical_polygon(points, polygon, K());
+  canonical_polygon = polygon;
+  PMP::internal::canonicalize_polygon(points, canonical_polygon, K());
   assert(canonical_polygon.size() == 5);
   assert(canonical_polygon[0] == 0);
 
   // all cyclic permutations
   for(std::size_t i=0, end=polygon.size(); i<end; ++i)
   {
-    CGAL_polygon cpol = PMP::internal::construct_canonical_polygon(points, polygon, K());
+    CGAL_polygon cpol = polygon;
+    PMP::internal::canonicalize_polygon(points, cpol, K());
     if(verbose)
     {
       std::cout << "Input polygon:";
@@ -90,7 +98,8 @@ void test_polygon_canonicalization(const bool verbose = false)
   std::reverse(polygon.begin(), polygon.end());
   for(std::size_t i=0, end=polygon.size(); i<end; ++i)
   {
-    CGAL_polygon cpol = PMP::internal::construct_canonical_polygon(points, polygon, K());
+    CGAL_polygon cpol = polygon;
+    PMP::internal::canonicalize_polygon(points, cpol, K());
     if(verbose)
     {
       std::cout << "Input polygon:";

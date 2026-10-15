@@ -478,7 +478,12 @@ public Q_SLOTS:
     Scene_surface_mesh_item* wrap_item = new Scene_surface_mesh_item(std::move(wrapper_thread->wrap));
     wrap_item->setName(tr("Wrap with alpha %2 offset %3").arg(wrapper_thread->alpha)
                                                          .arg(wrapper_thread->offset));
-    wrap_item->setColor(Qt::gray);
+    wrap_item->setColor(Qt::yellow);
+
+    wrap_item->invalidateOpenGLBuffers();
+    wrap_item->redraw();
+    wrap_item->itemChanged();
+
     const int wrap_item_id = scene->addItem(wrap_item);
     scene->setSelectedItem(wrap_item_id);
 

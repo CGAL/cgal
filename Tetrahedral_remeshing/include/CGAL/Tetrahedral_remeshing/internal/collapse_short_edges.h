@@ -440,7 +440,6 @@ bool is_link_condition_valid(const typename Triangulation::Edge& edge,
                              const Triangulation& tr)
 {
   using Vertex_handle = typename Triangulation::Vertex_handle;
-  using Cell_handle = typename Triangulation::Cell_handle;
   using Cell_circulator = typename Triangulation::Cell_circulator;
 
   const Vertex_handle v0 = edge.first->vertex(edge.second);

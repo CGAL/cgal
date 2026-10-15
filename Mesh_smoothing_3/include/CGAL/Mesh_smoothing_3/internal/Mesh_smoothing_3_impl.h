@@ -44,7 +44,7 @@ void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::
     _max_number_of_iteration = number_of_iterations;
 }
 
-template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag> // necessay
+template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag> // necessary
 void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::set_optimization_mode(Parameters::OPTIMIZATION_MODE mode) {
     _optimization_mode = mode;
 }
@@ -489,7 +489,7 @@ void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::
 }
 
 template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::initialise_point_targets() {
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::initialize_point_targets() {
     for (auto [v, target, weight] : _vertex_target_positions) {
         auto iterator = _vertex_original_to_compressed.find(static_cast<Vertex_descriptor>(v));
         if (iterator == _vertex_original_to_compressed.end()) continue;
@@ -575,7 +575,7 @@ bool Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::
 }
 
 template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::initialise_boundary_query(Tetrahedral_mesh_smoother &smoother) {
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::initialize_boundary_query(Tetrahedral_mesh_smoother &smoother) {
     switch (_boundary_query_type) {
     case NONE:
         smoother.set_boundary_with_singular_query(
@@ -715,7 +715,7 @@ void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::
 }
 
 template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::initialise_curve_queries(Tetrahedral_mesh_smoother &smoother) {
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::initialize_curve_queries(Tetrahedral_mesh_smoother &smoother) {
     switch (_curve_query_type) {
     case NONE:
         break;
@@ -816,11 +816,11 @@ void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::
 }
 
 template<typename TetrahedralMesh, typename BoundaryMesh, typename EdgeNetwork, typename ConcurrencyTag>
-void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::initialise_smoother(Tetrahedral_mesh_smoother &smoother) {
-    initialise_boundary_query(smoother);
-    initialise_curve_queries(smoother);
+void Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, ConcurrencyTag>::initialize_smoother(Tetrahedral_mesh_smoother &smoother) {
+    initialize_boundary_query(smoother);
+    initialize_curve_queries(smoother);
 
-    initialise_point_targets();
+    initialize_point_targets();
     smoother.set_quadratic_target_positions(_point_targets);
 
     if (_callback_function != nullptr) {
@@ -912,7 +912,7 @@ Smoothing_status Mesh_smoother<TetrahedralMesh, BoundaryMesh, EdgeNetwork, Concu
         assert(Eigen::nbThreads() == 1);
     }
 
-    initialise_smoother(smoother);
+    initialize_smoother(smoother);
     _smoothing_status.add_time(true);
     switch (_optimization_mode)
     {

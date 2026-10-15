@@ -36,7 +36,7 @@ using namespace CGAL::Surface_mesh_topology;
 }
 ///////////////////////////////////////////////////////////////////////////////
 void process_command_line(int argc, char** argv,
-                          std::string& file,
+                          std::string file,
                           bool& draw,
                           int& l1,
                           int& l2,
@@ -100,7 +100,7 @@ void process_command_line(int argc, char** argv,
 ///////////////////////////////////////////////////////////////////////////////
 int main(int argc, char** argv)
 {
-  std::string file=CGAL::data_file_path("meshes/elephant.off");
+  std::string file=CGAL::data_file_path("meshes/elephant.off").string();
   bool draw=false;
   int l1=10, l2=100;
   int d1=10, d2=100;

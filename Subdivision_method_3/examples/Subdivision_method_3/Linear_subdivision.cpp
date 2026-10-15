@@ -16,7 +16,7 @@ namespace params = CGAL::parameters;
 
 int main(int argc, char* argv[]) {
 
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/quad.off");
+  const std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/quad.off");
   const unsigned int iter = (argc > 2) ? std::stoi(argv[2]) : 3;
 
   Surface_mesh mesh;

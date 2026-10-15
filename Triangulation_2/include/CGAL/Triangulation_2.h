@@ -315,6 +315,10 @@ public:
     return {f->vertex(0), f->vertex(1), f->vertex(2)};
   }
 
+  std::array<Vertex_handle, 2> vertices(Face_handle f, int i) const {
+    return {f->vertex(ccw(i)), f->vertex(cw(i))};
+  }
+
   std::array<Vertex_handle, 2> vertices(Edge e) const {
     return {e.first->vertex(ccw(e.second)), e.first->vertex(cw(e.second))};
   }

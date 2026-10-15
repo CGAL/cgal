@@ -316,7 +316,7 @@ public:
       \cgalParamDefault{false}
     \cgalParamNEnd
     \cgalParamNBegin{verbose}
-      \cgalParamDescription{Write timing and internal information to std::cout.}
+      \cgalParamDescription{Write timing and internal information to `std::cout`.}
       \cgalParamType{bool}
       \cgalParamDefault{false}
     \cgalParamNEnd
@@ -499,7 +499,9 @@ public:
 
     std::cout.precision(17);
     if (m_input_polygons.size() == 0) {
-      std::cout << "Warning: Your input is empty!";
+      if (m_parameters.verbose) {
+        std::cout << "Warning: Your input is empty!";
+      }
       return;
     }
 
@@ -594,8 +596,9 @@ public:
 
       // Already initialized?
       if (partition.m_data->number_of_support_planes() < 6) {
-        std::cout << "Kinetic partition not initialized or empty. Number of support planes: " << partition.m_data->number_of_support_planes() << std::endl;
-
+        if (m_parameters.verbose) {
+          std::cout << "Kinetic partition not initialized or empty. Number of support planes: " << partition.m_data->number_of_support_planes() << std::endl;
+        }
         return;
       }
 
@@ -623,7 +626,8 @@ public:
 
       for (std::size_t i = 0; i < partition.m_data->number_of_support_planes(); i++)
         if (!partition.m_data->support_plane(i).mesh().is_valid(true))
-          std::cout << i << ". support has an invalid mesh!" << std::endl;
+          if (m_parameters.verbose)
+            std::cout << i << ". support has an invalid mesh!" << std::endl;
 
       Finalizer finalizer(*partition.m_data, m_parameters);
 

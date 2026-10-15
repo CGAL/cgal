@@ -86,15 +86,14 @@ public:
      * \param cone_number The number of cones
      * \param initial_direction The direction of the first ray
      * \param result  The output iterator
+     *
+     * \pre `cone_number >= 2`
      */
     template<class DirectionOutputIterator>
     DirectionOutputIterator operator()(const unsigned int cone_number,
                                        const Direction_2& initial_direction,
                                        DirectionOutputIterator result)  {
-        if (cone_number<2) {
-            std::cout << "The number of cones must be larger than 1!" << std::endl;
-            CGAL_assertion(false);
-        }
+        CGAL_precondition(cone_number >= 2);
 
         *result++ = initial_direction;
 
@@ -142,16 +141,15 @@ public:
       \param cone_number The number of cones
       \param initial_direction The direction of the first ray
       \param result  The output iterator
+
+      \pre `cone_number >= 2`
     */
     template<typename DirectionOutputIterator>
     DirectionOutputIterator operator()(const unsigned int cone_number,
                                        const Direction_2& initial_direction,
                                        DirectionOutputIterator result)  {
 
-        if (cone_number<2) {
-            std::cout << "The number of cones must be larger than 1!" << std::endl;
-            std::exit(1);
-        }
+        CGAL_precondition(cone_number >= 2);
 
         // Since CGAL::root_of() gives the k-th smallest root,
         // here -x is actually used instead of x.

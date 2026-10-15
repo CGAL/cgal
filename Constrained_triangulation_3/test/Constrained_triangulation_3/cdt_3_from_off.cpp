@@ -133,7 +133,7 @@ struct CDT_options
 #else
                                                     false;
 #endif
-  bool        move_Steiner_vertices_to_the_volume = true;
+  bool        move_Steiner_vertices_to_the_volume = false;
   bool        allow_moving_Steiner_vertices_to_create_negative_tets = true;
   bool        use_epeck_for_normals               = false;
   bool        use_epeck_for_Steiner_points        = false;
@@ -143,7 +143,7 @@ struct CDT_options
   double      segment_vertex_epsilon              = 0.; // 1e-14;
   double      coplanar_polygon_max_angle          = 5.1;
   double      coplanar_polygon_max_distance       = 1e-6;
-  std::string input_filename                      = CGAL::data_file_path("meshes/mpi.off");
+  std::string input_filename                      = CGAL::data_file_path("meshes/mpi.off").string();
   std::string output_filename                     {"dump.off"};
   std::string dump_patches_after_merge_filename   {};
   std::string dump_surface_mesh_after_merge_filename{};

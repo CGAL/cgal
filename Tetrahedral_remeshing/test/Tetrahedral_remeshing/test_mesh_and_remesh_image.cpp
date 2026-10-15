@@ -34,7 +34,7 @@ using namespace CGAL::parameters;
 
 int main()
 {
-  const std::string filename = CGAL::data_file_path("images/liver.inr.gz");
+  const std::filesystem::path filename = CGAL::data_file_path("images/liver.inr.gz");
 
   CGAL::Image_3 image;
   if (!image.read(filename)) {

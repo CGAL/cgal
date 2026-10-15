@@ -207,6 +207,7 @@ private:
           m_free_vertices[idi] = !m_protect_boundaries && m_smooth_constrained_edges;
           break;
         case 0:
+        case -1:
           m_free_vertices[idi] = false;
           break;
         default:

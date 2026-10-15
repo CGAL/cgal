@@ -564,7 +564,6 @@ compute_vertex_normal_as_sum_of_weighted_normals(typename boost::graph_traits<Po
 
   typedef typename GT::FT                                                     FT;
   typedef typename GT::Vector_3                                               Vector_3;
-  typedef typename boost::property_traits<FaceNormalVector>::reference        Vector_ref;
 
   typename GT::Construct_vector_3 cv_3 = traits.construct_vector_3_object();
   typename GT::Compute_squared_length_3 csl_3 = traits.compute_squared_length_3_object();
@@ -586,8 +585,7 @@ compute_vertex_normal_as_sum_of_weighted_normals(typename boost::graph_traits<Po
     {
       if(vn_type == NO_WEIGHT)
       {
-        const Vector_ref n = get(face_normals, face(h, pmesh));
-        normal = traits.construct_sum_of_vectors_3_object()(normal, n);
+        normal = traits.construct_sum_of_vectors_3_object()(normal, get(face_normals, face(h, pmesh)));
       }
       else if(vn_type == SIN_WEIGHT)
       {

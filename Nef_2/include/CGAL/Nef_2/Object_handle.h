@@ -59,7 +59,7 @@ template <typename... Args>
 struct Object_handle<Type_pack<Args...>>
   : std::variant<std::monostate, Args...> {
   using std::variant<std::monostate, Args...>::variant;
-  // needed for compatabiity with CGAL::Object API
+  // needed for compatibility with CGAL::Object API
   bool empty() const
   { return std::holds_alternative<std::monostate>(*this); }
 };
