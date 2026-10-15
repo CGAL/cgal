@@ -554,43 +554,52 @@ bool read_MEDIT(std::istream& is,
   // cells
   std::vector<std::array<int, 4>> default_tetrahedra;
   using Tetrahedra = typename internal_np::Lookup_named_param_def<internal_np::tetrahedra_t, CGAL_NP_CLASS, std::vector<std::array<int,4>>>::reference;
+  static_assert(std::is_reference_v<Tetrahedra> || !"tetrahedra named parameter must be a reference_wrapper");
   Tetrahedra tetrahedra = choose_parameter(get_parameter_reference(np, internal_np::tetrahedra), default_tetrahedra);
 
   // triangles
   std::vector<std::array<int, 3>> default_triangles;
   using Triangles = typename internal_np::Lookup_named_param_def<internal_np::triangles_t, CGAL_NP_CLASS, std::vector<std::array<int,3>>>::reference;
+  static_assert(std::is_reference_v<Triangles> || !"triangles named parameter must be a reference_wrapper");
   Triangles triangles = choose_parameter(get_parameter_reference(np, internal_np::triangles), default_triangles);
 
   // edges
   std::vector<std::array<int, 2>> default_edges;
   using Edges = typename internal_np::Lookup_named_param_def<internal_np::edges_t, CGAL_NP_CLASS, std::vector<std::array<int,2>>>::reference;
+  static_assert(std::is_reference_v<Edges> || !"edges named parameter must be a reference_wrapper");
   Edges edges = choose_parameter(get_parameter_reference(np, internal_np::edges), default_edges);
 
   // ridges
   std::vector<int> default_ridges;
   using Ridges = typename internal_np::Lookup_named_param_def<internal_np::ridges_t, CGAL_NP_CLASS, std::vector<int>>::reference;
+  static_assert(std::is_reference_v<Ridges> || !"ridges named parameter must be a reference_wrapper");
   Ridges ridges = choose_parameter(get_parameter_reference(np, internal_np::ridges), default_ridges);
 
   // corners
   std::vector<int> default_corners;
   using Corners = typename internal_np::Lookup_named_param_def<internal_np::corners_t, CGAL_NP_CLASS, std::vector<int>>::reference;
+  static_assert(std::is_reference_v<Corners> || !"corners named parameter must be a reference_wrapper");
   Corners corners = choose_parameter(get_parameter_reference(np, internal_np::corners), default_corners);
 
   // tetrahedron_refs
   std::vector<int> default_tetrahedron_refs;
   using Tetrahedron_refs = typename internal_np::Lookup_named_param_def<internal_np::tetrahedron_refs_t, CGAL_NP_CLASS, std::vector<int>>::reference;
+  static_assert(std::is_reference_v<Tetrahedron_refs> || !"tetrahedron_refs named parameter must be a reference_wrapper");
   Tetrahedron_refs  tetrahedron_refs  = choose_parameter(get_parameter_reference(np, internal_np::tetrahedron_refs), default_tetrahedron_refs);
 
   std::vector<int> default_triangle_refs;
   using Triangle_refs = typename internal_np::Lookup_named_param_def<internal_np::triangle_refs_t, CGAL_NP_CLASS, std::vector<int>>::reference;
+  static_assert(std::is_reference_v<Triangle_refs> || !"triangle_refs named parameter must be a reference_wrapper");
   Triangle_refs  triangle_refs  = choose_parameter(get_parameter_reference(np, internal_np::triangle_refs), default_triangle_refs);
 
   std::vector<int> default_edge_refs;
   using Edge_refs = typename internal_np::Lookup_named_param_def<internal_np::edge_refs_t, CGAL_NP_CLASS, std::vector<int>>::reference;
+  static_assert(std::is_reference_v<Edge_refs> || !"edge_refs named parameter must be a reference_wrapper");
   Edge_refs  edge_refs  = choose_parameter(get_parameter_reference(np, internal_np::edge_refs), default_edge_refs);
 
   std::vector<int> default_point_refs;
   using Point_refs = typename internal_np::Lookup_named_param_def<internal_np::point_refs_t, CGAL_NP_CLASS, std::vector<int>>::reference;
+  static_assert(std::is_reference_v<Point_refs> || !"point_refs named parameter must be a reference_wrapper");
   Point_refs  point_refs  = choose_parameter(get_parameter_reference(np, internal_np::point_refs), default_point_refs);
 
   constexpr bool is_triangles_map = !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::triangles_t>::value;
