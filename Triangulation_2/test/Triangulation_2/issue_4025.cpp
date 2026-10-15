@@ -51,7 +51,7 @@ int main()
 
     auto oformat = [tr = &cdtp](Vertex_handle vh)
     {
-        return CGAL::IO::oformat(vh, CGAL::With_point_tag{ {-1}, tr });
+        return CGAL::IO::oformat(vh, CGAL::With_point_tag<CDTP>{{-1}, tr });
     };
 
     const std::array<Point, 6> collinear_points = {

@@ -74,7 +74,7 @@ class Intersection_of_constraints_exception : public std::runtime_error
   template <typename Tr, typename Vertex_handle>
   static auto with_point(Tr* tr, Vertex_handle v) {
     return IO::oformat([v, tr](std::ostream& os) -> auto& {
-      return os << IO::oformat(v, With_point_tag{{-1}, tr});
+      return os << IO::oformat(v, With_point_tag<Tr>{{-1}, tr});
     }, IO_manip_tag{});
   }
 
