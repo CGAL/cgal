@@ -35,6 +35,7 @@
 #include <CGAL/intersections.h>
 #include <CGAL/squared_distance_2.h>
 #include <CGAL/tags.h>
+#include <CGAL/type_traits.h>
 #include <CGAL/Kernel_23/internal/Has_boolean_tags.h>
 #include <CGAL/NT_converter.h>
 
@@ -115,10 +116,11 @@ class Intersection_of_constraints_exception : public std::runtime_error
   }
 
 public:
-  template <typename Tr, typename ... Args>
-  Intersection_of_constraints_exception(Tr* tr, Args&&... args)
-    : std::runtime_error(construct_what(tr, std::forward<Args>(args)...))
-  {}
+  template <typename Arg, typename... Args,
+      std::enable_if_t<!(sizeof...(Args) == 0 && std::is_same_v<CGAL::cpp20::remove_cvref_t<Arg>,
+                                                                Intersection_of_constraints_exception>)>* = nullptr>
+  Intersection_of_constraints_exception(Arg&& arg, Args&&... args)
+      : std::runtime_error(construct_what(std::forward<Arg>(arg), std::forward<Args>(args)...)) {}
 };
 
 // This was deprecated and replaced by ` No_constraint_intersection_tag` and `No_constraint_intersection_requiring_constructions_tag`
