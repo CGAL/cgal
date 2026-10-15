@@ -22,6 +22,7 @@
 #include <CGAL/use.h>
 
 #include <boost/scoped_array.hpp>
+#include <boost/scoped_ptr.hpp>
 
 namespace CGAL {
 namespace Surface_mesh_simplification {

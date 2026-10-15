@@ -211,7 +211,7 @@ struct Orthogonal_cut_plane_traits
  *    \cgalParamNEnd
  *
  *    \cgalParamNBegin{use_convex_specialization}
- *      \cgalParamDescription{If set to `true`, a faster implementation specialized for convex meshes is used. The input mesh must be convex to guarantee a correct execution and results.}
+ *      \cgalParamDescription{If set to `true`, a faster implementation specialized for convex meshes is used. The input mesh must be convex and have no flat vertices to guarantee a correct execution and results.}
  *      \cgalParamType{Boolean}
  *      \cgalParamDefault{`false`}
  *      \cgalParamExtra{convex specialization is only used if `edge_is_constrained_map`, `edge_is_marked_map` and `vertex_oriented_side_map` are unused.}
@@ -442,7 +442,7 @@ void refine_with_plane(PolygonMesh& pm,
     std::sort(test_faces.begin(), test_faces.end());
     auto last = std::unique(test_faces.begin(), test_faces.end());
     test_faces.erase(last, test_faces.end());
-    if (does_self_intersect<Concurrency_tag>(test_faces, pm, np))
+    if (does_self_intersect<Concurrency_tag>(test_faces, pm, parameters::vertex_point_map(vpm).concurrency_tag(Concurrency_tag())))
       throw Corefinement::Self_intersection_exception();
   }
 

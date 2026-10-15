@@ -6,7 +6,7 @@ function(process_CGAL_subdirectory entry subdir type_name)
   get_filename_component(ENTRY_DIR_NAME "${entry}" NAME)
 
   if( NOT "${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}") # out-of-source
-    make_directory("${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}")
+    file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}")
   endif()
 
   message("-- Configuring ${subdir} in ${subdir}/${ENTRY_DIR_NAME}")

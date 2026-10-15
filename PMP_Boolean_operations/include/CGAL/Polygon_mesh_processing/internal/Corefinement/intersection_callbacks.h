@@ -15,7 +15,6 @@
 
 #include <CGAL/license/Polygon_mesh_processing/corefinement.h>
 
-#include <CGAL/Box_intersection_d/Box_with_info_d.h>
 #include <CGAL/property_map.h>
 #include <CGAL/enum.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
@@ -40,9 +39,6 @@ protected:
   typedef typename Graph_traits::face_descriptor face_descriptor;
   typedef typename Graph_traits::halfedge_descriptor halfedge_descriptor;
 
-  typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;
-  typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, halfedge_descriptor, Box_policy> Box;
-
 public:
   Collect_face_bbox_per_edge_bbox(
     const TriangleMesh& tm_faces,
@@ -53,17 +49,10 @@ public:
   , edge_to_faces(edge_to_faces)
   {}
 
-  void operator()( const Box& face_box, const Box& edge_box) const
+  void operator()( halfedge_descriptor fh, halfedge_descriptor eh) const
   {
-    halfedge_descriptor fh = face_box.info();
-    halfedge_descriptor eh = edge_box.info();
-
+    // put(edge_to_faces, edge(eh,tm_edges), face(fh, tm_faces));
     edge_to_faces[edge(eh,tm_edges)].insert(face(fh, tm_faces));
-  }
-
-  void operator()( const Box* face_box_ptr, const Box* edge_box_ptr) const
-  {
-    operator()(*face_box_ptr, *edge_box_ptr);
   }
 };
 
@@ -88,9 +77,6 @@ protected:
 
   typedef typename boost::property_traits<VertexPointMapF>::reference Point;
 
-  typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;
-  typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, halfedge_descriptor, Box_policy> Box;
-
 public:
   Collect_face_bbox_per_edge_bbox_with_coplanar_handling(
     const TriangleMesh& tm_faces,
@@ -109,9 +95,7 @@ public:
   , visitor(visitor)
   {}
 
-  void operator()( const Box& face_box, const Box& edge_box) const {
-    halfedge_descriptor fh = face_box.info();
-    halfedge_descriptor eh = edge_box.info();
+  void operator()(halfedge_descriptor fh, halfedge_descriptor eh) const {
     if(is_border(eh,tm_edges)) eh = opposite(eh, tm_edges);
 
     //check if the segment intersects the plane of the facet or if it is included in the plane
@@ -120,8 +104,10 @@ public:
     Point c = get(vpmap_tmf, target(next(fh, tm_faces), tm_faces));
 
     /// SHOULD_USE_TRAITS_TAG
-    const Orientation abcp = orientation(a,b,c, get(vpmap_tme, target(eh, tm_edges)));
-    const Orientation abcq = orientation(a,b,c, get(vpmap_tme, source(eh, tm_edges)));
+    using K = typename Kernel_traits<std::remove_reference_t<Point>>::Kernel;
+    auto orientation = K().orientation_3_object();
+    const auto [abcp,abcq] = orientation(a,b,c, get(vpmap_tme, target(eh, tm_edges)), get(vpmap_tme, source(eh, tm_edges)));
+
     if (abcp==abcq){
       if (abcp!=COPLANAR){
         return; //no intersection
@@ -182,12 +168,6 @@ public:
     return false;
   }
 
-
-  void operator()(const Box* face_box_ptr, const Box* edge_box_ptr) const
-  {
-    operator()(*face_box_ptr, *edge_box_ptr);
-  }
-
   void progress(double d)
   {
     visitor.progress_filtering_intersections(d);
@@ -210,9 +190,6 @@ protected:
   typedef typename Graph_traits::face_descriptor face_descriptor;
   typedef typename Graph_traits::halfedge_descriptor halfedge_descriptor;
   typedef typename Graph_traits::vertex_descriptor vertex_descriptor;
-
-  typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;
-  typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, halfedge_descriptor, Box_policy> Box;
 
   typedef typename boost::property_traits<VertexPointMap>::reference Point;
 
@@ -274,10 +251,7 @@ public:
   , coplanar_faces(coplanar_faces)
   {}
 
-  void operator()( const Box& face_box, const Box& edge_box) const {
-    halfedge_descriptor fh = face_box.info();
-    halfedge_descriptor eh = edge_box.info();
-
+  void operator()(halfedge_descriptor fh, halfedge_descriptor eh) const {
     if ( face(eh, tm) == face(fh, tm) || face(opposite(eh,tm), tm) == face(fh, tm) )
       return; //edge incident to the triangle
 
@@ -355,11 +329,6 @@ public:
     // non-coplanar case
     edge_to_faces[edge(eh,tm)].insert(face(fh, tm));
   }
-
-  void operator()(const Box* face_box_ptr, const Box* edge_box_ptr) const
-  {
-    operator()(*face_box_ptr, *edge_box_ptr);
-  }
 };
 
 template <class TriangleMesh, class Base>
@@ -368,7 +337,6 @@ class Callback_with_self_intersection_report
 {
   typedef typename Base::face_descriptor face_descriptor;
   typedef typename Base::halfedge_descriptor halfedge_descriptor;
-  typedef typename Base::Box Box;
   std::set<face_descriptor>* tmf_collected_faces_ptr;
   std::set<face_descriptor>* tme_collected_faces_ptr;
 public:
@@ -380,24 +348,24 @@ public:
     tme_collected_faces_ptr(&tme_collected_faces)
   {}
 
-  void operator()( const Box* fb, const Box* eb) {
-    halfedge_descriptor h = eb->info();
-    if (!is_border(h, this->tm_edges))
-      tme_collected_faces_ptr->insert( face(h, this->tm_edges) );
-    h = opposite(h, this->tm_edges);
-    if (!is_border(h, this->tm_edges))
-      tme_collected_faces_ptr->insert( face(h, this->tm_edges) );
-    tmf_collected_faces_ptr->insert( face(fb->info(), this->tm_faces) );
+  void operator()(halfedge_descriptor fh, halfedge_descriptor eh) {
+    if (!is_border(eh, this->tm_edges))
+      tme_collected_faces_ptr->insert( face(eh, this->tm_edges) );
+    eh = opposite(eh, this->tm_edges);
+    if (!is_border(eh, this->tm_edges))
+      tme_collected_faces_ptr->insert( face(eh, this->tm_edges) );
+    tmf_collected_faces_ptr->insert( face(fh, this->tm_faces) );
 
     // throw if one of the faces are degenerated
-    if (this->is_face_degenerated(fb->info()) ||
-        this->are_edge_faces_degenerated(h))
+    if (this->is_face_degenerated(fh) ||
+        this->are_edge_faces_degenerated(eh))
     {
       throw Self_intersection_exception();
     }
 
-    Base::operator()(fb, eb);
+    Base::operator()(fh, eh);
   }
+
   bool self_intersections_found()
   {
     return

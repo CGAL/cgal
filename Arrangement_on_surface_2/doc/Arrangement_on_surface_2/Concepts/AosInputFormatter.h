@@ -6,6 +6,7 @@
  * specific format.
  *
  * \cgalHasModelsBegin
+ * \cgalHasModels{DefaultConstructible}
  * \cgalHasModels{CGAL::Arr_text_formatter<Arrangement>}
  * \cgalHasModels{CGAL::Arr_face_extended_text_formatter<Arrangement>}
  * \cgalHasModels{CGAL::Arr_extended_dcel_text_formatter<Arrangement>}
@@ -42,13 +43,9 @@ public:
   /// \name Creation
   /// @{
 
-  /*! default constructor.
-   */
-  Arr_in_formatter();
-
   /*! constructs a formatter that reads from `is`.
    */
-  Arr_in_formatter(std::istream& is);
+  AosInputFormatter(std::istream& is);
 
   /*! directs `inf` to read from `is`.
    */

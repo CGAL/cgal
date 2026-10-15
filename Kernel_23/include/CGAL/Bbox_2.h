@@ -61,14 +61,20 @@ public:
   inline double     ymin() const;
   inline double     xmax() const;
   inline double     ymax() const;
-  inline double x_span() const;
-  inline double y_span() const;
+  inline double     x_span() const;
+  inline double     y_span() const;
+  inline double     squared_diagonal_length() const;
 
   inline double     max BOOST_PREVENT_MACRO_SUBSTITUTION (int i) const;
   inline double     min BOOST_PREVENT_MACRO_SUBSTITUTION (int i) const;
 
   inline Bbox_2     operator+(const Bbox_2 &b) const;
   inline Bbox_2&     operator+=(const Bbox_2 &b);
+
+  inline const Bbox_2& bbox() const;
+  inline Bbox_2& bbox();
+
+  inline int largest_span_index() const;
 
   inline void dilate(int dist);
   inline void scale(double factor);
@@ -100,6 +106,14 @@ inline double Bbox_2::x_span() const {
 
 inline double Bbox_2::y_span() const {
   return ymax() - ymin();
+}
+
+inline double Bbox_2::squared_diagonal_length() const {
+  return x_span()*x_span() + y_span()*y_span();
+}
+
+int Bbox_2::largest_span_index() const {
+  return (x_span()>=y_span()) ? 0 : 1;
 }
 
 inline
@@ -138,6 +152,18 @@ Bbox_2::max BOOST_PREVENT_MACRO_SUBSTITUTION (int i) const
   CGAL_kernel_precondition( (i == 0 ) || ( i == 1 ) );
   if(i == 0) { return xmax(); }
   return ymax();
+}
+
+inline
+const Bbox_2&
+Bbox_2::bbox() const{
+  return *this;
+}
+
+inline
+Bbox_2&
+Bbox_2::bbox(){
+  return *this;
 }
 
 inline

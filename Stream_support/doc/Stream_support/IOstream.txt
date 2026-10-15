@@ -177,9 +177,9 @@ int main()
 \subsubsection IOstreamUsingOutputFormatting Using Output Formatting
 
 To ensure that non-\cgal types are formatted correctly (i.e., respecting \link PkgStreamSupportEnumRef `IO::Mode` \endlink),
-`oformat()` can be used.
+`CGAL::IO::oformat()` can be used.
 For types with a `Output_rep` specialization, the respective output routine of `Output_rep`
-will be called by `oformat()`. Otherwise, the stream output operator will be called.
+will be called by `CGAL::IO::oformat()`. Otherwise, the stream output operator will be called.
 
 \code{.cpp}
 std::cout << CGAL::IO::oformat( myobject );
@@ -255,9 +255,9 @@ for drawing operations in many \cgal output streams.
 Each color is defined by a triple of integers `(r,g,b)` with
 0 \f$ \le \f$ r,g,b \f$ \le \f$ 255, the so-called <I>rgb-value</I> of the color.
 There are a 11 predefined `Color` functions available:
-`black()`, `white()`, `gray()`, `red()`, `green()`,
-`deep_blue()`, `blue()`, `purple()`, `violet()`, `orange()`,
-and `yellow()`.
+`CGAL::IO::black()`, `CGAL::IO::white()`, `CGAL::IO::gray()`, `CGAL::IO::red()`, `CGAL::IO::green()`,
+`CGAL::IO::deep_blue()`, `CGAL::IO::blue()`, `CGAL::IO::purple()`, `CGAL::IO::violet()`, `CGAL::IO::orange()`,
+and `CGAL::IO::yellow()`.
 
 \subsection IOstreamStream Stream Support
 
@@ -279,8 +279,8 @@ Specific standards have been created to facilitate the exchange of data for trad
 such as point sets or polygon meshes.
 
 \cgal aims to provide a uniform and consistent approach for Input/Output functions,
-providing for a given file format with shorter name `XXX` an input function `read_XXX(input, data_structure)`,
-and an output function called `write_XXX(output, data_structure)`. Whenever possible, a <em>generic</em> I/O function
+providing for a given file format with shorter name `XXX` an input function `CGAL::IO::read_XXX(input, data_structure)`,
+and an output function called `CGAL::IO::write_XXX(output, data_structure)`. Whenever possible, a <em>generic</em> I/O function
 which can deduce the file format from the extension is also provided for convenience.
 
 In the following subsections, file formats supported in \cgal are listed along with compatible
@@ -376,7 +376,7 @@ The file formats supported for `CGAL::Point_set_3` are detailed in the table bel
 \subsection IOstreamPolygonSoupIO Polygon Soup IO
 A polygon soup is a set of polygons with no global combinatorial information,
 stored in a two containers: one storing the points, and the other one storing
-their indices per face (i.e a vector of 3 integers represent a triangle face).
+their indices per face (i.e., a vector of 3 integers represent a triangle face).
 
 <table class="iotable">
   <tr>
@@ -494,11 +494,29 @@ If this is not the case, the package \ref PkgPMPMeshRepair offers the function
 \link PMP_IO_grp `CGAL::Polygon_mesh_processing::IO::read_polygon_mesh()` \endlink
 which can perform some combinatorial repairing to ensure the input data is a 2-manifold.
 
+\subsection IOstream3DSimplicial 3D Simplicial Mesh IO
+
+<table class="iotable">
+  <tr>
+    <th></th>
+    <th>Input</th>
+    <th>Output</th>
+  </tr>
+
+  <tr>
+    <th>\ref IOStreamMedit "MEDIT"</th>
+    <td>\link CGAL::IO::read_MEDIT(std::istream&, PointRange&, CellRange&, std::vector<int>&,bool) `CGAL::IO::read_MEDIT()` \endlink</td>
+    <td><center> - </center></td>
+  </tr>
+</table>
+
+Some particular 3D simplicial mesh data structures such as `CGAL::Mesh_complex_3_in_triangulation_3` have specific overloads of these functions.
+
 \subsection IOstream2DGeo Simple 2D Geometry IO
 `WKT` stands for <em>Well-Known Text</em> and it is a text markup language for representing
 vector geometry objects on a geographical map. See the
 <A HREF="https://en.wikipedia.org/wiki/Well-known_text">wikipedia page</A> for details.
-CGAL supports a subset of WKT types: point, multipoint, linestring, multilinestring, polygon and multipolygon.
+\cgal supports a subset of WKT types: point, multipoint, linestring, multilinestring, polygon and multipolygon.
 Free functions are provided for reading and writing several \cgal types using these WKT types, namely:
 - `CGAL::Point_2`
 - `CGAL::Point_3`
