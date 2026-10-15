@@ -35,6 +35,7 @@
 
 #include <CGAL/assertions.h>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
+#include <CGAL/Compact_container.h>
 #include <CGAL/Default.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/enum.h>
@@ -533,7 +534,7 @@ private:
   }
 
   auto with_point_tag() const {
-    return With_point_tag<Tr>{{-1}, &tr()};
+    return With_point_tag<const Tr>{{-1}, &tr()};
   }
 
 protected:
