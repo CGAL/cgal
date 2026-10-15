@@ -23,8 +23,6 @@
 
 #include <CGAL/tags.h>
 
-#include <type_traits>
-
 namespace CGAL
 {
 namespace Tetrahedral_remeshing

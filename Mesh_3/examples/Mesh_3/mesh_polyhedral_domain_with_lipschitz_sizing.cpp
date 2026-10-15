@@ -29,7 +29,7 @@ typedef CGAL::Mesh_complex_3_in_triangulation_3<
   Tr,Mesh_domain::Corner_index,Mesh_domain::Curve_index> C3t3;
 
 // Criteria
-typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
+typedef CGAL::Mesh_criteria_3<C3t3> Mesh_criteria;
 
 // Sizing field
 typedef CGAL::Mesh_3::Lipschitz_sizing<K, Mesh_domain, Mesh_domain::AABB_tree> Lip_sizing;

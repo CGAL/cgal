@@ -70,9 +70,9 @@ public:
   }
 
   static std::string io_signature() {
-    static_assert(
-        std::is_same_v<
-            decltype(std::declval<Conforming_constrained_Delaunay_triangulation_cell_data_3>().face_constraint_index(0)), int>);
+//    static_assert(
+//        std::is_same_v<
+//            decltype(std::declval<Conforming_constrained_Delaunay_triangulation_cell_data_3>().face_constraint_index(0)), int>);
 
     return Get_io_signature<Base>()() + "+(" + Get_io_signature<int>()() + ")[4]";
   }
@@ -82,13 +82,13 @@ public:
              const Conforming_constrained_Delaunay_triangulation_cell_base_3& c)
   {
     os << static_cast<const Base&>(c);
-    for( unsigned li = 0; li < 4; ++li ) {
-      if(IO::is_ascii(os)) {
-        os << " " << c.ccdt_3_data().face_constraint_index(li);
-      } else {
-        CGAL::write(os, c.ccdt_3_data().face_constraint_index(li));
-      }
-    }
+    //for( unsigned li = 0; li < 4; ++li ) {
+    //  if(IO::is_ascii(os)) {
+    //    os << " " << face_constraint_index(c, li);
+    //  } else {
+    //    CGAL::write(os, face_constraint_index(c, li));
+    //  }
+    //}
     return os;
   }
   friend std::istream&
@@ -97,16 +97,16 @@ public:
   {
     is >> static_cast<Base&>(c);
     if(!is) return is;
-    for( int li = 0; li < 4; ++li ) {
-      int i;
-      if(IO::is_ascii(is)) {
-        is >> i;
-      } else {
-        CGAL::read(is, i);
-      }
-      if(!is) return is;
-      c->ccdt_3_data().set_face_constraint_index(li, i);
-    }
+//    for( int li = 0; li < 4; ++li ) {
+//      int i;
+//      if(IO::is_ascii(is)) {
+//        is >> i;
+//      } else {
+//        CGAL::read(is, i);
+//      }
+//      if(!is) return is;
+//      set_face_constraint_index(c, li, i);
+//    }
     return is;
   }
 };

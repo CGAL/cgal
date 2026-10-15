@@ -11,9 +11,9 @@ at any point of the space.
 
 \sa `MeshDomain_3`
 \sa `MeshDomainWithFeatures_3`
-\sa `CGAL::Mesh_edge_criteria_3<Tr>`
-\sa `CGAL::Mesh_facet_criteria_3<Tr>`
-\sa `CGAL::Mesh_cell_criteria_3<Tr>`
+\sa `CGAL::Mesh_edge_criteria_3<C3T3>`
+\sa `CGAL::Mesh_facet_criteria_3<C3T3>`
+\sa `CGAL::Mesh_cell_criteria_3<C3T3>`
 
 */
 

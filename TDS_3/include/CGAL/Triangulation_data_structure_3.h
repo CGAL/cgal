@@ -333,6 +333,7 @@ public:
     : _dimension(std::exchange(tds._dimension, -2))
     , _cells(std::move(tds._cells))
     , _vertices(std::move(tds._vertices))
+    , _initial_Euler_characteristic(std::exchange(tds._initial_Euler_characteristic, 0))
   {
   }
 
@@ -351,6 +352,7 @@ public:
     _cells = std::move(tds._cells);
     _vertices = std::move(tds._vertices);
     _dimension = std::exchange(tds._dimension, -2);
+    _initial_Euler_characteristic = std::exchange(tds._initial_Euler_characteristic, 0);
     return *this;
   }
 

@@ -60,7 +60,8 @@ struct Image_tester : public Tester<K_e_i>
     ConcurrencyTag>::type Tr;
   typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 
-  typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
+  typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria; // the template parameter is `Tr` on purpose,
+                                                   // to test the backward compatibility
 
   void mesh_and_verify(Mesh_domain& domain, const Image& image, const double volume) const
   {
