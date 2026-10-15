@@ -112,7 +112,7 @@ is significantly improved.
 
 This example builds on the example presented in Section
 \ref Mesh_3MeshingMultipleDomains_2 of the \ref PkgMesh3 package.
-After generating a mesh of the implicit domain using `CGAL::make_mesh_3`, we smooth the mesh using
+After generating a mesh of the implicit domain using `CGAL::make_mesh_3()`, we smooth the mesh using
 `CGAL::Mesh_smoothing_3::Signed_distance_function_projector` to project its boundary back onto the
 implicit domain. This recovers the sharp features formed by the intersection of the implicit surfaces.
 

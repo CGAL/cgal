@@ -20,10 +20,10 @@ typedef boost::graph_traits<Mesh>::face_descriptor            face_descriptor;
 
 int main(int argc, char* argv[])
 {
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/eight.off");
+  const std::filesystem::path filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/eight.off");
 
   Mesh mesh;
-  OpenMesh::IO::read_mesh(mesh, filename);
+  OpenMesh::IO::read_mesh(mesh, filename.string());
 
   CGAL::OM_pmap<Mesh, face_descriptor, Vector> fnormals(mesh);
   CGAL::OM_pmap<Mesh, vertex_descriptor, Vector> vnormals(mesh);

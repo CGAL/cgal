@@ -61,6 +61,8 @@ CGAL_add_named_parameter(vertex_normal_map_t, vertex_normal_map, vertex_normal_m
 CGAL_add_named_parameter(vertex_color_map_t, vertex_color_map, vertex_color_map)
 CGAL_add_named_parameter(vertex_texture_map_t, vertex_texture_map, vertex_texture_map)
 CGAL_add_named_parameter(vertex_oriented_side_map_t, vertex_oriented_side_map, vertex_oriented_side_map)
+CGAL_add_named_parameter(read_vertex_oriented_side_map_t, read_vertex_oriented_side_map, read_vertex_oriented_side_map)
+
 
 CGAL_add_named_parameter(face_color_map_t, face_color_map, face_color_map)
 CGAL_add_named_parameter(repair_polygon_soup_t, repair_polygon_soup, repair_polygon_soup)
@@ -121,6 +123,7 @@ CGAL_add_named_parameter(allow_move_functor_t, allow_move_functor, allow_move_fu
 CGAL_add_named_parameter(throw_on_self_intersection_t, throw_on_self_intersection, throw_on_self_intersection)
 CGAL_add_named_parameter(clip_volume_t, clip_volume, clip_volume)
 CGAL_add_named_parameter(use_compact_clipper_t, use_compact_clipper, use_compact_clipper)
+CGAL_add_named_parameter(do_not_mark_intersection_polylines_t, do_not_mark_intersection_polylines, do_not_mark_intersection_polylines)
 CGAL_add_named_parameter(output_iterator_t, output_iterator, output_iterator)
 CGAL_add_named_parameter(erase_policy_t, erase_policy, erase_policy)
 CGAL_add_named_parameter(require_same_orientation_t, require_same_orientation, require_same_orientation)
@@ -453,6 +456,9 @@ CGAL_add_named_parameter(with_plc_face_id_t, with_plc_face_id, with_plc_face_id)
 
 // List of named parameters used in the package 'Barycentric_coordinates_3'
 CGAL_add_named_parameter(computation_policy_t, computation_policy, computation_policy)
+
+// List of named parameters used in the package 'Linear_cell_complex'
+CGAL_add_named_parameter(use_trimming_t, use_trimming, use_trimming)
 
 //List of named parameters used in Mesh_smoothing_3
 CGAL_add_named_parameter(max_number_of_evaluations_t, max_number_of_evaluations, max_number_of_evaluations)

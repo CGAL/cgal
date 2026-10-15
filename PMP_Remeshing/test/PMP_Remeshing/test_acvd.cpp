@@ -20,7 +20,7 @@ using Polyhedron = CGAL::Polyhedron_3<K>;
 namespace params = CGAL::parameters;
 
 template <class Mesh>
-void run_test(std::string fname, std::size_t genus, bool subdiv)
+void run_test(std::filesystem::path fname, std::size_t genus, bool subdiv)
 {
   Mesh mesh;
   CGAL::IO::read_polygon_mesh(fname, mesh);

@@ -339,24 +339,25 @@ void refine_with_plane(PolygonMesh& pm,
                        typename internal_np::Get_param<typename NamedParameters::base,
                                                        internal_np::vertex_oriented_side_map_t>::type>;
 
-
-  Vertex_oriented_side_map vertex_os;
-  if constexpr (use_default_vosm)
-    vertex_os = get(V_os_tag(), pm);
-  else
-    vertex_os = get_parameter(np, internal_np::vertex_oriented_side_map);
+  Vertex_oriented_side_map vertex_os =
+    choose_parameter(get_parameter(np, internal_np::vertex_oriented_side_map), V_os_tag(), pm);
 
   std::vector<edge_descriptor> inters;
+
+  bool read_vos = choose_parameter(get_parameter(np, internal_np::read_vertex_oriented_side_map),false);
 
   bool all_in = true;
   bool all_out = true;
   bool at_least_one_on = false;
+
   std::vector<vertex_descriptor> on_obnd;
   //TODO: parallel for
   for (vertex_descriptor v : vertices(pm))
   {
-    Oriented_side os = oriented_side(plane,  get(vpm, v));
-    put(vertex_os,v,os);
+    Oriented_side os = read_vos ? get(vertex_os,v) : oriented_side(plane,  get(vpm, v));
+    CGAL_assertion(os == oriented_side(plane,  get(vpm, v)));
+    if (!read_vos)
+      put(vertex_os,v,os);
     switch(os)
     {
       case ON_POSITIVE_SIDE:
@@ -373,6 +374,8 @@ void refine_with_plane(PolygonMesh& pm,
     }
   }
 
+  bool ignore_1d_tangencies = choose_parameter(get_parameter(np, internal_np::do_not_mark_intersection_polylines), false);
+
   if (at_least_one_on || (!all_in && !all_out))
   {
     //TODO: parallel for
@@ -383,29 +386,36 @@ void refine_with_plane(PolygonMesh& pm,
       {
         if (get(vertex_os, tgt)==CGAL::ON_ORIENTED_BOUNDARY)
         {
-          bool pure_coplanar=true;
-          if (!is_border(e, pm))
-          {
-            halfedge_descriptor he=halfedge(e, pm);
+          bool on_boundary=false;
+          halfedge_descriptor he=halfedge(e, pm);
+          Oriented_side os1=ON_ORIENTED_BOUNDARY;
+          if (!is_border(he, pm))
             for (halfedge_descriptor h : halfedges_around_face(he,pm))
-              if (get(vertex_os,target(h, pm))!=CGAL::ON_ORIENTED_BOUNDARY)
-              {
-                pure_coplanar=false;
-                break;
-              }
-            if (pure_coplanar)
             {
-              he=opposite(he, pm);
-              for (halfedge_descriptor h : halfedges_around_face(he,pm))
-                if (get(vertex_os, target(h, pm))!=CGAL::ON_ORIENTED_BOUNDARY)
-                {
-                  pure_coplanar=false;
-                  break;
-                }
+              os1 = get(vertex_os,target(h, pm));
+              if (os1!=CGAL::ON_ORIENTED_BOUNDARY) break;
             }
+          else
+            on_boundary=true;
+          he=opposite(he, pm);
+          Oriented_side os2=ON_ORIENTED_BOUNDARY;
+          if (!is_border(he, pm))
+            for (halfedge_descriptor h : halfedges_around_face(he,pm))
+            {
+              os2 = get(vertex_os,target(h, pm));
+              if (os2!=CGAL::ON_ORIENTED_BOUNDARY) break;
+            }
+          else
+            on_boundary=true;
+
+          if (os1==os2)
+          {
+            if (!ignore_1d_tangencies && os1!=ON_ORIENTED_BOUNDARY)
+              put(edge_is_marked, e, true);
           }
-          if (!pure_coplanar)
-            put(edge_is_marked, e, true);
+          else
+            if (!on_boundary || !ignore_1d_tangencies)
+              put(edge_is_marked, e, true);
         }
       }
       else

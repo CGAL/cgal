@@ -273,7 +273,7 @@ class ID_support_handler<SNC_indexed_items, Decorator> {
     index2 = get_hash(se2->twin()->get_index());
     if(index1 < index2) {
       se->twin()->set_index(index1);
-      set_hash(se1->twin()->get_index(), index1);
+      set_hash(se2->twin()->get_index(), index1);
     } else {
       se->twin()->set_index(index2);
       set_hash(se1->twin()->get_index(), index2);
@@ -305,12 +305,10 @@ class ID_support_handler<SNC_indexed_items, Decorator> {
     int index2 = get_hash(sl2->get_index());
     if(index1 < index2) {
       se->set_index(index1);
-      set_hash(se1->get_index(), index1);
       set_hash(sl2->get_index(), index1);
     } else {
       se->set_index(index2);
       set_hash(se1->get_index(), index2);
-      set_hash(sl2->get_index(), index2);
     }
 
     index1 = get_hash(se1->twin()->get_index());

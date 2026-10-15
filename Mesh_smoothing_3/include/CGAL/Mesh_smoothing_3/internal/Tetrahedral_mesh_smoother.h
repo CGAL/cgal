@@ -1505,7 +1505,7 @@ inline bool Tetrahedral_mesh_smoother<Surface_patch_index, Curve_index, Concurre
 
         double improvement_ratio = e/e_prev;
         if (iter == 0) {
-            // reseting the eps after the first iter to account for degenerated configurations
+            // resetting the eps after the first iter to account for degenerated configurations
             improvement_ratio = 1;
             _untangling_eps = _untangling_ref_eps;
         }
