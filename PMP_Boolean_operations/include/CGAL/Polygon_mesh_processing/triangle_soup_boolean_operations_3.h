@@ -135,11 +135,6 @@ parallel_connected_components(const size_t split_range_at,
   std::size_t max_size = (std::max)(trs_per_cc_1.size(), trs_per_cc_2.size());
   trs_per_cc_end = connected_components(new_triangles_at, nb_poly, max_size, 1, triangles, adjacent_edges, adjacent_faces, ccids, nm_edges);
 
-  // New triangles are
-  CGAL_assertion_code(
-    for(std::size_t i=new_triangles_at; i<nb_poly; ++i));
-      CGAL_assertion(ccids[i]!=-1);
-
   merged_trs_per_cc.resize(2 * max_size + trs_per_cc_end.size(), std::size_t(-1));
   for(std::size_t i=0; i<trs_per_cc_1.size(); ++i)
     merged_trs_per_cc[2*i] = trs_per_cc_1[i];
