@@ -34,6 +34,7 @@
 #include <CGAL/type_traits.h>
 #include <CGAL/unordered_flat_map.h>
 #include <CGAL/unordered_flat_set.h>
+#include <CGAL/use.h>
 
 #include <CGAL/Mesh_3/io_signature.h>
 #include <CGAL/IO/File_binary_mesh_3.h>
@@ -337,8 +338,16 @@ public:
   using Locate_type = typename T_3::Locate_type;
 
   inline static With_offset_tag with_offset_tag{ -1 };
-  inline static With_point_tag with_point_tag{ {-1} };
-  inline static With_point_and_info_tag with_point_and_info_tag{ { {-1} } };
+  With_point_tag<T_3> with_point_tag{ {-1}, this };
+  With_point_and_info_tag<T_3> with_point_and_info_tag{ { {-1}, this } };
+
+  auto with_point(Vertex_handle v) const {
+    return IO::oformat(v, with_point_tag);
+  }
+
+  auto with_point_and_info(Vertex_handle v) const {
+    return IO::oformat(v, with_point_and_info_tag);
+  }
 
   Conforming_Delaunay_triangulation_3(const Geom_traits& gt = Geom_traits())
     : T_3(gt)
@@ -512,7 +521,7 @@ protected:
       // vertices as sub-constraints.
       std::for_each(tr().segment_traverser_simplices_begin(va, vb), tr().segment_traverser_simplices_end(),
                     [&, prev = Vertex_handle{}](auto simplex) mutable {
-                      // std::cerr << "- " << oformat(simplex, With_point_tag{}) << '\n';
+                      // std::cerr << "- " << oformat(simplex, with_point_tag) << '\n';
                       if(simplex.dimension() == 0) {
                         const auto v = static_cast<Vertex_handle>(simplex);
                         v->ccdt_3_data().set_on_constraint(c_id);
@@ -896,7 +905,7 @@ protected:
       ss << "insert_Steiner_point_on_subconstraint: Steiner point coincides with an existing vertex\n";
       ss << "  -> Steiner point: " << steiner_pt << '\n';
       ss << "     on constraint: " << display_vert(c_va) << "  -  " << display_vert(c_vb) << '\n';
-      ss << "  -> existing vertex: " << with_point_and_info(other_v) << '\n';
+      ss << "  -> existing vertex: " << display_vert(other_v) << '\n';
       if(other_v->ccdt_3_data().number_of_incident_constraints() > 0) {
         const auto c_id = other_v->ccdt_3_data().constrained_polyline_id(*this);
         const auto [c_va, c_vb] = constraint_extremities(c_id);
@@ -1181,7 +1190,7 @@ protected:
     };
     auto fill_encroaching_vertices = [&](const auto simplex) {
       if(debug().encroaching_vertices()) {
-        std::cerr << " - " << IO::oformat(simplex, With_point_tag{}) << '\n';
+        std::cerr << " - " << IO::oformat(simplex, with_point_tag) << '\n';
       }
       auto visit_cell = [&](Cell_handle cell) {
         for(int i = 0, end = this->tr().dimension() + 1; i < end; ++i) {
