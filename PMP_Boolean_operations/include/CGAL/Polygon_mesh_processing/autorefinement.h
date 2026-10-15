@@ -975,9 +975,10 @@ void generate_subtriangles(std::size_t ti,
 namespace autorefine_impl{
 
 //
-template <typename Kernel, typename Concurrency_tag, typename PointRange, typename PolygonRange, typename Pair_of_triangle_ids>
+template <typename Kernel, typename Concurrency_tag, typename PointRange, typename PolygonRange, typename Pair_of_triangle_ids, typename PointMap>
 void compute_intersecting_pairs(const PointRange& points, const PolygonRange& triangles,
-                                std::size_t split_id, std::vector<Pair_of_triangle_ids>& si_pairs)
+                                std::size_t split_id, std::vector<Pair_of_triangle_ids>& si_pairs,
+                                const PointMap& pm)
 {
   typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;
   typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, std::size_t, Box_policy> Box;
@@ -989,7 +990,7 @@ void compute_intersecting_pairs(const PointRange& points, const PolygonRange& tr
   boxes_1_ptr.reserve(boxes_1.size());
   for (std::size_t i=0;i<split_id; ++i)
   {
-    boxes_1.emplace_back(points[triangles[i][0]].bbox()+points[triangles[i][1]].bbox()+points[triangles[i][2]].bbox(), i);
+    boxes_1.emplace_back(get(pm, points[triangles[i][0]]).bbox()+get(pm, points[triangles[i][1]]).bbox()+get(pm, points[triangles[i][2]]).bbox(), i);
     boxes_1_ptr.push_back( &boxes_1.back() );
   }
 
@@ -997,7 +998,7 @@ void compute_intersecting_pairs(const PointRange& points, const PolygonRange& tr
   boxes_2_ptr.reserve(boxes_2.size());
   for (std::size_t i=split_id;i<triangles.size(); ++i)
   {
-    boxes_2.emplace_back(points[triangles[i][0]].bbox()+points[triangles[i][1]].bbox()+points[triangles[i][2]].bbox(), i);
+    boxes_2.emplace_back(get(pm, points[triangles[i][0]]).bbox()+get(pm, points[triangles[i][1]]).bbox()+get(pm, points[triangles[i][2]]).bbox(), i);
     boxes_2_ptr.push_back( &boxes_2.back() );
   }
 
@@ -1012,13 +1013,13 @@ void compute_intersecting_pairs(const PointRange& points, const PolygonRange& tr
 #else
   std::vector<Pair_of_triangle_ids>& collecter=si_pairs;
 #endif
-  auto callback = [&points, &triangles, &collecter]
+  auto callback = [&points, &triangles, &collecter, &pm]
   (const Box* b1, const Box* b2)
   {
     std::size_t i1=b1->info(), i2=b2->info();
 
-    if (do_intersect(typename Kernel::Triangle_3(points[triangles[i1][0]],points[triangles[i1][1]],points[triangles[i1][2]]),
-                     typename Kernel::Triangle_3(points[triangles[i2][0]],points[triangles[i2][1]],points[triangles[i2][2]])))
+    if (do_intersect(typename Kernel::Triangle_3(get(pm, points[triangles[i1][0]]),get(pm, points[triangles[i1][1]]),get(pm, points[triangles[i1][2]])),
+                     typename Kernel::Triangle_3(get(pm, points[triangles[i2][0]]),get(pm, points[triangles[i2][1]]),get(pm, points[triangles[i2][2]]))))
     {
       collecter.emplace_back(i1,i2);
     }
@@ -1102,7 +1103,7 @@ bool autorefine_triangle_soup(PointRange& soup_points,
   if constexpr(!parameters::is_default_parameter<NamedParameters, internal_np::split_triangle_range_at_t>::value)
   {
     std::size_t split_id=get_parameter(np, internal_np::split_triangle_range_at);
-    compute_intersecting_pairs<GT, Concurrency_tag>(soup_points, soup_triangles, split_id, si_pairs);
+    compute_intersecting_pairs<GT, Concurrency_tag>(soup_points, soup_triangles, split_id, si_pairs, pm);
   }
   else
     triangle_soup_self_intersections<Concurrency_tag>(soup_points, soup_triangles, std::back_inserter(si_pairs), np);
