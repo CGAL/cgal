@@ -347,8 +347,8 @@ select(const std::vector<Exact_point>& points,
   // extract connected_components bounded by non-manifold edges
   std::vector<std::size_t>& ccids = data_out.ccids;
   std::vector< EID > nm_edges;
-#ifdef CGAL_LINKED_WITH_TBB
   std::vector<std::size_t> one_triangle_per_cc;
+#ifdef CGAL_LINKED_WITH_TBB
   if constexpr(std::is_same_v<Concurrency_tag, Parallel_tag>)
   {
     one_triangle_per_cc = boolops_3::parallel_connected_components(split_at, new_triangles_at, triangles, adjacent_edges, adjacent_faces, ccids, nm_edges);
