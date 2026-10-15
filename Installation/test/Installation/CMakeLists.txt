@@ -179,13 +179,18 @@ function(CGAL_add_config_file_test test_name src_dir cgal_config_path)
     set(extra_ctest_args -R terrain_with_info)
   endif()
   add_test(NAME "config___${test_name}"
-    COMMAND ${CMAKE_COMMAND} ${GENERATOR} ${INIT_FILE}
+    COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" ${INIT_FILE}
                              -DCGAL_ENABLE_TESTING=ON
-                             -DCMAKE_BUILD_TYPE=${CGAL_TESTSUITE_BUILD_TYPE} -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON
+                             -DCMAKE_BUILD_TYPE=${CGAL_TESTSUITE_BUILD_TYPE}
+                             -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON
                              -DCMAKE_FIND_PACKAGE_PREFER_CONFIG=ON
                              "-DCGAL_DIR=${cgal_dir}"
                              "-DCGAL_GIVEN_DIR=${cgal_dir}"
                              -S "${src_dir}" -B "${build_dir}")
+  set_property(TEST "config___${test_name}"
+               PROPERTY ENVIRONMENT CMAKE_GENERATOR_INSTANCE="${CMAKE_GENERATOR_INSTANCE}"
+                                    CMAKE_GENERATOR_PLATFORM="${CMAKE_GENERATOR_PLATFORM}"
+                                    CMAKE_GENERATOR_TOOLSET="${CMAKE_GENERATOR_TOOLSET}")
   add_test(NAME "cleanup__${test_name}"  COMMAND ${CMAKE_COMMAND} -E remove_directory "${build_dir}")
   add_test(NAME "test_____${test_name}"
     COMMAND ${CMAKE_CTEST_COMMAND} --test-dir "${build_dir}"
@@ -193,7 +198,7 @@ function(CGAL_add_config_file_test test_name src_dir cgal_config_path)
                                    --output-on-failure
                                    ${extra_ctest_args})
   set_property(TEST "test_____${test_name}" APPEND PROPERTY ENVIRONMENT CTEST_NO_TESTS_ACTION=error)
-
+  set_property(TEST "test_____${test_name}" PROPERTY RESOURCE_LOCK CGAL_Compilation)
   set_property(TEST "config___${test_name}" APPEND PROPERTY FIXTURES_SETUP "${test_name}_build_directory")
   set_property(TEST "cleanup__${test_name}" APPEND PROPERTY FIXTURES_CLEANUP "${test_name}_build_directory")
   set_property(TEST "test_____${test_name}"
@@ -228,11 +233,17 @@ endfunction()
 ##
 function(test_CGAL_installation test_name install_prefix build_dir)
   add_test(NAME "config___${test_name}"
-    COMMAND ${CMAKE_COMMAND} ${GENERATOR} ${INIT_FILE} -DCMAKE_BUILD_TYPE=${CGAL_TESTSUITE_BUILD_TYPE} -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON
-                                                       -DCMAKE_FIND_PACKAGE_PREFER_CONFIG=ON
-                                                       "-DCMAKE_INSTALL_PREFIX=${install_prefix}"
-                                                       "-DCGAL_INSTALL_LIB_DIR=lib"
-                                                       -S "${CGAL_SOURCE_DIR}" -B "${build_dir}")
+    COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" ${INIT_FILE}
+                             -DCMAKE_BUILD_TYPE=${CGAL_TESTSUITE_BUILD_TYPE}
+                             -DCGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE=ON
+                             -DCMAKE_FIND_PACKAGE_PREFER_CONFIG=ON
+                             "-DCMAKE_INSTALL_PREFIX=${install_prefix}"
+                             "-DCGAL_INSTALL_LIB_DIR=lib"
+                             -S "${CGAL_SOURCE_DIR}" -B "${build_dir}")
+  set_property(TEST "config___${test_name}"
+               PROPERTY ENVIRONMENT CMAKE_GENERATOR_INSTANCE="${CMAKE_GENERATOR_INSTANCE}"
+                                    CMAKE_GENERATOR_PLATFORM="${CMAKE_GENERATOR_PLATFORM}"
+                                    CMAKE_GENERATOR_TOOLSET="${CMAKE_GENERATOR_TOOLSET}")
   add_test(NAME "install__${test_name}"
     COMMAND ${CMAKE_COMMAND} --install "${build_dir}" --config "$<CONFIG>")
   set_property(TEST "install__${test_name}" APPEND PROPERTY DEPENDS "config___${test_name}")
