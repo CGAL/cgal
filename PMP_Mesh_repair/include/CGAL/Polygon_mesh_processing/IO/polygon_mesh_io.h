@@ -17,6 +17,8 @@
 
 #include <CGAL/license/Polygon_mesh_processing.h>
 
+#include <vector>
+
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
@@ -29,7 +31,6 @@
 #include <algorithm>
 #include <iostream>
 #include <filesystem>
-#include <vector>
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -70,6 +71,23 @@ namespace IO {
  *                     must be available in `PolygonMesh`.}
  *   \cgalParamNEnd
  *
+ *   \cgalParamNBegin{vertex_color_output_iterator}
+ *     \cgalParamDescription{an output iterator receiving the vertex colors read from the file,
+ *                           in input order, for formats supporting vertex colors}
+ *     \cgalParamType{a model of `OutputIterator` accepting `CGAL::IO::Color`}
+ *     \cgalParamExtra{These colors describe the input soup. Repair and orientation can merge,
+ *                     remove, or duplicate vertices, so they do not necessarily correspond to
+ *                     the vertices of the resulting mesh.}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{face_color_output_iterator}
+ *     \cgalParamDescription{an output iterator receiving the face colors read from the file,
+ *                           in input order, for formats supporting face colors}
+ *     \cgalParamType{a model of `OutputIterator` accepting `CGAL::IO::Color`}
+ *     \cgalParamExtra{These colors describe the input soup. Repair can remove or split polygons,
+ *                     so they do not necessarily correspond to the faces of the resulting mesh.}
+ *   \cgalParamNEnd
+ *
  *   \cgalParamNBegin{repair_polygon_soup}
  *     \cgalParamDescription{a parameter used to indicate whether `CGAL::Polygon_mesh_processing::repair_polygon_soup()`
  *                           should be called on the intermediate polygon soup.}
@@ -105,7 +123,7 @@ bool read_polygon_mesh(const std::filesystem::path& fname,
 
   std::vector<Point> points;
   std::vector<std::vector<std::size_t> > faces;
-  if(!CGAL::IO::read_polygon_soup(fname, points, faces, CGAL::parameters::verbose(verbose)))
+  if(!CGAL::IO::read_polygon_soup(fname, points, faces, np))
   {
     if(verbose)
       std::cerr << "Warning: cannot read polygon soup" << std::endl;
