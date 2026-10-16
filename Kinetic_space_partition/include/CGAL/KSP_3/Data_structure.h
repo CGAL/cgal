@@ -202,7 +202,6 @@ public:
 
 private:
   std::vector<Support_plane> m_support_planes;
-  std::vector<typename Support_plane::Data> m_initial_support_planes;
   Intersection_graph m_intersection_graph;
 
   std::vector<std::vector<Point_3> > m_input_polygons;
@@ -260,29 +259,48 @@ public:
 
   void initialization_done() {
     m_intersection_graph.initialization_done();
-    //m_initial_support_planes.resize(m_support_planes.size());
-    //for (std::size_t i = 0; i < m_support_planes.size(); i++)
-      //m_initial_support_planes[i] = m_support_planes[i].data();
-
   }
-  void reset_to_initialization() {
-    m_intersection_graph.reset_to_initialization();
 
-    //CGAL_assertion(m_support_planes.size() == m_initial_support_planes.size());
-    for (std::size_t i = 0; i < m_support_planes.size(); i++) {
-      //m_support_planes[i].data() = m_initial_support_planes[i];
+  // Everything that is modified by the propagation and the finalization:
+  // the support planes, the kinetic vertices and parts of the intersection graph.
+  struct Initial_state {
+    std::vector<Support_plane> support_planes;
+    std::vector<Vertex> kinetic_vertices;
+    typename Intersection_graph::Propagation_state igraph;
+  };
 
-      m_support_planes[i].link_property_maps();
-    }
+  // Saves a copy of the initialized state. Together with restore_initial_state(), it allows
+  // to propagate the same initialized data structure several times, e.g., with different k.
+  Initial_state save_initial_state() const {
+    Initial_state state;
+    state.support_planes.reserve(m_support_planes.size());
+    for (const Support_plane& sp : m_support_planes)
+      state.support_planes.push_back(sp.deep_copy());
 
-    m_volumes.clear();
-    m_vertices.clear();
-    m_exact_vertices.clear();
-    m_ivertex2vertex.clear();
-    m_face2index.clear();
-    m_face2vertices.clear();
-    m_pface_neighbors.clear();
-    m_face2sp.clear();
+    state.kinetic_vertices = m_kinetic_vertices;
+    state.igraph = m_intersection_graph.save_propagation_state();
+
+    return state;
+  }
+
+  // Restores the state saved by save_initial_state() and discards the results of the finalization.
+  void restore_initial_state(Initial_state&& state) {
+    CGAL_assertion(state.support_planes.size() == m_support_planes.size());
+    m_support_planes = std::move(state.support_planes);
+    // The support planes refer to m_kinetic_vertices, so the vector itself has to stay in place.
+    m_kinetic_vertices = std::move(state.kinetic_vertices);
+    m_intersection_graph.restore_propagation_state(std::move(state.igraph));
+
+    std::vector<Volume_cell>().swap(m_volumes);
+    std::vector<Point_3>().swap(m_vertices);
+    std::vector<typename Intersection_kernel::Point_3>().swap(m_exact_vertices);
+    std::vector<int>().swap(m_ivertex2vertex);
+    std::vector<std::pair<int, int> >().swap(m_face2volumes);
+    std::map<PFace, std::size_t>().swap(m_face2index);
+    std::vector<std::vector<std::size_t> >().swap(m_face2vertices);
+    std::vector<bool>().swap(m_part_of_initial);
+    std::map<PFace, std::pair<int, int> >().swap(m_pface_neighbors);
+    std::vector<std::size_t>().swap(m_face2sp);
   }
 
   /*******************************

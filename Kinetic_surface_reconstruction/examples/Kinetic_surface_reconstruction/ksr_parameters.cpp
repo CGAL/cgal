@@ -5,7 +5,6 @@
 #include <CGAL/Point_set_3/IO.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/IO/PLY.h>
-#include <CGAL/IO/VG.h>
 #include <CGAL/IO/polygon_soup_io.h>
 #include <CGAL/pca_estimate_normals.h>
 #include <CGAL/mst_orient_normals.h>
@@ -79,6 +78,7 @@ void parse_terminal(Terminal_parser& parser, Parameters& parameters) {
   parser.add_val_parameter("-k", parameters.k_intersections);
   parser.add_val_parameter("-odepth", parameters.max_octree_depth);
   parser.add_val_parameter("-osize", parameters.max_octree_node_size);
+  parser.add_val_parameter("-sequential", parameters.sequential);
 
   // Reconstruction.
   parser.add_val_parameter("-lambda", parameters.graphcut_lambda);
@@ -113,9 +113,9 @@ int main(const int argc, const char** argv) {
   std::vector<std::pair<Plane_3, std::vector<typename Point_set::Index>>> regions;
   std::filesystem::path path = parameters.data;
 
-  if (CGAL::IO::read_VG("planar_shapes.vg", point_set, std::back_inserter(regions))) {
-    std::cout << "Successfully read planar_shapes_.vg" << std::endl;
-  }
+//   if (CGAL::IO::read_VG("planar_shapes.vg", point_set, std::back_inserter(regions))) {
+//     std::cout << "Successfully read planar_shapes_.vg" << std::endl;
+//   }
 
   // Input.
   if (!regions.empty())
@@ -203,7 +203,7 @@ int main(const int argc, const char** argv) {
 
   if (regions.empty()) {
     ksr.detect_planar_shapes(param);
-    CGAL::IO::write_VG("planar_shapes.vg", point_set, ksr.planar_shapes());
+    //CGAL::IO::write_VG("planar_shapes.vg", point_set, ksr.planar_shapes());
   }
   else if (lcc_input.template one_dart_per_cell<3>().empty() && lcc_input.template one_dart_per_cell<3>().empty())
       ksr.insert_planar_shapes(regions);
@@ -222,14 +222,17 @@ int main(const int argc, const char** argv) {
   else {
     after_shape_detection = timer.time();
 
-    ksr.partition(parameters.k_intersections, param);
+    if (parameters.sequential)
+      ksr.partition<CGAL::Sequential_tag>(parameters.k_intersections, param);
+    else
+      ksr.partition<CGAL::Parallel_if_available_tag>(parameters.k_intersections, param);
 
     after_partition = timer.time();
 
     const typename KSR::LCC& lcc = ksr.get_linear_cell_complex();
-    std::ofstream file(lcc_file);
-    file << lcc;
-    file.close();
+//     std::ofstream file(lcc_file);
+//     file << lcc;
+//     file.close();
   }
 
   std::vector<Point_3> vtx;

@@ -364,6 +364,38 @@ public:
       m_ifaces[idx].part_of_partition = m_initial_part_of_partition[idx];
   }
 
+  // Parts of the intersection graph that are modified by the propagation and finalization.
+  // The structure of the graph itself does not change after initialization.
+  struct Propagation_state {
+    std::vector<bool> part_of_partition;
+    std::vector<std::pair<Edge_descriptor, decltype(Edge_property::vertices)> > edge_vertices;
+  };
+
+  Propagation_state save_propagation_state() const {
+    Propagation_state state;
+    state.part_of_partition.resize(m_ifaces.size());
+    for (std::size_t idx = 0; idx < m_ifaces.size(); idx++)
+      state.part_of_partition[idx] = m_ifaces[idx].part_of_partition;
+
+    for (const Edge_descriptor e : edges())
+      if (!m_graph[e].vertices.empty())
+        state.edge_vertices.push_back(std::make_pair(e, m_graph[e].vertices));
+
+    return state;
+  }
+
+  void restore_propagation_state(Propagation_state&& state) {
+    CGAL_assertion(m_ifaces.size() == state.part_of_partition.size());
+    for (std::size_t idx = 0; idx < m_ifaces.size(); idx++)
+      m_ifaces[idx].part_of_partition = state.part_of_partition[idx];
+
+    for (const Edge_descriptor e : edges())
+      m_graph[e].vertices.clear();
+
+    for (auto& p : state.edge_vertices)
+      m_graph[p.first].vertices = std::move(p.second);
+  }
+
   const std::pair<Edge_descriptor, Edge_descriptor>
     split_edge(Edge_descriptor edge, Vertex_descriptor vertex) {
 

@@ -268,6 +268,15 @@ public:
     m_data->f_initial_map = m_data->mesh.template add_property_map<Face_index, bool >("f:initial", false).first;
   }
 
+  // Returns a copy of the support plane that does not share its data with this one.
+  // The copy still refers to the same kinetic vertices and the same intersection graph.
+  Support_plane deep_copy() const {
+    Support_plane copy(*this);
+    copy.m_data = std::make_shared<Data>(*m_data);
+    copy.link_property_maps();
+    return copy;
+  }
+
   void link_property_maps() {
     m_data->v_ivertex_map = m_data->mesh.template property_map<Vertex_index, IVertex>("v:ivertex").value();
     m_data->v_iedge_map = m_data->mesh.template property_map<Vertex_index, IEdge>("v:iedge").value();

@@ -140,7 +140,7 @@ public:
   using LCC = CGAL::Linear_cell_complex_for_combinatorial_map<3, 3, LCC_traits, typename KSP::Linear_cell_complex_min_items>;
 
   /*!
-    \brief creates a `Kinetic_shape_reconstruction_3` object.
+    \brief creates a `Kinetic_surface_reconstruction_3` object.
 
     \param points
      an instance of `PointRange` with 3D points and corresponding 3D normal vectors.
@@ -317,7 +317,7 @@ public:
   }
 
   /*!
-    \brief inserts planar shapes ti skip shape detection.
+    \brief inserts planar shapes to skip shape detection.
 
     \tparam RegionRange
     a model of `Range` whose iterator type is `RandomAccessIterator` and value type is `std::pair<Plane_3, std::vector<item>>`,
@@ -377,7 +377,7 @@ public:
   /*!
     \brief detects and regularizes shapes in the provided point cloud and creates the kinetic space partition.
 
-    Combines calls of `detect_planar_shapes()` and `partition()`.
+    Combines calls of `detect_planar_shapes()`, `regularize_planar_shapes()` and `partition()`.
 
     \tparam NamedParameters
     a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -516,9 +516,13 @@ public:
   }
 
   /*!
-    \brief initializes the kinetic partition and propagates the planar shapes
+    \brief initializes the kinetic partition and propagates the planar shapes.
+
+    The kinetic partitions of the octree leaves are computed independently and, if `ConcurrencyTag` is `Parallel_tag`, in parallel.
+    See \ref Ksp_usage for details.
 
     \tparam ConcurrencyTag enables sequential versus parallel computation of the kinetic partitions of the octree leaves. Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
+    The default `Parallel_if_available_tag` computes in parallel if \cgal is linked with \ref thirdpartyTBB.
 
     \tparam NamedParameters
     a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -543,6 +547,16 @@ public:
         \cgalParamType{FT}
         \cgalParamDefault{1.1}
       \cgalParamNEnd
+      \cgalParamNBegin{max_octree_depth}
+        \cgalParamDescription{The maximal depth of the octree for subdividing the kinetic partition before initialization.}
+        \cgalParamType{std::size_t}
+        \cgalParamDefault{3}
+      \cgalParamNEnd
+      \cgalParamNBegin{max_octree_node_size}
+        \cgalParamDescription{A node in the octree is only split if the contained number of primitives is larger and the maximal depth is not yet reached.}
+        \cgalParamType{std::size_t}
+        \cgalParamDefault{40}
+      \cgalParamNEnd
     \cgalNamedParamsEnd
   */
   template<typename ConcurrencyTag = CGAL::Parallel_if_available_tag, typename CGAL_NP_TEMPLATE_PARAMETERS>
@@ -556,10 +570,8 @@ public:
     }
 
     m_kinetic_partition = KSP(m_polygon_pts, m_polygon_indices, np);
-    m_kinetic_partition.initialize(np);
-
     FT partition_time, finalization_time, conformal_time;
-    m_kinetic_partition.template partition<ConcurrencyTag>(k, partition_time, finalization_time, conformal_time);
+    m_kinetic_partition.template init_and_partition<ConcurrencyTag>(k, partition_time, finalization_time, conformal_time, np);
 
     m_kinetic_partition.get_linear_cell_complex(m_lcc_from_kinetic_partition);
     const LCC &lcc = m_lcc;

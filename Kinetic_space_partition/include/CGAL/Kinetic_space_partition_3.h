@@ -261,6 +261,8 @@ private:
   std::vector<Index> m_volumes;
   std::map<Index, std::size_t> m_index2volume;
 
+  bool m_kinetic_data_initialized = false; // True if initialize() created the kinetic data structures of all octree leaves.
+
   std::set<Index> duplicates;
 
 public:
@@ -469,7 +471,17 @@ public:
   }
 
   /*!
-  \brief initializes the kinetic partition and separates the input polygons using an octree.
+  \brief initializes the kinetic partition.
+
+  The input polygons are separated using an octree. Afterwards, the kinetic data structure of each octree leaf is initialized.
+  The leaves are initialized independently and, if `ConcurrencyTag` is `Parallel_tag`, in parallel.
+
+  The initialized kinetic data structures are kept. Hence, `partition()` can be called several times afterwards, e.g., with different values of `k`, without initializing again.
+
+  \note The initialized kinetic data structures of all octree leaves exist at the same time. If only a single partition is needed,
+  `init_and_partition()` has a considerably lower memory consumption.
+
+  \tparam ConcurrencyTag enables sequential versus parallel algorithm. Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
 
   \tparam NamedParameters
   a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -503,92 +515,41 @@ public:
 
   \pre input data has been provided via `insert()`.
   */
-
-  template<
+  template<typename ConcurrencyTag = Parallel_if_available_tag,
     typename NamedParameters = parameters::Default_named_parameters>
   void initialize(
     const NamedParameters& np = CGAL::parameters::default_values()) {
-    Timer timer;
-    m_parameters.bbox_dilation_ratio = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::bbox_dilation_ratio), FT(11) / FT(10));
-    m_parameters.reorient_bbox = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::reorient_bbox), false);
-    m_parameters.max_octree_depth = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::max_octree_depth), 3);
-    m_parameters.max_octree_node_size = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::max_octree_node_size), 40);
+#ifndef CGAL_LINKED_WITH_TBB
+    static_assert (!std::is_convertible<ConcurrencyTag, Parallel_tag>::value,
+                   "Parallel_tag is enabled but TBB is unavailable.");
+#endif
 
-    if (m_parameters.bbox_dilation_ratio <= 1.0) {
-      std::cout << "Warning: You set enlarge_bbox_ratio <= 1.0! The valid range is (1.0, +inf). Setting to 1.1!" << std::endl;
-      m_parameters.bbox_dilation_ratio = FT(11) / FT(10);
-    }
+    release_kinetic_data();
+    clear_partition();
 
-    std::cout.precision(17);
-    if (m_input_polygons.size() == 0) {
-      std::cout << "Warning: Your input is empty!";
+    if (!create_subpartitions(np))
+      return;
+
+    FT initialization_time = 0;
+    if (!initialize_subpartitions<ConcurrencyTag>(initialization_time)) {
+      release_kinetic_data();
       return;
     }
 
-    std::set<std::size_t> n;
-    for (auto p : m_input2regularized)
-      n.insert(p);
+    m_kinetic_data_initialized = true;
 
-    CGAL_assertion(m_regularized2input.size() == m_input_polygons.size());
-    CGAL_assertion(m_regularized2input.size() == n.size());
-
-    if (m_parameters.bbox_dilation_ratio < FT(1)) {
-      CGAL_warning_msg(m_parameters.bbox_dilation_ratio >= FT(1),
-        "Warning: You set enlarge_bbox_ratio < 1.0! The valid range is [1.0, +inf). Setting to 1.0!");
-      m_parameters.bbox_dilation_ratio = FT(1);
-    }
-
-    if (m_parameters.verbose) {
-      //const std::string is_reorient = (m_parameters.reorient ? "true" : "false");
-
-      std::cout << "\n--- PARTITION OPTIONS: \n";
-      std::cout << "* enlarge bbox ratio: " << m_parameters.bbox_dilation_ratio << "\n";
-
-      std::cout << "\n--- CREATING SUBPARTITIONS:" << std::endl;
-
-      // Initialization.
-      timer.reset();
-      timer.start();
-    }
-
-    if (m_parameters.debug) {
-      for (std::size_t i = 0; i < m_input_polygons.size(); i++)
-        KSP_3::internal::dump_polygon<GeomTraits>(m_input_polygons[i], std::to_string(i) + "-input_polygon");
-    }
-
-    // Discard the results of a previous partition.
-    m_volumes.clear();
-    m_index2volume.clear();
-
-    split_octree();
-    m_partitions.resize(m_partition_nodes.size());
-    std::iota(m_partitions.begin(), m_partitions.end(), 0);
-
-    // The kinetic data structure of each partition is created in partition() right before its propagation.
-    // Thus, only one kinetic data structure exists at any time.
-    for (std::size_t idx : m_partitions)
-      m_partition_nodes[idx].index = idx;
-
-    // Timing.
-    if (m_parameters.verbose) {
-      const double time_to_initialize = timer.time();
-      std::cout << "* initialization time: " << time_to_initialize << std::endl;
-    }
+    if (m_parameters.verbose)
+      std::cout << "* initialization time of kinetic data structures: " << initialization_time << std::endl;
   }
 
   /*!
   \brief propagates the kinetic polygons in the initialized partition.
 
   The kinetic partitions of the octree leaves are computed independently and, if `ConcurrencyTag` is `Parallel_tag`, in parallel.
-  The internal kinetic data structure of each leaf is created right before its propagation and released after its finalization.
-  Hence, `partition()` can only be called once after `initialize()`.
-  To create a partition with a different `k`, `initialize()` has to be called again.
+  The kinetic data structures initialized by `initialize()` are restored after the propagation of each leaf. Hence, `partition()` can be called several times with different values of `k`.
+  The result of a previous call is replaced.
 
-  \note In the parallel version, several kinetic data structures exist at the same time, one per running thread.
+  \note In the parallel version, the state of several kinetic data structures is copied at the same time, one per running thread.
   Thus, the memory consumption is higher than in the sequential version.
 
   \tparam ConcurrencyTag enables sequential versus parallel algorithm. Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
@@ -596,7 +557,7 @@ public:
   \param k
    maximum number of allowed intersections for each vertex of the polygon before its expansion stops.
 
-  \pre initialized partition and `k != 0`
+  \pre `initialize()` has been called and `k != 0`
   */
   template<typename ConcurrencyTag = Parallel_if_available_tag>
   void partition(std::size_t k) {
@@ -612,93 +573,110 @@ public:
                    "Parallel_tag is enabled but TBB is unavailable.");
 #endif
 
-    // The kinetic data structures are released after finalizing each partition.
-    // Thus, partition() can only be called once after initialize().
-    if (!m_volumes.empty()) {
-      std::cout << "Warning: partition() can only be called once after initialize()!" << std::endl;
-      return;
-    }
-    if (m_partitions.empty()) {
+    partition_time = 0;
+    finalization_time = 0;
+    conformal_time = 0;
+
+    if (!m_kinetic_data_initialized) {
       std::cout << "Warning: initialize() has to be called before partition()!" << std::endl;
       return;
     }
 
-    Timer timer;
-    timer.start();
+    clear_partition();
+
+    FT initialization_time = 0;
+    if (!compute_subpartitions<ConcurrencyTag>(k, false, initialization_time, partition_time, finalization_time))
+      return;
+
+    merge_subpartitions(conformal_time);
+  }
+#endif
+
+  /*!
+  \brief initializes the kinetic partition and propagates the kinetic polygons.
+
+  The input polygons are separated using an octree. Afterwards, the kinetic partition of each octree leaf is computed.
+  Each leaf are computed independently and, if `ConcurrencyTag` is `Parallel_tag`, in parallel.
+
+  In contrast to calling `initialize()` and `partition()`, the kinetic data structure of each leaf is created right before its propagation and released after its finalization.
+  Hence, the memory consumption is considerably lower. To compute another partition, e.g., with a different `k`, `init_and_partition()` has to be called again.
+
+  \note In the parallel version, several kinetic data structures exist at the same time, one per running thread.
+  Thus, the memory consumption is higher than in the sequential version.
+
+  \tparam ConcurrencyTag enables sequential versus parallel algorithm. Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
+
+  \tparam NamedParameters
+  a sequence of \ref bgl_namedparameters "Named Parameters"
+
+  \param k
+   maximum number of allowed intersections for each vertex of the polygon before its expansion stops.
+
+  \param np
+  a sequence of \ref bgl_namedparameters "Named Parameters"
+  among the ones listed below
+
+  \cgalNamedParamsBegin
+    \cgalParamNBegin{reorient_bbox}
+      \cgalParamDescription{Use the oriented bounding box instead of the axis-aligned bounding box. While the z direction is maintained, the x axis is aligned with the largest variation in the horizontal plane.}
+      \cgalParamType{bool}
+      \cgalParamDefault{false}
+    \cgalParamNEnd
+    \cgalParamNBegin{bbox_dilation_ratio}
+      \cgalParamDescription{Factor for extension of the bounding box of the input data to be used for the partition. Must be larger than 1.0.}
+      \cgalParamType{FT}
+      \cgalParamDefault{1.1}
+    \cgalParamNEnd
+    \cgalParamNBegin{max_octree_depth}
+      \cgalParamDescription{The maximal depth of the octree for subdividing the kinetic partition before initialization.}
+      \cgalParamType{std::size_t}
+      \cgalParamDefault{3}
+    \cgalParamNEnd
+    \cgalParamNBegin{max_octree_node_size}
+      \cgalParamDescription{A node in the octree is only split if the contained number of primitives is larger and the maximal depth is not yet reached.}
+      \cgalParamType{std::size_t}
+      \cgalParamDefault{40}
+    \cgalParamNEnd
+  \cgalNamedParamsEnd
+
+  \pre input data has been provided via `insert()` and `k != 0`.
+  */
+  template<typename ConcurrencyTag = Parallel_if_available_tag,
+    typename NamedParameters = parameters::Default_named_parameters>
+  void init_and_partition(std::size_t k,
+    const NamedParameters& np = CGAL::parameters::default_values()) {
+    FT a, b, c;
+    init_and_partition<ConcurrencyTag>(k, a, b, c, np);
+  }
+
+#ifndef DOXYGEN_RUNNING
+  template<typename ConcurrencyTag = Parallel_if_available_tag,
+    typename NamedParameters = parameters::Default_named_parameters>
+  void init_and_partition(std::size_t k, FT& partition_time, FT& finalization_time, FT& conformal_time,
+    const NamedParameters& np = CGAL::parameters::default_values()) {
+#ifndef CGAL_LINKED_WITH_TBB
+    static_assert (!std::is_convertible<ConcurrencyTag, Parallel_tag>::value,
+                   "Parallel_tag is enabled but TBB is unavailable.");
+#endif
+
     partition_time = 0;
     finalization_time = 0;
     conformal_time = 0;
-    FT initialization_time = 0;
 
-    std::cout.precision(17);
+    release_kinetic_data();
+    clear_partition();
 
-    // Times are collected per partition. In the parallel version, they sum up to more than the elapsed time.
-    std::vector<FT> initialization_times(m_partitions.size(), 0), partition_times(m_partitions.size(), 0), finalization_times(m_partitions.size(), 0);
-    std::vector<std::size_t> positions(m_partitions.size());
-    std::iota(positions.begin(), positions.end(), 0);
-    std::atomic<bool> failed(false);
-
-    CGAL::for_each<ConcurrencyTag>(positions, [&](const std::size_t i) -> bool {
-      if (failed)
-        return false;
-
-      if (!compute_partition(m_partitions[i], k, initialization_times[i], partition_times[i], finalization_times[i])) {
-        failed = true;
-        std::cout << "Warning: partition() failed for partition " << i << " " << m_partitions[i] << std::endl;
-        return false;
-      }
-
-      return true;
-    });
-
-    if (failed)
+    if (!create_subpartitions(np))
       return;
 
-    for (std::size_t i = 0; i < m_partitions.size(); i++) {
-      initialization_time += initialization_times[i];
-      partition_time += partition_times[i];
-      finalization_time += finalization_times[i];
-    }
+    FT initialization_time = 0;
+    if (!compute_subpartitions<ConcurrencyTag>(k, true, initialization_time, partition_time, finalization_time))
+      return;
 
     if (m_parameters.verbose)
       std::cout << "* initialization time of kinetic data structures: " << initialization_time << std::endl;
 
-    for (std::size_t i = 0; i < m_partitions.size(); i++) {
-      const Sub_partition& partition = m_partition_nodes[m_partitions[i]];
-
-      for (std::size_t j = 0; j < partition.volumes.size(); j++)
-        m_volumes.push_back(std::make_pair(m_partitions[i], j));
-    }
-
-    for (std::size_t i = 0; i < m_volumes.size(); i++)
-      m_index2volume[m_volumes[i]] = i;
-
-    std::map<typename Intersection_kernel::Point_3, Index> pts2idx;
-
-    for (std::size_t i = 0; i < number_of_volumes(); i++) {
-      std::vector<Index> f1;
-      faces(i, std::back_inserter(f1));
-      for (const Index& f : f1) {
-        std::vector<Index>& face = m_partition_nodes[f.first].face2vertices[f.second];
-        for (std::size_t j = 0; j < face.size(); j++) {
-          auto it = pts2idx.emplace(m_partition_nodes[face[j].first].exact_vertices[face[j].second], face[j]);
-          if (!it.second)
-            face[j] = it.first->second;
-        }
-      }
-    }
-
-    timer.stop();
-
-    timer.reset();
-    timer.start();
-    make_conformal(0);
-    conformal_time = timer.time();
-
-    if (m_parameters.verbose)
-      std::cout << "ksp v: " << m_partition_nodes[0].vertices.size() << " f: " << m_partition_nodes[0].face2vertices.size() << " vol: " << m_volumes.size() << std::endl;
-
-    return;
+    merge_subpartitions(conformal_time);
   }
 #endif
   /// @}
@@ -1504,23 +1482,170 @@ private:
     return result;
   }
 
-  // Initializes, propagates and finalizes the kinetic partition of one octree leaf.
+  // Discards the result of a previous partition.
+  void clear_partition() {
+    m_volumes.clear();
+    m_index2volume.clear();
+  }
+
+  // Releases the kinetic data structures kept by initialize().
+  void release_kinetic_data() {
+    for (Sub_partition& partition : m_partition_nodes)
+      partition.m_data.reset();
+
+    m_kinetic_data_initialized = false;
+  }
+
+  // Sets the parameters and separates the input polygons into the leaves of an octree.
+  template<typename NamedParameters>
+  bool create_subpartitions(const NamedParameters& np) {
+    Timer timer;
+    m_parameters.bbox_dilation_ratio = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::bbox_dilation_ratio), FT(11) / FT(10));
+    m_parameters.reorient_bbox = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::reorient_bbox), false);
+    m_parameters.max_octree_depth = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::max_octree_depth), 3);
+    m_parameters.max_octree_node_size = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::max_octree_node_size), 40);
+
+    if (m_parameters.bbox_dilation_ratio <= 1.0) {
+      std::cout << "Warning: You set enlarge_bbox_ratio <= 1.0! The valid range is (1.0, +inf). Setting to 1.1!" << std::endl;
+      m_parameters.bbox_dilation_ratio = FT(11) / FT(10);
+    }
+
+    std::cout.precision(17);
+    if (m_input_polygons.size() == 0) {
+      std::cout << "Warning: Your input is empty!" << std::endl;
+      return false;
+    }
+
+    std::set<std::size_t> n;
+    for (auto p : m_input2regularized)
+      n.insert(p);
+
+    CGAL_assertion(m_regularized2input.size() == m_input_polygons.size());
+    CGAL_assertion(m_regularized2input.size() == n.size());
+
+    if (m_parameters.bbox_dilation_ratio < FT(1)) {
+      CGAL_warning_msg(m_parameters.bbox_dilation_ratio >= FT(1),
+        "Warning: You set enlarge_bbox_ratio < 1.0! The valid range is [1.0, +inf). Setting to 1.0!");
+      m_parameters.bbox_dilation_ratio = FT(1);
+    }
+
+    if (m_parameters.verbose) {
+      //const std::string is_reorient = (m_parameters.reorient ? "true" : "false");
+
+      std::cout << "\n--- PARTITION OPTIONS: \n";
+      std::cout << "* enlarge bbox ratio: " << m_parameters.bbox_dilation_ratio << "\n";
+
+      std::cout << "\n--- CREATING SUBPARTITIONS:" << std::endl;
+
+      // Initialization.
+      timer.reset();
+      timer.start();
+    }
+
+    if (m_parameters.debug) {
+      for (std::size_t i = 0; i < m_input_polygons.size(); i++)
+        KSP_3::internal::dump_polygon<GeomTraits>(m_input_polygons[i], std::to_string(i) + "-input_polygon");
+    }
+
+    split_octree();
+    m_partitions.resize(m_partition_nodes.size());
+    std::iota(m_partitions.begin(), m_partitions.end(), 0);
+
+    for (std::size_t idx : m_partitions)
+      m_partition_nodes[idx].index = idx;
+
+    // Timing.
+    if (m_parameters.verbose) {
+      const double time_to_initialize = timer.time();
+      std::cout << "* octree creation time: " << time_to_initialize << std::endl;
+    }
+
+    return true;
+  }
+
+  // Initializes the kinetic data structures of all octree leaves.
+  template<typename ConcurrencyTag>
+  bool initialize_subpartitions(FT& initialization_time) {
+    // Times are collected per partition. In the parallel version, they sum up to more than the elapsed time.
+    std::vector<FT> initialization_times(m_partitions.size(), 0);
+    std::vector<std::size_t> positions(m_partitions.size());
+    std::iota(positions.begin(), positions.end(), 0);
+    std::atomic<bool> failed(false);
+
+    CGAL::for_each<ConcurrencyTag>(positions, [&](const std::size_t i) -> bool {
+      if (failed)
+        return false;
+
+      if (!initialize_subpartition(m_partitions[i], initialization_times[i])) {
+        failed = true;
+        return false;
+      }
+
+      return true;
+    });
+
+    initialization_time = std::accumulate(initialization_times.begin(), initialization_times.end(), FT(0));
+
+    return !failed;
+  }
+
+  // Computes the kinetic partitions of all octree leaves.
+  // If init_and_release is true, the kinetic data structure of each leaf is created before and released after its propagation.
+  // Otherwise, the kinetic data structures created by initialize() are used and restored afterwards.
+  template<typename ConcurrencyTag>
+  bool compute_subpartitions(std::size_t k, bool init_and_release, FT& initialization_time, FT& partition_time, FT& finalization_time) {
+    // Times are collected per partition. In the parallel version, they sum up to more than the elapsed time.
+    std::vector<FT> initialization_times(m_partitions.size(), 0), partition_times(m_partitions.size(), 0), finalization_times(m_partitions.size(), 0);
+    std::vector<std::size_t> positions(m_partitions.size());
+    std::iota(positions.begin(), positions.end(), 0);
+    std::atomic<bool> failed(false);
+
+    std::cout.precision(17);
+
+    CGAL::for_each<ConcurrencyTag>(positions, [&](const std::size_t i) -> bool {
+      if (failed)
+        return false;
+
+      if (!compute_partition(m_partitions[i], k, init_and_release, initialization_times[i], partition_times[i], finalization_times[i])) {
+        failed = true;
+        std::cout << "Warning: partition() failed for partition " << i << " " << m_partitions[i] << std::endl;
+        return false;
+      }
+
+      return true;
+    });
+
+    initialization_time = std::accumulate(initialization_times.begin(), initialization_times.end(), FT(0));
+    partition_time = std::accumulate(partition_times.begin(), partition_times.end(), FT(0));
+    finalization_time = std::accumulate(finalization_times.begin(), finalization_times.end(), FT(0));
+
+    return !failed;
+  }
+
+  // Creates and initializes the kinetic data structure of one octree leaf.
   // Only accesses data of the given Sub_partition and read-only shared data. Thus, it can be called in parallel for different leaves.
-  bool compute_partition(std::size_t idx, std::size_t k, FT& initialization_time, FT& partition_time, FT& finalization_time) {
+  bool initialize_subpartition(std::size_t idx, FT& initialization_time) {
     Sub_partition& partition = m_partition_nodes[idx];
     // Each line written to std::cout gets the index of the partition as prefix, as partitions may be computed in parallel.
     const std::string log_prefix = "[P" + std::to_string(idx) + "] ";
     Timer timer;
     timer.start();
 
-    // Initialization of the kinetic data structure. It is released again after finalization in extract_finalized_data().
     partition.m_data = std::make_shared<Data_structure>(m_parameters, std::to_string(idx) + "-", log_prefix);
 
     Initializer initializer(partition.clipped_polygons, partition.m_input_planes, *partition.m_data, m_parameters, m_partitions.size() != 1);
     initializer.initialize(partition.bbox, partition.input_polygons);
 
+    // The input of the Initializer is not needed anymore.
+    std::vector<std::vector<typename Intersection_kernel::Point_3> >().swap(partition.clipped_polygons);
+    std::vector<typename Intersection_kernel::Plane_3>().swap(partition.m_input_planes);
+    std::vector<typename Intersection_kernel::Plane_3>().swap(partition.m_bbox_planes);
+
     initialization_time = timer.time();
-    timer.reset();
 
     // Initialization successful?
     if (partition.m_data->number_of_support_planes() < 6) {
@@ -1528,6 +1653,31 @@ private:
 
       return false;
     }
+
+    return true;
+  }
+
+  // Propagates and finalizes the kinetic partition of one octree leaf. If init_and_release is true, the kinetic data structure is
+  // created before and released afterwards. Otherwise, the kinetic data structure is restored to its initialized state afterwards.
+  // Only accesses data of the given Sub_partition and read-only shared data. Thus, it can be called in parallel for different leaves.
+  bool compute_partition(std::size_t idx, std::size_t k, bool init_and_release, FT& initialization_time, FT& partition_time, FT& finalization_time) {
+    Sub_partition& partition = m_partition_nodes[idx];
+    const std::string log_prefix = "[P" + std::to_string(idx) + "] ";
+
+    if (init_and_release) {
+      if (!initialize_subpartition(idx, initialization_time))
+        return false;
+    }
+
+    CGAL_assertion(partition.m_data);
+
+    // Propagation and finalization modify the kinetic data structure. Its initialized state is saved to be restored afterwards.
+    typename Data_structure::Initial_state initial_state;
+    if (!init_and_release)
+      initial_state = partition.m_data->save_initial_state();
+
+    Timer timer;
+    timer.start();
 
     if (m_parameters.verbose) {
       KSP::internal::Log_line(log_prefix) << "--- RUNNING THE QUEUE:";
@@ -1539,18 +1689,15 @@ private:
     propagation.propagate(k);
 
     partition_time = timer.time();
+    timer.reset();
 
     if (m_parameters.verbose) {
       KSP::internal::Log_line(log_prefix) << "events in partition: " << propagation.handled_events;
       KSP::internal::Log_line(log_prefix) << "* propagation finished";
-    }
-
-    if (m_parameters.verbose) {
       KSP::internal::Log_line(log_prefix) << "--- FINALIZING PARTITION:";
     }
 
     // Finalization.
-
     for (std::size_t i = 0; i < partition.m_data->number_of_support_planes(); i++)
       if (!partition.m_data->support_plane(i).mesh().is_valid(true))
         KSP::internal::Log_line(log_prefix) << i << ". support has an invalid mesh!";
@@ -1567,6 +1714,15 @@ private:
       KSP::internal::Log_line(log_prefix) << "partition with " << partition.input_polygons.size() << " input polygons split into " << partition.m_data->number_of_volumes() << " volumes";
 
     extract_finalized_data(partition, idx);
+
+    if (init_and_release) {
+      // The kinetic data structure (support planes, intersection graph, kinetic vertices, ...) is not needed anymore.
+      // Releasing it here keeps the peak memory at one kinetic data structure per thread plus the finalized results.
+      CGAL_assertion(partition.m_data.use_count() == 1);
+      partition.m_data.reset();
+    }
+    else
+      partition.m_data->restore_initial_state(std::move(initial_state));
 
     return true;
   }
@@ -1614,16 +1770,42 @@ private:
     }
 
     partition.input2sp = data.input_polygon_map();
+  }
 
-    // The kinetic data structure (support planes, intersection graph, kinetic vertices, ...) is not needed anymore.
-    // Releasing it here keeps the peak memory at one kinetic data structure plus the finalized results.
-    CGAL_assertion(partition.m_data.use_count() == 1);
-    partition.m_data.reset();
+  // Merges the finalized partitions of the octree leaves into one conformal partition.
+  void merge_subpartitions(FT& conformal_time) {
+    for (std::size_t i = 0; i < m_partitions.size(); i++) {
+      const Sub_partition& partition = m_partition_nodes[m_partitions[i]];
 
-    // Initializer input is not needed anymore either.
-    std::vector<std::vector<typename Intersection_kernel::Point_3> >().swap(partition.clipped_polygons);
-    std::vector<typename Intersection_kernel::Plane_3>().swap(partition.m_input_planes);
-    std::vector<typename Intersection_kernel::Plane_3>().swap(partition.m_bbox_planes);
+      for (std::size_t j = 0; j < partition.volumes.size(); j++)
+        m_volumes.push_back(std::make_pair(m_partitions[i], j));
+    }
+
+    for (std::size_t i = 0; i < m_volumes.size(); i++)
+      m_index2volume[m_volumes[i]] = i;
+
+    std::map<typename Intersection_kernel::Point_3, Index> pts2idx;
+
+    for (std::size_t i = 0; i < number_of_volumes(); i++) {
+      std::vector<Index> f1;
+      faces(i, std::back_inserter(f1));
+      for (const Index& f : f1) {
+        std::vector<Index>& face = m_partition_nodes[f.first].face2vertices[f.second];
+        for (std::size_t j = 0; j < face.size(); j++) {
+          auto it = pts2idx.emplace(m_partition_nodes[face[j].first].exact_vertices[face[j].second], face[j]);
+          if (!it.second)
+            face[j] = it.first->second;
+        }
+      }
+    }
+
+    Timer timer;
+    timer.start();
+    make_conformal(0);
+    conformal_time = timer.time();
+
+    if (m_parameters.verbose)
+      std::cout << "ksp v: " << m_partition_nodes[0].vertices.size() << " f: " << m_partition_nodes[0].face2vertices.size() << " vol: " << m_volumes.size() << std::endl;
   }
 
   void collect_faces(std::size_t partition_idx, std::size_t sp_idx, std::vector<Index>& faces, typename Intersection_kernel::Plane_3& plane) {
@@ -2400,7 +2582,7 @@ private:
         auto polys = m_octree->data(node);
 
         // The octree clipping assigns a polygon that only touches the box of the node in a vertex or along an edge
-        // to that node as well. 
+        // to that node as well.
         polys.erase(std::remove_if(polys.begin(), polys.end(), [](const auto& p) {
           const auto& pts = p.second;
           std::size_t j = 1;
