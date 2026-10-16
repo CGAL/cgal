@@ -1,6 +1,6 @@
+#include <CGAL/Min_ellipse_2_traits_2.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Min_ellipse_2.h>
-#include <CGAL/Min_ellipse_2_traits_2.h>
 #include <cassert>
 #include <vector>
 

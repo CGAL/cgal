@@ -16,6 +16,7 @@
 #include <CGAL/license/Bounding_volumes.h>
 
 
+#include <CGAL/number_type_basic.h>
 #include <CGAL/Conic_2.h>
 #include <CGAL/Cartesian/ConicCPA2.h>
 #include <CGAL/Cartesian/Data_accessor_2.h>
