@@ -12,15 +12,19 @@
 #ifndef CGAL_NAMED_FUNCTION_PARAMETERS_H
 #define CGAL_NAMED_FUNCTION_PARAMETERS_H
 
+#include <array>
 #ifndef CGAL_NO_STATIC_ASSERTION_TESTS
 #include <CGAL/basic.h>
 #endif
 
-#include <CGAL/tags.h>
 #include <CGAL/STL_Extension/internal/mesh_option_classes.h>
+#include <CGAL/tags.h>
+#include <CGAL/type_traits.h>
 
 #include <boost/mpl/has_xxx.hpp>
 
+#include <cstddef>
+#include <functional>
 #include <type_traits>
 #include <utility>
 
@@ -40,156 +44,20 @@
 namespace CGAL {
 namespace internal_np{
 
-struct No_property {};
+struct No_property {
+  static const std::size_t number_of_parameters = 0;
+};
+
 struct Param_not_found {};
+
+template <typename T>
+inline constexpr bool is_param_not_found_v = std::is_same_v<CGAL::cpp20::remove_cvref_t<T>, Param_not_found>;
 
 enum all_default_t { all_default };
 
-// define enum types and values for new named parameters
-#define CGAL_add_named_parameter(X, Y, Z)            \
-  enum X { Y };
-#define CGAL_add_named_parameter_with_compatibility(X, Y, Z)            \
-  enum X { Y };
-#define CGAL_add_named_parameter_with_compatibility_cref_only(X, Y, Z)            \
-  enum X { Y };
-#define CGAL_add_named_parameter_with_compatibility_ref_only(X, Y, Z)            \
-  enum X { Y };
-#define CGAL_add_extra_named_parameter_with_compatibility(X, Y, Z)
-#include <CGAL/STL_Extension/internal/parameters_interface.h>
-#undef CGAL_add_named_parameter
-#undef CGAL_add_named_parameter_with_compatibility
-#undef CGAL_add_named_parameter_with_compatibility_cref_only
-#undef CGAL_add_named_parameter_with_compatibility_ref_only
-#undef CGAL_add_extra_named_parameter_with_compatibility
-
-template <typename T, typename Tag, typename Base>
-struct Named_params_impl : Base
-{
-  typename std::conditional<std::is_copy_constructible<T>::value,
-                            T, std::reference_wrapper<const T> >::type v; // copy of the parameter if copyable
-  Named_params_impl(const T& v, const Base& b)
-    : Base(b)
-    , v(v)
-  {}
-};
-
-// partial specialization for base class of the recursive nesting
-template <typename T, typename Tag>
-struct Named_params_impl<T, Tag, No_property>
-{
-  typename std::conditional<std::is_copy_constructible<T>::value,
-                            T, std::reference_wrapper<const T> >::type v; // copy of the parameter if copyable
-  Named_params_impl(const T& v)
-    : v(v)
-  {}
-};
-
-// Helper class to get the type of a named parameter pack given a query tag
-template <typename NP, typename Query_tag>
-struct Get_param;
-
-template< typename T, typename Tag, typename Query_tag>
-struct Get_param< Named_params_impl<T, Tag, No_property>, Query_tag >
-{
-  typedef Param_not_found type;
-  typedef Param_not_found reference;
-};
-
-template< typename T, typename Tag, typename Base>
-struct Get_param< Named_params_impl<T, Tag, Base>, Tag >
-{
-  typedef typename std::conditional<std::is_copy_constructible<T>::value,
-                                    T, std::reference_wrapper<const T> >::type type;
-  typedef typename std::conditional<std::is_copy_constructible<T>::value,
-                                    T, const T&>::type reference;
-};
-
-template< typename T, typename Tag>
-struct Get_param< Named_params_impl<T, Tag, No_property>, Tag >
-{
-  typedef typename std::conditional<std::is_copy_constructible<T>::value,
-                                    T, std::reference_wrapper<const T> >::type type;
-  typedef typename std::conditional<std::is_copy_constructible<T>::value,
-                                    T, const T&>::type reference;
-};
-
-template< typename T, typename Tag, typename Base>
-struct Get_param< Named_params_impl<std::reference_wrapper<T>, Tag, Base>, Tag >
-{
-  typedef std::reference_wrapper<T> type;
-  typedef T& reference;
-};
-
-template< typename T, typename Tag>
-struct Get_param< Named_params_impl<std::reference_wrapper<T>, Tag, No_property>, Tag >
-{
-  typedef std::reference_wrapper<T> type;
-  typedef T& reference;
-};
-
-
-template< typename T, typename Tag, typename Base, typename Query_tag>
-struct Get_param< Named_params_impl<T,Tag,Base>, Query_tag>
-{
-  typedef typename Get_param<typename Base::base, Query_tag>::type type;
-  typedef typename Get_param<typename Base::base, Query_tag>::reference reference;
-};
-
-// helper to choose the default
-template <typename Query_tag, typename NP, typename D>
-struct Lookup_named_param_def
-{
-  typedef typename internal_np::Get_param<typename NP::base, Query_tag>::type NP_type;
-  typedef typename internal_np::Get_param<typename NP::base, Query_tag>::reference NP_reference;
-
-  typedef std::conditional_t<
-    std::is_same_v<NP_type, internal_np::Param_not_found>,
-    D, NP_type>
-  type;
-
-  typedef std::conditional_t<
-    std::is_same_v<NP_reference, internal_np::Param_not_found>,
-    D&, NP_reference>
-  reference;
-};
-
-// helper function to extract the value from a named parameter pack given a query tag
-template <typename T, typename Tag, typename Base>
-typename std::conditional<std::is_copy_constructible<T>::value,
-                          T, std::reference_wrapper<const T> >::type
-get_parameter_impl(const Named_params_impl<T, Tag, Base>& np, Tag)
-{
-  return np.v;
-}
-
-template< typename T, typename Tag, typename Query_tag>
-Param_not_found get_parameter_impl(const Named_params_impl<T, Tag, No_property>&, Query_tag)
-{
-  return Param_not_found();
-}
-
-template< typename T, typename Tag>
-typename std::conditional<std::is_copy_constructible<T>::value,
-                          T, std::reference_wrapper<const T> >::type
-get_parameter_impl(const Named_params_impl<T, Tag, No_property>& np, Tag)
-{
-  return np.v;
-}
-
-template <typename T, typename Tag, typename Base, typename Query_tag>
-typename Get_param<Named_params_impl<T, Tag, Base>, Query_tag>::type
-get_parameter_impl(const Named_params_impl<T, Tag, Base>& np, Query_tag tag)
-{
-#ifndef CGAL_NO_STATIC_ASSERTION_TEST
-  static_assert(!std::is_same<Query_tag, Tag>::value);
-#endif
-  return get_parameter_impl(static_cast<const typename Base::base&>(np), tag);
-}
-
-
 // helper for getting references
 template <class T>
-const T& get_reference(const T& t)
+T get_reference(const T& t)
 {
   return t;
 }
@@ -200,150 +68,165 @@ T& get_reference(const std::reference_wrapper<T>& r)
   return r.get();
 }
 
-// helper function to extract the reference from a named parameter pack given a query tag
+// define enum types and values for new named parameters
+#define CGAL_add_named_parameter(X, Y, Z) \
+  enum X { Y };
+#include <CGAL/STL_Extension/internal/parameters_interface.h>
+
+} // end namespace internal_np
+
+// forward-declaration of Named_function_parameters
+template <typename T, typename Tag, typename Base = internal_np::No_property>
+struct Named_function_parameters;
+
+namespace internal_np {
 template <typename T, typename Tag, typename Base>
-typename std::conditional<std::is_copy_constructible<T>::value,
-                          T, const T& >::type
-get_parameter_reference_impl(const Named_params_impl<T, Tag, Base>& np, Tag)
+struct Named_params_impl : Base
 {
-  return get_reference(np.v);
-}
+  static constexpr std::size_t number_of_parameters = 1 + Base::number_of_parameters;
+  using tag = Tag;
+  using base = Base;
 
-template< typename T, typename Tag, typename Query_tag>
-Param_not_found
-get_parameter_reference_impl(const Named_params_impl<T, Tag, No_property>&, Query_tag)
-{
-  return Param_not_found();
-}
+  typename std::conditional<std::is_copy_constructible<T>::value,
+                            T, std::reference_wrapper<const T> >::type v; // copy of the parameter if copyable
+  constexpr Named_params_impl(const T& v, const Base& b)
+    : Base(b)
+    , v(v)
+  {}
 
-template< typename T, typename Tag>
-typename std::conditional<std::is_copy_constructible<T>::value,
-                          T, const T& >::type
-get_parameter_reference_impl(const Named_params_impl<T, Tag, No_property>& np, Tag)
-{
-  return get_reference(np.v);
-}
+  constexpr decltype(auto) parameter(Tag) const noexcept { return v; }
+  static constexpr bool has_parameter(Tag) noexcept { return true; }
+  using Base::parameter;
+  using Base::has_parameter;
+};
 
-template <typename T, typename Tag, typename Base>
-T&
-get_parameter_reference_impl(const Named_params_impl<std::reference_wrapper<T>, Tag, Base>& np, Tag)
+// partial specialization for base class of the recursive nesting
+template <typename T, typename Tag>
+struct Named_params_impl<T, Tag, No_property>
 {
-  return np.v.get();
-}
+  static constexpr std::size_t number_of_parameters = 1;
+  using tag = Tag;
 
-template< typename T, typename Tag>
-T&
-get_parameter_reference_impl(const Named_params_impl<std::reference_wrapper<T>, Tag, No_property>& np, Tag)
-{
-  return np.v.get();
-}
+  typename std::conditional<std::is_copy_constructible<T>::value,
+                            T, std::reference_wrapper<const T> >::type v; // copy of the parameter if copyable
+  constexpr Named_params_impl(const T& v)
+    : v(v)
+  {}
+  constexpr decltype(auto) parameter(Tag) const noexcept { return v; }
+  static constexpr bool has_parameter(Tag) noexcept { return true; }
+};
+
+// Helper class to get the type of a named parameter pack given a query tag
+template <typename NP, typename Query_tag>
+struct Get_param;
 
 template <typename T, typename Tag, typename Base, typename Query_tag>
-typename Get_param<Named_params_impl<T, Tag, Base>, Query_tag>::reference
-get_parameter_reference_impl(const Named_params_impl<T, Tag, Base>& np, Query_tag tag)
+struct Get_param<Named_params_impl<T, Tag, Base>, Query_tag>
 {
-  static_assert(!std::is_same<Query_tag, Tag>::value);
-  return get_parameter_reference_impl(static_cast<const typename Base::base&>(np), tag);
-}
+  using type = decltype(std::declval<Named_function_parameters<T, Tag, Base>>().parameter(Query_tag{}));
+  using reference =
+      decltype(get_reference(std::declval<Named_function_parameters<T, Tag, Base>>().parameter(Query_tag{})));
+};
+
+// helper to choose the default
+template <typename Query_tag, typename NP, typename D>
+struct Lookup_named_param_def
+{
+  typedef typename internal_np::Get_param<typename NP::base, Query_tag>::type NP_type;
+  typedef typename internal_np::Get_param<typename NP::base, Query_tag>::reference NP_reference;
+
+  typedef std::conditional_t<
+    internal_np::is_param_not_found_v<NP_type>,
+    D, NP_type>
+  type;
+
+  typedef std::conditional_t<
+    internal_np::is_param_not_found_v<NP_reference>,
+    D&, NP_reference>
+  reference;
+};
 
 } // end of internal_np namespace
 
-template <typename T, typename Tag, typename Base = internal_np::No_property>
-struct Named_function_parameters;
+template <typename U, typename T, typename Tag, typename Base, typename Query_tag>
+constexpr decltype(auto) parameter_or([[maybe_unused]] const Named_function_parameters<T, Tag, Base>& np,
+                                      [[maybe_unused]] Query_tag tag,
+                                      [[maybe_unused]] U&& default_value)
+{
+  return np.parameter_or(tag, std::forward<U>(default_value));
+}
+
+template <typename U, typename T, typename Tag, typename Base, typename Query_tag>
+constexpr decltype(auto) parameter_or([[maybe_unused]] const Named_function_parameters<T, Tag, Base>& np,
+                                      [[maybe_unused]] Query_tag tag)
+{
+  return np.template parameter_or<U>(tag);
+}
 
 namespace parameters{
 
 typedef Named_function_parameters<bool, internal_np::all_default_t>  Default_named_parameters;
 
-Default_named_parameters
-inline default_values();
+inline constexpr Default_named_parameters default_values();
 
 // function to extract a parameter
 template <typename T, typename Tag, typename Base, typename Query_tag>
-typename internal_np::Get_param<internal_np::Named_params_impl<T, Tag, Base>, Query_tag>::type
+constexpr decltype(auto)
 get_parameter(const Named_function_parameters<T, Tag, Base>& np, Query_tag tag)
 {
-  return internal_np::get_parameter_impl(static_cast<const internal_np::Named_params_impl<T, Tag, Base>&>(np), tag);
+  return np.parameter(tag);
 }
 
 template <typename T, typename Tag, typename Base, typename Query_tag>
-typename internal_np::Get_param<internal_np::Named_params_impl<T, Tag, Base>, Query_tag>::reference
+constexpr decltype(auto)
 get_parameter_reference(const Named_function_parameters<T, Tag, Base>& np, Query_tag tag)
 {
-  return internal_np::get_parameter_reference_impl(
-    static_cast<const internal_np::Named_params_impl<T, Tag, Base>&>(np),
-    tag);
+  return internal_np::get_reference(np.parameter(tag));
 }
 
 // Two parameters, non-trivial default value
-template <typename D>
-D& choose_parameter(const internal_np::Param_not_found&, D& d)
-{
-  return d;
-}
-
-template <typename D>
-const D& choose_parameter(const internal_np::Param_not_found&, const D& d)
-{
-  return d;
-}
-
-template <typename D>
-D choose_parameter(const internal_np::Param_not_found&, D&& d)
-{
-  return std::forward<D>(d);
-}
-
 template <typename T, typename D>
-T& choose_parameter(T& t, D&)
-{
-  return t;
-}
-
-template <typename T, typename D>
-const T& choose_parameter(const T& t, const D&)
-{
-  return t;
+constexpr decltype(auto) choose_parameter([[maybe_unused]] T&& t, [[maybe_unused]] D&& d) {
+  if constexpr (internal_np::is_param_not_found_v<T>) {
+    return std::forward<D>(d);
+  } else {
+    return std::forward<T>(t);
+  }
 }
 
 // single parameter so that we can avoid a default construction
-template <typename D>
-D choose_parameter(const internal_np::Param_not_found&)
-{
-  return D();
-}
-
 template <typename D, typename T>
-const T& choose_parameter(const T& t)
+constexpr decltype(auto) choose_parameter([[maybe_unused]] T&& t)
 {
-  return t;
+  if constexpr (internal_np::is_param_not_found_v<T>) {
+    return D{};
+  } else {
+    return std::forward<T>(t);
+  }
 }
 
 // version with a dynamic property tag with initialization
-template <typename Tag, typename Graph, typename V>
-auto
-choose_parameter(const internal_np::Param_not_found&, Tag tag, Graph& graph, const V& default_value)
-{
-  return get(tag, graph, default_value);
-}
-
-template <typename Tag, typename Graph>
-auto
-choose_parameter(const internal_np::Param_not_found&, Tag tag, Graph& graph)
-{
-  return get(tag, graph);
-}
-
 template <typename T, typename Tag, typename Graph, typename V>
-const T& choose_parameter(const T& t,  Tag, Graph&, const V&)
-{
-  return t;
+constexpr decltype(auto) choose_parameter([[maybe_unused]] T&& t,
+                                          [[maybe_unused]] Tag tag,
+                                          [[maybe_unused]] Graph& graph,
+                                          [[maybe_unused]] const V& default_value) {
+  if constexpr (internal_np::is_param_not_found_v<T>) {
+    return get(tag, graph, default_value);
+  } else {
+    return std::forward<T>(t);
+  }
 }
 
 template <typename T, typename Tag, typename Graph>
-const T& choose_parameter(const T& t, Tag, Graph&)
+constexpr decltype(auto)
+choose_parameter([[maybe_unused]] T&& t, [[maybe_unused]] Tag tag, [[maybe_unused]] Graph& graph)
 {
-  return t;
+  if constexpr (internal_np::is_param_not_found_v<T>) {
+    return get(tag, graph);
+  } else {
+    return std::forward<T>(t);
+  }
 }
 
 } // parameters namespace
@@ -363,65 +246,77 @@ template <typename T, typename Tag, typename Base>
 struct Named_function_parameters
   : internal_np::Named_params_impl<T, Tag, Base>
 {
-  typedef internal_np::Named_params_impl<T, Tag, Base> base;
-  typedef Named_function_parameters<T, Tag, Base> self;
+  using base = internal_np::Named_params_impl<T, Tag, Base>;
+  using self = Named_function_parameters<T, Tag, Base>;
+  using tag = Tag;
 
-  Named_function_parameters() : base(T()) {}
-  Named_function_parameters(const T& v) : base(v) {}
-  Named_function_parameters(const T& v, const Base& b) : base(v, b) {}
+  static constexpr std::size_t number_of_parameters = base::number_of_parameters;
+
+  using base::parameter;
+  using base::has_parameter;
+  constexpr auto parameter(...) const { return internal_np::Param_not_found(); }
+  static constexpr bool has_parameter(...) { return false; }
+
+  template <typename Query_tag>
+  constexpr decltype(auto) parameter_ref([[maybe_unused]] Query_tag tag) const {
+    static_assert(has_parameter(Query_tag()), "Parameter not found");
+    return internal_np::get_reference(parameter(tag));
+  }
+
+  template <typename D, typename Query_tag>
+  constexpr decltype(auto) parameter_or([[maybe_unused]] Query_tag tag, [[maybe_unused]] D&& default_value) const {
+    if constexpr (has_parameter(Query_tag())) {
+      return parameter(tag);
+    } else {
+      return std::forward<D>(default_value);
+    }
+  }
+
+  template <typename D, typename Query_tag>
+  constexpr decltype(auto) parameter_or([[maybe_unused]] Query_tag tag) const {
+    if constexpr (has_parameter(Query_tag())) {
+      return parameter(tag);
+    } else {
+      return D{};
+    }
+  }
+
+  constexpr Named_function_parameters() : base(T()) {}
+  constexpr Named_function_parameters(const T& v) : base(v) {}
+  constexpr Named_function_parameters(const T& v, const Base& b) : base(v, b) {}
 
 // create the functions for new named parameters and the one imported boost
 // used to concatenate several parameters
 #define CGAL_add_named_parameter(X, Y, Z)                             \
   template<typename K>                                                \
-  Named_function_parameters<K, internal_np::X, self>                  \
-  Z(const K& k) const                                                 \
+  constexpr auto Z(const K& k) const                                  \
   {                                                                   \
-    typedef Named_function_parameters<K, internal_np::X, self> Params;\
+    using Params = Named_function_parameters<K, internal_np::X, self>;\
     return Params(k, *this);                                          \
   }
 #define CGAL_add_named_parameter_with_compatibility(X, Y, Z)          \
+  CGAL_add_named_parameter(X, Y, Z)
+#define CGAL_add_extra_named_parameter_with_compatibility(X, Y, Z)    \
+  CGAL_add_named_parameter(X, Y, Z)
+#define CGAL_add_named_parameter_with_compatibility_cref_only(X, Y, Z)\
   template<typename K>                                                \
-  Named_function_parameters<K, internal_np::X, self>                  \
-  Z(const K& k) const                                                 \
+  constexpr auto Z(const K& k) const                                  \
   {                                                                   \
-    typedef Named_function_parameters<K, internal_np::X, self> Params;\
-    return Params(k, *this);                                          \
-  }
-#define CGAL_add_named_parameter_with_compatibility_cref_only(X, Y, Z) \
-  template<typename K>                                                \
-  Named_function_parameters<std::reference_wrapper<const K>,          \
-                            internal_np::X, self>                     \
-  Z(const K& k) const                                                 \
-  {                                                                   \
-    typedef Named_function_parameters<std::reference_wrapper<const K>,\
-                                      internal_np::X, self> Params;   \
+    using Params =                                                    \
+        Named_function_parameters<std::reference_wrapper<const K>,    \
+                                  internal_np::X, self>;              \
     return Params(std::cref(k), *this);                               \
   }
 #define CGAL_add_named_parameter_with_compatibility_ref_only(X, Y, Z) \
   template<typename K>                                                \
-  Named_function_parameters<std::reference_wrapper<K>,                \
-                            internal_np::X, self>                     \
-  Z(K& k) const                                                       \
+  constexpr auto Z(K& k) const                                        \
   {                                                                   \
-    typedef Named_function_parameters<std::reference_wrapper<K>,      \
-                                      internal_np::X, self> Params;   \
+    using Params =                                                    \
+        Named_function_parameters<std::reference_wrapper<K>,          \
+                                  internal_np::X, self>;              \
     return Params(std::ref(k), *this);                                \
   }
-#define CGAL_add_extra_named_parameter_with_compatibility(X, Y, Z)    \
-  template<typename K>                                                \
-  Named_function_parameters<K, internal_np::X, self>                  \
-  Z(const K& k) const                                                 \
-  {                                                                   \
-    typedef Named_function_parameters<K, internal_np::X, self> Params;\
-    return Params(k, *this);                                          \
-  }
 #include <CGAL/STL_Extension/internal/parameters_interface.h>
-#undef CGAL_add_named_parameter
-#undef CGAL_add_named_parameter_with_compatibility
-#undef CGAL_add_named_parameter_with_compatibility_cref_only
-#undef CGAL_add_named_parameter_with_compatibility_ref_only
-#undef CGAL_add_extra_named_parameter_with_compatibility
 
 // inject mesh specific named parameter functions
 #define CGAL_NP_BASE self
@@ -433,34 +328,33 @@ struct Named_function_parameters
 #undef CGAL_NP_BUILD
 
   template <typename OT, typename OTag>
-  Named_function_parameters<OT, OTag, self>
+  constexpr Named_function_parameters<OT, OTag, self>
   combine(const Named_function_parameters<OT,OTag>& np) const
   {
     return Named_function_parameters<OT, OTag, self>(np.v,*this);
   }
 
   template <typename OT, typename OTag, typename ... NPS>
-  auto
+  constexpr auto
   combine(const Named_function_parameters<OT,OTag>& np, const NPS& ... nps) const
   {
     return Named_function_parameters<OT, OTag, self>(np.v,*this).combine(nps...);
   }
 
   // typedef for SFINAE
-  typedef int CGAL_Named_function_parameters_class;
+  using CGAL_Named_function_parameters_class = int;
 };
 
 namespace parameters {
 
-Default_named_parameters
-inline default_values()
+inline constexpr Default_named_parameters default_values()
 {
   return Default_named_parameters();
 }
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 Default_named_parameters
-inline all_default()
+inline constexpr all_default()
 {
   return Default_named_parameters();
 }
@@ -470,113 +364,139 @@ template <class Tag, bool ref_only = false, bool ref_is_const = false>
 struct Boost_parameter_compatibility_wrapper
 {
   template <typename K>
-  Named_function_parameters<K, Tag>
-  operator()(const K& p) const
+  constexpr auto operator()(K&& p) const
   {
-    typedef Named_function_parameters<K, Tag> Params;
-    return Params(p);
+    if constexpr (ref_only)
+    {
+      using Pointed_type = std::remove_reference_t<cpp20::unwrap_reference_t<K>>;
+      if constexpr (ref_is_const)
+      {
+        using Params = Named_function_parameters<std::reference_wrapper<const Pointed_type>, Tag>;
+        const auto& ref = cpp20::unwrap_reference_t<K>(p);
+        return Params{std::cref(ref)};
+      }
+      else
+      {
+        using Params = Named_function_parameters<std::reference_wrapper<Pointed_type>, Tag>;
+        auto& ref = cpp20::unwrap_reference_t<K>(p);
+        return Params{std::ref(ref)};
+      }
+    }
+    else
+    {
+      using Params = Named_function_parameters<K, Tag>;
+      return Params{std::forward<K>(p)};
+    }
   }
 
   template <typename K>
-  Named_function_parameters<K, Tag>
-  operator=(const K& p) const
+  constexpr auto operator=(K&& p) const
   {
-    typedef Named_function_parameters<K, Tag> Params;
-    return Params(p);
-  }
-};
-
-template <class Tag>
-struct Boost_parameter_compatibility_wrapper<Tag, true, true>
-{
-  template <typename K>
-  Named_function_parameters<std::reference_wrapper<const K>, Tag>
-  operator()(const K& p) const
-  {
-    typedef Named_function_parameters<std::reference_wrapper<const K>, Tag> Params;
-    return Params(std::cref(p));
-  }
-
-  template <typename K>
-  Named_function_parameters<std::reference_wrapper<const K>, Tag>
-  operator=(const K& p) const
-  {
-    typedef Named_function_parameters<std::reference_wrapper<const K>, Tag> Params;
-    return Params(std::cref(p));
-  }
-};
-
-template <class Tag>
-struct Boost_parameter_compatibility_wrapper<Tag, true, false>
-{
-  template <typename K>
-  Named_function_parameters<std::reference_wrapper<K>, Tag>
-  operator()(K& p) const
-  {
-    typedef Named_function_parameters<std::reference_wrapper<K>, Tag> Params;
-    return Params(std::ref(p));
-  }
-
-  template <typename K>
-  Named_function_parameters<std::reference_wrapper<K>, Tag>
-  operator=(std::reference_wrapper<K> p) const
-  {
-    typedef Named_function_parameters<std::reference_wrapper<K>, Tag> Params;
-    return Params(std::ref(p));
+    return operator()(std::forward<K>(p));
   }
 };
 
 // define free functions and Boost_parameter_compatibility_wrapper for named parameters
-#define CGAL_add_named_parameter(X, Y, Z)        \
-  template <typename K>                        \
-  Named_function_parameters<K, internal_np::X>                  \
-  Z(const K& p)                                \
-  {                                            \
-    typedef Named_function_parameters<K, internal_np::X> Params;\
-    return Params(p);                          \
+#define CGAL_add_named_parameter(X, Y, Z)                         \
+  template <typename K>                                           \
+  constexpr auto Z(const K& p) {                                  \
+    using Params = Named_function_parameters<K, internal_np::X>;  \
+    return Params{p};                                             \
   }
 
 #define CGAL_add_named_parameter_with_compatibility(X, Y, Z)        \
-  inline const Boost_parameter_compatibility_wrapper<internal_np::X> Z;
+  inline constexpr Boost_parameter_compatibility_wrapper<internal_np::X> Z;
 #define CGAL_add_named_parameter_with_compatibility_cref_only(X, Y, Z)        \
-  inline const Boost_parameter_compatibility_wrapper<internal_np::X, true, true> Z;
+  inline constexpr Boost_parameter_compatibility_wrapper<internal_np::X, true, true> Z;
 #define CGAL_add_named_parameter_with_compatibility_ref_only(X, Y, Z)        \
-  inline const Boost_parameter_compatibility_wrapper<internal_np::X, true, false> Z;
+  inline constexpr Boost_parameter_compatibility_wrapper<internal_np::X, true, false> Z;
 #define CGAL_add_extra_named_parameter_with_compatibility(X, Y, Z)        \
-  inline const Boost_parameter_compatibility_wrapper<internal_np::X> Z;
+  inline constexpr Boost_parameter_compatibility_wrapper<internal_np::X> Z;
 #include <CGAL/STL_Extension/internal/parameters_interface.h>
-#undef CGAL_add_named_parameter
-#undef CGAL_add_extra_named_parameter_with_compatibility
-#undef CGAL_add_named_parameter_with_compatibility
-#undef CGAL_add_named_parameter_with_compatibility_cref_only
-#undef CGAL_add_named_parameter_with_compatibility_ref_only
-
-// Version with three parameters for dynamic property maps
-template <typename D, typename Dynamic_tag, typename PolygonMesh>
-D choose_parameter(const internal_np::Param_not_found&, Dynamic_tag tag, PolygonMesh& pm)
-{
-  return get(tag, pm);
-}
-
-template <typename D, typename T, typename Dynamic_tag, typename PolygonMesh>
-const T& choose_parameter(const T& t, Dynamic_tag, PolygonMesh&)
-{
-  return t;
-}
 
 template <class NamedParameters, class Parameter>
-struct is_default_parameter
+using is_default_parameter = Boolean_tag<!NamedParameters::has_parameter(Parameter{})>;
+
+
+// code used to make sure all options passed are used by a function
+namespace authorized_parameters_impl
 {
-  typedef typename internal_np::Lookup_named_param_def<Parameter,
-                                                       NamedParameters,
-                                                       internal_np::Param_not_found>::type NP_type;
 
-  static const bool value = std::is_same<NP_type, internal_np::Param_not_found>::value;
-
-  typedef CGAL::Boolean_tag<value> type;
+template <typename Tag>
+struct Wrapped_type {
+  static void id();
 };
 
+template <typename Tag>
+inline constexpr auto meta = Wrapped_type<Tag>::id;
+
+using Meta = std::remove_const_t<decltype(meta<void>)>;
+
+template <typename NamedParameters>
+constexpr auto parameter_types()
+{
+  std::array<Meta, NamedParameters::number_of_parameters> result{};
+  if constexpr (result.size() > 0) {
+    result.back() = meta<typename NamedParameters::tag>;
+  }
+  if constexpr (result.size() > 1) {
+    auto base_result = parameter_types<typename NamedParameters::base::base>();
+    static_assert(base_result.size() + 1 == result.size());
+    for(auto i = 0u; i < base_result.size(); ++i) {
+      result[i] = base_result[i];
+    }
+  }
+  return result;
+}
+
+template <std::size_t N>
+inline constexpr int find_index(const std::array<Meta, N>& arr, Meta value)
+{
+  for (std::size_t i = 0; i < N; ++i) {
+    if (arr[i] == value) return static_cast<int>(i);
+  }
+  return -1;
+}
+
+}// impl namespace
+
+template <class Named_function_parameters, class ... TagsAllowed>
+constexpr
+bool authorized_options()
+{
+#ifndef CGAL_DISABLE_NAMED_FUNCTION_PARAMETERS_CHECKS
+  using NP = CGAL::cpp20::remove_cvref_t<Named_function_parameters>;
+  if constexpr(NP::has_parameter(internal_np::do_not_check_allowed_np_t{})) {
+    return true;
+  }
+  constexpr auto np_types = authorized_parameters_impl::parameter_types<NP>();
+  constexpr std::array allowed_types{ authorized_parameters_impl::meta<TagsAllowed>... };
+  for(auto m : np_types) {
+    if(m == authorized_parameters_impl::meta<internal_np::all_default_t>) continue;
+    if(authorized_parameters_impl::find_index(allowed_types, m) == -1) return false;
+  }
+  return true;
+#else
+  return true;
+#endif
+}
+
 } // end of parameters namespace
+
+#ifdef CGAL_NDEBUG
+#define CGAL_CHECK_AUTHORIZED_NAMED_PARAMETERS(np, ...)
+#else
+#define CGAL_CHECK_AUTHORIZED_NAMED_PARAMETERS(np, ...)                             \
+{                                                                                   \
+using namespace ::CGAL::internal_np;                                                \
+using ::CGAL::internal_np::vertex_point_t;                                          \
+using ::CGAL::internal_np::vertex_index_t;                                          \
+using ::CGAL::internal_np::halfedge_index_t;                                        \
+using ::CGAL::internal_np::edge_index_t;                                            \
+using ::CGAL::internal_np::face_index_t;                                            \
+static_assert(::CGAL::parameters::authorized_options<decltype(np), __VA_ARGS__>()); \
+}
+#endif
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 namespace Polygon_mesh_processing {
