@@ -141,6 +141,7 @@
 #include <string>
 #include <tuple>
 #include <type_traits>
+#include <unordered_set>
 #include <utility>
 #include <vector>
 #if __has_include(<version>)
@@ -570,11 +571,12 @@ concept Range_of_polygon_3 = std::ranges::common_range<Polygons>
       && Polygon_3<std::ranges::range_value_t<Polygons>, Kernel>;
 #endif // concepts
 
-template <class DSC, bool Const>
-struct Output_rep<CGAL::internal::CC_iterator<DSC, Const>, With_point_and_info_tag>
+template <class DSC, bool Const, typename Tr>
+struct Output_rep<CGAL::internal::CC_iterator<DSC, Const>, With_point_and_info_tag<Tr>>
   : public Output_rep<CGAL::internal::CC_iterator<DSC, Const>>
 {
   int offset = 0;
+  With_point_and_info_tag<Tr> tag;
   using Base = Output_rep<CGAL::internal::CC_iterator<DSC, Const>>;
   using CC_iterator = CGAL::internal::CC_iterator<DSC, Const>;
   using Compact_container = typename CC_iterator::CC;
@@ -582,8 +584,8 @@ struct Output_rep<CGAL::internal::CC_iterator<DSC, Const>, With_point_and_info_t
 
   using Base::Base;
 
-  Output_rep(const CC_iterator& it, With_point_and_info_tag tag)
-    : Base(it), offset(tag.offset)
+  Output_rep(const CC_iterator& it, With_point_and_info_tag<Tr> tag)
+    : Base(it), offset(tag.offset), tag(tag)
   {
   }
 
@@ -599,7 +601,7 @@ struct Output_rep<CGAL::internal::CC_iterator<DSC, Const>, With_point_and_info_t
     out << (v_ptr->ccdt_3_data().is_Steiner_vertex_on_edge() ? "(Steiner)" : "")
         << (v_ptr->ccdt_3_data().is_Steiner_vertex_in_face() ? "(Steiner in face)" : "")
         << (v_ptr->ccdt_3_data().is_Steiner_vertex_in_volume() ? "(Steiner in volume)" : "")
-        << "= " << v_ptr->point();
+        << "= " << tag.tr->point(this->it);
     if(v_ptr->ccdt_3_data().is_marked(CDT_3_vertex_marker::REGION_BORDER)) out << " (region border)";
     if(v_ptr->ccdt_3_data().is_marked(CDT_3_vertex_marker::REGION_INSIDE)) out << " (inside region)";
     if(v_ptr->ccdt_3_data().is_marked(CDT_3_vertex_marker::CAVITY)) out << " (cavity vertex)";
@@ -1521,6 +1523,8 @@ public:
   static inline constexpr Face_index INVALID_FACE_INDEX = -1;
 
   using Conforming_Dt::Conforming_Dt;
+  using Conforming_Dt::with_point;
+  using Conforming_Dt::with_point_and_info;
 
   using Tds = typename T_3::Triangulation_data_structure;
   using Concurrency_tag = typename Tds::Concurrency_tag;
@@ -1649,7 +1653,7 @@ protected:
     return with_point_and_info(v);
   }
 
-  template <typename Tag = With_point_tag>
+  template <typename Tag = With_point_tag<T_3>>
   auto display_facet(std::string_view prefix, Facet f, Tag tag = {}) const {
     std::array<Vertex_handle, 3> vertices = { Vertex_handle{} , Vertex_handle{} , Vertex_handle{} };
     Vertex_handle v4 = {};
@@ -3668,10 +3672,10 @@ public:
     if(this->debug().display_statistics()) {
       std::cout << "Min distance between constraint segment and vertex: " << min_distance << '\n'
             << "  between segment                                 : "
-            << CGAL::IO::oformat(min_va, CGAL::With_point_tag{}) << "    "
-            << CGAL::IO::oformat(min_vb, CGAL::With_point_tag{}) << '\n'
+            << with_point(min_va) << "    "
+            << with_point(min_vb) << '\n'
             << "  and vertex                                      : "
-            << CGAL::IO::oformat(min_vertex, CGAL::With_point_tag{}) << "\n\n";
+            << with_point(min_vertex) << "\n\n";
     }
     this->check_segment_vertex_distance_or_throw(min_va, min_vb, min_vertex, min_distance);
   }
@@ -3687,8 +3691,8 @@ public:
     if(this->debug().display_statistics()) {
       std::cout << "Min distance between vertices: " << result.min_distance << '\n'
                 << "  between vertices           : "
-                << CGAL::IO::oformat(result.vertices_of_min_edge[0], CGAL::With_point_tag{}) << "    "
-                << CGAL::IO::oformat(result.vertices_of_min_edge[1], CGAL::With_point_tag{}) << "\n\n";
+                << with_point(result.vertices_of_min_edge[0]) << "    "
+                << with_point(result.vertices_of_min_edge[1]) << "\n\n";
     }
     this->check_vertex_vertex_distance_or_throw(result.vertices_of_min_edge[0],
                                                 result.vertices_of_min_edge[1],
@@ -5367,7 +5371,7 @@ private:
       if(debug) {
         extra_facets.push_back(facet);
         std::cerr << "ERROR: constrained 3D facet"
-                  << display_facet("    ", facet, With_point_and_info_tag{})
+                  << display_facet("    ", facet, this->with_point_and_info_tag)
                   << "\n  has no corresponding 2D triangle in face #"
                   << face_constraint_index(facet) << '\n';
       }
@@ -6353,6 +6357,7 @@ public:
     const auto to_exact = CGAL::Cartesian_converter<Geom_traits, EK>();
     const auto& cdt_2 = this->face_cdt_2(face_index);
 
+    auto indent_guard = CGAL::IO::make_indenting_guards("| ", std::cerr, std::cout, std::clog);
     std::cerr << cdt_3_format("intersecting edge #{}: ( {}   {} )\n"
                               "intersected triangle vertices: {}\n"
                               "                               {}\n"
