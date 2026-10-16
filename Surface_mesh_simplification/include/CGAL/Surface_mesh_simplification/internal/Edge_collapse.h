@@ -20,9 +20,7 @@
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Modifiable_priority_queue.h>
 #include <CGAL/use.h>
-
-#include <boost/scoped_array.hpp>
-#include <boost/scoped_ptr.hpp>
+#include <memory>
 
 namespace CGAL {
 namespace Surface_mesh_simplification {
@@ -198,7 +196,7 @@ public:
   };
 
   typedef Edge_data*                                                                Edge_data_ptr;
-  typedef boost::scoped_array<Edge_data>                                            Edge_data_array;
+  typedef std::unique_ptr<Edge_data[]>                                              Edge_data_array;
 
 public:
   EdgeCollapse(Triangle_mesh& tmesh,
@@ -396,7 +394,7 @@ private:
 private:
   Edge_data_array m_edge_data;
 
-  boost::scoped_ptr<PQ> mPQ;
+  std::unique_ptr<PQ> mPQ;
 
   size_type m_initial_edge_count;
   size_type m_current_edge_count;
