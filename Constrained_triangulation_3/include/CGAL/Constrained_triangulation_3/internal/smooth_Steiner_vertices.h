@@ -132,8 +132,8 @@ void smooth_Steiner_vertices_in_volume(CDT_3& cdt,
 
     // collapse and smooth only
     CGAL::tetrahedral_isotropic_remeshing(cdt, bbox_max_span,
-                                          CGAL::parameters::number_of_iterations(5)
-                                              .nb_smoothing_iterations(3)
+                                          CGAL::parameters::number_of_iterations(10)
+                                              .nb_smoothing_iterations(0)
                                               .nb_flip_smooth_iterations(0)
                                               .do_split(false)
                                               .do_collapse(true)
@@ -159,12 +159,13 @@ void smooth_Steiner_vertices_in_volume(CDT_3& cdt,
     const double target_edge_length = 0.0005 * bbox_max_span;
     CGAL::tetrahedral_isotropic_remeshing(cdt, target_edge_length,
                                           CGAL::parameters::number_of_iterations(5)
-                                              .nb_smoothing_iterations(5)
+                                              .nb_smoothing_iterations(1)
                                               .nb_flip_smooth_iterations(10)
                                               .do_split(true)
                                               .do_collapse(true)
                                               .do_flip(true)
                                               .remesh_boundaries(false)
+                                              .cell_is_selected_map(is_finite_cell)
                                               .vertex_is_constrained_map(is_input_vertex_pmap));
 
     std::cout << std::endl;
