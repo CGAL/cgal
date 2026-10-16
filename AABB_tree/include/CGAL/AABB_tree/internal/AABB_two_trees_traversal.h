@@ -205,7 +205,9 @@ template<typename ConcurrencyTag = Sequential_tag,
 void one_tree_traversal(const Tree& tree,
                         TwoTreeTraversalTraits &traits)
 {
-  CGAL_precondition(tree.size() != 0);
+  // Nothing to do if the tree is a singleton
+  if(tree.size() < 2)
+    return;
   one_tree_traversal<ConcurrencyTag>(*tree.root_node(), tree.size(), traits);
 }
 

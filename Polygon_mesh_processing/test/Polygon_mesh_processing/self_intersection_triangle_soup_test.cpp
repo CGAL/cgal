@@ -189,6 +189,19 @@ int main(int argc, char** argv)
 
   // extra hand written tests
   {
+    // Empty test
+    std::vector<EPICK::Point_3> points;
+    std::vector< std::array<std::size_t, 3> > triangles;
+    assert(!PMP::does_triangle_soup_self_intersect(points, triangles));
+  }
+  {
+    // Singleton
+    typedef EPICK::Point_3 Point_3;
+    std::vector<EPICK::Point_3> points = {Point_3(0,0,0), Point_3(1,0,0), Point_3(0,1,0)};
+    std::vector< std::array<std::size_t, 3> > triangles={{0,1,2}};
+    assert(!PMP::does_triangle_soup_self_intersect(points, triangles));
+  }
+  {
     // shared edge with same point: no self-intersection
     typedef EPICK::Point_3 Point_3;
     std::vector<EPICK::Point_3> points = {Point_3(0,0,0), Point_3(1,0,0), Point_3(0,1,0), Point_3(0,-1,0)};
