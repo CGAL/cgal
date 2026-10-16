@@ -13,13 +13,17 @@
 #include <iostream>
 #include <fstream>
 
+#include <CGAL/Real_timer.h>
+
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 typedef CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<K> Remeshing_triangulation;
 typedef Remeshing_triangulation Tr;
 
 
-int test(const std::string& filename, const bool perturb_vertices_positions = false)
+int test(const std::filesystem::path& filename,
+         const bool perturb_vertices_positions = false)
 {
   const double target_edge_length = 0.05;
 
@@ -89,12 +93,12 @@ int test(const std::string& filename, const bool perturb_vertices_positions = fa
 int main(int argc, char* argv[])
 {
   std::cout << "Run remeshing from elephant.mesh" << std::endl;
-  const std::string file1 = CGAL::data_file_path("meshes/elephant.mesh");
+  const std::filesystem::path file1 = CGAL::data_file_path("meshes/elephant.mesh");
   if(test(file1) != EXIT_SUCCESS)
     return EXIT_FAILURE;
 
   std::cout << "\n\nRun remeshing from perturbed elephant.mesh" << std::endl;
-  const std::string file2 = CGAL::data_file_path("meshes/elephant.mesh");
+  const std::filesystem::path file2 = CGAL::data_file_path("meshes/elephant.mesh");
   if(test(file2, true) != EXIT_SUCCESS)
     return EXIT_FAILURE;
 

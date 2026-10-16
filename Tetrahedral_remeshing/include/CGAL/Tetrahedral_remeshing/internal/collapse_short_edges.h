@@ -440,6 +440,7 @@ bool is_link_condition_valid(const typename Triangulation::Edge& edge,
                              const Triangulation& tr)
 {
   using Vertex_handle = typename Triangulation::Vertex_handle;
+  using Cell_handle = typename Triangulation::Cell_handle;
   using Cell_circulator = typename Triangulation::Cell_circulator;
 
   const Vertex_handle v0 = edge.first->vertex(edge.second);
@@ -1217,12 +1218,6 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
 
   Collapse_type collapse_type = get_collapse_type(edge, c3t3, cell_selector);
 
-#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
-  const bool in_cx = c3t3.is_in_complex(edge);
-  if (in_cx && collapse_type == IMPOSSIBLE)
-    nb_impossible++;
-#endif
-
   if (collapse_type == IMPOSSIBLE)
     return Vertex_handle();
 
@@ -1297,22 +1292,10 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
         new_pos = v1->point();
       }
       else
-      {
-#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
-        if (in_cx)
-          nb_invalid_collapse++;
-#endif
         return Vertex_handle();
-      }
     }
     else
-    {
-#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
-      if (in_cx)
-        nb_invalid_collapse++;
-#endif
       return Vertex_handle();
-    }
   }
 
   if (are_edge_lengths_valid(edge, c3t3, collapse_type, new_pos, sizing, cell_selector)
@@ -1339,23 +1322,12 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
     if(!is_cells_set_manifold(c3t3, cells_to_insert))
       return Vertex_handle();
 
-    if(angles == ANGLES_UNDECIDED)
-    {
-      CollapseTriangulation<C3t3> local_tri(edge, cells_to_insert, collapse_type);
-      if(local_tri.collapse() != VALID)
-        return Vertex_handle();
-    }
+    CollapseTriangulation<C3t3> local_tri(edge, cells_to_insert, collapse_type);
 
-#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
-    if (in_cx)
-      nb_valid_collapse++;
-#endif
-    return collapse(edge, collapse_type, cell_selector, c3t3, short_edges);
+    Result_type res = local_tri.collapse();
+    if (res == VALID)
+      return collapse(edge, collapse_type, cell_selector, c3t3, short_edges);
   }
-#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
-  else if (in_cx)
-    nb_invalid_lengths++;
-#endif
   return Vertex_handle();
 }
 
