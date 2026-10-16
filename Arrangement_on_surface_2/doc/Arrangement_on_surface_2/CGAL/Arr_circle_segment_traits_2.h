@@ -310,6 +310,22 @@ public:
     /// @}
   }; /* end Arr_circle_segment_traits_2::X_monotone_curve_2 */
 
+  /*! constructs bounding boxes for points, line segments, circular arcs, and
+   * full circles. The bounds enclose the input, including when coordinates
+   * or extrema are not representable as `double` values.
+   */
+  class Construct_bbox_2 {
+  public:
+    /*! returns a bounding box of `point`. */
+    Bbox_2 operator()(const Point_2& point) const;
+
+    /*! returns a bounding box of `cv`. */
+    Bbox_2 operator()(const X_monotone_curve_2& cv) const;
+
+    /*! returns a bounding box of `cv`. */
+    Bbox_2 operator()(const Curve_2& cv) const;
+  };
+
   /*! \class Trim_2
    * A functor for trimming curves.
    */
@@ -329,6 +345,9 @@ public:
 
   /*! obtains a `Trim_2` functor. */
   Trim_2 trim_2_object() const;
+
+  /*! obtains a `Construct_bbox_2` functor. */
+  Construct_bbox_2 construct_bbox_2_object() const;
 
   /// @}
 }; // end Arr_circle_segment_traits_2
