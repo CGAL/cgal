@@ -384,7 +384,7 @@ namespace CGAL::internal::Hexmeshing
           // mark_face_unchecked(lcc, top_face_2, explored_faces);
         }
       }
-      // Also add the adjacent volumes if there is atleast one marked node
+      // Also add the adjacent volumes if there is at least one marked node
       // Because we are on odd/even layers, we can't accidently add twice a volume
 
       auto &face_attr = lcc.attribute<2>(face)->info();

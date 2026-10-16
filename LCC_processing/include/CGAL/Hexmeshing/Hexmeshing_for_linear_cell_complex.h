@@ -134,8 +134,8 @@ public:
 
     if (!should_fix) return;
 
-    // We don't care if a face has multiple planes, there is atleast one face for each cc that is not a merged face
-    // Eitherway we cannot treat a face belonging to multiple planes, because the cc_id is undefined
+    // We don't care if a face has multiple planes, there is at least one face for each cc that is not a merged face
+    // Either way we cannot treat a face belonging to multiple planes, because the cc_id is undefined
     const auto get_plane_normal = [&](DartInfo::FaceAttrValue& face) -> std::optional<char>{
       std::bitset<3>& plane = face.plane;
       char sum = plane[0] + plane[1] + plane[2];

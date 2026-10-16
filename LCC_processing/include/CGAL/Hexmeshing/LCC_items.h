@@ -157,7 +157,7 @@ bool operator==(const DartInfo::VolumeAttrValue& /*first*/,
                 const DartInfo::VolumeAttrValue& /*second*/)
 { return true; }
 
-// Do no use this, only to statisfy lcc.is_isomorphic_to
+// Do no use this, only to satisfy lcc.is_isomorphic_to
 inline
 bool operator==(const DartInfo::FaceAttrValue& /*first*/,
                 const DartInfo::FaceAttrValue& /*second*/)
