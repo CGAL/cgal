@@ -27,15 +27,22 @@ of type `Data` specified in the definition of `map`.
 
 \cgalHeading{Implementation}
 
-`Unique_hash_map` is implemented via a chained hashing scheme. Access
+`Unique_hash_map` is implemented via an internal hash table. Access
 operations `map[i]` take expected time \cgalBigO{1}. The `table_size`
-parameter passed to chained hashing can be used to avoid unnecessary
-rehashing when set to the number of expected elements in the map.
-The design is derived from the \stl `hash_map` and the \leda type
-`map`. Its specialization on insertion only and unique hash values
-allow for a more time- and space-efficient implementation, see also
-\cgalCite{mn-lpcgc-00}, Chapter 5. This implementation makes also use
-of sentinels that lead to defined keys that have not been inserted.
+parameter can be used to avoid unnecessary rehashing when set to the
+number of expected elements in the map.
+
+The design is inspired by the \stl `unordered_map`. Its specialization
+for unique hash values allows for a more time- and space-efficient
+implementation than a general-purpose map.
+
+\cgalHeading{Historical Note}
+
+Earlier versions of this class were derived from the \leda type `map`
+and implemented via a chained map scheme specialized for insertion-only
+operations, as described in \cgalCite{mn-lpcgc-00}, Chapter 5. The
+implementation also made use of sentinels that lead to defined keys that
+had not been inserted.
 
 */
 template< typename Key, typename Data, typename UniqueHashFunction, typename Allocator>
@@ -120,6 +127,17 @@ been inserted explicitly. Their variables are initialized to
 */
 bool is_defined( const Key& key) const;
 
+/*!
+returns true if \f$ key\f$ is
+defined in `*this`.
+*/
+bool contains(const Key& key) const;
+
+/*!
+Removes the element (if one exists) with the `key`
+and returns the number of elements removed (0 or 1).
+*/
+std::size_t erase(const Key& key);
 
 /*!
 sets the table size.
