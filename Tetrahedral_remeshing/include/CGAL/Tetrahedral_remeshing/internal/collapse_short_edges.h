@@ -391,39 +391,97 @@ Collapse_type get_collapse_type(const typename C3t3::Edge& edge,
 //  return NO_COLLAPSE;
 //}
 
-template<typename C3t3>
-bool is_valid_collapse(const typename C3t3::Edge& edge,
-                       const C3t3& c3t3)
+
+template <typename Triangulation>
+bool is_link_condition_valid(const typename Triangulation::Edge& edge,
+                             const Triangulation& tr)
 {
-  typedef typename C3t3::Vertex_handle Vertex_handle;
-  typedef typename C3t3::Cell_handle   Cell_handle;
-  typedef typename C3t3::Triangulation::Cell_circulator Cell_circulator;
+  using Vertex_handle = typename Triangulation::Vertex_handle;
+  using Cell_handle = typename Triangulation::Cell_handle;
+  using Cell_circulator = typename Triangulation::Cell_circulator;
 
   const Vertex_handle v0 = edge.first->vertex(edge.second);
   const Vertex_handle v1 = edge.first->vertex(edge.third);
 
-  Cell_circulator circ = c3t3.triangulation().incident_cells(edge);
+  if(tr.is_infinite(v0) || tr.is_infinite(v1))
+    return false;
+
+  // collect vertices of link(edge) - the "circle" around edge
+  std::vector<Vertex_handle> edge_link_vertices;
+  edge_link_vertices.reserve(12);
+
+  Cell_circulator circ = tr.incident_cells(edge);
   Cell_circulator done = circ;
   do
   {
-    int v0_id = circ->index(v0);
-    int v1_id = circ->index(v1);
-
-    Cell_handle n0_ch = circ->neighbor(v0_id);
-    Cell_handle n1_ch = circ->neighbor(v1_id);
-
-    if (n0_ch->has_vertex(v0)
-        || n1_ch->has_vertex(v1)
-        || n0_ch->has_neighbor(n1_ch))
-    {
-#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
-      if (c3t3.is_in_complex(edge))
-        ++nb_invalid_collapse_short;
-#endif
+    if(tr.is_infinite(circ))
       return false;
+
+    for(int k = 0; k < 4; ++k)
+    {
+      Vertex_handle vk = circ->vertex(k);
+      if(vk != v0 && vk != v1)
+        edge_link_vertices.push_back(vk);
+    }
+  } while(++circ != done);
+
+  std::sort(edge_link_vertices.begin(), edge_link_vertices.end());
+  edge_link_vertices.erase(std::unique(edge_link_vertices.begin(), edge_link_vertices.end()),
+                           edge_link_vertices.end());
+
+  const std::size_t ring_size = edge_link_vertices.size();
+
+  // collect the intersection of neighbors of v0 and neighbors of v1
+  std::vector<Vertex_handle> neighbors_v0, neighbors_v1;
+  tr.adjacent_vertices(v0, std::back_inserter(neighbors_v0));
+  if(neighbors_v0.size() < ring_size)
+    return false; // v0 has fewer neighbors than the link, so there must be a shared neighbor outside the link
+
+  tr.adjacent_vertices(v1, std::back_inserter(neighbors_v1));
+  if(neighbors_v1.size() < ring_size)
+    return false; // v1 has fewer neighbors than the link, so there must be a shared neighbor outside the link
+
+  std::sort(neighbors_v0.begin(), neighbors_v0.end());
+  std::sort(neighbors_v1.begin(), neighbors_v1.end());
+
+  std::size_t common_count = 0;
+  auto it0 = neighbors_v0.begin();
+  auto it1 = neighbors_v1.begin();
+
+  while(it0 != neighbors_v0.end() && it1 != neighbors_v1.end())
+  {
+    if(*it0 < *it1)       ++it0;
+    else if(*it1 < *it0)  ++it1;
+    else
+    {
+      if(!std::binary_search(edge_link_vertices.begin(), edge_link_vertices.end(), *it0))
+        return false;// there is a shared neighbor of v0 and v1 that is not in the link of edge
+      ++common_count;
+      ++it0;
+      ++it1;
     }
   }
-  while (++circ != done);
+
+  if(common_count != ring_size)
+    return false; // there are missing or extra vertices
+
+  if(ring_size == neighbors_v0.size() && ring_size == neighbors_v1.size())
+    return true; // the link is exactly the set of neighbors of v0 and v1
+                 // there is no extra chord edge possible
+
+  // Check the link condition
+  // for each pair of vertices in the link, if they are connected by an edge of the triangulation,
+  // that edge must belong to one of the cells incident to `edge`
+  // (checking that there are no "chords" in the link that would violate the link condition)
+  for(std::size_t i = 0; i < ring_size; ++i)
+  {
+    const Vertex_handle v_curr = edge_link_vertices[i];
+    const Vertex_handle v_next = edge_link_vertices[(i + 1) % ring_size];
+
+    // check that the facet "closing" the ring exists in the triangulation
+    if(!tr.is_facet(v0, v_curr, v_next) && !tr.is_facet(v1, v_curr, v_next))
+      return false;
+  }
 
   return true;
 }
@@ -440,19 +498,6 @@ bool is_valid_collapse(const typename C3t3::Edge& edge,
 
   const Vertex_handle v0 = edge.first->vertex(edge.second);
   const Vertex_handle v1 = edge.first->vertex(edge.third);
-
-#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
-  const bool in_cx = c3t3.is_in_complex(edge);
-  if (in_cx)
-  {
-    if (collapse_type == TO_MIDPOINT)
-      nb_test_midpoint++;
-    else if (collapse_type == TO_V1)
-      nb_test_v1++;
-    else
-      nb_test_v0++;
-  }
-#endif
 
   if (collapse_type == TO_V1 || collapse_type == TO_MIDPOINT)
   {
@@ -473,15 +518,6 @@ bool is_valid_collapse(const typename C3t3::Edge& edge,
         if (CGAL::orientation(point(pts[0]), point(pts[1]), point(pts[2]), point(pts[3]))
             != CGAL::POSITIVE)
         {
-#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
-          if (in_cx)
-          {
-            if (collapse_type == TO_MIDPOINT)
-              nb_orientation_midpoint++;
-            else
-              nb_orientation_v1++;
-          }
-#endif
           return false;
         }
       }
@@ -506,22 +542,13 @@ bool is_valid_collapse(const typename C3t3::Edge& edge,
         if (CGAL::orientation(point(pts[0]), point(pts[1]), point(pts[2]), point(pts[3]))
             != CGAL::POSITIVE)
         {
-#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
-          if (in_cx)
-          {
-            if (collapse_type == TO_MIDPOINT)
-              nb_orientation_midpoint++;
-            else
-              nb_orientation_v0++;
-          }
-#endif
           return false;
         }
       }
     }
   }
 
-  return is_valid_collapse(edge, c3t3);
+  return is_link_condition_valid(edge, c3t3.triangulation());
 }
 
 template<typename Facet, typename Vh>
@@ -1101,12 +1128,6 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
 
   Collapse_type collapse_type = get_collapse_type(edge, c3t3, cell_selector);
 
-#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
-  const bool in_cx = c3t3.is_in_complex(edge);
-  if (in_cx && collapse_type == IMPOSSIBLE)
-    nb_impossible++;
-#endif
-
   if (collapse_type == IMPOSSIBLE)
     return Vertex_handle();
 
@@ -1138,22 +1159,10 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
         new_pos = v1->point();
       }
       else
-      {
-#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
-        if (in_cx)
-          nb_invalid_collapse++;
-#endif
         return Vertex_handle();
-      }
     }
     else
-    {
-#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
-      if (in_cx)
-        nb_invalid_collapse++;
-#endif
       return Vertex_handle();
-    }
   }
 
   if (are_edge_lengths_valid(edge, c3t3, collapse_type, new_pos, sizing, cell_selector)
@@ -1179,18 +1188,8 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
 
     Result_type res = local_tri.collapse();
     if (res == VALID)
-    {
-#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
-      if (in_cx)
-        nb_valid_collapse++;
-#endif
       return collapse(edge, collapse_type, cell_selector, c3t3, short_edges);
-    }
   }
-#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
-  else if (in_cx)
-    nb_invalid_lengths++;
-#endif
   return Vertex_handle();
 }
 
