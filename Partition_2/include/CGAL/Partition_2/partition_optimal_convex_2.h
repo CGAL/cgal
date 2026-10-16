@@ -450,6 +450,7 @@ void partition_opt_cvx_preprocessing(Polygon& polygon,
     typedef std::pair<Point_2, Point_2>                   Point_pair;
 
     Vis_graph graph(polygon.begin(), polygon.end(), traits);
+    const auto ordered = traits.are_strictly_ordered_along_line_2_object();
 
     size_type prev_i, i, next_i, next_next_i;
     size_type prev_j, j, next_j;
@@ -472,9 +473,13 @@ void partition_opt_cvx_preprocessing(Polygon& polygon,
        for (j = i + 2 ; j < polygon.size(); j++)
        {
           prev_j = j-1;
-          if (graph.is_an_edge(Point_pair(polygon[i], polygon[j])))
+          next_j = (j + 1)% polygon.size();
+          if (graph.is_an_edge(Point_pair(polygon[i], polygon[j])) &&
+              !ordered(Point_2(polygon[i]), Point_2(polygon[prev_i]), Point_2(polygon[j])) &&
+              !ordered(Point_2(polygon[i]), Point_2(polygon[next_i]), Point_2(polygon[j])) &&
+              !ordered(Point_2(polygon[j]), Point_2(polygon[prev_j]), Point_2(polygon[i])) &&
+              !ordered(Point_2(polygon[j]), Point_2(polygon[next_j]), Point_2(polygon[i])))
           {
-             next_j = (j + 1)% polygon.size();
              edges[i][j].set_visible(true);
              edges[i][j].set_valid(polygon[prev_i],polygon[i],polygon[next_i],
                                    polygon[prev_j],polygon[j],polygon[next_j],
