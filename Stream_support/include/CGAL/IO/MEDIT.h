@@ -750,8 +750,8 @@ bool write_MEDIT(std::ostream& os,
   using Ridges = typename internal_np::Lookup_named_param_def<internal_np::ridges_t, CGAL_NP_CLASS, std::vector<int>>::reference;
   Ridges ridges = choose_parameter(get_parameter_reference(np, internal_np::ridges), default_ridges);
 
-  using corners = typename internal_np::Lookup_named_param_def<internal_np::corners_t, CGAL_NP_CLASS, std::vector<internal::Vertex_with_corner_index<int>>>::reference;
-  corners vertices = choose_parameter(get_parameter_reference(np, internal_np::corners), default_corners);
+  using Corners = typename internal_np::Lookup_named_param_def<internal_np::corners_t, CGAL_NP_CLASS, std::vector<int>>::reference;
+  Corners corners = choose_parameter(get_parameter_reference(np, internal_np::corners), default_corners);
 
   using Tetrahedron_refs = typename internal_np::Lookup_named_param_def<internal_np::tetrahedron_refs_t, CGAL_NP_CLASS, std::vector<int>>::reference;
   Tetrahedron_refs tetrahedron_refs = choose_parameter(get_parameter_reference(np, internal_np::tetrahedron_refs), default_tetrahedron_refs);
@@ -810,9 +810,9 @@ bool write_MEDIT(std::ostream& os,
     }
   }
 
-  if(!vertices.empty()){
-    os << "Corners\n" << vertices.size() << "\n";
-    for(const auto& c : vertices)
+  if(!corners.empty()){
+    os << "Corners\n" << corners.size() << "\n";
+    for(const auto& c : corners)
       os << c + 1 << "\n";
   }
 
