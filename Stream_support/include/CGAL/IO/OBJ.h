@@ -306,7 +306,7 @@ bool read_OBJ(std::istream& is,
  *
  * \brief reads the content of `is` into `points` and `polygons`, using the \ref IOStreamOBJ.
  *
- * \attention The polygon soup is not cleared, and the data from the stream are appended.
+ * \note The polygon soup is not cleared, and the data from the stream are appended.
  *
  * \tparam PointRange a model of the concept `BackInsertionSequence` whose value type is the point type
  * \tparam PolygonRange a model of the concept `BackInsertionSequence` whose `value_type` is
@@ -356,7 +356,7 @@ bool read_OBJ(std::istream& is,
  *
  * \brief reads the content of the file `fname` into `points` and `polygons`, using the \ref IOStreamOBJ.
  *
- * \attention The polygon soup is not cleared, and the data from the file are appended.
+ * \note The polygon soup is not cleared, and the data from the file are appended.
  *
  * \tparam PointRange a model of the concept `BackInsertionSequence` whose value type is the point type.
  * \tparam PolygonRange a model of the concept `BackInsertionSequence` whose `value_type` is

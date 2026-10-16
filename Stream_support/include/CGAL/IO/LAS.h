@@ -95,7 +95,7 @@ make_las_point_reader(PointMap point_map);
    - `LAS_property::B` with type `unsigned short`
    - `LAS_property::I` with type `unsigned short`
 
-   \attention To read a binary file, the flag `std::ios::binary` must be set during the creation of the `ifstream`.
+   \note To read a binary file, the flag `std::ios::binary` must be set during the creation of the `ifstream`.
 
    \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
    It must be a model of `DefaultConstructible` and defaults to `value_type_traits<PointOutputIterator>::%type`.
@@ -125,7 +125,7 @@ bool read_LAS_with_properties(std::istream& is,
 
    Potential additional properties are ignored.
 
-   \attention To read a binary file, the flag `std::ios::binary` must be set during the creation of the `ifstream`.
+   \note To read a binary file, the flag `std::ios::binary` must be set during the creation of the `ifstream`.
 
    \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
    It must be a model of `DefaultConstructible` and defaults to `value_type_traits<PointOutputIterator>::%type`.
@@ -237,7 +237,7 @@ make_las_point_writer(PointMap point_map);
    See documentation of `read_LAS_with_properties()` for the
    list of available `LAS_property::Tag` classes.
 
-   \attention To write to a binary file, the flag `std::ios::binary` must be set during the creation of the `ofstream`.
+   \note To write to a binary file, the flag `std::ios::binary` must be set during the creation of the `ofstream`.
 
    \tparam PointRange is a model of `ConstRange`. The value type of
                       its iterator is the key type of the named parameter `point_map`.
@@ -266,7 +266,7 @@ bool write_LAS_with_properties(std::ostream& os, ///< output stream.
 
    \brief writes the range of `points` (positions only), using the \ref IOStreamLAS.
 
-  \attention To write to a binary file, the flag `std::ios::binary` must be set during the creation of the `ofstream`.
+  \note To write to a binary file, the flag `std::ios::binary` must be set during the creation of the `ofstream`.
 
    \tparam PointRange is a model of `ConstRange`. The value type of
                       its iterator is the key type of the named parameter `point_map`.

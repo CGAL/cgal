@@ -10,6 +10,7 @@ using Surface_mesh = CGAL::Surface_mesh<Point_3>;
 using Computation_policy_3 = CGAL::Barycentric_coordinates::Computation_policy_3;
 using Wachspress = CGAL::Barycentric_coordinates::Wachspress_coordinates_3<Surface_mesh>;
 
+
 int main() {
   CGAL::Random_points_in_sphere_3<Point_3> gen(1.0);
   std::vector<Point_3> points;
@@ -29,13 +30,15 @@ int main() {
       coordinates.reserve(number_of_vertices);
       wp(points[i], std::back_inserter(coordinates));
 
+#if 0
       std::cout << "Point " << i + 1 << ": " << std::endl;
 
       for(std::size_t j = 0; j < number_of_vertices; j++)
         std::cout << "Coordinate " << j + 1 << " = " << coordinates[j] << "; " << std::endl;
 
       std::cout << std::endl;
+#endif
   }
-
+std::cout << "done"<< std::endl;
   return EXIT_SUCCESS;
 }

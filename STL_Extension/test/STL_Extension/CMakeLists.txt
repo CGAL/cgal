@@ -43,7 +43,6 @@ target_compile_options(test_multiset_cc PRIVATE -DCGAL_MULTISET_USE_COMPACT_CONT
 cgal_add_test(test_multiset_cc)
 add_to_cached_list(CGAL_EXECUTABLE_TARGETS test_multiset_cc)
 
-create_single_source_cgal_program("test_N_tuple.cpp")
 create_single_source_cgal_program("test_namespaces.cpp")
 create_single_source_cgal_program("test_Nested_iterator.cpp")
 create_single_source_cgal_program("test_Object.cpp")
