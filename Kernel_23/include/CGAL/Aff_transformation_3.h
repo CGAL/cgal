@@ -20,12 +20,8 @@
 #include <CGAL/aff_transformation_tags.h>
 #include <CGAL/Kernel/Return_base_tag.h>
 
-#ifndef CGAL_NO_OSTREAM_INSERT_AFF_TRANSFORMATION_3
-#include <ostream>
-#endif
-#ifndef CGAL_NO_ISTREAM_EXTRACT_AFF_TRANSFORMATION_3
-#include <istream>
-#endif
+#include <iostream>
+
 namespace CGAL {
 
 template <class R_>
@@ -58,7 +54,7 @@ public:
     : Rep(t) {}
 
   Aff_transformation_3(Rep&& t)
-      : Rep(std::move(t)) {}
+    : Rep(std::move(t)) {}
 
   Aff_transformation_3(const Identity_transformation& tag)
     : Rep(tag) {}
@@ -77,31 +73,48 @@ public:
                        const RT& w)
     : Rep(tag, s ,w) {}
 
-
-
   // the general case:
   Aff_transformation_3(
       const RT& m11, const RT& m12, const RT& m13, const RT& m14,
       const RT& m21, const RT& m22, const RT& m23, const RT& m24,
       const RT& m31, const RT& m32, const RT& m33, const RT& m34,
-                                                   const RT& w= RT(1) )
+                                                   const RT& w)
     : Rep(m11, m12, m13, m14,
-                            m21, m22, m23, m24,
-                            m31, m32, m33, m34,
-                                           w) {}
+          m21, m22, m23, m24,
+          m31, m32, m33, m34,
+                         w)
+  {}
+
+  Aff_transformation_3(
+      const RT& m11, const RT& m12, const RT& m13, const RT& m14,
+      const RT& m21, const RT& m22, const RT& m23, const RT& m24,
+      const RT& m31, const RT& m32, const RT& m33, const RT& m34)
+    : Rep(m11, m12, m13, m14,
+          m21, m22, m23, m24,
+          m31, m32, m33, m34)
+  {}
 
   Aff_transformation_3(
       const RT& m11, const RT& m12, const RT& m13,
       const RT& m21, const RT& m22, const RT& m23,
       const RT& m31, const RT& m32, const RT& m33,
-                                                   const RT& w = RT(1) )
+                                                   const RT& w)
     : Rep(m11, m12, m13,
-                           m21, m22, m23,
-                           m31, m32, m33,
-                                          w) {}
+          m21, m22, m23,
+          m31, m32, m33,
+                      w)
+  {}
+
+  Aff_transformation_3(
+      const RT& m11, const RT& m12, const RT& m13,
+      const RT& m21, const RT& m22, const RT& m23,
+      const RT& m31, const RT& m32, const RT& m33)
+    : Rep(m11, m12, m13,
+          m21, m22, m23,
+          m31, m32, m33)
+  {}
 };
 
-#ifndef CGAL_NO_OSTREAM_INSERT_AFF_TRANSFORMATION_3
 template < class R >
 std::ostream&
 operator<<(std::ostream& os, const CGAL::Aff_transformation_3<R>& t)
@@ -109,9 +122,7 @@ operator<<(std::ostream& os, const CGAL::Aff_transformation_3<R>& t)
   typedef typename R::Kernel_base::Aff_transformation_3 RAff_transformation_3;
   return os << static_cast<const RAff_transformation_3&>(t);
 }
-#endif // CGAL_NO_OSTREAM_INSERT_AFF_TRANSFORMATION_3
 
-#ifndef CGAL_NO_ISTREAM_EXTRACT_AFF_TRANSFORMATION_3
 template < class R >
 std::istream&
 operator>>(std::istream& is, CGAL::Aff_transformation_3<R>& t)
@@ -119,7 +130,7 @@ operator>>(std::istream& is, CGAL::Aff_transformation_3<R>& t)
   typedef typename R::Kernel_base::Aff_transformation_3 RAff_transformation_3;
   return is >> static_cast<const RAff_transformation_3&>(t);
 }
-#endif // CGAL_NO_ISTREAM_EXTRACT_AFF_TRANSFORMATION_3
+
 
 } //namespace CGAL
 
