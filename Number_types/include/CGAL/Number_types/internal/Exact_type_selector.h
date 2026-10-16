@@ -181,6 +181,18 @@ CGAL_EXACT_SELECTORS_SPECS(float)
 CGAL_EXACT_SELECTORS_SPECS(int)
 
 template <>
+struct Exact_field_selector<long long> : Exact_field_selector<int> {};
+
+template <>
+struct Exact_field_selector<unsigned long long> : Exact_field_selector<int> {};
+
+template <>
+struct Exact_ring_selector<long long> : Exact_field_selector<long long> {};
+
+template <>
+struct Exact_ring_selector<unsigned long long> : Exact_field_selector<unsigned long long> {};
+
+template <>
 struct Exact_field_selector<MP_Float>
 { typedef Quotient<MP_Float> Type; };
 
