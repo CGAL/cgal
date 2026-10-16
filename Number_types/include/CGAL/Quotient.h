@@ -666,31 +666,27 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
       : public CGAL::cpp98::unary_function< Type, double > {
       public:
         double operator()( const Type& x ) const {
-        // Original global function was marked with an TODO!!
-          if (x.num == 0 )
-            return 0;
+          if (x.num == 0)
+            return 0.0;
 
-          double nd = CGAL_NTS to_double( x.num );
+          if (x.den == 1)
+            return CGAL_NTS to_double(x.num);
 
-          if (x.den == 1 )
-            return nd;
-
-          double dd = CGAL_NTS to_double( x.den );
-
-          if ( CGAL_NTS is_finite( x.den ) && CGAL_NTS is_finite( x.num ) )
-            return nd/dd;
-
-          if ( CGAL_NTS abs(x.num) > CGAL_NTS abs(x.den) )
-          {
-              NT  nt_div = x.num / x.den;
-              double divd = CGAL_NTS to_double(nt_div);
-              if ( divd >= std::ldexp(1.0,53) )
-              { return divd; }
-          }
-          if ( CGAL_NTS abs(x.num) < CGAL_NTS abs(x.den) )
-          { return 1.0 / CGAL_NTS to_double( NT(1) / x ); }
-
-          return nd/dd;
+          // Convert the numerator and the denominator separately and let IEEE
+          // arithmetic perform the division.  NT is only required to be a model
+          // of IntegralDomainWithoutDivision, so the division must not be done
+          // in NT (issue #1053).  The previous implementation also tested
+          // is_finite() on the NT values instead of on the converted doubles,
+          // which is what made the overflow handling ineffective (issue #1815):
+          // for an integer type is_finite() is always true, so the test never
+          // fired and the result was inf/inf, that is NaN.
+          //
+          // Out of range values are reported the way IEEE reports them: 0 when
+          // the quotient underflows, +-inf when only the numerator overflows,
+          // and NaN when both the numerator and the denominator overflow, in
+          // which case no double approximation can be determined from the two
+          // converted values alone.
+          return CGAL_NTS to_double(x.num) / CGAL_NTS to_double(x.den);
         }
     };
 
