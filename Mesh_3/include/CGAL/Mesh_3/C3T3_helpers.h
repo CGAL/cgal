@@ -2184,7 +2184,7 @@ private:
 
   auto display_vertex(Vertex_handle v) const {
     return IO::oformat([&,v](std::ostream& os) -> std::ostream&{
-      os << IO::oformat(v, With_point_tag{});
+      os << IO::oformat(v, With_point_tag<Tr>{{-1}, &tr_});
       if (v != Vertex_handle()) {
         os << " (dimension: " << c3t3_.in_dimension(v)
            << ", index.index(): " << c3t3_.index(v).index() << ")";
