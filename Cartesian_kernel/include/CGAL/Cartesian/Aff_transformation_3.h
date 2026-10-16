@@ -116,11 +116,11 @@ public:
 
 
   template <class T>
-  T transform(const T &t) const
+  auto transform(const T &t) const -> decltype(t.transform(*this))
   { return t.transform(*this); }
 
   template <class T>
-  T operator()(const T &t) const
+  auto operator()(const T &t) const -> decltype(t.transform(*this))
   { return t.transform(*this); }
 
   Point_3
