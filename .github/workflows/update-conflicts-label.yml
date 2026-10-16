@@ -1,0 +1,80 @@
+name: Update Conflicts Label
+
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize, ready_for_review]
+  push:
+  workflow_dispatch:
+
+permissions:
+  pull-requests: read
+  issues: write
+
+jobs:
+  update-conflicts-label:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update Conflicts label
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const label = 'Conflicts';
+            const sleep = (milliseconds) =>
+              new Promise((resolve) => setTimeout(resolve, milliseconds));
+
+            async function getMergeablePullRequest(number) {
+              for (let attempt = 0; attempt < 5; ++attempt) {
+                const { data: pullRequest } = await github.rest.pulls.get({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: number,
+                });
+
+                if (pullRequest.mergeable !== null) {
+                  return pullRequest;
+                }
+
+                await sleep(3000);
+              }
+
+              throw new Error(`GitHub did not determine whether pull request #${number} is mergeable.`);
+            }
+
+            async function updateLabel(number) {
+              const pullRequest = await getMergeablePullRequest(number);
+              const labels = pullRequest.labels.map(({ name }) => name);
+
+              if (pullRequest.mergeable === false) {
+                if (!labels.includes(label)) {
+                  await github.rest.issues.addLabels({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: number,
+                    labels: [label],
+                  });
+                }
+              } else if (labels.includes(label)) {
+                await github.rest.issues.removeLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: number,
+                  name: label,
+                });
+              }
+            }
+
+            if (context.eventName === 'pull_request_target') {
+              await updateLabel(context.payload.pull_request.number);
+            } else {
+              const pullRequests = await github.paginate(github.rest.pulls.list, {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                state: 'open',
+                base: context.ref.replace('refs/heads/', ''),
+                per_page: 100,
+              });
+
+              for (const pullRequest of pullRequests) {
+                await updateLabel(pullRequest.number);
+              }
+            }
