@@ -19,6 +19,7 @@
 #define CGAL_RATIONAL_ROTATION_H
 
 #include <algorithm>
+#include <utility>
 #include <CGAL/number_type_basic.h>
 
 namespace CGAL {
@@ -131,6 +132,27 @@ rational_rotation_approximation( const NT &  dirx,     // dir.x()
   if (dx < NT0) { cos = - cos; }
 
   if (dy < NT0) { sin = - sin; }
+}
+
+
+template <class ET> class Lazy_exact_nt;
+
+template <class ET>
+void rational_rotation_approximation(const Lazy_exact_nt<ET>& dirx,
+                                     const Lazy_exact_nt<ET>& diry,
+                                     Lazy_exact_nt<ET>& sin,
+                                     Lazy_exact_nt<ET>& cos,
+                                     Lazy_exact_nt<ET>& den,
+                                     const Lazy_exact_nt<ET>& eps_num,
+                                     const Lazy_exact_nt<ET>& eps_den)
+{
+  ET exact_sin, exact_cos, exact_den;
+  rational_rotation_approximation(dirx.exact(), diry.exact(),
+                                  exact_sin, exact_cos, exact_den,
+                                  eps_num.exact(), eps_den.exact());
+  sin = std::move(exact_sin);
+  cos = std::move(exact_cos);
+  den = std::move(exact_den);
 }
 
 
