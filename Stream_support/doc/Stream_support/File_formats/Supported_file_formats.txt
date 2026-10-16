@@ -12,6 +12,7 @@ each specific format.
 - \ref IOStreamOM
 - \ref IOStreamSTL
 - \ref IOStreamPLY
+- \ref IOStreamVG
 - \ref IOStreamXYZ
 - \ref IOStreamVTK
 - \ref IOStreamGocad
@@ -313,6 +314,29 @@ A precise specification of those formats is available
   </tr>
 </table>
 
+\section IOStreamVG VG VertexGroup File Format
+
+The `VG` format, using the file extension `.vg`, is an \ascii data format that allows to store a segmented point cloud. Each segment can have a type and a number of parameters, e.g., to describe a geometric primitive.
+
+A precise specification of the format is available <a href="https://abspy.readthedocs.io/en/latest/vertexgroup.html"> here</a>.
+
+<table class="iotable">
+  <tr>
+    <th colspan="4">VG File Format</th>
+  </tr>
+  <tr>
+    <td rowspan="1" width="75">Input</td>
+    <td rowspan="1" width="175">Point Set</td>
+    <td>Any point range or `CGAL::Point_set_3`</td>
+    <td>\link PkgStreamSupportIoFuncsVG CGAL::IO::read_VG(const std::string&, PointRange&, RegionOutputIterator)\endlink</td>
+  </tr>
+  <tr>
+    <td rowspan="1">Output</td>
+    <td rowspan="1">Point Set</td>
+    <td>Any point range or `CGAL::Point_set_3`</td>
+    <td>\link PkgStreamSupportIoFuncsVG CGAL::IO::write_VG(const std::string&, const PointRange&, const RegionRange&)\endlink</td>
+  </tr>
+</table>
 
 \section IOStreamXYZ XYZ File Format
 
