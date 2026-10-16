@@ -9,10 +9,10 @@ typedef LCC_3::Dart_descriptor Dart_descriptor;
 typedef LCC_3::Point           Point;
 typedef LCC_3::FT              FT;
 
-void load_and_simplify_off(LCC_3& lcc, const std::string& filename,
+void load_and_simplify_off(LCC_3& lcc, const std::filesystem::path& filename,
                            bool updateattribs, int percent)
 {
-  std::ifstream ifile(filename.c_str());
+  std::ifstream ifile(filename);
   if (ifile)
   {
     CGAL::load_off(lcc, ifile);
@@ -47,13 +47,13 @@ int main(int narg, char** argv)
     return EXIT_FAILURE;
   }
 
-  std::string filename;
+  std::filesystem::path filename;
   if ( narg==1 )
   {
-    filename=std::string(CGAL::data_file_path("meshes/armadillo.off"));
-    std::cout<<"No filename given: use data/armadillo.off by default."<<std::endl;
+    filename = CGAL::data_file_path("meshes/armadillo.off");
+    std::cout << "No filename given: use data/armadillo.off by default." << std::endl;
   }
-  else filename=std::string(argv[1]);
+  else filename = std::filesystem::path(argv[1]);
 
   int percent = 30; // remove 30 percent of edges
   if ( narg>2 ) { percent = atoi(argv[2]); }

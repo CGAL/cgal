@@ -904,20 +904,6 @@ inline bool parse_double(const std::string& line, double& d)
 
 } // IO namespace
 
-#ifndef CGAL_NO_DEPRECATED_CODE
-using IO::oformat;
-using IO::iformat;
-using IO::bmformat;
-using IO::get_mode;
-using IO::set_ascii_mode;
-using IO::set_binary_mode;
-using IO::set_pretty_mode;
-using IO::set_mode;
-using IO::is_pretty;
-using IO::is_ascii;
-using IO::is_binary;
-using IO::mode_name;
-#endif
 
 // From polynomial.h TODO: Where to put this?
 inline void swallow(std::istream &is, char d)

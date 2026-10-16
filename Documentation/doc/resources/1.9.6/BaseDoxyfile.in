@@ -113,6 +113,7 @@ ALIASES                = "cgal=%CGAL" \
                          "api=API" \
                          "vtk=VTK" \
                          "itk=ITK" \
+                         "medit=MEDIT" \
                          "visualstudio=Visual Studio" \
                          "taucs=TAUCS" \
                          "lapack=LAPACK" \

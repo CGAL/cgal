@@ -21,7 +21,7 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 // be reoriented to define a valid closed mesh
 void create_mesh_with_cc_to_orient(Mesh& mesh)
 {
-  const std::string filename = CGAL::data_file_path("meshes/elephant.off");
+  const std::filesystem::path filename = CGAL::data_file_path("meshes/elephant.off");
   CGAL::IO::read_polygon_mesh(filename, mesh);
 
   // turn the mesh into a triangle soup, duplicating all the vertices and shuffling orientations

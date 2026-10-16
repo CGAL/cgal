@@ -121,7 +121,9 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
     APPEND ${CGAL_DOC_PACKAGE_DEFAULTS}
     "ALIASES += \"cgalPkgManuals{2}=<div class=\\\"PkgManuals\\\"></div>\"\n")
   file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "INPUT = ${CGAL_PACKAGE_DOC_DIR}\n")
-  if(NOT EXISTS "${CGAL_PACKAGE_DOC_DIR}/CGAL")
+
+  #special cases for Stream_support and Documentation package: stream support also needs include/CGAL while Documentation
+  if((NOT EXISTS "${CGAL_PACKAGE_DOC_DIR}/CGAL" AND (NOT ${CGAL_PACKAGE_NAME} STREQUAL "Documentation")) OR ${CGAL_PACKAGE_NAME} STREQUAL "Stream_support")
     # This package has in-source documentation.
     if(CGAL_BRANCH_BUILD) # use the entire include subdir
       file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS}
@@ -350,7 +352,12 @@ if(NOT CGAL_CREATED_VERSION_NUM)
   if(CGAL_BRANCH_BUILD)
     include(${CGAL_ROOT}/CGALConfigVersion.cmake)
 
-    if(CGAL_BUGFIX_VERSION AND CGAL_BUGFIX_VERSION GREATER 0)
+    # Prefer the public release version (e.g. "6.0-beta1") which includes
+    # pre-release suffixes; fall back to computing from components when it
+    # is not available (issue #8322).
+    if(CGAL_VERSION_PUBLIC_RELEASE_VERSION)
+      set(CGAL_CREATED_VERSION_NUM "${CGAL_VERSION_PUBLIC_RELEASE_VERSION}")
+    elseif(CGAL_BUGFIX_VERSION AND CGAL_BUGFIX_VERSION GREATER 0)
       set(CGAL_CREATED_VERSION_NUM
           "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}.${CGAL_BUGFIX_VERSION}")
     else()
@@ -366,8 +373,9 @@ if(NOT CGAL_CREATED_VERSION_NUM)
       #read version.h and get the line with CGAL_VERSION
       file(STRINGS "${CGAL_ROOT}/include/CGAL/version.h" CGAL_VERSION_LINE
            REGEX "CGAL_VERSION ")
-      #extract release id
-      string(REGEX MATCH "[0-9]+\\.[0-9]+\\.?[0-9]*" CGAL_CREATED_VERSION_NUM
+      #extract release id, including any pre-release suffix like -beta1, -dev,
+      #or multi-segment ids such as -Ic-33
+      string(REGEX MATCH "[0-9]+\\.[0-9]+(\\.[0-9]+)?(-[a-zA-Z0-9]+)*" CGAL_CREATED_VERSION_NUM
                    "${CGAL_VERSION_LINE}")
     endif()
   endif()

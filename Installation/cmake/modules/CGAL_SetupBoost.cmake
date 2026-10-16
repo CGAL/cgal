@@ -25,8 +25,10 @@ if(Boost_FOUND AND Boost_VERSION VERSION_LESS 1.74)
   endif()
 endif()
 
-message( STATUS "Boost include dirs: ${Boost_INCLUDE_DIRS}" )
-message( STATUS "Boost libraries:    ${Boost_LIBRARIES}" )
+if (NOT CGAL_FIND_QUIETLY)
+  message (STATUS "Boost include dirs: ${Boost_INCLUDE_DIRS}")
+  message (STATUS "Boost libraries:    ${Boost_LIBRARIES}")
+endif ()
 
 set ( CGAL_USE_BOOST 1 )
 
