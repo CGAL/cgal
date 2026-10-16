@@ -17,6 +17,8 @@
 
 #include <CGAL/license/Polygon_mesh_processing.h>
 
+#include <vector>
+
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
@@ -29,7 +31,6 @@
 #include <algorithm>
 #include <iostream>
 #include <filesystem>
-#include <vector>
 
 namespace CGAL {
 namespace Polygon_mesh_processing {

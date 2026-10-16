@@ -1,5 +1,5 @@
-#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/IO/Color.h>
 #include <cassert>
