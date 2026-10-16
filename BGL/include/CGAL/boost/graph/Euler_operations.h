@@ -746,7 +746,7 @@ add_face(const VertexRange& vr, Graph& g)
   CGAL_precondition_code(for(vertex_descriptor v : vr))
   CGAL_precondition(is_valid_vertex_descriptor(v, g));
 
-  std::vector<vertex_descriptor> vertices(vr.begin(), vr.end()); // quick and dirty copy
+  boost::container::small_vector<vertex_descriptor,4> vertices(vr.begin(), vr.end()); // quick and dirty copy
   unsigned int n = (unsigned int)vertices.size();
   //check that every vertex is unique
   std::sort(vertices.begin(), vertices.end());
@@ -759,8 +759,8 @@ add_face(const VertexRange& vr, Graph& g)
     return boost::graph_traits<Graph>::null_face();
   }
 
-  std::vector<halfedge_descriptor> halfedges(n);
-  std::vector<bool>                is_new(n);
+  boost::container::small_vector<halfedge_descriptor,4> halfedges(n);
+  boost::container::small_vector<bool,4>                is_new(n);
 
   for (unsigned int i = 0, ii = 1; i<n; ++i, ++ii, ii %= n)
   {
