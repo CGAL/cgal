@@ -274,9 +274,9 @@ bool read_PLY(std::istream& is,
  *
  * \brief reads the content of `is` into `points` and `polygons`, using the \ref IOStreamPLY.
  *
- * \attention The polygon soup is not cleared, and the data from the stream are appended.
+ * \note The polygon soup is not cleared, and the data from the stream are appended.
  *
- * \attention To read a binary file, the flag `std::ios::binary` must be set during the creation of the `ifstream`.
+ * \note To read a binary file, the flag `std::ios::binary` must be set during the creation of the `ifstream`.
  *
  * \tparam PointRange a model of the concept `BackInsertionSequence` whose value type is the point type
  * \tparam PolygonRange a model of the concept `BackInsertionSequence` whose `value_type` is
@@ -350,7 +350,7 @@ bool read_PLY(std::istream& is,
  *
  * \brief reads the content of `fname` into `points` and `polygons`, using the \ref IOStreamPLY.
  *
- * \attention The polygon soup is not cleared, and the data from the file are appended.
+ * \note The polygon soup is not cleared, and the data from the file are appended.
  *
  * \tparam PointRange a model of the concept `BackInsertionSequence` whose value type is the point type.
  * \tparam PolygonRange a model of the concept `BackInsertionSequence` whose `value_type` is
@@ -432,7 +432,7 @@ bool read_PLY(const std::filesystem::path& fname,
  *
  * \brief writes the content of `points` and `polygons` in `out`, using the \ref IOStreamPLY.
  *
- * \attention To write to a binary file, the flag `std::ios::binary` must be set during the creation
+ * \note To write to a binary file, the flag `std::ios::binary` must be set during the creation
  *            of the `ofstream`, and the \link PkgStreamSupportEnumRef `IO::Mode` \endlink
  *            of the stream must be set to `BINARY`.
  *
@@ -645,7 +645,7 @@ make_ply_normal_reader(VectorMap normal_map);
   second element of the tuple should be a functor that constructs
   the value type of `PropertyMap` from N objects of types `T`.
 
-  \attention To read a binary file, the flag `std::ios::binary` must be set during the creation of the `ifstream`.
+  \note To read a binary file, the flag `std::ios::binary` must be set during the creation of the `ifstream`.
 
   \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
   It must be a model of `DefaultConstructible` and defaults to `value_type_traits<PointOutputIterator>::%type`.
@@ -676,7 +676,7 @@ bool read_PLY_with_properties(std::istream& is,
 
    Potential additional point properties and faces are ignored.
 
-  \attention To read a binary file, the flag `std::ios::binary` must be set during the creation of the `ifstream`.
+  \note To read a binary file, the flag `std::ios::binary` must be set during the creation of the `ifstream`.
 
    \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
    It must be a model of `DefaultConstructible` and defaults to `value_type_traits<PointOutputIterator>::%type`.
@@ -840,7 +840,7 @@ bool read_PLY(const std::filesystem::path& fname,
    be provided for `PropertyMap::value_type` that handles both ASCII
    and binary output (see `CGAL::IO::get_mode()`).
 
-   \attention To write to a binary file, the flag `std::ios::binary` must be set during the creation
+   \note To write to a binary file, the flag `std::ios::binary` must be set during the creation
               of the `ofstream`, and the \link PkgStreamSupportEnumRef `IO::Mode` \endlink
               of the stream must be set to `BINARY`.
 
@@ -868,7 +868,7 @@ template <typename PointRange,
 
    \brief writes the range of `points` (positions + normals, if available) using \ref IOStreamPLY.
 
-   \attention To write to a binary file, the flag `std::ios::binary` must be set during the creation
+   \note To write to a binary file, the flag `std::ios::binary` must be set during the creation
               of the `ofstream`, and the \link PkgStreamSupportEnumRef `IO::Mode` \endlink
               of the stream must be set to `BINARY`.
 

@@ -45,7 +45,7 @@ output_to_tetgen(std::string filename,
   Cell_pmap cell_pmap(c3t3);
   Facet_pmap facet_pmap(c3t3,cell_pmap);
   Facet_pmap_twice facet_pmap_twice(c3t3,cell_pmap);
-  Vertex_pmap vertex_pmap(c3t3,cell_pmap,facet_pmap);
+  Vertex_pmap vertex_pmap(c3t3);
 
   output_to_tetgen(filename,
                    c3t3,
