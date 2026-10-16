@@ -43,9 +43,7 @@ functions that return instances of these types:
 
 \cgalHeading{Implementation}
 
-This function uses the algorithm of Akl and
-Toussaint \cgalCite{at-fcha-78} that requires \cgalBigO{n \log n} time for \f$ n\f$ input
-points.
+This function uses the algorithm of \cgalCite{at-fcha-78} that requires \cgalBigO{n \log n} time for \f$ n\f$ input points.
 
 
 */

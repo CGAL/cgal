@@ -172,8 +172,7 @@ executed on two machines:
 \section HT2_Design Design and Implementation History
 
 This package implements the algorithms for computing Delaunay complexes
-in the hyperbolic plane, described by Mikhail Bogdanov, Olivier
-Devillers, and Monique Teillaud \cgalCite{cgal:bdt-hdcvd-14}.
+in the hyperbolic plane, described by \cgalCite{cgal:bdt-hdcvd-14}.
 
 Mikhail Bogdanov wrote most of the code. Iordan Iordanov added the
 traits class `CGAL::Hyperbolic_Delaunay_triangulation_traits_2` and

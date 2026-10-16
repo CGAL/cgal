@@ -26,9 +26,9 @@ constraints. Specifically, it requires that these piecewise linear constraints a
 _piecewise linear complex_&nbsp;(PLC). The resulting triangulations are of type `Triangulation_3`,
 as described in the chapter \ref PkgTriangulation3.
 
-The article by Cohen-Steiner et al. \cgalCite{cgal:cohen2002conforming} discusses the problem of
+The article by \cgalCite{cgal:cohen2002conforming} discusses the problem of
 constructing conforming Delaunay triangulations and proposes an algorithm to address it.
-Si et al.'s work \cgalCite{si2005meshing}, \cgalCite{cgal:si2008cdt3}, \cgalCite{si2015tetgen},
+\cgalCite{si2005meshing}, \cgalCite{cgal:si2008cdt3}, \cgalCite{si2015tetgen},
  presents an algorithm for computing conforming constrained
 Delaunay triangulations in 3D.
 
@@ -85,7 +85,7 @@ the segment.
 
 In 3D, constrained triangulations do not always exist. This can be demonstrated using the example of
 Sch&ouml;nhardt polyhedra \cgalCite{s-udzvd-28} (see \cgalFigureRef{CT_3_schonhardt_fig}),
-\cgalCite{b-ip-48a}. Shewchuk \cgalCite{cgal:shewchuk1998condition} demonstrated that for any PLC,
+\cgalCite{b-ip-48a}. \cgalCite{cgal:shewchuk1998condition} demonstrated that for any PLC,
 there exists a refined
 version of the original PLC that admits a constrained Delaunay triangulation. This refinement is
 achieved by adding Steiner vertices to the input edges and polygonal faces. The constrained triangulation
@@ -342,8 +342,7 @@ The left column shows the input PLC, while the right column displays the resulti
 
 The initial version of this package was implemented by Laurent Rineau and released in
 \cgal&nbsp;6.1&nbsp;(2025). Jane Tournois contributed to the documentation and helped improve the API.
-The package design and algorithms are grounded in the theoretical work of
-Hang&nbsp;Si et al. on meshing algorithms&nbsp;\cgalCite{si2005meshing},&nbsp;\cgalCite{si2015tetgen}.
+The package design and algorithms are grounded in the theoretical work of \cgalCite{si2005meshing} and \cgalCite{si2015tetgen}.
 
 */
 } /* namespace CGAL */
