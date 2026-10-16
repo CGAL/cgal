@@ -27,9 +27,13 @@
 #include <cmath>
 #include <fstream>
 #include <atomic>
+#include <iterator>
+#include <variant>
+#include <vector>
 
 #include <CGAL/tags.h>
 #include <CGAL/Arr_tags.h>
+#include <CGAL/Bbox_2.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Arr_geometry_traits/Circle_segment_2.h>
 
@@ -638,6 +642,45 @@ public:
 
   /*! obtains a `Make_x_monotone_2` functor object. */
   Make_x_monotone_2 make_x_monotone_2_object() const { return Make_x_monotone_2(m_use_cache); }
+
+  class Construct_bbox_2 {
+  public:
+    Bbox_2 operator()(const Point_2& point) const {
+      const auto x = CGAL::to_interval(point.x());
+      const auto y = CGAL::to_interval(point.y());
+      return Bbox_2(x.first, y.first, x.second, y.second);
+    }
+
+    Bbox_2 operator()(const X_monotone_curve_2& cv) const {
+      const Bbox_2 box = (*this)(cv.left()) + (*this)(cv.right());
+      if (cv.is_linear()) return box;
+
+      const auto& circle = cv.supporting_circle();
+      const CoordNT center_x(circle.center().x());
+      if (CGAL::compare(cv.left().x(), center_x) == LARGER ||
+          CGAL::compare(cv.right().x(), center_x) == SMALLER)
+        return box;
+
+      const Bbox_2 circle_box = circle.bbox();
+      const bool upper = (cv.orientation() == COUNTERCLOCKWISE) != cv.is_directed_right();
+      return upper ? Bbox_2(box.xmin(), box.ymin(), box.xmax(), circle_box.ymax()) :
+                     Bbox_2(box.xmin(), circle_box.ymin(), box.xmax(), box.ymax());
+    }
+
+    Bbox_2 operator()(const Curve_2& cv) const {
+      if (cv.is_full()) return cv.supporting_circle().bbox();
+
+      std::vector<std::variant<Point_2, X_monotone_curve_2>> pieces;
+      Make_x_monotone_2()(cv, std::back_inserter(pieces));
+      Bbox_2 box;
+      for (const auto& piece : pieces)
+        box += std::visit(*this, piece);
+      return box;
+    }
+  };
+
+  /*! obtains a `Construct_bbox_2` functor object. */
+  Construct_bbox_2 construct_bbox_2_object() const { return Construct_bbox_2(); }
 
   class Split_2 {
   public:

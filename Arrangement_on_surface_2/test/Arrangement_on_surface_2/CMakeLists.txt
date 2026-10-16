@@ -9,3 +9,7 @@ enable_testing()
 find_package(CGAL REQUIRED)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/cgal_test.cmake)
+
+if(NOT CGAL_DISABLE_GMP)
+  create_single_source_cgal_program("test_circle_segment_bbox.cpp")
+endif()
