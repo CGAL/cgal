@@ -111,7 +111,15 @@ static double get_relative_precision_of_to_double();
 }; /* end Lazy_exact_nt */
 
 /*!
-writes `m` to ostream `out` in an interval format.
+writes `m` to ostream `out`. By default a `double` approximation
+(`to_double(m)`) is written, as historically. After calling
+`CGAL::IO::set_exact_mode(out)`, the exact value `m.exact()` is written instead,
+using `NT`'s own output operator. When `NT` has an exact stream representation,
+such as a rational type (`Exact_rational`, `Gmpq`), `operator>>` then reconstructs
+the same exact number, so exact values can be saved and reloaded without loss. For
+`NT` whose output operator writes an approximation (for example `CORE::Expr`, which
+writes a decimal), exact mode writes that approximation and the round-trip is not
+exact.
 \relates Lazy_exact_nt
 */
 std::ostream& operator<<(std::ostream& out, const Lazy_exact_nt<NT>& m);
@@ -121,6 +129,5 @@ reads a `NT` from `in`, then converts it to a `Lazy_exact_nt<NT>`.
 \relates Lazy_exact_nt
 */
 std::istream& operator>>(std::istream& in, Lazy_exact_nt<NT>& m);
-
 
 } /* end namespace CGAL */
