@@ -271,18 +271,22 @@ template <class T>
     if(variant == 1){
       if(t.variant == 0) return *this;
       if(t.variant == 1) return Aff_transformation_3(SCALING, entries[0]*t.entries[0]);
-      if(t.variant == 2) return Aff_transformation_3(TRANSLATION, Vector_3(entries[0]*t.entries[0], entries[0]*t.entries[1], entries[0]*t.entries[2]));
-      return Aff_transformation_3(entries[0]*t.entries[0], entries[0]*t.entries[1], entries[0]*t.entries[2], entries[0]*t.entries[3],
-                                  entries[0]*t.entries[4], entries[0]*t.entries[5], entries[0]*t.entries[6], entries[0]*t.entries[7],
-                                  entries[0]*t.entries[8], entries[0]*t.entries[9], entries[0]*t.entries[10], entries[0]*t.entries[11]);
+      if(t.variant == 2) return Aff_transformation_3(entries[0], FT(0), FT(0), t.entries[0],
+                                                    FT(0), entries[0], FT(0), t.entries[1],
+                                                    FT(0), FT(0), entries[0], t.entries[2]);
+      return Aff_transformation_3(entries[0]*t.entries[0], entries[0]*t.entries[1], entries[0]*t.entries[2], t.entries[3],
+                                  entries[0]*t.entries[4], entries[0]*t.entries[5], entries[0]*t.entries[6], t.entries[7],
+                                  entries[0]*t.entries[8], entries[0]*t.entries[9], entries[0]*t.entries[10], t.entries[11]);
     }
     if(variant == 2){
       if(t.variant == 0) return *this;
-      if(t.variant == 1) return Aff_transformation_3(TRANSLATION, Vector_3(entries[0]*t.entries[0], entries[1]*t.entries[0], entries[2]*t.entries[0]));
+      if(t.variant == 1) return Aff_transformation_3(t.entries[0], FT(0), FT(0), entries[0]*t.entries[0],
+                                                    FT(0), t.entries[0], FT(0), entries[1]*t.entries[0],
+                                                    FT(0), FT(0), t.entries[0], entries[2]*t.entries[0]);
       if(t.variant == 2) return Aff_transformation_3(TRANSLATION, Vector_3(entries[0]+t.entries[0], entries[1]+t.entries[1], entries[2]+t.entries[2]));
-      return Aff_transformation_3(t.entries[0]+entries[0], t.entries[1]+entries[1], t.entries[2]+entries[2], t.entries[3],
-                                  t.entries[4]+entries[0], t.entries[5]+entries[1], t.entries[6]+entries[2], t.entries[7],
-                                  t.entries[8]+entries[0], t.entries[9]+entries[1], t.entries[10]+entries[2], t.entries[11]);
+      return Aff_transformation_3(t.entries[0], t.entries[1], t.entries[2], t.entries[0]*entries[0] + t.entries[1]*entries[1] + t.entries[2]*entries[2] + t.entries[3],
+                                  t.entries[4], t.entries[5], t.entries[6], t.entries[4]*entries[0] + t.entries[5]*entries[1] + t.entries[6]*entries[2] + t.entries[7],
+                                  t.entries[8], t.entries[9], t.entries[10], t.entries[8]*entries[0] + t.entries[9]*entries[1] + t.entries[10]*entries[2] + t.entries[11]);
     }
       if(t.variant == 0) return *this;
       if(t.variant == 1)
@@ -290,9 +294,9 @@ template <class T>
                                     entries[4]*t.entries[0], entries[5]*t.entries[0], entries[6]*t.entries[0], entries[7]*t.entries[0],
                                     entries[8]*t.entries[0], entries[9]*t.entries[0], entries[10]*t.entries[0], entries[11]*t.entries[0]);
       if(t.variant == 2)
-        return Aff_transformation_3(entries[0]+entries[3]*t.entries[0], entries[1]+entries[3]*t.entries[1], entries[2]+entries[3]*t.entries[2], entries[3],
-                                    entries[4]+entries[7]*t.entries[0], entries[5]+entries[7]*t.entries[1], entries[6]+entries[7]*t.entries[2], entries[7],
-                                    entries[8]+entries[11]*t.entries[0], entries[9]+entries[11]*t.entries[1], entries[10]+entries[11]*t.entries[2], entries[11]);
+        return Aff_transformation_3(entries[0], entries[1], entries[2], entries[3]+t.entries[0],
+                                    entries[4], entries[5], entries[6], entries[7]+t.entries[1],
+                                    entries[8], entries[9], entries[10], entries[11]+t.entries[2]);
 
       return Aff_transformation_3(t.entries[0]*entries[0] + t.entries[1]*entries[4] + t.entries[2]*entries[8],
                                   t.entries[0]*entries[1] + t.entries[1]*entries[5] + t.entries[2]*entries[9],
@@ -351,7 +355,7 @@ Aff_transformationC3<R>::print(std::ostream &os) const
     return os << "Identity";
   }
   if(variant == 1) {
-    os << "Scaling: " << entries[0];
+    return os << "Scaling: " << entries[0];
   }
   if(variant == 2) {
     return os << "Translation: " << entries[0] << " " << entries[1] << " " << entries[2];

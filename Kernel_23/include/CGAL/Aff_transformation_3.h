@@ -69,7 +69,7 @@ public:
 
   Aff_transformation_3(const Scaling tag,
                        const RT& s)
-    : Rep(tag, s) {}
+    : Rep(tag, s, RT(1)) {}
 
 
   Aff_transformation_3(const Scaling tag,
