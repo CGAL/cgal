@@ -25,16 +25,42 @@ void check_product(long a, long b)
     assert(product.asLong() == expected.convert_to<long>());
   }
 }
+template <class Integer>
+void check_unsigned_constructors()
+{
+  const long limit = (std::numeric_limits<long>::max)();
+  auto check = [limit](Integer value)
+  {
+    const CORE::extLong number(value);
+    if(boost::multiprecision::cpp_int(value) >= limit)
+      assert(number.isInfty());
+    else
+      assert(!number.isInfty() && number.asLong() == static_cast<long>(value));
+  };
+  check(0);
+  check((std::numeric_limits<Integer>::max)());
+  for(int bit = 0; bit < std::numeric_limits<Integer>::digits; ++bit)
+    check(Integer(1) << bit);
+}
+
 #endif
 
 int main()
 {
 #ifdef CGAL_USE_CORE
+  check_unsigned_constructors<unsigned int>();
+  check_unsigned_constructors<unsigned long>();
+  check_unsigned_constructors<std::size_t>();
   const long limit = (std::numeric_limits<long>::max)();
   std::vector<long> values = {0, 1, -1, 2, -2, 3, -3,
                             limit - 1, 1 - limit,
                             limit / 2, -limit / 2,
                             limit / 2 + 1, -limit / 2 - 1};
+  if(limit % 7 == 0)
+  {
+    values.push_back(limit / 7);
+    values.push_back(-limit / 7);
+  }
   for(long power = 1; power <= limit / 2; power *= 2)
   {
     values.push_back(power);
