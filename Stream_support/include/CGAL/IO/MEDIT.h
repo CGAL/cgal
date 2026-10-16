@@ -632,12 +632,8 @@ bool read_MEDIT(std::istream& is,
  *
  * \brief writes a soup of indexed cells using the \ref IOStreamMedit.
  *
- * The subdomain index corresponds to what \medit calls cell reference,
- * facet patch index corresponds to triangle reference,
- * edge curve index to edge reference,
- * and vertex corner index to vertex reference.
 
- * \note Currently only tetrahedral cells are supported.
+ * \note Currently, only tetrahedral cells are supported.
  *
  * \tparam PointRange a model of `ConstRange` whose value type is the point type
  *
