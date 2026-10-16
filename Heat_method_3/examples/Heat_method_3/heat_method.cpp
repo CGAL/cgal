@@ -1,7 +1,8 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Heat_method_3/Surface_mesh_geodesic_distances_3.h>
-
+#include <CGAL/IO/Color_ramp.h>
+#include <CGAL/boost/graph/IO/PLY.h>
 #include <iostream>
 #include <fstream>
 
@@ -11,6 +12,7 @@ typedef CGAL::Surface_mesh<Point_3>                          Triangle_mesh;
 
 typedef boost::graph_traits<Triangle_mesh>::vertex_descriptor vertex_descriptor;
 typedef Triangle_mesh::Property_map<vertex_descriptor,double> Vertex_distance_map;
+typedef Triangle_mesh::Property_map<vertex_descriptor,CGAL::IO::Color> Vertex_color_map;
 
 int main(int argc, char* argv[])
 {
@@ -31,12 +33,25 @@ int main(int argc, char* argv[])
 
   CGAL::Heat_method_3::estimate_geodesic_distances(tm, vertex_distance, source) ;
 
+  double sdistance = 0;
   std::cout << "Source vertex " << source << " at: " << tm.point(source) << std::endl;
+
+  Vertex_color_map vertex_color = tm.add_property_map<vertex_descriptor, CGAL::IO::Color>("v:color", CGAL::IO::Color()).first;
   for(vertex_descriptor vd : vertices(tm))
   {
-    std::cout << vd << " ("<< tm.point(vd) << ")"
-              <<  " is at distance " << get(vertex_distance, vd) << std::endl;
+    double d = get(vertex_distance, vd);
+   sdistance = (std::max)(sdistance,d);
   }
+
+  CGAL::IO::Color_ramp ramp;
+  ramp.build_thermal();
+  for(vertex_descriptor vd : vertices(tm))
+  {
+    double d = get(vertex_distance, vd);
+    put(vertex_color,vd, ramp.interpolate(d/sdistance));
+  }
+  std::ofstream out("out.ply");
+  CGAL::IO::write_PLY(out, tm );
 
   return 0;
 }
