@@ -5,6 +5,7 @@
 \example Nef_3/extended_kernel.cpp
 \example Nef_3/handling_double_coordinates.cpp
 \example Nef_3/interface_polyhedron.cpp
+\example Nef_3/interface_surface_mesh.cpp
 \example Nef_3/nef_3_construction.cpp
 \example Nef_3/nef_3_point_location.cpp
 \example Nef_3/nef_3_simple.cpp
