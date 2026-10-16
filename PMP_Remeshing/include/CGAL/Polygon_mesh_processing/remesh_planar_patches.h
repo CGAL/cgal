@@ -36,6 +36,7 @@
 #endif
 
 #include <algorithm>
+#include <map>
 #include <unordered_map>
 
 namespace CGAL{
@@ -615,6 +616,8 @@ bool decimate_impl(const TriangleMesh& tm,
   cc_to_handle.set();
 
   bool all_patches_successfully_remeshed = true;
+  boost::dynamic_bitset<> patches_to_copy(nb_corners_and_nb_cc.second);
+  const std::size_t initial_face_count = out_faces.size();
   do
   {
     std::vector< std::vector<Id_pair> > face_boundaries(nb_corners_and_nb_cc.second);
@@ -674,6 +677,7 @@ bool decimate_impl(const TriangleMesh& tm,
       std::vector< Id_pair >& csts = face_boundaries[cc_id];
 
       if (!face_boundaries_valid[cc_id]) continue;
+      if (patches_to_copy.test(cc_id)) csts.clear();
 
       // do not remesh a patch containing duplicated vertices
       for (auto c : csts)
@@ -735,9 +739,12 @@ bool decimate_impl(const TriangleMesh& tm,
             debug << "2 " << corners[c.first] << " " << corners[c.second] << "\n";
           debug.close();
           std::cout << "  normal used is " << face_normals[cc_id] << "\n";
-          debug.open("normal"+std::to_string(fail_case_id)+".polylines.txt");
-          debug << "2 " << corners[csts[0].first] << " " << corners[csts[0].first]+face_normals[cc_id] << "\n";
-          debug.close();
+          if (!csts.empty())
+          {
+            debug.open("normal"+std::to_string(fail_case_id)+".polylines.txt");
+            debug << "2 " << corners[csts[0].first] << " " << corners[csts[0].first]+face_normals[cc_id] << "\n";
+            debug.close();
+          }
           ++fail_case_id;
 #endif
           all_patches_successfully_remeshed = false;
@@ -780,15 +787,42 @@ bool decimate_impl(const TriangleMesh& tm,
         }
       }
     }
+    if (!cc_to_handle.any())
+    {
+      out_faces.resize(initial_face_count);
+      for (const auto& patch_faces : faces_per_cc)
+        out_faces.insert(out_faces.end(), patch_faces.begin(), patch_faces.end());
+      if (!is_polygon_soup_a_polygon_mesh(out_faces))
+      {
+        typedef std::pair<std::size_t, bool> Edge_use;
+        std::map<Id_pair, std::vector<Edge_use>> edge_uses;
+        for (std::size_t patch = 0; patch < faces_per_cc.size(); ++patch)
+          for (const auto& polygon : faces_per_cc[patch])
+            for (std::size_t i = 0; i < polygon.size(); ++i)
+            {
+              const auto a = polygon[i], b = polygon[(i + 1) % polygon.size()];
+              edge_uses[std::minmax(a, b)].emplace_back(patch, a < b);
+            }
+        for (const auto& entry : edge_uses)
+        {
+          const auto& uses = entry.second;
+          if (uses.size() <= 1 || (uses.size() == 2 && uses[0].second != uses[1].second))
+            continue;
+          for (const auto& use : uses)
+            if (!patches_to_copy.test(use.first))
+            {
+              patches_to_copy.set(use.first);
+              cc_to_handle.set(use.first);
+            }
+        }
+      }
+    }
   }
   while(cc_to_handle.any());
 
   std::size_t cc_id=0;
   for (const std::vector<boost::container::small_vector<std::size_t,3>>& cc_trs : faces_per_cc)
-  {
-    out_faces.insert(out_faces.end(), cc_trs.begin(), cc_trs.end());
     f_id_tracker.register_faces_of_cc(cc_trs.size(), cc_id++);
-  }
 
   return all_patches_successfully_remeshed;
 }
