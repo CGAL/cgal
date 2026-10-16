@@ -104,6 +104,19 @@ void dump_negative_tetrahedra(const char* filename, const CDT_3& cdt)
   ofs.close();
 }
 
+template<typename CDT_3>
+void dump_Steiner_points_in_volume(const char* filename, const CDT_3& cdt)
+{
+  std::ofstream ofs(filename);
+  ofs.precision(17);
+  for(auto v : cdt.triangulation().finite_vertex_handles()) {
+    if(v->ccdt_3_data().vertex_type() == CDT_3_vertex_type::STEINER_IN_VOLUME) {
+      ofs << v->point() << std::endl;
+    }
+  }
+  ofs.close();
+}
+
 template <typename CDT_3>
 void smooth_Steiner_vertices_in_volume(CDT_3& cdt,
                                        const double bbox_max_span,
@@ -122,6 +135,7 @@ void smooth_Steiner_vertices_in_volume(CDT_3& cdt,
     std::cout << "Good :-) No negative tetrahedra left!" << std::endl;
     return;
   }
+  dump_negative_tetrahedra("out_before_steiner_smoothing_negative_tetrahedra.polylines.txt", cdt);
 
   cdt.triangulation().may_have_badly_oriented_cells(true);
 
@@ -154,6 +168,8 @@ void smooth_Steiner_vertices_in_volume(CDT_3& cdt,
       std::cout << "Good :-) No negative tetrahedra left after collapse!" << std::endl;
       return;
     }
+    dump_negative_tetrahedra("out_after_collapse_negative_tetrahedra.polylines.txt", cdt);
+    dump_Steiner_points_in_volume("out_after_collapse_Steiner_points_in_volume.xyz", cdt);
 
     // split long internal edges
     const double target_edge_length = 0.0005 * bbox_max_span;
@@ -177,6 +193,9 @@ void smooth_Steiner_vertices_in_volume(CDT_3& cdt,
       std::cout << "Good :-) No negative tetrahedra left after remeshing!" << std::endl;
       return;
     }
+    dump_negative_tetrahedra("out_after_remeshing_negative_tetrahedra.polylines.txt", cdt);
+    dump_Steiner_points_in_volume("out_after_remeshing_Steiner_points_in_volume.xyz", cdt);
+
   }
   std::cout << cdt.statistics() << std::endl;
 }
