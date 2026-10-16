@@ -458,7 +458,7 @@ private:
           m_c3t3.add_to_complex(vit, ++corner_id);
 
         set_dimension(vit, 0);
-        vit->set_index(corner_id);
+        m_c3t3.set_index(vit, corner_id);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
         ++nbv;
