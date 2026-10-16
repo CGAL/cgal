@@ -329,6 +329,20 @@ public:
     // non-coplanar case
     edge_to_faces[edge(eh,tm)].insert(face(fh, tm));
   }
+
+  template <class Box>
+  void operator()(const Box& face_box, const Box& edge_box) const
+  {
+    halfedge_descriptor fh = face_box.info();
+    halfedge_descriptor eh = edge_box.info();
+    return operator()(fh, eh);
+  }
+
+  template <class Box>
+  void operator()(Box* const face_box_ptr, Box* const edge_box_ptr) const
+  {
+    operator()(*face_box_ptr, *edge_box_ptr);
+  }
 };
 
 template <class TriangleMesh, class Base>
