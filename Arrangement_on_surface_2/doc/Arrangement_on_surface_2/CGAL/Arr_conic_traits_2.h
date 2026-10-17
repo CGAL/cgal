@@ -316,8 +316,6 @@ public:
      * For a non-degenerate ellipse, the orientation is `CLOCKWISE` if
      * \f$r > 0\f$ and `COUNTERCLOCKWISE` if \f$r < 0\f$. Negating all six
      * coefficients reverses the orientation without changing the ellipse.
-     * To choose the orientation explicitly, use the overload taking an
-     * `Orientation` argument.
      *
      * \pre As a conic arc must be bounded, the given curve must be an ellipse,
      * that is \f$4 r s - t^2 > 0\f$.
@@ -326,16 +324,16 @@ public:
                        const Rational& t, const Rational& u,
                        const Rational& v, const Rational& w) const;
 
-    /*! constructs a conic arc that corresponds to the full conic curve
-     * \f$r x^2 + s y^2 + t x y + u x + v y + w = 0\f$, with orientation `o`.
-     * The coefficients are negated if necessary to obtain this orientation.
+    /*! constructs a full ellipse with rational center `center` and orientation `o`.
+     * Its axes are parallel to the coordinate axes. The horizontal and vertical
+     * semi-axis lengths are `x_radius` and `y_radius`, respectively; either
+     * may be the larger one. Equal lengths construct a circle.
      *
-     * \pre The given curve must be an ellipse, that is \f$4 r s - t^2 > 0\f$.
+     * \pre `x_radius` and `y_radius` are positive.
      * \pre `o` is not `COLLINEAR`.
      */
-    Curve_2 operator()(const Rational& r, const Rational& s,
-                       const Rational& t, const Rational& u,
-                       const Rational& v, const Rational& w,
+    Curve_2 operator()(const typename RatKernel::Point_2& center,
+                       const Rational& x_radius, const Rational& y_radius,
                        Orientation o) const;
 
     /*! constructs a conic arc supported by the conic curve
