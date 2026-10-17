@@ -176,7 +176,16 @@ private:
       } while (h != first);
     }
 
-    volume.centroid = CGAL::centroid(tets.begin(), tets.end(), CGAL::Dimension_tag<3>());
+    // The volume of thin cells may vanish in the approximation. In that case, the average of the vertices,
+    // which lies within the convex cell, is used as centroid.
+    FT sum_volumes = 0;
+    for (const Tetrahedron_3& tet : tets)
+      sum_volumes += CGAL::abs(tet.volume());
+
+    if (sum_volumes > 0)
+      volume.centroid = CGAL::centroid(tets.begin(), tets.end(), CGAL::Dimension_tag<3>());
+    else
+      volume.centroid = inside;
   }
 
   void create_volumes() {

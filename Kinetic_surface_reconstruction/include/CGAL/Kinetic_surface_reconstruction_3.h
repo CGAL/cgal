@@ -570,6 +570,8 @@ public:
     }
 
     m_kinetic_partition = KSP(m_polygon_pts, m_polygon_indices, np);
+    merge_regions_like_partition();
+
     FT partition_time, finalization_time, conformal_time;
     m_kinetic_partition.template init_and_partition<ConcurrencyTag>(k, partition_time, finalization_time, conformal_time, np);
 
@@ -1296,6 +1298,34 @@ private:
         *polyit++ = std::move(indices);
       }
     }
+  }
+
+  // The kinetic space partition merges coplanar input polygons. The regions are merged accordingly,
+  // so that the index of a region equals the index of the input polygon in the kinetic partition.
+  void merge_regions_like_partition() {
+    const std::vector<std::vector<std::size_t> >& mapping = m_kinetic_partition.input_mapping();
+    if (mapping.size() == m_regions.size())
+      return;
+
+    std::vector<typename Region_growing::Primitive_and_region> merged(mapping.size());
+    std::vector<std::size_t> region2merged(m_regions.size(), std::size_t(-1));
+    for (std::size_t i = 0; i < mapping.size(); i++) {
+      CGAL_assertion(!mapping[i].empty());
+      merged[i].first = m_regions[mapping[i][0]].first;
+      for (std::size_t j : mapping[i]) {
+        CGAL_assertion(j < m_regions.size());
+        region2merged[j] = i;
+        std::move(m_regions[j].second.begin(), m_regions[j].second.end(), std::back_inserter(merged[i].second));
+      }
+    }
+
+    if (m_ground_polygon_index != std::size_t(-1))
+      m_ground_polygon_index = region2merged[m_ground_polygon_index];
+
+    if (m_verbose)
+      std::cout << m_regions.size() << " planar shapes merged into " << merged.size() << " coplanar shapes by the kinetic partition" << std::endl;
+
+    m_regions = std::move(merged);
   }
 
   template<typename Region>
@@ -2252,8 +2282,15 @@ private:
         n = lcc.beta(n, 0);
       } while (n != dd);
 
-      Polygon_2<Kernel> poly(vts2d.begin(), vts2d.end());
-      if (poly.is_clockwise_oriented())
+      // Orientation by the signed area. Polygon_2::is_clockwise_oriented() requires a simple polygon, which is not
+      // guaranteed for very small faces after the conversion to inexact 2D coordinates.
+      FT area = 0;
+      for (std::size_t i = 0; i < vts2d.size(); i++) {
+        const Point_2& a = vts2d[i];
+        const Point_2& b = vts2d[(i + 1) % vts2d.size()];
+        area += a.x() * b.y() - b.x() * a.y();
+      }
+      if (area < 0)
         std::reverse(vts2d.begin(), vts2d.end());
 
       for (std::size_t i = 0; i < pts2d.size(); i++) {

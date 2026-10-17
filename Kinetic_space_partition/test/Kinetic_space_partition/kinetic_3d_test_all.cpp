@@ -106,7 +106,8 @@ void run_all_tests() {
   results[0] = { 18, 20, 4 };
   run_test<Kernel, IntersectionKernel, Concurrency_tag>("data/edge-case-test/test-2-polygons.off", { 1 }, results);
 
-  results[0] = { 22, 25, 5 };
+  // test-4 and test-5 contain exactly coplanar polygons, which are merged into their convex hull when inserted.
+  results[0] = { 24, 29, 6 };
   run_test<Kernel, IntersectionKernel, Concurrency_tag>("data/edge-case-test/test-4-polygons.off", { 1 }, results);
   run_test<Kernel, IntersectionKernel, Concurrency_tag>("data/edge-case-test/test-5-polygons.off", { 1 }, results);
 

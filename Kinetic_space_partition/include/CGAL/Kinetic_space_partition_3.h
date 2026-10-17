@@ -20,6 +20,7 @@
 #include <CGAL/Named_function_parameters.h>
 
 #include <algorithm>
+#include <array>
 #include <atomic>
 #include <numeric>
 
@@ -380,6 +381,9 @@ public:
   /*!
   \brief inserts non-coplanar polygons, requires `initialize()` afterwards to have effect.
 
+  Coplanar input polygons are not supported. Polygons that are exactly coplanar to an already inserted polygon are merged into a single input polygon,
+  i.e., the convex hull of both. The mapping from the input polygons of the partition to the inserted polygons is provided by `input_mapping()`.
+
   \tparam PointRange
   must be a model of `ConstRange` whose iterator type is `RandomAccessIterator` and whose value type is `GeomTraits::Point_3`.
 
@@ -437,30 +441,34 @@ public:
       process_input_polygon(pts, pl, c, ch);
       typename Intersection_kernel::Plane_3 exact_pl = to_exact(pl);
 
-      // Check if there is already a coplanar polygon inserted
-      bool skip = false;
+      // Coplanar input polygons are not supported. Polygons that are exactly coplanar to an already inserted polygon
+      // are merged with it into the convex hull of both. Nearly coplanar polygons are handled by the kinetic partition.
+      bool merged = false;
       for (std::size_t i = 0; i < m_input_planes.size(); i++) {
         if (m_input_planes[i] == exact_pl || m_input_planes[i] == exact_pl.opposite()) {
-          if (verbose) {
-            std::cout << i << ". input polygon is coplanar to " << (p + offset) << ". input polygon" << std::endl;
-            std::copy(m_input_polygons[i].begin(), m_input_polygons[i].end(), std::back_inserter(pts));
-            process_input_polygon(pts, pl, m_input_centroids[i], ch);
-            m_input_planes[i] = to_exact(pl);
-            m_input_polygons[i].resize(ch.size());
-            for (std::size_t j = 0; j < ch.size(); j++)
-              m_input_polygons[i][j] = pl.to_3d(ch[j]);
-          }
-          skip = true;
+          if (verbose)
+            std::cout << (p + offset) << ". input polygon is coplanar to " << i << ". partitioning polygon and is merged with it" << std::endl;
+
+          std::copy(m_input_polygons[i].begin(), m_input_polygons[i].end(), std::back_inserter(pts));
+          process_input_polygon(pts, pl, m_input_centroids[i], ch);
+          m_input_planes[i] = to_exact(pl);
+          m_input_polygons[i].resize(ch.size());
+          for (std::size_t j = 0; j < ch.size(); j++)
+            m_input_polygons[i][j] = pl.to_3d(ch[j]);
+
+          m_input2regularized.push_back(i);
+          m_regularized2input[i].push_back(p + offset);
+          merged = true;
           break;
         }
       }
 
-      if (skip)
+      if (merged)
         continue;
 
       m_input2regularized.push_back(m_input_planes.size());
       m_regularized2input.push_back(std::vector<std::size_t>());
-      m_regularized2input.back().push_back(p);
+      m_regularized2input.back().push_back(p + offset);
       m_input_planes.push_back(exact_pl);
       m_input_centroids.push_back(c);
       m_input_polygons.push_back(std::vector<Point_3>(ch.size()));
@@ -710,6 +718,21 @@ public:
   }
 
   /*!
+  \brief provides the mapping from the input polygons of the partition to the inserted polygons.
+
+  Exactly coplanar polygons are merged into a single input polygon of the partition when inserted.
+  The input polygon index stored in the face attributes of the linear cell complex, see `get_linear_cell_complex()`, refers to the input polygons of the partition.
+
+  @return
+   for each input polygon of the partition, the indices of the inserted polygons that have been merged into it.
+
+  \pre inserted polygons
+  */
+  const std::vector<std::vector<std::size_t> >& input_mapping() const {
+    return m_regularized2input;
+  }
+
+  /*!
    \brief exports the kinetic partition into a `Linear_cell_complex_for_combinatorial_map<3, 3>` using a model of `KineticLCCItems` as items, e.g., `Kinetic_linear_cell_complex_min_items`.
 
    Volume and face attributes defined in the model `KineticLCCItems` are filled. The volume index is in the range [0, number of volumes -1]
@@ -795,6 +818,14 @@ public:
       std::vector<bool> face_added(faces_of_volume.size(), false);
       std::vector<std::vector<Index> > vtx_of_faces(faces_of_volume.size());
 
+      // All vertices of the volume, used to orient its faces exactly.
+      std::vector<std::size_t> vtx_of_volume;
+      for (std::size_t i = 0; i < faces_of_volume.size(); i++) {
+        vertex_indices(faces_of_volume[i], std::back_inserter(vtx_of_faces[i]));
+        for (const Index& vi : vtx_of_faces[i])
+          vtx_of_volume.push_back(mapped_vertices[vi]);
+      }
+
       std::queue<std::size_t> face_queue;
       for (std::size_t i = 0;i<faces_of_volume.size();i++)
         face_queue.push(i);
@@ -807,7 +838,7 @@ public:
           vertex_indices(faces_of_volume[j], std::back_inserter(vtx_of_faces[j]));
 
         if (first) {
-          add_face_to_lcc(lcc, ib, faces_of_volume[j], vtx_of_faces[j], centroid, mapped_vertices, vtx, used_vertices);
+          add_face_to_lcc(lcc, ib, faces_of_volume[j], vtx_of_faces[j], vtx_of_volume, mapped_vertices, vtx, used_vertices);
 
           // Add neighboring faces to queue
           auto pair = neighbors(faces_of_volume[j]);
@@ -823,7 +854,7 @@ public:
         }
         else {
           if (face_queue.size() <= 3 || can_add_face_to_lcc(vtx_of_faces[j], mapped_vertices, used_vertices)) {
-            add_face_to_lcc(lcc, ib, faces_of_volume[j], vtx_of_faces[j], centroid, mapped_vertices, vtx, used_vertices);
+            add_face_to_lcc(lcc, ib, faces_of_volume[j], vtx_of_faces[j], vtx_of_volume, mapped_vertices, vtx, used_vertices);
 
             // Add neighboring faces to queue
             auto pair = neighbors(faces_of_volume[j]);
@@ -1039,10 +1070,6 @@ private:
           *it++ = std::make_pair(idx, i);
       }
     }
-  }
-
-  const std::vector<std::vector<std::size_t> >& input_mapping() const {
-    return m_regularized2input;
   }
 
   /*!
@@ -1669,7 +1696,7 @@ private:
         return false;
     }
 
-    CGAL_assertion(partition.m_data);
+    CGAL_assertion(partition.m_data != nullptr);
 
     // Propagation and finalization modify the kinetic data structure. Its initialized state is saved to be restored afterwards.
     typename Data_structure::Initial_state initial_state;
@@ -2006,27 +2033,70 @@ private:
 
   template<typename LCC, typename LCCIncrementalBuilder, typename VertexMap>
   void add_face_to_lcc(LCC &lcc, LCCIncrementalBuilder &ib, const Index& face, std::vector<Index> &vtx_of_face,
-                       const IkPoint_3& centroid, VertexMap &mapped_vertices, const std::vector<IkPoint_3> &vtx,
+                       const std::vector<std::size_t>& vtx_of_volume, VertexMap &mapped_vertices, const std::vector<IkPoint_3> &vtx,
                        std::vector<bool> &used_vertices) const {
     ib.begin_facet();
 
-    typename Intersection_kernel::Vector_3 norm;
-    std::size_t i = 0;
-    do {
-      std::size_t n = (i + 1) % vtx_of_face.size();
-      std::size_t nn = (n + 1) % vtx_of_face.size();
-      norm = CGAL::cross_product(vtx[mapped_vertices[vtx_of_face[n]]] - vtx[mapped_vertices[vtx_of_face[i]]], vtx[mapped_vertices[vtx_of_face[nn]]] - vtx[mapped_vertices[vtx_of_face[n]]]);
-      i++;
-    } while (norm.squared_length() == 0 && i < vtx_of_face.size());
+    // The orientation of the face is decided exactly, which is required for thin volumes, where an approximated centroid may lie outside.
+    // The points are chosen with their approximations, such that the exact predicates are usually decided by their filters.
+    auto approx = [&](std::size_t vi) {
+      return std::array<double, 3>{ CGAL::to_double(vtx[vi].x()), CGAL::to_double(vtx[vi].y()), CGAL::to_double(vtx[vi].z()) };
+    };
+    auto cross = [](const std::array<double, 3>& a, const std::array<double, 3>& b, const std::array<double, 3>& c) {
+      const double u[3] = { b[0] - a[0], b[1] - a[1], b[2] - a[2] }, v[3] = { c[0] - a[0], c[1] - a[1], c[2] - a[2] };
+      return std::array<double, 3>{ u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0] };
+    };
 
-    typename Intersection_kernel::FT len = CGAL::approximate_sqrt(norm.squared_length());
-    if (len != 0)
-      len = 1.0 / len;
-    norm = norm * len;
+    // Three consecutive vertices of the face spanning the largest approximated area. The face is convex, so they are not collinear.
+    const std::size_t nv = vtx_of_face.size();
+    std::size_t best = 0;
+    double best_area = -1;
+    for (std::size_t k = 0; k < nv; k++) {
+      const auto c = cross(approx(mapped_vertices[vtx_of_face[k]]), approx(mapped_vertices[vtx_of_face[(k + 1) % nv]]), approx(mapped_vertices[vtx_of_face[(k + 2) % nv]]));
+      const double area = c[0] * c[0] + c[1] * c[1] + c[2] * c[2];
+      if (area > best_area) {
+        best_area = area;
+        best = k;
+      }
+    }
+    if (CGAL::collinear(vtx[mapped_vertices[vtx_of_face[best]]], vtx[mapped_vertices[vtx_of_face[(best + 1) % nv]]], vtx[mapped_vertices[vtx_of_face[(best + 2) % nv]]])) {
+      // The approximation failed, search exactly.
+      for (best = 0; best < nv; best++)
+        if (!CGAL::collinear(vtx[mapped_vertices[vtx_of_face[best]]], vtx[mapped_vertices[vtx_of_face[(best + 1) % nv]]], vtx[mapped_vertices[vtx_of_face[(best + 2) % nv]]]))
+          break;
+    }
+    CGAL_assertion(best < nv);
+    const std::size_t pi = mapped_vertices[vtx_of_face[best]], qi = mapped_vertices[vtx_of_face[(best + 1) % nv]], ri = mapped_vertices[vtx_of_face[(best + 2) % nv]];
+    const IkPoint_3& p = vtx[pi];
+    const IkPoint_3& q = vtx[qi];
+    const IkPoint_3& r = vtx[ri];
 
-    bool outwards_oriented = (vtx[mapped_vertices[vtx_of_face[0]]] - centroid) * norm < 0;
+    // The volume is convex. Thus, every vertex of the volume that is not on the supporting plane of the face lies on its inner side.
+    // The vertex with the largest approximated distance to the plane is tested first.
+    const std::array<double, 3> ap = approx(pi), normal = cross(ap, approx(qi), approx(ri));
+    std::size_t far_vi = vtx_of_volume.front();
+    double far_dist = -1;
+    for (std::size_t vi : vtx_of_volume) {
+      const std::array<double, 3> a = approx(vi);
+      const double d = std::abs(normal[0] * (a[0] - ap[0]) + normal[1] * (a[1] - ap[1]) + normal[2] * (a[2] - ap[2]));
+      if (d > far_dist) {
+        far_dist = d;
+        far_vi = vi;
+      }
+    }
+    CGAL::Orientation inner = CGAL::orientation(p, q, r, vtx[far_vi]);
+    if (inner == CGAL::COPLANAR) {
+      // The approximation failed, search exactly.
+      for (std::size_t vi : vtx_of_volume) {
+        inner = CGAL::orientation(p, q, r, vtx[vi]);
+        if (inner != CGAL::COPLANAR)
+          break;
+      }
+    }
+    CGAL_assertion(inner != CGAL::COPLANAR);
 
-    if (!outwards_oriented)
+    // Faces are inserted such that the volume lies on the positive side of their vertex order.
+    if (inner != CGAL::POSITIVE)
       std::reverse(vtx_of_face.begin(), vtx_of_face.end());
 
     for (const Index& v : vtx_of_face) {

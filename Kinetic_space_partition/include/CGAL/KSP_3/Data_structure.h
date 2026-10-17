@@ -884,64 +884,105 @@ public:
     return PVertex(pvertex.first, support_plane(pvertex).next(pvertex.second));
   }
 
-  // Sorts the iedges of the support plane cyclically around ivertex. Only the cyclic order is defined, not the first
-  // iedge. The order is computed with the interval approximations of the directions, starting after the largest angular
-  // gap; only nearly parallel directions are compared exactly (e.g., iedges of nearly coincident planes).
+  // Provides the iedges incident to ivertex within the support plane sp_idx in counterclockwise order.
+  // Only the cyclic order is defined, not the first iedge.
+  // The directions are first sorted by their approximated angles. Directions whose angles cannot be separated by the
+  // approximation are then sorted with exact predicates. Thus, the order is correct for arbitrarily short iedges and
+  // small angles, while exact computations are only required for nearly parallel iedges.
   void get_and_sort_all_connected_iedges(const std::size_t sp_idx, const IVertex& ivertex, std::vector< std::pair<IEdge, IkDirection_2> >& iedges) const {
+    using IkVector_2 = typename Intersection_kernel::Vector_2;
     const Support_plane& sp = support_plane(sp_idx);
     const typename Intersection_kernel::Point_2 center = sp.to_2d(point_3(ivertex));
 
     struct Entry {
       IEdge edge;
-      typename Intersection_kernel::Vector_2 v;
+      IkVector_2 v;
       double angle, error;
     };
+
     std::vector<Entry> entries;
+    bool approximation_valid = true;
     for (const IEdge& inc_iedge : incident_iedges(ivertex)) {
       const auto& iplanes = intersected_planes(inc_iedge);
       if (iplanes.find(sp_idx) == iplanes.end())
         continue;
-      const typename Intersection_kernel::Vector_2 v = sp.to_2d(point_3(opposite(inc_iedge, ivertex))) - center;
+
+      const IkVector_2 v = sp.to_2d(point_3(opposite(inc_iedge, ivertex))) - center;
       const std::pair<double, double> x = CGAL::to_interval(v.x()), y = CGAL::to_interval(v.y());
       const double mx = (x.first + x.second) / 2, my = (y.first + y.second) / 2;
       const double len = std::sqrt(mx * mx + my * my);
       double angle = std::atan2(my, mx);
       if (angle < 0)
         angle += 2 * CGAL_PI;
-      // Bound of the angular error of the approximation (plus rounding of atan2).
-      const double error = (len > 0) ? ((std::max)(x.second - x.first, y.second - y.first) / len + 1e-12) : 10.0;
+
+      // Bound of the angular error of the approximation, including the rounding of atan2.
+      const double width = (std::max)(x.second - x.first, y.second - y.first);
+      double error = 4 * width / len + 1e-12;
+      if (!(len > 4 * width) || !(error < 0.01)) {
+        approximation_valid = false;
+        error = 0;
+      }
       entries.push_back({ inc_iedge, v, angle, error });
     }
     CGAL_assertion(entries.size() > 0);
 
-    std::sort(entries.begin(), entries.end(), [](const Entry& a, const Entry& b) { return a.angle < b.angle; });
+    // Exact comparison of two directions within less than a half-turn: a precedes b if b lies counterclockwise of a.
+    auto ccw = [](const Entry& a, const Entry& b) {
+      return CGAL::orientation(a.v, b.v) == CGAL::LEFT_TURN;
+    };
 
-    // Start after the largest gap, so that no direction lies close to the cut.
-    std::size_t start = 0;
-    double max_gap = -1;
-    for (std::size_t i = 0; i < entries.size(); i++) {
-      const std::size_t n = (i + 1) % entries.size();
-      double gap = entries[n].angle - entries[i].angle;
-      if (n == 0)
-        gap += 2 * CGAL_PI;
-      if (gap > max_gap) {
-        max_gap = gap;
-        start = n;
+    if (approximation_valid && entries.size() > 1) {
+      std::sort(entries.begin(), entries.end(), [](const Entry& a, const Entry& b) { return a.angle < b.angle; });
+
+      // Start after the largest gap, so that no group of nearly parallel directions is split at the start.
+      std::size_t start = 0;
+      double max_gap = -1;
+      for (std::size_t i = 0; i < entries.size(); i++) {
+        const std::size_t n = (i + 1) % entries.size();
+        double gap = entries[n].angle - entries[i].angle;
+        if (n == 0)
+          gap += 2 * CGAL_PI;
+        if (gap > max_gap) {
+          max_gap = gap;
+          start = n;
+        }
+      }
+      std::rotate(entries.begin(), entries.begin() + start, entries.end());
+
+      // Groups of consecutive directions that cannot be separated by the approximation are sorted exactly.
+      // The errors are small, so each group spans much less than a half-turn and the exact comparison is a strict weak ordering.
+      const double cut = entries[0].angle;
+      auto rel = [&](const Entry& e) { double a = e.angle - cut; return (a < 0) ? a + 2 * CGAL_PI : a; };
+      if (max_gap <= 2 * 0.01)
+        approximation_valid = false;
+      else {
+        std::size_t first = 0;
+        for (std::size_t i = 1; i <= entries.size(); i++) {
+          if (i == entries.size() || rel(entries[i]) - rel(entries[i - 1]) > entries[i].error + entries[i - 1].error) {
+            if (rel(entries[i - 1]) - rel(entries[first]) > CGAL_PI / 2) {
+              approximation_valid = false;
+              break;
+            }
+            if (i - first > 1)
+              std::sort(entries.begin() + first, entries.begin() + i, ccw);
+            first = i;
+          }
+        }
       }
     }
-    const double cut = entries[start].angle;
-    for (Entry& e : entries) {
-      e.angle -= cut;
-      if (e.angle < 0)
-        e.angle += 2 * CGAL_PI;
-    }
 
-    std::sort(entries.begin(), entries.end(), [&](const Entry& a, const Entry& b) {
-      if (std::abs(a.angle - b.angle) > 4 * (a.error + b.error))
-        return a.angle < b.angle;
-      // Nearly parallel: b follows a counterclockwise.
-      return CGAL::orientation(a.v, b.v) == CGAL::LEFT_TURN;
-    });
+    if (!approximation_valid) {
+      // Directions with an angle in [0, pi) come first, those in [pi, 2 pi) second, sorted exactly within each half-plane.
+      auto half = [](const IkVector_2& v) {
+        return (CGAL::is_positive(v.y()) || (CGAL::is_zero(v.y()) && CGAL::is_positive(v.x()))) ? 0 : 1;
+      };
+      std::sort(entries.begin(), entries.end(), [&](const Entry& a, const Entry& b) {
+        const int ha = half(a.v), hb = half(b.v);
+        if (ha != hb)
+          return ha < hb;
+        return ccw(a, b);
+      });
+    }
 
     iedges.clear();
     for (const Entry& e : entries)
