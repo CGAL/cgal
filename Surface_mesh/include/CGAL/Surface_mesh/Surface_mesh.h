@@ -2274,6 +2274,7 @@ private: //------------------------------------------------------- private data
 template <typename P>
 Surface_mesh<P>::
 Surface_mesh()
+: anonymous_property_(0)
 {
     // allocate standard properties
     // same list is used in operator=() and assign()
@@ -2289,7 +2290,6 @@ Surface_mesh()
     vertices_freelist_ = edges_freelist_ = faces_freelist_ = (std::numeric_limits<size_type>::max)();
     garbage_ = false;
     recycle_ = true;
-    anonymous_property_ = 0;
 }
 
 
