@@ -36,42 +36,62 @@ locate_impl(Arrangement_on_curve_1<GeometryTraits_1, TopologyTraits, BinarySearc
   // --------------------------------------------------------------------------
   if constexpr (Arr::binary_search_enabled) {
     auto& topo = arr.topology_traits();
-    if (arr.empty()) return Result{std::in_place_index<1>, topo.unbounded_left_edge()};
+    if (arr.empty()) return Result{std::in_place_index<1>, topo.left_boundary_edge()};
 
     std::size_t idx = arr.binary_search_vertex(p, cmp);
 
-    // p is to the right of all existing vertices
-    if (idx == topo.number_of_vertices()) return Result{std::in_place_index<1>, topo.unbounded_right_edge()};
-
     // Check if p coincides with the vertex at idx
-    if (cmp(p, topo.vertex_point(idx)) == CGAL::EQUAL) return Result{std::in_place_index<0>, idx};
+    if (idx < topo.number_of_vertices() && cmp(p, topo.vertex_point(idx)) == CGAL::EQUAL)
+      return Result{std::in_place_index<0>, idx};
 
-    // p is strictly to the left of vertex at idx;
-    // thus, p lies in the edge immediately to the left of vertex idx.
+    // p lies in an edge: either to the left of vertex idx (idx < n),
+    // or to the right of the last vertex (idx == n).
+    // In both cases the containing edge is the right edge of vertex idx-1,
+    // which is the same as the left edge of vertex idx for idx < n.
+    // When idx == 0 the arrangement is non-empty but p < all vertices,
+    // so p is in left_boundary_edge() — topo.left_edge(0) gives that.
+    if (idx == topo.number_of_vertices()) return Result{std::in_place_index<1>, arr.right_edge(idx - 1)};
     return Result{std::in_place_index<1>, topo.left_edge(idx)};
   }
   // --------------------------------------------------------------------------
-  // 2. LINEAR PATH: Sequential Topological Walk (O(n))
+  // 2. LINEAR PATH: Sequential / Cyclic Topological Walk (O(n))
+  //
+  // left_boundary_edge() is the uniform entry point for all topology types:
+  //   - open/bounded: the leftmost edge in the linear arrangement.
+  //   - identified:   the edge whose left end is at the identification point.
+  // has_right_vertex() returns false on the spanning edge (empty arrangement).
+  // For identified topologies the walk also stops when the next right vertex
+  // is the identification point, because Compare_x_1 must not be called on it.
   // --------------------------------------------------------------------------
   else {
     auto v_pnt_map = arr.vertex_point_map();
+    auto curr_e = arr.left_boundary_edge();
 
-    // Start with the leftmost unbounded edge (-inf, ...)
-    auto curr_e = arr.unbounded_left_edge();
+    // Predicate: is a point the identification point?
+    // Compiled away entirely for non-identified arrangements.
+    auto is_on_id = [&](const auto& pt) -> bool {
+      if constexpr (Arr::is_identified_curve) return arr.geometry_traits_1().is_on_identification_1_object()(pt);
+      else return false;
+    };
 
-    // Proceed to the right by traversing the topological graph
     while (arr.has_right_vertex(curr_e)) {
       auto curr_v = arr.right_vertex(curr_e);
-      auto res = cmp(p, get(v_pnt_map, curr_v));
+      auto curr_pnt = get(v_pnt_map, curr_v);
 
-      if (res == CGAL::EQUAL) return Result{std::in_place_index<0>, curr_v}; // point coincides with vertex
-      if (res == CGAL::SMALLER) return Result{std::in_place_index<1>, curr_e}; // point lies strictly to left of current vertex
+      // For identified topologies: the identification vertex terminates the
+      // cyclic walk — p lies in the edge that wraps back to the seam.
+      if (is_on_id(curr_pnt)) break;
 
-      // LARGER: move to right edge of this vertex
+      auto res = cmp(p, curr_pnt);
+
+      if (res == CGAL::EQUAL) return Result{std::in_place_index<0>, curr_v};
+      if (res == CGAL::SMALLER) return Result{std::in_place_index<1>, curr_e};
+
       curr_e = arr.right_edge(curr_v);
     }
 
-    // The point is to the right of all existing vertices (or arrangement is empty)
+    // p lies to the right of all existing interior vertices (linear), or
+    // between the last interior vertex and the identification point (cyclic).
     return Result{std::in_place_index<1>, curr_e};
   }
 }

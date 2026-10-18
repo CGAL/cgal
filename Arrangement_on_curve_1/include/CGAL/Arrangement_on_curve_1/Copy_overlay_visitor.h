@@ -60,9 +60,7 @@ public:
     using Vertex_data_r = typename Vertex_data_map_r::value_type;
     if constexpr (! std::is_void_v<Vertex_data_r>) {
       using Vertex_data_a = typename Vertex_data_map_a::value_type;
-      if constexpr (std::is_convertible_v<Vertex_data_a, Vertex_data_r>) {
-        put(m_v_map_r, v_res, get(m_v_map_a, v_a));
-      }
+      if constexpr (std::is_convertible_v<Vertex_data_a, Vertex_data_r>) put(m_v_map_r, v_res, get(m_v_map_a, v_a));
     }
   }
 
@@ -71,9 +69,7 @@ public:
     using Vertex_data_r = typename Vertex_data_map_r::value_type;
     if constexpr (! std::is_void_v<Vertex_data_r>) {
       using Vertex_data_a = typename Vertex_data_map_a::value_type;
-      if constexpr (std::is_convertible_v<Vertex_data_a, Vertex_data_r>) {
-        put(m_v_map_r, v_res, get(m_v_map_a, v_a));
-      }
+      if constexpr (std::is_convertible_v<Vertex_data_a, Vertex_data_r>) put(m_v_map_r, v_res, get(m_v_map_a, v_a));
     }
   }
 
@@ -82,9 +78,7 @@ public:
     using Vertex_data_r = typename Vertex_data_map_r::value_type;
     if constexpr (! std::is_void_v<Vertex_data_r>) {
       using Vertex_data_b = typename Vertex_data_map_b::value_type;
-      if constexpr (std::is_convertible_v<Vertex_data_b, Vertex_data_r>) {
-        put(m_v_map_r, v_res, get(m_v_map_b, v_b));
-      }
+      if constexpr (std::is_convertible_v<Vertex_data_b, Vertex_data_r>) put(m_v_map_r, v_res, get(m_v_map_b, v_b));
     }
   }
 
@@ -93,9 +87,7 @@ public:
     using Edge_data_r = typename Edge_data_map_r::value_type;
     if constexpr (! std::is_void_v<Edge_data_r>) {
       using Edge_data_a = typename Edge_data_map_a::value_type;
-      if constexpr (std::is_convertible_v<Edge_data_a, Edge_data_r>) {
-        put(m_e_map_r, e_res, get(m_e_map_a, e_a));
-      }
+      if constexpr (std::is_convertible_v<Edge_data_a, Edge_data_r>) put(m_e_map_r, e_res, get(m_e_map_a, e_a));
     }
   }
 };

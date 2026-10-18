@@ -1,6 +1,8 @@
 // Copyright (c) 2026 Tel-Aviv University (Israel).
 // All rights reserved.
 // This file is part of CGAL (www.cgal.org)
+// $URL$
+// $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // Author(s): Efi Fogel         <efifogel@gmail.com>
 
@@ -10,17 +12,28 @@
 #include <memory>
 
 #include <CGAL/enum.h>
+#include <CGAL/Arrangement_on_curve_1/Side_tags.h>
+#include <CGAL/Arrangement_on_curve_1/Parameter_space.h>
 
 namespace CGAL {
 namespace Arrangement_on_curve_1 {
 
 // Adapts any 2D geometry traits class of the 2D Arrangements package
-// (i.e., any model of the ArrangementTraits_2 concept, or a refinement
+// (i.e., any model of the `AosTraits_2` concept, or a refinement
 // thereof) into a 1D geometry traits class, suitable for use with
-// Arrangement_on_curve_1. The points of the 1D arrangement are the
-// Point_2 objects of the 2D traits, all assumed to lie on a single
-// curve -- the "master arc" -- which is either x-monotone or a single
+// `Arrangement_on_curve_1`. The points of the 1D arrangement are the
+// \c Point_2 objects of the 2D traits, all assumed to lie on a single
+// curve (the "master arc") which is either `x`-monotone or a single
 // vertical segment.
+//
+// Boundary categories
+// -------------------
+// The adaptor models an open (unbounded) parameter space: the master arc
+// is an unbounded `x`-monotone curve or a vertical line, so neither endpoint
+// is stored.  If you are adapting a bounded curve, subclass and override
+// `Left_side_category` / `Right_side_category` accordingly.
+//
+// Pair with `Unbounded_topology_traits` for the default open/open case.
 template <typename GeomTraits_2>
 class Geom_traits_2_adaptor_1 {
 public:
@@ -30,6 +43,14 @@ public:
   using X_monotone_curve_2 = typename Geom_traits_2::X_monotone_curve_2;
 
   using Shared_geom_traits_2 = std::shared_ptr<const Geom_traits_2>;
+
+  // Boundary-category tags (geometry traits owns these, following the
+  // convention of `Arrangement_on_surface_2`).
+  //
+  // The underlying curve is assumed to be an open (unbounded) arc; both
+  // ends extend to infinity with no stored boundary vertex.
+  using Left_side_category = Open_side_tag;
+  using Right_side_category = Open_side_tag;
 
   // 1. Default constructor: allocates a default-constructed 2D traits instance on the heap
   Geom_traits_2_adaptor_1() : m_traits_2(std::make_shared<const Geom_traits_2>()) {}
@@ -48,29 +69,36 @@ public:
     const Geom_traits_2& m_traits;
 
   public:
-    Compare_x_1(const Geom_traits_2& traits) : m_traits(std::move(traits)) {}
+    Compare_x_1(const Geom_traits_2& traits) : m_traits(traits) {}
 
     Comparison_result operator()(const Point_1& p1, const Point_1& p2) const {
-      // Lexicographic (x, then y) comparison.
+      // Lexicographic (`x`, then `y`) comparison.
       auto cmp_xy_obj = m_traits.compare_xy_2_object();
       auto cmp_xy = cmp_xy_obj(p1, p2);
       if (cmp_xy == EQUAL) return EQUAL;
 
-      // The master arc is either x-monotone or a single vertical segment.
-      // If it is x-monotone, the points are ordered by their x-coordinates.
+      // The master arc is either `x`-monotone or a single vertical segment.
+      // If it is `x`-monotone, the points are ordered by their `x`-coordinates.
       auto cmp_x_obj = m_traits.compare_x_2_object();
       auto cmp_x = cmp_x_obj(p1, p2);
       if (cmp_x != EQUAL) return cmp_x;
 
-      // The two points share the same x-coordinate, i.e., the master arc
+      // The two points share the same `x`-coordinate, i.e., the master arc
       // is a vertical segment. In this case, fall back to the (non-equal)
       // result of the lexicographic comparison, which orders the points
-      // by their y-coordinates.
+      // by their `y`-coordinates.
       return cmp_xy;
     }
   };
 
   Compare_x_1 compare_x_1_object() const { return Compare_x_1(*m_traits_2); }
+
+  // Both sides are open; every finite point is in the interior.
+  struct Parameter_space_in_x_1 {
+    Parameter_space operator()(const Point_1&) const { return INTERIOR; }
+  };
+
+  Parameter_space_in_x_1 parameter_space_in_x_1_object() const { return Parameter_space_in_x_1{}; }
 
 private:
   Shared_geom_traits_2 m_traits_2;

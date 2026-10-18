@@ -15,12 +15,12 @@ namespace Arrangement_on_curve_1 {
 template <typename ArrangementA, typename ArrangementB, typename ArrangementR>
 class Default_overlay_visitor {
 public:
-  using Vertex_descriptor_a = typename ArrangementA::Vertex_descriptor;
-  using Vertex_descriptor_b = typename ArrangementB::Vertex_descriptor;
+  using Vertex_descriptor_a = typename ArrangementA::Vertex_const_descriptor;
+  using Vertex_descriptor_b = typename ArrangementB::Vertex_const_descriptor;
   using Vertex_descriptor_r = typename ArrangementR::Vertex_descriptor;
 
-  using Edge_descriptor_a = typename ArrangementA::Edge_descriptor;
-  using Edge_descriptor_b = typename ArrangementB::Edge_descriptor;
+  using Edge_descriptor_a = typename ArrangementA::Edge_const_descriptor;
+  using Edge_descriptor_b = typename ArrangementB::Edge_const_descriptor;
   using Edge_descriptor_r = typename ArrangementR::Edge_descriptor;
 
 public:

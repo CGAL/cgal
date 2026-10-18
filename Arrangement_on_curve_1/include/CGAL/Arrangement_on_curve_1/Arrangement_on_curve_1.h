@@ -14,6 +14,7 @@
 #include <variant>
 #include <memory>
 
+#include <CGAL/Arrangement_on_curve_1/Side_tags.h>
 #include <CGAL/Arrangement_on_curve_1/Unbounded_topology_traits.h>
 
 namespace CGAL {
@@ -24,9 +25,9 @@ namespace Arrangement_on_curve_1 {
  *
  * \tparam TopologyTraits
  *
- * \tparam BinarySearch when true (requires UseVector = true), the locate()
+ * \tparam BinarySearch when true (requires UseVector = `true`), the locate()
  *                      function in locate.h uses a binary search over the sorted
- *                      vertex vector, reducing locate from O(n) to O(log n).
+ *                      vertex vector, reducing locate from \f$O(n)\f$ to \f$O(log n)\f$.
  */
 template <typename GeometryTraits_1,
           typename TopologyTraits = Unbounded_topology_traits<typename GeometryTraits_1::Point_1>,
@@ -40,6 +41,18 @@ public:
   using Geometry_traits_1 = GeometryTraits_1;
   using Topology_traits = TopologyTraits;
   static constexpr bool binary_search_enabled = BinarySearch;
+
+  // The boundary-category tags come from the geometry traits.
+  using Left_side_category = typename Geometry_traits_1::Left_side_category;
+  using Right_side_category = typename Geometry_traits_1::Right_side_category;
+
+  // True when both sides are identified (curve is a closed loop / circle).
+  static constexpr bool is_identified_curve =
+    Side_is_identified<Left_side_category>::value && Side_is_identified<Right_side_category>::value;
+
+  // True when the left/right boundary is a proper closed boundary vertex.
+  static constexpr bool left_is_closed = Side_is_closed<Left_side_category>::value;
+  static constexpr bool right_is_closed = Side_is_closed<Right_side_category>::value;
 
   // Define a clean type alias for the traits smart pointer
   using Shared_geometry_traits = std::shared_ptr<const Geometry_traits_1>;
@@ -119,18 +132,19 @@ public:
   // MODIFIERS
   // ==========================================================================
 
-  /*! creates a new vertex, enforcing the rightmost ordering invariant when BinarySearch is active.
+  /*! creates a new vertex, enforcing the rightmost ordering invariant when BinarySearch is active,
+   * and registers it as the left or right boundary vertex when the point lies on a closed boundary.
    */
   Vertex_descriptor create_vertex(const Point_1& p) {
     if constexpr (binary_search_enabled) {
       // Enforce that new vertices are inserted strictly in left-to-right order.
       CGAL_assertion_msg(empty() ||
                          m_geometry_traits->compare_x_1_object()
-                         (m_topology_traits.vertex_point(m_topology_traits.number_of_vertices() - 1), p) == CGAL::SMALLER,
-        "When BinarySearch = true, vertices must be created in strictly increasing x-order.");
+                         (m_topology_traits.vertex_point(m_topology_traits.number_of_vertices() - 1), p) == SMALLER,
+                         "When BinarySearch = true, vertices must be created in strictly increasing x-order.");
     }
 
-    return m_topology_traits.create_vertex(p);
+    return m_topology_traits.create_vertex(p, *m_geometry_traits);
   }
 
   /*! creates an new edge.
@@ -186,10 +200,8 @@ public:
   auto vertex_data_map() const { return m_topology_traits.vertex_data_map(); }
   auto edge_data_map() const { return m_topology_traits.edge_data_map(); }
 
-  Edge_descriptor unbounded_left_edge() { return m_topology_traits.unbounded_left_edge(); }
-  Edge_const_descriptor unbounded_left_edge() const { return m_topology_traits.unbounded_left_edge(); }
-  Edge_descriptor unbounded_right_edge() { return m_topology_traits.unbounded_right_edge(); }
-  Edge_const_descriptor unbounded_right_edge() const { return m_topology_traits.unbounded_right_edge(); }
+  Edge_descriptor left_boundary_edge() { return m_topology_traits.left_boundary_edge(); }
+  Edge_const_descriptor left_boundary_edge() const { return m_topology_traits.left_boundary_edge(); }
 
   Vertex_descriptor left_vertex(Edge_descriptor e) { return m_topology_traits.left_vertex(e); }
   Vertex_descriptor right_vertex(Edge_descriptor e) { return m_topology_traits.right_vertex(e); }
@@ -212,32 +224,84 @@ public:
   // ============================================================================
 
   /* inserts the very first point into an empty arrangement.
-   * The single unbounded edge is split into (\f$(-\infty\f$, `v`) and (`v`, \f$(+\infty\f$).
+   *
+   * For open/closed topologies: the single sentinel edge is split into
+   * (\f$−\infty\f$ / boundary-left, v) and (v, \f$+\infty\f$ / boundary-right).
+   *
+   * For identified (loop) topologies: the single sentinel cyclic edge is split
    */
   Vertex_descriptor insert_empty(const Point_1& p) {
     auto& topo = m_topology_traits;
 
-    // The arrangement must be empty: one unbounded edge exists.
-    auto e_unbounded = topo.unbounded_left_edge();
+    auto e_left_boundary = topo.left_boundary_edge();
 
-    Vertex_descriptor v = topo.create_vertex(p);
+    Vertex_descriptor v = create_vertex(p);
 
-    // Create the right new edge: (v, +inf)
-    Edge_descriptor e_right = topo.create_edge();
+    // Reuse e_left_boundary as the left edge of v.
+    topo.set_right_vertex(e_left_boundary, v);
+    topo.set_left_edge(v, e_left_boundary);
 
-    // Reuse e_unbounded as the left edge: (-inf, v)
-    // It already has no left vertex; set its right vertex to v.
-    topo.set_right_vertex(e_unbounded, v);
+    if constexpr (is_identified_curve) {
+      // Identified (cyclic) topology: one vertex, one edge. No new edge is created.
+      topo.set_left_vertex(e_left_boundary, v);
+      topo.set_right_edge(v, e_left_boundary);
+    }
+    else {
+      // Open / closed topology: create the right sub-edge (v, \f$+\infty\f$ or boundary-right).
+      Edge_descriptor e_right = topo.create_edge();
+      topo.set_left_vertex(e_right, v);
+      topo.set_right_edge(v, e_right);
+    }
 
-    // The right edge has v as its left vertex, and no right vertex.
-    topo.set_left_vertex(e_right, v);
+    return v;
+  }
 
-    // Wire the vertex to its two adjacent edges.
-    topo.set_left_edge(v, e_unbounded);
-    topo.set_right_edge(v, e_right);
+  /*! inserts a vertex at the left boundary of a left-bounded arrangement.  Sets
+   * `p` as the left vertex of left_boundary_edge(); no new edge is created.
+   */
+  Vertex_descriptor insert_left_boundary_vertex(const Point_1& p) {
+    static_assert(left_is_closed,
+                  "insert_left_boundary_vertex() is only valid for arrangements with a closed left boundary.");
+    auto& topo = m_topology_traits;
+    auto e_lb = topo.left_boundary_edge();
+    Vertex_descriptor v = create_vertex(p);
+    topo.set_left_vertex(e_lb, v);
+    topo.set_left_edge(v, e_lb);
+    topo.set_right_edge(v, e_lb);
+    return v;
+  }
 
-    // Explicitly update the right boundary tracker.
-    topo.set_unbounded_right_edge(e_right);
+  /*! inserts a vertex at the identification point of an identified (cyclic)
+   * arrangement.  Sets `p` as the left vertex of left_boundary_edge();
+   * no new edge is created.
+   *
+   * left_boundary_edge() is the wrap-around arc (its right vertex is v_id).
+   * The identification-point vertex v has:
+   *   v.left_edge  = left_boundary_edge()   (the arc ending at v from the left)
+   *   v.right_edge = first_interior_arc     (the arc leaving v toward the right)
+   *
+   * In a degenerate arrangement with v_id as the only vertex,
+   * first_interior_arc = left_boundary_edge() (a self-loop).
+   *
+   * If the arrangement was empty when this is called (lb_edge has no right
+   * vertex), v is also set as the right vertex of lb_edge (self-loop).
+   */
+  Vertex_descriptor insert_identification_vertex(const Point_1& p) {
+    static_assert(is_identified_curve, "insert_identification_vertex() is only valid for identified arrangements.");
+    CGAL_assertion_msg(! m_topology_traits.has_identification_vertex(), "The identification vertex already exists.");
+    CGAL_assertion_msg(! empty(), "The arrangement must be non-empty.");
+    auto& topo = m_topology_traits;
+    auto e_lb = topo.left_boundary_edge();
+    Vertex_descriptor v = create_vertex(p);
+    Edge_descriptor e_left = create_edge();
+
+    Vertex_descriptor v_old_left = topo.left_vertex(e_lb);
+    topo.set_left_vertex(e_left, v_old_left);
+    topo.set_right_edge(v_old_left, e_left);
+    topo.set_right_vertex(e_left, v);
+    topo.set_left_vertex(e_lb, v);
+    topo.set_left_edge(v, e_left);
+    topo.set_right_edge(v, e_lb);
 
     return v;
   }
@@ -304,16 +368,14 @@ public:
   }
 
   /*! splits the edge `e` by inserting a new point `p` inside it.
-   * `e` becomes the left sub-edge; a new edge becomes the right sub-edge.
+   * A new edge becomes the left sub-edge; `e` becomes the right sub-edge,
+   * so that `e` retains its identity (left_boundary_edge() remains stable).
    */
   Vertex_descriptor split_edge(Edge_descriptor e, const Point_1& p) {
+
     if constexpr (binary_search_enabled) {
-      // 1. Must split the rightmost unbounded edge (no right vertex)
       CGAL_assertion_msg(! m_topology_traits.has_right_vertex(e),
                          "When BinarySearch = true, split_edge() can only be called on the rightmost unbounded edge.");
-
-      // 2. If e has a left vertex, it MUST be the current rightmost vertex in the vector.
-      // (If e has no left vertex, it's the initial (-inf, +inf) edge of an empty arrangement.)
       CGAL_assertion_msg(! m_topology_traits.has_left_vertex(e) ||
                          m_topology_traits.left_vertex(e) == m_topology_traits.number_of_vertices() - 1,
                          "When BinarySearch = true, the edge being split must originate from the rightmost vertex.");
@@ -322,16 +384,15 @@ public:
     Vertex_descriptor v_new = create_vertex(p);
     Edge_descriptor e_right = create_edge();
 
-    // If e has a right vertex, transfer it to e_right.
+    // Transfer e's right vertex (if any) to e_right.
     if (m_topology_traits.has_right_vertex(e)) {
       Vertex_descriptor v_old_right = m_topology_traits.right_vertex(e);
       m_topology_traits.set_right_vertex(e_right, v_old_right);
       m_topology_traits.set_left_edge(v_old_right, e_right);
     }
-    // e_right's left vertex is v_new.
     m_topology_traits.set_left_vertex(e_right, v_new);
 
-    // e (the left sub-edge) now ends at v_new.
+    // e (left sub-edge) now ends at v_new.
     m_topology_traits.set_right_vertex(e, v_new);
 
     // Wire v_new between e and e_right.
@@ -394,8 +455,8 @@ public:
     while (lo < hi) {
       std::size_t mid = lo + (hi - lo) / 2;
       auto res = cmp(vertices[mid].m_point, p);
-      if (res == CGAL::SMALLER) lo = mid + 1;
-      else if (res == CGAL::LARGER)  hi = mid;
+      if (res == SMALLER) lo = mid + 1;
+      else if (res == LARGER)  hi = mid;
       else return mid; // EQUAL — vertex found
     }
     // p is not at any vertex; lo is the index of the first vertex > p.

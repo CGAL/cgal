@@ -47,16 +47,30 @@ insert(Arrangement_on_curve_1<GeometryTraits, TopologyTraits, BinarySearch>& arr
   bool has_left = arr.has_left_vertex(e);
   bool has_right = arr.has_right_vertex(e);
 
-  // Empty arrangement: single unbounded edge.
   if (! has_left && ! has_right) return arr.insert_empty(p);
 
-  // Leftmost unbounded edge (-inf, v_right): p is to the left of everything.
-  if (! has_left) return arr.insert_before(arr.right_vertex(e), p);
+  if constexpr (Arr::is_identified_curve) {
+    if (arr.geometry_traits_1().is_on_identification_1_object()(p)) return arr.insert_identification_vertex(p);
+    return arr.split_edge(e, p);
+  }
 
-  // Rightmost unbounded edge (v_left, +inf): p is to the right of everything.
-  if (! has_right) return arr.insert_after(arr.left_vertex(e), p);
+  // Edge has no left vertex: p is to the left of all existing vertices.
+  if (! has_left) {
+    // For closed left boundary: install p as the (unique) left boundary vertex.
+    // For open left side: split the unbounded left arc at p.
+    if constexpr (Arr::left_is_closed) return arr.insert_left_boundary_vertex(p);
+    else return arr.split_edge(e, p);
+  }
 
-  // Bounded interior edge (v_left, v_right): split it.
+  // Edge has no right vertex: p is to the right of all existing vertices.
+  if (! has_right) {
+    // For closed right boundary: append p after the current rightmost vertex.
+    // For open right side: split the unbounded right arc at p.
+    if constexpr (Arr::right_is_closed) return arr.insert_after(arr.left_vertex(e), p);
+    else return arr.split_edge(e, p);
+  }
+
+  // Interior edge (v_left, v_right): split it.
   return arr.split_edge(e, p);
 }
 
