@@ -154,6 +154,8 @@ public:
     template <class RandomAccessIterator>
     void operator() (RandomAccessIterator begin, RandomAccessIterator end) const
     {
+      if (begin == end) return;
+
       double xmin=to_double(_k.compute_x_3_object()(*begin)),
              ymin=to_double(_k.compute_y_3_object()(*begin)),
              zmin=to_double(_k.compute_z_3_object()(*begin)),
