@@ -13,7 +13,7 @@ using NT = CGAL::Quotient<CGAL::MP_Float>;
 using Kernel = CGAL::Cartesian_d<NT>;
 using FT = typename Kernel::FT;
 using Traits = CGAL::Arrangement_on_curve_1::Line_d_traits_1<Kernel>;
-using Topo = CGAL::Arrangement_on_curve_1::Unbounded_topology_traits<typename Traits::Point_1, int, void>;
+using Topo = CGAL::Arrangement_on_curve_1::Unbounded_topology_traits<Traits, int, void>;
 using Arrangement = CGAL::Arrangement_on_curve_1::Arrangement_on_curve_1<Traits, Topo>;
 
 int main() {
@@ -49,7 +49,7 @@ int main() {
 
   std::cout << "\nResulting Sorted Sequence along the 4D Line:\n";
   auto v_pnt_map = arr.vertex_point_map();
-  auto e = arr.unbounded_left_edge();
+  auto e = arr.left_boundary_edge();
   while (arr.has_right_vertex(e)) {
     auto v = arr.right_vertex(e);
     auto pnt = get(v_pnt_map, v);

@@ -29,7 +29,7 @@ using X_monotone_curve_2 = Geom_traits_2::X_monotone_curve_2;
 // Wrap into our 1D arrangement architecture
 using Geom_traits_1 = CGAL::Arrangement_on_curve_1::Geom_traits_2_adaptor_1<Geom_traits_2>;
 using Point_1 = Geom_traits_1::Point_1; // Maps to Geom_traits_2::Point_2
-using Topo_traits = CGAL::Arrangement_on_curve_1::Unbounded_topology_traits<Point_1, std::string, void>;
+using Topo_traits = CGAL::Arrangement_on_curve_1::Unbounded_topology_traits<Geom_traits_1, std::string, void>;
 using Arrangement = CGAL::Arrangement_on_curve_1::Arrangement_on_curve_1<Geom_traits_1, Topo_traits>;
 
 int main() {
@@ -129,7 +129,7 @@ int main() {
   std::cout << "  Number of edges:    " << arr.number_of_edges()    << "\n\n";
 
   std::cout << "Sorted vertex sequence (left to right by x-coordinate):\n";
-  auto e = arr.unbounded_left_edge();
+  auto e = arr.left_boundary_edge();
   while (arr.has_right_vertex(e)) {
     auto v = arr.right_vertex(e);
     std::cout << "  " << get(v_data_map, v) << "\n";
@@ -138,7 +138,7 @@ int main() {
 
   std::cout << "\nEdge structure (left to right):\n";
   size_t idx = 0;
-  e = arr.unbounded_left_edge();
+  e = arr.left_boundary_edge();
   while (true) {
     std::cout << "  Edge " << idx++ << ": ";
     if (arr.has_left_vertex(e)) std::cout << "[" << get(v_data_map, arr.left_vertex(e)) << "]";

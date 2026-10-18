@@ -39,7 +39,7 @@ using Arrangement_2 = CGAL::Arrangement_2<Geom_traits_2>;
 // 1D arrangement on the upper semicircular arc.
 using Geom_traits_1 = CGAL::Arrangement_on_curve_1::Geom_traits_2_adaptor_1<Geom_traits_2>;
 using Point_1 = Geom_traits_1::Point_1;   // same as Point_2 above
-using Topo_traits = CGAL::Arrangement_on_curve_1::Unbounded_topology_traits<Point_1, std::string, void>;
+using Topo_traits = CGAL::Arrangement_on_curve_1::Unbounded_topology_traits<Geom_traits_1, std::string, void>;
 using Arrangement_1 = CGAL::Arrangement_on_curve_1::Arrangement_on_curve_1<Geom_traits_1, Topo_traits>;
 
 /*! Helper: print a Point_2 using double approximations of its CoordNT coords.
@@ -144,7 +144,7 @@ int main() {
   auto v_pnt_map = arr_1d.vertex_point_map();
 
   std::cout << "Sorted vertex sequence (left to right by x-coordinate):\n";
-  auto e = arr_1d.unbounded_left_edge();
+  auto e = arr_1d.left_boundary_edge();
   while (arr_1d.has_right_vertex(e)) {
     auto v = arr_1d.right_vertex(e);
     std::cout << "  " << get(v_data_map, v) << "  ~  ";
@@ -155,7 +155,7 @@ int main() {
 
   std::cout << "\nEdge structure (left to right):\n";
   size_t idx = 0;
-  e = arr_1d.unbounded_left_edge();
+  e = arr_1d.left_boundary_edge();
   while (true) {
     std::cout << "  Edge " << idx++ << ": ";
     if (arr_1d.has_left_vertex(e)) std::cout << "[" << get(v_data_map, arr_1d.left_vertex(e)) << "]";

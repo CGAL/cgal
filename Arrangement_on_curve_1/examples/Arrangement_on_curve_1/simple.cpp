@@ -3,7 +3,7 @@
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Arrangement_on_curve_1/Arrangement_on_curve_1.h>
-#include <CGAL/Arrangement_on_curve_1/Ft_traits_1.h>
+#include <CGAL/Arrangement_on_curve_1/Line_traits_1.h>
 #include <CGAL/Arrangement_on_curve_1/insert.h>
 #include <CGAL/Arrangement_on_curve_1/Unbounded_topology_traits.h>
 
@@ -11,9 +11,9 @@
 // It forces inserting the points in increasing lexicographical order.
 
 using Kernel = CGAL::Exact_predicates_exact_constructions_kernel;
-using Geom_traits = CGAL::Arrangement_on_curve_1::Ft_traits_1<Kernel>;
+using Geom_traits = CGAL::Arrangement_on_curve_1::Line_traits_1<Kernel>;
 using Point = Geom_traits::Point_1;
-using Topo_traits = CGAL::Arrangement_on_curve_1::Unbounded_topology_traits<Point, std::string, void, true>;
+using Topo_traits = CGAL::Arrangement_on_curve_1::Unbounded_topology_traits<Geom_traits, std::string, void, true>;
 using Arrangement = CGAL::Arrangement_on_curve_1::Arrangement_on_curve_1<Geom_traits, Topo_traits, true>;
 
 int main() {
@@ -34,7 +34,7 @@ int main() {
   // Traverse and inspect the arrangement
   std::cout << "\nResulting Sorted Sequence along the 1D Line:\n";
   auto v_pnt_map = arr.vertex_point_map();
-  auto e = arr.unbounded_left_edge();
+  auto e = arr.left_boundary_edge();
   while (arr.has_right_vertex(e)) {
     auto v = arr.right_vertex(e);
     std::cout << "  Vertex Point: (" << get(v_pnt_map, v) << ") | Extension ID: " << get(v_data_map, v) << "\n";
