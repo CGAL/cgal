@@ -21,6 +21,7 @@
 #include <CGAL/Modifiable_priority_queue.h>
 #include <CGAL/use.h>
 #include <memory>
+#include <vector>
 
 namespace CGAL {
 namespace Surface_mesh_simplification {
@@ -196,7 +197,7 @@ public:
   };
 
   typedef Edge_data*                                                                Edge_data_ptr;
-  typedef std::unique_ptr<Edge_data[]>                                              Edge_data_array;
+  typedef std::vector<Edge_data>                                                    Edge_data_array;
 
 public:
   EdgeCollapse(Triangle_mesh& tmesh,
@@ -255,7 +256,13 @@ private:
   halfedge_descriptor find_connection(const vertex_descriptor v0, const vertex_descriptor v1) const;
   vertex_descriptor find_exterior_link_triangle_3rd_vertex(const halfedge_descriptor e, const vertex_descriptor v0, const vertex_descriptor v1) const;
 
-  Edge_data& get_data(const halfedge_descriptor h) const
+  const Edge_data& get_data(const halfedge_descriptor h) const
+  {
+    CGAL_assertion(is_primary_edge(h));
+    return m_edge_data[get_edge_id(h)];
+  }
+
+  Edge_data& get_data(const halfedge_descriptor h)
   {
     CGAL_assertion(is_primary_edge(h));
     return m_edge_data[get_edge_id(h)];
@@ -485,7 +492,7 @@ collect()
   const size_type ne = num_edges(m_tm); // if the mesh has garbage, you might have "ne > edges(tm).size()"
   m_initial_edge_count = m_current_edge_count = size_type(edges(m_tm).size());
 
-  m_edge_data.reset(new Edge_data[ne]);
+  m_edge_data.resize(ne);
   mPQ.reset(new PQ(ne, Compare_cost(this), edge_id(this)));
 
   CGAL_assertion_code(size_type num_inserted = 0);
