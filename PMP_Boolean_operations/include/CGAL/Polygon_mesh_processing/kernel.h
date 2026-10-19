@@ -97,7 +97,7 @@ kernel(const FaceRange& face_range,
   // Build the starting cube
   KernelPointMap kvpm = get(CGAL::dynamic_vertex_property_t<EPoint_3>(), kernel);
   if(is_empty(kernel))
-    make_hexahedron(bbox(pm), kernel, parameters::vertex_point_map(vpm_out));
+    make_hexahedron(bbox(pm, parameters::vertex_point_map(vpm)), kernel, parameters::vertex_point_map(vpm_out));
   for(vertex_descriptor v: vertices(kernel))
     put(kvpm, v, to_exact(get(vpm_out, v)));
   Bbox_3 bb3 = bbox(kernel);
