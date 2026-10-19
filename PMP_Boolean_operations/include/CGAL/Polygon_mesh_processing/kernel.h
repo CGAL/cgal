@@ -228,14 +228,21 @@ kernel(const FaceRange& face_range,
     }
 
     // Get the centroid
+    // WARNING: This will lead to huge depth in the tree construction.
+    //          If we can't get a special lazy node, then at least we should
+    //          sum vectors and do the division once -> will divide by two the number of nodes.
     EPoint_3 centroid(ORIGIN);
     for(auto v: vertices(kernel))
       centroid += EVector_3(ORIGIN, get(kvpm, v)) / vertices(kernel).size();
 
     // Approximate the centroid
+    // TODO: not used. I guess you wanted to build another exact centroid build from this variable in
+    //       the test below.
     Point_3 double_centroid(to_double(centroid.x()), to_double(centroid.y()), to_double(centroid.z()));
 
     // Check if the approximate_centroid is inside the kernel
+    // TODO: if the kernel of pm is exact, i.e. std::is_floating_point_v<Kernel::FT>==false
+    //       then this tests are useless
     bool is_valid = true;
     for(face_descriptor f: faces(kernel)){
       halfedge_descriptor h = halfedge(f, kernel);
