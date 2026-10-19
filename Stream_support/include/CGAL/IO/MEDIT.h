@@ -251,13 +251,13 @@ bool read_MEDIT(std::istream& is,
 
     if(line.find("Vertices") != std::string::npos)
     {
-      is >> ioformat(nv);
+      is >> iformat(nv);
       if(verbose)
         std::cerr << "Reading "<< nv << " vertices" << std::endl;
       for(int i=0; i<nv; ++i)
       {
         FT x,y,z;
-        if(!(is >> ioformat(x) >> ioformat(y) >> ioformat(z) >> ioformat(ref)))
+        if(!(is >> iformat(x) >> iformat(y) >> iformat(z) >> iformat(ref)))
         {
           if(verbose)
             std::cerr << "Issue while reading vertices" << std::endl;
@@ -272,7 +272,7 @@ bool read_MEDIT(std::istream& is,
     if(line.find("Triangles") != std::string::npos)
     {
       if(read_facets){
-        is >> ioformat(nf);
+        is >> iformat(nf);
         CGAL::internal::reserve(facets, nf);
 
         if(verbose)
@@ -282,7 +282,7 @@ bool read_MEDIT(std::istream& is,
         {
           int n[3];
           Surface_path_index_t<FacetRange> surface_patch_id;
-          if(!(is >> ioformat(n[0]) >> ioformat(n[1]) >> ioformat(n[2]) >> ioformat(surface_patch_id)))
+          if(!(is >> iformat(n[0]) >> iformat(n[1]) >> iformat(n[2]) >> iformat(surface_patch_id)))
           {
             if(verbose)
               std::cerr << "Issue while reading triangles" << std::endl;
@@ -314,7 +314,7 @@ bool read_MEDIT(std::istream& is,
             facet_refs.emplace_back(surface_patch_id);
         }
       }else{
-        is >> ioformat(nf);
+        is >> iformat(nf);
         std::string buffer;
         for(int i=0; i<nf; ++i)
           std::getline(is, buffer);
@@ -322,7 +322,7 @@ bool read_MEDIT(std::istream& is,
     }
     if(line.find("Tetrahedra") != std::string::npos)
     {
-      is >> ioformat(ntet);
+      is >> iformat(ntet);
 
       if(verbose)
         std::cerr << "Reading "<< ntet << " cells" << std::endl;
@@ -332,7 +332,7 @@ bool read_MEDIT(std::istream& is,
         int n[4];
         int ref;
 
-        if(!(is >> ioformat(n[0]) >> ioformat(n[1]) >> ioformat(n[2]) >> ioformat(n[3]) >> ioformat(ref)))
+        if(!(is >> iformat(n[0]) >> iformat(n[1]) >> iformat(n[2]) >> iformat(n[3]) >> iformat(ref)))
         {
           if(verbose)
             std::cerr << "Issue while reading cells" << std::endl;
@@ -364,7 +364,7 @@ bool read_MEDIT(std::istream& is,
     if(line.find("Edges") != std::string::npos)
     {
       if(read_edges){
-        is >> ioformat(nedges);
+        is >> iformat(nedges);
         CGAL::internal::reserve(edges, nedges);
 
         if(verbose)
@@ -377,7 +377,7 @@ bool read_MEDIT(std::istream& is,
       {
         int n[2];
         Curve_index_t<EdgeRange> ref = 0;
-        if(!(is >> ioformat(n[0]) >> ioformat(n[1]) >> ioformat(ref)))
+        if(!(is >> iformat(n[0]) >> iformat(n[1]) >> iformat(ref)))
         {
           if(verbose)
             std::cerr << "Issue while reading edges" << std::endl;
@@ -391,7 +391,7 @@ bool read_MEDIT(std::istream& is,
     }
     else
     {
-      is >> ioformat(nedges);
+      is >> iformat(nedges);
       std::string buffer;
       for(int i=0; i<nedges; ++i)
         std::getline(is, buffer);
@@ -399,10 +399,10 @@ bool read_MEDIT(std::istream& is,
   }
     if(line.find("Ridges") != std::string::npos)
     {
-      is >> ioformat(nridges);
+      is >> iformat(nridges);
         int ci;
         for(int i=0; i<nridges; ++i){
-          is >> ioformat(ci);
+          is >> iformat(ci);
           if(read_ridges){
             ridges.push_back(offset + i);
           }
@@ -411,10 +411,10 @@ bool read_MEDIT(std::istream& is,
 
     if(line.find("Corners") != std::string::npos)
     {
-        is >> ioformat(nvertices);
+        is >> iformat(nvertices);
         int ci;
         for(int i=0; i<nvertices; ++i){
-          is >> ioformat(ci);
+          is >> iformat(ci);
           if(read_corners){
             corners.push_back(offset + i);
           }
