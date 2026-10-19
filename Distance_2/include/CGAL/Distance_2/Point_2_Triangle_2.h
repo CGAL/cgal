@@ -94,7 +94,7 @@ distance_index(int &ind1,
             ind1 = 2; ind2 = 0;
             return;
           }
-          ind1 = 0; ind2 = -1;
+          ind1 = 2; ind2 = -1;
           return;
         }
         if(!is_acute_angle(vt2, vt1, pt, k)) {
@@ -172,7 +172,7 @@ distance_index(int &ind1,
             ind1 = 1; ind2 = 0;
             return;
           }
-          ind1 = 0; ind2 = -1;
+          ind1 = 1; ind2 = -1;
           return;
         }
         if(!is_acute_angle(vt1, vt2, pt, k)) {

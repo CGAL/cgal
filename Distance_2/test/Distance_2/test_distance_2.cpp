@@ -240,6 +240,11 @@ struct Test {
     std::cout << "Point - Triangle\n";
     check_squared_distance (p( 10,  0), T(p(  5,  2), p( 18, 57), p(  2,56)), 29);
     check_squared_distance (p(  5,101), T(p(  0,  0), p(  5,  1), p( 10, 0)), 10000);
+
+    // the point is outside of the edge (vertex(1), vertex(2)), past one of its
+    // ends, and closest to that vertex
+    check_squared_distance (p(  3, -2), T(p( -3,  2), p( -3,  0), p(  3, -1)), 1); // counterclockwise, vertex(2)
+    check_squared_distance (p( -2,  1), T(p(  2, -2), p( -1,  0), p(  2,  3)), 2); // clockwise, vertex(1)
   }
 
   void L_T()
