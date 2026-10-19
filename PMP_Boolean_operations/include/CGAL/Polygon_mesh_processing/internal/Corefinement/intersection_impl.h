@@ -101,7 +101,7 @@ struct Default_surface_intersection_visitor{
   void finalize(T&,
                 const TriangleMesh&, const TriangleMesh&,
                 const VPM1, const VPM2,
-                const std::vector<std::pair<face_descriptor, face_descriptor>>&)
+                const std::vector<std::pair<halfedge_descriptor, halfedge_descriptor>>&)
   {}
   void new_node_added_triple_face(std::size_t /* node_id */,
                                   face_descriptor /* f1 */,
@@ -1961,12 +1961,10 @@ public:
     else
       compute_intersection_of_coplanar_faces(current_node, tm2, tm1, vpm2, vpm1, non_manifold_feature_map_2, non_manifold_feature_map_1, nullptr);
 
-//    std::cout << "current_node+1 " << current_node+1 << std::endl;
-
     // look for border halfedges of common faces
     for (auto [h1, h2] : identical_patches)
     {
-      bool same_ori = (tm1.point(target(h1, tm1))==tm2.point(target(h2, tm2)));
+      bool same_ori = (get(vpm1, target(h1, tm1))==get(vpm2, target(h2, tm2)));
 
       for (int l=0; l<3; ++l)
       {
@@ -1974,8 +1972,8 @@ public:
         {
           Node_id_set& node_id_set = f_to_node[std::make_pair(face(h1, tm1), face(h2, tm2))];
           auto same_ori_h2 = same_ori ? h2 : opposite(h2,tm2);
-          CGAL_assertion(tm1.point(source(h1, tm1))==tm2.point(source(same_ori_h2, tm2)));
-          CGAL_assertion(tm1.point(target(h1, tm1))==tm2.point(target(same_ori_h2, tm2)));
+          CGAL_assertion(get(vpm1, source(h1, tm1))==get(vpm2, source(same_ori_h2, tm2)));
+          CGAL_assertion(get(vpm1, target(h1, tm1))==get(vpm2, target(same_ori_h2, tm2)));
 
           auto insert_res = vids1.emplace(source(h1, tm1), current_node+1);
           if ( insert_res.second )
