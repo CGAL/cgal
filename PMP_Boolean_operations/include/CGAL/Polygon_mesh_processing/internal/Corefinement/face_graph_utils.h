@@ -1207,7 +1207,10 @@ auto append_patches_to_triangle_mesh(
   const EdgeCstMapIn& edge_cst_map_in, const EdgeMarkMapIn& edge_mark_map_in,
   EdgetoEdgeMap& tm_to_output_edges,
   VertextoVertexMap& tm_to_output_vertices,
-  UserVisitor& user_visitor) -> std::enable_if_t<!is_surface_mesh<TriangleMesh>::value>
+  UserVisitor& user_visitor)
+#ifndef CGAL_DO_NOT_USE_SURFACE_MESH_SPECIALIZATIONS
+  -> std::enable_if_t<!is_surface_mesh<TriangleMesh>::value>
+#endif
 {
   using GT = boost::graph_traits<TriangleMesh>;
   using halfedge_descriptor = typename GT::halfedge_descriptor;
@@ -1348,7 +1351,10 @@ auto append_patches_to_triangle_mesh(
   const EdgeCstMapIn& edge_cst_map_in, const EdgeMarkMapIn& edge_mark_map_in,
   EdgetoEdgeMap& tm_to_output_edges,
   VertextoVertexMap& tm_to_output_vertices,
-  UserVisitor& user_visitor) -> std::enable_if_t<!is_surface_mesh<TriangleMesh>::value>
+  UserVisitor& user_visitor)
+#ifndef CGAL_DO_NOT_USE_SURFACE_MESH_SPECIALIZATIONS
+  -> std::enable_if_t<!is_surface_mesh<TriangleMesh>::value>
+#endif
 {
   append_patches_to_triangle_mesh<Sequential_tag, reverse_patch_orientation>(output,
                                                                              patches_to_append,
@@ -1394,7 +1400,10 @@ auto fill_new_triangle_mesh(
         EdgeCstMapOut& edge_cst_map_out, EdgeMarkMapOut& edge_mark_map_out,
   std::vector< typename boost::graph_traits<TriangleMesh>::edge_descriptor>&
                                                             output_shared_edges,
-  UserVisitor& user_visitor) -> std::enable_if_t<!is_surface_mesh<TriangleMesh>::value>
+  UserVisitor& user_visitor)
+#ifndef CGAL_DO_NOT_USE_SURFACE_MESH_SPECIALIZATIONS
+  -> std::enable_if_t<!is_surface_mesh<TriangleMesh>::value>
+#endif
 {
   using GT = boost::graph_traits<TriangleMesh>;
   using vertex_descriptor = typename GT::vertex_descriptor;
