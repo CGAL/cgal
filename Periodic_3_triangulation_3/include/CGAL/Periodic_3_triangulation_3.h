@@ -59,7 +59,6 @@
 #include <boost/random/variate_generator.hpp>
 #include <boost/unordered/unordered_map.hpp>
 
-#include <tuple>
 #include <algorithm>
 #include <array>
 #include <cstddef>
@@ -68,6 +67,7 @@
 #include <map>
 #include <set>
 #include <stack>
+#include <tuple>
 #include <utility>
 #include <vector>
 
