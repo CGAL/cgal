@@ -40,7 +40,7 @@ int main()
         std::ostringstream  out;
         CGAL::IO::set_ascii_mode( out);
         assert( CGAL::IO::is_ascii( out));
-        out << Point( 1, 2) << '\0';
+        out << Point( 1, 2) << std::flush;
         std::istringstream in( out.str() );
         CGAL::IO::set_ascii_mode(in);
         assert( CGAL::IO::is_ascii(in));
@@ -53,7 +53,7 @@ int main()
         CGAL::IO::set_ascii_mode( out);
         IteratorO   o(out);
         *o = Point( 1, 2);
-        out << '\0';
+        out << std::flush;
         std::istringstream  in( out.str() );
         CGAL::IO::set_ascii_mode( in);
         IteratorI   i(in);
