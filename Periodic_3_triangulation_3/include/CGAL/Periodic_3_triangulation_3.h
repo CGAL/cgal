@@ -60,7 +60,6 @@
 #include <boost/unordered/unordered_map.hpp>
 
 #include <tuple>
-
 #include <algorithm>
 #include <array>
 #include <cstddef>
