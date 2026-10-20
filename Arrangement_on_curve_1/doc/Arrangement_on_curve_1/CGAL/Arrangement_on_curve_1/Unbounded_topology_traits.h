@@ -50,8 +50,17 @@ public:
   //! copy constructor.
   Unbounded_topology_traits(const Unbounded_topology_traits& other);
 
+  //! copy assignment.
+  Unbounded_topology_traits& operator=(const Unbounded_topology_traits& other);
+
   //! move constructor.
   Unbounded_topology_traits(Unbounded_topology_traits&& other) noexcept;
+
+  //! move assignment.
+  Unbounded_topology_traits& operator=(Unbounded_topology_traits&& other) noexcept;
+
+  //! @}
+};
 
 } // namespace Arrangement_on_curve_1
 } // namespace CGAL
