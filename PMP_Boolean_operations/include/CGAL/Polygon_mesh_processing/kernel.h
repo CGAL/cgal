@@ -21,8 +21,10 @@
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Cartesian_converter.h>
+#include <CGAL/centroid.h>
 
 #include <boost/property_map/property_map.hpp>
+#include <boost/iterator/transform_iterator.hpp>
 
 #include <algorithm>
 #include <array>
@@ -228,17 +230,19 @@ kernel(const FaceRange& face_range,
     }
 
     // Get the centroid
-    // WARNING: This will lead to huge depth in the tree construction.
-    //          If we can't get a special lazy node, then at least we should
-    //          sum vectors and do the division once -> will divide by two the number of nodes.
-    EPoint_3 centroid(ORIGIN);
-    for(auto v: vertices(kernel))
-      centroid += EVector_3(ORIGIN, get(kvpm, v)) / vertices(kernel).size();
+    using AK = typename EK::Approximate_kernel;
+    using APoint_3 = typename AK::Point_3;
 
-    // Approximate the centroid
-    // TODO: not used. I guess you wanted to build another exact centroid build from this variable in
-    //       the test below.
-    EPoint_3 double_centroid(to_double(centroid.x()), to_double(centroid.y()), to_double(centroid.z()));
+    auto to_approx = [&kernel, &kvpm](vertex_descriptor v) { return approx(get(kvpm, v)); };
+    const auto& vrange = vertices(kernel);
+
+    APoint_3 acentroid;
+    {
+      typename AK::FT::Protector p;
+      acentroid = CGAL::centroid(boost::make_transform_iterator(vrange.begin(), to_approx),
+                                 boost::make_transform_iterator(vrange.end(), to_approx));
+    }
+    EPoint_3 double_centroid(to_double(acentroid.x()), to_double(acentroid.y()), to_double(acentroid.z())); // todo use converter
 
     // Check if the approximate_centroid is inside the kernel
     // TODO: if the kernel of pm is exact, i.e. std::is_floating_point_v<Kernel::FT>==false
@@ -256,11 +260,19 @@ kernel(const FaceRange& face_range,
     }
 
     // If not, refine the centroid position
-    if(!is_valid)
-      centroid.exact();
+    if(!is_valid){
+      using ExactK = typename EK::Exact_kernel;
+      using ExactPoint_3 = typename ExactK::Point_3;
+
+      auto to_exact = [&kernel, &kvpm](vertex_descriptor v) { return exact(get(kvpm, v)); };
+
+      ExactPoint_3 ecentroid = CGAL::centroid(boost::make_transform_iterator(vrange.begin(), to_exact),
+                                              boost::make_transform_iterator(vrange.end(), to_exact));
+      double_centroid = EPoint_3(ecentroid);
+    }
 
     // Return the centroid
-    *p = from_exact(centroid);
+    *p = from_exact(double_centroid);
     return;
   }
 
