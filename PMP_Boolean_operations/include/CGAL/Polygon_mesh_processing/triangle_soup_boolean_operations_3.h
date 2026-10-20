@@ -22,8 +22,6 @@
 
 #include <fstream>
 
-#include <fstream>
-
 #ifdef CGAL_LINKED_WITH_TBB
 #include <oneapi/tbb/parallel_sort.h>
 #endif
@@ -148,7 +146,7 @@ struct Selection_data
   std::vector<std::size_t> ccids;
   std::vector<bool> coplanar_patches;
   std::vector<bool> coplanar_patches_for_union_and_intersection;
-  std::vector< std::vector<bool> > cc_is_inside_per_mesh; // TODO: use an optional
+  std::vector< std::vector<bool> > cc_is_inside_per_mesh;
   std::vector<unsigned int> input_ids;
 };
 
@@ -388,10 +386,12 @@ select(const std::vector<Exact_point>& points,
   coplanar_patches.assign(nb_cc, false);
   coplanar_patches_for_union_and_intersection.assign(nb_cc, false);
 #ifdef CGAL_BO_AUTOREF_DEBUG
+  // Note: if we want to avoid this debug vector, we can use an optional in cc_is_inside_per_mesh.
+  // However, we would loose the compactness of std::vector<bool>, even if nb_cc is not that big.
   std::vector< std::vector<bool> > cc_is_inside_per_mesh_init(nb_meshes, std::vector<bool>(nb_cc, false));
   int case_id=-1;
 #endif
-  cc_is_inside_per_mesh.assign(nb_meshes, std::vector<bool>(nb_cc, false)); // TODO: use an optional
+  cc_is_inside_per_mesh.assign(nb_meshes, std::vector<bool>(nb_cc, false));
 
   for (auto e : nm_edges)
   {
@@ -436,10 +436,11 @@ select(const std::vector<Exact_point>& points,
     std::vector<std::pair<int, TID>> to_sort;
     to_sort.reserve(tids.size());
 
-    for (TID tid : tids){
-      for (int i=0; i<3; ++i)
-        if( adjacent_edges[tid][i] == e )
-          to_sort.emplace_back(i, tid);
+    for (TID tid : tids)
+    {
+      int i = adjacent_edges[tid][0] == e ? 0 : (adjacent_edges[tid][1] == e ? 1 : 2);
+      CGAL_assertion( adjacent_edges[tid][i] == e );
+      to_sort.emplace_back(i, tid);
     }
 
     // we arbitrarily take the last triangle
