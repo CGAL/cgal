@@ -100,7 +100,7 @@ kernel(const FaceRange& face_range,
     make_hexahedron(bbox(pm, parameters::vertex_point_map(vpm)), kernel, parameters::vertex_point_map(vpm_out));
   for(vertex_descriptor v: vertices(kernel))
     put(kvpm, v, to_exact(get(vpm_out, v)));
-  Bbox_3 bb3 = bbox(kernel, kvpm);
+  Bbox_3 bb3 = bbox(kernel, parameters::vertex_point_map(kvpm));
   vertex_descriptor start_vertex = *vertices(kernel).begin();
   if constexpr(is_face_to_face_map)
     for(face_descriptor f: faces(kernel))
