@@ -34,7 +34,7 @@ namespace CGAL {
 namespace boolops_3 {
 
 //TODO: update nm_edges for identical coplanar status (less test below then)
-template <class EdgeConnectivity, class FaceConnectivity, class NM_edges>
+template <class EdgeConnectivity, class FaceConnectivity>
 std::vector<std::size_t>
 connected_components(std::size_t begin,
                      std::size_t end,
@@ -42,8 +42,7 @@ connected_components(std::size_t begin,
                      int increment,
                      const EdgeConnectivity& adjacent_edges,
                      const FaceConnectivity& adjacent_faces,
-                     std::vector<std::size_t>& ccids,
-                     NM_edges& nm_edges)
+                     std::vector<std::size_t>& ccids)
 {
   auto is_handled = [&](std::size_t tid){ return ccids[tid]!=std::size_t(-1); };
   std::vector<std::size_t> one_triangle_per_cc;
@@ -81,8 +80,7 @@ connected_components(std::size_t begin,
           }
           break;
           default:
-            // non-manifold edge
-            nm_edges.emplace_back(ei);
+          // non-manifold edge
           break;
         }
       }
@@ -93,27 +91,25 @@ connected_components(std::size_t begin,
   return one_triangle_per_cc;
 }
 
-template <class EdgeConnectivity, class FaceConnectivity, class NM_edges>
+template <class EdgeConnectivity, class FaceConnectivity>
 std::vector<std::size_t>
 connected_components(const EdgeConnectivity& adjacent_edges,
                      const FaceConnectivity& adjacent_faces,
-                     std::vector<std::size_t>& ccids,
-                     NM_edges& nm_edges)
+                     std::vector<std::size_t>& ccids)
 {
   std::size_t nb_poly = adjacent_edges.size();
   ccids.resize(nb_poly, std::size_t(-1));
-  return connected_components(0, nb_poly, 0, 1, adjacent_edges, adjacent_faces, ccids, nm_edges);
+  return connected_components(0, nb_poly, 0, 1, adjacent_edges, adjacent_faces, ccids);
 }
 
 #ifdef CGAL_LINKED_WITH_TBB
-template <class EdgeConnectivity, class FaceConnectivity, class NM_edges>
+template <class EdgeConnectivity, class FaceConnectivity>
 std::vector<std::size_t>
 parallel_connected_components(const size_t split_range_at,
                               const size_t new_triangles_at,
                               const EdgeConnectivity& adjacent_edges,
                               const FaceConnectivity& adjacent_faces,
-                              std::vector<std::size_t>& ccids,
-                              NM_edges& nm_edges)
+                              std::vector<std::size_t>& ccids)
 {
   std::size_t nb_poly = adjacent_edges.size();
   ccids.resize(nb_poly, std::size_t(-1));
@@ -121,14 +117,12 @@ parallel_connected_components(const size_t split_range_at,
 
   tbb::task_group task_group;
   task_group.run([&](){
-    trs_per_cc_1 = connected_components(0, split_range_at, 0, 2, adjacent_edges, adjacent_faces, ccids, nm_edges);
+    trs_per_cc_1 = connected_components(0, split_range_at, 0, 2, adjacent_edges, adjacent_faces, ccids);
   });
-  NM_edges nm_edges_cc_2;
-  trs_per_cc_2 = connected_components(split_range_at, new_triangles_at, 1, 2, adjacent_edges, adjacent_faces, ccids, nm_edges_cc_2);
+  trs_per_cc_2 = connected_components(split_range_at, new_triangles_at, 1, 2, adjacent_edges, adjacent_faces, ccids);
   task_group.wait();
-  nm_edges.insert(nm_edges.end(), nm_edges_cc_2.begin(), nm_edges_cc_2.end());
   std::size_t max_size = (std::max)(trs_per_cc_1.size(), trs_per_cc_2.size());
-  trs_per_cc_end = connected_components(new_triangles_at, nb_poly, max_size, 1, adjacent_edges, adjacent_faces, ccids, nm_edges);
+  trs_per_cc_end = connected_components(new_triangles_at, nb_poly, max_size, 1, adjacent_edges, adjacent_faces, ccids);
 
   merged_trs_per_cc.resize(2 * max_size + trs_per_cc_end.size(), std::size_t(-1));
   for(std::size_t i=0; i<trs_per_cc_1.size(); ++i)
@@ -340,17 +334,16 @@ select(const std::vector<Exact_point>& points,
 
   // extract connected_components bounded by non-manifold edges
   std::vector<std::size_t>& ccids = data_out.ccids;
-  std::vector< EID > nm_edges;
   std::vector<std::size_t> one_triangle_per_cc;
 #ifdef CGAL_LINKED_WITH_TBB
   if constexpr(Concurrency_tag::is_parallel)
   {
-    one_triangle_per_cc = boolops_3::parallel_connected_components(split_at, new_triangles_at, adjacent_edges, adjacent_faces, ccids, nm_edges);
+    one_triangle_per_cc = boolops_3::parallel_connected_components(split_at, new_triangles_at, adjacent_edges, adjacent_faces, ccids);
   }
   else
 #endif
   {
-    one_triangle_per_cc = boolops_3::connected_components(adjacent_edges, adjacent_faces, ccids, nm_edges);
+    one_triangle_per_cc = boolops_3::connected_components(adjacent_edges, adjacent_faces, ccids);
   }
   std::size_t nb_cc = one_triangle_per_cc.size();
 
@@ -358,9 +351,11 @@ select(const std::vector<Exact_point>& points,
   std::cout << t.time() << " sec. to compute connected components\n";
 #endif
 
-  // Erase duplicates
-  std::sort(nm_edges.begin(), nm_edges.end());
-  nm_edges.erase(std::unique(nm_edges.begin(), nm_edges.end()), nm_edges.end());
+  // collect ids of non-manifold edges
+  std::vector< EID > nm_edges;
+  for (EID eid=0; eid<adjacent_faces.size(); ++eid)
+    if (adjacent_faces[eid].size()>2)
+      nm_edges.push_back(eid);
 
 #ifdef CGAL_BO_AUTOREF_DEBUG
   std::cout << "nb_cc " << nb_cc << "\n";
@@ -937,13 +932,14 @@ void compute_self_union(PointRange& points, TriangleRange& triangles,
 
   // extract connected_components bounded by non-manifold edges
   std::vector<std::size_t> ccids;
-  std::vector<EID> nm_edges;
   std::vector<std::size_t> one_triangle_per_cc =
-    boolops_3::connected_components(adjacent_edges, adjacent_faces, ccids, nm_edges);
+    boolops_3::connected_components(adjacent_edges, adjacent_faces, ccids);
   std::size_t nb_cc = one_triangle_per_cc.size();
 
-  std::sort(nm_edges.begin(), nm_edges.end());
-  nm_edges.erase(std::unique(nm_edges.begin(), nm_edges.end()), nm_edges.end());
+  std::vector<EID> nm_edges;
+  for (EID eid=0; eid<adjacent_faces.size(); ++eid)
+    if (adjacent_faces[eid].size()>2)
+      nm_edges.push_back(eid);
 
   // Get the vertices associate to an edge
   auto edge_vertices = [&](EID eid) {
