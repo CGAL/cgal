@@ -103,10 +103,14 @@ connected_components(const EdgeConnectivity& adjacent_edges,
 }
 
 #ifdef CGAL_LINKED_WITH_TBB
+// we actually only parallelise the exploraton in the triangles of the two (for now)
+// input soups. Since autorefine only creates new triangles and subdivided one are bounded
+// by non-manifold edges we have 2 non connected ranges of triangles that can be processed
+// separately.
 template <class EdgeConnectivity, class FaceConnectivity>
 std::vector<std::size_t>
-parallel_connected_components(const size_t split_range_at,
-                              const size_t new_triangles_at,
+parallel_connected_components(const size_t polyids_end1,
+                              const size_t polyids_end2,
                               const EdgeConnectivity& adjacent_edges,
                               const FaceConnectivity& adjacent_faces,
                               std::vector<std::size_t>& ccids)
@@ -117,12 +121,12 @@ parallel_connected_components(const size_t split_range_at,
 
   tbb::task_group task_group;
   task_group.run([&](){
-    trs_per_cc_1 = connected_components(0, split_range_at, 0, 2, adjacent_edges, adjacent_faces, ccids);
+    trs_per_cc_1 = connected_components(0, polyids_end1, 0, 2, adjacent_edges, adjacent_faces, ccids);
   });
-  trs_per_cc_2 = connected_components(split_range_at, new_triangles_at, 1, 2, adjacent_edges, adjacent_faces, ccids);
+  trs_per_cc_2 = connected_components(polyids_end1, polyids_end2, 1, 2, adjacent_edges, adjacent_faces, ccids);
   task_group.wait();
   std::size_t max_size = (std::max)(trs_per_cc_1.size(), trs_per_cc_2.size());
-  trs_per_cc_end = connected_components(new_triangles_at, nb_poly, max_size, 1, adjacent_edges, adjacent_faces, ccids);
+  trs_per_cc_end = connected_components(polyids_end2, nb_poly, max_size, 1, adjacent_edges, adjacent_faces, ccids);
 
   merged_trs_per_cc.resize(2 * max_size + trs_per_cc_end.size(), std::size_t(-1));
   for(std::size_t i=0; i<trs_per_cc_1.size(); ++i)
@@ -150,11 +154,11 @@ select(const std::vector<Exact_point>& points,
        const std::vector<Triangle>& triangles,
              std::vector<unsigned int>& input_ids,
 #ifdef CGAL_LINKED_WITH_TBB
-             std::size_t split_at,
-             std::size_t new_triangles_at,
+             std::size_t polyids_end1,
+             std::size_t polyids_end2,
 #else
-             std::size_t /* split_at */,
-             std::size_t /* new_triangles_at */,
+             std::size_t /* polyids_end1 */,
+             std::size_t /* polyids_end2 */,
 #endif
        const unsigned int nb_meshes)
 {
@@ -338,7 +342,7 @@ select(const std::vector<Exact_point>& points,
 #ifdef CGAL_LINKED_WITH_TBB
   if constexpr(Concurrency_tag::is_parallel)
   {
-    one_triangle_per_cc = boolops_3::parallel_connected_components(split_at, new_triangles_at, adjacent_edges, adjacent_faces, ccids);
+    one_triangle_per_cc = boolops_3::parallel_connected_components(polyids_end1, polyids_end2, adjacent_edges, adjacent_faces, ccids);
   }
   else
 #endif
