@@ -158,7 +158,7 @@ int main() {
   // -----------------------------------------------------------------------
   // Demonstrate Is_on_identification_1.
   // -----------------------------------------------------------------------
-  auto is_seam = traits->is_on_identification_1_object();
+  auto is_seam = traits->is_on_x_identification_1_object();
   Direction_2 seam_dir(1, 0);
   Direction_2 other_dir(0, 1);
   std::cout << "\nIs_on_identification_1 checks:\n";
