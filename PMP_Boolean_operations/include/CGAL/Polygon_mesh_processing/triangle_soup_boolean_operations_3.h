@@ -104,9 +104,8 @@ connected_components(const EdgeConnectivity& adjacent_edges,
 
 #ifdef CGAL_LINKED_WITH_TBB
 // we actually only parallelise the exploraton in the triangles of the two (for now)
-// input soups. Since autorefine only creates new triangles and subdivided one are bounded
-// by non-manifold edges we have 2 non connected ranges of triangles that can be processed
-// separately.
+// input soups. Since autorefine only creates new triangles, we can seed the exploration
+// with the range of input triangles. Everything not reached will be seeded in a last sequential step.
 template <class EdgeConnectivity, class FaceConnectivity>
 std::vector<std::size_t>
 parallel_connected_components(const size_t polyids_end1,
@@ -115,9 +114,10 @@ parallel_connected_components(const size_t polyids_end1,
                               const FaceConnectivity& adjacent_faces,
                               std::vector<std::size_t>& ccids)
 {
+  std::size_t NIN(-1);
   std::size_t nb_poly = adjacent_edges.size();
-  ccids.resize(nb_poly, std::size_t(-1));
-  std::vector<std::size_t> trs_per_cc_1, trs_per_cc_2, trs_per_cc_end, merged_trs_per_cc;
+  ccids.resize(nb_poly, NIN);
+  std::vector<std::size_t> trs_per_cc_1, trs_per_cc_2, trs_per_cc_end;
 
   tbb::task_group task_group;
   task_group.run([&](){
@@ -125,17 +125,24 @@ parallel_connected_components(const size_t polyids_end1,
   });
   trs_per_cc_2 = connected_components(polyids_end1, polyids_end2, 1, 2, adjacent_edges, adjacent_faces, ccids);
   task_group.wait();
-  std::size_t max_size = (std::max)(trs_per_cc_1.size(), trs_per_cc_2.size());
-  trs_per_cc_end = connected_components(polyids_end2, nb_poly, max_size, 1, adjacent_edges, adjacent_faces, ccids);
 
-  merged_trs_per_cc.resize(2 * max_size + trs_per_cc_end.size(), std::size_t(-1));
-  for(std::size_t i=0; i<trs_per_cc_1.size(); ++i)
-    merged_trs_per_cc[2*i] = trs_per_cc_1[i];
-  for(std::size_t i=0; i<trs_per_cc_2.size(); ++i)
-    merged_trs_per_cc[2*i+1] = trs_per_cc_2[i];
-  for(std::size_t i=0; i<trs_per_cc_end.size(); ++i)
-    merged_trs_per_cc[max_size+i] = trs_per_cc_end[i];
-  return merged_trs_per_cc;
+
+  // re-index cc ids
+  std::vector<std::size_t> cc_map(2*(std::max)(trs_per_cc_1.size(), trs_per_cc_2.size()));
+  std::size_t ccid=0;
+  for(std::size_t i=0; i<trs_per_cc_1.size(); ++i) cc_map[2*i] = ccid++;
+  for(std::size_t i=0; i<trs_per_cc_2.size(); ++i) cc_map[2*i+1] = ccid++;
+  tbb::parallel_for(std::size_t(0), nb_poly,
+    [&](std::size_t id){ if (ccids[id]!=NIN) ccids[id] = cc_map[ccids[id]]; });
+
+  // now tag cc not reach with the previous seeds
+  trs_per_cc_end = connected_components(polyids_end2, nb_poly, ccid, 1, adjacent_edges, adjacent_faces, ccids);
+
+  // update one triangle per cc
+  trs_per_cc_1.reserve(trs_per_cc_1.size()+ trs_per_cc_2.size()+trs_per_cc_end.size());
+  std::copy(trs_per_cc_2.begin(), trs_per_cc_2.end(), std::back_inserter(trs_per_cc_1));
+  std::copy(trs_per_cc_end.begin(), trs_per_cc_end.end(), std::back_inserter(trs_per_cc_1));
+  return trs_per_cc_1;
 }
 #endif
 
@@ -379,12 +386,6 @@ select(const std::vector<Exact_point>& points,
   std::vector<bool>& coplanar_patches=data_out.coplanar_patches;
   std::vector<bool>& coplanar_patches_for_union_and_intersection=data_out.coplanar_patches_for_union_and_intersection;
   std::vector< std::vector<bool> >& cc_is_inside_per_mesh=data_out.cc_is_inside_per_mesh;
-
-  for(std::size_t cc=0; cc<nb_cc; ++cc)
-    if( one_triangle_per_cc[cc] == std::size_t(-1)){
-      ++nb_handled;
-      cc_handled[cc] = true;
-    }
 
   coplanar_patches.assign(nb_cc, false);
   coplanar_patches_for_union_and_intersection.assign(nb_cc, false);
