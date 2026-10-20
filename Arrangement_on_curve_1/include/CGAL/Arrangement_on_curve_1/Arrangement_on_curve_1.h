@@ -47,7 +47,7 @@ public:
   using Right_side_category = typename Geometry_traits_1::Right_side_category;
 
   // True when both sides are identified (curve is a closed loop / circle).
-  static constexpr bool is_identified_curve =
+  static constexpr bool is_identified =
     Side_is_identified<Left_side_category>::value && Side_is_identified<Right_side_category>::value;
 
   // True when the left/right boundary is a proper closed boundary vertex.
@@ -241,7 +241,7 @@ public:
     topo.set_right_vertex(e_left_boundary, v);
     topo.set_left_edge(v, e_left_boundary);
 
-    if constexpr (is_identified_curve) {
+    if constexpr (is_identified) {
       // Identified (cyclic) topology: one vertex, one edge. No new edge is created.
       topo.set_left_vertex(e_left_boundary, v);
       topo.set_right_edge(v, e_left_boundary);
@@ -287,7 +287,7 @@ public:
    * vertex), v is also set as the right vertex of lb_edge (self-loop).
    */
   Vertex_descriptor insert_identification_vertex(const Point_1& p) {
-    static_assert(is_identified_curve, "insert_identification_vertex() is only valid for identified arrangements.");
+    static_assert(is_identified, "insert_identification_vertex() is only valid for identified arrangements.");
     CGAL_assertion_msg(! m_topology_traits.has_identification_vertex(), "The identification vertex already exists.");
     CGAL_assertion_msg(! empty(), "The arrangement must be non-empty.");
     auto& topo = m_topology_traits;

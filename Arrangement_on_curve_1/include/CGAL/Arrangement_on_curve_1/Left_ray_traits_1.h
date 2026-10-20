@@ -26,7 +26,7 @@ class Left_ray_traits_1 : public Ft_traits_1<Kernel_> {
 public:
   using Point_1 = typename Base::Point_1;
 
-  using Left_side_category  = Closed_side_tag;
+  using Left_side_category = Closed_side_tag;
   using Right_side_category = Open_side_tag;
 
   explicit Left_ray_traits_1(const Point_1& left_bound) : m_left_bound(left_bound) {}
@@ -41,8 +41,7 @@ public:
   public:
     explicit Parameter_space_in_x_1(const Left_ray_traits_1& tr) : m_tr(tr) {}
 
-    Parameter_space operator()(const Point_1& p) const
-    { return (p == m_tr.m_left_bound) ? LEFT_BOUNDARY : INTERIOR; }
+    Parameter_space operator()(const Point_1& p) const { return (p == m_tr.m_left_bound) ? LEFT_BOUNDARY : INTERIOR; }
   };
 
   Parameter_space_in_x_1 parameter_space_in_x_1_object() const { return Parameter_space_in_x_1(*this); }

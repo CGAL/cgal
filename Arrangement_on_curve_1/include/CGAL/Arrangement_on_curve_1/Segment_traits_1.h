@@ -26,9 +26,11 @@ class Segment_traits_1 : public Ft_traits_1<Kernel_> {
 public:
   using Point_1 = typename Base::Point_1;
 
-  using Left_side_category  = Closed_side_tag;
+  using Left_side_category = Closed_side_tag;
   using Right_side_category = Closed_side_tag;
 
+  /*! constructs from the boundary points
+   */
   Segment_traits_1(const Point_1& left_bound, const Point_1& right_bound) :
     m_left_bound(left_bound),
     m_right_bound(right_bound)
@@ -37,26 +39,34 @@ public:
   const Point_1& left_bound() const { return m_left_bound; }
   const Point_1& right_bound() const { return m_right_bound; }
 
-  // Parameter_space_in_x_ — returns ARR_LEFT_BOUNDARY / ARR_RIGHT_BOUNDARY at
-  // the stored endpoints; ARR_INTERIOR for all other points.
-  class Parameter_space_in_x_ {
+  /*! \class Parameter_space_in_x_1
+   * A functor that obtains the location of a point in the interval parameter space.
+   */
+  class Parameter_space_in_x_1 {
     const Segment_traits_1& m_tr;
 
   public:
     explicit Parameter_space_in_x_1(const Segment_traits_1& tr) : m_tr(tr) {}
 
+    /*! obtains the location of `p` in the interval parameter space;
+     * if `p` coincides with the leftmost point, returns LEFT_BOUNDARY;
+     * otherwise, if `p` coincides with the rightmost point, returns RIGHT_BOUNDARY;
+     * otherwise, returns INTERIOR
+     */
     Parameter_space operator()(const Point_1& p) const {
-      if (p == m_tr.m_left_bound)  return LEFT_BOUNDARY;
+      if (p == m_tr.m_left_bound) return LEFT_BOUNDARY;
       if (p == m_tr.m_right_bound) return RIGHT_BOUNDARY;
       return INTERIOR;
     }
   };
 
-  Parameter_space_in_x_ parameter_space_in_x_1_object() const { return Parameter_space_in_x_1(*this); }
+  /*! obtains a functor object of type `Parameter_space_in_x_1`.
+   */
+  Parameter_space_in_x_1 parameter_space_in_x_1_object() const { return Parameter_space_in_x_1(*this); }
 
 private:
-  Point_1 m_left_bound;
-  Point_1 m_right_bound;
+  Point_1 m_left_bound;         //! the left bound
+  Point_1 m_right_bound;        //! the right bound
 };
 
 } // namespace Arrangement_on_curve_1

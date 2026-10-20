@@ -49,8 +49,8 @@ insert(Arrangement_on_curve_1<GeometryTraits, TopologyTraits, BinarySearch>& arr
 
   if (! has_left && ! has_right) return arr.insert_empty(p);
 
-  if constexpr (Arr::is_identified_curve) {
-    if (arr.geometry_traits_1().is_on_identification_1_object()(p)) return arr.insert_identification_vertex(p);
+  if constexpr (Arr::is_identified) {
+    if (arr.geometry_traits_1().is_on_x_identification_1_object()(p)) return arr.insert_identification_vertex(p);
     return arr.split_edge(e, p);
   }
 

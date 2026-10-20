@@ -70,7 +70,7 @@ locate_impl(Arrangement_on_curve_1<GeometryTraits_1, TopologyTraits, BinarySearc
     // Predicate: is a point the identification point?
     // Compiled away entirely for non-identified arrangements.
     auto is_on_id = [&](const auto& pt) -> bool {
-      if constexpr (Arr::is_identified_curve) return arr.geometry_traits_1().is_on_identification_1_object()(pt);
+      if constexpr (Arr::is_identified) return arr.geometry_traits_1().is_on_x_identification_1_object()(pt);
       else return false;
     };
 

@@ -37,9 +37,9 @@
  *   \f$d_ref < d_1 < d_2 < \ldots < d_n < d_ref\f$
  *
  * The identification point is `d_ref`: a direction equal to `d_ref` lies
- * exactly on the seam.  `Is_on_identification_1` returns `true` for such a
+ * exactly on the seam.  `Is_on_x_identification_1` returns `true` for such a
  * direction.  `Compare_x_1` must not be called with `d_ref` as an argument;
- * guard first with `Is_on_identification_1`.
+ * guard first with `Is_on_x_identification_1`.
  *
  * Angular total order
  * -------------------
@@ -107,17 +107,17 @@ public:
 
   const Direction_2& reference_direction() const { return m_ref; }
 
-  /*! Is_on_identification_1
+  /*! Is_on_x_identification_1
    *
    * Returns `true` iff the given direction is the identification point, i.e.,
    * it equals the reference direction.
    *
    * Calling `Compare_x_1` with such a direction as an argument is forbidden.
-   * Guard all `Compare_x_1` calls with Is_on_identification_1 first.
+   * Guard all `Compare_x_1` calls with Is_on_x_identification_1 first.
    */
-  class Is_on_identification_1 {
+  class Is_on_x_identification_1 {
   public:
-    explicit Is_on_identification_1(const Circle_traits_1& tr) : m_tr(tr) {}
+    explicit Is_on_x_identification_1(const Circle_traits_1& tr) : m_tr(tr) {}
 
     bool operator()(const Point_1& d) const { return d == m_tr.m_ref; }
 
@@ -125,7 +125,7 @@ public:
     const Circle_traits_1& m_tr;
   };
 
-  Is_on_identification_1 is_on_identification_1_object() const { return Is_on_identification_1(*this); }
+  Is_on_x_identification_1 is_on_x_identification_1_object() const { return Is_on_x_identification_1(*this); }
 
   /*! Compare_x_1
    *
@@ -142,8 +142,8 @@ public:
 
     CGAL::Comparison_result operator()(const Point_1& d1, const Point_1& d2) const {
       // Precondition: neither argument is the identification point.
-      CGAL_precondition(! m_tr.is_on_identification_1_object()(d1));
-      CGAL_precondition(! m_tr.is_on_identification_1_object()(d2));
+      CGAL_precondition(! m_tr.is_on_x_identification_1_object()(d1));
+      CGAL_precondition(! m_tr.is_on_x_identification_1_object()(d2));
 
       // SMALLER: da comes before db in the CCW order starting after m_ref
       auto ccwib = m_tr.counterclockwise_in_between_2_object();

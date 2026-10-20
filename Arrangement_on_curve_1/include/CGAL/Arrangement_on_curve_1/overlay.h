@@ -48,11 +48,11 @@ void overlay(const Arrangement_on_curve_1<GeometryTraitsA, TopologyTraitsA, Bina
   using ArrA = std::remove_cv_t<std::remove_reference_t<decltype(arr_a)>>;
   using ArrB = std::remove_cv_t<std::remove_reference_t<decltype(arr_b)>>;
   using ArrRes = std::remove_cv_t<std::remove_reference_t<decltype(arr_res)>>;
-  constexpr bool identified = ArrRes::is_identified_curve;
+  constexpr bool identified = ArrRes::is_identified;
 
   auto cmp_x = arr_res.geometry_traits_1().compare_x_1_object();
   auto is_on_id = [&](const auto& pt) -> bool {
-    if constexpr (identified) return arr_res.geometry_traits_1().is_on_identification_1_object()(pt);
+    if constexpr (identified) return arr_res.geometry_traits_1().is_on_x_identification_1_object()(pt);
     else return false;
   };
 

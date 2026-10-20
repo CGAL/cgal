@@ -26,7 +26,7 @@ class Right_ray_traits_1 : public Ft_traits_1<Kernel_> {
 public:
   using Point_1 = typename Base::Point_1;
 
-  using Left_side_category  = Open_side_tag;
+  using Left_side_category = Open_side_tag;
   using Right_side_category = Closed_side_tag;
 
   explicit Right_ray_traits_1(const Point_1& right_bound) : m_right_bound(right_bound) {}

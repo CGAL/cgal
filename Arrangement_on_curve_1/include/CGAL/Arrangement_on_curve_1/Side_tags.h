@@ -40,13 +40,13 @@
  * Identified topology (Left_side_category == Identified_side_tag AND
  *                      Right_side_category == Identified_side_tag):
  *
- *   • Is_on_identification_1
+ *   • Is_on_x_identification_1
  *       Functor; operator()(const Point_1& p) → bool.
  *       Returns true iff p is the identification point, i.e. the point where
  *       the two identified sides meet.  Calling Compare_x_1 with such a
- *       point as an argument is forbidden; use Is_on_identification_1 to
+ *       point as an argument is forbidden; use Is_on_x_identification_1 to
  *       guard first.
- *       Obtained via: traits.is_on_identification_1_object().
+ *       Obtained via: traits.is_on_x_identification_1_object().
  *
  * Open topology (side is Open_side_tag):
  *   No additional predicate.  Points at ±∞ are never stored.

@@ -21,7 +21,7 @@ namespace Arrangement_on_curve_1 {
 
 /*! \ingroup PkgArrangementOnCurve1TopologyTraitsClasses
  *
- * \brief Topology traits for an arrangement on an unbounded master curve (−∞, +∞).
+ * \brief Topology traits for an arrangement on an unbounded master curve \f$(−\infty, +\infty)\f$.
  *
  * Both boundaries of the parameter space are open: neither endpoint of the
  * master curve is in the domain.  No boundary vertices are ever registered.
