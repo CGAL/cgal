@@ -21,8 +21,10 @@
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Cartesian_converter.h>
+#include <CGAL/algorithm.h>
 #include <CGAL/centroid.h>
 
+#include <boost/iterator/transform_iterator.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 
@@ -235,43 +237,61 @@ kernel(const FaceRange& face_range,
     auto to_approx = [&kernel, &kvpm](vertex_descriptor v) { return approx(get(kvpm, v)); };
     const auto& vrange = vertices(kernel);
 
-    APoint_3 acentroid;
+    APoint_3 approx_centroid;
     {
       typename AK::FT::Protector p;
-      acentroid = CGAL::centroid(boost::make_transform_iterator(vrange.begin(), to_approx),
-                                 boost::make_transform_iterator(vrange.end(), to_approx));
+      approx_centroid = CGAL::centroid(boost::make_transform_iterator(vrange.begin(), to_approx),
+                                       boost::make_transform_iterator(vrange.end(), to_approx));
     }
-    EPoint_3 double_centroid(to_double(acentroid.x()), to_double(acentroid.y()), to_double(acentroid.z())); // todo use converter
+    EPoint_3 double_centroid(to_double(approx_centroid.x()),
+                             to_double(approx_centroid.y()),
+                             to_double(approx_centroid.z())); // todo use converter
 
     // Check if the approximate_centroid is inside the kernel
-    // TODO: if the kernel of pm is exact, i.e. std::is_floating_point_v<Kernel::FT>==false
-    //       then this tests are useless
-    bool is_valid = true;
-    for(face_descriptor f: faces(kernel)){
-      halfedge_descriptor h = halfedge(f, kernel);
-      Plane_3 plane(get(kvpm,source(h, kernel)),
-                    get(kvpm,target(h, kernel)),
-                    get(kvpm,target(next(h, kernel), kernel)));
-      if(oriented_side(plane, double_centroid) != ON_NEGATIVE_SIDE){
-        is_valid = false;
-        break;
+    auto is_inside_kernel = [&](const EPoint_3& p) {
+      bool inside = true;
+      for(face_descriptor f: faces(kernel)){
+        halfedge_descriptor h = halfedge(f, kernel);
+        Plane_3 plane(get(kvpm,source(h, kernel)),
+                      get(kvpm,target(h, kernel)),
+                      get(kvpm,target(next(h, kernel), kernel)));
+        if(oriented_side(plane, p) != ON_NEGATIVE_SIDE){
+          inside = false;
+          break;
+        }
       }
+      return inside;
+    };
+
+    if(is_inside_kernel(double_centroid)) {
+      *p = from_exact(double_centroid);
     }
 
     // If not, refine the centroid position
-    if(!is_valid){
-      using ExactK = typename EK::Exact_kernel;
-      using ExactPoint_3 = typename ExactK::Point_3;
+    // Sum the vectors with a balanced reduction (to limit the depth of the lazy
+    // expression tree), and divide only once.
+    auto to_vector = [&kernel, &kvpm](vertex_descriptor v) { return EVector_3(ORIGIN, get(kvpm, v)); };
+    const EVector_3 sum = CGAL::divide_and_conquer_reduce<2>(boost::make_transform_iterator(vrange.begin(), to_vector),
+                                                             boost::make_transform_iterator(vrange.end(), to_vector),
+                                                             EVector_3(NULL_VECTOR), std::plus<EVector_3>());
+    EPoint_3 centroid = ORIGIN + sum / vrange.size();
 
-      auto to_exact = [&kernel, &kvpm](vertex_descriptor v) { return exact(get(kvpm, v)); };
+    double_centroid = EPoint_3(to_double(centroid.x()), to_double(centroid.y()), to_double(centroid.z()));
 
-      ExactPoint_3 ecentroid = CGAL::centroid(boost::make_transform_iterator(vrange.begin(), to_exact),
-                                              boost::make_transform_iterator(vrange.end(), to_exact));
-      double_centroid = EPoint_3(ecentroid);
+    if(is_inside_kernel(double_centroid)){
+      *p = from_exact(double_centroid);
+      return;
     }
 
-    // Return the centroid
-    *p = from_exact(double_centroid);
+    centroid.exact();
+    double_centroid = EPoint_3(to_double(centroid.x()), to_double(centroid.y()), to_double(centroid.z()));
+
+    if(is_inside_kernel(double_centroid)){
+      *p = from_exact(double_centroid);
+      return;
+    }
+
+    *p = from_exact(centroid);
     return;
   }
 
