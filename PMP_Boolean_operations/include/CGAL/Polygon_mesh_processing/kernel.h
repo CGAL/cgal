@@ -77,7 +77,6 @@ kernel(const FaceRange& face_range,
   constexpr bool is_face_to_face_map = !parameters::is_default_parameter<NamedParametersOut, internal_np::face_to_face_map_t>::value;
   auto f2f_map = choose_parameter<DefaultF2FMap>(get_parameter(np_out, internal_np::face_to_face_map));
 
-  using Point_3 = typename GT::Point_3;
   using EPoint_3 = typename EK::Point_3;
   using EVector_3 = typename EK::Vector_3;
   using Plane_3 = typename Three_point_cut_plane_traits<EK>::Plane_3;
