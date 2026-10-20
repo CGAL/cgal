@@ -238,7 +238,7 @@ kernel(const FaceRange& face_range,
     // Approximate the centroid
     // TODO: not used. I guess you wanted to build another exact centroid build from this variable in
     //       the test below.
-    Point_3 double_centroid(to_double(centroid.x()), to_double(centroid.y()), to_double(centroid.z()));
+    EPoint_3 double_centroid(to_double(centroid.x()), to_double(centroid.y()), to_double(centroid.z()));
 
     // Check if the approximate_centroid is inside the kernel
     // TODO: if the kernel of pm is exact, i.e. std::is_floating_point_v<Kernel::FT>==false
