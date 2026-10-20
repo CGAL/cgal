@@ -249,7 +249,7 @@ kernel(const FaceRange& face_range,
       Plane_3 plane(get(kvpm,source(h, kernel)),
                     get(kvpm,target(h, kernel)),
                     get(kvpm,target(next(h, kernel), kernel)));
-      if(oriented_side(plane, centroid) != ON_NEGATIVE_SIDE){
+      if(oriented_side(plane, double_centroid) != ON_NEGATIVE_SIDE){
         is_valid = false;
         break;
       }
