@@ -13,6 +13,14 @@
  * A model of the concept `ArrangementOnCurve_1` can be used to represent a 1D
  * subdivision of a continuous geometric curve (a 1D "master curve" or line
  * space) into alternating vertices and edges, collectively referred to as cells.
+ *
+ * The geometry is governed by the `GeometryTraits_1` template parameter, which
+ * must model the concept `AocTraits_1`.  In particular, any model of the concep
+ * `GeometryTraits_1` must define the `Left_side_category` and
+ * `Right_side_category` categories to describe whether the parameter space is
+ * open, closed, or identified at each end.  When both categories are
+ * `Identified_side_tag`, the arrangement represents a closed loop; in that case
+ * there are no unbounded edges.
  */
 class ArrangementOnCurve_1 {
 public:
@@ -38,25 +46,47 @@ public:
   typedef unspecified_type Edge_const_descriptor;
 
   /*! Represents a point localization result within the 1D curve structure.
-   * A coordinate query point must match a `Vertex_descriptor` if it rests on an arrangement node,
-   * or an `Edge_descriptor` if it falls securely between two nodes or out inside an infinity frontier.
+   * A coordinate query point matches a `Vertex_descriptor` if it rests on an
+   * arrangement vertex, or an `Edge_descriptor` if it falls inside an edge
+   * (bounded or unbounded).
    */
   typedef std::variant<Vertex_descriptor, Edge_descriptor> Location_result;
   typedef std::variant<Vertex_const_descriptor, Edge_const_descriptor> Const_location_result;
+
+  /// @}
+
+  /// \name Boundary Categories
+  /// @{
+
+  /// Tag type describing the left boundary condition.
+  /// Reflects `GeometryTraits_1::Left_side_category`.
+  typedef unspecified_type Left_side_category;
+
+  /// Tag type describing the right boundary condition.
+  /// Reflects `GeometryTraits_1::Right_side_category`.
+  typedef unspecified_type Right_side_category;
+
   /// @}
 
   /// \name Accessors
   /// @{
 
-  /*! obtains `true` if the arrangement does not contains any vertices.
+  /*! returns `true` if the arrangement is a closed loop (both
+   * `Left_side_category` and `Right_side_category` are `Identified_side_tag`).
+   * When this returns `true`, `unbounded_left_edge()` and
+   * `unbounded_right_edge()` are not available.
+   */
+  static constexpr bool is_identified_curve();
+
+  /*! returns `true` if the arrangement does not contain any vertices.
    */
   bool empty() const;
 
-  /*! obtains the total count of vertices resting along the line track.
+  /*! obtains the total count of vertices resting along the carrier curve.
    */
   Size number_of_vertices() const;
 
-  /*! obtains the total number of bounded and unbounded edge sections.
+  /*! obtains the total number of bounded and unbounded edges.
    */
   Size number_of_edges() const;
 
@@ -80,64 +110,67 @@ public:
    */
   auto edge_data_map() const;
 
-  /*! obtains the descriptor of the leftmost unbounded edge spanning \f$(-\infty, v_{first})\f$.
+  /*! obtains the descriptor of the leftmost edge.
    */
-  Edge_descriptor unbounded_left_edge();
+  Edge_descriptor left_edge();
 
-  /*! obtains the constant descriptor of the leftmost unbounded edge.
+  /*! obtains the constant descriptor of the leftmost edge.
    */
-  Edge_const_descriptor unbounded_left_edge() const;
+  Edge_const_descriptor left_edge() const;
 
-  /*! obtains the descriptor of the rightmost unbounded edge spanning \f$(v_{last}, +\infty)\f$.
+  /*! obtains the descriptor of the rightmost edge.
    */
-  Edge_descriptor unbounded_right_edge();
+  Edge_descriptor right_edge();
 
-  /*! obtains the constant descriptor of the rightmost unbounded edge.
+  /*! obtains the constant descriptor of the rightmost edge.
    */
-  Edge_const_descriptor unbounded_right_edge() const;
+  Edge_const_descriptor right_edge() const;
 
   /*! obtains the descriptor of the left vertex of an edge.
    * \param e the edge.
+   * \pre `has_left_vertex(e)` is `true`.
    */
-  Vertex_const_descriptor left_vertex(Edge_const_descriptor e) const { return m_topology_traits.left_vertex(e); }
+  Vertex_const_descriptor left_vertex(Edge_const_descriptor e) const;
 
-  /*! obtains the descriptor of the vertex of an edge.
+  /*! obtains the descriptor of the right vertex of an edge.
    * \param e the edge.
+   * \pre `has_right_vertex(e)` is `true`.
    */
-  Vertex_const_descriptor right_vertex(Edge_const_descriptor e) const { return m_topology_traits.right_vertex(e); }
+  Vertex_const_descriptor right_vertex(Edge_const_descriptor e) const;
 
-  /*! obtains the descriptor of left edge of a vertex.
+  /*! obtains the descriptor of the left edge of a vertex.
    * \param v the vertex.
    * \pre `has_left_vertex(e)` evaluates to `true`.
    */
-  Edge_const_descriptor left_edge(Vertex_const_descriptor v) const{ return m_topology_traits.left_edge(v); }
+  Edge_const_descriptor left_edge(Vertex_const_descriptor v) const;
 
-  /*! obtains the descriptor of right edge of a vertex.
+  /*! obtains the descriptor of the right edge of a vertex.
    * \param v the vertex.
    * \pre `has_right_vertex(e)` evaluates to `true`.
    */
-  Edge_const_descriptor right_edge(Vertex_const_descriptor v) const { return m_topology_traits.right_edge(v); }
+  Edge_const_descriptor right_edge(Vertex_const_descriptor v) const;
 
   /*! determines whether an edge has a left vertex.
    * \param e the edge.
    */
-  bool has_left_vertex(Edge_const_descriptor e) const { return m_topology_traits.has_left_vertex(e); }
+  bool has_left_vertex(Edge_const_descriptor e) const;
 
   /*! determines whether an edge has a right vertex.
    * \param e the edge.
    */
-  bool has_right_vertex(Edge_const_descriptor e) const { return m_topology_traits.has_right_vertex(e); }
+  bool has_right_vertex(Edge_const_descriptor e) const;
 
   /// @}
 
   /// \name Modifiers
   /// @{
 
-  /*! creates a new vertex, enforcing the rightmost ordering invariant when BinarySearch is active.
+  /*! creates a new vertex, enforcing the sorted ordering invariant when
+   * `BinarySearch` is `true`.
    */
   Vertex_descriptor create_vertex(const Point_1& p);
 
-  /*! creates an new edge.
+  /*! creates a new edge.
    */
   Edge_descriptor create_edge();
 
@@ -149,8 +182,11 @@ public:
    */
   void destroy_edge(Edge_descriptor e);
 
-  /* inserts the very first point into an empty arrangement.
-   * The single unbounded edge is split into (\f$(-\infty\f$, `v`) and (`v`, \f$(+\infty\f$).
+  /*! inserts the very first point into an empty arrangement.  For an
+   * open/closed arrangement the single unbounded edge is split into
+   * (\f$(-\infty\f$, `v`) and (`v`, \f$(+\infty\f$). For an identified
+   * arrangement a degenerate self-loop edge is created.
+   * \param p the point to insert.
    */
   Vertex_descriptor insert_empty(const Point_1& p);
 
@@ -167,8 +203,8 @@ public:
    */
   Vertex_descriptor split_edge(Edge_descriptor e, const Point_1& p);
 
-  /*! removes an active vertex node from the 1D track, cleanly merging its left
-   * and right segments into an individual unified edge.
+  /*! removes vertex `v` from the arrangement, merging its left and right
+   * edges into a single edge.
    */
   void remove(Vertex_descriptor v);
 

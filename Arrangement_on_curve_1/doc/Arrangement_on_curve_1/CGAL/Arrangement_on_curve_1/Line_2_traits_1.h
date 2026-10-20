@@ -11,13 +11,16 @@ namespace Arrangement_on_curve_1 {
 
 /*! \ingroup PkgArrangementOnCurve1TraitsClasses
  *
- * \brief `Line_2_traits_1` is a geometric traits model of `AocTraits_1` designed for
- * subdivisions along an infinite supporting line embedded in 2D Euclidean space.
+ * \brief `Line_2_traits_1` is a geometric traits model of `AocTraits_1` designed
+ * for subdivisions along an infinite supporting line embedded in 2D Euclidean
+ * space.
  *
- * Points are represented using standard 2D Cartesian coordinates, and their ordering
- * is determined by projecting them onto the direction vector of the master line.
+ * Points are represented using standard 2D Cartesian coordinates, and their
+ * ordering is determined by projecting them onto the direction vector of the
+ * master line.  Both sides of the parameter space are open, so `Line_2_traits_1`
+ * should be paired with `Unbounded_topology_traits`.
  *
- * \tparam Kernel must be a standard CGAL Kernel model.
+ * \tparam Kernel must be a standard \cgal `Kernel` model.
  *
  * \cgalModels{AocTraits_1}
  */
@@ -26,18 +29,32 @@ class Line_2_traits_1 {
 public:
   /// \name Types
   /// @{
-  typedef typename Kernel::Point_2 Point_1;   ///< The 1D arrangement point represented as a 2D coordinate.
-  typedef typename Kernel::Line_2 Line_2;     ///< The 2D master line supporting the topology.
-  typedef typename Kernel::Vector_2 Vector_2; ///< A 2D structural direction vector.
+
+  /// The 1D arrangement point type — a 2D coordinate on the supporting line.
+  typedef typename Kernel::Point_2 Point_1;
+
+  /// The 2D master line supporting the topology.
+  typedef typename Kernel::Line_2 Line_2;
+
+  /// A 2D direction vector along the master line.
+  typedef typename Kernel::Vector_2 Vector_2;
+
+  /// Both sides of the infinite line are open (unbounded).
+  typedef Open_side_tag Left_side_category;
+
+  /// Both sides of the infinite line are open (unbounded).
+  typedef Open_side_tag Right_side_category;
+
   /// @}
 
   /// \name Creation
   /// @{
 
   /*! constructs from an embedding 2D line.
-   * \param line The supporting geometric master line trajectory.
+   * \param line the supporting geometric master line trajectory.
    */
   Line_2_traits_1(const Line_2& line);
+
   /// @}
 };
 

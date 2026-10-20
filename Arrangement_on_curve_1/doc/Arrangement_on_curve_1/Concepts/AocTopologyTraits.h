@@ -17,6 +17,8 @@
  *
  * \cgalHasModelsBegin
  * \cgalHasModels{CGAL::Arrangement_on_curve_1::Unbounded_topology_traits<Point_1,VertexData,EdgeData,UseVector,Allocator>}
+ * \cgalHasModels{CGAL::Arrangement_on_curve_1::Closed_topology_traits<Point_1,LeftTag,RightTag,VertexData,EdgeData,UseVector,Allocator>}
+ * \cgalHasModels{CGAL::Arrangement_on_curve_1::Identified_topology_traits<Point_1,VertexData,EdgeData,UseVector,Allocator>}
  * \cgalHasModelsEnd
  */
 class AocTopologyTraits {
@@ -24,19 +26,25 @@ public:
   /// \name Types
   /// @{
 
+  //! The allocator type.
+  typedef Allocator Allocator_type;
+
+  /// Size type.
+  typedef std::size_t Size;
+
   /// The geometric point type stored at vertices.
   typedef unspecified_type Point_1;
 
-  /// Handle type used to refer to a vertex.
+  /// The vertex descriptor type (`std::size_t` if `UseVector` is `true`, iterator otherwise).
   typedef unspecified_type Vertex_descriptor;
 
-  /// Handle type used to refer to an edge.
+  /// he edge descriptor type (`std::size_t` if `UseVector` is `true`, iterator otherwise).
   typedef unspecified_type Edge_descriptor;
 
-  /// Constant handle type used to refer to a vertex.
+  /// Constant vertex descriptor type.
   typedef unspecified_type Vertex_const_descriptor;
 
-  /// Constant handle type used to refer to an edge.
+  /// Constant edge descriptor type.
   typedef unspecified_type Edge_const_descriptor;
 
   /// An iterator over vertex descriptors.
@@ -51,12 +59,6 @@ public:
   /// A range over all edge descriptors in the arrangement.
   typedef unspecified_type Edge_descriptor_range;
 
-  /// Size type.
-  typedef unspecified_type Size;
-
-  /// Allocator type.
-  typedef unspecified_type Allocator_type;
-
   /// A readable and writable lvalue property map mapping `Vertex_descriptor` to `const Point_1&`.
   typedef unspecified_type Vertex_point_map;
 
@@ -68,24 +70,13 @@ public:
 
   /// @}
 
-  /// \name Constants
-  /// @{
+  //! \name Constants
+  //! @{
 
-  /// Indicates whether vertices and edges are stored in random-access vector structures.
-  static const bool use_vector;
+  //! Reflects the value of template parameter `UseVector`.
+  static constexpr bool use_vector = UseVector;
 
-  /// @}
-
-  /// \name Creation
-  /// @{
-
-  /// Default constructor. Constructs an empty topology traits.
-  AocTopologyTraits();
-
-  /// Constructs an empty topology traits using the specified allocator.
-  explicit AocTopologyTraits(const Allocator_type& alloc);
-
-  /// @}
+  //! @}
 
   /// \name Queries and Ranges
   /// @{
@@ -122,17 +113,11 @@ public:
   /// \name Navigation
   /// @{
 
-  /// obtains the leftmost unbounded edge.
-  Edge_descriptor unbounded_left_edge();
+  /// obtains the leftmost boundary edge.
+  Edge_descriptor left_boundary_edge();
 
-  /// obtains the leftmost unbounded edge (const version).
-  Edge_const_descriptor unbounded_left_edge() const;
-
-  /// obtains the rightmost unbounded edge.
-  Edge_descriptor unbounded_right_edge();
-
-  /// obtains the rightmost unbounded edge (const version).
-  Edge_const_descriptor unbounded_right_edge() const;
+  /// obtains the leftmost boundary edge (const version).
+  Edge_const_descriptor left_boundary_edge() const;
 
   /// returns the edge incident to the left of vertex `v`.
   Edge_descriptor left_edge(Vertex_descriptor v);
@@ -160,10 +145,13 @@ public:
   /// \name Low-Level Storage Primitives
   /// @{
 
-  /// creates a new vertex storing geometric point `p`.
-  Vertex_descriptor create_vertex(const Point_1& p);
+  /// sets the leftmost boundary edge descriptor.
+  void set_left_boundary_edge(Edge_descriptor e);
 
-  /// creates a new edge.
+  /// creates a new vertex associated with point `p`.
+  Vertex_descriptor create_vertex(const Point_1& p, const GeometryTraits_1& gt);
+
+  /// creates a new uninitialized edge.
   Edge_descriptor create_edge();
 
   /// sets `e` as the left incident edge of vertex `v`.
@@ -178,29 +166,26 @@ public:
   /// sets `v` as the right endpoint vertex of edge `e`.
   void set_right_vertex(Edge_descriptor e, Vertex_descriptor v);
 
-  /// sets `e` as the leftmost unbounded edge.
-  void set_unbounded_left_edge(Edge_descriptor e);
-
-  /// sets `e` as the rightmost unbounded edge.
-  void set_unbounded_right_edge(Edge_descriptor e);
-
-  /// clears the left vertex endpoint of edge `e`.
+  /// unbinds the left vertex of edge `e`.
   void clear_left_vertex(Edge_descriptor e);
 
-  /// clears the right vertex endpoint of edge `e`.
+  /// unbinds the right vertex of edge `e`.
   void clear_right_vertex(Edge_descriptor e);
 
-  /// erases vertex `v` from the topology structure.
+  /// erases vertex `v`.
   void erase_vertex(Vertex_descriptor v);
 
-  /// erases edge `e` from the topology structure.
+  /// erases edge `e`.
   void erase_edge(Edge_descriptor e);
 
-  /// removes all vertices and resets edges to a single unbounded edge.
+  /// removes all vertices and edges and resets the topology to its initial state.
   void clear();
 
   /// swaps the content of the topology traits with `other`.
   void swap(AocTopologyTraits& other) noexcept;
+
+  //! obtains the allocator object.
+  Allocator_type get_allocator() const noexcept;
 
   /// @}
 };

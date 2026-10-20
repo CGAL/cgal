@@ -14,6 +14,12 @@
  * `CGAL::Arrangement_on_curve_1::Arrangement_on_curve_1`, as well as performing
  * simple queries (such as point-location queries) on such arrangements.
  *
+ * Every model must declare two nested type aliases that describe the topology of
+ * the parameter space:
+ *   - `Left_side_category` is one of `Open_side_tag`, `Closed_side_tag`, or
+ *     `Identified_side_tag`.
+ *   - `Right_side_category` has the same tag vocabulary.
+ *
  * \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
  *
  * \cgalHasModelsBegin
@@ -22,30 +28,42 @@
  * \cgalHasModels{CGAL::Arrangement_on_curve_1::Line_3_traits_1<Kernel>}
  * \cgalHasModels{CGAL::Arrangement_on_curve_1::Line_d_traits_1<Kernel>}
  * \cgalHasModels{CGAL::Arrangement_on_curve_1::Geom_traits_2_adaptor_1<GeomTraits_2>}
+ * \cgalHasModels{CGAL::Arrangement_on_curve_1::Circle_traits_1<Kernel>}
  * \cgalHasModelsEnd
  */
 class AocTraits_1 {
 public:
-  /// \name Types
-  /// @{
+  //! \name Types
+  //! @{
 
-  /// models the concept AocTraits::Point_1.
+  //! models the concept `AocTraits::Point_1`.
   typedef unspecified_type Point_1;
 
-  /// @}
+  //! Describes the topological behaviour of the left boundary of the parameter
+  //! space.  Must be one of `Open_side_tag`, `Closed_side_tag`, or
+  //! `Identified_side_tag`.
+  typedef unspecified_type Left_side_category;
 
-  /// \name Functor Types
-  /// @{
+  //! Describes the topological behaviour of the right boundary of the parameter
+  //! space.  Must be one of `Open_side_tag`, `Closed_side_tag`, or
+  //! `Identified_side_tag`.
+  typedef unspecified_type Right_side_category;
 
-  /// models the concept AocTraits::CompareX_1.
+  //! @}
+
+  //! \name Functor Types
+  //! @{
+
+  //! models the concept `AocTraits::CompareX_1`.
   typedef unspecified_type Compare_x_1;
 
-  /// @}
+  //! @}
 
-  /// \name Accessing Functor Objects
-  /// @{
+  //! \name Accessing Functor Objects
+  //! @{
 
+  //! returns the `Compare_x_1` functor.
   Compare_x_1 compare_x_1_object() const;
 
-  /// @}
+  //! @}
 };

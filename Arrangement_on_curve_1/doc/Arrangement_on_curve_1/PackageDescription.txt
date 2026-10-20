@@ -19,6 +19,7 @@ namespace AocTraits {}
 /// \defgroup PkgArrangementOnCurve1ConceptsTopologyTraits Topology Object Concepts
 /// \ingroup PkgArrangementOnCurve1Concepts
 
+
 /// \defgroup PkgArrangementOnCurve1IO I/O
 /// \ingroup PkgArrangementOnCurve1Ref
 
@@ -32,6 +33,9 @@ namespace AocTraits {}
 /// \ingroup PkgArrangementOnCurve1Ref
 
 /// \defgroup PkgArrangementOnCurve1TraitsClasses Geometry Traits Classes
+/// \ingroup PkgArrangementOnCurve1Ref
+
+/// \defgroup PkgArrangementOnCurve1TopologyTraitsClasses Topology Traits Classes
 /// \ingroup PkgArrangementOnCurve1Ref
 
 /*!
@@ -71,6 +75,8 @@ as free (global) functions.
 
 - `ArrangementOnCurve_1`
 - `AocTraits_1`
+- `AocClosedBoundaryTraits_1`
+- `AocIdentifiedBoundaryTraits_1`
 - `AocTopologyTraits`
 
 \cgalCRPSection{Geometric Object Concepts}
@@ -80,11 +86,26 @@ as free (global) functions.
 \cgalCRPSection{Function Object Concepts}
 
 - `AocTraits::CompareX_1`
+- `AocTraits::IsOnXIdentification_1`
+- `AocTraits::ParameterSpaceInX_1`
 
 \cgalCRPSection{Classes}
 
 - `CGAL::Arrangement_on_curve_1::Arrangement_on_curve_1<GeometryTraits_1, TopologyTraits, BinarySearch>`
-- `CGAL::Arrangement_on_curve_1::Unbounded_topology_traits<Point_1, VertexData, EdgeData, UseVector, Allocator>`
+- `CGAL::Arrangement_on_curve_1::Right_bounded_topology_traits<GeometryTraits_1, VertexData, EdgeData, UseVector, Allocator>`
+- `CGAL::Arrangement_on_curve_1::Left_bounded_topology_traits<GeometryTraits_1, VertexData, EdgeData, UseVector, Allocator>`
+- `CGAL::Arrangement_on_curve_1::Unbounded_topology_traits<GeometryTraits_1, VertexData, EdgeData, UseVector, Allocator>`
+- `CGAL::Arrangement_on_curve_1::Closed_topology_traits<GeometryTraits_1, VertexData, EdgeData, UseVector, Allocator>`
+- `CGAL::Arrangement_on_curve_1::Identified_topology_traits<GeometryTraits_1, VertexData, EdgeData, UseVector, Allocator>`
+- `CGAL::Arrangement_on_curve_1::Line_traits_1<Kernel>`
+- `CGAL::Arrangement_on_curve_1::Segment_traits_1<Kernel>`
+- `CGAL::Arrangement_on_curve_1::Left_ray_traits_1<Kernel>`
+- `CGAL::Arrangement_on_curve_1::Right_ray_traits_1<Kernel>`
+- `CGAL::Arrangement_on_curve_1::Line_2_traits_1<Kernel>`
+- `CGAL::Arrangement_on_curve_1::Line_3_traits_1<Kernel>`
+- `CGAL::Arrangement_on_curve_1::Line_d_traits_1<Kernel>`
+- `CGAL::Arrangement_on_curve_1::Circle_traits_1<Kernel>`
+- `CGAL::Arrangement_on_curve_1::Geom_traits_2_adaptor_1<GeomTraits_2>`
 
 \cgalCRPSection{Functions}
 

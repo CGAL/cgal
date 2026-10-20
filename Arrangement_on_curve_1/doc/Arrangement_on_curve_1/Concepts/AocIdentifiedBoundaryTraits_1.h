@@ -1,0 +1,51 @@
+// Copyright (c) 2026 Tel-Aviv University (Israel).
+// All rights reserved.
+// This file is part of CGAL (www.cgal.org).
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+// Author(s): Efi Fogel         <efifogel@gmail.com>
+
+/*! \ingroup PkgArrangementOnCurve1ConceptsTraits
+ * \cgalConcept
+ *
+ * Models of the concept `AosIdentifiedBoundaryTraits_1` handle curves on a circle
+ * or a curve that is topological equivalent to a circle. The circle is oriented
+ * in such a way that the boundary of the parameter space, the circle is the
+ * mapping of which, is identified on the left and right sides.
+ *
+ * \cgalRefines{AosTraits_2}
+ *
+ * When both categories are `Identified_side_tag`, the traits must also provide
+ * the functor type `Is_on_x_identification_1` (and its accessor), which tests
+ * whether a point lies on the seam that identifies the two sides.
+ *
+ * \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
+ *
+ * \cgalHasModelsBegin
+ * \cgalHasModels{CGAL::Arrangement_on_curve_1::Circle_traits_1<Kernel>}
+ * \cgalHasModelsEnd
+ */
+class AosIdentifiedBoundaryTraits_1 {
+public:
+  //! \name Functor Types
+  //! @{
+
+  /*! Functor that tests whether a point lies exactly on the seam that
+   *! identifies the left and right boundaries of the parameter space.
+   *! \pre `Left_side_category` and `Right_side_category` are both `Identified_side_tag`.
+   */
+  typedef unspecified_type Is_on_x_identification_1;
+
+  //! @}
+
+  //! \name Accessing Functor Objects
+  //! @{
+
+  /*! returns the `Is_on_x_identification_1` functor.
+   *! \pre `Left_side_category` and `Right_side_category` are both `Identified_side_tag`.
+   */
+  Is_on_x_identification_1 is_on_x_identification_1_object() const;
+
+  //! @}
+};
