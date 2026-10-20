@@ -29,17 +29,11 @@ namespace Homological_discrete_vector_field {
 
  The class `Abstract_simplicial_chain_complex` represents (topological) chain complexes associated to abstract simplicial complexes.
 
- An abstract simplicial complex is a set of simplices, also called cells (class `Simplex`) such that: all the faces of a given simplex also belong to the complex and any two simplices intersect exactly along a common face.
+ An abstract simplicial complex is a set of simplices, also called cells (class `Simplex`) such that all the faces of a given simplex also belong to the complex and any two simplices intersect exactly along a common face.
 
- <img src="simplicial_complex.png" align="center" width=45%/>
+ See \ref secHDVFsimplicial_chain_complex "user documentation of simplicial chain complexes" for more details.
 
- A simplex of dimension q contains exactly q+1 vertices (we will thus denote it by \f$\langle v_0, \ldots, v_q \rangle\f$, vertex indices **must be sorted**). A 0-cell is thus a vertex, a 1-cell contains two vertices (edge), a 2-cell contains three vertices (triangle) while a 3-cell is a tetrahedron.
-
- The boundary map of the complex is computed by the constructor of the class using the standard formula:
- \f[ \partial_q\left( \langle v_0, \ldots, v_q \rangle\right) = \sum_{i=0}^q (-1)^i\cdot \langle v_0, \ldots, \widehat{v_i}, \cdots, v_q \rangle\f]
- where \f$\langle v_0, \ldots, \widehat{v_i}, \cdots, v_q \rangle\f$ denotes the \f$q-1\f$-simplex with \f$v_i\f$ omitted. Hence, matrices of boundary maps are stored in each dimension using sparse matrices (in column-major mode).
-
- Let us also point out that cells are indexed along each dimension, thus each simplex is uniquely determined by its dimension and its index in this dimension.
+ Let us point out that cells are indexed along each dimension, thus each simplex is uniquely determined by its dimension and its index in this dimension.
 
  \cgalModels{AbstractChainComplex}
 
@@ -49,6 +43,13 @@ namespace Homological_discrete_vector_field {
  \warning Check if the documentation of the `SparseMatrixStruct` added is correct and "understandable".
  */
 
+//<img src="simplicial_complex.png" align="center" width=45%/>
+//
+//A simplex of dimension q contains exactly q+1 vertices (we will thus denote it by \f$\langle v_0, \ldots, v_q \rangle\f$, vertex indices *must be sorted*). A 0-cell is thus a vertex, a 1-cell contains two vertices (edge), a 2-cell contains three vertices (triangle) while a 3-cell is a tetrahedron.
+//
+//The boundary map of the complex is computed by the constructor of the class using the standard formula:
+//\f[ \partial_q\left( \langle v_0, \ldots, v_q \rangle\right) = \sum_{i=0}^q (-1)^i\cdot \langle v_0, \ldots, \widehat{v_i}, \cdots, v_q \rangle\f]
+//where \f$\langle v_0, \ldots, \widehat{v_i}, \cdots, v_q \rangle\f$ denotes the \f$q-1\f$-simplex with \f$v_i\f$ omitted. Hence, matrices of boundary maps are stored in each dimension using sparse matrices (in column-major mode).
 
 template<typename CoefficientRing, typename SparseMatrixStruct = OSM::Sparse_matrix<OSM::Sparse_chain> >
 class Abstract_simplicial_chain_complex {
@@ -92,14 +93,14 @@ public:
     typedef Sparse_matrix_type<Coefficient_ring, CGAL::OSM::COLUMN> Column_matrix;
 
 
-    /** \brief Checks if `q` belongs to the range of dimensions of cells in the complex. */
+    /* \brief Checks if `q` belongs to the range of dimensions of cells in the complex. */
     inline bool is_valid_cell_dimension(int q) const { return ((q>=0) && (q<=_dim)); }
-    /** \brief Checks if a cell of index `i` and dimension `q` belongs to the range of dimensions of cells in the complex. */
+    /* \brief Checks if a cell of index `i` and dimension `q` belongs to the range of dimensions of cells in the complex. */
     inline bool is_valid_cell(size_t id, int q) const { return is_valid_cell_dimension(q) && (id < number_of_cells(q)); }
     /** \brief Checks if a simplex `simplex` of dimension `q` belongs to the complex. */
     inline bool is_valid_simplex(const Simplex& simplex, int q) const { return _simp2ind.at(q).find(simplex) != _simp2ind.at(q).end(); }
 
-    /**
+    /*
      * \brief Assignment
      */
     Abstract_simplicial_chain_complex& operator= (const Abstract_simplicial_chain_complex& complex) {
@@ -113,7 +114,7 @@ public:
 
     // Methods of the AbstractChainComplex concept
 
-    /**
+    /*
      * \brief Returns the boundary of the cell `id_cell` in dimension `q`.
      *
      * Returns a copy of the column-major chain stored in the boundary matrix of dimension dim: boundary of the cell `id_cell` in dimension `q`.
@@ -132,7 +133,7 @@ public:
             return Column_chain(0) ;
     }
 
-    /**
+    /*
      * \brief Returns the co-boundary of the cell `id_cell` in dimension `q`.
      *
      * Returns a row-major chain containing the co-boundary of the cell `id_cell` in dimension `q` (so actually a row of the boundary matrix).
@@ -154,7 +155,7 @@ public:
             return Row_chain(0) ;
     }
 
-    /**
+    /*
      * \brief Returns the dimension of the complex.
      *
      * Returns the dimension of the simplicial complex (i.e. largest dimension of cells).
@@ -163,7 +164,7 @@ public:
      */
     int dimension() const { return _dim ;}
 
-    /**
+    /*
      * \brief Returns the number of cells in a given dimension.
      *
      * \param q Dimension along which the number of cells is returned.
@@ -193,7 +194,7 @@ public:
         return _simp2ind.at(q).at(simplex);
     }
 
-    /**
+    /*
      * \brief Returns a constant reference to the vector of boundary matrices (along each dimension).
      *
      * Returns a constant reference to the vector of boundary matrices along each dimension. The q-th element of this vector is a column-major sparse matrix containing the boundaries of q-cells (i.e. rows encode q-1 cells and columns q cells).
@@ -204,7 +205,7 @@ public:
         return _d ;
     }
 
-    /**
+    /*
      * \brief Returns a copy of the dim-th boundary matrix (i.e.\ column-major matrix of \f$\partial_q\f$).
      *
      * It is a column-major sparse matrix containing the boundaries of q-cells (i.e. rows encode q-1 cells and columns q cells).
@@ -275,7 +276,7 @@ protected:
      */
     std::ostream& print_complex(std::ostream& out = std::cout) const;
 public:
-    /**
+    /*
      * \brief Prints informations on the complex.
      *
      * Displays the number of cells in each dimension and the boundary matrix in each dimension.
@@ -283,7 +284,7 @@ public:
     template <typename _CT, typename _SMS>
     friend std::ostream& operator<< (std::ostream& out, const Abstract_simplicial_chain_complex<_CT, _SMS>& complex);
 
-    /** \brief Get (unique) object Id.
+    /* \brief Get (unique) object Id.
      * For comparison of constant references to the complex.
      */
     size_t id () const { return _complex_id; }

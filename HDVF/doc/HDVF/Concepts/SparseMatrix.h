@@ -142,30 +142,34 @@ public:
     std::pair<size_t, size_t> dimensions() const;
 
     /**
-     * \brief Iterator to the beginning of the chain indices (visited by increasing indices).
+     * \brief Iterator to the index of the first non null chain.
      *
-     * The function returns an iterator to the beginning of the (non zero) chain indices.
+     * Return an iterator to the index of the first non null chain (the iterator visits indices of non null chains along the major dimension of the matrix).
+     *
+     * \return The iterator to the index of the first non null chain.
      */
     inline Non_zero_chain_indices::iterator begin() const noexcept;
 
     /**
-     * \brief Past-the-end iterator of the chain indices (visited by increasing indices).
+     * \brief Iterator past-the-end of chain indices.
      *
-     * The function returns an iterator past the end of the chain indices.
+     * \return The iterator past-the-end of chain indices.
      */
     inline Non_zero_chain_indices::iterator end() const noexcept;
 
     /**
-     * \brief Reverse iterator to the beginning of the chain indices (visited by decreasing indices).
+     * \brief Reverse iterator to the index of the last non null chain.
      *
-     * The function returns a reverse iterator to the beginning of the (non zero) chain indices.
+     * Return a reverse iiterator to the index of the last non null chain (the iterator visits indices of non null chains, in decreading order, along the major dimension of the matrix).
+     *
+     * \return The reverse iterator to the index of the last non null chain.
      */
     inline Non_zero_chain_indices::iterator reverse_begin() const noexcept;
 
     /**
-     * \brief Past-the-end reverse iterator of the chain indices (visited by decreasing indices).
+     * \brief Reverse iterator past-the-end of chain indices.
      *
-     * The function returns a past-the-end reverse iterator of the chain indices.
+     * \return The reverse iterator past-the-end of chain indices.
      */
     inline Non_zero_chain_indices::iterator reverse_end() const noexcept;
 
@@ -175,56 +179,102 @@ public:
     /// @{
 
     /**
-     * \brief Inserts `matrix` in the output stream with a compact "user friendly" format.
+     * \brief Writes a sparse matrix in the output stream with a compact "user friendly" format.
+     *
+     * \param _stream The output stream.
+     * \param matrix The matrix to display.
+     *
+     * \return A reference to the modified stream.
      */
     friend std::ostream& operator<<(std::ostream &_stream, const SparseMatrix &matrix);
 
     /**
-     * \brief Inserts `matrix` in an output stream.
+     * \brief  Write a sparse matrix to an output stream using the `.osm` file format.
+     *
+     * Output a sparse matrix  (the matrix can be reloaded using `read_matrix`), see \ref OSM_FILE_FORMAT "OSM file format documentation".
      */
     friend std::ostream& write_matrix (const SparseMatrix& matrix, std::ostream& out);
 
     /**
-     * \brief Extracts a sparse matrix from an input stream.
+     * \brief  Write a sparse matrix to a file using the `.osm` file format.
+     *
+     * Output a sparse matrix  (the matrix can be reloaded using `read_matrix`), see \ref OSM_FILE_FORMAT "OSM file format documentation".
+     */
+    friend std::ostream& write_matrix (const SparseMatrix& matrix, std::string filename);
+
+    /**
+     * @brief  Read a sparse matrix from an input stream using the `.osm` file format.
+     *
+     * Read a sparse matrix (the input must respect the `.osm` file format), .see \ref OSM_FILE_FORMAT "OSM file format documentation".
      */
 
     template <typename _CT>
     friend std::istream& read_matrix (SparseMatrix& matrix, std::istream& in);
+
+    /**
+     * @brief  Read a sparse matrix from a file using the `.osm` file format.
+     *
+     * Read a sparse matrix (the input must respect the `.osm` file format), .see \ref OSM_FILE_FORMAT "OSM file format documentation".
+     */
+
+    template <typename _CT>
+    friend std::istream& read_matrix (SparseMatrix& matrix, std::string filename);
+
     /// @}
 
     /// \name Linear algebra operators
     /// @{
 
     /**
-     * \brief Sums the matrix `other` into the matrix.
+     * \brief Perform addition of matrices and assign the result to `matrix`.
      *
-     * Adds each coefficient of the matrix `other` to `this`.
-     * Matrices must have the same `Coefficient_ring` but can have different `StorageFormat`.
+     * Perform standard linear algebra addition. Matrices must have the same `CoefficientRing` but can have different `StorageFormat`. The addition is optimized for each combination of `StorageFormat`.
+     *
+     * @param matrix The first matrix.
+     * @param other The second matrix.
+     * @return A reference to the modified matrix `matrix` containing the result.
      */
     friend SparseMatrix& operator+=(SparseMatrix &matrix, const SparseMatrix &other);
 
     /**
-     * \brief Adds two matrices together.
+     * \brief  Perform addition of matrices and assign the result to `matrix`.
      *
-     * Sums each coefficient of the matrices together and returns a new matrix (of the same type as `first`) representing the result (when possible, prefer `+=` for efficiency).
-     * Matrices must have the same `Coefficient_ring` but can have different `StorageFormat`.
+     * Perform standard linear algebra addition. Matrices must have the same `CoefficientRing` but can have different `StorageFormat`. The addition is optimized for each combination of `StorageFormat`.
+     *
+     * @param matrix The first matrix.
+     * @param other The second matrix.
+     * @return A reference to the modified matrix `matrix` containing the result.
      */
     friend SparseMatrix operator+(const SparseMatrix &first, const SparseMatrix &second);
 
 
     /**
-     * \brief Subtracts the matrix `other`from the matrix.
+     * \brief Subtracts two matrices into a new matrix.
      *
-     * Subtracts each coefficient of the matrix `other` from `this`.
-     * Matrices must have the same `Coefficient_ring` but can have different `StorageFormat`.
+     * Subtracts each coefficient of the matrix `other` and returns a new matrix (of the same type as `this`) representing the result (when possible, prefer `-=` for efficiency).
+     *
+     * \pre Matrices must have the same `CoefficientRing` but can have different `StorageFormat`.
+     *
+     * \warning Will raise an error if the other matrix is not the same `CoefficientRing`.
+     *
+     * \param other The second matrix.
+     *
+     * \return A new matrix representing the result.
      */
     SparseMatrix& operator-=(SparseMatrix &matrix, const SparseMatrix &other);
 
     /**
-     * \brief Subtracts two matrices from each other.
+     * \brief Subtracts two matrices into a new matrix.
      *
-     * Subtracts each coefficient of the matrices from each other and returns a new matrix (of the same type as `first`) representing the result (when possible, prefer `-=` for efficiency).
-     * Matrices must have the same `Coefficient_ring` but can have different `StorageFormat`.
+     * Subtracts each coefficient of the matrix `other` and returns a new matrix (of the same type as `this`) representing the result (when possible, prefer `-=` for efficiency).
+     *
+     * \pre Matrices must have the same `CoefficientRing` but can have different `StorageFormat`.
+     *
+     * \warning Will raise an error if the other matrix is not the same `CoefficientRing`.
+     *
+     * \param other The second matrix.
+     *
+     * \return A new matrix representing the result.
      */
     friend SparseMatrix operator-(const SparseMatrix &first, const SparseMatrix &second);
 
