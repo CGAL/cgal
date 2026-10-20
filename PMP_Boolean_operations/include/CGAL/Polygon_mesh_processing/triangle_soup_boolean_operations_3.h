@@ -238,13 +238,14 @@ select(const std::vector<Exact_point>& points,
 #ifdef CGAL_LINKED_WITH_TBB
   if constexpr (Concurrency_tag::is_parallel)
   {
-    // Cut all_triangle_edges in blocks and compute the offset on edges for each block
+    // split all_triangle_edges in blocks and compute the number of times we change edges for each block.
+    // for the first block we have an extra +1 making first_edge_id_per_block[nb_blocks] the number of edges
     const std::size_t block_size = 4096;
     const std::size_t nb_blocks = (all_triangle_edges.size() + block_size - 1) / block_size;
 
-    std::vector<std::size_t> counts(nb_blocks, 0);
+    std::vector<std::size_t> nb_edge_changes_per_block(nb_blocks, 0);
 
-    // count edge groups whose first record belongs to each block.
+    // count how many times we change from an edge to the next one into each block
     tbb::parallel_for(tbb::blocked_range<std::size_t>(0, nb_blocks, 1), [&](const tbb::blocked_range<std::size_t>& r)
     {
       for (std::size_t bi = r.begin(); bi != r.end(); ++bi){
@@ -254,16 +255,16 @@ select(const std::vector<Exact_point>& points,
         for (std::size_t i = begin; i < end; ++i)
           if (i == 0 || std::get<0>(all_triangle_edges[i]) != std::get<0>(all_triangle_edges[i-1]) ||
                         std::get<1>(all_triangle_edges[i]) != std::get<1>(all_triangle_edges[i-1]))
-            ++counts[bi];
+            ++nb_edge_changes_per_block[bi];
       }
     });
 
     // Compute offset for each block
-    std::vector<std::size_t> offsets(nb_blocks+1, 0);
+    std::vector<std::size_t> first_edge_id_per_block(nb_blocks+1, 0);
     for (std::size_t i=0; i < nb_blocks; ++i)
-      offsets[i+1] = offsets[i] + counts[i];
+      first_edge_id_per_block[i+1] = first_edge_id_per_block[i] + nb_edge_changes_per_block[i];
 
-    adjacent_faces.resize(offsets.back());
+    adjacent_faces.resize(first_edge_id_per_block.back());
 
     tbb::parallel_for(tbb::blocked_range<std::size_t>(0, nb_blocks, 1), [&](const tbb::blocked_range<std::size_t>& r)
     {
@@ -271,7 +272,7 @@ select(const std::vector<Exact_point>& points,
       {
         std::size_t begin = bi * block_size;
         const std::size_t end = (std::min)(begin + block_size, all_triangle_edges.size());
-        std::size_t idx = offsets[bi];
+        std::size_t idx = first_edge_id_per_block[bi];
 
         // Skip a group that started in the previous block.
         if(begin != 0)
@@ -302,7 +303,7 @@ select(const std::vector<Exact_point>& points,
                                                     std::get<1>(all_triangle_edges[i]) == b);
           ++idx;
         }
-        CGAL_assertion(idx == offsets[bi+1]);
+        CGAL_assertion(idx == first_edge_id_per_block[bi+1]);
       }
     });
   }
