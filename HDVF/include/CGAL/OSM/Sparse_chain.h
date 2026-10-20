@@ -55,7 +55,7 @@ public:
     /*!  Type of the coefficient ring */
     typedef CoefficientRing Coefficient_ring;
 
-    /** \brief Type of derived sparse matrices. */
+    /* \brief Type of derived sparse matrices. */
     template <typename CT, int SF>
     using Sparse_matrix_derived = OSM::Sparse_matrix<OSM::Sparse_chain>::Sparse_matrix_type<CT, SF>;
 
@@ -124,8 +124,10 @@ public:
     {}
 
 
-    /**
+    /*
      * \brief Assignment.
+     *
+     *The assignment operator converts the storage format if needed (complexity \f$\mathscr O(1)\f$).
      *
      * \pre Chains must have the same `CoefficientRing`.
      */
@@ -136,26 +138,14 @@ public:
         return *this;
     }
 
-//    /**
-//     * \brief Assignment.
-//     *
-//     * \pre Chains must have the same `CoefficientRing`.
-//     */
-//    Sparse_chain& operator=(Sparse_chain otherToCopy) {
-//        _upperBound = otherToCopy._upperBound;
-//        _chainData = otherToCopy._chainData;
-//
-//        return *this;
-//    }
-
-    /**
+    /*
      * \brief Size of the chain
      *
      * \return Size allocated for the chain.
      */
     size_t dimension() const { return _upperBound ; }
 
-    /** \relates Sparse_chain
+    /* \relates Sparse_chain
      *
      * \brief writes a sparse chain in the output stream.
      *
@@ -178,10 +168,10 @@ public:
         return stream;
     }
 
-    /** \relates Sparse_chain
+    /* \relates Sparse_chain
      *
      * \defgroup WriteChain Writes chain to an output stream or a file.
-     * \ingroup PkgHDVFAlgorithmClasses
+     * 
      * @brief  Write a sparse chain to an output stream or a file using the `.osm` file format.
      *
      * Output a sparse chain  (the chain can be reloaded using `read_chain`).
@@ -189,21 +179,21 @@ public:
      * @{
      */
 
-    /** \relates Sparse_chain
+    /* \relates Sparse_chain
      *
      * \brief Writes a sparse chain to a stream.
      */
     template <typename _CT, int _SF>
     friend std::ostream& write_chain (const Sparse_chain<_CT, _SF>& chain, std::ostream& out);
 
-    /** \relates Sparse_chain
+    /* \relates Sparse_chain
      *
      * \brief Writes a sparse chain to a file.
      */
     template <typename _CT, int _SF>
     friend void write_chain (const Sparse_chain<_CT, _SF>& chain, std::string filename);
 
-    /**
+    /*
      * \relates Sparse_chain
      *
      * \brief Reads a sparse chain from a stream.
@@ -211,16 +201,16 @@ public:
    template <typename _CT, int _SF>
    friend std::istream& read_chain (Sparse_chain<_CT, _SF>& chain, std::istream& in);
 
-   /** \relates Sparse_chain
+   /* \relates Sparse_chain
     *
     * \brief Reads a sparse chain from a file.
     */
    template <typename _CT, int _SF>
    friend void read_chain (Sparse_chain<_CT, _SF>& chain, std::string filename);
 
-    /** @} */
+    /* @} */
 
-    /**
+    /*
      * \brief Adds two chains.
      *
      * Adds `other` chain to current chain and returns the result in a new matrix.
@@ -241,7 +231,7 @@ public:
         return newChain;
     }
 
-    /**
+    /*
      * \brief Subtracts a chain from current chain.
      *
      * Subtracts `other` chain from current chain and returns the result in a new matrix.
@@ -262,7 +252,7 @@ public:
         return newChain;
     }
 
-    /*! \relates Sparse_chain
+    /* \relates Sparse_chain
      *
      * \brief Multiplies each coefficient of `chain` by `lambda`.
      *
@@ -279,7 +269,7 @@ public:
         return newChain;
     }
 
-    /**
+    /*
      * \brief Multiplies each coefficient of `chain` by `lambda`.
      *
      * \param lambda The factor to apply.
@@ -293,7 +283,7 @@ public:
         return newChain;
     }
 
-    /** \relates Sparse_chain
+    /* \relates Sparse_chain
      *
      * \brief Performs matrix multiplication between two chains (COLUMN x ROW) and return a COLUMN matrix.
      *
@@ -311,7 +301,7 @@ public:
     template <typename _CT>
     friend Sparse_matrix_derived<_CT, COLUMN> operator*(const Sparse_chain<_CT, COLUMN>& column, const Sparse_chain<_CT, ROW>& row);
 
-    /** \relates Sparse_chain
+    /* \relates Sparse_chain
      *
      * \brief Performs matrix multiplication between two chains (COLUMN x ROW) and return a ROW matrix.
      *
@@ -329,7 +319,7 @@ public:
     template <typename _CT>
     friend Sparse_matrix_derived<_CT, ROW> operator%(const Sparse_chain<_CT, COLUMN> &column, const Sparse_chain<_CT, ROW> &row);
 
-    /** \relates Sparse_chain
+    /* \relates Sparse_chain
      *
      * \brief Performs dot product between two chains (ROW x COLUMN).
      *
@@ -345,7 +335,7 @@ public:
     template <typename _CT>
     friend _CT operator*(const Sparse_chain<_CT, ROW> &row, const Sparse_chain<_CT, COLUMN> &column);
 
-    /**
+    /*
      * \brief Adds a chain to `this`.
      *
      * Add a chain to `this`.
@@ -375,7 +365,7 @@ public:
         return *this;
     }
 
-    /**
+    /*
      * \brief Sustracts a chain to `this`.
      *
      * Subtract a chain to `this`.
@@ -405,7 +395,7 @@ public:
         return *this;
     }
 
-    /**
+    /*
      * \brief Multiplies each coefficient of `this` by `lambda`.
      *
      * If `lambda` is null, this function comes to nullify the chain.
@@ -427,7 +417,7 @@ public:
         return *this;
     }
 
-    /**
+    /*
      * \brief Gets the value of a coefficient index of the chain.
      *
      * \warning The chain will perform boundary check.
@@ -447,7 +437,7 @@ public:
             return _chainData.at(index);
     }
 
-    /**
+    /*
      * \brief Gets the value of a coefficient index of the chain.
      *
      * \warning The chain will perform boundary check.
@@ -467,7 +457,7 @@ public:
             return _chainData.at(index);
     }
 
-    /**
+    /*
      * \brief Sets coefficient index of the chain to value `d`.
      *
      * Sets the value of the coefficient in the chain at `index`.
@@ -488,7 +478,7 @@ public:
             _chainData[index] = d ;
     }
 
-    /**
+    /*
      * \brief Checks if a coefficient is null.
      *
      * \param index The index to check.
@@ -498,7 +488,7 @@ public:
         return _chainData.find(index) == _chainData.end();
     }
 
-    /**
+    /*
      * \brief Checks if the chain is null.
      *
      * \return True if the chain is null.
@@ -508,7 +498,7 @@ public:
     }
 
 
-    /**
+    /*
      * \brief Gets a subchain from the chain.
      *
      * Return a new chain where all coefficients of indices provided in the vector are removed.
@@ -525,7 +515,7 @@ public:
         return newChain;
     }
 
-    /**
+    /*
      * \brief Gets a subchain from the chain.
      *
      * Return a new chain where the coefficients at a given index is removed.
@@ -538,7 +528,7 @@ public:
         return newChain;
     }
 
-    /**
+    /*
      * \brief Restricts the chain to a sub-chain by removing indices.
      *
      * Removes all indices provided in the vector from the chain. Return a reference to the modified chain.
@@ -557,7 +547,7 @@ public:
         return *this;
     }
 
-    /**
+    /*
      * \brief Restricts the chain to a sub-chain by removing a given index.
      *
      * Removes the index provided from the chain.
@@ -574,7 +564,7 @@ public:
         return *this;
     }
 
-    /**
+    /*
      * \brief Removes all coefficients from the chain.
      *
      * The function comes to set all coefficients to zero.
@@ -583,7 +573,7 @@ public:
         this->_chainData.clear();
     }
 
-    /**
+    /*
      * \brief Iterator to the beginning of the chain.
      *
      * \warning The chain is stored in an unordered map for speed reason.
@@ -594,7 +584,7 @@ public:
         return _chainData.begin();
     }
 
-    /**
+    /*
      * \brief Constant iterator to the beginning of the chain.
      *
      * \warning The chain is stored unordered for speed reason.
@@ -605,7 +595,7 @@ public:
         return _chainData.begin();
     }
 
-    /**
+    /*
      * \brief Constant iterator to the beginning of the chain.
      *
      * \warning The chain is stored unordered for speed reason.
@@ -616,7 +606,7 @@ public:
         return _chainData.cbegin();
     }
 
-    /**
+    /*
      * \brief Iterator to the end of the chain.
      *
      * \warning The chain is stored unordered for speed reason.
@@ -627,7 +617,7 @@ public:
         return _chainData.end();
     }
 
-    /**
+    /*
      * \brief Constant iterator to the end of the chain.
      *
      * \warning The chain is stored unordered for speed reason.
@@ -638,7 +628,7 @@ public:
         return _chainData.end();
     }
 
-    /**
+    /*
      * \brief Constant iterator to the end of the chain.
      *
      * \warning The chain is stored unordered for speed reason.
@@ -649,7 +639,7 @@ public:
         return _chainData.cend();
     }
 
-    /**
+    /*
      * \brief Transposes a sparse chain.
      *
      * The result is a chain with `StorageFormat` switched between COLUMN and ROW.
@@ -665,7 +655,7 @@ public:
         return chain;
     }
 
-    /**
+    /*
      * \brief Checks if chain is a column.
      *
      * \return true if chain is column-major, false otherwise.
@@ -674,7 +664,7 @@ public:
         return StorageFormat == COLUMN;
     }
 
-    /**
+    /*
      * \brief Checks if chain is a row.
      *
      * \return true if chain is row-major, false otherwise.
@@ -703,28 +693,28 @@ private:
         return _chainData[index];
     }
 
-    /** \relates Sparse_chain
+    /* \relates Sparse_chain
      *
      * \brief Comparison of two `COLUMN` chains.
      */
     template <typename _CT>
     friend bool operator==(const Sparse_chain<_CT, OSM::COLUMN>& chain, const Sparse_chain<_CT, OSM::COLUMN> &other);
 
-    /** \relates Sparse_chain
+    /* \relates Sparse_chain
      *
      * \brief Test if a `COLUMN`  and a `ROW` chain are equal.
      */
     template <typename _CT>
     friend bool operator==(const Sparse_chain<_CT, OSM::COLUMN>& chain, const Sparse_chain<_CT, OSM::ROW> &other);
 
-    /** \relates Sparse_chain
+    /* \relates Sparse_chain
      *
      * \brief Tests if a `ROW` and a `COLUMN` chain are equal.
      */
     template <typename _CT>
     friend bool operator==(const Sparse_chain<_CT, OSM::ROW>& chain, const Sparse_chain<_CT, OSM::COLUMN> &other);
 
-    /** \relates Sparse_chain
+    /* \relates Sparse_chain
      *
      * \brief Tests if two chains with similar storage formats are equal.
      */

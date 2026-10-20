@@ -100,6 +100,19 @@ public:
      */
     void nullify();
 
+    /** \brief Sets an identity matrix.
+     *
+     * \param nrows Number of rows of the matrix.
+     * \param ncols Number of columns of the matrix.
+     */
+    void eye (size_t nrows, size_t  ncols);
+
+    /** \brief Sets an identity matrix.
+     *
+     * \param dimensions Pair containing the number of rows and number of columns of the matrix.
+     */
+    void eye (std::pair<size_t, size_t> dimensions);
+
     /// @}
 
     /// \name Matrix informations and iterators
@@ -112,6 +125,15 @@ public:
      */
     bool is_null();
 
+    /**
+     * \brief Tests if a `Sparse_matrix_core` is empty.
+     *
+     * The function return `true` is the `Sparse_matrix_core` is empty (that is, if the number of columns or rows is null) and `false` otherwise.
+     */
+    bool is_empty();
+
+    /** \brief Returns the storage format of the matrix. */
+    int storage_format();
     /**
      * \brief Gets the matrix size.
      *

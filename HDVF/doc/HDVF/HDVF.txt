@@ -617,18 +617,18 @@ Primal and dual constructions of cubical chain complexes from a binary volume. *
 Figure taken from [AGL, 2016].
 \cgalFigureEnd
 
-\subsubsection secHDVFsimpFile The `.simp` file format
+\subsubsection secHDVFsimpFile The %SIMP file format\anchor SIMP_FILE_FORMAT
 
-The `simp` file format is a very simple text format listing, encoding simplicial complexes. It enumerates simplices line by line (described by the indices of their vertices).
+The %SIMP file format is a very simple text format listing, encoding simplicial complexes. It enumerates simplices line by line (described by the indices of their vertices).
 The file doesn't need to provide an exhaustive enumeration of simplices (with all their faces), indeed, the simplicial chain complex constructors fill them with faces. Figure \cgalFigureRef{HDVF_simp_file} illustrate the format on a simple simplicial complex.
 
 \cgalFigureBegin{HDVF_simp_file,HDVF_simp_file.png}
 Example of `simp` file. **Left:** a simplicial complex; **Right:** associated `simp` files describing maximal simplices.
 \cgalFigureEnd
 
-\subsubsection secHDVFcubFile The CUB file format
+\subsubsection secHDVFcubFile The %CUB file format\anchor CUB_FILE_FORMAT
 
-The `cub` file format is a very simple text format encoding binary volumes:
+The %CUB file format is a very simple text format encoding binary volumes:
 - first line: dimension
 - second line: size of Khalimsky coordinates of the bounding box along each axis
 - following lines: list of cells in Khalimsky coordinates
@@ -740,9 +740,9 @@ CGAL::IO::write_VTK<CoefficientType, Complex>(hdvf, complex, outfile_root, co_fa
 where `outfile_root` is the root of the `.vtk` file names and `co_faces` is a %Boolean (if `true`, cohomology generators are represented through their cofaces).
 - HDVFs and reductions can also be saved / loaded to `.hdvf` files (a simple text file format described in section \ref secHDVFHDVF_format) with `insert_hdvf_reduction()` and `extract_hdvf_reduction()`.
 
-\subsubsection secHDVFHDVF_format The `.hdvf` file format
+\subsubsection secHDVFHDVF_format The %HDVF file format
 
-The `.hdvf` file format is a simple text format used to save HDVFs. It relies on the `.osm` format described in section \ref secHDVFOSM_format.
+The %HDVF file format is a simple text format used to save HDVFs. It relies on the %OSM format described in section \ref secHDVFOSM_format.
 
 \warning The file format does not store the underlying complex, therefore the dimension and the number of cells in each dimension are used to check the coherence of the `.hdvf` file with the underlying complex provided by the user.
 
@@ -780,7 +780,7 @@ The following example builds a column major matrix, iterate over its non empty c
 
 All standard linear algebra operators are provided (and optimized according to the matrix/chain types).
 
-\subsubsection secHDVFOSM_format The OSM file format
+\subsubsection secHDVFOSM_format The OSM file format\anchor OSM_FILE_FORMAT
 
 The `.osm` file format is a simple text format to store OSM sparse matrices:
 - Matrix type (0 for COLUMN, 1 for ROW)

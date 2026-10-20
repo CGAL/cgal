@@ -42,7 +42,10 @@ namespace Homological_discrete_vector_field {
 //    return deg_fun_f ;
 //}
 
-/** \brief Degree function providing a filtration value for all vertices of the complex.
+/**
+ *\ingroup PkgHDVFFiltrationsClasses
+ *
+ * \brief Degree function providing a filtration value for all vertices of the complex.
  *
  * Given a function mapping a point's coordinates to a degree, `degree_function` returns a function mapping the index of a vertex to the degree associated to its coordinates.
  *
@@ -62,7 +65,7 @@ std::function<double(size_t)>  degree_function (const ChainComplex& complex,  co
 }
 
 /*!
- \ingroup PkgHDVFRef
+ \ingroup PkgHDVFFiltrationsClasses
 
  The class `Filtration_lower_star` implements the lower star filtration on a given complex implementing the concept `AbstractChainComplex`.
 

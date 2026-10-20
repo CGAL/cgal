@@ -75,11 +75,11 @@ inline bool get_next_uncommented_line(std::ifstream &infile, std::string &result
  *
  * \param filename Name of the input file.
  * \param nodes Pointer to a vector of points into which nodes are outputed.
- * \param adapt If `fill` is false, nodes must have the same dimension as the traits Point, if true, nodes dimension can be lower (and missing coordinates are filled with zeros) or higher (and coordinates are truncated to the traits dimension).
+ * \param adapt If `fill` is false, nodes must have the same %dimension as the traits Point, if true, nodes %dimension can be lower (and missing coordinates are filled with zeros) or higher (and coordinates are truncated to the traits %dimension).
  *
  * \exception File_not_found If `filename` does not exist, raise a `%std::runtime_error` exception.
  *
- * \exception Incoherent_dimension Raises a `%std::runtime_error` if dimensions of the `Traits` and dimension of nodes do not match.
+ * \exception Incoherent_dimension Raises a `%std::runtime_error` if %dimensions of the `Traits` and %dimension of nodes do not match.
  */
 
 template <typename Traits>
@@ -265,11 +265,11 @@ protected:
     }
 
 public:
-    /** \brief Returns the dimension of the Mesh_object_io.
+    /** \brief Returns the %dimension of the Mesh_object_io.
      *
-     * The dimension can be positive or negative:
-     * - if positive: the set of simplicial cells loaded is a "mesh" and all cells have the same dimension which is the dimension of the `Mesh_object_io`
-     * - if negative: the set of simplicial cells loaded have various dimensions and the dimension of the `Mesh_object_io` is the maximum of these dimensions.
+     * The %dimension can be positive or negative:
+     * - if positive: the set of simplicial cells loaded is a "mesh" and all cells have the same %dimension which is the dimension of the `Mesh_object_io`
+     * - if negative: the set of simplicial cells loaded have various %dimensions and the %dimension of the `Mesh_object_io` is the maximum of these %dimensions.
      */
     int dimension() const { return _dim; }
 
@@ -283,9 +283,9 @@ public:
      *
      * Simplices are described by the list of vertex indices.
      *
-     * \param d The dimension `d` can be positive or negative:
-     * - if positive: the set of simplicial cells loaded is a "mesh" and all cells have the same dimension
-     * - if negative: the set of simplicial cells loaded have various dimensions and `d` must be the maximum of these dimensions.
+     * \param d The %dimension `d` can be positive or negative:
+     * - if positive: the set of simplicial cells loaded is a "mesh" and all cells have the same %dimension
+     * - if negative: the set of simplicial cells loaded have various %dimensions and `d` must be the maximum of these %dimensions.
      *
      * Vertices are described by their index; this index must be unique (vertices with similar underlying points and different vertex indices will be considered as different).
      *
@@ -293,9 +293,9 @@ public:
      * \param vcells Vector of cells (described by a sorted vector of indices)
      * \param sort_data If `true` the vectors of vertex indices are sorted, if `false` they are assumed to be sorted (faster).
      *
-     * \exception Traits_dimension_mismatch If the dimension `d` provided does not match the dimension of the Traits, raises a `%std::runtime_error`.
+     * \exception Traits_dimension_mismatch If the %dimension `d` provided does not match the %dimension of the Traits, raises a `%std::runtime_error`.
      *
-     * \exception Inconsistent_dimension If the dimension of one of the cell does not match the dimension of the Traits,  raises a `%std::runtime_error`.
+     * \exception Inconsistent_dimension If the %dimension of one of the cell does not match the %dimension of the Traits,  raises a `%std::runtime_error`.
      */
     Mesh_object_io(int d, const std::vector<Point> &vnodes, const std::vector<Io_cell_type> &vcells, bool sort_data = false) : _dim(d), _nvertices(vnodes.size()), _ncells(vcells.size()), _nedges(0), _nodes(vnodes), _cells(vcells) {
         check_dimension() ;
@@ -341,12 +341,12 @@ public:
 
     // TODO : check that de dimensions of nodes are consistent...
 
-    /** \brief Returns the vector of nodes (ie. vertices coordinates). */
+    /** \brief Returns the vector of nodes (ie vertices coordinates). */
     const std::vector<Point>& nodes() const {
         return _nodes ;
     }
 
-    /** \brief Returns the number of nodes (ie. vertices). */
+    /** \brief Returns the number of nodes (ie vertices). */
     int number_of_nodes() const { return _nvertices; }
 
     /** \brief Returns the vector of cells. */
@@ -354,16 +354,16 @@ public:
         return _cells;
     }
 
-    /** \brief Update the coordinates of a node (ie. vertex). */
+    /** \brief Update the coordinates of a node (ie vertex). */
     void set_node(size_t i, const Point &P) {
         _nodes[i] = P;
     }
 
     // Mesh operations
-    // Add a Mesh_object_io to the current Mesh_object_io
+
     /** Add a `Mesh_object_io` to the current  `Mesh_object_io`.
      *
-     * In order to concatenate objects, the function
+     * In order to concatenate objects, the function updates indices of the simplices of `mesh` (such that the numbering of `mesh` vertices starts after vertices of `this`).
      */
     void push_back(const Mesh_object_io &mesh) {
         size_t off = _nvertices ; // The index of all the cells of mesh has to be incremented by off

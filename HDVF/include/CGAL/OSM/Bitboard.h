@@ -61,8 +61,9 @@ const int index64[64] = {
 /*!
  \ingroup PkgHDVFAlgorithmClasses
 
- The class `Bitboard` implements an accelerating structure, derived from the chess community. This structure maps stores a sequence of bits. However, unlike vectors or arrays, it provides fast forward and reverse iterators over `1` bits. It is used in `OSM::Sparse_matrix` to build a fast iterator over non-zero chains.
+ The class `Bitboard` implements an accelerating iteration structure, derived from the chess community. This structure stores a sequence of bits and provides fast forward and reverse iterators over `1` bits (unlike vectors or arrays).
 
+ It is used in `OSM::Sparse_matrix` to build a fast iterator over non-zero chains.
 */
 
 class Bitboard {

@@ -4,13 +4,25 @@
 /// \defgroup PkgHDVFConcepts Concepts
 /// \ingroup PkgHDVFRef
 
-/// \defgroup PkgHDVFAlgorithmClasses Sparse Matrices and Vectors
+/// \defgroup PkgHDVFAlgorithmClasses Sparse Matrices and Vectors Classes
 /// \ingroup PkgHDVFRef
 
 /// \defgroup PkgHDVFTraitsClasses Traits Classes
 /// \ingroup PkgHDVFRef
 
-/// \defgroup PkgHDVFIOClasses IO Classes
+/// \defgroup PkgHDVFChainComplexesClasses Chain Complexes Classes
+/// \ingroup PkgHDVFRef
+
+/// \defgroup PkgHDVFHDVFClasses HDVFs Classes
+/// \ingroup PkgHDVFRef
+
+/// \defgroup PkgHDVFFiltrationsClasses Filtrations Classes
+/// \ingroup PkgHDVFRef
+
+/// \defgroup PkgHDVFToolsClasses Tools Classes
+/// \ingroup PkgHDVFRef
+
+/// \defgroup PkgHDVFIOClasses IO Classes and Functions
 /// \ingroup PkgHDVFRef
 
 

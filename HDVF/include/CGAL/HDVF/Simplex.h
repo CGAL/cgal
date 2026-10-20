@@ -26,7 +26,7 @@ namespace CGAL {
 namespace Homological_discrete_vector_field {
 
 /*!
- \ingroup PkgHDVFRef
+ \ingroup PkgHDVFChainComplexesClasses
 
  The class `Simplex` is used by the class `Abstract_simplicial_chain_complex` to represent a simplex (i.e.\ cells of a simplicial complex).
 

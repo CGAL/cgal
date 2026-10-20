@@ -65,6 +65,15 @@ public:
      */
     SparseChain(size_t chainSize);
 
+    /**
+     * \brief Assignment.
+     *
+     *The assignment operator converts the storage format if needed (complexity \f$\mathscr O(1)\f$).
+     *
+     * \pre Chains must have the same `CoefficientRing`.
+     */
+    Sparse_chain& operator=(const Sparse_chain &otherToCopy);
+
     /// @}
 
     /// \name Matrix informations and iterators
@@ -123,9 +132,44 @@ public:
     /// @{
 
     /*!
-     * \brief Inserts `chain` in the output stream.
+     * \brief Inserts `chain` in the output stream with a compact "user friendly" format.
      */
     friend std::ostream& operator<<(std::ostream &stream, const SparseChain& chain);
+
+    /**
+     * @brief  Write a sparse chain to an output stream  using the `.osm` file format.
+     *
+     * Outputs a sparse chain  (the chain can be reloaded using `read_chain`), see \ref OSM_FILE_FORMAT "OSM file format documentation".
+     */
+    template <typename _CT, int _SF>
+    friend std::ostream& write_chain (const Sparse_chain<_CT, _SF>& chain, std::ostream& out);
+
+    /**
+     * @brief  Write a sparse chain to a file  using the `.osm` file format.
+     *
+     * Outputs a sparse chain  (the chain can be reloaded using `read_chain`), see \ref OSM_FILE_FORMAT "OSM file format documentation".
+     */
+    template <typename _CT, int _SF>
+    friend void write_chain (const Sparse_chain<_CT, _SF>& chain, std::string filename);
+
+
+
+
+    /**
+     * \brief Reads a sparse chain from an input stream using the `.osm` file format.
+     *
+     * Loads a sparse chain  (the chain can be exported using `write_chain`), see \ref OSM_FILE_FORMAT "OSM file format documentation".
+     */
+   template <typename _CT, int _SF>
+   friend std::istream& read_chain (Sparse_chain<_CT, _SF>& chain, std::istream& in);
+
+    /**
+     * \brief Reads a sparse chain from a file using the `.osm` file format.
+     *
+     * Loads a sparse chain  (the chain can be exported using `write_chain`), see \ref OSM_FILE_FORMAT "OSM file format documentation".
+     */
+    template <typename _CT, int _SF>
+    friend void read_chain (Sparse_chain<_CT, _SF>& chain, std::string filename);
 
     /// @}
 

@@ -31,7 +31,7 @@ class Sub_sparse_matrix_core;
 /*!
  \ingroup PkgHDVFAlgorithmClasses
 
- The structure `Sub_sparse_matrix` provides a user friendly interface for sub-sparse matrices built over a given `SparseChain`model (actually a Curryfication of the `Sub_parse_matrix_core` template).
+ The structure `Sub_sparse_matrix` provides a user friendly interface for sub-sparse matrices built over a given `SparseChain`model (this is actually a Curryfication of the `Sub_parse_matrix_core` template).
 
  Given the template parameter `SparseChainType` (a model of the `SparseChain` concept), corresponding sparse chains and matrices templates are given by:
  \code
@@ -58,13 +58,13 @@ struct Sub_sparse_matrix {
 /*!
  \ingroup PkgHDVFAlgorithmClasses
 
- The class `Sub_sparse_matrix_core` is a technical class implementing the concept `SparseMatrix` together with a system of masks to partially screen matrices (and restrict computations to a subset of indices *along their major direction*). This class is used to compute reduced homology (and thus to compute persistent homology and Alexander duality).
+ The class `Sub_sparse_matrix_core` is a technical class, deriving from `Sparse_matrix_core` together with a system of masks to partially screen matrices (and restrict computations to a subset of indices *along their major direction*). This class is used to compute relative homology (and thus to compute persistent homology and Alexander duality).
 
- `Sub_sparse_matrix_core` inherits `Sparse_matrix_core` structure and basically adds two bitboards:
+ `Sub_sparse_matrix_core` basically adds to `Sparse_matrix_core` two bitboards:
  - one describing indices of cells belonging to the subset of indices considered (let us denote it by \f$A\f$)
- - the second  providing indices of non-empty chains in \f$A\f$
+ - the second  providing corresponding indices of non-empty chains in \f$A\f$
 
- The class does not modify linear algebra operators, but focuses on adapted iterators, output operators and methods to adjust the "mask".
+ \warning The class does not modify linear algebra operators, but focuses on adapted iterators, output operators and methods to adjust the "mask".
 
  \cgalModels{SparseMatrix}
 
@@ -123,11 +123,11 @@ public:
     {
     }
 
-    /** \brief Copy constructor.
+    /* \brief Copy constructor.
      */
     Sub_sparse_matrix_core(const Sub_sparse_matrix_core& otherToCopy) : Sparse_matrix_core<CoefficientRing, StorageFormat, SparseChainType>(otherToCopy), _subChains(otherToCopy._subChains), _subChainsStates(otherToCopy._subChainsStates) {}
 
-    /** \brief Copy constructor.
+    /* \brief Copy constructor.
      */
     Sub_sparse_matrix_core(const Sparse_matrix_core<CoefficientRing,StorageFormat, SparseChainType>& otherToCopy) : Sparse_matrix_core<CoefficientRing, StorageFormat>(otherToCopy)
     {
@@ -189,7 +189,7 @@ public:
     /** \brief Changes the mask to its complement. */
     inline void complement() { _subChains.bit_not() ; }
 
-    /**
+    /*
      * \brief Assignment.
      */
     inline Sub_sparse_matrix_core& operator=(const Sub_sparse_matrix_core &otherToCopy)
@@ -200,7 +200,7 @@ public:
         return *this ;
     }
 
-    /**
+    /*
      * \brief Displays a `Sub_sparse_matrix_core` in the output stream.
      *
      * Displays the sparse matrix as well as its mask.
@@ -213,7 +213,7 @@ public:
     template <typename _CR, int _SF, template <typename, int> typename _SCT>
     friend std::ostream& operator<<(std::ostream &stream, const Sub_sparse_matrix_core<_CR,_SF,_SCT> &matrix);
 
-    /**
+    /*
      * \brief Tests if a `Sub_sparse_matrix_core` is null.
      *
      * The function return `true` is the `Sub_sparse_matrix_core` is null (that is, all the chains in the mask are empty) and `false` otherwise.
@@ -223,7 +223,7 @@ public:
         return (_subChainsStates.begin() == _subChainsStates.end()) ;
     }
 
-    /**
+    /*
      * \brief Tests if a `Sub_sparse_matrix_core` with chains restricted to a `Bitboard` is null.
      *
      * The function return `true` is the restricted `Sub_sparse_matrix_core` is null (that is, all the chains in the mask, restricted to the `Bitboard` `b` are null) and `false` otherwise.

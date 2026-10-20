@@ -38,7 +38,7 @@ class Sparse_chain;
 /*!
  \ingroup PkgHDVFAlgorithmClasses
 
- The structure `Sparse_matrix` provides a user friendly interface for sparse matrices built over a given `SparseChain`model (actually a Curryfication of the `Sparse_matrix_core` template).
+ The structure `Sparse_matrix` provides a user friendly interface for sparse matrices built over a given model of `SparseChain` (this is actually a Curryfication of the `Sparse_matrix_core` template).
 
  Given the template parameter `SparseChainType` (a model of the `SparseChain` concept), corresponding sparse chains and matrices templates are given by:
  \code
@@ -47,12 +47,11 @@ class Sparse_chain;
  \endcode
 
  \tparam SparseChainType a model of `SparseChain` used to store chains of the sparse matrix (default: `OSM::Sparse_chain`).
-
- \warning Check if the documentation of this structure interfaces properly with the `SparseMatrix` concept.
  */
 
 template <template <typename, int> typename SparseChainType>
 struct Sparse_matrix {
+    /* \brief */
     template <typename CT, int SF>
     using Sparse_chain_type = SparseChainType<CT,SF>;
 
@@ -64,6 +63,8 @@ struct Sparse_matrix {
  \ingroup PkgHDVFAlgorithmClasses
 
  The class `Sparse_matrix_core` implements the concept `SparseMatrix`, that is, sparse matrices optimized for topological computations. It provides standard linear algebra operators and fast iterators and block operations (set, get and nullify) which are required to implement efficiently HDVFs.
+
+ Given a `SparseChain` model, users should normally define a `Sparse_matrix` structure (which provides both corresponding `Sparse_chain_type` and `Spare_matrix_type` templates).
 
  The implementation is based on mapped sparse matrices. Hence matrices of the `Sparse_matrix_core` class are either column of row major (the `StorageFormat` parameter determines this storage format). A column-major (resp. row-major) `Sparse_matrix_core` is a vector of `SparseChainType` (a model of `SparseChain`) which encode columns (res. rows). Moreover, in order to efficiently iterate over non empty columns (resp. rows) the `Bitboard` data structure implements the concept `SparseMatrix::NonZeroChainIndices`. A bitboard is basically a bucket of bits recording the indices of non empty chains. However, this data structure has been designed in order to efficiently remove or add indices, as well as  provide efficient iterators to visit non empty chains.
 
@@ -96,12 +97,12 @@ class Sparse_matrix_core {
 
 public:
     /*!
-     Type of coefficient ring.
+     \brief Type of coefficient ring.
      */
     typedef CoefficientRing  Coefficient_ring;
 
     /**
-     Type of sparse chains used in the matrix.
+     \brief Type of sparse chains used in the matrix.
      */
     template <typename _CT, int _SF>
     using Sparse_chain_type = SparseChainType<_CT, _SF>;
@@ -192,7 +193,7 @@ public:
     Sparse_matrix_core(const std::pair<size_t, size_t> dimensions) : Sparse_matrix_core(dimensions.first, dimensions.second) {}
 
 
-    /**
+    /*
      * \brief Copy constructor.
      *
      * Create a new SparseMatrix from another SparseMatrix object (with possibly a different `StorageFormat`). Initialize a SparseMatrix of same sizes, containing the same coefficients (but not necessarly of the same `StorageFormat`).
@@ -246,7 +247,7 @@ public:
         }
     }
 
-    /** \brief Sets an identity matrix.
+    /* \brief Sets an identity matrix.
      *
      * \param nrows Number of rows of the matrix.
      * \param ncols Number of columns of the matrix.
@@ -258,7 +259,7 @@ public:
             set_coefficient(i, i, 1);
     }
 
-    /** \brief Sets an identity matrix.
+    /* \brief Sets an identity matrix.
      *
      * \param dimensions Pair containing the number of rows and number of columns of the matrix.
      */
@@ -266,7 +267,7 @@ public:
         eye(dimensions.first, dimensions.second);
     }
 
-    /**
+    /*
      * \brief Assignment.
      *
      * Assign to other matrix coefficient-wise, equivalent to copying it.
@@ -275,7 +276,7 @@ public:
      */
     Sparse_matrix_core& operator=(const Sparse_matrix_core& otherToCopy) = default;
 
-    /**
+    /*
      * \brief Cleans a SparseMatrix (set all coefficients to zero).
      *
      * Empty all structures of the sparse matrix.
@@ -289,7 +290,7 @@ public:
         *this /= coefs ;
     }
 
-    /**
+    /*
      * \brief Tests if a `Sparse_matrix_core` is null.
      *
      * The function return `true` is the `Sparse_matrix_core` is null (that is, empty) and `false` otherwise.
@@ -299,7 +300,7 @@ public:
         return (_chainsStates.begin() == _chainsStates.end()) ;
     }
 
-    /**
+    /*
      * \brief Tests if a `Sparse_matrix_core` is empty.
      *
      * The function return `true` is the `Sparse_matrix_core` is empty (that is, if the number of columns or rows is null) and `false` otherwise.
@@ -309,12 +310,12 @@ public:
         return ((_size.first == 0) || (_size.second == 0));
     }
 
-    /** \brief Returns the storage format of the matrix. */
+    /* \brief Returns the storage format of the matrix. */
     int storage_format() const { return StorageFormat; }
 
-    /**
+    /*
      * \defgroup MatrixMatrixComparison Compares two matrices.
-     * \ingroup PkgHDVFAlgorithmClasses
+     *
      * @brief  Compare two matrices and return `true` if both matrices equal (and `false` otherwise).
      *
      * @param matrix The first matrix.
@@ -323,37 +324,37 @@ public:
      * @{
      */
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Comparison of two COLUMN matrices.
      */
     template <typename _CT, template <typename, int> typename SCT>
     friend bool operator==(const Sparse_matrix_core<_CT, OSM::COLUMN, SCT>& matrix, const Sparse_matrix_core<_CT, OSM::COLUMN, SCT> &other);
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Comparison of a COLUMN  and a ROW matrix.
      */
     template <typename _CT, template <typename, int> typename SCT>
     friend bool operator==(const Sparse_matrix_core<_CT, OSM::COLUMN, SCT>& matrix, const Sparse_matrix_core<_CT, OSM::ROW, SCT> &other);
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Comparison of a ROW and a COLUMN matrix.
      */
     template <typename _CT, template <typename, int> typename SCT>
     friend bool operator==(const Sparse_matrix_core<_CT, OSM::ROW, SCT>& matrix, const Sparse_matrix_core<_CT, OSM::COLUMN, SCT> &other);
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Comparison of two ROW matrices.
      */
     template <typename _CT, template <typename, int> typename SCT>
     friend bool operator==(const Sparse_matrix_core<_CT, OSM::ROW, SCT>& matrix, const Sparse_matrix_core<_CT, OSM::ROW, SCT> &other);
 
-    /** @} */
+    /* @} */
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Writes a sparse matrix in the output stream with a compact "user friendly" format.
      *
@@ -395,10 +396,10 @@ public:
         return stream;
     }
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \defgroup WriteMatrix Writes matrix to an output stream or a file.
-     * \ingroup PkgHDVFAlgorithmClasses
+     *
      * @brief  Write a sparse matrix to an output stream or a file using the `.osm` file format.
      *
      * Output a sparse matrix  (the matrix can be reloaded using `read_matrix`).
@@ -406,40 +407,40 @@ public:
      * @{
      */
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Writes a sparse COLUMN matrix to a stream.
      */
     template <typename _CT, template <typename, int> typename SCT>
     friend std::ostream& write_matrix (const Sparse_matrix_core<_CT, OSM::COLUMN, SCT>& M, std::ostream& out);
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Writes a sparse ROW matrix to a stream.
      */
     template <typename _CT, template <typename, int> typename SCT>
     friend std::ostream& write_matrix (const Sparse_matrix_core<_CT, OSM::ROW, SCT>& M, std::ostream& out);
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Writes a sparse COLUMN matrix to a file.
      */
     template <typename _CT, template <typename, int> typename SCT>
     friend void write_matrix (const Sparse_matrix_core<_CT, OSM::COLUMN, SCT>& M, std::string filename);
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Writes a sparse ROW matrix to a file.
      */
     template <typename _CT, template <typename, int> typename SCT>
     friend void write_matrix (const Sparse_matrix_core<_CT, OSM::ROW, SCT>& M, std::string filename);
 
-    /** @} */
+    /* @} */
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \defgroup ReadMatrix Reads matrix from an input stream.
-     * \ingroup PkgHDVFAlgorithmClasses
+     *
      * @brief  Read a sparse matrix from an input stream or a file using the `.osm` file format.
      *
      * Read a sparse matrix (the input must respect the `.osm` file format).
@@ -447,37 +448,37 @@ public:
      * @{
      */
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Reads a sparse COLUMN matrix from a stream.
      */
     template <typename _CT, template <typename, int> typename SCT>
     friend std::istream& read_matrix (Sparse_matrix_core<_CT, OSM::COLUMN, SCT>& M, std::istream& in);
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Reads a sparse ROW matrix from a stream.
      */
     template <typename _CT, template <typename, int> typename SCT>
     friend std::istream& read_matrix (Sparse_matrix_core<_CT, OSM::ROW, SCT>& M, std::istream& in);
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Reads a sparse COLUMN matrix from a file.
      */
     template <typename _CT, template <typename, int> typename SCT>
     friend void read_matrix (Sparse_matrix_core<_CT, OSM::COLUMN, SCT>& M, std::string filename);
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Reads a sparse ROW matrix from a file.
      */
     template <typename _CT, template <typename, int> typename SCT>
     friend void read_matrix (Sparse_matrix_core<_CT, OSM::ROW, SCT>& M, std::string filename);
 
-    /** @} */
+    /* @} */
 
-    /**
+    /*
      * \brief Adds two matrices into a new matrix.
      *
      * Adds each coefficient of the matrices and returns a new matrix (of the same type as `this`) representing the result (when possible, prefer `+=` for efficiency).
@@ -498,7 +499,7 @@ public:
         return newMatrix;
     }
 
-    /**
+    /*
      * \brief Subtracts two matrices into a new matrix.
      *
      * Subtracts each coefficient of the matrix `other` and returns a new matrix (of the same type as `this`) representing the result (when possible, prefer `-=` for efficiency).
@@ -519,7 +520,7 @@ public:
         return newMatrix;
     }
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Applies factor on each coefficients into a new matrix.
      *
@@ -540,7 +541,7 @@ public:
         return newMatrix;
     }
 
-    /**
+    /*
      * \brief Applies factor on each coefficients into a new matrix.
      *
      * This method creates a new matrix obtained by multiplying the matrix by a scalar factor `lambda`.
@@ -558,10 +559,10 @@ public:
         return newMatrix;
     }
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \defgroup MatrixMatrixProdCol Matrix multiplication (with column-based result).
-     * \ingroup PkgHDVFAlgorithmClasses
+     *
      * @brief  Perform multiplication of matrices and return a new column-major matrix.
      *
      * Perform standard linear algebra multiplication of matrices and return a new column-major matrix (when possible, prefer `*=` for efficiency). Matrices must have the same `CoefficientRing` but can have different `StorageFormat`. The multiplication is optimized (using standard definition or block multiplications) for each combination of `StorageFormat`. However, efficiency depends on `StorageFormat` (when possible, prefer row-major by column-major multiplications).
@@ -572,40 +573,40 @@ public:
      * @{
      */
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Matrix multiplication: COLUMN x COLUMN -> COLUMN
      */
     template <typename _CT, template <typename, int> typename SCT>
     friend Sparse_matrix_core<_CT, COLUMN, SCT> operator*(const Sparse_matrix_core<_CT, COLUMN, SCT> &first, const Sparse_matrix_core<_CT, COLUMN, SCT> &second);
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Matrix multiplication: ROW x COLUMN -> COLUMN
      */
     template <typename _CT, template <typename, int> typename SCT>
     friend Sparse_matrix_core<_CT, COLUMN, SCT> operator*(const Sparse_matrix_core<_CT, ROW, SCT> &first, const Sparse_matrix_core<_CT, COLUMN, SCT> &second);
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Matrix multiplication: COLUMN x ROW -> COLUMN
      */
     template <typename _CT, template <typename, int> typename SCT>
     friend Sparse_matrix_core<_CT, COLUMN, SCT> operator*(const Sparse_matrix_core<_CT, COLUMN, SCT> &first, const Sparse_matrix_core<_CT, ROW, SCT> &second);
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Matrix multiplication: ROW x ROW -> COLUMN
      */
     template <typename _CT, template <typename, int> typename SCT>
     friend Sparse_matrix_core<_CT, COLUMN, SCT> operator*(const Sparse_matrix_core<_CT, ROW, SCT> &first, const Sparse_matrix_core<_CT, ROW, SCT> &second);
 
-    /** @} */
+    /* @} */
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      *\defgroup MatrixChainProd Matrix / column-chain multiplication (with column-chain result).
-     * \ingroup PkgHDVFAlgorithmClasses
+     *
      * @brief  Perform multiplication of a sparse matrix (column or row major) and a column-chain. The function returns a new column-major chain.
      *
      * Perform standard linear algebra multiplication of a matrix and a column-chain (ie.\ matrix / column vector multiplication) and returns a new column-major chain. Both arguments must have the same `CoefficientRing` but the matrix can have any `StorageFormat` (and the multiplication is optimized for each of them).
@@ -616,26 +617,26 @@ public:
      * @{
      */
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Matrix/column chain multiplication: COLUMN matrix x COLUMN chain -> COLUMN chain.
      */
     template <typename _CT, template <typename, int> typename SCT>
     friend SCT<_CT, COLUMN> operator*(const Sparse_matrix_core<_CT, COLUMN, SCT> &_matrix, const SCT<_CT, COLUMN> &_column);
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Matrix/column chain multiplication: ROW matrix x COLUMN chain -> COLUMN chain.
      */
     template <typename _CT, template <typename, int> typename SCT>
     friend SCT<_CT, COLUMN> operator*(const Sparse_matrix_core<_CT, ROW, SCT> &_matrix, const SCT<_CT, COLUMN> &_column);
 
-    /** @} */
+    /* @} */
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \defgroup ChainMatrixProd Row-chain / matrix multiplication (with row-chain result).
-     * \ingroup PkgHDVFAlgorithmClasses
+     *
      * @brief  Perform multiplication of a row-chain and a sparse matrix (column or row major). The function returns a new row-major chain.
      *
      * Perform standard linear algebra multiplication of a row-chain and a matrix (ie.\ row vector / matrix multiplication) and returns a new row-major chain. Both arguments must have the same `CoefficientRing` but the matrix can have any `StorageFormat` (and the multiplication is optimized for each of them).
@@ -646,26 +647,26 @@ public:
      * @{
      */
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Row chain/matrix multiplication: ROW chain x COLUMN matrix -> ROW chain.
      */
     template <typename _CT, template <typename, int> typename SCT>
     friend SCT<_CT, ROW> operator*(const SCT<_CT, ROW> &_row, const Sparse_matrix_core<_CT, ROW, SCT> &_matrix) ;
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Row chain/matrix multiplication: ROW chain x ROW matrix -> ROW chain.
      */
     template <typename _CT, template <typename, int> typename SCT>
     friend SCT<_CT, ROW> operator*(const SCT<_CT, ROW> &_row, const Sparse_matrix_core<_CT, COLUMN, SCT> &_matrix) ;
 
-    /** @} */
+    /* @} */
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \defgroup MatrixMatrixProdRow matrix multiplication (with row-based result).
-     * \ingroup PkgHDVFAlgorithmClasses
+     *
      * @brief  Perform multiplication of matrices and return a new row-major matrix.
      *
      * Perform standard linear algebra multiplication of matrices and return a new row-major matrix (when possible, prefer `*=` for efficiency). Matrices must have the same `CoefficientRing` but can have different `StorageFormat`. The multiplication is optimized (using standard definition or block multiplications) for each combination of `StorageFormat`. However, efficiency depends on `StorageFormat`.
@@ -676,40 +677,40 @@ public:
      * @{
      */
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
-     * \brief matrix multiplication: COLUMN x COLUMN -> ROW
+     * \brief Matrix multiplication: COLUMN x COLUMN -> ROW
      */
     template <typename _CT, template <typename, int> typename SCT>
     friend Sparse_matrix_core<_CT, ROW, SCT> operator%(const Sparse_matrix_core<_CT, COLUMN, SCT> &_first, const Sparse_matrix_core<_CT, COLUMN, SCT> &_second);
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
-     * \brief matrix multiplication: ROW x COLUMN -> ROW
+     * \brief Matrix multiplication: ROW x COLUMN -> ROW
      */
     template <typename _CT, template <typename, int> typename SCT>
     friend Sparse_matrix_core<_CT, ROW, SCT> operator%(const Sparse_matrix_core<_CT, ROW, SCT> &_first, const Sparse_matrix_core<_CT, COLUMN, SCT> &_second);
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
-     * \brief matrix multiplication: COLUMN x ROW -> ROW
+     * \brief Matrix multiplication: COLUMN x ROW -> ROW
      */
     template <typename _CT, template <typename, int> typename SCT>
     friend Sparse_matrix_core<_CT, ROW, SCT> operator%(const Sparse_matrix_core<_CT, COLUMN, SCT> &_first, const Sparse_matrix_core<_CT, ROW, SCT> &_second);
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
-     * \brief matrix multiplication: ROW x ROW -> ROW
+     * \brief Matrix multiplication: ROW x ROW -> ROW
      */
     template <typename _CT, template <typename, int> typename SCT>
     friend Sparse_matrix_core<_CT, ROW, SCT> operator%(const Sparse_matrix_core<_CT, ROW, SCT> &_first, const Sparse_matrix_core<_CT, ROW, SCT> &_second);
 
-    /** @} */
+    /* @} */
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \defgroup MatrixMatrixAddAssign Sums matrices and assign.
-     * \ingroup PkgHDVFAlgorithmClasses
+     *
      * @brief  Perform addition of matrices and assign the result to `matrix`.
      *
      * Perform standard linear algebra addition. Matrices must have the same `CoefficientRing` but can have different `StorageFormat`. The addition is optimized for each combination of `StorageFormat`.
@@ -720,7 +721,7 @@ public:
      * @{
      */
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Matrices sum and assign: COLUMN += COLUMN or ROW += ROW.
      */
@@ -741,26 +742,26 @@ public:
         return *this;
     }
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Matrices sum and assign: COLUMN += ROW.
      */
     template <typename _CT, template <typename, int> typename SCT>
     friend Sparse_matrix_core<_CT, COLUMN, SCT>& operator+=(Sparse_matrix_core<_CT, COLUMN, SCT> &matrix, const Sparse_matrix_core<_CT, ROW, SCT> &other);
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Matrices sum and assign: ROW += COLUMN.
      */
     template <typename _CT, template <typename, int> typename SCT>
     friend Sparse_matrix_core<_CT, ROW, SCT>& operator+=(Sparse_matrix_core<_CT, ROW, SCT> &matrix, const Sparse_matrix_core<_CT, COLUMN, SCT> &other);
 
-    /** @} */
+    /* @} */
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \defgroup MatrixMatrixSubtractAssign Subtracts matrices and assign.
-     * \ingroup PkgHDVFAlgorithmClasses
+     *
      * @brief  Perform subtraction of matrices and assign the result to `matrix`.
      *
      * Perform standard linear algebra subtraction. Matrices must have the same `CoefficientRing` but can have different `StorageFormat`. The addition is optimized for each combination of `StorageFormat`.
@@ -771,7 +772,7 @@ public:
      * @{
      */
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Matrices subtraction and assign: COLUMN -= COLUMN or ROW -= ROW.
      */
@@ -792,23 +793,23 @@ public:
         return *this;
     }
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Matrices subtraction and assign: COLUMN -= ROW.
      */
     template <typename _CT, template <typename, int> typename SCT>
     friend Sparse_matrix_core<_CT, COLUMN, SCT>& operator-=(Sparse_matrix_core<_CT, COLUMN, SCT> &matrix, const Sparse_matrix_core<_CT, ROW, SCT> &other);
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Matrices subtraction and assign: ROW -= COLUMN.
      */
     template <typename _CT, template <typename, int> typename SCT>
     friend Sparse_matrix_core<_CT, ROW, SCT>& operator-=(Sparse_matrix_core<_CT, ROW, SCT> &matrix, const Sparse_matrix_core<_CT, COLUMN, SCT> &other);
 
-    /** @} */
+    /* @} */
 
-    /**
+    /*
      * \brief Applies factor on each coefficients and assign.
      *
      * If `lambda` is 0, this comes to nullify the matrix.
@@ -830,7 +831,7 @@ public:
         return *this;
     }
 
-    /**
+    /*
      * \brief Computes the negative of a matrix (unary operator).
      *
      * \return The resulting matrix.
@@ -847,10 +848,10 @@ public:
         return res ;
     }
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \defgroup MatrixMatrixProdAssign Multiplies matrices and assign.
-     * \ingroup PkgHDVFAlgorithmClasses
+     *
      * @brief  Perform multiplication of matrices and assign the result to `matrix`.
      *
      * Perform standard linear algebra multiplication. Matrices must have the same `CoefficientRing` but can have different `StorageFormat`. The multiplication is optimized for each combination of `StorageFormat`.
@@ -861,37 +862,37 @@ public:
      * @{
      */
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Matrix multiplication and assign: COLUMN *= COLUMN.
      */
     template <typename _CT, template <typename, int> typename SCT>
     friend Sparse_matrix_core<_CT, COLUMN, SCT>& operator*=(Sparse_matrix_core<_CT, COLUMN, SCT> &matrix, const Sparse_matrix_core<_CT, COLUMN, SCT> &other);
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Matrix multiplication and assign: ROW *= ROW.
      */
     template <typename _CT, template <typename, int> typename SCT>
     friend Sparse_matrix_core<_CT, ROW, SCT>& operator*=(Sparse_matrix_core<_CT, ROW, SCT> &matrix, const Sparse_matrix_core<_CT, ROW, SCT> &other);
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Matrix multiplication and assign: COLUMN *= ROW.
      */
     template <typename _CT, template <typename, int> typename SCT>
     friend Sparse_matrix_core<_CT, COLUMN, SCT>& operator*=(Sparse_matrix_core<_CT, COLUMN, SCT> &matrix, const Sparse_matrix_core<_CT, ROW, SCT> &other);
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Matrix multiplication and assign: ROW *= COLUMN.
      */
     template <typename _CT, template <typename, int> typename SCT>
     friend Sparse_matrix_core<_CT, ROW, SCT>& operator*=(Sparse_matrix_core<_CT, ROW, SCT> &matrix, const Sparse_matrix_core<_CT, COLUMN, SCT> &other);
 
-    /** @} */
+    /* @} */
 
-    /**
+    /*
      * \brief Gets the value of a chain from a const matrix.
      *
      * \warning The matrix will perform boundary check.
@@ -911,7 +912,7 @@ public:
         return _chains[index];
     }
 
-    /**
+    /*
      * \brief Gets the value of a chain from a const matrix.
      *
      * \warning The matrix will perform boundary check.
@@ -956,7 +957,7 @@ protected:
         }
     }
 public:
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Sets a given coefficient in `matrix`.
      *
@@ -988,7 +989,7 @@ protected:
             return (this->_chains)[i][j] ;
     }
 public:
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Gets a given coefficient.
      *
@@ -1005,10 +1006,10 @@ public:
     template <typename _CT, int _CTF, template <typename, int> typename SCT>
     friend _CT get_coefficient(const Sparse_matrix_core<_CT, _CTF, SCT>& matrix, size_t i, size_t j);
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \defgroup GetColumn Gets a column.
-     * \ingroup PkgHDVFAlgorithmClasses
+     *
      * @brief Get the value of the column at a given `index` from the matrix (whatever the `StorageFormat` of the matrix).
      *
      * \note For column-matrices, it is equivalent to `operator[]`, for row-matrices a traversal of the matrix is required (in \f$\mathcal O(n)\f$).
@@ -1021,26 +1022,26 @@ public:
      * @{
      */
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Gets a column from a COLUMN matrix.
      */
     template <typename _CT, template <typename, int> typename SCT>
     friend SCT<_CT, COLUMN> get_column(const Sparse_matrix_core<_CT, COLUMN, SCT> &matrix,  size_t index);
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Gets a column from a ROW matrix.
      */
     template <typename _CT, template <typename, int> typename SCT>
     friend SCT<_CT, COLUMN> get_column(const Sparse_matrix_core<_CT, ROW, SCT> &matrix,  size_t index);
 
-    /** @} */
+    /* @} */
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \defgroup GetRow Gets a row.
-     * \ingroup PkgHDVFAlgorithmClasses
+     *
      * @brief Get the value of the row at a given `index` from the matrix (whatever the `StorageFormat` of the matrix).
      *
      * \note For row-matrices, it is equivalent to `operator[]`, for column-matrices a traversal of the matrix is required (in \f$\mathcal O(n)\f$).
@@ -1053,23 +1054,23 @@ public:
      * @{
      */
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Gets a row from a COLUMN matrix.
      */
     template <typename _CT, template <typename, int> typename SCT>
     friend SCT<_CT, ROW> get_row(const Sparse_matrix_core<_CT, COLUMN, SCT> &matrix,  size_t index);
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Gets a row from a ROW matrix.
      */
     template <typename _CT, template <typename, int> typename SCT>
     friend SCT<_CT, ROW> get_row(const Sparse_matrix_core<_CT, ROW, SCT> &matrix,  size_t index);
 
-    /** @} */
+    /* @} */
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Gets a const reference over a column from a column matrix.
      *
@@ -1085,7 +1086,7 @@ public:
     template <typename _CT, template <typename, int> typename SCT>
     friend const SCT<_CT, COLUMN> & cget_column(const Sparse_matrix_core<_CT, COLUMN, SCT> &matrix,  size_t index);
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Gets a constant reference over a row from a row matrix
      *
@@ -1102,10 +1103,10 @@ public:
     friend const SCT<_CT, ROW> & cget_row(const Sparse_matrix_core<_CT, ROW, SCT> &matrix, const size_t index);
 
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \defgroup SetColumn Sets a column.
-     * \ingroup PkgHDVFAlgorithmClasses
+     *
      * @brief Set the value of the column at a given `index` from the matrix to `column` (whatever the `StorageFormat` of the matrix).
      *
      * \note For column-matrices, it is equivalent to `operator[]` followed by an assignment, for row-matrices a traversal of the matrix is required (in \f$\mathcal O(n)\f$).
@@ -1118,26 +1119,26 @@ public:
      * @{
      */
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Sets a column in a COLUMN matrix.
      */
     template <typename _CT, template <typename, int> typename SCT>
     friend void set_column(Sparse_matrix_core<_CT, COLUMN, SCT> &matrix,  size_t index, const SCT<_CT, COLUMN> &column);
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Sets a column in a ROW matrix.
      */
     template <typename _CT, template <typename, int> typename SCT>
     friend void set_column(Sparse_matrix_core<_CT, ROW, SCT> &matrix,  size_t index, const SCT<_CT, COLUMN> &column);
 
-    /** @} */
+    /* @} */
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \defgroup SetRow Sets a row.
-     * \ingroup PkgHDVFAlgorithmClasses
+     *
      * @brief Set the value of the row at a given `index` from the matrix to `chain` (whatever the `StorageFormat` of the matrix).
      *
      * \note For row-matrices, it is equivalent to `operator[]` followed by an assignment, for column-matrices a traversal of the matrix is required (in \f$\mathcal O(n)\f$).
@@ -1150,25 +1151,25 @@ public:
      * @{
      */
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Sets a row in a COLUMN matrix.
      */
     template <typename _CT, template <typename, int> typename SCT>
     friend void set_row(Sparse_matrix_core<_CT, COLUMN, SCT> &matrix,  size_t index, const SCT<_CT, ROW> &row);
 
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Sets a row in a ROW matrix.
      */
     template <typename _CT, template <typename, int> typename SCT>
     friend void set_row(Sparse_matrix_core<_CT, ROW, SCT> &matrix,  size_t index, const SCT<_CT, ROW> &row);
 
-    /** @} */
+    /* @} */
 
-    /**
+    /*
      * \defgroup GetBlockMatrix Gets a sub-matrix by removing chains in a matrix.
-     * \ingroup PkgHDVFAlgorithmClasses
+     *
      * @brief Build and return a new matrix by copying a `matrix` and removing  all chains with indices in the `indices` vector (or at a given `index`). The result is thus a block of the initial matrix. When possible, for efficiency, prefer `\=`.
      *
      * \note Will return a copy of the matrix if given vector is empty.
@@ -1182,25 +1183,25 @@ public:
      * @{
      */
 
-    /** \brief Removes a set of chains from a copy of the matrix. */
+    /* \brief Removes a set of chains from a copy of the matrix. */
     Sparse_matrix_core operator/(const std::vector<size_t> &_indices) {
         Sparse_matrix_core res(*this);
         res /= _indices;
         return res;
     }
 
-    /** \brief Removes the chain at a given `index` from a copy of the matrix. */
+    /* \brief Removes the chain at a given `index` from a copy of the matrix. */
     Sparse_matrix_core operator/(size_t index) {
         Sparse_matrix_core res(*this);
         res /= index;
         return res;
     }
 
-    /** @} */
+    /* @} */
 
-    /**
+    /*
      * \defgroup GetBlockMatrixAssign Assign a sub-matrix by removing chains in a matrix.
-     * \ingroup PkgHDVFAlgorithmClasses
+     *
      * @brief Remove  all chains with indices in the `indices` vector (or at a given `index`). The result is thus a block of the initial matrix.
      *
      * \warning The matrix will perform boundary check.
@@ -1211,7 +1212,7 @@ public:
      * @{
      */
 
-    /** \brief Removes a set of chains from a matrix. */
+    /* \brief Removes a set of chains from a matrix. */
     Sparse_matrix_core& operator/=(const std::vector<size_t> &indices) {
         for (size_t index : indices) {
             *this /= index;
@@ -1220,7 +1221,7 @@ public:
         return *this;
     }
 
-    /** \brief Removes the chain at a given `index` from a matrix. */
+    /* \brief Removes the chain at a given `index` from a matrix. */
     Sparse_matrix_core& operator/=(const size_t index) {
         _chains[index].nullify();
         _chainsStates.set_off(index);
@@ -1228,7 +1229,7 @@ public:
         return *this;
     }
 
-    /** @} */
+    /* @} */
 
 protected:
     // Protected version of remove_column
@@ -1253,7 +1254,7 @@ protected:
         return *this;
     }
 public:
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Removes a column from the matrix.
      *
@@ -1288,7 +1289,7 @@ protected:
     }
 
 public:
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Removes a row from the matrix.
      *
@@ -1313,7 +1314,7 @@ protected:
     }
 
 public:
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Swaps rows in a matrix.
      *
@@ -1339,7 +1340,7 @@ protected:
     }
 
 public:
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Swaps columns in a matrix.
      *
@@ -1376,7 +1377,7 @@ protected:
     }
 
 public:
-    /** \relates Sparse_matrix_core
+    /* \relates Sparse_matrix_core
      *
      * \brief Removes a coefficient from the matrix.
      *
@@ -1391,7 +1392,7 @@ public:
     template <typename _CT, int _CTF, template <typename, int> typename SCT>
     friend Sparse_matrix_core<_CT, _CTF, SCT>& remove_coefficient(Sparse_matrix_core<_CT, _CTF, SCT>& matrix, size_t i, size_t j);
 
-    /**
+    /*
      * \brief Iterator to the index of the first non null chain.
      *
      * Return an iterator to the index of the first non null chain (the iterator visits indices of non null chains along the major dimension of the matrix).
@@ -1400,14 +1401,14 @@ public:
      */
     inline Bitboard::iterator begin() const noexcept { return _chainsStates.begin(); }
 
-    /**
+    /*
      * \brief Iterator past-the-end of chain indices.
      *
      * \return The iterator past-the-end of chain indices.
      */
     inline Bitboard::iterator end() const noexcept { return _chainsStates.end(); }
 
-    /**
+    /*
      * \brief Reverse iterator to the index of the last non null chain.
      *
      * Return a reverse iiterator to the index of the last non null chain (the iterator visits indices of non null chains, in decreading order, along the major dimension of the matrix).
@@ -1417,7 +1418,7 @@ public:
     inline Bitboard::reverse_iterator reverse_begin() noexcept { return _chainsStates.reverse_begin(); }
     inline Bitboard::reverse_iterator reverse_begin(size_t index) noexcept { return _chainsStates.reverse_begin(index); }
 
-    /**
+    /*
      * \brief Reverse iterator past-the-end of chain indices.
      *
      * \return The reverse iterator past-the-end of chain indices.
@@ -1425,7 +1426,7 @@ public:
     inline Bitboard::reverse_iterator reverse_end() noexcept { return _chainsStates.reverse_end(); }
 
 
-    /**
+    /*
      * \brief Transposes a matrix.
      *
      * \return A new matrix where the `StorageFormat` has been swapped between COLUMN and ROW and data chains have been transposed.
@@ -1442,7 +1443,7 @@ public:
         return transposed;
     }
 
-    /**
+    /*
      * \brief Gets the matrix sizes.
      *
      * \return The matrix size as a row/column pair.

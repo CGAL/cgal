@@ -26,7 +26,7 @@ namespace CGAL {
 namespace Homological_discrete_vector_field {
 
 /*!
- \ingroup PkgHDVFRef
+ \ingroup PkgHDVFHDVFClasses
 
  The class `Hdvf` implements homology and cohomology computation via homological discrete vector fields (%HDVF for short). It derives from `Hdvf_core` and shares all its data and methods.
 

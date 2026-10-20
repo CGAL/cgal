@@ -31,6 +31,8 @@ inline std::ostream & operator<< (std::ostream &out, const Cell_pair& p)
 }
 
 /**
+ *\ingroup PkgHDVFToolsClasses
+ *
  * \brief Runs an interaction loop to iterate M, W or MW operations and export the results to vtk.
  *
  * The loop runs until the key `Q` is pressed. Otherwise, the loop asks for an operation (M, W or MW) and a cell (index and dimension).

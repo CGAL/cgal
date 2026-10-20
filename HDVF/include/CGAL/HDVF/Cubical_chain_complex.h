@@ -26,7 +26,7 @@ namespace CGAL {
 namespace Homological_discrete_vector_field {
 
 /*!
- \ingroup PkgHDVFRef
+ \ingroup PkgHDVFChainComplexesClasses
 
  The class `Cubical_chain_complex` represents (topological) chain complexes associated to cubical complexes.
 

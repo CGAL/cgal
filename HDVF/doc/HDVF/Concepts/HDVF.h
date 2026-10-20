@@ -279,7 +279,7 @@ std::ostream& write_reduction(std::ostream &out = std::cout) const;
 /*!
  *\brief Writes a HDVF and its reduction to a stream.
  *
- * Exports  them to a stream  in  `.hdvf` file format (see xxx for a specification).
+ * Exports  them to a stream  in  `.hdvf` file format (see \ref secHDVFHDVF_format  for a specification).
  */
 
 std::ostream& write_hdvf_reduction(std::ostream& out) ;
@@ -287,7 +287,7 @@ std::ostream& write_hdvf_reduction(std::ostream& out) ;
 /*!
  * \brief Reads a HDVF and its reduction from a stream.
  *
- * Imports them from a `.hdvf` file format (see xxx for a specification).
+ * Imports them from a `.hdvf` file format (see \ref secHDVFHDVF_format  for a specification).
  */
 std::istream& read_hdvf_reduction(std::istream& in) ;
 

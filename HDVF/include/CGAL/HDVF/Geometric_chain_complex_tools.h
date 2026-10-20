@@ -35,7 +35,7 @@
 #include <CGAL/HDVF/Icosphere_object_io.h>
 #include <CGAL/OSM/OSM.h>
 
-/**
+/*
  * \class SimpComplexTools
  * \brief Provides tools for SimpComplexes ((co)homology, duality, persistent homology).
  * \brief Friend class of SimpComplex
@@ -49,6 +49,8 @@ namespace IO {
 // Hdvf vtk export
 
 /*!
+ *\ingroup PkgHDVFIOClasses
+ *
  * \brief Exports all the `Hdvf` information of a geometric chain complex to vtk files.
  *
  * Export PSC labels and homology/cohomology generators (depending on HDVF options) associated to each critical cell to vtk files.
@@ -124,7 +126,10 @@ void write_VTK (const Homological_discrete_vector_field::Hdvf_core<ChainComplex>
 
 // Hdvf_persistence vtk export
 
-/** \brief Exports all the `HDVF_persistence` information of a geometric chain complex to vtk files.
+/**
+ * \ingroup PkgHDVFIOClasses
+ *
+ * \brief Exports all the `HDVF_persistence` information of a geometric chain complex to vtk files.
  *
  * Export PSC labels and homology/cohomology generators (depending on HDVF options) associated to each persistent intervals to vtk files.
  *
@@ -222,7 +227,10 @@ void write_VTK (const Homological_discrete_vector_field::Hdvf_persistence<ChainC
 
 // Hdvf_duality vtk export
 
-/** \brief Exports all the `HDVF_duality` information of a geometric chain complex to vtk files.
+/**
+ * \ingroup PkgHDVFIOClasses
+ *
+ * \brief Exports all the `HDVF_duality` information of a geometric chain complex to vtk files.
  *
  * Export PSC labels and homology/cohomology generators (depending on HDVF options) associated to each persistent intervals to vtk files.
  *
@@ -278,6 +286,8 @@ void write_VTK (const Homological_discrete_vector_field::Hdvf_duality<ChainCompl
 }
 
 /**
+ *\ingroup PkgHDVFIOClasses
+ *
  * \brief Exports a model of `GeometricChainComplex` (plus, optionally, labels) to a VTK file.
  *
  * The method generates legacy text VTK files. Labels are exported as such in a VTK property, together with CellID property, containing the index of each cell.
@@ -295,6 +305,8 @@ static void write_VTK(const Chain_complex &K, const std::string &filename, const
 }
 
 /**
+ *\ingroup PkgHDVFIOClasses
+ *
  * \brief Exports a chain over a model of `GeometricChainComplex` to a VTK file.
  *
  * The method generates legacy text VTK files. All the cells of the chain with non zero coefficient are exported. If a cellId is provided, labels are exported in a VTK property (2 for all cells, 0 for cell of index cellId).  The index of each cell is exported in a CellID property.
@@ -317,7 +329,9 @@ namespace Homological_discrete_vector_field {
 // Duality tools
 
 
-/** \brief Type returned by `dualize_complex()`.
+/**
+ *\ingroup PkgHDVFToolsClasses
+ * \brief Type returned by `dualize_complex()`.
  *
  * \tparam ChainComplex Type of the underlying chain complex.
  *
@@ -350,7 +364,7 @@ public:
 // Build K sub-chain complex of L (homeomorphic to B^n)
 
 /*!
- \ingroup PkgHDVFRef
+ \ingroup PkgHDVFToolsClasses
 
  The class `Duality_simplicial_complex_tools` is dedicated to Alexander duality for 3D surface meshes. Starting from a simplicial chain complex (encoding a 3D surface mesh), it provides methods to embed the complex into a larger icosphere and generate a 3D constrained Delaunay triangulation.
 
@@ -585,7 +599,7 @@ public:
 // Adjust L size
 
 /*!
- \ingroup PkgHDVFRef
+ *\ingroup PkgHDVFToolsClasses
 
  The class `Duality_cubical_complex_tools` is dedicated to Alexander duality for 3D binary volumes.
 

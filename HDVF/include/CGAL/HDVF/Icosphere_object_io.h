@@ -37,12 +37,22 @@ namespace Homological_discrete_vector_field {
 template <typename Traits>
 class Icosphere_object_io : public Mesh_object_io<Traits>
 {
-public:
+protected:
     using Point = typename Traits::Point;
     using Vector = typename Traits::Vector;
+
     using Index=size_t ;
     using Lookup=std::map<std::pair<Index, Index>, Index>;
-    //    using Point = typename Traits::Point;
+
+public:
+    /** \brief Builds a `Mesh_object_io` icosphere.
+     *
+     * Such icospheres are usually used to compute Alexander duality isomorphisms with `HDVF_duality`. The initial complex is embedded into a `Mesh_object_io` icosphere and the resulting set of simplices is triangulated using tetgen.
+     *
+     * \param subdivisions Subdivision level of the icosphere.
+     * \param c Center of the icosphere.
+     * \param r Radius of the icosphere.
+     */
     Icosphere_object_io(size_t subdivisions, const Point &c = Point({0, 0, 0}), double r=1.) : Mesh_object_io<Traits>(2, vertices_ico, triangles_ico)
     {
         for (size_t i=0; i<subdivisions; ++i)
@@ -52,7 +62,7 @@ public:
         rigid_transformation(c, r) ;
     }
 
-
+protected:
     // Icosahedron
     inline static const float X=.525731112119133606f;
     inline static const float Z=.850650808352039932f;
