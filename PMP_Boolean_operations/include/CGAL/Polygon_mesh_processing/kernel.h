@@ -116,12 +116,12 @@ kernel(const FaceRange& face_range,
       std::function<double(const Bbox_3&)> value;
     };
     std::array<Bbox_entry,6> entries {{
-        {0, [](const EPoint_3& p){ return to_interval(p.x()).first;  }, [](const Bbox_3& b){ return b.xmin(); }},
-        {1, [](const EPoint_3& p){ return to_interval(p.x()).second; }, [](const Bbox_3& b){ return b.xmax(); }},
-        {2, [](const EPoint_3& p){ return to_interval(p.y()).first;  }, [](const Bbox_3& b){ return b.ymin(); }},
-        {3, [](const EPoint_3& p){ return to_interval(p.y()).second; }, [](const Bbox_3& b){ return b.ymax(); }},
-        {4, [](const EPoint_3& p){ return to_interval(p.z()).first;  }, [](const Bbox_3& b){ return b.zmin(); }},
-        {5, [](const EPoint_3& p){ return to_interval(p.z()).second; }, [](const Bbox_3& b){ return b.zmax(); }}
+        {0, [](const EPoint_3& p){ return approx(p).x().inf();  }, [](const Bbox_3& b){ return b.xmin(); }},
+        {1, [](const EPoint_3& p){ return approx(p).x().sup(); }, [](const Bbox_3& b){ return b.xmax(); }},
+        {2, [](const EPoint_3& p){ return approx(p).y().inf();  }, [](const Bbox_3& b){ return b.ymin(); }},
+        {3, [](const EPoint_3& p){ return approx(p).y().sup(); }, [](const Bbox_3& b){ return b.ymax(); }},
+        {4, [](const EPoint_3& p){ return approx(p).z().inf();  }, [](const Bbox_3& b){ return b.zmin(); }},
+        {5, [](const EPoint_3& p){ return approx(p).z().sup(); }, [](const Bbox_3& b){ return b.zmax(); }}
     }};
 
     for (const auto& e : entries){
