@@ -97,10 +97,10 @@ kernel(const FaceRange& face_range,
   // Build the starting cube
   KernelPointMap kvpm = get(CGAL::dynamic_vertex_property_t<EPoint_3>(), kernel);
   if(is_empty(kernel))
-    make_hexahedron(bbox(pm), kernel, parameters::vertex_point_map(vpm_out));
+    make_hexahedron(bbox(pm, parameters::vertex_point_map(vpm)), kernel, parameters::vertex_point_map(vpm_out));
   for(vertex_descriptor v: vertices(kernel))
     put(kvpm, v, to_exact(get(vpm_out, v)));
-  Bbox_3 bb3 = bbox(kernel);
+  Bbox_3 bb3 = bbox(kernel, kvpm);
   vertex_descriptor start_vertex = *vertices(kernel).begin();
   if constexpr(is_face_to_face_map)
     for(face_descriptor f: faces(kernel))
@@ -228,21 +228,28 @@ kernel(const FaceRange& face_range,
     }
 
     // Get the centroid
+    // WARNING: This will lead to huge depth in the tree construction.
+    //          If we can't get a special lazy node, then at least we should
+    //          sum vectors and do the division once -> will divide by two the number of nodes.
     EPoint_3 centroid(ORIGIN);
     for(auto v: vertices(kernel))
       centroid += EVector_3(ORIGIN, get(kvpm, v)) / vertices(kernel).size();
 
     // Approximate the centroid
-    Point_3 double_centroid(to_double(centroid.x()), to_double(centroid.y()), to_double(centroid.z()));
+    // TODO: not used. I guess you wanted to build another exact centroid build from this variable in
+    //       the test below.
+    EPoint_3 double_centroid(to_double(centroid.x()), to_double(centroid.y()), to_double(centroid.z()));
 
     // Check if the approximate_centroid is inside the kernel
+    // TODO: if the kernel of pm is exact, i.e. std::is_floating_point_v<Kernel::FT>==false
+    //       then this tests are useless
     bool is_valid = true;
     for(face_descriptor f: faces(kernel)){
       halfedge_descriptor h = halfedge(f, kernel);
       Plane_3 plane(get(kvpm,source(h, kernel)),
                     get(kvpm,target(h, kernel)),
                     get(kvpm,target(next(h, kernel), kernel)));
-      if(oriented_side(plane, centroid) != ON_NEGATIVE_SIDE){
+      if(oriented_side(plane, double_centroid) != ON_NEGATIVE_SIDE){
         is_valid = false;
         break;
       }
