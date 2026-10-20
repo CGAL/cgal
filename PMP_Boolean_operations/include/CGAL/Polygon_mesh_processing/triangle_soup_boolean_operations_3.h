@@ -182,7 +182,7 @@ select(const std::vector<Exact_point>& points,
   std::vector<Edge_record> partial_edges;
   partial_edges.resize(3 * triangles.size());
 #ifdef CGAL_LINKED_WITH_TBB
-  if (std::is_same_v<Concurrency_tag, Parallel_tag>)
+  if constexpr (Concurrency_tag::is_parallel)
   {
     tbb::parallel_for(std::size_t(0), triangles.size(), [&](std::size_t tid)
     {
@@ -215,7 +215,7 @@ select(const std::vector<Exact_point>& points,
 #endif
 
 #ifdef CGAL_LINKED_WITH_TBB
-  if (std::is_same_v<Concurrency_tag, Parallel_tag>)
+  if constexpr (Concurrency_tag::is_parallel)
   {
     tbb::parallel_sort(partial_edges.begin(), partial_edges.end());
   }
@@ -232,9 +232,8 @@ select(const std::vector<Exact_point>& points,
   // Build adjacencies between edges and faces
   std::vector<std::array<EID, 3>> adjacent_edges(triangles.size());
   std::vector<boost::container::small_vector<TID, 2>> adjacent_faces;
-
 #ifdef CGAL_LINKED_WITH_TBB
-  if constexpr(std::is_same_v<Concurrency_tag, Parallel_tag>)
+  if constexpr (Concurrency_tag::is_parallel)
   {
     // Cut partial_edges in blocks and compute the offset on edges for each block
     const std::size_t block_size = 4096;
@@ -339,7 +338,7 @@ select(const std::vector<Exact_point>& points,
   std::vector< EID > nm_edges;
   std::vector<std::size_t> one_triangle_per_cc;
 #ifdef CGAL_LINKED_WITH_TBB
-  if constexpr(std::is_same_v<Concurrency_tag, Parallel_tag>)
+  if constexpr(Concurrency_tag::is_parallel)
   {
     one_triangle_per_cc = boolops_3::parallel_connected_components(split_at, new_triangles_at, adjacent_edges, adjacent_faces, ccids, nm_edges);
   }
