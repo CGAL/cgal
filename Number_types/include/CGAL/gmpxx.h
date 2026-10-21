@@ -31,8 +31,11 @@
 #define CGAL_GMPXX_H
 
 #include <cstring> // needed by GMP 4.1.4 since <gmpxx.h> misses it.
-#include <gmpxx.h>
+#include <limits>
+#include <type_traits>
 #include <utility>
+
+#include <gmpxx.h>
 
 #include <CGAL/mpz_class.h>
 #include <CGAL/mpq_class.h>
@@ -62,14 +65,20 @@ struct Gmpxx_long_long_converter
 
   Target operator()(Integer value) const
   {
-    unsigned long long magnitude = static_cast<unsigned long long>(value);
-    if(value < 0)
-      magnitude = 0 - magnitude;
-    mpz_class integer;
-    mpz_import(integer.get_mpz_t(), 1, 1, sizeof(magnitude), 0, 0, &magnitude);
-    if(value < 0)
-      mpz_neg(integer.get_mpz_t(), integer.get_mpz_t());
-    return Target(integer);
+    using Long = std::conditional_t<std::is_signed_v<Integer>, long, unsigned long>;
+    if constexpr(std::numeric_limits<Long>::digits >= std::numeric_limits<Integer>::digits)
+      return Target(static_cast<Long>(value));
+    else
+    {
+      unsigned long long magnitude = static_cast<unsigned long long>(value);
+      if(value < 0)
+        magnitude = 0 - magnitude;
+      mpz_class integer;
+      mpz_import(integer.get_mpz_t(), 1, 1, sizeof(magnitude), 0, 0, &magnitude);
+      if(value < 0)
+        mpz_neg(integer.get_mpz_t(), integer.get_mpz_t());
+      return Target(integer);
+    }
   }
 };
 
