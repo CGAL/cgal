@@ -78,5 +78,26 @@ int main()
   assert((CORE::extLong::getPosInfty() * CORE::extLong(-2)).sign() < 0);
   assert((CORE::extLong::getNegInfty() * CORE::extLong(-2)).sign() > 0);
   assert((CORE::extLong(true) * CORE::extLong(2)).isNaN());
+  for(const CORE::extLong infinity : {CORE::extLong::getPosInfty(),
+                                     CORE::extLong::getNegInfty()})
+  {
+    for(bool reverse : {false, true})
+    {
+      CORE::extLong product = reverse ? CORE::extLong(0) : infinity;
+      product *= reverse ? infinity : CORE::extLong(0);
+      assert(!product.isNaN() && !product.isInfty() && !product.isTiny());
+      assert(product.asLong() == 0);
+    }
+    for(int sign : {-1, 1})
+    {
+      const CORE::extLong product = infinity * CORE::extLong(sign);
+      assert(product.sign() == infinity.sign() * sign);
+    }
+  }
+  assert((CORE::extLong(true) * CORE::extLong(0)).isNaN());
+  assert((CORE::extLong(0) * CORE::extLong(true)).isNaN());
+  CORE::extLong zero(0);
+  zero *= zero;
+  assert(!zero.isNaN() && zero.asLong() == 0);
 #endif
 }

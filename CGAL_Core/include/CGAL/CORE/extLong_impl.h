@@ -115,7 +115,10 @@ extLong& extLong::operator*= (const extLong& y) {
   if (flag == 2 || y.flag == 2) {
     *this = CORE_NaNLong;
   } else if ((flag != 0) || (y.flag != 0)) {
-    if (sign() * y.sign() > 0)
+    const int s = sign() * y.sign();
+    if (s == 0)
+      *this = EXTLONG_ZERO;
+    else if (s > 0)
       *this = CORE_posInfty;
     else
       *this = CORE_negInfty;
