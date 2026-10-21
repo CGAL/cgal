@@ -1789,8 +1789,12 @@ protected:
                                   const Map& map_from_incident_constraint_face_id_to_new_triangles) const
   {
     CGAL::Surface_mesh<Point_3> component_mesh;
+    using face_descriptor = typename CGAL::Surface_mesh<Point_3>::Face_index;
+    auto [patch_id_map, _] = component_mesh.template add_property_map<face_descriptor, int>("f:patch_id", 0);
+
     std::vector<Point_3> points;
     std::vector<std::array<std::size_t, 3>> triangles;
+    std::vector<Face_index> triangle_face_indices;
     std::size_t vertex_index = 0;
     for(std::size_t facet_id = components.component_offsets[component_index - 1],
                          end = components.component_offsets[component_index];
@@ -1802,15 +1806,21 @@ protected:
       {
         continue;
       }
-      if(tr().is_infinite(Facet(cell, facet_index))) {
+      Facet facet(cell, facet_index);
+      if(tr().is_infinite(facet)) {
         continue;
       }
-      for(auto v: this->vertices(Facet{cell, facet_index})) {
+      for(auto v: this->vertices(facet)) {
         points.push_back(tr().point(v));
       } // end for each vertex of the facet
       // swap the orientation: our facets are oriented toward the center of the star component
       // but we want them to be oriented outward
       triangles.push_back({vertex_index, vertex_index + 2, vertex_index + 1});
+      Face_index face_index = -1;
+      if(type == Star_components_facets::Type_of_facet::INCIDENT_TO_V) {
+         face_index = face_constraint_index(facet);
+      }
+      triangle_face_indices.push_back(face_index);
       vertex_index += 3;
     } // end for each facet in the component
     if(!this->debug().move_Steiner_vertices_allow_negative_tets()) {
@@ -1825,13 +1835,19 @@ protected:
           points.push_back(triangle[1]);
           points.push_back(triangle[2]);
           triangles.push_back({vertex_index, vertex_index + 1, vertex_index + 2});
+          triangle_face_indices.push_back(face_id);
           vertex_index += 3;
         }
       }
     }
     CGAL::Polygon_mesh_processing::merge_duplicate_points_in_polygon_soup(points, triangles);
     CGAL::Polygon_mesh_processing::orient_polygon_soup(points, triangles);
-    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, triangles, component_mesh);
+    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, triangles, component_mesh,
+    CGAL::parameters::polygon_to_face_output_iterator(boost::make_function_output_iterator(
+        [&](const auto& polygon_to_face) {
+          auto [poly_idx, fd] = polygon_to_face;
+          put(patch_id_map, fd, triangle_face_indices[poly_idx]);
+        })));
     return component_mesh;
   }
 
@@ -2736,21 +2752,23 @@ protected:
                                                             map_from_incident_constraint_face_id_to_new_triangles);
         if(dbg().move_Steiner_vertices_level() > 1) {
           std::ostringstream ss;
-          ss << "dump_vertex_" << with_offset(v) << "_component_"  << component_index << ".off";
-          const std::string filename = ss.str();
-          std::ofstream out(filename);
-          out.precision(17);
-          out << component_mesh;
+          ss << "dump_vertex_" << with_offset(v) << "_component_"  << component_index << ".ply";
+          CGAL::IO::write_PLY(ss.str(), component_mesh, CGAL::parameters::stream_precision(17));
         }
+        std::chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
         auto opt_kernel_center_point = compute_center_point_if_possible(component_mesh);
+        std::chrono::duration<double> elapsed_time = std::chrono::steady_clock::now() - start_time;
         if(dbg().move_Steiner_vertices_level() > 1) {
           std::cerr << "  - incident constraint faces ids of component #" << component_index << ": {"
                     << IO::oformat(star_components.component_incident_constraint_face_ids[component_index - 1])
                     << "}\n";
           std::cerr << "    kernel center point of component #" << component_index << ": ";
         }
+        if(dbg().move_Steiner_vertices_level() > 0) {
+          std::cerr << "    computation time for kernel_point of component #" << component_index << ": " << elapsed_time.count() << " s\n";
+        }
         if(opt_kernel_center_point.has_value()) {
-          auto kernel_center_point = *opt_kernel_center_point;
+          auto kernel_center_point = this->exact(*opt_kernel_center_point);
           central_points->push_back(kernel_center_point);
           if(dbg().move_Steiner_vertices_level() > 1) {
             std::cerr << *opt_kernel_center_point << " (distance to vertex: "
