@@ -15,8 +15,8 @@ namespace Arrangement_on_curve_1 {
  * boundary).
  *
  * When both sides of the parameter space are identified (tag:
- * `Identified_side_tag`), the curve is a closed loop — for example a circle,
- * a direction-space S¹, or any periodic 1D domain.
+ * `Identified_side_tag`), the curve is a closed loop, for example a circle,
+ * a direction-space \f$\mathbb{S}_1\f$, or any periodic 1D domain.
  *
  * Key topological differences from `Open_topology_traits`:
  *
