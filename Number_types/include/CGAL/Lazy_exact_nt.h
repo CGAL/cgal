@@ -38,6 +38,7 @@
 #include<type_traits>
 
 #include <CGAL/IO/io.h>
+#include <CGAL/is_streamable.h>
 
 #define CGAL_int(T)    typename First_if_different<int,    T>::Type
 #define CGAL_double(T) typename First_if_different<double, T>::Type
@@ -1311,8 +1312,12 @@ operator<< (std::ostream & os, const Lazy_exact_nt<ET> & a)
   // not exact for ET whose operator<< writes an approximation (e.g. CORE::Expr,
   // which writes a decimal). Keeping the default keeps this non-breaking. See
   // issue #135.
-  if (IO::is_exact_mode(os))
-    return os << a.exact();
+  // When ET has no stream operators the flag is ignored, so that the default
+  // output still only requires to_double().
+  if constexpr (is_streamable<ET>::value) {
+    if (IO::is_exact_mode(os))
+      return os << a.exact();
+  }
   return os << CGAL_NTS to_double(a);
 }
 

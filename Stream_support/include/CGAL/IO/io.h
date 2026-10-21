@@ -676,7 +676,9 @@ flag. The default output is therefore exact for those types and approximate for
 
 The round-trip through `operator>>` is exact when the exact type has an exact stream
 representation, such as a rational type. It is not exact for an exact type whose
-output operator writes an approximation, such as `CORE::Expr`.
+output operator writes an approximation, such as `CORE::Expr`. If the exact type
+does not provide the stream operators `<<` and `>>`, the flag is ignored and the
+`double` approximation is written.
 
 \sa `CGAL::IO::set_lossy_mode()`
 \sa `CGAL::IO::is_exact_mode()`

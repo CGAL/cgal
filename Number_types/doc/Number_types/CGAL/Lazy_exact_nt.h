@@ -119,7 +119,8 @@ such as a rational type (`Exact_rational`, `Gmpq`), `operator>>` then reconstruc
 the same exact number, so exact values can be saved and reloaded without loss. For
 `NT` whose output operator writes an approximation (for example `CORE::Expr`, which
 writes a decimal), exact mode writes that approximation and the round-trip is not
-exact.
+exact. If `NT` does not provide the stream operators `<<` and `>>`, exact mode is
+ignored and the `double` approximation is written.
 \relates Lazy_exact_nt
 */
 std::ostream& operator<<(std::ostream& out, const Lazy_exact_nt<NT>& m);
