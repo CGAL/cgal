@@ -231,6 +231,25 @@ protected: // HELPER FUNCTIONS
 
 public:
 
+    // This avoids linear scanning of vertices in is_infinite(c), reducing overhead
+    // in high-dimensional predicates.
+    inline void update_full_cell_infinite_flag(Full_cell_handle c) const
+    {
+        bool inf = false;
+        // Check if any vertex of the cell is the infinite vertex
+        const int cur_dime = current_dimension();
+        for (int i = 0; i <= cur_dime; ++i)
+        {
+            if (c->vertex(i) == infinite_vertex())
+            {
+                inf = true;
+                break;
+            }
+        }
+        // Store the result in the cell's auxiliary data
+        c->tds_data().set_infinite(inf);
+    }
+
     //       FACETS OPERATIONS
 
     Full_cell_handle full_cell(const Facet & f) const
@@ -559,12 +578,11 @@ public:
         CGAL_precondition(Full_cell_const_handle() != s);
         return is_infinite(*s);
     }
+    // The infinite status is precomputed and cached in the cell's auxiliary
+    // data, avoiding repeated linear scans over the cell's vertices.
     bool is_infinite(const Full_cell & s) const /* internal use, not documented */
     {
-        for(int i = 0; i <= current_dimension(); ++i)
-            if( is_infinite(s.vertex(i)) )
-                return true;
-        return false;
+        return s.tds_data().is_infinite();
     }
     bool is_infinite(const Facet & ft) const
     {
@@ -651,6 +669,12 @@ public:
     {
         tds_.clear();
         infinity_ = tds().insert_increase_dimension();
+        // This initializes the cached "infinite" flag so that queries
+        // do not need to scan the cell's vertices.
+        Full_cell_handle inf_fc = infinity_->full_cell();
+        // This initializes the cached "infinite" flag so that
+        // is_infinite(inf_fc) returns the correct result
+        inf_fc->tds_data().set_infinite(true);
         // Our coaffine orientation predicates HAS state member variables
         reset_flat_orientation();
 #ifdef CGAL_TRIANGULATION_STATISTICS
@@ -969,6 +993,12 @@ Triangulation<TT, TDS>
 {
     CGAL_precondition( ! is_infinite(s) );
     Vertex_handle v = tds().insert_in_full_cell(s);
+    std::vector<Full_cell_handle> simps;
+    simps.reserve(64);
+    incident_full_cells(v, std::back_inserter(simps));
+    for (auto &fc : simps){
+        update_full_cell_infinite_flag(fc);
+    }
     v->set_point(p);
     return v;
 }
@@ -1020,6 +1050,12 @@ Triangulation<TT, TDS>
     int inf_v_index = s->index(infinite_vertex());
     Vertex_handle v = insert_in_hole(
       p, simps.begin(), simps.end(), Facet(s, inf_v_index));
+    std::vector<Full_cell_handle> incident;
+    incident.reserve(64);
+    incident_full_cells(v, std::back_inserter(incident));
+    for (auto &fc : incident){
+        update_full_cell_infinite_flag(fc);
+    }
     return v;
 }
 
@@ -1030,6 +1066,8 @@ Triangulation<TT, TDS>
 {
     CGAL_precondition( current_dimension() < maximal_dimension() );
     Vertex_handle v = tds().insert_increase_dimension(infinite_vertex());
+    Full_cell_handle inf_fc = infinite_vertex()->full_cell();
+    inf_fc->tds_data().set_infinite(true);
     // reset the orientation predicate:
     reset_flat_orientation();
     v->set_point(p);
@@ -1442,7 +1480,17 @@ operator>>(std::istream & is, Triangulation<TT, TDS> & tr)
     }
 
     // now, read the combinatorial information
-   return tr.tds().read_full_cells(is, vertices);
+   tr.tds().read_full_cells(is, vertices);
+
+    // After reconstruction, recompute and cache the "infinite" flag for each
+    // full cell. This ensures that is_infinite() queries are correct and do not
+    // require scanning the vertices of the cell at runtime.
+    for (auto fc = tr.full_cells_begin(); fc != tr.full_cells_end(); ++fc)
+    {
+        tr.update_full_cell_infinite_flag(fc);
+    }
+
+    return is;
 }
 
 template < class TT, class TDS >
