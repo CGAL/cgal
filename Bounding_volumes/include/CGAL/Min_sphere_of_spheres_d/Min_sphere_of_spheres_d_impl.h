@@ -330,7 +330,8 @@ namespace  Bounding_volumes {
         if (i >= D+1) {
           std::cerr << "BUG: Min_sphere_of_spheres_d: supp. centers aff. dep." << std::endl
                << "Refer to the bug-reporting instructions at https://www.cgal.org/bug_report.html" << std::endl;
-          return false;
+        delete[] m;
+        return false;
         }
 
         // exchange rows:
@@ -364,6 +365,7 @@ namespace  Bounding_volumes {
         std::cerr << "BUG: Min_sphere_of_spheres_d: center of the miniball" << std::endl
              << "     not in the span of the support centers." << std::endl
              << "Refer to the bug-reporting instructions at https://www.cgal.org/bug_report.html" << std::endl;
+        delete[] m;
         return false;
       }
 
@@ -382,6 +384,7 @@ namespace  Bounding_volumes {
         std::cerr << "BUG: Min_sphere_of_spheres_d: center of miniball not in" << std::endl
              << "     interior of convex hull of support centers." << std::endl
              << "Refer to the bug-reporting instructions at https://www.cgal.org/bug_report.html" << std::endl;
+        delete[] m;
         return false;
       }
 
