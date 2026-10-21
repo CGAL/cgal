@@ -218,7 +218,7 @@ using Default_edge_properties_for_input = Edge_properties_for_input<G,No_mark<G>
 template<class G>
 struct No_extra_output_from_corefinement
 {
-  using face_descriptor = typename boost::graph_traits<G>::face_descriptor;
+  using halfedge_descriptor = typename boost::graph_traits<G>::halfedge_descriptor;
   void start_new_polyline(std::size_t, std::size_t) {}
   void add_node_to_polyline(std::size_t){}
   template<class Node_id_pair, class halfedge_descriptor>
@@ -234,7 +234,7 @@ struct No_extra_output_from_corefinement
     bool /*input_have_coplanar_faces*/,
     const boost::dynamic_bitset<>& /* is_node_of_degree_one */,
     const Mesh_to_map_node& /*mesh_to_node_id_to_vertex*/,
-    const std::vector<std::pair<face_descriptor,face_descriptor>>& /*identical_patches*/) const
+    const std::vector<std::pair<halfedge_descriptor,halfedge_descriptor>>& /*identical_patches*/) const
   {}
 };
 
@@ -1735,7 +1735,7 @@ public:
                 const TriangleMesh& tm2,
                 const VertexPointMap1& vpm1,
                 const VertexPointMap2& vpm2,
-                const std::vector<std::pair<face_descriptor, face_descriptor>>& identical_patches = {})
+                const std::vector<std::pair<halfedge_descriptor, halfedge_descriptor>>& identical_patches = {})
   {
     copy_nodes_ids_for_non_manifold_features();
 
