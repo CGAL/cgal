@@ -115,22 +115,23 @@ kernel(const FaceRange& face_range,
     struct Bbox_entry {
       std::size_t index;
       std::function<double(const EPoint_3&)> bound;
-      std::function<double(const Bbox_3&)> value;
+      bool take_min;
     };
     std::array<Bbox_entry,6> entries {{
-        {0, [](const EPoint_3& p){ return approx(p).x().inf();  }, [](const Bbox_3& b){ return b.xmin(); }},
-        {1, [](const EPoint_3& p){ return approx(p).x().sup(); }, [](const Bbox_3& b){ return b.xmax(); }},
-        {2, [](const EPoint_3& p){ return approx(p).y().inf();  }, [](const Bbox_3& b){ return b.ymin(); }},
-        {3, [](const EPoint_3& p){ return approx(p).y().sup(); }, [](const Bbox_3& b){ return b.ymax(); }},
-        {4, [](const EPoint_3& p){ return approx(p).z().inf();  }, [](const Bbox_3& b){ return b.zmin(); }},
-        {5, [](const EPoint_3& p){ return approx(p).z().sup(); }, [](const Bbox_3& b){ return b.zmax(); }}
+        {0, [](const EPoint_3& p){ return approx(p).x().inf();  }, true},  // xmin
+        {1, [](const EPoint_3& p){ return approx(p).y().inf();  }, true},  // ymin
+        {2, [](const EPoint_3& p){ return approx(p).z().inf();  }, true},  // zmin
+        {3, [](const EPoint_3& p){ return approx(p).x().sup();  }, false}, // xmax
+        {4, [](const EPoint_3& p){ return approx(p).y().sup();  }, false}, // ymax
+        {5, [](const EPoint_3& p){ return approx(p).z().sup();  }, false}  // zmax
     }};
 
+    // Remark: No other operations have been performed since the bounding box was computed,
+    // so the intervals have not been refined.
     for (const auto& e : entries){
       for (vertex_descriptor v : vertices(kernel)){
         std::size_t i = e.index;
-        double bound = e.bound(get(kvpm, v));
-        if (bound == e.value(bb3)){
+        if (e.bound(get(kvpm, v)) == bb3.get_value(i)){
           bbox_vertices[i] = v;
           break;
         }
@@ -184,7 +185,7 @@ kernel(const FaceRange& face_range,
                                                                     geom_traits(kgt).
                                                                     do_not_triangulate_faces(true).
                                                                     vertex_point_map(kvpm).
-                                                                    bounding_box(&bbox_vertices).
+                                                                    bounding_box(std::make_pair(&bb3, &bbox_vertices)).
                                                                     starting_vertex_descriptor(start_vertex).
                                                                     face_to_face_map(f2f_map),
                                                                     f);
@@ -193,13 +194,9 @@ kernel(const FaceRange& face_range,
                                                                     geom_traits(kgt).
                                                                     do_not_triangulate_faces(true).
                                                                     vertex_point_map(kvpm).
-                                                                    bounding_box(&bbox_vertices).
+                                                                    bounding_box(std::make_pair(&bb3, &bbox_vertices)).
                                                                     starting_vertex_descriptor(start_vertex));
       if (is_empty(kernel)) return;
-
-      // update bbox, ( By looking which bbox_vertices have changed, it is possible to avoid recomputing all of them at each step )
-      bb3 = get(kvpm, bbox_vertices[0]).bbox()+get(kvpm, bbox_vertices[1]).bbox()+get(kvpm, bbox_vertices[2]).bbox()+
-            get(kvpm, bbox_vertices[3]).bbox()+get(kvpm, bbox_vertices[4]).bbox()+get(kvpm, bbox_vertices[5]).bbox();
     }
     else
     {
