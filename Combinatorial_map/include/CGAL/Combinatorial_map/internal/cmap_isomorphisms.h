@@ -240,7 +240,7 @@ bool are_volumes_isomorphic_from_darts(LCC1& lcc1, typename LCC1::Dart_descripto
          lcc2.is_marked(dh2, marktopreserve2))
       { match=false; }
 
-      // We test if the injection is valid with its neighboors.
+      // We test if the injection is valid with its neighbors.
       // We go out as soon as it is not satisfied.
       // Process next then opposite
       other1=next1(dh1); other2=next2(dh2);
@@ -571,7 +571,7 @@ bool is_submap_from_darts(LCC1& lcc1, typename LCC1::Dart_descriptor sd1,
             <LCC1, LCC2, 0>::run(lcc1, lcc2, dh1, dh2);
       }
 
-      // We test if the injection is valid with its neighboors.
+      // We test if the injection is valid with its neighbors.
       // We go out as soon as it is not satisfied.
       // Process next then opposite
       for(int i:{1, 2, 3})

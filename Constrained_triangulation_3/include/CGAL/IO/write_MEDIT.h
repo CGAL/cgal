@@ -32,10 +32,9 @@ namespace IO
 {
 /*!
  * @ingroup PkgCDT3IOFunctions
- * @brief outputs a conforming constrained Delaunay triangulation to
- * the MEDIT (`.mesh`) file format.
- *        See \cgalCite{frey:inria-00069921} for a comprehensive description of this
- *        file format.
+ * @brief outputs a conforming constrained Delaunay triangulation
+ *  using the \ref IOStreamMedit (`.mesh`).
+ *
  * @param os the output stream
  * @param ccdt the conforming constrained Delaunay triangulation to be written
  * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below

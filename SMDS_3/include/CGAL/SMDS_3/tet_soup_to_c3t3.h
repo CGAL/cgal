@@ -746,18 +746,21 @@ bool build_mesh_complex_from_file(std::istream& is,
   using Curve_index = typename C3T3::Curve_index;
   using Corner_index = typename C3T3::Corner_index;
 
+  using Edge = std::array<int, 2>;
   using Facet        = std::array<int, 3>; // 3 = id
-  using Tet_with_ref = std::array<int, 4>; // 4 = id
+  using Tet = std::array<int, 4>; // 4 = id
 
-  using Edge_with_index = CGAL::IO::internal::Edge_with_index<Curve_index>;
-  using Corner_with_index = CGAL::IO::internal::Corner_with_index<Corner_index>;
+  using Edge_with_index = CGAL::IO::internal::Edge_with_curve_index<Curve_index>;
+  using Corner_with_index = CGAL::IO::internal::Vertex_with_corner_index<Corner_index>;
 
-  std::vector<Tet_with_ref> finite_cells;
+  std::vector<Tet> finite_cells;
   std::vector<Subdomain_index> subdomains;
   std::vector<Point_3> points;
-  boost::unordered_map<Facet, Surface_patch_index> border_facets;
-  std::vector<Edge_with_index> edge_indices;
-  std::vector<Corner_with_index> corner_indices;
+
+  std::vector<Facet> facets;
+  std::vector<Edge> edges;
+  std::vector<int> corners, facet_refs, edge_refs, point_refs;
+  std::vector<int> ignored_ridges;
 
   bool is_CGAL_mesh = false;
 
@@ -768,27 +771,72 @@ bool build_mesh_complex_from_file(std::istream& is,
     std::cout << "Allow non-manifoldness = " << allow_non_manifold << std::endl;
   }
 
-  bool ok = CGAL::IO::internal::read_MEDIT(is, points, finite_cells, subdomains,
-                                           border_facets, true,
-                                           edge_indices,
-                                           corner_indices,
+  bool ok = CGAL::IO::internal::read_MEDIT(is, points, finite_cells,
+                                           facets, true,
+                                           edges, true,
+                                           ignored_ridges, false,
+                                           corners, true,
+                                           point_refs, true,
+                                           subdomains, true,
+                                           facet_refs, true,
+                                           edge_refs, true,
                                            verbose,
                                            is_CGAL_mesh);
-
-  if(!ok){
+  if(!ok)
     return false;
+
+  std::vector<Edge_with_index> edge_indices;
+  edge_indices.reserve(edges.size());
+  for(std::size_t i = 0; i < edges.size(); ++i)
+  {
+    Edge_with_index edge;
+    edge.v0 = edges[i][0];
+    edge.v1 = edges[i][1];
+    edge.curve_index = edge_refs[i];
+    edge_indices.emplace_back(edge);
+  }
+
+  std::vector<Corner_with_index> corner_indices;
+  corner_indices.reserve(corners.size());
+  for(std::size_t i = 0; i < corners.size(); ++i)
+  {
+    Corner_with_index corner;
+    corner.v = corners[i];
+    corner.corner_index = point_refs[i];
+    corner_indices.emplace_back(corner);
+  }
+
+  boost::unordered_map<Facet, Surface_patch_index> border_facets;
+  border_facets.reserve(facets.size());
+
+  bool has_negative_surface_patch_ids = false;
+  int max_surface_patch_id = 0;
+  for(std::size_t i = 0; i < facets.size(); ++i)
+  {
+    if(facet_refs[i] < 0)
+      has_negative_surface_patch_ids = true;
+    else if(facet_refs[i] > max_surface_patch_id)
+      max_surface_patch_id = facet_refs[i];
+    border_facets.emplace(facets[i], facet_refs[i]);
+  }
+
+  if(has_negative_surface_patch_ids)
+  {
+    if(verbose)
+      std::cerr << "Warning: negative surface patch ids" << std::endl;
+    for(auto& facet_and_patch_id : border_facets)
+      if(facet_and_patch_id.second < 0)
+        facet_and_patch_id.second = max_surface_patch_id - facet_and_patch_id.second;
   }
 
   if(!is_CGAL_mesh)
     c3t3.triangulation().may_have_badly_oriented_cells(true);
 
   std::vector<typename C3T3::Triangulation::Vertex_handle> no_vertices;
-  return build_mesh_complex_with_subdomains_range(c3t3,
-                                                  points, finite_cells, subdomains, border_facets,
-                                                  edge_indices,
-                                                  corner_indices,
-                                                  no_vertices,
-                                                  cx_edges_oit,
+  return build_mesh_complex_with_subdomains_range(c3t3, points, finite_cells,
+                                                  subdomains, border_facets,
+                                                  edge_indices, corner_indices,
+                                                  no_vertices, cx_edges_oit,
                                                   verbose,
                                                   replace_domain_0 && !is_CGAL_mesh,
                                                   allow_non_manifold,

@@ -46,9 +46,9 @@ namespace IO {
  *
  * \brief reads the content of `is` into `points` and `facets`, using the \ref IOStreamSTL.
  *
- * \attention The polygon soup is not cleared, and the data from the stream are appended.
+ * \note The polygon soup is not cleared, and the data from the stream are appended.
  *
- * \attention To read a binary file, the flag `std::ios::binary` must be set during the creation of the `ifstream`.
+ * \note To read a binary file, the flag `std::ios::binary` must be set during the creation of the `ifstream`.
  *
  * \tparam PointRange a model of the concepts `BackInsertionSequence` whose value type is the point type
  * \tparam TriangleRange a model of the concept `BackInsertionSequence` whose `value_type` is
@@ -161,7 +161,7 @@ bool read_STL(std::istream& is,
  * \brief reads the content of a file named `fname` into `points` and `facets`, using the \ref IOStreamSTL.
  *
  *  If `use_binary_mode` is `true`, but the reading fails, \ascii reading will be automatically tested.
- * \attention The polygon soup is not cleared, and the data from the file are appended.
+ * \note The polygon soup is not cleared, and the data from the file are appended.
  *
  * \tparam PointRange a model of the concept `BackInsertionSequence` whose value type is the point type.
  * \tparam TriangleRange a model of the concept `BackInsertionSequence` whose `value_type` is
@@ -251,7 +251,7 @@ typename K::Vector_3 construct_normal_of_STL_face(const typename K::Point_3& p,
  *
  * \brief writes the content of `points` and `facets` in `os`, using the \ref IOStreamSTL.
  *
- * \attention To write to a binary file, the flag `std::ios::binary` must be set during the creation
+ * \note To write to a binary file, the flag `std::ios::binary` must be set during the creation
  *            of the `ofstream`, and the \link PkgStreamSupportEnumRef `IO::Mode` \endlink
  *            of the stream must be set to `BINARY`.
  *
@@ -371,7 +371,7 @@ bool write_STL(std::ostream& os,
  *
  * \brief writes the content of `points` and `facets` in a file named `fname`, using the \ref IOStreamSTL.
  *
- * \attention The polygon soup is not cleared, and the data from the file are appended.
+ * \note The polygon soup is not cleared, and the data from the file are appended.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam TriangleRange a model of the concept `SequenceContainer` whose `value_type` is itself
