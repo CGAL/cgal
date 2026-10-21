@@ -144,7 +144,7 @@ Ray_2_Segment_2_pair<K>::intersection_type() const
                 }
                 if (maxpt->x() > start2.x()) {
                     _intersection_point = start2;
-                    _other_point = *maxpt;
+                    _other_point = *minpt;
                 } else {
                     _intersection_point = _seg->source();
                     _other_point = _seg->target();
@@ -192,7 +192,7 @@ Ray_2_Segment_2_pair<K>::intersection_type() const
                 }
                 if (maxpt->y() > start2.y()) {
                     _intersection_point = start2;
-                    _other_point = *maxpt;
+                    _other_point = *minpt;
                 } else {
                     _intersection_point = _seg->source();
                     _other_point = _seg->target();
