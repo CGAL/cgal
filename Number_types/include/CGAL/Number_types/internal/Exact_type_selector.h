@@ -180,11 +180,22 @@ CGAL_EXACT_SELECTORS_SPECS(double)
 CGAL_EXACT_SELECTORS_SPECS(float)
 CGAL_EXACT_SELECTORS_SPECS(int)
 
+template <ENT_backend_choice>
+struct Exact_long_long_selector {};
+
+#ifdef CGAL_USE_GMPXX
 template <>
-struct Exact_field_selector<long long> : Exact_field_selector<int> {};
+struct Exact_long_long_selector<GMPXX_BACKEND>
+{ using Type = mpq_class; };
+#endif
 
 template <>
-struct Exact_field_selector<unsigned long long> : Exact_field_selector<int> {};
+struct Exact_field_selector<long long>
+  : Exact_long_long_selector<Default_exact_nt_backend> {};
+
+template <>
+struct Exact_field_selector<unsigned long long>
+  : Exact_long_long_selector<Default_exact_nt_backend> {};
 
 template <>
 struct Exact_ring_selector<long long> : Exact_field_selector<long long> {};

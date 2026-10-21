@@ -4,6 +4,7 @@
 #include <CGAL/gmpxx.h>
 #include <CGAL/NT_converter.h>
 #include <CGAL/Filtered_kernel.h>
+#include <CGAL/Lazy_exact_nt.h>
 #include <CGAL/Simple_cartesian.h>
 #include <cassert>
 #include <limits>
@@ -16,6 +17,22 @@ void check(Integer value)
   const mpz_class expected(std::to_string(value));
   assert((CGAL::NT_converter<Integer, mpz_class>()(value) == expected));
   assert((CGAL::NT_converter<Integer, mpq_class>()(value) == mpq_class(expected)));
+  const CGAL::Lazy_exact_nt<mpz_class> lazy_integer(value);
+  const CGAL::Lazy_exact_nt<mpq_class> lazy_rational(value);
+  assert(lazy_integer.exact() == expected);
+  assert(lazy_rational.exact() == mpq_class(expected));
+}
+
+template <class Integer>
+void check_filtered_kernel()
+{
+  using K = CGAL::Filtered_kernel<CGAL::Simple_cartesian<Integer>>;
+  const Integer offset = (Integer(1) << 60) + 1;
+  const typename K::Point_2 p(offset, 0);
+  const typename K::Point_2 q(offset + 1, 0);
+  assert(K().equal_2_object()(p, p));
+  assert(!K().equal_2_object()(p, q));
+  assert(K().orientation_2_object()(p, q, typename K::Point_2(offset, 1)) == CGAL::LEFT_TURN);
 }
 #endif
 
@@ -40,11 +57,10 @@ int main()
     check(-signed_value);
   }
 
-  using K = CGAL::Filtered_kernel<CGAL::Simple_cartesian<long long>>;
-  const K::Point_2 p((1LL << 60) + 1, 0);
-  const K::Point_2 q((1LL << 60) + 2, 0);
-  assert(K().equal_2_object()(p, p));
-  assert(!K().equal_2_object()(p, q));
-  assert(K().orientation_2_object()(p, q, K::Point_2((1LL << 60) + 1, 1)) == CGAL::LEFT_TURN);
+  if constexpr(CGAL::internal::Default_exact_nt_backend == CGAL::internal::GMPXX_BACKEND)
+  {
+    check_filtered_kernel<long long>();
+    check_filtered_kernel<unsigned long long>();
+  }
 #endif
 }
